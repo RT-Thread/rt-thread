@@ -74,6 +74,7 @@ const char *ulog_global_filter_kw_get(void);
  * flush all backends's log
  */
 void ulog_flush(void);
+void ulog_emergency_dump_to(const char *backend_name);
 
 #ifdef ULOG_USING_ASYNC_OUTPUT
 /*

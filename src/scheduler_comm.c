@@ -485,6 +485,7 @@ void rt_scheduler_stack_check(struct rt_thread *thread)
         rt_err_t hook_result = -RT_ERROR;
 
         LOG_E("thread:%s stack overflow\n", thread->parent.name);
+        ulog_emergency_dump_to("console");
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
         if (rt_stack_overflow_hook != RT_NULL)

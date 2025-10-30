@@ -1486,6 +1486,72 @@ void ulog_flush(void)
 }
 
 /**
+ * @brief Safely dumps pending ulog async logs to a single specified backend.
+ *
+ * This function is designed for use in critical error handlers (e.g., stack
+ * overflow, hard fault, assertion failures). It avoids calling the general
+ * `ulog_flush()` function, which could trigger unstable backends (like
+ * filesystems or network sockets) and cause secondary crashes. Instead, it
+ * finds a specific, trusted backend by name and directly invokes its output
+ * and flush functions.
+ *
+ * @param[in] backend_name The name of the target backend to dump logs to.
+ *                         For maximum safety, this should be a simple,
+ *                         polling-based UART console backend (e.g., "console").
+ *
+ * @note This function will have no effect if the ulog asynchronous output
+ *       (`ULOG_USING_ASYNC_OUTPUT`) feature is not enabled.
+ */
+void ulog_emergency_dump_to(const char *backend_name)
+{
+    rt_rbb_blk_t log_blk;
+    ulog_frame_t log_frame;
+    ulog_backend_t target_backend = RT_NULL;
+
+    if (!ulog.init_ok || !backend_name)
+    {
+        return;
+    }
+
+    target_backend = ulog_backend_find(backend_name);
+    if (target_backend == RT_NULL)
+    {
+        return;
+    }
+
+#ifdef ULOG_USING_ASYNC_OUTPUT
+    while ((log_blk = rt_rbb_blk_get(ulog.async_rbb)) != RT_NULL)
+    {
+        log_frame = (ulog_frame_t) log_blk->buf;
+        if (log_frame->magic == ULOG_FRAME_MAGIC)
+        {
+            target_backend->output(target_backend, log_frame->level, log_frame->tag,
+                                   log_frame->is_raw, log_frame->log, log_frame->log_len);
+        }
+        rt_rbb_blk_free(ulog.async_rbb, log_blk);
+    }
+
+    rt_size_t log_len = rt_ringbuffer_data_len(ulog.async_rb);
+    if (ulog.async_rb && log_len > 0)
+    {
+        char *log = rt_malloc(log_len + 1);
+        if (log)
+        {
+            rt_size_t len = rt_ringbuffer_get(ulog.async_rb, (rt_uint8_t *)log, (rt_uint16_t)log_len);
+            log[log_len] = '\0';
+            ulog_output_to_all_backend(LOG_LVL_DBG, "", RT_TRUE, log, len);
+            rt_free(log);
+        }
+    }
+#endif
+
+    if (target_backend->flush)
+    {
+        target_backend->flush(target_backend);
+    }
+}
+
+/**
  * @brief ulog initialization
  *
  * @return int return 0 on success, return -5 when failed of insufficient memory.
