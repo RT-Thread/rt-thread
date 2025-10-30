@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,7 +26,7 @@
 #include "drv_config.h"
 #include <string.h>
 
-// #define DRV_DEBUG
+/*#define DRV_DEBUG*/
 #define LOG_TAG              "drv.spi"
 #include <drv_log.h>
 
@@ -360,9 +360,14 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         rt_uint8_t *aligned_send_buf = RT_NULL;
         rt_uint8_t *aligned_recv_buf = RT_NULL;
 
-        const rt_bool_t dma_eligible = (send_length >= DMA_TRANS_MIN_LEN);
-        const rt_bool_t use_tx_dma = dma_eligible && (spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG);
-        const rt_bool_t use_rx_dma = dma_eligible && (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG);
+        rt_bool_t dma_eligible = (send_length >= DMA_TRANS_MIN_LEN);
+        rt_bool_t use_tx_dma = dma_eligible && (spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG);
+        rt_bool_t use_rx_dma = dma_eligible && (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG);
+
+        if (!rt_scheduler_is_available())
+        {
+            use_rx_dma = use_tx_dma = dma_eligible = RT_FALSE;
+        }
 
         if (dma_eligible)
         {
@@ -478,18 +483,21 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         }
         else
         {
-            rt_uint32_t timeout = timeout_ms;
-            while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY)
+            if (rt_scheduler_is_available())
             {
-                if(timeout-- > 0)
+                rt_uint32_t timeout = timeout_ms;
+                while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY)
                 {
-                    rt_thread_mdelay(1);
-                }
-                else
-                {
-                    LOG_E("timeout! SPI state did not become READY.");
-                    state = HAL_TIMEOUT;
-                    break;
+                    if(timeout-- > 0)
+                    {
+                        rt_thread_mdelay(1);
+                    }
+                    else
+                    {
+                        LOG_E("timeout! SPI state did not become READY.");
+                        state = HAL_TIMEOUT;
+                        break;
+                    }
                 }
             }
         }
@@ -680,6 +688,47 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     LOG_D("%s attach to %s done", device_name, bus_name);
 
     return result;
+}
+
+/**
+  * Detach the spi device from SPI bus.
+  *
+  * @param device_name the name of the spi device to be detached.
+  */
+rt_err_t rt_hw_spi_device_detach(const char *device_name)
+{
+    RT_ASSERT(device_name != RT_NULL);
+
+    rt_err_t result;
+    struct rt_spi_device *spi_device;
+
+    rt_device_t device = rt_device_find(device_name);
+    if (device == RT_NULL)
+    {
+        LOG_E("SPI device %s not found.", device_name);
+        return -RT_ERROR;
+    }
+
+    if (device->type != RT_Device_Class_SPIDevice)
+    {
+        LOG_E("%s is not an SPI device.", device_name);
+        return -RT_ERROR;
+    }
+
+    spi_device = (struct rt_spi_device *)device;
+
+    result = rt_spi_bus_detach_device_cspin(spi_device);
+    if (result != RT_EOK)
+    {
+        LOG_E("Failed to detach %s from its bus, error code: %d", device_name, result);
+        return result;
+    }
+
+    rt_free(spi_device);
+
+    LOG_D("SPI device %s has been detached.", device_name);
+
+    return RT_EOK;
 }
 
 #if defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI1_RX_USING_DMA)
