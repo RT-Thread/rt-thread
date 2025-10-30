@@ -37,7 +37,6 @@ rsource "libc/Kconfig"
 rsource "net/Kconfig"
 rsource "mprotect/Kconfig"
 rsource "utilities/Kconfig"
-rsource "vbus/Kconfig"
 endif
 
 if ARCH_MM_MMU

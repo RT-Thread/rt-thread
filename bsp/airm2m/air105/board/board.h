@@ -28,6 +28,5 @@ extern int __bss_end;
 #define HEAP_END    (void*)(0x20000000 + 0xA0000)
 
 void rt_hw_board_init(void);
-int rt_vbus_do_init(void);
 
 #endif
