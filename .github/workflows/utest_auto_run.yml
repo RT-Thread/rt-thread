@@ -18,6 +18,13 @@ on:
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
+  workflow_dispatch:
+    inputs:
+      trigger_type:
+        description: '触发类型'
+        required: false
+        default: 'manual'
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
