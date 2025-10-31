@@ -123,7 +123,6 @@ INIT_DEVICE_EXPORT(rt_hw_led_init);
 #endif
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 void led(rt_uint32_t led, rt_uint32_t state)
 {
@@ -140,7 +139,6 @@ void led(rt_uint32_t led, rt_uint32_t state)
         break;
     }
 }
-FINSH_FUNCTION_EXPORT(led, turn led (0 - 3) on (1) or off (0).)
 #endif
 
 /*@}*/

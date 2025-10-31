@@ -1271,7 +1271,6 @@ void efm_spiSd_deinit(void)
  *  Export to FINSH
  ******************************************************************************/
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 void list_sd(void)
 {
@@ -1317,7 +1316,6 @@ void list_sd(void)
     capacity >>= 4;
     rt_kprintf(" Card capacity:\t\t%dMB\n", capacity);
 }
-FINSH_FUNCTION_EXPORT(list_sd, list the SD card.)
 #endif
 
 #endif /* defined(EFM32_USING_SPISD) */

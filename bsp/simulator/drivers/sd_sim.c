@@ -197,7 +197,6 @@ rt_err_t rt_hw_sdcard_init(const char *spi_device_name)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 int sd_erase(void)
 {
     rt_uint32_t index;
@@ -219,5 +218,4 @@ int sd_erase(void)
     rt_free(buffer);
     return 0;
 }
-FINSH_FUNCTION_EXPORT(sd_erase, erase all block in SPI flash);
 #endif

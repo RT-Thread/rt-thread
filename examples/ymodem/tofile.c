@@ -106,7 +106,6 @@ rt_err_t rym_write_to_file(rt_device_t idev)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 rt_err_t ry(char *dname)
 {
     rt_err_t res;
@@ -122,5 +121,4 @@ rt_err_t ry(char *dname)
 
     return res;
 }
-FINSH_FUNCTION_EXPORT(ry, receive files by ymodem protocol);
 #endif

@@ -276,7 +276,6 @@ void pcap_netif_hw_init(void)
     eth_device_init(&(pcap_netif_device.parent), "e0");
 }
 
-#include <finsh.h>
 void list_pcap(void)
 {
     int i=0;
@@ -310,4 +309,3 @@ void list_pcap(void)
 
     return ;
 }
-FINSH_FUNCTION_EXPORT(list_pcap, show host netif adapter);

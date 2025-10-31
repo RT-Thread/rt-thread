@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <finsh.h>
 #include <sys/errno.h>
 #include <sys/fcntl.h>
 #include <sys/stat.h>
@@ -35,7 +34,6 @@ void libc_fstat()
     printf("fstat result: %d\n", fstat(fd, &s));
     close(fd);
 }
-FINSH_FUNCTION_EXPORT(libc_fstat, fstat test for libc);
 
 void libc_lseek()
 {
@@ -53,7 +51,6 @@ void libc_lseek()
     printf("end: %d\n", lseek(fd, 0, SEEK_END));
     close(fd);
 }
-FINSH_FUNCTION_EXPORT(libc_lseek, lseek test for libc);
 
 void sleep(int tick)
 {
@@ -517,4 +514,3 @@ int libc_fseek(void)
 
     return result;
 }
-FINSH_FUNCTION_EXPORT(libc_fseek, lseek test for libc);

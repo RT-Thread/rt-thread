@@ -1488,20 +1488,17 @@ INIT_COMPONENT_EXPORT(rt_hw_tiva_eth_init);
 
 #if 0
 #ifdef RT_USING_FINSH
-#include "finsh.h"
 void PHY_Read(uint8_t addr)
 {
     uint16_t data = EMACPHYRead(EMAC0_BASE, PHY_PHYS_ADDR, addr);
     rt_kprintf("R PHY_REG[0x%02X] = 0x%04X\n", addr, data);
 }
-FINSH_FUNCTION_EXPORT(PHY_Read, (add));
 
 void PHY_Write(uint8_t addr , uint16_t data)
 {
    EMACPHYWrite(EMAC0_BASE, PHY_PHYS_ADDR, addr, data);
     rt_kprintf("W PHY_REG[0x%02X] = 0x%04X\n", addr, data);
 }
-FINSH_FUNCTION_EXPORT(PHY_Write, (add, data));
 
 void PHY_SetAdd(uint8_t addr0, uint8_t addr1, uint8_t addr2,
                 uint8_t addr3, uint8_t addr4, uint8_t addr5)
@@ -1514,6 +1511,5 @@ void PHY_SetAdd(uint8_t addr0, uint8_t addr1, uint8_t addr2,
     MAP_FlashUserSave();
     rt_kprintf("Save to EEPROM. please reboot.");
 }
-FINSH_FUNCTION_EXPORT(PHY_SetAdd, (add0-add5));
 #endif //RT_USING_FINSH
 #endif

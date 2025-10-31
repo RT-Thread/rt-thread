@@ -611,7 +611,6 @@ int rt_hw_mtd_nand_init(void)
 INIT_DEVICE_EXPORT(rt_hw_mtd_nand_init);
 
 #if defined(RT_USING_FINSH)
-#include <finsh.h>
 void nand_eraseall()
 {
     int tmp=0;
@@ -628,7 +627,6 @@ void nand_eraseall()
         at9260_nand_erase_block(RT_NULL, index);
     }
 }
-FINSH_FUNCTION_EXPORT(nand_eraseall, erase all of block in the nand flash);
 
 #endif //RT_USING_FINSH
 

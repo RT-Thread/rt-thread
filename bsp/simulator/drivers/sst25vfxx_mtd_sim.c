@@ -235,7 +235,6 @@ rt_err_t sst25vfxx_mtd_init(const char *nor_name,
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 void nor_erase(void)
 {
     rt_uint32_t index;
@@ -247,7 +246,6 @@ void nor_erase(void)
         sst25vfxx_erase_block(mtd, index * mtd->block_size, BLOCK_SIZE);
     }
 }
-FINSH_FUNCTION_EXPORT(nor_erase, erase all block in SPI flash);
 #endif
 
 #endif

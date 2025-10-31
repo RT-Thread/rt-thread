@@ -9,7 +9,6 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
-#include <finsh.h>
 
 #include <dirent.h>
 int libc_dirent()
@@ -56,4 +55,3 @@ int libc_dirent()
     closedir(dirp);
     return result;
 }
-FINSH_FUNCTION_EXPORT(libc_dirent, dirent test for libc);

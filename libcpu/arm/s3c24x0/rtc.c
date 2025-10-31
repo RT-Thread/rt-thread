@@ -168,7 +168,6 @@ void rt_hw_rtc_init(void)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 void list_date()
 {
     time_t time;
@@ -182,6 +181,5 @@ void list_date()
         rt_kprintf("%d, %s\n", time, ctime(&time));
     }
 }
-FINSH_FUNCTION_EXPORT(list_date, list date);
 #endif
 #endif

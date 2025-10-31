@@ -17,7 +17,6 @@
 #include <fsl_gpio.h>
 #include <fsl_iomuxc.h>
 
-#include <finsh.h>
 
 #define RT_USING_SDIO1
 #define RT_USING_SDIO2
@@ -395,7 +394,6 @@ static void log_toggle(int en)
 {
     enable_log = en;
 }
-FINSH_FUNCTION_EXPORT(log_toggle, toglle log dumple);
 #endif
 
 static const struct rt_mmcsd_host_ops ops =

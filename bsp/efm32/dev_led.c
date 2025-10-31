@@ -166,7 +166,6 @@ rt_err_t rt_hw_led_init(void)
  *  Export to FINSH
  ******************************************************************************/
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 void list_leds(void)
 {
@@ -189,7 +188,6 @@ void list_leds(void)
 #endif
     }
 }
-FINSH_FUNCTION_EXPORT(list_leds, list all the LEDs.)
 
 void set_led(rt_uint32_t led, rt_uint32_t state)
 {
@@ -206,7 +204,6 @@ void set_led(rt_uint32_t led, rt_uint32_t state)
         break;
     }
 }
-FINSH_FUNCTION_EXPORT(set_led, turn led (0 - 3) on (1) or off (0).)
 #endif
 
 /***************************************************************************//**

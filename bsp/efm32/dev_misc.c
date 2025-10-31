@@ -172,7 +172,6 @@ rt_int32_t efm32_misc_getCelsius(rt_uint32_t adcResult)
  *  Export to FINSH
  ******************************************************************************/
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 void list_temp(void)
 {
@@ -180,7 +179,6 @@ void list_temp(void)
 
     rt_kprintf("Temperature is %2d.%02d C\n", temp / 100, temp % 100);
 }
-FINSH_FUNCTION_EXPORT(list_temp, list current temperature value.)
 
 void list_vdd(void)
 {
@@ -188,7 +186,6 @@ void list_vdd(void)
 
     rt_kprintf("VDD is %1d.%02d V\n", vdd / 100, vdd % 100);
 }
-FINSH_FUNCTION_EXPORT(list_vdd, list current VDD value.)
 
 #endif /* RT_USING_FINSH */
 

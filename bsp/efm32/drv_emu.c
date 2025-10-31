@@ -232,7 +232,6 @@ void efm32_emu_init(void)
  *  Export to FINSH
  ******************************************************************************/
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 
 void list_emu(void)
 {
@@ -244,7 +243,6 @@ void list_emu(void)
     rt_kprintf(" em4 token used %d\n",
         EMU_TASK_EM4_TOKEN_NUMBER - emu_task.em4.value);
 }
-FINSH_FUNCTION_EXPORT(list_emu, list the EMU status)
 #endif
 
 /***************************************************************************//**

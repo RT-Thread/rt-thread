@@ -11,7 +11,6 @@
  * Net Test Utilities for RT-Thread
  */
 #include <rtthread.h>
-#include <finsh.h>
 #include <lwip/api.h>
 #include <lwip/sockets.h>
 #include <lwip/init.h>
@@ -342,4 +341,3 @@ void net_test(void)
         rt_thread_startup(tcpecho_socket_tid);
     }
 }
-FINSH_FUNCTION_EXPORT(net_test, network test);
