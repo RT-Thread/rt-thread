@@ -20,9 +20,14 @@
 #ifdef RT_USING_SOFT_RTC
 
 /* 2018-01-30 14:44:50 = RTC_TIME_INIT(2018, 1, 30, 14, 44, 50)  */
-#define RTC_TIME_INIT(year, month, day, hour, minute, second)                                                            \
-    {                                                                                                                    \
-        .tm_year = year - 1900, .tm_mon = month - 1, .tm_mday = day, .tm_hour = hour, .tm_min = minute, .tm_sec = second \
+#define RTC_TIME_INIT(year, month, day, hour, minute, second) \
+    {                                                         \
+        .tm_year = year - 1900,                               \
+        .tm_mon = month - 1,                                  \
+        .tm_mday = day,                                       \
+        .tm_hour = hour,                                      \
+        .tm_min = minute,                                     \
+        .tm_sec = second,                                     \
     }
 
 #ifndef SOFT_RTC_TIME_DEFAULT
