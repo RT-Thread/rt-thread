@@ -1,3 +1,184 @@
+# RT-Thread v5.2.2 Released
+
+Change Log Since v5.2.1 Release.
+
+## Kernel
+
+* Fix scheduling exception caused by interrupt preemption in rt_schedule.[(#10715)](https://github.com/RT-Thread/rt-thread/pull/10715)
+* Fix the legacy issue related to the length of the object name version.[(#10537)](https://github.com/RT-Thread/rt-thread/pull/10537)
+* Fixed buffer overflow vulnerability in object.[(#10523)](https://github.com/RT-Thread/rt-thread/pull/10523)
+* Add up scheduler critical switch flag.[(#10581)](https://github.com/RT-Thread/rt-thread/pull/10581)
+* Update the default value of RT_NAME_MAX to 12.[(#10839)](https://github.com/RT-Thread/rt-thread/pull/10839)
+* Feat the rt_scheduler lock nest uses atomic operations.[(#10621)](https://github.com/RT-Thread/rt-thread/pull/10621)
+
+## Components
+
+* **Drivers**
+  * **Serial:** 
+    * serial_v1
+      * Fix correct data loss logic when RX ring buffer is full.
+    * serial_v2
+      * Fix the bug of RX flush under DMA.
+      * Add serial V2 buffer configuration via Kconfig.
+      * Feat optimize serial v2. [(#10603)](https://github.com/RT-Thread/rt-thread/pull/10603)
+      * Feat modify the default configuration of the RT_SERIAL_CONFIG_DEFAULT structure to support parameters in the absence of DMA configuration.
+  * **RTC:** 
+    * Add the alarm using local time for calculation.
+  * **CAN:** 
+    * Fixed the issue where the thread calling CAN int TX was suspended when CAN at the bottom layer failed to work.
+    * Feat: Implement non-blocking send mechanism and enhance CAN driver functionality.
+  * **SPI:** 
+    * Add SPI device detach function.[(#10733)](https://github.com/RT-Thread/rt-thread/pull/10733)
+    * Update and fix up the SPI.
+  * **ADC:** 
+    * Fixed cppcheck error.
+    * Remove build warnings.
+  * **ktime:**
+    * Remove unused rt_ktime_hrtimer_getcnt for hrtimer.
+  * **wlan:**
+    * Update SECURITY_UNKNOWN value.
+* **LWP**
+  * Fix potential signal handler infinite loop for riscv.
+  * Feat: Restore TP register in arch_thread_signal_enter to fix user-mode memory access.
+* **Libc**
+  * Add comments for some pthread functions.
+  * pthreads: Fix pthread_cond_timedwait lacks timeout wakeup.
+  * ensure compatibility with newlib <3.4.0 by handling removed __sdidinit. [(#10791)](https://github.com/RT-Thread/rt-thread/pull/10791)
+* **DFS**
+  * **DFS v2**:
+    * Fix bugs for function _get_parent_path(). [(#10539)](https://github.com/RT-Thread/rt-thread/pull/10539)
+* **Net**
+  * **SAL/Socket:** 
+    * Fixed CI compilation failure in sal/src/sal_socket.c.
+    * Fix memory leak when sal_socket failed.
+    * improve the error return of sal.
+  * **Netdev:**
+    * Fixed compilation errors when enabling IPv6 and IPv4 dual-stack support.
+    * Fixed netdev_unregister missing correct return value. [(#10693)](https://github.com/RT-Thread/rt-thread/pull/10693)
+    * Expose netdev_set_dns and netdev_set_if. [(#10128)](https://github.com/RT-Thread/rt-thread/pull/10128)
+  * **AT:**
+    * at_client add deInit port. [(#10598)](https://github.com/RT-Thread/rt-thread/pull/10598)
+* **Finsh:**
+
+  * Fixed clear out the useless copy operations. [(#10699)](https://github.com/RT-Thread/rt-thread/pull/10699)
+  * Feat add support for the Home, Insert, Delete and End keys, and improve input mode processing.[(#10595)](https://github.com/RT-Thread/rt-thread/pull/10595)
+  * Feat: Add new features (delete by word, switch cursor, etc.).
+* **USB:**
+  * Update (cherryusb): update to v1.5.1.
+  * Fixed several issues related to cherryusb.[(#10844)](https://github.com/RT-Thread/rt-thread/pull/10844)
+* **Ulog:**
+  * Fix:filter should not be associated with ULOG_USING_COLOR and ULOG_USING_SYSLOG configurations.
+* **IPC:**
+  * Pass rt_tick_t for RT_TIMER_CTRL_SET_TIME and RT_TIMER_CTRL_GET_TIME.[(#10717)](https://github.com/RT-Thread/rt-thread/pull/10717)
+
+## DM
+
+* NVME: fix up the QUEUE alloc error no check.
+* Thermal: Fix up the C99, 6.8.1 Labeled statements p4; Fix up the PWM-FAN remove handle data ptr.
+* PCI: Add SoC PCI Kconfig import; Multiple PCI-related fixes; Fix and optimize interrupt-related issues.
+* WDT: Support related to Intel 6300ESB/Synopsys Watchdog, etc.
+
+## Libcpu
+
+* **AArch64:** 
+  * Fix up MMU and linker warning. 
+  * Fix rt_aspace_init error when KERNEL_VADDR_START >= 0x80000000.
+  * Add the configuration of libcpu/aarch64 KERNEL ASPACE START.
+  * Update Hypercall API.
+  * Remove unused rt_hw_set_gtimer_frq.
+* **Cortex-M33:**
+  * Fix the M33 assembly syntax errors and fix the compilation error of BSP.
+  * Added HardFault_Handler to save floating point registers.
+* **Cortex-M4:**
+  * Fixed compilation error. 
+  * Added HardFault_Handler to save floating point registers.
+
+* **Cortex-M3:**
+  * The parameter passed to the unified rt_exception_hook is exception_stack. [(#10619)](https://github.com/RT-Thread/rt-thread/pull/10619)
+* **RISC-V:** 
+  * Fix type mismatch of `_query`.
+  * Fix the support for RV32E. RV32E does not support the s2 register. Modify it to the s1 register.
+  * Use volatile RW for claim and complete.
+  * Add spaces to fix `Wliteral-suffix`.
+  * Add comment for the round down of symb_pc.
+  * Remove `rt_hw_cpu_id` in `cpuport.h` to fix error.
+
+## Tools
+
+* Add support for package.json, refactor BuildPackage function to handle new format.
+* Add documents for tools script; Add NG for tools. [(#10572)](https://github.com/RT-Thread/rt-thread/pull/10572)
+* Add workspace generation for RT-Thread root directory.
+* Add vsc_workspace target in scons.
+* Add DTC (Devicetree Compiler) tools.
+* Add clang-format formatting script for CI. 
+* Optimize the file opening method.
+* Clang format ignore migration.
+* Improve[clang-format]: optimize the formatting logic for RT-Thread coding standard.
+
+## Action
+
+* Fixed CI: ARDUINO_ADAFRUIT_SENSORLAB compilation failure issue.
+* Fixed CI compilation failure in sal/src/sal_socket.c.[(#10854)](https://github.com/RT-Thread/rt-thread/pull/10854)
+* Merge same tag with different paths, remove Path display from CI comment.
+* Add Copilot review title keywords.
+* Add concurrency control to GitHub Actions. [(#10761)](https://github.com/RT-Thread/rt-thread/pull/10761)
+* integrate utest run ci. [(#10748)](https://github.com/RT-Thread/rt-thread/pull/10748)
+* Improve the comment instructions for the PR format bot.[(#10747)](https://github.com/RT-Thread/rt-thread/pull/10747)
+
+## Documents
+
+* **Doxygen:**
+  * Fix some document issues.
+  * Update naming rule for utest-case.
+  * Update doc for env to latest.
+  * Update some document content.
+  * Group name all in lowercase. [(#10530)](https://github.com/RT-Thread/rt-thread/pull/10530)
+  * Grouping and page optimization related to device driver.
+  * use layout to control the HTML display.
+  * Add doxygen comments for scheduler. [(#10366)](https://github.com/RT-Thread/rt-thread/pull/10366) and lwp
+  * update doxygen version to v1.9.8 .
+
+## Utest
+
+* Add netdev/lwip/filesystem/memory pool/SAL/system performance API test case.
+* Support autocomplete of utest cases for `utest_run`. [(#10701)](https://github.com/RT-Thread/rt-thread/pull/10701)
+* Feat:reorganize utest menu.
+* Feat:rename files and update naming according to new rule.
+* Feat:reorganize utest framework structure (initial version).
+* Feat:unify config name. [(#10808)](https://github.com/RT-Thread/rt-thread/pull/10808)
+* Feat:integrate test cases into utest framework. [(#10665)](https://github.com/RT-Thread/rt-thread/pull/10665)
+* Move driver-related test cases under `drivers`.
+* Move and enhance C++ test cases.
+
+## BSP
+
+* Some driver issues have been resolved and some driver support has been added.
+
+* **Added/Updated BSPs:**
+
+  * **xuantie：**
+    * E901
+
+  * **Renesas:** 
+    * ek-ra6e2
+    * ek-ra4e2
+    * ek-ra2a1
+    * ek-ra2e2
+    * ek-ra4m1
+  * **GD32:** 
+    * gd32h759i-eval
+    * gd32470i-eval
+    * gd32e230-lckfb
+  * **NXP:** 
+    * MCX E247
+    * FRDM-MCXE247
+    * FRDM-MCXA346
+  * **HPMicro:** 
+    * hpm6p00evk 
+    * hpm5e00evk
+  * **Phytium**
+  * **Raspberry RP2350**
+
 # RT-Thread v5.2.1 Released
 
 Change Log Since v5.2.0 Release
