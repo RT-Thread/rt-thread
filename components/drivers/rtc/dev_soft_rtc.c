@@ -186,30 +186,32 @@ static void get_rtc_time(struct timespec *ts)
 static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     time_t *t;
+    struct timeval *tv;
+    struct timespec *ts;
+    struct timespec ts_temp;
     rt_base_t level;
-    struct tm time_temp;
 
     RT_ASSERT(dev != RT_NULL);
+
     if (!args)
         return -RT_EINVAL;
 
-    rt_memset(&time_temp, 0, sizeof(struct tm));
+    rt_memset(&ts_temp, 0, sizeof(ts_temp));
 
     switch (cmd)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
     {
         t = (time_t *)args;
-        struct timespec ts;
-        get_rtc_time(&ts);
-        *t = ts.tv_sec;
+        get_rtc_time(&ts_temp);
+        *t = ts_temp.tv_sec;
         break;
     }
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
         t = (time_t *)args;
-        struct timespec ts = { *t, 0 };
-        set_rtc_time(&ts);
+        ts_temp.tv_sec = *t;
+        set_rtc_time(&ts_temp);
         break;
     }
 #ifdef RT_USING_ALARM
@@ -223,35 +225,35 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
 #endif
     case RT_DEVICE_CTRL_RTC_GET_TIMEVAL:
     {
-        struct timeval *tv = (struct timeval *)args;
-        struct timespec ts;
-        get_rtc_time(&ts);
-        tv->tv_sec = ts.tv_sec;
-        tv->tv_usec = ts.tv_nsec / 1000;
+        tv = (struct timeval *)args;
+        get_rtc_time(&ts_temp);
+        tv->tv_sec = ts_temp.tv_sec;
+        tv->tv_usec = ts_temp.tv_nsec / 1000;
         break;
     }
     case RT_DEVICE_CTRL_RTC_SET_TIMEVAL:
     {
-        struct timeval *tv = (struct timeval *)args;
-        struct timespec ts = { tv->tv_sec, tv->tv_usec * 1000 };
-        set_rtc_time(&ts);
+        tv = (struct timeval *)args;
+        ts_temp.tv_sec = tv->tv_sec;
+        ts_temp.tv_nsec = tv->tv_usec * 1000;
+        set_rtc_time(&ts_temp);
         break;
     }
     case RT_DEVICE_CTRL_RTC_GET_TIMESPEC:
     {
-        struct timespec *ts = (struct timespec *)args;
+        ts = (struct timespec *)args;
         get_rtc_time(ts);
         break;
     }
     case RT_DEVICE_CTRL_RTC_SET_TIMESPEC:
     {
-        struct timespec *ts = (struct timespec *)args;
+        ts = (struct timespec *)args;
         set_rtc_time(ts);
         break;
     }
     case RT_DEVICE_CTRL_RTC_GET_TIMERES:
     {
-        struct timespec *ts = (struct timespec *)args;
+        ts = (struct timespec *)args;
         level = rt_spin_lock_irqsave(&_spinlock);
         ts->tv_sec = 0;
 #ifdef RT_USING_KTIME
