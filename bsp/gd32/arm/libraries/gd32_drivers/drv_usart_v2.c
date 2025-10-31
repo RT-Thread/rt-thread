@@ -263,7 +263,6 @@ static void dma_recv_isr (struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct gd32_uart, serial);
 
-    recv_len = 0;
     level = rt_hw_interrupt_disable();
     #if defined SOC_SERIES_GD32E23x
     counter = dma_transfer_number_get(uart->dma.rx.channel);
@@ -297,21 +296,14 @@ static void usart_isr (struct rt_serial_device *serial)
 
     if (usart_interrupt_flag_get(uart->periph, USART_INT_FLAG_RBNE) != RESET)
     {
-        struct rt_serial_rx_fifo *rx_fifo;
-        rx_fifo = (struct rt_serial_rx_fifo *) serial->serial_rx;
-        RT_ASSERT(rx_fifo != RT_NULL);
-
-        char chr = usart_data_receive(uart->periph);
-        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, &chr);
+        rt_uint8_t chr = usart_data_receive(uart->periph);
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_PUTC, (void *)&chr);
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-
-        /* Clear RXNE interrupt flag */
-        usart_interrupt_flag_clear(uart->periph, USART_INT_FLAG_RBNE);
     }
     else if (usart_interrupt_flag_get(uart->periph, USART_INT_FLAG_TBE) != RESET)
     {
         rt_uint8_t put_char = 0;
-        if (rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GETC, &put_char) == RT_EOK)
+        if (rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GETC, (void *)&put_char) == RT_EOK)
         {
             usart_data_transmit(uart->periph, put_char);
         }
@@ -320,7 +312,6 @@ static void usart_isr (struct rt_serial_device *serial)
             usart_interrupt_disable(uart->periph, USART_INT_TBE);
             usart_interrupt_enable(uart->periph, USART_INT_TC);
         }
-        usart_interrupt_flag_clear(uart->periph, USART_INT_FLAG_TBE);
     }
     else if (usart_interrupt_flag_get(uart->periph, USART_INT_FLAG_TC) != RESET)
     {
@@ -334,10 +325,9 @@ static void usart_isr (struct rt_serial_device *serial)
 #ifdef RT_SERIAL_USING_DMA
     else if (usart_interrupt_flag_get(uart->periph, USART_INT_FLAG_IDLE) != RESET)
     {
-        volatile uint8_t data = (uint8_t)usart_data_receive(uart->periph);
-
+        volatile uint8_t idle_clear_dummy = (uint8_t)usart_data_receive(uart->periph);
+        RT_UNUSED(idle_clear_dummy);
         dma_recv_isr(serial);
-
         usart_interrupt_flag_clear(uart->periph, USART_INT_FLAG_IDLE);
     }
 #endif
@@ -595,8 +585,8 @@ void UART7_IRQHandler (void)
 }
 
 #endif /* BSP_USING_UART7 */
-#if define SOC_SERIES_GD32E23x
-#if define BSP_UART0_RX_USING_DMA || define BSP_UART0_TX_USING_DMA
+#if defined SOC_SERIES_GD32E23x
+#if defined BSP_UART0_RX_USING_DMA || defined BSP_UART0_TX_USING_DMA
 void DMA_Channel1_2_IRQHandler(void)
 {
     /* enter interrupt */
@@ -906,6 +896,9 @@ static void _uart_dma_receive (struct gd32_uart *uart, rt_uint8_t *buffer, rt_ui
     dma_interrupt_enable(uart->dma.rx.channel, DMA_CHXCTL_HTFIE);
     dma_interrupt_enable(uart->dma.rx.channel, DMA_CHXCTL_FTFIE);
 
+    /* enable circular mode */
+    dma_circulation_enable(uart->dma.rx.channel);
+
     /* enable dma channel */
     dma_channel_enable(uart->dma.rx.channel);
 
@@ -953,7 +946,11 @@ static void _uart_dma_receive (struct gd32_uart *uart, rt_uint8_t *buffer, rt_ui
     usart_interrupt_enable(uart->periph, USART_INT_IDLE);
 
     /* enable dma receive */
+#if defined SOC_SERIES_GD32F5xx
+    usart_dma_receive_config(uart->periph, USART_DENR_ENABLE);
+#else
     usart_dma_receive_config(uart->periph, USART_RECEIVE_DMA_ENABLE);
+#endif
     #endif
 }
 
@@ -972,7 +969,11 @@ static void _uart_dma_transmit (struct gd32_uart *uart, rt_uint8_t *buffer, rt_u
     DMA_CHCNT(uart->dma.tx.periph, uart->dma.tx.channel) = size;
 
     /* enable dma transmit */
+#if defined SOC_SERIES_GD32F5xx
+    usart_dma_transmit_config(uart->periph, USART_DENT_ENABLE);
+#else
     usart_dma_transmit_config(uart->periph, USART_TRANSMIT_DMA_ENABLE);
+#endif
 
     /* enable dma channel */
     dma_channel_enable(uart->dma.tx.periph, uart->dma.tx.channel);
@@ -1057,7 +1058,7 @@ static void gd32_dma_config (struct rt_serial_device *serial, rt_ubase_t flag)
     if (flag == RT_DEVICE_FLAG_DMA_RX)
     {
         rt_uint8_t *ptr = NULL;
-        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF, &ptr);
+        rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF, (void *)&ptr);
 
         /* start dma transfer */
         _uart_dma_receive(uart, ptr, serial->config.dma_ping_bufsz);
