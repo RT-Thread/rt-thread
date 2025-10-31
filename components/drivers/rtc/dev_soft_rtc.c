@@ -37,21 +37,18 @@
 #endif
 
 static struct rt_work rtc_sync_work;
-
 static struct rt_device soft_rtc_dev;
+static struct timespec init_ts = { 0 };
+static RT_DEFINE_SPINLOCK(_spinlock);
 #ifdef RT_USING_KTIME
 static struct timespec init_ktime_ts = { 0 };
 #else
 static rt_tick_t init_tick;
 #endif
-static struct timespec init_ts = { 0 };
 
 #ifdef RT_USING_ALARM
-
 static struct rt_rtc_wkalarm wkalarm;
 static struct rt_timer alarm_time;
-
-static RT_DEFINE_SPINLOCK(_spinlock);
 
 static void alarm_timeout(void *param)
 {
