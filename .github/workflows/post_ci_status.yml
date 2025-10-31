@@ -36,6 +36,8 @@ jobs:
     steps:
       - name: Post or update CI status comment
         uses: actions/github-script@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
             const prNumber = ${{ inputs.pr_number }};
