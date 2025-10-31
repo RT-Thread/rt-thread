@@ -38,8 +38,9 @@
 
 static struct rt_work rtc_sync_work;
 static struct rt_device soft_rtc_dev;
-static struct timespec init_ts = { 0 };
 static RT_DEFINE_SPINLOCK(_spinlock);
+/* RTC time baseline for calculation */
+static struct timespec init_ts = { 0 };
 #ifdef RT_USING_KTIME
 static struct timespec init_ktime_ts = { 0 };
 #else
@@ -50,11 +51,28 @@ static rt_tick_t init_tick;
 static struct rt_rtc_wkalarm wkalarm;
 static struct rt_timer alarm_time;
 
+/**
+ * @brief Alarm timeout callback function
+ * @param param Pointer to RTC device
+ * @return None
+ * 
+ * This function is called when the alarm timer expires and updates
+ * the alarm system.
+ */
 static void alarm_timeout(void *param)
 {
     rt_alarm_update(param, 1);
 }
 
+/**
+ * @brief Update soft RTC alarm status
+ * @param palarm Pointer to alarm configuration structure
+ * @return None
+ * 
+ * This function updates the alarm timer based on the alarm enable status.
+ * When enabled, it starts a 1-second period timer for alarm detection.
+ * When disabled, it stops the timer.
+ */
 static void soft_rtc_alarm_update(struct rt_rtc_wkalarm *palarm)
 {
     rt_tick_t next_tick;
@@ -73,6 +91,16 @@ static void soft_rtc_alarm_update(struct rt_rtc_wkalarm *palarm)
 
 #endif
 
+/**
+ * @brief Set RTC time baseline
+ * @param ts Pointer to timestamp to set as baseline
+ * @return None
+ * 
+ * This function sets a new time baseline for the soft RTC. All subsequent
+ * time calculations will be based on this baseline. It records both the
+ * time value and the corresponding system tick or high-precision time.
+ * Also updates alarm status if alarms are enabled.
+ */
 static void set_rtc_time(struct timespec *ts)
 {
     rt_base_t level = rt_spin_lock_irqsave(&_spinlock);
@@ -89,6 +117,16 @@ static void set_rtc_time(struct timespec *ts)
 #endif
 }
 
+/**
+ * @brief Get current RTC time
+ * @param ts Output parameter to store the retrieved timestamp
+ * @return None
+ * 
+ * This function calculates the current time based on the stored baseline
+ * and the elapsed system tick or high-precision time. It handles both
+ * nanosecond overflow and underflow to ensure accurate time representation.
+ * The calculation is thread-safe using spinlock protection.
+ */
 static void get_rtc_time(struct timespec *ts)
 {
     rt_base_t level;
@@ -101,7 +139,6 @@ static void get_rtc_time(struct timespec *ts)
     struct timespec current_ts;
     rt_ktime_boottime_get_ns(&current_ts);
 
-    /* Calculate time difference */
     ts->tv_sec = init_ktime_ts.tv_sec + (current_ts.tv_sec - init_ktime_ts.tv_sec);
     ts->tv_nsec = init_ktime_ts.tv_nsec + (current_ts.tv_nsec - init_ktime_ts.tv_nsec);
 #else
@@ -109,13 +146,12 @@ static void get_rtc_time(struct timespec *ts)
     ts->tv_sec = init_ts.tv_sec + tick / RT_TICK_PER_SECOND;
     ts->tv_nsec = init_ts.tv_nsec + ((tick % RT_TICK_PER_SECOND) * (1000000000UL / RT_TICK_PER_SECOND));
 #endif
-    /* Handle nanosecond overflow */
+    /* Handle nanosecond overflow/underflow */
     if (ts->tv_nsec >= 1000000000L)
     {
         ts->tv_sec++;
         ts->tv_nsec -= 1000000000L;
     }
-    /* Handle nanosecond underflow */
     if (ts->tv_nsec < 0)
     {
         ts->tv_sec--;
@@ -124,6 +160,24 @@ static void get_rtc_time(struct timespec *ts)
     rt_spin_unlock_irqrestore(&_spinlock, level);
 }
 
+/**
+ * @brief RTC device control function
+ * @param dev Pointer to RTC device
+ * @param cmd Control command (RT_DEVICE_CTRL_RTC_*)
+ * @param args Command arguments (varies by command)
+ * @return rt_err_t RT_EOK on success, -RT_EINVAL on error
+ * 
+ * This function handles various RTC control commands including:
+ * - RT_DEVICE_CTRL_RTC_GET_TIME: Get current time as time_t
+ * - RT_DEVICE_CTRL_RTC_SET_TIME: Set time from time_t
+ * - RT_DEVICE_CTRL_RTC_GET_ALARM: Get alarm configuration
+ * - RT_DEVICE_CTRL_RTC_SET_ALARM: Set alarm configuration
+ * - RT_DEVICE_CTRL_RTC_GET_TIMEVAL: Get time as timeval
+ * - RT_DEVICE_CTRL_RTC_SET_TIMEVAL: Set time from timeval
+ * - RT_DEVICE_CTRL_RTC_GET_TIMESPEC: Get time as timespec
+ * - RT_DEVICE_CTRL_RTC_SET_TIMESPEC: Set time from timespec
+ * - RT_DEVICE_CTRL_RTC_GET_TIMERES: Get timer resolution
+ */
 static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     time_t *t;
@@ -236,6 +290,15 @@ const static struct rt_device_ops soft_rtc_ops = {
 };
 #endif
 
+/**
+ * @brief Soft RTC device initialization
+ * @return int 0 on success
+ * 
+ * This function initializes the soft RTC device, registers it to the system,
+ * and sets the default time. It ensures only one RTC device named "rtc"
+ * exists in the system and configures the device operations.
+ * The initialization is performed only once.
+ */
 static int rt_soft_rtc_init(void)
 {
     static rt_bool_t init_ok = RT_FALSE;
@@ -245,7 +308,6 @@ static int rt_soft_rtc_init(void)
     {
         return 0;
     }
-    /* Make sure only one 'rtc' device */
 #if defined(RT_USING_SOFT_RTC) && defined(BSP_USING_ONCHIP_RTC)
 #warning "Please note: Currently only one RTC device is allowed in the system, and the name is "rtc"."
 #endif
@@ -294,6 +356,13 @@ INIT_DEVICE_EXPORT(rt_soft_rtc_init);
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 
+/**
+ * @brief Soft RTC time synchronization
+ * @return rt_err_t RT_EOK on success
+ * 
+ * This function retrieves the current RTC time and resets the time baseline.
+ * It's used to synchronize the soft RTC time with an external time source.
+ */
 rt_err_t rt_soft_rtc_sync(void)
 {
     time_t time = 0;
@@ -304,16 +373,34 @@ rt_err_t rt_soft_rtc_sync(void)
     return RT_EOK;
 }
 
+/**
+ * @brief RTC sync work function
+ * @param work Pointer to work item
+ * @param work_data Work data (unused)
+ * @return None
+ * 
+ * This function is executed periodically to maintain soft RTC time accuracy.
+ * It performs synchronization and schedules the next sync task.
+ */
 static void rtc_sync_work_func(struct rt_work *work, void *work_data)
 {
     rt_soft_rtc_sync();
     rt_work_submit(work, rt_tick_from_millisecond(RTC_AUTO_SYNC_PERIOD * 1000));
 }
 
+/**
+ * @brief Set soft RTC time source
+ * @param name Name of the time source device
+ * @return rt_err_t RT_EOK on success
+ * 
+ * This function configures the soft RTC to use a specific time source
+ * and starts the periodic synchronization mechanism. The time source
+ * device must exist before calling this function.
+ */
 rt_err_t rt_soft_rtc_set_source(const char *name)
 {
     RT_ASSERT(name != RT_NULL);
-    RT_ASSERT(rt_device_find(name));  /* make sure source is exist*/
+    RT_ASSERT(rt_device_find(name));
 
     rt_work_init(&rtc_sync_work, rtc_sync_work_func, RT_NULL);
     rt_work_submit(&rtc_sync_work, rt_tick_from_millisecond(RTC_AUTO_SYNC_FIRST_DELAY * 1000));
@@ -323,6 +410,15 @@ rt_err_t rt_soft_rtc_set_source(const char *name)
 
 #ifdef FINSH_USING_MSH
 #include <finsh.h>
+/**
+ * @brief RTC sync command handler
+ * @param argc Argument count
+ * @param argv Argument array
+ * @return None
+ * 
+ * MSH command that manually triggers RTC time synchronization and displays
+ * the current time information. Usage: rtc_sync
+ */
 static void cmd_rtc_sync(int argc, char **argv)
 {
     struct timeval tv = { 0 };
@@ -333,7 +429,6 @@ static void cmd_rtc_sync(int argc, char **argv)
 
     gettimeofday(&tv, &tz);
     now = tv.tv_sec;
-    /* Output current time */
     rt_kprintf("local time: %.*s", 25, ctime(&now));
     rt_kprintf("timestamps: %ld\n", (long)tv.tv_sec);
 }
