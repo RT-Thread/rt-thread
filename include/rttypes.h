@@ -88,7 +88,11 @@ typedef rt_ubase_t                       rt_uintptr_t;   /**< Type for unsigned 
 #endif /* defined(RT_USING_LIBC) && !defined(RT_USING_NANO) */
 
 typedef rt_base_t                       rt_err_t;       /**< Type for error number */
+#if defined(ARCH_CPU_64BIT)
+typedef rt_uint64_t                     rt_tick_t;      /**< Type for tick count */
+#else
 typedef rt_uint32_t                     rt_tick_t;      /**< Type for tick count */
+#endif
 typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
@@ -249,6 +253,22 @@ struct rt_spinlock
 typedef struct rt_spinlock rt_spinlock_t;
 
 #define RT_DEFINE_SPINLOCK(x)  struct rt_spinlock x = RT_SPINLOCK_INIT
+
+/**
+ * @brief lossless mul div, return `(a * b) / c`
+ *
+ * if r is not NULL then `*r = (a * b) % c`
+ * @return rt_uint64_t
+ */
+rt_uint64_t rt_muldiv_u64(rt_uint64_t a, rt_uint64_t b, rt_uint64_t c, rt_uint64_t *r);
+
+/**
+ * @brief lossless mul div, return `(a * b) / c`
+ *
+ * if r is not NULL then `*r = (a * b) % c`
+ * @return rt_uint32_t
+ */
+rt_uint32_t rt_muldiv_u32(rt_uint32_t a, rt_uint32_t b, rt_uint32_t c, rt_uint32_t *r);
 
 #ifdef __cplusplus
 }
