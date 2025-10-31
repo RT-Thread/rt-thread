@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2016-09-28     armink       first version.
+ * 2025-10-30     wdfk-prog    enable interrupt-safe operations using spinlocks
  */
 
 #include <stdint.h>
@@ -233,7 +234,17 @@ static void spi_lock(const sfud_spi *spi) {
     RT_ASSERT(sfud_dev);
     RT_ASSERT(rtt_dev);
 
-    rt_mutex_take(&(rtt_dev->lock), RT_WAITING_FOREVER);
+    /* If the scheduler is started and in thread context */
+    if (rt_scheduler_is_available())
+    {
+        rt_mutex_take(&(rtt_dev->lock), RT_WAITING_FOREVER);
+    }
+    else
+    {
+#ifdef RT_USING_SPI_ISR
+        rtt_dev->_isr_lvl = rt_spin_lock_irqsave(&rtt_dev->_spinlock);
+#endif /* RT_USING_SPI_ISR */
+    }
 }
 
 static void spi_unlock(const sfud_spi *spi) {
@@ -244,12 +255,32 @@ static void spi_unlock(const sfud_spi *spi) {
     RT_ASSERT(sfud_dev);
     RT_ASSERT(rtt_dev);
 
-    rt_mutex_release(&(rtt_dev->lock));
+    /* If the scheduler is started and in thread context */
+    if (rt_scheduler_is_available())
+    {
+        rt_mutex_release(&(rtt_dev->lock));
+    }
+    else
+    {
+#ifdef RT_USING_SPI_ISR
+        rt_spin_unlock_irqrestore(&rtt_dev->_spinlock, rtt_dev->_isr_lvl);
+#endif /* RT_USING_SPI_ISR */
+    }
 }
 
 static void retry_delay_100us(void) {
     /* 100 microsecond delay */
-    rt_thread_delay((RT_TICK_PER_SECOND * 1 + 9999) / 10000);
+    if (rt_scheduler_is_available())
+    {
+         rt_thread_delay((RT_TICK_PER_SECOND * 1 + 9999) / 10000);
+    }
+    else
+    {
+#ifdef RT_USING_SPI_ISR
+        extern void rt_hw_us_delay(rt_uint32_t us);
+        rt_hw_us_delay(100);
+#endif /* RT_USING_SPI_ISR */
+    }
 }
 
 sfud_err sfud_spi_port_init(sfud_flash *flash) {
@@ -320,6 +351,9 @@ rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, con
     if (rtt_dev) {
         rt_memset(rtt_dev, 0, sizeof(struct spi_flash_device));
         /* initialize lock */
+#ifdef RT_USING_SPI_ISR
+        rt_spin_lock_init(&rtt_dev->_spinlock);
+#endif /* RT_USING_SPI_ISR */
         rt_mutex_init(&(rtt_dev->lock), spi_flash_dev_name, RT_IPC_FLAG_PRIO);
     }
 

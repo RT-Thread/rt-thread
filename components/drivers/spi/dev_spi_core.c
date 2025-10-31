@@ -11,6 +11,7 @@
  * 2012-05-18     bernard      Changed SPI message to message list.
  *                             Added take/release SPI device/bus interface.
  * 2012-09-28     aozima       fixed rt_spi_release_bus assert error.
+ * 2025-10-30     wdfk-prog    enable interrupt-safe operations using spinlocks
  */
 
 #include "drivers/dev_spi.h"
@@ -38,6 +39,9 @@ rt_err_t spi_bus_register(struct rt_spi_bus       *bus,
 
     /* initialize mutex lock */
     rt_mutex_init(&(bus->lock), name, RT_IPC_FLAG_PRIO);
+#ifdef RT_USING_SPI_ISR
+    rt_spin_lock_init(&bus->_spinlock);
+#endif /* RT_USING_SPI_ISR */
     /* set ops */
     bus->ops = ops;
     /* initialize owner */
@@ -164,13 +168,53 @@ rt_err_t rt_spi_bus_detach_device(struct rt_spi_device *device)
     return rt_spi_bus_detach_device_cspin(device);
 }
 
+static rt_err_t spi_lock(struct rt_spi_bus *bus)
+{
+    RT_ASSERT(bus);
+
+    rt_err_t ret = -RT_ERROR;
+    /* If the scheduler is started and in thread context */
+    if (rt_scheduler_is_available())
+    {
+        ret = rt_mutex_take(&(bus->lock), RT_WAITING_FOREVER);
+    }
+    else
+    {
+#ifdef RT_USING_SPI_ISR
+        bus->_isr_lvl = rt_spin_lock_irqsave(&bus->_spinlock);
+        ret = RT_EOK;
+#endif /* RT_USING_SPI_ISR */
+    }
+    return ret;
+}
+
+static rt_err_t spi_unlock(struct rt_spi_bus *bus)
+{
+    RT_ASSERT(bus);
+
+    rt_err_t ret = -RT_ERROR;
+    /* If the scheduler is started and in thread context */
+    if (rt_scheduler_is_available())
+    {
+        ret = rt_mutex_release(&(bus->lock));
+    }
+    else
+    {
+#ifdef RT_USING_SPI_ISR
+        rt_spin_unlock_irqrestore(&bus->_spinlock, bus->_isr_lvl);
+        ret = RT_EOK;
+#endif /* RT_USING_SPI_ISR */
+    }
+    return ret;
+}
+
 rt_err_t rt_spi_bus_configure(struct rt_spi_device *device)
 {
     rt_err_t result = -RT_ERROR;
 
     if (device->bus != RT_NULL)
     {
-        result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+        result = spi_lock(device->bus);
         if (result == RT_EOK)
         {
             if (device->bus->owner == device)
@@ -191,7 +235,7 @@ rt_err_t rt_spi_bus_configure(struct rt_spi_device *device)
                 result = -RT_EBUSY;
             }
             /* release lock */
-            rt_mutex_release(&(device->bus->lock));
+            spi_unlock(device->bus);
         }
     }
     else
@@ -211,7 +255,7 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
     /* reset the CS pin */
     if (device->cs_pin != PIN_NONE)
     {
-        rt_err_t result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+        rt_err_t result = spi_lock(device->bus);
         if (result == RT_EOK)
         {
             if (cfg->mode & RT_SPI_CS_HIGH)
@@ -222,7 +266,7 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
             {
                 rt_pin_write(device->cs_pin, PIN_HIGH);
             }
-            rt_mutex_release(&(device->bus->lock));
+            spi_unlock(device->bus);
         }
         else
         {
@@ -258,7 +302,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
 
-    result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+    result = spi_lock(device->bus);
     if (result == RT_EOK)
     {
         if (device->bus->owner != device)
@@ -316,7 +360,7 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
     }
 
 __exit:
-    rt_mutex_release(&(device->bus->lock));
+    spi_unlock(device->bus);
 
     return result;
 }
@@ -333,7 +377,7 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
 
-    result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+    result = spi_lock(device->bus);
     if (result == RT_EOK)
     {
         if (device->bus->owner != device)
@@ -391,7 +435,7 @@ rt_err_t rt_spi_send_then_recv(struct rt_spi_device *device,
     }
 
 __exit:
-    rt_mutex_release(&(device->bus->lock));
+    spi_unlock(device->bus);
 
     return result;
 }
@@ -407,7 +451,7 @@ rt_ssize_t rt_spi_transfer(struct rt_spi_device *device,
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
 
-    result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+    result = spi_lock(device->bus);
     if (result == RT_EOK)
     {
         if (device->bus->owner != device)
@@ -449,7 +493,7 @@ rt_ssize_t rt_spi_transfer(struct rt_spi_device *device,
     }
 
 __exit:
-    rt_mutex_release(&(device->bus->lock));
+    spi_unlock(device->bus);
 
     return result;
 }
@@ -510,7 +554,7 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
     if (index == RT_NULL)
         return index;
 
-    result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+    result = spi_lock(device->bus);
     if (result != RT_EOK)
     {
         return index;
@@ -548,7 +592,7 @@ struct rt_spi_message *rt_spi_transfer_message(struct rt_spi_device  *device,
 
 __exit:
     /* release bus lock */
-    rt_mutex_release(&(device->bus->lock));
+    spi_unlock(device->bus);
 
     return index;
 }
@@ -560,7 +604,7 @@ rt_err_t rt_spi_take_bus(struct rt_spi_device *device)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->bus != RT_NULL);
 
-    result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
+    result = spi_lock(device->bus);
     if (result != RT_EOK)
     {
         return -RT_EBUSY;
@@ -579,7 +623,7 @@ rt_err_t rt_spi_take_bus(struct rt_spi_device *device)
         else
         {
             /* configure SPI bus failed */
-            rt_mutex_release(&(device->bus->lock));
+            spi_unlock(device->bus);
 
             return result;
         }
@@ -595,7 +639,7 @@ rt_err_t rt_spi_release_bus(struct rt_spi_device *device)
     RT_ASSERT(device->bus->owner == device);
 
     /* release lock */
-    return rt_mutex_release(&(device->bus->lock));
+    return spi_unlock(device->bus);
 }
 
 rt_err_t rt_spi_take(struct rt_spi_device *device)
