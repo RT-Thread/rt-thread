@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-09-04     armink       the first version
+ * 2025-10-30     wdfk-prog    add emergency log flush mechanism
  */
 
 #include <rthw.h>
@@ -32,6 +33,8 @@ int ulog_console_backend_init(void)
     console.output = ulog_console_backend_output;
 
     ulog_backend_register(&console, "console", RT_TRUE);
+    console.output = ulog_console_backend_output;
+    console.is_emergency_backend = RT_TRUE;
 
     return 0;
 }
