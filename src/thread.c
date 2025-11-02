@@ -59,6 +59,7 @@ static void (*rt_thread_resume_hook) (rt_thread_t thread);
 void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread))
 {
     rt_thread_suspend_hook = hook;
+    NULL;
 }
 
 /**
