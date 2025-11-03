@@ -9,21 +9,21 @@
 
 name: Post CI Status Comment
 
-on:
-  workflow_call:
-    inputs:
-      workflow_name:
-        description: 'Name of the workflow'
-        required: true
-        type: string
-      workflow_status:
-        description: 'Status of the workflow (success/failure)'
-        required: true
-        type: string
-      pr_number:
-        description: 'Pull request number'
-        required: true
-        type: number
+# on:
+#   workflow_call:
+#     inputs:
+#       workflow_name:
+#         description: 'Name of the workflow'
+#         required: true
+#         type: string
+#       workflow_status:
+#         description: 'Status of the workflow (success/failure)'
+#         required: true
+#         type: string
+#       pr_number:
+#         description: 'Pull request number'
+#         required: true
+#         type: number
 
 permissions:
   pull-requests: write

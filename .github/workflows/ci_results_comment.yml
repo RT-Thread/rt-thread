@@ -9,17 +9,17 @@
 
 name: CI Results Comment
 
-on:
-  workflow_run:
-    workflows:
-      - "RT-Thread BSP Static Build Check"
-      - "Static code analysis"
-      - "Check File Format and License"
-      - "utest_auto_run"
-      - "ToolsCI"
-      - "pkgs_test"
-    types:
-      - completed
+# on:
+#   workflow_run:
+#     workflows:
+#       - "RT-Thread BSP Static Build Check"
+#       - "Static code analysis"
+#       - "Check File Format and License"
+#       - "utest_auto_run"
+#       - "ToolsCI"
+#       - "pkgs_test"
+#     types:
+#       - completed
 
 permissions:
   pull-requests: write
