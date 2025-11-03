@@ -1,8 +1,4 @@
 menu "Hardware Drivers Config"
-    config SCO_STM32H723ZGT6
-        bool
-        select SOC_SERIES_STM32H7
-        default y
 
     menu "Onboard Peripheral Drivers"
 
