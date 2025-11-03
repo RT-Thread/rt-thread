@@ -16,10 +16,12 @@
 #include "interrupt.h"
 
 struct rt_irq_desc irq_desc[MAX_HANDLERS];
+
 #ifdef RT_USING_SMP
+#include "sbi.h"
 struct rt_irq_desc ipi_desc[RT_MAX_IPI];
-uint8_t ipi_vectors[RT_CPUS_NR] = {0};
-#endif
+uint8_t ipi_vectors[RT_CPUS_NR] = { 0 };
+#endif /* RT_USING_SMP */
 
 static rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector, void *param)
 {
@@ -57,11 +59,11 @@ void rt_hw_interrupt_umask(int vector)
  * @param old_handler the old interrupt service routine
  */
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-        void *param, const char *name)
+                                         void *param, const char *name)
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
-    if(vector < MAX_HANDLERS)
+    if (vector < MAX_HANDLERS)
     {
         old_handler = irq_desc[vector].handler;
         if (handler != RT_NULL)
@@ -118,7 +120,6 @@ rt_bool_t rt_hw_interrupt_is_disabled(void)
 
 void rt_hw_spin_lock_init(rt_hw_spinlock_t *_lock)
 {
-    union rt_hw_spinlock_t *lock = (void *)_lock;
     _lock->slock = 0;
 }
 
@@ -146,7 +147,6 @@ void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
         if (owner == ticket)
             break;
         /* TODO: low-power wait for interrupt while spinning */
-        // __asm__ volatile("wfi" ::: "memory");
     }
 
     /* Ensure all following memory accesses are ordered after acquiring the lock */
@@ -169,7 +169,7 @@ void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 
 void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
 {
-    int cpuid = cpu_mask & -cpu_mask; // get the lowest set bit
+    int cpuid = __builtin_ctz(cpu_mask); // get the bit position of the lowest set bit
     ipi_vectors[cpuid] |= (uint8_t)ipi_vector;
     sbi_send_ipi((const unsigned long *)&cpu_mask);
 }
@@ -183,17 +183,17 @@ void rt_hw_ipi_init(void)
     {
         ipi_desc[idx].handler = RT_NULL;
         ipi_desc[idx].param = RT_NULL;
-        #ifdef RT_USING_INTERRUPT_INFO
-            rt_snprintf(ipi_desc[idx].name, RT_NAME_MAX - 1, "default");
-            ipi_desc[idx].counter = 0;
-        #endif
+#ifdef RT_USING_INTERRUPT_INFO
+        rt_snprintf(ipi_desc[idx].name, RT_NAME_MAX - 1, "default");
+        ipi_desc[idx].counter = 0;
+#endif
     }
     set_csr(sie, SIP_SSIP);
 }
 
 void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)
 {
-    if(ipi_vector < RT_MAX_IPI)
+    if (ipi_vector < RT_MAX_IPI)
     {
         if (ipi_isr_handler != RT_NULL)
         {

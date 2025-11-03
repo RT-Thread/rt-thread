@@ -18,16 +18,21 @@
 #include <sbi.h>
 #include <encoding.h>
 
+#ifdef RT_USING_SMP
+#include "tick.h"
+#include "interrupt.h"
+#endif /* RT_USING_SMP */
+
 #ifdef ARCH_RISCV_FPU
-    #define K_SSTATUS_DEFAULT_BASE (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM | SSTATUS_FS)
+#define K_SSTATUS_DEFAULT_BASE (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM | SSTATUS_FS)
 #else
-    #define K_SSTATUS_DEFAULT_BASE (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM)
+#define K_SSTATUS_DEFAULT_BASE (SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SUM)
 #endif
 
 #ifdef ARCH_RISCV_VECTOR
-    #define K_SSTATUS_DEFAULT (K_SSTATUS_DEFAULT_BASE | SSTATUS_VS)
+#define K_SSTATUS_DEFAULT (K_SSTATUS_DEFAULT_BASE | SSTATUS_VS)
 #else
-    #define K_SSTATUS_DEFAULT K_SSTATUS_DEFAULT_BASE
+#define K_SSTATUS_DEFAULT K_SSTATUS_DEFAULT_BASE
 #endif
 #ifdef RT_USING_SMART
 #include <lwp_arch.h>
@@ -51,8 +56,7 @@ volatile rt_ubase_t rt_thread_switch_interrupt_flag = 0;
 
 void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
 {
-    rt_hw_switch_frame_t frame = (rt_hw_switch_frame_t)
-        ((rt_ubase_t)sp - sizeof(struct rt_hw_switch_frame));
+    rt_hw_switch_frame_t frame = (rt_hw_switch_frame_t)((rt_ubase_t)sp - sizeof(struct rt_hw_switch_frame));
 
     rt_memset(frame, 0, sizeof(struct rt_hw_switch_frame));
 
@@ -68,8 +72,8 @@ int rt_hw_cpu_id(void)
     return 0;
 #else
     /* Currently, the hartid is stored in the satp register. */
-    uint32_t hart_id;
-    asm volatile ("csrr %0, satp" : "=r"(hart_id));
+    rt_ubase_t hart_id;
+    asm volatile("csrr %0, satp" : "=r"(hart_id));
     return hart_id;
 #endif /* RT_USING_SMP */
 }
@@ -126,7 +130,7 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t 
 }
 #else
 void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread)
-{   
+{
     /* Perform architecture-specific context switch. This call will
      * restore the target thread context and should not return when a
      * switch is performed. The caller (scheduler) invoked this function
@@ -166,12 +170,16 @@ void rt_hw_secondary_cpu_up(void)
     rt_uint64_t entry_pa;
     int hart, ret;
 
-    /* translate kernel virtual _start to physical address */
-    entry_pa = (rt_uint64_t)&_start;//(rt_uint64_t)rt_kmem_v2p((void *)&_start);
+    /* translate kernel virtual _start to physical address.
+     * TODO: Virtual-to-physical translation is not needed here
+     * because &_start is already a physical address on this platform.
+    */
+    entry_pa = (rt_uint64_t)&_start;
 
     for (hart = 0; hart < RT_CPUS_NR; hart++)
     {
-        if (hart == boot_hartid) continue;
+        if (hart == boot_hartid)
+            continue;
 
         ret = sbi_hsm_hart_start((unsigned long)hart,
                                  (unsigned long)entry_pa,
@@ -188,11 +196,9 @@ void secondary_cpu_entry(void)
     /* The PLIC peripheral interrupts are currently handled by the boot_hart. */
     /* Enable the Supervisor-Timer bit in SIE */
     rt_hw_tick_init();
-    
-#ifdef RT_USING_SMP
+
     /* ipi init */
     rt_hw_ipi_init();
-#endif /* RT_USING_SMP */
 
     rt_hw_spin_lock(&_cpus_lock);
     /* invoke system scheduler start for secondary CPU */
