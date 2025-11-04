@@ -27,23 +27,23 @@
 #endif /* RT_USING_POSIX_STDIO */
 #include <posix/stdlib.h>
 
-#define DBG_TAG    "armlibc.syscalls"
-#define DBG_LVL    DBG_INFO
+#define DBG_TAG "armlibc.syscalls"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #ifdef __clang__
-    __asm(".global __use_no_semihosting\n\t");
+__asm(".global __use_no_semihosting\n\t");
 #else
-    #pragma import(__use_no_semihosting_swi)
+#pragma import(__use_no_semihosting_swi)
 #endif
 
 /* Standard IO device handles. */
-#define STDIN       0
-#define STDOUT      1
-#define STDERR      2
+#define STDIN  0
+#define STDOUT 1
+#define STDERR 2
 
 /* Standard IO device name defines. */
-const char __stdin_name[]  = "STDIN";
+const char __stdin_name[] = "STDIN";
 const char __stdout_name[] = "STDOUT";
 const char __stderr_name[] = "STDERR";
 
@@ -314,7 +314,8 @@ void _ttywrch(int ch)
 rt_weak void _sys_exit(int return_code)
 {
     __rt_libc_exit(return_code);
-    while (1);
+    while (1)
+        ;
 }
 
 /**
