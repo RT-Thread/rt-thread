@@ -18,6 +18,13 @@ on:
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
+  workflow_dispatch:
+    inputs:
+      trigger_type:
+        description: '触发类型'
+        required: false
+        default: 'manual'
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -298,3 +305,15 @@ jobs:
               break
             fi
           done
+  # Post CI status to PR comment
+  post-ci-status:
+    needs: test
+    if: always() && github.event_name == 'pull_request' && github.repository_owner == 'RT-Thread'
+    uses: ./.github/workflows/post_ci_status.yml
+    with:
+      workflow_name: "utest_auto_run"
+      workflow_status: ${{ needs.test.result }}
+      pr_number: ${{ github.event.pull_request.number }}
+    permissions:
+      pull-requests: write
+      issues: write

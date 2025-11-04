@@ -9,6 +9,7 @@ src += ['sys_clk.c']
 src += ['tick.c']
 src += ['target_get.c']
 src += ['devices.c']
+src += ['feature.c']
 
 group = DefineGroup('sys', src, depend = [''], CPPPATH = CPPPATH)
 

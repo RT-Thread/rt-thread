@@ -278,6 +278,7 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 4096
 #define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 #define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
@@ -428,6 +429,14 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -507,18 +516,6 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
-
-/* Privated Packages of RealThread */
-
-
-/* Network Utilities */
-
-/* end of Network Utilities */
-
-/* RT-Thread Smart */
-
-/* end of RT-Thread Smart */
-/* end of Privated Packages of RealThread */
 
 /* RISC-V QEMU virt64 configs */
 

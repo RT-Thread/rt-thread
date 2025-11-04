@@ -347,9 +347,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>__CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, USE_SPIFI, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, CORE_M0, __RTTHREAD__</Define>
+              <Define>__STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, CORE_M0, RT_USING_ARMLIBC, __RTTHREAD__, RT_USING_LIBC, USE_SPIFI</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;.;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\include;..\..\..\..\..\components\vbus;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\libc\posix\ipc;..\Libraries\CMSIS\Include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\libcpu\arm\common;..\Libraries\Device\NXP\LPC43xx\Include;..\..\..\..\..\components\drivers\include;..\drivers;applications;..\..\..\..\..\components\vbus\share_hdr;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\finsh;..\..\..\..\..\components\drivers\include;..\..\..\..\..\libcpu\arm\cortex-m0;..\..\..\..\..\components\drivers\phy;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\libc\posix\io\epoll</IncludePath>
+              <IncludePath>..\..\..\..\..\components\drivers\include;.;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension;applications;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\libcpu\arm\common;..\Libraries\CMSIS\Include;..\drivers;..\..\..\..\..\components\drivers\phy;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\finsh;..\..\..\..\..\libcpu\arm\cortex-m0;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\vbus;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\Libraries\Device\NXP\LPC43xx\Include;..\..\..\..\..\components\vbus\share_hdr</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -392,13 +392,6 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>startup.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\startup.c</FilePath>
@@ -409,6 +402,13 @@
               <FileName>vbus_drv.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\vbus_drv.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\board.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -711,16 +711,16 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>drv_led.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\drivers\drv_uart.c</FilePath>
+              <FilePath>..\drivers\drv_led.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_led.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\drivers\drv_led.c</FilePath>
+              <FilePath>..\drivers\drv_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -728,9 +728,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -742,9 +742,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1059,16 +1059,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1080,16 +1080,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1128,16 +1128,16 @@
           <GroupName>VBus</GroupName>
           <Files>
             <File>
-              <FileName>watermark_queue.c</FileName>
+              <FileName>vbus.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\vbus\watermark_queue.c</FilePath>
+              <FilePath>..\..\..\..\..\components\vbus\vbus.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>vbus_chnx.c</FileName>
+              <FileName>watermark_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\vbus\vbus_chnx.c</FilePath>
+              <FilePath>..\..\..\..\..\components\vbus\watermark_queue.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1149,9 +1149,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>vbus.c</FileName>
+              <FileName>vbus_chnx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\vbus\vbus.c</FilePath>
+              <FilePath>..\..\..\..\..\components\vbus\vbus_chnx.c</FilePath>
             </File>
           </Files>
         </Group>

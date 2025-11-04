@@ -30,3 +30,16 @@ jobs:
         run: |
           pip install click chardet PyYaml
           python tools/ci/file_check.py check 'https://github.com/RT-Thread/rt-thread' 'master'
+
+  # Post CI status to PR comment
+  post-ci-status:
+    needs: scancode_job
+    if: always() && github.event_name == 'pull_request' && github.repository_owner == 'RT-Thread'
+    uses: ./.github/workflows/post_ci_status.yml
+    with:
+      workflow_name: "Check File Format and License"
+      workflow_status: ${{ needs.scancode_job.result }}
+      pr_number: ${{ github.event.pull_request.number }}
+    permissions:
+      pull-requests: write
+      issues: write

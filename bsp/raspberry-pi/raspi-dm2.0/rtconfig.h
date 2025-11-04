@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_USING_SMART
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
@@ -299,6 +299,7 @@
 
 #define RT_USING_SAL
 #define SAL_INTERNET_CHECK
+#define SOCKET_TABLE_STEP_LEN 4
 
 /* Docking with protocol stacks */
 
@@ -370,6 +371,7 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 8192
 #define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 #define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
@@ -411,38 +413,53 @@
 
 #define RT_USING_UTESTCASES
 
-/* Utest Self Testcase */
-
-/* end of Utest Self Testcase */
-
-/* Kernel Testcase */
+/* Kernel Core */
 
 #define RT_UTEST_SCHEDULER
 
-/* Kernel SMP Testcase */
+/* SMP Test */
 
-/* end of Kernel SMP Testcase */
-/* end of Kernel Testcase */
+/* end of SMP Test */
+/* end of Kernel Core */
 
-/* CPP11 Testcase */
+/* Kernel Components */
 
-/* end of CPP11 Testcase */
+/* Drivers */
 
-/* Utest Serial Testcase */
 
-/* end of Utest Serial Testcase */
+/* IPC Test */
 
-/* Serial-Bypass Testcase */
+/* end of IPC Test */
 
-/* end of Serial-Bypass Testcase */
+/* Serial Test */
 
-/* Utest IPC Testcase */
+/* end of Serial Test */
 
-/* end of Utest IPC Testcase */
+/* SMP-Call Test */
 
-/* RTT Posix Testcase */
+/* end of SMP-Call Test */
+/* end of Drivers */
 
-/* end of RTT Posix Testcase */
+/* File System */
+
+/* end of File System */
+
+/* CPP11 */
+
+/* end of CPP11 */
+
+/* LwIP */
+
+/* end of LwIP */
+
+/* Netdev */
+
+/* end of Netdev */
+
+/* Utest Framework */
+
+/* end of Utest Framework */
+/* end of Kernel Components */
 
 /* Memory Management Subsytem Testcase */
 
@@ -451,10 +468,6 @@
 /* Tmpfs Testcase */
 
 /* end of Tmpfs Testcase */
-
-/* SMP-Call Testcase */
-
-/* end of SMP-Call Testcase */
 /* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */
@@ -570,6 +583,14 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

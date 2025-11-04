@@ -403,6 +403,7 @@
 /* I2C Configuration */
 
 /* end of I2C Configuration */
+#define BSP_USING_GD_DBG
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
@@ -410,4 +411,3 @@
 /* end of Hardware Drivers Config */
 
 #endif
-
