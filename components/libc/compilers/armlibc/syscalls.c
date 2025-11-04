@@ -339,6 +339,12 @@ long _sys_flen(FILEHANDLE fh)
 #endif /* DFS_USING_POSIX */
 }
 
+/**
+ * check whether the file is a terminal device.
+ *
+ * @param fh - file handle
+ * @return 1 if is a terminal device, 0 if not
+ */
 int _sys_istty(FILEHANDLE fh)
 {
     if ((STDIN <= fh) && (fh <= STDERR))
@@ -347,6 +353,12 @@ int _sys_istty(FILEHANDLE fh)
         return 0;
 }
 
+/**
+ * remove a file
+ *
+ * @param filename - file name with path
+ * @return 0 on success, -1 on failed
+ */
 int remove(const char *filename)
 {
 #ifdef DFS_USING_POSIX
@@ -360,6 +372,13 @@ int remove(const char *filename)
 #ifdef __MICROLIB
 #include <stdio.h>
 
+/**
+ * write a character to file
+ *
+ * @param c - character to write
+ * @param fh - file handle
+ * @return 1 on success, 0 on failed
+ */
 int fputc(int c, FILE *f)
 {
 #ifdef RT_USING_CONSOLE
@@ -370,6 +389,12 @@ int fputc(int c, FILE *f)
 #endif /* RT_USING_CONSOLE */
 }
 
+/**
+ * get a character from file
+ *
+ * @param fh - file handle
+ * @return character read, or -1 on failed
+ */
 int fgetc(FILE *f)
 {
 #ifdef RT_USING_POSIX_STDIO
