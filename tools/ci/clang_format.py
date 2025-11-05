@@ -42,57 +42,129 @@ class ExitStatus:
     TROUBLE = 2
 
 
-def excludes_from_file(ignore_file):
+def get_ignore_file(filepath):
+    fileparts = os.path.normpath(filepath).split(os.path.sep)
+
+    for idx in range(len(fileparts) - 1, 0, -1):
+        parent = os.path.sep.join(fileparts[0:idx])
+        if os.path.isfile(os.path.join(parent, DEFAULT_CLANG_FORMAT_IGNORE)):
+            return os.path.join(parent, DEFAULT_CLANG_FORMAT_IGNORE)
+
+    return None
+
+
+def get_ignore_config(filepath):
+    ignorepath = get_ignore_file(filepath)
+
+    if not ignorepath:
+        return [], None
+
     excludes = []
     try:
-        with io.open(ignore_file, "r", encoding="utf-8") as f:
+        with io.open(ignorepath, "r", encoding="utf-8") as f:
             for line in f:
-                if line.startswith("#"):
+                pattern = line.strip()
+                if not pattern:
                     # ignore comments
                     continue
-                pattern = line.rstrip()
-                if not pattern:
+                elif pattern.startswith("#"):
                     # allow empty lines
                     continue
-                excludes.append(pattern)
+                else:
+                    excludes.append(pattern)
     except EnvironmentError as e:
         if e.errno != errno.ENOENT:
             raise
-    return excludes
+
+    return excludes, ignorepath
 
 
-def list_files(files, recursive=False, extensions=None, exclude=None):
+def check_ignore_status(filepath, excludes=None, extensions=DEFAULT_EXTENSIONS):
+    if excludes is None:
+        excludes = []
     if extensions is None:
         extensions = []
-    if exclude is None:
-        exclude = []
 
+    # 如果扩展名不满足要求，则直接忽略
+    ext = os.path.splitext(filepath)[1][1:]
+    if not ext in extensions:
+        return True
+
+    # 检查是否在命令行的忽略列表中
+    root_relpath = os.getcwd()
+    file_relpath = os.path.relpath(filepath, root_relpath)
+    for pattern in excludes:
+        if fnmatch.fnmatch(file_relpath, pattern):
+            return True
+
+    # 查找clang-format-ignore的配置
+    excludes, ignorepath = get_ignore_config(filepath)
+    root_relpath = os.path.dirname(ignorepath)
+    file_relpath = os.path.relpath(filepath, root_relpath)
+    for pattern in excludes:
+        if fnmatch.fnmatch(file_relpath, pattern):
+            return True
+
+    return False
+
+
+def list_files(files, recursive=False, excludes=None, extensions=DEFAULT_EXTENSIONS):
     out = []
     for file in files:
         if recursive and os.path.isdir(file):
             for dirpath, dnames, fnames in os.walk(file):
-                fpaths = [
-                    os.path.relpath(os.path.join(dirpath, fname), os.getcwd())
-                    for fname in fnames
-                ]
-                for pattern in exclude:
-                    # os.walk() supports trimming down the dnames list
-                    # by modifying it in-place,
-                    # to avoid unnecessary directory listings.
-                    dnames[:] = [
-                        x
-                        for x in dnames
-                        if not fnmatch.fnmatch(os.path.join(dirpath, x), pattern)
-                    ]
-                    fpaths = [x for x in fpaths if not fnmatch.fnmatch(x, pattern)]
-
-                for f in fpaths:
-                    ext = os.path.splitext(f)[1][1:]
-                    if ext in extensions:
-                        out.append(f)
-        else:
-            out.append(file)
+                for fname in fnames:
+                    fpath = os.path.join(dirpath, fname)
+                    if not check_ignore_status(fpath, excludes, extensions):
+                        out.append(fpath)
+        elif os.path.isfile(file):
+            ext = os.path.splitext(file)[1][1:]
+            if ext in extensions:
+                out.append(file)
     return out
+
+
+def list_files_changed(repo, exclude=None, extensions=DEFAULT_EXTENSIONS):
+    if repo and os.path.isdir(repo[0]):
+        os.chdir(repo[0])
+    else:
+        return []
+
+    encoding_py3 = {}
+    if sys.version_info[0] >= 3:
+        encoding_py3["encoding"] = "utf-8"
+
+    # invocation = ['git', '--no-pager', 'log', '--name-only', '-1']
+    invocation = ['git', 'diff', '--name-only', 'HEAD', 'origin/master', '--diff-filter=ACMR', '--no-renames', '--full-index']
+    try:
+        proc = subprocess.Popen(
+            invocation,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+            **encoding_py3,
+        )
+    except OSError as exc:
+        raise DiffError("Command '{}' failed to start: {}".format(subprocess.list2cmdline(invocation), exc))
+    proc_stdout = proc.stdout
+    proc_stderr = proc.stderr
+    if sys.version_info[0] < 3:
+        # make the pipes compatible with Python 3,
+        # reading lines should output unicode
+        encoding = "utf-8"
+        proc_stdout = codecs.getreader(encoding)(proc_stdout)
+        proc_stderr = codecs.getreader(encoding)(proc_stderr)
+    # hopefully the stderr pipe won't get full and block the process
+    outs = list([line.strip() for line in proc_stdout.readlines()])
+    errs = list(proc_stderr.readlines())
+    proc.wait()
+    if proc.returncode:
+        raise DiffError(
+            "Command '{}' returned non-zero exit status {}".format(subprocess.list2cmdline(invocation), proc.returncode),
+            errs,
+        )
+
+    return list_files(outs, False, exclude, extensions)
 
 
 def make_diff(file, original, reformatted):
@@ -131,12 +203,6 @@ def run_clang_format_diff_wrapper(args, file):
 
 
 def run_clang_format_diff(args, file):
-    # try:
-    #     with io.open(file, "r", encoding="utf-8") as f:
-    #         original = f.readlines()
-    # except IOError as exc:
-    #     raise DiffError(str(exc))
-
     if args.in_place:
         invocation = [args.clang_format_executable, "-i", file]
     else:
@@ -177,14 +243,10 @@ def run_clang_format_diff(args, file):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
-            **encoding_py3
+            **encoding_py3,
         )
     except OSError as exc:
-        raise DiffError(
-            "Command '{}' failed to start: {}".format(
-                subprocess.list2cmdline(invocation), exc
-            )
-        )
+        raise DiffError("Command '{}' failed to start: {}".format(subprocess.list2cmdline(invocation), exc))
     proc_stdout = proc.stdout
     proc_stderr = proc.stderr
     if sys.version_info[0] < 3:
@@ -199,14 +261,18 @@ def run_clang_format_diff(args, file):
     proc.wait()
     if proc.returncode:
         raise DiffError(
-            "Command '{}' returned non-zero exit status {}".format(
-                subprocess.list2cmdline(invocation), proc.returncode
-            ),
+            "Command '{}' returned non-zero exit status {}".format(subprocess.list2cmdline(invocation), proc.returncode),
             errs,
         )
     if args.in_place:
         return [], errs
-    return make_diff(file, original, outs), errs
+    else:
+        try:
+            with io.open(file, "r", encoding="utf-8") as f:
+                original = f.readlines()
+        except IOError as exc:
+            raise DiffError(str(exc))
+        return make_diff(file, original, outs), errs
 
 
 def bold_red(s):
@@ -265,9 +331,7 @@ def main():
     )
     parser.add_argument(
         "--extensions",
-        help="comma separated list of file extensions (default: {})".format(
-            DEFAULT_EXTENSIONS
-        ),
+        help="comma separated list of file extensions (default: {})".format(DEFAULT_EXTENSIONS),
         default=DEFAULT_EXTENSIONS,
     )
     parser.add_argument(
@@ -277,7 +341,10 @@ def main():
         help="run recursively over directories",
     )
     parser.add_argument(
-        "-d", "--dry-run", action="store_true", help="just print the list of files"
+        "-d",
+        "--dry-run",
+        action="store_true",
+        help="just print the list of files",
     )
     parser.add_argument(
         "-i",
@@ -285,7 +352,11 @@ def main():
         action="store_true",
         help="format file instead of printing differences",
     )
-    parser.add_argument("files", metavar="file", nargs="+")
+    parser.add_argument(
+        "files",
+        metavar="file",
+        nargs="+",
+    )
     parser.add_argument(
         "-q",
         "--quiet",
@@ -297,7 +368,7 @@ def main():
         metavar="N",
         type=int,
         default=0,
-        help="run N clang-format jobs in parallel" " (default number of cpus + 1)",
+        help="run N clang-format jobs in parallel (default number of cpus + 1)",
     )
     parser.add_argument(
         "--color",
@@ -311,13 +382,19 @@ def main():
         metavar="PATTERN",
         action="append",
         default=[],
-        help="exclude paths matching the given glob-like pattern(s)"
-        " from recursive search",
+        help="exclude paths matching the given glob-like pattern(s) from recursive search",
     )
     parser.add_argument(
         "--style",
         default="file",
         help="formatting style to apply (LLVM, Google, Chromium, Mozilla, WebKit)",
+    )
+    parser.add_argument(
+        "-g",
+        "--git-changed-only",
+        action="store_true",
+        default=False,
+        help="formatting files changed last commit (git --no-pager log --name-only -1)",
     )
 
     args = parser.parse_args()
@@ -351,27 +428,32 @@ def main():
     except OSError as e:
         print_trouble(
             parser.prog,
-            "Command '{}' failed to start: {}".format(
-                subprocess.list2cmdline(version_invocation), e
-            ),
+            "Command '{}' failed to start: {}".format(subprocess.list2cmdline(version_invocation), e),
             use_colors=colored_stderr,
         )
         return ExitStatus.TROUBLE
 
     retcode = ExitStatus.SUCCESS
 
-    if os.path.exists(DEFAULT_CLANG_FORMAT_IGNORE):
-        excludes = excludes_from_file(DEFAULT_CLANG_FORMAT_IGNORE)
-    else:
-        excludes = []
-    excludes.extend(args.exclude)
+    # if os.path.exists(DEFAULT_CLANG_FORMAT_IGNORE):
+    #     excludes = get_ignore_config(DEFAULT_CLANG_FORMAT_IGNORE)
+    # else:
+    #     excludes = []
+    # excludes.extend(args.exclude)
 
-    files = list_files(
-        args.files,
-        recursive=args.recursive,
-        exclude=excludes,
-        extensions=args.extensions.split(","),
-    )
+    if args.git_changed_only:
+        files = list_files_changed(
+            args.files,
+            excludes=args.exclude,
+            extensions=args.extensions.split(","),
+        )
+    else:
+        files = list_files(
+            args.files,
+            recursive=args.recursive,
+            excludes=args.exclude,
+            extensions=args.extensions.split(","),
+        )
 
     if not files:
         return

@@ -13,8 +13,9 @@ import click
 import logging
 import subprocess
 import sys
-import format_ignore
+import clang_format  # format_ignore
 import os
+
 '''
 --suppress=syntaxError：
 该选项用于抑制特定的错误类型。在这里，syntaxError 是被忽略的错误类型。这意味着 Cppcheck 不会报告语法错误（syntaxError）。这是因为在某些情况下，分析工具可能会误报语法错误，但 CI（持续集成）系统会在编译时捕获这些错误，因此可以忽略。
@@ -37,12 +38,15 @@ Cppcheck 会检查代码的可移植性问题。可移植性检查帮助发现�
 --force：
 这个选项强制 Cppcheck 对所有文件进行检查，即使它检测到编译条件缺失或某些配置问题。通常，如果某些宏定义或依赖项缺失，Cppcheck 可能会跳过某些文件的检查。但 --force 会强制工具继续执行分析，即使有可能缺少某些信息。这在某些大型项目中很有用，可以确保所有文件都经过检查。
 '''
+
+
 def add_summary(text):
     """
     add summary to github action.
     """
     os.system(f'echo "{text}" >> $GITHUB_STEP_SUMMARY ;')
-    
+
+
 class CPPCheck:
     def __init__(self, file_list):
         self.file_list = file_list
@@ -73,32 +77,39 @@ class CPPCheck:
                     '--inline-suppr',
                     '--error-exitcode=1',
                     '--force',
-                    file
-                ] + macros,
-                stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+                    file,
+                ]
+                + macros,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
             logging.info(result.stdout.decode())
             logging.info(result.stderr.decode())
             if result.stderr:
-                add_summary("The following errors are for reference only. If they are not actual issues, please ignore them and do not make unnecessary modifications.")
+                add_summary(
+                    "The following errors are for reference only. If they are not actual issues, please ignore them and do not make unnecessary modifications."
+                )
                 add_summary("以下错误仅供参考，如果发现没有问题，请直接忽略，不需要强行修改")
                 add_summary(f"- :rotating_light: {result.stderr.decode()}")
                 check_result = False
         return check_result
+
 
 @click.group()
 @click.pass_context
 def cli(ctx):
     pass
 
+
 @cli.command()
 def check():
     """
     static code analysis(cppcheck).
     """
-    format_ignore.init_logger()
+    # format_ignore.init_logger()
     # get modified files list
-    checkout = format_ignore.CheckOut()
-    file_list = checkout.get_new_file()
+    # checkout = format_ignore.CheckOut()
+    file_list = clang_format.list_files_changed(os.getcwd())
     if file_list is None:
         logging.error("checkout files fail")
         sys.exit(1)

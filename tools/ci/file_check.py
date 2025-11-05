@@ -16,15 +16,17 @@ import yaml
 import chardet
 import logging
 import datetime
+import clang_format
 
 
 def init_logger():
     log_format = "[%(filename)s %(lineno)d %(levelname)s] %(message)s "
     date_format = '%Y-%m-%d  %H:%M:%S %a '
-    logging.basicConfig(level=logging.INFO,
-                        format=log_format,
-                        datefmt=date_format,
-                        )
+    logging.basicConfig(
+        level=logging.INFO,
+        format=log_format,
+        datefmt=date_format,
+    )
 
 
 class CheckOut:
@@ -121,7 +123,9 @@ class FormatCheck:
         self.file_list = file_list
 
     def __check_rt_errorcode(self, line):
-        pattern = re.compile(r'return\s+(RT_ERROR|RT_ETIMEOUT|RT_EFULL|RT_EEMPTY|RT_ENOMEM|RT_ENOSYS|RT_EBUSY|RT_EIO|RT_EINTR|RT_EINVAL|RT_ENOENT|RT_ENOSPC|RT_EPERM|RT_ETRAP|RT_EFAULT)')
+        pattern = re.compile(
+            r'return\s+(RT_ERROR|RT_ETIMEOUT|RT_EFULL|RT_EEMPTY|RT_ENOMEM|RT_ENOSYS|RT_EBUSY|RT_EIO|RT_EINTR|RT_EINVAL|RT_ENOENT|RT_ENOSPC|RT_EPERM|RT_ETRAP|RT_EFAULT)'
+        )
         match = pattern.search(line)
         if match:
             return False
@@ -137,7 +141,9 @@ class FormatCheck:
             line_start = line.replace(' ', '')
             # find tab
             if line_start.startswith('\t'):
-                logging.error("{} line[{}]: please use space replace tab at the start of this line.".format(file_path, line_num))
+                logging.error(
+                    "{} line[{}]: please use space replace tab at the start of this line.".format(file_path, line_num)
+                )
                 check_result = False
             # check line end
             line_end = line.split('\n')[0]
@@ -145,7 +151,11 @@ class FormatCheck:
                 logging.error("{} line[{}]: please delete extra space at the end of this line.".format(file_path, line_num))
                 check_result = False
             if self.__check_rt_errorcode(line) == False:
-                logging.error("{} line[{}]: the RT-Thread error code should return negative value. e.g. return -RT_ERROR".format(file_path, line_num))
+                logging.error(
+                    "{} line[{}]: the RT-Thread error code should return negative value. e.g. return -RT_ERROR".format(
+                        file_path, line_num
+                    )
+                )
                 check_result = False
         return check_result
 
@@ -177,7 +187,7 @@ class FormatCheck:
             else:
                 logging.info('[{0}]: encoding check success.'.format(file_path))
 
-            with open(file_path, 'r', encoding = "utf-8") as f:
+            with open(file_path, 'r', encoding="utf-8") as f:
                 file_lines = f.readlines()
             if not self.__check_file(file_lines, file_path):
                 format_check_fail_files += 1
@@ -218,9 +228,9 @@ class LicenseCheck:
                     license_year = re.search(r'2006-\d{4}', file[1]).group()
                     true_year = '2006-{}'.format(current_year)
                     if license_year != true_year:
-                        logging.warning("[{0}]: license year: {} is not true: {}, please update.".format(file_path,
-                                                                                                         license_year,
-                                                                                                         true_year))
+                        logging.warning(
+                            "[{0}]: license year: {} is not true: {}, please update.".format(file_path, license_year, true_year)
+                        )
 
                     else:
                         logging.info("[{0}]: license check success.".format(file_path))
@@ -284,6 +294,18 @@ def check(check_license, repo, branch):
     if not format_check_result or not license_check_result:
         logging.error("file format check or license check fail.")
         sys.exit(1)
+
+    # use clang-format to format changed files
+    from collections import namedtuple
+
+    clang_format_args = namedtuple("clang_format_args", ["clang_format_executable", "style", "dry_run", "in_place"])
+    args = clang_format_args("clang-format", "file", False, False)
+    for file in file_list:
+        diff, errs = clang_format.run_clang_format_diff(args, file)
+        if not diff:
+            logging.error("clang format check fail, {}.".format(file))
+            sys.exit(1)
+
     logging.info("check success.")
     sys.exit(0)
 
