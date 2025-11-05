@@ -1344,7 +1344,7 @@ static int vsnprintf_impl(output_gadget_t* output, const char* format, va_list a
  *
  * @return The number of characters actually written to buffer.
  */
-int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
+int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
 {
   output_gadget_t gadget = buffer_gadget(buf, size);
   return vsnprintf_impl(&gadget, fmt, args);
