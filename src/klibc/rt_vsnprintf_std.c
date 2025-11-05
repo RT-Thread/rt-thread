@@ -222,6 +222,7 @@ typedef unsigned int printf_size_t;
 #if defined(RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS) || defined(RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS)
 #include <float.h>
 #if FLT_RADIX != 2
+// cppcheck-suppress preprocessorErrorDirective
 #error "Non-binary-radix floating-point types are unsupported."
 #endif
 
