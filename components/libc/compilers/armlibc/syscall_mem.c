@@ -6,8 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2014-08-03     bernard      Add file header
- * 2021-11-13     Meco Man     implement no-heap warning
- * 2025-11-1      MaChengyang  Add detailed function comments  
+ * 2021-11-13     Meco Man     implement no-heap warning  
  */
 
 #include <rtthread.h>
@@ -29,20 +28,19 @@
 #endif /* __CC_ARM */
 
 /**
- * @brief  Allocate memory block
+ * @brief Allocate memory block
  *
  * Allocates a block of size bytes of memory, returning a pointer to the
  * beginning of the block. The content of the newly allocated block of
  * memory is not initialized, remaining with indeterminate values.
  *
- * @param n the size of the memory block, in bytes.
+ * @param[in] n the size of the memory block, in bytes.
  *
  * @return On success, a pointer to the memory block allocated by the function.
  *         If the system is configured without heap (RT_USING_HEAP is not defined),
  *         the function will assert and return RT_NULL.
  *
  * @note The returned pointer is always suitably aligned for any built-in type.
- * @see rt_malloc
  */
 void *malloc(size_t n)
 {
@@ -56,7 +54,7 @@ void *malloc(size_t n)
 RTM_EXPORT(malloc);
 
 /**
- * @brief  Reallocate memory block
+ * @brief Reallocate memory block
  *
  * Changes the size of the memory block pointed to by rmem.
  * The function may move the memory block to a new location
@@ -66,18 +64,16 @@ RTM_EXPORT(malloc);
  * moved to a new location. If the new size is larger,
  * the value of the newly allocated portion is indeterminate.
  *
- * @param rmem pointer to a memory block previously allocated with
+ * @param[in,out] rmem pointer to a memory block previously allocated with
  *             malloc, calloc or realloc to be reallocated.
  *             If this is RT_NULL, a new block is allocated and
  *             a pointer to it is returned by the function.
- * @param newsize new size for the memory block, in bytes.
+ * @param[in] newsize new size for the memory block, in bytes.
  *
  * @return A pointer to the reallocated memory block, which may be either
  *         the same as the rmem pointer or a new location.
  *         If the system is configured without heap (RT_USING_HEAP is not defined),
  *         the function will assert and return RT_NULL.
- *
- * @see rt_realloc
  */
 void *realloc(void *rmem, size_t newsize)
 {
@@ -91,21 +87,19 @@ void *realloc(void *rmem, size_t newsize)
 RTM_EXPORT(realloc);
 
 /**
- * @brief  Allocate and zero-initialize array
+ * @brief Allocate and zero-initialize array
  *
  * Allocates a block of memory for an array of nelem elements, each of them
  * elsize bytes long, and initializes all its bits to zero.
  * The effective result is the allocation of a zero-initialized memory block
  * of (nelem*elsize) bytes.
  *
- * @param nelem number of elements to allocate.
- * @param elsize size of each element.
+ * @param[in] nelem number of elements to allocate.
+ * @param[in] elsize size of each element.
  *
  * @return On success, a pointer to the memory block allocated by the function.
  *         If the system is configured without heap (RT_USING_HEAP is not defined),
  *         the function will assert and return RT_NULL.
- *
- * @see rt_calloc
  */
 void *calloc(size_t nelem, size_t elsize)
 {
@@ -119,18 +113,17 @@ void *calloc(size_t nelem, size_t elsize)
 RTM_EXPORT(calloc);
 
 /**
- * @brief  Deallocate memory block
+ * @brief Deallocate memory block
  *
  * A block of memory previously allocated by a call to malloc, calloc or realloc
  * is deallocated, making it available again for further allocations.
  *
- * @param rmem pointer to a memory block previously allocated with malloc,
+ * @param[in] rmem pointer to a memory block previously allocated with malloc,
  *             calloc or realloc to be deallocated. If a null pointer is
  *             passed as argument, no action occurs.
  *
  * @note If the system is configured without heap (RT_USING_HEAP is not defined),
  *       the function will assert.
- * @see rt_free
  */
 void free(void *rmem)
 {
