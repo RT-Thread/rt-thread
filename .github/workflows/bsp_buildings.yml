@@ -13,9 +13,6 @@ name: RT-Thread BSP Static Build Check
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the RT-Thread organization master branch
 on:
-  # Runs at 16:00 UTC (BeiJing 00:00) every day
-  schedule:
-    - cron:  '0 16 * * *'
   push:
     branches:
       - master
@@ -46,6 +43,12 @@ on:
     types:
       - online-pkgs-static-building-trigger-event
   workflow_dispatch:
+    inputs:
+      trigger_type:
+        description: '触发类型'
+        required: false
+        default: 'manual'
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -289,3 +292,16 @@ jobs:
         with:
           name: 00_all_bsp_output_${{ github.sha }}  
           path: output/
+
+  # # Post CI status to PR comment
+  # post-ci-status:
+  #   needs: build
+  #   if: always() && github.event_name == 'pull_request' && github.repository_owner == 'RT-Thread'
+  #   uses: ./.github/workflows/post_ci_status.yml
+  #   with:
+  #     workflow_name: "RT-Thread BSP Static Build Check"
+  #     workflow_status: ${{ needs.build.result }}
+  #     pr_number: ${{ github.event.pull_request.number }}
+  #   permissions:
+  #     pull-requests: write
+  #     issues: write
