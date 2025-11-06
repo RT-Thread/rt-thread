@@ -662,12 +662,74 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     return RT_EOK;
 }
 
+rt_ssize_t _can_get_freebox(rt_uint32_t can_x)
+{
+    rt_uint32_t freebox = 0;
+    if ((CAN_STAT(can_x) & CAN_TSTAT_TME0) != 0U)
+    {
+        freebox++;
+    }
+    if ((CAN_STAT(can_x) & CAN_TSTAT_TME1) != 0U)
+    {
+        freebox++;
+    }
+    if ((CAN_STAT(can_x) & CAN_TSTAT_TME2) != 0U)
+    {
+        freebox++;
+    }
+    return freebox;
+}
+
+rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+{
+    RT_ASSERT(can);
+
+    can_trasnmit_message_struct transmit_message;
+    can_struct_para_init(CAN_TX_MESSAGE_STRUCT, &transmit_message);
+    rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
+    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
+
+    if(_can_get_freebox(can_x) == 0)
+    {
+        return -RT_EBUSY;
+    }
+    if (RT_CAN_STDID == pmsg->ide)
+    {
+        transmit_message.tx_ff = CAN_FF_STANDARD;
+        transmit_message.tx_sfid = pmsg->id;
+    }
+    else
+    {
+        transmit_message.tx_ff = CAN_FF_EXTENDED;
+        transmit_message.tx_efid = pmsg->id;
+    }
+
+    if (RT_CAN_DTR == pmsg->rtr)
+    {
+        transmit_message.tx_ft = CAN_FT_DATA;
+        memcpy(transmit_message.tx_data, pmsg->data, pmsg->len);
+    }
+    else
+    {
+        transmit_message.tx_ft = CAN_FT_REMOTE;
+    }
+
+    transmit_message.tx_dlen = pmsg->len;
+    if(can_message_transmit(can_x, &transmit_message) == CAN_NOMAILBOX)
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
 static const struct rt_can_ops _can_ops =
 {
     _can_config,
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
+    _can_sendmsg_nonblocking,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)

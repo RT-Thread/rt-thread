@@ -73,6 +73,34 @@ void utest_log_lv_set(rt_uint8_t lv)
     }
 }
 
+static struct msh_cmd_opt utest_testcase_run_msh_options[RT_UTEST_MAX_OPTIONS];
+static void utest_build_options(void);
+static void utest_build_options(void)
+{
+    rt_size_t i;
+    rt_size_t option_index = 0;
+
+    if (tc_num >= RT_UTEST_MAX_OPTIONS - 1)
+    {
+        LOG_W("The current number of test cases is (%d). Please expand RT_UTEST_MAX_OPTIONS's size to at least (%d).", tc_num, tc_num + 1);
+    }
+
+    rt_memset(utest_testcase_run_msh_options, 0, sizeof(utest_testcase_run_msh_options));
+
+    rt_size_t max_cases = (tc_num < RT_UTEST_MAX_OPTIONS - 1) ? tc_num : RT_UTEST_MAX_OPTIONS - 1;
+    for (i = 0; i < max_cases; i++)
+    {
+        utest_testcase_run_msh_options[option_index].id = i + 1;
+        utest_testcase_run_msh_options[option_index].name = tc_table[i].name;
+        utest_testcase_run_msh_options[option_index].des = tc_table[i].name;
+        option_index++;
+    }
+
+    utest_testcase_run_msh_options[option_index].id = 0;
+    utest_testcase_run_msh_options[option_index].name = RT_NULL;
+    utest_testcase_run_msh_options[option_index].des = RT_NULL;
+}
+
 int utest_init(void)
 {
     /* initialize the utest commands table.*/
@@ -123,6 +151,9 @@ int utest_init(void)
             LOG_E("no memory, tc_fail_list init failed!");
         }
     }
+
+    utest_build_options();
+
     return tc_num;
 }
 INIT_COMPONENT_EXPORT(utest_init);
@@ -379,7 +410,7 @@ int utest_testcase_run(int argc, char** argv)
 
     return RT_EOK;
 }
-MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [-thread or -help] [testcase name] [loop num]);
+MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [-thread or -help] [testcase name] [loop num], optenable);
 
 utest_t utest_handle_get(void)
 {

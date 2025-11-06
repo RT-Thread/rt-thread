@@ -319,7 +319,7 @@ Configuration is mainly done by modifying the file under project directory - `rt
 ```c
 /* Indicates the maximum length of the name of the kernel object. If the maximum length of the name of the object in the code is greater than the length of the macro definition,
  * the extra part will be cut off. */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 
 /* Set the number of aligned bytes when bytes are aligned. Usually use ALIGN(RT_ALIGN_SIZE) for byte alignment.*/
 #define RT_ALIGN_SIZE 8

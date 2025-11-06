@@ -315,7 +315,7 @@
 /* HPMicro SDK */
 
 #define PKG_USING_HPM_SDK
-#define PKG_USING_HPM_SDK_LATEST_VERSION
+#define PKG_USING_HPM_SDK_V110
 /* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 

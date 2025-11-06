@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-license-management -Wunused -Wuninitialized -Wall  -Wmissing-declarations  -Wpointer-arith  -Waggregate-return -Wfloat-equal</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\smp_call;..\..\..\components\finsh;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;board\ports;..\..\..\libcpu\arm\common;..\..\..\include;..\libraries\HAL_Drivers;..\..\..\components\libc\compilers\common\include;board;.;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;board\ports\wifi;..\..\..\components\drivers\phy;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\config;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;..\libraries\HAL_Drivers\drivers;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\phy;..\..\..\libcpu\arm\cortex-m4;..\libraries\HAL_Drivers\drivers\config;..\..\..\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;board\ports\wifi;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\smp_call;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\epoll;..\..\..\libcpu\arm\common;board;..\..\..\components\drivers\include;.;..\libraries\HAL_Drivers;board\ports</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -689,28 +689,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drivers\drv_gpio.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -729,7 +710,26 @@
             <File>
               <FileName>drv_usart_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_usart_v2.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drivers\drv_usart_v2.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1049,6 +1049,13 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
@@ -1066,13 +1073,6 @@
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>

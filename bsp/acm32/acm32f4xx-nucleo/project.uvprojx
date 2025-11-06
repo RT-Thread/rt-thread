@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __RTTHREAD__, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS</Define>
+              <Define>RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, RT_USING_LIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;libraries\CMSIS;..\..\..\libcpu\arm\common;applications;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;drivers;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\poll;libraries\Device;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;.;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\eventfd;libraries\HAL_Driver\Inc;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\eventfd;libraries\CMSIS;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;libraries\HAL_Driver\Inc;..\..\..\components\finsh;applications;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\smp_call;libraries\Device;drivers;.;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\cortex-m33;..\..\..\include;..\..\..\components\libc\posix\io\epoll;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,16 +381,9 @@
           <GroupName>ACM32_HAL</GroupName>
           <Files>
             <File>
-              <FileName>HAL_DMA.c</FileName>
+              <FileName>HAL_GPIO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\HAL_Driver\Src\HAL_DMA.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_EXTI.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\HAL_Driver\Src\HAL_EXTI.c</FilePath>
+              <FilePath>libraries\HAL_Driver\Src\HAL_GPIO.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -402,13 +395,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_EFlash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libraries\HAL_Driver\Src\HAL_EFlash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>Startup_ACM32F4.s</FileName>
               <FileType>2</FileType>
               <FilePath>libraries\Device\Startup_ACM32F4.s</FilePath>
@@ -416,9 +402,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_GPIO.c</FileName>
+              <FileName>HAL_EFlash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\HAL_Driver\Src\HAL_GPIO.c</FilePath>
+              <FilePath>libraries\HAL_Driver\Src\HAL_EFlash.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -426,6 +412,20 @@
               <FileName>System_ACM32F4.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\Device\System_ACM32F4.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_EXTI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\HAL_Driver\Src\HAL_EXTI.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_DMA.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libraries\HAL_Driver\Src\HAL_DMA.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -733,6 +733,13 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
+              <FileName>drv_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\board.c</FilePath>
@@ -745,16 +752,16 @@
               <FilePath>drivers\drv_uart.c</FilePath>
             </File>
           </Files>
-          <Files>
-            <File>
-              <FileName>drv_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_gpio.c</FilePath>
-            </File>
-          </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>shell.c</FileName>
@@ -767,13 +774,6 @@
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1083,9 +1083,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1097,16 +1097,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
         </Group>

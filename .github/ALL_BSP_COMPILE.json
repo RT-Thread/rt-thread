@@ -256,6 +256,7 @@
         "renesas/ra6e2-ek",
         "renesas/ra6e2-fpb",
         "renesas/ra4e2-eco",
+		"renesas/ra4m1-ek",
         "renesas/ra4m2-eco",
         "renesas/ra2l1-cpk",
         "renesas/ra8m1-ek",
@@ -481,6 +482,7 @@
       "RTT_BSP": "xuantie",
       "RTT_TOOL_CHAIN": "sourcery-Xuantie-900-gcc-elf-newlib",
       "SUB_RTT_BSP": [
+        "xuantie/smartl/e901",
         "xuantie/smartl/e902",
         "xuantie/smartl/e906",
         "xuantie/smartl/e907",

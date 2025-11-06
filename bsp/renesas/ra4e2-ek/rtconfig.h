@@ -1,6 +1,8 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
+#define SOC_R7FA4E2B9
+
 /* RT-Thread Kernel */
 
 /* klibc options */
@@ -61,7 +63,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -112,7 +114,7 @@
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_SECURE
-#define ARCH_ARM_CORTEX_M4
+#define ARCH_ARM_CORTEX_M33
 
 /* RT-Thread Components */
 
@@ -293,6 +295,30 @@
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
+
+/* WCH HAL & SDK Drivers */
+
+/* end of WCH HAL & SDK Drivers */
+
+/* AT32 HAL & SDK Drivers */
+
+/* end of AT32 HAL & SDK Drivers */
+
+/* HC32 DDL Drivers */
+
+/* end of HC32 DDL Drivers */
+
+/* NXP HAL & SDK Drivers */
+
+/* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -376,8 +402,6 @@
 #define SOC_SERIES_R7FA4E2
 
 /* Hardware Drivers Config */
-
-#define SOC_R7FA4E2B9
 
 /* Onboard Peripheral Drivers */
 

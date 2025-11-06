@@ -1,0 +1,15 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_SERIAL'], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

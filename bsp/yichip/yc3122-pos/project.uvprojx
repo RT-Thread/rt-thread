@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __USE_YC_M0__, __STDC_LIMIT_MACROS</Define>
+              <Define>__RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, __USE_YC_M0__</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\compilers\common\include;.;..\..\..\components\libc\posix\io\eventfd;drivers\ports;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\phy;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\spi;drivers;applications;Libraries;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\common;Libraries\core;..\..\..\components\drivers\smp_call;Libraries\CMSIS\Device\YICHIP\YC3122\Include;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m0;Libraries\CMSIS\Include;..\..\..\components\drivers\include;Libraries\sdk;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;Libraries\core;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m0;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension;.;Libraries\sdk;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;applications;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\posix\ipc;..\..\..\include;..\..\..\components\finsh;..\..\..\components\libc\posix\io\poll;drivers;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;Libraries;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\components\drivers\spi\sfud\inc;..\..\..\components\drivers\include;Libraries\CMSIS\Include;drivers\ports;Libraries\CMSIS\Device\YICHIP\YC3122\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -794,9 +794,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_uart.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -808,21 +808,14 @@
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers\drv_uart.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
-          <Files>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>msh.c</FileName>
@@ -842,6 +835,13 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1156,16 +1156,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kerrno.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1177,16 +1170,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1225,9 +1225,16 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>yc_wdt.c</FileName>
+              <FileName>yc_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
+              <FilePath>Libraries\sdk\yc_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_yc3122.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\arm\startup_yc3122.s</FilePath>
             </File>
           </Files>
           <Files>
@@ -1246,23 +1253,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>sdk_yc_qspi.lib</FileName>
-              <FileType>4</FileType>
-              <FilePath>Libraries\sdk\yc_qspi.lib</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_yc3122.c</FileName>
+              <FileName>yc_wdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>yc_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_gpio.c</FilePath>
+              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1274,9 +1267,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_yc3122.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\arm\startup_yc3122.s</FilePath>
+              <FileName>system_yc3122.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sdk_yc_qspi.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>Libraries\sdk\yc_qspi.lib</FilePath>
             </File>
           </Files>
         </Group>

@@ -18,16 +18,29 @@ When reviewing code, provide feedback in **both English and Chinese** to ensure 
 
 1. **Real-Time Performance / 实时性能**
    - Verify interrupt handling efficiency / 验证中断处理效率
-
 2. **Memory Management / 内存管理**
    - Detect memory leaks / 检测内存泄漏
    - Verify proper memory allocation/deallocation / 验证正确的内存分配/释放
    - Check stack usage optimization / 检查栈使用优化
-
 3. **Code Style / 代码风格**
    - Follow RT-Thread coding standards / 遵循 RT-Thread 编码标准
    - Maintain consistent naming conventions / 保持一致的命名约定
    - Ensure proper code comments (not documentation) / 确保适当的代码注释（而非文档）
+4. **PR Title Naming Guidelines / PR 标题命名规范**
+   - **Specify the module or keyword / 明确模块或关键字**：
+     - 标题需明确指出涉及的具体模块、子系统或关键字，例如具体的 BSP（Board Support Package）或芯片厂商名称（如 STM32, ESP32, NXP 等）。
+     - 示例：[STM32][I2C] Fix Kconfig parsing error 而非 fix:I2C——Kconfig修改。
+   - **Clearly describe the content being repaired or modified / 清晰描述修复或更改内容**：
+     - 标题需简洁清晰地描述修复的问题、添加的功能或修改的内容，避免模糊或过于简略的描述。
+     - 示例：[STM32][SPI] Fix buffer overflow in SPI driver 而非 SPI bug fix。
+   - **Format Recommendations / 格式建议**：
+     - 推荐使用 [模块/厂商][子系统] 具体描述 的格式，确保标题结构化且信息完整。
+     - 使用英文描述问题（除非项目明确要求使用其他语言），以提高国际化可读性。
+     - 示例：[NXP][UART] Add timeout handling for UART receive。
+   - **Issues to Avoid / 避免的问题**：
+     - 不要使用模糊的术语，如“修复问题”或“代码优化”，需具体说明问题或优化的内容。
+     - 避免使用不规范的符号（如 ——），建议使用标准英文字符（如 - 或 :）。
+     - 不要省略关键上下文信息，如 BSP 或芯片厂商。
 
 ### Review Comment Format / 审查评论格式
 
@@ -46,7 +59,6 @@ Example/示例:
 // Your code example here / 你的代码示例
 ```
 ```
-
 ### Common Issues to Check / 常见问题检查
 
 1. **Resource Management / 资源管理**
@@ -194,3 +206,4 @@ When suggesting improvements:
 - [RT-Thread Coding Style Guide](https://github.com/RT-Thread/rt-thread/blob/master/documentation/coding_style_en.md)
 - [RT-Thread 文档中心](https://www.rt-thread.org/document/site/)
 - [RT-Thread 编码规范](https://github.com/RT-Thread/rt-thread/blob/master/documentation/coding_style_cn.md)
+```
