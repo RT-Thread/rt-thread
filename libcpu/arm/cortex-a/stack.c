@@ -31,6 +31,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
                              rt_uint8_t *stack_addr, void *texit)
 {
     rt_uint32_t *stk;
+    rt_uint32_t i = 0;
 
     stack_addr += sizeof(rt_uint32_t);
     stack_addr  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 8);
@@ -61,7 +62,25 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     *(--stk) = 0;       /* user sp*/
 #endif
 #ifdef RT_USING_FPU
-    *(--stk) = 0;       /* not use fpu*/
+    /* 1. D0-D15 */
+    for (i = 0; i <= 15; i++)
+    {
+        *(--stk) = 0x00000000;
+        *(--stk) = 0x00000000;
+    }
+
+    /* 2. D16-D31 */
+    for (i = 16; i <= 31; i++)
+    {
+        *(--stk) = 0x00000000;
+        *(--stk) = 0x00000000;
+    }
+
+    /* 3. FPSCR */
+    *(--stk) = 0x00000000;
+
+    /* 4. FPEXC: EN=1 */
+    *(--stk) = 0x40000000; 
 #endif
 
     /* return task's current stack address */
