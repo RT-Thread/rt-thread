@@ -158,8 +158,20 @@ void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
     /* Ensure memory operations before unlock are visible before owner increment */
     __asm__ volatile("fence rw, rw" ::: "memory");
 
-    /* Increment owner (low 16 bits) to hand over lock to next ticket */
-    rt_hw_atomic_add((volatile rt_atomic_t *)&lock->slock, (rt_atomic_t)1);
+    /* Increment owner (low 16 bits) to hand over lock to next ticket.
+     * Use an atomic load of the combined slock word and compare the low
+     * 16-bit owner field.If owner would overflow (0xffff), clear the owner field
+     * atomically by ANDing with 0xffff0000; otherwise increment owner by 1.
+     */
+    if ((rt_hw_atomic_load((volatile rt_atomic_t *)&lock->slock) & (rt_atomic_t)0xffffUL) == (rt_atomic_t)0xffffUL)
+    {
+        /* Atomic clear owner (low 16 bits) when it overflows. Keep next ticket field. */
+        rt_hw_atomic_and((volatile rt_atomic_t *)&lock->slock, (rt_atomic_t)0xffff0000UL);
+    }
+    else
+    {
+        rt_hw_atomic_add((volatile rt_atomic_t *)&lock->slock, (rt_atomic_t)1);
+    }
 
     // TODO: IPI interrupt to wake up other harts waiting for the lock
 
