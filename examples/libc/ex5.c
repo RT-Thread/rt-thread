@@ -108,6 +108,4 @@ int libc_ex5(void)
   pthread_join(th_b, &retval);
   return 0;
 }
-#include <finsh.h>
-FINSH_FUNCTION_EXPORT(libc_ex5, example 5 for libc);
 

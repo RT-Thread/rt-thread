@@ -842,7 +842,6 @@ rt_err_t enc28j60_attach(const char *spi_device_name)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 /*
  * Debug routine to dump useful register contents
  */
@@ -895,5 +894,4 @@ static void enc28j60(void)
 
     enc28j60_unlock(&enc28j60_dev);
 }
-FINSH_FUNCTION_EXPORT(enc28j60, dump enc28j60 registers);
 #endif

@@ -201,5 +201,4 @@ void key(rt_uint32_t key)
     ekbd.type = RTGUI_KEYUP;
     rtgui_server_post_event((struct rtgui_event*)&ekbd, sizeof(ekbd));
 }
-FINSH_FUNCTION_EXPORT(key, send a key to gui server);
 #endif

@@ -149,7 +149,6 @@ __exit:
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 /* export to finsh */
-FINSH_FUNCTION_EXPORT(readwrite, perform file read and write test);
 
 static void cmd_readwrite(int argc, char *argv[])
 {

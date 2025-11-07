@@ -68,7 +68,6 @@ void writespeed(const char* filename, int total_length, int block_size)
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(writespeed, perform file write test);
 
 static void cmd_writespeed(int argc, char *argv[])
 {

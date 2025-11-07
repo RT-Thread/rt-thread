@@ -221,7 +221,6 @@ rt_err_t ping(char* target_name, rt_uint32_t times, rt_size_t size)
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 
-FINSH_FUNCTION_EXPORT(ping, ping network host);
 
 int cmd_ping(int argc, char **argv)
 {

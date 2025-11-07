@@ -393,7 +393,6 @@ void rt_hw_mtd_nand_init(void)
 }
 
 #if defined(RT_USING_FINSH)
-#include <finsh.h>
 void nand_eraseall()
 {
     int index;
@@ -402,6 +401,5 @@ void nand_eraseall()
         nanddrv_file_erase_block(&_nanddrv_file_device, index);
     }
 }
-FINSH_FUNCTION_EXPORT(nand_eraseall, erase all of block in the nand flash);
 
 #endif //RT_USING_FINSH

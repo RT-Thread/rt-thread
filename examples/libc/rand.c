@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <finsh.h>
 
 int libc_rand(void)
 {
@@ -44,4 +43,3 @@ int libc_rand(void)
         return 1;
     }
 }
-FINSH_FUNCTION_EXPORT(libc_rand, rand test for libc);

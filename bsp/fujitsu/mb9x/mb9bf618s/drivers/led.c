@@ -156,11 +156,9 @@ void rt_led_hw_init(void)
 }
 
 #ifdef RT_USING_FINSH
-#include <finsh.h>
 void led(rt_uint32_t led, rt_uint32_t value)
 {
     rt_uint8_t led_value = value;
     rt_led_write(&fm3_led.parent, led, &led_value, 1);
 }
-FINSH_FUNCTION_EXPORT(led, e.g:led(0,100).)
 #endif

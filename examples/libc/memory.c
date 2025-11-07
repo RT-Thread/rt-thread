@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <finsh.h>
 #include <sys/errno.h>
 
 static int errors = 0;
@@ -57,4 +56,3 @@ int libc_mem(void)
 
     return errors != 0;
 }
-FINSH_FUNCTION_EXPORT(libc_mem, memory test for libc);

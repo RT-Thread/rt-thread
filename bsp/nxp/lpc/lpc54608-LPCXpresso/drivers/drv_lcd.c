@@ -457,8 +457,6 @@ void lcd_test(void)
 }
 #ifdef RT_USING_FINSH
 #include <finsh.h>
-FINSH_FUNCTION_EXPORT(lcd_clear, lcd_clear);
-FINSH_FUNCTION_EXPORT(lcd_test, lcd_test);
 #ifdef FINSH_USING_MSH
 MSH_CMD_EXPORT(lcd_clear, lcd_clear);
 MSH_CMD_EXPORT(lcd_test, lcd_test);

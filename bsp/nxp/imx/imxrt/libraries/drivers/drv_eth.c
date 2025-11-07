@@ -15,10 +15,6 @@
 #include "board.h"
 #include <rtdevice.h>
 
-#ifdef RT_USING_FINSH
-#include <finsh.h>
-#endif
-
 #include "fsl_enet.h"
 #include "fsl_gpio.h"
 #include "fsl_cache.h"
@@ -1094,7 +1090,6 @@ INIT_DEVICE_EXPORT(rt_hw_imxrt_eth_init);
 #endif
 
 #if defined(RT_USING_FINSH) && defined(RT_USING_PHY)
-#include <finsh.h>
 
 void phy_read(rt_uint32_t phy_reg)
 {
@@ -1313,12 +1308,5 @@ void enet_buf_info(void)
     }
 }
 
-FINSH_FUNCTION_EXPORT(phy_read, read phy register);
-FINSH_FUNCTION_EXPORT(phy_write, write phy register);
-FINSH_FUNCTION_EXPORT(phy_dump, dump phy registers);
-FINSH_FUNCTION_EXPORT(enet_reg_dump, dump enet registers);
-FINSH_FUNCTION_EXPORT(enet_nvic_tog, toggle enet nvic pendding bit);
-FINSH_FUNCTION_EXPORT(enet_rx_stat, dump enet rx statistic);
-FINSH_FUNCTION_EXPORT(enet_buf_info, dump enet tx and tx buffer descripter);
 
 #endif

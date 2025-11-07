@@ -10,7 +10,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <finsh.h>
 
 int speed()
 {
@@ -24,4 +23,3 @@ int speed()
     printf("%d\n", time(0));
     return 0;
 }
-FINSH_FUNCTION_EXPORT(speed, speed test);
