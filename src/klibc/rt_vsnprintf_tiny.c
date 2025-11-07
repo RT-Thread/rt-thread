@@ -295,7 +295,7 @@ static char *print_number(char *buf,
  *
  * @return The number of characters actually written to buffer.
  */
-int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
+int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
 {
 #ifdef RT_KLIBC_USING_VSNPRINTF_LONGLONG
     unsigned long long num = 0;
@@ -576,7 +576,7 @@ int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
         }
         else if (qualifier == 'z')
         {
-            num = va_arg(args, rt_size_t);
+            num = va_arg(args, size_t);
             if (flags & SIGN)
             {
                 num = (rt_ssize_t)num;
