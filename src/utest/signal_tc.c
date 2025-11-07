@@ -84,6 +84,8 @@ static void rt_signal_unmask_test(void)
         uassert_int_equal(rt_thread_kill(rt_thread_self(), signo), RT_EOK);
         rt_thread_mdelay(1);
         uassert_int_not_equal(recive_sig, signo);
+        /* unmask to allow pending signal to be delivered and released */
+        rt_signal_unmask(signo);
     }
 
     return;
