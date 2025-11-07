@@ -31,7 +31,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
                              rt_uint8_t *stack_addr, void *texit)
 {
     rt_uint32_t *stk;
-    rt_uint32_t i = 0;
+    rt_uint32_t i;
 
     stack_addr += sizeof(rt_uint32_t);
     stack_addr  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stack_addr, 8);
