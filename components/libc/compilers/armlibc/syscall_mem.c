@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2014-08-03     bernard      Add file header
- * 2021-11-13     Meco Man     implement no-heap warning  
+ * 2021-11-13     Meco Man     implement no-heap warning
  */
 
 #include <rtthread.h>
