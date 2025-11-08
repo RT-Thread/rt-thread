@@ -40,6 +40,9 @@
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 #endif /* RT_USING_FINSH */
+#ifdef RT_USING_MODULE
+#include <dlmodule.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
