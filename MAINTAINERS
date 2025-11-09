@@ -147,6 +147,10 @@ tag: bsp_stm32f429-atk-apollo
 path: bsp/stm32/stm32f429-atk-apollo
 owners: lizhen9880(lizhen9880)<lizhen9880@126.com>
 
+tag: bsp_stm32f407-micu
+path: bsp/stm32/stm32f407-micu
+owners: DaiLingxiang(Dailingxiang1)<3070269033@qq.com>
+
 tag: bsp_stm32h723-st-nucleo
 path: bsp/stm32/stm32h723-st-nucleo
 owners: 下里巴人(hywing)<hywing.sir@qq.com>
