@@ -27,23 +27,23 @@
 #endif /* RT_USING_POSIX_STDIO */
 #include <posix/stdlib.h>
 
-#define DBG_TAG    "armlibc.syscalls"
-#define DBG_LVL    DBG_INFO
+#define DBG_TAG "armlibc.syscalls"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #ifdef __clang__
-    __asm(".global __use_no_semihosting\n\t");
+__asm(".global __use_no_semihosting\n\t");
 #else
-    #pragma import(__use_no_semihosting_swi)
+#pragma import(__use_no_semihosting_swi)
 #endif
 
 /* Standard IO device handles. */
-#define STDIN       0
-#define STDOUT      1
-#define STDERR      2
+#define STDIN  0
+#define STDOUT 1
+#define STDERR 2
 
 /* Standard IO device name defines. */
-const char __stdin_name[]  = "STDIN";
+const char __stdin_name[] = "STDIN";
 const char __stdout_name[] = "STDOUT";
 const char __stderr_name[] = "STDERR";
 
@@ -314,7 +314,8 @@ void _ttywrch(int ch)
 rt_weak void _sys_exit(int return_code)
 {
     __rt_libc_exit(return_code);
-    while (1);
+    while (1)
+        ;
 }
 
 /**
@@ -339,6 +340,12 @@ long _sys_flen(FILEHANDLE fh)
 #endif /* DFS_USING_POSIX */
 }
 
+/**
+ * check whether the file is a terminal device.
+ *
+ * @param fh - file handle
+ * @return 1 if is a terminal device, 0 if not
+ */
 int _sys_istty(FILEHANDLE fh)
 {
     if ((STDIN <= fh) && (fh <= STDERR))
@@ -347,6 +354,12 @@ int _sys_istty(FILEHANDLE fh)
         return 0;
 }
 
+/**
+ * remove a file
+ *
+ * @param filename - file name with path
+ * @return 0 on success, -1 on failed
+ */
 int remove(const char *filename)
 {
 #ifdef DFS_USING_POSIX
@@ -360,6 +373,13 @@ int remove(const char *filename)
 #ifdef __MICROLIB
 #include <stdio.h>
 
+/**
+ * write a character to file
+ *
+ * @param c - character to write
+ * @param fh - file handle
+ * @return 1 on success, 0 on failed
+ */
 int fputc(int c, FILE *f)
 {
 #ifdef RT_USING_CONSOLE
@@ -370,6 +390,12 @@ int fputc(int c, FILE *f)
 #endif /* RT_USING_CONSOLE */
 }
 
+/**
+ * get a character from file
+ *
+ * @param fh - file handle
+ * @return character read, or -1 on failed
+ */
 int fgetc(FILE *f)
 {
 #ifdef RT_USING_POSIX_STDIO

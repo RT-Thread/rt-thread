@@ -56,7 +56,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART0_TX_BUFSIZE
                 int "Set UART0 TX buffer size"
-                range 64 65535
+                range 0 65535
                 depends on BSP_USING_UART0 && RT_USING_SERIAL_V2
                 default 128
 
@@ -88,7 +88,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART1_TX_BUFSIZE
                 int "Set UART1 TX buffer size"
-                range 64 65535
+                range 0 65535
                 depends on BSP_USING_UART1 && RT_USING_SERIAL_V2
                 default 128
 
@@ -120,7 +120,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART2_TX_BUFSIZE
                 int "Set UART2 TX buffer size"
-                range 64 65535
+                range 0 65535
                 depends on BSP_USING_UART2 && RT_USING_SERIAL_V2
                 default 128
 
@@ -152,7 +152,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART3_TX_BUFSIZE
                 int "Set UART3 TX buffer size"
-                range 64 65535
+                range 0 65535
                 depends on BSP_USING_UART3 && RT_USING_SERIAL_V2
                 default 128
 
@@ -184,7 +184,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART4_TX_BUFSIZE
                 int "Set UART4 TX buffer size"
-                range 64 65535
+                range 0 65535
                 depends on BSP_USING_UART4 && RT_USING_SERIAL_V2
                 default 128
 
@@ -216,7 +216,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART5_TX_BUFSIZE
                 int "Set UART5 TX buffer size"
-                range 64 65535
+                range 0 65535
                 depends on BSP_USING_UART5 && RT_USING_SERIAL_V2
                 default 128
 
@@ -248,7 +248,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART6_TX_BUFSIZE
                 int "Set UART6 TX buffer size"
-                range 64 65535
+                range 0 65535
                 depends on BSP_USING_UART6 && RT_USING_SERIAL_V2
                 default 128
 
@@ -280,7 +280,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_UART7_TX_BUFSIZE
                 int "Set UART7 TX buffer size"
-                range 64 65535
+                range 0 65535
                 depends on BSP_USING_UART7 && RT_USING_SERIAL_V2
                 default 128
         endif
