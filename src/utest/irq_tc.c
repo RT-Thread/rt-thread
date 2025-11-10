@@ -6,6 +6,62 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-15     supperthomas add irq_test
+ * 2025-11-09     lhxj         Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core IRQ Test
+ *
+ * Test Objectives:
+ * - Clearly specify the core functional module being validated by this test
+ * - Validates the core kernel interrupt handling mechanisms.
+ * - List specific functions or APIs to be tested
+ * - rt_interrupt_enter_sethook()
+ * - rt_interrupt_leave_sethook()
+ * - rt_interrupt_get_nest()
+ * - rt_hw_interrupt_disable()
+ * - rt_hw_interrupt_enable()
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Hook Test / irq_test):**
+ * 1. Set interrupt enter/leave hooks that increment a counter (`irq_count`).
+ * 2. Delay the thread (`rt_thread_mdelay`) to allow a SysTick interrupt to occur.
+ * 3. Check if the hooks were triggered by the interrupt.
+ * - **Scenario 2 (Global Disable Test / interrupt_test):**
+ * 1. Set the same interrupt hooks.
+ * 2. Globally disable CPU interrupts using `rt_hw_interrupt_disable()`.
+ * 3. Execute a busy-wait loop.
+ * 4. Check if the hooks were *not* triggered, proving interrupts were masked.
+ *
+ * Verification Metrics:
+ * - List specific pass/fail criteria
+ * - Expected return values, state changes, resource usage, etc.
+ * - **Pass (Scenario 1):** `uassert_int_not_equal(0, irq_count)`
+ * (The hook counter must be non-zero after the delay).
+ * - **Pass (Scenario 1):** `uassert_int_not_equal(0, max_get_nest_count)`
+ * (The recorded nesting level must be non-zero).
+ * - **Pass (Scenario 2):** `uassert_int_equal(0, irq_count)`
+ * (The hook counter must remain zero while interrupts are disabled).
+ *
+ * Dependencies:
+ * - Hardware requirements (e.g., specific peripherals)
+ * - Requires a hardware timer to generate the SysTick (system tick) interrupt.
+ * (This is met by the qemu-virt64-riscv BSP).
+ * - Software configuration (e.g., kernel options, driver initialization)
+ * - `RT_USING_UTEST` must be enabled (`RT-Thread Utestcases`).
+ * - `IRQ Test` must be enabled (`RT-Thread Utestcases` -> `Kernel Core` -> 'IRQ Test').
+ * - Environmental assumptions
+ * - Assumes the system is idle enough for `rt_thread_mdelay(2)` to
+ * be interrupted by at least one SysTick.
+ * - Run the test case from the msh prompt:
+ * `utest_run core.irq`
+ *
+ * Expected Results:
+ * - System behavior and performance after test execution
+ * - The test case completes without errors or failed assertions.
+ * - Observable outcomes like console output, log records, etc.
+ * - The utest framework prints:
+ * `[  PASSED  ] [ result   ] testcase (core.irq)`
  */
 
 #include <rtthread.h>
