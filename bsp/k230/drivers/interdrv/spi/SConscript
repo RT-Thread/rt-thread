@@ -1,0 +1,11 @@
+# RT-Thread building script for SPI component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+CPPPATH = [cwd]
+
+group = DefineGroup('SPI', src, depend = ['BSP_USING_SPI'], CPPPATH = CPPPATH)
+
+Return('group')
