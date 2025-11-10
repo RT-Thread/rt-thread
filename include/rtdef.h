@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -60,6 +60,7 @@
  * 2024-01-18     Shell        Seperate basical types to a rttypes.h
  *                             Seperate the compiler portings to rtcompiler.h
  * 2024-03-30     Meco Man     update version number to v5.2.0
+ * 2025-11-10     Rbb666       update version number to v5.3.0
  */
 
 #ifndef __RT_DEF_H__
@@ -82,8 +83,8 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
-#define RT_VERSION_MINOR                2               /**< Minor version number (x.X.x) */
-#define RT_VERSION_PATCH                2               /**< Patch version number (x.x.X) */
+#define RT_VERSION_MINOR                3               /**< Minor version number (x.X.x) */
+#define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
 #define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000U) + (minor * 100U) + revise)
