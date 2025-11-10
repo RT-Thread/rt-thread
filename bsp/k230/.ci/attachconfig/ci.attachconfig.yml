@@ -1,6 +1,12 @@
 scons.args: &scons
     scons_arg:
       - '--strict'
+devices.spi:
+    <<: *scons
+    kconfig:
+      - CONFIG_RT_USING_SPI=y
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI0=y
 devices.i2c:
     <<: *scons
     kconfig:

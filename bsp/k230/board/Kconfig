@@ -1,4 +1,31 @@
 menu "Drivers Configuration"
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        select RT_USING_QSPI
+        default n
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0"
+                help
+                    Support 1, 2, 4 and 8 lines, Max clock frequency is 200 Mhz.
+                default n
+
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                help
+                    Support 1, 2, and 4 lines, Max clock frequency is 100 Mhz.
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2"
+                help
+                    Support 1, 2, and 4 lines, Max clock frequency is 100 Mhz.
+                default n
+        endif
+
     menuconfig BSP_USING_I2C
         bool "Enable I2C"
         select RT_USING_I2C
