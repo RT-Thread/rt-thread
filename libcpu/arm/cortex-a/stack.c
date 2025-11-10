@@ -82,7 +82,7 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     *(--stk) = 0x00000000;
 
     /* 4. FPEXC: EN=1 */
-    *(--stk) = 0x40000000; 
+    *(--stk) = 0x40000000;
 #endif
 
     /* return task's current stack address */
