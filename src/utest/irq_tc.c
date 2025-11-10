@@ -23,7 +23,6 @@
  * - rt_hw_interrupt_enable()
  *
  * Test Scenarios:
- * - Describe usage scenarios or boundary conditions being simulated
  * - **Scenario 1 (Hook Test / irq_test):**
  * 1. Set interrupt enter/leave hooks that increment a counter (`irq_count`).
  * 2. Delay the thread (`rt_thread_mdelay`) to allow a SysTick interrupt to occur.
