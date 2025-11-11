@@ -75,6 +75,7 @@ void rt_defunct_execute(void)
         void (*cleanup)(struct rt_thread *tid);
 
 #ifdef RT_USING_MODULE
+        #include <dlmodule.h>
         struct rt_dlmodule *module = RT_NULL;
 #endif
         /* get defunct thread */
@@ -85,6 +86,7 @@ void rt_defunct_execute(void)
         }
 
 #ifdef RT_USING_MODULE
+        #include <dlmodule.h>
         module = (struct rt_dlmodule *)thread->parent.module_id;
         if (module)
         {
