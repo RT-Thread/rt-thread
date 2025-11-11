@@ -6,7 +6,7 @@
  *
  * Change Logs:
  * Date           Author       notes
- * 2025-10-20     foxglove     Rust file opration test.
+ * 2025-10-20     foxglove     Rust file operation test.
  * 2025-10-29     foxglove     Updated to demonstrate new modular macro interface
  */
 #![no_std]

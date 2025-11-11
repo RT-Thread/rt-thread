@@ -22,7 +22,7 @@ pub const RTLD_LAZY: c_int = 0x00000;       // Lazy function call binding
 pub const RTLD_NOW: c_int = 0x00001;        // Immediate function call binding
 pub const RTLD_GLOBAL: c_int = 0x10000;     // Make symbols globally available
 pub const RTLD_LOCAL: c_int = 0x00000;      // Default local
-// fcntl.h interent constants
+// fcntl.h integer constants
 pub const O_RDONLY: c_int = 0x0000;         // open for reading only 
 pub const O_WRONLY: c_int = 0x0001;         // open for writing only 
 pub const O_RDWR: c_int = 0x0002;           // open for reading and writing 
