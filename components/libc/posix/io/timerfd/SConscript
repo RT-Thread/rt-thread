@@ -9,6 +9,6 @@ CPPPATH = [cwd]
 if GetDepend('RT_USING_DFS'):
     src += ['timerfd.c']
 
-group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX_TIMERFD'], CPPPATH = CPPPATH)
+group = DefineGroup('Libc', src, depend = ['RT_USING_POSIX_TIMERFD'], CPPPATH = CPPPATH)
 
 Return('group')
