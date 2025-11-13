@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-08-25     armink       the first version
+ * 2025-10-30     wdfk-prog    add emergency log flush mechanism
  */
 
 #include <stdarg.h>
@@ -501,7 +502,23 @@ rt_weak rt_size_t ulog_hex_formater(char *log_buf, const char *tag, const rt_uin
     return ulog_tail_formater(log_buf, log_len, RT_TRUE, LOG_LVL_DBG);
 }
 
-static void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is_raw, const char *log, rt_size_t len)
+/**
+ * @brief Internal helper to broadcast a log to backends.
+ *
+ * @details This is the core broadcasting function. It iterates through all
+ *          registered backends and outputs the log message. It can operate
+ *          in two modes.
+ *
+ * @param emergency_only If RT_TRUE, it will only output to backends marked as
+ *                       `is_emergency_backend`. If RT_FALSE, it will output to
+ *                       all backends that match the filter criteria.
+ * @param level The log level.
+ * @param tag The log tag.
+ * @param is_raw Whether the log is raw data.
+ * @param log The log message buffer.
+ * @param len The length of the log message.
+ */
+static void _ulog_output_to_backends(rt_bool_t emergency_only, rt_uint32_t level, const char *tag, rt_bool_t is_raw, const char *log, rt_size_t len)
 {
     rt_slist_t *node;
     ulog_backend_t backend;
@@ -520,6 +537,13 @@ static void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bo
     for (node = rt_slist_first(&ulog.backend_list); node; node = rt_slist_next(node))
     {
         backend = rt_slist_entry(node, struct ulog_backend, list);
+
+        if (emergency_only && !backend->is_emergency_backend)
+        {
+            /* In emergency mode, skip any backend not marked as emergency-safe. */
+            continue;
+        }
+
         if (backend->out_level < level)
         {
             continue;
@@ -556,6 +580,11 @@ static void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bo
         }
 #endif /* !defined(ULOG_USING_COLOR) || defined(ULOG_USING_SYSLOG) */
     }
+}
+
+static void ulog_output_to_all_backend(rt_uint32_t level, const char *tag, rt_bool_t is_raw, const char *log, rt_size_t len)
+{
+    _ulog_output_to_backends(RT_FALSE, level, tag, is_raw, log, len);
 }
 
 static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, const char *log_buf, rt_size_t log_len)
@@ -1297,6 +1326,7 @@ rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool
     backend->support_color = support_color;
     backend->out_level = LOG_FILTER_LVL_ALL;
     rt_strncpy(backend->name, name, RT_NAME_MAX - 1);
+    backend->is_emergency_backend = RT_FALSE;
 
     level = rt_spin_lock_irqsave(&_spinlock);
     rt_slist_append(&ulog.backend_list, &backend->list);
@@ -1366,13 +1396,54 @@ ulog_backend_t ulog_backend_find(const char *name)
     return RT_NULL;
 }
 
+/**
+ * @brief Sets the emergency-safe status for a specific backend at runtime.
+ *
+ * @details This function allows an application to dynamically mark a backend
+ *          as safe or unsafe for use in emergency contexts (e.g., fault handlers).
+ *          Only backends marked as safe will be used by `ulog_emergency_flush`.
+ *
+ * @param[in] name The name of the target backend.
+ * @param[in] is_emergency RT_TRUE to mark the backend as safe for emergency calls,
+ *                         RT_FALSE otherwise.
+ *
+ * @return rt_err_t RT_EOK on success, -RT_ERROR if the backend with the given name
+ *                  is not found, or -RT_EINVAL if the name is invalid.
+ */
+rt_err_t ulog_backend_set_emergency(const char *name, rt_bool_t is_emergency)
+{
+    ulog_backend_t backend;
+    rt_err_t result = -RT_ERROR;
+
+    if (name == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    rt_mutex_take(&ulog.output_locker, RT_WAITING_FOREVER);
+
+    backend = ulog_backend_find(name);
+    if (backend != RT_NULL)
+    {
+        backend->is_emergency_backend = is_emergency;
+        result = RT_EOK;
+    }
+
+    rt_mutex_release(&ulog.output_locker);
+
+    return result;
+}
+
 #ifdef ULOG_USING_ASYNC_OUTPUT
 /**
  * asynchronous output logs to all backends
  *
+ * @param[in] emergency_mode A flag to select the operational mode. RT_FALSE for
+ *            normal operation, RT_TRUE for emergency fault context.
+ *
  * @note you must call this function when ULOG_ASYNC_OUTPUT_BY_THREAD is disable
  */
-void ulog_async_output(void)
+void ulog_async_output(rt_bool_t emergency_mode)
 {
     rt_rbb_blk_t log_blk;
     ulog_frame_t log_frame;
@@ -1387,14 +1458,12 @@ void ulog_async_output(void)
         log_frame = (ulog_frame_t) log_blk->buf;
         if (log_frame->magic == ULOG_FRAME_MAGIC)
         {
-            /* output to all backends */
-            ulog_output_to_all_backend(log_frame->level, log_frame->tag, log_frame->is_raw, log_frame->log,
-                    log_frame->log_len);
+            _ulog_output_to_backends(emergency_mode, log_frame->level, log_frame->tag, log_frame->is_raw, log_frame->log, log_frame->log_len);
         }
         rt_rbb_blk_free(ulog.async_rbb, log_blk);
     }
     /* output the log_raw format log */
-    if (ulog.async_rb)
+    if (ulog.async_rb && !emergency_mode)
     {
         rt_size_t log_len = rt_ringbuffer_data_len(ulog.async_rb);
         char *log = rt_malloc(log_len + 1);
@@ -1434,14 +1503,14 @@ rt_err_t ulog_async_waiting_log(rt_int32_t time)
 
 static void async_output_thread_entry(void *param)
 {
-    ulog_async_output();
+    ulog_async_output(RT_FALSE);
 
     while (1)
     {
         ulog_async_waiting_log(RT_WAITING_FOREVER);
         while (1)
         {
-            ulog_async_output();
+            ulog_async_output(RT_FALSE);
             /* If there is no log output for a certain period of time,
              * refresh the log buffer
              */
@@ -1471,7 +1540,7 @@ void ulog_flush(void)
         return;
 
 #ifdef ULOG_USING_ASYNC_OUTPUT
-    ulog_async_output();
+    ulog_async_output(RT_FALSE);
 #endif
 
     /* flush all backends */
@@ -1483,6 +1552,36 @@ void ulog_flush(void)
             backend->flush(backend);
         }
     }
+}
+
+/**
+ * @brief Flushes pending logs and outputs to emergency-safe backends.
+ */
+void ulog_emergency_flush(void)
+{
+    rt_slist_t *node;
+    ulog_backend_t backend;
+    rt_base_t irq_flag;
+
+    if (!ulog.init_ok)
+        return;
+
+    irq_flag = rt_hw_interrupt_disable();
+
+#ifdef ULOG_USING_ASYNC_OUTPUT
+    ulog_async_output(RT_TRUE);
+#endif
+
+    rt_slist_for_each(node, &ulog.backend_list)
+    {
+        backend = rt_slist_entry(node, struct ulog_backend, list);
+        if (backend->is_emergency_backend && backend->flush)
+        {
+            backend->flush(backend);
+        }
+    }
+
+    rt_hw_interrupt_enable(irq_flag);
 }
 
 /**
