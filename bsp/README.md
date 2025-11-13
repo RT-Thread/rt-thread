@@ -555,7 +555,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 | BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
 |----------|------|------|-----|-----|-----|-----|
-| [hk32f030c8-mini](hk32) | ✅ | ✅ | ✅ | - | ✅ | - |
+| [hk32f030c8-mini](hk32/hk32f030c8-mini) | ✅ | ✅ | ✅ | - | ✅ | - |
 
 #### ⚪ Jutcevm
 
