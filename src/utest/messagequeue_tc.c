@@ -220,6 +220,10 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
+    /* wait for threads to finish */
+    rt_thread_mdelay(100);
+    /* detach event object */
+    rt_event_detach(&finish_e);
     return RT_EOK;
 }
 

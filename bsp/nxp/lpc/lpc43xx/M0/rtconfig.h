@@ -220,9 +220,6 @@
 #define RT_LWIP_MSKADDR3 0
 // </section>
 
-#define RT_USING_VBUS
-#define _RT_VBUS_RING_SZ 64
-#define RT_VBUS_GUEST_VIRQ 0
 // </RDTConfigurator>
 
 

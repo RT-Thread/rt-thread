@@ -68,6 +68,9 @@ enum CANBAUD
 #define RT_CAN_MODE_PRIV                0x01
 #define RT_CAN_MODE_NOPRIV              0x00
 
+#define RT_CAN_MODE_MASK                0x00
+#define RT_CAN_MODE_LIST                0x01
+
 /**
  * @defgroup    group_drivers_can CAN Driver
  * @brief       CAN driver api
