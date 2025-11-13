@@ -6,7 +6,39 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-05-20     Shell        the first version
+ * 2025-11-13     ChuanN       Add standardized utest documentation block
  */
+
+/**
+* Test Case Name: Drivers Core Test
+*
+* Test Objectives:
+* - Validate the correctness and consistency of the rt_device_find() API in the RT-Thread device management subsystem.
+* - Test rt_device_find() and rt_console_get_device().
+*
+* Test Scenarios:
+* - Locate a known console device by its actual name retrieved at runtime.
+* - Attempt to find the same device using the predefined macro RT_CONSOLE_DEVICE_NAME.
+* - Verify identity consistency when querying the same device through different but equivalent name sources.
+*
+* Verification Metrics:
+* - rt_device_find() must return a non-NULL pointer when a valid device name is provided.
+* - Pointers returned for the same logical device (via different name expressions) must be identical.
+* - When RT_CONSOLE_DEVICE_NAME differs from the actual console name, two distinct but valid devices must be found.
+* - All assertions must pass without triggering test failure.
+*
+* Dependencies:
+* - Hardware requirements: QEMU emulator or any hardware platform that supports RT-Thread with console device registration.
+* - Software configuration:
+*     - RT_USING_UTEST must be enabled (select "RT-Thread Utestcases" in menuconfig).
+*     - BSP_UTEST_DRIVERS_CORE must be enabled (enable via: RT-Thread Utestcases -> Kernel components -> drivers -> Driver core Test).
+* - Environmental assumptions: The system has initialized the console device before test execution.
+*
+* Expected Results:
+* - The test will pass silently if all assertions hold.
+* - Console will output: "[ PASSED ] [ result ] testcase (components.drivers.core.device_find)".
+*/
+
 #include <rtthread.h>
 #include <stdlib.h>
 #include "utest.h"
