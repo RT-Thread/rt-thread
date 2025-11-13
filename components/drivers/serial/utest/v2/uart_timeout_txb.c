@@ -1,11 +1,41 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART Blocking TX Timeout Test
  *
+ * Test Objectives:
+ * - Validate blocking transmit timeout handling when RX operates non-blocking
+ * - Verify APIs: rt_device_find, rt_device_control(RT_SERIAL_CTRL_SET_TX_TIMEOUT / _TX_FLUSH),
+ *   rt_device_open with RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING, rt_device_write
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (TX Timeout Sweep / tc_uart_api):**
+ *   1. Configure UART buffers and open the device in RX non-blocking / TX blocking mode.
+ *   2. Allocate a reusable TX buffer and iterate `RT_SERIAL_TC_SEND_ITERATIONS` times.
+ *   3. For each iteration, randomize burst length (1024~2047 bytes), set expected TX timeout,
+ *      issue write, and ensure returned write size falls into tolerated range.
+ *   4. Flush TX FIFO and delay to allow loopback RX to complete reception.
+ *
+ * Verification Metrics:
+ * - Each write returns size within `[tx_timeout_send_size - 70, send_size - 80]`.
+ * - No allocation failures; all iterations exit via RT_EOK and device closes cleanly.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` enabled and loopback wiring of `RT_SERIAL_TC_DEVICE_NAME`.
+ * - Excludes configurations with `BSP_UART2_TX_USING_DMA` (DMA write timeout unsupported).
+ * - Needs random number generator and system tick for duration calculations.
+ *
+ * Expected Results:
+ * - Test completes without assertion failures; logs show sequence of timeout send sizes.
+ * - Utest framework prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_timeout_txb)`.
  */
 
 #include <rtthread.h>

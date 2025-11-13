@@ -1,11 +1,43 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-06-16     KyleChan     the first version
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART Blocking RX & Non-Blocking TX Integration Test
+ *
+ * Test Objectives:
+ * - Validate receive-blocking / transmit-non-blocking coexistence including TX completion callbacks
+ * - Verify APIs: rt_device_find, rt_device_control(RT_DEVICE_CTRL_CONFIG / RT_SERIAL_CTRL_SET_RX_TIMEOUT),
+ *   rt_device_open with RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_NON_BLOCKING,
+ *   rt_device_set_tx_complete, rt_device_read, rt_device_write, rt_sem APIs
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Length Sweep with Callback Synchronization / tc_uart_api):**
+ *   1. Configure UART buffers (optional DMA ping buffer) and create TX completion semaphore.
+ *   2. Register `uart_tx_completion` to release semaphore for each non-blocking write fragment.
+ *   3. Iterate through deterministic and random payload lengths, launching paired sender/receiver threads.
+ *   4. Sender waits on semaphore between partial writes; receiver verifies ordered payload to detect loss or reordering.
+ *
+ * Verification Metrics:
+ * - All expected bytes received in sequence; `uart_result` remains `RT_TRUE`.
+ * - Semaphore operations succeed (`rt_sem_take` returns RT_EOK); `uart_over_flag` toggles once quota met.
+ * - Device configuration/open/close calls complete without error; resources freed in cleanup.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` and loopback wiring for `RT_SERIAL_TC_DEVICE_NAME`.
+ * - Non-blocking TX mode must support completion callback registration.
+ * - Dynamic memory for payload buffers, semaphore, and two 1 KB threads must be available.
+ *
+ * Expected Results:
+ * - Test finishes without assertions; logs show length coverage and success counts.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_rxb_txnb)`.
  */
 
 #include <rtthread.h>

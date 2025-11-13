@@ -1,3 +1,40 @@
+/*
+ * Copyright (c) 2006-2025 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART Non-Blocking Receive Echo Test
+ *
+ * Test Objectives:
+ * - Demonstrate non-blocking receive behavior paired with blocking transmit output
+ * - Verify APIs: rt_device_find, rt_device_open with RT_DEVICE_FLAG_RX_NON_BLOCKING,
+ *   rt_device_read (non-blocking), rt_device_write, rt_device_close
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Interactive Echo / uart_test_nonblocking_rx):**
+ *   1. Restart UART in RX non-blocking / TX blocking mode.
+ *   2. Prompt user (or loopback peer) to send data while issuing countdown markers to MSH.
+ *   3. Perform successive non-blocking reads of varying sizes (256/128 bytes), echoing captured data back and logging totals.
+ *
+ * Verification Metrics:
+ * - Each read returns immediately with available data (may be zero); totals accumulate without overflow.
+ * - Function returns RT_TRUE after final log, indicating no failures during sequence.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` with loopback or user-provided input on `RT_SERIAL_TC_DEVICE_NAME`.
+ * - UART driver must support non-blocking reads and reversible open/close.
+ *
+ * Expected Results:
+ * - No assertions triggered; terminal displays countdown prompts and mirrored input.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_nonblocking_rx)`.
+ */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "utest.h"
