@@ -13,29 +13,28 @@ using namespace rtthread;
 
 /** 
  * @brief Semaphore class implementation.
+ * @param name Semaphore name
+ * @param count Initial semaphore count
  */
 Semaphore::Semaphore(const char *name, int32_t count)
 {
-    // Initialize the semaphore with a specified count and FIFO order.
     rt_sem_init(&mID, name, count, RT_IPC_FLAG_FIFO);
 }
 
 /** 
  * @brief Wait on the semaphore.
- * @param millisec Timeout in milliseconds.
- * @return Boolean indicating if the semaphore was successfully taken.
+ * @param millisec Timeout in milliseconds (-1 for infinite wait).
+ * @return true if the semaphore was successfully taken, false on timeout.
  */
 bool Semaphore::wait(int32_t millisec)
 {
     rt_int32_t tick;
 
-    // Convert milliseconds to system ticks.
     if (millisec < 0)
         tick = -1;
     else
         tick = rt_tick_from_millisecond(millisec);
 
-    // Attempt to take the semaphore.
     return rt_sem_take(&mID, tick) == RT_EOK;
 }
 
@@ -48,7 +47,7 @@ void Semaphore::release(void)
 }
 
 /** 
- * Detach the semaphore when the object is destroyed.
+ * @brief Detach the semaphore when the object is destroyed.
  */
 Semaphore::~Semaphore()
 {

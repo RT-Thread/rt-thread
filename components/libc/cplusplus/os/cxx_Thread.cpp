@@ -13,6 +13,10 @@ using namespace rtthread;
 
 /** 
  * @brief Thread class constructor with parameters for stack size, priority, tick, and name.
+ * @param stack_size Stack size in bytes
+ * @param priority Thread priority
+ * @param tick Time slice in ticks
+ * @param name Thread name
  */
 Thread::Thread(rt_uint32_t stack_size,
                rt_uint8_t  priority,
@@ -32,6 +36,12 @@ Thread::Thread(rt_uint32_t stack_size,
 
 /** 
  * @brief Thread class constructor with entry function and parameters.
+ * @param entry The entry function pointer for the thread.
+ * @param p The parameter to pass to the entry function.
+ * @param stack_size The size of the thread stack in bytes.
+ * @param priority The priority of the thread.
+ * @param tick The time slice (tick) for the thread.
+ * @param name The name of the thread.
  */
 Thread::Thread(void (*entry)(void *p),
                void *p,
@@ -62,7 +72,7 @@ Thread::~Thread()
 
 /** 
  * @brief Start the thread execution.
- * @return Boolean indicating if the thread was successfully started.
+ * @return true if the thread was successfully started.
  */
 bool Thread::start()
 {
@@ -75,29 +85,26 @@ bool Thread::start()
 }
 
 /** 
- * Make the thread sleep for a specified duration.
+ * @brief Make the thread sleep for a specified duration.
  * @param millisec Duration in milliseconds.
  */
 void Thread::sleep(int32_t millisec)
 {
     rt_int32_t tick;
 
-    // Convert milliseconds to system ticks.
     if (millisec < 0)
         tick = 1;
     else
         tick = rt_tick_from_millisecond(millisec);
 
-    // Delay the thread for a specified number of ticks.
     rt_thread_delay(tick);
 }
 
 /** 
- * Static function to run the thread's entry function.
+ * @brief function to run the thread's entry function.
  */
 void Thread::func(Thread *pThis)
 {
-    // If an entry function is provided, execute it.
     if (pThis->_entry != RT_NULL)
     {
         pThis->_entry(pThis->_param);
@@ -107,12 +114,11 @@ void Thread::func(Thread *pThis)
         pThis->run(pThis->_param);
     }
 
-    // Send an event to signal thread completion.
     rt_event_send(&pThis->_event, 1);
 }
 
 /** 
- * Default run function that can be overridden by subclasses.
+ * @brief Default run function that can be overridden by subclasses.
  */
 void Thread::run(void *parameter)
 {
@@ -120,9 +126,9 @@ void Thread::run(void *parameter)
 }
 
 /** 
- * Wait for the thread to complete with a timeout.
+ * @brief Wait for the thread to complete with a timeout.
  * @param millisec Timeout in milliseconds.
- * @return Status code indicating the execution status.
+ * @return RT_EOK if the thread completed within the timeout, error code otherwise.
  */
 rt_err_t Thread::wait(int32_t millisec)
 {
@@ -130,7 +136,7 @@ rt_err_t Thread::wait(int32_t millisec)
 }
 
 /** 
- * Join the thread with a timeout.
+ * @brief the thread with a timeout.
  * @param millisec Timeout in milliseconds.
  * @return Status code indicating the execution status.
  */
@@ -139,14 +145,11 @@ rt_err_t Thread::join(int32_t millisec)
     if (started)
     {
         rt_int32_t tick;
-
-        // Convert milliseconds to system ticks.
         if (millisec < 0)
             tick = -1;
         else
             tick = rt_tick_from_millisecond(millisec);
 
-        // Wait for the thread's completion event.
         return rt_event_recv(&_event, 1, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, tick, RT_NULL);
     }
     else

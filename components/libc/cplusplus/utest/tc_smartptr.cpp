@@ -42,10 +42,10 @@ static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
 }
+
 /**
  * @brief Test case cleanup function.
  */
-
 static rt_err_t utest_tc_cleanup(void)
 {
     return RT_EOK;

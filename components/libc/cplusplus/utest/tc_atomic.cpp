@@ -20,7 +20,7 @@
  */
 static void test_atomic_load_store_int32(void)
 {
-    constexpr int        kRound = 10000000;
+    constexpr int kRound = 10000000;
     std::atomic<int32_t> thread_count(0);
     std::atomic<int32_t> count(100);
     uassert_int_equal(count.load(), 100);
@@ -56,7 +56,7 @@ static void test_atomic_load_store_int32(void)
  */
 static void test_atomic_load_store_int64(void)
 {
-    constexpr int        kRound = 10000000;
+    constexpr int kRound = 10000000;
     std::atomic<int64_t> thread_count(0);
     std::atomic<int64_t> count(100);
     uassert_int_equal(count.load(), 100);
@@ -121,9 +121,9 @@ static void test_atomic_basic_int32(void)
     val.exchange(1);
     uassert_int_equal(val.load(), 1);
 
-    int32_t x         = 2;
-    int32_t y         = 3;
-    bool    exchanged = val.compare_exchange_strong(x, y);
+    int32_t x = 2;
+    int32_t y = 3;
+    bool exchanged = val.compare_exchange_strong(x, y);
     uassert_false(exchanged);
     uassert_int_equal(val.load(), 1);
     uassert_int_equal(x, 1);
@@ -168,9 +168,9 @@ static void test_atomic_basic_int64(void)
     val.exchange(1);
     uassert_int_equal(val.load(), 1);
 
-    int64_t x         = 2;
-    int64_t y         = 3;
-    bool    exchanged = val.compare_exchange_strong(x, y);
+    int64_t x = 2;
+    int64_t y = 3;
+    bool exchanged = val.compare_exchange_strong(x, y);
     uassert_false(exchanged);
     uassert_int_equal(val.load(), 1);
     uassert_int_equal(x, 1);
@@ -191,7 +191,7 @@ static void test_atomic_bool(void)
     flag.exchange(false);
     uassert_false(flag.load());
     bool expected = false;
-    bool desired  = true;
+    bool desired = true;
     uassert_true(flag.compare_exchange_strong(expected, desired));
     uassert_true(flag.load());
 }
@@ -201,7 +201,7 @@ static void test_atomic_bool(void)
  */
 static void test_atomic_pointer(void)
 {
-    int                a = 1, b = 2;
+    int a = 1, b = 2;
     std::atomic<int *> ptr(&a);
     ptr.store(&b);
     uassert_int_equal(*ptr.load(), 2);
@@ -230,8 +230,8 @@ static void test_memory_order(void)
 static void test_compare_exchange_weak(void)
 {
     std::atomic<int> val(1);
-    int              expected = 1;
-    int              desired  = 2;
+    int expected = 1;
+    int desired = 2;
     while (!val.compare_exchange_weak(expected, desired))
     {
         expected = 1; // reset
