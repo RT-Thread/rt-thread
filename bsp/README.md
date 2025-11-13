@@ -182,7 +182,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [lpc178x](nxp/lpc/lpc178x) | ✅ | ✅ | - | - | - | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [lpc2148](nxp/lpc/lpc2148) | - | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | - | ✅ | - | - | - | - | - | - | - | - |
 | [lpc408x](nxp/lpc/lpc408x) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-| [lcp43xx](Infineon/psoc6-evaluationkit-062S2/packages/ili9341-latest/.git/objects/43) | - | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [lpc43xx](nxp/lpc/lpc43xx) | - | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [lpc5114-lite](nxp) | ✅ | ✅ | - | - | - | - | - | - | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ | - | - | - | - |
 | [lpc54608-LPCXpresso](nxp/lpc/lpc54608-LPCXpresso) | ✅ | ✅ | - | - | - | - | - | - | - | ✅ | - | - | - | - | ✅ | - | - | - | - | - | - | - | - |
 | [lpc5s06_nxp_evk](nxp) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | ✅ |
