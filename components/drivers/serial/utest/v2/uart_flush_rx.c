@@ -1,11 +1,39 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART RX Buffer Flush Test
  *
+ * Test Objectives:
+ * - Verify RX flush control clears buffered data and preserves integrity of subsequent transfers
+ * - Confirm APIs: rt_device_find, rt_device_control(RT_DEVICE_CTRL_CONFIG / RT_SERIAL_CTRL_RX_FLUSH),
+ *   rt_device_open with RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING,
+ *   rt_device_read, rt_device_write
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Flush Validation / tc_uart_api):**
+ *   1. Configure UART buffers and allocate test pattern spanning multiple RX buffer lengths.
+ *   2. Send payload, consume a single byte, invoke RX flush, and ensure next read returns no residual data.
+ *   3. Resend partial payloads of varying sizes to confirm data after flush matches original pattern.
+ *
+ * Verification Metrics:
+ * - Initial read after flush returns zero bytes; subsequent reads match transmitted data byte-for-byte.
+ * - All iterations across deterministic and random lengths complete with RT_EOK.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2`, loopback wiring, and RX flush support on `RT_SERIAL_TC_DEVICE_NAME`.
+ * - Optional DMA ping buffer configuration honored when `RT_SERIAL_USING_DMA` enabled.
+ *
+ * Expected Results:
+ * - No assertions triggered; logs show flush operations with payload sizes.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_flush_rx)`.
  */
 
 #include <rtthread.h>

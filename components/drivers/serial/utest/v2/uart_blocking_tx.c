@@ -1,3 +1,41 @@
+/*
+ * Copyright (c) 2006-2025 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART Blocking Transmit Throughput Test
+ *
+ * Test Objectives:
+ * - Measure blocking transmit throughput across varied burst sizes
+ * - Verify APIs: rt_device_find, rt_device_open with RT_DEVICE_FLAG_TX_BLOCKING,
+ *   rt_device_write, rt_device_close, rt_tick_get
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Burst Size Sweep / uart_test_blocking_tx):**
+ *   1. Re-open the UART in blocking TX mode.
+ *   2. Perform 100 iterations of 1024-byte writes followed by single bursts of 8, 32, 128, 512, and 1024 bytes,
+ *      capturing elapsed ticks and bytes transferred.
+ *   3. Log throughput metrics for later comparison against non-blocking mode.
+ *
+ * Verification Metrics:
+ * - Each write call returns the full requested length; accumulated counts match expectations.
+ * - Timing data captured for every burst; helper returns RT_TRUE on success.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` and loopback wiring on `RT_SERIAL_TC_DEVICE_NAME`.
+ * - UART driver must support blocking writes and open/close sequences.
+ *
+ * Expected Results:
+ * - Test finishes without assertions; logs show per-size timing statistics.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_blocking_tx)`.
+ */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "utest.h"

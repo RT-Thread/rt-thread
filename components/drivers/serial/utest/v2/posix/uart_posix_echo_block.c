@@ -1,11 +1,39 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-06-16     KyleChan     the first version
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART POSIX Blocking Echo Test
+ *
+ * Test Objectives:
+ * - Validate POSIX blocking serial IO paths with multi-threaded send/receive verification
+ * - Verify APIs: open/close, tcgetattr/tcsetattr, cfsetispeed/cfsetospeed, fcntl clearing O_NONBLOCK,
+ *   read, write, rt_thread_create/startup
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Length Sweep Echo / tc_uart_api):**
+ *   1. Open POSIX serial device, configure canonical settings, and enforce blocking mode.
+ *   2. Launch sender/receiver threads; sender streams sequential byte patterns while receiver checks ordering until quota met.
+ *   3. Iterate through deterministic and random lengths, mirroring behavior of kernel-space blocking tests, and monitor global flags for errors.
+ *
+ * Verification Metrics:
+ * - Received data remains sequential; `uart_result` stays RT_TRUE; `uart_over_flag` raised after completion.
+ * - No termios or fcntl calls fail; thread creation succeeds.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` with POSIX serial device `RT_SERIAL_POSIX_TC_DEVICE_NAME` looped back.
+ * - Host environment must provide POSIX termios/fcntl APIs; adequate heap for buffers and thread stacks.
+ *
+ * Expected Results:
+ * - Test completes without assertions; logs reflect pass counts for each payload length.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_posix_echo_block)`.
  */
 
 #include <rtthread.h>
