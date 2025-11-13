@@ -822,7 +822,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 | BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
 |----------|------|------|-----|-----|-----|-----|
-| [gd32vf103_rvstar](gd32) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [gd32vf103_rvstar](gd32/gd32vf103_rvstar) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [nuclei_fpga_eval](nuclei/nuclei_fpga_eval) | ✅ | ✅ | - | - | - | - |
 
 #### 🟡 ESP32_C3
