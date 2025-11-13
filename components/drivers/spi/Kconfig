@@ -4,6 +4,10 @@ menuconfig RT_USING_SPI
 
     if RT_USING_SPI
 
+        menuconfig RT_USING_SPI_ISR
+            bool "Enable interrupt-safe SPI operations (using spinlocks in ISR context)"
+            default y
+
         menuconfig RT_USING_SOFT_SPI
             bool "Use GPIO to simulate SPI"
             default n
