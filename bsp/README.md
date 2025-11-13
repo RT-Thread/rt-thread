@@ -433,12 +433,12 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 #### ⚪ HC321136 
 | BSP Name | GPIO | UART | I2C |
 |----------|------|------|-----|
-| [hc321136](hc32) | ✅ | ✅ | ✅ |
+| [hc321136](hc32/hc321136) | ✅ | ✅ | ✅ |
 
 #### ⚪ HC321196
 | BSP Name | GPIO | UART |
 |----------|------|------|
-| [hc321196](hc32) | ✅ | ✅ |
+| [hc321196](hc32/hc321196) | ✅ | ✅ |
 
 #### ⚪ Amebaz 
 | BSP Name | GPIO | UART | WLAN |
