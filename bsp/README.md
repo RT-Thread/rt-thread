@@ -232,9 +232,9 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 |----------|------|------|-----|-----|-----|-----|---------|-----|-----|-----|----------|
 | [c906_little](cvitek/c906_little) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - |
 | [cv18xx_aarch64 (RT-Smart)](cvitek/cv18xx_aarch64) | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | - | - | - |
-| [milkv-duo](cvitek) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [milkv-duo256m](cvitek) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [milkv-duos](cvitek) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [milkv-duo](cvitek/milkv-duo) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [milkv-duo256m](cvitek/milkv-duo256m) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [milkv-duos](cvitek/milkv-duos) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟢 QEMU VExpress A9 (RT-Smart) (SMP)
 
