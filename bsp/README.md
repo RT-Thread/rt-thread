@@ -68,7 +68,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [stm32f103-atk-warshipv3](stm32/stm32f103-atk-warshipv3) | ✅ | ✅ | ✅ | ✅ | - | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | ✅ | - | - | - | - | - | - | - |
 | [stm32f103-blue-pill](stm32/stm32f103-blue-pill) | ✅ | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | ✅ | - | - |
 | [stm32f103-dofly-M3S](stm32/stm32f103-dofly-M3S) | ✅ | ✅ | - | - | - | - | - | - | ✅ | - | - | ✅ | - | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - |
-| [stm32f103-dofy-lyc8](stm32) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [stm32f103-dofy-lyc8](stm32/stm32f103-dofy-lyc8) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32f103-fire-arbitrary](stm32/stm32f103-fire-arbitrary) | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | - |
 | [stm32f103-gizwits-gokitv21](stm32/stm32f103-gizwits-gokitv21) | ✅ | ✅ | - | - | - | - | - | - | ✅ | - | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32f103-hw100k-ibox](stm32/stm32f103-hw100k-ibox) | ✅ | ✅ | ✅ | - | - | - | ✅ | - | ✅ | - | ✅ | ✅ | - | ✅ | - | - | ✅ | - | - | - | - | - | - | - | - | - | - |
