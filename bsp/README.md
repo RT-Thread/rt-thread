@@ -321,7 +321,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [n32g45xml-stb](n32/n32g45xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [n32g45xrl-stb](n32/n32g45xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [n32g45xvl-stb](n32/n32g45xvl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32g47rml-stb](n32) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32g47rml-stb](n32/n32g47rml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [n32l40xcl-stb](n32/n32l40xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [n32l436-evb](n32/n32l436-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [n32l43xml-stb](n32/n32l43xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
