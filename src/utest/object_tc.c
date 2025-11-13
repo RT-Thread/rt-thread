@@ -6,6 +6,56 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-07-18     kurisaW      First commit
+ * 2025-11-13     CYFS         Add standardized documentation block for object_tc
+ */
+
+/**
+ * Test Case Name: Kernel Object Management Test
+ *
+ * Test Objectives:
+ * - Validate RT-Thread object lifecycle, lookup, enumeration, and metadata utilities
+ * - Verify core APIs: rt_object_init, rt_object_allocate, rt_object_delete, rt_object_detach,
+ *   rt_object_find, rt_thread_find, rt_device_find, rt_object_get_information,
+ *   rt_object_get_length, rt_object_get_pointers, rt_object_get_name, rt_object_get_type,
+ *   rt_object_is_systemobject
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Name Handling / test_object_name_handling):**
+ *   1. Create static objects with maximum-length names to validate truncation and null-termination rules.
+ *   2. Allocate dynamic objects with maximum-length names to confirm dynamic object naming and non-system classification.
+ *   3. Exercise NULL name handling for both static initialization and dynamic allocation paths.
+ *   4. Verify exact-length names remain intact alongside proper detach/cleanup.
+ * - **Scenario 2 (Find Operations / test_object_find_operations):**
+ *   1. Register static thread objects and verify discovery via rt_object_find.
+ *   2. Create runtime threads and confirm rt_thread_find returns expected handles.
+ *   3. (Optional with RT_USING_DEVICE) Register temporary devices, test rt_device_find against multiple entries, and validate deregistration paths.
+ *   4. Test same-prefix device registrations to confirm distinct name resolution.
+ *   5. Validate negative paths for nonexistent and NULL names across object, thread, and device lookup helpers.
+ * - **Scenario 3 (Info Enumeration / test_object_info_enumeration):**
+ *   1. Mix static and dynamic thread objects and query rt_object_get_information for metadata.
+ *   2. Retrieve counts with rt_object_get_length and enumerate pointers with sufficient buffer space.
+ *   3. Probe buffer boundary behavior by providing undersized pointer arrays.
+ *   4. (Optional with RT_USING_SEMAPHORE) Inspect empty semaphore container reporting.
+ * - **Scenario 4 (Type Utilities / test_object_type_handling):**
+ *   1. Inspect object type via rt_object_get_type and verify system-object status.
+ *   2. Retrieve object names using full buffers, truncated buffers, and invalid parameters.
+ *   3. Confirm error codes for NULL object pointers, NULL buffers, and zero-length requests.
+ *
+ * Verification Metrics:
+ * - **Scenario 1:** Name strings must be null-terminated within TEST_RT_NAME_MAX, retain expected contents, and reflect correct system-object classification.
+ * - **Scenario 2:** Lookup helpers return valid handles for registered objects, correctly distinguish between devices with similar name prefixes, and return NULL for missing or invalid names; device deregistration must succeed.
+ * - **Scenario 3:** Enumeration APIs report counts ≥ created objects, populate pointer arrays without overflow, and respect small-buffer contracts.
+ * - **Scenario 4:** Type and name utilities yield correct metadata and error codes across valid/invalid inputs, preserving partial name copies when truncated.
+ *
+ * Dependencies:
+ * - Scheduler availability (`rt_scheduler_is_available`) required before executing the suite.
+ * - Dynamic memory (rt_malloc/rt_free) needed for pointer buffer allocation.
+ * - `RT_USING_UTEST` enabled with test entry registered under `core.object`.
+ * - Optional paths: `RT_USING_DEVICE` for device lookup tests, `RT_USING_SEMAPHORE` for semaphore enumeration checks.
+ *
+ * Expected Results:
+ * - Test runs to completion with all assertions passing in the utest framework.
+ * - Console shows `[  PASSED  ] [ result   ] testcase (core.object)` when invoked via `utest_run core.object`.
  */
 
 #include <utest.h>
