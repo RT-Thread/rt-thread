@@ -19,10 +19,10 @@ using namespace rtthread;
  * @param name Thread name
  */
 Thread::Thread(rt_uint32_t stack_size,
-               rt_uint8_t priority,
+               rt_uint8_t  priority,
                rt_uint32_t tick,
-               const char *name) :
-    _entry(RT_NULL), _param(RT_NULL), started(false)
+               const char *name)
+    : _entry(RT_NULL), _param(RT_NULL), started(false)
 {
     rt_event_init(&_event, name, 0);
 
@@ -46,10 +46,10 @@ Thread::Thread(rt_uint32_t stack_size,
 Thread::Thread(void (*entry)(void *p),
                void *p,
                rt_uint32_t stack_size,
-               rt_uint8_t priority,
+               rt_uint8_t  priority,
                rt_uint32_t tick,
-               const char *name) :
-    _entry(entry), _param(p), started(false)
+               const char *name)
+    : _entry(entry), _param(p), started(false)
 {
     rt_event_init(&_event, name, 0);
 
@@ -136,9 +136,9 @@ rt_err_t Thread::wait(int32_t millisec)
 }
 
 /** 
- * @brief the thread with a timeout.
+ * @brief Join the thread with a timeout.
  * @param millisec Timeout in milliseconds.
- * @return Status code indicating the execution status.
+ * @return RT_EOK if the thread completed within the timeout, error code otherwise.
  */
 rt_err_t Thread::join(int32_t millisec)
 {
