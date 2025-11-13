@@ -357,9 +357,9 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [apm32f072vb-miniboard](apm32/apm32f072vb-miniboard) | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
 | [apm32f091vc-miniboard](apm32/apm32f091vc-miniboard) | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
 | [apm32f103vb-miniboard](apm32/apm32f103vb-miniboard) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
-| [apm32f103xe-miniboard](apm32) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
+| [apm32f103xe-miniboard](apm32/apm32f103xe-miniboard) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
 | [apm32f107vc-evalboard](apm32/apm32f107vc-evalboard) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
-| [apm32f407ig-miniboard](apm32) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
+| [apm32f407ig-miniboard](apm32/apm32f407ig-miniboard) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
 | [apm32f407zg-evalboard](apm32/apm32f407zg-evalboard) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
 | [apm32s103vb-miniboard](apm32/apm32s103vb-miniboard) | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
 
