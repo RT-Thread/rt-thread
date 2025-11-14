@@ -18,6 +18,10 @@
 #include <sbi.h>
 #include <encoding.h>
 
+#ifdef ARCH_MM_MMU
+#include "mmu.h"
+#endif
+
 #ifdef RT_USING_SMP
 #include "tick.h"
 #include "interrupt.h"
@@ -54,6 +58,10 @@ volatile rt_ubase_t rt_interrupt_to_thread = 0;
  */
 volatile rt_ubase_t rt_thread_switch_interrupt_flag = 0;
 
+#ifdef ARCH_MM_MMU
+static rt_ubase_t *percpu_hartid;
+#endif
+
 void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
 {
     rt_hw_switch_frame_t frame = (rt_hw_switch_frame_t)((rt_ubase_t)sp - sizeof(struct rt_hw_switch_frame));
@@ -71,10 +79,19 @@ int rt_hw_cpu_id(void)
 #ifndef RT_USING_SMP
     return 0;
 #else
-    /* Currently, the hartid is stored in the satp register. */
-    rt_ubase_t hart_id;
-    asm volatile("csrr %0, satp" : "=r"(hart_id));
-    return hart_id;
+    if (rt_kmem_pvoff() != 0)
+    {
+        return *percpu_hartid;
+    }
+    else
+    {
+        // if not enable MMU or pvoff==0, read hartid from satp register
+        rt_ubase_t hartid;
+        asm volatile("csrr %0, satp" : "=r"(hartid));
+        return hartid;
+    }
+    
+
 #endif /* RT_USING_SMP */
 }
 
@@ -170,11 +187,19 @@ void rt_hw_secondary_cpu_up(void)
     rt_uint64_t entry_pa;
     int hart, ret;
 
-    /* translate kernel virtual _start to physical address.
-     * TODO: Virtual-to-physical translation is not needed here
-     * because &_start is already a physical address on this platform.
-    */
+    /* translate kernel virtual _start to physical address. */
+#ifdef ARCH_MM_MMU
+    if (rt_kmem_pvoff() != 0)
+    {
+        entry_pa = (rt_uint64_t)rt_kmem_v2p(&_start);
+    }
+    else
+    {
+        entry_pa = (rt_uint64_t)&_start;
+    }
+#else
     entry_pa = (rt_uint64_t)&_start;
+#endif /* ARCH_MM_MMU */
 
     for (hart = 0; hart < RT_CPUS_NR; hart++)
     {
@@ -191,8 +216,31 @@ void rt_hw_secondary_cpu_up(void)
     }
 }
 
+#ifdef ARCH_MM_MMU
+void rt_hw_percpu_hartid_init(rt_ubase_t *percpu_ptr, rt_ubase_t hartid)
+{
+    rt_ubase_t *percpu_hartid_paddr;
+    rt_size_t percpu_size = (rt_size_t)((rt_ubase_t)&__percpu_end - (rt_ubase_t)&__percpu_start);
+    
+    percpu_hartid = percpu_ptr;
+
+    // from virtual address to physical address
+    percpu_ptr = (rt_ubase_t *)((rt_ubase_t)percpu_ptr + (rt_ubase_t)rt_kmem_pvoff());
+    percpu_hartid_paddr = percpu_ptr;
+    
+
+    /* Save to the real area */
+    *(rt_ubase_t *)((void *)percpu_hartid_paddr + hartid * percpu_size) = hartid;
+}
+#endif /* ARCH_MM_MMU */
+
 void secondary_cpu_entry(void)
 {
+    
+#ifdef RT_USING_SMART
+    /* switch to kernel address space */
+    rt_hw_aspace_switch(&rt_kernel_space);
+#endif
     /* The PLIC peripheral interrupts are currently handled by the boot_hart. */
     /* Enable the Supervisor-Timer bit in SIE */
     rt_hw_tick_init();

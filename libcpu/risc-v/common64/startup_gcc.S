@@ -45,6 +45,12 @@ _start:
 #ifdef RT_USING_SMP
 system_init:
 #endif
+
+    /* If ARCH_MM_MMU is not enabled or pvoff==0, save the hartid in the satp register;
+     * otherwise, save it in percpu_hartid.
+    */
+    csrw satp, a0
+
     /* clear Interrupt Registers */
     csrw sie, 0
     csrw sip, 0
@@ -104,7 +110,6 @@ system_init:
     li   t0, __STACKSIZE__
     add  sp, sp, t0
 #else
-    csrw   satp, a0        /* Currently, the hartid is stored in the satp register. */
     /* Initialize the sp pointer according to different hartids. */
     mv   t0, a0
     /* calculate stack offset: hartid * __STACKSIZE__ */
@@ -116,10 +121,10 @@ system_init:
     add  sp, sp, t0        /* sp = __stack_start__ + hartid * __STACKSIZE__ */
     add  sp, sp, t1        /* sp += __STACKSIZE__ (point to stack top) */
 
-    mv   t0, a0
-    lw   t1, boot_hartid
-    bne  t0, t1, secondary_cpu_entry
-    li x10,0               /* Clear the a0 register. */
+    mv      t0, a0
+    lw      t1, boot_hartid
+    mv      tp, a0
+    bne     t0, t1, early_secondary_cpu_entry
 #endif /* RT_USING_SMP */
 
     /**
@@ -127,7 +132,14 @@ system_init:
      */
     csrw sscratch, zero
     call init_bss
+early_secondary_cpu_entry:
 #ifdef ARCH_MM_MMU
+    // Pages need to be managed manually in the early stage.
+    la      a0, .early_page_array
+    call    set_free_page
+
+    la      a0, .early_tbl_page
+    mv      a1, tp
     call    rt_hw_mem_setup_early
     call    rt_kmem_pvoff
     /* a0 := pvoff  */
@@ -138,13 +150,37 @@ system_init:
     sub     x1, x1, a0
     ret
 _after_pc_relocation:
+#if defined(RT_USING_SMP)
+    /* If the MMU is enabled, save the hartid in percpu_hartid.
+     * -> .percpu_hartid (hartid_0)
+     * ...... align(2MB)
+     * -> (hartid_1)
+     * ......
+    */
+    la      a0, .percpu_hartid
+    mv      a1, tp
+    call    rt_hw_percpu_hartid_init
+#endif
     /* relocate gp */
     sub     gp, gp, a0
 
+#ifndef RT_USING_SMP
     /* relocate context: sp */
     la      sp, __stack_start__
     li      t0, __STACKSIZE__
     add     sp, sp, t0
+#else
+    /* Initialize the sp pointer according to different hartids. */
+    mv   t0, tp
+    /* calculate stack offset: hartid * __STACKSIZE__ */
+    li   t1, __STACKSIZE__
+    mul  t0, t0, t1        /* t0 = hartid * __STACKSIZE__ */
+
+    /* set stack pointer */
+    la   sp, __stack_start__
+    add  sp, sp, t0        /* sp = __stack_start__ + hartid * __STACKSIZE__ */
+    add  sp, sp, t1        /* sp += __STACKSIZE__ (point to stack top) */
+#endif /* RT_USING_SMP */
 
     /* reset s0-fp */
     mv      s0, zero
@@ -153,7 +189,12 @@ _after_pc_relocation:
     la      t0, trap_entry
     csrw    stvec, t0
 1:
+#ifdef RT_USING_SMP
+    mv      t0, tp
+    lw      t1, boot_hartid
+    bne     t0, t1, secondary_cpu_entry
 #endif
+#endif /* ARCH_MM_MMU */
     call    sbi_init
     call    primary_cpu_entry
 
@@ -163,3 +204,29 @@ _never_return_here:
 .global _start_link_addr
 _start_link_addr:
     .dword __text_start
+
+#ifdef ARCH_MM_MMU
+/*
+ * CPU stack builtin
+ */
+    .section ".percpu"
+.percpu_hartid:
+    .space 16
+
+    .section ".bss"
+
+.equ page_size, 4096
+    .balign page_size
+.early_tbl_page:
+    .space 1 * page_size
+#if defined(RT_USING_SMP) && RT_CPUS_NR > 1
+    .space (RT_CPUS_NR - 1) * page_size
+#endif
+
+.early_page_array:
+    .space (8 + 8) * page_size
+#ifdef RT_USING_SMP
+    .space RT_CPUS_NR * 5 * page_size
+#endif
+
+#endif /* ARCH_MM_MMU */

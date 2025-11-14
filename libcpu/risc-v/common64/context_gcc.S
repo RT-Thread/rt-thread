@@ -93,9 +93,12 @@ rt_hw_context_switch_to:
     call rt_thread_self
     mv s1, a0
 
+#ifndef RT_USING_SMP
+    //if enable RT_USING_SMP, it will finished by rt_cpus_lock_status_restore.
     #ifdef RT_USING_SMART
-        call lwp_aspace_switch
+      call lwp_aspace_switch
     #endif
+#endif
 
     RESTORE_CONTEXT
     sret
@@ -134,9 +137,12 @@ rt_hw_context_switch:
     call rt_thread_self
     mv s1, a0
 
+#ifndef RT_USING_SMP
+    // if enable RT_USING_SMP, it will finished by rt_cpus_lock_status_restore.
     #ifdef RT_USING_SMART
-        call lwp_aspace_switch
+       call lwp_aspace_switch
     #endif
+#endif
 
     RESTORE_CONTEXT
     sret
