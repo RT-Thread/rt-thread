@@ -16,6 +16,7 @@
  * 2018-07-24     aozima       enhancement hard fault exception handler.
  * 2019-07-03     yangjie      add __rt_ffs() for armclang.
  * 2022-06-12     jonas        fixed __rt_ffs() for armclang.
+ * 2025-08-18     wdfk_prog    add rt_interrupt_get_nest() and __get_IPSR() support.
  */
 
 #include <rtthread.h>
@@ -434,6 +435,42 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
 void rt_hw_cpu_reset(void)
 {
     SCB_AIRCR = SCB_RESET_VALUE;
+}
+
+/**
+  \brief   Get IPSR Register
+  \details Returns the content of the IPSR Register.
+  \return               IPSR Register value
+ */
+rt_inline rt_uint32_t __get_IPSR(void)
+{
+#if defined(__CC_ARM)
+    register uint32_t __regIPSR __asm("ipsr");
+    return(__regIPSR);
+#elif defined(__clang__)
+    uint32_t result;
+    __asm volatile ("MRS %0, ipsr" : "=r" (result) );
+    return(result);
+#elif defined(__IAR_SYSTEMS_ICC__)
+    return __iar_builtin_rsr("IPSR");
+#elif defined ( __GNUC__ )
+    uint32_t result;
+    __asm volatile ("MRS %0, ipsr" : "=r" (result) );
+    return(result);
+#endif
+}
+
+/**
+ * @brief This function will return the nest of interrupt.
+ *
+ * User application can invoke this function to get whether current
+ * context is interrupt context.
+ *
+ * @return the number of nested interrupts.
+ */
+rt_uint8_t rt_interrupt_get_nest(void)
+{
+    return (__get_IPSR() != 0);
 }
 
 #ifdef RT_USING_CPU_FFS
