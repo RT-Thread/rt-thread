@@ -1,0 +1,70 @@
+import os
+import sys
+from building import *
+
+cwd = GetCurrentDir()
+
+# Import usrapp build module and build support
+sys.path.append(os.path.join(cwd, '../../tools'))
+from build_usrapp import build_example_usrapp
+from build_support import clean_rust_build
+
+
+def _has(sym: str) -> bool:
+    try:
+        return bool(GetDepend([sym]))
+    except Exception:
+        return bool(GetDepend(sym))
+
+
+def load_extended_feature_configs():
+    """
+    Load extended feature configurations if available.
+    This allows users to add custom configuration mappings.
+    """
+    try:
+        from feature_config_examples import setup_all_example_features
+        setup_all_example_features()
+        print("Extended feature configurations loaded successfully.")
+    except ImportError:
+        print("Using default feature configurations.")
+
+group = []
+
+if not _has('RT_RUST_BUILD_APPLICATIONS'):
+    Return('group')
+
+# Load extended feature configurations
+load_extended_feature_configs()
+
+src = []
+LIBS = []
+LIBPATH = []
+LINKFLAGS = ""
+
+if GetOption('clean'):
+    app_build_dir = clean_rust_build(Dir('#').abspath, "example_usrapp")
+    if os.path.exists(app_build_dir):
+        print(f'Registering {app_build_dir} for cleanup')
+        Clean('.', app_build_dir)
+    else:
+        print('No example_usrapp build artifacts to clean')
+else:
+    import rtconfig
+    LIBS, LIBPATH, LINKFLAGS = build_example_usrapp(
+        cwd=cwd,
+        has_func=_has,
+        rtconfig=rtconfig,
+        build_root=os.path.join(Dir('#').abspath, "build", "example_usrapp")
+    )
+
+group = DefineGroup(
+    'example_usrapp', 
+    src, 
+    depend=['RT_USING_RUST'], 
+    LIBS=LIBS, 
+    LIBPATH=LIBPATH, 
+    LINKFLAGS=LINKFLAGS
+)
+
+Return('group')
