@@ -18,16 +18,14 @@
 
 #include "rtthread.h"
 
-#define RT_KTIME_RESMUL (1000000ULL)
-
 struct rt_ktime_hrtimer
 {
     rt_uint8_t           flag;                  /**< compatible to tick timer's flag */
     char                 name[RT_NAME_MAX];
     rt_list_t            node;
     void                *parameter;
-    unsigned long        delay_cnt;
-    unsigned long        timeout_cnt;
+    rt_tick_t            delay_cnt;
+    rt_tick_t            timeout_cnt;
     rt_err_t             error;
     struct rt_completion completion;
     void (*timeout_func)(void *parameter);
@@ -59,25 +57,18 @@ rt_err_t rt_ktime_boottime_get_s(time_t *t);
 rt_err_t rt_ktime_boottime_get_ns(struct timespec *ts);
 
 /**
- * @brief Get cputimer resolution
- *
- * @return (resolution * RT_KTIME_RESMUL)
- */
-rt_uint64_t rt_ktime_cputimer_getres(void);
-
-/**
  * @brief Get cputimer frequency
  *
  * @return frequency
  */
-unsigned long rt_ktime_cputimer_getfrq(void);
+rt_uint32_t rt_ktime_cputimer_getfrq(void);
 
 /**
  * @brief Get cputimer the value of the cnt counter
  *
  * @return cnt
  */
-unsigned long rt_ktime_cputimer_getcnt(void);
+rt_tick_t rt_ktime_cputimer_getcnt(void);
 
 /**
  * @brief Init cputimer
@@ -86,18 +77,11 @@ unsigned long rt_ktime_cputimer_getcnt(void);
 void rt_ktime_cputimer_init(void);
 
 /**
- * @brief Get hrtimer resolution
- *
- * @return (resolution * RT_KTIME_RESMUL)
- */
-rt_uint64_t rt_ktime_hrtimer_getres(void);
-
-/**
- * @brief Get hrtimer frequency
+ * @brief Get hrtimer frequency, you should re-implemented it in hrtimer device driver
  *
  * @return frequency
  */
-unsigned long rt_ktime_hrtimer_getfrq(void);
+rt_uint64_t rt_ktime_hrtimer_getfrq(void);
 
 /**
  * @brief set hrtimer interrupt timeout count (cnt), you should re-implemented it in hrtimer device driver
@@ -105,7 +89,7 @@ unsigned long rt_ktime_hrtimer_getfrq(void);
  * @param cnt: hrtimer requires a timing cnt value
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt);
+rt_err_t rt_ktime_hrtimer_settimeout(rt_uint64_t cnt);
 
 /**
  * @brief called in hrtimer device driver isr routinue, it will process the timeouts
@@ -117,7 +101,13 @@ void     rt_ktime_hrtimer_init(rt_ktime_hrtimer_t timer,
                                rt_uint8_t         flag,
                                void (*timeout)(void *parameter),
                                void *parameter);
-rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer, unsigned long cnt);
+/**
+ * @brief start the hrtimer
+ *
+ * @param cnt the cputimer cnt value
+ * @return rt_err_t
+ */
+rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer, rt_tick_t cnt);
 rt_err_t rt_ktime_hrtimer_stop(rt_ktime_hrtimer_t timer);
 rt_err_t rt_ktime_hrtimer_control(rt_ktime_hrtimer_t timer, int cmd, void *arg);
 rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer);
@@ -140,7 +130,7 @@ void rt_ktime_hrtimer_process(void);
  * @param cnt: the cputimer cnt value
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_sleep(struct rt_ktime_hrtimer *timer, unsigned long cnt);
+rt_err_t rt_ktime_hrtimer_sleep(struct rt_ktime_hrtimer *timer, rt_tick_t cnt);
 
 /**
  * @brief sleep by ns
@@ -148,7 +138,7 @@ rt_err_t rt_ktime_hrtimer_sleep(struct rt_ktime_hrtimer *timer, unsigned long cn
  * @param ns: ns
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_ndelay(struct rt_ktime_hrtimer *timer, unsigned long ns);
+rt_err_t rt_ktime_hrtimer_ndelay(struct rt_ktime_hrtimer *timer, rt_uint64_t ns);
 
 /**
  * @brief sleep by us
@@ -156,7 +146,7 @@ rt_err_t rt_ktime_hrtimer_ndelay(struct rt_ktime_hrtimer *timer, unsigned long n
  * @param us: us
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_udelay(struct rt_ktime_hrtimer *timer, unsigned long us);
+rt_err_t rt_ktime_hrtimer_udelay(struct rt_ktime_hrtimer *timer, rt_uint64_t us);
 
 /**
  * @brief sleep by ms
@@ -164,6 +154,6 @@ rt_err_t rt_ktime_hrtimer_udelay(struct rt_ktime_hrtimer *timer, unsigned long u
  * @param ms: ms
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_mdelay(struct rt_ktime_hrtimer *timer, unsigned long ms);
+rt_err_t rt_ktime_hrtimer_mdelay(struct rt_ktime_hrtimer *timer, rt_uint64_t ms);
 
 #endif
