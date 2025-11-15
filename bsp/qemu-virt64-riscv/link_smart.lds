@@ -9,6 +9,7 @@
  */
 
 INCLUDE "link_stacksize.lds"
+INCLUDE "link_cpus.lds"
 
 OUTPUT_ARCH( "riscv" )
 
@@ -122,12 +123,9 @@ SECTIONS
     {
         . = ALIGN(64);
         __stack_start__ = .;
-
-        . += __STACKSIZE__;
-        __stack_cpu0 = .;
-
-        . += __STACKSIZE__;
-        __stack_cpu1 = .;
+        /* Dynamically allocate stack areas according to RT_CPUS_NR */
+        . += (__STACKSIZE__ * RT_CPUS_NR);
+        __stack_end__ = .;
     } > SRAM
 
     .sbss :
@@ -146,6 +144,24 @@ SECTIONS
         *(.dynbss)
         *(COMMON)
     __bss_end = .;
+    } > SRAM
+    
+         .percpu (NOLOAD) :
+    {
+        /* Align for MMU early map */
+        . = ALIGN(1<<(12+9));
+        PROVIDE(__percpu_start = .);
+
+        *(.percpu)
+
+        /* Align for MMU early map */
+        . = ALIGN(1<<(12+9));
+
+        PROVIDE(__percpu_end = .);
+
+        /* Clone the area */
+        . = __percpu_end + (__percpu_end - __percpu_start) * (RT_CPUS_NR - 1);
+        PROVIDE(__percpu_real_end = .);
     } > SRAM
 
     _end = .;
