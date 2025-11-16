@@ -620,7 +620,6 @@ void nand_read(int block, int page)
     rt_kprintf("oob data:\n");
     dump_mem(nand_oob, 16);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(nand_read, read_page, read page[block/page]);
 
 void nand_write(int block, int page)
 {
@@ -630,13 +629,11 @@ void nand_write(int block, int page)
 
     NF_WritePage(block, page, nand_buffer);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(nand_write, write_page, write page[block/page]);
 
 void nand_erase(int block)
 {
     NF_EraseBlock(block);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(nand_erase, erase_block, erase block[block]);
 
 void nand_readoob(int block, int page)
 {
@@ -646,7 +643,6 @@ void nand_readoob(int block, int page)
     rt_kprintf("oob data:\n");
     dump_mem(nand_oob, 16);
 }
-FINSH_FUNCTION_EXPORT_ALIAS(nand_readoob, readoob, read oob[block/page]);
 
 void nand_erase_chip(void)
 {
@@ -661,5 +657,4 @@ void nand_erase_chip(void)
         NF_EraseBlock(i);
     }
 }
-FINSH_FUNCTION_EXPORT_ALIAS(nand_erase_chip, erase_chip, erase whole chip);
 #endif
