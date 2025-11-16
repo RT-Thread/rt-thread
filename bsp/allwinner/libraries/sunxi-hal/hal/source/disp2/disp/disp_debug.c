@@ -48,7 +48,7 @@ static void print_reg(void)
     printf("csc\n");
     printf_from_to(0x51b0000,0x51b00ff);
 }
-static int cmd_disp_debug(int argc, const char **argv)
+static int cmd_disp_debug(int argc, char **argv)
 {
     int i = 0, err = 0;
     struct disp_manager *mgr = NULL;
@@ -184,4 +184,4 @@ static int cmd_disp_debug(int argc, const char **argv)
     return 0;
 }
 
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_disp_debug, __cmd_disp, disp cmd);
+MSH_CMD_EXPORT_ALIAS(cmd_disp_debug, __cmd_disp, disp cmd);

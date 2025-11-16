@@ -135,11 +135,18 @@ int disp_mem(u32 mem_id, u32 width, u32 height, u32 clear_flag, char *filename)
         return 0;
     }
 
+    if (filename == NULL)
+    {
+        printf("filename is null.\n");
+        goto OUT;
+    }
+
     //for_test  we use r g b to set color buffer
-    if(filename[0] != 'r' && filename[0] != 'g' && filename[0] != 'b') {
-        if(filename != NULL)
-            fh = fopen(filename, "r");
-        if(!fh) {
+    if (filename[0] != 'r' && filename[0] != 'g' && filename[0] != 'b')
+    {
+        fh = fopen(filename, "r");
+        if (!fh)
+        {
             printf("open file %s fail. \n", filename);
             goto OUT;
         }
@@ -264,5 +271,4 @@ int parse_cmdline_and_alloc(int argc, char **argv)
     }
 }
 
-FINSH_FUNCTION_EXPORT_ALIAS(parse_cmdline_and_alloc, disp_mem, disp mem);
-
+MSH_CMD_EXPORT_ALIAS(parse_cmdline_and_alloc, disp_mem, disp mem);
