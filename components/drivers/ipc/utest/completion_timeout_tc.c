@@ -6,29 +6,43 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-04-30     Shell        init ver.
+ * 2025-11-16     ChuanN-sudo  add standardized utest documentation block
  */
 
 /**
- * Test Case for rt_completion API
+ * Test Case Name: IPC Completion Timeout Test
  *
- * The test simulates a producer-consumer interaction where a producer thread
- * generates data, and a consumer thread consumes the data after waiting for its
- * availability using rt_completion synchronization primitives.
+ * Test Objectives:
+ * - Validate rt_completion initialization, wait with timeout, and wake-up mechanisms.
+ * - Verify thread synchronization resilience in producer-consumer model under timing constraints.
+ * - Test core APIs: rt_completion_init(), rt_completion_wait_flags(), rt_completion_wakeup()
+ * - Verify proper handling of timeout and interrupt scenarios during synchronization.
  *
- * Test Criteria:
+ * Test Scenarios:
+ * - Producer thread generates incrementing data with small delays between productions.
+ * - Consumer thread waits for data with timeout flags (RT_INTERRUPTIBLE) to simulate real-world interruptions.
+ * - Test deliberately introduces random thread yields to simulate scheduling variations.
+ * - Producer-consumer synchronization loop runs for extended duration to expose timing issues.
+ * - System handles asynchronous interruptions during wait operations.
+ *
+ * Verification Metrics:
  * - The producer produces data correctly and notifies the consumer thread.
- * - The consumer receives data correctly and acknowledges receipt to the
- *   producer.
+ * - The consumer receives data correctly and acknowledges receipt to the producer.
  * - The producer and consumer threads synchronize their operations effectively.
- * - Verify the correctness of data production and consumption between producer
- *   and consumer threads.
- * - The asynchronous woken of consumer thread was handled properly so the
- *   consumer don't lose woken from producer.
+ * - Verify the correctness of data production and consumption between producer and consumer threads.
+ * - The asynchronous wakeup of consumer thread was handled properly so the consumer don't lose wakeup from producer.
  *
- * Test APIs:
- * - rt_completion_init()
- * - rt_completion_wakeup()
- * - rt_completion_wait_flags()
+ * Dependencies:
+ * - Hardware requirements: QEMU emulator or any hardware platform that supports RT-Thread.
+ * - Software configuration:
+ *     - RT_USING_UTEST must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_COMPLETION must be enabled (enable via: RT-Thread Utestcases -> Kernel Components -> Drivers -> IPC Test -> IPC Completion Test).
+ * - Environmental Assumptions: System clock interrupts and scheduler working normally.
+ *
+ * Expected Results:
+ * - Progress logs: "[ INFO ] components.drivers.ipc.rt_completion_timeout: Summary:...Test times:...Async interruption count:...".
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.ipc.rt_completion_timeout)".
+ * - No assertions triggered.
  */
 
 #define TEST_LATENCY_TICK (1)

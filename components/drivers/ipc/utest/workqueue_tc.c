@@ -42,8 +42,8 @@
  *
  * Expected Results:
  * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.ipc.workqueue_tc)"
- * - No memory leaks or race condition detections in logs
- * - No assertions triggered during test execution
+ * - No memory leaks or race condition detections in logs.
+ * - No assertions triggered during test execution.
  */
 #include "rtthread.h"
 #include "rtdevice.h"
