@@ -198,5 +198,5 @@ static void testcase(void)
     UTEST_UNIT_RUN(rt_perf_all_test);
 }
 
-UTEST_TC_EXPORT(testcase, "core.pref_test", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.perf_test", utest_tc_init, utest_tc_cleanup, 10);
 
