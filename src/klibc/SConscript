@@ -13,7 +13,7 @@ if not GetDepend(['RT_KLIBC_USING_LIBC_VSNPRINTF']):
 if not GetDepend(['RT_KLIBC_USING_LIBC_VSSCANF']):
     src += ['rt_vsscanf.c']
 
-group = DefineGroup('klibc', src, depend = [''])
+group = DefineGroup('Libc', src, depend = [''])
 
 list = os.listdir(cwd)
 for item in list:

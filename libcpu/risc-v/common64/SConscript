@@ -7,6 +7,6 @@ CPPPATH = [cwd]
 if not GetDepend('ARCH_USING_ASID'):
     SrcRemove(src, ['asid.c'])
 
-group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
