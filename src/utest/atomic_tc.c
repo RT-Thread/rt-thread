@@ -8,6 +8,34 @@
  * 2022-07-27     flybreak     the first version
  * 2023-03-21     WangShun     add atomic test
  * 2023-09-15     xqyjlj       change stack size in cpu64
+ * 2025-11-16     h0bbl3s      Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Atomic Operations Test
+ *
+ * Test Objectives:
+ * - Validate the functional correctness of the following RT-Thread core atomic operations:
+ * - rt_atomic_add, rt_atomic_sub, rt_atomic_or, rt_atomic_xor, rt_atomic_and, rt_atomic_exchange,
+ * - rt_atomic_flag_test_and_set, rt_atomic_flag_clear, rt_atomic_load, rt_atomic_store,
+ * - rt_atomic_compare_exchange_strong
+ * - Verify the thread-safety of rt_atomic_add under multi-threaded contention
+ *
+ * Test Scenarios:
+ * - test_atomic_api: A single-thread functional test checking all core atomic operations
+ * - test_atomic_add: Three concurrent threads, each incrementing a shared counter using rt_atomic_add
+ *
+ * Verification Metrics:
+ * - All assertions in test_atomic_api must pass
+ * - The final shared counter value in test_atomic_add must be correct
+ *
+ * Dependencies:
+ * - Enable Atomic Test (RT-Thread Utestcases -> Kernel Core -> Atomic Test)
+ * - Test on any RT-Thread supported platform
+ *
+ * Expected Results
+ * - After executing this test in msh, the expected output should be:
+ * "[  PASSED  ] [ result   ] testcase (core.atomic)"
  */
 
 #include <rtthread.h>
