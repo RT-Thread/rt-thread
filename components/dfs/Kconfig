@@ -5,16 +5,72 @@ config RT_USING_DFS
     select RT_USING_MUTEX
     default y
     help
-        The device file system is a light weight virtual file system.
+        DFS (Device File System) is RT-Thread's lightweight virtual file system.
+        
+        Provides unified file system abstraction layer supporting:
+        - Multiple file system types (FAT, ROM-FS, RAM-FS, NFS, etc.)
+        - POSIX-like file operations (open, read, write, close)
+        - Device file access (/dev/uart1, /dev/spi0, etc.)
+        - Mount points for different file systems
+        - Working directory support
+        
+        Features:
+        - Small footprint (~5-10KB depending on configuration)
+        - POSIX API compatibility for easier porting
+        - Multiple file systems can coexist
+        - Thread-safe operations with mutex protection
+        
+        Typical use cases:
+        - File logging and data storage
+        - Configuration file management
+        - Device access abstraction
+        - Network file systems (NFS)
+        
+        Enable for applications requiring file system support.
+        Disable for simple applications to save ~10-15KB ROM.
 
 if RT_USING_DFS
     config DFS_USING_POSIX
         bool "Using posix-like functions, open/read/write/close"
         default y
+        help
+            Enable POSIX-compliant file I/O API functions.
+            
+            Provides standard POSIX file operations:
+            - open(), close(), read(), write()
+            - lseek(), stat(), fstat()
+            - opendir(), readdir(), closedir()
+            - mkdir(), rmdir(), unlink(), rename()
+            
+            Benefits:
+            - Easier code porting from Linux/POSIX systems
+            - Familiar API for developers
+            - Better compatibility with third-party libraries
+            
+            Required for most applications using file operations.
+            Disable only if using custom file I/O API.
 
     config DFS_USING_WORKDIR
         bool "Using working directory"
         default y
+        help
+            Enable working directory (current directory) support.
+            
+            Features:
+            - Each thread can have its own working directory
+            - chdir() to change current directory
+            - Relative paths resolved from working directory
+            - getcwd() to get current directory path
+            
+            Essential for:
+            - Shell commands (cd, pwd)
+            - Relative path operations
+            - Multi-threaded file access with different contexts
+            
+            Memory cost: ~256 bytes per thread for path storage
+            
+            Recommended to keep enabled for convenience.
+            Disable to save minimal RAM if only using absolute paths.
 
 if RT_USING_DFS_V1
     config RT_USING_DFS_MNTTABLE
@@ -33,36 +89,138 @@ endif
     config DFS_FD_MAX
         int "The maximal number of opened files"
         default 16
+        help
+            Maximum number of file descriptors that can be opened simultaneously
+            across all threads in the system.
+            
+            Default: 16
+            
+            Each open file descriptor uses ~40-60 bytes of RAM.
+            Total memory: DFS_FD_MAX × ~50 bytes
+            
+            Increase if:
+            - Application opens many files concurrently
+            - Multiple threads access files simultaneously
+            - Getting "too many open files" errors
+            
+            Decrease to save RAM on memory-constrained systems (minimum ~4).
+            
+            Note: This is system-wide limit, not per-thread.
 
     choice RT_USING_DFS_VERSION
         prompt "The version of DFS"
         default RT_USING_DFS_V1
         default RT_USING_DFS_V2 if RT_USING_SMART
+        help
+            Select DFS version for your system.
+            
+            DFS v1.0:
+            - Traditional DFS implementation
+            - Stable and well-tested
+            - Suitable for most embedded applications
+            - Lower memory overhead
+            
+            DFS v2.0:
+            - Enhanced for RT-Smart user-space applications
+            - Page cache support for better performance
+            - Memory-mapped file support (mmap)
+            - Required for RT-Smart mode
+            
+            Choose v1.0 for standard RT-Thread applications.
+            Choose v2.0 for RT-Smart with user-space processes.
 
         config RT_USING_DFS_V1
             bool "DFS v1.0"
             depends on !RT_USING_SMART
+            help
+                DFS version 1.0 - traditional implementation.
+                
+                Stable version for standard RT-Thread applications without
+                user-space process support.
 
         config RT_USING_DFS_V2
             bool "DFS v2.0"
             select RT_USING_DEVICE_OPS
+            help
+                DFS version 2.0 - enhanced for RT-Smart.
+                
+                Advanced features:
+                - Page cache for improved performance
+                - Memory-mapped files (mmap)
+                - Better integration with RT-Smart processes
+                - Enhanced POSIX compliance
+                
+                Required for RT-Smart mode.
     endchoice
 
 if RT_USING_DFS_V1
     config DFS_FILESYSTEMS_MAX
         int "The maximal number of mounted file system"
         default 4
+        help
+            Maximum number of file systems that can be mounted simultaneously.
+            
+            Default: 4 mount points
+            
+            Each mount point uses ~40-60 bytes.
+            Examples:
+            - "/" - root file system (FAT/ROM/RAM)
+            - "/sdcard" - SD card FAT
+            - "/dev" - device file system
+            - "/tmp" - temporary file system
+            
+            Increase if you need more mount points.
+            Decrease to save RAM on simple systems (minimum 1).
 
     config DFS_FILESYSTEM_TYPES_MAX
         int "The maximal number of file system type"
         default 4
+        help
+            Maximum number of different file system types registered.
+            
+            Default: 4 types
+            
+            Common file system types:
+            - elm (FAT/exFAT)
+            - romfs (Read-Only Memory FS)
+            - ramfs (RAM FS)
+            - devfs (Device FS)
+            - nfs (Network FS)
+            - tmpfs (Temporary FS)
+            
+            Each type registration uses ~20-30 bytes.
+            Set based on number of file system types you plan to use.
 endif
 
     config RT_USING_DFS_ELMFAT
         bool "Enable elm-chan fatfs"
         default n
         help
-            FatFs is a generic FAT/exFAT file system module for small embedded systems.
+            Enable elm-chan's FAT file system implementation.
+            
+            FatFs is a generic FAT/exFAT file system module designed for
+            embedded systems with limited resources.
+            
+            Supported file systems:
+            - FAT12, FAT16, FAT32
+            - exFAT (with RT_DFS_ELM_USE_EXFAT enabled)
+            
+            Features:
+            - Long File Name (LFN) support
+            - Unicode file names (UTF-8/UTF-16/UTF-32)
+            - Thread-safe operations
+            - Multiple volumes
+            
+            Use cases:
+            - SD card file storage
+            - USB flash drives
+            - Internal flash storage
+            - Data logging
+            
+            ROM overhead: ~15-25KB depending on features enabled.
+            
+            Enable for FAT-formatted storage devices.
+            Disable if not using FAT file systems.
 
     if RT_USING_DFS_ELMFAT
         menu "elm-chan's FatFs, Generic FAT Filesystem Module"
@@ -161,6 +319,29 @@ endif
     config RT_USING_DFS_DEVFS
         bool "Using devfs for device objects"
         default y
+        help
+            Enable device file system (devfs) for accessing devices as files.
+            
+            Devfs provides /dev directory containing device nodes:
+            - /dev/uart1, /dev/uart2 - Serial ports
+            - /dev/spi0, /dev/i2c0 - Bus devices
+            - /dev/sd0, /dev/sd1 - Block devices
+            - /dev/rtc - Real-time clock
+            
+            Benefits:
+            - Unified device access via open/read/write
+            - POSIX-compliant device operations
+            - Better abstraction and portability
+            - Required for many device drivers
+            
+            Essential for:
+            - Device access from user applications
+            - RT-Smart user-space processes
+            - Shell device operations
+            
+            Minimal overhead (~1-2KB ROM, ~100 bytes RAM).
+            
+            Recommended to keep enabled for device access convenience.
 
 if RT_USING_DFS_V1
     config RT_USING_DFS_ISO9660
@@ -172,6 +353,31 @@ endif
     menuconfig RT_USING_DFS_ROMFS
         bool "Enable ReadOnly file system on flash"
         default n
+        help
+            Enable ROM File System for read-only data stored in flash memory.
+            
+            ROMFS stores read-only files directly in program flash, useful for:
+            - Static web pages for web servers
+            - Configuration files
+            - Font files and graphics resources
+            - Help files and documentation
+            - Initial file system bootstrap
+            
+            Features:
+            - Very small footprint (~2-3KB)
+            - No RAM required for file data (executes from flash)
+            - Files embedded in firmware binary
+            - Fast access (no erase/write delays)
+            
+            Files included at compile time using romfs generator tool.
+            
+            Use cases:
+            - Web server static content
+            - Resource files for GUI applications
+            - Read-only configuration defaults
+            
+            Enable if you need embedded read-only files.
+            Disable to save ~2-3KB ROM if not needed.
 
     if RT_USING_DFS_ROMFS
         config RT_USING_DFS_ROMFS_USER_ROOT
@@ -194,6 +400,32 @@ endif
         bool "Enable ReadOnly compressed file system on flash"
         default n
         # select PKG_USING_ZLIB
+        help
+            Enable Compressed ROM File System for compressed read-only data.
+            
+            CROMFS is similar to ROMFS but with compression, providing:
+            - Reduced flash usage (typically 30-70% compression)
+            - Read-only access to compressed files
+            - Automatic decompression on read
+            - Files embedded in firmware binary
+            
+            Trade-offs:
+            + Saves flash space (important for large resource files)
+            - Higher CPU usage for decompression
+            - Slower file access than ROMFS
+            - Requires ZLIB for decompression
+            
+            Best for:
+            - Large resource files (fonts, graphics, web content)
+            - Flash-constrained systems
+            - Files accessed infrequently
+            
+            Not recommended for:
+            - Frequently accessed files
+            - CPU-constrained systems
+            - Files already compressed (JPEG, PNG, MP3)
+            
+            Note: Requires ZLIB package for decompression support.
 
 if RT_USING_DFS_V1
     config RT_USING_DFS_RAMFS
@@ -206,12 +438,63 @@ endif
         bool "Enable TMP file system"
         default y if RT_USING_SMART
         default n
+        help
+            Enable temporary file system (tmpfs) in RAM.
+            
+            Tmpfs provides a RAM-based file system for temporary files:
+            - Files stored entirely in RAM
+            - Very fast read/write performance
+            - Files lost on reboot/power-off
+            - Dynamic size (grows/shrinks with usage)
+            
+            Typical mount point: /tmp
+            
+            Use cases:
+            - Temporary file storage during runtime
+            - Fast cache for processed data
+            - Inter-process communication via temp files
+            - Build/compile temporary files
+            - RT-Smart /tmp directory
+            
+            Memory usage:
+            - Grows with file content
+            - Files consume RAM directly
+            
+            Automatically enabled for RT-Smart (required for POSIX /tmp).
+            
+            Enable if you need fast temporary file storage.
+            Disable to save RAM if temporary files not needed.
 
     config RT_USING_DFS_MQUEUE
         bool "Enable MQUEUE file system"
         select RT_USING_DEV_BUS
         default y if RT_USING_SMART
         default n
+        help
+            Enable POSIX message queue file system.
+            
+            Provides POSIX message queues as files in /dev/mqueue:
+            - mq_open(), mq_send(), mq_receive()
+            - Named message queues
+            - File descriptor based operations
+            - Process-safe IPC mechanism
+            
+            Features:
+            - POSIX-compliant message queue API
+            - Multiple processes can communicate
+            - Priority-based message delivery
+            - Blocking and non-blocking modes
+            
+            Use cases:
+            - Inter-process communication in RT-Smart
+            - POSIX application porting
+            - Priority message passing
+            
+            Required for RT-Smart POSIX message queues.
+            Automatically enabled in RT-Smart mode.
+            
+            Enable for POSIX message queue support.
+            Disable if not using POSIX IPC (~2-3KB ROM savings).
 
 if RT_USING_DFS_V1
     config RT_USING_DFS_NFS
