@@ -88,7 +88,7 @@ int rt_hw_cpu_id(void)
         // if not enable MMU or pvoff==0, read hartid from satp register
         rt_ubase_t hartid;
         asm volatile("csrr %0, satp" : "=r"(hartid));
-        return hartid;
+        return hartid & 0xFFFF;  // Assuming hartid fits in lower 16 bits
     }
 #endif /* RT_USING_SMP */
 }
@@ -198,7 +198,8 @@ void rt_hw_secondary_cpu_up(void)
 #else
     entry_pa = (rt_uint64_t)&_start;
 #endif /* ARCH_MM_MMU */
-
+    /* Assumes hart IDs are in range [0, RT_CPUS_NR) */
+    RT_ASSERT(boot_hartid < RT_CPUS_NR);
     for (hart = 0; hart < RT_CPUS_NR; hart++)
     {
         if (hart == boot_hartid)
@@ -217,6 +218,7 @@ void rt_hw_secondary_cpu_up(void)
 #ifdef ARCH_MM_MMU
 void rt_hw_percpu_hartid_init(rt_ubase_t *percpu_ptr, rt_ubase_t hartid)
 {
+    RT_ASSERT(hartid < RT_CPUS_NR);
     rt_ubase_t *percpu_hartid_paddr;
     rt_size_t percpu_size = (rt_size_t)((rt_ubase_t)&__percpu_end - (rt_ubase_t)&__percpu_start);
 

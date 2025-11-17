@@ -136,6 +136,24 @@ SECTIONS
         *(.scommon)
     } > SRAM
 
+    .percpu (NOLOAD) :
+    {
+        /* 2MB Align for MMU early map */
+        . = ALIGN(0x200000);
+        PROVIDE(__percpu_start = .);
+
+        *(.percpu)
+
+        /* 2MB Align for MMU early map */
+        . = ALIGN(0x200000);
+
+        PROVIDE(__percpu_end = .);
+
+        /* Clone the area */
+        . = __percpu_end + (__percpu_end - __percpu_start) * (RT_CPUS_NR - 1);
+        PROVIDE(__percpu_real_end = .);
+    } > SRAM
+    
     .bss :
     {
         *(.bss)
@@ -143,24 +161,6 @@ SECTIONS
         *(.dynbss)
         *(COMMON)
     __bss_end = .;
-    } > SRAM
-
-    .percpu (NOLOAD) :
-    {
-        /* Align for MMU early map */
-        . = ALIGN(1<<(12+9));
-        PROVIDE(__percpu_start = .);
-
-        *(.percpu)
-
-        /* Align for MMU early map */
-       . = ALIGN(1<<(12+9));
-
-        PROVIDE(__percpu_end = .);
-
-        /* Clone the area */
-        . = __percpu_end + (__percpu_end - __percpu_start) * (RT_CPUS_NR - 1);
-        PROVIDE(__percpu_real_end = .);
     } > SRAM
 
     _end = .;

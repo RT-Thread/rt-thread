@@ -38,7 +38,7 @@
 
 static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr);
 
-// Define the structure of early page table
+/* Define the structure of early page table */
 struct page_table
 {
     unsigned long page[ARCH_PAGE_SIZE / sizeof(unsigned long)];
@@ -120,7 +120,7 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
     l1_off = GET_L1((size_t)va);
     l2_off = GET_L2((size_t)va);
     l3_off = GET_L3((size_t)va);
-    // create map for each hart
+    /* Create a separate page table for each hart to facilitate access to the .percpu section. */
     for (int hartid = 0; hartid < RT_CPUS_NR; hartid++)
     {
         mmu_l1 = (rt_ubase_t *)((rt_ubase_t)aspace->page_table + (rt_ubase_t)(hartid * ARCH_PAGE_SIZE)) + l1_off;
@@ -345,11 +345,12 @@ void set_free_page(void *page_array)
 // Early-stage page allocator
 unsigned long get_free_page(void)
 {
-    static unsigned long page_off = 0UL;
+    static rt_atomic_t page_off = 0;
 
-    if (page_off < ARCH_PAGE_SIZE / sizeof(unsigned long))
+    rt_atomic_t old_off = rt_hw_atomic_add(&page_off, 1);
+    if (old_off < ARCH_PAGE_SIZE / sizeof(unsigned long))
     {
-        return (unsigned long)(__init_page_array[page_off++].page);
+        return (unsigned long)(__init_page_array[old_off].page);
     }
 
     return 0;
@@ -860,10 +861,6 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
 
 #define SATP_BASE ((rt_ubase_t)SATP_MODE << SATP_MODE_OFFSET)
 
-extern unsigned int __bss_end;
-#if defined(RT_USING_SMP) && defined(ARCH_MM_MMU)
-extern unsigned int __percpu_real_end;
-#endif
 /**
  * @brief Early memory setup function for hardware initialization.
  *

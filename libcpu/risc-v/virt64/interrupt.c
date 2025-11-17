@@ -226,13 +226,13 @@ void rt_hw_ipi_handler(void)
         ipi_vector &= ~(1 << bitpos);
         if (bitpos < RT_MAX_IPI && ipi_desc[bitpos].handler != RT_NULL)
         {
+            rt_hw_atomic_and((volatile rt_atomic_t *)&ipi_vectors[rt_cpu_get_id()], ~((rt_atomic_t)(1 << bitpos)));
             /* call the irq service routine */
             ipi_desc[bitpos].handler(bitpos, ipi_desc[bitpos].param);
         }
     }
-    ipi_vectors[rt_cpu_get_id()] = 0;
 
-    // clear software interrupt pending bit
+    // TODO: Clear the software interrupt pending bit in CLINT
     clear_csr(sip, SIP_SSIP);
 }
 #endif /* RT_USING_SMP */

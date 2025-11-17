@@ -27,8 +27,9 @@ fi
 QEMU_CMD="qemu-system-riscv64 -nographic -machine virt -m 256M -kernel rtthread.bin"
 
 if grep -q "#define RT_USING_SMP" ./rtconfig.h 2>/dev/null; then
-    hart_num=$(grep "RT_CPUS_NR = [0-9]*;" ./link_cpus.lds | awk -F'[=;]' '{gsub(/ /, "", $2); print $2}')
-    if [ -z "$hart_num" ]; then
+    hart_num=$(grep "RT_CPUS_NR = [0-9]*;" ./link_cpus.lds 2>/dev/null | awk -F'[=;]' '{gsub(/ /, "", $2); print $2}')
+    if [ -z "$hart_num" ] || [ "$hart_num" -lt 1 ]; then
+        echo "Warning: Invalid or missing RT_CPUS_NR, defaulting to 1"
         hart_num=1
     fi
     QEMU_CMD="$QEMU_CMD -smp $hart_num"
