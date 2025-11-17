@@ -34,7 +34,7 @@ _start:
     la t0, boot_hartid                /* global varible rt_boot_hartid */
 #ifdef RT_USING_SMP
     lw   t2, (t0)
-    li   t3, 0xdeadbeef
+    li   t3, 0xdeadbeef               /* Sentinel value indicating uninitialized boot_hartid */
     li   t4, 0xffffffff
     and  t2, t2, t4                   /* Extract the lower 32 bits. */
     bne  t2, t3, system_init          /* If the current value is 0xdeadbeef, skip the boot_hartid assignment operation. */
@@ -46,9 +46,14 @@ _start:
 system_init:
 #endif
 
-    /* If ARCH_MM_MMU is not enabled or pvoff==0, save the hartid in the satp register;
-     * otherwise, save it in percpu_hartid.
-    */
+    /*
+     * When ARCH_MM_MMU is not enabled or pvoff==0:
+     * Store hartid temporarily in the satp register because:
+     * 1. satp is not used for address translation when MMU is disabled or pvoff==0.
+     * 2. This value will be moved to percpu_hartid once MMU is initialized.
+     * This approach avoids using extra memory or registers during the critical boot phase,
+     * but developers should be aware that satp is overloaded for this purpose until MMU setup.
+     */
     csrw satp, a0
 
     /* clear Interrupt Registers */
@@ -134,7 +139,7 @@ system_init:
     call init_bss
 early_secondary_cpu_entry:
 #ifdef ARCH_MM_MMU
-    // Pages need to be managed manually in the early stage.
+    // Manually manage pages in the early stage
     la      a0, .early_page_array
     call    set_free_page
 
@@ -206,12 +211,14 @@ _start_link_addr:
     .dword __text_start
 
 #ifdef ARCH_MM_MMU
+#ifdef RT_USING_SMP
 /*
  * CPU stack builtin
  */
     .section ".percpu"
 .percpu_hartid:
     .space 16
+#endif
 
     .section ".bss"
 

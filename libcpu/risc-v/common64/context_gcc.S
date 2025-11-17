@@ -82,10 +82,7 @@ rt_hw_context_switch_to:
     LOAD sp, (a0)
 
 #ifdef RT_USING_SMP
-    /*
-     * Pass the previous CPU lock status to 
-     * rt_cpus_lock_status_restore for restoration 
-     */ 
+    /* Pass the previous CPU lock status to rt_cpus_lock_status_restore for restoration */
     mv   a0,   a1
     call  rt_cpus_lock_status_restore
 #endif
@@ -125,10 +122,7 @@ rt_hw_context_switch:
     LOAD sp, (a1)
 
 #ifdef RT_USING_SMP
-    /*
-     * Pass the previous CPU lock status to 
-     * rt_cpus_lock_status_restore for restoration 
-     */ 
+    /* Pass the previous CPU lock status to rt_cpus_lock_status_restore for restoration */
     mv   a0,   a2
     call  rt_cpus_lock_status_restore
 #endif /*RT_USING_SMP*/
