@@ -4,6 +4,33 @@ menuconfig RT_USING_PIC
     select RT_USING_ADT_BITMAP
     depends on RT_USING_DM
     default n
+    help
+        Enable Platform Interrupt Controller (PIC) framework.
+        
+        PIC provides unified interrupt controller abstraction for:
+        - ARM GIC (Generic Interrupt Controller) v1/v2/v3
+        - Platform-specific interrupt controllers
+        - MSI/MSI-X (Message Signaled Interrupts)
+        - Interrupt hierarchy and cascading
+        
+        Features:
+        - Device model integration
+        - Device tree support (OFW)
+        - Multiple interrupt controller support
+        - Interrupt routing and affinity
+        - Statistics and profiling
+        
+        Use cases:
+        - ARM Cortex-A systems with GIC
+        - SMP systems requiring interrupt affinity
+        - Systems using device tree
+        - Complex interrupt hierarchies
+        
+        Requires:
+        - RT_USING_DM (Device Model)
+        - Abstract Data Types (ADT) support
+        
+        Enable for advanced interrupt management with GIC or complex IRQ routing.
 
 config RT_USING_PIC_STATISTICS
     bool "Enable ISR execution time statistics"
@@ -11,35 +38,153 @@ config RT_USING_PIC_STATISTICS
     depends on RT_USING_KTIME
     depends on RT_USING_INTERRUPT_INFO
     default n
+    help
+        Enable interrupt service routine (ISR) execution time tracking.
+        
+        Provides statistics for each interrupt:
+        - Total execution time
+        - Minimum/maximum execution time
+        - Average execution time
+        - Interrupt count
+        
+        Benefits:
+        - Performance profiling
+        - Identify slow interrupt handlers
+        - Optimize ISR performance
+        - Debug interrupt latency issues
+        
+        Requirements:
+        - KTIME for high-resolution timing
+        - RT_USING_INTERRUPT_INFO for interrupt tracking
+        
+        Overhead:
+        - Minimal per-interrupt timing overhead
+        - Memory for statistics (~40 bytes per IRQ)
+        
+        Enable for interrupt performance analysis.
+        Disable in production to save memory and overhead.
 
 config MAX_HANDLERS
     int "IRQ max handlers"
     depends on RT_USING_PIC
     range 1 4294967294
     default 256
+    help
+        Maximum number of interrupt handlers supported by PIC.
+        
+        Default: 256 handlers
+        
+        This limits the total number of IRQ lines the system can handle.
+        
+        Typical values:
+        - Small systems: 64-128 IRQs
+        - Medium systems: 256-512 IRQs
+        - Large systems: 512-1024 IRQs
+        
+        Memory usage: ~16-32 bytes per handler slot
+        
+        Set based on your SoC's interrupt controller capabilities.
+        Check GIC documentation for maximum SPIs (Shared Peripheral Interrupts).
 
 config RT_PIC_ARM_GIC
     bool "ARM GICv2/v1"
     depends on RT_USING_PIC
     select RT_USING_OFW
     default n
+    help
+        Enable ARM Generic Interrupt Controller version 1/2 (GICv1/GICv2).
+        
+        GICv2 features:
+        - Up to 1020 interrupt sources
+        - Support for SGIs (Software Generated Interrupts)
+        - Support for PPIs (Private Peripheral Interrupts)
+        - Support for SPIs (Shared Peripheral Interrupts)
+        - CPU interfaces for each core
+        - Distributor for routing interrupts
+        
+        Used in:
+        - ARM Cortex-A5/A7/A8/A9/A15/A17
+        - Many ARM-based SoCs
+        
+        Requires device tree (OFW) for configuration.
+        
+        Enable for ARM Cortex-A systems with GICv2.
 
 config RT_PIC_ARM_GIC_V2M
     bool "ARM GIC V2M" if RT_PIC_ARM_GIC && RT_PCI_MSI
     depends on RT_USING_OFW
     default n
+    help
+        Enable GICv2m MSI (Message Signaled Interrupts) support.
+        
+        GICv2m provides:
+        - MSI support for GICv2 (which lacks native MSI)
+        - PCIe device interrupt handling
+        - Doorbell-style interrupt delivery
+        
+        Allows PCIe devices to use MSI with GICv2.
+        
+        Requirements:
+        - RT_PIC_ARM_GIC enabled
+        - RT_PCI_MSI for PCI MSI support
+        - Device tree configuration
+        
+        Enable for PCIe systems with GICv2 requiring MSI support.
 
 config RT_PIC_ARM_GIC_V3
     bool "ARM GICv3"
     depends on RT_USING_PIC
     select RT_USING_OFW
     default n
+    help
+        Enable ARM Generic Interrupt Controller version 3 (GICv3).
+        
+        GICv3 enhancements over GICv2:
+        - Better scalability (supports more cores)
+        - System register access (no memory-mapped CPU interface)
+        - Affinity routing for flexible interrupt routing
+        - Locality-specific peripheral interrupts (LPI)
+        - ITS (Interrupt Translation Service) for MSI
+        - Support for GICv4 virtualization extensions
+        
+        Used in:
+        - ARM Cortex-A53/A55/A57/A72/A73/A76
+        - ARMv8 and ARMv9 systems
+        - Modern ARM SoCs
+        
+        Requires device tree (OFW) for configuration.
+        
+        Enable for ARM Cortex-A systems with GICv3.
 
 config RT_PIC_ARM_GIC_V3_ITS
     bool "ARM GICv3 ITS (Interrupt Translation Service)" if RT_PIC_ARM_GIC_V3 && RT_PCI_MSI
     depends on RT_USING_OFW
     select RT_USING_ADT_REF
     default n
+    help
+        Enable GICv3 ITS for MSI/MSI-X support.
+        
+        ITS (Interrupt Translation Service) provides:
+        - Native MSI support for PCIe and other devices
+        - LPI (Locality-specific Peripheral Interrupts) management
+        - Efficient interrupt routing for thousands of devices
+        - Scalable to large systems
+        
+        Features:
+        - Translates MSI writes to LPIs
+        - Device and interrupt ID management
+        - Interrupt collection for CPU targeting
+        
+        Required for:
+        - PCIe MSI/MSI-X on GICv3
+        - Large-scale systems with many devices
+        - Modern ARM servers and complex SoCs
+        
+        Memory overhead:
+        - ITS tables for device/interrupt mapping
+        - LPI configuration tables
+        
+        Enable for GICv3 systems with PCIe requiring MSI support.
 
 config RT_PIC_ARM_GIC_V3_ITS_IRQ_MAX
     int "IRQ maximum used"
@@ -47,7 +192,23 @@ config RT_PIC_ARM_GIC_V3_ITS_IRQ_MAX
     default 127 if ARCH_CPU_64BIT
     default 63
     help
-      Recommended to be based on the bit length (full bits) of maximum usage.
+        Maximum number of ITS-managed LPIs (Locality-specific Peripheral Interrupts).
+        
+        Recommended to be based on the bit length (full bits) of maximum usage.
+        
+        Default values:
+        - 64-bit systems: 127 (uses 7 bits)
+        - 32-bit systems: 63 (uses 6 bits)
+        
+        LPI IDs typically start from 8192 and can go very high.
+        This setting affects ITS table allocation.
+        
+        Increase for:
+        - Systems with many PCIe devices
+        - MSI-X devices using multiple vectors
+        
+        Each LPI uses memory in ITS configuration tables.
+        Set based on actual device count to balance memory usage.
 
 config RT_PIC_ARM_GIC_MAX_NR
     int
@@ -55,6 +216,14 @@ config RT_PIC_ARM_GIC_MAX_NR
     depends on RT_PIC_ARM_GIC
     default 2 if SOC_REALVIEW
     default 1
+    help
+        Maximum number of GIC instances in the system.
+        
+        Most systems have 1 GIC.
+        Some systems may have cascaded GICs or multiple interrupt controllers.
+        
+        Automatically configured based on SoC type.
+        Users typically don't need to modify this.
 
 if RT_USING_PIC
     osource "$(SOC_DM_PIC_DIR)/Kconfig"
