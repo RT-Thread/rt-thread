@@ -6,6 +6,39 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-12     luckyzjq     the first version
+ * 2025-11-17     Ze-Hou       add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Timer Test
+ *
+ * Test Objectives:
+ * - Validate the RT-Thread kernel timer (rt_timer) functionality
+ * - Test static and dynamic timer creation, initialization, start, stop, delete,
+ *   detach, and control APIs
+ * - Verify one-shot and periodic timer behaviors, including hard and soft timer modes
+ *
+ * Test Scenarios:
+ * - Initialize and start static timers in one-shot and periodic modes, with various flag combinations
+ * - Start a timer twice before it expires to verify restart behavior
+ * - Use timer control APIs to set and get timer period, and verify correct timing
+ * - Start and stop timers within their callback functions to test reentrancy and robustness
+ * - Create, start, stop, and delete dynamic timers, verifying correct operation and resource management
+ * - Perform stress testing by rapidly starting and stopping a large number of timers concurrently
+ *
+ * Verification Metrics:
+ * - All uassert assertions pass without failure
+ * - Timers are created, started, stopped, detached, and deleted successfully
+ * - Timer callbacks are invoked at the expected tick count
+ * - Timer restart and control operations behave as expected
+ *
+ * Dependencies:
+ * - Enable Timer Test (RT-Thread Utestcases -> Kernel Core -> Timer Test)
+ * - Test on any RT-Thread supported platform (e.g., qemu-virt64-riscv)
+ *
+ * Expected Results:
+ * - After executing this test in msh, the expected output should be:
+ *   "[  PASSED  ] [ result   ] testcase (core.timer)"
  */
 
 #include <rtthread.h>
