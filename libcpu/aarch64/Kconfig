@@ -2,24 +2,162 @@ menu "AArch64 Architecture Configuration"
     config ARCH_TEXT_OFFSET
         hex "Text offset"
         default 0x200000
+        help
+            Offset of kernel text section from start of RAM.
+            
+            Defines where the kernel code (.text section) is located relative to
+            the beginning of physical RAM. This space before the kernel is typically
+            reserved for:
+            - Bootloader and device tree blob (DTB)
+            - Initial page tables
+            - Boot-time data structures
+            
+            Default 0x200000 (2MB):
+            - Provides 2MB for bootloader and DTB
+            - Aligns with common ARM64 configurations
+            - Compatible with 2MB page granularity
+            
+            Only change if you have specific bootloader requirements or memory layout.
+
     config ARCH_RAM_OFFSET
         hex "RAM offset"
         default 0
+        help
+            Physical address offset of the RAM start.
+            
+            Defines the starting physical address of system RAM. On many systems,
+            RAM doesn't start at address 0x0.
+            
+            Common values:
+            - 0x00000000: RAM starts at address 0 (some SoCs)
+            - 0x40000000: Common for many ARM SoCs
+            - 0x80000000: Some development boards
+            
+            This must match your hardware memory map. Check your SoC datasheet
+            or bootloader configuration.
+            
+            Default 0 means RAM starts at physical address 0x0.
+
     config ARCH_SECONDARY_CPU_STACK_SIZE
         int "Secondary CPU stack size"
         default 4096
+        help
+            Stack size for secondary CPU cores in multi-core (SMP) systems.
+            
+            Each secondary CPU core (CPU1, CPU2, etc.) needs its own stack for
+            initialization and exception handling before the scheduler starts.
+            
+            Default 4096 bytes (4KB):
+            - Sufficient for standard initialization
+            - Handles nested exceptions during boot
+            
+            Increase if:
+            - Experiencing secondary CPU boot failures
+            - Complex initialization routines
+            - Deep call chains during CPU startup
+            
+            Total memory used: (Number of secondary cores) × stack size
+            
+            Note: After scheduler starts, each thread has its own stack.
+
     config ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
         bool
         default y
+        help
+            ARMv8 supports efficient unaligned memory access.
+            
+            ARMv8 architecture can access unaligned memory addresses (addresses not
+            aligned to word boundaries) without performance penalty or exceptions.
+            
+            Benefits:
+            - Simpler code (no manual alignment required)
+            - Network packet processing (headers often unaligned)
+            - Reduced padding in data structures
+            
+            This is automatically enabled for ARMv8 - no configuration needed.
+            
+            Note: Some embedded systems may disable this for deterministic timing
+            or to catch alignment bugs, but ARMv8 handles it efficiently in hardware.
+
     config ARCH_USING_GENERIC_CPUID
         bool "Using generic cpuid implemenation"
         select ARCH_USING_HW_THREAD_SELF
         default y if RT_USING_OFW
         default n
+        help
+            Use generic CPU identification implementation for multi-core systems.
+            
+            Provides standardized method to identify which CPU core is currently
+            executing, essential for SMP (Symmetric Multi-Processing).
+            
+            When enabled:
+            - Reads MPIDR_EL1 register for CPU ID
+            - Maps hardware CPU IDs to logical CPU numbers
+            - Enables proper per-CPU data structures
+            
+            Required for:
+            - SMP systems with multiple cores
+            - Per-CPU statistics and profiling
+            - CPU affinity and core-specific operations
+            
+            Automatically enabled when using OpenFirmware/Device Tree (RT_USING_OFW).
+            
+            Enable if you have multi-core ARMv8 system. Disable for single-core
+            to save minimal overhead.
+
     config ARCH_HEAP_SIZE
         hex "Size of system heap"
         default 0x4000000
+        help
+            Size of system heap for dynamic memory allocation.
+            
+            Defines the amount of memory available for rt_malloc() and related
+            dynamic allocation functions.
+            
+            Default 0x4000000 (64MB):
+            - Suitable for application-class systems with RT-Smart
+            - Supports moderate number of dynamic allocations
+            
+            Adjust based on:
+            - Available RAM in your system
+            - Application memory requirements
+            - Static vs dynamic allocation strategy
+            
+            Smaller values for resource-constrained systems.
+            Larger values for systems with abundant RAM and heavy dynamic allocation.
+            
+            Note: Actual available memory depends on total RAM size.
+            
+            Example configurations:
+            - 128MB RAM system: 0x4000000 (64MB) or less
+            - 256MB RAM system: 0x8000000 (128MB) or more
+            - 1GB+ RAM system: 0x20000000 (512MB) or more
+
     config ARCH_INIT_PAGE_SIZE
         hex "Size of init page region"
         default 0x200000
+        help
+            Size of initial page table region for early boot.
+            
+            Reserves memory for page tables used during system initialization
+            before the full memory management is set up.
+            
+            Default 0x200000 (2MB):
+            - Sufficient for initial kernel mappings
+            - Covers typical early boot requirements
+            - Aligns with 2MB page granularity
+            
+            This memory is used for:
+            - Initial MMU page table entries
+            - Early kernel virtual memory mappings
+            - Temporary boot-time allocations
+            
+            Increase if:
+            - Experiencing boot failures related to page tables
+            - Large kernel image
+            - Extensive early I/O mappings
+            
+            Decrease for memory-constrained systems (minimum ~1MB).
+            
+            Note: After full MM initialization, regular page allocation takes over.
 endmenu
