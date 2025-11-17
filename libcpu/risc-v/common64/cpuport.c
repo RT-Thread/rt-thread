@@ -90,8 +90,6 @@ int rt_hw_cpu_id(void)
         asm volatile("csrr %0, satp" : "=r"(hartid));
         return hartid;
     }
-    
-
 #endif /* RT_USING_SMP */
 }
 
@@ -221,13 +219,12 @@ void rt_hw_percpu_hartid_init(rt_ubase_t *percpu_ptr, rt_ubase_t hartid)
 {
     rt_ubase_t *percpu_hartid_paddr;
     rt_size_t percpu_size = (rt_size_t)((rt_ubase_t)&__percpu_end - (rt_ubase_t)&__percpu_start);
-    
+
     percpu_hartid = percpu_ptr;
 
     // from virtual address to physical address
     percpu_ptr = (rt_ubase_t *)((rt_ubase_t)percpu_ptr + (rt_ubase_t)rt_kmem_pvoff());
     percpu_hartid_paddr = percpu_ptr;
-    
 
     /* Save to the real area */
     *(rt_ubase_t *)((void *)percpu_hartid_paddr + hartid * percpu_size) = hartid;
@@ -236,7 +233,7 @@ void rt_hw_percpu_hartid_init(rt_ubase_t *percpu_ptr, rt_ubase_t hartid)
 
 void secondary_cpu_entry(void)
 {
-    
+
 #ifdef RT_USING_SMART
     /* switch to kernel address space */
     rt_hw_aspace_switch(&rt_kernel_space);

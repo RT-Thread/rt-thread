@@ -180,7 +180,7 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
         *(mmu_l3 + l3_off) = COMBINEPTE((rt_ubase_t)pa, attr);
         rt_hw_cpu_dcache_clean(mmu_l3 + l3_off, sizeof(*(mmu_l3 + l3_off)));
     }
-    
+
     return 0;
 }
 
@@ -951,7 +951,7 @@ void rt_hw_mem_setup_early(void *pgtbl, rt_uint64_t hartid)
             ps += L2_PAGE_SIZE;
             vs += L2_PAGE_SIZE;
         }
-#endif 
+#endif
         /* apply new mapping */
         asm volatile("sfence.vma x0, x0");
         write_csr(satp, SATP_BASE | ((size_t)early_pgtbl >> PAGE_OFFSET_BIT));
