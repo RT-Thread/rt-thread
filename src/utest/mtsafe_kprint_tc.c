@@ -25,7 +25,7 @@
  * - Console output is not garbled or corrupted
  *
  * Dependencies:
- * - Enable Thread-Safe kprint Test (RT-Thread Utestcases -> Kernel Core -> MT-Safe Kprint Test)
+ * - Enable MT-Safe kprint Test (RT-Thread Utestcases -> Kernel Core -> MT-Safe Kprint Test)
  * - RT_USING_THREADSAFE_PRINTF must be enabled (RT-Thread Kernel -> Enable thread safe kernel print service)
  * - Note: This test (and thread-safe kprintf) increases scheduler load. The idle thread stack
  * - size (RT-Thread Kernel -> The stack size of idle thread) may need to be increased for this test
