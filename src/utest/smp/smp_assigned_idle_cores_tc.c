@@ -21,24 +21,21 @@
 
 #define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
 #define THREAD_PRIORITY   20
-static rt_thread_t threads[RT_CPUS_NR];
-static int         tick = 0, finsh_flag = 0;
+static rt_thread_t threads[RT_CPUS_NR - 1];
+static int         tick = 0, finish_flag = 0;
 static int                num        = 0;
 /* thread entry function */
 static void thread_entry(void *parameter)
 {
+    int value = *(int *)parameter;
     while (1)
     {
         tick++;
-        if (tick == 100)
+        if (tick >= 100 && (finish_flag & (1 << value)) == 0)
         {
-            /* Output the current core running threads */
-            extern long list_thread(void);
-            list_thread();
-            finsh_flag = 0xA55A;
+            rt_atomic_or((volatile rt_atomic_t *)&finish_flag, (1 << value));
             uassert_true(1);
         }
-        rt_thread_delay(5);
     }
 }
 
@@ -54,8 +51,8 @@ static void thread_on_idle_core_tc(void)
         params[i] = i;
     }
 
-    /* Create RT_CPUS_NR threads and pass the entry parameters for each thread */
-    for (i = 0; i < RT_CPUS_NR; i++)
+    /* Create RT_CPUS_NR-1 threads and pass the entry parameters for each thread */
+    for (i = 0; i < RT_CPUS_NR - 1; i++)
     {
         rt_snprintf(thread_name, sizeof(thread_name), "T%d", i);
         threads[i] = rt_thread_create(thread_name, thread_entry, &params[i], THREAD_STACK_SIZE, THREAD_PRIORITY, 20);
@@ -66,18 +63,23 @@ static void thread_on_idle_core_tc(void)
         }
     }
     /* Waiting for test cases to finish */
-    while (finsh_flag != 0xA55A);
+    while (finish_flag != (1<<(RT_CPUS_NR-1))-1);
+    /* Output the current core running threads */
+    extern long list_thread(void);
+    list_thread();
 }
 
 static rt_err_t utest_tc_init(void)
 {
+    finish_flag = 0;
+    tick = 0;
     rt_kprintf("[Test case]: created threads are automatically assigned to run on idle cores\r\n");
     return RT_EOK;
 }
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    for (num = 0; num < RT_CPUS_NR; num++)
+    for (num = 0; num < RT_CPUS_NR - 1; num++)
     {
         rt_thread_delete(threads[num]);
     }
@@ -89,3 +91,4 @@ static void testcase(void)
     UTEST_UNIT_RUN(thread_on_idle_core_tc);
 }
 UTEST_TC_EXPORT(testcase, "core.smp_assigned_idle_cores", utest_tc_init, utest_tc_cleanup, 10);
+
