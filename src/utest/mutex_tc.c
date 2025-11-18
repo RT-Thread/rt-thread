@@ -8,6 +8,37 @@
  * 2021-09.01     luckyzjq     the first version
  * 2023-09-15     xqyjlj       change stack size in cpu64
  */
+
+/**
+ * Test Case Name: RT-Thread Mutex Functional and Scheduling Validation
+ * Test Objectives:
+ * - Verify correctness of static and dynamic mutex operations
+ * - Validate priority inheritance, recursive locking, timeout handling, and error cases
+ * - Test core mutex APIs: rt_mutex_init/detach, rt_mutex_create/delete,
+ *   rt_mutex_take/trytake/release, and related thread scheduling functions
+ * Test Scenarios:
+ * - Mutex acquisition under contention with multi-thread scheduling
+ * - Try-take on locked mutex, timeout-based take, recursive take sequence
+ * - Priority inheritance when high-priority threads are blocked by lower-priority holders
+ * - Behavior differences between static and dynamic mutexes
+ * - Mutex release error handling, invalid release, and cleanup
+ * Verification Metrics:
+ * - Correct return codes for all mutex operations (RT_EOK, timeouts, error states)
+ * - Proper priority inheritance and restoration during contention
+ * - Expected thread wake-up and state transition behavior
+ * - Successful thread synchronization via _sync_flag
+ * Dependencies:
+ * - RT-Thread kernel with IPC and mutex support enabled
+ * - Heap availability when testing dynamic mutex creation
+ * - Scheduler operating normally with multi-thread preemption
+ * - Accurate system tick for timeout and delay validation
+ * Expected Results:
+ * - All mutex APIs behave according to RT-Thread specifications
+ * - Static and dynamic mutex tests complete successfully
+ * - Priority inversion resolved via priority inheritance
+ * - Console/log output indicates all UTEST cases pass
+ */
+
 #define __RT_IPC_SOURCE__
 
 #include <rtthread.h>
