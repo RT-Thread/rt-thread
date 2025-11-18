@@ -55,14 +55,15 @@ static void test_thread(void)
 
 /**
  * @brief Test case initialization function.
+ * @return RT_EOK on success.
  */
-
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
 }
 /**
  * @brief Test case cleanup function.
+ * @return RT_EOK on success.
  */
 static rt_err_t utest_tc_cleanup(void)
 {
