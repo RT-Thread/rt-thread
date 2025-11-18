@@ -24,7 +24,7 @@
 static int run_num = 10;
 #define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
 #define THREAD_PRIORITY   2
-#define LOW_PRIORITY  50
+#define LOW_PRIORITY  30
 #define THIGH_PRIORITY  10
 static rt_thread_t        threads[RT_CPUS_NR];
 static rt_thread_t        temp_thread;
