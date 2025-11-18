@@ -28,7 +28,7 @@
  * - Enable MT-Safe kprint Test (RT-Thread Utestcases -> Kernel Core -> MT-Safe Kprint Test)
  * - RT_USING_THREADSAFE_PRINTF must be enabled (RT-Thread Kernel -> Enable thread safe kernel print service)
  * - Note: This test (and MT-safe kprint) increases scheduler load. The idle thread stack
- * - size (RT-Thread Kernel -> The stack size of idle thread) may need to be increased for this test
+ *   size (RT-Thread Kernel -> The stack size of idle thread) may need to be increased for this test
  * - Test on any RT-Thread supported platform
  *
  * Expected Results:
