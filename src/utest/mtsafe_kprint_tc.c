@@ -17,7 +17,7 @@
  *
  * Test Scenarios:
  * - mtsafe_kprint_tc: Creates 16 concurrent threads, each calling rt_kprintf in a loop to stress test for
- * - race conditions and corruptions
+ *   race conditions and corruptions
  *
  * Verification Metrics:
  * - All 16 threads run to completion (verified by semaphore)
