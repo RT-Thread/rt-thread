@@ -16,9 +16,9 @@
  *
  * Test Objectives:
  * - Validate the functional correctness of the following RT-Thread core atomic operations:
- * - rt_atomic_add, rt_atomic_sub, rt_atomic_or, rt_atomic_xor, rt_atomic_and, rt_atomic_exchange,
- * - rt_atomic_flag_test_and_set, rt_atomic_flag_clear, rt_atomic_load, rt_atomic_store,
- * - rt_atomic_compare_exchange_strong
+ *   rt_atomic_add, rt_atomic_sub, rt_atomic_or, rt_atomic_xor, rt_atomic_and, rt_atomic_exchange,
+ *   rt_atomic_flag_test_and_set, rt_atomic_flag_clear, rt_atomic_load, rt_atomic_store,
+ *   rt_atomic_compare_exchange_strong
  * - Verify the thread-safety of rt_atomic_add under multi-threaded contention
  *
  * Test Scenarios:
