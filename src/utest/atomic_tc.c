@@ -33,7 +33,7 @@
  * - Enable Atomic Test (RT-Thread Utestcases -> Kernel Core -> Atomic Test)
  * - Test on any RT-Thread supported platform
  *
- * Expected Results
+ * Expected Results:
  * - After executing this test in msh, the expected output should be:
  * "[  PASSED  ] [ result   ] testcase (core.atomic)"
  */
