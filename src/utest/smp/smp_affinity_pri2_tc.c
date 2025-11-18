@@ -99,7 +99,7 @@ static void smp_affinity_pri2_tc(void)
         if (threads[i] != RT_NULL)
         {
             uassert_true(1);
-            rt_thread_control(threads[i], RT_THREAD_CTRL_BIND_CPU, (void *)i);
+            rt_thread_control(threads[i], RT_THREAD_CTRL_BIND_CPU, (void *)(rt_ubase_t)i);
             rt_thread_startup(threads[i]);
         }
     }
