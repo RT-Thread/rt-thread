@@ -158,7 +158,7 @@ static void test_atomic_basic_int64(void)
 
     val.fetch_and(14);
     uassert_int_equal(val.load(), 10);
-    
+
     val.fetch_or(11); /* 1010 */
     uassert_int_equal(val.load(), 11);
 
@@ -239,13 +239,19 @@ static void test_compare_exchange_weak(void)
     }
     uassert_int_equal(val.load(), 2);
 }
-/* Test case initialization function. */
+/**
+ * @brief Test case initialization function.
+ * @return RT_EOK on success.
+ */
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
 }
 
-/* Test case cleanup function.*/
+/**
+ * @brief Test case cleanup function.
+ * @return RT_EOK on success.
+ */
 static rt_err_t utest_tc_cleanup(void)
 {
     return RT_EOK;
