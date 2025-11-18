@@ -399,10 +399,9 @@ void rt_object_init(struct rt_object         *object,
         if(obj_name_len > RT_NAME_MAX - 1)
         {
             LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
-            obj_name_len = RT_NAME_MAX - 1;
         }
-        rt_memcpy(object->name, name, obj_name_len);
-        object->name[obj_name_len] = '\0';
+        rt_strncpy(object->name, name, RT_NAME_MAX - 1);
+        object->name[RT_NAME_MAX - 1] = '\0';
     }
     else
     {
@@ -515,10 +514,9 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
         if(obj_name_len > RT_NAME_MAX - 1)
         {
             LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
-            obj_name_len = RT_NAME_MAX - 1;
         }
-        rt_memcpy(object->name, name, obj_name_len);
-        object->name[obj_name_len] = '\0';
+        rt_strncpy(object->name, name, RT_NAME_MAX - 1);
+        object->name[RT_NAME_MAX - 1] = '\0';
     }
     else
     {
