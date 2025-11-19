@@ -555,7 +555,7 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
         rt_set_errno(EINVAL);
         return -1;
     }
-    unsigned long ns = rqtp->tv_sec * NANOSECOND_PER_SECOND + rqtp->tv_nsec;
+    rt_uint64_t ns = (rt_uint64_t)rqtp->tv_sec * NANOSECOND_PER_SECOND + rqtp->tv_nsec;
     rt_ktime_boottime_get_ns(&old_ts);
     rt_ktime_hrtimer_ndelay(&timer, ns);
     if (rt_get_errno() == RT_EINTR)
@@ -615,7 +615,7 @@ int clock_getres(clockid_t clockid, struct timespec *res)
         case CLOCK_PROCESS_CPUTIME_ID:
         case CLOCK_THREAD_CPUTIME_ID:
             res->tv_sec  = 0;
-            res->tv_nsec = (rt_ktime_cputimer_getres() / RT_KTIME_RESMUL);
+            res->tv_nsec = (rt_uint32_t)(NANOSECOND_PER_SECOND / rt_ktime_cputimer_getfrq());
             return 0;
 
         default:
@@ -805,7 +805,7 @@ struct timer_obj
     union sigval val;
     struct timespec interval;              /* Reload value */
     struct timespec value;                 /* Reload value */
-    unsigned long reload;                    /* Reload value in ms */
+    rt_tick_t reload;                    /* Reload value in ms */
     rt_uint32_t status;
     int sigev_signo;
     clockid_t clockid;
@@ -887,6 +887,7 @@ int timer_list_free(rt_list_t *timer_list)
 static void rtthread_timer_wrapper(void *timerobj)
 {
     struct timer_obj *timer;
+    rt_uint64_t ns;
 
     timer = (struct timer_obj *)timerobj;
 
@@ -895,8 +896,8 @@ static void rtthread_timer_wrapper(void *timerobj)
         timer->status = NOT_ACTIVE;
     }
 
-    timer->reload = ((timer->interval.tv_sec * NANOSECOND_PER_SECOND + timer->interval.tv_nsec) * RT_KTIME_RESMUL) /
-                    rt_ktime_cputimer_getres();
+    ns = timer->interval.tv_sec * NANOSECOND_PER_SECOND + timer->interval.tv_nsec;
+    timer->reload = (rt_tick_t)rt_muldiv_u64(ns, rt_ktime_cputimer_getfrq(), NANOSECOND_PER_SECOND, NULL);
     if (timer->reload)
     {
         rt_ktime_hrtimer_start(&timer->hrtimer, timer->reload);
@@ -1115,7 +1116,6 @@ int timer_getoverrun(timer_t timerid)
 int timer_gettime(timer_t timerid, struct itimerspec *its)
 {
     struct timer_obj *timer;
-    rt_uint32_t seconds, nanoseconds;
 
     timer = _g_timerid[(rt_ubase_t)timerid];
 
@@ -1133,13 +1133,13 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
 
     if (timer->status == ACTIVE)
     {
-        unsigned long remain_cnt;
+        rt_tick_t remain_cnt;
+        rt_tick_t remain_relative_cnt;
+        const rt_uint32_t freq = rt_ktime_cputimer_getfrq();
         rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_GET_REMAIN_TIME, &remain_cnt);
-        nanoseconds = ((remain_cnt - rt_ktime_cputimer_getcnt()) * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
-        seconds     = nanoseconds / NANOSECOND_PER_SECOND;
-        nanoseconds = nanoseconds % NANOSECOND_PER_SECOND;
-        its->it_value.tv_sec = (rt_int32_t)seconds;
-        its->it_value.tv_nsec = (rt_int32_t)nanoseconds;
+        remain_relative_cnt = remain_cnt - rt_ktime_cputimer_getcnt();
+        its->it_value.tv_sec = (time_t)(remain_relative_cnt / freq);
+        its->it_value.tv_nsec = rt_muldiv_u32((rt_uint32_t)(remain_relative_cnt % freq), (rt_uint32_t)NANOSECOND_PER_SECOND, freq, NULL);
     }
     else
     {
@@ -1227,8 +1227,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     if (ns <= 0)
         return 0;
 
-    unsigned long res       = rt_ktime_cputimer_getres();
-    timer->reload           = (ns * RT_KTIME_RESMUL) / res;
+    timer->reload           = (rt_tick_t)rt_muldiv_u64(ns, rt_ktime_cputimer_getfrq(), NANOSECOND_PER_SECOND, NULL);
     timer->interval.tv_sec  = value->it_interval.tv_sec;
     timer->interval.tv_nsec = value->it_interval.tv_nsec;
     timer->value.tv_sec     = value->it_value.tv_sec;

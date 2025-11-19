@@ -12,21 +12,16 @@
 
 static volatile unsigned long _init_cnt = 0;
 
-rt_uint64_t rt_ktime_cputimer_getres(void)
-{
-    return ((1000ULL * 1000 * 1000) * RT_KTIME_RESMUL) / CPUTIME_TIMER_FREQ;
-}
-
-unsigned long rt_ktime_cputimer_getfrq(void)
+rt_uint32_t rt_ktime_cputimer_getfrq(void)
 {
     return CPUTIME_TIMER_FREQ;
 }
 
-unsigned long rt_ktime_cputimer_getcnt(void)
+rt_tick_t rt_ktime_cputimer_getcnt(void)
 {
     unsigned long time_elapsed;
     __asm__ __volatile__("rdtime %0" : "=r"(time_elapsed));
-    return time_elapsed - _init_cnt;
+    return (rt_tick_t)(time_elapsed - _init_cnt);
 }
 
 void rt_ktime_cputimer_init(void)
