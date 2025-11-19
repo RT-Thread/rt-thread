@@ -942,29 +942,38 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-
+    
     LOG_D("thread suspend:  %s", thread->parent.name);
+    RT_ASSERT(thread == rt_thread_self());
 
     rt_sched_lock(&slvl);
 
     stat = rt_sched_thread_get_stat(thread);
-    if (stat == RT_THREAD_SUSPEND)
+    if (stat & RT_THREAD_SUSPEND_MASK)
     {
-        rt_sched_unlock(slvl);
-        /* Already suspended, just set status to success.  */
-        return RT_EOK;
+        /* Already manually suspended, just set the status to success. */
+        if (RT_SCHED_CTX(thread).sched_flag_ttmr_set == 0)
+        {
+            /* Update if a pending flag needs */
+            if ((stat & RT_THREAD_STAT_MASK) < suspend_flag)
+            {
+                _thread_set_suspend_state(thread, suspend_flag);
+            }
+            
+            rt_sched_unlock(slvl);
+            return RT_EOK;
+        }
+        /* Manual suspension overrides delayed suspension. */
+        else
+        {
+            LOG_D("thread suspend: converting delay suspend to manual suspend");
+        }
     }
     else if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
-        LOG_D("thread suspend: thread disorder, 0x%2x", RT_SCHED_CTX(thread).stat);
+        LOG_W("thread suspend: thread disorder, 0x%02x", RT_SCHED_CTX(thread).stat);
         rt_sched_unlock(slvl);
         return -RT_ERROR;
-    }
-
-    if (stat == RT_THREAD_RUNNING)
-    {
-        /* not suspend running status thread on other core */
-        RT_ASSERT(thread == rt_thread_self());
     }
 
 #ifdef RT_USING_SMART
