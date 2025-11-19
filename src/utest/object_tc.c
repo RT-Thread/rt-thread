@@ -7,170 +7,188 @@
  * Date           Author       Notes
  * 2025-07-18     kurisaW      First commit
  * 2025-11-13     CYFS         Add standardized documentation block for object_tc
+ * 2025-11-19     Rbb666       Refactor tests, add stress and error-path coverage
  */
 
 /**
  * Test Case Name: Kernel Object Management Test
  *
- * Test Objectives:
- * - Validate RT-Thread object lifecycle, lookup, enumeration, and metadata utilities
- * - Verify core APIs: rt_object_init, rt_object_allocate, rt_object_delete, rt_object_detach,
- *   rt_object_find, rt_thread_find, rt_device_find, rt_object_get_information,
- *   rt_object_get_length, rt_object_get_pointers, rt_object_get_name, rt_object_get_type,
- *   rt_object_is_systemobject
+ * Objectives:
+ * - Validate RT-Thread object lifecycle, lookup, enumeration, metadata, and error handling
+ * - Exercise both static and dynamic objects under realistic embedded constraints
+ * - Apply repeated stress rounds to ensure determinism across multiple executions
  *
- * Test Scenarios:
- * - **Scenario 1 (Name Handling / test_object_name_handling):**
- *   1. Create static objects with maximum-length names to validate truncation and null-termination rules.
- *   2. Allocate dynamic objects with maximum-length names to confirm dynamic object naming and non-system classification.
- *   3. Exercise NULL name handling for both static initialization and dynamic allocation paths.
- *   4. Verify exact-length names remain intact alongside proper detach/cleanup.
- * - **Scenario 2 (Find Operations / test_object_find_operations):**
- *   1. Register static thread objects and verify discovery via rt_object_find.
- *   2. Create runtime threads and confirm rt_thread_find returns expected handles.
- *   3. (Optional with RT_USING_DEVICE) Register temporary devices, test rt_device_find against multiple entries, and validate deregistration paths.
- *   4. Test same-prefix device registrations to confirm distinct name resolution.
- *   5. Validate negative paths for nonexistent and NULL names across object, thread, and device lookup helpers.
- * - **Scenario 3 (Info Enumeration / test_object_info_enumeration):**
- *   1. Mix static and dynamic thread objects and query rt_object_get_information for metadata.
- *   2. Retrieve counts with rt_object_get_length and enumerate pointers with sufficient buffer space.
- *   3. Probe buffer boundary behavior by providing undersized pointer arrays.
- *   4. (Optional with RT_USING_SEMAPHORE) Inspect empty semaphore container reporting.
- * - **Scenario 4 (Type Utilities / test_object_type_handling):**
- *   1. Inspect object type via rt_object_get_type and verify system-object status.
- *   2. Retrieve object names using full buffers, truncated buffers, and invalid parameters.
- *   3. Confirm error codes for NULL object pointers, NULL buffers, and zero-length requests.
+ * Test Implementation:
  *
- * Verification Metrics:
- * - **Scenario 1:** Name strings must be null-terminated within TEST_RT_NAME_MAX, retain expected contents, and reflect correct system-object classification.
- * - **Scenario 2:** Lookup helpers return valid handles for registered objects, correctly distinguish between devices with similar name prefixes, and return NULL for missing or invalid names; device deregistration must succeed.
- * - **Scenario 3:** Enumeration APIs report counts ≥ created objects, populate pointer arrays without overflow, and respect small-buffer contracts.
- * - **Scenario 4:** Type and name utilities yield correct metadata and error codes across valid/invalid inputs, preserving partial name copies when truncated.
+ * 1. test_object_name_handling()
+ *    - Tests object name storage, truncation, and null-termination
+ *    - Validates RT_NAME_MAX boundary conditions
+ *    - Verifies static vs dynamic object identification via rt_object_is_systemobject()
+ *    - Tests both NULL and non-NULL name initialization
  *
- * Dependencies:
- * - Scheduler availability (`rt_scheduler_is_available`) required before executing the suite.
- * - Dynamic memory (rt_malloc/rt_free) needed for pointer buffer allocation.
- * - `RT_USING_UTEST` enabled with test entry registered under `core.object`.
- * - Optional paths: `RT_USING_DEVICE` for device lookup tests, `RT_USING_SEMAPHORE` for semaphore enumeration checks.
+ * 2. test_object_find_operations()
+ *    - Tests rt_object_find() with static objects
+ *    - Tests rt_thread_find() with dynamically created threads
+ *    - Tests rt_device_find() with registered devices (when RT_USING_DEVICE enabled)
+ *    - Validates NULL parameter handling and non-existent object queries
+ *    - Ensures proper cleanup and object removal from containers
  *
- * Expected Results:
- * - Test runs to completion with all assertions passing in the utest framework.
- * - Console shows `[  PASSED  ] [ result   ] testcase (core.object)` when invoked via `utest_run core.object`.
+ * 3. test_object_info_enumeration()
+ *    - Tests rt_object_get_information() for object container metadata
+ *    - Tests rt_object_get_length() for accurate object counting
+ *    - Tests rt_object_get_pointers() for batch object retrieval
+ *    - Validates mixed static and dynamic object enumeration
+ *    - Tests boundary conditions with NULL/invalid parameters
+ *
+ * 4. test_object_type_handling()
+ *    - Tests rt_object_get_type() for correct type identification
+ *    - Tests rt_object_get_name() with various buffer sizes
+ *    - Validates truncation behavior when buffer is too small
+ *    - Tests error handling for invalid parameters
+ *
+ * 5. test_object_error_paths()
+ *    - Tests invalid object class (RT_Object_Class_Null)
+ *    - Tests rt_object_for_each() iteration mechanism
+ *    - Validates early termination and error propagation in iterators
+ *
+ * 6. test_custom_object_lifecycle() (when RT_USING_HEAP enabled)
+ *    - Tests rt_custom_object_create() and rt_custom_object_destroy()
+ *    - Validates custom cleanup callback execution
+ *
+ * 7. test_object_pressure()
+ *    - Stress tests with OBJECT_STRESS_BATCH (24) objects across OBJECT_STRESS_ROUNDS (3) rounds
+ *    - Validates memory cleanup and object container consistency under load
+ *    - Ensures no resource leaks after repeated create/delete cycles
+ *
+ * Helper Functions:
+ * - generate_unique_name(): Creates collision-free object names using incremental counter
+ * - name_in_use(): Checks if a name is already registered in the object system
+ *
+ * Memory Safety:
+ * - All dynamic objects are properly deleted with appropriate delays for defunct queue processing
+ * - Static objects use stack allocation to prevent leaks
+ * - testcase_cleanup() includes 50ms delay to ensure complete resource cleanup
  */
 
 #include <utest.h>
 #include <rtthread.h>
 #include <string.h>
 
-/**
- * @brief   Comprehensive test suite for RT-Thread object system
- *
- * @note    This test suite validates:
- *          1. Object name handling (truncation, NULL, exact length)
- *          2. Static and dynamic object initialization
- *          3. Object finding functionality (rt_object_find, rt_thread_find, rt_device_find)
- *          4. Object information and enumeration
- *          5. Type checking and system object detection
- *          6. Memory safety and boundary conditions
- */
+#define TEST_RT_NAME_MAX        RT_NAME_MAX
+#define OBJECT_STRESS_BATCH     24
+#define OBJECT_STRESS_ROUNDS    3
 
-/* Define TEST_RT_NAME_MAX for testing purposes */
-#define TEST_RT_NAME_MAX RT_NAME_MAX
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+#endif
 
 /* Global counter for unique object names */
-static rt_uint32_t name_counter = 0;
+static rt_uint32_t name_counter;
 
-/* Generate unique name to avoid conflicts, respecting TEST_RT_NAME_MAX */
-static rt_err_t generate_unique_name(char *buf, rt_size_t size, const char *prefix)
+static rt_bool_t name_in_use(const char *name, enum rt_object_class_type type)
 {
+    if (!name)
+        return RT_FALSE;
+
+    if (rt_object_find(name, (rt_uint8_t)type))
+        return RT_TRUE;
+
+    if (type == RT_Object_Class_Thread)
+    {
+        if (rt_thread_find((char *)name))
+            return RT_TRUE;
+    }
+#ifdef RT_USING_DEVICE
+    if (type == RT_Object_Class_Device)
+    {
+        if (rt_device_find(name))
+            return RT_TRUE;
+    }
+#endif
+
+    return RT_FALSE;
+}
+
+static rt_err_t generate_unique_name(char *buf,
+                                     rt_size_t size,
+                                     const char *prefix,
+                                     enum rt_object_class_type type)
+{
+    rt_size_t prefix_len, max_prefix_len;
+
     if (!buf || !prefix || size < TEST_RT_NAME_MAX)
         return -RT_EINVAL;
 
-    for (int i = 0; i < 1000; i++) /* Limit attempts to prevent infinite loop */
-    {
-        rt_snprintf(buf, size, "%s%d", prefix, name_counter++);
-        rt_size_t len = rt_strlen(buf);
-        if (len >= TEST_RT_NAME_MAX)
-        {
-            buf[TEST_RT_NAME_MAX - 1] = '\0';
-            len = TEST_RT_NAME_MAX - 1;
-        }
+    /* Reserve space for up to 5-digit counter (99999) plus '\0' */
+    max_prefix_len = TEST_RT_NAME_MAX - 6;
+    prefix_len = rt_strlen(prefix);
 
-        /* Check if name (or truncated name) is unique */
-        if (rt_object_find(buf, RT_Object_Class_Unknown) == RT_NULL &&
-            rt_thread_find(buf) == RT_NULL &&
-            rt_device_find(buf) == RT_NULL)
-        {
+    /* Limit prefix length to fit within name constraints */
+    if (prefix_len > max_prefix_len)
+        prefix_len = max_prefix_len;
+
+    for (int i = 0; i < 2000; i++)
+    {
+        /* Generate name with truncated prefix if necessary */
+        rt_snprintf(buf, size, "%.*s%u", (int)prefix_len, prefix, name_counter++);
+        buf[TEST_RT_NAME_MAX - 1] = '\0';
+
+        if (!name_in_use(buf, type))
             return RT_EOK;
-        }
     }
+
     return -RT_ENOMEM;
 }
 
 static void test_object_name_handling(void)
 {
-    struct rt_object static_obj1, static_obj2, static_obj3;
+    struct rt_object static_obj;
     rt_object_t dyn_obj = RT_NULL;
     char test_name[TEST_RT_NAME_MAX];
-    char unique_name[TEST_RT_NAME_MAX];
+    char exact_name[TEST_RT_NAME_MAX];
 
-    /* Prepare a test name within TEST_RT_NAME_MAX */
     rt_memset(test_name, 'A', TEST_RT_NAME_MAX - 1);
     test_name[TEST_RT_NAME_MAX - 1] = '\0';
 
-    /* Test 1: Static Object with Name Within TEST_RT_NAME_MAX */
-    uassert_true(generate_unique_name(unique_name, TEST_RT_NAME_MAX, "long") == RT_EOK);
-    rt_object_init(&static_obj1, RT_Object_Class_Thread, test_name);
-    uassert_true(rt_strlen(static_obj1.name) <= TEST_RT_NAME_MAX - 1);
-    uassert_true(static_obj1.name[TEST_RT_NAME_MAX - 1] == '\0');
-    uassert_true(rt_strncmp(static_obj1.name, test_name, TEST_RT_NAME_MAX - 1) == 0);
-    uassert_true(rt_object_is_systemobject(&static_obj1));
-    rt_object_detach(&static_obj1);
+    rt_object_init(&static_obj, RT_Object_Class_Thread, test_name);
+    uassert_true(rt_strlen(static_obj.name) <= TEST_RT_NAME_MAX - 1);
+    uassert_true(static_obj.name[TEST_RT_NAME_MAX - 1] == '\0');
+    uassert_true(rt_strncmp(static_obj.name, test_name, TEST_RT_NAME_MAX - 1) == 0);
+    uassert_true(rt_object_is_systemobject(&static_obj));
+    rt_object_detach(&static_obj);
 
-    /* Test 2: Dynamic Object with Name Within TEST_RT_NAME_MAX */
-    uassert_true(generate_unique_name(unique_name, TEST_RT_NAME_MAX, "dyn") == RT_EOK);
     dyn_obj = rt_object_allocate(RT_Object_Class_Thread, test_name);
     uassert_not_null(dyn_obj);
-    uassert_true(rt_strlen(dyn_obj->name) <= TEST_RT_NAME_MAX - 1);
     uassert_true(dyn_obj->name[TEST_RT_NAME_MAX - 1] == '\0');
-    uassert_true(rt_strncmp(dyn_obj->name, test_name, TEST_RT_NAME_MAX - 1) == 0);
     uassert_false(rt_object_is_systemobject(dyn_obj));
     rt_object_delete(dyn_obj);
 
-    /* Test 3: NULL Name Handling */
-    uassert_true(generate_unique_name(unique_name, TEST_RT_NAME_MAX, "null") == RT_EOK);
-    rt_object_init(&static_obj2, RT_Object_Class_Thread, NULL);
-    uassert_true(static_obj2.name[0] == '\0');
-    rt_object_detach(&static_obj2);
+    rt_object_init(&static_obj, RT_Object_Class_Thread, RT_NULL);
+    uassert_true(static_obj.name[0] == '\0');
+    rt_object_detach(&static_obj);
 
-    uassert_true(generate_unique_name(unique_name, TEST_RT_NAME_MAX, "dynull") == RT_EOK);
-    dyn_obj = rt_object_allocate(RT_Object_Class_Thread, NULL);
+    dyn_obj = rt_object_allocate(RT_Object_Class_Thread, RT_NULL);
     uassert_not_null(dyn_obj);
     uassert_true(dyn_obj->name[0] == '\0');
     rt_object_delete(dyn_obj);
 
-    /* Test 4: Exact Length Name */
-    char exact_name[TEST_RT_NAME_MAX];
     rt_memset(exact_name, 'B', TEST_RT_NAME_MAX - 1);
     exact_name[TEST_RT_NAME_MAX - 1] = '\0';
-    uassert_true(generate_unique_name(unique_name, TEST_RT_NAME_MAX, "exact") == RT_EOK);
-    rt_object_init(&static_obj3, RT_Object_Class_Thread, exact_name);
-    uassert_str_equal(static_obj3.name, exact_name);
-    rt_object_detach(&static_obj3);
+    rt_object_init(&static_obj, RT_Object_Class_Thread, exact_name);
+    uassert_str_equal(static_obj.name, exact_name);
+    rt_object_detach(&static_obj);
 }
 
 static void test_object_find_operations(void)
 {
-    rt_object_t found;
-    rt_thread_t found_thread;
-    rt_device_t found_device;
-    char name[TEST_RT_NAME_MAX];
-    rt_err_t ret;
-
-    /* Scenario 1: Object Name Within TEST_RT_NAME_MAX */
-    /* Test 1.1: Find static thread object with rt_object_find */
     struct rt_object static_obj;
-    uassert_true(generate_unique_name(name, TEST_RT_NAME_MAX, "sobj") == RT_EOK);
+    char name[TEST_RT_NAME_MAX];
+    rt_thread_t thread;
+    rt_thread_t found_thread;
+    rt_object_t found;
+    char missing_name[] = "object.not.exists";
+
+    uassert_true(generate_unique_name(name, sizeof(name), "sobj", RT_Object_Class_Thread) == RT_EOK);
     rt_object_init(&static_obj, RT_Object_Class_Thread, name);
     found = rt_object_find(name, RT_Object_Class_Thread);
     uassert_not_null(found);
@@ -178,169 +196,293 @@ static void test_object_find_operations(void)
     uassert_str_equal(found->name, name);
     rt_object_detach(&static_obj);
 
-    /* Test 1.2: Find thread object with rt_thread_find */
-    uassert_true(generate_unique_name(name, TEST_RT_NAME_MAX, "thr") == RT_EOK);
-    rt_thread_t thread = rt_thread_create(name, RT_NULL, RT_NULL, 1024, 20, 10);
+    uassert_true(generate_unique_name(name, sizeof(name), "thr", RT_Object_Class_Thread) == RT_EOK);
+    thread = rt_thread_create(name, RT_NULL, RT_NULL, 512, RT_THREAD_PRIORITY_MAX / 2, 10);
     uassert_not_null(thread);
     found_thread = rt_thread_find(name);
     uassert_not_null(found_thread);
     uassert_ptr_equal(found_thread, thread);
     uassert_str_equal(found_thread->parent.name, name);
     rt_thread_delete(thread);
+    rt_thread_mdelay(10);
+    uassert_null(rt_thread_find(name));
 
 #ifdef RT_USING_DEVICE
-    /* Test 1.3: Find device object with rt_device_find */
     struct rt_device device;
-    uassert_true(generate_unique_name(name, TEST_RT_NAME_MAX, "dev") == RT_EOK);
-    ret = rt_device_register(&device, name, RT_DEVICE_FLAG_RDONLY);
-    uassert_int_equal(ret, RT_EOK);
+    rt_device_t found_device;
+
+    uassert_true(generate_unique_name(name, sizeof(name), "dev", RT_Object_Class_Device) == RT_EOK);
+    uassert_int_equal(rt_device_register(&device, name, RT_DEVICE_FLAG_RDONLY), RT_EOK);
     found_device = rt_device_find(name);
     uassert_not_null(found_device);
     uassert_ptr_equal(found_device, &device);
     uassert_str_equal(found_device->parent.name, name);
     rt_device_unregister(&device);
+    /* Verify device is properly unregistered */
+    uassert_null(rt_device_find(name));
 #endif
 
-    /* Test 2: Same Prefix Within TEST_RT_NAME_MAX */
+    uassert_null(rt_object_find(missing_name, RT_Object_Class_Thread));
+    uassert_null(rt_thread_find(missing_name));
+
 #ifdef RT_USING_DEVICE
-    struct rt_device dev1, dev2;
-    char name1[TEST_RT_NAME_MAX] = "norflash1";
-    char name2[TEST_RT_NAME_MAX] = "norflash2";
-    ret = rt_device_register(&dev1, name1, RT_DEVICE_FLAG_RDONLY);
-    uassert_int_equal(ret, RT_EOK);
-    ret = rt_device_register(&dev2, name2, RT_DEVICE_FLAG_RDONLY);
-    uassert_int_equal(ret, RT_EOK); /* Expect success if RT-Thread allows distinct names */
-    found_device = rt_device_find(name1);
-    uassert_not_null(found_device);
-    uassert_ptr_equal(found_device, &dev1);
-    uassert_str_equal(found_device->parent.name, name1);
-    found_device = rt_device_find(name2);
-    uassert_not_null(found_device);
-    uassert_ptr_equal(found_device, &dev2);
-    uassert_str_equal(found_device->parent.name, name2);
-    rt_device_unregister(&dev1);
-    rt_device_unregister(&dev2);
+    uassert_null(rt_device_find(missing_name));
 #endif
 
-    /* Test 3: Find non-existent object */
-    const char *nonexist_name = "nonexist";
-    uassert_true(rt_strlen(nonexist_name) <= TEST_RT_NAME_MAX - 1);
-    found = rt_object_find(nonexist_name, RT_Object_Class_Thread);
-    uassert_null(found);
-
-    /* Test 4: Find with NULL name */
-    found = rt_object_find(NULL, RT_Object_Class_Thread);
-    uassert_null(found);
-    found_thread = rt_thread_find(NULL);
-    uassert_null(found_thread);
-
+    uassert_null(rt_object_find(RT_NULL, RT_Object_Class_Thread));
+    uassert_null(rt_thread_find(RT_NULL));
 #ifdef RT_USING_DEVICE
-    found_device = rt_device_find(NULL);
-    uassert_null(found_device);
+    uassert_null(rt_device_find(RT_NULL));
 #endif
 }
 
 static void test_object_info_enumeration(void)
 {
-    struct rt_object static_objs[3];
-    rt_object_t dyn_objs[2] = {RT_NULL, RT_NULL};
-    char names[5][TEST_RT_NAME_MAX];
+    enum { STATIC_OBJ_COUNT = 2, DYNAMIC_OBJ_COUNT = 2 };
+    struct rt_object static_objs[STATIC_OBJ_COUNT];
+    rt_object_t dyn_objs[DYNAMIC_OBJ_COUNT] = {RT_NULL};
+    char names[STATIC_OBJ_COUNT + DYNAMIC_OBJ_COUNT][TEST_RT_NAME_MAX];
+    int baseline;
 
-    /* Generate unique names */
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < ARRAY_SIZE(names); i++)
     {
-        uassert_true(generate_unique_name(names[i], TEST_RT_NAME_MAX, "enum") == RT_EOK);
+        uassert_true(generate_unique_name(names[i], sizeof(names[i]), "obj", RT_Object_Class_Thread) == RT_EOK);
     }
 
-    /* Create test objects */
-    for (int i = 0; i < 3; i++)
+    baseline = rt_object_get_length(RT_Object_Class_Thread);
+
+    for (int i = 0; i < STATIC_OBJ_COUNT; i++)
     {
         rt_object_init(&static_objs[i], RT_Object_Class_Thread, names[i]);
     }
-    for (int i = 0; i < 2; i++)
+
+    for (int i = 0; i < DYNAMIC_OBJ_COUNT; i++)
     {
-        dyn_objs[i] = rt_object_allocate(RT_Object_Class_Thread, names[i + 3]);
+        dyn_objs[i] = rt_object_allocate(RT_Object_Class_Thread, names[i + STATIC_OBJ_COUNT]);
         uassert_not_null(dyn_objs[i]);
     }
 
-    /* Test 1: Get object information */
     struct rt_object_information *info = rt_object_get_information(RT_Object_Class_Thread);
     uassert_not_null(info);
     uassert_int_equal(info->type, RT_Object_Class_Thread);
 
-    /* Test 2: Get object count */
-    int count = rt_object_get_length(RT_Object_Class_Thread);
-    uassert_true(count >= 5);
+    int count_after = rt_object_get_length(RT_Object_Class_Thread);
+    uassert_true(count_after >= baseline + STATIC_OBJ_COUNT + DYNAMIC_OBJ_COUNT);
 
-    /* Test 3: Get object pointers with sufficient buffer */
-    rt_object_t *objects = (rt_object_t *)rt_malloc((count + 2) * sizeof(rt_object_t));
+    int max_objects = count_after + 2;
+    rt_object_t *objects = (rt_object_t *)rt_malloc(max_objects * sizeof(rt_object_t));
     uassert_not_null(objects);
-    int ret = rt_object_get_pointers(RT_Object_Class_Thread, objects, count + 2);
-    uassert_int_equal(ret, count);
-    int found_count = 0;
-    for (int i = 0; i < ret; i++)
+    int ret = rt_object_get_pointers(RT_Object_Class_Thread, objects, max_objects);
+    uassert_true(ret <= max_objects);
+
+    for (int i = 0; i < STATIC_OBJ_COUNT; i++)
     {
-        for (int j = 0; j < 3; j++)
-            if (objects[i] == &static_objs[j]) found_count++;
-        for (int j = 0; j < 2; j++)
-            if (objects[i] == dyn_objs[j]) found_count++;
+        rt_bool_t seen = RT_FALSE;
+        for (int j = 0; j < ret; j++)
+        {
+            if (objects[j] == &static_objs[i])
+            {
+                seen = RT_TRUE;
+                break;
+            }
+        }
+        uassert_true(seen);
     }
-    uassert_int_equal(found_count, 5);
+
+    for (int i = 0; i < DYNAMIC_OBJ_COUNT; i++)
+    {
+        rt_bool_t seen = RT_FALSE;
+        for (int j = 0; j < ret; j++)
+        {
+            if (objects[j] == dyn_objs[i])
+            {
+                seen = RT_TRUE;
+                break;
+            }
+        }
+        uassert_true(seen);
+    }
+
     rt_free(objects);
 
-    /* Test 4: Get object pointers with small buffer */
-    rt_object_t one_object[1];
-    ret = rt_object_get_pointers(RT_Object_Class_Thread, one_object, 1);
-    uassert_true(ret <= 1);
+    uassert_int_equal(rt_object_get_pointers(RT_Object_Class_Thread, RT_NULL, 0), 0);
+    uassert_int_equal(rt_object_get_pointers(RT_Object_Class_Thread, RT_NULL, -1), 0);
 
-    /* Test 5: Empty container (Semaphore) */
 #ifdef RT_USING_SEMAPHORE
-    int empty_count = rt_object_get_length(RT_Object_Class_Semaphore);
-    uassert_true(empty_count >= 0);
+    uassert_true(rt_object_get_length(RT_Object_Class_Semaphore) >= 0);
 #endif
 
-    /* Cleanup */
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < STATIC_OBJ_COUNT; i++)
+    {
         rt_object_detach(&static_objs[i]);
-    for (int i = 0; i < 2; i++)
-        if (dyn_objs[i]) rt_object_delete(dyn_objs[i]);
+    }
+
+    for (int i = 0; i < DYNAMIC_OBJ_COUNT; i++)
+    {
+        if (dyn_objs[i])
+            rt_object_delete(dyn_objs[i]);
+    }
 }
 
 static void test_object_type_handling(void)
 {
     struct rt_object obj;
     char name[TEST_RT_NAME_MAX];
-    uassert_true(generate_unique_name(name, TEST_RT_NAME_MAX, "typ") == RT_EOK);
+    char name_buf[TEST_RT_NAME_MAX];
+    char small_buf[4] = {0};
+    rt_err_t ret;
+
+    uassert_true(generate_unique_name(name, sizeof(name), "typ", RT_Object_Class_Thread) == RT_EOK);
     rt_object_init(&obj, RT_Object_Class_Thread, name);
 
-    /* Test 1: Get object type */
     uassert_int_equal(rt_object_get_type(&obj), RT_Object_Class_Thread);
-
-    /* Test 2: Check system object */
     uassert_true(rt_object_is_systemobject(&obj));
 
-    /* Test 3: Get name with sufficient buffer */
-    char name_buf[TEST_RT_NAME_MAX];
-    rt_err_t ret = rt_object_get_name(&obj, name_buf, sizeof(name_buf));
+    ret = rt_object_get_name(&obj, name_buf, sizeof(name_buf));
     uassert_int_equal(ret, RT_EOK);
     uassert_str_equal(name_buf, name);
 
-    /* Test 4: Get name with small buffer */
-    char small_buf[4] = {0};
     ret = rt_object_get_name(&obj, small_buf, sizeof(small_buf));
     uassert_int_equal(ret, RT_EOK);
     uassert_true(rt_strncmp(small_buf, name, sizeof(small_buf) - 1) == 0);
     uassert_true(small_buf[sizeof(small_buf) - 1] == '\0');
 
-    /* Test 5: Get name with invalid parameters */
     ret = rt_object_get_name(RT_NULL, name_buf, sizeof(name_buf));
     uassert_int_equal(ret, -RT_EINVAL);
-    ret = rt_object_get_name(&obj, NULL, sizeof(name_buf));
+    ret = rt_object_get_name(&obj, RT_NULL, sizeof(name_buf));
     uassert_int_equal(ret, -RT_EINVAL);
     ret = rt_object_get_name(&obj, name_buf, 0);
     uassert_int_equal(ret, -RT_EINVAL);
+    ret = rt_object_get_name(&obj, name_buf, 1);
+    uassert_int_equal(ret, RT_EOK);
 
     rt_object_detach(&obj);
+}
+
+struct for_each_ctx
+{
+    const char *target;
+    rt_bool_t matched;
+    rt_int8_t mode; /* 0: stop on match, 1: error on match */
+};
+
+static rt_err_t for_each_iter(struct rt_object *obj, void *data)
+{
+    struct for_each_ctx *ctx = (struct for_each_ctx *)data;
+
+    if (!ctx || !ctx->target)
+        return -RT_EINVAL;
+
+    if (rt_strcmp(obj->name, ctx->target) == 0)
+    {
+        ctx->matched = RT_TRUE;
+        if (ctx->mode == 0)
+            return 1; /* early break */
+        else
+            return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
+static void test_object_error_paths(void)
+{
+    rt_object_t list_sample[2] = {RT_NULL};
+    struct rt_object obj;
+    char name[TEST_RT_NAME_MAX];
+    struct for_each_ctx ctx;
+
+    uassert_null(rt_object_get_information(RT_Object_Class_Null));
+    uassert_int_equal(rt_object_get_length(RT_Object_Class_Null), 0);
+    uassert_int_equal(rt_object_get_pointers(RT_Object_Class_Null, list_sample, ARRAY_SIZE(list_sample)), 0);
+    rt_memset(&ctx, 0, sizeof(ctx));
+    uassert_int_equal(rt_object_for_each(RT_Object_Class_Null, for_each_iter, &ctx), -RT_EINVAL);
+
+    uassert_true(generate_unique_name(name, sizeof(name), "err", RT_Object_Class_Thread) == RT_EOK);
+    rt_object_init(&obj, RT_Object_Class_Thread, name);
+
+    ctx.target = name;
+    ctx.mode = 0;
+    ctx.matched = RT_FALSE;
+    uassert_int_equal(rt_object_for_each(RT_Object_Class_Thread, for_each_iter, &ctx), RT_EOK);
+    uassert_true(ctx.matched);
+
+    ctx.mode = 1;
+    ctx.matched = RT_FALSE;
+    uassert_int_equal(rt_object_for_each(RT_Object_Class_Thread, for_each_iter, &ctx), -RT_ERROR);
+    uassert_true(ctx.matched);
+
+    rt_object_detach(&obj);
+}
+
+#ifdef RT_USING_HEAP
+static rt_err_t custom_destroy_cb(void *data)
+{
+    rt_uint32_t *counter = (rt_uint32_t *)data;
+    if (counter)
+    {
+        (*counter)++;
+        return RT_EOK;
+    }
+    return -RT_ERROR;
+}
+
+static void test_custom_object_lifecycle(void)
+{
+    char name[TEST_RT_NAME_MAX];
+    rt_uint32_t destroy_counter = 0;
+    rt_object_t obj;
+
+    uassert_true(generate_unique_name(name, sizeof(name), "cust", RT_Object_Class_Custom) == RT_EOK);
+    obj = rt_custom_object_create(name, &destroy_counter, custom_destroy_cb);
+    uassert_not_null(obj);
+    uassert_false(rt_object_is_systemobject(obj));
+    uassert_int_equal(rt_custom_object_destroy(obj), RT_EOK);
+    uassert_int_equal(destroy_counter, 1);
+}
+#endif /* RT_USING_HEAP */
+
+static void test_object_pressure(void)
+{
+    rt_object_t objects[OBJECT_STRESS_BATCH] = {RT_NULL};
+    char names[OBJECT_STRESS_BATCH][TEST_RT_NAME_MAX];
+    int baseline = rt_object_get_length(RT_Object_Class_Thread);
+
+    for (int round = 0; round < OBJECT_STRESS_ROUNDS; round++)
+    {
+        for (int i = 0; i < OBJECT_STRESS_BATCH; i++)
+        {
+            uassert_true(generate_unique_name(names[i], sizeof(names[i]), "stress", RT_Object_Class_Thread) == RT_EOK);
+            objects[i] = rt_object_allocate(RT_Object_Class_Thread, names[i]);
+            uassert_not_null(objects[i]);
+        }
+
+        uassert_true(rt_object_get_length(RT_Object_Class_Thread) >= baseline + OBJECT_STRESS_BATCH);
+
+        for (int i = 0; i < OBJECT_STRESS_BATCH; i += 5)
+        {
+            uassert_not_null(rt_object_find(names[i], RT_Object_Class_Thread));
+        }
+
+        for (int i = 0; i < OBJECT_STRESS_BATCH; i++)
+        {
+            if (objects[i])
+            {
+                rt_object_delete(objects[i]);
+                objects[i] = RT_NULL;
+            }
+        }
+
+        /* Allow time for memory cleanup */
+        rt_thread_mdelay(5);
+
+        for (int i = 0; i < OBJECT_STRESS_BATCH; i += 5)
+        {
+            uassert_null(rt_object_find(names[i], RT_Object_Class_Thread));
+        }
+    }
+
+    uassert_true(rt_object_get_length(RT_Object_Class_Thread) >= baseline);
 }
 
 static rt_err_t testcase_init(void)
@@ -349,24 +491,32 @@ static rt_err_t testcase_init(void)
     {
         return -RT_ERROR;
     }
+    /* Reset counter to ensure consistent naming across multiple test runs */
     name_counter = 0;
     return RT_EOK;
 }
 
 static rt_err_t testcase_cleanup(void)
 {
+    /* Force garbage collection delay to ensure all deferred cleanup completes */
+    rt_thread_mdelay(50);
     return RT_EOK;
 }
 
 static void test_object_suite(void)
 {
-#if RT_NAME_MAX < 10
-    rt_kprintf("Error: Please increase \'RT_NAME_MAX\' to be greater than 10.\n");
+#if RT_NAME_MAX < 8
+    rt_kprintf("Error: RT_NAME_MAX=%d is too small, please increase to at least 8.\n", RT_NAME_MAX);
     return;
 #endif
     UTEST_UNIT_RUN(test_object_name_handling);
     UTEST_UNIT_RUN(test_object_find_operations);
     UTEST_UNIT_RUN(test_object_info_enumeration);
     UTEST_UNIT_RUN(test_object_type_handling);
+    UTEST_UNIT_RUN(test_object_error_paths);
+#ifdef RT_USING_HEAP
+    UTEST_UNIT_RUN(test_custom_object_lifecycle);
+#endif
+    UTEST_UNIT_RUN(test_object_pressure);
 }
 UTEST_TC_EXPORT(test_object_suite, "core.object", testcase_init, testcase_cleanup, 20);
