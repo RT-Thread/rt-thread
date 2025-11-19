@@ -17,6 +17,33 @@
  * @note    Create multiple threads untied core threads, run them for a while on each core to see
  *          if the threads are automatically distributed evenly, run for a while to output the threads
  *          running on each core.
+ *
+ * Test Case Name: [smp_assigned_idle_cores]
+ *
+ * Test Objectives:
+ * - Test whether ready threads unbound to cores can be automatically allocated
+ * - to idle cores under the SMP architecture.
+ *
+ * Test Scenarios:
+ * - Under the SMP architecture, each core spends most of its time running the
+ * - idle thread after the system starts. At this point, create RT_CPUS_NR-1 cyclic
+ * - tasks and observe whether these tasks can be evenly distributed across all
+ * - cores for execution. Since the thread running the utest occupies one core, it
+ * - is only necessary to observe whether the remaining (RT_CPUS_NR - 1) cores can
+ * - be allocated the newly created threads and execute them.
+ *
+ * Verification Metrics:
+ * - After running this test case, it is necessary to observe the printed thread
+ * - list, where all threads created with names from T0 to T(RT_CPUS_NR-2) must
+ * - be in the running state. RT_CPUS_NR must be greater than or equal to 2.
+ *
+ * Dependencies:
+ * - RT_USING_SMP needs to be enabled.
+ *
+ * Expected Results:
+ * - Print the thread list on the terminal, and observe that T0 to T(RT_CPUS_NR-2)
+ * - are all in the running state, with the output "[ PASSED ] [ result ] testcase
+ * - (core.smp_assigned_idle_cores)".
  */
 
 #define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
