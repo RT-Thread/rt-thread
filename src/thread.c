@@ -41,13 +41,13 @@
 #include <rtthread.h>
 #include <stddef.h>
 
-#define DBG_TAG           "kernel.thread"
-#define DBG_LVL           DBG_INFO
+#define DBG_TAG "kernel.thread"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_thread_suspend_hook)(rt_thread_t thread);
-static void (*rt_thread_resume_hook) (rt_thread_t thread);
+static void (*rt_thread_resume_hook)(rt_thread_t thread);
 
 /**
  * @brief   This function sets a hook function when the system suspend a thread.
@@ -91,7 +91,7 @@ static void _thread_detach_from_mutex(rt_thread_t thread)
         (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex))
     {
         /* remove it from its waiting list */
-        struct rt_mutex *mutex = (struct rt_mutex*)thread->pending_object;
+        struct rt_mutex *mutex = (struct rt_mutex *)thread->pending_object;
         rt_mutex_drop_thread(mutex, thread);
         thread->pending_object = RT_NULL;
     }
@@ -174,13 +174,13 @@ static void _thread_timeout(void *parameter)
 }
 
 static rt_err_t _thread_init(struct rt_thread *thread,
-                             const char       *name,
+                             const char *name,
                              void (*entry)(void *parameter),
-                             void             *parameter,
-                             void             *stack_start,
-                             rt_uint32_t       stack_size,
-                             rt_uint8_t        priority,
-                             rt_uint32_t       tick)
+                             void *parameter,
+                             void *stack_start,
+                             rt_uint32_t stack_size,
+                             rt_uint8_t priority,
+                             rt_uint32_t tick)
 {
     RT_UNUSED(name);
 
@@ -235,7 +235,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #endif
 
     /* initialize cleanup function and user data */
-    thread->cleanup   = 0;
+    thread->cleanup = 0;
     thread->user_data = 0;
 
     /* initialize thread timer */
@@ -248,14 +248,14 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 
     /* initialize signal */
 #ifdef RT_USING_SIGNALS
-    thread->sig_mask    = 0x00;
+    thread->sig_mask = 0x00;
     thread->sig_pending = 0x00;
 
 #ifndef RT_USING_SMP
-    thread->sig_ret     = RT_NULL;
+    thread->sig_ret = RT_NULL;
 #endif /* RT_USING_SMP */
     thread->sig_vectors = RT_NULL;
-    thread->si_list     = RT_NULL;
+    thread->si_list = RT_NULL;
 #endif /* RT_USING_SIGNALS */
 
 #ifdef RT_USING_SMART
@@ -337,13 +337,13 @@ static rt_err_t _thread_init(struct rt_thread *thread,
  *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_init(struct rt_thread *thread,
-                        const char       *name,
+                        const char *name,
                         void (*entry)(void *parameter),
-                        void             *parameter,
-                        void             *stack_start,
-                        rt_uint32_t       stack_size,
-                        rt_uint8_t        priority,
-                        rt_uint32_t       tick)
+                        void *parameter,
+                        void *stack_start,
+                        rt_uint32_t stack_size,
+                        rt_uint8_t priority,
+                        rt_uint32_t tick)
 {
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
@@ -378,7 +378,7 @@ rt_thread_t rt_thread_self(void)
 #ifndef RT_USING_SMP
     return rt_cpu_self()->current_thread;
 
-#elif defined (ARCH_USING_HW_THREAD_SELF)
+#elif defined(ARCH_USING_HW_THREAD_SELF)
     return rt_hw_thread_self();
 
 #else /* !ARCH_USING_HW_THREAD_SELF */
@@ -549,9 +549,9 @@ static rt_err_t _thread_detach(rt_thread_t thread)
  */
 rt_thread_t rt_thread_create(const char *name,
                              void (*entry)(void *parameter),
-                             void       *parameter,
+                             void *parameter,
                              rt_uint32_t stack_size,
-                             rt_uint8_t  priority,
+                             rt_uint8_t priority,
                              rt_uint32_t tick)
 {
     /* parameter check */
@@ -822,56 +822,56 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 
     switch (cmd)
     {
-        case RT_THREAD_CTRL_CHANGE_PRIORITY:
+    case RT_THREAD_CTRL_CHANGE_PRIORITY:
+    {
+        rt_err_t error;
+        rt_sched_lock_level_t slvl;
+        rt_sched_lock(&slvl);
+        error = rt_sched_thread_change_priority(thread, *(rt_uint8_t *)arg);
+        rt_sched_unlock(slvl);
+        return error;
+    }
+
+    case RT_THREAD_CTRL_RESET_PRIORITY:
+    {
+        rt_err_t error;
+        rt_sched_lock_level_t slvl;
+        rt_sched_lock(&slvl);
+        error = rt_sched_thread_reset_priority(thread, *(rt_uint8_t *)arg);
+        rt_sched_unlock(slvl);
+        return error;
+    }
+
+    case RT_THREAD_CTRL_STARTUP:
+    {
+        return rt_thread_startup(thread);
+    }
+
+    case RT_THREAD_CTRL_CLOSE:
+    {
+        rt_err_t rt_err = -RT_EINVAL;
+
+        if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
         {
-            rt_err_t error;
-            rt_sched_lock_level_t slvl;
-            rt_sched_lock(&slvl);
-            error = rt_sched_thread_change_priority(thread, *(rt_uint8_t *)arg);
-            rt_sched_unlock(slvl);
-            return error;
+            rt_err = rt_thread_detach(thread);
         }
-
-        case RT_THREAD_CTRL_RESET_PRIORITY:
+#ifdef RT_USING_HEAP
+        else
         {
-            rt_err_t error;
-            rt_sched_lock_level_t slvl;
-            rt_sched_lock(&slvl);
-            error = rt_sched_thread_reset_priority(thread, *(rt_uint8_t *)arg);
-            rt_sched_unlock(slvl);
-            return error;
+            rt_err = rt_thread_delete(thread);
         }
+#endif /* RT_USING_HEAP */
+        rt_schedule();
+        return rt_err;
+    }
 
-        case RT_THREAD_CTRL_STARTUP:
-        {
-            return rt_thread_startup(thread);
-        }
+    case RT_THREAD_CTRL_BIND_CPU:
+    {
+        rt_uint8_t cpu;
 
-        case RT_THREAD_CTRL_CLOSE:
-        {
-            rt_err_t rt_err = -RT_EINVAL;
-
-            if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
-            {
-                rt_err = rt_thread_detach(thread);
-            }
-    #ifdef RT_USING_HEAP
-            else
-            {
-                rt_err = rt_thread_delete(thread);
-            }
-    #endif /* RT_USING_HEAP */
-            rt_schedule();
-            return rt_err;
-        }
-
-        case RT_THREAD_CTRL_BIND_CPU:
-        {
-            rt_uint8_t cpu;
-
-            cpu = (rt_uint8_t)(rt_size_t)arg;
-            return rt_sched_thread_bind_cpu(thread, cpu);
-        }
+        cpu = (rt_uint8_t)(rt_size_t)arg;
+        return rt_sched_thread_bind_cpu(thread, cpu);
+    }
 
     default:
         break;
@@ -942,7 +942,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-    
+
     LOG_D("thread suspend:  %s", thread->parent.name);
     RT_ASSERT(thread == rt_thread_self());
 
@@ -959,7 +959,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
             {
                 _thread_set_suspend_state(thread, suspend_flag);
             }
-            
+
             rt_sched_unlock(slvl);
             return RT_EOK;
         }
@@ -1168,7 +1168,7 @@ rt_err_t rt_thread_wakeup(rt_thread_t thread)
 }
 RTM_EXPORT(rt_thread_wakeup);
 
-void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void* user_data)
+void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void *user_data)
 {
     rt_sched_lock_level_t slvl;
 
