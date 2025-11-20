@@ -551,6 +551,7 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
 
         if (HAL_IS_BIT_SET(hcan->Instance->TSR, tme_flag) != SET)
         {
+            RT_UNUSED(mailbox_mask);
             return -RT_ERROR;
         }
 
