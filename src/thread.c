@@ -960,7 +960,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
         }
         if (stat < suspend_flag)
         {
-            /* Update if a suspend_flag flag stricter */
+            /* Update if suspend_flag is stricter */
             _thread_set_suspend_state(thread, suspend_flag);
         }
         
