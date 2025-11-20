@@ -954,7 +954,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
         if (RT_SCHED_CTX(thread).sched_flag_ttmr_set == 1)
         {
             /* The new suspend operation will halt the tick timer. */
-            LOG_D("Thread [%s]'s timer has been halted.\n", thread->parent.name);
+            LOG_D("Thread [%s]'s timer has been halted.", thread->parent.name);
             rt_sched_thread_timer_stop(thread);
             
         }
