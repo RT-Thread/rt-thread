@@ -58,7 +58,7 @@ static struct rt_timer alarm_time;
 
 /**
  * @brief Alarm timeout callback function
- * @param param Pointer to RTC device
+ * @param param User data passed to alarm update function
  * @return None
  * 
  * This function is called when the alarm timer expires and updates
@@ -144,12 +144,12 @@ static void get_rtc_time(struct timespec *ts)
     struct timespec current_ts;
     rt_ktime_boottime_get_ns(&current_ts);
 
-    ts->tv_sec = init_ktime_ts.tv_sec + (current_ts.tv_sec - init_ktime_ts.tv_sec);
-    ts->tv_nsec = init_ktime_ts.tv_nsec + (current_ts.tv_nsec - init_ktime_ts.tv_nsec);
+    ts->tv_sec = init_ts.tv_sec + (current_ts.tv_sec - init_ktime_ts.tv_sec);
+    ts->tv_nsec = init_ts.tv_nsec + (current_ts.tv_nsec - init_ktime_ts.tv_nsec);
 #else
     rt_tick_t tick = rt_tick_get_delta(init_tick);
     ts->tv_sec = init_ts.tv_sec + tick / RT_TICK_PER_SECOND;
-    ts->tv_nsec = init_ts.tv_nsec + ((tick % RT_TICK_PER_SECOND) * (1000000000UL / RT_TICK_PER_SECOND));
+    ts->tv_nsec = init_ts.tv_nsec + ((tick % RT_TICK_PER_SECOND) * 1000000000UL / RT_TICK_PER_SECOND);
 #endif
     /* Handle nanosecond overflow/underflow */
     if (ts->tv_nsec >= 1000000000L)
@@ -320,6 +320,7 @@ static int rt_soft_rtc_init(void)
     init_tick = rt_tick_get();
 #endif
     init_ts.tv_sec = timegm(&time_new);
+    init_ts.tv_nsec = 0;
 
     soft_rtc_dev.type = RT_Device_Class_RTC;
 
@@ -361,6 +362,12 @@ rt_err_t rt_soft_rtc_sync(void)
 
     rt_device_control(&soft_rtc_dev, RT_DEVICE_CTRL_RTC_GET_TIME, &time);
     struct timespec ts = { time, 0 };
+    /* 
+     * Intentionally reset the soft RTC baseline to the current time.
+     * This operation updates alarm status and synchronizes the soft RTC
+     * with the external time source, discarding any accumulated drift.
+     * This is the intended behavior for synchronization in this context.
+     */
     set_rtc_time(&ts);
     return RT_EOK;
 }
