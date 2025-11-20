@@ -399,7 +399,7 @@ void rt_object_init(struct rt_object         *object,
         if(obj_name_len > RT_NAME_MAX - 1)
         {
             LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
-            RT_ASSERT(obj_name_len <= RT_NAME_MAX - 1);
+            obj_name_len = RT_NAME_MAX - 1;
         }
         rt_memcpy(object->name, name, obj_name_len);
         object->name[obj_name_len] = '\0';
