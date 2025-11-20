@@ -943,7 +943,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     
-    LOG_D("thread suspend:  %s", thread->parent.name);
+    LOG_D("thread suspend: %s", thread->parent.name);
 
     rt_sched_lock(&slvl);
 
