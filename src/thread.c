@@ -942,39 +942,42 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-
+    
     LOG_D("thread suspend:  %s", thread->parent.name);
-    RT_ASSERT(thread == rt_thread_self());
 
     rt_sched_lock(&slvl);
 
     stat = rt_sched_thread_get_stat(thread);
+    /* Already suspended, just set the status to success. */
     if (stat & RT_THREAD_SUSPEND_MASK)
     {
-        /* Already manually suspended, just set the status to success. */
-        if (RT_SCHED_CTX(thread).sched_flag_ttmr_set == 0)
+        if (RT_SCHED_CTX(thread).sched_flag_ttmr_set == 1)
         {
-            /* Update if a pending flag needs */
-            if ((stat & RT_THREAD_STAT_MASK) < suspend_flag)
-            {
-                _thread_set_suspend_state(thread, suspend_flag);
-            }
-
-            rt_sched_unlock(slvl);
-            return RT_EOK;
+            /* The new suspend operation will halt the tick timer. */
+            LOG_D("Thread [%s]'s timer has been halted.\n", thread->parent.name);
+            rt_sched_thread_timer_stop(thread);
+            
         }
-        /* Manual suspension overrides delayed suspension. */
-        else
+        if (stat < suspend_flag)
         {
-            LOG_D("thread suspend: converting delay suspend to manual suspend");
+            /* Update if a suspend_flag flag stricter */
+            _thread_set_suspend_state(thread, suspend_flag);
         }
+        
+        rt_sched_unlock(slvl);
+        return RT_EOK;
     }
     else if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
-        LOG_W("thread suspend: thread disorder, 0x%02x", RT_SCHED_CTX(thread).stat);
+        LOG_W("thread suspend: thread disorder, 0x%02x"， RT_SCHED_CTX(thread).stat);
         rt_sched_unlock(slvl);
         return -RT_ERROR;
     }
+    
+    if(stat == RT_THREAD_RUNNING)
+    {
+        RT_ASSERT(thread == rt_thread_self());
+}
 
 #ifdef RT_USING_SMART
     if (thread->lwp)
