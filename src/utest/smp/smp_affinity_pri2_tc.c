@@ -22,11 +22,11 @@
  * Test Case Name: [smp_affinity_pri2]
  *
  * Test Objectives:
- * - Verify that threads with low-priority unbound cores do not preempt high-priority threads.
+ * - Verify that a low-priority thread bound to a core does not preempt a higher-priority thread running on the same core.
  *
  * Test Scenarios:
- * - RT_CPUS_NR threads (T0~T(RT_CPUS_NR-1)) are created, with each thread bound to its respective core. Among them,
- * - the thread on core 0 has a medium priority (THIGH_PRIORITY), while the other threads have the highest priority (THREAD_PRIORITY).
+ * - RT_CPUS_NR threads (T0~T(RT_CPUS_NR-1)) are created. T0 is unbound with medium priority (THIGH_PRIORITY), while
+ * - threads T1~T(RT_CPUS_NR-1) are each bound to their respective cores with the highest priority (THREAD_PRIORITY).
  * - All threads share a common entry function thread_entry. In thread_entry, only the threads running on non-core-0 cores
  * - execute an infinite loop (i.e., they do not release core ownership). After running for a certain period of time,
  * - the thread on core 0 checks whether run_flag equals 0 after creating a low-priority (LOW_PRIORITY) thread Tn. The entry
