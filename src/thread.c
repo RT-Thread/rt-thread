@@ -958,8 +958,25 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
             rt_sched_thread_timer_stop(thread);
             
         }
-        if (stat < suspend_flag)
+        /* Map suspend_flag to corresponding thread suspend state value */
+        rt_uint8_t new_suspend_state;
+        switch (suspend_flag)
         {
+        case RT_INTERRUPTIBLE:
+            new_suspend_state = RT_THREAD_SUSPEND_INTERRUPTIBLE;
+            break;
+        case RT_KILLABLE:
+            new_suspend_state = RT_THREAD_SUSPEND_KILLABLE;
+            break;
+        case RT_UNINTERRUPTIBLE:
+        default:
+            new_suspend_state = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
+            break;
+        }
+        /* Compare the suspend state portion of stat with the new suspend state */
+        if (stat < new_suspend_state)
+        {
+            /* Update if a stricter suspend_flag is requested */
             /* Update if suspend_flag is stricter */
             _thread_set_suspend_state(thread, suspend_flag);
         }
