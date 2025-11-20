@@ -17,6 +17,29 @@
  * @note    Create RT_CPUS_NR threads, thread 0 is bound to core 0, other threads are not bound to specific cores,
  *          after running for a set number of times, count the number of times each core is run on the corresponding core,
  *          thread 0 should always be run on core 0, other threads will be run on different cores.
+ *
+ * Test Case Name: [smp_bind_affinity]
+ *
+ * Test Objectives:
+ * - Verify that threads bound to specific cores run on those cores.
+ *
+ * Test Scenarios:
+ * - RT_CPUS_NR threads (T0~T(RT_CPUS_NR-1)) are created, with only T0 bound to core 0. When thread Tx is running,
+ * - thread_tic[x] increments by 1; if x is equal to the core ID, thread_inc[x] also increments by 1. After the
+ * - program runs for a period of time, observe the value relationship between the thread_inc and thread_tic arrays.
+ * - If thread_inc[x] is equal to thread_tic[x], it indicates that thread Tx is correctly bound to core x. In this test case,
+ * - only thread_inc[0] will be equal to thread_tic[0].
+ *
+ * Verification Metrics:
+ * - Output message: [I/utest] [ PASSED ] [ result ] testcase (core.smp_bind_affinity)
+ *
+ * Dependencies:
+ * - Enable RT_USING_SMP, set RT_THREAD_PRIORITY_MAX = 256.
+ *
+ * Expected Results:
+ * - You will see the relevant PASS message. Additionally, RT_CPUS_NR lines of printed information will be displayed,
+ * - indicating whether each thread Tx has been running on core x all the time. The results show that only T0 has been
+ * - running on core 0 consistently.
  */
 
 /* Number of thread runs */
