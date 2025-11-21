@@ -46,25 +46,19 @@ static enum rym_code _rym_recv_begin(
     rt_size_t len)
 {
     struct custom_ctx *cctx = (struct custom_ctx *)ctx;
-    char insert_0 = '\0';
-    char *ret;
     rt_err_t err;
-    ret = strchr(cctx->fpath,insert_0);
-    if(ret)
-    {
-        *ret = '/';
-    }
-    else
-    {
-        rt_kprintf("No end character\n");
-        return RYM_ERR_ACK;
-    }
-    rt_strncpy(ret + 1, (const char *)buf, len - 1);
-    cctx->fd = open(cctx->fpath, O_CREAT | O_WRONLY | O_TRUNC, 0);
+    
+    /*
+    support recv multiple files in one session
+    */
+    char user_path[DFS_PATH_MAX]={0};
+    rt_snprintf(user_path, DFS_PATH_MAX, "%s%s", cctx->fpath, buf);
+    cctx->fd = open(user_path, O_CREAT | O_WRONLY | O_TRUNC, 0);
+
     if (cctx->fd < 0)
     {
         err = rt_get_errno();
-        rt_kprintf("error creating file: %d\n", err);
+        rt_kprintf("error creating file: %ld\n", err);
         return RYM_CODE_CAN;
     }
     cctx->flen = atoi(1 + (const char *)buf + rt_strnlen((const char *)buf, len - 1));
@@ -124,7 +118,7 @@ static enum rym_code _rym_send_begin(
     if (cctx->fd < 0)
     {
         err = rt_get_errno();
-        rt_kprintf("error open file: %d\n", err);
+        rt_kprintf("error open file: %ld\n", err);
         return RYM_ERR_FILE;
     }
     rt_memset(buf, 0, len);
@@ -145,7 +139,7 @@ static enum rym_code _rym_send_begin(
         }
     }
 
-    rt_sprintf((char *)buf, "%s%c%d", fdst, insert_0, file_buf.st_size);
+    rt_sprintf((char *)buf, "%s%c%ld", fdst, insert_0, file_buf.st_size);
 
     return RYM_CODE_SOH;
 }
@@ -241,7 +235,6 @@ static rt_err_t ry(uint8_t argc, char **argv)
 {
     rt_err_t res;
     rt_device_t dev;
-    /* temporarily support 1 file*/
     const char *file_path;
     if (argc < 2)
     {
