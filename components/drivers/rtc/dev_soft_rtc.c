@@ -45,11 +45,11 @@ static struct rt_work rtc_sync_work;
 static struct rt_device soft_rtc_dev;
 static RT_DEFINE_SPINLOCK(_spinlock);
 /* RTC time baseline for calculation */
-static struct timespec init_ts = { 0 };
+static struct timespec base_ts = { 0 };
 #ifdef RT_USING_KTIME
-static struct timespec init_ktime_ts = { 0 };
+static struct timespec base_ktime_ts = { 0 };
 #else
-static rt_tick_t init_tick;
+static rt_tick_t base_tick;
 #endif
 
 #ifdef RT_USING_ALARM
@@ -109,12 +109,12 @@ static void soft_rtc_alarm_update(struct rt_rtc_wkalarm *palarm)
 static void set_rtc_time(struct timespec *ts)
 {
     rt_base_t level = rt_spin_lock_irqsave(&_spinlock);
-    init_ts.tv_sec = ts->tv_sec;
-    init_ts.tv_nsec = ts->tv_nsec;
+    base_ts.tv_sec = ts->tv_sec;
+    base_ts.tv_nsec = ts->tv_nsec;
 #ifdef RT_USING_KTIME
-    rt_ktime_boottime_get_ns(&init_ktime_ts);
+    rt_ktime_boottime_get_ns(&base_ktime_ts);
 #else
-    init_tick = rt_tick_get();
+    base_tick = rt_tick_get();
 #endif
     rt_spin_unlock_irqrestore(&_spinlock, level);
 #ifdef RT_USING_ALARM
@@ -144,12 +144,12 @@ static void get_rtc_time(struct timespec *ts)
     struct timespec current_ts;
     rt_ktime_boottime_get_ns(&current_ts);
 
-    ts->tv_sec = init_ts.tv_sec + (current_ts.tv_sec - init_ktime_ts.tv_sec);
-    ts->tv_nsec = init_ts.tv_nsec + (current_ts.tv_nsec - init_ktime_ts.tv_nsec);
+    ts->tv_sec = base_ts.tv_sec + (current_ts.tv_sec - base_ktime_ts.tv_sec);
+    ts->tv_nsec = base_ts.tv_nsec + (current_ts.tv_nsec - base_ktime_ts.tv_nsec);
 #else
-    rt_tick_t tick = rt_tick_get_delta(init_tick);
-    ts->tv_sec = init_ts.tv_sec + tick / RT_TICK_PER_SECOND;
-    ts->tv_nsec = init_ts.tv_nsec + ((tick % RT_TICK_PER_SECOND) * 1000000000UL / RT_TICK_PER_SECOND);
+    rt_tick_t tick = rt_tick_get_delta(base_tick);
+    ts->tv_sec = base_ts.tv_sec + tick / RT_TICK_PER_SECOND;
+    ts->tv_nsec = base_ts.tv_nsec + ((tick % RT_TICK_PER_SECOND) * (1000000000UL / RT_TICK_PER_SECOND));
 #endif
     /* Handle nanosecond overflow/underflow */
     if (ts->tv_nsec >= 1000000000L)
@@ -315,12 +315,12 @@ static int rt_soft_rtc_init(void)
 #endif
 
 #ifdef RT_USING_KTIME
-    rt_ktime_boottime_get_ns(&init_ktime_ts);
+    rt_ktime_boottime_get_ns(&base_ktime_ts);
 #else
-    init_tick = rt_tick_get();
+    base_tick = rt_tick_get();
 #endif
-    init_ts.tv_sec = timegm(&time_new);
-    init_ts.tv_nsec = 0;
+    base_ts.tv_sec = timegm(&time_new);
+    base_ts.tv_nsec = 0;
 
     soft_rtc_dev.type = RT_Device_Class_RTC;
 
