@@ -18,6 +18,29 @@
  *          threads for the system's highest and the thread entry function does not let out the CPU control, run the
  *          specified number of times after the creation of thread 0 in thread 0, a low-priority bound to the core 0,
  *          the thread will not preempt the core 0 is running on threads
+ *
+ * Test Case Name: [smp_affinity_pri2]
+ *
+ * Test Objectives:
+ * - Verify that threads with low-priority unbound cores do not preempt high-priority threads.
+ *
+ * Test Scenarios:
+ * - RT_CPUS_NR threads (T0~T(RT_CPUS_NR-1)) are created, with each thread bound to its respective core. Among them,
+ * - the thread on core 0 has a medium priority (THIGH_PRIORITY), while the other threads have the highest priority (THREAD_PRIORITY).
+ * - All threads share a common entry function thread_entry. In thread_entry, only the threads running on non-core-0 cores
+ * - execute an infinite loop (i.e., they do not release core ownership). After running for a certain period of time,
+ * - the thread on core 0 checks whether run_flag equals 0 after creating a low-priority (LOW_PRIORITY) thread Tn. The entry
+ * - function of Tn is thread_temp_entry, and Tn will be destroyed after setting run_flag = 1.
+ *
+ * Verification Metrics:
+ * - Output message: [I/utest] [ PASSED ] [ result ] testcase (core.smp_affinity_pri2)
+ *
+ * Dependencies:
+ * - Enable RT_USING_SMP, set RT_THREAD_PRIORITY_MAX = 256.
+ *
+ * Expected Results:
+ * - After T0 creates Tn, no scheduling occurs. T0 immediately checks whether run_flag is not equal to 1, and if this condition
+ * - is true, it indicates that Tn has failed to preempt T0.
  */
 
 /* Number of thread runs */
