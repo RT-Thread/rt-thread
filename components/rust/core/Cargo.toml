@@ -1,0 +1,18 @@
+[package]
+name = "rt-rust"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "rt_rust"
+crate-type = ["rlib", "staticlib"]
+
+[features]
+default = []
+smp = []
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
