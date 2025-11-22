@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-08-25     armink       the first version
+ * 2025-10-30     wdfk-prog    add emergency log flush mechanism
  */
 
 #ifndef _ULOG_DEF_H_
@@ -198,6 +199,7 @@ struct ulog_backend
     char name[RT_NAME_MAX];
     rt_bool_t support_color;
     rt_uint32_t out_level;
+    rt_bool_t is_emergency_backend; /**< Can this backend be called safely in a fault/emergency context? */
     void (*init)  (struct ulog_backend *backend);
     void (*output)(struct ulog_backend *backend, rt_uint32_t level, const char *tag, rt_bool_t is_raw, const char *log, rt_size_t len);
     void (*flush) (struct ulog_backend *backend);
