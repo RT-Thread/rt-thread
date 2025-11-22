@@ -6,24 +6,154 @@ menuconfig RT_USING_OFW
     select RT_USING_MEMBLOCK
     depends on RT_USING_DM
     default n
+    help
+        Enable Open Firmware (Device Tree) support.
+        
+        OFW/Device Tree provides hardware description separate from code:
+        - Flattened Device Tree (FDT/DTB) parsing
+        - Hardware discovery and configuration
+        - Platform-independent device drivers
+        - Runtime hardware detection
+        
+        Features:
+        - Standard device tree bindings
+        - Property parsing and access
+        - Node traversal and searching
+        - Phandle reference resolution
+        - Address translation
+        - Interrupt mapping
+        
+        Benefits:
+        - Single kernel binary for multiple boards
+        - Easier board porting (just change DTB)
+        - Better hardware abstraction
+        - Industry-standard hardware description
+        
+        Use cases:
+        - ARM/RISC-V systems with complex hardware
+        - Supporting multiple board variants
+        - Dynamic hardware configuration
+        - PCI, USB, network device enumeration
+        
+        Requires:
+        - RT_USING_DM (Device Model)
+        - Memory block allocator
+        - Abstract Data Types (ADT) support
+        
+        Essential for modern ARM Cortex-A and RISC-V systems.
+        Enable for device tree-based hardware discovery.
 
 config RT_USING_BUILTIN_FDT
     bool "Using builtin fdt in kernel"
     depends on RT_USING_OFW
     default n
+    help
+        Embed Flattened Device Tree (FDT) binary into kernel image.
+        
+        When enabled:
+        - DTB file linked into kernel binary
+        - No need for bootloader to pass DTB
+        - DTB always available at boot
+        
+        Advantages:
+        + Simpler boot process
+        + No DTB location dependencies
+        + Guaranteed DTB availability
+        
+        Disadvantages:
+        - Larger kernel image
+        - Must rebuild kernel to change DTB
+        - Less flexible than bootloader-provided DTB
+        
+        Typical use:
+        - Systems without proper bootloader
+        - Debugging and development
+        - Single-board configurations
+        
+        Alternative: Have bootloader pass DTB address to kernel.
+        
+        Enable for embedded DTB in kernel image.
 
 config RT_BUILTIN_FDT_PATH
     string "Builtin fdt path, will rebuild if have dts"
     depends on RT_USING_BUILTIN_FDT
     default "rtthread.dtb"
+    help
+        Path to the compiled Device Tree Blob (DTB) file to embed.
+        
+        Default: "rtthread.dtb"
+        
+        This file is included in the kernel binary during linking.
+        
+        Workflow:
+        1. Write device tree source (.dts file)
+        2. Compile to DTB: dtc -I dts -O dtb -o rtthread.dtb rtthread.dts
+        3. Set this path to the DTB location
+        4. Rebuild kernel (DTB will be embedded)
+        
+        Path can be:
+        - Relative to build directory
+        - Absolute path
+        
+        Kernel will automatically rebuild if DTS changes (if build system configured).
 
 config RT_FDT_EARLYCON_MSG_SIZE
     int "Earlycon message buffer size (KB)"
     depends on RT_USING_OFW
     default 128
+    help
+        Size of early console message buffer in kilobytes.
+        
+        Default: 128 KB
+        
+        Early console (earlycon) provides debug output before full console initialization:
+        - Available during early boot
+        - Before full UART driver loads
+        - Critical for debugging boot failures
+        
+        Buffer stores messages when:
+        - Console not yet available
+        - Output faster than transmission
+        
+        Larger buffer:
+        + More boot messages captured
+        + Better for verbose debugging
+        - More memory usage
+        
+        Smaller buffer:
+        + Less memory overhead
+        - May lose early messages
+        
+        Increase for detailed boot debugging.
+        Decrease to save memory if earlycon not critical.
 
 config RT_USING_OFW_BUS_RANGES_NUMBER
     int "Max bus ranges number"
     depends on RT_USING_OFW
     default 8 if ARCH_CPU_64BIT
     default 4
+    help
+        Maximum number of bus address ranges for device tree translation.
+        
+        Default:
+        - 64-bit systems: 8 ranges
+        - 32-bit systems: 4 ranges
+        
+        Bus ranges define address space mappings:
+        - CPU address to device bus address
+        - PCI memory/IO spaces
+        - Different bus protocols (AHB, APB, AXI)
+        
+        Each range describes a memory window mapping.
+        
+        Typical usage:
+        - PCI: 2-3 ranges (prefetchable mem, non-prefetchable mem, I/O)
+        - Complex SoCs: 4-8 ranges for different buses
+        
+        Increase for:
+        - Complex bus hierarchies
+        - Multiple PCI buses
+        - Systems with many address spaces
+        
+        Each range uses ~32-48 bytes of memory.
+        Set based on your SoC's bus complexity.

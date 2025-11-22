@@ -7,11 +7,52 @@ config RT_USING_POSIX_PIPE
     select RT_USING_POSIX_POLL
     select RT_USING_RESOURCE_ID
     default n
+    help
+        Enable POSIX pipes and FIFOs for inter-process communication.
+        
+        Provides:
+        - Anonymous pipes: pipe(pipefd)
+        - Named pipes (FIFOs): mkfifo(path, mode)
+        - Unidirectional byte streams
+        - Blocking and non-blocking I/O
+        
+        Features:
+        - Simple producer-consumer pattern
+        - Works with select/poll for multiplexing
+        - File descriptor based (can use read/write)
+        
+        Use cases:
+        - Parent-child process communication
+        - Shell command pipelines
+        - Simple message passing
+        - Event notification
+        
+        Buffer size: RT_USING_POSIX_PIPE_SIZE
+        
+        Enable for POSIX pipe/FIFO support.
+        Essential for shell pipeline and process IPC.
 
 config RT_USING_POSIX_PIPE_SIZE
     int "Set pipe buffer size"
     depends on RT_USING_POSIX_PIPE
     default 512
+    help
+        Size of pipe buffer in bytes.
+        
+        Default: 512 bytes
+        
+        Trade-offs:
+        Larger buffer:
+        + More data can be buffered
+        + Better performance for burst writes
+        - More memory per pipe
+        
+        Smaller buffer:
+        + Less memory usage
+        - More frequent blocking on writes
+        
+        Typical values: 512-4096 bytes
+        Adjust based on typical message sizes and memory constraints.
 
 # We have't implement of 'systemv ipc', so hide it firstly.
 #
@@ -28,11 +69,75 @@ config RT_USING_POSIX_MESSAGE_QUEUE
     select RT_USING_MESSAGEQUEUE_PRIORITY
     select RT_USING_DFS_MQUEUE
     default n
+    help
+        Enable POSIX message queues for IPC.
+        
+        Provides POSIX message queue APIs:
+        - mq_open(): Open/create message queue
+        - mq_send()/mq_receive(): Send/receive messages
+        - mq_timedsend()/mq_timedreceive(): With timeout
+        - mq_notify(): Async notification
+        - mq_getattr()/mq_setattr(): Queue attributes
+        
+        Features:
+        - Priority-based message delivery
+        - Named queues (visible in /dev/mqueue)
+        - Blocking and non-blocking modes
+        - Timeout support
+        - Asynchronous notification
+        
+        vs. Pipes:
+        + Message boundaries preserved
+        + Priority-based delivery
+        + Can be used with select/poll
+        - More overhead per message
+        
+        Use cases:
+        - Process communication with priorities
+        - Event notification systems
+        - Service request queues
+        - RT-Smart IPC
+        
+        Requires DFS with MQUEUE support.
+        Enable for POSIX message queue IPC.
 
 config RT_USING_POSIX_MESSAGE_SEMAPHORE
     bool "Enable posix semaphore <semaphore.h>"
     select RT_USING_POSIX_CLOCK
     default n
+    help
+        Enable POSIX named and unnamed semaphores.
+        
+        Provides semaphore APIs:
+        - sem_init()/sem_destroy(): Unnamed semaphores
+        - sem_open()/sem_close()/sem_unlink(): Named semaphores
+        - sem_wait()/sem_trywait()/sem_timedwait(): Acquire
+        - sem_post(): Release
+        - sem_getvalue(): Get current value
+        
+        Types:
+        - Unnamed (memory-based): For thread synchronization
+        - Named (file-based): For process synchronization
+        
+        Features:
+        - Counting semaphore (value > 1)
+        - Binary semaphore (value = 0 or 1)
+        - Timeout support
+        - Non-blocking try operation
+        
+        Use cases:
+        - Thread/process synchronization
+        - Resource counting
+        - Producer-consumer patterns
+        - Mutual exclusion
+        
+        vs. Mutex:
+        + Can be used for signaling (sem_post from any thread)
+        + Counting capability
+        - No ownership tracking
+        
+        Enable for POSIX semaphore support.
+        Essential for POSIX synchronization.
 
 comment "Socket is in the 'Network' category"
 

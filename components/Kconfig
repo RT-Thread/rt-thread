@@ -3,27 +3,120 @@ menu "RT-Thread Components"
 config RT_USING_COMPONENTS_INIT
     bool
     default n
+    help
+        Enable automatic component initialization framework.
+        
+        When enabled, components marked with INIT_EXPORT() macros will be
+        automatically initialized during system startup in proper order.
+        
+        Initialization levels (in order):
+        - INIT_BOARD_EXPORT: Board-level initialization (pins, clocks)
+        - INIT_PREV_EXPORT: Early driver initialization
+        - INIT_DEVICE_EXPORT: Device driver initialization
+        - INIT_COMPONENT_EXPORT: Component initialization
+        - INIT_ENV_EXPORT: Environment initialization
+        - INIT_APP_EXPORT: Application initialization
+        
+        Benefits:
+        - Automatic dependency ordering
+        - Cleaner code (no manual init function calls)
+        - Consistent initialization across components
+        
+        Note: Most RT-Thread components rely on this. Usually enabled automatically
+        by build system.
 
 config RT_USING_USER_MAIN
     bool
     default n
+    help
+        Use user-defined main() function as entry point.
+        
+        When enabled, RT-Thread creates a main thread that calls your main() function,
+        allowing traditional C programming style entry point.
+        
+        Without this option: You must manually create threads from application
+        With this option: Your main() function runs in a dedicated main thread
+        
+        The main thread:
+        - Runs after system initialization
+        - Has configurable stack size and priority
+        - Can use RT-Thread APIs like any other thread
+        - Can create additional threads
+        
+        Enable this for easier application development and familiar entry point.
 
     if RT_USING_USER_MAIN
         config RT_MAIN_THREAD_STACK_SIZE
             int "Set main thread stack size"
             default 6144 if ARCH_CPU_64BIT
             default 2048
+            help
+                Stack size in bytes for the main thread.
+                
+                Default values:
+                - 64-bit architectures: 6144 bytes (6KB)
+                - 32-bit architectures: 2048 bytes (2KB)
+                
+                Increase if:
+                - Deep recursion in main()
+                - Large local variables
+                - Stack overflow in main thread
+                - Complex initialization requiring more stack
+                
+                Decrease for memory-constrained systems if main() is simple.
+                
+                Note: Each thread's stack is separate. This only affects main thread.
 
         config RT_MAIN_THREAD_PRIORITY
             int "Set main thread priority"
             default 4   if RT_THREAD_PRIORITY_8
             default 10  if RT_THREAD_PRIORITY_32
             default 85  if RT_THREAD_PRIORITY_256
+            help
+                Priority of the main thread (lower number = higher priority).
+                
+                Default values scale with priority levels:
+                - 8 levels: Priority 4 (middle-low priority)
+                - 32 levels: Priority 10 (medium priority)
+                - 256 levels: Priority 85 (medium-low priority)
+                
+                Lower values (higher priority) if:
+                - Main thread needs to preempt other tasks
+                - Time-critical initialization in main()
+                
+                Higher values (lower priority) if:
+                - Main thread is just coordination/monitoring
+                - Other threads need priority over main
+                
+                Note: Priority 0 is highest, maximum is configured by RT_THREAD_PRIORITY_MAX.
     endif
 
 config RT_USING_LEGACY
     bool "Support legacy version for compatibility"
     default n
+    help
+        Enable compatibility layer for legacy RT-Thread versions.
+        
+        Provides deprecated APIs and compatibility shims for older code,
+        allowing gradual migration to newer RT-Thread versions.
+        
+        Includes:
+        - Deprecated API wrappers
+        - Legacy component interfaces
+        - Backward-compatible behavior
+        
+        Enable if:
+        - Porting code from older RT-Thread versions
+        - Using third-party libraries requiring legacy APIs
+        - Gradual migration strategy
+        
+        Disable for:
+        - New projects (use modern APIs)
+        - Smaller code size
+        - Better performance (no compatibility overhead)
+        
+        Note: Legacy support may be removed in future versions.
+        Plan to migrate to current APIs.
 
 if RT_USING_CONSOLE
 rsource "finsh/Kconfig"

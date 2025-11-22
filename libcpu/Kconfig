@@ -4,73 +4,395 @@ endif
 
 config ARCH_CPU_64BIT
     bool
+    help
+        Indicates that this architecture uses 64-bit addressing and data types.
+        When enabled, pointers and registers are 64-bit wide, providing access
+        to larger memory spaces (>4GB). This is automatically selected by 64-bit
+        architectures like AArch64, RISC-V64, and MIPS64.
+        
+        Impact: Affects memory layout, data structure sizes, and ABI conventions.
 
 config RT_USING_CACHE
     bool
     default n
+    help
+        Enable CPU cache support for data and instruction caches.
+        
+        When enabled, RT-Thread will provide cache management APIs (flush, invalidate)
+        and properly handle cache coherency during DMA operations and memory management.
+        This is essential for high-performance CPUs like Cortex-A and Cortex-M7.
+        
+        Typical use cases:
+        - DMA transfers requiring cache synchronization
+        - Memory-mapped I/O operations
+        - Multi-core systems requiring cache coherency
+        
+        Note: Automatically selected by architectures with cache support (e.g., Cortex-M7,
+        Cortex-A series, ARMv8). Improper cache management can lead to data corruption.
 
 config RT_USING_HW_ATOMIC
     bool
     default n
+    help
+        Enable hardware atomic operations support using CPU-specific instructions.
+        
+        When enabled, RT-Thread uses hardware atomic instructions (e.g., LDREX/STREX on ARM,
+        atomic instructions on RISC-V) for lock-free synchronization primitives, improving
+        performance and reducing interrupt latency compared to software implementations.
+        
+        Automatically selected by CPUs with atomic instruction support:
+        - ARM Cortex-M3 and above (LDREX/STREX)
+        - ARM Cortex-A series
+        - ARM Cortex-R series
+        - RISC-V with 'A' extension
+        
+        Benefits: Better performance for spinlocks, reference counting, and concurrent data structures.
+        No action required - this is automatically configured based on CPU architecture.
 
 config ARCH_CPU_BIG_ENDIAN
     bool
+    help
+        Indicates that this CPU uses big-endian byte ordering.
+        
+        In big-endian systems, the most significant byte is stored at the lowest memory address.
+        This affects how multi-byte data (integers, floats) are stored and accessed in memory.
+        
+        Most ARM, RISC-V, and x86 systems use little-endian. Big-endian is common in:
+        - Some PowerPC configurations
+        - MIPS systems (configurable)
+        - Network protocols (network byte order)
+        
+        Note: This must match your hardware configuration. Incorrect setting will cause
+        data corruption when accessing multi-byte values.
 
 config ARCH_ARM_BOOTWITH_FLUSH_CACHE
     bool
     default n
+    help
+        Flush and disable caches during system boot on ARM platforms.
+        
+        When enabled, the bootloader will flush and disable instruction and data caches
+        before jumping to RT-Thread kernel. This ensures clean cache state during initialization.
+        
+        Enable this when:
+        - Bootloader leaves caches in inconsistent state
+        - Transitioning from another OS or bootloader
+        - Debugging cache-related boot issues
+        
+        Note: Not needed for most configurations. Only enable if experiencing boot failures
+        related to stale cache data.
 
 config ARCH_CPU_STACK_GROWS_UPWARD
     bool
     default n
+    help
+        Indicates that the stack grows toward higher memory addresses (upward).
+        
+        Most architectures (ARM, RISC-V, x86, MIPS) use downward-growing stacks where
+        the stack pointer decreases as items are pushed. However, some architectures
+        like TI DSP C28x use upward-growing stacks.
+        
+        This setting affects:
+        - Stack pointer initialization and overflow detection
+        - Context switching and exception handling
+        - Stack boundary checking
+        
+        Note: This is architecture-specific and automatically configured. Do not change
+        unless porting to a new architecture with upward-growing stack.
 
 config RT_USING_CPU_FFS
     bool
     default n
+    help
+        Enable optimized Find First Set (FFS) implementation using CPU instructions.
+        
+        FFS finds the position of the first (least significant) bit set in a word. When enabled,
+        RT-Thread uses hardware instructions like CLZ (Count Leading Zeros) on ARM or equivalent
+        on other architectures for fast bit scanning operations.
+        
+        Used internally by:
+        - Scheduler for finding highest-priority ready thread
+        - Bitmap operations
+        - IPC mechanisms
+        
+        Automatically selected by CPUs with FFS support:
+        - ARM Cortex-M3 and above (CLZ instruction)
+        - ARM Cortex-A series
+        - ARM Cortex-R series
+        
+        Benefits: Significantly faster scheduler operation (O(1) vs O(n) thread selection).
+        No configuration needed - automatically enabled for supported CPUs.
 
 config ARCH_MM_MMU
     bool
+    help
+        Enable Memory Management Unit (MMU) support for virtual memory.
+        
+        MMU provides hardware-based virtual memory management, enabling:
+        - Virtual to physical address translation
+        - Memory protection between processes
+        - Demand paging and memory mapping
+        - Separate address spaces for different processes
+        
+        Required for:
+        - RT-Smart mode (user-space applications)
+        - Process isolation and protection
+        - Dynamic memory mapping (mmap)
+        - Copy-on-write mechanisms
+        
+        Automatically selected by MMU-capable architectures:
+        - ARM Cortex-A series
+        - AArch64 (ARMv8)
+        - RISC-V with Sv39/Sv48 paging
+        
+        Note: MMU requires proper page table setup and increases system complexity.
+        Only available on CPUs with hardware MMU support.
 
 config ARCH_MM_MPU
     bool
+    help
+        Enable Memory Protection Unit (MPU) support.
+        
+        MPU provides hardware-based memory protection without full virtual memory capabilities.
+        Unlike MMU, MPU works with physical addresses and has limited number of regions (typically 8-16).
+        
+        Features:
+        - Protect memory regions from unauthorized access
+        - Define region permissions (read, write, execute)
+        - Prevent stack overflow and buffer overruns
+        - Isolate kernel from user code
+        
+        Common use cases:
+        - Thread stack protection
+        - Peripheral register protection
+        - Code/data separation
+        - Safety-critical applications
+        
+        Available on:
+        - ARM Cortex-M0+/M3/M4/M7/M23/M33/M85 (with MPU option)
+        - ARM Cortex-R series
+        
+        Note: Less flexible than MMU but lower overhead. Suitable for microcontrollers
+        without MMU. Enable RT_USING_HW_STACK_GUARD for automatic stack protection.
 
 config ARCH_ARM
     bool
+    help
+        Select ARM architecture family support.
+        
+        ARM is a widely-used RISC architecture family for embedded systems and mobile devices.
+        This is automatically selected when choosing a specific ARM CPU variant.
+        
+        Supported ARM variants in RT-Thread:
+        - ARM9/ARM11: Legacy 32-bit ARM cores
+        - Cortex-M: Microcontroller profile (M0/M0+/M3/M4/M7/M23/M33/M85)
+        - Cortex-R: Real-time profile (R4/R52)
+        - Cortex-A: Application profile (A5/A7/A8/A9/A55)
+        - ARMv8: 64-bit architecture (Cortex-A53/A57/A72/A73)
+        
+        No direct configuration needed - select specific CPU type instead.
 
 config ARCH_ARM_CORTEX_M
     bool
     select ARCH_ARM
+    help
+        ARM Cortex-M microcontroller profile.
+        
+        Cortex-M is ARM's microcontroller-optimized architecture designed for low-power,
+        cost-sensitive embedded applications with deterministic interrupt handling.
+        
+        Features:
+        - Nested Vectored Interrupt Controller (NVIC)
+        - Low interrupt latency (typically 12-15 cycles)
+        - Thumb-2 instruction set for code density
+        - Optional MPU for memory protection
+        - Optional FPU (M4F/M7F variants)
+        
+        Variants: M0/M0+/M3/M4/M7/M23/M33/M85
+        
+        Automatically selected when choosing specific Cortex-M CPU variant.
 
 config ARCH_ARM_CORTEX_R
     bool
     select ARCH_ARM
+    help
+        ARM Cortex-R real-time profile.
+        
+        Cortex-R is designed for high-performance real-time applications requiring
+        deterministic behavior and fault tolerance.
+        
+        Features:
+        - Tightly-coupled memory (TCM) for deterministic access
+        - Error detection and correction (ECC)
+        - Dual-core lockstep for safety-critical applications
+        - Low and deterministic interrupt latency
+        - Optional MPU or MMU
+        
+        Common applications:
+        - Automotive (ADAS, engine control)
+        - Industrial control systems
+        - Medical devices
+        - Hard real-time systems
+        
+        Variants: R4/R5/R52
+        Automatically selected when choosing specific Cortex-R CPU variant.
 
 config ARCH_ARM_CORTEX_FPU
     bool
+    help
+        Enable Floating Point Unit (FPU) support for ARM Cortex processors.
+        
+        When enabled, RT-Thread will:
+        - Save/restore FPU registers during context switch
+        - Enable FPU coprocessor access
+        - Support hardware floating-point operations
+        
+        FPU variants:
+        - Cortex-M4F/M7F: Single-precision FPv4-SP
+        - Cortex-M7: Optional double-precision FPv5
+        - Cortex-A: VFPv3/VFPv4/NEON
+        
+        Benefits: 10-100x performance improvement for floating-point math
+        Cost: Increased context switch time, larger stack frames
+        
+        Enable if your application requires:
+        - DSP operations
+        - Audio/video processing
+        - Scientific computations
+        - Graphics operations
+        
+        Note: Hardware must have FPU. Check your MCU datasheet.
 
 config ARCH_ARM_CORTEX_SECURE
     bool
+    help
+        Enable ARM TrustZone security extension support.
+        
+        TrustZone provides hardware-based isolation between secure and non-secure worlds,
+        enabling trusted execution environments (TEE).
+        
+        Features:
+        - Secure and non-secure memory regions
+        - Secure and non-secure peripheral access
+        - Secure state transitions
+        - Protection of cryptographic keys and sensitive data
+        
+        Available on:
+        - Cortex-M23/M33/M35P/M55/M85 (ARMv8-M)
+        - Cortex-A with Security Extensions
+        
+        Use cases:
+        - Secure boot
+        - Cryptographic operations
+        - Key storage
+        - Secure firmware updates
+        - Payment and DRM systems
+        
+        Note: Requires secure firmware and proper secure/non-secure memory partitioning.
 
 config ARCH_ARM_CORTEX_M0
     bool
     select ARCH_ARM_CORTEX_M
+    help
+        ARM Cortex-M0 ultra-low-power microcontroller core.
+        
+        Smallest and most energy-efficient ARM processor, ideal for simple control applications.
+        
+        Features:
+        - ARMv6-M architecture
+        - 32-bit processor with Thumb instruction set (subset)
+        - Minimal interrupt latency
+        - No MPU, no FPU, no cache
+        - Very low gate count and power consumption
+        
+        Performance: ~0.9 DMIPS/MHz
+        Typical applications: Sensors, simple controllers, battery-powered devices
+        
+        Choose this for your BSP if using Cortex-M0 based MCU.
 
 config ARCH_ARM_CORTEX_M3
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_HW_ATOMIC
+    help
+        ARM Cortex-M3 mainstream microcontroller core.
+        
+        Balanced processor for general-purpose embedded applications with good performance
+        and energy efficiency.
+        
+        Features:
+        - ARMv7-M architecture
+        - Thumb-2 instruction set (full)
+        - Hardware divide instructions
+        - Optional MPU (8 regions)
+        - Atomic operations (LDREX/STREX)
+        - No FPU, no cache
+        
+        Performance: ~1.25 DMIPS/MHz
+        
+        Common use cases:
+        - Industrial control
+        - Consumer electronics
+        - Motor control
+        - IoT devices
+        
+        Examples: STM32F1xx, LPC17xx, EFM32
+        Choose this for your BSP if using Cortex-M3 based MCU.
 
 config ARCH_ARM_MPU
     bool
     depends on ARCH_ARM
     select ARCH_MM_MPU
+    help
+        Enable Memory Protection Unit for ARM Cortex-M/R processors.
+        
+        Select this to enable MPU support on compatible ARM cores. The MPU provides
+        hardware-based memory protection with configurable regions.
+        
+        When enabled, you can:
+        - Protect thread stacks from overflow
+        - Restrict access to peripheral registers
+        - Enforce execute-never (XN) permissions
+        - Separate privileged and unprivileged memory
+        
+        Configuration:
+        - Number of regions: Typically 8 (Cortex-M3/M4) or 16 (Cortex-M7/M33)
+        - Region size: Must be power of 2, minimum 32 bytes (Cortex-M3/M4) or 256 bytes (ARMv8-M)
+        - Permissions: Read, write, execute, privileged/unprivileged
+        
+        Enable this along with RT_USING_HW_STACK_GUARD for automatic stack protection.
+        See components/mprotect/Kconfig for detailed MPU configuration.
 
 config ARCH_ARM_CORTEX_M4
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_HW_ATOMIC
+    help
+        ARM Cortex-M4 DSP-oriented microcontroller core.
+        
+        Enhanced version of M3 with DSP extensions and optional FPU, designed for
+        digital signal processing and motor control applications.
+        
+        Features:
+        - ARMv7E-M architecture
+        - DSP instructions (SIMD, saturating arithmetic, MAC)
+        - Optional single-precision FPU (FPv4-SP)
+        - Optional MPU (8 regions)
+        - Hardware divide and atomic operations
+        - No cache
+        
+        Performance: ~1.25 DMIPS/MHz (CPU), 10x faster for DSP operations with FPU
+        
+        Ideal for:
+        - Audio processing
+        - Motor control (FOC algorithms)
+        - Sensor fusion
+        - Real-time control loops
+        
+        Examples: STM32F4xx, K64F, nRF52, TM4C
+        Choose this for your BSP if using Cortex-M4 or M4F based MCU.
 
 config ARCH_ARM_CORTEX_M7
     bool
@@ -78,38 +400,223 @@ config ARCH_ARM_CORTEX_M7
     select RT_USING_CPU_FFS
     select RT_USING_CACHE
     select RT_USING_HW_ATOMIC
+    help
+        ARM Cortex-M7 high-performance microcontroller core.
+        
+        Most powerful Cortex-M processor with superscalar architecture, cache, and
+        advanced features for demanding embedded applications.
+        
+        Features:
+        - ARMv7E-M architecture with 6-stage superscalar pipeline
+        - L1 instruction and data cache (configurable 0-64KB each)
+        - Optional single/double-precision FPU (FPv5)
+        - Tightly-coupled memory (TCM) for deterministic access
+        - Optional MPU (8 or 16 regions)
+        - DSP instructions and atomic operations
+        
+        Performance: ~2.14 DMIPS/MHz (up to 600MHz), 5 CoreMark/MHz
+        
+        Critical for cache management:
+        - Must flush cache before DMA reads from memory
+        - Must invalidate cache after DMA writes to memory
+        - Cache coherency APIs automatically enabled
+        
+        Ideal for:
+        - High-performance embedded systems
+        - Vision and image processing
+        - Advanced motor control
+        - Real-time communication protocols
+        
+        Examples: STM32F7xx/H7xx, i.MX RT, SAM V71
+        Choose this for your BSP if using Cortex-M7 based MCU.
 
 config ARCH_ARM_CORTEX_M85
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_HW_ATOMIC
+    help
+        ARM Cortex-M85 next-generation high-performance microcontroller core.
+        
+        Latest and most powerful Cortex-M processor with AI/ML acceleration and
+        advanced security features (ARMv8.1-M architecture).
+        
+        Features:
+        - ARMv8.1-M architecture with Helium (M-Profile Vector Extension)
+        - TrustZone security
+        - L1 cache (optional)
+        - Optional single/double-precision FPU
+        - Optional MPU (8 or 16 regions)
+        - Pointer authentication and branch target identification
+        - DSP and atomic operations
+        
+        Performance: Up to 6.2 CoreMark/MHz
+        
+        Helium benefits:
+        - 5-15x performance for ML inference
+        - Enhanced DSP for signal processing
+        - Vector operations for parallel data processing
+        
+        Ideal for:
+        - Edge AI/ML applications
+        - Advanced image/audio processing
+        - Security-critical applications
+        - Next-generation IoT devices
+        
+        Examples: Future MCUs with Cortex-M85
+        Choose this for your BSP if using Cortex-M85 based MCU.
 
 config ARCH_ARM_CORTEX_M23
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_HW_ATOMIC
+    help
+        ARM Cortex-M23 ultra-low-power core with TrustZone.
+        
+        Energy-efficient processor with security features, successor to Cortex-M0+.
+        
+        Features:
+        - ARMv8-M Baseline architecture
+        - TrustZone security extension
+        - Optional MPU (8 or 16 regions)
+        - Atomic operations (LDREX/STREX)
+        - Low power consumption
+        - No FPU, no cache
+        
+        Performance: ~1.0 DMIPS/MHz
+        
+        Key advantage: Hardware security with minimal area/power overhead
+        
+        Ideal for:
+        - Secure IoT devices
+        - Battery-powered secure sensors
+        - Payment terminals
+        - Smart cards
+        
+        Examples: Future secure IoT MCUs
+        Choose this for your BSP if using Cortex-M23 based MCU.
 
 config ARCH_ARM_CORTEX_M33
     bool
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_HW_ATOMIC
+    help
+        ARM Cortex-M33 mainstream core with TrustZone.
+        
+        Balanced processor combining Cortex-M4 performance with TrustZone security,
+        ideal for secure IoT and connected devices.
+        
+        Features:
+        - ARMv8-M Mainline architecture
+        - TrustZone security extension
+        - Optional single-precision FPU (FPv5)
+        - Optional MPU (8 or 16 regions)
+        - DSP instructions
+        - Atomic operations
+        - Optional cache (Cortex-M33 derivatives)
+        
+        Performance: ~1.5 DMIPS/MHz
+        
+        Security features:
+        - Secure/non-secure memory partitioning
+        - Secure function calls
+        - Stack limit checking
+        - Co-processor isolation
+        
+        Ideal for:
+        - Secure IoT gateways
+        - Industrial automation with security
+        - Connected consumer devices
+        - Secure bootloaders
+        
+        Examples: nRF91, LPC55xx, STM32L5xx
+        Choose this for your BSP if using Cortex-M33 based MCU.
 
 config ARCH_ARM_CORTEX_R
     bool
     select ARCH_ARM
     select RT_USING_HW_ATOMIC
+    help
+        ARM Cortex-R real-time processor family.
+        
+        High-performance real-time processors with deterministic behavior for
+        safety-critical and real-time systems.
+        
+        Common features across Cortex-R family:
+        - Low and deterministic interrupt latency
+        - Tightly-coupled memory (TCM)
+        - Error correction code (ECC)
+        - Optional MPU or MMU
+        - VFP floating-point
+        
+        Automatically selected when choosing specific Cortex-R variant (R4/R52).
+        See individual Cortex-R variant options for detailed specifications.
 
 config ARCH_ARM_CORTEX_R52
     bool
     select ARCH_ARM_CORTEX_R
+    help
+        ARM Cortex-R52 safety-critical real-time core.
+        
+        Latest Cortex-R processor designed for ASIL-D automotive and IEC 61508 SIL-3
+        industrial safety applications.
+        
+        Features:
+        - ARMv8-R architecture (32-bit)
+        - Dual-core lockstep for fault detection
+        - ECC on caches and TCM
+        - Optional MPU or MMU
+        - Virtualization extensions
+        - Single/double precision FPU
+        - NEON SIMD
+        
+        Performance: Up to 1.6 DMIPS/MHz per core
+        
+        Safety features:
+        - Redundant execution for error detection
+        - Memory protection and ECC
+        - Built-in self-test (BIST)
+        
+        Ideal for:
+        - Automotive ADAS and autonomous driving
+        - Industrial safety controllers (SIL-3)
+        - Medical devices
+        - Aerospace applications
+        
+        Choose this for your BSP if using Cortex-R52 based SoC.
 
 config ARCH_ARM_MMU
     bool
     select RT_USING_CACHE
     select ARCH_MM_MMU
     depends on ARCH_ARM
+    help
+        Enable MMU support for ARM Cortex-A processors.
+        
+        Provides full virtual memory management with page-based address translation.
+        Automatically selected by Cortex-A variants.
+        
+        Features:
+        - 4KB/16KB/64KB page sizes
+        - Two-level (LPAE: three-level) page tables
+        - Virtual memory for multiple processes
+        - Memory attributes (cacheable, bufferable, shareable)
+        - Access permissions (privileged, user, read-only, execute-never)
+        
+        Enables:
+        - RT-Smart user-space applications
+        - Memory protection between processes
+        - Demand paging and swapping
+        - Memory-mapped files (mmap)
+        - Shared memory between processes
+        
+        Performance impact:
+        - TLB (Translation Lookaside Buffer) misses add latency
+        - Page table walks on TLB miss
+        - Requires proper cache and TLB management
+        
+        Note: Automatically enabled for Cortex-A. Required for RT-Smart mode.
 
 if RT_USING_SMART
     config KERNEL_VADDR_START
@@ -119,21 +626,89 @@ if RT_USING_SMART
         default 0xffffffc000000000 if ARCH_RISCV && ARCH_REMAP_KERNEL
         default 0x80000000 if ARCH_RISCV
         depends on ARCH_MM_MMU
+        help
+            Starting virtual address for kernel space in RT-Smart mode.
+            
+            This defines where the kernel is mapped in the virtual address space.
+            The kernel typically resides in the upper half of the address space to
+            separate it from user-space applications.
+            
+            Default values:
+            - ARMv8 (64-bit): 0xffff000000000000 (upper 256TB)
+            - ARM (32-bit): 0xc0000000 (upper 1GB, Linux-compatible)
+            - RISC-V with remap: 0xffffffc000000000
+            - RISC-V standard: 0x80000000 (2GB mark)
+            
+            User-space applications use addresses below this value.
+            
+            Note: Must be aligned to architecture's virtual memory requirements.
+            Changing this requires recompiling all kernel and user-space code.
 
     config RT_IOREMAP_LATE
         bool "Support to create IO mapping in the kernel address space after system initlalization."
         default n
         depends on ARCH_ARM_CORTEX_A
         depends on ARCH_MM_MMU
+        help
+            Enable dynamic I/O memory remapping after system initialization.
+            
+            When enabled, allows mapping device I/O memory into kernel virtual address
+            space at runtime using rt_ioremap(). This is useful for:
+            - Hot-pluggable devices
+            - Runtime device discovery (device tree)
+            - Drivers loaded after boot
+            - Flexible peripheral address mapping
+            
+            Without this option, all I/O mappings must be established during early boot.
+            
+            Impact:
+            - Slightly increased memory overhead for dynamic mapping tables
+            - Additional TLB entries for I/O regions
+            
+            Enable if you need runtime flexibility for device driver loading or
+            working with device tree-based systems.
 endif
 
 config ARCH_ARM_ARM9
     bool
     select ARCH_ARM
+    help
+        ARM9 processor family (legacy ARMv4T/ARMv5 architecture).
+        
+        Classic ARM architecture used in many embedded systems from the 2000s.
+        Now largely superseded by Cortex-A for application processors.
+        
+        Features:
+        - 5-stage pipeline
+        - MMU for virtual memory
+        - Separate instruction and data caches
+        - ARM and Thumb instruction sets
+        
+        Performance: ~1.1 DMIPS/MHz
+        
+        Examples: ARM926EJ-S (NXP i.MX, Atmel AT91SAM9)
+        Choose this if your BSP uses ARM9-based SoC.
 
 config ARCH_ARM_ARM11
     bool
     select ARCH_ARM
+    help
+        ARM11 processor family (ARMv6 architecture).
+        
+        Enhanced ARM architecture with improved performance and SIMD extensions.
+        Bridges the gap between ARM9 and Cortex-A.
+        
+        Features:
+        - 8-stage pipeline
+        - MMU with improved TLB
+        - SIMD instructions
+        - Unaligned access support
+        - Hardware divide (some variants)
+        
+        Performance: ~1.25 DMIPS/MHz
+        
+        Examples: ARM1176JZF-S (Raspberry Pi 1, BCM2835)
+        Choose this if your BSP uses ARM11-based SoC.
 
 config ARCH_ARM_CORTEX_A
     bool
@@ -141,54 +716,279 @@ config ARCH_ARM_CORTEX_A
     select ARCH_ARM_MMU
     select RT_USING_CPU_FFS
     select RT_USING_HW_ATOMIC
+    help
+        ARM Cortex-A application processor family.
+        
+        High-performance processors designed for complex operating systems and
+        rich applications (Linux, Android, RT-Smart).
+        
+        Common features:
+        - MMU for virtual memory (required)
+        - Multi-level caches (L1/L2/L3)
+        - VFP floating-point and NEON SIMD
+        - TrustZone security extensions
+        - Multi-core configurations (SMP)
+        - GIC (Generic Interrupt Controller)
+        
+        Typical applications:
+        - Industrial HMI and gateways
+        - Multimedia devices
+        - Automotive infotainment
+        - Edge computing
+        - RT-Smart mixed-criticality systems
+        
+        Variants: A5/A7/A8/A9/A15/A17/A35/A53/A55/A57/A72/A73
+        
+        Automatically selected when choosing specific Cortex-A variant.
 
     if ARCH_ARM_CORTEX_A
         config RT_SMP_AUTO_BOOT
             bool
             default n
+            help
+                Automatically boot secondary CPU cores at system startup.
+                
+                When enabled, RT-Thread will start all available CPU cores during
+                initialization for symmetric multiprocessing (SMP).
+                
+                If disabled, secondary cores remain in reset/low-power state until
+                explicitly started by application code.
+                
+                Enable for:
+                - Multi-core load distribution
+                - Parallel task execution
+                - Maximum system performance
+                
+                Disable for:
+                - Power-sensitive applications
+                - Asymmetric multiprocessing (AMP)
+                - Single-core debugging
+                
+                Note: Requires RT_USING_SMP to be enabled.
 
         config RT_USING_GIC_V2
             bool
             default n
+            help
+                Use ARM Generic Interrupt Controller version 2 (GICv2).
+                
+                GICv2 is the interrupt controller for Cortex-A processors, providing:
+                - Up to 1020 interrupt sources
+                - Interrupt priority and masking
+                - CPU interface for each core
+                - Distributor for routing interrupts to cores
+                - Software-generated interrupts (SGI) for inter-core communication
+                
+                Used in:
+                - Cortex-A5/A7/A8/A9/A15/A17
+                - Single and multi-core SMP systems
+                
+                Mutually exclusive with GICv3. Select based on your SoC hardware.
 
         config RT_USING_GIC_V3
             bool
             default n
+            help
+                Use ARM Generic Interrupt Controller version 3/4 (GICv3/GICv4).
+                
+                GICv3 is the enhanced interrupt controller for newer ARM processors:
+                - Improved scalability (supports more cores)
+                - System register access (no memory-mapped CPU interface)
+                - Locality-specific peripheral interrupts (LPI)
+                - Message-based interrupts
+                - GICv4: Direct injection of virtual interrupts
+                
+                Used in:
+                - Cortex-A55/A57/A72/A73 and newer
+                - ARMv8 (AArch64) systems
+                - Large SMP systems (>8 cores)
+                
+                Mutually exclusive with GICv2. Select based on your SoC hardware.
 
         config RT_NO_USING_GIC
             bool
             default y if !RT_USING_GIC_V2 && !RT_USING_GIC_V3
+            help
+                No GIC interrupt controller in use.
+                
+                Automatically set when neither GICv2 nor GICv3 is selected.
+                This may indicate:
+                - Custom interrupt controller
+                - Legacy interrupt controller
+                - Configuration error
+                
+                Most Cortex-A systems require either GICv2 or GICv3.
     endif
 
 config ARCH_ARM_CORTEX_A5
     bool
     select ARCH_ARM_CORTEX_A
+    help
+        ARM Cortex-A5 energy-efficient application processor.
+        
+        Entry-level Cortex-A processor offering lower cost and power than A9
+        while maintaining application-class capabilities.
+        
+        Features:
+        - ARMv7-A architecture
+        - 1-4 cores, in-order execution
+        - Optional NEON SIMD and VFPv4
+        - TrustZone security
+        - L1 cache, optional L2
+        - GICv2
+        
+        Performance: ~1.57 DMIPS/MHz
+        
+        Ideal for: Cost-sensitive IoT gateways, industrial HMI
+        Examples: Vybrid VF6xx (Cortex-A5 + Cortex-M4)
+        Choose this if your BSP uses Cortex-A5 based SoC.
 
 config ARCH_ARM_CORTEX_A7
     bool
     select ARCH_ARM_CORTEX_A
+    help
+        ARM Cortex-A7 power-efficient application processor.
+        
+        Most power-efficient ARMv7-A processor, often paired with A15 in big.LITTLE
+        configurations or used standalone for cost-effective systems.
+        
+        Features:
+        - ARMv7-A architecture with hardware virtualization
+        - 1-4 cores, in-order execution
+        - VFPv4 and NEON standard
+        - TrustZone security
+        - L1 and L2 cache
+        - GICv2
+        
+        Performance: ~1.9 DMIPS/MHz
+        Power: 40% lower than Cortex-A9 at same performance
+        
+        Ideal for: IoT gateways, set-top boxes, entry-level tablets
+        Examples: BCM2836 (Raspberry Pi 2), i.MX6UL, Allwinner A33
+        Choose this if your BSP uses Cortex-A7 based SoC.
 
 config ARCH_ARM_CORTEX_A8
     bool
     select ARCH_ARM_CORTEX_A
+    help
+        ARM Cortex-A8 general-purpose application processor.
+        
+        First Cortex-A processor, designed for multimedia and mobile applications.
+        
+        Features:
+        - ARMv7-A architecture
+        - Single core, 13-stage superscalar pipeline
+        - VFPv3 and NEON
+        - TrustZone security
+        - L1 and L2 cache
+        
+        Performance: ~2.0 DMIPS/MHz
+        
+        Ideal for: Industrial automation, multimedia systems
+        Examples: TI AM335x (BeagleBone), OMAP3
+        Choose this if your BSP uses Cortex-A8 based SoC.
 
 config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
+    help
+        ARM Cortex-A9 high-performance application processor.
+        
+        Popular multi-core processor balancing performance and power efficiency.
+        
+        Features:
+        - ARMv7-A architecture
+        - 1-4 cores, out-of-order execution
+        - VFPv3 and NEON
+        - TrustZone security
+        - L1 cache per core, shared L2
+        - GICv2
+        
+        Performance: ~2.5 DMIPS/MHz per core
+        
+        Ideal for: Industrial gateways, automotive, network equipment
+        Examples: Zynq-7000 (A9 + FPGA), i.MX6, NVIDIA Tegra 2/3
+        Choose this if your BSP uses Cortex-A9 based SoC.
 
 config ARCH_ARM_CORTEX_A55
     bool
     select ARCH_ARM_CORTEX_A
+    help
+        ARM Cortex-A55 ultra-efficient 64-bit processor (ARMv8.2-A).
+        
+        DynamIQ-enabled processor for modern SMP and big.LITTLE configurations,
+        designed for power efficiency and AI/ML workloads.
+        
+        Features:
+        - ARMv8.2-A architecture (64-bit)
+        - 1-8 cores in DynamIQ cluster
+        - Dot product instructions for ML
+        - TrustZone and pointer authentication
+        - L1 and L2 cache, optional L3
+        - GICv3
+        
+        Performance: ~1.8 DMIPS/MHz (better IPC than A53)
+        
+        Ideal for: Mobile, automotive ADAS, edge AI
+        Examples: MediaTek Helio, Qualcomm Snapdragon 7xx/6xx
+        Choose this if your BSP uses Cortex-A55 based SoC.
 
 config ARCH_ARM_SECURE_MODE
     bool "Running in secure mode [ARM Cortex-A]"
     default n
     depends on ARCH_ARM_CORTEX_A
+    help
+        Run RT-Thread in ARM secure mode (TrustZone secure world).
+        
+        TrustZone divides the system into two execution environments:
+        - Secure world: Access to all resources, runs trusted code
+        - Non-secure world: Restricted access, runs normal applications
+        
+        Enable this when:
+        - RT-Thread acts as secure monitor or trusted OS
+        - Implementing secure boot chain
+        - Running in EL3 (ARMv8) or secure state (ARMv7)
+        - Providing secure services to non-secure OS
+        
+        Disable when:
+        - Running as normal OS in non-secure world
+        - No TrustZone partitioning needed
+        - Booting directly without secure monitor
+        
+        Impact:
+        - Changes memory access permissions
+        - Affects SCR (Secure Configuration Register) settings
+        - Influences interrupt routing
+        
+        Note: Most applications run in non-secure mode. Only enable if you're
+        implementing secure firmware or trusted execution environment.
 
 config RT_BACKTRACE_FUNCTION_NAME
     bool "To show function name when backtrace."
     default n
     depends on ARCH_ARM_CORTEX_A
+    help
+        Display function names in backtrace/call stack dumps.
+        
+        When enabled, exception handlers and assertion failures will show
+        symbolic function names in addition to addresses, making debugging easier.
+        
+        Requires:
+        - Debug symbols in the binary
+        - Symbol table in memory or accessible
+        - Additional processing during backtrace
+        
+        Benefits:
+        - Easier identification of crash location
+        - Better error reports
+        - Faster debugging
+        
+        Costs:
+        - Slightly larger binary (symbol information)
+        - Increased backtrace processing time
+        
+        Recommended for development builds. May be disabled for production
+        to save space and improve backtrace speed.
 
 config ARCH_ARMV8
     bool
@@ -197,69 +997,351 @@ config ARCH_ARMV8
     select RT_USING_CPU_FFS
     select ARCH_USING_ASID
     select ARCH_USING_IRQ_CTX_LIST
+    help
+        ARM 64-bit architecture (ARMv8-A / AArch64).
+        
+        Modern 64-bit ARM architecture for high-performance application processors.
+        Represents major architectural evolution from ARMv7 with enhanced features.
+        
+        Key features:
+        - 64-bit addressing and registers (can also run 32-bit code in AArch32 mode)
+        - Exception levels (EL0-EL3) for privilege separation
+        - Enhanced virtual memory (48-bit addressing, up to 256TB)
+        - ASID (Address Space ID) for efficient context switching
+        - Improved SIMD (Advanced SIMD / NEON)
+        - Hardware virtualization support
+        - Scalable Vector Extension (SVE) on some variants
+        
+        Advantages over ARMv7:
+        - More registers (31 general-purpose 64-bit registers)
+        - Larger addressable memory (>4GB)
+        - Better performance and efficiency
+        - Enhanced security features
+        
+        Processors: Cortex-A53/A57/A72/A73/A75/A76, Neoverse, Apple M-series
+        
+        Automatically selected by AArch64 BSP configurations.
+        Required for RT-Smart on 64-bit ARM platforms.
 
 config ARCH_MIPS
     bool
+    help
+        MIPS (Microprocessor without Interlocked Pipeline Stages) architecture.
+        
+        Classic RISC architecture used in embedded systems, networking equipment,
+        and consumer electronics.
+        
+        Features:
+        - Simple load/store RISC design
+        - Configurable endianness (big or little)
+        - Optional FPU and DSP extensions
+        - Hardware multithreading (MIPS MT)
+        
+        Common applications:
+        - Network routers and switches
+        - Set-top boxes
+        - Gaming consoles
+        - Embedded Linux systems
+        
+        Variants: MIPS32, MIPS64, microMIPS
+        Choose this if your BSP uses MIPS-based SoC.
 
 config ARCH_MIPS64
     bool
     select ARCH_CPU_64BIT
+    help
+        MIPS 64-bit architecture.
+        
+        64-bit extension of MIPS architecture providing:
+        - 64-bit addressing and registers
+        - Backward compatible with MIPS32 code
+        - Enhanced performance for 64-bit operations
+        - Access to larger memory spaces
+        
+        Applications: High-end networking equipment, servers
+        Examples: Cavium OCTEON, Loongson processors
+        Choose this if your BSP uses MIPS64-based SoC.
 
 config ARCH_MIPS_XBURST
     bool
     select ARCH_MIPS
+    help
+        Ingenic XBurst MIPS-based processor family.
+        
+        Customized MIPS architecture optimized for mobile and multimedia applications
+        by Ingenic Semiconductor.
+        
+        Features:
+        - MIPS32-compatible core with enhancements
+        - Low power consumption
+        - Integrated multimedia accelerators
+        
+        Common applications: Handheld devices, e-readers, IoT
+        Examples: JZ47xx series SoCs
+        Choose this if your BSP uses Ingenic XBurst processor.
 
 config ARCH_ANDES
     bool
+    help
+        Andes RISC-V based architecture.
+        
+        Custom RISC-V implementation by Andes Technology with proprietary extensions
+        for enhanced performance and features.
+        
+        Features:
+        - RISC-V ISA with Andes-specific extensions
+        - CoDense (16-bit instruction compression)
+        - StackSafe for stack protection
+        - PowerBrake for power management
+        
+        Applications: AIoT, storage controllers, automotive
+        Choose this if your BSP uses Andes processor core.
 
 config ARCH_CSKY
     bool
+    help
+        C-SKY CPU architecture.
+        
+        Chinese-designed processor architecture (now part of Alibaba's T-Head).
+        
+        Features:
+        - 16/32-bit RISC architecture
+        - Low power and small code size
+        - DSP extensions
+        
+        Applications: IoT devices, consumer electronics
+        Choose this if your BSP uses C-SKY based processor.
 
 config ARCH_POWERPC
     bool
+    help
+        PowerPC architecture.
+        
+        High-performance RISC architecture traditionally used in embedded and
+        server applications.
+        
+        Features:
+        - Big-endian (configurable to little-endian on some models)
+        - AltiVec SIMD on some variants
+        - Strong memory consistency model
+        
+        Applications: Networking equipment, aerospace, industrial control
+        Examples: MPC5xxx, QorIQ series
+        Choose this if your BSP uses PowerPC processor.
 
 config ARCH_RISCV
     bool
+    help
+        RISC-V open standard instruction set architecture.
+        
+        Modern, modular, open-source ISA designed for efficiency and extensibility.
+        Gaining rapid adoption in embedded systems, IoT, and AI/ML applications.
+        
+        Key advantages:
+        - Open standard (no licensing fees)
+        - Modular design (choose only needed extensions)
+        - Simple and clean architecture
+        - Growing ecosystem and vendor support
+        
+        Base ISAs: RV32I (32-bit), RV64I (64-bit)
+        Common extensions:
+        - M: Integer multiplication/division
+        - A: Atomic instructions
+        - F: Single-precision floating-point
+        - D: Double-precision floating-point
+        - C: Compressed 16-bit instructions
+        - V: Vector operations
+        
+        Examples: SiFive, Allwinner D1, ESP32-C3/C6, GigaDevice GD32V
+        
+        Automatically selected when choosing RV32 or RV64 variant.
 
 config ARCH_RISCV_FPU
     bool
+    help
+        RISC-V floating-point unit support.
+        
+        Enable hardware floating-point operations using RISC-V F and/or D extensions.
+        Automatically selected by ARCH_RISCV_FPU_S or ARCH_RISCV_FPU_D.
+        
+        When enabled:
+        - FPU registers (f0-f31) saved/restored during context switch
+        - Hardware FP instructions used by compiler
+        - Significant performance improvement for floating-point math
+        
+        Note: CPU must have F and/or D extension support.
 
 config ARCH_RISCV_VECTOR
     bool
+    help
+        RISC-V Vector Extension (RVV) support.
+        
+        Enable RISC-V Vector Extension for SIMD operations, ideal for data-parallel
+        workloads like DSP, image processing, and AI/ML inference.
+        
+        Features:
+        - Vector registers with configurable length (VLEN)
+        - Vector arithmetic, logic, and memory operations
+        - Predication and masking
+        - Auto-vectorization by compiler
+        
+        Benefits:
+        - 4-10x performance for vectorizable workloads
+        - Efficient memory access patterns
+        - Scalable across different vector lengths
+        
+        Applications: Signal processing, multimedia, ML inference
+        
+        Note: Requires CPU with V extension (ratified v1.0).
+        Select VLEN based on your hardware specification.
 
     if ARCH_RISCV_VECTOR
         choice ARCH_VECTOR_VLEN
             prompt "RISCV Vector Vlen"
             default ARCH_VECTOR_VLEN_128
+            help
+                Select the vector register length (VLEN) for RISC-V Vector Extension.
+                
+                VLEN defines the width of vector registers in bits. This must match
+                your hardware's vector implementation.
+                
+                Common VLEN values:
+                - 128-bit: Entry-level vector implementations, good balance
+                - 256-bit: Higher throughput, more aggressive vectorization
+                
+                Larger VLEN:
+                + More data processed per instruction
+                + Better performance for vector operations
+                - Larger context switch overhead
+                - More silicon area required
+                
+                Check your CPU documentation for supported VLEN.
 
             config ARCH_VECTOR_VLEN_128
                 bool "128"
+                help
+                    128-bit vector register length.
+                    
+                    Standard choice for embedded RISC-V processors with vector support.
+                    Provides good performance/area balance.
+                    
+                    Choose this for most RISC-V vector implementations.
+
             config ARCH_VECTOR_VLEN_256
                 bool "256"
+                help
+                    256-bit vector register length.
+                    
+                    Wider vector registers for higher throughput in data-parallel workloads.
+                    Requires more silicon area and increases context switch time.
+                    
+                    Choose this only if your CPU supports 256-bit VLEN.
         endchoice
     endif
 
 config ARCH_RISCV_FPU_S
     select ARCH_RISCV_FPU
     bool
+    help
+        RISC-V single-precision floating-point (F extension).
+        
+        Enable support for 32-bit (float) floating-point operations in hardware.
+        
+        Features:
+        - 32 single-precision FP registers (f0-f31)
+        - IEEE 754 single-precision arithmetic
+        - FP load/store, arithmetic, conversion instructions
+        
+        Sufficient for many embedded applications requiring FP without the
+        overhead of double-precision.
+        
+        Automatically selected by BSP when CPU has F extension.
 
 config ARCH_RISCV_FPU_D
     select ARCH_RISCV_FPU
     bool
+    help
+        RISC-V double-precision floating-point (D extension).
+        
+        Enable support for 64-bit (double) floating-point operations in hardware.
+        Includes F extension functionality.
+        
+        Features:
+        - 32 double-precision FP registers (f0-f31, 64-bit wide)
+        - IEEE 754 double-precision arithmetic
+        - Both single and double-precision operations
+        
+        Required for:
+        - High-precision scientific computations
+        - Financial calculations
+        - Applications requiring >7 significant digits
+        
+        Note: D extension requires F extension as prerequisite.
+        Automatically selected by BSP when CPU has D extension.
 
 config ARCH_RISCV32
     select ARCH_RISCV
     bool
+    help
+        RISC-V 32-bit architecture (RV32).
+        
+        32-bit RISC-V implementation optimized for resource-constrained
+        embedded systems and microcontrollers.
+        
+        Features:
+        - 32-bit addressing (4GB address space)
+        - 32 general-purpose 32-bit registers
+        - Compact code size with C extension
+        - Lower power consumption
+        
+        Ideal for:
+        - Microcontrollers and IoT devices
+        - Cost-sensitive applications
+        - Battery-powered systems
+        
+        Common variants: RV32IMAC, RV32IMAFC
+        Examples: ESP32-C3, GigaDevice GD32VF103, Nuclei Bumblebee
+        
+        Choose this if your BSP uses 32-bit RISC-V processor.
 
 config ARCH_RISCV64
     select ARCH_RISCV
     select ARCH_CPU_64BIT
     bool
+    help
+        RISC-V 64-bit architecture (RV64).
+        
+        64-bit RISC-V implementation for high-performance embedded systems
+        and application processors.
+        
+        Features:
+        - 64-bit addressing (16 exabyte address space)
+        - 32 general-purpose 64-bit registers
+        - Backward compatible with RV32 software (with proper toolchain)
+        - Better performance for 64-bit arithmetic
+        
+        Ideal for:
+        - Application processors
+        - RT-Smart user-space applications
+        - Systems requiring >4GB memory
+        - High-performance embedded Linux
+        
+        Common variants: RV64IMAC, RV64GC
+        Examples: SiFive U74, Allwinner D1 (C906), Kendryte K210
+        
+        Choose this if your BSP uses 64-bit RISC-V processor.
 
 if ARCH_RISCV64
     config ARCH_USING_NEW_CTX_SWITCH
         bool
         default y
+        help
+            Use optimized context switch implementation for RISC-V 64-bit.
+            
+            Enables improved context switching with better performance and
+            smaller code size. This is the recommended implementation for RV64.
+            
+            Automatically enabled for RISC-V 64-bit. No manual configuration needed.
 
     config ARCH_USING_RISCV_COMMON64
         bool
@@ -267,43 +1349,199 @@ if ARCH_RISCV64
         select RT_USING_CPUTIME
         select ARCH_USING_NEW_CTX_SWITCH
         help
-            Using the common64 implementation under ./libcpu/risc-v
+            Use common 64-bit RISC-V implementation under ./libcpu/risc-v/common64.
+            
+            Provides unified, optimized implementation for 64-bit RISC-V cores:
+            - Standard context switch routines
+            - Exception and interrupt handling
+            - MMU/PMP management
+            - CPU time measurement
+            
+            Benefits:
+            - Code reuse across different RV64 cores
+            - Well-tested implementation
+            - Consistent behavior
+            
+            Enable this for standard RV64 cores (SiFive U74, T-Head C906, etc.)
+            unless you have specific custom requirements.
 endif
 
 config ARCH_REMAP_KERNEL
     bool
     depends on RT_USING_SMART
     help
-        Remapping kernel image to high virtual address region
+        Remap kernel image to high virtual address region.
+        
+        In RT-Smart mode, move kernel to upper virtual memory region to separate
+        it from user-space, similar to Linux kernel layout.
+        
+        Benefits:
+        - Clear separation between kernel and user address spaces
+        - User applications can use lower addresses (0x0 upward)
+        - Prevents accidental user access to kernel memory
+        - Compatible with standard executable loaders
+        
+        Memory layout with remapping:
+        - User space: 0x00000000 - KERNEL_VADDR_START
+        - Kernel space: KERNEL_VADDR_START - 0xFFFFFFFF...
+        
+        Required for: Full RT-Smart user-space isolation
+        Note: Increases boot time slightly due to remapping overhead.
 
 config ARCH_USING_ASID
     bool
     depends on RT_USING_SMART
     help
-        Using ASID support from architecture
+        Enable Address Space ID (ASID) support from architecture.
+        
+        ASID is a hardware feature that tags TLB (Translation Lookaside Buffer)
+        entries with process identifiers, avoiding TLB flushes on context switch.
+        
+        Benefits:
+        - Faster context switches between processes
+        - Better TLB utilization (multiple processes' translations cached)
+        - Reduced MMU overhead
+        
+        Without ASID: TLB must be flushed on every context switch (expensive)
+        With ASID: TLB entries for multiple processes coexist (efficient)
+        
+        Performance impact: Can reduce context switch time by 50-70%
+        
+        Automatically enabled for:
+        - ARMv8 (8-bit or 16-bit ASID)
+        - Some ARMv7-A implementations
+        - RISC-V with ASID support
+        
+        Note: Requires MMU with ASID support. Automatically selected by
+        compatible architectures.
 
 config ARCH_IA32
     bool
+    help
+        Intel IA-32 (x86 32-bit) architecture.
+        
+        32-bit x86 architecture for PC-compatible systems and embedded x86 platforms.
+        
+        Features:
+        - CISC architecture
+        - Segmented memory model (legacy) or flat model
+        - x87 FPU, MMX, SSE extensions
+        - Paging and segmentation
+        
+        Applications: Industrial PCs, legacy embedded systems, virtualization hosts
+        Examples: Intel Atom, AMD Geode
+        
+        Choose this if your BSP uses x86 32-bit processor.
 
 config ARCH_TIDSP
     bool
+    help
+        Texas Instruments DSP architecture family.
+        
+        Specialized processors for digital signal processing applications.
+        
+        Features:
+        - Optimized for real-time signal processing
+        - Harvard architecture (separate program/data memory)
+        - Hardware multipliers and MAC units
+        - Low-latency interrupt handling
+        
+        Applications: Motor control, audio processing, power electronics
+        
+        Automatically selected by specific TI DSP variant (e.g., C28x).
 
 config ARCH_TIDSP_C28X
     bool
     select ARCH_TIDSP
     select ARCH_CPU_STACK_GROWS_UPWARD
+    help
+        Texas Instruments C28x DSP architecture.
+        
+        Fixed-point DSP optimized for real-time control applications,
+        especially motor control and power conversion.
+        
+        Features:
+        - 32-bit fixed-point architecture
+        - Upward-growing stack (unusual characteristic)
+        - Single-cycle MAC operations
+        - Fast interrupt response (<50ns)
+        - Floating-point unit (C28x+FPU variants)
+        
+        Ideal for:
+        - Digital motor control (FOC, vector control)
+        - Power inverters and converters
+        - Solar inverters
+        - Industrial drives
+        
+        Examples: TMS320F28xxx series
+        
+        Note: Stack grows upward unlike most architectures.
+        Choose this if your BSP uses TI C28x DSP.
 
 config ARCH_HOST_SIMULATOR
     bool
-
-config ARCH_CPU_STACK_GROWS_UPWARD
-    bool
-    default n
+    help
+        Host machine simulator (running RT-Thread on development PC).
+        
+        Allows running RT-Thread as a user-space application on Linux, Windows,
+        or macOS for development, testing, and debugging without physical hardware.
+        
+        Features:
+        - Rapid prototyping and testing
+        - Debugger-friendly (use GDB, Visual Studio debugger)
+        - File system access to host files
+        - Network simulation
+        
+        Use cases:
+        - Algorithm development and testing
+        - Application logic verification
+        - CI/CD automated testing
+        - Learning RT-Thread without hardware
+        
+        Note: Timing behavior differs from real hardware. Not suitable for
+        real-time performance validation.
+        
+        Choose this for simulator-based BSP (e.g., qemu-vexpress-a9, simulator).
 
 config ARCH_USING_HW_THREAD_SELF
     bool
     default n
+    help
+        Use hardware register to identify current thread (thread self-identification).
+        
+        Some architectures provide dedicated registers or instructions to identify
+        the currently executing thread without memory access.
+        
+        Benefits:
+        - Faster rt_thread_self() operation (single register read)
+        - Reduced memory bandwidth
+        - Better performance in multi-core systems
+        
+        Examples:
+        - ARM: TPIDRURO/TPIDR_EL0 register
+        - x86: FS/GS segment registers
+        - RISC-V: Some implementations use tp register
+        
+        Automatically enabled by architectures supporting this feature.
+        No manual configuration needed.
 
 config ARCH_USING_IRQ_CTX_LIST
     bool
     default n
+    help
+        Use interrupt context list for nested interrupt handling.
+        
+        Maintains a list of interrupt contexts for proper nested interrupt
+        management, especially important for complex interrupt scenarios.
+        
+        Benefits:
+        - Correct handling of deeply nested interrupts
+        - Proper context tracking in multi-level interrupt systems
+        - Better debugging of interrupt-related issues
+        
+        Overhead:
+        - Slight increase in interrupt entry/exit time
+        - Small memory overhead for context list
+        
+        Automatically enabled by architectures requiring it (e.g., ARMv8).
+        No manual configuration needed.
