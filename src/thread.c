@@ -943,30 +943,58 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    LOG_D("thread suspend:  %s", thread->parent.name);
+    LOG_D("thread suspend: %s", thread->parent.name);
 
     rt_sched_lock(&slvl);
 
     stat = rt_sched_thread_get_stat(thread);
-    if (stat == RT_THREAD_SUSPEND)
+    /* Already suspended, just set the status to success. */
+    if (stat & RT_THREAD_SUSPEND_MASK)
     {
+        if (RT_SCHED_CTX(thread).sched_flag_ttmr_set == 1)
+        {
+            /* The new suspend operation will halt the tick timer. */
+            LOG_D("Thread [%s]'s timer has been halted.\n", thread->parent.name);
+            rt_sched_thread_timer_stop(thread);
+
+        }
+        /* Map suspend_flag to corresponding thread suspend state value */
+        rt_uint8_t new_suspend_state;
+        switch (suspend_flag)
+        {
+        case RT_INTERRUPTIBLE:
+            new_suspend_state = RT_THREAD_SUSPEND_INTERRUPTIBLE;
+            break;
+        case RT_KILLABLE:
+            new_suspend_state = RT_THREAD_SUSPEND_KILLABLE;
+            break;
+        case RT_UNINTERRUPTIBLE:
+        default:
+            new_suspend_state = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
+            break;
+        }
+        /* Compare the suspend state portion of stat with the new suspend state */
+        if (stat < new_suspend_state)
+        {
+            /* Update if suspend_flag is stricter */
+            _thread_set_suspend_state(thread, suspend_flag);
+        }
+
         rt_sched_unlock(slvl);
-        /* Already suspended, just set status to success.  */
         return RT_EOK;
     }
     else if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
-        LOG_D("thread suspend: thread disorder, 0x%2x", RT_SCHED_CTX(thread).stat);
+        LOG_W("thread suspend: thread disorder, 0x%02x", RT_SCHED_CTX(thread).stat);
         rt_sched_unlock(slvl);
         return -RT_ERROR;
     }
 
     if (stat == RT_THREAD_RUNNING)
     {
-        /* not suspend running status thread on other core */
         RT_ASSERT(thread == rt_thread_self());
     }
-
+    
 #ifdef RT_USING_SMART
     if (thread->lwp)
     {
