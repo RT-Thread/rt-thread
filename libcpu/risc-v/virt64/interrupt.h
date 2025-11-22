@@ -42,5 +42,12 @@ void rt_hw_interrupt_init(void);
 void rt_hw_interrupt_mask(int vector);
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, void *param, const char *name);
 void handle_trap(rt_ubase_t xcause, rt_ubase_t xtval, rt_ubase_t xepc, struct rt_hw_stack_frame *sp);
-
+#ifdef RT_USING_SMP
+void rt_hw_interrupt_set_priority(int vector, unsigned int priority);
+unsigned int rt_hw_interrupt_get_priority(int vector);
+void rt_hw_ipi_handler(void);
+void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler);
+void rt_hw_ipi_init(void);
+void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
+#endif /* RT_USING_SMP */
 #endif
