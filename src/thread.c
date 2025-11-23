@@ -673,7 +673,8 @@ static rt_err_t _thread_sleep(rt_tick_t tick)
         rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &tick);
         rt_timer_start(&(thread->thread_timer));
 
-        thread->error = -RT_EINTR;
+        /* mark wait pending errno */
+        thread->error = -RT_EWAITPEND;
 
         /* notify a pending rescheduling */
         rt_schedule();
