@@ -2,24 +2,55 @@
 menuconfig RT_USING_RT_LINK
     bool "RT-Link"
     default n
+    help
+        RT-Link is a lightweight, portable data link layer transport protocol.
+
+        Key Features:
+        Supports data retransmission mechanism
+        Frame sequence number and status synchronization
+        Provides a unified API interface
+        Supports adaptation to various underlying hardware
+        Built-in CRC checksum
+
+        Typical Application Scenarios:
+        Short-range communication between low-power devices
+        Device firmware upgrades, log feedback, etc.
+
+        Not enabled by default,Once enabled, RT-Link components can be used (requires enabling UART or other related hardware transmission media).
 
 if RT_USING_RT_LINK
     choice RT_LINK_USING_CRC
         prompt"use hw crc device or not"
         default RT_LINK_USING_SF_CRC
+        help 
+            In RT-Thread's RT-Link protocol:
+            CRC check verifies whether the data has been tampered with or corrupted during transmission by calculating the CRC value of the data.
+
+            Once enabled, CRC checksums in RT-Link can be used (software CRC checksums are enabled by default). 
+            You can choose to enable either software CRC checksums or hardware CRC checksums.
 
         config RT_LINK_USING_SF_CRC
             bool "use software crc table"
+            help
+                Once enabled, software CRC checksums in RT-Link can be used.
         config RT_LINK_USING_HW_CRC
             bool "use hardware crc device"
+            help
+                Once enabled, hardware CRC checksums in RT-Link can be used.
     endchoice
 
     menu "rt link debug option"
         config USING_RT_LINK_DEBUG
             bool "Enable RT-Link debug"
             default n
+            help
+                USING_RT_LINK_DEBUG enables RT-Link core debugging. 
+                Once enabled, it will output debugging information for the RT-Link protocol layer (disabled by default).
         config USING_RT_LINK_HW_DEBUG
             bool "Enable RT-Link hw debug"
             default n
+            help
+                USING_RT_LINK_HW_DEBUG enables RT-Link hardware debugging.
+                Once enabled, it will output debugging information about the underlying RT-Link hardware (disabled by default).
     endmenu
 endif
