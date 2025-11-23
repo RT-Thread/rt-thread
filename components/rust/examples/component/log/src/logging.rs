@@ -7,6 +7,7 @@
  * Date           Author       notes
  * 2025-10-20     foxglove     micro rust log component
  */
+/* Basic logging primitives and console output helpers */
 use alloc::string::String;
 use rt_rust::println;
 
@@ -20,6 +21,7 @@ pub enum Level {
     Trace = 5,
 }
 
+/* Top-level logging macro */
 #[macro_export]
 macro_rules! log {
     ($level:expr, $($arg:tt)*) => ({
@@ -27,6 +29,7 @@ macro_rules! log {
     });
 }
 
+/* Error-level logging */
 #[macro_export]
 macro_rules! error {
     ($($arg:tt)*) => ({
@@ -34,6 +37,7 @@ macro_rules! error {
     });
 }
 
+/* Warning-level logging */
 #[macro_export]
 macro_rules! warn {
     ($($arg:tt)*) => ({
@@ -41,6 +45,7 @@ macro_rules! warn {
     });
 }
 
+/* Info-level logging */
 #[macro_export]
 macro_rules! info {
     ($($arg:tt)*) => ({
@@ -48,6 +53,7 @@ macro_rules! info {
     });
 }
 
+/* Debug-level logging */
 #[macro_export]
 macro_rules! debug {
     ($($arg:tt)*) => ({
@@ -55,6 +61,7 @@ macro_rules! debug {
     });
 }
 
+/* Trace-level logging */
 #[macro_export]
 macro_rules! trace {
     ($($arg:tt)*) => ({
@@ -62,6 +69,7 @@ macro_rules! trace {
     });
 }
 
+/* Internal logging handler: formats message and prints with color */
 pub fn _log(level: Level, args: core::fmt::Arguments) {
     use core::fmt::Write;
     use rt_rust::time;

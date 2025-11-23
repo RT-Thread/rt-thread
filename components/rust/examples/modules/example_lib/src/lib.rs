@@ -8,7 +8,7 @@
  * 2025-10-10     foxglove     Basic library module template
  */
 #![no_std]
-// Bring rt-rust's println! macro into scope
+/* Bring rt-rust's println! macro into scope */ 
 use rt_rust::println;
 use core::ffi::{c_char, CStr};
 #[unsafe(no_mangle)]

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,12 +10,11 @@
  * 2025-10-10     foxglove     latest version
  */
 
-//! RT-THREAD & RUST
-//!
-//! A simple and easy-to-use system support library
-//! that provides basic functions and FS, NET and DEVICE.
-//!
-//! You can use this library on embedded devices that support rt-thread
+/* RT-Thread Rust core library
+
+Provides basic system support functionality including file system, network,
+and device interfaces. Designed for embedded devices running RT-Thread.
+*/
 
 #![no_std]
 #![feature(alloc_error_handler)]
@@ -46,10 +45,9 @@ pub mod libloader;
 mod prelude;
 pub use prelude::v1::*;
 
-// Re-export initialization function
+/* Re-export initialization function */
 pub use init::rust_init;
 
-// TODO: review this enum
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum RTTError {
     ThreadStartupErr,

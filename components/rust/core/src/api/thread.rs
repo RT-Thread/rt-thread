@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,14 +13,11 @@ use core::ptr;
 use core::ffi::c_void;
 use alloc::ffi::CString;
 
-// Thread handle, defined by c code
+/* Thread handle, defined by RT-Thread C code */
 pub type APIRawThread = rt_thread_t;
-
-// Thread entry function, Defined by rtt c code
+/* Thread entry function, defined by RT-Thread C code */
 pub type ThreadEntry = extern "C" fn(parameter: *mut c_void);
 
-// Create a new thread
-// Return None:OOM Some():thread handle
 #[inline]
 pub fn thread_create(
     name: &str,
@@ -49,13 +46,11 @@ pub fn thread_create(
     }
 }
 
-// Delete a thread from system
 #[inline]
 pub fn thread_delete(th: APIRawThread) -> RttCResult {
     unsafe { rt_thread_delete(th).into() }
 }
 
-// Get current thread
 #[inline]
 pub fn thread_self() -> Option<APIRawThread> {
     let ret;
@@ -69,25 +64,21 @@ pub fn thread_self() -> Option<APIRawThread> {
     }
 }
 
-// Startup a thread
 #[inline]
 pub fn thread_startup(th: APIRawThread) -> RttCResult {
     unsafe { rt_thread_startup(th).into() }
 }
 
-// Thread have a sleep
 #[inline]
 pub fn thread_delay(ticks: usize) -> RttCResult {
     unsafe { rt_thread_delay(ticks as _).into() }
 }
 
-// Thread have a ms sleep
 #[inline]
 pub fn thread_m_delay(ms: i32) -> RttCResult {
     unsafe { rt_thread_mdelay(ms as _).into() }
 }
 
-// Yield
 #[inline]
 pub fn thread_yield() {
     unsafe {
@@ -95,13 +86,11 @@ pub fn thread_yield() {
     }
 }
 
-// Suspend a thread
 #[inline]
 pub fn thread_suspend(th: APIRawThread) -> RttCResult {
     unsafe { rt_thread_suspend(th).into() }
 }
 
-// Resume a thread
 #[inline]
 pub fn thread_resume(th: APIRawThread) -> RttCResult {
     unsafe { rt_thread_resume(th).into() }

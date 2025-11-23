@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,8 +8,9 @@
  * 2025-10-14     foxglove     libdl safe wrapper (libloading-like)
  */
 
-//! Minimal `libloading`-style safe wrapper around RT-Thread libdl.
-//! Provides RAII `Library` and typed `Symbol<T>` for dlsym.
+/*! Minimal `libloading`-style safe wrapper around RT-Thread libdl.
+Provides RAII `Library` and typed `Symbol<T>` for dlsym.
+*/
 
 extern crate alloc;
 
@@ -26,13 +27,13 @@ use crate::bindings::libc;
 
 pub use crate::bindings::libc::{RTLD_GLOBAL, RTLD_LAZY, RTLD_LOCAL, RTLD_NOW};
 
-/// Error type for dynamic loading operations
+/* Error type for dynamic loading operations */
 pub enum DlError {
-    /// dlopen failed; contains last error C-string pointer
+    /* dlopen failed; contains last error C-string pointer */
     Open(*const c_char),
-    /// dlsym failed; contains last error C-string pointer
+    /* dlsym failed; contains last error C-string pointer */
     Symbol(*const c_char),
-    /// dlclose returned non-zero; contains return code
+    /* dlclose returned non-zero; contains return code */
     Close(c_int),
 }
 
@@ -64,27 +65,27 @@ impl core::fmt::Display for DlError {
     }
 }
 
-/// RAII wrapper for a `dlopen` handle
+/* RAII wrapper for a `dlopen` handle */
 pub struct Library {
     handle: *mut c_void,
 }
 
 impl Library {
-    /// Create a new library using default flags (`RTLD_NOW | RTLD_GLOBAL`).
-    /// Accepts a Rust string path and converts internally to a C string.
+    /* Create a new library using default flags (`RTLD_NOW | RTLD_GLOBAL`).
+     * Accepts a Rust string path and converts internally to a C string.
+     */
     pub fn new(path: &str) -> Result<Self, DlError> {
-        // Convert to NUL-terminated C string; reject interior NULs
         let cstr = match CString::new(path) {
             Ok(s) => s,
             Err(_) => {
-                // Interior NUL; no last_error available, return a neutral error
                 return Err(DlError::Open(core::ptr::null()));
             }
         };
         unsafe { Self::open_global(cstr.as_ptr()) }
     }
-    /// Open a dynamic module with given flags
-    /// Safety: `path` must be a valid, NUL-terminated C string pointer
+    /* Open a dynamic module with given flags
+     * Safety: `path` must be a valid, NUL-terminated C string pointer
+     */
     pub unsafe fn open(path: *const c_char, flags: c_int) -> Result<Self, DlError> {
         let h = libc::dlopen(path, flags);
         if h.is_null() {
@@ -94,13 +95,14 @@ impl Library {
         }
     }
 
-    /// Convenience open using `RTLD_NOW | RTLD_GLOBAL`
+    /* Convenience open using `RTLD_NOW | RTLD_GLOBAL` */
     pub unsafe fn open_global(path: *const c_char) -> Result<Self, DlError> {
         Self::open(path, RTLD_NOW | RTLD_GLOBAL)
     }
 
-    /// Resolve a typed symbol from the library using a C string pointer.
-    /// Safety: Caller must ensure `T` matches the actual symbol type and `symbol` is NUL-terminated.
+    /* Resolve a typed symbol from the library using a C string pointer.
+     * Safety: Caller must ensure `T` matches the actual symbol type and `symbol` is NUL-terminated.
+     */
     pub unsafe fn get_ptr<T>(&self, symbol: *const c_char) -> Result<Symbol<'_, T>, DlError> {
         let sym = libc::dlsym(self.handle, symbol);
         if sym.is_null() {
@@ -114,8 +116,9 @@ impl Library {
         }
     }
 
-    /// Resolve a typed symbol from the library using a byte slice name.
-    /// If the slice is not NUL-terminated, a temporary buffer is allocated.
+    /* Resolve a typed symbol from the library using a byte slice name.
+     * If the slice is not NUL-terminated, a temporary buffer is allocated.
+     */
     pub fn get<T>(&self, symbol: &[u8]) -> Result<Symbol<'_, T>, DlError> {
         let (ptr, _guard_buf): (*const c_char, Option<Vec<u8>>) = if symbol.last().copied() == Some(0) {
             (symbol.as_ptr() as *const c_char, None)
@@ -125,7 +128,6 @@ impl Library {
             buf.push(0);
             (buf.as_ptr() as *const c_char, Some(buf))
         };
-        // Call into dlsym; buffer lives until end of this function
         let sym = unsafe { libc::dlsym(self.handle, ptr) };
         if sym.is_null() {
             Err(DlError::Symbol(libc::last_error_ptr()))
@@ -138,12 +140,12 @@ impl Library {
         }
     }
 
-    /// Check if handle is null
+    /* Check if handle is null */
     pub fn is_null(&self) -> bool {
         self.handle.is_null()
     }
 
-    /// Consume and close the library explicitly
+    /* Consume and close the library explicitly */
     pub unsafe fn close(self) -> Result<(), DlError> {
         let h = self.handle;
         forget(self);
@@ -155,7 +157,7 @@ impl Library {
         }
     }
 
-    /// Leak the handle out (caller manages lifetime)
+    /* Leak the handle out (caller manages lifetime) */
     pub unsafe fn into_raw(self) -> *mut c_void {
         let h = self.handle;
         forget(self);
@@ -174,8 +176,9 @@ impl Drop for Library {
     }
 }
 
-/// RAII wrapper for a symbol tied to a `Library` lifetime.
-/// Stores the raw pointer and performs typed conversion at the use site.
+/* RAII wrapper for a symbol tied to a `Library` lifetime.
+ * Stores the raw pointer and performs typed conversion at the use site.
+ */
 pub struct Symbol<'lib, T> {
     raw: *mut c_void,
     _lib: PhantomData<&'lib Library>,
@@ -183,24 +186,26 @@ pub struct Symbol<'lib, T> {
 }
 
 impl<'lib, T> Symbol<'lib, T> {
-    /// Check if the underlying pointer is null
+    /* Check if the underlying pointer is null */
     pub fn is_null(&self) -> bool {
         self.raw.is_null()
     }
 
-    /// Get the raw pointer as `*mut c_void`
+    /* Get the raw pointer as `*mut c_void` */
     pub fn as_raw(&self) -> *mut c_void {
         self.raw
     }
 
-    /// Cast the raw pointer to a different pointer type
-    /// Safety: Caller must ensure `U` is the correct target type.
+    /* Cast the raw pointer to a different pointer type
+     * Safety: Caller must ensure `U` is the correct target type.
+     */
     pub unsafe fn as_ptr<U>(&self) -> *mut U {
         self.raw as *mut U
     }
 
-    /// Convert to the typed value (e.g., function pointer) at use site
-    /// Safety: `T` must be the correct type for the symbol.
+    /* Convert to the typed value (e.g., function pointer) at use site
+    Safety: `T` must be the correct type for the symbol.
+    */
     pub unsafe fn to_value(&self) -> T
     where
         T: Sized + Copy,
@@ -211,7 +216,6 @@ impl<'lib, T> Symbol<'lib, T> {
         core::ptr::read(src)
     }
 
-    /// Consume the wrapper and return the raw pointer
     pub fn into_raw(self) -> *mut c_void {
         let p = self.raw;
         forget(self);
@@ -222,13 +226,12 @@ impl<'lib, T> Symbol<'lib, T> {
 impl<'lib, T> Deref for Symbol<'lib, T> {
     type Target = T;
     fn deref(&self) -> &Self::Target {
-        // Reinterpret the `raw` pointer storage as a value of type `T`.
-        // This is safe if `T` is a pointer-sized function pointer or compatible pointer type.
+        /* Reinterpret the `raw` pointer storage as a value of type `T`. */
+        /* Safety: This is safe if `T` is a pointer-sized function pointer or compatible pointer type. */
         unsafe { &*((&self.raw as *const *mut c_void) as *const T) }
     }
 }
 
-/// Fetch last libc error C-string pointer (for printing)
 #[inline]
 pub fn last_error() -> *const c_char {
     libc::last_error_ptr()

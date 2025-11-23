@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -23,17 +23,18 @@ struct CmdArgs {
     desc: Option<String>,
 }
 
-/// RT-Thread Shell command export macro
-/// 
-/// Used to export a function as an RT-Thread Shell command
-/// 
-/// Usage:
-/// ```rust
-/// #[msh_cmd_export(name = "my_cmd", desc = "My command description")]
-/// fn my_command(args: vec::IntoIter<rt_rust::param::ParamItem>) {
-///     // Command logic
-/// }
-/// ```
+/** RT-Thread Shell command export macro
+ 
+ Used to export a function as an RT-Thread Shell command
+ 
+ Usage:
+ ```rust
+ #[msh_cmd_export(name = "my_cmd", desc = "My command description")]
+ fn my_command(args: vec::IntoIter<rt_rust::param::ParamItem>) {
+     // Command logic
+ }
+ ```
+*/
 pub fn msh_cmd_export(args: TokenStream, input: TokenStream) -> TokenStream {
     let f = parse_macro_input!(input as syn::ItemFn);
     let parser = syn::punctuated::Punctuated::<Meta, syn::token::Comma>::parse_terminated;
@@ -70,7 +71,7 @@ pub fn msh_cmd_export(args: TokenStream, input: TokenStream) -> TokenStream {
     let mod_name = format_ident!("__cmd_func_{}_", arg.name.as_ref().unwrap());
     let call_func_name = f.sig.ident.clone();
 
-    // Check function signature
+    /* Check function signature */
     let valid_signature = f.sig.constness.is_none()
         && f.sig.unsafety.is_none()
         && f.sig.asyncness.is_none()

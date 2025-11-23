@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,7 +7,6 @@
  * Date           Author       Notes
  * 2025-10-10     foxglove     RT-Thread Queue implementation
  */
-//! Passing information between threads
 
 use crate::api::*;
 use crate::{panic::panic_on_atomic_context, RTTError};

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,7 +14,7 @@ use alloc::ffi::CString;
 
 pub type APIRawSem = rt_sem_t;
 
-#[inline]
+ #[inline]
 pub(crate) fn semaphore_create(name: &str) -> Option<APIRawSem> {
     let s = CString::new(name).unwrap();
     let raw;
@@ -28,22 +28,22 @@ pub(crate) fn semaphore_create(name: &str) -> Option<APIRawSem> {
     };
 }
 
-#[inline]
+ #[inline]
 pub(crate) fn semaphore_try_take(handle: APIRawSem) -> RttCResult {
     unsafe { rt_sem_trytake(handle).into() }
 }
 
-#[inline]
+ #[inline]
 pub(crate) fn semaphore_take(handle: APIRawSem, tick: u32) -> RttCResult {
     unsafe { rt_sem_take(handle, tick).into() }
 }
 
-#[inline]
+ #[inline]
 pub(crate) fn semaphore_release(handle: APIRawSem) -> RttCResult {
     unsafe { rt_sem_release(handle).into() }
 }
 
-#[inline]
+ #[inline]
 pub(crate) fn semaphore_delete(handle: APIRawSem) {
     unsafe {
         let _ = rt_sem_delete(handle);

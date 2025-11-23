@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -35,7 +35,7 @@ impl fmt::Write for StdOut {
     fn write_str(&mut self, s: &str) -> fmt::Result {
         fn rtt_kputs(s: *const u8) {
             unsafe {
-                // Use kprintf with "%s" format to avoid dependency on rt_kputs symbol
+                /* Use kprintf with "%s" format to avoid dependency on rt_kputs symbol */
                 rt_kprintf(b"%s\0".as_ptr(), s);
             }
         }

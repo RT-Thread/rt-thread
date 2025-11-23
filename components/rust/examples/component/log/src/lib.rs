@@ -1,6 +1,6 @@
 
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,17 +12,19 @@
 
 extern crate alloc;
 
+/* When the `enable-log` feature is enabled, expose logging module and helpers */
 #[cfg(feature = "enable-log")]
 pub mod logging;
 #[cfg(feature = "enable-log")]
 use rt_rust::println;
 #[cfg(feature = "enable-log")]
 use crate::logging::Level;
-// 导入rust库的panic_handler
+
+/* Import panic handler parameters from rt_rust library */
 use rt_rust::param::{Param, ParamItem};
 
-// 当 enable-log feature 未启用时，提供一个空的实现
+/* Provide a no-op implementation when the `enable-log` feature is disabled */
 #[cfg(not(feature = "enable-log"))]
 pub extern "C" fn component_init() {
-    // 空实现，确保库仍然可以被链接
+    /* Empty implementation to ensure the library still links */
 }

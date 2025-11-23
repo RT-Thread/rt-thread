@@ -86,7 +86,6 @@ void rt_defunct_execute(void)
         }
 
 #ifdef RT_USING_MODULE
-        #include <dlmodule.h>
         module = (struct rt_dlmodule *)thread->parent.module_id;
         if (module)
         {

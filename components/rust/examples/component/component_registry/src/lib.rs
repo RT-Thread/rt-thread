@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,18 +12,18 @@
 
 extern crate alloc;
 
-// 演示新的模块化宏接口
+/* Demonstrate the new modular macro interface */
 use rt_macros::rt_component_export;
 use rt_rust::param::{Param, ParamItem};
 use rt_rust::println;
 
-// 重新导出组件功能，供其他模块使用
+/* Re-export component functionality for other modules */
 #[cfg(feature = "enable-log")]
 pub use em_component_log::*;
 #[cfg(feature = "enable-log")]
 use em_component_log::logging::Level;
 
-/// 统一的组件注册入口点
+/** Unified component registration entrypoint */
 #[cfg(feature = "enable-log")]
 #[rt_component_export(name = "rust_component_registry")]
 fn init_registry_component() {
@@ -36,8 +36,8 @@ fn init_registry_component() {
     debug!("hello world");
 }
 
-/// 当没有启用任何组件特性时的空实现
+/** Provide a no-op implementation when no component feature is enabled */
 #[cfg(not(feature = "enable-log"))]
 pub extern "C" fn component_init() {
-    // 空实现，确保库仍然可以被链接
+    /* Empty implementation to ensure the library still links */
 }

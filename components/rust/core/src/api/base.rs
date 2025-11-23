@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,7 +9,7 @@
  */
 use crate::bindings::*;
 
-// Error type from rt-thread `c code`
+/* Error type from rt-thread C code */
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub enum RttCResult {
     Ok = RT_EOK as isize,
@@ -26,7 +26,7 @@ pub enum RttCResult {
 
     NotValidCode = -100,
 }
-// NOTE Match to `enum Error`
+/* NOTE Match to `enum Error` */
 impl From<i32> for RttCResult {
     fn from(a: i32) -> Self {
         let ret = match a {

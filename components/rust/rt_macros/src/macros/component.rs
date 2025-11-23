@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,25 +21,26 @@ struct ComponentArgs {
     name: Option<String>,
 }
 
-/// RT-Thread component export macro
-/// 
-/// Used to export a function as an RT-Thread component initialization entry
-/// 
-/// Usage:
-/// ```rust
-/// #[rt_component_export]
-/// fn my_component_init() {
-///     // Component initialization logic
-/// }
-/// ```
-/// 
-/// Or specify a name:
-/// ```rust
-/// #[rt_component_export(name = "my_component")]
-/// fn my_component_init() {
-///     // Component initialization logic
-/// }
-/// ```
+/** RT-Thread component export macro
+ 
+ Used to export a function as an RT-Thread component initialization entry
+ 
+ Usage:
+ ```rust
+ #[rt_component_export]
+ fn my_component_init() {
+     // Component initialization logic
+ }
+ ```
+ 
+ Or specify a name:
+ ```rust
+ #[rt_component_export(name = "my_component")]
+ fn my_component_init() {
+     // Component initialization logic
+ }
+ ```
+*/
 pub fn rt_component_export(args: TokenStream, input: TokenStream) -> TokenStream {
     let f = parse_macro_input!(input as syn::ItemFn);
     let parser = syn::punctuated::Punctuated::<Meta, syn::token::Comma>::parse_terminated;
@@ -74,7 +75,7 @@ pub fn rt_component_export(args: TokenStream, input: TokenStream) -> TokenStream
     let mod_name = format_ident!("__component_func_{}_", arg.name.as_ref().unwrap());
     let call_func_name = f.sig.ident.clone();
 
-    // Check function signature
+    /* Check function signature */
     let valid_signature = f.sig.constness.is_none()
         && f.sig.unsafety.is_none()
         && f.sig.asyncness.is_none()

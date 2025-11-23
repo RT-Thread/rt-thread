@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -21,26 +21,27 @@ struct MainArgs {
     name: Option<String>,
 }
 
-/// RT-Thread main thread entry macro
-/// 
-/// Used to mark the main entry function of a Rust program, exporting it as 
-/// a main thread entry recognizable by RT-Thread
-/// 
-/// Usage:
-/// ```rust
-/// #[rt_thread_main]
-/// fn main() {
-///     // Main thread logic
-/// }
-/// ```
-/// 
-/// Or specify a name:
-/// ```rust
-/// #[rt_thread_main(name = "my_main")]
-/// fn main() {
-///     // Main thread logic
-/// }
-/// ```
+/** RT-Thread main thread entry macro
+ 
+ Used to mark the main entry function of a Rust program, exporting it as 
+ a main thread entry recognizable by RT-Thread
+ 
+ Usage:
+ ```rust
+ #[rt_thread_main]
+ fn main() {
+     // Main thread logic
+ }
+ ```
+ 
+ Or specify a name:
+ ```rust
+ #[rt_thread_main(name = "my_main")]
+ fn main() {
+     // Main thread logic
+ }
+ ```
+*/
 pub fn rt_thread_main(args: TokenStream, input: TokenStream) -> TokenStream {
     let f = parse_macro_input!(input as syn::ItemFn);
     let parser = syn::punctuated::Punctuated::<Meta, syn::token::Comma>::parse_terminated;
@@ -73,7 +74,7 @@ pub fn rt_thread_main(args: TokenStream, input: TokenStream) -> TokenStream {
     let mod_name = format_ident!("__init_func_{}_", arg.name.as_ref().unwrap());
     let call_func_name = f.sig.ident.clone();
 
-    // Check function signature
+    /* Check function signature */  
     let valid_signature = f.sig.constness.is_none()
         && f.sig.unsafety.is_none()
         && f.sig.asyncness.is_none()

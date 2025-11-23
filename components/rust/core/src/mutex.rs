@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,7 +28,7 @@ where
     data: UnsafeCell<T>,
 }
 
-// Impl for Default Mutex<M = SleepMutex, NAME = UnnamedObj>
+/* Impl for Default Mutex<M = SleepMutex, NAME = UnnamedObj> */
 impl<T> Mutex<T> {
     pub fn new(t: T) -> Result<Self, RTTError> {
         Ok(Mutex {
@@ -61,7 +61,7 @@ impl<T> Mutex<T> {
     }
 }
 
-// Impl for all Mutex
+/* Impl for all Mutex */
 impl<T, M: RawMutexOps> Mutex<T, M> {
     pub fn spec_new(t: T) -> Result<Self, RTTError> {
         Ok(Mutex {
