@@ -6,7 +6,42 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-11-20     zhujiale     the first version
+ * 2025-11-24     ChuanN-sudo  add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Serial Bypass Lower Run Test
+ *
+ * Test Objectives:
+ * - Validate serial device bypass lower layer registration and data processing mechanisms.
+ * - Verify correct character reception and callback execution in bypass mode.
+ * - Test core APIs: rt_bypass_lower_register(), rt_bypass_lower_unregister(), rt_hw_serial_isr()
+ *
+ * Test Scenarios:
+ * - Register bypass lower layer callback to intercept serial RX data before normal processing.
+ * - Simulate hardware interrupt with custom getc function returning predefined character sequences.
+ * - Verify repeated character reception, counting mechanism and sequential character reception with incremental validation.
+ * - Temporarily replace serial device operations with mock implementations for controlled testing.
+ *
+ * Verification Metrics:
+ * - Bypass callback executes for each received character with correct character value.
+ * - Character validation assertions pass: bypass_lower_001 validates 10 'a' characters, bypass_lower_002 validates sequential characters 'b' to 'u'.
+ * - Mock getc function returns -1 after 10 iterations (bypass_lower_001) or 20 iterations (bypass_lower_002) to terminate reception.
+ * - Serial device operations restore to original state after test completion.
+ * - Bypass lower layer unregisters successfully without resource leaks.
+ *
+ * Dependencies:
+ * - Hardware requirements: Platform with serial console device (UART) support.
+ * - Software configuration:
+ *     - RT_USING_UTESTCASES must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_SERIAL_BYPASS must be enabled (enable via: RT-Thread Utestcases -> Kernel Components -> Drivers -> Serial Test -> Serial Bypass Test).
+ * - Environmental Assumptions: Serial device initialized and operational before test execution.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.serial.bypass_lower)"
+ * - Character validation assertions pass for all test iterations.
+ */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "utest.h"
