@@ -6,6 +6,37 @@
  * Change Logs:
  * Date           Author       Notes
  */
+
+/**
+ * Test Case Name: RT-Thread Mutex Priority Inheritance & Timeout Behavior Test
+ * Test Objectives:
+ * - Verify RT-Thread mutex behavior under priority inheritance (PI)
+ * - Validate timeout, wake-up, chained mutex dependency, and recursive PI updates
+ * - Test APIs: rt_mutex_init/detach, rt_mutex_take/trytake/release,
+ *   rt_thread_create/startup, rt_thread_resume, rt_timer usage
+ * Test Scenarios:
+ * - Multiple threads contending for shared mutexes with different priorities
+ * - Main thread holding chained mutexes to trigger multi-level PI updates
+ * - Mutex timeout behavior (RT_ETIMEOUT) with concurrent holder priority changes
+ * - Wake-up of a waiting high-priority thread via external resume event
+ * - Recursive dependency chain causing full-chain PI propagation and restoration
+ * Verification Metrics:
+ * - Correct return codes (RT_EOK, -RT_ETIMEOUT, -RT_EINTR)
+ * - Correct priority inheritance and rollback to init_priority
+ * - Expected thread scheduling order and priority transitions
+ * - All synchronization flags increment to expected values
+ * Dependencies:
+ * - RT-Thread kernel with mutex and IPC components enabled
+ * - Preemptive scheduler with priority-based dispatching
+ * - System tick timer accuracy for delay/timeout verification
+ * - Sufficient thread stack size for multi-thread test
+ * Expected Results:
+ * - PI activates and restores correctly across simple and recursive mutex chains
+ * - Timeout and wake-up tests return expected error codes
+ * - All test units complete successfully with correct thread priorities
+ * - Console/log confirms all UTEST cases pass
+ */
+
 #define __RT_IPC_SOURCE__
 
 #include <rtthread.h>

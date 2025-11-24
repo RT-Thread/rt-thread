@@ -63,7 +63,7 @@ static int cmd_ps(int argc, char **argv)
     extern int list_module(void);
 
 #ifdef RT_USING_MODULE
-    if ((argc == 2) && (strcmp(argv[1], "-m") == 0))
+    if ((argc == 2) && (rt_strcmp(argv[1], "-m") == 0))
         list_module();
     else
 #endif
@@ -237,7 +237,7 @@ static cmd_function_t msh_get_cmd(char *cmd, int size)
             index < _syscall_table_end;
             FINSH_NEXT_SYSCALL(index))
     {
-        if (strncmp(index->name, cmd, size) == 0 &&
+        if (rt_strncmp(index->name, cmd, size) == 0 &&
                 index->name[size] == '\0')
         {
             cmd_func = (cmd_function_t)index->func;
@@ -276,7 +276,7 @@ int msh_exec_module(const char *cmd_line, int size)
     rt_memcpy(pg_name, cmd_line, cmd_length);
     pg_name[cmd_length] = '\0';
 
-    if (strstr(pg_name, ".mo") != RT_NULL || strstr(pg_name, ".MO") != RT_NULL)
+    if (rt_strstr(pg_name, ".mo") != RT_NULL || rt_strstr(pg_name, ".MO") != RT_NULL)
     {
         /* try to open program */
         fd = open(pg_name, O_RDONLY, 0);
@@ -374,12 +374,12 @@ static rt_bool_t _msh_lwp_cmd_exists(const char *path)
 static char *_msh_exec_search_path(const char *path, const char *pg_name)
 {
     char *path_buffer = RT_NULL;
-    ssize_t pg_len = strlen(pg_name);
+    ssize_t pg_len = rt_strlen(pg_name);
     ssize_t base_len = 0;
 
     if (path)
     {
-        base_len = strlen(path);
+        base_len = rt_strlen(path);
     }
 
     path_buffer = rt_malloc(base_len + pg_len + 6);
@@ -390,7 +390,7 @@ static char *_msh_exec_search_path(const char *path, const char *pg_name)
 
     if (base_len > 0)
     {
-        memcpy(path_buffer, path, base_len);
+        rt_memcpy(path_buffer, path, base_len);
         path_buffer[base_len] = '/';
         path_buffer[base_len + 1] = '\0';
     }
@@ -405,7 +405,7 @@ static char *_msh_exec_search_path(const char *path, const char *pg_name)
         return path_buffer;
     }
 
-    if (strstr(path_buffer, ".elf") != NULL)
+    if (rt_strstr(path_buffer, ".elf") != NULL)
     {
         goto not_found;
     }
@@ -506,7 +506,7 @@ int _msh_exec_lwp(int debug, char *cmd, rt_size_t length)
 
     /* only check these paths when the first argument doesn't contain path
        seperator */
-    if (strstr(argv[0], "/"))
+    if (rt_strstr(argv[0], "/"))
     {
         return -1;
     }
@@ -704,14 +704,14 @@ void msh_auto_complete_path(char *path)
             if (dirent == RT_NULL) break;
 
             /* matched the prefix string */
-            if (strncmp(index, dirent->d_name, rt_strlen(index)) == 0)
+            if (rt_strncmp(index, dirent->d_name, rt_strlen(index)) == 0)
             {
                 multi ++;
                 if (min_length == 0)
                 {
                     min_length = rt_strlen(dirent->d_name);
                     /* save dirent name */
-                    strcpy(full_path, dirent->d_name);
+                    rt_strcpy(full_path, dirent->d_name);
                 }
 
                 length = str_common(dirent->d_name, full_path);
@@ -735,7 +735,7 @@ void msh_auto_complete_path(char *path)
                     dirent = readdir(dir);
                     if (dirent == RT_NULL) break;
 
-                    if (strncmp(index, dirent->d_name, rt_strlen(index)) == 0)
+                    if (rt_strncmp(index, dirent->d_name, rt_strlen(index)) == 0)
                         rt_kprintf("%s\n", dirent->d_name);
                 }
             }
@@ -822,14 +822,14 @@ void msh_auto_complete(char *prefix)
         {
             /* skip finsh shell function */
             cmd_name = (const char *) index->name;
-            if (strncmp(prefix, cmd_name, strlen(prefix)) == 0)
+            if (rt_strncmp(prefix, cmd_name, rt_strlen(prefix)) == 0)
             {
                 if (min_length == 0)
                 {
                     /* set name_ptr */
                     name_ptr = cmd_name;
                     /* set initial length */
-                    min_length = strlen(name_ptr);
+                    min_length = rt_strlen(name_ptr);
                 }
 
                 length = str_common(name_ptr, cmd_name);
@@ -865,14 +865,14 @@ static msh_cmd_opt_t *msh_get_cmd_opt(char *opt_str)
     }
     else
     {
-        len = strlen(opt_str);
+        len = rt_strlen(opt_str);
     }
 #if defined(FINSH_USING_SYMTAB)
     for (index = _syscall_table_begin;
             index < _syscall_table_end;
             FINSH_NEXT_SYSCALL(index))
     {
-        if (strncmp(index->name, opt_str, len) == 0 && index->name[len] == '\0')
+        if (rt_strncmp(index->name, opt_str, len) == 0 && index->name[len] == '\0')
         {
             opt = index->opt;
             break;
@@ -906,18 +906,18 @@ static void msh_opt_complete(char *opts_str, struct msh_cmd_opt *cmd_opt)
     const char *name_ptr = RT_NULL;
     int min_length = 0, length, opts_str_len;
 
-    opts_str_len = strlen(opts_str);
+    opts_str_len = rt_strlen(opts_str);
 
     for (opt = cmd_opt; opt->id; opt++)
     {
-        if (!strncmp(opt->name, opts_str, opts_str_len))
+        if (!rt_strncmp(opt->name, opts_str, opts_str_len))
         {
             if (min_length == 0)
             {
                 /* set name_ptr */
                 name_ptr = opt->name;
                 /* set initial length */
-                min_length = strlen(name_ptr);
+                min_length = rt_strlen(name_ptr);
             }
 
             length = str_common(name_ptr, opt->name);
@@ -933,7 +933,7 @@ static void msh_opt_complete(char *opts_str, struct msh_cmd_opt *cmd_opt)
 
     if (name_ptr != NULL)
     {
-        strncpy(opts_str, name_ptr, min_length);
+        rt_strncpy(opts_str, name_ptr, min_length);
     }
 }
 
@@ -959,7 +959,7 @@ void msh_opt_auto_complete(char *prefix)
     {
         opt = msh_get_cmd_opt(prefix);
     }
-    else if (!msh_get_cmd(prefix, strlen(prefix)) && (' ' == prefix[strlen(prefix) - 1]))
+    else if (!msh_get_cmd(prefix, rt_strlen(prefix)) && (' ' == prefix[rt_strlen(prefix) - 1]))
     {
         opt = msh_get_cmd_opt(prefix);
     }
@@ -989,7 +989,7 @@ int msh_cmd_opt_id_get(int argc, char *argv[], void *options)
 
     for (opt_id = 0; (argc >= 2) && opt && opt->id; opt++)
     {
-        if (!strcmp(opt->name, argv[1]))
+        if (!rt_strcmp(opt->name, argv[1]))
         {
             opt_id = opt->id;
             break;

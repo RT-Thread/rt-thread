@@ -1,11 +1,39 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART TX Blocking Flush Test
  *
+ * Test Objectives:
+ * - Validate TX flush completion timing in blocking mode and ensure subsequent RX integrity
+ * - Verify APIs: rt_device_find, rt_device_control(RT_DEVICE_CTRL_CONFIG / RT_SERIAL_CTRL_TX_FLUSH / _SET_TX_TIMEOUT / RT_SERIAL_CTRL_RX_FLUSH),
+ *   rt_device_open with RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING,
+ *   rt_device_write, rt_device_read
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Flush Timing & Data Integrity / tc_uart_api):**
+ *   1. Configure enlarged TX buffer and set TX timeout guard.
+ *   2. Perform multiple iterations with varied payload sizes (aligned and unaligned), recording ticks needed to flush queued bytes and verifying they fall within `[expect_time, expect_time + 10]`.
+ *   3. After each flush, resend small samples and confirm received data matches transmitted pattern.
+ *
+ * Verification Metrics:
+ * - `rt_device_write` returns full payload length; measured tick difference respects expected window.
+ * - Post-flush RX comparisons succeed for all sample sizes.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` with hardware loopback and TX flush capability on `RT_SERIAL_TC_DEVICE_NAME`.
+ * - Optional DMA ping buffer configuration supported.
+ *
+ * Expected Results:
+ * - Test completes without assertions; logs show flush durations per payload.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_flush_txb)`.
  */
 
 #include <rtthread.h>

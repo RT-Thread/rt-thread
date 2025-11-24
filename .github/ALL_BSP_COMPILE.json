@@ -160,6 +160,7 @@
         "stm32/stm32f407-atk-explorer",
         "stm32/stm32f407-robomaster-c",
         "stm32/stm32f407-st-discovery",
+        "stm32/stm32f407-micu",
         "stm32/stm32f410-st-nucleo",
         "stm32/stm32f411-st-nucleo",
         "stm32/stm32f411-atk-nano",
@@ -195,6 +196,7 @@
         "stm32/stm32h563-st-nucleo",
         "stm32/stm32h503-st-nucleo",
         "stm32/stm32h723-st-nucleo",
+        "stm32/stm32h723-lxb-disco",
         "stm32/stm32h730-esphosted-evb",
         "stm32/stm32h743-armfly-v7",
         "stm32/stm32h743-atk-apollo",
@@ -482,6 +484,7 @@
       "RTT_BSP": "xuantie",
       "RTT_TOOL_CHAIN": "sourcery-Xuantie-900-gcc-elf-newlib",
       "SUB_RTT_BSP": [
+        "xuantie/smartl/e901",
         "xuantie/smartl/e902",
         "xuantie/smartl/e906",
         "xuantie/smartl/e907",

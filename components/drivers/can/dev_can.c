@@ -186,6 +186,7 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
         no = ((rt_ubase_t)tx_tosnd - (rt_ubase_t)tx_fifo->buffer) / sizeof(struct rt_can_sndbxinx_list);
         tx_tosnd->result = RT_CAN_SND_RESULT_WAIT;
         rt_completion_init(&tx_tosnd->completion);
+        can->status.sndchange |= 1<<no;
         if (can->ops->sendmsg(can, data, no) != RT_EOK)
         {
             /* send failed. */
@@ -196,7 +197,6 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
             goto err_ret;
         }
 
-        can->status.sndchange |= 1<<no;
         if (rt_completion_wait(&(tx_tosnd->completion), RT_CANSND_MSG_TIMEOUT) != RT_EOK)
         {
             level = rt_hw_local_irq_disable();
@@ -286,11 +286,12 @@ rt_inline int _can_int_tx_priv(struct rt_can_device *can, const struct rt_can_ms
         tx_fifo->buffer[no].result = RT_CAN_SND_RESULT_WAIT;
         rt_hw_local_irq_enable(level);
 
+        can->status.sndchange |= 1<<no;
         if (can->ops->sendmsg(can, data, no) != RT_EOK)
         {
             continue;
         }
-        can->status.sndchange |= 1<<no;
+
         if (rt_completion_wait(&(tx_fifo->buffer[no].completion), RT_CANSND_MSG_TIMEOUT) != RT_EOK)
         {
             can->status.sndchange &= ~ (1<<no);

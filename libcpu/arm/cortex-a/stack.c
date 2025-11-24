@@ -61,7 +61,13 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     *(--stk) = 0;       /* user sp*/
 #endif
 #ifdef RT_USING_FPU
-    *(--stk) = 0;       /* not use fpu*/
+    /* FPU context initialization matches context_gcc.S restore order:
+     * Stack layout (high to low): FPEXC -> FPSCR -> D16-D31 -> D0-D15
+     */
+    stk -= VFP_DATA_NR;
+    rt_memset(stk, 0, VFP_DATA_NR * sizeof(rt_uint32_t));  /* Initialize D0-D31 (64 words for 32 double regs) */
+    *(--stk) = 0;       /* FPSCR: Floating-Point Status and Control Register */
+    *(--stk) = 0x40000000;  /* FPEXC: Enable FPU (bit 30 = EN) */
 #endif
 
     /* return task's current stack address */

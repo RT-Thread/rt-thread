@@ -5,8 +5,37 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-08-15     liukang     the first version
+ * 2021-08-15     liukang      the first version
  * 2023-09-15     xqyjlj       change stack size in cpu64
+ * 2025-11-17     Ze-Hou       add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Event Test
+ *
+ * Test Objectives:
+ * - Validate the RT-Thread kernel event (rt_event) functionality
+ * - Test static and dynamic event object initialization, creation, deletion,
+ *   sending, receiving, and detachment APIs
+ *
+ * Test Scenarios:
+ * - Initialize and detach a static event object with both PRIO and FIFO modes
+ * - Create and delete a dynamic event object (if RT_USING_HEAP is enabled)
+ * - Use multiple threads to send and receive event flags, testing both OR and AND logic
+ * - Test event sending and receiving with different flag combinations and timing
+ *
+ * Verification Metrics:
+ * - All uassert assertions pass without failure
+ * - Event objects are correctly initialized, created, detached, and deleted
+ * - Event flags are sent and received as expected, with correct logic and timing
+ *
+ * Dependencies:
+ * - Enable Event Test (RT-Thread Utestcases -> Kernel Core -> Event Test)
+ * - Test on any RT-Thread supported platform (e.g., qemu-virt64-riscv)
+ *
+ * Expected Results:
+ * - After executing this test in msh, the expected output should be:
+ *   "[  PASSED  ] [ result   ] testcase (core.ipc_event)"
  */
 
 #include <rtthread.h>

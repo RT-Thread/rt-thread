@@ -1,27 +1,10 @@
 mainmenu "RT-Thread Configuration"
 
-config BSP_DIR
-    string
-    option env="BSP_ROOT"
-    default "."
+BSP_DIR := .
 
-config RTT_DIR
-    string
-    option env="RTT_ROOT"
-    default "rt-thread"
+RTT_DIR := ../../../../
 
-# you can change the RTT_ROOT default "rt-thread"
-# example : default "F:/git_repositories/rt-thread"
-
-config PKGS_DIR
-    string
-    option env="PKGS_ROOT"
-    default "packages"
-
-config ENV_DIR
-    string
-    option env="ENV_ROOT"
-    default "/"
+PKGS_DIR := packages
 
  config XUANTIAN_XIAOHUI_R920
     bool
@@ -30,6 +13,6 @@ config ENV_DIR
     select RT_USING_USER_MAIN
     default y
 
-source "$RTT_DIR/Kconfig"
+source "$(RTT_DIR)/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "$BSP_DIR/board/Kconfig"

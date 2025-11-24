@@ -24,7 +24,7 @@ if GetDepend('RT_USING_PIC') == True:
 if GetDepend('RT_HWTIMER_ARM_ARCH') == True:
     SrcRemove(src, ['gtimer.c'])
 
-group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
 
 # build for sub-directory
 list = os.listdir(cwd)

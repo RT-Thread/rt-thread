@@ -472,11 +472,23 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         argval = (rt_uint32_t) arg;
         if (argval == 0)
         {
-            HAL_CAN_Stop(&drv_can->CanHandle);
+            if (HAL_CAN_DeInit(&drv_can->CanHandle) != HAL_OK)
+            {
+                LOG_E("CAN deinitialization failed");
+                return -RT_ERROR;
+            }
         }
         else
         {
-            HAL_CAN_Start(&drv_can->CanHandle);
+            rt_err_t result = _can_config(&drv_can->device, &drv_can->device.config);
+            if (result != RT_EOK)
+            {
+                return result;
+            }
+            if (HAL_CAN_Start(&drv_can->CanHandle) != HAL_OK)
+            {
+                return -RT_ERROR;
+            }
         }
 
         break;
@@ -500,7 +512,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
  *
  * @return `RT_EOK` on success, or an error code on failure.
  */
-static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
+static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     CAN_HandleTypeDef *hcan;
     hcan = &((struct stm32_can *) can->parent.user_data)->CanHandle;
@@ -515,32 +527,32 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
             (state == HAL_CAN_STATE_LISTENING))
     {
         /*check select mailbox  is empty */
+        uint32_t mailbox_mask;
+        uint32_t tme_flag;
+
         switch (1 << box_num)
         {
         case CAN_TX_MAILBOX0:
-            if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME0) != SET)
-            {
-                /* Return function status */
-                return -RT_ERROR;
-            }
+            mailbox_mask = CAN_TX_MAILBOX0;
+            tme_flag = CAN_TSR_TME0;
             break;
         case CAN_TX_MAILBOX1:
-            if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME1) != SET)
-            {
-                /* Return function status */
-                return -RT_ERROR;
-            }
+            mailbox_mask = CAN_TX_MAILBOX1;
+            tme_flag = CAN_TSR_TME1;
             break;
         case CAN_TX_MAILBOX2:
-            if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME2) != SET)
-            {
-                /* Return function status */
-                return -RT_ERROR;
-            }
+            mailbox_mask = CAN_TX_MAILBOX2;
+            tme_flag = CAN_TSR_TME2;
             break;
         default:
             RT_ASSERT(0);
-            break;
+            return -RT_ERROR;
+        }
+
+        if (HAL_IS_BIT_SET(hcan->Instance->TSR, tme_flag) != SET)
+        {
+            RT_UNUSED(mailbox_mask);
+            return -RT_ERROR;
         }
 
         if (RT_CAN_STDID == pmsg->ide)
@@ -649,7 +661,7 @@ static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void
     return RT_EOK;
 }
 
-static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
+static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     HAL_StatusTypeDef status;
     CAN_HandleTypeDef *hcan;

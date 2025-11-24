@@ -6,6 +6,42 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-10-14     tyx          the first version
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Slab Memory Management Test
+ *
+ * Test Objectives:
+ * - Validate RT-Thread slab allocator behavior under deterministic and randomized workloads
+ * - Verify core APIs: rt_slab_init, rt_slab_alloc, rt_slab_free, rt_slab_realloc, rt_slab_detach
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Random Allocation Stress Test / slab_alloc_test):**
+ *   1. Initialize a 1 MB slab pool backed by dynamic memory.
+ *   2. Perform mixed random-sized allocations with ~60% allocation probability.
+ *   3. Reclaim half the outstanding allocations when the pool exhausts resources.
+ *   4. Validate slab payload integrity using magic bytes before every free.
+ *   5. Drain remaining allocations, ensuring list bookkeeping reaches zero.
+ * - **Scenario 2 (Random Reallocation Stress Test / slab_realloc_test):**
+ *   1. Initialize the slab pool and allocate a context table within it.
+ *   2. Randomly reallocate tracked blocks with size adjustments between 0 and 5 units.
+ *   3. On realloc failures, free random existing blocks to relieve pressure.
+ *   4. Confirm in-place data integrity after size changes using magic byte comparisons.
+ *   5. Reallocate to zero size to validate free semantics, then release all resources.
+ *
+ * Verification Metrics:
+ * - **Scenario 1:** Allocations return aligned pointers; data regions retain magic patterns until freed; head.count returns to 0 before teardown.
+ * - **Scenario 2:** Reallocated blocks preserve prior data up to the min(old, new) length; zero-size realloc frees memory; final sweep leaves no outstanding allocations.
+ *
+ * Dependencies:
+ * - Requires dynamic memory support (rt_malloc/rt_free) to back the slab pool.
+ * - `RT_USING_UTEST` enabled with test registered under `core.slab`.
+ * - System tick (`rt_tick_get`) and random number generator (`rand`) available for timing and stochastic operations.
+ *
+ * Expected Results:
+ * - Test case completes without assertion failures.
+ * - Console prints progress markers (`#`) during stress loops and `[  PASSED  ] [ result   ] testcase (core.slab)` when run via `utest_run core.slab`.
  */
 
 #include <rtthread.h>

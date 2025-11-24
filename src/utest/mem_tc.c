@@ -6,6 +6,77 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-10-14     tyx          the first version
+ * 2025-11-11     CYFS         Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Small Memory Management Test
+ *
+ * Test Objectives:
+ * - Validates the core kernel small memory management module functionality
+ * - Verify core APIs: rt_smem_init, rt_smem_alloc, rt_smem_free, rt_smem_realloc, rt_smem_detach
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Functional Test / mem_functional_test):**
+ * 1. Initialize small memory heap with 1024 bytes test buffer
+ * 2. Allocate entire heap at once and verify complete deallocation
+ * 3. Sequential allocation of multiple blocks followed by sequential release to test forward merging
+ * 4. Interval allocation and release pattern to test bidirectional block merging
+ * 5. Reallocation from small size to large size (requires memory move and data preservation)
+ * 6. Reallocation from large size to small size (in-place shrink verification)
+ * 7. Reallocation with equal size (no-op verification)
+ * - **Scenario 2 (Random Allocation Stress Test / mem_alloc_test):**
+ * 1. Perform random allocation/deallocation operations with 60% allocation probability
+ * 2. Memory size randomization (2-5 blocks of mem_alloc_context size)
+ * 3. Memory exhaustion handling: automatic release of half allocated blocks when allocation fails
+ * 4. Long-duration stress test (5 seconds by default)
+ * 5. Memory content verification using magic number patterns during operations
+ * - **Scenario 3 (Random Reallocation Stress Test / mem_realloc_test):**
+ * 1. Perform random reallocation of multiple memory blocks with size variations (0-5 blocks)
+ * 2. Random selection of target block from context table for reallocation
+ * 3. Memory exhaustion handling: random freeing of other blocks when realloc fails
+ * 4. Reallocation to zero size (free operation) verification
+ * 5. Memory content integrity verification before and after reallocation
+ *
+ * Verification Metrics:
+ * - **Pass (Scenario 1):** All allocation operations return non-NULL pointers
+ * - **Pass (Scenario 1):** Allocated memory is properly aligned (RT_ALIGN_SIZE)
+ * - **Pass (Scenario 1):** Memory content integrity verified using magic number pattern
+ * - **Pass (Scenario 1):** Maximum free block size equals initial total size after all deallocations
+ * - **Pass (Scenario 1):** Memory block merging verified after sequential and interval releases
+ * - **Pass (Scenario 1):** Realloc operations preserve existing data when expanding
+ * - **Pass (Scenario 1):** Realloc operations maintain pointer when shrinking in-place
+ * - **Pass (Scenario 2):** Allocated memory pointers are properly aligned
+ * - **Pass (Scenario 2):** Memory content integrity maintained throughout random operations
+ * - **Pass (Scenario 2):** Memory heap fully recovered (max_block equals initial total_size) after test
+ * - **Pass (Scenario 2):** Test count tracking accurate (head.count equals 0 at end)
+ * - **Pass (Scenario 3):** Realloc operations preserve existing data when size increases or decreases
+ * - **Pass (Scenario 3):** Magic number patterns maintained correctly after reallocation
+ * - **Pass (Scenario 3):** Realloc to zero size properly frees memory blocks
+ *
+ * Dependencies:
+ * - No specific hardware requirements, runs on any RT-Thread supported platform
+ * - Software configuration (e.g., kernel options, driver initialization)
+ * - `RT_USING_UTEST` must be enabled (`RT-Thread Utestcases`).
+ * - `Memory Test` must be enabled (`RT-Thread Utestcases` -> `Kernel Core` -> 'Memory Test').
+ * - RT-Thread kernel with small memory management enabled
+ * - rt_malloc and rt_free functions available for test buffer allocation
+ * - RT_ALIGN_SIZE macro defined for memory alignment
+ * - Random number generator (rand function) available for stress tests
+ * - System tick timer (rt_tick_get) for test duration control
+ * - Environmental assumptions
+ * - TEST_MEM_SIZE (1024 bytes) sufficient for test operations
+ * - System can handle high-frequency memory operations for stress tests
+ * - Run the test case from the msh prompt:
+ * `utest_run core.mem`
+ *
+ * Expected Results:
+ * - The test case completes without errors or failed assertions.
+ * - Memory heap fully recovered to initial state after functional test
+ * - No memory leaks or corruption detected
+ * - The utest framework prints:
+ * `[  PASSED  ] [ result   ] testcase (core.mem)`
+ * - Progress indicators (#) printed at regular intervals during stress tests
  */
 
 #include <rtthread.h>

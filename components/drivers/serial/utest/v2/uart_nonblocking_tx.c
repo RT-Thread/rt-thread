@@ -1,3 +1,41 @@
+/*
+ * Copyright (c) 2006-2025 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART Non-Blocking Transmit Throughput Test
+ *
+ * Test Objectives:
+ * - Measure and validate non-blocking transmit behavior across varying burst sizes
+ * - Verify APIs: rt_device_find, rt_device_open with RT_DEVICE_FLAG_TX_NON_BLOCKING,
+ *   rt_device_write, rt_device_close, rt_tick_get
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Burst Size Sweep / uart_test_nonblocking_tx):**
+ *   1. Re-open the UART in fully non-blocking mode after ensuring it is closed.
+ *   2. Issue sequential write loops for payloads of 8, 32, 128, 512, and 1024 bytes, plus 100 iterations of 1024 bytes,
+ *      collecting total bytes written and elapsed ticks.
+ *   3. Log throughput metrics for each run to detect stalls or partial transfers.
+ *
+ * Verification Metrics:
+ * - Each loop writes the exact number of requested bytes; cumulative counters match expectations.
+ * - Measured tick deltas are captured for post-run performance analysis; function returns RT_TRUE.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` with loopback wiring for `RT_SERIAL_TC_DEVICE_NAME`.
+ * - UART driver must support non-blocking write semantics and allow repeated open/close.
+ *
+ * Expected Results:
+ * - Test completes without assertion failures; logs show per-size throughput data.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_nonblocking_tx)`.
+ */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "utest.h"

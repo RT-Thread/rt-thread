@@ -1,3 +1,42 @@
+/*
+ * Copyright (c) 2006-2025 RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART QEMU Echo Loopback Test
+ *
+ * Test Objectives:
+ * - Validate dual-UART echo behavior under QEMU by cross-linking uart1 and uart2
+ * - Verify APIs: rt_device_find, rt_device_open, rt_device_write, rt_device_read,
+ *   rt_device_control(RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT), rt_thread_create/startup
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Cross-Echo Stress / uart_test_nonblocking_tx):**
+ *   1. Open uart1/uart2 in blocking mode and spawn threads to mirror RX→TX on uart2 while recording statistics.
+ *   2. Simultaneously read uart1 in a dedicated thread to monitor inbound bytes.
+ *   3. Send random-length payloads up to 1 KB for 1000 iterations, periodically comparing TX/RX counters across both devices.
+ *   4. Signal threads to exit once validation completes and ensure device handles close cleanly.
+ *
+ * Verification Metrics:
+ * - u1/u2 TX and RX counters remain equal; send total matches aggregated transmit length.
+ * - No allocation failures; `echo_test()` returns RT_TRUE when counters align.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` running under QEMU with uart1↔uart2 interconnected.
+ * - UART driver must support unread-bytes query and blocking modes.
+ * - Threads need 2 KB stacks; dynamic buffers sized at 1 KB per UART.
+ *
+ * Expected Results:
+ * - Test completes without assertions; logs show synchronized counter updates.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_qemu_echo)`.
+ */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "utest.h"

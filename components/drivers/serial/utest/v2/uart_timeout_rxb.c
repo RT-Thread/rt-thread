@@ -1,11 +1,42 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART Blocking RX Timeout Test
  *
+ * Test Objectives:
+ * - Validate blocking receive timeout behavior while TX operates non-blocking
+ * - Verify APIs: rt_device_find, rt_device_control(RT_SERIAL_CTRL_SET_RX_TIMEOUT / _TX_FLUSH),
+ *   rt_device_open with RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_NON_BLOCKING,
+ *   rt_device_write, rt_device_read
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (RX Timeout Sweep / tc_uart_api):**
+ *   1. Reconfigure UART buffers (optional DMA ping buffer) and open in RX blocking / TX non-blocking mode.
+ *   2. Allocate reusable TX buffer and iterate `RT_SERIAL_TC_SEND_ITERATIONS` times.
+ *   3. For each iteration, randomize burst length (1024~2047 bytes), program RX timeout, transmit payload,
+ *      then read back and ensure received size reflects timeout truncation.
+ *   4. Flush TX FIFO and delay to allow residual bytes to drain before next iteration.
+ *
+ * Verification Metrics:
+ * - Each receive length lies within `[rx_timeout_send_size - 70, send_size - 80]`.
+ * - Transmission always completes full burst; overall loop exits with RT_EOK and device closes successfully.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` with UART loopback (`RT_SERIAL_TC_DEVICE_NAME` TX shorted to RX).
+ * - Serial driver must support RX timeout control and optional DMA ping buffer configuration.
+ * - Random number generator and system tick used for timeout computation.
+ *
+ * Expected Results:
+ * - No assertions triggered; log traces show per-iteration timeout measurements.
+ * - Utest framework prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_timeout_rxb)`.
  */
 
 #include <rtthread.h>

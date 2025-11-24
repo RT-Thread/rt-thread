@@ -24,7 +24,7 @@
 static int run_num = 10;
 #define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
 #define THREAD_PRIORITY   2
-#define LOW_PRIORITY 50
+#define LOW_PRIORITY 30
 #define THIGH_PRIORITY  10
 static rt_thread_t        threads[RT_CPUS_NR];
 static rt_thread_t        temp_thread;
@@ -99,7 +99,7 @@ static void smp_affinity_pri2_tc(void)
         if (threads[i] != RT_NULL)
         {
             uassert_true(1);
-            rt_thread_control(threads[i], RT_THREAD_CTRL_BIND_CPU, (void *)i);
+            rt_thread_control(threads[i], RT_THREAD_CTRL_BIND_CPU, (void *)(rt_ubase_t)i);
             rt_thread_startup(threads[i]);
         }
     }

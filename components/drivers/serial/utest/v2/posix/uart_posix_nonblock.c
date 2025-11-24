@@ -1,11 +1,39 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-06-16     KyleChan     the first version
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART POSIX Non-Blocking Test
+ *
+ * Test Objectives:
+ * - Validate POSIX-layer non-blocking serial operations using termios configuration
+ * - Verify APIs: open/close, tcgetattr/tcsetattr, cfsetispeed/cfsetospeed, fcntl(O_NONBLOCK),
+ *   read, write, rt_thread_mdelay
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Non-Blocking Echo / tc_uart_api):**
+ *   1. Open POSIX device `RT_SERIAL_POSIX_TC_DEVICE_NAME`, configure baud, frame format, and disable flow control.
+ *   2. Enable O_NONBLOCK mode and allocate small TX/RX buffer.
+ *   3. Loop `RT_SERIAL_TC_SEND_ITERATIONS` times, issuing fixed-size and random-length writes, followed by reads after short delays to confirm echo data availability.
+ *
+ * Verification Metrics:
+ * - Each write/read pair returns the expected number of bytes.
+ * - No system calls fail; routine returns RT_TRUE signalling success.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` with POSIX device exposure (`RT_SERIAL_POSIX_TC_DEVICE_NAME`) and loopback wiring.
+ * - Operating environment must provide termios/fcntl APIs (e.g., RT-Thread POSIX layer or Linux host).
+ *
+ * Expected Results:
+ * - Test executes without assertions; logs remain quiet unless errors occur.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_posix_nonblock)`.
  */
 
 #include <rtthread.h>
