@@ -48,7 +48,15 @@
  * 1. 测试I2C0主机模式
  *     主机模式下，主机向从机发送16字节数据（不包括写读地址），
  *     然后再读取回来进行校验，共执行两次，分别是400kHz和1MHz速率。
- *     注：使用的从机为AT24C08 EEPROM，设备地址为0x50。
+ *     第一次写数据时，带一字节地址，总共写16字节数据，读取15字节数据，
+ *     第二次写数据时，带一字节地址，总共写17字节数据，读取16字节数据。
+ *     在两次写数据的过程中，如果开启dma功能，第一次会调用dma进行写，
+ *     第二次会调用dma进行读。（前提是BSP_USING_I2C_DMA宏被定义，
+ *     因为pdma要求地址与数据都要4字节对齐（地址的对齐问题会在驱动
+ *     内部处理），若写/读数据大小非4字节对齐，即使启用了dma功能，
+ *     实际也是调用的cpu轮询读写，这一点需要应用程序注意并处理）
+ *     注：使用的从机为AT24C08 EEPROM，设备地址为0x50，
+ *     page size 为 16 字节。
  */
 
 #define I2C_NAME            "i2c0"
@@ -88,12 +96,12 @@ static int test_i2c_check_pin(void)
 {
     test_i2c0_deinit_pin();
 
-    if(kd_pin_read(I2C_SCL_PIN) != 1 || kd_pin_read(I2C_SDA_PIN) != 1)
+    if (kd_pin_read(I2C_SCL_PIN) != 1 || kd_pin_read(I2C_SDA_PIN) != 1)
     {
         LOG_W("i2c bus is not idle, try to recover it.");
         k230_pinctrl_set_oe(I2C_SCL_PIN, 1);
         kd_pin_mode(I2C_SCL_PIN, GPIO_DM_OUTPUT);
-        for(rt_uint8_t i = 0; i < 9; i++)
+        for (rt_uint8_t i = 0; i < 9; i++)
         {
             kd_pin_write(I2C_SCL_PIN, 0);
             rt_hw_us_delay(2);
@@ -104,7 +112,7 @@ static int test_i2c_check_pin(void)
         kd_pin_mode(I2C_SCL_PIN, GPIO_DM_INPUT);
     }
 
-    if(kd_pin_read(I2C_SCL_PIN) != 1 || kd_pin_read(I2C_SDA_PIN) != 1)
+    if (kd_pin_read(I2C_SCL_PIN) != 1 || kd_pin_read(I2C_SDA_PIN) != 1)
     {
         LOG_E("i2c bus recover failed");
         return -RT_ERROR;
@@ -131,7 +139,7 @@ static void _test_i2c0_master(rt_uint8_t *buffer_w, rt_uint8_t *buffer_r, rt_uin
     msgs[0].buf   = buffer_w;
     msgs[0].len   = size + 1;
 
-    if(rt_i2c_transfer(dev, msgs, 1) != 1)
+    if (rt_i2c_transfer(dev, msgs, 1) != 1)
     {
         LOG_E("i2c transfer failed");
         uassert_true(0);
@@ -149,17 +157,18 @@ static void _test_i2c0_master(rt_uint8_t *buffer_w, rt_uint8_t *buffer_r, rt_uin
     msgs[1].buf   = &buffer_r[1];
     msgs[1].len   = size;
 
-    if(rt_i2c_transfer(dev, msgs, 2) != 2)
+    if (rt_i2c_transfer(dev, msgs, 2) != 2)
     {
         LOG_E("i2c transfer failed");
         uassert_true(0);
     }
 
     LOG_I("Read data:\n");
-    for(rt_uint8_t i = 1; i < size + 1; i++)
+    for (rt_uint8_t i = 1; i < size + 1; i++)
     {
         LOG_I("0x%02X ", buffer_r[i]);
     }
+
     uassert_buf_equal(buffer_w + 1, buffer_r + 1, size);
 }
 
@@ -174,13 +183,15 @@ static void test_i2c0_master(void)
     buffer_w[0] = 0x00; // memory address
     memset(buffer_r, 0x00, TEST_BUFFER_SIZE + 1);
 
-    _test_i2c0_master(buffer_w, buffer_r, size, speed);
+    /* if BSP_USING_I2C_DMA is enabled, test i2c write with dma */
+    _test_i2c0_master(buffer_w, buffer_r, size - 1, speed);
 
     speed = 1000000; // 1MHz
     memset(buffer_w + 1, 0x55, TEST_BUFFER_SIZE);
     buffer_w[0] = 0x00; // memory address
     memset(buffer_r, 0x00, TEST_BUFFER_SIZE + 1);
 
+    /* if BSP_USING_I2C_DMA is enabled, test i2c read with dma */
     _test_i2c0_master(buffer_w, buffer_r, size, speed);
 }
 

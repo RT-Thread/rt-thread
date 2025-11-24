@@ -32,6 +32,10 @@ menu "Drivers Configuration"
         default n
 
         if BSP_USING_I2C
+            config BSP_USING_I2C_DMA
+                bool "Enable I2C with DMA"
+                default n
+
             config BSP_USING_I2C0
                 bool "Enable I2C0"
                 default n
