@@ -13,6 +13,7 @@ devices.i2c:
       - CONFIG_RT_USING_I2C=y
       - CONFIG_BSP_USING_I2C=y
       - CONFIG_BSP_USING_I2C0=y
+      - CONFIG_BSP_USING_I2C_DMA=y
 devices.adc:
     <<: *scons
     kconfig:
