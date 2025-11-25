@@ -1,6 +1,13 @@
 menuconfig RT_USING_CPLUSPLUS
     bool "Enable C++ features"
     default n
+    help
+        RT_USING_CPLUSPLUS is the master switch for enabling C++ support.
+
+        It is off by default. Once enabled, RT-Thread's build system ensures that a C++ compiler is used to compile .cpp files,
+        and it links C++ standard libraries (such as libstdc++ or libc++) into the final firmware.
+        Other C++-related configuration items that depend on it become visible and configurable.
+
 
 if RT_USING_CPLUSPLUS
 
@@ -11,13 +18,21 @@ if RT_USING_CPLUSPLUS
         select RT_USING_POSIX_STDIO
         select RT_USING_PTHREADS
         select RT_USING_RTC
+        help
+            RT_USING_CPLUSPLUS11 controls whether support for multithreading features in the C++11 standard is enabled.
+
+            It is disabled by default. Once enabled, RT_USING_POSIX_FS, RT_USING_POSIX_STDIO, RT_USING_PTHREADS, and RT_USING_RTC will also be enabled.
 
     config RT_USING_CPP_WRAPPER
         bool "Enable RT-Thread APIs C++ wrapper"
         default n
+        help
+            RT_USING_CPP_WRAPPER is used to enable the C++ wrapper for the RT-Thread core API.
 
+            When this option is enabled(Off by default), RT-Thread provides an additional set of C++ code that encapsulates the underlying C API using classes and objects.
     config RT_USING_CPP_EXCEPTIONS
         bool "Enable C++ exceptions (will increase overhead)"
         default n
-
+        help
+            RT_USING_CPP_EXCEPTIONS is used to enable C++ exception handling.
 endif

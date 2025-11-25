@@ -5,27 +5,57 @@ menu "Timezone and Daylight Saving Time"
         bool "Enable fully version timezone and daylight saving time with database"
         select PKG_USING_TZ_DATABASE # select timezone database software package
         default n
+        help
+            RT_LIBC_USING_FULL_TZ_DST controls whether "full timezone and daylight saving time functionality with database" is enabled.
+
+            Essentially, it allows RT-Thread to support precise time conversion based on a global timezone database.
+
+            Features:
+            Global timezone adaptation
+            Automatic daylight saving time (DST) handling
+            Standard time interface compatibility
+
+            Dependencies:
+            Once enabled (disabled by default), it automatically enables the tz_database package in the RT-Thread software package.
+
+            After enabling RT_LIBC_USING_FULL_TZ_DST, the project will automatically import the tz_database code and data files.
+
 
     config RT_LIBC_USING_LIGHT_TZ_DST
         bool "Enable lightweight timezone and daylight saving time"
         depends on !RT_LIBC_USING_FULL_TZ_DST
         default y
+        help
+            RT_LIBC_USING_LIGHT_TZ_DST is a lightweight timezone and daylight saving time configuration option within the C standard library (libc) component of RT-Thread.
+            It is a lightweight alternative to RT_LIBC_USING_FULL_TZ_DST (the full timezone solution).
+
+            It achieves local timezone conversion using a fixed time offset, rather than relying on a large timezone database.
+
+            This option is enabled by default, but only one of RT_LIBC_USING_FULL_TZ_DST can be enabled at a time.
+            When enabled, three sub-configuration options will be displayed.
+            
 
     if RT_LIBC_USING_LIGHT_TZ_DST
         config RT_LIBC_TZ_DEFAULT_HOUR
             int "Set the default local timezone (hour)"
             range -12 12
             default 8
+            help
+                The hour offset of the local time zone relative to UTC (range -12~12, default 8, corresponding to UTC+8 Beijing time).
 
         config RT_LIBC_TZ_DEFAULT_MIN
             int "Set the default local timezone (minute)"
             range -59 59
             default 0
-
+            help
+                Minute offset (range -59~59, default 0)
         config RT_LIBC_TZ_DEFAULT_SEC
             int "Set the default local timezone (second)"
             range -59 59
             default 0
+            help
+                Second offset (range -59~59, default 0)
+
     endif
 endmenu
 

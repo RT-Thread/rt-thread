@@ -4,5 +4,10 @@ config RT_UTEST_SELF_PASS
     bool "UTEST Framework Test"
     select RT_USING_UTEST
     default n
+    help
+        RT_UTEST_SELF_PASS controls whether the Utest framework's self-test functionality is enabled.    
+        Once enabled, RT_USING_UTEST will be enabled automatically, and the self-test code included with the Utest framework will also be compiled.
 
+        Application scenario: 
+        Verifying whether the Utest framework functions correctly.
 endmenu
