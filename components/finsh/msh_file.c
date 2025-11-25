@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -738,6 +738,18 @@ static int cmd_echo(int argc, char **argv)
 }
 MSH_CMD_EXPORT_ALIAS(cmd_echo, echo, echo string to file);
 
+/**
+ * @brief  Print the last part of a file (tail command).
+ *
+ * @note   Supported Usage:
+ *         1. tail <file>               : Print last 10 lines.
+ *         2. tail -n <num> <file>      : Print last <num> lines.
+ *         3. tail -n +<num> <file>     : Print starting from line <num>.
+ *
+ * @param  argc  Argument count
+ * @param  argv  Argument vector
+ * @return 0 on success, -1 on failure
+ */
 static int cmd_tail(int argc, char **argv)
 {
     int fd;
@@ -751,7 +763,7 @@ static int cmd_tail(int argc, char **argv)
 
     if (argc < 2)
     {
-        rt_kprintf("Usage: tail [-n numbers] <filename>\n");
+        rt_kprintf("Usage: tail [-n [+]numbers] <filename>\n");
         return -1;
     }
     else if (argc == 2)
@@ -761,19 +773,31 @@ static int cmd_tail(int argc, char **argv)
     }
     else if (rt_strcmp(argv[1], "-n") == 0)
     {
+        /*
+         * Check if enough arguments are provided to avoid crash.
+         * The command requires: "tail" + "-n" + "number" + "file" = 4 args.
+         */
+        if (argc < 4)
+        {
+            rt_kprintf("Error: Missing arguments.\n");
+            rt_kprintf("Usage: tail -n [+]numbers <filename>\n");
+            return -1;
+        }
+
+        /* Check for explicit start line syntax (e.g., +100) */
         if (argv[2][0] != '+')
         {
             required_lines = atoi(argv[2]);
         }
         else
         {
-            start_line = atoi(&argv[2][1]); /* eg: +100, to get the 100 */
+            start_line = atoi(&argv[2][1]); /* eg: +100, skip '+' to get 100 */
         }
         file_name = argv[3];
     }
     else
     {
-        rt_kprintf("Usage: tail [-n numbers] <filename>\n");
+        rt_kprintf("Usage: tail [-n [+]numbers] <filename>\n");
         return -1;
     }
 
@@ -839,7 +863,7 @@ static int cmd_tail(int argc, char **argv)
     close(fd);
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_tail, tail, print the last N - lines data of the given file);
+MSH_CMD_EXPORT_ALIAS(cmd_tail, tail, Print the last N lines. Usage: tail -n [+]numbers <filename>);
 
 #ifdef RT_USING_DFS_V2
 
