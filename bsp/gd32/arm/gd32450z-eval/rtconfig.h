@@ -104,7 +104,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart"
+#define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x50201
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -328,6 +328,10 @@
 #define PKG_USING_GD32_ARM_SERIES_DRIVER
 #define PKG_USING_GD32_ARM_SERIES_DRIVER_LATEST_VERSION
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -412,7 +416,7 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_GD32450Z
+#define SOC_GD32F450ZK
 
 /* Onboard Peripheral Drivers */
 
@@ -420,7 +424,11 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
+#define BSP_USING_SERIAL_V1
 #define BSP_USING_UART0
+#define BSP_UART0_TX_PIN "PA9"
+#define BSP_UART0_RX_PIN "PA10"
+#define BSP_UART0_AFIO "AF1"
 #define BSP_USING_GD_DBG
 /* end of On-chip Peripheral Drivers */
 
