@@ -322,6 +322,10 @@
 #define PKG_USING_GD32_ARM_SERIES_DRIVER
 #define PKG_USING_GD32_ARM_SERIES_DRIVER_LATEST_VERSION
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -406,7 +410,7 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_GD32107V
+#define SOC_GD32F107VC
 
 /* Onboard Peripheral Drivers */
 
@@ -414,7 +418,11 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
+#define BSP_USING_SERIAL_V1
 #define BSP_USING_UART1
+#define BSP_UART1_TX_PIN "PA2"
+#define BSP_UART1_RX_PIN "PA3"
+#define BSP_UART1_AFIO "AF7"
 #define BSP_USING_SPI
 #define BSP_USING_SPI1
 #define BSP_USING_GD_DBG

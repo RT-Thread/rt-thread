@@ -169,6 +169,7 @@
           <state>USE_STDPERIPH_DRIVER</state>
           <state>GD32F4XX</state>
           <state>GD32F527</state>
+          <state>USE_STDPERIPH_DRIVER</state>
           <state>__RTTHREAD__</state>
           <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
           <state>RT_USING_DLIBC</state>
@@ -305,25 +306,30 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\libraries\gd32_drivers</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\packages\gd32-arm-cmsis-latest\GD32F5xx</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m33</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\dfs\dfs_v1\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\dfs\dfs_v1\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m33</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\packages\gd32-arm-series-latest\GD32F5xx\GD32F5xx_standard_peripheral\Include</state>
+          <state>$PROJ_DIR$\..\libraries\gd32_drivers\config</state>
+          <state>$PROJ_DIR$\packages\gd32-arm-cmsis-latest\GD32F5xx\GD\GD32F5xx\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\net\utest</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\libraries\gd32_drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1138,6 +1144,7 @@
           <name>CCDefines</name>
           <state>NDEBUG</state>
           <state>GD32F527</state>
+          <state>USE_STDPERIPH_DRIVER</state>
           <state>__RTTHREAD__</state>
           <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
           <state>RT_USING_DLIBC</state>
@@ -1275,25 +1282,30 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\libraries\gd32_drivers</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\packages\gd32-arm-cmsis-latest\GD32F5xx</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m33</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\drivers\phy</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\dfs\dfs_v1\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\smp_call</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\dfs\dfs_v1\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m33</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\packages\gd32-arm-series-latest\GD32F5xx\GD32F5xx_standard_peripheral\Include</state>
+          <state>$PROJ_DIR$\..\libraries\gd32_drivers\config</state>
+          <state>$PROJ_DIR$\packages\gd32-arm-cmsis-latest\GD32F5xx\GD\GD32F5xx\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\net\utest</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\libraries\gd32_drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2054,10 +2066,10 @@
       <name>$PROJ_DIR$\..\..\..\..\components\dfs\dfs_v1\src\dfs_file.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\dfs\dfs_v1\src\dfs_posix.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\dfs\dfs_v1\src\dfs.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\dfs\dfs_v1\src\dfs.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\dfs\dfs_v1\src\dfs_posix.c</name>
     </file>
   </group>
   <group>
@@ -2066,16 +2078,16 @@
       <name>$PROJ_DIR$\..\..\..\..\components\finsh\cmd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\finsh\shell.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\..\components\finsh\msh_parse.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\finsh\msh_file.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\finsh\shell.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\finsh\msh.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\components\finsh\msh_file.c</name>
     </file>
   </group>
   <group>
@@ -2132,16 +2144,16 @@
       <name>$PROJ_DIR$\..\..\..\..\src\klibc\kerrno.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\klibc\rt_vsscanf.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\src\klibc\kstdio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\src\klibc\rt_vsscanf.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\klibc\kstring.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\src\klibc\kstring.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
     </file>
   </group>
   <group>
@@ -2166,6 +2178,39 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m33\trustzone.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Libraries</name>
+    <file>
+      <name>$PROJ_DIR$\packages\gd32-arm-cmsis-latest\GD32F5xx\GD\GD32F5xx\Source\IAR\startup_gd32f5xx.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\gd32-arm-cmsis-latest\GD32F5xx\GD\GD32F5xx\Source\system_gd32f5xx.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\gd32-arm-series-latest\GD32F5xx\GD32F5xx_standard_peripheral\Source\gd32f5xx_dbg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\gd32-arm-series-latest\GD32F5xx\GD32F5xx_standard_peripheral\Source\gd32f5xx_dma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\gd32-arm-series-latest\GD32F5xx\GD32F5xx_standard_peripheral\Source\gd32f5xx_exti.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\gd32-arm-series-latest\GD32F5xx\GD32F5xx_standard_peripheral\Source\gd32f5xx_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\gd32-arm-series-latest\GD32F5xx\GD32F5xx_standard_peripheral\Source\gd32f5xx_misc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\gd32-arm-series-latest\GD32F5xx\GD32F5xx_standard_peripheral\Source\gd32f5xx_rcu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\gd32-arm-series-latest\GD32F5xx\GD32F5xx_standard_peripheral\Source\gd32f5xx_syscfg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\gd32-arm-series-latest\GD32F5xx\GD32F5xx_standard_peripheral\Source\gd32f5xx_usart.c</name>
     </file>
   </group>
   <group>
