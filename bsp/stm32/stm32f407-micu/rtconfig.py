@@ -20,7 +20,7 @@ if  CROSS_TOOL == 'gcc':
     EXEC_PATH   = ''
     # Example: set EXEC_PATH to your toolchain path, e.g. r'C:\Program Files\GNU Tools Arm Embedded\bin'
 elif CROSS_TOOL == 'keil':
-    PLATFORM    = 'armclang'
+    PLATFORM    = 'armcc'
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iccarm'
