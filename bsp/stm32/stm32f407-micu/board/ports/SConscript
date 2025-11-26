@@ -11,7 +11,6 @@ path =  [cwd]
 
 if GetDepend(['BSP_USING_ON_BOARD_FLASH']):
     src += Glob('spi_flash_init.c')
-print("BSP_USING_ON_BOARD_FLASH =", GetDepend(['BSP_USING_ON_BOARD_FLASH']))
 CPPDEFINES = ['STM32F407xx']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

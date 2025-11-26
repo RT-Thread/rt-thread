@@ -448,7 +448,6 @@
 /* Onboard Peripheral Drivers */
 
 #define BSP_USING_VIRTUAL_USART
-#define BSP_USING_ON_BOARD_FLASH
 /* end of Onboard Peripheral Drivers */
 
 /* On-chip Peripheral Drivers */
@@ -457,10 +456,6 @@
 #define BSP_USING_UART
 #define BSP_STM32_UART_V1_TX_TIMEOUT 2000
 #define BSP_USING_UART1
-#define BSP_USING_SPI
-#define BSP_USING_SPI1
-#define BSP_SPI1_TX_USING_DMA
-#define BSP_SPI1_RX_USING_DMA
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
