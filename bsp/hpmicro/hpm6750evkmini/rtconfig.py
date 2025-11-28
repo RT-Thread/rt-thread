@@ -12,30 +12,6 @@ else:
     RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
-try:
-    from building import *
-except:
-    print('Cannot found RT-Thread root directory, please check RTT_ROOT')
-    print(RTT_ROOT)
-    exit(-1)
-
-def bsp_pkg_check():
-    import subprocess
-    
-    need_update = True
-    for p in os.listdir("packages"):
-        if p.startswith("hpm_sdk-"):
-            need_update = False
-            break
-    if need_update:
-        print("\n===============================================================================")
-        print("Dependency packages missing, please running 'pkgs --update'...")
-        print("If no packages are fetched, run 'pkgs --upgrade' first, then 'pkgs --update'...")
-        print("===============================================================================")
-        exit(1)
-
-RegisterPreBuildingAction(bsp_pkg_check)
-
 
 # toolchains options
 ARCH='risc-v'
