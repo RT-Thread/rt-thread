@@ -956,7 +956,6 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
             /* The new suspend operation will halt the tick timer. */
             LOG_D("Thread [%s]'s timer has been halted.\n", thread->parent.name);
             rt_sched_thread_timer_stop(thread);
-
         }
         /* Map suspend_flag to corresponding thread suspend state value */
         rt_uint8_t new_suspend_state;
@@ -994,7 +993,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     {
         RT_ASSERT(thread == rt_thread_self());
     }
-    
+
 #ifdef RT_USING_SMART
     if (thread->lwp)
     {
