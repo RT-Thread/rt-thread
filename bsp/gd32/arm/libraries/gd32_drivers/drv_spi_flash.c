@@ -8,7 +8,7 @@
  * 2021-12-31     BruceOu      first implementation
  * 2023-06-03     CX           fixed sf probe error bug
  * 2024-05-30     godmial      refactor driver for multi-SPI bus auto-mount
- * 2024-12-XX     godmial         add configurable SPI Flash initialization
+ * 2025-11-28     godmial      add configurable SPI Flash initialization
  *                             Only initialize flash on SPI buses explicitly configured
  *                             via BSP_USING_SPIx_FLASH options to avoid conflicts
  *                             with other SPI devices (e.g., OLED, WIFI)
