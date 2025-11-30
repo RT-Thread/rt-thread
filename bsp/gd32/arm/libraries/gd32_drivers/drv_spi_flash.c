@@ -8,6 +8,10 @@
  * 2021-12-31     BruceOu      first implementation
  * 2023-06-03     CX           fixed sf probe error bug
  * 2024-05-30     godmial      refactor driver for multi-SPI bus auto-mount
+ * 2025-11-28     godmial      add configurable SPI Flash initialization
+ *                             Only initialize flash on SPI buses explicitly configured
+ *                             via BSP_USING_SPIx_FLASH options to avoid conflicts
+ *                             with other SPI devices (e.g., OLED, WIFI)
  */
 #include <board.h>
 #include "drv_spi.h"
@@ -34,7 +38,7 @@ struct spi_flash_config
 
 static const struct spi_flash_config flash_configs[] =
 {
-#ifdef BSP_USING_SPI0
+#if defined(BSP_USING_SPI0) && defined(BSP_USING_SPI0_FLASH)
     {
         .bus_name    = "spi0",
         .device_name = "spi00",
@@ -43,7 +47,7 @@ static const struct spi_flash_config flash_configs[] =
     },
 #endif
 
-#ifdef BSP_USING_SPI1
+#if defined(BSP_USING_SPI1) && defined(BSP_USING_SPI1_FLASH)
     {
         .bus_name    = "spi1",
         .device_name = "spi10",
@@ -52,7 +56,7 @@ static const struct spi_flash_config flash_configs[] =
     },
 #endif
 
-#ifdef BSP_USING_SPI2
+#if defined(BSP_USING_SPI2) && defined(BSP_USING_SPI2_FLASH)
     {
         .bus_name    = "spi2",
         .device_name = "spi20",
@@ -61,7 +65,7 @@ static const struct spi_flash_config flash_configs[] =
     },
 #endif
 
-#ifdef BSP_USING_SPI3
+#if defined(BSP_USING_SPI3) && defined(BSP_USING_SPI3_FLASH)
     {
         .bus_name    = "spi3",
         .device_name = "spi30",
@@ -70,7 +74,7 @@ static const struct spi_flash_config flash_configs[] =
     },
 #endif
 
-#ifdef BSP_USING_SPI4
+#if defined(BSP_USING_SPI4) && defined(BSP_USING_SPI4_FLASH)
     {
         .bus_name    = "spi4",
         .device_name = "spi40",
@@ -78,11 +82,21 @@ static const struct spi_flash_config flash_configs[] =
         .cs_pin      = GET_PIN(F, 6),
     },
 #endif
+
+#if defined(BSP_USING_SPI5) && defined(BSP_USING_SPI5_FLASH)
+    {
+        .bus_name    = "spi5",
+        .device_name = "spi50",
+        .flash_name  = "gd25q_spi5",
+        .cs_pin      = GET_PIN(F, 6),  /* Note: Update CS pin according to actual hardware */
+    },
+#endif
 };
 
 
 static int spi_flash_init(void)
 {
+#ifdef BSP_USING_SPI_FLASH
     int result = RT_EOK;
 
     for (size_t i = 0; i < sizeof(flash_configs) / sizeof(flash_configs[0]); i++)
@@ -106,5 +120,9 @@ static int spi_flash_init(void)
     }
 
     return result;
+#else
+    /* SPI Flash auto-initialization is disabled. User should initialize SPI Flash manually in board code. */
+    return RT_EOK;
+#endif
 }
 INIT_COMPONENT_EXPORT(spi_flash_init);
