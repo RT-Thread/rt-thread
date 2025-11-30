@@ -1,0 +1,13 @@
+[package]
+name = "em_param"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "em_param"
+crate-type = ["staticlib"]
+
+[dependencies]
+rt-rust = { path = "../../../core" }
+rt_macros = { path = "../../../rt_macros" }
+

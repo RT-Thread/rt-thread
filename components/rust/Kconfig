@@ -1,0 +1,26 @@
+menuconfig RT_USING_RUST
+    bool "Enable Rust component support"
+    default n
+    help
+        Enable Rust programming language support for RT-Thread.
+        This allows you to write RT-Thread components using Rust.
+
+if RT_USING_RUST
+    config RT_RUST_CORE
+        bool "Enable Rust Core Library"
+        default y
+    config RUST_DEBUG_BUILD
+        bool "Build Rust code in debug mode"
+        default n
+        help
+            Build Rust code with debug symbols and without optimizations.
+            This increases binary size but helps with debugging.
+    config RUST_INIT_COMPONENT
+        bool "Auto-initialize Rust component"
+        default y
+        help
+            Automatically initialize Rust component during RT-Thread startup.
+
+    rsource "examples/Kconfig"
+
+endif
