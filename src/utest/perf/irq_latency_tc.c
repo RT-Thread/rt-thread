@@ -4,8 +4,42 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2025-07-03     rcitach      test case for irq latency
+ * Date           Author         Notes
+ * 2025-07-03     rcitach        test case for irq latency
+ * 2025-11-30     westcity-YOLO  Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core IRQ Latency Performance Test
+ *
+ * Test Objectives:
+ * - Measure interrupt-to-thread response time using hardware timer
+ * - Validate high-resolution timing accuracy (us level)
+ * - Verify consistent latency under repeated testing
+ *
+ * Test Scenarios:
+ * - **Hardware Timer ISR**: Triggered every 50μs via RT_UTEST_HWTIMER_DEV_NAME
+ * - **Latency Measurement**: Time from ISR entry to thread wake-up
+ * - **Stress Test**: 100+ repeated measurements (RT_UTEST_SYS_PERF_TC_COUNT)
+ * - **Priority Handling**: High-priority thread response validation
+ *
+ * Verification Metrics:
+ * - Latency < 1000μs (system-dependent threshold)
+ * - Max/Min/Avg deviation < 10% of average value
+ * - 0 errors in hardware timer setup
+ * - No memory leaks during test
+ *
+ * Dependencies:
+ * - RT_USING_PERF_TEST enabled
+ * - RT_USING_UTEST framework
+ * - Hardware timer device "hwtimer0" (or defined RT_UTEST_HWTIMER_DEV_NAME)
+ * - rt_device_find/open/close support
+ *
+ * Expected Results:
+ * [  PASSED  ] [ result   ] testcase (core.irq_latency)
+ * - Structured output with Min/Max/Avg latency (μs)
+ * - Final line: "=== IRQ Latency Test Results End ==="
+ * - Executable via: `utest_run core.irq_latency` in msh
  */
 
 #include <rtthread.h>

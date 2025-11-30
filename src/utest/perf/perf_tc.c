@@ -4,10 +4,50 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2025-07-03     rcitach      test case for irq latency
+ * Date           Author         Notes
+ * 2025-07-03     rcitach        test case for irq latency
+ * 2025-11-30     westcity-YOLO  Add standardized utest documentation block
  */
 
+/**
+ * Test Case Name: Kernel Core Performance Benchmark Suite
+ *
+ * Test Objectives:
+ * - Measures key kernel performance metrics using high-resolution hardware timer
+ * - Validates context switch and IPC mechanism latency
+ * - Tests interrupt-to-thread response time (IRQ latency)
+ * - Provides quantitative results in microseconds (us)
+ *
+ * Test Scenarios:
+ * - **Context Switch Overhead**: Thread-to-thread switch time
+ * - **Semaphore Performance**: rt_sem_take/rt_sem_release round-trip latency
+ * - **Event Performance**: rt_event_recv/rt_event_send latency
+ * - **Message Queue Performance**: rt_mq_send/rt_mq_recv latency
+ * - **Mailbox Performance**: rt_mb_send/rt_mb_recv latency
+ * - **IRQ Latency**: Time from hardware timer interrupt to thread wakeup
+ *
+ * Verification Metrics:
+ * - All tests complete without crash or timeout
+ * - Measured times are within reasonable system limits (e.g., < 1000 us for IRQ)
+ * - Performance data is printed in structured table format
+ * - No memory leaks during test execution
+ *
+ * Dependencies:
+ * - RT_USING_PERF_TEST must be enabled
+ * - RT_USING_UTEST framework enabled
+ * - Hardware timer device named "hwtimer0" (or defined by RT_UTEST_HWTIMER_DEV_NAME)
+ * - System must support rt_device_find/open/close for HWTIMER
+ * - Sufficient heap memory for dynamic allocation in test runner
+ *
+ * Expected Results:
+ * - Console output shows a formatted table with:
+ *   Test No | Test Name | Count | Total/Max/Min/Avg Time (us)
+ * - Final line: "=== Performance Test Results End ==="
+ * - utest framework reports: [  PASSED  ] [ result   ] testcase (core.perf_test)
+ * - Test runs via: `utest_run core.perf_test` in msh
+ */
+
+ 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rtservice.h>
