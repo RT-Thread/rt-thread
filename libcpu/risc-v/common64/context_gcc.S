@@ -69,29 +69,47 @@
 .endm
 
 /*
+ * #ifdef RT_USING_SMP
+ * void rt_hw_context_switch_to(rt_ubase_t to, stuct rt_thread *to_thread);
+ * #else
  * void rt_hw_context_switch_to(rt_ubase_t to);
- *
- * a0 --> to SP pointer
+ * #endif
+ * a0 --> to
+ * a1 --> to_thread
  */
 .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
     LOAD sp, (a0)
 
+#ifdef RT_USING_SMP
+    /* Pass the previous CPU lock status to rt_cpus_lock_status_restore for restoration */
+    mv   a0,   a1
+    call  rt_cpus_lock_status_restore
+#endif
+
     call rt_thread_self
     mv s1, a0
 
+#ifndef RT_USING_SMP
+    //if enable RT_USING_SMP, it will finished by rt_cpus_lock_status_restore.
     #ifdef RT_USING_SMART
-        call lwp_aspace_switch
+      call lwp_aspace_switch
     #endif
+#endif
 
     RESTORE_CONTEXT
     sret
 
 /*
+ * #ifdef RT_USING_SMP
+ * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to, struct rt_thread *to_thread);
+ * #else
  * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
+ * #endif
  *
  * a0 --> from SP pointer
  * a1 --> to SP pointer
+ * a2 --> to_thread
  *
  * It should only be used on local interrupt disable
  */
@@ -103,13 +121,22 @@ rt_hw_context_switch:
     // restore to thread SP
     LOAD sp, (a1)
 
+#ifdef RT_USING_SMP
+    /* Pass the previous CPU lock status to rt_cpus_lock_status_restore for restoration */
+    mv   a0,   a2
+    call  rt_cpus_lock_status_restore
+#endif /*RT_USING_SMP*/
+
     // restore Address Space
     call rt_thread_self
     mv s1, a0
 
+#ifndef RT_USING_SMP
+    // if enable RT_USING_SMP, it will finished by rt_cpus_lock_status_restore.
     #ifdef RT_USING_SMART
-        call lwp_aspace_switch
+       call lwp_aspace_switch
     #endif
+#endif
 
     RESTORE_CONTEXT
     sret
