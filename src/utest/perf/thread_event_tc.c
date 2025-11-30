@@ -4,8 +4,41 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2025-07-03     rcitach      test case for event
+ * Date           Author         Notes
+ * 2025-07-03     rcitach        test case for event
+ * 2025-11-30     westcity-YOLO  Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Event Performance Test
+ *
+ * Test Objectives:
+ * - Measures event object synchronization performance
+ * - Validates event flag handling (OR/CLEAR) and priority
+ * - Provides latency metrics for event-based thread communication
+ *
+ * Test Scenarios:
+ * - **Event Flag Handling**: EVENT_FLAG with OR/CLEAR operation
+ * - **Priority Synchronization**: Higher-priority thread (THREAD_PRIORITY+1) response
+ * - **Stress Test**: Repeated event signaling (RT_UTEST_SYS_PERF_TC_COUNT times)
+ * - **Thread Coordination**: Two threads exchanging events via semaphores
+ *
+ * Verification Metrics:
+ * - Latency < 50μs (event recv/send cycle)
+ * - 0 errors in event flag handling
+ * - Consistent results across test cycles
+ * - No memory leaks during test
+ *
+ * Dependencies:
+ * - RT_USING_EVENT must be enabled
+ * - RT_USING_UTEST framework
+ * - Hardware timer support (for high-precision timing)
+ *
+ * Expected Results:
+ * [  PASSED  ] [ result   ] testcase (core.event)
+ * - Structured performance data table (Min/Max/Avg latency)
+ * - Final line: "=== Event Performance Test Results End ==="
+ * - Executable via: `utest_run core.event` in msh
  */
 
 #include <rtthread.h>
