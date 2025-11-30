@@ -222,10 +222,6 @@
 #define RT_LWIP_MSKADDR3 0
 // </section>
 
-#define RT_USING_VBUS
-
-#define RT_VBUS_GUEST_VIRQ 0
-#define _RT_VBUS_RING_SZ 64
 // </RDTConfigurator>
 #define RT_CPUS_NR 1
 #define RT_BACKTRACE_LEVEL_MAX_NR 32

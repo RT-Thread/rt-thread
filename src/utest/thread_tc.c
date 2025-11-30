@@ -5,8 +5,51 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-09.01     yangjie      the firet version
+ * 2021-09.01     yangjie      the first version
  * 2021-10.11     mazhiyuan    add idle, yield, suspend, control, priority, delay_until
+ * 2025-11-12     Ze-Hou       add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Thread Test
+ *
+ * Test Objectives:
+ * - Validate the core thread management features of the RT-Thread kernel:
+ *   1. Thread creation methods (dynamic and static)
+ *   2. Timing accuracy (resolution) of the rt_thread_delay API
+ *   3. Use of the idle hook
+ *   4. RT-Thread’s thread yield mechanism
+ *   5. RT-Thread’s thread control interfaces
+ *   6. Thread priorities
+ *   7. Absolute delay functionality
+ *   8. Time-slice scheduling among threads with the same priority
+ *
+ * Test Scenarios:
+ * - Create, start, and delete a dynamic thread to verify dynamic thread lifecycle management
+ * - Initialize, start, and detach a static thread to verify static thread lifecycle management
+ * - Delay a thread for a specific tick count and check timing accuracy
+ * - Register and remove an idle hook, verifying it is called as expected
+ * - Use thread yield to test scheduler fairness among threads of the same priority
+ * - Use thread control APIs to start, change priority, and close a thread, verifying each operation
+ * - Create a thread with a specific priority and verify it runs as expected
+ * - Use rt_thread_delay_until to test absolute delay and periodic task timing
+ * - Create multiple threads with the same priority and test time-slice scheduling fairness
+ *
+ * Verification Metrics:
+ * - Threads are created, started, deleted, and detached successfully
+ * - The precision of both relative delay and absolute delay is correct.
+ * - Idle hook is invoked as expected during thread idle periods
+ * - Thread yield causes correct scheduling among threads of the same priority
+ * - Thread control APIs (startup, change priority, close) work as intended and update thread state correctly
+ * - Time-slice scheduling distributes CPU time fairly among threads of the same priority (difference < 30%)
+ *
+ * Dependencies:
+ * - Enable Thread Test (RT-Thread Utestcases -> Kernel Core -> Thread Test)
+ * - Test on any RT-Thread supported platform (e.g., qemu-virt64-riscv)
+ *
+ * Expected Results:
+ * - After executing this test in msh, the expected output should be:
+ *   "[  PASSED  ] [ result   ] testcase (core.thread_tc)"
  */
 
 #define __RT_IPC_SOURCE__ /* include internal API for utest */

@@ -1,11 +1,39 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART Unread Bytes Count Test
  *
+ * Test Objectives:
+ * - Validate query of unread RX bytes and flush interaction in non-blocking receive mode
+ * - Verify APIs: rt_device_find, rt_device_control(RT_DEVICE_CTRL_CONFIG / RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT / RT_SERIAL_CTRL_RX_FLUSH),
+ *   rt_device_open with RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING,
+ *   rt_device_write
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Unread Count Verification / tc_uart_api):**
+ *   1. Configure UART buffers and send varying payload lengths, some exceeding RX buffer capacity.
+ *   2. After each transfer, query unread byte count and ensure it saturates at `min(send_size, RT_SERIAL_TC_RXBUF_SIZE)`.
+ *   3. Flush RX buffer and verify unread count resets to zero before next iteration.
+ *
+ * Verification Metrics:
+ * - `RT_SERIAL_CTRL_GET_UNREAD_BYTES_COUNT` returns expected length; subsequent flush yields zero.
+ * - All iterations covering large and random payloads complete with RT_EOK.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2`, RX count control support, and loopback wiring on `RT_SERIAL_TC_DEVICE_NAME`.
+ * - Optional DMA ping buffer configuration honored.
+ *
+ * Expected Results:
+ * - Test ends without assertions; logs may remain silent unless failures occur.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_get_unread_bytes_count)`.
  */
 
 #include <rtthread.h>

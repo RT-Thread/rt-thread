@@ -6,7 +6,46 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-11-20     zhujiale     the first version
+ * 2025-11-24     ChuanN-sudo  add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Serial Bypass Conflict Test
+ *
+ * Test Objectives:
+ * - Validate serial device bypass mechanism under high-concurrency RX interrupt scenarios.
+ * - Verify thread-safe registration/unregistration of upper and lower bypass handlers.
+ * - Ensure correct data reception counting across concurrent ISR triggers and workqueue processing.
+ * - Test core APIs: rt_bypass_upper_register(), rt_bypass_upper_unregister(),
+ *      rt_bypass_lower_register(), rt_bypass_lower_unregister(), rt_hw_serial_isr().
+ *
+ * Test Scenarios:
+ * - bypass_rx_stress_001: Two threads simultaneously trigger RX ISRs with upper bypass handler registered.
+ *      Each thread generates 10 ISR events, expecting 200 total character receptions (10 chars per ISR × 10 ISRs × 2 threads).
+ * - bypass_rx_stress_002: Concurrent ISR triggering and workqueue processing with lower bypass handler.
+ *      Tests interaction between interrupt context and work queue context, expecting 100 total receptions.
+ * - bypass_rx_stress_003: High-priority thread (priority 15, numerically lower = higher priority) dynamically
+ *      registers/unregisters bypass handlers while low-priority thread (priority 20) continuously triggers RX ISRs.
+ *
+ * Verification Metrics:
+ * - Character reception counter matches expected values (200 for test_001, 100 for test_002, 200 for test_003).
+ * - No data loss occurs during concurrent handler registration/unregistration operations.
+ * - Atomic operations ensure thread-safe counter increments without race conditions.
+ * - Mock UART getc function correctly limits character generation to 10 per call sequence.
+ * - System remains stable during priority inversion scenarios (priority 15 vs 20 threads).
+ *
+ * Dependencies:
+ * - Hardware requirements: Platform with serial console device (UART) support.
+ * - Software configuration:
+ *     - RT_USING_UTESTCASES must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_SERIAL_BYPASS must be enabled (enable via: RT-Thread Utestcases -> Kernel Components -> Drivers -> Serial Test -> Serial Bypass Test).
+ * - Environmental Assumptions: Serial device initialized and operational before test execution.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.serial.bypass_rx_stress)"
+ * - All atomic counter assertions pass with exact expected values.
+ */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "utest.h"

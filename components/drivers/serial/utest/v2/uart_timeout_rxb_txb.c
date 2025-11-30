@@ -1,11 +1,41 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART Blocking Timeout RX/TX Test
  *
+ * Test Objectives:
+ * - Validate combined blocking receive/transmit timeout behavior for the serial v2 driver
+ * - Verify APIs: rt_device_find, rt_device_control(RT_SERIAL_CTRL_SET_RX_TIMEOUT / _SET_TX_TIMEOUT / _RX_FLUSH / _TX_FLUSH),
+ *   rt_device_open with RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING, rt_device_read, rt_device_write
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Timeout Verification / tc_uart_api):**
+ *   1. Discover and reconfigure the target UART with loopback (TX shorted to RX) and known buffer sizes.
+ *   2. Spawn concurrent TX and RX worker threads; RX thread configures 100-tick blocking timeout and repeatedly validates measured wait time.
+ *   3. Switch to TX timeout mode (10 ticks) and push oversized bursts to ensure write calls block for the configured window.
+ *   4. Monitor status flags to detect allocation failures, timeout violations, or thread termination.
+ *
+ * Verification Metrics:
+ * - RX blocking reads must complete within [100, 101] ticks and return expected lengths across 10 iterations.
+ * - TX blocking writes must complete within [10, 11] ticks with successful flush between iterations.
+ * - No allocation or control failures occur; master loop exits with `uart_over_flag == RT_TRUE`.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` enabled and a loopbacked UART defined by `RT_SERIAL_TC_DEVICE_NAME`.
+ * - Serial driver must support blocking mode and timeout controls; optional RX DMA segment size is set via `RT_SERIAL_USING_DMA`.
+ * - Two 2 KB threads plus dynamic buffers (~RT_SERIAL_TC_RXBUF_SIZE*10) must be allocatable from the heap.
+ *
+ * Expected Results:
+ * - Test completes without assertions, device handles close cleanly, logs show timeout measurements within tolerance.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_timeout_rxb_txb)`.
  */
 
 #include <rtthread.h>

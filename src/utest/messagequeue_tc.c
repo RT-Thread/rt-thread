@@ -8,6 +8,44 @@
  * 2021-08-28     Sherman      the first version
  * 2023-09-15     xqyjlj       change stack size in cpu64
  *                             fix in smp
+ * 2025-11-17     Ze-Hou       add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Message Queue Test
+ *
+ * Test Objectives:
+ * - Validate the RT-Thread kernel message queue (rt_messagequeue) functionality
+ * - Test static and dynamic message queue creation, initialization, sending,
+ *   receiving, urgent send, priority send, reset, detach, and delete APIs
+ *
+ * Test Scenarios:
+ * - Initialize a static message queue and verify correct setup
+ * - Create a dynamic message queue and verify allocation
+ * - Send messages to the queue until full, test blocking and non-blocking send,
+ *   urgent send, and priority send (if enabled)
+ * - Receive messages from the queue, verify order and data integrity, including
+ *   priority receive (if enabled)
+ * - Reset the message queue and verify it is empty
+ * - Detach and delete message queues, ensuring resources are released
+ * - Use multiple threads to simulate concurrent send/receive operations
+ *
+ * Verification Metrics:
+ * - All uassert assertions pass without failure
+ * - Message queues are created, initialized, detached, and deleted successfully
+ * - Messages are sent and received in correct order and with correct data
+ * - Blocking and non-blocking operations behave as expected
+ * - Urgent and priority send/receive functions work correctly (if enabled)
+ *
+ * Dependencies:
+ * - Enable message queue priority (RT-Thread Kernel -> Inter-Thread communication
+ *   -> Enable message queue priority)
+ * - Enable Message Queue Test (RT-Thread Utestcases -> Kernel Core -> Message Queue Test)
+ * - Test on any RT-Thread supported platform (e.g., qemu-virt64-riscv)
+ *
+ * Expected Results:
+ * - After executing this test in msh, the expected output should be:
+ *   "[  PASSED  ] [ result   ] testcase (core.messagequeue)"
  */
 
 #include <rtthread.h>
@@ -220,6 +258,10 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
+    /* wait for threads to finish */
+    rt_thread_mdelay(100);
+    /* detach event object */
+    rt_event_detach(&finish_e);
     return RT_EOK;
 }
 

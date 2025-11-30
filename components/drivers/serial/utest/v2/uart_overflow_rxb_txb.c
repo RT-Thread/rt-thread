@@ -1,11 +1,41 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART RX Buffer Overflow Handling Test
  *
+ * Test Objectives:
+ * - Validate UART behavior when RX FIFO exceeds configured buffer size under blocking operation
+ * - Verify APIs: rt_device_find, rt_device_control(RT_DEVICE_CTRL_CONFIG / RT_SERIAL_CTRL_SET_RX_TIMEOUT),
+ *   rt_device_open with RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING,
+ *   rt_device_read, rt_device_write, rt_thread_create/startup
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Overflow Stress / tc_uart_api):**
+ *   1. Configure UART buffers and spawn sender thread to push large monotonic sequences while receiver drains in buffer-sized chunks.
+ *   2. Delay receiver startup to force RX queue saturation, then verify data either restarts from zero (drop strategy) or continues modulo 256.
+ *   3. Iterate across deterministic and random payload lengths, monitoring flags for misordered data.
+ *
+ * Verification Metrics:
+ * - Receiver reads exactly `RT_SERIAL_TC_RXBUF_SIZE` bytes per chunk.
+ * - Data pattern matches expected strategy (`RT_SERIAL_BUF_STRATEGY_DROP` or wraparound).
+ * - `uart_result` remains `RT_TRUE`; `uart_over_flag` set before loop exit.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` with loopback wiring and optional DMA ping buffer support.
+ * - UART driver must implement overflow strategy macros and blocking modes.
+ * - Adequate heap for large TX/RX buffers and 2 KB thread stacks.
+ *
+ * Expected Results:
+ * - No assertions triggered; logs report pass counts for each length.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_overflow_rxb_txb)`.
  */
 
 #include <rtthread.h>

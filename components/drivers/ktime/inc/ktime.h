@@ -80,13 +80,6 @@ unsigned long rt_ktime_cputimer_getfrq(void);
 unsigned long rt_ktime_cputimer_getcnt(void);
 
 /**
- * @brief Get cputimer the cnt value corresponding to 1 os tick
- *
- * @return step
- */
-unsigned long rt_ktime_cputimer_getstep(void);
-
-/**
  * @brief Init cputimer
  *
  */

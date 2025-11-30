@@ -18,13 +18,37 @@
  *          for the system's highest and the thread entry function does not let out the CPU control, run the specified
  *          number of times in thread 0 to create a high-priority not bound to the core of the thread, the thread will
  *          be preempted by the core 0 is running on the thread!
+ *
+ * Test Case Name: [smp_affinity_pri1]
+ *
+ * Test Objectives:
+ * - Verify that threads with low-priority bound cores do not preempt high-priority threads.
+ *
+ * Test Scenarios:
+ * - RT_CPUS_NR threads (T0~T(RT_CPUS_NR-1)) are created, with each thread bound to its respective core. Among them, the
+ * - thread on core 0 has the lowest priority (LOW_PRIORITY), while the other threads have the highest priority (THREAD_PRIORITY).
+ * - All threads share a common entry function "thread_entry". In thread_entry, only the threads running on non-core-0 cores
+ * - execute an infinite loop (i.e., they do not release core ownership). After running for a certain period of time, the
+ * - thread on core 0 executes list_thread() and creates a medium-priority (THIGH_PRIORITY) thread Tn, whose entry function
+ * - is thread_temp_entry. Tn is automatically destroyed after executing list_thread().
+ *
+ * Verification Metrics:
+ * - Output message: [I/utest] [ PASSED ] [ result ] testcase (core.smp_affinity_pri1)
+ *
+ * Dependencies:
+ * - Enable RT_USING_SMP, set RT_THREAD_PRIORITY_MAX = 256.
+ *
+ * Expected Results:
+ * - You will see the information printed by list_thread() twice on the terminal. For the first time, you will see that T0 is
+ * - running on core 0, and T1~T(RT_CPUS_NR-1) are running on their respective cores. For the second time, you will see that Tn
+ * - is running on core 0, while T0 is in the ready state. Subsequently, the PASS message will be printed.
  */
 
 /* Number of thread runs */
 static int run_num = 10;
 #define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
 #define THREAD_PRIORITY   2
-#define LOW_PRIORITY  50
+#define LOW_PRIORITY  30
 #define THIGH_PRIORITY  10
 static rt_thread_t        threads[RT_CPUS_NR];
 static rt_thread_t        temp_thread;
@@ -106,7 +130,7 @@ static void smp_affinity_pri1_tc(void)
 
         if (threads[i] != RT_NULL)
         {
-            rt_thread_control(threads[i], RT_THREAD_CTRL_BIND_CPU, (void *)i);
+            rt_thread_control(threads[i], RT_THREAD_CTRL_BIND_CPU, (void *)(rt_ubase_t)i);
             rt_thread_startup(threads[i]);
         }
     }

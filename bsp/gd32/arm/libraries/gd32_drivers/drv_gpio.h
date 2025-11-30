@@ -29,6 +29,8 @@ extern "C" {
 #include "gd32f4xx_gpio.h"
 #elif defined SOC_SERIES_GD32H7xx
 #include "gd32h7xx_gpio.h"
+#elif defined SOC_SERIES_GD32H75e
+#include "gd32h75e_gpio.h"
 #elif defined SOC_SERIES_GD32E50x
 #include "gd32e50x_gpio.h"
 #elif defined SOC_SERIES_GD32F5xx
@@ -39,11 +41,12 @@ extern "C" {
 
 #define __GD32_PORT(port)  GPIO##port
 
-#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32H7xx || defined SOC_SERIES_GD32F5xx || defined SOC_SERIES_GD32E23x
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx || defined SOC_SERIES_GD32E23x || defined SOC_SERIES_GD32H75E || defined SOC_SERIES_GD32H7xx
 #define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,      \
                                     GPIO##port, GPIO_PIN_##pin, \
                                     EXTI_SOURCE_GPIO##port,     \
-                                    EXTI_SOURCE_PIN##pin}
+                                    EXTI_SOURCE_PIN##pin,       \
+                                    EXTI_##pin}
 #else
 #define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,        \
                                     GPIO##port, GPIO_PIN_##pin,   \
@@ -70,6 +73,7 @@ struct pin_index
     rt_uint32_t pin;
     rt_uint8_t port_src;
     rt_uint8_t pin_src;
+    rt_uint32_t exit_line;
 };
 
 struct pin_irq_map
@@ -77,6 +81,9 @@ struct pin_irq_map
     rt_uint16_t pinbit;
     IRQn_Type irqno;
 };
+
+int get_pin_config(const char *pin_name, uint32_t *port, uint32_t *pin, rcu_periph_enum *clk);
+int pin_alternate_config(const char *alternate, uint32_t *af);
 
 #ifdef __cplusplus
 }

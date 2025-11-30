@@ -1,11 +1,43 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-06-16     KyleChan     the first version
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART Blocking RX & TX Integration Test
+ *
+ * Test Objectives:
+ * - Validate simultaneous blocking receive/transmit operation with sequential integrity checks
+ * - Verify APIs: rt_device_find, rt_device_control(RT_DEVICE_CTRL_CONFIG / RT_SERIAL_CTRL_SET_RX_TIMEOUT),
+ *   rt_device_open with RT_DEVICE_FLAG_RX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING,
+ *   rt_device_read, rt_device_write, rt_thread_create/startup
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Length Sweep & Randomized Payloads / tc_uart_api):**
+ *   1. Reconfigure UART to known buffer sizes (optional DMA ping buffer) and set generous RX timeout.
+ *   2. Spawn paired producer/consumer threads; sender streams monotonically increasing bytes while receiver validates ordering until quota met.
+ *   3. Iterate over deterministic payload lengths based on TX buffer, RX buffer, and random samples until `RT_SERIAL_TC_SEND_ITERATIONS` reached.
+ *   4. Monitor flags for allocation failures or data mismatches; terminate threads once reception quota per iteration satisfied.
+ *
+ * Verification Metrics:
+ * - Each transfer completes with ordered byte sequence and total receive length equals requested count.
+ * - `uart_result` remains `RT_TRUE`; `uart_over_flag` set per iteration before teardown.
+ * - Device open/close succeeds across all iterations without lingering handles.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` with loopback wiring on `RT_SERIAL_TC_DEVICE_NAME`.
+ * - Blocking mode support plus optional DMA ping buffer configuration.
+ * - Thread stack allocations (2 × 1 KB) and send buffers must be available from heap.
+ *
+ * Expected Results:
+ * - Unit test passes without assertions; logs show progressive length coverage.
+ * - Utest framework prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_rxb_txb)`.
  */
 
 #include <rtthread.h>

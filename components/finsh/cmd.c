@@ -262,7 +262,7 @@ long list_thread(void)
 #else
                     ptr = (rt_uint8_t *)thread->stack_addr;
                     while (*ptr == '#') ptr ++;
-                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s %p",
+                    rt_kprintf(" 0x%08x 0x%08x    %3d%%   0x%08x %s %p",
                                thread->stack_size + ((rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
                                thread->stack_size,
                                (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
@@ -940,64 +940,64 @@ static int cmd_list(int argc, char **argv)
 {
     if(argc == 2)
     {
-        if(strcmp(argv[1], "thread") == 0)
+        if(rt_strcmp(argv[1], "thread") == 0)
         {
             list_thread();
         }
-        else if(strcmp(argv[1], "timer") == 0)
+        else if(rt_strcmp(argv[1], "timer") == 0)
         {
             list_timer();
         }
 #ifdef RT_USING_SEMAPHORE
-        else if(strcmp(argv[1], "sem") == 0)
+        else if(rt_strcmp(argv[1], "sem") == 0)
         {
             list_sem();
         }
 #endif /* RT_USING_SEMAPHORE */
 #ifdef RT_USING_EVENT
-        else if(strcmp(argv[1], "event") == 0)
+        else if(rt_strcmp(argv[1], "event") == 0)
         {
             list_event();
         }
 #endif /* RT_USING_EVENT */
 #ifdef RT_USING_MUTEX
-        else if(strcmp(argv[1], "mutex") == 0)
+        else if(rt_strcmp(argv[1], "mutex") == 0)
         {
             list_mutex();
         }
 #endif /* RT_USING_MUTEX */
 #ifdef RT_USING_MAILBOX
-        else if(strcmp(argv[1], "mailbox") == 0)
+        else if(rt_strcmp(argv[1], "mailbox") == 0)
         {
             list_mailbox();
         }
 #endif  /* RT_USING_MAILBOX */
 #ifdef RT_USING_MESSAGEQUEUE
-        else if(strcmp(argv[1], "msgqueue") == 0)
+        else if(rt_strcmp(argv[1], "msgqueue") == 0)
         {
             list_msgqueue();
         }
 #endif /* RT_USING_MESSAGEQUEUE */
 #ifdef RT_USING_MEMHEAP
-        else if(strcmp(argv[1], "memheap") == 0)
+        else if(rt_strcmp(argv[1], "memheap") == 0)
         {
             list_memheap();
         }
 #endif /* RT_USING_MEMHEAP */
 #ifdef RT_USING_MEMPOOL
-        else if(strcmp(argv[1], "mempool") == 0)
+        else if(rt_strcmp(argv[1], "mempool") == 0)
         {
             list_mempool();
         }
 #endif /* RT_USING_MEMPOOL */
 #ifdef RT_USING_DEVICE
-        else if(strcmp(argv[1], "device") == 0)
+        else if(rt_strcmp(argv[1], "device") == 0)
         {
             list_device();
         }
 #endif /* RT_USING_DEVICE */
 #ifdef RT_USING_DFS
-        else if(strcmp(argv[1], "fd") == 0)
+        else if(rt_strcmp(argv[1], "fd") == 0)
         {
             extern int list_fd(void);
             list_fd();

@@ -7,6 +7,43 @@
  * Date           Author       Notes
  * 2021-09-08     liukang     the first version
  * 2023-09-15     xqyjlj       change stack size in cpu64
+ * 2025-11-16     ChuanN-sudo  add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: IPC Mailbox Test
+ *
+ * Test Objectives:
+ * - Validate mailbox core functionality under different scheduling policies and allocation methods.
+ * - Test comprehensive mailbox operations including send, receive, send-wait, and urgent delivery.
+ * - Test core APIs:
+ *      - rt_mb_init(), rt_mb_detach(), rt_mb_create(), rt_mb_delete(),
+ *      - rt_mb_send(), rt_mb_send_wait(), rt_mb_urgent(), rt_mb_recv().
+ *
+ * Test Scenarios:
+ * - Static mailbox initialization and detachment with FIFO and PRIO scheduling.
+ * - Dynamic mailbox creation and deletion with FIFO and PRIO scheduling.
+ * - Multi-threaded communication using normal send, timed send-wait, and urgent messages in FIFO mode.
+ * - Thread coordination using completion flags to validate test sequence execution.
+ *
+ * Verification Metrics:
+ * - All mailbox initialization and creation operations return RT_EOK status.
+ * - Mailbox detachment and deletion operations complete successfully without resource leaks.
+ * - Sent messages are correctly received with preserved content integrity.
+ * - Send-wait operations are verified to respect specified timeout values.
+ * - No memory corruption or race conditions during concurrent mailbox access.
+ *
+ * Dependencies:
+ * - Hardware requirements: QEMU emulator or any hardware platform that supports RT-Thread.
+ * - Software configuration:
+ *     - RT_USING_UTEST must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_MAILBOX must be enabled (enable via: RT-Thread Utestcases -> Kernel Core -> Mailbox Test).
+ * - Environmental Assumptions: System scheduler working normally.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (core.ipc_mailbox)"
+ * - No memory leaks or race condition detections in logs
+ * - No assertions triggered during test execution
  */
 
 #include <rtthread.h>

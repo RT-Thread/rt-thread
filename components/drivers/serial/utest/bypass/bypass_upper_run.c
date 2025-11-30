@@ -6,7 +6,43 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-11-20     zhujiale     the first version
+ * 2025-11-24     ChuanN-sudo  add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Serial Bypass Upper Run Test
+ *
+ * Test Objectives:
+ * - Validate serial device bypass upper layer registration and data processing mechanisms.
+ * - Verify correct character reception and filtering through bypass callback functions.
+ * - Ensure proper handling of bypass level priorities and callback execution order.
+ * - Test core APIs: rt_bypass_upper_register(), rt_bypass_upper_unregister(), rt_hw_serial_isr()
+ *
+ * Test Scenarios:
+ * - Register bypass callback at RT_BYPASS_LEVEL_1 to intercept incoming serial data.
+ * - Verify bypass callback receives expected character values and executes correct number of times.
+ * - Register bypass callback at RT_BYPASS_MAX_LEVEL with different character sequence.
+ * - Test bypass unregistration and verify proper cleanup of callback handlers.
+ *
+ * Verification Metrics:
+ * - Bypass callback executes exactly 10 times for first test case with character 'a'.
+ * - Second test case processes 20 characters in ascending sequence ('b' to 'u').
+ * - Character values received in callback match expected values from mock getc function.
+ * - Bypass registration and unregistration complete without memory leaks or errors.
+ * - Serial device operations restore to original state after test completion.
+ *
+ * Dependencies:
+ * - Hardware requirements: Platform with serial console device (UART) support.
+ * - Software configuration:
+ *     - RT_USING_UTESTCASES must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_SERIAL_BYPASS must be enabled (enable via: RT-Thread Utestcases -> Kernel Components -> Drivers -> Serial Test -> Serial Bypass Test).
+ * - Environmental Assumptions: Serial device initialized and operational before test execution.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.serial.bypass_upper)"
+ * - No assertions triggered during character validation or callback execution.
+ */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "utest.h"

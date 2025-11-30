@@ -72,6 +72,11 @@ struct rt_hw_stack
 #define E_Bit       (1<<9)
 #define J_Bit       (1<<24)
 
+/* VFP/NEON register count for FPU context */
+#ifndef VFP_DATA_NR
+#define VFP_DATA_NR 64  /* 32 double-precision registers = 64 words */
+#endif
+
 #ifdef RT_USING_SMP
 typedef union {
     unsigned long slock;

@@ -1,11 +1,43 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-06-16     KyleChan     the first version
+ * 2025-11-13     CYFS         Add standardized utest documentation block
+*/
+
+/**
+ * Test Case Name: UART Non-Blocking RX & Blocking TX Integration Test
+ *
+ * Test Objectives:
+ * - Validate RX interrupt/callback based reception paired with blocking transmit path
+ * - Verify APIs: rt_device_find, rt_device_control(RT_DEVICE_CTRL_CONFIG / RT_SERIAL_CTRL_SET_RX_TIMEOUT),
+ *   rt_device_open with RT_DEVICE_FLAG_RX_NON_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING,
+ *   rt_device_set_rx_indicate, rt_device_read, rt_device_write, rt_sem APIs
+ *
+ * Test Scenarios:
+ * - **Scenario 1 (Callback-Driven Reception / tc_uart_api):**
+ *   1. Configure UART buffers (optional DMA ping buffer) and create RX semaphore.
+ *   2. Register `uart_rx_indicate` callback to signal semaphore whenever new bytes arrive.
+ *   3. For a sweep of deterministic and random lengths, launch sender/receiver threads.
+ *   4. Receiver waits on semaphore, drains available bytes, and enforces monotonic data ordering until quota met.
+ *
+ * Verification Metrics:
+ * - Received data remains sequential; `uart_result` stays `RT_TRUE`.
+ * - Semaphore take operations succeed; `uart_over_flag` flips upon completion.
+ * - UART open/close and callback registration succeed without leaks; resources cleaned in teardown.
+ *
+ * Dependencies:
+ * - Requires `RT_UTEST_SERIAL_V2` with loopback for `RT_SERIAL_TC_DEVICE_NAME`.
+ * - Non-blocking RX must support callback indication.
+ * - Heap must provide buffers and semaphore; two 1 KB thread stacks required.
+ *
+ * Expected Results:
+ * - Test executes without assertion failures; logs show iteration counts and lengths.
+ * - Utest harness prints `[  PASSED  ] [ result   ] testcase (components.drivers.serial.v2.uart_rxnb_txb)`.
  */
 
 #include <rtthread.h>

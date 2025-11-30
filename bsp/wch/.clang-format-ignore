@@ -1,0 +1,9 @@
+
+# files format check exclude path, please follow the instructions below to modify;
+# If you need to exclude an entire folder, add the folder path in dir_path;
+# If you need to exclude a file, add the path to the file in file_path.
+
+# 从 .ignore_format.yml 迁移的规则
+# 忽略所有 CH32F 系列标准外设驱动目录
+/arm/Libraries/CH32F*_StdPeriph_Driver/
+/risc-v/Libraries/CH32V10x_StdPeriph_Driver/

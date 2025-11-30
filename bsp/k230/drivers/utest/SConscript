@@ -33,6 +33,9 @@ if GetDepend('BSP_UTEST_DRIVERS'):
     if GetDepend('BSP_USING_I2C'):
         src += ['test_i2c.c']
 
+    if GetDepend('BSP_USING_SPI'):
+        src += ['test_spi.c']
+
 group = DefineGroup('utestcases', src, depend = [''])
 
 Return('group')
