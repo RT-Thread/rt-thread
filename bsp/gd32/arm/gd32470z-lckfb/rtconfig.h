@@ -428,7 +428,7 @@
 #define BSP_USING_UART0
 #define BSP_UART0_TX_PIN "PA9"
 #define BSP_UART0_RX_PIN "PA10"
-#define BSP_UART0_AFIO "AF1"
+#define BSP_UART0_AFIO "AF7"
 #define BSP_USING_GD_DBG
 /* end of On-chip Peripheral Drivers */
 

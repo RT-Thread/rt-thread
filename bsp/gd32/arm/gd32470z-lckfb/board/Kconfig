@@ -53,7 +53,7 @@ menu "On-chip Peripheral Drivers"
                         
                     config BSP_UART0_AFIO
                         string "UART0 alternate function, such as AF7"
-                        default "AF1"
+                        default "AF7"
                         
                     if BSP_USING_SERIAL_V2
                         config BSP_UART0_RX_USING_DMA
@@ -254,6 +254,61 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_SPI4
                 select BSP_SPI4_TX_USING_DMA
                 default n
+
+            menuconfig BSP_USING_SPI_FLASH
+                bool "Enable SPI Flash auto initialization"
+                depends on RT_USING_SPI
+                default n
+                help
+                    Enable automatic SPI Flash initialization on selected SPI buses.
+                    Note: Only enable this for SPI buses that are actually connected to SPI Flash.
+                    If a SPI bus is used for other devices (e.g., OLED, WIFI), do not enable flash initialization for it.
+                    Note: This feature can work with or without SFUD. If you want to use SFUD, enable it in SPI driver menu.
+
+            if BSP_USING_SPI_FLASH
+
+                config BSP_USING_SPI0_FLASH
+                    bool "Enable SPI Flash on SPI0"
+                    depends on BSP_USING_SPI0
+                    default n
+                    help
+                        Enable SPI Flash initialization on SPI0 bus.
+
+                config BSP_USING_SPI1_FLASH
+                    bool "Enable SPI Flash on SPI1"
+                    depends on BSP_USING_SPI1
+                    default n
+                    help
+                        Enable SPI Flash initialization on SPI1 bus.
+
+                config BSP_USING_SPI2_FLASH
+                    bool "Enable SPI Flash on SPI2"
+                    depends on BSP_USING_SPI2
+                    default n
+                    help
+                        Enable SPI Flash initialization on SPI2 bus.
+
+                config BSP_USING_SPI3_FLASH
+                    bool "Enable SPI Flash on SPI3"
+                    depends on BSP_USING_SPI3
+                    default n
+                    help
+                        Enable SPI Flash initialization on SPI3 bus.
+
+                config BSP_USING_SPI4_FLASH
+                    bool "Enable SPI Flash on SPI4"
+                    depends on BSP_USING_SPI4
+                    default n
+                    help
+                        Enable SPI Flash initialization on SPI4 bus.
+
+                config BSP_USING_SPI5_FLASH
+                    bool "Enable SPI Flash on SPI5"
+                    depends on BSP_USING_SPI5
+                    default n
+                    help
+                        Enable SPI Flash initialization on SPI5 bus.
+            endif
         endif
 
     menuconfig BSP_USING_ADC
