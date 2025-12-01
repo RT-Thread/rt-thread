@@ -3,6 +3,13 @@ menuconfig RT_USING_MFD
     depends on RT_USING_DM
     default n
 
+config RT_MFD_EDU
+    bool "Educational device driver"
+    depends on RT_USING_MFD
+    depends on RT_USING_PCI
+    depends on RT_USING_DMA
+    default n
+
 config RT_MFD_SYSCON
     bool "System Controller Register R/W"
     depends on RT_USING_MFD
