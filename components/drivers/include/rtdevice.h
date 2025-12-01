@@ -170,9 +170,9 @@ extern "C" {
 #endif /* RT_USING_DM */
 #endif /* RT_USING_I2C */
 
-#ifdef RT_USING_PHY
+#if defined(RT_USING_PHY) || defined(RT_USING_PHY_V2)
 #include "drivers/phy.h"
-#endif /* RT_USING_PHY */
+#endif /* RT_USING_PHY || RT_USING_PHY_V2 */
 
 #ifdef RT_USING_SDIO
 #include "drivers/dev_mmcsd_core.h"
