@@ -12,7 +12,7 @@
 #ifndef __SHELL_H__
 #define __SHELL_H__
 
-#include <rtthread.h>
+#include <rtdevice.h>
 #include "finsh.h"
 
 #ifndef FINSH_THREAD_NAME
@@ -97,8 +97,8 @@ struct finsh_snapshot
 #else
     char *cmd; /* cmd is the command string */
 #endif /* !RT_USING_HEAP */
-    size_t cmd_length;
-    size_t cmd_cursor;
+    rt_size_t cmd_length;
+    rt_size_t cmd_cursor;
     rt_list_t list;
 };
 #endif /* FINSH_USING_SNAPSHOT */
@@ -118,8 +118,8 @@ struct finsh_shell
 #endif /* FINSH_USING_HISTORY */
 
     char cmd[FINSH_CMD_SIZE + 1];
-    size_t cmd_length;
-    size_t cmd_cursor;
+    rt_size_t cmd_length;
+    rt_size_t cmd_cursor;
 
     char extend_key; /* extend key is the key after the function key */
     rt_bool_t is_insert; /* insert mode is the mode to insert character at the cursor position */

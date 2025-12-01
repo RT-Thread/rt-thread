@@ -67,13 +67,13 @@ static struct finsh_shell _shell = { 0 };
 
 /* finsh symtab */
 #ifdef FINSH_USING_SYMTAB
-struct finsh_syscall *_syscall_table_begin = NULL;
-struct finsh_syscall *_syscall_table_end = NULL;
+struct finsh_syscall *_syscall_table_begin = RT_NULL;
+struct finsh_syscall *_syscall_table_end = RT_NULL;
 #endif /* FINSH_USING_SYMTAB */
 
-static struct finsh_shell *shell = NULL;
+static struct finsh_shell *shell = RT_NULL;
 static char finsh_prompt[RT_CONSOLEBUF_SIZE + 1] = { 0 };
-static size_t finsh_prompt_length = 0;
+static rt_size_t finsh_prompt_length = 0;
 
 #if defined(_MSC_VER) || (defined(__GNUC__) && defined(__x86_64__))
 struct finsh_syscall *finsh_syscall_next(struct finsh_syscall *call)
@@ -110,11 +110,11 @@ void finsh_thread_entry_sethook(void (*hook)(void))
   *
   * This function sets the prompt string for the FinSH shell. It copies the given prompt
   * to the internal prompt buffer, ensuring it does not exceed the maximum buffer size.
-  * If the input prompt is NULL, it prints an error message and returns an error code.
+  * If the input prompt is RT_NULL, it prints an error message and returns an error code.
   *
   * @param prompt The new prompt string to set.
   *
-  * @return 0 on success, -RT_EINVAL if the prompt is NULL.
+  * @return 0 on success, -RT_EINVAL if the prompt is RT_NULL.
   */
 int finsh_set_prompt_word(const char *prompt)
 {
@@ -144,9 +144,9 @@ int finsh_set_prompt_word(const char *prompt)
   */
 const char *finsh_get_prompt_word(void)
 {
-    size_t len;
+    rt_size_t len;
 
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
 
     /* check prompt mode */
     if (!shell->is_prompt)
@@ -183,7 +183,7 @@ const char *finsh_get_prompt_word(void)
   */
 void finsh_set_prompt(rt_bool_t prompt)
 {
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
     shell->is_prompt = prompt;
 }
 
@@ -197,14 +197,14 @@ void finsh_set_prompt(rt_bool_t prompt)
   */
 rt_bool_t finsh_get_prompt(void)
 {
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
     return shell->is_prompt;
 }
 
 #if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
 static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
 
     if (size)
         rt_sem_release(&shell->rx_notice);
@@ -226,14 +226,14 @@ static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 void finsh_set_device(const char *device_name)
 {
     struct rt_device *device;
-    uint16_t oflag;
+    rt_uint16_t oflag;
     int ret;
 #ifdef RT_USING_SERIAL_V2
     int rxto;
 #endif /* RT_USING_SERIAL_V2 */
 
-    RT_ASSERT(shell != NULL);
-    RT_ASSERT(device_name != NULL);
+    RT_ASSERT(shell != RT_NULL);
+    RT_ASSERT(device_name != RT_NULL);
 
     device = rt_device_find(device_name);
     if (!device)
@@ -266,7 +266,7 @@ void finsh_set_device(const char *device_name)
     if (shell->device)
     {
         rt_device_close(shell->device);
-        rt_device_set_rx_indicate(shell->device, NULL);
+        rt_device_set_rx_indicate(shell->device, RT_NULL);
     }
 
     rt_device_set_rx_indicate(device, finsh_rx_ind);
@@ -280,7 +280,7 @@ void finsh_set_device(const char *device_name)
   */
 const char *finsh_get_device(void)
 {
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
     return shell->device->parent.name;
 }
 #endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
@@ -295,7 +295,7 @@ const char *finsh_get_device(void)
   */
 void finsh_set_echo(rt_bool_t echo)
 {
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
     shell->is_echo = echo;
 }
 
@@ -309,7 +309,7 @@ void finsh_set_echo(rt_bool_t echo)
   */
 rt_bool_t finsh_get_echo(void)
 {
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
     return shell->is_echo;
 }
 
@@ -318,23 +318,23 @@ rt_bool_t finsh_get_echo(void)
   * @brief Set a new password for the finsh shell.
   *
   * This function sets a new password for the finsh shell. It first checks whether the input password
-  * is valid (not NULL and its length is within the allowed range). If the password is valid, it copies
+  * is valid (not RT_NULL and its length is within the allowed range). If the password is valid, it copies
   * the new password into the shell's password buffer in a critical section to ensure thread safety.
   *
   * @param password The new password string to set.
   *
-  * @return 0 on success, -RT_EINVAL if the password is NULL or its length is invalid.
+  * @return 0 on success, -RT_EINVAL if the password is RT_NULL or its length is invalid.
   */
 int finsh_set_password(const char *password)
 {
-    size_t len;
+    rt_size_t len;
     rt_base_t level;
 
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
 
     if (!password)
     {
-        rt_kprintf("Password is NULL!\n");
+        rt_kprintf("Password is RT_NULL!\n");
         return -RT_EINVAL;
     }
 
@@ -363,14 +363,14 @@ int finsh_set_password(const char *password)
   */
 const char *finsh_get_password(void)
 {
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
     return shell->password;
 }
 
 static void finsh_wait_input_password(char *password)
 {
     char ch;
-    size_t cursor = 0;
+    rt_size_t cursor = 0;
 
     while (1)
     {
@@ -421,7 +421,7 @@ static void finsh_password_auth(void)
 #endif /* FINSH_USING_AUTH */
 
 #ifdef FINSH_USING_HISTORY
-static struct finsh_history *finsh_history_alloc(char *cmd, size_t cmd_length)
+static struct finsh_history *finsh_history_alloc(char *cmd, rt_size_t cmd_length)
 {
     struct finsh_history *history;
 
@@ -483,7 +483,7 @@ static void finsh_history_free(struct finsh_history *history)
 #endif /* RT_USING_HEAP */
 }
 
-static struct finsh_history *finsh_history_realloc(struct finsh_history *history, char *cmd, size_t cmd_length)
+static struct finsh_history *finsh_history_realloc(struct finsh_history *history, char *cmd, rt_size_t cmd_length)
 {
     if (!history)
         return finsh_history_alloc(cmd, cmd_length);
@@ -508,7 +508,7 @@ static struct finsh_history *finsh_history_realloc(struct finsh_history *history
 #endif /* FINSH_USING_HISTORY */
 
 #ifdef FINSH_USING_SNAPSHOT
-static struct finsh_snapshot *finsh_snapshot_alloc(char *cmd, size_t cmd_length, size_t cmd_cursor)
+static struct finsh_snapshot *finsh_snapshot_alloc(char *cmd, rt_size_t cmd_length, rt_size_t cmd_cursor)
 {
     struct finsh_snapshot *snap;
 
@@ -571,7 +571,7 @@ static void finsh_snapshot_free(struct finsh_snapshot *snap)
 #endif /* RT_USING_HEAP */
 }
 
-static struct finsh_snapshot *finsh_snapshot_realloc(struct finsh_snapshot *snap, char *cmd, size_t cmd_length, size_t cmd_cursor)
+static struct finsh_snapshot *finsh_snapshot_realloc(struct finsh_snapshot *snap, char *cmd, rt_size_t cmd_length, rt_size_t cmd_cursor)
 {
     if (!snap)
         return finsh_snapshot_alloc(cmd, cmd_length, cmd_cursor);
@@ -604,7 +604,7 @@ static int finsh_shell_init(void)
 #endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
     int ret;
 
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
 
     ret = rt_sem_init(&shell->rx_notice, "shrx", 0, RT_IPC_FLAG_FIFO);
     if (ret)
@@ -685,7 +685,7 @@ static void finsh_shell_deinit(void)
     struct finsh_snapshot *snap, *s;
 #endif /* AT_BYPASS_USING_SNAPSHOT */
 
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
 
 #ifdef FINSH_USING_HISTORY
     rt_list_for_each_entry_safe(history, n, &shell->history_list, list)
@@ -707,9 +707,9 @@ static void finsh_shell_deinit(void)
     if (shell->device)
     {
         rt_device_close(shell->device);
-        rt_device_set_rx_indicate(shell->device, NULL);
+        rt_device_set_rx_indicate(shell->device, RT_NULL);
     }
-    shell->device = NULL;
+    shell->device = RT_NULL;
 #endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
 
     rt_sem_detach(&shell->rx_notice);
@@ -736,7 +736,7 @@ char finsh_getchar(void)
 #else
     int ret;
 
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
 
     if (!shell->device)
         return -1; /* EOF */
@@ -773,10 +773,10 @@ static void finsh_push_snapshot(void)
 {
     struct finsh_snapshot *snap, *pos, *n;
     rt_list_t *node;
-    uint32_t len;
+    rt_uint32_t len;
 
     /* if current snapshot is not the last of the snapshot list, use the current snapshot */
-    node = !_is_snapshot_last(shell->cur_snapshot) ? shell->cur_snapshot : NULL;
+    node = !_is_snapshot_last(shell->cur_snapshot) ? shell->cur_snapshot : RT_NULL;
     if (node)
         snap = rt_list_entry(node, struct finsh_snapshot, list);
     else
@@ -794,7 +794,7 @@ static void finsh_push_snapshot(void)
         }
 
         if (len < FINSH_SNAPSHOT_DEPTH)
-            snap = NULL;
+            snap = RT_NULL;
         else
         {
             node = shell->snapshot_list.prev;
@@ -831,7 +831,7 @@ static void finsh_push_snapshot(void)
 
 static void finsh_handle_backspace_key(void)
 {
-    size_t cursor;
+    rt_size_t cursor;
     int i;
 
 #ifdef FINSH_USING_SNAPSHOT
@@ -870,7 +870,7 @@ static void finsh_handle_backspace_key(void)
 
 static void finsh_auto_complete(void)
 {
-    finsh_putc("\n");
+    finsh_putc('\n');
     msh_auto_complete(shell->cmd);
 #ifdef FINSH_USING_OPTION_COMPLETION
     msh_opt_auto_complete(shell->cmd);
@@ -878,7 +878,7 @@ static void finsh_auto_complete(void)
     finsh_printf("%s%s", FINSH_PROMPT, shell->cmd);
 
     /* re-calculate position */
-    shell->cmd_cursor = strlen(shell->cmd);
+    shell->cmd_cursor = rt_strlen(shell->cmd);
     shell->cmd_length = shell->cmd_cursor;
 }
 
@@ -893,7 +893,7 @@ static void finsh_render_line(void)
         finsh_putc(' ');
     finsh_putc('\r');
 #else /* _WIN32 */
-    finsh_puts("\033[2K\r");
+    finsh_puts("\033[2K\r"); // 2K: clear the line, \r: return to the beginning of the line
 #endif /* _WIN32 */
     finsh_printf("%s%s", FINSH_PROMPT, shell->cmd);
 
@@ -910,7 +910,7 @@ rt_inline int _is_word_char(char ch)
 
 static void finsh_handle_ctrl_backspace_key(void)
 {
-    size_t cursor, start_cursor, delete_count;
+    rt_size_t cursor, start_cursor, delete_count;
     rt_bool_t is_word_char;
 
     /* if cursor is at the beginning, do nothing */
@@ -1025,7 +1025,7 @@ static void finsh_push_history(void)
 {
     struct finsh_history *history;
     rt_list_t *node;
-    uint32_t len;
+    rt_uint32_t len;
 
     /* if command is empty, do nothing */
     if (shell->cmd_length == 0)
@@ -1053,7 +1053,7 @@ static void finsh_push_history(void)
     /* if the history list is not full, allocate a new history */
     len = rt_list_len(&shell->history_list);
     if (len < FINSH_HISTORY_LINES)
-        history = NULL;
+        history = RT_NULL;
     else
     {
         /* if the history list is full, remove the last history */
@@ -1108,7 +1108,7 @@ static void finsh_handle_enter_key(void)
 
 rt_inline void _finsh_add_key_by_insert(char ch)
 {
-    size_t cursor;
+    rt_size_t cursor;
 
     cursor = shell->cmd_cursor;
     shell->cmd[cursor] = ch;
@@ -1119,7 +1119,7 @@ rt_inline void _finsh_add_key_by_insert(char ch)
 
 rt_inline void _finsh_add_key_by_normal(char ch)
 {
-    size_t cursor;
+    rt_size_t cursor;
     int i;
 
     cursor = shell->cmd_cursor;
@@ -1338,7 +1338,7 @@ static void finsh_handle_function_key(char ch)
 #ifdef FINSH_USING_EXTEND_FEATURE
 static void finsh_handle_delete_key(void)
 {
-    size_t cursor;
+    rt_size_t cursor;
     int i;
 
     /* if cursor is at the end of the command, do nothing */
@@ -1399,7 +1399,7 @@ static void finsh_handle_extend_key(char ch)
 #ifdef FINSH_USING_WORD_OPERATION
 static void finsh_handle_ctrl_left_key(void)
 {
-    size_t cursor;
+    rt_size_t cursor;
     rt_bool_t is_word_char;
 
     /* if already at the beginning, do nothing */
@@ -1424,7 +1424,7 @@ static void finsh_handle_ctrl_left_key(void)
 
 static void finsh_handle_ctrl_right_key(void)
 {
-    size_t cursor;
+    rt_size_t cursor;
     rt_bool_t is_word_char;
 
     /* if already at the end, do nothing */
@@ -1573,7 +1573,7 @@ const char __fsym_begin_desc[] = "begin of finsh";
 __declspec(allocate("FSymTab$a")) const struct finsh_syscall __fsym_begin = {
     __fsym_begin_name,
     __fsym_begin_desc,
-    NULL,
+    RT_NULL,
 };
 
 #pragma section("FSymTab$z", read)
@@ -1582,7 +1582,7 @@ const char __fsym_end_desc[] = "end of finsh";
 __declspec(allocate("FSymTab$z")) const struct finsh_syscall __fsym_end = {
     __fsym_end_name,
     __fsym_end_desc,
-    NULL,
+    RT_NULL,
 };
 #endif /* _MSC_VER */
 
@@ -1598,11 +1598,7 @@ __declspec(allocate("FSymTab$z")) const struct finsh_syscall __fsym_end = {
   */
 int finsh_system_init(void)
 {
-    rt_ubase_t *ptr_begin, *ptr_end;
     rt_thread_t tid;
-#ifndef RT_USING_HEAP
-    int ret;
-#endif /* RT_USING_HEAP */
 
     if (shell)
     {
@@ -1625,6 +1621,7 @@ int finsh_system_init(void)
 #elif defined(__ADSPBLACKFIN__) /* for VisualDSP++ Compiler */
     finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
 #elif defined(_MSC_VER)
+    rt_ubase_t *ptr_begin, *ptr_end;
 
     ptr_begin = (rt_ubase_t *)&__fsym_begin;
     ptr_begin += (sizeof(struct finsh_syscall) / sizeof(rt_ubase_t));
@@ -1647,7 +1644,7 @@ int finsh_system_init(void)
         rt_kprintf("No memory for shell!\n");
         return -RT_ENOMEM;
     }
-    tid = rt_thread_create(FINSH_THREAD_NAME, finsh_thread_entry, NULL, FINSH_THREAD_STACK_SIZE, FINSH_THREAD_PRIORITY, 10);
+    tid = rt_thread_create(FINSH_THREAD_NAME, finsh_thread_entry, RT_NULL, FINSH_THREAD_STACK_SIZE, FINSH_THREAD_PRIORITY, 10);
     if (!tid)
     {
         rt_free(shell);
@@ -1655,7 +1652,8 @@ int finsh_system_init(void)
         return -RT_ENOMEM;
     }
 #else
-    ret = rt_thread_init(&finsh_thread, FINSH_THREAD_NAME, finsh_thread_entry, NULL, &finsh_thread_stack[0], sizeof(finsh_thread_stack), FINSH_THREAD_PRIORITY, 10);
+    int ret;
+    ret = rt_thread_init(&finsh_thread, FINSH_THREAD_NAME, finsh_thread_entry, RT_NULL, &finsh_thread_stack[0], sizeof(finsh_thread_stack), FINSH_THREAD_PRIORITY, 10);
     if (ret)
     {
         rt_kprintf("Init finsh thread failed!\n");
@@ -1683,7 +1681,7 @@ int finsh_system_deinit(void)
 {
     rt_thread_t tid;
 
-    RT_ASSERT(shell != NULL);
+    RT_ASSERT(shell != RT_NULL);
 
     finsh_shell_deinit();
 
