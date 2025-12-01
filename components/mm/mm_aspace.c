@@ -641,7 +641,7 @@ static rt_varea_t _varea_create(void *start, rt_size_t size)
 }
 
 #define _IS_OVERFLOW(start, length) ((length) > (0ul - (uintptr_t)(start)))
-#define _IS_OVERSIZE(start, length, limit_s, limit_sz) (((length) + (rt_size_t)((char *)(start) - (char *)(limit_start))) > (limit_size))
+#define _IS_OVERSIZE(start, length, limit_s, limit_sz) (((length) + (rt_size_t)((char *)(start) - (char *)(limit_s))) > (limit_sz))
 
 static inline int _not_in_range(rt_size_t flags, void *start, rt_size_t length,
                                 void *limit_start, rt_size_t limit_size)

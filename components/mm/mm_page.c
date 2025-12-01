@@ -1168,7 +1168,7 @@ void rt_page_init(rt_region_t reg)
     shadow.start = reg.start & ~shadow_mask;
     shadow.end = CEIL(reg.end, shadow_mask + 1);
     LOG_D("[Init page] start: 0x%lx, end: 0x%lx, total: 0x%lx", reg.start,
-          reg.end, page_nr);
+          reg.end, ((reg.end - reg.start) >> ARCH_PAGE_SHIFT));
 
     int err;
 
