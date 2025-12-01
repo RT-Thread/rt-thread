@@ -1,5 +1,5 @@
 menuconfig RT_USING_MFD
-    bool "Using Multifunction device drivers"
+    bool "Using Multifunction device drivers (MFD)"
     depends on RT_USING_DM
     default n
 
@@ -8,3 +8,7 @@ config RT_MFD_SYSCON
     depends on RT_USING_MFD
     depends on RT_USING_OFW
     default y
+
+if RT_USING_MFD
+    osource "$(SOC_DM_MFD_DIR)/Kconfig"
+endif
