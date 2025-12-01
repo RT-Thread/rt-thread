@@ -258,14 +258,15 @@ menu "On-chip Peripheral Drivers"
             menuconfig BSP_USING_SPI_FLASH
                 bool "Enable SPI Flash auto initialization"
                 depends on RT_USING_SPI
-                select RT_USING_SFUD
                 default n
                 help
                     Enable automatic SPI Flash initialization on selected SPI buses.
                     Note: Only enable this for SPI buses that are actually connected to SPI Flash.
                     If a SPI bus is used for other devices (e.g., OLED, WIFI), do not enable flash initialization for it.
+                    Note: This feature can work with or without SFUD. If you want to use SFUD, enable it in SPI driver menu.
 
             if BSP_USING_SPI_FLASH
+
                 config BSP_USING_SPI0_FLASH
                     bool "Enable SPI Flash on SPI0"
                     depends on BSP_USING_SPI0
