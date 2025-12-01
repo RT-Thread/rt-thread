@@ -188,6 +188,7 @@ rt_err_t rt_dma_chan_release(struct rt_dma_chan *chan);
 #define RT_DMA_F_NOCACHE    RT_BIT(2)
 #define RT_DMA_F_DEVICE     RT_BIT(3)
 #define RT_DMA_F_NOMAP      RT_BIT(4)
+#define RT_DMA_F_WT         RT_BIT(5)
 
 #define RT_DMA_PAGE_SIZE    ARCH_PAGE_SIZE
 
@@ -228,7 +229,6 @@ rt_inline void rt_dma_device_set_ops(struct rt_device *dev,
 }
 
 struct rt_dma_pool *rt_dma_pool_install(rt_region_t *region);
-rt_err_t rt_dma_pool_extract(rt_region_t *region_list, rt_size_t list_len,
-        rt_size_t cma_size, rt_size_t coherent_pool_size);
+rt_err_t rt_dma_pool_extract(rt_size_t cma_size, rt_size_t coherent_pool_size);
 
 #endif /* __DMA_H__ */
