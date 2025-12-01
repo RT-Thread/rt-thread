@@ -35,7 +35,7 @@
  *                             9. 'Insert' to toggle insert mode.
  *                             #endif
  *                             10. 'Tab' to auto complete.
- *                             11. 'Backspace' to delete character forward 
+ *                             11. 'Backspace' to delete character forward
  *                             12. 'Enter' to execute command.
  */
 
@@ -114,14 +114,14 @@ void finsh_thread_entry_sethook(void (*hook)(void))
   *
   * @param prompt The new prompt string to set.
   *
-  * @return 0 on success, -EINVAL if the prompt is NULL.
+  * @return 0 on success, -RT_EINVAL if the prompt is NULL.
   */
 int finsh_set_prompt_word(const char *prompt)
 {
     if (!prompt)
     {
         rt_kprintf("Invalid prompt!\n");
-        return -EINVAL;
+        return -RT_EINVAL;
     }
 
     rt_memset(finsh_prompt, 0, sizeof(finsh_prompt));
@@ -323,7 +323,7 @@ rt_bool_t finsh_get_echo(void)
   *
   * @param password The new password string to set.
   *
-  * @return 0 on success, -EINVAL if the password is NULL or its length is invalid.
+  * @return 0 on success, -RT_EINVAL if the password is NULL or its length is invalid.
   */
 int finsh_set_password(const char *password)
 {
@@ -335,14 +335,14 @@ int finsh_set_password(const char *password)
     if (!password)
     {
         rt_kprintf("Password is NULL!\n");
-        return -EINVAL;
+        return -RT_EINVAL;
     }
 
     len = rt_strlen(password);
     if (len > FINSH_PASSWORD_MAX || len < FINSH_PASSWORD_MIN)
     {
         rt_kprintf("Password length is less than FINSH_PASSWORD_MIN(%d) or greater than FINSH_PASSWORD_MAX(%d)!\n", FINSH_PASSWORD_MIN, FINSH_PASSWORD_MAX);
-        return -EINVAL;
+        return -RT_EINVAL;
     }
 
     level = rt_hw_interrupt_disable();
@@ -438,14 +438,14 @@ static struct finsh_history *finsh_history_alloc(char *cmd, size_t cmd_length)
     if (i >= FINSH_HISTORY_LINES)
     {
         rt_kprintf("No available historical record buffer zone!\n");
-        return NULL;
+        return RT_NULL;
     }
 #else
     history = (struct finsh_history *)rt_malloc(sizeof(*history));
     if (!history)
     {
         rt_kprintf("Failed to allocate memory for history!\n");
-        return NULL;
+        return RT_NULL;
     }
 
     history->cmd = (char *)rt_calloc(1, cmd_length + 1);
@@ -453,7 +453,7 @@ static struct finsh_history *finsh_history_alloc(char *cmd, size_t cmd_length)
     {
         rt_free(history);
         rt_kprintf("Failed to allocate memory for history command!\n");
-        return NULL;
+        return RT_NULL;
     }
 #endif /* !RT_USING_HEAP */
 
@@ -495,7 +495,7 @@ static struct finsh_history *finsh_history_realloc(struct finsh_history *history
     {
         rt_free(history);
         rt_kprintf("Failed to allocate memory for history command!\n");
-        return NULL;
+        return RT_NULL;
     }
 #endif /* RT_USING_HEAP */
 
@@ -524,14 +524,14 @@ static struct finsh_snapshot *finsh_snapshot_alloc(char *cmd, size_t cmd_length,
     if (i >= FINSH_SNAPSHOT_DEPTH)
     {
         rt_kprintf("No available snapshot buffer zone!\n");
-        return NULL;
+        return RT_NULL;
     }
 #else
     snap = (struct finsh_snapshot *)rt_malloc(sizeof(*snap));
     if (!snap)
     {
         rt_kprintf("Failed to allocate memory for snapshot!\n");
-        return NULL;
+        return RT_NULL;
     }
 
     snap->cmd = (char *)rt_calloc(1, cmd_length + 1);
@@ -539,7 +539,7 @@ static struct finsh_snapshot *finsh_snapshot_alloc(char *cmd, size_t cmd_length,
     {
         rt_free(snap);
         rt_kprintf("Failed to allocate memory for snapshot command!\n");
-        return NULL;
+        return RT_NULL;
     }
 #endif /* !RT_USING_HEAP */
 
@@ -583,7 +583,7 @@ static struct finsh_snapshot *finsh_snapshot_realloc(struct finsh_snapshot *snap
     {
         rt_free(snap);
         rt_kprintf("Failed to allocate memory for snapshot command!\n");
-        return NULL;
+        return RT_NULL;
     }
 #endif /* RT_USING_HEAP */
 
@@ -610,7 +610,7 @@ static int finsh_shell_init(void)
     if (ret)
     {
         rt_kprintf("Failed to initialize shell_rx_notice semaphore!\n");
-        return -EIO;
+        return -RT_EIO;
     }
 
     shell->input_state = FINSH_INPUT_STATE_NORMAL;
@@ -669,7 +669,7 @@ static int finsh_shell_init(void)
     {
         rt_sem_detach(&shell->rx_notice);
         rt_kprintf("Finsh: can not find device!\n");
-        return -ENODEV;
+        return -RT_ENOENT;
     }
 #endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
 
@@ -731,10 +731,11 @@ char finsh_getchar(void)
 {
 #ifdef RT_USING_DEVICE
     char ch;
-    int ret;
 #ifdef RT_USING_POSIX_STDIO
     return (read(rt_posix_stdio_get_console(), &ch, 1) > 0) ? ch : -1;
 #else
+    int ret;
+
     RT_ASSERT(shell != NULL);
 
     if (!shell->device)
@@ -1597,8 +1598,11 @@ __declspec(allocate("FSymTab$z")) const struct finsh_syscall __fsym_end = {
   */
 int finsh_system_init(void)
 {
+    rt_ubase_t *ptr_begin, *ptr_end;
     rt_thread_t tid;
+#ifndef RT_USING_HEAP
     int ret;
+#endif /* RT_USING_HEAP */
 
     if (shell)
     {
@@ -1621,7 +1625,6 @@ int finsh_system_init(void)
 #elif defined(__ADSPBLACKFIN__) /* for VisualDSP++ Compiler */
     finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
 #elif defined(_MSC_VER)
-    rt_ubase_t *ptr_begin, *ptr_end;
 
     ptr_begin = (rt_ubase_t *)&__fsym_begin;
     ptr_begin += (sizeof(struct finsh_syscall) / sizeof(rt_ubase_t));
@@ -1642,14 +1645,14 @@ int finsh_system_init(void)
     if (!shell)
     {
         rt_kprintf("No memory for shell!\n");
-        return -ENOMEM;
+        return -RT_ENOMEM;
     }
     tid = rt_thread_create(FINSH_THREAD_NAME, finsh_thread_entry, NULL, FINSH_THREAD_STACK_SIZE, FINSH_THREAD_PRIORITY, 10);
     if (!tid)
     {
         rt_free(shell);
         rt_kprintf("Create finsh thread failed!\n");
-        return -ENOMEM;
+        return -RT_ENOMEM;
     }
 #else
     ret = rt_thread_init(&finsh_thread, FINSH_THREAD_NAME, finsh_thread_entry, NULL, &finsh_thread_stack[0], sizeof(finsh_thread_stack), FINSH_THREAD_PRIORITY, 10);
