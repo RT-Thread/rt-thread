@@ -81,6 +81,8 @@ struct rt_dma_controller
 
     struct rt_device *dev;
 
+#define RT_DMA_ADDR_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL << (n)) - 1))
+    rt_uint64_t addr_mask;
     RT_BITMAP_DECLARE(dir_cap, RT_DMA_DIR_MAX);
     const struct rt_dma_controller_ops *ops;
 
@@ -95,6 +97,7 @@ struct rt_dma_controller_ops
     rt_err_t (*release_chan)(struct rt_dma_chan *chan);
 
     rt_err_t (*start)(struct rt_dma_chan *chan);
+    rt_err_t (*pause)(struct rt_dma_chan *chan);
     rt_err_t (*stop)(struct rt_dma_chan *chan);
     rt_err_t (*config)(struct rt_dma_chan *chan, struct rt_dma_slave_config *conf);
 
@@ -164,10 +167,19 @@ rt_inline void rt_dma_controller_add_direction(struct rt_dma_controller *ctrl,
     rt_bitmap_set_bit(ctrl->dir_cap, dir);
 }
 
+rt_inline void rt_dma_controller_set_addr_mask(struct rt_dma_controller *ctrl,
+        rt_uint64_t mask)
+{
+    RT_ASSERT(ctrl != RT_NULL);
+
+    ctrl->addr_mask = mask;
+}
+
 rt_err_t rt_dma_controller_register(struct rt_dma_controller *ctrl);
 rt_err_t rt_dma_controller_unregister(struct rt_dma_controller *ctrl);
 
 rt_err_t rt_dma_chan_start(struct rt_dma_chan *chan);
+rt_err_t rt_dma_chan_pause(struct rt_dma_chan *chan);
 rt_err_t rt_dma_chan_stop(struct rt_dma_chan *chan);
 rt_err_t rt_dma_chan_config(struct rt_dma_chan *chan,
         struct rt_dma_slave_config *conf);
