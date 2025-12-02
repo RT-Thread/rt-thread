@@ -1,4 +1,4 @@
-config RT_USING_MTD_NOR
+menuconfig RT_USING_MTD_NOR
     bool "Using MTD Nor Flash device drivers"
     default n
 
