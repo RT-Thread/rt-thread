@@ -29,7 +29,7 @@
  *
  * Test Scenarios:
  * - First, two interrupts are registered, namely the low-priority interrupt RT_SPI_1 and the high-priority
- * - interrupt RT_SPI_2. 
+ * - interrupt RT_SPI_2.
  * - Scenario 1 (int_pri1_tc, mode=0): RT_SPI_1 and RT_SPI_2 are triggered sequentially without interrupt masking.
  * - At this point, the interrupt service routine (ISR) of RT_SPI_1 executes first to set ipi_val[0] = SET_VAL;
  * - since the RT_SPI_2 interrupt has not been triggered yet, ipi_val[1] remains at the initial value RES_VAL,

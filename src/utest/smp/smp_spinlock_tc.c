@@ -16,6 +16,27 @@
  * @brief   Spinlock testcase.
  *
  * @note    Create multiple threads and use spinlocks to protect shared memory
+ *
+ * Test Case Name: [smp_spinlock_tc]
+ *
+ * Test Objectives:
+ * - Test the protection effect of spin locks on shared memory under the SMP architecture.
+ *
+ * Test Scenarios:
+ * - This utest creates two threads. Thread 1 acquires the spin lock, performs the number1++ operation,
+ * - then voluntarily enters a sleep state. After being awakened, it executes number2++ and finally
+ * - releases the spin lock. Thread 2, upon acquiring the spin lock, first checks whether number1 is
+ * - equal to number2, then performs number1++ and number2++ operations, and ultimately releases the
+ * - spin lock. Within Thread 2, if the judgment condition number >= 10 is satisfied, finsh_flag is set to 1.
+ *
+ * Verification Metrics:
+ * - Output message: [ PASSED ] [ result ] testcase (core.smp_spinlock)
+ *
+ * Dependencies:
+ * - RT_USING_SMP needs to be enabled.
+ *
+ * Expected Results:
+ * - You will see the PASS message of smp_spinlock_tc.
  */
 
 #define THREAD_PRIORITY   20
