@@ -2,14 +2,24 @@ config RT_USING_SENSOR
     bool "Using Sensor device drivers"
     select RT_USING_PIN
     default n
+    help
+      Enable the sensor framework so accelerometers, gyros, temperature sensors,
+      etc. can register unified data channels. Depends on GPIO for interrupt
+      pins. Disable if no sensors are present.
 
 if RT_USING_SENSOR
     config RT_USING_SENSOR_V2
         bool "Enable Sensor Framework v2"
         default n
+        help
+          Opt in to the redesigned sensor framework (v2) that updates the device
+          APIs and CLI tools. Only enable if your BSP/drivers support it.
 
     config RT_USING_SENSOR_CMD
         bool "Using Sensor cmd"
         select RT_KLIBC_USING_VSNPRINTF_STANDARD if RT_USING_SENSOR_V2
         default y
+        help
+          Build the shell command helpers for listing and testing sensors. Useful
+          during bring-up; disable to save a bit of code.
 endif

@@ -2,6 +2,12 @@ menuconfig RT_USING_LED
     bool "Using Light Emitting Diode (LED) device drivers"
     depends on RT_USING_DM
     default n
+    help
+      Enable the LED framework so on-board indicators described in device tree
+      can be registered and controlled via `rt_led_set_state()` (on/off/blink).
+      The core parses LED nodes, exports sysfs-like control via IPC, and lets
+      other subsystems (for example triggers) manipulate them. Disable it when
+      the hardware has no controllable LEDs.
 
 config RT_LED_GPIO
     bool "GPIO connected LEDs Support"
@@ -9,6 +15,12 @@ config RT_LED_GPIO
     depends on RT_USING_PINCTRL
     depends on RT_USING_OFW
     default n
+    help
+      Provide the GPIO-backed LED driver that maps each `leds` device-tree node
+      to a pin, honours `default-state`/`default-trigger`, and optionally
+      applies pinctrl states per LED. Enable this for the common case where
+      LEDs are tied directly to GPIOs; leave disabled if LEDs are driven through
+      a different bus (I2C expanders, PMICs, etc.).
 
 if RT_USING_LED
     osource "$(SOC_DM_LED_DIR)/Kconfig"

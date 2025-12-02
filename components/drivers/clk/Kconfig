@@ -3,6 +3,15 @@ menuconfig RT_USING_CLK
     depends on RT_USING_DM
     select RT_USING_ADT_REF
     default y
+    help
+      Enable the common clock framework so SoC clock providers can register
+      themselves and consumers can obtain `struct rt_clk` handles to manage
+      gate, mux and divider trees. This is required by most complex drivers
+      (MMC, Ethernet, display) because they explicitly prepare and enable their
+      input clocks before accessing hardware. The framework relies on the DM
+      bus and device tree clock references, so disable it only on the smallest
+      MCUs where every peripheral runs off the same fixed clock and no driver
+      ever calls into the clock API.
 
 if RT_USING_CLK
     osource "$(SOC_DM_CLK_DIR)/Kconfig"

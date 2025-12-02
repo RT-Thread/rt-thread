@@ -1,8 +1,14 @@
 config RT_USING_TOUCH
     bool "Using Touch device drivers"
     default n
+    help
+      Enable the touchscreen input framework so controllers (capacitive,
+      resistive, I2C, SPI) can register coordinate events.
     if RT_USING_TOUCH
         config RT_TOUCH_PIN_IRQ
         bool "touch irq use pin irq"
         default n
+        help
+          Use GPIO pin interrupts for touch controllers that can signal via an
+          external interrupt line instead of polling.
     endif

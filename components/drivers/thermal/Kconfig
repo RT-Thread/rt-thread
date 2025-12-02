@@ -2,6 +2,10 @@ menuconfig RT_USING_THERMAL
     bool "Using Thermal Management device drivers"
     depends on RT_USING_DM
     default n
+    help
+      Enable the thermal framework which registers sensors/cooling devices and
+      lets policies throttle clocks, fans, or regulators. Required on SoCs that
+      monitor die temperature.
 
 if RT_USING_THERMAL
     comment "Thermal Sensors Drivers"
@@ -22,6 +26,9 @@ config RT_THERMAL_COOL_PWM_FAN
     depends on RT_USING_REGULATOR
     depends on RT_USING_OFW
     default n
+    help
+      Build the cooling device that drives fans via PWM and regulator APIs based
+      on thermal policy requests.
 
 if RT_USING_THERMAL
     osource "$(SOC_DM_THERMAL_COOL_DIR)/Kconfig"

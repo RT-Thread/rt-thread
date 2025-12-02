@@ -3,11 +3,27 @@ menuconfig RT_USING_RESET
     depends on RT_USING_DM
     depends on RT_USING_OFW
     default n
+    help
+      Turn on the reset-controller framework that lets platform drivers acquire
+      reset lines by phandle, assert/deassert them, and request pulse sequences.
+      This mirrors the Linux-style reset subsystem and requires both the device
+      model and flattened device tree parser because controllers and consumers
+      are linked by DT properties. Enable it whenever your SoC has shareable
+      reset gates (RCC, PRCM, etc.) described in DTS; otherwise peripheral
+      drivers such as DMA or watchdog blocks cannot safely leave reset.
 
 config RT_RESET_SIMPLE
     bool "Simple Reset Controller Driver"
     depends on RT_USING_RESET
     default n
+    help
+      Build the generic MMIO reset controller that toggles bits inside one or
+      more memory-mapped registers. The driver supports active-high/-low lines,
+      exposes optional delay-based `reset()` callbacks, and covers many SoC
+      reset managers listed in its compatible table (STM32 RCC, Allwinner,
+      Synopsys DW, Sophgo SG2042, etc.). Select this when your DTS describes
+      a `reset-simple`-compatible node or when downstream controllers reuse the
+      same register layout; leave it disabled if you rely on a custom reset IP.
 
 if RT_USING_RESET
     osource "$(SOC_DM_RESET_DIR)/Kconfig"

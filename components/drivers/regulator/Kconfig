@@ -4,6 +4,15 @@ menuconfig RT_USING_REGULATOR
     select RT_USING_ADT_REF
     depends on RT_USING_DM
     default n
+    help
+      Enable the regulator framework so power supplies described in the device
+      tree can be registered, referenced, and controlled at runtime. With this
+      selected, drivers may obtain regulators via `rt_regulator_get()`, request
+      enable/disable, or vote for specific voltage/current levels before their
+      peripherals start. The framework depends on the driver-model and ADT
+      parser because it walks the same device tree phandles. Disable it only
+      when the SoC has no controllable supplies and every peripheral is powered
+      permanently.
 
 config RT_REGULATOR_FIXED
     bool "Fixed regulator support"
@@ -11,12 +20,29 @@ config RT_REGULATOR_FIXED
     depends on RT_USING_PIN
     depends on RT_USING_PINCTRL
     default y
+    help
+      Provide the "fixed" regulator type in which the output voltage is defined
+      entirely by the hardware (for example a PMIC LDO) and RT-Thread can only
+      toggle an optional GPIO enable pin. The driver parses standard device tree
+      properties such as `startup-delay-us`, `off-on-delay-us`, `enable-active-
+      high`, and also applies any pinctrl state before asserting the output.
+      Select this when the board DTS contains `regulator-fixed` nodes; it is
+      safe to leave enabled because it only instantiates devices that the DT
+      describes.
 
 config RT_REGULATOR_GPIO
     bool "GPIO regulator support"
     depends on RT_USING_REGULATOR
     depends on RT_USING_PIN
     default y
+    help
+      Allow the framework to emulate simple DAC-like regulators using GPIO banks
+      where each output bit selects a discrete voltage/current point. The
+      driver reads the `states` table from the device tree and programs the GPIO
+      pins accordingly, so peripheral drivers can call `set_voltage()` and let
+      the framework choose the closest valid entry. Enable this when your board
+      uses GPIO strapping to select regulator levels (common with analog muxes)
+      or PMIC power modes; otherwise it adds no runtime cost.
 
 if RT_USING_REGULATOR
     osource "$(SOC_DM_REGULATOR_DIR)/Kconfig"

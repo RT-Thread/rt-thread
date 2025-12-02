@@ -1,6 +1,9 @@
 menuconfig RT_USING_VIRTIO
     bool "Using VirtIO device drivers"
     default n
+    help
+      Enable VirtIO front-end drivers for virtualized environments (QEMU,
+      cloud). Requires a hypervisor exposing VirtIO MMIO or PCI devices.
 
     if RT_USING_VIRTIO
         choice RT_USING_VIRTIO_VERSION
@@ -9,35 +12,54 @@ menuconfig RT_USING_VIRTIO
 
             config RT_USING_VIRTIO10
                 bool "VirtIO v1.0"
+                help
+                  Use the modern VirtIO 1.0 device layout with feature bits in
+                  the standard registers.
         endchoice
 
         config RT_USING_VIRTIO_MMIO_ALIGN
             bool "Using VirtIO MMIO alignment"
             default y
+            help
+              Enforce strict MMIO alignment handling required by some hosts.
 
         config RT_USING_VIRTIO_BLK
             bool "Using VirtIO BLK"
             default y
+            help
+              Build the VirtIO block driver to expose virtual disks as RT-Thread
+              block devices.
 
         config RT_USING_VIRTIO_NET
             bool "Using VirtIO NET"
             default y
+            help
+              Build the VirtIO network driver to connect to the hypervisor's
+              virtual NIC.
 
         menuconfig RT_USING_VIRTIO_CONSOLE
             bool "Using VirtIO Console"
             default y
+            help
+              Enable the VirtIO console port driver for serial I/O via hypervisor.
 
             if RT_USING_VIRTIO_CONSOLE
                 config RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR
                     int "Max number of port in VirtIO Console"
                     default 4
+                    help
+                      Maximum number of sub-ports exposed by the VirtIO console.
             endif
 
         config RT_USING_VIRTIO_GPU
             bool "Using VirtIO GPU"
             default y
+            help
+              Build the VirtIO GPU driver for virtual display support.
 
         config RT_USING_VIRTIO_INPUT
             bool "Using VirtIO Input"
             default y
+            help
+              Register VirtIO input devices (keyboard, pointer) through RT-Thread.
     endif

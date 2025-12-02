@@ -1,3 +1,8 @@
 config RT_USING_LCD
     bool "Using LCD graphic drivers"
     default n
+    help
+      Enable the RT-Thread LCD/graphics driver framework so display controllers
+      can expose framebuffers or panel pipelines. This pulls in the drawing
+      helpers used by GUI packages; select it whenever your board has an LCD or
+      RGB/MIPI panel. Disable it on headless builds to save code size.

@@ -1,6 +1,15 @@
 menuconfig RT_USING_WDT
     bool "Using Watch Dog device drivers"
     default n
+    help
+      Enable the common watchdog device layer so watchdog-capable SoCs or
+      external supervisors can be exposed through the RT-Thread `rt_watchdog`
+      APIs. Selecting this option allows watchdog platform drivers to register
+      /dev/wdt style devices, lets applications query/set timeout windows, and
+      integrates watchdog notifications into the driver-model (DM) probe/remove
+      flow. Disable it only when the hardware has no watchdog or it is managed
+      entirely outside of RT-Thread, because the system will no longer be able
+      to arm, feed or inspect watchdogs during boot and runtime.
 
 config RT_WDT_DW
     bool "Synopsys DesignWare watchdog"
@@ -8,12 +17,31 @@ config RT_WDT_DW
     depends on RT_USING_WDT
     depends on RT_USING_RESET
     default n
+    help
+      Build the driver for Synopsys DesignWare watchdog blocks that appear in
+      many ARM and RISC-V SoCs. The driver maps the DM platform resources,
+      exports the 16 preset timeout levels ("TOPs"), supports optional pre-
+      timeout interrupts, and automatically toggles the associated reset line
+      through `RT_USING_RESET`. Once started the DW watchdog cannot be disabled,
+      so the driver only gates the peripheral clock and pulses the reset
+      controller to keep it under control. Use this when your device tree
+      exposes a `snps,dw-wdt` node and you need either reset-based system
+      recovery or two-stage IRQ/Reset supervision; otherwise leave it off.
 
 config RT_WDT_I6300ESB
     bool "Intel 6300ESB Timer/Watchdog"
     depends on RT_USING_DM
     depends on RT_USING_WDT
     depends on RT_USING_PCI
+    help
+      Enable support for the watchdog integrated in Intel 6300ESB southbridge
+      chipsets. The driver binds to the PCI device, unlocks the dual-stage timer,
+      and exposes the 1 kHz heartbeat window (1–2046 seconds) through the
+      standard watchdog IOCTLs. It can optionally enter "nowayout" mode when the
+      firmware locks the control register, so be careful when testing on shared
+      x86 hardware. Select this only on boards that actually contain the 6300ESB
+      watchdog because the driver directly touches PCI config space and assumes
+      the LPC reset registers are routed correctly.
 
 if RT_USING_DM && RT_USING_WDT
     osource "$(SOC_DM_WDT_DIR)/Kconfig"

@@ -4,6 +4,13 @@ menuconfig RT_USING_DMA
     select RT_USING_ADT
     select RT_USING_ADT_BITMAP
     default n
+    help
+      Enable the DMA framework so DM-aware SoC drivers can request DMA channels,
+      submit descriptors, and share controller instances that are described in
+      the device tree. This pulls in the generic DMA core (`dma.c`) and the pool
+      allocator used by slave/peripheral clients. Select it whenever your board
+      has DMA-capable peripherals (MMC, SPI, audio, etc.) that need offloading;
+      leave it disabled only on targets without DMA hardware to save code size.
 
 if RT_USING_DMA
     osource "$(SOC_DM_DMA_DIR)/Kconfig"

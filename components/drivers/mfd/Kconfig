@@ -2,9 +2,18 @@ menuconfig RT_USING_MFD
     bool "Using Multifunction device drivers"
     depends on RT_USING_DM
     default n
+    help
+      Enable the MFD framework so composite chips (PMICs, southbridges, etc.)
+      described in device tree can expose multiple child devices (GPIO, RTC,
+      regulator…) through the driver model. Required when your board uses such
+      multifunction ICs; disable to save code if every device is standalone.
 
 config RT_MFD_SYSCON
     bool "System Controller Register R/W"
     depends on RT_USING_MFD
     depends on RT_USING_OFW
     default y
+    help
+      Provide the syscon helper that maps register banks described by
+      `syscon`/`simple-mfd` nodes and allows other drivers to read/write them.
+      Keep enabled on SoCs whose reset/clock/PHY drivers access syscon regions.

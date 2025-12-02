@@ -1,18 +1,37 @@
 config RT_USING_AUDIO
     bool "Using Audio device drivers"
     default n
+    help
+      Enable the RT-Thread audio framework so playback/record devices may be
+      registered, DMA pipes allocated, and ALSA-like controls exposed via
+      `rt_audio_*` APIs. Choose this whenever your board has I2S/TDM codecs or
+      PDM microphones; disable it on MCU builds that do not process audio data.
 
     if RT_USING_AUDIO
         config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
             int "Replay memory pool block size"
             default 4096
+            help
+              Size in bytes for each block inside the replay memory pool used by
+              `dev_audio.c` to stage PCM data before pushing it to DMA. Larger
+              values increase latency but reduce IRQ pressure; shrink it when
+              RAM is tight and the codec tolerates smaller bursts.
 
         config RT_AUDIO_REPLAY_MP_BLOCK_COUNT
             int "Replay memory pool block count"
             default 2
+            help
+              Number of replay memory pool blocks. Raising this allows more
+              outstanding audio buffers (useful for long DMA transfers) but
+              consumes additional RAM = `BLOCK_SIZE * COUNT`.
 
         config RT_AUDIO_RECORD_PIPE_SIZE
             int "Record pipe size"
             default 2048
+            help
+              Size of the ring buffer used to capture samples before user-space
+              reads them. Increase this to prevent overflow when the recorder
+              callback runs slower than the DMA completion interrupt; reduce it
+              on memory constrained platforms.
 
     endif

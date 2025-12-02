@@ -1,6 +1,11 @@
 menuconfig RT_USING_PIN
     bool "Using Generic GPIO device drivers"
     default y
+    help
+      Enable the generic GPIO/pin driver interface so BSPs can expose pin mode,
+      read/write, and interrupt capabilities through `rt_pin_*` APIs. Most
+      drivers depend on this; disable only when building extremely tiny images
+      with no GPIO control.
 
 if RT_USING_PIN
     osource "$(SOC_DM_PIN_DIR)/Kconfig"

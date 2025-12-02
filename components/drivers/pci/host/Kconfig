@@ -2,12 +2,19 @@ config RT_PCI_HOST_COMMON
     bool "Common PCI host controller"
     depends on RT_PCI_ECAM
     default y
+    help
+      Include shared helper code for PCI host controllers that follow the ECAM
+      (Enhanced Configuration Access Mechanism) layout. Required by most PCIe
+      root complexes.
 
 config RT_PCI_HOST_GENERIC
     bool "Generic PCI host controller"
     depends on RT_PCI_ECAM
     select RT_PCI_HOST_COMMON
     default y
+    help
+      Build the minimal ECAM-based PCI host driver that can enumerate devices at
+      a fixed base address. Useful for QEMU/virt platforms or simple SoCs.
 
 rsource "dw/Kconfig"
 

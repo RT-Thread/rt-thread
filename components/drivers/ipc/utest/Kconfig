@@ -4,9 +4,15 @@ menu "IPC Test"
 config RT_UTEST_COMPLETION
     bool "IPC Completion Test"
     default n
+    help
+      Build completion primitive unit tests to verify wait/notify semantics.
+      Enable only when running the IPC utest suite.
 
 config RT_UTEST_WORKQUEUE
     bool "IPC Workqueue Test"
     default n
+    help
+      Compile the workqueue stress tests that schedule and cancel asynchronous
+      jobs. Useful for validating driver workqueue usage during development.
 
 endmenu

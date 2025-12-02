@@ -3,11 +3,21 @@ config RT_PCI_DW
     depends on RT_MFD_SYSCON
     depends on RT_USING_DMA
     default n
+    help
+      Enable support for Synopsys DesignWare PCIe controllers that appear in
+      many SoCs. This pulls in common init logic that handles PHY resets, ATU
+      windows, and DMA operations shared between host and endpoint modes.
 
 config RT_PCI_DW_HOST
     bool
     depends on RT_PCI_DW
+    help
+      Build the host-mode glue so the DesignWare IP enumerates downstream PCIe
+      devices. Usually selected by SoC-specific configs targeting host mode.
 
 config RT_PCI_DW_EP
     bool
     depends on RT_PCI_DW
+    help
+      Build the endpoint-mode glue so the DesignWare controller can act as a PCIe
+      endpoint exposing its own BARs to a host.

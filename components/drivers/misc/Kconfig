@@ -1,37 +1,65 @@
 config RT_USING_ADC
     bool "Using ADC device drivers"
     default n
+    help
+      Enable analog-to-digital converter framework support so MCU ADC channels
+      can be exposed through the RT-Thread device interface. Required when your
+      application samples voltages or sensors via ADC.
 
 config RT_USING_DAC
     bool "Using DAC device drivers"
     default n
+    help
+      Build the digital-to-analog converter driver layer. Enable if you need to
+      output analog voltages or audio waveforms through DAC peripherals.
 
 config RT_USING_NULL
     bool "Using NULL device drivers"
     default n
+    help
+      Register a `/dev/null` style sink device that discards written data and
+      always returns EOF when read. Handy for tests or redirecting logs.
 
 config RT_USING_ZERO
     bool "Using ZERO device drivers"
     default n
+    help
+      Provide a `/dev/zero` like device that returns zero-filled buffers on
+      reads. Useful for quick buffer initialization without touching memory.
 
 config RT_USING_RANDOM
     bool "Using RANDOM device drivers"
     default n
+    help
+      Expose a `/dev/random` source backed by software entropy or hardware RNG.
+      Enable only when you supply a randomness provider.
 
 config RT_USING_PWM
     bool "Using PWM device drivers"
     default n
+    help
+      Enable the Pulse-Width Modulation driver layer so timers configured as PWM
+      can control motors, LEDs, etc. Required by many BSPs with PWM outputs.
 
 config RT_USING_PULSE_ENCODER
     bool "Using PULSE ENCODER device drivers"
     default n
+    help
+      Build the pulse encoder (quadrature decoder) driver so incremental
+      encoders can be read through the RT-Thread device API.
 
 config RT_USING_INPUT_CAPTURE
     bool "Using INPUT CAPTURE device drivers"
     default n
+    help
+      Enable input capture support, letting timers timestamp external pulses for
+      frequency/period measurements.
 
 if RT_USING_INPUT_CAPTURE
     config RT_INPUT_CAPTURE_RB_SIZE
         int "Set input capture ringbuffer size"
         default 100
+        help
+          Number of samples buffered per capture channel. Increase to avoid data
+          loss when interrupts arrive faster than the consumer drains them.
 endif
