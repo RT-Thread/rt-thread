@@ -523,7 +523,7 @@ static struct finsh_snapshot *finsh_snapshot_alloc(char *cmd, rt_size_t cmd_leng
     }
     if (i >= FINSH_SNAPSHOT_DEPTH)
     {
-        rt_kprintf("No available snapshot buffer zone!\n");
+        rt_kprintf("No available snapshot buffer!\n");
         return RT_NULL;
     }
 #else
