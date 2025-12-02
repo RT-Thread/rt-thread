@@ -70,7 +70,7 @@ static rt_ssize_t _led_write(rt_device_t dev, rt_off_t pos, const void *buffer, 
 
     for (int i = 0; i < RT_ARRAY_SIZE(_led_states); ++i)
     {
-        if (!rt_strncpy((char *)_led_states[i], buffer, size))
+        if (!rt_strncmp((char *)_led_states[i], buffer, size))
         {
             return rt_led_set_state(led, i) ? : size;
         }
