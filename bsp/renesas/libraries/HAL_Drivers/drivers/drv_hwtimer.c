@@ -47,6 +47,16 @@ const rt_uint32_t PLCKD_FREQ_PRESCALER[PLCKD_PRESCALER_MAX_SELECT] =
     PLCKD_PRESCALER_6_25M,
     PLCKD_PRESCALER_3_125M,
     PLCKD_PRESCALER_1_5625M
+#elif defined(SOC_SERIES_R7KA8P1)
+    PLCKD_PRESCALER_250M,
+    PLCKD_PRESCALER_200M,
+    PLCKD_PRESCALER_100M,
+    PLCKD_PRESCALER_50M,
+    PLCKD_PRESCALER_25M,
+    PLCKD_PRESCALER_12_5M,
+    PLCKD_PRESCALER_6_25M,
+    PLCKD_PRESCALER_3_125M,
+    PLCKD_PRESCALER_1_5625M
 #endif
 };
 
@@ -117,11 +127,19 @@ static rt_uint32_t timer_counter_get(rt_hwtimer_t *timer)
 
     tim = (struct ra_hwtimer *)timer->parent.user_data;
 
+#if defined(SOC_SERIES_R7KA8P1)
+    timer_info_t info;
+    if (R_GPT_InfoGet(tim->g_ctrl, &info) != FSP_SUCCESS)
+        return -RT_ERROR;
+
+    return info.period_counts;
+#else
     timer_status_t status;
     if (R_GPT_StatusGet(tim->g_ctrl, &status) != FSP_SUCCESS)
         return -RT_ERROR;
 
     return status.counter;
+#endif
 }
 
 static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)

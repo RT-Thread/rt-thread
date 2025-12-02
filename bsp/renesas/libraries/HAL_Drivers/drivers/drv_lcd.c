@@ -14,6 +14,8 @@
 #ifdef BSP_USING_LCD
 #ifdef SOC_SERIES_R7FA8M85
 #include <ra8/lcd_config.h>
+#elif defined(SOC_SERIES_R7KA8P1)
+#include <lcd_port.h>
 #else
 #include <ra6m3/lcd_config.h>
 #endif
@@ -24,6 +26,7 @@
 #define DRV_DEBUG
 #define LOG_TAG             "drv_lcd"
 #include <drv_log.h>
+
 struct drv_lcd_device
 {
     struct rt_device parent;
@@ -39,7 +42,7 @@ static uint16_t *gp_double_buffer = NULL;
 static uint16_t *lcd_current_working_buffer = (uint16_t *) &fb_background[0];
 
 #ifdef SOC_SERIES_R7FA8M85
-static uint8_t lcd_framebuffer[LCD_BUF_SIZE] BSP_ALIGN_VARIABLE(64) BSP_PLACE_IN_SECTION(".sdram");
+static uint8_t lcd_framebuffer[LCD_BUF_SIZE] rt_align(64) rt_section(".sdram") rt_used;
 #endif
 
 // G2D
@@ -47,7 +50,7 @@ extern d2_device *d2_handle0;
 static d2_device **_d2_handle_user = &d2_handle0;
 static d2_renderbuffer *renderbuffer;
 
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
 extern void ra8_mipi_lcd_init(void);
 #endif
 
@@ -85,7 +88,7 @@ static void turn_on_lcd_backlight(void)
 
 static void ra_bsp_lcd_clear(uint16_t color)
 {
-    for (uint32_t i = 0; i < LCD_BUF_SIZE; i++)
+    for (uint32_t i = 0; i <= LCD_BUF_SIZE / sizeof(uint16_t); i++)
     {
         lcd_current_working_buffer[i] = color;
     }
@@ -262,7 +265,7 @@ static rt_err_t ra_lcd_control(rt_device_t device, int cmd, void *args)
     {
     case RTGRAPHIC_CTRL_RECT_UPDATE:
     {
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
         struct rt_device_rect_info *info = (struct rt_device_rect_info *)args;
 #if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
         SCB_CleanInvalidateDCache_by_Addr((uint32_t *)lcd->lcd_info.framebuffer, sizeof(fb_background[0]));
@@ -279,7 +282,7 @@ static rt_err_t ra_lcd_control(rt_device_t device, int cmd, void *args)
         fsp_err_t err = R_GLCDC_BufferChange(&g_display0_ctrl, (uint8_t *) lcd_current_working_buffer, DISPLAY_FRAME_LAYER_1);
         RT_ASSERT(err == 0);
 #endif
-#endif  /* SOC_SERIES_R7FA8M85 */
+#endif  /* SOC_SERIES_R7FA8M85 | SOC_SERIES_R7KA8P1 */
         /* wait for vsync interrupt */
         vsync_wait();
     }
@@ -340,7 +343,7 @@ static rt_err_t ra_bsp_lcd_init(void)
     error = R_GLCDC_Open(&g_display0_ctrl, &g_display0_cfg);
     if (FSP_SUCCESS == error)
     {
-#ifdef SOC_SERIES_R7FA8M85
+#if (defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)) && defined(BSP_USING_MIPI_LCD)
         /* config mipi */
         ra8_mipi_lcd_init();
 #endif
@@ -408,7 +411,7 @@ int rt_hw_lcd_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_lcd_init);
 
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
 rt_weak void ra8_mipi_lcd_init(void)
 {
     LOG_E("please Implementation function %s", __func__);
