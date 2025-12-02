@@ -201,6 +201,13 @@ rt_err_t rt_pwm_set_dead_time(struct rt_device_pwm *device, int channel, rt_uint
 */
 rt_err_t rt_pwm_set_phase(struct rt_device_pwm *device, int channel, rt_uint32_t phase);
 
+/**
+ * @brief set the PWM channel
+ * @param device the PWM device
+ * @param cfg the configuration of PWM
+ */
+rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *cfg);
+
 /*! @}*/
 
 #endif /* __DEV_PWM_H__ */
