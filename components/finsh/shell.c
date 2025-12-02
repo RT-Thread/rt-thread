@@ -893,7 +893,7 @@ static void finsh_render_line(void)
         finsh_putc(' ');
     finsh_putc('\r');
 #else /* _WIN32 */
-    finsh_puts("\033[2K\r"); // 2K: clear the line, \r: return to the beginning of the line
+    finsh_puts("\033[2K\r"); /* 2K: clear the line, \r: return to the beginning of the line */
 #endif /* _WIN32 */
     finsh_printf("%s%s", FINSH_PROMPT, shell->cmd);
 
