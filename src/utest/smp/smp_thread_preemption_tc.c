@@ -24,6 +24,7 @@
 #define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
 
 static rt_thread_t   threads[2];
+static rt_uint8_t    finish_flag = 0;
 static struct rt_spinlock lock;
 
 /* High Priority Thread */
@@ -35,6 +36,7 @@ static void thread_high_entry(void *parameter)
     extern long list_thread(void);
     list_thread();
     rt_spin_unlock(&lock);
+    finish_flag = 1;
 }
 
 /* Low Priority Thread */
@@ -46,6 +48,7 @@ static void thread_low_entry(void *parameter)
     extern long list_thread(void);
     list_thread();
     rt_spin_unlock(&lock);
+    while(!finish_flag);
 }
 
 static void thread_preemptions_tc(void)
@@ -72,6 +75,7 @@ static void thread_preemptions_tc(void)
 static rt_err_t utest_tc_init(void)
 {
     rt_spin_lock_init(&lock);
+    finish_flag = 0;
     return RT_EOK;
 }
 
