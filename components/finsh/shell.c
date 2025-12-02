@@ -1202,7 +1202,7 @@ static void finsh_handle_normal_key(char ch)
     }
 #endif /* FINSH_USING_SNAPSHOT */
 
-    if (shell->cmd_length > FINSH_CMD_SIZE)
+    if (shell->cmd_length >= FINSH_CMD_SIZE)
     {
         _finsh_clear_command();
         rt_kprintf("Command length exceeds the maximum limit!\n");
