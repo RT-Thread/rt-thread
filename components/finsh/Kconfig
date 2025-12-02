@@ -46,6 +46,12 @@ if RT_USING_MSH
 
     config FINSH_USING_WORD_OPERATION
         bool "Enable Ctrl+W/Backspace/Ctrl+Left/Right word-based cursor operations"
+        help
+            Enable word-based cursor operations in the shell:
+            - Ctrl+Backspace: delete previous word
+            - Ctrl+Left/Right Arrow: move cursor by word
+            - Ctrl+W: delete word before cursor
+            This feature improves command line editing efficiency.
         default n
 
     config FINSH_USING_EXTEND_FEATURE
