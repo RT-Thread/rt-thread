@@ -1428,7 +1428,7 @@ static void finsh_handle_ctrl_right_key(void)
     rt_bool_t is_word_char;
 
     /* if already at the end, do nothing */
-    if (cursor >= shell->cmd_length)
+    if (shell->cmd_cursor >= shell->cmd_length)
         return;
 
     cursor = shell->cmd_cursor;
