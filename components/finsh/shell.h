@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2011-06-02     Bernard      Add finsh_get_prompt function declaration.
- * 2025-09-22     yiyi         reconstruct the shell.
+ * 2025-12-01     yiyi         reconstruct the shell.
  */
 
 #ifndef __SHELL_H__
