@@ -823,7 +823,7 @@ static void finsh_push_snapshot(void)
     }
 
     rt_list_insert_after(&shell->snapshot_list, &snap->list);
-    /* set the current snapshot to the new snapshot, the "cur_snapshot" always starts from the first snapshot. */
+    /* Update cur_snapshot to point to the newly inserted snapshot (most recent). */
     shell->cur_snapshot = &snap->list;
     shell->is_push_last_snapshot = RT_FALSE;
 }
