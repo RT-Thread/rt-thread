@@ -2,18 +2,28 @@ menuconfig RT_USING_SCSI
     bool "Using Small Computer System Interface (SCSI)"
     depends on RT_USING_DM
     default n
+    help
+      Enable the SCSI mid-layer which translates block requests to SCSI command
+      packets. Needed by AHCI, USB Mass Storage, and NVMe drivers that expose
+      disks as SCSI devices.
 
 config RT_SCSI_SD
     bool "SD device on SCSI"
     depends on RT_USING_SCSI
     depends on RT_USING_BLK
     default y
+    help
+      Register disk-type SCSI devices (direct-access). Keep enabled unless you
+      intentionally drop support for SCSI disks.
 
 config RT_SCSI_CDROM
     bool "CD-ROM device on SCSI"
     depends on RT_USING_SCSI
     depends on RT_USING_BLK
     default y
+    help
+      Provide SCSI CD-ROM device emulation (read-only block devices). Disable
+      only if optical-style devices are never needed.
 
 if RT_USING_SCSI
     osource "$(SOC_DM_SCSI_DIR)/Kconfig"

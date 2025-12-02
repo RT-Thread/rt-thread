@@ -1,165 +1,272 @@
 menuconfig RT_USING_HWCRYPTO
         bool "Using Hardware Crypto drivers"
         default n
+        help
+          Enable the hardware crypto abstraction layer so SoC accelerators can
+          register cipher/hash/RNG engines and high-level components can route
+          requests through them. Select this when your platform provides AES,
+          HASH, RNG or big-number engines and you want to offload work from the
+          CPU; disable it to keep the image lean on chips without crypto IP.
 
     if RT_USING_HWCRYPTO
         config RT_HWCRYPTO_DEFAULT_NAME
             string "Hardware crypto device name"
             default "hwcryto"
+            help
+              Default device name announced via `rt_hwcrypto_dev_register`. You
+              may override it if multiple accelerators coexist or you need a
+              deterministic node name for auto-binding.
 
         config RT_HWCRYPTO_IV_MAX_SIZE
             int "IV max size"
             default "16"
+            help
+              Maximum initialization-vector length (bytes) allocated in the
+              generic session context. Set this to match the longest IV your
+              hardware supports (for example 16 for AES) to avoid truncation.
 
         config RT_HWCRYPTO_KEYBIT_MAX_SIZE
             int "Key max bit length"
             default 256
+            help
+              Upper bound on key size (bits) that the framework will accept.
+              Increase this if your accelerator supports longer RSA/ECC keys.
 
         config RT_HWCRYPTO_USING_GCM
             bool "Using Hardware GCM"
             default n
+            help
+              Advertise AES-GCM authenticated encryption support. Only enable if
+              the hardware can perform GHASH + counter mode internally.
 
         config RT_HWCRYPTO_USING_AES
             bool "Using Hardware AES"
             default n
+            help
+              Enable AES cipher acceleration (key setup + block operations). You
+              should only turn this on when the SoC AES engine is initialized
+              elsewhere in BSP code.
 
         if RT_HWCRYPTO_USING_AES
             config RT_HWCRYPTO_USING_AES_ECB
                 bool "Using Hardware AES ECB mode"
                 default y
+                help
+                  Allow AES ECB operations. Keep it on unless your hardware
+                  lacks ECB (rare) or you want to trim dead code.
 
             config RT_HWCRYPTO_USING_AES_CBC
                 bool "Using Hardware AES CBC mode"
                 default n
+                help
+                  Enable AES CBC mode helpers when the peripheral can chain IVs.
 
             config RT_HWCRYPTO_USING_AES_CFB
                 bool "Using Hardware AES CFB mode"
                 default n
+                help
+                  Advertise AES CFB streaming cipher support if the hardware
+                  exposes it; leave disabled otherwise.
 
             config RT_HWCRYPTO_USING_AES_CTR
                 bool "Using Hardware AES CTR mode"
                 default n
+                help
+                  Enable AES counter mode processing for peripherals that can
+                  increment counters internally.
 
             config RT_HWCRYPTO_USING_AES_OFB
                 bool "Using Hardware AES OFB mode"
                 default n
+                help
+                  Provide AES OFB (output feedback) mode wrappers. Only useful
+                  when the engine implements OFB directly.
         endif
 
         config RT_HWCRYPTO_USING_DES
             bool "Using Hardware DES"
             default n
+            help
+              Toggle hardware DES acceleration. DES is legacy; enable it only
+              for compatibility with existing protocols.
 
         if RT_HWCRYPTO_USING_DES
             config RT_HWCRYPTO_USING_DES_ECB
                 bool "Using Hardware DES ECB mode"
                 default y
+                help
+                  Support DES ECB mode if the IP block offers it.
 
             config RT_HWCRYPTO_USING_DES_CBC
                 bool "Using Hardware DES CBC mode"
                 default n
+                help
+                  Enable DES CBC helper functions when the peripheral supports
+                  feedback chaining.
         endif
 
         config RT_HWCRYPTO_USING_3DES
             bool "Using Hardware 3DES"
             default n
+            help
+              Enable triple-DES acceleration (single/dual key). Required when
+              interacting with older security modules.
 
         if RT_HWCRYPTO_USING_3DES
             config RT_HWCRYPTO_USING_3DES_ECB
                 bool "Using Hardware 3DES ECB mode"
                 default y
+                help
+                  Provide 3DES ECB support if your IP implements it.
 
             config RT_HWCRYPTO_USING_3DES_CBC
                 bool "Using Hardware 3DES CBC mode"
                 default n
+                help
+                  Provide 3DES CBC helpers for devices that offer feedback
+                  chaining.
         endif
 
         config RT_HWCRYPTO_USING_RC4
             bool "Using Hardware RC4"
             default n
+            help
+              Enable the RC4 stream cipher hooks. Only rare legacy hardware
+              still implements RC4; keep disabled otherwise.
 
         config RT_HWCRYPTO_USING_MD5
             bool "Using Hardware MD5"
             default n
+            help
+              Register MD5 digest offload support. Use this only if the SoC
+              exposes a hash module with MD5 capability.
 
         config RT_HWCRYPTO_USING_SHA1
             bool "Using Hardware SHA1"
             default n
+            help
+              Enable SHA-1 hashing acceleration. SHA-1 is deprecated for secure
+              applications but may be required for compatibility.
 
         config RT_HWCRYPTO_USING_SHA2
             bool "Using Hardware SHA2"
             default n
+            help
+              Turn on SHA-2 (224/256/384/512) acceleration. Select the exact
+              digests below to match your IP core.
 
         if RT_HWCRYPTO_USING_SHA2
             config RT_HWCRYPTO_USING_SHA2_224
                 bool "Using Hardware SHA2_224 mode"
                 default n
+                help
+                  Provide SHA-224 digest routines if hardware supports them.
 
             config RT_HWCRYPTO_USING_SHA2_256
                 bool "Using Hardware SHA2_256 mode"
                 default y
+                help
+                  Enable SHA-256, the most commonly required SHA-2 variant.
 
             config RT_HWCRYPTO_USING_SHA2_384
                 bool "Using Hardware SHA2_384 mode"
                 default n
+                help
+                  Toggle SHA-384 support when present to support TLS-style HMAC.
 
             config RT_HWCRYPTO_USING_SHA2_512
                 bool "Using Hardware SHA2_512 mode"
                 default n
+                help
+                  Expose SHA-512 digest if your accelerator implements 512-bit
+                  compression functions.
         endif
 
         config RT_HWCRYPTO_USING_RNG
             bool "Using Hardware RNG"
             default n
+            help
+              Enable the true/fast random number generator interface so the RNG
+              peripheral can feed entropy to TLS stacks or secure boot.
 
         config RT_HWCRYPTO_USING_CRC
             bool "Using Hardware CRC"
             default n
+            help
+              Expose hardware CRC units and allow selecting supported
+              polynomials below. Useful for communication stacks that need
+              high-throughput CRC calculation.
 
         if RT_HWCRYPTO_USING_CRC
             config RT_HWCRYPTO_USING_CRC_07
                 bool "Using Hardware CRC-8 0x07 polynomial"
                 default n
+                help
+                  Turn on support for the CRC-8 polynomial 0x07 (ATM/SMBus).
 
             config RT_HWCRYPTO_USING_CRC_8005
                 bool "Using Hardware CRC-16 0x8005 polynomial"
                 default n
+                help
+                  Enable CRC-16/IBM polynomial acceleration.
 
             config RT_HWCRYPTO_USING_CRC_1021
                 bool "Using Hardware CRC-16 0x1021 polynomial"
                 default n
+                help
+                  Enable CRC-16/CCITT-FALSE polynomial support.
 
             config RT_HWCRYPTO_USING_CRC_3D65
                 bool "Using Hardware CRC-16 0x3D65 polynomial"
                 default n
+                help
+                  Enable CRC-16/USB polynomial (0x3D65) support.
 
             config RT_HWCRYPTO_USING_CRC_04C11DB7
                 bool "Using Hardware CRC-32 0x04C11DB7 polynomial"
                 default n
+                help
+                  Enable CRC-32/IEEE polynomial support for Ethernet-like CRCs.
         endif
 
         config RT_HWCRYPTO_USING_BIGNUM
             bool "Using Hardware bignum"
             default n
+            help
+              Allow hardware accelerators to handle modular exponentiation and
+              other big-number math (RSA, DH, ECC). Enable when your SoC
+              includes a crypto accelerator with public-key instructions.
 
         if RT_HWCRYPTO_USING_BIGNUM
             config RT_HWCRYPTO_USING_BIGNUM_EXPTMOD
                 bool "Using Hardware bignum expt_mod operation"
                 default y
+                help
+                  Provide modular exponentiation support (RSA decrypt/sign).
 
             config RT_HWCRYPTO_USING_BIGNUM_MULMOD
                 bool "Using Hardware bignum mul_mod operation"
                 default y
+                help
+                  Enable modular multiplication for ECC/DH operations.
 
             config RT_HWCRYPTO_USING_BIGNUM_MUL
                 bool "Using Hardware bignum mul operation"
                 default n
+                help
+                  Advertise raw big-number multiply support when hardware can do
+                  wide integer multiplication.
 
             config RT_HWCRYPTO_USING_BIGNUM_ADD
                 bool "Using Hardware bignum add operation"
                 default n
+                help
+                  Enable big-number addition helpers when provided by silicon.
 
             config RT_HWCRYPTO_USING_BIGNUM_SUB
                 bool "Using Hardware bignum sub operation"
                 default n
+                help
+                  Expose big-number subtraction support if available.
         endif
     endif

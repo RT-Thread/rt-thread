@@ -1,32 +1,77 @@
 config RT_USING_RTC
     bool "Using RTC device drivers"
     default n
+    help
+      Enable the RTC core so hardware real-time clocks can be registered via
+      `rt_hw_rtc_register`, the kernel can keep wall clock time across suspend/
+      resume, and applications can query or set calendar values through the
+      `rtc` character device. Turn this on whenever you have a peripheral or
+      PMIC that supplies timestamp/backup registers referenced from the device
+      tree; disable it only on chips that genuinely lack RTC hardware.
 
     if RT_USING_RTC
         config RT_USING_ALARM
             bool "Using RTC alarm"
             default n
+            help
+              Spawn the alarm service defined in `dev_alarm.c`. The driver
+              creates an RT-Thread worker thread that reconciles user-space
+              alarms with the RTC wakeup registers, automatically reprograms
+              oneshot/periodic alarms, and raises callbacks when the hardware
+              interrupt fires. Enable this if your application needs wakeup at a
+              given date/time; leave it disabled to save RAM/CPU when alarms are
+              not used.
 
         if RT_USING_ALARM
             config RT_ALARM_STACK_SIZE
                 int "stack size for alarm thread"
                 default 2048
+                help
+                  Specify the stack size (bytes) used by the internal alarm
+                  management thread. Increase this when alarm callbacks perform
+                  complex logic or use libc time conversions; shrink it on very
+                  constrained MCUs when you are sure the callbacks stay shallow.
 
             config RT_ALARM_TIMESLICE
                 int "timeslice for alarm thread"
                 default 5
+                help
+                  Define the timeslice (OS ticks) granted to the alarm thread
+                  when it runs at the same priority as other time-sensitive
+                  tasks. Lower values make the system more responsive at the
+                  cost of additional context switches; higher values slightly
+                  delay alarm handling under load.
 
             config RT_ALARM_PRIORITY
                 int "priority for alarm thread"
                 default 10
+                help
+                  RT-Thread priority (smaller numbers are higher priority) of
+                  the alarm management thread. Choose a priority above most
+                  application threads if you require deterministic wakeups, or
+                  below CPU-intensive tasks when alarm latency is less critical.
 
             config RT_ALARM_USING_LOCAL_TIME
                 bool "Using local time for the alarm calculation"
                 default n
                 depends on RT_USING_ALARM
+                help
+                  Make the alarm service convert timestamps with `mktime()` so
+                  alarms follow the configured local time zone instead of UTC.
+                  Enable this when alarms must honor daylight saving or custom
+                  offsets; otherwise keep it disabled to avoid the overhead of
+                  repeatedly converting between UTC and local time.
         endif
 
         config RT_USING_SOFT_RTC
             bool "Using software simulation RTC device"
             default n
+            help
+              Build the tick-based software RTC implementation (`dev_soft_rtc`)
+              for boards without dedicated RTC hardware. The driver keeps time
+              by accumulating system ticks and stores values in RAM only, so it
+              resets to the compile-time default after power loss. Enable it for
+              simulations or low-cost MCUs that still need an `rtc` device node;
+              disable it when real RTC registers are available to avoid two
+              competing time sources.
     endif

@@ -4,18 +4,35 @@ menuconfig RT_USING_ATA
     depends on RT_USING_BLK
     depends on RT_USING_DMA
     default n
+    help
+      Enable the ATA core so AHCI/legacy controllers can register themselves in
+      the driver model, allocate DMA resources, and expose block devices to the
+      RT-Thread block layer. Select this only on SoCs/boards that actually wire
+      SATA ports because it pulls in the SCSI translation layer and requires DMA
+      support. When disabled, no SATA disks will be enumerated.
 
 config RT_ATA_AHCI
     bool "Advanced Host Controller Interface (AHCI)"
     depends on RT_USING_ATA
     depends on RT_USING_SCSI
     default y
+    help
+      Build the generic AHCI driver that maps HBA registers (ports, command list,
+      FIS receive, etc.), handles NCQ, and bridges each detected SATA device to
+      the RT-SCSI mid-layer so filesystems can treat them like disks. Enable it
+      whenever your SoC implements a standards-compliant AHCI core; disable if
+      you rely on a vendor-specific ATA engine.
 
 config RT_ATA_AHCI_PCI
     bool "AHCI support on PCI bus"
     depends on RT_ATA_AHCI
     depends on RT_USING_PCI
     default n
+    help
+      Allow the AHCI driver to bind to PCI devices and fetch resources via PCI
+      config space. Required on PC-class hardware where the AHCI HBA is behind
+      PCI/PCIe; boards with platform AHCI (non-PCI) can leave this off to save a
+      little code.
 
 if RT_USING_ATA
     osource "$(SOC_DM_ATA_DIR)/Kconfig"

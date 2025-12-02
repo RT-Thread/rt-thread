@@ -1,21 +1,42 @@
 menuconfig RT_USING_SPI
     bool "Using SPI Bus/Device device drivers"
     default n
+    help
+      Enable the SPI framework so hardware controllers and client drivers can
+      register SPI buses/devices through RT-Thread. This brings in the SPI core,
+      the DM glue, and the optional software backend. Turn it on for any board
+      that connects SPI flashes, sensors, RF chips, or display panels; disable
+      only when SPI is unused to save footprint.
 
     if RT_USING_SPI
 
         menuconfig RT_USING_SPI_ISR
             bool "Enable interrupt-safe SPI operations (using spinlocks in ISR context)"
             default y
+            help
+              Allow SPI APIs to be invoked from interrupt context by guarding
+              transfer state with spinlocks instead of mutexes. Enable it when
+              DMA completion or GPIO IRQ handlers need to queue SPI work; leave
+              it off if every transfer happens in thread context to slightly
+              reduce locking overhead.
 
         menuconfig RT_USING_SOFT_SPI
             bool "Use GPIO to simulate SPI"
             default n
             select RT_USING_PIN
+            help
+              Build software (bit-banged) SPI masters that toggle GPIO pins in
+              software. Each bus selected below lets you pick SCK/MISO/MOSI pins
+              and an exported bus name, ideal for simple sensors or when all
+              hardware SPI controllers are in use.
             if RT_USING_SOFT_SPI
                 menuconfig RT_USING_SOFT_SPI0
                     bool "Enable SPI0 Bus (software simulation)"
                     default y
+                    help
+                      Instantiate the first software SPI bus using the pins
+                      configured below. Disable it if your board does not need a
+                      bit-banged SPI0 instance.
                     if RT_USING_SOFT_SPI0
                         config RT_SOFT_SPI0_SCK_PIN
                             int "SCK pin number"
@@ -40,6 +61,9 @@ menuconfig RT_USING_SPI
                 menuconfig RT_USING_SOFT_SPI1
                     bool "Enable SPI1 Bus (software simulation)"
                     default y
+                    help
+                      Enable a second software SPI channel for additional
+                      low-speed peripherals when dedicated controllers run out.
                     if RT_USING_SOFT_SPI1
                         config RT_SOFT_SPI1_SCK_PIN
                             int "SCK pin number"
@@ -64,6 +88,9 @@ menuconfig RT_USING_SPI
                 menuconfig RT_USING_SOFT_SPI2
                     bool "Enable SPI2 Bus (software simulation)"
                     default n
+                    help
+                      Optional third soft SPI bus. Only enable when the PCB
+                      routes the corresponding GPIO pins.
                     if RT_USING_SOFT_SPI2
                         config RT_SOFT_SPI2_SCK_PIN
                             int "SCK pin number"
@@ -88,6 +115,9 @@ menuconfig RT_USING_SPI
                 menuconfig RT_USING_SOFT_SPI3
                     bool "Enable SPI3 Bus (software simulation)"
                     default n
+                    help
+                      Fourth bit-banged SPI bus entry. Leave disabled to save
+                      resources if not wired.
                     if RT_USING_SOFT_SPI3
                         config RT_SOFT_SPI3_SCK_PIN
                             int "SCK pin number"
@@ -112,6 +142,9 @@ menuconfig RT_USING_SPI
                 menuconfig RT_USING_SOFT_SPI4
                     bool "Enable SPI4 Bus (software simulation)"
                     default n
+                    help
+                      Provide a fifth software SPI bus; adds static data for the
+                      pin descriptors even when unused.
                     if RT_USING_SOFT_SPI4
                         config RT_SOFT_SPI4_SCK_PIN
                             int "SCK pin number"
@@ -136,6 +169,9 @@ menuconfig RT_USING_SPI
                 menuconfig RT_USING_SOFT_SPI5
                     bool "Enable SPI5 Bus (software simulation)"
                     default n
+                    help
+                      Optional sixth software bus for complex designs with many
+                      discrete chips.
                     if RT_USING_SOFT_SPI5
                         config RT_SOFT_SPI5_SCK_PIN
                             int "SCK pin number"
@@ -160,6 +196,9 @@ menuconfig RT_USING_SPI
                 menuconfig RT_USING_SOFT_SPI6
                     bool "Enable SPI6 Bus (software simulation)"
                     default n
+                    help
+                      Enable a seventh software SPI controller if more GPIO-only
+                      buses are necessary.
                     if RT_USING_SOFT_SPI6
                         config RT_SOFT_SPI6_SCK_PIN
                             int "SCK pin number"
@@ -187,57 +226,99 @@ menuconfig RT_USING_SPI
             bool "Use simulate SPI debug message"
             depends on RT_USING_SOFT_SPI
             default n
+            help
+              Print the edge-level toggling performed by the software SPI
+              backend. Useful when verifying custom wiring, but it slows down
+              transfers considerably.
 
         config RT_USING_QSPI
             bool "Enable QSPI mode"
             default n
+            help
+              Adds Quad-SPI support to the SPI core so flash drivers can switch
+              MISO/MOSI pins into quad data mode and use controller-specific
+              QSPI ops. Enable this when your SoC exposes a QSPI controller or
+              you plan to run SFUD in quad mode.
 
         config RT_USING_SPI_MSD
             bool "Using SD/TF card driver with spi"
             select RT_USING_DFS
             default n
+            help
+              Build the SPI-based block driver for SD/TF cards (Mass Storage
+              Device). Select this when your design wires SD cards to an SPI
+              bus instead of a dedicated SDIO host; it pulls in DFS for the
+              filesystem layer.
 
         config RT_USING_SFUD
             bool "Using Serial Flash Universal Driver"
             default n
             help
-                An using JEDEC's SFDP standard serial (SPI) flash universal driver library
+              Pull in the Serial Flash Universal Driver which speaks the JEDEC
+              SFDP standard, auto-detects parameters, and exposes SPI NOR chips
+              through the RT-Thread MTD interface. Enable this for off-chip SPI
+              NOR/QSPI flash storage; disable it if you rely on SoC-specific
+              flash drivers instead.
 
             if RT_USING_SFUD
                 config RT_SFUD_USING_SFDP
                 bool "Using auto probe flash JEDEC SFDP parameter"
                 default y
+                help
+                  Parse the flash SFDP tables at runtime for sizing, erase
+                  commands, and quad support. Disable only if your flash lacks
+                  SFDP and you prefer hard-coded settings.
 
                 config RT_SFUD_USING_FLASH_INFO_TABLE
                 bool "Using defined supported flash chip information table"
                 default y
+                help
+                  Keep the built-in flash info table so chips without valid SFDP
+                  headers can still be recognized. You can turn it off to reduce
+                  the binary when you know SFDP probing always succeeds.
 
                 config RT_SFUD_USING_QSPI
                 bool "Using QSPI mode support"
                 select RT_USING_QSPI
                 default n
+                help
+                  Allow SFUD to drive flashes via Quad-SPI instructions. Requires
+                  a QSPI-capable controller and board routing.
 
                 config RT_SFUD_SPI_MAX_HZ
-                int "Default spi maximum speed(HZ)"
-                range 0 50000000
-                default 50000000
-                help
-                    Read the JEDEC SFDP command must run at 50 MHz or less,and you also can use rt_spi_configure(); to config spi speed.
+                    int "Default spi maximum speed(HZ)"
+                    range 0 50000000
+                    default 50000000
+                    help
+                      Default maximum bus frequency SFUD will request when
+                      probing flashes. Keep it at or below 50 MHz for SFDP per
+                      the JEDEC spec; runtime drivers may still lower it with
+                      `rt_spi_configure()`.
 
                 config RT_DEBUG_SFUD
                 bool "Show more SFUD debug information"
                 default n
+                help
+                  Verbosely log SFUD operations (probe, erase, write). Enable
+                  when bringing up new flash parts; keep disabled in production.
             endif
 
         config RT_USING_ENC28J60
             bool "Using ENC28J60 SPI Ethernet network interface"
             select RT_USING_LWIP
             default n
+            help
+              Build the ENC28J60 Ethernet driver which talks to Microchip's SPI
+              MAC+PHY and registers a netif on top of lwIP. Enable it when your
+              board uses the ENC28J60; otherwise it adds dead code.
 
         config RT_USING_SPI_WIFI
             bool "Using RW009/007 SPI Wi-Fi wireless interface"
             select RT_USING_LWIP
             default n
+            help
+              Include the RW009/RW007 Wi-Fi driver that exchanges frames via
+              SPI. Requires lwIP and a matching module connected to the bus.
     endif
 
 if RT_USING_DM && RT_USING_SPI

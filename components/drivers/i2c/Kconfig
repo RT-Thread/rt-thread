@@ -1,20 +1,40 @@
 config RT_USING_I2C
     bool "Using I2C device drivers"
     default n
+    help
+      Enable the RT-Thread I2C core so both DM aware controllers and legacy bus
+      drivers can register `struct rt_i2c_bus_device` objects, and client
+      drivers can issue transfers through the unified APIs. Select this on any
+      board that exposes an I2C peripheral or software bit-bang bus; disable it
+      only if you never interface with I2C sensors/PMICs/MCUs.
 
 if RT_USING_I2C
     config RT_I2C_DEBUG
         bool "Use I2C debug message"
         default n
+        help
+          Print verbose I2C transaction logs (start/stop, address, data) to the
+          console. Helpful while debugging board bring-up, but it slows down the
+          bus and should remain off in production firmware.
 
     config RT_USING_I2C_BITOPS
         bool "Use GPIO to simulate I2C"
         default y
+        help
+          Build the generic bit-banging algorithm (`dev_i2c_bit_ops.c`) so
+          controller drivers or the software I2C backend can drive SCL/SDA pins
+          directly. Disable this only when every I2C controller is hardware-
+          assisted and you want to shave a few hundred bytes of code.
 
     if RT_USING_I2C_BITOPS
         config RT_I2C_BITOPS_DEBUG
             bool "Use simulate I2C debug message"
             default n
+            help
+              Emit timing-level diagnostics from the bit-bang implementation,
+              showing whether GPIO toggles are happening as expected. Useful to
+              diagnose board wiring or timing issues, but generates a lot of log
+              traffic and should stay disabled normally.
     endif
 
     menuconfig RT_USING_SOFT_I2C
@@ -22,10 +42,19 @@ if RT_USING_I2C
         default n
         select RT_USING_PIN
         select RT_USING_I2C_BITOPS
+        help
+          Instantiate one or more fully software I2C buses backed by GPIO pins.
+          Each enabled bus entry below lets you choose SCL/SDA pin numbers, the
+          exported bus name, and bit-bang timing. Use this when the SoC lacks an
+          available controller but you still need to connect low-speed sensors.
         if RT_USING_SOFT_I2C
             menuconfig RT_USING_SOFT_I2C0
                 bool "Enable I2C0 Bus (software simulation)"
                 default y
+                help
+                  Create a software I2C bus named by `RT_SOFT_I2C0_BUS_NAME`
+                  using the selected SCL/SDA pins. Disable it if the board does
+                  not wire up a first soft I2C channel.
                 if RT_USING_SOFT_I2C0
                     config RT_SOFT_I2C0_SCL_PIN
                         int "SCL pin number"
@@ -50,6 +79,10 @@ if RT_USING_I2C
             menuconfig RT_USING_SOFT_I2C1
                 bool "Enable I2C1 Bus (software simulation)"
                 default y
+                help
+                  Enable the second software I2C controller and configure its
+                  pins/name/timing below when multiple bit-bang buses are wired
+                  out on the PCB.
                 if RT_USING_SOFT_I2C1
                     config RT_SOFT_I2C1_SCL_PIN
                         int "SCL pin number"
@@ -74,6 +107,10 @@ if RT_USING_I2C
             menuconfig RT_USING_SOFT_I2C2
                 bool "Enable I2C2 Bus (software simulation)"
                 default n
+                help
+                  Optional third soft I2C bus for boards that expose additional
+                  GPIO pairs. Turn this on only if you really route the
+                  corresponding pins.
                 if RT_USING_SOFT_I2C2
                     config RT_SOFT_I2C2_SCL_PIN
                         int "SCL pin number"
@@ -98,6 +135,8 @@ if RT_USING_I2C
             menuconfig RT_USING_SOFT_I2C3
                 bool "Enable I2C3 Bus (software simulation)"
                 default n
+                help
+                  Same as above but for the fourth software I2C instance.
                 if RT_USING_SOFT_I2C3
                     config RT_SOFT_I2C3_SCL_PIN
                         int "SCL pin number"
@@ -122,6 +161,9 @@ if RT_USING_I2C
             menuconfig RT_USING_SOFT_I2C4
                 bool "Enable I2C4 Bus (software simulation)"
                 default n
+                help
+                  Enable the fifth configurable bit-bang bus if more GPIO-based
+                  channels are required.
                 if RT_USING_SOFT_I2C4
                     config RT_SOFT_I2C4_SCL_PIN
                         int "SCL pin number"
@@ -146,6 +188,9 @@ if RT_USING_I2C
             menuconfig RT_USING_SOFT_I2C5
                 bool "Enable I2C5 Bus (software simulation)"
                 default n
+                help
+                  Enable the sixth configurable bit-bang bus when the hardware
+                  exposes yet another sensor connector.
                 if RT_USING_SOFT_I2C5
                     config RT_SOFT_I2C5_SCL_PIN
                         int "SCL pin number"
@@ -170,6 +215,9 @@ if RT_USING_I2C
             menuconfig RT_USING_SOFT_I2C6
                 bool "Enable I2C6 Bus (software simulation)"
                 default n
+                help
+                  Enable the seventh software bus; use only on complex boards
+                  because each additional bus increases code/data usage.
                 if RT_USING_SOFT_I2C6
                     config RT_SOFT_I2C6_SCL_PIN
                         int "SCL pin number"
@@ -194,6 +242,9 @@ if RT_USING_I2C
             menuconfig RT_USING_SOFT_I2C7
                 bool "Enable I2C7 Bus (software simulation)"
                 default n
+                help
+                  Provide an eighth configurable software bus if still more GPIO
+                  pairs are required for isolated peripherals.
                 if RT_USING_SOFT_I2C7
                     config RT_SOFT_I2C7_SCL_PIN
                         int "SCL pin number"
@@ -218,6 +269,10 @@ if RT_USING_I2C
             menuconfig RT_USING_SOFT_I2C8
                 bool "Enable I2C8 Bus (software simulation)"
                 default n
+                help
+                  Final reserved entry for a ninth soft I2C controller. Enable
+                  it only when the design needs that many bit-bang buses; leave
+                  disabled otherwise to save resources.
                 if RT_USING_SOFT_I2C8
                     config RT_SOFT_I2C8_SCL_PIN
                         int "SCL pin number"

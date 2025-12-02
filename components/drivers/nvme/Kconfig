@@ -4,6 +4,11 @@ menuconfig RT_USING_NVME
     depends on RT_USING_BLK
     depends on RT_USING_DMA
     default n
+    help
+      Enable the NVMe driver stack so PCIe-connected SSDs can be discovered,
+      command queues created, and block devices exported through the block
+      layer. Requires DMA and the driver model; disable if your platform lacks
+      NVMe hardware.
 
 config RT_USING_NVME_IO_QUEUE
     int "Number of I/O Command queue"
@@ -11,12 +16,19 @@ config RT_USING_NVME_IO_QUEUE
     default 2 if RT_THREAD_PRIORITY_8
     default 4 if RT_THREAD_PRIORITY_32
     default 8 if RT_THREAD_PRIORITY_256
+    help
+      Set how many submission/completion queue pairs to create for NVMe I/O.
+      More queues improve parallelism on multicore systems but consume more DMA
+      memory and interrupts.
 
 config RT_NVME_PCI
     bool "NVME support on PCI bus"
     depends on RT_USING_NVME
     depends on RT_USING_PCI
     default y
+    help
+      Allow the driver to bind to NVMe controllers discovered via PCI/PCIe.
+      Disable only for non-PCI environments (for example, custom interconnects).
 
 if RT_USING_NVME
     osource "$(SOC_DM_NVME_DIR)/Kconfig"

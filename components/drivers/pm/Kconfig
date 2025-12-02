@@ -1,39 +1,64 @@
 config RT_USING_PM
     bool "Using Power Management device drivers"
     default n
+    help
+      Enable the system-level power management framework which coordinates
+      suspend/resume, tickless idle, and device low-power states. Required when
+      implementing sleep modes beyond simple tick suppression.
 
     if RT_USING_PM
         config PM_TICKLESS_THRESHOLD_TIME
             int "PM tickless threashold time"
             default 2
+            help
+              Minimum idle duration (in milliseconds) before the PM core enters
+              tickless mode. Tune based on wake-up latency vs power savings.
 
         config PM_USING_CUSTOM_CONFIG
             bool "PM using custom pm config"
             default n
+            help
+              Allow BSPs to provide custom PM policy hooks instead of the stock
+              configuration.
 
         config PM_ENABLE_DEBUG
             bool "PM Enable Debug"
             default n
+            help
+              Print suspend/resume decisions and timing for debugging purposes.
 
         config PM_ENABLE_SUSPEND_SLEEP_MODE
             bool "PM Device suspend change sleep mode"
             default n
+            help
+              Permit PM to change system sleep mode dynamically when devices
+              suspend; requires board support.
 
         config PM_ENABLE_THRESHOLD_SLEEP_MODE
             bool "PM using threshold time change sleep mode"
             default n
+            help
+              Automatically select light/deep/standby sleep based on idle time
+              thresholds configured below.
 
         if PM_ENABLE_THRESHOLD_SLEEP_MODE
             config PM_LIGHT_THRESHOLD_TIME
                 int "PM light mode threashold time"
                 default 5
+                help
+                  Idle time in milliseconds required before entering light sleep.
 
             config PM_DEEP_THRESHOLD_TIME
                 int "PM deep mode threashold time"
                 default 20
+                help
+                  Idle duration required before requesting deep sleep.
 
             config PM_STANDBY_THRESHOLD_TIME
                 int "PM standby mode threashold time"
                 default 100
+                help
+                  Idle time before transitioning into standby (longest latency)
+                  mode. Increase if standby exit is expensive.
         endif
     endif

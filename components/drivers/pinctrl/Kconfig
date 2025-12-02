@@ -3,6 +3,11 @@ menuconfig RT_USING_PINCTRL
     depends on RT_USING_DM
     depends on RT_USING_PIN
     default n
+    help
+      Enable the pinctrl framework so pin multiplexing/state tables from the
+      device tree can be applied to peripherals (I2C, SPI, LEDs, etc.). Needed
+      on SoCs where GPIOs share multiple alternate functions; disable on simple
+      MCUs where pins have fixed roles.
 
 if RT_USING_PINCTRL
     osource "$(SOC_DM_PINCTRL_DIR)/Kconfig"

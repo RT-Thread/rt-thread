@@ -1,8 +1,16 @@
 config RT_USING_PHY
     bool "Using ethernet phy device drivers"
     default n
+    help
+      Enable the Ethernet PHY framework so MAC drivers can negotiate link state
+      via MII/MDIO and apply vendor-specific fixes. Required when using RMII/RGMII
+      external PHYs.
 
 config RT_USING_PHY_V2
     bool "Using phy device and mii bus v2"
     depends on !RT_USING_PHY
     default n
+    help
+      Opt into the newer PHY/MDIO stack (version 2) which redesigns the PHY bus
+      representation. Only enable this when migrating to the new API; it is
+      mutually exclusive with the legacy PHY support.

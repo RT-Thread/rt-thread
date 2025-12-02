@@ -3,11 +3,23 @@ menuconfig RT_USING_MBOX
     depends on RT_USING_DM
     depends on RT_USING_OFW
     default n
+    help
+      Enable the mailbox framework so multi-core SoCs or remote processors can
+      exchange messages via hardware mailbox/FIFO IP. The core registers mailbox
+      controllers described in device tree, manages channel timeouts, and
+      exposes asynchronous send/receive callbacks to drivers such as RPMsg or
+      audio DSP clients. Disable it only when the SoC lacks mailbox hardware.
 
 config RT_MBOX_PIC
     bool "RT-Thread PIC Mailbox"
     depends on RT_USING_MBOX
     default y
+    help
+      Build the PIC mailbox controller driver which exposes RT-Thread's
+      platform interrupt controller mailboxes through the common API. Select it
+      when the firmware runs on platforms where the PIC provides mailbox
+      registers (for example Sophgo SG2042); turning it off prevents those DTS
+      nodes from binding.
 
 if RT_USING_MBOX
     osource "$(SOC_DM_MBOX_DIR)/Kconfig"
