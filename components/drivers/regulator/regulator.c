@@ -538,7 +538,7 @@ static void regulator_check_parent(struct rt_regulator_node *reg_np)
             rt_list_insert_after(&reg_np->parent->children_nodes, &reg_np->list);
             rt_ofw_node_put(np);
         }
-    #endif
+    #endif /* RT_USING_OFW */
     }
 }
 
@@ -581,11 +581,10 @@ struct rt_regulator *rt_regulator_get(struct rt_device *dev, const char *id)
         reg_np = rt_ofw_data(np);
         rt_ofw_node_put(np);
     }
-#endif
+#endif /* RT_USING_OFW */
 
     if (!reg_np)
     {
-        reg = rt_err_ptr(-RT_ENOSYS);
         goto _end;
     }
 
