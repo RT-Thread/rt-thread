@@ -55,9 +55,9 @@
 #endif /* !FINSH_SNAPSHOT_DEPTH */
 #endif /* FINSH_USING_SNAPSHOT */
 
-#ifndef FINSH_PROMPT_WORD_DEFAULT
-#define FINSH_PROMPT_WORD_DEFAULT "msh "
-#endif /* !FINSH_PROMPT_WORD_DEFAULT */
+#ifndef FINSH_PROMPT_TEXT_DEFAULT
+#define FINSH_PROMPT_TEXT_DEFAULT "msh "
+#endif /* !FINSH_PROMPT_TEXT_DEFAULT */
 
 enum finsh_input_state
 {
@@ -157,20 +157,20 @@ char finsh_getchar(void);
 void finsh_thread_entry_sethook(void (*hook)(void));
 #endif /* RT_USING_HOOK */
 
-int finsh_set_prompt_word(const char *prompt);
-const char *finsh_get_prompt_word(void);
-#define FINSH_PROMPT finsh_get_prompt_word()
+int finsh_set_prompt_text(const char *text);
+const char *finsh_get_prompt_text(void);
+#define FINSH_PROMPT finsh_get_prompt_text()
 
-void finsh_set_prompt(rt_bool_t prompt);
-rt_bool_t finsh_get_prompt(void);
+void finsh_set_prompt_enabled(rt_bool_t enabled);
+rt_bool_t finsh_get_prompt_enabled(void);
 
 #if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
 void finsh_set_device(const char *device_name);
 const char *finsh_get_device(void);
 #endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
 
-void finsh_set_echo(rt_bool_t echo);
-rt_bool_t finsh_get_echo(void);
+void finsh_set_echo_enabled(rt_bool_t enabled);
+rt_bool_t finsh_get_echo_enabled(void);
 
 #ifdef FINSH_USING_AUTH
 int finsh_set_password(const char *password);

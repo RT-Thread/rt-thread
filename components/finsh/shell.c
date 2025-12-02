@@ -112,20 +112,20 @@ void finsh_thread_entry_sethook(void (*hook)(void))
   * to the internal prompt buffer, ensuring it does not exceed the maximum buffer size.
   * If the input prompt is RT_NULL, it prints an error message and returns an error code.
   *
-  * @param prompt The new prompt string to set.
+  * @param text The new prompt string to set.
   *
   * @return 0 on success, -RT_EINVAL if the prompt is RT_NULL.
   */
-int finsh_set_prompt_word(const char *prompt)
+int finsh_set_prompt_text(const char *text)
 {
-    if (!prompt)
+    if (!text)
     {
-        rt_kprintf("Invalid prompt!\n");
+        rt_kprintf("Invalid prompt text!\n");
         return -RT_EINVAL;
     }
 
     rt_memset(finsh_prompt, 0, sizeof(finsh_prompt));
-    rt_strncpy(finsh_prompt, prompt, RT_CONSOLEBUF_SIZE);
+    rt_strncpy(finsh_prompt, text, RT_CONSOLEBUF_SIZE);
     finsh_prompt_length = rt_strlen(finsh_prompt);
 
     return 0;
@@ -136,13 +136,13 @@ int finsh_set_prompt_word(const char *prompt)
   *
   * This function returns the current prompt string for the FinSH shell.
   * If the prompt mode is disabled, it returns an empty string.
-  * If the prompt string is not set, it sets the default prompt ("msh ").
+  * If the prompt string is not set, it sets the default prompt (FINSH_PROMPT_TEXT_DEFAULT).
   * When POSIX and workdir support are enabled, it appends the current working directory to the prompt.
   * Finally, it appends a '>' character to the prompt if there is enough space.
   *
   * @return Pointer to the prompt string.
   */
-const char *finsh_get_prompt_word(void)
+const char *finsh_get_prompt_text(void)
 {
     rt_size_t len;
 
@@ -151,12 +151,12 @@ const char *finsh_get_prompt_word(void)
     /* check prompt mode */
     if (!shell->is_prompt)
     {
-        finsh_prompt[RT_CONSOLEBUF_SIZE] = 0;
+        finsh_prompt[RT_CONSOLEBUF_SIZE] = '\0';
         return &finsh_prompt[RT_CONSOLEBUF_SIZE];
     }
 
     if (!finsh_prompt[0])
-        finsh_set_prompt_word(FINSH_PROMPT_WORD_DEFAULT);
+        finsh_set_prompt_text(FINSH_PROMPT_TEXT_DEFAULT);
 
     len = finsh_prompt_length;
 #if defined(DFS_USING_POSIX) && defined(DFS_USING_WORKDIR)
@@ -167,7 +167,7 @@ const char *finsh_get_prompt_word(void)
     if ((len + 2) < RT_CONSOLEBUF_SIZE)
     {
         finsh_prompt[len++] = '>';
-        finsh_prompt[len++] = 0;
+        finsh_prompt[len] = '\0';
     }
 
     return finsh_prompt;
@@ -179,12 +179,12 @@ const char *finsh_get_prompt_word(void)
   * This function enables or disables the prompt mode for the FinSH shell.
   * If the parameter is 0, the prompt mode is disabled; any other value enables the prompt mode.
   *
-  * @param prompt The prompt mode flag (0 to disable, non-zero to enable).
+  * @param enabled The prompt mode flag (RT_FALSE to disable, RT_TRUE to enable).
   */
-void finsh_set_prompt(rt_bool_t prompt)
+void finsh_set_prompt_enabled(rt_bool_t enabled)
 {
     RT_ASSERT(shell != RT_NULL);
-    shell->is_prompt = prompt;
+    shell->is_prompt = enabled;
 }
 
 /**
@@ -195,7 +195,7 @@ void finsh_set_prompt(rt_bool_t prompt)
   *
   * @return The prompt mode status: 0 means prompt mode is disabled, non-zero means enabled.
   */
-rt_bool_t finsh_get_prompt(void)
+rt_bool_t finsh_get_prompt_enabled(void)
 {
     RT_ASSERT(shell != RT_NULL);
     return shell->is_prompt;
@@ -206,10 +206,10 @@ static rt_err_t finsh_rx_ind(rt_device_t dev, rt_size_t size)
 {
     RT_ASSERT(shell != RT_NULL);
 
-    if (size)
+    if (size > 0)
         rt_sem_release(&shell->rx_notice);
 
-    return 0;
+    return RT_EOK;
 }
 
 /**
@@ -274,7 +274,7 @@ void finsh_set_device(const char *device_name)
 }
 
 /**
-  * Get the name of the current input device used by the finsh shell.
+  * @brief Get the name of the current input device used by the finsh shell.
   *
   * @return The name of the device as a string.
   */
@@ -286,17 +286,17 @@ const char *finsh_get_device(void)
 #endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
 
 /**
-  * Set the echo mode of the finsh shell.
+  * @brief Set the echo mode of the finsh shell.
   *
   * When echo mode is enabled, the shell will display user input characters.
   * When disabled, user input will not be echoed to the terminal.
   *
-  * @param echo RT_TRUE to enable echo, RT_FALSE to disable echo.
+  * @param enabled The echo mode flag (RT_FALSE to disable, RT_TRUE to enable).
   */
-void finsh_set_echo(rt_bool_t echo)
+void finsh_set_echo_enabled(rt_bool_t enabled)
 {
     RT_ASSERT(shell != RT_NULL);
-    shell->is_echo = echo;
+    shell->is_echo = enabled;
 }
 
 /**
@@ -307,7 +307,7 @@ void finsh_set_echo(rt_bool_t echo)
   *
   * @return RT_TRUE if echo mode is enabled, RT_FALSE otherwise.
   */
-rt_bool_t finsh_get_echo(void)
+rt_bool_t finsh_get_echo_enabled(void)
 {
     RT_ASSERT(shell != RT_NULL);
     return shell->is_echo;
@@ -489,10 +489,11 @@ static struct finsh_history *finsh_history_realloc(struct finsh_history *history
         return finsh_history_alloc(cmd, cmd_length);
 
 #ifdef RT_USING_HEAP
-    if (cmd_length > rt_strlen(history->cmd))
-        history->cmd = (char *)rt_realloc(history->cmd, cmd_length + 1);
+    char *cmd_ptr = history->cmd;
+    history->cmd = (char *)rt_realloc(cmd_ptr, cmd_length + 1);
     if (!history->cmd)
     {
+        rt_free(cmd_ptr);
         rt_free(history);
         rt_kprintf("Failed to allocate memory for history command!\n");
         return RT_NULL;
@@ -523,7 +524,7 @@ static struct finsh_snapshot *finsh_snapshot_alloc(char *cmd, rt_size_t cmd_leng
     }
     if (i >= FINSH_SNAPSHOT_DEPTH)
     {
-        rt_kprintf("No available snapshot buffer!\n");
+        rt_kprintf("No available snapshot buffer zone!\n");
         return RT_NULL;
     }
 #else
@@ -577,10 +578,11 @@ static struct finsh_snapshot *finsh_snapshot_realloc(struct finsh_snapshot *snap
         return finsh_snapshot_alloc(cmd, cmd_length, cmd_cursor);
 
 #ifdef RT_USING_HEAP
-    if (cmd_length > rt_strlen(snap->cmd))
-        snap->cmd = (char *)rt_realloc(snap->cmd, cmd_length + 1);
+    char *cmd_ptr = snap->cmd;
+    snap->cmd = (char *)rt_realloc(cmd_ptr, cmd_length + 1);
     if (!snap->cmd)
     {
+        rt_free(cmd_ptr);
         rt_free(snap);
         rt_kprintf("Failed to allocate memory for snapshot command!\n");
         return RT_NULL;
@@ -596,6 +598,13 @@ static struct finsh_snapshot *finsh_snapshot_realloc(struct finsh_snapshot *snap
     return snap;
 }
 #endif /* FINSH_USING_SNAPSHOT */
+
+rt_inline void _finsh_clear_command(void)
+{
+    rt_memset(shell->cmd, 0, sizeof(shell->cmd));
+    shell->cmd_length = 0;
+    shell->cmd_cursor = 0;
+}
 
 static int finsh_shell_init(void)
 {
@@ -624,9 +633,7 @@ static int finsh_shell_init(void)
 #endif /* !RT_USING_HEAP */
 #endif /* FINSH_USING_HISTORY */
 
-    rt_memset(shell->cmd, 0, sizeof(shell->cmd));
-    shell->cmd_length = 0;
-    shell->cmd_cursor = 0;
+    _finsh_clear_command();
 
     shell->extend_key = 0;
     shell->is_insert = RT_FALSE;
@@ -758,9 +765,9 @@ char finsh_getchar(void)
 }
 
 /* clang-format off */
- #define finsh_printf(fmt, ...) do { if (shell->is_echo) rt_kprintf(fmt, ##__VA_ARGS__); } while (0)
- #define finsh_puts(str) do { if (shell->is_echo) rt_kputs(str); } while (0)
- #define finsh_putc(ch) do { if (shell->is_echo) rt_kprintf("%c", ch); } while (0)
+#define finsh_printf(fmt, ...) do { if (shell->is_echo) rt_kprintf(fmt, ##__VA_ARGS__); }while (0)
+#define finsh_puts(str) do { if (shell->is_echo) rt_kputs(str); } while (0)
+#define finsh_putc(ch) do { if (shell->is_echo) rt_kprintf("%c", ch); } while (0)
 /* clang-format on */
 
 #ifdef FINSH_USING_SNAPSHOT
@@ -886,10 +893,11 @@ static void finsh_auto_complete(void)
 static void finsh_render_line(void)
 {
 #ifdef _WIN32
+#define FINSH_WIN32_CLEAR_WIDTH 60
     int i;
 
     finsh_putc('\r');
-    for (i = 0; i <= 60; i++)
+    for (i = 0; i <= FINSH_WIN32_CLEAR_WIDTH; i++)
         finsh_putc(' ');
     finsh_putc('\r');
 #else /* _WIN32 */
@@ -1090,9 +1098,7 @@ static void finsh_handle_enter_key(void)
     rt_kprintf("\n");
     msh_exec(shell->cmd, shell->cmd_length);
     rt_kprintf(FINSH_PROMPT);
-    rt_memset(shell->cmd, 0, sizeof(shell->cmd));
-    shell->cmd_cursor = 0;
-    shell->cmd_length = 0;
+    _finsh_clear_command();
 
 #ifdef FINSH_USING_SNAPSHOT
     rt_list_for_each_entry_safe(snap, n, &shell->snapshot_list, list)
@@ -1196,10 +1202,10 @@ static void finsh_handle_normal_key(char ch)
     }
 #endif /* FINSH_USING_SNAPSHOT */
 
-    if (shell->cmd_length >= FINSH_CMD_SIZE)
+    if (shell->cmd_length > FINSH_CMD_SIZE)
     {
-        shell->cmd_length = 0;
-        shell->cmd_cursor = 0;
+        _finsh_clear_command();
+        rt_kprintf("Command length exceeds the maximum limit!\n");
     }
 
     if (shell->cmd_cursor >= shell->cmd_length)

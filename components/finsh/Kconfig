@@ -32,43 +32,45 @@ if RT_USING_MSH
         if FINSH_USING_HISTORY
             config FINSH_HISTORY_LINES
                 int "The command history line number"
-                default 10
+                default 5
         endif
 
     config FINSH_USING_SNAPSHOT
         bool "Enable command Ctrl+Z/Ctrl+Y snapshot feature"
         default n
+        help
+            Enable snapshot feature for command history. Ctrl+Z undoes recent edits,
+            Ctrl+Y redoes undone edits. This feature requires additional memory
+            based on FINSH_SNAPSHOT_DEPTH settings.
         if FINSH_USING_SNAPSHOT
             config FINSH_SNAPSHOT_DEPTH
                 int "The command snapshot depth"
                 default 10
+                help
+                    The number of command snapshots to keep.
         endif
 
     config FINSH_USING_WORD_OPERATION
         bool "Enable Ctrl+W/Backspace/Ctrl+Left/Right word-based cursor operations"
+        default n
         help
             Enable word-based cursor operations in the shell:
             - Ctrl+Backspace: delete previous word
             - Ctrl+Left/Right Arrow: move cursor by word
             - Ctrl+W: delete word before cursor
             This feature improves command line editing efficiency.
-        default n
-
+    
     config FINSH_USING_EXTEND_FEATURE
         bool "Enable insert/delete/home/end extend feature"
         default n
-
-    # Deprecated alias for backward compatibility
-    # English: Deprecated. Use FINSH_USING_EXTEND_FEATURE instead.
-    # 中文：已弃用。请使用 FINSH_USING_EXTEND_FEATURE。
-    config FINSH_USING_FUNC_EXT
-        bool "DEPRECATED: Use FINSH_USING_EXTEND_FEATURE instead"
-        default n
-        select FINSH_USING_EXTEND_FEATURE
         help
-          English: This option is deprecated and will be removed in future releases.
-          Please migrate to FINSH_USING_EXTEND_FEATURE.
-          中文：此选项已弃用，未来版本将移除。请迁移到 FINSH_USING_EXTEND_FEATURE。
+            Enable insert/delete/home/end extend feature in the shell:
+            - Insert: toggle insert mode
+            - Delete: delete character backward
+            - Home: move cursor to the beginning of the command
+            - End: move cursor to the end of the command
+            This feature improves command line editing efficiency.
+
     config FINSH_USING_SYMTAB
         bool "Using symbol table for commands"
         default y
@@ -93,8 +95,8 @@ if RT_USING_MSH
         bool "Enable the prompt mode in default"
         default y
 
-    config FINSH_PROMPT_WORD_DEFAULT
-        string "The default prompt word"
+    config FINSH_PROMPT_TEXT_DEFAULT
+        string "The default prompt text"
         default "msh "
 
     config FINSH_USING_AUTH
