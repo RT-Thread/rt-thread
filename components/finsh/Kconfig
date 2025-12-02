@@ -58,6 +58,17 @@ if RT_USING_MSH
         bool "Enable insert/delete/home/end extend feature"
         default n
 
+    # Deprecated alias for backward compatibility
+    # English: Deprecated. Use FINSH_USING_EXTEND_FEATURE instead.
+    # 中文：已弃用。请使用 FINSH_USING_EXTEND_FEATURE。
+    config FINSH_USING_FUNC_EXT
+        bool "DEPRECATED: Use FINSH_USING_EXTEND_FEATURE instead"
+        default n
+        select FINSH_USING_EXTEND_FEATURE
+        help
+          English: This option is deprecated and will be removed in future releases.
+          Please migrate to FINSH_USING_EXTEND_FEATURE.
+          中文：此选项已弃用，未来版本将移除。请迁移到 FINSH_USING_EXTEND_FEATURE。
     config FINSH_USING_SYMTAB
         bool "Using symbol table for commands"
         default y
