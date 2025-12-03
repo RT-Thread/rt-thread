@@ -58,6 +58,10 @@
 #include <posix/stdio.h>
 #endif /* RT_USING_POSIX_STDIO */
 
+#ifdef RT_USING_SERIAL_V2
+#include <drivers/dev_serial_v2.h>
+#endif /* RT_USING_SERIAL_V2 */
+
 /* finsh thread */
 #ifndef RT_USING_HEAP
 static struct rt_thread finsh_thread = { 0 };
