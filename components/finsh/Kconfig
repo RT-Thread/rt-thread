@@ -71,6 +71,14 @@ if RT_USING_MSH
             - End: move cursor to the end of the command
             This feature improves command line editing efficiency.
 
+    config FINSH_USING_FUNC_EXT
+        bool "DEPRECATED: Use FINSH_USING_EXTEND_FEATURE instead"
+        default n
+        select FINSH_USING_EXTEND_FEATURE
+        help
+            This option is deprecated and will be removed in future releases.
+            Please migrate to FINSH_USING_EXTEND_FEATURE.
+
     config FINSH_USING_SYMTAB
         bool "Using symbol table for commands"
         default y

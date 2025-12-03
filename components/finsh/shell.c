@@ -427,6 +427,7 @@ static struct finsh_history *finsh_history_alloc(char *cmd, rt_size_t cmd_length
 
 #ifndef RT_USING_HEAP
     int i;
+    history = RT_NULL;
     for (i = 0; i < FINSH_HISTORY_LINES; i++)
     {
         /* Use list.next and list.prev to check if the current historical record is being used */
@@ -437,7 +438,7 @@ static struct finsh_history *finsh_history_alloc(char *cmd, rt_size_t cmd_length
     }
     if (i >= FINSH_HISTORY_LINES)
     {
-        rt_kprintf("No available historical record buffer zone!\n");
+        rt_kprintf("No available historical record buffer!\n");
         return RT_NULL;
     }
 #else
@@ -515,6 +516,7 @@ static struct finsh_snapshot *finsh_snapshot_alloc(char *cmd, rt_size_t cmd_leng
 
 #ifndef RT_USING_HEAP
     int i;
+    snap = RT_NULL;
     for (i = 0; i < FINSH_SNAPSHOT_DEPTH; i++)
     {
         if (shell->snapshot[i].list.next && shell->snapshot[i].list.prev)
@@ -524,7 +526,7 @@ static struct finsh_snapshot *finsh_snapshot_alloc(char *cmd, rt_size_t cmd_leng
     }
     if (i >= FINSH_SNAPSHOT_DEPTH)
     {
-        rt_kprintf("No available snapshot buffer zone!\n");
+        rt_kprintf("No available snapshot buffer!\n");
         return RT_NULL;
     }
 #else
@@ -765,8 +767,11 @@ char finsh_getchar(void)
 }
 
 /* clang-format off */
-#define finsh_printf(fmt, ...) do { if (shell->is_echo) rt_kprintf(fmt, ##__VA_ARGS__); }while (0)
+/* Print a formatted string if echo is enabled */
+#define finsh_printf(fmt, ...) do { if (shell->is_echo) rt_kprintf(fmt, ##__VA_ARGS__); } while (0)
+/* Output a string if echo is enabled */
 #define finsh_puts(str) do { if (shell->is_echo) rt_kputs(str); } while (0)
+/* Output a character if echo is enabled */
 #define finsh_putc(ch) do { if (shell->is_echo) rt_kprintf("%c", ch); } while (0)
 /* clang-format on */
 
@@ -929,13 +934,18 @@ static void finsh_handle_ctrl_backspace_key(void)
     cursor = shell->cmd_cursor;
     while (cursor > 0 && shell->cmd[cursor - 1] == ' ')
         cursor--;
-    is_word_char = cursor > 0 && _is_word_char(shell->cmd[cursor - 1]);
 
-    /* find the start of the word to delete */
-    while (cursor > 0 && is_word_char && _is_word_char(shell->cmd[cursor - 1]))
-        cursor--;
-    while (cursor > 0 && !is_word_char && !_is_word_char(shell->cmd[cursor - 1]))
-        cursor--;
+    /* if the space is more than 1 characters, only delete space characters */
+    if (start_cursor - cursor < 2)
+    {
+        is_word_char = cursor > 0 && _is_word_char(shell->cmd[cursor - 1]);
+
+        /* find the start of the word to delete */
+        while (cursor > 0 && is_word_char && _is_word_char(shell->cmd[cursor - 1]))
+            cursor--;
+        while (cursor > 0 && !is_word_char && !_is_word_char(shell->cmd[cursor - 1]))
+            cursor--;
+    }
 
     /* calculate how many characters to delete */
     delete_count = start_cursor - cursor;
@@ -1095,11 +1105,6 @@ static void finsh_handle_enter_key(void)
     finsh_push_history();
 #endif /* FINSH_USING_HISTORY */
 
-    rt_kprintf("\n");
-    msh_exec(shell->cmd, shell->cmd_length);
-    rt_kprintf(FINSH_PROMPT);
-    _finsh_clear_command();
-
 #ifdef FINSH_USING_SNAPSHOT
     rt_list_for_each_entry_safe(snap, n, &shell->snapshot_list, list)
     {
@@ -1110,6 +1115,11 @@ static void finsh_handle_enter_key(void)
     shell->cur_snapshot = &shell->snapshot_list;
     shell->snapshot_state = FINSH_SNAPSHOT_STATE_NONE;
 #endif /* FINSH_USING_SNAPSHOT */
+
+    rt_kprintf("\n");
+    msh_exec(shell->cmd, shell->cmd_length);
+    rt_kprintf(FINSH_PROMPT);
+    _finsh_clear_command();
 }
 
 rt_inline void _finsh_add_key_by_insert(char ch)
@@ -1205,7 +1215,7 @@ static void finsh_handle_normal_key(char ch)
     if (shell->cmd_length >= FINSH_CMD_SIZE)
     {
         _finsh_clear_command();
-        rt_kprintf("Command length exceeds the maximum limit!\n");
+        rt_kprintf("\nCommand too long! Discarded.\a\n");
     }
 
     if (shell->cmd_cursor >= shell->cmd_length)
@@ -1604,7 +1614,13 @@ __declspec(allocate("FSymTab$z")) const struct finsh_syscall __fsym_end = {
   */
 int finsh_system_init(void)
 {
+#ifdef _MSC_VER
+    rt_ubase_t *ptr_begin, *ptr_end;
+#endif /* _MSC_VER */
     rt_thread_t tid;
+#ifndef RT_USING_HEAP
+    int ret;
+#endif /* RT_USING_HEAP */
 
     if (shell)
     {
@@ -1627,8 +1643,6 @@ int finsh_system_init(void)
 #elif defined(__ADSPBLACKFIN__) /* for VisualDSP++ Compiler */
     finsh_system_function_init(&__fsymtab_start, &__fsymtab_end);
 #elif defined(_MSC_VER)
-    rt_ubase_t *ptr_begin, *ptr_end;
-
     ptr_begin = (rt_ubase_t *)&__fsym_begin;
     ptr_begin += (sizeof(struct finsh_syscall) / sizeof(rt_ubase_t));
     while (*ptr_begin == 0)
@@ -1658,7 +1672,6 @@ int finsh_system_init(void)
         return -RT_ENOMEM;
     }
 #else
-    int ret;
     ret = rt_thread_init(&finsh_thread, FINSH_THREAD_NAME, finsh_thread_entry, RT_NULL, &finsh_thread_stack[0], sizeof(finsh_thread_stack), FINSH_THREAD_PRIORITY, 10);
     if (ret)
     {

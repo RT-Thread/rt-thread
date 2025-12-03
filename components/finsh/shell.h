@@ -12,7 +12,7 @@
 #ifndef __SHELL_H__
 #define __SHELL_H__
 
-#include <rtdevice.h>
+#include <rtthread.h>
 #include "finsh.h"
 
 #ifndef FINSH_THREAD_NAME
