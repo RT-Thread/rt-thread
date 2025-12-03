@@ -1,33 +1,81 @@
 menuconfig RT_USING_NETDEV
     bool "Enable network interface device"
     default n
+    help
+        RT_USING_NETDEV is used in the RT-Thread operating system to enable the Network Device Driver Framework.
 
+        Features:
+        Compiles the core code of the network device framework
+        Provides a unified interface for operating network devices
+        Supports multiple network device types
+        Enables related network tools and commands
+
+        Disabled by default; RT_USING_NETDEV is available once enabled.
 if RT_USING_NETDEV
 
     config NETDEV_USING_IFCONFIG
         bool "Enable ifconfig features"
         default y
+        help
+            NETDEV_USING_IFCONFIG is used to enable or disable the ifconfig command functionality in the system.
 
+            NETDEV_USING_IFCONFIG is enabled by default. When enabled, ifconfig can be used to perform the following functions: 
+            View network interface information; 
+            Configure network interface parameters.
     config NETDEV_USING_PING
         bool "Enable ping features"
         default y
+        help
+            NETDEV_USING_PING enables or disables the ping command functionality on the system.
+
+            Function Description:
+            Ping is a commonly used network diagnostic tool used to test connectivity between two network devices.
+
+            It is disabled by default; once enabled, the ping function can be used.
 
     config NETDEV_USING_NETSTAT
         bool "Enable netstat features"
         default y
+        help
+            NETDEV_USING_NETSTAT enables or disables the netstat command functionality on your system.
 
+            netstat is a command-line tool used to display network connectivity status, routing tables, and network interface statistics.
+
+            It is enabled by default. Once enabled, you can use the netstat command in the shell (FinSH/MSH) to perform the following operations:
+            View network connectivity status
+            View network interface statistics
+            View routing tables
     config NETDEV_USING_AUTO_DEFAULT
         bool "Enable default netdev automatic change features"
         default y
-	
+        help
+            NETDEV_USING_AUTO_DEFAULT enables or disables automatic switching of the default network interface.
+
+            Enabled by default. When enabled, the system automatically monitors the status of all network interfaces. 
+            When a new network interface is enabled and successfully obtains an IP address, the system automatically sets this new interface as the default network interface.
+            If the current default network interface becomes disconnected, the system will attempt to select one from other connected network interfaces as the new default interface.
     config NETDEV_USING_LINK_STATUS_CALLBACK
     	bool "Enable netdev callback on link status change"
     	default n
-	
+        help
+            NETDEV_USING_LINK_STATUS_CALLBACK enables the network link state change callback mechanism.
+
+            It is disabled by default. Once enabled, the netdev framework provides a set of link state change callback registration/deregistration interfaces, 
+            allowing users to execute custom business logic when the link state of network devices changes.
+                                
     config NETDEV_USING_IPV6
         bool "Enable IPV6 protocol support"
         default n
+        help
+            NETDEV_USING_IPv6 enables IPv6 protocol stack adaptation.
 
+            Features:
+            Adds IPv6 address management to network devices;
+            Supports IPv6 link layer adaptation;
+            Adapts to the RT-Thread kernel IPv6 protocol stack, providing IPv6 tools such as ping6 and ifconfig6;
+            Unifies the operation interface for IPv4/IPv6 devices.
+
+            Disabled by default. Once enabled, the netdev framework expands from "IPv4 only" to "dual-stack (IPv4+IPv6)/pure IPv6" mode.
     config NETDEV_IPV4
         int
         default 1
