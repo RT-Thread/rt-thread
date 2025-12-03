@@ -4,6 +4,16 @@ menuconfig RT_USING_LWIP
     select RT_USING_DEVICE_IPC
     select SAL_USING_LWIP if RT_USING_SAL
     default n
+    help
+        RT_USING_LWIP enables the LwIP lightweight TCP/IP protocol stack.
+
+        It is disabled by default. Once enabled:
+        - Enables RT_USING_DEVICE, enabling the RT-Thread device driver framework.
+        - Enables RT_USING_DEVICE_IPC, enabling the device framework's IPC (Inter-Process Communication) mechanism.
+        - Enables SAL_USING_LWIP (if RT_USING_SAL is on), binding the SAL (Socket Abstraction Layer) and LwIP adapter layer.
+        - Compiles the LwIP core source code (tcpip.c, udp.c, ip.c etc.).
+        - Compiles the LwIP and RT-Thread kernel adapter layer (thread, memory, lock adaptation).
+        - Compiles the LwIP and network card driver adapter layer (netif integration).
 
 if RT_USING_LWIP
     config RT_USING_LWIP_LOCAL_VERSION
@@ -21,18 +31,30 @@ if RT_USING_LWIP
 
         config RT_USING_LWIP141
             bool "lwIP v1.4.1"
+            help
+                RT_USING_LWIP141 is used to control the enabling of lwip version 1.4.1.
 
         config RT_USING_LWIP203
             bool "lwIP v2.0.3"
+            help
+                RT_USING_LWIP141 is used to control the enabling of lwip version 2.0.3.
 
         config RT_USING_LWIP212
             bool "lwIP v2.1.2"
-
+            help
+                RT_USING_LWIP141 is used to control the enabling of lwip version 2.1.2.
         # online version
         if !RT_USING_LWIP_LOCAL_VERSION
             config RT_USING_LWIP_LATEST
                 bool "lwIP latest"
                 select PKG_USING_LWIP
+                help       
+                    RT_USING_LWIP_LATEST selects the latest upstream version of LwIP from the RT-Thread package manager.
+
+                    This option is only visible when RT_USING_LWIP_LOCAL_VERSION is disabled (not selected). Once enabled:
+                    Automatically selects PKG_USING_LWIP to enable the RT-Thread package management framework.
+                    The latest LwIP source code will be downloaded from the RT-Thread package repository during the build process (network access required).
+                    This version may include the latest features and bug fixes but may have stability risks (not fully validated by RT-Thread).
         endif
     endchoice
 
@@ -55,188 +77,383 @@ if RT_USING_LWIP
         int "Memory alignment"
         default 8 if ARCH_CPU_64BIT
         default 4
+        help
+            RT_LWIP_MEM_ALIGNMENT controls the number of memory alignment bytes customized for the LwIP protocol stack.
+
+            64-bit CPU (ARCH_CPU_64BIT=y): Default 8 bytes
+            32-bit CPU (ARCH_CPU_64BIT=n): Default 4 bytes
 
     config RT_LWIP_IGMP
         bool "IGMP protocol"
         default y
+        help
+            RT_LWIP_IGMP controls whether the LwIP protocol stack enables IGMP (Internet Group Management Protocol).
+            IGMP is a protocol in the TCP/IP protocol suite responsible for IP multicast management, 
+            specifically addressing the questions of "how a device joins/leaves a multicast group and how a router knows the members of a multicast group".
+
+            It is enabled by default.
 
     config RT_LWIP_ICMP
         bool "ICMP protocol"
         default y
+        help
+            RT_LWIP_ICMP controls whether ICMP (Internet Control Message Protocol) is enabled in the LwIP protocol stack.
+            ICMP is the core protocol for network diagnostics and error feedback in the TCP/IP protocol suite. 
+            It does not handle data transmission and focuses solely on network status notifications, error reporting, and connectivity checks.
+
+            Enabled by default.
 
     config RT_LWIP_SNMP
         bool "SNMP protocol"
         select RT_LWIP_STATS
         default n
+        help    
+            RT_LWIP_SNMP is the core switch in RT-Thread that controls whether SNMP (Simple Network Management Protocol) is enabled in the LwIP protocol stack.
+            SNMP is an industrial-grade "network device management standard protocol," whose core purpose is to remotely monitor/configure the status of network devices.
+
+            It is disabled by default; once enabled, it will enable RT_LWIP_STATS (LwIP statistics function).
 
     config RT_LWIP_DNS
         bool "Enble DNS for name resolution"
         select RT_LWIP_UDP
         default y
+        help
+            RT_LWIP_DNS is the core switch in RT-Thread that controls whether the LwIP protocol stack enables DNS (Domain Name System) client functionality.
+            DNS acts as a "domain name translator" for network communication, resolving the core contradiction of "humans remembering domain names, machines recognizing IP addresses."
+
+            It is enabled by default, and enabling it will also enable RT_LWIP_UDP.
 
     config RT_LWIP_DHCP
         bool "Enable alloc ip address through DHCP"
         select RT_LWIP_UDP
         default y
+        help
+            RT_LWIP_DHCP is the core switch in RT-Thread that controls whether the LwIP protocol stack enables DHCP (Dynamic Host Configuration Protocol) client functionality.
+            Its function is to allow devices to automatically obtain network parameters such as IP address, subnet mask, gateway, and DNS server from a DHCP server (such as a router or gateway) on the local area network,
+            without requiring manual static configuration. It is the "core of automated network configuration" for embedded devices accessing the local area network.
+
+            It is enabled by default, and when enabled, RT_LWIP_UDP will also be enabled.
 
         if RT_LWIP_DHCP
             config IP_SOF_BROADCAST
                 int "SOF broadcast"
                 default 1
+                help
+                    IP_SOF_BROADCAST: DHCP broadcast transmission control. 
+                    The default value is 1 (1 is enabled, 0 is disabled).
 
             config IP_SOF_BROADCAST_RECV
                 int "SOF broadcast recv"
                 default 1
+                help
+                    IP_SOF_BROADCAST_RECV: DHCP broadcast receive control. 
+                    The default value is 1 (1 is enabled, 0 is disabled).
+
         endif
 
     menu "Static IPv4 Address"
             config RT_LWIP_IPADDR
                 string "IPv4: IP address"
                 default "192.168.1.30"
+                help
+                    RT_LWIP_IPADDR: The device's own static IPv4 address. 
+                    The default value is 192.168.1.30.
 
             config RT_LWIP_GWADDR
                 string "IPv4: Gateway address"
                 default "192.168.1.1"
+                help
+                    RT_LWIP_GWADDR: Default IPv4 gateway address for the local area network. 
+                    The default value is 192.168.1.1.
 
             config RT_LWIP_MSKADDR
                 string "IPv4: Mask address"
                 default "255.255.255.0"
+                help
+                    RT_LWIP_MSKADDR: Subnet mask. 
+                    The default value is 255.255.255.0.
     endmenu
 
     config RT_LWIP_UDP
         bool "UDP protocol"
         default y
+        help
+            RT_LWIP_UDP is the core switch in RT-Thread that controls whether the LwIP protocol stack enables UDP (User Datagram Protocol).
+            UDP is a minimalist transport layer protocol, characterized by connectionless, no acknowledgments, no retransmissions, low overhead, and low latency.
+
+            It is enabled by default, and features such as DHCP, DNS, IGMP, and SNMP will require RT_LWIP_UDP to function.
 
     config RT_LWIP_TCP
         bool "TCP protocol"
         default y
+        help
+            RT_LWIP_TCP is the core switch in RT-Thread that controls whether TCP (Transmission Control Protocol) is enabled in the LwIP protocol stack.
+            TCP is a transport layer protocol that prioritizes reliability. 
+            Its core features include connection-oriented architecture, three-way handshake, acknowledgment and retransmission, congestion control, and flow control.
+
+            It is enabled by default, and features such as HTTP, HTTPS, MQTT (TCP version), and Telnet rely on RT_LWIP_TCP.
 
     config RT_LWIP_RAW
         bool "RAW protocol"
         default n
+        help
+            RT_LWIP_RAW is the core switch in RT-Thread that controls whether the LwIP protocol stack enables raw sockets.
+            RAW sockets are a special communication method that "skips the transport layer (UDP/TCP) and directly manipulates the IP layer."
+
+            It is disabled by default, and RT_LWIP_USING_PING (ping function) will force it to depend on RT_LWIP_RAW.
 
     config RT_LWIP_PPP
         bool "PPP protocol"
         default n
+        help
+            RT_LWIP_PPP is the core switch in RT-Thread that controls whether the LwIP protocol stack enables PPP (Point-to-Point Protocol).
+            PPP is a communication protocol that operates at the "link layer" and is specifically designed to solve the problem of "encapsulating IP packets on serial links (such as serial ports)".
 
+            It is disabled by default.
     if RT_LWIP_PPP
         config RT_LWIP_PPPOE
             bool "PPPoE protocol"
             default n
+            help
+                RT_LWIP_PPPOE controls whether PPPoE (Point-to-Point Protocol over Ethernet) is enabled. 
+                It is disabled by default.
 
         config RT_LWIP_PPPOS
             bool "PPPoS protocol"
             default n
+            help
+                RT_LWIP_PPPOS controls whether PPPoS (Point-to-Point Protocol over Serial) functionality is enabled. 
+                It is disabled by default.
     endif
 
     config RT_MEMP_NUM_NETCONN
         int "the number of struct netconns"
         default 8
+        help
+            RT_MEMP_NUM_NETCONN specifies the maximum number of struct netconn instances in LwIP (i.e., the size of the netconn memory pool).
+            struct netconn is the core data structure of the high-level network programming interface (Netconn API) provided by LwIP for the application layer.
+
+            The default value is 8.
 
     config RT_LWIP_PBUF_NUM
         int "the number of PBUF"
         default 16
+        help
+            RT_LWIP_PBUF_NUM specifies the maximum number of pbuf (packet buffer) structure instances in LwIP.
+            The pbuf is the most basic and core data structure in the LwIP protocol stack; all network packets flowing within LwIP rely on the pbuf for transport.
+
+            The default value is 16.
 
     config RT_LWIP_RAW_PCB_NUM
         int "the number of raw connection"
         default 4
+        help
+            RT_LWIP_RAW_PCB_NUM specifies the maximum number of raw_pcb (Raw Protocol Control Block) structure instances in LwIP, i.e., the capacity of the raw_pcb memory pool.
+            raw_pcb is the core data structure for LwIP to manage "raw IP connections," essentially acting as a "handle" for raw IP communication.
+
+            The default value is 4.
 
     config RT_LWIP_UDP_PCB_NUM
         int "the number of UDP socket"
         default 8 if RT_USING_DFS_NFS
         default 4
+        help
+            RT_LWIP_UDP_PCB_NUM specifies the maximum number of udp_pcb (UDP Protocol Control Block) structure instances in LwIP, i.e., the capacity of the UDP control block memory pool.
+            UDP is a connectionless transport layer protocol, but LwIP still requires a "management unit" to maintain the context of UDP communication; this unit is udp_pcb.
+
+            If the NFS file system is enabled (RT_USING_DFS_NFS=y), the default value is 8; 
+            if NFS is not enabled, the default value is 4.
 
     if RT_LWIP_TCP
     config RT_LWIP_TCP_PCB_NUM
         int "the number of TCP socket"
         default 4
+        help
+            RT_LWIP_TCP_PCB_NUM specifies the maximum number of tcp_pcb (TCP Protocol Control Block) structure instances in LwIP, i.e., the total capacity of the TCP control block memory pool.
+            TCP is a connection-oriented transport layer protocol, and tcp_pcb is the core data structure in LwIP that manages the entire lifecycle of a TCP connection.
 
+            The default value is 4.
     config RT_LWIP_TCP_SEG_NUM
         int "the number of TCP segment"
         default 40
+        help
+            RT_LWIP_TCP_SEG_NUM specifies the maximum number of tcp_seg (TCP segment/packet) structure instances in LwIP, i.e., the total capacity of the TCP segment memory pool.
+            TCP is a byte-stream-oriented protocol; during actual transmission, the byte stream is split into "segments," and tcp_seg is the core data structure in LwIP that manages these segments.
+
+            The default value is 40.
 
     config RT_LWIP_TCP_SND_BUF
         int "the size of send buffer"
         default 8196
+        help
+            RT_LWIP_TCP_SND_BUF specifies the total size of the send buffer for a single TCP connection in LwIP. 
+            The default value is 8196 bytes.
 
     config RT_LWIP_TCP_WND
         int "the size of TCP send window"
         default 8196
+        help
+            RT_LWIP_TCP_WND specifies the send window size for TCP connections in LwIP. 
+            The default value is 8196 bytes.
     endif
 
     config RT_LWIP_TCPTHREAD_PRIORITY
         int "the priority level value of lwIP thread"
         default 10
+        help
+            RT_LWIP_TCPTHREAD_PRIORITY specifies the priority value of the LwIP core processing thread (usually called tcpip_thread).
+            tcpip_thread is the "main processing thread" of LwIP, and all core network-related operations are performed by it.
+
+            The default priority is 10.
 
     config RT_LWIP_TCPTHREAD_MBOX_SIZE
         int "the number of mail in the lwIP thread mailbox"
         default 8
+        help
+            RT_LWIP_TCPTHREAD_MBOX_SIZE specifies the mailbox size for the LwIP core thread (tcpip_thread). 
+            The default mailbox size is 8.
 
     config RT_LWIP_TCPTHREAD_STACKSIZE
         int "the stack size of lwIP thread"
         default 2048 if ARCH_CPU_64BIT
         default 1024
+        help
+            RT_LWIP_TCPTHREAD_STACKSIZE specifies the stack size of the LwIP core processing thread (tcpip_thread).
+
+            For 64-bit architectures (ARCH_CPU_64BIT=y), the default stack size is 2048 bytes;
+            For non-64-bit architectures (such as 32-bit ARM/STM32), the default stack size is 1024 bytes.
 
     config LWIP_NO_RX_THREAD
         bool "Not use Rx thread"
         default n
+        help
+            LWIP_NO_RX_THREAD is a network interface card (NIC) data reception architecture switch when RT-Thread adapts to the LwIP protocol stack.
+            It is off by default: enabling a separate "receive thread (Rx Thread)" to handle NIC data reception.
 
     config LWIP_NO_TX_THREAD
         bool "Not use Tx thread"
         default n
+        help
+            LWIP_NO_TX_THREAD is a network interface card (NIC) data transmission architecture switch when RT-Thread adapts to the LwIP protocol stack.
+            It is off by default: enabling a separate "transmission thread (Tx Thread)" to handle NIC data transmission.
 
     config RT_LWIP_ETHTHREAD_PRIORITY
         int "the priority level value of ethernet thread"
         default 12
+        help
+            RT_LWIP_ETHTHREAD_PRIORITY is used to set the priority of the Ethernet processing thread. 
+            The default priority is 12.
 
     config RT_LWIP_ETHTHREAD_STACKSIZE
         int "the stack size of ethernet thread"
         default 2048 if ARCH_CPU_64BIT
         default 1024
+        help
+            RT_LWIP_ETHTHREAD_STACKSIZE sets the stack size for the Ethernet processing thread, directly determining the stack memory space available for the Ethernet thread during runtime.
+
+            For 64-bit CPU architectures, the default stack size is 2048 bytes.
+            For other architectures (such as 32-bit ARM/MCU), the default stack size is 1024 bytes.
 
     config RT_LWIP_ETHTHREAD_MBOX_SIZE
         int "the number of mail in the ethernet thread mailbox"
         default 8
+        help
+            RT_LWIP_ETHTHREAD_MBOX_SIZE sets the maximum number of messages a single Ethernet processing thread can hold in its mailbox. 
+            It is a key rate-limiting parameter for asynchronous inter-thread communication.
+            
+            The default mailbox capacity is 8 messages.
 
     config RT_LWIP_REASSEMBLY_FRAG
         bool "Enable IP reassembly and frag"
         default n
+        help
+            RT_LWIP_REASSEMBLY_FRAG controls the on/off state of "IP datagram fragmentation and reassembly".
+
+            Enabled (y): Supports sending very large IP datagrams (automatic fragmentation), and can also receive and reassemble fragmented packets from other devices;
+            Disabled (n): Does not support fragmentation (discards very large datagrams directly), and does not process received fragmented packets (discards directly).
+            Disabled by default.
 
     config LWIP_NETIF_STATUS_CALLBACK
         int "Enable netif status callback"
         default 1
+        help
+            LWIP_NETIF_STATUS_CALLBACK is a core switch in the LwIP protocol stack that controls the "Network Interface (NETIF) status callback function," 
+            enabling custom processing logic when a network interface status change is triggered.
+            When LWIP_NETIF_STATUS_CALLBACK is enabled, LwIP calls the registered callback function when a critical state of the NETIF changes, 
+            allowing the application layer to detect and handle the state change—essentially an "event-driven" network status notification mechanism. 
+            
+            It is enabled by default.
 
     config LWIP_NETIF_LINK_CALLBACK
         int "Enable netif link status callback"
         default 1
+        help
+            LWIP_NETIF_LINK_CALLBACK is a core switch in the LwIP protocol stack that focuses on "network interface (netif) link state callbacks", 
+            specifically used to detect the physical link connectivity status of the network interface.
+
+            When LWIP_NETIF_LINK_CALLBACK is enabled, LwIP will trigger the registered "link callback function" when the physical link status of the netif changes.
+
+            Enabled by default.
 
     config RT_LWIP_NETIF_NAMESIZE
         int "netif name length"
         default 6
+        help
+            RT_LWIP_NETIF_NAMESIZE limits the maximum length of a network interface (NETIF) name; essentially, it allocates a fixed-length memory buffer for the NETIF name. 
+            The default value is 6.
 
     config SO_REUSE
         int "Enable SO_REUSEADDR option"
         default 1
+        help
+            SO_REUSE is a core switch in the LwIP protocol stack that controls the "SO_REUSEADDR socket option," used to relax address/port multiplexing rules for TCP/UDP socket binding (bind()).
+
+            It is enabled by default.
 
     config LWIP_SO_RCVTIMEO
         int "Enable receive timeout for sockets/netconns and SO_RCVTIMEO processing."
         default 1
+        help
+            LWIP_SO_RCVTIMEO is a core switch in the LwIP protocol stack that controls the "socket/network connection (netconn) receive timeout function."
+            It sets the timeout for receive operations such as recv()/recvfrom()/netconn_recv(), preventing threads from being blocked indefinitely while waiting for data.
+
+            It is enabled by default.
 
     config LWIP_SO_SNDTIMEO
         int "Enable send timeout for sockets/netconns and SO_SNDTIMEO processing."
         default 1
+        help
+            LWIP_SO_SNDTIMEO is a core switch in the LwIP protocol stack that controls the "socket/network connection (netconn) send timeout function."
+            It is used to set the timeout for send()/sendto()/netconn_send() and other send operations, preventing threads from being permanently blocked while waiting for the send buffer/network link.
+
+            It is enabled by default.
 
     config LWIP_SO_RCVBUF
         int "Enable SO_RCVBUF processing"
         default 1
+        help
+            LWIP_SO_RCVBUF is a core switch in the LwIP protocol stack that controls the configuration of the socket receive buffer (SO_RCVBUF). 
+            It allows the application layer to customize the receive buffer size through SO_RCVBUF socket options.
+
+            It is enabled by default.
 
     config LWIP_SO_LINGER
         int "Enable SO_LINGER processing"
         default 0
+        help
+            LWIP_SO_LINGER is a core switch in the LwIP protocol stack that controls the handling of the SO_LINGER option for sockets. 
+            It controls the "delayed close" behavior when closing a TCP socket (using close())————determining whether to wait for any unsent data to complete before closing the socket.
+
+            It is disabled by default.
 
     config RT_LWIP_NETIF_LOOPBACK
         bool "Enable netif loopback"
         default n
+        help
+            LWIP_SO_LINGER enables the "Loopback" function of the LwIP network interface (netif).
+            Essentially, it allows data to be transmitted in a closed loop within the protocol stack (data packets sent to the local machine do not need to pass through the physical network card).
+
+            It is disabled by default.
 
     config LWIP_NETIF_LOOPBACK
         int
@@ -246,10 +463,22 @@ if RT_USING_LWIP
     config RT_LWIP_STATS
         bool "Enable lwIP statistics"
         default n
+        help
+            RT_LWIP_STATS controls the core switch for "LwIP Statistics Functions," enabling LwIP's built-in comprehensive network statistics capabilities.
+            This covers traffic, error, and status statistics at various layers, including TCP/UDP/IP/ICMP/NIC,
+            and is a crucial configuration for network debugging, performance analysis, and fault location. However, it significantly increases memory usage and incurs a small amount of CPU overhead.
+
+            It is disabled by default.
 
     config RT_LWIP_USING_HW_CHECKSUM
         bool "Enable hardware checksum"
         default n
+        help    
+            RT_LWIP_USING_HW_CHECKSUM is a core switch controlling "hardware checksum acceleration."
+            It's used to offload the "TCP/UDP/IP checksum calculation" in LwIP from software implementation to hardware. 
+            This is a key configuration for reducing CPU overhead and improving network throughput, but it relies on hardware driver support and increases adaptation complexity.
+
+            Disabled by default.
 
     config RT_LWIP_USING_PING
         bool "Enable ping features"
@@ -257,151 +486,309 @@ if RT_USING_LWIP
         select NETDEV_USING_PING
         select RT_LWIP_ICMP
         select RT_LWIP_RAW
+        help
+            RT_LWIP_USING_PING controls the core master switch for the "Ping function"
+            It enables devices to support ICMP Echo Request/Reply (i.e., the Ping protocol)—allowing them to respond to ping requests from external devices and also to proactively ping other devices.
+            It is a fundamental function for network connectivity testing and fault location.
+
+            It is enabled by default. Enabling it will enable NETDEV_USING_PING, RT_LWIP_ICMP, and RT_LWIP_RAW.
 
     config LWIP_USING_DHCPD
         bool "Enable DHCP server"
         default n
+        help
+            LWIP_USING_DHCPD is the core switch in the LwIP protocol stack that controls the "DHCP Server function."
+            It enables embedded devices to act as DHCP servers—assigning network parameters such as IP addresses, subnet masks, gateways, and DNS to other devices on the local area network.
+
+            It is disabled by default.
 
     if LWIP_USING_DHCPD
         config DHCPD_SERVER_IP
             string "DHCPD SERVER IP address"
             default "192.168.169.1"
+            help
+                DHCPD_SERVER_IP is an auxiliary configuration for the LwIP DHCP server function, used to define the DHCP server's own static IP address.
+                The default value is 192.168.169.1.
 
         config DHCPD_USING_ROUTER
             bool "alloc gateway ip for router"
             default y
+            help    
+                DHCPD_USING_ROUTER determines whether the DHCP server assigns a gateway IP address to clients.
+                When enabled, it sends a default gateway IP address (which by default is the DHCP server's own IP address, `DHCPD_SERVER_IP`) to clients.
+                When disabled, it does not assign a gateway address to clients, only an IP address and subnet mask.
+
+                Enabled by default.
 
         config LWIP_USING_CUSTOMER_DNS_SERVER
             bool "Enable customer DNS server config"
             default n
+            help
+                LWIP_USING_CUSTOMER_DNS_SERVER allows the DHCP server to assign a custom DNS server IP to the client.
+                The DHCP server will not send DNS addresses to the client.
+                When enabled, one or more DNS server IPs can be manually configured and sent to the client.
+
+                It is disabled by default.
+
         if LWIP_USING_CUSTOMER_DNS_SERVER
             config DHCP_DNS_SERVER_IP
                 string "Custom DNS server IP address"
                 default "1.1.1.1"
+                help
+                    DHCP_DNS_SERVER_IP is a "custom DNS address configuration item" in the LwIP DHCP server. 
+                    Its core function is to define the "preferred DNS server IP address" assigned by the DHCP server to clients.
+
+                    The default value is 1.1.1.1.
+
         endif
     endif
 
     config RT_LWIP_ENABLE_USER_HOOKS
         bool "Enable user-defined LWIP hooks"
         default n
+        help
+            The core function of RT_LWIP_ENABLE_USER_HOOKS is to expose "user-defined callback interfaces" for key processes in the LwIP protocol stack.
+            When enabled, users can register custom functions at core LwIP processing nodes (such as packet sending/receiving, connection establishment/closure, and error handling).
+            It enables fine-grained monitoring, modification, or extension of protocol stack behavior.
+
+            It is disabled by default.
 
     menuconfig RT_LWIP_DEBUG
         bool "Enable lwIP Debugging Options"
         default n
+        help    
+            The core function of RT_LWIP_DEBUG is to enable full-dimensional debug logging for the LwIP protocol stack—
+            When enabled, it displays detailed debug configuration options (such as IP/TCP/UDP/ICMP layer debugging, log levels), allowing users to enable debug logging at different levels/modules as needed.
+            It is the "ultimate tool" for locating problems in the LwIP core layer (such as protocol interaction, packet transmission and reception, and error triggering).
+
+            It is disabled by default.
 
     if RT_LWIP_DEBUG
 
         config RT_LWIP_SYS_DEBUG
             bool "Enable Debugging of sys.c"
             default n
+            help
+                RT_LWIP_SYS_DEBUG enables debug logging in the LwIP core abstraction layer sys.c.
+                Enabling this configuration will output debug logs for all operations in sys.c.
+
+                It is disabled by default.
 
         config RT_LWIP_ETHARP_DEBUG
             bool "Enable Debugging of etharp.c"
             default n
+            help
+                RT_LWIP_ETHARP_DEBUG enables debug logging in etharp.c.
+                Enabling this outputs debug logs for all etharp.c operations.
+                Disabled by default.
 
         config RT_LWIP_PPP_DEBUG
             bool "Enable Debugging of PPP"
             default n
+            help
+                RT_LWIP_PPP_DEBUG enables debug logging for PPP module.
+                Enabling this outputs debug logs for all PPP operations.
+                Disabled by default.
 
         config RT_LWIP_MEM_DEBUG
             bool "Enable Debugging of mem.c"
             default n
+            help
+                RT_LWIP_MEM_DEBUG enables debug logging in mem.c.
+                Enabling this outputs debug logs for all mem.c operations.
+                Disabled by default.
 
         config RT_LWIP_MEMP_DEBUG
             bool "Enable Debugging of memp.c"
             default n
+            help
+                RT_LWIP_MEMP_DEBUG enables debug logging in memp.c.
+                Enabling this outputs debug logs for all memp.c operations.
+                Disabled by default.
 
         config RT_LWIP_PBUF_DEBUG
             bool "Enable Debugging of pbuf.c"
             default n
+            help
+                RT_LWIP_PBUF_DEBUG enables debug logging in pbuf.c.
+                Enabling this outputs debug logs for all pbuf.c operations.
+                Disabled by default.
 
         config RT_LWIP_API_LIB_DEBUG
             bool "Enable Debugging of api_lib.c"
             default n
+            help
+                RT_LWIP_API_LIB_DEBUG enables debug logging in api_lib.c.
+                Enabling this outputs debug logs for all api_lib.c operations.
+                Disabled by default.
 
         config RT_LWIP_API_MSG_DEBUG
             bool "Enable Debugging of api_msg.c"
             default n
+            help
+                RT_LWIP_API_MSG_DEBUG enables debug logging in api_msg.c.
+                Enabling this outputs debug logs for all api_msg.c operations.
+                Disabled by default.
 
         config RT_LWIP_TCPIP_DEBUG
             bool "Enable Debugging of tcpip.c"
             default n
+            help
+                RT_LWIP_TCPIP_DEBUG enables debug logging in tcpip.c.
+                Enabling this outputs debug logs for all tcpip.c operations.
+                Disabled by default.
 
         config RT_LWIP_NETIF_DEBUG
             bool "Enable Debugging of netif.c"
             default n
+            help
+                RT_LWIP_NETIF_DEBUG enables debug logging in netif.c.
+                Enabling this outputs debug logs for all netif.c operations.
+                Disabled by default.
 
         config RT_LWIP_SOCKETS_DEBUG
             bool "Enable Debugging of sockets.c"
             default n
+            help
+                RT_LWIP_SOCKETS_DEBUG enables debug logging in sockets.c.
+                Enabling this outputs debug logs for all sockets.c operations.
+                Disabled by default.
 
         config RT_LWIP_DNS_DEBUG
             bool "Enable Debugging of DNS"
             default n
+            help
+                RT_LWIP_DNS_DEBUG enables debug logging for DNS module.
+                Enabling this outputs debug logs for all DNS operations.
+                Disabled by default.
 
         config RT_LWIP_AUTOIP_DEBUG
             bool "Enable Debugging of autoip.c"
             default n
+            help
+                RT_LWIP_AUTOIP_DEBUG enables debug logging in autoip.c.
+                Enabling this outputs debug logs for all autoip.c operations.
+                Disabled by default.
 
         config RT_LWIP_DHCP_DEBUG
             bool "Enable Debugging of dhcp.c"
             default n
+            help
+                RT_LWIP_DHCP_DEBUG enables debug logging in dhcp.c.
+                Enabling this outputs debug logs for all dhcp.c operations.
+                Disabled by default.
 
         config RT_LWIP_IP_DEBUG
             bool "Enable Debugging of IP"
             default n
+            help
+                RT_LWIP_IP_DEBUG enables debug logging for IP module.
+                Enabling this outputs debug logs for all IP operations.
+                Disabled by default.
 
         config RT_LWIP_IP_REASS_DEBUG
             bool "Enable debugging in ip_frag.c for both frag & reass"
             default n
+            help
+                RT_LWIP_IP_REASS_DEBUG enables debug logging in ip_frag.c.
+                Enabling this outputs logs for IP fragment & reassembly.
+                Disabled by default.
 
         config RT_LWIP_ICMP_DEBUG
             bool "Enable Debugging of icmp.c"
             default n
+            help
+                RT_LWIP_ICMP_DEBUG enables debug logging in icmp.c.
+                Enabling this outputs debug logs for all icmp.c operations.
+                Disabled by default.
 
         config RT_LWIP_IGMP_DEBUG
             bool "Enable Debugging of igmp.c"
             default n
+            help
+                RT_LWIP_IGMP_DEBUG enables debug logging in igmp.c.
+                Enabling this outputs debug logs for all igmp.c operations.
+                Disabled by default.
 
         config RT_LWIP_UDP_DEBUG
             bool "Enable Debugging of UDP"
             default n
+            help
+                RT_LWIP_UDP_DEBUG enables debug logging for UDP module.
+                Enabling this outputs debug logs for all UDP operations.
+                Disabled by default.
 
         config RT_LWIP_TCP_DEBUG
             bool "Enable Debugging of TCP"
             default n
+            help
+                RT_LWIP_TCP_DEBUG enables debug logging for TCP module.
+                Enabling this outputs debug logs for all TCP operations.
+                Disabled by default.
 
         config RT_LWIP_TCP_INPUT_DEBUG
             bool "Enable Debugging of tcp_in.c"
             default n
+            help
+                RT_LWIP_TCP_INPUT_DEBUG enables debug logging in tcp_in.c.
+                Enabling this outputs logs for TCP input processing.
+                Disabled by default.
 
         config RT_LWIP_TCP_OUTPUT_DEBUG
             bool "Enable Debugging of tcp_out.c"
             default n
+            help
+                RT_LWIP_TCP_OUTPUT_DEBUG enables debug logging in tcp_out.c.
+                Enabling this outputs logs for TCP output processing.
+                Disabled by default.
 
         config RT_LWIP_TCP_RTO_DEBUG
             bool "Enable debugging in TCP for retransmit"
             default n
+            help
+                RT_LWIP_TCP_RTO_DEBUG enables debug logging for TCP retransmit.
+                Enabling this outputs logs for TCP retransmission logic.
+                Disabled by default.
 
         config RT_LWIP_TCP_CWND_DEBUG
             bool "Enable debugging for TCP congestion window"
             default n
+            help
+                RT_LWIP_TCP_CWND_DEBUG enables logging for TCP congestion window.
+                Enabling this outputs logs for TCP congestion window logic.
+                Disabled by default.
 
         config RT_LWIP_TCP_WND_DEBUG
             bool "Enable debugging in tcp_in.c for window updating"
             default n
+            help
+                RT_LWIP_TCP_WND_DEBUG enables logging for TCP window updating.
+                Enabling this outputs logs for TCP window update logic.
+                Disabled by default.
 
         config RT_LWIP_TCP_FR_DEBUG
             bool "Enable debugging in tcp_in.c for fast retransmit"
             default n
+            help
+                RT_LWIP_TCP_FR_DEBUG enables logging for TCP fast retransmit.
+                Enabling this outputs logs for TCP fast retransmission logic.
+                Disabled by default.
 
         config RT_LWIP_TCP_QLEN_DEBUG
             bool "Enable debugging for TCP queue lengths"
             default n
+            help
+                RT_LWIP_TCP_QLEN_DEBUG enables logging for TCP queue lengths.
+                Enabling this outputs logs for TCP queue length monitoring.
+                Disabled by default.
 
         config RT_LWIP_TCP_RST_DEBUG
             bool "Enable debugging for TCP with the RST message"
             default n
+            help
+                RT_LWIP_TCP_RST_DEBUG enables logging for TCP RST messages.
+                Enabling this outputs logs for TCP RST message processing.
+                Disabled by default.
 
     endif
 
