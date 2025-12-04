@@ -24,8 +24,13 @@
 #error "Please set RT_NAME_MAX to at lest 16"
 #endif
 
-#ifdef RT_USING_VIRTIO10
-#define RT_USING_VIRTIO_VERSION 0x1
+/* VirtIO version configuration */
+#if defined(RT_USING_VIRTIO_LEGACY) || defined(RT_USING_VIRTIO10)
+#define RT_USING_VIRTIO_VERSION 0x1  /* Legacy interface */
+#elif defined(RT_USING_VIRTIO_MODERN)
+#define RT_USING_VIRTIO_VERSION 0x2  /* Modern interface (1.0+) */
+#else
+#define RT_USING_VIRTIO_VERSION 0x1  /* Default to legacy */
 #endif
 
 #include <virtio_mmio.h>
@@ -111,6 +116,7 @@ enum
 struct virtio_device
 {
     rt_uint32_t irq;
+    rt_uint32_t version;        /* VirtIO version from MMIO config */
 
     struct virtq *queues;
     rt_size_t queues_num;
@@ -135,6 +141,11 @@ void virtio_status_acknowledge_driver(struct virtio_device *dev);
 void virtio_status_driver_ok(struct virtio_device *dev);
 void virtio_interrupt_ack(struct virtio_device *dev);
 rt_bool_t virtio_has_feature(struct virtio_device *dev, rt_uint32_t feature_bit);
+
+/* Modern VirtIO feature negotiation (64-bit features) */
+rt_uint64_t virtio_get_features(struct virtio_device *dev);
+void virtio_set_features(struct virtio_device *dev, rt_uint64_t features);
+rt_bool_t virtio_has_feature_64(struct virtio_device *dev, rt_uint64_t features, rt_uint32_t feature_bit);
 
 rt_err_t virtio_queues_alloc(struct virtio_device *dev, rt_size_t queues_num);
 void virtio_queues_free(struct virtio_device *dev);
