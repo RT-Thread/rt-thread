@@ -8,3 +8,7 @@ config RT_HWTIMER_ARM_ARCH
     depends on RT_USING_HWTIMER
     depends on ARCH_ARM_CORTEX_A || ARCH_ARMV8
     default n
+
+if RT_USING_DM && RT_USING_HWTIMER
+    osource "$(SOC_DM_HWTIMER_DIR)/Kconfig"
+endif

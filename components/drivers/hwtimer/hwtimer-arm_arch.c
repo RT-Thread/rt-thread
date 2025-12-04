@@ -201,7 +201,7 @@ static timer_value_handle value_handle[] =
     os_vtimer_value,
 };
 
-static rt_err_t arm_arch_timer_local_enable(void)
+rt_err_t arm_arch_timer_local_enable(void)
 {
     rt_err_t ret = RT_EOK;
 
@@ -222,8 +222,7 @@ static rt_err_t arm_arch_timer_local_enable(void)
     return ret;
 }
 
-rt_used
-static rt_err_t arm_arch_timer_local_disable(void)
+rt_err_t arm_arch_timer_local_disable(void)
 {
     rt_err_t ret = RT_EOK;
 
@@ -240,8 +239,7 @@ static rt_err_t arm_arch_timer_local_disable(void)
     return ret;
 }
 
-rt_used
-static rt_err_t arm_arch_timer_set_frequency(rt_uint64_t frq)
+rt_err_t arm_arch_timer_set_frequency(rt_uint64_t frq)
 {
     rt_err_t ret = RT_EOK;
 
@@ -256,8 +254,7 @@ static rt_err_t arm_arch_timer_set_frequency(rt_uint64_t frq)
     return ret;
 }
 
-rt_used
-static rt_uint64_t arm_arch_timer_get_frequency(void)
+rt_uint64_t arm_arch_timer_get_frequency(void)
 {
     rt_uint64_t frq;
 
@@ -268,8 +265,7 @@ static rt_uint64_t arm_arch_timer_get_frequency(void)
     return frq;
 }
 
-rt_used
-static rt_err_t arm_arch_timer_set_value(rt_uint64_t val)
+rt_err_t arm_arch_timer_set_value(rt_uint64_t val)
 {
     rt_err_t ret = RT_EOK;
 
@@ -285,8 +281,7 @@ static rt_err_t arm_arch_timer_set_value(rt_uint64_t val)
     return ret;
 }
 
-rt_used
-static rt_uint64_t arm_arch_timer_get_value(void)
+rt_uint64_t arm_arch_timer_get_value(void)
 {
     rt_uint64_t val = 0;
 
@@ -296,6 +291,15 @@ static rt_uint64_t arm_arch_timer_get_value(void)
     }
 
     return val;
+}
+
+rt_uint64_t arm_arch_timer_get_count(void)
+{
+    rt_uint64_t cntpct;
+
+    rt_hw_sysreg_read(CNTPCT, cntpct);
+
+    return cntpct;
 }
 
 static void arm_arch_timer_isr(int vector, void *param)
