@@ -1182,7 +1182,7 @@ rt_err_t rt_link_deinit(void)
         rt_timer_detach(&rt_link_scb->sendtimer);
         rt_timer_detach(&rt_link_scb->recvtimer);
         rt_event_detach(&rt_link_scb->event);
-            rt_free(rt_link_scb);
+        rt_free(rt_link_scb);
         rt_link_scb = RT_NULL;
     }
     rt_thread_t thread = rt_thread_find(RT_LINK_THREAD_NAME);
