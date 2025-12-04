@@ -25,7 +25,7 @@
 #endif
 
 /* VirtIO version configuration */
-#ifdef RT_USING_VIRTIO_LEGACY
+#if defined(RT_USING_VIRTIO_LEGACY) || defined(RT_USING_VIRTIO10)
 #define RT_USING_VIRTIO_VERSION 0x1  /* Legacy interface */
 #elif defined(RT_USING_VIRTIO_MODERN)
 #define RT_USING_VIRTIO_VERSION 0x2  /* Modern interface (1.0+) */

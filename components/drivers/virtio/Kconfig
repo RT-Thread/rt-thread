@@ -13,6 +13,12 @@ menuconfig RT_USING_VIRTIO
                     Support for VirtIO legacy interface (version 0x1).
                     This is the older version compatible with most existing QEMU versions.
 
+            config RT_USING_VIRTIO10
+                bool "VirtIO Legacy (v1.0 - alias for compatibility)"
+                help
+                    Alias for RT_USING_VIRTIO_LEGACY for backward compatibility.
+                    Support for VirtIO legacy interface (version 0x1).
+
             config RT_USING_VIRTIO_MODERN
                 bool "VirtIO Modern (v1.0+)"
                 help
