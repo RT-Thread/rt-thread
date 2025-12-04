@@ -1,0 +1,22 @@
+# RT-Thread building script for Rust examples
+
+import os
+from building import *
+
+Import('rtconfig')
+
+cwd    = GetCurrentDir()
+group  = []
+entries = os.listdir(cwd)
+
+subdirs = ['application', 'component', 'modules']
+
+for subdir in subdirs:
+    if subdir in entries:
+        result = SConscript(os.path.join(subdir, 'SConscript'))
+        if isinstance(result, (list, tuple)):
+            group.extend(result)
+        else:
+            group.append(result)
+
+Return('group')

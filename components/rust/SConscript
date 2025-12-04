@@ -1,0 +1,28 @@
+# for module compiling
+import os
+from building import *
+
+objs = []
+
+def _has(sym: str) -> bool:
+    try:
+        return bool(GetDepend([sym]))
+    except Exception:
+        return bool(GetDepend(sym))
+
+if not _has('RT_USING_RUST'):
+    Return('objs')
+
+cwd = GetCurrentDir()
+entries = os.listdir(cwd)
+
+for d in entries:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        result = SConscript(os.path.join(d, 'SConscript'))
+        if isinstance(result, (list, tuple)):
+            objs.extend(result)
+        else:
+            objs.append(result)
+
+Return('objs')
