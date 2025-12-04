@@ -1,5 +1,7 @@
 # VirtIO Driver for RT-Thread
 
+[中文](README_zh.md) | English
+
 ## Overview
 
 The VirtIO driver provides support for virtual I/O devices in RT-Thread, primarily used in virtualized environments like QEMU.
@@ -43,17 +45,13 @@ Options:
 
 Enable individual VirtIO devices:
 
-```
-RT-Thread Components → Device Drivers → Using VirtIO device drivers
-```
-
 - `RT_USING_VIRTIO_BLK`: VirtIO block device support
 - `RT_USING_VIRTIO_NET`: VirtIO network device support
 - `RT_USING_VIRTIO_CONSOLE`: VirtIO console device support
 - `RT_USING_VIRTIO_GPU`: VirtIO GPU device support
 - `RT_USING_VIRTIO_INPUT`: VirtIO input device support
 
-## Key Differences Between Legacy and Modern VirtIO
+## Key Differences
 
 ### Legacy VirtIO (v0.95)
 - 32-bit feature negotiation
@@ -66,7 +64,6 @@ RT-Thread Components → Device Drivers → Using VirtIO device drivers
 - Separate descriptor/driver/device queue areas
 - Enhanced status flow with FEATURES_OK check
 - Better memory alignment and atomicity guarantees
-- Config generation field for atomic configuration reads
 
 ## Migration Guide
 
@@ -94,74 +91,10 @@ The following BSPs have been updated to support both legacy and modern VirtIO:
 
 ## Reference Specifications
 
-- [VirtIO Specification v1.0](https://docs.oasis-open.org/virtio/virtio/v1.0/virtio-v1.0.html)
-- [VirtIO Specification v1.1](https://docs.oasis-open.org/virtio/virtio/v1.1/virtio-v1.1.html)
-- [VirtIO Specification v1.2](https://docs.oasis-open.org/virtio/virtio/v1.2/virtio-v1.2.html)
-
-## Implementation Details
-
-### Feature Negotiation
-
-Modern VirtIO uses 64-bit feature negotiation:
-- Device exposes features via `device_features` register (selected by `device_features_sel`)
-- Driver acknowledges features via `driver_features` register (selected by `driver_features_sel`)
-- For modern devices, the driver must negotiate `VIRTIO_F_VERSION_1` (feature bit 32)
-
-### Queue Initialization
-
-**Legacy VirtIO:**
-- Uses single `queue_pfn` register pointing to the start of the queue area
-- Guest page size configured via `guest_page_size`
-
-**Modern VirtIO:**
-- Uses separate registers for descriptor, driver (avail), and device (used) areas:
-  - `queue_desc_low`/`queue_desc_high`: Descriptor table address
-  - `queue_driver_low`/`queue_driver_high`: Available ring address
-  - `queue_device_low`/`queue_device_high`: Used ring address
-- Queue activated via `queue_ready` register
-
-### Status Flow
-
-**Modern VirtIO adds FEATURES_OK check:**
-1. Reset device (status = 0)
-2. Set ACKNOWLEDGE and DRIVER status bits
-3. Read and negotiate features
-4. Write negotiated features to device
-5. Set FEATURES_OK status bit
-6. Re-read status to verify FEATURES_OK (device may reject features)
-7. If accepted, proceed with queue setup and set DRIVER_OK
-
-## Troubleshooting
-
-### Device Not Detected
-
-Check that:
-1. QEMU is configured with VirtIO devices
-2. The VirtIO version matches your QEMU configuration
-3. The device memory region is correctly mapped
-
-### Build Errors
-
-Ensure:
-1. The Kconfig is properly configured
-2. All VirtIO header files are included
-3. The BSP supports VirtIO (check `BSP_USING_VIRTIO`)
-
-### Runtime Issues
-
-Debug tips:
-1. Check device version in MMIO config
-2. Verify feature negotiation succeeded
-3. Check queue initialization (descriptor, avail, used ring addresses)
-4. Monitor interrupt status and acknowledgment
-
-## Contributing
-
-When adding new VirtIO devices or features:
-1. Support both legacy and modern versions
-2. Use the helper functions for feature negotiation (`virtio_get_features`, `virtio_set_features`)
-3. Use version checking (`dev->version`) for version-specific code
-4. Test on both legacy and modern QEMU configurations
+- [VirtIO Specification v1.2](https://docs.oasis-open.org/virtio/virtio/v1.2/virtio-v1.2.html) (Latest, 2022)
+- [VirtIO Specification v1.1](https://docs.oasis-open.org/virtio/virtio/v1.1/virtio-v1.1.html) (2019)
+- [VirtIO Specification v1.0](https://docs.oasis-open.org/virtio/virtio/v1.0/virtio-v1.0.html) (2016)
+- [OASIS VirtIO TC](https://www.oasis-open.org/committees/virtio/)
 
 ## License
 

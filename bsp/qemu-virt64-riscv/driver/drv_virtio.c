@@ -86,7 +86,7 @@ int rt_virtio_devices_init(void)
         }
 
         /* Support both legacy (0x1) and modern (0x2) versions */
-        if (mmio_config->version != 1 && mmio_config->version != 2)
+        if ((mmio_config->version < 1) || (mmio_config->version > 2))
         {
             continue;
         }
