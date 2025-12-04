@@ -74,8 +74,13 @@ int rt_virtio_devices_init(void)
         mmio_config = (struct virtio_mmio_config *)mmio_base;
 
         if (mmio_config->magic != VIRTIO_MAGIC_VALUE ||
-            mmio_config->version != RT_USING_VIRTIO_VERSION ||
             mmio_config->vendor_id != VIRTIO_VENDOR_ID)
+        {
+            continue;
+        }
+
+        /* Support both legacy (0x1) and modern (0x2) versions */
+        if (mmio_config->version != 1 && mmio_config->version != 2)
         {
             continue;
         }
