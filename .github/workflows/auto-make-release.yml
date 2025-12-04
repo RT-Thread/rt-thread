@@ -1,0 +1,97 @@
+#
+# Copyright (c) 2025, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2025-04-01     Hydevcode    定时自动发送Release版本
+#
+name: Auto Release with PR Notes
+
+on:
+  schedule:
+    - cron:  '0 16 * 3,6,9,12 *'
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'RT-Thread'
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # 获取完整提交历史
+
+    - name: Get Previous Tag
+      id: prev_tag
+      run: |
+        # 获取上一个发布的标签（排除预发布标签）
+        PREV_TAG=$(git describe --tags --abbrev=0 --match "v*" 2>/dev/null || echo "")
+        echo "prev_tag=${PREV_TAG}" >> $GITHUB_OUTPUT
+        echo "${PREV_TAG}"
+        # 获取上一个版本的时间，如果有的话,没有就用基准时间
+        PREV_TIME=$(gh release list -L 1 --json publishedAt | jq '.[].publishedAt')
+        
+        echo "${PREV_TIME}"
+        if [[ -z "$PREV_TIME" ]]; then
+          # 基准时间
+          PREV_TIME="2025-04-01"
+          echo "${PREV_TIME}"
+        fi
+        echo "prev_time=${PREV_TIME}" >> $GITHUB_OUTPUT
+
+        echo "--------------------------------"
+        if [[ -n "$PREV_TAG" ]]; then
+          last_digit=$(echo "${PREV_TAG}" | grep -oE '[0-9]+$')
+          new_last_digit=$((last_digit + 1))
+          echo "$new_last_digit"
+          new_version=$(echo "$PREV_TAG" | sed "s/[0-9]\+$/$new_last_digit/")
+          
+          echo "$new_version"
+        else
+          echo "没有找到上一个版本"
+          #默认第一个版本
+          new_version=v1.0.0
+        fi
+        echo "new_version=${new_version}" >> $GITHUB_OUTPUT
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Generate PR List
+      id: pr_list
+      run: |
+        # 获取两个标签之间的 PR 列表(使用 GitHub CLI)
+        # 依靠的是上一个版本的时间
+        gh pr list \
+          --base master \
+          --state merged \
+          --search "merged:>=${{steps.prev_tag.outputs.prev_time}}" \
+          --json number,title,url \
+          --jq 'map("- [#\(.number)](\(.url)) \(.title)") | join("\n")' \
+          > pr_list.txt
+
+        # 将 PR 列表保存为变量
+        PR_NOTES=$(cat pr_list.txt)
+
+        # 统计当前到上一个版本的pr做成描述
+        RELEASE_NOTES="## ${{ steps.prev_tag.outputs.new_version }} ($(date -I))\n\n"
+        if [ -n "$PR_NOTES" ]; then
+          RELEASE_NOTES+="### Merged PRs since ${{ steps.prev_tag.outputs.prev_tag }}:\n"
+          RELEASE_NOTES+="$PR_NOTES\n"
+        else
+          RELEASE_NOTES+="No new PRs since last release.\n"
+        fi
+
+        echo -e "$RELEASE_NOTES" > release_notes.md
+        echo "$RELEASE_NOTES"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Publish Release
+      uses: softprops/action-gh-release@v2
+      with:
+        body_path: release_notes.md
+        tag_name: ${{ steps.prev_tag.outputs.new_version }}
+        name: RT-Thread ${{ steps.prev_tag.outputs.new_version }} released
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
