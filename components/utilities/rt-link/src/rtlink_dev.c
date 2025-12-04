@@ -24,6 +24,8 @@
 #include <sys/stat.h>
 #include <sys/statfs.h>
 #include <poll.h>
+#include <dfs_file.h>
+#include <fcntl.h>
 
 int rtlink_fops_open(struct dfs_file *fd)
 {
@@ -82,9 +84,9 @@ int rtlink_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
     }
 }
 
-int rtlink_fops_read(struct dfs_file *fd, void *buf, size_t count)
+ssize_t rtlink_fops_read(struct dfs_file *fd, void *buf, size_t count)
 {
-    int size = 0;
+    ssize_t size = 0;
     rt_device_t device;
     device = (rt_device_t)fd->vnode->data;
 
@@ -96,9 +98,9 @@ int rtlink_fops_read(struct dfs_file *fd, void *buf, size_t count)
     return size;
 }
 
-int rtlink_fops_write(struct dfs_file *fd, const void *buf, size_t count)
+ssize_t rtlink_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 {
-    int size = 0;
+    ssize_t size = 0;
     rt_device_t device;
     device = (rt_device_t)fd->vnode->data;
 
