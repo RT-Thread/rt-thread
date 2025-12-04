@@ -86,7 +86,7 @@ static void _insert_timer_to_list_locked(rt_clock_hrtimer_t timer)
 static void _hrtimer_process_locked(void)
 {
     rt_clock_hrtimer_t timer;
-    rt_uint64_t current_cnt = rt_clock_time_getcnt();
+    unsigned long current_cnt = (unsigned long)rt_clock_time_getcnt();
     
     for (timer = _first_hrtimer();
          (timer != RT_NULL) && (timer->timeout_cnt <= current_cnt);
@@ -96,7 +96,7 @@ static void _hrtimer_process_locked(void)
         
         if (timer->flag & RT_TIMER_FLAG_PERIODIC)
         {
-            timer->timeout_cnt = timer->delay_cnt + rt_clock_time_getcnt();
+            timer->timeout_cnt = timer->delay_cnt + (unsigned long)rt_clock_time_getcnt();
             _insert_timer_to_list_locked(timer);
         }
         else
@@ -111,10 +111,10 @@ static void _hrtimer_process_locked(void)
     }
 }
 
-static rt_uint64_t _cnt_convert_to_hardware(rt_uint64_t target_cnt)
+static unsigned long _cnt_convert_to_hardware(unsigned long target_cnt)
 {
-    rt_uint64_t current_cnt = rt_clock_time_getcnt();
-    rt_uint64_t delta = target_cnt - current_cnt;
+    unsigned long current_cnt = (unsigned long)rt_clock_time_getcnt();
+    unsigned long delta = target_cnt - current_cnt;
     
     /* Check for overflow or already expired */
     if (delta > (_HRTIMER_MAX_CNT / 2))
@@ -129,7 +129,7 @@ static rt_uint64_t _cnt_convert_to_hardware(rt_uint64_t target_cnt)
 static void _set_next_timeout_locked(void)
 {
     rt_clock_hrtimer_t timer;
-    rt_uint64_t next_timeout_cnt;
+    unsigned long next_timeout_cnt;
     rt_bool_t find_next;
     
     do
@@ -182,7 +182,7 @@ void rt_clock_hrtimer_init(rt_clock_hrtimer_t timer,
     rt_completion_init(&timer->completion);
 }
 
-rt_err_t rt_clock_hrtimer_start(rt_clock_hrtimer_t timer, rt_uint64_t delay_cnt)
+rt_err_t rt_clock_hrtimer_start(rt_clock_hrtimer_t timer, unsigned long delay_cnt)
 {
     rt_base_t level;
     
@@ -242,13 +242,13 @@ rt_err_t rt_clock_hrtimer_control(rt_clock_hrtimer_t timer, int cmd, void *arg)
     switch (cmd)
     {
     case RT_TIMER_CTRL_GET_TIME:
-        *(rt_uint64_t *)arg = timer->delay_cnt;
+        *(unsigned long *)arg = timer->delay_cnt;
         break;
         
     case RT_TIMER_CTRL_SET_TIME:
-        RT_ASSERT((*(rt_uint64_t *)arg) < (_HRTIMER_MAX_CNT / 2));
-        timer->delay_cnt = *(rt_uint64_t *)arg;
-        timer->timeout_cnt = *(rt_uint64_t *)arg + rt_clock_time_getcnt();
+        RT_ASSERT((*(unsigned long *)arg) < (_HRTIMER_MAX_CNT / 2));
+        timer->delay_cnt = *(unsigned long *)arg;
+        timer->timeout_cnt = *(unsigned long *)arg + rt_clock_time_getcnt();
         break;
         
     case RT_TIMER_CTRL_SET_ONESHOT:
@@ -271,7 +271,7 @@ rt_err_t rt_clock_hrtimer_control(rt_clock_hrtimer_t timer, int cmd, void *arg)
         break;
         
     case RT_TIMER_CTRL_GET_REMAIN_TIME:
-        *(rt_uint64_t *)arg = timer->timeout_cnt;
+        *(unsigned long *)arg = timer->timeout_cnt;
         break;
         
     case RT_TIMER_CTRL_GET_FUNC:
@@ -330,7 +330,7 @@ static void _sleep_timeout(void *parameter)
     rt_completion_done(&timer->completion);
 }
 
-rt_err_t rt_clock_hrtimer_sleep(rt_clock_hrtimer_t timer, rt_uint64_t cnt)
+rt_err_t rt_clock_hrtimer_sleep(rt_clock_hrtimer_t timer, unsigned long cnt)
 {
     RT_ASSERT(timer != RT_NULL);
     
@@ -354,37 +354,37 @@ rt_err_t rt_clock_hrtimer_sleep(rt_clock_hrtimer_t timer, rt_uint64_t cnt)
     return RT_EOK;
 }
 
-rt_err_t rt_clock_hrtimer_ndelay(rt_clock_hrtimer_t timer, rt_uint64_t ns)
+rt_err_t rt_clock_hrtimer_ndelay(rt_clock_hrtimer_t timer, unsigned long ns)
 {
-    rt_uint64_t cnt = rt_clock_time_ns_to_cnt(ns);
+    unsigned long cnt = (unsigned long)rt_clock_time_ns_to_cnt(ns);
     return rt_clock_hrtimer_sleep(timer, cnt);
 }
 
-rt_err_t rt_clock_hrtimer_udelay(rt_clock_hrtimer_t timer, rt_uint64_t us)
+rt_err_t rt_clock_hrtimer_udelay(rt_clock_hrtimer_t timer, unsigned long us)
 {
     return rt_clock_hrtimer_ndelay(timer, us * 1000);
 }
 
-rt_err_t rt_clock_hrtimer_mdelay(rt_clock_hrtimer_t timer, rt_uint64_t ms)
+rt_err_t rt_clock_hrtimer_mdelay(rt_clock_hrtimer_t timer, unsigned long ms)
 {
     return rt_clock_hrtimer_ndelay(timer, ms * 1000 * 1000);
 }
 
 /* Simple delay functions with internal timer */
 
-rt_err_t rt_clock_ndelay(rt_uint64_t ns)
+rt_err_t rt_clock_ndelay(unsigned long ns)
 {
     struct rt_clock_hrtimer timer;
     return rt_clock_hrtimer_ndelay(&timer, ns);
 }
 
-rt_err_t rt_clock_udelay(rt_uint64_t us)
+rt_err_t rt_clock_udelay(unsigned long us)
 {
     struct rt_clock_hrtimer timer;
     return rt_clock_hrtimer_udelay(&timer, us);
 }
 
-rt_err_t rt_clock_mdelay(rt_uint64_t ms)
+rt_err_t rt_clock_mdelay(unsigned long ms)
 {
     struct rt_clock_hrtimer timer;
     return rt_clock_hrtimer_mdelay(&timer, ms);

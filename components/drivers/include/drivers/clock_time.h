@@ -132,13 +132,21 @@ struct rt_clock_hrtimer
     char                 name[RT_NAME_MAX];        /* Timer name */
     rt_list_t            node;                      /* List node */
     void                *parameter;                 /* User parameter */
-    rt_uint64_t          delay_cnt;                /* Delay in counter ticks */
-    rt_uint64_t          timeout_cnt;              /* Absolute timeout counter value */
+    unsigned long        delay_cnt;                /* Delay in counter ticks */
+    unsigned long        timeout_cnt;              /* Absolute timeout counter value */
     rt_err_t             error;                     /* Error code */
     struct rt_completion completion;                /* Completion for blocking waits */
     void (*timeout_func)(void *parameter);         /* Timeout callback */
 };
 typedef struct rt_clock_hrtimer *rt_clock_hrtimer_t;
+
+/* Compatibility typedefs for legacy ktime APIs */
+#ifdef RT_CLOCK_TIME_COMPAT_KTIME
+struct rt_ktime_hrtimer;
+typedef struct rt_clock_hrtimer rt_ktime_hrtimer;
+typedef struct rt_clock_hrtimer *rt_ktime_hrtimer_t;
+#define RT_KTIME_RESMUL RT_CLOCK_TIME_RESMUL
+#endif
 
 /**
  * @brief Initialize a high-resolution timer
@@ -162,7 +170,7 @@ void rt_clock_hrtimer_init(rt_clock_hrtimer_t timer,
  * @param delay_cnt Delay in counter ticks
  * @return RT_EOK on success, error code otherwise
  */
-rt_err_t rt_clock_hrtimer_start(rt_clock_hrtimer_t timer, rt_uint64_t delay_cnt);
+rt_err_t rt_clock_hrtimer_start(rt_clock_hrtimer_t timer, unsigned long delay_cnt);
 
 /**
  * @brief Stop a high-resolution timer
@@ -193,17 +201,17 @@ rt_err_t rt_clock_hrtimer_detach(rt_clock_hrtimer_t timer);
 /**
  * @brief High-precision delay functions
  */
-rt_err_t rt_clock_hrtimer_sleep(rt_clock_hrtimer_t timer, rt_uint64_t cnt);
-rt_err_t rt_clock_hrtimer_ndelay(rt_clock_hrtimer_t timer, rt_uint64_t ns);
-rt_err_t rt_clock_hrtimer_udelay(rt_clock_hrtimer_t timer, rt_uint64_t us);
-rt_err_t rt_clock_hrtimer_mdelay(rt_clock_hrtimer_t timer, rt_uint64_t ms);
+rt_err_t rt_clock_hrtimer_sleep(rt_clock_hrtimer_t timer, unsigned long cnt);
+rt_err_t rt_clock_hrtimer_ndelay(rt_clock_hrtimer_t timer, unsigned long ns);
+rt_err_t rt_clock_hrtimer_udelay(rt_clock_hrtimer_t timer, unsigned long us);
+rt_err_t rt_clock_hrtimer_mdelay(rt_clock_hrtimer_t timer, unsigned long ms);
 
 /**
  * @brief Simple delay functions (use internal timer)
  */
-rt_err_t rt_clock_ndelay(rt_uint64_t ns);
-rt_err_t rt_clock_udelay(rt_uint64_t us);
-rt_err_t rt_clock_mdelay(rt_uint64_t ms);
+rt_err_t rt_clock_ndelay(unsigned long ns);
+rt_err_t rt_clock_udelay(unsigned long us);
+rt_err_t rt_clock_mdelay(unsigned long ms);
 
 /**
  * @brief Process hrtimer timeouts (called from device driver ISR)

@@ -10,6 +10,9 @@
 
 #include <rtdevice.h>
 #include <rthw.h>
+#include <sys/time.h>
+#include <drivers/clock_time.h>
+#include <ktime.h>
 
 /* Legacy ktime API wrappers */
 
