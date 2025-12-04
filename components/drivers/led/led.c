@@ -21,6 +21,7 @@ struct blink_timer
 {
     rt_bool_t toggle;
     rt_bool_t enabled;
+    rt_uint32_t count;
     struct rt_timer timer;
 };
 
@@ -70,7 +71,7 @@ static rt_ssize_t _led_write(rt_device_t dev, rt_off_t pos, const void *buffer, 
 
     for (int i = 0; i < RT_ARRAY_SIZE(_led_states); ++i)
     {
-        if (!rt_strncpy((char *)_led_states[i], buffer, size))
+        if (!rt_strncmp((char *)_led_states[i], buffer, size))
         {
             return rt_led_set_state(led, i) ? : size;
         }
@@ -104,19 +105,42 @@ const static struct rt_device_ops _led_ops =
 
 static void _led_blink_timerout(void *param)
 {
+    rt_tick_t tick;
     struct rt_led_device *led = param;
     struct blink_timer *btimer = led->sysdata;
 
     if (btimer->toggle)
     {
         led->ops->set_state(led, RT_LED_S_OFF);
+
+        if (btimer->count++ & 1)
+        {
+            btimer->count = 0;
+            tick = rt_tick_from_millisecond(1000);
+            goto _set_timeout;
+        }
     }
     else
     {
         led->ops->set_state(led, RT_LED_S_ON);
+
+        if (!btimer->count)
+        {
+            tick = rt_tick_from_millisecond(80);
+            goto _set_timeout;
+        }
     }
 
+_toggle:
     btimer->toggle = !btimer->toggle;
+    return;
+
+_set_timeout:
+    rt_timer_stop(&btimer->timer);
+    rt_timer_control(&btimer->timer, RT_TIMER_CTRL_SET_TIME, &tick);
+    rt_timer_start(&btimer->timer);
+
+    goto _toggle;
 }
 
 rt_err_t rt_led_register(struct rt_led_device *led)
@@ -158,8 +182,9 @@ rt_err_t rt_led_register(struct rt_led_device *led)
 
         btimer->toggle = RT_FALSE;
         btimer->enabled = RT_FALSE;
+        btimer->count = 0;
         rt_timer_init(&btimer->timer, dev_name, _led_blink_timerout, led,
-                rt_tick_from_millisecond(500), RT_TIMER_FLAG_PERIODIC);
+                rt_tick_from_millisecond(1000), RT_TIMER_FLAG_PERIODIC);
     }
 
     led->parent.type = RT_Device_Class_Char;
