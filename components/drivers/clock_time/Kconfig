@@ -11,26 +11,6 @@ menuconfig RT_USING_CLOCK_TIME
         - High-resolution timers (hrtimer)
         - POSIX clock support
         - Boottime tracking
+        - CPU time APIs (clock_cpu_*, rt_cputime_*)
+        - Boottime APIs (rt_boottime_*)
 
-if RT_USING_CLOCK_TIME
-    config RT_CLOCK_TIME_COMPAT_KTIME
-        bool "Enable compatibility layer for ktime APIs"
-        default y
-        help
-            Provides backward compatibility wrappers for legacy ktime APIs.
-            Enable this if existing code uses rt_ktime_* functions.
-
-    config RT_CLOCK_TIME_COMPAT_CPUTIME
-        bool "Enable compatibility layer for cputime APIs"
-        default y
-        help
-            Provides backward compatibility wrappers for legacy cputime APIs.
-            Enable this if existing code uses clock_cpu_* or rt_cputimer_* functions.
-
-    config RT_CLOCK_TIME_COMPAT_HWTIMER
-        bool "Enable compatibility layer for hwtimer device APIs"
-        default y
-        help
-            Provides backward compatibility for legacy hwtimer device APIs.
-            Enable this if BSP drivers use rt_device_hwtimer_* functions.
-endif

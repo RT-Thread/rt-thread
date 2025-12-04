@@ -540,9 +540,6 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
     struct timespec old_ts = {0};
     struct timespec new_ts = {0};
-    struct rt_ktime_hrtimer timer;
-
-    rt_ktime_hrtimer_delay_init(&timer);
 
     if (rqtp == RT_NULL)
     {
@@ -556,14 +553,14 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
         return -1;
     }
     unsigned long ns = rqtp->tv_sec * NANOSECOND_PER_SECOND + rqtp->tv_nsec;
-    rt_ktime_boottime_get_ns(&old_ts);
-    rt_ktime_hrtimer_ndelay(&timer, ns);
+    rt_clock_time_boottime_ns(&old_ts);
+    rt_clock_ndelay(ns);
     if (rt_get_errno() == RT_EINTR)
     {
         if (rmtp)
         {
             rt_base_t rsec, rnsec;
-            rt_ktime_boottime_get_ns(&new_ts);
+            rt_clock_time_boottime_ns(&new_ts);
 
             rsec = old_ts.tv_sec + rqtp->tv_sec - new_ts.tv_sec;
             rnsec = old_ts.tv_nsec + rqtp->tv_nsec - new_ts.tv_nsec;
@@ -579,12 +576,10 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
             }
         }
 
-        rt_ktime_hrtimer_delay_detach(&timer);
         rt_set_errno(EINTR);
         return -1;
     }
 
-    rt_ktime_hrtimer_delay_detach(&timer);
     return 0;
 }
 RTM_EXPORT(nanosleep);
@@ -615,7 +610,7 @@ int clock_getres(clockid_t clockid, struct timespec *res)
         case CLOCK_PROCESS_CPUTIME_ID:
         case CLOCK_THREAD_CPUTIME_ID:
             res->tv_sec  = 0;
-            res->tv_nsec = (rt_ktime_cputimer_getres() / RT_KTIME_RESMUL);
+            res->tv_nsec = (rt_clock_time_getres() / RT_CLOCK_TIME_RESMUL);
             return 0;
 
         default:
@@ -645,11 +640,11 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
         case CLOCK_MONOTONIC_COARSE:
         case CLOCK_MONOTONIC_RAW:
         case CLOCK_BOOTTIME:
-            return rt_ktime_boottime_get_ns(tp);
+            return rt_clock_time_boottime_ns(tp);
 
         case CLOCK_PROCESS_CPUTIME_ID:
         case CLOCK_THREAD_CPUTIME_ID:
-            return rt_ktime_boottime_get_ns(tp);  // TODO not yet implemented
+            return rt_clock_time_boottime_ns(tp);  // TODO not yet implemented
 
         default:
             tp->tv_sec  = 0;
@@ -689,7 +684,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
         case CLOCK_MONOTONIC:  // use boottime
         case CLOCK_PROCESS_CPUTIME_ID:
             if (flags & TIMER_ABSTIME)
-                err = rt_ktime_boottime_get_ns(&ts);
+                err = rt_clock_time_boottime_ns(&ts);
             break;
 
         default:
@@ -800,7 +795,7 @@ RTM_EXPORT(rt_timespec_to_tick);
 
 struct timer_obj
 {
-    struct rt_ktime_hrtimer hrtimer;
+    struct rt_clock_hrtimer hrtimer;
     void (*sigev_notify_func)(union sigval val);
     union sigval val;
     struct timespec interval;              /* Reload value */
@@ -895,11 +890,11 @@ static void rtthread_timer_wrapper(void *timerobj)
         timer->status = NOT_ACTIVE;
     }
 
-    timer->reload = ((timer->interval.tv_sec * NANOSECOND_PER_SECOND + timer->interval.tv_nsec) * RT_KTIME_RESMUL) /
-                    rt_ktime_cputimer_getres();
+    timer->reload = ((timer->interval.tv_sec * NANOSECOND_PER_SECOND + timer->interval.tv_nsec) * RT_CLOCK_TIME_RESMUL) /
+                    rt_clock_time_getres();
     if (timer->reload)
     {
-        rt_ktime_hrtimer_start(&timer->hrtimer, timer->reload);
+        rt_clock_hrtimer_start(&timer->hrtimer, timer->reload);
     }
 #ifdef RT_USING_SMART
     /* this field is named as tid in musl */
@@ -1020,7 +1015,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     timer->status = NOT_ACTIVE;
     timer->clockid = clockid;
 
-    rt_ktime_hrtimer_init(&timer->hrtimer, timername, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
+    rt_clock_hrtimer_init(&timer->hrtimer, timername, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
                           rtthread_timer_wrapper, timer);
 
     _timerid = resource_id_get(&id_timer);
@@ -1030,7 +1025,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
         rt_free(param);
 #endif /* RT_USING_SMART */
 
-        rt_ktime_hrtimer_detach(&timer->hrtimer);
+        rt_clock_hrtimer_detach(&timer->hrtimer);
         rt_free(timer);
         rt_set_errno(ENOMEM);
         return -1;
@@ -1082,9 +1077,9 @@ int timer_delete(timer_t timerid)
     if (timer->status == ACTIVE)
     {
         timer->status = NOT_ACTIVE;
-        rt_ktime_hrtimer_stop(&timer->hrtimer);
+        rt_clock_hrtimer_stop(&timer->hrtimer);
     }
-    rt_ktime_hrtimer_detach(&timer->hrtimer);
+    rt_clock_hrtimer_detach(&timer->hrtimer);
 
 #ifdef RT_USING_SMART
     if (timer->pid)
@@ -1134,8 +1129,8 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
     if (timer->status == ACTIVE)
     {
         unsigned long remain_cnt;
-        rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_GET_REMAIN_TIME, &remain_cnt);
-        nanoseconds = ((remain_cnt - rt_ktime_cputimer_getcnt()) * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
+        rt_clock_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_GET_REMAIN_TIME, &remain_cnt);
+        nanoseconds = ((remain_cnt - rt_clock_time_getcnt()) * rt_clock_time_getres()) / RT_CLOCK_TIME_RESMUL;
         seconds     = nanoseconds / NANOSECOND_PER_SECOND;
         nanoseconds = nanoseconds % NANOSECOND_PER_SECOND;
         its->it_value.tv_sec = (rt_int32_t)seconds;
@@ -1190,7 +1185,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     {
         if (timer->status == ACTIVE)
         {
-            rt_ktime_hrtimer_stop(&timer->hrtimer);
+            rt_clock_hrtimer_stop(&timer->hrtimer);
         }
 
         timer->status = NOT_ACTIVE;
@@ -1212,7 +1207,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
         case CLOCK_PROCESS_CPUTIME_ID:
         case CLOCK_THREAD_CPUTIME_ID:
             if (flags & TIMER_ABSTIME)
-                err = rt_ktime_boottime_get_ns(&ts);
+                err = rt_clock_time_boottime_ns(&ts);
             break;
         default:
             rt_set_errno(EINVAL);
@@ -1227,8 +1222,8 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     if (ns <= 0)
         return 0;
 
-    unsigned long res       = rt_ktime_cputimer_getres();
-    timer->reload           = (ns * RT_KTIME_RESMUL) / res;
+    unsigned long res       = rt_clock_time_getres();
+    timer->reload           = (ns * RT_CLOCK_TIME_RESMUL) / res;
     timer->interval.tv_sec  = value->it_interval.tv_sec;
     timer->interval.tv_nsec = value->it_interval.tv_nsec;
     timer->value.tv_sec     = value->it_value.tv_sec;
@@ -1236,16 +1231,16 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
 
     if (timer->status == ACTIVE)
     {
-        rt_ktime_hrtimer_stop(&timer->hrtimer);
+        rt_clock_hrtimer_stop(&timer->hrtimer);
     }
     timer->status = ACTIVE;
 
     if ((value->it_interval.tv_sec == 0) && (value->it_interval.tv_nsec == 0))
-        rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_SET_ONESHOT, RT_NULL);
+        rt_clock_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_SET_ONESHOT, RT_NULL);
     else
-        rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_SET_PERIODIC, RT_NULL);
+        rt_clock_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_SET_PERIODIC, RT_NULL);
 
-    rt_ktime_hrtimer_start(&timer->hrtimer, timer->reload);
+    rt_clock_hrtimer_start(&timer->hrtimer, timer->reload);
 
     return 0;
 }

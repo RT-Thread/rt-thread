@@ -6,13 +6,9 @@ src = Split('''
 src/clock_time.c
 src/hrtimer.c
 src/clock_time_tick.c
+src/clock_time_cputime.c
+src/clock_time_boottime.c
 ''')
-
-if GetDepend('RT_CLOCK_TIME_COMPAT_KTIME'):
-    src += ['src/ktime_compat.c']
-
-if GetDepend('RT_CLOCK_TIME_COMPAT_CPUTIME'):
-    src += ['src/cputime_compat.c']
 
 CPPPATH = [cwd + '/include', cwd + '/../include']
 
