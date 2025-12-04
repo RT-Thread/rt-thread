@@ -12,9 +12,8 @@
 #include <rthw.h>
 #include <sys/time.h>
 #include <drivers/clock_time.h>
-#include <ktime.h>
 
-/* Legacy ktime API wrappers */
+/* Legacy ktime API wrappers - all types defined in clock_time.h */
 
 rt_err_t rt_ktime_boottime_get_us(struct timeval *tv)
 {

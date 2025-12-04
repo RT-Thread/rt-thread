@@ -148,6 +148,28 @@ typedef struct rt_clock_hrtimer *rt_ktime_hrtimer_t;
 #define RT_KTIME_RESMUL RT_CLOCK_TIME_RESMUL
 #endif
 
+/* Compatibility typedefs for legacy cputime APIs */
+#ifdef RT_CLOCK_TIME_COMPAT_CPUTIME
+struct rt_clock_cputime_ops
+{
+    uint64_t (*cputime_getres)(void);
+    uint64_t (*cputime_gettime)(void);
+    int (*cputime_settimeout)(uint64_t tick, void (*timeout)(void *param), void *param);
+};
+
+struct rt_cputimer
+{
+    struct rt_object parent;
+    rt_list_t row;
+    void (*timeout_func)(void *parameter);
+    void *parameter;
+    rt_uint64_t init_tick;
+    rt_uint64_t timeout_tick;
+    struct rt_semaphore sem;
+};
+typedef struct rt_cputimer *rt_cputimer_t;
+#endif
+
 /**
  * @brief Initialize a high-resolution timer
  * 
@@ -221,6 +243,65 @@ void rt_clock_hrtimer_process(void);
 /* POSIX clock support */
 #define CLOCK_REALTIME_ALARM    8
 #define CLOCK_BOOTTIME_ALARM    9
+
+/* Legacy API compatibility declarations */
+
+#ifdef RT_CLOCK_TIME_COMPAT_KTIME
+/* ktime compatibility APIs */
+rt_err_t rt_ktime_boottime_get_us(struct timeval *tv);
+rt_err_t rt_ktime_boottime_get_s(time_t *t);
+rt_err_t rt_ktime_boottime_get_ns(struct timespec *ts);
+rt_uint64_t rt_ktime_cputimer_getres(void);
+unsigned long rt_ktime_cputimer_getfrq(void);
+unsigned long rt_ktime_cputimer_getcnt(void);
+void rt_ktime_cputimer_init(void);
+rt_uint64_t rt_ktime_hrtimer_getres(void);
+unsigned long rt_ktime_hrtimer_getfrq(void);
+rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt);
+void rt_ktime_hrtimer_process(void);
+void rt_ktime_hrtimer_init(struct rt_ktime_hrtimer *timer,
+                          const char *name,
+                          rt_uint8_t flag,
+                          void (*timeout)(void *parameter),
+                          void *parameter);
+rt_err_t rt_ktime_hrtimer_start(struct rt_ktime_hrtimer *timer, unsigned long cnt);
+rt_err_t rt_ktime_hrtimer_stop(struct rt_ktime_hrtimer *timer);
+rt_err_t rt_ktime_hrtimer_control(struct rt_ktime_hrtimer *timer, int cmd, void *arg);
+rt_err_t rt_ktime_hrtimer_detach(struct rt_ktime_hrtimer *timer);
+void rt_ktime_hrtimer_delay_init(struct rt_ktime_hrtimer *timer);
+void rt_ktime_hrtimer_delay_detach(struct rt_ktime_hrtimer *timer);
+rt_err_t rt_ktime_hrtimer_sleep(struct rt_ktime_hrtimer *timer, unsigned long cnt);
+rt_err_t rt_ktime_hrtimer_ndelay(struct rt_ktime_hrtimer *timer, unsigned long ns);
+rt_err_t rt_ktime_hrtimer_udelay(struct rt_ktime_hrtimer *timer, unsigned long us);
+rt_err_t rt_ktime_hrtimer_mdelay(struct rt_ktime_hrtimer *timer, unsigned long ms);
+#endif /* RT_CLOCK_TIME_COMPAT_KTIME */
+
+#ifdef RT_CLOCK_TIME_COMPAT_CPUTIME
+/* cputime compatibility APIs */
+uint64_t clock_cpu_getres(void);
+uint64_t clock_cpu_gettime(void);
+int clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param), void *param);
+int clock_cpu_issettimeout(void);
+uint64_t clock_cpu_microsecond(uint64_t cpu_tick);
+uint64_t clock_cpu_millisecond(uint64_t cpu_tick);
+int clock_cpu_setops(const struct rt_clock_cputime_ops *ops);
+
+void rt_cputimer_init(struct rt_cputimer *timer,
+                     const char *name,
+                     void (*timeout)(void *parameter),
+                     void *parameter,
+                     rt_uint64_t tick,
+                     rt_uint8_t flag);
+rt_err_t rt_cputimer_delete(struct rt_cputimer *timer);
+rt_err_t rt_cputimer_start(struct rt_cputimer *timer);
+rt_err_t rt_cputimer_stop(struct rt_cputimer *timer);
+rt_err_t rt_cputimer_control(struct rt_cputimer *timer, int cmd, void *arg);
+rt_err_t rt_cputimer_detach(struct rt_cputimer *timer);
+rt_err_t rt_cputime_sleep(rt_uint64_t tick);
+rt_err_t rt_cputime_ndelay(rt_uint64_t ns);
+rt_err_t rt_cputime_udelay(rt_uint64_t us);
+rt_err_t rt_cputime_mdelay(rt_uint64_t ms);
+#endif /* RT_CLOCK_TIME_COMPAT_CPUTIME */
 
 #ifdef __cplusplus
 }
