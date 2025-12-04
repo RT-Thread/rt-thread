@@ -43,15 +43,16 @@ static rt_ssize_t _adc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size
 static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
 {
     rt_adc_device_t adc = (struct rt_adc_device *)dev;
-    rt_err_t        result = RT_ERROR;
+    rt_err_t        result = -RT_ERROR;
+
 
     if (cmd == RT_ADC_CMD_ENABLE && adc->ops->enabled)
     {
-        result = adc->ops->enabled(adc, (rt_int8_t)(rt_base_t)args, RT_TRUE);
+        result = adc->ops->enabled(adc, (rt_uint32_t)(rt_ubase_t)args, RT_TRUE);
     }
     else if (cmd == RT_ADC_CMD_DISABLE && adc->ops->enabled)
     {
-        result = adc->ops->enabled(adc, (rt_int8_t)(rt_base_t)args, RT_FALSE);
+        result = adc->ops->enabled(adc, (rt_uint32_t)(rt_ubase_t)args, RT_FALSE);
     }
     else if (cmd == RT_ADC_CMD_GET_RESOLUTION && adc->ops->get_resolution && args)
     {
@@ -167,7 +168,7 @@ rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_int8_t channel)
     RT_ASSERT(dev);
 
     rt_uint32_t value;
-    rt_int16_t  vref, voltage;
+    rt_int16_t  vref, voltage = 0;
     rt_uint8_t  resolution;
     rt_err_t    result;
 
