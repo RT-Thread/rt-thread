@@ -1,0 +1,13 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('rpc/*.c')
+CPPPATH = [cwd]
+
+SrcRemove(src, ['rpc/auth_none.c'])
+
+group = DefineGroup('Filesystem', src, depend = ['RT_USING_DFS', 'RT_USING_DFS_NFS'], CPPPATH = CPPPATH)
+
+Return('group')
