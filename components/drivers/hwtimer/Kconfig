@@ -1,6 +1,12 @@
 menuconfig RT_USING_HWTIMER
-    bool "Using Hardware Timer device drivers"
+    bool "Using Hardware Timer device drivers (DEPRECATED - use RT_USING_CLOCK_TIME instead)"
     default n
+    help
+        WARNING: This subsystem is deprecated. Please use the unified
+        RT_USING_CLOCK_TIME subsystem instead, which provides better
+        integration and design for hardware timers.
+        
+        Enable RT_CLOCK_TIME_COMPAT_HWTIMER for backward compatibility.
 
 config RT_HWTIMER_ARM_ARCH
     bool "ARM ARCH Timer"

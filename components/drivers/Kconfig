@@ -5,6 +5,7 @@ rsource "ipc/Kconfig"
 
 rsource "serial/Kconfig"
 rsource "can/Kconfig"
+rsource "clock_time/Kconfig"
 rsource "cputime/Kconfig"
 rsource "i2c/Kconfig"
 rsource "phy/Kconfig"

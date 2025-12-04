@@ -1,0 +1,28 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Split('''
+src/clock_time.c
+src/hrtimer.c
+src/clock_time_tick.c
+''')
+
+if GetDepend('RT_CLOCK_TIME_COMPAT_KTIME'):
+    src += ['src/ktime_compat.c']
+
+if GetDepend('RT_CLOCK_TIME_COMPAT_CPUTIME'):
+    src += ['src/cputime_compat.c']
+
+CPPPATH = [cwd + '/include', cwd + '/../include']
+
+LOCAL_CCFLAGS = ''
+if rtconfig.PLATFORM in ['gcc', 'armclang']:
+    LOCAL_CCFLAGS += ' -std=gnu99'
+elif rtconfig.PLATFORM in ['armcc']:
+    LOCAL_CCFLAGS += ' --c99 --gnu'
+
+group = DefineGroup('DeviceDrivers', src, depend=['RT_USING_CLOCK_TIME'], 
+                   CPPPATH=CPPPATH, LOCAL_CCFLAGS=LOCAL_CCFLAGS)
+
+Return('group')
