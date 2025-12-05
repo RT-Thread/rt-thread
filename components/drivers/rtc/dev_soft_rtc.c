@@ -13,8 +13,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#ifdef RT_USING_KTIME
-#include <ktime.h>
+#ifdef RT_USING_CLOCK_TIME
+#include <drivers/clock_time.h>
 #endif
 
 #ifdef RT_USING_SOFT_RTC
@@ -46,8 +46,8 @@ static struct rt_device soft_rtc_dev;
 static RT_DEFINE_SPINLOCK(_spinlock);
 /* RTC time baseline for calculation */
 static struct timespec base_ts = { 0 };
-#ifdef RT_USING_KTIME
-static struct timespec base_ktime_ts = { 0 };
+#ifdef RT_USING_CLOCK_TIME
+static struct timespec base_clocktime_ts = { 0 };
 #else
 static rt_tick_t base_tick;
 #endif
@@ -111,8 +111,8 @@ static void set_rtc_time(struct timespec *ts)
     rt_base_t level = rt_spin_lock_irqsave(&_spinlock);
     base_ts.tv_sec = ts->tv_sec;
     base_ts.tv_nsec = ts->tv_nsec;
-#ifdef RT_USING_KTIME
-    rt_ktime_boottime_get_ns(&base_ktime_ts);
+#ifdef RT_USING_CLOCK_TIME
+    rt_clock_time_boottime_ns(&base_clocktime_ts);
 #else
     base_tick = rt_tick_get();
 #endif
@@ -140,12 +140,12 @@ static void get_rtc_time(struct timespec *ts)
         return;
 
     level = rt_spin_lock_irqsave(&_spinlock);
-#ifdef RT_USING_KTIME
+#ifdef RT_USING_CLOCK_TIME
     struct timespec current_ts;
-    rt_ktime_boottime_get_ns(&current_ts);
+    rt_clock_time_boottime_ns(&current_ts);
 
-    ts->tv_sec = base_ts.tv_sec + (current_ts.tv_sec - base_ktime_ts.tv_sec);
-    ts->tv_nsec = base_ts.tv_nsec + (current_ts.tv_nsec - base_ktime_ts.tv_nsec);
+    ts->tv_sec = base_ts.tv_sec + (current_ts.tv_sec - base_clocktime_ts.tv_sec);
+    ts->tv_nsec = base_ts.tv_nsec + (current_ts.tv_nsec - base_clocktime_ts.tv_nsec);
 #else
     rt_tick_t tick = rt_tick_get_delta(base_tick);
     ts->tv_sec = base_ts.tv_sec + tick / RT_TICK_PER_SECOND;
@@ -256,8 +256,8 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
         ts = (struct timespec *)args;
         level = rt_spin_lock_irqsave(&_spinlock);
         ts->tv_sec = 0;
-#ifdef RT_USING_KTIME
-        ts->tv_nsec = (rt_ktime_cputimer_getres() / RT_KTIME_RESMUL);
+#ifdef RT_USING_CLOCK_TIME
+        ts->tv_nsec = (rt_clock_time_getres() / RT_CLOCK_TIME_RESMUL);
 #else
         ts->tv_nsec = (1000UL * 1000 * 1000) / RT_TICK_PER_SECOND;
 #endif
@@ -314,8 +314,8 @@ static int rt_soft_rtc_init(void)
                   RT_TIMER_FLAG_SOFT_TIMER | RT_TIMER_FLAG_ONE_SHOT);
 #endif
 
-#ifdef RT_USING_KTIME
-    rt_ktime_boottime_get_ns(&base_ktime_ts);
+#ifdef RT_USING_CLOCK_TIME
+    rt_clock_time_boottime_ns(&base_clocktime_ts);
 #else
     base_tick = rt_tick_get();
 #endif

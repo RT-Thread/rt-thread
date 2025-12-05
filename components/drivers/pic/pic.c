@@ -17,7 +17,7 @@
 
 #include <drivers/pic.h>
 #ifdef RT_USING_PIC_STATISTICS
-#include <ktime.h>
+#include <drivers/clock_time.h>
 #endif
 
 struct irq_traps
@@ -553,7 +553,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
     RT_ASSERT(pirq->pic != RT_NULL);
 
 #ifdef RT_USING_PIC_STATISTICS
-    rt_ktime_boottime_get_ns(&ts);
+    rt_clock_time_boottime_ns(&ts);
     current_irq_begin = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec;
 #endif
 
@@ -614,7 +614,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
     }
 
 #ifdef RT_USING_PIC_STATISTICS
-    rt_ktime_boottime_get_ns(&ts);
+    rt_clock_time_boottime_ns(&ts);
     irq_time_ns = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec - current_irq_begin;
     pirq->stat.sum_irq_time_ns += irq_time_ns;
     if (irq_time_ns < pirq->stat.min_irq_time_ns || pirq->stat.min_irq_time_ns == 0)
