@@ -16,8 +16,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#ifdef RT_USING_KTIME
-#include <ktime.h>
+#ifdef RT_USING_CLOCK_TIME
+#include <drivers/clock_time.h>
 #endif
 
 #define HZ      100
@@ -205,10 +205,10 @@ static void rk_timer_isr(int irqno, void *param)
 
     rk_timer_interrupt_clear(time);
 
-    rt_ktime_hrtimer_process();
+    rt_clock_hrtimer_process();
 }
 
-void rt_ktime_hrtimer_bind(rt_bitmap_t *affinity)
+void rt_clock_hrtimer_bind(rt_bitmap_t *affinity)
 {
     struct rk_timer *timer = _timer0.timer;
 
@@ -285,7 +285,7 @@ static rt_err_t rk_timer_probe(struct rt_platform_device *pdev)
 
     RT_BITMAP_DECLARE(affinity, RT_CPUS_NR) = { 0 };
     rt_bitmap_set_bit(affinity, RT_CPUS_NR - 1);
-    rt_ktime_hrtimer_bind(affinity);
+    rt_clock_hrtimer_bind(affinity);
 
     rt_pic_attach_irq(timer->irq, rk_timer_isr, timer, dev_name, RT_IRQ_F_NONE);
     rt_pic_irq_unmask(timer->irq);
@@ -326,16 +326,16 @@ static const struct rk_timer_data rk3399_timer_data =
     .ctrl_reg = TIMER_CONTROL_REG3399,
 };
 
-#ifdef RT_USING_KTIME
+#ifdef RT_USING_CLOCK_TIME
 
-uint64_t rt_ktime_hrtimer_getfrq(void)
+uint64_t rt_clock_hrtimer_getfrq(void)
 {
     return (24 * 1000 * 1000UL);
 }
 
-uint64_t rt_ktime_hrtimer_getres(void)
+uint64_t rt_clock_hrtimer_getres(void)
 {
-    return ((1000UL * 1000 * 1000) * RT_KTIME_RESMUL) / (24 * 1000 * 1000UL);
+    return ((1000UL * 1000 * 1000) * RT_CLOCK_TIME_RESMUL) / (24 * 1000 * 1000UL);
 }
 
 /**
@@ -346,7 +346,7 @@ uint64_t rt_ktime_hrtimer_getres(void)
  * @param cnt the count of timer dealy
  * @return rt_err_t 0 forever
  */
-rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt)
+rt_err_t rt_clock_hrtimer_settimeout(unsigned long cnt)
 {
     struct hrt_timer *timer = &_timer0;
     struct rk_timer *time = timer->timer;
