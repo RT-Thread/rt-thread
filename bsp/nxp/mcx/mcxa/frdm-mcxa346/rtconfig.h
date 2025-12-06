@@ -155,6 +155,7 @@
 #define RT_USING_ADC
 #define RT_USING_RTC
 #define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_PIN
 #define RT_USING_HWTIMER
 /* end of Device Drivers */
@@ -330,6 +331,10 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -419,6 +424,9 @@
 #define BSP_USING_PIN
 #define BSP_USING_UART
 #define BSP_USING_UART2
+#define BSP_USING_HWTIMER
+#define BSP_USING_CTIMER0
+#define BSP_USING_CTIMER1
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

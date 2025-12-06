@@ -20,7 +20,7 @@
 #define BUTTON_PIN     ((1*32)+7)   /* P1_7 button pin */
 
 static rt_bool_t led_state = RT_FALSE;        /* Current LED state */
-
+int create_tester_hwtimer_thread(void);
 
 /* Button interrupt callback function */
 void button_irq_callback(void *args)
@@ -52,13 +52,13 @@ int main(void)
     /* Attach interrupt to button pin */
     rt_pin_attach_irq(BUTTON_PIN, PIN_IRQ_MODE_FALLING, button_irq_callback, RT_NULL);
     rt_pin_irq_enable(BUTTON_PIN, PIN_IRQ_ENABLE);
-
+		create_tester_hwtimer_thread();
     while (1)
     {
-        /* Toggle LED state */
-        led_state = !led_state;
+//        /* Toggle LED state */
+//        led_state = !led_state;
 
-        rt_pin_write(LED_PIN, led_state ? PIN_HIGH : PIN_LOW);
+//        rt_pin_write(LED_PIN, led_state ? PIN_HIGH : PIN_LOW);
 
         rt_thread_mdelay(500);
     }
