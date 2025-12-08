@@ -1254,11 +1254,11 @@ static int list_irq(int argc, char**argv)
 
         rt_kputs(info);
     #ifdef RT_USING_SMP
+        rt_kputs(cpumask);
         if (RT_CPUS_NR < 4)
         {
-            rt_memset(&cpumask[RT_CPUS_NR], ' ', 4 - RT_CPUS_NR);
+            rt_kprintf("%-*.s", 4 - RT_CPUS_NR, " ");
         }
-        rt_kputs(cpumask);
     #endif
 
     #ifdef RT_USING_INTERRUPT_INFO
