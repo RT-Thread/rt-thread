@@ -306,6 +306,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     }
 
     rt_uint32_t timeout_ms = total_byte_ms / speed_bytes_per_sec + 100;
+    rt_tick_t timeout_tick = rt_tick_from_millisecond(timeout_ms);
 
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
@@ -384,7 +385,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
                 {
                     state = HAL_ERROR;
                     LOG_E("malloc aligned_send_buf failed!");
-                    break;
+                    goto transfer_cleanup;
                 }
                 rt_memcpy(aligned_send_buf, send_buf, send_length);
                 dma_send_buf = aligned_send_buf;
@@ -397,7 +398,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
                 {
                     state = HAL_ERROR;
                     LOG_E("malloc aligned_recv_buf failed!");
-                    break;
+                    goto transfer_cleanup;
                 }
                 dma_recv_buf = aligned_recv_buf;
             }
@@ -463,7 +464,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             LOG_E("SPI transfer error: %d", state);
             message->length = 0;
             spi_handle->State = HAL_SPI_STATE_READY;
-            break;
+            goto transfer_cleanup;
         }
         else
         {
@@ -473,12 +474,12 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         if (use_tx_dma || use_rx_dma)
         {
             /* blocking the thread,and the other tasks can run */
-            if (rt_completion_wait(&spi_drv->cpt, timeout_ms) != RT_EOK)
+            if (rt_completion_wait(&spi_drv->cpt, timeout_tick) != RT_EOK)
             {
                 state = HAL_ERROR;
                 LOG_E("wait for DMA interrupt overtime!");
                 HAL_SPI_DMAStop(spi_handle);
-                break;
+                goto transfer_cleanup;
             }
         }
         else
@@ -502,6 +503,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             }
         }
 
+transfer_cleanup:
         /* Post-transfer processing */
         if (state == HAL_OK)
         {
@@ -517,6 +519,11 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         // Free any temporary buffers that were allocated
         if (aligned_send_buf) rt_free_align(aligned_send_buf);
         if (aligned_recv_buf) rt_free_align(aligned_recv_buf);
+
+        if (state != HAL_OK)
+        {
+            break;
+        }
     }
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
