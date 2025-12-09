@@ -10,6 +10,10 @@
 
 #include <rtthread.h>
 
+#define DBG_TAG "rtdm"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+
 #ifdef RT_USING_OFW
 #include <drivers/ofw_io.h>
 #include <drivers/ofw_irq.h>
@@ -445,7 +449,7 @@ void rt_dm_dev_bind_fwdata(rt_device_t dev, void *fw_np, void *data)
 
     if (dev->ofw_node == RT_NULL)
     {
-        rt_kprintf("[%s:%s] line=%d ofw_node is NULL\r\n", __FILE__, __func__, __LINE__);
+        LOG_D("[%s:%s] line=%d ofw_node is NULL", __FILE__, __func__, __LINE__);
         return;
     }
 
@@ -468,7 +472,7 @@ void rt_dm_dev_unbind_fwdata(rt_device_t dev, void *fw_np)
 
     if (dev_fw_np == RT_NULL)
     {
-        rt_kprintf("[%s:%s] line=%d dev_fw_np is NULL\r\n", __FILE__, __func__, __LINE__);
+        LOG_D("[%s:%s] line=%d dev_fw_np is NULL", __FILE__, __func__, __LINE__);
         return;
     }
 
@@ -597,4 +601,3 @@ rt_bool_t rt_dm_dev_prop_read_bool(rt_device_t dev, const char *propname)
 
     return RT_FALSE;
 }
-
