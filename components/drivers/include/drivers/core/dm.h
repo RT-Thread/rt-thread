@@ -31,6 +31,14 @@ extern int rt_hw_cpu_id(void);
 #define RT_MAX_IPI 0
 #endif
 
+#ifndef DM_THREAD_STACK_SIZE
+#ifdef SYSTEM_THREAD_STACK_SIZE
+#define DM_THREAD_STACK_SIZE    SYSTEM_THREAD_STACK_SIZE
+#else
+#define DM_THREAD_STACK_SIZE    IDLE_THREAD_STACK_SIZE
+#endif
+#endif
+
 void rt_dm_secondary_cpu_init(void);
 
 /* ID Allocation */
