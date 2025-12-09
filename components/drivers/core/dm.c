@@ -306,6 +306,23 @@ const char *rt_dm_dev_get_name(rt_device_t dev)
 #define ofw_api_call_ptr(name, ...) RT_NULL
 #endif
 
+rt_bool_t rt_dm_dev_is_big_endian(rt_device_t dev)
+{
+    if (rt_dm_dev_prop_read_bool(dev, "big-endian"))
+    {
+        return RT_TRUE;
+    }
+
+#ifdef ARCH_CPU_BIG_ENDIAN
+    if (rt_dm_dev_prop_read_bool(dev, "native-endian"))
+    {
+        return RT_TRUE;
+    }
+#endif /* ARCH_CPU_BIG_ENDIAN */
+
+    return RT_FALSE;
+}
+
 int rt_dm_dev_get_address_count(rt_device_t dev)
 {
     RT_ASSERT(dev != RT_NULL);
@@ -478,6 +495,20 @@ void rt_dm_dev_unbind_fwdata(rt_device_t dev, void *fw_np)
 
     rt_ofw_data(dev_fw_np) = RT_NULL;
 #endif
+}
+
+const char *rt_dm_dev_get_prop_fuzzy_name(rt_device_t dev, const char *name)
+{
+    RT_ASSERT(dev != RT_NULL);
+
+#ifdef RT_USING_OFW
+    if (dev->ofw_node)
+    {
+        return ofw_api_call_ptr(get_prop_fuzzy_name, dev->ofw_node, name);
+    }
+#endif
+
+    return RT_NULL;
 }
 
 int rt_dm_dev_prop_read_u8_array_index(rt_device_t dev, const char *propname,
