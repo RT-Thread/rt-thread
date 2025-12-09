@@ -1,4 +1,8 @@
 menu "Drivers Configuration"
+        
+    config BSP_USING_GNNE
+        bool "Enable KPU and AI2D"
+        default n
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
