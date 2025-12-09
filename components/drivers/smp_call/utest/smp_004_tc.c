@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024/10/28     Shell        Added smp.smoke
+ * 2025/12/9      ChuanN-sudo  fix: initialize current_mask variable
  */
 
 #include <rtdevice.h>
@@ -90,7 +91,7 @@ static void _test_smp_call_isr(void *param)
 
 static rt_ubase_t _wait_for_update(rt_ubase_t *maskp, rt_ubase_t exp, int cpuid, rt_thread_t curthr)
 {
-    rt_ubase_t level, current_mask;
+    rt_ubase_t level, current_mask = 0;
 
     for (size_t i = cpuid; i < RT_CPUS_NR; i++)
     {
