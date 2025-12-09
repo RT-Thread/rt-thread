@@ -485,11 +485,11 @@ int rt_dm_dev_prop_read_u8_array_index(rt_device_t dev, const char *propname,
 {
     RT_ASSERT(dev != RT_NULL);
 
-#ifdef RT_UISNG_OFW
+#ifdef RT_USING_OFW
     if (dev->ofw_node)
     {
         return ofw_api_call(prop_read_u8_array_index, dev->ofw_node, propname,
-                index, nr, out_value);
+                index, nr, out_values);
     }
 #endif
 
