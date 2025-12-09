@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../../include']
 
 src = []
 
+if GetDepend(['RT_INPUT_KEYBOARD_GPIO']):
+    src += ['keys-gpio.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
