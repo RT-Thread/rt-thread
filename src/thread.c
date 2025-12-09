@@ -885,26 +885,27 @@ RTM_EXPORT(rt_thread_control);
 #include <lwp_signal.h>
 #endif
 
-static void _thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
+/* Convert suspend_flag to corresponding thread suspend state value */
+static rt_uint8_t _thread_get_suspend_state(int suspend_flag)
 {
-    rt_uint8_t stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
-
-    RT_ASSERT(thread != RT_NULL);
     switch (suspend_flag)
     {
     case RT_INTERRUPTIBLE:
-        stat = RT_THREAD_SUSPEND_INTERRUPTIBLE;
-        break;
+        return RT_THREAD_SUSPEND_INTERRUPTIBLE;
     case RT_KILLABLE:
-        stat = RT_THREAD_SUSPEND_KILLABLE;
-        break;
+        return  RT_THREAD_SUSPEND_KILLABLE;
     case RT_UNINTERRUPTIBLE:
-        stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
-        break;
     default:
-        RT_ASSERT(0);
-        break;
+        return RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
     }
+}
+
+static void _thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
+{
+    rt_uint8_t stat;
+
+    RT_ASSERT(thread != RT_NULL);
+    stat = _thread_get_suspend_state(suspend_flag);
     RT_SCHED_CTX(thread).stat = stat | (RT_SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
 }
 
@@ -948,7 +949,6 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     rt_sched_lock(&slvl);
 
     stat = rt_sched_thread_get_stat(thread);
-    /* Already suspended, just set the status to success. */
     if (stat & RT_THREAD_SUSPEND_MASK)
     {
         if (RT_SCHED_CTX(thread).sched_flag_ttmr_set == 1)
@@ -957,29 +957,13 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
             LOG_D("Thread [%s]'s timer has been halted.\n", thread->parent.name);
             rt_sched_thread_timer_stop(thread);
         }
-        /* Map suspend_flag to corresponding thread suspend state value */
-        rt_uint8_t new_suspend_state;
-        switch (suspend_flag)
+        /* Upgrade suspend state if new state is stricter */
+        if (stat < _thread_get_suspend_state(suspend_flag))
         {
-        case RT_INTERRUPTIBLE:
-            new_suspend_state = RT_THREAD_SUSPEND_INTERRUPTIBLE;
-            break;
-        case RT_KILLABLE:
-            new_suspend_state = RT_THREAD_SUSPEND_KILLABLE;
-            break;
-        case RT_UNINTERRUPTIBLE:
-        default:
-            new_suspend_state = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
-            break;
-        }
-        /* Compare the suspend state portion of stat with the new suspend state */
-        if (stat < new_suspend_state)
-        {
-            /* Update if suspend_flag is stricter */
             _thread_set_suspend_state(thread, suspend_flag);
         }
-
         rt_sched_unlock(slvl);
+        /* Already suspended, just set the status to success. */
         return RT_EOK;
     }
     else if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
