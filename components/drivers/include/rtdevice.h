@@ -125,6 +125,10 @@ extern "C" {
 #ifdef RT_USING_THERMAL
 #include "drivers/thermal.h"
 #endif /* RT_USING_THERMAL */
+
+#ifdef RT_USING_NVMEM
+#include "drivers/nvmem.h"
+#endif /* RT_USING_NVMEM */
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC
