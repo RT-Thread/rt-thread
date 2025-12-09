@@ -66,6 +66,10 @@ extern "C" {
 #include "drivers/mailbox.h"
 #endif /* RT_USING_MBOX */
 
+#ifdef RT_USING_HWSPINLOCK
+#include "drivers/hwspinlock.h"
+#endif /* RT_USING_HWSPINLOCK */
+
 #ifdef RT_USING_BLK
 #include "drivers/blk.h"
 #endif /* RT_USING_BLK */
