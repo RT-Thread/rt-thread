@@ -2,6 +2,6 @@ menuconfig RT_USING_PIN
     bool "Using Generic GPIO device drivers"
     default y
 
-if RT_USING_PIN
+if RT_USING_DM && RT_USING_PIN
     osource "$(SOC_DM_PIN_DIR)/Kconfig"
 endif
