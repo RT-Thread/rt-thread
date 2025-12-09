@@ -1,0 +1,8 @@
+menuconfig RT_INPUT_TOUCHSCREEN
+    bool "Touchscreens"
+    select RT_USING_TOUCH
+    default n
+
+if RT_INPUT_TOUCHSCREEN
+    osource "$(SOC_DM_INPUT_TOUCHSCREEN_DIR)/Kconfig"
+endif

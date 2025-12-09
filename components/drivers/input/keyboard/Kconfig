@@ -1,0 +1,7 @@
+menuconfig RT_INPUT_KEYBOARD
+    bool "Keyboards"
+    default n
+
+if RT_INPUT_KEYBOARD
+    osource "$(SOC_DM_INPUT_KEYBOARD_DIR)/Kconfig"
+endif

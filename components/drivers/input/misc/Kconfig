@@ -1,0 +1,7 @@
+menuconfig RT_INPUT_MISC
+    bool "Misc"
+    default n
+
+if RT_INPUT_MISC
+    osource "$(SOC_DM_INPUT_MISC_DIR)/Kconfig"
+endif

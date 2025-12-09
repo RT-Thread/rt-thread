@@ -53,7 +53,14 @@ extern "C" {
 
 #ifdef RT_USING_LED
 #include "drivers/led.h"
+#endif /* RT_USING_LED */
+
+#ifdef RT_USING_INPUT
+#include "drivers/input.h"
+#ifdef RT_INPUT_UAPI
+#include "drivers/input_uapi.h"
 #endif
+#endif /* RT_USING_INPUT */
 
 #ifdef RT_USING_MBOX
 #include "drivers/mailbox.h"
