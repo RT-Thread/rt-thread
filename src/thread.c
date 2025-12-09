@@ -975,6 +975,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
 
     if (stat == RT_THREAD_RUNNING)
     {
+        /* not suspend running status thread on other core */
         RT_ASSERT(thread == rt_thread_self());
     }
 
