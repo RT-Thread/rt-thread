@@ -1,4 +1,4 @@
-config RT_USING_RTC
+menuconfig RT_USING_RTC
     bool "Using RTC device drivers"
     default n
 
@@ -30,3 +30,7 @@ config RT_USING_RTC
             bool "Using software simulation RTC device"
             default n
     endif
+
+if RT_USING_DM && RT_USING_RTC
+    osource "$(SOC_DM_RTC_DIR)/Kconfig"
+endif
