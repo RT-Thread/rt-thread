@@ -13,6 +13,9 @@ if GetDepend(['RT_USING_RTC']):
     if GetDepend(['RT_USING_SOFT_RTC']):
         src = src + ['dev_soft_rtc.c']
 
+if GetDepend(['RT_USING_DM']):
+    src += ['rtc_dm.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_RTC'], CPPPATH = CPPPATH)
 
 Return('group')
