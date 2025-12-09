@@ -147,7 +147,7 @@ static void LPUART_TransferHandleTransmissionComplete(LPUART_Type *base, lpuart_
  * Variables
  ******************************************************************************/
 /* Array of LPUART peripheral base address. */
-static LPUART_Type *const s_lpuartBases[] = LPUART_BASE_PTRS;
+static LPUART_Type** const s_lpuartBases[] = LPUART_BASE_PTRS;
 /* Array of LPUART handle. */
 void *s_lpuartHandle[ARRAY_SIZE(s_lpuartBases)];
 /* Array of LPUART IRQ number. */
@@ -201,9 +201,9 @@ uint32_t LPUART_GetInstance(LPUART_Type *base)
     uint32_t instance;
 
     /* Find the instance index from base address mappings. */
-    for (instance = 0U; instance < ARRAY_SIZE(s_lpuartBases); instance++)
+    for (instance = 1U; instance < ARRAY_SIZE(s_lpuartBases); instance++)
     {
-        if (MSDK_REG_SECURE_ADDR(s_lpuartBases[instance]) == MSDK_REG_SECURE_ADDR(base))
+        if (MSDK_REG_SECURE_ADDR(*(s_lpuartBases[instance])) == MSDK_REG_SECURE_ADDR(base))
         {
             return instance;
         }
@@ -212,6 +212,21 @@ uint32_t LPUART_GetInstance(LPUART_Type *base)
     assert(instance < ARRAY_SIZE(s_lpuartBases));
 
     return instance;
+}
+
+/*!
+ * @brief Set the LPUART instance to peripheral base address.
+ *
+ * @param instance LPUART instance.
+ * @param base LPUART peripheral base address.
+ */
+void LPUART_SetInstance(uint32_t instance, LPUART_Type *base)
+{
+    if (instance >= ARRAY_SIZE(s_lpuartBases) || !instance)
+    {
+        return;
+    }
+    *(s_lpuartBases[instance]) = base;
 }
 
 /*!
@@ -2293,7 +2308,7 @@ void LPUART_DriverIRQHandler(uint32_t instance)
 {
     if (instance < ARRAY_SIZE(s_lpuartBases))
     {
-        s_lpuartIsr[instance](s_lpuartBases[instance], s_lpuartHandle[instance]);
+        s_lpuartIsr[instance](*(s_lpuartBases[instance]), s_lpuartHandle[instance]);
     }
     SDK_ISR_EXIT_BARRIER;
 }

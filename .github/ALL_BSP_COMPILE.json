@@ -387,7 +387,8 @@
       "SUB_RTT_BSP": [
         "qemu-virt64-aarch64",
         "raspberry-pi/raspi3-64",
-        "raspberry-pi/raspi4-64"
+        "raspberry-pi/raspi4-64",
+        "nxp/imx/imx91"
       ]
     },
     {

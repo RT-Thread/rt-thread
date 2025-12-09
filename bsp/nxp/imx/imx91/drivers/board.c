@@ -23,32 +23,29 @@
 #include <limits.h>
 
 #define DRAM_MAP_START KERNEL_BOOT_ADDR
-#define DRAM_MAP_SIZE (64 * 1024 * 1024) // part of DRAM
+#define DRAM_MAP_SIZE  MB_SIZE(256)
 
 #define MEM_DESC(vaddr_start, size, paddr_start, attr) \
     vaddr_start, (vaddr_start + size - 1uL), paddr_start, attr
 
-static volatile unsigned long MMUTable[512*4] __attribute__((aligned(4 * 1024)));
+extern volatile unsigned long MMUTable[];
 
-struct mem_desc platform_mem_desc[] = {
-    {MEM_DESC(DRAM_MAP_START, DRAM_MAP_SIZE, DRAM_MAP_START, NORMAL_MEM)},
-    // {MEM_DESC(LPUART1_BASE, LPUART1_SIZE, LPUART1_BASE, DEVICE_MEM)}, // 0x4438_0000
-    // {MEM_DESC(CCM_CTRL_BASE, CCM_CTRL_SIZE, CCM_CTRL_BASE, DEVICE_MEM)}, // 0x4445_8000
-    // {MEM_DESC(GIC_DISTRIBUTOR_BASE, GIC_DISTRIBUTOR_SIZE, GIC_DISTRIBUTOR_BASE, DEVICE_MEM)}, // 0x4800_0000 
-    // {MEM_DESC(GIC_REDISTRIBUTOR_BASE, GIC_REDISTRIBUTOR_SIZE, GIC_REDISTRIBUTOR_BASE, DEVICE_MEM)}, // 0x4804_0000
+static struct mem_desc platform_mem_desc[] = {
+    { MEM_DESC(DRAM_MAP_START, DRAM_MAP_SIZE, DRAM_MAP_START, NORMAL_MEM) }, // 0x8000_0000
+    { MEM_DESC(LPUART1_BASE, LPUART1_SIZE, LPUART1_BASE, DEVICE_MEM) }, // 0x4438_0000
+    { MEM_DESC(CCM_CTRL_BASE, CCM_CTRL_SIZE, CCM_CTRL_BASE, DEVICE_MEM) }, // 0x4445_8000
+    { MEM_DESC(GIC_DISTRIBUTOR_BASE, GIC_DISTRIBUTOR_SIZE, GIC_DISTRIBUTOR_BASE, DEVICE_MEM) }, // 0x4800_0000
+    { MEM_DESC(GIC_REDISTRIBUTOR_BASE, GIC_REDISTRIBUTOR_SIZE, GIC_REDISTRIBUTOR_BASE, DEVICE_MEM) }, // 0x4804_0000
 };
 
-const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
+static const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]);
 
-rt_region_t init_page_region = {
-    (rt_size_t)PAGE_START,
-    (rt_size_t)PAGE_END,
-};
+static rt_region_t init_page_region;
 
 static rt_base_t get_sctlr_el1()
 {
     rt_base_t sctlr = 0;
-    __asm__ volatile ("mrs %0, sctlr_el1" : "=r"(sctlr));
+    __asm__ volatile("mrs %0, sctlr_el1" : "=r"(sctlr));
     return sctlr;
 }
 
@@ -57,17 +54,20 @@ static rt_base_t get_sctlr_el1()
  */
 void rt_hw_board_init(void)
 {
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x080000000000, 0x10000000, (size_t *) MMUTable, 0);
+    rt_hw_earlycon_ioremap();
+    rt_hw_earlycon_print_hex("sctlr_el1: ", get_sctlr_el1());
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0x080000000000, 0x10000000, (size_t *)MMUTable, 0);
+
+    init_page_region.start = BOARD_PAGE_START;
+    init_page_region.end = BOARD_PAGE_END;
     rt_page_init(init_page_region);
+
     rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
 
-#ifdef RT_USING_HEAP    
+#ifdef RT_USING_HEAP
     /* initialize system heap */
-    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+    rt_system_heap_init((void *)BOARD_HEAP_BEGIN, (void *)BOARD_HEAP_END);
 #endif
-
-    /* map LPUART1/CCM_CTRL/GIC_DISTRIBUTOR/GIC_REDISTRIBUTOR virtual address to equals physical address */
-    rt_ioremap_early((void*)LPUART1_BASE, GIC_REDISTRIBUTOR_BASE + GIC_REDISTRIBUTOR_SIZE - LPUART1_BASE);
 
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
@@ -80,7 +80,4 @@ void rt_hw_board_init(void)
 
     rt_components_board_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-    rt_kprintf("[rt_hw_board_init] rt_kprintf works!\n");
 }
-
-/*@}*/

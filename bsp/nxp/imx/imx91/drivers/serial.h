@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2025, Real-Thread Information Technology Ltd
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,21 +19,15 @@
 int rt_hw_uart_init(void);
 
 #ifdef BSP_USING_EARLY_CONSOLE
-#define USING_EARLY_CONSOLE 1
-#else
-#define USING_EARLY_CONSOLE 0
-#endif
-
-#if USING_EARLY_CONSOLE
 void rt_hw_earlycon_ioremap(void);
 void rt_hw_earlycon_putc(char c);
 void rt_hw_earlycon_puts(const char *str);
 void rt_hw_earlycon_print_hex(const char *str, rt_base_t hex);
 #else
 static inline void rt_hw_earlycon_ioremap(void) {}
-static inline void rt_hw_earlycon_putc(char) {}
-static inline void rt_hw_earlycon_puts(const char *) {}
-static inline void rt_hw_earlycon_print_hex(const char *, rt_base_t) {}
+static inline void rt_hw_earlycon_putc(char c) {}
+static inline void rt_hw_earlycon_puts(const char *str) {}
+static inline void rt_hw_earlycon_print_hex(const char *str, rt_base_t hex) {}
 #endif
 
 void rt_hw_console_putc(char c);

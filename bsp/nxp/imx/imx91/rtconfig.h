@@ -458,6 +458,7 @@
 
 /* Hardware Drivers Config */
 
+#define BSP_USING_EARLY_CONSOLE
 #define BSP_USING_UART1
 #define BSP_USING_GIC
 #define BSP_USING_GICV3

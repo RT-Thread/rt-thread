@@ -743,6 +743,15 @@ static inline void LPUART_EnableRxDMA(LPUART_Type *base, bool enable)
 uint32_t LPUART_GetInstance(LPUART_Type *base);
 
 /*!
+ * @brief Set the LPUART instance to peripheral base address.
+ *
+ * @note Add this function to support remap LPUART base address.
+ * @param instance LPUART instance.
+ * @param base LPUART peripheral base address.
+ */
+void LPUART_SetInstance(uint32_t instance, LPUART_Type *base);
+
+/*!
  * @brief Enables or disables the LPUART transmitter.
  *
  * This function enables or disables the LPUART transmitter.

@@ -20,8 +20,6 @@ EXEC_PATH = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-print('RTT_EXEC_PATH:', os.getenv('RTT_EXEC_PATH'))
-
 BUILD = 'debug'
 
 if PLATFORM == 'gcc':
@@ -42,8 +40,6 @@ if PLATFORM == 'gcc':
     DEVICE += ' -fno-omit-frame-pointer -ffunction-sections -fdata-sections'
     CPPFLAGS = ' -E -P -x assembler-with-cpp'
     CFLAGS = DEVICE + ' -Wall -Wno-cpp'
-    CFLAGS += ' -mstrict-align' # disable unaligned access
-    CFLAGS += ' -Dmemcmp=rt_memcmp -Dstrcmp=rt_strcmp -Dstrcpy=rt_strcpy -Dstrlen=rt_strlen' # use rtthread string operations
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
 

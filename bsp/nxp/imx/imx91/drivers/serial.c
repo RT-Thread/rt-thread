@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2015, Real-Thread Information Technology Ltd
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -25,8 +25,9 @@ struct hw_uart_device
     struct rt_serial_device serial;  /* Select serial device */
     const char *device_name; /* serial device name */
 
-    LPUART_Type* uart_base;
-    LPUART_Type* uart_instance;
+    LPUART_Type *uart_ptr;
+    rt_base_t uart_base;
+    int instance;
     int irqn;
 
     clock_root_t clock_root; /* clock root */
@@ -36,11 +37,11 @@ struct hw_uart_device
 
 #ifdef BSP_USING_UART1
 /* UART1 device driver structure */
-static struct hw_uart_device _uart1_device =
-{
+static struct hw_uart_device _uart1_device = {
     .device_name = "uart1",
-    .uart_base = RT_NULL,
-    .uart_instance = LPUART1,
+    .uart_ptr = RT_NULL,
+    .uart_base = LPUART1_BASE,
+    .instance = 1,
     .irqn = LPUART1_IRQn,
     .clock_root = kCLOCK_Root_Lpuart1,
     .clock_mux = kCLOCK_LPUART1_ClockRoot_MuxOsc24M,
@@ -48,8 +49,7 @@ static struct hw_uart_device _uart1_device =
 };
 #endif
 
-static struct hw_uart_device* hw_uart_devices[] =
-{
+static struct hw_uart_device *hw_uart_devices[] = {
 #ifdef BSP_USING_UART1
     &_uart1_device,
 #endif
@@ -78,66 +78,72 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     // data bits
     switch (cfg->data_bits)
     {
-        case DATA_BITS_8:
-            config.dataBitsCount = kLPUART_EightDataBits;
-            break;
-        case DATA_BITS_7:
+    case DATA_BITS_8:
+        config.dataBitsCount = kLPUART_EightDataBits;
+        break;
+    case DATA_BITS_7:
 #if defined(FSL_FEATURE_LPUART_HAS_7BIT_DATA_SUPPORT) && FSL_FEATURE_LPUART_HAS_7BIT_DATA_SUPPORT
-            config.dataBitsCount = kLPUART_SevenDataBits;
-            break;
+        config.dataBitsCount = kLPUART_SevenDataBits;
+        break;
 #endif
-        default:
-            config.dataBitsCount = kLPUART_EightDataBits;
-            break;
+    default:
+        config.dataBitsCount = kLPUART_EightDataBits;
+        break;
     }
 
     // parity bit
     switch (cfg->parity)
     {
-        case PARITY_NONE:
-            config.parityMode = kLPUART_ParityDisabled;
-            break;
-        case PARITY_ODD:
-            config.parityMode = kLPUART_ParityOdd;
-            break;
-        case PARITY_EVEN:
-            config.parityMode = kLPUART_ParityEven;
-            break;
-        default:
-            config.parityMode = kLPUART_ParityDisabled;
-            break;
+    case PARITY_NONE:
+        config.parityMode = kLPUART_ParityDisabled;
+        break;
+    case PARITY_ODD:
+        config.parityMode = kLPUART_ParityOdd;
+        break;
+    case PARITY_EVEN:
+        config.parityMode = kLPUART_ParityEven;
+        break;
+    default:
+        config.parityMode = kLPUART_ParityDisabled;
+        break;
     }
 
     // stop bits
 #if defined(FSL_FEATURE_LPUART_HAS_STOP_BIT_CONFIG_SUPPORT) && FSL_FEATURE_LPUART_HAS_STOP_BIT_CONFIG_SUPPORT
     switch (cfg->stop_bits)
     {
-        case STOP_BITS_1:
-            config.stopBitCount = kLPUART_OneStopBit;
-            break;
-        case STOP_BITS_2:
-            config.stopBitCount = kLPUART_TwoStopBit;
-            break;
-        default:
-            config.stopBitCount = kLPUART_OneStopBit;
-            break;
+    case STOP_BITS_1:
+        config.stopBitCount = kLPUART_OneStopBit;
+        break;
+    case STOP_BITS_2:
+        config.stopBitCount = kLPUART_TwoStopBit;
+        break;
+    default:
+        config.stopBitCount = kLPUART_OneStopBit;
+        break;
     }
 #endif
 
     // LSB/MSB
-    if (cfg->bit_order == BIT_ORDER_LSB) {
+    if (cfg->bit_order == BIT_ORDER_LSB)
+    {
         config.isMsb = false;
-    } else {
+    }
+    else
+    {
         config.isMsb = true;
     }
 
     // hardware flow control
 #if defined(FSL_FEATURE_LPUART_HAS_MODEM_SUPPORT) && FSL_FEATURE_LPUART_HAS_MODEM_SUPPORT
-    if (cfg->flowcontrol == RT_SERIAL_FLOWCONTROL_NONE) {
+    if (cfg->flowcontrol == RT_SERIAL_FLOWCONTROL_NONE)
+    {
         // disable hardware flow control
         config.enableRxRTS = false;
         config.enableTxCTS = false;
-    } else {
+    }
+    else
+    {
         // enable hardware flow control
         config.enableRxRTS = true;
         config.enableTxCTS = true;
@@ -153,16 +159,15 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     CLOCK_SetRootClockDiv(uart->clock_root, 1U);
 
     // Initialize the LPUART module with the configuration structure and clock source
-    LPUART_Init(uart->uart_base, &config, CLOCK_GetIpFreq(uart->clock_root));
+    LPUART_Init(uart->uart_ptr, &config, CLOCK_GetIpFreq(uart->clock_root));
 
     // Install interrupt handler
     rt_hw_interrupt_install(uart->irqn, rt_hw_uart_isr, serial, "uart");
     rt_hw_interrupt_mask(uart->irqn);
 
     // Enable RX interrupt
-    // rt_hw_console_output("uart_configure LPUART_EnableInterrupts ...\n");
-    LPUART_EnableInterrupts(uart->uart_base, kLPUART_RxDataRegFullInterruptEnable);
-   return RT_EOK;
+    LPUART_EnableInterrupts(uart->uart_ptr, kLPUART_RxDataRegFullInterruptEnable);
+    return RT_EOK;
 }
 
 static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg)
@@ -195,16 +200,17 @@ static int uart_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
-    while (!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag)) {
+    while (!(LPUART_GetStatusFlags(uart->uart_ptr) & kLPUART_TxDataRegEmptyFlag))
+    {
         __NOP();
     }
 
-    LPUART_WriteByte(uart->uart_base, c);
+    LPUART_WriteByte(uart->uart_ptr, c);
 
     return 1;
 }
 
-#if USING_EARLY_CONSOLE
+#ifdef BSP_USING_EARLY_CONSOLE
 LPUART_Type *earlycon_base = RT_NULL;
 
 void rt_hw_earlycon_set(void *base)
@@ -214,33 +220,38 @@ void rt_hw_earlycon_set(void *base)
 
 void rt_hw_earlycon_ioremap(void)
 {
-    // earlycon_base = rt_ioremap_early((void *)LPUART1, LPUART1_SIZE);
-    earlycon_base = rt_ioremap_early((void*)LPUART1_BASE, GIC_REDISTRIBUTOR_BASE + GIC_REDISTRIBUTOR_SIZE - LPUART1_BASE);
-    rt_hw_earlycon_print_hex("earlycon_base: ", (rt_base_t)earlycon_base);
+    earlycon_base = rt_ioremap_early((void *)LPUART1, LPUART1_SIZE);
 }
 
 void rt_hw_earlycon_putc(char c)
 {
     LPUART_WriteByte(earlycon_base, c);
-    while (!(LPUART_GetStatusFlags(earlycon_base) & kLPUART_TxDataRegEmptyFlag));
+    while (!(LPUART_GetStatusFlags(earlycon_base) & kLPUART_TxDataRegEmptyFlag))
+        ;
 }
 
 static void rt_hw_earlycon_print(const char *str, int print_newline)
 {
     int has_cr = 0;
     int has_lf = 0;
-    while (*str) {
-        if (*str == '\r') {
+    while (*str)
+    {
+        if (*str == '\r')
+        {
             has_cr = 1;
-        } else if (*str == '\n') {
+        }
+        else if (*str == '\n')
+        {
             has_lf = 1;
         }
         rt_hw_earlycon_putc(*str++);
     }
-    if (!has_cr && print_newline) {
+    if (!has_cr && print_newline)
+    {
         rt_hw_earlycon_putc('\r');
     }
-    if (!has_lf && print_newline) {
+    if (!has_lf && print_newline)
+    {
         rt_hw_earlycon_putc('\n');
     }
 }
@@ -255,7 +266,8 @@ void rt_hw_earlycon_print_hex(const char *str, rt_base_t hex)
     rt_hw_earlycon_print(str, 0);
     rt_hw_earlycon_putc('0');
     rt_hw_earlycon_putc('x');
-    for (int i = 60; i >= 0; i -= 4) {
+    for (int i = 60; i >= 0; i -= 4)
+    {
         rt_base_t h = (hex >> i) & 0xF;
         rt_hw_earlycon_putc(h < 10 ? '0' + h : 'A' + h - 10);
     }
@@ -276,18 +288,24 @@ void rt_hw_console_output(const char *str)
 #if defined(BSP_USING_UART1)
     int has_cr = 0;
     int has_lf = 0;
-    while (*str) {
-        if (*str == '\r') {
+    while (*str)
+    {
+        if (*str == '\r')
+        {
             has_cr = 1;
-        } else if (*str == '\n') {
+        }
+        else if (*str == '\n')
+        {
             has_lf = 1;
         }
         rt_hw_console_putc(*str++);
     }
-    if (!has_cr) {
+    if (!has_cr)
+    {
         rt_hw_console_putc('\r');
     }
-    if (!has_lf) {
+    if (!has_lf)
+    {
         rt_hw_console_putc('\n');
     }
 #endif
@@ -301,56 +319,54 @@ static int uart_getc(struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
 
-    uint32_t flags = LPUART_GetStatusFlags(uart->uart_base);
-    if (flags & kLPUART_RxDataRegFullFlag) {
-        ch = LPUART_ReadByte(uart->uart_base);
-    } else {
+    uint32_t flags = LPUART_GetStatusFlags(uart->uart_ptr);
+    if (flags & kLPUART_RxDataRegFullFlag)
+    {
+        ch = LPUART_ReadByte(uart->uart_ptr);
+    }
+    else
+    {
         ch = -1;
     }
 
     return ch;
 }
 
-static const struct rt_uart_ops _uart_ops =
-{
+static const struct rt_uart_ops _uart_ops = {
     uart_configure,
     uart_control,
     uart_putc,
     uart_getc,
 };
 
-#define PERIPH_MAP_START 0x44000000
-#define PERIPH_MAP_SIZE (0x0C000000)
-
 int rt_hw_uart_init(void)
 {
     struct serial_configure config;
-    /* set serial configure */
+
+    /* setup default serial configure */
     config.baud_rate = BAUD_RATE_115200;
     config.bit_order = BIT_ORDER_LSB;
     config.data_bits = DATA_BITS_8;
-    config.parity    = PARITY_NONE;
+    config.parity = PARITY_NONE;
     config.stop_bits = STOP_BITS_1;
-    config.invert    = NRZ_NORMAL;
-    config.bufsz     = RT_SERIAL_RB_BUFSZ;
+    config.invert = NRZ_NORMAL;
+    config.bufsz = RT_SERIAL_RB_BUFSZ;
 
-// #ifdef BSP_USING_EARLY_CONSOLE
-//     rt_ioremap_early((void*)CCM_CTRL_BASE, CCM_CTRL_SIZE);
-// #else
-//     g_CCM_CTRL_BASE = (uintptr_t) rt_ioremap((void *)CCM_CTRL_BASE, CCM_CTRL_SIZE);
-// #endif
+    /* Remap CCM controller to virtual address */
+    CCM_CTRL = rt_ioremap((void *)CCM_CTRL_BASE, CCM_CTRL_SIZE);
+
     for (int i = 0; i < RT_ARRAY_SIZE(hw_uart_devices); i++)
     {
         if (hw_uart_devices[i] != RT_NULL)
         {
             hw_uart_devices[i]->serial.ops = &_uart_ops;
             hw_uart_devices[i]->serial.config = config;
-            hw_uart_devices[i]->uart_base = (LPUART_Type *)hw_uart_devices[i]->uart_instance;
-// #ifdef BSP_USING_EARLY_CONSOLE
-//             hw_uart_devices[i]->uart_base = rt_ioremap_early((void *)hw_uart_devices[i]->uart_instance, LPUART1_SIZE);
-// #else
-//             hw_uart_devices[i]->uart_base = rt_ioremap((void *)hw_uart_devices[i]->uart_instance, LPUART1_SIZE);
-// #endif
+
+            /* Remap LPUART instance to virtual address */
+            hw_uart_devices[i]->uart_ptr = rt_ioremap((void *)hw_uart_devices[i]->uart_base, LPUART1_SIZE);
+
+            /* Update LPUART instance */
+            LPUART_SetInstance(hw_uart_devices[i]->instance, hw_uart_devices[i]->uart_ptr);
 
             rt_hw_serial_register(&hw_uart_devices[i]->serial, hw_uart_devices[i]->device_name,
                                   RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, hw_uart_devices[i]);
