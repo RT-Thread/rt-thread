@@ -1,38 +1,24 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author            Notes
- * 2017-12-23     Bernard           first version
+ * Date           Author       Notes
+ * 2024-12-04     RT-Thread    Stub header for cputime compatibility
  */
 
-#ifndef CPUTIME_H__
-#define CPUTIME_H__
+#ifndef __DRIVERS_CPUTIME_H__
+#define __DRIVERS_CPUTIME_H__
 
-#include <stdint.h>
-#include "cputimer.h"
+/*
+ * This is a compatibility stub header.
+ * The cputime subsystem has been replaced by the unified clock_time subsystem.
+ * Please update your code to use <drivers/clock_time.h> instead.
+ */
 
-struct rt_clock_cputime_ops
-{
-    uint64_t (*cputime_getres)(void);
-    uint64_t (*cputime_gettime)(void);
-    int (*cputime_settimeout)(uint64_t tick, void (*timeout)(void *param), void *param);
-};
+#include <drivers/clock_time.h>
 
-uint64_t clock_cpu_getres(void);
-uint64_t clock_cpu_gettime(void);
-int clock_cpu_settimeout(uint64_t tick, void (*timeout)(void *param), void *param);
-int clock_cpu_issettimeout(void);
+#warning "drivers/cputime.h is deprecated. Please use drivers/clock_time.h instead."
 
-uint64_t clock_cpu_microsecond(uint64_t cpu_tick);
-uint64_t clock_cpu_millisecond(uint64_t cpu_tick);
-
-int clock_cpu_setops(const struct rt_clock_cputime_ops *ops);
-
-#ifdef RT_USING_CPUTIME_RISCV
-int riscv_cputime_init(void);
-#endif /* RT_USING_CPUTIME_RISCV */
-
-#endif
+#endif /* __DRIVERS_CPUTIME_H__ */
