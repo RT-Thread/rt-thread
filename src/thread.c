@@ -893,7 +893,7 @@ static rt_uint8_t _thread_get_suspend_state(int suspend_flag)
     case RT_INTERRUPTIBLE:
         return RT_THREAD_SUSPEND_INTERRUPTIBLE;
     case RT_KILLABLE:
-        return  RT_THREAD_SUSPEND_KILLABLE;
+        return RT_THREAD_SUSPEND_KILLABLE;
     case RT_UNINTERRUPTIBLE:
     default:
         return RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
