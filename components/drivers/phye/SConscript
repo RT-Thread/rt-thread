@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../include']
 
 src = ['phye.c']
 
+if GetDepend(['RT_PHYE_GENERIC_USB']):
+    src += ['phye-generic-usb.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

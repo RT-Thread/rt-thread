@@ -38,10 +38,21 @@
 
 static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr);
 
+/* Define the structure of early page table */
+struct page_table
+{
+    unsigned long page[ARCH_PAGE_SIZE / sizeof(unsigned long)];
+};
+static struct page_table *__init_page_array;
+
+#ifndef RT_USING_SMP
 static void *current_mmu_table = RT_NULL;
+#else
+static void *current_mmu_table[RT_CPUS_NR] = { RT_NULL };
+#endif /* RT_USING_SMP */
 
 volatile __attribute__((aligned(4 * 1024)))
-rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
+rt_ubase_t MMUTable[__SIZE(VPN2_BIT) * RT_CPUS_NR];
 
 /**
  * @brief Switch the current address space to the specified one.
@@ -69,8 +80,15 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
 #else /* !ARCH_USING_ASID */
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
-    uintptr_t page_table = (uintptr_t)rt_kmem_v2p(aspace->page_table);
+    // It is necessary to find the MMU page table specific to each core.
+    uint32_t hartid = rt_cpu_get_id();
+    uintptr_t ptr = (uintptr_t)aspace->page_table + (uintptr_t)(hartid * ARCH_PAGE_SIZE);
+    uintptr_t page_table = (uintptr_t)rt_kmem_v2p((void *)ptr);
+#ifndef RT_USING_SMP
     current_mmu_table = aspace->page_table;
+#else
+    current_mmu_table[rt_hw_cpu_id()] = (void *)ptr;
+#endif
 
     write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
                         ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
@@ -85,7 +103,11 @@ void rt_hw_asid_init(void)
 /* get current page table. */
 void *rt_hw_mmu_tbl_get()
 {
+#ifndef RT_USING_SMP
     return current_mmu_table;
+#else
+    return current_mmu_table[rt_hw_cpu_id()];
+#endif /* RT_USING_SMP */
 }
 
 /* Map a single virtual address page to a physical address page in the page table. */
@@ -98,65 +120,152 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
     l1_off = GET_L1((size_t)va);
     l2_off = GET_L2((size_t)va);
     l3_off = GET_L3((size_t)va);
-
-    mmu_l1 = ((rt_ubase_t *)aspace->page_table) + l1_off;
-
-    if (PTE_USED(*mmu_l1))
+    /* Create a separate page table for each hart to facilitate access to the .percpu section. */
+    for (int hartid = 0; hartid < RT_CPUS_NR; hartid++)
     {
-        mmu_l2 = (rt_ubase_t *)PPN_TO_VPN(GET_PADDR(*mmu_l1), PV_OFFSET);
-    }
-    else
-    {
-        mmu_l2 = (rt_ubase_t *)rt_pages_alloc(0);
+        mmu_l1 = (rt_ubase_t *)((rt_ubase_t)aspace->page_table + (rt_ubase_t)(hartid * ARCH_PAGE_SIZE)) + l1_off;
 
-        if (mmu_l2)
+        if (PTE_USED(*mmu_l1))
         {
-            rt_memset(mmu_l2, 0, PAGE_SIZE);
-            rt_hw_cpu_dcache_clean(mmu_l2, PAGE_SIZE);
-            *mmu_l1 = COMBINEPTE((rt_ubase_t)VPN_TO_PPN(mmu_l2, PV_OFFSET),
-                                 PAGE_DEFAULT_ATTR_NEXT);
-            rt_hw_cpu_dcache_clean(mmu_l1, sizeof(*mmu_l1));
+            mmu_l2 = (rt_ubase_t *)PPN_TO_VPN(GET_PADDR(*mmu_l1), PV_OFFSET);
         }
         else
         {
-            return -1;
+            mmu_l2 = (rt_ubase_t *)rt_pages_alloc(0);
+
+            if (mmu_l2)
+            {
+                rt_memset(mmu_l2, 0, PAGE_SIZE);
+                rt_hw_cpu_dcache_clean(mmu_l2, PAGE_SIZE);
+                *mmu_l1 = COMBINEPTE((rt_ubase_t)VPN_TO_PPN(mmu_l2, PV_OFFSET),
+                                    PAGE_DEFAULT_ATTR_NEXT);
+                rt_hw_cpu_dcache_clean(mmu_l1, sizeof(*mmu_l1));
+            }
+            else
+            {
+                return -1;
+            }
         }
-    }
 
-    if (PTE_USED(*(mmu_l2 + l2_off)))
-    {
-        RT_ASSERT(!PAGE_IS_LEAF(*(mmu_l2 + l2_off)));
-        mmu_l3 =
-            (rt_ubase_t *)PPN_TO_VPN(GET_PADDR(*(mmu_l2 + l2_off)), PV_OFFSET);
-    }
-    else
-    {
-        mmu_l3 = (rt_ubase_t *)rt_pages_alloc(0);
-
-        if (mmu_l3)
+        if (PTE_USED(*(mmu_l2 + l2_off)))
         {
-            rt_memset(mmu_l3, 0, PAGE_SIZE);
-            rt_hw_cpu_dcache_clean(mmu_l3, PAGE_SIZE);
-            *(mmu_l2 + l2_off) =
-                COMBINEPTE((rt_ubase_t)VPN_TO_PPN(mmu_l3, PV_OFFSET),
-                           PAGE_DEFAULT_ATTR_NEXT);
-            rt_hw_cpu_dcache_clean(mmu_l2, sizeof(*mmu_l2));
-            /* declares a reference to parent page table */
-            rt_page_ref_inc((void *)mmu_l2, 0);
+            RT_ASSERT(!PAGE_IS_LEAF(*(mmu_l2 + l2_off)));
+            mmu_l3 =
+                (rt_ubase_t *)PPN_TO_VPN(GET_PADDR(*(mmu_l2 + l2_off)), PV_OFFSET);
         }
         else
         {
-            return -1;
+            mmu_l3 = (rt_ubase_t *)rt_pages_alloc(0);
+
+            if (mmu_l3)
+            {
+                rt_memset(mmu_l3, 0, PAGE_SIZE);
+                rt_hw_cpu_dcache_clean(mmu_l3, PAGE_SIZE);
+                *(mmu_l2 + l2_off) =
+                    COMBINEPTE((rt_ubase_t)VPN_TO_PPN(mmu_l3, PV_OFFSET),
+                            PAGE_DEFAULT_ATTR_NEXT);
+                rt_hw_cpu_dcache_clean(mmu_l2, sizeof(*mmu_l2));
+                /* declares a reference to parent page table */
+                rt_page_ref_inc((void *)mmu_l2, 0);
+            }
+            else
+            {
+                return -1;
+            }
         }
+
+        RT_ASSERT(!PTE_USED(*(mmu_l3 + l3_off)));
+        /* declares a reference to parent page table */
+        rt_page_ref_inc((void *)mmu_l3, 0);
+        *(mmu_l3 + l3_off) = COMBINEPTE((rt_ubase_t)pa, attr);
+        rt_hw_cpu_dcache_clean(mmu_l3 + l3_off, sizeof(*(mmu_l3 + l3_off)));
     }
 
-    RT_ASSERT(!PTE_USED(*(mmu_l3 + l3_off)));
-    /* declares a reference to parent page table */
-    rt_page_ref_inc((void *)mmu_l3, 0);
-    *(mmu_l3 + l3_off) = COMBINEPTE((rt_ubase_t)pa, attr);
-    rt_hw_cpu_dcache_clean(mmu_l3 + l3_off, sizeof(*(mmu_l3 + l3_off)));
     return 0;
 }
+
+#if defined(RT_USING_SMP) && defined(ARCH_MM_MMU)
+static int _map_percpu_area(rt_ubase_t *table, void *va, void *pa, int cpu_id)
+{
+    unsigned long page;
+    rt_ubase_t off, level_shift;
+
+    level_shift = PPN2_SHIFT;
+
+    // map pages - 4KB
+    for (int level = 0; level < 2; ++level)
+    {
+        off = ((rt_ubase_t)va >> level_shift) & VPN_MASK;
+        if (table[off] & PTE_V)
+        {
+            /* Step into the next level page table */
+            table = (unsigned long *)((table[off] >> PTE_BITS) << ARCH_PAGE_SHIFT);
+            level_shift -= VPN_BITS;
+            continue;
+        }
+        if (!(page = get_free_page()))
+        {
+            return MMU_MAP_ERROR_NOPAGE;
+        }
+        rt_memset((void *)page, 0, ARCH_PAGE_SIZE);
+        table[off] = ((page >> ARCH_PAGE_SHIFT) << PTE_BITS) | PTE_V;
+
+        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, table + off, sizeof(void *));
+
+        /* Step into the next level page table */
+        table = (unsigned long *)((table[off] >> PTE_BITS) << ARCH_PAGE_SHIFT);
+
+        level_shift -= VPN_BITS;
+    }
+
+    off = ((rt_ubase_t)va >> level_shift) & VPN_MASK;
+    table[off] = (((rt_ubase_t)pa >> ARCH_PAGE_SHIFT) << PTE_BITS) | MMU_MAP_K_RWCB;
+
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, table + off, sizeof(void *));
+
+    return ARCH_PAGE_SIZE;
+}
+
+// Ensure that the .percpu section is mapped in the specific address for each core.
+static void rt_hw_percpu_mmu_init_check(void)
+{
+    size_t mapped, size;
+    void *page_table, *vaddr, *paddr;
+    static rt_bool_t inited = RT_FALSE;
+
+    if (inited)
+    {
+        return;
+    }
+    inited = RT_TRUE;
+
+    page_table = rt_kernel_space.page_table;
+
+    for (int hartid = 0; hartid < RT_CPUS_NR; ++hartid)
+    {
+        vaddr = &__percpu_start;
+        paddr = vaddr + rt_kmem_pvoff();
+        size = (size_t)((rt_ubase_t)&__percpu_end - (rt_ubase_t)&__percpu_start);
+        /* Offset to per-CPU partition for current CPU */
+        paddr += size * hartid;
+
+        while (size > 0)
+        {
+            MM_PGTBL_LOCK(&rt_kernel_space);
+            mapped = _map_percpu_area(page_table, vaddr, paddr, hartid);
+            MM_PGTBL_UNLOCK(&rt_kernel_space);
+
+            RT_ASSERT(mapped > 0);
+
+            size -= mapped;
+            vaddr += mapped;
+            paddr += mapped;
+        }
+
+        page_table += ARCH_PAGE_SIZE;
+    }
+}
+#endif /* RT_USING_SMP && RT_USING_SMART */
 
 /**
  * @brief Maps a virtual address space to a physical address space.
@@ -185,24 +294,35 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
     int ret = -1;
     void *unmap_va = v_addr;
     size_t npages = size >> ARCH_PAGE_SHIFT;
+#if defined(RT_USING_SMP) && defined(ARCH_MM_MMU)
+    // Map the memory of the .percpu section separately for each core.
+    rt_hw_percpu_mmu_init_check();
+#endif
 
     /* TODO trying with HUGEPAGE here */
     while (npages--)
     {
-        MM_PGTBL_LOCK(aspace);
-        ret = _map_one_page(aspace, v_addr, p_addr, attr);
-        MM_PGTBL_UNLOCK(aspace);
-        if (ret != 0)
+#if defined(RT_USING_SMP) && defined(ARCH_MM_MMU)
+        // skip mapping .percpu section pages
+        if (v_addr < (void *)&__percpu_start ||
+            v_addr >= (void *)&__percpu_end)
+#endif
         {
-            /* error, undo map */
-            while (unmap_va != v_addr)
+            MM_PGTBL_LOCK(aspace);
+            ret = _map_one_page(aspace, v_addr, p_addr, attr);
+            MM_PGTBL_UNLOCK(aspace);
+            if (ret != 0)
             {
-                MM_PGTBL_LOCK(aspace);
-                _unmap_area(aspace, unmap_va);
-                MM_PGTBL_UNLOCK(aspace);
-                unmap_va += ARCH_PAGE_SIZE;
+                /* error, undo map */
+                while (unmap_va != v_addr)
+                {
+                    MM_PGTBL_LOCK(aspace);
+                    _unmap_area(aspace, unmap_va);
+                    MM_PGTBL_UNLOCK(aspace);
+                    unmap_va += ARCH_PAGE_SIZE;
+                }
+                break;
             }
-            break;
         }
         v_addr += ARCH_PAGE_SIZE;
         p_addr += ARCH_PAGE_SIZE;
@@ -215,6 +335,99 @@ void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
 
     return NULL;
 }
+
+#ifdef ARCH_MM_MMU
+void set_free_page(void *page_array)
+{
+    __init_page_array = page_array;
+}
+
+// Early-stage page allocator
+unsigned long get_free_page(void)
+{
+    static rt_atomic_t page_off = 0;
+
+    rt_atomic_t old_off = rt_hw_atomic_add(&page_off, 1);
+    if (old_off < ARCH_PAGE_SIZE / sizeof(unsigned long))
+    {
+        return (unsigned long)(__init_page_array[old_off].page);
+    }
+
+    return 0;
+}
+
+#ifdef RT_USING_SMP
+// Perform early mapping for the .percpu section
+static int rt_hw_mmu_map_percpu_early(rt_ubase_t *tbl, rt_ubase_t va, rt_ubase_t pa)
+{
+    unsigned long page;
+    rt_ubase_t off, level_shift;
+
+    level_shift = PPN2_SHIFT;
+
+    // page size 2MB
+    off = (va >> level_shift) & VPN_MASK;
+    // Step into the next level page table
+    tbl = (rt_ubase_t *)((tbl[off] >> PTE_BITS) << ARCH_PAGE_SHIFT);
+    level_shift -= VPN_BITS;
+
+    off = (va >> level_shift) & VPN_MASK;
+    tbl[off] = ((pa >> ARCH_PAGE_SHIFT) << PTE_BITS) | MMU_MAP_K_RWCB;
+
+    asm volatile("sfence.vma x0, x0");
+    return 0;
+}
+#endif /* RT_USING_SMP */
+
+static int rt_hw_mmu_map_early(rt_ubase_t *tbl, rt_ubase_t va, rt_ubase_t pa,
+                               rt_ubase_t attr)
+{
+    unsigned long page, *table;
+    rt_ubase_t off, level_shift;
+
+    if ((va & (L2_PAGE_SIZE - 1)) || (pa & (L2_PAGE_SIZE - 1)))
+    {
+        return MMU_MAP_ERROR_VANOTALIGN;
+    }
+
+    table = tbl;
+    level_shift = PPN2_SHIFT;
+
+    // page size 2MB
+    for (int level = 0; level < 1; ++level)
+    {
+        off = (va >> level_shift) & VPN_MASK;
+
+        if (!(table[off] & PTE_V))
+        {
+            if (!(page = get_free_page()))
+            {
+                return MMU_MAP_ERROR_NOPAGE;
+            }
+
+            rt_memset((void *)page, 0, ARCH_PAGE_SIZE);
+            table[off] = ((page >> ARCH_PAGE_SHIFT) << PTE_PPN_SHIFT) | PTE_V;
+        }
+
+        if ((table[off] & PTE_ATTR_RWX) != 0)
+        {
+            /* No a page! */
+            return MMU_MAP_ERROR_CONFLICT;
+        }
+
+        /* Step into the next level page table */
+        page = (table[off] >> PTE_BITS) << ARCH_PAGE_SHIFT;
+        table = (unsigned long *)page;
+
+        level_shift -= VPN_BITS;
+    }
+
+    off = (va >> level_shift) & VPN_MASK;
+    table[off] = ((pa >> ARCH_PAGE_SHIFT) << PTE_BITS) | attr;
+
+    return 0;
+}
+#endif
 
 /* unmap page table entry */
 static void _unmap_pte(rt_ubase_t *pentry, rt_ubase_t *lvl_entry[], int level)
@@ -456,7 +669,7 @@ static rt_ubase_t *_query(struct rt_aspace *aspace, void *vaddr, int *level)
         return RT_NULL;
     }
 
-    mmu_l1 = ((rt_ubase_t *)aspace->page_table) + l1_off;
+    mmu_l1 = ((rt_ubase_t *)((rt_ubase_t)aspace->page_table + (rt_ubase_t)(rt_hw_cpu_id() * ARCH_PAGE_SIZE))) + l1_off;
 
     if (PTE_USED(*mmu_l1))
     {
@@ -648,8 +861,6 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
 
 #define SATP_BASE ((rt_ubase_t)SATP_MODE << SATP_MODE_OFFSET)
 
-extern unsigned int __bss_end;
-
 /**
  * @brief Early memory setup function for hardware initialization.
  *
@@ -662,12 +873,12 @@ extern unsigned int __bss_end;
  *       before the memory management system is fully operational.
  *       Here the identity mapping is implemented by a 1-stage page table, whose page size is 1GB.
  */
-void rt_hw_mem_setup_early(void)
+void rt_hw_mem_setup_early(void *pgtbl, rt_uint64_t hartid)
 {
-    rt_ubase_t pv_off;
+    rt_ubase_t pv_off, size;
     rt_ubase_t ps = 0x0;
     rt_ubase_t vs = 0x0;
-    rt_ubase_t *early_pgtbl = (rt_ubase_t *)(((size_t)&__bss_end + 4095) & ~0xfff);
+    rt_ubase_t *early_pgtbl = (rt_ubase_t *)(pgtbl + hartid * ARCH_PAGE_SIZE);
 
     /* calculate pv_offset */
     void *symb_pc;
@@ -705,14 +916,39 @@ void rt_hw_mem_setup_early(void)
         vs = ps - pv_off;
 
         /* relocate region */
-        rt_ubase_t vs_idx = GET_L1(vs);
-        rt_ubase_t ve_idx = GET_L1(vs + 0x80000000);
-        for (size_t i = vs_idx; i < ve_idx; i++)
+        rt_ubase_t ve = vs + 0x80000000;
+#if defined(RT_USING_SMP) && defined(ARCH_MM_MMU)
+        while (vs < ve)
+        {
+            rt_hw_mmu_map_early(early_pgtbl, vs, ps, MMU_MAP_EARLY);
+            vs += L2_PAGE_SIZE;
+            ps += L2_PAGE_SIZE;
+        }
+#else
+        for (int i = GET_L1(vs); i < GET_L1(ve); i++)
         {
             early_pgtbl[i] = COMBINEPTE(ps, MMU_MAP_EARLY);
             ps += L1_PAGE_SIZE;
         }
+#endif
 
+#if defined(RT_USING_SMP) && defined(ARCH_MM_MMU)
+        // map .percpu section
+        ps = (rt_ubase_t)&__percpu_start;
+        vs = ps - rt_kmem_pvoff();
+        size = (rt_size_t)((rt_ubase_t)&__percpu_end - (rt_ubase_t)&__percpu_start);
+        /* Offset to per-CPU partition for current CPU */
+        ps += hartid * size;
+        ve = vs + size;
+
+        while (vs < ve)
+        {
+            /* Map physical address per-CPU partition */
+            rt_hw_mmu_map_percpu_early(early_pgtbl, vs, ps);
+            ps += L2_PAGE_SIZE;
+            vs += L2_PAGE_SIZE;
+        }
+#endif
         /* apply new mapping */
         asm volatile("sfence.vma x0, x0");
         write_csr(satp, SATP_BASE | ((size_t)early_pgtbl >> PAGE_OFFSET_BIT));

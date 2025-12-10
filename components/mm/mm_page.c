@@ -417,9 +417,26 @@ static inline rt_page_t addr_to_page(rt_page_t pg_start, void *addr)
 const rt_size_t shadow_mask =
     ((1ul << (RT_PAGE_MAX_ORDER + ARCH_PAGE_SHIFT - 1)) - 1);
 
-const rt_size_t rt_mpr_size = CEIL(
-    ((1ul << (ARCH_VADDR_WIDTH - ARCH_PAGE_SHIFT))) * sizeof(struct rt_page),
-    ARCH_PAGE_SIZE);
+#define MPR_SIZE CEIL( \
+        ((1ul << (ARCH_VADDR_WIDTH - ARCH_PAGE_SHIFT))) * sizeof(struct rt_page), \
+        ARCH_PAGE_SIZE)
+
+#ifdef RT_PAGE_MPR_SIZE_DYNAMIC
+/**
+ * @brief Get the size of Memory Page Region (MPR)
+ *
+ * When RT_PAGE_MPR_SIZE_DYNAMIC is enabled, MPR size is calculated at runtime
+ * for platforms where virtual address width is not a compile-time constant.
+ *
+ * @return MPR size in bytes
+ */
+const rt_size_t rt_mpr_size_dynamic(void)
+{
+    return MPR_SIZE;
+}
+#else
+const rt_size_t rt_mpr_size = MPR_SIZE;
+#endif
 
 void *rt_mpr_start;
 
@@ -1168,7 +1185,7 @@ void rt_page_init(rt_region_t reg)
     shadow.start = reg.start & ~shadow_mask;
     shadow.end = CEIL(reg.end, shadow_mask + 1);
     LOG_D("[Init page] start: 0x%lx, end: 0x%lx, total: 0x%lx", reg.start,
-          reg.end, page_nr);
+          reg.end, ((reg.end - reg.start) >> ARCH_PAGE_SHIFT));
 
     int err;
 

@@ -53,7 +53,14 @@ extern "C" {
 
 #ifdef RT_USING_LED
 #include "drivers/led.h"
+#endif /* RT_USING_LED */
+
+#ifdef RT_USING_INPUT
+#include "drivers/input.h"
+#ifdef RT_INPUT_UAPI
+#include "drivers/input_uapi.h"
 #endif
+#endif /* RT_USING_INPUT */
 
 #ifdef RT_USING_MBOX
 #include "drivers/mailbox.h"
@@ -118,6 +125,10 @@ extern "C" {
 #ifdef RT_USING_THERMAL
 #include "drivers/thermal.h"
 #endif /* RT_USING_THERMAL */
+
+#ifdef RT_USING_NVMEM
+#include "drivers/nvmem.h"
+#endif /* RT_USING_NVMEM */
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC
@@ -170,9 +181,9 @@ extern "C" {
 #endif /* RT_USING_DM */
 #endif /* RT_USING_I2C */
 
-#ifdef RT_USING_PHY
+#if defined(RT_USING_PHY) || defined(RT_USING_PHY_V2)
 #include "drivers/phy.h"
-#endif /* RT_USING_PHY */
+#endif /* RT_USING_PHY || RT_USING_PHY_V2 */
 
 #ifdef RT_USING_SDIO
 #include "drivers/dev_mmcsd_core.h"

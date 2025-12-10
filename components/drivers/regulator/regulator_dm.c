@@ -41,10 +41,29 @@ rt_err_t regulator_ofw_parse(struct rt_ofw_node *np, struct rt_regulator_param *
     {
         param->ramp_delay = pval;
     }
+    else
+    {
+        param->ramp_disable = RT_TRUE;
+    }
 
     if (!rt_ofw_prop_read_u32(np, "regulator-enable-ramp-delay", &pval))
     {
         param->enable_delay = pval;
+    }
+
+    if (!rt_ofw_prop_read_u32(np, "regulator-settling-time-us", &pval))
+    {
+        param->settling_time = pval;
+    }
+
+    if (!rt_ofw_prop_read_u32(np, "regulator-settling-time-up-us", &pval))
+    {
+        param->settling_time_up = pval;
+    }
+
+    if (!rt_ofw_prop_read_u32(np, "regulator-settling-time-down-us", &pval))
+    {
+        param->settling_time_down = pval;
     }
 
     param->enable_active_high = rt_ofw_prop_read_bool(np, "enable-active-high");

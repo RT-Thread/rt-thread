@@ -48,5 +48,5 @@ rsource "lwp/Kconfig"
 endif
 
 rsource "legacy/Kconfig"
-
+rsource "rust/Kconfig"
 endmenu
