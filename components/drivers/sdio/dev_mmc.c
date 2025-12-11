@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2015-06-15     hichard      first version
  * 2024-05-25     HPMicro      add HS400 support
+ * 2025-12-11     HPMicro      correct the sequence of switching to high-speed ddr mode
  */
 
 #include <drivers/dev_mmcsd_core.h>
@@ -403,13 +404,6 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
         }
     }
 
-    if (!err && ddr)
-    {
-        err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-                         EXT_CSD_BUS_WIDTH,
-                         ext_csd_bits[idx][1]);
-    }
-
     if (!err)
     {
         if (card->flags & (CARD_FLAG_HIGHSPEED | CARD_FLAG_HIGHSPEED_DDR))
@@ -419,6 +413,13 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
                              EXT_CSD_HS_TIMING,
                              1);
         }
+    }
+
+    if (!err && ddr)
+    {
+        err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+                         EXT_CSD_BUS_WIDTH,
+                         ext_csd_bits[idx][1]);
     }
 
     return err;
