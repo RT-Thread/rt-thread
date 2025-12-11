@@ -6,6 +6,38 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024/10/28     Shell        Added smp.smoke
+ * 2025/12/3      ChuanN-sudo  add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: SMP Call Smoke 003 Test
+ *
+ * Test Objectives:
+ * - Validate asynchronous rt_smp_call_cpu_mask() reliability under high-contention.
+ * - Ensure no Inter-Processor Interrupts are lost when fired rapidly without waiting.
+ * - Test core APIs: rt_smp_call_cpu_mask() (with wait_flag=0), rt_thread_control(RT_THREAD_CTRL_BIND_CPU)
+ *
+ * Test Scenarios:
+ * - One worker thread pinned to each CPU core.
+ * - Threads repeatedly call non-blocking rt_smp_call_cpu_mask() with random targets.
+ * - After dispatching Inter-Processor Interrupts, threads migrate across cores to yield processing time.
+ * - Final verification checks eventual consistency.
+ *
+ * Verification Metrics:
+ * - Callback count must eventually match requested count.
+ * - Callbacks execute in interrupt-disabled context.
+ * - All threads successfully created and started.
+ *
+ * Dependencies:
+ * - Hardware requirements:  QEMU emulator or any multi-core hardware platform that supports RT-Thread.
+ * - Software configuration:
+ *     - RT_USING_UTEST must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_SMP_CALL_FUNC must be enabled(enable via:  RT-Thread Utestcases -> Kernel Components -> Drivers -> SMP-Call Test -> SMP-Call Smoke Test).
+ * - Environmental Assumptions: System scheduler and SMP services working normally.
+ *
+ * Expected Results:
+ * - Progress logs: A series of '#' characters indicating asynchronous callback executions.
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.smp_call.smoke_003)"
  */
 
 #include <rtdevice.h>
