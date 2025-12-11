@@ -14,6 +14,7 @@
 #include <drivers/ofw.h>
 #include <drivers/ofw_io.h>
 #include <drivers/ofw_irq.h>
+#include <drivers/platform.h>
 
 #define DBG_TAG "rtdm.ofw"
 #define DBG_LVL DBG_INFO
@@ -525,8 +526,15 @@ struct rt_ofw_node *rt_ofw_find_irq_parent(struct rt_ofw_node *np, int *out_inte
 static int ofw_map_irq(struct rt_ofw_cell_args *irq_args)
 {
     int irq;
+    struct rt_pic *pic;
     struct rt_ofw_node *ic_np = irq_args->data;
-    struct rt_pic *pic = rt_pic_dynamic_cast(rt_ofw_data(ic_np));
+
+    if (!rt_ofw_data(ic_np))
+    {
+        rt_platform_ofw_request(ic_np);
+    }
+
+    pic = rt_pic_dynamic_cast(rt_ofw_data(ic_np));
 
     /* args.data is "interrupt-controller" */
     if (pic)
