@@ -10,5 +10,11 @@ CPPPATH = [cwd + '/../../include']
 
 src     = ['backlight.c']
 
+if GetDepend(['RT_GRAPHIC_BACKLIGHT_GPIO']):
+    src += ['backlight-gpio.c']
+
+if GetDepend(['RT_GRAPHIC_BACKLIGHT_PWM']):
+    src += ['backlight-pwm.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')
