@@ -8,6 +8,12 @@ CPPPATH = [cwd + '/../../include']
 
 src = []
 
+if GetDepend(['RT_SERIAL_EARLY_HVC']):
+    src += ['serial-early-hvc.c']
+
+if GetDepend(['RT_SERIAL_PL011']):
+    src += ['serial-pl011.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 for d in list:
