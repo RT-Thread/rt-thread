@@ -1,0 +1,6 @@
+if RT_USING_DM
+menu "Power Management (PM) Domains device drivers"
+
+    osource "$(SOC_DM_PMDOMAIN_DIR)/Kconfig"
+endmenu
+endif
