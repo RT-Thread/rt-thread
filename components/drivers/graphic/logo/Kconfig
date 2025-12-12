@@ -11,6 +11,12 @@ choice
     config RT_GRAPHIC_LOGO_NONE
         bool "None logo (Change in runtime)"
 
+    config RT_GRAPHIC_LOGO_RT_THREAD_CLUT224
+        bool "Standard 224-color RT-Thread logo"
+
+    config RT_GRAPHIC_LOGO_RT_THREAD_WHITE_CLUT224
+        bool "Standard 224-color RT-Thread white logo"
+
     osource "$(SOC_DM_GRAPHIC_LOGO_DIR)/Kconfig"
 endchoice
 
