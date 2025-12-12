@@ -1,0 +1,17 @@
+menuconfig RT_SERIAL_VIRTUAL
+    bool "Virtual Serial in video"
+    depends on RT_GRAPHIC_FB
+    depends on RT_INPUT_KEYBOARD
+    default n
+
+choice
+    prompt "Rendering font(psf)"
+    default RT_SERIAL_VIRTUAL_FONT_UNI2_FIXED16
+    depends on RT_SERIAL_VIRTUAL
+
+    config RT_SERIAL_VIRTUAL_FONT_UNI2_FIXED16
+        bool "uni2 fixed16"
+
+    config RT_SERIAL_VIRTUAL_FONT_UNI2_VGA16
+        bool "uni2 vga16"
+endchoice
