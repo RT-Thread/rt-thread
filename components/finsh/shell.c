@@ -1009,7 +1009,7 @@ int finsh_system_init(void)
                             FINSH_THREAD_PRIORITY, 10);
 #endif /* RT_USING_HEAP */
 
-    rt_sem_init(&(shell->rx_sem), "shrx", 0, 0);
+    rt_sem_init(&(shell->rx_sem), FINSH_SEM_NAME, 0, 0);
     finsh_set_prompt_mode(1);
 
     if (tid != NULL && result == RT_EOK)
