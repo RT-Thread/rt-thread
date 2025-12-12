@@ -6,7 +6,60 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-01-17     Shell        the first version
+ * 2025-12-12     lhxj         Add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Priority Based Semaphore Synchronization Test (core.scheduler_sem)
+ *
+ * Test Objectives:
+ * - Verify the stability and correctness of the scheduler under high concurrency.
+ * - Verify thread synchronization and execution order using Semaphore chains across different priority levels.
+ * - Verify SMP (Symmetric Multiprocessing) load balancing and atomic operations in a multi-core environment.
+ * - List specific functions or APIs to be tested:
+ * - rt_sem_init
+ * - rt_sem_take
+ * - rt_sem_release
+ * - rt_thread_create
+ * - rt_thread_startup
+ * - rt_atomic_add
+ *
+ * Test Scenarios:
+ * - **Semaphore Chained Scheduling:**
+ * 1. Initialize a "thread matrix" where threads are created across multiple priority levels (`TEST_LEVEL_COUNTS`).
+ * 2. For each priority level, create multiple concurrent threads (`RT_CPUS_NR * 2`).
+ * 3. Establish a dependency chain (Ring Topology):
+ * - **Level 0 threads:** Notify Level 1, then wait for their own resource.
+ * - **Middle Level threads:** Wait for their resource (notified by Level N-1), then notify Level N+1.
+ * - **Last Level threads:** Wait for their resource, print status (CPU ID), delay, then notify Level 0.
+ * 4. Each thread increments an atomic load counter for the specific CPU it is running on.
+ * 5. The main test thread waits for all sub-threads to signal completion via `_thr_exit_sem`.
+ *
+ * Verification Metrics:
+ * - **Pass:** All created threads must complete their execution loops without deadlocking.
+ * - **Pass:** The sum of execution counts across all CPUs (`_load_average`) must equal the calculated expected total (`KERN_TEST_CONFIG_LOOP_TIMES * TEST_LEVEL_COUNTS * KERN_TEST_CONCURRENT_THREADS`).
+ *
+ * Dependencies:
+ * - Hardware requirements
+ * - No specific peripherals required, but multi-core CPU is recommended for SMP verification.
+ * (This is met by the qemu-virt64-riscv BSP).
+ * - Software configuration
+ * - `RT_USING_UTEST` must be enabled (`RT-Thread Utestcases`).
+ * - `Scheduler Test` must be enabled (`RT-Thread Utestcases` -> `Kernel Core` -> 'Scheduler Test').
+ * - (Optional) Enable SMP for parallel testing (Highly Recommended):
+ * - Go to `RT-Thread Kernel` -> `Enable SMP (Symmetric multiprocessing)`.
+ * - Set `Number of CPUs` to > 1 (e.g., 2 or 4).
+ * - Environmental assumptions
+ * - The system must support enough valid priority levels (`RT_THREAD_PRIORITY_MAX`) to accommodate `TEST_LEVEL_COUNTS`.
+ * - Run the test case from the msh prompt:
+ * `utest_run core.scheduler_sem`
+ *
+ * Expected Results:
+ * - The console should print character patterns (e.g., `*0*1...`) indicating thread activity on specific CPUs.
+ * - The final load statistics per CPU should be printed.
+ * - Final Output: `[ PASSED ] [ result ] testcase (core.scheduler_sem)`
+ */
+
 #define __RT_IPC_SOURCE__
 
 #include <rtthread.h>
