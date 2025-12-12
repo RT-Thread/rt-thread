@@ -6,7 +6,56 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-01-17     Shell        the first version
+ * 2025-12-12     lhxj         Add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Scheduler Mutex Stress Test (core.scheduler_mutex)
+ *
+ * Test Objectives:
+ * - Validate the stability of the Mutex subsystem under high contention (Stress Test).
+ * - Ensure priority inheritance (if supported) or basic blocking/waking works correctly.
+ * - In multi-core systems, verify data consistency and spinlock mechanisms when multiple cores contend for a single kernel object simultaneously.
+ * - List specific functions or APIs to be tested:
+ * - rt_mutex_take()
+ * - rt_mutex_release()
+ * - rt_thread_create()
+ *
+ * Test Scenarios:
+ * - **Stress Test (mutex_stress_tc):**
+ * 1. Create `RT_CPUS_NR` threads (e.g., 4 threads in a Quad-Core setup).
+ * 2. Assign **staggered priorities** to these threads (`priority_base + i % range`) to simulate contention between high and low priority tasks.
+ * 3. All tester threads execute a tight loop: attempting to take and immediately release the *same* global mutex (`_racing_lock`).
+ * - In SMP, this simulates true parallel contention.
+ * 4. The main test thread sleeps for `TEST_SECONDS` (30s), periodically printing progress.
+ * 5. After time is up, signal threads to exit (`_exit_flag`) and wait for them using a semaphore (`_thr_exit_sem`).
+ *
+ * Verification Metrics:
+ * - **Pass:** The system must remain responsive (no deadlocks, hard faults, or RCU stalls) during the 30-second run.
+ * - **Pass:** The main thread must successfully wait for all tester threads to exit (`rt_sem_take` returns `RT_EOK`).
+ * - **Pass:** `uassert_true(1)` is executed periodically, confirming the main loop is alive.
+ *
+ * Dependencies:
+ * - Hardware requirements (e.g., specific peripherals)
+ * - No specific peripherals required, but Multi-core CPU recommended for SMP testing.
+ * (This is met by the qemu-virt64-riscv BSP).
+ * - Software configuration (e.g., kernel options, driver initialization)
+ * - `RT_USING_UTEST` must be enabled (`RT-Thread Utestcases`).
+ * - `Scheduler Test` must be enabled (`RT-Thread Utestcases` -> `Kernel Core` -> 'Scheduler Test').
+ * - (Optional) Enable SMP for parallel testing:
+ * - Go to `RT-Thread Kernel` -> `Enable SMP (Symmetric multiprocessing)`.
+ * - Set `Number of CPUs` to > 1 (e.g., 4).
+ * - Environmental assumptions
+ * - Requires sufficient heap memory to allocate stacks for `RT_CPUS_NR` threads.
+ * - Run the test case from the msh prompt:
+ * `utest_run core.scheduler_mutex`
+ *
+ * Expected Results:
+ * - The test continues for approximately 30 seconds.
+ * - The console logs periodic success assertions.
+ * - Final Output: `[ PASSED ] [ result ] testcase (core.scheduler_mutex)`
+ */
+
 #include <rtthread.h>
 #include <stdlib.h>
 #include "utest.h"
