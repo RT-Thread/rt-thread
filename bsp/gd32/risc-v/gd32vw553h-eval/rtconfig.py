@@ -17,7 +17,7 @@ if os.getenv('RTT_ROOT'):
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'E:\GD32\GD32VW5\GD32EmbeddedBuilder_v1.5.4_Rel\Tools\RISC-V Embedded GCC\8.2.0-2.2-20190521-0004\bin'
+    EXEC_PATH   = r'C:/Program Files (x86)/GNU Tools RISC-V Embedded/8 2019.08-2/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
