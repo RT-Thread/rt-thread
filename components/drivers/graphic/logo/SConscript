@@ -17,6 +17,12 @@ logo_width = 0
 logo_height = 0
 logo_max_val = 0
 
+if GetDepend(['RT_GRAPHIC_LOGO_RT_THREAD_CLUT224']):
+    logo_path = cwd + '/logo-rt-thread-clut224.ppm'
+
+if GetDepend(['RT_GRAPHIC_LOGO_RT_THREAD_WHITE_CLUT224']):
+    logo_path = cwd + '/logo-rt-thread-white-clut224.ppm'
+
 if logo_path == None:
     # Find in BSP
     paths = None
