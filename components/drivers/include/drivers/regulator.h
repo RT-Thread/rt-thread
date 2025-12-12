@@ -30,6 +30,9 @@ struct rt_regulator_param
     int ramp_delay;     /* In uV/usec */
     int enable_delay;   /* In usec */
     int off_on_delay;   /* In usec */
+    int settling_time;
+    int settling_time_up;
+    int settling_time_down;
 
     rt_uint32_t enable_active_high:1;
     rt_uint32_t boot_on:1;                  /* Is enabled on boot */
@@ -37,6 +40,7 @@ struct rt_regulator_param
     rt_uint32_t soft_start:1;               /* Ramp voltage slowly */
     rt_uint32_t pull_down:1;                /* Pull down resistor when regulator off */
     rt_uint32_t over_current_protection:1;  /* Auto disable on over current */
+    rt_uint32_t ramp_disable:1;             /* Disable ramp delay */
 };
 
 struct rt_regulator_ops;

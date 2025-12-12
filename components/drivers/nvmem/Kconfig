@@ -1,0 +1,12 @@
+menuconfig RT_USING_NVMEM
+    bool "Using Non Volatile Memory (NVMEM) device drivers"
+    depends on RT_USING_DM
+    depends on RT_USING_OFW
+    depends on RT_USING_PIN
+    select RT_USING_ADT
+    select RT_USING_ADT_REF
+    default n
+
+if RT_USING_NVMEM
+    osource "$(SOC_DM_NVMEM_DIR)/Kconfig"
+endif

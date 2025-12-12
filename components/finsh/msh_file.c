@@ -585,7 +585,7 @@ static int cmd_mount(int argc, char **argv)
 
         /* mount a filesystem to the specified directory */
         rt_kprintf("mount device %s(%s) onto %s ... ", device, fstype, path);
-        if (rt_strcmp(fstype, "nfs") == 0)
+        if (rt_strcmp(fstype, "nfs") == 0 || rt_strcmp(fstype, "9p") == 0)
         {
             data = argv[1];
             device = 0;

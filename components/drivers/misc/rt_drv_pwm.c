@@ -285,7 +285,7 @@ rt_err_t rt_pwm_set_phase(struct rt_device_pwm *device, int channel, rt_uint32_t
     return result;
 }
 
-static rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *cfg)
+rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *cfg)
 {
     rt_err_t result = RT_EOK;
 

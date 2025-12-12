@@ -1,0 +1,40 @@
+# ------ devices CI ------
+devices.adc:
+    kconfig:
+      - CONFIG_RT_USING_ADC=y
+      - CONFIG_BSP_USING_ADC0=y
+devices.spi:
+    kconfig:
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI0=y
+devices.i2c:
+    kconfig:
+      - CONFIG_BSP_USING_HW_I2C=y
+      - CONFIG_BSP_USING_HW_I2C2=y
+devices.sdhi:
+    kconfig:
+      - CONFIG_BSP_USING_SDHI=y
+      - CONFIG_BSP_USING_SDHI0=y
+      - CONFIG_SDHI_USING_1_BIT=y
+devices.timer:
+    kconfig:
+      - CONFIG_BSP_USING_TIM=y
+      - CONFIG_BSP_USING_TIM0=y
+devices.pwm:
+    kconfig:
+      - CONFIG_BSP_USING_PWM=y
+      - CONFIG_BSP_USING_PWM12=y
+devices.can:
+    kconfig:
+      - CONFIG_BSP_USING_CANFD=y
+      - CONFIG_BSP_USING_CAN_RA=y
+      - CONFIG_BSP_USING_CAN0=y
+devices.hyperram:
+    kconfig:
+      - CONFIG_BSP_USING_OSPI_RAM=y
+devices.ethernet:
+    kconfig:
+      - CONFIG_BSP_USING_ETH=y
+devices.rtc:
+    kconfig:
+      - CONFIG_BSP_USING_ONCHIP_RTC=y
