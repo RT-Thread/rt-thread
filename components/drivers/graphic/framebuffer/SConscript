@@ -1,0 +1,16 @@
+from building import *
+
+group   = []
+
+if not GetDepend(['RT_GRAPHIC_FB']):
+    Return('group')
+
+cwd     = GetCurrentDir()
+list    = os.listdir(cwd)
+CPPPATH = [cwd + '/../../include']
+
+src     = []
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,0 +1,7 @@
+menuconfig RT_GRAPHIC_BACKLIGHT
+    bool "Backlight support"
+    default n
+
+if RT_GRAPHIC_BACKLIGHT
+    osource "$(SOC_DM_GRAPHIC_BACKLIGHT_DIR)/Kconfig"
+endif
