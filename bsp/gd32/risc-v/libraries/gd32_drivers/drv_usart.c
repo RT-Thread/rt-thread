@@ -156,11 +156,11 @@ void UART7_IRQHandler(void)
 static const struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART0
     {
-        USART0,                                 // uart peripheral index
-        USART0_IRQn,                            // uart iqrn
-        RCU_USART0, RCU_GPIOB, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOB, GPIO_PIN_15,           // tx port, tx pin
-        GPIOA, GPIO_PIN_8,          // rx port, rx pin
+        USART0,                                 /* uart peripheral index */
+        USART0_IRQn,                            /* uart iqrn */
+        RCU_USART0, RCU_GPIOB, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOB, GPIO_PIN_15,           /* tx port, tx pin */
+        GPIOA, GPIO_PIN_8,          /* rx port, rx pin */
         &serial0,
         "uart0",
     },
@@ -168,11 +168,11 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART1
     {
-        USART1,                                 // uart peripheral index
-        USART1_IRQn,                            // uart iqrn
-        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_2,                      // tx port, tx pin
-        GPIOA, GPIO_PIN_3,                      // rx port, rx pin
+        USART1,                                 /* uart peripheral index */
+        USART1_IRQn,                            /* uart iqrn */
+        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOA, GPIO_PIN_2,                      /* tx port, tx pin */
+        GPIOA, GPIO_PIN_3,                      /* rx port, rx pin */
         &serial1,
         "uart1",
     },
@@ -180,11 +180,11 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART2
     {
-        USART2,                                 // uart peripheral index
-        USART2_IRQn,                            // uart iqrn
-        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOB, GPIO_PIN_10,          // tx port, tx pin
-        GPIOB, GPIO_PIN_11,          // rx port, rx pin
+        USART2,                                 /* uart peripheral index */
+        USART2_IRQn,                            /* uart iqrn */
+        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOB, GPIO_PIN_10,          /* tx port, tx pin */
+        GPIOB, GPIO_PIN_11,          /* rx port, rx pin */
         &serial2,
         "uart2",
     },
@@ -192,11 +192,11 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART3
     {
-        UART3,                                 // uart peripheral index
-        UART3_IRQn,                            // uart iqrn
-        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_10,         // tx port, tx pin
-        GPIOC, GPIO_PIN_11,         // rx port, rx pin
+        UART3,                                 /* uart peripheral index */
+        UART3_IRQn,                            /* uart iqrn */
+        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOC, GPIO_PIN_10,         /* tx port, tx pin */
+        GPIOC, GPIO_PIN_11,         /* rx port, rx pin */
         &serial3,
         "uart3",
     },
@@ -204,11 +204,11 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART4
     {
-        UART4,                                 // uart peripheral index
-        UART4_IRQn,                            // uart iqrn
-        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_12,         // tx port, tx pin
-        GPIOD, GPIO_PIN_2,          // rx port, rx pin
+        UART4,                                 /* uart peripheral index */
+        UART4_IRQn,                            /* uart iqrn */
+        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOC, GPIO_PIN_12,         /* tx port, tx pin */
+        GPIOD, GPIO_PIN_2,          /* rx port, rx pin */
         &serial4,
         "uart4",
     },
@@ -451,3 +451,4 @@ int rt_hw_usart_init(void)
     return result;
 }
 #endif
+

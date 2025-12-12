@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -184,7 +184,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const struct pin_index *index = RT_NULL;
 
-#if defined(SOC_SERIES_GD32VF103V) 
+#if defined(SOC_SERIES_GD32VF103V)
     rt_uint32_t pin_mode = GPIO_MODE_OUT_PP;
 #elif defined(SOC_SERIES_GD32VW55x)
     rt_uint32_t pin_mode = GPIO_MODE_OUTPUT;
@@ -208,61 +208,61 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     {
     case PIN_MODE_OUTPUT:
         /* output setting */
-#if defined(SOC_SERIES_GD32VF103V) 
+#if defined(SOC_SERIES_GD32VF103V)
         pin_mode = GPIO_MODE_OUT_PP;
 #elif defined(SOC_SERIES_GD32VW55x)
         pin_mode = GPIO_MODE_OUTPUT;
 #else
 #error "not support soc"
-#endif      
+#endif
         break;
     case PIN_MODE_OUTPUT_OD:
         /* output setting: od. */
-#if defined(SOC_SERIES_GD32VF103V) 
+#if defined(SOC_SERIES_GD32VF103V)
         pin_mode = GPIO_MODE_OUT_OD;
 #elif defined(SOC_SERIES_GD32VW55x)
         pin_otype = GPIO_OTYPE_OD;
 #else
 #error "not support soc"
-#endif    
+#endif
         break;
     case PIN_MODE_INPUT:
         /* input setting: not pull. */
-#if defined(SOC_SERIES_GD32VF103V) 
+#if defined(SOC_SERIES_GD32VF103V)
         pin_mode = GPIO_MODE_IN_FLOATING;
 #elif defined(SOC_SERIES_GD32VW55x)
         pin_mode = GPIO_MODE_INPUT;
 #else
 #error "not support soc"
-#endif   
+#endif
         break;
     case PIN_MODE_INPUT_PULLUP:
         /* input setting: pull up. */
-#if defined(SOC_SERIES_GD32VF103V) 
+#if defined(SOC_SERIES_GD32VF103V)
         pin_mode = GPIO_MODE_IPU;
 #elif defined(SOC_SERIES_GD32VW55x)
         pin_mode = GPIO_MODE_INPUT;
         pin_pull_up_down = GPIO_PUPD_PULLUP;
 #else
 #error "not support soc"
-#endif   
+#endif
         break;
     case PIN_MODE_INPUT_PULLDOWN:
         /* input setting: pull down. */
-#if defined(SOC_SERIES_GD32VF103V) 
+#if defined(SOC_SERIES_GD32VF103V)
         pin_mode = GPIO_MODE_IPD;
 #elif defined(SOC_SERIES_GD32VW55x)
         pin_mode = GPIO_MODE_INPUT;
         pin_pull_up_down = GPIO_PUPD_PULLDOWN;
 #else
 #error "not support soc"
-#endif   
+#endif
         break;
     default:
             break;
     }
 
-#if defined(SOC_SERIES_GD32VF103V) 
+#if defined(SOC_SERIES_GD32VF103V)
     gpio_init(index->gpio_periph, pin_mode, GPIO_OSPEED_50MHZ, index->pin);
 #elif defined(SOC_SERIES_GD32VW55x)
     gpio_mode_set(index->gpio_periph, pin_mode, pin_pull_up_down, index->pin);
@@ -271,7 +271,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 #error "not support soc"
 #endif /* SOC_GD32VW553H */
 
-    
+
 }
 
 /**
@@ -378,6 +378,7 @@ static rt_err_t gd32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
         rt_hw_interrupt_enable(level);
         return RT_EOK;
     }
+
     if (pin_irq_hdr_tab[hdr_index].pin != -1)
     {
         rt_hw_interrupt_enable(level);
@@ -482,22 +483,22 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
                 return -RT_EINVAL;
         }
 
-#if defined(SOC_SERIES_GD32VF103V) 
+#if defined(SOC_SERIES_GD32VF103V)
         rcu_periph_clock_enable(RCU_AF);
 #elif defined(SOC_SERIES_GD32VW55x)
         rcu_periph_clock_enable(RCU_SYSCFG);
 #else
-#endif  
+#endif
         /* enable and set interrupt priority */
         eclic_irq_enable(irqmap->irqno, 5U, 0U);
 
         /* connect EXTI line to  GPIO pin */
-#if defined(SOC_SERIES_GD32VF103V) 
+#if defined(SOC_SERIES_GD32VF103V)
         gpio_exti_source_select(index->port_src, index->pin_src);
 #elif defined(SOC_SERIES_GD32VW55x)
         syscfg_exti_line_config(index->port_src, index->pin_src);
 #else
-#endif       
+#endif
         /* configure EXTI line */
         exti_init((exti_line_enum)(index->pin), EXTI_INTERRUPT, trigger_mode);
         exti_interrupt_flag_clear((exti_line_enum)(index->pin));
@@ -629,3 +630,4 @@ int rt_hw_pin_init(void)
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 #endif
+
