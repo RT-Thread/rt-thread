@@ -118,6 +118,10 @@ extern "C" {
 #ifdef RT_USING_THERMAL
 #include "drivers/thermal.h"
 #endif /* RT_USING_THERMAL */
+
+#ifdef RT_USING_HWCACHE
+#include "drivers/hwcache.h"
+#endif /* RT_USING_HWCACHE */
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC
