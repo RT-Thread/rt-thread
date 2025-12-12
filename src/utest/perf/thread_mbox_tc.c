@@ -4,8 +4,41 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2025-07-03     rcitach      test case for mbox
+ * Date           Author         Notes
+ * 2025-07-03     rcitach        test case for mbox
+ * 2025-11-30     westcity-YOLO  Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Mailbox Performance Test
+ *
+ * Test Objectives:
+ * - Measures mailbox object synchronization performance
+ * - Validates mailbox message passing with priority handling
+ * - Provides latency metrics for inter-thread communication
+ *
+ * Test Scenarios:
+ * - **Mailbox Message Passing**: Single message (1) sent/received
+ * - **Priority Handling**: Higher-priority thread (THREAD_PRIORITY+1) response
+ * - **Stress Test**: Repeated message passing (RT_UTEST_SYS_PERF_TC_COUNT times)
+ * - **Thread Coordination**: Two threads exchanging messages via semaphores
+ *
+ * Verification Metrics:
+ * - Message passing latency < 40μs
+ * - 0 errors in mailbox operations
+ * - Consistent results across test cycles
+ * - No memory leaks during test
+ *
+ * Dependencies:
+ * - RT_USING_MAILBOX must be enabled
+ * - RT_USING_UTEST framework
+ * - Hardware timer support (for high-precision timing)
+ *
+ * Expected Results:
+ * [  PASSED  ] [ result   ] testcase (core.mbox)
+ * - Structured performance data table (Min/Max/Avg latency)
+ * - Final line: "=== Mailbox Performance Test Results End ==="
+ * - Executable via: `utest_run core.mbox` in msh
  */
 
 #include <rtthread.h>
