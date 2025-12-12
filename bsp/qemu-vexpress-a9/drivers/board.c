@@ -35,11 +35,45 @@ struct mem_desc platform_mem_desc[] = {
 };
 #endif
 
+/* Console buffer for early print before device init */
+#define RT_CONSOLE_EARLY_BUF_SIZE (RT_CONSOLEBUF_SIZE * 4)
+static char console_early_buf[RT_CONSOLE_EARLY_BUF_SIZE];
+static rt_size_t console_early_buf_idx = 0;
+
 const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc)/sizeof(platform_mem_desc[0]);
 
 #define SYS_CTRL                        __REG32(REALVIEW_SCTL_BASE)
 
 extern void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler);
+
+void rt_hw_console_output(const char *str)
+{
+    if (console_early_buf_idx < RT_CONSOLE_EARLY_BUF_SIZE - 1)
+    {
+        rt_size_t copy_len = rt_strlen(str);
+        if (console_early_buf_idx + copy_len >= RT_CONSOLE_EARLY_BUF_SIZE)
+        {
+            copy_len = RT_CONSOLE_EARLY_BUF_SIZE - console_early_buf_idx - 1;
+        }
+
+        if (copy_len > 0)
+        {
+            rt_memcpy(&console_early_buf[console_early_buf_idx], str, copy_len);
+            console_early_buf_idx += copy_len;
+            console_early_buf[console_early_buf_idx] = '\0';
+        }
+    }
+}
+
+static void rt_earlycon_kick_completed(void)
+{
+    if (console_early_buf_idx > 0)
+    {
+        rt_kputs(console_early_buf);
+        console_early_buf_idx = 0;
+        console_early_buf[0] = '\0';
+    }
+}
 
 void idle_wfi(void)
 {
@@ -85,6 +119,7 @@ void rt_hw_board_init(void)
 
     rt_components_board_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+    rt_earlycon_kick_completed();
 
     rt_thread_idle_sethook(idle_wfi);
 
