@@ -119,6 +119,13 @@ static rt_err_t platform_probe(rt_device_t dev)
     struct rt_ofw_node *np = dev->ofw_node;
 #endif
 
+#ifdef RT_USING_PINCTRL
+    if (rt_pin_ctrl_confs_apply_by_name(dev, RT_NULL))
+    {
+        rt_pin_ctrl_confs_apply(dev, 0);
+    }
+#endif
+
     err = rt_dm_power_domain_attach(dev, RT_TRUE);
 
     if (err && err != -RT_EEMPTY)
