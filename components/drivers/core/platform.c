@@ -15,6 +15,10 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+#ifdef RT_USING_CLK
+#include <drivers/clk.h>
+#endif
+#include <drivers/dev_pin.h>
 #include <drivers/platform.h>
 #include <drivers/core/bus.h>
 #include <drivers/core/dm.h>
@@ -123,6 +127,13 @@ static rt_err_t platform_probe(rt_device_t dev)
     if (rt_pin_ctrl_confs_apply_by_name(dev, RT_NULL))
     {
         rt_pin_ctrl_confs_apply(dev, 0);
+    }
+#endif
+
+#ifdef RT_USING_CLK
+    if ((err = rt_ofw_clk_set_defaults(dev->ofw_node)))
+    {
+        return err;
     }
 #endif
 

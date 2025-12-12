@@ -38,5 +38,25 @@ if GetDepend('__STACKSIZE__'): stack_size = GetDepend('__STACKSIZE__')
 stack_lds.write('__STACKSIZE__ = %d;\n' % stack_size)
 stack_lds.close()
 
+# Obtain the number of harts from rtconfig.h and write 
+# it into link_cpus.lds for the linker script
+try:
+    with open('rtconfig.h', 'r') as f:
+        rtconfig_content = f.readlines()
+except FileNotFoundError:
+    cpus_nr = 1
+else:
+    cpus_nr = 1  # default value
+    for line in rtconfig_content:
+        line = line.strip()
+        if line.startswith('#define') and 'RT_CPUS_NR' in line:
+            parts = line.split()
+            if len(parts) >= 3 and parts[2].isdigit():
+                cpus_nr = int(parts[2])
+                break 
+
+with open('link_cpus.lds', 'w') as cpus_lds:
+    cpus_lds.write(f'RT_CPUS_NR = {cpus_nr};\n')
+
 # make a building
 DoBuilding(TARGET, objs)

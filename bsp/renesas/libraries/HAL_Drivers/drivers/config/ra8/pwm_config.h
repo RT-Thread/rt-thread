@@ -59,6 +59,9 @@ enum
 #ifdef BSP_USING_PWM12
     BSP_PWM12_INDEX,
 #endif
+#ifdef BSP_USING_PWM13
+    BSP_PWM13_INDEX,
+#endif
     BSP_PWMS_NUM
 };
 

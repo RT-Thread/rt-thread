@@ -1,0 +1,15 @@
+menuconfig RT_USING_HWSPINLOCK
+    bool "Using Hardware Spinlock device drivers"
+    depends on RT_USING_DM
+    depends on RT_USING_OFW
+    select RT_USING_ADT
+    select RT_USING_ADT_REF
+    default n
+    help
+      Hardware spinlock modules provide hardware assistance for
+      synchronization and mutual exclusion between heterogeneous processors
+      and those not operating under a single, shared operating system.
+
+if RT_USING_HWSPINLOCK
+    osource "$(SOC_DM_HWSPINLOCK_DIR)/Kconfig"
+endif

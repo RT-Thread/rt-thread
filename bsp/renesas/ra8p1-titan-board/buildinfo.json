@@ -1,0 +1,35 @@
+{
+  "definedMacros": [
+    "_RA_CORE=CPU0",
+    "_RA_ORDINAL=1",
+    "_RENESAS_RA_"
+  ],
+  "sourcePaths": [
+    "ra",
+    "ra_gen",
+    "src"
+  ],
+  "excludedFilePaths": [],
+  "includePaths": [
+    "ra/arm/CMSIS_6/CMSIS/Core/Include",
+    "ra/fsp/inc",
+    "ra/fsp/inc/api",
+    "ra/fsp/inc/instances",
+    "ra_cfg/fsp_cfg",
+    "ra_cfg/fsp_cfg/bsp",
+    "ra_gen",
+    "src"
+  ],
+  "libraryPaths": [],
+  "libraryNames": [],
+  "objectFiles": [],
+  "linkerScript": "script/fsp.ld",
+  "targetDeviceName": "R7KA8P1KFLCAC",
+  "entrySymbol": "Reset_Handler",
+  "isPreBuildContentGenEnabled": true,
+  "isPostBuildContentGenEnabled": true,
+  "isTargetDeviceSupportsTrustZone": true,
+  "buildOptionsMap": {},
+  "targetDeviceCommand": "R7KA8P1KF",
+  "targetCoreName": "CPU0"
+}

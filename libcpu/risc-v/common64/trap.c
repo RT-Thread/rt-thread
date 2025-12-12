@@ -76,44 +76,44 @@ void dump_regs(struct rt_hw_stack_frame *regs)
     rt_kprintf("\tCurrent Page Table(Physical) = %p\n",
                __MASKVALUE(satp_v, __MASK(44)) << PAGE_OFFSET_BIT);
     rt_kprintf("\tCurrent ASID = %p\n", __MASKVALUE(satp_v >> 44, __MASK(16))
-                                              << PAGE_OFFSET_BIT);
+                                            << PAGE_OFFSET_BIT);
     const char *mode_str = "Unknown Address Translation/Protection Mode";
 
     switch (__MASKVALUE(satp_v >> 60, __MASK(4)))
     {
-        case 0:
-            mode_str = "No Address Translation/Protection Mode";
-            break;
+    case 0:
+        mode_str = "No Address Translation/Protection Mode";
+        break;
 
-        case 8:
-            mode_str = "Page-based 39-bit Virtual Addressing Mode";
-            break;
+    case 8:
+        mode_str = "Page-based 39-bit Virtual Addressing Mode";
+        break;
 
-        case 9:
-            mode_str = "Page-based 48-bit Virtual Addressing Mode";
-            break;
+    case 9:
+        mode_str = "Page-based 48-bit Virtual Addressing Mode";
+        break;
     }
 
     rt_kprintf("\tMode = %s\n", mode_str);
     rt_kprintf("-----------------Dump OK---------------------\n");
 }
 
-static const char *Exception_Name[] = {"Instruction Address Misaligned",
-                                       "Instruction Access Fault",
-                                       "Illegal Instruction",
-                                       "Breakpoint",
-                                       "Load Address Misaligned",
-                                       "Load Access Fault",
-                                       "Store/AMO Address Misaligned",
-                                       "Store/AMO Access Fault",
-                                       "Environment call from U-mode",
-                                       "Environment call from S-mode",
-                                       "Reserved-10",
-                                       "Reserved-11",
-                                       "Instruction Page Fault",
-                                       "Load Page Fault",
-                                       "Reserved-14",
-                                       "Store/AMO Page Fault"};
+static const char *Exception_Name[] = { "Instruction Address Misaligned",
+                                        "Instruction Access Fault",
+                                        "Illegal Instruction",
+                                        "Breakpoint",
+                                        "Load Address Misaligned",
+                                        "Load Access Fault",
+                                        "Store/AMO Address Misaligned",
+                                        "Store/AMO Access Fault",
+                                        "Environment call from U-mode",
+                                        "Environment call from S-mode",
+                                        "Reserved-10",
+                                        "Reserved-11",
+                                        "Instruction Page Fault",
+                                        "Load Page Fault",
+                                        "Reserved-14",
+                                        "Store/AMO Page Fault" };
 
 static const char *Interrupt_Name[] = {
     "User Software Interrupt",
@@ -135,7 +135,16 @@ static volatile int nested = 0;
 #define ENTER_TRAP nested += 1
 #define EXIT_TRAP  nested -= 1
 #define CHECK_NESTED_PANIC(cause, tval, epc, eframe) \
-    if (nested != 1) handle_nested_trap_panic(cause, tval, epc, eframe)
+    if (nested != 1)                                 \
+    handle_nested_trap_panic(cause, tval, epc, eframe)
+#else
+/* Add trap nesting detection under the SMP architecture. */
+static volatile int nested[RT_CPUS_NR] = { 0 };
+#define ENTER_TRAP nested[rt_hw_cpu_id()] += 1
+#define EXIT_TRAP  nested[rt_hw_cpu_id()] -= 1
+#define CHECK_NESTED_PANIC(cause, tval, epc, eframe) \
+    if (nested[rt_hw_cpu_id()] != 1)                 \
+    handle_nested_trap_panic(cause, tval, epc, eframe)
 #endif /* RT_USING_SMP */
 
 static const char *get_exception_msg(int id)
@@ -165,44 +174,44 @@ void handle_user(rt_ubase_t scause, rt_ubase_t stval, rt_ubase_t sepc,
     enum rt_mm_fault_type fault_type;
     switch (id)
     {
-        case EP_LOAD_PAGE_FAULT:
-            fault_op = MM_FAULT_OP_READ;
-            fault_type = MM_FAULT_TYPE_GENERIC_MMU;
-            break;
-        case EP_LOAD_ACCESS_FAULT:
-            fault_op = MM_FAULT_OP_READ;
-            fault_type = MM_FAULT_TYPE_BUS_ERROR;
-            break;
-        case EP_LOAD_ADDRESS_MISALIGNED:
-            fault_op = MM_FAULT_OP_READ;
-            fault_type = MM_FAULT_TYPE_BUS_ERROR;
-            break;
-        case EP_STORE_PAGE_FAULT:
-            fault_op = MM_FAULT_OP_WRITE;
-            fault_type = MM_FAULT_TYPE_GENERIC_MMU;
-            break;
-        case EP_STORE_ACCESS_FAULT:
-            fault_op = MM_FAULT_OP_WRITE;
-            fault_type = MM_FAULT_TYPE_BUS_ERROR;
-            break;
-        case EP_STORE_ADDRESS_MISALIGNED:
-            fault_op = MM_FAULT_OP_WRITE;
-            fault_type = MM_FAULT_TYPE_BUS_ERROR;
-            break;
-        case EP_INSTRUCTION_PAGE_FAULT:
-            fault_op = MM_FAULT_OP_EXECUTE;
-            fault_type = MM_FAULT_TYPE_GENERIC_MMU;
-            break;
-        case EP_INSTRUCTION_ACCESS_FAULT:
-            fault_op = MM_FAULT_OP_EXECUTE;
-            fault_type = MM_FAULT_TYPE_BUS_ERROR;
-            break;
-        case EP_INSTRUCTION_ADDRESS_MISALIGNED:
-            fault_op = MM_FAULT_OP_EXECUTE;
-            fault_type = MM_FAULT_TYPE_BUS_ERROR;
-            break;
-        default:
-            fault_op = 0;
+    case EP_LOAD_PAGE_FAULT:
+        fault_op = MM_FAULT_OP_READ;
+        fault_type = MM_FAULT_TYPE_GENERIC_MMU;
+        break;
+    case EP_LOAD_ACCESS_FAULT:
+        fault_op = MM_FAULT_OP_READ;
+        fault_type = MM_FAULT_TYPE_BUS_ERROR;
+        break;
+    case EP_LOAD_ADDRESS_MISALIGNED:
+        fault_op = MM_FAULT_OP_READ;
+        fault_type = MM_FAULT_TYPE_BUS_ERROR;
+        break;
+    case EP_STORE_PAGE_FAULT:
+        fault_op = MM_FAULT_OP_WRITE;
+        fault_type = MM_FAULT_TYPE_GENERIC_MMU;
+        break;
+    case EP_STORE_ACCESS_FAULT:
+        fault_op = MM_FAULT_OP_WRITE;
+        fault_type = MM_FAULT_TYPE_BUS_ERROR;
+        break;
+    case EP_STORE_ADDRESS_MISALIGNED:
+        fault_op = MM_FAULT_OP_WRITE;
+        fault_type = MM_FAULT_TYPE_BUS_ERROR;
+        break;
+    case EP_INSTRUCTION_PAGE_FAULT:
+        fault_op = MM_FAULT_OP_EXECUTE;
+        fault_type = MM_FAULT_TYPE_GENERIC_MMU;
+        break;
+    case EP_INSTRUCTION_ACCESS_FAULT:
+        fault_op = MM_FAULT_OP_EXECUTE;
+        fault_type = MM_FAULT_TYPE_BUS_ERROR;
+        break;
+    case EP_INSTRUCTION_ADDRESS_MISALIGNED:
+        fault_op = MM_FAULT_OP_EXECUTE;
+        fault_type = MM_FAULT_TYPE_BUS_ERROR;
+        break;
+    default:
+        fault_op = 0;
     }
 
     if (fault_op)
@@ -228,7 +237,7 @@ void handle_user(rt_ubase_t scause, rt_ubase_t stval, rt_ubase_t sepc,
     dump_regs(sp);
 
     rt_thread_t cur_thr = rt_thread_self();
-    struct rt_hw_backtrace_frame frame = {.fp = sp->s0_fp, .pc = sepc};
+    struct rt_hw_backtrace_frame frame = { .fp = sp->s0_fp, .pc = sepc };
     rt_kprintf("fp = %p\n", frame.fp);
     lwp_backtrace_frame(cur_thr, &frame);
 
@@ -260,12 +269,12 @@ static int illegal_inst_recoverable(rt_ubase_t stval,
 
     switch (opcode)
     {
-        case 0x57: // V
-        case 0x27: // scalar FLOAT
-        case 0x07:
-        case 0x73: // CSR
-            flag = 1;
-            break;
+    case 0x57: // V
+    case 0x27: // scalar FLOAT
+    case 0x07:
+    case 0x73: // CSR
+        flag = 1;
+        break;
     }
 
     if (flag)
@@ -314,6 +323,15 @@ void handle_trap(rt_ubase_t scause, rt_ubase_t stval, rt_ubase_t sepc,
         tick_isr();
         rt_interrupt_leave();
     }
+#ifdef RT_USING_SMP
+    else if ((SCAUSE_INTERRUPT | SCAUSE_S_SOFTWARE_INTR) == scause)
+    {
+        /* supervisor software interrupt for ipi */
+        rt_interrupt_enter();
+        rt_hw_ipi_handler();
+        rt_interrupt_leave();
+    }
+#endif /* RT_USING_SMP */
     else
     {
         if (SCAUSE_INTERRUPT & scause)
@@ -364,7 +382,7 @@ void handle_trap(rt_ubase_t scause, rt_ubase_t stval, rt_ubase_t sepc,
         rt_kprintf("current thread: %s\n", cur_thr->parent.name);
 
         rt_kprintf("--------------Backtrace--------------\n");
-        struct rt_hw_backtrace_frame frame = {.fp = sp->s0_fp, .pc = sepc};
+        struct rt_hw_backtrace_frame frame = { .fp = sp->s0_fp, .pc = sepc };
 
 #ifdef RT_USING_SMART
         if (!(sp->sstatus & 0x100))

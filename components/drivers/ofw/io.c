@@ -155,7 +155,6 @@ rt_err_t rt_ofw_get_address(struct rt_ofw_node *np, int index, rt_uint64_t *out_
 
 static rt_err_t ofw_get_address_by_name(struct rt_ofw_node *np, const char *name,
         rt_uint64_t *out_address, rt_uint64_t *out_size)
-
 {
     int index = 0;
     rt_err_t err = -RT_EEMPTY;

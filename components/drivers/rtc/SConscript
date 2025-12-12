@@ -13,6 +13,33 @@ if GetDepend(['RT_USING_RTC']):
     if GetDepend(['RT_USING_SOFT_RTC']):
         src = src + ['dev_soft_rtc.c']
 
+if GetDepend(['RT_USING_DM']):
+    src += ['rtc_dm.c']
+
+if GetDepend(['RT_RTC_DS1302']):
+    src += ['rtc-ds1302.c']
+
+if GetDepend(['RT_RTC_DS1307']):
+    src += ['rtc-ds1307.c']
+
+if GetDepend(['RT_RTC_GOLDFISH']):
+    src += ['rtc-goldfish.c']
+
+if GetDepend(['RT_RTC_HYM8563']):
+    src += ['rtc-hym8563.c']
+
+if GetDepend(['RT_RTC_PCF8523']):
+    src += ['rtc-pcf8523.c']
+
+if GetDepend(['RT_RTC_PCF8563']):
+    src += ['rtc-pcf8563.c']
+
+if GetDepend(['RT_RTC_PL031']):
+    src += ['rtc-pl031.c']
+
+if GetDepend(['RT_RTC_RX8010']):
+    src += ['rtc-rx8010.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_RTC'], CPPPATH = CPPPATH)
 
 Return('group')
