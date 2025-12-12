@@ -26,12 +26,6 @@ void systick_config(void)
     eclic_irq_enable(CLIC_INT_TMR, 0, 0);
 }
 
-/* fixed misaligned bug for qemu */
-void *__wrap_memset(void *s, int c, size_t n)
-{
-    return rt_memset(s, c, n);
-}
-
 void rt_hw_board_init(void)
 {
 extern void _init(void);
@@ -58,5 +52,20 @@ extern void _init(void);
 #endif
 
 }
+
+ void eclic_mtip_handler(void)
+ {
+     /* clear value */
+     ECLIC_ClearPendingIRQ(CLIC_INT_TMR);
+     SysTimer_SetLoadValue(0);
+
+     /* enter interrupt */
+     rt_interrupt_enter();
+     /* tick increase */
+     rt_tick_increase();
+
+     /* leave interrupt */
+     rt_interrupt_leave();
+ }
 
 /******************** end of file *******************/

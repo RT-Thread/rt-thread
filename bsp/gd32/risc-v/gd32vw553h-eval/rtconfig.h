@@ -308,7 +308,13 @@
 
 /* GD32 Drivers */
 
+#define PKG_USING_GD32_RISCV_SERIES_DRIVER
+#define PKG_USING_GD32_RISCV_SERIES_DRIVER_LATEST_VERSION
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -393,7 +399,7 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_SERIES_GD32VW
+#define SOC_SERIES_GD32VW55x
 
 /* Onboard Peripheral Drivers */
 

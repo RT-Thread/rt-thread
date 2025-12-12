@@ -10,19 +10,18 @@ cwd = GetCurrentDir()
 src = Split('''
 board.c
 trap_gcc.S
-gd32vw55x_it.c
 ''')
 
 path =  [cwd]
 
-startup_path_prefix = SDK_LIB
+# add startup txt path
+startup_path_prefix = os.getcwd() + '/../'
 
 if rtconfig.PLATFORM in ['gcc']:
-    src += [startup_path_prefix + '/GD32VW55x_Firmware_Library/RISCV/env_Eclipse/start.S']
-    src += [startup_path_prefix + '/GD32VW55x_Firmware_Library/RISCV/env_Eclipse/entry.S']
+    src += [startup_path_prefix + '/packages/gd32-riscv-series-latest/GD32VW55x/RISCV/env_Eclipse/start.S']
+    src += [startup_path_prefix + '/packages/gd32-riscv-series-latest/GD32VW55x/RISCV/env_Eclipse/entry.S']
 
 CPPDEFINES = ['GD32VW553H_EVAL']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
-
 
 Return('group')

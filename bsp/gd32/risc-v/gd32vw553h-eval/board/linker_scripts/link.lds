@@ -43,6 +43,7 @@ SECTIONS
     *(.text.startup .text.startup.*)
     *(.text .text.*)
     *(.gnu.linkonce.t.*)
+    
     /* section information for finsh shell */
     . = ALIGN(4);
     __fsymtab_start = .;

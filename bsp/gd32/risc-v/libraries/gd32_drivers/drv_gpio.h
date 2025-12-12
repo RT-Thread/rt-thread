@@ -21,7 +21,7 @@ extern "C" {
 
 #if defined SOC_SERIES_GD32VF103V
 #include "gd32vf103_gpio.h"
-#elif defined SOC_SERIES_GD32VW
+#elif defined SOC_SERIES_GD32VW55x
 #include "gd32vw55x_gpio.h"
 #else
 #error "未定义的SOC系列"
@@ -34,7 +34,7 @@ extern "C" {
                                     GPIO##port, GPIO_PIN_##pin,   \
                                     GPIO_PORT_SOURCE_GPIO##port,  \
                                     GPIO_PIN_SOURCE_##pin}
-#elif defined SOC_SERIES_GD32VW
+#elif defined SOC_SERIES_GD32VW55x
 #define GD32_PIN(index, port, pin) {index, RCU_GPIO##port,        \
                                     GPIO##port, GPIO_PIN_##pin,   \
                                     EXTI_SOURCE_GPIO##port,  \

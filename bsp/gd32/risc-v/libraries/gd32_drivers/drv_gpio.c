@@ -186,7 +186,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 
 #if defined(SOC_SERIES_GD32VF103V) 
     rt_uint32_t pin_mode = GPIO_MODE_OUT_PP;
-#elif defined(SOC_SERIES_GD32VW)
+#elif defined(SOC_SERIES_GD32VW55x)
     rt_uint32_t pin_mode = GPIO_MODE_OUTPUT;
     rt_uint32_t pin_pull_up_down = GPIO_PUPD_NONE;
     rt_uint32_t pin_otype = GPIO_OTYPE_PP;
@@ -210,7 +210,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
         /* output setting */
 #if defined(SOC_SERIES_GD32VF103V) 
         pin_mode = GPIO_MODE_OUT_PP;
-#elif defined(SOC_SERIES_GD32VW)
+#elif defined(SOC_SERIES_GD32VW55x)
         pin_mode = GPIO_MODE_OUTPUT;
 #else
 #error "not support soc"
@@ -220,7 +220,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
         /* output setting: od. */
 #if defined(SOC_SERIES_GD32VF103V) 
         pin_mode = GPIO_MODE_OUT_OD;
-#elif defined(SOC_SERIES_GD32VW)
+#elif defined(SOC_SERIES_GD32VW55x)
         pin_otype = GPIO_OTYPE_OD;
 #else
 #error "not support soc"
@@ -230,7 +230,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
         /* input setting: not pull. */
 #if defined(SOC_SERIES_GD32VF103V) 
         pin_mode = GPIO_MODE_IN_FLOATING;
-#elif defined(SOC_SERIES_GD32VW)
+#elif defined(SOC_SERIES_GD32VW55x)
         pin_mode = GPIO_MODE_INPUT;
 #else
 #error "not support soc"
@@ -240,7 +240,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
         /* input setting: pull up. */
 #if defined(SOC_SERIES_GD32VF103V) 
         pin_mode = GPIO_MODE_IPU;
-#elif defined(SOC_SERIES_GD32VW)
+#elif defined(SOC_SERIES_GD32VW55x)
         pin_mode = GPIO_MODE_INPUT;
         pin_pull_up_down = GPIO_PUPD_PULLUP;
 #else
@@ -251,7 +251,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
         /* input setting: pull down. */
 #if defined(SOC_SERIES_GD32VF103V) 
         pin_mode = GPIO_MODE_IPD;
-#elif defined(SOC_SERIES_GD32VW)
+#elif defined(SOC_SERIES_GD32VW55x)
         pin_mode = GPIO_MODE_INPUT;
         pin_pull_up_down = GPIO_PUPD_PULLDOWN;
 #else
@@ -264,7 +264,7 @@ static void gd32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 
 #if defined(SOC_SERIES_GD32VF103V) 
     gpio_init(index->gpio_periph, pin_mode, GPIO_OSPEED_50MHZ, index->pin);
-#elif defined(SOC_SERIES_GD32VW)
+#elif defined(SOC_SERIES_GD32VW55x)
     gpio_mode_set(index->gpio_periph, pin_mode, pin_pull_up_down, index->pin);
     gpio_output_options_set(index->gpio_periph, pin_otype, pin_speed, index->pin);
 #else
@@ -484,7 +484,7 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
 
 #if defined(SOC_SERIES_GD32VF103V) 
         rcu_periph_clock_enable(RCU_AF);
-#elif defined(SOC_SERIES_GD32VW)
+#elif defined(SOC_SERIES_GD32VW55x)
         rcu_periph_clock_enable(RCU_SYSCFG);
 #else
 #endif  
@@ -494,7 +494,7 @@ static rt_err_t gd32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
         /* connect EXTI line to  GPIO pin */
 #if defined(SOC_SERIES_GD32VF103V) 
         gpio_exti_source_select(index->port_src, index->pin_src);
-#elif defined(SOC_SERIES_GD32VW)
+#elif defined(SOC_SERIES_GD32VW55x)
         syscfg_exti_line_config(index->port_src, index->pin_src);
 #else
 #endif       

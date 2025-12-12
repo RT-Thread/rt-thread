@@ -17,18 +17,18 @@ if os.getenv('RTT_ROOT'):
 # EXEC_PATH is the compiler execute path, for example, CodeSourcery, Keil MDK, IAR
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'E:/GD32VW5/Tools/GD32EmbeddedBuilder_v1.5.2.30854/Tools/RISC-V Embedded GCC/8.2.0-2.2-20190521-0004/bin'
+    EXEC_PATH   = r'E:\GD32\GD32VW5\GD32EmbeddedBuilder_v1.5.4_Rel\Tools\RISC-V Embedded GCC\8.2.0-2.2-20190521-0004\bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
 
-#if os.getenv('RTT_EXEC_PATH'):
-#    EXEC_PATH = os.getenv('RTT_EXEC_PATH')
+if os.getenv('RTT_EXEC_PATH'):
+   EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 CORE = 'risc-v'
 BUILD = 'debug'
 MAP_FILE = 'rtthread.map'
-LINK_FILE = '../libraries/GD32VW55x_Firmware_Library/RISCV/env_Eclipse/GD32VW553xM.lds'
+LINK_FILE = './board/linker_scripts/link.lds'
 
 if PLATFORM == 'gcc':
     # toolchains

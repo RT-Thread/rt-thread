@@ -1,7 +1,6 @@
 #include "cpuport.h"
 #include "riscv_encoding.h"
 
-
 .macro SAVE_CSR_CONTEXT
     csrrwi  x0, CSR_PUSHMCAUSE, 11
     csrrwi  x0, CSR_PUSHMEPC, 12
