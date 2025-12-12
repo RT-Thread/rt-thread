@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-08-20     Abbcc        first version
- * 2022-03-04     stevetong459 FINSH_FUNCTION_EXPORT_ALIAS change to MSH_CMD_EXPORT for reboot function.
+ * 2022-03-04     stevetong459 Use MSH_CMD_EXPORT for reboot function.
  */
 
 #include "drv_common.h"
