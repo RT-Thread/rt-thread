@@ -77,7 +77,7 @@ pub enum RTTError {
     FileSetLengthErr,
     FileSyncErr,
 
-    FuncUnDefine,
+    FuncUndefined,
 }
 
 pub type RTResult<T> = Result<T, RTTError>;

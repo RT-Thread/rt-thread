@@ -24,7 +24,7 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
 }
 
 #[linkage = "weak"]
-#[unsafe(no_mangle)]
+#[no_mangle]
 fn __rust_panic() -> ! {
     /* Default weak panic handler: loops forever to halt execution. */
     print!("Entered weak panic handler: system will halt.");

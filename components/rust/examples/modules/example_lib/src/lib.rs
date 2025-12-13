@@ -11,7 +11,7 @@
 /* Bring rt-rust's println! macro into scope */ 
 use rt_rust::println;
 use core::ffi::{c_char, CStr};
-#[unsafe(no_mangle)]
+#[no_mangle]
 pub extern "C" fn rust_mylib_println(s: *const c_char) {
     if s.is_null() {
         println!("");
@@ -24,7 +24,7 @@ pub extern "C" fn rust_mylib_println(s: *const c_char) {
     }
 }
 
-#[unsafe(no_mangle)]
+#[no_mangle]
 pub extern "C" fn rust_mylib_add(a: usize, b: usize) -> usize {
     a + b
 }

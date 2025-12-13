@@ -28,7 +28,7 @@ impl Thread {
 
     pub fn new() -> ThreadBuilder {
         ThreadBuilder {
-            th_name: "uname".into(),
+            th_name: "Unnamed".into(),
             th_stack_size: 4096,
             th_priority: 10,
             th_ticks: 10,
