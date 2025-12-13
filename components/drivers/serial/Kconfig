@@ -1,5 +1,5 @@
 menuconfig RT_USING_SERIAL
-    bool "USING Serial device drivers"
+    bool "Using Serial device drivers"
     select RT_USING_DEVICE_IPC
     select RT_USING_DEVICE
     default y
@@ -36,3 +36,7 @@ menuconfig RT_USING_SERIAL
             bool "Using serial bypass"
             default n
         endif
+
+if RT_USING_DM && RT_USING_SERIAL
+    rsource "device/Kconfig"
+endif
