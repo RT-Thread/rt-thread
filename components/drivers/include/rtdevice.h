@@ -130,6 +130,10 @@ extern "C" {
 #include "drivers/thermal.h"
 #endif /* RT_USING_THERMAL */
 
+#ifdef RT_USING_HWCACHE
+#include "drivers/hwcache.h"
+#endif /* RT_USING_HWCACHE */
+
 #ifdef RT_USING_NVMEM
 #include "drivers/nvmem.h"
 #endif /* RT_USING_NVMEM */
