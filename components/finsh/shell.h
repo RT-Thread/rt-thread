@@ -5,7 +5,8 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2011-06-02     Bernard      Add finsh_get_prompt function declaration
+ * 2011-06-02     Bernard      Add finsh_get_prompt function declaration.
+ * 2025-12-01     yiyi         reconstruct the shell.
  */
 
 #ifndef __SHELL_H__
@@ -14,97 +15,166 @@
 #include <rtthread.h>
 #include "finsh.h"
 
+#ifndef FINSH_THREAD_NAME
+#define FINSH_THREAD_NAME "tshell"
+#endif /* !FINSH_THREAD_NAME */
+
 #ifndef FINSH_THREAD_PRIORITY
-    #define FINSH_THREAD_PRIORITY 20
-#endif
+#define FINSH_THREAD_PRIORITY 20
+#endif /* !FINSH_THREAD_PRIORITY */
+
 #ifndef FINSH_THREAD_STACK_SIZE
-    #define FINSH_THREAD_STACK_SIZE 2048
-#endif
+#define FINSH_THREAD_STACK_SIZE 2048
+#endif /* !FINSH_THREAD_STACK_SIZE */
+
 #ifndef FINSH_CMD_SIZE
-    #define FINSH_CMD_SIZE      80
-#endif
-
-#define FINSH_OPTION_ECHO   0x01
-
-#define FINSH_PROMPT        finsh_get_prompt()
-const char *finsh_get_prompt(void);
-int finsh_set_prompt(const char *prompt);
+#define FINSH_CMD_SIZE 80
+#endif /* !FINSH_CMD_SIZE */
 
 #ifdef FINSH_USING_HISTORY
-    #ifndef FINSH_HISTORY_LINES
-        #define FINSH_HISTORY_LINES 5
-    #endif
-#endif
+#ifndef FINSH_HISTORY_LINES
+#define FINSH_HISTORY_LINES 5
+#endif /* !FINSH_HISTORY_LINES */
+#endif /* FINSH_USING_HISTORY */
 
 #ifdef FINSH_USING_AUTH
-    #ifndef FINSH_PASSWORD_MAX
-        #define FINSH_PASSWORD_MAX RT_NAME_MAX
-    #endif
-    #ifndef FINSH_PASSWORD_MIN
-        #define FINSH_PASSWORD_MIN 6
-    #endif
-    #ifndef FINSH_DEFAULT_PASSWORD
-        #define FINSH_DEFAULT_PASSWORD "rtthread"
-    #endif
+#ifndef FINSH_PASSWORD_MAX
+#define FINSH_PASSWORD_MAX RT_NAME_MAX
+#endif /* !FINSH_PASSWORD_MAX */
+#ifndef FINSH_PASSWORD_MIN
+#define FINSH_PASSWORD_MIN 6
+#endif /* !FINSH_PASSWORD_MIN */
+#ifndef FINSH_DEFAULT_PASSWORD
+#define FINSH_DEFAULT_PASSWORD "rtthread"
+#endif /* !FINSH_DEFAULT_PASSWORD */
 #endif /* FINSH_USING_AUTH */
 
-#ifndef FINSH_THREAD_NAME
-    #define FINSH_THREAD_NAME   "tshell"
-#endif
+#ifdef FINSH_USING_SNAPSHOT
+#ifndef FINSH_SNAPSHOT_DEPTH
+#define FINSH_SNAPSHOT_DEPTH 32
+#endif /* !FINSH_SNAPSHOT_DEPTH */
+#endif /* FINSH_USING_SNAPSHOT */
 
-enum input_stat
+#ifndef FINSH_PROMPT_TEXT_DEFAULT
+#define FINSH_PROMPT_TEXT_DEFAULT "msh "
+#endif /* !FINSH_PROMPT_TEXT_DEFAULT */
+
+enum finsh_input_state
 {
-    WAIT_NORMAL,
-    WAIT_SPEC_KEY,
-    WAIT_FUNC_KEY,
-    WAIT_EXT_KEY,
+    FINSH_INPUT_STATE_NORMAL,
+    FINSH_INPUT_STATE_SPECIFIED_KEY,
+    FINSH_INPUT_STATE_FUNCTION_KEY,
+    FINSH_INPUT_STATE_EXTEND_KEY,
+    FINSH_INPUT_STATE_CTRL_SEQUENCE,
 };
+
+#ifdef FINSH_USING_HISTORY
+struct finsh_history
+{
+#ifndef RT_USING_HEAP
+    char cmd[FINSH_CMD_SIZE + 1];
+#else
+    char *cmd; /* cmd is the command string */
+#endif /* !RT_USING_HEAP */
+    rt_list_t list;
+};
+#endif /* FINSH_USING_HISTORY */
+
+#ifdef FINSH_USING_SNAPSHOT
+enum finsh_snapshot_state
+{
+    FINSH_SNAPSHOT_STATE_NONE,
+    FINSH_SNAPSHOT_STATE_NORMAL,
+    FINSH_SNAPSHOT_STATE_ESC,
+    FINSH_SNAPSHOT_STATE_BACKSPACE,
+    FINSH_SNAPSHOT_STATE_SPACE,
+};
+
+struct finsh_snapshot
+{
+#ifndef RT_USING_HEAP
+    char cmd[FINSH_CMD_SIZE + 1];
+#else
+    char *cmd; /* cmd is the command string */
+#endif /* !RT_USING_HEAP */
+    rt_size_t cmd_length;
+    rt_size_t cmd_cursor;
+    rt_list_t list;
+};
+#endif /* FINSH_USING_SNAPSHOT */
+
 struct finsh_shell
 {
-    struct rt_semaphore rx_sem;
+    struct rt_semaphore rx_notice;
+    enum finsh_input_state input_state;
 
-    enum input_stat stat;
-
-    rt_uint8_t echo_mode: 1;
-    rt_uint8_t prompt_mode: 1;
-    rt_uint8_t overwrite_mode: 1;
 #ifdef FINSH_USING_HISTORY
-    rt_uint16_t current_history;
-    rt_uint16_t history_count;
+    rt_list_t history_list;
+    rt_list_t *cur_history;
+    rt_bool_t is_push_last_history;
+#ifndef RT_USING_HEAP
+    struct finsh_history history[FINSH_HISTORY_LINES];
+#endif /* !RT_USING_HEAP */
+#endif /* FINSH_USING_HISTORY */
 
-    char cmd_history[FINSH_HISTORY_LINES][FINSH_CMD_SIZE];
-#endif
+    char cmd[FINSH_CMD_SIZE + 1];
+    rt_size_t cmd_length;
+    rt_size_t cmd_cursor;
 
-    char line[FINSH_CMD_SIZE + 1];
-    rt_uint16_t line_position;
-    rt_uint16_t line_curpos;
+    char extend_key; /* extend key is the key after the function key */
+    rt_bool_t is_insert; /* insert mode is the mode to insert character at the cursor position */
+    rt_bool_t is_ctrl; /* ctrl mode is the mode to handle ctrl sequence */
 
-#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
-    rt_device_t device;
-#endif
+    rt_bool_t is_echo; /* echo mode is the mode to echo the command */
+    rt_bool_t is_prompt; /* prompt mode is the mode to prompt the command */
+
+#ifdef FINSH_USING_SNAPSHOT
+    rt_list_t snapshot_list;
+    rt_list_t *cur_snapshot;
+    rt_bool_t is_push_last_snapshot;
+    enum finsh_snapshot_state snapshot_state;
+    rt_bool_t is_space_snapshot;
+#ifndef RT_USING_HEAP
+    struct finsh_snapshot snapshot[FINSH_SNAPSHOT_DEPTH];
+#endif /* !RT_USING_HEAP */
+#endif /* FINSH_USING_SNAPSHOT */
 
 #ifdef FINSH_USING_AUTH
     char password[FINSH_PASSWORD_MAX];
-#endif
+#endif /* FINSH_USING_AUTH */
+
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
+    struct rt_device *device;
+#endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
 };
 
-void finsh_set_echo(rt_uint32_t echo);
-rt_uint32_t finsh_get_echo(void);
-
 int finsh_system_init(void);
-const char *finsh_get_device(void);
-int finsh_getchar(void);
+int finsh_system_deinit(void);
 
-rt_uint32_t finsh_get_prompt_mode(void);
-void finsh_set_prompt_mode(rt_uint32_t prompt_mode);
-
-#ifdef FINSH_USING_AUTH
-    rt_err_t finsh_set_password(const char *password);
-    const char *finsh_get_password(void);
-#endif
+char finsh_getchar(void);
 
 #ifdef RT_USING_HOOK
 void finsh_thread_entry_sethook(void (*hook)(void));
 #endif /* RT_USING_HOOK */
 
-#endif
+int finsh_set_prompt_text(const char *text);
+const char *finsh_get_prompt_text(void);
+#define FINSH_PROMPT finsh_get_prompt_text()
+
+void finsh_set_prompt_enabled(rt_bool_t enabled);
+rt_bool_t finsh_get_prompt_enabled(void);
+
+#if !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE)
+void finsh_set_device(const char *device_name);
+const char *finsh_get_device(void);
+#endif /* !defined(RT_USING_POSIX_STDIO) && defined(RT_USING_DEVICE) */
+
+void finsh_set_echo_enabled(rt_bool_t enabled);
+rt_bool_t finsh_get_echo_enabled(void);
+
+#ifdef FINSH_USING_AUTH
+int finsh_set_password(const char *password);
+const char *finsh_get_password(void);
+#endif /* FINSH_USING_AUTH */
+
+#endif /* __SHELL_H__ */
