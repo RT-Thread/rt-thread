@@ -9,3 +9,4 @@
 - @subpage page_memory_management
 - @subpage page_interrupt_management
 - @subpage page_kernel_porting
+- @subpage page_kernel_smp_boot
