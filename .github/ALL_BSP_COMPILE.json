@@ -398,7 +398,8 @@
         "k210",
         "wch/risc-v/ch32v208w-r0",
         "wch/risc-v/ch32v307v-r1",
-        "wch/risc-v/yd-ch32v307vct6"
+        "wch/risc-v/yd-ch32v307vct6",
+        "gd32/risc-v/gd32vw553h-eval"
       ]
     },
     {
