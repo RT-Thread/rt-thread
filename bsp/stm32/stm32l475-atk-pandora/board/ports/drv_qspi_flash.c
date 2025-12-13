@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -60,9 +60,23 @@ void w25qxx_enter_qspi_mode(struct rt_qspi_device *device)
     }
 }
 
+/* Adapter function to bridge the signature mismatch between driver layer
+ * expectation (void (*)()) and framework requirement (void (*)(struct rt_qspi_device *)).
+ */
+void w25qxx_enter_qspi_mode_adapter(void)
+{
+    struct rt_qspi_device *device = (struct rt_qspi_device *)rt_device_find("qspi10");
+    if (device == RT_NULL)
+    {
+        rt_kprintf("QSPI device not found!\n");
+        return;
+    }
+    w25qxx_enter_qspi_mode(device);
+}
+
 static int rt_hw_qspi_flash_with_sfud_init(void)
 {
-    rt_hw_qspi_device_attach("qspi1", "qspi10", RT_NULL, 4, w25qxx_enter_qspi_mode, RT_NULL);
+    rt_hw_qspi_device_attach("qspi1", "qspi10", RT_NULL, 4, w25qxx_enter_qspi_mode_adapter, RT_NULL);
 
     /* init w25q128 */
     if (RT_NULL == rt_sfud_flash_probe("W25Q128", "qspi10"))
@@ -72,6 +86,7 @@ static int rt_hw_qspi_flash_with_sfud_init(void)
 
     return RT_EOK;
 }
+
 INIT_COMPONENT_EXPORT(rt_hw_qspi_flash_with_sfud_init);
 
 #if defined(RT_USING_DFS_ELMFAT) && !defined(BSP_USING_SDCARD_FATFS)
@@ -108,3 +123,4 @@ INIT_ENV_EXPORT(mnt_init);
 
 #endif /* defined(RT_USING_DFS_ELMFAT) && !defined(BSP_USING_SDCARD_FATFS) */
 #endif /* BSP_USING_QSPI_FLASH */
+
