@@ -11,13 +11,13 @@ This guide walks through the multi-core boot path of RT-Thread on AArch64 using 
 
 ```mermaid
 flowchart TD
-    ROM[BootROM/BL1<br/>QEMU firmware] --> START[_start<br/>(entry_point.S)]
-    START --> MMU[init_mmu_early<br/>enable_mmu_early]
+    ROM[BootROM/BL1<br/>QEMU firmware] --> START["_start<br/>(entry_point.S)"]
+    START --> MMU["init_mmu_early<br/>enable_mmu_early"]
     MMU --> CBOOT[rtthread_startup()]
-    CBOOT --> BOARD[rt_hw_board_init<br/>-> rt_hw_common_setup]
+    CBOOT --> BOARD["rt_hw_board_init<br/>-> rt_hw_common_setup"]
     BOARD --> MAIN[main_thread_entry]
-    MAIN --> PSCI[rt_hw_secondary_cpu_up<br/>(PSCI CPU_ON)]
-    PSCI --> SECASM[_secondary_cpu_entry<br/>(ASM)]
+    MAIN --> PSCI["rt_hw_secondary_cpu_up<br/>(PSCI CPU_ON)"]
+    PSCI --> SECASM["_secondary_cpu_entry<br/>(ASM)"]
     SECASM --> SECC[rt_hw_secondary_cpu_bsp_start]
     SECC --> SCHED[rt_system_scheduler_start]
     SCHED --> RUN[SMP scheduling]
