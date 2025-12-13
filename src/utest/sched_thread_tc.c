@@ -6,7 +6,58 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-01-25     Shell        init ver.
+ * 2025-12-12     lhxj         Add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Scheduler Thread Stability Test (core.scheduler_thread)
+ *
+ * Test Objectives:
+ * - Verify the stability of the scheduler during intensive context switching.
+ * - Test the interaction between `rt_thread_suspend` and `rt_thread_resume` within critical sections.
+ * - Verify scheduler robustness in multi-core environments (using `RT_CPUS_NR`) ensuring no deadlocks or race conditions occur during thread state transitions.
+ * - List specific functions or APIs to be tested:
+ * - rt_thread_create
+ * - rt_thread_startup
+ * - rt_thread_suspend
+ * - rt_thread_resume
+ * - rt_enter_critical / rt_exit_critical_safe
+ * - rt_atomic_add
+ *
+ * Test Scenarios:
+ * - **Multi-threaded Ping-Pong Context Switching:**
+ * 1. Initialize a semaphore `_thr_exit_sem` for completion synchronization.
+ * 2. Create `TEST_THREAD_COUNT` pairs of threads (based on `RT_CPUS_NR`).
+ * 3. Each thread pair performs a "ping-pong" operation in a loop (100,000 iterations):
+ * - Thread A enters critical section, suspends self, resumes Thread B, exits critical section.
+ * - Thread B enters critical section, suspends self, resumes Thread A, exits critical section.
+ * 4. An atomic counter `_progress_counter` tracks execution progress, triggering `uassert_true` at intervals.
+ * 5. The main test thread waits for all worker threads to signal completion via the semaphore.
+ *
+ * Verification Metrics:
+ * - **Pass:** All created threads complete their execution loops without system hangs or crashes.
+ * - **Pass:** The progress counter increments as expected, validating thread execution flow.
+ *
+ * Dependencies:
+ * - Hardware requirements (e.g., specific peripherals)
+ * - No specific peripherals required.
+ * (This is met by the qemu-virt64-riscv BSP).
+ * - Software configuration (e.g., kernel options, driver initialization)
+ * - `RT_USING_UTEST` must be enabled (`RT-Thread Utestcases`).
+ * - `Scheduler Test` must be enabled (`RT-Thread Utestcases` -> `Kernel Core` -> 'Scheduler Test').
+ * - (Optional) Enable SMP for parallel testing:
+ * - Go to `RT-Thread Kernel` -> `Enable SMP (Symmetric multiprocessing)`.
+ * - Set `Number of CPUs` to > 1 (e.g., 4).
+ * - Environmental assumptions
+ * - `UTEST_THR_STACK_SIZE` is sufficient for the test threads.
+ * - Run the test case from the msh prompt:
+ * `utest_run core.scheduler_thread`
+ *
+ * Expected Results:
+ * - The test proceeds through multiple loops of thread suspension and resumption.
+ * - Final Output: `[ PASSED ] [ result ] testcase (core.scheduler_thread)`
+ */
+
 #define __RT_KERNEL_SOURCE__
 #include <rtthread.h>
 #include "utest.h"
