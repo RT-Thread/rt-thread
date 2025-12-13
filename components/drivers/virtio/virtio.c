@@ -38,7 +38,27 @@ void virtio_status_driver_ok(struct virtio_device *dev)
 {
     _virtio_dev_check(dev);
 
-    dev->mmio_config->status |= VIRTIO_STATUS_FEATURES_OK | VIRTIO_STATUS_DRIVER_OK;
+    if (dev->version == 1)
+    {
+        /* Legacy virtio */
+        dev->mmio_config->status |= VIRTIO_STATUS_FEATURES_OK | VIRTIO_STATUS_DRIVER_OK;
+    }
+    else
+    {
+        /* Modern virtio: set FEATURES_OK and verify it */
+        dev->mmio_config->status |= VIRTIO_STATUS_FEATURES_OK;
+
+        /* Verify that device accepted the features */
+        if (!(dev->mmio_config->status & VIRTIO_STATUS_FEATURES_OK))
+        {
+            /* Device doesn't support our feature subset */
+            dev->mmio_config->status |= VIRTIO_STATUS_FAILED;
+            return;
+        }
+
+        /* Now set DRIVER_OK */
+        dev->mmio_config->status |= VIRTIO_STATUS_DRIVER_OK;
+    }
 }
 
 void virtio_interrupt_ack(struct virtio_device *dev)
@@ -59,7 +79,66 @@ rt_bool_t virtio_has_feature(struct virtio_device *dev, rt_uint32_t feature_bit)
 {
     _virtio_dev_check(dev);
 
-    return !!(dev->mmio_config->device_features & (1UL << feature_bit));
+    if (dev->version == 1)
+    {
+        /* Legacy: 32-bit feature bits only */
+        return !!(dev->mmio_config->device_features & (1UL << feature_bit));
+    }
+    else
+    {
+        /* Modern: Use 64-bit feature access */
+        rt_uint64_t features = virtio_get_features(dev);
+        return !!(features & (1ULL << feature_bit));
+    }
+}
+
+rt_uint64_t virtio_get_features(struct virtio_device *dev)
+{
+    rt_uint64_t features = 0;
+
+    _virtio_dev_check(dev);
+
+    if (dev->version == 1)
+    {
+        /* Legacy: only lower 32 bits */
+        features = dev->mmio_config->device_features;
+    }
+    else
+    {
+        /* Modern: read both 32-bit halves */
+        dev->mmio_config->device_features_sel = 0;
+        features = dev->mmio_config->device_features;
+
+        dev->mmio_config->device_features_sel = 1;
+        features |= ((rt_uint64_t)dev->mmio_config->device_features) << 32;
+    }
+
+    return features;
+}
+
+void virtio_set_features(struct virtio_device *dev, rt_uint64_t features)
+{
+    _virtio_dev_check(dev);
+
+    if (dev->version == 1)
+    {
+        /* Legacy: only lower 32 bits */
+        dev->mmio_config->driver_features = (rt_uint32_t)features;
+    }
+    else
+    {
+        /* Modern: write both 32-bit halves */
+        dev->mmio_config->driver_features_sel = 0;
+        dev->mmio_config->driver_features = (rt_uint32_t)features;
+
+        dev->mmio_config->driver_features_sel = 1;
+        dev->mmio_config->driver_features = (rt_uint32_t)(features >> 32);
+    }
+}
+
+rt_bool_t virtio_has_feature_64(struct virtio_device *dev, rt_uint64_t features, rt_uint32_t feature_bit)
+{
+    return !!(features & (1ULL << feature_bit));
 }
 
 rt_err_t virtio_queues_alloc(struct virtio_device *dev, rt_size_t queues_num)
@@ -93,6 +172,7 @@ rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, r
     void *pages;
     rt_size_t pages_total_size;
     struct virtq *queue;
+    rt_uint64_t desc_addr, avail_addr, used_addr;
 
     _virtio_dev_check(dev);
 
@@ -123,17 +203,43 @@ rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, r
 
     rt_memset(pages, 0, pages_total_size);
 
-    dev->mmio_config->guest_page_size = VIRTIO_PAGE_SIZE;
+    /* Set queue selector */
     dev->mmio_config->queue_sel = queue_index;
     dev->mmio_config->queue_num = ring_size;
-    dev->mmio_config->queue_align = VIRTIO_PAGE_SIZE;
-    dev->mmio_config->queue_pfn = VIRTIO_VA2PA(pages) >> VIRTIO_PAGE_SHIFT;
 
+    /* Calculate queue area addresses */
     queue->num = ring_size;
     queue->desc = (struct virtq_desc *)((rt_ubase_t)pages);
     queue->avail = (struct virtq_avail *)(((rt_ubase_t)pages) + VIRTQ_DESC_TOTAL_SIZE(ring_size));
     queue->used = (struct virtq_used *)VIRTIO_PAGE_ALIGN(
             (rt_ubase_t)&queue->avail->ring[ring_size] + VIRTQ_AVAIL_RES_SIZE);
+
+    desc_addr = VIRTIO_VA2PA(queue->desc);
+    avail_addr = VIRTIO_VA2PA(queue->avail);
+    used_addr = VIRTIO_VA2PA(queue->used);
+
+    if (dev->version == 1)
+    {
+        /* Legacy virtio: use queue_pfn */
+        dev->mmio_config->guest_page_size = VIRTIO_PAGE_SIZE;
+        dev->mmio_config->queue_align = VIRTIO_PAGE_SIZE;
+        dev->mmio_config->queue_pfn = desc_addr >> VIRTIO_PAGE_SHIFT;
+    }
+    else
+    {
+        /* Modern virtio: use separate descriptor/driver/device registers */
+        dev->mmio_config->queue_desc_low = (rt_uint32_t)desc_addr;
+        dev->mmio_config->queue_desc_high = (rt_uint32_t)(desc_addr >> 32);
+
+        dev->mmio_config->queue_driver_low = (rt_uint32_t)avail_addr;
+        dev->mmio_config->queue_driver_high = (rt_uint32_t)(avail_addr >> 32);
+
+        dev->mmio_config->queue_device_low = (rt_uint32_t)used_addr;
+        dev->mmio_config->queue_device_high = (rt_uint32_t)(used_addr >> 32);
+
+        /* Enable the queue */
+        dev->mmio_config->queue_ready = 1;
+    }
 
     queue->used_idx = 0;
 
@@ -165,7 +271,17 @@ void virtio_queue_destroy(struct virtio_device *dev, rt_uint32_t queue_index)
     rt_free_align((void *)queue->desc);
 
     dev->mmio_config->queue_sel = queue_index;
-    dev->mmio_config->queue_pfn = RT_NULL;
+
+    if (dev->version == 1)
+    {
+        /* Legacy virtio */
+        dev->mmio_config->queue_pfn = 0;
+    }
+    else
+    {
+        /* Modern virtio */
+        dev->mmio_config->queue_ready = 0;
+    }
 
     queue->num = 0;
     queue->desc = RT_NULL;
