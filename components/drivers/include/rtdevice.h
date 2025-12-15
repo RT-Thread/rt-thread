@@ -135,6 +135,10 @@ extern "C" {
 #include "drivers/hwcache.h"
 #endif /* RT_USING_HWCACHE */
 
+#ifdef RT_USING_POWER_SUPPLY
+#include "drivers/power_supply.h"
+#endif /* RT_USING_POWER_SUPPLY */
+
 #ifdef RT_USING_NVMEM
 #include "drivers/nvmem.h"
 #endif /* RT_USING_NVMEM */

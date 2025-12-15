@@ -1,0 +1,7 @@
+menuconfig RT_USING_POWER_RESET
+    bool "Using Board level reset or poweroff"
+    depends on RT_USING_DM
+
+if RT_USING_POWER_RESET
+    osource "$(SOC_DM_POWER_RESET_DIR)/Kconfig"
+endif
