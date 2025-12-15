@@ -205,7 +205,7 @@ rt_err_t scsi_sd_probe(struct rt_scsi_device *sdev)
     sdev->priv = ssd;
     ssd->sdev = sdev;
     ssd->parent.ida = &scsi_sd_ida;
-    ssd->parent.parallel_io = RT_FALSE;
+    ssd->parent.parallel_io = sdev->host->parallel_io;
     ssd->parent.ops = &scsi_sd_ops;
     ssd->parent.max_partitions = RT_BLK_PARTITION_MAX;
 
