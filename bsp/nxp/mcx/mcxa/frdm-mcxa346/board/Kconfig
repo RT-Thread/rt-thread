@@ -123,6 +123,23 @@ menu "On-chip Peripheral Drivers"
                 endif
 endmenu
 
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_UART2
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC0
+        select BSP_USING_ADC0_CH0
+        select BSP_USING_PWM
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        select RTDUINO_USING_WIRE
+        imply RTDUINO_USING_SERVO
+        default n
+ endmenu
+
 
 menu "Board extended module Drivers"
     menuconfig BSP_USING_RW007
