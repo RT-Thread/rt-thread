@@ -1,0 +1,3 @@
+config RT_UTEST_DRIVERS_CORE
+    bool "Drivers Core Test"
+    default n

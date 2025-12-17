@@ -1,0 +1,37 @@
+menuconfig RT_GRAPHIC_LOGO
+    bool "Startup Logo"
+    select RT_GRAPHIC_FB
+    default y
+
+choice
+    prompt "Rendering image(ppm)"
+    default RT_GRAPHIC_LOGO_RT_THREAD_CLUT224
+    depends on RT_GRAPHIC_LOGO
+
+    config RT_GRAPHIC_LOGO_NONE
+        bool "None logo (Change in runtime)"
+
+    config RT_GRAPHIC_LOGO_RT_THREAD_CLUT224
+        bool "Standard 224-color RT-Thread logo"
+
+    config RT_GRAPHIC_LOGO_RT_THREAD_WHITE_CLUT224
+        bool "Standard 224-color RT-Thread white logo"
+
+    osource "$(SOC_DM_GRAPHIC_LOGO_DIR)/Kconfig"
+endchoice
+
+# Provide the logos path for the BSP path:
+#
+# RT_GRAPHIC_LOGO_<XYZ> in Kconfig:
+#
+#   config RT_GRAPHIC_LOGO_<XYZ>
+#       bool "<XYZ> logo"
+#
+# RT_GRAPHIC_LOGO_<XYZ>_PATH in Kconfig.path:
+#
+#   if RT_GRAPHIC_LOGO_<XYZ>
+#       config RT_GRAPHIC_LOGO_<XYZ>_PATH
+#           string
+#           default "dm/graphic/logo/[filename].ppm"
+#   endif
+osource "$(SOC_DM_GRAPHIC_LOGO_DIR)/Kconfig.path"

@@ -50,7 +50,10 @@ if GetDepend(['RT_USING_DAC']):
     src += ['drv_dac.c']
 
 if GetDepend(['RT_USING_CAN']):
-    src += ['drv_can.c']
+    if GetDepend(['SOC_SERIES_STM32H7']):
+        src += ['drv_fdcan.c']
+    else:
+        src += ['drv_can.c']
 
 if GetDepend(['RT_USING_PM']):
     src += ['drv_pm.c']

@@ -330,9 +330,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__DEBUG, RT_USING_ARMLIBC, RT_USING_LIBC, TAE32F53xx, __RTTHREAD__, USE_TAE_DRIVER, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>USE_TAE_DRIVER, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, __DEBUG, __STDC_LIMIT_MACROS, RT_USING_LIBC, TAE32F53xx, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\include;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;Libraries\TAE32F53xx_StdPeriph_Driver\inc;.;..\..\components\finsh;..\..\components\libc\posix\io\eventfd;Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Include;..\..\components\libc\compilers\common\include;..\..\libcpu\arm\common;drivers;..\..\components\libc\posix\ipc;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;application;board;Libraries\CMSIS\Include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\drivers\phy;..\..\components\libc\posix\io\epoll;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\smp_call</IncludePath>
+              <IncludePath>..\..\components\libc\compilers\common\include;..\..\components\drivers\phy;..\..\libcpu\arm\cortex-m3;application;Libraries\CMSIS\Include;..\..\components\libc\posix\io\eventfd;..\..\libcpu\arm\common;..\..\components\finsh;..\..\components\drivers\include;..\..\components\drivers\include;.;board;..\..\components\drivers\include;..\..\include;..\..\components\libc\posix\io\epoll;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\drivers\smp_call;..\..\components\libc\compilers\common\extension;Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Include;..\..\components\libc\posix\ipc;drivers;Libraries\TAE32F53xx_StdPeriph_Driver\inc;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -751,21 +751,28 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_gpio.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>drv_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_uart.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Finsh</GroupName>
+          <Files>
+            <File>
+              <FileName>msh_parse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>cmd.c</FileName>
@@ -785,13 +792,6 @@
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\msh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>msh_parse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1087,13 +1087,6 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
@@ -1118,6 +1111,13 @@
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1163,9 +1163,9 @@
           <GroupName>TAE32_StdPeriph</GroupName>
           <Files>
             <File>
-              <FileName>tae32f53xx_ll_tmr.c</FileName>
+              <FileName>tae32f53xx_ll_cortex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_tmr.c</FilePath>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_cortex.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1177,51 +1177,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>tae32f53xx_ll.c</FileName>
+              <FileName>tae32f53xx_ll_sysctrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tae32f53xx_ll_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_tae32f53xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Source\startup_tae32f53xx.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tae32f53xx_ll_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tae32f53xx_ll_cortex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_cortex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tae32f53xx_ll_fpll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_fpll.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tae32f53xx_ll_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_gpio.c</FilePath>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_sysctrl.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1233,9 +1191,51 @@
           </Files>
           <Files>
             <File>
-              <FileName>tae32f53xx_ll_sysctrl.c</FileName>
+              <FileName>tae32f53xx_ll_tmr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_sysctrl.c</FilePath>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_tmr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_tae32f53xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Device\Tai_action\TAE32F53xx\Source\startup_tae32f53xx.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tae32f53xx_ll.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tae32f53xx_ll_fpll.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_fpll.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tae32f53xx_ll_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tae32f53xx_ll_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>tae32f53xx_ll_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\TAE32F53xx_StdPeriph_Driver\src\tae32f53xx_ll_gpio.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -91,7 +91,7 @@ rt_err_t scsi_cdrom_probe(struct rt_scsi_device *sdev)
     scdrom->sdev = sdev;
     scdrom->parent.ida = &scsi_cdrom_ida;
     scdrom->parent.read_only = RT_TRUE;
-    scdrom->parent.parallel_io = RT_FALSE;
+    scdrom->parent.parallel_io = sdev->host->parallel_io;
     scdrom->parent.ops = &scsi_cdrom_ops;
     scdrom->parent.max_partitions = RT_BLK_PARTITION_NONE;
 

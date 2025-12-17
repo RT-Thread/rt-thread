@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -60,6 +60,7 @@
  * 2024-01-18     Shell        Seperate basical types to a rttypes.h
  *                             Seperate the compiler portings to rtcompiler.h
  * 2024-03-30     Meco Man     update version number to v5.2.0
+ * 2025-11-10     Rbb666       update version number to v5.3.0
  */
 
 #ifndef __RT_DEF_H__
@@ -82,8 +83,8 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
-#define RT_VERSION_MINOR                2               /**< Minor version number (x.X.x) */
-#define RT_VERSION_PATCH                2               /**< Patch version number (x.x.X) */
+#define RT_VERSION_MINOR                3               /**< Minor version number (x.X.x) */
+#define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
 #define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000U) + (minor * 100U) + revise)
@@ -267,9 +268,8 @@ typedef int (*init_fn_t)(void);
 
 /**
  * @addtogroup group_object_management
+ * @{
  */
-
-/**@{*/
 
 /*
  * kernel object macros
@@ -512,7 +512,7 @@ struct rt_object_information
 #define RT_OBJECT_HOOKLIST_CALL(name, argv)
 #endif /* RT_USING_HOOKLIST */
 
-/**@}*/
+/** @} group_object_management */
 
 /**
  * @addtogroup group_clock_management
@@ -592,9 +592,8 @@ typedef void (*rt_sighandler_t)(int signo);
 
 /**
  * @addtogroup group_thread_management
+ * @{
  */
-
-/**@{*/
 
 /*
  * Thread
@@ -895,10 +894,6 @@ struct rt_thread
     void                        *si_list;               /**< the signal infor list */
 #endif /* RT_USING_SIGNALS */
 
-#ifdef RT_USING_CPU_USAGE
-    rt_uint64_t                 duration_tick;          /**< cpu usage tick */
-#endif /* RT_USING_CPU_USAGE */
-
 #ifdef RT_USING_PTHREADS
     void                        *pthread_data;          /**< the handle of pthread data, adapt 32/64bit */
 #endif /* RT_USING_PTHREADS */
@@ -960,7 +955,7 @@ typedef struct rt_thread *rt_thread_t;
 #define LWP_IS_USER_MODE(t) (0)
 #endif /* RT_USING_SMART */
 
-/**@}*/
+/** @} group_thread_management */
 
 /**
  * @addtogroup group_thread_comm

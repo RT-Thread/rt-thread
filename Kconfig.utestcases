@@ -1,27 +1,34 @@
 menu "RT-Thread Utestcases"
 
-config RT_USING_UTESTCASES
-    bool "RT-Thread Utestcases"
-    default n
-    select RT_USING_UTEST
+    config RT_USING_UTESTCASES
+        bool "RT-Thread Utestcases"
+        default n
+        select RT_USING_UTEST
+        select RT_USING_DEBUG if !RT_USING_ULOG
 
-if RT_USING_UTESTCASES
+    if RT_USING_UTESTCASES
 
-rsource "components/utilities/utest/utest/Kconfig"
-rsource "examples/utest/testcases/kernel/Kconfig"
-rsource "examples/utest/testcases/cpp11/Kconfig"
-rsource "examples/utest/testcases/drivers/serial_v2/Kconfig"
-rsource "examples/utest/testcases/drivers/serial_bypass/Kconfig"
-rsource "examples/utest/testcases/drivers/ipc/Kconfig"
-rsource "examples/utest/testcases/posix/Kconfig"
-rsource "examples/utest/testcases/mm/Kconfig"
-rsource "examples/utest/testcases/tmpfs/Kconfig"
-rsource "examples/utest/testcases/smp_call/Kconfig"
-rsource "examples/utest/testcases/perf/Kconfig"
+        rsource "src/utest/Kconfig"
 
-rsource "src/klibc/utest/Kconfig"
+        menu "Kernel Components"
 
-rsource "components/drivers/audio/utest/Kconfig"
+            menu "Drivers"
+                rsource "components/drivers/core/utest/Kconfig"
+                rsource "components/drivers/audio/utest/Kconfig"
+                rsource "components/drivers/ipc/utest/Kconfig"
+                rsource "components/drivers/serial/utest/Kconfig"
+                rsource "components/drivers/smp_call/utest/Kconfig"
+            endmenu
+
+            rsource "components/dfs/utest/Kconfig"
+            rsource "components/libc/cplusplus/utest/Kconfig"
+            rsource "components/net/utest/Kconfig"
+            rsource "components/utilities/utest/utest/Kconfig"
+
+        endmenu
+
+        rsource "examples/utest/testcases/mm/Kconfig"
+        rsource "examples/utest/testcases/tmpfs/Kconfig"
 
 endif
 

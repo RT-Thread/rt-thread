@@ -441,7 +441,7 @@ rt_ssize_t _serial_poll_tx(struct rt_device *dev,
 
     while (size)
     {
-        if (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM)
+        if (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM || (dev == rt_console_get_device()))
         {
             /* If open_flag satisfies RT_DEVICE_FLAG_STREAM and the received character is '\n',
              * inserts '\r' character before '\n' character for the effect of carriage return newline */
@@ -579,7 +579,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device *dev,
     tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
     RT_ASSERT(tx_fifo != RT_NULL);
 
-    if (rt_thread_self() == RT_NULL || (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+    if (rt_thread_self() == RT_NULL || (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM) || (dev == rt_console_get_device()))
     {
         /* using poll tx when the scheduler not startup or in stream mode */
         return _serial_poll_tx(dev, pos, buffer, size);
@@ -651,7 +651,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device *dev,
     tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
     RT_ASSERT(tx_fifo != RT_NULL);
 
-    if (rt_thread_self() == RT_NULL || (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+    if (rt_thread_self() == RT_NULL || (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM) || (dev == rt_console_get_device()))
     {
         /* using poll tx when the scheduler not startup or in stream mode */
         return _serial_poll_tx(dev, pos, buffer, size);
@@ -747,7 +747,7 @@ static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device *dev,
 {
     struct rt_serial_device  *serial;
     struct rt_serial_tx_fifo *tx_fifo;
-    rt_uint8_t               *put_ptr;
+    rt_uint8_t               *put_ptr = RT_NULL;
     rt_base_t                 level;
     rt_size_t                 send_size;
     rt_ssize_t                transmit_size;

@@ -100,7 +100,9 @@ static rt_err_t ifx_rtc_get_timeval(struct timeval *tv)
 
     return RT_EOK;
 }
-
+#ifdef RT_USING_ALARM
+void rtc_alarm_callback(void *callback_arg, cyhal_rtc_event_t event);
+#endif
 static rt_err_t _rtc_init(void)
 {
 #ifdef BSP_RTC_USING_LSE
@@ -187,8 +189,10 @@ static rt_err_t _rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
 }
 
 #ifdef RT_USING_ALARM
-void rtc_alarm_callback(void)
+void rtc_alarm_callback(void *callback_arg, cyhal_rtc_event_t event)
 {
+    RT_UNUSED(callback_arg);
+    RT_UNUSED(event);
     rt_interrupt_enter();
     rt_alarm_update(0, 0);
     rt_interrupt_leave();
@@ -231,4 +235,5 @@ static int rt_hw_rtc_init(void)
 }
 
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);
+#endif
 #endif

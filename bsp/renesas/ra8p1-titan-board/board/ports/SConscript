@@ -1,0 +1,22 @@
+import os
+from building import *
+
+objs = []
+src = []
+cwd  = GetCurrentDir()
+CPPPATH = [cwd]
+
+if GetDepend(['BSP_USING_FILESYSTEM']):
+    src += ['drv_filesystem.c']
+
+if GetDepend(['BSP_USING_ETH']):
+    src += ['drv_rtl8211.c']
+
+objs = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        objs = objs + SConscript(os.path.join(item, 'SConscript'))
+
+Return('objs')

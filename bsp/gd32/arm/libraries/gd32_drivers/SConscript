@@ -18,8 +18,8 @@ if GetDepend(['RT_USING_SERIAL']):
         src += ['drv_usart_v2.c']
     else:
         src += ['drv_usart.c']
- 
- # add i2c hard drivers.       
+
+# add i2c hard drivers.       
 if GetDepend(['RT_USING_I2C']):
     if GetDepend('BSP_USING_HARD_I2C0') or GetDepend('BSP_USING_HARD_I2C1') or GetDepend('BSP_USING_HARD_I2C2') or GetDepend('BSP_USING_HARD_I2C3') or GetDepend('BSP_USING_HARD_I2C4') or GetDepend('BSP_USING_HARD_I2C5'):
         src += ['drv_hard_i2c.c']
@@ -65,6 +65,7 @@ if GetDepend('BSP_USING_SDRAM'):
     src += ['drv_sdram.c']
 
 path = [cwd]
+path += [cwd + "/config"]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 

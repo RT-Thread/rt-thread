@@ -61,7 +61,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -321,6 +321,10 @@
 #define PKG_USING_GD32_ARM_SERIES_DRIVER
 #define PKG_USING_GD32_ARM_SERIES_DRIVER_LATEST_VERSION
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -405,7 +409,7 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_GD32470Z
+#define SOC_GD32F470ZG
 
 /* Onboard Peripheral Drivers */
 
@@ -413,7 +417,12 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
+#define BSP_USING_SERIAL_V1
 #define BSP_USING_UART0
+#define BSP_UART0_TX_PIN "PA9"
+#define BSP_UART0_RX_PIN "PA10"
+#define BSP_UART0_AFIO "AF1"
+#define BSP_USING_GD_DBG
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
@@ -422,4 +431,3 @@
 /* end of Hardware Drivers Config */
 
 #endif
-

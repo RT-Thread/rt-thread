@@ -1,0 +1,10 @@
+# .clang-format-ignore File Description:
+# ----------------------------------------------------------------------------------------
+# 1. Used to specify which files or directories should be skipped by the clang-format tool.
+# 2. Follows syntax rules similar to .gitignore.
+# 3. Supports wildcard patterns and path matching.
+# 4. clang-format will recursively apply the .clang-format-ignore rules.
+
+/lwip-1.4.1/
+/lwip-2.0.3/
+/lwip-2.1.2/

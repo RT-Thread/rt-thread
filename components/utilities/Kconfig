@@ -192,6 +192,14 @@ menuconfig RT_USING_ULOG
                 It will enable the log filter.
                 Such as level filter, log tag filter, log kw filter and tag's level filter.
 
+        config ULOG_USING_FINSH_CMD
+            bool "Enable ulog finsh/msh commands"
+            depends on ULOG_USING_FILTER && RT_USING_FINSH
+            default y
+            help
+                Enable this option to use ulog commands in finsh/msh,
+                such as ulog_lvl, ulog_tag, ulog_kw and so on.
+
         config ULOG_USING_SYSLOG
             bool "Enable syslog format log and API."
             select ULOG_OUTPUT_TIME
@@ -217,12 +225,12 @@ config RT_USING_UTEST
             help
                 If enable this option, the test cases will be run automatically when board boot up.
 
-        config RT_UTEST_USING_ALL_CASES
-            bool "Enable all selected modules' test cases"
-            default n
-            help
-                If enable this option, all selected modules' test cases will be run.
-                Otherwise, only the test cases that are explicitly enabled will be run.
+        if FINSH_USING_OPTION_COMPLETION
+            config RT_UTEST_MAX_OPTIONS
+                int "Maximum number of utest cases for auto-completion"
+                default 64
+        endif
+
     endif
 
 config RT_USING_VAR_EXPORT

@@ -85,6 +85,19 @@ extern "C"
 #endif
 #endif /* SOC_SERIES_R7FA6M4 */
 
+#ifdef SOC_SERIES_R7FA2E2
+#include "ra2e2/uart_config.h"
+
+#ifdef BSP_USING_PWM
+#include "ra2e2/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_ADC
+#include "ra2e2/adc_config.h"
+#endif
+
+#endif /* SOC_SERIES_R7FA2E2 */
+
 #ifdef SOC_SERIES_R7FA2L1
 #include "ra2l1/uart_config.h"
 
@@ -125,6 +138,26 @@ extern "C"
 #endif
 #endif /* SOC_SERIES_R7FA4E2 */
 
+#ifdef SOC_SERIES_R7FA4M1
+#include "ra4m1/uart_config.h"
+
+#ifdef BSP_USING_ADC
+#include "ra4m1/adc_config.h"
+#endif
+
+#ifdef BSP_USING_DAC
+#include "ra4m1/dac_config.h"
+#endif
+
+#ifdef BSP_USING_PWM
+#include "ra4m1/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_CAN
+#include "ra4m1/can_config.h"
+#endif
+#endif /* SOC_SERIES_R7FA4M1 */
+
 #ifdef SOC_SERIES_R7FA4M2
 #include "ra4m2/uart_config.h"
 
@@ -161,6 +194,32 @@ extern "C"
 #endif
 
 #endif /* SOC_SERIES_R7FA8M85 */
+
+#ifdef SOC_SERIES_R7KA8P1
+
+#include "ra8/uart_config.h"
+
+#ifdef BSP_USING_PWM
+#include "ra8/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_ADC
+#include "ra8/adc_config.h"
+#endif
+
+#ifdef BSP_USING_DAC
+#include "ra8/dac_config.h"
+#endif
+
+#ifdef BSP_USING_TIM
+#include "ra8/timer_config.h"
+#endif
+
+#ifdef BSP_USING_CANFD
+#include "ra8/canfd_config.h"
+#endif
+
+#endif /* SOC_SERIES_R7KA8P1 */
 
 #ifdef SOC_SERIES_R9A07G0
 #include "rzt/uart_config.h"

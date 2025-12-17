@@ -1,0 +1,94 @@
+menu "Kernel Core"
+
+    config RT_UTEST_MEMHEAP
+        bool "Memory Heap Stability Test"
+        default n
+        depends on RT_USING_MEMHEAP
+
+    config RT_UTEST_SMALL_MEM
+        bool "Memory Test"
+        default n
+        depends on RT_USING_SMALL_MEM
+
+    config RT_UTEST_OBJECT
+        select RT_USING_DEVICE
+        select RT_USING_SEMAPHORE
+        bool "Object Test"
+        default n
+
+    config RT_UTEST_SLAB
+        bool "SLAB Test"
+        default n
+        depends on RT_USING_SLAB
+
+    config RT_UTEST_IRQ
+        bool "IRQ Test"
+        default n
+
+    config RT_UTEST_SEMAPHORE
+        bool "Semaphore Test"
+        default n
+        depends on RT_USING_SEMAPHORE
+
+    config RT_UTEST_EVENT
+        bool "Event Test"
+        default n
+        depends on RT_USING_EVENT
+
+    config RT_UTEST_TIMER
+        bool "Timer Test"
+        default n
+
+    config RT_UTEST_MESSAGEQUEUE
+        bool "Message Queue Test"
+        default n
+
+    config RT_UTEST_SIGNAL
+        bool "Signal Test"
+        select RT_USING_SIGNALS
+        default n
+
+    config RT_UTEST_MUTEX
+        bool "Mutex Test"
+        default n
+
+    config RT_UTEST_MAILBOX
+        bool "Mailbox Test"
+        default n
+
+    config RT_UTEST_THREAD
+        bool "Thread Test"
+        default n
+        select RT_USING_TIMER_SOFT
+        select RT_USING_THREAD
+
+    config RT_UTEST_ATOMIC
+        bool "Atomic Test"
+        default n
+
+    config RT_UTEST_HOOKLIST
+        bool "Hook List Test"
+        select RT_USING_HOOKLIST
+        default n
+
+    config RT_UTEST_MTSAFE_KPRINT
+        bool "MT-Safe Kprint Test"
+        default n
+
+    config RT_UTEST_SCHEDULER
+        bool "Scheduler Test"
+        default n
+
+    config RT_UTEST_MEMPOOL
+        bool "Memory Pool Test"
+        default n
+        depends on RT_USING_MEMPOOL
+
+    rsource "perf/Kconfig"
+    rsource "../klibc/utest/Kconfig"
+
+    if RT_USING_SMP
+        rsource "smp/Kconfig"
+    endif
+
+endmenu

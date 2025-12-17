@@ -157,9 +157,8 @@ void (*rt_object_put_hook)(struct rt_object *object);
 
 /**
  * @addtogroup group_hook
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief This function will set a hook function, which will be invoked when object
@@ -231,14 +230,13 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object))
     rt_object_put_hook = hook;
 }
 
-/**@}*/
+/** @} group_hook */
 #endif /* RT_USING_HOOK */
 
 /**
  * @addtogroup group_object_management
+ * @{
  */
-
-/**@{*/
 
 /**
  * @brief This function will return the specified type of object information.
@@ -401,10 +399,9 @@ void rt_object_init(struct rt_object         *object,
         if(obj_name_len > RT_NAME_MAX - 1)
         {
             LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
-            RT_ASSERT(obj_name_len <= RT_NAME_MAX - 1);
         }
-        rt_memcpy(object->name, name, obj_name_len);
-        object->name[obj_name_len] = '\0';
+        rt_strncpy(object->name, name, RT_NAME_MAX - 1);
+        object->name[RT_NAME_MAX - 1] = '\0';
     }
     else
     {
@@ -517,10 +514,9 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
         if(obj_name_len > RT_NAME_MAX - 1)
         {
             LOG_E("Object name %s exceeds RT_NAME_MAX=%d, consider increasing RT_NAME_MAX.", name, RT_NAME_MAX);
-            RT_ASSERT(obj_name_len <= RT_NAME_MAX - 1);
         }
-        rt_memcpy(object->name, name, obj_name_len);
-        object->name[obj_name_len] = '\0';
+        rt_strncpy(object->name, name, RT_NAME_MAX - 1);
+        object->name[RT_NAME_MAX - 1] = '\0';
     }
     else
     {
@@ -814,5 +810,5 @@ rt_err_t rt_custom_object_destroy(rt_object_t obj)
 }
 #endif
 
-/**@}*/
+/** @} group_object_management */
 

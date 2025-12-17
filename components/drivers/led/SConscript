@@ -13,6 +13,12 @@ src = ['led.c']
 if GetDepend(['RT_LED_GPIO']):
     src += ['led-gpio.c']
 
+if GetDepend(['RT_LED_PWM']):
+    src += ['led-pwm.c']
+
+if GetDepend(['RT_LED_SYSCON']):
+    src += ['led-syscon.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

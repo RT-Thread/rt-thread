@@ -1,0 +1,76 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend(['RT_UTEST_OBJECT']):
+    src += ['object_tc.c']
+
+if GetDepend(['RT_UTEST_MEMHEAP']):
+    src += ['memheap_tc.c']
+
+if GetDepend(['RT_UTEST_SMALL_MEM']):
+    src += ['mem_tc.c']
+
+if GetDepend(['RT_UTEST_SLAB']):
+    src += ['slab_tc.c']
+
+if GetDepend(['RT_UTEST_IRQ']):
+    src += ['irq_tc.c']
+
+if GetDepend(['RT_UTEST_SEMAPHORE']):
+    src += ['semaphore_tc.c']
+
+if GetDepend(['RT_UTEST_EVENT']):
+    src += ['event_tc.c']
+
+if GetDepend(['RT_UTEST_TIMER']):
+    src += ['timer_tc.c']
+
+if GetDepend(['RT_UTEST_MESSAGEQUEUE']):
+    src += ['messagequeue_tc.c']
+
+if GetDepend(['RT_UTEST_SIGNAL']):
+    src += ['signal_tc.c']
+
+if GetDepend(['RT_UTEST_MUTEX']):
+    src += ['mutex_tc.c', 'mutex_pi_tc.c']
+
+if GetDepend(['RT_UTEST_MAILBOX']):
+    src += ['mailbox_tc.c']
+
+if GetDepend(['RT_UTEST_THREAD']):
+    src += ['thread_tc.c']
+    src += ['thread_overflow_tc.c']
+    src += ['thread_suspend_tc.c']
+
+if GetDepend(['RT_UTEST_ATOMIC']):
+    src += ['atomic_tc.c']
+
+if GetDepend(['RT_UTEST_HOOKLIST']):
+    src += ['hooklist_tc.c']
+
+if GetDepend(['RT_UTEST_MTSAFE_KPRINT']):
+    src += ['mtsafe_kprint_tc.c']
+
+if GetDepend(['RT_UTEST_MEMPOOL']):
+    src += ['mempool_tc.c']
+
+# Stressful testcase for scheduler (MP/UP)
+if GetDepend(['RT_UTEST_SCHEDULER']):
+    src += ['sched_timed_sem_tc.c']
+    src += ['sched_timed_mtx_tc.c']
+    src += ['sched_mtx_tc.c']
+    src += ['sched_sem_tc.c', 'sched_thread_tc.c']
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')
+

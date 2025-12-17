@@ -5,7 +5,7 @@ rsource "klibc/Kconfig"
 config RT_NAME_MAX
     int "The maximal size of kernel object name"
     range 2 64
-    default 8
+    default 12
     help
         Each kernel object, such as thread, timer, semaphore etc, has a name,
         the RT_NAME_MAX is the maximal size of this object name.
@@ -242,7 +242,6 @@ config RT_USING_CI_ACTION
     bool "Enable CI Action build mode"
     select RT_USING_UTEST
     select RT_UTEST_USING_AUTO_RUN
-    select RT_UTEST_USING_ALL_CASES
     default n
     help
         Identify that the environment is CI Action.
@@ -435,7 +434,7 @@ endif
 
 config RT_VER_NUM
     hex
-    default 0x50201
+    default 0x50300
     help
         RT-Thread version number
 

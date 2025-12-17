@@ -1,0 +1,39 @@
+from building import *
+
+group   = []
+
+if not GetDepend(['RT_SERIAL_VIRTUAL']):
+    Return('group')
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+CPPDEFINES = []
+
+src     = []
+
+font_path = None
+
+if GetDepend(['RT_SERIAL_VIRTUAL_FONT_UNI2_FIXED16']):
+    font_path = cwd + '/font-uni2-fixed16.psf'
+
+if GetDepend(['RT_SERIAL_VIRTUAL_FONT_UNI2_VGA16']):
+    font_path = cwd + '/font-uni2-vga16.psf'
+
+if font_path != None:
+    with open(font_path, 'rb') as psf:
+        psf_data = psf.read()
+
+    first_byte = True
+
+    with open(cwd + '/psf.inc', 'w') as font:
+        for byte in psf_data:
+            if not first_byte:
+                font.write(", ")
+
+            font.write("0x{:02x}".format(byte))
+            first_byte = False
+
+    src += ['psf.c', 'render.c', 'virtual.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+Return('group')

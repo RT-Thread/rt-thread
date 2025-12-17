@@ -1,0 +1,30 @@
+menu "Hardware Drivers Config"
+
+config SOC_XUANTIE
+    bool
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+
+menu "On-chip Peripheral Drivers"
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default n
+
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default n
+        endif
+
+    menuconfig ENABLE_FPU
+        bool "Enable FPU"
+        select ARCH_RISCV_FPU
+        default n
+          
+endmenu
+
+endmenu

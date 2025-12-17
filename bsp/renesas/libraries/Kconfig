@@ -19,6 +19,12 @@ config SOC_SERIES_R7FA6M4
     select SOC_FAMILY_RENESAS_RA
     default n
 
+config SOC_SERIES_R7FA2E2
+    bool
+    select ARCH_ARM_CORTEX_M23
+    select SOC_FAMILY_RENESAS_RA
+    default n
+
 config SOC_SERIES_R7FA2L1
     bool
     select ARCH_ARM_CORTEX_M23
@@ -37,6 +43,12 @@ config SOC_SERIES_R7FA4E2
     select SOC_FAMILY_RENESAS_RA
     default n
 
+config SOC_SERIES_R7FA4M1
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_RENESAS_RA
+    default n
+
 config SOC_SERIES_R7FA4M2
     bool
     select ARCH_ARM_CORTEX_M4
@@ -44,6 +56,12 @@ config SOC_SERIES_R7FA4M2
     default n
 
 config SOC_SERIES_R7FA8M85
+    bool
+    select ARCH_ARM_CORTEX_M85
+    select SOC_FAMILY_RENESAS_RA
+    default n
+
+config SOC_SERIES_R7KA8P1
     bool
     select ARCH_ARM_CORTEX_M85
     select SOC_FAMILY_RENESAS_RA

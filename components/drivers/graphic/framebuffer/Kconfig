@@ -1,0 +1,14 @@
+menuconfig RT_GRAPHIC_FB
+    bool "LCD and Frame buffer support"
+    select RT_USING_LCD
+    default y
+
+config RT_GRAPHIC_FB_SIMPLE
+    bool "Simple framebuffer support"
+    depends on RT_GRAPHIC_FB
+    depends on RT_USING_OFW
+    default y
+
+if RT_GRAPHIC_FB
+    osource "$(SOC_DM_GRAPHIC_FB_DIR)/Kconfig"
+endif

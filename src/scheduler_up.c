@@ -32,6 +32,7 @@
  * 2023-10-17     ChuShicheng  Modify the timing of clearing RT_THREAD_STAT_YIELD flag bits
  * 2025-08-04     Pillar       Add rt_scheduler_critical_switch_flag
  * 2025-08-20     RyanCW       rt_scheduler_lock_nest use atomic operations
+ * 2025-09-20     wdfk_prog    fix scheduling exception caused by interrupt preemption in rt_schedule
  */
 
 #define __RT_IPC_SOURCE__
@@ -92,6 +93,14 @@ void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
 
 /**@}*/
 #endif /* RT_USING_HOOK */
+
+/**
+ * @addtogroup group_thread_management
+ *
+ * @cond
+ *
+ * @{
+ */
 
 static struct rt_thread* _scheduler_get_highest_priority_thread(rt_ubase_t *highest_prio)
 {
@@ -257,13 +266,6 @@ void rt_system_scheduler_start(void)
 }
 
 /**
- * @addtogroup group_thread_management
- * @cond
- */
-
-/**@{*/
-
-/**
  * @brief Perform thread scheduling once. Select the highest priority thread and switch to it.
  *
  * @details This function:
@@ -282,11 +284,13 @@ void rt_schedule(void)
     rt_base_t level;
     struct rt_thread *to_thread;
     struct rt_thread *from_thread;
-    /* using local variable to avoid unecessary function call */
-    struct rt_thread *curr_thread = rt_thread_self();
+    struct rt_thread *curr_thread;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
+
+    /* using local variable to avoid unnecessary function call */
+    curr_thread = rt_thread_self();
 
     /* check the scheduler is enabled or not */
     if (rt_scheduler_lock_nest == 0)
@@ -719,5 +723,8 @@ rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
     return -RT_EINVAL;
 }
 
-/**@}*/
-/**@endcond*/
+/**
+ * @} group_thread_management
+ *
+ * @endcond
+ */

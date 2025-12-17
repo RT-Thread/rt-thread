@@ -219,7 +219,7 @@ typedef struct {
  */
 
 typedef struct {
-    uint32_t RESERVED0;                 /*!< Offset: 0x000 (R/W)  CLINT configure register */
+    uint32_t RESERVED0;
     __IOM uint32_t PLIC_PRIO[1023];
     __IOM uint32_t PLIC_IP[32];
     uint32_t RESERVED1[3972 / 4 - 1];
@@ -403,7 +403,9 @@ typedef struct {
 #define CACHE_MHCR_IE_Msk                      (0x1UL << CACHE_MHCR_IE_Pos)                  /*!< CACHE MHCR: IE Mask */
 
 #if CONFIG_CPU_XUANTIE_R908 || CONFIG_CPU_XUANTIE_R908FD || CONFIG_CPU_XUANTIE_R908FDV \
-    || CONFIG_CPU_XUANTIE_R908_CP || CONFIG_CPU_XUANTIE_R908FD_CP || CONFIG_CPU_XUANTIE_R908FDV_CP
+    || CONFIG_CPU_XUANTIE_R908_CP || CONFIG_CPU_XUANTIE_R908FD_CP || CONFIG_CPU_XUANTIE_R908FDV_CP \
+    || CONFIG_CPU_XUANTIE_R908_CP_XT || CONFIG_CPU_XUANTIE_R908FD_CP_XT || CONFIG_CPU_XUANTIE_R908FDV_CP_XT \
+    || CONFIG_CPU_XUANTIE_C908X || CONFIG_CPU_XUANTIE_C908X_CP || CONFIG_CPU_XUANTIE_C908X_CP_XT
 #define MCER_ECC_FATAL_Pos           34U
 #define MCER_ECC_FATAL_Msk           (0x1ULL << MCER_ECC_FATAL_Pos)
 
@@ -440,7 +442,7 @@ typedef struct {
 #define CACHE_MCER2H_RAMID_Msk                 (0x3ULL << CACHE_MCER2H_RAMID_Pos)
 
 #define CACHE_INV_ADDR_Pos                     6U
-#define CACHE_INV_ADDR_Msk                     (0xFFFFFFFFULL << CACHE_INV_ADDR_Pos)
+#define CACHE_INV_ADDR_Msk                     (~((0x1ULL << CACHE_INV_ADDR_Pos) - 1))
 
 enum MCER_FAULT_RAMID {
     /* L1 Cache, JTLB and TCM (RAMID of MCER)*/
@@ -462,19 +464,19 @@ enum MCER2_FAULT_RAMID {
 
 /*@} end of group CSI_CACHE */
 
-// MSTATUS Register
-#define MSTATUS_TVM_MASK (1L << 20)     // mstatus.TVM                      [20]
-#define MSTATUS_MPP_MASK (3L << 11)     // mstatus.SPP                      [11:12]
+/* MSTATUS Register */
+#define MSTATUS_TVM_MASK (1L << 20)     /* mstatus.TVM                      [20] */
+#define MSTATUS_MPP_MASK (3L << 11)     /* mstatus.SPP                      [11:12] */
 #ifndef MSTATUS_MPP_M
-#define MSTATUS_MPP_M    (3L << 11)     // Machine mode                     11
+#define MSTATUS_MPP_M    (3L << 11)     /* Machine mode                     11 */
 #endif
-#define MSTATUS_MPP_S    (1L << 11)     // Supervisor mode                  01
-#define MSTATUS_MPP_U    (0L << 11)     // User mode                        00
+#define MSTATUS_MPP_S    (1L << 11)     /* Supervisor mode                  01 */
+#define MSTATUS_MPP_U    (0L << 11)     /* User mode                        00 */
 
-// SSTATUS Register
-#define SSTATUS_SPP_MASK (3L << 8)      // sstatus.SPP                      [8:9]
-#define SSTATUS_SPP_S    (1L << 8)      // Supervisor mode                  01
-#define SSTATUS_SPP_U    (0L << 8)      // User mode                        00
+/* SSTATUS Register */
+#define SSTATUS_SPP_MASK (3L << 8)      /* sstatus.SPP                      [8:9] */
+#define SSTATUS_SPP_S    (1L << 8)      /* Supervisor mode                  01 */
+#define SSTATUS_SPP_U    (0L << 8)      /* User mode                        00 */
 
 typedef enum {
     USER_MODE        = 0,
@@ -675,7 +677,8 @@ __STATIC_INLINE void csi_vic_enable_irq(int32_t IRQn)
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 
 #if CONFIG_INTC_CLIC_PLIC
-    if (IRQn > PLIC_IRQ_OFFSET) {
+    if (IRQn > PLIC_IRQ_OFFSET)
+    {
         IRQn -= PLIC_IRQ_OFFSET;
     } else {
         CLIC->CLICINT[IRQn].IE |= CLIC_INTIE_IE_Msk;
@@ -719,7 +722,8 @@ __STATIC_INLINE void csi_vic_disable_irq(int32_t IRQn)
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 
 #if CONFIG_INTC_CLIC_PLIC
-    if (IRQn > PLIC_IRQ_OFFSET) {
+    if (IRQn > PLIC_IRQ_OFFSET)
+    {
         IRQn -= PLIC_IRQ_OFFSET;
     } else {
         CLIC->CLICINT[IRQn].IE &= ~CLIC_INTIE_IE_Msk;
@@ -765,7 +769,8 @@ __STATIC_INLINE uint32_t csi_vic_get_enabled_irq(int32_t IRQn)
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 
 #if CONFIG_INTC_CLIC_PLIC
-    if (IRQn > PLIC_IRQ_OFFSET) {
+    if (IRQn > PLIC_IRQ_OFFSET)
+    {
         IRQn -= PLIC_IRQ_OFFSET;
     } else {
         return (uint32_t)(CLIC->CLICINT[IRQn].IE & CLIC_INTIE_IE_Msk);
@@ -808,7 +813,8 @@ __STATIC_INLINE uint32_t csi_vic_get_pending_irq(int32_t IRQn)
 {
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 #if CONFIG_INTC_CLIC_PLIC
-    if (IRQn > PLIC_IRQ_OFFSET) {
+    if (IRQn > PLIC_IRQ_OFFSET)
+    {
         IRQn -= PLIC_IRQ_OFFSET;
     } else {
         return (uint32_t)(CLIC->CLICINT[IRQn].IP & CLIC_INTIP_IP_Msk);
@@ -826,14 +832,17 @@ __STATIC_INLINE void csi_vic_set_pending_irq(int32_t IRQn)
 {
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 #if CONFIG_INTC_CLIC_PLIC
-    if (IRQn > PLIC_IRQ_OFFSET) {
+    if (IRQn > PLIC_IRQ_OFFSET)
+    {
         IRQn -= PLIC_IRQ_OFFSET;
     } else {
         CLIC->CLICINT[IRQn].IP |= CLIC_INTIP_IP_Msk;
+        __DSB();
         return;
     }
 #endif
     plic->PLIC_IP[IRQn/32] = plic->PLIC_IP[IRQn/32] | (0x1 << (IRQn%32));
+    __DSB();
 }
 
 /**
@@ -845,14 +854,17 @@ __STATIC_INLINE void csi_vic_clear_pending_irq(int32_t IRQn)
 {
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 #if CONFIG_INTC_CLIC_PLIC
-    if (IRQn > PLIC_IRQ_OFFSET) {
+    if (IRQn > PLIC_IRQ_OFFSET)
+    {
         IRQn -= PLIC_IRQ_OFFSET;
     } else {
         CLIC->CLICINT[IRQn].IP &= ~CLIC_INTIP_IP_Msk;
+        __DSB();
         return;
     }
 #endif
     plic->PLIC_H0_SCLAIM = IRQn;
+    __DSB();
 }
 
 /**
@@ -901,16 +913,21 @@ __STATIC_INLINE void csi_vic_set_prio(int32_t IRQn, uint32_t priority)
 {
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 #if CONFIG_INTC_CLIC_PLIC
-    if (IRQn > PLIC_IRQ_OFFSET) {
+    if (IRQn > PLIC_IRQ_OFFSET)
+    {
         IRQn -= PLIC_IRQ_OFFSET;
     } else {
         uint8_t nlbits = (CLIC->CLICINFO & CLIC_INFO_CLICINTCTLBITS_Msk) >> CLIC_INFO_CLICINTCTLBITS_Pos;
-        CLIC->CLICINT[IRQn].CTL = (CLIC->CLICINT[IRQn].CTL & (~CLIC_INTCFG_PRIO_Msk)) | (priority << (8 - nlbits));
+        uint8_t ctl = CLIC->CLICINT[IRQn].CTL;
+        ctl <<= nlbits;
+        ctl >>= nlbits;
+        CLIC->CLICINT[IRQn].CTL = ctl | (priority << (8 - nlbits));
         __DSB();
         return;
     }
 #endif
     plic->PLIC_PRIO[IRQn - 1] = priority;
+    __DSB();
 }
 
 /**
@@ -926,7 +943,8 @@ __STATIC_INLINE uint32_t csi_vic_get_prio(int32_t IRQn)
 {
     PLIC_Type *plic = (PLIC_Type *)CONFIG_PLIC_BASE;
 #if CONFIG_INTC_CLIC_PLIC
-    if (IRQn > PLIC_IRQ_OFFSET) {
+    if (IRQn > PLIC_IRQ_OFFSET)
+    {
         IRQn -= PLIC_IRQ_OFFSET;
     } else {
         uint8_t nlbits = (CLIC->CLICINFO & CLIC_INFO_CLICINTCTLBITS_Msk) >> CLIC_INFO_CLICINTCTLBITS_Pos;
@@ -991,18 +1009,22 @@ __STATIC_INLINE void csi_mpu_config_region(uint32_t idx, uint32_t base_addr, reg
     uint8_t  pmpxcfg = 0;
     uint32_t addr = 0;
 
-    if (idx > 15) {
+    if (idx > 15)
+    {
         return;
     }
 
-    if (!enable) {
+    if (!enable)
+    {
         attr.a = (address_matching_e)0;
     }
 
-    if (attr.a == ADDRESS_MATCHING_TOR) {
+    if (attr.a == ADDRESS_MATCHING_TOR)
+    {
         addr = base_addr >> 2;
     } else {
-        if (size == REGION_SIZE_4B) {
+        if (size == REGION_SIZE_4B)
+        {
             addr = base_addr >> 2;
             attr.a = (address_matching_e)2;
         } else {
@@ -1049,7 +1071,8 @@ __STATIC_INLINE uint32_t _csi_clint_config2(unsigned long coret_base, uint16_t h
     uint64_t value = (((uint64_t)(CLINT_TIMECMPn_VAL(&clint->STIMECMPH0, hartid))) << 32) + \
                      (uint64_t)(CLINT_TIMECMPn_VAL(&clint->STIMECMPL0, hartid));
 
-    if ((value != 0) && (value != 0xffffffffffffffff)) {
+    if ((value != 0) && (value != 0xffffffffffffffff))
+    {
         value = value + (uint64_t)ticks;
     } else {
         value = __get_MTIME() + ticks;
@@ -1060,7 +1083,8 @@ __STATIC_INLINE uint32_t _csi_clint_config2(unsigned long coret_base, uint16_t h
     uint64_t value = (((uint64_t)(CLINT_TIMECMPn_VAL(&clint->MTIMECMPH0, hartid))) << 32) + \
                      (uint64_t)(CLINT_TIMECMPn_VAL(&clint->MTIMECMPL0, hartid));
 
-    if ((value != 0) && (value != 0xffffffffffffffff)) {
+    if ((value != 0) && (value != 0xffffffffffffffff))
+    {
         value = value + (uint64_t)ticks;
     } else {
         value = __get_MTIME() + ticks;
@@ -1274,16 +1298,15 @@ __STATIC_INLINE int csi_icache_is_enable()
 __STATIC_INLINE void csi_icache_enable(void)
 {
 #if (__ICACHE_PRESENT == 1U)
-    if (!csi_icache_is_enable()) {
+    if (!csi_icache_is_enable())
+    {
         uint32_t cache;
         __DSB();
-        __ISB();
         __ICACHE_IALL();
         cache = __get_MHCR();
         cache |= CACHE_MHCR_IE_Msk;
         __set_MHCR(cache);
         __DSB();
-        __ISB();
     }
 #endif
 }
@@ -1296,16 +1319,15 @@ __STATIC_INLINE void csi_icache_enable(void)
 __STATIC_INLINE void csi_icache_disable(void)
 {
 #if (__ICACHE_PRESENT == 1U)
-    if (csi_icache_is_enable()) {
+    if (csi_icache_is_enable())
+    {
         uint32_t cache;
         __DSB();
-        __ISB();
         cache = __get_MHCR();
         cache &= ~CACHE_MHCR_IE_Msk;            /* disable icache */
         __set_MHCR(cache);
         __ICACHE_IALL();                        /* invalidate all icache */
         __DSB();
-        __ISB();
     }
 #endif
 }
@@ -1319,10 +1341,8 @@ __STATIC_INLINE void csi_icache_invalid(void)
 {
 #if (__ICACHE_PRESENT == 1U)
     __DSB();
-    __ISB();
     __ICACHE_IALL();                        /* invalidate all icache */
     __DSB();
-    __ISB();
 #endif
 }
 
@@ -1342,17 +1362,16 @@ __STATIC_INLINE int csi_dcache_is_enable()
 __STATIC_INLINE void csi_dcache_enable(void)
 {
 #if (__DCACHE_PRESENT == 1U)
-    if (!csi_dcache_is_enable()) {
+    if (!csi_dcache_is_enable())
+    {
         uint32_t cache;
         __DSB();
-        __ISB();
         __DCACHE_IALL();                        /* invalidate all dcache */
         cache = __get_MHCR();
         cache |= CACHE_MHCR_DE_Msk;             /* enable dcache */
         __set_MHCR(cache);
 
         __DSB();
-        __ISB();
     }
 #endif
 }
@@ -1365,16 +1384,15 @@ __STATIC_INLINE void csi_dcache_enable(void)
 __STATIC_INLINE void csi_dcache_disable(void)
 {
 #if (__DCACHE_PRESENT == 1U)
-    if (csi_dcache_is_enable()) {
+    if (csi_dcache_is_enable())
+    {
         uint32_t cache;
         __DSB();
-        __ISB();
         cache = __get_MHCR();
         cache &= ~(uint32_t)CACHE_MHCR_DE_Msk; /* disable all Cache */
         __set_MHCR(cache);
         __DCACHE_IALL();                             /* invalidate all Cache */
         __DSB();
-        __ISB();
     }
 #endif
 }
@@ -1387,10 +1405,8 @@ __STATIC_INLINE void csi_dcache_invalid(void)
 {
 #if (__DCACHE_PRESENT == 1U)
     __DSB();
-    __ISB();
     __DCACHE_IALL();                            /* invalidate all Cache */
     __DSB();
-    __ISB();
 #endif
 }
 
@@ -1403,10 +1419,8 @@ __STATIC_INLINE void csi_dcache_clean(void)
 {
 #if (__DCACHE_PRESENT == 1U)
     __DSB();
-    __ISB();
     __DCACHE_CALL();                                     /* clean all Cache */
     __DSB();
-    __ISB();
 #endif
 }
 
@@ -1419,10 +1433,8 @@ __STATIC_INLINE void csi_dcache_clean_invalid(void)
 {
 #if (__DCACHE_PRESENT == 1U)
     __DSB();
-    __ISB();
     __DCACHE_CIALL();                                   /* clean and inv all Cache */
     __DSB();
-    __ISB();
 #endif
 }
 
@@ -1437,11 +1449,12 @@ __STATIC_INLINE void csi_dcache_invalid_range(unsigned long *addr, size_t dsize)
 #if (__DCACHE_PRESENT == 1U)
     int linesize = csi_get_cache_line_size();
     long op_size = dsize + (unsigned long)addr % linesize;
-    unsigned long op_addr = (unsigned long)addr;
+    unsigned long op_addr = (unsigned long)addr & CACHE_INV_ADDR_Msk;
 
     __DSB();
 #if CBO_INSN_SUPPORT
-    while (op_size > 0) {
+    while (op_size > 0)
+    {
         __CBO_INVAL(op_addr);
         op_addr += linesize;
         op_size -= linesize;
@@ -1450,14 +1463,18 @@ __STATIC_INLINE void csi_dcache_invalid_range(unsigned long *addr, size_t dsize)
     cpu_work_mode_t cpu_work_mode;
     cpu_work_mode = (cpu_work_mode_t)__get_CPU_WORK_MODE();
 
-    if (cpu_work_mode == MACHINE_MODE) {
-        while (op_size > 0) {
+    if (cpu_work_mode == MACHINE_MODE)
+    {
+        while (op_size > 0)
+        {
             __DCACHE_IPA(op_addr);
             op_addr += linesize;
             op_size -= linesize;
         }
-    } else if (cpu_work_mode == SUPERVISOR_MODE) {
-        while (op_size > 0) {
+    } else if (cpu_work_mode == SUPERVISOR_MODE)
+    {
+        while (op_size > 0)
+        {
             __DCACHE_IVA(op_addr);
             op_addr += linesize;
             op_size -= linesize;
@@ -1487,7 +1504,8 @@ __STATIC_INLINE void csi_dcache_clean_range(unsigned long *addr, size_t dsize)
 
     __DSB();
 #if CBO_INSN_SUPPORT
-    while (op_size > 0) {
+    while (op_size > 0)
+    {
         __CBO_CLEAN(op_addr);
         op_addr += linesize;
         op_size -= linesize;
@@ -1496,14 +1514,18 @@ __STATIC_INLINE void csi_dcache_clean_range(unsigned long *addr, size_t dsize)
     cpu_work_mode_t cpu_work_mode;
     cpu_work_mode = (cpu_work_mode_t)__get_CPU_WORK_MODE();
 
-    if (cpu_work_mode == MACHINE_MODE) {
-        while (op_size > 0) {
+    if (cpu_work_mode == MACHINE_MODE)
+    {
+        while (op_size > 0)
+        {
             __DCACHE_CPA(op_addr);
             op_addr += linesize;
             op_size -= linesize;
         }
-    } else if (cpu_work_mode == SUPERVISOR_MODE) {
-        while (op_size > 0) {
+    } else if (cpu_work_mode == SUPERVISOR_MODE)
+    {
+        while (op_size > 0)
+        {
             __DCACHE_CVA(op_addr);
             op_addr += linesize;
             op_size -= linesize;
@@ -1528,11 +1550,12 @@ __STATIC_INLINE void csi_dcache_clean_invalid_range(unsigned long *addr, size_t 
 #if (__DCACHE_PRESENT == 1U)
     int linesize = csi_get_cache_line_size();
     long op_size = dsize + (unsigned long)addr % linesize;
-    unsigned long op_addr = (unsigned long) addr;
+    unsigned long op_addr = (unsigned long) addr & CACHE_INV_ADDR_Msk;
 
     __DSB();
 #if CBO_INSN_SUPPORT
-    while (op_size > 0) {
+    while (op_size > 0)
+    {
         __CBO_FLUSH(op_addr);
         op_addr += linesize;
         op_size -= linesize;
@@ -1541,14 +1564,18 @@ __STATIC_INLINE void csi_dcache_clean_invalid_range(unsigned long *addr, size_t 
     cpu_work_mode_t cpu_work_mode;
     cpu_work_mode = (cpu_work_mode_t)__get_CPU_WORK_MODE();
 
-    if (cpu_work_mode == MACHINE_MODE) {
-        while (op_size > 0) {
+    if (cpu_work_mode == MACHINE_MODE)
+    {
+        while (op_size > 0)
+        {
             __DCACHE_CIPA(op_addr);
             op_addr += linesize;
             op_size -= linesize;
         }
-    } else if (cpu_work_mode == SUPERVISOR_MODE) {
-        while (op_size > 0) {
+    } else if (cpu_work_mode == SUPERVISOR_MODE)
+    {
+        while (op_size > 0)
+        {
             __DCACHE_CIVA(op_addr);
             op_addr += linesize;
             op_size -= linesize;
@@ -1709,10 +1736,14 @@ __STATIC_INLINE void csi_mmu_invalid_tlb_all(void)
 
 #if CONFIG_CPU_XUANTIE_C907 || CONFIG_CPU_XUANTIE_C907FD || CONFIG_CPU_XUANTIE_C907FDV || CONFIG_CPU_XUANTIE_C907FDVM \
     || CONFIG_CPU_XUANTIE_C908 || CONFIG_CPU_XUANTIE_C908V || CONFIG_CPU_XUANTIE_C908I \
+    || CONFIG_CPU_XUANTIE_C908X || CONFIG_CPU_XUANTIE_C908X_CP || CONFIG_CPU_XUANTIE_C908X_CP_XT \
     || CONFIG_CPU_XUANTIE_C910V2 || CONFIG_CPU_XUANTIE_C920V2 \
-    || CONFIG_CPU_XUANTIE_C910V3 || CONFIG_CPU_XUANTIE_C910V3_CP || CONFIG_CPU_XUANTIE_C920V3 || CONFIG_CPU_XUANTIE_C920V3_CP \
+    || CONFIG_CPU_XUANTIE_C910V3 || CONFIG_CPU_XUANTIE_C920V3 \
+    || CONFIG_CPU_XUANTIE_C910V3_CP || CONFIG_CPU_XUANTIE_C920V3_CP \
+    || CONFIG_CPU_XUANTIE_C910V3_CP_XT || CONFIG_CPU_XUANTIE_C920V3_CP_XT \
     || CONFIG_CPU_XUANTIE_R908 || CONFIG_CPU_XUANTIE_R908FD || CONFIG_CPU_XUANTIE_R908FDV \
     || CONFIG_CPU_XUANTIE_R908_CP || CONFIG_CPU_XUANTIE_R908FD_CP || CONFIG_CPU_XUANTIE_R908FDV_CP \
+    || CONFIG_CPU_XUANTIE_R908_CP_XT || CONFIG_CPU_XUANTIE_R908FD_CP_XT || CONFIG_CPU_XUANTIE_R908FDV_CP_XT \
     || CONFIG_CPU_XUANTIE_R910 || CONFIG_CPU_XUANTIE_R920
 /**
  \ingroup    CSI_tcm_register
@@ -2001,3 +2032,4 @@ __STATIC_INLINE int csi_xmlenb_get_value(void)
 #endif /* __CORE_RV32_H_DEPENDANT */
 
 #endif /* __CSI_GENERIC */
+

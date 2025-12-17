@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024 RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,6 +14,7 @@
  * 2021-02-02     YuZhe XU     fix bug in filter config
  * 2021-8-25      SVCHAO       The baud rate is configured according to the different APB1 frequencies.
                                f4-series only.
+ * 2025-09-20     wdfk_prog    Implemented sendmsg_nonblocking op to support framework's async TX.
  */
 
 #include "drv_can.h"
@@ -471,11 +472,23 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         argval = (rt_uint32_t) arg;
         if (argval == 0)
         {
-            HAL_CAN_Stop(&drv_can->CanHandle);
+            if (HAL_CAN_DeInit(&drv_can->CanHandle) != HAL_OK)
+            {
+                LOG_E("CAN deinitialization failed");
+                return -RT_ERROR;
+            }
         }
         else
         {
-            HAL_CAN_Start(&drv_can->CanHandle);
+            rt_err_t result = _can_config(&drv_can->device, &drv_can->device.config);
+            if (result != RT_EOK)
+            {
+                return result;
+            }
+            if (HAL_CAN_Start(&drv_can->CanHandle) != HAL_OK)
+            {
+                return -RT_ERROR;
+            }
         }
 
         break;
@@ -484,7 +497,22 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     return RT_EOK;
 }
 
-static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
+/**
+ * @internal
+ * @brief Low-level function to send a CAN message to a specific hardware mailbox.
+ *
+ * This function is part of the **blocking** send mechanism. It is called by
+ * `_can_int_tx` after a hardware mailbox has already been acquired. Its role is
+ * to format the message according to the STM32 hardware requirements and place
+ * it into the specified mailbox for transmission.
+ *
+ * @param[in] can     A pointer to the CAN device structure.
+ * @param[in] buf     A pointer to the `rt_can_msg` to be sent.
+ * @param[in] box_num The specific hardware mailbox index (0, 1, or 2) to use for this tran
+ *
+ * @return `RT_EOK` on success, or an error code on failure.
+ */
+static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     CAN_HandleTypeDef *hcan;
     hcan = &((struct stm32_can *) can->parent.user_data)->CanHandle;
@@ -499,32 +527,32 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
             (state == HAL_CAN_STATE_LISTENING))
     {
         /*check select mailbox  is empty */
+        uint32_t mailbox_mask;
+        uint32_t tme_flag;
+
         switch (1 << box_num)
         {
         case CAN_TX_MAILBOX0:
-            if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME0) != SET)
-            {
-                /* Return function status */
-                return -RT_ERROR;
-            }
+            mailbox_mask = CAN_TX_MAILBOX0;
+            tme_flag = CAN_TSR_TME0;
             break;
         case CAN_TX_MAILBOX1:
-            if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME1) != SET)
-            {
-                /* Return function status */
-                return -RT_ERROR;
-            }
+            mailbox_mask = CAN_TX_MAILBOX1;
+            tme_flag = CAN_TSR_TME1;
             break;
         case CAN_TX_MAILBOX2:
-            if (HAL_IS_BIT_SET(hcan->Instance->TSR, CAN_TSR_TME2) != SET)
-            {
-                /* Return function status */
-                return -RT_ERROR;
-            }
+            mailbox_mask = CAN_TX_MAILBOX2;
+            tme_flag = CAN_TSR_TME2;
             break;
         default:
             RT_ASSERT(0);
-            break;
+            return -RT_ERROR;
+        }
+
+        if (HAL_IS_BIT_SET(hcan->Instance->TSR, tme_flag) != SET)
+        {
+            RT_UNUSED(mailbox_mask);
+            return -RT_ERROR;
         }
 
         if (RT_CAN_STDID == pmsg->ide)
@@ -586,7 +614,54 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     }
 }
 
-static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
+/**
+ * @internal
+ * @brief Low-level, hardware-specific non-blocking function to send a CAN message.
+ *
+ * This function interacts directly with the STM32 HAL library to add a message
+ * to a hardware TX mailbox. It returns immediately and does not wait for the
+ * transmission to complete.
+ *
+ * @param[in] can   A pointer to the CAN device structure.
+ * @param[in] buf   A pointer to the `rt_can_msg` to be sent.
+ *
+ * @return
+ * - `RT_EOK` if the message was successfully accepted by the hardware.
+ * - `-RT_EBUSY` if all hardware mailboxes are currently full.
+ * - `-RT_ERROR` on other HAL failures.
+ */
+static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+{
+    CAN_HandleTypeDef *hcan = &((struct stm32_can *) can->parent.user_data)->CanHandle;
+    struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
+    CAN_TxHeaderTypeDef txheader = {0};
+    uint32_t tx_mailbox;
+
+    if ((hcan->State != HAL_CAN_STATE_READY) && (hcan->State != HAL_CAN_STATE_LISTENING))
+        return -RT_ERROR;
+
+    if (HAL_CAN_GetTxMailboxesFreeLevel(hcan) == 0)
+        return -RT_EBUSY;
+
+    txheader.DLC = pmsg->len;
+    txheader.RTR = (pmsg->rtr == RT_CAN_RTR) ? CAN_RTR_REMOTE : CAN_RTR_DATA;
+    txheader.IDE = (pmsg->ide == RT_CAN_STDID) ? CAN_ID_STD : CAN_ID_EXT;
+    if (txheader.IDE == CAN_ID_STD)
+        txheader.StdId = pmsg->id;
+    else
+        txheader.ExtId = pmsg->id;
+
+    HAL_StatusTypeDef status = HAL_CAN_AddTxMessage(hcan, &txheader, pmsg->data, &tx_mailbox);
+    if (status != HAL_OK)
+    {
+        LOG_W("can sendmsg nonblocking send error %d", status);
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
+static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     HAL_StatusTypeDef status;
     CAN_HandleTypeDef *hcan;
@@ -645,10 +720,11 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 
 static const struct rt_can_ops _can_ops =
 {
-    _can_config,
-    _can_control,
-    _can_sendmsg,
-    _can_recvmsg,
+    .configure  = _can_config,
+    .control    = _can_control,
+    .sendmsg    = _can_sendmsg,
+    .recvmsg    = _can_recvmsg,
+    .sendmsg_nonblocking = _can_sendmsg_nonblocking,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
@@ -788,6 +864,22 @@ static void _can_sce_isr(struct rt_can_device *can)
     hcan->Instance->MSR |= CAN_MSR_ERRI;
 }
 
+/**
+ * @internal
+ * @brief The low-level ISR for CAN TX events on STM32.
+ *
+ * This function's sole responsibility is to check the hardware status flags
+ * to determine which mailbox completed a transmission and whether it was
+ * successful or failed. It then reports the specific event to the upper
+ * framework layer via `rt_hw_can_isr()`.
+ *
+ * @note This ISR contains NO framework-level logic (e.g., buffer handling).
+ *       It is a pure hardware event reporter, ensuring a clean separation
+ *       of concerns between the driver and the framework.
+ *
+ * @param[in] can A pointer to the CAN device structure.
+ * @return void
+ */
 static void _can_tx_isr(struct rt_can_device *can)
 {
     CAN_HandleTypeDef *hcan;

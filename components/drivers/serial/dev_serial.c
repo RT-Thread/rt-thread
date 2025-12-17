@@ -664,11 +664,6 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
     /* get open flags */
     dev->open_flag = oflag & 0xff;
 
-#ifdef RT_USING_PINCTRL
-    /* initialize iomux in DM */
-    rt_pin_ctrl_confs_apply_by_name(dev, RT_NULL);
-#endif
-
     /* initialize the Rx/Tx structure according to open flag */
     if (serial->serial_rx == RT_NULL)
     {
