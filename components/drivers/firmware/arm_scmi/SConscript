@@ -1,0 +1,21 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_FIRMWARE_ARM_SCMI']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+
+src = ['agent.c', 'bus.c', 'shmem.c']
+
+if GetDepend(['RT_FIRMWARE_ARM_SCMI_TRANSPORT_MAILBOX']):
+    src += ['agent-mailbox.c']
+
+if GetDepend(['RT_FIRMWARE_ARM_SCMI_TRANSPORT_SMC']):
+    src += ['agent-smc.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
