@@ -17,7 +17,6 @@
 #include <rtdevice.h>
 
 #define GET_PINS(PORTx, PINx)      (32 * PORTx + PINx)  
-
 extern int rt_hw_pin_init(void);
 
 #endif /* __DRV_PIN_H__ */

@@ -6,13 +6,13 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-12-08     westcity-yolo  first version
- * 
+ *
  */
 
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
- 
+
 
 /* pins alias. Must keep in sequence */
 #define D0        (0)

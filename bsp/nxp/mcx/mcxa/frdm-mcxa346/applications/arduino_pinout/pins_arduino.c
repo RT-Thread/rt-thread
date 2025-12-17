@@ -27,7 +27,7 @@ const pin_map_t pin_map_table[]=
     {D1, GET_PINS(2,2), "uart2"},      /* Serial2-TX */
     {D2, GET_PINS(3,31)},
     {D3, GET_PINS(3,14), "pwm1", 1},    /* PWM */
-    {D4, GET_PINS(4,7)},   
+    {D4, GET_PINS(4,7)},
     {D5, GET_PINS(3,1), "pwm0", 0},     /* PWM */
     {D6, GET_PINS(3,17), "pwm1", 0},    /* PWM */
     {D7, GET_PINS(3,22)},
