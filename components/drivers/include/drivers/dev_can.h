@@ -9,6 +9,7 @@
  * 2015-07-06     Bernard           remove RT_CAN_USING_LED.
  * 2022-05-08     hpmicro           add CANFD support, fixed typos
  * 2025-09-20     wdfk_prog         Added non-blocking send mechanism APIs and data structures.
+ * 2025-12-17     RCSN              Added send_mode_nonblocking and RT_CAN_CMD_SET_SENDMODE for TX completion callback control
  */
 
 #ifndef __DEV_CAN_H_
@@ -417,6 +418,7 @@ struct rt_can_ops;
 #define RT_CAN_CMD_SET_BAUD_FD      0x1B
 #define RT_CAN_CMD_SET_BITTIMING    0x1C
 #define RT_CAN_CMD_START            0x1D
+#define RT_CAN_CMD_SET_SENDMODE     0x1E
 
 #define RT_DEVICE_CAN_INT_ERR       0x1000
 
@@ -563,6 +565,7 @@ struct rt_can_device
 #else
     rt_uint8_t nb_tx_rb_pool[RT_CAN_NB_TX_FIFO_SIZE]; /**< The statically allocated pool for the non-blocking TX ring buffer. */
 #endif /* RT_CAN_MALLOC_NB_TX_BUFFER  */
+    rt_uint8_t send_mode_nonblocking;   /**< Global send mode: 0=Blocking (default), 1=Non-blocking. */
 };
 typedef struct rt_can_device *rt_can_t;
 

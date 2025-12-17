@@ -8,6 +8,7 @@
  * 2015-05-14     aubrcool@qq.com   first version
  * 2015-07-06     Bernard           code cleanup and remove RT_CAN_USING_LED;
  * 2025-09-20     wdfk_prog         Implemented non-blocking, ISR-safe send logic unified under rt_device_write.
+ * 2025-12-17     RCSN              Support global send mode control, enable TX completion callback via RT_CAN_CMD_SET_SENDMODE
  */
 
 #include <rthw.h>
@@ -652,7 +653,7 @@ static rt_ssize_t rt_can_write(struct rt_device *dev,
      * 1. Called from within an interrupt context.
      * 2. Called from a thread, but the user explicitly set the nonblocking flag on the first message.
      */
-    if (rt_interrupt_get_nest() > 0 || pmsg->nonblocking)
+    if (rt_interrupt_get_nest() > 0 || pmsg->nonblocking || can->send_mode_nonblocking)
     {
         return _can_nonblocking_tx(can, pmsg, size);
     }
@@ -1097,12 +1098,30 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
     {
         struct rt_can_tx_fifo *tx_fifo;
         rt_uint32_t no;
+        struct rt_device *device;
         no = event >> 8;
         tx_fifo = (struct rt_can_tx_fifo *) can->can_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
 
-        if (can->status.sndchange&(1<<no))
+        /**
+         * @brief Handle blocking (synchronous) send completion notification.
+         *
+         * This section is ONLY executed for blocking (synchronous) send operations.
+         * Specifically:
+         * 1. The sndchange flag is set ONLY by blocking send functions (_can_int_tx, _can_int_tx_priv)
+         *    to indicate that there is an ongoing blocking operation waiting for this mailbox.
+         * 2. For non-blocking sends, the sndchange flag is NOT set, so this condition is skipped.
+         * 3. When a blocking send completes (via interrupt), we:
+         *    - Store the result (OK or ERR) in tx_fifo->buffer[no].result
+         *    - Wake up the blocked thread using rt_completion_done()
+         *    - The blocked thread then checks the result and resumes execution
+         *
+         * Non-blocking sends are handled separately by the tx_complete callback
+         * (see the send_mode_nonblocking section below).
+         */
+        if (can->status.sndchange & (1<<no))
         {
+            /* Update the transmission result based on the event type */
             if ((event & 0xff) == RT_CAN_EVENT_TX_DONE)
             {
                 tx_fifo->buffer[no].result = RT_CAN_SND_RESULT_OK;
@@ -1111,11 +1130,19 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
             {
                 tx_fifo->buffer[no].result = RT_CAN_SND_RESULT_ERR;
             }
+            
+            /* Wake up the blocked thread waiting on this mailbox's completion */
             rt_completion_done(&(tx_fifo->buffer[no].completion));
-        }
-
-        if (can->ops->sendmsg_nonblocking != RT_NULL)
+        } 
+        else if (can->ops->sendmsg_nonblocking != RT_NULL)
         {
+            if (can->send_mode_nonblocking == 1) {
+                device = &(can->parent);
+                if (device->tx_complete != RT_NULL)
+                {
+                    device->tx_complete(device, RT_NULL);
+                }
+            }
             while (RT_TRUE)
             {
                 struct rt_can_msg msg_to_send;
