@@ -719,26 +719,30 @@ static void memset_64 (uint64_t * destination, const uint64_t value, size_t coun
  **********************************************************************************************************************/
 static void bsp_init_itcm (void)
 {
-    uint64_t       * itcm_destination;
-    const uint64_t * itcm_source;
-    size_t           count;
+    uint64_t       * itcm_destination = NULL;
+    const uint64_t * itcm_source      = NULL;
+    size_t           count            = 0;
 
-  #if defined(__ARMCC_VERSION)
+#if defined(__ARMCC_VERSION)
     itcm_destination = (uint64_t *) &Image$$ITCM_DATA$$Base;
     itcm_source      = (uint64_t *) &Load$$ITCM_DATA$$Base;
     count            = ((uint32_t) &Load$$ITCM_PAD$$Limit - (uint32_t) &Load$$ITCM_DATA$$Base) / sizeof(uint64_t);
-  #elif defined(__GNUC__)
+#elif defined(__GNUC__)
     itcm_destination = (uint64_t *) &__itcm_data_start;
     itcm_source      = (uint64_t *) &__itcm_data_init_start;
     count            = ((uint32_t) &__itcm_data_init_end - (uint32_t) &__itcm_data_init_start) / sizeof(uint64_t);
-  #elif defined(__ICCARM__)
+#elif defined(__ICCARM__)
     itcm_destination = (uint64_t *) &ITCM_DATA$$Base;
     itcm_source      = (uint64_t *) &ITCM_DATA_INIT$$Base;
     count            = ((uint32_t) &ITCM_DATA_INIT$$Limit - (uint32_t) &ITCM_DATA_INIT$$Base) / sizeof(uint64_t);
-  #endif
+#endif
 
-    memcpy_64(itcm_destination, itcm_source, count);
+    if ((itcm_destination != NULL) && (itcm_source != NULL) && (count > 0))
+    {
+        memcpy_64(itcm_destination, itcm_source, count);
+    }
 }
+
 
  #endif
 
