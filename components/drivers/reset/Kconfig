@@ -4,6 +4,12 @@ menuconfig RT_USING_RESET
     depends on RT_USING_OFW
     default n
 
+config RT_RESET_SCMI
+    bool "Reset driver controlled via ARM SCMI interface"
+    depends on RT_USING_RESET
+    depends on RT_FIRMWARE_ARM_SCMI
+    default n
+
 config RT_RESET_SIMPLE
     bool "Simple Reset Controller Driver"
     depends on RT_USING_RESET

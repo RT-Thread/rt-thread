@@ -13,6 +13,9 @@ src = ['reset.c']
 if GetDepend(['RT_RESET_SIMPLE']):
     src += ['reset-simple.c']
 
+if GetDepend(['RT_RESET_SCMI']):
+    src += ['reset-scmi.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

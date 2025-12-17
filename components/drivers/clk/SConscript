@@ -14,6 +14,8 @@ src = ['clk.c']
 if GetDepend(['RT_USING_OFW']):
     src += ['clk-fixed-rate.c']
 
+if GetDepend(['RT_CLK_SCMI']):
+    src += ['clk-scmi.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 

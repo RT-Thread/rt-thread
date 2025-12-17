@@ -1,6 +1,11 @@
 if RT_USING_DM
 menu "Power Management (PM) Domains device drivers"
 
+    config RT_PMDOMAIN_SCMI
+        bool "ARM SCMI"
+        depends on RT_FIRMWARE_ARM_SCMI
+        default n
+
     osource "$(SOC_DM_PMDOMAIN_DIR)/Kconfig"
 endmenu
 endif
