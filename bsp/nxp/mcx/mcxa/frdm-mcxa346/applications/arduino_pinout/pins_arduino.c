@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-12-08     westcity-yolo  first version
- * 
+ *
  */
 
 #include <Arduino.h>
@@ -45,5 +45,5 @@ const pin_map_t pin_map_table[]=
     {A3, GET_PINS(3,30),"adc1", 21},
     {A4, GET_PINS(1,0),"i2c1"},       /* I2C-SDA (Wire) */
     {A5, GET_PINS(1,1),"i2c1"},       /* I2C-SCL (Wire) */
-   
+
 };
