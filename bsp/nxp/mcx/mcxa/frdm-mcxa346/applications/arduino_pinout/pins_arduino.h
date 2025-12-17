@@ -12,7 +12,7 @@
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
-#define GET_PINS(PORTx, PINx)      (32 * PORTx + PINx)   
+ 
 
 /* pins alias. Must keep in sequence */
 #define D0        (0)
