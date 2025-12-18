@@ -17,7 +17,6 @@
 #include <drv_spi.h>
 #include <drv_gpio.h>
 
-#if defined(BSP_USING_ON_BOARD_FLASH)
 static int rt_hw_spi_flash_init(void)
 {
     __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -31,4 +30,3 @@ static int rt_hw_spi_flash_init(void)
     return RT_EOK;
 }
 INIT_COMPONENT_EXPORT(rt_hw_spi_flash_init);
-#endif

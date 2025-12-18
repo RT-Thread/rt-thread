@@ -8,11 +8,13 @@ config SOC_STM32F407VE
     default y
 
 menu "Onboard Peripheral Drivers"
+
     config BSP_USING_VIRTUAL_USART
         bool "Enable DAPLink USB-to-USART1 virtual port"
         select BSP_USING_UART
         select BSP_USING_UART1
         default y
+
     config BSP_USING_ON_BOARD_FLASH
         bool "Enable Onboard SPI Flash"
         select BSP_USING_SPI
@@ -21,6 +23,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_SPI1_RX_USING_DMA
         select RT_USING_SFUD
         default n
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -49,6 +52,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
         endif
+        
     menuconfig BSP_USING_SPI
             bool "Enable SPI BUS"
             default n
