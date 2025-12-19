@@ -11,6 +11,9 @@ CPPPATH = [cwd + '/../include']
 
 src = ['pinctrl.c']
 
+if GetDepend(['RT_PINCTRL_SCMI']):
+    src += ['pinctrl-scmi.c']
+
 if GetDepend(['RT_PINCTRL_SINGLE']):
     src += ['pinctrl-single.c']
 
