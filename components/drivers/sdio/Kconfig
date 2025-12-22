@@ -1,4 +1,4 @@
-config RT_USING_SDIO
+menuconfig RT_USING_SDIO
     bool "Using SD/MMC device drivers"
     select RT_USING_BLK
     default n
@@ -30,3 +30,7 @@ config RT_USING_SDIO
             bool "Using sdhci for sd/mmc drivers"
             default n
         endif
+
+if RT_USING_DM && RT_USING_SDIO
+    rsource "host/Kconfig"
+endif
