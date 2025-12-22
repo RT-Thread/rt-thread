@@ -46,6 +46,13 @@ extern "C" {
 #include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
 
+#ifdef RT_USING_GRAPHIC
+#include "drivers/graphic.h"
+#ifdef RT_GRAPHIC_BACKLIGHT
+#include "drivers/backlight.h"
+#endif /* RT_GRAPHIC_BACKLIGHT */
+#endif /* RT_USING_GRAPHIC */
+
 #ifdef RT_USING_ATA
 #ifdef RT_ATA_AHCI
 #include "drivers/ahci.h"
