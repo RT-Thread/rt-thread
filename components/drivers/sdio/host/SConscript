@@ -10,6 +10,15 @@ CPPPATH = [cwd + '/../../include']
 
 src = []
 
+if GetDepend(['RT_SDIO_SDHCI_PCI']):
+    src += ['sdhci-pci.c']
+
+if GetDepend(['RT_SDIO_DW_MMC']):
+    src += ['sdio-dw.c', 'sdio-dw-platform.c']
+
+    if GetDepend(['RT_SDIO_DW_MMC_PCI']):
+            src += ['sdio-dw-pci.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
