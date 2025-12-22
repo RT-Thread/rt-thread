@@ -549,6 +549,281 @@ rt_uint32_t mmcsd_select_voltage(struct rt_mmcsd_host *host, rt_uint32_t ocr)
     return ocr;
 }
 
+rt_err_t mmcsd_set_signal_voltage(struct rt_mmcsd_host *host, unsigned char signal_voltage)
+{
+    rt_err_t err = RT_EOK;
+    unsigned char old_signal_voltage = host->io_cfg.signal_voltage;
+
+    host->io_cfg.signal_voltage = signal_voltage;
+    if (host->ops->signal_voltage_switch)
+    {
+        err = host->ops->signal_voltage_switch(host, &host->io_cfg);
+    }
+
+    if (err)
+    {
+        host->io_cfg.signal_voltage = old_signal_voltage;
+    }
+
+    return err;
+}
+
+void mmcsd_set_initial_signal_voltage(struct rt_mmcsd_host *host)
+{
+    /* 3.3V -> 1.8v -> 1.2v */
+    if (!mmcsd_set_signal_voltage(host, MMCSD_SIGNAL_VOLTAGE_330))
+    {
+        LOG_D("Initial signal voltage of %sv", "3.3");
+    }
+    else if (!mmcsd_set_signal_voltage(host, MMCSD_SIGNAL_VOLTAGE_180))
+    {
+        LOG_D("Initial signal voltage of %sv", "1.8");
+    }
+    else if (!mmcsd_set_signal_voltage(host, MMCSD_SIGNAL_VOLTAGE_120))
+    {
+        LOG_D("Initial signal voltage of %sv", "1.2");
+    }
+}
+
+rt_err_t mmcsd_host_set_uhs_voltage(struct rt_mmcsd_host *host)
+{
+    rt_uint32_t old_clock = host->io_cfg.clock;
+
+    host->io_cfg.clock = 0;
+    mmcsd_set_iocfg(host);
+
+    if (mmcsd_set_signal_voltage(host, MMCSD_SIGNAL_VOLTAGE_180))
+    {
+        return -RT_ERROR;
+    }
+
+    /* Keep clock gated for at least 10 ms, though spec only says 5 ms */
+    rt_thread_mdelay(10);
+
+    host->io_cfg.clock = old_clock;
+    mmcsd_set_iocfg(host);
+
+    return RT_EOK;
+}
+
+static void mmcsd_power_cycle(struct rt_mmcsd_host *host, rt_uint32_t ocr);
+
+rt_err_t mmcsd_set_uhs_voltage(struct rt_mmcsd_host *host, rt_uint32_t ocr)
+{
+    rt_err_t err = RT_EOK;
+    struct rt_mmcsd_cmd cmd;
+
+    if (!host->ops->signal_voltage_switch)
+    {
+        return -RT_EINVAL;
+    }
+
+    if (!host->ops->card_busy)
+    {
+        LOG_W("%s: Cannot verify signal voltage switch", host->name);
+    }
+
+    rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
+
+    cmd.cmd_code = VOLTAGE_SWITCH;
+    cmd.arg = 0;
+    cmd.flags = RESP_R1 | CMD_AC;
+
+    err = mmcsd_send_cmd(host, &cmd, 0);
+    if (err)
+    {
+        goto power_cycle;
+    }
+
+    if (!controller_is_spi(host) && (cmd.resp[0] & R1_ERROR))
+    {
+        return -RT_EIO;
+    }
+
+    /*
+     * The card should drive cmd and dat[0:3] low immediately
+     * after the response of cmd11, but wait 1 ms to be sure
+     */
+    rt_thread_mdelay(1);
+    if (host->ops->card_busy && !host->ops->card_busy(host))
+    {
+        err = -RT_ERROR;
+        goto power_cycle;
+    }
+
+    if (mmcsd_host_set_uhs_voltage(host))
+    {
+        /*
+         * Voltages may not have been switched, but we've already
+         * sent CMD11, so a power cycle is required anyway
+         */
+        err = -RT_ERROR;
+        goto power_cycle;
+    }
+
+    /* Wait for at least 1 ms according to spec */
+    rt_thread_mdelay(1);
+
+    /*
+     * Failure to switch is indicated by the card holding
+     * dat[0:3] low
+     */
+    if (host->ops->card_busy && host->ops->card_busy(host))
+    {
+        err = -RT_ERROR;
+    }
+
+power_cycle:
+    if (err)
+    {
+        LOG_D("%s: Signal voltage switch failed, power cycling card", host->name);
+        mmcsd_power_cycle(host, ocr);
+    }
+
+    return err;
+}
+
+static const rt_uint8_t tuning_blk_pattern_4bit[] =
+{
+    0xff, 0x0f, 0xff, 0x00, 0xff, 0xcc, 0xc3, 0xcc,
+    0xc3, 0x3c, 0xcc, 0xff, 0xfe, 0xff, 0xfe, 0xef,
+    0xff, 0xdf, 0xff, 0xdd, 0xff, 0xfb, 0xff, 0xfb,
+    0xbf, 0xff, 0x7f, 0xff, 0x77, 0xf7, 0xbd, 0xef,
+    0xff, 0xf0, 0xff, 0xf0, 0x0f, 0xfc, 0xcc, 0x3c,
+    0xcc, 0x33, 0xcc, 0xcf, 0xff, 0xef, 0xff, 0xee,
+    0xff, 0xfd, 0xff, 0xfd, 0xdf, 0xff, 0xbf, 0xff,
+    0xbb, 0xff, 0xf7, 0xff, 0xf7, 0x7f, 0x7b, 0xde,
+};
+
+static const rt_uint8_t tuning_blk_pattern_8bit[] =
+{
+    0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0x00, 0x00,
+    0xff, 0xff, 0xcc, 0xcc, 0xcc, 0x33, 0xcc, 0xcc,
+    0xcc, 0x33, 0x33, 0xcc, 0xcc, 0xcc, 0xff, 0xff,
+    0xff, 0xee, 0xff, 0xff, 0xff, 0xee, 0xee, 0xff,
+    0xff, 0xff, 0xdd, 0xff, 0xff, 0xff, 0xdd, 0xdd,
+    0xff, 0xff, 0xff, 0xbb, 0xff, 0xff, 0xff, 0xbb,
+    0xbb, 0xff, 0xff, 0xff, 0x77, 0xff, 0xff, 0xff,
+    0x77, 0x77, 0xff, 0x77, 0xbb, 0xdd, 0xee, 0xff,
+    0xff, 0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0x00,
+    0x00, 0xff, 0xff, 0xcc, 0xcc, 0xcc, 0x33, 0xcc,
+    0xcc, 0xcc, 0x33, 0x33, 0xcc, 0xcc, 0xcc, 0xff,
+    0xff, 0xff, 0xee, 0xff, 0xff, 0xff, 0xee, 0xee,
+    0xff, 0xff, 0xff, 0xdd, 0xff, 0xff, 0xff, 0xdd,
+    0xdd, 0xff, 0xff, 0xff, 0xbb, 0xff, 0xff, 0xff,
+    0xbb, 0xbb, 0xff, 0xff, 0xff, 0x77, 0xff, 0xff,
+    0xff, 0x77, 0x77, 0xff, 0x77, 0xbb, 0xdd, 0xee,
+};
+
+rt_err_t mmcsd_send_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode, rt_err_t *cmd_error)
+{
+    rt_err_t err = RT_EOK;
+    int size;
+    rt_uint8_t *data_buf;
+    const rt_uint8_t *tuning_block_pattern;
+    struct rt_mmcsd_req req = {};
+    struct rt_mmcsd_cmd cmd = {};
+    struct rt_mmcsd_data data = {};
+    struct rt_mmcsd_io_cfg *io_cfg = &host->io_cfg;
+
+    if (io_cfg->bus_width == MMCSD_BUS_WIDTH_8)
+    {
+        tuning_block_pattern = tuning_blk_pattern_8bit;
+        size = sizeof(tuning_blk_pattern_8bit);
+    }
+    else if (io_cfg->bus_width == MMCSD_BUS_WIDTH_4)
+    {
+        tuning_block_pattern = tuning_blk_pattern_4bit;
+        size = sizeof(tuning_blk_pattern_4bit);
+    }
+    else
+    {
+        return -RT_EINVAL;
+    }
+
+    data_buf = rt_malloc(size);
+    if (!data_buf)
+    {
+        return -RT_ENOMEM;
+    }
+
+    rt_memset(data_buf, 0, size);
+    rt_memset(&req, 0, sizeof(struct rt_mmcsd_req));
+    rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
+    rt_memset(&data, 0, sizeof(struct rt_mmcsd_data));
+
+    req.cmd = &cmd;
+    req.data = &data;
+
+    cmd.cmd_code = opcode;
+    cmd.flags = RESP_R1 | CMD_ADTC;
+
+    data.blksize = size;
+    data.blks = 1;
+    data.flags = DATA_DIR_READ;
+
+    /*
+     * According to the tuning specs, Tuning process
+     * is normally shorter 40 executions of CMD19,
+     * and timeout value should be shorter than 150 ms
+     */
+    data.timeout_ns = 150 * 1000000;
+
+    mmcsd_send_request(host, &req);
+
+    if (cmd_error)
+    {
+        *cmd_error = cmd.err;
+    }
+
+    if (cmd.err)
+    {
+        err = cmd.err;
+        goto out_free;
+    }
+
+    if (data.err)
+    {
+        err = data.err;
+        goto out_free;
+    }
+
+    if (rt_memcmp(data_buf, tuning_block_pattern, size))
+    {
+        err = -RT_EIO;
+    }
+
+out_free:
+    rt_free(data_buf);
+
+    return err;
+}
+
+rt_err_t mmcsd_send_abort_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode)
+{
+    struct rt_mmcsd_cmd cmd = {};
+
+    /*
+     * eMMC specification specifies that CMD12 can be used to stop a tuning
+     * command, but SD specification does not, so do nothing unless it is eMMC.
+     */
+    if (opcode != SEND_TUNING_BLOCK_HS200)
+    {
+        return 0;
+    }
+
+    cmd.cmd_code = STOP_TRANSMISSION;
+    cmd.flags = RESP_SPI_R1 | RESP_R1 | CMD_AC;
+
+    /*
+     * For drivers that override R1 to R1b, set an arbitrary timeout based
+     * on the tuning timeout i.e. 150ms.
+     */
+    cmd.busy_timeout = 150;
+
+    return mmcsd_send_cmd(host, &cmd, 0);
+}
+
 static void mmcsd_power_up(struct rt_mmcsd_host *host)
 {
     int bit = __rt_fls(host->valid_ocr) - 1;
@@ -567,6 +842,8 @@ static void mmcsd_power_up(struct rt_mmcsd_host *host)
     host->io_cfg.power_mode = MMCSD_POWER_UP;
     host->io_cfg.bus_width = MMCSD_BUS_WIDTH_1;
     mmcsd_set_iocfg(host);
+
+    mmcsd_set_initial_signal_voltage(host);
 
     /*
      * This delay should be sufficient to allow the power supply
@@ -597,6 +874,17 @@ static void mmcsd_power_off(struct rt_mmcsd_host *host)
     host->io_cfg.power_mode = MMCSD_POWER_OFF;
     host->io_cfg.bus_width = MMCSD_BUS_WIDTH_1;
     mmcsd_set_iocfg(host);
+}
+
+static void mmcsd_power_cycle(struct rt_mmcsd_host *host, rt_uint32_t ocr)
+{
+    mmcsd_power_off(host);
+
+    /* Wait at least 1 ms according to SD spec */
+    rt_thread_mdelay(1);
+
+    mmcsd_power_up(host);
+    mmcsd_select_voltage(host, ocr);
 }
 
 int mmcsd_wait_cd_changed(rt_int32_t timeout)
