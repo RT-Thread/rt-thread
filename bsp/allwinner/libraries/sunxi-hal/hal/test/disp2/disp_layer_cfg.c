@@ -556,7 +556,3 @@ int parse_cmdline_and_set_config(int argc, char **argv)
     }
 }
 
-
-
-FINSH_FUNCTION_EXPORT_ALIAS(parse_cmdline_and_set_config, disp_layer_cfg, disp set layer);
-
