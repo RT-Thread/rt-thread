@@ -629,7 +629,7 @@ int dfs_elm_flush(struct dfs_file *file)
 off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
     FRESULT result = FR_OK;
-
+    off_t pos = 0;
     switch (wherece)
     {
     case SEEK_SET:
@@ -656,11 +656,12 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
         RT_ASSERT(fd != RT_NULL);
         rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
         result = f_lseek(fd, offset);
+        pos = fd->fptr;
         rt_mutex_release(&file->vnode->lock);
         if (result == FR_OK)
         {
             /* return current position */
-            return fd->fptr;
+            return pos;
         }
     }
     else if (file->vnode->type == FT_DIRECTORY)
