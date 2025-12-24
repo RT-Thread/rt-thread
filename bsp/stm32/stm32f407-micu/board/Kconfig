@@ -88,6 +88,18 @@ menu "On-chip Peripheral Drivers"
                     select BSP_SPI2_TX_USING_DMA
                     default n
             endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        default n
+        if BSP_USING_SDIO
+            config SDIO_MAX_FREQ
+                int "sdio max freq"
+                range 0 24000000
+                depends on BSP_USING_SDIO
+                default 1000000
+        endif
     source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
