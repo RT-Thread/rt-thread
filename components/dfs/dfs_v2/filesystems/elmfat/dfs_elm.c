@@ -783,7 +783,7 @@ int dfs_elm_unlink(struct dfs_dentry *dentry)
     rt_snprintf(drivers_fn, 256, "%d:%s", vol, dentry->pathname);
 #else
     const char *drivers_fn;
-    drivers_fn = path;
+    drivers_fn = dentry->pathname;
 #endif
 
     result = f_unlink(drivers_fn);
