@@ -89,6 +89,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [stm32f407-atk-explorer](stm32/stm32f407-atk-explorer) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | - | - | - | ✅ | - | ✅ |
 | [stm32f407-fk407m2-zgt6](stm32/stm32f407-fk407m2-zgt6) | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | ✅ | - | - | - | - | ✅ | - | ✅ |
 | [stm32f407-lckfb-skystar](stm32/stm32f407-lckfb-skystar) | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | ✅ | - | - | - | ✅ | ✅ | - | - |
+| [stm32f407-micu](stm32/stm32f407-micu) | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | - | - | - | - |
 | [stm32f407-robomaster-c](stm32/stm32f407-robomaster-c) | ✅ | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32f407-rt-spark](stm32/stm32f407-rt-spark) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | ✅ | - | ✅ |
 | [stm32f407-st-discovery](stm32/stm32f407-st-discovery) | ✅ | ✅ | - | - | - | - | - | - | ✅ | - | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
