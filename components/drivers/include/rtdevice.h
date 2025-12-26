@@ -215,6 +215,10 @@ extern "C" {
 #include "drivers/dev_mmcsd_core.h"
 #include "drivers/dev_sd.h"
 #include "drivers/dev_sdio.h"
+#if defined(RT_USING_DM) && defined(RT_USING_SDHCI)
+#include "drivers/dev_sdhci.h"
+#include "drivers/dev_sdhci_host.h"
+#endif /* RT_USING_DM && RT_USING_SDHCI */
 #endif /* RT_USING_SDIO */
 
 
