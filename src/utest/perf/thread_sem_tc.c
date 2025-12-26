@@ -4,8 +4,41 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2025-07-03     rcitach      test case for semaphore
+ * Date           Author         Notes
+ * 2025-07-03     rcitach        test case for semaphore
+ * 2025-11-30     westcity-YOLO  Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Semaphore Performance Test
+ *
+ * Test Objectives:
+ * - Measures semaphore synchronization performance
+ * - Validates priority inheritance in semaphore operations
+ * - Provides latency metrics for thread synchronization
+ *
+ * Test Scenarios:
+ * - **Semaphore Operation**: Counting semaphore (initial value 0) for thread coordination
+ * - **Priority Inheritance**: Higher-priority thread (THREAD_PRIORITY+1) response
+ * - **Stress Test**: Repeated synchronization (RT_UTEST_SYS_PERF_TC_COUNT times)
+ * - **Thread Coordination**: Two threads exchanging events for timing control
+ *
+ * Verification Metrics:
+ * - Synchronization latency < 35μs
+ * - 0 errors in thread coordination
+ * - Consistent results across test cycles
+ * - No priority inversion issues
+ *
+ * Dependencies:
+ * - RT_USING_SEMAPHORE must be enabled
+ * - RT_USING_UTEST framework
+ * - Hardware timer support (for high-precision timing)
+ *
+ * Expected Results:
+ * [  PASSED  ] [ result   ] testcase (core.sem)
+ * - Structured performance data table (Min/Max/Avg latency)
+ * - Final line: "=== Semaphore Performance Test Results End ==="
+ * - Executable via: `utest_run core.sem` in msh
  */
 
 #include <rtthread.h>
