@@ -88,8 +88,6 @@ menu "On-chip Peripheral Drivers"
                     select BSP_SPI2_TX_USING_DMA
                     default n
             endif
-<<<<<<< HEAD
-=======
 
     config BSP_USING_SDIO
         bool "Enable SDIO"
@@ -222,7 +220,6 @@ menu "On-chip Peripheral Drivers"
                     default n
             endif
         endif
->>>>>>> 69a5eaa3df (add i2c,timer,pwm support for bsp:stm32f407-micu)
     source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
