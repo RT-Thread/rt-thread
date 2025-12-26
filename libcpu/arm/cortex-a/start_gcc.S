@@ -28,11 +28,11 @@
 .equ F_Bit,           0x40   /* when F bit is set, FIQ is disabled */
 
 /**
- * @brief get the physical address of the symbol
+ * @brief   Get the physical address of the symbol
  *
- * @param reg register to store the physical address
- * @param symbol symbol name
- * @param _pvoff the offset between the physical address and the virtual address
+ * @param   reg is the register to store the physical address
+ * @param   symbol is symbol name
+ * @param   _pvoff is the offset between the physical address and the virtual address
  */
 .macro get_phy, reg, symbol, _pvoff
     ldr \reg, =\symbol
@@ -40,10 +40,10 @@
 .endm
 
 /**
- * @brief calculate the offset between the physical address and the virtual address of the "_reset"
+ * @brief   Calculate the offset between the physical address and the virtual address of the "_reset"
  *
- * @param tmp register which will be used to store the virtual address of the "_reset"
- * @param out register which will be used to store the pv_off (paddr - vaddr)
+ * @param   tmp is the register which will be used to store the virtual address of the "_reset"
+ * @param   out is the register which will be used to store the pv_off (paddr - vaddr)
  */
 .macro get_pvoff, tmp, out
     ldr     \tmp, =_reset
