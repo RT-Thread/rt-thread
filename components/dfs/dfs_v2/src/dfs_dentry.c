@@ -499,16 +499,19 @@ int dfs_dentry_dump(int argc, char** argv)
 {
     int index = 0;
     struct dfs_dentry *entry = RT_NULL;
+    rt_err_t ret = dfs_file_lock();
 
-    dfs_lock();
-    for (index = 0; index < DFS_DENTRY_HASH_NR; index ++)
+    if (ret == RT_EOK)
     {
-        rt_list_for_each_entry(entry, &hash_head.head[index], hashlist)
+        for (index = 0; index < DFS_DENTRY_HASH_NR; index ++)
         {
-            printf("dentry: %s%s @ %p, ref_count = %zd\n", entry->mnt->fullpath, entry->pathname, entry, (size_t)rt_atomic_load(&entry->ref_count));
+            rt_list_for_each_entry(entry, &hash_head.head[index], hashlist)
+            {
+                printf("dentry: %s%s @ %p, ref_count = %zd\n", entry->mnt->fullpath, entry->pathname, entry, (size_t)rt_atomic_load(&entry->ref_count));
+            }
         }
+        dfs_file_unlock();
     }
-    dfs_unlock();
 
     return 0;
 }
