@@ -4,25 +4,165 @@ config RT_USING_MEM_PROTECTION
     bool "Enable memory protection"
     default n
     select RT_USING_HEAP
+    help
+        Enable memory protection framework using MPU (Memory Protection Unit).
+        
+        Provides hardware-based memory protection to prevent:
+        - Stack overflow and underflow
+        - Buffer overruns
+        - Unauthorized access to memory regions
+        - Corruption of kernel data structures
+        
+        Features:
+        - Per-thread memory protection
+        - Stack guard regions
+        - Configurable memory regions with access permissions
+        - Exclusive regions for sensitive data
+        
+        Requirements:
+        - CPU with MPU support (Cortex-M3/M4/M7/M33/R52, etc.)
+        - ARCH_MM_MPU or ARCH_ARM_MPU enabled
+        - RT_USING_HEAP (dynamic memory)
+        
+        Benefits:
+        - Catch memory bugs early (development)
+        - Improve system safety (production)
+        - Isolate thread memory spaces
+        
+        Costs:
+        - Context switch overhead (save/restore MPU regions)
+        - Configuration complexity
+        - Slight runtime overhead
+        
+        Ideal for safety-critical applications and debugging memory issues.
 
 config RT_USING_HW_STACK_GUARD
     bool "Enable hardware stack guard"
     default n
     select RT_USING_MEM_PROTECTION
+    help
+        Enable hardware-based stack overflow protection using MPU.
+        
+        Automatically creates guard regions at the end of each thread's stack
+        to detect stack overflow at the moment it occurs.
+        
+        How it works:
+        - Configures MPU region below stack as no-access
+        - Stack overflow triggers immediate MPU fault
+        - Exception handler identifies the overflowing thread
+        
+        Benefits:
+        - Immediate detection (vs periodic checks)
+        - Precise identification of overflow location
+        - No runtime overhead (hardware-based)
+        - Catches stack corruption before it spreads
+        
+        Requirements:
+        - RT_USING_MEM_PROTECTION enabled
+        - Sufficient MPU regions (at least 1 per thread)
+        
+        Recommended for:
+        - Development and debugging
+        - Safety-critical systems
+        - Systems with limited stack space
+        
+        Note: Requires one MPU region per thread. Check NUM_MEM_REGIONS configuration.
 
 if RT_USING_MEM_PROTECTION
     config USE_MEM_PROTECTION_EXAMPLES
     bool "Use memory protection examples"
     default y
+    help
+        Build and include memory protection example code.
+        
+        Provides demonstration code showing how to:
+        - Configure memory protection regions
+        - Set up stack guards
+        - Add exclusive regions
+        - Handle protection faults
+        
+        Useful for:
+        - Learning memory protection concepts
+        - Testing MPU functionality
+        - Debugging protection configurations
+        
+        Disable for production builds to save code space.
 
     config NUM_MEM_REGIONS
     int "Total number of memory protection regions supported by hardware"
+    help
+        Total number of MPU regions available in hardware.
+        
+        This depends on your CPU architecture:
+        - Cortex-M3/M4: Typically 8 regions
+        - Cortex-M7: 8 or 16 regions
+        - Cortex-M33/M85: 8 or 16 regions (configurable in silicon)
+        - Cortex-R52: 16 or 32 regions
+        
+        Check your MCU datasheet or reference manual for exact count.
+        
+        Usage breakdown:
+        - Stack guard per thread: 1 region per thread
+        - Exclusive regions: NUM_EXCLUSIVE_REGIONS
+        - Configurable per thread: NUM_CONFIGURABLE_REGIONS
+        
+        Formula: NUM_MEM_REGIONS = 1 (stack) + NUM_EXCLUSIVE_REGIONS + NUM_CONFIGURABLE_REGIONS
+        
+        Example for 8-region MPU with 2 threads:
+        - Thread 1 stack guard: 1 region
+        - Thread 2 stack guard: 1 region
+        - Shared exclusive regions: 2 regions
+        - Per-thread config: 2 regions per thread
+        Total: 2 + 2 + 4 = 8 regions
 
     config NUM_EXCLUSIVE_REGIONS
     int "Total number of exclusive memory regions added using rt_mprotect_add_exclusive_region API"
+    help
+        Number of shared exclusive memory protection regions.
+        
+        Exclusive regions are memory areas with specific access permissions
+        shared across all threads (e.g., peripheral registers, kernel data).
+        
+        Use cases:
+        - Protect peripheral registers from thread access
+        - Mark flash memory as read-only/execute-only
+        - Protect kernel data structures
+        - Define shared memory with specific permissions
+        
+        Example configurations:
+        - Peripheral protection: 1-2 regions
+        - Kernel data protection: 1 region
+        - Shared buffers: 0-2 regions
+        
+        Note: These regions are configured once and apply to all threads.
+        Set based on your system's protection requirements.
 
     config NUM_CONFIGURABLE_REGIONS
     int "Maximum number of configurable memory regions for each thread, excluding stack guard and exclusive regions added using rt_mprotect_add_exclusive_region API"
+    help
+        Per-thread configurable memory protection regions.
+        
+        These regions are specific to each thread and can be configured independently
+        for thread-specific memory protection needs.
+        
+        Use cases:
+        - Protect thread's private data buffers
+        - Restrict access to thread-local peripherals
+        - Define custom memory permissions per thread
+        
+        Calculation:
+        NUM_CONFIGURABLE_REGIONS = NUM_MEM_REGIONS - 1 (stack) - NUM_EXCLUSIVE_REGIONS
+        
+        Example for 8-region MPU with 2 exclusive regions:
+        NUM_CONFIGURABLE_REGIONS = 8 - 1 - 2 = 5 regions per thread
+        
+        More regions = more flexibility but:
+        - Increased configuration complexity
+        - Longer context switch time
+        - More memory for region descriptors
+        
+        Set based on your application's per-thread protection needs.
+        Typical values: 1-4 regions per thread.
 endif
 
 endmenu
