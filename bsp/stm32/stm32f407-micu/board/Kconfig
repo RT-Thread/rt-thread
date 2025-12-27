@@ -24,6 +24,23 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_SFUD
         default n
 
+    config BSP_USING_AHT20
+        bool "Enable AHT20(i2c1)"
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        select PKG_USING_SENSORS_DRIVERS
+        select PKG_USING_AHT10
+        default n 
+
+    config BSP_USING_ICM20608
+        bool "Enable ICM20608(i2c1)"
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        select PKG_USING_SENSORS_DRIVERS
+        select PKG_USING_ICM20608
+        default n
+
+        
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -225,6 +242,16 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Board extended module Drivers"
+
+    config BSP_USING_SSD1306
+    bool "Enable SSD1306 OLED"
+    select BSP_USING_I2C
+    select BSP_USING_I2C2
+    select PKG_USING_SSD1306
+    default n
+    help
+        Enable SSD1306 OLED display (connected to I2C2 on this board).
+
 
 endmenu
 
