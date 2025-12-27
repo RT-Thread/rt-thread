@@ -6,6 +6,15 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-10-19     Nations      first version
+ * 
+ *  *
+ * 2025-12-12
+    1.在N32L40x的平台添加了串口1-串口5的Kconfig串口配置
+
+     
+ * 2025-12-18
+    1.在N32G457的平台添加了串口1-串口7的Kconfig串口配置
+
  */
 
 #include <drv_usart.h>
@@ -27,6 +36,7 @@ struct n32_uart
     USART_Module* uart_periph;      //Todo: 3bits
     IRQn_Type     irqn;             //Todo: 7bits
     uint32_t      per_clk;          //Todo: 5bits
+    uint32_t       remap;           //N32G45X设备gpio的映射
     uint32_t      tx_gpio_clk;      //Todo: 5bits
     uint32_t      rx_gpio_clk;      //Todo: 5bits
     GPIO_Module*  tx_port;          //Todo: 4bits
@@ -174,15 +184,39 @@ void UART7_IRQHandler(void)
 
 static const struct n32_uart uarts[] = {
 #if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
+#define UART_SOC_N32G45X_CFG_START
 #ifdef BSP_USING_USART1
     {
         USART1,                                                               // uart peripheral index
         USART1_IRQn,                                                          // uart iqrn
-        RCC_APB2_PERIPH_USART1, RCC_APB2_PERIPH_GPIOA, RCC_APB2_PERIPH_GPIOA, // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_Mode_AF_PP, GPIO_PIN_9,                                   // tx port, tx alternate, tx pin
-        GPIOA, GPIO_Mode_IN_FLOATING, GPIO_PIN_10,                            // rx port, rx alternate, rx pin
+        RCC_APB2_PERIPH_USART1, 
+        #ifdef UART1_PA9_PA10
+        0,
+        RCC_APB2_PERIPH_GPIOA, 
+        RCC_APB2_PERIPH_GPIOA, // periph clock, tx gpio clock, rt gpio clock
+        GPIOA, 
+        GPIO_Mode_AF_PP, 
+        GPIO_PIN_9,                                   // tx port, tx alternate, tx pin
+        GPIOA, 
+        GPIO_Mode_IN_FLOATING, 
+        GPIO_PIN_10,                            // rx port, rx alternate, rx pin
         &serial1,
         "usart1",
+        #endif /*UART1_PA9_PA10*/
+
+        #ifdef UART1_PB6_PB7
+        GPIO_RMP_USART1,/*io映射配置*/
+        RCC_APB2_PERIPH_GPIOB, 
+        RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
+        GPIOB, 
+        GPIO_Mode_AF_PP, 
+        GPIO_PIN_6,                                   // tx port, tx alternate, tx pin
+        GPIOB, 
+        GPIO_Mode_IN_FLOATING, 
+        GPIO_PIN_7,                            // rx port, rx alternate, rx pin
+        &serial1,
+        "usart1",
+        #endif /*UART1_PB6_PB7*/
     },
 #endif
 
@@ -190,11 +224,62 @@ static const struct n32_uart uarts[] = {
     {
         USART2,                                                               // uart peripheral index
         USART2_IRQn,                                                          // uart iqrn
-        RCC_APB1_PERIPH_USART2, RCC_APB2_PERIPH_GPIOA, RCC_APB2_PERIPH_GPIOA, // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_Mode_AF_PP, GPIO_PIN_2,                                   // tx port, tx alternate, tx pin
-        GPIOA, GPIO_Mode_IN_FLOATING, GPIO_PIN_3,                             // rx port, rx alternate, rx pin
+        RCC_APB1_PERIPH_USART2, 
+        #ifdef UART2_PA2_PA3
+        0,
+        RCC_APB2_PERIPH_GPIOA, 
+        RCC_APB2_PERIPH_GPIOA, // periph clock, tx gpio clock, rt gpio clock
+        GPIOA, 
+        GPIO_Mode_AF_PP, 
+        GPIO_PIN_2,                                   // tx port, tx alternate, tx pin
+        GPIOA, 
+        GPIO_Mode_IN_FLOATING, 
+        GPIO_PIN_3,                             // rx port, rx alternate, rx pin
         &serial2,
         "usart2",
+        #endif /*UART2_PA2_PA3*/
+
+        #ifdef UART2_PD5_PD6
+        GPIO_RMP1_USART2,
+        RCC_APB2_PERIPH_GPIOD, 
+        RCC_APB2_PERIPH_GPIOD, // periph clock, tx gpio clock, rt gpio clock
+        GPIOD, 
+        GPIO_Mode_AF_PP, 
+        GPIO_PIN_5,                                   // tx port, tx alternate, tx pin
+        GPIOD, 
+        GPIO_Mode_IN_FLOATING, 
+        GPIO_PIN_6,                             // rx port, rx alternate, rx pin
+        &serial2,
+        "usart2",
+        #endif /*UART2_PD5_PD6*/
+
+        #ifdef UART2_PC8_PC9
+        GPIO_RMP2_USART2,
+        RCC_APB2_PERIPH_GPIOC, 
+        RCC_APB2_PERIPH_GPIOC, // periph clock, tx gpio clock, rt gpio clock
+        GPIOC, 
+        GPIO_Mode_AF_PP, 
+        GPIO_PIN_8,                                   // tx port, tx alternate, tx pin
+        GPIOC, 
+        GPIO_Mode_IN_FLOATING, 
+        GPIO_PIN_9,                             // rx port, rx alternate, rx pin
+        &serial2,
+        "usart2",
+        #endif /*UART2_PC8_PC9*/
+
+        #ifdef UART2_PB4_PB5
+        GPIO_RMP3_USART2,
+        RCC_APB2_PERIPH_GPIOB, 
+        RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
+        GPIOB, 
+        GPIO_Mode_AF_PP, 
+        GPIO_PIN_4,                                   // tx port, tx alternate, tx pin
+        GPIOB, 
+        GPIO_Mode_IN_FLOATING, 
+        GPIO_PIN_5,                             // rx port, rx alternate, rx pin
+        &serial2,
+        "usart2",
+        #endif /*UART2_PB4_PB5*/
     },
 #endif
 
@@ -202,23 +287,79 @@ static const struct n32_uart uarts[] = {
     {
         USART3,                                                               // uart peripheral index
         USART3_IRQn,                                                          // uart iqrn
-        RCC_APB1_PERIPH_USART3, RCC_APB2_PERIPH_GPIOB, RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
+        RCC_APB1_PERIPH_USART3, 
+        #ifdef UART3_PB10_PB11
+        0,
+        RCC_APB2_PERIPH_GPIOB, 
+        RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
         GPIOB, GPIO_Mode_AF_PP, GPIO_PIN_10,                                  // tx port, tx alternate, tx pin
         GPIOB, GPIO_Mode_IN_FLOATING, GPIO_PIN_11,                            // rx port, rx alternate, rx pin
         &serial3,
         "usart3",
+        #endif /*UART3_PB10_PB11*/
+
+        #ifdef UART3_PC10_PC11
+        GPIO_PART_RMP_USART3,
+        RCC_APB2_PERIPH_GPIOC, 
+        RCC_APB2_PERIPH_GPIOC, // periph clock, tx gpio clock, rt gpio clock
+        GPIOC, GPIO_Mode_AF_PP, GPIO_PIN_10,                                  // tx port, tx alternate, tx pin
+        GPIOC, GPIO_Mode_IN_FLOATING, GPIO_PIN_11,                            // rx port, rx alternate, rx pin
+        &serial3,
+        "usart3",
+        #endif /*UART3_PC10_PC11*/
+
+        #ifdef UART3_PD8_PD9
+        GPIO_ALL_RMP_USART3,
+        RCC_APB2_PERIPH_GPIOD, 
+        RCC_APB2_PERIPH_GPIOD, // periph clock, tx gpio clock, rt gpio clock
+        GPIOD, GPIO_Mode_AF_PP, GPIO_PIN_8,                                  // tx port, tx alternate, tx pin
+        GPIOD, GPIO_Mode_IN_FLOATING, GPIO_PIN_9,                            // rx port, rx alternate, rx pin
+        &serial3,
+        "usart3",
+        #endif /*UART3_PD8_PD9*/
     },
 #endif
 
 #ifdef BSP_USING_UART4
     {
-              UART4,                                                                // uart peripheral index
+        UART4,                                                                // uart peripheral index
         UART4_IRQn,                                                           // uart iqrn
-        RCC_APB1_PERIPH_UART4, RCC_APB2_PERIPH_GPIOA, RCC_APB2_PERIPH_GPIOA,  // periph clock, tx gpio clock, rt gpio clock
+        RCC_APB1_PERIPH_UART4, 
+        #ifdef UART4_PC10_PC11
+        0,
+        RCC_APB2_PERIPH_GPIOC, RCC_APB2_PERIPH_GPIOC,  // periph clock, tx gpio clock, rt gpio clock
+        GPIOC, GPIO_Mode_AF_PP, GPIO_PIN_10,                                  // tx port, tx alternate, tx pin
+        GPIOC, GPIO_Mode_IN_FLOATING, GPIO_PIN_11,                            // rx port, rx alternate, rx pin
+        &serial4,
+        "uart4",
+        #endif /*UART4_PC10_PC11*/
+
+        #ifdef UART4_PB2_PE7
+        GPIO_RMP1_UART4,
+        RCC_APB2_PERIPH_GPIOB, RCC_APB2_PERIPH_GPIOE,  // periph clock, tx gpio clock, rt gpio clock
+        GPIOB, GPIO_Mode_AF_PP, GPIO_PIN_2,                                  // tx port, tx alternate, tx pin
+        GPIOE, GPIO_Mode_IN_FLOATING, GPIO_PIN_7,                            // rx port, rx alternate, rx pin
+        &serial4,
+        "uart4",
+        #endif /*UART4_PB2_PE7*/
+
+        #ifdef UART4_PA13_PA14
+        GPIO_RMP2_UART4,
+        RCC_APB2_PERIPH_GPIOA, RCC_APB2_PERIPH_GPIOA,  // periph clock, tx gpio clock, rt gpio clock
         GPIOA, GPIO_Mode_AF_PP, GPIO_PIN_13,                                  // tx port, tx alternate, tx pin
         GPIOA, GPIO_Mode_IN_FLOATING, GPIO_PIN_14,                            // rx port, rx alternate, rx pin
         &serial4,
         "uart4",
+        #endif /*UART4_PA13_PA14*/
+
+        #ifdef UART4_PD0_PD1
+        GPIO_RMP2_UART4,
+        RCC_APB2_PERIPH_GPIOD, RCC_APB2_PERIPH_GPIOD,  // periph clock, tx gpio clock, rt gpio clock
+        GPIOD, GPIO_Mode_AF_PP, GPIO_PIN_0,                                  // tx port, tx alternate, tx pin
+        GPIOD, GPIO_Mode_IN_FLOATING, GPIO_PIN_1,                            // rx port, rx alternate, rx pin
+        &serial4,
+        "uart4",
+        #endif /*UART4_PD0_PD1*/
     },
 #endif
 
@@ -226,11 +367,43 @@ static const struct n32_uart uarts[] = {
     {
         UART5,                                                                // uart peripheral index
         UART5_IRQn,                                                           // uart iqrn
-        RCC_APB1_PERIPH_UART5, RCC_APB2_PERIPH_GPIOB, RCC_APB2_PERIPH_GPIOB,  // periph clock, tx gpio clock, rt gpio clock
+        RCC_APB1_PERIPH_UART5, 
+        #ifdef UART5_PC12_PD2
+        0,
+        RCC_APB2_PERIPH_GPIOC, RCC_APB2_PERIPH_GPIOD,  // periph clock, tx gpio clock, rt gpio clock
+        GPIOC, GPIO_Mode_AF_PP, GPIO_PIN_12,                                  // tx port, tx alternate, tx pin
+        GPIOD, GPIO_Mode_IN_FLOATING, GPIO_PIN_2,                            // rx port, rx alternate, rx pin
+        &serial5,
+        "uart5",
+        #endif /*UART5_PC12_PD2*/
+
+        #ifdef UART5_PB13_PB14
+        GPIO_RMP1_UART5,
+        RCC_APB2_PERIPH_GPIOB, RCC_APB2_PERIPH_GPIOB,  // periph clock, tx gpio clock, rt gpio clock
         GPIOB, GPIO_Mode_AF_PP, GPIO_PIN_13,                                  // tx port, tx alternate, tx pin
         GPIOB, GPIO_Mode_IN_FLOATING, GPIO_PIN_14,                            // rx port, rx alternate, rx pin
         &serial5,
         "uart5",
+        #endif /*UART5_PB13_PB14*/
+
+        #ifdef UART5_PE8_PE9
+        GPIO_RMP2_UART5,
+        RCC_APB2_PERIPH_GPIOE, RCC_APB2_PERIPH_GPIOE,  // periph clock, tx gpio clock, rt gpio clock
+        GPIOE, GPIO_Mode_AF_PP, GPIO_PIN_8,                                  // tx port, tx alternate, tx pin
+        GPIOE, GPIO_Mode_IN_FLOATING, GPIO_PIN_9,                            // rx port, rx alternate, rx pin
+        &serial5,
+        "uart5",
+        #endif /*UART5_PE8_PE9*/
+
+        #ifdef UART5_PB8_PB9
+        GPIO_RMP3_UART5,
+        RCC_APB2_PERIPH_GPIOB, RCC_APB2_PERIPH_GPIOB,  // periph clock, tx gpio clock, rt gpio clock
+        GPIOB, GPIO_Mode_AF_PP, GPIO_PIN_8,                                  // tx port, tx alternate, tx pin
+        GPIOB, GPIO_Mode_IN_FLOATING, GPIO_PIN_9,                            // rx port, rx alternate, rx pin
+        &serial5,
+        "uart5",
+        #endif /*UART5_PB8_PB9*/
+
     },
 #endif
 
@@ -238,11 +411,33 @@ static const struct n32_uart uarts[] = {
     {
         UART6,                                                                // uart peripheral index
         UART6_IRQn,                                                           // uart iqrn
-        RCC_APB2_PERIPH_UART6, RCC_APB2_PERIPH_GPIOB, RCC_APB2_PERIPH_GPIOB,  // periph clock, tx gpio clock, rt gpio clock
+        RCC_APB2_PERIPH_UART6,
+        #ifdef UART6_PB0_PB1
+        GPIO_RMP3_UART6, 
+        RCC_APB2_PERIPH_GPIOB, RCC_APB2_PERIPH_GPIOB,  // periph clock, tx gpio clock, rt gpio clock
         GPIOB, GPIO_Mode_AF_PP, GPIO_PIN_0,                                   // tx port, tx alternate, tx pin
         GPIOB, GPIO_Mode_IN_FLOATING, GPIO_PIN_1,                             // rx port, rx alternate, rx pin
         &serial6,
         "uart6",
+        #endif /*UART6_PB0_PB1*/
+
+        #ifdef UART6_PC0_PC1
+        GPIO_RMP2_UART6, 
+        RCC_APB2_PERIPH_GPIOC, RCC_APB2_PERIPH_GPIOC,  // periph clock, tx gpio clock, rt gpio clock
+        GPIOC, GPIO_Mode_AF_PP, GPIO_PIN_0,                                   // tx port, tx alternate, tx pin
+        GPIOC, GPIO_Mode_IN_FLOATING, GPIO_PIN_1,                             // rx port, rx alternate, rx pin
+        &serial6,
+        "uart6",
+        #endif /*UART6_PC0_PC1*/
+
+        #ifdef UART6_PE2_PE3
+        0, 
+        RCC_APB2_PERIPH_GPIOE, RCC_APB2_PERIPH_GPIOE,  // periph clock, tx gpio clock, rt gpio clock
+        GPIOE, GPIO_Mode_AF_PP, GPIO_PIN_1,                                   // tx port, tx alternate, tx pin
+        GPIOE, GPIO_Mode_IN_FLOATING, GPIO_PIN_1,                             // rx port, rx alternate, rx pin
+        &serial6,
+        "uart6",
+        #endif /*UART6_PE2_PE3*/
     },
 #endif
 
@@ -250,76 +445,248 @@ static const struct n32_uart uarts[] = {
     {
         UART7,                                                                // uart peripheral index
         UART7_IRQn,                                                           // uart iqrn
-        RCC_APB2_PERIPH_UART7, RCC_APB2_PERIPH_GPIOC, RCC_APB2_PERIPH_GPIOC,  // periph clock, tx gpio clock, rt gpio clock
+        RCC_APB2_PERIPH_UART7,
+        #ifdef UART7_PC4_PC5
+        0,
+        RCC_APB2_PERIPH_GPIOC, RCC_APB2_PERIPH_GPIOC,  // periph clock, tx gpio clock, rt gpio clock
+        GPIOC, GPIO_Mode_AF_PP, GPIO_PIN_4,                                   // tx port, tx alternate, tx pin
+        GPIOC, GPIO_Mode_IN_FLOATING, GPIO_PIN_5,                             // rx port, rx alternate, rx pin
+        &serial7,
+        "uart7",
+        #endif /*UART7_PC4_PC5*/
+
+        #ifdef UART7_PC2_PC3
+        GPIO_RMP1_UART7,
+        RCC_APB2_PERIPH_GPIOC, RCC_APB2_PERIPH_GPIOC,  // periph clock, tx gpio clock, rt gpio clock
         GPIOC, GPIO_Mode_AF_PP, GPIO_PIN_2,                                   // tx port, tx alternate, tx pin
         GPIOC, GPIO_Mode_IN_FLOATING, GPIO_PIN_3,                             // rx port, rx alternate, rx pin
         &serial7,
         "uart7",
+        #endif /*UART7_PC2_PC3*/
+
+        #ifdef UART7_PG0_PG1
+        GPIO_RMP3_UART7,
+        RCC_APB2_PERIPH_GPIOG, RCC_APB2_PERIPH_GPIOG,  // periph clock, tx gpio clock, rt gpio clock
+        GPIOG, GPIO_Mode_AF_PP, GPIO_PIN_0,                                   // tx port, tx alternate, tx pin
+        GPIOG, GPIO_Mode_IN_FLOATING, GPIO_PIN_1,                             // rx port, rx alternate, rx pin
+        &serial7,
+        "uart7",
+        #endif /*UART7_PG0_PG1*/
     },
 #endif
 
 #elif defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X)
-
+#define UART_SOC_N32L43X_CFG_START
 #ifdef BSP_USING_USART1
     {
-        USART1,                                                                                             // uart peripheral index
-        USART1_IRQn,                                                                                        // uart iqrn
-        RCC_APB2_PERIPH_USART1, RCC_APB2_PERIPH_GPIOA, RCC_APB2_PERIPH_GPIOA, // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_AF4_USART1, GPIO_PIN_9,                                   // tx port, tx alternate, tx pin
-        GPIOA, GPIO_AF4_USART1, GPIO_PIN_10,                                                                // rx port, rx alternate, rx pin
+        USART1,      // uart peripheral index
+        USART1_IRQn, // uart iqrn
+        RCC_APB2_PERIPH_USART1,
+#ifdef UART1_TX_PA4_PA5
+        RCC_APB2_PERIPH_GPIOA,
+        RCC_APB2_PERIPH_GPIOA, // periph clock, tx gpio clock, rt gpio clock
+        GPIOA,
+        GPIO_AF1_USART1,
+        GPIO_PIN_4, // tx port, tx alternate, tx pin
+        GPIOA,
+        GPIO_AF4_USART1,
+        GPIO_PIN_5, // rx port, rx alternate, rx pin
         &serial1,
         "usart1",
+#endif
+#ifdef UART1_PA9_PA10
+        RCC_APB2_PERIPH_GPIOA,
+        RCC_APB2_PERIPH_GPIOA, // periph clock, tx gpio clock, rt gpio clock
+        GPIOA,
+        GPIO_AF4_USART1,
+        GPIO_PIN_9, // tx port, tx alternate, tx pin
+        GPIOA,
+        GPIO_AF4_USART1,
+        GPIO_PIN_10, // rx port, rx alternate, rx pin
+        &serial1,
+        "usart1",
+#endif
+#ifdef UART1_PB6_PB7
+        RCC_APB2_PERIPH_GPIOB,
+        RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
+        GPIOB,
+        GPIO_AF0_USART1,
+        GPIO_PIN_6, // tx port, tx alternate, tx pin
+        GPIOB,
+        GPIO_AF0_USART1,
+        GPIO_PIN_7, // rx port, rx alternate, rx pin
+        &serial1,
+        "usart1",
+#endif
+
     },
 #endif
 
 #ifdef BSP_USING_USART2
     {
-        USART2,                                                                                             // uart peripheral index
-        USART2_IRQn,                                                                                        // uart iqrn
-        RCC_APB1_PERIPH_USART2, RCC_APB2_PERIPH_GPIOA, RCC_APB2_PERIPH_GPIOA, // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_AF4_USART2, GPIO_PIN_2,                                                         // tx port, tx alternate, tx pin
-        GPIOA, GPIO_AF4_USART2, GPIO_PIN_3,                                                               // rx port, rx alternate, rx pin
+        USART2,      // uart peripheral index
+        USART2_IRQn, // uart iqrn
+        RCC_APB1_PERIPH_USART2,
+#ifdef UART2_TX_PA2_RX_PA3
+        RCC_APB2_PERIPH_GPIOA,
+        RCC_APB2_PERIPH_GPIOA, // periph clock, tx gpio clock, rt gpio clock
+        GPIOA,
+        GPIO_AF4_USART2,
+        GPIO_PIN_2, // tx port, tx alternate, tx pin
+        GPIOA,
+        GPIO_AF4_USART2,
+        GPIO_PIN_3, // rx port, rx alternate, rx pin
         &serial2,
         "usart2",
+#endif /*UART2_TX_PA2_RX_PA3*/
+#ifdef UART2_TX_PB4_RX_PB5
+        RCC_APB2_PERIPH_GPIOB,
+        RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
+        GPIOB,
+        GPIO_AF4_USART2,
+        GPIO_PIN_4, // tx port, tx alternate, tx pin
+        GPIOB,
+        GPIO_AF6_USART2,
+        GPIO_PIN_5, // rx port, rx alternate, rx pin
+        &serial2,
+        "usart2",
+#endif /*UART2_TX_PB4_RX_PB5*/
     },
 #endif
 
 #ifdef BSP_USING_USART3
     {
-        USART3,                                                                                             // uart peripheral index
-        USART3_IRQn,                                                                                        // uart iqrn
-        RCC_APB1_PERIPH_USART3, RCC_APB2_PERIPH_GPIOB, RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
-        GPIOB, GPIO_AF0_USART3, GPIO_PIN_10,                                                        // tx port, tx alternate, tx pin
-        GPIOB, GPIO_AF5_USART3, GPIO_PIN_11,                                                              // rx port, rx alternate, rx pin
+        USART3,      // uart peripheral index
+        USART3_IRQn, // uart iqrn
+        RCC_APB1_PERIPH_USART3,
+#ifdef UART3_TX_PB10_RX_B11
+        RCC_APB2_PERIPH_GPIOB,
+        RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
+        GPIOB,
+        GPIO_AF0_USART3,
+        GPIO_PIN_10, // tx port, tx alternate, tx pin
+        GPIOB,
+        GPIO_AF5_USART3,
+        GPIO_PIN_11, // rx port, rx alternate, rx pin
         &serial3,
         "usart3",
+#endif /*UART3_TX_PB10_RX_B11*/
+#ifdef UART3_TX_PC10_RX_PC11
+        RCC_APB2_PERIPH_GPIOC,
+        RCC_APB2_PERIPH_GPIOC, // periph clock, tx gpio clock, rt gpio clock
+        GPIOC,
+        GPIO_AF5_USART3,
+        GPIO_PIN_10, // tx port, tx alternate, tx pin
+        GPIOC,
+        GPIO_AF5_USART3,
+        GPIO_PIN_11, // rx port, rx alternate, rx pin
+        &serial3,
+        "usart3",
+#endif /*UART3_TX_PC10_RX_PC11*/
     },
 #endif
 
 #ifdef BSP_USING_UART4
     {
-        UART4,                                                                                            // uart peripheral index
-        UART4_IRQn,                                                                                         // uart iqrn
-        RCC_APB2_PERIPH_UART4, RCC_APB2_PERIPH_GPIOB, RCC_APB2_PERIPH_GPIOB,  // periph clock, tx gpio clock, rt gpio clock
-        GPIOB, GPIO_AF6_UART4, GPIO_PIN_0,                                                              // tx port, tx alternate, tx pin
-        GPIOB, GPIO_AF6_UART4, GPIO_PIN_1,                                                                    // rx port, rx alternate, rx pin
+        UART4,      // uart peripheral index
+        UART4_IRQn, // uart iqrn
+        RCC_APB2_PERIPH_UART4,
+#ifdef UART4_TX_PB0_RX_PB1
+        RCC_APB2_PERIPH_GPIOB,
+        RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
+        GPIOB,
+        GPIO_AF6_UART4,
+        GPIO_PIN_0, // tx port, tx alternate, tx pin
+        GPIOB,
+        GPIO_AF6_UART4,
+        GPIO_PIN_1, // rx port, rx alternate, rx pin
         &serial4,
         "uart4",
+#endif /*UART4_TX_PB0_RX_PB1*/
+#ifdef UART4_TX_PB14_RX_PB15
+        RCC_APB2_PERIPH_GPIOB,
+        RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
+        GPIOB,
+        GPIO_AF6_UART4,
+        GPIO_PIN_14, // tx port, tx alternate, tx pin
+        GPIOB,
+        GPIO_AF6_UART4,
+        GPIO_PIN_15, // rx port, rx alternate, rx pin
+        &serial4,
+        "uart4",
+#endif /*UART4_TX_PB14_RX_PB15*/
+#ifdef UART4_TX_PC10_RX_PC11
+        RCC_APB2_PERIPH_GPIOC,
+        RCC_APB2_PERIPH_GPIOC, // periph clock, tx gpio clock, rt gpio clock
+        GPIOC,
+        GPIO_AF6_UART4,
+        GPIO_PIN_10, // tx port, tx alternate, tx pin
+        GPIOC,
+        GPIO_AF6_UART4,
+        GPIO_PIN_11, // rx port, rx alternate, rx pin
+        &serial4,
+        "uart4",
+#endif /*UART4_TX_PC10_RX_PC11*/
+#ifdef UART4_TX_PD13_RX_PD12
+        RCC_APB2_PERIPH_GPIOD,
+        RCC_APB2_PERIPH_GPIOD, // periph clock, tx gpio clock, rt gpio clock
+        GPIOD,
+        GPIO_AF6_UART4,
+        GPIO_PIN_13, // tx port, tx alternate, tx pin
+        GPIOD,
+        GPIO_AF6_UART4,
+        GPIO_PIN_12, // rx port, rx alternate, rx pin
+        &serial4,
+        "uart4",
+#endif /*UART4_TX_PD13_RX_PD12*/
     },
 #endif
 
 #ifdef BSP_USING_UART5
     {
-        UART5,                                                                                              // uart peripheral index
-        UART5_IRQn,                                                                                         // uart iqrn
-        RCC_APB2_PERIPH_UART5, RCC_APB2_PERIPH_GPIOB, RCC_APB2_PERIPH_GPIOB,  // periph clock, tx gpio clock, rt gpio clock
-        GPIOB, GPIO_AF6_UART5, GPIO_PIN_8,                                                            // tx port, tx alternate, tx pin
-        GPIOB, GPIO_AF6_UART5, GPIO_PIN_9,                                                                    // rx port, rx alternate, rx pin
+        UART5,      // uart peripheral index
+        UART5_IRQn, // uart iqrn
+        RCC_APB2_PERIPH_UART5,
+#ifdef UART5_TX_PB4_RX_PB5
+        RCC_APB2_PERIPH_GPIOB,
+        RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
+        GPIOB,
+        GPIO_AF6_UART5,
+        GPIO_PIN_4, // tx port, tx alternate, tx pin
+        GPIOB,
+        GPIO_AF6_UART5,
+        GPIO_PIN_5, // rx port, rx alternate, rx pin
         &serial5,
         "uart5",
+#endif /*UART5_TX_PB4_RX_PB5*/
+#ifdef UART5_TX_PB8_RX_PB9
+        RCC_APB2_PERIPH_GPIOB,
+        RCC_APB2_PERIPH_GPIOB, // periph clock, tx gpio clock, rt gpio clock
+        GPIOB,
+        GPIO_AF6_UART5,
+        GPIO_PIN_8, // tx port, tx alternate, tx pin
+        GPIOB,
+        GPIO_AF6_UART5,
+        GPIO_PIN_9, // rx port, rx alternate, rx pin
+        &serial5,
+        "uart5",
+#endif /*UART5_TX_PB8_RX_PB9*/
+#ifdef UART5_TX_PC12_RX_PD2
+        RCC_APB2_PERIPH_GPIOC,
+        RCC_APB2_PERIPH_GPIOD, // periph clock, tx gpio clock, rt gpio clock
+        GPIOC,
+        GPIO_AF6_UART5,
+        GPIO_PIN_12, // tx port, tx alternate, tx pin
+        GPIOD,
+        GPIO_AF6_UART5,
+        GPIO_PIN_2, // rx port, rx alternate, rx pin
+        &serial5,
+        "uart5",
+#endif /*UART5_TX_PC12_RX_PD2*/
     },
 #endif
 #endif
+
 };
 
 /**
@@ -347,23 +714,11 @@ void n32_uart_gpio_init(struct n32_uart *uart, struct serial_configure *cfg)
     {
         RCC_EnableAPB1PeriphClk(uart->per_clk, ENABLE);
     }
-
-#ifdef BSP_USING_UART4
-    GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_DISABLE, ENABLE);
-    GPIO_ConfigPinRemap(GPIO_RMP2_UART4, ENABLE);
-#endif /* BSP_USING_UART4 */
-
-#ifdef BSP_USING_UART5
-    GPIO_ConfigPinRemap(GPIO_RMP1_UART5, ENABLE);
-#endif /* BSP_USING_UART5 */
-
-#ifdef BSP_USING_UART6
-    GPIO_ConfigPinRemap(GPIO_RMP3_UART6, ENABLE);
-#endif /* BSP_USING_UART6 */
-
-#ifdef BSP_USING_UART7
-    GPIO_ConfigPinRemap(GPIO_RMP1_UART7, ENABLE);
-#endif /* BSP_USING_UART7 */
+    //io 映射
+    if(uart->remap)
+    {
+        GPIO_ConfigPinRemap(uart->remap, ENABLE);
+    }
 
     GPIO_InitStruct(&GPIO_InitStructure);
 
