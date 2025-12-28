@@ -750,6 +750,17 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
 }
 RTM_EXPORT(clock_settime);
 
+#endif /* RT_USING_POSIX_CLOCK && RT_USING_CLOCK_TIME */
+
+#ifdef RT_USING_POSIX_CLOCK
+/**
+ * @brief Convert absolute timespec to relative tick
+ * @param time Absolute time
+ * @return Relative tick value
+ * 
+ * @note This function is available when RT_USING_POSIX_CLOCK is defined,
+ *       regardless of RT_USING_CLOCK_TIME, to support POSIX semaphores and other APIs.
+ */
 int rt_timespec_to_tick(const struct timespec *time)
 {
     int tick;
@@ -784,7 +795,7 @@ int rt_timespec_to_tick(const struct timespec *time)
 }
 RTM_EXPORT(rt_timespec_to_tick);
 
-#endif /* RT_USING_POSIX_CLOCK && RT_USING_CLOCK_TIME */
+#endif /* RT_USING_POSIX_CLOCK */
 
 #if defined(RT_USING_POSIX_TIMER) && defined(RT_USING_CLOCK_TIME)
 
