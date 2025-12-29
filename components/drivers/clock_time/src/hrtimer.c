@@ -81,8 +81,8 @@ static unsigned long _cnt_convert(unsigned long cnt)
 {
     unsigned long rtn   = 0;
     unsigned long current_cnt = rt_clock_cputimer_getcnt();
-    
-    /* 
+
+    /*
      * Check if target count is in the past.
      * For unsigned counters, if cnt <= current_cnt, it means the target
      * has already passed (or is exactly now).
@@ -91,10 +91,10 @@ static unsigned long _cnt_convert(unsigned long cnt)
     {
         return 0;
     }
-    
+
     unsigned long count = cnt - current_cnt;
-    
-    /* 
+
+    /*
      * Sanity check for wrap-around detection.
      * If the difference exceeds half the maximum counter value, it's likely
      * a wrap-around or invalid value. This handles both:
@@ -108,7 +108,7 @@ static unsigned long _cnt_convert(unsigned long cnt)
     rt_uint64_t count_64 = (rt_uint64_t)count;
     rt_uint64_t res_cpu = rt_clock_cputimer_getres();
     rt_uint64_t res_hr = rt_clock_hrtimer_getres();
-    
+
     rtn = (unsigned long)((count_64 * res_cpu) / res_hr);
     return rtn == 0 ? 1 : rtn; /* at least 1 */
 }
