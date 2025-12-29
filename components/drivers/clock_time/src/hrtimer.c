@@ -80,7 +80,17 @@ rt_weak rt_err_t rt_clock_hrtimer_settimeout(unsigned long cnt)
 static unsigned long _cnt_convert(unsigned long cnt)
 {
     unsigned long rtn   = 0;
-    unsigned long count = cnt - rt_clock_cputimer_getcnt();
+    unsigned long current_cnt = rt_clock_cputimer_getcnt();
+    
+    /* Check for overflow/underflow - if cnt is in the past or wrapped around */
+    if (cnt <= current_cnt)
+    {
+        return 0;
+    }
+    
+    unsigned long count = cnt - current_cnt;
+    
+    /* Sanity check: if count is too large, it might be a wrap-around */
     if (count > (_HRTIMER_MAX_CNT / 2))
         return 0;
 
@@ -289,7 +299,7 @@ rt_err_t rt_clock_hrtimer_control(rt_clock_hrtimer_t timer, int cmd, void *arg)
         *(unsigned long *)arg = timer->timeout_cnt;
         break;
     case RT_TIMER_CTRL_GET_FUNC:
-        arg = (void *)timer->timeout_func;
+        *(void **)arg = (void *)timer->timeout_func;
         break;
 
     case RT_TIMER_CTRL_SET_FUNC:

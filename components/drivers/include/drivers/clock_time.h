@@ -256,6 +256,10 @@ rt_err_t rt_clock_hrtimer_detach(rt_clock_hrtimer_t timer);
  * @brief Keep errno in timer structure
  * @param timer Timer structure
  * @param err Error code to keep
+ * 
+ * Note: This function negates err when setting errno to convert RT-Thread
+ * error codes to POSIX-style errno values. This maintains compatibility
+ * with the original ktime implementation.
  */
 rt_inline void rt_clock_hrtimer_keep_errno(rt_clock_hrtimer_t timer, rt_err_t err)
 {

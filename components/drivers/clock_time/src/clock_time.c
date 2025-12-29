@@ -52,8 +52,20 @@ rt_err_t rt_clock_time_device_register(struct rt_clock_time_device *dev,
         rt_uint64_t freq = dev->ops->get_freq();
         if (freq > 0)
         {
-            /* res_scale = (1e9 * RT_CLOCK_TIME_RESMUL) / freq */
-            dev->res_scale = ((1000000000ULL * RT_CLOCK_TIME_RESMUL) / freq);
+            /* res_scale = (1e9 * RT_CLOCK_TIME_RESMUL) / freq 
+             * To avoid overflow, we check if freq is very small.
+             * For freq >= 1000, this calculation is safe on 64-bit.
+             * For very small frequencies, limit the scale factor.
+             */
+            if (freq >= 1000)
+            {
+                dev->res_scale = ((1000000000ULL * RT_CLOCK_TIME_RESMUL) / freq);
+            }
+            else
+            {
+                /* For very low frequencies, calculate more carefully */
+                dev->res_scale = (1000000ULL * RT_CLOCK_TIME_RESMUL) / freq * 1000;
+            }
         }
         else
         {
