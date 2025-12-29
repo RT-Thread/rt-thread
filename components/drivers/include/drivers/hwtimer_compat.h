@@ -98,8 +98,7 @@ extern void (*rt_device_hwtimer_us_delay)(rt_uint32_t us);
 
 #else /* !RT_USING_CLOCK_TIME */
 
-#warning "RT_USING_HWTIMER is deprecated. Please migrate to RT_USING_CLOCK_TIME."
-#warning "Include <drivers/clock_time.h> instead and use rt_clock_time_* APIs."
+#warning "RT_USING_HWTIMER is deprecated. Please migrate to RT_USING_CLOCK_TIME. Include <drivers/clock_time.h> instead and use rt_clock_time_* APIs."
 
 /* If clock_time is not enabled, this means the old hwtimer module should still exist */
 /* The build system should handle this by including the old hwtimer directory */

@@ -82,7 +82,11 @@ static unsigned long _cnt_convert(unsigned long cnt)
     unsigned long rtn   = 0;
     unsigned long current_cnt = rt_clock_cputimer_getcnt();
     
-    /* Check for overflow/underflow - if cnt is in the past or wrapped around */
+    /* 
+     * Check if target count is in the past.
+     * For unsigned counters, if cnt <= current_cnt, it means the target
+     * has already passed (or is exactly now).
+     */
     if (cnt <= current_cnt)
     {
         return 0;
@@ -90,7 +94,13 @@ static unsigned long _cnt_convert(unsigned long cnt)
     
     unsigned long count = cnt - current_cnt;
     
-    /* Sanity check: if count is too large, it might be a wrap-around */
+    /* 
+     * Sanity check for wrap-around detection.
+     * If the difference exceeds half the maximum counter value, it's likely
+     * a wrap-around or invalid value. This handles both:
+     * - Forward overflow: count is unreasonably large
+     * - Backward wrap: cnt was in the past but appeared larger due to overflow
+     */
     if (count > (_HRTIMER_MAX_CNT / 2))
         return 0;
 
