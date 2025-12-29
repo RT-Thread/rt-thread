@@ -7,11 +7,16 @@ menuconfig RT_USING_SPI
         menuconfig RT_USING_SPI_ISR
             bool "Enable interrupt-safe SPI operations (using spinlocks in ISR context)"
             default y
+        
+        config RT_USING_SPI_BITOPS
+            bool "Enable SPI bit-bang operation functions"
+            default n
 
         menuconfig RT_USING_SOFT_SPI
             bool "Use GPIO to simulate SPI"
             default n
             select RT_USING_PIN
+            select RT_USING_SPI_BITOPS
             if RT_USING_SOFT_SPI
                 menuconfig RT_USING_SOFT_SPI0
                     bool "Enable SPI0 Bus (software simulation)"
