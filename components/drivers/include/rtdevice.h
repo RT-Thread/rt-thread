@@ -242,6 +242,10 @@ extern "C" {
 #include "drivers/dev_can.h"
 #endif /* RT_USING_CAN */
 
+#ifdef RT_USING_CLOCK_TIME
+#include "drivers/clock_time.h"
+#endif /* RT_USING_CLOCK_TIME */
+
 #ifdef RT_USING_HWTIMER
 #include "drivers/hwtimer.h"
 #endif /* RT_USING_HWTIMER */

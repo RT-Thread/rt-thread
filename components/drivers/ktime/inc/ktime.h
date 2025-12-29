@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2023-07-10     xqyjlj       The first version.
  * 2024-04-26     Shell        Improve ipc performance
+ * 2025-01-01     RT-Thread    Compatibility layer for unified clock_time
  */
 
 #ifndef __KTIME_H__
@@ -17,6 +18,26 @@
 #include <ipc/completion.h>
 
 #include "rtthread.h"
+
+/*
+ * COMPATIBILITY LAYER:
+ * When RT_USING_CLOCK_TIME is enabled, this header redirects to the
+ * unified clock_time subsystem. All rt_ktime_* APIs are mapped to
+ * rt_clock_* APIs via macros defined in clock_time.h.
+ * 
+ * When RT_USING_CLOCK_TIME is not enabled, the original ktime
+ * implementation is used.
+ */
+
+#ifdef RT_USING_CLOCK_TIME
+
+/* Include the unified clock_time header which provides all APIs */
+#include <drivers/clock_time.h>
+
+/* All rt_ktime_* APIs are already defined as macros in clock_time.h */
+/* No additional definitions needed here */
+
+#else /* !RT_USING_CLOCK_TIME - Original ktime implementation */
 
 #define RT_KTIME_RESMUL (1000000ULL)
 
@@ -166,4 +187,6 @@ rt_err_t rt_ktime_hrtimer_udelay(struct rt_ktime_hrtimer *timer, unsigned long u
  */
 rt_err_t rt_ktime_hrtimer_mdelay(struct rt_ktime_hrtimer *timer, unsigned long ms);
 
-#endif
+#endif /* !RT_USING_CLOCK_TIME */
+
+#endif /* __KTIME_H__ */

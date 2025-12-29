@@ -1,3 +1,7 @@
 menuconfig RT_USING_KTIME
-    bool "Ktime: kernel time"
+    bool "Ktime: kernel time (DEPRECATED - use RT_USING_CLOCK_TIME)"
     default n
+    depends on !RT_USING_CLOCK_TIME
+    help
+        DEPRECATED: This option is maintained for backward compatibility only.
+        New projects should use RT_USING_CLOCK_TIME instead.

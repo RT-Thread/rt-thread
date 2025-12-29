@@ -1,7 +1,11 @@
 config RT_USING_CPUTIME
-    bool "Enable CPU time for high resolution clock counter"
+    bool "Enable CPU time for high resolution clock counter (DEPRECATED - use RT_USING_CLOCK_TIME)"
     default n
+    depends on !RT_USING_CLOCK_TIME
     help
+        DEPRECATED: This option is maintained for backward compatibility only.
+        New projects should use RT_USING_CLOCK_TIME instead.
+        
         When enable this option, the BSP should provide a rt_clock_cputime_ops
         for CPU time by:
         const static struct rt_clock_cputime_ops _ops = {...};
