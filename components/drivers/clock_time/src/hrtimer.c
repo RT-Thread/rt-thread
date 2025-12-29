@@ -74,8 +74,8 @@ rt_weak rt_err_t rt_clock_hrtimer_settimeout(unsigned long cnt)
 /**
  * @brief convert cnt from cputimer cnt to hrtimer cnt
  *
- * @param cnt
- * @return unsigned long
+ * @param cnt Target count value
+ * @return Converted count for hrtimer
  */
 static unsigned long _cnt_convert(unsigned long cnt)
 {
@@ -94,7 +94,12 @@ static unsigned long _cnt_convert(unsigned long cnt)
     if (count > (_HRTIMER_MAX_CNT / 2))
         return 0;
 
-    rtn = (count * rt_clock_cputimer_getres()) / rt_clock_hrtimer_getres();
+    /* Use 64-bit intermediate to prevent overflow in multiplication */
+    rt_uint64_t count_64 = (rt_uint64_t)count;
+    rt_uint64_t res_cpu = rt_clock_cputimer_getres();
+    rt_uint64_t res_hr = rt_clock_hrtimer_getres();
+    
+    rtn = (unsigned long)((count_64 * res_cpu) / res_hr);
     return rtn == 0 ? 1 : rtn; /* at least 1 */
 }
 

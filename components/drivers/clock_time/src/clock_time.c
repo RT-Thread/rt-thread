@@ -63,8 +63,8 @@ rt_err_t rt_clock_time_device_register(struct rt_clock_time_device *dev,
             }
             else
             {
-                /* For very low frequencies, calculate more carefully */
-                dev->res_scale = (1000000ULL * RT_CLOCK_TIME_RESMUL) / freq * 1000;
+                /* For very low frequencies, calculate more carefully to avoid precision loss */
+                dev->res_scale = ((1000000ULL * RT_CLOCK_TIME_RESMUL * 1000) / freq);
             }
         }
         else
