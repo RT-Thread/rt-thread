@@ -5,51 +5,223 @@ config RT_USING_POSIX_FS
     select RT_USING_DFS
     select DFS_USING_POSIX
     default n
+    help
+        Enable POSIX-compliant file system and I/O APIs.
+        
+        Provides standard POSIX file operations:
+        - File I/O: open(), read(), write(), close(), lseek()
+        - Directory: opendir(), readdir(), closedir()
+        - File control: fcntl(), ioctl()
+        - File status: stat(), fstat(), access()
+        - File operations: unlink(), rename(), chmod()
+        
+        Benefits:
+        - Source code compatibility with Linux/Unix
+        - Easier porting of existing applications
+        - Standard API familiar to developers
+        - Better integration with third-party libraries
+        
+        Requirements:
+        - RT_USING_DFS must be enabled
+        - File system support (FAT, ROM-FS, etc.)
+        
+        Enable for applications requiring POSIX file I/O compatibility.
+        Essential for porting Linux/Unix applications to RT-Thread.
 
 if RT_USING_POSIX_FS
     config RT_USING_POSIX_DEVIO
         bool "Enable devices as file descriptors"
         select RT_USING_DFS_DEVFS
         default n
+        help
+            Access devices through file descriptors like regular files.
+            
+            Allows opening devices in /dev using standard file operations:
+            - fd = open("/dev/uart1", O_RDWR)
+            - read(fd, buffer, size) / write(fd, buffer, size)
+            - ioctl(fd, cmd, arg) for device control
+            - close(fd)
+            
+            Benefits:
+            - Unified I/O model for files and devices
+            - Compatible with select/poll for device I/O
+            - Easier application design
+            
+            Automatically enables devfs (/dev filesystem).
+            
+            Enable for POSIX-style device access.
+            Required for RT_USING_POSIX_STDIO.
 
     config RT_USING_POSIX_STDIO
         bool "Enable standard I/O devices, e.g. STDOUT_FILENO"
         select RT_USING_POSIX_DEVIO
         default n
+        help
+            Enable standard POSIX I/O file descriptors.
+            
+            Provides standard file descriptors:
+            - STDIN_FILENO (0): Standard input
+            - STDOUT_FILENO (1): Standard output
+            - STDERR_FILENO (2): Standard error
+            
+            Allows using printf, scanf, fprintf with standard streams.
+            
+            Benefits:
+            - Compatible with standard C library I/O
+            - Easier debugging with stderr
+            - Standard input/output redirection
+            
+            Requires RT_USING_POSIX_DEVIO (device file descriptors).
+            
+            Enable for applications using stdin/stdout/stderr.
 
     config RT_USING_POSIX_POLL
         bool "Enable I/O Multiplexing poll() <poll.h>"
         default y if RT_USING_SMART
         default n
+        help
+            Enable POSIX poll() for I/O multiplexing.
+            
+            poll() monitors multiple file descriptors for I/O events:
+            - Wait for data available on sockets/files
+            - Detect when writing won't block
+            - Error and hangup conditions
+            - Timeout support
+            
+            Use cases:
+            - Network servers handling multiple connections
+            - Monitoring multiple devices simultaneously
+            - Event-driven I/O programming
+            
+            More portable than select() (no FD_SETSIZE limit).
+            
+            Automatically enabled in RT-Smart mode.
+            Enable for I/O multiplexing applications.
 
     config RT_USING_POSIX_SELECT
         bool "Enable I/O Multiplexing select() <sys/select.h>"
         select RT_USING_POSIX_POLL
         default y if RT_USING_SMART
         default n
+        help
+            Enable POSIX select() for I/O multiplexing.
+            
+            select() monitors file descriptors for I/O readiness:
+            - Check multiple sockets/files for data
+            - Wait with timeout
+            - Detect errors and exceptions
+            
+            Compatible with BSD sockets and standard POSIX API.
+            
+            Advantages over poll():
+            + More widely known API
+            + Compatible with older code
+            
+            Disadvantages:
+            - Limited to FD_SETSIZE file descriptors (typically 1024)
+            - Less efficient for large numbers of FDs
+            
+            Automatically enables poll() (implementation uses poll).
+            
+            Enable for applications using select() API.
 
     config RT_USING_POSIX_EVENTFD
         bool "Enable I/O event eventfd <sys/eventfd.h>"
         select RT_USING_POSIX_POLL
         default y if RT_USING_SMART
         default n
+        help
+            Enable Linux-style eventfd for event notification.
+            
+            eventfd provides a file descriptor for event notification:
+            - Create event object: eventfd(initval, flags)
+            - Signal event: write(efd, &value, 8)
+            - Wait for event: read(efd, &value, 8)
+            - Integrates with poll/select/epoll
+            
+            Features:
+            - Semaphore-style counting (EFD_SEMAPHORE)
+            - Non-blocking mode (EFD_NONBLOCK)
+            - Cloexec flag support (EFD_CLOEXEC)
+            
+            Use cases:
+            - Thread/process notification
+            - Event-driven architectures
+            - Integrating with poll/epoll event loops
+            
+            Lighter weight than pipes for simple notifications.
+            
+            Enable for Linux-compatible event notification.
 
     if RT_USING_SMART
         config RT_USING_POSIX_EPOLL
             bool "Enable I/O Multiplexing epoll <sys/epoll.h>"
             select RT_USING_POSIX_POLL
             default y
+            help
+                Enable Linux epoll for scalable I/O multiplexing.
+                
+                epoll is designed for handling large numbers of file descriptors:
+                - No FD_SETSIZE limit (unlike select)
+                - O(1) performance (vs O(n) for select/poll)
+                - Edge-triggered and level-triggered modes
+                - One-shot mode support
+                
+                API:
+                - epoll_create(): Create epoll instance
+                - epoll_ctl(): Add/modify/remove file descriptors
+                - epoll_wait(): Wait for I/O events
+                
+                Benefits:
+                - Scales to thousands of connections
+                - Better performance for large FD sets
+                - More flexible event notification
+                
+                Use cases:
+                - High-performance network servers
+                - Event-driven applications
+                - Systems with many concurrent I/O operations
+                
+                Required for RT-Smart. Recommended for server applications.
 
         config RT_USING_POSIX_SIGNALFD
             bool "Enable Signalfd <sys/signalfd.h>"
             select RT_USING_POSIX_POLL
             default y
+            help
+                Enable signalfd for receiving signals via file descriptor.
+                
+                signalfd converts signal delivery into file I/O:
+                - Create: signalfd(fd, &mask, flags)
+                - Read signal info: read(sfd, &siginfo, sizeof(siginfo))
+                - Integrate with poll/select/epoll
+                
+                Benefits:
+                - Unified event handling (signals + I/O)
+                - Avoid signal handler race conditions
+                - Easier signal processing in event loops
+                
+                Use cases:
+                - Event-driven applications handling signals
+                - Integrating signals with epoll event loops
+                - Safe signal handling without signal handlers
+                
+                Required for RT-Smart signal handling integration.
 
         if RT_USING_POSIX_SIGNALFD
             config RT_SIGNALFD_MAX_NUM
                 int "signaled The maximum number of concurrent firing signals"
                 range 1 20
                 default 10
+                help
+                    Maximum number of signals that can be queued in signalfd.
+                    
+                    Default: 10 signals
+                    
+                    Limits memory usage for signal buffering.
+                    Increase if applications generate many concurrent signals.
+                    
+                    Each signal uses ~128 bytes for siginfo structure.
         endif
     endif
 
@@ -57,62 +229,307 @@ if RT_USING_POSIX_FS
             bool "Enable I/O timerfd <sys/timerfd.h>"
             default y if RT_USING_SMART
             default n
+            help
+                Enable timerfd for timer notification via file descriptor.
+                
+                timerfd provides timer expiration as file I/O events:
+                - Create: timerfd_create(clockid, flags)
+                - Set timer: timerfd_settime(fd, flags, &spec, NULL)
+                - Read expiration: read(tfd, &expirations, 8)
+                - Integrate with poll/select/epoll
+                
+                Features:
+                - One-shot and periodic timers
+                - Absolute and relative timeouts
+                - Can be monitored with epoll
+                
+                Benefits:
+                - Unified event handling (timers + I/O)
+                - Multiple independent timers
+                - Compatible with event-driven design
+                
+                Use cases:
+                - Event loop timers
+                - Timeout handling in servers
+                - Periodic tasks in event-driven apps
+                
+                Enable for file-descriptor-based timer notification.
 
     config RT_USING_POSIX_SOCKET
         bool "Enable BSD Socket I/O <sys/socket.h> <netdb.h>"
         select RT_USING_POSIX_SELECT
         select RT_USING_SAL
         default n
+        help
+            Enable POSIX BSD socket API for network programming.
+            
+            Provides standard socket APIs:
+            - socket(), bind(), listen(), accept(), connect()
+            - send(), recv(), sendto(), recvfrom()
+            - setsockopt(), getsockopt()
+            - getaddrinfo(), gethostbyname()
+            
+            Requires SAL (Socket Abstraction Layer) for network stack.
+            
+            Enables network application development with standard API.
+            See Network -> SAL configuration for protocol stack selection.
 
     config RT_USING_POSIX_TERMIOS
         bool "Enable Terminal I/O <termios.h>"
         select RT_USING_POSIX_STDIO
         default n
+        help
+            Enable POSIX terminal I/O control (termios).
+            
+            Provides terminal control APIs:
+            - tcgetattr(), tcsetattr(): Get/set terminal attributes
+            - cfsetispeed(), cfsetospeed(): Set baud rates
+            - tcdrain(), tcflush(), tcflow(): Terminal flow control
+            
+            Features:
+            - Raw and canonical mode control
+            - Baud rate configuration
+            - Character size and parity settings
+            - Flow control (hardware/software)
+            
+            Use cases:
+            - Serial terminal configuration
+            - Raw mode for binary protocols
+            - Terminal emulation applications
+            
+            Requires RT_USING_POSIX_STDIO (standard I/O).
+            
+            Enable for POSIX terminal control compatibility.
 
     config RT_USING_POSIX_AIO
         bool "Enable Asynchronous I/O <aio.h>"
         default n
+        help
+            Enable POSIX Asynchronous I/O APIs.
+            
+            Provides async I/O operations:
+            - aio_read(), aio_write(): Asynchronous read/write
+            - aio_fsync(): Asynchronous file sync
+            - aio_suspend(): Wait for async operations
+            - aio_error(), aio_return(): Check status
+            
+            Benefits:
+            - Non-blocking I/O operations
+            - Better CPU utilization
+            - Overlap I/O with computation
+            
+            Use cases:
+            - High-performance file I/O
+            - Database systems
+            - Large file operations
+            
+            Note: Requires careful memory management.
+            Overhead: ~200-400 bytes per async operation.
 
     config RT_USING_POSIX_MMAN
         bool "Enable Memory-Mapped I/O <sys/mman.h>"
         default n
+        help
+            Enable POSIX memory mapping (mmap).
+            
+            Provides memory mapping APIs:
+            - mmap(): Map files or devices into memory
+            - munmap(): Unmap memory regions
+            - mprotect(): Set memory protection
+            - msync(): Synchronize memory with file
+            
+            Benefits:
+            - Efficient file I/O (no read/write calls)
+            - Shared memory between processes
+            - Large file handling
+            
+            Use cases:
+            - Large file access
+            - Shared memory IPC
+            - Memory-mapped device registers
+            
+            Requires MMU or MPU support.
+            Available in RT-Smart with proper hardware support.
 endif
 
 config RT_USING_POSIX_DELAY
     select RT_USING_KTIME
     bool "Enable delay APIs, sleep()/usleep()/msleep() etc"
     default n
+    help
+        Enable POSIX delay/sleep functions.
+        
+        Provides standard delay APIs:
+        - sleep(seconds): Sleep for seconds
+        - usleep(microseconds): Sleep for microseconds  
+        - msleep(milliseconds): Sleep for milliseconds
+        - nanosleep(timespec): High-precision sleep
+        
+        Based on RT-Thread's kernel time (ktime) for accuracy.
+        
+        Benefits:
+        - Standard POSIX API for delays
+        - Better code portability
+        - Microsecond precision
+        
+        Enable for POSIX-compatible delay functions.
+        Automatically selected by RT_USING_POSIX_CLOCK.
 
 config RT_USING_POSIX_CLOCK
     bool "Enable clock/time APIs, clock_gettime()/clock_settime() etc"
     select RT_USING_POSIX_DELAY
     default n
+    help
+        Enable POSIX clock and time APIs.
+        
+        Provides standard time functions:
+        - clock_gettime(): Get clock time
+        - clock_settime(): Set clock time
+        - clock_getres(): Get clock resolution
+        
+        Supported clocks:
+        - CLOCK_REALTIME: System-wide real-time clock
+        - CLOCK_MONOTONIC: Monotonic time (doesn't jump)
+        - CLOCK_PROCESS_CPUTIME_ID: Process CPU time
+        - CLOCK_THREAD_CPUTIME_ID: Thread CPU time
+        
+        Benefits:
+        - Standard time API
+        - High-resolution timestamps
+        - Monotonic time for intervals
+        
+        Required by pthreads and POSIX timers.
+        Enable for POSIX time functionality.
 
 config RT_USING_POSIX_TIMER
     select RT_USING_KTIME
     select RT_USING_RESOURCE_ID
     bool "Enable timer APIs, timer_create()/timer_gettime() etc"
     default n
+    help
+        Enable POSIX interval timers.
+        
+        Provides POSIX timer APIs:
+        - timer_create(): Create a timer
+        - timer_settime(): Arm/disarm timer
+        - timer_gettime(): Get timer status
+        - timer_delete(): Delete timer
+        
+        Features:
+        - Per-process timers
+        - One-shot and periodic modes
+        - Signal-based or thread-based notification
+        - Absolute and relative timeouts
+        
+        Use cases:
+        - Periodic task execution
+        - Timeout handling
+        - Watchdog timers
+        - Scheduled events
+        
+        Requires KTIME and resource ID management.
+        Enable for POSIX timer functionality.
 
 config RT_USING_PTHREADS
     bool "Enable pthreads APIs"
     select RT_USING_POSIX_CLOCK
     default n
+    help
+        Enable POSIX threads (pthreads) API.
+        
+        Provides standard threading APIs:
+        - Thread management: pthread_create(), pthread_join(), pthread_exit()
+        - Mutex: pthread_mutex_lock(), pthread_mutex_unlock()
+        - Condition variables: pthread_cond_wait(), pthread_cond_signal()
+        - Read-write locks: pthread_rwlock_*()
+        - Barriers: pthread_barrier_*()
+        - Thread-specific data: pthread_key_create(), pthread_setspecific()
+        
+        Benefits:
+        - Standard threading API for portability
+        - Compatible with Linux/Unix applications
+        - Rich synchronization primitives
+        
+        Implementation:
+        - Maps to RT-Thread native threads
+        - Full POSIX thread attribute support
+        - Detached and joinable threads
+        
+        Essential for porting multi-threaded POSIX applications.
+        
+        Configure maximum threads with PTHREAD_NUM_MAX.
 
 if RT_USING_PTHREADS
     config PTHREAD_NUM_MAX
         int "Maximum number of pthreads"
         default 8
+        help
+            Maximum number of POSIX threads (pthreads) that can exist simultaneously.
+            
+            Default: 8 threads
+            
+            Each pthread uses:
+            - Thread control block (~100-200 bytes)
+            - Stack (configured per thread)
+            - pthread-specific data storage
+            
+            Increase for applications creating many threads.
+            Decrease to save memory on constrained systems.
+            
+            Note: This is separate from RT-Thread native thread limit.
 endif
 
 config RT_USING_MODULE
     bool "Enable dynamic module APIs, dlopen()/dlsym()/dlclose() etc"
     default n
+    help
+        Enable POSIX dynamic module loading (dlopen/dlsym).
+        
+        Provides dynamic library APIs:
+        - dlopen(): Load shared library
+        - dlsym(): Get symbol address from library
+        - dlclose(): Unload library
+        - dlerror(): Get error string
+        
+        Features:
+        - Runtime loading of .so files
+        - Symbol resolution
+        - Lazy and immediate binding
+        - RTLD_GLOBAL and RTLD_LOCAL scope
+        
+        Use cases:
+        - Plugin architectures
+        - Optional feature loading
+        - Runtime extensibility
+        - Reduce initial memory footprint
+        
+        Requires:
+        - DFS for file system access
+        - Module support in build system
+        
+        Note: Increases complexity and security considerations.
+        Enable for dynamic module/plugin support.
 
 if RT_USING_MODULE
     config RT_USING_CUSTOM_DLMODULE
         bool "Enable load dynamic module by custom"
         default n
+        help
+            Enable custom dynamic module loader.
+            
+            Allows implementing custom module loading logic:
+            - Custom file format support
+            - Special initialization sequences
+            - Security checks and validation
+            - Custom symbol resolution
+            
+            Use cases:
+            - Proprietary module formats
+            - Enhanced security validation
+            - Special loading requirements
+            
+            Disable for standard ELF module loading.
+            Enable only if custom loader needed.
 endif
 
 rsource "ipc/Kconfig"

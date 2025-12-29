@@ -3,12 +3,61 @@ menuconfig RT_USING_LWP
     depends on RT_USING_SMART
     default y
     help
-        The lwP is a light weight process running in user mode.
+        LWP (Light Weight Process) provides user-space process support in RT-Smart mode.
+        
+        Features:
+        - User-space and kernel-space separation
+        - Process isolation with MMU/MPU
+        - POSIX process APIs (fork, exec, waitpid, etc.)
+        - Inter-process communication (IPC)
+        - Signal handling
+        - Dynamic linking and loading (LDSO)
+        
+        Benefits:
+        - Memory protection between processes
+        - Fault isolation (process crash doesn't affect kernel)
+        - Multi-user application support
+        - Better security and stability
+        
+        Requirements:
+        - RT_USING_SMART must be enabled
+        - CPU with MMU or MPU support
+        - DFS v2.0 for file system access
+        
+        Use cases:
+        - Running untrusted user applications
+        - Mixed-criticality systems
+        - Applications requiring process isolation
+        - POSIX application porting
+        
+        Note: LWP is the foundation of RT-Smart user-space support.
+        Required for running user-space applications.
 
 if RT_USING_LWP
     menuconfig LWP_DEBUG
         bool "Enable debugging features of LwP"
         default n
+        help
+            Enable debugging and tracing features for LWP processes.
+            
+            Debug features:
+            - Process state transitions logging
+            - Memory allocation tracking
+            - IPC operation tracing
+            - Signal delivery monitoring
+            
+            Useful for:
+            - Development and debugging
+            - Troubleshooting process issues
+            - Performance analysis
+            - System behavior understanding
+            
+            Overhead:
+            - Increased log output
+            - Slightly slower process operations
+            - Additional ROM for debug strings (~2-4KB)
+            
+            Enable during development, disable in production for performance.
 
     if LWP_DEBUG
         config LWP_DEBUG_INIT
@@ -16,56 +65,231 @@ if RT_USING_LWP
             bool "Enable debug mode of init process"
             depends on LWP_USING_RUNTIME
             default y
+            help
+                Enable detailed debugging for init process (PID 1).
+                
+                Traces init process activities:
+                - Boot script execution
+                - Child process spawning
+                - Signal handling
+                - Shutdown sequence
+                
+                Useful for debugging system startup and shutdown issues.
+                Requires LWP_USING_RUNTIME enabled.
     endif
 
     config LWP_USING_RUNTIME
         bool "Using processes runtime environment (INIT process)"
         default y
         help
-            Runtime environment provide by init process including boot scripts,
-            poweroff, shutdown, reboot, etc.
+            Enable init process and runtime environment for user-space.
+            
+            Provides Linux-like init system (PID 1) that:
+            - Starts as first user process
+            - Executes boot scripts (/etc/rc.local, /etc/init.d/*)
+            - Manages system lifecycle
+            - Handles orphaned processes
+            - Provides system commands (poweroff, reboot, shutdown)
+            
+            Features:
+            - Boot script support for auto-starting applications
+            - Graceful shutdown handling
+            - Process reaping (zombie cleanup)
+            - System service management
+            
+            Required for:
+            - Complete RT-Smart user-space environment
+            - Automatic application startup
+            - System lifecycle management
+            
+            Disable only for minimal systems without init process.
 
     config RT_LWP_MAX_NR
         int "The max number of light-weight process"
         default 30
+        help
+            Maximum number of processes that can run simultaneously.
+            
+            Default: 30 processes
+            
+            Each process uses:
+            - ~200-400 bytes for process control block
+            - Separate page tables (MMU systems)
+            - Individual memory spaces
+            
+            Total memory: RT_LWP_MAX_NR × ~300 bytes (minimum)
+            
+            Increase for:
+            - Systems running many concurrent applications
+            - Multi-user environments
+            
+            Decrease to save memory on constrained systems.
+            Minimum recommended: 8-10 processes.
 
     config LWP_TASK_STACK_SIZE
         int "The lwp thread kernel stack size"
         default 16384
+        help
+            Kernel stack size for each LWP thread in bytes.
+            
+            Default: 16384 bytes (16KB)
+            
+            This is the kernel-mode stack used when process enters kernel via:
+            - System calls
+            - Exception handling
+            - Interrupt processing
+            
+            Stack usage depends on:
+            - System call complexity
+            - Nested interrupt depth
+            - Kernel function call chains
+            
+            Increase if:
+            - Kernel stack overflow errors
+            - Deep system call nesting
+            - Complex device drivers
+            
+            Decrease to save RAM (minimum ~8KB for basic operations).
+            Each LWP thread requires this much kernel stack.
 
     config RT_CH_MSG_MAX_NR
         int "The maximum number of channel messages"
         default 1024
+        help
+            Maximum number of messages in channel IPC message pool.
+            
+            Default: 1024 messages
+            
+            Channels provide RT-Thread's native IPC mechanism for LWP:
+            - Higher performance than POSIX IPC
+            - Direct memory-mapped communication
+            - Zero-copy message passing
+            
+            Each message slot uses ~32-64 bytes depending on message size.
+            
+            Increase for:
+            - High-frequency IPC between processes
+            - Many concurrent channel communications
+            
+            Decrease to save memory if channel IPC not heavily used.
 
     config LWP_TID_MAX_NR
         int "The maximum number of lwp thread id"
         default 64
+        help
+            Maximum number of thread IDs available for LWP threads.
+            
+            Default: 64 thread IDs
+            
+            Each process can create multiple threads. This limits total
+            thread IDs across all processes.
+            
+            Typical usage:
+            - Single-threaded processes: 1 TID each
+            - Multi-threaded processes: N TIDs per process
+            
+            Total threads = sum of threads in all processes
+            
+            Increase for:
+            - Applications creating many threads
+            - Many multi-threaded processes
+            
+            Decrease if applications mostly single-threaded.
 
     config LWP_ENABLE_ASID
         bool "The switch of ASID feature"
         depends on ARCH_ARM_CORTEX_A
         default y
+        help
+            Enable Address Space ID (ASID) for Cortex-A processors.
+            
+            ASID provides hardware-based process identification:
+            - Tags TLB entries with process ID
+            - Avoids TLB flush on context switch
+            - Significantly faster process switching
+            
+            Performance impact:
+            - 50-70% faster context switch between processes
+            - Better TLB hit rate
+            - Reduced MMU overhead
+            
+            Automatically enabled for Cortex-A (recommended).
+            Only disable for debugging TLB-related issues.
+            
+            Note: Requires CPU with ASID support (ARMv7-A and above).
 
     if ARCH_MM_MMU
         config RT_LWP_SHM_MAX_NR
             int "The maximum number of shared memory"
             default 64
+            help
+                Maximum number of shared memory segments for inter-process communication.
+                
+                Default: 64 segments
+                
+                Shared memory provides:
+                - Fastest IPC method (direct memory access)
+                - POSIX shm_open()/shm_unlink() APIs
+                - mmap() for memory-mapped sharing
+                
+                Each segment descriptor uses ~40-60 bytes.
+                
+                Increase for:
+                - Applications using extensive shared memory
+                - Multiple processes sharing data
+                - High-performance IPC requirements
+                
+                Decrease to save memory if shared memory rarely used.
 
         config LWP_USING_MPROTECT
             bool
             default n
             help
-                ARCH has the support of mprotect
+                Architecture has mprotect() support for memory protection.
+                
+                mprotect() allows changing memory region permissions:
+                - Read, write, execute permissions
+                - Guard pages for stack overflow detection
+                - Memory region isolation
+                
+                Automatically enabled by architecture support.
+                User does not configure directly.
     endif
 
     if ARCH_MM_MPU
         config RT_LWP_MPU_MAX_NR
             int "The maximum number of mpu region"
             default 2
+            help
+                Maximum number of MPU regions per process.
+                
+                Default: 2 regions per process
+                
+                MPU provides memory protection without full MMU:
+                - Limited number of protection regions
+                - Simpler than MMU but less flexible
+                
+                Regions typically used for:
+                - Code region (read-execute)
+                - Data region (read-write)
+                - Stack guard region
+                
+                Limited by hardware MPU region count.
+                Check your CPU MPU capabilities.
 
         config RT_LWP_USING_SHM
             bool "Enable shared memory"
             default y
+            help
+                Enable shared memory support for MPU-based systems.
+                
+                Provides shared memory IPC even without MMU:
+                - Processes can share memory regions
+                - Requires careful MPU configuration
+                - More limited than MMU-based sharing
+                
+                Enable for IPC in MPU-only systems (Cortex-M with MPU).
+                Disable if not using shared memory to save ~1-2KB ROM.
     endif
 
     menuconfig RT_USING_LDSO
@@ -73,15 +297,76 @@ if RT_USING_LWP
         depends on RT_USING_DFS_V2
         select RT_USING_PAGECACHE
         default y
+        help
+            Enable dynamic linker/loader for shared libraries and executables.
+            
+            LDSO (LD.SO - Link editor, Shared Object) provides:
+            - Dynamic linking of shared libraries (.so files)
+            - Runtime loading of executables (ELF files)
+            - Symbol resolution and relocation
+            - Lazy binding for faster startup
+            
+            Features:
+            - Load executables from file system
+            - Share library code between processes (saves RAM)
+            - Update libraries without recompiling applications
+            - Standard ELF binary support
+            
+            Requirements:
+            - DFS v2.0 for file system access
+            - Page cache for performance
+            
+            Use cases:
+            - Running standard Linux binaries
+            - Modular application architecture
+            - Shared library usage
+            - Dynamic plugin loading
+            
+            Essential for RT-Smart user-space applications.
+            ROM overhead: ~10-15KB for LDSO implementation.
 
     if RT_USING_LDSO
         config ELF_DEBUG_ENABLE
             bool "Enable ldso debug"
             default n
+            help
+                Enable debugging output for dynamic linker/loader operations.
+                
+                Debug information includes:
+                - Library loading and unloading
+                - Symbol resolution process
+                - Relocation details
+                - Memory mapping operations
+                
+                Useful for:
+                - Troubleshooting loading failures
+                - Understanding dependency chains
+                - Debugging symbol resolution issues
+                
+                Disable in production for reduced log output and smaller ROM.
 
         config ELF_LOAD_RANDOMIZE
             bool "Enable random load address"
             default n
+            help
+                Enable ASLR (Address Space Layout Randomization) for loaded binaries.
+                
+                Security feature that randomizes:
+                - Executable base address
+                - Shared library load addresses
+                - Stack and heap positions
+                
+                Benefits:
+                - Harder to exploit buffer overflows
+                - Prevents return-to-libc attacks
+                - Increases security against memory exploits
+                
+                Overhead:
+                - Slightly slower loading
+                - More complex debugging (non-deterministic addresses)
+                
+                Enable for security-critical applications.
+                Disable for easier debugging or deterministic behavior.
     endif
 
 rsource "terminal/Kconfig"

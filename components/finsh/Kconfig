@@ -3,95 +3,324 @@ menuconfig RT_USING_MSH
     default n if RT_USING_NANO
     default y
     select RT_USING_SEMAPHORE
+    help
+        MSH (Module SHell) is RT-Thread's command-line interface (CLI) shell.
+        
+        Provides interactive command execution for:
+        - System debugging and monitoring
+        - Runtime configuration and testing
+        - File system operations
+        - Network diagnostics
+        - Custom application commands
+        
+        Features:
+        - Tab completion for commands and file paths
+        - Command history with arrow keys
+        - Built-in commands (ls, ps, free, etc.)
+        - Custom command registration via MSH_CMD_EXPORT()
+        - Authentication support for secure access
+        
+        Typical use cases:
+        - Development and debugging
+        - Production diagnostics
+        - Interactive testing
+        - System administration
+        
+        Note: Disable for headless embedded systems to save ~8-16KB ROM.
+        Automatically disabled in RT_USING_NANO configuration.
 
 if RT_USING_MSH
 
     config RT_USING_FINSH
         bool
         default y
+        help
+            Internal configuration for finsh shell support.
+            Automatically enabled when RT_USING_MSH is selected.
+            Do not modify directly.
 
     config FINSH_USING_MSH
         bool
         default y
+        help
+            Use MSH (Module SHell) mode instead of traditional C-expression shell.
+            MSH provides a more familiar POSIX-like command interface.
+            Automatically enabled when RT_USING_MSH is selected.
+            Do not modify directly.
 
     config FINSH_THREAD_NAME
         string "The msh thread name"
         default "tshell"
+        help
+            Name of the MSH shell thread visible in thread list.
+            
+            Default: "tshell"
+            
+            Change this to avoid name conflicts or for identification purposes.
+            Thread name length limited by RT_NAME_MAX (default 8 chars).
 
     config FINSH_THREAD_PRIORITY
         int "The priority level value of thread"
         default 20
+        help
+            Priority of MSH shell thread (lower number = higher priority).
+            
+            Default: 20 (low priority)
+            
+            Recommendations:
+            - Keep at low priority (15-25) to avoid blocking real-time tasks
+            - Increase priority if shell responsiveness is critical
+            - Must be less than RT_THREAD_PRIORITY_MAX
+            
+            Note: Shell executes user commands which may have high CPU usage.
 
     config FINSH_THREAD_STACK_SIZE
         int "The stack size for thread"
         default 4096
+        help
+            Stack size in bytes for the MSH shell thread.
+            
+            Default: 4096 bytes (4KB)
+            
+            Increase if:
+            - Shell commands use deep recursion or large local variables
+            - Running complex scripts
+            - Stack overflow errors occur
+            
+            Decrease to save RAM on memory-constrained systems (minimum ~2KB).
+            
+            Note: Each command execution may require additional stack space.
 
     config FINSH_USING_HISTORY
         bool "Enable command history feature"
         default y
+        help
+            Enable command history buffer with up/down arrow key navigation.
+            
+            Features:
+            - Recall previous commands with up arrow
+            - Navigate forward with down arrow
+            - Configurable number of history lines
+            
+            Memory cost: ~80 bytes × FINSH_HISTORY_LINES
+            
+            Enable for improved user experience during interactive sessions.
+            Disable to save minimal RAM (~400 bytes with default 5 lines).
 
     if FINSH_USING_HISTORY
         config FINSH_HISTORY_LINES
             int "The command history line number"
             default 5
+            help
+                Number of command lines stored in history buffer.
+                
+                Default: 5 lines
+                
+                Each line uses ~80 bytes (FINSH_CMD_SIZE).
+                Total memory: FINSH_HISTORY_LINES × FINSH_CMD_SIZE
+                
+                Increase for longer history (up to ~10-20 lines reasonable).
+                Decrease to save RAM on constrained systems.
     endif
 
     config FINSH_USING_WORD_OPERATION
         bool "Enable word-based cursor operations"
         default n
         help
-            Enable Ctrl+Backspace to delete words and Ctrl+Arrow to move cursor by word
+            Enable Ctrl+Backspace to delete words and Ctrl+Arrow to move cursor by word.
+            
+            Provides enhanced editing with word-boundary operations:
+            - Ctrl+Backspace: Delete word before cursor
+            - Ctrl+Left/Right Arrow: Move cursor by word
+            
+            Improves command-line editing efficiency for long commands.
+            Minimal memory overhead (~100 bytes).
         
     config FINSH_USING_FUNC_EXT
         bool "Enable function extension home end ins del"
         default n
         help
-            Enable function extension home end ins del.
+            Enable extended function keys for cursor movement and editing.
+            
+            Supported keys:
+            - Home: Move cursor to start of line
+            - End: Move cursor to end of line
+            - Insert: Toggle insert/overwrite mode
+            - Delete: Delete character at cursor
+            
+            Provides familiar editing experience from standard terminals.
+            Minimal memory overhead (~100 bytes).
 
     config FINSH_USING_SYMTAB
         bool "Using symbol table for commands"
         default y
+        help
+            Use symbol table to store and lookup shell commands.
+            
+            When enabled:
+            - Commands registered via MSH_CMD_EXPORT() are stored in symbol table
+            - Supports command name lookup and auto-completion
+            - Enables help command to list all available commands
+            
+            Required for most shell functionality. Only disable for minimal
+            configurations where commands are hard-coded.
+            
+            Disabling saves ~1-2KB depending on number of commands.
 
     config FINSH_CMD_SIZE
         int "The command line size for shell"
         default 80
+        help
+            Maximum length of a single command line including arguments.
+            
+            Default: 80 characters
+            
+            Increase if you need to:
+            - Enter long file paths
+            - Pass many arguments to commands
+            - Use complex command pipelines
+            
+            Decrease to save RAM (minimum ~40 chars recommended).
+            
+            Memory impact: FINSH_CMD_SIZE bytes per command buffer +
+            FINSH_CMD_SIZE × FINSH_HISTORY_LINES for history
 
     config MSH_USING_BUILT_IN_COMMANDS
         bool "Enable built-in commands, such as list_thread"
         default y
+        help
+            Include standard built-in shell commands.
+            
+            Built-in commands include:
+            - System: help, version, reboot
+            - Threads: list_thread (ps), list_sem, list_mutex, list_timer
+            - Memory: free, memcheck, memtrace
+            - File system: ls, cd, pwd, cat, rm, mkdir, etc.
+            
+            Disabling removes these commands but allows custom implementations.
+            Saves ~4-8KB ROM depending on enabled features.
+            
+            Recommended to keep enabled unless implementing custom command set.
 
     config FINSH_USING_DESCRIPTION
         bool "Keeping description in symbol table"
         default y
+        help
+            Store command descriptions in symbol table for help text.
+            
+            When enabled:
+            - 'help' command shows detailed description for each command
+            - MSH_CMD_EXPORT() macro can include description parameter
+            
+            Cost: ~20-50 bytes per command for description strings
+            
+            Disable to save ROM if help text not needed in production.
+            Keep enabled during development for better usability.
 
     config FINSH_ECHO_DISABLE_DEFAULT
         bool "Disable the echo mode in default"
         default n
+        help
+            Disable character echo by default when shell starts.
+            
+            When disabled (echo off):
+            - Typed characters not displayed (useful for password input)
+            - Can be toggled at runtime with 'echo' command
+            
+            Normal configuration: Keep disabled (echo enabled by default)
+            
+            Enable this option to start with echo off, useful for:
+            - Security-sensitive applications
+            - Non-interactive serial protocols
+            - Automated test scripts
 
     config FINSH_USING_AUTH
         bool "shell support authentication"
         default n
+        help
+            Enable password authentication for shell access.
+            
+            Security features:
+            - Password prompt on shell connection
+            - Configurable password and length requirements
+            - Locks shell until correct password entered
+            
+            Use cases:
+            - Production systems with console access
+            - Security-critical applications
+            - Preventing unauthorized access via UART/Telnet
+            
+            Note: Password stored in plain text in firmware.
+            For strong security, combine with encrypted communication.
 
     if FINSH_USING_AUTH
         config FINSH_DEFAULT_PASSWORD
             string "The default password for shell authentication"
             default "rtthread"
+            help
+                Default password required to access the shell.
+                
+                Default: "rtthread"
+                
+                Security recommendations:
+                - Change from default in production systems
+                - Use strong passwords (mix of letters, numbers, symbols)
+                - Length between FINSH_PASSWORD_MIN and FINSH_PASSWORD_MAX
+                
+                Note: Password stored as plain text in firmware binary.
+                Anyone with firmware access can extract the password.
 
         config FINSH_PASSWORD_MIN
             int "The password min length"
             default 6
+            help
+                Minimum password length in characters.
+                
+                Default: 6 characters
+                
+                Enforces minimum password strength. Increase for better security
+                (recommended: 8+ characters for production).
 
         config FINSH_PASSWORD_MAX
             int "The password max length"
             default RT_NAME_MAX
+            help
+                Maximum password length in characters.
+                
+                Default: RT_NAME_MAX (typically 8)
+                
+                Limited by password buffer size. Increase RT_NAME_MAX if you
+                need longer passwords, but consider memory constraints.
     endif
 
     config FINSH_ARG_MAX
         int "The number of arguments for a shell command"
         default 10
+        help
+            Maximum number of arguments (including command name) that can be
+            passed to a single shell command.
+            
+            Default: 10 arguments
+            
+            Increase if you have commands that need many parameters.
+            Each argument slot uses ~4 bytes (pointer size).
+            
+            Total memory: FINSH_ARG_MAX × sizeof(char*)
 
     config FINSH_USING_OPTION_COMPLETION
         bool "command option completion enable"
         default y
+        help
+            Enable tab completion for command options and arguments.
+            
+            Features:
+            - Press Tab to auto-complete command names
+            - Complete file paths when using file system commands
+            - Show list of matches if multiple options available
+            
+            Greatly improves usability and reduces typing errors.
+            Minimal memory overhead (~200 bytes).
+            
+            Recommended to keep enabled for interactive shells.
 
 endif

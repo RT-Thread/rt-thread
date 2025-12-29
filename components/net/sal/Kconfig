@@ -2,6 +2,35 @@ menuconfig RT_USING_SAL
     bool "SAL: socket abstraction layer"
     select RT_USING_NETDEV
     default n
+    help
+        SAL (Socket Abstraction Layer) provides unified BSD socket API for multiple network stacks.
+        
+        Features:
+        - Standard BSD socket API (socket, bind, connect, send, recv, etc.)
+        - Support multiple protocol stacks simultaneously
+        - Network stack independence for applications
+        - Automatic routing between different network interfaces
+        
+        Supported protocol stacks:
+        - LwIP (full TCP/IP stack)
+        - AT commands (for cellular/WiFi modules)
+        - TLS/SSL (via MbedTLS)
+        - Custom protocol stacks
+        
+        Benefits:
+        - Write once, run on any supported network stack
+        - Easy switching between WiFi, Ethernet, cellular
+        - Multiple network connections concurrently
+        - Standard POSIX socket compatibility
+        
+        Use cases:
+        - Applications requiring network connectivity
+        - Multi-interface systems (WiFi + Ethernet)
+        - IoT devices with multiple network options
+        - Network stack abstraction
+        
+        Enable for any application using network sockets.
+        Overhead: ~4-6KB ROM, ~1KB RAM + socket buffers.
 
 if RT_USING_SAL
 
@@ -15,19 +44,107 @@ if RT_USING_SAL
     config SOCKET_TABLE_STEP_LEN
         int "Configure socket table step length"
         default 4
+        help
+            Growth step size for dynamic socket table expansion.
+            
+            Default: 4 sockets
+            
+            When socket table is full, it grows by this many entries:
+            - Initial size: SAL_SOCKETS_NUM
+            - Grows by: SOCKET_TABLE_STEP_LEN when full
+            
+            Smaller values:
+            + Less wasted memory
+            - More frequent reallocations
+            
+            Larger values:
+            + Fewer reallocations
+            - More unused memory
+            
+            Recommended: 4-8 for most applications.
 
     menu "Docking with protocol stacks"
         config SAL_USING_LWIP
             bool "Docking with lwIP stack"
             default n
+            help
+                Integrate LwIP (Lightweight IP) TCP/IP stack with SAL.
+                
+                LwIP provides full-featured TCP/IP protocol stack:
+                - TCP, UDP, ICMP, IGMP protocols
+                - IPv4 and IPv6 support
+                - DHCP client and server
+                - DNS resolution
+                - Raw socket support
+                
+                When enabled, applications can use BSD sockets backed by LwIP.
+                
+                Required for:
+                - Ethernet networking
+                - WiFi with full TCP/IP
+                - Complex network protocols
+                
+                Enable if using LwIP as network stack.
 
         config SAL_USING_AT
             bool "Docking with AT commands stack"
             default n
+            help
+                Integrate AT command-based network modules with SAL.
+                
+                AT commands provide network connectivity through:
+                - Cellular modules (2G/3G/4G/5G/NB-IoT)
+                - WiFi modules (ESP8266, ESP32, etc.)
+                - Bluetooth modules
+                
+                Features:
+                - BSD socket API over AT commands
+                - Transparent to applications
+                - Supports multiple AT devices
+                - Hardware offload (module handles TCP/IP)
+                
+                Advantages:
+                - Lower MCU resource usage
+                - Faster time-to-market
+                - Leverages module's TCP/IP stack
+                
+                Use cases:
+                - IoT devices with cellular connectivity
+                - Low-power WiFi applications
+                - Systems with network co-processors
+                
+                Enable for AT command-based network modules.
 
         config SAL_USING_TLS
             bool "Docking with MbedTLS protocol"
             default n
+            help
+                Integrate MbedTLS for SSL/TLS secure communication.
+                
+                MbedTLS provides:
+                - SSL/TLS encryption (TLS 1.0-1.3)
+                - X.509 certificate handling
+                - Secure sockets (HTTPS, MQTTS, etc.)
+                - Cryptographic primitives
+                
+                Features:
+                - Transparent SSL/TLS layer over SAL
+                - Certificate verification
+                - Multiple cipher suites
+                - Session resumption
+                
+                Use cases:
+                - HTTPS web clients/servers
+                - Secure MQTT (MQTTS)
+                - Encrypted data transmission
+                - Cloud service connections (AWS, Azure, etc.)
+                
+                Requirements:
+                - MbedTLS package
+                - Network stack (LwIP or AT)
+                - Sufficient RAM for TLS buffers (~20-40KB)
+                
+                Enable for secure network communications.
     endmenu
 
     config SAL_USING_POSIX
@@ -35,12 +152,42 @@ if RT_USING_SAL
         depends on DFS_USING_POSIX
         default y
         help
-            Enable BSD socket operated by file system API
-            Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
+            Enable BSD socket operations via file system API.
+            
+            When enabled, sockets can be used like files:
+            - open/close for socket creation/destruction
+            - read/write for send/receive
+            - select/poll for I/O multiplexing
+            - File descriptor sharing with regular files
+            
+            Benefits:
+            - Unified I/O model (files + sockets)
+            - Compatible with POSIX I/O functions
+            - Works with select/poll
+            - Easier application porting from Linux
+            
+            Automatically enabled when DFS with POSIX is available.
+            Required for RT-Smart user-space socket access.
 
     config SAL_SOCKETS_NUM
         int "the maximum number of sockets"
         depends on !SAL_USING_POSIX
         default 16
+        help
+            Maximum number of sockets that can be created simultaneously.
+            
+            Default: 16 sockets
+            
+            Each socket uses:
+            - ~100-200 bytes for socket structure
+            - Send/receive buffers (protocol stack dependent)
+            
+            Increase for:
+            - Server applications with many concurrent connections
+            - Applications opening multiple sockets
+            
+            Decrease to save memory on constrained systems.
+            
+            Note: Not used when SAL_USING_POSIX enabled (uses DFS_FD_MAX instead).
 
 endif
