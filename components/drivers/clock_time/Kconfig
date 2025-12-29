@@ -1,0 +1,50 @@
+menuconfig RT_USING_CLOCK_TIME
+    bool "Using unified clock_time subsystem"
+    default n
+    help
+        Unified time subsystem that consolidates hwtimer, ktime, and cputime.
+        Provides clock source, clock event, and high-resolution timer support.
+
+if RT_USING_CLOCK_TIME
+
+    config RT_USING_CLOCK_HRTIMER
+        bool "Enable high-resolution timer support"
+        default y
+        help
+            Enable high-resolution software timers built on clock_time devices.
+            
+    config RT_USING_CLOCK_CPUTIME
+        bool "Enable CPU time APIs"
+        default y
+        help
+            Enable CPU time measurement and delay APIs.
+
+    config RT_USING_CLOCK_BOOTTIME
+        bool "Enable boottime APIs"
+        default y
+        help
+            Enable system boottime (monotonic time since boot) APIs.
+
+    # Backward compatibility options
+    config RT_USING_HWTIMER
+        bool
+        default y
+        help
+            Legacy option for backward compatibility with hwtimer.
+            Automatically enabled when RT_USING_CLOCK_TIME is enabled.
+
+    config RT_USING_KTIME
+        bool
+        default y if RT_USING_CLOCK_HRTIMER
+        help
+            Legacy option for backward compatibility with ktime.
+            Automatically enabled when RT_USING_CLOCK_HRTIMER is enabled.
+
+    config RT_USING_CPUTIME
+        bool
+        default y if RT_USING_CLOCK_CPUTIME
+        help
+            Legacy option for backward compatibility with cputime.
+            Automatically enabled when RT_USING_CLOCK_CPUTIME is enabled.
+
+endif

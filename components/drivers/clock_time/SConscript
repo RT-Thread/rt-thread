@@ -1,0 +1,28 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+inc = [cwd + '/inc']
+
+if GetDepend(['RT_USING_CLOCK_TIME']):
+    # Core clock_time device implementation
+    src += ['src/clock_time.c']
+    
+    # High-resolution timer support
+    if GetDepend(['RT_USING_CLOCK_HRTIMER']):
+        src += ['src/hrtimer.c']
+    
+    # CPU time APIs
+    if GetDepend(['RT_USING_CLOCK_CPUTIME']):
+        src += ['src/clock_time_cputime.c']
+    
+    # Boottime APIs  
+    if GetDepend(['RT_USING_CLOCK_BOOTTIME']):
+        src += ['src/clock_time_boottime.c']
+    
+    # Tick-based fallback implementation
+    src += ['src/clock_time_tick.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = inc)
+
+Return('group')
