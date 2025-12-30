@@ -19,10 +19,10 @@
  * Level 1 translation table entry format
  * 
  * It has 4 types:
- *      Fault type:             bit[1:0] = 0b00
+ *      Fault         type:     bit[1:0] = 0b00
  *      Point L2 page type:     bit[1:0] = 0b01
- *      Section type:           bit[1:0] = 0b10 and bit[18] = 0
- *      Supersection type:      bit[1:0] = 0b10 and bit[18] = 1
+ *      Section       type:     bit[1:0] = 0b10 and bit[18] = 0
+ *      Supersection  type:     bit[1:0] = 0b10 and bit[18] = 1
  * 
  * The following defines are for section type entry
  *      bit[01:00]: 0b10
