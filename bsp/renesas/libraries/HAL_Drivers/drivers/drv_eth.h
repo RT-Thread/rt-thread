@@ -105,6 +105,5 @@
 
 #define PHY_LINK (1 << 0)
 #define PHY_100M (1 << 1)
-#define PING_PORT_COUNT (3) ///< Count of port
 
 #endif /* __DRV_ETH_H__ */

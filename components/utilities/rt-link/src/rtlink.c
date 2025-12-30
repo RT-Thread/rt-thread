@@ -48,7 +48,7 @@
 #define RT_LINK_THREAD_NAME         "rtlink"
 #define RT_LINK_THREAD_TICK         20
 #define RT_LINK_THREAD_PRIORITY     25
-#define RT_LINK_THREAD_STACK_SIZE   1024 /* 32 bytes aligned */
+#define RT_LINK_THREAD_STACK_SIZE   (4 * 1024) /* 32 bytes aligned */
 
 #define RT_LINK_FRAME_SENT      1
 #define RT_LINK_FRAME_NOSEND    0
@@ -905,8 +905,8 @@ static void rt_link_frame_recv_timeout(void)
 
 static void rt_link_send_timeout(void)
 {
-    LOG_D("send count(%d)", (rt_uint32_t)rt_link_scb->sendtimer.parameter);
-    if ((rt_uint32_t)rt_link_scb->sendtimer.parameter >= 5)
+    LOG_D("send count(%d)", (rt_ubase_t)rt_link_scb->sendtimer.parameter);
+    if ((rt_ubase_t)rt_link_scb->sendtimer.parameter >= 5)
     {
         rt_timer_stop(&rt_link_scb->sendtimer);
         LOG_W("Send timeout, please check the link status!");
@@ -929,7 +929,7 @@ static void rt_link_send_timeout(void)
 
 static void rt_link_long_recv_timeout(void)
 {
-    if ((rt_uint32_t)rt_link_scb->longframetimer.parameter >= 5)
+    if ((rt_ubase_t)rt_link_scb->longframetimer.parameter >= 5)
     {
         LOG_W("long package receive timeout");
         rt_link_scb->longframetimer.parameter = 0x00;
@@ -996,7 +996,7 @@ void rt_link_thread(void *parameter)
 
 static void rt_link_sendtimer_callback(void *parameter)
 {
-    rt_uint32_t count = (rt_uint32_t)rt_link_scb->sendtimer.parameter + 1;
+    rt_ubase_t count = (rt_ubase_t)rt_link_scb->sendtimer.parameter + 1;
     rt_link_scb->sendtimer.parameter = (void *)count;
     rt_event_send(&rt_link_scb->event, RT_LINK_SEND_TIMEOUT_EVENT);
 }
@@ -1008,7 +1008,7 @@ static void rt_link_recvtimer_callback(void *parameter)
 
 static void rt_link_receive_long_frame_callback(void *parameter)
 {
-    rt_uint32_t count = (rt_uint32_t)rt_link_scb->longframetimer.parameter + 1;
+    rt_ubase_t count = (rt_ubase_t)rt_link_scb->longframetimer.parameter + 1;
     rt_link_scb->longframetimer.parameter = (void *)count;
     rt_event_send(&rt_link_scb->event, RT_LINK_RECV_TIMEOUT_LONG_EVENT);
 }
@@ -1174,8 +1174,8 @@ MSH_CMD_EXPORT(rtlink_status, Display RTLINK status);
  * */
 rt_err_t rt_link_deinit(void)
 {
-    rt_enter_critical();
     rt_link_hw_deinit();
+    rt_enter_critical();
     if (rt_link_scb)
     {
         rt_timer_detach(&rt_link_scb->longframetimer);
@@ -1234,6 +1234,13 @@ int rt_link_init(void)
 
     rt_slist_init(&rt_link_scb->tx_data_slist);
     rt_link_scb->tx_seq = RT_LINK_INIT_FRAME_SEQENCE;
+
+    if (RT_EOK != rt_link_hw_init())
+    {
+        LOG_E("rtlink hw init failed.");
+        result = -RT_ERROR;
+        goto __exit;
+    }
 
     /* create rtlink core work thread */
     thread = rt_thread_create(RT_LINK_THREAD_NAME,

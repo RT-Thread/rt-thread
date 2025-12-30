@@ -1,0 +1,90 @@
+from building import *
+import os, re
+
+group   = []
+
+if not GetDepend(['RT_GRAPHIC_LOGO']):
+    Return('group')
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+CPPDEFINES = []
+
+src     = ['logo.c']
+
+logo_path = None
+logo_width = 0
+logo_height = 0
+logo_max_val = 0
+
+if GetDepend(['RT_GRAPHIC_LOGO_RT_THREAD_CLUT224']):
+    logo_path = cwd + '/logo-rt-thread-clut224.ppm'
+
+if GetDepend(['RT_GRAPHIC_LOGO_RT_THREAD_WHITE_CLUT224']):
+    logo_path = cwd + '/logo-rt-thread-white-clut224.ppm'
+
+if logo_path == None:
+    # Find in BSP
+    paths = None
+    for key in BuildOptions.keys():
+        if re.match(r'RT_GRAPHIC_LOGO_.*_PATH', key):
+            paths = BuildOptions[key]
+            break
+
+    if paths != None and len(paths) > 0:
+        logo_path = Dir('#').abspath + '/' + paths[1:-1]
+        if not os.path.exists(logo_path):
+            print("Logo file '{}' not found!".format(logo_path))
+            exit(-1)
+
+if logo_path != None:
+    with open(logo_path, 'rb') as ppm:
+        data = ppm.read().split(b'\n')
+
+        # PPM: <magic number>
+        magic = data[0].decode('utf-8')
+
+        # PPM: <comment>
+        offset = 1
+        while True:
+            comment = str(data[offset].decode('utf-8'))
+            if comment[0] != '#':
+                break
+            offset += 1
+
+        # PPM: <width> <height>
+        logo_width, logo_height = map(int, data[offset].split())
+
+        # PPM: <max pixel value>
+        logo_max_val = int(data[offset + 1])
+
+        # PPM: <data>
+        ppm.seek(0)
+        pixels = b''.join(ppm.readlines()[offset + 2:])
+        ppm.close()
+
+        if magic == 'P1' or magic == 'P2' or magic == 'P3':
+            # ASCII
+            pixels = re.sub(b'\\s+', b'\n', pixels.strip()).decode('utf-8').split('\n')
+
+    logo = open(cwd + '/logo.inc', "w")
+
+    for dy in range(logo_height):
+        for dx in range(logo_width):
+            index = (dy * logo_width + dx) * 3
+            # Red
+            logo.write(str(pixels[index]).rjust(4) + ",")
+            # Green
+            logo.write(str(pixels[index + 1]).rjust(4) + ",")
+            # Blue
+            logo.write(str(pixels[index + 2]).rjust(4) + ",")
+        logo.write("\n")
+
+    logo.close()
+
+CPPDEFINES += ['__STARTUP_LOGO_WIDTH__=' + str(logo_width)]
+CPPDEFINES += ['__STARTUP_LOGO_HEIGHT__=' + str(logo_height)]
+CPPDEFINES += ['__STARTUP_LOGO_COLOR_MAX__=' + str(logo_max_val)]
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+Return('group')

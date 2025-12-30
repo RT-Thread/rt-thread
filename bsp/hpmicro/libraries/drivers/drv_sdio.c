@@ -97,7 +97,7 @@ static hpm_stat_t hpm_sdmmc_transfer_polling(struct hpm_mmcsd *mmcsd, sdxc_adma_
 static hpm_stat_t hpm_sdmmc_transfer_interrupt_driven(struct hpm_mmcsd *mmcsd, sdxc_adma_config_t *dma_config, sdxc_xfer_t *xfer);
 static hpm_stat_t hpm_sdmmc_transfer(struct hpm_mmcsd *mmcsd, sdxc_adma_config_t *dma_config, sdxc_xfer_t *xfer);
 static rt_int32_t hpm_sdmmc_execute_tuning(struct rt_mmcsd_host *host, rt_int32_t opcode);
-static rt_int32_t hpm_sdmmc_switch_uhs_voltage(struct rt_mmcsd_host *host);
+static rt_err_t hpm_sdmmc_signal_voltage_switch(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg);
 
 static void hpm_sdmmc_power_on_via_pin(struct hpm_mmcsd *mmcsd);
 static void hpm_sdmmc_power_off_via_pin(struct hpm_mmcsd *mmcsd);
@@ -152,7 +152,7 @@ static void hpm_sdmmc_switch_to_1v8_via_pin(struct hpm_mmcsd *mmcsd)
 }
 
 
-static rt_int32_t hpm_sdmmc_switch_uhs_voltage(struct rt_mmcsd_host *host)
+static rt_err_t hpm_sdmmc_signal_voltage_switch(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg)
 {
     struct hpm_mmcsd *mmcsd = (struct hpm_mmcsd *) host->private_data;
     SDXC_Type *base = mmcsd->sdxc_base;
@@ -174,9 +174,17 @@ static rt_int32_t hpm_sdmmc_switch_uhs_voltage(struct rt_mmcsd_host *host)
         return -RT_ETIMEOUT;
     }
 
-    /* 3. Switch to 1.8V */
-    hpm_sdmmc_switch_to_1v8_via_pin(mmcsd);
-    sdxc_select_voltage(mmcsd->sdxc_base, sdxc_bus_voltage_sd_1v8);
+    /* 3. Switch to 1.8V/3.3V */
+    if (ios->signal_voltage == MMCSD_SIGNAL_VOLTAGE_330)
+    {
+        hpm_sdmmc_switch_to_3v3_via_pin(mmcsd);
+        sdxc_select_voltage(mmcsd->sdxc_base, sdxc_bus_voltage_sd_3v3);
+    }
+    else
+    {
+        hpm_sdmmc_switch_to_1v8_via_pin(mmcsd);
+        sdxc_select_voltage(mmcsd->sdxc_base, sdxc_bus_voltage_sd_1v8);
+    }
 
     /* 4. spec:host delay 5ms,  host: give more delay time here */
     rt_thread_mdelay(10);
@@ -213,7 +221,7 @@ static const struct rt_mmcsd_host_ops hpm_mmcsd_host_ops =
     .get_card_status = NULL,
     .enable_sdio_irq = hpm_sdmmc_enable_sdio_irq,
     .execute_tuning = hpm_sdmmc_execute_tuning,
-    .switch_uhs_voltage = hpm_sdmmc_switch_uhs_voltage,
+    .signal_voltage_switch = hpm_sdmmc_signal_voltage_switch,
 };
 
 void hpm_sdmmc_isr(struct hpm_mmcsd *mmcsd)

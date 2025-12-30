@@ -1,0 +1,18 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_DM']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+src = []
+
+if GetDepend(['RT_PMDOMAIN_SCMI']):
+    src += ['pm-domain-scmi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

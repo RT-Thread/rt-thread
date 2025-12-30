@@ -62,7 +62,11 @@ static char *alloc_device_name(struct rt_serial_device *serial)
      * must be obtained using the serial_dev_set_name function,
      * and it should begin with "uart".
      */
-    RT_ASSERT((strlen(serial_name) > strlen("uart")) && (strncmp(serial_name, "uart", 4) == 0));
+    if (!serial_name || rt_strlen(serial_name) < 4 || rt_strncmp(serial_name, "uart", 4))
+    {
+        return RT_NULL;
+    }
+
     long digits_len = (sizeof(TTY_NAME_PREFIX) - 1) /* raw prefix */
                       + strlen(serial_name + sizeof("uart") - 1) /* suffix of serial device name*/
                       + 1;  /* tailing \0 */

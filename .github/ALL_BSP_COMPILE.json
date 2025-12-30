@@ -248,7 +248,7 @@
         "nxp/mcx/mcxc/frdm-mcxc444",
         "nxp/mcx/mcxa/frdm-mcxa153",
         "nxp/mcx/mcxa/frdm-mcxa156",
-		"nxp/mcx/mcxa/frdm-mcxa346",
+        "nxp/mcx/mcxa/frdm-mcxa346",
         "nxp/mcx/mcxe/frdm-mcxe247",
         "renesas/ebf_qi_min_6m5",
         "renesas/ra6m4-cpk",
@@ -258,12 +258,13 @@
         "renesas/ra6e2-ek",
         "renesas/ra6e2-fpb",
         "renesas/ra4e2-eco",
-		"renesas/ra4m1-ek",
+        "renesas/ra4m1-ek",
         "renesas/ra4m2-eco",
         "renesas/ra2l1-cpk",
         "renesas/ra8m1-ek",
         "renesas/ra8d1-ek",
         "renesas/ra8d1-vision-board",
+        "renesas/ra8p1-titan-board",
         "renesas/rzt2m_rsk",
         "renesas/rzn2l_rsk",
         "renesas/rzn2l_etherkit",
@@ -386,7 +387,8 @@
       "SUB_RTT_BSP": [
         "qemu-virt64-aarch64",
         "raspberry-pi/raspi3-64",
-        "raspberry-pi/raspi4-64"
+        "raspberry-pi/raspi4-64",
+        "nxp/imx/imx91"
       ]
     },
     {
@@ -396,7 +398,8 @@
         "k210",
         "wch/risc-v/ch32v208w-r0",
         "wch/risc-v/ch32v307v-r1",
-        "wch/risc-v/yd-ch32v307vct6"
+        "wch/risc-v/yd-ch32v307vct6",
+        "gd32/risc-v/gd32vw553h-eval"
       ]
     },
     {

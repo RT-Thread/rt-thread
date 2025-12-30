@@ -42,8 +42,16 @@ extern "C" {
 #ifdef RT_USING_DM
 #include "drivers/core/dm.h"
 #include "drivers/core/numa.h"
+#include "drivers/core/power.h"
 #include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
+
+#ifdef RT_USING_GRAPHIC
+#include "drivers/graphic.h"
+#ifdef RT_GRAPHIC_BACKLIGHT
+#include "drivers/backlight.h"
+#endif /* RT_GRAPHIC_BACKLIGHT */
+#endif /* RT_USING_GRAPHIC */
 
 #ifdef RT_USING_ATA
 #ifdef RT_ATA_AHCI
@@ -53,11 +61,22 @@ extern "C" {
 
 #ifdef RT_USING_LED
 #include "drivers/led.h"
+#endif /* RT_USING_LED */
+
+#ifdef RT_USING_INPUT
+#include "drivers/input.h"
+#ifdef RT_INPUT_UAPI
+#include "drivers/input_uapi.h"
 #endif
+#endif /* RT_USING_INPUT */
 
 #ifdef RT_USING_MBOX
 #include "drivers/mailbox.h"
 #endif /* RT_USING_MBOX */
+
+#ifdef RT_USING_HWSPINLOCK
+#include "drivers/hwspinlock.h"
+#endif /* RT_USING_HWSPINLOCK */
 
 #ifdef RT_USING_BLK
 #include "drivers/blk.h"
@@ -118,6 +137,24 @@ extern "C" {
 #ifdef RT_USING_THERMAL
 #include "drivers/thermal.h"
 #endif /* RT_USING_THERMAL */
+
+#ifdef RT_USING_FIRMWARE
+#ifdef RT_FIRMWARE_ARM_SCMI
+#include "drivers/scmi.h"
+#endif /* RT_FIRMWARE_ARM_SCMI */
+#endif /* RT_USING_FIRMWARE */
+
+#ifdef RT_USING_HWCACHE
+#include "drivers/hwcache.h"
+#endif /* RT_USING_HWCACHE */
+
+#ifdef RT_USING_POWER_SUPPLY
+#include "drivers/power_supply.h"
+#endif /* RT_USING_POWER_SUPPLY */
+
+#ifdef RT_USING_NVMEM
+#include "drivers/nvmem.h"
+#endif /* RT_USING_NVMEM */
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC
@@ -170,14 +207,18 @@ extern "C" {
 #endif /* RT_USING_DM */
 #endif /* RT_USING_I2C */
 
-#ifdef RT_USING_PHY
+#if defined(RT_USING_PHY) || defined(RT_USING_PHY_V2)
 #include "drivers/phy.h"
-#endif /* RT_USING_PHY */
+#endif /* RT_USING_PHY || RT_USING_PHY_V2 */
 
 #ifdef RT_USING_SDIO
 #include "drivers/dev_mmcsd_core.h"
 #include "drivers/dev_sd.h"
 #include "drivers/dev_sdio.h"
+#if defined(RT_USING_DM) && defined(RT_USING_SDHCI)
+#include "drivers/dev_sdhci.h"
+#include "drivers/dev_sdhci_host.h"
+#endif /* RT_USING_DM && RT_USING_SDHCI */
 #endif /* RT_USING_SDIO */
 
 

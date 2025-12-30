@@ -20,6 +20,17 @@
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
+#if defined(SOC_SERIES_R7KA8P1)
+
+#define R_ADC_Open      R_ADC_B_Open
+#define R_ADC_ScanCfg   R_ADC_B_ScanCfg
+#define R_ADC_ScanStart R_ADC_B_ScanStart
+#define R_ADC_Read32    R_ADC_B_Read32
+#define R_ADC_Read    	R_ADC_B_Read
+#define R_ADC_ScanStop  R_ADC_B_ScanStop
+
+#endif
+
 struct ra_adc_map ra_adc[] =
 {
 #ifdef BSP_USING_ADC0
@@ -27,7 +38,11 @@ struct ra_adc_map ra_adc[] =
       .device_name = "adc0",
       .g_cfg = &g_adc0_cfg,
       .g_ctrl = &g_adc0_ctrl,
+#ifdef SOC_SERIES_R7KA8P1
+      .g_channel_cfg = &g_adc0_scan_cfg,
+#else
       .g_channel_cfg = &g_adc0_channel_cfg,
+#endif
     },
 #endif
 #ifdef BSP_USING_ADC1

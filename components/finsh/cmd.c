@@ -32,6 +32,7 @@
  * 2022-07-02     Stanley Lwin add list command
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2024-02-09     Bernard      fix the version command
+ * 2023-02-25     GuEe-GUI     add console
  */
 
 #include <rthw.h>
@@ -59,6 +60,61 @@ static long version(void)
     return 0;
 }
 MSH_CMD_EXPORT(version, show RT-Thread version information);
+
+#if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
+#if !defined(RT_USING_POSIX) && defined(RT_USING_POSIX_STDIO)
+#include <posix/stdio.h>
+#endif
+
+static int console(int argc, char **argv)
+{
+    if (argc > 1)
+    {
+        if (!rt_strcmp(argv[1], "set"))
+        {
+            if (argc < 3)
+            {
+                goto _help;
+            }
+
+            rt_kprintf("console change to %s\n", argv[2]);
+            rt_console_set_device(argv[2]);
+
+#ifdef RT_USING_POSIX
+            {
+                rt_device_t dev = rt_device_find(argv[2]);
+
+                if (dev != RT_NULL)
+                {
+                    console_set_iodev(dev);
+                }
+            }
+#elif !defined(RT_USING_POSIX_STDIO)
+            finsh_set_device(argv[2]);
+#else
+            rt_posix_stdio_init();
+#endif /* RT_USING_POSIX */
+        }
+        else
+        {
+            goto _help;
+        }
+    }
+    else
+    {
+        goto _help;
+    }
+
+    return RT_EOK;
+
+_help:
+    rt_kprintf("Usage: \n");
+    rt_kprintf("console set <name>   - change console by name\n");
+
+    return -RT_ERROR;
+}
+MSH_CMD_EXPORT(console, console setting);
+#endif /* RT_USING_DEVICE && RT_USING_CONSOLE */
 
 rt_inline void object_split(int len)
 {
