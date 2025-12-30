@@ -17,13 +17,13 @@
 
 /**
  * Level 1 translation table entry format
- * 
+ *
  * It has 4 types:
  *      Fault         type:     bit[1:0] = 0b00
  *      Point L2 page type:     bit[1:0] = 0b01
  *      Section       type:     bit[1:0] = 0b10 and bit[18] = 0
  *      Supersection  type:     bit[1:0] = 0b10 and bit[18] = 1
- * 
+ *
  * The following defines are for section type entry
  *      bit[01:00]: 0b10
  *      bit[02]   : B
@@ -92,12 +92,12 @@ struct mem_desc
 
 /**
  * Level 2 translation table entry format
- * 
+ *
  * It has 3 types:
  *      Fault:       bit[1:0] = 0b00
  *      Larger page: bit[1:0] = 0b01
  *      Small  page: bit[1:0] = 0b1x
- * 
+ *
  * The following defines are for small page type entry
  *      bit[00]:    XN
  *      bit[01]:    1
