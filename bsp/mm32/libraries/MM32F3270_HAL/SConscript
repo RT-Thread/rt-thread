@@ -29,7 +29,7 @@ if GetDepend(['RT_USING_SPI']):
 if GetDepend(['RT_USING_USB']):
     src += ['MM32F3270_HAL_Driver/Src/hal_usb.c']
 
-if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
+if GetDepend(['RT_USING_CLOCK_TIME']) or GetDepend(['RT_USING_PWM']):
     src += ['MM32F3270_HAL_Driver/Src/hal_tim_16b.c']
     src += ['MM32F3270_HAL_Driver/Src/hal_tim_32b.c']
     src += ['MM32F3270_HAL_Driver/Src/hal_tim_adv.c']

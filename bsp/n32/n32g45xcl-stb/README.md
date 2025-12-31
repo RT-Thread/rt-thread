@@ -45,7 +45,7 @@ N32G45XCL-STB 板级包支持MDK5开发环境和GCC编译器，以下是具体�
 | ADC       | 支持      | ADC1/2/3/4                           |
 | CAN       | 支持      | CAN1/2                               |
 | DAC       | 支持      | DAC1/2                               |
-| HWTIMER   | 支持      | TIMER1/2/3/4/5/6/7/8                 |
+| CLOCK_TIMER   | 支持      | TIMER1/2/3/4/5/6/7/8                 |
 | WDT       | 支持      | IWDG                                 |
 | RTC       | 支持      | 时钟源支持LSE/LSI/HSE                | 
 

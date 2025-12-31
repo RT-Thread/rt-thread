@@ -92,7 +92,7 @@ config SOC_SERIES_M032
 
                 config BSP_USING_TIMER0
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "TIMER"
                 help
                     Choose this option if you need TIMER function mode.
@@ -117,7 +117,7 @@ config SOC_SERIES_M032
 
                 config BSP_USING_TIMER1
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "TIMER"
                     help
                     Choose this option if you need TIMER function mode.
@@ -141,7 +141,7 @@ config SOC_SERIES_M032
 
                 config BSP_USING_TIMER2
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "TIMER"
                 help
                     Choose this option if you need TIMER function mode.
@@ -165,7 +165,7 @@ config SOC_SERIES_M032
 
                 config BSP_USING_TIMER3
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "TIMER"
                     help
                         Choose this option if you need TIMER function mode.

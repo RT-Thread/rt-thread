@@ -51,8 +51,8 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
     if GetDepend('BSP_USING_PWM'):
         src += ['drv_pwm.c']
 
-    if GetDepend('BSP_USING_HWTIMER'):
-        src += ['drv_hwtimer.c']
+    if GetDepend('BSP_USING_CLOCK_TIMER'):
+        src += ['drv_timer.c']
 
     if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
         src += ['drv_flash.c']

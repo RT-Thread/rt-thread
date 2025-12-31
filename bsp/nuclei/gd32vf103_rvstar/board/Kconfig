@@ -68,30 +68,30 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_HWTIMER
+    menuconfig BSP_USING_CLOCK_TIMER
         bool "Enable TIMER"
         default n
-        select RT_USING_HWTIMER
-        if BSP_USING_HWTIMER
-            config BSP_USING_HWTIMER0
+        select RT_USING_CLOCK_TIME
+        if BSP_USING_CLOCK_TIMER
+            config BSP_USING_CLOCK_TIMER0
                 bool "Enable TIMER0"
                 default n
-            config BSP_USING_HWTIMER1
+            config BSP_USING_CLOCK_TIMER1
                 bool "Enable TIMER1"
                 default n
-            config BSP_USING_HWTIMER2
+            config BSP_USING_CLOCK_TIMER2
                 bool "Enable TIMER2"
                 default n
-            config BSP_USING_HWTIMER3
+            config BSP_USING_CLOCK_TIMER3
                 bool "Enable TIMER3"
                 default n
-            config BSP_USING_HWTIMER4
+            config BSP_USING_CLOCK_TIMER4
                 bool "Enable TIMER4"
                 default n
-            config BSP_USING_HWTIMER5
+            config BSP_USING_CLOCK_TIMER5
                 bool "Enable TIMER5"
                 default n
-            config BSP_USING_HWTIMER6
+            config BSP_USING_CLOCK_TIMER6
                 bool "Enable TIMER6"
                 default n
         endif

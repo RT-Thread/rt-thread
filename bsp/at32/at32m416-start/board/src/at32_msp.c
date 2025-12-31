@@ -208,7 +208,7 @@ void at32_msp_adc_init(void *instance)
 }
 #endif /* BSP_USING_ADC */
 
-#ifdef BSP_USING_HWTIMER
+#ifdef BSP_USING_CLOCK_TIMER
 void at32_msp_hwtmr_init(void *instance)
 {
     tmr_type *tmr_x = (tmr_type *)instance;

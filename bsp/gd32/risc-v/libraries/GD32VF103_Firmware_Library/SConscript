@@ -40,7 +40,7 @@ if GetDepend(['RT_USING_ADC']):
 if GetDepend(['RT_USING_DAC']):
     src += ['GD32VF103_standard_peripheral/Source/gd32vf103_dac.c']
 
-if GetDepend(['RT_USING_HWTIMER']):
+if GetDepend(['RT_USING_CLOCK_TIME']):
     src += ['GD32VF103_standard_peripheral/Source/gd32vf103_timer.c']
 
 if GetDepend(['RT_USING_RTC']):

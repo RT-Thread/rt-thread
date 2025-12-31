@@ -33,7 +33,7 @@ Titan Board 搭载频率 1GHz Arm® Cortex®-M85 与 250MHz Arm® Cortex®-M33 �
 | ------------ | ------------ | -------- | ------------ |
 | UART         | 支持         | LWIP     | 支持         |
 | GPIO         | 支持         | TCP/UDP  | 支持         |
-| HWTIMER      | 支持         | MQTT     | 支持         |
+| CLOCK_TIMER      | 支持         | MQTT     | 支持         |
 | IIC          | 支持         | TFTP     | 支持         |
 | WDT          | 支持         | Telnet | 支持 |
 | RTC          | 支持         | **多核通信** | **支持情况** |

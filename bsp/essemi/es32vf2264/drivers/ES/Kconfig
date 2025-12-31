@@ -121,31 +121,31 @@ menu "ADC Drivers"
 
 endmenu
 
-menu "HWTIMER Drivers"
+menu "CLOCK_TIMER Drivers"
 
-    config BSP_USING_AD16C4T0_HWTIMER
-        bool "Register HWTIMER0 "
-        select RT_USING_HWTIMER
+    config BSP_USING_AD16C4T0_CLOCK_TIMER
+        bool "Register CLOCK_TIMER0 "
+        select RT_USING_CLOCK_TIME
         default n
 
-    config BSP_USING_GP16C4T0_HWTIMER
-        bool "Register HWTIMER1 "
-        select RT_USING_HWTIMER
+    config BSP_USING_GP16C4T0_CLOCK_TIMER
+        bool "Register CLOCK_TIMER1 "
+        select RT_USING_CLOCK_TIME
         default n
 
-    config BSP_USING_GP16C4T1_HWTIMER
-        bool "Register HWTIMER2 "
-        select RT_USING_HWTIMER
+    config BSP_USING_GP16C4T1_CLOCK_TIMER
+        bool "Register CLOCK_TIMER2 "
+        select RT_USING_CLOCK_TIME
         default n
 
-    config BSP_USING_GP16C4T2_HWTIMER
-        bool "Register HWTIMER3 "
-        select RT_USING_HWTIMER
+    config BSP_USING_GP16C4T2_CLOCK_TIMER
+        bool "Register CLOCK_TIMER3 "
+        select RT_USING_CLOCK_TIME
         default n
 
-    config BSP_USING_BS16T0_HWTIMER
-        bool "Register HWTIMER4 "
-        select RT_USING_HWTIMER
+    config BSP_USING_BS16T0_CLOCK_TIMER
+        bool "Register CLOCK_TIMER4 "
+        select RT_USING_CLOCK_TIME
         default n
 
 endmenu
@@ -156,25 +156,25 @@ menu "PWM Drivers"
         bool "Register PWM0 "
         select RT_USING_PWM
         default n
-        depends on !BSP_USING_AD16C4T0_HWTIMER
+        depends on !BSP_USING_AD16C4T0_CLOCK_TIMER
 
     config BSP_USING_GP16C4T0_PWM
         bool "Register PWM1 "
         select RT_USING_PWM
         default n
-        depends on !BSP_USING_GP16C4T0_HWTIMER
+        depends on !BSP_USING_GP16C4T0_CLOCK_TIMER
 
     config BSP_USING_GP16C4T1_PWM
         bool "Register PWM2 "
         select RT_USING_PWM
         default n
-        depends on !BSP_USING_GP16C4T1_HWTIMER
+        depends on !BSP_USING_GP16C4T1_CLOCK_TIMER
 
     config BSP_USING_GP16C4T2_PWM
         bool "Register PWM3 "
         select RT_USING_PWM
         default n
-        depends on !BSP_USING_GP16C4T1_HWTIMER
+        depends on !BSP_USING_GP16C4T1_CLOCK_TIMER
 
 endmenu
 
