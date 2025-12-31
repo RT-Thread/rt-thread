@@ -247,15 +247,14 @@
 #define RT_PIN_ROCKCHIP
 #define RT_USING_PINCTRL
 #define RT_PINCTRL_ROCKCHIP
-#define RT_USING_KTIME
+#define RT_USING_CLOCK_TIME
 #define RT_USING_CLK
 #define RT_CLK_ROCKCHIP_LINK
 #define RT_CLK_ROCKCHIP
 #define RT_CLK_ROCKCHIP_RK3568
 #define RT_CLK_ROCKCHIP_RK3588
-#define RT_USING_HWTIMER
-#define RT_HWTIMER_ARM_ARCH
-#define RT_HWTIMER_ROCKCHIP
+#define RT_CLOCK_TIME_ARM_ARCH
+#define RT_CLOCK_TIMER_ROCKCHIP
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -595,6 +594,10 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -677,5 +680,6 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define SOC_RK3500
+#define SOC_RK3568
 
 #endif
