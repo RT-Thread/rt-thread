@@ -23,9 +23,10 @@
 #include "hpm_pllctl_drv.h"
 #include "hpm_enet_drv.h"
 #include "hpm_pcfg_drv.h"
-#include <rtconfig.h>
 #if defined(ENET_MULTIPLE_PORT) && ENET_MULTIPLE_PORT
 #include "hpm_enet_phy_common.h"
+#include <rtconfig.h>
+#include <rthw.h>
 #endif
 
 /**
@@ -311,12 +312,15 @@ void board_panel_para_to_lcdc(lcdc_config_t *config)
 
 void board_delay_ms(uint32_t ms)
 {
-    clock_cpu_delay_ms(ms);
+    while (ms--)
+    {
+        rt_hw_us_delay(1000);
+    }
 }
 
 void board_delay_us(uint32_t us)
 {
-    clock_cpu_delay_us(us);
+    rt_hw_us_delay(us);
 }
 
 #if !defined(NO_BOARD_TIMER_SUPPORT) || !NO_BOARD_TIMER_SUPPORT

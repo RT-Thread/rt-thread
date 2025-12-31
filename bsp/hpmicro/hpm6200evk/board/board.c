@@ -20,6 +20,7 @@
 #include "hpm_pllctlv2_drv.h"
 #include "hpm_pcfg_drv.h"
 #include <rtconfig.h>
+#include <rthw.h>
 /**
  * @brief FLASH configuration option definitions:
  * option[0]:
@@ -190,12 +191,15 @@ void board_init_core1(void)
 
 void board_delay_us(uint32_t us)
 {
-    clock_cpu_delay_us(us);
+    rt_hw_us_delay(us);
 }
 
 void board_delay_ms(uint32_t ms)
 {
-    clock_cpu_delay_ms(ms);
+    while (ms--)
+    {
+        rt_hw_us_delay(1000);
+    }
 }
 
 #if !defined(NO_BOARD_TIMER_SUPPORT) || !NO_BOARD_TIMER_SUPPORT
