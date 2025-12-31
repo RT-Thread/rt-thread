@@ -689,39 +689,3 @@ rt_base_t rk_clk_pll_round_rate(const struct rk_pll_rate_table *pll_rates,
     /* return minimum supported value */
     return pll_rates[i - 1].rate;
 }
-
-void rk_clk_set_default_rates(struct rt_clk *clk,
-        rt_err_t (*clk_set_rate)(struct rt_clk *, rt_ubase_t, rt_ubase_t), int id)
-{
-    rt_uint32_t rate;
-    struct rt_ofw_cell_args clk_args;
-    struct rt_ofw_node *np = clk->fw_node;
-    const char *rate_propname = "assigned-clock-rates";
-
-    if (!rt_ofw_prop_read_bool(np, rate_propname))
-    {
-        return;
-    }
-
-    for (int i = 0; ; ++i)
-    {
-        if (rt_ofw_parse_phandle_cells(np, "assigned-clocks", "#clock-cells", i, &clk_args))
-        {
-            break;
-        }
-
-        rt_ofw_node_put(clk_args.data);
-
-        if (clk_args.args[0] != id)
-        {
-            continue;
-        }
-
-        if (!rt_ofw_prop_read_u32_index(np, rate_propname, i, &rate))
-        {
-            clk_set_rate(clk, rate, 0);
-        }
-
-        break;
-    }
-}

@@ -10,6 +10,12 @@
 #include <setup.h>
 #include <board.h>
 #include <psci.h>
+#include <drivers/core/power.h>
+
+static void rk3568_machine_shutdown(void)
+{
+    psci_system_off();
+}
 
 void rt_hw_board_init(void)
 {
@@ -22,6 +28,8 @@ void rt_hw_board_init(void)
     }, RT_TRUE);
 #endif
     rt_hw_common_setup();
+    rt_dm_machine_shutdown = rk3568_machine_shutdown;
+    rt_dm_machine_reset = psci_system_reboot;
 }
 
 void reboot(void)
@@ -29,9 +37,3 @@ void reboot(void)
     psci_system_reboot();
 }
 MSH_CMD_EXPORT(reboot, reboot...);
-
-void rt_hw_cpu_shutdown(void)
-{
-    psci_system_off();
-}
-MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_shutdown, shutdown, shutdown...);
