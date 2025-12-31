@@ -17,8 +17,8 @@ if GetDepend(['RT_USING_SERIAL']):
     else:
         src += ['drv_usart.c']
 
-if GetDepend(['RT_USING_HWTIMER']):
-    src += ['drv_hwtimer.c']
+if GetDepend(['RT_USING_CLOCK_TIME']):
+    src += ['drv_timer.c']
 
 if GetDepend(['RT_USING_PWM']):
     src += ['drv_pwm.c']

@@ -45,7 +45,7 @@ AT32F405-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | SPI       | 支持     | SPI1/2                     |
 | ADC       | 支持     | ADC1                       |
 | PWM       | 支持     | TMR1/2                     |
-| HWTIMER   | 支持     | TMR3/4                     |
+| CLOCK_TIMER   | 支持     | TMR3/4                     |
 | CAN       | 支持     | CAN1                       |
 | QSPI      | 支持     | QSPI1/2                    |
 | WDT       | 支持     |                            |

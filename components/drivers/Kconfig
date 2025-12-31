@@ -5,7 +5,7 @@ rsource "ipc/Kconfig"
 
 rsource "serial/Kconfig"
 rsource "can/Kconfig"
-rsource "cputime/Kconfig"
+rsource "clock_time/Kconfig"
 rsource "i2c/Kconfig"
 rsource "phy/Kconfig"
 rsource "misc/Kconfig"
@@ -46,9 +46,7 @@ rsource "pci/Kconfig"
 rsource "pic/Kconfig"
 rsource "pin/Kconfig"
 rsource "pinctrl/Kconfig"
-rsource "ktime/Kconfig"
 rsource "clk/Kconfig"
-rsource "hwtimer/Kconfig"
 rsource "usb/Kconfig"
 
 endmenu

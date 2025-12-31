@@ -165,7 +165,7 @@ menu "Drivers Configuration"
 
     menuconfig BSP_USING_TIMERS
         bool "Enable Hardware Timers"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
 
         if BSP_USING_TIMERS

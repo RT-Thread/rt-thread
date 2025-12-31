@@ -203,7 +203,7 @@ static void pm_timer_stop(struct rt_pm *pm)
     RT_ASSERT(pm != RT_NULL);
 
     /* Reset pmtimer status */
-    rt_device_control(timer, HWTIMER_CTRL_STOP, RT_NULL);
+    rt_device_control(timer, CLOCK_TIMER_CTRL_STOP, RT_NULL);
 }
 
 /**

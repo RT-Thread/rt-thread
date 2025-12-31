@@ -18,11 +18,8 @@ if GetDepend('BSP_USING_LCD'):
     src += ['drv_mpylcd.c']
     src += ['test/lcd_test.c']
 
-if GetDepend('RT_USING_HWTIMER'):
+if GetDepend('RT_USING_CLOCK_TIME') and os.path.exists(os.path.join(cwd, 'drv_hw_timer.c')):
     src += ['drv_hw_timer.c']
-
-if GetDepend('RT_USING_CPUTIME'):
-    src += ['drv_cputime.c']
 
 if GetDepend('RT_USING_I2C'):
     src += ['drv_i2c.c']

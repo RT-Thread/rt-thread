@@ -359,7 +359,7 @@
               <MiscControls />
               <Define>__RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\ktime\inc;..\..\..\libcpu\arm\arm926;applications;..\..\..\components\libc\posix\tls;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\dfs\dfs_v1\include;..\..\..\components\drivers\phy;.;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\cplusplus;platform;..\..\..\components\libc\posix\pthreads;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\drivers\ktime;..\..\..\components\drivers\smp_call;drivers;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\delay</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\clock_time\inc;..\..\..\libcpu\arm\arm926;applications;..\..\..\components\libc\posix\tls;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\dfs\dfs_v1\include;..\..\..\components\drivers\phy;.;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\cplusplus;platform;..\..\..\components\libc\posix\pthreads;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\drivers\clock_time;..\..\..\components\drivers\smp_call;drivers;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\delay</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1222,12 +1222,12 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>ktime</GroupName>
+          <GroupName>clock_time</GroupName>
           <Files>
             <File>
-              <FileName>boottime.c</FileName>
+              <FileName>clock_boottime.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ktime\src\boottime.c</FilePath>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_boottime.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1244,9 +1244,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cputimer.c</FileName>
+              <FileName>clock_time_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ktime\src\cputimer.c</FilePath>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_time_core.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1263,9 +1263,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>hrtimer.c</FileName>
+              <FileName>clock_hrtimer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ktime\src\hrtimer.c</FilePath>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_hrtimer.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>

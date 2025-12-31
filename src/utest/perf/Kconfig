@@ -7,9 +7,9 @@ config RT_UTEST_SYS_PERF_TC_COUNT
     default 1000
     depends on RT_UTEST_SYS_PERF
 
-config RT_UTEST_HWTIMER_DEV_NAME
-    string "PerfTest: Hardware timer device name"
+config RT_UTEST_CLOCK_TIMER_DEV_NAME
+    string "PerfTest: Clock time timer device name"
     default "timer0"
-    depends on RT_USING_HWTIMER && RT_UTEST_SYS_PERF
+    depends on RT_USING_CLOCK_TIME && RT_UTEST_SYS_PERF
     help
         Specify the hardware timer device name used for context switch testing (e.g., timer0).

@@ -64,7 +64,7 @@ if GetDepend('BSP_USING_PWM'):
     src += ['rt_drivers/drv_pwm.c']
 
 if GetDepend('BSP_USING_TIM'):
-    src += ['rt_drivers/drv_hwtimer.c']
+    src += ['rt_drivers/drv_timer.c']
 
 if GetDepend('BSP_USING_WDT'):
     src += ['rt_drivers/drv_wdt.c']

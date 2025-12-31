@@ -18,7 +18,7 @@ if GetDepend('RT_USING_USB_DEVICE'):
 if GetDepend('RT_USING_PWM'):
     src += ['ch56x_pwm.c']
 
-if GetDepend('RT_USING_HWTIMER'):
+if GetDepend('RT_USING_CLOCK_TIME'):
     src += ['ch56x_timer.c']
 
 if GetDepend('RT_USING_SPI'):

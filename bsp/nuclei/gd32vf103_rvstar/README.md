@@ -256,7 +256,7 @@ Breakpoint 1, irq_entry () at D:\workspace\Sourcecode\rt-thread\libcpu\risc-v\nu
 | GPIO    | 支持     |      默认使能，支持中断控制      |
 | SPI     | 支持     |             默认关闭             |
 | I2C     | 支持     |             默认关闭             |
-| HWTIMER | 支持     |             默认关闭             |
+| CLOCK_TIMER | 支持     |             默认关闭             |
 | PWM     | 支持     |             默认关闭             |
 | WDT     | 支持     |             默认关闭             |
 | RTC     | 支持     |             默认关闭             |
@@ -300,7 +300,7 @@ gpio_init(GPIOA, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
 - 适配RT-Thread的驱动框架的代码在 [../libraries/gd32vf103/HAL_Drivers](../libraries/gd32vf103/HAL_Drivers)目录下。
 - 如果有开发者想适配更多的驱动, 请在对应目录下增加驱动适配支持。
 - GD32VF103的驱动适配开关在 `menuconfig -> Hardware Drivers Config -> On-chip Peripheral Drivers` 可以找到。
-- HWTIMER和PWM都是采用的TIMER模块进行功能实现，所以在使用驱动时，请务必注意不要重叠使用相同模块。
+- CLOCK_TIMER和PWM都是采用的TIMER模块进行功能实现，所以在使用驱动时，请务必注意不要重叠使用相同模块。
 
 ## 联系人信息
 

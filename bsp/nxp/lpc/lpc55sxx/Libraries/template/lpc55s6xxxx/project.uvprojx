@@ -534,9 +534,9 @@
               <FilePath>..\Libraries\drivers\drv_adc.c</FilePath>
             </File>
             <File>
-              <FileName>drv_hwtimer.c</FileName>
+              <FileName>drv_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_hwtimer.c</FilePath>
+              <FilePath>..\Libraries\drivers\drv_timer.c</FilePath>
             </File>
             <File>
               <FileName>drv_pwm.c</FileName>
@@ -688,9 +688,9 @@
           </GroupOption>
           <Files>
             <File>
-              <FileName>hwtimer.c</FileName>
+              <FileName>clock_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_timer.c</FilePath>
             </File>
             <File>
               <FileName>i2c_core.c</FileName>

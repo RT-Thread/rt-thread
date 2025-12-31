@@ -36,7 +36,7 @@
 #include "es_conf_info_map.h"
 #include "es_conf_info_gpio.h"
 #include "es_conf_info_adc.h"
-#include "es_conf_info_hwtimer.h"
+#include "es_conf_info_clock_timer.h"
 #include "es_conf_info_pwm.h"
 #include "es_conf_info_uart.h"
 #include "es_conf_info_spi.h"
