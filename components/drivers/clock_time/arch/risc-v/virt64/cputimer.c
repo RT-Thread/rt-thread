@@ -14,10 +14,12 @@ static volatile unsigned long _init_cnt = 0;
 static rt_bool_t _riscv_clock_registered = RT_FALSE;
 static struct rt_clock_time_device _riscv_clock_dev;
 
+extern rt_uint64_t rt_hw_get_clock_timer_freq(void);
+
 static rt_uint64_t _riscv_clock_get_freq(struct rt_clock_time_device *dev)
 {
     RT_UNUSED(dev);
-    return CLOCK_TIMER_FREQ;
+    return rt_hw_get_clock_timer_freq();
 }
 
 static rt_uint64_t _riscv_clock_get_counter(struct rt_clock_time_device *dev)
