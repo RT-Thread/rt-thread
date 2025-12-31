@@ -435,7 +435,7 @@ static int char_dev_fopen(struct dfs_file *fd)
     return RT_EOK;
 }
 #ifdef RT_USING_DFS_V2
-static ssize_t char_dev_fread(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
+static ssize_t char_dev_fread(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
 #else
 static ssize_t char_dev_fread(struct dfs_file *fd, void *buf, size_t count)
 #endif
