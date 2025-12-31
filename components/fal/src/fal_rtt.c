@@ -434,43 +434,55 @@ static int char_dev_fopen(struct dfs_file *fd)
 
     return RT_EOK;
 }
-
-static int char_dev_fread(struct dfs_file *fd, void *buf, rt_size_t count)
+#ifdef RT_USING_DFS_V2
+static ssize_t char_dev_fread(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
+#else
+static ssize_t char_dev_fread(struct dfs_file *fd, void *buf, size_t count)
+#endif
 {
-    int ret = 0;
+    ssize_t ret = 0;
     struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
+#ifndef RT_USING_DFS_V2
+    off_t *pos = &(fd->pos);
+#endif
 
     RT_ASSERT(part != RT_NULL);
 
-    if (DFS_FILE_POS(fd) + count > part->fal_part->len)
-        count = part->fal_part->len - DFS_FILE_POS(fd);
+    if (*pos + count > part->fal_part->len)
+        count = part->fal_part->len - *pos;
 
-    ret = fal_partition_read(part->fal_part, DFS_FILE_POS(fd), buf, count);
+    ret = fal_partition_read(part->fal_part, *pos, buf, count);
 
-    if (ret != (int)(count))
+    if (ret != (ssize_t)(count))
         return 0;
 
-    DFS_FILE_POS(fd) += ret;
+    *pos += ret;
 
     return ret;
 }
-
-static int char_dev_fwrite(struct dfs_file *fd, const void *buf, rt_size_t count)
+#ifdef RT_USING_DFS_V2
+static ssize_t char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
+#else
+static ssize_t char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t count)
+#endif
 {
-    int ret = 0;
+    ssize_t ret = 0;
     struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
+#ifndef RT_USING_DFS_V2
+    off_t *pos = &(fd->pos);
+#endif
 
     RT_ASSERT(part != RT_NULL);
 
-    if (DFS_FILE_POS(fd) + count > part->fal_part->len)
-        count = part->fal_part->len - DFS_FILE_POS(fd);
+    if (*pos + count > part->fal_part->len)
+        count = part->fal_part->len - *pos;
 
-    ret = fal_partition_write(part->fal_part, DFS_FILE_POS(fd), buf, count);
+    ret = fal_partition_write(part->fal_part, *pos, buf, count);
 
-    if (ret != (int) count)
+    if (ret != (ssize_t) count)
         return 0;
 
-    DFS_FILE_POS(fd) += ret;
+    *pos += ret;
 
     return ret;
 }
