@@ -1,0 +1,97 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+src = Split("""
+CMSIS/FT32F4xx/source/system_ft32f4xx.c
+FT32F4xx_Driver/src/ft32f4xx_comp.c
+FT32F4xx_Driver/src/ft32f4xx_crc.c
+FT32F4xx_Driver/src/ft32f4xx_crs.c
+FT32F4xx_Driver/src/ft32f4xx_debug.c
+FT32F4xx_Driver/src/ft32f4xx_dma.c
+FT32F4xx_Driver/src/ft32f4xx_exti.c
+FT32F4xx_Driver/src/ft32f4xx_gpio.c
+FT32F4xx_Driver/src/ft32f4xx_iwdg.c
+FT32F4xx_Driver/src/ft32f4xx_misc.c
+FT32F4xx_Driver/src/ft32f4xx_opamp.c
+FT32F4xx_Driver/src/ft32f4xx_pwr.c
+FT32F4xx_Driver/src/ft32f4xx_rcc.c
+FT32F4xx_Driver/src/ft32f4xx_syscfg.c
+FT32F4xx_Driver/src/ft32f4xx_tim.c
+""")
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_adc.c']
+
+if GetDepend(['RT_USING_DAC']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_dac.c']
+
+if GetDepend(['RT_USING_ECAP']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_ecap.c']
+
+if GetDepend(['RT_USING_EPWM']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_epwm.c']
+
+if GetDepend(['RT_USING_EQEP']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_eqep.c']
+
+if GetDepend(['RT_USING_FDCAN']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_fdcan.c']
+
+if GetDepend(['RT_USING_FMC']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_fmc.c']
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_usart.c']
+    src += ['FT32F4xx_Driver/src/ft32f4xx_uart.c']
+
+if GetDepend(['RT_USING_I2C']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_i2c.c']
+
+if GetDepend(['RT_USING_I2S']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_i2s.c']
+
+if GetDepend(['RT_USING_LPTIM']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_lptim.c']
+
+if GetDepend(['RT_USING_QSPI']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_qspi.c']
+
+if GetDepend(['RT_USING_RNG']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_rng.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_spi.c']
+
+if GetDepend(['RT_USING_RTC']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_rtc.c']
+
+if GetDepend(['RT_USING_SDIO']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_sdio.c']
+
+if GetDepend(['RT_USING_SPDIF']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_spdif.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_wwdg.c']
+
+if GetDepend(['RT_USING_SSI']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_ssi.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_flash.c']
+
+if GetDepend(['BSP_USING_ETH']):
+    src += ['FT32F4xx_Driver/src/ft32f4xx_eth.c']
+
+path = [cwd + '/CMSIS/FT32F4xx/include',
+    cwd + '/FT32F4xx_Driver/inc',
+    cwd + '/FT32F4xx_Driver/templates/inc']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+
+Return('group')

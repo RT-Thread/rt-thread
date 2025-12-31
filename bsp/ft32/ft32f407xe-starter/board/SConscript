@@ -1,0 +1,29 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+path =  [cwd]
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/FT32F4xx/CMSIS/FT32F4xx/source/gcc/startup_ft32f407xe.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/FT32F4xx/CMSIS/FT32F4xx/source/arm/startup_ft32f407xe.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/FT32F4xx/CMSIS/FT32F4xx/source/iar/startup_ft32f407xe.s']
+
+# FT32F407xE
+# You can select chips from the list above
+CPPDEFINES = ['FT32F407xE']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')
