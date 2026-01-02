@@ -1078,4 +1078,3 @@ uint32_t board_init_gptmr_clock(GPTMR_Type *ptr)
     }
     return freq;
 }
-
