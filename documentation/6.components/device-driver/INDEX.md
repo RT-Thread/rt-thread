@@ -1,6 +1,7 @@
 @page page_device Device Driver
 
 - @subpage page_device_framework
+- @subpage page_device_dm
 - @subpage page_device_pin
 - @subpage page_device_uart
 - @subpage page_device_adc
