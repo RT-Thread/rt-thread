@@ -23,9 +23,10 @@
 #include "hpm_pllctl_drv.h"
 #include "hpm_enet_drv.h"
 #include "hpm_pcfg_drv.h"
+#include <rtconfig.h>
+
 #if defined(ENET_MULTIPLE_PORT) && ENET_MULTIPLE_PORT
 #include "hpm_enet_phy_common.h"
-#include <rtconfig.h>
 #include <rthw.h>
 #endif
 
