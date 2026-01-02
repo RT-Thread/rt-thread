@@ -10,8 +10,10 @@ clock_time 子系统为 RT-Thread 提供统一的高精度时间基准与事件�
 
 ## 分层关系与职责
 
-- 上层：内核超时/延时、POSIX/libc 时间接口（clock_gettime、nanosleep），
-  以及 RTC/软 RTC，直接使用 clock_time 提供的时间与事件能力。
+- 上层：
+  - POSIX/libc 时间接口（clock_gettime、nanosleep）使用 boottime 和 hrtimer API。
+  - 软 RTC 使用 boottime 作为单调时间基准进行计时。
+  - 设备驱动（输入事件时间戳、vDSO、中断控制器统计）使用 boottime 获取时间戳。
 - clock_time 子系统：核心 API、时钟源/事件设备、高精度定时器调度器、
   boottime 辅助函数、clock_timer 适配层。
 - 下层：BSP 驱动提供硬件计数器与定时器，并封装为 clock_time 设备或

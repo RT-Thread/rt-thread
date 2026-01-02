@@ -13,9 +13,11 @@ hardware counters and timers while the kernel and libc see consistent behavior.
 
 ## Layering and Responsibilities
 
-- Upper layers: kernel services (timeouts, delays), POSIX/libc time APIs
-  (clock_gettime, nanosleep), and RTC/soft-RTC consume the monotonic time base
-  and timer events exposed by clock_time.
+- Upper layers:
+  - POSIX/libc time APIs (clock_gettime, nanosleep) use boottime and hrtimer APIs.
+  - Soft RTC uses boottime as its monotonic time base for timekeeping.
+  - Device drivers (input event timestamps, vDSO, PIC statistics) use boottime
+    for timestamping.
 - clock_time subsystem: core APIs, clock source/event devices, the hrtimer
   scheduler, boottime helpers, and the clock_timer adapter.
 - Lower layers: BSP drivers provide hardware counters and timers, which are
