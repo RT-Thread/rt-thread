@@ -1,78 +1,96 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620">
   <defs>
     <style>
-      .box { fill: #f8f9fb; stroke: #2d3b4f; stroke-width: 1.2; rx: 8; ry: 8; }
-      .title { font-family: Arial, sans-serif; font-size: 15px; font-weight: 700; fill: #1f2a3a; }
-      .text { font-family: Arial, sans-serif; font-size: 12px; fill: #1f2a3a; }
-      .label { font-family: Arial, sans-serif; font-size: 11px; fill: #1f2a3a; }
-      .layer { fill: #eef3f8; stroke: #2d3b4f; stroke-width: 1.2; rx: 10; ry: 10; }
-      .arrow { stroke: #2d3b4f; stroke-width: 1.3; fill: none; marker-end: url(#arrowhead); }
+      .box { fill: #ffffff; stroke: #3b5998; stroke-width: 1.5; }
+      .box-upper { fill: #e8f4fd; stroke: #3b5998; stroke-width: 1.5; }
+      .box-core { fill: #fff8e6; stroke: #d9a300; stroke-width: 1.5; }
+      .box-source { fill: #e6f7e6; stroke: #2e8b57; stroke-width: 1.5; }
+      .box-event { fill: #ffe6e6; stroke: #c44536; stroke-width: 1.5; }
+      .box-helper { fill: #f0e6ff; stroke: #7b4bb7; stroke-width: 1.5; }
+      .box-bsp { fill: #e6f0f0; stroke: #4a7c7c; stroke-width: 1.5; }
+      .box-hw { fill: #f5f5f5; stroke: #666666; stroke-width: 1.5; }
+      .title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: 600; fill: #1a1a2e; }
+      .text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #4a4a4a; }
+      .label { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10px; fill: #666666; font-style: italic; }
+      .layer { fill: #f8fafc; stroke: #3b5998; stroke-width: 2; stroke-dasharray: none; }
+      .layer-title { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; font-weight: 700; fill: #3b5998; }
+      .arrow { stroke: #5c6b7a; stroke-width: 1.5; fill: none; }
     </style>
-    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-      <polygon points="0 0, 10 3.5, 0 7" fill="#2d3b4f" />
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#5c6b7a" />
     </marker>
   </defs>
 
-  <rect class="box" x="40" y="20" width="240" height="60" />
-  <text class="title" x="60" y="45">Kernel Services</text>
-  <text class="text" x="60" y="63">rt_timer, delays, IPC timeouts</text>
+  <!-- ========== 上层应用层 ========== -->
+  <rect class="box-upper" x="50" y="20" width="240" height="65" rx="8" ry="8" />
+  <text class="title" x="170" y="45" text-anchor="middle">POSIX / libc</text>
+  <text class="text" x="170" y="62" text-anchor="middle">clock_gettime, nanosleep</text>
 
-  <rect class="box" x="330" y="20" width="240" height="60" />
-  <text class="title" x="350" y="45">POSIX / libc</text>
-  <text class="text" x="350" y="63">clock_gettime, nanosleep</text>
+  <rect class="box-upper" x="330" y="20" width="240" height="65" rx="8" ry="8" />
+  <text class="title" x="450" y="45" text-anchor="middle">Soft RTC</text>
+  <text class="text" x="450" y="62" text-anchor="middle">timekeeping baseline</text>
 
-  <rect class="box" x="620" y="20" width="240" height="60" />
-  <text class="title" x="640" y="45">RTC / Soft RTC</text>
-  <text class="text" x="640" y="63">timekeeping, alarms</text>
+  <rect class="box-upper" x="610" y="20" width="240" height="65" rx="8" ry="8" />
+  <text class="title" x="730" y="45" text-anchor="middle">Device Drivers</text>
+  <text class="text" x="730" y="62" text-anchor="middle">input timestamp, vDSO, PIC</text>
 
-  <rect class="layer" x="60" y="110" width="780" height="270" />
-  <text class="title" x="80" y="140">Clock Time Subsystem</text>
+  <!-- ========== Clock Time 子系统层 ========== -->
+  <rect class="layer" x="40" y="115" width="820" height="300" rx="12" ry="12" />
+  <text class="layer-title" x="60" y="142">Clock Time Subsystem</text>
 
-  <rect class="box" x="100" y="160" width="210" height="70" />
-  <text class="title" x="115" y="185">Core API</text>
-  <text class="text" x="115" y="203">register, default source/event</text>
-  <text class="text" x="115" y="220">counter &lt;-&gt; ns conversion</text>
+  <!-- 第一行：Core API, Clock Source, Clock Event -->
+  <rect class="box-core" x="80" y="165" width="200" height="80" rx="6" ry="6" />
+  <text class="title" x="180" y="195" text-anchor="middle">Core API</text>
+  <text class="text" x="180" y="212" text-anchor="middle">register, default source/event</text>
+  <text class="text" x="180" y="227" text-anchor="middle">counter ↔ ns conversion</text>
 
-  <rect class="box" x="330" y="160" width="210" height="70" />
-  <text class="title" x="345" y="185">Clock Source Device</text>
-  <text class="text" x="345" y="203">get_freq / get_counter</text>
+  <rect class="box-source" x="350" y="165" width="200" height="80" rx="6" ry="6" />
+  <text class="title" x="450" y="195" text-anchor="middle">Clock Source Device</text>
+  <text class="text" x="450" y="212" text-anchor="middle">get_freq / get_counter</text>
+  <text class="text" x="450" y="227" text-anchor="middle">monotonic time base</text>
 
-  <rect class="box" x="560" y="160" width="210" height="70" />
-  <text class="title" x="575" y="185">Clock Event Device</text>
-  <text class="text" x="575" y="203">set_timeout / event ISR</text>
+  <rect class="box-event" x="620" y="165" width="200" height="80" rx="6" ry="6" />
+  <text class="title" x="720" y="195" text-anchor="middle">Clock Event Device</text>
+  <text class="text" x="720" y="212" text-anchor="middle">set_timeout / event ISR</text>
+  <text class="text" x="720" y="227" text-anchor="middle">timeout programming</text>
 
-  <rect class="box" x="100" y="260" width="210" height="70" />
-  <text class="title" x="115" y="285">Clock HRTimer</text>
-  <text class="text" x="115" y="303">priority queue of timeouts</text>
+  <!-- 第二行：HRTimer, Boottime, Clock Timer Adapter -->
+  <rect class="box-helper" x="80" y="275" width="200" height="80" rx="6" ry="6" />
+  <text class="title" x="180" y="305" text-anchor="middle">Clock HRTimer</text>
+  <text class="text" x="180" y="322" text-anchor="middle">priority queue of timeouts</text>
+  <text class="text" x="180" y="337" text-anchor="middle">callback dispatch</text>
 
-  <rect class="box" x="330" y="260" width="210" height="70" />
-  <text class="title" x="345" y="285">Boottime Helpers</text>
-  <text class="text" x="345" y="303">get_us / get_ns / get_s</text>
+  <rect class="box-helper" x="350" y="275" width="200" height="80" rx="6" ry="6" />
+  <text class="title" x="450" y="305" text-anchor="middle">Boottime Helpers</text>
+  <text class="text" x="450" y="322" text-anchor="middle">get_us / get_ns / get_s</text>
+  <text class="text" x="450" y="337" text-anchor="middle">timeval / timespec</text>
 
-  <rect class="box" x="560" y="260" width="210" height="70" />
-  <text class="title" x="575" y="285">Clock Timer Adapter</text>
-  <text class="text" x="575" y="303">rt_clock_timer device API</text>
+  <rect class="box-helper" x="620" y="275" width="200" height="80" rx="6" ry="6" />
+  <text class="title" x="720" y="305" text-anchor="middle">Clock Timer Adapter</text>
+  <text class="text" x="720" y="322" text-anchor="middle">rt_clock_timer device API</text>
+  <text class="text" x="720" y="337" text-anchor="middle">unified timer interface</text>
 
-  <path class="arrow" d="M 205 230 L 205 260" />
-  <text class="label" x="215" y="250">timeouts</text>
+  <!-- ========== BSP 驱动层 ========== -->
+  <rect class="box-bsp" x="40" y="445" width="820" height="65" rx="12" ry="12" />
+  <text class="title" x="450" y="472" text-anchor="middle">BSP Drivers</text>
+  <text class="text" x="450" y="490" text-anchor="middle">arch counters, clock_timer drivers, DM/OFW integration</text>
 
-  <path class="arrow" d="M 310 195 L 330 195" />
-  <path class="arrow" d="M 540 195 L 560 195" />
+  <!-- ========== 硬件层 ========== -->
+  <rect class="box-hw" x="40" y="540" width="820" height="55" rx="12" ry="12" />
+  <text class="title" x="450" y="565" text-anchor="middle">Hardware Counter / Timer</text>
+  <text class="text" x="450" y="582" text-anchor="middle">CPU timer, SoC timer peripherals</text>
 
-  <path class="arrow" d="M 310 295 L 560 195" />
-  <text class="label" x="380" y="232">set_timeout</text>
+  <!-- ========== 箭头连接（使用圆弧路径） ========== -->
 
-  <path class="arrow" d="M 560 215 L 310 295" />
-  <text class="label" x="390" y="260">event_isr</text>
+  <!-- 上层到子系统的连接 -->
+  <path class="arrow" d="M 170 85 Q 170 100, 180 115" marker-end="url(#arrowhead)" />
+  <path class="arrow" d="M 450 85 Q 450 100, 450 115" marker-end="url(#arrowhead)" />
+  <path class="arrow" d="M 730 85 Q 730 100, 720 115" marker-end="url(#arrowhead)" />
 
-  <rect class="box" x="140" y="410" width="620" height="60" />
-  <text class="title" x="160" y="440">BSP Drivers</text>
-  <text class="text" x="160" y="458">arch counters, clock_timer drivers, DM/OFW integration</text>
+  <!-- 子系统到 BSP 层的连接 -->
+  <path class="arrow" d="M 450 415 Q 450 430, 450 445" marker-end="url(#arrowhead)" />
 
-  <rect class="box" x="200" y="490" width="500" height="50" />
-  <text class="title" x="220" y="520">Hardware Counter / Timer</text>
+  <!-- BSP 到硬件层的连接 -->
+  <path class="arrow" d="M 450 510 Q 450 525, 450 540" marker-end="url(#arrowhead)" />
 
-  <path class="arrow" d="M 450 80 L 450 110" />
-  <path class="arrow" d="M 450 380 L 450 410" />
-  <path class="arrow" d="M 450 470 L 450 490" />
 </svg>
