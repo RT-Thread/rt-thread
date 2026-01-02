@@ -1,6 +1,11 @@
 menuconfig RT_USING_BLK
     bool "Using Block device drivers"
     default n
+    help
+      Enable the generic block-device infrastructure so storage controllers can
+      register disks/partitions and the RT-Thread DFS layer can mount them.
+      Almost every filesystem, SDIO, SATA or NAND driver depends on this. Turn
+      it off only on firmware builds that never interact with block media.
 
 if RT_USING_BLK
     rsource "partitions/Kconfig"

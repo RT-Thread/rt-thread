@@ -1,6 +1,12 @@
 menuconfig RT_USING_HWTIMER
     bool "Using Hardware Timer device drivers"
     default n
+    help
+      Enable the generic hardware-timer framework so SoC timer blocks can
+      register themselves, expose capture/compare features, and provide high
+      resolution timing services beyond the system tick. Select this for chips
+      with general-purpose timers or watchdog-timer reuse; disable on systems
+      that only rely on the software tick.
 
 config RT_HWTIMER_ARM_ARCH
     bool "ARM ARCH Timer"
@@ -8,3 +14,8 @@ config RT_HWTIMER_ARM_ARCH
     depends on RT_USING_HWTIMER
     depends on ARCH_ARM_CORTEX_A || ARCH_ARMV8
     default n
+    help
+      Enable the driver for the ARM architectural timer (ARMv7-A/v8 system
+      counter). This maps CNTFRQ/CNTV registers into the driver-model so the
+      kernel can expose a precise clocksource/clockevent. Only useful on Cortex-
+      A/R platforms that implement the generic timer block.

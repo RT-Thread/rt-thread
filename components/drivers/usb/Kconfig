@@ -1,1 +1,8 @@
+menu "USB Drivers"
+    help
+      Select USB host/device controller stacks. CherryUSB provides both device
+      and host implementations used by RT-Thread.
+
 rsource "cherryusb/Kconfig.rtt"
+
+endmenu

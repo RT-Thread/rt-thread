@@ -1,3 +1,7 @@
 menuconfig RT_USING_KTIME
     bool "Ktime: kernel time"
     default n
+    help
+      Enable the ktime helpers which provide high-resolution timekeeping APIs
+      for drivers and subsystems that need more precision than the scheduler
+      tick. Disable if the platform sticks to coarse `rt_tick_get()` timing.

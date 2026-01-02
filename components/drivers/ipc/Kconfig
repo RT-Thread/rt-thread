@@ -3,23 +3,41 @@ menuconfig RT_USING_DEVICE_IPC
     default y
     select RT_USING_MUTEX
     select RT_USING_SEMAPHORE
+    help
+      Enable the device-layer IPC helpers (pipes, message queues, workqueues)
+      that many drivers rely on for buffering and deferred processing. Disable
+      only on extremely small systems that do not load drivers needing mutex or
+      semaphore-based IPC primitives.
 
 if RT_USING_DEVICE_IPC
     config RT_UNAMED_PIPE_NUMBER
         int "The number of unamed pipe"
         default 64
+        help
+          Maximum number of anonymous pipes that can be created at runtime.
+          Reduce this to save memory if your application uses few pipes.
 
     config RT_USING_SYSTEM_WORKQUEUE
         bool "Using system default workqueue"
         default n
+        help
+          Create a global system workqueue thread so drivers can defer work out
+          of interrupt context without allocating their own threads.
 
     if RT_USING_SYSTEM_WORKQUEUE
         config RT_SYSTEM_WORKQUEUE_STACKSIZE
             int "The stack size for system workqueue thread"
             default 2048
+            help
+              Stack size in bytes for the common workqueue thread; increase when
+              queued jobs perform complex tasks or call into heavy subsystems.
 
         config RT_SYSTEM_WORKQUEUE_PRIORITY
             int "The priority level of system workqueue thread"
             default 23
+            help
+              Scheduler priority assigned to the workqueue thread. Lower numbers
+              mean higher priority; adjust relative to other timing-sensitive
+              threads in your system.
     endif
 endif

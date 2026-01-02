@@ -2,4 +2,8 @@ if RT_USING_AUDIO
     config RT_UTEST_USING_AUDIO_DRIVER
         bool "Audio Test"
         default n
+        help
+          Build the audio driver utest cases which stream synthetic data through
+          the replay/record paths. Enable only when running the RT-Thread unit
+          test suite; it adds test hooks that are not required in production.
 endif

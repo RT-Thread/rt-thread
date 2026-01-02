@@ -1,4 +1,8 @@
 menu "Device Drivers"
+    help
+      Select which RT-Thread driver stacks are built into the firmware. Each
+      submenu groups related peripherals (IPC, storage, networking, etc.) and
+      exposes their own configuration knobs.
 
 rsource "core/Kconfig"
 rsource "ipc/Kconfig"

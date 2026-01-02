@@ -4,9 +4,20 @@ config RT_BLK_PARTITION_DFS
     bool "DFS Partition support"
     depends on RT_USING_DFS
     default y
+    help
+      Parse the RT-Thread DFS partition table (vfs_part) so a single block
+      device can be split into multiple named logical volumes. Enable this when
+      you use the DFS tooling or `mkpart` scripts to carve flash storage; it is
+      harmless to keep on because it only activates when the table signature is
+      present.
 
 config RT_BLK_PARTITION_EFI
     bool "EFI Globally Unique Identifier (GUID) Partition support"
     default y
+    help
+      Add GUID Partition Table (GPT) support, allowing disks formatted on
+      modern PCs to be recognized. Required for SATA/NVMe/USB disks that use
+      GPT; you may disable it on very small targets that only boot from DFS
+      partitions to save a few kilobytes.
 
 endmenu
