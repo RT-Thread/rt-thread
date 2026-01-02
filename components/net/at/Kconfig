@@ -1,36 +1,73 @@
 menuconfig RT_USING_AT
     bool "Enable AT commands"
     default n
+    help
+        RT_USING_AT is the master switch for the "AT command framework" in the RT-Thread system.
+        The AT command component provides a standardized framework for AT command parsing, registration, and response, adapting to various peripherals that support AT commands.
+       
+        It is disabled by default.
 
 if RT_USING_AT
 
     config AT_DEBUG
         bool "Enable debug log output"
         default n
+        help
+            AT_DEBUG is a switch that enables debug logging output for the AT command framework.
+            When enabled, it prints logs of AT commands, including "sent/received content," "parsing process," "response result," and "error reason."
+
+            It is disabled by default.
 
     config AT_USING_SERVER
         bool "Enable AT commands server"
         default n
+        help
+            AT_USING_SERVERAT is the AT server function switch.
+            Its core function is to expand the AT command framework from "local serial port interaction mode" to "network/multi-channel service mode."
+            When enabled, AT commands are no longer limited to local serial port transmission and reception.
+            They can also receive and respond to AT commands through network channels such as TCP/UDP/virtual serial ports, enabling "remote AT debugging/control."
+
+            It is disabled by default.
 
     if AT_USING_SERVER
 
         config AT_SERVER_DEVICE
             string "Server device name"
             default "uart3"
+            help
+                The core function of AT_SERVER_DEVICE is to specify the "underlying data transceiver device name" of the AT server.
+                The command interaction of the AT server ultimately needs to be bound to a physical/virtual device as a data channel (such as a serial port or network device).
+
+                By default, it is "uart3".
 
         config AT_SERVER_RECV_BUFF_LEN
             int "The maximum length of server data accepted"
             default 256
+            help    
+                The core function of AT_SERVER_RECV_BUFF_LEN is to define the "maximum buffer length" for the AT server to receive a single AT command.
+                When receiving remote/serial AT commands, the AT server first stores the data in this buffer, and then parses it after the command is fully received.
+
+                The default value is 256.
 
         config AT_SERVER_SEND_BUFF_LEN
             int "The maximum length of server commands buffer"
             default 256
+            help
+                The core function of AT_SERVER_SEND_BUFF_LEN is to define the "maximum buffer length" for the AT server to send AT command responses/issue commands.
+                When the AT server returns command responses to a remote terminal/serial port or issues AT commands to a module, it first stores the data in this buffer before sending it in batches.
+
+                The default value is 256.
 
     endif
 
     config AT_USING_CLIENT
         bool "Enable AT commands client"
         default n
+        help
+            The core function of AT_USING_CLIENT is to switch the AT framework from a "passive command response mode" to an "active command initiation mode."
+            When enabled, the AT framework can act as an "AT client," actively sending AT commands to external AT devices and waiting for/parsing responses.
+
+            It is disabled by default.
 
     if AT_USING_CLIENT
 
@@ -38,18 +75,29 @@ if RT_USING_AT
             int "The maximum number of supported clients"
             default 1
             range 1 65535
+            help
+                The core function of AT_CLIENT_NUM_MAX is to define the maximum number of AT client instances that can be created simultaneously within the AT framework.
+
+                By default, the value range is 1-65535.
 
         config AT_USING_SOCKET
             bool "Enable BSD Socket API support by AT commnads"
             select RT_USING_SAL
             select SAL_USING_AT
             default n
+            help
+
 
         if AT_USING_SOCKET
 
             config AT_USING_SOCKET_SERVER
                 bool "Enable BSD Socket API support about AT server"
                 default n
+                help    
+                    AT_USING_SOCKET is an AT socket adaptation switch within the AT command framework. Its core function is to enable the AT framework to provide a "BSD Socket standard API wrapper."
+                    When enabled, network modules adapted to AT commands can directly call the standard BSD Socket API without needing to concern themselves with the underlying AT command details.
+
+                    It is disabled by default; enabling it will also enable RT_USING_SAL and SAL_USING_AT.
 
         endif
 
@@ -61,10 +109,22 @@ if RT_USING_AT
             bool "Enable CLI(Command-Line Interface) for AT commands"
             default y
             depends on RT_USING_FINSH
+            help    
+                AT_USING_CLI is the AT command-line interaction switch within the AT framework.
+                Its core function is to integrate AT commands into the RT-Thread FinSH command-line console.
+                When enabled, AT commands can be entered directly in the FinSH terminal without requiring an additional serial port/network channel.
+
+                It is enabled by default, but RT_USING_FINSH must be enabled.
 
        config AT_PRINT_RAW_CMD
             bool "Enable print RAW format AT command communication data"
             default n
+            help    
+                AT_PRINT_RAW_CMD is a switch for printing raw AT data within the AT command framework.
+                Its core function is to print the raw binary/character data during AT command interaction.
+                When enabled, it outputs unfiltered, unformatted AT transmit and receive data.
+
+                It is disabled by default.
 
     endif
 
