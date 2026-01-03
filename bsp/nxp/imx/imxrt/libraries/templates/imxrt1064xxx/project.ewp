@@ -1167,7 +1167,7 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\cputime\cputime.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\clock_time\clock_time_core.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\misc\pin.c</name>

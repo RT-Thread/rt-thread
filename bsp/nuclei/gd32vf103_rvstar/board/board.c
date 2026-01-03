@@ -37,7 +37,7 @@ extern void _init(void);
 /*
  * - Check MCU pin assignment here https://doc.nucleisys.com/nuclei_board_labs/hw/hw.html
  * - If you changed menuconfig to use different peripherals such as SPI, ADC, GPIO,
- *   HWTIMER, I2C, PWM, UART, WDT, RTC, please add or change related pinmux configuration
+ *   CLOCK_TIMER, I2C, PWM, UART, WDT, RTC, please add or change related pinmux configuration
  *   code in functions(rt_hw_*_drvinit) below
  */
 
@@ -62,7 +62,7 @@ void rt_hw_gpio_drvinit(void)
     rcu_periph_clock_enable(RCU_AF);
 }
 
-void rt_hw_hwtimer_drvinit(void)
+void rt_hw_clock_timer_drvinit(void)
 {
 
 }
@@ -116,8 +116,8 @@ void rt_hw_drivers_init(void)
 #ifdef BSP_USING_RTC
     rt_hw_rtc_drvinit();
 #endif
-#ifdef BSP_USING_HWTIMER
-    rt_hw_hwtimer_drvinit();
+#ifdef BSP_USING_CLOCK_TIMER
+    rt_hw_clock_timer_drvinit();
 #endif
 #ifdef BSP_USING_PWM
     rt_hw_pwm_drvinit();

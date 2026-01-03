@@ -1161,7 +1161,7 @@
       <name>$PROJ_DIR$\..\Libraries\drivers\drv_mma8562.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Libraries\drivers\drv_hwtimer.c</name>
+      <name>$PROJ_DIR$\..\Libraries\drivers\drv_timer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\Libraries\drivers\drv_wdt.c</name>
@@ -1221,7 +1221,7 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\hwtimer\hwtimer.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\clock_time\clock_timer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_core.c</name>

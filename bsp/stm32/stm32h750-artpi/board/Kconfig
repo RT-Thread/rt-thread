@@ -242,7 +242,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable lptimer"
         default n
         select RT_USING_LPTIMER
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         if BSP_USING_LPTIM
             config BSP_USING_LPTIM1
                 bool "Enable LPTIM1"

@@ -314,7 +314,7 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_TIM
         bool "Enable Hardware Timer"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
         if BSP_USING_TIM
             config BSP_USING_TIM2

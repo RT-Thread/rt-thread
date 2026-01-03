@@ -124,6 +124,10 @@ struct rk_clk
         struct rk_pmuclk_priv pmuclk_info;
     };
 
+    struct rt_clk_cell *cells;
+    struct rt_clk_cell **cells_list;
+    rt_size_t cells_nr;
+
     struct rk_clk_platform_data pdata[];
 };
 
@@ -4328,84 +4332,115 @@ static rt_base_t mmc_get_phase(struct rk_clk_platform_data *pdata,
     return rk_clk_mmc_get_phase(rate, reg, 1);
 }
 
-static rt_err_t rk3568_clk_init(struct rt_clk *clk, void *fw_data)
+static const struct rt_clk_ops rk3568_clk_ops;
+
+static void rk3568_clk_init_cells(struct rk_clk *rk_clk, struct rt_ofw_node *np)
 {
-    struct rk_clk *rk_clk = raw_to_rk_clk(clk->clk_np);
-    struct rt_ofw_cell_args *args = fw_data;
-    struct rk_clk_platform_data *pdata;
-    rt_uint32_t clk_id = args->args[0];
-    rt_ubase_t reg_base;
+    rt_size_t clk_nr = rk_clk->cells_nr;
 
-    pdata = &rk_clk->pdata[clk_id];
-
-    if (rk_clk->type == rk_clk_type_pmuclk)
+    for (rt_uint32_t clk_id = 0; clk_id < clk_nr; ++clk_id)
     {
-        reg_base = (rt_ubase_t)rk_clk->pmuclk_info.pmucru;
+        rt_ubase_t reg_base = RT_NULL;
+        struct rk_clk_platform_data *pdata = &rk_clk->pdata[clk_id];
+        struct rt_clk_cell *cell = &rk_clk->cells[clk_id];
+        const char *name = RT_NULL;
 
-        switch (clk_id)
+        if (rk_clk->type == rk_clk_type_pmuclk)
         {
-        case PLL_PPLL:
-            reg_base += pmu_pll_clks[ppll].con_offset;
-            break;
-        case PLL_HPLL:
-            reg_base += pmu_pll_clks[hpll].con_offset;
-            break;
-        default:
-            reg_base = RT_NULL;
-            break;
-        }
-    }
-    else if (rk_clk->type == rk_clk_type_clk)
-    {
-        reg_base = (rt_ubase_t)rk_clk->clk_info.cru;
+            reg_base = (rt_ubase_t)rk_clk->pmuclk_info.pmucru;
 
-        switch (clk_id)
+            switch (clk_id)
+            {
+            case PLL_PPLL:
+                reg_base += pmu_pll_clks[ppll].con_offset;
+                break;
+            case PLL_HPLL:
+                reg_base += pmu_pll_clks[hpll].con_offset;
+                break;
+            default:
+                reg_base = RT_NULL;
+                break;
+            }
+        }
+        else if (rk_clk->type == rk_clk_type_clk)
         {
-        case PLL_APLL:
-        case ARMCLK:
-            reg_base += pll_clks[apll].con_offset;
-            break;
-        case PLL_CPLL:
-            reg_base += pll_clks[cpll].con_offset;
-            break;
-        case PLL_GPLL:
-            reg_base += pll_clks[gpll].con_offset;
-            break;
-        case PLL_NPLL:
-            reg_base += pll_clks[npll].con_offset;
-            break;
-        case PLL_VPLL:
-            reg_base += pll_clks[vpll].con_offset;
-            break;
-        case PLL_DPLL:
-            reg_base += pll_clks[dpll].con_offset;
-            break;
-        default:
-            reg_base = RT_NULL;
-            break;
+            reg_base = (rt_ubase_t)rk_clk->clk_info.cru;
+
+            switch (clk_id)
+            {
+            case PLL_APLL:
+            case ARMCLK:
+                reg_base += pll_clks[apll].con_offset;
+                break;
+            case PLL_CPLL:
+                reg_base += pll_clks[cpll].con_offset;
+                break;
+            case PLL_GPLL:
+                reg_base += pll_clks[gpll].con_offset;
+                break;
+            case PLL_NPLL:
+                reg_base += pll_clks[npll].con_offset;
+                break;
+            case PLL_VPLL:
+                reg_base += pll_clks[vpll].con_offset;
+                break;
+            case PLL_DPLL:
+                reg_base += pll_clks[dpll].con_offset;
+                break;
+            default:
+                reg_base = RT_NULL;
+                break;
+            }
         }
+        else
+        {
+            LOG_E("Unknow type of rk clk = %d", rk_clk->type);
+            RT_ASSERT(0);
+        }
+
+        pdata->id = clk_id;
+        pdata->base = (void *)reg_base;
+
+        if (np && !rt_ofw_prop_read_string_index(np, "clock-output-names", clk_id, &name))
+        {
+            cell->name = name;
+        }
+        else if (rk_clk->type == rk_clk_type_clk &&
+                clk_id < RT_ARRAY_SIZE(clk_gates) && clk_gates[clk_id].name)
+        {
+            cell->name = clk_gates[clk_id].name;
+        }
+        else if (rk_clk->type == rk_clk_type_pmuclk &&
+                clk_id < RT_ARRAY_SIZE(pmu_clk_gates) && pmu_clk_gates[clk_id].name)
+        {
+            cell->name = pmu_clk_gates[clk_id].name;
+        }
+
+        cell->ops = &rk3568_clk_ops;
+        cell->priv = pdata;
+        rk_clk->cells_list[clk_id] = cell;
     }
-    else
-    {
-        LOG_E("Unknow type of rk clk = %d", rk_clk->type);
-        RT_ASSERT(0);
-    }
-
-    pdata->id = clk_id;
-    pdata->base = (void *)reg_base;
-
-    clk->rate = rk_clk_get_rate(pdata, rk_clk);
-    clk->priv = pdata;
-
-    rk_clk_set_default_rates(clk, clk->clk_np->ops->set_rate, clk_id);
-
-    return RT_EOK;
 }
 
-static rt_err_t rk3568_clk_enable(struct rt_clk *clk)
+static rt_ubase_t rk3568_clk_recalc_rate(struct rt_clk_cell *cell, rt_ubase_t parent_rate)
 {
-    struct rk_clk_platform_data *pdata = clk->priv;
-    struct rk_clk *rk_clk = raw_to_rk_clk(clk->clk_np);
+    struct rk_clk_platform_data *pdata = cell->priv;
+    struct rk_clk *rk_clk = raw_to_rk_clk(cell->clk_np);
+
+    RT_UNUSED(parent_rate);
+
+    if (!pdata || !rk_clk)
+    {
+        return 0;
+    }
+
+    return rk_clk_get_rate(pdata, rk_clk);
+}
+
+static rt_err_t rk3568_clk_enable(struct rt_clk_cell *cell)
+{
+    struct rk_clk_platform_data *pdata = cell->priv;
+    struct rk_clk *rk_clk = raw_to_rk_clk(cell->clk_np);
     struct rk_cru *cru = rk_clk->clk_info.cru;
     struct rk_pmucru *pmucru = rk_clk->pmuclk_info.pmucru;
 
@@ -4441,10 +4476,10 @@ static rt_err_t rk3568_clk_enable(struct rt_clk *clk)
     return RT_EOK;
 }
 
-static void rk3568_clk_disable(struct rt_clk *clk)
+static void rk3568_clk_disable(struct rt_clk_cell *cell)
 {
-    struct rk_clk_platform_data *pdata = clk->priv;
-    struct rk_clk *rk_clk = raw_to_rk_clk(clk->clk_np);
+    struct rk_clk_platform_data *pdata = cell->priv;
+    struct rk_clk *rk_clk = raw_to_rk_clk(cell->clk_np);
     struct rk_cru *cru = rk_clk->clk_info.cru;
     struct rk_pmucru *pmucru = rk_clk->pmuclk_info.pmucru;
 
@@ -4476,9 +4511,9 @@ static void rk3568_clk_disable(struct rt_clk *clk)
     }
 }
 
-static rt_bool_t rk3568_clk_is_enabled(struct rt_clk *clk)
+static rt_bool_t rk3568_clk_is_enabled(struct rt_clk_cell *cell)
 {
-    struct rk_clk_platform_data *pdata = clk->priv;
+    struct rk_clk_platform_data *pdata = cell->priv;
 
     if (pdata->base)
     {
@@ -4490,29 +4525,21 @@ static rt_bool_t rk3568_clk_is_enabled(struct rt_clk *clk)
     return RT_TRUE;
 }
 
-static rt_err_t rk3568_clk_set_rate(struct rt_clk *clk, rt_ubase_t rate, rt_ubase_t parent_rate)
+static rt_err_t rk3568_clk_set_rate(struct rt_clk_cell *cell, rt_ubase_t rate, rt_ubase_t parent_rate)
 {
     rt_ubase_t res_rate;
-    struct rk_clk_platform_data *pdata = clk->priv;
-    struct rk_clk *rk_clk = raw_to_rk_clk(clk->clk_np);
+    struct rk_clk_platform_data *pdata = cell->priv;
+    struct rk_clk *rk_clk = raw_to_rk_clk(cell->clk_np);
+
+    RT_UNUSED(parent_rate);
 
     if (rk_clk->type == rk_clk_type_clk)
     {
         res_rate = rk_clk_set_rate(pdata, rk_clk, rate);
-
-        if ((rt_base_t)res_rate > 0)
-        {
-            clk->rate = res_rate;
-        }
     }
     else if (rk_clk->type == rk_clk_type_pmuclk)
     {
         res_rate = rk_pmuclk_set_rate(pdata, rk_clk, rate);
-
-        if ((rt_base_t)res_rate > 0)
-        {
-            clk->rate = res_rate;
-        }
     }
     else
     {
@@ -4522,17 +4549,19 @@ static rt_err_t rk3568_clk_set_rate(struct rt_clk *clk, rt_ubase_t rate, rt_ubas
     return (rt_ubase_t)res_rate > 0 ? RT_EOK : (rt_err_t)res_rate;
 }
 
-static rt_err_t rk3568_clk_set_parent(struct rt_clk *clk, struct rt_clk *parent)
+static rt_err_t rk3568_clk_set_parent(struct rt_clk_cell *cell, rt_uint8_t idx)
 {
     rt_err_t err;
-    struct rk_clk_platform_data *pdata = clk->priv, *ppdata = parent->priv;
-    struct rk_clk *rk_clk = raw_to_rk_clk(clk->clk_np);
-    struct rk_clk *rk_clk_parent = raw_to_rk_clk(clk->clk_np);
+    struct rt_clk_cell *parent_cell = rt_clk_cell_get_parent_by_index(cell, idx);
+    struct rk_clk_platform_data *pdata = cell->priv;
+    struct rk_clk *rk_clk = raw_to_rk_clk(cell->clk_np);
 
-    if (rk_clk->type != rk_clk_parent->type)
+    if (!parent_cell || parent_cell->clk_np != cell->clk_np || !parent_cell->priv)
     {
         return -RT_EINVAL;
     }
+
+    struct rk_clk_platform_data *ppdata = parent_cell->priv;
 
     if (rk_clk->type == rk_clk_type_clk)
     {
@@ -4550,11 +4579,11 @@ static rt_err_t rk3568_clk_set_parent(struct rt_clk *clk, struct rt_clk *parent)
     return err;
 }
 
-static rt_err_t rk3568_clk_set_phase(struct rt_clk *clk, int degrees)
+static rt_err_t rk3568_clk_set_phase(struct rt_clk_cell *cell, int degrees)
 {
     rt_err_t res;
-    struct rk_clk_platform_data *pdata = clk->priv;
-    struct rk_clk *rk_clk = raw_to_rk_clk(clk->clk_np);
+    struct rk_clk_platform_data *pdata = cell->priv;
+    struct rk_clk *rk_clk = raw_to_rk_clk(cell->clk_np);
 
     switch (pdata->id)
     {
@@ -4576,11 +4605,11 @@ static rt_err_t rk3568_clk_set_phase(struct rt_clk *clk, int degrees)
     return res;
 }
 
-static rt_base_t rk3568_clk_get_phase(struct rt_clk *clk)
+static rt_base_t rk3568_clk_get_phase(struct rt_clk_cell *cell)
 {
     rt_base_t res;
-    struct rk_clk_platform_data *pdata = clk->priv;
-    struct rk_clk *rk_clk = raw_to_rk_clk(clk->clk_np);
+    struct rk_clk_platform_data *pdata = cell->priv;
+    struct rk_clk *rk_clk = raw_to_rk_clk(cell->clk_np);
 
     switch (pdata->id)
     {
@@ -4602,18 +4631,20 @@ static rt_base_t rk3568_clk_get_phase(struct rt_clk *clk)
     return res;
 }
 
-static rt_base_t rk3568_clk_round_rate(struct rt_clk *clk, rt_ubase_t drate,
+static rt_base_t rk3568_clk_round_rate(struct rt_clk_cell *cell, rt_ubase_t drate,
         rt_ubase_t *prate)
 {
+    RT_UNUSED(cell);
+
     return rk_clk_pll_round_rate(pll_rates, RT_ARRAY_SIZE(pll_rates), drate, prate);
 }
 
 static const struct rt_clk_ops rk3568_clk_ops =
 {
-    .init = rk3568_clk_init,
     .enable = rk3568_clk_enable,
     .disable = rk3568_clk_disable,
     .is_enabled = rk3568_clk_is_enabled,
+    .recalc_rate = rk3568_clk_recalc_rate,
     .set_rate = rk3568_clk_set_rate,
     .set_parent = rk3568_clk_set_parent,
     .set_phase = rk3568_clk_set_phase,
@@ -4689,27 +4720,40 @@ static void rk3568_pmu_clk_type_init(struct rk_clk *rk_clk, struct rt_ofw_node *
 static rt_err_t clk_rk3568_probe(struct rt_platform_device *pdev)
 {
     rt_err_t err;
-    rt_size_t data_size = 0;
+    rt_size_t clk_nr = 0;
+    rt_size_t pdata_size = 0;
+    rt_size_t cells_size = 0;
+    rt_size_t cells_list_size = 0;
     struct rk_clk *rk_clk;
     struct rt_ofw_node *np = pdev->parent.ofw_node;
     enum rk_clk_type type = (rt_ubase_t)pdev->id->data;
 
     if (type == rk_clk_type_clk)
     {
-        data_size = CLK_NR_CLKS;
+        clk_nr = CLK_NR_CLKS;
     }
     else if (type == rk_clk_type_pmuclk)
     {
-        data_size = CLKPMU_NR_CLKS;
+        clk_nr = CLKPMU_NR_CLKS;
     }
 
-    data_size *= sizeof(struct rk_clk_platform_data);
-    rk_clk = rt_malloc(sizeof(*rk_clk) + data_size);
+    pdata_size = RT_ALIGN(clk_nr * sizeof(struct rk_clk_platform_data), RT_ALIGN_SIZE);
+    cells_size = RT_ALIGN(clk_nr * sizeof(struct rt_clk_cell), RT_ALIGN_SIZE);
+    cells_list_size = clk_nr * sizeof(struct rt_clk_cell *);
+    rk_clk = rt_malloc(sizeof(*rk_clk) + pdata_size + cells_size + cells_list_size);
 
     if (rk_clk)
     {
+        rt_size_t total_size = sizeof(*rk_clk) + pdata_size + cells_size + cells_list_size;
+        rt_uint8_t *mem;
         void *softrst_regs = RT_NULL;
-        rt_memset(&rk_clk->parent, 0, sizeof(rk_clk->parent));
+
+        rt_memset(rk_clk, 0, total_size);
+
+        mem = (rt_uint8_t *)rk_clk->pdata;
+        rk_clk->cells = (struct rt_clk_cell *)(mem + pdata_size);
+        rk_clk->cells_list = (struct rt_clk_cell **)((rt_uint8_t *)rk_clk->cells + cells_size);
+        rk_clk->cells_nr = clk_nr;
 
         rk_clk->base = rt_ofw_iomap(np, 0);
 
@@ -4734,9 +4778,14 @@ static rt_err_t clk_rk3568_probe(struct rt_platform_device *pdev)
             softrst_regs = &rk_clk->pmuclk_info.pmucru->pmu_softrst_con;
         }
 
-        rk_clk->parent.parent.ops = &rk3568_clk_ops;
+        rk_clk->parent.parent.dev = &pdev->parent;
+        rk_clk->parent.parent.cells_nr = rk_clk->cells_nr;
+        rk_clk->parent.parent.cells = rk_clk->cells_list;
+        rk_clk->parent.parent.multi_clk = rk_clk->cells_nr;
 
-        if ((err = rt_clk_register(&rk_clk->parent.parent, RT_NULL)))
+        rk3568_clk_init_cells(rk_clk, np);
+
+        if ((err = rt_clk_register(&rk_clk->parent.parent)))
         {
             goto _fail;
         }

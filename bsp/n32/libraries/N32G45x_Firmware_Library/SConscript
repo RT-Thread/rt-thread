@@ -38,7 +38,7 @@ if GetDepend(['RT_USING_ADC']):
 if GetDepend(['RT_USING_DAC']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_dac.c']
 
-if GetDepend(['RT_USING_HWTIMER']):
+if GetDepend(['RT_USING_CLOCK_TIME']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_tim.c']
 
 if GetDepend(['RT_USING_RTC']):

@@ -27,7 +27,7 @@ if GetDepend(['RT_USING_I2C']):
 if GetDepend(['RT_USING_SPI']):
     src += ['Src/fm33lc0xx_fl_spi.c']
 
-if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
+if GetDepend(['RT_USING_CLOCK_TIME']) or GetDepend(['RT_USING_PWM']):
     src += ['Src/fm33lc0xx_fl_atim.c']
     src += ['Src/fm33lc0xx_fl_bstim32.c']
 

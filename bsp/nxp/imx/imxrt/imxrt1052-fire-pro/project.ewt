@@ -1215,7 +1215,7 @@
             <name>$PROJ_DIR$\..\..\..\components\drivers\src\completion.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\components\drivers\cputime\cputime.c</name>
+            <name>$PROJ_DIR$\..\..\..\components\drivers\clock_time\clock_time_core.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\..\..\components\drivers\src\dataqueue.c</name>

@@ -29,7 +29,7 @@ if GetDepend(['RT_USING_RTC']):
 if GetDepend(['RT_USING_SPI']):
     src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_spi.c']
 
-if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
+if GetDepend(['RT_USING_CLOCK_TIME']) or GetDepend(['RT_USING_PWM']):
     src += ['APM32F0xx_StdPeriphDriver/src/apm32f0xx_tmr.c']
 
 if GetDepend(['RT_USING_WDT']):

@@ -1,0 +1,18 @@
+menuconfig RT_USING_CLOCK_TIME
+    bool "Clock time subsystem"
+    default n
+
+if RT_USING_CLOCK_TIME
+    config CLOCK_TIMER_FREQ
+        int "Clock time timer freq"
+        default 0
+        depends on ARCH_RISCV64
+        help
+            Base frequency (Hz) for clock time counter on RISC-V.
+
+    config RT_CLOCK_TIME_ARM_ARCH
+        bool "ARM ARCH Timer"
+        depends on RT_USING_DM
+        depends on ARCH_ARM_CORTEX_A || ARCH_ARMV8
+        default n
+endif

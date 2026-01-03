@@ -120,7 +120,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_TMR
         bool "Enable Timer"
         default n
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         if BSP_USING_TMR
             config BSP_USING_TMR1
                 bool "Enable TMR1"

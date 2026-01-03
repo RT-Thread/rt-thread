@@ -45,7 +45,7 @@ N32G457QEL-STB 板级包支持MDK5开发环境和GCC编译器，以下是具体�
 | ADC       | 支持      | ADC1/2/3/4                                   |
 | CAN       | 支持      | CAN1/2                                       |
 | DAC       | 支持      | DAC2, DAC1由于与音频芯片直连，工作会受到影响 |
-| HWTIMER   | 支持      | TIMER1/2/3/4/5/6/7/8                         |
+| CLOCK_TIMER   | 支持      | TIMER1/2/3/4/5/6/7/8                         |
 | WDT       | 支持      | IWDG                                         |
 | RTC       | 支持      | 时钟源支持LSE/LSI/HSE                        | 
 

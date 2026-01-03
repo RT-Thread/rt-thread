@@ -239,10 +239,10 @@
 #define RT_PIC_ARM_GIC_V3
 #define RT_USING_PIN
 #define RT_USING_PINCTRL
-#define RT_USING_KTIME
+#define RT_USING_CLOCK_TIME
 #define RT_USING_CLK
-#define RT_USING_HWTIMER
-#define RT_HWTIMER_ARM_ARCH
+#define RT_USING_CLOCK_TIME
+#define RT_CLOCK_TIME_ARM_ARCH
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -443,13 +443,9 @@
 
 /* end of CPP11 */
 
-/* LwIP */
+/* Network */
 
-/* end of LwIP */
-
-/* Netdev */
-
-/* end of Netdev */
+/* end of Network */
 
 /* Utest Framework */
 
@@ -586,6 +582,10 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -673,8 +673,7 @@
 #define RT_CLK_ROCKCHIP
 #define RT_CLK_ROCKCHIP_RK3568
 #define RT_CLK_ROCKCHIP_RK3588
-#define RT_SERIAL_8250
-#define RT_HWTIMER_ROCKCHIP
+#define RT_CLOCK_TIMER_ROCKCHIP
 /* end of RT-Thread rockchip RK3500 drivers */
 #define SOC_RK3568
 

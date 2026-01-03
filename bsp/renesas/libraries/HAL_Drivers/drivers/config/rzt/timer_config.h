@@ -38,7 +38,7 @@ extern "C"
         .maxfreq = 400000000,                   \
         .minfreq = 1562500,                     \
         .maxcnt  = 0XFFFFFFFF,                  \
-        .cntmode = HWTIMER_CNTMODE_UP,          \
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,          \
     }
 #endif /* TIM_DEV_INFO_CONFIG */
 
