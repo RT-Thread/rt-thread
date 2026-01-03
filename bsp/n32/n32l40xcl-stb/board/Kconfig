@@ -22,6 +22,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
+     #---------------N32L40x UART--------------------
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
@@ -30,39 +31,121 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_USART1
                 bool "Enable USART1"
                 default y
+                if BSP_USING_USART1
+                    choice
+                        prompt "Select UART Pin"
+                        default UART1_PA9_PA10
+                        config UART1_TX_PA4_PA5
+                            bool "PA4 AF1 PA5 AF4"
+                        config UART1_PA9_PA10
+                            bool "PA9 AF4 PA10 AF4"
+                        config UART1_PB6_PB7
+                            bool "PB6 AF0 PB7 AF0"
+                    endchoice
+                endif
 
             config BSP_USING_USART2
                 bool "Enable USART2"
                 default n
+                if BSP_USING_USART2
+                    choice
+                        prompt "Select UART Pin"
+                        default UART2_TX_PA2_RX_PA3
+                        config UART2_TX_PA2_RX_PA3
+                            bool "PA2 PA3 AF2"
+                        config UART2_TX_PB4_RX_PB5
+                            bool "PB4 AF4 PB5 AF6"
+                    endchoice
+                endif
 
             config BSP_USING_USART3
                 bool "Enable USART3"
                 default n
+                if BSP_USING_USART3
+                    choice
+                        prompt "Select UART Pin"
+                        default UART3_TX_PB10_RX_B11
+                        config UART3_TX_PB10_RX_B11
+                            bool "PB10 AF0 PB11 AF5"
+                        config UART3_TX_PC10_RX_PC11
+                            bool "PC10 AF5 PC11 AF5"
+                    endchoice
+                endif
 
             config BSP_USING_UART4
                 bool "Enable UART4"
                 default n
+                if BSP_USING_UART4
+                    choice
+                        prompt "Select UART Pin"
+                        default UART4_TX_PB0_RX_PB1
+                        config UART4_TX_PB0_RX_PB1
+                            bool "PB0  AF6 PB1 AF6"
+                        config UART4_TX_PB14_RX_PB15
+                            bool "PB14 AF6 PB15 AF6"
+                        config UART4_TX_PC10_RX_PC11
+                            bool "PC10 AF6 PC11 AF6"
+                        config UART4_TX_PD13_RX_PD12
+                            bool "PD13 AF6 PD12 AF6"
+                    endchoice
+                endif
 
             config BSP_USING_UART5
                 bool "Enable UART5"
                 default n
+                if BSP_USING_UART5
+                    choice
+                        prompt "Select UART Pin"
+                        default UART5_TX_PB8_RX_PB9
+                        config UART5_TX_PB4_RX_PB5
+                            bool "PB4  AF6 PB5 AF6"
+                        config UART5_TX_PB8_RX_PB9
+                            bool "PB8 AF6 PB9 AF6"
+                        config UART5_TX_PC12_RX_PD2
+                            bool "PC12 AF6 PD2 AF6"
+                    endchoice
+                endif
 
         endif
-
+    #---------------N32L40x UART--------------------
+    
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
         select RT_USING_SPI
         if BSP_USING_SPI
-            config BSP_USING_SPI1
+             config BSP_USING_SPI1
                 bool "Enable SPI1 BUS"
                 default n
+                if BSP_USING_SPI1
+                    choice
+                    prompt "Select SPI1 PIN"
+                    default BSP_SPI1_REMAP_0
+                    config BSP_SPI1_REMAP_0
+                        bool "PA5 PA6 PA7"
+                    config BSP_SPI1_REMAP_1
+                        bool "PB3 PB4 PB5"
+                    config BSP_SPI1_REMAP_2
+                        bool "PD4 PD5 PD6"
+                endchoice
+                endif
 
             config BSP_USING_SPI2
                 bool "Enable SPI2 BUS"
                 default n
-
-        endif
+                if BSP_USING_SPI2
+                    choice
+                    prompt "Select SPI2 PIN"
+                    default BSP_SPI2_REMAP_0
+                    config BSP_SPI2_REMAP_0
+                        bool "PB13 PB14 PB15"
+                    config BSP_SPI2_REMAP_1
+                        bool "PC7 PC8 PC9"
+                    config BSP_SPI2_REMAP_3
+                        bool "PA10 PA11 PA12"
+                endchoice
+                endif
+        endif   #BSP_USING_SPI
 
     menuconfig BSP_USING_I2C1
         bool "Enable I2C1 BUS (software simulation)"
@@ -164,6 +247,240 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_CAN
         default n
 
+    #-----------------------------PWM----------------------------------
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        select RT_USING_HWTIMER
+        if BSP_USING_PWM
+        menuconfig BSP_USING_TIM1_PWM
+            bool "Enable TIM1 output PWM"
+            default n
+            # --------------selcet remap-----------------
+            if BSP_USING_TIM1_PWM
+                config BSP_USING_TIM1_PWM_CH1
+                    bool "Enable TIM1 channel1 PA8 AF2"
+                    default n
+                config BSP_USING_TIM1_PWM_CH2
+                    bool "Enable TIM1 channel2 PA9 AF2"
+                    default n
+                config BSP_USING_TIM1_PWM_CH3
+                    bool "Enable TIM1 channel3 PA10 AF2"
+                    default n
+                config BSP_USING_TIM1_PWM_CH4
+                    bool "Enable TIM1 channel4 PA11 AF2"
+                    default n
+            endif#BSP_USING_TIM1_PWM
+        
+
+        menuconfig BSP_USING_TIM2_PWM
+            bool "Enable TIM2 output PWM"
+            default n
+            if BSP_USING_TIM2_PWM
+                config BSP_USING_TIM2_PWM_CH1
+                    bool "Enable TIM2 channel1"
+                    default n
+                    if BSP_USING_TIM2_PWM_CH1
+                        choice
+                        prompt "Select Pin"
+                        default TIM2_PWM_CH1_PA0
+                        config TIM2_PWM_CH1_PA0
+                            bool "PA0 AF2"
+                        config TIM2_PWM_CH1_PA15
+                            bool "PA15 AF5"
+                        endchoice
+                    endif
+                config BSP_USING_TIM2_PWM_CH2
+                    bool "Enable TIM2 channel2"
+                    default n
+                    if BSP_USING_TIM2_PWM_CH2
+                        choice
+                        prompt "Select Pin"
+                        default TIM2_PWM_CH2_PA1
+                        config TIM2_PWM_CH2_PA1
+                            bool "PA1 AF2"
+                        config TIM2_PWM_CH2_PB3
+                            bool "PB3 AF2"
+                        endchoice
+                    endif
+                config BSP_USING_TIM2_PWM_CH3
+                    bool "Enable TIM2 channel3"
+                    default n
+                    if BSP_USING_TIM2_PWM_CH3
+                        choice
+                        prompt "Select Pin"
+                        default TIM2_PWM_CH3_PA2
+                        config TIM2_PWM_CH3_PA2
+                            bool "PA2 AF2"
+                        config TIM2_PWM_CH3_PB10
+                            bool "PB10 AF2"
+                        endchoice
+                    endif
+                config BSP_USING_TIM2_PWM_CH4
+                    bool "Enable TIM2 channel3 AF2 PB11"
+                    default n
+            endif#BSP_USING_TIM2_PWM
+
+        menuconfig BSP_USING_TIM3_PWM
+            bool "Enable TIM3 output PWM"
+            default n
+            if BSP_USING_TIM3_PWM
+                config BSP_USING_TIM3_PWM_CH1
+                    bool "Enable TIM3 channel1"
+                    default n
+                    if BSP_USING_TIM3_PWM_CH1
+                        choice
+                        prompt "Select Pin"
+                        default TIM3_PWM_CH1_PA6
+                        config TIM3_PWM_CH1_PA6
+                            bool "PA6 AF2"
+                        config TIM3_PWM_CH1_PB4
+                            bool "PB4 AF2"
+                        config TIM3_PWM_CH1_PC6
+                            bool "PC6 AF5"
+                        endchoice
+                    endif
+                config BSP_USING_TIM3_PWM_CH2
+                    bool "Enable TIM3 channel2"
+                    default n
+                    if BSP_USING_TIM3_PWM_CH2
+                        choice
+                        prompt "Select Pin"
+                        default TIM3_PWM_CH2_PA7
+                        config TIM3_PWM_CH2_PA7
+                            bool "PA7 AF2"
+                        config TIM3_PWM_CH2_PB5
+                            bool "PB5 AF2"
+                        config TIM3_PWM_CH2_PC7
+                            bool "PC7 AF2"
+                        endchoice
+                    endif
+                config BSP_USING_TIM3_PWM_CH3
+                    bool "Enable TIM3 channel3"
+                    default n
+                    if BSP_USING_TIM3_PWM_CH3
+                        choice
+                        prompt "Select Pin"
+                        default TIM3_PWM_CH3_PB0
+                        config TIM3_PWM_CH3_PB0
+                            bool "PB0 AF2"
+                        config TIM3_PWM_CH3_PC8
+                            bool "PC8 AF2"
+                        endchoice
+                    endif
+                config BSP_USING_TIM3_PWM_CH4
+                    bool "Enable TIM3 channel3 AF2 PB11"
+                    default n
+                    if BSP_USING_TIM3_PWM_CH4
+                        choice
+                        prompt "Select Pin"
+                        default TIM3_PWM_CH4_PB1
+                        config TIM3_PWM_CH4_PB1
+                            bool "PB1 AF2"
+                        config TIM3_PWM_CH4_PC9
+                            bool "PC89 AF2"
+                        endchoice
+                    endif
+            endif  #BSP_USING_TIM3_PWM
+        endif#BSP_USING_PWM
+
+    #------------TIM ETR CLOCK2--------------
+    menuconfig BSP_USING_TIM_ETR_CNT
+        bool "Enable timer ETR MAX=10M"
+        select RT_USING_HWTIMER
+        default n
+        if BSP_USING_TIM_ETR_CNT
+            config BSP_USING_TIM_ETR_CNT_DEBUG
+                    bool "Enable TIM ETR debug message output"
+                    default n
+            config BSP_USING_TIM_ETR_CNT_DEMO
+                    bool "Enable demo"
+                    default n
+
+            config BSP_USING_TIM1_ETR_CNT
+                bool "Enable TIM1 ETR PA12 AF2"
+                default n
+
+            config BSP_USING_TIM2_ETR_CNT
+                bool "Enable TIM1 ETR"
+                default n
+                choice
+                    prompt "Select TIM2 ETR PIN"
+                    default TIM2_ETR_PIN_PA0
+                    config TIM2_ETR_PIN_PA0
+                        bool "PA0 AF5"
+                    config TIM1_ETR_PIN_PA15
+                        bool "PA15 AF2"
+                endchoice #
+            config BSP_USING_TIM3_ETR_CNT
+                bool "Enable TIM3 ETR PD2 AF2"
+                default n
+            config BSP_USING_TIM9_ETR_CNT
+                bool "Enable TIM9 ETR PB2 AF1"
+                default n
+        endif#BSP_USING_TIM_ETR_CNT
+		#------------TIM ETR CLOCK2--------------
+
+    
+    #-----------------------------EXT_COUNTER----------------------------------
+    menuconfig BSP_USING_TIM_EXT_COUNTER
+        bool "Enable TIM External Counter"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM_EXT_COUNTER
+            config BSP_USING_EXT_COUNTER_DEMO
+                bool "Enable  External Counter Demo"
+                default n
+
+            config BSP_USING_TIM1_EXT_COUNTER
+                bool "Enable TIM1 External Counter"
+                default n
+                choice
+                    prompt "Select TIM1 Pin"
+                    default TIM1_CH1_PA8
+                    config TIM1_CH1_PA8
+                        bool "PA8 AF2"
+                    config TIM1_CH2_PA9
+                        bool "PA9 AF2"
+                endchoice
+
+            config BSP_USING_TIM2_EXT_COUNTER
+                bool "Enable TIM2 External Counter"
+                default n
+                choice
+                    prompt "Select TIM2 Pin"
+                    default TIM2_CH1_PA0
+                    config TIM2_CH1_PA0
+                        bool "PA0 AF2"
+                    config TIM2_CH1_PA15
+                        bool "PA15 AF5"
+                    config TIM2_CH2_PA1
+                        bool "PA1 AF2"
+                    config TIM2_CH2_PB3
+                        bool "PB3 AF2"
+                endchoice
+
+            config BSP_USING_TIM3_EXT_COUNTER
+                bool "Enable TIM3 External Counter"
+                default n
+                choice
+                    prompt "Select TIM3 Pin"
+                    default TIM3_CH1_PA6
+                    config TIM3_CH1_PA6
+                        bool "PA6 AF2"
+                    config TIM3_CH1_PB4
+                        bool "PB4 AF2"
+                    config TIM3_CH1_PC6
+                        bool "PC6 AF2"
+                    config TIM3_CH2_PA7
+                        bool "PA7 AF2"
+                    config TIM3_CH2_PB5
+                        bool "PB5 AF2"
+                    config TIM3_CH2_PC7
+                        bool "PC7 AF2"
+                endchoice
+        endif#---------BSP_USING_TIM_EXT_COUNTER------------
     rsource "../../libraries/n32_drivers/Kconfig"
 
 endmenu
