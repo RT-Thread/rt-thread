@@ -4,8 +4,43 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2021-08-12     luckyzjq     the first version
+ * Date           Author          Notes
+ * 2021-08-12     luckyzjq        the first version
+ * 2025-11-30     westcity-yolo   Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Semaphore Functional Test
+ *
+ * Test Objectives:
+ * - Validate static/dynamic semaphore functionality
+ * - Verify critical APIs: rt_sem_init, rt_sem_take, rt_sem_release, rt_sem_create, etc.
+ * - Ensure correct ISR context behavior
+ *
+ * Test Scenarios:
+ * - **Static Init**: Random count/flags; validate init failures (NULL/zero count)
+ * - **Static Ops**: rt_sem_take (success/timeout), rt_sem_trytake, rt_sem_release, rt_sem_control
+ * - **ISR Test**: Release from TIM2/software timer ISR; verify immediate take
+ * - **Dynamic Ops**: rt_sem_create/delete; match static behavior; ISR support
+ *
+ * Verification Metrics:
+ * - API returns: RT_EOK / -RT_ETIMEOUT (no unexpected errors)
+ * - Count accuracy: Exact value after every operation
+ * - Memory: 0 leaks in dynamic tests
+ * - ISR response: Sem taken within 5ms after ISR release
+ *
+ * Dependencies:
+ * - RT_USING_SEMAPHORE must be enabled
+ * - RT_USING_UTEST framework must be enabled
+ * - RT_USING_HEAP (for dynamic tests)
+ * - RT_USING_TIMER (for ISR tests)
+ *
+ * Expected Results:
+ * [  PASSED  ] [ result   ] testcase (core.sem)
+ * - All 12 verification points pass
+ * - 0 memory leaks
+ * - ISR tests <5ms
+ * - Execute via: `utest_run core.sem` in msh
  */
 
 #include <rtthread.h>
