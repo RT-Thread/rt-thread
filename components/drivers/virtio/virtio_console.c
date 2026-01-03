@@ -674,6 +674,7 @@ rt_err_t rt_virtio_console_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
     char dev_name[RT_NAME_MAX];
     struct virtio_device *virtio_dev;
     struct virtio_console_device *virtio_console_dev;
+    rt_uint64_t device_features, driver_features;
 
     RT_ASSERT(RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR > 0);
 
@@ -687,6 +688,7 @@ rt_err_t rt_virtio_console_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
     virtio_dev = &virtio_console_dev->virtio_dev;
     virtio_dev->irq = irq;
     virtio_dev->mmio_base = mmio_base;
+    virtio_dev->version = virtio_dev->mmio_config->version;
 
     virtio_console_dev->config = (struct virtio_console_config *)virtio_dev->mmio_config->config;
 
@@ -697,9 +699,19 @@ rt_err_t rt_virtio_console_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
     virtio_reset_device(virtio_dev);
     virtio_status_acknowledge_driver(virtio_dev);
 
-    virtio_dev->mmio_config->driver_features = virtio_dev->mmio_config->device_features & ~(
-            (1 << VIRTIO_F_RING_EVENT_IDX) |
-            (1 << VIRTIO_F_RING_INDIRECT_DESC));
+    /* Negotiate features */
+    device_features = virtio_get_features(virtio_dev);
+    driver_features = device_features & ~(
+            (1ULL << VIRTIO_F_RING_EVENT_IDX) |
+            (1ULL << VIRTIO_F_RING_INDIRECT_DESC));
+
+    /* For modern virtio, we must support VERSION_1 */
+    if (virtio_dev->version == 2)
+    {
+        driver_features |= (1ULL << VIRTIO_F_VERSION_1);
+    }
+
+    virtio_set_features(virtio_dev, driver_features);
 
     virtio_status_driver_ok(virtio_dev);
 
