@@ -10,6 +10,15 @@ config RT_NAME_MAX
         Each kernel object, such as thread, timer, semaphore etc, has a name,
         the RT_NAME_MAX is the maximal size of this object name.
 
+config RT_USING_STRICT_NAME_CHECKS
+    bool "Enable strict name checks for kernel objects"
+    default n
+    help
+        Enable duplicate-name detection and strict length checks for kernel
+        object names. The kernel will refuse to register a new object when its
+        name already exists in the same class or exceeds RT_NAME_MAX. This
+        option helps detect configuration mistakes during development.
+
 config RT_USING_ARCH_DATA_TYPE
     bool "Use the data types defined in ARCH_CPU"
     default n
