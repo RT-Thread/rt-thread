@@ -9,6 +9,7 @@
  * Date           Author       Notes
  * 2024-01-18     Shell        Separate scheduling related codes from thread.c, scheduler_.*
  * 2025-09-01     Rbb666       Add thread stack overflow hook.
+ * 2025-10-30     wdfk-prog    add emergency log flush mechanism
  */
 
 #define DBG_TAG           "kernel.sched"
@@ -484,8 +485,11 @@ void rt_scheduler_stack_check(struct rt_thread *thread)
         rt_base_t dummy = 1;
         rt_err_t hook_result = -RT_ERROR;
 
-        LOG_E("thread:%s stack overflow\n", thread->parent.name);
-
+        LOG_EMERGENCY("thread:%s stack overflow\n", thread->parent.name);
+#ifdef RT_USING_FINSH
+        extern long list_thread(void);
+        list_thread();
+#endif
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
         if (rt_stack_overflow_hook != RT_NULL)
         {
