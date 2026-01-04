@@ -330,6 +330,10 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         else
         {
             filter_cfg = (struct rt_can_filter_config *)arg;
+            if (!IS_CAN_FILTER_BANK_DUAL(drv_can->FilterConfig.SlaveStartFilterBank))
+            {
+                LOG_W("can%s invalid SlaveStartFilterBank=%d", drv_can->name, drv_can->FilterConfig.SlaveStartFilterBank);
+            }
             /* get default filter */
             for (int i = 0; i < filter_cfg->count; i++)
             {
@@ -351,6 +355,11 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 {
                     /* use user-defined filter bank settings */
                     drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr_bank;
+                }
+                if (!IS_CAN_FILTER_BANK_DUAL(drv_can->FilterConfig.FilterBank))
+                {
+                    LOG_W("can%s invalid FilterBank=%d, skip item %d", drv_can->name, drv_can->FilterConfig.FilterBank, i);
+                    continue;
                 }
                  /**
                  * ID     | CAN_FxR1[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
