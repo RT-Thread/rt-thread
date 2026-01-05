@@ -1,0 +1,3 @@
+config RT_HWSPINLOCK_ROCKCHIP
+    bool "Rockchip Hardware Spinlock device"
+    default n

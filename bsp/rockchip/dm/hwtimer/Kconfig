@@ -1,0 +1,3 @@
+config RT_HWTIMER_ROCKCHIP
+    bool "RockChip Timer"
+    default n
