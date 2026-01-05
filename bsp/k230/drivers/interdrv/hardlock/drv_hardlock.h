@@ -39,6 +39,7 @@ typedef enum k230_hardlock_type
     HARDLOCK_AES = 7,
     HARDLOCK_SM4 = 8,
     HARDLOCK_PDMA = 9,
+    HARDLOCK_AI2D = 10,
     HARDLOCK_MAX = 128
 } hardlock_type;
 

@@ -104,23 +104,39 @@ menu "On-chip Peripheral Drivers"
                     default n
             endif
 
-        menuconfig BSP_USING_PWM
-            config BSP_USING_PWM
-                bool "Enable PWM"
-                select RT_USING_PWM
-                default n
-    
-                if BSP_USING_PWM
-                    config BSP_USING_PWM0
-                        bool "Enable eFlex PWM0"
-                        default n
-                    config BSP_USING_PWM1
-                        bool "Enable eFlex PWM1"
-                        default n
-                    config BSP_USING_PWM2
-                        bool "Enable eFlex PWM2"
-                        default n
-                endif
+    menuconfig BSP_USING_PWM
+        config BSP_USING_PWM
+            bool "Enable PWM"
+            select RT_USING_PWM
+            default n
+
+            if BSP_USING_PWM
+                config BSP_USING_PWM0
+                    bool "Enable eFlex PWM0"
+                    default n
+                config BSP_USING_PWM1
+                    bool "Enable eFlex PWM1"
+                    default n
+                config BSP_USING_PWM2
+                    bool "Enable eFlex PWM2"
+                    default n
+            endif
+
+    menuconfig BSP_USING_CAN
+        config BSP_USING_CAN
+            bool "Enable CAN"
+            select RT_USING_CAN
+            default n
+            if BSP_USING_CAN
+                config BSP_USING_CAN0
+                    bool "Enable CAN0"
+                    default n
+                
+                config BSP_USING_CAN1
+                    bool "Enable CAN1"
+                    default n
+            endif
+
 endmenu
 
 menu "Onboard Peripheral Drivers"

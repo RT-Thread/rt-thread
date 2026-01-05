@@ -7,17 +7,25 @@
  * Date           Author        Notes
  * 2024-08-16     zhujiale     first version
  */
-#include <rtthread.h>
-#include "sdhci.h"
-#include <rtdbg.h>
-#include <mmu.h>
-#include <drivers/core/dm.h>
 
+#include <rtthread.h>
+#include <rtdevice.h>
+
+#define DBG_TAG "SDHCI"
+#ifdef RT_SDIO_DEBUG
+#define DBG_LVL DBG_LOG
+#else
+#define DBG_LVL DBG_INFO
+#endif /* RT_SDIO_DEBUG */
+#include <rtdbg.h>
+
+#include "dev_sdio_dm.h"
+#include "dev_sdhci_dm.h"
 
 static void rt_plat_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 {
-    struct rt_mmc_host *mmc   = (struct rt_mmc_host *)host;
-    rt_uint32_t      flags = req->cmd->flags;
+    rt_uint32_t flags = req->cmd->flags;
+    struct rt_mmc_host *mmc = rt_container_of(host, struct rt_mmc_host, rthost);
 
     switch (flags & RESP_MASK)
     {
@@ -49,12 +57,13 @@ static void rt_plat_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req
         flags |= MMC_RSP_R7;
         break;
     }
+
     if (req->data)
     {
         if ((rt_uint64_t)rt_kmem_v2p(req->data->buf) > 0xffffffff)
         {
+            void *req_buf = RT_NULL;
             void *dma_buffer = rt_malloc(req->data->blks * req->data->blksize);
-            void *req_buf    = NULL;
 
             if (req->data->flags & DATA_DIR_WRITE)
             {
@@ -76,7 +85,9 @@ static void rt_plat_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req
             {
                 rt_memcpy(req_buf, dma_buffer, req->data->blksize * req->data->blks);
                 req->data->buf = req_buf;
-            }else{
+            }
+            else
+            {
                 req->data->buf = req_buf;
             }
 
@@ -98,9 +109,9 @@ static void rt_plat_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req
 
 static void rt_plat_set_ioconfig(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *iocfg)
 {
-    struct rt_mmc_host *mmc = (struct rt_mmc_host *)host;
+    struct rt_mmc_host *mmc = rt_container_of(host, struct rt_mmc_host, rthost);
 
-    LOG_D("clock:%d,width:%d,power:%d,vdd:%d,timing:%d\n",
+    LOG_D("clock: %u, width: %u, power: %u, vdd: %u, timing: %u",
           iocfg->clock, iocfg->bus_width,
           iocfg->power_mode, iocfg->vdd, iocfg->timing);
 
@@ -109,66 +120,80 @@ static void rt_plat_set_ioconfig(struct rt_mmcsd_host *host, struct rt_mmcsd_io_
 
 static rt_int32_t rt_plat_get_card_status(struct rt_mmcsd_host *host)
 {
-    struct rt_mmc_host *mmc = (struct rt_mmc_host *)host;
+    struct rt_mmc_host *mmc = rt_container_of(host, struct rt_mmc_host, rthost);
 
     return mmc->ops->get_cd(mmc);
 }
 
 static rt_int32_t rt_plat_execute_tuning(struct rt_mmcsd_host *host, rt_int32_t opcode)
 {
-    struct rt_mmc_host *mmc = (struct rt_mmc_host *)host;
+    struct rt_mmc_host *mmc = rt_container_of(host, struct rt_mmc_host, rthost);
 
     return mmc->ops->execute_tuning(mmc, opcode);
 }
 
 static void rt_plat_enable_sdio_irq(struct rt_mmcsd_host *host, rt_int32_t en)
 {
-    struct rt_mmc_host *mmc = (struct rt_mmc_host *)host;
+    struct rt_mmc_host *mmc = rt_container_of(host, struct rt_mmc_host, rthost);
 
     return mmc->ops->enable_sdio_irq(mmc, en);
 }
 
+static rt_bool_t rt_plat_card_busy(struct rt_mmcsd_host *host)
+{
+    struct rt_mmc_host *mmc = rt_container_of(host, struct rt_mmc_host, rthost);
 
-static const struct rt_mmcsd_host_ops rt_mmcsd_ops = {
-    .request         = rt_plat_request,
-    .set_iocfg       = rt_plat_set_ioconfig,
-    .get_card_status = rt_plat_get_card_status,
-    .enable_sdio_irq = rt_plat_enable_sdio_irq,
-    .execute_tuning  = rt_plat_execute_tuning,
+    return mmc->ops->card_busy(mmc);
+}
+
+static rt_err_t rt_plat_signal_voltage_switch(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg)
+{
+    struct rt_mmc_host *mmc = rt_container_of(host, struct rt_mmc_host, rthost);
+
+    return mmc->ops->start_signal_voltage_switch(mmc, io_cfg);
+}
+
+static const struct rt_mmcsd_host_ops rt_mmcsd_ops =
+{
+    .request                = rt_plat_request,
+    .set_iocfg              = rt_plat_set_ioconfig,
+    .get_card_status        = rt_plat_get_card_status,
+    .enable_sdio_irq        = rt_plat_enable_sdio_irq,
+    .execute_tuning         = rt_plat_execute_tuning,
+    .card_busy              = rt_plat_card_busy,
+    .signal_voltage_switch  = rt_plat_signal_voltage_switch,
 };
-
 
 void rt_mmc_request_done(struct rt_mmc_host *host, struct rt_mmcsd_req *mrq)
 {
     mmcsd_req_complete(&host->rthost);
 }
 
-/*add host in rtt while sdhci complete*/
-int rt_mmc_add_host(struct rt_mmc_host *mmc)
+/* Add host in rtt while sdhci complete */
+rt_err_t rt_mmc_add_host(struct rt_mmc_host *mmc)
 {
     mmc->rthost.ops           = &rt_mmcsd_ops;
     mmc->rthost.flags         = mmc->caps;
     mmc->rthost.freq_max      = mmc->f_max;
-    mmc->rthost.freq_min      = 400000;
+    mmc->rthost.freq_min      = mmc->f_min;
     mmc->rthost.max_dma_segs  = mmc->max_segs;
     mmc->rthost.max_seg_size  = mmc->max_seg_size;
     mmc->rthost.max_blk_size  = mmc->max_blk_size;
     mmc->rthost.max_blk_count = mmc->max_blk_count;
-    mmc->rthost.valid_ocr     = VDD_165_195|VDD_20_21|VDD_21_22|VDD_22_23|VDD_24_25|VDD_25_26|VDD_26_27|VDD_27_28|VDD_28_29|VDD_29_30|VDD_30_31|VDD_32_33|VDD_33_34|VDD_34_35|VDD_35_36;
-
+    mmc->rthost.valid_ocr     = mmc->ocr_avail;
 
     mmcsd_change(&mmc->rthost);
-    return 0;
+
+    return RT_EOK;
 }
 
 struct rt_mmc_host *rt_mmc_alloc_host(int extra, struct rt_device *dev)
 {
     struct rt_mmc_host *mmc;
 
-    mmc = rt_malloc(sizeof(*mmc) + extra);
+    mmc = rt_calloc(1, sizeof(*mmc) + extra);
     if (mmc)
     {
-        rt_memset(mmc, 0, sizeof(*mmc) + extra);
         mmc->parent = dev;
         mmcsd_host_init(&mmc->rthost);
     }
@@ -181,25 +206,18 @@ void rt_mmc_remove_host(struct rt_mmc_host *host)
     rt_free(host);
 }
 
-int rt_mmc_abort_tuning(struct rt_mmc_host *host, rt_uint32_t opcode)
+rt_err_t rt_mmc_abort_tuning(struct rt_mmc_host *host, rt_uint32_t opcode)
 {
-    return 0;
+    return RT_EOK;
 }
 
-
-int rt_mmc_gpio_get_cd(struct rt_mmc_host *host)
+rt_err_t rt_mmc_gpio_get_cd(struct rt_mmc_host *host)
 {
-    return -ENOSYS;
+    return -RT_ENOSYS;
 }
 
-void rt_mmc_detect_change(struct rt_mmc_host *host, unsigned long delay)
+void rt_mmc_detect_change(struct rt_mmc_host *host, rt_ubase_t delay)
 {
-}
-
-
-int rt_mmc_regulator_set_vqmmc(struct rt_mmc_host *mmc, struct rt_mmcsd_io_cfg *ios)
-{
-    return 0;
 }
 
 rt_bool_t rt_mmc_can_gpio_ro(struct rt_mmc_host *host)
@@ -207,60 +225,33 @@ rt_bool_t rt_mmc_can_gpio_ro(struct rt_mmc_host *host)
     return RT_FALSE;
 }
 
-int rt_mmc_gpio_get_ro(struct rt_mmc_host *host)
+rt_err_t rt_mmc_gpio_get_ro(struct rt_mmc_host *host)
 {
-    return 0;
+    return RT_EOK;
 }
 
-int rt_mmc_send_abort_tuning(struct rt_mmc_host *host, rt_uint32_t opcode)
+rt_err_t rt_mmc_send_abort_tuning(struct rt_mmc_host *host, rt_uint32_t opcode)
 {
-    return 0;
+    return RT_EOK;
 }
-int rt_mmc_of_parse(struct rt_mmc_host *host)
+
+rt_err_t rt_mmc_of_parse(struct rt_mmc_host *host)
 {
+    rt_err_t err;
     struct rt_device *dev = host->parent;
-    rt_uint32_t       bus_width;
 
     if (!dev || !dev->ofw_node)
-        return 0;
-
-    /* "bus-width" is translated to MMC_CAP_*_BIT_DATA flags */
-    if (rt_dm_dev_prop_read_u32(dev, "bus-width", &bus_width) < 0)
     {
-        bus_width = 1;
+        return RT_EOK;
     }
 
-    switch (bus_width)
+    err = sdio_ofw_parse(dev->ofw_node, &host->rthost);
+    if (err)
     {
-    case 8:
-        host->caps |= MMC_CAP_8_BIT_DATA;
-        break; /* Hosts capable of 8-bit can also do 4 bits */
-    case 4:
-        host->caps |= MMC_CAP_4_BIT_DATA;
-        break;
-    case 1:
-        break;
-    default:
-        return -EINVAL;
+        return err;
     }
 
-    /* f_max is obtained from the optional "max-frequency" property */
-    rt_dm_dev_prop_read_u32(dev, "max-frequency", &host->f_max);
-
-    if (rt_dm_dev_prop_read_bool(dev, "cap-mmc-highspeed"))
-    {
-        host->caps |= MMC_CAP_MMC_HIGHSPEED;
-    }
-
-    if (rt_dm_dev_prop_read_bool(dev, "mmc-hs200-1_8v"))
-    {
-        host->caps |= MMC_CAP2_HS200_1_8V_SDR;
-    }
-
-    if (rt_dm_dev_prop_read_bool(dev, "non-removable"))
-    {
-        host->caps |= MMC_CAP_NONREMOVABLE;
-    }
+    host->caps |= host->rthost.flags;
 
     if (rt_dm_dev_prop_read_bool(dev, "no-sdio"))
     {
@@ -272,24 +263,8 @@ int rt_mmc_of_parse(struct rt_mmc_host *host)
         host->caps2 |= MMC_CAP2_NO_SD;
     }
 
-    if (rt_dm_dev_prop_read_bool(dev, "mmc-ddr-3_3v"))
-    {
-        host->caps |= MMC_CAP_3_3V_DDR;
-    }
-
-    if (rt_dm_dev_prop_read_bool(dev, "mmc-ddr-1_8v"))
-    {
-        host->caps |= MMC_CAP_1_8V_DDR;
-    }
-
-    if (rt_dm_dev_prop_read_bool(dev, "mmc-ddr-1_2v"))
-    {
-        host->caps |= MMC_CAP_1_2V_DDR;
-    }
-
-    return 0;
+    return RT_EOK;
 }
-
 
 void rt_mmc_free_host(struct rt_mmc_host *host)
 {
@@ -298,23 +273,4 @@ void rt_mmc_free_host(struct rt_mmc_host *host)
 rt_bool_t rt_mmc_can_gpio_cd(struct rt_mmc_host *host)
 {
     return RT_FALSE;
-}
-
-int mmc_regulator_get_supply(struct rt_mmc_host *mmc)
-{
-    mmc->supply.vmmc  = -RT_NULL;
-    mmc->supply.vqmmc = -RT_NULL;
-
-    return 0;
-}
-int regulator_get_current_limit(struct regulator *regulator)
-{
-    return 0;
-}
-
-int regulator_is_supported_voltage(struct regulator *regulator,
-
-                                   int min_uV, int max_uV)
-{
-    return 0;
 }

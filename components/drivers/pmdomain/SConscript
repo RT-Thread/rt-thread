@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../include']
 
 src = []
 
+if GetDepend(['RT_PMDOMAIN_SCMI']):
+    src += ['pm-domain-scmi.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

@@ -16,6 +16,9 @@ if GetDepend(['RT_REGULATOR_FIXED']):
 if GetDepend(['RT_REGULATOR_GPIO']):
     src += ['regulator-gpio.c']
 
+if GetDepend(['RT_REGULATOR_SCMI']):
+    src += ['regulator-scmi.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
