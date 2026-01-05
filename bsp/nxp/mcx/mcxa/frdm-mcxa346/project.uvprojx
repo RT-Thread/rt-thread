@@ -10,13 +10,13 @@
       <TargetName>rtthread-frdm-mcxa346</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6230000::V6.23::ARMCLANG</pCCUsed>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>MCXA346VLQ</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.MCXA346_DFP.25.06.00</PackID>
+          <PackID>NXP.MCXA346_DFP.25.09.00</PackID>
           <PackURL>https://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
           <Cpu>IRAM(0x20000000,0x03c000) IRAM2(0x04000000,0x2000) IROM(0x03000000,0x2000) IROM2(0x00000000,0x0fe000) XRAM(0x04002000,0x2000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
-              <Define>__RTTHREAD__, CPU_MCXA346VLQ, RT_USING_ARMLIBC, DEBUG, __STDC_LIMIT_MACROS, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, CPU_MCXA346VLQ, RT_USING_LIBC, DEBUG, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\components\drivers\include;applications;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\smp_call;..\Libraries\drivers\config;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\drivers\include;.;..\..\..\..\..\libcpu\arm\common;packages\nxp-mcx-cmsis-latest\Core\Include;packages\nxp-mcx-series-latest\MCXA346\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXA346\periph2;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\finsh;packages\nxp-mcx-series-latest\MCXA346;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\include;..\..\..\..\..\components\libc\posix\io\epoll;board\MCUX_Config\board;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXA346\components\codec;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\include;board;..\..\..\..\..\components\drivers\phy</IncludePath>
+              <IncludePath>..\..\..\..\..\components\drivers\include;..\Libraries\drivers\config;board;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\net\sal\impl;..\..\..\..\..\components\drivers\include;.;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\include;packages\at_device-latest\inc;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\net\sal\include\socket\sys_socket;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\drivers\include;applications;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXA346;..\..\..\..\..\components\libc\posix\io\eventfd;packages\nxp-mcx-series-latest\MCXA346\periph2;..\..\..\..\..\components\net\sal\include\socket;packages\nxp-mcx-series-latest\MCXA346\components\codec;packages\at_device-latest\class\esp8266;board\MCUX_Config\board;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\drivers\phy;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\net\netdev\include;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXA346\drivers;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\net\at\include;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\net\at\at_socket;..\Libraries\drivers;..\..\..\..\..\components\net\sal\include;..\..\..\..\..\components\net\utest;..\..\..\..\..\components\finsh;packages\nxp-mcx-cmsis-latest\Core\Include;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -390,9 +390,74 @@
               <FilePath>applications\drv_spi_sample_rw007.c</FilePath>
             </File>
             <File>
+              <FileName>uart_sample.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\uart_sample.c</FilePath>
+            </File>
+            <File>
+              <FileName>at_sample_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\at_sample_client.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>uart3_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\uart3_test.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>AT</GroupName>
+          <Files>
+            <File>
+              <FileName>at_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\net\at\src\at_utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>at_client.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\net\at\src\at_client.c</FilePath>
+            </File>
+            <File>
+              <FileName>at_cli.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\net\at\src\at_cli.c</FilePath>
+            </File>
+            <File>
+              <FileName>at_socket.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\net\at\at_socket\at_socket.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>at_device</GroupName>
+          <Files>
+            <File>
+              <FileName>at_socket_esp8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\at_device-latest\class\esp8266\at_socket_esp8266.c</FilePath>
+            </File>
+            <File>
+              <FileName>at_device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\at_device-latest\src\at_device.c</FilePath>
+            </File>
+            <File>
+              <FileName>at_device_esp8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\at_device-latest\class\esp8266\at_device_esp8266.c</FilePath>
+            </File>
+            <File>
+              <FileName>at_sample_esp8266.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\at_device-latest\samples\at_sample_esp8266.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1600,9 +1665,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
             <File>
               <FileName>msh_parse.c</FileName>
@@ -1610,14 +1675,14 @@
               <FilePath>..\..\..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
             <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2470,24 +2535,24 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kerrno.c</FilePath>
-            </File>
-            <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-            <File>
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
             </File>
             <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
             <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
@@ -2718,6 +2783,36 @@
               <FileName>system_MCXA346.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\nxp-mcx-series-latest\MCXA346\system_MCXA346.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>SAL</GroupName>
+          <Files>
+            <File>
+              <FileName>netdev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\net\netdev\src\netdev.c</FilePath>
+            </File>
+            <File>
+              <FileName>netdev_ipaddr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
+            </File>
+            <File>
+              <FileName>af_inet_at.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\net\sal\impl\af_inet_at.c</FilePath>
+            </File>
+            <File>
+              <FileName>net_netdb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\net\sal\socket\net_netdb.c</FilePath>
+            </File>
+            <File>
+              <FileName>sal_socket.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\net\sal\src\sal_socket.c</FilePath>
             </File>
           </Files>
         </Group>

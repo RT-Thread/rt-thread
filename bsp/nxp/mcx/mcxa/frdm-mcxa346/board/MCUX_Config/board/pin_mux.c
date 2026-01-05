@@ -485,4 +485,38 @@ void BOARD_InitPins(void)
                                                     .lockRegister = kPORT_UnlockRegister};
     /* PORT3_9 (pin 97) is configured as LPSPI1_SDI */
     PORT_SetPinConfig(PORT3, 9U, &port3_9_pin97_config);
+													
+														
+	/* ------------------ UART3 TX (PORT4_5) ------------------ */
+	const port_pin_config_t uart3_tx_config = {
+													.pullSelect = kPORT_PullUp,                 /* 内部上拉 */
+													.pullValueSelect = kPORT_LowPullResistor,   /* 低阻上拉 */
+													.slewRate = kPORT_FastSlewRate,             /* 快速上升沿 */
+													.passiveFilterEnable = kPORT_PassiveFilterDisable,
+													.openDrainEnable = kPORT_OpenDrainDisable,
+													.driveStrength = kPORT_LowDriveStrength,
+													.driveStrength1 = kPORT_NormalDriveStrength,
+													.mux = kPORT_MuxAlt3,                       /*  UART3_TX 对应 ALT3 */
+													.inputBuffer = kPORT_InputBufferEnable,
+													.invertInput = kPORT_InputNormal,
+													.lockRegister = kPORT_UnlockRegister};
+	/* PORT4_5 is configured as LPUART3_TX */
+	PORT_SetPinConfig(PORT4, 5U, &uart3_tx_config);
+
+	/* ------------------ UART3 RX (PORT4_2) ------------------ */
+	const port_pin_config_t uart3_rx_config = {
+													.pullSelect = kPORT_PullUp,
+													.pullValueSelect = kPORT_LowPullResistor,
+													.slewRate = kPORT_FastSlewRate,
+													.passiveFilterEnable = kPORT_PassiveFilterDisable,
+													.openDrainEnable = kPORT_OpenDrainDisable,
+													.driveStrength = kPORT_LowDriveStrength,
+													.driveStrength1 = kPORT_NormalDriveStrength,
+													.mux = kPORT_MuxAlt3,                       /*  UART3_RX 对应 ALT3 */
+													.inputBuffer = kPORT_InputBufferEnable,
+													.invertInput = kPORT_InputNormal,
+													.lockRegister = kPORT_UnlockRegister};
+	/* PORT4_2 is configured as LPUART3_RX */
+	PORT_SetPinConfig(PORT4, 2U, &uart3_rx_config);
+																									
 }
