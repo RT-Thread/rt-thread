@@ -1,0 +1,12 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/can']
+
+if GetDepend(['RT_CAN_CANFD_ROCKCHIP']):
+    src += ['canfd-rockchip.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/rtc']
+
+if GetDepend(['RT_RTC_RK8XX']):
+    src += ['rtc-rk8xx.c']
+
+if GetDepend(['RT_RTC_RK_TIMER']):
+    src += ['rtc-rk_timer.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

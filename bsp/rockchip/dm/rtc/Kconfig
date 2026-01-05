@@ -1,0 +1,7 @@
+config RT_RTC_RK8XX
+    bool "Rockchip RK805/RK808/RK809/RK817/RK818 RTC"
+    depends on RT_MFD_RK8XX
+
+config RT_RTC_RK_TIMER
+    bool "Rockchip RTC"
+    default n
