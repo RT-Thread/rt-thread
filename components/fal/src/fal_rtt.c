@@ -434,13 +434,14 @@ static int char_dev_fopen(struct dfs_file *fd)
 
     return RT_EOK;
 }
+
 #ifdef RT_USING_DFS_V2
-static ssize_t char_dev_fread(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
+static rt_ssize_t char_dev_fread(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
 #else
-static ssize_t char_dev_fread(struct dfs_file *fd, void *buf, size_t count)
+static rt_ssize_t char_dev_fread(struct dfs_file *fd, void *buf, size_t count)
 #endif
 {
-    ssize_t ret = 0;
+    rt_ssize_t ret = 0;
     struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 #ifndef RT_USING_DFS_V2
     off_t *pos = &(fd->pos);
@@ -453,20 +454,21 @@ static ssize_t char_dev_fread(struct dfs_file *fd, void *buf, size_t count)
 
     ret = fal_partition_read(part->fal_part, *pos, buf, count);
 
-    if (ret != (ssize_t)(count))
+    if (ret != (rt_ssize_t)(count))
         return 0;
 
     *pos += ret;
 
     return ret;
 }
+
 #ifdef RT_USING_DFS_V2
-static ssize_t char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
+static rt_ssize_t char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
 #else
-static ssize_t char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t count)
+static rt_ssize_t char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t count)
 #endif
 {
-    ssize_t ret = 0;
+    rt_ssize_t ret = 0;
     struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
 #ifndef RT_USING_DFS_V2
     off_t *pos = &(fd->pos);
@@ -479,7 +481,7 @@ static ssize_t char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t coun
 
     ret = fal_partition_write(part->fal_part, *pos, buf, count);
 
-    if (ret != (ssize_t) count)
+    if (ret != (rt_ssize_t) count)
         return 0;
 
     *pos += ret;
