@@ -141,20 +141,16 @@ endmenu
 
 menu "Onboard Peripheral Drivers"
     config BSP_USING_ARDUINO
-        bool "Compatible with Arduino Ecosystem (RTduino)"
+        bool "Compatible with Arduino Ecosystem (RTduino)"  
         select PKG_USING_RTDUINO
-        select BSP_USING_UART2
-        select BSP_USING_GPIO
-        select BSP_USING_PWM
-        select BSP_USING_ADC
-        select BSP_USING_ADC0
-        select BSP_USING_ADC1
-        select BSP_USING_I2C
-        select BSP_USING_I2C1
-        select BSP_USING_I2C2
-        select BSP_USING_SPI
-        select BSP_USING_SPI1
-        default n
+        select BSP_USING_UART2              
+        select BSP_USING_GPIO              
+        select BSP_USING_ADC0               
+        select BSP_USING_PWM0               
+        select BSP_USING_PWM1               
+        select BSP_USING_I2C1              
+        select BSP_USING_I2C2              
+        select BSP_USING_SPI1               
  endmenu
 
 
