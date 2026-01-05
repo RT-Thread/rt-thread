@@ -104,7 +104,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "usart1"
-#define RT_VER_NUM 0x50201
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 
@@ -153,8 +153,10 @@
 #define RT_USING_I2C_BITOPS
 #define RT_USING_ADC
 #define RT_USING_DAC
+#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_WDT
 #define RT_USING_PIN
 #define RT_USING_HWTIMER
@@ -327,6 +329,10 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -419,6 +425,9 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_USART1
+#define BSP_USING_PWM
+#define BSP_USING_TIM1_PWM
+#define BSP_USING_TIM1_PWM_CH1
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
