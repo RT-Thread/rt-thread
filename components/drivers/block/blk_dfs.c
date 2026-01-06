@@ -182,11 +182,9 @@ _goon:
             *pos += wsize;
             return wsize;
         }
-        else
-        {
-            wsize += res * bytes_per_sector;
-            blk_pos += res;
-        }
+
+        wsize += res * bytes_per_sector;
+        blk_pos += res;
     }
 
     /*
