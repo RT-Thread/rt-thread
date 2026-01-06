@@ -149,7 +149,9 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
+#define RT_USING_PWM
 #define RT_USING_PIN
+#define RT_USING_HWTIMER
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -420,6 +422,19 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define BSP_USING_PWM
+#define BSP_USING_PWM0
+#define BSP_USING_PWM1
+#define BSP_USING_PWM2
+#define BSP_USING_PWM3
+#define BSP_USING_PWM4
+#define BSP_USING_PWM7
+#define BSP_USING_PWM8
+#define BSP_USING_PWM9
+#define BSP_USING_PWM10
+#define BSP_USING_PWM11
+#define BSP_USING_PWM12
+#define BSP_USING_PWM13
 #define BSP_USING_GD_DBG
 /* end of On-chip Peripheral Drivers */
 
