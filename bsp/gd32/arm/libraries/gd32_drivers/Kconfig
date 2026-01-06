@@ -24,3 +24,7 @@ if BSP_USING_USBD
         # "ULPI: UTMI+ Low Pin Interface"
 endif
 
+config BSP_USING_GD_DBG
+    bool 
+    default y
+    # "Using GD32 debug module"

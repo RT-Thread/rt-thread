@@ -284,7 +284,7 @@ rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
             phy_addr_cells, phy_size_cells, cpu_addr_cells,
             &host_bridge->dma_regions, &host_bridge->dma_regions_nr);
 
-    if (err != -RT_EEMPTY)
+    if (err && err != -RT_EEMPTY)
     {
         rt_free(host_bridge->bus_regions);
         host_bridge->bus_regions_nr = 0;
@@ -314,7 +314,10 @@ rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node *dev_np,
 
     if (rt_ofw_prop_read_u32_array_index(dev_np, "bus-range", 0, 2, host_bridge->bus_range) < 0)
     {
-        return -RT_EIO;
+        host_bridge->bus_range[0] = 0x00;
+        host_bridge->bus_range[1] = 0xff;
+        LOG_I("%s: No \"%s\" found, using [%#02x, %#02x]", rt_ofw_node_full_name(dev_np), "bus-range",
+                host_bridge->bus_range[0], host_bridge->bus_range[1]);
     }
 
     propname = rt_ofw_get_prop_fuzzy_name(dev_np, ",pci-domain$");

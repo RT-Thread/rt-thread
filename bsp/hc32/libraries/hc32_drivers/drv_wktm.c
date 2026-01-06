@@ -30,7 +30,7 @@
 #else
     #if defined(HC32F4A0) || defined(HC32F4A8)
         #define PWC_WKT_CLK_SRC         (PWC_WKT_CLK_SRC_RTCLRC)
-    #elif defined(HC32F460) || defined(HC32F448) || defined(HC32F472)
+    #elif defined(HC32F460) || defined(HC32F448) || defined(HC32F472) || defined(HC32F334)
         #define PWC_WKT_CLK_SRC         (PWC_WKT_CLK_SRC_LRC)
     #endif
     #define PWC_WKT_COUNT_FRQ           (32768UL)

@@ -1,6 +1,11 @@
 devices.strict:
     depend_scons_arg:
       - '--strict'
+system.nano:
+    kconfig:
+      - CONFIG_RT_USING_NANO=y
+      - CONFIG_RT_USING_CONSOLE=y
+      - CONFIG_RT_NANO_CONSOLE_UART9=y
 devices.gpio:
     depends:
       - devices.strict

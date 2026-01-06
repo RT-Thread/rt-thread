@@ -83,7 +83,7 @@
 /* TTY */
 #define MASTER_ID_TTY                                   141
 #define MASTER_ID_TTY_SLAVES                            142
-#define MASTER_ID_TTY_ALTERNATE                        	143
+#define MASTER_ID_TTY_ALTERNATE                         143
 #define MASTER_ID_PTMX                                  144
 
 /* USB */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -39,6 +39,21 @@ static struct rt_mutex fslock;
 static struct rt_mutex fdlock;
 static struct dfs_fdtable _fdtab = {0};
 
+/**
+ * @brief Expand the file descriptor table to accommodate a specified file descriptor
+ *
+ * This function ensures that the file descriptor table in the given `dfs_fdtable` structure
+ * has sufficient capacity to include the specified file descriptor `fd`. If the table
+ * needs to be expanded, it reallocates memory and initializes new slots to `NULL`.
+ *
+ * @param[in,out] fdt Pointer to the file descriptor table to be expanded
+ * @param[in] fd The file descriptor that needs to be accommodated
+ *
+ * @return int The input file descriptor if successful (fd >= 0),
+ *         -1 if expansion failed or fd exceeds maximum allowed value (DFS_FD_MAX)
+ *
+ * @note Expand table size to next multiple of 4 (but not exceeding DFS_FD_MAX)
+ */
 static int _fdt_slot_expand(struct dfs_fdtable *fdt, int fd)
 {
     int nr;
@@ -76,6 +91,17 @@ static int _fdt_slot_expand(struct dfs_fdtable *fdt, int fd)
     return fd;
 }
 
+/**
+ * @brief Allocate an available file descriptor slot in the file descriptor table
+ *
+ * @param[in,out] fdt Pointer to the file descriptor table to allocate from
+ * @param[in] startfd The starting file descriptor index to begin searching
+ *
+ * @return int The allocated file descriptor index if successful (>= 0),
+ *         -1 if allocation failed (table expansion failed)
+ *
+ * @note If no empty slot found, expand the table and return the new index.
+ */
 static int _fdt_slot_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx;
@@ -103,6 +129,18 @@ static int _fdt_slot_alloc(struct dfs_fdtable *fdt, int startfd)
     return idx;
 }
 
+/**
+ * @brief Allocate a file descriptor from the file descriptor table
+ *
+ * @param[in,out] fdt Pointer to the file descriptor table to allocate from
+ * @param[in] startfd The starting file descriptor index to begin searching
+ *
+ * @return int The allocated file descriptor index if successful (>= 0),
+ *         -1 if allocation failed
+ *
+ * @note This is a wrapper function that calls _fdt_slot_alloc() to perform
+ *       the actual allocation. It maintains the same behavior as _fdt_slot_alloc().
+ */
 static int _fdt_fd_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx;
@@ -130,7 +168,7 @@ rt_err_t dfs_lock(void)
 }
 
 /**
- * this function will lock device file system.
+ * this function will unlock device file system.
  *
  * @note please don't invoke it on ISR.
  */
@@ -143,6 +181,17 @@ void dfs_unlock(void)
  *
  *
  *  @{
+ */
+
+/**
+ * @brief Lock the file descriptor table mutex
+ *
+ * @return rt_err_t RT_EOK if lock acquired successfully,
+ *         -RT_ENOSYS if filesystem not initialized,
+ *         -RT_EBUSY if mutex is already locked (retries until acquired)
+ *
+ * @note This function will block indefinitely until the lock is acquired.
+ *       Should not be called from interrupt service routines.
  */
 rt_err_t dfs_file_lock(void)
 {
@@ -161,6 +210,13 @@ rt_err_t dfs_file_lock(void)
     return result;
 }
 
+/**
+ * @brief Unlock the file descriptor table mutex
+ *
+ * @note This function releases the lock acquired by dfs_file_lock().
+ *       Should be called in the same context as the corresponding lock.
+ *       Should not be called from interrupt service routines.
+ */
 void dfs_file_unlock(void)
 {
     rt_mutex_release(&fdlock);
@@ -181,7 +237,7 @@ int dfs_init(void)
     rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_FIFO);
     rt_mutex_init(&fdlock, "fdlock", RT_IPC_FLAG_FIFO);
 
-    /* clean fd table */
+    /* Initialize dentry system */
     dfs_dentry_init();
 
     _dfs_init_ok = RT_TRUE;
@@ -190,6 +246,12 @@ int dfs_init(void)
 }
 INIT_PREV_EXPORT(dfs_init);
 
+/**
+ * @brief Create and initialize a new file descriptor structure
+ *
+ * @return struct dfs_file* Pointer to the newly created file descriptor structure,
+ *         NULL if memory allocation failed
+ */
 struct dfs_file* dfs_file_create(void)
 {
     struct dfs_file *file;
@@ -205,6 +267,11 @@ struct dfs_file* dfs_file_create(void)
     return file;
 }
 
+/**
+ * @brief Destroy and free a file descriptor structure
+ *
+ * @param[in] file Pointer to the file descriptor structure to be destroyed
+ */
 void dfs_file_destroy(struct dfs_file *file)
 {
     rt_mutex_detach(&file->pos_lock);
@@ -219,9 +286,14 @@ void dfs_file_destroy(struct dfs_file *file)
 
 /**
  * @ingroup group_fs_file_descriptor
- * This function will allocate a file descriptor.
  *
- * @return -1 on failed or the allocated file descriptor.
+ * @brief Allocate a new file descriptor in the file descriptor table
+ *
+ * @param[in,out] fdt Pointer to the file descriptor table to allocate from
+ *
+ * @return int The allocated file descriptor index if successful (>= 0),
+ *         -RT_ENOSYS if filesystem lock failed,
+ *         -1 if allocation failed (no empty slots or memory allocation failed)
  */
 int fdt_fd_new(struct dfs_fdtable *fdt)
 {
@@ -269,6 +341,12 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
     return idx;
 }
 
+/**
+ * @brief Release a file descriptor from the file descriptor table
+ *
+ * @param[in,out] fdt Pointer to the file descriptor table
+ * @param[in] fd The file descriptor to be released
+ */
 void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
 {
     if (fd < fdt->maxfd)
@@ -320,6 +398,17 @@ struct dfs_file *fdt_get_file(struct dfs_fdtable *fdt, int fd)
     return f;
 }
 
+/**
+ * @brief Associate a file structure with a file descriptor in the file descriptor table
+ *
+ * @param[in,out] fdt Pointer to the file descriptor table
+ * @param[in] fd The file descriptor to associate with
+ * @param[in] file Pointer to the file structure to associate
+ *
+ * @return int The file descriptor if successful (>= 0),
+ *         -1 if association failed (invalid parameters or fd already in use),
+ *         -RT_ENOSYS if filesystem lock failed
+ */
 int fdt_fd_associate_file(struct dfs_fdtable *fdt, int fd, struct dfs_file *file)
 {
     int retfd = -1;
@@ -359,6 +448,12 @@ exit:
     return retfd;
 }
 
+/**
+ * @brief Allocate a new file descriptor in current process's file descriptor table
+ *
+ * @return int The allocated file descriptor index if successful (>= 0),
+ *         -1 if allocation failed
+ */
 int fd_new(void)
 {
     struct dfs_fdtable *fdt;
@@ -381,6 +476,14 @@ void fd_release(int fd)
     fdt_fd_release(fdt, fd);
 }
 
+/**
+ * @brief Get file structure by file descriptor from current process's fd table
+ *
+ * @param[in] fd The file descriptor to lookup
+ *
+ * @return struct dfs_file* Pointer to the file structure if found,
+ *         NULL if invalid fd or file not found
+ */
 struct dfs_file *fd_get(int fd)
 {
     struct dfs_fdtable *fdt;
@@ -417,6 +520,14 @@ struct dfs_fdtable *dfs_fdtable_get(void)
 }
 
 #ifdef RT_USING_SMART
+/**
+ * @brief Get file structure by file descriptor from current process's fd table
+ *
+ * @param[in] fd The file descriptor to lookup
+ *
+ * @return struct dfs_file* Pointer to the file structure if found,
+ *         NULL if invalid fd or file not found
+ */
 struct dfs_fdtable *dfs_fdtable_get_from_pid(int pid)
 {
     struct rt_lwp *lwp = RT_NULL;
@@ -434,6 +545,11 @@ struct dfs_fdtable *dfs_fdtable_get_from_pid(int pid)
 }
 #endif
 
+/**
+ * @brief Get the global file descriptor table
+ *
+ * @return struct dfs_fdtable* Pointer to the global file descriptor table
+ */
 struct dfs_fdtable *dfs_fdtable_get_global(void)
 {
     return &_fdtab;
@@ -442,11 +558,11 @@ struct dfs_fdtable *dfs_fdtable_get_global(void)
 /**
  * @brief  Dup the specified fd_src from fdt_src to fdt_dst.
  *
- * @param  fdt_dst is the fd table for destination, if empty, use global (_fdtab).
+ * @param[out]  fdt_dst is the fd table for destination, if empty, use global (_fdtab).
  *
- * @param  fdt_src is the fd table for source, if empty, use global (_fdtab).
+ * @param[in]  fdt_src is the fd table for source, if empty, use global (_fdtab).
  *
- * @param  fd_src is the fd in the designate fdt_src table.
+ * @param[in]  fd_src is the fd in the designate fdt_src table.
  *
  * @return -1 on failed or the allocated file descriptor.
  */
@@ -540,6 +656,16 @@ int dfs_fdtable_drop_fd(struct dfs_fdtable *fdt, int fd)
     return err;
 }
 
+/**
+ * @brief Duplicate a file descriptor in the current process's file descriptor table
+ *
+ * @param[in] oldfd The file descriptor to duplicate
+ * @param[in] startfd The starting index to search for an available file descriptor slot
+ *
+ * @return int The new file descriptor if successful (>=0),
+ *         -1 if failed (invalid fd or allocation failed),
+ *         -RT_ENOSYS if filesystem lock failed
+ */
 int dfs_dup(int oldfd, int startfd)
 {
     int newfd = -1;
@@ -576,11 +702,10 @@ exit:
 }
 
 /**
- * @brief  The fd in the current process dup to designate fd table.
+ * @brief Duplicate a file descriptor from current process to target file descriptor table
  *
- * @param  oldfd is the fd in current process.
- *
- * @param  fdtab is the fd table to dup, if empty, use global (_fdtab).
+ * @param[in]  oldfd is the fd in current process.
+ * @param[in,out]  fdtab is the fd table to dup, if empty, use global (_fdtab).
  *
  * @return -1 on failed or the allocated file descriptor.
  */
@@ -625,11 +750,10 @@ exit:
 }
 
 /**
- * @brief  The fd in the designate fd table dup to current process.
+ * @brief  Duplicate a file descriptor from source table to current process
  *
- * @param  oldfd is the fd in the designate fd table.
- *
- * @param  fdtab is the fd table for oldfd, if empty, use global (_fdtab).
+ * @param[in]  oldfd is the fd in the designate fd table.
+ * @param[in,out]  fdtab is the fd table for oldfd, if empty, use global (_fdtab).
  *
  * @return -1 on failed or the allocated file descriptor.
  */
@@ -680,6 +804,14 @@ exit:
     return newfd;
 }
 
+/**
+ * @brief System call to duplicate a file descriptor
+ *
+ * @param[in] oldfd The file descriptor to duplicate
+ *
+ * @return sysret_t/int The new file descriptor if successful (>=0),
+ *         negative error code if failed
+ */
 #ifdef RT_USING_SMART
 sysret_t sys_dup(int oldfd)
 #else
@@ -700,6 +832,16 @@ int sys_dup(int oldfd)
 #endif
 }
 
+/**
+ * @brief System call to duplicate a file descriptor to a specific descriptor number
+ *
+ * @param[in] oldfd The file descriptor to duplicate
+ * @param[in] newfd The desired file descriptor number
+ *
+ * @return rt_err_t The new file descriptor number if successful (>=0),
+ *         -RT_ENOSYS if filesystem lock failed,
+ *         -1 if operation failed (invalid descriptors or allocation failed)
+ */
 rt_err_t sys_dup2(int oldfd, int newfd)
 {
     struct dfs_fdtable *fdt = NULL;
@@ -760,12 +902,13 @@ exit:
 }
 
 /**
- * this function will return a sub-path name under directory.
+ * @brief Get the subdirectory path relative to a parent directory
  *
- * @param directory the parent directory.
- * @param filename the filename.
+ * @param[in] directory The parent directory path
+ * @param[in] filename The full path including parent directory and subpath
  *
- * @return the subdir pointer in filename
+ * @return const char* Pointer to the subdirectory portion of filename,
+ *         NULL if paths are identical or invalid
  */
 const char *dfs_subdir(const char *directory, const char *filename)
 {
@@ -785,13 +928,21 @@ const char *dfs_subdir(const char *directory, const char *filename)
 RTM_EXPORT(dfs_subdir);
 
 /**
- * this function will normalize a path according to specified parent directory
- * and file name.
+ * @brief Normalize a path by combining directory and filename into an absolute path
  *
- * @param directory the parent path
- * @param filename the file name
+ * @param[in] directory The parent directory path (NULL means use working directory)
+ * @param[in] filename The filename or relative path to be normalized
  *
- * @return the built full file path (absolute path)
+ * @return char* The normalized absolute path (must be freed by caller),
+ *         NULL if path is invalid or memory allocation fails
+ *
+ * @note This function will:
+ *       - Handle working directory when directory is NULL
+ *       - Join directory and filename with proper separators
+ *       - Resolve . and .. in paths
+ *       - Remove redundant slashes
+ *       - Ensure path starts with /
+ *       - Allocate memory for the returned path string
  */
 char *dfs_normalize_path(const char *directory, const char *filename)
 {
@@ -819,7 +970,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
     }
 #endif
 
-    if (filename[0] != '/') /* it's a absolute path, use it directly */
+    if (filename[0] != '/')
     {
         int path_len;
 
@@ -839,7 +990,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
         rt_snprintf(fullpath, strlen(directory) + strlen(filename) + 2,
                     "%s/%s", directory, filename);
     }
-    else
+    else /* it's a absolute path, use it directly */
     {
         fullpath = rt_strdup(filename); /* copy string */
 
@@ -847,29 +998,35 @@ char *dfs_normalize_path(const char *directory, const char *filename)
             return NULL;
     }
 
+    /* Initialize source and destination pointers to start of path */
     src = fullpath;
     dst = fullpath;
 
+    /* Save initial position for boundary checking */
     dst0 = dst;
     while (1)
     {
         char c = *src;
 
+        /* Handle '.' and '..' path components */
         if (c == '.')
         {
+            /* Single dot at end of path */
             if (!src[1])
-                src++; /* '.' and ends */
+                src++; /* '.' and ends, Skip single dot */
             else if (src[1] == '/')
             {
                 /* './' case */
                 src += 2;
 
+                /* Skip consecutive slashes */
                 while ((*src == '/') && (*src != '\0'))
                     src++;
                 continue;
             }
             else if (src[1] == '.')
             {
+                /* Parent directory reference */
                 if (!src[2])
                 {
                     /* '..' and ends case */
@@ -878,9 +1035,10 @@ char *dfs_normalize_path(const char *directory, const char *filename)
                 }
                 else if (src[2] == '/')
                 {
-                    /* '../' case */
+                    /* '../' case: parent directory reference */
                     src += 3;
 
+                    /* Skip consecutive slashes */
                     while ((*src == '/') && (*src != '\0'))
                         src++;
                     goto up_one;
@@ -894,6 +1052,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
         if (c == '/')
         {
+            /* Add single slash */
             *dst++ = '/';
             while (c == '/')
                 c = *src++;
@@ -901,21 +1060,25 @@ char *dfs_normalize_path(const char *directory, const char *filename)
             src--;
         }
         else if (!c)
-            break;
+            break; /* End of string */
 
         continue;
 
+    /* Handle parent directory reference */
     up_one:
+        /* Move back one directory level */
         dst--;
-        if (dst < dst0)
+        if (dst < dst0) /* Check for path traversal underflow */
         {
             rt_free(fullpath);
             return NULL;
         }
+        /* Find previous directory separator */
         while (dst0 < dst && dst[-1] != '/')
             dst--;
     }
 
+    /* Null-terminate the path */
     *dst = '\0';
 
     /* remove '/' in the end of path if exist */
@@ -936,6 +1099,11 @@ RTM_EXPORT(dfs_normalize_path);
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
+/**
+ * @brief List all open file descriptors in the current process
+ *
+ * @return int 0 on success, -1 if failed to get file descriptor table
+ */
 int list_fd(void)
 {
     int index;
@@ -980,6 +1148,15 @@ int list_fd(void)
 }
 MSH_CMD_EXPORT(list_fd, list file descriptor);
 
+/**
+ * @brief Dump all file descriptors information in the global file descriptor table
+ *
+ * @param[in] argc Number of command line arguments (unused)
+ * @param[in] argv Array of command line arguments (unused)
+ *
+ * @return int 0 on success,
+ *         -RT_ENOSYS if failed to acquire file system lock
+ */
 int dfs_fd_dump(int argc, char** argv)
 {
     int index;
@@ -1015,7 +1192,24 @@ int dfs_fd_dump(int argc, char** argv)
 MSH_CMD_EXPORT_ALIAS(dfs_fd_dump, fd_dump, fd dump);
 
 #ifdef PKG_USING_DLOG
-
+/**
+ * @brief Control the DFS (Device File System) debug logging functionality
+ *
+ * @param[in] argc Number of command line arguments (must be 2)
+ * @param[in] argv Array of command line arguments:
+ *                - argv[1]: "on" to enable logging, "off" to disable logging
+ *
+ * @return int Always returns 0 (success)
+ *
+ * @note When enabled, this function activates logging for multiple DFS components:
+ *       - dfs: Core DFS functionality
+ *       - dfs_file: File operations
+ *       - dentry: Directory entries
+ *       - vnode: Virtual nodes
+ *       - mnt: Mount points
+ *       - rom: ROM filesystem
+ *       - devfs: Device filesystem
+ */
 int dfs_dlog(int argc, char** argv)
 {
     if (argc == 2)

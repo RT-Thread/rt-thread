@@ -18,7 +18,7 @@
 #ifndef __aarch64__
 .globl cpu_id_mapping
 cpu_id_mapping:
-#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
+#if defined(TARGET_PE2204)
 cmp r0, #0 // compare cpu_id with 0
 beq map_cpu_id_0
 cmp r0, #1 // compare cpu_id with 1
@@ -31,7 +31,7 @@ mov pc, lr // no mapping needed
 #endif
 mov pc, lr // no mapping needed
 
-// Mapping for E2000Q
+// Mapping for PE2204
 map_cpu_id_0:
 mov r0, #2
 mov pc, lr
@@ -105,7 +105,7 @@ return:
 
 .globl cpu_id_mapping
 cpu_id_mapping:
-#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
+#if defined(TARGET_PE2204)
 cmp x0, #0 // compare cpu_id with 0
 beq map_cpu_id_0
 cmp x0, #1 // compare cpu_id with 1
@@ -118,7 +118,7 @@ RET // no mapping needed
 #endif
 RET // no mapping needed
 
-// Mapping for E2000Q
+// Mapping for PE2204
 map_cpu_id_0:
 mov x0, #2
 RET
@@ -147,7 +147,7 @@ rt_hw_cpu_id_set:
 .globl rt_hw_cpu_id
 rt_hw_cpu_id:
     mrs x0,MPIDR_EL1
-    ubfx x0, x0, #0, #12
+    ubfx x0, x0, #0, #20
     ldr x1,= CORE0_AFF
     cmp x0, x1
     beq core0
@@ -170,6 +170,30 @@ rt_hw_cpu_id:
     beq core3
 #endif
 
+#if defined(CORE4_AFF)
+    ldr x1,= CORE4_AFF
+    cmp x0, x1
+    beq core4
+#endif
+
+#if defined(CORE5_AFF)
+    ldr x1,= CORE5_AFF
+    cmp x0, x1
+    beq core5
+#endif
+
+#if defined(CORE6_AFF)
+    ldr x1,= CORE6_AFF
+    cmp x0, x1
+    beq core6
+#endif
+
+#if defined(CORE7_AFF)
+    ldr x1,= CORE7_AFF
+    cmp x0, x1
+    beq core7
+#endif
+
 core0:
     mov x0, #0
     b return 
@@ -184,6 +208,22 @@ core2:
 
 core3: 
     mov x0, #3
+    b return 
+
+core4: 
+    mov x0, #4
+    b return 
+
+core5: 
+    mov x0, #5
+    b return 
+
+core6: 
+    mov x0, #6
+    b return 
+
+core7: 
+    mov x0, #7
     b return 
 
 return:

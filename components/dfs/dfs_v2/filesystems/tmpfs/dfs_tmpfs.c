@@ -358,7 +358,7 @@ static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t co
     rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
 
     count = _dfs_tmpfs_write(d_file, buf, count, pos);
-
+    file->vnode->size = d_file->size;
     rt_mutex_release(&file->vnode->lock);
 
     return count;

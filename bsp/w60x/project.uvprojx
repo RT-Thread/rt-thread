@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--c99 --gnu</MiscControls>
-              <Define>RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\components\finsh;..\..\components\net\lwip\port;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\drivers\hwcrypto;..\..\components\libc\posix\io\poll;applications;..\..\include;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\net\sal\include\socket\sys_socket;..\..\components\net\sal\impl;..\..\components\drivers\include;..\..\libcpu\arm\cortex-m3;..\..\components\libc\posix\io\eventfd;..\..\components\libc\posix\ipc;..\..\components\drivers\phy;..\..\components\drivers\wlan;..\..\components\net\sal\include\dfs_net;..\..\components\drivers\include;..\..\components\utilities\ulog;..\..\components\dfs\dfs_v1\include;drivers;..\..\components\net\lwip-dhcpd;..\..\libcpu\arm\common;..\..\components\net\netdev\include;..\..\components\drivers\include;..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\drivers\include;oneshot;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\drivers\smp_call;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\dfs\dfs_v1\filesystems\devfs;.;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\net\sal\include;..\..\components\net\sal\include\socket</IncludePath>
+              <IncludePath>..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\libc\posix\io\epoll;..\..\components\dfs\dfs_v1\include;..\..\components\libc\compilers\common\include;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\drivers\phy;..\..\components\drivers\include;..\..\components\drivers\wlan;..\..\components\net\sal\include;..\..\components\net\lwip\port;..\..\components\net\sal\include\socket\sys_socket;..\..\components\finsh;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\smp_call;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\drivers\include;applications;..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\io\eventfd;.;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\include;..\..\components\drivers\include;..\..\components\net\lwip-dhcpd;..\..\components\drivers\spi;..\..\components\drivers\include;oneshot;..\..\components\net\sal\impl;..\..\components\net\sal\include\socket;..\..\components\drivers\include;..\..\components\net\sal\include\dfs_net;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\utilities\ulog;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\libc\posix\ipc;..\..\components\drivers\include;..\..\components\net\netdev\include;..\..\components\drivers\hwcrypto;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1117,27 +1117,6 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_wifi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_wifi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_flash.c</FilePath>
@@ -1155,6 +1134,27 @@
               <FileName>drv_pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_pin.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_wifi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_wifi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1267,16 +1267,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_file.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh_file.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1288,9 +1288,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1586,9 +1586,23 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1600,23 +1614,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
         </Group>

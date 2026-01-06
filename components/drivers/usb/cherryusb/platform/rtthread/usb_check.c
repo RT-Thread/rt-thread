@@ -12,10 +12,9 @@
 #error must enable RT_USING_TIMER_SOFT to support timer callback in thread
 #endif
 
-#if RT_TIMER_THREAD_STACK_SIZE < 2048
-#error "RT_TIMER_THREAD_STACK_SIZE must be >= 2048"
+#if RT_TIMER_THREAD_STACK_SIZE < 1024
+#error "RT_TIMER_THREAD_STACK_SIZE must be >= 1024"
 #endif
-
 #endif
 
 #if defined(ARCH_ARM_CORTEX_M7) ||                                          \
@@ -28,9 +27,6 @@
 
 #ifdef RT_USING_CACHE
 #ifndef CONFIG_USB_DCACHE_ENABLE
-#error CONFIG_USB_DCACHE_ENABLE must be enabled
-#endif
-#if RT_ALIGN_SIZE != 32 && RT_ALIGN_SIZE != 64
-#error RT_ALIGN_SIZE must be cacheline to 32 or 64
+#warning CONFIG_USB_DCACHE_ENABLE must be enabled if you do not config nocache ram
 #endif
 #endif

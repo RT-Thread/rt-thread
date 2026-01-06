@@ -15,7 +15,9 @@
 #include <rtconfig.h>
 #include "hc32_ll.h"
 #include "drv_config.h"
-
+#if defined(RT_USING_CHERRYUSB)
+    #include "usb_config.h"
+#endif
 
 /************************* XTAL port **********************/
 #define XTAL_PORT                       (GPIO_PORT_H)
@@ -585,8 +587,17 @@
     #endif
 #endif
 
-#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
-    #if defined(BSP_USING_USBFS)
+#if defined(RT_USING_CHERRYUSB)
+    #if defined(BSP_USING_USBD) || defined(BSP_USING_USBH) || \
+        defined(BSP_USING_USBFS) || defined(BSP_USING_USBHS) || \
+        defined(BSP_USING_USBHS_PHY_EMBED) || defined(BSP_USING_USBHS_PHY_EXTERN) || \
+        defined(RT_USING_USB)
+        #error "When using CherryUSB, Please donot Enable 'On-Chip Peripheral Driver---> []Enable USB' or using USB legacy version!"
+    #endif
+#endif
+
+#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH) || defined(RT_USING_CHERRYUSB)
+    #if defined(BSP_USING_USBFS) || defined(RT_USING_CHERRYUSB)
         /* USBFS Core*/
         #define USBF_DP_PORT                    (GPIO_PORT_A)
         #define USBF_DP_PIN                     (GPIO_PIN_12)
@@ -599,9 +610,9 @@
         #define USBF_DRVVBUS_PIN                (GPIO_PIN_09)
         #define USBF_DRVVBUS_FUNC               (GPIO_FUNC_10)
     #endif
-    #if defined(BSP_USING_USBHS)
+    #if defined(BSP_USING_USBHS) || defined(RT_USING_CHERRYUSB)
         /* USBHS Core*/
-        #if defined(BSP_USING_USBHS_PHY_EMBED)
+        #if defined(BSP_USING_USBHS_PHY_EMBED) || (defined(RT_USING_CHERRYUSB) && !defined(CONFIG_USB_HS))
             #define USBH_DP_PORT                    (GPIO_PORT_B)
             #define USBH_DP_PIN                     (GPIO_PIN_15)
             #define USBH_DP_FUNC                    (GPIO_FUNC_10)

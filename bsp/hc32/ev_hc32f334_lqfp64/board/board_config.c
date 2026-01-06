@@ -114,9 +114,14 @@ rt_err_t rt_hw_board_dac_init(CM_DAC_TypeDef *DACx)
     switch ((rt_uint32_t)DACx)
     {
 #if defined(BSP_USING_DAC1)
-    case (rt_uint32_t)CM_DAC:
+    case (rt_uint32_t)CM_DAC1:
         (void)GPIO_Init(DAC1_CH1_PORT, DAC1_CH1_PIN, &stcGpioInit);
         (void)GPIO_Init(DAC1_CH2_PORT, DAC1_CH2_PIN, &stcGpioInit);
+        break;
+#endif
+#if defined(BSP_USING_DAC2)
+    case (rt_uint32_t)CM_DAC2:
+        (void)GPIO_Init(DAC2_CH1_PORT, DAC2_CH1_PIN, &stcGpioInit);
         break;
 #endif
     default:
@@ -131,15 +136,22 @@ rt_err_t rt_hw_board_dac_init(CM_DAC_TypeDef *DACx)
 #if defined(RT_USING_CAN)
 void CanPhyEnable(void)
 {
+    stc_gpio_init_t stcGpioInit;
+
 #if defined(BSP_USING_MCAN1)
-    TCA9539_WritePin(CAN1_STB_PORT, CAN1_STB_PIN, TCA9539_PIN_RESET);
-    TCA9539_ConfigPin(CAN1_STB_PORT, CAN1_STB_PIN, TCA9539_DIR_OUT);
+    GPIO_StructInit(&stcGpioInit);
+    stcGpioInit.u16PinState = PIN_STAT_RST;
+    stcGpioInit.u16PinDir   = PIN_DIR_OUT;
+    GPIO_Init(MCAN1_PHY_STBY_PORT, MCAN1_PHY_STBY_PIN, &stcGpioInit);
 #endif
 #if defined(BSP_USING_MCAN2)
-    TCA9539_WritePin(CAN2_STB_PORT, CAN2_STB_PIN, TCA9539_PIN_RESET);
-    TCA9539_ConfigPin(CAN2_STB_PORT, CAN2_STB_PIN, TCA9539_DIR_OUT);
+    GPIO_StructInit(&stcGpioInit);
+    stcGpioInit.u16PinState = PIN_STAT_RST;
+    stcGpioInit.u16PinDir   = PIN_DIR_OUT;
+    GPIO_Init(MCAN2_PHY_STBY_PORT, MCAN2_PHY_STBY_PIN, &stcGpioInit);
 #endif
 }
+
 rt_err_t rt_hw_board_mcan_init(CM_MCAN_TypeDef *MCANx)
 {
     rt_err_t result = RT_EOK;
@@ -178,13 +190,7 @@ rt_err_t rt_hw_spi_board_init(CM_SPI_TypeDef *CM_SPIx)
     switch ((rt_uint32_t)CM_SPIx)
     {
 #if defined(BSP_USING_SPI1)
-    case (rt_uint32_t)CM_SPI1:
-        GPIO_StructInit(&stcGpioInit);
-        stcGpioInit.u16PinState = PIN_STAT_SET;
-        stcGpioInit.u16PinDir   = PIN_DIR_OUT;
-        GPIO_Init(SPI1_WP_PORT, SPI1_WP_PIN, &stcGpioInit);
-        GPIO_Init(SPI1_HOLD_PORT, SPI1_HOLD_PIN, &stcGpioInit);
-
+    case (rt_uint32_t)CM_SPI:
         (void)GPIO_StructInit(&stcGpioInit);
         stcGpioInit.u16PinDrv = PIN_HIGH_DRV;
         stcGpioInit.u16PinInputType = PIN_IN_TYPE_CMOS;
@@ -228,22 +234,6 @@ rt_err_t rt_hw_board_pwm_tmra_init(CM_TMRA_TypeDef *TMRAx)
 #endif
         break;
 #endif
-#if defined(BSP_USING_PWM_TMRA_2)
-    case (rt_uint32_t)CM_TMRA_2:
-#ifdef BSP_USING_PWM_TMRA_2_CH1
-        GPIO_SetFunc(PWM_TMRA_2_CH1_PORT, PWM_TMRA_2_CH1_PIN, PWM_TMRA_2_CH1_PIN_FUNC);
-#endif
-#ifdef BSP_USING_PWM_TMRA_2_CH2
-        GPIO_SetFunc(PWM_TMRA_2_CH2_PORT, PWM_TMRA_2_CH2_PIN, PWM_TMRA_2_CH2_PIN_FUNC);
-#endif
-#ifdef BSP_USING_PWM_TMRA_2_CH3
-        GPIO_SetFunc(PWM_TMRA_2_CH3_PORT, PWM_TMRA_2_CH3_PIN, PWM_TMRA_2_CH3_PIN_FUNC);
-#endif
-#ifdef BSP_USING_PWM_TMRA_2_CH4
-        GPIO_SetFunc(PWM_TMRA_2_CH4_PORT, PWM_TMRA_2_CH4_PIN, PWM_TMRA_2_CH4_PIN_FUNC);
-#endif
-        break;
-#endif
     default:
         result = -RT_ERROR;
         break;
@@ -260,7 +250,7 @@ rt_err_t rt_hw_board_pwm_tmr4_init(CM_TMR4_TypeDef *TMR4x)
     switch ((rt_uint32_t)TMR4x)
     {
 #if defined(BSP_USING_PWM_TMR4_1)
-    case (rt_uint32_t)CM_TMR4_1:
+    case (rt_uint32_t)CM_TMR4:
 #ifdef BSP_USING_PWM_TMR4_1_OUH
         GPIO_SetFunc(PWM_TMR4_1_OUH_PORT, PWM_TMR4_1_OUH_PIN, PWM_TMR4_1_OUH_PIN_FUNC);
 #endif
@@ -278,6 +268,12 @@ rt_err_t rt_hw_board_pwm_tmr4_init(CM_TMR4_TypeDef *TMR4x)
 #endif
 #ifdef BSP_USING_PWM_TMR4_1_OWL
         GPIO_SetFunc(PWM_TMR4_1_OWL_PORT, PWM_TMR4_1_OWL_PIN, PWM_TMR4_1_OWL_PIN_FUNC);
+#endif
+#ifdef BSP_USING_PWM_TMR4_1_OXH
+        GPIO_SetFunc(PWM_TMR4_1_OXH_PORT, PWM_TMR4_1_OXH_PIN, PWM_TMR4_1_OXH_PIN_FUNC);
+#endif
+#ifdef BSP_USING_PWM_TMR4_1_OXL
+        GPIO_SetFunc(PWM_TMR4_1_OXL_PORT, PWM_TMR4_1_OXL_PIN, PWM_TMR4_1_OXL_PIN_FUNC);
 #endif
         break;
 #endif

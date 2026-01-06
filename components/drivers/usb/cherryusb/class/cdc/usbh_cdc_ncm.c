@@ -148,7 +148,7 @@ get_mac:
     }
 
     memset(mac_buffer, 0, 12);
-    ret = usbh_get_string_desc(cdc_ncm_class->hport, mac_str_idx, (uint8_t *)mac_buffer);
+    ret = usbh_get_string_desc(cdc_ncm_class->hport, mac_str_idx, (uint8_t *)mac_buffer, 12);
     if (ret < 0) {
         return ret;
     }

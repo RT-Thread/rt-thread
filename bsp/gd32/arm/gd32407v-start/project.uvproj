@@ -787,11 +787,6 @@
             </File>
           </Files>
           <Files>
-            <File>
-              <FileName>drv_soft_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\gd32_drivers\drv_soft_i2c.c</FilePath>
-            </File>
           </Files>
           <Files>
             <File>

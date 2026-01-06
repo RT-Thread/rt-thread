@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -49,7 +49,7 @@ static struct nrfx_drv_spi_config spi_config[] =
 
 static struct nrfx_drv_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])];
 
-//Configure SPI bus pins using the menuconfig
+/* Configure SPI bus pins using the menuconfig */
 static struct nrfx_drv_spi_pin_config bsp_spi_pin[] =
 {
 #ifdef BSP_USING_SPI0
@@ -128,10 +128,12 @@ static void spi2_handler(const nrfx_spim_evt_t *p_event, void *p_context)
 {
     LOG_I("\nspi2_handler");
 }
+
 static void spi3_handler(const nrfx_spim_evt_t *p_event, void *p_context)
 {
     LOG_I("\nspi3_handler");
 }
+
 static void spi4_handler(const nrfx_spim_evt_t *p_event, void *p_context)
 {
     LOG_I("\nspi4_handler");
@@ -224,7 +226,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     }
 
     rt_memcpy((void*)&spi_bus_obj[index].spi_config, (void*)&config, sizeof(nrfx_spim_config_t));
-    nrfx_spim_evt_handler_t handler = RT_NULL;    //spi send callback handler ,default NULL
+    nrfx_spim_evt_handler_t handler = RT_NULL;    /* spi send callback handler ,default NULL */
     void * context = RT_NULL;
     nrfx_err_t nrf_ret = nrfx_spim_init(&spi, &config, handler, context);
     if(NRFX_SUCCESS == nrf_ret)
@@ -258,6 +260,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     {
         p_xfer_desc.tx_length = 0;
     }
+
     if(message->recv_buf == RT_NULL)
     {
         p_xfer_desc.rx_length = 0;
@@ -293,7 +296,7 @@ static int rt_hw_spi_bus_init(void)
     for (int i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
     {
         spi_bus_obj[i].spi = spi_config[i].spi;
-        spi_bus_obj[i].spi_bus.parent.user_data = &spi_config[i];   //SPI INSTANCE
+        spi_bus_obj[i].spi_bus.parent.user_data = &spi_config[i];   /* SPI INSTANCE */
         result = rt_spi_bus_register(&spi_bus_obj[i].spi_bus, spi_config[i].bus_name, &nrfx_spi_ops);
         RT_ASSERT(result == RT_EOK);
     }
@@ -350,7 +353,7 @@ static int spi_sample(int argc, char *argv[])
 
 
 
-       /* 查找 spi 设备获取设备句柄 */
+    /* find spi device to get handler */
     spi_dev = (struct rt_spi_device *)rt_device_find(SPI_DEVICE_NAME);
     if (!spi_dev)
     {
@@ -359,10 +362,10 @@ static int spi_sample(int argc, char *argv[])
     else
     {
          rt_spi_configure(spi_dev, &cfg);
-        /* 方式1：使用 rt_spi_send_then_recv()发送命令读取ID */
+        /* use func: rt_spi_send_then_recv() send and read ID */
          while(1)
        { rt_spi_send(spi_dev, m_tx_buf, 6);rt_thread_mdelay(500);}
-        //rt_kprintf("use rt_spi_send_then_recv() read w25q ID is:%x%x\n", id[3], id[4]);
+        /* rt_kprintf("use rt_spi_send_then_recv() read w25q ID is:%x%x\n", id[3], id[4]); */
         }
 return RT_EOK;
 
@@ -389,7 +392,7 @@ static struct nrfx_drv_spi_config spi_config[] =
 
 static struct nrfx_drv_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])];
 
-//Configure SPI bus pins using the menuconfig
+/* Configure SPI bus pins using the menuconfig */
 static struct nrfx_drv_spi_pin_config bsp_spi_pin[] =
 {
 #ifdef BSP_USING_SPI0
@@ -534,7 +537,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     }
 
     rt_memcpy((void*)&spi_bus_obj[index].spi_config, (void*)&config, sizeof(nrfx_spi_config_t));
-    nrfx_spi_evt_handler_t handler = RT_NULL;    //spi send callback handler ,default NULL
+    nrfx_spi_evt_handler_t handler = RT_NULL;    /* spi send callback handler ,default NULL */
     void * context = RT_NULL;
     nrfx_err_t nrf_ret = nrfx_spi_init(&spi, &config, handler, context);
     if(NRFX_SUCCESS == nrf_ret)
@@ -568,6 +571,7 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     {
         p_xfer_desc.tx_length = 0;
     }
+
     if(message->recv_buf == RT_NULL)
     {
         p_xfer_desc.rx_length = 0;
@@ -603,7 +607,7 @@ static int rt_hw_spi_bus_init(void)
     for (int i = 0; i < sizeof(spi_config) / sizeof(spi_config[0]); i++)
     {
         spi_bus_obj[i].spi = spi_config[i].spi;
-        spi_bus_obj[i].spi_bus.parent.user_data = &spi_config[i];   //SPI INSTANCE
+        spi_bus_obj[i].spi_bus.parent.user_data = &spi_config[i];   /* SPI INSTANCE */
         result = rt_spi_bus_register(&spi_bus_obj[i].spi_bus, spi_config[i].bus_name, &nrfx_spi_ops);
         RT_ASSERT(result == RT_EOK);
     }
@@ -644,3 +648,4 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 #endif /* BSP_USING_SPI0 || BSP_USING_SPI1 || BSP_USING_SPI2 */
 #endif
 #endif /*BSP_USING_SPI*/
+

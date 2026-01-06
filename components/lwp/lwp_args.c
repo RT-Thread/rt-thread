@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,6 +13,11 @@
 #include "lwp_internal.h"
 #include "mm_page.h"
 
+/**
+ * @brief Initializes a string vector structure with default buffer size
+ *
+ * @param[out] sv Pointer to the string vector structure to initialize
+ */
 static void _strvec_init(struct lwp_string_vector *sv)
 {
     #define DEFAUTL_ARGV_BUFLEN 4
@@ -21,6 +26,11 @@ static void _strvec_init(struct lwp_string_vector *sv)
     sv->string_count = 0;
 }
 
+/**
+ * @brief Detaches and frees memory from a string vector structure
+ *
+ * @param[in,out] sv Pointer to the string vector structure to detach
+ */
 static void _strvec_detach(struct lwp_string_vector *sv)
 {
     if (sv->strvec)
@@ -29,6 +39,17 @@ static void _strvec_detach(struct lwp_string_vector *sv)
     }
 }
 
+/**
+ * @brief Appends a string to a string vector structure
+ *
+ * @param[in,out] sv Pointer to the string vector structure
+ * @param[in] string String to append to the vector
+ *
+ * @return rt_err_t RT_EOK on success, -RT_ENOMEM on memory allocation failure
+ *
+ * @note This function dynamically grows the string vector's buffer into 2 times its current size
+ *       if buffer is full.
+ */
 static rt_err_t _strvec_append(struct lwp_string_vector *sv, const char *string)
 {
     if (sv->string_count == sv->strvec_buflen)
@@ -45,6 +66,19 @@ static rt_err_t _strvec_append(struct lwp_string_vector *sv, const char *string)
     return RT_EOK;
 }
 
+/**
+ * @brief Appends an argument or environment variable to the LWP arguments info structure
+ *
+ * @param[in,out] ai Pointer to the arguments info structure
+ * @param[in] str_addr Address of the string to append (user or kernel space)
+ * @param[in] str_len Length of the string to append
+ * @param[in] atype Type of argument being appended (LWP_ARGS_TYPE_*)
+ *
+ * @return rt_err_t RT_EOK on success, -RT_ENOMEM on memory allocation failure
+ *
+ * @note This function handles both kernel-space and user-space strings, dynamically
+ *       growing the string buffer into 2 times its current size if buffer is full.
+ */
 static rt_err_t args_append(struct lwp_args_info *ai, const char *str_addr,
                             size_t str_len, enum lwp_args_type atype)
 {
@@ -101,13 +135,19 @@ static rt_err_t args_append(struct lwp_args_info *ai, const char *str_addr,
 /**
  * @brief Override arguments 0 for script interpreter.
  *
- * Manual: interpreter will be invoked with the following arguments:
- *      {interpreter [optional-arg] pathname arg...}
- * where pathname is the pathname of the file specified as the first
- * argument of execve(), and arg...  is the series of words pointed
- * to by the argv argument of execve(), starting at argv[1].  Note
- * that there is no way to get the argv[0] that was passed to the
- * execve() call.
+ * @param[in,out] ai Pointer to the target argument info structure to be modified.
+ * @param[in] ow_ai Pointer to the source argument info structure containing arguments to override
+ *                  argv[0] with.
+ *
+ * @return rt_err_t RT_EOK on success, -RT_EINVAL for invalid input, -RT_ENOMEM on memory allocation failure
+ *
+ * @note Manual: interpreter will be invoked with the following arguments:
+ *          {interpreter [optional-arg] pathname arg...}
+ *       where pathname is the pathname of the file specified as the first
+ *       argument of execve(), and arg...  is the series of words pointed
+ *       to by the argv argument of execve(), starting at argv[1].  Note
+ *       that there is no way to get the argv[0] that was passed to the
+ *       execve() call.
  */
 static rt_err_t _args_override_argv0(struct lwp_args_info *ai, struct lwp_args_info *ow_ai)
 {
@@ -178,11 +218,28 @@ static rt_err_t _args_override_argv0(struct lwp_args_info *ai, struct lwp_args_i
     return error;
 }
 
+/**
+ * @brief Get argument 0.
+ *
+ * @param[in] ai Pointer to the argument info structure.
+ *
+ * @return const char* Pointer to the arguments 0.
+ */
 const char *lwp_args_get_argv_0(struct lwp_args_info *ai)
 {
     return ai->str_buf;
 }
 
+/**
+ * @brief implementation for initializing a light-weight process arguments info structure
+ *
+ * @param[in,out] ai Pointer to the arguments info structure to initialize
+ * @param[in] str_buf_size Size of the string buffer to allocate
+ *
+ * @return rt_err_t
+ *   - RT_EOK on successful initialization
+ *   - -RT_ENOMEM if memory allocation fails
+ */
 static rt_err_t args_init(struct lwp_args_info *ai, size_t str_buf_size)
 {
     void *str_buf;
@@ -212,11 +269,28 @@ static rt_err_t args_init(struct lwp_args_info *ai, size_t str_buf_size)
 }
 
 #define STR_BUF_DEFAULT_SIZE 2048
+
+/**
+ * @brief Initialize a light-weight process arguments info structure
+ *
+ * @param[in,out] ai Pointer to the arguments info structure to initialize
+ *
+ * @return rt_err_t
+ *   - RT_EOK on successful initialization
+ *   - -RT_ENOMEM if memory allocation fails
+ *
+ * @see args_init
+ */
 rt_err_t lwp_args_init(struct lwp_args_info *ai)
 {
     return args_init(ai, STR_BUF_DEFAULT_SIZE);
 }
 
+/**
+ * @brief Detach a light-weight process arguments info structure
+ *
+ * @param[in,out] ai Pointer to the arguments info structure to detach
+ */
 void lwp_args_detach(struct lwp_args_info *ai)
 {
     _strvec_detach(&ai->argv);
@@ -225,6 +299,14 @@ void lwp_args_detach(struct lwp_args_info *ai)
 }
 
 #ifdef ARCH_MM_MMU
+/**
+ * @brief Copy a light-weight process arguments info structure to user space
+ *
+ * @param[in] lwp Pointer to the light-weight process structure
+ * @param[in] ai Pointer to the arguments info structure to copy
+ *
+ * @return struct process_aux* Pointer to the process auxiliary structure in user space
+ */
 struct process_aux *lwp_argscopy(struct rt_lwp *lwp, struct lwp_args_info *ai)
 {
     int size = sizeof(rt_base_t) * 4; /* store argc, argv_NULL, envp_NULL, aux_NULL */
@@ -404,6 +486,18 @@ static struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **arg
 }
 #endif
 
+/**
+ * @brief Put arguments or environment variables into LWP arguments info structure
+ *
+ * @param[in,out] args Pointer to the lwp_args_info structure to store the arguments
+ * @param[in] strv_addr Pointer to the string array (argv/envp) to be processed
+ * @param[in] atype Type of arguments being processed (LWP_ARGS_TYPE_ARG/LWP_ARGS_TYPE_ENVP)
+ *
+ * @return rt_err_t
+ *   - RT_EOK on success
+ *   - -EFAULT if user-space string access fails
+ *   - Other errors from args_append() if memory allocation fails
+ */
 rt_err_t lwp_args_put(struct lwp_args_info *args, const char **strv_addr, enum lwp_args_type atype)
 {
     rt_err_t error;
@@ -450,7 +544,15 @@ rt_err_t lwp_args_put(struct lwp_args_info *args, const char **strv_addr, enum l
 }
 
 /**
- * @brief Put argument vector to args object
+ * @brief Put command line arguments into LWP arguments info structure
+ *
+ * @param[in,out] args Pointer to the lwp_args_info structure to store the arguments
+ * @param[in] argv_uaddr Pointer to the string array (argv) to be processed
+ *
+ * @return rt_err_t
+ *   - RT_EOK on success
+ *   - -EFAULT if user-space string access fails
+ *   - Other errors from args_append() if memory allocation fails
  */
 rt_err_t lwp_args_put_argv(struct lwp_args_info *args, const char **argv_uaddr)
 {
@@ -458,7 +560,15 @@ rt_err_t lwp_args_put_argv(struct lwp_args_info *args, const char **argv_uaddr)
 }
 
 /**
- * @brief Put argument vector to args object
+ * @brief Put environment variables into LWP arguments info structure
+ *
+ * @param[in,out] args Pointer to the lwp_args_info structure to store the arguments
+ * @param[in] envp_uaddr Pointer to the string array (envp) to be processed
+ *
+ * @return rt_err_t
+ *   - RT_EOK on success
+ *   - -EFAULT if user-space string access fails
+ *   - Other errors from args_append() if memory allocation fails
  */
 rt_err_t lwp_args_put_envp(struct lwp_args_info *args, const char **envp_uaddr)
 {
@@ -473,6 +583,24 @@ rt_err_t lwp_args_put_envp(struct lwp_args_info *args, const char **envp_uaddr)
 #define READFILE_STAT_NEXTLINE_REACHED      0
 #define READFILE_STAT_TRUNCATED             1
 #define READFILE_STAT_CAN_READMORE(stat)    (stat)
+
+/**
+ * @brief Read data from a file descriptor with line handling
+ *
+ * @param[in] fd File descriptor to read from
+ * @param[in] maxbytes Maximum bytes to read (buffer size - 1)
+ * @param[out] buffer Output buffer for the read data (null-terminated)
+ * @param[out] p_readlen Pointer to store actual bytes read (optional)
+ *
+ * @return int Status code:
+ *   - READFILE_STAT_NEXTLINE_REACHED when newline found
+ *   - READFILE_STAT_TRUNCATED when line truncated at word boundary
+ *   - READFILE_STAT_EOF_REACHED when EOF or error occurs
+ *
+ * @note Reads data from a file descriptor into a buffer, handling newlines and
+ *       truncating long lines while preserving word boundaries. Manages file
+ *       position for partial reads.
+ */
 static int _readfile(int fd, size_t maxbytes, char *buffer, int *p_readlen)
 {
     int readlen;
@@ -525,6 +653,16 @@ static int _readfile(int fd, size_t maxbytes, char *buffer, int *p_readlen)
     return stat;
 }
 
+/**
+ * @brief Find the start of the next word in a string
+ *
+ * @param[in] cp Pointer to the string to search
+ *
+ * @return char* Pointer to the first non-space character in the string
+ *
+ * @note Skips leading whitespace characters and returns a pointer to the first
+ *       non-whitespace character.
+ */
 static char *_find_word(char *cp)
 {
     for (; (*cp == ' ') || (*cp == '\t'); cp++)
@@ -532,6 +670,16 @@ static char *_find_word(char *cp)
     return cp;
 }
 
+/**
+ * @brief Seperate words in a string and get the next word
+ *
+ * @param[in] cp Pointer to the string to process
+ *
+ * @return char* Pointer to the next word in the string
+ *
+ * @note Finds the next whitespace character, seperates words, and returns a
+ *       pointer to the next word.
+ */
 static char *_seperate_and_get_nextword(char *cp)
 {
     /* find next whitespace */
@@ -546,6 +694,20 @@ static char *_seperate_and_get_nextword(char *cp)
 }
 
 #define INTERP_BUF_SIZE 128
+/**
+ * @brief Load and process interpreter script for light-weight process
+ *
+ * @param[in,out] ai Pointer to the lwp_args_info structure to store script arguments
+ * @param[in] filename Path to the script file to load
+ *
+ * @return rt_err_t Returns RT_EOK (0) on success, negative error code on failure:
+ *         - -1: General error (file open/read failure)
+ *         - Other errors from args_init() or _args_override_argv0()
+ *
+ * @note This function reads an interpreter script (e.g., shell script starting with #!),
+ *       extracts the interpreter path and arguments, and prepares them for process execution.
+ *       It handles script verification, argument parsing, and proper cleanup on failure.
+ */
 rt_err_t lwp_args_load_script(struct lwp_args_info *ai, const char *filename)
 {
     rt_err_t error = -1;
@@ -633,6 +795,20 @@ quit:
     return error;
 }
 
+/**
+ * @brief Get command line arguments from light-weight process
+ *
+ * @param[in] lwp Pointer to the light-weight process structure
+ *
+ * @return char** Returns a NULL-terminated array of argument strings on success:
+ *         - The array and each string are allocated in kernel space
+ *         - The caller is responsible for freeing using lwp_free_command_line_args()
+ *         RT_NULL Returns NULL on failure (invalid LWP, memory allocation failure, or copy error)
+ *
+ * @note This function retrieves the command line arguments (argv) from a light-weight process (LWP)
+ *       and returns a NULL-terminated array of argument strings. It handles memory allocation and
+ *       proper NULL termination of the argument vector.
+ */
 char **lwp_get_command_line_args(struct rt_lwp *lwp)
 {
     size_t argc = 0;
@@ -687,6 +863,13 @@ error_exit:
     return RT_NULL;
 }
 
+/**
+ * @brief Print environment variables of light-weight process
+ *
+ * @param[in] lwp Pointer to the light-weight process structure
+ *
+ * @return void
+ */
 void lwp_print_envp(struct rt_lwp *lwp)
 {
     rt_size_t envp_counts;
@@ -703,6 +886,17 @@ void lwp_print_envp(struct rt_lwp *lwp)
     return ;
 }
 
+/**
+ * @brief Get environment variables of light-weight process
+ *
+ * @param[in] lwp Pointer to the light-weight process structure
+ * @param[out] penvp_counts Pointer to store the number of environment variables
+ *
+ * @return char** Returns a NULL-terminated array of environment variable strings on success:
+ *         - The array and each string are allocated in kernel space
+ *         - The caller is responsible for freeing using lwp_free_command_line_args()
+ *         RT_NULL Returns NULL on failure (invalid LWP, memory allocation failure, or copy error)
+ */
 char** lwp_get_envp(struct rt_lwp *lwp, rt_size_t *penvp_counts)
 {
     int ret, len;
@@ -767,6 +961,13 @@ char** lwp_get_envp(struct rt_lwp *lwp, rt_size_t *penvp_counts)
     return p_kenvp;
 }
 
+/**
+ * @brief Free memory allocated for command line arguments
+ *
+ * @param argv Array of command line arguments to free
+ *
+ * @return void
+ */
 void lwp_free_command_line_args(char** argv)
 {
     size_t i;

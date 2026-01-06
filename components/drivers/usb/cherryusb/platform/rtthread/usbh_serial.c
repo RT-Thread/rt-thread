@@ -587,7 +587,7 @@ rt_err_t usbh_serial_register(struct usbh_serial *serial,
     device->user_data = data;
 
     /* register a character device */
-    ret = rt_device_register(device, serial->name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE);
+    ret = rt_device_register(device, serial->name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_REMOVABLE);
 
 #ifdef RT_USING_POSIX_DEVIO
     /* set fops */

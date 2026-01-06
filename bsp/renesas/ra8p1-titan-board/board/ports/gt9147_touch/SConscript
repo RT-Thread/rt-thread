@@ -1,0 +1,20 @@
+from building import *
+Import('rtconfig')
+
+src   = []
+cwd   = GetCurrentDir()
+
+# add gt9147 src files.
+if GetDepend('BSP_USING_GT9147'):
+    src += Glob('src/gt9147.c')
+
+if GetDepend('BSP_USING_GT9147_SAMPLE'):
+    src += Glob('samples/gt9147_sample.c')
+
+# add gt9147 include path.
+path  = [cwd + '/inc']
+
+# add src and include to group.
+group = DefineGroup('gt9147', src, depend = ['BSP_USING_GT9147'], CPPPATH = path)
+
+Return('group')

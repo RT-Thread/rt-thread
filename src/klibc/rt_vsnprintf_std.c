@@ -222,6 +222,7 @@ typedef unsigned int printf_size_t;
 #if defined(RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS) || defined(RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS)
 #include <float.h>
 #if FLT_RADIX != 2
+// cppcheck-suppress preprocessorErrorDirective
 #error "Non-binary-radix floating-point types are unsupported."
 #endif
 
@@ -592,13 +593,13 @@ static double apply_scaling(double num, struct scaling_factor normalization)
 
 static double unapply_scaling(double normalized, struct scaling_factor normalization)
 {
-#if defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */
+#if defined(__GNUC__) && !defined(__clang__) && !defined(__ARMCC_VERSION) /* GCC */
 // accounting for a static analysis bug in GCC 6.x and earlier
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 #endif
   return normalization.multiply ? normalized / normalization.raw_factor : normalized * normalization.raw_factor;
-#if defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */
+#if defined(__GNUC__) && !defined(__clang__) && !defined(__ARMCC_VERSION) /* GCC */
 #pragma GCC diagnostic pop
 #endif
 }
@@ -1344,7 +1345,7 @@ static int vsnprintf_impl(output_gadget_t* output, const char* format, va_list a
  *
  * @return The number of characters actually written to buffer.
  */
-int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
+int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
 {
   output_gadget_t gadget = buffer_gadget(buf, size);
   return vsnprintf_impl(&gadget, fmt, args);

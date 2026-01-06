@@ -55,7 +55,6 @@ extern void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode);
 {                                                                              \
     {                                                                          \
         .u16Clock = PWC_STOP_CLK_KEEP,                                         \
-        .u8StopDrv = PWC_STOP_DRV_HIGH,                                        \
         .u16ExBusHold = PWC_STOP_EXBUS_HIZ,                                    \
         .u16FlashWait = PWC_STOP_FLASH_WAIT_ON,                                \
     },                                                                         \
@@ -72,7 +71,6 @@ extern void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode);
     {                                                                          \
         .u8Mode = PWC_PD_MD1,                                                  \
         .u8IOState = PWC_PD_IO_KEEP1,                                          \
-        .u8VcapCtrl = PWC_PD_VCAP_0P047UF,                                     \
     },                                                                         \
 }
 #endif /*PM_SLEEP_STANDBY_CFG*/
@@ -86,7 +84,6 @@ extern void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode);
     {                                                                          \
         .u8Mode = PWC_PD_MD3,                                                  \
         .u8IOState = PWC_PD_IO_KEEP1,                                          \
-        .u8VcapCtrl = PWC_PD_VCAP_0P047UF,                                     \
     },                                                                         \
 }
 #endif /*PM_SLEEP_SHUTDOWN_CFG*/

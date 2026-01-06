@@ -10,7 +10,11 @@
 
 #include <rtthread.h>
 #include "hal_data.h"
+#ifdef RT_USING_NANO
+#include <drv_gpio.h>
+#else
 #include <rtdevice.h>
+#endif /* RT_USING_NANO */
 
 #define LED_PIN    BSP_IO_PORT_06_PIN_00 /* Onboard LED pins */
 

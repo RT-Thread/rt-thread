@@ -110,5 +110,5 @@ STM32 系列 BSP 目前支持情况如下表所示：
 | [外设驱动使用教程](docs/STM32系列BSP外设驱动使用教程.md) | 讲解 BSP 上更多外设驱动的使用方法                                                                                                        |
 | [外设驱动介绍与应用](docs/STM32系列驱动介绍.md)       | 讲解 STM32 系列 BSP 驱动的支持情况，以及如何利用驱动框架开发应用程序                                                                                   |
 | **BSP 制作与提交**                          | **简介**                                                                                                                     |
-| [BSP 制作教程](docs/STM32系列BSP制作教程.md)     | 讲解 STM32 系列 BSP 的制作方法，以及在制作 BSP 和提交 BSP 时应当遵守的规范，视频教程请观看 ：[《RT-Thread STM32 系列 BSP 制作视频教程》](https://url.cn/5qqxJMU?sf=uri) |
+| [BSP 制作教程](docs/STM32系列BSP制作教程.md)     | 讲解 STM32 系列 BSP 的制作方法，以及在制作 BSP 和提交 BSP 时应当遵守的规范，视频教程请观看 ：[《RT-Thread STM32 系列 BSP 制作视频教程》](https://www.bilibili.com/video/BV17J411V7xb) |
 | [外设驱动添加指南](docs/STM32系列外设驱动添加指南.md)    | 讲解 BSP 添加更多设备驱动的方法                                                                                                         |

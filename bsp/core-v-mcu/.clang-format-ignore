@@ -1,0 +1,7 @@
+# clang-format ignore file  
+/Libraries/core_v_hal_libraries/bmsis/
+/Libraries/core_v_hal_libraries/core_v_hal/
+/Libraries/core_v_hal_libraries/core_v_udma_driver/
+/Libraries/core_v_hal_libraries/bmsis/core-v-mcu/source/core-v-mcu.c
+/Libraries/core_v_hal_libraries/bmsis/core-v-mcu/source/crt0.S
+/Libraries/core_v_hal_libraries/bmsis/core-v-mcu/source/vectors.S

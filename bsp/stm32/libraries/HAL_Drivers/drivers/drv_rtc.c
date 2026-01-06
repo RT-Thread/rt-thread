@@ -46,12 +46,20 @@ static RTC_AlarmTypeDef Alarm_InitStruct = { 0 };
 static struct rtc_device_object rtc_device;
 static RTC_HandleTypeDef RTC_Handler;
 
+#ifdef SOC_SERIES_STM32H7
+rt_weak uint32_t HAL_RTCEx_BKUPRead(const RTC_HandleTypeDef *hrtc, uint32_t BackupRegister)
+#else
 rt_weak uint32_t HAL_RTCEx_BKUPRead(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister)
+#endif
 {
     return (~BKUP_REG_DATA);
 }
 
+#ifdef SOC_SERIES_STM32H7
+rt_weak void HAL_RTCEx_BKUPWrite(const RTC_HandleTypeDef *hrtc, uint32_t BackupRegister, uint32_t Data)
+#else
 rt_weak void HAL_RTCEx_BKUPWrite(RTC_HandleTypeDef *hrtc, uint32_t BackupRegister, uint32_t Data)
+#endif
 {
     return;
 }

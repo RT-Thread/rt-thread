@@ -15,17 +15,17 @@ static rt_uint8_t thread1_stack[512];
 /* Thread 1 entry */
 void thread1_entry(void* parameter)
 {
-     int i;
+    int i;
 
     while (1)
     {
-	for (i = 0; i < 10; i ++)
-	{
-	    rt_kprintf("%d\n", i);
+        for (i = 0; i < 10; i ++)
+        {
+            rt_kprintf("%d\n", i);
 
-	    /* Delay 100ms */
-	    rt_thread_mdelay(100);
-	}
+            /* Delay 100ms */
+            rt_thread_mdelay(100);
+        }
     }
 }
 
@@ -35,10 +35,10 @@ void thread2_entry(void* parameter)
      int count = 0;
      while (1)
      {
-	 rt_kprintf("Thread2 count:%d\n", ++count);
+        rt_kprintf("Thread2 count:%d\n", ++count);
 
-	/* Delay 50ms */
-	rt_thread_mdelay(50);
+        /* Delay 50ms */
+        rt_thread_mdelay(50);
     }
 }
 
@@ -54,10 +54,10 @@ int thread_sample_init()
      * Priority is 200 and time slice is 10 OS Tick
      */
     result = rt_thread_init(&thread1,
-			    "thread1",
-			    thread1_entry, RT_NULL,
-			    &thread1_stack[0], sizeof(thread1_stack),
-			    200, 10);
+                            "thread1",
+                            thread1_entry, RT_NULL,
+                            &thread1_stack[0], sizeof(thread1_stack),
+                            200, 10);
 
     /* Start thread */
     if (result == RT_EOK) rt_thread_startup(&thread1);
@@ -67,8 +67,8 @@ int thread_sample_init()
      *  Stack space is 512, priority is 250, and time slice is 25 OS Tick
      */
     thread2_ptr = rt_thread_create("thread2",
-				thread2_entry, RT_NULL,
-				512, 250, 25);
+                                   thread2_entry, RT_NULL,
+                                   512, 250, 25);
 
     /* Start thread */
     if (thread2_ptr != RT_NULL) rt_thread_startup(thread2_ptr);
@@ -157,8 +157,8 @@ An uninitialized static object must be initialized before it can be used. The in
 
 ```c
 void rt_object_init(struct  rt_object*  object ,
-		    enum rt_object_class_type  type ,
-		    const char* name)
+                    enum rt_object_class_type  type ,
+                    const char* name)
 ```
 
 When this function is called to initialize the object, the system will place the object into the object container for management, that is, initialize some parameters of the object, and then insert the object node into the object linked list of the object container.

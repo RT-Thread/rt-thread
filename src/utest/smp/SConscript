@@ -1,0 +1,27 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend(['RT_UTEST_SMP_SPINLOCK']):
+    src += ['smp_spinlock_tc.c']
+    
+if GetDepend(['RT_UTEST_SMP_ASSIGNED_IDLE_CORE']):
+    src += ['smp_assigned_idle_cores_tc.c']
+
+if GetDepend(['RT_UTEST_SMP_INTERRUPT_PRI']):
+    src += ['smp_interrupt_pri_tc.c']
+
+if GetDepend(['RT_UTEST_SMP_THREAD_PREEMPTION']):
+    src += ['smp_thread_preemption_tc.c']
+
+if GetDepend(['RT_UTEST_SMP_AFFFINITY']):
+    src += ['smp_bind_affinity_tc.c']
+    src += ['smp_affinity_pri1_tc.c']
+    src += ['smp_affinity_pri2_tc.c']    
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
+
+Return('group')

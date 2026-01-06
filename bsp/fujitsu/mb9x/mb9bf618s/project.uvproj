@@ -346,9 +346,9 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, MB9B610S, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, RT_USING_LIBC</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, MB9B610S, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>CMSIS\Include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include;drivers;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\posix\io\epoll;applications;..\..\..\..\components\drivers\phy;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\include;CMSIS\DeviceSupport\fujitsu\mb9bf61x;.;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\components\finsh</IncludePath>
+              <IncludePath>..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\phy;..\..\..\..\components\drivers\smp_call;CMSIS\Include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\include;applications;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\libcpu\arm\common;..\..\..\..\components\finsh;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;.;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\posix\io\eventfd;CMSIS\DeviceSupport\fujitsu\mb9bf61x;drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -714,6 +714,13 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
+              <FileName>serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\serial.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\board.c</FilePath>
@@ -724,13 +731,6 @@
               <FileName>led.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\led.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>serial.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\serial.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -836,9 +836,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\msh_file.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -857,16 +864,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_file.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh_file.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1162,6 +1162,13 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
@@ -1172,13 +1179,6 @@
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kerrno.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>

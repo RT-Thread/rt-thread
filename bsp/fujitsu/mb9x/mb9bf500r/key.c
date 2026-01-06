@@ -30,7 +30,7 @@ static void key_io_init(void)
 static void key_thread_entry(void *parameter)
 {
 #ifdef RT_USING_RTGUI
-    rt_time_t next_delay;
+    rt_tick_t next_delay;
     rt_uint8_t i;
 
     struct rtgui_event_kbd kbd_event;
@@ -106,7 +106,7 @@ static void key_thread_entry(void *parameter)
     }
 #else
     extern struct rt_messagequeue mq;
-    rt_time_t next_delay;
+    rt_tick_t next_delay;
     struct lcd_msg msg;
     msg.type = KEY_MSG;
 

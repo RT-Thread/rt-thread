@@ -366,6 +366,27 @@ rt_err_t rt_hw_usbfs_board_init(void)
 }
 #endif
 
+#if defined(RT_USING_CHERRYUSB)
+rt_err_t rt_hw_usbfs_board_init(uint8_t devmode)
+{
+    stc_gpio_init_t stcGpioCfg;
+    (void)GPIO_StructInit(&stcGpioCfg);
+
+    stcGpioCfg.u16PinAttr = PIN_ATTR_ANALOG;
+    (void)GPIO_Init(USBF_DM_PORT, USBF_DM_PIN, &stcGpioCfg);
+    (void)GPIO_Init(USBF_DP_PORT, USBF_DP_PIN, &stcGpioCfg);
+    if (0U != devmode)
+    {
+        GPIO_SetFunc(USBF_VBUS_PORT, USBF_VBUS_PIN, USBF_VBUS_FUNC); /* VBUS */
+    }
+    else
+    {
+        GPIO_SetFunc(USBF_DRVVBUS_PORT, USBF_DRVVBUS_PIN, USBF_DRVVBUS_FUNC); /* DRV VBUS */
+    }
+    return RT_EOK;
+}
+#endif
+
 #if defined(BSP_USING_QSPI)
 rt_err_t rt_hw_qspi_board_init(void)
 {

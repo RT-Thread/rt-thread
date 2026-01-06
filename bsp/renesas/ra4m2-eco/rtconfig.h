@@ -1,6 +1,8 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
+#define SOC_R7FA4M2AD
+
 /* RT-Thread Kernel */
 
 /* klibc options */
@@ -61,7 +63,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -316,6 +318,14 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -399,8 +409,6 @@
 #define SOC_SERIES_R7FA4M2
 
 /* Hardware Drivers Config */
-
-#define SOC_R7FA4M2AD
 
 /* Onboard Peripheral Drivers */
 

@@ -68,7 +68,7 @@ static int usbh_rndis_init_msg_transfer(struct usbh_rndis *rndis_class)
 
     ret = usbh_control_transfer(rndis_class->hport, setup, (uint8_t *)cmd);
     if (ret < 0) {
-        USB_LOG_ERR("rndis_initialize_msg_t send error, ret: %d\r\n", ret);
+        USB_LOG_ERR("init send error, ret: %d\r\n", ret);
         return ret;
     }
 
@@ -84,14 +84,14 @@ static int usbh_rndis_init_msg_transfer(struct usbh_rndis *rndis_class)
 
     ret = usbh_control_transfer(rndis_class->hport, setup, (uint8_t *)resp);
     if (ret < 0) {
-        USB_LOG_ERR("rndis_initialize_cmplt_t recv error, ret: %d\r\n", ret);
+        USB_LOG_ERR("init recv error, ret: %d\r\n", ret);
         return ret;
     }
 
     rndis_class->max_transfer_pkts = resp->MaxPacketsPerTransfer;
     rndis_class->max_transfer_size = resp->MaxTransferSize;
-    USB_LOG_INFO("MaxPacketsPerTransfer:%u\r\n", (unsigned int)resp->MaxPacketsPerTransfer);
-    USB_LOG_INFO("MaxTransferSize:%u\r\n", (unsigned int)resp->MaxTransferSize);
+    USB_LOG_INFO("MaxPacketsPerTransfer: %u\r\n", (unsigned int)resp->MaxPacketsPerTransfer);
+    USB_LOG_INFO("MaxTransferSize: %u\r\n", (unsigned int)resp->MaxTransferSize);
 
     return ret;
 }
@@ -312,14 +312,13 @@ static int usbh_rndis_connect(struct usbh_hubport *hport, uint8_t intf)
     if (ret < 0) {
         return ret;
     }
-    USB_LOG_INFO("rndis init success\r\n");
 
     ret = usbh_rndis_query_msg_transfer(rndis_class, OID_GEN_SUPPORTED_LIST, 0, tmp_buffer, &data_len);
     if (ret < 0) {
         return ret;
     }
     oid_num = (data_len / 4);
-    USB_LOG_INFO("rndis query OID_GEN_SUPPORTED_LIST success,oid num :%u\r\n", (unsigned int)oid_num);
+    USB_LOG_INFO("rndis query OID_GEN_SUPPORTED_LIST success,oid num: %u\r\n", (unsigned int)oid_num);
 
     oid_support_list = (uint32_t *)tmp_buffer;
 
@@ -380,10 +379,8 @@ static int usbh_rndis_connect(struct usbh_hubport *hport, uint8_t intf)
                 }
                 break;
             default:
-                USB_LOG_WRN("Ignore rndis query iod:%08x\r\n", (unsigned int)oid);
-                continue;
+                break;
         }
-        USB_LOG_INFO("rndis query iod:%08x success\r\n", (unsigned int)oid);
     }
 
     uint32_t packet_filter = 0x0f;
@@ -391,14 +388,12 @@ static int usbh_rndis_connect(struct usbh_hubport *hport, uint8_t intf)
     if (ret < 0) {
         return ret;
     }
-    USB_LOG_INFO("rndis set OID_GEN_CURRENT_PACKET_FILTER success\r\n");
 
     uint8_t multicast_list[6] = { 0x01, 0x00, 0x5E, 0x00, 0x00, 0x01 };
     ret = usbh_rndis_set_msg_transfer(rndis_class, OID_802_3_MULTICAST_LIST, multicast_list, 6);
     if (ret < 0) {
         return ret;
     }
-    USB_LOG_INFO("rndis set OID_802_3_MULTICAST_LIST success\r\n");
 
     USB_LOG_INFO("rndis MAC address %02x:%02x:%02x:%02x:%02x:%02x\r\n",
                  rndis_class->mac[0],
@@ -487,7 +482,7 @@ find_class:
         usbh_bulk_urb_fill(&g_rndis_class.bulkin_urb, g_rndis_class.hport, g_rndis_class.bulkin, &g_rndis_rx_buffer[g_rndis_rx_length], transfer_size, USB_OSAL_WAITING_FOREVER, NULL, NULL);
         ret = usbh_submit_urb(&g_rndis_class.bulkin_urb);
         if (ret < 0) {
-            goto find_class;
+            break;
         }
 
         g_rndis_rx_length += g_rndis_class.bulkin_urb.actual_length;

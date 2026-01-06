@@ -60,6 +60,7 @@ void rtt_board_init(void)
 
 void app_init_led_pins(void)
 {
+    board_init_led_pins();
     gpio_set_pin_output(BOARD_LED_GPIO_CTRL, BOARD_LED_GPIO_INDEX, BOARD_LED_GPIO_PIN);
     gpio_write_pin(BOARD_LED_GPIO_CTRL, BOARD_LED_GPIO_INDEX, BOARD_LED_GPIO_PIN, BOARD_LED_OFF_LEVEL);
 }
@@ -93,7 +94,7 @@ void rt_hw_console_output(const char *str)
 
 void app_init_usb_pins(void)
 {
-    board_init_usb_pins();
+    board_init_usb(HPM_USB0);
 }
 
 ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
@@ -105,7 +106,7 @@ ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
 
 void rt_hw_cpu_reset(void)
 {
-    HPM_PPOR->RESET_ENABLE = (1UL << 31);
+    HPM_PPOR->RESET_ENABLE |= (1UL << 31);
     HPM_PPOR->RESET_HOT &= ~(1UL << 31);
     HPM_PPOR->RESET_COLD |= (1UL << 31);
 
@@ -127,3 +128,94 @@ void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
     }
 }
 #endif
+
+uint32_t rtt_board_init_adc16_clock(ADC16_Type *ptr, bool clk_src_ahb)
+{
+    uint32_t freq = 0;
+
+    if (ptr == HPM_ADC0) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc0, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from pll0_clk0 divided by 2 (@200MHz by default) */
+            clock_set_adc_source(clock_adc0, clk_adc_src_ana0);
+            clock_set_source_divider(clock_ana0, clk_src_pll0_clk0, 2U);
+        }
+        clock_add_to_group(clock_adc0, 0);
+        freq = clock_get_frequency(clock_adc0);
+    } else if (ptr == HPM_ADC1) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc1, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from pll0_clk0 divided by 2 (@200MHz by default) */
+            clock_set_adc_source(clock_adc1, clk_adc_src_ana1);
+            clock_set_source_divider(clock_ana1, clk_src_pll0_clk0, 2U);
+        }
+        clock_add_to_group(clock_adc1, 0);
+        freq = clock_get_frequency(clock_adc1);
+    } else if (ptr == HPM_ADC2) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc2, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from pll0_clk0 divided by 2 (@200MHz by default) */
+            clock_set_adc_source(clock_adc2, clk_adc_src_ana2);
+            clock_set_source_divider(clock_ana2, clk_src_pll0_clk0, 2U);
+        }
+        clock_add_to_group(clock_adc2, 0);
+        freq = clock_get_frequency(clock_adc2);
+    }
+
+    return freq;
+}
+
+uint32_t rtt_board_init_pwm_clock(PWM_Type *ptr)
+{
+    uint32_t freq = 0;
+    if (ptr == HPM_PWM0) {
+        clock_add_to_group(clock_mot0, 0);
+        freq = clock_get_frequency(clock_mot0);
+    } else if (ptr == HPM_PWM1) {
+        clock_add_to_group(clock_mot1, 0);
+        freq = clock_get_frequency(clock_mot1);
+    } else if (ptr == HPM_PWM2) {
+        clock_add_to_group(clock_mot2, 0);
+        freq = clock_get_frequency(clock_mot2);
+    } else if (ptr == HPM_PWM3) {
+        clock_add_to_group(clock_mot3, 0);
+        freq = clock_get_frequency(clock_mot3);
+    } else {
+
+    }
+    return freq;
+}
+
+#ifdef CONFIG_CHERRYUSB_CUSTOM_IRQ_HANDLER
+extern void hpm_isr_usb0(void);
+RTT_DECLARE_EXT_ISR_M(IRQn_USB0, hpm_isr_usb0)
+#endif
+
+
+void hpm_usb_isr_enable(uint32_t base)
+{
+    if (base == HPM_USB0_BASE) {
+        intc_m_enable_irq_with_priority(IRQn_USB0, 4);
+    } else {
+#ifdef HPM_USB1_BASE
+        intc_m_enable_irq_with_priority(IRQn_USB1, 4);
+#endif
+    }
+}
+
+void hpm_usb_isr_disable(uint32_t base)
+{
+    if (base == HPM_USB0_BASE) {
+        intc_m_disable_irq(IRQn_USB0);
+    } else {
+#ifdef HPM_USB1_BASE
+        intc_m_disable_irq(IRQn_USB1);
+#endif
+    }
+}

@@ -19,7 +19,7 @@
 #define EHCI_ADDR2ITD(x) ((struct ehci_itd_hw *)(uintptr_t)((uint32_t)(x) & ~0x1F))
 
 #ifndef CONFIG_USB_EHCI_QH_NUM
-#define CONFIG_USB_EHCI_QH_NUM CONFIG_USBHOST_PIPE_NUM
+#define CONFIG_USB_EHCI_QH_NUM 10
 #endif
 #ifndef CONFIG_USB_EHCI_QTD_NUM
 #define CONFIG_USB_EHCI_QTD_NUM (CONFIG_USB_EHCI_QH_NUM * 3)

@@ -29,11 +29,6 @@ unsigned long rt_ktime_cputimer_getcnt(void)
     return time_elapsed - _init_cnt;
 }
 
-unsigned long rt_ktime_cputimer_getstep(void)
-{
-    return rt_ktime_cputimer_getfrq() / RT_TICK_PER_SECOND;
-}
-
 void rt_ktime_cputimer_init(void)
 {
     __asm__ __volatile__("rdtime %0" : "=r"(_init_cnt));

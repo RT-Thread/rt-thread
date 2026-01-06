@@ -69,7 +69,6 @@ _start:
 nmi_handler:
 1:    j 1b
 
-    .global default_irq_handler
     .weak default_irq_handler
     .align 2
 default_irq_handler:

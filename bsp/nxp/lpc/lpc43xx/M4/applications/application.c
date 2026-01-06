@@ -18,10 +18,6 @@
 #include <shell.h>
 #endif
 
-#ifdef RT_USING_VBUS
-#include <vbus.h>
-#endif
-
 static const unsigned char _M0_CODE[] rt_section("M0_CODE") = {
 // #include "M0_CODE.h"
 };
@@ -64,10 +60,6 @@ void rt_init_thread_entry(void *parameter)
 #endif
 #endif
 
-#ifdef RT_USING_VBUS
-    rt_vbus_do_init();
-#endif
-
     _boot_M0();
 }
 
@@ -79,8 +71,6 @@ static void led_thread_entry(void *parameter)
 {
     rt_uint8_t led_value;
     rt_device_t led_dev;
-    rt_device_t vbus_dev;
-    rt_err_t err;
 
     rt_led_hw_init();
 
@@ -91,34 +81,11 @@ static void led_thread_entry(void *parameter)
         return;
     }
 
-    vbus_dev = rt_device_find("vecho");
-    if (vbus_dev == RT_NULL)
-    {
-        rt_kprintf("can not find the vbus device\n");
-        return;
-    }
-
-    err = rt_device_open(vbus_dev, RT_DEVICE_OFLAG_RDWR);
-    if (err != RT_EOK)
-    {
-        rt_kprintf("open vbus failed: %d\n", err);
-        return;
-    }
-
     led_value = 0;
     while (1)
     {
-        int len;
-
         led_dev->write(led_dev, 0, &led_value, sizeof(led_value));
-
         led_value = !led_value;
-        len = rt_device_write(vbus_dev, 0, &led_value, sizeof(led_value));
-        if (len <= 0)
-        {
-            rt_kprintf("vbus write err: %d, %d\n", len, rt_get_errno());
-        }
-
         rt_thread_delay(1000);
     }
 }

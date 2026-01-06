@@ -43,11 +43,6 @@ rt_weak unsigned long rt_ktime_hrtimer_getfrq(void)
     return RT_TICK_PER_SECOND;
 }
 
-rt_weak unsigned long rt_ktime_hrtimer_getcnt(void)
-{
-    return rt_tick_get();
-}
-
 rt_weak rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt)
 {
     static rt_timer_t timer = RT_NULL;

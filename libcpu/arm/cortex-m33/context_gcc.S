@@ -13,13 +13,13 @@
  */
 
 /**
- * @addtogroup cortex-m4
+ * @addtogroup cortex-m33
  */
 /*@{*/
 
 #include <rtconfig.h>
 
-.cpu cortex-m4
+.cpu cortex-m33
 .syntax unified
 .thumb
 .text
@@ -280,6 +280,12 @@ HardFault_Handler:
     BEQ     get_sp_done
     MRS     r0, psp                                 /* get fault context from thread. */
 get_sp_done:
+
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
+    TST     lr, #0x10                               /* if(!EXC_RETURN[4]) */
+    IT      EQ
+    VSTMDBEQ  r0!, {d8 - d15}                       /* push FPU register s16~s31 */
+#endif
 
     STMFD   r0!, {r4 - r11}                         /* push r4 - r11 register */
 

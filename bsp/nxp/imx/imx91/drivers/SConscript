@@ -1,0 +1,15 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+
+CPPPATH = [cwd]
+
+objs = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+for item in os.listdir(cwd):
+    sconsfile = os.path.join(item, 'SConscript')
+    if os.path.isfile(os.path.join(cwd, sconsfile)):
+        objs += SConscript(sconsfile)
+
+Return('objs')

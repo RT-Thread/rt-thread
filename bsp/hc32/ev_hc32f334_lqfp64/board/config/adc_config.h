@@ -34,7 +34,7 @@ extern "C" {
        .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_B,                 \
        .internal_trig1_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig1_comtrg1_enable   = RT_FALSE,                             \
-       .internal_trig1_sel              = EVT_SRC_MAX,                          \
+       .internal_trig1_sel              = EVT_SRC_TMR0_1_CMP_A,                 \
        .continue_conv_mode_enable       = RT_FALSE,                             \
        .data_reg_auto_clear             = RT_TRUE,                              \
     }
@@ -77,7 +77,7 @@ extern "C" {
        .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_B,                 \
        .internal_trig1_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig1_comtrg1_enable   = RT_FALSE,                             \
-       .internal_trig1_sel              = EVT_SRC_MAX,                          \
+       .internal_trig1_sel              = EVT_SRC_TMR0_1_CMP_A,                 \
        .continue_conv_mode_enable       = RT_FALSE,                             \
        .data_reg_auto_clear             = RT_TRUE,                              \
     }
@@ -120,7 +120,7 @@ extern "C" {
        .internal_trig0_sel              = EVT_SRC_TMR0_1_CMP_B,                 \
        .internal_trig1_comtrg0_enable   = RT_FALSE,                             \
        .internal_trig1_comtrg1_enable   = RT_FALSE,                             \
-       .internal_trig1_sel              = EVT_SRC_MAX,                          \
+       .internal_trig1_sel              = EVT_SRC_TMR0_1_CMP_A,                 \
        .continue_conv_mode_enable       = RT_FALSE,                             \
        .data_reg_auto_clear             = RT_TRUE,                              \
     }

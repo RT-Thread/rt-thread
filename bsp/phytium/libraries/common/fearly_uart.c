@@ -33,6 +33,44 @@
 #include "fio.h"
 #include "fparameters.h"
 #include "fearly_uart.h"
+
+
+#if  defined(BSP_USING_UART_MSG)
+
+
+#include "fuart_msg.h"
+#include "fio_mux.h"
+
+static FUartMsg early_uart;
+
+void FEarlyUartProbe(void)
+{
+    FUartMsgConfig config;
+    config = *FUartMsgLookupConfig(EARLY_UART_CTRL_ID);
+
+#ifdef RT_USING_SMART
+    config.msg.regfile = (uintptr)rt_ioremap((void *)config.msg.regfile,  0x1000);
+    config.msg.shmem = (uintptr)rt_ioremap((void *)config.msg.shmem,  0x1000);
+#endif
+
+    FIOPadSetUartMux(EARLY_UART_CTRL_ID);
+
+    FUartMsgCfgInitialize(&early_uart, &config);
+    FUartMsgSetStartUp(&early_uart);
+    return;
+}
+
+void OutByte(s8 byte)
+{
+    while(-1 == FUartMsgTxChar(&(early_uart), byte));
+}
+
+char GetByte(void)
+{
+    return (char)(FUartMsgBlockReceive(&early_uart));
+}
+
+#else
 #include "fpl011.h"
 
 /**************************** Type Definitions *******************************/
@@ -42,6 +80,8 @@ void FEarlyUartProbe(void)
 {
     FPl011Config config;
     config = *FPl011LookupConfig(EARLY_UART_CTRL_ID);
+
+
 #ifdef RT_USING_SMART
     config.base_address = (uintptr)rt_ioremap((void *)config.base_address, 0x2000);
 #endif
@@ -55,6 +95,8 @@ void FEarlyUartProbe(void)
 /***************** Macros (Inline Functions) Definitions *********************/
 
 /*****************************************************************************/
+
+
 void OutByte(s8 byte)
 {
     FPl011BlockSend(&early_uart, (u8 *)&byte, 1);
@@ -64,3 +106,4 @@ char GetByte(void)
 {
     return (char)(FPl011BlockReceive(&early_uart));
 }
+#endif

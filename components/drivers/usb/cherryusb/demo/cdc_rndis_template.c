@@ -189,14 +189,14 @@ void usbd_rndis_data_send_done(uint32_t len)
 #error rndis must enable RT_LWIP_DHCP
 #endif
 
-#ifndef LWIP_USING_DHCPD
-#error rndis must enable LWIP_USING_DHCPD
+#ifdef LWIP_USING_DHCPD
+#include <dhcp_server.h>
 #endif
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <netif/ethernetif.h>
-#include <dhcp_server.h>
+#include <netdev.h>
 
 struct eth_device rndis_dev;
 
@@ -250,7 +250,14 @@ void rndis_lwip_init(void)
     eth_device_init(&rndis_dev, "u0");
 
     eth_device_linkchange(&rndis_dev, RT_TRUE);
+#ifdef LWIP_USING_DHCPD
     dhcpd_start("u0");
+#else
+    struct netdev *netdev = netdev_get_by_name("u0");
+    if (netdev) {
+        netdev_dhcp_enabled(netdev, RT_TRUE);
+    }
+#endif
 }
 
 void usbd_rndis_data_recv_done(uint32_t len)

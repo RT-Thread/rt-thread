@@ -17,3 +17,7 @@
 ### AllwinnerTech
 
 - F1Cxxx, F2Cxxx
+
+### SIFLI
+
+- SF325X

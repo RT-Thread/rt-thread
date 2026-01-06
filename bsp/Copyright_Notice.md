@@ -325,6 +325,17 @@ Path:
 
 - bsp/imx6ul/platform
 
+### imx91
+
+License: bsd-new
+
+Copyright: Copyright 2014-2016 Freescale Semiconductor, Inc.
+           Copyright 2016-2025 NXP
+
+Path:
+
+- bsp/nxp/imx/imx91/drivers/sdk
+
 ### imxrt
 
 License: clear-bsd

@@ -361,9 +361,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_LIBC, __STDC_LIMIT_MACROS</Define>
+              <Define>__RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\finsh;applications;..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;..\..\include;..\..\libcpu\arm\common;..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\components\libc\posix\ipc;..\..\components\libc\compilers\common\extension;..\..\components\drivers\phy;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;CMSIS\CME_M7;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\drivers\smp_call;..\..\components\libc\compilers\common\extension\fcntl\octal;StdPeriph_Driver\inc;..\..\components\drivers\include;drivers;..\..\components\net\lwip\lwip-2.0.3\src\include;CMSIS\CMSIS\Include;..\..\components\dfs\dfs_v1\include;..\..\libcpu\arm\cortex-m3;..\..\components\net\lwip\port;.;..\..\components\libc\compilers\common\include;..\..\components\net\lwip\lwip-2.0.3\src\include\posix;..\..\components\net\lwip\lwip-2.0.3\src\include\netif</IncludePath>
+              <IncludePath>..\..\components\libc\posix\ipc;..\..\components\net\lwip\lwip-2.0.3\src\include\posix;..\..\libcpu\arm\cortex-m3;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;applications;.;..\..\include;..\..\components\drivers\include;..\..\components\dfs\dfs_v1\include;..\..\components\drivers\smp_call;..\..\components\drivers\include;..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\components\finsh;..\..\components\net\lwip\port;CMSIS\CME_M7;..\..\libcpu\arm\common;drivers;CMSIS\CMSIS\Include;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\drivers\include;..\..\components\libc\posix\io\eventfd;..\..\components\libc\compilers\common\include;..\..\components\net\lwip\lwip-2.0.3\src\include;StdPeriph_Driver\inc;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\drivers\phy;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -414,16 +414,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -738,16 +738,16 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>emac.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\emac.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>uart.c</FileName>
+              <FileName>emac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\uart.c</FilePath>
+              <FilePath>drivers\emac.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -759,9 +759,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers\uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -905,13 +905,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\shell.c</FilePath>
@@ -919,9 +912,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -933,9 +933,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_file.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh_file.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1231,16 +1231,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1252,16 +1245,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1307,9 +1307,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>cmem7_gpio.c</FileName>
+              <FileName>cmem7_wdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_gpio.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_wdg.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1321,9 +1321,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmem7_rtc.c</FileName>
+              <FileName>cmem7_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_rtc.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_eth.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_eth.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1349,44 +1363,16 @@
           </Files>
           <Files>
             <File>
+              <FileName>cmem7_efuse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_efuse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cmem7_misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>StdPeriph_Driver\src\cmem7_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_usb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_usb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_wdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_wdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1398,16 +1384,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmem7_efuse.c</FileName>
+              <FileName>cmem7_usb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_efuse.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_usb.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cmem7_dma.c</FileName>
+              <FileName>cmem7_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_dma.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_can.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1419,9 +1412,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmem7_eth.c</FileName>
+              <FileName>cmem7_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_eth.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_gpio.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -9,7 +9,11 @@
  */
 #include <rtthread.h>
 #include "hal_data.h"
+#ifdef RT_USING_NANO
+#include <drv_gpio.h>
+#else
 #include <rtdevice.h>
+#endif /* RT_USING_NANO */
 
 #define LED1_PIN    "P502" /* Onboard LED pins */
 #define USER_INPUT  "P004"
@@ -27,6 +31,7 @@ void hal_entry(void)
     }
 }
 
+#ifndef RT_USING_NANO
 void irq_callback_test(void *args)
 {
     rt_kprintf("\n IRQ03 triggered \n");
@@ -49,3 +54,4 @@ void icu_sample(void)
     }
 }
 MSH_CMD_EXPORT(icu_sample, icu sample);
+#endif

@@ -26,6 +26,7 @@ struct hpm_lcd
 {
     LCDC_Type *lcd_base;
     rt_uint8_t lcd_irq;
+    rt_uint8_t lcd_irq_priority;
     struct rt_semaphore lcd_lock;
     char *bus_name;
     struct rt_device parent;
@@ -58,6 +59,11 @@ static struct hpm_lcd hpm_lcds[] =
         .lcd_buffer_size = (PANEL_SIZE_WIDTH * PANEL_SIZE_HEIGHT * LCD_BITS_PER_PIXEL / 8),
         .lcd_base = HPM_LCDC,
         .lcd_irq = BOARD_LCD_IRQ,
+#if defined(BSP_RTT_LCD_IRQ_PRIORITY)
+        .lcd_irq_priority = BSP_RTT_LCD_IRQ_PRIORITY,
+#else
+        .lcd_irq_priority = 7,
+#endif
         .parent.type = RT_Device_Class_Graphic,
 #ifdef RT_USING_DEVICE_OPS
         .parent.ops = &hpm_lcd_ops,
@@ -72,13 +78,13 @@ static struct hpm_lcd hpm_lcds[] =
     },
 };
 
+SDK_DECLARE_EXT_ISR_M(BOARD_LCD_IRQ, isr_lcd_d0)
 void isr_lcd_d0(void)
 {
     lcdc_disable_interrupt(hpm_lcds[0].lcd_base, LCDC_INT_EN_VSYNC_MASK);
     rt_sem_release(&hpm_lcds[0].lcd_lock);
     lcdc_clear_status(hpm_lcds[0].lcd_base, LCDC_ST_VSYNC_MASK);
 }
-SDK_DECLARE_EXT_ISR_M(BOARD_LCD_IRQ, isr_lcd_d0)
 
 static rt_err_t hpm_lcd_init(struct rt_device *device)
 {
@@ -199,7 +205,7 @@ static int hpm_lcdc_init(struct hpm_lcd *lcd, struct rt_device_graphic_info *inf
 
     lcdc_turn_on_display(lcd->lcd_base);
     lcdc_enable_interrupt(lcd->lcd_base, LCDC_INT_EN_VSYNC_MASK);
-    intc_m_enable_irq_with_priority(lcd->lcd_irq, 7);
+    intc_m_enable_irq_with_priority(lcd->lcd_irq, lcd->lcd_irq_priority);
     return 0;
 }
 

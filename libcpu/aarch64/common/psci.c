@@ -22,6 +22,7 @@
 #include <drivers/ofw.h>
 #include <drivers/platform.h>
 #include <drivers/core/dm.h>
+#include <drivers/core/power.h>
 
 struct psci_ops
 {
@@ -98,16 +99,9 @@ static rt_uint32_t psci_get_features(rt_uint32_t psci_func_id)
 /* PSCI CPU_ON */
 static rt_uint32_t psci_cpu_on(rt_uint32_t func_id, int cpuid, rt_ubase_t entry_point)
 {
-    rt_uint32_t ret = -PSCI_RET_INVALID_PARAMETERS;
+    rt_ubase_t mpid = rt_cpu_mpidr_table[cpuid] & MPIDR_MASK;
 
-    if (cpuid < RT_CPUS_NR)
-    {
-        rt_ubase_t mpid = rt_cpu_mpidr_table[cpuid] & MPIDR_MASK;
-
-        ret = (rt_uint32_t)psci_call(func_id, mpid, entry_point, 0);
-    }
-
-    return ret;
+    return (rt_uint32_t)psci_call(func_id, mpid, entry_point, 0);
 }
 
 static rt_uint32_t psci_0_1_cpu_on(int cpuid, rt_ubase_t entry_point)
@@ -211,7 +205,6 @@ void psci_system_reboot(void)
     {
         psci_call(PSCI_0_2_FN_SYSTEM_RESET, 0, 0, 0);
     }
-
 }
 
 #define PSCI_CALL_FN_RET(fn, ...)       \
@@ -316,6 +309,16 @@ static rt_err_t psci_0_2_init(struct rt_ofw_node *np)
         _psci_ops.migrate           = psci_0_2_migrate;
         _psci_ops.get_affinity_info = psci_affinity_info;
         _psci_ops.migrate_info_type = psci_migrate_info_type;
+
+        if (!rt_dm_machine_shutdown)
+        {
+            rt_dm_machine_shutdown = psci_system_off;
+        }
+
+        if (!rt_dm_machine_reset)
+        {
+            rt_dm_machine_reset = psci_system_reboot;
+        }
     }
     else
     {

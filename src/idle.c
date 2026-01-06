@@ -56,17 +56,6 @@ static rt_uint8_t idle_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
 static void (*idle_hook_list[RT_IDLE_HOOK_LIST_SIZE])(void);
 static struct rt_spinlock _hook_spinlock;
 
-/**
- * @brief This function sets a hook function to idle thread loop. When the system performs
- *        idle loop, this hook function should be invoked.
- *
- * @param hook the specified hook function.
- *
- * @return RT_EOK: set OK.
- *         -RT_EFULL: hook list is full.
- *
- * @note the hook function must be simple and never be blocked or suspend.
- */
 rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 {
     rt_size_t i;
@@ -91,12 +80,17 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 }
 
 /**
+ * @addtogroup group_thread_management
+ * @{
+ */
+
+/**
  * @brief delete the idle hook on hook list.
  *
  * @param hook the specified hook function.
  *
- * @return RT_EOK: delete OK.
- *         -RT_ENOSYS: hook was not found.
+ * @return `RT_EOK`: delete OK.
+ *         `-RT_ENOSYS`: hook was not found.
  */
 rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 {
@@ -217,3 +211,5 @@ rt_thread_t rt_thread_idle_gethandler(void)
 
     return (rt_thread_t)(&idle_thread[id]);
 }
+
+/** @} group_thread_management */

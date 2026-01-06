@@ -121,7 +121,7 @@ static void TC_rt_memcmp_partial_match(void)
     uassert_int_not_equal(rt_memcmp(arr1, arr2, sizeof(arr1)), 0);
 }
 
-#define LARGE_ARRAY_SIZE 1000
+#define LARGE_ARRAY_SIZE 500
 
 static void TC_rt_memcmp_large_array(void)
 {
@@ -158,4 +158,4 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(TC_rt_memcmp_large_array);
 }
 
-UTEST_TC_EXPORT(utest_do_tc, "klibc.rt_memcmp", RT_NULL, RT_NULL, 1000);
+UTEST_TC_EXPORT(utest_do_tc, "core.klibc.rt_memcmp", RT_NULL, RT_NULL, 1000);

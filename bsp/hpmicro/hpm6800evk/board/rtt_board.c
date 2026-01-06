@@ -61,6 +61,7 @@ void rtt_board_init(void)
 
 void app_init_led_pins(void)
 {
+    board_init_led_pins();
     gpio_set_pin_output(APP_LED0_GPIO_CTRL, APP_LED0_GPIO_INDEX, APP_LED0_GPIO_PIN);
     gpio_set_pin_output(APP_LED1_GPIO_CTRL, APP_LED1_GPIO_INDEX, APP_LED1_GPIO_PIN);
     gpio_set_pin_output(APP_LED2_GPIO_CTRL, APP_LED2_GPIO_INDEX, APP_LED2_GPIO_PIN);
@@ -99,7 +100,7 @@ void rt_hw_console_output(const char *str)
 
 void app_init_usb_pins(void)
 {
-    board_init_usb_pins();
+    board_init_usb(HPM_USB0);
 }
 
 ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
@@ -111,7 +112,7 @@ ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
 
 void rt_hw_cpu_reset(void)
 {
-    HPM_PPOR->RESET_ENABLE = (1UL << 31);
+    HPM_PPOR->RESET_ENABLE |= (1UL << 31);
     HPM_PPOR->SOFTWARE_RESET = 1000U;
     while(1) {
 
@@ -130,3 +131,50 @@ void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
     }
 }
 #endif
+
+uint32_t rtt_board_init_adc16_clock(ADC16_Type *ptr, bool clk_src_ahb)
+{
+    uint32_t freq = 0;
+
+    if (ptr == HPM_ADC0) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AXI (@200MHz by default)*/
+            clock_set_adc_source(clock_adc0, clk_adc_src_axi0);
+        } else {
+            /* Configure the ADC clock from pll0_clk1 divided by 4 (@200MHz by default) */
+            clock_set_adc_source(clock_adc0, clk_adc_src_ana0);
+            clock_set_source_divider(clock_ana0, clk_src_pll1_clk0, 4U);
+        }
+        clock_add_to_group(clock_adc0, 0);
+        freq = clock_get_frequency(clock_adc0);
+    }
+
+    return freq;
+}
+
+uint32_t rtt_board_init_i2s_clock(I2S_Type *ptr)
+{
+    if (ptr == HPM_I2S0) {
+        clock_add_to_group(clock_i2s0, 0);
+        return clock_get_frequency(clock_i2s0);
+    } else if (ptr == HPM_I2S1) {
+        clock_add_to_group(clock_i2s1, 0);
+        return clock_get_frequency(clock_i2s1);
+    } else if (ptr == HPM_I2S2) {
+        clock_add_to_group(clock_i2s2, 0);
+        return clock_get_frequency(clock_i2s2);
+    } else if (ptr == HPM_I2S3) {
+        clock_add_to_group(clock_i2s3, 0);
+        return clock_get_frequency(clock_i2s3);
+    } else {
+        return 0;
+    }
+}
+
+
+#ifdef CONFIG_CHERRYUSB_CUSTOM_IRQ_HANDLER
+extern void hpm_isr_usb0(void);
+RTT_DECLARE_EXT_ISR_M(IRQn_USB0, hpm_isr_usb0)
+#endif
+
+

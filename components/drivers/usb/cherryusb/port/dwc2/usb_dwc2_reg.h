@@ -215,9 +215,7 @@ typedef struct
 #define USB_OTG_HCFG_FSLSS_Pos                   (2U)
 #define USB_OTG_HCFG_FSLSS_Msk                   (0x1UL << USB_OTG_HCFG_FSLSS_Pos) /*!< 0x00000004 */
 #define USB_OTG_HCFG_FSLSS                       USB_OTG_HCFG_FSLSS_Msk        /*!< FS- and LS-only support */
-#define USB_OTG_HFIR_RELOAD_CTRL_Pos             (16U)
-#define USB_OTG_HFIR_RELOAD_CTRL_Msk             (0x1UL << USB_OTG_HFIR_RELOAD_CTRL_Pos)
-#define USB_OTG_HFIR_RELOAD_CTRL                 USB_OTG_HFIR_RELOAD_CTRL_Msk
+
 /********************  Bit definition for USB_OTG_DCFG register  ********************/
 
 #define USB_OTG_DCFG_DSPD_Pos                    (0U)
@@ -335,6 +333,9 @@ typedef struct
 #define USB_OTG_HFIR_FRIVL_Pos                   (0U)
 #define USB_OTG_HFIR_FRIVL_Msk                   (0xFFFFUL << USB_OTG_HFIR_FRIVL_Pos) /*!< 0x0000FFFF */
 #define USB_OTG_HFIR_FRIVL                       USB_OTG_HFIR_FRIVL_Msk        /*!< Frame interval */
+#define USB_OTG_HFIR_RELOAD_CTRL_Pos             (16U)
+#define USB_OTG_HFIR_RELOAD_CTRL_Msk             (0x1UL << USB_OTG_HFIR_RELOAD_CTRL_Pos)
+#define USB_OTG_HFIR_RELOAD_CTRL                 USB_OTG_HFIR_RELOAD_CTRL_Msk
 
 /********************  Bit definition for USB_OTG_HFNUM register  ********************/
 #define USB_OTG_HFNUM_FRNUM_Pos                  (0U)

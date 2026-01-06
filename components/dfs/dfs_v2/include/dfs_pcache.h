@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -29,72 +29,77 @@ struct dfs_vnode;
 struct dfs_dentry;
 struct dfs_aspace;
 
+/* Memory mapping structure for page cache */
 struct dfs_mmap
 {
-    rt_list_t mmap_node;
-    struct rt_aspace *aspace;
-    void *vaddr;
+    rt_list_t mmap_node;          /* List node for address space's mmap list */
+    struct rt_aspace *aspace;     /* Address space this mapping belongs to */
+    void *vaddr;                  /* Virtual address where the page is mapped */
 };
 
+/* Page structure for file system page cache */
 struct dfs_page
 {
-    rt_list_t space_node;
-    rt_list_t dirty_node;
-    struct util_avl_struct avl_node;
-    rt_list_t mmap_head;
+    rt_list_t space_node;         /* Node for address space's page list */
+    rt_list_t dirty_node;         /* Node for dirty page list */
+    struct util_avl_struct avl_node; /* Node for AVL tree in address space */
+    rt_list_t mmap_head;          /* Head of memory mappings list */
 
-    rt_atomic_t ref_count;
+    rt_atomic_t ref_count;        /* Reference count for this page */
 
-    void *page;
-    off_t fpos;
-    size_t size;
-    size_t len;
-    int is_dirty;
-    rt_tick_t tick_ms;
+    void *page;                   /* Pointer to physical page data */
+    off_t fpos;                   /* File position this page represents */
+    size_t size;                  /* Total size of the page */
+    size_t len;                   /* Valid data length in the page */
+    int is_dirty;                 /* Dirty flag indicating if page needs writeback */
+    rt_tick_t tick_ms;            /* Last access timestamp */
 
-    struct dfs_aspace *aspace;
+    struct dfs_aspace *aspace;    /* Address space this page belongs to */
 };
 
+/* Address space operations interface */
 struct dfs_aspace_ops
 {
-    ssize_t (*read)(struct dfs_file *file, struct dfs_page *page);
-    ssize_t (*write)(struct dfs_page *page);
+    ssize_t (*read)(struct dfs_file *file, struct dfs_page *page);  /* Read operation for page cache */
+    ssize_t (*write)(struct dfs_page *page);                       /* Write operation for page cache */
 };
 
+/* Address space structure for page cache management */
 struct dfs_aspace
 {
-    rt_list_t hash_node, cache_node;
-    char *fullpath, *pathname;
-    struct dfs_mnt *mnt;
+    rt_list_t hash_node, cache_node;  /* Nodes for hash table and cache lists */
+    char *fullpath, *pathname;        /* Full path and relative path strings */
+    struct dfs_mnt *mnt;              /* Mount point this space belongs to */
 
-    rt_list_t list_active, list_inactive;
-    rt_list_t list_dirty;
-    size_t pages_count;
+    rt_list_t list_active, list_inactive;  /* Active and inactive page lists */
+    rt_list_t list_dirty;                  /* Dirty page list */
+    size_t pages_count;                    /* Total pages in this space */
 
-    struct util_avl_root avl_root;
-    struct dfs_page *avl_page;
+    struct util_avl_root avl_root;          /* AVL tree root for page lookup */
+    struct dfs_page *avl_page;             /* Current AVL tree page */
 
-    rt_bool_t is_active;
+    rt_bool_t is_active;                   /* Active/inactive status flag */
 
-    struct rt_mutex lock;
-    rt_atomic_t ref_count;
+    struct rt_mutex lock;                  /* Mutex for thread safety */
+    rt_atomic_t ref_count;                 /* Reference counter */
 
-    struct dfs_vnode *vnode;
-    const struct dfs_aspace_ops *ops;
+    struct dfs_vnode *vnode;               /* Associated vnode */
+    const struct dfs_aspace_ops *ops;      /* Operations interface */
 };
 
 #ifndef RT_PAGECACHE_HASH_NR
 #define RT_PAGECACHE_HASH_NR   1024
 #endif
 
+/* Global page cache management structure */
 struct dfs_pcache
 {
-    rt_list_t head[RT_PAGECACHE_HASH_NR];
-    rt_list_t list_active, list_inactive;
-    rt_atomic_t pages_count;
-    struct rt_mutex lock;
-    struct rt_messagequeue *mqueue;
-    rt_tick_t last_time_wb;
+    rt_list_t head[RT_PAGECACHE_HASH_NR];  /* Hash table buckets for address spaces */
+    rt_list_t list_active, list_inactive;  /* Active and inactive space lists */
+    rt_atomic_t pages_count;              /* Total cached pages count */
+    struct rt_mutex lock;                 /* Global lock for thread safety */
+    struct rt_messagequeue *mqueue;       /* Message queue for sending GC/WB command.*/
+    rt_tick_t last_time_wb;               /* Last writeback timestamp */
 };
 
 struct dfs_aspace *dfs_aspace_create(struct dfs_dentry *dentry, struct dfs_vnode *vnode, const struct dfs_aspace_ops *ops);

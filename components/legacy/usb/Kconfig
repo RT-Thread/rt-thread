@@ -50,7 +50,7 @@ menu "Using USB legacy version"
             config RT_USB_DEVICE_COMPOSITE
                 bool "Enable composite device"
                 default n
-                choice
+                choice RT_USING_COMPOSITE_DEVICE
                     prompt "Device type"
                     default _RT_USB_DEVICE_NONE
                     depends on !RT_USB_DEVICE_COMPOSITE

@@ -250,9 +250,4 @@ menu "klibc options"
             default n
     endmenu # rt_strnlen options
 
-    config RT_UTEST_TC_USING_KLIBC
-        bool "Enable klibc utest cases"
-        select RT_USING_UTEST
-        default n
-
 endmenu

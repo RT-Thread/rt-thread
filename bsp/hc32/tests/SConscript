@@ -91,6 +91,9 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
 if GetDepend(['BSP_USING_GPIO']):
     src += ['test_gpio.c']
 
+if GetDepend(['RT_USING_CHERRYUSB']):
+    src += ['test_cherryusb.c']
+
 path = [cwd]
 
 group = DefineGroup('Tests', src, depend = [''], CPPPATH = path)

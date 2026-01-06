@@ -338,11 +338,6 @@ uint64_t rt_ktime_hrtimer_getres(void)
     return ((1000UL * 1000 * 1000) * RT_KTIME_RESMUL) / (24 * 1000 * 1000UL);
 }
 
-uint64_t rt_ktime_hrtimer_getcnt(void)
-{
-    return rk_timer_current_value(_timer0.timer);
-}
-
 /**
  * @brief set the timeout function for hrtimer framework
  *

@@ -1,0 +1,9 @@
+menuconfig RT_USING_FIRMWARE
+    bool "Using Firmware"
+    depends on RT_USING_DM
+    default n
+
+if RT_USING_FIRMWARE
+    rsource "arm_scmi/Kconfig"
+    osource "$(SOC_DM_FIRMWARE_DIR)/Kconfig"
+endif

@@ -2,6 +2,7 @@ menuconfig RT_USING_MSH
     bool "MSH: command shell"
     default n if RT_USING_NANO
     default y
+    select RT_USING_SEMAPHORE
 
 if RT_USING_MSH
 
@@ -34,6 +35,18 @@ if RT_USING_MSH
             int "The command history line number"
             default 5
     endif
+
+    config FINSH_USING_WORD_OPERATION
+        bool "Enable word-based cursor operations"
+        default n
+        help
+            Enable Ctrl+Backspace to delete words and Ctrl+Arrow to move cursor by word
+        
+    config FINSH_USING_FUNC_EXT
+        bool "Enable function extension home end ins del"
+        default n
+        help
+            Enable function extension home end ins del.
 
     config FINSH_USING_SYMTAB
         bool "Using symbol table for commands"

@@ -53,27 +53,27 @@ menu "Onboard Peripheral Drivers"
             default 1
             config BSP_QSPI_SCK_PIN
                 int "QSPI SCK pin number"
-                range 0 31
+                range 0 48
                 default 19
             config BSP_QSPI_CSN_PIN
                 int "QSPI CSN pin number"
-                range 0 31
+                range 0 48
                 default 17
             config BSP_QSPI_IO0_PIN
                 int "QSPI IO0 pin number"
-                range 0 31
+                range 0 48
                 default 20
             config BSP_QSPI_IO1_PIN
                 int "QSPI IO1 pin number"
-                range 0 31
+                range 0 48
                 default 21
             config BSP_QSPI_IO2_PIN
                 int "QSPI IO2 pin number"
-                range 0 31
+                range 0 48
                 default 22
             config BSP_QSPI_IO3_PIN
                 int "QSPI IO3 pin number"
-                range 0 31
+                range 0 48
                 default 23
             config QSPI_FLASH_SIZE_KB
                 int "QSPI FLASH SIZE, DEFAULT size 8192 KB"
@@ -113,12 +113,12 @@ menu "On-chip Peripheral Drivers"
                 if BSP_USING_UART0
                     config BSP_UART0_RX_PIN
                         int "uart0 rx pin number"
-                        range 0 64
+                        range 0 48
                         default 8 if BSP_BOARD_PCA_10056
                         default 42 if BSP_BOARD_ARDUINO_NANO_33_BLE
                     config BSP_UART0_TX_PIN
                         int "uart0 tx pin number"
-                        range 0 64
+                        range 0 48
                         default 6 if BSP_BOARD_PCA_10056
                         default 35 if BSP_BOARD_ARDUINO_NANO_33_BLE
                 endif
@@ -137,11 +137,11 @@ menu "On-chip Peripheral Drivers"
                     default 1
                     config BSP_UART0_RX_PIN
                         int "uarte0 rx pin number"
-                        range 0 31
+                        range 0 48
                         default 8
                     config BSP_UART0_TX_PIN
                         int "uarte0 tx pin number"
-                        range 0 31
+                        range 0 48
                         default 6
                 endif
             config BSP_USING_UART1
@@ -153,11 +153,11 @@ menu "On-chip Peripheral Drivers"
                     default 1
                     config BSP_UART1_RX_PIN
                         int "uarte1 rx pin number"
-                        range 0 31
+                        range 0 48
                         default 7
                     config BSP_UART1_TX_PIN
                         int "uarte1 tx pin number"
-                        range 0 31
+                        range 0 48
                         default 5
                 endif
         endif
@@ -236,19 +236,19 @@ menu "On-chip Peripheral Drivers"
                 default n
             if BSP_USING_SPI1
                 config BSP_SPI1_SCK_PIN
-                    int "SPI0 sck pin number set"
+                    int "SPI1 sck pin number set"
                     range 0 47
                     default 28
                 config BSP_SPI1_MOSI_PIN
-                    int "SPI0 mosi pin number set"
+                    int "SPI1 mosi pin number set"
                     range 0 47
                     default 29
                 config BSP_SPI1_MISO_PIN
-                    int "SPI0 miso pin number set"
+                    int "SPI1 miso pin number set"
                     range 0 47
                     default 30
                 config BSP_SPI1_SS_PIN
-                    int "SPI0 ss pin number set"
+                    int "SPI1 ss pin number set"
                     range 0 47
                     default 31
             endif
@@ -258,21 +258,120 @@ menu "On-chip Peripheral Drivers"
                 default n
             if BSP_USING_SPI2
                 config BSP_SPI2_SCK_PIN
-                    int "SPI0 sck pin number set"
+                    int "SPI2 sck pin number set"
                     range 0 47
                     default 28
                 config BSP_SPI2_MOSI_PIN
-                    int "SPI0 mosi pin number set"
+                    int "SPI2 mosi pin number set"
                     range 0 47
                     default 29
                 config BSP_SPI2_MISO_PIN
-                    int "SPI0 miso pin number set"
+                    int "SPI2 miso pin number set"
                     range 0 47
                     default 30
                 config BSP_SPI2_SS_PIN
-                    int "SPI0 ss pin number set"
+                    int "SPI2 ss pin number set"
                     range 0 47
                     default 31
+            endif
+
+        endif
+
+    menuconfig BSP_USING_SPIM
+        bool "Enable SPIM"
+        select RT_USING_SPIM
+        default n
+
+        if BSP_USING_SPIM
+            config BSP_USING_SPIM0
+                bool "Enable SPIM0 bus"
+                default y
+            if BSP_USING_SPIM0
+                config NRFX_SPIM0_ENABLED
+                    int "Enable SPI0 instance"
+                    default 1
+                config BSP_SPIM0_SCK_PIN
+                    int "SPIM0 sck pin number set"
+                    range 0 47
+                    default 28
+                config BSP_SPIM0_MOSI_PIN
+                    int "SPIM0 mosi pin number set"
+                    range 0 47
+                    default 29
+                config BSP_SPIM0_MISO_PIN
+                    int "SPIM0 miso pin number set"
+                    range 0 47
+                    default 30
+                config BSP_SPIM0_SS_PIN
+                    int "SPIM0 ss pin number set"
+                    range 0 47
+                    default 31
+            endif
+
+            config BSP_USING_SPIM1
+                bool "Enable SPIM1 bus"
+                default n
+            if BSP_USING_SPIM1
+                config BSP_SPIM1_SCK_PIN
+                    int "SPIM1 sck pin number set"
+                    range 0 47
+                    default 28
+                config BSP_SPIM1_MOSI_PIN
+                    int "SPIM1 mosi pin number set"
+                    range 0 47
+                    default 29
+                config BSP_SPIM1_MISO_PIN
+                    int "SPIM1 miso pin number set"
+                    range 0 47
+                    default 30
+                config BSP_SPIM1_SS_PIN
+                    int "SPIM1 ss pin number set"
+                    range 0 47
+                    default 31
+            endif
+
+            config BSP_USING_SPIM2
+                bool "Enable SPIM2 bus"
+                default n
+            if BSP_USING_SPIM2
+                config BSP_SPIM2_SCK_PIN
+                    int "SPIM2 sck pin number set"
+                    range 0 47
+                    default 28
+                config BSP_SPIM2_MOSI_PIN
+                    int "SPIM2 mosi pin number set"
+                    range 0 47
+                    default 29
+                config BSP_SPIM2_MISO_PIN
+                    int "SPIM2 miso pin number set"
+                    range 0 47
+                    default 30
+                config BSP_SPIM2_SS_PIN
+                    int "SPIM2 ss pin number set"
+                    range 0 47
+                    default 31
+            endif
+
+        config BSP_USING_SPIM3
+            bool "Enable SPIM3 bus"
+            default n
+        if BSP_USING_SPIM3
+            config BSP_SPIM3_SCK_PIN
+                int "SPIM3 sck pin number set"
+                range 0 47
+                default 28
+            config BSP_SPIM3_MOSI_PIN
+                int "SPIM3 mosi pin number set"
+                range 0 47
+                default 29
+            config BSP_SPIM3_MISO_PIN
+                int "SPIM3 miso pin number set"
+                range 0 47
+                default 30
+            config BSP_SPIM3_SS_PIN
+                int "SPIM3 ss pin number set"
+                range 0 47
+                default 31
             endif
 
         endif

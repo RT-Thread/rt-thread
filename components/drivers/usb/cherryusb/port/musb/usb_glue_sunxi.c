@@ -11,11 +11,11 @@
 #error must define CONFIG_USB_MUSB_SUNXI when use sunxi chips
 #endif
 
-#if CONFIG_USBDEV_EP_NUM != 4
+#if CONFIG_USB_MUSB_EP_NUM != 4
 #error sunxi chips only support 4 endpoints
 #endif
 
-#if CONFIG_USBHOST_PIPE_NUM != 4
+#if CONFIG_USB_MUSB_PIPE_NUM != 4
 #error sunxi chips only support 4 pipes
 #endif
 

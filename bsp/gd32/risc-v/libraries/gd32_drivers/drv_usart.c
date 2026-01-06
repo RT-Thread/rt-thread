@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-20     BruceOu      first implementation
+ * 2025-07-11     Wangshun     adapt to GD32VV553H
  */
 
 #include "drv_usart.h"
@@ -155,11 +156,11 @@ void UART7_IRQHandler(void)
 static const struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART0
     {
-        USART0,                                 // uart peripheral index
-        USART0_IRQn,                            // uart iqrn
-        RCU_USART0, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_9,           // tx port, tx pin
-        GPIOA, GPIO_PIN_10,          // rx port, rx pin
+        USART0,                                 /* uart peripheral index */
+        USART0_IRQn,                            /* uart iqrn */
+        RCU_USART0, RCU_GPIOB, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOB, GPIO_PIN_15,           /* tx port, tx pin */
+        GPIOA, GPIO_PIN_8,          /* rx port, rx pin */
         &serial0,
         "uart0",
     },
@@ -167,11 +168,11 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART1
     {
-        USART1,                                 // uart peripheral index
-        USART1_IRQn,                            // uart iqrn
-        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOA, GPIO_PIN_2,                      // tx port, tx pin
-        GPIOA, GPIO_PIN_3,                      // rx port, rx pin
+        USART1,                                 /* uart peripheral index */
+        USART1_IRQn,                            /* uart iqrn */
+        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOA, GPIO_PIN_2,                      /* tx port, tx pin */
+        GPIOA, GPIO_PIN_3,                      /* rx port, rx pin */
         &serial1,
         "uart1",
     },
@@ -179,11 +180,11 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART2
     {
-        USART2,                                 // uart peripheral index
-        USART2_IRQn,                            // uart iqrn
-        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOB, GPIO_PIN_10,          // tx port, tx pin
-        GPIOB, GPIO_PIN_11,          // rx port, rx pin
+        USART2,                                 /* uart peripheral index */
+        USART2_IRQn,                            /* uart iqrn */
+        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOB, GPIO_PIN_10,          /* tx port, tx pin */
+        GPIOB, GPIO_PIN_11,          /* rx port, rx pin */
         &serial2,
         "uart2",
     },
@@ -191,11 +192,11 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART3
     {
-        UART3,                                 // uart peripheral index
-        UART3_IRQn,                            // uart iqrn
-        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_10,         // tx port, tx pin
-        GPIOC, GPIO_PIN_11,         // rx port, rx pin
+        UART3,                                 /* uart peripheral index */
+        UART3_IRQn,                            /* uart iqrn */
+        RCU_UART3, RCU_GPIOC, RCU_GPIOC,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOC, GPIO_PIN_10,         /* tx port, tx pin */
+        GPIOC, GPIO_PIN_11,         /* rx port, rx pin */
         &serial3,
         "uart3",
     },
@@ -203,11 +204,11 @@ static const struct gd32_uart uart_obj[] = {
 
     #ifdef BSP_USING_UART4
     {
-        UART4,                                 // uart peripheral index
-        UART4_IRQn,                            // uart iqrn
-        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       // periph clock, tx gpio clock, rt gpio clock
-        GPIOC, GPIO_PIN_12,         // tx port, tx pin
-        GPIOD, GPIO_PIN_2,          // rx port, rx pin
+        UART4,                                 /* uart peripheral index */
+        UART4_IRQn,                            /* uart iqrn */
+        RCU_UART4, RCU_GPIOC, RCU_GPIOD,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOC, GPIO_PIN_12,         /* tx port, tx pin */
+        GPIOD, GPIO_PIN_2,          /* rx port, rx pin */
         &serial4,
         "uart4",
     },
@@ -231,11 +232,19 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     rcu_periph_clock_enable(uart->rx_gpio_clk);
     rcu_periph_clock_enable(uart->per_clk);
 
-    /* connect port to USARTx_Tx */
+    /* connect port */
+#if defined SOC_SERIES_GD32VF103V
     gpio_init(uart->tx_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, uart->tx_pin);
-
-    /* connect port to USARTx_Rx */
     gpio_init(uart->rx_port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, uart->rx_pin);
+#else
+    gpio_af_set(uart->tx_port, GPIO_AF_8, uart->tx_pin);
+    gpio_mode_set(uart->tx_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, uart->tx_pin);
+    gpio_output_options_set(uart->tx_port, GPIO_OTYPE_PP, GPIO_OSPEED_25MHZ, uart->tx_pin);
+
+    gpio_af_set(uart->rx_port, GPIO_AF_2, uart->rx_pin);
+    gpio_mode_set(uart->rx_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, uart->rx_pin);
+    gpio_output_options_set(uart->rx_port, GPIO_OTYPE_PP, GPIO_OSPEED_25MHZ, uart->rx_pin);
+#endif
 }
 
 /**
@@ -319,7 +328,9 @@ static rt_err_t gd32_uart_control(struct rt_serial_device *serial, int cmd, void
 
         break;
     case RT_DEVICE_CTRL_SET_INT:
+#ifdef SOC_SERIES_GD32VF103V
         eclic_set_nlbits(ECLIC_GROUP_LEVEL3_PRIO1);
+#endif /* SOC_SERIES_GD32VF103V */
         /* enable rx irq */
         eclic_irq_enable(uart->irqn, 1, 0);
         /* enable interrupt */
@@ -442,7 +453,5 @@ int rt_hw_usart_init(void)
 
     return result;
 }
-
-//INIT_BOARD_EXPORT(rt_hw_usart_init);
-
 #endif
+

@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__RTTHREAD__, RT_USING_LIBC, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, N32L40X</Define>
+              <Define>RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, USE_STDPERIPH_DRIVER, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, N32L40X</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\libraries\n32_drivers\config;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\phy;applications;..\..\..\components\finsh;..\..\..\components\drivers\include;.;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\spi;..\..\..\components\libc\posix\io\poll;..\..\..\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\N32L40x_Firmware_Library\CMSIS\core;..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\inc;..\libraries\n32_drivers;..\..\..\components\drivers\include;..\libraries\N32L40x_Firmware_Library\CMSIS\device;board;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
+              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\libraries\n32_drivers;..\libraries\n32_drivers\config;..\..\..\components\libc\posix\io\eventfd;..\libraries\N32L40x_Firmware_Library\CMSIS\core;..\..\..\components\drivers\include;..\..\..\components\drivers\include;.;applications;board;..\..\..\libcpu\arm\common;..\..\..\components\drivers\spi;..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\inc;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\include;..\..\..\libcpu\arm\cortex-m4;..\libraries\N32L40x_Firmware_Library\CMSIS\device;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -970,20 +970,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
@@ -994,6 +980,20 @@
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1308,13 +1308,6 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
@@ -1322,16 +1315,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1377,51 +1377,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>n32l40x_wwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_wwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32l40x_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32l40x_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32l40x_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_iwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32l40x_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_tim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32l40x_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_usart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1433,30 +1391,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32l40x_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32l40x_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>n32l40x_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_n32l40x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\N32L40x_Firmware_Library\CMSIS\device\system_n32l40x.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1468,6 +1405,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>n32l40x_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>n32l40x_flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_flash.c</FilePath>
@@ -1475,9 +1419,37 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32l40x_rtc.c</FileName>
+              <FileName>n32l40x_wwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_rtc.c</FilePath>
+              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_wwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32l40x_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_n32l40x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L40x_Firmware_Library\CMSIS\device\system_n32l40x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32l40x_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_iwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32l40x_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_dac.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1489,9 +1461,37 @@
           </Files>
           <Files>
             <File>
+              <FileName>n32l40x_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32l40x_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32l40x_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>n32l40x_rcc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_rcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32l40x_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L40x_Firmware_Library\n32l40x_std_periph_driver\src\n32l40x_tim.c</FilePath>
             </File>
           </Files>
         </Group>

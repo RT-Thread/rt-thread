@@ -62,18 +62,45 @@ UTEST_TC_EXPORT(testcase, name, init, cleanup, timeout)
 | Parameters | Description |
 | :-----   | :------ |
 | testcase | Test case main-bearing function (**specifies** using a function called *static void testcase(void)* |
-| name     | Test case name (uniqueness). Specifies the naming format for connecting relative names of test cases relative to `testcases directory` with `.` |
+| name     | Test case name (uniqueness). Detailed requirements see below **Test case naming requirements:** |
 | init     | the initialization function before Test case startup |
 | cleanup  | Cleanup function after the end of the test case |
 | timeout  | Test case expected test time (in seconds) |
 
 **Test case naming requirements:**
 
-Test cases need to be named in the prescribed format. Specifies the naming format for the connection of the current test case relative to the `testcases directory ` linked with  `.` . The name contains the file name of the current test case file (the file name except the suffix name).
+To ensure unique unit-testcase names throughout the RT-Thread source code repository, the full name consists of two parts:
+
+**Module-Prefix.Test-Function**
+
+- **Module-Prefix**: Use the path of the *module's utest directory* relative to the source code repository root (excluding utest), connected by a dot ("."). For more information on *module's utest directory*, see section **How-to add utest cases into RT-Thread for your module**.
+
+- **Test-Function**: Define your own name, ensuring it's unique within the same **Module-Prefix** (it doesn't have to match the test case file name).
 
 **Test case naming example:**
 
-Assuming that there is a `testcases\components\filesystem\dfs\dfs_api_tc.c` test case file in the test case `testcases` directory, the test case name in the `dfs_api_tc.c` is named `components.filesystem.dfs.dfs_api_tc`.
+Assuming that there is a *module's utest directory*: `components/dfs/utest`, which contains utest source files for module "DFS". We can define the testcase in file `components/dfs/utest/tc_dfs_api.c` as below:
+
+```c
+static void testcase(void)
+{
+    /* Skip filesystem mount test for now due to mutex issues */
+    UTEST_UNIT_RUN(test_mkfs);
+    // ......
+}
+
+UTEST_TC_EXPORT(testcase, "components.dfs.fs_dfs_api_tc", utest_tc_init, utest_tc_cleanup, 10);
+```
+
+Here, the global unique unit-testcase name is "components.dfs.fs_dfs_api_tc". Of this name, **Module-Prefix** is "components.dfs", which corresponds to the path name `components/dfs`; **Test-Function** is `fs_dfs_api_tc`, which uniquely identifies a suite of cases which will be run in the function `testcase()`, and note that the `fs_dfs_api_tc` need not be the same as the file name of `tc_dfs_api.c`.
+
+Particularly, for modules in the `src` directory, since the name `src` is ambiguous, it is recommended to replace it with `core` to contrast it with `components`. This indicates that the code in `src` is the kernel's *core* code module relative to `components`.
+
+For example: The utest case in `src/klibc/utest/TC_rt_memcmp.c` can be written as:
+
+```c
+UTEST_TC_EXPORT(utest_do_tc, "core.klibc.rt_memcmp", RT_NULL, RT_NULL, 1000);
+```
 
 ## Test Case LOG Output Interface
 
@@ -263,7 +290,13 @@ As shown in the figure above, the log of the test case run is divided into four 
 From the above flow chart you can get the following:
 
 * The utest framework is a sequential execution of all **test units** in the *testcase* function
-* Assert of the previous UTEST_UNIT_RUN macro has occurred, and all subsequent UTEST_UNIT_RUN will skip execution.
+* Assert of the previous UTEST_UNIT_RUN macro has occurred, and all subsequent UTEST_UNIT_RUN will skip executio
+
+## utest_run auto-completion Function
+
+The utest_run tool now supports dynamic auto-completion for test case names. After entering the utest_run command in the terminal, users can press the TAB key to activate the auto-completion feature. The system will then dynamically match and suggest available test case names in real time.
+
+![utest_run_auto_option](.\figures\utest_run_auto_option.png)
 
 # NOTE
 
@@ -272,3 +305,24 @@ From the above flow chart you can get the following:
 - The resources (threads, semaphores, timers, memory, etc.) created in the test case need to be released before the test ends.
 - A test case implementation can only export a test body function (testcase function) using `UTEST_TC_EXPORT`
 - Write a `README.md` document for the your test case to guide the user through configuring the test environment.
+
+# How-to add utest cases into RT-Thread for your module
+
+The source code of utest cases is recommended to be placed in each module for maintenance, but the entry of Kconfig should all be placed(rsourced) in `Kconfig.utestcases` for unified maintenance. In this way, when executing menuconfig, people can enter and configure from one place, avoiding searching for utest configuration switches scattering in the menuconfig interface.
+    
+For each module, you can maintain unit testcases in a unified manner in the following way:
+
+- Create a subdirectory named 'utest' in the directory where your module is located.
+
+- Store the following files in the 'utest' subdirectory:
+
+  - Unit-testcase program source code files for this module.
+
+  - `Kconfig` file, which defining configuration options for the unit test cases of this module, the recommended option is named `RT_UTEST_XXXX`, XXXX is the global unique module name of this module.
+
+  - `SConscript` file, when adding src files, you need to rely on `RT_UTEST_XXXX`.
+    
+After completing the above steps, rsource the path of the Kconfig file of utest of this module to the file `Kconfig.utestcases`.
+
+You can find a good example in <a href="https://github.com/RT-Thread/rt-thread/blob/master/src/klibc/utest/">"klibc"</a>.
+

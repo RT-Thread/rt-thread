@@ -16,7 +16,7 @@ elif rtconfig.PLATFORM in ['gcc'] and rtconfig.CPU in ['posix']:
 
 src += Glob('*.c')
 
-group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+group = DefineGroup('Libc', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
 
 list = os.listdir(cwd)
 for item in list:

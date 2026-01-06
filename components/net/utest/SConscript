@@ -1,0 +1,23 @@
+﻿Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend('RT_UTEST_TC_USING_LWIP'):
+    # Add lwIP test source if enabled
+    src += ['tc_lwip.c']
+
+if GetDepend('RT_UTEST_TC_USING_NETDEV'):
+    # Add netdev test source if enabled
+    src += ['tc_netdev.c']
+
+if GetDepend('RT_UTEST_TC_USING_SAL'):
+    # Add sal test source if enabled
+    src += ['tc_sal_socket.c']
+
+# Define the test group with proper dependencies
+group = DefineGroup('utestcases', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

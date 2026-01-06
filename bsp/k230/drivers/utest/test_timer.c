@@ -150,4 +150,4 @@ static rt_err_t utest_tc_cleanup(void)
     return RT_EOK;
 }
 
-UTEST_TC_EXPORT(hw_timer_testcase, "timer", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(hw_timer_testcase, "bsp.k230.drivers.timer", utest_tc_init, utest_tc_cleanup, 10);

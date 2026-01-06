@@ -252,6 +252,10 @@ void usbd_video_close(uint8_t busid, uint8_t intf)
 
 void usbd_video_iso_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
+    if (nbytes == 0) {
+        return;
+    }
+
     if (usbd_video_stream_split_transfer(busid, ep)) {
         /* one frame has done */
         iso_tx_busy = false;

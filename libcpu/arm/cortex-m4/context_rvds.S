@@ -236,10 +236,21 @@ HardFault_Handler    PROC
     MRSEQ   r0, msp                 ; [2]=0 ==> Z=1, get fault context from handler.
     MRSNE   r0, psp                 ; [2]=1 ==> Z=0, get fault context from thread.
 
-    STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
     IF      {FPU} != "SoftVFP"
-    STMFD   r0!, {lr}               ; push dummy for flag
+    TST     lr, #0x10               ; if(!EXC_RETURN[4])
+    VSTMFDEQ r0!, {d8 - d15}        ; push FPU register s16~s31
     ENDIF
+
+    STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
+
+    IF      {FPU} != "SoftVFP"
+    MOV     r4, #0x00               ; flag = 0
+
+    TST     lr, #0x10               ; if(!EXC_RETURN[4])
+    MOVEQ   r4, #0x01               ; flag = 1
+    STMFD   r0!, {r4}               ; push flag
+    ENDIF
+
     STMFD   r0!, {lr}               ; push exec_return register
 
     TST     lr, #0x04               ; if(!EXC_RETURN[2])

@@ -228,7 +228,7 @@ config ARCH_RISCV_VECTOR
     bool
 
     if ARCH_RISCV_VECTOR
-        choice
+        choice ARCH_VECTOR_VLEN
             prompt "RISCV Vector Vlen"
             default ARCH_VECTOR_VLEN_128
 

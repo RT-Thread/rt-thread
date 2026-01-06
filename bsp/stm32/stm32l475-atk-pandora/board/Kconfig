@@ -349,7 +349,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART2 TX buffer size"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
-                        default 256
+                        default 0
 
                     config BSP_UART2_DMA_PING_BUFSIZE
                         int "Set UART2 RX DMA ping-pong buffer size"

@@ -49,7 +49,7 @@ static int cdc_sample(void)
     rt_err_t ret = RT_EOK;
     rt_device_t cdc_dev = RT_NULL;                           /* usb device设备句柄 */
     rt_uint8_t str_write[] = "This is a usb cdc device test!\r\n";
-
+    rt_size_t str_len = rt_strlen((const char *)str_write);
 
     /* 查找USB虚拟串口设备 */
     cdc_dev = rt_device_find(USBD_DEV_NAME);
@@ -71,7 +71,7 @@ static int cdc_sample(void)
     for (i = 1; i < 4; i++)
     {
         rt_kprintf("Start to send test message 3 timers :%d.\n", i);
-        if (rt_device_write(cdc_dev, 0, str_write, sizeof(str_write)) != sizeof(str_write))
+        if (rt_device_write(cdc_dev, 0, str_write, str_len) != str_len)
         {
             rt_kprintf("send test message failed\n");
             return -RT_ERROR;
@@ -91,7 +91,7 @@ MSH_CMD_EXPORT(cdc_sample, usbd cdc sample);
 #if defined(RT_USB_DEVICE_MSTORAGE)
 
 /* F4A0 only FS can used with spi flash */
-#if (defined(HC32F4A0) && defined(BSP_USING_USBFS)) || \
+#if ((defined(HC32F4A0) || defined(HC32F4A8)) && defined(BSP_USING_USBFS)) || \
      defined(HC32F460)  || defined(HC32F472)
 
 /* Enable spibus1, SFUD, usb msc */
@@ -117,7 +117,7 @@ MSH_CMD_EXPORT(cdc_sample, usbd cdc sample);
 #include "dev_spi_flash_sfud.h"
 
 #define SPI_FLASH_CHIP                  RT_USB_MSTORAGE_DISK_NAME /* msc class disk name */
-#if defined(HC32F4A0)
+#if defined(HC32F4A0) || defined(HC32F4A8)
     #define SPI_FLASH_SS_PORT               GPIO_PORT_C
     #define SPI_FLASH_SS_PIN                GPIO_PIN_07
     #define SPI_BUS_NAME                    "spi1"
@@ -157,7 +157,7 @@ static void rt_hw_spi_flash_reset(char *spi_dev_name)
 
 static int rt_hw_spi_flash_with_sfud_init(void)
 {
-#if defined(HC32F4A0) || defined(HC32F460)
+#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F4A8)
     rt_hw_spi_device_attach(SPI_BUS_NAME, SPI_FLASH_DEVICE_NAME, GET_PIN(C, 7));
 #elif defined(HC32F472)
     rt_hw_spi_device_attach(SPI_BUS_NAME, SPI_FLASH_DEVICE_NAME, GET_PIN(B, 12));
@@ -201,7 +201,7 @@ INIT_COMPONENT_EXPORT(rt_hw_spi_flash_with_sfud_init);
 */
 
 #define USBD_DEV_NAME   "hidd"     /* 名称 */
-#if defined(HC32F4A0)
+#if defined(HC32F4A0) || defined(HC32F4A8)
     #define KEY_PIN_NUM     GET_PIN(A,0)          /* PA0 */
 #elif defined(HC32F460)
     #define KEY_PIN_NUM     GET_PIN(B,1)          /* PB1 */
@@ -270,11 +270,11 @@ MSH_CMD_EXPORT(hid_sample, usbd hid sample);
  * 命令调用格式：winusb_sample
  * 软件：llcom.exe
  * 程序功能：MSH命令发送winusb_sample，运行测试程序。
- * 打开llcom.exe软件，选择小工具-WinUSB设备-选择对应RTT Win USB设备-打开-勾选Hex发送-发送数据。
+ * 打开llcom.exe软件，选择小工具-WinUSB设备-选择对应RTT Win USB设备-打开-勾选Hex发送-发送数据（注意：每次发送数据长度为4的整数倍）。
  * 通过llcom.exe可发送bulk数据（100字符以内）到设备，设备收到后会回发给主机(llcom.exe)，同时通过MSH终端显示收到的HEX数据。
  * 注意：1、llcom.exe中的GUID与驱动程序中设定保持一致(通过设备管理器选择RTT Win USB设备的属性来查看)；
- *      2、win_usb_read()函数中的UIO_REQUEST_READ_FULL改为UIO_REQUEST_READ_BEST，实现数据即读即取;
- *         否则需要接满传入的size数量，才会回调接收函数。
+ *       2、win_usb_read()函数中的UIO_REQUEST_READ_FULL改为UIO_REQUEST_READ_BEST，实现数据即读即取;
+ *          否则需要接满传入的size数量，才会回调接收函数。
  *
  */
 #define WINUSB_DEV_NAME   "winusb"     /* 名称 */

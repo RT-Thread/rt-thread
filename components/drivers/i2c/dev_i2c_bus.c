@@ -61,6 +61,8 @@ void i2c_bus_scan_clients(struct rt_i2c_bus_device *bus)
             client->bus = bus;
             client->client_addr = client_addr;
 
+            rt_dm_dev_set_name(&client->parent, "%s", client->name);
+
             rt_i2c_device_register(client);
 
             if (i2c_client_np != child_np)

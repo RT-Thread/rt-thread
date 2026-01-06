@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-license-management -Wunused -Wuninitialized -Wall -Wmissing-declarations  -Wpointer-arith -Waggregate-return -Wfloat-equal</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __RTTHREAD__</Define>
+              <Define>RT_USING_LIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\libraries\HAL_Drivers;..\..\..\components\finsh;board\ports;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;.;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;ra_cfg\fsp_cfg\bsp;..\..\..\libcpu\arm\cortex-m23;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\eventfd;ra_cfg\fsp_cfg;..\..\..\components\dfs\dfs_v1\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;board;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\epoll;..\libraries\HAL_Drivers\drivers\config;..\..\..\components\libc\posix\ipc;board\ports;..\..\..\libcpu\arm\common;ra_cfg\fsp_cfg\bsp;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\phy;..\..\..\components\dfs\dfs_v1\include;ra_cfg\fsp_cfg;..\..\..\components\libc\compilers\common\extension;..\..\..\include;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m23;board;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\libraries\HAL_Drivers\drivers;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -671,28 +671,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  -std=c99</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_gpio.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drivers\drv_gpio.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -711,7 +692,26 @@
             <File>
               <FileName>drv_usart_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HAL_Drivers\drv_usart_v2.c</FilePath>
+              <FilePath>..\libraries\HAL_Drivers\drivers\drv_usart_v2.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -750,9 +750,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs_fs.c</FileName>
+              <FileName>dfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs_fs.c</FilePath>
+              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -769,9 +769,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>dfs.c</FileName>
+              <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs.c</FilePath>
+              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs_fs.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -824,16 +824,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_file.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1136,16 +1136,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1157,16 +1157,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -267,6 +267,12 @@ static int platform_ofw_device_probe(void)
 
     if (ofw_node_root)
     {
+        if ((node = rt_ofw_find_node_by_path("/clocks")))
+        {
+            platform_ofw_device_probe_once(node);
+            rt_ofw_node_put(node);
+        }
+
         rt_ofw_node_get(ofw_node_root);
 
         err = platform_ofw_device_probe_once(ofw_node_root);
@@ -274,12 +280,6 @@ static int platform_ofw_device_probe(void)
         rt_ofw_node_put(ofw_node_root);
 
         if ((node = rt_ofw_find_node_by_path("/firmware")))
-        {
-            platform_ofw_device_probe_once(node);
-            rt_ofw_node_put(node);
-        }
-
-        if ((node = rt_ofw_find_node_by_path("/clocks")))
         {
             platform_ofw_device_probe_once(node);
             rt_ofw_node_put(node);

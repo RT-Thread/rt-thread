@@ -68,7 +68,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART1 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART1_RX_USING_DMA
-                        default 64                        
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART2
@@ -101,7 +101,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART2 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART2_RX_USING_DMA
-                        default 64                        
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART3
@@ -134,7 +134,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART3 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART3_RX_USING_DMA
-                        default 64                              
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART4
@@ -167,7 +167,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART4 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART4_RX_USING_DMA
-                        default 64                          
+                        default 64
                 endif
         endif
 
@@ -377,7 +377,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         if BSP_USING_WDT_TMR
             config BSP_USING_WDT
-                bool 
+                bool
                 default y
 
             config BSP_WDT_CONTINUE_COUNT
@@ -562,6 +562,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_USB
         bool "Enable USB"
         default n
+        depends on !RT_USING_CHERRYUSB
         select RT_USING_USB_DEVICE if BSP_USING_USBD
         select RT_USING_USB_HOST if BSP_USING_USBH
         if BSP_USING_USB

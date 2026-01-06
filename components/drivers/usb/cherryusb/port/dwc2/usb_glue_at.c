@@ -68,7 +68,7 @@ const struct dwc2_user_params param_pb14_pb15 = {
         [15] = 0 },
 
     .host_dma_desc_enable = false,
-    .host_rx_fifo_size = 628,
+    .host_rx_fifo_size = 624,
     .host_nperio_tx_fifo_size = 128, // 512 byte
     .host_perio_tx_fifo_size = 256,  // 1024 byte
 

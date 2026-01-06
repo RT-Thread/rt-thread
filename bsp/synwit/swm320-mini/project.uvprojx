@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __STDC_LIMIT_MACROS</Define>
+              <Define>RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_LIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\phy;..\..\..\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\libraries\SWM320_CSL\CMSIS\DeviceSupport;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\extension;..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver;..\..\..\components\drivers\include;..\libraries\SWM320_CSL\CMSIS\CoreSupport;..\..\..\components\drivers\smp_call;board;applications;..\..\..\components\drivers\include;.;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\libraries\SWM320_drivers;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>.;..\..\..\components\drivers\phy;board;..\..\..\include;..\..\..\components\libc\compilers\common\include;..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;applications;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\libraries\SWM320_CSL\CMSIS\DeviceSupport;..\libraries\SWM320_CSL\CMSIS\CoreSupport;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\libraries\SWM320_drivers;..\..\..\components\libc\posix\io\poll</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -690,16 +690,16 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_drivers\drv_uart.c</FilePath>
+              <FilePath>..\libraries\SWM320_drivers\drv_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_gpio.c</FileName>
+              <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_drivers\drv_gpio.c</FilePath>
+              <FilePath>..\libraries\SWM320_drivers\drv_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -721,16 +721,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1040,13 +1040,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
@@ -1057,6 +1050,13 @@
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1102,23 +1102,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>SWM320_can.c</FileName>
+              <FileName>SWM320_lcd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_can.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_SWM320.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\CMSIS\DeviceSupport\system_SWM320.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_norflash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_norflash.c</FilePath>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_lcd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1130,114 +1116,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>SWM320_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_lcd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_port.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_port.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_SWM320.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\SWM320_CSL\CMSIS\DeviceSupport\startup\arm\startup_SWM320.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_sdram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_sdram.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>SWM320_sdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_sdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_timr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_timr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_crc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>SWM320_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1249,9 +1130,128 @@
           </Files>
           <Files>
             <File>
+              <FileName>SWM320_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_timr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_timr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_SWM320.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\CMSIS\DeviceSupport\system_SWM320.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_sdram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_port.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>SWM320_sram.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_sram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_norflash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_norflash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM320_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_SWM320.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\SWM320_CSL\CMSIS\DeviceSupport\startup\arm\startup_SWM320.s</FilePath>
             </File>
           </Files>
         </Group>

@@ -186,7 +186,7 @@ static rt_err_t hc32_rtc_set_time_stamp(time_t time_stamp)
     #else
         #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_LRC)
     #endif
-#elif defined(HC32F472)
+#elif defined(HC32F472) || defined (HC32F334)
     #if defined(BSP_RTC_USING_XTAL32)
         #define  RTC_CLK_SRC_SEL            (RTC_CLK_SRC_XTAL32)
     #elif defined(BSP_RTC_USING_XTAL_DIV)
@@ -219,7 +219,7 @@ static rt_err_t _rtc_init(void)
     if ((SET == VBAT_PowerDownCheck()) || (LL_OK != _bakup_reg_check()) || (LL_OK != _hc32_rtc_rw_check()))
 #elif defined(HC32F4A0)
     if ((LL_OK != _bakup_reg_check()) || (LL_OK != _hc32_rtc_rw_check()))
-#elif  defined(HC32F460) || defined(HC32F448) || defined(HC32F472)
+#elif  defined(HC32F460) || defined(HC32F448) || defined(HC32F472) || defined (HC32F334)
     if (DISABLE == RTC_GetCounterState())
 #endif
     {
@@ -297,7 +297,7 @@ static void _rtc_alarm_irq_handler(void)
     rt_interrupt_leave();
 }
 
-#if defined(HC32F448) || defined(HC32F472)
+#if defined(HC32F448) || defined(HC32F472) || defined (HC32F334)
 void RTC_Handler(void)
 {
     if (RTC_GetStatus(RTC_FLAG_ALARM) != RESET)

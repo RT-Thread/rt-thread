@@ -7,11 +7,11 @@
 #include "stdint.h"
 #include "usb_musb_reg.h"
 
-#if CONFIG_USBDEV_EP_NUM != 6
+#if CONFIG_USB_MUSB_EP_NUM != 6
 #error es32 chips only support 6 endpoints
 #endif
 
-#if CONFIG_USBHOST_PIPE_NUM != 6
+#if CONFIG_USB_MUSB_PIPE_NUM != 6
 #error es32 chips only support 6 pipes
 #endif
 

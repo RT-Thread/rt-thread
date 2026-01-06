@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,6 +10,19 @@
 #include <rtthread.h>
 #include <lwp_avl.h>
 
+/**
+ * @brief Rebalances an AVL tree after insertion or deletion
+ *
+ * @param[in,out] nodeplaces_ptr Pointer to stack of node pointers that need rebalancing
+ * @param[in] count Number of nodes in the stack that need rebalancing
+ *
+ * @note This function performs AVL tree rebalancing by checking and correcting height imbalances
+ *       between left and right subtrees. It handles:
+ *       - Left-left case (single right rotation)
+ *       - Left-right case (double rotation: left then right)
+ *       - Right-right case (single left rotation)
+ *       - Right-left case (double rotation: right then left)
+ */
 static void lwp_avl_rebalance(struct lwp_avl_struct ***nodeplaces_ptr, int count)
 {
     for (; count > 0; count--)
@@ -76,6 +89,18 @@ static void lwp_avl_rebalance(struct lwp_avl_struct ***nodeplaces_ptr, int count
     }
 }
 
+/**
+ * @brief Removes a node from an AVL tree while maintaining balance
+ *
+ * @param[in] node_to_delete The node to be removed from the AVL tree
+ * @param[in,out] ptree Pointer to the root node pointer of the AVL tree
+ *
+ * @note This function removes the specified node from the AVL tree and performs
+ *       necessary rebalancing operations. It handles both cases where the node
+ *       has no left child (simple removal) and where it has a left child (finding
+ *       the rightmost node in the left subtree as replacement).
+ *       It uses a stack to track the removal path for rebalancing.
+ */
 void lwp_avl_remove(struct lwp_avl_struct *node_to_delete, struct lwp_avl_struct **ptree)
 {
     avl_key_t key = node_to_delete->avl_key;
@@ -132,6 +157,14 @@ void lwp_avl_remove(struct lwp_avl_struct *node_to_delete, struct lwp_avl_struct
     lwp_avl_rebalance(stack_ptr, stack_count);
 }
 
+/**
+ * @brief Inserts a new node into an AVL tree while maintaining balance
+ *
+ * @param[in] new_node The new node to be inserted into the AVL tree
+ * @param[in,out] ptree Pointer to the root node pointer of the AVL tree
+ *
+ * @note Uses a stack to track the insertion path for rebalancing
+ */
 void lwp_avl_insert(struct lwp_avl_struct *new_node, struct lwp_avl_struct **ptree)
 {
     avl_key_t key = new_node->avl_key;
@@ -158,6 +191,18 @@ void lwp_avl_insert(struct lwp_avl_struct *new_node, struct lwp_avl_struct **ptr
     lwp_avl_rebalance(stack_ptr, stack_count);
 }
 
+/**
+ * @brief Finds a node in an AVL tree by key
+ *
+ * @param[in] key The key to search for in the AVL tree
+ * @param[in] ptree Pointer to the root node of the AVL tree
+ *
+ * @return struct lwp_avl_struct* Pointer to the found node, or NULL if not found
+ *
+ * @note This function searches the AVL tree for a node with the specified key.
+ *       It performs a standard binary search by comparing keys and traversing
+ *       left or right subtrees accordingly.
+ */
 struct lwp_avl_struct *lwp_avl_find(avl_key_t key, struct lwp_avl_struct *ptree)
 {
     for (;;)
@@ -176,6 +221,19 @@ struct lwp_avl_struct *lwp_avl_find(avl_key_t key, struct lwp_avl_struct *ptree)
     return ptree;
 }
 
+/**
+ * @brief Recursively traverses an AVL tree and applies a function to each node
+ *
+ * @param[in] ptree Pointer to the root node of the AVL tree
+ * @param[in] fun Callback function to apply to each node
+ * @param[in,out] arg Additional argument passed to the callback function
+ *
+ * @return int Returns the last result from the callback function (0 if all nodes processed)
+ *
+ * @note This function performs an in-order traversal of the AVL tree, applying the
+ *       provided callback function to each node. The traversal can be stopped early
+ *       if the callback returns a non-zero value.
+ */
 int lwp_avl_traversal(struct lwp_avl_struct *ptree, int (*fun)(struct lwp_avl_struct *, void *), void *arg)
 {
     int ret;
@@ -208,6 +266,16 @@ int lwp_avl_traversal(struct lwp_avl_struct *ptree, int (*fun)(struct lwp_avl_st
     return ret;
 }
 
+/**
+ * @brief Finds the first (leftmost) node in an AVL tree
+ *
+ * @param[in] ptree Pointer to the root node of the AVL tree
+ *
+ * @return struct lwp_avl_struct* Pointer to the leftmost node, or NULL if tree is empty
+ *
+ * @note This function traverses the AVL tree to find the leftmost node, which represents
+ *       the minimum element in the tree. It's commonly used for ordered traversal starting point.
+ */
 rt_weak struct lwp_avl_struct* lwp_map_find_first(struct lwp_avl_struct* ptree)
 {
     if (ptree == AVL_EMPTY)
@@ -224,4 +292,3 @@ rt_weak struct lwp_avl_struct* lwp_map_find_first(struct lwp_avl_struct* ptree)
     }
     return ptree;
 }
-

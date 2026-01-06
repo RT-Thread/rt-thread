@@ -80,13 +80,6 @@ unsigned long rt_ktime_cputimer_getfrq(void);
 unsigned long rt_ktime_cputimer_getcnt(void);
 
 /**
- * @brief Get cputimer the cnt value corresponding to 1 os tick
- *
- * @return step
- */
-unsigned long rt_ktime_cputimer_getstep(void);
-
-/**
  * @brief Init cputimer
  *
  */
@@ -105,13 +98,6 @@ rt_uint64_t rt_ktime_hrtimer_getres(void);
  * @return frequency
  */
 unsigned long rt_ktime_hrtimer_getfrq(void);
-
-/**
- * @brief Get hrtimer the value of the cnt counter
- *
- * @return cnt
- */
-unsigned long rt_ktime_hrtimer_getcnt(void);
 
 /**
  * @brief set hrtimer interrupt timeout count (cnt), you should re-implemented it in hrtimer device driver

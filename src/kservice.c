@@ -535,6 +535,53 @@ rt_err_t rt_backtrace_thread(rt_thread_t thread)
     return rc;
 }
 
+#ifdef RT_USING_CPU_USAGE_TRACER
+/**
+ * @brief Get thread usage percentage relative to total system CPU time
+ *
+ * This function calculates the CPU usage percentage of a specific thread
+ * relative to the total CPU time consumed by all threads in the system.
+ *
+ * @param thread Pointer to the thread object. Must not be NULL.
+ *
+ * @return The CPU usage percentage as an integer value (0-100).
+ *         Returns 0 if total system time is 0 or if CPU usage tracing is not enabled.
+ *
+ * @note This function requires RT_USING_CPU_USAGE_TRACER to be enabled.
+ * @note The percentage is calculated as: (thread_time * 100) / total_system_time
+ * @note Due to integer arithmetic, the result is truncated and may not sum
+ *       to exactly 100% across all threads due to rounding.
+ * @note If thread is NULL, an assertion will be triggered in debug builds.
+ */
+rt_uint8_t rt_thread_get_usage(rt_thread_t thread)
+{
+    rt_ubase_t thread_time;
+    rt_ubase_t total_time = 0U;
+    int i;
+    rt_cpu_t pcpu;
+
+    RT_ASSERT(thread != RT_NULL);
+
+    thread_time = thread->user_time + thread->system_time;
+
+    /* Calculate total system time by summing all CPUs' time */
+    for (i = 0; i < RT_CPUS_NR; i++)
+    {
+        pcpu = rt_cpu_index(i);
+        total_time += pcpu->cpu_stat.user + pcpu->cpu_stat.system + pcpu->cpu_stat.idle;
+    }
+
+    if (total_time > 0U)
+    {
+        /* Calculate thread usage percentage: (thread_time * 100) / total_time */
+        rt_ubase_t usage = (thread_time * 100U) / total_time;
+        return (rt_uint8_t)(usage > 100U ? 100U : usage);
+    }
+
+    return 0U;
+}
+#endif /* RT_USING_CPU_USAGE_TRACER */
+
 #if defined(RT_USING_LIBC) && defined(RT_USING_FINSH)
 #include <stdlib.h> /* for string service */
 

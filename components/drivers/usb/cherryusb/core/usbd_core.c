@@ -950,7 +950,6 @@ static int usbd_vendor_request_handler(uint8_t busid, struct usb_setup_packet *s
                     *len = desclen;
                     return 0;
                 default:
-                    USB_LOG_ERR("unknown vendor code\r\n");
                     return -1;
             }
         }
@@ -964,7 +963,6 @@ static int usbd_vendor_request_handler(uint8_t busid, struct usb_setup_packet *s
                     *len = g_usbd_core[busid].descriptors->msosv2_descriptor->compat_id_len;
                     return 0;
                 default:
-                    USB_LOG_ERR("unknown vendor code\r\n");
                     return -1;
             }
         }
@@ -980,7 +978,6 @@ static int usbd_vendor_request_handler(uint8_t busid, struct usb_setup_packet *s
                     *len = desclen;
                     return 0;
                 default:
-                    USB_LOG_ERR("unknown vendor code\r\n");
                     return -1;
             }
         }
@@ -1008,7 +1005,6 @@ static int usbd_vendor_request_handler(uint8_t busid, struct usb_setup_packet *s
                     *len = desclen;
                     return 0;
                 default:
-                    USB_LOG_ERR("unknown vendor code\r\n");
                     return -1;
             }
         }
@@ -1021,7 +1017,6 @@ static int usbd_vendor_request_handler(uint8_t busid, struct usb_setup_packet *s
                     *len = g_usbd_core[busid].msosv2_desc->compat_id_len;
                     return 0;
                 default:
-                    USB_LOG_ERR("unknown vendor code\r\n");
                     return -1;
             }
         }
@@ -1037,7 +1032,6 @@ static int usbd_vendor_request_handler(uint8_t busid, struct usb_setup_packet *s
                     *len = desclen;
                     return 0;
                 default:
-                    USB_LOG_ERR("unknown vendor code\r\n");
                     return -1;
             }
         }

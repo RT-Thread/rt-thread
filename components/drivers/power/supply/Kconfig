@@ -1,0 +1,35 @@
+menuconfig RT_USING_POWER_SUPPLY
+    bool "Using Power supply class support"
+    depends on RT_USING_DM
+    select RT_USING_ADT
+    select RT_USING_ADT_REF
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+
+config RT_POWER_SUPPLY_DAEMON
+    bool "System supply daemon"
+    depends on RT_USING_POWER_SUPPLY
+    default y
+
+if RT_USING_POWER_SUPPLY
+    comment "Power Supply Device Drivers"
+endif
+
+config RT_POWER_SUPPLY_EMU
+    bool "Emulator battery(thermal)/charger"
+    depends on RT_USING_POWER_SUPPLY
+    depends on RT_USING_PM
+    depends on RT_USING_CONSOLE
+    depends on RT_USING_MSH
+    depends on RT_USING_CPU_USAGE_TRACER
+    default n
+
+config RT_POWER_SUPPLY_CHARGER_GPIO
+    bool "GPIO charger"
+    depends on RT_USING_POWER_SUPPLY
+    depends on RT_USING_PIN
+    default y
+
+if RT_USING_POWER_SUPPLY
+    osource "$(SOC_DM_POWER_SUPPLY_DIR)/Kconfig"
+endif

@@ -2,7 +2,7 @@
 
 <workspace>
   <project>
-    <path>$WS_DIR$\template.ewp</path>
+    <path>$WS_DIR$\GD32H759I_EVAL.ewp</path>
   </project>
   <batchBuild/>
 </workspace>

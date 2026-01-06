@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-    config SOC_R9A07G084
-        bool
-        select SOC_SERIES_R9A07G0
-        select RT_USING_COMPONENTS_INIT
-        select RT_USING_USER_MAIN
-        default y
-
     menu "Onboard Peripheral Drivers"
 
         config BSP_USING_ETHERCAT_EOE
@@ -29,7 +22,7 @@ menu "Hardware Drivers Config"
 
     menu "On-chip Peripheral Drivers"
 
-        rsource "../../libraries/HAL_Drivers/Kconfig"
+        rsource "../../libraries/HAL_Drivers/drivers/Kconfig"
 
         menuconfig BSP_USING_UART
             bool "Enable UART"

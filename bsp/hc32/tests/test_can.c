@@ -70,6 +70,10 @@ static struct rt_semaphore can_rx_sem;
 static rt_mutex_t can_mutex = RT_NULL;
 static rt_thread_t rx_thread;
 
+#ifdef RT_CAN_USING_CANFD
+static const uint8_t mcan_data_size[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64};
+#endif
+
 #define CAN_IF_INIT()                   do {                            \
                                             if (can_dev == RT_NULL || can_mutex == RT_NULL) { \
                                                 rt_kprintf("failed! please first execute can_sample cmd!\n"); \
@@ -99,10 +103,27 @@ static void _set_default_filter(void)
 #endif
 }
 
+static uint8_t _get_can_data_bytes_len(uint32_t dlc)
+{
+    uint8_t data_bytes = 0;
+
+    dlc &= 0xFU;
+    if (dlc <= 8U)
+    {
+        data_bytes = dlc;
+    }
+#ifdef RT_CAN_USING_CANFD
+    data_bytes = mcan_data_size[dlc];
+#endif
+
+    return data_bytes;
+}
+
 static void can_rx_thread(void *parameter)
 {
     struct rt_can_msg rxmsg = {0};
     rt_size_t  size;
+    uint8_t data_len;
 
     while (1)
     {
@@ -115,7 +136,8 @@ static void can_rx_thread(void *parameter)
         rt_device_read(can_dev, 0, &rxmsg, sizeof(rxmsg));
         /* 打印数据 ID 及内容 */
         rt_kprintf("ID:%x Data:", rxmsg.id);
-        for (int i = 0; i < rxmsg.len; i++)
+        data_len = _get_can_data_bytes_len(rxmsg.len);
+        for (int i = 0; i < data_len; i++)
         {
             rt_kprintf("%2x ", rxmsg.data[i]);
         }

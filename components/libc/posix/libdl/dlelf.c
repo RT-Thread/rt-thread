@@ -209,12 +209,12 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
     }
 
     /* construct module symbol table */
+    rt_uint8_t *shstrab;
+    shstrab = (rt_uint8_t *)module_ptr +
+                  shdr[elf_module->e_shstrndx].sh_offset;
     for (index = 0; index < elf_module->e_shnum; index ++)
     {
         /* find .dynsym section */
-        rt_uint8_t *shstrab;
-        shstrab = (rt_uint8_t *)module_ptr +
-                  shdr[elf_module->e_shstrndx].sh_offset;
         if (rt_strcmp((const char *)(shstrab + shdr[index].sh_name), ELF_DYNSYM) == 0)
             break;
     }

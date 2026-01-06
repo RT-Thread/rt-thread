@@ -1,0 +1,19 @@
+# for module compiling
+import os
+from building import *
+
+cwd  = GetCurrentDir()
+src = Glob('*.c') + Glob('Source/*.c')
+
+CPPPATH = [cwd + '/Include']
+CPPDEFINES = [
+    {'CPU_MIMX9131DVVXJ': 1}
+]
+objs = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+for item in os.listdir(cwd):
+    sconsfile = os.path.join(item, 'SConscript')
+    if os.path.isfile(os.path.join(cwd, sconsfile)):
+        objs += SConscript(sconsfile)
+
+Return('objs')

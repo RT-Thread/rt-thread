@@ -1,0 +1,44 @@
+if RT_USING_DFS
+    menu "File System"
+
+    config RT_UTEST_TC_USING_DFS_API
+        bool "DFS API Test"
+        default n
+        help
+            Enable DFS native API unit tests including file operations like open, 
+            read, write, close, stat, unlink and rename
+
+        if RT_UTEST_TC_USING_DFS_API
+
+            config RT_UTEST_TC_USING_POSIX_API
+                bool "POSIX API Test"
+                default n
+                depends on RT_USING_POSIX_FS
+                help
+                    Enable POSIX filesystem API unit tests including file operations,
+                    directory operations, and file permission tests
+
+            config RT_UTEST_DFS_MNT_PATH
+                string "Mount Path for DFS Test"
+                default ""
+                help
+                    Configure the mount point path where the test filesystem will be mounted.
+                    All test files and directories will be created under this path
+
+            config RT_UTEST_DFS_FS_TYPE
+                string "Filesystem Type for Test"
+                default "elm"
+                help
+                    Configure the filesystem type for unit test (e.g., elm, fat).
+                    This will be used for dfs_mkfs() and dfs_mount() operations
+
+            config RT_UTEST_DFS_BLOCK_DEV
+                string "Block Device Name for Test"
+                default "sd0"
+                help
+                    Configure the block device name for unit test (e.g., sd0, sd1).
+                    This device will be formatted and mounted during testing
+
+        endif
+    endmenu
+endif

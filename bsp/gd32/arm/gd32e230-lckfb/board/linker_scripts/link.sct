@@ -1,0 +1,39 @@
+; *************************************************************
+; *** Scatter-Loading Description File for GD32E230 + RT-Thread
+; *** Target: GD32E230C8T6 (64KB Flash, 8KB SRAM)
+; *** This version is more structured and recommended.
+; *************************************************************
+
+#!armclang --cpu=cortex-m23
+
+; Define stack and heap sizes
+define symbol Stack_Size = 0x00000400; ; 1KB for Main Stack
+define symbol Heap_Size  = 0x00000100; ; 256B for C-library Heap
+
+; Max size of load region LR_IROM1
+LR_IROM1 0x08000000 0x00010000  {    ; Load region: Flash, 64KB
+
+  ; First execution region for exception vectors and startup code
+  ER_IROM1 0x08000000 0x00010000  {
+   *.o (RESET, +First)
+   *(InRoot$$Sections)
+   .ANY (+RO)
+   
+   ; --- Special sections for RT-Thread ---
+   * (FSymTab)
+   * (VSymTab)
+   * (rti_fn*)
+   ; --------------------------------------
+  }
+
+  ; RAM region for RW, ZI, Stack, and Heap
+  RW_IRAM1 0x20000000 0x00002000  {  ; RW region: SRAM, 8KB
+    ; C-library Stack, placed at the top of RAM, growing downwards
+    ARM_LIB_STACK STACK_TOP(0x20002000) EMPTY -Stack_Size { }
+
+    .ANY (+RW +ZI)
+
+    ; C-library Heap, placed after RW/ZI data
+    ARM_LIB_HEAP +0 EMPTY Heap_Size { }
+  }
+}

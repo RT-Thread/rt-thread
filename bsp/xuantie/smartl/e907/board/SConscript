@@ -11,5 +11,20 @@ src = ['board.c']
 
 path =  [cwd]
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+CPPDEFINES = [
+    'CONFIG_KERNEL_RTTHREAD=1',
+    '__RT_KERNEL_SOURCE__=1',
+    'CONFIG_CSI_V2=1',
+    'CONFIG_CSI="csi2"',
+    'CONFIG_SUPPORT_TSPEND=0',
+    'CONFIG_SUPPORT_IRQ_NESTED=0',
+    'CONFIG_XIP=1',
+    'CONFIG_ARCH_MAINSTACK=4096',
+    'CONFIG_ARCH_INTERRUPTSTACK=4096',
+    'CONFIG_BOARD_SMARTL_EVB=1',
+    'CLI_CONFIG_STACK_SIZE=4096',
+    'CONFIG_CPU_XUANTIE_E907FD=1',
+]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 Return('group')

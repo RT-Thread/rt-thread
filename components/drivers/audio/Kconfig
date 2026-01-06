@@ -15,7 +15,4 @@ config RT_USING_AUDIO
             int "Record pipe size"
             default 2048
 
-        config RT_UTEST_USING_AUDIO_DRIVER
-            bool "Enable rt_audio_api testcase"
-            default n
     endif

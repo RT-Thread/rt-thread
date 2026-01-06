@@ -1,0 +1,6 @@
+# clang-format ignore file 
+/libraries/APM32F0xx_Library/ 
+/libraries/APM32F10x_Library/ 
+/libraries/APM32F4xx_Library/ 
+/libraries/APM32E10x_Library/ 
+/libraries/APM32S10x_Library/ 

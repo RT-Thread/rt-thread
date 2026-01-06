@@ -118,7 +118,7 @@ void PeripheralClock_Config(void)
 #if defined(RT_USING_ADC)
     CLK_SetPeriClockSrc(CLK_PERIPHCLK_PCLK);
 #endif
-#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
+#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH) || defined(RT_USING_CHERRYUSB)
     CLK_SetUSBClockSrc(CLK_USBCLK_PLLQ);
 #endif
 }

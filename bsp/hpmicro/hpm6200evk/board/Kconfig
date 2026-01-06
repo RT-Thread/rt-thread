@@ -1,8 +1,8 @@
 menu "Hardware Drivers Config"
 
-config SOC_HPM6000
+config SOC_HPM6200
     bool
-    select SOC_SERIES_HPM6000
+    select SOC_HPM6200_SERIES
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y

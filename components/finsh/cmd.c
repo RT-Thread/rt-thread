@@ -32,6 +32,7 @@
  * 2022-07-02     Stanley Lwin add list command
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2024-02-09     Bernard      fix the version command
+ * 2023-02-25     GuEe-GUI     add console
  */
 
 #include <rthw.h>
@@ -59,6 +60,61 @@ static long version(void)
     return 0;
 }
 MSH_CMD_EXPORT(version, show RT-Thread version information);
+
+#if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
+#if !defined(RT_USING_POSIX) && defined(RT_USING_POSIX_STDIO)
+#include <posix/stdio.h>
+#endif
+
+static int console(int argc, char **argv)
+{
+    if (argc > 1)
+    {
+        if (!rt_strcmp(argv[1], "set"))
+        {
+            if (argc < 3)
+            {
+                goto _help;
+            }
+
+            rt_kprintf("console change to %s\n", argv[2]);
+            rt_console_set_device(argv[2]);
+
+#ifdef RT_USING_POSIX
+            {
+                rt_device_t dev = rt_device_find(argv[2]);
+
+                if (dev != RT_NULL)
+                {
+                    console_set_iodev(dev);
+                }
+            }
+#elif !defined(RT_USING_POSIX_STDIO)
+            finsh_set_device(argv[2]);
+#else
+            rt_posix_stdio_init();
+#endif /* RT_USING_POSIX */
+        }
+        else
+        {
+            goto _help;
+        }
+    }
+    else
+    {
+        goto _help;
+    }
+
+    return RT_EOK;
+
+_help:
+    rt_kprintf("Usage: \n");
+    rt_kprintf("console set <name>   - change console by name\n");
+
+    return -RT_ERROR;
+}
+MSH_CMD_EXPORT(console, console setting);
+#endif /* RT_USING_DEVICE && RT_USING_CONSOLE */
 
 rt_inline void object_split(int len)
 {
@@ -165,6 +221,7 @@ long list_thread(void)
     rt_list_t *next = (rt_list_t *)RT_NULL;
     const char *item_title = "thread";
     const size_t tcb_strlen = sizeof(void *) * 2 + 2;
+    const size_t usage_strlen = sizeof(void *) + 1;
     int maxlen;
 
     list_find_init(&find_arg, RT_Object_Class_Thread, obj_list, sizeof(obj_list) / sizeof(obj_list[0]));
@@ -173,18 +230,22 @@ long list_thread(void)
     maxlen = RT_NAME_MAX;
 
 #ifdef RT_USING_SMP
-    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick   error  tcb addr\n", maxlen, maxlen, item_title);
+    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick   error  tcb addr   usage\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- -------");
     rt_kprintf(" ");
     object_split(tcb_strlen);
+    rt_kprintf(" ");
+    object_split(usage_strlen);
     rt_kprintf("\n");
 #else
-    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick   error  tcb addr\n", maxlen, maxlen, item_title);
+    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick   error  tcb addr   usage\n", maxlen, maxlen, item_title);
     object_split(maxlen);
     rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- -------");
     rt_kprintf(" ");
     object_split(tcb_strlen);
+    rt_kprintf(" ");
+    object_split(usage_strlen);
     rt_kprintf("\n");
 #endif /*RT_USING_SMP*/
 
@@ -196,7 +257,7 @@ long list_thread(void)
             for (i = 0; i < find_arg.nr_out; i++)
             {
                 struct rt_object *obj;
-                struct rt_thread thread_info, *thread;
+                struct rt_thread *thread;
 
                 obj = rt_list_entry(obj_list[i], struct rt_object, list);
                 level = rt_spin_lock_irqsave(&info->spinlock);
@@ -207,7 +268,6 @@ long list_thread(void)
                     continue;
                 }
                 /* copy info */
-                rt_memcpy(&thread_info, obj, sizeof thread_info);
                 rt_spin_unlock_irqrestore(&info->spinlock, level);
 
                 thread = (struct rt_thread *)obj;
@@ -243,17 +303,22 @@ long list_thread(void)
                     ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size - 1;
                     while (*ptr == '#')ptr --;
 
-                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s %p\n",
+                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s %p",
                                ((rt_ubase_t)thread->sp - (rt_ubase_t)thread->stack_addr),
                                thread->stack_size,
                                ((rt_ubase_t)ptr - (rt_ubase_t)thread->stack_addr) * 100 / thread->stack_size,
                                thread->remaining_tick,
                                rt_strerror(thread->error),
                                thread);
+#ifdef RT_USING_CPU_USAGE_TRACER
+                    rt_kprintf(" %3d%%\n", rt_thread_get_usage(thread));
+#else
+                    rt_kprintf("  N/A\n");
+#endif
 #else
                     ptr = (rt_uint8_t *)thread->stack_addr;
                     while (*ptr == '#') ptr ++;
-                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s %p\n",
+                    rt_kprintf(" 0x%08x 0x%08x    %3d%%   0x%08x %s %p",
                                thread->stack_size + ((rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
                                thread->stack_size,
                                (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
@@ -261,6 +326,11 @@ long list_thread(void)
                                RT_SCHED_PRIV(thread).remaining_tick,
                                rt_strerror(thread->error),
                                thread);
+#ifdef RT_USING_CPU_USAGE_TRACER
+                    rt_kprintf(" %3d%%\n", rt_thread_get_usage(thread));
+#else
+                    rt_kprintf("  N/A\n");
+#endif
 #endif
                 }
             }
@@ -926,64 +996,64 @@ static int cmd_list(int argc, char **argv)
 {
     if(argc == 2)
     {
-        if(strcmp(argv[1], "thread") == 0)
+        if(rt_strcmp(argv[1], "thread") == 0)
         {
             list_thread();
         }
-        else if(strcmp(argv[1], "timer") == 0)
+        else if(rt_strcmp(argv[1], "timer") == 0)
         {
             list_timer();
         }
 #ifdef RT_USING_SEMAPHORE
-        else if(strcmp(argv[1], "sem") == 0)
+        else if(rt_strcmp(argv[1], "sem") == 0)
         {
             list_sem();
         }
 #endif /* RT_USING_SEMAPHORE */
 #ifdef RT_USING_EVENT
-        else if(strcmp(argv[1], "event") == 0)
+        else if(rt_strcmp(argv[1], "event") == 0)
         {
             list_event();
         }
 #endif /* RT_USING_EVENT */
 #ifdef RT_USING_MUTEX
-        else if(strcmp(argv[1], "mutex") == 0)
+        else if(rt_strcmp(argv[1], "mutex") == 0)
         {
             list_mutex();
         }
 #endif /* RT_USING_MUTEX */
 #ifdef RT_USING_MAILBOX
-        else if(strcmp(argv[1], "mailbox") == 0)
+        else if(rt_strcmp(argv[1], "mailbox") == 0)
         {
             list_mailbox();
         }
 #endif  /* RT_USING_MAILBOX */
 #ifdef RT_USING_MESSAGEQUEUE
-        else if(strcmp(argv[1], "msgqueue") == 0)
+        else if(rt_strcmp(argv[1], "msgqueue") == 0)
         {
             list_msgqueue();
         }
 #endif /* RT_USING_MESSAGEQUEUE */
 #ifdef RT_USING_MEMHEAP
-        else if(strcmp(argv[1], "memheap") == 0)
+        else if(rt_strcmp(argv[1], "memheap") == 0)
         {
             list_memheap();
         }
 #endif /* RT_USING_MEMHEAP */
 #ifdef RT_USING_MEMPOOL
-        else if(strcmp(argv[1], "mempool") == 0)
+        else if(rt_strcmp(argv[1], "mempool") == 0)
         {
             list_mempool();
         }
 #endif /* RT_USING_MEMPOOL */
 #ifdef RT_USING_DEVICE
-        else if(strcmp(argv[1], "device") == 0)
+        else if(rt_strcmp(argv[1], "device") == 0)
         {
             list_device();
         }
 #endif /* RT_USING_DEVICE */
 #ifdef RT_USING_DFS
-        else if(strcmp(argv[1], "fd") == 0)
+        else if(rt_strcmp(argv[1], "fd") == 0)
         {
             extern int list_fd(void);
             list_fd();

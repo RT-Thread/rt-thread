@@ -43,7 +43,9 @@ rt_inline void rt_hw_isb(void)
     __asm__ volatile(OPC_FENCE_I:::"memory");
 }
 
-int rt_hw_cpu_id(void);
+#ifdef ARCH_MM_MMU
+void rt_hw_percpu_hartid_init(rt_ubase_t *percpu_ptr, rt_ubase_t hartid);
+#endif
 
 #endif
 

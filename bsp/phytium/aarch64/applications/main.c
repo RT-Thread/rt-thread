@@ -15,6 +15,9 @@
 #include <rtthread.h>
 
 #include <board.h>
+#ifdef BSP_USING_DRIVERS_EXAMPLE
+#include "auto_test.h"
+#endif
 
 #define ASSERT_STATIC(expression) \
     extern int assert_static[(expression) ? 1 : -1]
@@ -23,10 +26,12 @@
 #ifndef RT_USING_SMP
     ASSERT_STATIC(RT_CPUS_NR == 1U); /* please set RT_CPUS_NR = 1 when SMP off */
 #else
-    #if defined(TARGET_E2000D)
+    #if defined(TARGET_PE2202)
         ASSERT_STATIC(RT_CPUS_NR <= 2U); /* use 2 cores at most */
-    #elif defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
+    #elif defined(TARGET_PE2204)
         ASSERT_STATIC(RT_CPUS_NR <= 4U); /* use 4 cores at most */
+    #elif defined(TARGET_PD2408)
+        ASSERT_STATIC(RT_CPUS_NR <= 8U); /* use 4 cores at most */
     #endif
 #endif
 
@@ -83,7 +88,10 @@ void demo_core(void)
 
 int main(void)
 {
-#ifdef RT_USING_SMP
+#ifdef BSP_USING_DRIVERS_EXAMPLE
+    rt_thread_mdelay(2000);
+    auto_test();
+#elif defined RT_USING_SMP
     demo_core();
 #endif
     return RT_EOK;

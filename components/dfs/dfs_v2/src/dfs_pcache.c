@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -82,7 +82,18 @@ static int dfs_pcache_unlock(void);
 
 static struct dfs_pcache __pcache;
 
-
+/**
+ * @brief Perform garbage collection on an address space to release pages
+ *
+ * This function attempts to release a specified number of pages from both inactive
+ * and active lists of the given address space. It prioritizes releasing pages from
+ * the inactive list first before moving to the active list.
+ *
+ * @param[in] aspace Pointer to the address space structure to perform GC on
+ * @param[in] count  Number of pages to attempt to release
+ *
+ * @return Number of pages actually released (count - remaining)
+ */
 static int dfs_aspace_gc(struct dfs_aspace *aspace, int count)
 {
     int cnt = count;
@@ -124,6 +135,20 @@ static int dfs_aspace_gc(struct dfs_aspace *aspace, int count)
     return count - cnt;
 }
 
+/**
+ * @brief Release page cache entries to free up memory
+ *
+ * This function attempts to release a specified number of page cache entries.
+ * If count is 0, it calculates the number of pages to release based on the
+ * current cache size and GC stop level. It first tries to release from inactive
+ * list, then from active list if needed.
+ *
+ * @param[in] count Number of pages to release. If 0, calculates automatically
+ *                  based on current cache size and GC stop level.
+ *
+ * @note The function uses LRU (Least Recently Used) policy by prioritizing
+ *       inactive list over active list.
+ */
 void dfs_pcache_release(size_t count)
 {
     rt_list_t *node = RT_NULL;
@@ -162,6 +187,17 @@ void dfs_pcache_release(size_t count)
     dfs_pcache_unlock();
 }
 
+/**
+ * @brief Clean up page cache entries for a specific mount point
+ *
+ * This function iterates through both inactive and active lists of the page cache
+ * to clean up entries associated with the given mount point. It performs cleanup
+ * and calls the provided callback function for each matching address space.
+ *
+ * @param[in] mnt Pointer to the mount point structure to clean up
+ * @param[in] cb  Callback function to be called for each matching address space
+ *                The callback takes an address space pointer and returns an integer
+ */
 static void _pcache_clean(struct dfs_mnt *mnt, int (*cb)(struct dfs_aspace *aspace))
 {
     rt_list_t *node = RT_NULL;
@@ -196,6 +232,18 @@ static void _pcache_clean(struct dfs_mnt *mnt, int (*cb)(struct dfs_aspace *aspa
     dfs_pcache_unlock();
 }
 
+/**
+ * @brief Unmount and clean up page cache for a specific mount point
+ *
+ * This function cleans up all page cache entries associated with the given mount point
+ * by calling _pcache_clean() with dfs_aspace_release as the callback function.
+ * It will release all address spaces and their pages belonging to this mount point.
+ *
+ * @param[in] mnt Pointer to the mount point structure to be unmounted
+ *
+ * @note This function is typically called during filesystem unmount operation
+ * @see _pcache_clean()
+ */
 void dfs_pcache_unmount(struct dfs_mnt *mnt)
 {
     _pcache_clean(mnt, dfs_aspace_release);
@@ -206,11 +254,34 @@ static int _dummy_cb(struct dfs_aspace *mnt)
     return 0;
 }
 
+/**
+ * @brief Clean page cache for a specific mount point without releasing address spaces
+ *
+ * This function cleans up all page cache entries associated with the given mount point
+ * but keeps the address spaces intact by using a dummy callback function.
+ *
+ * @param[in] mnt Pointer to the mount point structure to be cleaned
+ *
+ * @note Typical usage scenarios:
+ * - Filesystem maintenance operations that require cache invalidation
+ * - Force refreshing cached data without unmounting
+ * - Handling external modifications to mounted filesystems
+ *
+ * @see _pcache_clean()
+ */
 void dfs_pcache_clean(struct dfs_mnt *mnt)
 {
     _pcache_clean(mnt, _dummy_cb);
 }
 
+/**
+ * @brief Check and enforce page cache memory limit
+ *
+ * This function checks if the current page cache usage exceeds the working level threshold.
+ * If exceeded, it will trigger page cache release up to 4 times to reduce cache size.
+ *
+ * @return Always returns 0 indicating success
+ */
 static int dfs_pcache_limit_check(void)
 {
     int index = 4;
@@ -224,6 +295,20 @@ static int dfs_pcache_limit_check(void)
     return 0;
 }
 
+/**
+ * @brief Page cache management thread
+ *
+ * This is the main worker thread for page cache management. It handles:
+ * - Garbage collection (GC) requests to free up memory
+ * - Write-back (WB) requests to flush dirty pages to storage
+ *
+ * @param[in] parameter Thread parameter (unused)
+ *
+ * @note The thread runs in an infinite loop processing messages from the cache message queue:
+ * - For GC commands: calls dfs_pcache_limit_check() to free pages when cache is full
+ * - For WB commands: flushes dirty pages that have been dirty for at least 500ms
+ * - Processes up to 4 dirty pages per WB command to prevent thread starvation
+ */
 static void dfs_pcache_thread(void *parameter)
 {
     struct dfs_pcache_mq_obj work;
@@ -321,6 +406,23 @@ static void dfs_pcache_thread(void *parameter)
     }
 }
 
+/**
+ * @brief Initialize the page cache system
+ *
+ * This function initializes the global page cache structure including:
+ * - Hash table for address space lookup
+ * - Active and inactive page lists
+ * - Page count tracking
+ * - Mutex for thread safety
+ * - Message queue for cache operations
+ * - Worker thread for background tasks
+ *
+ * @return 0 on success, negative error code on failure
+ *
+ * @note This function is automatically called during system initialization
+ * via INIT_PREV_EXPORT macro. It sets up all necessary infrastructure
+ * for page cache management.
+ */
 static int dfs_pcache_init(void)
 {
     rt_thread_t tid;
@@ -351,6 +453,19 @@ static int dfs_pcache_init(void)
 }
 INIT_PREV_EXPORT(dfs_pcache_init);
 
+/**
+ * @brief Send a command to page cache message queue
+ *
+ * This function sends a command to the page cache message queue for processing
+ * by the cache management thread. It waits for the message to be sent.
+ *
+ * @param[in] cmd The command to send (PCACHE_MQ_GC or PCACHE_MQ_WB)
+ *
+ * @return RT_EOK on success, error code on failure
+ *
+ * @note This is used to trigger garbage collection or write-back operations
+ * asynchronously through the cache management thread.
+ */
 static rt_ubase_t dfs_pcache_mq_work(rt_uint32_t cmd)
 {
     rt_err_t err;
@@ -363,18 +478,44 @@ static rt_ubase_t dfs_pcache_mq_work(rt_uint32_t cmd)
     return err;
 }
 
+/**
+ * @brief Lock the page cache global mutex
+ *
+ * @return Always returns 0.
+ */
 static int dfs_pcache_lock(void)
 {
     rt_mutex_take(&__pcache.lock, RT_WAITING_FOREVER);
     return 0;
 }
 
+/**
+ * @brief Unlock the page cache global mutex
+ *
+ * @return Always returns 0.
+ */
 static int dfs_pcache_unlock(void)
 {
     rt_mutex_release(&__pcache.lock);
     return 0;
 }
 
+/**
+ * @brief Calculate hash value for address space lookup
+ *
+ * This function computes a hash value based on mount point and path string.
+ * It uses a simple string hashing algorithm combined with mount point pointer.
+ *
+ * @param[in] mnt  Pointer to the mount point structure
+ * @param[in] path Path string to be hashed (can be NULL)
+ *
+ * @return Computed hash value within range [0, RT_PAGECACHE_HASH_NR-1]
+ *
+ * @note The hash algorithm combines:
+ * - DJB2 hash algorithm for the path string
+ * - XOR with mount point pointer
+ * - Modulo operation to fit hash table size
+ */
 static uint32_t dfs_aspace_hash(struct dfs_mnt *mnt, const char *path)
 {
     uint32_t val = 0;
@@ -390,6 +531,18 @@ static uint32_t dfs_aspace_hash(struct dfs_mnt *mnt, const char *path)
     return (val ^ (unsigned long)mnt) & (RT_PAGECACHE_HASH_NR - 1);
 }
 
+/**
+ * @brief Look up an address space in the page cache hash table
+ *
+ * This function searches for an address space matching the given dentry and operations
+ * in the page cache hash table. If found, it increments the reference count of the
+ * address space before returning it.
+ *
+ * @param[in] dentry Directory entry containing mount point and path information
+ * @param[in] ops    Pointer to address space operations structure
+ *
+ * @return Pointer to the found address space on success, NULL if not found
+ */
 static struct dfs_aspace *dfs_aspace_hash_lookup(struct dfs_dentry *dentry, const struct dfs_aspace_ops *ops)
 {
     struct dfs_aspace *aspace = RT_NULL;
@@ -412,6 +565,15 @@ static struct dfs_aspace *dfs_aspace_hash_lookup(struct dfs_dentry *dentry, cons
     return RT_NULL;
 }
 
+/**
+ * @brief Insert an address space into page cache
+ *
+ * This function inserts the given address space into both the hash table and
+ * inactive list of the page cache. It also increments the reference count of
+ * the address space.
+ *
+ * @param[in,out] aspace Pointer to the address space to be inserted
+ */
 static void dfs_aspace_insert(struct dfs_aspace *aspace)
 {
     uint32_t val = 0;
@@ -425,6 +587,14 @@ static void dfs_aspace_insert(struct dfs_aspace *aspace)
     dfs_pcache_unlock();
 }
 
+/**
+ * @brief Remove an address space from page cache
+ *
+ * This function removes the given address space from both the hash table and
+ * active/inactive lists of the page cache.
+ *
+ * @param[in,out] aspace Pointer to the address space to be removed
+ */
 static void dfs_aspace_remove(struct dfs_aspace *aspace)
 {
     dfs_pcache_lock();
@@ -439,6 +609,20 @@ static void dfs_aspace_remove(struct dfs_aspace *aspace)
     dfs_pcache_unlock();
 }
 
+/**
+ * @brief Move an address space to active list
+ *
+ * This function moves the specified address space from its current position
+ * to the active list in the page cache. The active list contains frequently
+ * accessed address spaces.
+ *
+ * @param[in,out] aspace Pointer to the address space to be activated
+ *
+ * @note Insert the address space before inactive list's head, means putting it
+ *       to the end of the active list.
+ *
+ * @see dfs_aspace_inactive() for the opposite operation
+ */
 static void dfs_aspace_active(struct dfs_aspace *aspace)
 {
     dfs_pcache_lock();
@@ -450,6 +634,15 @@ static void dfs_aspace_active(struct dfs_aspace *aspace)
     dfs_pcache_unlock();
 }
 
+/**
+ * @brief Move an address space to inactive list
+ *
+ * This function moves the specified address space from its current position
+ * to the inactive list in the page cache. The inactive list contains less
+ * frequently accessed address spaces that are candidates for eviction.
+ *
+ * @param[in,out] aspace Pointer to the address space to be deactivated
+ */
 static void dfs_aspace_inactive(struct dfs_aspace *aspace)
 {
     dfs_pcache_lock();
@@ -461,6 +654,21 @@ static void dfs_aspace_inactive(struct dfs_aspace *aspace)
     dfs_pcache_unlock();
 }
 
+/**
+ * @brief Internal function to create a new address space for page cache
+ *
+ * This function allocates and initializes a new address space structure for page caching.
+ * It sets up all necessary lists, locks, and initial values for the address space.
+ *
+ * @param[in] dentry Directory entry containing mount point and path information (can be NULL)
+ * @param[in] vnode  Pointer to the vnode structure this address space will be associated with
+ * @param[in] ops    Pointer to address space operations structure
+ *
+ * @return Pointer to the newly created address space on success, NULL on failure
+ *
+ * @note The created address space will be automatically inserted into the page cache
+ * @see dfs_aspace_create() for the public interface to create address spaces
+ */
 static struct dfs_aspace *_dfs_aspace_create(struct dfs_dentry *dentry,
                                              struct dfs_vnode *vnode,
                                              const struct dfs_aspace_ops *ops)
@@ -498,6 +706,19 @@ static struct dfs_aspace *_dfs_aspace_create(struct dfs_dentry *dentry,
     return aspace;
 }
 
+/**
+ * @brief Create or lookup an address space for page caching
+ *
+ * This function either creates a new address space or looks up an existing one
+ * in the page cache hash table. If found, it updates the vnode reference and
+ * activates the address space.
+ *
+ * @param[in] dentry Directory entry containing mount point and path info (can be NULL)
+ * @param[in] vnode  Pointer to the vnode structure to associate with
+ * @param[in] ops    Pointer to address space operations structure
+ *
+ * @return Pointer to the found/created address space on success, NULL on failure
+ */
 struct dfs_aspace *dfs_aspace_create(struct dfs_dentry *dentry,
                                      struct dfs_vnode *vnode,
                                      const struct dfs_aspace_ops *ops)
@@ -524,6 +745,16 @@ struct dfs_aspace *dfs_aspace_create(struct dfs_dentry *dentry,
     return aspace;
 }
 
+/**
+ * @brief Destroy an address space and release its resources
+ *
+ * This function decrements the reference count of the address space and marks it as inactive.
+ * If the reference count reaches 1 and there are no pages left, it will be fully released.
+ *
+ * @param[in] aspace Pointer to the address space to be destroyed
+ *
+ * @return 0 on successful release, -EINVAL if aspace is NULL
+ */
 int dfs_aspace_destroy(struct dfs_aspace *aspace)
 {
     int ret = -EINVAL;
@@ -546,6 +777,18 @@ int dfs_aspace_destroy(struct dfs_aspace *aspace)
     return ret;
 }
 
+/**
+ * @brief Release an address space when its reference count reaches 1
+ *
+ * This function checks if the address space can be safely released by verifying:
+ * - Reference count is 1 (only caller holds reference)
+ * - No pages remain in the address space
+ * If conditions are met, it removes the space from cache and frees all resources.
+ *
+ * @param[in] aspace Pointer to the address space to be released
+ *
+ * @return 0 on successful release, -1 if space cannot be released yet
+ */
 static int dfs_aspace_release(struct dfs_aspace *aspace)
 {
     int ret = -1;
@@ -580,6 +823,17 @@ static int dfs_aspace_release(struct dfs_aspace *aspace)
     return ret;
 }
 
+/**
+ * @brief Dump address space page information for debugging
+ *
+ * This function prints detailed information about pages in the given address space.
+ * It can optionally filter to show only dirty pages or all pages.
+ *
+ * @param[in] aspace    Pointer to the address space to dump
+ * @param[in] is_dirty  Flag indicating whether to show only dirty pages (1) or all pages (0)
+ *
+ * @return Always returns 0
+ */
 static int _dfs_aspace_dump(struct dfs_aspace *aspace, int is_dirty)
 {
     if (aspace)
@@ -615,6 +869,21 @@ static int _dfs_aspace_dump(struct dfs_aspace *aspace, int is_dirty)
     return 0;
 }
 
+/**
+ * @brief Dump page cache information for debugging purposes
+ *
+ * This function prints detailed information about the page cache, including:
+ * - Total page count and capacity
+ * - File paths and page counts for each address space
+ * - Optional detailed page information (with --dump or --dirty flags)
+ *
+ * @param[in] argc Number of command line arguments
+ * @param[in] argv Command line arguments array
+ *
+ * @return Always returns 0
+ *
+ * @see _dfs_aspace_dump() for the actual page dumping implementation
+ */
 static int dfs_pcache_dump(int argc, char **argv)
 {
     int dump = 0;
@@ -673,6 +942,16 @@ static int dfs_pcache_dump(int argc, char **argv)
 }
 MSH_CMD_EXPORT_ALIAS(dfs_pcache_dump, dfs_cache, dump dfs page cache);
 
+/**
+ * @brief Unmap all memory mappings for a page
+ *
+ * This function unmaps all virtual memory areas that have mapped this physical page.
+ * It also marks the page as dirty if it contains valid data that hasn't been written back.
+ *
+ * @param[in,out] page Pointer to the page structure to unmap
+ *
+ * @return Always returns 0
+ */
 static int dfs_page_unmap(struct dfs_page *page)
 {
     rt_list_t *next;
@@ -710,6 +989,19 @@ static int dfs_page_unmap(struct dfs_page *page)
     return 0;
 }
 
+/**
+ * @brief Create a new page structure for page cache
+ *
+ * This function allocates and initializes a new page structure for the page cache.
+ * It allocates physical memory for the page and initializes its metadata including:
+ * - Memory mapping list head
+ * - Reference count
+ * - Physical page allocation with affinity hint
+ *
+ * @param[in] pos File position used to determine page allocation affinity
+ *
+ * @return Pointer to the newly created page structure on success, NULL on failure
+ */
 static struct dfs_page *dfs_page_create(off_t pos)
 {
     struct dfs_page *page = RT_NULL;
@@ -721,7 +1013,7 @@ static struct dfs_page *dfs_page_create(off_t pos)
         page->page = rt_pages_alloc_tagged(0, affid, PAGE_ANY_AVAILABLE);
         if (page->page)
         {
-            //memset(page->page, 0x00, ARCH_PAGE_SIZE);
+            /* memset(page->page, 0x00, ARCH_PAGE_SIZE); */
             rt_list_init(&page->mmap_head);
             rt_atomic_store(&(page->ref_count), 1);
         }
@@ -736,11 +1028,30 @@ static struct dfs_page *dfs_page_create(off_t pos)
     return page;
 }
 
+/**
+ * @brief Increment the reference count of a page
+ *
+ * This function atomically increases the reference count of the specified page.
+ * It is used to track how many times the page is being referenced/used.
+ *
+ * @param[in,out] page Pointer to the page structure whose reference count will be incremented
+ */
 static void dfs_page_ref(struct dfs_page *page)
 {
     rt_atomic_add(&(page->ref_count), 1);
 }
 
+/**
+ * @brief Release a page from page cache when reference count reaches zero
+ *
+ * This function decrements the reference count of a page and performs cleanup
+ * when the count reaches zero. It handles:
+ * - Unmapping all virtual mappings of the page
+ * - Writing back dirty pages to storage
+ * - Freeing physical memory and page structure
+ *
+ * @param[in,out] page Pointer to the page structure to be released
+ */
 static void dfs_page_release(struct dfs_page *page)
 {
     struct dfs_aspace *aspace = page->aspace;
@@ -779,11 +1090,40 @@ static void dfs_page_release(struct dfs_page *page)
     dfs_aspace_unlock(aspace);
 }
 
+/**
+ * @brief Compare file positions for page alignment
+ *
+ * This function compares two file positions to determine if they belong to the same page.
+ * It aligns both positions to page boundaries before comparison.
+ *
+ * @param[in] fpos   File position to compare (byte offset)
+ * @param[in] value  Reference file position to compare against (byte offset)
+ *
+ * @return 0 if positions are in the same page, negative if fpos is before value,
+ *         positive if fpos is after value
+ */
 static int dfs_page_compare(off_t fpos, off_t value)
 {
     return fpos / ARCH_PAGE_SIZE * ARCH_PAGE_SIZE - value;
 }
 
+/**
+ * @brief Insert a page into the AVL tree of an address space
+ *
+ * This function inserts a page into the AVL tree of the specified address space.
+ * The tree is ordered by the file position (fpos) of pages. If a page with the
+ * same fpos already exists, the insertion fails.
+ *
+ * @param[in] aspace Pointer to the address space containing the AVL tree
+ * @param[in,out] page Pointer to the page structure to be inserted
+ *
+ * @return 0 on successful insertion, -1 if a page with same fpos already exists
+ *
+ * @note The function:
+ * - Maintains AVL tree balance after insertion
+ * - Updates the aspace's avl_page pointer to the newly inserted page
+ * - Uses file position (fpos) as the ordering key
+ */
 static int _dfs_page_insert(struct dfs_aspace *aspace, struct dfs_page *page)
 {
     struct dfs_page *tmp;
@@ -812,6 +1152,15 @@ static int _dfs_page_insert(struct dfs_aspace *aspace, struct dfs_page *page)
     return 0;
 }
 
+/**
+ * @brief Remove a page from the AVL tree of an address space
+ *
+ * This function removes a page from the AVL tree of the specified address space.
+ * It also clears the cached AVL page pointer if it points to the page being removed.
+ *
+ * @param[in,out] aspace Pointer to the address space containing the AVL tree
+ * @param[in,out] page   Pointer to the page structure to be removed
+ */
 static void _dfs_page_remove(struct dfs_aspace *aspace, struct dfs_page *page)
 {
     if (aspace->avl_page && aspace->avl_page == page)
@@ -822,18 +1171,48 @@ static void _dfs_page_remove(struct dfs_aspace *aspace, struct dfs_page *page)
     util_avl_remove(&page->avl_node, &aspace->avl_root);
 }
 
+/**
+ * @brief Lock an address space for thread-safe operations
+ *
+ * @param[in,out] aspace Pointer to the address space structure to be locked
+ *
+ * @return Always returns 0 indicating success
+ *
+ * @note The lock must be released using dfs_aspace_unlock()
+ * @see dfs_aspace_unlock()
+ */
 static int dfs_aspace_lock(struct dfs_aspace *aspace)
 {
     rt_mutex_take(&aspace->lock, RT_WAITING_FOREVER);
     return 0;
 }
 
+/**
+ * @brief Unlock an address space after thread-safe operations
+ *
+ * @param[in,out] aspace Pointer to the address space structure to be unlocked
+ *
+ * @return Always returns 0 indicating success
+ *
+ * @note Must be called after dfs_aspace_lock() to release the lock
+ * @see dfs_aspace_lock()
+ */
 static int dfs_aspace_unlock(struct dfs_aspace *aspace)
 {
     rt_mutex_release(&aspace->lock);
     return 0;
 }
 
+/**
+ * @brief Insert a page into the address space's page cache
+ *
+ * This function inserts a page into the active list of the address space's page cache.
+ * It maintains the page count and performs eviction if the cache exceeds its capacity.
+ *
+ * @param[in] page Pointer to the page structure to be inserted
+ *
+ * @return Always returns 0 indicating success
+ */
 static int dfs_page_insert(struct dfs_page *page)
 {
     struct dfs_aspace *aspace = page->aspace;
@@ -866,6 +1245,16 @@ static int dfs_page_insert(struct dfs_page *page)
     return 0;
 }
 
+/**
+ * @brief Remove a page from the address space's page cache
+ *
+ * This function safely removes a page from both the space and dirty lists of the address space.
+ * It decrements the reference count and releases the page if it's the last reference.
+ *
+ * @param[in] page Pointer to the page structure to be removed
+ *
+ * @return 0 if the page was successfully removed, -1 if the page is still referenced
+ */
 static int dfs_page_remove(struct dfs_page *page)
 {
     int ret = -1;
@@ -899,6 +1288,15 @@ static int dfs_page_remove(struct dfs_page *page)
     return ret;
 }
 
+/**
+ * @brief Move a page to active list
+ *
+ * This function moves a page to the active list
+ * within its associated address space.
+ *
+ * @param[in] page The page to be moved to active list
+ * @return int Always returns 0 on success
+ */
 static int dfs_page_active(struct dfs_page *page)
 {
     struct dfs_aspace *aspace = page->aspace;
@@ -914,6 +1312,15 @@ static int dfs_page_active(struct dfs_page *page)
     return 0;
 }
 
+/**
+ * @brief Move a page to inactive list
+ *
+ * This function moves a page to the inactive list
+ * within its associated address space.
+ *
+ * @param[in] page The page to be moved to inactive list
+ * @return int Always returns 0 on success
+ */
 static int dfs_page_inactive(struct dfs_page *page)
 {
     struct dfs_aspace *aspace = page->aspace;
@@ -929,6 +1336,15 @@ static int dfs_page_inactive(struct dfs_page *page)
     return 0;
 }
 
+/**
+ * @brief Mark a page as dirty and manage dirty list
+ *
+ * This function marks a page as dirty and adds it to the dirty list if not already present.
+ * It also triggers a write-back operation if more than 1 second has passed since last write-back.
+ *
+ * @param[in] page The page to be marked as dirty
+ * @return int Always returns 0 on success
+ */
 static int dfs_page_dirty(struct dfs_page *page)
 {
     struct dfs_aspace *aspace = page->aspace;
@@ -954,6 +1370,16 @@ static int dfs_page_dirty(struct dfs_page *page)
     return 0;
 }
 
+/**
+ * @brief Search for a page in the address space AVL tree
+ *
+ * This function searches for a page at the specified file position in the address space's AVL tree.
+ * If found, it marks the page as active and increments its reference count.
+ *
+ * @param[in] aspace The address space to search in
+ * @param[in] fpos The file position to search for
+ * @return struct dfs_page* The found page, or RT_NULL if not found
+ */
 static struct dfs_page *dfs_page_search(struct dfs_aspace *aspace, off_t fpos)
 {
     int cmp;
@@ -1000,6 +1426,19 @@ static struct dfs_page *dfs_page_search(struct dfs_aspace *aspace, off_t fpos)
     return RT_NULL;
 }
 
+/**
+ * @brief Load a page from file into address space cache
+ *
+ * This function creates a new page cache entry for the specified file position,
+ * reads the content from the file into the page, and inserts it into the cache.
+ * The page's reference count is incremented to prevent c eviction.
+ *
+ * @param[in] file Pointer to the file structure containing the vnode and aspace
+ * @param[in] pos  File position to load (will be page-aligned)
+ *
+ * @return Pointer to the newly created and loaded page on success,
+ *         NULL on failure or invalid parameters
+ */
 static struct dfs_page *dfs_aspace_load_page(struct dfs_file *file, off_t pos)
 {
     struct dfs_page *page = RT_NULL;
@@ -1025,6 +1464,19 @@ static struct dfs_page *dfs_aspace_load_page(struct dfs_file *file, off_t pos)
     return page;
 }
 
+/**
+ * @brief Look up a page in the cache and load it if not found
+ *
+ * This function searches for a page at the specified position in the file's address space.
+ * If the page isn't found, it preloads multiple pages (RT_PAGECACHE_PRELOAD count) next to the requested position.
+ * It also triggers garbage collection when the cache reaches certain thresholds.
+ *
+ * @param[in] file Pointer to the file structure containing the vnode and aspace
+ * @param[in] pos  File position to look up (will be page-aligned)
+ *
+ * @return Pointer to the found or newly loaded page on success,
+ *         NULL if the page couldn't be found or loaded
+ */
 static struct dfs_page *dfs_page_lookup(struct dfs_file *file, off_t pos)
 {
     struct dfs_page *page = RT_NULL;
@@ -1089,6 +1541,20 @@ static struct dfs_page *dfs_page_lookup(struct dfs_file *file, off_t pos)
     return page;
 }
 
+/**
+ * @brief Read data from file through address space page cache
+ *
+ * This function reads data from a file using its address space page cache. It handles
+ * the lookup of pages containing the requested data, copies the data to the provided
+ * buffer, and manages page references.
+ *
+ * @param[in] file  Pointer to the file structure containing vnode and aspace
+ * @param[in] buf   Buffer to store the read data
+ * @param[in] count Number of bytes to read
+ * @param[in,out] pos Pointer to the file position (updated during reading)
+ *
+ * @return Number of bytes successfully read, or negative error code
+ */
 int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 {
     int ret = -EINVAL;
@@ -1150,6 +1616,19 @@ int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
     return ret;
 }
 
+/**
+ * @brief Write data to file through address space page cache
+ *
+ * This function writes data to a file using its address space page cache. It handles
+ * page lookup, data copying, dirty page marking, and synchronization operations.
+ *
+ * @param[in] file  Pointer to the file structure containing vnode and aspace
+ * @param[in] buf   Buffer containing data to write
+ * @param[in] count Number of bytes to write
+ * @param[in,out] pos Pointer to the file position (updated during writing)
+ *
+ * @return Number of bytes successfully written, or negative error code
+ */
 int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
 {
     int ret = -EINVAL;
@@ -1226,6 +1705,17 @@ int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t
     return ret;
 }
 
+/**
+ * @brief Flush dirty pages in an address space to storage
+ *
+ * This function writes all dirty pages in the specified address space to storage,
+ * ensuring data persistence. It handles page size adjustments and clears dirty flags
+ * after successful writes.
+ *
+ * @param[in] aspace Pointer to the address space containing dirty pages
+ *
+ * @return Always returns 0 (success)
+ */
 int dfs_aspace_flush(struct dfs_aspace *aspace)
 {
     if (aspace)
@@ -1267,6 +1757,17 @@ int dfs_aspace_flush(struct dfs_aspace *aspace)
     return 0;
 }
 
+/**
+ * @brief Clean all pages from an address space
+ *
+ * This function removes all active pages from the specified address space while
+ * maintaining thread safety through proper locking. It skips inactive pages
+ * during the cleanup process.
+ *
+ * @param[in] aspace Pointer to the address space structure to clean
+ *
+ * @return 0 on success, negative value on error
+ */
 int dfs_aspace_clean(struct dfs_aspace *aspace)
 {
     if (aspace)
@@ -1297,6 +1798,23 @@ int dfs_aspace_clean(struct dfs_aspace *aspace)
     return 0;
 }
 
+/**
+ * @brief Map a file page into virtual address space
+ *
+ * This function maps a file page into the specified virtual address space, handling
+ * memory allocation, page lookup, and cache synchronization. It ensures proper
+ * memory visibility across different CPU architectures with cache operations.
+ *
+ * @param[in] file    Pointer to the file structure
+ * @param[in] varea   Pointer to the virtual address area structure
+ * @param[in] vaddr   Virtual address to map the page to
+ *
+ * @return Pointer to the mapped page on success, NULL on failure
+ *
+ * @note This function handles cache synchronization for architectures with weak
+ *       memory models or Harvard architectures to ensure data visibility. It also
+ *       manages the mapping structure lifecycle through proper allocation/free.
+ */
 void *dfs_aspace_mmap(struct dfs_file *file, struct rt_varea *varea, void *vaddr)
 {
     void *ret = RT_NULL;
@@ -1354,6 +1872,20 @@ void *dfs_aspace_mmap(struct dfs_file *file, struct rt_varea *varea, void *vaddr
     return ret;
 }
 
+/**
+ * @brief Unmap pages from virtual address space
+ *
+ * This function removes mappings of file pages within the specified virtual address range.
+ * It handles cache synchronization and maintains page dirty status when unmapping.
+ *
+ * @param[in] file    Pointer to the file structure
+ * @param[in] varea   Pointer to the virtual address area to unmap
+ *
+ * @return 0 on success
+ *
+ * @note This function handles both private and shared mappings, ensuring proper
+ *       cache synchronization and page dirty status maintenance during unmapping.
+ */
 int dfs_aspace_unmap(struct dfs_file *file, struct rt_varea *varea)
 {
     struct dfs_vnode *vnode = file->vnode;
@@ -1425,6 +1957,18 @@ int dfs_aspace_unmap(struct dfs_file *file, struct rt_varea *varea)
     return 0;
 }
 
+/**
+ * Unmap a page from virtual address space.
+ *
+ * @param[in] file    The file object containing the page
+ * @param[in] varea   The virtual memory area
+ * @param[in] vaddr   The virtual address to unmap
+ *
+ * @return Always returns 0 on success
+ *
+ * @note This function removes the mapping between a virtual address and a physical page.
+ *          It handles cleanup of mmap structures and marks pages dirty if needed.
+ */
 int dfs_aspace_page_unmap(struct dfs_file *file, struct rt_varea *varea, void *vaddr)
 {
     struct dfs_page *page;
@@ -1470,6 +2014,18 @@ int dfs_aspace_page_unmap(struct dfs_file *file, struct rt_varea *varea, void *v
     return 0;
 }
 
+/**
+ * Mark a page as dirty in the address space.
+ *
+ * @param[in] file    The file object containing the page
+ * @param[in] varea   The virtual memory area
+ * @param[in] vaddr   The virtual address of the page
+ *
+ * @return Always returns 0 on success
+ *
+ * @note This function marks a specific page as dirty in the file's address space.
+ *          The page is released after being marked dirty.
+ */
 int dfs_aspace_page_dirty(struct dfs_file *file, struct rt_varea *varea, void *vaddr)
 {
     struct dfs_page *page;
@@ -1492,16 +2048,47 @@ int dfs_aspace_page_dirty(struct dfs_file *file, struct rt_varea *varea, void *v
     return 0;
 }
 
+/**
+ * Calculate file position from virtual address.
+ *
+ * @param[in] varea   The virtual memory area
+ * @param[in] vaddr   The virtual address to convert
+ *
+ * @return The calculated file position offset
+ */
 off_t dfs_aspace_fpos(struct rt_varea *varea, void *vaddr)
 {
     return (off_t)(intptr_t)vaddr - (off_t)(intptr_t)varea->start + varea->offset * ARCH_PAGE_SIZE;
 }
 
+/**
+ * Get the virtual address corresponding to a file position in a virtual area.
+ *
+ * @param[in] varea The virtual area structure
+ * @param[in] fpos  The file position to convert
+ *
+ * @return The virtual address corresponding to the file position
+ */
 void *dfs_aspace_vaddr(struct rt_varea *varea, off_t fpos)
 {
     return varea->start + fpos - varea->offset * ARCH_PAGE_SIZE;
 }
 
+/**
+ * @brief Read data from memory-mapped file space
+ *
+ * This function handles read operations for memory-mapped file regions by
+ * translating virtual addresses to file positions and performing the actual
+ * read operation through dfs_aspace_read.
+ *
+ * @param[in] file   Pointer to the file structure being mapped
+ * @param[in] varea  Pointer to the virtual memory area structure
+ * @param[in] data   Pointer to the I/O message containing read details
+ *                    (includes fault address and buffer address)
+ *
+ * @return Number of bytes successfully read (ARCH_PAGE_SIZE on success)
+ *         0 if any parameter is invalid
+ */
 int dfs_aspace_mmap_read(struct dfs_file *file, struct rt_varea *varea, void *data)
 {
     int ret = 0;
@@ -1519,6 +2106,21 @@ int dfs_aspace_mmap_read(struct dfs_file *file, struct rt_varea *varea, void *da
     return ret;
 }
 
+/**
+ * @brief Write data to memory-mapped file space
+ *
+ * This function handles write operations for memory-mapped file regions by
+ * translating virtual addresses to file positions and performing the actual
+ * write operation through dfs_aspace_write.
+ *
+ * @param[in] file   Pointer to the file structure being mapped
+ * @param[in] varea  Pointer to the virtual memory area structure
+ * @param[in] data   Pointer to the I/O message containing write details
+ *                    (includes fault address and buffer address)
+ *
+ * @return Number of bytes successfully written (ARCH_PAGE_SIZE on success)
+ *         0 if any parameter is invalid
+ */
 int dfs_aspace_mmap_write(struct dfs_file *file, struct rt_varea *varea, void *data)
 {
     int ret = 0;

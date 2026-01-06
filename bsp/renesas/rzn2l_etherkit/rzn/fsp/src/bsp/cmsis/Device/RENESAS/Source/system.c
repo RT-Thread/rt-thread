@@ -577,7 +577,7 @@ void bsp_loader_bss_init (void)
 void bsp_copy_multibyte (uintptr_t * src, uintptr_t * dst, uintptr_t bytesize)
 {
     uintptr_t i;
-    uintptr_t cnt;
+    volatile uintptr_t cnt;
 
     uintptr_t src_mod;
     uint8_t * src_single_byte;
@@ -630,7 +630,7 @@ void bsp_copy_multibyte (uintptr_t * src, uintptr_t * dst, uintptr_t bytesize)
 void bsp_bss_init_multibyte (uintptr_t * src, uintptr_t bytesize)
 {
     uintptr_t i;
-    uintptr_t cnt;
+    volatile uintptr_t cnt;
     uintptr_t zero = 0;
 
     uintptr_t src_mod;

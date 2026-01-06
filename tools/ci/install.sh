@@ -8,6 +8,7 @@
 # Change Logs:
 # Date           Author       Notes
 # 2024-08-27     Supperthomas the first version
+# 2025-08-09     ThearchyHelios     Fix Darwin detection and URL
 #
 
 #这个脚本用于安装RT-Thread开发环境 请确保网络畅通
@@ -58,7 +59,7 @@ detect_os() {
         if [ -f "/etc/os-release" ]; then
             OS="Linux"
         elif [ -f "/System/Library/CoreServices/SystemVersion.plist" ]; then
-            OS="macOS"
+            OS="Darwin"
         elif [[ -d "/mnt/c/Windows" || -d "/c/Windows" ]]; then
             OS="WSL"
         else
@@ -91,7 +92,7 @@ install_on_ubuntu() {
 
     # 根据检测结果决定是否使用--gitee参数
     if [ "$use_gitee" = true ]; then
-        wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+        wget https://gitee.com/RT-Thread-Mirror/env/raw/master/install_ubuntu.sh
         chmod 777 install_ubuntu.sh
         echo "Installing on China gitee..."
         ./install_ubuntu.sh --gitee
@@ -124,7 +125,7 @@ install_on_macos() {
 
     # 根据检测结果决定是否使用--gitee参数
     if [ "$use_gitee" = true ]; then
-        wget https://raw.githubusercontent.com/RT-Thread/env/master/install_macos.sh
+        wget https://gitee.com/RT-Thread-Mirror/env/raw/master/install_macos.sh
         chmod 777 install_macos.sh
         echo "Installing on China gitee..."
         ./install_macos.sh --gitee
@@ -147,7 +148,7 @@ install_on_windows() {
 
     # 根据检测结果决定是否使用--gitee参数
     if [ "$use_gitee" = true ]; then
-        wget https://raw.githubusercontent.com/RT-Thread/env/master/install_windows.ps1
+        wget https://gitee.com/RT-Thread-Mirror/env/raw/master/install_windows.ps1
         echo "Installing on China gitee..."
         ./install_windows.ps1 --gitee
     else
@@ -162,7 +163,7 @@ install_on_opensuse() {
     echo "Installing on openSUSE..."
     use_gitee=$(check_if_china_ip)
     if [ "$use_gitee" = true ]; then
-        wget https://raw.githubusercontent.com/RT-Thread/env/master/install_suse.sh
+        wget https://gitee.com/RT-Thread-Mirror/env/raw/master/install_suse.sh
         chmod 777 install_suse.sh
         echo "Installing on China gitee..."
         ./install_suse.sh --gitee
@@ -198,7 +199,7 @@ main() {
                     ;;
             esac
             ;;
-        macOS)
+        Darwin)
             install_on_macos
             ;;
         WSL)

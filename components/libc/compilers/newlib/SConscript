@@ -18,7 +18,7 @@ if newlib_version and not GetDepend('RT_USING_EXTERNAL_LIBC'):
     LIBS = ['c', 'm'] # link libc and libm
     AddDepend(['RT_USING_NEWLIBC', 'RT_USING_LIBC'])
 
-    group = group + DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
+    group = group + DefineGroup('Libc', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
 
     list = os.listdir(cwd)
     for d in list:

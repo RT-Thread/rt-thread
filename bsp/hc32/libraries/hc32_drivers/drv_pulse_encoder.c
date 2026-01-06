@@ -146,7 +146,7 @@ static void TMRA_1_Udf_callback(void)
     TMRA_ClearStatus(hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_1_INDEX].tmr_handler, TMRA_FLAG_UDF);
     hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_1_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMRA_1_Ovf_Udf_Handler(void)
 {
     CM_TMRA_TypeDef *tmr_handler = hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_1_INDEX].tmr_handler;
@@ -173,7 +173,7 @@ static void TMRA_2_Udf_callback(void)
     TMRA_ClearStatus(hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_2_INDEX].tmr_handler, TMRA_FLAG_UDF);
     hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_2_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMRA_2_Ovf_Udf_Handler(void)
 {
     CM_TMRA_TypeDef *tmr_handler = hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_2_INDEX].tmr_handler;
@@ -200,7 +200,7 @@ static void TMRA_3_Udf_callback(void)
     TMRA_ClearStatus(hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_3_INDEX].tmr_handler, TMRA_FLAG_UDF);
     hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_3_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMRA_3_Ovf_Udf_Handler(void)
 {
     CM_TMRA_TypeDef *tmr_handler = hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_3_INDEX].tmr_handler;
@@ -227,7 +227,7 @@ static void TMRA_4_Udf_callback(void)
     TMRA_ClearStatus(hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_4_INDEX].tmr_handler, TMRA_FLAG_UDF);
     hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_4_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMRA_4_Ovf_Udf_Handler(void)
 {
     CM_TMRA_TypeDef *tmr_handler = hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_4_INDEX].tmr_handler;
@@ -254,7 +254,7 @@ static void TMRA_5_Udf_callback(void)
     TMRA_ClearStatus(hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_5_INDEX].tmr_handler, TMRA_FLAG_UDF);
     hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_5_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMRA_5_Ovf_Udf_Handler(void)
 {
     CM_TMRA_TypeDef *tmr_handler = hc32_pulse_encoder_tmra_obj[PULSE_ENCODER_TMRA_5_INDEX].tmr_handler;
@@ -647,7 +647,7 @@ void TMR6_1_Udf_callback(void)
     TMR6_ClearStatus(hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_1_INDEX].tmr_handler, TMR6_FLAG_UDF);
     hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_1_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMR6_1_Ovf_Udf_Handler(void)
 {
     CM_TMR6_TypeDef *tmr_handler = hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_1_INDEX].tmr_handler;
@@ -674,7 +674,7 @@ void TMR6_2_Udf_callback(void)
     TMR6_ClearStatus(hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_2_INDEX].tmr_handler, TMR6_FLAG_UDF);
     hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_2_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F448) || defined (HC32F472)
+#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
 void TMR6_2_Ovf_Udf_Handler(void)
 {
     CM_TMR6_TypeDef *tmr_handler = hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_2_INDEX].tmr_handler;
@@ -701,7 +701,7 @@ void TMR6_3_Udf_callback(void)
     TMR6_ClearStatus(hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_3_INDEX].tmr_handler, TMR6_FLAG_UDF);
     hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_3_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F472)
+#if defined (HC32F472) || defined (HC32F334)
 void TMR6_3_Ovf_Udf_Handler(void)
 {
     CM_TMR6_TypeDef *tmr_handler = hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_3_INDEX].tmr_handler;
@@ -728,7 +728,7 @@ void TMR6_4_Udf_callback(void)
     TMR6_ClearStatus(hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_4_INDEX].tmr_handler, TMR6_FLAG_UDF);
     hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_4_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F472)
+#if defined (HC32F472) || defined (HC32F334)
 void TMR6_4_Ovf_Udf_Handler(void)
 {
     CM_TMR6_TypeDef *tmr_handler = hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_4_INDEX].tmr_handler;
@@ -755,7 +755,7 @@ void TMR6_5_Udf_callback(void)
     TMR6_ClearStatus(hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_5_INDEX].tmr_handler, TMR6_FLAG_UDF);
     hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_5_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F472)
+#if defined (HC32F472) || defined (HC32F334)
 void TMR6_5_Ovf_Udf_Handler(void)
 {
     CM_TMR6_TypeDef *tmr_handler = hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_5_INDEX].tmr_handler;
@@ -782,7 +782,7 @@ void TMR6_6_Udf_callback(void)
     TMR6_ClearStatus(hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_6_INDEX].tmr_handler, TMR6_FLAG_UDF);
     hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_6_INDEX].Over_Under_Flowcount--;
 }
-#if defined (HC32F472)
+#if defined (HC32F472) || defined (HC32F334)
 void TMR6_6_Ovf_Udf_Handler(void)
 {
     CM_TMR6_TypeDef *tmr_handler = hc32_pulse_encoder_tmr6_obj[PULSE_ENCODER_TMR6_6_INDEX].tmr_handler;

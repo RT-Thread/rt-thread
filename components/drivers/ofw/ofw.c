@@ -307,7 +307,26 @@ rt_err_t rt_ofw_console_setup(void)
 
     if (err == -RT_ENOSYS && !rt_ofw_prop_read_string(ofw_node_chosen, "stdout-path", &stdout_path))
     {
-        struct rt_ofw_node *stdout_np = rt_ofw_find_node_by_path(stdout_path);
+        struct rt_ofw_node *stdout_np;
+
+        if (*stdout_path != '/' && ofw_node_aliases)
+        {
+            int alias_len;
+            struct rt_ofw_prop *prop;
+
+            alias_len = strchrnul(stdout_path, ':') - stdout_path;
+
+            rt_ofw_foreach_prop(ofw_node_aliases, prop)
+            {
+                if (!rt_strncmp(prop->name, stdout_path, alias_len))
+                {
+                    stdout_path = prop->value;
+                    break;
+                }
+            }
+        }
+
+        stdout_np = rt_ofw_find_node_by_path(stdout_path);
 
         if (stdout_np && (ofw_name = ofw_console_serial_find(con_name, stdout_np)))
         {

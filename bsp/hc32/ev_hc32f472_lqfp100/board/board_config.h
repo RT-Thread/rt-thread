@@ -16,7 +16,9 @@
 #include <rtconfig.h>
 #include "hc32_ll.h"
 #include "drv_config.h"
-
+#if defined(RT_USING_CHERRYUSB)
+    #include "usb_config.h"
+#endif
 
 /************************* XTAL port **********************/
 #define XTAL_PORT                       (GPIO_PORT_F)
@@ -292,6 +294,24 @@
 
 #endif
 
+#if defined(BSP_USING_INPUT_CAPTURE)
+    #if defined(BSP_USING_INPUT_CAPTURE_TMR6_1)
+        #define INPUT_CAPTURE_TMR6_1_PORT           (GPIO_PORT_A)
+        #define INPUT_CAPTURE_TMR6_1_PIN            (GPIO_PIN_00)
+        #define INPUT_CAPTURE_TMR6_1_FUNC           (GPIO_FUNC_11)
+    #endif
+    #if defined(BSP_USING_INPUT_CAPTURE_TMR6_2)
+        #define INPUT_CAPTURE_TMR6_2_PORT           (GPIO_PORT_B)
+        #define INPUT_CAPTURE_TMR6_2_PIN            (GPIO_PIN_02)
+        #define INPUT_CAPTURE_TMR6_2_FUNC           (GPIO_FUNC_12)
+    #endif
+    #if defined(BSP_USING_INPUT_CAPTURE_TMR6_10)
+        #define INPUT_CAPTURE_TMR6_10_PORT          (GPIO_PORT_A)
+        #define INPUT_CAPTURE_TMR6_10_PIN           (GPIO_PIN_12)
+        #define INPUT_CAPTURE_TMR6_10_FUNC          (GPIO_FUNC_11)
+    #endif
+#endif
+
 #if defined(BSP_USING_QSPI)
     #ifndef BSP_QSPI_USING_SOFT_CS
         /* QSSN */
@@ -346,8 +366,15 @@
     #endif /* BSP_USING_TMR6_PULSE_ENCODER */
 #endif /* RT_USING_PULSE_ENCODER */
 
-#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH)
-    #if defined(BSP_USING_USBFS)
+#if defined(RT_USING_CHERRYUSB)
+    #if defined(BSP_USING_USBD) || defined(BSP_USING_USBH) || \
+        defined(BSP_USING_USBFS) || defined(RT_USING_USB)
+        #error "When using CherryUSB, Please donot Enable 'On-Chip Peripheral Driver---> []Enable USB' or using USB legacy version!"
+    #endif
+#endif
+
+#if defined(BSP_USING_USBD) || defined(BSP_USING_USBH) || defined(RT_USING_CHERRYUSB)
+    #if defined(BSP_USING_USBFS) || defined(RT_USING_CHERRYUSB)
         /* USBFS Core*/
         #define USBF_DP_PORT                    (GPIO_PORT_A)
         #define USBF_DP_PIN                     (GPIO_PIN_12)

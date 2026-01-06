@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>GD32F407, __RTTHREAD__, RT_USING_LIBC, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, USE_STDPERIPH_DRIVER</Define>
+              <Define>USE_STDPERIPH_DRIVER, RT_USING_ARMLIBC, __RTTHREAD__, RT_USING_LIBC, GD32F407, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>packages\gd32-arm-series-latest\GD32F4xx\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\smp_call;..\..\..\..\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\libraries\gd32_drivers;packages\gd32-arm-cmsis-latest\GD32F4xx;..\..\..\..\components\drivers\phy;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\finsh;..\..\..\..\libcpu\arm\cortex-m4;.;applications;..\..\..\..\libcpu\arm\common;board;..\..\..\..\components\drivers\include;packages\gd32-arm-cmsis-latest\GD32F4xx\GD\GD32F4xx\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include</IncludePath>
+              <IncludePath>..\..\..\..\components\drivers\include;applications;packages\gd32-arm-cmsis-latest\GD32F4xx;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\libraries\gd32_drivers;..\..\..\..\components\drivers\phy;packages\gd32-arm-series-latest\GD32F4xx\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\net\utest;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;.;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\posix\io\epoll;packages\gd32-arm-cmsis-latest\GD32F4xx\GD\GD32F4xx\Include;..\..\..\..\libcpu\arm\common;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\libc\compilers\common\extension;..\libraries\gd32_drivers\config;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\include;..\..\..\..\include;board;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -752,13 +752,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_soft_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\gd32_drivers\drv_soft_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\gd32_drivers\drv_usart.c</FilePath>
@@ -769,16 +762,9 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>msh_parse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -790,9 +776,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1088,16 +1081,16 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1116,9 +1109,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
         </Group>

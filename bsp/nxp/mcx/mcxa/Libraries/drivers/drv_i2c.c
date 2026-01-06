@@ -16,15 +16,26 @@
 
 #ifdef RT_USING_I2C
 
+#define DBG_TAG    "drv.i2c"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 enum
 {
 #ifdef BSP_USING_I2C0
     I2C0_INDEX,
 #endif
+#ifdef BSP_USING_I2C1
+    I2C1_INDEX,
+#endif
+#ifdef BSP_USING_I2C2
+    I2C2_INDEX,
+#endif
+#ifdef BSP_USING_I2C3
+    I2C3_INDEX,
+#endif
 };
 
-
-#define i2c_dbg                 rt_kprintf
 
 struct lpc_i2c_bus
 {
@@ -44,10 +55,56 @@ struct lpc_i2c_bus lpc_obj[] =
         {
             .I2C = LPI2C0,
             .baud = 100000U,
+#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+            .clock_attach_id = kFRO_LF_DIV_to_LPI2C0,
+#else
             .clock_attach_id = kFRO12M_to_LPI2C0,
+#endif
             .clock_div_name = kCLOCK_DivLPI2C0,
             .clock_src = kCLOCK_Fro12M,
             .name = "i2c0",
+        },
+#endif
+#ifdef BSP_USING_I2C1
+        {
+            .I2C = LPI2C1,
+            .baud = 100000U,
+#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+            .clock_attach_id = kFRO_LF_DIV_to_LPI2C1,
+#else
+            .clock_attach_id = kFRO12M_to_LPI2C1,
+#endif
+            .clock_div_name = kCLOCK_DivLPI2C1,
+            .clock_src = kCLOCK_Fro12M,
+            .name = "i2c1",
+        },
+#endif
+#ifdef BSP_USING_I2C2
+        {
+            .I2C = LPI2C2,
+            .baud = 100000U,
+#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+            .clock_attach_id = kFRO_LF_DIV_to_LPI2C2,
+#else
+            .clock_attach_id = kFRO12M_to_LPI2C2,
+#endif
+            .clock_div_name = kCLOCK_DivLPI2C2,
+            .clock_src = kCLOCK_Fro12M,
+            .name = "i2c2",
+        },
+#endif
+#ifdef BSP_USING_I2C3
+        {
+            .I2C = LPI2C3,
+            .baud = 100000U,
+#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+            .clock_attach_id = kFRO_LF_DIV_to_LPI2C3,
+#else
+            .clock_attach_id = kFRO12M_to_LPI2C3,
+#endif
+            .clock_div_name = kCLOCK_DivLPI2C3,
+            .clock_src = kCLOCK_Fro12M,
+            .name = "i2c3",
         },
 #endif
 };
@@ -80,7 +137,7 @@ static rt_ssize_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
 
             if (LPI2C_MasterTransferBlocking(lpc_i2c->I2C, &xfer) != kStatus_Success)
             {
-                i2c_dbg("i2c bus read failed!\n");
+                LOG_D("i2c bus read failed!\n");
                 return i;
             }
         }
@@ -99,7 +156,7 @@ static rt_ssize_t lpc_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg 
 
             if (LPI2C_MasterTransferBlocking(lpc_i2c->I2C, &xfer) != kStatus_Success)
             {
-                i2c_dbg("i2c bus write failed!\n");
+                LOG_D("i2c bus write failed!\n");
                 return i;
             }
         }

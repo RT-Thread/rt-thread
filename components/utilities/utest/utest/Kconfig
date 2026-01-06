@@ -1,0 +1,8 @@
+menu "Utest Framework"
+
+config RT_UTEST_SELF_PASS
+    bool "UTEST Framework Test"
+    select RT_USING_UTEST
+    default n
+
+endmenu

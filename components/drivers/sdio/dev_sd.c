@@ -48,7 +48,7 @@ rt_inline rt_uint32_t GET_BITS(rt_uint32_t *resp,
                                rt_uint32_t  size)
 {
         const rt_int32_t __size = size;
-        const rt_uint32_t __mask = (__size < 32 ? 1 << __size : 0) - 1;
+        const rt_uint32_t __mask = (__size < 32 ? 1U << __size : 0) - 1;
         const rt_int32_t __off = 3 - ((start) / 32);
         const rt_int32_t __shft = (start) & 31;
         rt_uint32_t __res;
@@ -274,7 +274,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
     card->max_data_rate = 50000000;
     if (switch_func_timing == SD_SWITCH_FUNC_TIMING_SDR104)
     {
-        LOG_I("sd: switch to SDR104 mode\n");
+        LOG_I("SD card switch to %s mode", "SDR104");
         mmcsd_set_timing(card->host, MMCSD_TIMING_UHS_SDR104);
         mmcsd_set_clock(card->host, 208000000);
         err = mmcsd_excute_tuning(card);
@@ -282,7 +282,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
     }
     else if (switch_func_timing == SD_SWITCH_FUNC_TIMING_SDR50)
     {
-        LOG_I("sd: switch to SDR50 mode\n");
+        LOG_I("SD card switch to %s mode", "SDR50");
         mmcsd_set_timing(card->host, MMCSD_TIMING_UHS_SDR50);
         mmcsd_set_clock(card->host, 100000000);
         err = mmcsd_excute_tuning(card);
@@ -290,13 +290,13 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
     }
     else if (switch_func_timing == SD_SWITCH_FUNC_TIMING_DDR50)
     {
-        LOG_I("sd: switch to DDR50 mode\n");
+        LOG_I("SD card switch to %s mode", "DDR50");
         mmcsd_set_timing(card->host, MMCSD_TIMING_UHS_DDR50);
         mmcsd_set_clock(card->host, 50000000);
     }
     else
     {
-        LOG_I("sd: switch to High Speed / SDR25 mode \n");
+        LOG_I("SD card switch to %s mode", "High Speed / SDR25");
         mmcsd_set_timing(card->host, MMCSD_TIMING_SD_HS);
         mmcsd_set_clock(card->host, 50000000);
     }
@@ -629,31 +629,6 @@ static rt_err_t mmcsd_read_sd_status(struct rt_mmcsd_card *card, rt_uint32_t *sd
     return 0;
 }
 
-static rt_err_t sd_switch_voltage(struct rt_mmcsd_host *host)
-{
-    rt_err_t err;
-    struct rt_mmcsd_cmd cmd = { 0 };
-
-    cmd.cmd_code = VOLTAGE_SWITCH;
-    cmd.arg = 0;
-    cmd.flags = RESP_R1 | CMD_AC;
-
-    err = mmcsd_send_cmd(host, &cmd, 0);
-    if (err)
-        return err;
-
-    return RT_EOK;
-}
-
-static rt_err_t sd_switch_uhs_voltage(struct rt_mmcsd_host *host)
-{
-    if (host->ops->switch_uhs_voltage != RT_NULL)
-    {
-        return host->ops->switch_uhs_voltage(host);
-    }
-    return -ENOSYS;
-}
-
 static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
                                      rt_uint32_t           ocr)
 {
@@ -675,7 +650,7 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
         ocr |= 1 << 30;
 
     /* Switch to UHS voltage if both Host and the Card support this feature */
-    if (((host->valid_ocr & VDD_165_195) != 0) && (host->ops->switch_uhs_voltage != RT_NULL))
+    if (((host->valid_ocr & VDD_165_195) != 0) && (host->ops->signal_voltage_switch != RT_NULL))
     {
         ocr |= OCR_S18R;
     }
@@ -687,10 +662,7 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     if (ocr & OCR_S18R)
     {
         ocr = VDD_165_195;
-        err = sd_switch_voltage(host);
-        if (err)
-           goto err2;
-        err = sd_switch_uhs_voltage(host);
+        err = mmcsd_set_uhs_voltage(host, ocr);
         if (err)
             goto err2;
     }

@@ -7,6 +7,41 @@
  * Date           Author       Notes
  * 2022-12-14     WangXiaoyao  the first version
  * 2023-03-20     WangXiaoyao  Format & add more testcases for API under mm_aspace.h
+ * 2025-12-14     ChuanN-sudo  Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: MM API Test
+ *
+ * Test Objectives:
+ * - Verify I/O remapping functionality with cached memory access.
+ * - Test memory mapping flag creation and extraction mechanisms.
+ * - Validate address space management operations.
+ * - Test core APIs: rt_pages_alloc(), rt_ioremap_cached(), rt_iounmap(), rt_pages_free(),
+ *      rt_pages_free(), MMF_CREATE(), MMF_GET_CNTL(), MMF_GET_ALIGN().
+ *
+ * Test Scenarios:
+ * - Address Space Test (aspace_tc): Tests memory address space management APIs.
+ * - I/O Remap Test (ioremap_tc): Allocates physical pages, maps to virtual address with cache, verifies data consistency, and cleans up resources.
+ * - Flag Test (flag_tc): Creates memory mapping flags with different parameters and validates control bits and alignment values extraction.
+ *
+ * Verification Metrics:
+ * - I/O remapping should correctly map physical to virtual addresses.
+ * - Cached memory access should maintain data consistency between physical and virtual addresses.
+ * - Memory mapping flags should correctly encode and decode control bits and alignment values.
+ * - Flag creation with alignment should set MMF_REQUEST_ALIGN bit and store alignment value.
+ * - Flag creation without alignment should not set alignment-related bits.
+ *
+  Dependencies:
+ * - Hardware requirements: QEMU emulator or any hardware platform that supports RT-Thread with MMU.
+ * - Software configuration:
+ *     - RT_UTEST_MM_API must be enabled (enable via: RT-Thread Utestcases -> RT-Thread Utestcases -> Memory Management Subsystem Testcase -> Enable Utest for MM API).
+ *     - RT_USING_SMART must be enabled (enable via:  Enable RT-Thread Kernel -> RT-Thread Smart (microkernel on kernel/userland)).
+ * - Environmental Assumptions: MMU support must be available on the target platform.
+
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (testcases.mm.api_tc)"
+ * - No assertion failures during test execution.
  */
 #include "common.h"
 

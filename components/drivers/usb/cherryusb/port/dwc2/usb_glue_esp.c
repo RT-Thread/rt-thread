@@ -144,6 +144,7 @@ void usb_dc_low_level_init(uint8_t busid)
 {
     esp_err_t ret;
     void *reg_base = (void*)g_usbdev_bus[busid].reg_base;
+    (void)reg_base;
     usb_phy_config_t phy_config = {
         .controller = USB_PHY_CTRL_OTG,
         .otg_mode = USB_OTG_MODE_DEVICE,
@@ -170,6 +171,7 @@ void usb_dc_low_level_init(uint8_t busid)
 void usb_dc_low_level_deinit(uint8_t busid)
 {
     void *reg_base = (void*)g_usbdev_bus[busid].reg_base;
+    (void)reg_base;
     if (s_interrupt_handle[GET_USB_INDEX(reg_base)]) {
         esp_intr_free(s_interrupt_handle[GET_USB_INDEX(reg_base)]);
         s_interrupt_handle[GET_USB_INDEX(reg_base)] = NULL;
@@ -190,6 +192,7 @@ static void usb_hc_interrupt_cb(void *arg_pv)
 void usb_hc_low_level_init(struct usbh_bus *bus)
 {
     void *reg_base = (void*)bus->hcd.reg_base;
+    (void)reg_base;
     // Host Library defaults to internal PHY
     usb_phy_config_t phy_config = {
         .controller = USB_PHY_CTRL_OTG,
@@ -219,6 +222,7 @@ void usb_hc_low_level_init(struct usbh_bus *bus)
 void usb_hc_low_level_deinit(struct usbh_bus *bus)
 {
     void *reg_base = (void*)bus->hcd.reg_base;
+    (void)reg_base;
     if (s_interrupt_handle[GET_USB_INDEX(reg_base)]) {
         esp_intr_free(s_interrupt_handle[GET_USB_INDEX(reg_base)]);
         s_interrupt_handle[GET_USB_INDEX(reg_base)] = NULL;

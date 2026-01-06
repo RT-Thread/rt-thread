@@ -1,0 +1,35 @@
+menu "RT-Thread Utestcases"
+
+    config RT_USING_UTESTCASES
+        bool "RT-Thread Utestcases"
+        default n
+        select RT_USING_UTEST
+        select RT_USING_DEBUG if !RT_USING_ULOG
+
+    if RT_USING_UTESTCASES
+
+        rsource "src/utest/Kconfig"
+
+        menu "Kernel Components"
+
+            menu "Drivers"
+                rsource "components/drivers/core/utest/Kconfig"
+                rsource "components/drivers/audio/utest/Kconfig"
+                rsource "components/drivers/ipc/utest/Kconfig"
+                rsource "components/drivers/serial/utest/Kconfig"
+                rsource "components/drivers/smp_call/utest/Kconfig"
+            endmenu
+
+            rsource "components/dfs/utest/Kconfig"
+            rsource "components/libc/cplusplus/utest/Kconfig"
+            rsource "components/net/utest/Kconfig"
+            rsource "components/utilities/utest/utest/Kconfig"
+
+        endmenu
+
+        rsource "examples/utest/testcases/mm/Kconfig"
+        rsource "examples/utest/testcases/tmpfs/Kconfig"
+
+endif
+
+endmenu

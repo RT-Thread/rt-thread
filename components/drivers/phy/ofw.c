@@ -11,7 +11,7 @@
 #include <rtdevice.h>
 #include <stdio.h>
 #define DBG_TAG "rtdm.phy"
-#define DBG_LVL DBG_INFO
+#define DBG_LVL DBG_LOG
 #include <rtdbg.h>
 #include "ofw.h"
 

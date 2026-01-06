@@ -1,0 +1,17 @@
+
+# files format check exclude path, please follow the instructions below to modify;
+# If you need to exclude an entire folder, add the folder path in dir_path;
+# If you need to exclude a file, add the path to the file in file_path.
+
+# 从 .ignore_format.yml 迁移的规则
+/imx/imxrt/imxrt1060-nxp-evk/board/board.c/
+/imx/imxrt/imxrt1060-nxp-evk/board/MCUX_Config/
+/imx/imxrt/imxrt1060-nxp-evk/xip/
+
+/imx/imxrt/libraries/MIMXRT1060/
+
+/lpc/lpc55sxx/Libraries/LPC55*/
+
+/mcx/mcxa/Libraries/MCXA153/
+/mcx/mcxc/Libraries/MCXC444/
+/mcx/mcxn/Libraries/MCXN947/

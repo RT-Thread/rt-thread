@@ -204,6 +204,7 @@ void dw_pcie_free_msi(struct dw_pcie_port *port)
 
         rt_dma_free_coherent(pci->dev, sizeof(rt_uint64_t), port->msi_data,
                 port->msi_data_phy);
+        port->msi_data = RT_NULL;
     }
 }
 
@@ -331,7 +332,8 @@ rt_err_t dw_pcie_host_init(struct dw_pcie_port *port)
         {
             LOG_E("Invalid count of irq = %d", port->irq_count);
 
-            return -RT_EINVAL;
+            err = -RT_EINVAL;
+            goto _err_free_cfg;
         }
     }
 
@@ -341,7 +343,8 @@ rt_err_t dw_pcie_host_init(struct dw_pcie_port *port)
 
         if (!port->msi_pic)
         {
-            return -RT_ENOMEM;
+            err = -RT_ENOMEM;
+            goto _err_free_cfg;
         }
 
         port->msi_pic->priv_data = port;
@@ -403,6 +406,13 @@ _err_free_msi:
 _err_free_bridge:
     rt_pci_host_bridge_free(bridge);
     port->bridge = RT_NULL;
+
+_err_free_cfg:
+    if (port->cfg0_base)
+    {
+        rt_iounmap(port->cfg0_base);
+        port->cfg0_base = RT_NULL;
+    }
 
     return err;
 }

@@ -17,22 +17,25 @@
 
 #ifdef RT_USING_PIN
 
+#define DBG_TAG    "drv.pin"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 #define GET_GPIO_PORT(x)      ((x) / 32)
 #define GET_GPIO_PIN(x)       ((x) % 32)
 
 static struct rt_pin_ops mcx_pin_ops;
 
-static GPIO_Type *GPIO_TYPE_TBL[] = {GPIO0, GPIO1, GPIO2, GPIO3};
-static PORT_Type *PORT_TYPE_TBL[] = {PORT0, PORT1, PORT2, PORT3};
-static IRQn_Type   IRQ_TYPE_TBL[] = {GPIO0_IRQn, GPIO1_IRQn, GPIO2_IRQn, GPIO3_IRQn};
+static GPIO_Type *GPIO_TYPE_TBL[] = GPIO_BASE_PTRS;
+static PORT_Type *PORT_TYPE_TBL[] = PORT_BASE_PTRS;
+static IRQn_Type   IRQ_TYPE_TBL[] = GPIO_IRQS;
 
 
 #define PIN2GPIO(x)     GPIO_TYPE_TBL[GET_GPIO_PORT(x)]
 #define PIN2PORT(x)     PORT_TYPE_TBL[GET_GPIO_PORT(x)]
 #define PIN2IRQ(x)      IRQ_TYPE_TBL[GET_GPIO_PORT(x)]
 
-struct rt_pin_irq_hdr pin_irq_hdr_tab[32*4] = {0};
+struct rt_pin_irq_hdr pin_irq_hdr_tab[32*5] = {0};
 
 static void mcx_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
@@ -141,6 +144,11 @@ void GPIO2_IRQHandler(void)
 void GPIO3_IRQHandler(void)
 {
     pin_irq_handler(3);
+}
+
+void GPIO4_IRQHandler(void)
+{
+    pin_irq_handler(4);
 }
 
 

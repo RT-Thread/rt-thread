@@ -30,7 +30,7 @@
 
 #ifdef BSP_USING_PULSE_ENCODER
 
-#if defined (HC32F4A0)
+#if defined (HC32F4A0) || defined (HC32F4A8)
     #define TEST_IO_A_PIN GET_PIN(A, 5)
     #define TEST_IO_B_PIN GET_PIN(A, 6)
 #else
@@ -42,7 +42,7 @@ static rt_device_t pulse_encoder_dev = RT_NULL;
 
 static void printf_connect(void)
 {
-#if defined (HC32F4A0)
+#if defined (HC32F4A0) || defined (HC32F4A8)
 #if defined(BSP_USING_PULSE_ENCODER_TMRA_1)
     rt_kprintf("  [tmra]*connect PA5-->PA8 PA6-->PA9\n");
 #endif
@@ -72,6 +72,14 @@ static void printf_connect(void)
 #endif
 #if defined(BSP_USING_PULSE_ENCODER_TMR6_1)
     rt_kprintf("  [tmr6]*connect PB0-->PA3 PB1-->PA7\n");
+#endif
+#endif
+#if defined (HC32F334)
+#if defined(BSP_USING_PULSE_ENCODER_TMRA_1)
+    rt_kprintf("  [tmra]*connect PB0-->PA0 PB1-->PA1\n");
+#endif
+#if defined(BSP_USING_PULSE_ENCODER_TMR6_1)
+    rt_kprintf("  [tmr6]*connect PB0-->PA7 PB1-->PA3\n");
 #endif
 #endif
 }

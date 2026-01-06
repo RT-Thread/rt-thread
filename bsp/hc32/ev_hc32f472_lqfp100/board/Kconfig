@@ -90,7 +90,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART1 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART1_RX_USING_DMA
-                        default 64                     
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART2
@@ -123,7 +123,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART2 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART2_RX_USING_DMA
-                        default 64                        
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART3
@@ -173,7 +173,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART4 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART4_RX_USING_DMA
-                        default 64                            
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART5
@@ -206,7 +206,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART5 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART5_RX_USING_DMA
-                        default 64                        
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART6
@@ -634,6 +634,38 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    menuconfig BSP_USING_INPUT_CAPTURE
+        bool "Enable Input Capture"
+        default n
+        select RT_USING_INPUT_CAPTURE
+        if BSP_USING_INPUT_CAPTURE
+            menuconfig BSP_USING_INPUT_CAPTURE_TMR6
+                bool "Use Timer6 As The Input Capture"
+                default n
+                if BSP_USING_INPUT_CAPTURE_TMR6
+                    config BSP_USING_INPUT_CAPTURE_TMR6_1
+                        bool "unit 1"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_2
+                        bool "unit 2"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_3
+                        bool "unit 3"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_4
+                        bool "unit 4"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_5
+                        bool "unit 5"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_6
+                        bool "unit 6"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_7
+                        bool "unit 7"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_8
+                        bool "unit 8"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_9
+                        bool "unit 9"
+                    config BSP_USING_INPUT_CAPTURE_TMR6_10
+                        bool "unit 10"
+                endif
+        endif
+
     menuconfig BSP_USING_QSPI
         bool "Enable QSPI BUS"
         select RT_USING_QSPI
@@ -710,6 +742,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_USB
         bool "Enable USB"
         default n
+        depends on !RT_USING_CHERRYUSB
         select RT_USING_USB_DEVICE if BSP_USING_USBD
         select RT_USING_USB_HOST if BSP_USING_USBH
         if BSP_USING_USB

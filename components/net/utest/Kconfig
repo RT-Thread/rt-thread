@@ -1,0 +1,140 @@
+menu "Network"
+
+    config RT_UTEST_TC_USING_SAL
+        select RT_USING_SAL
+        bool "SAL Unit Testcase"
+        default n
+
+    menuconfig RT_UTEST_TC_USING_NETDEV
+        select RT_USING_NETDEV
+        bool "Netdev API Test"
+        help
+            Enable netdev network device framework unit tests.
+            
+            Test coverage includes:
+            * Network connectivity (ping operations)
+            * DHCP functionality (enable/disable/restore)
+            * DNS configuration and hostname resolution
+            * Interface configuration (IP/gateway/netmask)
+            * IP address conversion functions
+            * Device retrieval and management
+            * Status control and callback mechanisms
+
+        if RT_UTEST_TC_USING_NETDEV
+
+            config RT_UTEST_DEFAULT_NETDEV_NAME
+                string "Default Netdev Name"
+                default "e0"
+                help
+                    Network interface name for tests. Common values:
+                    "e0" (Ethernet), "w0" (Wireless).
+                    Ensure the device exists in your environment.
+        endif
+
+    menuconfig RT_UTEST_TC_USING_LWIP
+        select RT_USING_LWIP
+        select RT_LWIP_NETIF_LOOPBACK
+        bool "lwIP Unit Testcase"
+        default n
+        help
+            Enable lwIP network stack unit tests including DNS resolution,
+            TCP/UDP socket operations, and network interface tests
+
+        if RT_UTEST_TC_USING_LWIP
+
+            config RT_UTEST_LWIP_DNS_TEST
+                bool "DNS Resolution Test"
+                default y
+                help
+                    Enable DNS resolution unit tests including gethostbyname()
+                    and gethostbyname_r() functions for hostname to IP resolution,
+                    as well as getaddrinfo() and freeaddrinfo() for address info
+                    retrieval and release. Tests verify successful resolution
+                    without hardcoded IP comparisons.
+
+            config RT_UTEST_LWIP_TCP_TEST
+                bool "TCP Socket Test"
+                default y
+                help
+                    Enable TCP socket unit tests including client-server communication
+                    with echo functionality, socket creation, binding, listening,
+                    accepting connections, data transmission with varying buffer sizes,
+                    socket options (TCP_NODELAY, SO_REUSEADDR, SO_REUSEPORT),
+                    and connection management (shutdown, close).
+
+            config RT_UTEST_LWIP_UDP_TEST
+                bool "UDP Socket Test"
+                default y
+                help
+                    Enable UDP socket unit tests including datagram transmission
+                    and reception, client-server echo communication, socket binding
+                    to any port, select() operations with timeout, recvfrom/sendto
+                    functions, and timeout handling for receive operations.
+
+            config RT_UTEST_LWIP_ICMP_TEST
+                bool "ICMP Ping Test"
+                default y
+                help
+                    Enable ICMP ping unit tests using raw sockets to send
+                    ICMP echo requests and receive echo replies. Tests verify
+                    basic ICMP functionality with loopback address (127.0.0.1).
+
+            config RT_UTEST_LWIP_SOCKET_OPT_TEST
+                bool "Socket Options Test"
+                default y
+                help
+                    Enable socket options unit tests including setsockopt()
+                    and getsockopt() functions. Tests verify setting and
+                    retrieving socket options such as SO_REUSEADDR.
+
+            config RT_UTEST_LWIP_ADDR_CONV_TEST
+                bool "Address Conversion Test"
+                default y
+                help
+                    Enable address conversion unit tests including inet_addr()
+                    for converting string IP addresses to binary format and
+                    inet_ntoa() for converting binary addresses back to strings.
+                    Tests verify proper conversion functionality.
+
+            config RT_UTEST_LWIP_NETIF_TEST
+                bool "Network Interface Management Test"
+                default y
+                help
+                    Enable network interface management unit tests including
+                    netif_set_up(), netif_set_down(), and netif_set_default()
+                    functions. Tests verify interface state changes and
+                    default interface configuration.
+
+            config RT_UTEST_LWIP_TCP_PORT
+                int "TCP Test Port"
+                default 1234
+                range 1024 65535
+                help
+                    Configure the TCP port number for unit test communication.
+                    Must be in the range 1024-65535 to avoid system ports
+
+            config RT_UTEST_LWIP_UDP_PORT
+                int "UDP Test Port"
+                default 1235
+                range 1024 65535
+                help
+                    Configure the UDP port number for unit test communication.
+                    Must be in the range 1024-65535 to avoid system ports
+
+            config RT_UTEST_LWIP_TEST_URL
+                string "Test Domain Name"
+                default "www.rt-thread.org"
+                help
+                    Configure the domain name for DNS resolution tests.
+                    This domain will be resolved to verify DNS functionality
+
+            config RT_UTEST_LWIP_TEST_ADDR
+                string "Expected IP Address"
+                default "180.163.146.111"
+                help
+                    Configure the expected IP address for DNS resolution verification.
+                    This should match the actual IP of the test domain
+
+        endif
+
+endmenu

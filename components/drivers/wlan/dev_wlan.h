@@ -114,7 +114,7 @@ typedef enum
     SECURITY_WPA2_MIXED_PSK = (WPA2_SECURITY | AES_ENABLED | TKIP_ENABLED),     /* WPA2 Security with AES & TKIP           */
     SECURITY_WPS_OPEN       = WPS_ENABLED,                                      /* WPS with open security                  */
     SECURITY_WPS_SECURE     = (WPS_ENABLED | AES_ENABLED),                      /* WPS with AES security                   */
-    SECURITY_UNKNOWN        = -1,                                               /* May be returned by scan function if security is unknown.
+    SECURITY_UNKNOWN        = 0xffffffff,                                       /* May be returned by scan function if security is unknown.
                                                                                     Do not pass this to the join function! */
 } rt_wlan_security_t;
 

@@ -45,6 +45,12 @@
 #define __ALIGNED(x) __attribute__((aligned(x)))
 #endif
 #elif defined(__ICCARM__) || defined(__ICCRX__) || defined(__ICCRISCV__)
+#if (__VER__ >= 8000000)
+  #define __ICCARM_V8 1
+#else
+  #define __ICCARM_V8 0
+#endif
+
 #ifndef __USED
 #if defined(__ICCARM_V8) || defined(__ICCRISCV__)
 #define __USED __attribute__((used))

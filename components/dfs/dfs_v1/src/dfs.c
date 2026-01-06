@@ -35,7 +35,9 @@ char working_directory[DFS_PATH_MAX] = {"/"};
 #endif
 
 static struct dfs_fdtable _fdtab;
+#ifdef DFS_USING_POSIX
 static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
+#endif /* DFS_USING_POSIX */
 
 /**
  * @addtogroup group_device_virtual_file_system
@@ -477,8 +479,6 @@ exit:
     return newfd;
 }
 
-#endif /* DFS_USING_POSIX */
-
 /**
  * @ingroup group_fs_file_descriptor
  *
@@ -696,6 +696,7 @@ exit:
     dfs_file_unlock();
     return retfd;
 }
+#endif  /* DFS_USING_POSIX */
 
 /**
  * @brief initialize a dfs file object.
@@ -1082,6 +1083,6 @@ int lsof(int argc, char *argv[])
 MSH_CMD_EXPORT(lsof, list open files);
 #endif /* RT_USING_SMART */
 
-#endif
+#endif  /* RT_USING_FINSH */
 /**@}*/
 

@@ -1,0 +1,9 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+
+# ------ component CI ------
+component.can:
+    kconfig:
+      - CONFIG_BSP_USING_CAN
+      - CONFIG_BSP_USING_CAN0

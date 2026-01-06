@@ -11,6 +11,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <stdlib.h>
+#include <string.h>
 
 #if defined(BSP_USING_HWCRYPTO)
 
@@ -43,7 +44,7 @@ static void _crypto_cmd_print_usage(void)
     rt_kprintf("  aes: test aes module. \n");
 #if defined(HC32F460)
     rt_kprintf("    e.g. msh >crypto_sample aes 128 \n");
-#elif defined (HC32F4A0) || defined (HC32F448) || defined (HC32F472)
+#elif defined (HC32F4A0) || defined (HC32F448) || defined (HC32F472) || defined (HC32F4A8)
     rt_kprintf("    e.g. msh >crypto_sample aes 128/192/256 \n");
 #endif
 #endif
@@ -56,6 +57,14 @@ static void _crypto_cmd_print_usage(void)
 }
 
 #if defined(BSP_USING_CRC)
+/* menuconfig:
+   Hardware Drivers Config--->On-Chip Peripheral Driver--->Using Hardware Crypto --->
+                                                            [*]Enable Hardeware CRC
+ * CRC16命令调用：crypto_sample crc 16
+ * CRC32命令调用：crypto_sample crc 32
+ * 程序功能：打印CRC输入数据和计数结果，使用第三方软件计算数据，再做比较
+ */
+
 #define CRC16_WIDTH    16U
 #define CRC32_WIDTH    32U
 static void crc_test(rt_uint32_t width)
@@ -125,65 +134,91 @@ static void aes_test(rt_uint16_t key_bitlen)
     const char *key192 = "1234567890abcdefghijklmn";
     const char *key256 = "1234567890abcdefghijklmnopqrstuv";
     const char *key;
-
-    ctx = rt_hwcrypto_symmetric_create(rt_hwcrypto_dev_default(), HWCRYPTO_TYPE_AES_ECB);
-    if (ctx == RT_NULL)
+    rt_uint8_t type_max = 1U;
+    hwcrypto_type types[] =
     {
-        rt_kprintf("create AES-CBC context err!");
-        return;
-    }
-    switch (key_bitlen)
+        HWCRYPTO_TYPE_AES_ECB,
+        HWCRYPTO_TYPE_AES_CBC,
+        HWCRYPTO_TYPE_AES_CTR,
+        HWCRYPTO_TYPE_AES_CFB,
+        HWCRYPTO_TYPE_AES_OFB,
+    };
+    const char *type_str[] =
     {
-    case 128:
-        key = key128;
-        break;
-    case 192:
-        key = key192;
-        break;
-    case 256:
-        key = key256;
-        break;
-    default:
-        key = key128;
-        break;
-    }
-    result = rt_hwcrypto_symmetric_setkey(ctx, (rt_uint8_t *)key, key_bitlen);
-    if (result == RT_EOK)
+        "aes_ecb",
+        "aes_cbc",
+        "aes_ctr",
+        "aes_cfb",
+        "aes_ofb",
+    };
+#if defined (HC32F4A8)
+    type_max = 5U;
+#endif
+    for (int i = 0; i < type_max; i++)
     {
-        result = rt_hwcrypto_symmetric_crypt(ctx, HWCRYPTO_MODE_ENCRYPT, AES_DATA_LEN, (rt_uint8_t *)enc_in, enc_out);
-        if (result != RT_EOK)
+        ctx = rt_hwcrypto_symmetric_create(rt_hwcrypto_dev_default(), types[i]);
+        if (ctx == RT_NULL)
         {
-            goto _exit;
+            rt_kprintf("create AES context err!");
+            return;
         }
+        switch (key_bitlen)
+        {
+        case 128:
+            key = key128;
+            break;
+        case 192:
+            key = key192;
+            break;
+        case 256:
+            key = key256;
+            break;
+        default:
+            key = key128;
+            break;
+        }
+        result = rt_hwcrypto_symmetric_setkey(ctx, (rt_uint8_t *)key, key_bitlen);
+#if defined (HC32F4A8)
+        const char *iv = "1234567812345678";
+        result = rt_hwcrypto_symmetric_setiv(ctx, (const rt_uint8_t *)iv, strlen(iv));
+#endif
+        if (result == RT_EOK)
+        {
+            result = rt_hwcrypto_symmetric_crypt(ctx, HWCRYPTO_MODE_ENCRYPT, AES_DATA_LEN, (rt_uint8_t *)enc_in, enc_out);
+            if (result != RT_EOK)
+            {
+                goto _exit;
+            }
 
-        rt_kprintf("aes src data:");
-        for (int i = 0; i < AES_DATA_LEN; i++)
-        {
-            rt_kprintf("%c", enc_in[i]);
-        }
-        rt_kprintf("\n");
+            rt_kprintf("%s src data:", type_str[i]);
+            for (int i = 0; i < AES_DATA_LEN; i++)
+            {
+                rt_kprintf("%c", enc_in[i]);
+            }
+            rt_kprintf("\n");
 
-        rt_kprintf("aes enc data:");
-        for (int i = 0; i < AES_DATA_LEN; i++)
-        {
-            rt_kprintf("%x ", enc_out[i]);
-        }
-        rt_kprintf("\n");
+            rt_kprintf("%s enc data:", type_str[i]);
+            for (int i = 0; i < AES_DATA_LEN; i++)
+            {
+                rt_kprintf("%02x ", enc_out[i]);
+            }
+            rt_kprintf("\n");
 
-        result = rt_hwcrypto_symmetric_crypt(ctx, HWCRYPTO_MODE_DECRYPT, AES_DATA_LEN, (rt_uint8_t *)enc_out, dec_out);
-        if (result != RT_EOK)
-        {
-            goto _exit;
-        }
-        rt_kprintf("aes dec data:");
-        for (int i = 0; i < AES_DATA_LEN; i++)
-        {
-            rt_kprintf("%c", dec_out[i]);
-        }
-        rt_kprintf("\n");
+            result = rt_hwcrypto_symmetric_crypt(ctx, HWCRYPTO_MODE_DECRYPT, AES_DATA_LEN, (rt_uint8_t *)enc_out, dec_out);
+            if (result != RT_EOK)
+            {
+                goto _exit;
+            }
+            rt_kprintf("%s dec data:", type_str[i]);
+            for (int i = 0; i < AES_DATA_LEN; i++)
+            {
+                rt_kprintf("%c", dec_out[i]);
+            }
+            rt_kprintf("\n");
 
 _exit:
-        rt_hwcrypto_symmetric_destroy(ctx);
+            rt_hwcrypto_symmetric_destroy(ctx);
+        }
     }
 }
 #endif

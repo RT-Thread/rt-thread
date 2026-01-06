@@ -177,6 +177,7 @@ struct rt_pci_msi_desc
 #define rt_pci_msix_table_size(flags) ((flags & PCIM_MSIXCTRL_TABLE_SIZE) + 1)
 
 rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type);
+rt_err_t rt_pci_msi_cleanup_irqs(struct rt_pci_device *pdev);
 
 void rt_pci_msi_shutdown(struct rt_pci_device *pdev);
 void rt_pci_msix_shutdown(struct rt_pci_device *pdev);
