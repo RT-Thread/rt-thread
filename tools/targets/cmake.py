@@ -62,7 +62,8 @@ def GenerateCFiles(env, project, project_name):
     OBJCOPY = tool_path_conv["CMAKE_OBJCOPY"]["path"]
     FROMELF = tool_path_conv["CMAKE_FROMELF"]["path"]
 
-    CFLAGS = env['CFLAGS'].replace('\\', "/").replace('\"', "\\\"")
+    CFLAGS = "".join(env['CFLAGS'])
+    CFLAGS = CFLAGS.replace('\\', "/").replace('\"', "\\\"")   
     if 'CXXFLAGS' in dir(rtconfig):
         cflag_str=''.join(env['CXXFLAGS'])
         CXXFLAGS = cflag_str.replace('\\', "/").replace('\"', "\\\"")
