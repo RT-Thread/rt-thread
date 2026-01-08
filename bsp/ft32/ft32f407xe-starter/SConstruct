@@ -19,8 +19,8 @@ def bsp_pkg_check():
     import subprocess
 
     check_paths = [
-        os.path.join("packages", "ft32f0_cmsis_driver-latest"),
-        os.path.join("packages", "ft32f0_std_driver-latest")
+        os.path.join("packages", "ft32f4_cmsis_driver-latest"),
+        os.path.join("packages", "ft32f4_std_driver-latest")
     ]
 
     need_update = not all(os.path.exists(p) for p in check_paths)

@@ -543,6 +543,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | BSP Name | GPIO | UART |
 |----------|------|------|
 | [ft32f072xb-starter](ft32/ft32f072xb-starter) | ✅ | ✅ |
+| [ft32f407xe-starter](ft32/ft32f407xe-starter) | ✅ | ✅ |
 
 #### ⚪ Fujitsu
 
