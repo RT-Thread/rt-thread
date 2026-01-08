@@ -381,10 +381,10 @@
 /* end of Device Control */
 
 /* Other */
-#define PKG_USING_FT32F0_STD_DRIVER
-#define PKG_USING_FT32F0_STD_DRIVER_LATEST_VERSION
-#define PKG_USING_FT32F0_CMSIS_DRIVER
-#define PKG_USING_FT32F0_CMSIS_DRIVER_LATEST_VERSION
+#define PKG_USING_FT32F4_STD_DRIVER
+#define PKG_USING_FT32F4_STD_DRIVER_LATEST_VERSION
+#define PKG_USING_FT32F4_CMSIS_DRIVER
+#define PKG_USING_FT32F4_CMSIS_DRIVER_LATEST_VERSION
 /* end of Other */
 
 /* Signal IO */
@@ -396,19 +396,19 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define SOC_FAMILY_FT32
-#define SOC_SERIES_FT32F0
+#define SOC_SERIES_FT32F4
 
 /* Hardware Drivers Config */
 
-#define SOC_FT32F072RB
+#define SOC_FT32F407VE
 
 /* Onboard Peripheral Drivers */
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
-#define BSP_USING_UART
 #define BSP_USING_UART2
+
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

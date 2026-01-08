@@ -10,8 +10,8 @@ board.c
 
 path =  [cwd]
 
-# FT32F072x8 || FT32F072xB
+# FT32F407xE
 # You can select chips from the list above
-CPPDEFINES = ['FT32F072xB']
+CPPDEFINES = ['FT32F407xE']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 Return('group')

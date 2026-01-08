@@ -73,6 +73,7 @@
         "asm9260t",
         "allwinner_tina",
         "ft32/ft32f072xb-starter",
+        "ft32/ft32f407xe-starter",
         "mini2440",
         "at91/at91sam9g45",
         "at91/at91sam9260",

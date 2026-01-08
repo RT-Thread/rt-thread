@@ -1,12 +1,12 @@
 menu "Hardware Drivers Config"
 
-config SOC_SERIES_FT32F0
+config SOC_SERIES_FT32F4
     bool
     default y
 
-config SOC_FT32F072RB
+config SOC_FT32F407VE
     bool
-    select SOC_SERIES_FT32F0
+    select SOC_SERIES_FT32F4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y

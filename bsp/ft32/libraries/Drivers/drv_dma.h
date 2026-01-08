@@ -22,6 +22,10 @@ extern "C" {
 #define DMA_INSTANCE_TYPE              DMA_Channel_TypeDef
 #endif
 
+#if defined(SOC_SERIES_FT32F4)
+#define DMA_INSTANCE_TYPE              DMA_Channel_TypeDef
+#endif
+
 struct dma_config {
     DMA_INSTANCE_TYPE *Instance;
     rt_uint32_t dma_rcc;
