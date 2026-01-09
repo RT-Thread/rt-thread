@@ -1,0 +1,22 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/serial/device/']
+
+if GetDepend(['RT_SOC_ROCKCHIP_FIQ_DEBUGGER']):
+    src += ['fiq-debugger.c']
+
+if GetDepend(['RT_SOC_ROCKCHIP_GRF']):
+    src += ['grf.c']
+
+if GetDepend(['RT_SOC_ROCKCHIP_HW_DECOMPRESS']):
+    src += ['hw-decompress.c']
+
+if GetDepend(['RT_SOC_ROCKCHIP_IODOMAIN']):
+    src += ['io-domain.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

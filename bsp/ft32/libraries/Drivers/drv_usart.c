@@ -23,10 +23,6 @@
     /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
 
-#ifdef RT_SERIAL_USING_DMA
-    static void ft32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag);
-#endif
-
 enum
 {
 #ifdef BSP_USING_UART1
@@ -54,7 +50,12 @@ void UART_MspInit(USART_TypeDef *USARTx)
     GPIO_InitTypeDef GPIO_InitStruct;
     if (USARTx == USART1)
     {
+#if defined(SOC_SERIES_FT32F0)
         RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
+#endif
+#if defined(SOC_SERIES_FT32F4)
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+#endif
         RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
 
         /*GPIO INIT*/
@@ -64,17 +65,28 @@ void UART_MspInit(USART_TypeDef *USARTx)
         GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
         GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
         GPIO_Init(GPIOA, &GPIO_InitStruct);
+#if defined(SOC_SERIES_FT32F0)
         GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_1);
         GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_1);
-
+#endif
+#if defined(SOC_SERIES_FT32F4)
+        GPIO_PinAFConfig(GPIOA, GPIO_PinSource9, GPIO_AF_7);
+        GPIO_PinAFConfig(GPIOA, GPIO_PinSource10, GPIO_AF_7);
+#endif
         /* USART1 interrupt Init */
         NVIC_SetPriority(USART1_IRQn, 5);
         NVIC_EnableIRQ(USART1_IRQn);
     }
     else if (USARTx  == USART2)
     {
+#if defined(SOC_SERIES_FT32F0)
         RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
         RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE);
+#endif
+#if defined(SOC_SERIES_FT32F4)
+        RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+        RCC_APB1PeriphClockCmd(RCC_APB1Periph_UART2, ENABLE);
+#endif
 
         /*GPIO INIT*/
         GPIO_InitStruct.GPIO_Pin = GPIO_Pin_2 | GPIO_Pin_3;
@@ -83,8 +95,14 @@ void UART_MspInit(USART_TypeDef *USARTx)
         GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;
         GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
         GPIO_Init(GPIOA, &GPIO_InitStruct);
+#if defined(SOC_SERIES_FT32F0)
         GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_1);
         GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_1);
+#endif
+#if defined(SOC_SERIES_FT32F4)
+        GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_7);
+        GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_7);
+#endif
 
         /* USART2 interrupt Init */
         NVIC_SetPriority(USART2_IRQn, 5);
@@ -100,15 +118,24 @@ static rt_err_t ft32_configure(struct rt_serial_device *serial, struct serial_co
 
     uart = rt_container_of(serial, struct ft32_uart, serial);
     uart->Init.USART_BaudRate = cfg->baud_rate;
+#if defined(SOC_SERIES_FT32F0)
     uart->Init.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
-
+#endif
+#if defined(SOC_SERIES_FT32F4)
+    uart->Init.USART_Mode = USART_MODE_TX_RX;
+#endif
     switch (cfg->flowcontrol)
     {
     case RT_SERIAL_FLOWCONTROL_NONE:
         uart->Init.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
         break;
     case RT_SERIAL_FLOWCONTROL_CTSRTS:
+#if defined(SOC_SERIES_FT32F0)
         uart->Init.USART_HardwareFlowControl = USART_HardwareFlowControl_RTS_CTS;
+#endif
+#if defined(SOC_SERIES_FT32F4)
+        uart->Init.USART_HardwareFlowControl = USART_HardwareFlowControl_RTS_DTR;
+#endif
         break;
     default:
         uart->Init.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
@@ -117,6 +144,7 @@ static rt_err_t ft32_configure(struct rt_serial_device *serial, struct serial_co
 
     switch (cfg->data_bits)
     {
+#if defined(SOC_SERIES_FT32F0)
     case DATA_BITS_8:
         if (cfg->parity == PARITY_ODD || cfg->parity == PARITY_EVEN)
             uart->Init.USART_WordLength = USART_WordLength_9b;
@@ -129,10 +157,32 @@ static rt_err_t ft32_configure(struct rt_serial_device *serial, struct serial_co
     default:
         uart->Init.USART_WordLength = USART_WordLength_8b;
         break;
+#endif
+#if defined(SOC_SERIES_FT32F4)
+    case DATA_BITS_9:
+        uart->Init.USART_WordLength = USART_CHAR_LENGTH9_ENABLE;
+        break;
+    case DATA_BITS_8:
+        uart->Init.USART_WordLength = USART_CHAR_LENGTH_8BIT;
+        break;
+    case DATA_BITS_7:
+        uart->Init.USART_WordLength = USART_CHAR_LENGTH_7BIT;
+        break;
+    case DATA_BITS_6:
+        uart->Init.USART_WordLength = USART_CHAR_LENGTH_6BIT;
+        break;
+    case DATA_BITS_5:
+        uart->Init.USART_WordLength = USART_CHAR_LENGTH_5BIT;
+        break;
+    default:
+        uart->Init.USART_WordLength = USART_CHAR_LENGTH_8BIT;
+        break;
+#endif
     }
 
     switch (cfg->stop_bits)
     {
+#if defined(SOC_SERIES_FT32F0)
     case STOP_BITS_1:
         uart->Init.USART_StopBits = USART_StopBits_1;
         break;
@@ -142,10 +192,23 @@ static rt_err_t ft32_configure(struct rt_serial_device *serial, struct serial_co
     default:
         uart->Init.USART_StopBits   = USART_StopBits_1;
         break;
+#endif
+#if defined(SOC_SERIES_FT32F4)
+    case STOP_BITS_1:
+        uart->Init.USART_StopBits = USART_STOPBITS_1;
+        break;
+    case STOP_BITS_2:
+        uart->Init.USART_StopBits   = USART_STOPBITS_2;
+        break;
+    default:
+        uart->Init.USART_StopBits   = USART_STOPBITS_1;
+        break;
+#endif
     }
 
     switch (cfg->parity)
     {
+#if defined(SOC_SERIES_FT32F0)
     case PARITY_NONE:
         uart->Init.USART_Parity     = USART_Parity_No;
         break;
@@ -158,11 +221,23 @@ static rt_err_t ft32_configure(struct rt_serial_device *serial, struct serial_co
     default:
         uart->Init.USART_Parity     = USART_Parity_No;
         break;
+#endif
+#if defined(SOC_SERIES_FT32F4)
+    case PARITY_NONE:
+        uart->Init.USART_Parity     = USART_PARITY_NONE;
+        break;
+    case PARITY_ODD:
+        uart->Init.USART_Parity     = USART_PARITY_ODD;
+        break;
+    case PARITY_EVEN:
+        uart->Init.USART_Parity     = USART_PARITY_EVEN;
+        break;
+    default:
+        uart->Init.USART_Parity     = USART_PARITY_NONE;
+        break;
+#endif
     }
 
-#ifdef RT_SERIAL_USING_DMA
-    uart->dma_rx.last_index = 0;
-#endif
     UART_MspInit(uart->config->Instance);
     USART_Init(uart->config->Instance, &(uart->Init));
     USART_Cmd(uart->config->Instance, ENABLE);
@@ -172,9 +247,6 @@ static rt_err_t ft32_configure(struct rt_serial_device *serial, struct serial_co
 static rt_err_t ft32_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct ft32_uart *uart;
-#ifdef RT_SERIAL_USING_DMA
-    rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
-#endif
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct ft32_uart, serial);
@@ -186,21 +258,17 @@ static rt_err_t ft32_control(struct rt_serial_device *serial, int cmd, void *arg
         /* disable rx irq */
         NVIC_DisableIRQ(uart->config->irq_type);
         /* disable interrupt */
+#if defined(SOC_SERIES_FT32F0)
+        /* enable interrupt */
         USART_ITConfig(uart->config->Instance, USART_IT_RXNE, DISABLE);
-
-#ifdef RT_SERIAL_USING_DMA
-        /* disable DMA */
-        if (ctrl_arg == RT_DEVICE_FLAG_DMA_RX)
-        {
-            NVIC_DisableIRQ(uart->config->dma_rx->dma_irq);
-            DMA_DeInit(uart->dma_rx.Instance);
-        }
-        else if (ctrl_arg == RT_DEVICE_FLAG_DMA_TX)
-        {
-            NVIC_DisableIRQ(uart->config->dma_tx->dma_irq);
-            DMA_DeInit(uart->dma_rx.Instance);
-        }
+        break;
 #endif
+#if defined(SOC_SERIES_FT32F4)
+        /* enable interrupt */
+        USART_ITConfig(uart->config->Instance, USART_IT_RXRDY, DISABLE);
+        break;
+#endif
+
         break;
 
     /* enable interrupt */
@@ -208,15 +276,17 @@ static rt_err_t ft32_control(struct rt_serial_device *serial, int cmd, void *arg
         /* enable rx irq */
         NVIC_SetPriority(uart->config->irq_type, 1);
         NVIC_EnableIRQ(uart->config->irq_type);
+#if defined(SOC_SERIES_FT32F0)
         /* enable interrupt */
         USART_ITConfig(uart->config->Instance, USART_IT_RXNE, ENABLE);
         break;
-
-#ifdef RT_SERIAL_USING_DMA
-    case RT_DEVICE_CTRL_CONFIG:
-        ft32_dma_config(serial, ctrl_arg);
+#endif
+#if defined(SOC_SERIES_FT32F4)
+        /* enable interrupt */
+        USART_ITConfig(uart->config->Instance, USART_IT_RXRDY, ENABLE);
         break;
 #endif
+        break;
 
     case RT_DEVICE_CTRL_CLOSE:
         USART_DeInit(uart->config->Instance);
@@ -226,6 +296,7 @@ static rt_err_t ft32_control(struct rt_serial_device *serial, int cmd, void *arg
     return RT_EOK;
 }
 
+#if defined(SOC_SERIES_FT32F0)
 rt_uint32_t ft32_uart_get_mask(rt_uint32_t word_length, rt_uint32_t parity)
 {
     rt_uint32_t mask;
@@ -269,6 +340,7 @@ rt_uint32_t ft32_uart_get_mask(rt_uint32_t word_length, rt_uint32_t parity)
     }
     return mask;
 }
+#endif
 
 static int ft32_putc(struct rt_serial_device *serial, char c)
 {
@@ -276,13 +348,20 @@ static int ft32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
 
     uart = rt_container_of(serial, struct ft32_uart, serial);
-    UART_INSTANCE_CLEAR_FUNCTION(uart->config->Instance, USART_FLAG_TC);
 #if defined(SOC_SERIES_FT32F0)
+    UART_INSTANCE_CLEAR_FUNCTION(uart->config->Instance, USART_FLAG_TC);
     uart->config->Instance->TDR = c;
+#elif defined(SOC_SERIES_FT32F4)
+    USART_Transmit(uart->config->Instance, c);
 #else
     uart->config->Instance->DR = c;
 #endif
+#if defined(SOC_SERIES_FT32F0)
     while (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TC) == RESET);
+#endif
+#if defined(SOC_SERIES_FT32F4)
+    while (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TXRDY) == RESET);
+#endif
     return 1;
 }
 
@@ -294,14 +373,21 @@ static int ft32_getc(struct rt_serial_device *serial)
     uart = rt_container_of(serial, struct ft32_uart, serial);
 
     ch = -1;
-    if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_RXNE) != RESET)
-    {
 #if defined(SOC_SERIES_FT32F0)
-        ch = uart->config->Instance->RDR & ft32_uart_get_mask(uart->Init.USART_WordLength, uart->Init.USART_Parity);
-#else
-        ch = uart->config->Instance->DR & ft32_uart_get_mask(uart->Init.USART_WordLength, uart->Init.USART_Parity);
+    if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_RXNE) != RESET)
 #endif
-    }
+#if defined(SOC_SERIES_FT32F4)
+        if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_RXRDY) != RESET)
+#endif
+        {
+#if defined(SOC_SERIES_FT32F0)
+            ch = uart->config->Instance->RDR & ft32_uart_get_mask(uart->Init.USART_WordLength, uart->Init.USART_Parity);
+#elif defined(SOC_SERIES_FT32F4)
+            ch = USART_Receive(uart->config->Instance);
+#else
+            ch = uart->config->Instance->DR & ft32_uart_get_mask(uart->Init.USART_WordLength, uart->Init.USART_Parity);
+#endif
+        }
     return ch;
 }
 
@@ -329,43 +415,24 @@ static rt_ssize_t ft32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t 
 static void uart_isr(struct rt_serial_device *serial)
 {
     struct ft32_uart *uart;
-#ifdef RT_SERIAL_USING_DMA
-    rt_size_t recv_total_index, recv_len;
-    rt_base_t level;
-#endif
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct ft32_uart, serial);
-
+#if defined(SOC_SERIES_FT32F0)
     /* UART in mode Receiver -------------------------------------------------*/
     if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_RXNE) != RESET)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
-#ifdef RT_SERIAL_USING_DMA
-    else if ((uart->uart_dma_flag) && (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_RXNE) != RESET))
+#endif
+#if defined(SOC_SERIES_FT32F4)
+    /* UART in mode Receiver -------------------------------------------------*/
+    if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_RXRDY) != RESET)
     {
-        level = rt_hw_interrupt_disable();
-        recv_total_index = serial->config.bufsz - DMA_GetCurrDataCounter(&(uart->dma_rx.Instance));
-        recv_len = recv_total_index - uart->dma_rx.last_index;
-        uart->dma_rx.last_index = recv_total_index;
-        rt_hw_interrupt_enable(level);
-
-        if (recv_len)
-        {
-            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
-        }
-        USART_ClearFlag(uart->config->Instance, USART_IT_IDLE);
-    }
-    else if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TC) != RESET)
-    {
-        if ((serial->parent.open_flag & RT_DEVICE_FLAG_DMA_TX) != 0)
-        {
-
-        }
-        UART_INSTANCE_CLEAR_FUNCTION(uart->config->Instance, USART_FLAG_TC);
+        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
 #endif
+#if defined (SOC_SERIES_FT32F0)
     else
     {
         if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_ORE) != RESET)
@@ -384,12 +451,6 @@ static void uart_isr(struct rt_serial_device *serial)
         {
             USART_ClearFlag(uart->config->Instance, USART_FLAG_PE);
         }
-#if !defined(SOC_SERIES_FT32F0)
-        if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_LBD) != RESET)
-        {
-            UART_INSTANCE_CLEAR_FUNCTION(uart->config->Instance, USART_FLAG_LBD);
-        }
-#endif
         if (USART_GetFlagStatus(uart->config->Instance, USART_FLAG_CTS) != RESET)
         {
             UART_INSTANCE_CLEAR_FUNCTION(uart->config->Instance, USART_FLAG_CTS);
@@ -407,42 +468,16 @@ static void uart_isr(struct rt_serial_device *serial)
             UART_INSTANCE_CLEAR_FUNCTION(uart->config->Instance, USART_FLAG_RXNE);
         }
     }
-}
-
-#ifdef RT_SERIAL_USING_DMA
-static void dma_isr(struct rt_serial_device *serial)
-{
-    struct ft32_uart *uart;
-    rt_size_t recv_total_index, recv_len;
-    rt_base_t level;
-
-    RT_ASSERT(serial != RT_NULL);
-    uart = rt_container_of(serial, struct ft32_uart, serial);
-
-    if ((DMA_GetITStatus(uart->dma_rx.Instance, DMA_IT_TC) != RESET) ||
-            (DMA_GetITStatus(uart->dma_rx.Instance, DMA_IT_HT) != RESET))
-    {
-        level = rt_hw_interrupt_disable();
-        recv_total_index = serial->config.bufsz - DMA_GetCurrDataCounter(uart->dma_rx.Instance);
-        if (recv_total_index == 0)
-        {
-            recv_len = serial->config.bufsz - uart->dma_rx.last_index;
-        }
-        else
-        {
-            recv_len = recv_total_index - uart->dma_rx.last_index;
-        }
-        uart->dma_rx.last_index = recv_total_index;
-        rt_hw_interrupt_enable(level);
-
-        if (recv_len)
-        {
-            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
-        }
-    }
-}
 #endif
+#if defined (SOC_SERIES_FT32F4)
+    else
+    {
 
+    }
+#endif
+}
+
+#if defined(SOC_SERIES_FT32F0)
 #if defined(BSP_USING_UART1)
 void USART1_IRQHandler(void)
 {
@@ -454,30 +489,7 @@ void USART1_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_RX_USING_DMA)
-void UART1_DMA_RX_IRQHandler(void)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
 
-    __DMA_IRQHandler(uart_obj[UART1_INDEX].dma_rx.Instance);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_RX_USING_DMA) */
-#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_TX_USING_DMA)
-void UART1_DMA_TX_IRQHandler(void)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    __DMA_IRQHandler(uart_obj[UART1_INDEX].dma_tx.Instance);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART1_TX_USING_DMA) */
 #endif /* BSP_USING_UART1 */
 
 #if defined(BSP_USING_UART2)
@@ -491,169 +503,50 @@ void USART2_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_RX_USING_DMA)
-void UART2_DMA_RX_IRQHandler(void)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
 
-    __DMA_IRQHandler(uart_obj[UART2_INDEX].dma_rx.Instance);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_RX_USING_DMA) */
-#if defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_TX_USING_DMA)
-void UART2_DMA_TX_IRQHandler(void)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    __DMA_IRQHandler(uart_obj[UART2_INDEX].dma_tx.Instance);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
-#endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART2_TX_USING_DMA) */
 #endif /* BSP_USING_UART2 */
+#endif
 
+#if defined(SOC_SERIES_FT32F4)
+#if defined(BSP_USING_UART1)
+void USART1_Handler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&(uart_obj[UART1_INDEX].serial));
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+#endif /* BSP_USING_UART1 */
+
+#if defined(BSP_USING_UART2)
+void USART2_Handler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    uart_isr(&(uart_obj[UART2_INDEX].serial));
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+#endif /* BSP_USING_UART2 */
+#endif
 
 static void ft32_uart_get_dma_config(void)
 {
 #ifdef BSP_USING_UART1
     uart_obj[UART1_INDEX].uart_dma_flag = 0;
-#ifdef BSP_UART1_RX_USING_DMA
-    uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
-    static struct dma_config uart1_dma_rx = UART1_DMA_RX_CONFIG;
-    uart_config[UART1_INDEX].dma_rx = &uart1_dma_rx;
-#endif
-#ifdef BSP_UART1_TX_USING_DMA
-    uart_obj[UART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
-    static struct dma_config uart1_dma_tx = UART1_DMA_TX_CONFIG;
-    uart_config[UART1_INDEX].dma_tx = &uart1_dma_tx;
-#endif
 #endif
 
 #ifdef BSP_USING_UART2
     uart_obj[UART2_INDEX].uart_dma_flag = 0;
-#ifdef BSP_UART2_RX_USING_DMA
-    uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
-    static struct dma_config uart2_dma_rx = UART2_DMA_RX_CONFIG;
-    uart_config[UART2_INDEX].dma_rx = &uart2_dma_rx;
-#endif
-#ifdef BSP_UART2_TX_USING_DMA
-    uart_obj[UART2_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
-    static struct dma_config uart2_dma_tx = UART2_DMA_TX_CONFIG;
-    uart_config[UART2_INDEX].dma_tx = &uart2_dma_tx;
-#endif
 #endif
 }
-
-#ifdef RT_SERIAL_USING_DMA
-static void ft32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
-{
-    struct rt_serial_rx_fifo *rx_fifo;
-
-    DMA_InitTypeDef Init;
-    struct dma_config *dma_config;
-    struct ft32_uart *uart;
-
-    RT_ASSERT(serial != RT_NULL);
-    RT_ASSERT(flag == RT_DEVICE_FLAG_DMA_TX || flag == RT_DEVICE_FLAG_DMA_RX);
-    uart = rt_container_of(serial, struct ft32_uart, serial);
-
-    if (RT_DEVICE_FLAG_DMA_RX == flag)
-    {
-        Init = &uart->dma_rx.Init;
-        dma_config = uart->config->dma_rx;
-    }
-    else /* RT_DEVICE_FLAG_DMA_TX == flag */
-    {
-        Init = &uart->dma_tx.Init;
-        dma_config = uart->config->dma_tx;
-    }
-    LOG_D("%s dma config start", uart->config->name);
-
-    {
-        rt_uint32_t tmpreg = 0x00U;
-#if defined(SOC_SERIES_FT32F0)
-        /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
-        SET_BIT(RCC->AHBENR, dma_config->dma_rcc);
-        tmpreg = READ_BIT(RCC->AHBENR, dma_config->dma_rcc);
-#endif
-
-        (void)(tmpreg);   /* To avoid compiler warnings */
-    }
-
-    if (RT_DEVICE_FLAG_DMA_RX == flag)
-    {
-    }
-    else if (RT_DEVICE_FLAG_DMA_TX == flag)
-    {
-    }
-
-    Init.DMA_PeripheralInc   =  DMA_PeripheralInc_Disable;
-    Init.MemInc              = DMA_MemoryInc_Enable;
-    Init.PeriphDataAlignment = DMA_PeripheralDataSize_Byte;
-    Init.MemDataAlignment    = DMA_MemoryDataSize_Byte;
-
-    if (RT_DEVICE_FLAG_DMA_RX == flag)
-    {
-        Init.Direction           = DMA_DIR_PeripheralSRC;
-        Init.Mode                = DMA_Mode_Circular;
-    }
-    else if (RT_DEVICE_FLAG_DMA_TX == flag)
-    {
-        Init.Direction           = DMA_DIR_PeripheralDST;
-        Init.Mode                = DMA_Mode_Normal;
-    }
-
-    Init.Priority            = DMA_Priority_Medium;
-    DMA_DeInit(dma_config->Instance);
-    DMA_Init(dma_config->Instance);
-
-    /* enable interrupt */
-    if (flag == RT_DEVICE_FLAG_DMA_RX)
-    {
-        rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
-        /* Start DMA transfer */
-        UART_Receive_DMA(uart->config->Instance, rx_fifo->buffer, serial->config.bufsz);
-        CLEAR_BIT(uart->handle.Instance->CR3, USART_CR3_EIE);
-        USART_ITConfig(uart->config->Instance, USART_IT_IDLE, ENABLE);
-    }
-
-    /* DMA irq should set in DMA TX mode, or HAL_UART_TxCpltCallback function will not be called */
-    NVIC_SetPriority(dma_config->dma_irq, 0, 0);
-    NVIC_EnableIRQ(dma_config->dma_irq);
-
-    NVIC_SetPriority(uart->config->irq_type, 1, 0);
-    NVIC_EnableIRQ(uart->config->irq_type);
-
-    LOG_D("%s dma %s instance: %x", uart->config->name, flag == RT_DEVICE_FLAG_DMA_RX ? "RX" : "TX", DMA_Handle->Instance);
-    LOG_D("%s dma config done", uart->config->name);
-}
-
-static void _dma_tx_complete(struct rt_serial_device *serial)
-{
-    struct ft32_uart *uart;
-    rt_size_t trans_total_index;
-    rt_base_t level;
-
-    RT_ASSERT(serial != RT_NULL);
-    uart = rt_container_of(serial, struct ft32_uart, serial);
-
-    level = rt_hw_interrupt_disable();
-    trans_total_index = DMA_GetCurrDataCounter(uart->dma_tx.Instance);
-    rt_hw_interrupt_enable(level);
-
-    if (trans_total_index == 0)
-    {
-        rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
-    }
-}
-
-
-#endif  /* RT_SERIAL_USING_DMA */
 
 static const struct rt_uart_ops ft32_uart_ops =
 {

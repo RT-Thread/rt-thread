@@ -1,0 +1,59 @@
+menu "Hardware Drivers Config"
+
+config SOC_SERIES_FT32F4
+    bool
+    default y
+
+config SOC_FT32F407VE
+    bool
+    select SOC_SERIES_FT32F4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        if BSP_USING_UART
+            choice
+                prompt "Select UART framework version"
+                default BSP_USING_SERIAL_V1
+                
+                config BSP_USING_SERIAL_V1
+                    bool "Use Serial V1 framework"
+                    select RT_USING_SERIAL
+                    
+                config BSP_USING_SERIAL_V2
+                    bool "Use Serial V2 framework"
+                    select RT_USING_SERIAL_V2
+            endchoice
+
+            menuconfig BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+
+            menuconfig BSP_USING_UART2
+                bool "Enable UART2"
+                default y
+        endif
+
+    source "$(BSP_DIR)/../libraries/Drivers/Kconfig"
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

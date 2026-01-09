@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_PINCTRL_ROCKCHIP_RK8XX']):
+    src += ['pinctrl-rk8xx.c']
+
+if GetDepend(['RT_PINCTRL_ROCKCHIP']):
+    src += ['pinctrl-rockchip.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

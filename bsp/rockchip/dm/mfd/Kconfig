@@ -1,0 +1,19 @@
+config RT_MFD_RK8XX
+    bool
+    depends on RT_USING_PIC
+
+config RT_MFD_RK8XX_I2C
+    bool "Rockchip RK805/RK808/RK809/RK817/RK818 Power Management Chip"
+    depends on RT_USING_OFW
+    depends on RT_USING_I2C
+    select RT_MFD_RK8XX
+    select RT_MFD_SYSCON
+    default n
+
+config RT_MFD_RK8XX_SPI
+    bool "Rockchip RK806 Power Management Chip"
+    depends on RT_USING_OFW
+    depends on RT_USING_SPI
+    select RT_MFD_RK8XX
+    select RT_MFD_SYSCON
+    default n

@@ -265,6 +265,8 @@
 
 /* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
+#define PKG_USING_CMSIS_CORE
+#define PKG_USING_CMSIS_CORE_LATEST_VERSION
 /* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -379,7 +381,10 @@
 /* end of Device Control */
 
 /* Other */
-
+#define PKG_USING_FT32F0_STD_DRIVER
+#define PKG_USING_FT32F0_STD_DRIVER_LATEST_VERSION
+#define PKG_USING_FT32F0_CMSIS_DRIVER
+#define PKG_USING_FT32F0_CMSIS_DRIVER_LATEST_VERSION
 /* end of Other */
 
 /* Signal IO */
