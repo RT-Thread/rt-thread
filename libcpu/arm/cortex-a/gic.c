@@ -260,7 +260,7 @@ void arm_gic_clear_pending_irq(rt_uint32_t index, int irq)
  *        which have fully programmable configuration registers.
  *
  * @param index  GIC controller index
- * @param irq    The actual interrupt number(with offset)
+ * @param irq    The actual interrupt number (with offset)
  * @param config 0: level-sensitive, 1: edge-triggered
  */
 void arm_gic_set_configuration(rt_uint32_t index, int irq, rt_uint32_t config)
@@ -367,7 +367,7 @@ rt_uint32_t arm_gic_get_target_cpu(rt_uint32_t index, int irq)
  * @note The lower the value, the greater the priority of the corresponding interrupt.
  *
  * @param index    GIC controller index
- * @param irq      The actual interrupt number(with offset)
+ * @param irq      The actual interrupt number (with offset)
  * @param priority The priority to set.Only the lower 8 bits are valid (bits [7:0]).
  */
 void arm_gic_set_priority(rt_uint32_t index, int irq, rt_uint32_t priority)
@@ -695,7 +695,7 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
  * @brief Initialize the GIC CPU Interface (GICC)
  *
  * @note: The exact bit definitions and behavior may vary depending on
- *        the GIC implementation (GICv1/GICv2) and security context..
+ *        the GIC implementation (GICv1/GICv2) and security context.
  *
  * @param index    GIC controller index
  * @param cpu_base Base address of the GIC CPU Interface (GICC)
@@ -721,7 +721,7 @@ int arm_gic_cpu_init(rt_uint32_t index, rt_uint32_t cpu_base)
 }
 
 /**
- * @brief Print the GIC infomations(version, base addr, max irq nums, security extension)
+ * @brief Print the GIC information (version, base addr, max irq nums, security extension)
  *
  * @param index GIC controller index
  */
@@ -739,7 +739,7 @@ void arm_gic_dump_type(rt_uint32_t index)
 }
 
 /**
- * @brief Print the GIC status(highest priority pending interrupt, enable status, pending status , active status)
+ * @brief Print the GIC status (highest priority pending interrupt, enable status, pending status , active status)
  *
  * @param index
  */
