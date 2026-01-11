@@ -422,19 +422,9 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART0
-#define BSP_USING_PWM
-#define BSP_USING_PWM0
-#define BSP_USING_PWM1
-#define BSP_USING_PWM2
-#define BSP_USING_PWM3
-#define BSP_USING_PWM4
-#define BSP_USING_PWM7
-#define BSP_USING_PWM8
-#define BSP_USING_PWM9
-#define BSP_USING_PWM10
-#define BSP_USING_PWM11
-#define BSP_USING_PWM12
-#define BSP_USING_PWM13
+#define BSP_USING_HARD_I2C
+#define BSP_USING_RECEIVING_A
+#define BSP_USING_HARD_I2C0
 #define BSP_USING_GD_DBG
 /* end of On-chip Peripheral Drivers */
 
