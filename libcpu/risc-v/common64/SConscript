@@ -2,13 +2,28 @@ from building import *
 
 cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
-CPPPATH = [cwd]
+CPPPATH = [cwd, cwd + '/include']
 
 if not GetDepend('ARCH_USING_ASID'):
     SrcRemove(src, ['asid.c'])
 
+if GetDepend('RT_USING_DM'):
+    SrcRemove(src, ['interrupt.c'])
+else:
+    SrcRemove(src, ['cache.c', 'setup.c'])
+
 src.append('../common/atomic_riscv.c')
 
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
+
+# build for sub-directory
+list = os.listdir(cwd)
+objs = []
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+group = group + objs
 
 Return('group')

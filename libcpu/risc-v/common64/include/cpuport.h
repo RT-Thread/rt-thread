@@ -28,6 +28,13 @@ typedef union {
 
 #include <rtcompiler.h>
 
+#define RISCV_FENCE(p, s)   __asm__ volatile ("fence " #p "," #s:::"memory")
+
+#define rt_hw_barrier(...)  RISCV_FENCE(iorw, iorw)
+#define rt_hw_wfi()         __asm__ volatile ("wfi")
+#define rt_hw_wmb()         RISCV_FENCE(ir, ir)
+#define rt_hw_rmb()         RISCV_FENCE(ow, ow)
+
 rt_inline void rt_hw_dsb(void)
 {
     __asm__ volatile("fence":::"memory");
@@ -41,6 +48,16 @@ rt_inline void rt_hw_dmb(void)
 rt_inline void rt_hw_isb(void)
 {
     __asm__ volatile(OPC_FENCE_I:::"memory");
+}
+
+rt_inline void rt_hw_cpu_relax(void)
+{
+#ifdef ARCH_TOOLCHAIN_HAS_ZIHINTPAUSE
+    __asm__ volatile ("pause");
+#else /* !ARCH_TOOLCHAIN_HAS_ZIHINTPAUSE */
+    __asm__ volatile (".4byte 0x0100000f");
+#endif /* ARCH_TOOLCHAIN_HAS_ZIHINTPAUSE */
+    rt_hw_barrier();
 }
 
 #ifdef ARCH_MM_MMU

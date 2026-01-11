@@ -19,6 +19,9 @@
 #include <sbi.h>
 #include <riscv.h>
 #include <interrupt.h>
+#ifdef RT_USING_DM
+#include <drivers/pic.h>
+#endif
 #include <plic.h>
 #include <tick.h>
 
@@ -313,7 +316,11 @@ void handle_trap(rt_ubase_t scause, rt_ubase_t stval, rt_ubase_t sepc,
         SCAUSE_S_EXTERNAL_INTR == (scause & 0xff))
     {
         rt_interrupt_enter();
+    #ifndef RT_USING_DM
         plic_handle_irq();
+    #else
+        rt_pic_do_traps();
+    #endif
         rt_interrupt_leave();
     }
     else if ((SCAUSE_INTERRUPT | SCAUSE_S_TIMER_INTR) == scause)

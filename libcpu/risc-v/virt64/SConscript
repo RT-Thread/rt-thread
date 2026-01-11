@@ -5,6 +5,9 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
 CPPPATH = [cwd]
 
+if GetDepend('RT_USING_DM'):
+    SrcRemove(src, ['cache.c', 'interrupt.c', 'plic.c'])
+
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

@@ -10,6 +10,12 @@
 
 #include "ktime.h"
 
+#ifdef RT_USING_DM
+extern rt_uint32_t riscv_timer_get_frequency(void);
+
+#define CPUTIME_TIMER_FREQ riscv_timer_get_frequency()
+#endif
+
 static volatile unsigned long _init_cnt = 0;
 
 rt_uint64_t rt_ktime_cputimer_getres(void)

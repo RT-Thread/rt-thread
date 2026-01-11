@@ -11,10 +11,12 @@
 #ifndef INTERRUPT_H__
 #define INTERRUPT_H__
 
-#define MAX_HANDLERS 128
-
 #include <rthw.h>
 #include "stack.h"
+
+#ifndef MAX_HANDLERS
+#define MAX_HANDLERS 128
+#endif
 
 enum
 {

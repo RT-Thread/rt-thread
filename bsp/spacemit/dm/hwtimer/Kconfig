@@ -1,0 +1,3 @@
+config RT_HWTIMER_SPACEMIT_K1X
+    bool "Spacemit k1x Timer"
+    default n

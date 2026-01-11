@@ -19,9 +19,74 @@
 boot_hartid:
     .word 0xdeadbeef
 
+#ifndef RT_USING_DM
     .global         _start
     .section ".start", "ax"
 _start:
+#else
+#define __STACKSIZE__               ARCH_SECONDARY_CPU_STACK_SIZE
+
+#define RISCV_IMAGE_FLAG_BE_SHIFT   0
+#define RISCV_IMAGE_FLAG_BE_MASK    0x1
+
+#define RISCV_IMAGE_FLAG_LE         0
+#define RISCV_IMAGE_FLAG_BE         1
+
+#define RISCV_HEADER_VERSION_MAJOR  0
+#define RISCV_HEADER_VERSION_MINOR  2
+
+#ifdef ARCH_CPU_BIG_ENDIAN
+#error conversion of header fields to LE not yet implemented
+#else
+#define __HEAD_FLAG_BE              RISCV_IMAGE_FLAG_LE
+#endif
+
+#define __HEAD_FLAG(field)          (__HEAD_FLAG_##field << RISCV_IMAGE_FLAG_##field##_SHIFT)
+
+#define __HEAD_FLAGS                (__HEAD_FLAG(BE))
+
+#define __HEAD_VERSION              (RISCV_HEADER_VERSION_MAJOR << 16 | RISCV_HEADER_VERSION_MINOR)
+
+    .section ".text.start","ax"
+
+#ifdef RT_USING_OFW
+/*
+ * We follow the kernel's boot in RISC-V:
+ *   https://www.kernel.org/doc/html/latest/arch/riscv/boot-image-header.html
+ */
+_head:
+    j       _start          /* Executable code */
+    .word   0               /* Executable code */
+    .balign 8
+#if __riscv_xlen == 64
+    .dword  0x200000        /* Image load offset(2MB) from start of RAM */
+#elif __riscv_xlen == 32
+    .dword  0x400000        /* Image load offset(4MB) from start of RAM */
+#else
+#error "Unexpected __riscv_xlen"
+#endif
+    .dword  _end - _head    /* Effective Image size, little endian (_end defined in link.lds) */
+    .dword  __HEAD_FLAGS    /* kernel flags, little endian */
+    .word   __HEAD_VERSION  /* Version of this header */
+    .word   0               /* Reserved */
+    .dword  0               /* Reserved */
+    .ascii  "RISCV\0\0\0"   /* Magic number, little endian */
+    .balign 4
+    .ascii  "RSC\x05"       /* Magic number 2, little endian */
+    .word   0               /* Reserved for PE COFF offset */
+#endif /* RT_USING_OFW */
+
+    .global _start
+_start:
+/*
+ * Boot CPU general-purpose register settings:
+ *   https://www.kernel.org/doc/html/latest/arch/riscv/boot.html#pre-kernel-requirements-and-constraints
+ *      a0 = hartid of the current core.
+ *      a1 = physical address of device tree blob (dtb) in system RAM.
+ */
+    mv      s0, a0
+    mv      s1, a1
+#endif
     j 1f
     .word 0xdeadbeef
     .align 3
@@ -71,7 +136,10 @@ system_init:
     li x6, 0
     li x7, 0
     li x8, 0
+#ifndef RT_USING_OFW
+    /* In the DM OFW, s1 will be used again later */
     li x9, 0
+#endif
 #ifndef RT_USING_SMP
     /* In the SMP architecture, a0 will be used again later */
     li x10,0
@@ -131,6 +199,12 @@ system_init:
     mv      tp, a0
     bne     t0, t1, early_secondary_cpu_entry
 #endif /* RT_USING_SMP */
+
+#ifdef RT_USING_OFW
+    /* Save devicetree info */
+    mv      a0, s1
+    call    rt_hw_fdt_install_early
+#endif
 
     /**
      * sscratch is always zero on kernel mode

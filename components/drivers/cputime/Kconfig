@@ -29,6 +29,7 @@ if RT_USING_CPUTIME
         help
             Some RISCV64 MCU Use rdtime instructions read CPU time.
     config CPUTIME_TIMER_FREQ
+        depends on !RT_USING_DM
         int "CPUTIME timer freq"
         default 0
 endif

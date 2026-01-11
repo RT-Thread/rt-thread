@@ -257,6 +257,10 @@ config ARCH_RISCV64
     bool
 
 if ARCH_RISCV64
+if RT_USING_DM
+orsource "./risc-v/Kconfig"
+endif
+
     config ARCH_USING_NEW_CTX_SWITCH
         bool
         default y

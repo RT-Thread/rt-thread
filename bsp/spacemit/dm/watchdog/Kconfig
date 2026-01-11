@@ -1,0 +1,3 @@
+config RT_WDT_SPACEMIT_WATCHDOG
+    bool "Spacemit-k1x SoC Watchdog"
+    default n

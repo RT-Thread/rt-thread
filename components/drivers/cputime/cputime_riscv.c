@@ -4,6 +4,12 @@
 
 #include <board.h>
 
+#ifdef RT_USING_DM
+extern rt_uint32_t riscv_timer_get_frequency(void);
+
+#define CPUTIME_TIMER_FREQ riscv_timer_get_frequency()
+#endif
+
 /* Use Cycle counter of Data Watchpoint and Trace Register for CPU time */
 
 static uint64_t riscv_cputime_getres(void)

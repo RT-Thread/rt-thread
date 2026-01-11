@@ -36,6 +36,10 @@
 #define USER_VADDR_START 0
 #endif
 
+#ifdef RT_USING_DM
+#define rt_hw_cpu_dcache_clean(addr, size) rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, addr, size)
+#endif
+
 static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr);
 
 /* Define the structure of early page table */
