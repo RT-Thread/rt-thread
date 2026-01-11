@@ -232,6 +232,35 @@ menu "On-chip Peripheral Drivers"
                 default 32
         endif
 
+    menuconfig BSP_USING_HARD_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+        if BSP_USING_HARD_I2C
+            choice
+                prompt "Select I2C Receiving Scheme"
+                default BSP_USING_RECEIVING_A
+
+                config BSP_USING_RECEIVING_A
+                    bool "master receiving secheme A --- requires that the software be capable of responding quickly to the 12C event."
+
+                config BSP_USING_RECEIVING_B
+                    bool "master receiving secheme B --- don't requires that the software be capable of responding quickly to the 12C event."
+            endchoice
+
+            config BSP_USING_HARD_I2C0
+                bool "enable hard I2C0"
+                default n
+
+            config BSP_USING_HARD_I2C1
+                bool "enable hard I2C1"
+                default n
+
+            config BSP_USING_HARD_I2C2
+                bool "enable hard I2C2"
+                default n
+        endif
+   
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
