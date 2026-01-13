@@ -6,7 +6,46 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-11-20     zhujiale     the first version
+ * 2025-11-24     ChuanN-sudo  add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Serial Bypass Register Test
+ *
+ * Test Objectives:
+ * - Validate serial bypass function registration and unregistration mechanisms.
+ * - Verify correct ordering of bypass functions by priority level in concurrent scenarios.
+ * - Ensure thread-safe registration of upper and lower bypass handlers.
+ * - Test core APIs: rt_bypass_upper_register(), rt_bypass_lower_register(),
+ *   rt_bypass_upper_unregister(), rt_bypass_lower_unregister()
+ *
+ * Test Scenarios:
+ * - bypass_register_001: Main thread and worker thread concurrently register upper bypass
+ *   functions with even/odd priority levels to test insertion ordering and thread safety.
+ * - bypass_register_002: Two worker threads simultaneously register upper and lower bypass
+ *   functions with levels 1-9 to verify independent queue management.
+ * - Tests validate that registered functions maintain strict ascending order by level.
+ * - Unregistration operations verify complete cleanup of bypass function chains.
+ *
+ * Verification Metrics:
+ * - Bypass functions are inserted in correct priority order (level 0-9 ascending).
+ * - Concurrent registrations from multiple threads maintain list integrity.
+ * - Upper and lower bypass chains operate independently without interference.
+ * - All registered bypass functions can be successfully unregistered by level.
+ * - No memory leaks or list corruption after registration/unregistration cycles.
+ *
+ * Dependencies:
+ * - Hardware requirements: Platform with serial console device (UART) support.
+ * - Software configuration:
+ *     - RT_USING_UTESTCASES must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_SERIAL_BYPASS must be enabled (enable via: RT-Thread Utestcases -> Kernel Components -> Drivers -> Serial Test -> Serial Bypass Test).
+ * - Environmental Assumptions: Serial device initialized and operational before test execution.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.serial.bypass_register)"
+ * - All uassert_true() checks pass, confirming correct level ordering.
+ */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "utest.h"

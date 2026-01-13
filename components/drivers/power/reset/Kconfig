@@ -1,0 +1,39 @@
+menuconfig RT_USING_POWER_RESET
+    bool "Using Board level reset or poweroff"
+    depends on RT_USING_DM
+
+config RT_POWER_RESET_GPIO_POWEROFF
+    bool "GPIO poweroff"
+    depends on RT_USING_POWER_RESET
+    depends on RT_USING_PIN
+    depends on RT_USING_PINCTRL
+
+config RT_POWER_RESET_GPIO_RESTART
+    bool "GPIO restart"
+    depends on RT_USING_POWER_RESET
+    depends on RT_USING_PIN
+    depends on RT_USING_PINCTRL
+
+config RT_POWER_RESET_SYSCON_POWEROFF
+    bool "Generic SYSCON regmap poweroff driver"
+    depends on RT_USING_POWER_RESET
+    depends on RT_MFD_SYSCON
+
+config RT_POWER_RESET_SYSCON_REBOOT_MODE
+    bool "Generic SYSCON regmap reboot mode driver"
+    depends on RT_USING_POWER_RESET
+    depends on RT_MFD_SYSCON
+    select RT_POWER_RESET_REBOOT_MODE
+
+config RT_POWER_RESET_SYSCON_REBOOT
+    bool "Generic SYSCON regmap reboot driver"
+    depends on RT_USING_POWER_RESET
+    depends on RT_MFD_SYSCON
+
+if RT_USING_POWER_RESET
+    osource "$(SOC_DM_POWER_RESET_DIR)/Kconfig"
+endif
+
+config RT_POWER_RESET_REBOOT_MODE
+    bool
+    depends on RT_USING_OFW

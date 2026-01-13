@@ -124,7 +124,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 1024
 #define RT_CONSOLE_DEVICE_NAME "uart2"
-#define RT_VER_NUM 0x50201
+#define RT_VER_NUM 0x50300
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -141,7 +141,6 @@
 /* end of AArch64 Architecture Configuration */
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
-#define ARCH_ARM_BOOTWITH_FLUSH_CACHE
 #define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
 #define ARCH_ARM
@@ -212,6 +211,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_SERIAL_BYPASS
+#define RT_SERIAL_8250
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -231,6 +231,12 @@
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
 #define RT_USING_RESET
+
+/* Power Management (PM) Domains device drivers */
+
+/* end of Power Management (PM) Domains device drivers */
+#define RT_USING_MFD
+#define RT_MFD_SYSCON
 #define RT_USING_OFW
 #define RT_FDT_EARLYCON_MSG_SIZE 128
 #define RT_USING_OFW_BUS_RANGES_NUMBER 8
@@ -238,11 +244,18 @@
 #define MAX_HANDLERS 1024
 #define RT_PIC_ARM_GIC_V3
 #define RT_USING_PIN
+#define RT_PIN_ROCKCHIP
 #define RT_USING_PINCTRL
+#define RT_PINCTRL_ROCKCHIP
 #define RT_USING_KTIME
 #define RT_USING_CLK
+#define RT_CLK_ROCKCHIP_LINK
+#define RT_CLK_ROCKCHIP
+#define RT_CLK_ROCKCHIP_RK3568
+#define RT_CLK_ROCKCHIP_RK3588
 #define RT_USING_HWTIMER
 #define RT_HWTIMER_ARM_ARCH
+#define RT_HWTIMER_ROCKCHIP
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -443,13 +456,9 @@
 
 /* end of CPP11 */
 
-/* LwIP */
+/* Network */
 
-/* end of LwIP */
-
-/* Netdev */
-
-/* end of Netdev */
+/* end of Network */
 
 /* Utest Framework */
 
@@ -667,15 +676,6 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
-
-/* RT-Thread rockchip RK3500 drivers */
-
-#define RT_CLK_ROCKCHIP
-#define RT_CLK_ROCKCHIP_RK3568
-#define RT_CLK_ROCKCHIP_RK3588
-#define RT_SERIAL_8250
-#define RT_HWTIMER_ROCKCHIP
-/* end of RT-Thread rockchip RK3500 drivers */
-#define SOC_RK3568
+#define SOC_RK3500
 
 #endif

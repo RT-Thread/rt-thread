@@ -1,5 +1,5 @@
 menuconfig RT_USING_MFD
-    bool "Using Multifunction device drivers"
+    bool "Using Multifunction device drivers (MFD)"
     depends on RT_USING_DM
     default n
     help
@@ -7,6 +7,13 @@ menuconfig RT_USING_MFD
       described in device tree can expose multiple child devices (GPIO, RTC,
       regulator…) through the driver model. Required when your board uses such
       multifunction ICs; disable to save code if every device is standalone.
+
+config RT_MFD_EDU
+    bool "Educational device driver"
+    depends on RT_USING_MFD
+    depends on RT_USING_PCI
+    depends on RT_USING_DMA
+    default n
 
 config RT_MFD_SYSCON
     bool "System Controller Register R/W"
@@ -17,3 +24,7 @@ config RT_MFD_SYSCON
       Provide the syscon helper that maps register banks described by
       `syscon`/`simple-mfd` nodes and allows other drivers to read/write them.
       Keep enabled on SoCs whose reset/clock/PHY drivers access syscon regions.
+
+if RT_USING_MFD
+    osource "$(SOC_DM_MFD_DIR)/Kconfig"
+endif

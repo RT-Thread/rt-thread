@@ -1,11 +1,27 @@
+/*
+ * Copyright (c) 2023-2025, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-03-01     Yaochenger   The first version
+ * 2023-03-19     flyingcys    Add support for rv32e
+ * 2023-03-29     flyingcys    return old handler when install new one for rt_hw_interrupt_install
+ * 2023-06-08     Liu,Yuan     remove unused variables
+ * 2025-01-27     Chen Wang    fix build warnings
+ * 2025-12-11     HPMicro      allow overriding the ISR numbers
+ */
 #include <rthw.h>
 #include <rtthread.h>
 #include "riscv-ops.h"
 #include "rt_hw_stack_frame.h"
 
-#define ISR_NUMBER    32
+#ifndef RT_HW_ISR_NUM
+#define RT_HW_ISR_NUM 32
+#endif
 static volatile rt_hw_stack_frame_t *s_stack_frame;
-static struct rt_irq_desc rv32irq_table[ISR_NUMBER];
+static struct rt_irq_desc rv32irq_table[RT_HW_ISR_NUM];
 void rt_show_stack_frame(void);
 
 /**
@@ -27,7 +43,7 @@ rt_weak void rt_hw_interrupt_init(void)
 {
     int idx = 0;
 
-    for (idx = 0; idx < ISR_NUMBER; idx++)
+    for (idx = 0; idx < RT_HW_ISR_NUM; idx++)
     {
         rv32irq_table[idx].handler = (rt_isr_handler_t)rt_hw_interrupt_handle;
         rv32irq_table[idx].param = RT_NULL;
@@ -48,7 +64,7 @@ rt_weak rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t ha
 {
     rt_isr_handler_t old_handler = RT_NULL;
 
-    if(vector < ISR_NUMBER)
+    if(vector < RT_HW_ISR_NUM)
     {
         old_handler = rv32irq_table[vector].handler;
         if (handler != RT_NULL)

@@ -1,12 +1,43 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2023-12-25     Shell        the first version
+ * 2025-11-16     h0bbl3s      Add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Kernel Core MT-Safe Kprint Test
+ *
+ * Test Objectives:
+ * - Validate the thread-safety of the rt_kprintf function
+ *
+ * Test Scenarios:
+ * - mtsafe_kprint_tc: Creates 16 concurrent threads, each calling rt_kprintf in a loop to stress test for
+ *   race conditions and corruptions
+ *
+ * Verification Metrics:
+ * - All 16 threads run to completion (verified by semaphore)
+ * - The system does not crash or deadlock
+ * - Console output is not garbled or corrupted
+ *
+ * Dependencies:
+ * - Enable MT-Safe kprint Test (RT-Thread Utestcases -> Kernel Core -> MT-Safe Kprint Test)
+ * - RT_USING_THREADSAFE_PRINTF must be enabled (RT-Thread Kernel -> Enable thread safe kernel print service)
+ * - Note: This test (and MT-safe kprint) increases scheduler load. The idle thread stack
+ *   size (RT-Thread Kernel -> The stack size of idle thread) may need to be increased for this test
+ * - Test on any RT-Thread supported platform
+ *
+ * Expected Results:
+ * - After executing this test in msh each thread prints its id on a single line each loop until it is finished
+ * - There should be no mixed or overlapping console outputs
+ * - When complete you should see the output:
+ * "[  PASSED  ] [ result   ] testcase (core.mtsafe_kprint)"
+ */
+
 #include <rtthread.h>
 #include "utest.h"
 

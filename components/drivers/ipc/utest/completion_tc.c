@@ -6,23 +6,40 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-04-30     Shell        init ver.
+ * 2025-11-16     ChuanN-sudo  add standardized utest documentation block
  */
 
 /**
- * Test Case for rt_completion API
+ * Test Case Name: IPC Completion Basic Test
  *
- * The test simulates a producer-consumer interaction where a producer thread
- * generates data, and a consumer thread consumes the data after waiting for its
- * availability using rt_completion synchronization primitives.
+ * Test Objectives:
+ * - Validate rt_completion initialization, wait, and wake-up mechanisms.
+ * - Verify thread synchronization in producer-consumer model.
+ * - Test core APIs: rt_completion_init(), rt_completion_wait_flags(), rt_completion_wakeup()
  *
- * Test Criteria:
- * - The producer should correctly increment the test data and signal
- *   completion.
- * - The consumer should correctly wait for data update, consume it, and signal
- *   completion.
+ * Test Scenarios:
+ * - Producer thread generates incrementing data and notifies consumer.
+ * - Consumer thread waits for data updates and validates integrity.
+ * - Random delays simulate race conditions in synchronization.
+ *
+ * Verification Metrics:
+ * - The producer should correctly increment the test data and signal completion.
+ * - The consumer should correctly wait for data update, consume it, and signal completion.
  * - Data integrity should be maintained between producer and consumer.
  * - Synchronization is properly done so both can see consistent data.
  * - Random latency is introduced to simulate racing scenarios.
+ *
+ * Dependencies:
+ * - Hardware requirements: QEMU emulator or any hardware platform that supports RT-Thread.
+ * - Software configuration:
+ *     - RT_USING_UTEST must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_COMPLETION must be enabled (enable via: RT-Thread Utestcases -> Kernel Components -> Drivers -> IPC Test -> IPC Completion Test).
+ * - Environmental Assumptions: System scheduler working normally.
+ *
+ * Expected Results:
+ * - Progress logs: "[ INFO ] components.drivers.ipc.rt_completion_basic: Summary:...Test times:..."
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.ipc.rt_completion_basic)"
+ * - No assertions triggered.
  */
 
 #define TEST_LATENCY_TICK (1)

@@ -13,6 +13,12 @@ menuconfig RT_USING_CLK
       MCUs where every peripheral runs off the same fixed clock and no driver
       ever calls into the clock API.
 
+config RT_CLK_SCMI
+    bool "Clock driver controlled via SCMI interface"
+    depends on RT_USING_CLK
+    depends on RT_FIRMWARE_ARM_SCMI
+    default n
+
 if RT_USING_CLK
     osource "$(SOC_DM_CLK_DIR)/Kconfig"
 endif

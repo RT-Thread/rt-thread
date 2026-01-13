@@ -456,3 +456,20 @@ rt_ssize_t rt_pin_get_named_pin_count(struct rt_device *dev, const char *propnam
 
     return count;
 }
+
+#ifdef RT_USING_PINCTRL
+rt_err_t pin_gpio_request(struct rt_device_pin *pinctrl, rt_base_t gpio, rt_uint32_t flags)
+{
+    if (!pinctrl || gpio < 0)
+    {
+        return -RT_EINVAL;
+    }
+
+    if (pinctrl->ops->pin_ctrl_gpio_request)
+    {
+        return pinctrl->ops->pin_ctrl_gpio_request(&pinctrl->parent, gpio, flags);
+    }
+
+    return RT_EOK;
+}
+#endif /* RT_USING_PINCTRL */

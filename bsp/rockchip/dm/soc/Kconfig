@@ -1,0 +1,19 @@
+config RT_SOC_ROCKCHIP_FIQ_DEBUGGER
+    bool "FIQ Debugger"
+    depends on RT_USING_OFW
+    default y
+
+config RT_SOC_ROCKCHIP_GRF
+    bool "General Register Files support"
+    depends on RT_MFD_SYSCON
+    default y
+
+config RT_SOC_ROCKCHIP_HW_DECOMPRESS
+    bool "HardWare Decompress (LZ4, GZIP, ZLIB)"
+    default n
+
+config RT_SOC_ROCKCHIP_IODOMAIN
+    bool "IO domain support"
+    depends on RT_MFD_SYSCON
+    depends on RT_USING_REGULATOR
+    default y

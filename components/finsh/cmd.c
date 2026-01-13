@@ -32,6 +32,7 @@
  * 2022-07-02     Stanley Lwin add list command
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2024-02-09     Bernard      fix the version command
+ * 2023-02-25     GuEe-GUI     add console
  */
 
 #include <rthw.h>
@@ -59,6 +60,61 @@ static long version(void)
     return 0;
 }
 MSH_CMD_EXPORT(version, show RT-Thread version information);
+
+#if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
+#if !defined(RT_USING_POSIX) && defined(RT_USING_POSIX_STDIO)
+#include <posix/stdio.h>
+#endif
+
+static int console(int argc, char **argv)
+{
+    if (argc > 1)
+    {
+        if (!rt_strcmp(argv[1], "set"))
+        {
+            if (argc < 3)
+            {
+                goto _help;
+            }
+
+            rt_kprintf("console change to %s\n", argv[2]);
+            rt_console_set_device(argv[2]);
+
+#ifdef RT_USING_POSIX
+            {
+                rt_device_t dev = rt_device_find(argv[2]);
+
+                if (dev != RT_NULL)
+                {
+                    console_set_iodev(dev);
+                }
+            }
+#elif !defined(RT_USING_POSIX_STDIO)
+            finsh_set_device(argv[2]);
+#else
+            rt_posix_stdio_init();
+#endif /* RT_USING_POSIX */
+        }
+        else
+        {
+            goto _help;
+        }
+    }
+    else
+    {
+        goto _help;
+    }
+
+    return RT_EOK;
+
+_help:
+    rt_kprintf("Usage: \n");
+    rt_kprintf("console set <name>   - change console by name\n");
+
+    return -RT_ERROR;
+}
+MSH_CMD_EXPORT(console, console setting);
+#endif /* RT_USING_DEVICE && RT_USING_CONSOLE */
 
 rt_inline void object_split(int len)
 {
@@ -940,64 +996,64 @@ static int cmd_list(int argc, char **argv)
 {
     if(argc == 2)
     {
-        if(strcmp(argv[1], "thread") == 0)
+        if(rt_strcmp(argv[1], "thread") == 0)
         {
             list_thread();
         }
-        else if(strcmp(argv[1], "timer") == 0)
+        else if(rt_strcmp(argv[1], "timer") == 0)
         {
             list_timer();
         }
 #ifdef RT_USING_SEMAPHORE
-        else if(strcmp(argv[1], "sem") == 0)
+        else if(rt_strcmp(argv[1], "sem") == 0)
         {
             list_sem();
         }
 #endif /* RT_USING_SEMAPHORE */
 #ifdef RT_USING_EVENT
-        else if(strcmp(argv[1], "event") == 0)
+        else if(rt_strcmp(argv[1], "event") == 0)
         {
             list_event();
         }
 #endif /* RT_USING_EVENT */
 #ifdef RT_USING_MUTEX
-        else if(strcmp(argv[1], "mutex") == 0)
+        else if(rt_strcmp(argv[1], "mutex") == 0)
         {
             list_mutex();
         }
 #endif /* RT_USING_MUTEX */
 #ifdef RT_USING_MAILBOX
-        else if(strcmp(argv[1], "mailbox") == 0)
+        else if(rt_strcmp(argv[1], "mailbox") == 0)
         {
             list_mailbox();
         }
 #endif  /* RT_USING_MAILBOX */
 #ifdef RT_USING_MESSAGEQUEUE
-        else if(strcmp(argv[1], "msgqueue") == 0)
+        else if(rt_strcmp(argv[1], "msgqueue") == 0)
         {
             list_msgqueue();
         }
 #endif /* RT_USING_MESSAGEQUEUE */
 #ifdef RT_USING_MEMHEAP
-        else if(strcmp(argv[1], "memheap") == 0)
+        else if(rt_strcmp(argv[1], "memheap") == 0)
         {
             list_memheap();
         }
 #endif /* RT_USING_MEMHEAP */
 #ifdef RT_USING_MEMPOOL
-        else if(strcmp(argv[1], "mempool") == 0)
+        else if(rt_strcmp(argv[1], "mempool") == 0)
         {
             list_mempool();
         }
 #endif /* RT_USING_MEMPOOL */
 #ifdef RT_USING_DEVICE
-        else if(strcmp(argv[1], "device") == 0)
+        else if(rt_strcmp(argv[1], "device") == 0)
         {
             list_device();
         }
 #endif /* RT_USING_DEVICE */
 #ifdef RT_USING_DFS
-        else if(strcmp(argv[1], "fd") == 0)
+        else if(rt_strcmp(argv[1], "fd") == 0)
         {
             extern int list_fd(void);
             list_fd();

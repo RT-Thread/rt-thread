@@ -19,3 +19,7 @@ config RT_HWTIMER_ARM_ARCH
       counter). This maps CNTFRQ/CNTV registers into the driver-model so the
       kernel can expose a precise clocksource/clockevent. Only useful on Cortex-
       A/R platforms that implement the generic timer block.
+
+if RT_USING_DM && RT_USING_HWTIMER
+    osource "$(SOC_DM_HWTIMER_DIR)/Kconfig"
+endif

@@ -270,3 +270,7 @@ menuconfig RT_USING_HWCRYPTO
                   Expose big-number subtraction support if available.
         endif
     endif
+
+if RT_USING_DM && RT_USING_HWCRYPTO
+    osource "$(SOC_DM_HWCRYPTO_DIR)/Kconfig"
+endif

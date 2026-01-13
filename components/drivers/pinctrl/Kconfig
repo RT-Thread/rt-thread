@@ -9,6 +9,17 @@ menuconfig RT_USING_PINCTRL
       on SoCs where GPIOs share multiple alternate functions; disable on simple
       MCUs where pins have fixed roles.
 
+config RT_PINCTRL_SCMI
+    bool "Pinctrl driver via ARM SCMI interface"
+    depends on RT_USING_PINCTRL
+    depends on RT_FIRMWARE_ARM_SCMI
+    default n
+
+config RT_PINCTRL_SINGLE
+    bool "Single Pinctrl driver"
+    depends on RT_USING_PINCTRL
+    default n
+
 if RT_USING_PINCTRL
     osource "$(SOC_DM_PINCTRL_DIR)/Kconfig"
 endif

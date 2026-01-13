@@ -12,6 +12,13 @@ menuconfig RT_USING_DMA
       has DMA-capable peripherals (MMC, SPI, audio, etc.) that need offloading;
       leave it disabled only on targets without DMA hardware to save code size.
 
+config RT_DMA_PL330
+    bool "ARM PL330"
+    depends on RT_USING_DMA
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    default n
+
 if RT_USING_DMA
     osource "$(SOC_DM_DMA_DIR)/Kconfig"
 endif

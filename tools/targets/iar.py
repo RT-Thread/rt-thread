@@ -131,10 +131,11 @@ def IARProject(env, target, script):
                     print('not found LIB: ' + item)
 
     # make relative path
-    paths = set()
+    paths = {}
     for path in CPPPATH:
         inc = _make_path_relative(project_path, os.path.normpath(path))
-        paths.add(inc) #.replace('\\', '/')
+        paths[inc] = None  # 使用 dict 去重并保持插入顺序
+    paths = list(paths.keys())
 
     # setting options
     options = tree.findall('configuration/settings/data/option')

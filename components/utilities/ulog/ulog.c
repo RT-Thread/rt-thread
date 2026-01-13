@@ -421,6 +421,17 @@ rt_weak rt_size_t ulog_tail_formater(char *log_buf, rt_size_t log_len, rt_bool_t
     return log_len;
 }
 
+static void ulog_no_enough_buffer_printf(void)
+{
+    static rt_bool_t already_output = RT_FALSE;
+    if (already_output == RT_FALSE)
+    {
+        rt_kprintf("Warning: There is not enough buffer to output the log,"
+                " please increase the ULOG_LINE_BUF_SIZE option.\n");
+        already_output = RT_TRUE;
+    }
+}
+
 rt_weak rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *tag, rt_bool_t newline,
         const char *format, va_list args)
 {
@@ -444,6 +455,7 @@ rt_weak rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *ta
     {
         /* using max length */
         log_len = ULOG_LINE_BUF_SIZE;
+        ulog_no_enough_buffer_printf();
     }
     /* log tail */
     return ulog_tail_formater(log_buf, log_len, newline, level);
@@ -472,6 +484,7 @@ rt_weak rt_size_t ulog_hex_formater(char *log_buf, const char *tag, const rt_uin
     else
     {
         log_len = ULOG_LINE_BUF_SIZE;
+        ulog_no_enough_buffer_printf();
     }
     /* dump hex */
     for (j = 0; j < width; j++)

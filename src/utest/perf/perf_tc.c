@@ -15,18 +15,17 @@
 #include <utest_assert.h>
 #include <perf_tc.h>
 
-#define RET_INT             0
-#define RET_DECIMALS        1
+#define RET_INT      0
+#define RET_DECIMALS 1
 
-#define GET_INT(num)        split_double(num, RET_INT)
-#define GET_DECIMALS(num)   split_double(num, RET_DECIMALS)
+#define GET_INT(num)      split_double(num, RET_INT)
+#define GET_DECIMALS(num) split_double(num, RET_DECIMALS)
 
 static rt_device_t hw_dev = RT_NULL;
-static rt_hwtimerval_t timeout_s = {0};
+static rt_hwtimerval_t timeout_s = { 0 };
 
 typedef rt_err_t (*testcase_function)(rt_perf_t *perf);
-testcase_function test_func_ptrs[] =
-{
+testcase_function test_func_ptrs[] = {
     context_switch_test,
     rt_perf_thread_sem,
     rt_perf_thread_event,
@@ -38,7 +37,7 @@ testcase_function test_func_ptrs[] =
 
 static rt_uint32_t rt_perf_get_timer_us(void)
 {
-    rt_hwtimerval_t timer_val = {0};
+    rt_hwtimerval_t timer_val = { 0 };
     if (hw_dev && rt_device_read(hw_dev, 0, &timer_val, sizeof(rt_hwtimerval_t)))
     {
         return (rt_uint32_t)(timer_val.sec * 1000000u + timer_val.usec); /* return us */
@@ -61,7 +60,8 @@ void rt_perf_stop(rt_perf_t *perf)
 {
     perf->real_time = rt_perf_get_timer_us() - perf->begin_time;
 
-    if(perf->local_modify) perf->local_modify(perf);
+    if (perf->local_modify)
+        perf->local_modify(perf);
     if (perf->real_time > perf->max_time)
     {
         perf->max_time = perf->real_time;
@@ -75,7 +75,7 @@ void rt_perf_stop(rt_perf_t *perf)
     perf->count++;
     perf->tot_time += perf->real_time;
 
-    if(hw_dev)
+    if (hw_dev)
         rt_device_control(hw_dev, HWTIMER_CTRL_STOP, NULL);
 }
 
@@ -97,11 +97,11 @@ static rt_int32_t split_double(double num, rt_uint32_t type)
     return (-1);
 }
 
-void rt_perf_dump( rt_perf_t *perf)
+void rt_perf_dump(rt_perf_t *perf)
 {
     static rt_uint32_t test_index = 1;
-    char avg_str[10] = {0};
-    if(perf->dump_head)
+    char avg_str[10] = { 0 };
+    if (perf->dump_head)
     {
         rt_kprintf("Test No | Test Name            | Count | Total Time (us) | Max Time (us) | Min Time (us) | Avg Time (us)\n");
         rt_kprintf("--------|----------------------|-------|-----------------|---------------|---------------|--------------\n");
@@ -116,13 +116,13 @@ void rt_perf_dump( rt_perf_t *perf)
     rt_sprintf(avg_str, "%u.%04u", GET_INT(perf->avg_time), GET_DECIMALS(perf->avg_time));
 
     rt_kprintf("%7u | %-20s | %5u | %15u | %13u | %13u | %12s\n",
-                test_index++,
-                perf->name,
-                perf->count,
-                perf->tot_time,
-                perf->max_time,
-                perf->min_time,
-                avg_str);
+               test_index++,
+               perf->name,
+               perf->count,
+               perf->tot_time,
+               perf->max_time,
+               perf->min_time,
+               avg_str);
 }
 
 static void rt_perf_clear(rt_perf_t *perf)
@@ -140,7 +140,6 @@ static void rt_perf_clear(rt_perf_t *perf)
 
 static void rt_perf_all_test(void)
 {
-
     rt_perf_t *perf_data = rt_malloc(sizeof(rt_perf_t));
     if (perf_data == RT_NULL)
     {
@@ -154,7 +153,7 @@ static void rt_perf_all_test(void)
         rt_perf_clear(perf_data);
         if (test_func_ptrs[i](perf_data) != RT_EOK)
         {
-            LOG_E("%s test fail",perf_data->name);
+            LOG_E("%s test fail", perf_data->name);
             continue;
         }
     }
@@ -181,7 +180,7 @@ static rt_err_t utest_tc_init(void)
         return ret;
     }
 
-    timeout_s.sec  = 10;      /* No modification is necessary here, use the fixed value */
+    timeout_s.sec = 10;      /* No modification is necessary here, use the fixed value */
     timeout_s.usec = 0;
 
     return ret;
@@ -189,7 +188,8 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    if(hw_dev) rt_device_close(hw_dev);
+    if (hw_dev)
+        rt_device_close(hw_dev);
     return RT_EOK;
 }
 
@@ -198,5 +198,5 @@ static void testcase(void)
     UTEST_UNIT_RUN(rt_perf_all_test);
 }
 
-UTEST_TC_EXPORT(testcase, "core.pref_test", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(testcase, "core.perf_test", utest_tc_init, utest_tc_cleanup, 10);
 

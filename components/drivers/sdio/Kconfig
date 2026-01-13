@@ -1,4 +1,4 @@
-config RT_USING_SDIO
+menuconfig RT_USING_SDIO
     bool "Using SD/MMC device drivers"
     select RT_USING_BLK
     default n
@@ -10,7 +10,7 @@ config RT_USING_SDIO
     if RT_USING_SDIO
         config RT_SDIO_STACK_SIZE
             int "The stack size for sdio irq thread"
-            default 512
+            default IDLE_THREAD_STACK_SIZE
             help
               Stack size for the SDIO interrupt handler thread; increase if your
               controller driver performs complex processing in IRQ context.
@@ -23,7 +23,7 @@ config RT_USING_SDIO
 
         config RT_MMCSD_STACK_SIZE
             int "The stack size for mmcsd thread"
-            default 1024
+            default IDLE_THREAD_STACK_SIZE
             help
               Stack size for the mmc/sd management thread that handles requests.
 
@@ -51,3 +51,7 @@ config RT_USING_SDIO
               Build the SD Host Controller Interface (SDHCI) compatible driver.
               Enable when your controller follows the SDHCI specification.
         endif
+
+if RT_USING_DM && RT_USING_SDIO
+    rsource "host/Kconfig"
+endif

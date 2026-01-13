@@ -1,0 +1,24 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_POWER_SUPPLY']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+
+src = ['supply.c']
+
+if GetDepend(['RT_POWER_SUPPLY_DAEMON']):
+    src += ['supply-daemon.c']
+
+if GetDepend(['RT_POWER_SUPPLY_EMU']):
+    src += ['emu-power.c']
+
+if GetDepend(['RT_POWER_SUPPLY_CHARGER_GPIO']):
+    src += ['gpio-charger.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

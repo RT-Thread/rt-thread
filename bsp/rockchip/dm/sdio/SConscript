@@ -1,0 +1,12 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/sdio/host']
+
+if GetDepend(['RT_SDIO_DW_MMC_ROCKCHIP']):
+    src += ['sdio-dw_rockchip.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

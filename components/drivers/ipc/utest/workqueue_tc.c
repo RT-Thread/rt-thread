@@ -7,8 +7,44 @@
  * Date           Author       Notes
  * 2021-02-06     tyx          first commit
  * 2024-12-31     rbb666       Adding Test Cases
+ * 2025-11-16     ChuanN-sudo  add standardized utest documentation block
  */
 
+/**
+ * Test Case Name: IPC Workqueue Test
+ *
+ * Test Objectives:
+ * - Validate rt_workqueue creation, task submission, and execution mechanisms.
+ * - Verify ordered execution of work items under concurrent submission scenarios.
+ * - Ensure proper handling of task dependencies and resource cleanup during workqueue termination.
+ * - Test core APIs: rt_workqueue_create(), rt_workqueue_submit(), rt_workqueue_cancel()
+ *
+ * Test Scenarios:
+ * - Multiple threads submit periodic work items with varying delays to simulate real-world workloads.
+ * - Workqueue processes tasks in FIFO order while handling dynamic task cancellations.
+ * - Test injects random scheduling delays and priority inversions to stress-test queue stability.
+ * - Concurrent submission of high-priority and normal-priority work items to verify scheduling fairness.
+ * - System triggers asynchronous workqueue destruction during active task processing.
+ *
+ * Verification Metrics:
+ * - Submitted work items execute exactly once with correct parameter context.
+ * - Task execution order preserves submission sequence under normal scheduling conditions.
+ * - Cancelled tasks are safely removed from queue without execution or memory leaks.
+ * - Workqueue resource cleanup completes successfully even with pending operations.
+ * - Asynchronous destruction of workqueue handles active tasks gracefully without corruption.
+ *
+ * Dependencies:
+ * - Hardware requirements: QEMU emulator or any hardware platform that supports RT-Thread.
+ * - Software configuration:
+ *     - RT_USING_UTEST must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_WORKQUEUE must be enabled (enable via: RT-Thread Utestcases -> Kernel Components -> Drivers -> IPC Test -> IPC Workqueue Test).
+ * - Environmental Assumptions: System scheduler working normally.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.ipc.workqueue_tc)"
+ * - No memory leaks or race condition detections in logs.
+ * - No assertions triggered during test execution.
+ */
 #include "rtthread.h"
 #include "rtdevice.h"
 #include "utest.h"

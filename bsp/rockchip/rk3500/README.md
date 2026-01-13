@@ -1,64 +1,24 @@
-# RK3568 BSP Introduction
+# RK3500 BSP Introduction
 
 [中文页](./README_ZH.md) | English
 
 ## 1. Introduction
 
-### Core Architecture
+### Product Details
 
-- **CPU**: Quad-core 64-bit ARM Cortex-A55
-- **Process Node**: 22nm FinFET
-- **Clock Speed**: Up to 1.8GHz (boost)
+https://www.rock-chips.com/a/cn/product/RK35xilie/index.html
 
-### Graphics Subsystem
+### Condition
 
-- **GPU**: ARM Mali-G52 MP2
-  - Graphics APIs:
-    - OpenGL ES 3.2/2.0/1.1
-    - Vulkan 1.1
-  - Display Outputs:
-    - HDMI 2.0b
-    - eDP 1.3
-    - MIPI-DSI (4 lanes)
-- **Video Processing**:
-  - Decoding: 4K@60fps (H.265/H.264/VP9)
-  - Encoding: 1080P@60fps (H.264/H.265)
-
-### Memory & Storage
-
-- **RAM Support**:
-  - Dual-channel LPDDR4/LPDDR4X
-  - Max Capacity: 8GB
-- **Storage Options**:
-  - eMMC 5.1 HS400
-  - SD 3.0 UHS-I
-  - Optional SATA III (6Gbps)
-- **High-Speed Interfaces**:
-  - USB 3.0 Type-A/C
-  - PCIe 2.1 (x1 lane)
-
-### AI Acceleration
-
-- **NPU**: 0.8 TOPS INT8
-  - Framework Support:
-    - TensorFlow Lite
-    - MXNet
-    - PyTorch Mobile
-
-### Connectivity
-
-- **Wired**:
-  - Dual Gigabit Ethernet (RGMII)
-- **Wireless**:
-  - Expansion via:
-    - PCIe-based WiFi6
-    - USB Bluetooth 5.0
-
-### Multimedia I/O
-
-- **Camera Input**:
-  - Dual 4-lane MIPI-CSI
-  - Supports up to 13MP sensors
+| SoC | Condition | Earlycon |
+| ------ | ----  | ----  |
+| RK3576 | Support | earlycon=uart8250,mmio32,0x2ad40000 |
+| RK3588 | Support | earlycon=uart8250,mmio32,0xfeb50000 |
+| RK3562 | - | - |
+| RK3568J | Support | earlycon=uart8250,mmio32,0xfe660000 |
+| RK3568 | Support | earlycon=uart8250,mmio32,0xfe660000 |
+| RK3566 | Support | earlycon=uart8250,mmio32,0xfe660000 |
+| RK3506 | - |
 
 ## 2. Compiling
 
@@ -98,7 +58,7 @@ scons
 
 ## 3. Execution
 
-The RK3566 SoC uses different methods to install the kernel depending on the board.It is recommended to install and boot from an SD card.The following steps take the Orange Pi Compute Module 4 as an example:
+The RK3500 SoC uses different methods to install the kernel depending on the board.It is recommended to install and boot from an SD card.The following steps take the Orange Pi Compute Module 4 as an example:
 
 Connect the serial port of the development board:
 ![uart](./figures/uart.png)

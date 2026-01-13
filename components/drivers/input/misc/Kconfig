@@ -1,0 +1,12 @@
+menuconfig RT_INPUT_MISC
+    bool "Misc"
+    default n
+
+config RT_INPUT_MISC_BUTTON_E3X0
+    bool "NI Ettus Research USRP E3xx Button support"
+    depends on RT_INPUT_MISC
+    default n
+
+if RT_INPUT_MISC
+    osource "$(SOC_DM_INPUT_MISC_DIR)/Kconfig"
+endif

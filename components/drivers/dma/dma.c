@@ -19,6 +19,22 @@
 static rt_list_t dmac_nodes = RT_LIST_OBJECT_INIT(dmac_nodes);
 static RT_DEFINE_SPINLOCK(dmac_nodes_lock);
 
+static void dma_lock(struct rt_dma_controller *ctrl)
+{
+    if (rt_thread_self())
+    {
+        rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
+    }
+}
+
+static void dma_unlock(struct rt_dma_controller *ctrl)
+{
+    if (rt_thread_self())
+    {
+        rt_mutex_release(&ctrl->mutex);
+    }
+}
+
 rt_err_t rt_dma_controller_register(struct rt_dma_controller *ctrl)
 {
     const char *dev_name;
@@ -64,11 +80,11 @@ rt_err_t rt_dma_controller_unregister(struct rt_dma_controller *ctrl)
         return -RT_EINVAL;
     }
 
-    rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
+    dma_lock(ctrl);
 
     if (!rt_list_isempty(&ctrl->channels_nodes))
     {
-        rt_mutex_release(&ctrl->mutex);
+        dma_unlock(ctrl);
         return -RT_EBUSY;
     }
 
@@ -77,7 +93,7 @@ rt_err_t rt_dma_controller_unregister(struct rt_dma_controller *ctrl)
         rt_dm_dev_unbind_fwdata(ctrl->dev, RT_NULL);
     }
 
-    rt_mutex_release(&ctrl->mutex);
+    dma_unlock(ctrl);
     rt_mutex_detach(&ctrl->mutex);
 
     rt_spin_lock(&dmac_nodes_lock);
@@ -106,11 +122,45 @@ rt_err_t rt_dma_chan_start(struct rt_dma_chan *chan)
 
     ctrl = chan->ctrl;
 
-    rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
+    dma_lock(ctrl);
 
     err = ctrl->ops->start(chan);
 
-    rt_mutex_release(&ctrl->mutex);
+    dma_unlock(ctrl);
+
+    return err;
+}
+
+rt_err_t rt_dma_chan_pause(struct rt_dma_chan *chan)
+{
+    rt_err_t err;
+    struct rt_dma_controller *ctrl;
+
+    if (!chan)
+    {
+        return -RT_EINVAL;
+    }
+
+    if (!chan->ctrl->ops->pause)
+    {
+        LOG_D("%s: No pause, try stop", rt_dm_dev_get_name(chan->ctrl->dev));
+        return rt_dma_chan_stop(chan);
+    }
+
+    if (chan->prep_err)
+    {
+        LOG_D("%s: Not config done", rt_dm_dev_get_name(chan->slave));
+
+        return chan->prep_err;
+    }
+
+    ctrl = chan->ctrl;
+
+    dma_lock(ctrl);
+
+    err = ctrl->ops->pause(chan);
+
+    dma_unlock(ctrl);
 
     return err;
 }
@@ -134,11 +184,11 @@ rt_err_t rt_dma_chan_stop(struct rt_dma_chan *chan)
 
     ctrl = chan->ctrl;
 
-    rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
+    dma_lock(ctrl);
 
     err = ctrl->ops->stop(chan);
 
-    rt_mutex_release(&ctrl->mutex);
+    dma_unlock(ctrl);
 
     return err;
 }
@@ -188,11 +238,11 @@ rt_err_t rt_dma_chan_config(struct rt_dma_chan *chan,
         goto _end;
     }
 
-    rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
+    dma_lock(ctrl);
 
     err = ctrl->ops->config(chan, conf);
 
-    rt_mutex_release(&ctrl->mutex);
+    dma_unlock(ctrl);
 
     if (!err)
     {
@@ -233,6 +283,19 @@ static rt_bool_t range_is_illegal(const char *name, const char *desc,
     return illegal;
 }
 
+static rt_bool_t addr_is_supported(const char *name, const char *desc,
+        rt_uint64_t mask, rt_ubase_t addr)
+{
+    rt_bool_t illegal = !!(addr & ~mask);
+
+    if (illegal)
+    {
+        LOG_E("%s: %s %p is out of mask %p", name, desc, addr, mask);
+    }
+
+    return illegal;
+}
+
 rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
         struct rt_dma_slave_transfer *transfer)
 {
@@ -262,6 +325,18 @@ rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
     dma_addr_dst = transfer->dst_addr;
     len = transfer->buffer_len;
 
+    if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "source",
+        ctrl->addr_mask, conf->src_addr))
+    {
+        return -RT_ENOSYS;
+    }
+
+    if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "dest",
+        ctrl->addr_mask, conf->dst_addr))
+    {
+        return -RT_ENOSYS;
+    }
+
     if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "source",
         dma_addr_src, conf->src_addr))
     {
@@ -276,11 +351,11 @@ rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
 
     if (ctrl->ops->prep_memcpy)
     {
-        rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
+        dma_lock(ctrl);
 
         err = ctrl->ops->prep_memcpy(chan, dma_addr_src, dma_addr_dst, len);
 
-        rt_mutex_release(&ctrl->mutex);
+        dma_unlock(ctrl);
     }
     else
     {
@@ -327,6 +402,12 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
     {
         dma_buf_addr = transfer->src_addr;
 
+        if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "source",
+            ctrl->addr_mask, conf->src_addr))
+        {
+            return -RT_ENOSYS;
+        }
+
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "source",
             dma_buf_addr, conf->src_addr))
         {
@@ -336,6 +417,12 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
     else if (dir == RT_DMA_DEV_TO_MEM)
     {
         dma_buf_addr = transfer->dst_addr;
+
+        if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "dest",
+            ctrl->addr_mask, conf->dst_addr))
+        {
+            return -RT_ENOSYS;
+        }
 
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "dest",
             dma_buf_addr, conf->dst_addr))
@@ -350,12 +437,12 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
 
     if (ctrl->ops->prep_cyclic)
     {
-        rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
+        dma_lock(ctrl);
 
         err = ctrl->ops->prep_cyclic(chan, dma_buf_addr,
                 transfer->buffer_len, transfer->period_len, dir);
 
-        rt_mutex_release(&ctrl->mutex);
+        dma_unlock(ctrl);
     }
     else
     {
@@ -402,6 +489,12 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
     {
         dma_buf_addr = transfer->src_addr;
 
+        if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "source",
+            ctrl->addr_mask, conf->src_addr))
+        {
+            return -RT_ENOSYS;
+        }
+
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "source",
             dma_buf_addr, conf->src_addr))
         {
@@ -411,6 +504,12 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
     else if (dir == RT_DMA_DEV_TO_MEM)
     {
         dma_buf_addr = transfer->dst_addr;
+
+        if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "dest",
+            ctrl->addr_mask, conf->dst_addr))
+        {
+            return -RT_ENOSYS;
+        }
 
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "dest",
             dma_buf_addr, conf->dst_addr))
@@ -425,12 +524,12 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
 
     if (ctrl->ops->prep_single)
     {
-        rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
+        dma_lock(ctrl);
 
         err = ctrl->ops->prep_single(chan, dma_buf_addr,
                 transfer->buffer_len, dir);
 
-        rt_mutex_release(&ctrl->mutex);
+        dma_unlock(ctrl);
     }
     else
     {
@@ -556,9 +655,9 @@ struct rt_dma_chan *rt_dma_chan_request(struct rt_device *dev, const char *name)
     chan->conf_err = -RT_ERROR;
     chan->prep_err = -RT_ERROR;
 
-    rt_mutex_take(&ctrl->mutex, RT_WAITING_FOREVER);
+    dma_lock(ctrl);
     rt_list_insert_before(&ctrl->channels_nodes, &chan->list);
-    rt_mutex_release(&ctrl->mutex);
+    dma_unlock(ctrl);
 
     return chan;
 }

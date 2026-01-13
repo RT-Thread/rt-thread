@@ -1,0 +1,22 @@
+menuconfig RT_GRAPHIC_BACKLIGHT
+    bool "Backlight support"
+    default n
+
+config RT_GRAPHIC_BACKLIGHT_GPIO
+    bool "Generic GPIO based backlight driver"
+    depends on RT_GRAPHIC_BACKLIGHT
+    depends on RT_USING_PIN
+    default n
+
+config RT_GRAPHIC_BACKLIGHT_PWM
+    bool "Generic PWM based backlight driver"
+    depends on RT_GRAPHIC_BACKLIGHT
+    depends on RT_USING_OFW
+    depends on RT_USING_PIN
+    depends on RT_USING_PWM
+    depends on RT_USING_REGULATOR
+    default n
+
+if RT_GRAPHIC_BACKLIGHT
+    osource "$(SOC_DM_GRAPHIC_BACKLIGHT_DIR)/Kconfig"
+endif

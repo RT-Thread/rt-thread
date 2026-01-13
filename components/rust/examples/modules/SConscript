@@ -1,0 +1,159 @@
+import os
+import sys
+import subprocess
+import toml
+from building import *
+
+cwd = GetCurrentDir()
+
+RUSTC_FLAGS = {
+    "linker": "-C linker=ld.lld",
+    "panic": "-C panic=abort",
+}
+
+CARGO_CMD = {
+    "base": "cargo build",
+    "build_std": "-Z build-std=core,alloc,panic_abort",
+    "target_flag": "--target",
+    "target_arch": "%s",  
+    "release_profile": "--release",
+    "debug_profile": "",  # No additional flag for debug mode
+}
+
+tools_dir = os.path.join(cwd, '..', '..', 'tools')
+sys.path.insert(0, tools_dir)
+
+from build_support import detect_rust_target, ensure_rust_target_installed, clean_rust_build
+
+def _has(sym: str) -> bool:
+    """Helper function to check if a configuration symbol is enabled"""
+    try:
+        return bool(GetDepend([sym]))
+    except Exception:
+        return bool(GetDepend(sym))
+
+def detect_target_for_dynamic_modules():
+    """
+    Detect the appropriate Rust target for dynamic modules.
+    For dynamic modules, we need Linux targets instead of bare-metal targets.
+    """
+    if detect_rust_target is not None:
+        try:
+            import rtconfig
+            bare_metal_target = detect_rust_target(_has, rtconfig)
+            
+            if bare_metal_target:
+                if "riscv64" in bare_metal_target:
+                    return "riscv64gc-unknown-linux-gnu"
+                elif "riscv32" in bare_metal_target:
+                    return "riscv32gc-unknown-linux-gnu"
+                elif "aarch64" in bare_metal_target:
+                    return "aarch64-unknown-linux-gnu"
+                elif "arm" in bare_metal_target or "thumb" in bare_metal_target:
+                    return "armv7-unknown-linux-gnueabihf"
+        except Exception as e:
+            print(f"Error: Target detection failed: {e}")
+            raise RuntimeError(f"Failed to detect Rust target for dynamic modules: {e}")
+    
+    print("Error: Unable to detect appropriate Rust target for dynamic modules")
+    raise RuntimeError("Target detection failed - no valid target found")
+
+def build_rust_module(module_dir, build_root):
+    """Build a Rust dynamic module with automatic target detection"""
+    cargo_toml_path = os.path.join(module_dir, 'Cargo.toml')
+    if not os.path.exists(cargo_toml_path):
+        return [], [], ""
+    
+    with open(cargo_toml_path, 'r') as f:
+        cargo_config = toml.load(f)
+    
+    module_name = cargo_config['package']['name']
+    
+    # Detect target automatically based on the current configuration
+    target = detect_target_for_dynamic_modules()
+    print(f"Building Rust module '{module_name}' for target: {target}")
+    
+    # Detect debug mode from rtconfig (same as main rust/SConscript)
+    debug = bool(_has('RUST_DEBUG_BUILD'))
+    build_mode = "debug" if debug else "release"
+    print(f"Building in {build_mode} mode")
+    
+    # Use global RUSTFLAGS configuration for dynamic modules
+    rustflags = " ".join(RUSTC_FLAGS.values())
+    
+    # Verify that the target is installed
+    if ensure_rust_target_installed is not None:
+        if not ensure_rust_target_installed(target):
+            print(f"Error: Rust target '{target}' is not installed")
+            print(f"Please install it with: rustup target add {target}")
+            return [], [], ""
+    else:
+        print(f"Warning: Cannot verify if target '{target}' is installed")
+    
+    # Set up build environment
+    env = os.environ.copy()
+    env['RUSTFLAGS'] = rustflags
+    env['CARGO_TARGET_DIR'] = build_root
+    
+    # Build the module with configurable parameters using dictionary configuration
+    build_cmd = [
+        CARGO_CMD["base"].split()[0],  # 'cargo'
+        CARGO_CMD["base"].split()[1],  # 'build'
+        CARGO_CMD["target_flag"],      # '--target'
+        target,                        # actual target architecture
+    ]
+    
+    # Add profile flag based on debug mode
+    profile_flag = CARGO_CMD["debug_profile"] if debug else CARGO_CMD["release_profile"]
+    if profile_flag:
+        build_cmd.append(profile_flag)
+    
+    # Add build-std flag if specified
+    if CARGO_CMD["build_std"]:
+        build_std_parts = CARGO_CMD["build_std"].split()
+        build_cmd.extend(build_std_parts)  
+    
+    try:
+        subprocess.run(build_cmd, cwd=module_dir, env=env, check=True, capture_output=True)
+        lib_dir = os.path.join(build_root, target, build_mode)
+        return [module_name], [lib_dir], ""
+    except subprocess.CalledProcessError:
+        return [], [], ""
+
+# Check dependencies
+if not _has('RT_RUST_BUILD_MODULES'):
+    Return([])
+
+build_root = os.path.join(Dir('#').abspath, "build", "rust_modules")
+
+# Handle clean operation
+if GetOption('clean'):
+    if clean_rust_build is not None:
+        modules_build_dir = clean_rust_build(Dir('#').abspath, "rust_modules")
+        if os.path.exists(modules_build_dir):
+            print(f'Registering {modules_build_dir} for cleanup')
+            Clean('.', modules_build_dir)
+        else:
+            print('No rust_modules build artifacts to clean')
+    else:
+        print('Warning: clean_rust_build function not available')
+else:
+    # Build all Rust modules in subdirectories
+    modules_built = []
+    for item in os.listdir(cwd):
+        item_path = os.path.join(cwd, item)
+        if os.path.isdir(item_path) and os.path.exists(os.path.join(item_path, 'Cargo.toml')):
+            result = build_rust_module(item_path, build_root)
+            if result[0]:
+                modules_built.extend(result[0])
+
+    if modules_built:
+        print(f"Successfully built {len(modules_built)} Rust dynamic module(s): {', '.join(modules_built)}")
+
+group = DefineGroup(
+    'rust_modules', 
+    [], 
+    depend=['RT_RUST_BUILD_MODULES']
+)
+
+Return('group')

@@ -1,0 +1,28 @@
+mainmenu "RT-Thread Project Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../..
+
+PKGS_DIR := packages
+
+SOC_DM_DIR := $BSP_DIR/../dm/
+
+source "$(SOC_DM_DIR)/Kconfig"
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+
+config SOC_RK3300
+    bool
+    select ARCH_ARMV8
+    select ARCH_CPU_64BIT
+    select ARCH_ARM_MMU
+    select RT_USING_CACHE
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select RT_USING_STDC_ATOMIC
+    default y
+
+config RT_USING_AMBA_BUS
+    bool
+    default y
