@@ -133,8 +133,6 @@ void xpt2046_entry(void *parameter)
 
         if (rt_device_read(touch, 0, &read_data, 1) == 1)
         {
-            rotate_coordinates(&read_data.x_coordinate, &read_data.y_coordinate);
-
             int current_x = read_data.x_coordinate;
             int current_y = read_data.y_coordinate;
 
