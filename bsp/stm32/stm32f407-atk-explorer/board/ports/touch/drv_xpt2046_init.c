@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2022-6-27      solar        first version
+ * 2026-01-12     LinuxMint-User fix touch event bug with LVGL
+ * 2026-01-13     LinuxMint-User improve the touch sliding experience of resistive screens
  */
 
 #include <rtdevice.h>
@@ -42,6 +44,7 @@ void xpt2046_init_hw(void)
         rt_kprintf("can't find touch device:%s\n", TOUCH_DEVICE_NAME);
         return;
     }
+
     if (rt_device_open(touch, RT_DEVICE_FLAG_INT_RX) != RT_EOK)
     {
         rt_kprintf("can't open touch device:%s\n", TOUCH_DEVICE_NAME);
@@ -87,38 +90,157 @@ void xpt2046_init_hw(void)
 
 void xpt2046_entry(void *parameter)
 {
-    /* Find the touch device */
     rt_device_t touch = rt_device_find(TOUCH_DEVICE_NAME);
     if (touch == RT_NULL)
     {
         rt_kprintf("can't find touch device:%s\n", TOUCH_DEVICE_NAME);
         return;
     }
-#ifndef PKG_USING_LVGL
+
+    #ifndef PKG_USING_LVGL
     rt_device_t lcd = rt_device_find(TFTLCD_DEVICE_NAME);
     if (lcd == RT_NULL)
     {
-       rt_kprintf("can't find display device:%s\n", TFTLCD_DEVICE_NAME);
-       return;
+        rt_kprintf("can't find display device:%s\n", TFTLCD_DEVICE_NAME);
+        return;
     }
-#endif /* PKG_USING_LVGL */
+    #endif
+
+    static bool is_touching = false;
+    static int no_touch_count = 0;
+    static int touch_hold_count = 0;
+    static int last_x = 0, last_y = 0;
+    static int stable_x = 0, stable_y = 0;
+
+    #define HISTORY_SIZE 5
+    static int history_x[HISTORY_SIZE] = {0};
+    static int history_y[HISTORY_SIZE] = {0};
+    static int history_index = 0;
+    static int history_count = 0;
+
+    static const int DEBOUNCE_COUNT = 2;
+    static const int RELEASE_DEBOUNCE_COUNT = 5;
+    static const int MIN_MOVE_DISTANCE = 3;
+    static const int SMOOTHING_FACTOR = 2;
+
+    rt_memset(history_x, 0, sizeof(history_x));
+    rt_memset(history_y, 0, sizeof(history_y));
+
     while (1)
     {
-        /* Prepare variable to read out the touch data */
         struct rt_touch_data read_data;
         rt_memset(&read_data, 0, sizeof(struct rt_touch_data));
+
         if (rt_device_read(touch, 0, &read_data, 1) == 1)
         {
-#ifdef PKG_USING_LVGL
-            lv_port_indev_input(read_data.x_coordinate, read_data.y_coordinate,
-                                ((read_data.event = RT_TOUCH_EVENT_DOWN) ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL));
-#else /* PKG_USING_LVGL */
+            rotate_coordinates(&read_data.x_coordinate, &read_data.y_coordinate);
+
+            int current_x = read_data.x_coordinate;
+            int current_y = read_data.y_coordinate;
+
+            history_x[history_index] = current_x;
+            history_y[history_index] = current_y;
+            history_index = (history_index + 1) % HISTORY_SIZE;
+            if (history_count < HISTORY_SIZE) history_count++;
+
+            int avg_x = 0, avg_y = 0;
+            if (history_count > 0)
+            {
+                for (int i = 0; i < history_count; i++)
+                {
+                    avg_x += history_x[i];
+                    avg_y += history_y[i];
+                }
+                avg_x /= history_count;
+                avg_y /= history_count;
+            }
+            else
+            {
+                avg_x = current_x;
+                avg_y = current_y;
+            }
+
+            no_touch_count = 0;
+
+            #ifdef PKG_USING_LVGL
+            if (!is_touching)
+            {
+                touch_hold_count++;
+
+                if (touch_hold_count >= DEBOUNCE_COUNT)
+                {
+                    is_touching = true;
+                    stable_x = avg_x;
+                    stable_y = avg_y;
+                    touch_hold_count = 0;
+
+                    lv_port_indev_input(stable_x, stable_y, LV_INDEV_STATE_PR);
+
+                    last_x = stable_x;
+                    last_y = stable_y;
+                }
+            }
+            else
+            {
+                touch_hold_count = 0;
+
+                int dx = avg_x - last_x;
+                int dy = avg_y - last_y;
+                int distance = dx * dx + dy * dy;
+
+                if (distance >= MIN_MOVE_DISTANCE * MIN_MOVE_DISTANCE)
+                {
+                    int smooth_x = last_x + (avg_x - last_x) / SMOOTHING_FACTOR;
+                    int smooth_y = last_y + (avg_y - last_y) / SMOOTHING_FACTOR;
+
+                    lv_port_indev_input(smooth_x, smooth_y, LV_INDEV_STATE_PR);
+
+                    last_x = smooth_x;
+                    last_y = smooth_y;
+                    stable_x = smooth_x;
+                    stable_y = smooth_y;
+                }
+                else
+                {
+                    lv_port_indev_input(stable_x, stable_y, LV_INDEV_STATE_PR);
+                }
+            }
+
+            #else
             const rt_uint32_t black = 0x0;
-            rt_graphix_ops(lcd)->set_pixel((const char *)(&black),
-                                        read_data.x_coordinate,
-                                         read_data.y_coordinate);
-#endif /* PKG_USING_LVGL */
+            rt_graphix_ops(lcd)->set_pixel((const char *)(&black), avg_x, avg_y);
+            #endif
         }
+        else
+        {
+            no_touch_count++;
+            touch_hold_count = 0;
+
+            if (is_touching)
+            {
+                if (no_touch_count >= RELEASE_DEBOUNCE_COUNT)
+                {
+                    #ifdef PKG_USING_LVGL
+                    lv_port_indev_input(stable_x, stable_y, LV_INDEV_STATE_REL);
+                    #endif
+
+                    is_touching = false;
+                    no_touch_count = 0;
+
+                    history_count = 0;
+                    history_index = 0;
+                    rt_memset(history_x, 0, sizeof(history_x));
+                    rt_memset(history_y, 0, sizeof(history_y));
+                }
+                else
+                {
+                    #ifdef PKG_USING_LVGL
+                    lv_port_indev_input(stable_x, stable_y, LV_INDEV_STATE_PR);
+                    #endif
+                }
+            }
+        }
+
         rt_thread_mdelay(1);
     }
 }
@@ -134,3 +256,4 @@ static int touch_xpt2046_init(void)
 INIT_COMPONENT_EXPORT(touch_xpt2046_init);
 
 #endif /* BSP_USING_TOUCH_RES */
+
