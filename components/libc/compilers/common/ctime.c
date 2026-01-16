@@ -391,7 +391,6 @@ time_t timegm(struct tm * const t)
         return (time_t)-1;
     }
 
-    years = (time_t)t->tm_year - 70;
     if (t->tm_sec > 60)         /* seconds after the minute - [0, 60] including leap second */
     {
         t->tm_min += t->tm_sec / 60;
@@ -432,6 +431,8 @@ time_t timegm(struct tm * const t)
         rt_set_errno(EINVAL);
         return (time_t) -1;
     }
+
+    years = (time_t)t->tm_year - 70;
 
     /* Days since 1970 is 365 * number of years + number of leap years since 1970 */
     day = years * 365 + (years + 1) / 4;
