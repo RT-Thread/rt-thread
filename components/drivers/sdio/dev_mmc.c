@@ -323,7 +323,8 @@ static int mmc_poll_for_busy(struct rt_mmcsd_card *card, rt_uint32_t timeout_ms,
             return err;
         }
     }
-    while (!(status & R1_READY_FOR_DATA));
+    while (!(status & R1_READY_FOR_DATA) ||
+           (R1_CURRENT_STATE(status) == R1_STATE_PRG));
 
     return err;
 }
