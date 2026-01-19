@@ -303,7 +303,6 @@ static int mmc_poll_for_busy(struct rt_mmcsd_card *card, rt_uint32_t timeout_ms,
     rt_tick_t start;
 
     start = rt_tick_get();
-    
     do
     {
         rt_bool_t out = (int)(rt_tick_get() - start) >= timeout;
