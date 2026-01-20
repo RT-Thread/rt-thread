@@ -44,24 +44,26 @@ void *mmap(void *addr, size_t length, int prot, int flags,
 
     if (mem)
     {
-        off_t cur;
-        size_t read_bytes;
-
-        cur = lseek(fd, 0, SEEK_SET);
-
-        lseek(fd, offset, SEEK_SET);
-        read_bytes = read(fd, mem, length);
-        if (read_bytes != length)
+        if (!(flags & MAP_ANON))
         {
-            if (addr == RT_NULL)
-            {
-                /* read failed */
-                free(mem);
-                mem = RT_NULL;
-            }
-        }
-        lseek(fd, cur, SEEK_SET);
+            off_t cur;
+            size_t read_bytes;
 
+            cur = lseek(fd, 0, SEEK_SET);
+
+            lseek(fd, offset, SEEK_SET);
+            read_bytes = read(fd, mem, length);
+            if (read_bytes != length)
+            {
+                if (addr == RT_NULL)
+                {
+                    /* read failed */
+                    free(mem);
+                    mem = RT_NULL;
+                }
+            }
+            lseek(fd, cur, SEEK_SET);
+        }
         return mem;
     }
 

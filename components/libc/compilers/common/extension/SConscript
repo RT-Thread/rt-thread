@@ -9,7 +9,7 @@ group = []
 
 src += Glob('*.c')
 
-if rtconfig.PLATFORM not in ['gcc', 'llvm-arm']:
+if rtconfig.PLATFORM not in ['gcc', 'llvm-arm', 'llvm-riscv']:
     group = DefineGroup('Libc', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)

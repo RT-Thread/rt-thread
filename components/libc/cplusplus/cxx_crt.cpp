@@ -21,12 +21,12 @@ void *operator new[](size_t size)
     return rt_malloc(size);
 }
 
-void operator delete(void *ptr)
+void operator delete(void *ptr) noexcept
 {
     rt_free(ptr);
 }
 
-void operator delete[](void *ptr)
+void operator delete[](void *ptr) noexcept
 {
     return rt_free(ptr);
 }
