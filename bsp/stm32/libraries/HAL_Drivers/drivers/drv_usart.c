@@ -10,7 +10,7 @@
  * 2020-03-20     SummerGift   fix bug caused by ORE
  * 2020-05-02     whj4674672   support stm32h7 uart dma
  * 2020-09-09     forest-rain  support stm32wl uart
- * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2020-10-14     PeakRacing   Porting for stm32wbxx
  */
 
 #include "board.h"

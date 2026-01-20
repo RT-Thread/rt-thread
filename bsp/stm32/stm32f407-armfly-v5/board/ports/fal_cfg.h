@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2020-07-13     Dozingfiretruck   first version
+ * 2020-07-13     PeakRacing   first version
  */
 
 #ifndef _FAL_CFG_H_
