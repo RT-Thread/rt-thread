@@ -6,7 +6,7 @@
  * Change Logs:
  * Date         Author        Notes
  * 2018-12-04   balanceTWK    first version
- * 2020-10-14   Dozingfiretruck Porting for stm32wbxx
+ * 2020-10-14   PeakRacing Porting for stm32wbxx
  * 2021-02-05   Meco Man      fix the problem of mixing local time and UTC time
  * 2021-07-05   iysheng       implement RTC framework V2.0
  * 2025-06-05   RCSN          add local time conversion for get timeval and set stamp
