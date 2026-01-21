@@ -19,6 +19,20 @@
 #define LOG_TAG    "can_drv"
 #include <drv_log.h>
 
+#if (defined(SOC_SERIES_GD32F10x) && !defined(GD32F10X_CL)) || \
+    (defined(SOC_SERIES_GD32F30x) && !defined(GD32F30X_CL)) || \
+    (defined(SOC_SERIES_GD32E50x) && defined(GD32E50X_HD))
+#define CAN0_TX_IRQn_ALIAS      USBD_HP_CAN0_TX_IRQn
+#define CAN0_RX0_IRQn_ALIAS     USBD_LP_CAN0_RX0_IRQn
+#define CAN0_TX_ISR_HANDLER     USBD_HP_CAN0_TX_IRQHandler
+#define CAN0_RX0_ISR_HANDLER    USBD_LP_CAN0_RX0_IRQHandler
+#else
+#define CAN0_TX_IRQn_ALIAS      CAN0_TX_IRQn
+#define CAN0_RX0_IRQn_ALIAS     CAN0_RX0_IRQn
+#define CAN0_TX_ISR_HANDLER     CAN0_TX_IRQHandler
+#define CAN0_RX0_ISR_HANDLER    CAN0_RX0_IRQHandler
+#endif
+
 #if defined(GD32F405) || defined(GD32F407) /* 42MHz(max) */
 static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
 {
@@ -45,7 +59,7 @@ static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
     {CAN20kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 250},
     {CAN10kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 500},
 };
-#elif defined(GD32F470) /* 60MHz(max) */
+#elif defined(GD32F470) || defined(SOC_SERIES_GD32F30x) /* 60MHz(max) */
 static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
 {
     {CAN1MBaud,     CAN_BT_SJW_1TQ, CAN_BT_BS1_12TQ, CAN_BT_BS2_2TQ, 4},
@@ -63,19 +77,11 @@ static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
 #endif
 
 #ifdef BSP_USING_CAN0
-static struct gd32_can_device dev_can0 =
-{
-    .name = "can0",
-    .can_x = CAN0,
-};
+static struct gd32_can_device dev_can0;
 #endif
 
 #ifdef BSP_USING_CAN1
-static struct gd32_can_device dev_can1 =
-{
-    "can1",
-    .can_x = CAN1,
-};
+static struct gd32_can_device dev_can1;
 #endif
 
 static const struct gd32_can gd32_can_gpio[] =
@@ -167,7 +173,7 @@ static void gd32_can_gpio_init(void)
         gpio_mode_set(PIN_GDPORT(gd32_can_gpio[i].rx_pin), GPIO_MODE_AF, GPIO_PUPD_NONE, PIN_GDPIN(gd32_can_gpio[i].rx_pin));
 #else
         gpio_init(PIN_GDPORT(gd32_can_gpio[i].tx_pin), GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, PIN_GDPIN(gd32_can_gpio[i].tx_pin));
-        gpio_init(PIN_GDPORT(gd32_can_gpio[i].rx_pin), GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, PIN_GDPIN(gd32_can_gpio[i].rx_pin));
+        gpio_init(PIN_GDPORT(gd32_can_gpio[i].rx_pin), GPIO_MODE_IPU, GPIO_OSPEED_50MHZ, PIN_GDPIN(gd32_can_gpio[i].rx_pin));
 #endif
     }
 }
@@ -201,7 +207,11 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     can_init_struct.time_triggered = DISABLE;
     can_init_struct.auto_bus_off_recovery = ENABLE;
     can_init_struct.auto_wake_up = ENABLE;
+#if defined(SOC_SERIES_GD32F10x) || defined(SOC_SERIES_GD32F20x) || defined(SOC_SERIES_GD32F30x)
+    can_init_struct.no_auto_retrans = ENABLE;
+#else
     can_init_struct.auto_retrans = DISABLE;
+#endif
     can_init_struct.rec_fifo_overwrite = DISABLE;
     can_init_struct.trans_fifo_order = DISABLE;
 
@@ -254,15 +264,17 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 #ifdef CAN0
             if (CAN0 == can_dev->can_x)
             {
-                nvic_irq_disable(CAN0_RX0_IRQn);
+                nvic_irq_disable(CAN0_RX0_IRQn_ALIAS);
                 nvic_irq_disable(CAN0_RX1_IRQn);
             }
 #endif
 #ifdef CAN1
             if (CAN1 == can_dev->can_x)
             {
+#if defined(CAN1_RX0_IRQn)
                 nvic_irq_disable(CAN1_RX0_IRQn);
                 nvic_irq_disable(CAN1_RX1_IRQn);
+#endif
             }
 #endif
             can_interrupt_disable(can_dev->can_x, CAN_INT_RFNE0);
@@ -277,13 +289,15 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 #ifdef CAN0
             if (CAN0 == can_dev->can_x)
             {
-                nvic_irq_disable(CAN0_TX_IRQn);
+                nvic_irq_disable(CAN0_TX_IRQn_ALIAS);
             }
 #endif
 #ifdef CAN1
             if (CAN1 == can_dev->can_x)
             {
+#if defined(CAN1_TX_IRQn)
                 nvic_irq_disable(CAN1_TX_IRQn);
+#endif
             }
 #endif
             can_interrupt_disable(can_dev->can_x, CAN_INT_TME);
@@ -299,7 +313,9 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 #ifdef CAN1
             if (CAN1 == can_dev->can_x)
             {
+#if defined(CAN1_EWMC_IRQn)
                 nvic_irq_disable(CAN1_EWMC_IRQn);
+#endif
             }
 #endif
             can_interrupt_disable(can_dev->can_x, CAN_INT_WERR);
@@ -322,15 +338,17 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 #ifdef CAN0
             if (CAN0 == can_dev->can_x)
             {
-                nvic_irq_enable(CAN0_RX0_IRQn, 1, 0);
+                nvic_irq_enable(CAN0_RX0_IRQn_ALIAS, 1, 0);
                 nvic_irq_enable(CAN0_RX1_IRQn, 1, 0);
             }
 #endif
 #ifdef CAN1
             if (CAN1 == can_dev->can_x)
             {
+#if defined(CAN1_RX0_IRQn)
                 nvic_irq_enable(CAN1_RX0_IRQn, 1, 0);
                 nvic_irq_enable(CAN1_RX1_IRQn, 1, 0);
+#endif
             }
 #endif
         }
@@ -340,13 +358,15 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 #ifdef CAN0
             if (CAN0 == can_dev->can_x)
             {
-                nvic_irq_enable(CAN0_TX_IRQn, 1, 0);
+                nvic_irq_enable(CAN0_TX_IRQn_ALIAS, 1, 0);
             }
 #endif
 #ifdef CAN1
             if (CAN1 == can_dev->can_x)
             {
+#if defined(CAN1_TX_IRQn)
                 nvic_irq_enable(CAN1_TX_IRQn, 1, 0);
+#endif
             }
 #endif
         }
@@ -366,7 +386,9 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 #ifdef CAN1
             if (CAN1 == can_dev->can_x)
             {
+#if defined(CAN1_EWMC_IRQn)
                 nvic_irq_enable(CAN1_EWMC_IRQn, 1, 0);
+#endif
             }
 #endif
         }
@@ -906,7 +928,7 @@ static void _can_tx_isr(struct rt_can_device *can)
 /**
  * @brief This function handles CAN0 TX interrupts. transmit fifo0/1/2 is empty can trigger this interrupt
  */
-void CAN0_TX_IRQHandler(void)
+void CAN0_TX_ISR_HANDLER(void)
 {
     rt_interrupt_enter();
     _can_tx_isr(&dev_can0.device);
@@ -916,7 +938,7 @@ void CAN0_TX_IRQHandler(void)
 /**
  * @brief This function handles CAN0 RX0 interrupts.
  */
-void CAN0_RX0_IRQHandler(void)
+void CAN0_RX0_ISR_HANDLER(void)
 {
     rt_interrupt_enter();
     _can_rx_isr(&dev_can0.device, CAN_RX_FIFO0);
@@ -1009,7 +1031,7 @@ int rt_hw_can_init(void)
     config.ticks = 50;
 #ifdef RT_CAN_USING_HDR
     config.maxhdr = 14;
-#ifdef CAN1
+#ifdef CAN1_EWMC_IRQn
     config.maxhdr = 28;
 #endif
 #endif
@@ -1033,6 +1055,9 @@ int rt_hw_can_init(void)
 #ifdef BSP_USING_CAN0
     filter_config.filter_number = 0;
 
+    dev_can0.name = "can0";
+    dev_can0.can_x = CAN0;
+
     dev_can0.filter_config = filter_config;
     dev_can0.device.config = config;
     /* register CAN1 device */
@@ -1044,6 +1069,9 @@ int rt_hw_can_init(void)
 
 #ifdef BSP_USING_CAN1
     filter_config.filter_number = 14;
+
+    dev_can1.name = "can1";
+    dev_can1.can_x = CAN1;
 
     dev_can1.filter_config = filter_config;
     dev_can1.device.config = config;
