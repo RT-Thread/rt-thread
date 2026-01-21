@@ -8,7 +8,7 @@
  * 2018-12-10     zylx         first version
  * 2020-06-16     thread-liu   Porting for stm32mp1
  * 2020-08-25     linyongkang  Fix the timer clock frequency doubling problem
- * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2020-10-14     PeakRacing   Porting for stm32wbxx
  * 2020-11-18     leizhixiong  add STM32H7 series support
  * 2023-08-21     Donocean     fix the MCU crash when using timer6
  * 2023-12-24     Meco Man     add TIMx existing check

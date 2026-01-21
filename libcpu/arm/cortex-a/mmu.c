@@ -112,7 +112,7 @@ void rt_hw_mem_setup_early(rt_uint32_t *early_mmu_talbe,
     extern unsigned char _reset;
     rt_uint32_t va = (rt_uint32_t) &_reset;
     /* The starting virtual address is aligned along 0x1000000. */
-    va &= (0x1000000 - 1);
+    va &= ~(0x1000000 - 1);
     size -= va;
     _init_map_section(early_mmu_talbe, va, size, va + pv_off, normal_attr);
 #endif
