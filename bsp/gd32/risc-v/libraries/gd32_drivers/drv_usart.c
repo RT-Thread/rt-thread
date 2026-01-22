@@ -205,7 +205,7 @@ static const struct gd32_uart uart_obj[] = {
 #if defined (SOC_SERIES_GD32VF103V)
         USART1,                                 /* uart peripheral index */
         USART1_IRQn,                            /* uart iqrn */
-        RCU_UART1, RCU_GPIOA, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
+        RCU_USART1, RCU_GPIOA, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
         GPIOA, GPIO_PIN_2,                      /* tx port, tx pin */
         GPIOA, GPIO_PIN_3,                      /* rx port, rx pin */
 #elif defined (SOC_SERIES_GD32VW55x)
@@ -226,11 +226,11 @@ static const struct gd32_uart uart_obj[] = {
     #ifdef BSP_USING_UART2
     {
 #if defined (SOC_SERIES_GD32VF103V)
-        UART2,                                 /* uart peripheral index */
-        UART2_IRQn,                            /* uart iqrn */
-        RCU_UART2, RCU_GPIOA, RCU_GPIOA,       /* periph clock, tx gpio clock, rt gpio clock */
-        GPIOA, GPIO_PIN_6,          /* tx port, tx pin */
-        GPIOA, GPIO_PIN_7,          /* rx port, rx pin */
+        USART2,                                 /* uart peripheral index */
+        USART2_IRQn,                            /* uart iqrn */
+        RCU_USART2, RCU_GPIOB, RCU_GPIOB,       /* periph clock, tx gpio clock, rt gpio clock */
+        GPIOB, GPIO_PIN_10,          /* tx port, tx pin */
+        GPIOB, GPIO_PIN_11,          /* rx port, rx pin */
 #elif defined (SOC_SERIES_GD32VW55x)
         UART2,                                 /* uart peripheral index */
         UART2_IRQn,                            /* uart iqrn */
