@@ -47,7 +47,6 @@
  * - Test runs via: `utest_run core.perf_test` in msh
  */
 
- 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <rtservice.h>
