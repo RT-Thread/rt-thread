@@ -47,5 +47,26 @@ if RT_USING_FAL
             default "norflash0"
     endif
 
+    config FAL_DEV_NAME_MAX
+        int "FAL device/partition name max length"
+        default 24
+        range 8 128
+        help
+            Configure the maximum length of flash/partition device name used by FAL.
+            This value corresponds to macro FAL_DEV_NAME_MAX.
+            Increase it if your flash device name or partition name is longer.
+            Note: Larger value may increase memory usage in some implementations.
+
+    config FAL_DEV_BLK_MAX
+        int "FAL max flash device blocks"
+        default 6
+        range 1 32
+        help
+            Configure the maximum number of flash device blocks managed by FAL.
+            This value corresponds to macro FAL_DEV_BLK_MAX.
+            If you have multiple flash devices (onchip/spi-nor/spi-nand, etc.)
+            or multiple underlying blocks, increase this value accordingly.
+            Note: Larger value may increase RAM/ROM usage.
+
 endif
 
