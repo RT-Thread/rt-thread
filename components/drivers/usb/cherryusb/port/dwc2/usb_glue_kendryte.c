@@ -50,11 +50,7 @@ const uintptr_t usb_dev_addr[2] = { 0x91500000UL, 0x91540000UL };
 
 const struct dwc2_user_params param_common = {
     .phy_type = DWC2_PHY_TYPE_PARAM_UTMI,
-#ifdef CONFIG_USB_DWC2_DMA_ENABLE
     .device_dma_enable = true,
-#else
-    .device_dma_enable = false,
-#endif
     .device_dma_desc_enable = false,
     .device_rx_fifo_size = (3016 - 16 - 256 * 8),
     .device_tx_fifo_size = {
@@ -202,6 +198,11 @@ void usb_dc_low_level_deinit(uint8_t busid)
 void usbd_dwc2_delay_ms(uint8_t ms)
 {
     rt_thread_mdelay(ms);
+}
+
+uint32_t usbd_dwc2_get_system_clock(void)
+{
+    return SystemCoreClock;
 }
 
 #ifdef CONFIG_USB_DCACHE_ENABLE

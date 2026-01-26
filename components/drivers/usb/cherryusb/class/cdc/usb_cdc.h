@@ -217,12 +217,12 @@
 #define CDC_SERIAL_STATE_BREAK          (1 << 2) /* state of break detection */
 #define CDC_SERIAL_STATE_BREAK_Pos      (2)
 #define CDC_SERIAL_STATE_BREAK_Msk      (1 << CDC_SERIAL_STATE_BREAK_Pos)
-#define CDC_SERIAL_STATE_TX_CARRIER     (1 << 1) /* state of transmission carrier */
-#define CDC_SERIAL_STATE_TX_CARRIER_Pos (1)
-#define CDC_SERIAL_STATE_TX_CARRIER_Msk (1 << CDC_SERIAL_STATE_TX_CARRIER_Pos)
-#define CDC_SERIAL_STATE_RX_CARRIER     (1 << 0) /* state of receiver carrier */
-#define CDC_SERIAL_STATE_RX_CARRIER_Pos (0)
-#define CDC_SERIAL_STATE_RX_CARRIER_Msk (1 << CDC_SERIAL_STATE_RX_CARRIER_Pos)
+#define CDC_SERIAL_STATE_DSR            (1 << 1) /* state of transmission carrier */
+#define CDC_SERIAL_STATE_DSR_Pos        (1)
+#define CDC_SERIAL_STATE_DSR_Msk        (1 << CDC_SERIAL_STATE_DSR_Pos)
+#define CDC_SERIAL_STATE_DCD            (1 << 0) /* state of receiver carrier */
+#define CDC_SERIAL_STATE_DCD_Pos        (0)
+#define CDC_SERIAL_STATE_DCD_Msk        (1 << CDC_SERIAL_STATE_DCD_Pos)
 
 #define CDC_ECM_XMIT_OK                                     (1 << 0)
 #define CDC_ECM_RVC_OK                                      (1 << 1)
@@ -551,10 +551,9 @@ struct cdc_ncm_ndp16 {
 #define DBVAL_BE(x) ((x >> 24) & 0xFF), ((x >> 16) & 0xFF), ((x >> 8) & 0xFF), (x & 0xFF)
 
 /*Length of template descriptor: 71 bytes*/
-#define CDC_ECM_DESCRIPTOR_LEN   (8 + 9 + 5 + 5 + 13 + 7 + 9 + 7 + 7)
+#define CDC_ECM_DESCRIPTOR_LEN (8 + 9 + 5 + 5 + 13 + 7 + 9 + 7 + 7)
 // clang-format off
-#define CDC_ECM_DESCRIPTOR_INIT(bFirstInterface, int_ep, out_ep, in_ep, wMaxPacketSize, \
-eth_statistics, wMaxSegmentSize, wNumberMCFilters, bNumberPowerFilters, str_idx) \
+#define CDC_ECM_DESCRIPTOR_INIT(bFirstInterface, int_ep, out_ep, in_ep, wMaxPacketSize, str_idx) \
     /* Interface Associate */                                                                  \
     0x08,                                                  /* bLength */                       \
     USB_DESCRIPTOR_TYPE_INTERFACE_ASSOCIATION,             /* bDescriptorType */               \
@@ -587,10 +586,10 @@ eth_statistics, wMaxSegmentSize, wNumberMCFilters, bNumberPowerFilters, str_idx)
     CDC_CS_INTERFACE,                                       /* bDescriptorType: CS_INTERFACE */\
     CDC_FUNC_DESC_ETHERNET_NETWORKING, /* Ethernet Networking functional descriptor subtype  */\
     str_idx,                                                    /* Device's MAC string index */\
-    DBVAL_BE(eth_statistics),                                /* Ethernet statistics (bitmap) */\
-    WBVAL(wMaxSegmentSize),/* wMaxSegmentSize: Ethernet Maximum Segment size, typically 1514 bytes */\
-    WBVAL(wNumberMCFilters),            /* wNumberMCFilters: the number of multicast filters */\
-    bNumberPowerFilters,          /* bNumberPowerFilters: the number of wakeup power filters */\
+    DBVAL_BE(0x00000000),                                    /* Ethernet statistics (bitmap) */\
+    WBVAL(1514),     /* wMaxSegmentSize: Ethernet Maximum Segment size, typically 1514 bytes */\
+    WBVAL(0),        /* wNumberMCFilters: the number of multicast filters */                   \
+    0,               /* bNumberPowerFilters: the number of wakeup power filters */             \
     0x07,                                                  /* bLength */                       \
     USB_DESCRIPTOR_TYPE_ENDPOINT,                          /* bDescriptorType */               \
     int_ep,                                                /* bEndpointAddress */              \
@@ -621,10 +620,9 @@ eth_statistics, wMaxSegmentSize, wNumberMCFilters, bNumberPowerFilters, str_idx)
 // clang-format on
 
 /*Length of template descriptor: 77 bytes*/
-#define CDC_NCM_DESCRIPTOR_LEN   (8 + 9 + 5 + 5 + 13 + 6 + 7 + 9 + 7 + 7)
+#define CDC_NCM_DESCRIPTOR_LEN (8 + 9 + 5 + 5 + 13 + 6 + 7 + 9 + 7 + 7)
 // clang-format off
-#define CDC_NCM_DESCRIPTOR_INIT(bFirstInterface, int_ep, out_ep, in_ep, wMaxPacketSize, \
-eth_statistics, wMaxSegmentSize, wNumberMCFilters, bNumberPowerFilters, str_idx) \
+#define CDC_NCM_DESCRIPTOR_INIT(bFirstInterface, int_ep, out_ep, in_ep, wMaxPacketSize, str_idx) \
     /* Interface Associate */                                                                  \
     0x08,                                                  /* bLength */                       \
     USB_DESCRIPTOR_TYPE_INTERFACE_ASSOCIATION,             /* bDescriptorType */               \
@@ -657,10 +655,10 @@ eth_statistics, wMaxSegmentSize, wNumberMCFilters, bNumberPowerFilters, str_idx)
     CDC_CS_INTERFACE,                                       /* bDescriptorType: CS_INTERFACE */\
     CDC_FUNC_DESC_ETHERNET_NETWORKING, /* Ethernet Networking functional descriptor subtype  */\
     str_idx,                                                    /* Device's MAC string index */\
-    DBVAL_BE(eth_statistics),                                /* Ethernet statistics (bitmap) */\
-    WBVAL(wMaxPacketSize),/* wMaxSegmentSize: Ethernet Maximum Segment size, typically 1514 bytes */\
-    WBVAL(wNumberMCFilters),            /* wNumberMCFilters: the number of multicast filters */\
-    bNumberPowerFilters,          /* bNumberPowerFilters: the number of wakeup power filters */\
+    DBVAL_BE(0x00000000),                                    /* Ethernet statistics (bitmap) */\
+    WBVAL(1514),     /* wMaxSegmentSize: Ethernet Maximum Segment size, typically 1514 bytes */\
+    WBVAL(0),        /* wNumberMCFilters: the number of multicast filters */                   \
+    0,               /* bNumberPowerFilters: the number of wakeup power filters */             \
     0x06,                                                                                      \
     CDC_CS_INTERFACE,                                                                          \
     CDC_FUNC_DESC_NCM,                                                                         \

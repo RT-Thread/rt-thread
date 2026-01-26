@@ -40,6 +40,8 @@ Taking into account USB performance issues and trying to achieve the theoretical
 - Unlimited length make it easier to interface with hardware DMA and take advantage of DMA
 - Packetization is handled in interrupt
 
+Performance show：https://cherryusb.cherry-embedded.org/show/
+
 ## Directory Structure
 
 |   Directory       |  Description            |
@@ -103,14 +105,15 @@ CherryUSB Host Stack has the following functions:
 - Support blocking transfers and asynchronous transfers
 - Support Composite Device
 - Multi-level HUB support, expandable up to 7 levels(Testing hub with 10 ports works well,only support dwc2/ehci/xhci/rp2040)
-- Support Communication Device Class (CDC_ACM, CDC_ECM)
+- Support Communication Device Class (CDC_ACM, CDC_ECM, CDC_NCM)
 - Support Human Interface Device (HID)
 - Support Mass Storage Class (MSC)
 - Support USB Video CLASS (UVC1.0, UVC1.5)
 - Support USB Audio CLASS (UAC1.0)
 - Support Remote NDIS (RNDIS)
 - Support USB Bluetooth class (support nimble and zephyr bluetooth stack, support **CLASS:0xE0** or vendor class like cdc acm)
-- Support Vendor class (serial, net, wifi)
+- Support Vendor Serial Class(CH34X、CP210X、PL2303、FTDI、GSM)
+- Support Vendor network Class(RTL8152、AX88772)
 - Support USB modeswitch
 - Support Android Open Accessory
 - Support multi host with the same USB IP
@@ -141,14 +144,14 @@ Among them, `sizeof(struct usbh_hub)` and `sizeof(struct usbh_hubport)` are affe
 #define CONFIG_USBHOST_MAX_EXTHUBS          1
 #define CONFIG_USBHOST_MAX_EHPORTS          4
 #define CONFIG_USBHOST_MAX_INTERFACES       8
-#define CONFIG_USBHOST_MAX_INTF_ALTSETTINGS 8
+#define CONFIG_USBHOST_MAX_INTF_ALTSETTINGS 2
 #define CONFIG_USBHOST_MAX_ENDPOINTS        4
 ```
 
 x is affected by the following macros:
 
 ```
-#define CONFIG_USBHOST_MAX_CDC_ACM_CLASS 4
+#define CONFIG_USBHOST_MAX_SERIAL_CLASS  4
 #define CONFIG_USBHOST_MAX_HID_CLASS     4
 #define CONFIG_USBHOST_MAX_MSC_CLASS     2
 #define CONFIG_USBHOST_MAX_AUDIO_CLASS   1
@@ -179,32 +182,33 @@ Quickly start, USB basic concepts, API manual, Class basic concepts and examples
 
 ## Video Tutorial
 
-CherryUSB Cheese (based V1.4.3): https://www.bilibili.com/cheese/play/ss707687201 .
+CherryUSB Cheese (>= V1.4.3): https://www.bilibili.com/cheese/play/ss707687201 .
 
 ## Descriptor Generator Tool
 
-TODO
+Cherry Descriptor: https://desc.cherry-embedded.org/en
 
 ## Demo Repo
 
-|   Manufacturer       |  CHIP or Series    | USB IP| Repo Url | Support version     | Support status |
+|   Manufacturer       |  CHIP or Series    | USB IP| Repo Url | Support version     | Note |
 |:--------------------:|:------------------:|:-----:|:--------:|:------------------:|:-------------:|
-|Bouffalolab    |  BL702/BL616/BL808 | bouffalolab/ehci|[bouffalo_sdk](https://github.com/CherryUSB/bouffalo_sdk)|<= latest | Long-term |
-|ST             |  STM32F1x/STM32F4/STM32H7 | fsdev/dwc2 |[stm32_repo](https://github.com/CherryUSB/cherryusb_stm32)|<= latest | Long-term |
-|HPMicro        |  HPM6000/HPM5000 | hpm/ehci |[hpm_sdk](https://github.com/CherryUSB/hpm_sdk)|<= latest | Long-term |
-|Essemi         |  ES32F36xx | musb |[es32f369_repo](https://github.com/CherryUSB/cherryusb_es32)|<= latest | Long-term |
-|Phytium        |  e2000 | pusb2/xhci |[phytium_repo](https://gitee.com/phytium_embedded/phytium-free-rtos-sdk)|>=1.4.0  | Long-term |
-|Artinchip      |  d12x/d13x/d21x | aic/ehci/ohci |[luban-lite](https://gitee.com/artinchip/luban-lite)|<= latest  | Long-term |
-|Espressif      |  esp32s2/esp32s3/esp32p4 | dwc2 |[esp32_repo](https://github.com/CherryUSB/cherryusb_esp32)|<= latest | Long-term |
-|NXP            |  mcx | kinetis/chipidea/ehci |[nxp_mcx_repo](https://github.com/CherryUSB/cherryusb_mcx)|<= latest | Long-term |
-|Kendryte       |  k230 | dwc2 |[k230_repo](https://github.com/CherryUSB/k230_sdk)|v1.2.0 | Long-term |
-|Actionstech    |  ATS30xx | dwc2 |[action_zephyr_repo](https://github.com/CherryUSB/lv_port_actions_technology/tree/master/action_technology_sdk)|>=1.4.0 | Long-term |
-|Nationstech    |  n32h4x | dwc2 |[nation_repo](https://github.com/CherryUSB/cherryusb_nation)|>=1.5.0 | Long-term |
-|Raspberry pi   |  rp2040/rp2350 | rp2040 |[pico-examples](https://github.com/CherryUSB/pico-examples)|<= latest | Long-term |
-|AllwinnerTech  |  F1C100S/F1C200S | musb |[cherryusb_rtt_f1c100s](https://github.com/CherryUSB/cherryusb_rtt_f1c100s)|<= latest | the same with musb |
-|Bekencorp      |  bk7256/bk7258 | musb |[bk_idk](https://github.com/CherryUSB/bk_idk)| v0.7.0 | the same with musb |
-|Sophgo         |  cv18xx | dwc2 |[cvi_alios_open](https://github.com/CherryUSB/cvi_alios_open)| v0.7.0 | TBD |
-|WCH            |  CH32V307/ch58x | ch32_usbfs/ch32_usbhs/ch58x |[wch_repo](https://github.com/CherryUSB/cherryusb_wch)|<= v0.10.2/>=v1.5.0 | TBD |
+|Bouffalolab    |  BL702/BL616/BL808 | bouffalolab/ehci|[bouffalo_sdk](https://github.com/CherryUSB/bouffalo_sdk)|<= latest | Official |
+|ST             |  STM32F1x/STM32F4/STM32H7 | fsdev/dwc2 |[stm32_repo](https://github.com/CherryUSB/cherryusb_stm32)|<= latest | Community |
+|HPMicro        |  HPM6000/HPM5000 | hpm/ehci |[hpm_sdk](https://github.com/CherryUSB/hpm_sdk)|<= latest | Official |
+|Essemi         |  ES32F36xx | musb |[es32f369_repo](https://github.com/CherryUSB/cherryusb_es32)|<= latest | Official |
+|Phytium        |  e2000 | pusb2/xhci |[phytium_repo](https://gitee.com/phytium_embedded/phytium-free-rtos-sdk)|>=1.4.0  | Official |
+|Artinchip      |  d12x/d13x/d21x | aic/ehci/ohci |[luban-lite](https://gitee.com/artinchip/luban-lite)|<= latest  | Official |
+|Espressif      |  esp32s2/esp32s3/esp32p4 | dwc2 |[esp32_repo](https://github.com/CherryUSB/cherryusb_esp32)/[espressif](https://github.com/espressif/esp-idf/tree/master/examples/peripherals/usb)|<= latest | Official |
+|Kendryte       |  k230 | dwc2 |[k230_repo](https://github.com/CherryUSB/k230_sdk)|v1.2.0 | Official |
+|Actionstech    |  ATS30xx | dwc2 |[action_zephyr_repo](https://github.com/CherryUSB/lv_port_actions_technology/tree/master/action_technology_sdk)|>=1.4.0 | Official |
+|SiFli          |  SF32LB5x | musb |[SiFli_sdk](https://github.com/OpenSiFli/SiFli-SDK)|>=1.5.0 | Official |
+|NXP            |  mcx | kinetis/chipidea/ehci |[nxp_mcx_repo](https://github.com/CherryUSB/cherryusb_mcx)|<= latest | Community |
+|Nationstech    |  n32h4x | dwc2 |[nation_repo](https://github.com/CherryUSB/cherryusb_nation)|>=1.5.0 | Official ongoing |
+|Raspberry pi   |  rp2040/rp2350 | rp2040 |[pico-sdk](https://github.com/CherryUSB/pico-sdk)|<= latest | Official ongoing |
+|AllwinnerTech  |  F1C100S/F1C200S | musb |[cherryusb_rtt_f1c100s](https://github.com/CherryUSB/cherryusb_rtt_f1c100s)|<= latest | no more update |
+|Bekencorp      |  bk7256/bk7258 | musb |[bk_idk](https://github.com/CherryUSB/bk_idk)| v0.7.0 | Official |
+|Sophgo         |  cv18xx | dwc2 |[cvi_alios_open](https://github.com/CherryUSB/cvi_alios_open)| v0.7.0 | Official |
+|WCH            |  CH32V307/ch58x | ch32_usbfs/ch32_usbhs/ch58x |[wch_repo](https://github.com/CherryUSB/cherryusb_wch)|<= v0.10.2/>=v1.5.0 | no more update |
 
 ## Package Support
 
@@ -226,5 +230,4 @@ CherryUSB discord: https://discord.com/invite/wFfvrSAey8.
 
 Thanks to the following companies for their support (in no particular order):
 
-<img src="docs/assets/bouffalolab.jpg"  width="100" height="80"/> <img src="docs/assets/hpmicro.jpg"  width="100" height="80" /> <img src="docs/assets/eastsoft.jpg"  width="100" height="80" /> <img src="docs/assets/rtthread.jpg"  width="100" height="80" /> <img src="docs/assets/sophgo.jpg"  width="100" height="80" /> <img src="docs/assets/phytium.jpg"  width="100" height="80" /> <img src="docs/assets/thead.jpg"  width="100" height="80" /> <img src="docs/assets/nuvoton.jpg"  width="100" height="80" /> <img src="docs/assets/artinchip.jpg"  width="100" height="80" /> <img src="docs/assets/bekencorp.jpg"  width="100" height="80" /> <img src="docs/assets/nxp.png"  width="100" height="80" /> <img src="docs/assets/espressif.png"  width="100" height="80" /> <img src="docs/assets/canaan.jpg"  width="100" height="80" />
-<img src="docs/assets/actions.jpg"  width="100" height="80" /> <img src="docs/assets/nationstech.jpg"  width="100" height="80" />
+<img src="docs/assets/bouffalolab.jpg"  width="100" height="80"/> <img src="docs/assets/hpmicro.jpg"  width="100" height="80" /> <img src="docs/assets/eastsoft.jpg"  width="100" height="80" /> <img src="docs/assets/rtthread.jpg"  width="100" height="80" /> <img src="docs/assets/sophgo.jpg"  width="100" height="80" /> <img src="docs/assets/phytium.jpg"  width="100" height="80" /> <img src="docs/assets/thead.jpg"  width="100" height="80" /> <img src="docs/assets/nuvoton.jpg"  width="100" height="80" /> <img src="docs/assets/artinchip.jpg"  width="100" height="80" /> <img src="docs/assets/bekencorp.jpg"  width="100" height="80" /> <img src="docs/assets/nxp.png"  width="100" height="80" /> <img src="docs/assets/espressif.png"  width="100" height="80" /> <img src="docs/assets/canaan.jpg"  width="100" height="80" /> <img src="docs/assets/actions.jpg"  width="100" height="80" /> <img src="docs/assets/sifli.jpg"  width="100" height="80" /> <img src="docs/assets/nationstech.jpg"  width="100" height="80" />

@@ -25,7 +25,7 @@
 #endif
 
 #ifndef LWIP_NO_RX_THREAD
-#error must enable LWIP_NO_RX_THREAD, we do not use rtthread eth rx thread
+#warning suggest you to enable LWIP_NO_RX_THREAD, we do not use rtthread eth rx thread
 #endif
 
 #ifndef LWIP_NO_TX_THREAD
@@ -33,7 +33,7 @@
 #endif
 
 #if LWIP_TCPIP_CORE_LOCKING_INPUT != 1
-#warning suggest you to set LWIP_TCPIP_CORE_LOCKING_INPUT to 1, usb handles eth input with own thread
+#warning suggest you to set LWIP_TCPIP_CORE_LOCKING_INPUT to 1 for better performance, usb handles eth input with own thread
 #endif
 
 #if LWIP_TCPIP_CORE_LOCKING != 1
@@ -46,6 +46,14 @@
 
 #if RT_LWIP_TCPTHREAD_STACKSIZE < 2048
 #error RT_LWIP_TCPTHREAD_STACKSIZE must be >= 2048
+#endif
+
+#if !defined(CONFIG_USBHOST_PLATFORM_CDC_ECM) &&   \
+    !defined(CONFIG_USBHOST_PLATFORM_CDC_RNDIS) && \
+    !defined(CONFIG_USBHOST_PLATFORM_CDC_NCM) &&   \
+    !defined(CONFIG_USBHOST_PLATFORM_ASIX) &&      \
+    !defined(CONFIG_USBHOST_PLATFORM_RTL8152)
+#error "Please enable at least one USB Ethernet platform in usb_config.h or Kconfig"
 #endif
 
 // #define CONFIG_USBHOST_PLATFORM_CDC_ECM

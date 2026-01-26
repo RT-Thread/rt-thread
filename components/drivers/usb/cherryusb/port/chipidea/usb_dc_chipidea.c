@@ -594,10 +594,15 @@ int usbd_ep_start_write(uint8_t busid, const uint8_t ep, const uint8_t *data, ui
         return -2;
     }
 
+#ifdef CONFIG_USB_DCACHE_ENABLE
+    USB_ASSERT_MSG(!((uintptr_t)data % CONFIG_USB_ALIGN_SIZE), "data is not aligned %d", CONFIG_USB_ALIGN_SIZE);
+#endif
+
     g_chipidea_udc[busid].in_ep[ep_idx].xfer_buf = (uint8_t *)data;
     g_chipidea_udc[busid].in_ep[ep_idx].xfer_len = data_len;
     g_chipidea_udc[busid].in_ep[ep_idx].actual_xfer_len = 0;
 
+    usb_dcache_clean((uintptr_t)data, USB_ALIGN_UP(data_len, CONFIG_USB_ALIGN_SIZE));
     chipidea_start_xfer(busid, ep, (uint8_t *)data, data_len);
 
     return 0;
@@ -614,10 +619,15 @@ int usbd_ep_start_read(uint8_t busid, const uint8_t ep, uint8_t *data, uint32_t 
         return -2;
     }
 
+#ifdef CONFIG_USB_DCACHE_ENABLE
+    USB_ASSERT_MSG(!((uintptr_t)data % CONFIG_USB_ALIGN_SIZE), "data is not aligned %d", CONFIG_USB_ALIGN_SIZE);
+#endif
+
     g_chipidea_udc[busid].out_ep[ep_idx].xfer_buf = (uint8_t *)data;
     g_chipidea_udc[busid].out_ep[ep_idx].xfer_len = data_len;
     g_chipidea_udc[busid].out_ep[ep_idx].actual_xfer_len = 0;
 
+    usb_dcache_invalidate((uintptr_t)data, USB_ALIGN_UP(data_len, CONFIG_USB_ALIGN_SIZE));
     chipidea_start_xfer(busid, ep, data, data_len);
 
     return 0;
@@ -649,7 +659,7 @@ void USBD_IRQHandler(uint8_t busid)
         memset(g_chipidea_udc[busid].in_ep, 0, sizeof(struct chipidea_ep_state) * CONFIG_USBDEV_EP_NUM);
         memset(g_chipidea_udc[busid].out_ep, 0, sizeof(struct chipidea_ep_state) * CONFIG_USBDEV_EP_NUM);
         usbd_event_reset_handler(busid);
-        chipidea_bus_reset(busid, 64);
+        chipidea_bus_reset(busid, g_chipidea_udc[busid].in_ep[0].ep_mps);
     }
 
     if (int_status & intr_suspend) {
@@ -712,6 +722,7 @@ void USBD_IRQHandler(uint8_t busid)
                         if (ep_addr & 0x80) {
                             usbd_event_ep_in_complete_handler(busid, ep_addr, transfer_len);
                         } else {
+                            usb_dcache_invalidate((uintptr_t)g_chipidea_udc[busid].out_ep[ep_idx].xfer_buf, USB_ALIGN_UP(transfer_len, CONFIG_USB_ALIGN_SIZE));
                             usbd_event_ep_out_complete_handler(busid, ep_addr, transfer_len);
                         }
                     }
