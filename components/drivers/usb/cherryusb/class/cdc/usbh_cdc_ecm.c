@@ -306,16 +306,6 @@ int usbh_cdc_ecm_eth_output(uint32_t buflen)
     return usbh_submit_urb(&g_cdc_ecm_class.bulkout_urb);
 }
 
-__WEAK void usbh_cdc_ecm_run(struct usbh_cdc_ecm *cdc_ecm_class)
-{
-    (void)cdc_ecm_class;
-}
-
-__WEAK void usbh_cdc_ecm_stop(struct usbh_cdc_ecm *cdc_ecm_class)
-{
-    (void)cdc_ecm_class;
-}
-
 const struct usbh_class_driver cdc_ecm_class_driver = {
     .driver_name = "cdc_ecm",
     .connect = usbh_cdc_ecm_connect,

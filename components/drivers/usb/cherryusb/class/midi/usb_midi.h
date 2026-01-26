@@ -6,6 +6,8 @@
 #ifndef USB_MIDI_H
 #define USB_MIDI_H
 
+#include "usb_audio.h"
+
 /* bDescriptorSubType */
 #define MIDI_VC_HEADER_DESCRIPTOR_SUBTYPE     0x01U
 #define MIDI_MS_HEADER_DESCRIPTOR_SUBTYPE     0x01U
@@ -201,6 +203,19 @@ struct midi_cs_ep_ms_general_descriptor {
 #define MIDI_SIZEOF_MS_GENERAL_DESC(n) (4 + n)
 
 // clang-format off
+#define MIDI_STANDARD_DESCRIPTOR_INIT(bInterfaceNumber, bNumEndpoints)                                               \
+    0x09,                            /* bLength */                                                                   \
+    USB_DESCRIPTOR_TYPE_INTERFACE,   /* bDescriptorType */                                                           \
+    bInterfaceNumber,                /* bInterfaceNumber */                                                          \
+    0x00,                            /* bAlternateSetting */                                                         \
+    bNumEndpoints,                   /* bNumEndpoints */                                                             \
+    USB_DEVICE_CLASS_AUDIO,          /* bInterfaceClass */                                                           \
+    AUDIO_SUBCLASS_MIDISTREAMING,    /* bInterfaceSubClass */                                                        \
+    AUDIO_PROTOCOL_UNDEFINED,        /* bInterfaceProtocol */                                                        \
+    0x00                             /* iInterface */
+
+#define MIDI_STANDARD_DESCRIPTOR_LEN 0x09
+
 #define MIDI_CS_HEADER_DESCRIPTOR_INIT(wTotalLength)                                              \
     0x07,                                             /* bLength */                               \
     USB_CS_DESCRIPTOR_TYPE_INTERFACE,                 /* bDescriptorType */                       \
