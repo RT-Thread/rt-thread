@@ -78,6 +78,30 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            config BSP_USING_PWM0
+                bool "Enable PWM0"
+                default y
+            config BSP_USING_PWM1
+                bool "Enable PWM1"
+                default n
+            config BSP_USING_PWM2
+                bool "Enable PWM2"
+                default n
+            config BSP_USING_PWM15
+                bool "Enable PWM15"
+                default n
+            config BSP_USING_PWM16
+                bool "Enable PWM16"
+                default n
+        endif
+
+
+
     source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"
 
 endmenu

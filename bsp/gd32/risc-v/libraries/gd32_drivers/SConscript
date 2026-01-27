@@ -45,6 +45,10 @@ if GetDepend('RT_USING_HWTIMER'):
 if GetDepend('RT_USING_ADC'):
     src += ['drv_adc.c']
 
+# add pwm drivers.
+if GetDepend(['RT_USING_PWM', 'SOC_GD32VW553H']):
+    src += ['drv_pwm.c']
+
 path = [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
