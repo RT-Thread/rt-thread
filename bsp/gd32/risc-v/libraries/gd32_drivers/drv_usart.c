@@ -70,7 +70,7 @@ void UART1_IRQHandler(void)
 }
 #else
 #error "not support soc"
-#endif  
+#endif
 
 #endif /* BSP_USING_UART1 */
 
