@@ -33,8 +33,8 @@ struct gd32_uart
     uint32_t rx_port;               /* Todo: 4bits */
     uint16_t rx_pin;                /* Todo: 4bits */
 #if defined (SOC_SERIES_GD32VW55x)
-    uint32_t tx_alt;
-    uint32_t rx_alt;
+    uint32_t tx_alt;                /* GPIO alternate function for TX */
+    uint32_t rx_alt;                /* GPIO alternate function for RX */
 #endif
     struct rt_serial_device * serial;
     char *device_name;
