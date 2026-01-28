@@ -8,13 +8,13 @@
 #include "usb_dwc2_param.h"
 #include "rtthread.h"
 #include "cybsp.h"
+#include "cy_device.h"
 
 #if defined (COMPONENT_CM55)
 
-#if defined(CONFIG_USB_DWC2_DMA_ENABLE) && !defined(CONFIG_USB_DCACHE_ENABLE)
+#if !defined(CONFIG_USB_DCACHE_ENABLE)
 #error "Please enable CONFIG_USB_DCACHE_ENABLE and put USB_NOCACHE_RAM_SECTION to section ".cy_socmem_data" when using DMA"
 #endif
-
 #else
 #define CONFIG_USB_DWC2_DMA_ENABLE
 #endif
@@ -83,6 +83,8 @@ void usb_dc_low_level_init(uint8_t busid)
     USBHS_SS->PHY_FUNC_CTL_1 |= (7 << USBHS_SS_PHY_FUNC_CTL_1_PLL_FSEL_Pos);
     USBHS_SS->PHY_FUNC_CTL_2 |= (USBHS_SS_PHY_FUNC_CTL_2_RES_TUNING_SEL_Msk | USBHS_SS_PHY_FUNC_CTL_2_EFUSE_SEL_Msk);
 
+    rt_thread_mdelay(200); /* Wait for PHY stable */
+
     cy_stc_sysint_t usb_int_cfg = {
         .intrSrc = usbhs_interrupt_usbhsctrl_IRQn,
         .intrPriority = 3
@@ -119,6 +121,8 @@ void usb_hc_low_level_init(struct usbh_bus *bus)
     USBHS_SS->SUBSYSTEM_CTL = (1 << USBHS_SS_SUBSYSTEM_CTL_AHB_MASTER_SYNC_Pos) | USBHS_SS_SUBSYSTEM_CTL_USB_MODE_Msk | USBHS_SS_SUBSYSTEM_CTL_SS_ENABLE_Msk;
     USBHS_SS->PHY_FUNC_CTL_1 |= (7 << USBHS_SS_PHY_FUNC_CTL_1_PLL_FSEL_Pos);
     USBHS_SS->PHY_FUNC_CTL_2 |= (USBHS_SS_PHY_FUNC_CTL_2_RES_TUNING_SEL_Msk | USBHS_SS_PHY_FUNC_CTL_2_EFUSE_SEL_Msk);
+
+    rt_thread_mdelay(200); /* Wait for PHY stable */
 
     cy_stc_sysint_t usb_int_cfg = {
         .intrSrc = usbhs_interrupt_usbhsctrl_IRQn,
