@@ -1,0 +1,5 @@
+config RT_REGULATOR_SPACEMIT_PMIC
+    bool "Spacemit PMIC Power regulators"
+    depends on RT_MFD_SPACEMIT_PMIC
+    depends on RT_USING_PIN
+    default y

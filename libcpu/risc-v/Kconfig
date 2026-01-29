@@ -1,0 +1,30 @@
+menu "RISC-V Architecture Configuration"
+    config ARCH_TEXT_OFFSET
+        hex "Text offset"
+        default 0x200000
+        help
+          We use the area as the DM ioremap address space in 32 bits RT-Thread:
+                [ARCH_TEXT_OFFSET - IOREMAP_SIZE, ARCH_TEXT_OFFSET)
+          So you SHOULD config the value bigger than this area.
+          The `IOREMAP_SIZE` is defined a default value in common/setup.c.
+
+    config ARCH_RAM_OFFSET
+        hex "RAM offset"
+        default 0
+
+    config ARCH_SECONDARY_CPU_STACK_SIZE
+        int "Secondary CPU stack size"
+        default 4096
+
+    config ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+        bool
+        default y
+
+    config ARCH_HEAP_SIZE
+        hex "Size of system heap"
+        default 0x4000000
+
+    config ARCH_INIT_PAGE_SIZE
+        hex "Size of init page region"
+        default 0x200000
+endmenu

@@ -1,0 +1,3 @@
+config RT_MBOX_K1X
+    bool "Spacemit K1pro Mailbox Support"
+    default n

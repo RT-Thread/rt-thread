@@ -9,6 +9,14 @@ common64_arch = ['virt64', 'c906', 'c908','ur-cp100']
 cwd   = GetCurrentDir()
 group = []
 list  = os.listdir(cwd)
+bsp_path = Dir('#').abspath
+
+if not os.path.exists(bsp_path + "/link.lds"):
+    Env['LINKFLAGS'] = Env['LINKFLAGS'].replace('link.lds', cwd + "/link.lds")
+    Preprocessing("link.lds.S", ".lds", CPPPATH=[bsp_path, cwd + '/common64/include'])
+
+# fix the linker with crtx.o
+Env['LINKFLAGS'] += ' -nostartfiles'
 
 # add common code files
 if rtconfig.CPU in common64_arch :

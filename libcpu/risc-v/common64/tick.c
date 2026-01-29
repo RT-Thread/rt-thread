@@ -29,8 +29,25 @@ int tick_isr(void)
     return 0;
 }
 
+#ifdef RT_USING_DM
+static rt_uint32_t timebase_frequency;
+#define CPUTIME_TIMER_FREQ timebase_frequency
+
+void riscv_timer_set_frequency(rt_uint32_t freq)
+{
+    HWREG32(&timebase_frequency) = freq;
+    rt_hw_wmb();
+}
+
+rt_uint32_t riscv_timer_get_frequency(void)
+{
+    rt_hw_rmb();
+    return HWREG32(&timebase_frequency);
+}
+#else
 /* BSP should config clockbase frequency */
 RT_STATIC_ASSERT(defined_clockbase_freq, CPUTIME_TIMER_FREQ != 0);
+#endif
 
 /* Sets and enable the timer interrupt */
 int rt_hw_tick_init(void)
@@ -61,7 +78,7 @@ int rt_hw_tick_init(void)
  *
  * @param us the delay time of us
  */
-void rt_hw_us_delay(rt_uint32_t us)
+void riscv_timer_us_delay(rt_uint32_t us)
 {
     unsigned long start_time;
     unsigned long end_time;
@@ -74,3 +91,15 @@ void rt_hw_us_delay(rt_uint32_t us)
         run_time = clock_cpu_gettime();
     } while(run_time < end_time);
 }
+
+#if !defined(RT_USING_DM) || !defined(RT_USING_HWTIMER)
+/**
+ * This function will delay for some us.
+ *
+ * @param us the delay time of us
+ */
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    riscv_timer_us_delay(us);
+}
+#endif /* !RT_USING_DM || !RT_USING_HWTIMER */

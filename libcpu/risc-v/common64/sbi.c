@@ -35,9 +35,9 @@
  * SUCH DAMAGE.
  */
 
-#include "sbi.h"
 #include <rtthread.h>
-#include <stdbool.h>
+
+#include <sbi.h>
 
 /* SBI Implementation-Specific Definitions */
 #define OPENSBI_VERSION_MAJOR_OFFSET 16
@@ -47,9 +47,10 @@ unsigned long sbi_spec_version;
 unsigned long sbi_impl_id;
 unsigned long sbi_impl_version;
 
-static bool has_time_extension = false;
-static bool has_ipi_extension = false;
-static bool has_rfnc_extension = false;
+bool has_time_extension = false;
+bool has_ipi_extension = false;
+bool has_rfnc_extension = false;
+bool has_srst_extension = false;
 
 static struct sbi_ret sbi_get_spec_version(void)
 {
@@ -225,6 +226,21 @@ int sbi_hsm_hart_status(unsigned long hart)
     return (ret.error != 0 ? (int)ret.error : (int)ret.value);
 }
 
+static void sbi_srst_reset(unsigned long type, unsigned long reason)
+{
+    SBI_CALL2(SBI_EXT_ID_SRST, SBI_SRST_FID_RESET, type, reason);
+}
+
+void sbi_srst_reboot(unsigned long reset_type)
+{
+    sbi_srst_reset(reset_type, SBI_SRST_RESET_REASON_NONE);
+}
+
+void sbi_srst_power_off(void)
+{
+    sbi_srst_reset(SBI_SRST_RESET_TYPE_SHUTDOWN, SBI_SRST_RESET_REASON_NONE);
+}
+
 void sbi_init(void)
 {
     struct sbi_ret sret;
@@ -253,12 +269,6 @@ void sbi_init(void)
         has_ipi_extension = true;
     if (sbi_probe_extension(SBI_EXT_ID_RFNC) != 0)
         has_rfnc_extension = true;
-}
-
-void rt_hw_console_output(const char *str)
-{
-    while (*str)
-    {
-        sbi_console_putchar(*str++);
-    }
+    if (sbi_probe_extension(SBI_EXT_ID_SRST) != 0)
+        has_srst_extension = true;
 }

@@ -1,0 +1,4 @@
+config RT_PWM_PXA
+    bool "PXA PWM support"
+    depends on RT_USING_PWM
+    default n

@@ -1,0 +1,25 @@
+from building import *
+
+group = []
+
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
+CPPPATH = [cwd + '/../include']
+
+src = []
+
+if GetDepend(['RT_SOC_SPACEMIT_K1X_RPROC']):
+    src += ['k1x-rproc.c']
+
+if GetDepend(['RT_SOC_SPACEMIT_K1X_TCM']):
+    src += ['k1x-tcm.c']
+
+if GetDepend(['ARCH_RISCV']):
+    src += ['sbi-ipi.c']
+
+if GetDepend(['RT_SOC_SPACEMIT_SOCINFO']):
+    src += ['spacemit-socinfo.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

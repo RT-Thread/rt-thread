@@ -74,6 +74,36 @@ void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
     return (void *)frame;
 }
 
+#ifdef RT_USING_CPU_FFS
+
+int __rt_ffs(int value)
+{
+#ifdef __GNUC__
+    return __builtin_ffs(value);
+#else
+#error Unsupport ffs
+#endif
+}
+
+unsigned long __rt_ffsl(unsigned long value)
+{
+#ifdef __GNUC__
+    return __builtin_ffsl(value);
+#else
+#error Unsupport ffsl
+#endif
+}
+
+unsigned long __rt_clz(unsigned long value)
+{
+#ifdef __GNUC__
+    return __builtin_clz(value);
+#else
+#error Unsupport clz
+#endif
+}
+#endif /* RT_USING_CPU_FFS */
+
 int rt_hw_cpu_id(void)
 {
 #ifndef RT_USING_SMP
@@ -157,6 +187,7 @@ void rt_hw_context_switch_interrupt(void *context, rt_ubase_t from, rt_ubase_t t
 }
 #endif /* end of RT_USING_SMP */
 
+#ifndef RT_USING_DM
 /** shutdown CPU */
 rt_weak void rt_hw_cpu_shutdown(void)
 {
@@ -170,6 +201,7 @@ rt_weak void rt_hw_cpu_shutdown(void)
     while (1)
         ;
 }
+#endif /* RT_USING_DM */
 
 void rt_hw_set_process_id(int pid)
 {

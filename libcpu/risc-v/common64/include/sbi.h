@@ -49,6 +49,7 @@
 #define _MACHINE_SBI_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <rtdef.h>
 
 /* SBI Specification Version */
@@ -101,6 +102,14 @@
 #define SBI_RFNC_REMOTE_HFENCE_GVMA         4
 #define SBI_RFNC_REMOTE_HFENCE_VVMA_ASID    5
 #define SBI_RFNC_REMOTE_HFENCE_VVMA         6
+
+#define SBI_EXT_ID_SRST                     0x53525354
+#define SBI_SRST_FID_RESET                  0
+#define SBI_SRST_RESET_TYPE_SHUTDOWN        0
+#define SBI_SRST_RESET_TYPE_COLD_REBOOT     1
+#define SBI_SRST_RESET_TYPE_WARM_REBOOT     2
+#define SBI_SRST_RESET_REASON_NONE          0
+#define SBI_SRST_RESET_REASON_SYS_FAILURE   1
 
 /* Hart State Management (HSM) Extension */
 #define SBI_EXT_ID_HSM                  0x48534D
@@ -171,6 +180,11 @@ extern unsigned long sbi_spec_version;
 extern unsigned long sbi_impl_id;
 extern unsigned long sbi_impl_version;
 
+extern bool has_time_extension;
+extern bool has_ipi_extension;
+extern bool has_rfnc_extension;
+extern bool has_srst_extension;
+
 static __inline long
 sbi_probe_extension(long id)
 {
@@ -214,6 +228,18 @@ void sbi_hsm_hart_stop(void);
  *  - SBI_HSM_STATUS_STOP_PENDING
  */
 int sbi_hsm_hart_status(unsigned long hart);
+
+/*
+ * Reboot the system. The type will be one of:
+ *  - SBI_SRST_RESET_TYPE_WARM_REBOOT
+ *  - SBI_SRST_RESET_TYPE_COLD_REBOOT
+ */
+void sbi_srst_reboot(unsigned long reset_type);
+
+/*
+ * Power off the system.
+ */
+void sbi_srst_power_off(void);
 
 /* Legacy extension functions. */
 static __inline void
