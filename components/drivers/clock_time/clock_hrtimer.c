@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,17 +34,17 @@ rt_inline rt_clock_hrtimer_t _first_hrtimer(void)
     return rt_list_isempty(&_timer_list) ? RT_NULL : rt_list_first_entry(&_timer_list, struct rt_clock_hrtimer, node);
 }
 
-static unsigned long _clock_time_get_cnt(void)
+rt_inline unsigned long _clock_time_get_cnt(void)
 {
     return rt_clock_time_get_counter();
 }
 
-static rt_inline rt_bool_t _cnt_before(unsigned long a, unsigned long b)
+rt_inline rt_bool_t _cnt_before(unsigned long a, unsigned long b)
 {
     return ((rt_base_t)(a - b)) < 0;
 }
 
-static rt_inline rt_bool_t _cnt_after(unsigned long a, unsigned long b)
+rt_inline rt_bool_t _cnt_after(unsigned long a, unsigned long b)
 {
     return _cnt_before(b, a);
 }
