@@ -134,16 +134,16 @@ void rt_hw_console_init(void)
     USART_DeInit(USARTx);
 
     USART_StructInit(&USART_InitStructure);
-	USART_InitStructure.BaudRate            = 115200;
-	USART_InitStructure.WordLength          = USART_WL_8B;
-	USART_InitStructure.StopBits            = USART_STPB_1;
-	USART_InitStructure.Parity              = USART_PE_NO;
-	USART_InitStructure.HardwareFlowControl = USART_HFCTRL_NONE;
-	USART_InitStructure.OverSampling        = USART_16OVER;
-	USART_InitStructure.Mode                = USART_MODE_RX | USART_MODE_TX;
-	USART_Init(USARTx, &USART_InitStructure);
-
-	USART_Enable(USARTx, ENABLE);
+    USART_InitStructure.BaudRate            = 115200;
+    USART_InitStructure.WordLength          = USART_WL_8B;
+    USART_InitStructure.StopBits            = USART_STPB_1;
+    USART_InitStructure.Parity              = USART_PE_NO;
+    USART_InitStructure.HardwareFlowControl = USART_HFCTRL_NONE;
+    USART_InitStructure.OverSampling        = USART_16OVER;
+    USART_InitStructure.Mode                = USART_MODE_RX | USART_MODE_TX;
+    USART_Init(USARTx, &USART_InitStructure);
+    
+    USART_Enable(USARTx, ENABLE);
 }
 
 void rt_hw_console_output(const char *str)

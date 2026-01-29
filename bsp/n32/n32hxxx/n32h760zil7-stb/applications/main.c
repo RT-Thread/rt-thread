@@ -8,10 +8,12 @@
  * 2026-01-24     ox-horse         first version
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <board.h>
-#include <rtdbg.h>
+#include <rtthread.h>
+#include <drv_gpio.h>
+#ifndef RT_USING_NANO
+#include <rtdevice.h>
+#endif /* RT_USING_NANO */
 
 /* defined the LED0 pin: PA1 */
 #define LED0_PIN    GET_PIN(A, 1)
@@ -29,4 +31,3 @@ int main(void)
         rt_thread_mdelay(500);
     }
 }
-

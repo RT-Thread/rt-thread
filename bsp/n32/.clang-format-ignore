@@ -10,6 +10,4 @@
 /n32gxx_lxx/libraries/N32L40x_Firmware_Library/
 /n32gxx_lxx/libraries/N32L43x_Firmware_Library/
 /n32gxx_lxx/libraries/N32WB452_Firmware_Library/
-
-# 忽略所有 N32 BSP 的 Cube_Config 配置目录
-/n32hxxx/n32h*/board/Cube_Config/
+/n32hxxx/n32h760zil7-stb/board/Cube_Config/

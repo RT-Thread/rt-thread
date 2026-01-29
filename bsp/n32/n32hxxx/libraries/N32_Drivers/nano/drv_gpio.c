@@ -78,7 +78,7 @@ void rt_pin_mode(rt_uint64_t pin, rt_uint8_t mode)
 #endif /* GPIOk */
     }
 
-    GPIO_InitStruct(&GPIO_InitStructure);	
+    GPIO_InitStruct(&GPIO_InitStructure);
     GPIO_InitStructure.Pin = GPIO_Pin;
 
     if (mode == PIN_MODE_OUTPUT)
