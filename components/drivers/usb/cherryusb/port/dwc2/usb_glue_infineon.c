@@ -13,8 +13,9 @@
 #if defined (COMPONENT_CM55)
 
 #if !defined(CONFIG_USB_DCACHE_ENABLE)
-#error "Please enable CONFIG_USB_DCACHE_ENABLE and put USB_NOCACHE_RAM_SECTION to section ".cy_socmem_data" when using DMA"
+#error "Please enable CONFIG_USB_DCACHE_ENABLE and put USB_NOCACHE_RAM_SECTION to section ".cy_socmem_data" for CM55"
 #endif
+
 #else
 #define CONFIG_USB_DWC2_DMA_ENABLE
 #endif
