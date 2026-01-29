@@ -717,10 +717,10 @@ int usb_hc_init(struct usbh_bus *bus)
 
     USB_ASSERT_MSG((USB_OTG_GLB->GRXFSIZ & 0xffff) >= g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_rx_fifo_size,
                    "host_rx_fifo_size cannot be larger than power_on_value %u", (unsigned int)(USB_OTG_GLB->GRXFSIZ & 0xffff));
-    USB_ASSERT_MSG((USB_OTG_GLB->DIEPTXF0_HNPTXFSIZ & 0xffff) >= g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_nperio_tx_fifo_size,
-                   "host_nperio_tx_fifo_size cannot be larger than power_on_value %u", (unsigned int)(USB_OTG_GLB->DIEPTXF0_HNPTXFSIZ & 0xffff));
-    USB_ASSERT_MSG((USB_OTG_GLB->HPTXFSIZ & 0xffff) >= g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_perio_tx_fifo_size,
-                   "host_perio_tx_fifo_size cannot be larger than power_on_value %u", (unsigned int)(USB_OTG_GLB->HPTXFSIZ & 0xffff));
+    USB_ASSERT_MSG(((USB_OTG_GLB->DIEPTXF0_HNPTXFSIZ >> 16) & 0xffff) >= g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_nperio_tx_fifo_size,
+                   "host_nperio_tx_fifo_size cannot be larger than power_on_value %u", (unsigned int)((USB_OTG_GLB->DIEPTXF0_HNPTXFSIZ >> 16) & 0xffff));
+    USB_ASSERT_MSG(((USB_OTG_GLB->HPTXFSIZ >> 16) & 0xffff) >= g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_perio_tx_fifo_size,
+                   "host_perio_tx_fifo_size cannot be larger than power_on_value %u", (unsigned int)((USB_OTG_GLB->HPTXFSIZ >> 16) & 0xffff));
 
     /* B-peripheral session valid override enable */
     USB_OTG_GLB->GOTGCTL &= ~USB_OTG_GOTGCTL_BVALOEN;
