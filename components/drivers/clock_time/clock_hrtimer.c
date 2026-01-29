@@ -349,11 +349,7 @@ rt_err_t rt_clock_hrtimer_control(rt_clock_hrtimer_t timer, int cmd, void *arg)
         *(unsigned long *)arg = timer->timeout_cnt;
         break;
     case RT_TIMER_CTRL_GET_FUNC:
-        if (arg == RT_NULL)
-        {
-            result = -RT_EEMPTY;
-        }
-        else
+        if (arg != RT_NULL)
         {
             *(void **)arg = (void *)timer->timeout_func;
         }
