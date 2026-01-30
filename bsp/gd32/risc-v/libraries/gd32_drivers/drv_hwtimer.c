@@ -5,48 +5,15 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2021-02-25     iysheng           first version
+ * 2026-01-30     pomin             first version
  */
 
 #include <board.h>
 #include <rtdevice.h>
-#include <drivers/hwtimer.h>
+#include "drv_hwtimer.h"
+#include "hwtimer_config.h"
 
 #ifdef BSP_USING_HWTIMER
-
-typedef struct {
-    uint32_t reg_base;
-    IRQn_Type irqn;
-    rcu_periph_enum rcu;
-} gd32_hwtimer_data;
-
-typedef struct {
-    char dev_name[RT_NAME_MAX];
-    const gd32_hwtimer_data hw_data;
-    rt_hwtimer_t hwtimer_dev;
-    const struct rt_hwtimer_info hwtimer_info;
-} gd32_hwtimer_device;
-
-enum timer_index_E {
-#ifdef BSP_USING_HWTIMER0
-    TIM0_INDEX,
-#endif
-#ifdef BSP_USING_HWTIMER1
-    TIM1_INDEX,
-#endif
-#ifdef BSP_USING_HWTIMER2
-    TIM2_INDEX,
-#endif
-#ifdef BSP_USING_HWTIMER5
-    TIM5_INDEX,
-#endif
-#ifdef BSP_USING_HWTIMER15
-    TIM15_INDEX,
-#endif
-#ifdef BSP_USING_HWTIMER16
-    TIM16_INDEX,
-#endif
-};
 
 /*
  * static void __set_timerx_freq
@@ -171,140 +138,22 @@ static const struct rt_hwtimer_ops g_gd32_hwtimer_ops = {
 
 static gd32_hwtimer_device g_gd32_hwtimer[] = {
 #ifdef BSP_USING_HWTIMER0
-    {
-        "timer0",
-        {
-             TIMER0,
-             TIMER0_UP_IRQn,
-             RCU_TIMER0,
-        },
-        {0},
-        {
-            1000000,
-            1000,
-            0xffff,
-            0, /* count up mode  */
-        }
-    },
+    HWTIMER0_CONFIG,
 #endif
 #ifdef BSP_USING_HWTIMER1
-    {
-        "timer1",
-        {
-             TIMER1,
-             TIMER1_IRQn,
-             RCU_TIMER1,
-        },
-        {0},
-        {
-            1000000,
-            1000,
-            0xffff,
-            0, /* count up mode  */
-        }
-    },
+    HWTIMER1_CONFIG,
 #endif
 #ifdef BSP_USING_HWTIMER2
-    {
-        "timer2",
-        {
-             TIMER2,
-             TIMER2_IRQn,
-             RCU_TIMER2,
-        },
-        {0},
-        {
-            1000000,
-            1000,
-            0xffff,
-            0, /* count up mode  */
-        }
-    },
+    HWTIMER2_CONFIG,
 #endif
 #ifdef BSP_USING_HWTIMER5
-    {
-        "timer5",
-        {
-             TIMER5,
-             TIMER5_IRQn,
-             RCU_TIMER5,
-        },
-        {0},
-        {
-            1000000,
-            1000,
-            0xffff,
-            0, /* count up mode  */
-        }
-    },
+    HWTIMER5_CONFIG,
 #endif
 #ifdef BSP_USING_HWTIMER15
-    {
-        "timer15",
-        {
-             TIMER15,
-             TIMER15_IRQn,
-             RCU_TIMER15,
-        },
-        {0},
-        {
-            1000000,
-            1000,
-            0xffff,
-            0, /* count up mode  */
-        }
-    },
+    HWTIMER15_CONFIG,
 #endif
 #ifdef BSP_USING_HWTIMER16
-    {
-        "timer16",
-        {
-             TIMER16,
-             TIMER16_IRQn,
-             RCU_TIMER16,
-        },
-        {0},
-        {
-            1000000,
-            1000,
-            0xffff,
-            0, /* count up mode  */
-        }
-    },
-#endif
-#ifdef BSP_USING_HWTIMER12
-    {
-        "timer12",
-        {
-             TIMER12,
-             TIMER12_IRQn,
-             RCU_TIMER12,
-        },
-        {0},
-        {
-            1000000,
-            1000,
-            0xffff,
-            0, /* count up mode  */
-        }
-    },
-#endif
-#ifdef BSP_USING_HWTIMER13
-    {
-        "timer13",
-        {
-             TIMER13,
-             TIMER13_IRQn,
-             RCU_TIMER13,
-        },
-        {0},
-        {
-            1000000,
-            1000,
-            0xffff,
-            0, /* count up mode  */
-        }
-    },
+    HWTIMER16_CONFIG,
 #endif
 };
 
