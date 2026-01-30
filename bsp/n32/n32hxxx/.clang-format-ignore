@@ -4,5 +4,9 @@
 # If you need to exclude a file, add the path to the file in file_path.
 
 # 从 .ignore_format.yml 迁移的规则
-# 忽略所有 N32H7XXX BSP 的 Cube_Config 配置目录
-/n32h*/board/Cube_Config/
+/n32h760zil7-stb/board/Cube_Config/
+/n32h760zil7-stb/board/Cube_Config/data/
+/n32h760zil7-stb/board/Cube_Config/Driver/
+/n32h760zil7-stb/board/Cube_Config/MDK-ARM/
+/n32h760zil7-stb/board/Cube_Config/startup/
+/n32h760zil7-stb/board/Cube_Config/USER/

@@ -142,7 +142,6 @@ void rt_hw_console_init(void)
     USART_InitStructure.OverSampling        = USART_16OVER;
     USART_InitStructure.Mode                = USART_MODE_RX | USART_MODE_TX;
     USART_Init(USARTx, &USART_InitStructure);
-    
     USART_Enable(USARTx, ENABLE);
 }
 
