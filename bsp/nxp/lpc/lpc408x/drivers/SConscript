@@ -11,8 +11,8 @@ board.c
 if GetDepend(['BSP_USING_EMAC']):
     src += ['drv_emac.c']
 
-if GetDepend(['BSP_USING_HWTIMER0']):
-    src += ['drv_hwtimer.c']
+if GetDepend(['BSP_USING_CLOCK_TIMER0']):
+    src += ['drv_timer.c']
 
 if GetDepend(['BSP_USING_LED']):
     src += ['drv_led.c']

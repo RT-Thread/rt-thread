@@ -298,7 +298,7 @@ menu "General Drivers Configuration"
     menuconfig BSP_USING_TIMER
         bool "Enable TIMER"
         default n
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         if BSP_USING_TIMER
             config BSP_USING_TIMER0
                 bool "Enable TIMER0"

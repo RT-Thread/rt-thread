@@ -50,7 +50,7 @@
 
 static rt_device_t hw_dev = RT_NULL;
 static rt_sem_t complete_sem = RT_NULL;
-static rt_hwtimerval_t timeout = {0};
+static rt_clock_timerval_t timeout = {0};
 static rt_perf_t *perf_local = RT_NULL;
 
 static void modify_time(rt_perf_t *perf)
@@ -79,14 +79,14 @@ rt_err_t rt_perf_irq_latency(rt_perf_t *perf)
     rt_strcpy(perf->name,"rt_perf_irq_latency");
 #endif
     int ret = RT_EOK;
-    rt_hwtimer_mode_t mode = HWTIMER_MODE_PERIOD;
+    rt_clock_timer_mode_t mode = CLOCK_TIMER_MODE_PERIOD;
 
     perf_local = perf;
-    hw_dev = rt_device_find(RT_UTEST_HWTIMER_DEV_NAME);
+    hw_dev = rt_device_find(RT_UTEST_CLOCK_TIMER_DEV_NAME);
     if (hw_dev == RT_NULL)
     {
         ret = RT_ERROR;
-        LOG_E("hwtimer sample run failed! can't find %s device!", RT_UTEST_HWTIMER_DEV_NAME);
+        LOG_E("clock_timer sample run failed! can't find %s device!", RT_UTEST_CLOCK_TIMER_DEV_NAME);
         return ret;
     }
 
@@ -100,7 +100,7 @@ rt_err_t rt_perf_irq_latency(rt_perf_t *perf)
     rt_mutex_release(perf->lock);
 
     rt_device_set_rx_indicate(hw_dev, timer_callback);
-    rt_device_control(hw_dev, HWTIMER_CTRL_MODE_SET, (void *)&mode);
+    rt_device_control(hw_dev, CLOCK_TIMER_CTRL_MODE_SET, (void *)&mode);
 
     rt_perf_start_impl(perf_local, &timeout);
 
@@ -111,4 +111,3 @@ rt_err_t rt_perf_irq_latency(rt_perf_t *perf)
 
     return RT_EOK;
 }
-

@@ -35,6 +35,11 @@ struct mem_desc platform_mem_desc[] =
 
 #endif
 
+rt_uint64_t rt_hw_get_clock_timer_freq(void)
+{
+    return 10000000ULL;
+}
+
 void primary_cpu_entry(void)
 {
     /* disable global interrupt */

@@ -7,14 +7,14 @@
  * Date           Author            Notes
  * 2022-07-15     Emuzit            first version
  * 2022-07-20     Emuzit            add watchdog test
- * 2022-07-26     Emuzit            add hwtimer test
+ * 2022-07-26     Emuzit            add clock_timer test
  * 2022-07-30     Emuzit            add spi master test
  * 2022-08-04     Emuzit            add pwm test
  */
 #include <rtthread.h>
 #include <drivers/dev_pin.h>
 #include "drivers/dev_watchdog.h"
-#include <drivers/hwtimer.h>
+#include <drivers/clock_time.h>
 #include "drivers/dev_spi.h"
 #include <drivers/dev_pwm.h>
 #include "board.h"
@@ -154,7 +154,7 @@ static void test_watchdog(uint32_t seconds)
     #define test_watchdog(tov)  do {} while(0)
 #endif
 
-#ifdef RT_USING_HWTIMER
+#ifdef RT_USING_CLOCK_TIME
 static struct rt_device *tmr_dev_0;
 static struct rt_device *tmr_dev_1;
 
@@ -164,15 +164,15 @@ static rt_err_t tmr_timeout_cb(rt_device_t dev, rt_size_t size)
 
     int tmr = (dev == tmr_dev_1) ? 1 : 0;
 
-    rt_kprintf("hwtimer %d timeout callback fucntion @tick %d\n", tmr, tick);
+    rt_kprintf("clock_timer %d timeout callback fucntion @tick %d\n", tmr, tick);
 
     return RT_EOK;
 }
 
-static void test_hwtimer(void)
+static void test_clock_timer(void)
 {
-    rt_hwtimerval_t timerval;
-    rt_hwtimer_mode_t mode;
+    rt_clock_timerval_t timerval;
+    rt_clock_timer_mode_t mode;
     rt_size_t tsize;
 
     /* setup two timers, ONESHOT & PERIOD each
@@ -181,12 +181,12 @@ static void test_hwtimer(void)
     tmr_dev_1 = rt_device_find("timer1");
     if (tmr_dev_0 == RT_NULL || tmr_dev_1 == RT_NULL)
     {
-        rt_kprintf("hwtimer device(s) not found !\n");
+        rt_kprintf("clock_timer device(s) not found !\n");
     }
     else if (rt_device_open(tmr_dev_0, RT_DEVICE_OFLAG_RDWR) != RT_EOK ||
              rt_device_open(tmr_dev_1, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
     {
-        rt_kprintf("hwtimer device(s) open failed !\n");
+        rt_kprintf("clock_timer device(s) open failed !\n");
     }
     else
     {
@@ -196,8 +196,8 @@ static void test_hwtimer(void)
         timerval.sec = 3;
         timerval.usec = 500000;
         tsize = sizeof(timerval);
-        mode = HWTIMER_MODE_ONESHOT;
-        if (rt_device_control(tmr_dev_0, HWTIMER_CTRL_MODE_SET, &mode) != RT_EOK)
+        mode = CLOCK_TIMER_MODE_ONESHOT;
+        if (rt_device_control(tmr_dev_0, CLOCK_TIMER_CTRL_MODE_SET, &mode) != RT_EOK)
         {
             rt_kprintf("timer0 set mode failed !\n");
         }
@@ -213,8 +213,8 @@ static void test_hwtimer(void)
         timerval.sec = 5;
         timerval.usec = 0;
         tsize = sizeof(timerval);
-        mode = HWTIMER_MODE_PERIOD;
-        if (rt_device_control(tmr_dev_1, HWTIMER_CTRL_MODE_SET, &mode) != RT_EOK)
+        mode = CLOCK_TIMER_MODE_PERIOD;
+        if (rt_device_control(tmr_dev_1, CLOCK_TIMER_CTRL_MODE_SET, &mode) != RT_EOK)
         {
             rt_kprintf("timer1 set mode failed !\n");
         }
@@ -229,7 +229,7 @@ static void test_hwtimer(void)
     }
 }
 #else
-    #define test_hwtimer()  do {} while(0)
+    #define test_clock_timer()  do {} while(0)
 #endif
 
 #ifdef RT_USING_SPI
@@ -414,7 +414,7 @@ void main(void)
 
     test_gpio_int();
     test_watchdog(wdog_timeout);
-    test_hwtimer();
+    test_clock_timer();
     test_spi_master();
     test_pwm();
     test_usbd();

@@ -618,9 +618,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>hwtimer.c</FileName>
+              <FileName>clock_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\clock_time\clock_timer.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1036,9 +1036,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_hwtimer_ch32f20x.c</FileName>
+              <FileName>drv_timer_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_hwtimer_ch32f20x.c</FilePath>
+              <FilePath>..\Libraries\ch32_drivers\drv_timer_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>

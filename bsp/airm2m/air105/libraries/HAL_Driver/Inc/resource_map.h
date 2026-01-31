@@ -28,7 +28,7 @@
 #define CORE_TICK_1MS   (48000)
 #define CORE_TICK_1S        (48000000)
 #define CORE_TICK_IRQ_LEVEL 1
-#define HWTIMER_IRQ_LEVEL   0
+#define CLOCK_TIMER_IRQ_LEVEL   0
 
 #define SYS_TIMER_TIM 6
 #define SYS_TIMER_IRQ TIM0_6_IRQn

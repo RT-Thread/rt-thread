@@ -139,31 +139,31 @@ menu "On-chip Peripheral Drivers"
         config BSP_USING_TIM1
             bool "Enable Timer1"
             default n
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
         config BSP_USING_TIM3
             bool "Enable Timer3"
             default n
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
         config BSP_USING_TIM6
             bool "Enable Timer6"
             default n
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
         config BSP_USING_TIM14
             bool "Enable Timer14"
             default n
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
         config BSP_USING_TIM15
             bool "Enable Timer15"
             default n
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
         config BSP_USING_TIM16
             bool "Enable Timer16"
             default n
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
         config BSP_USING_TIM17
             bool "Enable Timer17"
             default n
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
     endmenu
 
     menu "Hardware WDT"

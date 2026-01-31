@@ -50,6 +50,6 @@
 #define SS          D10
 #define RTDUINO_DEFAULT_SPI_BUS_NAME     "spi1"
 
-#define RTDUINO_TONE_HWTIMER_DEVICE_NAME "timer9"
+#define RTDUINO_TONE_CLOCK_TIMER_DEVICE_NAME "timer9"
 
 #endif /* Pins_Arduino_h */
