@@ -2211,7 +2211,11 @@
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\core\device.c</name>
     </file>
     <file>
+<<<<<<< .mine
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\hwtimer\hwtimer.c</name>
+=======
+      <name>$PROJ_DIR$\..\..\..\components\drivers\clock_time\clock_timer.c</name>
+>>>>>>> .theirs
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\i2c\dev_i2c_bit_ops.c</name>
@@ -2295,7 +2299,7 @@
       <name>$PROJ_DIR$\..\libraries\n32_drivers\drv_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\n32_drivers\drv_hwtimer.c</name>
+      <name>$PROJ_DIR$\..\libraries\n32_drivers\drv_timer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\n32_drivers\drv_rtc.c</name>

@@ -29,8 +29,8 @@ if  GetDepend('SOC_ARM_SERIES_CH32F103'):
     if GetDepend(['RT_USING_WDT', 'BSP_USING_IWDT']):
         src += ['drv_iwdt_ch32f10x.c']
 
-    if GetDepend(['RT_USING_HWTIMER', 'BSP_USING_HWTIMER']):
-        src += ['drv_hwtimer_ch32f10x.c']
+    if GetDepend(['RT_USING_CLOCK_TIME', 'BSP_USING_CLOCK_TIMER']):
+        src += ['drv_timer_ch32f10x.c']
 
     if GetDepend(['RT_USING_PWM', 'BSP_USING_PWM']):
         src += ['drv_pwm_ch32f10x.c']
@@ -56,8 +56,8 @@ if  GetDepend('SOC_ARM_SERIES_CH32F203'):
     if GetDepend(['RT_USING_WDT', 'BSP_USING_IWDT']):
         src += ['drv_iwdt_ch32f20x.c']
 
-    if GetDepend(['RT_USING_HWTIMER', 'BSP_USING_HWTIMER']):
-        src += ['drv_hwtimer_ch32f20x.c']
+    if GetDepend(['RT_USING_CLOCK_TIME', 'BSP_USING_CLOCK_TIMER']):
+        src += ['drv_timer_ch32f20x.c']
 
     if GetDepend(['RT_USING_PWM', 'BSP_USING_PWM']):
         src += ['drv_pwm_ch32f20x.c']

@@ -1733,4 +1733,6 @@ typedef struct
 void usb_dc_low_level_init(uint8_t busid);
 void usb_dc_low_level_deinit(uint8_t busid);
 void usbd_dwc2_delay_ms(uint8_t ms);
+uint32_t usbd_dwc2_get_system_clock(void);
+
 #endif

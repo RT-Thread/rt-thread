@@ -242,17 +242,13 @@ extern "C" {
 #include "drivers/dev_can.h"
 #endif /* RT_USING_CAN */
 
-#ifdef RT_USING_HWTIMER
-#include "drivers/hwtimer.h"
-#endif /* RT_USING_HWTIMER */
+#ifdef RT_USING_CLOCK_TIME
+#include "drivers/clock_time.h"
+#endif /* RT_USING_CLOCK_TIME */
 
 #ifdef RT_USING_AUDIO
 #include "drivers/dev_audio.h"
 #endif /* RT_USING_AUDIO */
-
-#ifdef RT_USING_CPUTIME
-#include "drivers/cputime.h"
-#endif /* RT_USING_CPUTIME */
 
 #ifdef RT_USING_ADC
 #include "drivers/adc.h"

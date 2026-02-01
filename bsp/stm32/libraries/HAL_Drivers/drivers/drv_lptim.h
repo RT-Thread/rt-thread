@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author          Notes
  * 2019-05-06     Zero-Free       first version
- * 2024-07-04     wdfk-prog       lptimer is register with hwtimer, only supports pm calls,the timer function is not supported
+ * 2024-07-04     wdfk-prog       lptimer is register with clock_timer, only supports pm calls,the timer function is not supported
  */
 
 #ifndef  __DRV_PMTIMER_H__

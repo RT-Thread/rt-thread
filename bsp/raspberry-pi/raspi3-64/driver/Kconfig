@@ -27,6 +27,7 @@ menu "Hardware Drivers Config"
 
         menuconfig BSP_USING_SYSTIMER
             bool "Enable SYSTIMER"
+            select RT_USING_CLOCK_TIME
             default n
 
         if  BSP_USING_SYSTIMER

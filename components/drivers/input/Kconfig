@@ -13,7 +13,7 @@ config RT_INPUT_POWER
 config RT_INPUT_UAPI
     bool "Input event Unix API"
     depends on RT_USING_INPUT
-    depends on RT_USING_KTIME
+    depends on RT_USING_CLOCK_TIME
     depends on RT_USING_POSIX_DEVIO
     default n
     default y if RT_USING_SMART
