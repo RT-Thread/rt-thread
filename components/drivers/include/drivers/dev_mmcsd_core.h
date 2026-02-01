@@ -142,6 +142,8 @@ struct rt_mmcsd_req
 #define R1_READY_FOR_DATA   (1 << 8)    /* sx, a */
 #define R1_APP_CMD      (1 << 5)    /* sr, c */
 
+/*the programing is state*/
+#define R1_STATE_PRG    0x07
 
 #define R1_SPI_IDLE     (1 << 0)
 #define R1_SPI_ERASE_RESET  (1 << 1)
