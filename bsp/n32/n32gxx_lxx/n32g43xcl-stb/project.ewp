@@ -2206,11 +2206,7 @@
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\core\device.c</name>
     </file>
     <file>
-<<<<<<< .mine
-      <name>$PROJ_DIR$\..\..\..\..\components\drivers\hwtimer\hwtimer.c</name>
-=======
       <name>$PROJ_DIR$\..\..\..\components\drivers\clock_time\clock_timer.c</name>
->>>>>>> .theirs
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\i2c\dev_i2c_bit_ops.c</name>

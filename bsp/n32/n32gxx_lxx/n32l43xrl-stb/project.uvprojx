@@ -462,11 +462,7 @@
             <File>
               <FileName>clock_timer.c</FileName>
               <FileType>1</FileType>
-<<<<<<< .mine
-              <FilePath>..\..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
-=======
               <FilePath>..\..\..\components\drivers\clock_time\clock_timer.c</FilePath>
->>>>>>> .theirs
               <FileOption>
                 <FileArmAds>
                   <Cads>
