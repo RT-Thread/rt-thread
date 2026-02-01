@@ -8,6 +8,7 @@
  * Date           Author       Notes
  * 2013-04-14     Grissiom     initial implementation
  * 2019-12-09     Steven Liu   add YMODEM send protocol
+ * 2026-02-01     wdfk-prog    update ymodem callbacks and error handling
  */
 
 #include <rthw.h>
@@ -180,6 +181,27 @@ static rt_err_t _rym_send_packet(
     return RT_EOK;
 }
 
+/**
+ * @brief Finalize a transfer, record error state, invoke end callback, and free buffer.
+ *
+ * @param ctx Transfer context.
+ * @param err Transfer result (RT_EOK on success, negative on failure).
+ */
+static void _rym_cleanup(struct rym_ctx *ctx, rt_err_t err)
+{
+    ctx->last_err = err;
+    if (ctx->on_end && ctx->begin_called && !ctx->end_called)
+    {
+        ctx->on_end(ctx, ctx->buf + 3, 128);
+        ctx->end_called = 1;
+    }
+    if (ctx->buf)
+    {
+        rt_free(ctx->buf);
+        ctx->buf = RT_NULL;
+    }
+}
+
 static rt_ssize_t _rym_putchar(struct rym_ctx *ctx, rt_uint8_t code)
 {
     rt_device_write(ctx->dev, 0, &code, sizeof(code));
@@ -254,7 +276,13 @@ static rt_err_t _rym_do_handshake(
 
     /* congratulations, check passed. */
     if (ctx->on_begin && ctx->on_begin(ctx, ctx->buf + 3, data_sz - 5) != RYM_CODE_ACK)
+    {
         return -RYM_ERR_CAN;
+    }
+    else
+    {
+        ctx->begin_called = 1;
+    }
 
     return RT_EOK;
 }
@@ -289,12 +317,17 @@ static rt_err_t _rym_do_send_handshake(
 
     /* congratulations, check passed. */
     if (ctx->on_begin && ctx->on_begin(ctx, ctx->buf + 3, data_sz - 5) != RYM_CODE_SOH)
+    {
         return -RYM_ERR_CODE;
+    }
+    else
+    {
+        ctx->begin_called = 1;
+    }
 
     code = RYM_CODE_SOH;
     _rym_send_packet(ctx, code, index);
 
-    rt_device_set_rx_indicate(ctx->dev, _rym_rx_ind);
     getc_ack = _rym_getchar(ctx);
 
     if (getc_ack != RYM_CODE_ACK)
@@ -440,25 +473,43 @@ static rt_err_t _rym_do_send_trans(struct rym_ctx *ctx)
     rt_size_t data_sz;
     rt_uint32_t index = 1;
     rt_uint8_t getc_ack;
+    rt_size_t errors = 0;
+    rt_uint8_t have_packet = 0;
 
     data_sz = _RYM_STX_PKG_SZ;
     while (1)
     {
-        if (!ctx->on_data)
+        if (!have_packet)
+        {
+            if (!ctx->on_data)
+            {
+                return -RYM_ERR_CODE;
+            }
+            /* Prepare the next payload only once; reuse it on retransmits. */
+            code = ctx->on_data(ctx, ctx->buf + 3, data_sz - 5);
+            have_packet = 1;
+        }
+
+        if (_rym_send_packet(ctx, code, index) != RT_EOK)
         {
             return -RYM_ERR_CODE;
         }
-        code = ctx->on_data(ctx, ctx->buf + 3, data_sz - 5);
-
-        _rym_send_packet(ctx, code, index);
-        index++;
-        rt_device_set_rx_indicate(ctx->dev, _rym_rx_ind);
 
         getc_ack = _rym_getchar(ctx);
         if (getc_ack != RYM_CODE_ACK)
         {
-            return -RYM_ERR_ACK;
+            if (getc_ack == RYM_CODE_CAN)
+                return -RYM_ERR_CAN;
+
+            if (++errors > RYM_MAX_ERRORS)
+                return -RYM_ERR_ACK;
+
+            /* Not ACK: retry the same packet until we hit the error limit. */
+            continue;
         }
+        errors = 0;
+        have_packet = 0;
+        index++;
 
         if (ctx->stage == RYM_STAGE_FINISHING)
             break;
@@ -478,7 +529,10 @@ static rt_err_t _rym_do_fin(struct rym_ctx *ctx)
     /* we already got one EOT in the caller. invoke the callback if there is
      * one. */
     if (ctx->on_end)
+    {
         ctx->on_end(ctx, ctx->buf + 3, 128);
+        ctx->end_called = 1;
+    }
 
     _rym_putchar(ctx, RYM_CODE_NAK);
     code = _rym_read_code(ctx, RYM_WAIT_PKG_TICK);
@@ -538,7 +592,6 @@ static rt_err_t _rym_do_send_fin(struct rym_ctx *ctx)
     rt_uint8_t getc_ack;
 
     data_sz = _RYM_SOH_PKG_SZ;
-    rt_device_set_rx_indicate(ctx->dev, _rym_rx_ind);
 
     _rym_putchar(ctx, RYM_CODE_EOT);
     getc_ack = _rym_getchar(ctx);
@@ -564,7 +617,13 @@ static rt_err_t _rym_do_send_fin(struct rym_ctx *ctx)
     }
 
     if (ctx->on_end && ctx->on_end(ctx, ctx->buf + 3, data_sz - 5) != RYM_CODE_SOH)
+    {
         return -RYM_ERR_CODE;
+    }
+    else
+    {
+        ctx->end_called = 1;
+    }
 
     code = RYM_CODE_SOH;
 
@@ -582,6 +641,9 @@ static rt_err_t _rym_do_recv(
     rt_err_t err;
 
     ctx->stage = RYM_STAGE_NONE;
+    ctx->begin_called = 0;
+    ctx->end_called = 0;
+    ctx->last_err = RT_EOK;
 
     ctx->buf = rt_malloc(_RYM_STX_PKG_SZ);
     if (ctx->buf == RT_NULL)
@@ -589,25 +651,22 @@ static rt_err_t _rym_do_recv(
 
     err = _rym_do_handshake(ctx, handshake_timeout);
     if (err != RT_EOK)
-    {
-        rt_free(ctx->buf);
-        return err;
-    }
+        goto __cleanup;
     while (1)
     {
         err = _rym_do_trans(ctx);
+        if (err != RT_EOK)
+            goto __cleanup;
 
         err = _rym_do_fin(ctx);
         if (err != RT_EOK)
-        {
-            rt_free(ctx->buf);
-            return err;
-        }
+            goto __cleanup;
 
         if (ctx->stage == RYM_STAGE_FINISHED)
             break;
     }
-    rt_free(ctx->buf);
+__cleanup:
+    _rym_cleanup(ctx, err);
     return err;
 }
 
@@ -618,6 +677,9 @@ static rt_err_t _rym_do_send(
     rt_err_t err;
 
     ctx->stage = RYM_STAGE_NONE;
+    ctx->begin_called = 0;
+    ctx->end_called = 0;
+    ctx->last_err = RT_EOK;
 
     ctx->buf = rt_malloc(_RYM_STX_PKG_SZ);
     if (ctx->buf == RT_NULL)
@@ -625,26 +687,17 @@ static rt_err_t _rym_do_send(
 
     err = _rym_do_send_handshake(ctx, handshake_timeout);
     if (err != RT_EOK)
-    {
-        rt_free(ctx->buf);
-        return err;
-    }
+        goto __cleanup;
 
     err = _rym_do_send_trans(ctx);
     if (err != RT_EOK)
-    {
-        rt_free(ctx->buf);
-        return err;
-    }
+        goto __cleanup;
 
     err = _rym_do_send_fin(ctx);
     if (err != RT_EOK)
-    {
-        rt_free(ctx->buf);
-        return err;
-    }
-
-    rt_free(ctx->buf);
+        goto __cleanup;
+__cleanup:
+    _rym_cleanup(ctx, err);
     return err;
 }
 
@@ -666,9 +719,12 @@ rt_err_t rym_recv_on_device(
     _rym_the_ctx = ctx;
 
     ctx->on_begin = on_begin;
-    ctx->on_data  = on_data;
-    ctx->on_end   = on_end;
-    ctx->dev      = dev;
+    ctx->on_data = on_data;
+    ctx->on_end = on_end;
+    ctx->begin_called = 0;
+    ctx->end_called = 0;
+    ctx->last_err = RT_EOK;
+    ctx->dev = dev;
     rt_sem_init(&ctx->sem, "rymsem", 0, RT_IPC_FLAG_FIFO);
 
     odev_rx_ind = dev->rx_indicate;
@@ -723,9 +779,12 @@ rt_err_t rym_send_on_device(
     _rym_the_ctx = ctx;
 
     ctx->on_begin = on_begin;
-    ctx->on_data  = on_data;
-    ctx->on_end   = on_end;
-    ctx->dev      = dev;
+    ctx->on_data = on_data;
+    ctx->on_end = on_end;
+    ctx->begin_called = 0;
+    ctx->end_called = 0;
+    ctx->last_err = RT_EOK;
+    ctx->dev = dev;
     rt_sem_init(&ctx->sem, "rymsem", 0, RT_IPC_FLAG_FIFO);
 
     odev_rx_ind = dev->rx_indicate;
