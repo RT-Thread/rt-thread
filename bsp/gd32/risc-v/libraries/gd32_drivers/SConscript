@@ -46,6 +46,7 @@ if GetDepend('RT_USING_ADC'):
     src += ['drv_adc.c']
 
 path = [cwd]
+path += [cwd + "/config"]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
