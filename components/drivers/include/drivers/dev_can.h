@@ -132,22 +132,42 @@ enum CANBAUD
  *     res = rt_device_control(can_dev, RT_CAN_CMD_START, &cmd_arg);
  *     RT_ASSERT(res == RT_EOK);
  *
+ *     #define CAN_RX_BATCH_SIZE 8
+ *
  *     while (1)
  *     {
  *         // Block and wait for the semaphore, which is released by the receive callback.
  *         rt_sem_take(&rx_sem, RT_WAITING_FOREVER);
  *
- *         // Read one frame of data from the CAN device's general message queue.
- *         rx_msg.hdr_index = -1;
- *         rt_device_read(can_dev, 0, &rx_msg, sizeof(rx_msg));
- *
- *         // Print the received message's ID and data.
- *         rt_kprintf("Received a message. ID: 0x%x, Data: ", rx_msg.id);
- *         for (int i = 0; i < rx_msg.len; i++)
+ *         // Drain all pending frames in batches.
+ *         struct rt_can_msg rx_buf[CAN_RX_BATCH_SIZE];
+ *         rt_ssize_t read_size;
+ *         rt_size_t count;
+ *         do
  *         {
- *             rt_kprintf("%02x ", rx_msg.data[i]);
+ *             for (rt_size_t i = 0; i < CAN_RX_BATCH_SIZE; i++)
+ *             {
+ *                 rx_buf[i].hdr_index = -1;
+ *             }
+ *
+ *             read_size = rt_device_read(can_dev, 0, rx_buf, sizeof(rx_buf));
+ *             if (read_size <= 0)
+ *             {
+ *                 break;
+ *             }
+ *             count = (rt_size_t)(read_size / sizeof(rx_buf[0]));
+ *             for (rt_size_t i = 0; i < count; i++)
+ *             {
+ *                 // Print the received message's ID and data.
+ *                 rt_kprintf("Received a message. ID: 0x%x, Data: ", rx_buf[i].id);
+ *                 for (int j = 0; j < rx_buf[i].len; j++)
+ *                 {
+ *                     rt_kprintf("%02x ", rx_buf[i].data[j]);
+ *                 }
+ *                 rt_kprintf("\n");
+ *             }
  *         }
- *         rt_kprintf("\n");
+ *         while(count == CAN_RX_BATCH_SIZE);
  *     }
  * }
  *
