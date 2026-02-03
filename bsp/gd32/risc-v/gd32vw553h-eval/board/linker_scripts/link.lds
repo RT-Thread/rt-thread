@@ -62,6 +62,12 @@ SECTIONS
     __rt_init_end = .;
     . = ALIGN(4);
 
+    /* section information for utest */
+    . = ALIGN(4);
+    __rt_utest_tc_tab_start = .;
+    KEEP(*(UtestTcTab))
+    __rt_utest_tc_tab_end = .;
+
     /* section information for modules */
     . = ALIGN(4);
     __rtmsymtab_start = .;
