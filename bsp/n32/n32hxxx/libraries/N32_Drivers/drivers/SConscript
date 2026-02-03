@@ -1,0 +1,39 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+import os
+
+cwd = GetCurrentDir()
+group = []
+src = []
+path = [cwd]
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['drv_usart.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['drv_spi.c']
+
+if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
+    if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
+        src += ['drv_soft_i2c.c']
+        
+if GetDepend(['RT_USING_I2C']):
+    if GetDepend('BSP_USING_HARD_I2C1') or GetDepend('BSP_USING_HARD_I2C2') or GetDepend('BSP_USING_HARD_I2C3') or GetDepend('BSP_USING_HARD_I2C4') or GetDepend('BSP_USING_HARD_I2C5') or GetDepend('BSP_USING_HARD_I2C6') or GetDepend('BSP_USING_HARD_I2C7') or GetDepend('BSP_USING_HARD_I2C8') or GetDepend('BSP_USING_HARD_I2C9') or GetDepend('BSP_USING_HARD_I2C10'):
+        src += ['drv_hard_i2c.c']
+
+if GetDepend('BSP_USING_ONCHIP_RTC'):
+    src += ['drv_rtc.c']
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['drv_adc.c']
+
+
+path += [os.path.join(cwd, 'config')]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')

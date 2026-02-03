@@ -1,0 +1,16 @@
+if BSP_USING_USBD
+    config BSP_USBD_TYPE_FS
+        bool
+        # "USB Full Speed (FS) Core"
+    config BSP_USBD_TYPE_HS
+        bool
+        # "USB High Speed (HS) Core"
+
+    config BSP_USBD_SPEED_HS
+        bool
+        # "USB High Speed (HS) Mode"
+    config BSP_USBD_SPEED_HSINFS
+        bool
+        # "USB High Speed (HS) Core in FS mode"
+endif
+
