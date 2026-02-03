@@ -69,7 +69,7 @@ void UART1_IRQHandler(void)
     rt_interrupt_leave();
 }
 #else
-#error "not support soc"
+#error "Uart1 ISR name not compatible with current MCU series"
 #endif
 
 #endif /* BSP_USING_UART1 */
@@ -100,7 +100,7 @@ void UART2_IRQHandler(void)
     rt_interrupt_leave();
 }
 #else
-#error "not support soc"
+#error "Uart2 ISR name not compatible with current MCU series"
 #endif
 
 #endif /* BSP_USING_UART2 */
@@ -216,7 +216,7 @@ static const struct gd32_uart uart_obj[] = {
         GPIOA, GPIO_PIN_3,                      /* rx port, rx pin */
         GPIO_AF_7, GPIO_AF_7,
 #else
-#error "not support soc"
+#error "UART1 peripheral config incompatible with current MCU series"
 #endif
         &serial1,
         "uart1",
@@ -239,7 +239,7 @@ static const struct gd32_uart uart_obj[] = {
         GPIOA, GPIO_PIN_7,                      /* rx port, rx pin */
         GPIO_AF_10, GPIO_AF_8,
 #else
-#error "not support soc"
+#error "UART2 peripheral config incompatible with current MCU series"
 #endif
         &serial2,
         "uart2",
@@ -301,7 +301,7 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     gpio_mode_set(uart->rx_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, uart->rx_pin);
     gpio_output_options_set(uart->rx_port, GPIO_OTYPE_PP, GPIO_OSPEED_25MHZ, uart->rx_pin);
 #else
-#error "not support soc"
+#error "Uart GPIO config incompatible with current MCU series"
 #endif
 }
 
