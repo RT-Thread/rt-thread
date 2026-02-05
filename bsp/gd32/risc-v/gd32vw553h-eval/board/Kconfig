@@ -56,26 +56,6 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART2
                 select RT_SERIAL_USING_DMA
                 default n
-
-            config BSP_USING_UART3
-                bool "Enable UART3"
-                default n
-
-            config BSP_UART3_RX_USING_DMA
-                bool "Enable UART3 RX DMA"
-                depends on BSP_USING_UART3
-                select RT_SERIAL_USING_DMA
-                default n
-
-            config BSP_USING_UART4
-                bool "Enable UART4"
-                default n
-
-            config BSP_UART4_RX_USING_DMA
-                bool "Enable UART4 RX DMA"
-                depends on BSP_USING_UART4
-                select RT_SERIAL_USING_DMA
-                default n
         endif
 
     menuconfig BSP_USING_PWM
