@@ -441,7 +441,7 @@ rt_ssize_t _serial_poll_tx(struct rt_device *dev,
 
     while (size)
     {
-        if (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM || (dev == rt_console_get_device()))
+        if (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM)
         {
             /* If open_flag satisfies RT_DEVICE_FLAG_STREAM and the received character is '\n',
              * inserts '\r' character before '\n' character for the effect of carriage return newline */
