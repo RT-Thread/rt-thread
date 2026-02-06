@@ -167,7 +167,8 @@ struct rt_device *fal_blk_device_create(const char *parition_name)
         return NULL;
     }
 
-    if ((fal_flash = fal_flash_device_find(fal_part->flash_name)) == NULL)
+    fal_flash = fal_flash_device_find(fal_part->flash_name);
+    if (fal_flash == NULL)
     {
         LOG_E("Error: the flash device name (%s) is not found.", fal_part->flash_name);
         return NULL;
@@ -309,7 +310,8 @@ struct rt_device *fal_mtd_nor_device_create(const char *parition_name)
         return NULL;
     }
 
-    if ((fal_flash = fal_flash_device_find(fal_part->flash_name)) == NULL)
+    fal_flash = fal_flash_device_find(fal_part->flash_name);
+    if (fal_flash == NULL)
     {
         LOG_E("Error: the flash device name (%s) is not found.", fal_part->flash_name);
         return NULL;
@@ -620,19 +622,24 @@ static void fal(rt_uint8_t argc, char **argv) {
             if (argc >= 3)
             {
                 char *dev_name = argv[2];
-                if ((flash_dev = fal_flash_device_find(dev_name)) != NULL)
+                flash_dev = fal_flash_device_find(dev_name);
+                if (flash_dev != NULL)
                 {
                     part_dev = NULL;
-                }
-                else if ((part_dev = fal_partition_find(dev_name)) != NULL)
-                {
-                    flash_dev = NULL;
                 }
                 else
                 {
-                    rt_kprintf("Device %s NOT found. Probe failed.\n", dev_name);
-                    flash_dev = NULL;
-                    part_dev = NULL;
+                    part_dev = fal_partition_find(dev_name);
+                    if (part_dev != NULL)
+                    {
+                        flash_dev = NULL;
+                    }
+                    else
+                    {
+                        rt_kprintf("Device %s NOT found. Probe failed.\n", dev_name);
+                        flash_dev = NULL;
+                        part_dev = NULL;
+                    }
                 }
             }
 
