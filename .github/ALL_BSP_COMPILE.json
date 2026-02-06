@@ -254,6 +254,7 @@
         "renesas/ebf_qi_min_6m5",
         "renesas/ra6m4-cpk",
         "renesas/ra6m4-iot",
+        "renesas/ra6m4-eco",
         "renesas/ra6m3-ek",
         "renesas/ra6m3-hmi-board",
         "renesas/ra6e2-ek",
