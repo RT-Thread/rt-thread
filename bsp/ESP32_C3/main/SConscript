@@ -9,3 +9,24 @@ CPPPATH = []
 group = DefineGroup('Main', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
+
+# SConscript file content
+
+# Define a list of source files to compile
+src = []
+
+# Add common BSP source files (these lines might already exist)
+# src += ['board.c', 'drivers/drv_gpio.c'] 
+
+# >>> ADD YOUR APPLICATION FILES HERE <<<
+# Ensure your main.c file is in the list.
+src += ['main.c'] 
+# If you add any other custom C files (e.g., app_logic.c), list them too.
+# src += ['app_logic.c'] 
+
+# Pass the source list to the build environment
+from building import *
+# This line tells SCons to compile the files in the 'src' list
+list = SConscript('drivers/SConscript', variant_dir='drivers')
+list.append(src)
+
