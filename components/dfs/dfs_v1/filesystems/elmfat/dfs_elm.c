@@ -15,6 +15,7 @@
  * 2017-02-13     Hichard      Update Fatfs version to 0.12b, support exFAT.
  * 2017-04-11     Bernard      fix the st_blksize issue.
  * 2017-05-26     Urey         fix f_mount error when mount more fats
+ * 2025-10-29     wdfk-prog    Fixed a memory leak in dfs_elm_close
  */
 
 #include <rtthread.h>
@@ -468,10 +469,7 @@ int dfs_elm_close(struct dfs_file *file)
     FRESULT result;
 
     RT_ASSERT(file->vnode->ref_count > 0);
-    if (file->vnode->ref_count > 1)
-    {
-        return 0;
-    }
+    RT_ASSERT(file->data != RT_NULL);
     result = FR_OK;
     if (file->vnode->type == FT_DIRECTORY)
     {
