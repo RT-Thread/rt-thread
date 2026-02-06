@@ -13,6 +13,34 @@ config SOC_GD32VW553H
 
 menu "Onboard Peripheral Drivers"
 
+    menuconfig BSP_USING_WLAN
+        bool "Enable WiFi (GD32VW553H Internal)"
+        select RT_USING_WIFI
+        select PKG_USING_GD32VW55X_WIFI
+        select RT_USING_MEMHEAP
+        select RT_USING_SYSTEM_WORKQUEUE
+        default n
+
+    if BSP_USING_WLAN
+        config BSP_WLAN_SSID_MAX_LENGTH
+            int "WiFi SSID max length"
+            range 1 32
+            default 32
+
+        config BSP_WLAN_PASSWORD_MAX_LENGTH
+            int "WiFi password max length"
+            range 8 64
+            default 64
+
+        config BSP_WLAN_SCAN_CACHE_NUM
+            int "WiFi scan result cache number"
+            range 4 32
+            default 16
+
+        # Include GD32VW55x WIFI package configuration
+        osource "$(BSP_DIR)/packages/gd32vw55x-wifi/Kconfig"
+    endif
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

@@ -170,7 +170,51 @@ msh >
 
 完成上述配置后即可点击调试选项进行调试，调试时boot管脚均置为低电平即可，调试时同样会进行固件下载。
 
-## 4 注意事项
+## 4.WIFI使用
+
+使用ENV，menuconfig，修改和使能下面的配置
+
+* 修改 RT_NAME_MAX为24
+
+  ![image-20260205145545039](figures/image-20260205145545039.png)
+
+* 使能 BSP_USING_WLAN
+
+  ![image-20260205145642371](figures/image-20260205145642371.png)
+
+* 修改LWIP的版本为V2.1.2
+
+  ![image-20260205145806668](figures/image-20260205145806668.png)
+
+* 关闭 RT_WLAN_PROT_ENABLE
+
+  ![image-20260205145856756](figures/image-20260205145856756.png)
+
+进行编译 scons -jx ，下载。
+
+![image-20260205150826393](figures/image-20260205150826393.png)
+
+可以使用help查看wifi指令，下面演示连接wifi以及ping
+
+![image-20260205151251937](figures/image-20260205151251937.png)
+
+### 使用NETDEV
+
+* 使能 RT_USING_NETDEV
+
+  ![image-20260205151356304](figures/image-20260205151356304.png) 
+
+重新编译，下载。
+
+* wifi 连接以及ping 
+
+  ![image-20260205151712234](figures/image-20260205151712234.png)
+
+* ifconfig：
+
+  ![image-20260205151644687](figures/image-20260205151644687.png)
+
+## 5 注意事项
 
 - Cortex-Debug插件优先选用v1.4.4版本，高版本可能会出现与GDB版本不匹配的问题。
 
