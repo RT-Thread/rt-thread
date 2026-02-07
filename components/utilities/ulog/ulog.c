@@ -1479,7 +1479,6 @@ void ulog_async_output_enabled(rt_bool_t enabled)
  */
 rt_err_t ulog_async_waiting_log(rt_int32_t time)
 {
-    rt_sem_control(&ulog.async_notice, RT_IPC_CMD_RESET, RT_NULL);
     return rt_sem_take(&ulog.async_notice, time);
 }
 
