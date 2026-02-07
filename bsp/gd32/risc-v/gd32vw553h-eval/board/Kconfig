@@ -79,8 +79,63 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM16"
                 default n
         endif
+    menuconfig BSP_USING_HW_I2C
+        bool "Enable Hardware I2C"
+        default n
+        select RT_USING_I2C
+        if BSP_USING_HW_I2C
+            config BSP_USING_HW_I2C0
+                bool "Enable Hardware I2C0"
+                default n
 
+            # config i2c0 pins
+            choice
+                prompt "Select I2C0 pins"
+                depends on BSP_USING_HW_I2C0
+                config BSP_HW_I2C0_PIN_PA2_PA3
+                    bool "SCL=PA2,  SDA=PA3"
+                config BSP_HW_I2C0_PIN_PA15_PC8
+                    bool "SCL=PA15, SDA=PC8"
+                config BSP_HW_I2C0_PIN_PB0_PB1
+                    bool "SCL=PB0,  SDA=PB1"
+                config BSP_HW_I2C0_PIN_PB15_PA8
+                    bool "SCL=PB15, SDA=PA8"
+            endchoice
 
+            # config i2c0 clock
+            config BSP_HW_I2C0_CLK
+                int "I2C0 clock frequency(KHz)"
+                default 100
+                depends on BSP_USING_HW_I2C0
+                range 10 1000
+
+            config BSP_USING_HW_I2C1
+                bool "Enable Hardware I2C1"
+                default n
+
+            # config i2c1 pins
+            choice
+                prompt "Select I2C1 pins"
+                depends on BSP_USING_HW_I2C1
+                config BSP_HW_I2C1_PIN_PA6_PA7
+                    bool "SCL=PA6,  SDA=PA7"
+                config BSP_HW_I2C1_PIN_PA13_PA14
+                    bool "SCL=PA13, SDA=PA14"
+                config BSP_HW_I2C1_PIN_PA15_PC8
+                    bool "SCL=PA15, SDA=PC8"
+                config BSP_HW_I2C1_PIN_PB12_PB13
+                    bool "SCL=PB12, SDA=PB13"
+                config BSP_HW_I2C1_PIN_PB15_PA8
+                    bool "SCL=PB15, SDA=PA8"
+            endchoice
+
+            # config i2c1 clock
+            config BSP_HW_I2C1_CLK
+                int "I2C1 clock frequency(KHz)"
+                default 100
+                depends on BSP_USING_HW_I2C1
+                range 10 1000
+        endif
 
     source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"
 
