@@ -35,6 +35,57 @@ void SysTick_Handler(void)
 }
 
 /**
+ * This function will initial the FlexComm mode.
+ * +--------+----------------+--------+--------+--------------+
+ * | Signal | LPSPI          | LPUART | LPI2C  | LPUART+LPI2C |
+ * +--------+----------------+--------+--------+--------------+
+ * |  FC_P0 | SDO/DATA[0]    | RXD    | SDA    | SDA          |
+ * |  FC_P1 | SCK            | TXD    | SCL    | SCL          |
+ * |  FC_P2 | SDI/DATA[1]    | RTS_b  | SCLS   | TXD          |
+ * |  FC_P3 | PCS[0]         | CTS_b  | SDAS   | RXD          |
+ * |  FC_P4 | PCS[3]/DATA[3] | DSR_b  | HREQ_b | CTS_b        |
+ * |  FC_P5 | PCS[2]/DATA[2] | DTR_b  | —      | RTS_b        |
+ * |  FC_P6 | PCS[1]/HREQ    | DCD_b  | —      | HREQ_b       |
+ * +--------+----------------+--------+--------+--------------+
+ */
+void rt_hw_flexcomm_mode_init(void)
+{
+#ifdef BSP_USING_UART2
+    LP_FLEXCOMM_Init(2, LP_FLEXCOMM_PERIPH_LPI2CAndLPUART); /* FLEXCOMM2 used for LPI2C and LPUART */
+#endif
+#ifdef BSP_USING_UART4
+    LP_FLEXCOMM_Init(4, LP_FLEXCOMM_PERIPH_LPUART); /* FLEXCOMM4 used for LPUART */
+#endif
+#ifdef BSP_USING_UART5
+    LP_FLEXCOMM_Init(5, LP_FLEXCOMM_PERIPH_LPUART); /* FLEXCOMM5 used for LPUART */
+#endif
+#ifdef BSP_USING_UART6
+    LP_FLEXCOMM_Init(6, LP_FLEXCOMM_PERIPH_LPUART); /* FLEXCOMM6 used for LPUART */
+    #endif
+#ifdef BSP_USING_SPI1
+    LP_FLEXCOMM_Init(2, LP_FLEXCOMM_PERIPH_LPSPI); /* FLEXCOMM2 used for LPI2C and LPUART */
+#endif
+#ifdef BSP_USING_SPI3
+    LP_FLEXCOMM_Init(3, LP_FLEXCOMM_PERIPH_LPSPI); /* FLEXCOMM3 used for LPSPI */
+#endif
+#ifdef BSP_USING_SPI6
+    LP_FLEXCOMM_Init(6, LP_FLEXCOMM_PERIPH_LPSPI); /* FLEXCOMM6 used for LPSPI */
+#endif
+#ifdef BSP_USING_SPI7
+    LP_FLEXCOMM_Init(7, LP_FLEXCOMM_PERIPH_LPSPI); /* FLEXCOMM7 used for LPSPI */
+#endif
+#ifdef BSP_USING_I2C0
+    LP_FLEXCOMM_Init(0, LP_FLEXCOMM_PERIPH_LPI2C); /* FLEXCOMM0 used for LPI2C */
+#endif
+#ifdef BSP_USING_I2C1
+    LP_FLEXCOMM_Init(1, LP_FLEXCOMM_PERIPH_LPI2C); /* FLEXCOMM1 used for LPI2C */
+#endif
+#ifdef BSP_USING_I2C2
+    LP_FLEXCOMM_Init(2, LP_FLEXCOMM_PERIPH_LPI2C); /* FLEXCOMM2 used for LPI2C */
+#endif
+}
+
+/**
  * This function will initial board.
  */
 void rt_hw_board_init()
