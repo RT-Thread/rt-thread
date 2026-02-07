@@ -421,15 +421,45 @@ rt_weak rt_size_t ulog_tail_formater(char *log_buf, rt_size_t log_len, rt_bool_t
     return log_len;
 }
 
+/**
+ * @brief Print a warning message once (best-effort).
+ *
+ * @param[in,out] printed  Pointer to a per-call-site flag used to suppress
+ *                          repeated prints.
+ * @param[in]     msg      Warning message to print.
+ *
+ * @details This helper provides a lightweight, best-effort "print-once"
+ *          mechanism for diagnostic warnings.
+ *
+ *          ulog output may be executed in different contexts (thread or ISR)
+ *          and on single-core or SMP targets. To avoid unsafe blocking,
+ *          excessive latency, or re-entrancy risks in these contexts, this
+ *          function intentionally avoids locks, spinlocks, and atomic CAS.
+ *
+ *          Under extreme multi-thread or SMP contention, it is therefore
+ *          possible that the warning is printed more than once. This behavior
+ *          is acceptable because the message is diagnostic-only and the
+ *          critical logging path must remain lightweight.
+ */
+static void ulog_warn_once(rt_bool_t *printed, const char *msg)
+{
+    if (*printed == RT_FALSE)
+    {
+        /* Set first to reduce re-entrancy and recursive logging. */
+        *printed = RT_TRUE;
+        rt_kprintf("%s", msg);
+    }
+}
+
+/**
+ * @brief Print a "line buffer too small" warning once (best-effort).
+ */
 static void ulog_no_enough_buffer_printf(void)
 {
-    static rt_bool_t already_output = RT_FALSE;
-    if (already_output == RT_FALSE)
-    {
-        rt_kprintf("Warning: There is not enough buffer to output the log,"
-                " please increase the ULOG_LINE_BUF_SIZE option.\n");
-        already_output = RT_TRUE;
-    }
+    static rt_bool_t warned_line_buf = RT_FALSE;
+    ulog_warn_once(&warned_line_buf,
+                   "Warning: There is not enough buffer to output the log,"
+                   " please increase the ULOG_LINE_BUF_SIZE option.\n");
 }
 
 rt_weak rt_size_t ulog_formater(char *log_buf, rt_uint32_t level, const char *tag, rt_bool_t newline,
@@ -603,21 +633,29 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
             }
             else
             {
-                static rt_bool_t already_output = RT_FALSE;
-                if (already_output == RT_FALSE)
-                {
-                    rt_kprintf("Warning: There is no enough buffer for saving async log,"
-                            " please increase the ULOG_ASYNC_OUTPUT_BUF_SIZE option.\n");
-                    already_output = RT_TRUE;
-                }
+                static rt_bool_t warned_async_log_buf = RT_FALSE;
+                ulog_warn_once(&warned_async_log_buf,
+                               "Warning: There is no enough buffer for saving async log,"
+                               " please increase the ULOG_ASYNC_OUTPUT_BUF_SIZE option.\n");
             }
         }
         else if (ulog.async_rb)
         {
             /* log_buf_size contain the tail \0, which will lead discard follow char, so only put log_buf_size -1  */
-            rt_ringbuffer_put(ulog.async_rb, (const rt_uint8_t *)log_buf, (rt_uint16_t)log_buf_size - 1);
-            /* send a notice */
-            rt_sem_release(&ulog.async_notice);
+            rt_size_t req_len = (rt_size_t)log_buf_size - 1;
+            rt_size_t put_len = rt_ringbuffer_put(ulog.async_rb, (const rt_uint8_t *)log_buf, (rt_uint32_t)req_len);
+            /* send a notice after writing data */
+            if (put_len > 0)
+            {
+                rt_sem_release(&ulog.async_notice);
+            }
+            if (put_len < req_len)
+            {
+                static rt_bool_t warned_async_raw_partial = RT_FALSE;
+                ulog_warn_once(&warned_async_raw_partial,
+                               "Warning: There is no enough buffer for saving async raw log,"
+                               " please increase the ULOG_ASYNC_OUTPUT_BUF_SIZE option.\n");
+            }
         }
 
         return;
