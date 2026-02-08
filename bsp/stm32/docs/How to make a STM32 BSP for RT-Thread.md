@@ -54,7 +54,7 @@ Modify the configuration file in the board folder. The modified content is shown
 
 | Item                      | Instruction                                                  |
 | ------------------------- | ------------------------------------------------------------ |
-| CubeMX_Config （folder��  | CubeMX project                                               |
+| CubeMX_Config （folder）  | CubeMX project                                               |
 | linker_scripts （folder） | BSP link script                                              |
 | board.c/h                 | System clock, GPIO initialization function, chip memory size |
 | Kconfig                   | Chip series, peripheral resources                            |
