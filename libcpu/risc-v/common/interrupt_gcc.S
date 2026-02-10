@@ -17,7 +17,7 @@
     .align  6
 #else
     .align  2
-#endif 
+#endif
     .global SW_handler
 
 SW_handler:
@@ -102,12 +102,21 @@ SW_handler:
     /* interrupt handle */
     call  rt_interrupt_enter
     /* Do the work after saving the above */
-    jal   rt_hw_do_after_save_above
-
+#ifdef SOC_GD32VW553H
+    call   rt_hw_do_after_save_above
+#else
+    jal    rt_hw_do_after_save_above
+#endif
     call  rt_interrupt_leave
     /* switch to from thread stack */
     csrrw sp,mscratch,sp
-
+#ifdef SOC_GD32VW553H
+    /* Check if we are in interrupt nesting, if so, skip task switching */
+    la    t0, rt_interrupt_nest
+    lw    t1, 0(t0)
+    li    t3, 1
+    bge   t1, t3, 1f
+#endif /* SOC_GD32VW553H */
     /* Determine whether to trigger scheduling at the interrupt function */
     la    t0, rt_thread_switch_interrupt_flag
     lw    t2, 0(t0)

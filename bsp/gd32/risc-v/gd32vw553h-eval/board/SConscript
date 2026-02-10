@@ -12,12 +12,17 @@ board.c
 trap_gcc.S
 ''')
 
+# add WiFi driver
+if GetDepend(['BSP_USING_WLAN']):
+    src += ['drv_wlan.c']
+
 path =  [cwd]
 
 # add startup txt path
 startup_path_prefix = os.getcwd() + '/../'
 
 if rtconfig.PLATFORM in ['gcc']:
+    # Use standard peripheral library startup files for compatibility
     src += [startup_path_prefix + '/packages/gd32-riscv-series-latest/GD32VW55x/RISCV/env_Eclipse/start.S']
     src += [startup_path_prefix + '/packages/gd32-riscv-series-latest/GD32VW55x/RISCV/env_Eclipse/entry.S']
 

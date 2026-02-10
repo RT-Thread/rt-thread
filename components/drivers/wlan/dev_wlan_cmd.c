@@ -79,10 +79,14 @@ static const struct wifi_cmd_des debug_tab[] =
     {"save_cfg", wifi_debug_save_cfg},
     {"dump_cfg", wifi_debug_dump_cfg},
     {"clear_cfg", wifi_debug_clear_cfg},
+#ifdef RT_WLAN_PROT_ENABLE
     {"dump_prot", wifi_debug_dump_prot},
     {"mode", wifi_debug_set_mode},
     {"prot", wifi_debug_set_prot},
-    {"auto", wifi_debug_set_autoconnect},
+#else
+    {"mode", wifi_debug_set_mode },
+#endif /* RT_WLAN_PROT_ENABLE */
+    {"auto", wifi_debug_set_autoconnect },
 };
 #endif
 
@@ -171,7 +175,7 @@ static rt_bool_t wifi_info_isequ(struct rt_wlan_info *info1, struct rt_wlan_info
         is_equ &= rt_memcmp(&info2->ssid.val[0], &info1->ssid.val[0], info1->ssid.len) == 0;
     }
     if (is_equ && (rt_memcmp(&info1->bssid[0], bssid_zero, RT_WLAN_BSSID_MAX_LENGTH)) &&
-       (rt_memcmp(&info2->bssid[0], bssid_zero, RT_WLAN_BSSID_MAX_LENGTH)))
+        (rt_memcmp(&info2->bssid[0], bssid_zero, RT_WLAN_BSSID_MAX_LENGTH)))
     {
         is_equ &= rt_memcmp(&info1->bssid[0], &info2->bssid[0], RT_WLAN_BSSID_MAX_LENGTH) == 0;
     }
@@ -197,10 +201,11 @@ static rt_err_t wifi_scan_result_cache(struct rt_wlan_info *info)
     int i, insert = -1;
     rt_base_t level;
 
-    if ((info == RT_NULL) || (info->ssid.len == 0)) return -RT_EINVAL;
+    if ((info == RT_NULL) || (info->ssid.len == 0))
+        return -RT_EINVAL;
 
     LOG_D("ssid:%s len:%d mac:%02x:%02x:%02x:%02x:%02x:%02x", info->ssid.val, info->ssid.len,
-                  info->bssid[0], info->bssid[1], info->bssid[2], info->bssid[3], info->bssid[4], info->bssid[5]);
+          info->bssid[0], info->bssid[1], info->bssid[2], info->bssid[3], info->bssid[4], info->bssid[5]);
 
     /* scanning result filtering */
     level = rt_hw_interrupt_disable();
@@ -222,7 +227,7 @@ static rt_err_t wifi_scan_result_cache(struct rt_wlan_info *info)
     for (i = 0; i < scan_result.num; i++)
     {
         if ((info->ssid.len == scan_result.info[i].ssid.len) &&
-                (rt_memcmp(&info->bssid[0], &scan_result.info[i].bssid[0], RT_WLAN_BSSID_MAX_LENGTH) == 0))
+            (rt_memcmp(&info->bssid[0], &scan_result.info[i].bssid[0], RT_WLAN_BSSID_MAX_LENGTH) == 0))
         {
             return RT_EOK;
         }
@@ -283,7 +288,7 @@ static rt_err_t wifi_scan_result_cache(struct rt_wlan_info *info)
         LOG_E("wlan info malloc failed!");
         return -RT_ENOMEM;
     }
-    scan_result.num ++;
+    scan_result.num++;
 
     /* copy info */
     for (i = 0; i < scan_result.num; i++)
@@ -307,10 +312,8 @@ static rt_err_t wifi_scan_result_cache(struct rt_wlan_info *info)
 }
 
 
-
 static void wifi_scan_result_clean(void)
 {
-
     /* If there is data */
     if (scan_result.num)
     {
@@ -320,68 +323,66 @@ static void wifi_scan_result_clean(void)
     }
 }
 
-static void print_ap_info(struct rt_wlan_info *info,int index)
+static void print_ap_info(struct rt_wlan_info *info, int index)
 {
-        char *security;
+    char *security;
 
-        if(index == 0)
+    if (index == 0)
+    {
+        rt_kprintf("             SSID                      MAC            security    rssi chn Mbps\n");
+        rt_kprintf("------------------------------- -----------------  -------------- ---- --- ----\n");
+    }
+
+    {
+        rt_kprintf("%-32.32s", &(info->ssid.val[0]));
+        rt_kprintf("%02x:%02x:%02x:%02x:%02x:%02x  ",
+                   info->bssid[0],
+                   info->bssid[1],
+                   info->bssid[2],
+                   info->bssid[3],
+                   info->bssid[4],
+                   info->bssid[5]);
+        switch (info->security)
         {
-            rt_kprintf("             SSID                      MAC            security    rssi chn Mbps\n");
-            rt_kprintf("------------------------------- -----------------  -------------- ---- --- ----\n");
+        case SECURITY_OPEN:
+            security = "OPEN";
+            break;
+        case SECURITY_WEP_PSK:
+            security = "WEP_PSK";
+            break;
+        case SECURITY_WEP_SHARED:
+            security = "WEP_SHARED";
+            break;
+        case SECURITY_WPA_TKIP_PSK:
+            security = "WPA_TKIP_PSK";
+            break;
+        case SECURITY_WPA_AES_PSK:
+            security = "WPA_AES_PSK";
+            break;
+        case SECURITY_WPA2_AES_PSK:
+            security = "WPA2_AES_PSK";
+            break;
+        case SECURITY_WPA2_TKIP_PSK:
+            security = "WPA2_TKIP_PSK";
+            break;
+        case SECURITY_WPA2_MIXED_PSK:
+            security = "WPA2_MIXED_PSK";
+            break;
+        case SECURITY_WPS_OPEN:
+            security = "WPS_OPEN";
+            break;
+        case SECURITY_WPS_SECURE:
+            security = "WPS_SECURE";
+            break;
+        default:
+            security = "UNKNOWN";
+            break;
         }
-
-        {
-            rt_kprintf("%-32.32s", &(info->ssid.val[0]));
-            rt_kprintf("%02x:%02x:%02x:%02x:%02x:%02x  ",
-                       info->bssid[0],
-                       info->bssid[1],
-                       info->bssid[2],
-                       info->bssid[3],
-                       info->bssid[4],
-                       info->bssid[5]
-                      );
-            switch (info->security)
-            {
-            case SECURITY_OPEN:
-                security = "OPEN";
-                break;
-            case SECURITY_WEP_PSK:
-                security = "WEP_PSK";
-                break;
-            case SECURITY_WEP_SHARED:
-                security = "WEP_SHARED";
-                break;
-            case SECURITY_WPA_TKIP_PSK:
-                security = "WPA_TKIP_PSK";
-                break;
-            case SECURITY_WPA_AES_PSK:
-                security = "WPA_AES_PSK";
-                break;
-            case SECURITY_WPA2_AES_PSK:
-                security = "WPA2_AES_PSK";
-                break;
-            case SECURITY_WPA2_TKIP_PSK:
-                security = "WPA2_TKIP_PSK";
-                break;
-            case SECURITY_WPA2_MIXED_PSK:
-                security = "WPA2_MIXED_PSK";
-                break;
-            case SECURITY_WPS_OPEN:
-                security = "WPS_OPEN";
-                break;
-            case SECURITY_WPS_SECURE:
-                security = "WPS_SECURE";
-                break;
-            default:
-                security = "UNKNOWN";
-                break;
-            }
-            rt_kprintf("%-14.14s ", security);
-            rt_kprintf("%-4d ", info->rssi);
-            rt_kprintf("%3d ", info->channel);
-            rt_kprintf("%4d\n", info->datarate / 1000000);
-        }
-
+        rt_kprintf("%-14.14s ", security);
+        rt_kprintf("%-4d ", info->rssi);
+        rt_kprintf("%3d ", info->channel);
+        rt_kprintf("%4d\n", info->datarate / 1000000);
+    }
 }
 
 static void user_ap_info_callback(int event, struct rt_wlan_buff *buff, void *parameter)
@@ -399,25 +400,24 @@ static void user_ap_info_callback(int event, struct rt_wlan_buff *buff, void *pa
     index = *((int *)(parameter));
 
     ret = wifi_scan_result_cache(info);
-    if(ret == RT_EOK)
+    if (ret == RT_EOK)
     {
-        if(scan_filter == RT_NULL ||
-                (scan_filter != RT_NULL &&
-                 scan_filter->ssid.len == info->ssid.len &&
-                 rt_memcmp(&scan_filter->ssid.val[0], &info->ssid.val[0], scan_filter->ssid.len) == 0))
+        if (scan_filter == RT_NULL ||
+            (scan_filter != RT_NULL &&
+             scan_filter->ssid.len == info->ssid.len &&
+             rt_memcmp(&scan_filter->ssid.val[0], &info->ssid.val[0], scan_filter->ssid.len) == 0))
         {
             /*Check whether a new ap is added*/
             if (last_num < scan_result.num)
             {
                 /*Print the info*/
-                print_ap_info(info,index);
+                print_ap_info(info, index);
             }
 
             index++;
             *((int *)(parameter)) = index;
         }
     }
-
 }
 static int wifi_scan(int argc, char *argv[])
 {
@@ -436,14 +436,14 @@ static int wifi_scan(int argc, char *argv[])
         info = &filter;
     }
 
-    ret = rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT,user_ap_info_callback,&i);
-    if(ret != RT_EOK)
+    ret = rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT, user_ap_info_callback, &i);
+    if (ret != RT_EOK)
     {
-        LOG_E("Scan register user callback error:%d!\n",ret);
+        LOG_E("Scan register user callback error:%d!\n", ret);
         return 0;
     }
 
-    if(info)
+    if (info)
     {
         scan_filter = info;
     }
@@ -451,14 +451,14 @@ static int wifi_scan(int argc, char *argv[])
 
     /*Todo: what can i do for it return val */
     ret = rt_wlan_scan_with_info(info);
-    if(ret != RT_EOK)
+    if (ret != RT_EOK)
     {
-        LOG_E("Scan with info error:%d!\n",ret);
+        LOG_E("Scan with info error:%d!\n", ret);
     }
 
     /* clean scan result */
     wifi_scan_result_clean();
-    if(info)
+    if (info)
     {
         scan_filter = RT_NULL;
     }
@@ -472,7 +472,7 @@ static int wifi_join(int argc, char *argv[])
     struct rt_wlan_cfg_info cfg_info;
 
     rt_memset(&cfg_info, 0, sizeof(cfg_info));
-    if (argc ==  2)
+    if (argc == 2)
     {
 #ifdef RT_WLAN_CFG_ENABLE
         /* get info to connect */
@@ -678,7 +678,12 @@ static int wifi_debug_dump_prot(int argc, char *argv[])
 {
     if (argc == 1)
     {
+#ifdef RT_WLAN_PROT_ENABLE
         rt_wlan_prot_dump();
+#else
+        rt_kprintf("wlan protocol disabled\r\n");
+        return -1;
+#endif
     }
     else
     {
@@ -720,7 +725,12 @@ static int wifi_debug_set_prot(int argc, char *argv[])
         return -1;
     }
 
+#ifdef RT_WLAN_PROT_ENABLE
     rt_wlan_prot_attach(argv[2], argv[1]);
+#else
+    rt_kprintf("wlan protocol disabled\r\n");
+    return -1;
+#endif
     return 0;
 }
 
