@@ -133,6 +133,7 @@ static rt_err_t mcx_configure(struct rt_serial_device *serial, struct serial_con
 {
     struct mcx_uart *uart; /* Serial port hardware structure, calling the structure initialized above */
     lpuart_config_t config;/* It contains basic configuration parameters of the serial port, such as baud rate, data bit, stop bit, and parity check */
+    rt_uint32_t irq_regval;
 
     RT_ASSERT(serial != RT_NULL); /* assert */
     RT_ASSERT(cfg != RT_NULL);
@@ -159,8 +160,14 @@ static rt_err_t mcx_configure(struct rt_serial_device *serial, struct serial_con
 
     config.enableTx     = true;
     config.enableRx     = true;
-
+    
+    irq_regval = LPUART_GetEnabledInterrupts(uart->uart_base);
     LPUART_Init(uart->uart_base, &config, CLOCK_GetFreq(uart->clock_src));
+    if(irq_regval & kLPUART_RxDataRegFullInterruptEnable)
+    {
+        LPUART_EnableInterrupts(uart->uart_base, kLPUART_RxDataRegFullInterruptEnable);
+        EnableIRQ(uart->irqn);
+    }
 
     return RT_EOK;
 }
