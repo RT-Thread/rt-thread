@@ -1198,7 +1198,7 @@ static int list_irq(int argc, char**argv)
             _pic_name_max, "PIC",
             12, "Mode",
         #ifdef RT_USING_SMP
-            RT_CPUS_NR, "CPUs",
+            rt_max(RT_CPUS_NR, 4), "CPUs",
         #else
             0, 0,
         #endif
@@ -1254,7 +1254,15 @@ static int list_irq(int argc, char**argv)
 
         rt_kputs(info);
     #ifdef RT_USING_SMP
+        if (RT_CPUS_NR < 4)
+        {
+            rt_memset(&cpumask[RT_CPUS_NR], ' ', 4 - RT_CPUS_NR);
+        }
         rt_kputs(cpumask);
+        if (RT_CPUS_NR < 4)
+        {
+            rt_kprintf("%-*.s", 4 - RT_CPUS_NR, " ");
+        }
     #endif
 
     #ifdef RT_USING_INTERRUPT_INFO

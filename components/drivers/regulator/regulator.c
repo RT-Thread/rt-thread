@@ -31,6 +31,7 @@ static rt_err_t regulator_disable(struct rt_regulator_node *reg_np);
 
 rt_err_t rt_regulator_register(struct rt_regulator_node *reg_np)
 {
+    rt_err_t err;
     const struct rt_regulator_param *param;
 
     if (!reg_np || !reg_np->dev || !reg_np->param || !reg_np->ops)
@@ -47,6 +48,16 @@ rt_err_t rt_regulator_register(struct rt_regulator_node *reg_np)
     param = reg_np->param;
 
     reg_np->parent = RT_NULL;
+
+    if ((param->ramp_delay || param->ramp_disable) &&
+        reg_np->ops->set_ramp_delay)
+    {
+        if ((err = reg_np->ops->set_ramp_delay(reg_np, param->ramp_delay)))
+        {
+            LOG_E("Set ramp error = %s\n", rt_strerror(err));
+            return err;
+        }
+    }
 
 #ifdef RT_USING_OFW
     if (reg_np->dev->ofw_node)
@@ -184,6 +195,40 @@ static rt_uint32_t regulator_get_enable_time(struct rt_regulator_node *reg_np)
     return 0;
 }
 
+static rt_uint32_t regulator_set_voltage_time(struct rt_regulator_node *reg_np,
+        int old_uvolt, int new_uvolt)
+{
+    unsigned int ramp_delay = 0;
+
+    if (reg_np->param->ramp_delay)
+    {
+        ramp_delay = reg_np->param->ramp_delay;
+    }
+    else if (reg_np->param->ramp_delay)
+    {
+        ramp_delay = reg_np->param->ramp_delay;
+    }
+    else if (reg_np->param->settling_time)
+    {
+        return reg_np->param->settling_time;
+    }
+    else if (reg_np->param->settling_time_up && new_uvolt > old_uvolt)
+    {
+        return reg_np->param->settling_time_up;
+    }
+    else if (reg_np->param->settling_time_down && new_uvolt < old_uvolt)
+    {
+        return reg_np->param->settling_time_down;
+    }
+
+    if (ramp_delay == 0)
+    {
+        return 0;
+    }
+
+    return RT_DIV_ROUND_UP(rt_abs(new_uvolt - old_uvolt), ramp_delay);
+}
+
 static void regulator_delay(rt_uint32_t delay)
 {
     rt_uint32_t ms = delay / 1000;
@@ -227,7 +272,6 @@ static void regulator_delay(rt_uint32_t delay)
 static rt_err_t regulator_enable(struct rt_regulator_node *reg_np)
 {
     rt_err_t err = RT_EOK;
-    rt_uint32_t enable_delay = regulator_get_enable_time(reg_np);
 
     if (reg_np->ops->enable)
     {
@@ -235,6 +279,8 @@ static rt_err_t regulator_enable(struct rt_regulator_node *reg_np)
 
         if (!err)
         {
+            rt_uint32_t enable_delay = regulator_get_enable_time(reg_np);
+
             if (enable_delay)
             {
                 regulator_delay(enable_delay);
@@ -369,7 +415,17 @@ static rt_err_t regulator_set_voltage(struct rt_regulator_node *reg_np, int min_
             err = reg_np->ops->set_voltage(reg_np, min_uvolt, max_uvolt);
         }
 
-        if (err)
+        if (!err)
+        {
+            rt_uint32_t delay = regulator_set_voltage_time(reg_np,
+                    args.old_uvolt, reg_np->ops->get_voltage(reg_np));
+
+            if (delay)
+            {
+                regulator_delay(delay);
+            }
+        }
+        else
         {
             regulator_notifier_call_chain(reg_np, RT_REGULATOR_MSG_VOLTAGE_CHANGE_ERR,
                     (void *)(rt_base_t)args.old_uvolt);
@@ -538,7 +594,7 @@ static void regulator_check_parent(struct rt_regulator_node *reg_np)
             rt_list_insert_after(&reg_np->parent->children_nodes, &reg_np->list);
             rt_ofw_node_put(np);
         }
-    #endif
+    #endif /* RT_USING_OFW */
     }
 }
 
@@ -581,11 +637,10 @@ struct rt_regulator *rt_regulator_get(struct rt_device *dev, const char *id)
         reg_np = rt_ofw_data(np);
         rt_ofw_node_put(np);
     }
-#endif
+#endif /* RT_USING_OFW */
 
     if (!reg_np)
     {
-        reg = rt_err_ptr(-RT_ENOSYS);
         goto _end;
     }
 

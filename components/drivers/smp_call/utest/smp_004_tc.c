@@ -6,6 +6,41 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024/10/28     Shell        Added smp.smoke
+ * 2025/12/3      ChuanN-sudo  add standardized utest documentation block
+ * 2025/12/9      ChuanN-sudo  fix: initialize current_mask variable
+ */
+
+/**
+ * Test Case Name: SMP Call Smoke 004 Test
+ *
+ * Test Objectives:
+ * - Validate SMP call mechanism is re-entrant.
+ * - Test rt_smp_call_request robustness from interrupt context.
+ * - Ensure system stability under nested Inter-Processor Interrupts scenarios from multiple cores.
+ * - Test core APIs: rt_smp_call_request(), rt_smp_call_req_init(), rt_smp_request_wait_freed(), rt_smp_call_cpu_mask()
+ *
+ * Test Scenarios:
+ * - Pre-initialized 2D array of rt_smp_call_req objects.
+ * - Worker thread triggers primary Inter-Processor Interrupts to another CPU.
+ * - Primary handler fires secondary Inter-Processor Interrupts to all other CPUs.
+ * - Secondary handlers update shared bitmask.
+ * - Worker thread polls bitmask until all secondary Inter-Processor Interrupts complete.
+ *
+ * Verification Metrics:
+ * - Bitmask must match expected value.
+ * - Callbacks execute in interrupt-disabled context.
+ * - rt_smp_call_request from ISR returns no error.
+ *
+ * Dependencies:
+ * - Hardware requirements:  QEMU emulator or any multi-core hardware platform that supports RT-Thread.
+ * - Software configuration:
+ *     - RT_USING_UTEST must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_SMP_CALL_FUNC must be enabled(enable via:  RT-Thread Utestcases -> Kernel Components -> Drivers -> SMP-Call Test -> SMP-Call Smoke Test).
+ * - Environmental Assumptions: System scheduler and SMP services working normally.
+ *
+ * Expected Results:
+ * - Progress logs: A series of characters (0-N) indicating which worker's callbacks are executing.
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.smp_call.smoke_004)"
  */
 
 #include <rtdevice.h>
@@ -90,7 +125,7 @@ static void _test_smp_call_isr(void *param)
 
 static rt_ubase_t _wait_for_update(rt_ubase_t *maskp, rt_ubase_t exp, int cpuid, rt_thread_t curthr)
 {
-    rt_ubase_t level, current_mask;
+    rt_ubase_t level, current_mask = 0;
 
     for (size_t i = cpuid; i < RT_CPUS_NR; i++)
     {

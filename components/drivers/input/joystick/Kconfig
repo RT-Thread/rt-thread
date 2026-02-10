@@ -1,0 +1,7 @@
+menuconfig RT_INPUT_JOYSTICK
+    bool "Joystick"
+    default n
+
+if RT_INPUT_JOYSTICK
+    osource "$(SOC_DM_INPUT_JOYSTICK_DIR)/Kconfig"
+endif

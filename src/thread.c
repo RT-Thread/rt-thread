@@ -885,26 +885,27 @@ RTM_EXPORT(rt_thread_control);
 #include <lwp_signal.h>
 #endif
 
-static void _thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
+/* Convert suspend_flag to corresponding thread suspend state value */
+static rt_uint8_t _thread_get_suspend_state(int suspend_flag)
 {
-    rt_uint8_t stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
-
-    RT_ASSERT(thread != RT_NULL);
     switch (suspend_flag)
     {
     case RT_INTERRUPTIBLE:
-        stat = RT_THREAD_SUSPEND_INTERRUPTIBLE;
-        break;
+        return RT_THREAD_SUSPEND_INTERRUPTIBLE;
     case RT_KILLABLE:
-        stat = RT_THREAD_SUSPEND_KILLABLE;
-        break;
+        return RT_THREAD_SUSPEND_KILLABLE;
     case RT_UNINTERRUPTIBLE:
-        stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
-        break;
     default:
-        RT_ASSERT(0);
-        break;
+        return RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
     }
+}
+
+static void _thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
+{
+    rt_uint8_t stat;
+
+    RT_ASSERT(thread != RT_NULL);
+    stat = _thread_get_suspend_state(suspend_flag);
     RT_SCHED_CTX(thread).stat = stat | (RT_SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
 }
 
@@ -943,20 +944,31 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    LOG_D("thread suspend:  %s", thread->parent.name);
+    LOG_D("thread suspend: %s", thread->parent.name);
 
     rt_sched_lock(&slvl);
 
     stat = rt_sched_thread_get_stat(thread);
-    if (stat == RT_THREAD_SUSPEND)
+    if (stat & RT_THREAD_SUSPEND_MASK)
     {
+        if (RT_SCHED_CTX(thread).sched_flag_ttmr_set == 1)
+        {
+            /* The new suspend operation will halt the tick timer. */
+            LOG_D("Thread [%s]'s timer has been halted.\n", thread->parent.name);
+            rt_sched_thread_timer_stop(thread);
+        }
+        /* Upgrade suspend state if new state is stricter */
+        if (stat < _thread_get_suspend_state(suspend_flag))
+        {
+            _thread_set_suspend_state(thread, suspend_flag);
+        }
         rt_sched_unlock(slvl);
-        /* Already suspended, just set status to success.  */
+        /* Already suspended, just set the status to success. */
         return RT_EOK;
     }
     else if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
     {
-        LOG_D("thread suspend: thread disorder, 0x%2x", RT_SCHED_CTX(thread).stat);
+        LOG_W("thread suspend: thread disorder, 0x%02x", RT_SCHED_CTX(thread).stat);
         rt_sched_unlock(slvl);
         return -RT_ERROR;
     }

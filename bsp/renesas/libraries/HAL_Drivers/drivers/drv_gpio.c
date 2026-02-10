@@ -109,6 +109,58 @@ static void ra_pin_map_init(void)
     pin_irq_map[15].irq_ctrl = &g_external_irq15_ctrl;
     pin_irq_map[15].irq_cfg = &g_external_irq15_cfg;
 #endif
+#if defined(VECTOR_NUMBER_ICU_IRQ16) || (VECTOR_NUMBER_IRQ016)
+    pin_irq_map[16].irq_ctrl = &g_external_irq16_ctrl;
+    pin_irq_map[16].irq_cfg = &g_external_irq16_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ17) || (VECTOR_NUMBER_IRQ017)
+    pin_irq_map[17].irq_ctrl = &g_external_irq17_ctrl;
+    pin_irq_map[17].irq_cfg = &g_external_irq17_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ18) || (VECTOR_NUMBER_IRQ018)
+    pin_irq_map[18].irq_ctrl = &g_external_irq18_ctrl;
+    pin_irq_map[18].irq_cfg = &g_external_irq18_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ19) || (VECTOR_NUMBER_IRQ019)
+    pin_irq_map[19].irq_ctrl = &g_external_irq19_ctrl;
+    pin_irq_map[19].irq_cfg = &g_external_irq19_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ20) || (VECTOR_NUMBER_IRQ020)
+    pin_irq_map[20].irq_ctrl = &g_external_irq20_ctrl;
+    pin_irq_map[20].irq_cfg = &g_external_irq20_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ21) || (VECTOR_NUMBER_IRQ021)
+    pin_irq_map[21].irq_ctrl = &g_external_irq21_ctrl;
+    pin_irq_map[21].irq_cfg = &g_external_irq21_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ22) || (VECTOR_NUMBER_IRQ022)
+    pin_irq_map[22].irq_ctrl = &g_external_irq22_ctrl;
+    pin_irq_map[22].irq_cfg = &g_external_irq22_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ23) || (VECTOR_NUMBER_IRQ023)
+    pin_irq_map[23].irq_ctrl = &g_external_irq23_ctrl;
+    pin_irq_map[23].irq_cfg = &g_external_irq23_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ24) || (VECTOR_NUMBER_IRQ024)
+    pin_irq_map[24].irq_ctrl = &g_external_irq24_ctrl;
+    pin_irq_map[24].irq_cfg = &g_external_irq24_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ25) || (VECTOR_NUMBER_IRQ025)
+    pin_irq_map[25].irq_ctrl = &g_external_irq25_ctrl;
+    pin_irq_map[25].irq_cfg = &g_external_irq25_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ26) || (VECTOR_NUMBER_IRQ026)
+    pin_irq_map[26].irq_ctrl = &g_external_irq26_ctrl;
+    pin_irq_map[26].irq_cfg = &g_external_irq26_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ27) || (VECTOR_NUMBER_IRQ027)
+    pin_irq_map[27].irq_ctrl = &g_external_irq27_ctrl;
+    pin_irq_map[27].irq_cfg = &g_external_irq27_cfg;
+#endif
+#if defined(VECTOR_NUMBER_ICU_IRQ28) || (VECTOR_NUMBER_IRQ028)
+    pin_irq_map[28].irq_ctrl = &g_external_irq28_ctrl;
+    pin_irq_map[28].irq_cfg = &g_external_irq28_cfg;
+#endif
 }
 #endif  /* R_ICU_H */
 

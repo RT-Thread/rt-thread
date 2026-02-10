@@ -372,6 +372,7 @@ struct rt_scsi_host
 
     rt_size_t max_id;
     rt_size_t max_lun;
+    rt_bool_t parallel_io;
 
     rt_list_t lun_nodes;
 };

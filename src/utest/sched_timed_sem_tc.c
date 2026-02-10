@@ -6,7 +6,56 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-01-25     Shell        init ver.
+ * 2025-12-12     lhxj         Add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Scheduler Timed Semaphore Race Test (core.scheduler_timed_sem)
+ *
+ * Test Objectives:
+ * - Verify IPC (Semaphore) behavior under tight timing conditions (tick edge).
+ * - Stress test the race condition where a timeout routine and a producer thread
+ * race to wake up a sleeping consumer.
+ * - Ensure the scheduler handles interruptible semaphore takes correctly without
+ * returning unexpected error codes during high-contention/edge-case timing.
+ * - List specific functions or APIs to be tested:
+ * - rt_sem_take_interruptible
+ * - rt_sem_release
+ * - rt_tick_get
+ * - rt_thread_create
+ *
+ * Test Scenarios:
+ * - **Producer-Consumer Tick Edge Race:**
+ * 1. Initialize two semaphores (`_ipc_sem`, `_thr_exit_sem`).
+ * 2. Create two threads: a Producer (priority +1) and a Consumer (priority +1).
+ * 3. **Producer Loop:** Wait specifically for the RT-Thread tick count to change (tick edge),
+ * add a small random latency, and then release `_ipc_sem`.
+ * 4. **Consumer Loop:** Attempt to take `_ipc_sem` with a timeout of exactly 1 tick.
+ * 5. Track "failed times" (valid timeouts) versus "unexpected errors" (assert failure).
+ * 6. Run this loop for `TEST_SECONDS` (10 seconds).
+ *
+ * Verification Metrics:
+ * - **Pass:** The test completes the duration without triggering `uassert_true(0)`.
+ * - **Pass:** Consumer receives either `RT_EOK` (success) or `-RT_ETIMEOUT` (expected race loss).
+ * - **Fail:** Consumer receives any error code other than `RT_EOK` or `-RT_ETIMEOUT`.
+ *
+ * Dependencies:
+ * - Hardware requirements
+ * - No specific peripheral required.
+ * (This is met by the qemu-virt64-riscv BSP).
+ * - Software configuration
+ * - `RT_USING_UTEST` must be enabled (`RT-Thread Utestcases`).
+ * - `Scheduler Test` must be enabled (`RT-Thread Utestcases` -> `Kernel Core` -> 'Scheduler Test').
+ * - Environmental assumptions
+ * - System tick must be running.
+ * - Run the test case from the msh prompt:
+ * `utest_run core.scheduler_timed_sem`
+ *
+ * Expected Results:
+ * - The system logs "Total failed times: X(in Y)" (Timeouts are allowed/counted, not fatal).
+ * - Final Output: `[ PASSED ] [ result ] testcase (core.scheduler_timed_sem)`
+ */
+
 #define __RT_KERNEL_SOURCE__
 #include <rtthread.h>
 #include <stdlib.h>

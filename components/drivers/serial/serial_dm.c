@@ -30,11 +30,11 @@ int serial_dev_set_name(struct rt_serial_device *sdev)
             id = rt_ofw_get_alias_id(sdev->parent.ofw_node, "uart");
         }
     }
-#endif
+#endif /* RT_USING_OFW */
 
     if (id < 0)
     {
-        id = (int)rt_hw_atomic_add(&uid, 1);
+        id = (int)rt_atomic_add(&uid, 1);
     }
 
     return rt_dm_dev_set_name(&sdev->parent, "uart%u", id);
@@ -53,7 +53,7 @@ static int serial_dm_naming_framework_init(void)
     uid_min = uid_min < 0 ? 0 : (uid_min + 1);
 
     rt_hw_atomic_store(&uid, uid_min);
-#endif
+#endif /* RT_USING_OFW */
 
     return 0;
 }
@@ -154,7 +154,7 @@ struct serial_configure serial_cfg_from_args(char *_str)
                 rt_memset(str, 0, RT_ARRAY_SIZE(earlycon_magic));
             }
         }
-    #endif
+    #endif /* RT_USING_OFW */
     }
 
     return cfg;

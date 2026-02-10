@@ -49,7 +49,8 @@
 #define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
 #define THREAD_PRIORITY   20
 static rt_thread_t threads[RT_CPUS_NR - 1];
-static int         tick = 0, finish_flag = 0;
+static int         tick = 0;
+static rt_align(sizeof(rt_ubase_t)) int finish_flag = 0;
 static int                num        = 0;
 /* thread entry function */
 static void thread_entry(void *parameter)

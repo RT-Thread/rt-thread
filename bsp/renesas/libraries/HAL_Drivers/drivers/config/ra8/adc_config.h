@@ -31,7 +31,11 @@ struct ra_adc_map
     const char *device_name;
     const adc_cfg_t *g_cfg;
     const adc_ctrl_t *g_ctrl;
-    const adc_channel_cfg_t   *g_channel_cfg;
+#ifdef SOC_SERIES_R7KA8P1
+    const adc_b_scan_cfg_t	*g_channel_cfg;
+#else
+    const adc_channel_cfg_t	*g_channel_cfg;
+#endif
 };
 #endif
 #endif

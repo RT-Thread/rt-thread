@@ -6,6 +6,42 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-03-27     WangXiaoyao  testcase for lwp
+ * 2025-12-14     ChuanN-sudo  Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: MM API lwp Test
+ *
+ * Test Objectives:
+ * - Verify LWP user space virtual area mapping functionality.
+ * - Test user memory accessibility checking mechanisms.
+ * - Test core APIs: lwp_create(), lwp_user_space_init(), lwp_map_user_varea(),
+ *   lwp_map_user_varea_ext(), lwp_user_accessible_ext(), lwp_ref_dec()
+ *
+ * Test Scenarios:
+ * - User Map Varea Test (user_map_varea_tc):
+ *   - test_user_map_varea(): Creates LWP, initializes user space, maps virtual area with default flags, verifies varea properties (cached, private mapping).
+ *   - test_user_map_varea_ext(): Creates LWP, maps virtual area with NOCACHE flag, verifies uncached memory attributes.
+ * - Accessible Test (accessible_tc):
+ *   - test_user_accessible(): Creates LWP with user stack, tests accessibility checks for unmapped and mapped memory regions.
+ *
+ * Verification Metrics:
+ * - Virtual areas should be correctly inserted with proper ordering.
+ * - Default mapping should have cached attributes (MMU_MAP_U_RWCB).
+ * - NOCACHE mapping should have uncached attributes (MMU_MAP_U_RW).
+ * - Virtual addresses should be within user space range.
+ * - Accessibility check should return false for unmapped memory, true for mapped memory.
+ *
+ * Dependencies:
+ * - Hardware requirements: QEMU emulator or any hardware platform that supports RT-Thread with MMU.
+ * - Software configuration:
+ *     - RT_UTEST_MM_LWP must be enabled (enable via: RT-Thread Utestcases -> RT-Thread Utestcases -> Memory Management Subsystem Testcase -> Enable Utest for MM API in lwp).
+ *     - RT_USING_SMART must be enabled (enable via:  Enable RT-Thread Kernel -> RT-Thread Smart (microkernel on kernel/userland)).
+ * - Environmental Assumptions: MMU support must be available on the target platform.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (testcases.lwp.mm_tc)"
+ * - No assertion failures during test execution.
  */
 
 #include "common.h"

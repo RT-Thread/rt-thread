@@ -1,0 +1,23 @@
+menu "Hardware Drivers Config"
+
+config BSP_USING_EARLY_CONSOLE
+    bool "Enable early console"
+    default n
+
+config BSP_USING_UART1
+    bool "Enable UART1"
+    default y
+
+config BSP_USING_GIC
+    bool "Enalbe GIC"
+    default y
+
+config BSP_USING_GICV3
+    bool "Enable GICv3"
+    default y
+
+config KERNEL_ASPACE_START
+    hex "Kernel aspace start address"
+    default 0x1000000
+
+endmenu

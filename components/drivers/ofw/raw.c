@@ -93,6 +93,7 @@ int fdt_io_addr_cells(void *fdt, int nodeoffset)
         if (cells_tmp)
         {
             cells = fdt32_to_cpu(*cells_tmp);
+            break;
         }
     }
 
@@ -116,6 +117,7 @@ int fdt_io_size_cells(void *fdt, int nodeoffset)
         if (cells_tmp)
         {
             cells = fdt32_to_cpu(*cells_tmp);
+            break;
         }
     }
 

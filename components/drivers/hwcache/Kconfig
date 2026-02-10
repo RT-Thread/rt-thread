@@ -1,0 +1,9 @@
+menuconfig RT_USING_HWCACHE
+    bool "Using Hardware Cache device drivers"
+    depends on RT_USING_DM
+    depends on RT_USING_CACHE
+    default n
+
+if RT_USING_HWCACHE
+    osource "$(SOC_DM_HWCACHE_DIR)/Kconfig"
+endif

@@ -461,7 +461,7 @@ static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         {
             //LOG_E("10Bit not support");
             //break;
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
             R_SCI_B_I2C_SlaveAddressSet(master_ctrl, msg->addr, I2C_MASTER_ADDR_MODE_10BIT);
 #else
             R_SCI_I2C_SlaveAddressSet(master_ctrl, msg->addr, I2C_MASTER_ADDR_MODE_10BIT);
@@ -470,7 +470,7 @@ static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         else
         {
             //master_ctrl->slave = msg->addr;
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
             R_SCI_B_I2C_SlaveAddressSet(master_ctrl, msg->addr, I2C_MASTER_ADDR_MODE_7BIT);
 #else
             R_SCI_I2C_SlaveAddressSet(master_ctrl, msg->addr, I2C_MASTER_ADDR_MODE_7BIT);
@@ -479,7 +479,7 @@ static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 
         if (msg->flags & RT_I2C_RD)
         {
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
             err = R_SCI_B_I2C_Read(master_ctrl, msg->buf, msg->len, restart);
 #else
             err = R_SCI_I2C_Read(master_ctrl, msg->buf, msg->len, restart);
@@ -487,7 +487,7 @@ static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         }
         else
         {
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
             err = R_SCI_B_I2C_Write(master_ctrl, msg->buf, msg->len, restart);
 #else
             err = R_SCI_I2C_Write(master_ctrl, msg->buf, msg->len, restart);
@@ -783,7 +783,7 @@ static int ra_hw_sci_init(void)
                 obj->ibus.ops = param->ops;
                 obj->ibus.priv = 0;
                 /* opening IIC master module */
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
                 err = R_SCI_B_I2C_Open((i2c_master_ctrl_t *)param->sci_ctrl, param->sci_cfg);
 #else
                 err = R_SCI_I2C_Open((i2c_master_ctrl_t *)param->sci_ctrl, param->sci_cfg);
@@ -793,7 +793,7 @@ static int ra_hw_sci_init(void)
                     LOG_E("R_IIC_MASTER_Open API failed,%d", err);
                     continue;
                 }
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
                 err = R_SCI_B_I2C_CallbackSet((i2c_master_ctrl_t *)param->sci_ctrl, sci_i2c_irq_callback, obj, NULL);
 #else
                 err = R_SCI_I2C_CallbackSet((i2c_master_ctrl_t *)param->sci_ctrl, sci_i2c_irq_callback, obj, NULL);

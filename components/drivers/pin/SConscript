@@ -16,6 +16,9 @@ if GetDepend(['RT_USING_DM']):
 if GetDepend(['RT_USING_OFW']):
     src += ['dev_pin_ofw.c']
 
+if GetDepend(['RT_PIN_PL061']):
+    src += ['pin-pl061.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

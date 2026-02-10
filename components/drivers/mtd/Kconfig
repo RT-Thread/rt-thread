@@ -1,8 +1,25 @@
-config RT_USING_MTD_NOR
+menuconfig RT_USING_MTD_NOR
     bool "Using MTD Nor Flash device drivers"
     default n
 
-config RT_USING_MTD_NAND
+config RT_USING_MTD_NOR_CFI
+    bool "CFI Flash driver"
+    depends on RT_USING_DM
+    depends on RT_USING_MTD_NOR
+    default n
+
+config RT_USING_MTD_NOR_SPI
+    bool "SPI Nor Flash driver"
+    depends on RT_USING_DM
+    depends on RT_USING_MTD_NOR
+    depends on RT_USING_SPI
+    select RT_USING_SFUD
+    select RT_SFUD_USING_SFDP
+    select RT_SFUD_USING_FLASH_INFO_TABLE
+    select SFUD_USING_QSPI if RT_USING_QSPI
+    default n
+
+menuconfig RT_USING_MTD_NAND
     bool "Using MTD Nand Flash device drivers"
     default n
 

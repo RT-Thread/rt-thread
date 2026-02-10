@@ -6,65 +6,71 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-11-26     GuEe-GUI     first version
+ * 2024-05-01     GuEe-GUI     update for new clk
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#include <drivers/platform.h>
-
-static rt_err_t fixed_clk_ofw_init(struct rt_platform_device *pdev, struct rt_clk_fixed_rate *clk_fixed)
+struct clk_fixed
 {
-    rt_err_t err = RT_EOK;
-    rt_uint32_t rate, accuracy;
-    struct rt_ofw_node *np = pdev->parent.ofw_node;
-    const char *clk_name = np->name;
+    struct rt_clk_node parent;
 
-    if (!rt_ofw_prop_read_u32(np, "clock-frequency", &rate))
-    {
-        rt_ofw_prop_read_u32(np, "clock-accuracy", &accuracy);
-        rt_ofw_prop_read_string(np, "clock-output-names", &clk_name);
+    struct rt_clk_fixed_rate fcell;
+    struct rt_clk_cell *cells[1];
+};
 
-        clk_fixed->clk.name = clk_name;
-        clk_fixed->clk.rate = rate;
-        clk_fixed->clk.min_rate = rate;
-        clk_fixed->clk.max_rate = rate;
-        clk_fixed->fixed_rate = rate;
-        clk_fixed->fixed_accuracy = accuracy;
+static rt_ubase_t fixed_clk_recalc_rate(struct rt_clk_cell *cell, rt_ubase_t parent_rate)
+{
+    struct rt_clk_fixed_rate *fr = rt_container_of(cell, struct rt_clk_fixed_rate, cell);
 
-        rt_ofw_data(np) = &clk_fixed->clk;
-    }
-    else
-    {
-        err = -RT_EIO;
-    }
-
-    return err;
+    return fr->fixed_rate;
 }
+
+static struct rt_clk_ops fixed_clk_ops =
+{
+    .recalc_rate = fixed_clk_recalc_rate,
+};
 
 static rt_err_t fixed_clk_probe(struct rt_platform_device *pdev)
 {
-    rt_err_t err = RT_EOK;
-    struct rt_clk_fixed_rate *clk_fixed = rt_calloc(1, sizeof(*clk_fixed));
+    rt_err_t err;
+    rt_uint32_t val;
+    struct rt_device *dev = &pdev->parent;
+    struct clk_fixed *cf = rt_calloc(1, sizeof(*cf));
 
-    if (clk_fixed)
+    if (!cf)
     {
-        err = fixed_clk_ofw_init(pdev, clk_fixed);
-    }
-    else
-    {
-        err = -RT_ENOMEM;
+        return -RT_ENOMEM;
     }
 
-    if (!err)
+    if ((err = rt_dm_dev_prop_read_u32(dev, "clock-frequency", &val)))
     {
-        err = rt_clk_register(&clk_fixed->clk, RT_NULL);
+        goto _fail;
+    }
+    cf->fcell.fixed_rate = val;
+
+    val = 0;
+    rt_dm_dev_prop_read_u32(dev, "clock-accuracy", &val);
+    cf->fcell.fixed_accuracy = val;
+
+    rt_dm_dev_prop_read_string(dev, "clock-output-names", &cf->fcell.cell.name);
+
+    cf->parent.dev = dev;
+    cf->parent.cells_nr = 1;
+    cf->parent.cells = cf->cells;
+    cf->cells[0] = &cf->fcell.cell;
+    cf->fcell.cell.ops = &fixed_clk_ops;
+
+    if ((err = rt_clk_register(&cf->parent)))
+    {
+        goto _fail;
     }
 
-    if (err && clk_fixed)
-    {
-        rt_free(clk_fixed);
-    }
+    return RT_EOK;
+
+_fail:
+    rt_free(cf);
 
     return err;
 }

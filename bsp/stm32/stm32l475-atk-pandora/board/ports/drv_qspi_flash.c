@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2018-11-27     zylx         first version
+ * Date           Author         Notes
+ * 2018-11-27     zylx           first version
+ * 2025-12-14     LinuxMint-User resolve QSPI compilation error
  */
 
 #include <board.h>
@@ -18,6 +19,9 @@
 
 #include "dev_spi_flash.h"
 #include "dev_spi_flash_sfud.h"
+
+#define QSPI_BUS_NAME        "qspi1"
+#define QSPI_DEVICE_NAME     "qspi10"
 
 char w25qxx_read_status_register2(struct rt_qspi_device *device)
 {
@@ -62,16 +66,18 @@ void w25qxx_enter_qspi_mode(struct rt_qspi_device *device)
 
 static int rt_hw_qspi_flash_with_sfud_init(void)
 {
-    rt_hw_qspi_device_attach("qspi1", "qspi10", RT_NULL, 4, w25qxx_enter_qspi_mode, RT_NULL);
+    rt_hw_qspi_device_attach(QSPI_BUS_NAME, QSPI_DEVICE_NAME, RT_NULL, 4,
+                             (void (*)(void))w25qxx_enter_qspi_mode, RT_NULL);
 
     /* init w25q128 */
-    if (RT_NULL == rt_sfud_flash_probe("W25Q128", "qspi10"))
+    if (RT_NULL == rt_sfud_flash_probe("W25Q128", QSPI_DEVICE_NAME))
     {
         return -RT_ERROR;
     }
 
     return RT_EOK;
 }
+
 INIT_COMPONENT_EXPORT(rt_hw_qspi_flash_with_sfud_init);
 
 #if defined(RT_USING_DFS_ELMFAT) && !defined(BSP_USING_SDCARD_FATFS)
@@ -108,3 +114,4 @@ INIT_ENV_EXPORT(mnt_init);
 
 #endif /* defined(RT_USING_DFS_ELMFAT) && !defined(BSP_USING_SDCARD_FATFS) */
 #endif /* BSP_USING_QSPI_FLASH */
+

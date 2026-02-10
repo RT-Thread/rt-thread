@@ -18,6 +18,13 @@ config RT_REGULATOR_GPIO
     depends on RT_USING_PIN
     default y
 
+config RT_REGULATOR_SCMI
+    bool "SCMI regulator support"
+    depends on RT_USING_REGULATOR
+    depends on RT_USING_OFW
+    depends on RT_FIRMWARE_ARM_SCMI
+    default n
+
 if RT_USING_REGULATOR
     osource "$(SOC_DM_REGULATOR_DIR)/Kconfig"
 endif

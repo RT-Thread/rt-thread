@@ -1,0 +1,23 @@
+from building import *
+
+group   = []
+
+if not GetDepend(['RT_SERIAL_8250']):
+    Return('group')
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+
+src     = ['core.c', 'early.c']
+
+if GetDepend(['RT_SERIAL_8250_DW']):
+    src += ['8250-dw.c']
+
+if GetDepend(['RT_USING_OFW', 'RT_USING_RESET']):
+    src += ['8250-ofw.c']
+
+if GetDepend(['RT_SERIAL_8250_PCI']):
+    src += ['8250-pci.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')

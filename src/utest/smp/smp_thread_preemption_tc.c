@@ -17,6 +17,29 @@
  * @note    Create multiple threads, low-priority threads run first,
  *          high-priority threads preempt low-priority threads, and
  *          print the current status of each core in the thread's entry function.
+ *
+ * Test Case Name: [smp_thread_preemptions]
+ *
+ * Test Objectives:
+ * - Test the thread preemption logic under the SMP architecture
+ *
+ * Test Scenarios:
+ * - A high-priority thread thigh and a low-priority thread tlow are created. Since tlow is created
+ * - prior to thigh, it prints the thread list information first and then waits for the finish_flag
+ * - bit. Once thigh becomes ready, it preempts tlow, prints the thread list, and then sets the
+ * - finish_flag bit. After that, tlow exits the busy-wait loop.
+ *
+ * Verification Metrics:
+ * - First, the message "Low priority thread is running" will be displayed, followed immediately by
+ * - a thread_list information list. Subsequently, the message "High priority thread is running" will
+ * - appear, and in the thread_list that follows, the tlow thread can be observed in the ready state.
+ *
+ * Dependencies:
+ * - Enable RT_USING_SMP, set RT_THREAD_PRIORITY_MAX = 256.
+ *
+ * Expected Results:
+ * - You will see the message "[ PASSED ] [ result ] testcase (core.smp_thread_preemptions)", and observe
+ * - the tlow thread in the ready state in the thread_list printed by the thigh thread.
  */
 
 #define THREAD_PRIORITY_HIGH 21
@@ -24,6 +47,7 @@
 #define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
 
 static rt_thread_t   threads[2];
+static volatile rt_uint8_t    finish_flag = 0;
 static struct rt_spinlock lock;
 
 /* High Priority Thread */
@@ -35,6 +59,7 @@ static void thread_high_entry(void *parameter)
     extern long list_thread(void);
     list_thread();
     rt_spin_unlock(&lock);
+    finish_flag = 1;
 }
 
 /* Low Priority Thread */
@@ -46,6 +71,7 @@ static void thread_low_entry(void *parameter)
     extern long list_thread(void);
     list_thread();
     rt_spin_unlock(&lock);
+    while (!finish_flag);
 }
 
 static void thread_preemptions_tc(void)
@@ -72,6 +98,7 @@ static void thread_preemptions_tc(void)
 static rt_err_t utest_tc_init(void)
 {
     rt_spin_lock_init(&lock);
+    finish_flag = 0;
     return RT_EOK;
 }
 

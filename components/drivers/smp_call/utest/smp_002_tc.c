@@ -6,6 +6,38 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024/10/28     Shell        Added smp.smoke
+ * 2025/12/3      ChuanN-sudo  add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: SMP Call Smoke 002 Test
+ *
+ * Test Objectives:
+ * - Validate thread-safety of rt_smp_call_cpu_mask() under concurrent calls from multiple CPUs.
+ * - Verify system stability with simultaneous blocking SMP calls.
+ * - Test core APIs: rt_smp_call_cpu_mask().
+ *
+ * Test Scenarios:
+ * - One worker thread pinned to each CPU core.
+ * - All threads simultaneously call rt_smp_call_cpu_mask() with random targets.
+ * - Atomic counter tracks callbacks executed per thread.
+ *
+ * Verification Metrics:
+ * - Callback count must match requested target count.
+ * - Callbacks execute in interrupt-disabled context.
+ * - All threads successfully created and pinned.
+ * - Each thread tests all available CPUs.
+ *
+ * Dependencies:
+ * - Hardware requirements:  QEMU emulator or any multi-core hardware platform that supports RT-Thread.
+ * - Software configuration:
+ *     - RT_USING_UTEST must be enabled (select "RT-Thread Utestcases" in menuconfig).
+ *     - RT_UTEST_SMP_CALL_FUNC must be enabled(enable via:  RT-Thread Utestcases -> Kernel Components -> Drivers -> SMP-Call Test -> SMP-Call Smoke Test).
+ * - Environmental Assumptions: System scheduler and SMP services working normally.
+ *
+ * Expected Results:
+ * - Progress logs: A series of '#' characters indicating callback executions.
+ * - Final output: "[ PASSED ] [ result ] testcase (components.drivers.smp_call.smoke_002)"
  */
 
 #include <rtdevice.h>

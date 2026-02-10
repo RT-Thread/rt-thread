@@ -26,19 +26,16 @@
 #include <gic.h>
 #include <gicv3.h>
 #include <mm_memblock.h>
-
-#define SIZE_KB  1024
-#define SIZE_MB (1024 * SIZE_KB)
-#define SIZE_GB (1024 * SIZE_MB)
+#include <dt-bindings/size.h>
 
 extern rt_ubase_t _start, _end;
 extern void _secondary_cpu_entry(void);
+extern void rt_hw_builtin_fdt();
 extern size_t MMUTable[];
 extern void *system_vectors;
 
 static void *fdt_ptr = RT_NULL;
 static rt_size_t fdt_size = 0;
-static rt_uint64_t initrd_ranges[3] = { };
 
 #ifdef RT_USING_SMP
 extern struct cpu_ops_t cpu_psci_ops;
@@ -64,11 +61,15 @@ static struct rt_ofw_node *cpu_np[RT_CPUS_NR] = { };
 
 void rt_hw_fdt_install_early(void *fdt)
 {
+#ifndef RT_USING_BUILTIN_FDT
     if (fdt != RT_NULL && !fdt_check_header(fdt))
     {
         fdt_ptr = fdt;
         fdt_size = fdt_totalsize(fdt);
     }
+#else
+    (void)fdt;
+#endif
 }
 
 #ifdef RT_USING_HWTIMER
@@ -169,8 +170,6 @@ rt_inline void cpu_info_init(void)
         cpu_np[i] = np;
         rt_cpu_mpidr_table[i] = hwid;
 
-        rt_ofw_data(np) = (void *)hwid;
-
         for (int idx = 0; idx < RT_ARRAY_SIZE(cpu_ops); ++idx)
         {
             struct cpu_ops_t *ops = cpu_ops[idx];
@@ -199,8 +198,44 @@ rt_inline void cpu_info_init(void)
 #endif /* RT_USING_HWTIMER */
 }
 
+rt_inline rt_size_t string_to_size(const char *string, const char *who)
+{
+    char unit;
+    rt_size_t size;
+    const char *cp = string;
+
+    size = atoi(cp);
+
+    while (*cp >= '0' && *cp <= '9')
+    {
+        ++cp;
+    }
+
+    unit = *cp & '_';
+
+    if (unit == 'M')
+    {
+        size *= SIZE_MB;
+    }
+    else if (unit == 'K')
+    {
+        size *= SIZE_KB;
+    }
+    else if (unit == 'G')
+    {
+        size *= SIZE_GB;
+    }
+    else
+    {
+        LOG_W("Unknown unit of '%c' in `%s`", unit, who);
+    }
+
+    return size;
+}
+
 void rt_hw_common_setup(void)
 {
+    rt_uint64_t initrd_ranges[3];
     rt_size_t kernel_start, kernel_end;
     rt_size_t heap_start, heap_end;
     rt_size_t init_page_start, init_page_end;
@@ -213,9 +248,9 @@ void rt_hw_common_setup(void)
     system_vectors_init();
 
 #ifdef RT_USING_SMART
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, pv_off);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xffffffff00000000, 0x20000000, MMUTable, pv_off);
 #else
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xffffd0000000, 0x10000000, MMUTable, 0);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xffffd0000000, 0x20000000, MMUTable, 0);
 #endif
 
     kernel_start    = RT_ALIGN_DOWN((rt_size_t)rt_kmem_v2p((void *)&_start) - 64, ARCH_PAGE_SIZE);
@@ -228,25 +263,36 @@ void rt_hw_common_setup(void)
     fdt_end         = RT_ALIGN(fdt_start + fdt_size, ARCH_PAGE_SIZE);
 
     platform_mem_region.start = kernel_start;
+#ifndef RT_USING_BUILTIN_FDT
     platform_mem_region.end   = fdt_end;
+#else
+    platform_mem_region.end   = init_page_end;
+    (void)fdt_start;
+    (void)fdt_end;
+#endif
 
     rt_memblock_reserve_memory("kernel", kernel_start, kernel_end, MEMBLOCK_NONE);
     rt_memblock_reserve_memory("memheap", heap_start, heap_end, MEMBLOCK_NONE);
     rt_memblock_reserve_memory("init-page", init_page_start, init_page_end, MEMBLOCK_NONE);
+#ifndef RT_USING_BUILTIN_FDT
     rt_memblock_reserve_memory("fdt", fdt_start, fdt_end, MEMBLOCK_NONE);
 
     /* To virtual address */
     fdt_ptr = (void *)(fdt_ptr - pv_off);
 #ifdef KERNEL_VADDR_START
-    if ((rt_ubase_t)fdt_ptr + fdt_size - KERNEL_VADDR_START > SIZE_GB)
+    if ((rt_ubase_t)fdt_ptr + fdt_size - KERNEL_VADDR_START > ARCH_EARLY_MAP_SIZE)
     {
         fdt_ptr = rt_ioremap_early(fdt_ptr + pv_off, fdt_size);
 
         RT_ASSERT(fdt_ptr != RT_NULL);
     }
-#endif
+#endif /* KERNEL_VADDR_START */
     rt_memmove((void *)(fdt_start - pv_off), fdt_ptr, fdt_size);
     fdt_ptr = (void *)fdt_start - pv_off;
+#else
+    fdt_ptr = &rt_hw_builtin_fdt;
+    fdt_size = fdt_totalsize(fdt_ptr);
+#endif /* RT_USING_BUILTIN_FDT */
 
     rt_system_heap_init((void *)(heap_start - pv_off), (void *)(heap_end - pv_off));
 
@@ -276,6 +322,46 @@ void rt_hw_common_setup(void)
     rt_fdt_scan_initrd(initrd_ranges);
 
     rt_fdt_scan_memory();
+
+#ifdef RT_USING_DMA
+    do {
+        const char *bootargs;
+        rt_ubase_t dma_pool_base;
+        rt_size_t cma_size = 0, coherent_pool_size = 0;
+
+        if (!rt_fdt_bootargs_select("cma=", 0, &bootargs))
+        {
+            cma_size = string_to_size(bootargs, "cma");
+        }
+
+        if (!rt_fdt_bootargs_select("coherent_pool=", 0, &bootargs))
+        {
+            coherent_pool_size = string_to_size(bootargs, "coherent-pool");
+        }
+
+        if (cma_size <= coherent_pool_size)
+        {
+            if (cma_size || coherent_pool_size)
+            {
+                LOG_W("DMA pool %s=%u > %s=%u",
+                    "CMA", cma_size, "coherent-pool", coherent_pool_size);
+            }
+
+            cma_size = 8 * SIZE_MB;
+            coherent_pool_size = 2 * SIZE_MB;
+        }
+
+        dma_pool_base = platform_mem_region.end;
+        rt_memblock_reserve_memory("dma-pool",
+                dma_pool_base, dma_pool_base + cma_size + coherent_pool_size, MEMBLOCK_NONE);
+
+        if (rt_dma_pool_extract(cma_size, coherent_pool_size))
+        {
+            LOG_E("Alloc DMA pool %s=%u, %s=%u fail",
+                    "CMA", cma_size, "coherent-pool", coherent_pool_size);
+        }
+    } while (0);
+#endif /* RT_USING_DMA */
 
     rt_memblock_setup_memory_environment();
 

@@ -170,6 +170,12 @@ rt_weak void rt_hw_board_init()
     rt_hw_interrupt_init();
 #endif
 
+#if defined(BSP_CFG_CPU_CORE) && (BSP_CFG_CPU_CORE == CPU0) && defined(SOC_SERIES_R7KA8P1) && defined(BSP_START_SECONDARY_CORE)
+    #if !defined(BSP_USING_RPMSG_LITE_MCMGR)
+        R_BSP_SecondaryCoreStart();
+    #endif
+#endif
+
     rt_hw_systick_init();
 
     /* Heap initialization */

@@ -70,7 +70,12 @@ typedef struct tag_region
     const char *name;
 } rt_region_t;
 
+#ifdef RT_PAGE_MPR_SIZE_DYNAMIC
+const rt_size_t rt_mpr_size_dynamic(void);
+#define rt_mpr_size rt_mpr_size_dynamic()
+#else
 extern const rt_size_t rt_mpr_size;
+#endif
 extern void *rt_mpr_start;
 
 void rt_page_init(rt_region_t reg);

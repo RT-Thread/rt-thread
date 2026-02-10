@@ -10,6 +10,10 @@
 
 #include <rtthread.h>
 
+#define DBG_TAG "rtdm"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
+
 #ifdef RT_USING_OFW
 #include <drivers/ofw_io.h>
 #include <drivers/ofw_irq.h>
@@ -302,6 +306,23 @@ const char *rt_dm_dev_get_name(rt_device_t dev)
 #define ofw_api_call_ptr(name, ...) RT_NULL
 #endif
 
+rt_bool_t rt_dm_dev_is_big_endian(rt_device_t dev)
+{
+    if (rt_dm_dev_prop_read_bool(dev, "big-endian"))
+    {
+        return RT_TRUE;
+    }
+
+#ifdef ARCH_CPU_BIG_ENDIAN
+    if (rt_dm_dev_prop_read_bool(dev, "native-endian"))
+    {
+        return RT_TRUE;
+    }
+#endif /* ARCH_CPU_BIG_ENDIAN */
+
+    return RT_FALSE;
+}
+
 int rt_dm_dev_get_address_count(rt_device_t dev)
 {
     RT_ASSERT(dev != RT_NULL);
@@ -445,7 +466,7 @@ void rt_dm_dev_bind_fwdata(rt_device_t dev, void *fw_np, void *data)
 
     if (dev->ofw_node == RT_NULL)
     {
-        rt_kprintf("[%s:%s] line=%d ofw_node is NULL\r\n", __FILE__, __func__, __LINE__);
+        LOG_D("[%s:%s] line=%d ofw_node is NULL", __FILE__, __func__, __LINE__);
         return;
     }
 
@@ -468,7 +489,7 @@ void rt_dm_dev_unbind_fwdata(rt_device_t dev, void *fw_np)
 
     if (dev_fw_np == RT_NULL)
     {
-        rt_kprintf("[%s:%s] line=%d dev_fw_np is NULL\r\n", __FILE__, __func__, __LINE__);
+        LOG_D("[%s:%s] line=%d dev_fw_np is NULL", __FILE__, __func__, __LINE__);
         return;
     }
 
@@ -476,16 +497,30 @@ void rt_dm_dev_unbind_fwdata(rt_device_t dev, void *fw_np)
 #endif
 }
 
+const char *rt_dm_dev_get_prop_fuzzy_name(rt_device_t dev, const char *name)
+{
+    RT_ASSERT(dev != RT_NULL);
+
+#ifdef RT_USING_OFW
+    if (dev->ofw_node)
+    {
+        return ofw_api_call_ptr(get_prop_fuzzy_name, dev->ofw_node, name);
+    }
+#endif
+
+    return RT_NULL;
+}
+
 int rt_dm_dev_prop_read_u8_array_index(rt_device_t dev, const char *propname,
         int index, int nr, rt_uint8_t *out_values)
 {
     RT_ASSERT(dev != RT_NULL);
 
-#ifdef RT_UISNG_OFW
+#ifdef RT_USING_OFW
     if (dev->ofw_node)
     {
         return ofw_api_call(prop_read_u8_array_index, dev->ofw_node, propname,
-                index, nr, out_value);
+                index, nr, out_values);
     }
 #endif
 
@@ -597,4 +632,3 @@ rt_bool_t rt_dm_dev_prop_read_bool(rt_device_t dev, const char *propname)
 
     return RT_FALSE;
 }
-

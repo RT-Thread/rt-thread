@@ -23,6 +23,10 @@
 
 #define RT_DIV_ROUND_UP(n, d)   (((n) + (d) - 1) / (d))
 
+#define RT_DIV_ROUND_DOWN_ULL(ll, d)    ({ rt_uint64_t _tmp = (ll); rt_do_div(_tmp, d); _tmp; })
+
+#define RT_DIV_ROUND_UP_ULL(ll, d)      RT_DIV_ROUND_DOWN_ULL((rt_uint64_t)(ll) + (d) - 1, (d))
+
 #define RT_DIV_ROUND_CLOSEST(x, divisor)        \
 ({                                              \
     typeof(x) __x = x;                          \
@@ -32,6 +36,14 @@
      (((__x) > 0) == ((__d) > 0))) ?            \
             (((__x) + ((__d) / 2)) / (__d)) :   \
             (((__x) - ((__d) / 2)) / (__d));    \
+})
+
+#define RT_DIV_ROUND_CLOSEST_ULL(x, divisor)    \
+({                                              \
+    typeof(divisor) __d = divisor;              \
+    rt_uint64_t _tmp = (x) + (__d) / 2;         \
+    rt_do_div(_tmp, __d);                       \
+    _tmp;                                       \
 })
 
 #define __KEY_PLACEHOLDER_1                     0,
@@ -103,14 +115,12 @@
 
 #define rt_clamp(val, lo, hi)   rt_min((typeof(val))rt_max(val, lo), hi)
 
-#define rt_do_div(n, base)              \
-({                                      \
-    rt_uint32_t _base = (base), _rem;   \
-    _rem = ((rt_uint64_t)(n)) % _base;  \
-    (n) = ((rt_uint64_t)(n)) / _base;   \
-    if (_rem > _base / 2)               \
-        ++(n);                          \
-    _rem;                               \
+#define rt_do_div(n, base)                          \
+({                                                  \
+    rt_uint32_t _base = (base);                     \
+    rt_uint32_t _rem = (rt_uint64_t)(n) % _base;    \
+    (n) = (rt_uint64_t)(n) / _base;                 \
+    _rem;                                           \
 })
 
 #define rt_abs(x)                       \
@@ -129,6 +139,18 @@
     ret;                                \
 })
 
+#define rt_roundup(x, y)                \
+({                                      \
+    typeof(y) __y = y;                  \
+    (((x) + (__y - 1)) / __y) * __y;    \
+})
+
+#define rt_rounddown(x, y)              \
+({                                      \
+    typeof(x) __x = (x);                \
+    __x - (__x % (y));                  \
+})
+
 #ifndef rt_ilog2
 rt_inline int rt_ilog2(rt_ubase_t v)
 {
@@ -142,5 +164,38 @@ rt_inline int rt_ilog2(rt_ubase_t v)
     return l;
 }
 #endif /* !rt_ilog2 */
+
+#ifndef rt_bcd2bin
+rt_inline rt_ubase_t rt_bcd2bin(rt_uint8_t val)
+{
+    return (val & 0x0f) + (val >> 4) * 10;
+}
+#endif /* !rt_bcd2bin */
+
+#ifndef rt_bin2bcd
+rt_inline rt_uint8_t rt_bin2bcd(rt_ubase_t val)
+{
+    return ((val / 10) << 4) + val % 10;
+}
+#endif /* !rt_bin2bcd */
+
+#ifndef rt_div_u64_rem
+rt_inline rt_uint64_t rt_div_u64_rem(rt_uint64_t dividend, rt_uint32_t divisor,
+        rt_uint32_t *remainder)
+{
+    *remainder = dividend % divisor;
+
+    return dividend / divisor;
+}
+#endif /* !rt_div_u64_rem */
+
+#ifndef rt_div_u64
+rt_inline rt_uint64_t rt_div_u64(rt_uint64_t dividend, rt_uint32_t divisor)
+{
+    rt_uint32_t remainder;
+
+    return rt_div_u64_rem(dividend, divisor, &remainder);
+}
+#endif /* !rt_div_u64 */
 
 #endif /* __MISC_H__ */

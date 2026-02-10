@@ -1,0 +1,14 @@
+menuconfig RT_SERIAL_8250
+    bool "8250 Serial Family"
+    default n
+
+config RT_SERIAL_8250_DW
+    bool "Synopsys DesignWare 8250"
+    depends on RT_SERIAL_8250
+    default n
+
+config RT_SERIAL_8250_PCI
+    bool "8250 PCI/2x/4x"
+    depends on RT_SERIAL_8250
+    depends on RT_USING_PCI
+    default n
