@@ -24,7 +24,7 @@ if GetDepend(['PKG_USING_CJSON']) and GetDepend(['PKG_USING_WEBCLIENT']):
 
 
 CPPPATH = [cwd, cwd + '/MCUX_Config/board']
-CPPDEFINES = ['DEBUG', 'CPU_MCXN947VDF_cm33_core0', 'LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER=1']
+CPPDEFINES = ['DEBUG', 'CPU_MCXN947VDF_cm33_core0']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
