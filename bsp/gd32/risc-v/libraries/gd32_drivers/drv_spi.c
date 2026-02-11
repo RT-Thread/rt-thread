@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-06-04     BruceOu      first implementation
+ * 2026-01-24     Unknown      Add GD32VW553h
  */
 #include "drv_spi.h"
 
@@ -29,6 +30,19 @@ static struct rt_spi_bus spi_bus2;
 static const struct gd32_spi spi_bus_obj[] = {
 
 #ifdef BSP_USING_SPI0
+#if defined (SOC_SERIES_GD32VW55x)
+    {
+        SPI,
+        "spi0",
+        RCU_SPI,
+        RCU_GPIOA,
+        &spi_bus0,
+        GPIOA,
+        GPIO_PIN_9,
+        GPIO_PIN_10,
+        GPIO_PIN_11,
+    }
+#else
     {
         SPI0,
         "spi0",
@@ -40,6 +54,7 @@ static const struct gd32_spi spi_bus_obj[] = {
         GPIO_PIN_6,
         GPIO_PIN_7,
     }
+#endif
 #endif /* BSP_USING_SPI0 */
 
 #ifdef BSP_USING_SPI1
@@ -92,16 +107,22 @@ static void gd32_spi_init(struct gd32_spi *gd32_spi)
     rcu_periph_clock_enable(gd32_spi->spi_clk);
     rcu_periph_clock_enable(gd32_spi->gpio_clk);
 
+#if defined (SOC_SERIES_GD32VW55x)
+    /* configure SPI GPIO: SCK, MISO, MOSI */
+    gpio_af_set(gd32_spi->spi_port, GPIO_AF_0, gd32_spi->sck_pin | gd32_spi->miso_pin | gd32_spi->mosi_pin);
+
+    gpio_mode_set(gd32_spi->spi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, gd32_spi->sck_pin | gd32_spi->miso_pin | gd32_spi->mosi_pin);
+    gpio_output_options_set(gd32_spi->spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_25MHZ, gd32_spi->sck_pin | gd32_spi->miso_pin | gd32_spi->mosi_pin);
+#else
     /* Init SPI SCK MOSI */
     gpio_init(gd32_spi->spi_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, gd32_spi->sck_pin | gd32_spi->mosi_pin);
-
     /* Init SPI MISO */
     gpio_init(gd32_spi->spi_port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, gd32_spi->miso_pin);
-
+#endif
 }
 
 static rt_err_t spi_configure(struct rt_spi_device* device,
-                          struct rt_spi_configuration* configuration)
+                              struct rt_spi_configuration* configuration)
 {
     struct rt_spi_bus * spi_bus = (struct rt_spi_bus *)device->bus;
     struct gd32_spi *spi_device = (struct gd32_spi *)spi_bus->parent.user_data;
@@ -140,6 +161,9 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
         LOG_D("CK_APB2 freq: %d\n", rcu_clock_freq_get(CK_APB2));
         LOG_D("max   freq: %d\n", max_hz);
 
+#if defined (SOC_SERIES_GD32VW55x)
+        spi_src = CK_APB2;
+#else
         if (spi_periph == SPI1 || spi_periph == SPI2)
         {
             spi_src = CK_APB1;
@@ -148,6 +172,9 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
         {
             spi_src = CK_APB2;
         }
+#endif
+
+
         spi_apb_clock = rcu_clock_freq_get(spi_src);
 
         if(max_hz >= spi_apb_clock/2)
@@ -215,12 +242,19 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
     spi_init_struct.device_mode = SPI_MASTER;
     spi_init_struct.nss = SPI_NSS_SOFT;
 
+#if defined (SOC_SERIES_GD32VW55x)
+    spi_crc_off();
+    /* init SPI */
+    spi_init(&spi_init_struct);
+    /* Enable SPI_MASTER */
+    spi_enable();
+#else
     spi_crc_off(spi_periph);
-
     /* init SPI */
     spi_init(spi_periph, &spi_init_struct);
     /* Enable SPI_MASTER */
     spi_enable(spi_periph);
+#endif
 
     return RT_EOK;
 };
@@ -261,6 +295,18 @@ static rt_uint32_t spixfer(struct rt_spi_device* device, struct rt_spi_message* 
                     data = *send_ptr++;
                 }
 
+#if defined (SOC_SERIES_GD32VW55x)
+                // Todo: replace register read/write by gd32f4 lib
+                //Wait until the transmit buffer is empty
+                while(RESET == spi_flag_get(SPI_FLAG_TBE));
+                // Send the byte
+                spi_data_transmit(data);
+
+                //Wait until a data is received
+                while(RESET == spi_flag_get(SPI_FLAG_RBNE));
+                // Get the received data
+                data = spi_data_receive();
+#else
                 // Todo: replace register read/write by gd32f4 lib
                 //Wait until the transmit buffer is empty
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
@@ -271,6 +317,7 @@ static rt_uint32_t spixfer(struct rt_spi_device* device, struct rt_spi_message* 
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
                 // Get the received data
                 data = spi_i2s_data_receive(spi_periph);
+#endif
 
                 if(recv_ptr != RT_NULL)
                 {
@@ -294,6 +341,19 @@ static rt_uint32_t spixfer(struct rt_spi_device* device, struct rt_spi_message* 
                     data = *send_ptr++;
                 }
 
+#if defined (SOC_SERIES_GD32VW55x)
+                // Todo: replace register read/write by gd32f4 lib
+                //Wait until the transmit buffer is empty
+                while(RESET == spi_flag_get(SPI_FLAG_TBE));
+                // Send the byte
+                spi_data_transmit(data);
+
+                //Wait until a data is received
+                while(RESET == spi_flag_get(SPI_FLAG_RBNE));
+                // Get the received data
+                data = spi_data_receive();
+#else
+                // Todo: replace register read/write by gd32f4 lib
                 //Wait until the transmit buffer is empty
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
                 // Send the byte
@@ -303,6 +363,7 @@ static rt_uint32_t spixfer(struct rt_spi_device* device, struct rt_spi_message* 
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
                 // Get the received data
                 data = spi_i2s_data_receive(spi_periph);
+#endif
 
                 if(recv_ptr != RT_NULL)
                 {
