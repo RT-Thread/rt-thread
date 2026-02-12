@@ -143,6 +143,29 @@ endmenu
 
 menu "Board extended module Drivers"
 
+    menuconfig BSP_USING_AT24C02
+        bool "Enable AT24C02 I2C0( SCL[PA2 : 2] SDA[PA3 : 3] )"
+        default n
+        select BSP_USING_HW_I2C
+        select BSP_USING_HW_I2C0
+        select PKG_USING_AT24CXX
+        select PKG_AT24CXX_EE_TYPE_AT24C02
+
+        if BSP_USING_AT24C02
+            
+            config BSP_USING_AT24C02_UTEST
+                bool "Enable the utest of AT24C02"
+                default n
+                select RT_USING_UTEST
+                select RT_USING_ULOG
+                select ULOG_USING_ISR_LOG
+
+            config BSP_USING_AT24C02_INIT
+                bool "Init the model and check it"
+                default y
+
+        endif
+
 endmenu
 
 endmenu
