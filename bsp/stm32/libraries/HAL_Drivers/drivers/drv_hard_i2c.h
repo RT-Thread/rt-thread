@@ -22,6 +22,9 @@ extern "C"
 {
 #endif
 
+/* I2C bus control command ids */
+#define I2C_CTRL_SET_SPEED              (0x01U)
+
 struct stm32_i2c_config
 {
     const char        *name;
