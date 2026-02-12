@@ -635,7 +635,7 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
             {
                 static rt_bool_t warned_async_log_buf = RT_FALSE;
                 ulog_warn_once(&warned_async_log_buf,
-                               "Warning: There is no enough buffer for saving async log,"
+                               "Warning: There is not enough buffer for saving async log,"
                                " please increase the ULOG_ASYNC_OUTPUT_BUF_SIZE option.\n");
             }
         }
@@ -653,7 +653,7 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
             {
                 static rt_bool_t warned_async_raw_partial = RT_FALSE;
                 ulog_warn_once(&warned_async_raw_partial,
-                               "Warning: There is no enough buffer for saving async raw log,"
+                               "Warning: There is not enough buffer for saving async raw log,"
                                " please increase the ULOG_ASYNC_OUTPUT_BUF_SIZE option.\n");
             }
         }
@@ -1479,7 +1479,6 @@ void ulog_async_output_enabled(rt_bool_t enabled)
  */
 rt_err_t ulog_async_waiting_log(rt_int32_t time)
 {
-    rt_sem_control(&ulog.async_notice, RT_IPC_CMD_RESET, RT_NULL);
     return rt_sem_take(&ulog.async_notice, time);
 }
 
@@ -1569,6 +1568,12 @@ int ulog_init(void)
         return -RT_ENOMEM;
     }
     rt_sem_init(&ulog.async_notice, "ulog", 0, RT_IPC_FLAG_FIFO);
+    /*
+     * Use binary-semaphore semantics for async_notice.
+     * This relies on ulog_async_output() draining all pending logs in one wakeup,
+     * so coalescing multiple notices will not lose log data.
+     */
+    rt_sem_control(&ulog.async_notice, RT_IPC_CMD_SET_VLIMIT, (void *)1);
 #endif /* ULOG_USING_ASYNC_OUTPUT */
 
 #ifdef ULOG_USING_FILTER
