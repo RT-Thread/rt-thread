@@ -337,7 +337,7 @@ int dfs_file_close(struct dfs_file *fd)
         dfs_fm_lock();
         vnode = fd->vnode;
 
-        if (vnode->ref_count <= 0)
+        if (vnode == NULL || vnode->ref_count <= 0)
         {
             dfs_fm_unlock();
             return -ENXIO;
@@ -348,11 +348,12 @@ int dfs_file_close(struct dfs_file *fd)
             result = vnode->fops->close(fd);
         }
 
-        if (vnode->ref_count == 1)
+        vnode->ref_count--;
+        fd->vnode = NULL;
+        if (vnode->ref_count == 0)
         {
             /* remove from hash */
             rt_list_remove(&vnode->list);
-            fd->vnode = NULL;
 
             if (vnode->path != vnode->fullpath)
             {

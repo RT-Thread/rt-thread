@@ -552,9 +552,9 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
-              <FileName>cputime.c</FileName>
+              <FileName>clock_time_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\cputime\cputime.c</FilePath>
+              <FilePath>..\..\..\..\..\..\NXP\RTT_BSP\imxrt_bsp\components\drivers\clock_time\clock_time_core.c</FilePath>
             </File>
             <File>
               <FileName>pin.c</FileName>

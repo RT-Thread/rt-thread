@@ -34,7 +34,7 @@
 #if defined(RT_USING_SPI)
     #include "apm32f0xx_spi.h"
 #endif
-#if defined(RT_USING_HWTIMER) || defined(RT_USING_PWM)
+#if defined(RT_USING_CLOCK_TIME) || defined(RT_USING_PWM)
     #include "apm32f0xx_tmr.h"
 #endif
 #if defined(RT_USING_WDT)

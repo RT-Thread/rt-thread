@@ -1,0 +1,20 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+
+# ------ component CI ------
+component.pwm:
+    kconfig:
+      - CONFIG_BSP_USING_PWM=y
+      - CONFIG_BSP_USING_PWM0=y
+
+# ------ devices ------
+devices.i2c:
+    kconfig:
+      - CONFIG_BSP_USING_HW_I2C=y
+      - CONFIG_BSP_USING_HW_I2C0=y
+      - CONFIG_BSP_HW_I2C0_PIN_PA2_PA3=y
+      - CONFIG_BSP_HW_I2C0_CLK=100
+      - CONFIG_BSP_USING_HW_I2C1=y
+      - CONFIG_BSP_HW_I2C1_PIN_PB12_PB13=y
+      - CONFIG_BSP_HW_I2C1_CLK=100

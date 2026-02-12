@@ -41,8 +41,8 @@ if GetDepend('RT_USING_RTC'):
     src += ['drv_rtc.c']
 
 # add timer drivers.
-if GetDepend('RT_USING_HWTIMER'):
-    src += ['drv_hwtimer.c']
+if GetDepend('RT_USING_CLOCK_TIME'):
+    src += ['drv_timer.c']
 
 # add adc drivers.
 if GetDepend('RT_USING_ADC'):

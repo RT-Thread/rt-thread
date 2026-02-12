@@ -13,8 +13,8 @@
 #include <gtimer.h>
 #include <cpuport.h>
 
-#ifdef RT_USING_KTIME
-#include <ktime.h>
+#ifdef RT_USING_CLOCK_TIME
+#include <drivers/clock_time.h>
 #endif
 
 #define EL1_PHY_TIMER_IRQ_NUM 30
@@ -42,8 +42,8 @@ void rt_hw_gtimer_local_enable(void)
     rt_hw_gtimer_disable();
     rt_hw_set_gtimer_val(timer_step);
     rt_hw_interrupt_umask(EL1_PHY_TIMER_IRQ_NUM);
-#ifdef RT_USING_KTIME
-    rt_ktime_cputimer_init();
+#ifdef RT_USING_CLOCK_TIME
+    rt_clock_time_source_init();
 #endif
     rt_hw_gtimer_enable();
 }

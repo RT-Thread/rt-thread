@@ -21,8 +21,8 @@ if GetDepend('RT_USING_PIN'):
 if GetDepend('RT_USING_ADC'):
     src += ['drv_adc.c']
 
-if GetDepend('RT_USING_HWTIMER'):
-    src += ['drv_hwtimer.c']
+if GetDepend('RT_USING_CLOCK_TIME'):
+    src += ['drv_timer.c']
 
 if GetDepend('RT_USING_RTC'):
     src += ['drv_rtc.c']

@@ -339,22 +339,6 @@ static inline void dwc2_chan_enable_csplit(struct usbh_bus *bus, uint8_t ch_num,
     }
 }
 
-static inline void dwc2_chan_reenable(struct usbh_bus *bus, uint8_t ch_num)
-{
-    __IO uint32_t tmpreg;
-    uint8_t is_oddframe;
-
-    is_oddframe = (((uint32_t)USB_OTG_HOST->HFNUM & 0x01U) != 0U) ? 0U : 1U;
-    USB_OTG_HC(ch_num)->HCCHAR &= ~USB_OTG_HCCHAR_ODDFRM;
-    USB_OTG_HC(ch_num)->HCCHAR |= (uint32_t)is_oddframe << 29;
-
-    /* Set host channel enable */
-    tmpreg = USB_OTG_HC(ch_num)->HCCHAR;
-    tmpreg &= ~USB_OTG_HCCHAR_CHDIS;
-    tmpreg |= USB_OTG_HCCHAR_CHENA;
-    USB_OTG_HC(ch_num)->HCCHAR = tmpreg;
-}
-
 static void dwc2_halt(struct usbh_bus *bus, uint8_t ch_num)
 {
     volatile uint32_t ChannelEna = (USB_OTG_HC(ch_num)->HCCHAR & USB_OTG_HCCHAR_CHENA) >> 31;
@@ -731,6 +715,13 @@ int usb_hc_init(struct usbh_bus *bus)
     /* Force Host Mode*/
     dwc2_set_mode(bus, USB_OTG_MODE_HOST);
 
+    USB_ASSERT_MSG((USB_OTG_GLB->GRXFSIZ & 0xffff) >= g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_rx_fifo_size,
+                   "host_rx_fifo_size cannot be larger than power_on_value %u", (unsigned int)(USB_OTG_GLB->GRXFSIZ & 0xffff));
+    USB_ASSERT_MSG(((USB_OTG_GLB->DIEPTXF0_HNPTXFSIZ >> 16) & 0xffff) >= g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_nperio_tx_fifo_size,
+                   "host_nperio_tx_fifo_size cannot be larger than power_on_value %u", (unsigned int)((USB_OTG_GLB->DIEPTXF0_HNPTXFSIZ >> 16) & 0xffff));
+    USB_ASSERT_MSG(((USB_OTG_GLB->HPTXFSIZ >> 16) & 0xffff) >= g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_perio_tx_fifo_size,
+                   "host_perio_tx_fifo_size cannot be larger than power_on_value %u", (unsigned int)((USB_OTG_GLB->HPTXFSIZ >> 16) & 0xffff));
+
     /* B-peripheral session valid override enable */
     USB_OTG_GLB->GOTGCTL &= ~USB_OTG_GOTGCTL_BVALOEN;
     USB_OTG_GLB->GOTGCTL &= ~USB_OTG_GOTGCTL_BVALOVAL;
@@ -745,13 +736,15 @@ int usb_hc_init(struct usbh_bus *bus)
 
     USB_OTG_HOST->HCFG &= ~USB_OTG_HCFG_FSLSPCS;
     if (g_dwc2_hcd[bus->hcd.hcd_id].user_params.phy_type == DWC2_PHY_TYPE_PARAM_FS) {
+        bus->hcd.roothub.speed = USB_SPEED_FULL;
         USB_OTG_HOST->HCFG |= USB_OTG_HCFG_FSLSPCLKSEL_48_MHZ;
     } else {
+        bus->hcd.roothub.speed = USB_SPEED_HIGH;
         USB_OTG_HOST->HCFG |= USB_OTG_HCFG_FSLSPCLKSEL_30_60_MHZ;
     }
 
     if (g_dwc2_hcd[bus->hcd.hcd_id].hw_params.snpsid > 0x4F54292AU) {
-        USB_OTG_HOST->HCFG |= USB_OTG_HFIR_RELOAD_CTRL;
+        USB_OTG_HOST->HFIR |= USB_OTG_HFIR_RELOAD_CTRL;
     }
 
     /* Clear all pending HC Interrupts */
@@ -766,7 +759,7 @@ int usb_hc_init(struct usbh_bus *bus)
     /* Clear any pending interrupts */
     USB_OTG_GLB->GINTSTS = 0xFFFFFFFFU;
 
-    /* set Rx FIFO size */
+    /* set FIFO size */
     USB_OTG_GLB->GRXFSIZ = g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_rx_fifo_size;
     USB_OTG_GLB->DIEPTXF0_HNPTXFSIZ = (uint32_t)(((g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_nperio_tx_fifo_size << 16) & USB_OTG_NPTXFD) |
                                                  g_dwc2_hcd[bus->hcd.hcd_id].user_params.host_rx_fifo_size);
@@ -794,36 +787,14 @@ int usb_hc_init(struct usbh_bus *bus)
 
 int usb_hc_deinit(struct usbh_bus *bus)
 {
-    volatile uint32_t count = 0U;
-    uint32_t value;
-
     USB_OTG_GLB->GAHBCFG &= ~USB_OTG_GAHBCFG_GINT;
 
     dwc2_flush_txfifo(bus, 0x10U);
     dwc2_flush_rxfifo(bus);
 
     /* Flush out any leftover queued requests. */
-    for (uint32_t i = 0U; i < g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels; i++) {
-        value = USB_OTG_HC(i)->HCCHAR;
-        value |= USB_OTG_HCCHAR_CHDIS;
-        value &= ~USB_OTG_HCCHAR_CHENA;
-        value &= ~USB_OTG_HCCHAR_EPDIR;
-        USB_OTG_HC(i)->HCCHAR = value;
-    }
-
-    /* Halt all channels to put them into a known state. */
-    for (uint32_t i = 0U; i < g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels; i++) {
-        value = USB_OTG_HC(i)->HCCHAR;
-        value |= USB_OTG_HCCHAR_CHDIS;
-        value |= USB_OTG_HCCHAR_CHENA;
-        value &= ~USB_OTG_HCCHAR_EPDIR;
-        USB_OTG_HC(i)->HCCHAR = value;
-
-        do {
-            if (++count > 1000U) {
-                return -USB_ERR_TIMEOUT;
-            }
-        } while ((USB_OTG_HC(i)->HCCHAR & USB_OTG_HCCHAR_CHENA) == USB_OTG_HCCHAR_CHENA);
+    for (uint8_t chidx = 0; chidx < g_dwc2_hcd[bus->hcd.hcd_id].hw_params.host_channels; chidx++) {
+        dwc2_halt(bus, chidx);
     }
 
     /* Disable all interrupts. */
@@ -1235,12 +1206,15 @@ static void dwc2_inchan_irq_handler(struct usbh_bus *bus, uint8_t ch_num)
                 /* restart ssplit transfer */
                 switch (USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes)) {
                     case USB_ENDPOINT_TYPE_CONTROL:
+                        chan->do_csplit = 0;
+                        dwc2_control_urb_init(bus, ch_num, urb, urb->setup, urb->transfer_buffer + urb->actual_length - 8, urb->transfer_buffer_length);
+                        break;
                     case USB_ENDPOINT_TYPE_BULK:
                         chan->do_csplit = 0;
-                        dwc2_chan_enable_csplit(bus, ch_num, false);
-                        dwc2_chan_reenable(bus, ch_num);
+                        dwc2_bulk_intr_urb_init(bus, ch_num, urb, urb->transfer_buffer + urb->actual_length, urb->transfer_buffer_length);
                         break;
                     case USB_ENDPOINT_TYPE_INTERRUPT:
+                        chan->do_csplit = 0;
                         dwc2_chan_enable_csplit(bus, ch_num, false);
                         urb->errorcode = -USB_ERR_NAK;
                         dwc2_urb_waitup(urb);
@@ -1255,17 +1229,39 @@ static void dwc2_inchan_irq_handler(struct usbh_bus *bus, uint8_t ch_num)
             }
         } else if (chan_intstatus & USB_OTG_HCINT_ACK) {
             if (chan->do_ssplit) {
-                /* start ssplit transfer */
+                /* start csplit transfer */
                 chan->do_csplit = 1;
                 chan->ssplit_frame = dwc2_get_full_frame_num(bus);
-                dwc2_chan_enable_csplit(bus, ch_num, true);
-                dwc2_chan_reenable(bus, ch_num);
+                switch (USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes)) {
+                    case USB_ENDPOINT_TYPE_CONTROL:
+                        dwc2_control_urb_init(bus, ch_num, urb, urb->setup, urb->transfer_buffer + urb->actual_length - 8, urb->transfer_buffer_length);
+                        break;
+                    case USB_ENDPOINT_TYPE_BULK:
+                    case USB_ENDPOINT_TYPE_INTERRUPT:
+                        dwc2_bulk_intr_urb_init(bus, ch_num, urb, urb->transfer_buffer + urb->actual_length, urb->transfer_buffer_length);
+                        break;
+
+                    default:
+                        break;
+                }
             }
         } else if (chan_intstatus & USB_OTG_HCINT_NYET) {
             if (chan->do_ssplit) {
                 /* restart csplit transfer */
-                dwc2_chan_enable_csplit(bus, ch_num, true);
-                dwc2_chan_reenable(bus, ch_num);
+                chan->do_csplit = 1;
+                chan->ssplit_frame = dwc2_get_full_frame_num(bus);
+                switch (USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes)) {
+                    case USB_ENDPOINT_TYPE_CONTROL:
+                        dwc2_control_urb_init(bus, ch_num, urb, urb->setup, urb->transfer_buffer + urb->actual_length - 8, urb->transfer_buffer_length);
+                        break;
+                    case USB_ENDPOINT_TYPE_BULK:
+                    case USB_ENDPOINT_TYPE_INTERRUPT:
+                        dwc2_bulk_intr_urb_init(bus, ch_num, urb, urb->transfer_buffer + urb->actual_length, urb->transfer_buffer_length);
+                        break;
+
+                    default:
+                        break;
+                }
             } else {
                 urb->errorcode = -USB_ERR_NAK;
                 dwc2_urb_waitup(urb);
@@ -1372,12 +1368,15 @@ static void dwc2_outchan_irq_handler(struct usbh_bus *bus, uint8_t ch_num)
                 /* restart ssplit transfer */
                 switch (USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes)) {
                     case USB_ENDPOINT_TYPE_CONTROL:
+                        chan->do_csplit = 0;
+                        dwc2_control_urb_init(bus, ch_num, urb, urb->setup, urb->transfer_buffer + urb->actual_length - 8, urb->transfer_buffer_length);
+                        break;
                     case USB_ENDPOINT_TYPE_BULK:
                         chan->do_csplit = 0;
-                        dwc2_chan_enable_csplit(bus, ch_num, false);
-                        dwc2_chan_reenable(bus, ch_num);
+                        dwc2_bulk_intr_urb_init(bus, ch_num, urb, urb->transfer_buffer + urb->actual_length, urb->transfer_buffer_length);
                         break;
                     case USB_ENDPOINT_TYPE_INTERRUPT:
+                        chan->do_csplit = 0;
                         dwc2_chan_enable_csplit(bus, ch_num, false);
                         urb->errorcode = -USB_ERR_NAK;
                         dwc2_urb_waitup(urb);
@@ -1392,17 +1391,39 @@ static void dwc2_outchan_irq_handler(struct usbh_bus *bus, uint8_t ch_num)
             }
         } else if (chan_intstatus & USB_OTG_HCINT_ACK) {
             if (chan->do_ssplit) {
-                /* start ssplit transfer */
+                /* start csplit transfer */
                 chan->do_csplit = 1;
                 chan->ssplit_frame = dwc2_get_full_frame_num(bus);
-                dwc2_chan_enable_csplit(bus, ch_num, true);
-                dwc2_chan_reenable(bus, ch_num);
+                switch (USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes)) {
+                    case USB_ENDPOINT_TYPE_CONTROL:
+                        dwc2_control_urb_init(bus, ch_num, urb, urb->setup, urb->transfer_buffer + urb->actual_length - 8, urb->transfer_buffer_length);
+                        break;
+                    case USB_ENDPOINT_TYPE_BULK:
+                    case USB_ENDPOINT_TYPE_INTERRUPT:
+                        dwc2_bulk_intr_urb_init(bus, ch_num, urb, urb->transfer_buffer + urb->actual_length, urb->transfer_buffer_length);
+                        break;
+
+                    default:
+                        break;
+                }
             }
         } else if (chan_intstatus & USB_OTG_HCINT_NYET) {
             if (chan->do_ssplit) {
                 /* restart csplit transfer */
-                dwc2_chan_enable_csplit(bus, ch_num, true);
-                dwc2_chan_reenable(bus, ch_num);
+                chan->do_csplit = 1;
+                chan->ssplit_frame = dwc2_get_full_frame_num(bus);
+                switch (USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes)) {
+                    case USB_ENDPOINT_TYPE_CONTROL:
+                        dwc2_control_urb_init(bus, ch_num, urb, urb->setup, urb->transfer_buffer + urb->actual_length - 8, urb->transfer_buffer_length);
+                        break;
+                    case USB_ENDPOINT_TYPE_BULK:
+                    case USB_ENDPOINT_TYPE_INTERRUPT:
+                        dwc2_bulk_intr_urb_init(bus, ch_num, urb, urb->transfer_buffer + urb->actual_length, urb->transfer_buffer_length);
+                        break;
+
+                    default:
+                        break;
+                }
             } else {
                 urb->errorcode = -USB_ERR_NAK;
                 dwc2_urb_waitup(urb);

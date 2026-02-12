@@ -89,50 +89,50 @@ menu "PWM Drivers"
 endmenu
 
 menu "HWtimer Drivers"
-    config BSP_USING_AD16C4T0_HWTIMER
+    config BSP_USING_AD16C4T0_CLOCK_TIMER
         bool "Register timer0"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
         depends on !BSP_USING_AD16C4T0_PWM
 
-    config BSP_USING_GP16C4T0_HWTIMER
+    config BSP_USING_GP16C4T0_CLOCK_TIMER
         bool "Register timer1"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
         depends on !BSP_USING_GP16C4T0_PWM
 
-    config BSP_USING_GP16C2T0_HWTIMER
+    config BSP_USING_GP16C2T0_CLOCK_TIMER
         bool "Register timer2"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
         depends on !BSP_USING_GP16C2T0_PWM
 
-    config BSP_USING_GP16C2T1_HWTIMER
+    config BSP_USING_GP16C2T1_CLOCK_TIMER
         bool "Register timer3"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
         depends on !BSP_USING_GP16C2T1_PWM
 
-    config BSP_USING_BS16T0_HWTIMER
+    config BSP_USING_BS16T0_CLOCK_TIMER
         bool "Register timer4"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
 
-    config BSP_USING_BS16T1_HWTIMER
+    config BSP_USING_BS16T1_CLOCK_TIMER
         bool "Register timer5"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
         depends on !BSP_USING_UART2
 
-    config BSP_USING_BS16T2_HWTIMER
+    config BSP_USING_BS16T2_CLOCK_TIMER
         bool "Register timer6"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
         depends on !BSP_USING_UART3
 
-    config BSP_USING_BS16T3_HWTIMER
+    config BSP_USING_BS16T3_CLOCK_TIMER
         bool "Register timer7"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
 endmenu
 

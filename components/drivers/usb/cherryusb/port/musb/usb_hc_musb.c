@@ -328,10 +328,16 @@ void musb_control_urb_init(struct usbh_bus *bus, uint8_t chidx, struct usbh_urb 
         speed = USB_TYPE0_SPEED_LOW;
     }
 
+#ifdef CONFIG_USB_MUSB_WITHOUT_MULTIPOINT
+    /* Without multipoint, use FADDR for host target addressing and do not access Hub/FuncAddr regs */
+    HWREGB(USB_BASE + MUSB_FADDR_OFFSET) = (urb->hport->dev_addr & 0x7F);
+    HWREGB(USB_TXTYPE_BASE(chidx)) = speed;
+#else
     HWREGB(USB_TXADDR_BASE(chidx)) = urb->hport->dev_addr;
     HWREGB(USB_TXTYPE_BASE(chidx)) = speed;
     HWREGB(USB_TXHUBADDR_BASE(chidx)) = 0;
     HWREGB(USB_TXHUBPORT_BASE(chidx)) = 0;
+#endif
 
     musb_write_packet(bus, chidx, (uint8_t *)setup, 8);
     HWREGB(USB_TXCSRL_BASE(chidx)) = USB_CSRL0_TXRDY | USB_CSRL0_SETUP;
@@ -360,12 +366,19 @@ int musb_bulk_urb_init(struct usbh_bus *bus, uint8_t chidx, struct usbh_urb *urb
             return -USB_ERR_RANGE;
         }
 
+#ifdef CONFIG_USB_MUSB_WITHOUT_MULTIPOINT
+        HWREGB(USB_BASE + MUSB_FADDR_OFFSET) = (urb->hport->dev_addr & 0x7F);
+        HWREGB(USB_RXTYPE_BASE(chidx)) = (urb->ep->bEndpointAddress & 0x0f) | speed | USB_TXTYPE1_PROTO_BULK;
+        HWREGH(USB_RXMAP_BASE(chidx)) = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
+        HWREGB(USB_RXINTERVAL_BASE(chidx)) = 0;
+#else
         HWREGB(USB_RXADDR_BASE(chidx)) = urb->hport->dev_addr;
         HWREGB(USB_RXTYPE_BASE(chidx)) = (urb->ep->bEndpointAddress & 0x0f) | speed | USB_TXTYPE1_PROTO_BULK;
         HWREGH(USB_RXMAP_BASE(chidx)) = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
         HWREGB(USB_RXINTERVAL_BASE(chidx)) = 0;
         HWREGB(USB_RXHUBADDR_BASE(chidx)) = 0;
         HWREGB(USB_RXHUBPORT_BASE(chidx)) = 0;
+#endif
         HWREGB(USB_TXCSRH_BASE(chidx)) &= ~USB_TXCSRH1_MODE;
         HWREGB(USB_RXCSRL_BASE(chidx)) = USB_RXCSRL1_REQPKT;
 
@@ -376,12 +389,19 @@ int musb_bulk_urb_init(struct usbh_bus *bus, uint8_t chidx, struct usbh_urb *urb
             return -USB_ERR_RANGE;
         }
 
+#ifdef CONFIG_USB_MUSB_WITHOUT_MULTIPOINT
+        HWREGB(USB_BASE + MUSB_FADDR_OFFSET) = (urb->hport->dev_addr & 0x7F);
+        HWREGB(USB_TXTYPE_BASE(chidx)) = (urb->ep->bEndpointAddress & 0x0f) | speed | USB_TXTYPE1_PROTO_BULK;
+        HWREGH(USB_TXMAP_BASE(chidx)) = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
+        HWREGB(USB_TXINTERVAL_BASE(chidx)) = 0;
+#else
         HWREGB(USB_TXADDR_BASE(chidx)) = urb->hport->dev_addr;
         HWREGB(USB_TXTYPE_BASE(chidx)) = (urb->ep->bEndpointAddress & 0x0f) | speed | USB_TXTYPE1_PROTO_BULK;
         HWREGH(USB_TXMAP_BASE(chidx)) = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
         HWREGB(USB_TXINTERVAL_BASE(chidx)) = 0;
         HWREGB(USB_TXHUBADDR_BASE(chidx)) = 0;
         HWREGB(USB_TXHUBPORT_BASE(chidx)) = 0;
+#endif
 
         if (buflen > USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize)) {
             buflen = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
@@ -419,12 +439,19 @@ int musb_intr_urb_init(struct usbh_bus *bus, uint8_t chidx, struct usbh_urb *urb
             return -USB_ERR_RANGE;
         }
 
+#ifdef CONFIG_USB_MUSB_WITHOUT_MULTIPOINT
+        HWREGB(USB_BASE + MUSB_FADDR_OFFSET) = (urb->hport->dev_addr & 0x7F);
+        HWREGB(USB_RXTYPE_BASE(chidx)) = (urb->ep->bEndpointAddress & 0x0f) | speed | USB_TXTYPE1_PROTO_INT;
+        HWREGH(USB_RXMAP_BASE(chidx)) = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
+        HWREGB(USB_RXINTERVAL_BASE(chidx)) = urb->ep->bInterval;
+#else
         HWREGB(USB_RXADDR_BASE(chidx)) = urb->hport->dev_addr;
         HWREGB(USB_RXTYPE_BASE(chidx)) = (urb->ep->bEndpointAddress & 0x0f) | speed | USB_TXTYPE1_PROTO_INT;
         HWREGH(USB_RXMAP_BASE(chidx)) = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
         HWREGB(USB_RXINTERVAL_BASE(chidx)) = urb->ep->bInterval;
         HWREGB(USB_RXHUBADDR_BASE(chidx)) = 0;
         HWREGB(USB_RXHUBPORT_BASE(chidx)) = 0;
+#endif
         HWREGB(USB_TXCSRH_BASE(chidx)) &= ~USB_TXCSRH1_MODE;
         HWREGB(USB_RXCSRL_BASE(chidx)) = USB_RXCSRL1_REQPKT;
 
@@ -435,12 +462,19 @@ int musb_intr_urb_init(struct usbh_bus *bus, uint8_t chidx, struct usbh_urb *urb
             return -USB_ERR_RANGE;
         }
 
+#ifdef CONFIG_USB_MUSB_WITHOUT_MULTIPOINT
+        HWREGB(USB_BASE + MUSB_FADDR_OFFSET) = (urb->hport->dev_addr & 0x7F);
+        HWREGB(USB_TXTYPE_BASE(chidx)) = (urb->ep->bEndpointAddress & 0x0f) | speed | USB_TXTYPE1_PROTO_INT;
+        HWREGH(USB_TXMAP_BASE(chidx)) = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
+        HWREGB(USB_TXINTERVAL_BASE(chidx)) = urb->ep->bInterval;
+#else
         HWREGB(USB_TXADDR_BASE(chidx)) = urb->hport->dev_addr;
         HWREGB(USB_TXTYPE_BASE(chidx)) = (urb->ep->bEndpointAddress & 0x0f) | speed | USB_TXTYPE1_PROTO_INT;
         HWREGH(USB_TXMAP_BASE(chidx)) = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
         HWREGB(USB_TXINTERVAL_BASE(chidx)) = urb->ep->bInterval;
         HWREGB(USB_TXHUBADDR_BASE(chidx)) = 0;
         HWREGB(USB_TXHUBPORT_BASE(chidx)) = 0;
+#endif
 
         if (buflen > USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize)) {
             buflen = USB_GET_MAXPACKETSIZE(urb->ep->wMaxPacketSize);
@@ -490,31 +524,36 @@ static uint8_t usbh_get_port_speed(struct usbh_bus *bus, const uint8_t port)
     return speed;
 }
 
-#if 0
-static int musb_pipe_alloc(void)
+static int musb_pipe_alloc(struct usbh_bus *bus)
 {
     int chidx;
+    uintptr_t flags;
 
+    flags = usb_osal_enter_critical_section();
     for (chidx = 1; chidx < CONFIG_USB_MUSB_PIPE_NUM; chidx++) {
         if (!g_musb_hcd[bus->hcd.hcd_id].pipe_pool[chidx].inuse) {
             g_musb_hcd[bus->hcd.hcd_id].pipe_pool[chidx].inuse = true;
+            usb_osal_leave_critical_section(flags);
             return chidx;
         }
     }
+    usb_osal_leave_critical_section(flags);
 
     return -1;
 }
-#endif
 
 static void musb_pipe_free(struct musb_pipe *pipe)
 {
+    uintptr_t flags;
+
+    flags = usb_osal_enter_critical_section();
     if (pipe->urb) {
         pipe->urb->hcpriv = NULL;
         pipe->urb = NULL;
     }
-#if 0
+
     pipe->inuse = false;
-#endif
+    usb_osal_leave_critical_section(flags);
 }
 
 __WEAK void usb_hc_low_level_init(struct usbh_bus *bus)
@@ -730,10 +769,9 @@ int usbh_submit_urb(struct usbh_urb *urb)
     if (USB_GET_ENDPOINT_TYPE(urb->ep->bmAttributes) == USB_ENDPOINT_TYPE_CONTROL) {
         chidx = 0;
     } else {
-        chidx = (urb->ep->bEndpointAddress & 0x0f);
-
-        if (chidx > (CONFIG_USB_MUSB_PIPE_NUM - 1)) {
-            return -USB_ERR_RANGE;
+        chidx = musb_pipe_alloc(bus);
+        if (chidx == -1) {
+            return -USB_ERR_NOMEM;
         }
     }
 
@@ -839,8 +877,6 @@ static void musb_urb_waitup(struct usbh_urb *urb)
     struct musb_pipe *pipe;
 
     pipe = (struct musb_pipe *)urb->hcpriv;
-    pipe->urb = NULL;
-    urb->hcpriv = NULL;
 
     if (urb->timeout) {
         usb_osal_sem_give(pipe->waitsem);
@@ -987,9 +1023,11 @@ void USBH_IRQHandler(uint8_t busid)
 
     bus = &g_usbhost_bus[busid];
 
+#if 0
     if (!(HWREGB(USB_BASE + MUSB_DEVCTL_OFFSET) & USB_DEVCTL_HOST)) {
         return;
     }
+#endif
 
     is = HWREGB(USB_BASE + MUSB_IS_OFFSET);
     txis = HWREGH(USB_BASE + MUSB_TXIS_OFFSET);

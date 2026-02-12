@@ -173,7 +173,7 @@
 
                 config BSP_USING_TIMER0
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                     Choose this option if you need TIMER function mode.
@@ -198,7 +198,7 @@
 
                 config BSP_USING_TIMER1
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                     Choose this option if you need TIMER function mode.
@@ -222,7 +222,7 @@
 
                 config BSP_USING_TIMER2
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                         Choose this option if you need TIMER function mode.
@@ -246,7 +246,7 @@
 
                 config BSP_USING_TIMER3
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                         Choose this option if you need TIMER function mode.
@@ -270,7 +270,7 @@
 
                 config BSP_USING_TIMER4
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                         Choose this option if you need TIMER function mode.
@@ -295,7 +295,7 @@
 
                 config BSP_USING_TIMER5
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                         Choose this option if you need TIMER function mode.
@@ -320,7 +320,7 @@
 
                 config BSP_USING_TIMER6
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                         Choose this option if you need TIMER function mode.
@@ -346,7 +346,7 @@
 
                 config BSP_USING_TIMER7
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                         Choose this option if you need TIMER function mode.
@@ -371,7 +371,7 @@
 
                 config BSP_USING_TIMER8
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                         Choose this option if you need TIMER function mode.
@@ -396,7 +396,7 @@
 
                 config BSP_USING_TIMER9
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                         Choose this option if you need TIMER function mode.
@@ -421,7 +421,7 @@
 
                 config BSP_USING_TIMER10
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                         Choose this option if you need TIMER function mode.
@@ -446,7 +446,7 @@
 
                 config BSP_USING_TIMER11
                     select BSP_USING_TIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "Timer"
                     help
                         Choose this option if you need TIMER function mode.

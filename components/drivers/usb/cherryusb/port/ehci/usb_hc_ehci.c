@@ -774,6 +774,8 @@ int usb_hc_init(struct usbh_bus *bus)
     volatile uint32_t timeout = 0;
     uint32_t regval;
 
+    bus->hcd.roothub.speed = USB_SPEED_HIGH;
+
     memset(&g_ehci_hcd[bus->hcd.hcd_id], 0, sizeof(struct ehci_hcd));
     memset(ehci_qh_pool[bus->hcd.hcd_id], 0, sizeof(struct ehci_qh_hw) * CONFIG_USB_EHCI_QH_NUM);
     memset(ehci_qtd_pool[bus->hcd.hcd_id], 0, sizeof(struct ehci_qtd_hw) * CONFIG_USB_EHCI_QTD_NUM);
@@ -1337,6 +1339,7 @@ int usbh_kill_urb(struct usbh_urb *urb)
     EHCI_HCOR->usbcmd |= (EHCI_USBCMD_PSEN | EHCI_USBCMD_ASEN);
 
     qh = (struct ehci_qh_hw *)urb->hcpriv;
+    qh->remove_in_iaad = 0;
     urb->errorcode = -USB_ERR_SHUTDOWN;
 
     if (urb->timeout) {
@@ -1347,6 +1350,7 @@ int usbh_kill_urb(struct usbh_urb *urb)
 
     if (remove_in_iaad) {
         volatile uint32_t timeout = 0;
+        EHCI_HCOR->usbsts = EHCI_USBSTS_IAA;
         EHCI_HCOR->usbcmd |= EHCI_USBCMD_IAAD;
         while (!(EHCI_HCOR->usbsts & EHCI_USBSTS_IAA)) {
             timeout++;

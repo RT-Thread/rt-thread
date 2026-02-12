@@ -1,0 +1,2542 @@
+/**
+*     Copyright (c) 2025, Nations Technologies Inc.
+* 
+*     All rights reserved.
+*
+*     This software is the exclusive property of Nations Technologies Inc. (Hereinafter 
+* referred to as NATIONS). This software, and the product of NATIONS described herein 
+* (Hereinafter referred to as the Product) are owned by NATIONS under the laws and treaties
+* of the People's Republic of China and other applicable jurisdictions worldwide.
+*
+*     NATIONS does not grant any license under its patents, copyrights, trademarks, or other 
+* intellectual property rights. Names and brands of third party may be mentioned or referred 
+* thereto (if any) for identification purposes only.
+*
+*     NATIONS reserves the right to make changes, corrections, enhancements, modifications, and 
+* improvements to this software at any time without notice. Please contact NATIONS and obtain 
+* the latest version of this software before placing orders.
+
+*     Although NATIONS has attempted to provide accurate and reliable information, NATIONS assumes 
+* no responsibility for the accuracy and reliability of this software.
+* 
+*     It is the responsibility of the user of this software to properly design, program, and test 
+* the functionality and safety of any application made of this information and any resulting product. 
+* In no event shall NATIONS be liable for any direct, indirect, incidental, special,exemplary, or 
+* consequential damages arising in any way out of the use of this software or the Product.
+*
+*     NATIONS Products are neither intended nor warranted for usage in systems or equipment, any
+* malfunction or failure of which may cause loss of human life, bodily injury or severe property 
+* damage. Such applications are deemed, "Insecure Usage".
+*
+*     All Insecure Usage shall be made at user's risk. User shall indemnify NATIONS and hold NATIONS 
+* harmless from and against all claims, costs, damages, and other liabilities, arising from or related 
+* to any customer's Insecure Usage.
+
+*     Any express or implied warranty with regard to this software or the Product, including,but not 
+* limited to, the warranties of merchantability, fitness for a particular purpose and non-infringement
+* are disclaimed to the fullest extent permitted by law.
+
+*     Unless otherwise explicitly permitted by NATIONS, anyone may not duplicate, modify, transcribe
+* or otherwise distribute this software for any purposes, in whole or in part.
+*
+*     NATIONS products and technologies shall not be used for or incorporated into any products or systems
+* whose manufacture, use, or sale is prohibited under any applicable domestic or foreign laws or regulations. 
+* User shall comply with any applicable export control laws and regulations promulgated and administered by 
+* the governments of any countries asserting jurisdiction over the parties or transactions.
+**/
+
+/**
+ * @file n32h76x_78x_rcc.h
+ * @author Nations
+ * @version v1.0.0
+ *
+ * @copyright Copyright (c) 2025, Nations Technologies Inc. All rights reserved.
+ */#ifndef __N32H76X_78X_RCC_H
+#define __N32H76X_78X_RCC_H
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
+/* Includes */
+#include "n32h76x_78x.h"
+
+/** RCC_Exported_Types **/  
+typedef struct
+{
+  uint32_t PLL1AClkFreq;     /* returns PLL1A clock frequency expressed in Hz */
+  uint32_t PLL1BClkFreq;     /* returns PLL1B clock frequency expressed in Hz */
+  uint32_t PLL1CClkFreq;     /* returns PLL1C clock frequency expressed in Hz */
+  uint32_t PLL2AClkFreq;     /* returns PLL2A clock frequency expressed in Hz */
+  uint32_t PLL2BClkFreq;     /* returns PLL2B clock frequency expressed in Hz */
+  uint32_t PLL2CClkFreq;     /* returns PLL2C clock frequency expressed in Hz */
+  uint32_t PLL3AClkFreq;     /* returns PLL3A clock frequency expressed in Hz */
+  uint32_t PLL3BClkFreq;     /* returns PLL3B clock frequency expressed in Hz */
+  uint32_t PLL3CClkFreq;     /* returns PLL3C clock frequency expressed in Hz */
+  uint32_t SysClkFreq;     /* returns SysClk clock frequency expressed in Hz */
+  uint32_t SysBusDivClkFreq;     /* returns SysBusDivClk clock frequency expressed in Hz */
+  uint32_t M4ClkFreq;     /* returns M4 clock frequency expressed in Hz */
+  uint32_t M7ClkFreq;     /* returns M7 clock frequency expressed in Hz */
+  uint32_t AXIClkFreq;     /* returns AXI clock frequency expressed in Hz */
+  uint32_t AHB1ClkFreq;     /* returns AHB1 clock frequency expressed in Hz */
+  uint32_t AHB2ClkFreq;     /* returns AHB2 clock frequency expressed in Hz */
+  uint32_t AHB5ClkFreq;     /* returns AHB5 clock frequency expressed in Hz */
+  uint32_t AHB6ClkFreq;     /* returns AHB6 clock frequency expressed in Hz */
+  uint32_t AHB9ClkFreq;     /* returns AHB9 clock frequency expressed in Hz */
+  uint32_t APB1ClkFreq;     /* returns APB1 clock frequency expressed in Hz */
+  uint32_t APB2ClkFreq;     /* returns APB2 clock frequency expressed in Hz */
+  uint32_t APB5ClkFreq;     /* returns APB5 clock frequency expressed in Hz */
+  uint32_t APB6ClkFreq;     /* returns APB6 clock frequency expressed in Hz */
+  uint32_t PeriphClkFreq;     /* returns Periph clock frequency expressed in Hz */
+
+}RCC_ClocksTypeDef;
+
+#define VCO_MIN  300000000 //300M
+#define VCO_MAX  1250000000//1.25G
+#define REF_MIN  1000000   //1M
+#define REF_MAX  64000000  //64M
+#define NR_MIN   1
+#define NR_MAX   64
+#define NF_MIN   2
+#define NF_MAX   4095
+
+/** RCC R_BIT_MASK **/
+#define RCC_REG_BIT_MASK  ((uint32_t)0x00000000)
+
+/** RCC_Flag **/
+#define RCC_FLAG_MASK          ((uint8_t)0x1F)
+#define RCC_FLAG_OFFSET        ((uint8_t)0x05)
+//SRCCTRL1=1
+#define RCC_FLAG_HSIRD          ((uint8_t)0x21) 
+#define RCC_FLAG_HSERD          ((uint8_t)0x23)
+#define RCC_FLAG_MSIRD          ((uint8_t)0x27)
+#define RCC_FLAG_AFEHSIRD       ((uint8_t)0x3E)
+#define RCC_FLAG_AFEMSIRD       ((uint8_t)0x3F)
+//SRCCTRL2=2
+#define RCC_FLAG_MSICALE       ((uint8_t)0x5C)
+#define RCC_FLAG_HSICALE       ((uint8_t)0x5D)
+#define RCC_FLAG_BOR           ((uint8_t)0x5E)
+//BDCTRL=3
+#define RCC_FLAG_LSIRD         ((uint8_t)0x61)
+#define RCC_FLAG_LSERD         ((uint8_t)0x65)
+#define RCC_FLAG_LSECSS        ((uint8_t)0x69)
+#define RCC_FLAG_LSISECRD      ((uint8_t)0x73)
+#define RCC_FLAG_RTCHSFSW      ((uint8_t)0x74)
+#define RCC_FLAG_RTCLSFSW      ((uint8_t)0x75)
+#define RCC_FLAG_LSIPF         ((uint8_t)0x79)
+#define RCC_FLAG_AFELSIRD      ((uint8_t)0x7E)
+#define RCC_FLAG_AFELSERD      ((uint8_t)0x7F)
+//CTRLSTS=4
+#define RCC_FLAG_PINRST        ((uint8_t)0x80)
+#define RCC_FLAG_PORRST        ((uint8_t)0x81)
+#define RCC_FLAG_CM7SFTRST     ((uint8_t)0x82)
+#define RCC_FLAG_CM4SFTRST     ((uint8_t)0x83)
+#define RCC_FLAG_IWDG2RST      ((uint8_t)0x84)
+#define RCC_FLAG_IWDG1RST      ((uint8_t)0x85)
+#define RCC_FLAG_WWDG2RST      ((uint8_t)0x86)
+#define RCC_FLAG_WWDG1RST      ((uint8_t)0x87)
+#define RCC_FLAG_MMURST        ((uint8_t)0x89)
+#define RCC_FLAG_BORRST        ((uint8_t)0x8B)
+#define RCC_FLAG_BKPEMCRST     ((uint8_t)0x8C)
+#define RCC_FLAG_RETEMCRST     ((uint8_t)0x8D)
+#define RCC_FLAG_C2LPRST       ((uint8_t)0x8E)
+#define RCC_FLAG_C1LPRST       ((uint8_t)0x8F)
+//PLLFD=5
+#define RCC_FLAG_SHRPLLG       ((uint8_t)0xAB)
+#define RCC_FLAG_PLL3G         ((uint8_t)0xAA)
+#define RCC_FLAG_PLL2G         ((uint8_t)0xA9)
+#define RCC_FLAG_PLL1G         ((uint8_t)0xA8)
+#define RCC_FLAG_SHRPLLF       ((uint8_t)0xA7)
+#define RCC_FLAG_PLL3F         ((uint8_t)0xA6)
+#define RCC_FLAG_PLL2F         ((uint8_t)0xA5)
+#define RCC_FLAG_PLL1F         ((uint8_t)0xA4)
+
+
+#define RCC_REMOVE_RESET_FLAG   (RCC_CTRLSTS_RMRSTF)
+#define RCC_RSTEN_M4REL         (RCC_M4RSTREL_EN) 
+
+/** AHB1 peripherals reset **/
+#define RCC_AHB1_PERIPHRST_SDMMC2          (RCC_AHB1RST1_SDMMC2RST)      
+#define RCC_AHB1_PERIPHRST_SDHOST2         (RCC_AHB1RST1_SDHOST2RST   )
+#define RCC_AHB1_PERIPHRST_USB2WRAP       (RCC_AHB1RST1_USB2WRAPRST )
+#define RCC_AHB1_PERIPHRST_USB2POR        (RCC_AHB1RST1_USB2PORRST  )
+#define RCC_AHB1_PERIPHRST_USB2           (RCC_AHB1RST1_USB2RST     )   
+#define RCC_AHB1_PERIPHRST_DMAMUX1        (RCC_AHB1RST1_DMAMUX1RST  )       
+#define RCC_AHB1_PERIPHRST_ADC1           (RCC_AHB1RST1_ADC1RST     )
+
+#define RCC_AHB1_PERIPHRST_ETH2           (RCC_AHB1RST2_ETH2RST)
+
+#define RCC_AHB1_PERIPHRST_ECCMAC         (RCC_AHB1RST3_ECCMACRST)
+#define RCC_AHB1_PERIPHRST_DMA1           (RCC_AHB1RST3_DMA1RST  )
+#define RCC_AHB1_PERIPHRST_DMA2           (RCC_AHB1RST3_DMA2RST  )
+#define RCC_AHB1_PERIPHRST_DMA3           (RCC_AHB1RST3_DMA3RST  )
+
+#define RCC_AHB1_PERIPHRST_ADC2           (RCC_AHB1RST4_ADC2RST) 
+#define RCC_AHB1_PERIPHRST_ADC3           (RCC_AHB1RST4_ADC3RST) 
+/** APB1 peripherals reset **/ 
+#define RCC_APB1_PERIPHRST_BTIM1          (RCC_APB1RST1_BTIM1RST )
+#define RCC_APB1_PERIPHRST_BTIM2          (RCC_APB1RST1_BTIM2RST )
+#define RCC_APB1_PERIPHRST_BTIM3          (RCC_APB1RST1_BTIM3RST )
+#define RCC_APB1_PERIPHRST_BTIM4          (RCC_APB1RST1_BTIM4RST )
+#define RCC_APB1_PERIPHRST_GTIMB1         (RCC_APB1RST1_GTIMB1RST)
+#define RCC_APB1_PERIPHRST_GTIMB2         (RCC_APB1RST1_GTIMB2RST)
+#define RCC_APB1_PERIPHRST_GTIMB3         (RCC_APB1RST1_GTIMB3RST)
+#define RCC_APB1_PERIPHRST_GTIMA4         (RCC_APB1RST1_GTIMA4RST)
+
+#define RCC_APB1_PERIPHRST_GTIMA5         (RCC_APB1RST2_GTIMA5RST)
+#define RCC_APB1_PERIPHRST_GTIMA6         (RCC_APB1RST2_GTIMA6RST)
+#define RCC_APB1_PERIPHRST_GTIMA7         (RCC_APB1RST2_GTIMA7RST)
+#define RCC_APB1_PERIPHRST_SPI3           (RCC_APB1RST2_SPI3RST  )
+#define RCC_APB1_PERIPHRST_DAC12           (RCC_APB1RST2_DAC12RST  )
+#define RCC_APB1_PERIPHRST_WWDG2          (RCC_APB1RST2_WWDG2RST )
+
+#define RCC_APB1_PERIPHRST_USART1         (RCC_APB1RST3_USART1RST)
+#define RCC_APB1_PERIPHRST_USART2         (RCC_APB1RST3_USART2RST)
+#define RCC_APB1_PERIPHRST_USART3         (RCC_APB1RST3_USART3RST)
+#define RCC_APB1_PERIPHRST_USART4         (RCC_APB1RST3_USART4RST)
+#define RCC_APB1_PERIPHRST_UART9          (RCC_APB1RST3_UART9RST )
+#define RCC_APB1_PERIPHRST_UART10          (RCC_APB1RST3_UART10RST )
+#define RCC_APB1_PERIPHRST_UART11          (RCC_APB1RST3_UART11RST )
+#define RCC_APB1_PERIPHRST_UART12          (RCC_APB1RST3_UART12RST )
+
+#define RCC_APB1_PERIPHRST_I2S3           (RCC_APB1RST4_I2S3RST  )
+#define RCC_APB1_PERIPHRST_I2S4           (RCC_APB1RST4_I2S4RST  )
+#define RCC_APB1_PERIPHRST_I2C1           (RCC_APB1RST4_I2C1RST  )
+#define RCC_APB1_PERIPHRST_I2C2           (RCC_APB1RST4_I2C2RST  )
+#define RCC_APB1_PERIPHRST_I2C3           (RCC_APB1RST4_I2C3RST  )
+
+#define RCC_APB1_PERIPHRST_FDCAN1         (RCC_APB1RST5_FDCAN1RST)
+#define RCC_APB1_PERIPHRST_FDCAN2         (RCC_APB1RST5_FDCAN2RST)
+#define RCC_APB1_PERIPHRST_FDCAN5         (RCC_APB1RST5_FDCAN5RST)
+#define RCC_APB1_PERIPHRST_FDCAN6         (RCC_APB1RST5_FDCAN6RST)
+#define RCC_APB1_PERIPHRST_CAHI           (RCC_APB1RST5_CAHIRST  )
+#define RCC_APB1_PERIPHRST_CAHD           (RCC_APB1RST5_CAHDRST  )
+/** AHB2 peripherals reset **/
+#define RCC_AHB2_PERIPHRST_DAC56           (RCC_AHB2RST1_DAC56RST    )
+#define RCC_AHB2_PERIPHRST_DAC34           (RCC_AHB2RST1_DAC34RST    )
+#define RCC_AHB2_PERIPHRST_USB1WRAP       (RCC_AHB2RST1_USB1WRAPRST)
+#define RCC_AHB2_PERIPHRST_USB1POR        (RCC_AHB2RST1_USB1PORRST )
+#define RCC_AHB2_PERIPHRST_USB1           (RCC_AHB2RST1_USB1RST    )
+#define RCC_AHB2_PERIPHRST_ETH1           (RCC_AHB2RST1_ETH1RST    )
+#define RCC_AHB2_PERIPHRST_ECCM2          (RCC_AHB2RST1_ECCM2RST   )
+#define RCC_AHB2_PERIPHRST_CORDIC         (RCC_AHB2RST1_CORDICRST  )
+#define RCC_AHB2_PERIPHRST_SDPU           (RCC_AHB2RST1_SDPURST    )
+#define RCC_AHB2_PERIPHRST_FMAC           (RCC_AHB2RST1_FMACRST    )
+/** APB2 peripherals reset **/ 
+#define RCC_APB2_PERIPHRST_ATIM1          (RCC_APB2RST1_ATIM1RST  )
+#define RCC_APB2_PERIPHRST_ATIM2          (RCC_APB2RST1_ATIM2RST  )
+#define RCC_APB2_PERIPHRST_GTIMA1         (RCC_APB2RST1_GTIMA1RST )
+#define RCC_APB2_PERIPHRST_GTIMA2         (RCC_APB2RST1_GTIMA2RST )
+#define RCC_APB2_PERIPHRST_GTIMA3         (RCC_APB2RST1_GTIMA3RST )
+#define RCC_APB2_PERIPHRST_SHRTIM1        (RCC_APB2RST1_SHRTIM1RST)
+#define RCC_APB2_PERIPHRST_SHRTIM2        (RCC_APB2RST1_SHRTIM2RST)
+
+#define RCC_APB2_PERIPHRST_I2S1           (RCC_APB2RST2_I2S1RST   )
+#define RCC_APB2_PERIPHRST_I2S2           (RCC_APB2RST2_I2S2RST   )
+#define RCC_APB2_PERIPHRST_SPI1           (RCC_APB2RST2_SPI1RST   )
+#define RCC_APB2_PERIPHRST_SPI2           (RCC_APB2RST2_SPI2RST   )
+#define RCC_APB2_PERIPHRST_DSMU           (RCC_APB2RST2_DSMURST   )
+#define RCC_APB2_PERIPHRST_I2C4           (RCC_APB2RST2_I2C4RST   )
+#define RCC_APB2_PERIPHRST_I2C5           (RCC_APB2RST2_I2C5RST   )
+#define RCC_APB2_PERIPHRST_I2C6           (RCC_APB2RST2_I2C6RST   )
+
+#define RCC_APB2_PERIPHRST_USART5         (RCC_APB2RST3_USART5RST )
+#define RCC_APB2_PERIPHRST_USART6         (RCC_APB2RST3_USART6RST )
+#define RCC_APB2_PERIPHRST_USART7         (RCC_APB2RST3_USART7RST )
+#define RCC_APB2_PERIPHRST_USART8         (RCC_APB2RST3_USART8RST )
+#define RCC_APB2_PERIPHRST_UART13          (RCC_APB2RST3_UART13RST  )
+#define RCC_APB2_PERIPHRST_UART14          (RCC_APB2RST3_UART14RST  )
+#define RCC_APB2_PERIPHRST_UART15          (RCC_APB2RST3_UART15RST  )
+
+#define RCC_APB2_PERIPHRST_FDCAN3         (RCC_APB2RST4_FDCAN3RST )
+#define RCC_APB2_PERIPHRST_FDCAN4         (RCC_APB2RST4_FDCAN4RST )
+#define RCC_APB2_PERIPHRST_FDCAN7         (RCC_APB2RST4_FDCAN7RST )
+#define RCC_APB2_PERIPHRST_FDCAN8         (RCC_APB2RST4_FDCAN8RST )
+/** AHB5 peripherals reset **/
+#define RCC_AHB5_PERIPHRST_GPIOA          (RCC_AHB5RST1_GPIOARST)
+#define RCC_AHB5_PERIPHRST_GPIOB          (RCC_AHB5RST1_GPIOBRST)
+#define RCC_AHB5_PERIPHRST_GPIOC          (RCC_AHB5RST1_GPIOCRST)
+#define RCC_AHB5_PERIPHRST_GPIOD          (RCC_AHB5RST1_GPIODRST)
+#define RCC_AHB5_PERIPHRST_GPIOE          (RCC_AHB5RST1_GPIOERST)
+#define RCC_AHB5_PERIPHRST_GPIOF          (RCC_AHB5RST1_GPIOFRST)
+#define RCC_AHB5_PERIPHRST_GPIOG          (RCC_AHB5RST1_GPIOGRST)
+#define RCC_AHB5_PERIPHRST_GPIOH          (RCC_AHB5RST1_GPIOHRST)
+
+#define RCC_AHB5_PERIPHRST_GPIOI          (RCC_AHB5RST2_GPIOIRST)
+#define RCC_AHB5_PERIPHRST_GPIOJ          (RCC_AHB5RST2_GPIOJRST)
+#define RCC_AHB5_PERIPHRST_GPIOK          (RCC_AHB5RST2_GPIOKRST)
+#define RCC_AHB5_PERIPHRST_ECCM3          (RCC_AHB5RST2_ECCM3RST)
+#define RCC_AHB5_PERIPHRST_PWR            (RCC_AHB5RST2_PWRRST  )
+#define RCC_AHB5_PERIPHRST_CRC            (RCC_AHB5RST2_CRCRST  )
+#define RCC_AHB5_PERIPHRST_SEMA4          (RCC_AHB5RST2_SEMA4RST)
+#define RCC_AHB5_PERIPHRST_AFIO           (RCC_AHB5RST2_AFIORST )
+/** APB5 peripherals reset **/
+#define RCC_APB5_PERIPHRST_ATIM3          (RCC_APB5RST1_ATIM3RST)
+#define RCC_APB5_PERIPHRST_ATIM4          (RCC_APB5RST1_ATIM4RST)
+#define RCC_APB5_PERIPHRST_SPI4           (RCC_APB5RST1_SPI4RST )
+#define RCC_APB5_PERIPHRST_SPI5           (RCC_APB5RST1_SPI5RST )
+#define RCC_APB5_PERIPHRST_SPI6           (RCC_APB5RST1_SPI6RST )
+#define RCC_APB5_PERIPHRST_SPI7           (RCC_APB5RST1_SPI7RST )
+
+#define RCC_APB5_PERIPHRST_I2C7           (RCC_APB5RST2_I2C7RST )
+#define RCC_APB5_PERIPHRST_I2C8           (RCC_APB5RST2_I2C8RST )
+#define RCC_APB5_PERIPHRST_I2C9           (RCC_APB5RST2_I2C9RST )
+#define RCC_APB5_PERIPHRST_I2C10          (RCC_APB5RST2_I2C10RST)
+/** AXI/AHB6/APB6 peripherals reset **/
+#define RCC_AXI_PERIPHRST_JPEGD          (RCC_AXIRST1_JPEGDRST    )
+#define RCC_AXI_PERIPHRST_JPEGE          (RCC_AXIRST1_JPEGERST    )
+#define RCC_AXI_PERIPHRST_DMAMUX2        (RCC_AXIRST1_DMAMUX2RST  )
+#define RCC_AXI_PERIPHRST_MDMA           (RCC_AXIRST1_MDMARST     )
+#define RCC_AXI_PERIPHRST_SDMMC1          (RCC_AXIRST1_SDMMC1RST)
+#define RCC_AXI_PERIPHRST_SDHOST1         (RCC_AXIRST1_SDHOST1RST   )
+#define RCC_AXI_PERIPHRST_ECCM1          (RCC_AXIRST1_ECCM1RST    )
+#define RCC_AXI_PERIPHRST_OTPC           (RCC_AXIRST1_OTPCRST     )
+
+#define RCC_AXI_PERIPHRST_DSICFG         (RCC_AXIRST2_DSICFGRST   )
+#define RCC_AXI_PERIPHRST_DSI            (RCC_AXIRST2_DSIRST      )
+#define RCC_AXI_PERIPHRST_LCDC            (RCC_AXIRST2_LCDCRST      )
+#define RCC_AXI_PERIPHRST_DVP1           (RCC_AXIRST2_DVP1RST     )
+#define RCC_AXI_PERIPHRST_DVP2           (RCC_AXIRST2_DVP2RST     )
+#define RCC_AXI_PERIPHRST_WWDG1          (RCC_AXIRST2_WWDG1RST    )
+
+#define RCC_AXI_PERIPHRST_GPU            (RCC_AXIRST3_GPURST      )
+
+#define RCC_AXI_PERIPHRST_XSPI1          (RCC_AXIRST4_XSPI1RST    )
+#define RCC_AXI_PERIPHRST_XSPI2          (RCC_AXIRST4_XSPI2RST    )
+#define RCC_AXI_PERIPHRST_FEMCCFG        (RCC_AXIRST4_FEMCCFGRST  )
+#define RCC_AXI_PERIPHRST_FEMC           (RCC_AXIRST4_FEMCRST     )
+#define RCC_AXI_PERIPHRST_SDRAM          (RCC_AXIRST4_SDRAMRST    )
+/** AHB9 peripherals reset **/
+#define RCC_AHB9_PERIPHRST_ESC          (RCC_AHB9RST1_ESCRST)
+/** Retention domain peripherals reset **/
+#define RCC_RD_PERIPHRST_LPTIM1        (RCC_RDRST1_LPTIM1RST )
+#define RCC_RD_PERIPHRST_LPTIM2        (RCC_RDRST1_LPTIM2RST )
+#define RCC_RD_PERIPHRST_LPTIM3        (RCC_RDRST1_LPTIM3RST )
+#define RCC_RD_PERIPHRST_LPTIM4        (RCC_RDRST1_LPTIM4RST )
+#define RCC_RD_PERIPHRST_LPTIM5        (RCC_RDRST1_LPTIM5RST )
+#define RCC_RD_PERIPHRST_LPUART1       (RCC_RDRST1_LPUART1RST)
+#define RCC_RD_PERIPHRST_LPUART2       (RCC_RDRST1_LPUART2RST)
+
+#define RCC_RD_PERIPHRST_COMP          (RCC_RDRST2_COMPRST)
+
+
+/** AHB1 peripherals enable **/
+#define RCC_AHB1_PERIPHEN_M7_SDMMC2           (RCC_AHB1EN1_M7SDMMC2EN   ) 
+#define RCC_AHB1_PERIPHEN_M4_SDMMC2           (RCC_AHB1EN1_M4SDMMC2EN   ) 
+#define RCC_AHB1_PERIPHEN_M7_SDMMC2LP         (RCC_AHB1EN1_M7SDMMC2LPEN ) 
+#define RCC_AHB1_PERIPHEN_M4_SDMMC2LP         (RCC_AHB1EN1_M4SDMMC2LPEN ) 
+#define RCC_AHB1_PERIPHEN_M7_USB2             (RCC_AHB1EN1_M7USB2EN     ) 
+#define RCC_AHB1_PERIPHEN_M4_USB2             (RCC_AHB1EN1_M4USB2EN     ) 
+#define RCC_AHB1_PERIPHEN_M7_USB2LP           (RCC_AHB1EN1_M7USB2LPEN   ) 
+#define RCC_AHB1_PERIPHEN_M4_USB2LP           (RCC_AHB1EN1_M4USB2LPEN   ) 
+#define RCC_AHB1_PERIPHEN_M7_DMAMUX1             (RCC_AHB1EN1_M7DMAMUX1EN     ) 
+#define RCC_AHB1_PERIPHEN_M4_DMAMUX1             (RCC_AHB1EN1_M4DMAMUX1EN     ) 
+#define RCC_AHB1_PERIPHEN_M7_DMAMUX1LP           (RCC_AHB1EN1_M7DMAMUX1LPEN   ) 
+#define RCC_AHB1_PERIPHEN_M4_DMAMUX1LP           (RCC_AHB1EN1_M4DMAMUX1LPEN   ) 
+#define RCC_AHB1_PERIPHEN_M7_ADC1PLL          (RCC_AHB1EN1_M7ADC1PLLEN  ) 
+#define RCC_AHB1_PERIPHEN_M4_ADC1PLL          (RCC_AHB1EN1_M4ADC1PLLEN  ) 
+#define RCC_AHB1_PERIPHEN_M7_ADC1PLLLP        (RCC_AHB1EN1_M7ADC1PLLLPEN) 
+#define RCC_AHB1_PERIPHEN_M4_ADC1PLLLP        (RCC_AHB1EN1_M4ADC1PLLLPEN) 
+#define RCC_AHB1_PERIPHEN_M7_ADC1SYS          (RCC_AHB1EN1_M7ADC1SYSEN  ) 
+#define RCC_AHB1_PERIPHEN_M4_ADC1SYS          (RCC_AHB1EN1_M4ADC1SYSEN  ) 
+#define RCC_AHB1_PERIPHEN_M7_ADC1SYSLP        (RCC_AHB1EN1_M7ADC1SYSLPEN) 
+#define RCC_AHB1_PERIPHEN_M4_ADC1SYSLP        (RCC_AHB1EN1_M4ADC1SYSLPEN) 
+#define RCC_AHB1_PERIPHEN_M7_ADC1BUS          (RCC_AHB1EN1_M7ADC1BUSEN  ) 
+#define RCC_AHB1_PERIPHEN_M4_ADC1BUS          (RCC_AHB1EN1_M4ADC1BUSEN  ) 
+#define RCC_AHB1_PERIPHEN_M7_ADC1BUSLP        (RCC_AHB1EN1_M7ADC1BUSLPEN) 
+#define RCC_AHB1_PERIPHEN_M4_ADC1BUSLP        (RCC_AHB1EN1_M4ADC1BUSLPEN) 
+
+#define RCC_AHB1_PERIPHEN_M7_ETH2TX           (RCC_AHB1EN2_M7ETH2TXEN   ) 
+#define RCC_AHB1_PERIPHEN_M4_ETH2TX           (RCC_AHB1EN2_M4ETH2TXEN   ) 
+#define RCC_AHB1_PERIPHEN_M7_ETH2TXLP         (RCC_AHB1EN2_M7ETH2TXLPEN ) 
+#define RCC_AHB1_PERIPHEN_M4_ETH2TXLP         (RCC_AHB1EN2_M4ETH2TXLPEN ) 
+#define RCC_AHB1_PERIPHEN_M7_ETH2RX           (RCC_AHB1EN2_M7ETH2RXEN   ) 
+#define RCC_AHB1_PERIPHEN_M4_ETH2RX           (RCC_AHB1EN2_M4ETH2RXEN   ) 
+#define RCC_AHB1_PERIPHEN_M7_ETH2RXLP         (RCC_AHB1EN2_M7ETH2RXLPEN ) 
+#define RCC_AHB1_PERIPHEN_M4_ETH2RXLP         (RCC_AHB1EN2_M4ETH2RXLPEN ) 
+#define RCC_AHB1_PERIPHEN_M7_ETH2MAC          (RCC_AHB1EN2_M7ETH2MACEN  ) 
+#define RCC_AHB1_PERIPHEN_M4_ETH2MAC          (RCC_AHB1EN2_M4ETH2MACEN  ) 
+#define RCC_AHB1_PERIPHEN_M7_ETH2MACLP        (RCC_AHB1EN2_M7ETH2MACLPEN) 
+#define RCC_AHB1_PERIPHEN_M4_ETH2MACLP        (RCC_AHB1EN2_M4ETH2MACLPEN)
+
+#define RCC_AHB1_PERIPHEN_M7_ECCMAC           (RCC_AHB1EN3_M7ECCMACEN   ) 
+#define RCC_AHB1_PERIPHEN_M4_ECCMAC           (RCC_AHB1EN3_M4ECCMACEN   ) 
+#define RCC_AHB1_PERIPHEN_M7_ECCMACLP         (RCC_AHB1EN3_M7ECCMACLPEN ) 
+#define RCC_AHB1_PERIPHEN_M4_ECCMACLP         (RCC_AHB1EN3_M4ECCMACLPEN ) 
+#define RCC_AHB1_PERIPHEN_M7_DMA1             (RCC_AHB1EN3_M7DMA1EN     ) 
+#define RCC_AHB1_PERIPHEN_M4_DMA1             (RCC_AHB1EN3_M4DMA1EN     ) 
+#define RCC_AHB1_PERIPHEN_M7_DMA1LP           (RCC_AHB1EN3_M7DMA1LPEN   ) 
+#define RCC_AHB1_PERIPHEN_M4_DMA1LP           (RCC_AHB1EN3_M4DMA1LPEN   ) 
+#define RCC_AHB1_PERIPHEN_M7_DMA2             (RCC_AHB1EN3_M7DMA2EN     ) 
+#define RCC_AHB1_PERIPHEN_M4_DMA2             (RCC_AHB1EN3_M4DMA2EN     ) 
+#define RCC_AHB1_PERIPHEN_M7_DMA2LP           (RCC_AHB1EN3_M7DMA2LPEN   ) 
+#define RCC_AHB1_PERIPHEN_M4_DMA2LP           (RCC_AHB1EN3_M4DMA2LPEN   ) 
+#define RCC_AHB1_PERIPHEN_M7_DMA3             (RCC_AHB1EN3_M7DMA3EN     ) 
+#define RCC_AHB1_PERIPHEN_M4_DMA3             (RCC_AHB1EN3_M4DMA3EN     ) 
+#define RCC_AHB1_PERIPHEN_M7_DMA3LP           (RCC_AHB1EN3_M7DMA3LPEN   ) 
+#define RCC_AHB1_PERIPHEN_M4_DMA3LP           (RCC_AHB1EN3_M4DMA3LPEN   ) 
+
+#define RCC_AHB1_PERIPHEN_M7_ADC2PLL          (RCC_AHB1EN4_M7ADC2PLLEN  ) 
+#define RCC_AHB1_PERIPHEN_M4_ADC2PLL          (RCC_AHB1EN4_M4ADC2PLLEN  ) 
+#define RCC_AHB1_PERIPHEN_M7_ADC2PLLLP        (RCC_AHB1EN4_M7ADC2PLLLPEN) 
+#define RCC_AHB1_PERIPHEN_M4_ADC2PLLLP        (RCC_AHB1EN4_M4ADC2PLLLPEN) 
+#define RCC_AHB1_PERIPHEN_M7_ADC2SYS          (RCC_AHB1EN4_M7ADC2SYSEN  ) 
+#define RCC_AHB1_PERIPHEN_M4_ADC2SYS          (RCC_AHB1EN4_M4ADC2SYSEN  ) 
+#define RCC_AHB1_PERIPHEN_M7_ADC2SYSLP        (RCC_AHB1EN4_M7ADC2SYSLPEN) 
+#define RCC_AHB1_PERIPHEN_M4_ADC2SYSLP        (RCC_AHB1EN4_M4ADC2SYSLPEN) 
+#define RCC_AHB1_PERIPHEN_M7_ADC2BUS          (RCC_AHB1EN4_M7ADC2BUSEN  ) 
+#define RCC_AHB1_PERIPHEN_M4_ADC2BUS          (RCC_AHB1EN4_M4ADC2BUSEN  ) 
+#define RCC_AHB1_PERIPHEN_M7_ADC2BUSLP        (RCC_AHB1EN4_M7ADC2BUSLPEN) 
+#define RCC_AHB1_PERIPHEN_M4_ADC2BUSLP        (RCC_AHB1EN4_M4ADC2BUSLPEN) 
+#define RCC_AHB1_PERIPHEN_M7_ADC3PLL          (RCC_AHB1EN4_M7ADC3PLLEN  ) 
+#define RCC_AHB1_PERIPHEN_M4_ADC3PLL          (RCC_AHB1EN4_M4ADC3PLLEN  ) 
+#define RCC_AHB1_PERIPHEN_M7_ADC3PLLLP        (RCC_AHB1EN4_M7ADC3PLLLPEN) 
+#define RCC_AHB1_PERIPHEN_M4_ADC3PLLLP        (RCC_AHB1EN4_M4ADC3PLLLPEN) 
+#define RCC_AHB1_PERIPHEN_M7_ADC3SYS          (RCC_AHB1EN4_M7ADC3SYSEN  ) 
+#define RCC_AHB1_PERIPHEN_M4_ADC3SYS          (RCC_AHB1EN4_M4ADC3SYSEN  ) 
+#define RCC_AHB1_PERIPHEN_M7_ADC3SYSLP        (RCC_AHB1EN4_M7ADC3SYSLPEN) 
+#define RCC_AHB1_PERIPHEN_M4_ADC3SYSLP        (RCC_AHB1EN4_M4ADC3SYSLPEN) 
+#define RCC_AHB1_PERIPHEN_M7_ADC3BUS          (RCC_AHB1EN4_M7ADC3BUSEN  ) 
+#define RCC_AHB1_PERIPHEN_M4_ADC3BUS          (RCC_AHB1EN4_M4ADC3BUSEN  ) 
+#define RCC_AHB1_PERIPHEN_M7_ADC3BUSLP        (RCC_AHB1EN4_M7ADC3BUSLPEN) 
+#define RCC_AHB1_PERIPHEN_M4_ADC3BUSLP        (RCC_AHB1EN4_M4ADC3BUSLPEN) 
+/** APB1 peripherals enable **/
+#define RCC_APB1_PERIPHEN_M7_BTIM1            (RCC_APB1EN1_M7BTIM1EN   ) 
+#define RCC_APB1_PERIPHEN_M4_BTIM1            (RCC_APB1EN1_M4BTIM1EN   ) 
+#define RCC_APB1_PERIPHEN_M7_BTIM1LP          (RCC_APB1EN1_M7BTIM1LPEN ) 
+#define RCC_APB1_PERIPHEN_M4_BTIM1LP          (RCC_APB1EN1_M4BTIM1LPEN ) 
+#define RCC_APB1_PERIPHEN_M7_BTIM2            (RCC_APB1EN1_M7BTIM2EN   ) 
+#define RCC_APB1_PERIPHEN_M4_BTIM2            (RCC_APB1EN1_M4BTIM2EN   ) 
+#define RCC_APB1_PERIPHEN_M7_BTIM2LP          (RCC_APB1EN1_M7BTIM2LPEN ) 
+#define RCC_APB1_PERIPHEN_M4_BTIM2LP          (RCC_APB1EN1_M4BTIM2LPEN ) 
+#define RCC_APB1_PERIPHEN_M7_BTIM3            (RCC_APB1EN1_M7BTIM3EN   ) 
+#define RCC_APB1_PERIPHEN_M4_BTIM3            (RCC_APB1EN1_M4BTIM3EN   ) 
+#define RCC_APB1_PERIPHEN_M7_BTIM3LP          (RCC_APB1EN1_M7BTIM3LPEN ) 
+#define RCC_APB1_PERIPHEN_M4_BTIM3LP          (RCC_APB1EN1_M4BTIM3LPEN ) 
+#define RCC_APB1_PERIPHEN_M7_BTIM4            (RCC_APB1EN1_M7BTIM4EN   ) 
+#define RCC_APB1_PERIPHEN_M4_BTIM4            (RCC_APB1EN1_M4BTIM4EN   ) 
+#define RCC_APB1_PERIPHEN_M7_BTIM4LP          (RCC_APB1EN1_M7BTIM4LPEN ) 
+#define RCC_APB1_PERIPHEN_M4_BTIM4LP          (RCC_APB1EN1_M4BTIM4LPEN ) 
+#define RCC_APB1_PERIPHEN_M7_GTIMB1           (RCC_APB1EN1_M7GTIMB1EN  ) 
+#define RCC_APB1_PERIPHEN_M4_GTIMB1           (RCC_APB1EN1_M4GTIMB1EN  ) 
+#define RCC_APB1_PERIPHEN_M7_GTIMB1LP         (RCC_APB1EN1_M7GTIMB1LPEN) 
+#define RCC_APB1_PERIPHEN_M4_GTIMB1LP         (RCC_APB1EN1_M4GTIMB1LPEN) 
+#define RCC_APB1_PERIPHEN_M7_GTIMB2           (RCC_APB1EN1_M7GTIMB2EN  ) 
+#define RCC_APB1_PERIPHEN_M4_GTIMB2           (RCC_APB1EN1_M4GTIMB2EN  ) 
+#define RCC_APB1_PERIPHEN_M7_GTIMB2LP         (RCC_APB1EN1_M7GTIMB2LPEN) 
+#define RCC_APB1_PERIPHEN_M4_GTIMB2LP         (RCC_APB1EN1_M4GTIMB2LPEN) 
+#define RCC_APB1_PERIPHEN_M7_GTIMB3           (RCC_APB1EN1_M7GTIMB3EN  ) 
+#define RCC_APB1_PERIPHEN_M4_GTIMB3           (RCC_APB1EN1_M4GTIMB3EN  ) 
+#define RCC_APB1_PERIPHEN_M7_GTIMB3LP         (RCC_APB1EN1_M7GTIMB3LPEN) 
+#define RCC_APB1_PERIPHEN_M4_GTIMB3LP         (RCC_APB1EN1_M4GTIMB3LPEN) 
+#define RCC_APB1_PERIPHEN_M7_GTIMA4           (RCC_APB1EN1_M7GTIMA4EN  ) 
+#define RCC_APB1_PERIPHEN_M4_GTIMA4           (RCC_APB1EN1_M4GTIMA4EN  ) 
+#define RCC_APB1_PERIPHEN_M7_GTIMA4LP         (RCC_APB1EN1_M7GTIMA4LPEN) 
+#define RCC_APB1_PERIPHEN_M4_GTIMA4LP         (RCC_APB1EN1_M4GTIMA4LPEN) 
+
+#define RCC_APB1_PERIPHEN_M7_GTIMA5           (RCC_APB1EN2_M7GTIMA5EN  ) 
+#define RCC_APB1_PERIPHEN_M4_GTIMA5           (RCC_APB1EN2_M4GTIMA5EN  ) 
+#define RCC_APB1_PERIPHEN_M7_GTIMA5LP         (RCC_APB1EN2_M7GTIMA5LPEN) 
+#define RCC_APB1_PERIPHEN_M4_GTIMA5LP         (RCC_APB1EN2_M4GTIMA5LPEN) 
+#define RCC_APB1_PERIPHEN_M7_GTIMA6           (RCC_APB1EN2_M7GTIMA6EN  ) 
+#define RCC_APB1_PERIPHEN_M4_GTIMA6           (RCC_APB1EN2_M4GTIMA6EN  ) 
+#define RCC_APB1_PERIPHEN_M7_GTIMA6LP         (RCC_APB1EN2_M7GTIMA6LPEN) 
+#define RCC_APB1_PERIPHEN_M4_GTIMA6LP         (RCC_APB1EN2_M4GTIMA6LPEN) 
+#define RCC_APB1_PERIPHEN_M7_GTIMA7           (RCC_APB1EN2_M7GTIMA7EN  ) 
+#define RCC_APB1_PERIPHEN_M4_GTIMA7           (RCC_APB1EN2_M4GTIMA7EN  ) 
+#define RCC_APB1_PERIPHEN_M7_GTIMA7LP         (RCC_APB1EN2_M7GTIMA7LPEN) 
+#define RCC_APB1_PERIPHEN_M4_GTIMA7LP         (RCC_APB1EN2_M4GTIMA7LPEN) 
+#define RCC_APB1_PERIPHEN_M7_SPI3             (RCC_APB1EN2_M7SPI3EN    ) 
+#define RCC_APB1_PERIPHEN_M4_SPI3             (RCC_APB1EN2_M4SPI3EN    ) 
+#define RCC_APB1_PERIPHEN_M7_SPI3LP           (RCC_APB1EN2_M7SPI3LPEN  ) 
+#define RCC_APB1_PERIPHEN_M4_SPI3LP           (RCC_APB1EN2_M4SPI3LPEN  ) 
+#define RCC_APB1_PERIPHEN_M7_DAC12             (RCC_APB1EN2_M7DAC12EN    ) 
+#define RCC_APB1_PERIPHEN_M4_DAC12             (RCC_APB1EN2_M4DAC12EN    ) 
+#define RCC_APB1_PERIPHEN_M7_DAC12LP           (RCC_APB1EN2_M7DAC12LPEN  ) 
+#define RCC_APB1_PERIPHEN_M4_DAC12LP           (RCC_APB1EN2_M4DAC12LPEN  ) 
+#define RCC_APB1_PERIPHEN_M7_WWDG2            (RCC_APB1EN2_M7WWDG2EN   ) 
+#define RCC_APB1_PERIPHEN_M4_WWDG2            (RCC_APB1EN2_M4WWDG2EN   ) 
+#define RCC_APB1_PERIPHEN_M7_WWDG2LP          (RCC_APB1EN2_M7WWDG2LPEN ) 
+#define RCC_APB1_PERIPHEN_M4_WWDG2LP          (RCC_APB1EN2_M4WWDG2LPEN )
+
+
+#define RCC_APB1_PERIPHEN_M7_USART1           (RCC_APB1EN3_M7USART1EN  ) 
+#define RCC_APB1_PERIPHEN_M4_USART1           (RCC_APB1EN3_M4USART1EN  ) 
+#define RCC_APB1_PERIPHEN_M7_USART1LP         (RCC_APB1EN3_M7USART1LPEN) 
+#define RCC_APB1_PERIPHEN_M4_USART1LP         (RCC_APB1EN3_M4USART1LPEN) 
+#define RCC_APB1_PERIPHEN_M7_USART2           (RCC_APB1EN3_M7USART2EN  ) 
+#define RCC_APB1_PERIPHEN_M4_USART2           (RCC_APB1EN3_M4USART2EN  ) 
+#define RCC_APB1_PERIPHEN_M7_USART2LP         (RCC_APB1EN3_M7USART2LPEN) 
+#define RCC_APB1_PERIPHEN_M4_USART2LP         (RCC_APB1EN3_M4USART2LPEN) 
+#define RCC_APB1_PERIPHEN_M7_USART3           (RCC_APB1EN3_M7USART3EN  ) 
+#define RCC_APB1_PERIPHEN_M4_USART3           (RCC_APB1EN3_M4USART3EN  ) 
+#define RCC_APB1_PERIPHEN_M7_USART3LP         (RCC_APB1EN3_M7USART3LPEN) 
+#define RCC_APB1_PERIPHEN_M4_USART3LP         (RCC_APB1EN3_M4USART3LPEN) 
+#define RCC_APB1_PERIPHEN_M7_USART4           (RCC_APB1EN3_M7USART4EN  ) 
+#define RCC_APB1_PERIPHEN_M4_USART4           (RCC_APB1EN3_M4USART4EN  ) 
+#define RCC_APB1_PERIPHEN_M7_USART4LP         (RCC_APB1EN3_M7USART4LPEN) 
+#define RCC_APB1_PERIPHEN_M4_USART4LP         (RCC_APB1EN3_M4USART4LPEN) 
+#define RCC_APB1_PERIPHEN_M7_UART9            (RCC_APB1EN3_M7UART9EN   ) 
+#define RCC_APB1_PERIPHEN_M4_UART9            (RCC_APB1EN3_M4UART9EN   ) 
+#define RCC_APB1_PERIPHEN_M7_UART9LP          (RCC_APB1EN3_M7UART9LPEN ) 
+#define RCC_APB1_PERIPHEN_M4_UART9LP          (RCC_APB1EN3_M4UART9LPEN ) 
+#define RCC_APB1_PERIPHEN_M7_UART10            (RCC_APB1EN3_M7UART10EN   ) 
+#define RCC_APB1_PERIPHEN_M4_UART10            (RCC_APB1EN3_M4UART10EN   ) 
+#define RCC_APB1_PERIPHEN_M7_UART10LP          (RCC_APB1EN3_M7UART10LPEN ) 
+#define RCC_APB1_PERIPHEN_M4_UART10LP          (RCC_APB1EN3_M4UART10LPEN ) 
+#define RCC_APB1_PERIPHEN_M7_UART11            (RCC_APB1EN3_M7UART11EN   ) 
+#define RCC_APB1_PERIPHEN_M4_UART11            (RCC_APB1EN3_M4UART11EN   ) 
+#define RCC_APB1_PERIPHEN_M7_UART11LP          (RCC_APB1EN3_M7UART11LPEN ) 
+#define RCC_APB1_PERIPHEN_M4_UART11LP          (RCC_APB1EN3_M4UART11LPEN ) 
+#define RCC_APB1_PERIPHEN_M7_UART12            (RCC_APB1EN3_M7UART12EN   ) 
+#define RCC_APB1_PERIPHEN_M4_UART12            (RCC_APB1EN3_M4UART12EN   ) 
+#define RCC_APB1_PERIPHEN_M7_UART12LP          (RCC_APB1EN3_M7UART12LPEN ) 
+#define RCC_APB1_PERIPHEN_M4_UART12LP          (RCC_APB1EN3_M4UART12LPEN ) 
+
+#define RCC_APB1_PERIPHEN_M7_I2S3             (RCC_APB1EN4_M7I2S3EN    ) 
+#define RCC_APB1_PERIPHEN_M4_I2S3             (RCC_APB1EN4_M4I2S3EN    ) 
+#define RCC_APB1_PERIPHEN_M7_I2S3LP           (RCC_APB1EN4_M7I2S3LPEN  ) 
+#define RCC_APB1_PERIPHEN_M4_I2S3LP           (RCC_APB1EN4_M4I2S3LPEN  ) 
+#define RCC_APB1_PERIPHEN_M7_I2S4             (RCC_APB1EN4_M7I2S4EN    ) 
+#define RCC_APB1_PERIPHEN_M4_I2S4             (RCC_APB1EN4_M4I2S4EN    ) 
+#define RCC_APB1_PERIPHEN_M7_I2S4LP           (RCC_APB1EN4_M7I2S4LPEN  ) 
+#define RCC_APB1_PERIPHEN_M4_I2S4LP           (RCC_APB1EN4_M4I2S4LPEN  ) 
+#define RCC_APB1_PERIPHEN_M7_I2C1             (RCC_APB1EN4_M7I2C1EN    ) 
+#define RCC_APB1_PERIPHEN_M4_I2C1             (RCC_APB1EN4_M4I2C1EN    ) 
+#define RCC_APB1_PERIPHEN_M7_I2C1LP           (RCC_APB1EN4_M7I2C1LPEN  ) 
+#define RCC_APB1_PERIPHEN_M4_I2C1LP           (RCC_APB1EN4_M4I2C1LPEN  ) 
+#define RCC_APB1_PERIPHEN_M7_I2C2             (RCC_APB1EN4_M7I2C2EN    ) 
+#define RCC_APB1_PERIPHEN_M4_I2C2             (RCC_APB1EN4_M4I2C2EN    ) 
+#define RCC_APB1_PERIPHEN_M7_I2C2LP           (RCC_APB1EN4_M7I2C2LPEN  ) 
+#define RCC_APB1_PERIPHEN_M4_I2C2LP           (RCC_APB1EN4_M4I2C2LPEN  ) 
+#define RCC_APB1_PERIPHEN_M7_I2C3             (RCC_APB1EN4_M7I2C3EN    ) 
+#define RCC_APB1_PERIPHEN_M4_I2C3             (RCC_APB1EN4_M4I2C3EN    ) 
+#define RCC_APB1_PERIPHEN_M7_I2C3LP           (RCC_APB1EN4_M7I2C3LPEN  ) 
+#define RCC_APB1_PERIPHEN_M4_I2C3LP           (RCC_APB1EN4_M4I2C3LPEN  ) 
+
+#define RCC_APB1_PERIPHEN_M7_FDCAN1           (RCC_APB1EN5_M7FDCAN1EN  ) 
+#define RCC_APB1_PERIPHEN_M4_FDCAN1           (RCC_APB1EN5_M4FDCAN1EN  ) 
+#define RCC_APB1_PERIPHEN_M7_FDCAN1LP         (RCC_APB1EN5_M7FDCAN1LPEN) 
+#define RCC_APB1_PERIPHEN_M4_FDCAN1LP         (RCC_APB1EN5_M4FDCAN1LPEN) 
+#define RCC_APB1_PERIPHEN_M7_FDCAN2           (RCC_APB1EN5_M7FDCAN2EN  ) 
+#define RCC_APB1_PERIPHEN_M4_FDCAN2           (RCC_APB1EN5_M4FDCAN2EN  ) 
+#define RCC_APB1_PERIPHEN_M7_FDCAN2LP         (RCC_APB1EN5_M7FDCAN2LPEN) 
+#define RCC_APB1_PERIPHEN_M4_FDCAN2LP         (RCC_APB1EN5_M4FDCAN2LPEN) 
+#define RCC_APB1_PERIPHEN_M7_FDCAN5           (RCC_APB1EN5_M7FDCAN5EN  ) 
+#define RCC_APB1_PERIPHEN_M4_FDCAN5           (RCC_APB1EN5_M4FDCAN5EN  ) 
+#define RCC_APB1_PERIPHEN_M7_FDCAN5LP         (RCC_APB1EN5_M7FDCAN5LPEN) 
+#define RCC_APB1_PERIPHEN_M4_FDCAN5LP         (RCC_APB1EN5_M4FDCAN5LPEN) 
+#define RCC_APB1_PERIPHEN_M7_FDCAN6           (RCC_APB1EN5_M7FDCAN6EN  ) 
+#define RCC_APB1_PERIPHEN_M4_FDCAN6           (RCC_APB1EN5_M4FDCAN6EN  ) 
+#define RCC_APB1_PERIPHEN_M7_FDCAN6LP         (RCC_APB1EN5_M7FDCAN6LPEN) 
+#define RCC_APB1_PERIPHEN_M4_FDCAN6LP         (RCC_APB1EN5_M4FDCAN6LPEN) 
+/** AHB2 peripherals enable **/
+#define RCC_AHB2_PERIPHEN_M7_USB1             (RCC_AHB2EN1_M7USB1EN     ) 
+#define RCC_AHB2_PERIPHEN_M4_USB1             (RCC_AHB2EN1_M4USB1EN     ) 
+#define RCC_AHB2_PERIPHEN_M7_USB1LP           (RCC_AHB2EN1_M7USB1LPEN   ) 
+#define RCC_AHB2_PERIPHEN_M4_USB1LP           (RCC_AHB2EN1_M4USB1LPEN   ) 
+#define RCC_AHB2_PERIPHEN_M7_ECCM2            (RCC_AHB2EN1_M7ECCM2EN    ) 
+#define RCC_AHB2_PERIPHEN_M4_ECCM2            (RCC_AHB2EN1_M4ECCM2EN    ) 
+#define RCC_AHB2_PERIPHEN_M7_ECCM2LP          (RCC_AHB2EN1_M7ECCM2LPEN  ) 
+#define RCC_AHB2_PERIPHEN_M4_ECCM2LP          (RCC_AHB2EN1_M4ECCM2LPEN  ) 
+#define RCC_AHB2_PERIPHEN_M7_CORDIC           (RCC_AHB2EN1_M7CORDICEN   ) 
+#define RCC_AHB2_PERIPHEN_M4_CORDIC           (RCC_AHB2EN1_M4CORDICEN   ) 
+#define RCC_AHB2_PERIPHEN_M7_CORDICLP         (RCC_AHB2EN1_M7CORDICLPEN ) 
+#define RCC_AHB2_PERIPHEN_M4_CORDICLP         (RCC_AHB2EN1_M4CORDICLPEN ) 
+#define RCC_AHB2_PERIPHEN_M7_SDPU             (RCC_AHB2EN1_M7SDPUEN     ) 
+#define RCC_AHB2_PERIPHEN_M4_SDPU             (RCC_AHB2EN1_M4SDPUEN     ) 
+#define RCC_AHB2_PERIPHEN_M7_SDPULP           (RCC_AHB2EN1_M7SDPULPEN   ) 
+#define RCC_AHB2_PERIPHEN_M4_SDPULP           (RCC_AHB2EN1_M4SDPULPEN   ) 
+#define RCC_AHB2_PERIPHEN_M7_FMAC             (RCC_AHB2EN1_M7FMACEN     ) 
+#define RCC_AHB2_PERIPHEN_M4_FMAC             (RCC_AHB2EN1_M4FMACEN     ) 
+#define RCC_AHB2_PERIPHEN_M7_FMACLP           (RCC_AHB2EN1_M7FMACLPEN   ) 
+#define RCC_AHB2_PERIPHEN_M4_FMACLP           (RCC_AHB2EN1_M4FMACLPEN   ) 
+
+#define RCC_AHB2_PERIPHEN_M7_DAC56             (RCC_AHB2EN2_M7DAC56EN     ) 
+#define RCC_AHB2_PERIPHEN_M4_DAC56             (RCC_AHB2EN2_M4DAC56EN     ) 
+#define RCC_AHB2_PERIPHEN_M7_DAC56LP           (RCC_AHB2EN2_M7DAC56LPEN   ) 
+#define RCC_AHB2_PERIPHEN_M4_DAC56LP           (RCC_AHB2EN2_M4DAC56LPEN   ) 
+#define RCC_AHB2_PERIPHEN_M7_DAC34             (RCC_AHB2EN2_M7DAC34EN     ) 
+#define RCC_AHB2_PERIPHEN_M4_DAC34             (RCC_AHB2EN2_M4DAC34EN     ) 
+#define RCC_AHB2_PERIPHEN_M7_DAC34LP           (RCC_AHB2EN2_M7DAC34LPEN   ) 
+#define RCC_AHB2_PERIPHEN_M4_DAC34LP           (RCC_AHB2EN2_M4DAC34LPEN   ) 
+#define RCC_AHB2_PERIPHEN_M7_ETH1TX           (RCC_AHB2EN2_M7ETH1TXEN   ) 
+#define RCC_AHB2_PERIPHEN_M4_ETH1TX           (RCC_AHB2EN2_M4ETH1TXEN   ) 
+#define RCC_AHB2_PERIPHEN_M7_ETH1TXLP         (RCC_AHB2EN2_M7ETH1TXLPEN ) 
+#define RCC_AHB2_PERIPHEN_M4_ETH1TXLP         (RCC_AHB2EN2_M4ETH1TXLPEN ) 
+#define RCC_AHB2_PERIPHEN_M7_ETH1RX           (RCC_AHB2EN2_M7ETH1RXEN   ) 
+#define RCC_AHB2_PERIPHEN_M4_ETH1RX           (RCC_AHB2EN2_M4ETH1RXEN   ) 
+#define RCC_AHB2_PERIPHEN_M7_ETH1RXLP         (RCC_AHB2EN2_M7ETH1RXLPEN ) 
+#define RCC_AHB2_PERIPHEN_M4_ETH1RXLP         (RCC_AHB2EN2_M4ETH1RXLPEN ) 
+#define RCC_AHB2_PERIPHEN_M7_ETH1MAC          (RCC_AHB2EN2_M7ETH1MACEN  ) 
+#define RCC_AHB2_PERIPHEN_M4_ETH1MAC          (RCC_AHB2EN2_M4ETH1MACEN  ) 
+#define RCC_AHB2_PERIPHEN_M7_ETH1MACLP        (RCC_AHB2EN2_M7ETH1MACLPEN) 
+#define RCC_AHB2_PERIPHEN_M4_ETH1MACLP        (RCC_AHB2EN2_M4ETH1MACLPEN) 
+/** APB2 peripherals enable **/
+#define RCC_APB2_PERIPHEN_M7_ATIM1            (RCC_APB2EN1_M7ATIM1EN    ) 
+#define RCC_APB2_PERIPHEN_M4_ATIM1            (RCC_APB2EN1_M4ATIM1EN    ) 
+#define RCC_APB2_PERIPHEN_M7_ATIM1LP          (RCC_APB2EN1_M7ATIM1LPEN  ) 
+#define RCC_APB2_PERIPHEN_M4_ATIM1LP          (RCC_APB2EN1_M4ATIM1LPEN  ) 
+#define RCC_APB2_PERIPHEN_M7_ATIM2            (RCC_APB2EN1_M7ATIM2EN    ) 
+#define RCC_APB2_PERIPHEN_M4_ATIM2            (RCC_APB2EN1_M4ATIM2EN    ) 
+#define RCC_APB2_PERIPHEN_M7_ATIM2LP          (RCC_APB2EN1_M7ATIM2LPEN  ) 
+#define RCC_APB2_PERIPHEN_M4_ATIM2LP          (RCC_APB2EN1_M4ATIM2LPEN  ) 
+#define RCC_APB2_PERIPHEN_M7_GTIMA1           (RCC_APB2EN1_M7GTIMA1EN   ) 
+#define RCC_APB2_PERIPHEN_M4_GTIMA1           (RCC_APB2EN1_M4GTIMA1EN   ) 
+#define RCC_APB2_PERIPHEN_M7_GTIMA1LP         (RCC_APB2EN1_M7GTIMA1LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_GTIMA1LP         (RCC_APB2EN1_M4GTIMA1LPEN ) 
+#define RCC_APB2_PERIPHEN_M7_GTIMA2           (RCC_APB2EN1_M7GTIMA2EN   ) 
+#define RCC_APB2_PERIPHEN_M4_GTIMA2           (RCC_APB2EN1_M4GTIMA2EN   ) 
+#define RCC_APB2_PERIPHEN_M7_GTIMA2LP         (RCC_APB2EN1_M7GTIMA2LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_GTIMA2LP         (RCC_APB2EN1_M4GTIMA2LPEN ) 
+#define RCC_APB2_PERIPHEN_M7_GTIMA3           (RCC_APB2EN1_M7GTIMA3EN   ) 
+#define RCC_APB2_PERIPHEN_M4_GTIMA3           (RCC_APB2EN1_M4GTIMA3EN   ) 
+#define RCC_APB2_PERIPHEN_M7_GTIMA3LP         (RCC_APB2EN1_M7GTIMA3LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_GTIMA3LP         (RCC_APB2EN1_M4GTIMA3LPEN ) 
+#define RCC_APB2_PERIPHEN_M7_SHRTIM1          (RCC_APB2EN1_M7SHRTIM1EN  ) 
+#define RCC_APB2_PERIPHEN_M4_SHRTIM1          (RCC_APB2EN1_M4SHRTIM1EN  ) 
+#define RCC_APB2_PERIPHEN_M7_SHRTIM1LP        (RCC_APB2EN1_M7SHRTIM1LPEN) 
+#define RCC_APB2_PERIPHEN_M4_SHRTIM1LP        (RCC_APB2EN1_M4SHRTIM1LPEN) 
+#define RCC_APB2_PERIPHEN_M7_SHRTIM2          (RCC_APB2EN1_M7SHRTIM2EN  ) 
+#define RCC_APB2_PERIPHEN_M4_SHRTIM2          (RCC_APB2EN1_M4SHRTIM2EN  ) 
+#define RCC_APB2_PERIPHEN_M7_SHRTIM2LP        (RCC_APB2EN1_M7SHRTIM2LPEN) 
+#define RCC_APB2_PERIPHEN_M4_SHRTIM2LP        (RCC_APB2EN1_M4SHRTIM2LPEN) 
+
+#define RCC_APB2_PERIPHEN_M7_I2S1             (RCC_APB2EN2_M7I2S1EN     ) 
+#define RCC_APB2_PERIPHEN_M4_I2S1             (RCC_APB2EN2_M4I2S1EN     ) 
+#define RCC_APB2_PERIPHEN_M7_I2S1LP           (RCC_APB2EN2_M7I2S1LPEN   ) 
+#define RCC_APB2_PERIPHEN_M4_I2S1LP           (RCC_APB2EN2_M4I2S1LPEN   ) 
+#define RCC_APB2_PERIPHEN_M7_I2S2             (RCC_APB2EN2_M7I2S2EN     ) 
+#define RCC_APB2_PERIPHEN_M4_I2S2             (RCC_APB2EN2_M4I2S2EN     ) 
+#define RCC_APB2_PERIPHEN_M7_I2S2LP           (RCC_APB2EN2_M7I2S2LPEN   ) 
+#define RCC_APB2_PERIPHEN_M4_I2S2LP           (RCC_APB2EN2_M4I2S2LPEN   ) 
+#define RCC_APB2_PERIPHEN_M7_SPI1             (RCC_APB2EN2_M7SPI1EN     ) 
+#define RCC_APB2_PERIPHEN_M4_SPI1             (RCC_APB2EN2_M4SPI1EN     ) 
+#define RCC_APB2_PERIPHEN_M7_SPI1LP           (RCC_APB2EN2_M7SPI1LPEN   ) 
+#define RCC_APB2_PERIPHEN_M4_SPI1LP           (RCC_APB2EN2_M4SPI1LPEN   ) 
+#define RCC_APB2_PERIPHEN_M7_SPI2             (RCC_APB2EN2_M7SPI2EN     ) 
+#define RCC_APB2_PERIPHEN_M4_SPI2             (RCC_APB2EN2_M4SPI2EN     ) 
+#define RCC_APB2_PERIPHEN_M7_SPI2LP           (RCC_APB2EN2_M7SPI2LPEN   ) 
+#define RCC_APB2_PERIPHEN_M4_SPI2LP           (RCC_APB2EN2_M4SPI2LPEN   ) 
+#define RCC_APB2_PERIPHEN_M7_DSMU             (RCC_APB2EN2_M7DSMUEN     ) 
+#define RCC_APB2_PERIPHEN_M4_DSMU             (RCC_APB2EN2_M4DSMUEN     ) 
+#define RCC_APB2_PERIPHEN_M7_DSMULP           (RCC_APB2EN2_M7DSMULPEN   ) 
+#define RCC_APB2_PERIPHEN_M4_DSMULP           (RCC_APB2EN2_M4DSMULPEN   ) 
+#define RCC_APB2_PERIPHEN_M7_I2C4             (RCC_APB2EN2_M7I2C4EN     ) 
+#define RCC_APB2_PERIPHEN_M4_I2C4             (RCC_APB2EN2_M4I2C4EN     ) 
+#define RCC_APB2_PERIPHEN_M7_I2C4LP           (RCC_APB2EN2_M7I2C4LPEN   ) 
+#define RCC_APB2_PERIPHEN_M4_I2C4LP           (RCC_APB2EN2_M4I2C4LPEN   ) 
+#define RCC_APB2_PERIPHEN_M7_I2C5             (RCC_APB2EN2_M7I2C5EN     ) 
+#define RCC_APB2_PERIPHEN_M4_I2C5             (RCC_APB2EN2_M4I2C5EN     ) 
+#define RCC_APB2_PERIPHEN_M7_I2C5LP           (RCC_APB2EN2_M7I2C5LPEN   ) 
+#define RCC_APB2_PERIPHEN_M4_I2C5LP           (RCC_APB2EN2_M4I2C5LPEN   ) 
+#define RCC_APB2_PERIPHEN_M7_I2C6             (RCC_APB2EN2_M7I2C6EN     ) 
+#define RCC_APB2_PERIPHEN_M4_I2C6             (RCC_APB2EN2_M4I2C6EN     ) 
+#define RCC_APB2_PERIPHEN_M7_I2C6LP           (RCC_APB2EN2_M7I2C6LPEN   ) 
+#define RCC_APB2_PERIPHEN_M4_I2C6LP           (RCC_APB2EN2_M4I2C6LPEN   ) 
+
+#define RCC_APB2_PERIPHEN_M7_USART5           (RCC_APB2EN3_M7USART5EN   ) 
+#define RCC_APB2_PERIPHEN_M4_USART5           (RCC_APB2EN3_M4USART5EN   ) 
+#define RCC_APB2_PERIPHEN_M7_USART5LP         (RCC_APB2EN3_M7USART5LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_USART5LP         (RCC_APB2EN3_M4USART5LPEN ) 
+#define RCC_APB2_PERIPHEN_M7_USART6           (RCC_APB2EN3_M7USART6EN   ) 
+#define RCC_APB2_PERIPHEN_M4_USART6           (RCC_APB2EN3_M4USART6EN   ) 
+#define RCC_APB2_PERIPHEN_M7_USART6LP         (RCC_APB2EN3_M7USART6LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_USART6LP         (RCC_APB2EN3_M4USART6LPEN ) 
+#define RCC_APB2_PERIPHEN_M7_USART7           (RCC_APB2EN3_M7USART7EN   ) 
+#define RCC_APB2_PERIPHEN_M4_USART7           (RCC_APB2EN3_M4USART7EN   ) 
+#define RCC_APB2_PERIPHEN_M7_USART7LP         (RCC_APB2EN3_M7USART7LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_USART7LP         (RCC_APB2EN3_M4USART7LPEN ) 
+#define RCC_APB2_PERIPHEN_M7_USART8           (RCC_APB2EN3_M7USART8EN   ) 
+#define RCC_APB2_PERIPHEN_M4_USART8           (RCC_APB2EN3_M4USART8EN   ) 
+#define RCC_APB2_PERIPHEN_M7_USART8LP         (RCC_APB2EN3_M7USART8LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_USART8LP         (RCC_APB2EN3_M4USART8LPEN ) 
+#define RCC_APB2_PERIPHEN_M7_UART13            (RCC_APB2EN3_M7UART13EN    ) 
+#define RCC_APB2_PERIPHEN_M4_UART13            (RCC_APB2EN3_M4UART13EN    ) 
+#define RCC_APB2_PERIPHEN_M7_UART13LP          (RCC_APB2EN3_M7UART13LPEN  ) 
+#define RCC_APB2_PERIPHEN_M4_UART13LP          (RCC_APB2EN3_M4UART13LPEN  ) 
+#define RCC_APB2_PERIPHEN_M7_UART14            (RCC_APB2EN3_M7UART14EN    ) 
+#define RCC_APB2_PERIPHEN_M4_UART14            (RCC_APB2EN3_M4UART14EN    ) 
+#define RCC_APB2_PERIPHEN_M7_UART14LP          (RCC_APB2EN3_M7UART14LPEN  ) 
+#define RCC_APB2_PERIPHEN_M4_UART14LP          (RCC_APB2EN3_M4UART14LPEN  ) 
+#define RCC_APB2_PERIPHEN_M7_UART15            (RCC_APB2EN3_M7UART15EN    ) 
+#define RCC_APB2_PERIPHEN_M4_UART15            (RCC_APB2EN3_M4UART15EN    ) 
+#define RCC_APB2_PERIPHEN_M7_UART15LP          (RCC_APB2EN3_M7UART15LPEN  ) 
+#define RCC_APB2_PERIPHEN_M4_UART15LP          (RCC_APB2EN3_M4UART15LPEN  ) 
+
+#define RCC_APB2_PERIPHEN_M7_FDCAN3           (RCC_APB2EN4_M7FDCAN3EN   ) 
+#define RCC_APB2_PERIPHEN_M4_FDCAN3           (RCC_APB2EN4_M4FDCAN3EN   ) 
+#define RCC_APB2_PERIPHEN_M7_FDCAN3LP         (RCC_APB2EN4_M7FDCAN3LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_FDCAN3LP         (RCC_APB2EN4_M4FDCAN3LPEN ) 
+#define RCC_APB2_PERIPHEN_M7_FDCAN4           (RCC_APB2EN4_M7FDCAN4EN   ) 
+#define RCC_APB2_PERIPHEN_M4_FDCAN4           (RCC_APB2EN4_M4FDCAN4EN   ) 
+#define RCC_APB2_PERIPHEN_M7_FDCAN4LP         (RCC_APB2EN4_M7FDCAN4LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_FDCAN4LP         (RCC_APB2EN4_M4FDCAN4LPEN ) 
+#define RCC_APB2_PERIPHEN_M7_FDCAN7           (RCC_APB2EN4_M7FDCAN7EN   ) 
+#define RCC_APB2_PERIPHEN_M4_FDCAN7           (RCC_APB2EN4_M4FDCAN7EN   ) 
+#define RCC_APB2_PERIPHEN_M7_FDCAN7LP         (RCC_APB2EN4_M7FDCAN7LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_FDCAN7LP         (RCC_APB2EN4_M4FDCAN7LPEN ) 
+#define RCC_APB2_PERIPHEN_M7_FDCAN8           (RCC_APB2EN4_M7FDCAN8EN   ) 
+#define RCC_APB2_PERIPHEN_M4_FDCAN8           (RCC_APB2EN4_M4FDCAN8EN   ) 
+#define RCC_APB2_PERIPHEN_M7_FDCAN8LP         (RCC_APB2EN4_M7FDCAN8LPEN ) 
+#define RCC_APB2_PERIPHEN_M4_FDCAN8LP         (RCC_APB2EN4_M4FDCAN8LPEN ) 
+/** AHB5 peripherals enable **/
+#define RCC_AHB5_PERIPHEN_M7_GPIOA            (RCC_AHB5EN1_M7GPIOAEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOA            (RCC_AHB5EN1_M4GPIOAEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOALP          (RCC_AHB5EN1_M7GPIOALPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOALP          (RCC_AHB5EN1_M4GPIOALPEN) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOB            (RCC_AHB5EN1_M7GPIOBEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOB            (RCC_AHB5EN1_M4GPIOBEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOBLP          (RCC_AHB5EN1_M7GPIOBLPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOBLP          (RCC_AHB5EN1_M4GPIOBLPEN) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOC            (RCC_AHB5EN1_M7GPIOCEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOC            (RCC_AHB5EN1_M4GPIOCEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOCLP          (RCC_AHB5EN1_M7GPIOCLPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOCLP          (RCC_AHB5EN1_M4GPIOCLPEN) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOD            (RCC_AHB5EN1_M7GPIODEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOD            (RCC_AHB5EN1_M4GPIODEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIODLP          (RCC_AHB5EN1_M7GPIODLPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIODLP          (RCC_AHB5EN1_M4GPIODLPEN) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOE            (RCC_AHB5EN1_M7GPIOEEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOE            (RCC_AHB5EN1_M4GPIOEEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOELP          (RCC_AHB5EN1_M7GPIOELPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOELP          (RCC_AHB5EN1_M4GPIOELPEN) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOF            (RCC_AHB5EN1_M7GPIOFEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOF            (RCC_AHB5EN1_M4GPIOFEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOFLP          (RCC_AHB5EN1_M7GPIOFLPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOFLP          (RCC_AHB5EN1_M4GPIOFLPEN) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOG            (RCC_AHB5EN1_M7GPIOGEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOG            (RCC_AHB5EN1_M4GPIOGEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOGLP          (RCC_AHB5EN1_M7GPIOGLPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOGLP          (RCC_AHB5EN1_M4GPIOGLPEN) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOH            (RCC_AHB5EN1_M7GPIOHEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOH            (RCC_AHB5EN1_M4GPIOHEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOHLP          (RCC_AHB5EN1_M7GPIOHLPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOHLP          (RCC_AHB5EN1_M4GPIOHLPEN) 
+
+#define RCC_AHB5_PERIPHEN_M7_GPIOI            (RCC_AHB5EN2_M7GPIOIEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOI            (RCC_AHB5EN2_M4GPIOIEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOILP          (RCC_AHB5EN2_M7GPIOILPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOILP          (RCC_AHB5EN2_M4GPIOILPEN) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOJ            (RCC_AHB5EN2_M7GPIOJEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOJ            (RCC_AHB5EN2_M4GPIOJEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOJLP          (RCC_AHB5EN2_M7GPIOJLPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOJLP          (RCC_AHB5EN2_M4GPIOJLPEN) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOK            (RCC_AHB5EN2_M7GPIOKEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOK            (RCC_AHB5EN2_M4GPIOKEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_GPIOKLP          (RCC_AHB5EN2_M7GPIOKLPEN) 
+#define RCC_AHB5_PERIPHEN_M4_GPIOKLP          (RCC_AHB5EN2_M4GPIOKLPEN) 
+#define RCC_AHB5_PERIPHEN_M7_ECCM3            (RCC_AHB5EN2_M7ECCM3EN  ) 
+#define RCC_AHB5_PERIPHEN_M4_ECCM3            (RCC_AHB5EN2_M4ECCM3EN  ) 
+#define RCC_AHB5_PERIPHEN_M7_ECCM3LP          (RCC_AHB5EN2_M7ECCM3LPEN) 
+#define RCC_AHB5_PERIPHEN_M4_ECCM3LP          (RCC_AHB5EN2_M4ECCM3LPEN) 
+#define RCC_AHB5_PERIPHEN_PWR                (RCC_AHB5EN2_PWREN      ) 
+#define RCC_AHB5_PERIPHEN_PWRLP              (RCC_AHB5EN2_PWRLPEN    ) 
+#define RCC_AHB5_PERIPHEN_M7_CRC              (RCC_AHB5EN2_M7CRCEN    ) 
+#define RCC_AHB5_PERIPHEN_M4_CRC              (RCC_AHB5EN2_M4CRCEN    ) 
+#define RCC_AHB5_PERIPHEN_M7_CRCLP            (RCC_AHB5EN2_M7CRCLPEN  ) 
+#define RCC_AHB5_PERIPHEN_M4_CRCLP            (RCC_AHB5EN2_M4CRCLPEN  ) 
+#define RCC_AHB5_PERIPHEN_M7_SEMA4            (RCC_AHB5EN2_M7SEMA4EN  ) 
+#define RCC_AHB5_PERIPHEN_M4_SEMA4            (RCC_AHB5EN2_M4SEMA4EN  ) 
+#define RCC_AHB5_PERIPHEN_M7_SEMA4LP          (RCC_AHB5EN2_M7SEMA4LPEN) 
+#define RCC_AHB5_PERIPHEN_M4_SEMA4LP          (RCC_AHB5EN2_M4SEMA4LPEN) 
+#define RCC_AHB5_PERIPHEN_M7_AFIO             (RCC_AHB5EN2_M7AFIOEN   ) 
+#define RCC_AHB5_PERIPHEN_M4_AFIO             (RCC_AHB5EN2_M4AFIOEN   ) 
+#define RCC_AHB5_PERIPHEN_M7_AFIOLP           (RCC_AHB5EN2_M7AFIOLPEN ) 
+#define RCC_AHB5_PERIPHEN_M4_AFIOLP           (RCC_AHB5EN2_M4AFIOLPEN ) 
+/** APB5 peripherals enable **/
+#define RCC_APB5_PERIPHEN_M7_ATIM3            (RCC_APB5EN1_M7ATIM3EN    ) 
+#define RCC_APB5_PERIPHEN_M4_ATIM3            (RCC_APB5EN1_M4ATIM3EN    ) 
+#define RCC_APB5_PERIPHEN_M7_ATIM3LP          (RCC_APB5EN1_M7ATIM3LPEN  ) 
+#define RCC_APB5_PERIPHEN_M4_ATIM3LP          (RCC_APB5EN1_M4ATIM3LPEN  ) 
+#define RCC_APB5_PERIPHEN_M7_ATIM4            (RCC_APB5EN1_M7ATIM4EN    ) 
+#define RCC_APB5_PERIPHEN_M4_ATIM4            (RCC_APB5EN1_M4ATIM4EN    ) 
+#define RCC_APB5_PERIPHEN_M7_ATIM4LP          (RCC_APB5EN1_M7ATIM4LPEN  ) 
+#define RCC_APB5_PERIPHEN_M4_ATIM4LP          (RCC_APB5EN1_M4ATIM4LPEN  ) 
+#define RCC_APB5_PERIPHEN_M7_AFEC             (RCC_APB5EN1_M7AFECEN     ) 
+#define RCC_APB5_PERIPHEN_M4_AFEC             (RCC_APB5EN1_M4AFECEN     ) 
+#define RCC_APB5_PERIPHEN_M7_AFECLP           (RCC_APB5EN1_M7AFECLPEN   ) 
+#define RCC_APB5_PERIPHEN_M4_AFECLP           (RCC_APB5EN1_M4AFECLPEN   ) 
+#define RCC_APB5_PERIPHEN_M7_SPI4             (RCC_APB5EN1_M7SPI4EN     ) 
+#define RCC_APB5_PERIPHEN_M4_SPI4             (RCC_APB5EN1_M4SPI4EN     ) 
+#define RCC_APB5_PERIPHEN_M7_SPI4LP           (RCC_APB5EN1_M7SPI4LPEN   ) 
+#define RCC_APB5_PERIPHEN_M4_SPI4LP           (RCC_APB5EN1_M4SPI4LPEN   ) 
+#define RCC_APB5_PERIPHEN_M7_SPI5             (RCC_APB5EN1_M7SPI5EN     ) 
+#define RCC_APB5_PERIPHEN_M4_SPI5             (RCC_APB5EN1_M4SPI5EN     ) 
+#define RCC_APB5_PERIPHEN_M7_SPI5LP           (RCC_APB5EN1_M7SPI5LPEN   ) 
+#define RCC_APB5_PERIPHEN_M4_SPI5LP           (RCC_APB5EN1_M4SPI5LPEN   ) 
+#define RCC_APB5_PERIPHEN_M7_SPI6             (RCC_APB5EN1_M7SPI6EN     ) 
+#define RCC_APB5_PERIPHEN_M4_SPI6             (RCC_APB5EN1_M4SPI6EN     ) 
+#define RCC_APB5_PERIPHEN_M7_SPI6LP           (RCC_APB5EN1_M7SPI6LPEN   ) 
+#define RCC_APB5_PERIPHEN_M4_SPI6LP           (RCC_APB5EN1_M4SPI6LPEN   ) 
+#define RCC_APB5_PERIPHEN_M7_SPI7             (RCC_APB5EN1_M7SPI7EN     ) 
+#define RCC_APB5_PERIPHEN_M4_SPI7             (RCC_APB5EN1_M4SPI7EN     ) 
+#define RCC_APB5_PERIPHEN_M7_SPI7LP           (RCC_APB5EN1_M7SPI7LPEN   ) 
+#define RCC_APB5_PERIPHEN_M4_SPI7LP           (RCC_APB5EN1_M4SPI7LPEN   ) 
+
+#define RCC_APB5_PERIPHEN_M7_I2C7             (RCC_APB5EN2_M7I2C7EN     ) 
+#define RCC_APB5_PERIPHEN_M4_I2C7             (RCC_APB5EN2_M4I2C7EN     ) 
+#define RCC_APB5_PERIPHEN_M7_I2C7LP           (RCC_APB5EN2_M7I2C7LPEN   ) 
+#define RCC_APB5_PERIPHEN_M4_I2C7LP           (RCC_APB5EN2_M4I2C7LPEN   ) 
+#define RCC_APB5_PERIPHEN_M7_I2C8             (RCC_APB5EN2_M7I2C8EN     ) 
+#define RCC_APB5_PERIPHEN_M4_I2C8             (RCC_APB5EN2_M4I2C8EN     ) 
+#define RCC_APB5_PERIPHEN_M7_I2C8LP           (RCC_APB5EN2_M7I2C8LPEN   ) 
+#define RCC_APB5_PERIPHEN_M4_I2C8LP           (RCC_APB5EN2_M4I2C8LPEN   ) 
+#define RCC_APB5_PERIPHEN_M7_I2C9             (RCC_APB5EN2_M7I2C9EN     ) 
+#define RCC_APB5_PERIPHEN_M4_I2C9             (RCC_APB5EN2_M4I2C9EN     ) 
+#define RCC_APB5_PERIPHEN_M7_I2C9LP           (RCC_APB5EN2_M7I2C9LPEN   ) 
+#define RCC_APB5_PERIPHEN_M4_I2C9LP           (RCC_APB5EN2_M4I2C9LPEN   ) 
+#define RCC_APB5_PERIPHEN_M7_I2C10            (RCC_APB5EN2_M7I2C10EN    ) 
+#define RCC_APB5_PERIPHEN_M4_I2C10            (RCC_APB5EN2_M4I2C10EN    ) 
+#define RCC_APB5_PERIPHEN_M7_I2C10LP          (RCC_APB5EN2_M7I2C10LPEN  ) 
+#define RCC_APB5_PERIPHEN_M4_I2C10LP          (RCC_APB5EN2_M4I2C10LPEN  ) 
+#define RCC_APB5_PERIPHEN_EXTI               (RCC_APB5EN2_EXTIEN       ) 
+#define RCC_APB5_PERIPHEN_EXTILP             (RCC_APB5EN2_EXTILPEN     ) 
+#define RCC_APB5_PERIPHEN_M7_RTCPCLK          (RCC_APB5EN2_M7RTCPCLKEN  ) 
+#define RCC_APB5_PERIPHEN_M4_RTCPCLK          (RCC_APB5EN2_M4RTCPCLKEN  ) 
+#define RCC_APB5_PERIPHEN_M7_RTCPCLKLP        (RCC_APB5EN2_M7RTCPCLKLPEN) 
+#define RCC_APB5_PERIPHEN_M4_RTCPCLKLP        (RCC_APB5EN2_M4RTCPCLKLPEN) 
+#define RCC_APB5_PERIPHEN_IWDG1PCLK          (RCC_APB5EN2_IWDG1PCLKEN  ) 
+#define RCC_APB5_PERIPHEN_IWDG1PCLKLP        (RCC_APB5EN2_IWDG1PCLKLPEN) 
+#define RCC_APB5_PERIPHEN_IWDG2PCLK          (RCC_APB5EN2_IWDG2PCLKEN  ) 
+#define RCC_APB5_PERIPHEN_IWDG2PCLKLP        (RCC_APB5EN2_IWDG2PCLKLPEN) 
+/** APB9 peripherals enable **/
+#define RCC_AHB9_PERIPHEN_M7_ESC             (RCC_AHB9EN1_M7ESCEN  ) 
+#define RCC_AHB9_PERIPHEN_M4_ESC             (RCC_AHB9EN1_M4ESCEN  ) 
+#define RCC_AHB9_PERIPHEN_M7_ESCLP           (RCC_AHB9EN1_M7ESCLPEN) 
+#define RCC_AHB9_PERIPHEN_M4_ESCLP           (RCC_AHB9EN1_M4ESCLPEN) 
+/** Retention domain peripherals enable **/
+#define RCC_RD_PERIPHEN_M7_LPTIM1           (RCC_RDEN1_M7LPTIM1EN   ) 
+#define RCC_RD_PERIPHEN_M4_LPTIM1           (RCC_RDEN1_M4LPTIM1EN   ) 
+#define RCC_RD_PERIPHEN_M7_LPTIM1LP         (RCC_RDEN1_M7LPTIM1LPEN ) 
+#define RCC_RD_PERIPHEN_M4_LPTIM1LP         (RCC_RDEN1_M4LPTIM1LPEN ) 
+#define RCC_RD_PERIPHEN_M7_LPTIM2           (RCC_RDEN1_M7LPTIM2EN   ) 
+#define RCC_RD_PERIPHEN_M4_LPTIM2           (RCC_RDEN1_M4LPTIM2EN   ) 
+#define RCC_RD_PERIPHEN_M7_LPTIM2LP         (RCC_RDEN1_M7LPTIM2LPEN ) 
+#define RCC_RD_PERIPHEN_M4_LPTIM2LP         (RCC_RDEN1_M4LPTIM2LPEN ) 
+#define RCC_RD_PERIPHEN_M7_LPTIM3           (RCC_RDEN1_M7LPTIM3EN   ) 
+#define RCC_RD_PERIPHEN_M4_LPTIM3           (RCC_RDEN1_M4LPTIM3EN   ) 
+#define RCC_RD_PERIPHEN_M7_LPTIM3LP         (RCC_RDEN1_M7LPTIM3LPEN ) 
+#define RCC_RD_PERIPHEN_M4_LPTIM3LP         (RCC_RDEN1_M4LPTIM3LPEN ) 
+#define RCC_RD_PERIPHEN_M7_LPTIM4           (RCC_RDEN1_M7LPTIM4EN   ) 
+#define RCC_RD_PERIPHEN_M4_LPTIM4           (RCC_RDEN1_M4LPTIM4EN   ) 
+#define RCC_RD_PERIPHEN_M7_LPTIM4LP         (RCC_RDEN1_M7LPTIM4LPEN ) 
+#define RCC_RD_PERIPHEN_M4_LPTIM4LP         (RCC_RDEN1_M4LPTIM4LPEN ) 
+#define RCC_RD_PERIPHEN_M7_LPTIM5           (RCC_RDEN1_M7LPTIM5EN   ) 
+#define RCC_RD_PERIPHEN_M4_LPTIM5           (RCC_RDEN1_M4LPTIM5EN   ) 
+#define RCC_RD_PERIPHEN_M7_LPTIM5LP         (RCC_RDEN1_M7LPTIM5LPEN ) 
+#define RCC_RD_PERIPHEN_M4_LPTIM5LP         (RCC_RDEN1_M4LPTIM5LPEN ) 
+#define RCC_RD_PERIPHEN_M7_LPUART1          (RCC_RDEN1_M7LPUART1EN  ) 
+#define RCC_RD_PERIPHEN_M4_LPUART1          (RCC_RDEN1_M4LPUART1EN  ) 
+#define RCC_RD_PERIPHEN_M7_LPUART1LP        (RCC_RDEN1_M7LPUART1LPEN) 
+#define RCC_RD_PERIPHEN_M4_LPUART1LP        (RCC_RDEN1_M4LPUART1LPEN) 
+#define RCC_RD_PERIPHEN_M7_LPUART2          (RCC_RDEN1_M7LPUART2EN  ) 
+#define RCC_RD_PERIPHEN_M4_LPUART2          (RCC_RDEN1_M4LPUART2EN  ) 
+#define RCC_RD_PERIPHEN_M7_LPUART2LP        (RCC_RDEN1_M7LPUART2LPEN) 
+#define RCC_RD_PERIPHEN_M4_LPUART2LP        (RCC_RDEN1_M4LPUART2LPEN) 
+
+#define RCC_RD_PERIPHEN_M7_COMP             (RCC_RDEN2_M7COMPEN     ) 
+#define RCC_RD_PERIPHEN_M4_COMP             (RCC_RDEN2_M4COMPEN     ) 
+#define RCC_RD_PERIPHEN_M7_COMPLP           (RCC_RDEN2_M7COMPLPEN   ) 
+#define RCC_RD_PERIPHEN_M4_COMPLP           (RCC_RDEN2_M4COMPLPEN   ) 
+/** AXI peripherals enable **/
+#define RCC_AXI_PERIPHEN_M7_JPEGD            (RCC_AXIEN1_M7JPEGDEN    ) 
+#define RCC_AXI_PERIPHEN_M4_JPEGD            (RCC_AXIEN1_M4JPEGDEN    ) 
+#define RCC_AXI_PERIPHEN_M7_JPEGDLP          (RCC_AXIEN1_M7JPEGDLPEN  ) 
+#define RCC_AXI_PERIPHEN_M4_JPEGDLP          (RCC_AXIEN1_M4JPEGDLPEN  ) 
+#define RCC_AXI_PERIPHEN_M7_JPEGE            (RCC_AXIEN1_M7JPEGEEN    ) 
+#define RCC_AXI_PERIPHEN_M4_JPEGE            (RCC_AXIEN1_M4JPEGEEN    ) 
+#define RCC_AXI_PERIPHEN_M7_JPEGELP          (RCC_AXIEN1_M7JPEGELPEN  ) 
+#define RCC_AXI_PERIPHEN_M4_JPEGELP          (RCC_AXIEN1_M4JPEGELPEN  ) 
+#define RCC_AXI_PERIPHEN_M7_DMAMUX2          (RCC_AXIEN1_M7DMAMUX2EN  ) 
+#define RCC_AXI_PERIPHEN_M4_DMAMUX2          (RCC_AXIEN1_M4DMAMUX2EN  ) 
+#define RCC_AXI_PERIPHEN_M7_DMAMUX2LP        (RCC_AXIEN1_M7DMAMUX2LPEN) 
+#define RCC_AXI_PERIPHEN_M4_DMAMUX2LP        (RCC_AXIEN1_M4DMAMUX2LPEN) 
+#define RCC_AXI_PERIPHEN_M7_MDMA             (RCC_AXIEN1_M7MDMAEN     ) 
+#define RCC_AXI_PERIPHEN_M4_MDMA             (RCC_AXIEN1_M4MDMAEN     ) 
+#define RCC_AXI_PERIPHEN_M7_MDMALP           (RCC_AXIEN1_M7MDMALPEN   ) 
+#define RCC_AXI_PERIPHEN_M4_MDMALP           (RCC_AXIEN1_M4MDMALPEN   ) 
+#define RCC_AXI_PERIPHEN_M7_SDMMC1           (RCC_AXIEN1_M7SDMMC1EN   ) 
+#define RCC_AXI_PERIPHEN_M4_SDMMC1           (RCC_AXIEN1_M4SDMMC1EN   ) 
+#define RCC_AXI_PERIPHEN_M7_SDMMC1LP         (RCC_AXIEN1_M7SDMMC1LPEN ) 
+#define RCC_AXI_PERIPHEN_M4_SDMMC1LP         (RCC_AXIEN1_M4SDMMC1LPEN ) 
+#define RCC_AXI_PERIPHEN_M7_ECCM1            (RCC_AXIEN1_M7ECCM1EN    ) 
+#define RCC_AXI_PERIPHEN_M4_ECCM1            (RCC_AXIEN1_M4ECCM1EN    ) 
+#define RCC_AXI_PERIPHEN_M7_ECCM1LP          (RCC_AXIEN1_M7ECCM1LPEN  ) 
+#define RCC_AXI_PERIPHEN_M4_ECCM1LP          (RCC_AXIEN1_M4ECCM1LPEN  ) 
+#define RCC_AXI_PERIPHEN_M7_OTPC             (RCC_AXIEN1_M7OTPCEN     ) 
+#define RCC_AXI_PERIPHEN_M4_OTPC             (RCC_AXIEN1_M4OTPCEN     ) 
+#define RCC_AXI_PERIPHEN_M7_OTPCLP           (RCC_AXIEN1_M7OTPCLPEN   ) 
+#define RCC_AXI_PERIPHEN_M4_OTPCLP           (RCC_AXIEN1_M4OTPCLPEN   ) 
+
+#define RCC_AXI_PERIPHEN_M7_DSI              (RCC_AXIEN2_M7DSIEN      ) 
+#define RCC_AXI_PERIPHEN_M4_DSI              (RCC_AXIEN2_M4DSIEN      ) 
+#define RCC_AXI_PERIPHEN_M7_DSILP            (RCC_AXIEN2_M7DSILPEN    ) 
+#define RCC_AXI_PERIPHEN_M4_DSILP            (RCC_AXIEN2_M4DSILPEN    ) 
+#define RCC_AXI_PERIPHEN_M7_LCDC              (RCC_AXIEN2_M7LCDCEN      ) 
+#define RCC_AXI_PERIPHEN_M4_LCDC              (RCC_AXIEN2_M4LCDCEN      ) 
+#define RCC_AXI_PERIPHEN_M7_LCDCLP            (RCC_AXIEN2_M7LCDCLPEN    ) 
+#define RCC_AXI_PERIPHEN_M4_LCDCLP            (RCC_AXIEN2_M4LCDCLPEN    ) 
+#define RCC_AXI_PERIPHEN_M7_LCDCAPB           (RCC_AXIEN2_M7LCDCAPBEN   ) 
+#define RCC_AXI_PERIPHEN_M4_LCDCAPB           (RCC_AXIEN2_M4LCDCAPBEN   ) 
+#define RCC_AXI_PERIPHEN_M7_LCDCAPBLP         (RCC_AXIEN2_M7LCDCAPBLPEN ) 
+#define RCC_AXI_PERIPHEN_M4_LCDCAPBLP         (RCC_AXIEN2_M4LCDCAPBLPEN ) 
+#define RCC_AXI_PERIPHEN_M7_DVP1             (RCC_AXIEN2_M7DVP1EN     ) 
+#define RCC_AXI_PERIPHEN_M4_DVP1             (RCC_AXIEN2_M4DVP1EN     ) 
+#define RCC_AXI_PERIPHEN_M7_DVP1LP           (RCC_AXIEN2_M7DVP1LPEN   ) 
+#define RCC_AXI_PERIPHEN_M4_DVP1LP           (RCC_AXIEN2_M4DVP1LPEN   ) 
+#define RCC_AXI_PERIPHEN_M7_DVP1APB          (RCC_AXIEN2_M7DVP1APBEN  ) 
+#define RCC_AXI_PERIPHEN_M4_DVP1APB          (RCC_AXIEN2_M4DVP1APBEN  ) 
+#define RCC_AXI_PERIPHEN_M7_DVP1APBLP        (RCC_AXIEN2_M7DVP1APBLPEN) 
+#define RCC_AXI_PERIPHEN_M4_DVP1APBLP        (RCC_AXIEN2_M4DVP1APBLPEN) 
+#define RCC_AXI_PERIPHEN_M7_DVP2             (RCC_AXIEN2_M7DVP2EN     ) 
+#define RCC_AXI_PERIPHEN_M4_DVP2             (RCC_AXIEN2_M4DVP2EN     ) 
+#define RCC_AXI_PERIPHEN_M7_DVP2LP           (RCC_AXIEN2_M7DVP2LPEN   ) 
+#define RCC_AXI_PERIPHEN_M4_DVP2LP           (RCC_AXIEN2_M4DVP2LPEN   ) 
+#define RCC_AXI_PERIPHEN_M7_DVP2APB          (RCC_AXIEN2_M7DVP2APBEN  ) 
+#define RCC_AXI_PERIPHEN_M4_DVP2APB          (RCC_AXIEN2_M4DVP2APBEN  ) 
+#define RCC_AXI_PERIPHEN_M7_DVP2APBLP        (RCC_AXIEN2_M7DVP2APBLPEN) 
+#define RCC_AXI_PERIPHEN_M4_DVP2APBLP        (RCC_AXIEN2_M4DVP2APBLPEN) 
+#define RCC_AXI_PERIPHEN_M7_WWDG1            (RCC_AXIEN2_M7WWDG1EN    ) 
+#define RCC_AXI_PERIPHEN_M4_WWDG1            (RCC_AXIEN2_M4WWDG1EN    ) 
+#define RCC_AXI_PERIPHEN_M7_WWDG1LP          (RCC_AXIEN2_M7WWDG1LPEN  ) 
+#define RCC_AXI_PERIPHEN_M4_WWDG1LP          (RCC_AXIEN2_M4WWDG1LPEN  ) 
+
+#define RCC_AXI_PERIPHEN_M7_TASRAM2          (RCC_AXIEN3_M7TASRAM2EN  ) 
+#define RCC_AXI_PERIPHEN_M4_TASRAM2          (RCC_AXIEN3_M4TASRAM2EN  ) 
+#define RCC_AXI_PERIPHEN_M7_TASRAM2LP        (RCC_AXIEN3_M7TASRAM2LPEN) 
+#define RCC_AXI_PERIPHEN_M4_TASRAM2LP        (RCC_AXIEN3_M4TASRAM2LPEN) 
+#define RCC_AXI_PERIPHEN_M7_TASRAM3          (RCC_AXIEN3_M7TASRAM3EN  ) 
+#define RCC_AXI_PERIPHEN_M4_TASRAM3          (RCC_AXIEN3_M4TASRAM3EN  ) 
+#define RCC_AXI_PERIPHEN_M7_TASRAM3LP        (RCC_AXIEN3_M7TASRAM3LPEN) 
+#define RCC_AXI_PERIPHEN_M4_TASRAM3LP        (RCC_AXIEN3_M4TASRAM3LPEN) 
+#define RCC_AXI_PERIPHEN_M7_TCM              (RCC_AXIEN3_M7TCMEN      ) 
+#define RCC_AXI_PERIPHEN_M4_TCM              (RCC_AXIEN3_M4TCMEN      ) 
+#define RCC_AXI_PERIPHEN_M7_TCMLP            (RCC_AXIEN3_M7TCMLPEN    ) 
+#define RCC_AXI_PERIPHEN_M4_TCMLP            (RCC_AXIEN3_M4TCMLPEN    ) 
+#define RCC_AXI_PERIPHEN_M7_TCMAXI           (RCC_AXIEN3_M7TCMAXIEN   ) 
+#define RCC_AXI_PERIPHEN_M4_TCMAXI           (RCC_AXIEN3_M4TCMAXIEN   ) 
+#define RCC_AXI_PERIPHEN_M7_TCMAXILP         (RCC_AXIEN3_M7TCMAXILPEN ) 
+#define RCC_AXI_PERIPHEN_M4_TCMAXILP         (RCC_AXIEN3_M4TCMAXILPEN ) 
+#define RCC_AXI_PERIPHEN_M7_TCMAPB           (RCC_AXIEN3_M7TCMAPBEN   ) 
+#define RCC_AXI_PERIPHEN_M4_TCMAPB           (RCC_AXIEN3_M4TCMAPBEN   ) 
+#define RCC_AXI_PERIPHEN_M7_TCMAPBLP         (RCC_AXIEN3_M7TCMAPBLPEN ) 
+#define RCC_AXI_PERIPHEN_M4_TCMAPBLP         (RCC_AXIEN3_M4TCMAPBLPEN ) 
+#define RCC_AXI_PERIPHEN_M7_ASRAM1           (RCC_AXIEN3_M7ASRAM1EN   ) 
+#define RCC_AXI_PERIPHEN_M4_ASRAM1           (RCC_AXIEN3_M4ASRAM1EN   ) 
+#define RCC_AXI_PERIPHEN_M7_ASRAM1LP         (RCC_AXIEN3_M7ASRAM1LPEN ) 
+#define RCC_AXI_PERIPHEN_M4_ASRAM1LP         (RCC_AXIEN3_M4ASRAM1LPEN ) 
+#define RCC_AXI_PERIPHEN_M7_AXIROM           (RCC_AXIEN3_M7AXIROMEN   ) 
+#define RCC_AXI_PERIPHEN_M4_AXIROM           (RCC_AXIEN3_M4AXIROMEN   ) 
+#define RCC_AXI_PERIPHEN_M7_AXIROMLP         (RCC_AXIEN3_M7AXIROMLPEN ) 
+#define RCC_AXI_PERIPHEN_M4_AXIROMLP         (RCC_AXIEN3_M4AXIROMLPEN ) 
+#define RCC_AXI_PERIPHEN_M7_GPU              (RCC_AXIEN3_M7GPUEN      ) 
+#define RCC_AXI_PERIPHEN_M4_GPU              (RCC_AXIEN3_M4GPUEN      ) 
+#define RCC_AXI_PERIPHEN_M7_GPULP            (RCC_AXIEN3_M7GPULPEN    ) 
+#define RCC_AXI_PERIPHEN_M4_GPULP            (RCC_AXIEN3_M4GPULPEN    ) 
+
+#define RCC_AXI_PERIPHEN_M7_XSPI1            (RCC_AXIEN4_M7XSPI1EN    ) 
+#define RCC_AXI_PERIPHEN_M4_XSPI1            (RCC_AXIEN4_M4XSPI1EN    ) 
+#define RCC_AXI_PERIPHEN_M7_XSPI1LP          (RCC_AXIEN4_M7XSPI1LPEN  ) 
+#define RCC_AXI_PERIPHEN_M4_XSPI1LP          (RCC_AXIEN4_M4XSPI1LPEN  ) 
+#define RCC_AXI_PERIPHEN_M7_XSPI2            (RCC_AXIEN4_M7XSPI2EN    ) 
+#define RCC_AXI_PERIPHEN_M4_XSPI2            (RCC_AXIEN4_M4XSPI2EN    ) 
+#define RCC_AXI_PERIPHEN_M7_XSPI2LP          (RCC_AXIEN4_M7XSPI2LPEN  ) 
+#define RCC_AXI_PERIPHEN_M4_XSPI2LP          (RCC_AXIEN4_M4XSPI2LPEN  ) 
+#define RCC_AXI_PERIPHEN_M7_FEMC             (RCC_AXIEN4_M7FEMCEN     ) 
+#define RCC_AXI_PERIPHEN_M4_FEMC             (RCC_AXIEN4_M4FEMCEN     ) 
+#define RCC_AXI_PERIPHEN_M7_FEMCLP           (RCC_AXIEN4_M7FEMCLPEN   ) 
+#define RCC_AXI_PERIPHEN_M4_FEMCLP           (RCC_AXIEN4_M4FEMCLPEN   ) 
+#define RCC_AXI_PERIPHEN_M7_SDRAM            (RCC_AXIEN4_M7SDRAMEN    ) 
+#define RCC_AXI_PERIPHEN_M4_SDRAM            (RCC_AXIEN4_M4SDRAMEN    ) 
+#define RCC_AXI_PERIPHEN_M7_SDRAMLP          (RCC_AXIEN4_M7SDRAMLPEN  ) 
+#define RCC_AXI_PERIPHEN_M4_SDRAMLP          (RCC_AXIEN4_M4SDRAMLPEN  ) 
+#define RCC_AXI_PERIPHEN_M7_DSIULPS          (RCC_AXIEN4_M7DSIULPSEN  ) 
+#define RCC_AXI_PERIPHEN_M4_DSIULPS          (RCC_AXIEN4_M4DSIULPSEN  ) 
+#define RCC_AXI_PERIPHEN_M7_DSIULPSLP        (RCC_AXIEN4_M7DSIULPSLPEN) 
+#define RCC_AXI_PERIPHEN_M4_DSIULPSLP        (RCC_AXIEN4_M4DSIULPSLPEN) 
+
+/** CFG2 register peripherals enable **/
+#define RCC_CFG2_PERIPHEN_M4_CAHI              (RCC_CFG2_M4CAHIEN     )
+#define RCC_CFG2_PERIPHEN_M4_CAHIPCLK          (RCC_CFG2_M4CAHIPCLKEN )
+#define RCC_CFG2_PERIPHEN_M4_CAHD              (RCC_CFG2_M4CAHDEN     )
+#define RCC_CFG2_PERIPHEN_M4_CAHDPCLK          (RCC_CFG2_M4CAHDPCLKEN )
+#define RCC_CFG2_PERIPHEN_M7_MMU              (RCC_CFG2_M7MMUEN      )
+#define RCC_CFG2_PERIPHEN_M7_MMULP            (RCC_CFG2_M7MMULPEN    )
+#define RCC_CFG2_PERIPHEN_M4_MMU              (RCC_CFG2_M4MMUEN      )
+#define RCC_CFG2_PERIPHEN_M4_MMULP            (RCC_CFG2_M4MMULPEN    )
+#define RCC_CFG2_PERIPHEN_M7_SRAMBKP          (RCC_CFG2_M7SRAMBKPEN  )
+#define RCC_CFG2_PERIPHEN_M4_SRAMBKP          (RCC_CFG2_M4SRAMBKPEN  )
+#define RCC_CFG2_PERIPHEN_M7_SRAMBKPLP        (RCC_CFG2_M7SRAMBKPLPEN)
+#define RCC_CFG2_PERIPHEN_M4_SRAMBKPLP        (RCC_CFG2_M4SRAMBKPLPEN)
+#define RCC_CFG2_PERIPHEN_M7_SRAM1              (RCC_CFG2_M7SRAM1EN    )
+#define RCC_CFG2_PERIPHEN_M4_SRAM1              (RCC_CFG2_M4SRAM1EN    )
+#define RCC_CFG2_PERIPHEN_M7_SRAM1LP            (RCC_CFG2_M7SRAM1LPEN  )
+#define RCC_CFG2_PERIPHEN_M4_SRAM1LP            (RCC_CFG2_M4SRAM1LPEN  )
+#define RCC_CFG2_PERIPHEN_M7_SRAM2              (RCC_CFG2_M7SRAM2EN    )
+#define RCC_CFG2_PERIPHEN_M4_SRAM2              (RCC_CFG2_M4SRAM2EN    )
+#define RCC_CFG2_PERIPHEN_M7_SRAM2LP            (RCC_CFG2_M7SRAM2LPEN  )
+#define RCC_CFG2_PERIPHEN_M4_SRAM2LP            (RCC_CFG2_M4SRAM2LPEN  )
+#define RCC_CFG2_PERIPHEN_M7_SRAM3              (RCC_CFG2_M7SRAM3EN    )
+#define RCC_CFG2_PERIPHEN_M4_SRAM3              (RCC_CFG2_M4SRAM3EN    )
+#define RCC_CFG2_PERIPHEN_M7_SRAM3LP            (RCC_CFG2_M7SRAM3LPEN  )
+#define RCC_CFG2_PERIPHEN_M4_SRAM3LP            (RCC_CFG2_M4SRAM3LPEN  )
+#define RCC_CFG2_PERIPHEN_M7_SRAM4              (RCC_CFG2_M7SRAM4EN    )
+#define RCC_CFG2_PERIPHEN_M4_SRAM4              (RCC_CFG2_M4SRAM4EN    )
+#define RCC_CFG2_PERIPHEN_M7_SRAM4LP            (RCC_CFG2_M7SRAM4LPEN  )
+#define RCC_CFG2_PERIPHEN_M4_SRAM4LP            (RCC_CFG2_M4SRAM4LPEN  )
+
+/** CFG4 register peripherals enable **/
+#define RCC_CFG4_PERIPHEN_AHB1BUS                 (RCC_CFG4_AHB1CLKEN   )
+#define RCC_CFG4_PERIPHEN_AHB2BUS                 (RCC_CFG4_AHB2CLKEN   )
+#define RCC_CFG4_PERIPHEN_AHB5BUS                 (RCC_CFG4_AHB5CLKEN   )
+#define RCC_CFG4_PERIPHEN_AHB6BUS                (RCC_CFG4_AHB6CLKEN   )
+#define RCC_CFG4_PERIPHEN_AXIBUS                 (RCC_CFG4_AXICLKEN    )
+#define RCC_CFG4_PERIPHEN_APB1BUS                (RCC_CFG4_APB1CLKEN   )
+#define RCC_CFG4_PERIPHEN_APB2BUS                (RCC_CFG4_APB2CLKEN   )
+#define RCC_CFG4_PERIPHEN_APB5BUS                (RCC_CFG4_APB5CLKEN   )
+#define RCC_CFG4_PERIPHEN_APB6BUS                (RCC_CFG4_APB6CLKEN   )
+#define RCC_CFG4_PERIPHEN_AHB9BUS                (RCC_CFG4_AHB9CLKEN   )
+#define RCC_CFG4_PERIPHEN_M7AXIMATRIX_GPV        (RCC_CFG4_AXIMM7GCLKEN)
+#define RCC_CFG4_PERIPHEN_M4AXIMATRIX_GPV        (RCC_CFG4_AXIMM4GCLKEN)
+#define RCC_CFG4_PERIPHEN_HSICG                  (RCC_CFG4_HSICGEN     )
+#define RCC_CFG4_PERIPHEN_HSIKERCG               (RCC_CFG4_HSIKERCGEN  )
+#define RCC_CFG4_PERIPHEN_HSECG                  (RCC_CFG4_HSECGEN     )
+#define RCC_CFG4_PERIPHEN_HSEKERCG               (RCC_CFG4_HSEKERCGEN  )
+#define RCC_CFG4_PERIPHEN_MSICG                  (RCC_CFG4_MSICGEN     )
+#define RCC_CFG4_PERIPHEN_MSIKERCG               (RCC_CFG4_MSIKERCGEN  )
+#define RCC_CFG4_PERIPHEN_M7AXIMATRIX            (RCC_CFG4_AXIMM7CLKEN )
+#define RCC_CFG4_PERIPHEN_AXIGGPV                (RCC_CFG4_AXIGCLKEN   )
+#define RCC_CFG4_PERIPHEN_M4AXIMATRIX            (RCC_CFG4_AXIMM4CLKEN )
+#define RCC_CFG4_PERIPHEN_M7DCMUCLK              (RCC_CFG4_DCMUM7CLKEN )
+#define RCC_CFG4_PERIPHEN_M4DCMUCLK              (RCC_CFG4_DCMUM4CLKEN )
+#define RCC_CFG4_PERIPHEN_AHBMATRIX1             (RCC_CFG4_AHBM1CLKEN  )
+#define RCC_CFG4_PERIPHEN_AHBMATRIX2             (RCC_CFG4_AHBM2CLKEN  )
+#define RCC_CFG4_PERIPHEN_AHBMATRIX3             (RCC_CFG4_AHBM3CLKEN  )
+
+/** CFG5 register peripherals enable **/
+#define RCC_CFG5_PERIPHEN_M7_SRAM5              (RCC_CFG5_M7SRAM5EN    )
+#define RCC_CFG5_PERIPHEN_M4_SRAM5              (RCC_CFG5_M4SRAM5EN    )
+#define RCC_CFG5_PERIPHEN_M7_SRAM5LP            (RCC_CFG5_M7SRAM5LPEN  )
+#define RCC_CFG5_PERIPHEN_M4_SRAM5LP            (RCC_CFG5_M4SRAM5LPEN  )
+
+
+/** HSE_configuration **/
+#define RCC_HSE_DISABLE  (RCC_REG_BIT_MASK)
+#define RCC_HSE_ENABLE   (RCC_SRCCTRL1_HSEEN)
+#define RCC_HSE_BYPASS   (RCC_SRCCTRL1_HSEBP)
+#define RCC_HSE_RDCNTEN    (RCC_SRCCTRL1_HSERDCNTEN)
+#define RCC_HSE_STABLE_FLAG    (RCC_SRCCTRL1_HSERDF)
+
+/** LSI_configuration **/
+#define RCC_LSI_ENABLE        (RCC_BDCTRL_LSIEN)
+#define RCC_LSIRDY_ENABLE      (RCC_BDCTRL_LSIRDEN)
+#define RCC_LSI_STABLE_FLAG    (RCC_BDCTRL_LSIRDF|RCC_BDCTRL_AFELSIRDF)
+
+#define RCC_SECLSI_ENABLE     (RCC_BDCTRL_LSISECEN)
+#define RCC_SECLSI_STABLE_FLAG    (RCC_BDCTRL_LSISECRDF)
+
+/** HSI_configuration **/
+#define RCC_HSI_ENABLE        (RCC_SRCCTRL1_HSIEN)
+#define RCC_HSI_STABLE_FLAG    (RCC_SRCCTRL1_HSIRDF|RCC_SRCCTRL1_AFEHSIRDF)
+
+/** MSI_configuration **/
+#define RCC_MSI_ENABLE        (RCC_SRCCTRL1_MSIEN)
+#define RCC_MSI_STABLE_FLAG    (RCC_SRCCTRL1_MSIRDF|RCC_SRCCTRL1_AFEMSIRDF)
+
+/** System_clock_status mask **/
+#define RCC_SYSCLK_STS_MASK    (RCC_SRCCTRL1_SCLKSTS)
+#define RCC_SYSCLK_STS_HSI     (RCC_SRCCTRL1_SCLKSTS_HSI )
+#define RCC_SYSCLK_STS_MSI     (RCC_SRCCTRL1_SCLKSTS_MSI )
+#define RCC_SYSCLK_STS_HSE     (RCC_SRCCTRL1_SCLKSTS_HSE )
+#define RCC_SYSCLK_STS_PLL1A   (RCC_SRCCTRL1_SCLKSTS_PLL1)
+
+#define RCC_SYSCLK_SRC_MASK     (~RCC_SRCCTRL1_SCLKSW )
+#define RCC_SYSCLK_SRC_HSI      (RCC_SRCCTRL1_SCLKSW_HSI )
+#define RCC_SYSCLK_SRC_MSI      (RCC_SRCCTRL1_SCLKSW_MSI )
+#define RCC_SYSCLK_SRC_HSE      (RCC_SRCCTRL1_SCLKSW_HSE )
+#define RCC_SYSCLK_SRC_PLL1A    (RCC_SRCCTRL1_SCLKSW_PLL1)
+
+
+/** LSE_configuration **/
+#define RCC_LSE_DISABLE        (RCC_REG_BIT_MASK)
+#define RCC_LSE_ENABLE         (RCC_BDCTRL_LSEEN)
+#define RCC_LSE_BYPASS         (RCC_BDCTRL_LSEBP) 
+#define RCC_LSE_LSELDO         (RCC_BDCTRL_LSELDOEN)    
+#define RCC_LSERDY_ENABLE      (RCC_BDCTRL_LSERDEN)
+#define RCC_LSE_RDCNTEN        (RCC_BDCTRL_LSERDCNTEN) 
+#define RCC_LSE_STABLE_FLAG    (RCC_BDCTRL_LSERDF|RCC_BDCTRL_AFELSERDF)
+/**  PLL_clock  **/
+#define RCC_PLL_BWAJ_MASK        (~RCC_PLL1CTRL1_PLL1BWAJ)
+#define RCC_PLL_CLKR_CLKF_MASK   (RCC_REG_BIT_MASK)
+#define RCC_PLL_SRC_MASK         (~RCC_PLL1CTRL1_PLL1SRC)
+#define RCC_PLL_LOCK_FLAG        (RCC_PLL1CTRL1_PLL1PHLK)
+#define RCC_PLL_LDO_ENABLE       (RCC_PLL1CTRL1_PLL1LDOEN)
+#define RCC_PLL_ENABLE           (RCC_PLL1CTRL1_PLL1EN   )
+#define RCC_PLL_RESET_ENABLE     (RCC_PLL1CTRL1_PLL1RST  )
+#define RCC_PLL_POWER_DOWN       (RCC_PLL1CTRL1_PLL1PD   )
+
+#define RCC_PLL_SRC_HSI          (RCC_REG_BIT_MASK )
+#define RCC_PLL_SRC_MSI          (RCC_PLL1CTRL1_PLL1SRC_1 )
+#define RCC_PLL_SRC_HSE          (RCC_PLL1CTRL1_PLL1SRC_0|RCC_PLL1CTRL1_PLL1SRC_1 )
+
+/**  cortex Selection       **/
+#define RCC_M7HYPERCLK_SRC_MASK                    (~RCC_SRCCTRL2_M7HYPSEL )
+#define RCC_M7HYPERCLK_SRC_PLL1A                   (RCC_REG_BIT_MASK )
+#define RCC_M7HYPERCLK_SRC_PLL2A                   (RCC_SRCCTRL2_M7HYPSEL )
+
+#define RCC_AXIHYPERCLK_SRC_MASK                    (~RCC_SRCCTRL2_AXIHYPSEL )
+#define RCC_AXIHYPERCLK_SRC_PLL1A                   (RCC_REG_BIT_MASK )
+#define RCC_AXIHYPERCLK_SRC_PLL2A                   (RCC_SRCCTRL2_AXIHYPSEL )
+
+/**  PLL1C,PLL2C,PLL3C DIV values   **/
+#define RCC_PLLC_DIV_MASK               (~RCC_PLL1DIV_PLL1CDIV )
+#define RCC_PLLC_DIV1                   (RCC_PLL1DIV_PLL1CDIV_DIV1 )
+#define RCC_PLLC_DIV2                   (RCC_PLL1DIV_PLL1CDIV_DIV2 )
+#define RCC_PLLC_DIV3                   (RCC_PLL1DIV_PLL1CDIV_DIV3 )
+#define RCC_PLLC_DIV4                   (RCC_PLL1DIV_PLL1CDIV_DIV4 )
+#define RCC_PLLC_DIV5                   (RCC_PLL1DIV_PLL1CDIV_DIV5 )
+#define RCC_PLLC_DIV6                   (RCC_PLL1DIV_PLL1CDIV_DIV6 )
+#define RCC_PLLC_DIV7                   (RCC_PLL1DIV_PLL1CDIV_DIV7 )
+#define RCC_PLLC_DIV8                   (RCC_PLL1DIV_PLL1CDIV_DIV8 )
+#define RCC_PLLC_DIV9                   (RCC_PLL1DIV_PLL1CDIV_DIV9 )
+#define RCC_PLLC_DIV10                  (RCC_PLL1DIV_PLL1CDIV_DIV10)
+#define RCC_PLLC_DIV11                  (RCC_PLL1DIV_PLL1CDIV_DIV11)
+#define RCC_PLLC_DIV12                  (RCC_PLL1DIV_PLL1CDIV_DIV12)
+#define RCC_PLLC_DIV13                  (RCC_PLL1DIV_PLL1CDIV_DIV13)
+#define RCC_PLLC_DIV14                  (RCC_PLL1DIV_PLL1CDIV_DIV14)
+#define RCC_PLLC_DIV15                  (RCC_PLL1DIV_PLL1CDIV_DIV15)
+#define RCC_PLLC_DIV16                  (RCC_PLL1DIV_PLL1CDIV_DIV16)
+#define RCC_PLLC_DIV17                  (RCC_PLL1DIV_PLL1CDIV_DIV17)
+#define RCC_PLLC_DIV18                  (RCC_PLL1DIV_PLL1CDIV_DIV18)
+#define RCC_PLLC_DIV19                  (RCC_PLL1DIV_PLL1CDIV_DIV19)
+#define RCC_PLLC_DIV20                  (RCC_PLL1DIV_PLL1CDIV_DIV20)
+#define RCC_PLLC_DIV21                  (RCC_PLL1DIV_PLL1CDIV_DIV21)
+#define RCC_PLLC_DIV22                  (RCC_PLL1DIV_PLL1CDIV_DIV22)
+#define RCC_PLLC_DIV23                  (RCC_PLL1DIV_PLL1CDIV_DIV23)
+#define RCC_PLLC_DIV24                  (RCC_PLL1DIV_PLL1CDIV_DIV24)
+#define RCC_PLLC_DIV25                  (RCC_PLL1DIV_PLL1CDIV_DIV25)
+#define RCC_PLLC_DIV26                  (RCC_PLL1DIV_PLL1CDIV_DIV26)
+#define RCC_PLLC_DIV27                  (RCC_PLL1DIV_PLL1CDIV_DIV27)
+#define RCC_PLLC_DIV28                  (RCC_PLL1DIV_PLL1CDIV_DIV28)
+#define RCC_PLLC_DIV29                  (RCC_PLL1DIV_PLL1CDIV_DIV29)
+#define RCC_PLLC_DIV30                  (RCC_PLL1DIV_PLL1CDIV_DIV30)
+#define RCC_PLLC_DIV31                  (RCC_PLL1DIV_PLL1CDIV_DIV31)
+#define RCC_PLLC_DIV32                  (RCC_PLL1DIV_PLL1CDIV_DIV32)
+#define RCC_PLLC_DIV33                  (RCC_PLL1DIV_PLL1CDIV_DIV33)
+#define RCC_PLLC_DIV34                  (RCC_PLL1DIV_PLL1CDIV_DIV34)
+#define RCC_PLLC_DIV35                  (RCC_PLL1DIV_PLL1CDIV_DIV35)
+#define RCC_PLLC_DIV36                  (RCC_PLL1DIV_PLL1CDIV_DIV36)
+#define RCC_PLLC_DIV37                  (RCC_PLL1DIV_PLL1CDIV_DIV37)
+#define RCC_PLLC_DIV38                  (RCC_PLL1DIV_PLL1CDIV_DIV38)
+#define RCC_PLLC_DIV39                  (RCC_PLL1DIV_PLL1CDIV_DIV39)
+#define RCC_PLLC_DIV40                  (RCC_PLL1DIV_PLL1CDIV_DIV40)
+#define RCC_PLLC_DIV41                  (RCC_PLL1DIV_PLL1CDIV_DIV41)
+#define RCC_PLLC_DIV42                  (RCC_PLL1DIV_PLL1CDIV_DIV42)
+#define RCC_PLLC_DIV43                  (RCC_PLL1DIV_PLL1CDIV_DIV43)
+#define RCC_PLLC_DIV44                  (RCC_PLL1DIV_PLL1CDIV_DIV44)
+#define RCC_PLLC_DIV45                  (RCC_PLL1DIV_PLL1CDIV_DIV45)
+#define RCC_PLLC_DIV46                  (RCC_PLL1DIV_PLL1CDIV_DIV46)
+#define RCC_PLLC_DIV47                  (RCC_PLL1DIV_PLL1CDIV_DIV47)
+#define RCC_PLLC_DIV48                  (RCC_PLL1DIV_PLL1CDIV_DIV48)
+#define RCC_PLLC_DIV49                  (RCC_PLL1DIV_PLL1CDIV_DIV49)
+#define RCC_PLLC_DIV50                  (RCC_PLL1DIV_PLL1CDIV_DIV50)
+#define RCC_PLLC_DIV51                  (RCC_PLL1DIV_PLL1CDIV_DIV51)
+#define RCC_PLLC_DIV52                  (RCC_PLL1DIV_PLL1CDIV_DIV52)
+#define RCC_PLLC_DIV53                  (RCC_PLL1DIV_PLL1CDIV_DIV53)
+#define RCC_PLLC_DIV54                  (RCC_PLL1DIV_PLL1CDIV_DIV54)
+#define RCC_PLLC_DIV55                  (RCC_PLL1DIV_PLL1CDIV_DIV55)
+#define RCC_PLLC_DIV56                  (RCC_PLL1DIV_PLL1CDIV_DIV56)
+#define RCC_PLLC_DIV57                  (RCC_PLL1DIV_PLL1CDIV_DIV57)
+#define RCC_PLLC_DIV58                  (RCC_PLL1DIV_PLL1CDIV_DIV58)
+#define RCC_PLLC_DIV59                  (RCC_PLL1DIV_PLL1CDIV_DIV59)
+#define RCC_PLLC_DIV60                  (RCC_PLL1DIV_PLL1CDIV_DIV60)
+#define RCC_PLLC_DIV61                  (RCC_PLL1DIV_PLL1CDIV_DIV61)
+#define RCC_PLLC_DIV62                  (RCC_PLL1DIV_PLL1CDIV_DIV62)
+#define RCC_PLLC_DIV63                  (RCC_PLL1DIV_PLL1CDIV_DIV63)
+
+/**  PLL1B,PLL2B,PLL3B DIV values   **/
+#define RCC_PLLB_DIV_MASK               (~RCC_PLL1DIV_PLL1BDIV )
+#define RCC_PLLB_DIV1                   (RCC_PLL1DIV_PLL1BDIV_DIV1 )
+#define RCC_PLLB_DIV2                   (RCC_PLL1DIV_PLL1BDIV_DIV2 )
+#define RCC_PLLB_DIV3                   (RCC_PLL1DIV_PLL1BDIV_DIV3 )
+#define RCC_PLLB_DIV4                   (RCC_PLL1DIV_PLL1BDIV_DIV4 )
+#define RCC_PLLB_DIV5                   (RCC_PLL1DIV_PLL1BDIV_DIV5 )
+#define RCC_PLLB_DIV6                   (RCC_PLL1DIV_PLL1BDIV_DIV6 )
+#define RCC_PLLB_DIV7                   (RCC_PLL1DIV_PLL1BDIV_DIV7 )
+#define RCC_PLLB_DIV8                   (RCC_PLL1DIV_PLL1BDIV_DIV8 )
+#define RCC_PLLB_DIV9                   (RCC_PLL1DIV_PLL1BDIV_DIV9 )
+#define RCC_PLLB_DIV10                  (RCC_PLL1DIV_PLL1BDIV_DIV10)
+#define RCC_PLLB_DIV11                  (RCC_PLL1DIV_PLL1BDIV_DIV11)
+#define RCC_PLLB_DIV12                  (RCC_PLL1DIV_PLL1BDIV_DIV12)
+#define RCC_PLLB_DIV13                  (RCC_PLL1DIV_PLL1BDIV_DIV13)
+#define RCC_PLLB_DIV14                  (RCC_PLL1DIV_PLL1BDIV_DIV14)
+#define RCC_PLLB_DIV15                  (RCC_PLL1DIV_PLL1BDIV_DIV15)
+#define RCC_PLLB_DIV16                  (RCC_PLL1DIV_PLL1BDIV_DIV16)
+#define RCC_PLLB_DIV17                  (RCC_PLL1DIV_PLL1BDIV_DIV17)
+#define RCC_PLLB_DIV18                  (RCC_PLL1DIV_PLL1BDIV_DIV18)
+#define RCC_PLLB_DIV19                  (RCC_PLL1DIV_PLL1BDIV_DIV19)
+#define RCC_PLLB_DIV20                  (RCC_PLL1DIV_PLL1BDIV_DIV20)
+#define RCC_PLLB_DIV21                  (RCC_PLL1DIV_PLL1BDIV_DIV21)
+#define RCC_PLLB_DIV22                  (RCC_PLL1DIV_PLL1BDIV_DIV22)
+#define RCC_PLLB_DIV23                  (RCC_PLL1DIV_PLL1BDIV_DIV23)
+#define RCC_PLLB_DIV24                  (RCC_PLL1DIV_PLL1BDIV_DIV24)
+#define RCC_PLLB_DIV25                  (RCC_PLL1DIV_PLL1BDIV_DIV25)
+#define RCC_PLLB_DIV26                  (RCC_PLL1DIV_PLL1BDIV_DIV26)
+#define RCC_PLLB_DIV27                  (RCC_PLL1DIV_PLL1BDIV_DIV27)
+#define RCC_PLLB_DIV28                  (RCC_PLL1DIV_PLL1BDIV_DIV28)
+#define RCC_PLLB_DIV29                  (RCC_PLL1DIV_PLL1BDIV_DIV29)
+#define RCC_PLLB_DIV30                  (RCC_PLL1DIV_PLL1BDIV_DIV30)
+#define RCC_PLLB_DIV31                  (RCC_PLL1DIV_PLL1BDIV_DIV31)
+#define RCC_PLLB_DIV32                  (RCC_PLL1DIV_PLL1BDIV_DIV32)
+#define RCC_PLLB_DIV33                  (RCC_PLL1DIV_PLL1BDIV_DIV33)
+#define RCC_PLLB_DIV34                  (RCC_PLL1DIV_PLL1BDIV_DIV34)
+#define RCC_PLLB_DIV35                  (RCC_PLL1DIV_PLL1BDIV_DIV35)
+#define RCC_PLLB_DIV36                  (RCC_PLL1DIV_PLL1BDIV_DIV36)
+#define RCC_PLLB_DIV37                  (RCC_PLL1DIV_PLL1BDIV_DIV37)
+#define RCC_PLLB_DIV38                  (RCC_PLL1DIV_PLL1BDIV_DIV38)
+#define RCC_PLLB_DIV39                  (RCC_PLL1DIV_PLL1BDIV_DIV39)
+#define RCC_PLLB_DIV40                  (RCC_PLL1DIV_PLL1BDIV_DIV40)
+#define RCC_PLLB_DIV41                  (RCC_PLL1DIV_PLL1BDIV_DIV41)
+#define RCC_PLLB_DIV42                  (RCC_PLL1DIV_PLL1BDIV_DIV42)
+#define RCC_PLLB_DIV43                  (RCC_PLL1DIV_PLL1BDIV_DIV43)
+#define RCC_PLLB_DIV44                  (RCC_PLL1DIV_PLL1BDIV_DIV44)
+#define RCC_PLLB_DIV45                  (RCC_PLL1DIV_PLL1BDIV_DIV45)
+#define RCC_PLLB_DIV46                  (RCC_PLL1DIV_PLL1BDIV_DIV46)
+#define RCC_PLLB_DIV47                  (RCC_PLL1DIV_PLL1BDIV_DIV47)
+#define RCC_PLLB_DIV48                  (RCC_PLL1DIV_PLL1BDIV_DIV48)
+#define RCC_PLLB_DIV49                  (RCC_PLL1DIV_PLL1BDIV_DIV49)
+#define RCC_PLLB_DIV50                  (RCC_PLL1DIV_PLL1BDIV_DIV50)
+#define RCC_PLLB_DIV51                  (RCC_PLL1DIV_PLL1BDIV_DIV51)
+#define RCC_PLLB_DIV52                  (RCC_PLL1DIV_PLL1BDIV_DIV52)
+#define RCC_PLLB_DIV53                  (RCC_PLL1DIV_PLL1BDIV_DIV53)
+#define RCC_PLLB_DIV54                  (RCC_PLL1DIV_PLL1BDIV_DIV54)
+#define RCC_PLLB_DIV55                  (RCC_PLL1DIV_PLL1BDIV_DIV55)
+#define RCC_PLLB_DIV56                  (RCC_PLL1DIV_PLL1BDIV_DIV56)
+#define RCC_PLLB_DIV57                  (RCC_PLL1DIV_PLL1BDIV_DIV57)
+#define RCC_PLLB_DIV58                  (RCC_PLL1DIV_PLL1BDIV_DIV58)
+#define RCC_PLLB_DIV59                  (RCC_PLL1DIV_PLL1BDIV_DIV59)
+#define RCC_PLLB_DIV60                  (RCC_PLL1DIV_PLL1BDIV_DIV60)
+#define RCC_PLLB_DIV61                  (RCC_PLL1DIV_PLL1BDIV_DIV61)
+#define RCC_PLLB_DIV62                  (RCC_PLL1DIV_PLL1BDIV_DIV62)
+#define RCC_PLLB_DIV63                  (RCC_PLL1DIV_PLL1BDIV_DIV63)
+
+/**  PLL1A,PLL2A,PLL3A DIV values   **/
+#define RCC_PLLA_DIV_MASK               (~RCC_PLL1DIV_PLL1ADIV )
+#define RCC_PLLA_DIV1                   (RCC_PLL1DIV_PLL1ADIV_DIV1 )
+#define RCC_PLLA_DIV2                   (RCC_PLL1DIV_PLL1ADIV_DIV2 )
+#define RCC_PLLA_DIV3                   (RCC_PLL1DIV_PLL1ADIV_DIV3 )
+#define RCC_PLLA_DIV4                   (RCC_PLL1DIV_PLL1ADIV_DIV4 )
+#define RCC_PLLA_DIV5                   (RCC_PLL1DIV_PLL1ADIV_DIV5 )
+#define RCC_PLLA_DIV6                   (RCC_PLL1DIV_PLL1ADIV_DIV6 )
+#define RCC_PLLA_DIV7                   (RCC_PLL1DIV_PLL1ADIV_DIV7 )
+#define RCC_PLLA_DIV8                   (RCC_PLL1DIV_PLL1ADIV_DIV8 )
+#define RCC_PLLA_DIV9                   (RCC_PLL1DIV_PLL1ADIV_DIV9 )
+#define RCC_PLLA_DIV10                  (RCC_PLL1DIV_PLL1ADIV_DIV10)
+#define RCC_PLLA_DIV11                  (RCC_PLL1DIV_PLL1ADIV_DIV11)
+#define RCC_PLLA_DIV12                  (RCC_PLL1DIV_PLL1ADIV_DIV12)
+#define RCC_PLLA_DIV13                  (RCC_PLL1DIV_PLL1ADIV_DIV13)
+#define RCC_PLLA_DIV14                  (RCC_PLL1DIV_PLL1ADIV_DIV14)
+#define RCC_PLLA_DIV15                  (RCC_PLL1DIV_PLL1ADIV_DIV15)
+#define RCC_PLLA_DIV16                  (RCC_PLL1DIV_PLL1ADIV_DIV16)
+#define RCC_PLLA_DIV17                  (RCC_PLL1DIV_PLL1ADIV_DIV17)
+#define RCC_PLLA_DIV18                  (RCC_PLL1DIV_PLL1ADIV_DIV18)
+#define RCC_PLLA_DIV19                  (RCC_PLL1DIV_PLL1ADIV_DIV19)
+#define RCC_PLLA_DIV20                  (RCC_PLL1DIV_PLL1ADIV_DIV20)
+#define RCC_PLLA_DIV21                  (RCC_PLL1DIV_PLL1ADIV_DIV21)
+#define RCC_PLLA_DIV22                  (RCC_PLL1DIV_PLL1ADIV_DIV22)
+#define RCC_PLLA_DIV23                  (RCC_PLL1DIV_PLL1ADIV_DIV23)
+#define RCC_PLLA_DIV24                  (RCC_PLL1DIV_PLL1ADIV_DIV24)
+#define RCC_PLLA_DIV25                  (RCC_PLL1DIV_PLL1ADIV_DIV25)
+#define RCC_PLLA_DIV26                  (RCC_PLL1DIV_PLL1ADIV_DIV26)
+#define RCC_PLLA_DIV27                  (RCC_PLL1DIV_PLL1ADIV_DIV27)
+#define RCC_PLLA_DIV28                  (RCC_PLL1DIV_PLL1ADIV_DIV28)
+#define RCC_PLLA_DIV29                  (RCC_PLL1DIV_PLL1ADIV_DIV29)
+#define RCC_PLLA_DIV30                  (RCC_PLL1DIV_PLL1ADIV_DIV30)
+#define RCC_PLLA_DIV31                  (RCC_PLL1DIV_PLL1ADIV_DIV31)
+#define RCC_PLLA_DIV32                  (RCC_PLL1DIV_PLL1ADIV_DIV32)
+#define RCC_PLLA_DIV33                  (RCC_PLL1DIV_PLL1ADIV_DIV33)
+#define RCC_PLLA_DIV34                  (RCC_PLL1DIV_PLL1ADIV_DIV34)
+#define RCC_PLLA_DIV35                  (RCC_PLL1DIV_PLL1ADIV_DIV35)
+#define RCC_PLLA_DIV36                  (RCC_PLL1DIV_PLL1ADIV_DIV36)
+#define RCC_PLLA_DIV37                  (RCC_PLL1DIV_PLL1ADIV_DIV37)
+#define RCC_PLLA_DIV38                  (RCC_PLL1DIV_PLL1ADIV_DIV38)
+#define RCC_PLLA_DIV39                  (RCC_PLL1DIV_PLL1ADIV_DIV39)
+#define RCC_PLLA_DIV40                  (RCC_PLL1DIV_PLL1ADIV_DIV40)
+#define RCC_PLLA_DIV41                  (RCC_PLL1DIV_PLL1ADIV_DIV41)
+#define RCC_PLLA_DIV42                  (RCC_PLL1DIV_PLL1ADIV_DIV42)
+#define RCC_PLLA_DIV43                  (RCC_PLL1DIV_PLL1ADIV_DIV43)
+#define RCC_PLLA_DIV44                  (RCC_PLL1DIV_PLL1ADIV_DIV44)
+#define RCC_PLLA_DIV45                  (RCC_PLL1DIV_PLL1ADIV_DIV45)
+#define RCC_PLLA_DIV46                  (RCC_PLL1DIV_PLL1ADIV_DIV46)
+#define RCC_PLLA_DIV47                  (RCC_PLL1DIV_PLL1ADIV_DIV47)
+#define RCC_PLLA_DIV48                  (RCC_PLL1DIV_PLL1ADIV_DIV48)
+#define RCC_PLLA_DIV49                  (RCC_PLL1DIV_PLL1ADIV_DIV49)
+#define RCC_PLLA_DIV50                  (RCC_PLL1DIV_PLL1ADIV_DIV50)
+#define RCC_PLLA_DIV51                  (RCC_PLL1DIV_PLL1ADIV_DIV51)
+#define RCC_PLLA_DIV52                  (RCC_PLL1DIV_PLL1ADIV_DIV52)
+#define RCC_PLLA_DIV53                  (RCC_PLL1DIV_PLL1ADIV_DIV53)
+#define RCC_PLLA_DIV54                  (RCC_PLL1DIV_PLL1ADIV_DIV54)
+#define RCC_PLLA_DIV55                  (RCC_PLL1DIV_PLL1ADIV_DIV55)
+#define RCC_PLLA_DIV56                  (RCC_PLL1DIV_PLL1ADIV_DIV56)
+#define RCC_PLLA_DIV57                  (RCC_PLL1DIV_PLL1ADIV_DIV57)
+#define RCC_PLLA_DIV58                  (RCC_PLL1DIV_PLL1ADIV_DIV58)
+#define RCC_PLLA_DIV59                  (RCC_PLL1DIV_PLL1ADIV_DIV59)
+#define RCC_PLLA_DIV60                  (RCC_PLL1DIV_PLL1ADIV_DIV60)
+#define RCC_PLLA_DIV61                  (RCC_PLL1DIV_PLL1ADIV_DIV61)
+#define RCC_PLLA_DIV62                  (RCC_PLL1DIV_PLL1ADIV_DIV62)
+#define RCC_PLLA_DIV63                  (RCC_PLL1DIV_PLL1ADIV_DIV63)
+
+/**  HSI DIV values   **/
+#define RCC_HSICLK_DIV_MASK              (~RCC_SYSBUSDIV1_HSIDIV  )
+#define RCC_HSICLK_DIV1                  (RCC_SYSBUSDIV1_HSIDIV_DIV1  )
+#define RCC_HSICLK_DIV2                  (RCC_SYSBUSDIV1_HSIDIV_DIV2  )
+#define RCC_HSICLK_DIV4                  (RCC_SYSBUSDIV1_HSIDIV_DIV4  )
+#define RCC_HSICLK_DIV8                  (RCC_SYSBUSDIV1_HSIDIV_DIV8  )
+#define RCC_HSICLK_DIV16                 (RCC_SYSBUSDIV1_HSIDIV_DIV16 )
+#define RCC_HSICLK_DIV32                 (RCC_SYSBUSDIV1_HSIDIV_DIV32 )
+#define RCC_HSICLK_DIV64                 (RCC_SYSBUSDIV1_HSIDIV_DIV64 )
+#define RCC_HSICLK_DIV128                (RCC_SYSBUSDIV1_HSIDIV_DIV128)
+#define RCC_HSICLK_DIV256                (RCC_SYSBUSDIV1_HSIDIV_DIV256)
+#define RCC_HSICLK_DIV512                (RCC_SYSBUSDIV1_HSIDIV_DIV512)
+
+/**  MSI DIV values   **/
+#define RCC_MSICLK_DIV_MASK              (~RCC_SYSBUSDIV1_MSIDIV  )
+#define RCC_MSICLK_DIV1                  (RCC_SYSBUSDIV1_MSIDIV_DIV1  )
+#define RCC_MSICLK_DIV2                  (RCC_SYSBUSDIV1_MSIDIV_DIV2  )
+#define RCC_MSICLK_DIV4                  (RCC_SYSBUSDIV1_MSIDIV_DIV4  )
+#define RCC_MSICLK_DIV8                  (RCC_SYSBUSDIV1_MSIDIV_DIV8  )
+#define RCC_MSICLK_DIV16                 (RCC_SYSBUSDIV1_MSIDIV_DIV16 )
+#define RCC_MSICLK_DIV32                 (RCC_SYSBUSDIV1_MSIDIV_DIV32 )
+#define RCC_MSICLK_DIV64                 (RCC_SYSBUSDIV1_MSIDIV_DIV64 )
+#define RCC_MSICLK_DIV128                (RCC_SYSBUSDIV1_MSIDIV_DIV128)
+#define RCC_MSICLK_DIV256                (RCC_SYSBUSDIV1_MSIDIV_DIV256)
+#define RCC_MSICLK_DIV512                (RCC_SYSBUSDIV1_MSIDIV_DIV512)
+
+/**  AXI Clock Hyper Mode DIV values   **/
+#define RCC_AXICLK_HYP_DIV_MASK              (~RCC_SYSBUSDIV1_AXIHYPDIV  )
+#define RCC_AXICLK_HYP_DIV1                  (RCC_SYSBUSDIV1_AXIHYPDIV_DIV1  )
+#define RCC_AXICLK_HYP_DIV2                  (RCC_SYSBUSDIV1_AXIHYPDIV_DIV2  )
+#define RCC_AXICLK_HYP_DIV4                  (RCC_SYSBUSDIV1_AXIHYPDIV_DIV4  )
+#define RCC_AXICLK_HYP_DIV8                  (RCC_SYSBUSDIV1_AXIHYPDIV_DIV8  )
+#define RCC_AXICLK_HYP_DIV16                 (RCC_SYSBUSDIV1_AXIHYPDIV_DIV16 )
+#define RCC_AXICLK_HYP_DIV32                 (RCC_SYSBUSDIV1_AXIHYPDIV_DIV32 )
+#define RCC_AXICLK_HYP_DIV64                 (RCC_SYSBUSDIV1_AXIHYPDIV_DIV64 )
+#define RCC_AXICLK_HYP_DIV128                (RCC_SYSBUSDIV1_AXIHYPDIV_DIV128)
+#define RCC_AXICLK_HYP_DIV256                (RCC_SYSBUSDIV1_AXIHYPDIV_DIV256)
+#define RCC_AXICLK_HYP_DIV512                (RCC_SYSBUSDIV1_AXIHYPDIV_DIV512)
+
+/**  M7 Clock Hyper Mode DIV values   **/
+#define RCC_M7CLK_HYP_DIV_MASK              (~RCC_SYSBUSDIV1_M7HYPDIV  )
+#define RCC_M7CLK_HYP_DIV1                  (RCC_SYSBUSDIV1_M7HYPDIV_DIV1  )
+#define RCC_M7CLK_HYP_DIV2                  (RCC_SYSBUSDIV1_M7HYPDIV_DIV2  )
+#define RCC_M7CLK_HYP_DIV4                  (RCC_SYSBUSDIV1_M7HYPDIV_DIV4  )
+#define RCC_M7CLK_HYP_DIV8                  (RCC_SYSBUSDIV1_M7HYPDIV_DIV8  )
+#define RCC_M7CLK_HYP_DIV16                 (RCC_SYSBUSDIV1_M7HYPDIV_DIV16 )
+#define RCC_M7CLK_HYP_DIV32                 (RCC_SYSBUSDIV1_M7HYPDIV_DIV32 )
+#define RCC_M7CLK_HYP_DIV64                 (RCC_SYSBUSDIV1_M7HYPDIV_DIV64 )
+#define RCC_M7CLK_HYP_DIV128                (RCC_SYSBUSDIV1_M7HYPDIV_DIV128)
+#define RCC_M7CLK_HYP_DIV256                (RCC_SYSBUSDIV1_M7HYPDIV_DIV256)
+#define RCC_M7CLK_HYP_DIV512                (RCC_SYSBUSDIV1_M7HYPDIV_DIV512)
+
+/**  AXI Clock DIV values   **/
+#define RCC_AXICLK_DIV_MASK                           (~RCC_SYSBUSDIV1_AXIDIV  )
+#define RCC_AXICLK_DIV1                               (RCC_SYSBUSDIV1_AXIDIV_DIV1  )
+#define RCC_AXICLK_DIV2                               (RCC_SYSBUSDIV1_AXIDIV_DIV2  )
+#define RCC_AXICLK_DIV4                               (RCC_SYSBUSDIV1_AXIDIV_DIV4  )
+#define RCC_AXICLK_DIV8                               (RCC_SYSBUSDIV1_AXIDIV_DIV8  )
+#define RCC_AXICLK_DIV16                              (RCC_SYSBUSDIV1_AXIDIV_DIV16 )
+#define RCC_AXICLK_DIV32                              (RCC_SYSBUSDIV1_AXIDIV_DIV32 )
+#define RCC_AXICLK_DIV64                              (RCC_SYSBUSDIV1_AXIDIV_DIV64 )
+#define RCC_AXICLK_DIV128                             (RCC_SYSBUSDIV1_AXIDIV_DIV128)
+#define RCC_AXICLK_DIV256                             (RCC_SYSBUSDIV1_AXIDIV_DIV256)
+#define RCC_AXICLK_DIV512                             (RCC_SYSBUSDIV1_AXIDIV_DIV512)
+
+/**   System bus clock DIV values   **/
+#define RCC_BUSCLK_DIV_MASK                               (~RCC_SYSBUSDIV1_BUSDIV  )
+#define RCC_BUSCLK_DIV1                                   (RCC_SYSBUSDIV1_BUSDIV_DIV1  )
+#define RCC_BUSCLK_DIV2                                   (RCC_SYSBUSDIV1_BUSDIV_DIV2  )
+#define RCC_BUSCLK_DIV4                                   (RCC_SYSBUSDIV1_BUSDIV_DIV4  )
+#define RCC_BUSCLK_DIV8                                   (RCC_SYSBUSDIV1_BUSDIV_DIV8  )
+#define RCC_BUSCLK_DIV16                                  (RCC_SYSBUSDIV1_BUSDIV_DIV16 )
+#define RCC_BUSCLK_DIV32                                  (RCC_SYSBUSDIV1_BUSDIV_DIV32 )
+#define RCC_BUSCLK_DIV64                                  (RCC_SYSBUSDIV1_BUSDIV_DIV64 )
+#define RCC_BUSCLK_DIV128                                 (RCC_SYSBUSDIV1_BUSDIV_DIV128)
+#define RCC_BUSCLK_DIV256                                 (RCC_SYSBUSDIV1_BUSDIV_DIV256)
+#define RCC_BUSCLK_DIV512                                 (RCC_SYSBUSDIV1_BUSDIV_DIV512)
+
+/**   System clock DIV values   **/
+#define RCC_SYSCLK_DIV_MASK                               (~RCC_SYSBUSDIV1_SCLKDIV  )
+#define RCC_SYSCLK_DIV1                                   (RCC_SYSBUSDIV1_SCLKDIV_DIV1  )
+#define RCC_SYSCLK_DIV2                                   (RCC_SYSBUSDIV1_SCLKDIV_DIV2  )
+#define RCC_SYSCLK_DIV4                                   (RCC_SYSBUSDIV1_SCLKDIV_DIV4  )
+#define RCC_SYSCLK_DIV8                                   (RCC_SYSBUSDIV1_SCLKDIV_DIV8  )
+#define RCC_SYSCLK_DIV16                                  (RCC_SYSBUSDIV1_SCLKDIV_DIV16 )
+#define RCC_SYSCLK_DIV32                                  (RCC_SYSBUSDIV1_SCLKDIV_DIV32 )
+#define RCC_SYSCLK_DIV64                                  (RCC_SYSBUSDIV1_SCLKDIV_DIV64 )
+#define RCC_SYSCLK_DIV128                                 (RCC_SYSBUSDIV1_SCLKDIV_DIV128)
+#define RCC_SYSCLK_DIV256                                 (RCC_SYSBUSDIV1_SCLKDIV_DIV256)
+#define RCC_SYSCLK_DIV512                                 (RCC_SYSBUSDIV1_SCLKDIV_DIV512)
+
+
+#define RCC_APBCLK_DIV_MASK                               (~(RCC_SYSBUSDIV2_APB1DIV|RCC_SYSBUSDIV2_APB2DIV|RCC_SYSBUSDIV2_APB5DIV|RCC_SYSBUSDIV2_APB6DIV))
+/**   APB6 clock DIV values   **/
+#define RCC_APB6CLK_DIV1                                   (RCC_SYSBUSDIV2_APB6DIV_DIV1 )
+#define RCC_APB6CLK_DIV2                                   (RCC_SYSBUSDIV2_APB6DIV_DIV2 )
+#define RCC_APB6CLK_DIV4                                   (RCC_SYSBUSDIV2_APB6DIV_DIV4 )
+#define RCC_APB6CLK_DIV8                                   (RCC_SYSBUSDIV2_APB6DIV_DIV8 )
+#define RCC_APB6CLK_DIV16                                  (RCC_SYSBUSDIV2_APB6DIV_DIV16)
+/**   APB5 clock DIV values   **/
+#define RCC_APB5CLK_DIV1                                   (RCC_SYSBUSDIV2_APB5DIV_DIV1 )
+#define RCC_APB5CLK_DIV2                                   (RCC_SYSBUSDIV2_APB5DIV_DIV2 )
+#define RCC_APB5CLK_DIV4                                   (RCC_SYSBUSDIV2_APB5DIV_DIV4 )
+#define RCC_APB5CLK_DIV8                                   (RCC_SYSBUSDIV2_APB5DIV_DIV8 )
+#define RCC_APB5CLK_DIV16                                  (RCC_SYSBUSDIV2_APB5DIV_DIV16)													 
+/**   APB2 clock DIV values   **/
+#define RCC_APB2CLK_DIV1                                   (RCC_SYSBUSDIV2_APB2DIV_DIV1 )
+#define RCC_APB2CLK_DIV2                                   (RCC_SYSBUSDIV2_APB2DIV_DIV2 )
+#define RCC_APB2CLK_DIV4                                   (RCC_SYSBUSDIV2_APB2DIV_DIV4 )
+#define RCC_APB2CLK_DIV8                                   (RCC_SYSBUSDIV2_APB2DIV_DIV8 )
+#define RCC_APB2CLK_DIV16                                  (RCC_SYSBUSDIV2_APB2DIV_DIV16)
+/**   APB1 clock DIV values   **/
+#define RCC_APB1CLK_DIV1                                   (RCC_SYSBUSDIV2_APB1DIV_DIV1 )
+#define RCC_APB1CLK_DIV2                                   (RCC_SYSBUSDIV2_APB1DIV_DIV2 )
+#define RCC_APB1CLK_DIV4                                   (RCC_SYSBUSDIV2_APB1DIV_DIV4 )
+#define RCC_APB1CLK_DIV8                                   (RCC_SYSBUSDIV2_APB1DIV_DIV8 )
+#define RCC_APB1CLK_DIV16                                  (RCC_SYSBUSDIV2_APB1DIV_DIV16)
+													 
+/**   Ethernet system clock DIV values   **/
+#define RCC_ETHPTPCLK_SRC_MASK                         (~RCC_AHB2SEL1_ETH1PTPSEL)
+#define RCC_ETHPTPCLK_SRC_SYSBUSDIV                       (RCC_AHB2SEL1_ETH1PTPSEL_SYSBUSDIV)
+#define RCC_ETHPTPCLK_SRC_PERIPH                       (RCC_AHB2SEL1_ETH1PTPSEL_PERIPH)
+#define RCC_ETHPTPCLK_SRC_PLL2C                        (RCC_AHB2SEL1_ETH1PTPSEL_PLL2C )
+#define RCC_ETHPTPCLK_SRC_PLL3A                        (RCC_AHB2SEL1_ETH1PTPSEL_PLL3A )
+
+#define RCC_ETHPTPCLK_SYSBUSDIV_MASK                            (~RCC_AHB2DIV1_ETH1SYSDIV  )
+#define RCC_ETHPTPCLK_SYSBUSDIV1                                (RCC_AHB2DIV1_ETH1SYSDIV_DIV1  )
+#define RCC_ETHPTPCLK_SYSBUSDIV2                                (RCC_AHB2DIV1_ETH1SYSDIV_DIV2  )
+#define RCC_ETHPTPCLK_SYSBUSDIV4                                (RCC_AHB2DIV1_ETH1SYSDIV_DIV4  )
+#define RCC_ETHPTPCLK_SYSBUSDIV8                                (RCC_AHB2DIV1_ETH1SYSDIV_DIV8  )
+#define RCC_ETHPTPCLK_SYSBUSDIV16                               (RCC_AHB2DIV1_ETH1SYSDIV_DIV16 )
+#define RCC_ETHPTPCLK_SYSBUSDIV32                               (RCC_AHB2DIV1_ETH1SYSDIV_DIV32 )
+#define RCC_ETHPTPCLK_SYSBUSDIV64                               (RCC_AHB2DIV1_ETH1SYSDIV_DIV64 )
+#define RCC_ETHPTPCLK_SYSBUSDIV128                              (RCC_AHB2DIV1_ETH1SYSDIV_DIV128)
+#define RCC_ETHPTPCLK_SYSBUSDIV256                              (RCC_AHB2DIV1_ETH1SYSDIV_DIV256)
+#define RCC_ETHPTPCLK_SYSBUSDIV512                              (RCC_AHB2DIV1_ETH1SYSDIV_DIV512)
+
+#define RCC_ETH1GMIITXCLK_SRC_MASK                        (~RCC_AHB2SEL1_ETH1GMIITXSEL)
+#define RCC_ETH1GMIITXCLK_SRC_PLL3A                       (RCC_AHB2SEL1_ETH1GMIITXSEL_PLL3A)
+#define RCC_ETH1GMIITXCLK_SRC_PLL2B                       (RCC_AHB2SEL1_ETH1GMIITXSEL_PLL2B)
+#define RCC_ETH1GMIITXCLK_SRC_IOM                         (RCC_AHB2SEL1_ETH1GMIITXSEL_IOM  )
+#define RCC_ETH1GMIITXCLK_SRC_PLL1C                       (RCC_AHB2SEL1_ETH1GMIITXSEL_PLL1C)
+/**   SDMMC2  clock  values   **/
+#define RCC_SDMMC2KERCLK_SRC_MASK                     (~RCC_AHB1SEL1_SDMMC2KERSEL)
+#define RCC_SDMMC2KERCLK_SRC_SYSBUSDIV                   (RCC_AHB1SEL1_SDMMC2KERSEL_SYSBUSDIV)
+#define RCC_SDMMC2KERCLK_SRC_PERIPH                   (RCC_AHB1SEL1_SDMMC2KERSEL_PERIPH)
+#define RCC_SDMMC2KERCLK_SRC_PLL2A                    (RCC_AHB1SEL1_SDMMC2KERSEL_PLL2A )
+#define RCC_SDMMC2KERCLK_SRC_PLL3A                    (RCC_AHB1SEL1_SDMMC2KERSEL_PLL3A )
+#define RCC_SDMMC2KERCLK_SRC_PLL1B                    (RCC_AHB1SEL1_SDMMC2KERSEL_PLL1B )
+
+#define RCC_SDMMC2KERCLK_SYSBUSDIV_MASK                  (~RCC_AHB1DIV1_SDMMC2SYSDIV  )
+#define RCC_SDMMC2KERCLK_SYSBUSDIV1                      (RCC_AHB1DIV1_SDMMC2SYSDIV_DIV1  )
+#define RCC_SDMMC2KERCLK_SYSBUSDIV2                      (RCC_AHB1DIV1_SDMMC2SYSDIV_DIV2  )
+#define RCC_SDMMC2KERCLK_SYSBUSDIV4                      (RCC_AHB1DIV1_SDMMC2SYSDIV_DIV4  )
+#define RCC_SDMMC2KERCLK_SYSBUSDIV8                      (RCC_AHB1DIV1_SDMMC2SYSDIV_DIV8  )
+#define RCC_SDMMC2KERCLK_SYSBUSDIV16                     (RCC_AHB1DIV1_SDMMC2SYSDIV_DIV16 )
+#define RCC_SDMMC2KERCLK_SYSBUSDIV32                     (RCC_AHB1DIV1_SDMMC2SYSDIV_DIV32 )
+#define RCC_SDMMC2KERCLK_SYSBUSDIV64                     (RCC_AHB1DIV1_SDMMC2SYSDIV_DIV64 )
+#define RCC_SDMMC2KERCLK_SYSBUSDIV128                    (RCC_AHB1DIV1_SDMMC2SYSDIV_DIV128)
+#define RCC_SDMMC2KERCLK_SYSBUSDIV256                    (RCC_AHB1DIV1_SDMMC2SYSDIV_DIV256)
+#define RCC_SDMMC2KERCLK_SYSBUSDIV512                    (RCC_AHB1DIV1_SDMMC2SYSDIV_DIV512)
+
+
+#define RCC_SDMMC1KERCLK_SRC_MASK               (~RCC_AXISEL1_SDMMC1KERSEL)
+#define RCC_SDMMC1KERCLK_SRC_AXIDIV             (RCC_AXISEL1_SDMMC1KERSEL_AXIDIV)
+#define RCC_SDMMC1KERCLK_SRC_PERIPH             (RCC_AXISEL1_SDMMC1KERSEL_PERIPH)
+#define RCC_SDMMC1KERCLK_SRC_PLL2A              (RCC_AXISEL1_SDMMC1KERSEL_PLL2A )
+#define RCC_SDMMC1KERCLK_SRC_PLL3A              (RCC_AXISEL1_SDMMC1KERSEL_PLL3A )
+#define RCC_SDMMC1KERCLK_SRC_PLL1B              (RCC_AXISEL1_SDMMC1KERSEL_PLL1B )
+
+#define RCC_SDMMC1KERCLK_AXIDIV_MASK            (~RCC_AXIDIV1_SDMMC1AXIDIV  )
+#define RCC_SDMMC1KERCLK_AXIDIV1                (RCC_AXIDIV1_SDMMC1AXIDIV_DIV1  )
+#define RCC_SDMMC1KERCLK_AXIDIV2                (RCC_AXIDIV1_SDMMC1AXIDIV_DIV2  )
+#define RCC_SDMMC1KERCLK_AXIDIV4                (RCC_AXIDIV1_SDMMC1AXIDIV_DIV4  )
+#define RCC_SDMMC1KERCLK_AXIDIV8                (RCC_AXIDIV1_SDMMC1AXIDIV_DIV8  )
+#define RCC_SDMMC1KERCLK_AXIDIV16               (RCC_AXIDIV1_SDMMC1AXIDIV_DIV16 )
+#define RCC_SDMMC1KERCLK_AXIDIV32               (RCC_AXIDIV1_SDMMC1AXIDIV_DIV32 )
+#define RCC_SDMMC1KERCLK_AXIDIV64               (RCC_AXIDIV1_SDMMC1AXIDIV_DIV64 )
+#define RCC_SDMMC1KERCLK_AXIDIV128              (RCC_AXIDIV1_SDMMC1AXIDIV_DIV128)
+#define RCC_SDMMC1KERCLK_AXIDIV256              (RCC_AXIDIV1_SDMMC1AXIDIV_DIV256)
+#define RCC_SDMMC1KERCLK_AXIDIV512              (RCC_AXIDIV1_SDMMC1AXIDIV_DIV512)
+
+
+/**    DSMU system bus clock prescalar values   **/
+#define RCC_DSMUKERCLK_SRC_MASK                       (~RCC_APB2SEL1_DSMUKERSEL  )
+#define RCC_DSMUKERCLK_SRC_APB2                       (RCC_APB2SEL1_DSMUKERSEL_APB2  )
+#define RCC_DSMUKERCLK_SRC_SYSBUSDIV                     (RCC_APB2SEL1_DSMUKERSEL_SYSBUSDIV)
+
+#define RCC_DSMUKERCLK_SYSBUSDIV_MASK                    (~RCC_APB2DIV1_APB2DSMUDIV )
+#define RCC_DSMUKERCLK_SYSBUSDIV1                        (RCC_APB2DIV1_APB2DSMUDIV_DIV1 )
+#define RCC_DSMUKERCLK_SYSBUSDIV2                        (RCC_APB2DIV1_APB2DSMUDIV_DIV2 )
+#define RCC_DSMUKERCLK_SYSBUSDIV4                        (RCC_APB2DIV1_APB2DSMUDIV_DIV4 )
+#define RCC_DSMUKERCLK_SYSBUSDIV8                        (RCC_APB2DIV1_APB2DSMUDIV_DIV8 )
+#define RCC_DSMUKERCLK_SYSBUSDIV16                       (RCC_APB2DIV1_APB2DSMUDIV_DIV16)
+
+
+
+/**     DSMU Kernel A clock selection register
+  */ 
+
+#define RCC_DSMUKERACLK_SRC_MASK                     (~RCC_APB2SEL1_DSMUKERASEL  )	
+#define RCC_DSMUKERACLK_SRC_APB2                     (RCC_APB2SEL1_DSMUKERASEL_APB2  )
+#define RCC_DSMUKERACLK_SRC_PLL1B                    (RCC_APB2SEL1_DSMUKERASEL_PLL1B )
+#define RCC_DSMUKERACLK_SRC_PLL2B                    (RCC_APB2SEL1_DSMUKERASEL_PLL2B )
+#define RCC_DSMUKERACLK_SRC_PLL3A                    (RCC_APB2SEL1_DSMUKERASEL_PLL3A )
+#define RCC_DSMUKERACLK_SRC_CKIN                     (RCC_APB2SEL1_DSMUKERASEL_CKIN  )
+#define RCC_DSMUKERACLK_SRC_PERIPH                   (RCC_APB2SEL1_DSMUKERASEL_PERIPH)
+
+#define RCC_DSMUKERACLK_CKIN_MASK             (~RCC_CFG3_I2SSEL)
+#define RCC_DSMUKERACLK_CKIN_I2S1             (RCC_CFG3_I2SSEL_I2S1)
+#define RCC_DSMUKERACLK_CKIN_I2S2             (RCC_CFG3_I2SSEL_I2S2)
+#define RCC_DSMUKERACLK_CKIN_I2S3             (RCC_CFG3_I2SSEL_I2S3)
+#define RCC_DSMUKERACLK_CKIN_I2S4             (RCC_CFG3_I2SSEL_I2S4)
+
+/**     Periph clock selection register
+  */ 
+#define RCC_PERIPHCLK_SRC_MASK            (~RCC_CFG3_PERSW)
+#define RCC_PERIPHCLK_SRC_HSI             (RCC_REG_BIT_MASK)
+#define RCC_PERIPHCLK_SRC_MSI             (RCC_CFG3_PERSW_1)
+#define RCC_PERIPHCLK_SRC_HSE             (RCC_CFG3_PERSW_0|RCC_CFG3_PERSW_1)
+
+/**     USB1/2 reference clock selection register
+  */ 
+#define RCC_USBREFCLK_HSE_DIV_MASK           (~RCC_AHB2DIV1_USBHSEDIV)
+#define RCC_USBREFCLK_HSE_DIV1               (RCC_AHB2DIV1_USBHSEDIV_DIV1)
+#define RCC_USBREFCLK_HSE_DIV2               (RCC_AHB2DIV1_USBHSEDIV_DIV2)
+
+#define RCC_ADC1PLLCLK_SRC_MASK             (~RCC_AHB1SEL1_ADC1PLLSEL)
+#define RCC_ADC2PLLCLK_SRC_MASK             (~RCC_AHB1SEL1_ADC2PLLSEL)
+#define RCC_ADC3PLLCLK_SRC_MASK             (~RCC_AHB1SEL1_ADC3PLLSEL)
+#define RCC_ADCPLLCLK_SRC_PLL2B             (RCC_AHB1SEL1_ADC1PLLSEL_PLL2B)
+#define RCC_ADCPLLCLK_SRC_PLL1B             (RCC_AHB1SEL1_ADC1PLLSEL_PLL1B)
+#define RCC_ADCPLLCLK_SRC_PLL3B             (RCC_AHB1SEL1_ADC1PLLSEL_PLL3B)
+#define RCC_ADCPLLCLK_SRC_PLL3C             (RCC_AHB1SEL1_ADC1PLLSEL_PLL3C)
+
+
+#define RCC_ADC1SYSCLK_DIV_MASK               (~RCC_AHB1DIV2_ADC1SYSDIV)
+#define RCC_ADC2SYSCLK_DIV_MASK               (~RCC_AHB1DIV2_ADC2SYSDIV)
+#define RCC_ADC3SYSCLK_DIV_MASK               (~RCC_AHB1DIV2_ADC3SYSDIV)
+#define RCC_ADCSYSCLK_DIV1                    (RCC_AHB1DIV2_ADC1SYSDIV_DIV1 )
+#define RCC_ADCSYSCLK_DIV2                    (RCC_AHB1DIV2_ADC1SYSDIV_DIV2 )
+#define RCC_ADCSYSCLK_DIV3                    (RCC_AHB1DIV2_ADC1SYSDIV_DIV3 )
+#define RCC_ADCSYSCLK_DIV4                    (RCC_AHB1DIV2_ADC1SYSDIV_DIV4 )
+#define RCC_ADCSYSCLK_DIV5                    (RCC_AHB1DIV2_ADC1SYSDIV_DIV5 )
+#define RCC_ADCSYSCLK_DIV6                    (RCC_AHB1DIV2_ADC1SYSDIV_DIV6 )
+#define RCC_ADCSYSCLK_DIV7                    (RCC_AHB1DIV2_ADC1SYSDIV_DIV7 )
+#define RCC_ADCSYSCLK_DIV8                    (RCC_AHB1DIV2_ADC1SYSDIV_DIV8 )
+#define RCC_ADCSYSCLK_DIV9                    (RCC_AHB1DIV2_ADC1SYSDIV_DIV9 )
+#define RCC_ADCSYSCLK_DIV10                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV10)
+#define RCC_ADCSYSCLK_DIV11                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV11)
+#define RCC_ADCSYSCLK_DIV12                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV12)
+#define RCC_ADCSYSCLK_DIV13                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV13)
+#define RCC_ADCSYSCLK_DIV14                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV14)
+#define RCC_ADCSYSCLK_DIV15                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV15)
+#define RCC_ADCSYSCLK_DIV16                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV16)
+#define RCC_ADCSYSCLK_DIV17                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV17)
+#define RCC_ADCSYSCLK_DIV18                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV18)
+#define RCC_ADCSYSCLK_DIV19                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV19)
+#define RCC_ADCSYSCLK_DIV20                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV20)
+#define RCC_ADCSYSCLK_DIV21                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV21)
+#define RCC_ADCSYSCLK_DIV22                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV22)
+#define RCC_ADCSYSCLK_DIV23                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV23)
+#define RCC_ADCSYSCLK_DIV24                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV24)
+#define RCC_ADCSYSCLK_DIV25                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV25)
+#define RCC_ADCSYSCLK_DIV26                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV26)
+#define RCC_ADCSYSCLK_DIV27                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV27)
+#define RCC_ADCSYSCLK_DIV28                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV28)
+#define RCC_ADCSYSCLK_DIV29                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV29)
+#define RCC_ADCSYSCLK_DIV30                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV30)
+#define RCC_ADCSYSCLK_DIV31                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV31)
+#define RCC_ADCSYSCLK_DIV32                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV32)
+#define RCC_ADCSYSCLK_DIV33                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV33)
+#define RCC_ADCSYSCLK_DIV34                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV34)
+#define RCC_ADCSYSCLK_DIV35                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV35)
+#define RCC_ADCSYSCLK_DIV36                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV36)
+#define RCC_ADCSYSCLK_DIV37                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV37)
+#define RCC_ADCSYSCLK_DIV38                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV38)
+#define RCC_ADCSYSCLK_DIV39                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV39)
+#define RCC_ADCSYSCLK_DIV40                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV40)
+#define RCC_ADCSYSCLK_DIV41                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV41)
+#define RCC_ADCSYSCLK_DIV42                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV42)
+#define RCC_ADCSYSCLK_DIV43                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV43)
+#define RCC_ADCSYSCLK_DIV44                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV44)
+#define RCC_ADCSYSCLK_DIV45                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV45)
+#define RCC_ADCSYSCLK_DIV46                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV46)
+#define RCC_ADCSYSCLK_DIV47                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV47)
+#define RCC_ADCSYSCLK_DIV48                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV48)
+#define RCC_ADCSYSCLK_DIV49                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV49)
+#define RCC_ADCSYSCLK_DIV50                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV50)
+#define RCC_ADCSYSCLK_DIV51                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV51)
+#define RCC_ADCSYSCLK_DIV52                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV52)
+#define RCC_ADCSYSCLK_DIV53                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV53)
+#define RCC_ADCSYSCLK_DIV54                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV54)
+#define RCC_ADCSYSCLK_DIV55                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV55)
+#define RCC_ADCSYSCLK_DIV56                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV56)
+#define RCC_ADCSYSCLK_DIV57                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV57)
+#define RCC_ADCSYSCLK_DIV58                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV58)
+#define RCC_ADCSYSCLK_DIV59                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV59)
+#define RCC_ADCSYSCLK_DIV60                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV60)
+#define RCC_ADCSYSCLK_DIV61                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV61)
+#define RCC_ADCSYSCLK_DIV62                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV62)
+#define RCC_ADCSYSCLK_DIV63                   (RCC_AHB1DIV2_ADC1SYSDIV_DIV63)
+
+
+/**   APB1 "btimer(n)_gated_ker_clk" DIV values   **/
+#define RCC_BTIMKERCLK_AHB1_DIV_MASK              (~RCC_APB1DIV1_APB1BTIMDIV )
+#define RCC_BTIMKERCLK_AHB1_DIV1                  (RCC_APB1DIV1_APB1BTIMDIV_DIV1 )
+#define RCC_BTIMKERCLK_AHB1_DIV2                  (RCC_APB1DIV1_APB1BTIMDIV_DIV2 )
+#define RCC_BTIMKERCLK_AHB1_DIV4                  (RCC_APB1DIV1_APB1BTIMDIV_DIV4 )
+#define RCC_BTIMKERCLK_AHB1_DIV8                  (RCC_APB1DIV1_APB1BTIMDIV_DIV8 )
+#define RCC_BTIMKERCLK_AHB1_DIV16                 (RCC_APB1DIV1_APB1BTIMDIV_DIV16)
+
+/**   APB1 "gtimer(n)_gated_ker_clk" DIV values   **/
+#define RCC_GTIMKERCLK_AHB1_DIV_MASK             (~RCC_APB1DIV1_APB1GTIMDIV )
+#define RCC_GTIMKERCLK_AHB1_DIV1                 (RCC_APB1DIV1_APB1GTIMDIV_DIV1 )
+#define RCC_GTIMKERCLK_AHB1_DIV2                 (RCC_APB1DIV1_APB1GTIMDIV_DIV2 )
+#define RCC_GTIMKERCLK_AHB1_DIV4                 (RCC_APB1DIV1_APB1GTIMDIV_DIV4 )
+#define RCC_GTIMKERCLK_AHB1_DIV8                 (RCC_APB1DIV1_APB1GTIMDIV_DIV8 )
+#define RCC_GTIMKERCLK_AHB1_DIV16                (RCC_APB1DIV1_APB1GTIMDIV_DIV16)
+
+/**    APB2 "atimer(n)_gated_ker_clk" prescalar values   **/
+#define RCC_ATIMKERCLK_AHB2_DIV_MASK                             (~RCC_APB2DIV1_APB2ATIMDIV )
+#define RCC_ATIMKERCLK_AHB2_DIV1                                 (RCC_APB2DIV1_APB2ATIMDIV_DIV1 )
+#define RCC_ATIMKERCLK_AHB2_DIV2                                 (RCC_APB2DIV1_APB2ATIMDIV_DIV2 )
+#define RCC_ATIMKERCLK_AHB2_DIV4                                 (RCC_APB2DIV1_APB2ATIMDIV_DIV4 )
+#define RCC_ATIMKERCLK_AHB2_DIV8                                 (RCC_APB2DIV1_APB2ATIMDIV_DIV8 )
+#define RCC_ATIMKERCLK_AHB2_DIV16                                (RCC_APB2DIV1_APB2ATIMDIV_DIV16)
+
+/**    APB2 "gtimer(n)_gated_ker_clk" prescalar values   **/
+#define RCC_GTIMKERCLK_AHB2_DIV_MASK                       (~RCC_APB2DIV1_APB2GTIMDIV )
+#define RCC_GTIMKERCLK_AHB2_DIV1                           (RCC_APB2DIV1_APB2GTIMDIV_DIV1 )
+#define RCC_GTIMKERCLK_AHB2_DIV2                           (RCC_APB2DIV1_APB2GTIMDIV_DIV2 )
+#define RCC_GTIMKERCLK_AHB2_DIV4                           (RCC_APB2DIV1_APB2GTIMDIV_DIV4 )
+#define RCC_GTIMKERCLK_AHB2_DIV8                           (RCC_APB2DIV1_APB2GTIMDIV_DIV8 )
+#define RCC_GTIMKERCLK_AHB2_DIV16                          (RCC_APB2DIV1_APB2GTIMDIV_DIV16)
+
+/**    APB5 "atimer(n)_gated_ker_clk" prescalar values   **/
+#define RCC_ATIMKERCLK_AHB5_DIV_MASK                             (~RCC_APB5DIV1_APB5ATIMDIV )
+#define RCC_ATIMKERCLK_AHB5_DIV1                                 (RCC_APB5DIV1_APB5ATIMDIV_DIV1 )
+#define RCC_ATIMKERCLK_AHB5_DIV2                                 (RCC_APB5DIV1_APB5ATIMDIV_DIV2 )
+#define RCC_ATIMKERCLK_AHB5_DIV4                                 (RCC_APB5DIV1_APB5ATIMDIV_DIV4 )
+#define RCC_ATIMKERCLK_AHB5_DIV8                                 (RCC_APB5DIV1_APB5ATIMDIV_DIV8 )
+#define RCC_ATIMKERCLK_AHB5_DIV16                                (RCC_APB5DIV1_APB5ATIMDIV_DIV16)
+
+
+/**    APB1 USART prescalar values   **/
+#define RCC_USARTPCLK_AHB1_DIV_MASK                             (~RCC_APB1DIV1_APB1USARTDIV )
+#define RCC_USARTPCLK_AHB1_DIV1                                 (RCC_APB1DIV1_APB1USARTDIV_DIV1 )
+#define RCC_USARTPCLK_AHB1_DIV2                                 (RCC_APB1DIV1_APB1USARTDIV_DIV2 )
+#define RCC_USARTPCLK_AHB1_DIV4                                 (RCC_APB1DIV1_APB1USARTDIV_DIV4 )
+#define RCC_USARTPCLK_AHB1_DIV8                                 (RCC_APB1DIV1_APB1USARTDIV_DIV8 )
+#define RCC_USARTPCLK_AHB1_DIV16                                (RCC_APB1DIV1_APB1USARTDIV_DIV16)
+
+/**   APB1 "i2s(n)_ker_gated_clk" DIV values   **/
+#define RCC_I2S1_2_KERCLK_SYSBUSDIV_MASK                         (~RCC_APB2DIV1_APB2I2SDIV )
+#define RCC_I2S3_4_KERCLK_SYSBUSDIV_MASK                         (~RCC_APB1DIV1_APB1I2SDIV )
+#define RCC_I2SKERCLK_SYSBUSDIV1                                 (RCC_APB1DIV1_APB1I2SDIV_DIV1 )
+#define RCC_I2SKERCLK_SYSBUSDIV2                                 (RCC_APB1DIV1_APB1I2SDIV_DIV2 )
+#define RCC_I2SKERCLK_SYSBUSDIV4                                 (RCC_APB1DIV1_APB1I2SDIV_DIV4 )
+#define RCC_I2SKERCLK_SYSBUSDIV8                                 (RCC_APB1DIV1_APB1I2SDIV_DIV8 )
+#define RCC_I2SKERCLK_SYSBUSDIV16                                (RCC_APB1DIV1_APB1I2SDIV_DIV16)
+
+
+#define RCC_I2S1KERCLK_SRC_MASK                               (~RCC_APB2SEL1_I2S1KERSEL )
+#define RCC_I2S2KERCLK_SRC_MASK                               (~RCC_APB2SEL1_I2S2KERSEL )
+#define RCC_I2S3KERCLK_SRC_MASK                               (~RCC_APB1SEL1_I2S3KERSEL )
+#define RCC_I2S4KERCLK_SRC_MASK                               (~RCC_APB1SEL1_I2S4KERSEL )
+#define RCC_I2SKERCLK_SRC_SYSBUSDIV                              (RCC_APB2SEL1_I2S1KERSEL_SYSBUSDIV)
+#define RCC_I2SKERCLK_SRC_PLL3B                               (RCC_APB2SEL1_I2S1KERSEL_PLL3B )
+#define RCC_I2SKERCLK_SRC_HSI                                 (RCC_APB2SEL1_I2S1KERSEL_HSI   )
+#define RCC_I2SKERCLK_SRC_CLKIN                               (RCC_APB2SEL1_I2S1KERSEL_CLKIN )
+
+/**   "i2c(n)_ker_gated_clk" prescalar values when "I2C(n)_KER_CLK_SEL" is selected as 3'b100   **/
+																												  
+#define RCC_I2C1_3_KERCLK_SYSBUSDIV_MASK                         (~RCC_APB1DIV1_APB1I2CDIV )
+#define RCC_I2C4_6_KERCLK_SYSBUSDIV_MASK                         (~RCC_APB2DIV1_APB2I2CDIV )
+#define RCC_I2C7_10_KERCLK_SYSBUSDIV_MASK                        (~RCC_APB5DIV1_APB5I2CDIV )
+
+#define RCC_I2CKERCLK_SYSBUSDIV1                                 (RCC_APB1DIV1_APB1I2CDIV_DIV1 )
+#define RCC_I2CKERCLK_SYSBUSDIV2                                 (RCC_APB1DIV1_APB1I2CDIV_DIV2 )
+#define RCC_I2CKERCLK_SYSBUSDIV4                                 (RCC_APB1DIV1_APB1I2CDIV_DIV4 )
+#define RCC_I2CKERCLK_SYSBUSDIV8                                 (RCC_APB1DIV1_APB1I2CDIV_DIV8 )
+#define RCC_I2CKERCLK_SYSBUSDIV16                                (RCC_APB1DIV1_APB1I2CDIV_DIV16)
+
+#define RCC_I2C1KERCLK_SRC_MASK                                 (~RCC_APB1SEL1_I2C1KERSEL )
+#define RCC_I2C2KERCLK_SRC_MASK                                 (~RCC_APB1SEL1_I2C2KERSEL )
+#define RCC_I2C3KERCLK_SRC_MASK                                 (~RCC_APB1SEL1_I2C3KERSEL )
+#define RCC_I2C4KERCLK_SRC_MASK                                 (~RCC_APB2SEL1_I2C4KERSEL )
+#define RCC_I2C5KERCLK_SRC_MASK                                 (~RCC_APB2SEL1_I2C5KERSEL )
+#define RCC_I2C6KERCLK_SRC_MASK                                 (~RCC_APB2SEL1_I2C6KERSEL )
+#define RCC_I2C7KERCLK_SRC_MASK                                 (~RCC_APB5SEL1_I2C7KERSEL )
+#define RCC_I2C8KERCLK_SRC_MASK                                 (~RCC_APB5SEL1_I2C8KERSEL )
+#define RCC_I2C9KERCLK_SRC_MASK                                 (~RCC_APB5SEL1_I2C9KERSEL )
+#define RCC_I2C10KERCLK_SRC_MASK                                (~RCC_APB5SEL1_I2C10KERSEL )
+
+#define RCC_I2CKERCLK_SRC_SYSBUSDIV                                (RCC_APB1SEL1_I2C3KERSEL_SYSBUSDIV)
+#define RCC_I2CKERCLK_SRC_PLL3C                                 (RCC_APB1SEL1_I2C3KERSEL_PLL3C )
+#define RCC_I2CKERCLK_SRC_HSI                                   (RCC_APB1SEL1_I2C3KERSEL_HSI   )
+#define RCC_I2CKERCLK_SRC_MSI                                   (RCC_APB1SEL1_I2C3KERSEL_MSI )
+
+
+/**    CAN FD Kernel clock selection register   **/
+#define RCC_FDCAN1_2_5_6_KERCLK_SYSBUSDIV_MASK                     (~RCC_APB1DIV1_APB1FDCANDIV )
+#define RCC_FDCAN3_4_7_8_KERCLK_SYSBUSDIV_MASK                     (~RCC_APB2DIV1_APB2FDCANDIV )
+
+#define RCC_FDCANKERCLK_SYSBUSDIV1                                 (RCC_APB1DIV1_APB1FDCANDIV_DIV1 )
+#define RCC_FDCANKERCLK_SYSBUSDIV2                                 (RCC_APB1DIV1_APB1FDCANDIV_DIV2 )
+#define RCC_FDCANKERCLK_SYSBUSDIV4                                 (RCC_APB1DIV1_APB1FDCANDIV_DIV4 )
+#define RCC_FDCANKERCLK_SYSBUSDIV8                                 (RCC_APB1DIV1_APB1FDCANDIV_DIV8 )
+#define RCC_FDCANKERCLK_SYSBUSDIV16                                (RCC_APB1DIV1_APB1FDCANDIV_DIV16)
+
+#define RCC_FDCAN1KERCLK_SRC_MASK                                (~RCC_APB1SEL1_FDCAN1KERSEL)
+#define RCC_FDCAN2KERCLK_SRC_MASK                                (~RCC_APB1SEL1_FDCAN2KERSEL)
+#define RCC_FDCAN5KERCLK_SRC_MASK                                (~RCC_APB1SEL2_FDCAN5KERSEL)
+#define RCC_FDCAN6KERCLK_SRC_MASK                                (~RCC_APB1SEL2_FDCAN6KERSEL)
+#define RCC_FDCAN3KERCLK_SRC_MASK                                (~RCC_APB2SEL2_FDCAN3KERSEL)
+#define RCC_FDCAN4KERCLK_SRC_MASK                                (~RCC_APB2SEL2_FDCAN4KERSEL)
+#define RCC_FDCAN7KERCLK_SRC_MASK                                (~RCC_APB2SEL2_FDCAN7KERSEL)
+#define RCC_FDCAN8KERCLK_SRC_MASK                                (~RCC_APB2SEL2_FDCAN8KERSEL)
+
+#define RCC_FDCANKERCLK_SRC_SYSBUSDIV                                (RCC_APB1SEL1_FDCAN2KERSEL_SYSBUSDIV)
+#define RCC_FDCANKERCLK_SRC_PLL1C                                (RCC_APB1SEL1_FDCAN2KERSEL_PLL1C )
+#define RCC_FDCANKERCLK_SRC_PLL2C                                (RCC_APB1SEL1_FDCAN2KERSEL_PLL2C )
+#define RCC_FDCANKERCLK_SRC_PLL3B                                (RCC_APB1SEL1_FDCAN2KERSEL_PLL3B )
+#define RCC_FDCANKERCLK_SRC_PERIPH                                (RCC_APB1SEL1_FDCAN2KERSEL_PERIPH)
+
+
+/**     EXTI clock source selection.   **/
+
+#define RCC_EXTI_SYSBUSDIV_MASK                                (~RCC_APB5DIV1_APB5EXTIDIV )
+#define RCC_EXTICLK_SYSBUSDIV1                                 (RCC_APB5DIV1_APB5EXTIDIV_DIV1 )
+#define RCC_EXTICLK_SYSBUSDIV2                                 (RCC_APB5DIV1_APB5EXTIDIV_DIV2 )
+#define RCC_EXTICLK_SYSBUSDIV4                                 (RCC_APB5DIV1_APB5EXTIDIV_DIV4 )
+#define RCC_EXTICLK_SYSBUSDIV8                                 (RCC_APB5DIV1_APB5EXTIDIV_DIV8 )
+#define RCC_EXTICLK_SYSBUSDIV16                                (RCC_APB5DIV1_APB5EXTIDIV_DIV16)
+
+/**     RTC Kernel clock source selection. The BDRST bit can be used to reset this field  **/
+#define RCC_RTC_ENABLE                     (RCC_BDCTRL_RTCEN)
+
+#define RCC_RTCCLK_SRC_MASK                (~RCC_BDCTRL_RTCSEL)
+#define RCC_RTCCLK_SRC_LSE                 (RCC_BDCTRL_RTCSEL_LSE)
+#define RCC_RTCCLK_SRC_LSI                 (RCC_BDCTRL_RTCSEL_LSI)
+#define RCC_RTCCLK_SRC_HSEDIV              (RCC_BDCTRL_RTCSEL_HSEDIV)
+
+#define RCC_RTCCLK_HSEDIV_MASK             (~RCC_CFG5_RTCHSEDIV )
+#define RCC_RTCCLK_HSEDIV1                 (RCC_CFG5_RTCHSEDIV_DIV1 )
+#define RCC_RTCCLK_HSEDIV2                 (RCC_CFG5_RTCHSEDIV_DIV2 )
+#define RCC_RTCCLK_HSEDIV3                 (RCC_CFG5_RTCHSEDIV_DIV3 )
+#define RCC_RTCCLK_HSEDIV4                 (RCC_CFG5_RTCHSEDIV_DIV4 )
+#define RCC_RTCCLK_HSEDIV5                 (RCC_CFG5_RTCHSEDIV_DIV5 )
+#define RCC_RTCCLK_HSEDIV6                 (RCC_CFG5_RTCHSEDIV_DIV6 )
+#define RCC_RTCCLK_HSEDIV7                 (RCC_CFG5_RTCHSEDIV_DIV7 )
+#define RCC_RTCCLK_HSEDIV8                 (RCC_CFG5_RTCHSEDIV_DIV8 )
+#define RCC_RTCCLK_HSEDIV9                 (RCC_CFG5_RTCHSEDIV_DIV9 )
+#define RCC_RTCCLK_HSEDIV10                 (RCC_CFG5_RTCHSEDIV_DIV10 )
+#define RCC_RTCCLK_HSEDIV11                 (RCC_CFG5_RTCHSEDIV_DIV11 )
+#define RCC_RTCCLK_HSEDIV12                 (RCC_CFG5_RTCHSEDIV_DIV12 )
+#define RCC_RTCCLK_HSEDIV13                 (RCC_CFG5_RTCHSEDIV_DIV13 )
+#define RCC_RTCCLK_HSEDIV14                 (RCC_CFG5_RTCHSEDIV_DIV14 )
+#define RCC_RTCCLK_HSEDIV15                 (RCC_CFG5_RTCHSEDIV_DIV15 )
+#define RCC_RTCCLK_HSEDIV16                 (RCC_CFG5_RTCHSEDIV_DIV16 )
+#define RCC_RTCCLK_HSEDIV17                 (RCC_CFG5_RTCHSEDIV_DIV17 )
+#define RCC_RTCCLK_HSEDIV18                 (RCC_CFG5_RTCHSEDIV_DIV18 )
+#define RCC_RTCCLK_HSEDIV19                 (RCC_CFG5_RTCHSEDIV_DIV19 )
+#define RCC_RTCCLK_HSEDIV20                 (RCC_CFG5_RTCHSEDIV_DIV20 )
+#define RCC_RTCCLK_HSEDIV21                 (RCC_CFG5_RTCHSEDIV_DIV21 )
+#define RCC_RTCCLK_HSEDIV22                 (RCC_CFG5_RTCHSEDIV_DIV22 )
+#define RCC_RTCCLK_HSEDIV23                 (RCC_CFG5_RTCHSEDIV_DIV23 )
+#define RCC_RTCCLK_HSEDIV24                 (RCC_CFG5_RTCHSEDIV_DIV24 )
+#define RCC_RTCCLK_HSEDIV25                 (RCC_CFG5_RTCHSEDIV_DIV25 )
+#define RCC_RTCCLK_HSEDIV26                 (RCC_CFG5_RTCHSEDIV_DIV26 )
+#define RCC_RTCCLK_HSEDIV27                 (RCC_CFG5_RTCHSEDIV_DIV27 )
+#define RCC_RTCCLK_HSEDIV28                 (RCC_CFG5_RTCHSEDIV_DIV28 )
+#define RCC_RTCCLK_HSEDIV29                 (RCC_CFG5_RTCHSEDIV_DIV29 )
+#define RCC_RTCCLK_HSEDIV30                 (RCC_CFG5_RTCHSEDIV_DIV30 )
+#define RCC_RTCCLK_HSEDIV31                 (RCC_CFG5_RTCHSEDIV_DIV31 )
+#define RCC_RTCCLK_HSEDIV32                 (RCC_CFG5_RTCHSEDIV_DIV32 )
+#define RCC_RTCCLK_HSEDIV33                 (RCC_CFG5_RTCHSEDIV_DIV33 )
+#define RCC_RTCCLK_HSEDIV34                 (RCC_CFG5_RTCHSEDIV_DIV34 )
+#define RCC_RTCCLK_HSEDIV35                 (RCC_CFG5_RTCHSEDIV_DIV35 )
+#define RCC_RTCCLK_HSEDIV36                 (RCC_CFG5_RTCHSEDIV_DIV36 )
+#define RCC_RTCCLK_HSEDIV37                 (RCC_CFG5_RTCHSEDIV_DIV37 )
+#define RCC_RTCCLK_HSEDIV38                 (RCC_CFG5_RTCHSEDIV_DIV38 )
+#define RCC_RTCCLK_HSEDIV39                 (RCC_CFG5_RTCHSEDIV_DIV39 )
+#define RCC_RTCCLK_HSEDIV40                 (RCC_CFG5_RTCHSEDIV_DIV40 )
+#define RCC_RTCCLK_HSEDIV41                 (RCC_CFG5_RTCHSEDIV_DIV41 )
+#define RCC_RTCCLK_HSEDIV42                 (RCC_CFG5_RTCHSEDIV_DIV42 )
+#define RCC_RTCCLK_HSEDIV43                 (RCC_CFG5_RTCHSEDIV_DIV43 )
+#define RCC_RTCCLK_HSEDIV44                 (RCC_CFG5_RTCHSEDIV_DIV44 )
+#define RCC_RTCCLK_HSEDIV45                 (RCC_CFG5_RTCHSEDIV_DIV45 )
+#define RCC_RTCCLK_HSEDIV46                 (RCC_CFG5_RTCHSEDIV_DIV46 )
+#define RCC_RTCCLK_HSEDIV47                 (RCC_CFG5_RTCHSEDIV_DIV47 )
+#define RCC_RTCCLK_HSEDIV48                 (RCC_CFG5_RTCHSEDIV_DIV48 )
+#define RCC_RTCCLK_HSEDIV49                 (RCC_CFG5_RTCHSEDIV_DIV49 )
+#define RCC_RTCCLK_HSEDIV50                 (RCC_CFG5_RTCHSEDIV_DIV50 )
+#define RCC_RTCCLK_HSEDIV51                 (RCC_CFG5_RTCHSEDIV_DIV51 )
+#define RCC_RTCCLK_HSEDIV52                 (RCC_CFG5_RTCHSEDIV_DIV52 )
+#define RCC_RTCCLK_HSEDIV53                 (RCC_CFG5_RTCHSEDIV_DIV53 )
+#define RCC_RTCCLK_HSEDIV54                 (RCC_CFG5_RTCHSEDIV_DIV54 )
+#define RCC_RTCCLK_HSEDIV55                 (RCC_CFG5_RTCHSEDIV_DIV55 )
+#define RCC_RTCCLK_HSEDIV56                 (RCC_CFG5_RTCHSEDIV_DIV56 )
+#define RCC_RTCCLK_HSEDIV57                 (RCC_CFG5_RTCHSEDIV_DIV57 )
+#define RCC_RTCCLK_HSEDIV58                 (RCC_CFG5_RTCHSEDIV_DIV58 )
+#define RCC_RTCCLK_HSEDIV59                 (RCC_CFG5_RTCHSEDIV_DIV59 )
+#define RCC_RTCCLK_HSEDIV60                 (RCC_CFG5_RTCHSEDIV_DIV60 )
+#define RCC_RTCCLK_HSEDIV61                 (RCC_CFG5_RTCHSEDIV_DIV61 )
+#define RCC_RTCCLK_HSEDIV62                 (RCC_CFG5_RTCHSEDIV_DIV62 )
+#define RCC_RTCCLK_HSEDIV63                 (RCC_CFG5_RTCHSEDIV_DIV63 )
+
+#define RCC_BKUP_RESET                      (RCC_BDCTRL_BDRST)
+#define RCC_DCMU_RESET                      (RCC_CFG4_DCMURST)
+/**     LPTIMER1 Kernel clock selection register  **/
+#define RCC_LPTIM1CLK_SRC_MASK                          (~RCC_RDSEL1_LPTIM1SEL )
+#define RCC_LPTIM2CLK_SRC_MASK                          (~RCC_RDSEL1_LPTIM2SEL )
+#define RCC_LPTIM3CLK_SRC_MASK                          (~RCC_RDSEL1_LPTIM3SEL )
+#define RCC_LPTIM4CLK_SRC_MASK                          (~RCC_RDSEL1_LPTIM4SEL )
+#define RCC_LPTIM5CLK_SRC_MASK                          (~RCC_RDSEL1_LPTIM5SEL )
+
+#define RCC_LPTIMCLK_SRC_APB5                          (RCC_RDSEL1_LPTIM1SEL_APB5 )
+#define RCC_LPTIMCLK_SRC_LSI                           (RCC_RDSEL1_LPTIM1SEL_LSI  )
+#define RCC_LPTIMCLK_SRC_LSE                           (RCC_RDSEL1_LPTIM1SEL_LSE  )
+#define RCC_LPTIMCLK_SRC_HSE                           (RCC_RDSEL1_LPTIM1SEL_HSE  )
+#define RCC_LPTIMCLK_SRC_HSI                           (RCC_RDSEL1_LPTIM1SEL_HSI  )
+#define RCC_LPTIMCLK_SRC_MSI                           (RCC_RDSEL1_LPTIM1SEL_MSI  )
+#define RCC_LPTIMCLK_SRC_COMP1                         (RCC_RDSEL1_LPTIM1SEL_COMP1)
+#define RCC_LPTIMCLK_SRC_COMP2                         (RCC_RDSEL1_LPTIM1SEL_COMP2)
+#define RCC_LPTIMCLK_SRC_COMP3                         (RCC_RDSEL1_LPTIM1SEL_COMP3)
+#define RCC_LPTIMCLK_SRC_COMP4                         (RCC_RDSEL1_LPTIM1SEL_COMP4)
+
+#define RCC_GATEEN_LPTIM1_COMP1                         (RCC_RDCTRL1_LPTIM1COMP1EN)
+#define RCC_GATEEN_LPTIM1_COMP2                         (RCC_RDCTRL1_LPTIM1COMP2EN)
+#define RCC_GATEEN_LPTIM1_COMP3                         (RCC_RDCTRL1_LPTIM1COMP3EN)
+#define RCC_GATEEN_LPTIM1_COMP4                         (RCC_RDCTRL1_LPTIM1COMP4EN)
+
+#define RCC_GATEEN_LPTIM2_COMP1                         (RCC_RDCTRL1_LPTIM2COMP1EN)
+#define RCC_GATEEN_LPTIM2_COMP2                         (RCC_RDCTRL1_LPTIM2COMP2EN)
+#define RCC_GATEEN_LPTIM2_COMP3                         (RCC_RDCTRL1_LPTIM2COMP3EN)
+#define RCC_GATEEN_LPTIM2_COMP4                         (RCC_RDCTRL1_LPTIM2COMP4EN)
+
+#define RCC_GATEEN_LPTIM3_COMP1                         (RCC_RDCTRL2_LPTIM3COMP1EN)
+#define RCC_GATEEN_LPTIM3_COMP2                         (RCC_RDCTRL2_LPTIM3COMP2EN)
+#define RCC_GATEEN_LPTIM3_COMP3                         (RCC_RDCTRL2_LPTIM3COMP3EN)
+#define RCC_GATEEN_LPTIM3_COMP4                         (RCC_RDCTRL2_LPTIM3COMP4EN)
+
+#define RCC_GATEEN_LPTIM4_COMP1                         (RCC_RDCTRL2_LPTIM4COMP1EN)
+#define RCC_GATEEN_LPTIM4_COMP2                         (RCC_RDCTRL2_LPTIM4COMP2EN)
+#define RCC_GATEEN_LPTIM4_COMP3                         (RCC_RDCTRL2_LPTIM4COMP3EN)
+#define RCC_GATEEN_LPTIM4_COMP4                         (RCC_RDCTRL2_LPTIM4COMP4EN)
+
+#define RCC_GATEEN_LPTIM5_COMP1                         (RCC_RDCTRL3_LPTIM5COMP1EN)
+#define RCC_GATEEN_LPTIM5_COMP2                         (RCC_RDCTRL3_LPTIM5COMP2EN)
+#define RCC_GATEEN_LPTIM5_COMP3                         (RCC_RDCTRL3_LPTIM5COMP3EN)
+#define RCC_GATEEN_LPTIM5_COMP4                         (RCC_RDCTRL3_LPTIM5COMP4EN)
+
+/**     LPUART1 Kernel clock selection register  **/
+#define RCC_LPUART1CLK_SRC_MASK                      (~RCC_RDSEL1_LPUART1SEL )
+#define RCC_LPUART2CLK_SRC_MASK                      (~RCC_RDSEL1_LPUART2SEL )
+
+#define RCC_LPUARTCLK_SRC_SYSBUSDIV                      (RCC_RDSEL1_LPUART1SEL_SYSBUSDIV )
+#define RCC_LPUARTCLK_SRC_HSI                         (RCC_RDSEL1_LPUART1SEL_HSI  )
+#define RCC_LPUARTCLK_SRC_LSE                         (RCC_RDSEL1_LPUART1SEL_LSE  )
+#define RCC_LPUARTCLK_SRC_HSE                         (RCC_RDSEL1_LPUART1SEL_HSE  )
+#define RCC_LPUARTCLK_SRC_MSI                         (RCC_RDSEL1_LPUART1SEL_MSI  )
+
+#define RCC_LPUARTCLK_SYSBUSDIV_MASK                     (~RCC_RDDIV1_LPUARTDIV )
+#define RCC_LPUARTCLK_SYSBUSDIV1                         (RCC_RDDIV1_LPUARTDIV_DIV1 )
+#define RCC_LPUARTCLK_SYSBUSDIV2                         (RCC_RDDIV1_LPUARTDIV_DIV2 )
+#define RCC_LPUARTCLK_SYSBUSDIV4                         (RCC_RDDIV1_LPUARTDIV_DIV4 )
+#define RCC_LPUARTCLK_SYSBUSDIV8                         (RCC_RDDIV1_LPUARTDIV_DIV8 )
+#define RCC_LPUARTCLK_SYSBUSDIV16                        (RCC_RDDIV1_LPUARTDIV_DIV16)
+
+/**     Comparator Controller Clock Switch Selection  **/
+
+#define RCC_COMPLSXCLK_SRC_MASK                        (~RCC_RDSEL1_COMPSEL )
+#define RCC_COMPLSXCLK_SRC_LSI                         (RCC_REG_BIT_MASK )
+#define RCC_COMPLSXCLK_SRC_LSE                         (RCC_RDSEL1_COMPSEL )
+
+#define RCC_COMPKERCLK_SYSBUSDIV_MASK                     (~RCC_RDDIV1_COMPDIV )
+#define RCC_COMPKERCLK_SYSBUSDIV1                         (RCC_RDDIV1_COMPDIV_DIV1 )
+#define RCC_COMPKERCLK_SYSBUSDIV2                         (RCC_RDDIV1_COMPDIV_DIV2 )
+#define RCC_COMPKERCLK_SYSBUSDIV4                         (RCC_RDDIV1_COMPDIV_DIV4 )
+#define RCC_COMPKERCLK_SYSBUSDIV8                         (RCC_RDDIV1_COMPDIV_DIV8 )
+#define RCC_COMPKERCLK_SYSBUSDIV16                        (RCC_RDDIV1_COMPDIV_DIV16)
+
+/**   FEMC  clock  values   **/
+#define RCC_FEMCM0CLK_SRC_MASK                         (~RCC_AXISEL2_FEMCM0SEL)
+#define RCC_FEMCM1CLK_SRC_MASK                         (~RCC_AXISEL2_FEMCM1SEL)
+#define RCC_FEMCCLK_SRC_AXIDIV                         (RCC_AXISEL2_FEMCM0SEL_AXIDIV)
+#define RCC_FEMCCLK_SRC_PERIPH                         (RCC_AXISEL2_FEMCM0SEL_PERIPH)
+#define RCC_FEMCCLK_SRC_PLL2C                         (RCC_AXISEL2_FEMCM0SEL_PLL2C )
+#define RCC_FEMCCLK_SRC_PLL3B                         (RCC_AXISEL2_FEMCM0SEL_PLL3B )
+#define RCC_FEMCCLK_SRC_PLL1B                         (RCC_AXISEL2_FEMCM0SEL_PLL1B )
+
+#define RCC_FEMCM0CLK_AXIDIV_MASK                (~RCC_AXIDIV2_FEMCM0AXIDIV )
+#define RCC_FEMCM1CLK_AXIDIV_MASK                (~RCC_AXIDIV2_FEMCM1AXIDIV )
+#define RCC_FEMCCLK_AXIDIV1                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV1 )
+#define RCC_FEMCCLK_AXIDIV2                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV2 )
+#define RCC_FEMCCLK_AXIDIV3                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV3 )
+#define RCC_FEMCCLK_AXIDIV4                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV4 )
+#define RCC_FEMCCLK_AXIDIV5                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV5 )
+#define RCC_FEMCCLK_AXIDIV6                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV6 )
+#define RCC_FEMCCLK_AXIDIV7                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV7 )
+#define RCC_FEMCCLK_AXIDIV8                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV8 )
+#define RCC_FEMCCLK_AXIDIV9                       (RCC_AXIDIV2_FEMCM0AXIDIV_DIV9 )
+#define RCC_FEMCCLK_AXIDIV10                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV10)
+#define RCC_FEMCCLK_AXIDIV11                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV11)
+#define RCC_FEMCCLK_AXIDIV12                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV12)
+#define RCC_FEMCCLK_AXIDIV13                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV13)
+#define RCC_FEMCCLK_AXIDIV14                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV14)
+#define RCC_FEMCCLK_AXIDIV15                      (RCC_AXIDIV2_FEMCM0AXIDIV_DIV15)
+
+/**   DSI  clock  values   **/
+#define RCC_DSIREFCLK_HSE_DIV_MASK                    (~RCC_CFG5_DSIHSEDIV )
+#define RCC_DSIREFCLK_HSE_DIV1                        (RCC_REG_BIT_MASK )
+#define RCC_DSIREFCLK_HSE_DIV2                        (RCC_CFG5_DSIHSEDIV_0 )
+
+#define RCC_DSIKERCLK_SRC_MASK                        (~RCC_AXISEL1_DSIKERSEL )
+#define RCC_DSIKERCLK_SRC_REF                         (RCC_REG_BIT_MASK )
+#define RCC_DSIKERCLK_SRC_PLL3C                       (RCC_AXISEL1_DSIKERSEL_0 )
+
+#define RCC_DSIPPICLK_SRC_MASK                         (~RCC_AXISEL1_DSIPPITXSEL)
+#define RCC_DSIPPICLK_SRC_REFDIV                       (RCC_AXISEL1_DSIPPITXSEL_REFDIV)
+#define RCC_DSIPPICLK_SRC_PLL2B                        (RCC_AXISEL1_DSIPPITXSEL_PLL2B )
+#define RCC_DSIPPICLK_SRC_PERIPH                       (RCC_AXISEL1_DSIPPITXSEL_PERIPH)
+#define RCC_DSIPPICLK_SRC_AXIDIV                       (RCC_AXISEL1_DSIPPITXSEL_AXIDIV)
+
+#define RCC_DSIPPICLK_REFDIV_MASK                      (~RCC_AXIDIV1_DSIREFDIV  )
+#define RCC_DSIPPICLK_AXIDIV_MASK                      (~RCC_AXIDIV2_DSIAXIPPIDIV  )
+#define RCC_DSIPPICLK_DIV1                             (RCC_AXIDIV1_DSIREFDIV_DIV1  )
+#define RCC_DSIPPICLK_DIV2                            (RCC_AXIDIV1_DSIREFDIV_DIV2  )
+#define RCC_DSIPPICLK_DIV4                            (RCC_AXIDIV1_DSIREFDIV_DIV4  )
+#define RCC_DSIPPICLK_DIV8                            (RCC_AXIDIV1_DSIREFDIV_DIV8  )
+#define RCC_DSIPPICLK_DIV16                           (RCC_AXIDIV1_DSIREFDIV_DIV16 )
+#define RCC_DSIPPICLK_DIV32                           (RCC_AXIDIV1_DSIREFDIV_DIV32 )
+#define RCC_DSIPPICLK_DIV64                           (RCC_AXIDIV1_DSIREFDIV_DIV64 )
+#define RCC_DSIPPICLK_DIV128                           (RCC_AXIDIV1_DSIREFDIV_DIV128)
+#define RCC_DSIPPICLK_DIV256                           (RCC_AXIDIV1_DSIREFDIV_DIV256)
+#define RCC_DSIPPICLK_DIV512                           (RCC_AXIDIV1_DSIREFDIV_DIV512)
+
+#define RCC_DSIULPSCLK_SRC_MASK                         (~RCC_AXISEL1_DSIULPSSEL )
+#define RCC_DSIULPSCLK_SRC_REFDIV                       (RCC_REG_BIT_MASK )
+#define RCC_DSIULPSCLK_SRC_PLL3C                        (RCC_AXISEL1_DSIULPSSEL_0 )
+
+#define RCC_DSIULPSCLK_REFDIV_MASK                        (~RCC_AXIDIV2_DSIREFULPSDIV  )
+#define RCC_DSIULPSCLK_REFDIV1                            (RCC_AXIDIV2_DSIREFULPSDIV_DIV1  )
+#define RCC_DSIULPSCLK_REFDIV2                            (RCC_AXIDIV2_DSIREFULPSDIV_DIV2  )
+#define RCC_DSIULPSCLK_REFDIV4                            (RCC_AXIDIV2_DSIREFULPSDIV_DIV4  )
+#define RCC_DSIULPSCLK_REFDIV8                            (RCC_AXIDIV2_DSIREFULPSDIV_DIV8  )
+#define RCC_DSIULPSCLK_REFDIV16                           (RCC_AXIDIV2_DSIREFULPSDIV_DIV16 )
+#define RCC_DSIULPSCLK_REFDIV32                           (RCC_AXIDIV2_DSIREFULPSDIV_DIV32 )
+#define RCC_DSIULPSCLK_REFDIV64                           (RCC_AXIDIV2_DSIREFULPSDIV_DIV64 )
+#define RCC_DSIULPSCLK_REFDIV128                          (RCC_AXIDIV2_DSIREFULPSDIV_DIV128)
+#define RCC_DSIULPSCLK_REFDIV256                          (RCC_AXIDIV2_DSIREFULPSDIV_DIV256)
+#define RCC_DSIULPSCLK_REFDIV512                          (RCC_AXIDIV2_DSIREFULPSDIV_DIV512)
+
+/**      "axi_gated_bus_div_lcdc_clk"  prescalar values   **/
+#define RCC_LCDCPIXELCLK_SRC_MASK                           (~RCC_AXISEL1_LCDCKERSEL)
+#define RCC_LCDCPIXELCLK_SRC_AXIDIV                         (RCC_AXISEL1_LCDCKERSEL_AXIDIV)
+#define RCC_LCDCPIXELCLK_SRC_PERIPH                         (RCC_AXISEL1_LCDCKERSEL_PERIPH)
+#define RCC_LCDCPIXELCLK_SRC_PLL2C                          (RCC_AXISEL1_LCDCKERSEL_PLL2C )
+#define RCC_LCDCPIXELCLK_SRC_PLL3B                          (RCC_AXISEL1_LCDCKERSEL_PLL3B )
+
+#define RCC_LCDCPIXELCLK_AXIDIV_MASK                         (~RCC_AXIDIV1_LCDCAXIDIV  )
+#define RCC_LCDCPIXELCLK_AXIDIV1                             (RCC_AXIDIV1_LCDCAXIDIV_DIV1  )
+#define RCC_LCDCPIXELCLK_AXIDIV2                             (RCC_AXIDIV1_LCDCAXIDIV_DIV2  )
+#define RCC_LCDCPIXELCLK_AXIDIV4                             (RCC_AXIDIV1_LCDCAXIDIV_DIV4  )
+#define RCC_LCDCPIXELCLK_AXIDIV8                             (RCC_AXIDIV1_LCDCAXIDIV_DIV8  )
+#define RCC_LCDCPIXELCLK_AXIDIV16                            (RCC_AXIDIV1_LCDCAXIDIV_DIV16 )
+#define RCC_LCDCPIXELCLK_AXIDIV32                            (RCC_AXIDIV1_LCDCAXIDIV_DIV32 )
+#define RCC_LCDCPIXELCLK_AXIDIV64                            (RCC_AXIDIV1_LCDCAXIDIV_DIV64 )
+#define RCC_LCDCPIXELCLK_AXIDIV128                           (RCC_AXIDIV1_LCDCAXIDIV_DIV128)
+#define RCC_LCDCPIXELCLK_AXIDIV256                           (RCC_AXIDIV1_LCDCAXIDIV_DIV256)
+#define RCC_LCDCPIXELCLK_AXIDIV512                           (RCC_AXIDIV1_LCDCAXIDIV_DIV512)
+
+/**      DVP values   **/
+#define RCC_DVP1MCLK_SRC_MASK                               (~RCC_AXISEL1_DVP1MSEL)
+#define RCC_DVP2MCLK_SRC_MASK                               (~RCC_AXISEL1_DVP2MSEL)
+#define RCC_DVPMCLK_SRC_AXIDIV                              (RCC_AXISEL1_DVP1MSEL_AXIDIV)
+#define RCC_DVPMCLK_SRC_PERIPH                              (RCC_AXISEL1_DVP1MSEL_PERIPH)
+#define RCC_DVPMCLK_SRC_PLL2C                               (RCC_AXISEL1_DVP1MSEL_PLL2C )
+#define RCC_DVPMCLK_SRC_PLL3A                               (RCC_AXISEL1_DVP1MSEL_PLL3A )
+
+#define RCC_DVPMCLK_AXIDIV_MASK                    (~RCC_AXIDIV1_DVPMAXIDIV  )
+#define RCC_DVPMCLK_AXIDIV1                        (RCC_AXIDIV1_DVPMAXIDIV_DIV1  )
+#define RCC_DVPMCLK_AXIDIV2                        (RCC_AXIDIV1_DVPMAXIDIV_DIV2  )
+#define RCC_DVPMCLK_AXIDIV4                        (RCC_AXIDIV1_DVPMAXIDIV_DIV4  )
+#define RCC_DVPMCLK_AXIDIV8                        (RCC_AXIDIV1_DVPMAXIDIV_DIV8  )
+#define RCC_DVPMCLK_AXIDIV16                       (RCC_AXIDIV1_DVPMAXIDIV_DIV16 )
+#define RCC_DVPMCLK_AXIDIV32                       (RCC_AXIDIV1_DVPMAXIDIV_DIV32 )
+#define RCC_DVPMCLK_AXIDIV64                       (RCC_AXIDIV1_DVPMAXIDIV_DIV64 )
+#define RCC_DVPMCLK_AXIDIV128                      (RCC_AXIDIV1_DVPMAXIDIV_DIV128)
+#define RCC_DVPMCLK_AXIDIV256                      (RCC_AXIDIV1_DVPMAXIDIV_DIV256)
+#define RCC_DVPMCLK_AXIDIV512                      (RCC_AXIDIV1_DVPMAXIDIV_DIV512)
+/**      XSPI values   **/
+#define RCC_XSPI1SSICLK_SRC_MASK                      (~RCC_AXISEL1_XSPI1SSISEL  )
+#define RCC_XSPI2SSICLK_SRC_MASK                      (~RCC_AXISEL1_XSPI2SSISEL  )
+#define RCC_XSPISSICLK_SRC_AXI                        (RCC_AXISEL1_XSPI1SSISEL_AXI  )
+#define RCC_XSPISSICLK_SRC_PLL3C                      (RCC_AXISEL1_XSPI1SSISEL_PLL3C)
+#define RCC_XSPISSICLK_SRC_PLL1B                      (RCC_AXISEL1_XSPI1SSISEL_PLL1B)
+#define RCC_XSPISSICLK_SRC_PLL2A                      (RCC_AXISEL1_XSPI1SSISEL_PLL2A)
+#define RCC_XSPISSICLK_SRC_PLL2C                      (RCC_AXISEL1_XSPI1SSISEL_PLL2C)
+
+/**      SDRAM values   **/
+#define RCC_SDRAMMEMCLK_SRC_MASK                      (~RCC_AXISEL2_SDRAMMEMSEL)
+#define RCC_SDRAMMEMCLK_SRC_AXIDIV                    (RCC_AXISEL2_SDRAMMEMSEL_AXIDIV)
+#define RCC_SDRAMMEMCLK_SRC_PERIPH                    (RCC_AXISEL2_SDRAMMEMSEL_PERIPH)
+#define RCC_SDRAMMEMCLK_SRC_PLL2A                     (RCC_AXISEL2_SDRAMMEMSEL_PLL2A )
+#define RCC_SDRAMMEMCLK_SRC_PLL3A                     (RCC_AXISEL2_SDRAMMEMSEL_PLL3A )
+#define RCC_SDRAMMEMCLK_SRC_PLL1B                     (RCC_AXISEL2_SDRAMMEMSEL_PLL1B )
+
+#define RCC_SDRAMMEMCLK_AXIDIV_MASK                   (~RCC_AXIDIV2_SDRAMMEMDIV  )
+#define RCC_SDRAMMEMCLK_AXIDIV1                       (RCC_AXIDIV2_SDRAMMEMDIV_DIV1  )
+#define RCC_SDRAMMEMCLK_AXIDIV2                       (RCC_AXIDIV2_SDRAMMEMDIV_DIV2  )
+#define RCC_SDRAMMEMCLK_AXIDIV4                       (RCC_AXIDIV2_SDRAMMEMDIV_DIV4  )
+#define RCC_SDRAMMEMCLK_AXIDIV8                       (RCC_AXIDIV2_SDRAMMEMDIV_DIV8  )
+#define RCC_SDRAMMEMCLK_AXIDIV16                      (RCC_AXIDIV2_SDRAMMEMDIV_DIV16 )
+#define RCC_SDRAMMEMCLK_AXIDIV32                      (RCC_AXIDIV2_SDRAMMEMDIV_DIV32 )
+#define RCC_SDRAMMEMCLK_AXIDIV64                      (RCC_AXIDIV2_SDRAMMEMDIV_DIV64 )
+#define RCC_SDRAMMEMCLK_AXIDIV128                      (RCC_AXIDIV2_SDRAMMEMDIV_DIV128)
+#define RCC_SDRAMMEMCLK_AXIDIV256                      (RCC_AXIDIV2_SDRAMMEMDIV_DIV256)
+#define RCC_SDRAMMEMCLK_AXIDIV512                      (RCC_AXIDIV2_SDRAMMEMDIV_DIV512)
+
+/**      ETHERCAT values   **/
+#define RCC_ESCKERCLK_SRC_MASK                      (~RCC_AHB9SEL1_ESCKERSEL)
+#define RCC_ESCKERCLK_SRC_SYSBUSDIV                    (RCC_AHB9SEL1_ESCKERSEL_SYSBUSDIV)
+#define RCC_ESCKERCLK_SRC_PLL2B                     (RCC_AHB9SEL1_ESCKERSEL_PLL2B )
+#define RCC_ESCKERCLK_SRC_PLL3A                     (RCC_AHB9SEL1_ESCKERSEL_PLL3A )
+#define RCC_ESCKERCLK_SRC_PLL3C                     (RCC_AHB9SEL1_ESCKERSEL_PLL3C )
+#define RCC_ESCKERCLK_SRC_PLL1B                     (RCC_AHB9SEL1_ESCKERSEL_PLL1B )
+
+#define RCC_ESCKERCLK_SYSBUSDIV_MASK                   (~RCC_AHB9DIV1_ESCSYSDIV  )
+#define RCC_ESCKERCLK_SYSBUSDIV1                       (RCC_AHB9DIV1_ESCSYSDIV_DIV1  )
+#define RCC_ESCKERCLK_SYSBUSDIV2                       (RCC_AHB9DIV1_ESCSYSDIV_DIV2  )
+#define RCC_ESCKERCLK_SYSBUSDIV4                       (RCC_AHB9DIV1_ESCSYSDIV_DIV4  )
+#define RCC_ESCKERCLK_SYSBUSDIV8                       (RCC_AHB9DIV1_ESCSYSDIV_DIV8  )
+#define RCC_ESCKERCLK_SYSBUSDIV16                      (RCC_AHB9DIV1_ESCSYSDIV_DIV16 )
+#define RCC_ESCKERCLK_SYSBUSDIV32                      (RCC_AHB9DIV1_ESCSYSDIV_DIV32 )
+#define RCC_ESCKERCLK_SYSBUSDIV64                      (RCC_AHB9DIV1_ESCSYSDIV_DIV64 )
+#define RCC_ESCKERCLK_SYSBUSDIV128                       (RCC_AHB9DIV1_ESCSYSDIV_DIV128)
+#define RCC_ESCKERCLK_SYSBUSDIV256                       (RCC_AHB9DIV1_ESCSYSDIV_DIV256)
+#define RCC_ESCKERCLK_SYSBUSDIV512                       (RCC_AHB9DIV1_ESCSYSDIV_DIV512)
+/**   SDPU system clock DIV values   **/
+#define RCC_TRNG_ENABLE                               (RCC_CFG5_TRNGEN )
+
+#define RCC_TRNGCLK_SRC_MASK                          (~RCC_CFG5_TRNGSEL )
+#define RCC_TRNGCLK_SRC_SYSBUSDIV                        (RCC_REG_BIT_MASK )
+#define RCC_TRNGCLK_SRC_HSI                           (RCC_CFG5_TRNGSEL )
+
+#define RCC_TRNGCLK_SYSBUSDIV_MASK                       (~RCC_CFG5_TRNGDIV  )
+#define RCC_TRNGCLK_SYSBUSDIV1                          (RCC_CFG5_TRNGDIV_DIV1  )
+#define RCC_TRNGCLK_SYSBUSDIV2                          (RCC_CFG5_TRNGDIV_DIV2  )
+#define RCC_TRNGCLK_SYSBUSDIV4                          (RCC_CFG5_TRNGDIV_DIV4  )
+#define RCC_TRNGCLK_SYSBUSDIV8                          (RCC_CFG5_TRNGDIV_DIV8  )
+#define RCC_TRNGCLK_SYSBUSDIV16                         (RCC_CFG5_TRNGDIV_DIV16 )
+#define RCC_TRNGCLK_SYSBUSDIV32                         (RCC_CFG5_TRNGDIV_DIV32 )
+#define RCC_TRNGCLK_SYSBUSDIV64                         (RCC_CFG5_TRNGDIV_DIV64 )
+#define RCC_TRNGCLK_SYSBUSDIV128                        (RCC_CFG5_TRNGDIV_DIV128)
+#define RCC_TRNGCLK_SYSBUSDIV256                        (RCC_CFG5_TRNGDIV_DIV256)
+#define RCC_TRNGCLK_SYSBUSDIV512                        (RCC_CFG5_TRNGDIV_DIV512)
+
+
+/**         MCO1 clock selection register  **/
+#define RCC_MCO1_SRC_MASK                         (~RCC_CFG3_MCO1SEL  )																															  
+#define RCC_MCO1_SRC_LSI                          (RCC_CFG3_MCO1SEL_LSI  )
+#define RCC_MCO1_SRC_HSI                          (RCC_CFG3_MCO1SEL_HSI  )
+#define RCC_MCO1_SRC_MSI                          (RCC_CFG3_MCO1SEL_MSI  )
+#define RCC_MCO1_SRC_LSE                          (RCC_CFG3_MCO1SEL_LSE  )
+#define RCC_MCO1_SRC_HSE                          (RCC_CFG3_MCO1SEL_HSE  )
+#define RCC_MCO1_SRC_PLL3B                        (RCC_CFG3_MCO1SEL_PLL3B)
+
+/**      MCO1 clock prescalar values   **/
+#define RCC_MCO1_DIV_MASK                     (~RCC_CFG3_MCO1DIV  )
+#define RCC_MCO1_DIV1                         (RCC_CFG3_MCO1DIV_DIV1  )
+#define RCC_MCO1_DIV2                         (RCC_CFG3_MCO1DIV_DIV2  )
+#define RCC_MCO1_DIV4                         (RCC_CFG3_MCO1DIV_DIV4  )
+#define RCC_MCO1_DIV8                         (RCC_CFG3_MCO1DIV_DIV8  )
+#define RCC_MCO1_DIV16                        (RCC_CFG3_MCO1DIV_DIV16 )
+#define RCC_MCO1_DIV32                        (RCC_CFG3_MCO1DIV_DIV32 )
+#define RCC_MCO1_DIV64                        (RCC_CFG3_MCO1DIV_DIV64 )
+#define RCC_MCO1_DIV128                       (RCC_CFG3_MCO1DIV_DIV128)
+
+/**      MCO2 clock selection register  **/
+#define RCC_MCO2_SRC_MASK                         (~RCC_CFG3_MCO2SEL  )																															  
+#define RCC_MCO2_SRC_SYSCLK                       (RCC_CFG3_MCO2SEL_SYSCLK)
+#define RCC_MCO2_SRC_PLL1A                        (RCC_CFG3_MCO2SEL_PLL1A)
+#define RCC_MCO2_SRC_PLL2A                        (RCC_CFG3_MCO2SEL_PLL2A)
+#define RCC_MCO2_SRC_PLL3A                        (RCC_CFG3_MCO2SEL_PLL3A)
+#define RCC_MCO2_SRC_SHRPLL                       (RCC_CFG3_MCO2SEL_SHRPLL)
+#define RCC_MCO2_SRC_LSE                          (RCC_CFG3_MCO2SEL_LSE)
+
+
+/**      MCO2 clock prescalar values   **/
+#define RCC_MCO2_DIV_MASK                     (~RCC_CFG3_MCO2DIV  )
+#define RCC_MCO2_DIV1                         (RCC_CFG3_MCO2DIV_DIV1  )
+#define RCC_MCO2_DIV2                         (RCC_CFG3_MCO2DIV_DIV2  )
+#define RCC_MCO2_DIV4                         (RCC_CFG3_MCO2DIV_DIV4  )
+#define RCC_MCO2_DIV8                         (RCC_CFG3_MCO2DIV_DIV8  )
+#define RCC_MCO2_DIV16                        (RCC_CFG3_MCO2DIV_DIV16 )
+#define RCC_MCO2_DIV32                        (RCC_CFG3_MCO2DIV_DIV32 )
+#define RCC_MCO2_DIV64                        (RCC_CFG3_MCO2DIV_DIV64 )
+#define RCC_MCO2_DIV128                       (RCC_CFG3_MCO2DIV_DIV128)
+
+#define RCC_STOPEN_FDCAN1                       (RCC_APB1EN5_FDCAN1STPREQ)
+#define RCC_STOPEN_FDCAN2                       (RCC_APB1EN5_FDCAN2STPREQ)
+#define RCC_STOPEN_FDCAN5                       (RCC_APB1EN5_FDCAN5STPREQ)
+#define RCC_STOPEN_FDCAN6                       (RCC_APB1EN5_FDCAN6STPREQ)
+#define RCC_STOPEN_FDCAN3                       (RCC_APB2EN4_FDCAN3STPREQ)
+#define RCC_STOPEN_FDCAN4                       (RCC_APB2EN4_FDCAN4STPREQ)
+#define RCC_STOPEN_FDCAN7                       (RCC_APB2EN4_FDCAN7STPREQ)
+#define RCC_STOPEN_FDCAN8                       (RCC_APB2EN4_FDCAN8STPREQ)
+
+#define RCC_FLAG_STOPACK_FDCAN1                 (RCC_APB1EN5_FDCAN1STPACK)
+#define RCC_FLAG_STOPACK_FDCAN2                 (RCC_APB1EN5_FDCAN2STPACK)
+#define RCC_FLAG_STOPACK_FDCAN5                 (RCC_APB1EN5_FDCAN5STPACK)
+#define RCC_FLAG_STOPACK_FDCAN6                 (RCC_APB1EN5_FDCAN6STPACK)
+#define RCC_FLAG_STOPACK_FDCAN3                 (RCC_APB2EN4_FDCAN3STPACK)
+#define RCC_FLAG_STOPACK_FDCAN4                 (RCC_APB2EN4_FDCAN4STPACK)
+#define RCC_FLAG_STOPACK_FDCAN7                 (RCC_APB2EN4_FDCAN7STPACK)
+#define RCC_FLAG_STOPACK_FDCAN8                 (RCC_APB2EN4_FDCAN8STPACK)
+
+#define RCC_INT_LSECSS                          (RCC_CLKINT1_LSECSSIF)
+#define RCC_INT_HSECSS                          (RCC_CLKINT1_HSECSSIF)
+#define RCC_INT_BOR                             (RCC_CLKINT1_BORIF)
+#define RCC_INT_PLL1RD                          (RCC_CLKINT1_PLL1RDIF)
+#define RCC_INT_PLL2RD                          (RCC_CLKINT1_PLL2RDIF)
+#define RCC_INT_PLL3RD                          (RCC_CLKINT1_PLL3RDIF)
+#define RCC_INT_SHRPLLRD                        (RCC_CLKINT1_SHRPLLRDIF)
+
+#define RCC_INT_HSERD                           (RCC_CLKINT2_HSERDIF)
+#define RCC_INT_HSIRD                           (RCC_CLKINT2_HSIRDIF)
+#define RCC_INT_MSIRD                           (RCC_CLKINT2_MSIRDIF)
+#define RCC_INT_LSERD                           (RCC_CLKINT2_LSERDIF)
+#define RCC_INT_LSIRD                           (RCC_CLKINT2_LSIRDIF)
+#define RCC_INT_HSICALE                         (RCC_CLKINT2_HSICALEIF)
+#define RCC_INT_MSICALE                         (RCC_CLKINT2_MSICALEIF)
+
+#define RCC_INT_PLL1LKF                         (RCC_CLKINT3_PLL1LKFIF)
+#define RCC_INT_PLL2LKF                         (RCC_CLKINT3_PLL2LKFIF)
+#define RCC_INT_PLL3LKF                         (RCC_CLKINT3_PLL3LKFIF)
+#define RCC_INT_SHRPLLLKF                       (RCC_CLKINT3_SHRPLLLKFIF)
+#define RCC_INT_LSIF                            (RCC_CLKINT3_LSIFIF)
+
+#define RCC_RSTEN_WWDG1                        (RCC_CFG1_WWDG1RSTEN   )
+#define RCC_RSTEN_WWDG2                        (RCC_CFG1_WWDG2RSTEN   )
+#define RCC_RSTEN_BOR                          (RCC_BDCTRL_BORRSTEN   )
+#define RCC_RSTEN_C1LP                         (RCC_BDCTRL_C1LPRSTEN  )
+#define RCC_RSTEN_C2LP                         (RCC_BDCTRL_C2LPRSTEN  )
+#define RCC_RSTEN_BKPEMC                       (RCC_BDCTRL_BKPEMCRSTEN)
+#define RCC_RSTEN_RETEMC                       (RCC_BDCTRL_RETEMCRSTEN)
+
+/**      source values   **/
+#define RCC_HSITRIM_MASK                       (~RCC_SRCCTRL3_HSITRIM)
+#define RCC_MSITRIM_MASK                       (~RCC_SRCCTRL2_MSITRIM)
+#define RCC_HSECSS_ENABLE                      (RCC_SRCCTRL1_HSECSSEN)
+
+#define RCC_LSI_SRCCTRL_BY_SOFTWARE            (RCC_BDCTRL_LSIOVREN)
+#define RCC_LSI_SRCCTRL_BY_HARDWARE            (~RCC_BDCTRL_LSIOVREN)
+#define RCC_LSICSS_ENABLE                      (RCC_BDCTRL_LSICSSEN)
+#define RCC_LSI_FAILACK_ENABLE                 (RCC_BDCTRL_LSIPFACK)
+
+#define RCC_LSE_CALCNT_ENABLE                 (RCC_LSEOS_LSECALCNTEN)
+#define RCC_LSE_CALCNT_MASK                   (RCC_LSEOS_LSECALCNT)
+
+#define RCC_FLAG_LSECSS_CALCNTRD              (RCC_LSEOS_LSECALCNTF)
+#define RCC_FLAG_LSECSS_OFFSET                (RCC_LSEOS_LSEOSF)
+
+#define RCC_LSE_OFFSET_ENABLE                 (RCC_LSEOS_LSEOSEN)
+#define RCC_LSEOSTHR_MASK                     (~RCC_LSEOS_LSEOSTHR)
+
+#define RCC_HSE_CALCNT_ENABLE                 (RCC_HSECAL_HSECALCNTEN)
+#define RCC_HSE_CALCNT_MASK                   (RCC_HSECAL_HSECALCNT)
+
+#define RCC_FLAG_HSECSS_CALCNTRD              (RCC_HSECAL_HSECALCNTF)
+#define RCC_FLAG_HSECSS_OFFSET                (RCC_HSEOS_HSEOSF)
+#define RCC_FLAG_HSECSS_MAXPD                 (RCC_HSEOS_HSEMAXPDF)
+#define RCC_FLAG_HSECSS_MINND                 (RCC_HSEOS_HSEMINNDF)
+
+#define RCC_HSECSS_OFFSET                     (RCC_HSEOS_HSEOSEN)
+#define RCC_HSECSS_MAXPD                      (RCC_HSEOS_HSEMAXPDEN)
+#define RCC_HSECSS_MINND                      (RCC_HSEOS_HSEMINNDEN)
+
+#define RCC_HSEOSTHR_MASK                      (~RCC_HSEOS_HSEOSTHR)
+#define RCC_HSEMAXPDTHR_MASK                   (~RCC_HSEOS_HSEMAXPDTHR)
+#define RCC_HSEMINNDTHR_MASK                   (~RCC_HSEOS_HSEMINNDTHR)
+
+#define RCC_FAIL_DETECT_EN_SHRPLL                 (RCC_PLLFD_SHRPLLFEN)
+#define RCC_FAIL_DETECT_EN_PLL3                   (RCC_PLLFD_PLL3FEN)
+#define RCC_FAIL_DETECT_EN_PLL2                   (RCC_PLLFD_PLL2FEN)
+#define RCC_FAIL_DETECT_EN_PLL1                   (RCC_PLLFD_PLL1FEN)
+
+/**      LPTIM filter values   **/
+#define RCC_LPTIM1FILT_ENABLE                 (RCC_RDCTRL1_LPTIM1FLTEN)
+#define RCC_LPTIM1_FILTCLK_SRC_MSI            (RCC_RDCTRL1_LPTIM1FLTSEL)
+#define RCC_LPTIM1_FILTCLK_SRC_APB5           (~RCC_RDCTRL1_LPTIM1FLTSEL)
+#define I2C_LPTIM1FLTDFC_MASK                 (~RCC_RDCTRL1_LPTIM1FLTDFC)
+
+#define RCC_LPTIM2FILT_ENABLE                 (RCC_RDCTRL1_LPTIM2FLTEN)
+#define RCC_LPTIM2_FILTCLK_SRC_MSI            (RCC_RDCTRL1_LPTIM2FLTSEL)
+#define RCC_LPTIM2_FILTCLK_SRC_APB5           (~RCC_RDCTRL1_LPTIM2FLTSEL)
+#define I2C_LPTIM2FLTDFC_MASK                 (~RCC_RDCTRL1_LPTIM2FLTDFC)
+
+#define RCC_LPTIM3FILT_ENABLE                 (RCC_RDCTRL2_LPTIM3FLTEN)
+#define RCC_LPTIM3_FILTCLK_SRC_MSI            (RCC_RDCTRL2_LPTIM3FLTSEL)
+#define RCC_LPTIM3_FILTCLK_SRC_APB5           (~RCC_RDCTRL2_LPTIM3FLTSEL)
+#define I2C_LPTIM3FLTDFC_MASK                 (~RCC_RDCTRL2_LPTIM3FLTDFC)
+
+#define RCC_LPTIM4FILT_ENABLE                 (RCC_RDCTRL2_LPTIM4FLTEN)
+#define RCC_LPTIM4_FILTCLK_SRC_MSI            (RCC_RDCTRL2_LPTIM4FLTSEL)
+#define RCC_LPTIM4_FILTCLK_SRC_APB5           (~RCC_RDCTRL2_LPTIM4FLTSEL)
+#define I2C_LPTIM4FLTDFC_MASK                 (~RCC_RDCTRL2_LPTIM4FLTDFC)
+
+#define RCC_LPTIM5FILT_ENABLE                 (RCC_RDCTRL3_LPTIM5FLTEN)
+#define RCC_LPTIM5_FILTCLK_SRC_MSI            (RCC_RDCTRL3_LPTIM5FLTSEL)
+#define RCC_LPTIM5_FILTCLK_SRC_APB5           (~RCC_RDCTRL3_LPTIM5FLTSEL)
+#define I2C_LPTIM5FLTDFC_MASK                 (~RCC_RDCTRL3_LPTIM5FLTDFC)
+
+#define RCC_WWDG1RSTDLCNT_MASK                (~RCC_CFG1_WWDG1RSTDLCNT)
+#define RCC_WWDG2RSTDLCNT_MASK                (~RCC_CFG1_WWDG2RSTDLCNT)
+
+#define RCC_M7TRACECLK_DIV_MASK                (~RCC_CFG1_M7TRACEDIV)
+#define RCC_M4TRACECLK_DIV_MASK                (~RCC_CFG1_M4TRACEDIV)
+#define RCC_TRACECLK_DIV1                      (RCC_CFG1_M7TRACEDIV_DIV1  )
+#define RCC_TRACECLK_DIV2                      (RCC_CFG1_M7TRACEDIV_DIV2  )
+#define RCC_TRACECLK_DIV4                      (RCC_CFG1_M7TRACEDIV_DIV4  )
+#define RCC_TRACECLK_DIV8                      (RCC_CFG1_M7TRACEDIV_DIV8  )
+#define RCC_TRACECLK_DIV16                     (RCC_CFG1_M7TRACEDIV_DIV16 )
+#define RCC_TRACECLK_DIV32                     (RCC_CFG1_M7TRACEDIV_DIV32 )
+#define RCC_TRACECLK_DIV64                     (RCC_CFG1_M7TRACEDIV_DIV64 )
+#define RCC_TRACECLK_DIV128                    (RCC_CFG1_M7TRACEDIV_DIV128)
+#define RCC_TRACECLK_DIV256                    (RCC_CFG1_M7TRACEDIV_DIV256)
+#define RCC_TRACECLK_DIV512                    (RCC_CFG1_M7TRACEDIV_DIV512)
+
+#define RCC_M7STCLK_DIV_MASK                (~RCC_CFG3_M7STCLKDIV)
+#define RCC_M4STCLK_DIV_MASK                (~RCC_CFG3_M4STCLKDIV)
+#define RCC_STCLK_DIV1                      (RCC_CFG3_M7STCLKDIV_DIV1  )
+#define RCC_STCLK_DIV2                      (RCC_CFG3_M7STCLKDIV_DIV2  )
+#define RCC_STCLK_DIV4                      (RCC_CFG3_M7STCLKDIV_DIV4  )
+#define RCC_STCLK_DIV8                      (RCC_CFG3_M7STCLKDIV_DIV8  )
+#define RCC_STCLK_DIV16                     (RCC_CFG3_M7STCLKDIV_DIV16 )
+#define RCC_STCLK_DIV32                     (RCC_CFG3_M7STCLKDIV_DIV32 )
+#define RCC_STCLK_DIV64                     (RCC_CFG3_M7STCLKDIV_DIV64 )
+#define RCC_STCLK_DIV128                    (RCC_CFG3_M7STCLKDIV_DIV128)
+#define RCC_STCLK_DIV256                    (RCC_CFG3_M7STCLKDIV_DIV256)
+#define RCC_STCLK_DIV512                    (RCC_CFG3_M7STCLKDIV_DIV512)
+
+#define RCC_DUALCORE_DBG_ENABLE             (RCC_CFG5_DCDCLKEN)
+
+#define RCC_RTCCLK_HSIDIV_MASK                  (~RCC_CFG5_RTCHSIDIV)
+#define RCC_RTCCLK_HSIDIV1                      (RCC_CFG5_RTCHSIDIV_DIV1  )
+#define RCC_RTCCLK_HSIDIV2                      (RCC_CFG5_RTCHSIDIV_DIV2  )
+#define RCC_RTCCLK_HSIDIV4                      (RCC_CFG5_RTCHSIDIV_DIV4  )
+#define RCC_RTCCLK_HSIDIV8                      (RCC_CFG5_RTCHSIDIV_DIV8  )
+#define RCC_RTCCLK_HSIDIV16                     (RCC_CFG5_RTCHSIDIV_DIV16 )
+#define RCC_RTCCLK_HSIDIV32                     (RCC_CFG5_RTCHSIDIV_DIV32 )
+#define RCC_RTCCLK_HSIDIV64                     (RCC_CFG5_RTCHSIDIV_DIV64 )
+#define RCC_RTCCLK_HSIDIV128                    (RCC_CFG5_RTCHSIDIV_DIV128)
+#define RCC_RTCCLK_HSIDIV256                    (RCC_CFG5_RTCHSIDIV_DIV256)
+#define RCC_RTCCLK_HSIDIV512                    (RCC_CFG5_RTCHSIDIV_DIV512)
+
+#define RCC_SOFTLOCK_EN_SHRPLL                    (RCC_PLLSFTLK_SHRPLLSFTLK)
+#define RCC_SOFTLOCK_EN_PLL3                      (RCC_PLLSFTLK_PLL3SFTLK  )
+#define RCC_SOFTLOCK_EN_PLL2                      (RCC_PLLSFTLK_PLL2SFTLK  )
+#define RCC_SOFTLOCK_EN_PLL1                      (RCC_PLLSFTLK_PLL1SFTLK  )
+
+#define RCC_SHRTIMAFE_RESET_ENABLE                (RCC_PLLSFTLK_SHRTIMAFERST  )
+#define RCC_SDRAM_DELAY_ENABLE                (RCC_PLLSFTLK_SDRAMDLEN  )
+
+#define RCC_SDRAM_DELAY_MASK                (~RCC_PLLSFTLK_SDRAMDLSEL  )
+#define RCC_SDRAM_DELAY_0_2NS               (RCC_PLLSFTLK_SDRAMDLSEL_0_2NS)
+#define RCC_SDRAM_DELAY_0_4NS               (RCC_PLLSFTLK_SDRAMDLSEL_0_4NS)
+#define RCC_SDRAM_DELAY_0_6NS               (RCC_PLLSFTLK_SDRAMDLSEL_0_6NS)
+#define RCC_SDRAM_DELAY_0_8NS               (RCC_PLLSFTLK_SDRAMDLSEL_0_8NS)
+#define RCC_SDRAM_DELAY_1_0NS               (RCC_PLLSFTLK_SDRAMDLSEL_1_0NS)
+#define RCC_SDRAM_DELAY_1_2NS               (RCC_PLLSFTLK_SDRAMDLSEL_1_2NS)
+#define RCC_SDRAM_DELAY_1_4NS               (RCC_PLLSFTLK_SDRAMDLSEL_1_4NS)
+#define RCC_SDRAM_DELAY_1_6NS               (RCC_PLLSFTLK_SDRAMDLSEL_1_6NS)
+#define RCC_SDRAM_DELAY_1_8NS               (RCC_PLLSFTLK_SDRAMDLSEL_1_8NS)
+#define RCC_SDRAM_DELAY_2_0NS               (RCC_PLLSFTLK_SDRAMDLSEL_2_0NS)
+#define RCC_SDRAM_DELAY_2_2NS               (RCC_PLLSFTLK_SDRAMDLSEL_2_2NS)
+#define RCC_SDRAM_DELAY_2_4NS               (RCC_PLLSFTLK_SDRAMDLSEL_2_4NS)
+#define RCC_SDRAM_DELAY_2_6NS               (RCC_PLLSFTLK_SDRAMDLSEL_2_6NS)
+#define RCC_SDRAM_DELAY_2_8NS               (RCC_PLLSFTLK_SDRAMDLSEL_2_8NS)
+#define RCC_SDRAM_DELAY_3_0NS               (RCC_PLLSFTLK_SDRAMDLSEL_3_0NS)
+#define RCC_SDRAM_DELAY_3_2NS               (RCC_PLLSFTLK_SDRAMDLSEL_3_2NS)
+
+void RCC_DeInit(void);
+void RCC_ConfigHse(uint32_t RCC_HSE);
+void RCC_EnableHsi(FunctionalState Cmd);
+void RCC_EnableMsi(FunctionalState Cmd);
+void RCC_ConfigLse(uint32_t RCC_LSE);
+void RCC_EnableLsi(FunctionalState Cmd);
+void RCC_EnableSecondaryLsi(FunctionalState Cmd);
+void RCC_ConfigSysclk(uint32_t sysclk_source);
+uint32_t RCC_GetSysclkSrc(void);
+void RCC_ConfigHSIclkDivider(uint32_t CLK_divider);
+void RCC_ConfigMSIclkDivider(uint32_t CLK_divider);
+void RCC_ConfigM7Clk(uint32_t CLK_source);
+void RCC_ConfigAXIClk(uint32_t CLK_source);
+void RCC_ConfigPLL1CDivider(uint32_t CLK_divider);
+void RCC_ConfigPLL1BDivider(uint32_t CLK_divider);
+void RCC_ConfigPLL1ADivider(uint32_t CLK_divider);
+void RCC_ConfigPLL2CDivider(uint32_t CLK_divider);
+void RCC_ConfigPLL2BDivider(uint32_t CLK_divider);
+void RCC_ConfigPLL2ADivider(uint32_t CLK_divider);
+void RCC_ConfigPLL3CDivider(uint32_t CLK_divider);
+void RCC_ConfigPLL3BDivider(uint32_t CLK_divider);
+void RCC_ConfigPLL3ADivider(uint32_t CLK_divider);
+void RCC_ConfigAXIHyperDivider(uint32_t CLK_divider);
+void RCC_ConfigM7HyperDivider(uint32_t CLK_divider);
+void RCC_ConfigAXIclkDivider(uint32_t CLK_divider);
+void RCC_ConfigSysbusDivider(uint32_t CLK_divider);
+void RCC_ConfigSysclkDivider(uint32_t CLK_divider);
+void RCC_ConfigAPBclkDivider(uint32_t APB1_divider, uint32_t APB2_divider, uint32_t APB5_divider, uint32_t APB6_divider);
+void RCC_EnableAHB1PeriphReset1(uint32_t AHB_periph);
+void RCC_EnableAHB1PeriphReset2(uint32_t AHB_periph);
+void RCC_EnableAHB1PeriphReset3(uint32_t AHB_periph);
+void RCC_EnableAHB1PeriphReset4(uint32_t AHB_periph);
+void RCC_EnableAPB1PeriphReset1(uint32_t APB_periph);
+void RCC_EnableAPB1PeriphReset2(uint32_t APB_periph);
+void RCC_EnableAPB1PeriphReset3(uint32_t APB_periph);
+void RCC_EnableAPB1PeriphReset4(uint32_t APB_periph);
+void RCC_EnableAPB1PeriphReset5(uint32_t APB_periph);
+void RCC_EnableAHB2PeriphReset1(uint32_t AHB_periph);
+void RCC_EnableAPB2PeriphReset1(uint32_t APB_periph);
+void RCC_EnableAPB2PeriphReset2(uint32_t APB_periph);
+void RCC_EnableAPB2PeriphReset3(uint32_t APB_periph);
+void RCC_EnableAPB2PeriphReset4(uint32_t APB_periph);
+void RCC_EnableAHB5PeriphReset1(uint32_t AHB_periph);
+void RCC_EnableAHB5PeriphReset2(uint32_t AHB_periph);
+void RCC_EnableAPB5PeriphReset1(uint32_t APB_periph);
+void RCC_EnableAPB5PeriphReset2(uint32_t APB_periph);
+void RCC_EnableAXIPeriphReset1(uint32_t AXI_periph);
+void RCC_EnableAXIPeriphReset2(uint32_t AXI_periph);
+void RCC_EnableAXIPeriphReset3(uint32_t AXI_periph);
+void RCC_EnableAXIPeriphReset4(uint32_t AXI_periph);
+void RCC_EnableAHB9PeriphReset1(uint32_t AHB_periph);
+void RCC_EnableRDPeriphReset1(uint32_t RD_periph);
+void RCC_EnableRDPeriphReset2(uint32_t RD_periph);
+void RCC_EnableAHB1PeriphClk1(uint32_t AHB_periph, FunctionalState Cmd);
+void RCC_EnableAHB1PeriphClk2(uint32_t AHB_periph, FunctionalState Cmd);
+void RCC_EnableAHB1PeriphClk3(uint32_t AHB_periph, FunctionalState Cmd);
+void RCC_EnableAHB1PeriphClk4(uint32_t AHB_periph, FunctionalState Cmd);
+void RCC_EnableAPB1PeriphClk1(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAPB1PeriphClk2(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAPB1PeriphClk3(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAPB1PeriphClk4(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAPB1PeriphClk5(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAHB2PeriphClk1(uint32_t AHB_periph, FunctionalState Cmd);
+void RCC_EnableAHB2PeriphClk2(uint32_t AHB_periph, FunctionalState Cmd);
+void RCC_EnableAPB2PeriphClk1(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAPB2PeriphClk2(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAPB2PeriphClk3(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAPB2PeriphClk4(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAHB5PeriphClk1(uint32_t AHB_periph, FunctionalState Cmd);
+void RCC_EnableAHB5PeriphClk2(uint32_t AHB_periph, FunctionalState Cmd);
+void RCC_EnableAPB5PeriphClk1(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAPB5PeriphClk2(uint32_t APB_periph, FunctionalState Cmd);
+void RCC_EnableAHB9PeriphClk1(uint32_t AHB_periph, FunctionalState Cmd);
+void RCC_EnableRDPeriphClk1(uint32_t RD_periph, FunctionalState Cmd);
+void RCC_EnableRDPeriphClk2(uint32_t RD_periph, FunctionalState Cmd);
+void RCC_EnableAXIPeriphClk1(uint32_t AXI_periph, FunctionalState Cmd);
+void RCC_EnableAXIPeriphClk2(uint32_t AXI_periph, FunctionalState Cmd);
+void RCC_EnableAXIPeriphClk3(uint32_t AXI_periph, FunctionalState Cmd);
+void RCC_EnableAXIPeriphClk4(uint32_t AXI_periph, FunctionalState Cmd);
+void RCC_ConfigETH2PtpClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigETH1PtpClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigETH1GMIITXClk(uint32_t CLK_source);
+void RCC_ConfigSDMMC2KerClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigSDMMC1KerClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigDSMUKerClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigDSMUKerAClk(uint32_t CLK_source, uint32_t CLK_pinsel);
+void RCC_ConfigUSBRefClk(uint32_t CLK_divider);
+void RCC_ConfigAdc1PllClk(uint32_t CLK_source);
+void RCC_ConfigAdc1SysClk(uint32_t CLK_divider);
+void RCC_ConfigAdc2PllClk(uint32_t CLK_source);
+void RCC_ConfigAdc2SysClk(uint32_t CLK_divider);
+void RCC_ConfigAdc3PllClk(uint32_t CLK_source);
+void RCC_ConfigAdc3SysClk(uint32_t CLK_divider);
+void RCC_ConfigBTIMKerClk(uint32_t CLK_divider);
+void RCC_ConfigGTIMA1_3_KerClk(uint32_t CLK_divider);
+void RCC_ConfigGTIMA4_7_KerClk(uint32_t CLK_divider);
+void RCC_ConfigGTIMB1_3_KerClk(uint32_t CLK_divider);
+void RCC_ConfigATIM1_2_KerClk(uint32_t CLK_divider);
+void RCC_ConfigATIM3_4_KerClk(uint32_t CLK_divider);
+void RCC_ConfigUSARTPClk(uint32_t CLK_divider);
+void RCC_ConfigI2S1KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2S2KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2S1_2_KerSysDivider(uint32_t CLK_divider);
+void RCC_ConfigI2S3KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2S4KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2S3_4_KerSysDivider(uint32_t CLK_divider);
+void RCC_ConfigI2C1KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2C2KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2C3KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2C1_3_KerSysDivider(uint32_t CLK_divider);
+void RCC_ConfigI2C4KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2C5KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2C6KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2C4_6_KerSysDivider(uint32_t CLK_divider);
+void RCC_ConfigI2C7KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2C8KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2C9KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2C10KerClkSource(uint32_t CLK_source);
+void RCC_ConfigI2C7_10_KerSysDivider(uint32_t CLK_divider);
+void RCC_ConfigFDCAN1KerClkSource(uint32_t CLK_source);
+void RCC_ConfigFDCAN2KerClkSource(uint32_t CLK_source);
+void RCC_ConfigFDCAN5KerClkSource(uint32_t CLK_source);
+void RCC_ConfigFDCAN6KerClkSource(uint32_t CLK_source);
+void RCC_ConfigFDCAN1_2_5_6_KerSysDivider(uint32_t CLK_divider);
+void RCC_ConfigFDCAN3KerClkSource(uint32_t CLK_source);
+void RCC_ConfigFDCAN4KerClkSource(uint32_t CLK_source);
+void RCC_ConfigFDCAN7KerClkSource(uint32_t CLK_source);
+void RCC_ConfigFDCAN8KerClkSource(uint32_t CLK_source);
+void RCC_ConfigFDCAN3_4_7_8_KerSysDivider(uint32_t CLK_divider);
+void RCC_ConfigEXTISysDivider(uint32_t CLK_divider);
+void RCC_ConfigRtcClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_EnableRtcClk(FunctionalState Cmd);
+void RCC_EnableBackupReset(void);
+void RCC_EnableDCMUReset(void);
+void RCC_ConfigLPTIM1Clk(uint32_t CLK_source);
+void RCC_EnableLPTIM1CompGate(uint32_t COMP_sel, FunctionalState Cmd);
+void RCC_ConfigLPTIM2Clk(uint32_t CLK_source);
+void RCC_EnableLPTIM2CompGate(uint32_t COMP_sel, FunctionalState Cmd);
+void RCC_ConfigLPTIM3Clk(uint32_t CLK_source);
+void RCC_EnableLPTIM3CompGate(uint32_t COMP_sel, FunctionalState Cmd);
+void RCC_ConfigLPTIM4Clk(uint32_t CLK_source);
+void RCC_EnableLPTIM4CompGate(uint32_t COMP_sel, FunctionalState Cmd);
+void RCC_ConfigLPTIM5Clk(uint32_t CLK_source);
+void RCC_EnableLPTIM5CompGate(uint32_t COMP_sel, FunctionalState Cmd);
+void RCC_ConfigLPUART1ClkSource(uint32_t CLK_source);
+void RCC_ConfigLPUART2ClkSource(uint32_t CLK_source);
+void RCC_ConfigLPUART1_2_ClkDivider(uint32_t CLK_divider);
+void RCC_ConfigCOMPLsxClk(uint32_t CLK_source);
+void RCC_ConfigCOMPKerClk(uint32_t CLK_divider);
+void RCC_ConfigFEMCM0Clk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigFEMCM1Clk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigDSIRefClk(uint32_t CLK_divider);
+void RCC_ConfigDSIKerClk(uint32_t CLK_source);
+void RCC_ConfigDSIPpitxClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigDSIUlpsClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigLCDCPixelClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigDVP1MClkSource(uint32_t CLK_source);
+void RCC_ConfigDVP2MClkSource(uint32_t CLK_source);
+void RCC_ConfigDVP1_2_MClkDivider(uint32_t CLK_divider);
+void RCC_ConfigXSPI1SSIClk(uint32_t CLK_source);
+void RCC_ConfigXSPI2SSIClk(uint32_t CLK_source);
+void RCC_ConfigSDRAMMemClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigETHERCATKerClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigTRNGClk(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_EnableTRNGClk(FunctionalState Cmd);
+void RCC_EnableCFG2PeriphClk1(uint32_t CFG2_periph, FunctionalState Cmd);
+void RCC_EnableCFG4PeriphClk1(uint32_t CFG4_periph, FunctionalState Cmd);
+void RCC_EnableCFG5PeriphClk1(uint32_t CFG5_periph, FunctionalState Cmd);
+void RCC_ConfigMco1(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_ConfigMco2(uint32_t CLK_source, uint32_t CLK_divider);
+void RCC_EnableFDCANStopRequest1(uint32_t FDCAN_sel, FunctionalState Cmd);
+void RCC_EnableFDCANStopRequest2(uint32_t FDCAN_sel, FunctionalState Cmd);
+void RCC_ConfigPeriphClk(uint32_t CLK_source);
+void RCC_EnableModuleResetRequest(uint32_t Module_sel, FunctionalState Cmd);
+void RCC_ConfigInt1(uint32_t Interrupt, FunctionalState Cmd);
+void RCC_ConfigInt2(uint32_t Interrupt, FunctionalState Cmd);
+void RCC_ConfigInt3(uint32_t Interrupt, FunctionalState Cmd);
+void RCC_ClrIntPendingBit1(uint32_t interrupt_clear);
+void RCC_ClrIntPendingBit2(uint32_t interrupt_clear);
+void RCC_ClrIntPendingBit3(uint32_t interrupt_clear);
+void RCC_ClearResetFlag(void);
+void RCC_EnableCM4(uint32_t CM4_BaseAddr);
+void RCC_GetClocksFreqValue(RCC_ClocksTypeDef* RCC_Clocks);
+ErrorStatus RCC_WaitHseStable(void);
+ErrorStatus RCC_WaitHsiStable(void);
+ErrorStatus RCC_WaitMsiStable(void);
+ErrorStatus RCC_WaitLseStable(void);
+ErrorStatus RCC_WaitLsiStable(void);
+ErrorStatus RCC_WaitSecondaryLsiStable(void);
+ErrorStatus RCC_CalculatePLLParam(uint64_t fin, uint64_t fout, uint32_t* nr, uint32_t* nf, uint32_t* wb);
+ErrorStatus RCC_ConfigSHRPll(uint32_t PLL_source, uint64_t fin, uint64_t fout, FunctionalState Cmd);
+ErrorStatus RCC_ConfigPll1(uint32_t PLL_source, uint64_t fin, uint64_t fout, FunctionalState Cmd);
+ErrorStatus RCC_ConfigPll2(uint32_t PLL_source, uint64_t fin, uint64_t fout, FunctionalState Cmd);
+ErrorStatus RCC_ConfigPll3(uint32_t PLL_source, uint64_t fin, uint64_t fout, FunctionalState Cmd);
+ErrorStatus RCC_ConfigSHRPll_NoCalculate(uint32_t PLL_source, uint32_t nrtmp, uint32_t nftmp, uint32_t wbtmp, FunctionalState Cmd);
+ErrorStatus RCC_ConfigPll1_NoCalculate(uint32_t PLL_source, uint32_t nrtmp, uint32_t nftmp, uint32_t wbtmp, FunctionalState Cmd);
+ErrorStatus RCC_ConfigPll2_NoCalculate(uint32_t PLL_source, uint32_t nrtmp, uint32_t nftmp, uint32_t wbtmp, FunctionalState Cmd);
+ErrorStatus RCC_ConfigPll3_NoCalculate(uint32_t PLL_source, uint32_t nrtmp, uint32_t nftmp, uint32_t wbtmp, FunctionalState Cmd);
+FlagStatus RCC_GetFDCANStopAckFlag1(uint32_t RCC_flag);
+FlagStatus RCC_GetFDCANStopAckFlag2(uint32_t RCC_flag);
+FlagStatus RCC_GetFlagStatus(uint8_t RCC_flag);
+INTStatus RCC_GetIntStatus1(uint32_t interrupt_flag);
+INTStatus RCC_GetIntStatus2(uint32_t interrupt_flag);
+INTStatus RCC_GetIntStatus3(uint32_t interrupt_flag);
+void RCC_SetSysClkToMode0(void);
+void RCC_SetSysClkToMode1(void);
+void RCC_SetSysClkToMode2(void);
+void RCC_SetHsiCalibValue(uint16_t calibration_value); 
+void RCC_SetMsiCalibValue(uint16_t calibration_value); 
+void RCC_EnableHSEClockSecuritySystem(FunctionalState Cmd);
+void RCC_SelectLSISourceControl(uint32_t CLK_source);
+void RCC_EnableLSIClockSecuritySystem(FunctionalState Cmd);
+void RCC_EnableLSIFailAcknowledge(FunctionalState Cmd);
+void RCC_EnableLSECalibrationCount(FunctionalState Cmd);
+void RCC_EnableLSEOffsetDetection(FunctionalState Cmd);
+void RCC_SetLSEOffsetThreshold(uint8_t threshold_value); 
+void RCC_EnableHSECalibrationCount(FunctionalState Cmd);
+void RCC_EnableHSECSSCheck(uint32_t Chk_type, FunctionalState Cmd);
+void RCC_SetHSEOffsetThreshold(uint8_t threshold_value); 
+void RCC_SetHSEPositiveDeviationMAXThreshold(uint8_t threshold_value); 
+void RCC_SetHSENegativeDeviationMINThreshold(uint8_t threshold_value); 
+void RCC_SetLSICSSDelayValue(uint32_t delay_value); 
+void RCC_SetLSEReadyDelayValue(uint32_t delay_value); 
+void RCC_SetMSIReadyDelayValue(uint32_t delay_value); 
+void RCC_SetHSEReadyDelayValue(uint32_t delay_value); 
+void RCC_EnablePLLFailDetection(uint32_t Chk_type, FunctionalState Cmd);
+void RCC_EnableLPTIM1Filter(FunctionalState Cmd);
+void RCC_SelectLPTIM1FilterSource(uint32_t CLK_source);
+void RCC_ConfigLPTIM1FilterWidth(uint8_t width_value);
+void RCC_EnableLPTIM2Filter(FunctionalState Cmd);
+void RCC_SelectLPTIM2FilterSource(uint32_t CLK_source);
+void RCC_ConfigLPTIM2FilterWidth(uint8_t width_value);
+void RCC_EnableLPTIM3Filter(FunctionalState Cmd);
+void RCC_SelectLPTIM3FilterSource(uint32_t CLK_source);
+void RCC_ConfigLPTIM3FilterWidth(uint8_t width_value);
+void RCC_EnableLPTIM4Filter(FunctionalState Cmd);
+void RCC_SelectLPTIM4FilterSource(uint32_t CLK_source);
+void RCC_ConfigLPTIM4FilterWidth(uint8_t width_value);
+void RCC_EnableLPTIM5Filter(FunctionalState Cmd);
+void RCC_SelectLPTIM5FilterSource(uint32_t CLK_source);
+void RCC_ConfigLPTIM5FilterWidth(uint8_t width_value);
+void RCC_SetWWDG1ResetDelayValue(uint8_t delay_value); 
+void RCC_SetWWDG2ResetDelayValue(uint8_t delay_value); 
+void RCC_ConfigM7TraceClkDivider(uint32_t CLK_divider);
+void RCC_ConfigM4TraceClkDivider(uint32_t CLK_divider);
+void RCC_ConfigM7SystickClkDivider(uint32_t CLK_divider);
+void RCC_ConfigM4SystickClkDivider(uint32_t CLK_divider);
+void RCC_EnableDualCoreDebugClk(FunctionalState Cmd);
+void RCC_ConfigRTCHSIClkDivider(uint32_t CLK_divider);
+void RCC_EnablePLLSoftwareLock(uint32_t lock_type, FunctionalState Cmd);
+void RCC_EnableSHRTIMAFEReset(FunctionalState Cmd);
+void RCC_EnableSDRAMDelayChain(FunctionalState Cmd);
+void RCC_ConfigSDRAMDelay(uint32_t CLK_delay);
+void RCC_ConfigHSEDriveStrength(uint32_t CLK_driver);
+uint8_t RCC_GetLSECalibrationCount(void);
+FlagStatus RCC_GetLSECSSFlag(uint32_t RCC_flag);
+uint16_t RCC_GetHSECalibrationCount(void);
+FlagStatus RCC_GetHSECSSFlag(uint32_t RCC_flag);
+
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* __N32H76X_78X_RCC_H */
+
+

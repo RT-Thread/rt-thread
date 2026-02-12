@@ -185,8 +185,8 @@
         (field)[3] = (uint8_t)((value) >> 0);  \
     } while (0)
 
-#define WBVAL(x) (x & 0xFF), ((x >> 8) & 0xFF)
-#define DBVAL(x) (x & 0xFF), ((x >> 8) & 0xFF), ((x >> 16) & 0xFF), ((x >> 24) & 0xFF)
+#define WBVAL(x) ((x) & 0xFF), (((x) >> 8) & 0xFF)
+#define DBVAL(x) ((x) & 0xFF), (((x) >> 8) & 0xFF), (((x) >> 16) & 0xFF), (((x) >> 24) & 0xFF)
 
 #define PP_NARG(...) \
     PP_NARG_(__VA_ARGS__, PP_RSEQ_N())
@@ -208,6 +208,23 @@
         29, 28, 27, 26, 25, 24, 23, 22, 21, 20, \
         19, 18, 17, 16, 15, 14, 13, 12, 11, 10, \
         9, 8, 7, 6, 5, 4, 3, 2, 1, 0
+
+/*
+ * Divide positive or negative dividend by positive or negative divisor
+ * and round to closest integer. Result is undefined for negative
+ * divisors if the dividend variable type is unsigned and for negative
+ * dividends if the divisor variable type is unsigned.
+ */
+#define DIV_ROUND_CLOSEST(x, divisor) (       \
+    {                                         \
+        typeof(x) __x = x;                    \
+        typeof(divisor) __d = divisor;        \
+        (((typeof(x))-1) > 0 ||               \
+         ((typeof(divisor))-1) > 0 ||         \
+         (((__x) > 0) == ((__d) > 0))) ?      \
+            (((__x) + ((__d) / 2)) / (__d)) : \
+            (((__x) - ((__d) / 2)) / (__d));  \
+    })
 
 #define USB_MEM_ALIGNX __attribute__((aligned(CONFIG_USB_ALIGN_SIZE)))
 

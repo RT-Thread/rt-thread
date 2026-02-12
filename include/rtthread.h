@@ -783,6 +783,13 @@ void rt_components_board_init(void);
 #else
 int rt_kprintf(const char *fmt, ...);
 void rt_kputs(const char *str);
+#ifdef RT_USING_CONSOLE_OUTPUT_CTL
+void rt_console_output_set_enabled(rt_bool_t enabled);
+rt_bool_t rt_console_output_get_enabled(void);
+#else
+#define rt_console_output_set_enabled(enabled) ((void)0)
+#define rt_console_output_get_enabled()        (RT_TRUE)
+#endif /* RT_USING_CONSOLE_OUTPUT_CTL */
 #endif /* RT_USING_CONSOLE */
 
 rt_err_t rt_backtrace(void);

@@ -513,7 +513,7 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_TIM
         bool "Enable TIMER"
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         default n
         if BSP_USING_TIM
             config NRFX_TIMER_ENABLED

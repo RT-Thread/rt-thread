@@ -6,10 +6,11 @@
  * Change Logs:
  * Date         Author        Notes
  * 2018-12-04   balanceTWK    first version
- * 2020-10-14   Dozingfiretruck Porting for stm32wbxx
+ * 2020-10-14   PeakRacing Porting for stm32wbxx
  * 2021-02-05   Meco Man      fix the problem of mixing local time and UTC time
  * 2021-07-05   iysheng       implement RTC framework V2.0
  * 2025-06-05   RCSN          add local time conversion for get timeval and set stamp
+ * 0206-02-03   wdfk_prog     compute tv_usec from SecondFraction/SubSeconds
  */
 
 #include "board.h"
@@ -85,10 +86,30 @@ static rt_err_t stm32_rtc_get_timeval(struct timeval *tv)
 #else
     tv->tv_sec = timegm(&tm_new);
 #endif
-#if defined(SOC_SERIES_STM32H7)
-    tv->tv_usec = (255.0 - RTC_TimeStruct.SubSeconds * 1.0) / 256.0 * 1000.0 * 1000.0;
-#endif
-
+    tv->tv_usec = 0U;
+/* F1 RTC does not have SSR/PRER */
+#if defined(RTC_SSR_SS) && defined(RTC_PRER_PREDIV_S)
+    /*
+    * You can use SubSeconds and SecondFraction (sTime structure fields
+    * returned) to convert SubSeconds value in second fraction ratio with
+    * time unit following generic formula:
+    * Second fraction ratio * time_unit =
+    *    [(SecondFraction - SubSeconds) / (SecondFraction + 1)] * time_unit
+    * This conversion can be performed only if no shift operation is pending
+    * (ie. SHFP=0) when PREDIV_S >= SS
+    */
+#if defined(RTC_ISR_SHPF)
+    if (READ_BIT(RTC->ISR, RTC_ISR_SHPF) == 0U)
+#endif /* RTC_ISR_SHPF */
+    {
+        uint32_t sf = RTC_TimeStruct.SecondFraction;
+        uint32_t ss = RTC_TimeStruct.SubSeconds;
+        if ((sf != 0U) && (ss <= sf))
+        {
+            tv->tv_usec = (uint32_t)(((sf - ss) * 1000000ULL) / (sf + 1U));
+        }
+    }
+#endif /* defined(RTC_SSR_SS) && defined(RTC_PRER_PREDIV_S) */
     return RT_EOK;
 }
 

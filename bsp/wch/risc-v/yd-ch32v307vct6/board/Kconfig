@@ -256,9 +256,9 @@ menu "On-chip Peripheral Drivers"
         default n
 
         if BSP_USING_TIM
-            config BSP_USING_HWTIMER
+            config BSP_USING_CLOCK_TIMER
                 bool
-                select RT_USING_HWTIMER
+                select RT_USING_CLOCK_TIME
                 default n
 
             config BSP_USING_PWM
@@ -271,9 +271,9 @@ menu "On-chip Peripheral Drivers"
                 default n
 
                 if BSP_USING_TIM1
-                    config BSP_USING_TIM1_HWTIMER
-                        bool "Using TIM1 as hwtimer mode"
-                        select BSP_USING_HWTIMER
+                    config BSP_USING_TIM1_CLOCK_TIMER
+                        bool "Using TIM1 as clock_timer mode"
+                        select BSP_USING_CLOCK_TIMER
 
                     config BSP_USING_TIM1_PWM
                         bool "Using TIM1 as PWM mode"
@@ -295,8 +295,8 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM1 channel 4"
                     endif
 
-                    if BSP_USING_TIM1_HWTIMER && BSP_USING_TIM1_PWM
-                        comment "BSP_USING_TIM1_HWTIMER and BSP_USING_TIM1_PWM can only be chosen for one!"
+                    if BSP_USING_TIM1_CLOCK_TIMER && BSP_USING_TIM1_PWM
+                        comment "BSP_USING_TIM1_CLOCK_TIMER and BSP_USING_TIM1_PWM can only be chosen for one!"
                     endif
 
                 endif
@@ -306,9 +306,9 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM2
-                    config BSP_USING_TIM2_HWTIMER
-                        bool "Using TIM2 as hwtimer mode"
-                        select BSP_USING_HWTIMER
+                    config BSP_USING_TIM2_CLOCK_TIMER
+                        bool "Using TIM2 as clock_timer mode"
+                        select BSP_USING_CLOCK_TIMER
 
                     config BSP_USING_TIM2_PWM
                         bool "Using TIM2 as PWM mode"
@@ -330,8 +330,8 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM2 channel 4"
                     endif
 
-                    if BSP_USING_TIM2_HWTIMER && BSP_USING_TIM2_PWM
-                        comment "BSP_USING_TIM2_HWTIMER and BSP_USING_TIM2_PWM can only be chosen for one!"
+                    if BSP_USING_TIM2_CLOCK_TIMER && BSP_USING_TIM2_PWM
+                        comment "BSP_USING_TIM2_CLOCK_TIMER and BSP_USING_TIM2_PWM can only be chosen for one!"
                     endif
 
                 endif
@@ -341,9 +341,9 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM3
-                    config BSP_USING_TIM3_HWTIMER
-                        bool "Using TIM3 as hwtimer mode"
-                        select BSP_USING_HWTIMER
+                    config BSP_USING_TIM3_CLOCK_TIMER
+                        bool "Using TIM3 as clock_timer mode"
+                        select BSP_USING_CLOCK_TIMER
 
                     config BSP_USING_TIM3_PWM
                         bool "Using TIM3 as PWM mode"
@@ -365,8 +365,8 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM3 channel 4"
                     endif
 
-                    if BSP_USING_TIM3_HWTIMER && BSP_USING_TIM3_PWM
-                        comment "BSP_USING_TIM3_HWTIMER and BSP_USING_TIM3_PWM can only be chosen for one!"
+                    if BSP_USING_TIM3_CLOCK_TIMER && BSP_USING_TIM3_PWM
+                        comment "BSP_USING_TIM3_CLOCK_TIMER and BSP_USING_TIM3_PWM can only be chosen for one!"
                     endif
 
                 endif
@@ -376,9 +376,9 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM4
-                    config BSP_USING_TIM4_HWTIMER
-                        bool "Using TIM4 as hwtimer mode"
-                        select BSP_USING_HWTIMER
+                    config BSP_USING_TIM4_CLOCK_TIMER
+                        bool "Using TIM4 as clock_timer mode"
+                        select BSP_USING_CLOCK_TIMER
 
                     config BSP_USING_TIM4_PWM
                         bool "Using TIM4 as PWM mode"
@@ -400,8 +400,8 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM4 channel 4"
                     endif
 
-                    if BSP_USING_TIM4_HWTIMER && BSP_USING_TIM4_PWM
-                        comment "BSP_USING_TIM4_HWTIMER and BSP_USING_TIM4_PWM can only be chosen for one!"
+                    if BSP_USING_TIM4_CLOCK_TIMER && BSP_USING_TIM4_PWM
+                        comment "BSP_USING_TIM4_CLOCK_TIMER and BSP_USING_TIM4_PWM can only be chosen for one!"
                     endif
 
                 endif
@@ -411,9 +411,9 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM5
-                    config BSP_USING_TIM5_HWTIMER
-                        bool "Using TIM5 as hwtimer mode"
-                        select BSP_USING_HWTIMER
+                    config BSP_USING_TIM5_CLOCK_TIMER
+                        bool "Using TIM5 as clock_timer mode"
+                        select BSP_USING_CLOCK_TIMER
 
                     config BSP_USING_TIM5_PWM
                         bool "Using TIM5 as PWM mode"
@@ -435,8 +435,8 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM5 channel 4"
                     endif
 
-                    if BSP_USING_TIM5_HWTIMER && BSP_USING_TIM5_PWM
-                        comment "BSP_USING_TIM5_HWTIMER and BSP_USING_TIM5_PWM can only be chosen for one!"
+                    if BSP_USING_TIM5_CLOCK_TIMER && BSP_USING_TIM5_PWM
+                        comment "BSP_USING_TIM5_CLOCK_TIMER and BSP_USING_TIM5_PWM can only be chosen for one!"
                     endif
 
                 endif
@@ -446,9 +446,9 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM6
-                    config BSP_USING_TIM6_HWTIMER
-                        bool "Using TIM6 as hwtimer mode"
-                        select BSP_USING_HWTIMER
+                    config BSP_USING_TIM6_CLOCK_TIMER
+                        bool "Using TIM6 as clock_timer mode"
+                        select BSP_USING_CLOCK_TIMER
                 endif
 
             config BSP_USING_TIM7
@@ -456,9 +456,9 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM7
-                    config BSP_USING_TIM7_HWTIMER
-                        bool "Using TIM7 as hwtimer mode"
-                        select BSP_USING_HWTIMER
+                    config BSP_USING_TIM7_CLOCK_TIMER
+                        bool "Using TIM7 as clock_timer mode"
+                        select BSP_USING_CLOCK_TIMER
                 endif
 
             config BSP_USING_TIM8
@@ -466,9 +466,9 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM8
-                    config BSP_USING_TIM8_HWTIMER
-                        bool "Using TIM8 as hwtimer mode"
-                        select BSP_USING_HWTIMER
+                    config BSP_USING_TIM8_CLOCK_TIMER
+                        bool "Using TIM8 as clock_timer mode"
+                        select BSP_USING_CLOCK_TIMER
 
                     config BSP_USING_TIM8_PWM
                         bool "Using TIM8 as PWM mode"
@@ -490,8 +490,8 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM8 channel 4"
                     endif
 
-                    if BSP_USING_TIM8_HWTIMER && BSP_USING_TIM8_PWM
-                        comment "BSP_USING_TIM8_HWTIMER and BSP_USING_TIM8_PWM can only be chosen for one!"
+                    if BSP_USING_TIM8_CLOCK_TIMER && BSP_USING_TIM8_PWM
+                        comment "BSP_USING_TIM8_CLOCK_TIMER and BSP_USING_TIM8_PWM can only be chosen for one!"
                     endif
 
                 endif
@@ -501,9 +501,9 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM9
-                    config BSP_USING_TIM9_HWTIMER
-                        bool "Using TIM9 as hwtimer mode"
-                        select BSP_USING_HWTIMER
+                    config BSP_USING_TIM9_CLOCK_TIMER
+                        bool "Using TIM9 as clock_timer mode"
+                        select BSP_USING_CLOCK_TIMER
 
                     config BSP_USING_TIM9_PWM
                         bool "Using TIM9 as PWM mode"
@@ -525,8 +525,8 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM9 channel 4"
                     endif
 
-                    if BSP_USING_TIM9_HWTIMER && BSP_USING_TIM9_PWM
-                        comment "BSP_USING_TIM9_HWTIMER and BSP_USING_TIM9_PWM can only be chosen for one!"
+                    if BSP_USING_TIM9_CLOCK_TIMER && BSP_USING_TIM9_PWM
+                        comment "BSP_USING_TIM9_CLOCK_TIMER and BSP_USING_TIM9_PWM can only be chosen for one!"
                     endif
 
                 endif
@@ -536,9 +536,9 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM10
-                    config BSP_USING_TIM10_HWTIMER
-                        bool "Using TIM10 as hwtimer mode"
-                        select BSP_USING_HWTIMER
+                    config BSP_USING_TIM10_CLOCK_TIMER
+                        bool "Using TIM10 as clock_timer mode"
+                        select BSP_USING_CLOCK_TIMER
 
                     config BSP_USING_TIM10_PWM
                         bool "Using TIM10 as PWM mode"
@@ -560,8 +560,8 @@ menu "On-chip Peripheral Drivers"
                             bool "Using TIM10 channel 4"
                     endif
 
-                    if BSP_USING_TIM10_HWTIMER && BSP_USING_TIM10_PWM
-                        comment "BSP_USING_TIM10_HWTIMER and BSP_USING_TIM10_PWM can only be chosen for one!"
+                    if BSP_USING_TIM10_CLOCK_TIMER && BSP_USING_TIM10_PWM
+                        comment "BSP_USING_TIM10_CLOCK_TIMER and BSP_USING_TIM10_PWM can only be chosen for one!"
                     endif
 
                 endif

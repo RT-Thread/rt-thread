@@ -112,7 +112,8 @@ CherryUSB Host 协议栈当前实现以下功能：
 - Support USB Audio CLASS (UAC1.0)
 - 支持 Remote NDIS (RNDIS)
 - 支持 USB Bluetooth (支持 nimble and zephyr bluetooth 协议栈，支持 **CLASS: 0xE0** 或者厂家自定义类，类似于 cdc acm 功能)
-- 支持 Vendor 类 class (serial, net, wifi)
+- 支持 Vendor Serial 类(CH34X、CP210X、PL2303、FTDI、GSM)
+- 支持 Vendor network 类(RTL8152、AX88772)
 - 支持 USB modeswitch
 - 支持 Android Open Accessory
 - 支持相同 USB IP 的多主机
@@ -150,7 +151,7 @@ CherryUSB Host 协议栈资源占用说明（GCC 10.2 with -O2，关闭 log）�
 x 受以下宏影响：
 
 ```
-#define CONFIG_USBHOST_MAX_CDC_ACM_CLASS 4
+#define CONFIG_USBHOST_MAX_SERIAL_CLASS  4
 #define CONFIG_USBHOST_MAX_HID_CLASS     4
 #define CONFIG_USBHOST_MAX_MSC_CLASS     2
 #define CONFIG_USBHOST_MAX_AUDIO_CLASS   1
@@ -181,11 +182,11 @@ CherryUSB 快速入门、USB 基本概念、API 手册、Class 基本概念和�
 
 ## 视频教程
 
-CherryUSB 课程（基于 V1.4.3）：https://www.bilibili.com/cheese/play/ss707687201 。
+CherryUSB 课程（>= V1.4.3）：https://www.bilibili.com/cheese/play/ss707687201 。
 
 ## 描述符生成工具
 
-TODO
+Cherry Descriptor: https://desc.cherry-embedded.org/zh
 
 ## 示例仓库
 
@@ -197,7 +198,7 @@ TODO
 |Essemi         |  ES32F36xx | musb |[es32f369_repo](https://github.com/CherryUSB/cherryusb_es32)|<= latest | Official |
 |Phytium        |  e2000 | pusb2/xhci |[phytium_repo](https://gitee.com/phytium_embedded/phytium-free-rtos-sdk)|>=1.4.0  | Official |
 |Artinchip      |  d12x/d13x/d21x | aic/ehci/ohci |[luban-lite](https://gitee.com/artinchip/luban-lite)|<= latest  | Official |
-|Espressif      |  esp32s2/esp32s3/esp32p4 | dwc2 |[esp32_repo](https://github.com/CherryUSB/cherryusb_esp32)|<= latest | Official ongoing |
+|Espressif      |  esp32s2/esp32s3/esp32p4 | dwc2 |[esp32_repo](https://github.com/CherryUSB/cherryusb_esp32)/[espressif](https://github.com/espressif/esp-idf/tree/master/examples/peripherals/usb)|<= latest | Official |
 |Kendryte       |  k230 | dwc2 |[k230_repo](https://github.com/CherryUSB/k230_sdk)|v1.2.0 | Official |
 |Actionstech    |  ATS30xx | dwc2 |[action_zephyr_repo](https://github.com/CherryUSB/lv_port_actions_technology/tree/master/action_technology_sdk)|>=1.4.0 | Official |
 |SiFli          |  SF32LB5x | musb |[SiFli_sdk](https://github.com/OpenSiFli/SiFli-SDK)|>=1.5.0 | Official |

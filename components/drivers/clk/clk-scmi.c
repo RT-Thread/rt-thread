@@ -47,7 +47,7 @@ struct scmi_clk_data
     } info;
 };
 
-#define cell_to_scmi_clk_data(cell) rt_container_of(cell, struct scmi_clk_data, cell)
+#define cell_to_scmi_clk_data(cell_ptr) rt_container_of(cell_ptr, struct scmi_clk_data, cell)
 
 static rt_err_t scmi_clk_op_gate(struct scmi_clk *sclk, int clk_id, rt_bool_t enable)
 {
@@ -128,7 +128,7 @@ static rt_base_t scmi_clk_round_rate(struct rt_clk_cell *cell, rt_ubase_t drate,
 
     if (clk_data->rate_discrete)
     {
-        return rate;
+        return drate;
     }
 
     fmin = clk_data->info.range.min_rate;

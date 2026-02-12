@@ -88,7 +88,8 @@ def extract_source_dirs(compile_commands):
     for entry in compile_commands:
         file_path = os.path.abspath(entry['file'])
 
-        if file_path.endswith('.c'):
+        file_ext = os.path.splitext(file_path)[1].lower()
+        if file_ext in ('.c', '.cc', '.cpp', '.cxx', '.s', '.asm'):
             dir_path = os.path.dirname(file_path)
             source_dirs.add(dir_path)
             # command or arguments
@@ -126,6 +127,26 @@ def is_path_in_tree(path, tree):
         return False
 
 
+def should_force_include(path, root_path):
+    rel_path = os.path.relpath(path, root_path).replace('\\', '/')
+    return (
+        rel_path == 'board/linker_scripts' or
+        rel_path.startswith('board/linker_scripts/')
+    )
+
+def limit_excludes_to_root_dirs(root_path, names):
+    allowed = set(os.path.normpath(os.path.join(root_path, name)) for name in names)
+    return [p for p in allowed if os.path.isdir(p)]
+
+def is_under_roots(path, root_path, names):
+    norm = os.path.normpath(path)
+    for name in names:
+        root = os.path.normpath(os.path.join(root_path, name))
+        if norm == root or norm.startswith(root + os.path.sep):
+            return True
+    return False
+
+
 def generate_code_workspace_file(source_dirs,command_json_path,root_path):
     current_working_directory = os.getcwd()
     current_folder_name = os.path.basename(current_working_directory)
@@ -139,7 +160,13 @@ def generate_code_workspace_file(source_dirs,command_json_path,root_path):
             continue
 
     root_rel_path = os.path.relpath(root_path, current_working_directory)
-    command_json_path = os.path.relpath(current_working_directory, root_path) + os.sep
+    command_json_abs_path = command_json_path
+    if not os.path.isabs(command_json_abs_path):
+        command_json_abs_path = os.path.abspath(
+            os.path.join(current_working_directory, command_json_abs_path)
+        )
+    command_json_dir = os.path.dirname(command_json_abs_path)
+    command_json_dir = os.path.relpath(command_json_dir, root_path)
     workspace_data = {
         "folders": [
             {
@@ -148,7 +175,7 @@ def generate_code_workspace_file(source_dirs,command_json_path,root_path):
         ],
         "settings": {
             "clangd.arguments": [
-                f"--compile-commands-dir={command_json_path}",
+                f"--compile-commands-dir={command_json_dir}",
                 "--header-insertion=never"
             ],
             "files.exclude": {dir.replace('\\','/'): True for dir in sorted(relative_dirs)}
@@ -161,8 +188,11 @@ def generate_code_workspace_file(source_dirs,command_json_path,root_path):
     print(f'Workspace file {workspace_filename} created.')
 
 def command_json_to_workspace(root_path,command_json_path):
-    
-    with open('build/compile_commands.json', 'r') as f:
+    command_json_abs_path = command_json_path
+    if not os.path.isabs(command_json_abs_path):
+        command_json_abs_path = os.path.abspath(command_json_abs_path)
+
+    with open(command_json_abs_path, 'r') as f:
         compile_commands = json.load(f)
 
     source_dirs = extract_source_dirs(compile_commands)
@@ -182,17 +212,19 @@ def command_json_to_workspace(root_path,command_json_path):
     # os.chdir(root_path)
     # 轮询root文件夹下面的每一个文件夹和子文件夹
     for root, dirs, files in os.walk(root_path):
+        if not is_under_roots(root, root_path, ('rt-thread', 'packages')):
+            continue
         # 检查当前root是否在filtered_tree中
-        if not is_path_in_tree(root, filtered_tree):
+        if not is_path_in_tree(root, filtered_tree) and not should_force_include(root, root_path):
             exclude_fold.add(root)
             dirs[:] = []  # 不往下轮询子文件夹
             continue
         for dir in dirs:
             dir_path = os.path.join(root, dir)
-            if not is_path_in_tree(dir_path, filtered_tree):
+            if not is_path_in_tree(dir_path, filtered_tree) and not should_force_include(dir_path, root_path):
                 exclude_fold.add(dir_path)
 
-    generate_code_workspace_file(exclude_fold,command_json_path,root_path)
+    generate_code_workspace_file(exclude_fold,command_json_abs_path,root_path)
 
 def delete_repeatelist(data):
     temp_dict = set([str(item) for item in data])
@@ -245,8 +277,7 @@ def GenerateCFiles(env):
     Generate vscode.code-workspace files by build/compile_commands.json
     """
     if os.path.exists('build/compile_commands.json'):
-
-        command_json_to_workspace(env['RTT_ROOT'],'build/compile_commands.json')
+        command_json_to_workspace(os.getcwd(), 'build/compile_commands.json')
         return
     """
     Generate vscode.code-workspace files

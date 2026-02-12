@@ -54,7 +54,7 @@
 | WIFI              | 部分支持 | 目前存在一些问题，例如不能在ISR中使用`rt_mq_recive`等 |
 | BLE             | 部分支持 | 目前存在一些问题，例如`NimBLE`启动一段时间后运行错误 |
 | GDBStub         | 支持 | 通过开启`BSP_ENABLE_GDBSTUB`开关即可使用ESP-IDF所提供的GDB，其会在芯片出错后进入GDB模式 |
-| HWTIMER         | 支持 |
+| CLOCK_TIMER         | 支持 |
 注：
 
 1、WIFI和BLE不能同时启用，在使用BLE驱动时注意在`menuconfig`中关闭`RT_USING_WIFI`和`LWIP`开关。另外由于能力有限且缺乏调试设备，WIFI和BLE驱动运行都有问题，如果可以解决联系[timwcx@qq.com](mailto:timwcx@qq.com)。
