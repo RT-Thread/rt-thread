@@ -208,6 +208,32 @@ rt_device_t rt_console_set_device(const char *name)
 RTM_EXPORT(rt_console_set_device);
 #endif /* RT_USING_DEVICE */
 
+#ifdef RT_USING_CONSOLE_OUTPUT_CTL
+static volatile rt_bool_t _console_output_enabled = RT_TRUE;
+
+/**
+ * @brief Enable or disable console log output.
+ *
+ * @param enabled RT_TRUE to enable output, RT_FALSE to disable output.
+ */
+void rt_console_output_set_enabled(rt_bool_t enabled)
+{
+    _console_output_enabled = enabled;
+}
+RTM_EXPORT(rt_console_output_set_enabled);
+
+/**
+ * @brief Get current console log output enable state.
+ *
+ * @return RT_TRUE if output is enabled, RT_FALSE otherwise.
+ */
+rt_bool_t rt_console_output_get_enabled(void)
+{
+    return _console_output_enabled;
+}
+RTM_EXPORT(rt_console_output_get_enabled);
+#endif /* RT_USING_CONSOLE_OUTPUT_CTL */
+
 rt_weak void rt_hw_console_output(const char *str)
 {
     /* empty console output */
@@ -346,6 +372,11 @@ void rt_kputs(const char *str)
         return;
     }
 
+    if (!rt_console_output_get_enabled())
+    {
+        return;
+    }
+
     _kputs(str, rt_strlen(str));
 }
 
@@ -361,6 +392,11 @@ rt_weak int rt_kprintf(const char *fmt, ...)
     va_list args;
     rt_size_t length = 0;
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
+
+    if (!rt_console_output_get_enabled())
+    {
+        return 0;
+    }
 
     va_start(args, fmt);
     PRINTF_BUFFER_TAKE;
