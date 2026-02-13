@@ -869,7 +869,8 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'eclipse':
         from targets.eclipse import TargetEclipse
-        TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
+        project_name = os.path.basename(Dir('#').abspath)
+        TargetEclipse(Env, GetOption('reset-project-config'), project_name)
 
     if GetOption('target') == 'codelite':
         from targets.codelite import TargetCodelite
