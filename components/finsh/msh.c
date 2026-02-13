@@ -451,7 +451,7 @@ static char *_msh_exec_search_env(const char *pg_name)
        or hitting its end */
     while (1)
     {
-        /* env paths are seperated by ':' */
+        /* env paths are separated by ':' */
         if (*pos == ':' || *pos == '\0')
         {
             tmp_ch = *pos;

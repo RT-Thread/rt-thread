@@ -318,7 +318,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         if env['LINK'].find('gcc') != -1:
             env['LINK'] = env['LINK'].replace('gcc', 'g++')
 
-    # we need to seperate the variant_dir for BSPs and the kernels. BSPs could
+    # we need to separate the variant_dir for BSPs and the kernels. BSPs could
     # have their own components etc. If they point to the same folder, SCons
     # would find the wrong source code to compile.
     bsp_vdir = 'build'
@@ -792,7 +792,7 @@ def DoBuilding(target, objects):
         for group in Projects:
             local_group(group, objects_in_group)
 
-        # sort seperately, because the data type of
+        # sort separately, because the data type of
         # the members of the two lists are different
         objects_in_group = sorted(objects_in_group)
         objects = sorted(objects)
