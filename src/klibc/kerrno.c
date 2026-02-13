@@ -55,6 +55,7 @@ static struct _errno_str_t  rt_errno_strs[] =
     {RT_ENOENT  , "ENOENT "},  /**< No such file or directory. */
     {RT_ENOSPC  , "ENOSPC "},  /**< No space left on device. */
     {RT_EPERM   , "EPERM  "},  /**< Operation not permitted. */
+    {RT_EWAITPEND, "OK     "},  /**< Wait pending, internal sentinel for scheduler. */
     {RT_ETRAP   , "ETRAP  "},  /**< Trap error. */
 };
 
