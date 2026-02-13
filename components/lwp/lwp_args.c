@@ -671,21 +671,21 @@ static char *_find_word(char *cp)
 }
 
 /**
- * @brief Seperate words in a string and get the next word
+ * @brief Separate words in a string and get the next word
  *
  * @param[in] cp Pointer to the string to process
  *
  * @return char* Pointer to the next word in the string
  *
- * @note Finds the next whitespace character, seperates words, and returns a
+ * @note Finds the next whitespace character, separates words, and returns a
  *       pointer to the next word.
  */
-static char *_seperate_and_get_nextword(char *cp)
+static char *_separate_and_get_nextword(char *cp)
 {
     /* find next whitespace */
     for (; *cp && (*cp != ' ') && (*cp != '\t'); cp++)
         ;
-    /* seperate words */
+    /* separate words */
     while ((*cp == ' ') || (*cp == '\t'))
     {
         *cp++ = '\0';
@@ -762,7 +762,7 @@ rt_err_t lwp_args_load_script(struct lwp_args_info *ai, const char *filename)
 
         do
         {
-            nextword = _seperate_and_get_nextword(cp);
+            nextword = _separate_and_get_nextword(cp);
             args_append(&ow_ai, cp, strlen(cp), LWP_ARGS_TYPE_KARG);
             cp = nextword;
         }
