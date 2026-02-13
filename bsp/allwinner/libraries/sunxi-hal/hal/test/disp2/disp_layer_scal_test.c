@@ -145,5 +145,3 @@ int disp_layer_scal_test(int argc, char **argv)
 
     return 0;
 }
-
-FINSH_FUNCTION_EXPORT_ALIAS(disp_layer_scal_test, __cmd_disp_layer_scal_test, disp_layer_scal_test);

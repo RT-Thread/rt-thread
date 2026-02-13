@@ -157,9 +157,3 @@ int lbc_test(int argc, char **argv)
     return 0;
 }
 
-
-
-
-
-FINSH_FUNCTION_EXPORT_ALIAS(lbc_test, __cmd_disp_lbc_test, disp lbc test);
-

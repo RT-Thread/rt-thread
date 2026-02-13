@@ -121,16 +121,7 @@ typedef long (*syscall_func)(void);
  */
 #define FINSH_FUNCTION_EXPORT(name, desc)
 
-/**
- * @ingroup group_finsh
- *
- * @brief Exports a system function with an alias name to finsh shell.
- *
- * @param[in] name Name of function.
- * @param[in] alias Alias name of function.
- * @param[in] desc Description of function, which will show in help.
- */
-#define FINSH_FUNCTION_EXPORT_ALIAS(name, alias, desc)
+
 
 /**
  * @ingroup group_finsh
