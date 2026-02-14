@@ -98,7 +98,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -yqq install scons qemu-system git
-          pip3 install kconfiglib
+          pip3 install git+https://github.com/sysprog21/Kconfiglib
 
       - name: Install ToolChains
         shell: bash
