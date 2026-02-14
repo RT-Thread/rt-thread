@@ -27,6 +27,7 @@
 # 2025-01-05     Bernard      Add logging as Env['log']
 # 2025-03-02     ZhaoCake     Add MkDist_Strip
 # 2025-01-05     Assistant    Refactor SCons PreProcessor patch to independent class
+# 2025-09-01     wdfk-prog    Add project-name option for custom project naming in IDE targets
 
 import os
 import sys
@@ -802,19 +803,21 @@ def DoBuilding(target, objects):
 
     EndBuilding(target, program)
 
-def GenTargetProject(program = None):
+def GenTargetProject(program = None, project_name = None):
+    if project_name is None:
+        project_name = GetOption('project-name')
 
     if GetOption('target') in ['mdk', 'mdk4', 'mdk5']:
         from targets.keil import MDK2Project, MDK4Project, MDK5Project, ARMCC_Version
 
         if os.path.isfile('template.uvprojx') and GetOption('target') not in ['mdk4']: # Keil5
-            MDK5Project(Env, GetOption('project-name') + '.uvprojx', Projects)
+            MDK5Project(Env, project_name + '.uvprojx', Projects)
             print("Keil5 project is generating...")
         elif os.path.isfile('template.uvproj') and GetOption('target') not in ['mdk5']: # Keil4
-            MDK4Project(Env, GetOption('project-name') + '.uvproj', Projects)
+            MDK4Project(Env, project_name + '.uvproj', Projects)
             print("Keil4 project is generating...")
         elif os.path.isfile('template.Uv2') and GetOption('target') not in ['mdk4', 'mdk5']: # Keil2
-            MDK2Project(Env, GetOption('project-name') + '.Uv2', Projects)
+            MDK2Project(Env, project_name + '.Uv2', Projects)
             print("Keil2 project is generating...")
         else:
             print ('No template project file found.')
@@ -825,20 +828,20 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'iar':
         from targets.iar import IARProject, IARVersion
         print("IAR Version: " + IARVersion())
-        IARProject(Env, GetOption('project-name') + '.ewp', Projects)
+        IARProject(Env, project_name + '.ewp', Projects)
         print("IAR project has generated successfully!")
 
     if GetOption('target') == 'vs':
         from targets.vs import VSProject
-        VSProject(GetOption('project-name') + '.vcproj', Projects, program)
+        VSProject(project_name + '.vcproj', Projects, program)
 
     if GetOption('target') == 'vs2012':
         from targets.vs2012 import VS2012Project
-        VS2012Project(GetOption('project-name') + '.vcxproj', Projects, program)
+        VS2012Project(project_name + '.vcxproj', Projects, program)
 
     if GetOption('target') == 'cb':
         from targets.codeblocks import CBProject
-        CBProject(GetOption('project-name') + '.cbp', Projects, program)
+        CBProject(project_name + '.cbp', Projects, program)
 
     if GetOption('target') == 'ua':
         from targets.ua import PrepareUA
@@ -857,7 +860,7 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'cdk':
         from targets.cdk import CDKProject
-        CDKProject(GetOption('project-name') + '.cdkproj', Projects)
+        CDKProject(project_name + '.cdkproj', Projects)
 
     if GetOption('target') == 'ses':
         from targets.ses import SESProject
@@ -869,7 +872,9 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'eclipse':
         from targets.eclipse import TargetEclipse
-        TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
+        from utils import ProjectInfo
+        project = ProjectInfo(Env)
+        TargetEclipse(Env, project, GetOption('reset-project-config'), project_name)
 
     if GetOption('target') == 'codelite':
         from targets.codelite import TargetCodelite
@@ -877,7 +882,7 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
         from targets.cmake import CMakeProject
-        CMakeProject(Env, Projects, GetOption('project-name'))
+        CMakeProject(Env, Projects, project_name)
 
     if GetOption('target') == 'xmake':
         from targets.xmake import XMakeProject
@@ -912,13 +917,20 @@ def EndBuilding(target, program = None):
     Clean(target, 'rtua.pyc')
     Clean(target, '.sconsign.dblite')
 
+    # Priority: 1. PROJECT_NAME in rtconfig.py -> 
+    # 2. --project-name command line option -> 
+    # 3. SCons default value ('project')
+    project_name = GetOption('project-name')
+    if hasattr(rtconfig, 'PROJECT_NAME') and rtconfig.PROJECT_NAME:
+        project_name = rtconfig.PROJECT_NAME
+
+
     if GetOption('target'):
-        GenTargetProject(program)
+        GenTargetProject(program, project_name)
         need_exit = True
 
     BSP_ROOT = Dir('#').abspath
 
-    project_name = GetOption('project-name')
     project_path = GetOption('project-path')
 
     # 合并处理打包相关选项
