@@ -226,10 +226,10 @@ RTM_EXPORT(mq_receive);
  *          The priority of the message is specified by the msg_prio parameter.
  *          If either the message queue identified by id or the msg_ptr buffer is a null pointer, errno is set to EINVAL,
  *          indicating an invalid argument, and the function returns -1.
- *          The function then attempts to send the message to the message queue using the rt_mq_send_wait_prio() function
- *          with zero timeout and uninterruptible mode.
+ *          If the message queue is full, the function blocks until space becomes available,
+ *          following POSIX standard behavior.
  *          If the message is successfully sent, the function returns 0.
- *          If an error occurs during the send operation, errno is set to EBADF, indicating a bad file descriptor,
+ *          If an error occurs during the send operation, errno is set appropriately,
  *          and the function returns -1.
  */
 int mq_send(mqd_t id, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
@@ -245,11 +245,18 @@ int mq_send(mqd_t id, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
         rt_set_errno(EINVAL);
         return -1;
     }
-    result = rt_mq_send_wait_prio(mq, (void *)msg_ptr, msg_len, msg_prio, 0, RT_UNINTERRUPTIBLE);
+    result = rt_mq_send_wait_prio(mq, (void *)msg_ptr, msg_len, msg_prio, RT_WAITING_FOREVER, RT_UNINTERRUPTIBLE);
     if (result == RT_EOK)
         return 0;
 
-    rt_set_errno(EBADF);
+    if (result == -RT_EINTR)
+        rt_set_errno(EINTR);
+    else if (result == -RT_ERROR)
+        rt_set_errno(EMSGSIZE);
+    else if (result == -RT_EINVAL)
+        rt_set_errno(EINVAL);
+    else
+        rt_set_errno(EBADF);
 
     return -1;
 }
@@ -320,21 +327,19 @@ ssize_t mq_timedreceive(mqd_t                  id,
 RTM_EXPORT(mq_timedreceive);
 
 /**
- * @brief   Sends a message to a message queue with a timeout (not supported).
+ * @brief   Sends a message to a message queue with a timeout.
  * @param   id Message queue descriptor.
  * @param   msg_ptr Pointer to the buffer containing the message to be sent.
  * @param   msg_len Size of the message to be sent.
  * @param   msg_prio Priority of the message to be sent.
- * @param   abs_timeout Pointer to a struct timespec specifying the absolute timeout value (ignored).
+ * @param   abs_timeout Pointer to a struct timespec specifying the absolute timeout value (ignored if null).
  * @return  Upon successful completion, returns 0;
  *          otherwise, returns -1 and sets errno to indicate the error.
  *
- * @note    This function attempts to send a message to the message queue identified by id with a specified timeout,
- *          but timed send is not supported in the RT-Thread environment.
- *          Therefore, the function simply delegates the message sending operation to the mq_send() function,
- *          which does not involve a timeout.
- *          The abs_timeout parameter is ignored, and the message is sent without waiting for a timeout to occur.
- *          The function returns the result of the mq_send() function, which indicates whether the message was successfully sent.
+ * @note    This function sends a message to the message queue identified by id with a specified timeout.
+ *          If the message queue is full and the timeout has not expired, the function blocks.
+ *          If abs_timeout is NULL, the function waits indefinitely (same as mq_send).
+ *          If the timeout expires before space becomes available, errno is set to ETIMEDOUT.
  */
 int mq_timedsend(mqd_t                  id,
                  const char            *msg_ptr,
@@ -342,8 +347,38 @@ int mq_timedsend(mqd_t                  id,
                  unsigned               msg_prio,
                  const struct timespec *abs_timeout)
 {
-    /* RT-Thread does not support timed send */
-    return mq_send(id, msg_ptr, msg_len, msg_prio);
+    rt_mq_t mq;
+    rt_err_t result;
+    int tick = 0;
+    struct mqueue_file *mq_file;
+    mq_file = fd_get(id)->vnode->data;
+    mq = (rt_mq_t)mq_file->data;
+
+    if ((mq == RT_NULL) || (msg_ptr == RT_NULL))
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    if (abs_timeout != RT_NULL)
+        tick = rt_timespec_to_tick(abs_timeout);
+    else
+        tick = RT_WAITING_FOREVER;
+
+    result = rt_mq_send_wait_prio(mq, (void *)msg_ptr, msg_len, msg_prio, tick, RT_UNINTERRUPTIBLE);
+    if (result == RT_EOK)
+        return 0;
+
+    if (result == -RT_ETIMEOUT)
+        rt_set_errno(ETIMEDOUT);
+    else if (result == -RT_EINTR)
+        rt_set_errno(EINTR);
+    else if (result == -RT_ERROR)
+        rt_set_errno(EMSGSIZE);
+    else
+        rt_set_errno(EBADF);
+
+    return -1;
 }
 RTM_EXPORT(mq_timedsend);
 
