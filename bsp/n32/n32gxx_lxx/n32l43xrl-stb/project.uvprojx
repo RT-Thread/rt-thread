@@ -745,6 +745,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>rt_drv_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\misc\rt_drv_pwm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\pin\dev_pin.c</FilePath>
@@ -883,6 +902,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>drv_base.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\n32_drivers\drv_base.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>drv_can.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\n32_drivers\drv_can.c</FilePath>
@@ -907,6 +933,13 @@
               <FileName>drv_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\n32_drivers\drv_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\n32_drivers\drv_pwm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -956,7 +989,7 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
@@ -1388,16 +1421,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32l43x_rcc.c</FileName>
+              <FileName>n32l43x_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_rcc.c</FilePath>
+              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32l43x_exti.c</FileName>
+              <FileName>n32l43x_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_exti.c</FilePath>
+              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_spi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1451,9 +1484,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32l43x_tim.c</FileName>
+              <FileName>n32l43x_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_tim.c</FilePath>
+              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_flash.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1472,9 +1505,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32l43x_flash.c</FileName>
+              <FileName>n32l43x_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_flash.c</FilePath>
+              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_rcc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1488,7 +1521,21 @@
             <File>
               <FileName>n32l43x_wwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_wwdg.c</FilePath>
+              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>n32l43x_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\misc.c</FilePath>
             </File>
           </Files>
         </Group>

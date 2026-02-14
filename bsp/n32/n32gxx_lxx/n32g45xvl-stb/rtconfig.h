@@ -158,6 +158,7 @@
 #define RT_USING_I2C_BITOPS
 #define RT_USING_ADC
 #define RT_USING_DAC
+#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SPI
 #define RT_USING_SPI_ISR
@@ -435,6 +436,10 @@
 #define BSP_USING_UART
 #define BSP_USING_USART1
 #define BSP_USART1_AFIO_MODE_PA9_PA10
+#define BSP_USING_PWM
+#define BSP_USING_TIM2_PWM
+#define TIM2_REMAP_0
+#define BSP_USING_TIM2_PWM_CH0
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

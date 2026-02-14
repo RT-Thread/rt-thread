@@ -158,6 +158,7 @@
 #define RT_USING_I2C_BITOPS
 #define RT_USING_ADC
 #define RT_USING_DAC
+#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SPI
 #define RT_USING_SPI_ISR
