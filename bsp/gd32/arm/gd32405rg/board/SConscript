@@ -7,6 +7,7 @@ cwd = GetCurrentDir()
 # add general drivers
 src = Split('''
 board.c
+board_ms5611.c
 ''')
 
 path =  [cwd]

@@ -135,3 +135,69 @@ static void pwm_test(void)
 }
 MSH_CMD_EXPORT(pwm_test, pwm test);
 #endif // BSP_USING_PWM
+
+void ms5611_test(void)
+{
+    rt_device_t i2c_dev = RT_NULL;
+    rt_err_t result = RT_EOK;
+
+    // 查找气压计
+    i2c_dev = rt_device_find("baro_ms5611");
+    if(i2c_dev == RT_NULL)
+    {
+        rt_kprintf("i2c0 not found\r\n");
+        return;
+    }
+
+    // 打开气压计
+    result = rt_device_open(i2c_dev, RT_DEVICE_FLAG_RDWR);
+    if(result != RT_EOK)
+    {
+        rt_kprintf("open i2c0 failed\r\n");
+        return;
+    }
+
+    // 读取气压计数据
+    struct rt_sensor_data data = {0};
+    if(rt_device_read(i2c_dev, 0, &data, 1) == 1)
+    {
+        rt_kprintf("read ms5611: %d\n", data.data.baro);
+    }
+    else
+    {
+        rt_kprintf("read ms5611 failed\n");
+    }
+
+    // 关闭气压计
+    rt_device_close(i2c_dev);
+
+    // 查找气压计
+    i2c_dev = rt_device_find("temp_ms5611");
+    if(i2c_dev == RT_NULL)
+    {
+        rt_kprintf("i2c0 not found\r\n");
+        return;
+    }
+
+    // 打开气压计
+    result = rt_device_open(i2c_dev, RT_DEVICE_FLAG_RDWR);
+    if(result != RT_EOK)
+    {
+        rt_kprintf("open i2c0 failed\r\n");
+        return;
+    }
+
+    // 读取气压计温度
+    if(rt_device_read(i2c_dev, 0, &data, 1) == 1)
+    {
+        rt_kprintf("read ms5611: %d\n", data.data.temp);
+    }
+    else
+    {
+        rt_kprintf("read ms5611 failed\n");
+    }
+
+    // 关闭气压计
+    rt_device_close(i2c_dev);
+}
+MSH_CMD_EXPORT(ms5611_test, i2c test);
