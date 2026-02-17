@@ -16,10 +16,10 @@ const struct dwc2_user_params param_pa11_pa12 = {
     .phy_type = DWC2_PHY_TYPE_PARAM_FS,
     .device_dma_enable = false,
     .device_dma_desc_enable = false,
-    .device_rx_fifo_size = (320 - 16 - 16 - 16 - 16),
+    .device_rx_fifo_size = (320 - 16 - 64 - 16 - 16),
     .device_tx_fifo_size = {
         [0] = 16, // 64 byte
-        [1] = 16, // 64 byte
+        [1] = 64, // 256 byte
         [2] = 16, // 64 byte
         [3] = 16, // 64 byte
         [4] = 0,
@@ -50,10 +50,10 @@ const struct dwc2_user_params param_pa11_pa12 = {
     .phy_type = DWC2_PHY_TYPE_PARAM_FS,
     .device_dma_enable = false,
     .device_dma_desc_enable = false,
-    .device_rx_fifo_size = (320 - 16 - 16 - 16 - 16),
+    .device_rx_fifo_size = (320 - 16 - 64 - 16 - 16),
     .device_tx_fifo_size = {
         [0] = 16, // 64 byte
-        [1] = 16, // 64 byte
+        [1] = 64, // 256 byte
         [2] = 16, // 64 byte
         [3] = 16, // 64 byte
         [4] = 0,
@@ -124,10 +124,10 @@ const struct dwc2_user_params param_pa11_pa12 = {
     .phy_type = DWC2_PHY_TYPE_PARAM_FS,
     .device_dma_enable = false,
     .device_dma_desc_enable = false,
-    .device_rx_fifo_size = (320 - 16 - 16 - 16 - 16),
+    .device_rx_fifo_size = (320 - 16 - 64 - 16 - 16),
     .device_tx_fifo_size = {
         [0] = 16, // 64 byte
-        [1] = 16, // 64 byte
+        [1] = 64, // 256 byte
         [2] = 16, // 64 byte
         [3] = 16, // 64 byte
         [4] = 0,
@@ -212,10 +212,10 @@ const struct dwc2_user_params param_pa11_pa12 = {
     .phy_type = DWC2_PHY_TYPE_PARAM_FS,
     .device_dma_enable = false,
     .device_dma_desc_enable = false,
-    .device_rx_fifo_size = (320 - 16 - 16 - 16 - 16),
+    .device_rx_fifo_size = (320 - 16 - 64 - 16 - 16),
     .device_tx_fifo_size = {
         [0] = 16, // 64 byte
-        [1] = 16, // 64 byte
+        [1] = 64, // 256 byte
         [2] = 16, // 64 byte
         [3] = 16, // 64 byte
         [4] = 0,
@@ -380,10 +380,10 @@ const struct dwc2_user_params param_pa11_pa12 = {
     .phy_type = DWC2_PHY_TYPE_PARAM_FS,
     .device_dma_enable = false,
     .device_dma_desc_enable = false,
-    .device_rx_fifo_size = (320 - 16 - 16 - 16 - 16),
+    .device_rx_fifo_size = (320 - 16 - 64 - 16 - 16),
     .device_tx_fifo_size = {
         [0] = 16, // 64 byte
-        [1] = 16, // 64 byte
+        [1] = 64, // 256 byte
         [2] = 16, // 64 byte
         [3] = 16, // 64 byte
         [4] = 0,
@@ -446,10 +446,10 @@ const struct dwc2_user_params param_pa11_pa12 = {
     .phy_type = DWC2_PHY_TYPE_PARAM_FS,
     .device_dma_enable = false,
     .device_dma_desc_enable = false,
-    .device_rx_fifo_size = (320 - 16 - 16 - 16 - 16),
+    .device_rx_fifo_size = (320 - 16 - 64 - 16 - 16),
     .device_tx_fifo_size = {
         [0] = 16, // 64 byte
-        [1] = 16, // 64 byte
+        [1] = 64, // 256 byte
         [2] = 16, // 64 byte
         [3] = 16, // 64 byte
         [4] = 0,
@@ -481,10 +481,10 @@ const struct dwc2_user_params param_pa11_pa12 = {
     .phy_type = DWC2_PHY_TYPE_PARAM_FS,
     .device_dma_enable = false,
     .device_dma_desc_enable = false,
-    .device_rx_fifo_size = (320 - 16 - 16 - 16 - 16),
+    .device_rx_fifo_size = (320 - 16 - 64 - 16 - 16),
     .device_tx_fifo_size = {
         [0] = 16, // 64 byte
-        [1] = 16, // 64 byte
+        [1] = 64, // 256 byte
         [2] = 16, // 64 byte
         [3] = 16, // 64 byte
         [4] = 0,
@@ -720,6 +720,11 @@ void usbd_dwc2_delay_ms(uint8_t ms)
     while (count--) {
         __asm volatile("nop");
     }
+}
+
+uint32_t usbd_dwc2_get_system_clock(void)
+{
+    return SystemCoreClock;
 }
 
 void OTG_FS_IRQHandler(void)

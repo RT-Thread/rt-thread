@@ -9,7 +9,7 @@
  * 2018-12-12     greedyhao    Porting for stm32f7xx
  * 2019-02-01     yuneizhilin  fix the stm32_adc_init function initialization issue
  * 2020-06-17     thread-liu   Porting for stm32mp1xx
- * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2020-10-14     PeakRacing   Porting for stm32wbxx
  * 2022-05-22     Stanley Lwin Add stm32_adc_get_vref
  * 2022-12-26     wdfk-prog    Change the order of configuration channels and calibration functions
  */

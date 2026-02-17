@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2020-10-14     Dozingfiretruck   first version
+ * 2020-10-14     PeakRacing   first version
  */
 #ifndef __USBD_CONFIG_H__
 #define __USBD_CONFIG_H__

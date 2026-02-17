@@ -1,0 +1,6 @@
+config RT_THERMAL_ROCKCHIP_TSADC
+    bool "Rockchip TS-ADC driver"
+    depends on RT_USING_THERMAL
+    depends on RT_MFD_SYSCON
+    depends on RT_USING_RESET
+    default n

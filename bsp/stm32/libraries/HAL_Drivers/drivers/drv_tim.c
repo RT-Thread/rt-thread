@@ -8,7 +8,7 @@
  * 2018-12-10     zylx         first version
  * 2020-06-16     thread-liu   Porting for stm32mp1
  * 2020-08-25     linyongkang  Fix the timer clock frequency doubling problem
- * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2020-10-14     PeakRacing   Porting for stm32wbxx
  * 2020-11-18     leizhixiong  add STM32H7 series support
  * 2023-08-21     Donocean     fix the MCU crash when using timer6
  * 2023-12-24     Meco Man     add TIMx existing check
@@ -298,15 +298,15 @@ enum
 #endif
 };
 
-struct stm32_hwtimer
+struct stm32_clock_timer
 {
-    rt_hwtimer_t time_device;
+    rt_clock_timer_t time_device;
     TIM_HandleTypeDef    tim_handle;
     IRQn_Type tim_irqn;
     char *name;
 };
 
-static struct stm32_hwtimer stm32_hwtimer_obj[] =
+static struct stm32_clock_timer stm32_clock_timer_obj[] =
 {
 #ifdef BSP_USING_TIM1
     TIM1_CONFIG,
@@ -377,18 +377,18 @@ static struct stm32_hwtimer stm32_hwtimer_obj[] =
 #endif
 };
 
-static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
+static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
 {
     uint32_t prescaler_value = 0;
     uint32_t pclk1_doubler, pclk2_doubler;
     TIM_HandleTypeDef *tim = RT_NULL;
-    struct stm32_hwtimer *tim_device = RT_NULL;
+    struct stm32_clock_timer *tim_device = RT_NULL;
 
     RT_ASSERT(timer != RT_NULL);
     if (state)
     {
         tim = (TIM_HandleTypeDef *)timer->parent.user_data;
-        tim_device = (struct stm32_hwtimer *)timer;
+        tim_device = (struct stm32_clock_timer *)timer;
 
         stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
@@ -409,7 +409,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         tim->Init.Period            = 10000 - 1;
         tim->Init.Prescaler         = prescaler_value;
         tim->Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
-        if (timer->info->cntmode == HWTIMER_CNTMODE_UP)
+        if (timer->info->cntmode == CLOCK_TIMER_CNTMODE_UP)
         {
             tim->Init.CounterMode   = TIM_COUNTERMODE_UP;
         }
@@ -436,7 +436,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
     }
 }
 
-static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_t opmode)
+static rt_err_t timer_start(rt_clock_timer_t *timer, rt_uint32_t t, rt_clock_timer_mode_t opmode)
 {
     rt_err_t result = RT_EOK;
     TIM_HandleTypeDef *tim = RT_NULL;
@@ -450,7 +450,7 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
     /* set tim arr */
     __HAL_TIM_SET_AUTORELOAD(tim, t - 1);
 
-    if (opmode == HWTIMER_MODE_ONESHOT)
+    if (opmode == CLOCK_TIMER_MODE_ONESHOT)
     {
         /* set timer to single mode */
         tim->Instance->CR1 |= TIM_OPMODE_SINGLE;
@@ -470,7 +470,7 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
     return result;
 }
 
-static void timer_stop(rt_hwtimer_t *timer)
+static void timer_stop(rt_clock_timer_t *timer)
 {
     TIM_HandleTypeDef *tim = RT_NULL;
 
@@ -485,7 +485,7 @@ static void timer_stop(rt_hwtimer_t *timer)
     __HAL_TIM_SET_COUNTER(tim, 0);
 }
 
-static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
+static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
 {
     TIM_HandleTypeDef *tim = RT_NULL;
     rt_err_t result = -RT_ERROR;
@@ -498,7 +498,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 
     switch (cmd)
     {
-    case HWTIMER_CTRL_FREQ_SET:
+    case CLOCK_TIMER_CTRL_FREQ_SET:
     {
         rt_uint32_t freq;
         rt_uint16_t val=0;
@@ -591,7 +591,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
     return result;
 }
 
-static rt_uint32_t timer_counter_get(rt_hwtimer_t *timer)
+static rt_uint32_t timer_counter_get(rt_clock_timer_t *timer)
 {
     TIM_HandleTypeDef *tim = RT_NULL;
 
@@ -602,9 +602,9 @@ static rt_uint32_t timer_counter_get(rt_hwtimer_t *timer)
     return tim->Instance->CNT;
 }
 
-static const struct rt_hwtimer_info _info = TIM_DEV_INFO_CONFIG;
+static const struct rt_clock_timer_info _info = TIM_DEV_INFO_CONFIG;
 
-static const struct rt_hwtimer_ops _ops =
+static const struct rt_clock_timer_ops _ops =
 {
     .init = timer_init,
     .start = timer_start,
@@ -618,7 +618,7 @@ void TIM2_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM2_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM2_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -630,10 +630,10 @@ void TIM3_TIM4_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 #ifdef BSP_USING_TIM3
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM3_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM3_INDEX].tim_handle);
 #endif
 #ifdef BSP_USING_TIM4
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM4_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM4_INDEX].tim_handle);
 #endif
     /* leave interrupt */
     rt_interrupt_leave();
@@ -645,7 +645,7 @@ void TIM3_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM3_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM3_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -655,7 +655,7 @@ void TIM4_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM4_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM4_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -666,7 +666,7 @@ void TIM5_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM5_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM5_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -676,7 +676,7 @@ void TIM6_DAC_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM6_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM6_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -686,7 +686,7 @@ void TIM7_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM7_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM7_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -696,7 +696,7 @@ void TIM8_UP_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM8_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM8_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -706,7 +706,7 @@ void TIM1_TRG_COM_TIM11_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM11_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM11_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -716,7 +716,7 @@ void TIM8_UP_TIM13_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM13_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM13_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -730,7 +730,7 @@ void TIM8_UP_TIM13_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM14_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM14_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -740,7 +740,7 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM15_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM15_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -754,7 +754,7 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM16_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM16_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -768,7 +768,7 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM17_INDEX].tim_handle);
+    HAL_TIM_IRQHandler(&stm32_clock_timer_obj[TIM17_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -779,106 +779,106 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 #ifdef BSP_USING_TIM2
     if (htim->Instance == TIM2)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM2_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM2_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM3
     if (htim->Instance == TIM3)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM3_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM3_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM4
     if (htim->Instance == TIM4)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM4_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM4_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM5
     if (htim->Instance == TIM5)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM5_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM5_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM6
     if (htim->Instance == TIM6)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM6_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM6_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM7
     if (htim->Instance == TIM7)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM7_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM7_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM8
     if (htim->Instance == TIM8)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM8_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM8_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM11
     if (htim->Instance == TIM11)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM11_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM11_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM13
     if (htim->Instance == TIM13)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM13_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM13_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM14
     if (htim->Instance == TIM14)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM14_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM14_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM15
     if (htim->Instance == TIM15)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM15_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM15_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM16
     if (htim->Instance == TIM16)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM16_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM16_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM17
     if (htim->Instance == TIM17)
     {
-        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM17_INDEX].time_device);
+        rt_clock_timer_isr(&stm32_clock_timer_obj[TIM17_INDEX].time_device);
     }
 #endif
 }
 
-static int stm32_hwtimer_init(void)
+static int stm32_clock_timer_init(void)
 {
     rt_uint32_t i = 0;
     int result = RT_EOK;
 
-    for (i = 0; i < sizeof(stm32_hwtimer_obj) / sizeof(stm32_hwtimer_obj[0]); i++)
+    for (i = 0; i < sizeof(stm32_clock_timer_obj) / sizeof(stm32_clock_timer_obj[0]); i++)
     {
-        stm32_hwtimer_obj[i].time_device.info = &_info;
-        stm32_hwtimer_obj[i].time_device.ops  = &_ops;
-        if (rt_device_hwtimer_register(&stm32_hwtimer_obj[i].time_device,
-            stm32_hwtimer_obj[i].name, &stm32_hwtimer_obj[i].tim_handle) == RT_EOK)
+        stm32_clock_timer_obj[i].time_device.info = &_info;
+        stm32_clock_timer_obj[i].time_device.ops  = &_ops;
+        if (rt_clock_timer_register(&stm32_clock_timer_obj[i].time_device,
+            stm32_clock_timer_obj[i].name, &stm32_clock_timer_obj[i].tim_handle) == RT_EOK)
         {
-            LOG_D("%s register success", stm32_hwtimer_obj[i].name);
+            LOG_D("%s register success", stm32_clock_timer_obj[i].name);
         }
         else
         {
-            LOG_E("%s register failed", stm32_hwtimer_obj[i].name);
+            LOG_E("%s register failed", stm32_clock_timer_obj[i].name);
             result = -RT_ERROR;
         }
     }
 
     return result;
 }
-INIT_BOARD_EXPORT(stm32_hwtimer_init);
+INIT_BOARD_EXPORT(stm32_clock_timer_init);
 
 #endif /* BSP_USING_TIM */

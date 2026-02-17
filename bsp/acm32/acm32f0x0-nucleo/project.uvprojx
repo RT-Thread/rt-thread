@@ -570,9 +570,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>hwtimer.c</FileName>
+              <FileName>clock_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_timer.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -853,9 +853,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_hwtimer.c</FileName>
+              <FileName>drv_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_hwtimer.c</FilePath>
+              <FilePath>drivers\drv_timer.c</FilePath>
             </File>
           </Files>
           <Files>

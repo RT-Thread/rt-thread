@@ -19,7 +19,7 @@
     #error "Please define at least one RT_USING_SOFT_SPIx"
     /*
     This driver can be disabled at:
-    menuconfig -> RT-Thread Components -> Device Drivers -> Using I2C device drivers
+    menuconfig -> RT-Thread Components -> Device Drivers -> Using SPI Bus/Device device drivers -> Use GPIO to simulate SPI
     */
 #endif
 

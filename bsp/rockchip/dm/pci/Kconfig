@@ -1,0 +1,11 @@
+config RT_PCI_DW_ROCKCHIP
+    bool "Rockchip DesignWare PCIe"
+    depends on RT_PCI_DW
+    depends on RT_USING_PIN
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_PHYE
+    depends on RT_USING_RESET
+    depends on RT_USING_REGULATOR
+    select RT_PCI_DW_HOST
+    select RT_PCI_DW_EP
+    default n

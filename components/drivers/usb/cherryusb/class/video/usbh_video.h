@@ -14,6 +14,7 @@
 struct usbh_video_resolution {
     uint16_t wWidth;
     uint16_t wHeight;
+    uint32_t dwDefaultFrameInterval;
 };
 
 struct usbh_video_format {
@@ -40,7 +41,7 @@ struct usbh_videostreaming {
 struct usbh_video {
     struct usbh_hubport *hport;
     struct usb_endpoint_descriptor *isoin;  /* ISO IN endpoint */
-    struct usb_endpoint_descriptor *isoout; /* ISO OUT endpoint */
+    struct usb_endpoint_descriptor *bulkin;  /* Bulk IN endpoint */
 
     uint8_t ctrl_intf; /* interface number */
     uint8_t data_intf; /* interface number */
@@ -48,9 +49,9 @@ struct usbh_video {
     struct video_probe_and_commit_controls probe;
     struct video_probe_and_commit_controls commit;
     uint16_t isoin_mps;
-    uint16_t isoout_mps;
     bool is_opened;
     uint8_t current_format;
+    bool is_bulk;
     uint16_t bcdVDC;
     uint8_t num_of_intf_altsettings;
     uint8_t num_of_formats;

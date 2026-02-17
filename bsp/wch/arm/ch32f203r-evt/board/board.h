@@ -64,8 +64,8 @@ void ch32f2_i2c_config(I2C_TypeDef* i2cx);
 void ch32f2_tim_clock_init(TIM_TypeDef *timx);
 rt_uint32_t ch32f2_tim_clock_get(TIM_TypeDef *timx);
 
-#ifdef BSP_USING_HWTIMER
-struct rt_hwtimer_info* ch32f2_hwtimer_info_config_get(TIM_TypeDef *timx);
+#ifdef BSP_USING_CLOCK_TIMER
+struct rt_clock_timer_info* ch32f2_clock_timer_info_config_get(TIM_TypeDef *timx);
 #endif
 
 #ifdef BSP_USING_PWM

@@ -234,6 +234,8 @@ jobs:
           wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/arm-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2
           sudo tar xjf arm-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2 -C /opt
           /opt/arm-linux-musleabi_for_x86_64-pc-linux-gnu/bin/arm-linux-musleabi-gcc --version
+          echo "RTT_EXEC_PATH=/opt/arm-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+          echo "RTT_CC_PREFIX=arm-linux-musleabi-" >> $GITHUB_ENV
 
       - name: Install Simulator Tools
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'gcc' && success() }}

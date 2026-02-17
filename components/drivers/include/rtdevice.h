@@ -215,6 +215,10 @@ extern "C" {
 #include "drivers/dev_mmcsd_core.h"
 #include "drivers/dev_sd.h"
 #include "drivers/dev_sdio.h"
+#if defined(RT_USING_DM) && defined(RT_USING_SDHCI)
+#include "drivers/dev_sdhci.h"
+#include "drivers/dev_sdhci_host.h"
+#endif /* RT_USING_DM && RT_USING_SDHCI */
 #endif /* RT_USING_SDIO */
 
 
@@ -238,17 +242,13 @@ extern "C" {
 #include "drivers/dev_can.h"
 #endif /* RT_USING_CAN */
 
-#ifdef RT_USING_HWTIMER
-#include "drivers/hwtimer.h"
-#endif /* RT_USING_HWTIMER */
+#ifdef RT_USING_CLOCK_TIME
+#include "drivers/clock_time.h"
+#endif /* RT_USING_CLOCK_TIME */
 
 #ifdef RT_USING_AUDIO
 #include "drivers/dev_audio.h"
 #endif /* RT_USING_AUDIO */
-
-#ifdef RT_USING_CPUTIME
-#include "drivers/cputime.h"
-#endif /* RT_USING_CPUTIME */
 
 #ifdef RT_USING_ADC
 #include "drivers/adc.h"

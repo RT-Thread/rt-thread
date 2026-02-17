@@ -1,0 +1,3 @@
+config RT_WDT_RK8XX
+    bool "Rockchip RK806 watchdog"
+    depends on RT_MFD_RK8XX

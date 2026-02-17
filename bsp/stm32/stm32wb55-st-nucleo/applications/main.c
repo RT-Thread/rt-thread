@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author                Notes
- * 2020-09-29     Dozingfiretruck   first version
+ * 2020-09-29     PeakRacing   first version
  */
 
 #include <rtthread.h>

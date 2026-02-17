@@ -1,0 +1,36 @@
+menuconfig RT_CLK_ROCKCHIP_RK8XX_CLKOUT
+    bool "Clock driver for RK805/RK808/RK809/RK817/RK818"
+    depends on RT_MFD_RK8XX
+    depends on RT_USING_OFW
+    default n
+
+menuconfig RT_CLK_ROCKCHIP_LINK
+    bool "Rockchip link clock controller"
+    depends on RT_USING_OFW
+    default y
+
+menuconfig RT_CLK_ROCKCHIP
+    bool "Rockchip clock controller common"
+    depends on RT_USING_OFW
+    depends on RT_USING_RESET
+    default y
+
+config RT_CLK_ROCKCHIP_RK3308
+    bool "Rockchip RK3308 clock controller support"
+    depends on RT_CLK_ROCKCHIP
+    default n
+
+config RT_CLK_ROCKCHIP_RK3568
+    bool "Rockchip RK3568 clock controller support"
+    depends on RT_CLK_ROCKCHIP
+    default n
+
+config RT_CLK_ROCKCHIP_RK3576
+    bool "Rockchip RK3576 clock controller support"
+    depends on RT_CLK_ROCKCHIP
+    default n
+
+config RT_CLK_ROCKCHIP_RK3588
+    bool "Rockchip RK3588 clock controller support"
+    depends on RT_CLK_ROCKCHIP
+    default n

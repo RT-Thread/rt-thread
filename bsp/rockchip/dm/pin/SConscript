@@ -1,0 +1,13 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/pin']
+
+if GetDepend(['RT_PIN_ROCKCHIP']):
+    src += ['pin-rockchip.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

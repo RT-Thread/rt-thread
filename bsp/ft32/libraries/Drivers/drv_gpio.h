@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-03-02     FMD-AE       first version
+ * 2025-12-31     FMD-AE       add ft32f4 support
  */
 
 #ifndef __DRV_GPIO_H__
@@ -17,11 +18,21 @@
 extern "C" {
 #endif
 
+#if defined(SOC_SERIES_FT32F0)
 #define GPIO_GET_INDEX(__GPIOx__)    (((__GPIOx__) == (GPIOA))? 0U :\
                                       ((__GPIOx__) == (GPIOB))? 1U :\
                                       ((__GPIOx__) == (GPIOC))? 2U :\
                                       ((__GPIOx__) == (GPIOD))? 3U :\
                                       ((__GPIOx__) == (GPIOF))? 5U : 4U)
+#elif defined(SOC_SERIES_FT32F4)
+#define GPIO_GET_INDEX(__GPIOx__)    (((__GPIOx__) == (GPIOA))? 0U :\
+                                      ((__GPIOx__) == (GPIOB))? 1U :\
+                                      ((__GPIOx__) == (GPIOC))? 2U :\
+                                      ((__GPIOx__) == (GPIOD))? 3U :\
+                                      ((__GPIOx__) == (GPIOE))? 4U : 5U)
+#else
+#error "Unsupported SOC series"
+#endif
 
 #define __GPIO_EXTI_GET_IT(__EXTI_LINE__) (EXTI->PR & (__EXTI_LINE__))
 

@@ -5,6 +5,11 @@ config SOC_SERIES_FT32F0
     bool
     select ARCH_ARM_CORTEX_M0
     select SOC_FAMILY_FT32
+    select PKG_USING_FT32F0_STD_DRIVER
 
-
+config SOC_SERIES_FT32F4
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_FT32
+    select PKG_USING_FT32F4_STD_DRIVER
 

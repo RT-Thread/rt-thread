@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend('RT_SPI_ROCKCHIP_SFC'):
+    src += ['spi-rockchip-sfc.c']
+
+if GetDepend('RT_SPI_ROCKCHIP'):
+    src += ['spi-rockchip.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

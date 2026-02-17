@@ -1,4 +1,4 @@
-config RT_USING_SDIO
+menuconfig RT_USING_SDIO
     bool "Using SD/MMC device drivers"
     select RT_USING_BLK
     default n
@@ -6,7 +6,7 @@ config RT_USING_SDIO
     if RT_USING_SDIO
         config RT_SDIO_STACK_SIZE
             int "The stack size for sdio irq thread"
-            default 512
+            default IDLE_THREAD_STACK_SIZE
 
         config RT_SDIO_THREAD_PRIORITY
             int "The priority level value of sdio irq thread"
@@ -14,7 +14,7 @@ config RT_USING_SDIO
 
         config RT_MMCSD_STACK_SIZE
             int "The stack size for mmcsd thread"
-            default 1024
+            default IDLE_THREAD_STACK_SIZE
 
         config RT_MMCSD_THREAD_PRIORITY
             int "The priority level value of mmcsd thread"
@@ -30,3 +30,7 @@ config RT_USING_SDIO
             bool "Using sdhci for sd/mmc drivers"
             default n
         endif
+
+if RT_USING_DM && RT_USING_SDIO
+    rsource "host/Kconfig"
+endif

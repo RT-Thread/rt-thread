@@ -4,79 +4,73 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "usbh_core.h"
-#include "usbh_cdc_acm.h"
+#include "usbh_serial.h"
 #include "usbh_hid.h"
 #include "usbh_msc.h"
-#include "usbh_video.h"
-#include "usbh_audio.h"
 
-#ifndef CONFIG_TEST_USBH_CDC_ACM
-#define CONFIG_TEST_USBH_CDC_ACM 1
-#endif
-#ifndef TEST_USBH_CDC_SPEED
-#define TEST_USBH_CDC_SPEED 0
-#endif
-#ifndef CONFIG_TEST_USBH_HID
-#define CONFIG_TEST_USBH_HID 1
-#endif
-#ifndef CONFIG_TEST_USBH_MSC
-#define CONFIG_TEST_USBH_MSC 1
-#endif
-#ifndef TEST_USBH_MSC_FATFS
-#define TEST_USBH_MSC_FATFS 0
-#endif
-#ifndef TEST_USBH_MSC_FATFS_SPEED
-#define TEST_USBH_MSC_FATFS_SPEED 0
-#endif
-#ifndef CONFIG_TEST_USBH_AUDIO
-#define CONFIG_TEST_USBH_AUDIO 0
-#endif
-#ifndef CONFIG_TEST_USBH_VIDEO
-#define CONFIG_TEST_USBH_VIDEO 0
+// net class demos use socket api
+
+#ifdef CONFIG_TEST_USBH_SERIAL
+#define SERIAL_TEST_LEN (1 * 1024)
+
+#if SERIAL_TEST_LEN >= CONFIG_USBHOST_SERIAL_RX_SIZE
+#error SERIAL_TEST_LEN is larger than CONFIG_USBHOST_SERIAL_RX_SIZE, please reduce SERIAL_TEST_LEN or increase CONFIG_USBHOST_SERIAL_RX_SIZE
 #endif
 
-#if defined(TEST_USBH_CDC_ECM) || defined(TEST_USBH_CDC_RNDIS) || defined(TEST_USBH_ASIX) || defined(TEST_USBH_RTL8152)
-#error we have move those class implements into platform/none/usbh_lwip.c, and you should call tcpip_init(NULL, NULL) in your app
-#endif
+volatile uint32_t serial_tx_bytes = 0;
+volatile uint32_t serial_rx_bytes = 0;
+volatile bool serial_is_opened = false;
 
-#if CONFIG_TEST_USBH_CDC_ACM
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t cdc_buffer[4096];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t serial_tx_buffer[SERIAL_TEST_LEN];
+uint8_t serial_rx_data[SERIAL_TEST_LEN];
 
-#if TEST_USBH_CDC_SPEED
+#ifdef CONFIG_TEST_USBH_CDC_SPEED
 #define TEST_LEN   (16 * 1024)
 #define TEST_COUNT (10240)
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t cdc_speed_buffer[TEST_LEN];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t serial_speed_buffer[TEST_LEN];
 #endif
 
-void usbh_cdc_acm_callback(void *arg, int nbytes)
-{
-    //struct usbh_cdc_acm *cdc_acm_class = (struct usbh_cdc_acm *)arg;
-
-    if (nbytes > 0) {
-        for (size_t i = 0; i < nbytes; i++) {
-            USB_LOG_RAW("0x%02x ", cdc_buffer[i]);
-        }
-        USB_LOG_RAW("nbytes:%d\r\n", (unsigned int)nbytes);
-    }
-}
-
-static void usbh_cdc_acm_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
+static void usbh_serial_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     int ret;
-    struct usbh_cdc_acm *cdc_acm_class = (struct usbh_cdc_acm *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
+    struct usbh_serial *serial;
+    bool serial_test_success = false;
+
+    serial = usbh_serial_open("/dev/ttyACM0", USBH_SERIAL_O_RDWR | USBH_SERIAL_O_NONBLOCK);
+    if (serial == NULL) {
+        serial = usbh_serial_open("/dev/ttyUSB0", USBH_SERIAL_O_RDWR | USBH_SERIAL_O_NONBLOCK);
+        if (serial == NULL) {
+            USB_LOG_RAW("no serial device found\r\n");
+            goto delete;
+        }
+    }
+
+    struct usbh_serial_termios termios;
+
+    memset(&termios, 0, sizeof(termios));
+    termios.baudrate = 115200;
+    termios.stopbits = 0;
+    termios.parity = 0;
+    termios.databits = 8;
+    termios.rtscts = false;
+    termios.rx_timeout = 0;
+    ret = usbh_serial_control(serial, USBH_SERIAL_CMD_SET_ATTR, &termios);
+    if (ret < 0) {
+        USB_LOG_RAW("set serial attr error, ret:%d\r\n", ret);
+        goto delete_with_close;
+    }
 
     /* test with only one buffer, if you have more cdc acm class, modify by yourself */
-#if TEST_USBH_CDC_SPEED
+#ifdef CONFIG_TEST_USBH_CDC_SPEED
     const uint32_t test_len[] = { 512, 1 * 1024, 2 * 1024, 4 * 1024, 8 * 1024, 16 * 1024 };
 
-    memset(cdc_speed_buffer, 0xAA, TEST_LEN);
+    memset(serial_speed_buffer, 0xAA, TEST_LEN);
 
     for (uint8_t j = 0; j < 6; j++) {
         uint32_t start_time = (uint32_t)xTaskGetTickCount();
         for (uint32_t i = 0; i < TEST_COUNT; i++) {
-            usbh_bulk_urb_fill(&cdc_acm_class->bulkout_urb, cdc_acm_class->hport, cdc_acm_class->bulkout, cdc_speed_buffer, test_len[j], 0XFFFFFFF, NULL, NULL);
-            ret = usbh_submit_urb(&cdc_acm_class->bulkout_urb);
+            usbh_serial_write(serial, serial_speed_buffer, test_len[j]);
             if (ret < 0) {
                 USB_LOG_RAW("bulk out error,ret:%d\r\n", ret);
                 while (1) {
@@ -87,35 +81,75 @@ static void usbh_cdc_acm_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
         uint32_t time_ms = xTaskGetTickCount() - start_time;
         USB_LOG_RAW("per packet len:%d, out speed:%f MB/S\r\n", (unsigned int)test_len[j], (test_len[j] * TEST_COUNT / 1024 / 1024) * 1000 / ((float)time_ms));
     }
+    usbh_serial_close(serial);
+    goto delete;
 #endif
-    memset(cdc_buffer, 0x55, 4096);
+    memset(serial_tx_buffer, 0xA5, sizeof(serial_tx_buffer));
+    USB_LOG_RAW("start serial loopback test, len: %d\r\n", SERIAL_TEST_LEN);
 
-    /* for common, we use timeout with 0xffffffff, this is just a test */
-    usbh_bulk_urb_fill(&cdc_acm_class->bulkout_urb, cdc_acm_class->hport, cdc_acm_class->bulkout, cdc_buffer, sizeof(cdc_buffer), 3000, NULL, NULL);
-    ret = usbh_submit_urb(&cdc_acm_class->bulkout_urb);
-    if (ret < 0) {
-        USB_LOG_RAW("bulk out error,ret:%d\r\n", ret);
-        goto delete;
-    } else {
-        USB_LOG_RAW("send over:%d\r\n", (unsigned int)cdc_acm_class->bulkout_urb.actual_length);
+    serial_tx_bytes = 0;
+    while (1) {
+        ret = usbh_serial_write(serial, serial_tx_buffer, sizeof(serial_tx_buffer));
+        if (ret < 0) {
+            USB_LOG_RAW("serial write error, ret:%d\r\n", ret);
+            goto delete_with_close;
+        } else {
+            serial_tx_bytes += ret;
+
+            if (serial_tx_bytes == SERIAL_TEST_LEN) {
+                USB_LOG_RAW("send over\r\n");
+                break;
+            }
+        }
     }
 
-    /* we can change cdc_acm_class->bulkin->wMaxPacketSize with 4096 for testing zlp, default is ep mps  */
-    usbh_bulk_urb_fill(&cdc_acm_class->bulkin_urb, cdc_acm_class->hport, cdc_acm_class->bulkin, cdc_buffer, cdc_acm_class->bulkin->wMaxPacketSize, 0xffffffff, usbh_cdc_acm_callback, cdc_acm_class);
-    ret = usbh_submit_urb(&cdc_acm_class->bulkin_urb);
-    if (ret < 0) {
-        USB_LOG_RAW("bulk in error,ret:%d\r\n", ret);
-        goto delete;
-    } else {
+    volatile uint32_t wait_timeout = 0;
+    serial_rx_bytes = 0;
+    while (1) {
+        ret = usbh_serial_read(serial, &serial_rx_data[serial_rx_bytes], SERIAL_TEST_LEN - serial_rx_bytes);
+        if (ret < 0) {
+            USB_LOG_RAW("serial read error, ret:%d\r\n", ret);
+            goto delete_with_close;
+        } else {
+            serial_rx_bytes += ret;
+
+            if (serial_rx_bytes == SERIAL_TEST_LEN) {
+                USB_LOG_RAW("receive over\r\n");
+                for (uint32_t i = 0; i < SERIAL_TEST_LEN; i++) {
+                    if (serial_rx_data[i] != 0xa5) {
+                        USB_LOG_RAW("serial loopback data error at index %d, data: 0x%02x\r\n", (unsigned int)i, serial_rx_data[i]);
+                        goto delete_with_close;
+                    }
+                }
+                serial_test_success = true;
+                break;
+            }
+        }
+        wait_timeout++;
+
+        if (wait_timeout > 500) { // 5s
+            USB_LOG_RAW("serial read timeout\r\n");
+            goto delete_with_close;
+        }
+
+        usb_osal_msleep(10);
     }
+
     // clang-format off
+delete_with_close:
+    if (serial_test_success) {
+        USB_LOG_RAW("serial loopback test success\r\n");
+    } else {
+        USB_LOG_RAW("serial loopback test failed\r\n");
+    }
+    usbh_serial_close(serial);
 delete:
     usb_osal_thread_delete(NULL);
     // clang-format on
 }
 #endif
 
-#if CONFIG_TEST_USBH_HID
+#ifdef CONFIG_TEST_USBH_HID
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t hid_buffer[128];
 
 void usbh_hid_callback(void *arg, int nbytes)
@@ -140,7 +174,6 @@ static void usbh_hid_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     int ret;
     struct usbh_hid *hid_class = (struct usbh_hid *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
-    ;
 
     /* test with only one buffer, if you have more hid class, modify by yourself */
 
@@ -157,15 +190,15 @@ delete:
 }
 #endif
 
-#if CONFIG_TEST_USBH_MSC
+#ifdef CONFIG_TEST_USBH_MSC
 
-#if TEST_USBH_MSC_FATFS
+#ifdef CONFIG_TEST_USBH_MSC_FATFS
 #include "ff.h"
 
-#if TEST_USBH_MSC_FATFS_SPEED
+#ifdef CONFIG_TEST_USBH_MSC_FATFS_SPEED
 #define WRITE_SIZE_MB (128UL)
-#define WRITE_SIZE (1024UL * 1024UL * WRITE_SIZE_MB)
-#define BUF_SIZE (1024UL * 128UL)
+#define WRITE_SIZE    (1024UL * 1024UL * WRITE_SIZE_MB)
+#define BUF_SIZE      (1024UL * 128UL)
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t read_write_buffer[BUF_SIZE];
 #else
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t read_write_buffer[25 * 100];
@@ -223,7 +256,7 @@ int usb_msc_fatfs_test()
         goto unmount;
     }
 
-#if TEST_USBH_MSC_FATFS_SPEED
+#ifdef CONFIG_TEST_USBH_MSC_FATFS_SPEED
     for (uint32_t i = 0; i < BUF_SIZE; i++) {
         read_write_buffer[i] = i % 256;
     }
@@ -234,9 +267,9 @@ int usb_msc_fatfs_test()
         uint32_t write_size = WRITE_SIZE;
         uint32_t start_time = (uint32_t)xTaskGetTickCount();
         while (write_size > 0) {
-            res_sd = f_write(&fnew, read_write_buffer, BUF_SIZE, (UINT*)&fnum);
+            res_sd = f_write(&fnew, read_write_buffer, BUF_SIZE, (UINT *)&fnum);
             if (res_sd != FR_OK) {
-                printf("Write file failed, cause: %s\n", res_sd);
+                USB_LOG_RAW("Write file failed, cause: %s\n", res_sd);
                 goto unmount;
             }
             write_size -= BUF_SIZE;
@@ -260,9 +293,9 @@ int usb_msc_fatfs_test()
         uint32_t write_size = WRITE_SIZE;
         uint32_t start_time = (uint32_t)xTaskGetTickCount();
         while (write_size > 0) {
-            res_sd = f_read(&fnew, read_write_buffer, BUF_SIZE, (UINT*)&fnum);
+            res_sd = f_read(&fnew, read_write_buffer, BUF_SIZE, (UINT *)&fnum);
             if (res_sd != FR_OK) {
-                printf("Read file failed, cause: %s\n", res_sd);
+                USB_LOG_RAW("Read file failed, cause: %s\n", res_sd);
                 goto unmount;
             }
             write_size -= BUF_SIZE;
@@ -295,8 +328,10 @@ static void usbh_msc_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
     int ret;
     struct usbh_msc *msc_class = (struct usbh_msc *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
 
+    (void)msc_class;
+
     /* test with only one buffer, if you have more msc class, modify by yourself */
-#if TEST_USBH_MSC_FATFS == 0
+#ifndef TEST_USBH_MSC_FATFS
     ret = usbh_msc_scsi_init(msc_class);
     if (ret < 0) {
         USB_LOG_RAW("scsi_init error,ret:%d\r\n", ret);
@@ -326,18 +361,23 @@ delete:
 }
 #endif
 
-#if CONFIG_TEST_USBH_CDC_ACM
-void usbh_cdc_acm_run(struct usbh_cdc_acm *cdc_acm_class)
+#ifdef CONFIG_TEST_USBH_SERIAL
+void usbh_serial_run(struct usbh_serial *serial)
 {
-    usb_osal_thread_create("usbh_cdc", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_cdc_acm_thread, cdc_acm_class);
+    if (serial_is_opened) {
+        return;
+    }
+    serial_is_opened = true;
+    usb_osal_thread_create("usbh_serial", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_serial_thread, serial);
 }
 
-void usbh_cdc_acm_stop(struct usbh_cdc_acm *cdc_acm_class)
+void usbh_serial_stop(struct usbh_serial *serial)
 {
+    serial_is_opened = false;
 }
 #endif
 
-#if CONFIG_TEST_USBH_HID
+#ifdef CONFIG_TEST_USBH_HID
 void usbh_hid_run(struct usbh_hid *hid_class)
 {
     usb_osal_thread_create("usbh_hid", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_hid_thread, hid_class);
@@ -348,7 +388,7 @@ void usbh_hid_stop(struct usbh_hid *hid_class)
 }
 #endif
 
-#if CONFIG_TEST_USBH_MSC
+#ifdef CONFIG_TEST_USBH_MSC
 void usbh_msc_run(struct usbh_msc *msc_class)
 {
     usb_osal_thread_create("usbh_msc", 2048, CONFIG_USBHOST_PSC_PRIO + 1, usbh_msc_thread, msc_class);
@@ -357,14 +397,6 @@ void usbh_msc_run(struct usbh_msc *msc_class)
 void usbh_msc_stop(struct usbh_msc *msc_class)
 {
 }
-#endif
-
-#if CONFIG_TEST_USBH_AUDIO
-#error "commercial charge"
-#endif
-
-#if CONFIG_TEST_USBH_VIDEO
-#error "commercial charge"
 #endif
 
 #if 0

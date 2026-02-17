@@ -1,0 +1,4 @@
+config RT_PIN_ROCKCHIP
+    bool "Rockchip GPIO support"
+    depends on RT_USING_OFW
+    default y

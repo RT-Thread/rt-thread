@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2022-6-27      solar        first version
+ * Date           Author         Notes
+ * 2022-6-27      solar          first version
+ * 2026-01-12     LinuxMint-User fix xpt2046_touch_readpoint type error
  */
 
 #include <drv_touch_xpt.h>
@@ -30,6 +31,7 @@ rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name)
         LOG_E(LOG_TAG " cannot find lcd device named %s", lcd_name);
         return -RT_ERROR;
     }
+
     if (rt_device_open(lcd, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
     {
         LOG_E(LOG_TAG " cannot open lcd device named %s", lcd_name);
@@ -101,6 +103,7 @@ rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name)
             {
                 break;
             }
+
             switch (raw_idx)
             {
             case 1:
@@ -151,7 +154,7 @@ rt_err_t xpt2046_calibration(const char *lcd_name,const char *touch_name)
     return RT_EOK;
 }
 
-static rt_ssize_t xpt2046_touch_readpoint(struct rt_touch_device *touch, void *buf, rt_size_t touch_num)
+static rt_size_t xpt2046_touch_readpoint(struct rt_touch_device *touch, void *buf, rt_size_t touch_num)
 {
     if (touch_num != 0)
     {
@@ -185,6 +188,7 @@ static rt_ssize_t xpt2046_touch_readpoint(struct rt_touch_device *touch, void *b
                 y_cum += temp;
             }
         }
+
         if (!x_count || !y_count)
         {
             result->event = RT_TOUCH_EVENT_NONE;
@@ -264,3 +268,4 @@ static int xpt2046_hw_init(void)
 INIT_DEVICE_EXPORT(xpt2046_hw_init);
 
 #endif /* BSP_USING_TOUCH_RES */
+

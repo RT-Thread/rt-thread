@@ -1,61 +1,24 @@
-# RK3566 BSP 介绍
+# RK3500 BSP 介绍
 
 中文页 | [English](./README.md)
 
 ## 1. 介绍
 
-### 核心架构
+### 产品细节
 
-- **CPU**: 四核 64 位 Cortex-A55 处理器
-- **制程工艺**: 22nm 光刻技术  
-- **主频**: 最高 1.8GHz
+https://www.rock-chips.com/a/cn/product/RK35xilie/index.html
 
-### 图形处理
+### 支持列表
 
-- **GPU**: Mali-G52
-  - 支持 OpenGL ES 3.2/2.0/1.1
-  - 支持 Vulkan 1.1
-- **视频编解码**:
-  - 4K@60fps 解码 (H.265/H.264/VP9)
-  - 1080P@60fps 编码
-
-### 存储与扩展
-
-- **内存支持**:
-  - LPDDR4/LPDDR4X
-  - 最高 8GB 容量
-- **存储接口**:
-  - eMMC 5.1
-  - SDIO 3.0
-  - SATA 3.0 (可选)
-- **高速接口**:
-  - USB 3.0/2.0
-  - PCIe 2.1 (1x lane)
-
-### AI
-
-- **NPU**: 0.8TOPS 算力
-- **支持框架**:
-  - TensorFlow
-  - MXNet  
-  - PyTorch
-
-### 网络连接
-
-- **有线网络**:
-  - 双千兆以太网 (RGMII)
-- **无线扩展**:
-  - 支持 WiFi6/蓝牙模块扩展
-
-### 多媒体接口
-
-- **显示输出**:
-  - HDMI 2.0
-  - eDP 1.3
-  - MIPI-DSI
-- **摄像头输入**:
-  - 双 MIPI-CSI
-  - 支持 4K 图像处理
+| 驱动 | 支持情况  | Earlycon |
+| ------ | ----  | ----  |
+| RK3576 | 支持 | earlycon=uart8250,mmio32,0x2ad40000 |
+| RK3588 | 支持 | earlycon=uart8250,mmio32,0xfeb50000 |
+| RK3562 | - | - |
+| RK3568J | 支持 | earlycon=uart8250,mmio32,0xfe660000 |
+| RK3568 | 支持 | earlycon=uart8250,mmio32,0xfe660000 |
+| RK3566 | 支持 | earlycon=uart8250,mmio32,0xfe660000 |
+| RK3506 | - | - |
 
 ## 2. 编译
 
@@ -96,7 +59,7 @@ scons
 
 ## 3. 运行
 
-RK3566 根据不同的板卡有不同的内核安装方法，建议安装到 SD 卡中，这里以Orange Pi Compute Module 4举例说明：
+RK3500 根据不同的板卡有不同的内核安装方法，建议安装到 SD 卡中，这里以Orange Pi Compute Module 4举例说明：
 连接开发板串口： 
 ![uart](./figures/uart.png)
 

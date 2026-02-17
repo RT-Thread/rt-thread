@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-03-02     FMD-AE       first version
+ * 2025-12-31     FMD-AE       add ft32f4 support
  */
 
 #include <board.h>
@@ -58,6 +59,24 @@ static const struct pin_irq_map pin_irq_map[] =
     {GPIO_Pin_13, EXTI4_15_IRQn},
     {GPIO_Pin_14, EXTI4_15_IRQn},
     {GPIO_Pin_15, EXTI4_15_IRQn},
+#endif
+#if defined(SOC_SERIES_FT32F4)
+    {GPIO_Pin_0, EXTI0_IRQn},
+    {GPIO_Pin_1, EXTI1_IRQn},
+    {GPIO_Pin_2, EXTI2_IRQn},
+    {GPIO_Pin_3, EXTI3_IRQn},
+    {GPIO_Pin_4, EXTI4_IRQn},
+    {GPIO_Pin_5, EXTI9_5_IRQn},
+    {GPIO_Pin_6, EXTI9_5_IRQn},
+    {GPIO_Pin_7, EXTI9_5_IRQn},
+    {GPIO_Pin_8, EXTI9_5_IRQn},
+    {GPIO_Pin_9, EXTI9_5_IRQn},
+    {GPIO_Pin_10, EXTI15_10_IRQn},
+    {GPIO_Pin_11, EXTI15_10_IRQn},
+    {GPIO_Pin_12, EXTI15_10_IRQn},
+    {GPIO_Pin_13, EXTI15_10_IRQn},
+    {GPIO_Pin_14, EXTI15_10_IRQn},
+    {GPIO_Pin_15, EXTI15_10_IRQn},
 #endif
 };
 
@@ -339,12 +358,18 @@ static void rt_gpio_deinit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
             /* Deactivate the Pull-up and Pull-down resistor for the current IO */
             GPIOx->PUPDR &= ~(GPIO_PUPDR_PUPDR0 << (position * 2u));
 
+#if defined (SOC_SERIES_FT32F0)
             /* Configure the default value IO Output Type */
             GPIOx->OTYPER  &= ~(GPIO_OTYPER_OT_0 << position) ;
-
             /* Configure the default value for IO Speed */
             GPIOx->OSPEEDR &= ~(GPIO_OSPEEDER_OSPEEDR0 << (position * 2u));
-
+#endif
+#if defined (SOC_SERIES_FT32F4)
+            /* Configure the default value IO Output Type */
+            GPIOx->OTYPER  &= ~(GPIO_OTYPER_OT0 << position) ;
+            /* Configure the default value for IO Speed */
+            GPIOx->OSPEEDR &= ~(GPIO_OSPEEDR_OSPEEDR0 << (position * 2u));
+#endif
         }
 
         position++;
@@ -416,6 +441,7 @@ static rt_err_t ft32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             break;
         }
         GPIO_Init(PIN_FTPORT(pin), &GPIO_InitStruct);
+
         EXTI_Init(&EXTI_InitStructure);
 
         NVIC_SetPriority(irqmap->irqno, 5);
@@ -437,7 +463,6 @@ static rt_err_t ft32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         rt_gpio_deinit(PIN_FTPORT(pin), PIN_FTPIN(pin));
 
         pin_irq_enable_mask &= ~irqmap->pinbit;
-
 
 #if defined(SOC_SERIES_FT32F0)
         if ((irqmap->pinbit >= GPIO_Pin_0) && (irqmap->pinbit <= GPIO_Pin_1))
@@ -467,6 +492,26 @@ static rt_err_t ft32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             NVIC_DisableIRQ(irqmap->irqno);
         }
 
+#endif
+#if defined(SOC_SERIES_FT32F4)
+        if ((irqmap->pinbit >= GPIO_Pin_5) && (irqmap->pinbit <= GPIO_Pin_9))
+        {
+            if (!(pin_irq_enable_mask & (GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9)))
+            {
+                NVIC_DisableIRQ(irqmap->irqno);
+            }
+        }
+        else if ((irqmap->pinbit >= GPIO_Pin_10) && (irqmap->pinbit <= GPIO_Pin_15))
+        {
+            if (!(pin_irq_enable_mask & (GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15)))
+            {
+                NVIC_DisableIRQ(irqmap->irqno);
+            }
+        }
+        else
+        {
+            NVIC_DisableIRQ(irqmap->irqno);
+        }
 #endif
         rt_hw_interrupt_enable(level);
     }
@@ -546,15 +591,84 @@ void EXTI4_15_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+#if defined(SOC_SERIES_FT32F4)
+void EXTI0_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_IRQHandler(GPIO_Pin_0);
+    rt_interrupt_leave();
+}
+
+void EXTI1_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_IRQHandler(GPIO_Pin_1);
+    rt_interrupt_leave();
+}
+
+void EXTI2_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_IRQHandler(GPIO_Pin_2);
+    rt_interrupt_leave();
+}
+
+void EXTI3_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_IRQHandler(GPIO_Pin_3);
+    rt_interrupt_leave();
+}
+
+void EXTI4_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_IRQHandler(GPIO_Pin_4);
+    rt_interrupt_leave();
+}
+
+void EXTI5_9_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_IRQHandler(GPIO_Pin_5);
+    GPIO_EXTI_IRQHandler(GPIO_Pin_6);
+    GPIO_EXTI_IRQHandler(GPIO_Pin_7);
+    GPIO_EXTI_IRQHandler(GPIO_Pin_8);
+    GPIO_EXTI_IRQHandler(GPIO_Pin_9);
+    rt_interrupt_leave();
+}
+
+void EXTI10_15_Handler(void)
+{
+    rt_interrupt_enter();
+    GPIO_EXTI_IRQHandler(GPIO_Pin_10);
+    GPIO_EXTI_IRQHandler(GPIO_Pin_11);
+    GPIO_EXTI_IRQHandler(GPIO_Pin_12);
+    GPIO_EXTI_IRQHandler(GPIO_Pin_13);
+    GPIO_EXTI_IRQHandler(GPIO_Pin_14);
+    GPIO_EXTI_IRQHandler(GPIO_Pin_15);
+    rt_interrupt_leave();
+}
+#endif
 
 int rt_hw_pin_init(void)
 {
+#if defined(SOC_SERIES_FT32F0)
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOA, ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOB, ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOC, ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOD, ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_GPIOF, ENABLE);
     return rt_device_pin_register("pin", &_ft32_pin_ops, RT_NULL);
+#endif
+#if defined(SOC_SERIES_FT32F4)
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOD, ENABLE);
+    RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOE, ENABLE);
+    return rt_device_pin_register("pin", &_ft32_pin_ops, RT_NULL);
+#endif
 }
 
 #endif /* RT_USING_PIN */

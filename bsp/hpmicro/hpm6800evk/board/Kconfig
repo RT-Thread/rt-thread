@@ -567,7 +567,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_GPTMR
         bool "Enable GPTMR"
         default n
-        select RT_USING_HWTIMER if BSP_USING_GPTMR
+        select RT_USING_CLOCK_TIME if BSP_USING_GPTMR
         if BSP_USING_GPTMR
             config BSP_USING_GPTMR0
                 bool "Enable GPTMR0"

@@ -386,16 +386,6 @@ int usbh_cdc_ncm_eth_output(uint32_t buflen)
     return usbh_submit_urb(&g_cdc_ncm_class.bulkout_urb);
 }
 
-__WEAK void usbh_cdc_ncm_run(struct usbh_cdc_ncm *cdc_ncm_class)
-{
-    (void)cdc_ncm_class;
-}
-
-__WEAK void usbh_cdc_ncm_stop(struct usbh_cdc_ncm *cdc_ncm_class)
-{
-    (void)cdc_ncm_class;
-}
-
 const struct usbh_class_driver cdc_ncm_class_driver = {
     .driver_name = "cdc_ncm",
     .connect = usbh_cdc_ncm_connect,

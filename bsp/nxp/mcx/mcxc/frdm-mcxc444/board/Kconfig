@@ -75,10 +75,10 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
-    menuconfig BSP_USING_HWTIMER
-        config BSP_USING_HWTIMER
+    menuconfig BSP_USING_CLOCK_TIMER
+        config BSP_USING_CLOCK_TIMER
             bool "Enable Timer"
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
             default y
 
     menuconfig BSP_USING_PWM

@@ -723,9 +723,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>cputime.c</FileName>
+              <FileName>clock_time_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\cputime\cputime.c</FilePath>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_time_core.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -779,9 +779,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>cputimer.c</FileName>
+              <FileName>clock_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\cputime\cputimer.c</FilePath>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_timer.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1059,9 +1059,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>hwtimer.c</FileName>
+              <FileName>clock_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_timer.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>

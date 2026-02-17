@@ -20,7 +20,9 @@ if RT_USING_MSH
 
     config FINSH_THREAD_PRIORITY
         int "The priority level value of thread"
-        default 20
+        default 5   if RT_THREAD_PRIORITY_8
+        default 20  if RT_THREAD_PRIORITY_32
+        default 160 if RT_THREAD_PRIORITY_256
 
     config FINSH_THREAD_STACK_SIZE
         int "The stack size for thread"

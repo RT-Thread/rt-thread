@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-12-06     GuEe-GUI     first version
+ * 2025-12-25     lhxj         mark OFW node as taken to prevent platform bus duplication
  */
 
 #include <rtdevice.h>
@@ -62,6 +63,9 @@ void i2c_bus_scan_clients(struct rt_i2c_bus_device *bus)
             client->client_addr = client_addr;
 
             rt_dm_dev_set_name(&client->parent, "%s", client->name);
+
+            /* Mark this OFW node as taken to prevent platform bus from creating duplicate device */
+            i2c_client_np->dev = &client->parent;
 
             rt_i2c_device_register(client);
 

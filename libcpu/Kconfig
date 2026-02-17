@@ -264,7 +264,7 @@ if ARCH_RISCV64
     config ARCH_USING_RISCV_COMMON64
         bool
         depends on ARCH_RISCV64
-        select RT_USING_CPUTIME
+        select RT_USING_CLOCK_TIME
         select ARCH_USING_NEW_CTX_SWITCH
         help
             Using the common64 implementation under ./libcpu/risc-v

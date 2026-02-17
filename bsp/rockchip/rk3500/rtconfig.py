@@ -18,7 +18,7 @@ EXEC_PATH   = r'/opt/gcc-arm-8.3-2019.03-x86_64-aarch64-elf/bin/'
 
 EXEC_PATH   = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
 
-BUILD = 'release'
+BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -35,7 +35,7 @@ if PLATFORM == 'gcc':
     OBJCPY  = PREFIX + 'objcopy'
 
     DEVICE = ' -g -march=armv8.2-a -mtune=cortex-a55 -fdiagnostics-color=always'
-    CPPFLAGS= ' -E -P -x assembler-with-cpp'
+    CPPFLAGS= ' -nostdinc -undef -E -P -x assembler-with-cpp'
     CFLAGS = DEVICE + ' -Wall -Wno-cpp'
     AFLAGS = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--no-warn-rwx-segments -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'

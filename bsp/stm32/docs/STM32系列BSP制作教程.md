@@ -210,13 +210,35 @@ BSP 的制作过程分为如下五个步骤：
 
 ####  3.4.2 修改构建脚本
 
-**SConscript** 脚本决定 MDK/IAR 工程的生成以及编译过程中要添加文件。
+**SConscript** 脚本决定 MDK/IAR 工程的生成以及编译过程中要添加的文件。
 
-在这一步中需要修改芯片型号以及芯片启动文件的地址，修改内容如下图所示：
+在这一步中需要修改芯片型号以及芯片启动文件的地址，在BSP目录中存在两个SConscript文件，其中只有根目录下的需要修改，修改内容如下所示：
 
-![修改启动文件和芯片型号](./figures/SConscript.png)
+```diff
+# for module compiling
+import os
+Import('RTT_ROOT')
+Import('env')
+from building import *
 
-注意：如果在文件夹中找不到相应系列的 .s 文件，可能是多个系列的芯片重用了相同的启动文件，此时可以在 CubeMX 中生成目标芯片的工程，查看使用了哪个启动文件，然后再修改启动文件名。
+cwd = GetCurrentDir()
+objs = []
+list = os.listdir(cwd)
+
+- # 修改前模板中的存在如下宏定义语句:
+- env.Append(CPPDEFINES = ['STM32H723xx'])# 目标芯片宏定义，hal库将使用这个宏定义作判断
++ # 修改宏定义为对应的芯片型号，例如对于STM32F103xB，修改后的内容如下：
++ env.Append(CPPDEFINES = ['STM32F103xB'])
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+Return('objs')
+
+
+```
+注意：由于BSP瘦身计划，template目录下的模板已经过时，SConscript文件可能与示例有所差异，请参考实际BSP或等待更新。
 
 #### 3.4.3 修改工程模板
 
@@ -233,8 +255,11 @@ BSP 的制作过程分为如下五个步骤：
 ![配置下载方式](./figures/template_3.png)
 
 ### 3.5 重新生成工程
+工程生成需要使用 Env 工具。
 
-重新生成工程需要使用 Env 工具。
+在进行工程生成前，必须在 Env 工具中执行 `pkgs --update` 命令。
+
+该命令会根据 Kconfig 配置自动拉取对应的 HAL 库软件包，这是后续编译成功的关键。  
 
 #### 3.5.1 重新生成 rtconfig.h 文件
 

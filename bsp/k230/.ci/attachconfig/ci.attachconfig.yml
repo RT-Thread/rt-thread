@@ -1,6 +1,10 @@
 scons.args: &scons
     scons_arg:
       - '--strict'
+devices.gnee:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_GNNE=y
 devices.spi:
     <<: *scons
     kconfig:

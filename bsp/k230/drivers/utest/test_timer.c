@@ -30,9 +30,9 @@
  */
 
 #include <rtthread.h>
-#include <drivers/hwtimer.h>
+#include <drivers/clock_time.h>
 
-#include "../interdrv/hwtimer/drv_timer.h"
+#include "../interdrv/clock_timer/drv_timer.h"
 #include "utest.h"
 
 /*
@@ -46,8 +46,8 @@
  * 6. Trigger the interrupt callback when the timer times out and print a message.
  */
 
-#define DEVICE_NAME0 "hwtimer0"
-#define DEVICE_NAME1 "hwtimer1"
+#define DEVICE_NAME0 "clock_timer0"
+#define DEVICE_NAME1 "clock_timer1"
 
 static rt_device_t tmr_dev_0;
 static rt_device_t tmr_dev_1;
@@ -59,24 +59,24 @@ static rt_device_t tmr_dev_1;
 
 static rt_err_t tmr_timeout_cb(rt_device_t dev, rt_size_t size)
 {
-    struct rt_hwtimer_device *rt_timer = rt_container_of(dev, struct rt_hwtimer_device, parent);
+    struct rt_clock_timer_device *rt_timer = rt_container_of(dev, struct rt_clock_timer_device, parent);
     struct k230_timer *kd_timer = rt_container_of(rt_timer, struct k230_timer, device);
 
     LOG_I("---> [%s] timeout callback fucntion!\n", kd_timer->name);
     return RT_EOK;
 }
 
-static void test_hwtimer(void)
+static void test_clock_timer(void)
 {
-    rt_hwtimerval_t timerval;
-    rt_hwtimer_mode_t mode;
+    rt_clock_timerval_t timerval;
+    rt_clock_timer_mode_t mode;
     rt_size_t tsize;
     rt_uint32_t freq = 25000000; /* Frequency options: 12.5M 25M 50M 100M */
     rt_err_t ret;
     rt_ssize_t size;
     int loop_count = 0;
 
-    LOG_I("test_hwtimer start");
+    LOG_I("test_clock_timer start");
 
     tmr_dev_0 = rt_device_find(DEVICE_NAME0);
     uassert_not_null(tmr_dev_0);
@@ -88,7 +88,7 @@ static void test_hwtimer(void)
     ret = rt_device_open(tmr_dev_1, RT_DEVICE_OFLAG_RDWR);
     uassert_int_equal(ret, RT_EOK);
 
-    ret = rt_device_control(tmr_dev_0, HWTIMER_CTRL_FREQ_SET, &freq);
+    ret = rt_device_control(tmr_dev_0, CLOCK_TIMER_CTRL_FREQ_SET, &freq);
     uassert_int_equal(ret, RT_EOK);
 
     ret = rt_device_set_rx_indicate(tmr_dev_0, tmr_timeout_cb);
@@ -99,8 +99,8 @@ static void test_hwtimer(void)
     timerval.sec = TIMEOUT_SEC_0;
     timerval.usec = 0;
     tsize = sizeof(timerval);
-    mode = HWTIMER_MODE_ONESHOT;
-    ret = rt_device_control(tmr_dev_0, HWTIMER_CTRL_MODE_SET, &mode);
+    mode = CLOCK_TIMER_MODE_ONESHOT;
+    ret = rt_device_control(tmr_dev_0, CLOCK_TIMER_CTRL_MODE_SET, &mode);
     uassert_int_equal(ret, RT_EOK);
     size = rt_device_write(tmr_dev_0, 0, &timerval, tsize);
     uassert_int_equal(size, tsize);
@@ -109,8 +109,8 @@ static void test_hwtimer(void)
     timerval.sec = TIMEOUT_SEC_1;
     timerval.usec = 0;
     tsize = sizeof(timerval);
-    mode = HWTIMER_MODE_ONESHOT;
-    ret = rt_device_control(tmr_dev_1, HWTIMER_CTRL_MODE_SET, &mode);
+    mode = CLOCK_TIMER_MODE_ONESHOT;
+    ret = rt_device_control(tmr_dev_1, CLOCK_TIMER_CTRL_MODE_SET, &mode);
     uassert_int_equal(ret, RT_EOK);
     size = rt_device_write(tmr_dev_1, 0, &timerval, tsize);
     uassert_int_equal(size, tsize);
@@ -133,12 +133,12 @@ static void test_hwtimer(void)
     uassert_int_equal(ret, RT_EOK);
     ret = rt_device_close(tmr_dev_1);
     uassert_int_equal(ret, RT_EOK);
-    LOG_I("test_hwtimer end");
+    LOG_I("test_clock_timer end");
 }
 
 static void hw_timer_testcase(void)
 {
-    UTEST_UNIT_RUN(test_hwtimer);
+    UTEST_UNIT_RUN(test_clock_timer);
 }
 
 static rt_err_t utest_tc_init(void)
