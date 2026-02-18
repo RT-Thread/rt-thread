@@ -102,7 +102,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_HW_ATOMIC
@@ -151,7 +152,6 @@
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PWM
 #define RT_USING_PIN
-#define RT_USING_HWTIMER
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -421,7 +421,11 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
+#define BSP_USING_SERIAL_V1
 #define BSP_USING_UART0
+#define BSP_UART0_TX_PIN "PA9"
+#define BSP_UART0_RX_PIN "PA10"
+#define BSP_UART0_AFIO "AF7"
 #define BSP_USING_HARD_I2C
 #define BSP_USING_RECEIVING_A
 #define BSP_USING_HARD_I2C0

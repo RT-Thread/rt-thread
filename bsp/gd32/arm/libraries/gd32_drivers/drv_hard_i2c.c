@@ -292,7 +292,7 @@ static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_ui
                     i2c_stop_on_bus(i2c_periph);
             }
 #else
-#error "Please select the receiving secheme."
+#error "Please select the receiving scheme."
 #endif
             /* wait until RBNE bit is set */
             if(i2c_flag_get(i2c_periph, I2C_FLAG_RBNE))

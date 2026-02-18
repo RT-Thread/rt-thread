@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>RT_USING_LIBC, GD32F405, __RTTHREAD__, USE_STDPERIPH_DRIVER, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, HXTAL_VALUE=8000000U</Define>
+              <Define>__CLK_TCK=RT_TICK_PER_SECOND, HXTAL_VALUE=8000000U, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, GD32F405, RT_USING_ARMLIBC, __RTTHREAD__, RT_USING_LIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\posix\io\eventfd;board;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\smp_call;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\cortex-m4;packages\gd32-arm-cmsis-latest\GD32F4xx\GD\GD32F4xx\Include;..\..\..\..\components\libc\posix\io\epoll;..\libraries\gd32_drivers;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\net\utest;..\..\..\..\components\drivers\phy;..\..\..\..\include;packages\gd32-arm-cmsis-latest\GD32F4xx;.;..\..\..\..\components\drivers\include;packages\gd32-arm-series-latest\GD32F4xx\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\posix\ipc;packages\gd32-arm-cmsis-latest\GD32F4xx;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;applications;..\..\..\..\components\drivers\phy;..\..\..\..\libcpu\arm\common;..\libraries\gd32_drivers;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;.;..\..\..\..\components\drivers\include;..\..\..\..\components\net\utest;..\..\..\..\components\libc\compilers\common\extension;packages\gd32-arm-cmsis-latest\GD32F4xx\GD\GD32F4xx\Include;..\libraries\gd32_drivers\config;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\libc\posix\io\epoll;packages\gd32-arm-series-latest\GD32F4xx\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\eventfd;board</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -392,47 +392,32 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
             <File>
-              <FileName>cctype.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
             <File>
-              <FileName>cstdlib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
             </File>
             <File>
-              <FileName>cstring.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -443,62 +428,6 @@
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\core\device.c</FilePath>
-              <FileOption>
-                <CommonProperty>
-                  <UseCPPCompiler>2</UseCPPCompiler>
-                  <RVCTCodeConst>0</RVCTCodeConst>
-                  <RVCTZI>0</RVCTZI>
-                  <RVCTOtherData>0</RVCTOtherData>
-                  <ModuleSelection>0</ModuleSelection>
-                  <IncludeInBuild>1</IncludeInBuild>
-                  <AlwaysBuild>0</AlwaysBuild>
-                  <GenerateAssemblyFile>0</GenerateAssemblyFile>
-                  <AssembleAssemblyFile>0</AssembleAssemblyFile>
-                  <PublicsOnly>0</PublicsOnly>
-                  <StopOnExitCode>3</StopOnExitCode>
-                  <CustomArgument></CustomArgument>
-                  <IncludeLibraryModules></IncludeLibraryModules>
-                  <ComprImg>1</ComprImg>
-                </CommonProperty>
-                <FileArmAds>
-                  <Cads>
-                    <interw>2</interw>
-                    <Optim>0</Optim>
-                    <oTime>2</oTime>
-                    <SplitLS>2</SplitLS>
-                    <OneElfS>2</OneElfS>
-                    <Strict>2</Strict>
-                    <EnumInt>2</EnumInt>
-                    <PlainCh>2</PlainCh>
-                    <Ropi>2</Ropi>
-                    <Rwpi>2</Rwpi>
-                    <wLevel>0</wLevel>
-                    <uThumb>2</uThumb>
-                    <uSurpInc>2</uSurpInc>
-                    <uC99>2</uC99>
-                    <uGnu>2</uGnu>
-                    <useXO>2</useXO>
-                    <v6Lang>0</v6Lang>
-                    <v6LangP>0</v6LangP>
-                    <vShortEn>2</vShortEn>
-                    <vShortWch>2</vShortWch>
-                    <v6Lto>2</v6Lto>
-                    <v6WtE>2</v6WtE>
-                    <v6Rtti>2</v6Rtti>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-            <File>
-              <FileName>hwtimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1412,11 +1341,6 @@
               <FilePath>..\libraries\gd32_drivers\drv_hard_i2c.c</FilePath>
             </File>
             <File>
-              <FileName>drv_hwtimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\gd32_drivers\drv_hwtimer.c</FilePath>
-            </File>
-            <File>
               <FileName>drv_pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\gd32_drivers\drv_pwm.c</FilePath>
@@ -1432,24 +1356,24 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-            <File>
-              <FileName>cmd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-            <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
             <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
+            </File>
+            <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2299,22 +2223,52 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
           <Files>
+            <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+            </File>
             <File>
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\kerrno.c</FilePath>
-            </File>
-            <File>
-              <FileName>rt_vsscanf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
             </File>
             <File>
               <FileName>kstdio.c</FileName>
@@ -2322,39 +2276,19 @@
               <FilePath>..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
             <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libcpu</GroupName>
-          <Files>
             <File>
-              <FileName>atomic_arm.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
-            </File>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
-            </File>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
+              <FilePath>..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>
