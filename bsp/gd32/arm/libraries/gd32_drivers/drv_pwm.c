@@ -38,12 +38,12 @@ typedef struct{
 
 struct gd32_pwm
 {
-    struct rt_device_pwm       pwm_device;   /* 继承pwm设备 */
-           char                *name;        /* 设备名称 */
-           uint32_t            timerx;       /* PWM依赖的的硬件定时器 */
-           rcu_clock_freq_enum apb_of;       /* TIMER从属的APB总线 */
-           channel_type        channels[4];  /* PWM通道 */
-           channel_type        nchannels[3]; /* PWM反相通道, 只有高级定时器支持 */
+    struct rt_device_pwm       pwm_device;   /* Inherit PWM device */
+           char                *name;        /* Device name */
+           uint32_t            timerx;       /* Hardware timer that PWM depends on */
+           rcu_clock_freq_enum apb_of;       /* APB bus to which TIMER belongs */
+           channel_type        channels[4];  /* PWM channels */
+           channel_type        nchannels[3]; /* PWM complementary channels, only supported by advanced timers */
 };
 
 static struct gd32_pwm gd32_pwm_obj[] = {
@@ -149,7 +149,7 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .channels = {
             {GPIOA, GPIO_AF_1, GPIO_PIN_2},
             {GPIOA, GPIO_AF_3, GPIO_PIN_3},
-        }, // L1通用定时器为两通道定时器
+        }, // L1 general timer is a two-channel timer
     },
 #endif
 
@@ -160,7 +160,7 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .apb_of = CK_APB2,
         .channels = {
             {GPIOA, GPIO_AF_1, GPIO_PIN_0},
-        }, // L2通用定时器为单通道定时器
+        }, // L2 general timer is a single-channel timer
     },
 #endif
 
@@ -171,7 +171,7 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .apb_of = CK_APB2,
         .channels = {
             {GPIOA, GPIO_AF_1, GPIO_PIN_0},
-        }, // L2通用定时器为单通道定时器
+        }, // L2 general timer is a single-channel timer
     },
 #endif
 
@@ -183,7 +183,7 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .channels = {
             {GPIOA, GPIO_AF_1, GPIO_PIN_0},
             {GPIOA, GPIO_AF_1, GPIO_PIN_1},
-        }, // L1通用定时器为两通道定时器
+        }, // L1 general timer is a two-channel timer
     },
 #endif
 
@@ -194,7 +194,7 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .apb_of = CK_APB1,
         .channels = {
             {GPIOA, GPIO_AF_1, GPIO_PIN_0},
-        }, // L2通用定时器为单通道定时器
+        }, // L2 general timer is a single-channel timer
     },
 #endif
 
@@ -205,7 +205,7 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .apb_of = CK_APB1,
         .channels = {
             {GPIOA, GPIO_AF_1, GPIO_PIN_7},
-        }, // L2通用定时器为单通道定时器
+        }, // L2 general timer is a single-channel timer
     },
 #endif
 };
@@ -301,14 +301,14 @@ static void rcu_config(void)
         /* enable GPIO clock */
         switch (gd32_pwm_obj[i].timerx)
         {
-        /* 高级定时器 */
+        /* Advanced timer */
         case TIMER0:
         case TIMER7:
             gpio_clock_enable(gd32_pwm_obj[i].nchannels[0].gpio_port);
             gpio_clock_enable(gd32_pwm_obj[i].nchannels[1].gpio_port);
             gpio_clock_enable(gd32_pwm_obj[i].nchannels[2].gpio_port);
 
-        /* L0 通用定时器 */
+        /* L0 general timer */
         case TIMER1:
         case TIMER2:
         case TIMER3:
@@ -316,12 +316,12 @@ static void rcu_config(void)
             gpio_clock_enable(gd32_pwm_obj[i].channels[2].gpio_port);
             gpio_clock_enable(gd32_pwm_obj[i].channels[3].gpio_port);
         
-        /* L1 通用定时器 */
+        /* L1 general timer */
         case TIMER8:
         case TIMER11:
             gpio_clock_enable(gd32_pwm_obj[i].channels[1].gpio_port);
 
-        /* L2 通用定时器 */
+        /* L2 general timer */
         case TIMER9:
         case TIMER10:
         case TIMER12:
@@ -344,9 +344,9 @@ static void rcu_config(void)
 }
 
 /**
- * @brief 配置PWM输出引脚为pwm输出模式
- * @param pwm pwm 对象
- * @param configuration pwm驱动框架传递的配置信息
+ * @brief Configure PWM output pin to PWM output mode
+ * @param pwm PWM object
+ * @param configuration Configuration information passed by PWM driver framework
  */
 static void gpio_config_pwmout(const struct gd32_pwm *pwm, 
                                const struct rt_pwm_configuration *configuration)
@@ -369,9 +369,9 @@ static void gpio_config_pwmout(const struct gd32_pwm *pwm,
 }
 
 /**
- * @brief 配置PWM输出引脚为pwm浮空输入模式
- * @param pwm pwm 对象
- * @param configuration pwm驱动框架传递的配置信息
+ * @brief Configure PWM output pin to PWM floating input mode
+ * @param pwm PWM object
+ * @param configuration Configuration information passed by PWM driver framework
  */
 static void gpio_config_input(const struct gd32_pwm *pwm, 
                               const struct rt_pwm_configuration *configuration)
@@ -397,12 +397,12 @@ static void channel_output_config(rt_uint32_t timer_periph, timer_oc_parameter_s
 
     switch (timer_periph)
     {
-    /* 高级定时器 */
+    /* Advanced timer */
     case TIMER0:
     case TIMER7:
         timer_primary_output_config(timer_periph, ENABLE);
 
-    /* L0通用定时器 */
+    /* L0 general timer */
     case TIMER1:
     case TIMER2:
     case TIMER3:
@@ -425,7 +425,7 @@ static void channel_output_config(rt_uint32_t timer_periph, timer_oc_parameter_s
         timer_channel_output_state_config(timer_periph, TIMER_CH_3, TIMER_CCX_DISABLE);
         timer_channel_complementary_output_state_config(timer_periph, TIMER_CH_3, TIMER_CCXN_DISABLE);
 
-    /* L1通用定时器 */
+    /* L1 general timer */
     case TIMER8:
     case TIMER11:
         timer_channel_output_config(timer_periph, TIMER_CH_1, ocpara);
@@ -437,7 +437,7 @@ static void channel_output_config(rt_uint32_t timer_periph, timer_oc_parameter_s
         timer_channel_output_state_config(timer_periph, TIMER_CH_1, TIMER_CCX_DISABLE);
         timer_channel_complementary_output_state_config(timer_periph, TIMER_CH_1, TIMER_CCXN_DISABLE);
 
-    /* L2通用定时器 */
+    /* L2 general timer */
     case TIMER9:
     case TIMER10:
     case TIMER12:
@@ -624,8 +624,9 @@ static rt_err_t gd32_hw_pwm_init(void)
     timer_config();
 
     /* 
-     * gpio 此处不配置，当pwm通道使能时会配置为pwmout，失能时会配置为浮空输入
-     * gpio 默认为浮空输入
+     * GPIO is not configured here. When PWM channel is enabled, it will be configured as PWM output,
+     * and when disabled, it will be configured as floating input.
+     * GPIO defaults to floating input.
     */
 
     return RT_EOK;
@@ -666,4 +667,3 @@ __exit:
 }
 INIT_DEVICE_EXPORT(rt_hw_pwm_init);
 #endif /* RT_USING_PWM */
-
