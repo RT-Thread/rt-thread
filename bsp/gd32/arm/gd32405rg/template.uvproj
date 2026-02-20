@@ -13,12 +13,12 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>GD32F407VK</Device>
+          <Device>GD32F405RG</Device>
           <Vendor>GigaDevice</Vendor>
           <Cpu>IRAM(0x20000000,0x020000) IRAM2(0x10000000,0x010000) IROM(0x08000000,0x300000) CPUTYPE("Cortex-M4") FPU2 CLOCK(25000000)</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile>"Startup\GD\GD32F4xx\startup_gd32f4xx.s" ("GD32F4xx Startup Code")</StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC800 -FN1 -FF0GD32F4xx_3MB -FS08000000 -FL0300000 -FP0($$Device:GD32F407VK$Flash\GD32F4xx_3MB.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC800 -FN1 -FF0GD32F4xx_3MB -FS08000000 -FL0300000 -FP0($$Device:GD32F405RG$Flash\GD32F4xx_3MB.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>gd32f4xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
