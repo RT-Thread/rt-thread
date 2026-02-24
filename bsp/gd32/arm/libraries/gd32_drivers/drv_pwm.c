@@ -360,12 +360,20 @@ static void gpio_config_pwmout(const struct gd32_pwm *pwm,
     }
     if(configuration->complementary)
     {
-        if(channel_num > 3) channel_num = 3;
+        if(channel_num > 3)
+        {
+            LOG_E("GD32 PWM complementary channel max 3!\n");
+            return;
+        };
         channel = pwm->nchannels[channel_num-1];
     }
     else
     {
-        if(channel_num > 4) channel_num = 4;
+        if(channel_num > 4)
+        {
+            LOG_E("GD32 PWM complementary channel max 4!\n");
+            return;
+        };
         channel = pwm->channels[channel_num-1];
     }
     gpio_mode_set(channel.gpio_port, GPIO_MODE_AF, GPIO_PUPD_NONE, channel.gpio_pin);
@@ -385,17 +393,24 @@ static void gpio_config_input(const struct gd32_pwm *pwm,
     uint8_t channel_num = configuration->channel;
     if(channel_num == 0)
     {
-        LOG_E("PWM channel starts from 1!\n");
         return;
     }
     if(configuration->complementary)
     {
-        if(channel_num > 3) channel_num = 3;
+        if(channel_num > 3)
+        {
+            LOG_E("GD32 PWM complementary channel max 3!\n");
+            return;
+        };
         channel = pwm->nchannels[channel_num-1];
     }
     else
     {
-        if(channel_num > 4) channel_num = 4;
+        if(channel_num > 4)
+        {
+            LOG_E("GD32 PWM complementary channel max 4!\n");
+            return;
+        };
         channel = pwm->channels[channel_num-1];
     }
     gpio_mode_set(channel.gpio_port, GPIO_MODE_INPUT, GPIO_PUPD_NONE, channel.gpio_pin);
@@ -403,8 +418,6 @@ static void gpio_config_input(const struct gd32_pwm *pwm,
 
 static void channel_output_config(rt_uint32_t timer_periph, timer_oc_parameter_struct *ocpara)
 {
-    rt_int16_t  i;
-
     switch (timer_periph)
     {
     /* Advanced timer */
@@ -504,6 +517,28 @@ static void timer_config(void)
 static rt_err_t drv_pwm_enable(struct gd32_pwm *pwm, const struct rt_pwm_configuration *configuration,
                                rt_bool_t enable)
 {
+    if(channel_num == 0)
+    {
+        LOG_E("GD32 PWM channel starts from 1!\n");
+        return -RT_EINVAL;
+    }
+    if(configuration->complementary)
+    {
+        if(channel_num > 3)
+        {
+            LOG_E("GD32 PWM complementary channel max 3!\n");
+            return -RT_EINVAL;
+        };
+    }
+    else
+    {
+        if(channel_num > 4)
+        {
+            LOG_E("GD32 PWM complementary channel max 4!\n");
+            return -RT_EINVAL;
+        };
+    }
+
     if (!enable)
     {
         gpio_config_input(pwm, configuration);
@@ -541,6 +576,11 @@ static rt_err_t drv_pwm_get(const struct gd32_pwm *pwm, struct rt_pwm_configurat
     rt_uint64_t tim_clock;
     rt_uint16_t psc;
     rt_uint32_t chxcv;
+    
+    if(configuration->channel == 0)
+    {
+        return -RT_EINVAL;
+    }
 
     rt_uint8_t coef = (RCU_CFG1&RCU_CFG1_TIMERSEL)?4:2;
     tim_clock = rcu_clock_freq_get(pwm->apb_of)*coef;
@@ -571,6 +611,11 @@ static rt_err_t drv_pwm_set(struct gd32_pwm *pwm, struct rt_pwm_configuration *c
 
     rt_uint8_t coef = (RCU_CFG1&RCU_CFG1_TIMERSEL)?4:2;
     tim_clock = rcu_clock_freq_get(pwm->apb_of)*coef;
+
+    if(configuration->channel == 0)
+    {
+        return -RT_EINVAL;
+    }
 
     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
     tim_clock /= 1000000UL;
@@ -609,7 +654,7 @@ static rt_err_t drv_pwm_set(struct gd32_pwm *pwm, struct rt_pwm_configuration *c
 static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
 {
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
-    struct gd32_pwm             *pwm   = (struct gd32_pwm *)device;
+    struct gd32_pwm *pwm = rt_container_of(device, struct gd32_pwm, pwm_device);
 
     switch (cmd)
     {
