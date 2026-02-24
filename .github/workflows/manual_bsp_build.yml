@@ -149,7 +149,7 @@ jobs:
           source ~/.env/env.sh
           python tools/ci/manual_bsp_build_all.py $RTT_BSP
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: dist_file
           path: ${{ github.workspace }}/failed_bsp.log
