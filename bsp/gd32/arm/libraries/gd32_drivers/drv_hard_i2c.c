@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author            Notes
  * 2021-12-20     BruceOu           the first version
+ * 2026-01-11     ShiHongchao       Fix the I2C master receive mode B software 
+ *                                  flow and add support for mode A
  */
 
 #include "drv_hard_i2c.h"
@@ -112,8 +114,8 @@ static const struct gd32_i2c_bus gd_i2c_config[] = {
 
     RCU_I2C0, RCU_GPIOB, RCU_GPIOB,    /* periph clock, scl gpio clock, sda gpio clock */
 
-    GPIOB, GPIO_AF_4, GPIO_PIN_6,    /* scl port, scl alternate, scl pin */
-    GPIOB, GPIO_AF_4, GPIO_PIN_7,    /* sda port, sda alternate, sda pin */
+    GPIOB, GPIO_AF_4, GPIO_PIN_8,    /* scl port, scl alternate, scl pin */
+    GPIOB, GPIO_AF_4, GPIO_PIN_9,    /* sda port, sda alternate, sda pin */
 
         &i2c0,
         "hwi2c0",
@@ -229,13 +231,52 @@ static void gd32_i2c_gpio_init(const struct gd32_i2c_bus *i2c)
 static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_uint16_t data_byte)
 {
     if (data_byte == 0) return 1;
-    /* while there is data to be read */
 
+#ifdef BSP_USING_RECEIVING_A
+    /* 
+        In single-byte reception, disable ACK because the master needs to send 
+        NACK after receiving the first byte,indicating no more data will be 
+        received, then immediately send the stop condition
+    */
+    if(data_byte == 1)
+    {
+        /* disable acknowledge */
+        i2c_ack_config(i2c_periph, I2C_ACK_DISABLE);
+        /* send a stop condition to I2C bus */
+        i2c_stop_on_bus(i2c_periph);
+    }
+#endif
+    
+    /* while there is data to be read */
     while(data_byte)
     {
 #if defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32F4xx)
         if(IS_I2C_LEGACY(i2c_periph))
         {
+#ifdef BSP_USING_RECEIVING_A
+            /* 
+                After receiving the second-to-last byte, ACK should be disabled 
+                and STOP should be set, to ensure that NACK is sent after receiving 
+                the last byte and the stop condition is transmitted
+            */
+            if(2 == data_byte)
+            {
+                    /* wait until BTC bit is set */
+                    while(!i2c_flag_get(i2c_periph, I2C_FLAG_RBNE));
+                    /* disable acknowledge */
+                    i2c_ack_config(i2c_periph, I2C_ACK_DISABLE);
+                    /* send a stop condition to I2C bus */
+                    i2c_stop_on_bus(i2c_periph);
+            }
+#elif defined(BSP_USING_RECEIVING_B)
+            /* 
+                For 3-byte reception: Wait for byte transfer completion, then 
+                disable ACK so NACK is automatically sent after receiving the 
+                last byte
+                For 2-byte reception: Wait for byte transfer completion, then 
+                send stop condition to ensure direct stop after receiving the 
+                last byte instead of sending ACK 
+            */
             if(3 == data_byte)
             {
                     /* wait until BTC bit is set */
@@ -243,14 +284,16 @@ static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_ui
                     /* disable acknowledge */
                     i2c_ack_config(i2c_periph, I2C_ACK_DISABLE);
             }
-
-            if(2 == data_byte)
+            else if(2 == data_byte)
             {
                     /* wait until BTC bit is set */
                     while(!i2c_flag_get(i2c_periph, I2C_FLAG_BTC));
                     /* send a stop condition to I2C bus */
                     i2c_stop_on_bus(i2c_periph);
             }
+#else
+#error "Please select the receiving scheme."
+#endif
             /* wait until RBNE bit is set */
             if(i2c_flag_get(i2c_periph, I2C_FLAG_RBNE))
             {
@@ -379,11 +422,18 @@ static rt_ssize_t gd32_i2c_master_xfer(struct rt_i2c_bus_device *bus, struct rt_
                     {
                             i2c_stop_on_bus(gd32_i2c->i2c_periph);
                     }
-                        /* enable acknowledge */
+                    /* enable acknowledge */
                     i2c_ack_config(gd32_i2c->i2c_periph, I2C_ACK_ENABLE);
-                        /* i2c master sends start signal only when the bus is idle */
+                    /* i2c master sends start signal only when the bus is idle */
                     while(i2c_flag_get(gd32_i2c->i2c_periph, I2C_FLAG_I2CBSY));
-                        /* send the start signal */
+#ifdef BSP_USING_RECEIVING_B
+                    /*  */
+                    if(msg->len == 2)
+                    {
+                        i2c_ackpos_config(gd32_i2c->i2c_periph, I2C_ACKPOS_NEXT);
+                    }
+#endif
+                    /* send the start signal */
                     i2c_start_on_bus(gd32_i2c->i2c_periph);
                      /* i2c master sends START signal successfully */
                     while(!i2c_flag_get(gd32_i2c->i2c_periph, I2C_FLAG_SBSEND));
@@ -391,14 +441,26 @@ static rt_ssize_t gd32_i2c_master_xfer(struct rt_i2c_bus_device *bus, struct rt_
                     i2c_master_addressing(gd32_i2c->i2c_periph, msg->addr, I2C_RECEIVER);
 
                     while(!i2c_flag_get(gd32_i2c->i2c_periph, I2C_FLAG_ADDSEND));
-                       /* address flag set means i2c slave sends ACK */
+#ifdef BSP_USING_RECEIVING_B
+                    if(msg->len <= 2)
+                    {
+                        i2c_ack_config(gd32_i2c->i2c_periph, I2C_ACK_DISABLE);
+                    }
+#endif
+                    /* address flag set means i2c slave sends ACK */
                     i2c_flag_clear(gd32_i2c->i2c_periph, I2C_FLAG_ADDSEND);
+#ifdef BSP_USING_RECEIVING_B
+                    if(msg->len == 1)
+                    {
+                        i2c_stop_on_bus(gd32_i2c->i2c_periph);
+                    }
+#endif
 
                }else {
-                     /* configure slave address */
+                    /* configure slave address */
                     while(i2c_flag_get(gd32_i2c->i2c_periph, I2C_FLAG_I2CBSY));
-                     //i2c_transfer_byte_number_config(gd32_i2c->i2c_periph, w_total_byte);
-                     /* send a start condition to I2C bus */
+                    //i2c_transfer_byte_number_config(gd32_i2c->i2c_periph, w_total_byte);
+                    /* send a start condition to I2C bus */
                     i2c_start_on_bus(gd32_i2c->i2c_periph);
                     while(!i2c_flag_get(gd32_i2c->i2c_periph, I2C_FLAG_SBSEND));
 
