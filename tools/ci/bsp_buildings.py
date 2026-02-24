@@ -124,7 +124,7 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
             if returncode != 0:
                 print(f"Post-build command failed: {command}")
                 print(output)
-    run_cmd('scons -c', output_info=False)
+    run_cmd('scons -c', output_info=True)
 
     return success
 
