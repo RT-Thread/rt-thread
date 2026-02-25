@@ -215,6 +215,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [gd32303e-eval](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32305r-start](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32307e-start](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
+| [gd32405rg](gd32) | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32407v-ickfb](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32407v-start](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32450z-eval](gd32) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
