@@ -8,6 +8,7 @@
  * 2021-01-30     lizhirui     first version
  * 2021-05-03     lizhirui     porting to C906
  * 2023-10-12     Shell        Add permission control API
+ * 2026-02-25     Steven       Porting to Standard Svpbmt
  */
 
 #ifndef __RISCV_MMU_H__
@@ -19,12 +20,26 @@
 
 #undef PAGE_SIZE
 
-/* C-SKY extend */
+#if !CONFIG_XUANTIE_SVPBMT
+/*
+ * RISC-V Standard Svpbmt Extension (Bit 61-62)
+ * 00: PMA (Normal Memory, Cacheable)
+ * 01: NC  (Non-cacheable, Weakly-ordered)
+ * 10: IO  (Strongly-ordered, Non-cacheable, Non-idempotent)
+ * 11: Reserved
+ */
+#define PTE_PBMT_MASK (3UL << 61)
+#define PTE_PBMT_PMA  (0UL << 61)
+#define PTE_PBMT_NC   (1UL << 61)
+#define PTE_PBMT_IO   (2UL << 61)
+#else
+/* XuanTie Extension (Bit 59-63) */
 #define PTE_SEC   (1UL << 59) /* Security */
 #define PTE_SHARE (1UL << 60) /* Shareable */
 #define PTE_BUF   (1UL << 61) /* Bufferable */
 #define PTE_CACHE (1UL << 62) /* Cacheable */
 #define PTE_SO    (1UL << 63) /* Strong Order */
+#endif
 
 #define PAGE_OFFSET_SHIFT 0
 #define PAGE_OFFSET_BIT   12
@@ -60,12 +75,28 @@
 #define PAGE_ATTR_USER   (PTE_U)
 #define PAGE_ATTR_SYSTEM (0)
 
+#if !CONFIG_XUANTIE_SVPBMT
+/*
+ * Default Leaf Attribute:
+ * RWX + User + Valid + Global + Accessed + Dirty + PMA(Cacheable)
+ */
+#define PAGE_DEFAULT_ATTR_LEAF \
+    (PAGE_ATTR_RWX | PAGE_ATTR_USER | PTE_V | PTE_G | PTE_PBMT_PMA | PTE_A | PTE_D)
+
+/*
+ * Next Level Attribute:
+ * Svpbmt spec requires PBMT bits to be 0 for non-leaf PTEs.
+ */
+#define PAGE_DEFAULT_ATTR_NEXT \
+    (PAGE_ATTR_NEXT_LEVEL | PTE_V | PTE_G | PTE_A | PTE_D)
+#else
 #define PAGE_DEFAULT_ATTR_LEAF                                               \
     (PAGE_ATTR_RWX | PAGE_ATTR_USER | PTE_V | PTE_G | PTE_SHARE | PTE_BUF |  \
     PTE_CACHE | PTE_A | PTE_D)
 
 #define PAGE_DEFAULT_ATTR_NEXT \
     (PAGE_ATTR_NEXT_LEVEL | PTE_V | PTE_G | PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D)
+#endif
 
 #define PAGE_IS_LEAF(pte) __MASKVALUE(pte, PAGE_ATTR_RWX)
 
@@ -85,7 +116,32 @@
 #define ARCH_VADDR_WIDTH 39
 #define SATP_MODE        SATP_MODE_SV39
 
-//compatible to rt-smart new version
+#if !CONFIG_XUANTIE_SVPBMT
+/*
+ * Kernel Mappings
+ */
+/* Device: IO Mode (Strongly Ordered) */
+#define MMU_MAP_K_DEVICE (PTE_PBMT_IO | PTE_A | PTE_D | PTE_G | PTE_W | PTE_R | PTE_V)
+
+/* RW: Non-Cacheable (NC Mode) */
+#define MMU_MAP_K_RW     (PTE_PBMT_NC | PTE_A | PTE_D | PTE_G | PAGE_ATTR_RWX | PTE_V)
+
+/* RWCB: Cacheable (PMA Mode) - Normal RAM */
+#define MMU_MAP_K_RWCB   (PTE_PBMT_PMA | PTE_A | PTE_D | PTE_G | PAGE_ATTR_RWX | PTE_V)
+
+/*
+ * User Mappings
+ */
+/* User RW: Non-Cacheable */
+#define MMU_MAP_U_RW   (PTE_PBMT_NC | PTE_U | PTE_A | PTE_D | PAGE_ATTR_RWX | PTE_V)
+
+/* User RWCB: Cacheable */
+#define MMU_MAP_U_RWCB (PTE_PBMT_PMA | PTE_U | PTE_A | PTE_D | PAGE_ATTR_RWX | PTE_V)
+
+/* Early Mapping: Cacheable */
+#define MMU_MAP_EARLY \
+    PTE_WRAP(PAGE_ATTR_RWX | PTE_G | PTE_V | PTE_PBMT_PMA)
+#else
 #define MMU_MAP_K_DEVICE (PTE_BUF | PTE_SO | PTE_A | PTE_D | PTE_G | PTE_W | PTE_R | PTE_V)
 #define MMU_MAP_K_RW     (PTE_SHARE | PTE_A | PTE_D | PTE_G | PAGE_ATTR_RWX | PTE_V)
 #define MMU_MAP_K_RWCB   (MMU_MAP_K_RW | PTE_BUF | PTE_CACHE)
@@ -94,6 +150,8 @@
 #define MMU_MAP_U_RWCB (MMU_MAP_U_RW | PTE_BUF | PTE_CACHE)
 #define MMU_MAP_EARLY \
     PTE_WRAP(PAGE_ATTR_RWX | PTE_G | PTE_V | PTE_CACHE | PTE_SHARE | PTE_BUF)
+#endif
+
 #define MMU_MAP_TRACE(attr) (attr)
 
 #define PTE_XWR_MASK 0xe
