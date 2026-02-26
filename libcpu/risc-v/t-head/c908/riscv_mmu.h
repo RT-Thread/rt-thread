@@ -23,15 +23,15 @@
 #if !CONFIG_XUANTIE_SVPBMT
 /*
  * RISC-V Standard Svpbmt Extension (Bit 61-62)
- * 00: PMA (Normal Memory, Cacheable)
+ * 00: PMA (Normal Memory, Cacheable, No change to implied PMA memory type)
  * 01: NC  (Non-cacheable, Weakly-ordered)
  * 10: IO  (Strongly-ordered, Non-cacheable, Non-idempotent)
  * 11: Reserved
  */
-#define PTE_PBMT_MASK (3UL << 61)
 #define PTE_PBMT_PMA  (0UL << 61)
 #define PTE_PBMT_NC   (1UL << 61)
 #define PTE_PBMT_IO   (2UL << 61)
+#define PTE_PBMT_MASK (3UL << 61)
 #else
 /* XuanTie Extension (Bit 59-63) */
 #define PTE_SEC   (1UL << 59) /* Security */
@@ -39,6 +39,11 @@
 #define PTE_BUF   (1UL << 61) /* Bufferable */
 #define PTE_CACHE (1UL << 62) /* Cacheable */
 #define PTE_SO    (1UL << 63) /* Strong Order */
+/* Compatible with Standard Svpbmt */
+#define PTE_PBMT_PMA  (PTE_CACHE | PTE_BUF | PTE_SHARE)
+#define PTE_PBMT_NC   (PTE_BUF | PTE_SHARE)
+#define PTE_PBMT_IO   (PTE_SO | PTE_SHARE)
+#define PTE_PBMT_MASK (PTE_PBMT_PMA | PTE_PBMT_IO | PTE_SEC)
 #endif
 
 #define PAGE_OFFSET_SHIFT 0
@@ -82,22 +87,13 @@
  */
 #define PAGE_DEFAULT_ATTR_LEAF \
     (PAGE_ATTR_RWX | PAGE_ATTR_USER | PTE_V | PTE_G | PTE_PBMT_PMA | PTE_A | PTE_D)
-
-/*
- * Next Level Attribute:
- * Svpbmt spec requires PBMT bits to be 0 for non-leaf PTEs.
- */
-#define PAGE_DEFAULT_ATTR_NEXT \
-    (PAGE_ATTR_NEXT_LEVEL | PTE_V | PTE_G | PTE_A | PTE_D)
 #else
 #define PAGE_DEFAULT_ATTR_LEAF                                               \
     (PAGE_ATTR_RWX | PAGE_ATTR_USER | PTE_V | PTE_G | PTE_SHARE | PTE_BUF |  \
     PTE_CACHE | PTE_A | PTE_D)
-
-#define PAGE_DEFAULT_ATTR_NEXT \
-    (PAGE_ATTR_NEXT_LEVEL | PTE_V | PTE_G | PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D)
 #endif
 
+#define PAGE_DEFAULT_ATTR_NEXT (PAGE_ATTR_NEXT_LEVEL | PTE_V | PTE_G)
 #define PAGE_IS_LEAF(pte) __MASKVALUE(pte, PAGE_ATTR_RWX)
 
 #define PTE_USED(pte)  __MASKVALUE(pte, PTE_V)
