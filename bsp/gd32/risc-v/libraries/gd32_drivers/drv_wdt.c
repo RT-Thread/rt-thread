@@ -10,10 +10,6 @@
 
 #include <board.h>
 #include <rtthread.h>
-
-
-
-
 #ifdef RT_USING_WDT
 
 #if defined(BSP_USING_FWDT)     
@@ -121,7 +117,7 @@ int fwdt_test_sample()
     LOG_D("find fwdt device success,device=%x",hw_dev);
     if (hw_dev == RT_NULL)
     {
-        LOG_D("hwtimer sample run failed! can't find %s device!", HW_WDGT_DEV_NAME);
+        LOG_D("fwdt sample run failed! can't find %s device!", HW_WDGT_DEV_NAME);
         return -RT_ERROR;
     }
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
@@ -140,6 +136,7 @@ int fwdt_test_sample()
     }
     rt_device_control(hw_dev, RT_DEVICE_CTRL_WDT_START, RT_NULL);
     rt_device_control(hw_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, RT_NULL);
+    return ret;
 }
 
 MSH_CMD_EXPORT(fwdt_test_sample, fwdt timeout 4 sec reset)
@@ -155,7 +152,7 @@ int wwdt_test_sample()
     LOG_D("find wwdt device success,device=%x",hw_dev);
     if (hw_dev == RT_NULL)
     {
-        LOG_D("hwtimer sample run failed! can't find %s device!", HW_WDGT_DEV_NAME);
+        LOG_D("wwdt sample run failed! can't find %s device!", HW_WDGT_DEV_NAME);
         return -RT_ERROR;
     }
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
@@ -174,6 +171,7 @@ int wwdt_test_sample()
     }
     rt_device_control(hw_dev, RT_DEVICE_CTRL_WDT_START, RT_NULL);
     rt_device_control(hw_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, RT_NULL);
+    return ret;
 }
 MSH_CMD_EXPORT(wwdt_test_sample, wwdt timeout 40 msec reset)
 #endif
