@@ -462,7 +462,6 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         if (state != HAL_OK)
         {
             LOG_E("SPI transfer error: %d", state);
-            message->length = 0;
             spi_handle->State = HAL_SPI_STATE_READY;
             goto transfer_cleanup;
         }
