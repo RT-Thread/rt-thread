@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2021-12-20     BruceOu           the first version
- * 2026-01-11     ShiHongchao       Fix the I2C master receive mode B software 
+ * 2026-01-11     ShiHongchao       Fix the I2C master receive mode B software
  *                                  flow and add support for mode A
  */
 
@@ -17,7 +17,7 @@
 #define LOG_TAG              "drv.i2c"
 #include <rtdbg.h>
 
-#if !defined(BSP_USING_HARD_I2C0) && !defined(BSP_USING_HARD_I2C1) && !defined(BSP_USING_HARD_I2C2) && !defined(BSP_USING_HARD_I2C3)  && !defined(BSP_USING_HARD_I2C4)  && !defined(BSP_USING_HARD_I2C5)
+#if !defined(BSP_USING_HARD_I2C0) && !defined(BSP_USING_HARD_I2C1) && !defined(BSP_USING_HARD_I2C2) && !defined(BSP_USING_HARD_I2C3) && !defined(BSP_USING_HARD_I2C4) && !defined(BSP_USING_HARD_I2C5)
 #error "Please define at least one BSP_USING_I2Cx"
 /* this driver can be disabled at menuconfig → RT-Thread Components → Device Drivers */
 #endif
@@ -233,9 +233,9 @@ static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_ui
     if (data_byte == 0) return 1;
 
 #ifdef BSP_USING_RECEIVING_A
-    /* 
-        In single-byte reception, disable ACK because the master needs to send 
-        NACK after receiving the first byte,indicating no more data will be 
+    /*
+        In single-byte reception, disable ACK because the master needs to send
+        NACK after receiving the first byte,indicating no more data will be
         received, then immediately send the stop condition
     */
     if(data_byte == 1)
@@ -246,7 +246,7 @@ static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_ui
         i2c_stop_on_bus(i2c_periph);
     }
 #endif
-    
+
     /* while there is data to be read */
     while(data_byte)
     {
@@ -254,9 +254,9 @@ static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_ui
         if(IS_I2C_LEGACY(i2c_periph))
         {
 #ifdef BSP_USING_RECEIVING_A
-            /* 
-                After receiving the second-to-last byte, ACK should be disabled 
-                and STOP should be set, to ensure that NACK is sent after receiving 
+            /*
+                After receiving the second-to-last byte, ACK should be disabled
+                and STOP should be set, to ensure that NACK is sent after receiving
                 the last byte and the stop condition is transmitted
             */
             if(2 == data_byte)
@@ -269,13 +269,13 @@ static uint8_t gd32_i2c_read(rt_uint32_t i2c_periph, rt_uint8_t *p_buffer, rt_ui
                     i2c_stop_on_bus(i2c_periph);
             }
 #elif defined(BSP_USING_RECEIVING_B)
-            /* 
-                For 3-byte reception: Wait for byte transfer completion, then 
-                disable ACK so NACK is automatically sent after receiving the 
+            /*
+                For 3-byte reception: Wait for byte transfer completion, then
+                disable ACK so NACK is automatically sent after receiving the
                 last byte
-                For 2-byte reception: Wait for byte transfer completion, then 
-                send stop condition to ensure direct stop after receiving the 
-                last byte instead of sending ACK 
+                For 2-byte reception: Wait for byte transfer completion, then
+                send stop condition to ensure direct stop after receiving the
+                last byte instead of sending ACK
             */
             if(3 == data_byte)
             {
@@ -621,4 +621,3 @@ int rt_hw_i2c_init(void)
 INIT_BOARD_EXPORT(rt_hw_i2c_init);
 
 #endif /* RT_USING_I2C */
-

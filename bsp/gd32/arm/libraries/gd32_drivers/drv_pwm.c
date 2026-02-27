@@ -576,7 +576,7 @@ static rt_err_t drv_pwm_get(const struct gd32_pwm *pwm, struct rt_pwm_configurat
     rt_uint64_t tim_clock;
     rt_uint16_t psc;
     rt_uint32_t chxcv;
-    
+
     if(configuration->channel == 0)
     {
         return -RT_EINVAL;
