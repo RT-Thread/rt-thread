@@ -5,8 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2021-08-20     BruceOu      first implementation
- * 2024-03-19     Evlers       add serial supports
+ * 2026-01-08     ShiHongChao  first implementation
  */
 #include <stdint.h>
 #include <rthw.h>
@@ -69,13 +68,13 @@ void rt_hw_board_init()
     system_clock_8M_200M();
 
     /* NVIC Configuration */
-#define NVIC_VTOR_MASK              0x3FFFFF80
-#ifdef  VECT_TAB_RAM
+#define NVIC_VTOR_MASK 0x3FFFFF80
+#ifdef VECT_TAB_RAM
     /* Set the Vector Table base location at 0x10000000 */
-    SCB->VTOR  = (0x10000000 & NVIC_VTOR_MASK);
+    SCB->VTOR = (0x10000000 & NVIC_VTOR_MASK);
 #else  /* VECT_TAB_FLASH  */
     /* Set the Vector Table base location at 0x08000000 */
-    SCB->VTOR  = (0x08000000 & NVIC_VTOR_MASK);
+    SCB->VTOR = (0x08000000 & NVIC_VTOR_MASK);
 #endif
 
     SystemClock_Config();
@@ -107,7 +106,7 @@ static void system_clock_8M_200M(void)
 {
     uint32_t timeout = 0U;
     uint32_t stab_flag = 0U;
-    
+
     /* reset RCU */
     rcu_deinit();
 
@@ -115,17 +114,20 @@ static void system_clock_8M_200M(void)
     RCU_CTL |= RCU_CTL_HXTALEN;
 
     /* wait until HXTAL is stable or the startup time is longer than HXTAL_STARTUP_TIMEOUT */
-    do{
+    do
+    {
         timeout++;
         stab_flag = (RCU_CTL & RCU_CTL_HXTALSTB);
-    }while((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));
+    } while ((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));
 
     /* if fail */
-    if(0U == (RCU_CTL & RCU_CTL_HXTALSTB)){
-        while(1){
+    if (0U == (RCU_CTL & RCU_CTL_HXTALSTB))
+    {
+        while (1)
+        {
         }
     }
-         
+
     RCU_APB1EN |= RCU_APB1EN_PMUEN;
     PMU_CTL |= PMU_CTL_LDOVS;
 
@@ -137,35 +139,39 @@ static void system_clock_8M_200M(void)
     /* APB1 = AHB/4 */
     RCU_CFG0 |= RCU_APB1_CKAHB_DIV4;
 
-    /* Configure the main PLL, PSC = 8, PLL_N = 400, PLL_P = 2, PLL_Q = 9 */ 
+    /* Configure the main PLL, PSC = 8, PLL_N = 400, PLL_P = 2, PLL_Q = 9 */
     RCU_PLL = (8U | (400U << 6U) | (((2U >> 1U) - 1U) << 16U) |
-                   (RCU_PLLSRC_HXTAL) | (9U << 24U));
+               (RCU_PLLSRC_HXTAL) | (9U << 24U));
 
     /* enable PLL */
     RCU_CTL |= RCU_CTL_PLLEN;
 
     /* wait until PLL is stable */
-    while(0U == (RCU_CTL & RCU_CTL_PLLSTB)){
+    while (0U == (RCU_CTL & RCU_CTL_PLLSTB))
+    {
     }
-    
+
     /* Enable the high-drive to extend the clock frequency to 200 Mhz */
     PMU_CTL |= PMU_CTL_HDEN;
-    while(0U == (PMU_CS & PMU_CS_HDRF)){
+    while (0U == (PMU_CS & PMU_CS_HDRF))
+    {
     }
-    
+
     /* select the high-drive mode */
     PMU_CTL |= PMU_CTL_HDS;
-    while(0U == (PMU_CS & PMU_CS_HDSRF)){
-    } 
-    
+    while (0U == (PMU_CS & PMU_CS_HDSRF))
+    {
+    }
+
     /* select PLL as system clock */
     RCU_CFG0 &= ~RCU_CFG0_SCS;
     RCU_CFG0 |= RCU_CKSYSSRC_PLLP;
 
     /* wait until PLL is selected as system clock */
-    while(0U == (RCU_CFG0 & RCU_SCSS_PLLP)){
+    while (0U == (RCU_CFG0 & RCU_SCSS_PLLP))
+    {
     }
-    
+
     /* Update SystemCoreClock variable */
     SystemCoreClock = 200000000U; // 200MHz
 }
