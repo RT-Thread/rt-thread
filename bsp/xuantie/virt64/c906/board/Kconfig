@@ -1,15 +1,11 @@
 menu "RISC-V QEMU virt64 configs"
 
-config BSP_USING_VIRTIO
-    bool "Using VirtIO"
-    default y
-    depends on RT_USING_DEVICE_OPS
+rsource "../../../../qemu-virt64-riscv/driver/virtio/Kconfig"
 
 config BSP_USING_VIRTIO_BLK
     bool "Using VirtIO BLK"
-    select RT_USING_VIRTIO
+    select BSP_USING_VIRTIO
     select RT_USING_VIRTIO_BLK
     default y
-    depends on BSP_USING_VIRTIO
 
 endmenu
