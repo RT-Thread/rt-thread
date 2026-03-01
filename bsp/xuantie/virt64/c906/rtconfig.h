@@ -219,9 +219,6 @@
 #define RT_USING_RANDOM
 #define RT_USING_RTC
 #define RT_USING_SOFT_RTC
-#define RT_USING_VIRTIO
-#define RT_USING_VIRTIO10
-#define RT_USING_VIRTIO_BLK
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -527,7 +524,9 @@
 
 /* RISC-V QEMU virt64 configs */
 
-#define BSP_USING_VIRTIO
+#define RT_USING_LEGACY_VIRTIO
+#define RT_USING_VIRTIO10
+#define RT_USING_VIRTIO_BLK
 #define BSP_USING_VIRTIO_BLK
 /* end of RISC-V QEMU virt64 configs */
 #define BOARD_QEMU_VIRT_RV64
