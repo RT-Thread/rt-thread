@@ -1,0 +1,10 @@
+from building import *
+import os
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd]
+src = ['main.c']
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

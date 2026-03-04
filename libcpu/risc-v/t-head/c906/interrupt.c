@@ -23,7 +23,7 @@ struct rt_irq_desc isr_table[INTERRUPTS_MAX];
 
 static void rt_hw_interrupt_handler(int vector, void *param)
 {
-    rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
+    rt_kprintf("Unhandled interrupt %d occurred!!!\n", vector);
 }
 
 /**

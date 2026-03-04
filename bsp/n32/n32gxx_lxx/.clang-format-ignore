@@ -1,0 +1,12 @@
+
+# files format check exclude path, please follow the instructions below to modify;
+# If you need to exclude an entire folder, add the folder path in dir_path;
+# If you need to exclude a file, add the path to the file in file_path.
+
+# 从 .ignore_format.yml 迁移的规则
+/libraries/N32G43x_Firmware_Library/
+/libraries/N32G4FR_Firmware_Library/
+/libraries/N32G45x_Firmware_Library/
+/libraries/N32L40x_Firmware_Library/
+/libraries/N32L43x_Firmware_Library/
+/libraries/N32WB452_Firmware_Library/

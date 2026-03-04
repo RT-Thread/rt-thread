@@ -31,30 +31,37 @@ struct usbh_bus g_usbhost_bus[CONFIG_USBHOST_MAX_BUS];
 #define USB_DEV_ADDR_MARK_OFFSET 5
 #define USB_DEV_ADDR_MARK_MASK   0x1f
 
+static void dummy_event_handler(uint8_t busid, uint8_t hub_index, uint8_t hub_port, uint8_t intf, uint8_t event)
+{
+    (void)busid;
+    (void)hub_index;
+    (void)hub_port;
+    (void)intf;
+    (void)event;
+}
+
 static int usbh_allocate_devaddr(struct usbh_devaddr_map *devgen)
 {
-    uint8_t startaddr = devgen->next;
-    uint8_t devaddr;
+    uint8_t lastaddr = devgen->last;
+    uint8_t devaddr = lastaddr;
     int index;
     int bitno;
 
     for (;;) {
-        devaddr = devgen->next;
-        if (devgen->next >= 0x7f) {
-            devgen->next = 2;
-        } else {
-            devgen->next++;
+        devaddr++;
+        if (devaddr > 0x7f) {
+            devaddr = 2;
+        }
+        if (devaddr == lastaddr) {
+            return -USB_ERR_NOMEM;
         }
 
         index = devaddr >> 5;
         bitno = devaddr & 0x1f;
-        if ((devgen->alloctab[index] & (1 << bitno)) == 0) {
-            devgen->alloctab[index] |= (1 << bitno);
+        if ((devgen->alloctab[index] & (1ul << bitno)) == 0) {
+            devgen->alloctab[index] |= (1ul << bitno);
+            devgen->last = devaddr;
             return (int)devaddr;
-        }
-
-        if (startaddr == devaddr) {
-            return -USB_ERR_NOMEM;
         }
     }
 }
@@ -69,14 +76,10 @@ static int __usbh_free_devaddr(struct usbh_devaddr_map *devgen, uint8_t devaddr)
         bitno = devaddr & USB_DEV_ADDR_MARK_MASK;
 
         /* Free the address  */
-        if ((devgen->alloctab[index] |= (1 << bitno)) != 0) {
-            devgen->alloctab[index] &= ~(1 << bitno);
+        if ((devgen->alloctab[index] & (1ul << bitno)) != 0) {
+            devgen->alloctab[index] &= ~(1ul << bitno);
         } else {
             return -1;
-        }
-
-        if (devaddr < devgen->next) {
-            devgen->next = devaddr;
         }
     }
 
@@ -91,7 +94,7 @@ static int usbh_free_devaddr(struct usbh_hubport *hport)
     return 0;
 }
 
-static const struct usbh_class_driver *usbh_find_class_driver(uint8_t class, uint8_t subclass, uint8_t protocol,
+static const struct usbh_class_driver *usbh_find_class_driver(uint8_t class, uint8_t subclass, uint8_t protocol, uint8_t intf,
                                                               uint16_t vid, uint16_t pid)
 {
     struct usbh_class_info *index = NULL;
@@ -104,6 +107,9 @@ static const struct usbh_class_driver *usbh_find_class_driver(uint8_t class, uin
             continue;
         }
         if ((index->match_flags & USB_CLASS_MATCH_INTF_PROTOCOL) && !(index->bInterfaceProtocol == protocol)) {
+            continue;
+        }
+        if ((index->match_flags & USB_CLASS_MATCH_INTF_NUM) && !(index->bInterfaceNumber == intf)) {
             continue;
         }
         if (index->match_flags & USB_CLASS_MATCH_VID_PID && index->id_table) {
@@ -275,60 +281,6 @@ static int parse_config_descriptor(struct usbh_hubport *hport, struct usb_config
     return 0;
 }
 
-static void usbh_print_hubport_info(struct usbh_hubport *hport)
-{
-    USB_LOG_RAW("Device Descriptor:\r\n");
-    USB_LOG_RAW("bLength: 0x%02x           \r\n", hport->device_desc.bLength);
-    USB_LOG_RAW("bDescriptorType: 0x%02x   \r\n", hport->device_desc.bDescriptorType);
-    USB_LOG_RAW("bcdUSB: 0x%04x            \r\n", hport->device_desc.bcdUSB);
-    USB_LOG_RAW("bDeviceClass: 0x%02x      \r\n", hport->device_desc.bDeviceClass);
-    USB_LOG_RAW("bDeviceSubClass: 0x%02x   \r\n", hport->device_desc.bDeviceSubClass);
-    USB_LOG_RAW("bDeviceProtocol: 0x%02x   \r\n", hport->device_desc.bDeviceProtocol);
-    USB_LOG_RAW("bMaxPacketSize0: 0x%02x   \r\n", hport->device_desc.bMaxPacketSize0);
-    USB_LOG_RAW("idVendor: 0x%04x          \r\n", hport->device_desc.idVendor);
-    USB_LOG_RAW("idProduct: 0x%04x         \r\n", hport->device_desc.idProduct);
-    USB_LOG_RAW("bcdDevice: 0x%04x         \r\n", hport->device_desc.bcdDevice);
-    USB_LOG_RAW("iManufacturer: 0x%02x     \r\n", hport->device_desc.iManufacturer);
-    USB_LOG_RAW("iProduct: 0x%02x          \r\n", hport->device_desc.iProduct);
-    USB_LOG_RAW("iSerialNumber: 0x%02x     \r\n", hport->device_desc.iSerialNumber);
-    USB_LOG_RAW("bNumConfigurations: 0x%02x\r\n", hport->device_desc.bNumConfigurations);
-
-    USB_LOG_RAW("Config Descriptor:\r\n");
-    USB_LOG_RAW("bLength: 0x%02x             \r\n", hport->config.config_desc.bLength);
-    USB_LOG_RAW("bDescriptorType: 0x%02x     \r\n", hport->config.config_desc.bDescriptorType);
-    USB_LOG_RAW("wTotalLength: 0x%04x        \r\n", hport->config.config_desc.wTotalLength);
-    USB_LOG_RAW("bNumInterfaces: 0x%02x      \r\n", hport->config.config_desc.bNumInterfaces);
-    USB_LOG_RAW("bConfigurationValue: 0x%02x \r\n", hport->config.config_desc.bConfigurationValue);
-    USB_LOG_RAW("iConfiguration: 0x%02x      \r\n", hport->config.config_desc.iConfiguration);
-    USB_LOG_RAW("bmAttributes: 0x%02x        \r\n", hport->config.config_desc.bmAttributes);
-    USB_LOG_RAW("bMaxPower: 0x%02x           \r\n", hport->config.config_desc.bMaxPower);
-
-    for (uint8_t i = 0; i < hport->config.config_desc.bNumInterfaces; i++) {
-        for (uint8_t j = 0; j < hport->config.intf[i].altsetting_num; j++) {
-            USB_LOG_RAW("\tInterface Descriptor:\r\n");
-            USB_LOG_RAW("\tbLength: 0x%02x            \r\n", hport->config.intf[i].altsetting[j].intf_desc.bLength);
-            USB_LOG_RAW("\tbDescriptorType: 0x%02x    \r\n", hport->config.intf[i].altsetting[j].intf_desc.bDescriptorType);
-            USB_LOG_RAW("\tbInterfaceNumber: 0x%02x   \r\n", hport->config.intf[i].altsetting[j].intf_desc.bInterfaceNumber);
-            USB_LOG_RAW("\tbAlternateSetting: 0x%02x  \r\n", hport->config.intf[i].altsetting[j].intf_desc.bAlternateSetting);
-            USB_LOG_RAW("\tbNumEndpoints: 0x%02x      \r\n", hport->config.intf[i].altsetting[j].intf_desc.bNumEndpoints);
-            USB_LOG_RAW("\tbInterfaceClass: 0x%02x    \r\n", hport->config.intf[i].altsetting[j].intf_desc.bInterfaceClass);
-            USB_LOG_RAW("\tbInterfaceSubClass: 0x%02x \r\n", hport->config.intf[i].altsetting[j].intf_desc.bInterfaceSubClass);
-            USB_LOG_RAW("\tbInterfaceProtocol: 0x%02x \r\n", hport->config.intf[i].altsetting[j].intf_desc.bInterfaceProtocol);
-            USB_LOG_RAW("\tiInterface: 0x%02x         \r\n", hport->config.intf[i].altsetting[j].intf_desc.iInterface);
-
-            for (uint8_t k = 0; k < hport->config.intf[i].altsetting[j].intf_desc.bNumEndpoints; k++) {
-                USB_LOG_RAW("\t\tEndpoint Descriptor:\r\n");
-                USB_LOG_RAW("\t\tbLength: 0x%02x          \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.bLength);
-                USB_LOG_RAW("\t\tbDescriptorType: 0x%02x  \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.bDescriptorType);
-                USB_LOG_RAW("\t\tbEndpointAddress: 0x%02x \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.bEndpointAddress);
-                USB_LOG_RAW("\t\tbmAttributes: 0x%02x     \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.bmAttributes);
-                USB_LOG_RAW("\t\twMaxPacketSize: 0x%04x   \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.wMaxPacketSize);
-                USB_LOG_RAW("\t\tbInterval: 0x%02x        \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.bInterval);
-            }
-        }
-    }
-}
-
 static void usbh_print_setup(struct usb_setup_packet *setup)
 {
     (void)setup;
@@ -466,7 +418,7 @@ int usbh_enumerate(struct usbh_hubport *hport)
 
     USB_LOG_INFO("The device has %d bNumConfigurations\r\n", ((struct usb_device_descriptor *)ep0_request_buffer[hport->bus->busid])->bNumConfigurations);
 
-    config_index = 0;
+    config_index = usbh_get_hport_active_config_index(hport);
     USB_LOG_DBG("The device selects config %d\r\n", config_index);
 
     /* Read the first 9 bytes of the config descriptor */
@@ -599,23 +551,35 @@ int usbh_enumerate(struct usbh_hubport *hport)
     }
 #endif
     USB_LOG_INFO("Enumeration success, start loading class driver\r\n");
+    hport->bus->event_handler(hport->bus->busid, hport->parent->index, hport->port, USB_INTERFACE_ANY, USBH_EVENT_DEVICE_CONFIGURED);
     /*search supported class driver*/
     for (uint8_t i = 0; i < hport->config.config_desc.bNumInterfaces; i++) {
         intf_desc = &hport->config.intf[i].altsetting[0].intf_desc;
 
-        struct usbh_class_driver *class_driver = (struct usbh_class_driver *)usbh_find_class_driver(intf_desc->bInterfaceClass, intf_desc->bInterfaceSubClass, intf_desc->bInterfaceProtocol, hport->device_desc.idVendor, hport->device_desc.idProduct);
+        USB_ASSERT_MSG(intf_desc->bInterfaceNumber == i, "Interface number mismatch, do not support non-standard device\r\n");
+
+        struct usbh_class_driver *class_driver = (struct usbh_class_driver *)usbh_find_class_driver(intf_desc->bInterfaceClass,
+                                                                                                    intf_desc->bInterfaceSubClass,
+                                                                                                    intf_desc->bInterfaceProtocol,
+                                                                                                    intf_desc->bInterfaceNumber,
+                                                                                                    hport->device_desc.idVendor,
+                                                                                                    hport->device_desc.idProduct);
 
         if (class_driver == NULL) {
-            USB_LOG_ERR("do not support Class:0x%02x,Subclass:0x%02x,Protocl:0x%02x\r\n",
+            USB_LOG_ERR("Do not support Class:0x%02x, Subclass:0x%02x, Protocl:0x%02x on interface %u\r\n",
                         intf_desc->bInterfaceClass,
                         intf_desc->bInterfaceSubClass,
-                        intf_desc->bInterfaceProtocol);
-
+                        intf_desc->bInterfaceProtocol,
+                        i);
+            hport->bus->event_handler(hport->bus->busid, hport->parent->index, hport->port, i, USBH_EVENT_INTERFACE_UNSUPPORTED);
             continue;
         }
         hport->config.intf[i].class_driver = class_driver;
-        USB_LOG_INFO("Loading %s class driver\r\n", class_driver->driver_name);
+        USB_LOG_INFO("Loading %s class driver on interface %u\r\n", class_driver->driver_name, i);
         ret = CLASS_CONNECT(hport, i);
+        if (ret >= 0) {
+            hport->bus->event_handler(hport->bus->busid, hport->parent->index, hport->port, i, USBH_EVENT_INTERFACE_START);
+        }
     }
 
 errout:
@@ -630,17 +594,20 @@ void usbh_hubport_release(struct usbh_hubport *hport)
 {
     if (hport->connected) {
         hport->connected = false;
+        usbh_kill_urb(&hport->ep0_urb);
         usbh_free_devaddr(hport);
         for (uint8_t i = 0; i < hport->config.config_desc.bNumInterfaces; i++) {
             if (hport->config.intf[i].class_driver && hport->config.intf[i].class_driver->disconnect) {
                 CLASS_DISCONNECT(hport, i);
             }
+            hport->bus->event_handler(hport->bus->busid, hport->parent->index, hport->port, i, USBH_EVENT_INTERFACE_STOP);
         }
         hport->config.config_desc.bNumInterfaces = 0;
-        usbh_kill_urb(&hport->ep0_urb);
         if (hport->mutex) {
             usb_osal_mutex_delete(hport->mutex);
         }
+        USB_LOG_INFO("Device on Bus %u, Hub %u, Port %u disconnected\r\n", hport->bus->busid, hport->parent->index, hport->port);
+        hport->bus->event_handler(hport->bus->busid, hport->parent->index, hport->port, USB_INTERFACE_ANY, USBH_EVENT_DEVICE_DISCONNECTED);
     }
 }
 
@@ -652,24 +619,26 @@ static void usbh_bus_init(struct usbh_bus *bus, uint8_t busid, uintptr_t reg_bas
     bus->hcd.reg_base = reg_base;
 
     /* devaddr 1 is for roothub */
-    bus->devgen.next = 2;
+    bus->devgen.last = 0x7f;
 
     usb_slist_add_tail(&g_bus_head, &bus->list);
 }
 
-int usbh_initialize(uint8_t busid, uintptr_t reg_base)
+int usbh_initialize(uint8_t busid, uintptr_t reg_base, usbh_event_handler_t event_handler)
 {
     struct usbh_bus *bus;
 
-    if (busid >= CONFIG_USBHOST_MAX_BUS) {
-        USB_LOG_ERR("bus overflow\r\n");
-        while (1) {
-        }
-    }
+    USB_ASSERT_MSG(busid < CONFIG_USBHOST_MAX_BUS, "bus overflow\r\n");
 
     bus = &g_usbhost_bus[busid];
 
     usbh_bus_init(bus, busid, reg_base);
+
+    if (event_handler) {
+        bus->event_handler = event_handler;
+    } else {
+        bus->event_handler = dummy_event_handler;
+    }
 
 #ifdef __ARMCC_VERSION /* ARM C Compiler */
     extern const int usbh_class_info$$Base;
@@ -693,13 +662,11 @@ int usbh_deinitialize(uint8_t busid)
 {
     struct usbh_bus *bus;
 
-    if (busid >= CONFIG_USBHOST_MAX_BUS) {
-        USB_LOG_ERR("bus overflow\r\n");
-        while (1) {
-        }
-    }
+    USB_ASSERT_MSG(busid < CONFIG_USBHOST_MAX_BUS, "bus overflow\r\n");
 
     bus = &g_usbhost_bus[busid];
+
+    bus->event_handler(bus->busid, USB_HUB_INDEX_ANY, USB_HUB_PORT_ANY, USB_INTERFACE_ANY, USBH_EVENT_DEINIT);
 
     usbh_hub_deinitialize(bus);
 
@@ -711,6 +678,7 @@ int usbh_deinitialize(uint8_t busid)
 int usbh_control_transfer(struct usbh_hubport *hport, struct usb_setup_packet *setup, uint8_t *buffer)
 {
     struct usbh_urb *urb;
+    volatile uint8_t retry = 3;
     int ret;
 
     if (!hport || !setup) {
@@ -723,10 +691,19 @@ int usbh_control_transfer(struct usbh_hubport *hport, struct usb_setup_packet *s
 
     usbh_print_setup(setup);
 
+resubmit:
     usbh_control_urb_fill(urb, hport, setup, buffer, setup->wLength, CONFIG_USBHOST_CONTROL_TRANSFER_TIMEOUT, NULL, NULL);
     ret = usbh_submit_urb(urb);
     if (ret == 0) {
         ret = urb->actual_length;
+    }
+
+    if (ret < 0 && (ret != -USB_ERR_TIMEOUT)) {
+        retry--;
+        if (retry > 0) {
+            USB_LOG_WRN("Control transfer failed, errorcode %d, retrying...\r\n", ret);
+            goto resubmit;
+        }
     }
 
     usb_osal_mutex_give(hport->mutex);
@@ -816,73 +793,6 @@ static void *usbh_list_all_interface_name(struct usbh_hub *hub, const char *devn
     return NULL;
 }
 
-static void usbh_list_all_interface_driver(struct usbh_hub *hub)
-{
-    struct usbh_hubport *hport;
-    struct usbh_hub *hub_next;
-    const char *speed_table[] = { "error-speed", "low-speed", "full-speed", "high-speed", "wireless-speed", "super-speed", "superplus-speed" };
-
-    for (uint8_t port = 0; port < hub->nports; port++) {
-        hport = &hub->child[port];
-        if (hport->connected) {
-            for (uint8_t itf = 0; itf < hport->config.config_desc.bNumInterfaces; itf++) {
-                if (hport->config.intf[itf].class_driver && hport->config.intf[itf].class_driver->driver_name) {
-                    for (uint8_t j = 0; j < hub->index; j++) {
-                        USB_LOG_RAW("\t");
-                    }
-
-                    USB_LOG_RAW("|__Port %u, dev addr:0x%02x, If %u, ClassDriver=%s, %s\r\n",
-                                hport->port,
-                                hport->dev_addr,
-                                itf,
-                                hport->config.intf[itf].class_driver->driver_name,
-                                speed_table[hport->speed]);
-
-                    if (strcmp(hport->config.intf[itf].class_driver->driver_name, "hub") == 0) {
-                        hub_next = hport->config.intf[itf].priv;
-
-                        if (hub_next && hub_next->connected) {
-                            usbh_list_all_interface_driver(hub_next);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-static void usbh_list_all_interface_desc(struct usbh_bus *bus, struct usbh_hub *hub)
-{
-    struct usbh_hubport *hport;
-    struct usbh_hub *hub_next;
-
-    for (uint8_t port = 0; port < hub->nports; port++) {
-        hport = &hub->child[port];
-        if (hport->connected) {
-            USB_LOG_RAW("\r\nBus %u, Hub %u, Port %u, dev addr:0x%02x, VID:PID 0x%04x:0x%04x\r\n",
-                        bus->busid,
-                        hub->index,
-                        hport->port,
-                        hport->dev_addr,
-                        hport->device_desc.idVendor,
-                        hport->device_desc.idProduct);
-            usbh_print_hubport_info(hport);
-
-            for (uint8_t itf = 0; itf < hport->config.config_desc.bNumInterfaces; itf++) {
-                if (hport->config.intf[itf].class_driver && hport->config.intf[itf].class_driver->driver_name) {
-                    if (strcmp(hport->config.intf[itf].class_driver->driver_name, "hub") == 0) {
-                        hub_next = hport->config.intf[itf].priv;
-
-                        if (hub_next && hub_next->connected) {
-                            usbh_list_all_interface_desc(bus, hub_next);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 static struct usbh_hubport *usbh_list_all_hubport(struct usbh_hub *hub, uint8_t hub_index, uint8_t hub_port)
 {
     struct usbh_hubport *hport;
@@ -960,64 +870,348 @@ struct usbh_hubport *usbh_find_hubport(uint8_t busid, uint8_t hub_index, uint8_t
     return hport;
 }
 
+static void usbh_print_hubport_info(struct usbh_hubport *hport)
+{
+    USB_LOG_RAW("Device Descriptor:\r\n");
+    USB_LOG_RAW("  bLength: 0x%02x           \r\n", hport->device_desc.bLength);
+    USB_LOG_RAW("  bDescriptorType: 0x%02x   \r\n", hport->device_desc.bDescriptorType);
+    USB_LOG_RAW("  bcdUSB: 0x%04x            \r\n", hport->device_desc.bcdUSB);
+    USB_LOG_RAW("  bDeviceClass: 0x%02x      \r\n", hport->device_desc.bDeviceClass);
+    USB_LOG_RAW("  bDeviceSubClass: 0x%02x   \r\n", hport->device_desc.bDeviceSubClass);
+    USB_LOG_RAW("  bDeviceProtocol: 0x%02x   \r\n", hport->device_desc.bDeviceProtocol);
+    USB_LOG_RAW("  bMaxPacketSize0: 0x%02x   \r\n", hport->device_desc.bMaxPacketSize0);
+    USB_LOG_RAW("  idVendor: 0x%04x          \r\n", hport->device_desc.idVendor);
+    USB_LOG_RAW("  idProduct: 0x%04x         \r\n", hport->device_desc.idProduct);
+    USB_LOG_RAW("  bcdDevice: 0x%04x         \r\n", hport->device_desc.bcdDevice);
+    USB_LOG_RAW("  iManufacturer: 0x%02x     \r\n", hport->device_desc.iManufacturer);
+    USB_LOG_RAW("  iProduct: 0x%02x          \r\n", hport->device_desc.iProduct);
+    USB_LOG_RAW("  iSerialNumber: 0x%02x     \r\n", hport->device_desc.iSerialNumber);
+    USB_LOG_RAW("  bNumConfigurations: 0x%02x\r\n", hport->device_desc.bNumConfigurations);
+
+    USB_LOG_RAW("  Config Descriptor:\r\n");
+    USB_LOG_RAW("    bLength: 0x%02x             \r\n", hport->config.config_desc.bLength);
+    USB_LOG_RAW("    bDescriptorType: 0x%02x     \r\n", hport->config.config_desc.bDescriptorType);
+    USB_LOG_RAW("    wTotalLength: 0x%04x        \r\n", hport->config.config_desc.wTotalLength);
+    USB_LOG_RAW("    bNumInterfaces: 0x%02x      \r\n", hport->config.config_desc.bNumInterfaces);
+    USB_LOG_RAW("    bConfigurationValue: 0x%02x \r\n", hport->config.config_desc.bConfigurationValue);
+    USB_LOG_RAW("    iConfiguration: 0x%02x      \r\n", hport->config.config_desc.iConfiguration);
+    USB_LOG_RAW("    bmAttributes: 0x%02x        \r\n", hport->config.config_desc.bmAttributes);
+    USB_LOG_RAW("    bMaxPower: 0x%02x           \r\n", hport->config.config_desc.bMaxPower);
+
+    for (uint8_t i = 0; i < hport->config.config_desc.bNumInterfaces; i++) {
+        for (uint8_t j = 0; j < hport->config.intf[i].altsetting_num; j++) {
+            USB_LOG_RAW("    Interface Descriptor:\r\n");
+            USB_LOG_RAW("      bLength: 0x%02x            \r\n", hport->config.intf[i].altsetting[j].intf_desc.bLength);
+            USB_LOG_RAW("      bDescriptorType: 0x%02x    \r\n", hport->config.intf[i].altsetting[j].intf_desc.bDescriptorType);
+            USB_LOG_RAW("      bInterfaceNumber: 0x%02x   \r\n", hport->config.intf[i].altsetting[j].intf_desc.bInterfaceNumber);
+            USB_LOG_RAW("      bAlternateSetting: 0x%02x  \r\n", hport->config.intf[i].altsetting[j].intf_desc.bAlternateSetting);
+            USB_LOG_RAW("      bNumEndpoints: 0x%02x      \r\n", hport->config.intf[i].altsetting[j].intf_desc.bNumEndpoints);
+            USB_LOG_RAW("      bInterfaceClass: 0x%02x    \r\n", hport->config.intf[i].altsetting[j].intf_desc.bInterfaceClass);
+            USB_LOG_RAW("      bInterfaceSubClass: 0x%02x \r\n", hport->config.intf[i].altsetting[j].intf_desc.bInterfaceSubClass);
+            USB_LOG_RAW("      bInterfaceProtocol: 0x%02x \r\n", hport->config.intf[i].altsetting[j].intf_desc.bInterfaceProtocol);
+            USB_LOG_RAW("      iInterface: 0x%02x         \r\n", hport->config.intf[i].altsetting[j].intf_desc.iInterface);
+
+            for (uint8_t k = 0; k < hport->config.intf[i].altsetting[j].intf_desc.bNumEndpoints; k++) {
+                USB_LOG_RAW("      Endpoint Descriptor:\r\n");
+                USB_LOG_RAW("        bLength: 0x%02x          \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.bLength);
+                USB_LOG_RAW("        bDescriptorType: 0x%02x  \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.bDescriptorType);
+                USB_LOG_RAW("        bEndpointAddress: 0x%02x \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.bEndpointAddress);
+                USB_LOG_RAW("        bmAttributes: 0x%02x     \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.bmAttributes);
+                USB_LOG_RAW("        wMaxPacketSize: 0x%04x   \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.wMaxPacketSize);
+                USB_LOG_RAW("        bInterval: 0x%02x        \r\n", hport->config.intf[i].altsetting[j].ep[k].ep_desc.bInterval);
+            }
+        }
+    }
+}
+
+static void usbh_list_device(struct usbh_hub *hub, bool astree, bool verbose, int dev_addr, int vid, int pid)
+{
+    static const char *speed_table[] = {
+        "UNKNOWN",
+        "low-speed",
+        "full-speed",
+        "high-speed",
+        "wireless",
+        "super-speed",
+        "super-speed-plus",
+    };
+
+    static const char *root_speed_table[] = {
+        "UNKNOWN",
+        "1.1",
+        "1.1",
+        "2.0",
+        "2.5",
+        "3.0",
+        "3.0",
+    };
+
+    static const uint16_t speed_baud[] = {
+        0,
+        12,
+        12,
+        480,
+        480,
+        5000,
+        10000,
+    };
+
+    struct usbh_bus *bus;
+    struct usbh_hubport *hport;
+    struct usbh_hub *hub_next;
+
+    uint8_t imbuf[64];
+    uint8_t ipbuf[64];
+
+    const char *pimstr;
+    const char *pipstr;
+
+    bool imvalid = false;
+    bool ipvalid = false;
+
+    int ret;
+
+    bus = hub->bus;
+
+    (void)speed_table;
+
+    if (hub->is_roothub) {
+        if (astree) {
+            USB_LOG_RAW("/:  Bus %02u.Port 1: Dev %u, Class=root_hub, Driver=hcd, %uM\r\n",
+                        bus->busid, hub->hub_addr, speed_baud[hub->speed]);
+
+        } else {
+            if ((dev_addr < 0) || (hub->hub_addr == dev_addr)) {
+                if (((vid < 0) || (vid == 0xffff)) && ((pid < 0) || (pid == 0xffff))) {
+                    USB_LOG_RAW("Bus %03u Device %03u: ID %04x:%04x %s %s root hub\r\n",
+                                bus->busid, hub->hub_addr, 0xffff, 0xffff,
+                                "Cherry-Embedded", root_speed_table[hub->speed]);
+                }
+            }
+        }
+    }
+
+    for (uint8_t port = 0; port < hub->nports; port++) {
+        hport = &hub->child[port];
+        if (hport->connected) {
+            ret = 0;
+            if (hport->device_desc.iManufacturer) {
+                memset(imbuf, 0, sizeof(imbuf));
+                ret = usbh_get_string_desc(hport, hport->device_desc.iManufacturer, imbuf, sizeof(imbuf));
+                if (ret == 0) {
+                    imvalid = true;
+                }
+            }
+
+            if (hport->device_desc.iProduct) {
+                memset(ipbuf, 0, sizeof(ipbuf));
+                ret = usbh_get_string_desc(hport, hport->device_desc.iProduct, ipbuf, sizeof(ipbuf));
+                if (ret == 0) {
+                    ipvalid = true;
+                }
+            }
+
+            if (imvalid) {
+                pimstr = (const char *)imbuf;
+            } else {
+                pimstr = "Not specified Manufacturer";
+            }
+
+            if (ipvalid) {
+                pipstr = (const char *)ipbuf;
+            } else {
+                pipstr = "Not specified Product";
+            }
+
+            if (!astree) {
+                if ((dev_addr < 0) || (hport->dev_addr == dev_addr)) {
+                    if (((vid < 0) || (vid == hport->device_desc.idVendor)) && ((pid < 0) || (pid == hport->device_desc.idProduct))) {
+                        USB_LOG_RAW("Bus %03u Device %03u: ID %04x:%04x %s %s\r\n",
+                                    bus->busid, hport->dev_addr, hport->device_desc.idVendor, hport->device_desc.idProduct,
+                                    pimstr, pipstr);
+
+                        if (verbose) {
+                            usbh_print_hubport_info(hport);
+                        }
+                    }
+                }
+            }
+
+            for (uint8_t intf = 0; intf < hport->config.config_desc.bNumInterfaces; intf++) {
+                if (hport->config.intf[intf].class_driver && hport->config.intf[intf].class_driver->driver_name) {
+                    if (astree) {
+                        for (uint8_t j = 0; j < hub->index; j++) {
+                            USB_LOG_RAW("    ");
+                        }
+
+                        USB_LOG_RAW("|__ Port %u: Dev %u, If %u, ClassDriver=%s, %uM\r\n",
+                                    hport->port, hport->dev_addr, intf, hport->config.intf[intf].class_driver->driver_name, speed_baud[hport->speed]);
+                    }
+
+                    if (!strcmp(hport->config.intf[intf].class_driver->driver_name, "hub")) {
+                        hub_next = hport->config.intf[intf].priv;
+
+                        if (hub_next && hub_next->connected) {
+                            usbh_list_device(hub_next, astree, verbose, dev_addr, vid, pid);
+                        }
+                    }
+                } else if (astree) {
+                    for (uint8_t j = 0; j < hub->index; j++) {
+                        USB_LOG_RAW("    ");
+                    }
+
+                    USB_LOG_RAW("|__ Port %u: Dev %u, If 0 ClassDriver=none, %uM\r\n",
+                                hport->port, hport->dev_addr, speed_baud[hport->speed]);
+                }
+            }
+        }
+    }
+}
+
+void lsusb_help(void)
+{
+    USB_LOG_RAW("List USB Devices\r\n"
+                "Usage: lsusb [options]...\r\n"
+                "\r\n"
+                "-v, --verbose\r\n"
+                "    - increase verbosity (show descriptors)\r\n"
+                "-s [[bus]:][dev_addr]\r\n"
+                "    - show only devices with specified device and/or\r\n"
+                "      bus numbers (in decimal)\r\n"
+                "-d vendor:[product]\r\n"
+                "    - show only devices with the specified vendor and\r\n"
+                "      product ID numbers (in hexadecimal)\r\n"
+                "-t, --tree\r\n"
+                "    - dump the physical USB device hierarchy as a tree\r\n"
+                "-V, --version\r\n"
+                "    - show version of the cherryusb\r\n"
+                "-h, --help\r\n"
+                "    - show usage and help information\r\n");
+}
+
 int lsusb(int argc, char **argv)
 {
     usb_slist_t *bus_list;
-    struct usbh_hub *hub;
     struct usbh_bus *bus;
-    size_t flags;
+
+    int busid = -1;
+    int dev_addr = -1;
+    int vid = -1;
+    int pid = -1;
+    bool astree = false;
+    bool verbose = false;
 
     if (argc < 2) {
-        USB_LOG_RAW("Usage: lsusb [options]...\r\n");
-        USB_LOG_RAW("List USB devices\r\n");
-        USB_LOG_RAW("  -v, --verbose\r\n");
-        USB_LOG_RAW("      Increase verbosity (show descriptors)\r\n");
-        // USB_LOG_RAW("  -s [[bus]:[devnum]]\r\n");
-        // USB_LOG_RAW("      Show only devices with specified device and/or bus numbers (in decimal)\r\n");
-        // USB_LOG_RAW("  -d vendor:[product]\r\n");
-        // USB_LOG_RAW("      Show only devices with the specified vendor and product ID numbers (in hexadecimal)\r\n");
-        USB_LOG_RAW("  -t, --tree\r\n");
-        USB_LOG_RAW("      Dump the physical USB device hierachy as a tree\r\n");
-        USB_LOG_RAW("  -V, --version\r\n");
-        USB_LOG_RAW("      Show version of program\r\n");
-        USB_LOG_RAW("  -h, --help\r\n");
-        USB_LOG_RAW("      Show usage and help\r\n");
-        return 0;
-    }
-    if (argc > 3) {
+        lsusb_help();
         return 0;
     }
 
-    flags = usb_osal_enter_critical_section();
+    while (argc > 1) {
+        argc--;
+        argv++;
 
-    if (strcmp(argv[1], "-V") == 0) {
-        USB_LOG_RAW("CherryUSB Version %s\r\n", CHERRYUSB_VERSION_STR);
-    }
+        if (!strcmp(*argv, "-V") || !strcmp(*argv, "--version")) {
+            USB_LOG_RAW("CherryUSB version %s\r\n", CHERRYUSB_VERSION_STR);
+            return 0;
+        } else if (!strcmp(*argv, "-h") || !strcmp(*argv, "--help")) {
+            lsusb_help();
+            return 0;
+        } else if (!strcmp(*argv, "-v") || !strcmp(*argv, "--verbose")) {
+            verbose = true;
+        } else if (!strcmp(*argv, "-t") || !strcmp(*argv, "--tree")) {
+            astree = true;
+        } else if (!strcmp(*argv, "-s")) {
+            if (argc > 1) {
+                argc--;
+                argv++;
 
-    if (strcmp(argv[1], "-t") == 0) {
-        usb_slist_for_each(bus_list, &g_bus_head)
-        {
-            bus = usb_slist_entry(bus_list, struct usbh_bus, list);
-            hub = &bus->hcd.roothub;
+                if (*argv[0] == '-') {
+                    continue;
+                }
 
-            USB_LOG_RAW("/: Bus %u, Hub %u, ports=%u, is roothub\r\n",
-                        bus->busid,
-                        hub->index,
-                        hub->nports);
-            usbh_list_all_interface_driver(hub);
+                char *endptr;
+                const char *colon = strchr(*argv, ':');
+                (void)endptr;
+
+                if (colon != NULL) {
+                    const char *str;
+                    if (colon > *argv) {
+                        busid = strtol(*argv, &endptr, 10);
+                    }
+                    str = colon + 1;
+                    if (*str != '\0') {
+                        dev_addr = strtol(str, &endptr, 10);
+                        if (dev_addr <= 0 || dev_addr >= 128) {
+                            dev_addr = -1;
+                        }
+                    }
+                } else {
+                    dev_addr = strtol(*argv, &endptr, 10);
+                    if (dev_addr <= 0 || dev_addr >= 128) {
+                        dev_addr = -1;
+                    }
+                }
+            }
+        } else if (!strcmp(*argv, "-d")) {
+            if (argc > 1) {
+                argc--;
+                argv++;
+
+                if (*argv[0] == '-') {
+                    continue;
+                }
+
+                char *endptr;
+                const char *colon = strchr(*argv, ':');
+                (void)endptr;
+
+                if (colon == NULL) {
+                    continue;
+                }
+                const char *str;
+
+                vid = strtol(*argv, &endptr, 16);
+                if (vid < 0 || vid > 0xffff) {
+                    vid = -1;
+                    continue;
+                }
+                str = colon + 1;
+                if (*str != '\0') {
+                    pid = strtol(str, &endptr, 16);
+                    if (pid < 0 || pid > 0xffff) {
+                        pid = -1;
+                    }
+                }
+            }
         }
     }
 
-    if (strcmp(argv[1], "-v") == 0) {
-        usb_slist_for_each(bus_list, &g_bus_head)
-        {
-            bus = usb_slist_entry(bus_list, struct usbh_bus, list);
-            hub = &bus->hcd.roothub;
-
-            usbh_list_all_interface_desc(bus, hub);
-        }
+    if (astree) {
+        busid = -1;
+        dev_addr = -1;
+        vid = -1;
+        pid = -1;
+        verbose = false;
     }
 
-    usb_osal_leave_critical_section(flags);
+    usb_slist_for_each(bus_list, &g_bus_head)
+    {
+        bus = usb_slist_entry(bus_list, struct usbh_bus, list);
+        if (busid >= 0) {
+            if (bus->busid != busid) {
+                continue;
+            }
+        }
+
+        usbh_list_device(&bus->hcd.roothub, astree, verbose, dev_addr, vid, pid);
+    }
+
     return 0;
+}
+
+__WEAK uint8_t usbh_get_hport_active_config_index(struct usbh_hubport *hport)
+{
+    ARG_UNUSED(hport);
+
+    return 0; // Default to configuration index 0
 }

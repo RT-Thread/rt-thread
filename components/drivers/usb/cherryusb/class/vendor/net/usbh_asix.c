@@ -795,16 +795,6 @@ int usbh_asix_eth_output(uint32_t buflen)
     return usbh_submit_urb(&g_asix_class.bulkout_urb);
 }
 
-__WEAK void usbh_asix_run(struct usbh_asix *asix_class)
-{
-    (void)asix_class;
-}
-
-__WEAK void usbh_asix_stop(struct usbh_asix *asix_class)
-{
-    (void)asix_class;
-}
-
 static const uint16_t asix_id_table[][2] = {
     { 0x0B95, 0x772B },
     { 0x0B95, 0x7720 },

@@ -1,0 +1,1 @@
+{"configModDic":[{"Key":"Clock","Value":{"initByCoreX":0,"runOnCoreX":0}},{"Key":"SYS","Value":{"initByCoreX":0,"runOnCoreX":0}},{"Key":"NVIC_M7","Value":{"initByCoreX":0,"runOnCoreX":0}},{"Key":"DMA","Value":{"initByCoreX":0,"runOnCoreX":0}},{"Key":"GPIO","Value":{"initByCoreX":0,"runOnCoreX":0}},{"Key":"USART1","Value":{"initByCoreX":0,"runOnCoreX":0}}]}

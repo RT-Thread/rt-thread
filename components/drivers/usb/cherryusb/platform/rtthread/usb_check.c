@@ -17,8 +17,11 @@
 #endif
 #endif
 
-#if defined(ARCH_ARM_CORTEX_M7) ||                                          \
-    defined(SOC_HPM6000) || defined(SOC_HPM6E00) || defined(SOC_HPM6P00) || \
+#if defined(ARCH_ARM_CORTEX_M7) ||                                                                  \
+    defined(ARCH_ARM_CORTEX_A) ||                                                                   \
+    defined(ARCH_RISCV64) ||                                                                        \
+    defined(SOC_HPM6200) || defined(SOC_HPM6300) || defined(SOC_HPM6700) || defined(SOC_HPM6800) || \
+    defined(SOC_HPM6E00) || defined(SOC_HPM6P00) ||                                                 \
     defined(BSP_USING_BL61X) || defined(BSP_USING_BL808)
 #ifndef RT_USING_CACHE
 #error RT_USING_CACHE must be enabled in this chip
@@ -27,6 +30,6 @@
 
 #ifdef RT_USING_CACHE
 #ifndef CONFIG_USB_DCACHE_ENABLE
-#warning CONFIG_USB_DCACHE_ENABLE must be enabled if you do not config nocache ram
+#error CONFIG_USB_DCACHE_ENABLE must be enabled if you do not config nocache ram
 #endif
 #endif

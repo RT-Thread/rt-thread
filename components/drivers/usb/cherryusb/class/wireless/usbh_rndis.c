@@ -578,16 +578,6 @@ int usbh_rndis_eth_output(uint32_t buflen)
     return usbh_submit_urb(&g_rndis_class.bulkout_urb);
 }
 
-__WEAK void usbh_rndis_run(struct usbh_rndis *rndis_class)
-{
-    (void)rndis_class;
-}
-
-__WEAK void usbh_rndis_stop(struct usbh_rndis *rndis_class)
-{
-    (void)rndis_class;
-}
-
 static const struct usbh_class_driver rndis_class_driver = {
     .driver_name = "rndis",
     .connect = usbh_rndis_connect,
@@ -599,6 +589,15 @@ CLASS_INFO_DEFINE const struct usbh_class_info rndis_class_info = {
     .bInterfaceClass = USB_DEVICE_CLASS_WIRELESS,
     .bInterfaceSubClass = 0x01,
     .bInterfaceProtocol = 0x03,
+    .id_table = NULL,
+    .class_driver = &rndis_class_driver
+};
+
+CLASS_INFO_DEFINE const struct usbh_class_info rndis_cdcacm_class_info = {
+    .match_flags = USB_CLASS_MATCH_INTF_CLASS | USB_CLASS_MATCH_INTF_SUBCLASS | USB_CLASS_MATCH_INTF_PROTOCOL,
+    .bInterfaceClass = USB_DEVICE_CLASS_CDC,
+    .bInterfaceSubClass = CDC_ABSTRACT_CONTROL_MODEL,
+    .bInterfaceProtocol = 0xff,
     .id_table = NULL,
     .class_driver = &rndis_class_driver
 };

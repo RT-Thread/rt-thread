@@ -41,7 +41,7 @@ config RT_USING_SMART
     select RT_USING_POSIX_CLOCK
     select RT_USING_POSIX_FS
     select RT_USING_POSIX_TERMIOS
-    select RT_USING_KTIME
+    select RT_USING_CLOCK_TIME
     select RT_USING_STDC_ATOMIC
     select RT_USING_SYSTEM_WORKQUEUE
     select RT_USING_CPU_USAGE_TRACER
@@ -429,6 +429,18 @@ if RT_USING_CONSOLE
     config RT_CONSOLE_DEVICE_NAME
         string "the device name for console"
         default "uart1"
+
+    config RT_USING_CONSOLE_OUTPUT_CTL
+        bool "Enable runtime console output control"
+        default y
+        help
+            Enable runtime control for console output.
+            When enabled, rt_console_output_set_enabled() and
+            rt_console_output_get_enabled() can be used to switch
+            rt_kputs()/rt_kprintf() output on or off dynamically.
+
+            When disabled, these APIs are not compiled as real symbols and
+            output path has no runtime check, so console output stays enabled.
 
 endif
 

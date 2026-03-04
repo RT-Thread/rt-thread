@@ -45,7 +45,7 @@ AT32F421-START板级包支持MDK4﹑MDK5﹑IAR开发环境和GCC编译器，以�
 | SPI       | 支持     | SPI1/2                     |
 | ADC       | 支持     | ADC1                       |
 | PWM       | 支持     | TMR1                       |
-| HWTIMER   | 支持     | TMR3                       |
+| CLOCK_TIMER   | 支持     | TMR3                       |
 | WDT       | 支持     |                            |
 | RTC       | 支持     |                            |
 | FLASH     | 支持     |                            |

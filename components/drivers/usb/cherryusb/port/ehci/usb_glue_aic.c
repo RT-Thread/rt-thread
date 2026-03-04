@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (c) 2022, Artinchip Technology Co., Ltd
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -46,37 +46,31 @@ typedef struct aic_ehci_config {
     uint32_t phy_clk_id;
     uint32_t phy_rst_id;
     uint32_t irq_num;
-}aic_ehci_config_t;
+} aic_ehci_config_t;
 
 aic_ehci_config_t config[] = {
 #ifdef AIC_USING_USB0_HOST
-    {
-        USB_HOST0_BASE,
-        CLK_USBH0,
-        RESET_USBH0,
-        CLK_USB_PHY0,
-        RESET_USBPHY0,
-        USB_HOST0_EHCI_IRQn
-    },
+    { USB_HOST0_BASE,
+      CLK_USBH0,
+      RESET_USBH0,
+      CLK_USB_PHY0,
+      RESET_USBPHY0,
+      USB_HOST0_EHCI_IRQn },
 #else
-    {
-        0xFFFFFFFF,
-        0xFFFFFFFF,
-        0xFFFFFFFF,
-        0xFFFFFFFF,
-        0xFFFFFFFF,
-        0xFFFFFFFF
-    },
+    { 0xFFFFFFFF,
+      0xFFFFFFFF,
+      0xFFFFFFFF,
+      0xFFFFFFFF,
+      0xFFFFFFFF,
+      0xFFFFFFFF },
 #endif
 #ifdef AIC_USING_USB1_HOST
-    {
-        USB_HOST1_BASE,
-        CLK_USBH1,
-        RESET_USBH1,
-        CLK_USB_PHY1,
-        RESET_USBPHY1,
-        USB_HOST1_EHCI_IRQn
-    }
+    { USB_HOST1_BASE,
+      CLK_USBH1,
+      RESET_USBH1,
+      CLK_USB_PHY1,
+      RESET_USBPHY1,
+      USB_HOST1_EHCI_IRQn }
 #endif
 };
 
@@ -85,12 +79,12 @@ void usb_hc_low_level_init(struct usbh_bus *bus)
     uint32_t val;
     int i = 0;
 
-    for (i=0; i<sizeof(config)/sizeof(aic_ehci_config_t); i++) {
+    for (i = 0; i < sizeof(config) / sizeof(aic_ehci_config_t); i++) {
         if (bus->hcd.reg_base == config[i].base_addr)
             break;
     }
 
-    if (i == sizeof(config)/sizeof(aic_ehci_config_t))
+    if (i == sizeof(config) / sizeof(aic_ehci_config_t))
         return;
 
     /* set usb0 phy switch: Host/Device */
@@ -109,20 +103,20 @@ void usb_hc_low_level_init(struct usbh_bus *bus)
     aicos_udelay(300);
 
     /* set phy type: UTMI/ULPI */
-    val = readl((volatile void *)(unsigned long)(config[i].base_addr+0x800));
+    val = readl((volatile void *)(unsigned long)(config[i].base_addr + 0x800));
 #ifdef FPGA_BOARD_ARTINCHIP
     /* fpga phy type = ULPI */
-    writel((val  & ~0x1U), (volatile void *)(unsigned long)(config[i].base_addr+0x800));
+    writel((val & ~0x1U), (volatile void *)(unsigned long)(config[i].base_addr + 0x800));
 #else
     /* board phy type = UTMI */
-    writel((val | 0x1), (volatile void *)(unsigned long)(config[i].base_addr+0x800));
+    writel((val | 0x1), (volatile void *)(unsigned long)(config[i].base_addr + 0x800));
 #endif
 
     /* Set AHB2STBUS_INSREG01
         Set EHCI packet buffer IN/OUT threshold (in DWORDs)
         Must increase the OUT threshold to avoid underrun. (FIFO size - 4)
     */
-    writel((32 | (127 << 16)), (volatile void *)(unsigned long)(config[i].base_addr+0x94));
+    writel((32 | (127 << 16)), (volatile void *)(unsigned long)(config[i].base_addr + 0x94));
 
     /* register interrupt callback */
     aicos_request_irq(config[i].irq_num, (irq_handler_t)aic_ehci_isr,
@@ -160,12 +154,12 @@ int __usbh_init(void)
 #endif
 
 #ifdef AIC_USING_USB0_HOST
-    usbh_initialize(bus_id, USB_HOST0_BASE);
+    usbh_initialize(bus_id, USB_HOST0_BASE, NULL);
     bus_id++;
 #endif
 
 #ifdef AIC_USING_USB1_HOST
-    usbh_initialize(bus_id, USB_HOST1_BASE);
+    usbh_initialize(bus_id, USB_HOST1_BASE, NULL);
     bus_id++;
 #endif
     return 0;

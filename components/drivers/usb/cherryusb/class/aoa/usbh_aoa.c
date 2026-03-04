@@ -176,9 +176,6 @@ int usbh_aoa_register_hid(struct usbh_aoa *aoa_class, uint16_t id, uint8_t *repo
 int usbh_aoa_send_hid_event(struct usbh_aoa *aoa_class, uint16_t id, uint8_t *event, uint32_t event_len)
 {
     struct usb_setup_packet *setup;
-    int ret;
-    uint8_t len;
-    uint32_t offset;
 
     if (!aoa_class || !aoa_class->hport) {
         return -USB_ERR_INVAL;
@@ -198,7 +195,6 @@ int usbh_aoa_send_hid_event(struct usbh_aoa *aoa_class, uint16_t id, uint8_t *ev
 static int usbh_aoa_connect(struct usbh_hubport *hport, uint8_t intf)
 {
     struct usb_endpoint_descriptor *ep_desc;
-    int ret = 0;
 
     struct usbh_aoa *aoa_class = &g_aoa_class;
 

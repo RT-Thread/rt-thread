@@ -18,6 +18,7 @@
  * 2024-11-18     kaidegit     fix processing groups with similar name
  * 2025-02-22     kaidegit     fix missing some flags added in Sconscript
  * 2025-02-24     kaidegit     remove some code that is unnecessary but takes time, get them from env
+ * 2026-01-22     xym-ee       Fix handling of tuple-based CPPDEFINES from SCons in CMake project generation.
 """
 
 import os
@@ -187,7 +188,24 @@ def GenerateCFiles(env, project, project_name):
 
         cm_file.write("ADD_DEFINITIONS(\n")
         for i in env['CPPDEFINES']:
-            cm_file.write("\t-D" + i + "\n")
+            # Handle CPPDEFINES from SCons (str / tuple)
+            if isinstance(i, tuple):
+                # e.g. ('STM32F407xx',)
+                if len(i) == 1:
+                    cm_file.write("\t-D" + str(i[0]) + "\n")
+                # e.g. ('FOO', None)
+                elif len(i) == 2:
+                    if i[1] is None:
+                        cm_file.write("\t-D" + str(i[0]) + "\n")
+                    # e.g. ('FOO', 1)
+                    else:
+                        cm_file.write("\t-D{}={}\n".format(i[0], i[1]))
+                else:
+                    # unexpected form, fallback to name only
+                    cm_file.write("\t-D" + str(i[0]) + "\n")
+            else:
+                # generic macro (commonly a string), ensure robust string conversion
+                cm_file.write("\t-D" + str(i) + "\n")
         cm_file.write(")\n\n")
 
         libgroups = []

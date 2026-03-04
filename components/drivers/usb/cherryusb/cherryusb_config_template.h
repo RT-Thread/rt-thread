@@ -157,7 +157,7 @@
 #define CONFIG_USBHOST_MAX_INTF_ALTSETTINGS 2
 #define CONFIG_USBHOST_MAX_ENDPOINTS        4
 
-#define CONFIG_USBHOST_MAX_CDC_ACM_CLASS 4
+#define CONFIG_USBHOST_MAX_SERIAL_CLASS  4
 #define CONFIG_USBHOST_MAX_HID_CLASS     4
 #define CONFIG_USBHOST_MAX_MSC_CLASS     2
 #define CONFIG_USBHOST_MAX_AUDIO_CLASS   1
@@ -186,6 +186,10 @@
 
 #ifndef CONFIG_USBHOST_CONTROL_TRANSFER_TIMEOUT
 #define CONFIG_USBHOST_CONTROL_TRANSFER_TIMEOUT 500
+#endif
+
+#ifndef CONFIG_USBHOST_SERIAL_RX_SIZE
+#define CONFIG_USBHOST_SERIAL_RX_SIZE 2048
 #endif
 
 #ifndef CONFIG_USBHOST_MSC_TIMEOUT
@@ -301,6 +305,7 @@
 /* ---------------- MUSB Configuration ---------------- */
 #define CONFIG_USB_MUSB_PIPE_NUM 8
 // #define CONFIG_USB_MUSB_SUNXI
+// #define CONFIG_USB_MUSB_WITHOUT_MULTIPOINT
 
 /* When your chip hardware supports high-speed and wants to initialize it in high-speed mode,
  * the relevant IP will configure the internal or external high-speed PHY according to CONFIG_USB_HS.
@@ -316,5 +321,8 @@
 #ifndef usb_ramaddr2phyaddr
 #define usb_ramaddr2phyaddr(addr) (addr)
 #endif
+
+/* Enable OTG support, only support hpmicro now */
+// #define CONFIG_USB_OTG_ENABLE
 
 #endif

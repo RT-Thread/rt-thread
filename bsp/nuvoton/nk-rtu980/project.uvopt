@@ -367,8 +367,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\cputime\cputime.c</PathWithFileName>
-      <FilenameWithoutPath>cputime.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\components\drivers\clock_time\clock_time_core.c</PathWithFileName>
+      <FilenameWithoutPath>clock_time_core.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -379,8 +379,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\cputime\cputimer.c</PathWithFileName>
-      <FilenameWithoutPath>cputimer.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\components\drivers\clock_time\clock_timer.c</PathWithFileName>
+      <FilenameWithoutPath>clock_timer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -439,8 +439,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\drivers\hwtimer\hwtimer.c</PathWithFileName>
-      <FilenameWithoutPath>hwtimer.c</FilenameWithoutPath>
+      <PathWithFileName>..\..\..\components\drivers\clock_time\clock_timer.c</PathWithFileName>
+      <FilenameWithoutPath>clock_timer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

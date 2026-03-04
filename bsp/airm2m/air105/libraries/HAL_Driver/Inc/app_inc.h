@@ -23,7 +23,7 @@
 #define __APP_INC_H__
 #include "bl_inc.h"
 
-#include "core_hwtimer.h"
+#include "core_clock_timer.h"
 #include "core_spi.h"
 #include "core_adc.h"
 #include "core_dac.h"

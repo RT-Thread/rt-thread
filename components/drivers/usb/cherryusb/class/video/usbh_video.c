@@ -122,12 +122,12 @@ int usbh_videostreaming_get_cur_probe(struct usbh_video *video_class)
     return usbh_video_get(video_class, VIDEO_REQUEST_GET_CUR, video_class->data_intf, 0x00, VIDEO_VS_PROBE_CONTROL, (uint8_t *)&video_class->probe, 26);
 }
 
-int usbh_videostreaming_set_cur_probe(struct usbh_video *video_class, uint8_t formatindex, uint8_t frameindex)
+int usbh_videostreaming_set_cur_probe(struct usbh_video *video_class, uint8_t formatindex, uint8_t frameindex, uint32_t dwFrameInterval)
 {
     video_class->probe.bFormatIndex = formatindex;
     video_class->probe.bFrameIndex = frameindex;
     video_class->probe.dwMaxPayloadTransferSize = 0;
-    video_class->probe.dwFrameInterval = 333333;
+    video_class->probe.dwFrameInterval = dwFrameInterval;
     return usbh_video_set(video_class, VIDEO_REQUEST_SET_CUR, video_class->data_intf, 0x00, VIDEO_VS_PROBE_CONTROL, (uint8_t *)&video_class->probe, 26);
 }
 
@@ -136,7 +136,6 @@ int usbh_videostreaming_set_cur_commit(struct usbh_video *video_class, uint8_t f
     memcpy(&video_class->commit, &video_class->probe, sizeof(struct video_probe_and_commit_controls));
     video_class->commit.bFormatIndex = formatindex;
     video_class->commit.bFrameIndex = frameindex;
-    video_class->commit.dwFrameInterval = 333333;
     return usbh_video_set(video_class, VIDEO_REQUEST_SET_CUR, video_class->data_intf, 0x00, VIDEO_VS_COMMIT_CONTROL, (uint8_t *)&video_class->commit, 26);
 }
 
@@ -154,6 +153,7 @@ int usbh_video_open(struct usbh_video *video_class,
     bool found = false;
     uint8_t formatidx = 0;
     uint8_t frameidx = 0;
+    uint32_t dwDefaultFrameInterval = 0;
     uint8_t step;
 
     if (!video_class || !video_class->hport) {
@@ -172,6 +172,7 @@ int usbh_video_open(struct usbh_video *video_class,
                 if ((wWidth == video_class->format[i].frame[j].wWidth) &&
                     (wHeight == video_class->format[i].frame[j].wHeight)) {
                     frameidx = j + 1;
+                    dwDefaultFrameInterval = video_class->format[i].frame[j].dwDefaultFrameInterval;
                     found = true;
                     break;
                 }
@@ -204,7 +205,7 @@ int usbh_video_open(struct usbh_video *video_class,
     }
 
     step = 1;
-    ret = usbh_videostreaming_set_cur_probe(video_class, formatidx, frameidx);
+    ret = usbh_videostreaming_set_cur_probe(video_class, formatidx, frameidx, dwDefaultFrameInterval);
     if (ret < 0) {
         goto errout;
     }
@@ -228,7 +229,7 @@ int usbh_video_open(struct usbh_video *video_class,
     }
 
     step = 5;
-    ret = usbh_videostreaming_set_cur_probe(video_class, formatidx, frameidx);
+    ret = usbh_videostreaming_set_cur_probe(video_class, formatidx, frameidx, dwDefaultFrameInterval);
     if (ret < 0) {
         goto errout;
     }
@@ -246,26 +247,30 @@ int usbh_video_open(struct usbh_video *video_class,
     }
 
     step = 8;
-    setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_STANDARD | USB_REQUEST_RECIPIENT_INTERFACE;
-    setup->bRequest = USB_REQUEST_SET_INTERFACE;
-    setup->wValue = altsetting;
-    setup->wIndex = video_class->data_intf;
-    setup->wLength = 0;
+    if (!video_class->is_bulk) {
+        setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_STANDARD | USB_REQUEST_RECIPIENT_INTERFACE;
+        setup->bRequest = USB_REQUEST_SET_INTERFACE;
+        setup->wValue = altsetting;
+        setup->wIndex = video_class->data_intf;
+        setup->wLength = 0;
 
-    ret = usbh_control_transfer(video_class->hport, setup, NULL);
-    if (ret < 0) {
-        goto errout;
-    }
+        ret = usbh_control_transfer(video_class->hport, setup, NULL);
+        if (ret < 0) {
+            goto errout;
+        }
 
-    ep_desc = &video_class->hport->config.intf[video_class->data_intf].altsetting[altsetting].ep[0].ep_desc;
-    mult = (ep_desc->wMaxPacketSize & USB_MAXPACKETSIZE_ADDITIONAL_TRANSCATION_MASK) >> USB_MAXPACKETSIZE_ADDITIONAL_TRANSCATION_SHIFT;
-    mps = ep_desc->wMaxPacketSize & USB_MAXPACKETSIZE_MASK;
-    if (ep_desc->bEndpointAddress & 0x80) {
-        video_class->isoin_mps = mps * (mult + 1);
-        USBH_EP_INIT(video_class->isoin, ep_desc);
+        ep_desc = &video_class->hport->config.intf[video_class->data_intf].altsetting[altsetting].ep[0].ep_desc;
+        mult = (ep_desc->wMaxPacketSize & USB_MAXPACKETSIZE_ADDITIONAL_TRANSCATION_MASK) >> USB_MAXPACKETSIZE_ADDITIONAL_TRANSCATION_SHIFT;
+        mps = ep_desc->wMaxPacketSize & USB_MAXPACKETSIZE_MASK;
+        if (ep_desc->bEndpointAddress & 0x80) {
+            video_class->isoin_mps = mps * (mult + 1);
+            USBH_EP_INIT(video_class->isoin, ep_desc);
+        } else {
+            return -USB_ERR_NODEV;
+        }
     } else {
-        video_class->isoout_mps = mps * (mult + 1);
-        USBH_EP_INIT(video_class->isoout, ep_desc);
+        ep_desc = &video_class->hport->config.intf[video_class->data_intf].altsetting[0].ep[0].ep_desc;
+        USBH_EP_INIT(video_class->bulkin, ep_desc);
     }
 
     USB_LOG_INFO("Open video and select formatidx:%u, frameidx:%u, altsetting:%u\r\n", formatidx, frameidx, altsetting);
@@ -292,54 +297,62 @@ int usbh_video_close(struct usbh_video *video_class)
 
     video_class->is_opened = false;
 
-    if (video_class->isoin) {
-        video_class->isoin = NULL;
+    if (video_class->is_bulk) {
+        setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_STANDARD | USB_REQUEST_RECIPIENT_ENDPOINT;
+        setup->bRequest = USB_REQUEST_CLEAR_FEATURE;
+        setup->wValue = USB_FEATURE_ENDPOINT_HALT;
+        setup->wIndex = video_class->bulkin->bEndpointAddress;
+        setup->wLength = 0;
+    } else {
+        setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_STANDARD | USB_REQUEST_RECIPIENT_INTERFACE;
+        setup->bRequest = USB_REQUEST_SET_INTERFACE;
+        setup->wValue = 0;
+        setup->wIndex = video_class->data_intf;
+        setup->wLength = 0;
     }
-
-    if (video_class->isoout) {
-        video_class->isoout = NULL;
-    }
-
-    setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_STANDARD | USB_REQUEST_RECIPIENT_INTERFACE;
-    setup->bRequest = USB_REQUEST_SET_INTERFACE;
-    setup->wValue = 0;
-    setup->wIndex = video_class->data_intf;
-    setup->wLength = 0;
 
     ret = usbh_control_transfer(video_class->hport, setup, NULL);
     if (ret < 0) {
         return ret;
     }
+
     return ret;
 }
 
 void usbh_video_list_info(struct usbh_video *video_class)
 {
     struct usb_endpoint_descriptor *ep_desc;
-    uint8_t mult;
-    uint16_t mps;
 
     USB_LOG_INFO("============= Video device information ===================\r\n");
     USB_LOG_RAW("bcdVDC:%04x\r\n", video_class->bcdVDC);
-    USB_LOG_RAW("Num of altsettings:%u\r\n", video_class->num_of_intf_altsettings);
+    USB_LOG_RAW("Num of altsettings:%u (%s mode)\r\n", video_class->num_of_intf_altsettings, video_class->num_of_intf_altsettings == 1 ? "bulk" : "iso");
 
-    for (uint8_t i = 0; i < video_class->num_of_intf_altsettings; i++) {
-        if (i == 0) {
-            USB_LOG_RAW("Ingore altsetting 0\r\n");
-            continue;
+    video_class->is_bulk = video_class->num_of_intf_altsettings == 1 ? true : false;
+
+    if (video_class->is_bulk) {
+        ep_desc = &video_class->hport->config.intf[video_class->data_intf].altsetting[0].ep[0].ep_desc;
+        USB_LOG_RAW("Ep=%02x Attr=%02u Mps=%d Interval=%02u Mult=%02u\r\n",
+                    ep_desc->bEndpointAddress,
+                    ep_desc->bmAttributes,
+                    USB_GET_MAXPACKETSIZE(ep_desc->wMaxPacketSize),
+                    ep_desc->bInterval,
+                    USB_GET_MULT(ep_desc->wMaxPacketSize));
+    } else {
+        for (uint8_t i = 0; i < video_class->num_of_intf_altsettings; i++) {
+            if (i == 0) {
+                USB_LOG_RAW("Ingore altsetting 0\r\n");
+                continue;
+            }
+            ep_desc = &video_class->hport->config.intf[video_class->data_intf].altsetting[i].ep[0].ep_desc;
+
+            USB_LOG_RAW("Altsetting:%u, Ep=%02x Attr=%02u Mps=%d Interval=%02u Mult=%02u\r\n",
+                        i,
+                        ep_desc->bEndpointAddress,
+                        ep_desc->bmAttributes,
+                        USB_GET_MAXPACKETSIZE(ep_desc->wMaxPacketSize),
+                        ep_desc->bInterval,
+                        USB_GET_MULT(ep_desc->wMaxPacketSize));
         }
-        ep_desc = &video_class->hport->config.intf[video_class->data_intf].altsetting[i].ep[0].ep_desc;
-
-        mult = (ep_desc->wMaxPacketSize & USB_MAXPACKETSIZE_ADDITIONAL_TRANSCATION_MASK) >> USB_MAXPACKETSIZE_ADDITIONAL_TRANSCATION_SHIFT;
-        mps = ep_desc->wMaxPacketSize & USB_MAXPACKETSIZE_MASK;
-
-        USB_LOG_RAW("Altsetting:%u, Ep=%02x Attr=%02u Mps=%d Interval=%02u Mult=%02u\r\n",
-                     i,
-                     ep_desc->bEndpointAddress,
-                     ep_desc->bmAttributes,
-                     mps,
-                     ep_desc->bInterval,
-                     mult);
     }
 
     USB_LOG_RAW("bNumFormats:%u\r\n", video_class->num_of_formats);
@@ -350,9 +363,10 @@ void usbh_video_list_info(struct usbh_video *video_class)
         USB_LOG_RAW("  Resolution:\r\n");
         for (uint8_t j = 0; j < video_class->format[i].num_of_frames; j++) {
             USB_LOG_RAW("      FrameIndex:%u\r\n", j + 1);
-            USB_LOG_RAW("      wWidth: %d, wHeight: %d\r\n",
-                         video_class->format[i].frame[j].wWidth,
-                         video_class->format[i].frame[j].wHeight);
+            USB_LOG_RAW("      wWidth: %d, wHeight: %d, fps: %d\r\n",
+                        video_class->format[i].frame[j].wWidth,
+                        video_class->format[i].frame[j].wHeight,
+                        (1000 / (video_class->format[i].frame[j].dwDefaultFrameInterval / 10000)));
         }
     }
 
@@ -438,12 +452,14 @@ static int usbh_video_ctrl_connect(struct usbh_hubport *hport, uint8_t intf)
 
                             video_class->format[format_index - 1].frame[frame_index - 1].wWidth = ((struct video_cs_if_vs_frame_uncompressed_descriptor *)p)->wWidth;
                             video_class->format[format_index - 1].frame[frame_index - 1].wHeight = ((struct video_cs_if_vs_frame_uncompressed_descriptor *)p)->wHeight;
+                            video_class->format[format_index - 1].frame[frame_index - 1].dwDefaultFrameInterval = ((struct video_cs_if_vs_frame_uncompressed_descriptor *)p)->dwDefaultFrameInterval;
                             break;
                         case VIDEO_VS_FRAME_MJPEG_DESCRIPTOR_SUBTYPE:
                             frame_index = p[DESC_bFrameIndex];
 
                             video_class->format[format_index - 1].frame[frame_index - 1].wWidth = ((struct video_cs_if_vs_frame_mjpeg_descriptor *)p)->wWidth;
                             video_class->format[format_index - 1].frame[frame_index - 1].wHeight = ((struct video_cs_if_vs_frame_mjpeg_descriptor *)p)->wHeight;
+                            video_class->format[format_index - 1].frame[frame_index - 1].dwDefaultFrameInterval = ((struct video_cs_if_vs_frame_mjpeg_descriptor *)p)->dwDefaultFrameInterval;
                             break;
                         default:
                             break;
@@ -476,12 +492,6 @@ static int usbh_video_ctrl_disconnect(struct usbh_hubport *hport, uint8_t intf)
     struct usbh_video *video_class = (struct usbh_video *)hport->config.intf[intf].priv;
 
     if (video_class) {
-        if (video_class->isoin) {
-        }
-
-        if (video_class->isoout) {
-        }
-
         if (hport->config.intf[intf].devname[0] != '\0') {
             usb_osal_thread_schedule_other();
             USB_LOG_INFO("Unregister Video Class:%s\r\n", hport->config.intf[intf].devname);

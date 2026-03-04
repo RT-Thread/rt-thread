@@ -106,7 +106,6 @@ static void dfu_request_upload(struct usb_setup_packet *setup, uint8_t **data, u
 {
     struct usb_setup_packet *req = setup;
     uint32_t addr;
-    uint8_t *phaddr;
     /* Data setup request */
     if (req->wLength > 0U) {
         if ((g_usbd_dfu.dev_state == DFU_STATE_DFU_IDLE) || (g_usbd_dfu.dev_state == DFU_STATE_DFU_UPLOAD_IDLE)) {
@@ -143,7 +142,7 @@ static void dfu_request_upload(struct usb_setup_packet *setup, uint8_t **data, u
                 addr = ((g_usbd_dfu.wblock_num - 2U) * USBD_DFU_XFER_SIZE) + g_usbd_dfu.data_ptr;
 
                 /* Return the physical address where data are stored */
-                phaddr = dfu_read_flash((uint8_t *)addr, g_usbd_dfu.buffer.d8, g_usbd_dfu.wlength);
+                dfu_read_flash((uint8_t *)addr, g_usbd_dfu.buffer.d8, g_usbd_dfu.wlength);
 
                 /* Send the status data over EP0 */
                 memcpy(*data, g_usbd_dfu.buffer.d8, g_usbd_dfu.wlength);

@@ -9,8 +9,6 @@
 
 extern unsigned int system_core_clock;
 
-uint32_t SystemCoreClock;
-
 const struct dwc2_user_params param_pa11_pa12 = {
     .phy_type = DWC2_PHY_TYPE_PARAM_FS,
     .device_dma_enable = false,
@@ -80,8 +78,6 @@ const struct dwc2_user_params param_pb14_pb15 = {
 #ifndef CONFIG_USB_DWC2_CUSTOM_PARAM
 void dwc2_get_user_params(uint32_t reg_base, struct dwc2_user_params *params)
 {
-    SystemCoreClock = system_core_clock;
-
 #if __has_include("at32f402_405.h")
     if (reg_base == OTGHS_BASE) {
         memcpy(params, &param_pb14_pb15, sizeof(struct dwc2_user_params));
@@ -106,8 +102,13 @@ void dwc2_get_user_params(uint32_t reg_base, struct dwc2_user_params *params)
 
 void usbd_dwc2_delay_ms(uint8_t ms)
 {
-    uint32_t count = SystemCoreClock / 1000 * ms;
+    uint32_t count = system_core_clock / 1000 * ms;
     while (count--) {
         __asm volatile("nop");
     }
+}
+
+uint32_t usbd_dwc2_get_system_clock(void)
+{
+    return system_core_clock;
 }

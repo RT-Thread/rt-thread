@@ -5,5 +5,11 @@ scons.args: &scons
 # ------ component CI ------
 component.can:
     kconfig:
-      - CONFIG_BSP_USING_CAN
-      - CONFIG_BSP_USING_CAN0
+      - CONFIG_BSP_USING_CAN=y
+      - CONFIG_BSP_USING_CAN0=y
+
+# ------ Peripheral CI ------
+Peripheral.arduino:
+    kconfig:
+      - CONFIG_BSP_USING_ARDUINO=y
+

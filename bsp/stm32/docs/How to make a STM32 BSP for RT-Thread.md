@@ -166,11 +166,32 @@ The other two link script files are link.icf used by IAR and link.lds used by th
 
 The **SConscript** script determines the files to be added during the generation and compilation of the MDK/IAR project. 
 
-In this step, you need to modify the chip model and the address of the chip startup file. The modification content is shown in the figure below: 
+In this step, you need to modify the chip model and the address of the chip startup file. There are two SConscript files in the BSP directory, and only the one in the root directory needs to be modified, as shown below:
 
-![Modify the startup file and chip model](./figures_en/SConscript.png)
+```diff
+# for module compiling
+import os
+Import('RTT_ROOT')
+Import('env')
+from building import *
 
-Note: If you cannot find the .s file of the corresponding series in the folder, it may be that multiple series of chips reuse the same startup file. At this time, you can generate the target chip project in CubeMX to see which startup file is used. Then modify the startup file name. 
+cwd = GetCurrentDir()
+objs = []
+list = os.listdir(cwd)
+
+- # The following macro definition statement exists in the template before modification:
+- env.Append(CPPDEFINES = ['STM32H723xx'])# Target chip macro definition, hal library will use this macro definition for judgment
++ # Modify the macro definition to the corresponding chip model. For example, for STM32F103xB, the modified content is as follows:
++ env.Append(CPPDEFINES = ['STM32F103xB'])
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+Return('objs')
+```
+
+Note: Due to the BSP weight loss plan, the templates in the template directory are outdated, and the SConscript file may be different from the example. Please refer to the actual BSP or wait for an update.
 
 #### 3.4.3 Modify the project template 
 
@@ -189,6 +210,10 @@ Modify the program download method:
 ### 3.5 Regenerate the project 
 
 Env tool is required to regenerate the project. 
+
+Before regenerating the project, you must execute the `pkgs --update` command in the Env tool.
+
+This command will automatically pull the corresponding HAL library package according to the Kconfig configuration, which is the key to subsequent compilation success. 
 
 #### 3.5.1 Regenerate the rtconfig.h file 
 
@@ -255,5 +280,4 @@ The specifications of making STM32 BSP are mainly divided into three aspects: en
 - Only submit documents necessary for the BSP and delete irrelevant intermediate documents. Please check other BSPs for documents that can be submitted. 
 - When submitting libraries of different series of STM32, please refer to the HAL libraries of f1/f4 series and delete redundant library files.
 - Compile and test the BSP before submission to ensure that it compiles properly under different compilers.
-- Perform functional tests on the BSP before submission to ensure that the BSP meets the requirements in the engineering configuration chapter before submission.
-
+- Perform functional tests on the BSP before submission to ensure that the BSP meets the requirements in the engineering configuration chapter before submission. 
