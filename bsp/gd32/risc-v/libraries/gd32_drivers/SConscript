@@ -53,6 +53,7 @@ if GetDepend(['RT_USING_PWM', 'SOC_GD32VW553H']):
     src += ['drv_pwm.c']
 
 path = [cwd]
+path += [cwd + "/config"]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
