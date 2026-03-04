@@ -19,6 +19,15 @@ devices.i2c:
       - CONFIG_BSP_HW_I2C1_PIN_PB12_PB13=y
       - CONFIG_BSP_HW_I2C1_CLK=100
 
+devices.wlan:
+    kconfig:
+      - CONFIG_BSP_USING_WLAN=y
+      - CONFIG_RT_NAME_MAX=24
+      - CONFIG_RT_WLAN_PROT_ENABLE=n
+      - CONFIG_RT_USING_LWIP212=y
+
+
+
 # ------ peripheral CI ------
 peripheral.at24c02:
     kconfig:

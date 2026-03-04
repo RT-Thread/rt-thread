@@ -77,9 +77,13 @@ static const struct wifi_cmd_des debug_tab[] = {
     { "save_cfg", wifi_debug_save_cfg },
     { "dump_cfg", wifi_debug_dump_cfg },
     { "clear_cfg", wifi_debug_clear_cfg },
+#ifdef RT_WLAN_PROT_ENABLE
     { "dump_prot", wifi_debug_dump_prot },
     { "mode", wifi_debug_set_mode },
     { "prot", wifi_debug_set_prot },
+#else
+    { "mode", wifi_debug_set_mode },
+#endif /* RT_WLAN_PROT_ENABLE */
     { "auto", wifi_debug_set_autoconnect },
 };
 #endif
@@ -719,7 +723,12 @@ static int wifi_debug_set_prot(int argc, char *argv[])
         return -1;
     }
 
+#ifdef RT_WLAN_PROT_ENABLE
     rt_wlan_prot_attach(argv[2], argv[1]);
+#else
+    rt_kprintf("wlan protocol disabled\r\n");
+    return -1;
+#endif
     return 0;
 }
 
