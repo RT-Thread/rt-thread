@@ -163,7 +163,144 @@ menu "On-chip Peripheral Drivers"
         bool "Enable CAN"
         select RT_USING_CAN
         default n
+    #-----------------------------PWM----------------------------------
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        select RT_USING_HWTIMER
+        if BSP_USING_PWM
+        menuconfig BSP_USING_TIM1_PWM
+            bool "Enable TIM1 output PWM"
+            default n
+            # --------------selcet remap-----------------
+            if BSP_USING_TIM1_PWM
+                config BSP_USING_TIM1_PWM_CH1
+                    bool "Enable TIM1 channel1 PA8 AF2"
+                    default n
+                config BSP_USING_TIM1_PWM_CH2
+                    bool "Enable TIM1 channel2 PA9 AF2"
+                    default n
+                config BSP_USING_TIM1_PWM_CH3
+                    bool "Enable TIM1 channel3 PA10 AF2"
+                    default n
+                config BSP_USING_TIM1_PWM_CH4
+                    bool "Enable TIM1 channel4 PA11 AF2"
+                    default n
+            endif#BSP_USING_TIM1_PWM
+        
 
+        menuconfig BSP_USING_TIM2_PWM
+            bool "Enable TIM2 output PWM"
+            default n
+            if BSP_USING_TIM2_PWM
+                config BSP_USING_TIM2_PWM_CH1
+                    bool "Enable TIM2 channel1"
+                    default n
+                    if BSP_USING_TIM2_PWM_CH1
+                        choice
+                        prompt "Select Pin"
+                        default TIM2_PWM_CH1_PA0
+                        config TIM2_PWM_CH1_PA0
+                            bool "PA0 AF2"
+                        config TIM2_PWM_CH1_PA15
+                            bool "PA15 AF5"
+                        endchoice
+                    endif
+                config BSP_USING_TIM2_PWM_CH2
+                    bool "Enable TIM2 channel2"
+                    default n
+                    if BSP_USING_TIM2_PWM_CH2
+                        choice
+                        prompt "Select Pin"
+                        default TIM2_PWM_CH2_PA1
+                        config TIM2_PWM_CH2_PA1
+                            bool "PA1 AF2"
+                        config TIM2_PWM_CH2_PB3
+                            bool "PB3 AF2"
+                        endchoice
+                    endif
+                config BSP_USING_TIM2_PWM_CH3
+                    bool "Enable TIM2 channel3"
+                    default n
+                    if BSP_USING_TIM2_PWM_CH3
+                        choice
+                        prompt "Select Pin"
+                        default TIM2_PWM_CH3_PA2
+                        config TIM2_PWM_CH3_PA2
+                            bool "PA2 AF2"
+                        config TIM2_PWM_CH3_PB10
+                            bool "PB10 AF2"
+                        endchoice
+                    endif
+                config BSP_USING_TIM2_PWM_CH4
+                    bool "Enable TIM2 channel3 AF2 PB11"
+                    default n
+            endif#BSP_USING_TIM2_PWM
+
+        menuconfig BSP_USING_TIM3_PWM
+            bool "Enable TIM3 output PWM"
+            default n
+            if BSP_USING_TIM3_PWM
+                config BSP_USING_TIM3_PWM_CH1
+                    bool "Enable TIM3 channel1"
+                    default n
+                    if BSP_USING_TIM3_PWM_CH1
+                        choice
+                        prompt "Select Pin"
+                        default TIM3_PWM_CH1_PA6
+                        config TIM3_PWM_CH1_PA6
+                            bool "PA6 AF2"
+                        config TIM3_PWM_CH1_PB4
+                            bool "PB4 AF2"
+                        config TIM3_PWM_CH1_PC6
+                            bool "PC6 AF5"
+                        endchoice
+                    endif
+                config BSP_USING_TIM3_PWM_CH2
+                    bool "Enable TIM3 channel2"
+                    default n
+                    if BSP_USING_TIM3_PWM_CH2
+                        choice
+                        prompt "Select Pin"
+                        default TIM3_PWM_CH2_PA7
+                        config TIM3_PWM_CH2_PA7
+                            bool "PA7 AF2"
+                        config TIM3_PWM_CH2_PB5
+                            bool "PB5 AF2"
+                        config TIM3_PWM_CH2_PC7
+                            bool "PC7 AF2"
+                        endchoice
+                    endif
+                config BSP_USING_TIM3_PWM_CH3
+                    bool "Enable TIM3 channel3"
+                    default n
+                    if BSP_USING_TIM3_PWM_CH3
+                        choice
+                        prompt "Select Pin"
+                        default TIM3_PWM_CH3_PB0
+                        config TIM3_PWM_CH3_PB0
+                            bool "PB0 AF2"
+                        config TIM3_PWM_CH3_PC8
+                            bool "PC8 AF2"
+                        endchoice
+                    endif
+                config BSP_USING_TIM3_PWM_CH4
+                    bool "Enable TIM3 channel3 AF2 PB11"
+                    default n
+                    if BSP_USING_TIM3_PWM_CH4
+                        choice
+                        prompt "Select Pin"
+                        default TIM3_PWM_CH4_PB1
+                        config TIM3_PWM_CH4_PB1
+                            bool "PB1 AF2"
+                        config TIM3_PWM_CH4_PC9
+                            bool "PC9 AF2"
+                        endchoice
+                    endif
+            endif  #BSP_USING_TIM3_PWM
+        endif#BSP_USING_PWM
+        
     rsource "../../libraries/n32_drivers/Kconfig"
 
 endmenu

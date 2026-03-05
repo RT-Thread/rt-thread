@@ -189,7 +189,104 @@ menu "On-chip Peripheral Drivers"
                 bool "using can2"
                 default n
         endif
+    #-----------------------------PWM----------------------------------
+    menuconfig BSP_USING_PWM
+        bool "Enable  PWM"
+        default n
+        select RT_USING_PWM
+        select RT_USING_HWTIMER
+        if BSP_USING_PWM
+        menuconfig BSP_USING_TIM1_PWM
+            bool "Enable TIM1 output PWM"
+            default n
+            # --------------selcet remap-----------------
+            if BSP_USING_TIM1_PWM
+                choice
+                    prompt "Select Pin"
+                    default TIM1_REMAP_0
+                    config TIM1_REMAP_0
+                        bool "PA8 PA9 PA10 PA11"
+                    config TIM1_REMAP_3
+                        bool "PE9 PE11 PE13 PE14"
+                endchoice
+                # -----------tim chanle enable-----------------
+                config BSP_USING_TIM1_PWM_CH1
+                    bool "Enable TIM1 CH1"
+                    default n
+                config BSP_USING_TIM1_PWM_CH2
+                    bool "Enable TIM1 CH2"
+                    default n
+                config BSP_USING_TIM1_PWM_CH3
+                    bool "Enable TIM1 CH3"
+                    default n
+                config BSP_USING_TIM1_PWM_CH4
+                    bool "Enable TIM1 CH4"
+                    default n
+            endif
+        
 
+        menuconfig BSP_USING_TIM2_PWM
+            bool "Enable TIM2 output PWM"
+            default n
+            if BSP_USING_TIM2_PWM
+                 choice
+                    prompt "Select Pin"
+                    default TIM2_REMAP_0
+                    config TIM2_REMAP_0
+                        bool "PA0 PA1 PA2 PA3"
+                     config TIM2_REMAP_1
+                        bool "PA15 PB3 PA2 PA3"
+                     config TIM2_REMAP_2
+                        bool "PA0 PA1 PB10 PB11"
+                    config TIM2_REMAP_3
+                        bool "PA15 PB3 PB10 PB11"
+                endchoice
+
+                config BSP_USING_TIM2_PWM_CH0
+                    bool "Enable TIM2 CH1"
+                    default n
+                config BSP_USING_TIM2_PWM_CH1
+                    bool "Enable TIM2 CH2"
+                    default n
+                config BSP_USING_TIM2_PWM_CH2
+                    bool "Enable TIM2 CH3"
+                    default n
+                config BSP_USING_TIM2_PWM_CH3
+                    bool "Enable TIM2 CH4"
+                    default n
+            endif
+
+            menuconfig BSP_USING_TIM3_PWM
+            bool "Enable TIM3 output PWM"
+            default n
+            if BSP_USING_TIM3_PWM
+                 choice
+                    prompt "Select Pin"
+                    default TIM3_REMAP_0
+                    config TIM3_REMAP_0
+                        bool "PA6 PA7 PB0 PB1"
+                    config TIM3_REMAP_2
+                        bool "PB4 PB5 PB0 PB1"
+                    config TIM3_REMAP_3
+                        bool "PC6 PC7 PC8 PC9"
+                endchoice
+
+                config BSP_USING_TIM3_PWM_CH0
+                    bool "Enable TIM3 CH1"
+                    default n
+                config BSP_USING_TIM3_PWM_CH1
+                    bool "Enable TIM3 CH2"
+                    default n
+                config BSP_USING_TIM3_PWM_CH2
+                    bool "Enable TIM3 CH3"
+                    default n
+                config BSP_USING_TIM3_PWM_CH3
+                    bool "Enable TIM3 CH4"
+                    default n
+            endif#BSP_USING_TIM3_PWM
+            
+        endif#BSP_USING_PWM
+        
     rsource "../../libraries/n32_drivers/Kconfig"
 
 endmenu
