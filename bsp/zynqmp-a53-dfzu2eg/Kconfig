@@ -6,20 +6,18 @@ RTT_DIR := ../../
 
 PKGS_DIR := packages
 
+SOC_DM_RTC_DIR      := $(BSP_DIR)/drivers/rtc
+SOC_DM_SERIAL_DIR   := $(BSP_DIR)/drivers/serial
+
 source "$(RTT_DIR)/Kconfig"
 osource "$PKGS_DIR/Kconfig"
 
 config SOC_ZYNQMP_AARCH64
     bool
     select ARCH_ARMV8
-    select ARCH_CPU_64BIT
-    select ARCH_ARM_MMU
-    select RT_USING_CACHE
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select RT_USING_GIC
-    select BSP_USING_GIC
-    select ARCH_MM_MMU
+    select ARCH_CPU_64BIT
+    select RT_USING_CACHE
+    select RT_USING_STDC_ATOMIC
     default y
-
-source "$(BSP_DIR)/drivers/Kconfig"

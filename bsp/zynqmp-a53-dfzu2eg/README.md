@@ -95,7 +95,7 @@ setenv gatewayip 192.168.1.1
 setenv netmask 255.255.255.0
 setenv serverip 192.168.1.3
 tftpboot 0x00200000 rtthread.bin
-go 0x00200000
+booti 0x00200000 - ${fdt_addr}
 ```
 
 其中`192.168.1.3`为TFTP服务器的PC机的IP地址，大家可以根据自己的实际情况进行修改。
@@ -141,6 +141,7 @@ msh />
 | 驱动 | 支持情况  |  备注  |
 | ------ | ----  | :------:  |
 | UART | 支持 | UART0 |
+| RTC | 支持 | - |
 | GPIO | 暂不支持 | - |
 | SPI | 暂不支持 | - |
 | SDIO | 暂不支持 | - |
