@@ -7,6 +7,7 @@ Import('rtconfig')
 cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
 CPPPATH = [cwd, cwd + '/include']
+bsp_path = Dir('#').abspath
 
 if GetDepend('RT_USING_SMP'):
     core_model = 'mp'
@@ -17,6 +18,10 @@ src += Glob(core_model + '/*.S')
 
 if GetDepend('RT_USING_OFW') == False:
     SrcRemove(src, ['setup.c', 'cpu_psci.c', 'psci.c'])
+
+    if GetDepend('RT_BUILTIN_FDT_PATH'):
+        builtin_dtb = Env.Depends(target = 'builtin_fdt_gcc.o', source = bsp_path + GetDepend('RT_BUILTIN_FDT_PATH'))
+        Env.AlwaysBuild(builtin_dtb)
 
 if GetDepend('RT_USING_PIC') == True:
     SrcRemove(src, ['gicv3.c', 'gic.c', 'gtimer.c', 'interrupt.c'])
