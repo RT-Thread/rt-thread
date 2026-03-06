@@ -1104,7 +1104,75 @@ RTM_EXPORT(rt_free_align);
 #endif /* RT_USING_HEAP */
 
 #ifndef RT_USING_CPU_FFS
-#ifdef RT_USING_TINY_FFS
+#ifdef RT_USING_BUILTIN_FFS
+
+#if defined(__GNUC__) || defined(__clang__)
+#define __HAS_BUILTIN_CTZ__
+#define CTZ(x) ((x) ? 1 + __builtin_ctz(x) : 0)
+
+#elif defined(__ARMCC_VERSION) // Keil ARM Compiler
+#include "arm_math.h"
+#define __HAS_BUILTIN_CTZ__
+#define CTZ(x) ((x) ? 1 + __CLZ(__RBIT(x)) : 0)
+
+#elif defined(__ICCARM__) // IAR ARM Compiler
+#include <intrinsics.h>
+#define __HAS_BUILTIN_CTZ__
+#define CTZ(x) ((x) ? 1 + __CLZ(__RBIT(x)) : 0)
+
+#else
+#message "Don't know if compiler has builtin ctz"
+#endif
+
+#ifdef __HAS_BUILTIN_CTZ__
+int __rt_ffs(int value)
+{
+    return CTZ(value);
+}
+#else
+int __rt_ffs(int value) {
+    int position = 1; // position start from 1
+
+    if (value == 0)
+    {
+        return 0; // 0 means no bit 1
+    }
+
+    // search half range
+    if ((value & 0xFFFF) == 0)
+    {
+        // is lower 16bit 0
+        position += 16;
+        value >>= 16;
+    }
+    if ((value & 0xFF) == 0)
+    {
+        // is lower 8bit 0
+        position += 8;
+        value >>= 8;
+    }
+    if ((value & 0xF) == 0)
+    {
+        // is lower 4bit 0
+        position += 4;
+        value >>= 4;
+    }
+    if ((value & 0x3) == 0)
+    {
+        // is lower 2bit 0
+        position += 2;
+        value >>= 2;
+    }
+    if ((value & 0x1) == 0)
+    {
+        // is lower 1bit 0
+        position += 1;
+    }
+
+    return position;
+}
+#endif
+#elif defined(RT_USING_TINY_FFS)
 const rt_uint8_t __lowest_bit_bitmap[] =
 {
     /*  0 - 7  */  0,  1,  2, 27,  3, 24, 28, 32,
@@ -1128,7 +1196,7 @@ const rt_uint8_t __lowest_bit_bitmap[] =
  */
 int __rt_ffs(int value)
 {
-    return __lowest_bit_bitmap[(rt_uint32_t)(value & (value - 1) ^ value) % 37];
+    return __lowest_bit_bitmap[(rt_uint32_t)((value & (value - 1)) ^ value) % 37];
 }
 #else
 const rt_uint8_t __lowest_bit_bitmap[] =
