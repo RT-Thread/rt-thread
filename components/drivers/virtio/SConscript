@@ -1,11 +1,51 @@
-# RT-Thread building script for component
-
 from building import *
 
-cwd     = GetCurrentDir()
-src     = Glob('*.c')
-CPPPATH = [cwd]
+group = []
 
-group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_VIRTIO'], CPPPATH = CPPPATH)
+if not GetDepend(['RT_USING_VIRTIO']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+src = ['virtio.c', 'virtio_queue.c']
+
+if GetDepend(['RT_VIRTIO_TRANSPORT_MMIO']):
+    src += ['virtio_mmio.c']
+
+if GetDepend(['RT_VIRTIO_TRANSPORT_PCI']):
+    src += ['virtio_pci.c']
+
+if GetDepend(['RT_VIRTIO_NET']):
+    src += ['virtio-net.c']
+
+if GetDepend(['RT_VIRTIO_BLK']):
+    src += ['virtio-blk.c']
+
+if GetDepend(['RT_VIRTIO_CONSOLE']) or GetDepend(['RT_VIRTIO_RPROC_SERIAL']):
+    src += ['virtio-console.c']
+
+if GetDepend(['RT_VIRTIO_RNG']):
+    src += ['virtio-rng.c']
+
+if GetDepend(['RT_VIRTIO_SCSI']):
+    src += ['virtio-scsi.c']
+
+if GetDepend(['RT_VIRTIO_9P']):
+    src += ['virtio-9p.c']
+
+if GetDepend(['RT_VIRTIO_GPU']):
+    src += ['virtio-gpu.c']
+
+if GetDepend(['RT_VIRTIO_INPUT']):
+    src += ['virtio-input.c']
+
+if GetDepend(['RT_VIRTIO_CRYPTO']):
+    src += ['virtio-crypto.c']
+
+if GetDepend(['RT_VIRTIO_SCMI']):
+    src += ['virtio-scmi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
