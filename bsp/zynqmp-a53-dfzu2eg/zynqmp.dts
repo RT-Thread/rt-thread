@@ -1,0 +1,133 @@
+/*
+ * Copyright (c) 2006-2024, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2024-07-07     GuEe-GUI     the first version
+ */
+
+/dts-v1/;
+#include <rtconfig.h>
+#include <dt-bindings/size.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+
+/* Kernel and DMA heap */
+#define BASE_SIZE (SIZE_MB + (128 * SIZE_MB))
+
+/ {
+    compatible = "xlnx,zynqmp";
+    #address-cells = <2>;
+    #size-cells = <2>;
+    interrupt-parent = <&gic>;
+
+    chosen {
+        bootargs = "earlycon console=ttyPS0";
+        stdout-path = "serial0:115200n8";
+    };
+
+    aliases {
+        serial0 = &uart0;
+    };
+
+    memory {
+        reg = <0x0 (ARCH_RAM_OFFSET + ARCH_TEXT_OFFSET) 0x0 (BASE_SIZE + ARCH_HEAP_SIZE + ARCH_INIT_PAGE_SIZE)>;
+        device_type = "memory";
+    };
+
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        cpu0: cpu@0 {
+            compatible = "arm,cortex-a53";
+            device_type = "cpu";
+            enable-method = "psci";
+            reg = <0x0>;
+        };
+
+        cpu1: cpu@1 {
+            compatible = "arm,cortex-a53";
+            device_type = "cpu";
+            enable-method = "psci";
+            reg = <0x1>;
+        };
+
+        cpu2: cpu@2 {
+            compatible = "arm,cortex-a53";
+            device_type = "cpu";
+            enable-method = "psci";
+            reg = <0x2>;
+        };
+
+        cpu3: cpu@3 {
+            compatible = "arm,cortex-a53";
+            device_type = "cpu";
+            enable-method = "psci";
+            reg = <0x3>;
+        };
+    };
+
+    psci {
+        compatible = "arm,psci-0.2";
+        method = "smc";
+    };
+
+    timer {
+        compatible = "arm,armv8-timer";
+        interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+                     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+                     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+                     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+    };
+
+    amba_apu: amba-apu@0 {
+        compatible = "simple-bus";
+        #address-cells = <2>;
+        #size-cells = <1>;
+        ranges = <0 0 0 0 0xffffffff>;
+
+        gic: interrupt-controller@f9010000 {
+            compatible = "arm,gic-400", "arm,cortex-a15-gic";
+            #interrupt-cells = <3>;
+            reg = <0x0 0xf9010000 0x10000>,
+                  <0x0 0xf9020000 0x20000>,
+                  <0x0 0xf9040000 0x20000>,
+                  <0x0 0xf9060000 0x20000>;
+            interrupt-controller;
+            interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+        };
+    };
+
+    clk100: clk100 {
+        compatible = "fixed-clock";
+        clock-output-names = "clk100mhz";
+        #clock-cells = <0>;
+        clock-frequency = <100000000>;
+    };
+
+    amba: amba {
+        compatible = "simple-bus";
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges;
+
+        rtc: rtc@ffa60000 {
+            compatible = "xlnx,zynqmp-rtc";
+            reg = <0x0 0xffa60000 0x0 0x100>;
+            interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>,
+                         <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
+            interrupt-names = "alarm", "sec";
+            calibration = <0x7fff>;
+        };
+
+        uart0: serial@ff000000 {
+            compatible = "cdns,uart-r1p12", "xlnx,xuartps";
+            interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+            reg = <0x0 0xff000000 0x0 0x1000>;
+            clocks = <&clk100 &clk100>;
+            clock-names = "uart_clk", "pclk";
+        };
+    };
+};
