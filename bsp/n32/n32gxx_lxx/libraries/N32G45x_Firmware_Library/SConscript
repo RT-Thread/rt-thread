@@ -41,6 +41,9 @@ if GetDepend(['RT_USING_DAC']):
 if GetDepend(['RT_USING_CLOCK_TIME']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_tim.c']
 
+if GetDepend(['RT_USING_PWM']):
+    src += ['n32g45x_std_periph_driver/src/n32g45x_tim.c']
+
 if GetDepend(['RT_USING_RTC']):
     src += ['n32g45x_std_periph_driver/src/n32g45x_rtc.c']
     src += ['n32g45x_std_periph_driver/src/n32g45x_pwr.c']
