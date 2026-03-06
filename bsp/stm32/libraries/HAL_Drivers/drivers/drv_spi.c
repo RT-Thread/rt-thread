@@ -287,7 +287,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
 static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    #define DMA_TRANS_MIN_LEN  10 /* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
+#define DMA_TRANS_MIN_LEN  10 /* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
 
     HAL_StatusTypeDef state = HAL_OK;
     rt_size_t message_length, already_send_length;
@@ -301,6 +301,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 
     struct stm32_spi *spi_drv =  rt_container_of(device->bus, struct stm32_spi, spi_bus);
     SPI_HandleTypeDef *spi_handle = &spi_drv->handle;
+
     rt_uint64_t total_byte_ms = (rt_uint64_t)message->length * 1000;
     rt_uint32_t speed_bytes_per_sec = spi_drv->cfg->usage_freq / 8;
     if (speed_bytes_per_sec == 0)
@@ -383,7 +384,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
                 {
                     state = HAL_ERROR;
                     LOG_E("malloc aligned_send_buf failed!");
-                    break;
+                    goto transfer_cleanup;
                 }
                 rt_memcpy(aligned_send_buf, send_buf, send_length);
                 dma_send_buf = aligned_send_buf;
@@ -396,7 +397,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
                 {
                     state = HAL_ERROR;
                     LOG_E("malloc aligned_recv_buf failed!");
-                    break;
+                    goto transfer_cleanup;
                 }
                 dma_recv_buf = aligned_recv_buf;
             }
@@ -462,7 +463,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             LOG_E("SPI transfer error: %d", state);
             message->length = 0;
             spi_handle->State = HAL_SPI_STATE_READY;
-            break;
+            goto transfer_cleanup;
         }
         else
         {
@@ -476,7 +477,8 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             {
                 state = HAL_ERROR;
                 LOG_E("wait for DMA interrupt overtime!");
-                break;
+                HAL_SPI_DMAStop(spi_handle);
+                goto transfer_cleanup;
             }
         }
         else
@@ -497,16 +499,27 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             }
         }
 
-        if (state == HAL_OK && aligned_recv_buf != RT_NULL)
+transfer_cleanup:
+        /* Post-transfer processing */
+        if (state == HAL_OK)
         {
+            if (aligned_recv_buf != RT_NULL)
+            {
 #if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
-            rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, aligned_recv_buf, send_length);
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, aligned_recv_buf, send_length);
 #endif
-            rt_memcpy(recv_buf, aligned_recv_buf, send_length);
+                rt_memcpy(recv_buf, aligned_recv_buf, send_length);
+            }
         }
 
+        // Free any temporary buffers that were allocated
         if (aligned_send_buf) rt_free_align(aligned_send_buf);
         if (aligned_recv_buf) rt_free_align(aligned_recv_buf);
+
+        if (state != HAL_OK)
+        {
+            break;
+        }
     }
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
@@ -532,6 +545,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
 
     struct stm32_spi *spi_drv =  rt_container_of(device->bus, struct stm32_spi, spi_bus);
     spi_drv->cfg = configuration;
+
     return stm32_spi_init(spi_drv, configuration);
 }
 
