@@ -296,26 +296,24 @@ static rt_uint32_t spixfer(struct rt_spi_device* device, struct rt_spi_message* 
                 }
 
 #if defined (SOC_SERIES_GD32VW55x)
-                // Todo: replace register read/write by gd32f4 lib
-                //Wait until the transmit buffer is empty
+                /* Wait until the transmit buffer is empty */
                 while(RESET == spi_flag_get(SPI_FLAG_TBE));
-                // Send the byte
+                /* Send the byte */
                 spi_data_transmit(data);
 
-                //Wait until a data is received
+                /* Wait until a data is received */
                 while(RESET == spi_flag_get(SPI_FLAG_RBNE));
-                // Get the received data
+                /* Get the received data */
                 data = spi_data_receive();
 #else
-                // Todo: replace register read/write by gd32f4 lib
-                //Wait until the transmit buffer is empty
+                /* Wait until the transmit buffer is empty */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
-                // Send the byte
+                /* Send the byte */
                 spi_i2s_data_transmit(spi_periph, data);
 
-                //Wait until a data is received
+                /* Wait until a data is received */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
-                // Get the received data
+                /* Get the received data */
                 data = spi_i2s_data_receive(spi_periph);
 #endif
 
@@ -342,26 +340,24 @@ static rt_uint32_t spixfer(struct rt_spi_device* device, struct rt_spi_message* 
                 }
 
 #if defined (SOC_SERIES_GD32VW55x)
-                // Todo: replace register read/write by gd32f4 lib
-                //Wait until the transmit buffer is empty
+                /* Wait until the transmit buffer is empty */
                 while(RESET == spi_flag_get(SPI_FLAG_TBE));
-                // Send the byte
+                /* Send the byte */
                 spi_data_transmit(data);
 
-                //Wait until a data is received
+                /* Wait until a data is received */
                 while(RESET == spi_flag_get(SPI_FLAG_RBNE));
-                // Get the received data
+                /* Get the received data */
                 data = spi_data_receive();
 #else
-                // Todo: replace register read/write by gd32f4 lib
-                //Wait until the transmit buffer is empty
+                /* Wait until the transmit buffer is empty */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
-                // Send the byte
+                /* Send the byte */
                 spi_i2s_data_transmit(spi_periph, data);
 
-                //Wait until a data is received
+                /* Wait until a data is received */
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
-                // Get the received data
+                /* Get the received data */
                 data = spi_i2s_data_receive(spi_periph);
 #endif
 
