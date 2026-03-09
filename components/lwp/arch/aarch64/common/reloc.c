@@ -10,7 +10,8 @@
 #define Elf_Word Elf64_Word
 #define Elf_Addr Elf64_Addr
 #define Elf_Half Elf64_Half
-#define Elf_Ehdr Elf64_Ehdr                                                   #define Elf_Phdr Elf64_Phdr
+#define Elf_Ehdr Elf64_Ehdr
+#define Elf_Phdr Elf64_Phdr
 #define Elf_Shdr Elf64_Shdr
 
 typedef struct
