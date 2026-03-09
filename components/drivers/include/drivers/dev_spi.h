@@ -161,6 +161,7 @@ struct rt_spi_configuration
 #endif
 
     rt_uint32_t max_hz;
+    rt_uint32_t usage_freq;
 };
 
 struct rt_spi_ops;
