@@ -20,6 +20,11 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN) || \
+     defined(CPU_MCXA366VLH) || defined(CPU_MCXA366VLL) || defined(CPU_MCXA366VLQ) || defined(CPU_MCXA366VPN))
+#define MCXA_I2C_USE_FRO_LF_DIV
+#endif
+
 enum
 {
 #ifdef BSP_USING_I2C0
@@ -55,7 +60,7 @@ struct lpc_i2c_bus lpc_obj[] =
         {
             .I2C = LPI2C0,
             .baud = 100000U,
-#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+#if defined(MCXA_I2C_USE_FRO_LF_DIV)
             .clock_attach_id = kFRO_LF_DIV_to_LPI2C0,
 #else
             .clock_attach_id = kFRO12M_to_LPI2C0,
@@ -69,7 +74,7 @@ struct lpc_i2c_bus lpc_obj[] =
         {
             .I2C = LPI2C1,
             .baud = 100000U,
-#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+#if defined(MCXA_I2C_USE_FRO_LF_DIV)
             .clock_attach_id = kFRO_LF_DIV_to_LPI2C1,
 #else
             .clock_attach_id = kFRO12M_to_LPI2C1,
@@ -83,7 +88,7 @@ struct lpc_i2c_bus lpc_obj[] =
         {
             .I2C = LPI2C2,
             .baud = 100000U,
-#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+#if defined(MCXA_I2C_USE_FRO_LF_DIV)
             .clock_attach_id = kFRO_LF_DIV_to_LPI2C2,
 #else
             .clock_attach_id = kFRO12M_to_LPI2C2,
@@ -97,7 +102,7 @@ struct lpc_i2c_bus lpc_obj[] =
         {
             .I2C = LPI2C3,
             .baud = 100000U,
-#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+#if defined(MCXA_I2C_USE_FRO_LF_DIV)
             .clock_attach_id = kFRO_LF_DIV_to_LPI2C3,
 #else
             .clock_attach_id = kFRO12M_to_LPI2C3,

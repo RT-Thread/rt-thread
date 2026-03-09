@@ -18,6 +18,11 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN) || \
+     defined(CPU_MCXA366VLH) || defined(CPU_MCXA366VLL) || defined(CPU_MCXA366VLQ) || defined(CPU_MCXA366VPN))
+#define MCXA_UART_USE_FRO_LF_DIV
+#endif
+
 struct mcx_uart
 {
     struct rt_serial_device     *serial;
@@ -65,7 +70,7 @@ static const struct mcx_uart uarts[] =
         LPUART0,
         LPUART0_IRQn,
         kCLOCK_Fro12M,
-#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+#if defined(MCXA_UART_USE_FRO_LF_DIV)
         kFRO_LF_DIV_to_LPUART0,
 #else
         kFRO12M_to_LPUART0,
@@ -81,7 +86,7 @@ static const struct mcx_uart uarts[] =
         LPUART1,
         LPUART1_IRQn,
         kCLOCK_Fro12M,
-#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+#if defined(MCXA_UART_USE_FRO_LF_DIV)
         kFRO_LF_DIV_to_LPUART1,
 #else
         kFRO12M_to_LPUART1,
@@ -97,7 +102,7 @@ static const struct mcx_uart uarts[] =
         LPUART2,
         LPUART2_IRQn,
         kCLOCK_Fro12M,
-#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+#if defined(MCXA_UART_USE_FRO_LF_DIV)
         kFRO_LF_DIV_to_LPUART2,
 #else
         kFRO12M_to_LPUART2,
