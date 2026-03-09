@@ -26,7 +26,7 @@ menu "On-chip Peripheral Drivers"
 
         if BSP_USING_UART
             config BSP_USING_UART2
-                bool "Enable LPUART2 as defalt UART"
+                bool "Enable LPUART2 as default UART"
                 default y
 
         endif
@@ -136,14 +136,16 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_ARDUINO
         bool "Compatible with Arduino Ecosystem (RTduino)"  
         select PKG_USING_RTDUINO
-        select BSP_USING_UART2              
-        select BSP_USING_GPIO              
-        select BSP_USING_ADC0               
-        select BSP_USING_PWM0               
-        select BSP_USING_PWM1               
-        select BSP_USING_I2C1              
-        select BSP_USING_I2C2              
-        select BSP_USING_SPI1               
+        select BSP_USING_PIN
+        select BSP_USING_UART
+        select BSP_USING_UART2
+        select BSP_USING_I2C
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select BSP_USING_ADC
+        select BSP_USING_PWM
+        select BSP_USING_PWM0
+        select BSP_USING_PWM1
  endmenu
 
 

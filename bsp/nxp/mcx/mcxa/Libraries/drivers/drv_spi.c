@@ -79,12 +79,20 @@ static struct lpc_spi lpc_obj[] =
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t pin)
 {
     struct rt_spi_device *spi_device = rt_malloc(sizeof(struct rt_spi_device));
+    rt_err_t ret;
+
     if (!spi_device)
     {
         return -RT_ENOMEM;
     }
 
-    return rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, pin, NULL);
+    ret = rt_spi_bus_attach_device_cspin(spi_device, device_name, bus_name, pin, NULL);
+    if (ret != RT_EOK)
+    {
+        rt_free(spi_device);
+    }
+
+    return ret;
 }
 
 static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *cfg)
