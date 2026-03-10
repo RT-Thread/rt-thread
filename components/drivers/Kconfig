@@ -49,4 +49,10 @@ rsource "pinctrl/Kconfig"
 rsource "clk/Kconfig"
 rsource "usb/Kconfig"
 
+if RT_USING_DM
+    menu "SoC (System on Chip) Drivers"
+        osource "$(SOC_DM_SOC_DIR)/Kconfig"
+    endmenu
+endif
+
 endmenu

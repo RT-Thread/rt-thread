@@ -13,6 +13,34 @@ config SOC_GD32VW553H
 
 menu "Onboard Peripheral Drivers"
 
+    menuconfig BSP_USING_WLAN
+        bool "Enable WiFi (GD32VW553H Internal)"
+        select RT_USING_WIFI
+        select PKG_USING_GD32VW55X_WIFI
+        select RT_USING_MEMHEAP
+        select RT_USING_SYSTEM_WORKQUEUE
+        default n
+
+    if BSP_USING_WLAN
+        config BSP_WLAN_SSID_MAX_LENGTH
+            int "WiFi SSID max length"
+            range 1 32
+            default 32
+
+        config BSP_WLAN_PASSWORD_MAX_LENGTH
+            int "WiFi password max length"
+            range 8 64
+            default 64
+
+        config BSP_WLAN_SCAN_CACHE_NUM
+            int "WiFi scan result cache number"
+            range 4 32
+            default 16
+
+        # Include GD32VW55x WIFI package configuration
+        osource "$(BSP_DIR)/packages/gd32vw55x-wifi/Kconfig"
+    endif
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -79,7 +107,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM16"
                 default n
         endif
-
+    
     menuconfig BSP_USING_WDT
         bool "Enable WDT"
         default n
@@ -100,11 +128,117 @@ menu "On-chip Peripheral Drivers"
             endchoice
         endif
     
+    menuconfig BSP_USING_HW_I2C
+        bool "Enable Hardware I2C"
+        default n
+        select RT_USING_I2C
+        if BSP_USING_HW_I2C
+            config BSP_USING_HW_I2C0
+                bool "Enable Hardware I2C0"
+                default n
+
+            # config i2c0 pins
+            choice
+                prompt "Select I2C0 pins"
+                depends on BSP_USING_HW_I2C0
+                config BSP_HW_I2C0_PIN_PA2_PA3
+                    bool "SCL=PA2,  SDA=PA3"
+                config BSP_HW_I2C0_PIN_PA15_PC8
+                    bool "SCL=PA15, SDA=PC8"
+                config BSP_HW_I2C0_PIN_PB0_PB1
+                    bool "SCL=PB0,  SDA=PB1"
+                config BSP_HW_I2C0_PIN_PB15_PA8
+                    bool "SCL=PB15, SDA=PA8"
+            endchoice
+
+            # config i2c0 clock
+            config BSP_HW_I2C0_CLK
+                int "I2C0 clock frequency(KHz)"
+                default 100
+                depends on BSP_USING_HW_I2C0
+                range 10 1000
+
+            config BSP_USING_HW_I2C1
+                bool "Enable Hardware I2C1"
+                default n
+
+            # config i2c1 pins
+            choice
+                prompt "Select I2C1 pins"
+                depends on BSP_USING_HW_I2C1
+                config BSP_HW_I2C1_PIN_PA6_PA7
+                    bool "SCL=PA6,  SDA=PA7"
+                config BSP_HW_I2C1_PIN_PA13_PA14
+                    bool "SCL=PA13, SDA=PA14"
+                config BSP_HW_I2C1_PIN_PA15_PC8
+                    bool "SCL=PA15, SDA=PC8"
+                config BSP_HW_I2C1_PIN_PB12_PB13
+                    bool "SCL=PB12, SDA=PB13"
+                config BSP_HW_I2C1_PIN_PB15_PA8
+                    bool "SCL=PB15, SDA=PA8"
+            endchoice
+
+            # config i2c1 clock
+            config BSP_HW_I2C1_CLK
+                int "I2C1 clock frequency(KHz)"
+                default 100
+                depends on BSP_USING_HW_I2C1
+                range 10 1000
+        endif
+
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+            config BSP_USING_HWTIMER0
+                bool "Enable TIM0"
+                default n
+            config BSP_USING_HWTIMER1
+                bool "Enable TIM1"
+                default n
+            config BSP_USING_HWTIMER2
+                bool "Enable TIM2"
+                default n
+            config BSP_USING_HWTIMER5
+                bool "Enable TIM5"
+                default n
+            config BSP_USING_HWTIMER15
+                bool "Enable TIM15"
+                default n
+            config BSP_USING_HWTIMER16
+                bool "Enable TIM16"
+                default n
+        endif
+
     source "$(BSP_DIR)/../libraries/gd32_drivers/Kconfig"
 
 endmenu
 
 menu "Board extended module Drivers"
+
+    menuconfig BSP_USING_AT24C02
+        bool "Enable AT24C02 I2C0( SCL[PA2 : 2] SDA[PA3 : 3] )"
+        default n
+        select BSP_USING_HW_I2C
+        select BSP_USING_HW_I2C0
+        select PKG_USING_AT24CXX
+        select PKG_AT24CXX_EE_TYPE_AT24C02
+
+        if BSP_USING_AT24C02
+            
+            config BSP_USING_AT24C02_UTEST
+                bool "Enable the utest of AT24C02"
+                default n
+                select RT_USING_UTEST
+                select RT_USING_ULOG
+                select ULOG_USING_ISR_LOG
+
+            config BSP_USING_AT24C02_INIT
+                bool "Init the model and check it"
+                default y
+
+        endif
 
 endmenu
 
