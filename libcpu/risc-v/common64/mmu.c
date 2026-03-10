@@ -740,12 +740,18 @@ void *rt_hw_mmu_v2p(struct rt_aspace *aspace, void *vaddr)
 
 static int _noncache(rt_ubase_t *pte)
 {
-    return 0;
+    *pte &= ~PTE_PBMT_MASK;
+    *pte |= PTE_PBMT_NC;
+    rt_hw_cpu_dcache_clean(pte, sizeof(*pte));
+    return RT_EOK;
 }
 
 static int _cache(rt_ubase_t *pte)
 {
-    return 0;
+    *pte &= ~PTE_PBMT_MASK;
+    *pte |= PTE_PBMT_PMA;
+    rt_hw_cpu_dcache_clean(pte, sizeof(*pte));
+    return RT_EOK;
 }
 
 static int (*control_handler[MMU_CNTL_DUMMY_END])(rt_ubase_t *pte)=
@@ -829,7 +835,7 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
                 attr = MMU_MAP_K_RWCB;
                 break;
             case NORMAL_NOCACHE_MEM:
-                attr = MMU_MAP_K_RWCB;
+                attr = MMU_MAP_K_RW;
                 break;
             case DEVICE_MEM:
                 attr = MMU_MAP_K_DEVICE;

@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2019-12-09     Steven Liu   the first version
  * 2021-04-14     Meco Man     Check the file path's legitimacy of 'sy' command
+ * 2026-02-01     wdfk-prog    update ymodem transfer behaviors
  */
 
 #include <rtthread.h>
@@ -157,20 +158,35 @@ static enum rym_code _rym_send_data(
 {
     struct custom_ctx *cctx = (struct custom_ctx *)ctx;
     rt_size_t read_size;
-    int retry_read;
+    int rlen;
 
     read_size = 0;
-    for (retry_read = 0; retry_read < 10; retry_read++)
+    /* Loop until we fill one YMODEM data block, hit EOF, or get a read error. */
+    while (read_size < len)
     {
-        read_size += read(cctx->fd, buf + read_size, len - read_size);
-        if (read_size == len)
+        rlen = read(cctx->fd, buf + read_size, len - read_size);
+        if (rlen > 0)
+        {
+            read_size += rlen;
+            if (read_size == len)
+                break;
+        }
+        else if (rlen == 0)
+        {
+            /* EOF: mark finishing so sender switches to EOT after padding. */
+            ctx->stage = RYM_STAGE_FINISHING;
             break;
+        }
+        else
+        {
+            /* Read error: abort transfer and report file error to the protocol. */
+            return RYM_ERR_FILE;
+        }
     }
 
     if (read_size < len)
     {
         rt_memset(buf + read_size, 0x1A, len - read_size);
-        ctx->stage = RYM_STAGE_FINISHING;
     }
 
     if (read_size > 128)

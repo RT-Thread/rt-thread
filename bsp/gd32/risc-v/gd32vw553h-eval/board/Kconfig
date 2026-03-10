@@ -13,6 +13,34 @@ config SOC_GD32VW553H
 
 menu "Onboard Peripheral Drivers"
 
+    menuconfig BSP_USING_WLAN
+        bool "Enable WiFi (GD32VW553H Internal)"
+        select RT_USING_WIFI
+        select PKG_USING_GD32VW55X_WIFI
+        select RT_USING_MEMHEAP
+        select RT_USING_SYSTEM_WORKQUEUE
+        default n
+
+    if BSP_USING_WLAN
+        config BSP_WLAN_SSID_MAX_LENGTH
+            int "WiFi SSID max length"
+            range 1 32
+            default 32
+
+        config BSP_WLAN_PASSWORD_MAX_LENGTH
+            int "WiFi password max length"
+            range 8 64
+            default 64
+
+        config BSP_WLAN_SCAN_CACHE_NUM
+            int "WiFi scan result cache number"
+            range 4 32
+            default 16
+
+        # Include GD32VW55x WIFI package configuration
+        osource "$(BSP_DIR)/packages/gd32vw55x-wifi/Kconfig"
+    endif
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -79,7 +107,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM16"
                 default n
         endif
-		
+
     menuconfig BSP_USING_HW_I2C
         bool "Enable Hardware I2C"
         default n
@@ -138,6 +166,7 @@ menu "On-chip Peripheral Drivers"
                 range 10 1000
         endif
 
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI BUS"
         default n
@@ -156,6 +185,30 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI0 RX DMA"
                 depends on BSP_USING_SPI0
                 select BSP_SPI0_TX_USING_DMA
+
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+            config BSP_USING_HWTIMER0
+                bool "Enable TIM0"
+                default n
+            config BSP_USING_HWTIMER1
+                bool "Enable TIM1"
+                default n
+            config BSP_USING_HWTIMER2
+                bool "Enable TIM2"
+                default n
+            config BSP_USING_HWTIMER5
+                bool "Enable TIM5"
+                default n
+            config BSP_USING_HWTIMER15
+                bool "Enable TIM15"
+                default n
+            config BSP_USING_HWTIMER16
+                bool "Enable TIM16"
+
                 default n
         endif
 
@@ -187,6 +240,10 @@ menu "Board extended module Drivers"
                 default y
 
         endif
+
+
+endmenu
+
 
 endmenu
 
