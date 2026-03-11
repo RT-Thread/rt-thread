@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,7 @@
 #include <rtthread.h>
 #ifdef RT_USING_WDT
 
-#if defined(BSP_USING_FWDT)     
+#if defined(BSP_USING_FWDT)
     #define   HW_WDGT_DEV_NAME  "fwdgt"
 #elif defined(BSP_USING_WWDT)
     #define   HW_WDGT_DEV_NAME  "wwdgt"
@@ -38,7 +38,7 @@ static rt_err_t wdt_init(rt_watchdog_t *wdt)
 
 static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 {
-    
+
     rt_uint32_t time_sec;
     rt_uint32_t time_msec;
     rt_uint32_t wdgt_count;
@@ -47,7 +47,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
     {
         /* feed the watchdog */
     case RT_DEVICE_CTRL_WDT_KEEPALIVE:
-#if defined(BSP_USING_FWDT)     
+#if defined(BSP_USING_FWDT)
         fwdgt_counter_reload();
 #elif defined(BSP_USING_WWDT)
         wwdgt_counter_update(0x70);
@@ -55,8 +55,8 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 #endif
     break;
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-   
-#if defined(BSP_USING_FWDT) 
+
+#if defined(BSP_USING_FWDT)
      /* set timeout sec*/
      time_sec = *(rt_uint32_t*)arg;
      wdgt_count = 32*1000/32*time_sec;
@@ -71,10 +71,10 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
      wwdgt_config(wdgt_count, window_value, WWDGT_CFG_PSC_DIV8);
      LOG_D("timeout=%d msec,count=%d ", time_msec, wdgt_count);
 #endif
-    
+
     break;
     case RT_DEVICE_CTRL_WDT_START:
-#if defined(BSP_USING_FWDT)  
+#if defined(BSP_USING_FWDT)
         fwdgt_enable();
 #elif defined(BSP_USING_WWDT)
         wwdgt_enable();
@@ -106,14 +106,14 @@ int rt_wdt_init(void)
 }
 INIT_BOARD_EXPORT(rt_wdt_init);
 
-#if defined(BSP_USING_FWDT)  
+#if defined(BSP_USING_FWDT)
 int fwdt_test_sample()
 {
     rt_err_t ret = RT_EOK;
     rt_device_t hw_dev = RT_NULL;
     rt_ubase_t time_out_sec = 4;
     hw_dev = rt_device_find(HW_WDGT_DEV_NAME);
-    
+
     LOG_D("find fwdt device success,device=%x",hw_dev);
     if (hw_dev == RT_NULL)
     {
@@ -148,7 +148,7 @@ int wwdt_test_sample()
     rt_device_t hw_dev = RT_NULL;
     rt_ubase_t time_out_msec = 40;
     hw_dev = rt_device_find(HW_WDGT_DEV_NAME);
-    
+
     LOG_D("find wwdt device success,device=%x",hw_dev);
     if (hw_dev == RT_NULL)
     {
@@ -173,7 +173,9 @@ int wwdt_test_sample()
     rt_device_control(hw_dev, RT_DEVICE_CTRL_WDT_KEEPALIVE, RT_NULL);
     return ret;
 }
+
 MSH_CMD_EXPORT(wwdt_test_sample, wwdt timeout 40 msec reset)
 #endif
 
 #endif /* RT_USING_WDT */
+
