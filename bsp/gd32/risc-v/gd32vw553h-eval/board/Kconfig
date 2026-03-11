@@ -186,6 +186,26 @@ menu "On-chip Peripheral Drivers"
                 range 10 1000
         endif
 
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0 BUS"
+                default n
+
+            config BSP_SPI0_TX_USING_DMA
+                bool "Enable SPI0 TX DMA"
+                depends on BSP_USING_SPI0
+                default n
+
+            config BSP_SPI0_RX_USING_DMA
+                bool "Enable SPI0 RX DMA"
+                depends on BSP_USING_SPI0
+                select BSP_SPI0_TX_USING_DMA
+
     menuconfig BSP_USING_HWTIMER
         bool "Enable timer"
         default n
@@ -208,6 +228,7 @@ menu "On-chip Peripheral Drivers"
                 default n
             config BSP_USING_HWTIMER16
                 bool "Enable TIM16"
+
                 default n
         endif
 
@@ -240,7 +261,10 @@ menu "Board extended module Drivers"
 
         endif
 
-endmenu
 
 endmenu
 
+
+endmenu
+
+endmenu
