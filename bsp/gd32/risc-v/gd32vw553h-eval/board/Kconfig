@@ -107,7 +107,27 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM16"
                 default n
         endif
-
+    
+    menuconfig BSP_USING_WDT
+        bool "Enable WDT"
+        default n
+        if BSP_USING_WDT
+            config BSP_USING_FWDT
+                bool "Enable FWDT"
+                default y
+            config BSP_USING_WWDT
+                bool "Enable WWDT"
+                default n
+            choice
+                prompt "Select WDT type"
+                default BSP_USING_FWDT
+                config BSP_USING_FWDT
+                    bool "Enable FWDT"
+                config BSP_USING_WWDT
+                    bool "Enable WWDT"
+            endchoice
+        endif
+    
     menuconfig BSP_USING_HW_I2C
         bool "Enable Hardware I2C"
         default n
