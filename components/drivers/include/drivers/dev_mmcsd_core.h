@@ -142,6 +142,8 @@ struct rt_mmcsd_req
 #define R1_READY_FOR_DATA   (1 << 8)    /* sx, a */
 #define R1_APP_CMD      (1 << 5)    /* sr, c */
 
+/*the programing is state*/
+#define R1_STATE_PRG    0x07
 
 #define R1_SPI_IDLE     (1 << 0)
 #define R1_SPI_ERASE_RESET  (1 << 1)
@@ -242,6 +244,12 @@ void mmcsd_set_bus_width(struct rt_mmcsd_host *host, rt_uint32_t width);
 void mmcsd_set_timing(struct rt_mmcsd_host *host, rt_uint32_t timing);
 void mmcsd_set_data_timeout(struct rt_mmcsd_data *data, const struct rt_mmcsd_card *card);
 rt_uint32_t mmcsd_select_voltage(struct rt_mmcsd_host *host, rt_uint32_t ocr);
+rt_err_t mmcsd_set_signal_voltage(struct rt_mmcsd_host *host, unsigned char signal_voltage);
+void mmcsd_set_initial_signal_voltage(struct rt_mmcsd_host *host);
+rt_err_t mmcsd_host_set_uhs_voltage(struct rt_mmcsd_host *host);
+rt_err_t mmcsd_set_uhs_voltage(struct rt_mmcsd_host *host, rt_uint32_t ocr);
+rt_err_t mmcsd_send_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode, rt_err_t *cmd_error);
+rt_err_t mmcsd_send_abort_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode);
 void mmcsd_change(struct rt_mmcsd_host *host);
 void mmcsd_detect(void *param);
 void mmcsd_host_init(struct rt_mmcsd_host *host);

@@ -1,5 +1,5 @@
 if RT_USING_AUDIO
     config RT_UTEST_USING_AUDIO_DRIVER
-        bool "Enable rt_audio_api testcase"
+        bool "Audio Test"
         default n
 endif

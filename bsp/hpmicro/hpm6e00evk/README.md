@@ -30,6 +30,7 @@ Each peripheral supporting condition for this BSP is as follows:
 | USB                      | √           |                                       |
 | QSPI Flash               | √           |                                       |
 | Ethernet                 | √           |                                       |
+| EtherCAT Slave            |√           |                                       |
 | GPIO                     | √           |                                       |
 | SPI                      | √           |                                       |
 | I2C                      | √           |                                       |

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -90,7 +90,7 @@ int msh_exec_script(const char *cmd_line, int size)
     rt_memcpy(pg_name, cmd_line, cmd_length);
     pg_name[cmd_length] = '\0';
 
-    if (strstr(pg_name, ".sh") != RT_NULL || strstr(pg_name, ".SH") != RT_NULL)
+    if (rt_strstr(pg_name, ".sh") != RT_NULL || rt_strstr(pg_name, ".SH") != RT_NULL)
     {
         /* try to open program */
         fd = open(pg_name, O_RDONLY, 0);
@@ -274,6 +274,7 @@ static int cmd_mv(int argc, char **argv)
                 if (*src == '/') break;
                 src --;
             }
+            if(*src == '/') src++;
 
             rt_snprintf(dest, DFS_PATH_MAX - 1, "%s/%s", argv[2], src);
         }
@@ -351,7 +352,7 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
         if (rt_strcmp(".", dirent->d_name) != 0 &&
                 rt_strcmp("..", dirent->d_name) != 0)
         {
-            if (strlen(pathname) + 1 + strlen(dirent->d_name) > DFS_PATH_MAX)
+            if (rt_strlen(pathname) + 1 + rt_strlen(dirent->d_name) > DFS_PATH_MAX)
             {
                 rt_kprintf("cannot remove '%s/%s', path too long.\n", pathname, dirent->d_name);
                 continue;
@@ -518,7 +519,7 @@ static int cmd_mkfs(int argc, char **argv)
     }
     else if (argc == 4)
     {
-        if (strcmp(argv[1], "-t") == 0)
+        if (rt_strcmp(argv[1], "-t") == 0)
         {
             type = argv[2];
             result = dfs_mkfs(type, argv[3]);
@@ -585,7 +586,7 @@ static int cmd_mount(int argc, char **argv)
 
         /* mount a filesystem to the specified directory */
         rt_kprintf("mount device %s(%s) onto %s ... ", device, fstype, path);
-        if (strcmp(fstype, "nfs") == 0)
+        if (rt_strcmp(fstype, "nfs") == 0 || rt_strcmp(fstype, "9p") == 0)
         {
             data = argv[1];
             device = 0;
@@ -663,7 +664,7 @@ static int cmd_umount(int argc, char **argv)
 
     if (argc > 2)
     {
-        flags = strcmp(argv[1], "-f") == 0 ? MNT_FORCE : 0;
+        flags = rt_strcmp(argv[1], "-f") == 0 ? MNT_FORCE : 0;
         path  = argv[2];
     }
 
@@ -693,7 +694,7 @@ static int cmd_df(int argc, char **argv)
     }
     else
     {
-        if ((strcmp(argv[1], "--help") == 0) || (strcmp(argv[1], "-h") == 0))
+        if ((rt_strcmp(argv[1], "--help") == 0) || (rt_strcmp(argv[1], "-h") == 0))
         {
             rt_kprintf("df [path]\n");
         }
@@ -721,7 +722,7 @@ static int cmd_echo(int argc, char **argv)
         fd = open(argv[2], O_RDWR | O_APPEND | O_CREAT, 0);
         if (fd >= 0)
         {
-            write(fd, argv[1], strlen(argv[1]));
+            write(fd, argv[1], rt_strlen(argv[1]));
             close(fd);
         }
         else
@@ -738,6 +739,18 @@ static int cmd_echo(int argc, char **argv)
 }
 MSH_CMD_EXPORT_ALIAS(cmd_echo, echo, echo string to file);
 
+/**
+ * @brief  Print the last part of a file (tail command).
+ *
+ * @note   Supported Usage:
+ *         1. tail <file>               : Print last 10 lines.
+ *         2. tail -n <num> <file>      : Print last <num> lines.
+ *         3. tail -n +<num> <file>     : Print starting from line <num>.
+ *
+ * @param  argc  Argument count
+ * @param  argv  Argument vector
+ * @return 0 on success, -1 on failure
+ */
 static int cmd_tail(int argc, char **argv)
 {
     int fd;
@@ -751,7 +764,7 @@ static int cmd_tail(int argc, char **argv)
 
     if (argc < 2)
     {
-        rt_kprintf("Usage: tail [-n numbers] <filename>\n");
+        rt_kprintf("Usage: tail [-n [+]numbers] <filename>\n");
         return -1;
     }
     else if (argc == 2)
@@ -761,19 +774,31 @@ static int cmd_tail(int argc, char **argv)
     }
     else if (rt_strcmp(argv[1], "-n") == 0)
     {
+        /*
+         * Check if enough arguments are provided to avoid crash.
+         * The command requires: "tail" + "-n" + "number" + "file" = 4 args.
+         */
+        if (argc < 4)
+        {
+            rt_kprintf("Error: Missing arguments.\n");
+            rt_kprintf("Usage: tail -n [+]numbers <filename>\n");
+            return -1;
+        }
+
+        /* Check for explicit start line syntax (e.g., +100) */
         if (argv[2][0] != '+')
         {
             required_lines = atoi(argv[2]);
         }
         else
         {
-            start_line = atoi(&argv[2][1]); /* eg: +100, to get the 100 */
+            start_line = atoi(&argv[2][1]); /* eg: +100, skip '+' to get 100 */
         }
         file_name = argv[3];
     }
     else
     {
-        rt_kprintf("Usage: tail [-n numbers] <filename>\n");
+        rt_kprintf("Usage: tail [-n [+]numbers] <filename>\n");
         return -1;
     }
 
@@ -796,7 +821,7 @@ static int cmd_tail(int argc, char **argv)
         }
     }
 
-    rt_kprintf("\nTotal Number of lines:%d\n", total_lines);
+    rt_kprintf("\nTotal Number of lines:%ld\n", total_lines);
 
     if (start_line != 0)
     {
@@ -818,7 +843,7 @@ static int cmd_tail(int argc, char **argv)
         close(fd);
         return -1;
     }
-    rt_kprintf("Required Number of lines:%d\n", required_lines);
+    rt_kprintf("Required Number of lines:%ld\n", required_lines);
 
     target_line = total_lines - required_lines;
     lseek(fd, 0, SEEK_SET); /* back to head */
@@ -839,7 +864,7 @@ static int cmd_tail(int argc, char **argv)
     close(fd);
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_tail, tail, print the last N - lines data of the given file);
+MSH_CMD_EXPORT_ALIAS(cmd_tail, tail, Print the last N lines. Usage: tail -n [+]numbers <filename>);
 
 #ifdef RT_USING_DFS_V2
 
@@ -875,7 +900,7 @@ static void directory_setattr(const char *pathname, struct dfs_attr *attr, char 
         if (rt_strcmp(".", dirent->d_name) != 0 &&
             rt_strcmp("..", dirent->d_name) != 0)
         {
-            if (strlen(pathname) + 1 + strlen(dirent->d_name) > DFS_PATH_MAX)
+            if (rt_strlen(pathname) + 1 + rt_strlen(dirent->d_name) > DFS_PATH_MAX)
             {
                 rt_kprintf("'%s/%s' setattr failed, path too long.\n", pathname, dirent->d_name);
                 continue;

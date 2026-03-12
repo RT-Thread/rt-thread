@@ -303,7 +303,7 @@ void ch32f2_i2c_config(I2C_TypeDef *i2cx)
     }
 }
 
-#ifdef BSP_USING_HWTIMER
+#ifdef BSP_USING_CLOCK_TIMER
 void ch32f2_tim_clock_init(TIM_TypeDef *timx)
 {
     if (timx == TIM1)
@@ -379,143 +379,143 @@ rt_uint32_t ch32f2_tim_clock_get(TIM_TypeDef *timx)
     return ppre1 >= 4 ? RCC_Clocks.PCLK1_Frequency * 2 : RCC_Clocks.PCLK1_Frequency;
 }
 
-struct rt_hwtimer_info hwtimer_info1 =
+struct rt_clock_timer_info clock_timer_info1 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info2 =
+struct rt_clock_timer_info clock_timer_info2 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info3 =
+struct rt_clock_timer_info clock_timer_info3 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info4 =
+struct rt_clock_timer_info clock_timer_info4 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info5 =
+struct rt_clock_timer_info clock_timer_info5 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info6 =
+struct rt_clock_timer_info clock_timer_info6 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info7 =
+struct rt_clock_timer_info clock_timer_info7 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info8 =
+struct rt_clock_timer_info clock_timer_info8 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info9 =
+struct rt_clock_timer_info clock_timer_info9 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info10 =
+struct rt_clock_timer_info clock_timer_info10 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info *ch32f2_hwtimer_info_config_get(TIM_TypeDef *timx)
+struct rt_clock_timer_info *ch32f2_clock_timer_info_config_get(TIM_TypeDef *timx)
 {
-    struct rt_hwtimer_info *info = RT_NULL;
+    struct rt_clock_timer_info *info = RT_NULL;
 
     if (timx == TIM1)
     {
-        info = &hwtimer_info1;
+        info = &clock_timer_info1;
     }
     else if (timx == TIM2)
     {
-        info = &hwtimer_info2;
+        info = &clock_timer_info2;
     }
     else if (timx == TIM3)
     {
-        info = &hwtimer_info3;
+        info = &clock_timer_info3;
     }
     else if (timx == TIM4)
     {
-        info = &hwtimer_info4;
+        info = &clock_timer_info4;
     }
     else if (timx == TIM4)
     {
-        info = &hwtimer_info4;
+        info = &clock_timer_info4;
     }
     else if (timx == TIM5)
     {
-        info = &hwtimer_info5;
+        info = &clock_timer_info5;
     }
     else if (timx == TIM6)
     {
-        info = &hwtimer_info6;
+        info = &clock_timer_info6;
     }
     else if (timx == TIM7)
     {
-        info = &hwtimer_info7;
+        info = &clock_timer_info7;
     }
     else if (timx == TIM8)
     {
-        info = &hwtimer_info8;
+        info = &clock_timer_info8;
     }
     else if (timx == TIM9)
     {
-        info = &hwtimer_info9;
+        info = &clock_timer_info9;
     }
     else if (timx == TIM10)
     {
-        info = &hwtimer_info10;
+        info = &clock_timer_info10;
     }
 
     return info;

@@ -18,6 +18,8 @@
 
 #if defined(SOC_XMC7200D_E272K8384AA)
 #define __IFX_PORT_MAX      35u
+#elif defined(SOC_XMC7100D_F144K4160AA)
+#define __IFX_PORT_MAX      33u
 #else
 #define __IFX_PORT_MAX      14u
 #endif
@@ -57,7 +59,8 @@ static struct pin_irq_map pin_irq_map[] =
     {CYHAL_PORT_19,  ioss_interrupts_gpio_19_IRQn},
     {CYHAL_PORT_20,  ioss_interrupts_gpio_20_IRQn},
     {CYHAL_PORT_21,  ioss_interrupts_gpio_21_IRQn},
-    {CYHAL_PORT_22,  ioss_interrupts_gpio_23_IRQn},
+    {CYHAL_PORT_22,  ioss_interrupts_gpio_22_IRQn},
+    {CYHAL_PORT_23,  ioss_interrupts_gpio_23_IRQn},
     {CYHAL_PORT_24,  ioss_interrupts_gpio_24_IRQn},
     {CYHAL_PORT_25,  ioss_interrupts_gpio_25_IRQn},
     {CYHAL_PORT_26,  ioss_interrupts_gpio_26_IRQn},
@@ -69,6 +72,26 @@ static struct pin_irq_map pin_irq_map[] =
     {CYHAL_PORT_32,  ioss_interrupts_gpio_32_IRQn},
     {CYHAL_PORT_33,  ioss_interrupts_gpio_33_IRQn},
     {CYHAL_PORT_34,  ioss_interrupts_gpio_34_IRQn},
+#endif
+#if defined(SOC_XMC7100D_F144K4160AA)
+    {CYHAL_PORT_15,  ioss_interrupts_gpio_15_IRQn},
+    {CYHAL_PORT_16,  ioss_interrupts_gpio_16_IRQn},
+    {CYHAL_PORT_17,  ioss_interrupts_gpio_17_IRQn},
+    {CYHAL_PORT_18,  ioss_interrupts_gpio_18_IRQn},
+    {CYHAL_PORT_19,  ioss_interrupts_gpio_19_IRQn},
+    {CYHAL_PORT_20,  ioss_interrupts_gpio_20_IRQn},
+    {CYHAL_PORT_21,  ioss_interrupts_gpio_21_IRQn},
+    {CYHAL_PORT_22,  ioss_interrupts_gpio_22_IRQn},
+    {CYHAL_PORT_23,  ioss_interrupts_gpio_23_IRQn},
+    {CYHAL_PORT_24,  ioss_interrupts_gpio_24_IRQn},
+    {CYHAL_PORT_25,  ioss_interrupts_gpio_25_IRQn},
+    {CYHAL_PORT_26,  ioss_interrupts_gpio_26_IRQn},
+    {CYHAL_PORT_27,  ioss_interrupts_gpio_27_IRQn},
+    {CYHAL_PORT_28,  ioss_interrupts_gpio_28_IRQn},
+    {CYHAL_PORT_29,  ioss_interrupts_gpio_29_IRQn},
+    {CYHAL_PORT_30,  ioss_interrupts_gpio_30_IRQn},
+    {CYHAL_PORT_31,  ioss_interrupts_gpio_31_IRQn},
+    {CYHAL_PORT_32,  ioss_interrupts_gpio_32_IRQn},
 #endif
 };
 
@@ -93,6 +116,25 @@ static struct rt_pin_irq_hdr pin_irq_handler_tab[] =
 #if defined(SOC_XMC7200D_E272K8384AA)
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+    {-1, 0, RT_NULL, RT_NULL},
+#endif
+#if defined(SOC_XMC7100D_F144K4160AA)
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
     {-1, 0, RT_NULL, RT_NULL},
@@ -320,7 +362,7 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         irqmap = &pin_irq_map[gpio_port];
 
-#if !defined(COMPONENT_CAT1C)
+#if !defined(COMPONENT_CAT1C)||defined(SOC_XMC7100D_F144K4160AA)
         IRQn_Type irqn = irqmap->irqno;
         irq_cb_data[irqn].callback = irq_callback;
         irq_cb_data[irqn].callback_arg = (rt_uint16_t *)&pin_irq_map[gpio_port].port;
@@ -356,7 +398,7 @@ static rt_err_t ifx_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
         irqmap = &pin_irq_map[gpio_port];
 
-#if !defined(COMPONENT_CAT1C)
+#if !defined(COMPONENT_CAT1C)||defined(SOC_XMC7100D_F144K4160AA)
         IRQn_Type irqn = irqmap->irqno;
         if (irqn < 0 || irqn >= PIN_IFXPORT_MAX)
         {

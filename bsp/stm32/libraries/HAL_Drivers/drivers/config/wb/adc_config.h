@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author            Notes
- * 2020-10-14     Dozingfiretruck   first version
+ * 2020-10-14     PeakRacing   first version
  */
 
 #ifndef __ADC_CONFIG_H__

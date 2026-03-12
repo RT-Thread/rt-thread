@@ -1,5 +1,12 @@
 menu "Memory management"
 
+config RT_PAGE_MPR_SIZE_DYNAMIC
+    bool "Page MPR size is dynamic"
+    default n
+    help
+        Some platforms' virtual address width is not a compile-time constant
+        and must be determined dynamically at runtime.
+
 config RT_PAGE_AFFINITY_BLOCK_SIZE
     hex "Affinity block size in bytes for page management"
     default 0x1000

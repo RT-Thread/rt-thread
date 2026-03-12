@@ -135,11 +135,12 @@ int lwip_ping_recv(int s, int *ttl)
 /* using the lwIP custom ping */
 rt_err_t ping(char* target_name, rt_uint32_t times, rt_size_t size)
 {
-#if LWIP_VERSION_MAJOR >= 2U
-    struct timeval timeout = { PING_RCV_TIMEO / RT_TICK_PER_SECOND, PING_RCV_TIMEO % RT_TICK_PER_SECOND };
+
+#if LWIP_SO_SNDRCVTIMEO_NONSTANDARD
+    int timeout = (int)PING_RCV_TIMEO;
 #else
-    int timeout = PING_RCV_TIMEO * 1000UL / RT_TICK_PER_SECOND;
-#endif
+    struct timeval timeout = { PING_RCV_TIMEO / RT_TICK_PER_SECOND, PING_RCV_TIMEO % RT_TICK_PER_SECOND };
+#endif / * LWIP_SO_SNDRCVTIMEO_NONSTANDARD */
 
     int s, ttl, recv_len;
     ip_addr_t target_addr;

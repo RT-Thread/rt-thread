@@ -1,0 +1,12 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/regulator']
+
+if GetDepend(['RT_REGULATOR_RK8XX']):
+    src += ['regulator-rk8xx.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

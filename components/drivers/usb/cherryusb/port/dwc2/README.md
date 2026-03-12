@@ -49,3 +49,7 @@ Please note that host must support dma mode.
 ### Nationstech
 
 - N32H4X
+
+### Infineon
+
+- PSOC Edge E8X

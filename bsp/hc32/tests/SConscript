@@ -52,8 +52,8 @@ if GetDepend(['BSP_USING_RTC']):
 if GetDepend(['BSP_USING_WDT']) or GetDepend(['BSP_USING_SWDT']):
     src += ['test_wdt.c']
 
-if GetDepend(['BSP_USING_HWTIMER']):
-    src += ['test_hwtimer.c']
+if GetDepend(['BSP_USING_CLOCK_TIMER']):
+    src += ['test_clock_timer.c']
 
 if GetDepend(['BSP_USING_PULSE_ENCODER']):
     src += ['test_pulse_encoder.c']

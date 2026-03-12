@@ -163,6 +163,12 @@ endif
         default y
 
 if RT_USING_DFS_V1
+    config RT_USING_DFS_9PFS
+        bool "Using Plan 9 remote filesystem"
+        select RT_USING_ADT_BITMAP
+        depends on RT_USING_MEMHEAP
+        default n
+
     config RT_USING_DFS_ISO9660
         bool "Using ISO9660 filesystem"
         depends on RT_USING_MEMHEAP

@@ -88,18 +88,6 @@
 #define AUDIO_ENDPOINT_UNDEFINED 0x00U
 #define AUDIO_ENDPOINT_GENERAL   0x01U
 
-/* Feature Unit Control Bits */
-#define AUDIO_CONTROL_MUTE              0x0001
-#define AUDIO_CONTROL_VOLUME            0x0002
-#define AUDIO_CONTROL_BASS              0x0004
-#define AUDIO_CONTROL_MID               0x0008
-#define AUDIO_CONTROL_TREBLE            0x0010
-#define AUDIO_CONTROL_GRAPHIC_EQUALIZER 0x0020
-#define AUDIO_CONTROL_AUTOMATIC_GAIN    0x0040
-#define AUDIO_CONTROL_DEALY             0x0080
-#define AUDIO_CONTROL_BASS_BOOST        0x0100
-#define AUDIO_CONTROL_LOUDNESS          0x0200
-
 /* Encoder Type Codes */
 #define AUDIO_ENCODER_UNDEF 0x00
 #define AUDIO_ENCODER_OTHER 0x01
@@ -245,22 +233,34 @@
 #define AUDIO_FU_CONTROL_OVERFLOW     0x0f
 #define AUDIO_FU_CONTROL_LATENCY      0x10
 
-#define AUDIO_V2_FU_CONTROL_UNDEF        0x00
-#define AUDIO_V2_FU_CONTROL_MUTE         (0x03 << 0)
-#define AUDIO_V2_FU_CONTROL_VOLUME       (0x03 << 2)
-#define AUDIO_V2_FU_CONTROL_BASS         (0x03 << 4)
-#define AUDIO_V2_FU_CONTROL_MID          (0x03 << 6)
-#define AUDIO_V2_FU_CONTROL_TREBLE       (0x03 << 8)
-#define AUDIO_V2_FU_CONTROL_EQUALIZER    (0x03 << 10)
-#define AUDIO_V2_FU_CONTROL_AGC          (0x03 << 12)
-#define AUDIO_V2_FU_CONTROL_DELAY        (0x03 << 14)
-#define AUDIO_V2_FU_CONTROL_BASS_BOOST   (0x03 << 16)
-#define AUDIO_V2_FU_CONTROL_LOUDNESS     (0x03 << 18)
-#define AUDIO_V2_FU_CONTROL_INP_GAIN     (0x03 << 20)
-#define AUDIO_V2_FU_CONTROL_INP_GAIN_PAD (0x03 << 22)
-#define AUDIO_V2_FU_CONTROL_PHASE_INVERT (0x03 << 24)
-#define AUDIO_V2_FU_CONTROL_UNDERFLOW    (0x03 << 26)
-#define AUDIO_V2_FU_CONTROL_OVERFLOW     (0x03 << 28)
+/* Feature Unit Control Bits */
+#define AUDIO_CONTROL_MUTE              0x0001
+#define AUDIO_CONTROL_VOLUME            0x0002
+#define AUDIO_CONTROL_BASS              0x0004
+#define AUDIO_CONTROL_MID               0x0008
+#define AUDIO_CONTROL_TREBLE            0x0010
+#define AUDIO_CONTROL_GRAPHIC_EQUALIZER 0x0020
+#define AUDIO_CONTROL_AUTOMATIC_GAIN    0x0040
+#define AUDIO_CONTROL_DEALY             0x0080
+#define AUDIO_CONTROL_BASS_BOOST        0x0100
+#define AUDIO_CONTROL_LOUDNESS          0x0200
+
+#define AUDIO_V2_CONTROL_UNDEF        0x00
+#define AUDIO_V2_CONTROL_MUTE         (0x03 << 0)
+#define AUDIO_V2_CONTROL_VOLUME       (0x03 << 2)
+#define AUDIO_V2_CONTROL_BASS         (0x03 << 4)
+#define AUDIO_V2_CONTROL_MID          (0x03 << 6)
+#define AUDIO_V2_CONTROL_TREBLE       (0x03 << 8)
+#define AUDIO_V2_CONTROL_EQUALIZER    (0x03 << 10)
+#define AUDIO_V2_CONTROL_AGC          (0x03 << 12)
+#define AUDIO_V2_CONTROL_DELAY        (0x03 << 14)
+#define AUDIO_V2_CONTROL_BASS_BOOST   (0x03 << 16)
+#define AUDIO_V2_CONTROL_LOUDNESS     (0x03 << 18)
+#define AUDIO_V2_CONTROL_INP_GAIN     (0x03 << 20)
+#define AUDIO_V2_CONTROL_INP_GAIN_PAD (0x03 << 22)
+#define AUDIO_V2_CONTROL_PHASE_INVERT (0x03 << 24)
+#define AUDIO_V2_CONTROL_UNDERFLOW    (0x03 << 26)
+#define AUDIO_V2_CONTROL_OVERFLOW     (0x03 << 28)
 
 /* Parametric Equalizer Section Effect Unit Control Selectors */
 #define AUDIO_PE_CONTROL_UNDEF      0x00
@@ -605,7 +605,7 @@ struct audio_cs_if_ac_header_descriptor {
     uint8_t baInterfaceNr[];
 } __PACKED;
 
-#define AUDIO_SIZEOF_AC_HEADER_DESC(n) (8 + n)
+#define AUDIO_SIZEOF_AC_HEADER_DESC(bInCollection) (8 + (bInCollection))
 
 struct audio_cs_if_ac_input_terminal_descriptor {
     uint8_t bLength;
@@ -646,7 +646,7 @@ struct audio_cs_if_ac_feature_unit_descriptor {
     uint8_t iFeature;
 } __PACKED;
 
-#define AUDIO_SIZEOF_AC_FEATURE_UNIT_DESC(ch, n) (7 + (ch + 1) * n)
+#define AUDIO_SIZEOF_AC_FEATURE_UNIT_DESC(bNrChannels, bControlSize) (7 + ((bNrChannels) + 1) * (bControlSize))
 
 struct audio_cs_if_ac_selector_unit_descriptor {
     uint8_t bLength;
@@ -658,7 +658,7 @@ struct audio_cs_if_ac_selector_unit_descriptor {
     uint8_t iSelector;
 } __PACKED;
 
-#define AUDIO_SIZEOF_AC_SELECTOR_UNIT_DESC(n) (6 + n)
+#define AUDIO_SIZEOF_AC_SELECTOR_UNIT_DESC(bNrInPins) (6 + (bNrInPins))
 
 struct audio_cs_if_as_general_descriptor {
     uint8_t bLength;
@@ -683,7 +683,7 @@ struct audio_cs_if_as_format_type_descriptor {
     uint8_t tSamFreq[3];
 } __PACKED;
 
-#define AUDIO_SIZEOF_FORMAT_TYPE_DESC(n) (8 + 3 * n)
+#define AUDIO_SIZEOF_FORMAT_TYPE_DESC(bSamFreqType) (8 + 3 * (bSamFreqType))
 
 struct audio_ep_descriptor {
     uint8_t bLength;
@@ -738,7 +738,7 @@ struct audio_cs_ep_ep_general_descriptor {
     PP_NARG(__VA_ARGS__),            /* bInCollection */                                                                         \
     __VA_ARGS__                      /* baInterfaceNr */
 
-#define AUDIO_AC_DESCRIPTOR_INIT_LEN(n) (0x08 + 0x09 + 0x08 + n)
+#define AUDIO_AC_DESCRIPTOR_LEN(bInCollection) (0x08 + 0x09 + 0x08 + bInCollection)
 
 #define AUDIO_AC_INPUT_TERMINAL_DESCRIPTOR_INIT(bTerminalID, wTerminalType, bNrChannels, wChannelConfig) \
     0x0C,                            /* bLength */                                                   \
@@ -880,8 +880,8 @@ struct audio_cs_ep_ep_general_descriptor {
     0x03,                            /* bRefresh, 8ms */                                                                 \
     0x00                             /* bSynchAddress */
 
-#define AUDIO_AS_DESCRIPTOR_INIT_LEN(n) (0x09 + 0x09 + 0x07 + 0x08 + 3 * n + 0x09 + 0x07)
-#define AUDIO_AS_FEEDBACK_DESCRIPTOR_INIT_LEN(n) (0x09 + 0x09 + 0x07 + 0x08 + 3 * n + 0x09 + 0x07 + 0x09)
+#define AUDIO_AS_DESCRIPTOR_LEN(bSamFreqType) (0x09 + 0x09 + 0x07 + 0x08 + 3 * (bSamFreqType) + 0x09 + 0x07)
+#define AUDIO_AS_FEEDBACK_DESCRIPTOR_LEN(bSamFreqType) (0x09 + 0x09 + 0x07 + 0x08 + 3 * (bSamFreqType) + 0x09 + 0x07 + 0x09)
 
 #define AUDIO_AS_ALTSETTING_DESCRIPTOR_INIT(bInterfaceNumber, bAlternateSetting, bTerminalLink, bNrChannels, bSubFrameSize, bBitResolution, bEndpointAddress, bmAttributes, wMaxPacketSize, bInterval, ...) \
     0x09,                            /* bLength */                                                                       \
@@ -924,9 +924,9 @@ struct audio_cs_ep_ep_general_descriptor {
     0x00,                            /* wLockDelay */                                                                    \
     0x00
 
-#define AUDIO_AS_ALTSETTING_DESCRIPTOR_INIT_LEN(n) (0x09 + 0x07 + 0x08 + 3 * n + 0x09 + 0x07)
+#define AUDIO_AS_ALTSETTING_DESCRIPTOR_LEN(bSamFreqType) (0x09 + 0x07 + 0x08 + 3 * (bSamFreqType) + 0x09 + 0x07)
 
-#define AUDIO_AS_ALTSETTING0_DESCRIPTOR_INIT(bInterfaceNumber)                                               \
+#define AUDIO_AS_ALTSETTING0_DESCRIPTOR_INIT(bInterfaceNumber)                                                           \
     0x09,                            /* bLength */                                                                       \
     USB_DESCRIPTOR_TYPE_INTERFACE,   /* bDescriptorType */                                                               \
     bInterfaceNumber,                /* bInterfaceNumber */                                                              \
@@ -936,19 +936,6 @@ struct audio_cs_ep_ep_general_descriptor {
     AUDIO_SUBCLASS_AUDIOSTREAMING,   /* bInterfaceSubClass */                                                            \
     AUDIO_PROTOCOL_UNDEFINED,        /* bInterfaceProtocol */                                                            \
     0x00                             /* iInterface */
-
-#define AUDIO_MS_STANDARD_DESCRIPTOR_INIT(bInterfaceNumber, bNumEndpoints)                                               \
-    0x09,                            /* bLength */                                                                       \
-    USB_DESCRIPTOR_TYPE_INTERFACE,   /* bDescriptorType */                                                               \
-    bInterfaceNumber,                /* bInterfaceNumber */                                                              \
-    0x00,                            /* bAlternateSetting */                                                             \
-    bNumEndpoints,                   /* bNumEndpoints */                                                                 \
-    USB_DEVICE_CLASS_AUDIO,          /* bInterfaceClass */                                                               \
-    AUDIO_SUBCLASS_MIDISTREAMING,    /* bInterfaceSubClass */                                                            \
-    AUDIO_PROTOCOL_UNDEFINED,        /* bInterfaceProtocol */                                                            \
-    0x00                             /* iInterface */
-
-#define AUDIO_MS_STANDARD_DESCRIPTOR_INIT_LEN 0x09
 
 struct audio_v2_channel_cluster_descriptor {
     uint8_t bNrChannels;
@@ -993,7 +980,7 @@ struct audio_v2_cs_if_ac_clock_selector_descriptor {
     uint8_t iClockSelector;
 } __PACKED;
 
-#define AUDIO_SIZEOF_AC_CLOCK_SELECTOR_DESC(n) (7 + n)
+#define AUDIO_SIZEOF_AC_CLOCK_SELECTOR_DESC(bNrInPins) (7 + (bNrInPins))
 
 struct audio_v2_cs_if_ac_clock_multiplier_descriptor {
     uint8_t bLength;
@@ -1005,7 +992,7 @@ struct audio_v2_cs_if_ac_clock_multiplier_descriptor {
     uint8_t iClockMultiplier;
 } __PACKED;
 
-#define AUDIO_SIZEOF_AC_CLOCK_MULTIPLIER_DESC() (7)
+#define AUDIO_SIZEOF_AC_CLOCK_MULTIPLIER_DESC (7)
 
 struct audio_v2_cs_if_ac_input_terminal_descriptor {
     uint8_t bLength;
@@ -1049,7 +1036,7 @@ struct audio_v2_cs_if_ac_feature_unit_descriptor {
     uint8_t iFeature;
 } __PACKED;
 
-#define AUDIO_V2_SIZEOF_AC_FEATURE_UNIT_DESC(ch) (6 + (ch + 1) * 4)
+#define AUDIO_V2_SIZEOF_AC_FEATURE_UNIT_DESC(bNrChannels) (6 + ((bNrChannels) + 1) * 4)
 
 struct audio_v2_cs_if_as_general_descriptor {
     uint8_t bLength;
@@ -1124,7 +1111,7 @@ struct audio_v2_control_range3_param_block {
     WBVAL(wTotalLength),             /* wTotalLength */                                                                          \
     bmControls                       /* bmControls */                                                                            \
 
-#define AUDIO_V2_AC_DESCRIPTOR_INIT_LEN (0x08 + 0x09 + 0x09)
+#define AUDIO_V2_AC_DESCRIPTOR_LEN (0x08 + 0x09 + 0x09)
 
 #define AUDIO_V2_AC_CLOCK_SOURCE_DESCRIPTOR_INIT(bClockID, bmAttributes, bmControls) \
     0x08,                            /* bLength */                               \
@@ -1262,7 +1249,7 @@ struct audio_v2_control_range3_param_block {
     0x00,                            /* wLockDelay */                                                                                                                     \
     0x00
 
-#define AUDIO_V2_AS_ALTSETTING0_DESCRIPTOR_INIT(bInterfaceNumber)                                               \
+#define AUDIO_V2_AS_ALTSETTING0_DESCRIPTOR_INIT(bInterfaceNumber)                                                        \
     0x09,                            /* bLength */                                                                       \
     USB_DESCRIPTOR_TYPE_INTERFACE,   /* bDescriptorType */                                                               \
     bInterfaceNumber,                /* bInterfaceNumber */                                                              \
@@ -1331,9 +1318,10 @@ struct audio_v2_control_range3_param_block {
 
 // clang-format on
 
-#define AUDIO_V2_AS_DESCRIPTOR_INIT_LEN            (0x09 + 0x09 + 0x10 + 0x06 + 0x07 + 0x08)
-#define AUDIO_V2_AS_ALTSETTING_DESCRIPTOR_INIT_LEN (0x09 + 0x10 + 0x06 + 0x07 + 0x08)
-#define AUDIO_V2_AS_FEEDBACK_DESCRIPTOR_INIT_LEN   (0x09 + 0x09 + 0x10 + 0x06 + 0x07 + 0x08 + 0x07)
+#define AUDIO_V2_AS_DESCRIPTOR_LEN            (0x09 + 0x09 + 0x10 + 0x06 + 0x07 + 0x08)
+#define AUDIO_V2_AS_ALTSETTING0_DESCRIPTOR_LEN (0x09)
+#define AUDIO_V2_AS_ALTSETTING_DESCRIPTOR_LEN (0x09 + 0x10 + 0x06 + 0x07 + 0x08)
+#define AUDIO_V2_AS_FEEDBACK_DESCRIPTOR_LEN   (0x09 + 0x09 + 0x10 + 0x06 + 0x07 + 0x08 + 0x07)
 
 #define AUDIO_SAMPLE_FREQ_NUM(num) (uint8_t)(num), (uint8_t)((num >> 8))
 #define AUDIO_SAMPLE_FREQ_3B(frq)  (uint8_t)(frq), (uint8_t)((frq >> 8)), (uint8_t)((frq >> 16))

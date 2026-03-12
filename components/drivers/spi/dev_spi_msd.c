@@ -199,7 +199,7 @@ static rt_err_t _send_cmd(
         return -RT_ERROR;//fail
     }
 
-    //recieve other byte
+    //receive other byte
     if (type == response_r1)
     {
         return RT_EOK;

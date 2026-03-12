@@ -7,6 +7,6 @@ group = []
 if rtconfig.PLATFORM in ['armcc', 'armclang']:
     CPPDEFINES = ['RT_USING_ARMLIBC', 'RT_USING_LIBC', '__STDC_LIMIT_MACROS']
     AddDepend(['RT_USING_ARMLIBC', 'RT_USING_LIBC'])
-    group = DefineGroup('Compiler', src, depend = [''], CPPDEFINES = CPPDEFINES)
+    group = DefineGroup('Libc', src, depend = [''], CPPDEFINES = CPPDEFINES)
 
 Return('group')

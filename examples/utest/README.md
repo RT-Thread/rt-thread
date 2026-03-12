@@ -57,7 +57,7 @@ msh />utest_run
 1. 如果是对已有测试集合的完善，需要把添加的测试用例的配置项，以及对应的依赖项添加到对应测试集合的配置文件里，如：[examples\utest\configs\kernel\mem.conf](./configs/kernel/mem.conf)。
 
 ```
-CONFIG_UTEST_MEMHEAP_TC=y
+CONFIG_RT_UTEST_MEMHEAP=y
 
 # dependencies
 CONFIG_RT_USING_MEMHEAP=y

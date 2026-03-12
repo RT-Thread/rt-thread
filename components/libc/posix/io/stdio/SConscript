@@ -1,6 +1,6 @@
 from building import *
 
 src     = ['stdio.c']
-group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX_STDIO'], CPPPATH = [GetCurrentDir()])
+group = DefineGroup('Libc', src, depend = ['RT_USING_POSIX_STDIO'], CPPPATH = [GetCurrentDir()])
 
 Return('group')

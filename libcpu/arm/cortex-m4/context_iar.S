@@ -239,9 +239,9 @@ _get_sp_done
 
 #if defined ( __ARMVFP__ )
     TST     lr, #0x10               ; if(!EXC_RETURN[4])
-    BNE     skip_push_fpu
+    BNE     skip_push_fpu_hd
     VSTMDB  r0!, {d8 - d15}         ; push FPU register s16~s31
-skip_push_fpu
+skip_push_fpu_hd
 #endif
 
     STMFD   r0!, {r4 - r11}         ; push r4 - r11 register
@@ -250,9 +250,9 @@ skip_push_fpu
     MOV     r4, #0x00               ; flag = 0
 
     TST     lr, #0x10               ; if(!EXC_RETURN[4])
-    BNE     push_flag
+    BNE     push_flag_hd
     MOV     r4, #0x01               ; flag = 1
-push_flag
+push_flag_hd
     SUB     r0, r0, #0x04
     STR     r4, [r0]                ; push flag
 #endif

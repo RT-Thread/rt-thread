@@ -7,3 +7,9 @@ config SOC_GD32VF103V
     select SOC_FAMILY_GD32
     select RT_USING_HW_ATOMIC
 
+config SOC_GD32VW553H
+    bool
+    select SOC_SERIES_GD32VW
+    select SOC_FAMILY_GD32
+    select RT_USING_HW_ATOMIC
+

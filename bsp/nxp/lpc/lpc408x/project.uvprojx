@@ -333,7 +333,7 @@
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
               <Define>__STDC_LIMIT_MACROS, CORE_M4, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\ktime\inc;.;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\ktime;..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\libcpu\arm\common;..\..\..\..\components\finsh;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;drivers;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\components\libc\posix\io\eventfd;Libraries\Drivers\include;..\..\..\..\components\libc\posix\ipc;Libraries\CMSIS\Include;applications;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\delay;..\..\..\..\components\drivers\include;..\..\..\..\components\dfs\dfs_v1\include;Libraries\Device\NXP\LPC407x_8x_177x_8x\Include</IncludePath>
+              <IncludePath>..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\clock_time\inc;.;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\clock_time;..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\libcpu\arm\common;..\..\..\..\components\finsh;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;drivers;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\components\libc\posix\io\eventfd;Libraries\Drivers\include;..\..\..\..\components\libc\posix\ipc;Libraries\CMSIS\Include;applications;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\delay;..\..\..\..\components\drivers\include;..\..\..\..\components\dfs\dfs_v1\include;Libraries\Device\NXP\LPC407x_8x_177x_8x\Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1039,26 +1039,26 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>ktime</GroupName>
+          <GroupName>clock_time</GroupName>
           <Files>
             <File>
-              <FileName>cputimer.c</FileName>
+              <FileName>clock_time_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ktime\src\cputimer.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\clock_time\clock_time_core.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>boottime.c</FileName>
+              <FileName>clock_boottime.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ktime\src\boottime.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\clock_time\clock_boottime.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>hrtimer.c</FileName>
+              <FileName>clock_hrtimer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ktime\src\hrtimer.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\clock_time\clock_hrtimer.c</FilePath>
             </File>
           </Files>
         </Group>

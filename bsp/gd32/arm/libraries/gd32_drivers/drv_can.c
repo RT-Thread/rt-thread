@@ -8,6 +8,7 @@
  * Change Logs:
  * Date           Author               Notes
  * 2025-18-03     Dmitriy Chernov      first implementation for GD32F4xx
+ * 2025-09-24     CYFS                 add support for GD32F5xx
  */
 
 #include "drv_can.h"
@@ -31,7 +32,7 @@ static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
     {CAN20kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 150},
     {CAN10kBaud,    CAN_BT_SJW_1TQ, CAN_BT_BS1_11TQ, CAN_BT_BS2_2TQ, 300},
 };
-#elif defined(GD32F425) || defined(GD32F427) || defined(GD32F450) /* 50MHz(max) */
+#elif defined(GD32F425) || defined(GD32F427) || defined(GD32F450) || defined(GD32F527)/* 50MHz(max) */
 static const struct gd32_baudrate_tbl can_baudrate_tbl[] =
 {
     {CAN1MBaud,     CAN_BT_SJW_1TQ, CAN_BT_BS1_8TQ,  CAN_BT_BS2_1TQ, 5},
@@ -82,7 +83,9 @@ static const struct gd32_can gd32_can_gpio[] =
 #ifdef BSP_USING_CAN0
     {
         .can_clk = RCU_CAN0,
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
         .alt_func_num = GPIO_AF_9,
+#endif
 #if defined BSP_CAN0_TX_PA12
         .tx_clk = RCU_GPIOA,
         .tx_pin = GET_PIN(A, 12),
@@ -119,7 +122,10 @@ static const struct gd32_can gd32_can_gpio[] =
 #ifdef BSP_USING_CAN1
     {
         .can_clk = RCU_CAN1,
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
         .alt_func_num = GPIO_AF_9,
+#endif
+
 #if defined BSP_CAN1_TX_PB6
         .tx_clk = RCU_GPIOB,
         .tx_pin = GET_PIN(B, 6),
@@ -150,7 +156,7 @@ static void gd32_can_gpio_init(void)
         rcu_periph_clock_enable(gd32_can_gpio[i].tx_clk);
         rcu_periph_clock_enable(gd32_can_gpio[i].rx_clk);
 
-#if defined SOC_SERIES_GD32F4xx
+#if defined SOC_SERIES_GD32F4xx || defined SOC_SERIES_GD32F5xx
         gpio_af_set(PIN_GDPORT(gd32_can_gpio[i].tx_pin), gd32_can_gpio[i].alt_func_num, PIN_GDPIN(gd32_can_gpio[i].tx_pin));
         gpio_af_set(PIN_GDPORT(gd32_can_gpio[i].rx_pin), gd32_can_gpio[i].alt_func_num, PIN_GDPIN(gd32_can_gpio[i].rx_pin));
 
@@ -515,7 +521,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     return RT_EOK;
 }
 
-static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
+static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     RT_ASSERT(can);
 
@@ -605,7 +611,7 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     return RT_EOK;
 }
 
-static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
+static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     RT_ASSERT(can);
 
@@ -656,6 +662,66 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     return RT_EOK;
 }
 
+rt_ssize_t _can_get_freebox(rt_uint32_t can_x)
+{
+    rt_uint32_t freebox = 0;
+    if ((CAN_STAT(can_x) & CAN_TSTAT_TME0) != 0U)
+    {
+        freebox++;
+    }
+    if ((CAN_STAT(can_x) & CAN_TSTAT_TME1) != 0U)
+    {
+        freebox++;
+    }
+    if ((CAN_STAT(can_x) & CAN_TSTAT_TME2) != 0U)
+    {
+        freebox++;
+    }
+    return freebox;
+}
+
+rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+{
+    RT_ASSERT(can);
+
+    can_trasnmit_message_struct transmit_message;
+    can_struct_para_init(CAN_TX_MESSAGE_STRUCT, &transmit_message);
+    rt_uint32_t can_x = ((struct gd32_can_device *)can->parent.user_data)->can_x;
+    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
+
+    if(_can_get_freebox(can_x) == 0)
+    {
+        return -RT_EBUSY;
+    }
+    if (RT_CAN_STDID == pmsg->ide)
+    {
+        transmit_message.tx_ff = CAN_FF_STANDARD;
+        transmit_message.tx_sfid = pmsg->id;
+    }
+    else
+    {
+        transmit_message.tx_ff = CAN_FF_EXTENDED;
+        transmit_message.tx_efid = pmsg->id;
+    }
+
+    if (RT_CAN_DTR == pmsg->rtr)
+    {
+        transmit_message.tx_ft = CAN_FT_DATA;
+        memcpy(transmit_message.tx_data, pmsg->data, pmsg->len);
+    }
+    else
+    {
+        transmit_message.tx_ft = CAN_FT_REMOTE;
+    }
+
+    transmit_message.tx_dlen = pmsg->len;
+    if(can_message_transmit(can_x, &transmit_message) == CAN_NOMAILBOX)
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
 
 static const struct rt_can_ops _can_ops =
 {
@@ -663,6 +729,7 @@ static const struct rt_can_ops _can_ops =
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
+    _can_sendmsg_nonblocking,
 };
 
 static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
@@ -735,7 +802,7 @@ static void _can_ewmc_isr(struct rt_can_device *can)
             can->status.ackerrcnt++;
             if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF0))
             {
-                if (!can_interrupt_flag_get(can_x, CAN_FLAG_MTFNERR0))
+                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR0))
                 {
                     rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 0 << 8);
                 }
@@ -743,7 +810,7 @@ static void _can_ewmc_isr(struct rt_can_device *can)
             }
             else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1))
             {
-                if (!can_interrupt_flag_get(can_x, CAN_FLAG_MTFNERR1))
+                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR1))
                 {
                     rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 1 << 8);
                 }
@@ -751,7 +818,7 @@ static void _can_ewmc_isr(struct rt_can_device *can)
             }
             else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
             {
-                if (!can_interrupt_flag_get(can_x, CAN_FLAG_MTFNERR2))
+                if (!can_flag_get(can_x, CAN_FLAG_MTFNERR2))
                 {
                     rt_hw_can_isr(can, RT_CAN_EVENT_TX_FAIL | 2 << 8);
                 }
@@ -796,7 +863,7 @@ static void _can_tx_isr(struct rt_can_device *can)
 
     if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF0))
     {
-        if (can_interrupt_flag_get(can_x, CAN_FLAG_MTFNERR0))
+        if (can_flag_get(can_x, CAN_FLAG_MTFNERR0))
         {
             rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | 0 << 8);
         }
@@ -809,7 +876,7 @@ static void _can_tx_isr(struct rt_can_device *can)
     }
     else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF1))
     {
-        if (can_interrupt_flag_get(can_x, CAN_FLAG_MTFNERR1))
+        if (can_flag_get(can_x, CAN_FLAG_MTFNERR1))
         {
             rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | 1 << 8);
         }
@@ -822,7 +889,7 @@ static void _can_tx_isr(struct rt_can_device *can)
     }
     else if (can_interrupt_flag_get(can_x, CAN_INT_FLAG_MTF2))
     {
-        if (can_interrupt_flag_get(can_x, CAN_FLAG_MTFNERR2))
+        if (can_flag_get(can_x, CAN_FLAG_MTFNERR2))
         {
             rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | 2 << 8);
         }

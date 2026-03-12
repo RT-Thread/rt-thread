@@ -17,6 +17,6 @@ if rtconfig.PLATFORM in ['iccarm']:
         if iar_version != LooseVersion("0.0") and iar_version < LooseVersion("8.20.1"):
             CPPDEFINES = CPPDEFINES + ['_DLIB_THREAD_SUPPORT']
 
-    group = DefineGroup('Compiler', src, depend = [''], CPPDEFINES = CPPDEFINES)
+    group = DefineGroup('Libc', src, depend = [''], CPPDEFINES = CPPDEFINES)
 
 Return('group')

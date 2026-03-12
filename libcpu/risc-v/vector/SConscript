@@ -7,6 +7,6 @@ CPPPATH = []
 
 CPPPATH += [cwd + '/rvv-1.0']
 
-group = DefineGroup('libcpu', src, depend = ['ARCH_RISCV_VECTOR'], CPPPATH = CPPPATH)
+group = DefineGroup('CPU', src, depend = ['ARCH_RISCV_VECTOR'], CPPPATH = CPPPATH)
 
 Return('group')

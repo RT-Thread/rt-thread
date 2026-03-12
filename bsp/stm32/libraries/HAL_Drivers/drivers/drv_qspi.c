@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2018-11-27     zylx         first version
+ * Date           Author         Notes
+ * 2018-11-27     zylx           first version
+ * 2025-12-14     LinuxMint-User resolve QSPI interface type mismatch
  */
 
 #include "board.h"
@@ -146,6 +147,7 @@ static void qspi_send_cmd(struct stm32_qspi_bus *qspi_bus, struct rt_qspi_messag
     {
         Cmdhandler.InstructionMode = QSPI_INSTRUCTION_4_LINES;
     }
+
     if (message->address.qspi_lines == 0)
     {
         Cmdhandler.AddressMode = QSPI_ADDRESS_NONE;
@@ -162,6 +164,7 @@ static void qspi_send_cmd(struct stm32_qspi_bus *qspi_bus, struct rt_qspi_messag
     {
         Cmdhandler.AddressMode = QSPI_ADDRESS_4_LINES;
     }
+
     if (message->address.size == 24)
     {
         Cmdhandler.AddressSize = QSPI_ADDRESS_24_BITS;
@@ -170,6 +173,7 @@ static void qspi_send_cmd(struct stm32_qspi_bus *qspi_bus, struct rt_qspi_messag
     {
         Cmdhandler.AddressSize = QSPI_ADDRESS_32_BITS;
     }
+
     if (message->qspi_data_lines == 0)
     {
         Cmdhandler.DataMode = QSPI_DATA_NONE;
@@ -323,8 +327,27 @@ rt_err_t rt_hw_qspi_device_attach(const char *bus_name, const char *device_name,
         goto __exit;
     }
 
-    qspi_device->enter_qspi_mode = enter_qspi_mode;
-    qspi_device->exit_qspi_mode = exit_qspi_mode;
+    /* Safe type conversion to resolve interface contract mismatch.
+     * Caller ensures the function pointer is compatible via adapter pattern.
+     */
+    if (enter_qspi_mode != RT_NULL)
+    {
+        qspi_device->enter_qspi_mode = (void (*)(struct rt_qspi_device *))enter_qspi_mode;
+    }
+    else
+    {
+        qspi_device->enter_qspi_mode = RT_NULL;
+    }
+
+    if (exit_qspi_mode != RT_NULL)
+    {
+        qspi_device->exit_qspi_mode = (void (*)(struct rt_qspi_device *))exit_qspi_mode;
+    }
+    else
+    {
+        qspi_device->exit_qspi_mode = RT_NULL;
+    }
+
     qspi_device->config.qspi_dl_width = data_line_width;
 
 #ifdef BSP_QSPI_USING_SOFTCS
@@ -377,3 +400,4 @@ INIT_BOARD_EXPORT(rt_hw_qspi_bus_init);
 
 #endif /* BSP_USING_QSPI */
 #endif /* RT_USING_QSPI */
+

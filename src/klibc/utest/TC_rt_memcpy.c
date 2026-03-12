@@ -105,4 +105,4 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(TC_rt_memcpy_align);
 }
 
-UTEST_TC_EXPORT(utest_do_tc, "klibc.rt_memcpy", utest_tc_init, utest_tc_cleanup, 1000);
+UTEST_TC_EXPORT(utest_do_tc, "core.klibc.rt_memcpy", utest_tc_init, utest_tc_cleanup, 1000);

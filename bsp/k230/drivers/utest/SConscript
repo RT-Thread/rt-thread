@@ -2,7 +2,7 @@ from building import *
 
 src = []
 
-if GetDepend('RT_UTEST_USING_ALL_CASES') or GetDepend('BSP_UTEST_DRIVERS'):
+if GetDepend('BSP_UTEST_DRIVERS'):
     src += ['test_gpio.c']
     src += ['test_gpio_irq.c']
 
@@ -26,7 +26,16 @@ if GetDepend('RT_UTEST_USING_ALL_CASES') or GetDepend('BSP_UTEST_DRIVERS'):
 
     if GetDepend('BSP_USING_UART'):
         src += ['test_uart.c']
-        
+
+    if GetDepend('BSP_USING_RTC'):
+        src += ['test_rtc.c']
+
+    if GetDepend('BSP_USING_I2C'):
+        src += ['test_i2c.c']
+
+    if GetDepend('BSP_USING_SPI'):
+        src += ['test_spi.c']
+
 group = DefineGroup('utestcases', src, depend = [''])
 
 Return('group')

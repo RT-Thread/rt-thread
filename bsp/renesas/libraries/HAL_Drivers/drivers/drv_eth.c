@@ -10,6 +10,7 @@
 * 2019-06-10     SummerGift   optimize PHY state detection process
 * 2019-09-03     xiaofan      optimize link change detection process
 * 2025-02-11     kurisaW      adaptation for RZ Ethernet driver
+* 2025-12-01     yans         adaptation for RA8P1 Ethernet driver
 */
 
 #include "drv_config.h"
@@ -22,7 +23,11 @@
 // #define ETH_RX_DUMP
 // #define ETH_TX_DUMP
 #define MINIMUM_ETHERNET_FRAME_SIZE (60U)
+#ifdef SOC_SERIES_R7KA8P1
+#define ETH_MAX_PACKET_SIZE (1514U)
+#else
 #define ETH_MAX_PACKET_SIZE (2048U)
+#endif
 #define ETHER_GMAC_INTERRUPT_FACTOR_RECEPTION (0x000000C0)
 #define ETH_RX_BUF_SIZE ETH_MAX_PACKET_SIZE
 #define ETH_TX_BUF_SIZE ETH_MAX_PACKET_SIZE
@@ -52,6 +57,34 @@ static uint8_t g_link_change = 0; ///< Link change (bit0:port0, bit1:port1, bit2
 static uint8_t g_link_status = 0; ///< Link status (bit0:port0, bit1:port1, bit2:port2)
 static uint8_t previous_link_status = 0;
 
+/* Multi-PHY support structures */
+typedef struct
+{
+#if defined(SOC_SERIES_R7KA8P1)
+    rmac_phy_instance_ctrl_t *p_ctrl;
+#else
+    ether_phy_instance_ctrl_t *p_ctrl;
+#endif
+    uint8_t port_bit;
+    const char *name;
+} phy_port_info_t;
+
+static const phy_port_info_t phy_ports[] =
+{
+#if defined(SOC_SERIES_R7KA8P1)
+    { &g_rmac_phy0_ctrl,  0x01, "PHY0" },
+    { &g_rmac_phy1_ctrl,  0x02, "PHY1" },
+#elif defined(SOC_SERIES_R9A07G0)
+    { &g_ether_phy0_ctrl, 0x01, "PHY0" },
+    { &g_ether_phy1_ctrl, 0x02, "PHY1" },
+    { &g_ether_phy2_ctrl, 0x04, "PHY2" },
+#else
+    { &g_ether_phy0_ctrl, 0x01, "PHY"  },
+#endif
+};
+
+#define PHY_PORTS_COUNT (sizeof(phy_ports) / sizeof(phy_ports[0]))
+
 #if defined(SOC_SERIES_R9A07G0)
 
 #define status_ecsr             status_link
@@ -61,6 +94,14 @@ static uint8_t previous_link_status = 0;
 #define R_ETHER_Write       R_GMAC_Write
 #define R_ETHER_Read        R_GMAC_Read
 #define R_ETHER_LinkProcess R_GMAC_LinkProcess
+
+#elif defined(SOC_SERIES_R7KA8P1)
+
+#define R_ETHER_Open                R_RMAC_Open
+#define R_ETHER_Write               R_RMAC_Write
+#define R_ETHER_Read                R_RMAC_Read
+#define R_ETHER_LinkProcess         R_RMAC_LinkProcess
+#define R_ETHER_PHY_LinkStatusGet   R_RMAC_PHY_LinkStatusGet
 
 #endif
 
@@ -90,7 +131,6 @@ static void dump_hex(const rt_uint8_t *ptr, rt_size_t buflen)
 }
 #endif
 
-extern void phy_reset(void);
 /* EMAC initialization function */
 static rt_err_t rt_ra_eth_init(void)
 {
@@ -139,6 +179,8 @@ static rt_err_t rt_ra_eth_control(rt_device_t dev, int cmd, void *args)
         {
 #if defined(SOC_SERIES_R9A07G0)
             SMEMCPY(args, g_ether0_ctrl.p_gmac_cfg->p_mac_address, 6);
+#elif defined(SOC_SERIES_R7KA8P1)
+            SMEMCPY(args, g_ether0_ctrl.p_cfg->p_mac_address, 6);
 #else
             SMEMCPY(args, g_ether0_ctrl.p_ether_cfg->p_mac_address, 6);
 #endif
@@ -209,9 +251,15 @@ rt_err_t rt_ra_eth_tx(rt_device_t dev, struct pbuf *p)
         }
     }
 #endif
-    res = R_ETHER_Write(&g_ether0_ctrl, buffer, p->tot_len);//>MINIMUM_ETHERNET_FRAME_SIZE?p->tot_len:MINIMUM_ETHERNET_FRAME_SIZE);
+#if defined(__DCACHE_PRESENT)
+    SCB_CleanInvalidateDCache();
+#endif
+    res = R_ETHER_Write(&g_ether0_ctrl, buffer, p->tot_len < MINIMUM_ETHERNET_FRAME_SIZE ?  MINIMUM_ETHERNET_FRAME_SIZE : p->tot_len);
     if (res != FSP_SUCCESS)
+    {
         LOG_W("R_ETHER_Write failed!, res = %d", res);
+        return (err_t)ERR_USE;
+    }
     return RT_EOK;
 }
 
@@ -234,10 +282,19 @@ struct pbuf *rt_ra_eth_rx(rt_device_t dev)
 
     LOG_D("receive frame len : %d", len);
 
+#if defined(__DCACHE_PRESENT)
+    SCB_CleanInvalidateDCache();
+#endif
+
     if (len > 0)
     {
         /* We allocate a pbuf chain of pbufs from the Lwip buffer pool */
         p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
+        if (p == NULL)
+        {
+            LOG_E("Failed to allocate pbuf for %d bytes", len);
+            return NULL;
+        }
     }
 
 #ifdef ETH_RX_DUMP
@@ -290,61 +347,77 @@ static void phy_linkchange()
     fsp_err_t res;
     uint8_t port = 0;
     uint8_t port_bit = 0;
-
-#if defined(SOC_SERIES_R9A07G0)
-    gmac_link_status_t port_status;
-#endif
+    uint8_t status_change;
+    uint8_t current_link_status = 0;
+    uint8_t i;
 
     res = R_ETHER_LinkProcess(&g_ether0_ctrl);
     if (res != FSP_SUCCESS)
         LOG_D("R_ETHER_LinkProcess failed!, res = %d", res);
 
+#if !defined(SOC_SERIES_R7KA8P1) && !defined(SOC_SERIES_R7FA6M3)
     if (0 == g_ether0.p_cfg->p_callback)
-    {
-        for (port = 0; port < PING_PORT_COUNT; port++)
-        {
-#if defined(SOC_SERIES_R9A07G0)
-            res = R_GMAC_GetLinkStatus(&g_ether0_ctrl, port, &port_status);
-#else
-            res = R_ETHER_PHY_LinkStatusGet(&g_ether_phy0_ctrl);
 #endif
-            if (FSP_SUCCESS != res)
-            {
-                /* An error has occurred */
-                LOG_E("PHY_LinkStatus get failed!, res = %d", res);
-                break;
-            }
-
-            /* Set link up */
-            g_link_status |= (uint8_t)(1U << port);
-        }
-        if (FSP_SUCCESS == res)
+    {
+        /* Check link status for all PHY ports */
+        for (i = 0; i < PHY_PORTS_COUNT; i++)
         {
-            /* Set changed link status */
-            g_link_change = previous_link_status ^ g_link_status;
+            res = R_ETHER_PHY_LinkStatusGet(phy_ports[i].p_ctrl);
+
+            // ETHER_PHY successfully get link partner ability.
+            if (res == FSP_SUCCESS)
+            {
+                current_link_status |= phy_ports[i].port_bit; /* Port link up */
+
+                status_change = previous_link_status ^ current_link_status;
+                if (status_change & phy_ports[i].port_bit)
+                {
+                    g_link_change |= phy_ports[i].port_bit;
+                    LOG_I("%s Manual Link status changed: UP", phy_ports[i].name);
+                }
+            }
+            // PHY-LSI is not link up.
+            else if (res == FSP_ERR_ETHER_PHY_ERROR_LINK)
+            {
+                current_link_status &= ~(phy_ports[i].port_bit); /* Port link down */
+
+                status_change = previous_link_status ^ current_link_status;
+                if (status_change & phy_ports[i].port_bit)
+                {
+                    g_link_change |= phy_ports[i].port_bit;
+                    LOG_I("%s Manual Link status changed: DOWN", phy_ports[i].name);
+                }
+            }
+            else
+            {
+                LOG_E("%s PHY_Read failed!, res = %d", phy_ports[i].name, res);
+            }
+            /* Update global link status */
+            g_link_status = current_link_status;
         }
     }
 
-    for (port = 0; port < PING_PORT_COUNT; port++)
+    /* Process link changes for all ports */
+    for (port = 0; port < PHY_PORTS_COUNT; port++)
     {
-        port_bit = (uint8_t)(1U << port);
+        port_bit = phy_ports[port].port_bit;
 
         if (g_link_change & port_bit)
         {
             /* Link status changed */
-            g_link_change &= (uint8_t)(~port_bit); // change bit clear
+            g_link_change &= (uint8_t)(~port_bit); /* change bit clear */
 
             if (g_link_status & port_bit)
             {
                 /* Changed to Link-up */
                 eth_device_linkchange(&ra_eth_device.parent, RT_TRUE);
-                LOG_I("link up");
+                LOG_I("%s link up", phy_ports[port].name);
             }
             else
             {
                 /* Changed to Link-down */
                 eth_device_linkchange(&ra_eth_device.parent, RT_FALSE);
-                LOG_I("link down");
+                LOG_I("%s link down", phy_ports[port].name);
             }
         }
     }
@@ -371,7 +444,11 @@ void user_ether0_callback(ether_callback_args_t *p_args)
     case ETHER_EVENT_WAKEON_LAN:    ///< Magic packet detection event
     /* If EDMAC FR (Frame Receive Event) or FDE (Receive Descriptor Empty Event)
         * interrupt occurs, send rx mailbox. */
+#if defined(SOC_SERIES_R7KA8P1)
+    case ETHER_EVENT_RX_COMPLETE: ///< BSD Interrupt event
+#else
     case ETHER_EVENT_INTERRUPT: ///< BSD Interrupt event
+#endif
     {
         rt_err_t result;
         result = eth_device_ready(&(ra_eth_device.parent));

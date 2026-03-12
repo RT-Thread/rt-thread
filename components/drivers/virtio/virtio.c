@@ -96,11 +96,15 @@ rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, r
 
     _virtio_dev_check(dev);
 
-    RT_ASSERT(dev->mmio_config->queue_num_max > 0);
-    RT_ASSERT(dev->mmio_config->queue_num_max > queue_index);
+    RT_ASSERT(queue_index < dev->queues_num);
     /* ring_size is power of 2 */
     RT_ASSERT(ring_size > 0);
     RT_ASSERT(((ring_size - 1) & ring_size) == 0);
+
+    /* Select the queue first, then read queue_num_max */
+    dev->mmio_config->queue_sel = queue_index;
+    RT_ASSERT(dev->mmio_config->queue_num_max > 0);
+    RT_ASSERT(ring_size <= dev->mmio_config->queue_num_max);
 
     queue = &dev->queues[queue_index];
     pages_total_size = VIRTIO_PAGE_ALIGN(
@@ -124,7 +128,6 @@ rt_err_t virtio_queue_init(struct virtio_device *dev, rt_uint32_t queue_index, r
     rt_memset(pages, 0, pages_total_size);
 
     dev->mmio_config->guest_page_size = VIRTIO_PAGE_SIZE;
-    dev->mmio_config->queue_sel = queue_index;
     dev->mmio_config->queue_num = ring_size;
     dev->mmio_config->queue_align = VIRTIO_PAGE_SIZE;
     dev->mmio_config->queue_pfn = VIRTIO_VA2PA(pages) >> VIRTIO_PAGE_SHIFT;
@@ -154,8 +157,11 @@ void virtio_queue_destroy(struct virtio_device *dev, rt_uint32_t queue_index)
 
     _virtio_dev_check(dev);
 
+    RT_ASSERT(queue_index < dev->queues_num);
+
+    /* Select the queue first, then read queue_num_max */
+    dev->mmio_config->queue_sel = queue_index;
     RT_ASSERT(dev->mmio_config->queue_num_max > 0);
-    RT_ASSERT(dev->mmio_config->queue_num_max > queue_index);
 
     queue = &dev->queues[queue_index];
 
@@ -164,7 +170,6 @@ void virtio_queue_destroy(struct virtio_device *dev, rt_uint32_t queue_index)
     rt_free(queue->free);
     rt_free_align((void *)queue->desc);
 
-    dev->mmio_config->queue_sel = queue_index;
     dev->mmio_config->queue_pfn = RT_NULL;
 
     queue->num = 0;

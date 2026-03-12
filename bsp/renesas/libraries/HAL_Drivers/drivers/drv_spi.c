@@ -30,7 +30,7 @@
 #define RA_SPI2_EVENT 0x03
 static struct rt_event complete_event = {0};
 
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
 #define R_SPI_Write R_SPI_B_Write
 #define R_SPI_Read  R_SPI_B_Read
 #define R_SPI_WriteRead R_SPI_B_WriteRead
@@ -218,7 +218,7 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     rt_pin_write(device->cs_pin, PIN_HIGH);
 
     /**< config bitrate */
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
     R_SPI_B_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, SPI_B_CLOCK_SOURCE_PCLK, &spi_cfg.spck_div);
 #elif defined(SOC_SERIES_R9A07G0)
     R_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, SPI_CLOCK_SOURCE_PCLKM, &spi_cfg.spck_div);

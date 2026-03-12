@@ -18,6 +18,11 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN) || \
+     defined(CPU_MCXA366VLH) || defined(CPU_MCXA366VLL) || defined(CPU_MCXA366VLQ) || defined(CPU_MCXA366VPN))
+#define MCXA_UART_USE_FRO_LF_DIV
+#endif
+
 struct mcx_uart
 {
     struct rt_serial_device     *serial;
@@ -64,12 +69,12 @@ static const struct mcx_uart uarts[] =
         &serial0,
         LPUART0,
         LPUART0_IRQn,
-#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+        kCLOCK_Fro12M,
+#if defined(MCXA_UART_USE_FRO_LF_DIV)
         kFRO_LF_DIV_to_LPUART0,
 #else
         kFRO12M_to_LPUART0,
 #endif
-        kFRO12M_to_LPUART0,
         kCLOCK_GateLPUART0,
         kCLOCK_DivLPUART0,
         "uart0",
@@ -80,12 +85,12 @@ static const struct mcx_uart uarts[] =
         &serial1,
         LPUART1,
         LPUART1_IRQn,
-#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+        kCLOCK_Fro12M,
+#if defined(MCXA_UART_USE_FRO_LF_DIV)
         kFRO_LF_DIV_to_LPUART1,
 #else
         kFRO12M_to_LPUART1,
 #endif
-        kFRO12M_to_LPUART1,
         kCLOCK_GateLPUART1,
         kCLOCK_DivLPUART1,
         "uart1",
@@ -97,7 +102,7 @@ static const struct mcx_uart uarts[] =
         LPUART2,
         LPUART2_IRQn,
         kCLOCK_Fro12M,
-#if (defined(CPU_MCXA346VLH) || defined(CPU_MCXA346VLL) || defined(CPU_MCXA346VLQ) || defined(CPU_MCXA346VPN))
+#if defined(MCXA_UART_USE_FRO_LF_DIV)
         kFRO_LF_DIV_to_LPUART2,
 #else
         kFRO12M_to_LPUART2,
@@ -182,7 +187,7 @@ static int mcx_getc(struct rt_serial_device *serial)
 {
     struct mcx_uart *uart = (struct mcx_uart *)serial->parent.user_data;
 
-    if (kLPUART_RxDataRegFullInterruptEnable & LPUART_GetStatusFlags(uart->uart_base))
+    if (kLPUART_RxDataRegFullFlag & LPUART_GetStatusFlags(uart->uart_base))
     {
         return LPUART_ReadByte(uart->uart_base);
     }

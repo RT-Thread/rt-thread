@@ -1,0 +1,10 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+CPPPATH = [cwd]
+
+group = DefineGroup('utestcases', src, depend = ['RT_UTEST_SYS_PERF'], CPPPATH = CPPPATH)
+
+Return('group')

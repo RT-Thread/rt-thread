@@ -1,0 +1,16 @@
+[package]
+name = "rt_macros"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+proc_macro = true
+
+[dependencies]
+quote = "1.0"
+proc-macro2 = "1.0"
+darling = "0.13.0"
+
+[dependencies.syn]
+version = "1.0"
+features = ["extra-traits", "full"]

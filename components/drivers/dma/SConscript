@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../include']
 
 src = ['dma.c', 'dma_pool.c']
 
+if GetDepend(['RT_DMA_PL330']):
+    src += ['dma-pl330.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

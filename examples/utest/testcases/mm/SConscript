@@ -5,7 +5,7 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd]
 
-if GetDepend(['UTEST_MM_API_TC', 'RT_USING_SMART']):
+if GetDepend(['RT_UTEST_MM_API', 'RT_USING_SMART']):
     # deprecated test, will be rewrited in the future
     # src += ['mm_api_tc.c', 'mm_libcpu_tc.c']
     src += ['rt_ioremap.c']
@@ -14,10 +14,10 @@ if GetDepend(['UTEST_MM_API_TC', 'RT_USING_SMART']):
     src += ['lwp_mmap_expand.c', 'lwp_mmap_map_fixed.c', 'lwp_mmap_fix_private.c']
     src += ['lwp_mmap_fd.c', 'lwp_mmap_fd_map_fixed_merge.c', 'lwp_mmap_fd_map_fixed_split.c']
 
-if GetDepend(['UTEST_MM_API_TC', 'RT_USING_MEMBLOCK']):
+if GetDepend(['RT_UTEST_MM_API', 'RT_USING_MEMBLOCK']):
         src += ['mm_memblock_tc.c']
 
-if GetDepend(['UTEST_MM_LWP_TC', 'RT_USING_SMART']):
+if GetDepend(['RT_UTEST_MM_LWP', 'RT_USING_SMART']):
     src += ['mm_lwp_tc.c']
 
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)

@@ -178,6 +178,10 @@
 #define RT_SERIAL_RB_BUFSZ 2048
 #define RT_USING_CAN
 #define RT_CAN_USING_HDR
+#define RT_CANMSG_BOX_SZ 16
+#define RT_CANSND_BOX_NUM 1
+#define RT_CANSND_MSG_TIMEOUT 100
+#define RT_CAN_NB_TX_FIFO_SIZE 256
 #define RT_USING_CPUTIME
 #define CPUTIME_TIMER_FREQ 0
 #define RT_USING_I2C
@@ -251,6 +255,7 @@
 /* Network */
 
 #define RT_USING_SAL
+#define SOCKET_TABLE_STEP_LEN 4
 
 /* Docking with protocol stacks */
 
@@ -323,6 +328,7 @@
 #define RT_USING_UTEST
 #define UTEST_THR_STACK_SIZE 4096
 #define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
 #define RT_USING_ADT_BITMAP

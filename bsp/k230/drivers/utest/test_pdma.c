@@ -296,4 +296,4 @@ void test_pdma()
     UTEST_UNIT_RUN(test_pdma_rx);
 }
 
-UTEST_TC_EXPORT(test_pdma, "pdma", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(test_pdma, "bsp.k230.drivers.pdma", utest_tc_init, utest_tc_cleanup, 10);

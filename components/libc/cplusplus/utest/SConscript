@@ -1,0 +1,14 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend('RT_UTEST_CPP11_THREAD'):
+    src += Glob('tc_*.cpp')
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_CPLUSPLUS'], CPPPATH = CPPPATH)
+
+Return('group')
+

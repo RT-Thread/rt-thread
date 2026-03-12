@@ -27,13 +27,24 @@
 .equ I_Bit,           0x80   /* when I bit is set, IRQ is disabled */
 .equ F_Bit,           0x40   /* when F bit is set, FIQ is disabled */
 
-/*Load the physical address of a symbol into a register. 
-  Through pv_off calculates the offset of the physical address */
+/**
+ * @brief   Get the physical address of the symbol
+ *
+ * @param   reg is the register to store the physical address
+ * @param   symbol is symbol name
+ * @param   _pvoff is the offset between the physical address and the virtual address
+ */
 .macro get_phy, reg, symbol, _pvoff
     ldr \reg, =\symbol
     add \reg, \_pvoff
 .endm
-/*Calculate the offset between the physical address and the virtual address of the "_reset".*/
+
+/**
+ * @brief   Calculate the offset between the physical address and the virtual address of the "_reset"
+ *
+ * @param   tmp is the register which will be used to store the virtual address of the "_reset"
+ * @param   out is the register which will be used to store the pv_off (paddr - vaddr)
+ */
 .macro get_pvoff, tmp, out
     ldr     \tmp, =_reset
     adr     \out, _reset
@@ -68,7 +79,7 @@ init_cpu_stack_early:
 
 #ifdef RT_USING_FPU
     mov r4, #0xfffffff
-    mcr p15, 0, r4, c1, c0, 2
+    mcr p15, 0, r4, c1, c0, 2   /* CPACR */
 #endif
 
     mov pc, lr
@@ -76,12 +87,12 @@ init_cpu_stack_early:
 init_kernel_bss:
 
     /* enable I cache + branch prediction */
-    mrc p15, 0, r0, c1, c0, 0
-    orr     r0, r0, #(1<<12)
-    orr     r0, r0, #(1<<11)
+    mrc p15, 0, r0, c1, c0, 0   /* SCTLR */
+    orr     r0, r0, #(1<<12)    /* I=1 */
+    orr     r0, r0, #(1<<11)    /* Z=1 */
     mcr p15, 0, r0, c1, c0, 0
 
-    mov r0,#0                   /* get a zero      */
+    mov r0,#0
     get_phy r1, __bss_start, pv_off
     get_phy r2, __bss_end, pv_off
 
@@ -123,7 +134,7 @@ continue_exit:
 #endif
 #ifdef SOC_BCM283x
     /* Suspend the other cpu cores */
-    mrc p15, 0, r0, c0, c0, 5
+    mrc p15, 0, r0, c0, c0, 5   /* MPIDR */
     ands r0, #3
     bne _halt
 
@@ -162,17 +173,18 @@ continue_exit:
     
 #endif
 
-    /* invalid tlb before enable mmu */
-    mrc p15, 0, r0, c1, c0, 0
-    bic r0, #1
+    /* disable MMU  */
+    mrc p15, 0, r0, c1, c0, 0   /* SCTLR */
+    bic r0, #1                  /* M=0 */
     mcr p15, 0, r0, c1, c0, 0
     dsb
     isb
 
+    /* invalidate TLB, I-cache and branch predictor */
     mov r0, #0
-    mcr p15, 0, r0, c8, c7, 0
-    mcr p15, 0, r0, c7, c5, 0    /* iciallu */
-    mcr p15, 0, r0, c7, c5, 6    /* bpiall */
+    mcr p15, 0, r0, c8, c7, 0    /* ITLBIALL */
+    mcr p15, 0, r0, c7, c5, 0    /* ICIALLU */
+    mcr p15, 0, r0, c7, c5, 6    /* BPIALL */
     dsb
     isb
 
@@ -218,13 +230,14 @@ enable_mmu_page_table_early:
     get_phy r0, init_mtbl, pv_off
     mcr     p15, #0, r0, c2, c0, #0
     dmb
-    
-    ldr     r0,=#0x55555555
-    mcr     p15, #0, r0, c3, c0, #0
+
+    /* set all domains with client mode */
+    ldr     r0,=#0x55555555         /* client */
+    mcr     p15, #0, r0, c3, c0, #0 /* DACR */
 
     /* disable ttbr1 */
-    mov r0, #(1 << 5)            /* PD1=1 */
-    mcr p15, 0, r0, c2, c0, 2    /* ttbcr */
+    mov r0, #(1 << 5)               /* PD1=1 */
+    mcr p15, 0, r0, c2, c0, 2       /* TTBCR */
 
     
     /*  init stack for cpu mod */
@@ -253,16 +266,17 @@ enable_mmu_page_table_early:
     sub sp, r1, cpu_id, asl #ARM_CPU_STACK_SIZE_OFFSET
 
 
-    /* invalid tlb before enable mmu */
+    /* invalidate TLB, I-cache and branch predictor */
     mov r0, #0
-    mcr p15, 0, r0, c8, c7, 0
-    mcr p15, 0, r0, c7, c5, 0    /* iciallu */
-    mcr p15, 0, r0, c7, c5, 6    /* bpiall */
+    mcr p15, 0, r0, c8, c7, 0           /* ITLBIALL */
+    mcr p15, 0, r0, c7, c5, 0           /* ICIALLU */
+    mcr p15, 0, r0, c7, c5, 6           /* BPIALL */
 
-    mrc p15, 0, r0, c1, c0, 0
-    bic r0, r0, #0x7                    /* clear bit1~3 */
-    orr r0, #((1 << 12) | (1 << 11))    /* instruction cache, branch prediction */
-    orr r0, #((1 << 2) | (1 << 0))      /* data cache, mmu enable */
+    /* enable I cache + branch prediction, enable MMU */
+    mrc p15, 0, r0, c1, c0, 0           /* SCTLR */
+    bic r0, r0, #0x7                    /* C=0, A=0, M=0 */
+    orr r0, #((1 << 12) | (1 << 11))    /* I=1, Z=1 */
+    orr r0, #((1 << 2) | (1 << 0))      /* C=1, M=1 */
     mcr p15, 0, r0, c1, c0, 0
     dsb
     isb
@@ -278,13 +292,13 @@ master_core_startup :
 
 .global rt_hw_mmu_tbl_get
 rt_hw_mmu_tbl_get:
-    mrc p15, 0, r0, c2, c0, 0    /* ttbr0 */
-    bic r0, #0x18
+    mrc p15, 0, r0, c2, c0, 0   /* TTBR0 */
+    bic r0, #0x18               /* RGN=0 */
     mov pc, lr
 
 .weak rt_hw_cpu_id_early
 rt_hw_cpu_id_early:
-    mrc p15, 0, r0, c0, c0, 5
+    mrc p15, 0, r0, c0, c0, 5   /* MPIDR */
     and r0, r0, #0xf
     mov pc, lr
 
@@ -635,15 +649,20 @@ START_POINT_END(_thread_start)
 init_mtbl:
     .space  (4*4096) /* The  L1 translation table therefore contains 4096 32-bit (word-sized) entries.  */
 
+ /*
+ * void rt_hw_mmu_switch(rt_uint32_t* mmutable_p);
+ * r0 --> mmutable_p (mmu table address)
+ */
 .global rt_hw_mmu_switch
 rt_hw_mmu_switch:
-    orr r0, #0x18
-    mcr p15, 0, r0, c2, c0, 0       // ttbr0
-                                    //invalid tlb
+    orr r0, #0x18                   /* RGN=0b11 (Outer WB-WA) */
+    mcr p15, 0, r0, c2, c0, 0       /* TTBR0 */
+
+    /* invalidate TLB, I-cache and branch predictor */
     mov r0, #0
-    mcr p15, 0, r0, c8, c7, 0
-    mcr p15, 0, r0, c7, c5, 0       //iciallu
-    mcr p15, 0, r0, c7, c5, 6       //bpiall
+    mcr p15, 0, r0, c8, c7, 0       /* ITLBIALL */
+    mcr p15, 0, r0, c7, c5, 0       /* ICIALLU */
+    mcr p15, 0, r0, c7, c5, 6       /* BPIALL */
 
     dsb
     isb
@@ -653,7 +672,7 @@ rt_hw_mmu_switch:
 .global rt_hw_set_process_id
 rt_hw_set_process_id:
     LSL r0, r0, #8
-    MCR p15, 0, r0, c13, c0, 1
+    MCR p15, 0, r0, c13, c0, 1      /* CONTEXTIDR */
     mov pc, lr
 
 

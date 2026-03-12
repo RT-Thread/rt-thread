@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 HPMicro
+ * Copyright (c) 2021-2025 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  *
  */
@@ -15,19 +15,12 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include "hpm_dma_mgr.h"
+#include "hpm_l1c_drv.h"
 #include "hpm_mchtmr_drv.h"
 
 extern int rt_hw_uart_init(void);
 void os_tick_config(void);
 void rtt_board_init(void);
-
-void rt_hw_board_init(void)
-{
-    rtt_board_init();
-
-    /* Call the RT-Thread Component Board Initialization */
-    rt_components_board_init();
-}
 
 void os_tick_config(void)
 {
@@ -37,8 +30,14 @@ void os_tick_config(void)
     enable_mchtmr_irq();
 }
 
+void rtt_os_tick_clock(void)
+{
+    clock_add_to_group(clock_mchtmr0, 0);
+}
+
 void rtt_board_init(void)
 {
+    rtt_os_tick_clock();
     board_init_clock();
     board_init_console();
     board_init_pmp();
@@ -60,6 +59,7 @@ void rtt_board_init(void)
 
 void app_init_led_pins(void)
 {
+    board_init_led_pins();
     gpio_set_pin_output(APP_LED0_GPIO_CTRL, APP_LED0_GPIO_INDEX, APP_LED0_GPIO_PIN);
     gpio_set_pin_output(APP_LED1_GPIO_CTRL, APP_LED1_GPIO_INDEX, APP_LED1_GPIO_PIN);
     gpio_set_pin_output(APP_LED2_GPIO_CTRL, APP_LED2_GPIO_INDEX, APP_LED2_GPIO_PIN);
@@ -98,19 +98,12 @@ void rt_hw_console_output(const char *str)
 
 void app_init_usb_pins(void)
 {
-    board_init_usb_pins();
-}
-
-ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
-{
-    HPM_MCHTMR->MTIMECMP = HPM_MCHTMR->MTIME + BOARD_MCHTMR_FREQ_IN_HZ / RT_TICK_PER_SECOND;
-
-    rt_tick_increase();
+    board_init_usb(HPM_USB0);
 }
 
 void rt_hw_cpu_reset(void)
 {
-    HPM_PPOR->RESET_ENABLE = (1UL << 31);
+    HPM_PPOR->RESET_ENABLE |= (1UL << 31);
     HPM_PPOR->RESET_HOT &= ~(1UL << 31);
     HPM_PPOR->RESET_COLD |= (1UL << 31);
 
@@ -132,3 +125,139 @@ void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
     }
 }
 #endif
+
+uint32_t rtt_board_init_adc12_clock(ADC12_Type *ptr, bool clk_src_ahb)
+{
+    uint32_t freq = 0;
+
+    if (ptr == HPM_ADC0) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc0, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from pll1_clk1 divided by 2 (@200MHz by default) */
+            clock_set_adc_source(clock_adc0, clk_adc_src_ana0);
+            clock_set_source_divider(clock_ana0, clk_src_pll1_clk1, 2U);
+        }
+        clock_add_to_group(clock_adc0, 0);
+        freq = clock_get_frequency(clock_adc0);
+    } else if (ptr == HPM_ADC1) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc1, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from pll1_clk1 divided by 2 (@200MHz by default) */
+            clock_set_adc_source(clock_adc1, clk_adc_src_ana1);
+            clock_set_source_divider(clock_ana1, clk_src_pll1_clk1, 2U);
+        }
+        clock_add_to_group(clock_adc1, 0);
+        freq = clock_get_frequency(clock_adc1);
+    } else if (ptr == HPM_ADC2) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc2, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from pll1_clk1 divided by 2 (@200MHz by default) */
+            clock_set_adc_source(clock_adc2, clk_adc_src_ana2);
+            clock_set_source_divider(clock_ana2, clk_src_pll1_clk1, 2U);
+        }
+        clock_add_to_group(clock_adc2, 0);
+        freq = clock_get_frequency(clock_adc2);
+    }
+
+    return freq;
+}
+
+uint32_t rtt_board_init_adc16_clock(ADC16_Type *ptr, bool clk_src_ahb)
+{
+    uint32_t freq = 0;
+
+    if (ptr == HPM_ADC3) {
+        if (clk_src_ahb) {
+            /* Configure the ADC clock from AHB (@200MHz by default)*/
+            clock_set_adc_source(clock_adc3, clk_adc_src_ahb0);
+        } else {
+            /* Configure the ADC clock from pll1_clk1 divided by 2 (@200MHz by default) */
+            clock_set_adc_source(clock_adc3, clk_adc_src_ana2);
+            clock_set_source_divider(clock_ana2, clk_src_pll1_clk1, 2U);
+        }
+        clock_add_to_group(clock_adc3, 0);
+        freq = clock_get_frequency(clock_adc3);
+    }
+
+    return freq;
+}
+
+uint32_t rtt_board_init_i2s_clock(I2S_Type *ptr)
+{
+    uint32_t freq = 0;
+
+    if (ptr == HPM_I2S0) {
+        clock_add_to_group(clock_i2s0, 0);
+
+        sysctl_config_clock(HPM_SYSCTL, clock_node_aud0, clock_source_pll3_clk0, 25);
+        sysctl_set_adc_i2s_clock_mux(HPM_SYSCTL, clock_node_i2s0, clock_source_i2s_aud0_clk);
+
+        freq = clock_get_frequency(clock_i2s0);
+    } else if (ptr == HPM_I2S1) {
+        clock_add_to_group(clock_i2s1, 0);
+
+        sysctl_config_clock(HPM_SYSCTL, clock_node_aud1, clock_source_pll3_clk0, 25);
+        sysctl_set_adc_i2s_clock_mux(HPM_SYSCTL, clock_node_i2s1, clock_source_i2s_aud1_clk);
+
+        freq = clock_get_frequency(clock_i2s1);
+    } else {
+        ;
+    }
+
+    return freq;
+}
+
+uint32_t rtt_board_init_pwm_clock(PWM_Type *ptr)
+{
+    uint32_t freq = 0;
+    if (ptr == HPM_PWM0) {
+        clock_add_to_group(clock_mot0, 0);
+        freq = clock_get_frequency(clock_mot0);
+    } else if (ptr == HPM_PWM1) {
+        clock_add_to_group(clock_mot1, 0);
+        freq = clock_get_frequency(clock_mot1);
+    } else if (ptr == HPM_PWM2) {
+        clock_add_to_group(clock_mot2, 0);
+        freq = clock_get_frequency(clock_mot2);
+    } else if (ptr == HPM_PWM3) {
+        clock_add_to_group(clock_mot3, 0);
+        freq = clock_get_frequency(clock_mot3);
+    } else {
+
+    }
+    return freq;
+}
+
+#ifdef CONFIG_CHERRYUSB_CUSTOM_IRQ_HANDLER
+extern void hpm_isr_usb0(void);
+RTT_DECLARE_EXT_ISR_M(IRQn_USB0, hpm_isr_usb0)
+
+#ifdef HPM_USB1_BASE
+extern void hpm_isr_usb1(void);
+SDK_DECLARE_EXT_ISR_M(IRQn_USB1, hpm_isr_usb1)
+#endif
+#endif
+
+
+void rt_hw_board_init(void)
+{
+    rtt_board_init();
+
+
+    /* Call the RT-Thread Component Board Initialization */
+    rt_components_board_init();
+}
+
+
+ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
+{
+    HPM_MCHTMR->MTIMECMP = HPM_MCHTMR->MTIME + BOARD_MCHTMR_FREQ_IN_HZ / RT_TICK_PER_SECOND;
+
+    rt_tick_increase();
+}

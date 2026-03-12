@@ -61,7 +61,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 8
+#define RT_NAME_MAX 12
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -265,6 +265,8 @@
 
 /* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
+#define PKG_USING_CMSIS_CORE
+#define PKG_USING_CMSIS_CORE_LATEST_VERSION
 /* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -303,6 +305,14 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -371,7 +381,10 @@
 /* end of Device Control */
 
 /* Other */
-
+#define PKG_USING_FT32F0_STD_DRIVER
+#define PKG_USING_FT32F0_STD_DRIVER_LATEST_VERSION
+#define PKG_USING_FT32F0_CMSIS_DRIVER
+#define PKG_USING_FT32F0_CMSIS_DRIVER_LATEST_VERSION
 /* end of Other */
 
 /* Signal IO */

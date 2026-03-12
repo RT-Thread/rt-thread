@@ -25,6 +25,7 @@ typedef struct hpm_wdog
     clock_name_t clock_name;
     uint32_t irq_num;
     rt_watchdog_t *wdog;
+    wdg_control_t wdog_ctrl;
 }hpm_wdog_t;
 
 static rt_err_t hpm_wdog_init(rt_watchdog_t *wdt);
@@ -35,49 +36,40 @@ static rt_err_t hpm_wdog_control(rt_watchdog_t *wdt, int cmd, void *args);
 
 static void hpm_wdog_isr(rt_watchdog_t *wdt);
 
-static wdg_control_t wdog_ctrl = {
-    .reset_interval = reset_interval_clock_period_mult_16k,
-    .interrupt_interval = interrupt_interval_clock_period_multi_8k,
-    .reset_enable = true,
-    .interrupt_enable = false,
-    .clksrc = wdg_clksrc_extclk,
-    .wdg_enable = false,
-};
-
 #if defined(BSP_USING_WDG0)
 rt_watchdog_t wdog0;
+SDK_DECLARE_EXT_ISR_M(IRQn_WDG0, wdog0_isr)
 void wdog0_isr(void)
 {
     hpm_wdog_isr(&wdog0);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_WDG0, wdog0_isr)
 #endif
 
 #if defined(BSP_USING_WDG1)
 rt_watchdog_t wdog1;
+SDK_DECLARE_EXT_ISR_M(IRQn_WDG1, wdog1_isr)
 void wdog1_isr(void)
 {
     hpm_wdog_isr(&wdog1);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_WDG1, wdog1_isr)
 #endif
 
 #if defined(BSP_USING_WDG2)
 rt_watchdog_t wdog2;
+SDK_DECLARE_EXT_ISR_M(IRQn_WDG2, wdog2_isr)
 void wdog2_isr(void)
 {
     hpm_wdog_isr(&wdog2);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_WDG2, wdog2_isr)
 #endif
 
 #if defined(BSP_USING_WDG3)
 rt_watchdog_t wdog3;
+SDK_DECLARE_EXT_ISR_M(IRQn_WDG3, wdog3_isr)
 void wdog3_isr(void)
 {
     hpm_wdog_isr(&wdog3);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_WDG3, wdog3_isr)
 #endif
 
 static hpm_wdog_t wdogs[] = {
@@ -88,6 +80,14 @@ static hpm_wdog_t wdogs[] = {
         .clock_name = clock_watchdog0,
         .irq_num = IRQn_WDG0,
         .wdog = &wdog0,
+        .wdog_ctrl = {
+            .reset_interval = reset_interval_clock_period_mult_16k,
+            .interrupt_interval = interrupt_interval_clock_period_multi_8k,
+            .reset_enable = true,
+            .interrupt_enable = false,
+            .clksrc = wdg_clksrc_extclk,
+            .wdg_enable = false,
+        },
     },
 #endif
 
@@ -98,6 +98,14 @@ static hpm_wdog_t wdogs[] = {
         .clock_name = clock_watchdog1,
         .irq_num = IRQn_WDG1,
         .wdog = &wdog1,
+        .wdog_ctrl = {
+            .reset_interval = reset_interval_clock_period_mult_16k,
+            .interrupt_interval = interrupt_interval_clock_period_multi_8k,
+            .reset_enable = true,
+            .interrupt_enable = false,
+            .clksrc = wdg_clksrc_extclk,
+            .wdg_enable = false,
+        },
     },
 #endif
 
@@ -108,16 +116,32 @@ static hpm_wdog_t wdogs[] = {
         .clock_name = clock_watchdog2,
         .irq_num = IRQn_WDG2,
         .wdog = &wdog2,
+        .wdog_ctrl = {
+            .reset_interval = reset_interval_clock_period_mult_16k,
+            .interrupt_interval = interrupt_interval_clock_period_multi_8k,
+            .reset_enable = true,
+            .interrupt_enable = false,
+            .clksrc = wdg_clksrc_extclk,
+            .wdg_enable = false,
+        },
     },
 #endif
 
 #ifdef BSP_USING_WDG3
     {
-        .wdog_name = HPM_WDG3,
+        .wdog_base = HPM_WDG3,
         .device_name = "wdt3",
         .clock_name = clock_watchdog3,
         .irq_num = IRQn_WDG3,
         .wdog = &wdog3,
+        .wdog_ctrl = {
+            .reset_interval = reset_interval_clock_period_mult_16k,
+            .interrupt_interval = interrupt_interval_clock_period_multi_8k,
+            .reset_enable = true,
+            .interrupt_enable = false,
+            .clksrc = wdg_clksrc_extclk,
+            .wdg_enable = false,
+        },
     },
 #endif
 };
@@ -132,7 +156,9 @@ static rt_err_t hpm_wdog_init(rt_watchdog_t *wdt)
     hpm_wdog_t *hpm_wdog = (hpm_wdog_t*)wdt->parent.user_data;
     WDG_Type *base = hpm_wdog->wdog_base;
 
-    wdg_init(base, &wdog_ctrl);
+    clock_add_to_group(hpm_wdog->clock_name, BOARD_RUNNING_CORE & 0x1);
+
+    wdg_init(base, &hpm_wdog->wdog_ctrl);
 
     return RT_EOK;
 }
@@ -145,6 +171,7 @@ static rt_err_t hpm_wdog_open(rt_watchdog_t *wdt, rt_uint16_t oflag)
     rt_enter_critical();
     wdg_enable(base);
     rt_exit_critical();
+    return RT_EOK;
 }
 
 static rt_err_t hpm_wdog_close(rt_watchdog_t *wdt)
@@ -177,6 +204,7 @@ static rt_err_t hpm_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
 
     hpm_wdog_t *hpm_wdog = (hpm_wdog_t*)wdt->parent.user_data;
     WDG_Type *base = hpm_wdog->wdog_base;
+    wdg_control_t *wdog_ctrl = &hpm_wdog->wdog_ctrl;
 
     uint32_t temp;
     switch (cmd)
@@ -190,12 +218,12 @@ static rt_err_t hpm_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
         RT_ASSERT(*(uint32_t *)args != 0);
         temp = *(uint32_t *)args;
         temp *= 1000000U; /* Convert to microseconds */
-        wdog_ctrl.interrupt_interval = wdg_convert_interrupt_interval_from_us(WDG_EXT_CLK_FREQ, temp);
-        wdog_ctrl.reset_interval = reset_interval_clock_period_mult_128;
-        wdog_ctrl.reset_enable = true;
-        wdog_ctrl.interrupt_enable = true;
-        wdog_ctrl.clksrc = wdg_clksrc_extclk;
-        wdog_ctrl.wdg_enable = false;
+        wdog_ctrl->interrupt_interval = wdg_convert_interrupt_interval_from_us(WDG_EXT_CLK_FREQ, temp);
+        wdog_ctrl->reset_interval = reset_interval_clock_period_mult_128; /* Intentionally hard-coded */
+        wdog_ctrl->reset_enable = true;
+        wdog_ctrl->interrupt_enable = true;
+        wdog_ctrl->clksrc = wdg_clksrc_extclk;
+        wdog_ctrl->wdg_enable = false;
         hpm_wdog_init(wdt);
         break;
     case RT_DEVICE_CTRL_WDT_KEEPALIVE:
@@ -212,7 +240,7 @@ static rt_err_t hpm_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
         break;
     }
 
-    return RT_EOK;
+    return ret;
 }
 
 void hpm_wdog_isr(rt_watchdog_t *wdt)
@@ -235,7 +263,7 @@ int rt_hw_wdt_init(void)
     for (uint32_t i = 0; i < sizeof(wdogs) / sizeof(wdogs[0]); i++)
     {
         wdogs[i].wdog->ops = &hpm_wdog_ops;
-        clock_add_to_group(wdogs[i].clock_name, 0);
+        clock_add_to_group(wdogs[i].clock_name, BOARD_RUNNING_CORE & 0x1);
         err = rt_hw_watchdog_register(wdogs[i].wdog, wdogs[i].device_name, RT_DEVICE_FLAG_RDWR, (void *)&wdogs[i]);
         if (err != RT_EOK)
         {

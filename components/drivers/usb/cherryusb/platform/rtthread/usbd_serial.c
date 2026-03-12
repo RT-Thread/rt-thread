@@ -76,9 +76,8 @@ static rt_err_t usbd_serial_open(struct rt_device *dev, rt_uint16_t oflag)
 
     serial = (struct usbd_serial *)dev;
 
-    if (!usb_device_is_configured(serial->busid)) {
-        USB_LOG_ERR("USB device is not configured\n");
-        return -RT_EPERM;
+    while(!usb_device_is_configured(serial->busid)) {
+        rt_thread_mdelay(10);
     }
 
     usbd_ep_start_read(serial->busid, serial->out_ep,
@@ -123,9 +122,8 @@ static rt_ssize_t usbd_serial_write(struct rt_device *dev,
     }
     align_buf = (rt_uint8_t *)buffer;
 
-#ifdef CONFIG_USB_DCACHE_ENABLE
     if ((uint32_t)buffer & (CONFIG_USB_ALIGN_SIZE - 1)) {
-        align_buf = rt_malloc_align(size, CONFIG_USB_ALIGN_SIZE);
+        align_buf = rt_malloc_align(USB_ALIGN_UP(size, CONFIG_USB_ALIGN_SIZE), CONFIG_USB_ALIGN_SIZE);
         if (!align_buf) {
             USB_LOG_ERR("serial get align buf failed\n");
             return 0;
@@ -133,7 +131,7 @@ static rt_ssize_t usbd_serial_write(struct rt_device *dev,
 
         usb_memcpy(align_buf, buffer, size);
     }
-#endif
+
     usb_osal_sem_reset(serial->tx_done);
     usbd_ep_start_write(serial->busid, serial->in_ep, align_buf, size);
     ret = usb_osal_sem_take(serial->tx_done, 3000);
@@ -144,11 +142,9 @@ static rt_ssize_t usbd_serial_write(struct rt_device *dev,
         ret = size;
     }
 
-#ifdef CONFIG_USB_DCACHE_ENABLE
     if ((uint32_t)buffer & (CONFIG_USB_ALIGN_SIZE - 1)) {
         rt_free_align(align_buf);
     }
-#endif
 
     return ret;
 }

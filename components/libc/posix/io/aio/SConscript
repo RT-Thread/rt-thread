@@ -6,6 +6,6 @@ cwd     = GetCurrentDir()
 src     = ['aio.c']
 CPPPATH = [cwd]
 
-group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX_AIO'], CPPPATH = CPPPATH)
+group = DefineGroup('Libc', src, depend = ['RT_USING_POSIX_AIO'], CPPPATH = CPPPATH)
 
 Return('group')

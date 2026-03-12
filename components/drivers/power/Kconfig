@@ -1,0 +1,2 @@
+rsource "reset/Kconfig"
+rsource "supply/Kconfig"

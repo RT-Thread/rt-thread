@@ -692,7 +692,11 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
 
                     if (*options)
                     {
+                        int type_len_no_option;
+
                         type_len = strchrnul(options, ',') - options;
+                        type_len_no_option = strchrnul(options, ' ') - options;
+                        type_len = rt_min(type_len, type_len_no_option);
                     }
                 }
 
@@ -794,6 +798,10 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
     {
         LOG_I("Earlycon: %s at MMIO/PIO %p (options '%s')",
                 con_type, fdt_earlycon.mmio, fdt_earlycon.options);
+    }
+    else if (con_type)
+    {
+        LOG_I("Earlycon: %s (options '%s')", con_type, fdt_earlycon.options);
     }
 
     return err;

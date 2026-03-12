@@ -9,6 +9,7 @@
  * 2013-04-14     Grissiom     initial implementation
  * 2019-12-09     Steven Liu   add YMODEM send protocol
  * 2022-08-04     Meco Man     move error codes to rym_code to silence warnings
+ * 2026-02-01     wdfk-prog    update ymodem callbacks and error handling
  */
 
 #ifndef __YMODEM_H__
@@ -81,13 +82,22 @@ enum rym_stage
 };
 
 struct rym_ctx;
-/* When receiving files, the buf will be the data received from ymodem protocol
+/**
+ * @brief YMODEM callback signature.
+ *
+ * @param ctx The context of the current session.
+ *
+ * @note When receiving files, the buf will be the data received from ymodem protocol
  * and the len is the data size.
  *
  * When sending files, the len is the buf size in RYM. The callback need to
  * fill the buf with data to send. Returning RYM_CODE_EOT will terminate the
  * transfer and the buf will be discarded. Any other return values will cause
  * the transfer continue.
+ *
+ * @note Keep this typedef unchanged for compatibility with external packages.
+ *       To allow error-aware handling without breaking ABI, add state fields
+ *       (e.g. ctx->last_err) in rym_ctx for callbacks to inspect.
  */
 typedef enum rym_code(*rym_callback)(struct rym_ctx *ctx, rt_uint8_t *buf, rt_size_t len);
 
@@ -98,14 +108,37 @@ typedef enum rym_code(*rym_callback)(struct rym_ctx *ctx, rt_uint8_t *buf, rt_si
  */
 struct rym_ctx
 {
+    /**
+     * @brief Data callback for each received/sent block.
+     */
     rym_callback on_data;
+    /**
+     * @brief Begin callback for the initial header block.
+     */
     rym_callback on_begin;
+    /**
+     * @brief End callback for session finalization.
+     *        Callers should check ctx->last_err to distinguish success vs failure.
+     */
     rym_callback on_end;
     /* When error happened, user need to check this to get when the error has
      * happened. */
     enum rym_stage stage;
     /* user could get the error content through this */
     rt_uint8_t *buf;
+    /**
+     * @brief Callback lifecycle state: set when on_begin succeeds.
+     */
+    rt_uint8_t begin_called;
+    /**
+     * @brief Callback lifecycle state: set when on_end is invoked.
+     */
+    rt_uint8_t end_called;
+    /**
+     * @brief Last transfer error seen by the core state machine.
+     *        on_end can inspect this to distinguish success vs failure.
+     */
+    rt_err_t last_err;
 
     struct rt_semaphore sem;
 

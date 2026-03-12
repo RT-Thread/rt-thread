@@ -17,7 +17,7 @@
 #undef USB_POWER_RESUME
 
 #ifndef CONFIG_USB_MUSB_SIFLI
-#error must define CONFIG_USB_MUSB_SIFLI when use sunxi chips
+#error must define CONFIG_USB_MUSB_SIFLI when use sifli chips
 #endif
 
 #include "bf0_hal.h"

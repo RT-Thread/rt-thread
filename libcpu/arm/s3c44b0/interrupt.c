@@ -34,7 +34,7 @@ unsigned char interrupt_bank3[256];
 
 void rt_hw_interrupt_handle(int vector)
 {
-    rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
+    rt_kprintf("Unhandled interrupt %d occurred!!!\n", vector);
 }
 
 /**

@@ -175,14 +175,16 @@ _goon:
     if ((count - wsize) / bytes_per_sector != 0)
     {
         res = rt_device_write(dev, blk_pos, buf + wsize, (count - wsize) / bytes_per_sector);
-        wsize += res * bytes_per_sector;
-        blk_pos += res;
 
         if (res != (count - wsize) / bytes_per_sector)
         {
+            wsize += res * bytes_per_sector;
             *pos += wsize;
             return wsize;
         }
+
+        wsize += res * bytes_per_sector;
+        blk_pos += res;
     }
 
     /*

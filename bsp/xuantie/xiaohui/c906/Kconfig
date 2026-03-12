@@ -2,11 +2,11 @@ mainmenu "RT-Thread Configuration"
 
 BSP_DIR := .
 
-RTT_DIR := ../../../..
+RTT_DIR := ../../../../
 
 PKGS_DIR := packages
 
-config XUANTIAN_XIAOHUI_C906
+ config XUANTIAN_XIAOHUI_C906
     bool
     select ARCH_RISCV64
     select RT_USING_COMPONENTS_INIT
@@ -14,5 +14,5 @@ config XUANTIAN_XIAOHUI_C906
     default y
 
 source "$(RTT_DIR)/Kconfig"
-osource "$PKGS_DIR/Kconfig"
-rsource "board/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "$BSP_DIR/board/Kconfig"

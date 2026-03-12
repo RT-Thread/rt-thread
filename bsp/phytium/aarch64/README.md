@@ -67,6 +67,8 @@ rtthread_a64.elf
 rtthread_a64.map
 ```
 
+- 若需切换版本进行调试，请先在`bsp\phytium\libraries\phytium_standalone_sdk`目录下删除现有的`phytium_standalone_sdk`工具包，然后重新执行上述指令以拉取指定版本。
+
 ### RT-Thread env 环境
 
 #### RT-Thread

@@ -9,6 +9,6 @@ CPPPATH = [cwd]
 if GetDepend('RT_USING_POSIX_EPOLL'):
     src += ['epoll.c']
 
-group = DefineGroup('POSIX', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Libc', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

@@ -93,7 +93,7 @@ config SOC_SERIES_N9H30
 
                 config BSP_USING_ETIMER0
                     select BSP_USING_ETIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "ETIMER"
                 help
                     Choose this option if you need TIMER function mode.
@@ -118,7 +118,7 @@ config SOC_SERIES_N9H30
 
                 config BSP_USING_ETIMER1
                     select BSP_USING_ETIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "ETIMER"
                     help
                     Choose this option if you need TIMER function mode.
@@ -142,7 +142,7 @@ config SOC_SERIES_N9H30
 
                 config BSP_USING_ETIMER2
                     select BSP_USING_ETIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "ETIMER"
                 help
                     Choose this option if you need TIMER function mode.
@@ -166,7 +166,7 @@ config SOC_SERIES_N9H30
 
                 config BSP_USING_ETIMER3
                     select BSP_USING_ETIMER
-                    select RT_USING_HWTIMER
+                    select RT_USING_CLOCK_TIME
                     bool "ETIMER"
                 help
                     Choose this option if you need TIMER function mode.
@@ -197,28 +197,28 @@ config SOC_SERIES_N9H30
 
         config BSP_USING_TIMER0
             select BSP_USING_TIMER
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
             bool "TIMER0"
             help
                 Choose this option if you need TIMER function mode.
 
         config BSP_USING_TIMER1
             select BSP_USING_TIMER
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
             bool "TIMER1"
             help
                 Choose this option if you need TIMER function mode.
 
         config BSP_USING_TIMER2
             select BSP_USING_TIMER
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
             bool "TIMER2"
             help
                 Choose this option if you need TIMER function mode.
 
         config BSP_USING_TIMER3
             select BSP_USING_TIMER
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
             bool "TIMER3"
             help
                 Choose this option if you need TIMER function mode.

@@ -129,10 +129,11 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
             /* start timer */
             if (timeout > 0)
             {
+                rt_tick_t timeout_tick = timeout;
                 /* reset the timeout of thread timer and start it */
                 rt_timer_control(&(thread->thread_timer),
                                 RT_TIMER_CTRL_SET_TIME,
-                                &timeout);
+                                &timeout_tick);
                 rt_timer_start(&(thread->thread_timer));
             }
 
@@ -247,10 +248,11 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
             /* start timer */
             if (timeout > 0)
             {
+                rt_tick_t timeout_tick = timeout;
                 /* reset the timeout of thread timer and start it */
                 rt_timer_control(&(thread->thread_timer),
                                 RT_TIMER_CTRL_SET_TIME,
-                                &timeout);
+                                &timeout_tick);
                 rt_timer_start(&(thread->thread_timer));
             }
 

@@ -175,61 +175,61 @@ rt_uint32_t air32_tim_clock_get(TIM_TypeDef *timx)
     return RCC_Clocks.HCLK_Frequency;
 }
 
-struct rt_hwtimer_info hwtimer_info1 =
+struct rt_clock_timer_info clock_timer_info1 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info2 =
+struct rt_clock_timer_info clock_timer_info2 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info3 =
+struct rt_clock_timer_info clock_timer_info3 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info hwtimer_info4 =
+struct rt_clock_timer_info clock_timer_info4 =
     {
         .maxfreq = 1000000,
         .minfreq = 2000,
         .maxcnt = 0xFFFF,
-        .cntmode = HWTIMER_CNTMODE_UP,
+        .cntmode = CLOCK_TIMER_CNTMODE_UP,
 
 };
 
-struct rt_hwtimer_info *air32_hwtimer_info_config_get(TIM_TypeDef *timx)
+struct rt_clock_timer_info *air32_clock_timer_info_config_get(TIM_TypeDef *timx)
 {
-    struct rt_hwtimer_info *info = RT_NULL;
+    struct rt_clock_timer_info *info = RT_NULL;
 
     if (timx == TIM1)
     {
-        info = &hwtimer_info1;
+        info = &clock_timer_info1;
     }
     else if (timx == TIM2)
     {
-        info = &hwtimer_info2;
+        info = &clock_timer_info2;
     }
     else if (timx == TIM3)
     {
-        info = &hwtimer_info3;
+        info = &clock_timer_info3;
     }
     else if (timx == TIM4)
     {
-        info = &hwtimer_info4;
+        info = &clock_timer_info4;
     }
 
     return info;

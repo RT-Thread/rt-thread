@@ -47,7 +47,7 @@ static int _waitq_inqueue(rt_wqueue_t *queue, struct rt_wqueue_node *node,
         if (ret == RT_EOK)
         {
             rt_wqueue_add(queue, node);
-            if (timeout != RT_WAITING_FOREVER)
+            if (timeout != (rt_tick_t)RT_WAITING_FOREVER)
             {
                 rt_timer_control(timer, RT_TIMER_CTRL_SET_TIME, &timeout);
 

@@ -9,7 +9,6 @@
  */
 
 #include <drv_sdhi.h>
-struct ra_sdhi sdhi;
 
 #define RTHW_SDIO_LOCK(_sdio) rt_mutex_take(&_sdio->mutex, RT_WAITING_FOREVER)
 #define RTHW_SDIO_UNLOCK(_sdio) rt_mutex_release(&_sdio->mutex);
@@ -20,12 +19,18 @@ struct rthw_sdio
     struct ra_sdhi sdhi_des;
     struct rt_event event;
     struct rt_mutex mutex;
+    rt_uint8_t *cache_buf;
 };
 
-static struct rt_mmcsd_host *host;
+#ifdef BSP_USING_SDHI0
+    static struct rt_mmcsd_host *host0;
+#endif
+#ifdef BSP_USING_SDHI1
+    static struct rt_mmcsd_host *host1;
+#endif
 
 rt_align(SDIO_ALIGN_LEN)
-static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
+static rt_uint8_t cache_buf1[SDIO_BUFF_SIZE], cache_buf2[SDIO_BUFF_SIZE];
 
 rt_err_t command_send(sdhi_instance_ctrl_t *p_ctrl, struct rt_mmcsd_cmd *cmd)
 {
@@ -302,14 +307,20 @@ void ra_sdhi_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
             rt_uint32_t size = data->blks * data->blksize;
 
             RT_ASSERT(size <= SDIO_BUFF_SIZE);
-
+            /* 使用 SDIO WiFi(cyw43438) 时不使用数据流模式 */
+#if defined(SOC_SERIES_R7KA8P1)
+            if (data->flags & DATA_STREAM)
+            {
+                data->flags &= ~DATA_STREAM;
+            }
+#endif
             buffer = (rt_uint8_t *)data->buf;
             if ((rt_uint32_t)data->buf & (SDIO_ALIGN_LEN - 1))
             {
-                buffer = cache_buf;
+                buffer = sdio->cache_buf;
                 if (data->flags & DATA_DIR_WRITE)
                 {
-                    rt_memcpy(cache_buf, data->buf, size);
+                    rt_memcpy(sdio->cache_buf, data->buf, size);
                 }
             }
             if (data->flags & DATA_DIR_WRITE)
@@ -319,6 +330,9 @@ void ra_sdhi_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
             else if (data->flags & DATA_DIR_READ)
             {
                 transfer_read(sdio->sdhi_des.instance->p_ctrl, data->blks, data->blksize, buffer);
+#if defined(__DCACHE_PRESENT)
+                SCB_CleanInvalidateDCache();
+#endif
             }
             /* Set the sector count. */
             if (data->blks > 1U)
@@ -337,7 +351,10 @@ void ra_sdhi_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
         rt_exit_critical();
         if ((data != RT_NULL) && (data->flags & DATA_DIR_READ) && ((rt_uint32_t)data->buf & (SDIO_ALIGN_LEN - 1)))
         {
-            rt_memcpy(data->buf, cache_buf, data->blksize * data->blks);
+#if defined(__DCACHE_PRESENT)
+            SCB_CleanInvalidateDCache_by_Addr((uint32_t*)((uint32_t)sdio->cache_buf & ~(32U - 1U)), data->blks * data->blksize + 32U);
+#endif
+            rt_memcpy(data->buf, sdio->cache_buf, data->blksize * data->blks);
         }
     }
 
@@ -384,7 +401,11 @@ static rt_err_t clock_rate_set(sdhi_instance_ctrl_t *p_ctrl, uint32_t max_rate)
                     /* Set the calculated divider and enable clock output to start the 74 clocks required before
                      * initialization. Do not change the automatic clock control setting. */
                     uint32_t clkctrlen = p_ctrl->p_reg->SD_CLK_CTRL & (1U << 9);
-                    p_ctrl->p_reg->SD_CLK_CTRL = setting | clkctrlen | (1U << 8);
+#if defined(SOC_SERIES_R7KA8P1)
+                    p_ctrl->p_reg->SD_CLK_CTRL = 0x0100 | 0x00FF;
+#else
+                   p_ctrl->p_reg->SD_CLK_CTRL = setting | clkctrlen | (1U << 8);
+#endif
                     p_ctrl->device.clock_rate = frequency >> divisor_shift;
 
                     return RT_EOK;
@@ -445,11 +466,52 @@ struct rt_mmcsd_host_ops ra_sdhi_ops =
     .enable_sdio_irq = ra_sdhi_enable_sdio_irq
 };
 
-void sdhi_callback(sdmmc_callback_args_t *p_args)
+/**
+  * @brief  This function interrupt process function.
+  * @param  host  rt_mmcsd_host
+  * @retval None
+  */
+void rthw_sdio_irq_process(struct rt_mmcsd_host *host)
 {
+    struct rthw_sdio *sdio = host->private_data;
+    rt_event_send(&sdio->event, 0xffffffff);
 }
 
-struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des)
+#ifdef BSP_USING_SDHI0
+void sdhi0_callback(sdmmc_callback_args_t *p_args)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    if ((SDMMC_EVENT_ERASE_COMPLETE | SDMMC_EVENT_TRANSFER_COMPLETE) & p_args->event)
+    {
+       /* Process All SDIO Interrupt Sources */
+        rthw_sdio_irq_process(host0);
+    }
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
+
+#ifdef BSP_USING_SDHI1
+void sdhi1_callback(sdmmc_callback_args_t *p_args)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    if ((SDMMC_EVENT_ERASE_COMPLETE | SDMMC_EVENT_TRANSFER_COMPLETE) & p_args->event)
+    {
+       /* Process All SDIO Interrupt Sources */
+        rthw_sdio_irq_process(host1);
+    }
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
+
+struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des, rt_uint8_t cache_buf[SDIO_BUFF_SIZE])
 {
     struct rt_mmcsd_host *host;
     struct rthw_sdio *sdio = RT_NULL;
@@ -461,6 +523,7 @@ struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des)
     if (sdio == RT_NULL)
         return RT_NULL;
     rt_memset(sdio, 0, sizeof(struct rthw_sdio));
+    sdio->cache_buf = cache_buf;
 
     host = mmcsd_alloc_host();
     if (host == RT_NULL)
@@ -472,17 +535,17 @@ struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des)
     rt_memcpy(&sdio->sdhi_des, sdhi_des, sizeof(struct ra_sdhi));
 
     rt_event_init(&sdio->event, "sdio", RT_IPC_FLAG_FIFO);
-    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&sdio->mutex, "sdio", RT_IPC_FLAG_PRIO);
 
-    /* set host defautl attributes */
+    /* set host default attributes */
     host->ops = &ra_sdhi_ops;
     host->freq_min = 400 * 1000;
     host->freq_max = SDIO_MAX_FREQ;
     host->valid_ocr = 0X00FFFF80; /* The voltage range supported is 1.65v-3.6v */
 #ifndef SDHI_USING_1_BIT
-    host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ;
+    host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
 #else
-    host->flags = MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ;
+    host->flags = MMCSD_MUTBLKWRITE | MMCSD_SUP_SDIO_IRQ | MMCSD_SUP_HIGHSPEED;
 #endif
     host->max_seg_size = SDIO_BUFF_SIZE;
     host->max_dma_segs = 1;
@@ -496,7 +559,9 @@ struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des)
     ra_sdhi_enable_sdio_irq(host, 1);
 
     /* ready to change */
-//    mmcsd_change(host);
+#if defined (SOC_SERIES_R7KA8P1)
+    mmcsd_change(host);
+#endif
 
     return host;
 }
@@ -504,24 +569,44 @@ struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des)
 int rt_hw_sdhi_init(void)
 {
 #if defined(BSP_USING_SDHI0)
-    sdhi.instance = &g_sdmmc0;
-#elif defined(BSP_USING_SDHI1)
-    sdhi.instance = &g_sdmmc1;
+    struct ra_sdhi sdhi0;
+    sdhi0.instance = &g_sdmmc0;
+#ifndef SDHI_USING_1_BIT
+    sdhi0.bus_width = MMCSD_BUS_WIDTH_4;
 #else
-#error "please defined the g_sdmmc handle"
+    sdhi0.bus_width = MMCSD_BUS_WIDTH_1;
 #endif
-
-    sdhi.instance->p_api->open(sdhi.instance->p_ctrl, sdhi.instance->p_cfg);
-    host = sdio_host_create(&sdhi);
-    if (host == RT_NULL)
+    sdhi0.instance->p_api->open(sdhi0.instance->p_ctrl, sdhi0.instance->p_cfg);
+    host0 = sdio_host_create(&sdhi0, cache_buf1);
+    if (host0 == RT_NULL)
     {
         return -1;
     }
+#endif
+#if defined(BSP_USING_SDHI1)
+    struct ra_sdhi sdhi1;
+    sdhi1.instance = &g_sdmmc1;
+#ifndef SDHI_USING_1_BIT
+    sdhi1.bus_width = MMCSD_BUS_WIDTH_4;
+#else
+    sdhi1.bus_width = MMCSD_BUS_WIDTH_1;
+#endif
+    sdhi1.instance->p_api->open(sdhi1.instance->p_ctrl, sdhi1.instance->p_cfg);
+    host1 = sdio_host_create(&sdhi1, cache_buf2);
+    if (host1 == RT_NULL)
+    {
+        return -1;
+    }
+#endif
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_sdhi_init);
 
 void sdcard_change(void)
 {
-    mmcsd_change(host);
+#if (defined(SOC_SERIES_R7KA8P1) || defined(SOC_SERIES_R7FA6M4)) && defined(BSP_USING_SDHI0)
+    mmcsd_change(host0);
+#elif (defined(SOC_SERIES_R7FA6M3) || defined(SOC_SERIES_R7FA8M85)) && defined(BSP_USING_SDHI1)
+    mmcsd_change(host1);
+#endif
 }

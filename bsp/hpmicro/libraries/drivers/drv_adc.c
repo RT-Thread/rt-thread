@@ -33,7 +33,10 @@ typedef struct
     adc_channel_state_t chn_state[16];
 }hpm_rtt_adc;
 
-
+#if defined(ADC12_SOC_MAX_CH_NUM)
+extern uint32_t rtt_board_init_adc12_clock(ADC16_Type *ptr);
+#endif
+extern uint32_t rtt_board_init_adc16_clock(ADC16_Type *ptr, bool clk_src_ahb);
 
 static uint32_t hpm_adc_init_clock(struct rt_adc_device *device);
 static void hpm_adc_init_pins(struct rt_adc_device *device);
@@ -113,11 +116,11 @@ static uint32_t hpm_adc_init_clock(struct rt_adc_device *device)
 #if defined(ADC12_SOC_MAX_CH_NUM)
     if (hpm_adc->is_adc12)
     {
-        clock_freq = board_init_adc12_clock((ADC12_Type*)hpm_adc->adc_base,true);
+        clock_freq = rtt_board_init_adc12_clock((ADC12_Type*)hpm_adc->adc_base,true);
     } else
 #endif
     {
-        clock_freq = board_init_adc16_clock((ADC16_Type*)hpm_adc->adc_base,true);
+        clock_freq = rtt_board_init_adc16_clock((ADC16_Type*)hpm_adc->adc_base,true);
     }
     return clock_freq;
 }

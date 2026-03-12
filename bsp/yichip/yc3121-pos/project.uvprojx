@@ -332,9 +332,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, RT_USING_LIBC, __RTTHREAD__, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;.;Libraries;applications;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\phy;..\..\..\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;drivers;Libraries\core;..\..\..\components\finsh;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;Libraries\sdk;..\..\..\components\libc\compilers\common\extension</IncludePath>
+              <IncludePath>drivers;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\ipc;Libraries\sdk;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m0;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\eventfd;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;applications;Libraries\core;..\..\..\components\libc\posix\io\epoll;Libraries;..\..\..\components\drivers\phy;..\..\..\components\libc\compilers\common\extension</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -703,13 +703,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
@@ -720,6 +713,13 @@
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1041,9 +1041,9 @@
           <GroupName>klibc</GroupName>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1055,9 +1055,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1065,13 +1072,6 @@
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>kstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1110,37 +1110,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>system.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\core\system.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>flash_start.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\startup\flash_start.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>yc_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>yc_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\sdk\yc_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>yc_systick.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_systick.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1152,9 +1124,30 @@
           </Files>
           <Files>
             <File>
+              <FileName>flash_start.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\startup\flash_start.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\core\misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\startup\startup.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\core\system.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1166,9 +1159,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\startup\startup.s</FilePath>
+              <FileName>yc_systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\sdk\yc_systick.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>yc_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
             </File>
           </Files>
         </Group>

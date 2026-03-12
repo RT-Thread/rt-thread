@@ -19,7 +19,7 @@ if musllibc_version:
     LINKFLAGS = ' --specs=kernel.specs'
     AddDepend(['RT_USING_MUSLLIBC', 'RT_USING_LIBC'])
 
-    group = group + DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
+    group = group + DefineGroup('Libc', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
 
     list = os.listdir(cwd)
     for d in list:

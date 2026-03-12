@@ -162,4 +162,4 @@ static rt_err_t utest_tc_cleanup(void)
     return RT_EOK;
 }
 
-UTEST_TC_EXPORT(uart_testcase, "uart", utest_tc_init, utest_tc_cleanup, 10);
+UTEST_TC_EXPORT(uart_testcase, "bsp.k230.drivers.uart", utest_tc_init, utest_tc_cleanup, 10);

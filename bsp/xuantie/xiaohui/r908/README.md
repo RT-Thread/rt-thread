@@ -58,7 +58,7 @@ R908 采用同构多核架构，支持多 cluster，每个 cluster 支持 1~4 �
   r908 r908-cp r908fd r908fd-cp r908fdv r908fdv-cp
   ```
 
-- 当前BSP默认设置的内核是r908，该架构支持[F] [D]扩展，可以通过menuconfig工具使能[F]扩展或者[F] [D] 扩展。
+- 当前BSP默认设置的内核是r908，该架构支持[F] [D] [V]扩展，可以通过menuconfig工具使能[F]扩展或者[F] [D] [V]扩展。
 
 - 当使用其他内核架构时需要修改，rtconfig.py文件中的`MCPU`字段。
 
@@ -88,7 +88,7 @@ R908 采用同构多核架构，支持多 cluster，每个 cluster 支持 1~4 �
 生成可执行文件，可以直接在命令行启动qemu或者配置vscode脚本借助vscode强大的插件进行图形化调试，qemu的相关命令可以查看玄铁qemu的[用户手册](https://www.xrvm.cn/community/download?id=4397435198627713024)，下述是启动qemu的命令，在powershell或命令行可直接执行下述命令，注意qemu需要导出至环境变量或者使用绝对路径。
 
 ```shell
-qemu-system-riscv64 -machine smartl -nographic -kernel rtthread.elf -cpu e906
+qemu-system-riscv64 -machine xiaohui -nographic -kernel rtthread.elf -cpu r908fdv-cp
 ```
 
 下述是使用vscode调试的展示。

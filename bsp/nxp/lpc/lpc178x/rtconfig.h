@@ -337,6 +337,14 @@
 #define PKG_USING_NXP_LPC_DRIVER
 #define PKG_USING_NXP_LPC_DRIVER_LATEST_VERSION
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

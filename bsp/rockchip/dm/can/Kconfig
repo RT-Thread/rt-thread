@@ -1,0 +1,7 @@
+config RT_CAN_CANFD_ROCKCHIP
+    bool "Rockchip CANFD controller"
+    depends on RT_CAN_USING_CANFD
+    depends on RT_USING_RESET
+    select RT_USING_DEVICE_IPC
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n

@@ -1,0 +1,5 @@
+config RT_INPUT_MISC_PWRKEY_RK8XX
+    bool "Rockchip RK805/RK806/RK817 PMIC power key support"
+    depends on RT_INPUT_MISC
+    depends on RT_MFD_RK8XX
+    default n

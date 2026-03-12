@@ -427,9 +427,6 @@
 #define BSP_USING_PIN
 #define BSP_USING_UART
 #define BSP_USING_UART2
-#define BSP_USING_ADC
-#define BSP_USING_ADC0
-#define BSP_USING_ADC1
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

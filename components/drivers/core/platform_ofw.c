@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-06-04     GuEe-GUI     the first version
+ * 2025-12-25     lhxj         fix OFW bus conflict and prevent duplicate device creation
  */
 
 #include <rtthread.h>
@@ -223,16 +224,14 @@ rt_err_t rt_platform_ofw_request(struct rt_ofw_node *np)
 
         if (dev)
         {
-            /* Was create */
-            if (dev->drv)
-            {
-                /* Was probe OK */
-                err = RT_EOK;
-            }
-            else
-            {
-                err = rt_bus_reload_driver_device(dev->bus, dev);
-            }
+            /*
+             * Device was already created (np->dev != NULL).
+             * - If it's already probed (dev->drv != NULL), nothing to do.
+             * - If not yet probed (dev->drv == NULL), it belongs to its native bus
+             *   (e.g. I2C/SPI) which will handle probing; platform bus should not reload
+             *   or transfer it, to avoid cross-bus conflicts.
+             */
+            err = RT_EOK;
         }
         else
         {
@@ -267,6 +266,12 @@ static int platform_ofw_device_probe(void)
 
     if (ofw_node_root)
     {
+        if ((node = rt_ofw_find_node_by_path("/clocks")))
+        {
+            platform_ofw_device_probe_once(node);
+            rt_ofw_node_put(node);
+        }
+
         rt_ofw_node_get(ofw_node_root);
 
         err = platform_ofw_device_probe_once(ofw_node_root);
@@ -274,12 +279,6 @@ static int platform_ofw_device_probe(void)
         rt_ofw_node_put(ofw_node_root);
 
         if ((node = rt_ofw_find_node_by_path("/firmware")))
-        {
-            platform_ofw_device_probe_once(node);
-            rt_ofw_node_put(node);
-        }
-
-        if ((node = rt_ofw_find_node_by_path("/clocks")))
         {
             platform_ofw_device_probe_once(node);
             rt_ofw_node_put(node);

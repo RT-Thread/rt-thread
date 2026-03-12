@@ -1,0 +1,33 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_CLK_ROCKCHIP_LINK']):
+    src += ['clk-link.c']
+
+if GetDepend(['RT_CLK_ROCKCHIP_RK8XX_CLKOUT']):
+    src += ['clk-rk8xx-clkout.c']
+
+if GetDepend(['RT_CLK_ROCKCHIP']):
+    src += ['clk-rk-cpu.c', 'clk-rk-composite.c', 'clk-rk-divider.c', 'clk-rk-factor.c',
+            'clk-rk-fraction-divider.c', 'clk-rk-gate.c', 'clk-rk-mmc-phase.c',
+            'clk-rk-mux.c', 'clk-rk-muxgrf.c', 'clk-rk-pll.c', 'clk-rk-half-divider.c',
+            'clk-rk.c', 'softrst.c']
+
+if GetDepend(['RT_CLK_ROCKCHIP_RK3308']):
+    src += ['clk-rk3308.c']
+
+if GetDepend(['RT_CLK_ROCKCHIP_RK3568']):
+    src += ['clk-rk3568.c']
+
+if GetDepend(['RT_CLK_ROCKCHIP_RK3576']):
+    src += ['clk-rk3576.c']
+
+if GetDepend(['RT_CLK_ROCKCHIP_RK3588']):
+    src += ['clk-rk3588.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

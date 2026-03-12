@@ -10,20 +10,34 @@ C907 是一款基于 RISC-V 指令集架构的入门级 AP 处理器，主要面
 ### 2.特点
 
 • 支持 RV32 与 RV64 架构；
+
 • 支持 RV64GCB + RV32GCB 指令集，兼容 RVA22；
+
 • 支持 XuanTie Turbo 扩展指令集；
+
 • 可选配浮点指令扩展，支持 FP16/BF16/FP32 运算格式；
+
 • 可选配矢量指令扩展，支持 Vector Extention 1.0 版本，支持 INT8/INT16/INT32/INT64 以及
 FP16/BF16/FP32 运算格式，使用 chaining 的优化运算带宽技术；
+
 • 可选配矩阵指令扩展，支持 INT4/INT8/FP16/BF16；
-• 支持多核 SMP，可支持 1~4 核心可配置
+
+• 支持多核 SMP，可支持 1~4 核心可配置；
+
 • 按序部分双发 9 级流水线，支持乱序回写；
+
 • 混合分支预测机制，改进版的 G-Shared 分支预测器和 L0 BTB、 RAS；
+
 • 支持指令融合技术；
+
 • 支持指令和数据的 prefetch；
+
 • 指令 cache，四路组相连结构， 64B 缓存行， 8KB-64KB 可配置， VIPT；
+
 • 数据 cache，四路组相连结构， 64B 缓存行， 8KB-64KB 可配置， VIPT 模拟 PIPT；
+
 • 二级 Cache， 64B 缓存行， 128KB~4MB 可配置；
+
 • 支持 L1、 L2 两级 TLB， Sv39/Sv48 可配置，支持 Sv32；
 
 ### 3.BSP支持情况
@@ -64,7 +78,7 @@ FP16/BF16/FP32 运算格式，使用 chaining 的优化运算带宽技术；
 生成可执行文件，可以直接在命令行启动qemu或者配置vscode脚本借助vscode强大的插件进行图形化调试，qemu的相关命令可以查看玄铁qemu的[用户手册](https://www.xrvm.cn/community/download?id=4397435198627713024)，下述是启动qemu的命令，在powershell或命令行可直接执行下述命令，注意qemu需要导出至环境变量或者使用绝对路径。
 
 ```shell
-qemu-system-riscv64 -machine smartl -nographic -kernel rtthread.elf -cpu e906
+qemu-system-riscv64 -machine xiaohui -nographic -kernel rtthread.elf -cpu c907fdvm
 ```
 
 下述是使用vscode调试的展示。

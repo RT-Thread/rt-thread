@@ -108,7 +108,6 @@ struct usb_msosv1_descriptor msosv1_desc = {
     .comp_id_property = WINUSB_IFx_WCIDProperties,
 };
 
-#ifdef CONFIG_USBDEV_ADVANCE_DESC
 static const uint8_t device_descriptor[] = {
     USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0100, 0x01)
 };
@@ -171,80 +170,6 @@ const struct usb_descriptor adb_descriptor = {
     .string_descriptor_callback = string_descriptor_callback,
     .msosv1_descriptor = &msosv1_desc
 };
-#else
-/*!< global descriptor */
-static const uint8_t adb_descriptor[] = {
-    USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0100, 0x01),
-    USB_CONFIG_DESCRIPTOR_INIT(USB_CONFIG_SIZE, 0x01, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
-    ADB_DESCRIPTOR_INIT(ADB_INTF_NUM, WINUSB_IN_EP, WINUSB_OUT_EP, WINUSB_MAX_MPS),
-    ///////////////////////////////////////
-    /// string0 descriptor
-    ///////////////////////////////////////
-    USB_LANGID_INIT(USBD_LANGID_STRING),
-    ///////////////////////////////////////
-    /// string1 descriptor
-    ///////////////////////////////////////
-    0x14,                       /* bLength */
-    USB_DESCRIPTOR_TYPE_STRING, /* bDescriptorType */
-    'C', 0x00,                  /* wcChar0 */
-    'h', 0x00,                  /* wcChar1 */
-    'e', 0x00,                  /* wcChar2 */
-    'r', 0x00,                  /* wcChar3 */
-    'r', 0x00,                  /* wcChar4 */
-    'y', 0x00,                  /* wcChar5 */
-    'U', 0x00,                  /* wcChar6 */
-    'S', 0x00,                  /* wcChar7 */
-    'B', 0x00,                  /* wcChar8 */
-    ///////////////////////////////////////
-    /// string2 descriptor
-    ///////////////////////////////////////
-    0x14,                       /* bLength */
-    USB_DESCRIPTOR_TYPE_STRING, /* bDescriptorType */
-    'C', 0x00,                  /* wcChar0 */
-    'h', 0x00,                  /* wcChar1 */
-    'e', 0x00,                  /* wcChar2 */
-    'r', 0x00,                  /* wcChar3 */
-    'r', 0x00,                  /* wcChar4 */
-    'y', 0x00,                  /* wcChar5 */
-    'A', 0x00,                  /* wcChar6 */
-    'D', 0x00,                  /* wcChar7 */
-    'B', 0x00,                  /* wcChar8 */
-    ///////////////////////////////////////
-    /// string3 descriptor
-    ///////////////////////////////////////
-    0x1C,                       /* bLength */
-    USB_DESCRIPTOR_TYPE_STRING, /* bDescriptorType */
-    'C', 0x00,                  /* wcChar0 */
-    'h', 0x00,                  /* wcChar1 */
-    'e', 0x00,                  /* wcChar2 */
-    'r', 0x00,                  /* wcChar3 */
-    'r', 0x00,                  /* wcChar4 */
-    'y', 0x00,                  /* wcChar5 */
-    'A', 0x00,                  /* wcChar6 */
-    'D', 0x00,                  /* wcChar7 */
-    'B', 0x00,                  /* wcChar8 */
-    '2', 0x00,                  /* wcChar9 */
-    '0', 0x00,                  /* wcChar10 */
-    '2', 0x00,                  /* wcChar11 */
-    '4', 0x00,                  /* wcChar12 */
-#ifdef CONFIG_USB_HS
-    ///////////////////////////////////////
-    /// device qualifier descriptor
-    ///////////////////////////////////////
-    0x0a,
-    USB_DESCRIPTOR_TYPE_DEVICE_QUALIFIER,
-    0x00,
-    0x02,
-    0x00,
-    0x00,
-    0x00,
-    0x40,
-    0x00,
-    0x00,
-#endif
-    0x00
-};
-#endif
 
 static void usbd_event_handler(uint8_t busid, uint8_t event)
 {
@@ -288,20 +213,15 @@ void cherryadb_init(uint8_t busid, uint32_t reg_base)
     /* shell_init() must be called in-task */
     if (0 != shell_init(false)) {
         /* shell failed to be initialized */
-        printf("Failed to initialize shell\r\n");
+        USB_LOG_RAW("Failed to initialize shell\r\n");
         for (;;) {
             ;
         }
     }
 #endif
-#ifdef CONFIG_USBDEV_ADVANCE_DESC
+
     usbd_desc_register(busid, &adb_descriptor);
-#else
-    usbd_desc_register(busid, adb_descriptor);
-#endif
-#ifndef CONFIG_USBDEV_ADVANCE_DESC
-    usbd_msosv1_desc_register(busid, &msosv1_desc);
-#endif
+
     usbd_add_interface(busid, usbd_adb_init_intf(busid, &intf0, WINUSB_IN_EP, WINUSB_OUT_EP));
     usbd_initialize(busid, reg_base, usbd_event_handler);
 }

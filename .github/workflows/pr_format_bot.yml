@@ -1,0 +1,141 @@
+name: PR Format Notification
+on:
+  pull_request_target:
+    types: [opened]
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  notify-format:
+    if: github.repository_owner == 'RT-Thread'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if first commit and add comment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Event action: ${{ github.event.action }}"
+          
+          # 获取 PR 的提交信息
+          commits=$(curl -s \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits")
+
+          # 检查 API 响应是否为数组
+          if echo "$commits" | jq -e 'type == "array"' > /dev/null; then
+            commit_count=$(echo "$commits" | jq '. | length')
+            echo "PR commit count: $commit_count"
+
+            should_comment=false
+            if [ "${{ github.event.action }}" = "opened" ]; then
+              should_comment=true
+            elif [ "${{ github.event.action }}" = "synchronize" ] && [ "$commit_count" -eq 1 ]; then
+              should_comment=true
+            fi
+
+            if [ "$should_comment" = true ]; then
+              echo "Adding format notification comment..."
+              
+              # 构建工作流链接
+              branch="${{ github.event.pull_request.head.ref }}"
+              fork_repo="${{ github.event.pull_request.head.repo.full_name }}"
+              workflow_url="https://github.com/${fork_repo}/actions/workflows/pr_clang_format.yml"
+              direct_link="${workflow_url}?branch=${branch}"
+
+              # 使用数组存储多行消息
+              message_lines=(
+                "<!-- PR Format Notification Comment -->"
+                "**👋 感谢您对 RT-Thread 的贡献！Thank you for your contribution to RT-Thread!**"
+                ""
+                "为确保代码符合 RT-Thread 的编码规范，请在你的仓库中执行以下步骤运行代码格式化工作流（如果格式化CI运行失败）。"
+                "To ensure your code complies with RT-Thread's coding style, please run the code formatting workflow by following the steps below (If the formatting of CI fails to run)."
+                ""
+                "---"
+                ""
+                "### 🛠 操作步骤 | Steps"
+                ""
+                "1. **前往 Actions 页面 | Go to the Actions page**"
+                "[点击进入工作流 → | Click to open workflow →](${direct_link})"
+                ""
+                "2. **点击 \`Run workflow\` | Click \`Run workflow\`**"
+                "- 设置需排除的文件/目录（目录请以\"/\"结尾）"
+                "Set files/directories to exclude (directories should end with \"/\")"
+                "- 将目标分支设置为 \ Set the target branch to：**\`${branch}\`**"
+                "- 设置PR number为 \ Set the PR number to：**\`${{ github.event.pull_request.number }}\`**"
+                ""
+                "3. **等待工作流完成 | Wait for the workflow to complete**"
+                "格式化后的代码将自动推送至你的分支。"
+                "The formatted code will be automatically pushed to your branch."
+                ""
+                "完成后，提交将自动更新至 \`${branch}\` 分支，关联的 Pull Request 也会同步更新。"
+                "Once completed, commits will be pushed to the \`${branch}\` branch automatically, and the related Pull Request will be updated."
+                ""
+                "如有问题欢迎联系我们，再次感谢您的贡献！💐"
+                "If you have any questions, feel free to reach out. Thanks again for your contribution!"
+              )
+              
+              # 拼接数组为多行字符串
+              message=$(printf "%s\n" "${message_lines[@]}")
+
+              echo "Message content:"
+              echo "$message"
+
+              # 查找现有的 bot 评论
+              existing_comment=$(curl -s \
+                -H "Accept: application/vnd.github.v3+json" \
+                -H "Authorization: Bearer $GITHUB_TOKEN" \
+                "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" | \
+                jq -r '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- PR Format Notification Comment -->"))) | {id: .id, body: .body} | @base64')
+
+              # 使用 jq 安全地构建 JSON 负载
+              json_payload=$(jq -n --arg body "$message" '{"body": $body}')
+
+              if [[ -n "$existing_comment" ]]; then
+                # 更新现有评论
+                comment_id=$(echo "$existing_comment" | head -1 | base64 -d | jq -r .id)
+                echo "Updating existing comment $comment_id"
+                response=$(curl -s -w "\n%{http_code}" \
+                  -X PATCH \
+                  -H "Accept: application/vnd.github.v3+json" \
+                  -H "Authorization: Bearer $GITHUB_TOKEN" \
+                  -d "$json_payload" \
+                  "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id")
+              else
+                # 创建新评论
+                echo "Creating new comment"
+                response=$(curl -s -w "\n%{http_code}" \
+                  -X POST \
+                  -H "Accept: application/vnd.github.v3+json" \
+                  -H "Authorization: Bearer $GITHUB_TOKEN" \
+                  -d "$json_payload" \
+                  "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+              fi
+
+              # 提取 HTTP 状态码和响应体
+              http_code=$(echo "$response" | tail -n1)
+              response_body=$(echo "$response" | sed '$d')
+
+              if [ "$http_code" -eq 201 ] || [ "$http_code" -eq 200 ]; then
+                echo "Format notification comment added/updated successfully"
+                echo "Comment URL: $(echo "$response_body" | jq -r '.html_url')"
+              else
+                echo "Failed to add/update comment. HTTP status: $http_code"
+                echo "Response: $response_body"
+                exit 1
+              fi
+            else
+              echo "Not the first commit, skipping comment"
+            fi
+          else
+            echo "Failed to get commits from GitHub API"
+            echo "Response: $commits"
+            exit 1
+          fi

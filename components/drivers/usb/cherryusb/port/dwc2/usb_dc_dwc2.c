@@ -7,51 +7,6 @@
 #include "usb_dwc2_reg.h"
 #include "usb_dwc2_param.h"
 
-// clang-format off
-#if   defined ( __CC_ARM )
-#ifndef   __UNALIGNED_UINT32_WRITE
-  #define __UNALIGNED_UINT32_WRITE(addr, val)    ((*((__packed uint32_t *)(addr))) = (val))
-#endif
-#ifndef   __UNALIGNED_UINT32_READ
-  #define __UNALIGNED_UINT32_READ(addr)          (*((const __packed uint32_t *)(addr)))
-#endif
-#elif defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)
-#ifndef   __UNALIGNED_UINT32_WRITE
-  #pragma clang diagnostic push
-  #pragma clang diagnostic ignored "-Wpacked"
-/*lint -esym(9058, T_UINT32_WRITE)*/ /* disable MISRA 2012 Rule 2.4 for T_UINT32_WRITE */
-  __PACKED_STRUCT T_UINT32_WRITE { uint32_t v; };
-  #pragma clang diagnostic pop
-  #define __UNALIGNED_UINT32_WRITE(addr, val)    (void)((((struct T_UINT32_WRITE *)(void *)(addr))->v) = (val))
-#endif
-#ifndef   __UNALIGNED_UINT32_READ
-  #pragma clang diagnostic push
-  #pragma clang diagnostic ignored "-Wpacked"
-/*lint -esym(9058, T_UINT32_READ)*/ /* disable MISRA 2012 Rule 2.4 for T_UINT32_READ */
-  __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
-  #pragma clang diagnostic pop
-  #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(addr))->v)
-#endif
-#elif defined ( __GNUC__ )
-#ifndef   __UNALIGNED_UINT32_WRITE
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
-  __PACKED_STRUCT T_UINT32_WRITE { uint32_t v; };
-  #pragma GCC diagnostic pop
-  #define __UNALIGNED_UINT32_WRITE(addr, val)    (void)((((struct T_UINT32_WRITE *)(void *)(addr))->v) = (val))
-#endif
-#ifndef   __UNALIGNED_UINT32_READ
-  #pragma GCC diagnostic push
-  #pragma GCC diagnostic ignored "-Wpacked"
-  #pragma GCC diagnostic ignored "-Wattributes"
-  __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
-  #pragma GCC diagnostic pop
-  #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(addr))->v)
-#endif
-#endif
-// clang-format on
-
 #define USBD_BASE (g_usbdev_bus[busid].reg_base)
 
 #define USB_OTG_GLB      ((DWC2_GlobalTypeDef *)(USBD_BASE))
@@ -60,8 +15,6 @@
 #define USB_OTG_INEP(i)  ((DWC2_INEndpointTypeDef *)(USBD_BASE + USB_OTG_IN_ENDPOINT_BASE + ((i)*USB_OTG_EP_REG_SIZE)))
 #define USB_OTG_OUTEP(i) ((DWC2_OUTEndpointTypeDef *)(USBD_BASE + USB_OTG_OUT_ENDPOINT_BASE + ((i)*USB_OTG_EP_REG_SIZE)))
 #define USB_OTG_FIFO(i)  *(__IO uint32_t *)(USBD_BASE + USB_OTG_FIFO_BASE + ((i)*USB_OTG_FIFO_SIZE))
-
-extern uint32_t SystemCoreClock;
 
 /* Endpoint state */
 struct dwc2_ep_state {
@@ -328,12 +281,11 @@ static uint8_t dwc2_get_devspeed(uint8_t busid)
 
 static void dwc2_ep0_start_read_setup(uint8_t busid, uint8_t *psetup)
 {
-    USB_OTG_OUTEP(0U)->DOEPTSIZ = 0U;
-    USB_OTG_OUTEP(0U)->DOEPTSIZ |= (USB_OTG_DOEPTSIZ_PKTCNT & (1U << 19));
-    USB_OTG_OUTEP(0U)->DOEPTSIZ |= (3U * 8U);
-    USB_OTG_OUTEP(0U)->DOEPTSIZ |= USB_OTG_DOEPTSIZ_STUPCNT;
+    USB_OTG_OUTEP(0U)->DOEPTSIZ = (1U * 8U) | (1U << 19) | (1U << 29);
 
     if (g_dwc2_udc[busid].user_params.device_dma_enable) {
+        usb_dcache_invalidate((uintptr_t)&g_dwc2_udc[busid].setup, USB_ALIGN_UP(8, CONFIG_USB_ALIGN_SIZE));
+
         USB_OTG_OUTEP(0U)->DOEPDMA = (uint32_t)psetup;
         /* EP enable */
         USB_OTG_OUTEP(0U)->DOEPCTL |= USB_OTG_DOEPCTL_EPENA | USB_OTG_DOEPCTL_USBAEP;
@@ -342,25 +294,61 @@ static void dwc2_ep0_start_read_setup(uint8_t busid, uint8_t *psetup)
 
 void dwc2_ep_write(uint8_t busid, uint8_t ep_idx, uint8_t *src, uint16_t len)
 {
-    uint32_t *pSrc = (uint32_t *)src;
-    uint32_t count32b, i;
+    uint32_t *p32;
+    uint8_t *p8;
+    uint32_t val;
+    uint8_t remain;
 
-    count32b = ((uint32_t)len + 3U) / 4U;
-    for (i = 0U; i < count32b; i++) {
-        USB_OTG_FIFO((uint32_t)ep_idx) = __UNALIGNED_UINT32_READ(pSrc);
-        pSrc++;
+    p32 = (uint32_t *)src;
+    for (uint32_t i = 0U; i < (len / 4); i++) {
+        USB_OTG_FIFO((uint32_t)ep_idx) = *p32++;
+    }
+
+    remain = len % 4;
+
+    if (remain) {
+        p8 = (uint8_t *)p32;
+        val = (uint32_t)(*p8++);
+
+        if (remain > 1) {
+            val |= (uint32_t)((*p8++) << 8);
+        }
+
+        if (remain > 2) {
+            val |= (uint32_t)((*p8++) << 16);
+        }
+
+        USB_OTG_FIFO((uint32_t)ep_idx) = val;
     }
 }
 
 void dwc2_ep_read(uint8_t busid, uint8_t *dest, uint16_t len)
 {
-    uint32_t *pDest = (uint32_t *)dest;
-    uint32_t i;
-    uint32_t count32b = ((uint32_t)len + 3U) / 4U;
+    uint32_t *p32;
+    uint8_t *p8;
+    uint32_t val;
+    uint8_t remain;
 
-    for (i = 0U; i < count32b; i++) {
-        __UNALIGNED_UINT32_WRITE(pDest, USB_OTG_FIFO(0U));
-        pDest++;
+    p32 = (uint32_t *)dest;
+    for (uint32_t i = 0U; i < (len / 4); i++) {
+        *p32++ = USB_OTG_FIFO(0U);
+    }
+
+    remain = len % 4;
+
+    if (remain) {
+        p8 = (uint8_t *)p32;
+        val = USB_OTG_FIFO(0U);
+
+        *p8++ = (uint8_t)(val & 0xFFU);
+
+        if (remain > 1) {
+            *p8++ = (uint8_t)((val >> 8) & 0xFFU);
+        }
+
+        if (remain > 2) {
+            *p8++ = (uint8_t)((val >> 16) & 0xFFU);
+        }
     }
 }
 
@@ -530,6 +518,19 @@ int usb_dc_init(uint8_t busid)
     /* Force Device Mode*/
     dwc2_set_mode(busid, USB_OTG_MODE_DEVICE);
 
+    USB_ASSERT_MSG((USB_OTG_GLB->GRXFSIZ & 0xffff) >= g_dwc2_udc[busid].user_params.device_rx_fifo_size,
+                   "device_rx_fifo_size cannot be larger than power_on_value %u", (unsigned int)(USB_OTG_GLB->GRXFSIZ & 0xffff));
+    for (uint8_t i = 0; i < (g_dwc2_udc[busid].hw_params.num_dev_ep + 1); i++) {
+        uint16_t reset_txfifo_size;
+        if (i == 0) {
+            reset_txfifo_size = USB_OTG_GLB->DIEPTXF0_HNPTXFSIZ >> 16 & 0xffff;
+        } else {
+            reset_txfifo_size = USB_OTG_GLB->DIEPTXF[i - 1] >> 16 & 0xffff;
+        }
+        USB_ASSERT_MSG(reset_txfifo_size >= g_dwc2_udc[busid].user_params.device_tx_fifo_size[i],
+                       "device_tx_fifo_size[%u] cannot be larger than power_on_value %u", i, reset_txfifo_size);
+    }
+
     if (g_dwc2_udc[busid].user_params.b_session_valid_override) {
         /* B-peripheral session valid override enable */
         USB_OTG_GLB->GOTGCTL |= USB_OTG_GOTGCTL_BVALOEN;
@@ -675,6 +676,7 @@ uint8_t usbd_get_port_speed(uint8_t busid)
 int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
 {
     uint8_t ep_idx = USB_EP_GET_IDX(ep->bEndpointAddress);
+    uint16_t ep_mps;
 
     USB_ASSERT_MSG(ep_idx < (g_dwc2_udc[busid].hw_params.num_dev_ep + 1), "Ep addr %02x overflow", ep->bEndpointAddress);
 
@@ -682,14 +684,34 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
         g_dwc2_udc[busid].out_ep[ep_idx].ep_mps = USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize);
         g_dwc2_udc[busid].out_ep[ep_idx].ep_type = USB_GET_ENDPOINT_TYPE(ep->bmAttributes);
 
+        ep_mps = USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize);
+        if (ep_idx == 0) {
+            switch (ep_mps) {
+                case 64:
+                    ep_mps = EP_MPS_64;
+                    break;
+                case 32:
+                    ep_mps = EP_MPS_32;
+                    break;
+                case 16:
+                    ep_mps = EP_MPS_16;
+                    break;
+                case 8:
+                    ep_mps = EP_MPS_8;
+                    break;
+
+                default:
+                    ep_mps = EP_MPS_64;
+                    break;
+            }
+        }
+
         USB_OTG_DEV->DAINTMSK |= USB_OTG_DAINTMSK_OEPM & (uint32_t)(1UL << (16 + ep_idx));
 
-        if ((USB_OTG_OUTEP(ep_idx)->DOEPCTL & USB_OTG_DOEPCTL_USBAEP) == 0) {
-            USB_OTG_OUTEP(ep_idx)->DOEPCTL |= (USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize) & USB_OTG_DOEPCTL_MPSIZ) |
-                                              ((uint32_t)USB_GET_ENDPOINT_TYPE(ep->bmAttributes) << 18) |
-                                              USB_OTG_DIEPCTL_SD0PID_SEVNFRM |
-                                              USB_OTG_DOEPCTL_USBAEP;
-        }
+        USB_OTG_OUTEP(ep_idx)->DOEPCTL |= (ep_mps & USB_OTG_DOEPCTL_MPSIZ) |
+                                          ((uint32_t)USB_GET_ENDPOINT_TYPE(ep->bmAttributes) << 18) |
+                                          USB_OTG_DIEPCTL_SD0PID_SEVNFRM |
+                                          USB_OTG_DOEPCTL_USBAEP;
     } else {
         uint16_t fifo_size;
         if (ep_idx == 0) {
@@ -703,14 +725,34 @@ int usbd_ep_open(uint8_t busid, const struct usb_endpoint_descriptor *ep)
         g_dwc2_udc[busid].in_ep[ep_idx].ep_mps = USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize);
         g_dwc2_udc[busid].in_ep[ep_idx].ep_type = USB_GET_ENDPOINT_TYPE(ep->bmAttributes);
 
+        ep_mps = USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize);
+        if (ep_idx == 0) {
+            switch (ep_mps) {
+                case 64:
+                    ep_mps = EP_MPS_64;
+                    break;
+                case 32:
+                    ep_mps = EP_MPS_32;
+                    break;
+                case 16:
+                    ep_mps = EP_MPS_16;
+                    break;
+                case 8:
+                    ep_mps = EP_MPS_8;
+                    break;
+
+                default:
+                    ep_mps = EP_MPS_64;
+                    break;
+            }
+        }
+
         USB_OTG_DEV->DAINTMSK |= USB_OTG_DAINTMSK_IEPM & (uint32_t)(1UL << ep_idx);
 
-        if ((USB_OTG_INEP(ep_idx)->DIEPCTL & USB_OTG_DIEPCTL_USBAEP) == 0) {
-            USB_OTG_INEP(ep_idx)->DIEPCTL |= (USB_GET_MAXPACKETSIZE(ep->wMaxPacketSize) & USB_OTG_DIEPCTL_MPSIZ) |
-                                             ((uint32_t)USB_GET_ENDPOINT_TYPE(ep->bmAttributes) << 18) | (ep_idx << 22) |
-                                             USB_OTG_DIEPCTL_SD0PID_SEVNFRM |
-                                             USB_OTG_DIEPCTL_USBAEP;
-        }
+        USB_OTG_INEP(ep_idx)->DIEPCTL |= (ep_mps & USB_OTG_DIEPCTL_MPSIZ) |
+                                         ((uint32_t)USB_GET_ENDPOINT_TYPE(ep->bmAttributes) << 18) | (ep_idx << 22) |
+                                         USB_OTG_DIEPCTL_SD0PID_SEVNFRM |
+                                         USB_OTG_DIEPCTL_USBAEP;
         dwc2_flush_txfifo(busid, ep_idx);
     }
     return 0;
@@ -782,7 +824,6 @@ int usbd_ep_set_stall(uint8_t busid, const uint8_t ep)
     }
 
     if ((ep_idx == 0) && g_dwc2_udc[busid].user_params.device_dma_enable) {
-        usb_dcache_invalidate((uintptr_t)&g_dwc2_udc[busid].setup, USB_ALIGN_UP(8, CONFIG_USB_ALIGN_SIZE));
         dwc2_ep0_start_read_setup(busid, (uint8_t *)&g_dwc2_udc[busid].setup);
     }
 
@@ -1046,7 +1087,7 @@ void USBD_IRQHandler(uint8_t busid)
                             usbd_event_ep_out_complete_handler(busid, ep_idx, g_dwc2_udc[busid].out_ep[ep_idx].actual_xfer_len);
                         }
                     }
-                // clang-format off
+                    // clang-format off
 process_setup:
                     // clang-format on
                     if ((epint & USB_OTG_DOEPINT_STUP) == USB_OTG_DOEPINT_STUP) {
@@ -1132,14 +1173,15 @@ process_setup:
             memset(g_dwc2_udc[busid].in_ep, 0, sizeof(struct dwc2_ep_state) * 16);
             memset(g_dwc2_udc[busid].out_ep, 0, sizeof(struct dwc2_ep_state) * 16);
             usbd_event_reset_handler(busid);
-            /* Start reading setup */
-            dwc2_ep0_start_read_setup(busid, (uint8_t *)&g_dwc2_udc[busid].setup);
         }
         if (gint_status & USB_OTG_GINTSTS_ENUMDNE) {
             USB_OTG_GLB->GINTSTS = USB_OTG_GINTSTS_ENUMDNE;
-            dwc2_set_turnaroundtime(busid, SystemCoreClock, dwc2_get_devspeed(busid));
+            dwc2_set_turnaroundtime(busid, usbd_dwc2_get_system_clock(), dwc2_get_devspeed(busid));
 
             USB_OTG_DEV->DCTL |= USB_OTG_DCTL_CGINAK;
+
+            /* Start reading setup */
+            dwc2_ep0_start_read_setup(busid, (uint8_t *)&g_dwc2_udc[busid].setup);
         }
         if (gint_status & USB_OTG_GINTSTS_PXFR_INCOMPISOOUT) {
             USB_OTG_GLB->GINTSTS = USB_OTG_GINTSTS_PXFR_INCOMPISOOUT;

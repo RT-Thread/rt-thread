@@ -36,7 +36,7 @@
  * @return The address of source memory.
  */
 #ifndef RT_KLIBC_USING_USER_MEMSET
-void *rt_memset(void *s, int c, rt_ubase_t count)
+void *rt_memset(void *s, int c, size_t count)
 {
 #if defined(RT_KLIBC_USING_LIBC_MEMSET)
     return memset(s, c, count);
@@ -121,13 +121,13 @@ RTM_EXPORT(rt_memset);
  * @return The address of destination memory
  */
 #ifndef RT_KLIBC_USING_USER_MEMCPY
-void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
+void *rt_memcpy(void *dst, const void *src, size_t count)
 {
 #if defined(RT_KLIBC_USING_LIBC_MEMCPY)
     return memcpy(dst, src, count);
 #elif defined(RT_KLIBC_USING_TINY_MEMCPY)
     char *tmp = (char *)dst, *s = (char *)src;
-    rt_ubase_t len = 0;
+    size_t len = 0;
 
     if (tmp <= s || tmp > (s + count))
     {
@@ -153,7 +153,7 @@ void *rt_memcpy(void *dst, const void *src, rt_ubase_t count)
     char *src_ptr = (char *)src;
     long *aligned_dst = RT_NULL;
     long *aligned_src = RT_NULL;
-    rt_ubase_t len = count;
+    size_t len = count;
 
     /* If the size is small, or either SRC or DST is unaligned,
     then punt into the byte copy loop.  This should be rare. */
@@ -211,7 +211,7 @@ RTM_EXPORT(rt_memcpy);
  * @return The address of destination memory.
  */
 #ifndef RT_KLIBC_USING_USER_MEMMOVE
-void *rt_memmove(void *dest, const void *src, rt_size_t n)
+void *rt_memmove(void *dest, const void *src, size_t n)
 {
 #ifdef RT_KLIBC_USING_LIBC_MEMMOVE
     return memmove(dest, src, n);
@@ -253,7 +253,7 @@ RTM_EXPORT(rt_memmove);
  *         If the result = 0, cs is equal to ct.
  */
 #ifndef RT_KLIBC_USING_USER_MEMCMP
-rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count)
+int rt_memcmp(const void *cs, const void *ct, size_t count)
 {
 #ifdef RT_KLIBC_USING_LIBC_MEMCMP
     return memcmp(cs, ct, count);
@@ -326,7 +326,7 @@ RTM_EXPORT(rt_strstr);
  *         If the result = 0, a is equal to a.
  */
 #ifndef RT_KLIBC_USING_USER_STRCASECMP
-rt_int32_t rt_strcasecmp(const char *a, const char *b)
+int rt_strcasecmp(const char *a, const char *b)
 {
     int ca = 0, cb = 0;
 
@@ -358,7 +358,7 @@ RTM_EXPORT(rt_strcasecmp);
  * @return The address where the copied content is stored.
  */
 #ifndef RT_KLIBC_USING_USER_STRNCPY
-char *rt_strncpy(char *dst, const char *src, rt_size_t n)
+char *rt_strncpy(char *dst, const char *src, size_t n)
 {
 #ifdef RT_KLIBC_USING_LIBC_STRNCPY
     return strncpy(dst, src, n);
@@ -435,7 +435,7 @@ RTM_EXPORT(rt_strcpy);
  *         If the result = 0, cs is equal to ct.
  */
 #ifndef RT_KLIBC_USING_USER_STRNCMP
-rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count)
+int rt_strncmp(const char *cs, const char *ct, size_t count)
 {
 #ifdef RT_KLIBC_USING_LIBC_STRNCMP
     return strncmp(cs, ct, count);
@@ -471,7 +471,7 @@ RTM_EXPORT(rt_strncmp);
  *         If the result = 0, cs is equal to ct.
  */
 #ifndef RT_KLIBC_USING_USER_STRCMP
-rt_int32_t rt_strcmp(const char *cs, const char *ct)
+int rt_strcmp(const char *cs, const char *ct)
 {
 #ifdef RT_KLIBC_USING_LIBC_STRCMP
     return strcmp(cs, ct);
@@ -497,7 +497,7 @@ RTM_EXPORT(rt_strcmp);
  * @return The length of string.
  */
 #ifndef RT_KLIBC_USING_USER_STRLEN
-rt_size_t rt_strlen(const char *s)
+size_t rt_strlen(const char *s)
 {
 #ifdef RT_KLIBC_USING_LIBC_STRLEN
     return strlen(s);
@@ -524,10 +524,10 @@ RTM_EXPORT(rt_strlen);
  * @return The length of string.
  */
 #ifndef RT_KLIBC_USING_USER_STRNLEN
-rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
+size_t rt_strnlen(const char *s, size_t maxlen)
 {
     const char *sc;
-    for (sc = s; *sc != '\0' && (rt_ubase_t)(sc - s) < maxlen; ++sc);
+    for (sc = s; *sc != '\0' && (size_t)(sc - s) < maxlen; ++sc);
     return sc - s;
 }
 #endif /* RT_KLIBC_USING_USER_STRNLEN */
@@ -543,7 +543,7 @@ RTM_EXPORT(rt_strnlen);
  */
 char *rt_strdup(const char *s)
 {
-    rt_size_t len = rt_strlen(s) + 1;
+    size_t len = rt_strlen(s) + 1;
     char *tmp = (char *)rt_malloc(len);
 
     if (!tmp)

@@ -70,7 +70,7 @@
 /* Serial2 - PA2-TX  PA3-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME     "uart2"
 
-#define RTDUINO_TONE_HWTIMER_DEVICE_NAME "timer7"
+#define RTDUINO_TONE_CLOCK_TIMER_DEVICE_NAME "timer7"
 
 /* I2C */
 #if defined(BSP_USING_ARDUINO_AHT10)

@@ -1,0 +1,33 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_POWER_RESET']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+
+src = []
+
+if GetDepend(['RT_POWER_RESET_GPIO_POWEROFF']):
+    src += ['gpio-poweroff.c']
+
+if GetDepend(['RT_POWER_RESET_GPIO_RESTART']):
+    src += ['gpio-restart.c']
+
+if GetDepend(['RT_POWER_RESET_REBOOT_MODE']):
+    src += ['reboot-mode.c']
+
+if GetDepend(['RT_POWER_RESET_SYSCON_POWEROFF']):
+    src += ['syscon-poweroff.c']
+
+if GetDepend(['RT_POWER_RESET_SYSCON_REBOOT_MODE']):
+    src += ['syscon-reboot-mode.c']
+
+if GetDepend(['RT_POWER_RESET_SYSCON_REBOOT']):
+    src += ['syscon-reboot.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

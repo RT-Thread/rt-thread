@@ -24,3 +24,20 @@ if BSP_USING_USBD
         # "ULPI: UTMI+ Low Pin Interface"
 endif
 
+if BSP_USING_HARD_I2C
+    choice
+        prompt "Select I2C Receiving Scheme"
+        default BSP_USING_RECEIVING_A
+
+        config BSP_USING_RECEIVING_A
+            bool "master receiving secheme A --- requires that the software be capable of responding quickly to the 12C event."
+
+        config BSP_USING_RECEIVING_B
+            bool "master receiving secheme B --- don't requires that the software be capable of responding quickly to the 12C event."
+    endchoice
+endif
+
+config BSP_USING_GD_DBG
+    bool 
+    default y
+    # "Using GD32 debug module"

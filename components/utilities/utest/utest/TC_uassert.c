@@ -86,4 +86,4 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(TC_uassert_in_range);
 }
 
-UTEST_TC_EXPORT(utest_do_tc, "utest", RT_NULL, RT_NULL, 10);
+UTEST_TC_EXPORT(utest_do_tc, "components.utilities.utest.uassert", RT_NULL, RT_NULL, 10);

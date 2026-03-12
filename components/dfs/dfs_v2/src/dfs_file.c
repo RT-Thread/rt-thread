@@ -2597,7 +2597,7 @@ void ls(const char *pathname)
                         if (S_ISDIR(stat.st_mode))
                         {
                             rt_kprintf(_COLOR_BLUE "%-20s" _COLOR_NORMAL, dirent.d_name);
-                            rt_kprintf("%-25s\n", "<DIR>");
+                            rt_kprintf(" %-25s\n", "<DIR>");
                         }
                         else if (S_ISLNK(stat.st_mode))
                         {
@@ -2655,17 +2655,17 @@ void ls(const char *pathname)
                         else if (stat.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
                         {
                             rt_kprintf(_COLOR_GREEN "%-20s" _COLOR_NORMAL, dirent.d_name);
-                            rt_kprintf("%-25lu\n", (unsigned long)stat.st_size);
+                            rt_kprintf(" %-25lu\n", (unsigned long)stat.st_size);
                         }
                         else if (S_ISCHR(stat.st_mode))
                         {
                             rt_kprintf(_COLOR_YELLOW "%-20s" _COLOR_NORMAL, dirent.d_name);
-                            rt_kprintf("%-25s\n", "<CHR>");
+                            rt_kprintf(" %-25s\n", "<CHR>");
                         }
                         else
                         {
                             rt_kprintf("%-20s", dirent.d_name);
-                            rt_kprintf("%-25lu\n", (unsigned long)stat.st_size);
+                            rt_kprintf(" %-25lu\n", (unsigned long)stat.st_size);
                         }
                     }
                     else

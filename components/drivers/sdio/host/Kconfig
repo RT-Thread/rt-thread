@@ -1,0 +1,22 @@
+config RT_SDIO_SDHCI_PCI
+    bool "SDHCI support on PCI bus"
+    depends on RT_USING_PCI
+    select RT_USING_SDHCI
+    default n
+
+config RT_SDIO_DW_MMC
+    bool "Synopsys DesignWare MMC Family"
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_RESET
+    depends on RT_USING_REGULATOR
+    select RT_USING_DEVICE_IPC
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+
+config RT_SDIO_DW_MMC_PCI
+    bool "Synopsys Designware MCI support on PCI bus"
+    depends on RT_SDIO_DW_MMC
+    depends on RT_USING_PCI
+    default n
+
+osource "$(SOC_DM_SDIO_DIR)/Kconfig"

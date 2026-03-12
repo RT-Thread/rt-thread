@@ -57,31 +57,29 @@ void usb_hc_low_level2_init(struct usbh_bus *bus)
     if (bus->hcd.reg_base == HPM_USB0_BASE) {
         g_usb_hpm_busid[0] = bus->hcd.hcd_id;
         g_usb_hpm_irq[0] = USBH_IRQHandler;
-
-        hpm_usb_isr_enable(HPM_USB0_BASE);
     } else {
 #ifdef HPM_USB1_BASE
         g_usb_hpm_busid[1] = bus->hcd.hcd_id;
         g_usb_hpm_irq[1] = USBH_IRQHandler;
-
-        hpm_usb_isr_enable(HPM_USB1_BASE);
 #endif
     }
+
+#ifdef CONFIG_USB_OTG_ENABLE
+    usb_otgsc_enable_id_chg_int((USB_Type *)(bus->hcd.reg_base));
+#endif
+    hpm_usb_isr_enable(bus->hcd.reg_base);
 }
 
 void usb_hc_low_level_deinit(struct usbh_bus *bus)
 {
     usb_phy_deinit((USB_Type *)(bus->hcd.reg_base));
+    hpm_usb_isr_disable(bus->hcd.reg_base);
 
     if (bus->hcd.reg_base == HPM_USB0_BASE) {
-        hpm_usb_isr_disable(HPM_USB0_BASE);
-
         g_usb_hpm_busid[0] = 0;
         g_usb_hpm_irq[0] = NULL;
     } else {
 #ifdef HPM_USB1_BASE
-        hpm_usb_isr_disable(HPM_USB1_BASE);
-
         g_usb_hpm_busid[1] = 0;
         g_usb_hpm_irq[1] = NULL;
 #endif

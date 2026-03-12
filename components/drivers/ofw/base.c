@@ -1763,7 +1763,6 @@ const char *rt_ofw_get_prop_fuzzy_name(const struct rt_ofw_node *np, const char 
     return propname;
 }
 
-
 struct rt_ofw_prop *rt_ofw_get_prop(const struct rt_ofw_node *np, const char *name, rt_ssize_t *out_length)
 {
     struct rt_ofw_prop *prop = RT_NULL;

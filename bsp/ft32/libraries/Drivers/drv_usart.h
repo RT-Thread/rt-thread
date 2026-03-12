@@ -25,6 +25,9 @@ int rt_hw_usart_init(void);
 #if defined(SOC_SERIES_FT32F0)
     #define UART_INSTANCE_CLEAR_FUNCTION    USART_ClearITPendingBit
 #endif
+#if defined(SOC_SERIES_FT32F4)
+    #define UART_INSTANCE_CLEAR_FUNCTION    USART_ClearFlag
+#endif
 
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
@@ -46,20 +49,6 @@ struct ft32_uart
 {
     USART_InitTypeDef Init;
     struct ft32_uart_config *config;
-
-#ifdef RT_SERIAL_USING_DMA
-    struct
-    {
-        DMA_InitTypeDef Init;
-        DMA_Channel_TypeDef   *Instance;
-        rt_size_t last_index;
-    } dma_rx;
-    struct
-    {
-        DMA_InitTypeDef Init;
-        DMA_Channel_TypeDef   *Instance;
-    } dma_tx;
-#endif
     rt_uint16_t uart_dma_flag;
     struct rt_serial_device serial;
 };

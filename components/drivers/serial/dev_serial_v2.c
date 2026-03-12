@@ -579,7 +579,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device *dev,
     tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
     RT_ASSERT(tx_fifo != RT_NULL);
 
-    if (rt_thread_self() == RT_NULL || (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+    if (rt_thread_self() == RT_NULL || (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM) || (dev == rt_console_get_device()))
     {
         /* using poll tx when the scheduler not startup or in stream mode */
         return _serial_poll_tx(dev, pos, buffer, size);
@@ -651,7 +651,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device *dev,
     tx_fifo = (struct rt_serial_tx_fifo *)serial->serial_tx;
     RT_ASSERT(tx_fifo != RT_NULL);
 
-    if (rt_thread_self() == RT_NULL || (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM))
+    if (rt_thread_self() == RT_NULL || (serial->parent.open_flag & RT_DEVICE_FLAG_STREAM) || (dev == rt_console_get_device()))
     {
         /* using poll tx when the scheduler not startup or in stream mode */
         return _serial_poll_tx(dev, pos, buffer, size);
@@ -2000,13 +2000,13 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             {
                 rt_serial_update_write_index(&rx_fifo->dma_ping_rb, rx_length);
 
-                size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
+                size = rt_ringbuffer_get_direct(&rx_fifo->dma_ping_rb, &ptr);
 
                 put_len = rt_ringbuffer_put(&rx_fifo->rb, ptr, size);
                 if (put_len != size)
                     break;
 
-                size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
+                size = rt_ringbuffer_get_direct(&rx_fifo->dma_ping_rb, &ptr);
                 if (size == 0)
                     break;
 
@@ -2022,11 +2022,11 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             {
                 rt_serial_update_write_index(&rx_fifo->dma_ping_rb, rx_length);
 
-                size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
+                size = rt_ringbuffer_get_direct(&rx_fifo->dma_ping_rb, &ptr);
 
                 rt_ringbuffer_put_force(&rx_fifo->rb, ptr, size);
 
-                size = rt_ringbuffer_peek(&rx_fifo->dma_ping_rb, &ptr);
+                size = rt_ringbuffer_get_direct(&rx_fifo->dma_ping_rb, &ptr);
                 if (size == 0)
                     break;
 

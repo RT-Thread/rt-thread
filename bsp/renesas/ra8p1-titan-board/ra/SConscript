@@ -1,0 +1,59 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+from gcc import *
+
+cwd = GetCurrentDir()
+src = []
+group = []
+CPPPATH = []
+
+if rtconfig.PLATFORM in ['iccarm'] + GetGCCLikePLATFORM():
+    if rtconfig.PLATFORM == 'iccarm' or GetOption('target') != 'mdk5':
+        src += Glob('./fsp/src/bsp/mcu/all/*.c')
+        src += Glob('./fsp/src/bsp/mcu/ra8p1/*.c')
+        src += Glob('./fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c')
+        src += Glob('./fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c')
+        src += Glob('./fsp/src/r_*/*.c')
+        src += Glob('./npu/ethos-u-core-driver/src/*.c')
+        src += Glob('./fsp/src/rm_ethosu/*.c')
+        
+        CPPPATH = [ cwd + '/arm/CMSIS_6/CMSIS/Core/Include',
+                            cwd + '/fsp/inc',
+                            cwd + '/fsp/inc/api',
+                            cwd + '/fsp/inc/instances',
+                            cwd + '/fsp/src/rm_ethosu',
+                            cwd + '/npu/ethos-u-core-driver/include',
+                  ]
+
+    if GetDepend('BSP_USING_G2D'):
+        src += Glob(cwd + '/tes/dave2d/src/*.c')
+	
+    if GetDepend('BSP_USING_RA8P1_USB'):
+        src += Glob('./fsp/src/r_usb_basic/src/driver/*.c')
+        src += Glob('./fsp/src/r_usb_basic/src/hw/*.c')
+        CPPPATH += [cwd + '/fsp/src/r_usb_basic/src/driver/inc',
+                        cwd + '/fsp/src/r_usb_basic/src/hw/inc']
+
+    if GetDepend('BSP_USING_USB_PCDC'):
+        src += Glob('./fsp/src/r_usb_pcdc/src/*.c')
+        CPPPATH += [cwd + '/fsp/src/r_usb_pcdc/inc']
+
+    if GetDepend('BSP_USING_USB_HHID'):
+        src += Glob('./fsp/src/r_usb_hhid/src/*.c')
+        CPPPATH += [cwd + '/fsp/src/r_usb_hhid/inc']
+
+    if GetDepend('BSP_USING_MIPI_CSI_CAMERA'):
+        src += Glob('./fsp/src/r_mipi_csi/*.c')
+        src += Glob('./fsp/src/r_vin/*.c')
+        CPPPATH += [cwd + '/fsp/src/r_mipi_csi']
+        CPPPATH += [cwd + '/fsp/src/r_vin']
+	
+    CPPPATH += [
+    	cwd + '/tes/dave2d/inc',
+    	cwd + '/fsp/src/r_mipi_csi',
+	cwd + '/fsp/src/r_vin'
+    ]
+
+group = DefineGroup('RA', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')

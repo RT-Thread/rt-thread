@@ -342,6 +342,8 @@ rt_err_t rt_pci_setup_device(struct rt_pci_device *pdev)
     rt_dm_dev_set_name(&pdev->parent, "%04x:%02x:%02x.%u", rt_pci_domain(pdev),
             pdev->bus->number, RT_PCI_SLOT(pdev->devfn), RT_PCI_FUNC(pdev->devfn));
 
+    class = pdev->class >> 8;
+
     switch (pdev->hdr_type)
     {
     case PCIM_HDRTYPE_NORMAL:

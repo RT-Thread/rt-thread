@@ -116,7 +116,7 @@ static rt_err_t gd32_rtc_control(rt_device_t dev, int cmd, void *args)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
     {
-        *(uint32_t *)args = get_timestamp();
+        *(time_t *)args = get_timestamp();
     }
     break;
 
