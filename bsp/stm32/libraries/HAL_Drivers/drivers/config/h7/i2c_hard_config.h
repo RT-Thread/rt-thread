@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2024-02-06     Dyyt587   first version
  * 2024-04-23     Zeidan    Add I2Cx_xx_DMA_CONFIG
- * 2024-06-23     wdfk-prog Add I2C4 config entries
+ * 2024-06-23     wdfk-prog Add H7 hard I2C config
  */
 #ifndef __I2C_HARD_CONFIG_H__
 #define __I2C_HARD_CONFIG_H__
@@ -23,8 +23,8 @@ extern "C" {
 #define I2C1_BUS_CONFIG                             \
     {                                               \
         .Instance = I2C1,                           \
-        .timing=0x10707DBC,                         \
-        .timeout=0x1000,                            \
+        .timing = 0x307075B1,                       \
+        .timeout = 1000,                            \
         .name = "hwi2c1",                           \
         .evirq_type = I2C1_EV_IRQn,                 \
         .erirq_type = I2C1_ER_IRQn,                 \
@@ -81,8 +81,8 @@ extern "C" {
 #define I2C2_BUS_CONFIG                             \
     {                                               \
         .Instance = I2C2,                           \
-        .timing=0x10707DBC,                         \
-        .timeout=0x1000,                            \
+        .timing = 0x307075B1,                       \
+        .timeout = 1000,                            \
         .name = "hwi2c2",                           \
         .evirq_type = I2C2_EV_IRQn,                 \
         .erirq_type = I2C2_ER_IRQn,                 \
@@ -139,8 +139,8 @@ extern "C" {
 #define I2C3_BUS_CONFIG                             \
     {                                               \
         .Instance = I2C3,                           \
-        .timing=0x10707DBC,                         \
-        .timeout=0x1000,                            \
+        .timing = 0x307075B1,                       \
+        .timeout = 1000,                            \
         .name = "hwi2c3",                           \
         .evirq_type = I2C3_EV_IRQn,                 \
         .erirq_type = I2C3_ER_IRQn,                 \
@@ -197,8 +197,8 @@ extern "C" {
 #define I2C4_BUS_CONFIG                             \
     {                                               \
         .Instance = I2C4,                           \
-        .timing = 0x10707DBC,                       \
-        .timeout = 0x1000,                          \
+        .timing = 0x307075B1,                       \
+        .timeout = 1000,                            \
         .name = "hwi2c4",                           \
         .evirq_type = I2C4_EV_IRQn,                 \
         .erirq_type = I2C4_ER_IRQn,                 \
@@ -250,8 +250,9 @@ extern "C" {
 #endif /* I2C4_RX_DMA_CONFIG */
 #endif /* BSP_I2C4_RX_USING_DMA */
 
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__I2C_CONFIG_H__ */
+#endif /*__I2C_HARD_CONFIG_H__ */

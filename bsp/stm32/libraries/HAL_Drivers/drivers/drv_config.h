@@ -127,6 +127,7 @@ extern "C" {
 #include "h7/sdio_config.h"
 #include "h7/pwm_config.h"
 #include "h7/usbd_config.h"
+#include "h7/i2c_hard_config.h"
 
 #elif  defined(SOC_SERIES_STM32H7RS)
 #include "h7/dma_config.h"
