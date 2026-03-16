@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,6 +28,7 @@
  * 2023-10-21     Shell        support the common backtrace API which is arch-independent
  * 2023-12-10     xqyjlj       perf rt_hw_interrupt_disable/enable, fix memheap lock
  * 2024-03-10     Meco Man     move std libc related functions to rtklibc
+ * 2026-03-16     Rbb666       Change rt_thread_get_usage to incremental statistics.
  */
 
 #include <rtthread.h>
@@ -572,49 +573,174 @@ rt_err_t rt_backtrace_thread(rt_thread_t thread)
 }
 
 #ifdef RT_USING_CPU_USAGE_TRACER
-/**
- * @brief Get thread usage percentage relative to total system CPU time
+
+#define RT_CPU_USAGE_CALC_INTERVAL_TICK \
+    ((RT_TICK_PER_SECOND * RT_CPU_USAGE_CALC_INTERVAL_MS + 999U) / 1000U)
+
+static rt_tick_t _cpu_usage_sample_tick;
+static rt_bool_t _cpu_usage_inited = RT_FALSE;
+static struct rt_cpu_usage_stats _cpu_usage_prev_cpu_stat[RT_CPUS_NR];
+static struct rt_spinlock _cpu_usage_lock = RT_SPINLOCK_INIT;
+
+/*
+ * Calculate total CPU-time delta for this sampling window and
+ * refresh per-CPU snapshots.
  *
- * This function calculates the CPU usage percentage of a specific thread
- * relative to the total CPU time consumed by all threads in the system.
+ * Each counter delta is computed in rt_ubase_t width first, so wrap-around
+ * on 32-bit targets is handled naturally by unsigned arithmetic.
+ */
+static rt_uint64_t _cpu_usage_calc_total_delta(void)
+{
+    rt_uint64_t total_delta = 0;
+    int i;
+
+    for (i = 0; i < RT_CPUS_NR; i++)
+    {
+        rt_cpu_t pcpu = rt_cpu_index(i);
+        rt_ubase_t user_now = pcpu->cpu_stat.user;
+        rt_ubase_t system_now = pcpu->cpu_stat.system;
+        rt_ubase_t idle_now = pcpu->cpu_stat.idle;
+
+        /* Per-counter delta first to avoid overflow artifacts after sum. */
+        rt_ubase_t user_delta = (rt_ubase_t)(user_now - _cpu_usage_prev_cpu_stat[i].user);
+        rt_ubase_t system_delta = (rt_ubase_t)(system_now - _cpu_usage_prev_cpu_stat[i].system);
+        rt_ubase_t idle_delta = (rt_ubase_t)(idle_now - _cpu_usage_prev_cpu_stat[i].idle);
+
+        total_delta += (rt_uint64_t)user_delta;
+        total_delta += (rt_uint64_t)system_delta;
+        total_delta += (rt_uint64_t)idle_delta;
+
+        _cpu_usage_prev_cpu_stat[i].user = user_now;
+        _cpu_usage_prev_cpu_stat[i].system = system_now;
+        _cpu_usage_prev_cpu_stat[i].idle = idle_now;
+    }
+
+    return total_delta;
+}
+
+static void _cpu_usage_snapshot_init(void)
+{
+    struct rt_object_information *info;
+    rt_list_t *list;
+    rt_list_t *node;
+    rt_base_t level;
+    int i;
+
+    info = rt_object_get_information(RT_Object_Class_Thread);
+    list = &info->object_list;
+
+    level = rt_spin_lock_irqsave(&info->spinlock);
+    for (node = list->next; node != list; node = node->next)
+    {
+        struct rt_object *obj = rt_list_entry(node, struct rt_object, list);
+        struct rt_thread *t = (struct rt_thread *)obj;
+
+        t->total_time_prev = 0U;
+        t->cpu_usage = 0U;
+    }
+    rt_spin_unlock_irqrestore(&info->spinlock, level);
+
+    for (i = 0; i < RT_CPUS_NR; i++)
+    {
+        _cpu_usage_prev_cpu_stat[i].user = 0U;
+        _cpu_usage_prev_cpu_stat[i].system = 0U;
+        _cpu_usage_prev_cpu_stat[i].idle = 0U;
+    }
+
+    _cpu_usage_sample_tick = rt_tick_get();
+    _cpu_usage_inited = RT_TRUE;
+}
+
+static void _cpu_usage_refresh_threads(rt_uint64_t total_delta)
+{
+    struct rt_object_information *info;
+    rt_list_t *list;
+    rt_list_t *node;
+    rt_base_t level;
+
+    info = rt_object_get_information(RT_Object_Class_Thread);
+    list = &info->object_list;
+
+    level = rt_spin_lock_irqsave(&info->spinlock);
+    for (node = list->next; node != list; node = node->next)
+    {
+        struct rt_object *obj = rt_list_entry(node, struct rt_object, list);
+        struct rt_thread *t = (struct rt_thread *)obj;
+        rt_ubase_t total_now = (rt_ubase_t)(t->user_time + t->system_time);
+        rt_ubase_t total_delta_now = (rt_ubase_t)(total_now - t->total_time_prev);
+        rt_uint64_t thread_delta = (rt_uint64_t)total_delta_now;
+
+        if (total_delta > 0U)
+        {
+            rt_uint64_t usage = (thread_delta * 100U) / total_delta;
+            t->cpu_usage = (rt_uint8_t)(usage > 100U ? 100U : usage);
+        }
+        else
+        {
+            t->cpu_usage = 0U;
+        }
+
+        t->total_time_prev = total_now;
+    }
+    rt_spin_unlock_irqrestore(&info->spinlock, level);
+}
+
+static void _cpu_usage_update(void)
+{
+    rt_tick_t tick_now;
+    rt_tick_t delta_tick;
+    rt_uint64_t total_delta;
+    rt_bool_t bypass_interval_check = RT_FALSE;
+
+    if (!_cpu_usage_inited)
+    {
+        _cpu_usage_snapshot_init();
+        bypass_interval_check = RT_TRUE;
+    }
+
+    tick_now = rt_tick_get();
+    delta_tick = rt_tick_get_delta(_cpu_usage_sample_tick);
+    if (!bypass_interval_check && delta_tick < RT_CPU_USAGE_CALC_INTERVAL_TICK)
+    {
+        return;
+    }
+
+    total_delta = _cpu_usage_calc_total_delta();
+    _cpu_usage_refresh_threads(total_delta);
+    _cpu_usage_sample_tick = tick_now;
+}
+
+/**
+ * @brief Get thread CPU usage percentage in the recent sampling window
+ *
+ * This function returns per-thread CPU usage based on delta runtime in the
+ * latest sampling window, rather than cumulative runtime since boot.
  *
  * @param thread Pointer to the thread object. Must not be NULL.
  *
  * @return The CPU usage percentage as an integer value (0-100).
- *         Returns 0 if total system time is 0 or if CPU usage tracing is not enabled.
+ *         If sampling interval has not elapsed yet, the previous cached value
+ *         is returned (initial value is 0).
  *
  * @note This function requires RT_USING_CPU_USAGE_TRACER to be enabled.
- * @note The percentage is calculated as: (thread_time * 100) / total_system_time
- * @note Due to integer arithmetic, the result is truncated and may not sum
- *       to exactly 100% across all threads due to rounding.
+ * @note The percentage is calculated as
+ *       (thread_time_delta * 100) / total_time_delta,
+ *       where total_time_delta is the sum of user/system/idle deltas of all CPUs.
+ * @note Sampling interval can be tuned with RT_CPU_USAGE_CALC_INTERVAL_MS.
  * @note If thread is NULL, an assertion will be triggered in debug builds.
  */
 rt_uint8_t rt_thread_get_usage(rt_thread_t thread)
 {
-    rt_ubase_t thread_time;
-    rt_ubase_t total_time = 0U;
-    int i;
-    rt_cpu_t pcpu;
+    rt_uint8_t usage;
 
     RT_ASSERT(thread != RT_NULL);
 
-    thread_time = thread->user_time + thread->system_time;
+    rt_spin_lock(&_cpu_usage_lock);
+    _cpu_usage_update();
+    usage = thread->cpu_usage;
+    rt_spin_unlock(&_cpu_usage_lock);
 
-    /* Calculate total system time by summing all CPUs' time */
-    for (i = 0; i < RT_CPUS_NR; i++)
-    {
-        pcpu = rt_cpu_index(i);
-        total_time += pcpu->cpu_stat.user + pcpu->cpu_stat.system + pcpu->cpu_stat.idle;
-    }
-
-    if (total_time > 0U)
-    {
-        /* Calculate thread usage percentage: (thread_time * 100) / total_time */
-        rt_ubase_t usage = (thread_time * 100U) / total_time;
-        return (rt_uint8_t)(usage > 100U ? 100U : usage);
-    }
-
-    return 0U;
+    return usage;
 }
 #endif /* RT_USING_CPU_USAGE_TRACER */
 

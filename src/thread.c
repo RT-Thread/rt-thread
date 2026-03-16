@@ -277,6 +277,13 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->system_time = 0;
 #endif
 
+#ifdef RT_USING_CPU_USAGE_TRACER
+    thread->user_time = 0;
+    thread->system_time = 0;
+    thread->total_time_prev = 0;
+    thread->cpu_usage = 0;
+#endif /* RT_USING_CPU_USAGE_TRACER */
+
 #ifdef RT_USING_PTHREADS
     thread->pthread_data = RT_NULL;
 #endif /* RT_USING_PTHREADS */
