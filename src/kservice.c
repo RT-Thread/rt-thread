@@ -1104,13 +1104,19 @@ RTM_EXPORT(rt_free_align);
 #endif /* RT_USING_HEAP */
 
 /**
- * fls - find last (most-significant) bit set
- * @x: the word to search
+ * @brief Find the index of the most significant set bit in a 32-bit integer.
+ * @details The result is the position of the highest bit set to 1, counting
+ * from 1 for the least significant bit. If the input value is 0, the function
+ * returns 0.
  *
- * This is defined the same way as ffs.
- * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
+ * Examples:
+ * - fls(0) = 0
+ * - fls(1) = 1
+ * - fls(0x80000000) = 32
+ *
+ * @param val 32-bit integer value to examine.
+ * @return Position of the most significant set bit (1–32), or 0 if @p val is 0.
  */
-
 int __rt_fls(int val)
 {
     int bit = 32;
