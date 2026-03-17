@@ -4,8 +4,8 @@ config SOC_XUANTIE
     bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_HW_ATOMIC
     default y
-
 
 menu "On-chip Peripheral Drivers"
 
@@ -20,23 +20,6 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig ENABLE_FPU
-        bool "Enable FPU"
-        select ARCH_RISCV_FPU
-        default n
-
-    if ENABLE_FPU
-        choice
-            prompt "FPU Configuration"
-            default ARCH_RISCV_FPU_S
-
-            config ARCH_RISCV_FPU_S
-                bool "Enable [F] Extension"
-
-            config ARCH_RISCV_FPU_D
-                bool "Enable [F][D] Extension"
-        endchoice
-    endif   
 endmenu
 
 endmenu

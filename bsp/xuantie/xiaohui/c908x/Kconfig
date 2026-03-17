@@ -6,9 +6,12 @@ RTT_DIR := ../../../../
 
 PKGS_DIR := packages
 
- config XUANTIAN_XIAOHUI_C908X
+config XUANTIAN_XIAOHUI_C908X
     bool
     select ARCH_RISCV64
+    select ARCH_RISCV_FPU
+    select ARCH_RISCV_FPU_D
+    select ARCH_RISCV_VECTOR
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y

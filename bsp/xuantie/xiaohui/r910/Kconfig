@@ -6,12 +6,22 @@ RTT_DIR := ../../../../
 
 PKGS_DIR := packages
 
- config XUANTIAN_XIAOHUI_R910
+config XUANTIAN_XIAOHUI_R910
     bool
     select ARCH_RISCV64
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
+
+menu "CPU Architecture Features"
+
+    menuconfig ENABLE_FPU
+        bool "Enable FPU"
+        select ARCH_RISCV_FPU
+        select ARCH_RISCV_FPU_D
+        default y
+
+endmenu
 
 source "$(RTT_DIR)/Kconfig"
 source "$PKGS_DIR/Kconfig"
