@@ -3,6 +3,11 @@
 
 #define XUANTIAN_XIAOHUI_R910
 
+/* CPU Architecture Features */
+
+#define ENABLE_FPU
+/* end of CPU Architecture Features */
+
 /* RT-Thread Kernel */
 
 /* klibc options */
@@ -74,10 +79,10 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 1024
+#define IDLE_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 1024
+#define RT_TIMER_THREAD_STACK_SIZE 4096
 
 /* kservice options */
 
@@ -106,12 +111,16 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 512
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define ARCH_CPU_64BIT
+#define RT_USING_HW_ATOMIC
 #define ARCH_RISCV
+#define ARCH_RISCV_FPU
+#define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
 #define ARCH_USING_NEW_CTX_SWITCH
 
@@ -147,7 +156,6 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_PIN
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -309,6 +317,22 @@
 /* NXP HAL & SDK Drivers */
 
 /* end of NXP HAL & SDK Drivers */
+
+/* NUVOTON Drivers */
+
+/* end of NUVOTON Drivers */
+
+/* GD32 Drivers */
+
+/* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

@@ -13,6 +13,36 @@ config XUANTIAN_SMARTL_E907
     select RT_USING_USER_MAIN
     default y
 
+menu "CPU Architecture Features"
+
+    menuconfig ENABLE_FPU
+        bool "Enable FPU"
+        select ARCH_RISCV_FPU
+        default y
+
+    if ENABLE_FPU
+        choice
+            prompt "FPU Configuration"
+            default ARCH_RISCV_FPU_D
+
+            config ARCH_RISCV_FPU_S
+                bool "Enable [F] Extension"
+
+            config ARCH_RISCV_FPU_D
+                bool "Enable [F][D] Extension"
+        endchoice
+    endif
+
+    menuconfig ENABLE_DSP
+        bool "Enable DSP"
+        select ARCH_RISCV_DSP
+        default y
+
+config ARCH_RISCV_DSP
+    bool
+
+endmenu
+
 source "$(RTT_DIR)/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "$BSP_DIR/board/Kconfig"

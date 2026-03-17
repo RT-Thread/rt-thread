@@ -120,8 +120,8 @@ extern "C" {
 // UART
 
 /*
-    The total supported uart numbers on this board, 0 means No uart support.
-    the BOARD_UART<x>_XXX, x in range of (0, BOARD_UART_NUM - 1)
+    The total supported uart numbers on this board, 0 meas No uart support.
+    the BOARD_UART<x>_XXX, x in rang of (0, BOARD_UART_NUM - 1)
 */
 #ifndef BOARD_UART_NUM
 #define BOARD_UART_NUM (1)
