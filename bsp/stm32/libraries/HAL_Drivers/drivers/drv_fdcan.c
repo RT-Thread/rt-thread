@@ -535,8 +535,8 @@ static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
         pmsg->id = pdrv_can->RxHeader.Identifier;
 
         uint32_t actual_dlc = pdrv_can->RxHeader.DataLength;
-	    pmsg->len = dlc_to_length(actual_dlc);
-    
+        pmsg->len = dlc_to_length(actual_dlc);
+
         pmsg->hdr_index = pdrv_can->RxHeader.FilterIndex;
 
         #ifdef RT_CAN_USING_CANFD
