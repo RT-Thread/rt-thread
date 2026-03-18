@@ -71,10 +71,10 @@ static const stm32_fdcan_timing_t st_FDCAN_DataTiming[] =
 static uint8_t dlc_to_length(uint32_t dlc)
 {
     const uint8_t dlc_to_len_table[16] = {
-        0,  1,  2,  3,  4,  5,  6,  7, 
+        0,  1,  2,  3,  4,  5,  6,  7,
         8, 12, 16, 20, 24, 32, 48, 64
     };
-    
+
     if (dlc > 15) return 8;
     return dlc_to_len_table[dlc];
 }
@@ -381,7 +381,7 @@ static rt_err_t _inline_can_control(struct rt_can_device *can, int cmd, void *ar
             argval = (rt_uint32_t) arg;
             uint32_t arb_idx = _inline_get_ArbBaudIndex(argval);
             if (arb_idx == (uint32_t) -1) {
-                return -RT_ERROR; 
+                return -RT_ERROR;
             }
             if (argval != pdrv_can->device.config.baud_rate) {
                 pdrv_can->device.config.baud_rate = argval;
@@ -535,8 +535,8 @@ static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
         pmsg->id = pdrv_can->RxHeader.Identifier;
 
         uint32_t actual_dlc = pdrv_can->RxHeader.DataLength;
-		pmsg->len = dlc_to_length(actual_dlc);
-        
+	    pmsg->len = dlc_to_length(actual_dlc);
+    
         pmsg->hdr_index = pdrv_can->RxHeader.FilterIndex;
 
         #ifdef RT_CAN_USING_CANFD
