@@ -31,7 +31,7 @@ void __rt_libc_exit(int status)
         if (self->pthread_data != RT_NULL)
         {
             extern void pthread_exit(void *value);
-            pthread_exit((void *)status);
+            pthread_exit((void *)(intptr_t)status);
         }
         else
 #endif
