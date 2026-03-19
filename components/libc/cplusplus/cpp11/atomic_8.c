@@ -13,6 +13,8 @@
 #include <stdbool.h>
 #include <rtthread.h>
 
+#ifndef __clang__
+
 /*
 * override gcc builtin atomic function for std::atomic<int64_t>, std::atomic<uint64_t>
 * @see https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
@@ -165,3 +167,5 @@ __atomic_fetch_op_8(sub, -)
 __atomic_fetch_op_8( and, &)
 __atomic_fetch_op_8( or, |)
 __atomic_fetch_op_8(xor, ^)
+
+#endif /* __clang__ */
