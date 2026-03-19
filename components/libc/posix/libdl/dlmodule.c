@@ -44,17 +44,29 @@ static void _dlmodule_set_name(struct rt_dlmodule *module, const char *path)
     ptr   = first = (char *)path;
     end   = path + rt_strlen(path);
 
+    /* find the start of filename (after last '/') */
     while (*ptr != '\0')
     {
         if (*ptr == '/')
             first = ptr + 1;
-        if (*ptr == '.')
-            end = ptr - 1;
-
-        ptr ++;
+        ptr++;
     }
 
-    size = end - first + 1;
+    /* find extension in filename portion only (after last '/') */
+    ptr = first;
+    while (*ptr != '\0')
+    {
+        if (*ptr == '.')
+            end = ptr;
+        ptr++;
+    }
+
+    size = end - first;
+    if (size <= 0)
+    {
+        /* no extension found, use entire filename */
+        size = rt_strlen(first);
+    }
     if (size >= RT_NAME_MAX) size = RT_NAME_MAX - 1;
 
     rt_strncpy(object->name, first, size);
