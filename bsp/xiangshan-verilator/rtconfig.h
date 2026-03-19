@@ -228,6 +228,8 @@
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
 #define RT_USING_POSIX_TIMER
+#define RT_USING_PTHREADS
+#define PTHREAD_NUM_MAX 8
 
 /* Interprocess Communication (IPC) */
 
@@ -239,6 +241,7 @@
 /* end of Interprocess Communication (IPC) */
 /* end of POSIX (Portable Operating System Interface) layer */
 #define RT_USING_CPLUSPLUS
+#define RT_USING_CPLUSPLUS11
 #define RT_USING_CPP_WRAPPER
 /* end of C/C++ and POSIX layer */
 
