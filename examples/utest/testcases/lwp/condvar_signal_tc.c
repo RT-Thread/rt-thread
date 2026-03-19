@@ -6,6 +6,40 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-11-20     Shell        add test suites
+ * 2026-03-19     cl2t         Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Condition Variable Signal Test
+ *
+ * Test Objectives:
+ * - Verify that rt_condvar_signal() correctly wakes up a single thread
+ *   waiting on a condition variable.
+ * - Test core APIs: rt_condvar_signal(), rt_condvar_timedwait(),
+ *   rt_mutex_take(), rt_mutex_release(), rt_thread_create().
+ *
+ * Test Scenarios:
+ * - The main thread acquires a mutex, creates a waker thread, then waits
+ *   on a condition variable with a 100-tick timeout.
+ * - The waker thread acquires the mutex and calls rt_condvar_signal() to
+ *   wake the main thread.
+ * - The main thread verifies it was woken successfully and releases the
+ *   mutex.
+ *
+ * Verification Metrics:
+ * - rt_condvar_signal() must return 0 on success.
+ * - rt_condvar_timedwait() must return 0 when signaled before timeout.
+ * - Timeout (-ETIMEDOUT) or interrupt (-EINTR) are acceptable non-fatal
+ *   outcomes.
+ * - Mutex acquire and release must succeed without errors.
+ *
+ * Dependencies:
+ * - Software configuration: RT_USING_SMART must be enabled.
+ * - Environmental assumptions: The platform must support multi-threading.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (testcases.ipc.condvar.signal)"
+ * - No assertion failures during test execution.
  */
 
 #include "common.h"

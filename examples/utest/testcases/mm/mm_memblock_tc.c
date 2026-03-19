@@ -6,6 +6,42 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-09-28     zmshahaha    the first version
+ * 2026-03-19     cl2t         Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Memory Block Management Test
+ *
+ * Test Objectives:
+ * - Validate the memblock subsystem for early boot memory region management.
+ * - Test core APIs: rt_memblock_add_memory(), rt_memblock_reserve_memory(),
+ *   rt_memblock_merge(), rt_memblock_next_free_region().
+ *
+ * Test Scenarios:
+ * - Add Test (test_memblock_add): Verifies adding memory regions in various
+ *   configurations including simple addition, adjacent regions (top/bottom),
+ *   insertion between existing regions, and merging of contiguous regions
+ *   with the same flags.
+ * - Reserve Test (test_memblock_reserve): Verifies reserving memory within
+ *   existing regions at start/end positions, multiple reservations within
+ *   a single region, and large reservations spanning multiple regions.
+ *   Also validates free region iteration with MEMBLOCK_NOMAP filtering.
+ *
+ * Verification Metrics:
+ * - Region count after add/merge operations matches expected value.
+ * - Region start/end addresses and flags are correctly maintained.
+ * - Merge correctly combines adjacent regions with identical flags.
+ * - Free region iterator correctly skips reserved and NOMAP regions.
+ *
+ * Dependencies:
+ * - Software configuration: RT_USING_SMART and RT_UTEST_MM_MEMBLOCK must
+ *   be enabled.
+ * - Environmental assumptions: MMU support must be available on the target
+ *   platform.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (testcases.mm.memblock_tc)"
+ * - No assertion failures during test execution.
  */
 
 #include <mm_memblock.h>

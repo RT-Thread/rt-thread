@@ -6,6 +6,38 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-11-20     Shell        add test suites
+ * 2026-03-19     cl2t         Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Condition Variable Timed Wait Test
+ *
+ * Test Objectives:
+ * - Verify that rt_condvar_timedwait() correctly times out when no signal
+ *   is received within the specified timeout period.
+ * - Test core APIs: rt_condvar_timedwait(), rt_mutex_take(),
+ *   rt_mutex_init(), rt_condvar_init().
+ *
+ * Test Scenarios:
+ * - The main thread acquires a mutex and calls rt_condvar_timedwait()
+ *   with a 100-tick timeout.
+ * - Since no other thread signals the condition variable, the call is
+ *   expected to time out with -ETIMEDOUT or be interrupted with -EINTR.
+ *
+ * Verification Metrics:
+ * - rt_condvar_timedwait() must return -ETIMEDOUT or -EINTR when no
+ *   signal is received.
+ * - Any other non-zero return value indicates a test failure.
+ * - Mutex initialization and acquisition must succeed.
+ *
+ * Dependencies:
+ * - Software configuration: RT_USING_SMART must be enabled.
+ * - Environmental assumptions: The platform must support condition
+ *   variables and mutexes.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (testcases.ipc.condvar.timedwait)"
+ * - No assertion failures during test execution.
  */
 
 #include "common.h"
