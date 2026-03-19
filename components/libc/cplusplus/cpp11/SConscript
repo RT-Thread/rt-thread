@@ -9,7 +9,7 @@ src += Glob('*.cpp') + Glob('*.c')
 if rtconfig.PLATFORM in ['armclang']:
     src += Glob('armclang/*.cpp') + Glob('armclang/*.c')
     CPPPATH += [cwd + '/armclang']
-elif rtconfig.PLATFORM in ['gcc']:
+elif rtconfig.PLATFORM in ['gcc', 'llvm-riscv']:
     src += Glob('gcc/*.cpp') + Glob('gcc/*.c')
     CPPPATH += [cwd + '/gcc']
 
