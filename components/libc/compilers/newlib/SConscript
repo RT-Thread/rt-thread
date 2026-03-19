@@ -14,7 +14,7 @@ if newlib_version and not GetDepend('RT_USING_EXTERNAL_LIBC'):
     src = Glob('*.c')
 
     CPPPATH = [cwd]
-    CPPDEFINES = ['RT_USING_NEWLIBC', 'RT_USING_LIBC', '_POSIX_C_SOURCE=1'] # identify this is Newlib, and only enable POSIX.1-1990
+    CPPDEFINES = ['RT_USING_NEWLIBC', 'RT_USING_LIBC', '_POSIX_C_SOURCE=199309L', '_XOPEN_SOURCE=700'] # identify this is Newlib, and only enable POSIX.1-1990
     LIBS = ['c', 'm'] # link libc and libm
     AddDepend(['RT_USING_NEWLIBC', 'RT_USING_LIBC'])
 
