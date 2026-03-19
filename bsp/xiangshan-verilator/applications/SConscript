@@ -1,12 +1,73 @@
+import os
+import subprocess
+
 from building import *
 
-cwd     = GetCurrentDir()
-src = Glob('*.c') + Glob('*.cpp')
-CPPPATH = [cwd]
 
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
+def _get_verilator_include_dir():
+    try:
+        verilator_root = subprocess.check_output(
+            ['verilator', '--getenv', 'VERILATOR_ROOT'], universal_newlines=True
+        ).strip()
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise RuntimeError(
+            'Failed to query VERILATOR_ROOT via "verilator --getenv VERILATOR_ROOT"'
+        ) from exc
+
+    if not verilator_root:
+        raise RuntimeError('`verilator --getenv VERILATOR_ROOT` returned an empty path')
+
+    include_dir = os.path.join(verilator_root, 'include')
+    if not os.path.isdir(include_dir):
+        raise RuntimeError('Verilator include directory not found: %s' % include_dir)
+
+    return include_dir
+
+cwd = GetCurrentDir()
+
+# Application sources
+src = Glob('*.c') + Glob('*.cpp')
+
+# Verilated DUT and runtime support
+verilated_dut_dir = os.path.join(cwd, 'verilated_dut_150')
+verilator_rt_dir = _get_verilator_include_dir()
+verilator_runtime_build_dir = os.path.join(
+    os.path.dirname(cwd), 'build', 'applications', 'verilator_runtime'
+)
+
+# Only pull in the bits of the Verilated runtime we need for a single-threaded,
+# non-tracing simulation on RT-Thread.
+verilator_runtime_src = [
+    os.path.join(verilator_rt_dir, name)
+    for name in [
+        'verilated.cpp',
+        'verilated_random.cpp',
+        'verilated_threads.cpp',
+    ]
+]
+
+verilator_runtime_objs = [
+    Env.Object(
+        target=os.path.join(
+            verilator_runtime_build_dir,
+            os.path.splitext(os.path.basename(source))[0] + Env['OBJSUFFIX'],
+        ),
+        source=source,
+    )[0]
+    for source in verilator_runtime_src
+]
+
+src += Glob(os.path.join('verilated_dut_150', '*.cpp'))
+
+CPPPATH = [cwd, verilated_dut_dir, verilator_rt_dir]
+CPPDEFINES = ['VL_RT_THREAD']
+
+group = DefineGroup(
+    'Applications', src, depend=[''], CPPPATH=CPPPATH, CPPDEFINES=CPPDEFINES
+)
 
 objs = [group]
+objs += verilator_runtime_objs
 
 list = os.listdir(cwd)
 
