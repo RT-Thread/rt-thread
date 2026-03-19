@@ -52,9 +52,9 @@ void *pthread_getspecific(pthread_key_t key)
 
     if (rt_thread_self() == NULL) return NULL;
 
-    /* get pthread data from user data of thread */
-    ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
-    RT_ASSERT(ptd != NULL);
+    ptd = _pthread_get_self_data(RT_TRUE);
+    if (ptd == NULL)
+        return NULL;
 
     if (ptd->tls == NULL)
         return NULL;
@@ -103,9 +103,9 @@ int pthread_setspecific(pthread_key_t key, const void *value)
 
     if (rt_thread_self() == NULL) return EINVAL;
 
-    /* get pthread data from user data of thread */
-    ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
-    RT_ASSERT(ptd != NULL);
+    ptd = _pthread_get_self_data(RT_TRUE);
+    if (ptd == NULL)
+        return EINVAL;
 
     /* check tls area */
     if (ptd->tls == NULL)
@@ -215,4 +215,3 @@ int pthread_key_delete(pthread_key_t key)
     return 0;
 }
 RTM_EXPORT(pthread_key_delete);
-

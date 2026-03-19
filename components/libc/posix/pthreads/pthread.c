@@ -23,6 +23,9 @@ RT_DEFINE_HW_SPINLOCK(pth_lock);
 _pthread_data_t *pth_table[PTHREAD_NUM_MAX] = {NULL};
 static int concurrency_level;
 
+static void _pthread_cleanup(rt_thread_t tid);
+static void _pthread_cleanup_borrowed(rt_thread_t tid);
+
 /**
  * @brief   Retrieves the private data structure of a specified thread
  *
@@ -270,6 +273,37 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
     }
 }
 
+_pthread_data_t *_pthread_get_self_data(rt_bool_t create)
+{
+    rt_thread_t tid;
+    pthread_t pth_id;
+    _pthread_data_t *ptd;
+
+    tid = rt_thread_self();
+    if (tid == RT_NULL)
+        return RT_NULL;
+
+    ptd = (_pthread_data_t *)tid->pthread_data;
+    if ((ptd != RT_NULL) || !create)
+        return ptd;
+
+    pth_id = _pthread_data_create();
+    if (pth_id == PTHREAD_NUM_MAX)
+        return RT_NULL;
+
+    ptd = _pthread_get_data(pth_id);
+    if (ptd == RT_NULL)
+        return RT_NULL;
+
+    pthread_attr_init(&ptd->attr);
+    ptd->tid = tid;
+    ptd->thread_cleanup = tid->cleanup;
+    tid->cleanup = _pthread_cleanup_borrowed;
+    tid->pthread_data = (void *)ptd;
+
+    return ptd;
+}
+
 /**
  * @brief Perform final cleanup of thread resources during thread termination
  *
@@ -303,6 +337,28 @@ static void _pthread_cleanup(rt_thread_t tid)
 
     /* restore tid control block */
     rt_free(tid);
+}
+
+static void _pthread_cleanup_borrowed(rt_thread_t tid)
+{
+    _pthread_data_t *ptd;
+    void (*thread_cleanup)(rt_thread_t tid) = RT_NULL;
+
+    ptd = (_pthread_data_t *)tid->pthread_data;
+
+    tid->cleanup = RT_NULL;
+    tid->pthread_data = RT_NULL;
+
+    if (ptd != RT_NULL)
+    {
+        thread_cleanup = ptd->thread_cleanup;
+        _pthread_data_destroy(ptd);
+    }
+
+    if (thread_cleanup != RT_NULL)
+    {
+        thread_cleanup(tid);
+    }
 }
 
 /**
@@ -664,15 +720,11 @@ RTM_EXPORT(pthread_join);
  */
 pthread_t pthread_self (void)
 {
-    rt_thread_t tid;
     _pthread_data_t *ptd;
 
-    tid = rt_thread_self();
-    if (tid == NULL) return PTHREAD_NUM_MAX;
-
-    /* get pthread data from pthread_data of thread */
-    ptd = (_pthread_data_t *)rt_thread_self()->pthread_data;
-    RT_ASSERT(ptd != RT_NULL);
+    ptd = _pthread_get_self_data(RT_TRUE);
+    if (ptd == RT_NULL)
+        return PTHREAD_NUM_MAX;
 
     return _pthread_data_get_pth(ptd);
 }
@@ -1503,4 +1555,3 @@ int pthread_cancel(pthread_t thread)
     return 0;
 }
 RTM_EXPORT(pthread_cancel);
-

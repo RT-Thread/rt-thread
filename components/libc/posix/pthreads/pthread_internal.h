@@ -41,6 +41,7 @@ struct _pthread_data
     rt_uint32_t magic;
     pthread_attr_t attr;
     rt_thread_t tid;
+    void (*thread_cleanup)(rt_thread_t tid);
 
     void* (*thread_entry)(void *parameter);
     void *thread_parameter;
@@ -62,5 +63,6 @@ struct _pthread_data
 typedef struct _pthread_data _pthread_data_t;
 
 _pthread_data_t *_pthread_get_data(pthread_t thread);
+_pthread_data_t *_pthread_get_self_data(rt_bool_t create);
 
 #endif
