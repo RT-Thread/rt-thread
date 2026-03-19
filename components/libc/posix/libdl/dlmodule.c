@@ -41,8 +41,11 @@ static struct rt_module_symtab *_rt_module_symtab_end   = RT_NULL;
  * @param  name_size size of the name buffer
  *
  * @note   This function extracts the base name without path and extension.
- *         For example: "/mnt/sdcard/apps/clock.so" -> "clock"
- *         For hidden files like ".hidden", the entire filename is used.
+ *         Examples:
+ *         - "/mnt/sdcard/apps/clock.so" -> "clock"
+ *         - "/mnt/v1.2/app.so" -> "app" (dots in path are ignored)
+ *         - ".hidden" -> ".hidden" (hidden files without extension)
+ *         - ".hidden.so" -> ".hidden" (hidden files with extension)
  */
 void dlmodule_extract_name(const char *path, char *name, int name_size)
 {
@@ -77,15 +80,16 @@ void dlmodule_extract_name(const char *path, char *name, int name_size)
     /* determine end position for module name */
     if (last_dot != RT_NULL && last_dot != first)
     {
-        /* extension found and filename doesn't start with dot */
+        /* extension found (dot not at start of filename), strip it */
         end = last_dot;
     }
-    /* else: no extension or filename starts with dot, use entire filename */
+    /* else: no extension, or filename starts with dot only (e.g., ".hidden"),
+     * use entire filename */
 
     size = end - first;
     if (size <= 0)
     {
-        /* edge case: empty filename or only dot(s) */
+        /* defensive: empty path or path ending with "/" */
         size = rt_strlen(first);
     }
     if (size >= name_size)
