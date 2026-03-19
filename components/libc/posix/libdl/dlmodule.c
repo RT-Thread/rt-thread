@@ -33,16 +33,28 @@ static struct rt_module_symtab *_rt_module_symtab_end   = RT_NULL;
     #pragma section="RTMSymTab"
 #endif
 
-/* set the name of module */
-static void _dlmodule_set_name(struct rt_dlmodule *module, const char *path)
+/**
+ * @brief  Extract module name from a file path by stripping directory and extension.
+ *
+ * @param  path the file path (e.g., "/mnt/sdcard/apps/clock.so")
+ * @param  name buffer to store the extracted module name
+ * @param  name_size size of the name buffer
+ *
+ * @note   This function extracts the base name without path and extension.
+ *         For example: "/mnt/sdcard/apps/clock.so" -> "clock"
+ *         For hidden files like ".hidden", the entire filename is used.
+ */
+void dlmodule_extract_name(const char *path, char *name, int name_size)
 {
     int size;
-    struct rt_object *object;
-    const char *first, *end, *ptr;
+    const char *first, *end, *ptr, *last_dot;
 
-    object = &(module->parent);
-    ptr   = first = (char *)path;
-    end   = path + rt_strlen(path);
+    RT_ASSERT(path != RT_NULL);
+    RT_ASSERT(name != RT_NULL);
+    RT_ASSERT(name_size > 0);
+
+    ptr = first = path;
+    end = path + rt_strlen(path);
 
     /* find the start of filename (after last '/') */
     while (*ptr != '\0')
@@ -52,25 +64,44 @@ static void _dlmodule_set_name(struct rt_dlmodule *module, const char *path)
         ptr++;
     }
 
-    /* find extension in filename portion only (after last '/') */
+    /* find last extension in filename portion only (after last '/') */
+    last_dot = RT_NULL;
     ptr = first;
     while (*ptr != '\0')
     {
         if (*ptr == '.')
-            end = ptr;
+            last_dot = ptr;
         ptr++;
     }
+
+    /* determine end position for module name */
+    if (last_dot != RT_NULL && last_dot != first)
+    {
+        /* extension found and filename doesn't start with dot */
+        end = last_dot;
+    }
+    /* else: no extension or filename starts with dot, use entire filename */
 
     size = end - first;
     if (size <= 0)
     {
-        /* no extension found, use entire filename */
+        /* edge case: empty filename or only dot(s) */
         size = rt_strlen(first);
     }
-    if (size >= RT_NAME_MAX) size = RT_NAME_MAX - 1;
+    if (size >= name_size)
+        size = name_size - 1;
 
-    rt_strncpy(object->name, first, size);
-    object->name[size] = '\0';
+    rt_strncpy(name, first, size);
+    name[size] = '\0';
+}
+
+/* set the name of module */
+static void _dlmodule_set_name(struct rt_dlmodule *module, const char *path)
+{
+    struct rt_object *object;
+
+    object = &(module->parent);
+    dlmodule_extract_name(path, object->name, RT_NAME_MAX);
 }
 
 #define RT_MODULE_ARG_MAX    8

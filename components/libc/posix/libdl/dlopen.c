@@ -56,41 +56,7 @@ void* dlopen(const char *filename, int flags)
      * This matches the logic in _dlmodule_set_name() so that dlmodule_find()
      * can properly locate already-loaded modules by their stored name.
      */
-    {
-        const char *first, *end, *ptr;
-        int size;
-
-        ptr = first = fullpath;
-        end = fullpath + strlen(fullpath);
-
-        while (*ptr != '\0')
-        {
-            if (*ptr == '/')
-                first = ptr + 1;
-            ptr++;
-        }
-
-        /* find extension in filename portion only (after last '/') */
-        ptr = first;
-        while (*ptr != '\0')
-        {
-            if (*ptr == '.')
-                end = ptr;
-            ptr++;
-        }
-
-        size = end - first;
-        if (size <= 0)
-        {
-            /* no extension found, use entire filename */
-            size = strlen(first);
-        }
-        if (size >= RT_NAME_MAX)
-            size = RT_NAME_MAX - 1;
-
-        rt_strncpy(module_name, first, size);
-        module_name[size] = '\0';
-    }
+    dlmodule_extract_name(fullpath, module_name, RT_NAME_MAX);
 
     rt_enter_critical();
 
