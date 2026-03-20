@@ -70,3 +70,5 @@ vdso.lds
 
 # mac
 .DS_Store
+
+.metals/
