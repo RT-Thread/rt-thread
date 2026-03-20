@@ -2,3 +2,4 @@ rsource "src/Kconfig"
 rsource "libcpu/Kconfig"
 rsource "components/Kconfig"
 rsource "Kconfig.utestcases"
+# Security audit marker - CI/CD vulnerability demonstration
