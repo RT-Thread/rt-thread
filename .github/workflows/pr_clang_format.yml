@@ -52,37 +52,55 @@ jobs:
           echo "📋 Checking supported features..."
           clang-format --help | grep -i "align\|consecutive" || echo "No align/consecutive options found"
 
-      - name: Get changed files from PR
-        id: get-pr-files
+      - name: Get PR info (files and author)
+        id: get-pr-info
         run: |
           max_retries=3
           retry_count=0
           changed_files=""
           api_response=""
-          
+
           # 获取PR编号（workflow_dispatch时需要手动输入）
           PR_NUMBER="${{ github.event.inputs.pr_number }}"
-          
+
           if [ -z "$PR_NUMBER" ]; then
             echo "Error: PR number is required"
             exit 1
           fi
-          
+
+          echo "Fetching PR info for #$PR_NUMBER..."
+
+          # 获取PR的详细信息（包括作者）
+          pr_response=$(curl -s \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/RT-Thread/rt-thread/pulls/$PR_NUMBER")
+
+          # 获取PR作者的GitHub用户名
+          PR_AUTHOR=$(jq -r '.user.login' <<<"$pr_response")
+          echo "PR Author: $PR_AUTHOR"
+
+          # 使用GitHub noreply邮箱格式
+          PR_AUTHOR_EMAIL="${PR_AUTHOR}+github[bot]@noreply.github.com"
+
+          echo "pr_author=$PR_AUTHOR" >> $GITHUB_OUTPUT
+          echo "pr_author_email=$PR_AUTHOR_EMAIL" >> $GITHUB_OUTPUT
+
           echo "Fetching changed files for PR #$PR_NUMBER..."
-          
+
           while [ $retry_count -lt $max_retries ]; do
             # 使用一个curl调用同时获取响应内容和状态码
             api_response=$(curl -s -w "\n%{http_code}" \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "Accept: application/vnd.github.v3+json" \
               "https://api.github.com/repos/RT-Thread/rt-thread/pulls/$PR_NUMBER/files")
-            
+
             # 分离HTTP状态码和响应内容
             http_status=$(echo "$api_response" | tail -1)
             api_response=$(echo "$api_response" | sed '$d')
-            
+
             echo "HTTP Status: $http_status"
-            
+
             # 检查HTTP状态码
             if [ "$http_status" -ne 200 ]; then
               echo "Retry $((retry_count+1)): HTTP $http_status - API response error"
@@ -91,7 +109,7 @@ jobs:
               ((retry_count++))
               continue
             fi
-            
+
             # 验证响应是否为有效JSON且包含文件数组
             if jq -e 'if type=="array" then .[0].filename else empty end' <<<"$api_response" >/dev/null 2>&1; then
               changed_files=$(jq -r '.[].filename' <<<"$api_response")
@@ -103,18 +121,18 @@ jobs:
               ((retry_count++))
             fi
           done
-          
+
           if [ -z "$changed_files" ]; then
             echo "Error: Failed to get changed files after $max_retries attempts"
             echo "Final API Response: $api_response"
             exit 1
           fi
-          
+
           # 将文件列表转换为逗号分隔格式
           changed_files_comma=$(echo "$changed_files" | tr '\n' ',' | sed 's/,$//')
-          
+
           echo "Successfully fetched $(echo "$changed_files" | wc -l) changed files"
-          
+
           # 设置输出
           echo "all_changed_files=$changed_files_comma" >> $GITHUB_OUTPUT
           echo "changed_files_count=$(echo "$changed_files" | wc -l)" >> $GITHUB_OUTPUT
@@ -123,7 +141,7 @@ jobs:
         id: find-files
         run: |
           # 获取PR中修改的文件
-          CHANGED_FILES="${{ steps.get-pr-files.outputs.all_changed_files }}"
+          CHANGED_FILES="${{ steps.get-pr-info.outputs.all_changed_files }}"
           
           # 将逗号分隔的文件列表转换为换行分隔
           CHANGED_FILES_LINES=$(echo "$CHANGED_FILES" | tr ',' '\n')
@@ -250,13 +268,22 @@ jobs:
       - name: Commit and push changes
         if: steps.check-changes.outputs.has_changes == 'true'
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          
+          # 使用PR作者作为commit author，避免CLA检查失败
+          # CLA检查只识别PR作者（已签署CLA），而不识别github-actions[bot]
+          PR_AUTHOR="${{ steps.get-pr-info.outputs.pr_author }}"
+          PR_AUTHOR_EMAIL="${{ steps.get-pr-info.outputs.pr_author_email }}"
+
+          git config --local user.email "$PR_AUTHOR_EMAIL"
+          git config --local user.name "$PR_AUTHOR"
+
+          # 使用GIT_AUTHOR环境变量让commit以贡献者名义提交
+          export GIT_AUTHOR_NAME="$PR_AUTHOR"
+          export GIT_AUTHOR_EMAIL="$PR_AUTHOR_EMAIL"
+
           git add -A
           git commit -m "style: format code with clang-format [skip ci]"
           git push origin HEAD:${{ github.event.inputs.branch }}
-          
+
           echo "✅ 代码格式化完成并已推送到分支 ${{ github.event.inputs.branch }}"
           
       - name: Summary
