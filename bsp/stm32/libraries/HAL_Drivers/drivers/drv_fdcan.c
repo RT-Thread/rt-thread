@@ -8,6 +8,7 @@
  * 2020-02-24     heyuan       the first version
  * 2020-08-17     malongwei    Fix something
  * 2025-10-27     pandafeng    Fix some bugs
+ * 2026-03-16     sayaZhao     Fix some bugs
  */
 
 #include "drv_fdcan.h"
@@ -54,12 +55,30 @@ static const stm32_fdcan_timing_t st_FDCAN_ArbTiming[] =
 static const stm32_fdcan_timing_t st_FDCAN_DataTiming[] =
 {
     {CAN1MBaud * 8, {1, 3, 1, 1, 0}},   /* 8Mbps */
+    {CAN1MBaud * 5,  {1, 5, 2, 1, 0}},  /* 5Mbps */
     {CAN500kBaud *8,  {1, 7, 2, 1, 0}},   /* 4Mbps */
     {CAN250kBaud * 8,  {4, 3, 1, 1, 0}},  /* 2Mbps */
     {CAN125kBaud *8,  {1, 31, 8, 1, 0}},  /* 1Mkbps */
     {CAN100kBaud*8,  {2, 19, 5, 1, 0}},  /* 800kbps */
     {CAN50kBaud *8,   {5, 15, 4, 1, 0}},   /* 400kbps */
 };
+
+/**
+ * @brief  Convert CAN-FD DLC (Data Length Code) back to actual frame length
+ * @param  dlc  DLC code (0~15)
+ * @return      Actual length in bytes (0~64)
+ */
+static uint8_t dlc_to_length(uint32_t dlc)
+{
+    const uint8_t dlc_to_len_table[16] = {
+        0,  1,  2,  3,  4,  5,  6,  7,
+        8, 12, 16, 20, 24, 32, 48, 64
+    };
+
+    if (dlc > 15) return 8;
+    return dlc_to_len_table[dlc];
+}
+
 /**
  * @brief  Convert CAN-FD frame length to DLC (Data Length Code)
  *
@@ -208,8 +227,18 @@ static rt_err_t _inline_can_config(struct rt_can_device *can, struct can_configu
     {
         return -RT_ERROR;
     }
+/* Transceiver Delay Compensation */
+#ifdef RT_CAN_USING_CANFD
+    if (cfg->enable_canfd)
+    {
+        HAL_FDCAN_ConfigTxDelayCompensation(&pdrv_can->fdcanHandle, 0x0C, 0x00);
+        HAL_FDCAN_EnableTxDelayCompensation(&pdrv_can->fdcanHandle);
+    }
+#endif
     /* default filter config */
     HAL_FDCAN_ConfigFilter(&pdrv_can->fdcanHandle , &pdrv_can->FilterConfig);
+    /* FIFO RX INT */
+    HAL_FDCAN_ActivateNotification(&pdrv_can->fdcanHandle, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0);
     /*init fdcan tx header*/
     pdrv_can->TxHeader.Identifier = 0x000000;
     pdrv_can->TxHeader.IdType = FDCAN_EXTENDED_ID;
@@ -352,7 +381,7 @@ static rt_err_t _inline_can_control(struct rt_can_device *can, int cmd, void *ar
             argval = (rt_uint32_t) arg;
             uint32_t arb_idx = _inline_get_ArbBaudIndex(argval);
             if (arb_idx == (uint32_t) -1) {
-                return -RT_ERROR; 
+                return -RT_ERROR;
             }
             if (argval != pdrv_can->device.config.baud_rate) {
                 pdrv_can->device.config.baud_rate = argval;
@@ -452,6 +481,12 @@ static int _inline_can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
         pdrv_can->TxHeader.FDFormat = FDCAN_CLASSIC_CAN;
     }
 
+    if (pmsg->brs == 1) {
+        pdrv_can->TxHeader.BitRateSwitch = FDCAN_BRS_ON;
+    } else {
+        pdrv_can->TxHeader.BitRateSwitch = FDCAN_BRS_OFF;
+    }
+
     if(HAL_FDCAN_AddMessageToTxBuffer(&pdrv_can->fdcanHandle, &pdrv_can->TxHeader, pmsg->data, FDCAN_TX_BUFFER0 + box_num) != HAL_OK)
     {
         return -RT_ERROR;
@@ -499,13 +534,14 @@ static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
         }
         pmsg->id = pdrv_can->RxHeader.Identifier;
 
-        pmsg->len = pdrv_can->RxHeader.DataLength;
-        pmsg->hdr_index = pdrv_can->RxHeader.FilterIndex;
+        uint32_t actual_dlc = pdrv_can->RxHeader.DataLength;
+        pmsg->len = dlc_to_length(actual_dlc);
 
-        #ifdef RT_CAN_USING_CANFD
+        pmsg->hdr_index = pdrv_can->RxHeader.FilterIndex;
+#ifdef RT_CAN_USING_CANFD
         pmsg->fd_frame =  (pdrv_can->RxHeader.FDFormat >> 16) && 0x20;
         pmsg->brs = (pdrv_can->RxHeader.BitRateSwitch >> 16) && 0x10;
-        #endif
+#endif
 
         return sizeof(struct rt_can_msg);
     }
