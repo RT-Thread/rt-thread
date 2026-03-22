@@ -538,11 +538,10 @@ static int _inline_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
         pmsg->len = dlc_to_length(actual_dlc);
 
         pmsg->hdr_index = pdrv_can->RxHeader.FilterIndex;
-
-        #ifdef RT_CAN_USING_CANFD
+#ifdef RT_CAN_USING_CANFD
         pmsg->fd_frame =  (pdrv_can->RxHeader.FDFormat >> 16) && 0x20;
         pmsg->brs = (pdrv_can->RxHeader.BitRateSwitch >> 16) && 0x10;
-        #endif
+#endif
 
         return sizeof(struct rt_can_msg);
     }
