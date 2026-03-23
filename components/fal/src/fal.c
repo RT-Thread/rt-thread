@@ -19,7 +19,7 @@
 #endif
 #include <rtdbg.h>
 
-static rt_uint8_t init_ok = 0;
+static rt_uint8_t    init_ok = 0;
 
 /**
  * FAL (Flash Abstraction Layer) initialization.
@@ -27,7 +27,8 @@ static rt_uint8_t init_ok = 0;
  *
  * @return >= 0: partitions total number
  */
-int fal_init(void)
+int fal_init(  void)
+
 {
     extern int fal_flash_init(void);
     extern int fal_partition_init(void);
@@ -35,7 +36,8 @@ int fal_init(void)
     int result;
 
     /* initialize all flash device on FAL flash table */
-    result = fal_flash_init();
+    result = 
+    fal_flash_init();
 
     if (result < 0) {
         goto __exit;
