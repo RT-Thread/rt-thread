@@ -8746,6 +8746,8 @@ sysret_t sys_sysinfo(void *info)
 #endif
 }
 
+static rt_bool_t _sys_sched_priority_is_valid(int priority);
+
 /**
  * @brief Set scheduling parameters for a specific thread.
  *
@@ -8780,6 +8782,12 @@ sysret_t sys_sched_setparam(pid_t tid, void *param)
     }
 
     if (lwp_get_from_user(sched_param, param, sizeof(struct sched_param)) != sizeof(struct sched_param))
+    {
+        kmem_put(sched_param);
+        return -EINVAL;
+    }
+
+    if (!_sys_sched_priority_is_valid(sched_param->sched_priority))
     {
         kmem_put(sched_param);
         return -EINVAL;
@@ -8915,6 +8923,18 @@ sysret_t sys_sched_get_priority_min(int policy)
     return 0;
 }
 
+static rt_bool_t _sys_sched_priority_is_valid(int priority)
+{
+    return (priority >= 0) && (priority < RT_THREAD_PRIORITY_MAX);
+}
+
+#if defined(RT_USING_UTESTCASES) && defined(RT_USING_SMART)
+rt_bool_t rt_utest_sys_sched_priority_is_valid(int priority)
+{
+    return _sys_sched_priority_is_valid(priority);
+}
+#endif
+
 /**
  * @brief Set the scheduling policy and parameters for a thread.
  *
@@ -8953,6 +8973,12 @@ sysret_t sys_sched_setscheduler(int tid, int policy, void *param)
     }
 
     if (lwp_get_from_user(sched_param, param, sizeof(struct sched_param)) != sizeof(struct sched_param))
+    {
+        kmem_put(sched_param);
+        return -EINVAL;
+    }
+
+    if (!_sys_sched_priority_is_valid(sched_param->sched_priority))
     {
         kmem_put(sched_param);
         return -EINVAL;
