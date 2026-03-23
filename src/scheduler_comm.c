@@ -400,6 +400,11 @@ static rt_err_t _rt_sched_update_priority(struct rt_thread *thread, rt_uint8_t p
  */
 rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t priority)
 {
+    if (priority >= RT_THREAD_PRIORITY_MAX)
+    {
+        return -RT_EINVAL;
+    }
+
     return _rt_sched_update_priority(thread, priority, RT_FALSE);
 }
 
@@ -408,6 +413,11 @@ rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t pr
  */
 rt_err_t rt_sched_thread_reset_priority(struct rt_thread *thread, rt_uint8_t priority)
 {
+    if (priority >= RT_THREAD_PRIORITY_MAX)
+    {
+        return -RT_EINVAL;
+    }
+
     return _rt_sched_update_priority(thread, priority, RT_TRUE);
 }
 
