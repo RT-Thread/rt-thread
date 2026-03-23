@@ -48,7 +48,9 @@ int fal_init(  void)
 
 __exit:
 
-    if ((result > 0) && (!init_ok))
+    if 
+    ((result > 0) 
+    && (!init_ok))
     {
         init_ok = 1;
         LOG_I("RT-Thread Flash Abstraction Layer initialize success.");
