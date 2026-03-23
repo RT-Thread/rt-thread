@@ -35,11 +35,11 @@ static rt_uint8_t init_ok = 0;
  */
 int fal_flash_init(void)
 {
-                rt_size_t i, j, offset;
+    rt_size_t i, j, offset;
 
-    if (init_ok)   
+    if (init_ok)
     {
-                    return 0;
+        return 0;
     }
 
     for (i = 0; i < device_table_len; i++)
