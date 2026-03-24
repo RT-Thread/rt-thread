@@ -63,7 +63,7 @@ struct rockchip_half_divider_clk_cell
     .rk_cell.init = rockchip_half_divider_clk_cell_init,\
 }
 
-#define COMPOSITE_NOGATE_HALFDIV(_id, cname, pnames, f, mo, ms, mw, mf, ds, dw, df)                            \
+#define COMPOSITE_NOGATE_HALFDIV(_id, cname, pnames, f, mo, ms, mw, mf, ds, dw, df) \
 (void *)&(struct rockchip_half_divider_clk_cell)        \
 {                                                       \
     .rk_cell.cell.name = cname,                         \
@@ -82,7 +82,8 @@ struct rockchip_half_divider_clk_cell
     .rk_cell.init = rockchip_half_divider_clk_cell_init,\
 }
 
-#define COMPOSITE_NOMUX_HALFDIV(_id, cname, pname, f, mo, ds, dw, df, go, gs, gf)                             \
+#define COMPOSITE_NOMUX_HALFDIV(_id, cname, pname, f, mo, ds, dw, df, go, gs, gf) \
+(void *)&(struct rockchip_half_divider_clk_cell)        \
 {                                                       \
     .rk_cell.cell.name = cname,                         \
     .rk_cell.cell.parent_name = pname,                  \

@@ -230,7 +230,7 @@ static rt_err_t scmi_clk_probe(struct rt_scmi_device *sdev)
     for (int id = 0; id < cell_count; ++id)
     {
         const char *clk_name;
-        rt_uint32_t flags, rates_nr, rate_discrete;
+        rt_uint32_t flags, rate_discrete;
 
         in.id = rt_cpu_to_le32(id);
         in.rate_index = rt_cpu_to_le32(0);
@@ -242,7 +242,6 @@ static rt_err_t scmi_clk_probe(struct rt_scmi_device *sdev)
         }
 
         flags = rt_le32_to_cpu(out->num_rates_flags);
-        rates_nr = SCMI_NUM_REMAINING(flags);
         rate_discrete = SCMI_RATE_DISCRETE(flags);
 
         if (rate_discrete)
@@ -263,12 +262,40 @@ static rt_err_t scmi_clk_probe(struct rt_scmi_device *sdev)
 
         if (rate_discrete)
         {
-            for (int i = 0; i < rates_nr; ++i)
+            /*
+             * SCMI: [11:0] = rates in this message, [31:16] = remaining to query.
+             * Using REMAINING as the copy count overflows rates[] and corrupts heap.
+             */
+            int idx = 0;
+
+            for (;;)
             {
-                clk_data->info.list.rates[i] = SCMI_RATE_TO_U64(out->rate[i]);
+                rt_uint32_t nr = SCMI_NUM_RETURNED(flags);
+                rt_uint32_t remaining = SCMI_NUM_REMAINING(flags);
+
+                for (rt_uint32_t i = 0; i < nr && idx < SCMI_MAX_NUM_RATES; ++i, ++idx)
+                {
+                    clk_data->info.list.rates[idx] = SCMI_RATE_TO_U64(out->rate[i]);
+                }
+
+                if (remaining == 0 || idx >= SCMI_MAX_NUM_RATES)
+                {
+                    break;
+                }
+
+                in.rate_index = rt_cpu_to_le32(idx);
+                msg = RT_SCMI_MSG_RAW(SCMI_CLOCK_DESCRIBE_RATES, &in, sizeof(in), out, out_size);
+
+                if ((err = rt_scmi_process_msg(sclk->sdev, &msg)))
+                {
+                    rt_free(clk_data);
+                    goto _fail;
+                }
+
+                flags = rt_le32_to_cpu(out->num_rates_flags);
             }
 
-            clk_data->info.list.rates_nr = rates_nr;
+            clk_data->info.list.rates_nr = idx;
         }
         else
         {
