@@ -10,6 +10,7 @@
  * 2016-08-18     heyuanjie    add interface
  * 2021-07-20     arminker     fix write_index bug in function rt_ringbuffer_put_force
  * 2021-08-14     Jackistang   add comments for function interface.
+ * 2026-03-16     RyanCW       fix put_force overwrite in wrapped state
  */
 
 #include <rtdevice.h>
@@ -39,7 +40,8 @@ void rt_ringbuffer_init(struct rt_ringbuffer *rb,
                         rt_int32_t            size)
 {
     RT_ASSERT(rb != RT_NULL);
-    RT_ASSERT(size > 0);
+    RT_ASSERT(pool != RT_NULL);
+    RT_ASSERT(size >= RT_ALIGN_SIZE);
 
     /* initialize read and write index */
     rb->read_mirror = rb->read_index = 0;
@@ -67,6 +69,9 @@ rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
     rt_uint32_t size;
 
     RT_ASSERT(rb != RT_NULL);
+    if (length == 0)
+        return 0;
+    RT_ASSERT(ptr != RT_NULL);
 
     /* whether has enough space */
     size = rt_ringbuffer_space_len(rb);
@@ -118,15 +123,40 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
                                   rt_uint32_t           length)
 {
     rt_uint32_t space_length;
+    rt_uint32_t drop_length;
 
     RT_ASSERT(rb != RT_NULL);
 
-    space_length = rt_ringbuffer_space_len(rb);
+    if (length == 0)
+        return 0;
+    RT_ASSERT(ptr != RT_NULL);
 
+    /* Oversize write keeps the latest bytes. */
     if (length > rb->buffer_size)
     {
         ptr = &ptr[length - rb->buffer_size];
         length = rb->buffer_size;
+    }
+
+    space_length = rt_ringbuffer_space_len(rb);
+
+    rt_bool_t overflow = (length > space_length);
+
+    if (overflow)
+    {
+        /* Drop the oldest bytes to make room for the incoming data. */
+        drop_length = length - space_length;
+        if (rb->buffer_size - rb->read_index > drop_length)
+        {
+            rb->read_index += drop_length;
+        }
+        else
+        {
+            drop_length -= (rb->buffer_size - rb->read_index);
+            rb->read_index = drop_length;
+            /* Read pointer wraps to the other side of the mirror. */
+            rb->read_mirror = ~rb->read_mirror;
+        }
     }
 
     if (rb->buffer_size - rb->write_index > length)
@@ -136,30 +166,27 @@ rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
         /* this should not cause overflow because there is enough space for
          * length of data in current mirror */
         rb->write_index += length;
-
-        if (length > space_length)
-            rb->read_index = rb->write_index;
-
-        return length;
     }
-
-    rt_memcpy(&rb->buffer_ptr[rb->write_index],
-              &ptr[0],
-              rb->buffer_size - rb->write_index);
-    rt_memcpy(&rb->buffer_ptr[0],
-              &ptr[rb->buffer_size - rb->write_index],
-              length - (rb->buffer_size - rb->write_index));
-
-    /* we are going into the other side of the mirror */
-    rb->write_mirror = ~rb->write_mirror;
-    rb->write_index = length - (rb->buffer_size - rb->write_index);
-
-    if (length > space_length)
+    else
     {
-        if (rb->write_index <= rb->read_index)
-            rb->read_mirror = ~rb->read_mirror;
-        rb->read_index = rb->write_index;
+        rt_uint32_t tail = rb->buffer_size - rb->write_index;
+
+        rt_memcpy(&rb->buffer_ptr[rb->write_index], ptr, tail);
+        rt_memcpy(&rb->buffer_ptr[0], &ptr[tail], length - tail);
+
+        /* we are going into the other side of the mirror */
+        rb->write_mirror = ~rb->write_mirror;
+        rb->write_index = length - tail;
     }
+
+    /*
+     * If we dropped data and write catches up to read, we must keep
+     * "full" distinct from "empty" by flipping the write mirror.
+     */
+    if (overflow &&
+        (rb->write_index == rb->read_index) &&
+        (rb->write_mirror == rb->read_mirror))
+        rb->write_mirror = ~rb->write_mirror;
 
     return length;
 }
@@ -181,6 +208,9 @@ rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
     rt_size_t size;
 
     RT_ASSERT(rb != RT_NULL);
+    if (length == 0)
+        return 0;
+    RT_ASSERT(ptr != RT_NULL);
 
     /* whether has enough data  */
     size = rt_ringbuffer_data_len(rb);
@@ -235,6 +265,7 @@ rt_size_t rt_ringbuffer_get_direct(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
     rt_size_t size;
 
     RT_ASSERT(rb != RT_NULL);
+    RT_ASSERT(ptr != RT_NULL);
 
     *ptr = RT_NULL;
 
@@ -278,6 +309,7 @@ rt_size_t rt_ringbuffer_peek(struct rt_ringbuffer *rb, rt_uint8_t **ptr)
     rt_size_t size;
 
     RT_ASSERT(rb != RT_NULL);
+    RT_ASSERT(ptr != RT_NULL);
 
     *ptr = RT_NULL;
 
@@ -386,6 +418,7 @@ RTM_EXPORT(rt_ringbuffer_putchar_force);
 rt_size_t rt_ringbuffer_getchar(struct rt_ringbuffer *rb, rt_uint8_t *ch)
 {
     RT_ASSERT(rb != RT_NULL);
+    RT_ASSERT(ch != RT_NULL);
 
     /* ringbuffer is empty */
     if (!rt_ringbuffer_data_len(rb))
@@ -417,6 +450,8 @@ RTM_EXPORT(rt_ringbuffer_getchar);
  */
 rt_size_t rt_ringbuffer_data_len(struct rt_ringbuffer *rb)
 {
+    RT_ASSERT(rb != RT_NULL);
+
     switch (rt_ringbuffer_status(rb))
     {
     case RT_RINGBUFFER_EMPTY:
@@ -467,7 +502,7 @@ struct rt_ringbuffer *rt_ringbuffer_create(rt_uint32_t size)
     struct rt_ringbuffer *rb;
     rt_uint8_t *pool;
 
-    RT_ASSERT(size > 0);
+    RT_ASSERT(size >= RT_ALIGN_SIZE);
 
     size = RT_ALIGN_DOWN(size, RT_ALIGN_SIZE);
 
