@@ -199,6 +199,17 @@ config RT_USING_CPU_USAGE_TRACER
         percentage information through the list thread command.
         It will automatically integrate with the scheduler to track thread execution time.
 
+if RT_USING_CPU_USAGE_TRACER
+    config RT_CPU_USAGE_CALC_INTERVAL_MS
+        int "CPU usage sampling interval (ms)"
+        default 200
+        range 50 5000
+        help
+            Sampling window for thread CPU usage display.
+            A shorter interval updates faster but fluctuates more.
+            A longer interval is smoother but has higher display latency.
+endif
+
 menu "kservice options"
     config RT_USING_TINY_FFS
         bool "Enable kservice to use tiny finding first bit set method"
