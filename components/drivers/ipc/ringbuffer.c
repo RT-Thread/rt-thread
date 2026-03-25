@@ -36,8 +36,8 @@ rt_inline enum rt_ringbuffer_state rt_ringbuffer_status(struct rt_ringbuffer *rb
  * @param size      The size of the buffer in bytes.
  */
 void rt_ringbuffer_init(struct rt_ringbuffer *rb,
-                        rt_uint8_t           *pool,
-                        rt_int32_t            size)
+                        rt_uint8_t *pool,
+                        rt_int32_t size)
 {
     RT_ASSERT(rb != RT_NULL);
     RT_ASSERT(pool != RT_NULL);
@@ -63,8 +63,8 @@ RTM_EXPORT(rt_ringbuffer_init);
  * @return Return the data size we put into the ring buffer.
  */
 rt_size_t rt_ringbuffer_put(struct rt_ringbuffer *rb,
-                            const rt_uint8_t     *ptr,
-                            rt_uint32_t           length)
+                            const rt_uint8_t *ptr,
+                            rt_uint32_t length)
 {
     rt_uint32_t size;
 
@@ -119,8 +119,8 @@ RTM_EXPORT(rt_ringbuffer_put);
  * @return Return the data size we put into the ring buffer.
  */
 rt_size_t rt_ringbuffer_put_force(struct rt_ringbuffer *rb,
-                                  const rt_uint8_t     *ptr,
-                                  rt_uint32_t           length)
+                                  const rt_uint8_t *ptr,
+                                  rt_uint32_t length)
 {
     rt_uint32_t space_length;
     rt_uint32_t drop_length;
@@ -202,8 +202,8 @@ RTM_EXPORT(rt_ringbuffer_put_force);
  * @return Return the data size we read from the ring buffer.
  */
 rt_size_t rt_ringbuffer_get(struct rt_ringbuffer *rb,
-                            rt_uint8_t           *ptr,
-                            rt_uint32_t           length)
+                            rt_uint8_t *ptr,
+                            rt_uint32_t length)
 {
     rt_size_t size;
 

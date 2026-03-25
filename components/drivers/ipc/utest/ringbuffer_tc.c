@@ -191,11 +191,11 @@ static rt_size_t rb_ref_peek(struct rb_ref *ref, rt_uint8_t *out)
 /* Verify size alignment, minimum aligned size, and full write behavior after init. */
 static void ringbuffer_align_tc(void)
 {
-    rt_uint8_t pool_align[RINGBUFFER_ALIGN_POOL_SIZE] = {0};
+    rt_uint8_t pool_align[RINGBUFFER_ALIGN_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb_align;
     rt_uint32_t align_size;
     rt_uint32_t expect_size;
-    rt_uint8_t data[RINGBUFFER_ALIGN_POOL_SIZE] = {0};
+    rt_uint8_t data[RINGBUFFER_ALIGN_POOL_SIZE] = { 0 };
 
     rt_ringbuffer_init(&rb_align, pool_align, sizeof(pool_align));
     align_size = rt_ringbuffer_get_size(&rb_align);
@@ -210,7 +210,7 @@ static void ringbuffer_align_tc(void)
 
     /* Minimum aligned size should be accepted. */
     {
-        rt_uint8_t min_pool[RT_ALIGN_SIZE] = {0};
+        rt_uint8_t min_pool[RT_ALIGN_SIZE] = { 0 };
         struct rt_ringbuffer rb_min;
 
         rt_ringbuffer_init(&rb_min, min_pool, sizeof(min_pool));
@@ -221,13 +221,13 @@ static void ringbuffer_align_tc(void)
 /* Validate empty-buffer behaviors and zero-length operations. */
 static void ringbuffer_basic_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
     rt_uint32_t size;
     rt_uint8_t *peek_ptr = RT_NULL;
     rt_uint8_t *direct_ptr = RT_NULL;
     rt_size_t peek_len;
-    rt_uint8_t out[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t out[RINGBUFFER_POOL_SIZE] = { 0 };
     rt_uint8_t ch = 0;
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
@@ -253,10 +253,10 @@ static void ringbuffer_basic_tc(void)
 /* Validate put/peek/get; peek must not consume data. */
 static void ringbuffer_put_peek_get_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t data1[] = {1, 2, 3, 4, 5};
-    rt_uint8_t out[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t data1[] = { 1, 2, 3, 4, 5 };
+    rt_uint8_t out[RINGBUFFER_POOL_SIZE] = { 0 };
     rt_uint8_t *peek_ptr = RT_NULL;
     rt_size_t peek_len;
 
@@ -279,7 +279,7 @@ static void ringbuffer_put_peek_get_tc(void)
 /* Verify putchar/getchar FIFO behavior and length updates. */
 static void ringbuffer_putchar_getchar_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
     rt_uint8_t ch = 0;
 
@@ -300,9 +300,9 @@ static void ringbuffer_putchar_getchar_tc(void)
 /* Verify reset clears content and restores space. */
 static void ringbuffer_reset_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t data[] = {1, 2, 3, 4};
+    rt_uint8_t data[] = { 1, 2, 3, 4 };
     rt_uint8_t *peek_ptr = RT_NULL;
     rt_size_t peek_len;
 
@@ -322,15 +322,15 @@ static void ringbuffer_reset_tc(void)
 /* Verify put boundaries: exact full, overflow truncation, and oversize input. */
 static void ringbuffer_put_boundary_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t full_data[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t full_data[RINGBUFFER_POOL_SIZE] = { 0 };
     rt_uint8_t data2[12];
     rt_uint8_t data3[8];
-    rt_uint8_t expect_overflow[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t expect_overflow[RINGBUFFER_POOL_SIZE] = { 0 };
     rt_uint8_t big_data[RINGBUFFER_POOL_SIZE + 4];
     rt_uint8_t expect_big[RINGBUFFER_POOL_SIZE];
-    rt_uint8_t out[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t out[RINGBUFFER_POOL_SIZE] = { 0 };
     rt_uint32_t size;
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
@@ -377,10 +377,10 @@ static void ringbuffer_put_boundary_tc(void)
 /* Verify get boundaries: length > data and length == 0. */
 static void ringbuffer_get_boundary_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t data[] = {1, 2, 3, 4};
-    rt_uint8_t out[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t data[] = { 1, 2, 3, 4 };
+    rt_uint8_t out[RINGBUFFER_POOL_SIZE] = { 0 };
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
     uassert_int_equal(rt_ringbuffer_put(&rb, data, sizeof(data)), sizeof(data));
@@ -399,12 +399,12 @@ static void ringbuffer_get_boundary_tc(void)
 /* Verify put_force without overflow when write wraps; FIFO order preserved. */
 static void ringbuffer_put_force_no_overflow_wrap_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t data_a[] = {1, 2, 3, 4, 5, 6};
-    rt_uint8_t data_b[] = {10, 11, 12, 13};
-    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = {0};
-    rt_uint8_t expect[] = {4, 5, 6, 10, 11, 12, 13};
+    rt_uint8_t data_a[] = { 1, 2, 3, 4, 5, 6 };
+    rt_uint8_t data_b[] = { 10, 11, 12, 13 };
+    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
+    rt_uint8_t expect[] = { 4, 5, 6, 10, 11, 12, 13 };
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
 
@@ -424,10 +424,10 @@ static void ringbuffer_put_force_no_overflow_wrap_tc(void)
 /* Verify putchar on full fails and putchar_force overwrites oldest byte. */
 static void ringbuffer_putchar_force_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t out[RINGBUFFER_POOL_SIZE] = {0};
-    rt_uint8_t expect_full[RINGBUFFER_POOL_SIZE] = {0};
+    rt_uint8_t out[RINGBUFFER_POOL_SIZE] = { 0 };
+    rt_uint8_t expect_full[RINGBUFFER_POOL_SIZE] = { 0 };
     rt_uint32_t size;
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
@@ -457,12 +457,12 @@ static void ringbuffer_putchar_force_tc(void)
 /* Verify putchar_force full-buffer path when write_index is at tail. */
 static void ringbuffer_putchar_force_tail_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t full_data[RINGBUFFER_WRAP_POOL_SIZE] = {0};
-    rt_uint8_t refill[] = {10, 11, 12, 13, 14, 15, 16};
-    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = {0};
-    rt_uint8_t expect[] = {10, 11, 12, 13, 14, 15, 16, 0xAA};
+    rt_uint8_t full_data[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
+    rt_uint8_t refill[] = { 10, 11, 12, 13, 14, 15, 16 };
+    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
+    rt_uint8_t expect[] = { 10, 11, 12, 13, 14, 15, 16, 0xAA };
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
 
@@ -486,15 +486,15 @@ static void ringbuffer_putchar_force_tail_tc(void)
 /* Verify wrap-around order and contiguous peek segment. */
 static void ringbuffer_wrap_peek_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t w1[] = {1, 2, 3, 4, 5, 6};
-    rt_uint8_t w2[] = {10, 11, 12, 13, 14, 15};
-    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t w1[] = { 1, 2, 3, 4, 5, 6 };
+    rt_uint8_t w2[] = { 10, 11, 12, 13, 14, 15 };
+    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     rt_uint8_t *peek_ptr = RT_NULL;
     rt_size_t peek_len;
-    rt_uint8_t expect_peek[] = {5, 6, 10, 11};
-    rt_uint8_t expect_tail[] = {12, 13, 14, 15};
+    rt_uint8_t expect_peek[] = { 5, 6, 10, 11 };
+    rt_uint8_t expect_tail[] = { 12, 13, 14, 15 };
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
 
@@ -521,12 +521,12 @@ static void ringbuffer_wrap_peek_tc(void)
 /* Verify tail-equals-length edges (tail = buffer end) and empty offset. */
 static void ringbuffer_tail_equal_len_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t data1[] = {1, 2, 3, 4, 5, 6};
-    rt_uint8_t data2[] = {7, 8};
-    rt_uint8_t full[] = {1, 2, 3, 4, 5, 6, 7, 8};
-    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t data1[] = { 1, 2, 3, 4, 5, 6 };
+    rt_uint8_t data2[] = { 7, 8 };
+    rt_uint8_t full[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     rt_uint8_t *ptr = RT_NULL;
     rt_size_t len;
 
@@ -567,12 +567,12 @@ static void ringbuffer_tail_equal_len_tc(void)
 /* Verify oversize put_force keeps latest bytes on empty and non-empty buffers. */
 static void ringbuffer_force_oversize_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t exist[] = {1, 2, 3};
+    rt_uint8_t exist[] = { 1, 2, 3 };
     rt_uint8_t big_data[12];
-    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = {0};
-    rt_uint8_t expect_over[8] = {5, 6, 7, 8, 9, 10, 11, 12};
+    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
+    rt_uint8_t expect_over[8] = { 5, 6, 7, 8, 9, 10, 11, 12 };
     rt_uint32_t size;
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
@@ -604,11 +604,11 @@ static void ringbuffer_force_oversize_tc(void)
 /* Reproduce wrapped-state put_force overwrite bug (white-box seed). */
 static void ringbuffer_force_wrapped_bug_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t force_data[] = {60, 61, 62, 63, 64};
-    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = {0};
-    rt_uint8_t expect_force[] = {52, 53, 54, 60, 61, 62, 63, 64};
+    rt_uint8_t force_data[] = { 60, 61, 62, 63, 64 };
+    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
+    rt_uint8_t expect_force[] = { 52, 53, 54, 60, 61, 62, 63, 64 };
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
 
@@ -638,12 +638,12 @@ static void ringbuffer_force_wrapped_bug_tc(void)
 /* Verify drop_length < tail with no write wrap; order preserved. */
 static void ringbuffer_force_drop_less_tail_nowrap_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t fill_data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
-    rt_uint8_t force_wrap[] = {20, 21, 22, 23, 24, 25, 26};
-    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = {0};
-    rt_uint8_t expect_wrap[8] = {8, 20, 21, 22, 23, 24, 25, 26};
+    rt_uint8_t fill_data[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+    rt_uint8_t force_wrap[] = { 20, 21, 22, 23, 24, 25, 26 };
+    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
+    rt_uint8_t expect_wrap[8] = { 8, 20, 21, 22, 23, 24, 25, 26 };
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
 
@@ -662,13 +662,13 @@ static void ringbuffer_force_drop_less_tail_nowrap_tc(void)
 /* Verify drop_length > tail; read mirror flips and order preserved. */
 static void ringbuffer_force_drop_greater_tail_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t fill_data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
-    rt_uint8_t add_data[4] = {10, 11, 12, 13};
-    rt_uint8_t force_data[5] = {20, 21, 22, 23, 24};
-    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = {0};
-    rt_uint8_t expect[8] = {11, 12, 13, 20, 21, 22, 23, 24};
+    rt_uint8_t fill_data[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+    rt_uint8_t add_data[4] = { 10, 11, 12, 13 };
+    rt_uint8_t force_data[5] = { 20, 21, 22, 23, 24 };
+    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
+    rt_uint8_t expect[8] = { 11, 12, 13, 20, 21, 22, 23, 24 };
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
 
@@ -689,12 +689,12 @@ static void ringbuffer_force_drop_greater_tail_tc(void)
 /* Verify drop_length < tail with write wrap; order preserved. */
 static void ringbuffer_force_drop_less_tail_wrap_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t fill_data[] = {1, 2, 3, 4, 5, 6};
-    rt_uint8_t force_data[] = {10, 11, 12, 13, 14, 15, 16};
-    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = {0};
-    rt_uint8_t expect[] = {6, 10, 11, 12, 13, 14, 15, 16};
+    rt_uint8_t fill_data[] = { 1, 2, 3, 4, 5, 6 };
+    rt_uint8_t force_data[] = { 10, 11, 12, 13, 14, 15, 16 };
+    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
+    rt_uint8_t expect[] = { 6, 10, 11, 12, 13, 14, 15, 16 };
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
 
@@ -713,9 +713,9 @@ static void ringbuffer_force_drop_less_tail_wrap_tc(void)
 /* Verify get_direct consumes data and returns contiguous segment. */
 static void ringbuffer_get_direct_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t data[] = {1, 2, 3, 4, 5, 6};
+    rt_uint8_t data[] = { 1, 2, 3, 4, 5, 6 };
     rt_uint8_t *ptr = RT_NULL;
     rt_size_t len;
 
@@ -732,15 +732,15 @@ static void ringbuffer_get_direct_tc(void)
 /* Verify get_direct on wrapped buffer returns two segments. */
 static void ringbuffer_get_direct_wrap_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t w1[] = {1, 2, 3, 4, 5, 6};
-    rt_uint8_t w2[] = {10, 11, 12, 13, 14, 15};
-    rt_uint8_t out[4] = {0};
+    rt_uint8_t w1[] = { 1, 2, 3, 4, 5, 6 };
+    rt_uint8_t w2[] = { 10, 11, 12, 13, 14, 15 };
+    rt_uint8_t out[4] = { 0 };
     rt_uint8_t *ptr = RT_NULL;
     rt_size_t len;
-    rt_uint8_t expect_first[] = {5, 6, 10, 11};
-    rt_uint8_t expect_second[] = {12, 13, 14, 15};
+    rt_uint8_t expect_first[] = { 5, 6, 10, 11 };
+    rt_uint8_t expect_second[] = { 12, 13, 14, 15 };
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
 
@@ -763,11 +763,11 @@ static void ringbuffer_get_direct_wrap_tc(void)
 /* Verify drop_length == tail; read index lands on buffer end. */
 static void ringbuffer_force_drop_equal_tail_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
     struct rt_ringbuffer rb;
-    rt_uint8_t fill_data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
-    rt_uint8_t force_data[8] = {10, 11, 12, 13, 14, 15, 16, 17};
-    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = {0};
+    rt_uint8_t fill_data[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
+    rt_uint8_t force_data[8] = { 10, 11, 12, 13, 14, 15, 16, 17 };
+    rt_uint8_t out[RINGBUFFER_WRAP_POOL_SIZE] = { 0 };
 
     rt_ringbuffer_init(&rb, pool, sizeof(pool));
 
@@ -820,13 +820,13 @@ static void ringbuffer_heap_tc(void)
 /* Deterministic stress test against reference model. */
 static void ringbuffer_stress_tc(void)
 {
-    rt_uint8_t pool[RINGBUFFER_STRESS_SIZE] = {0};
+    rt_uint8_t pool[RINGBUFFER_STRESS_SIZE] = { 0 };
     struct rt_ringbuffer rb;
     struct rb_ref ref;
     rt_uint32_t seed = RINGBUFFER_STRESS_SEED;
-    rt_uint8_t tmp_exp[RINGBUFFER_REF_MAX] = {0};
-    rt_uint8_t tmp_got[RINGBUFFER_REF_MAX] = {0};
-    rt_uint8_t data[RINGBUFFER_STRESS_DATA_MAX] = {0};
+    rt_uint8_t tmp_exp[RINGBUFFER_REF_MAX] = { 0 };
+    rt_uint8_t tmp_got[RINGBUFFER_REF_MAX] = { 0 };
+    rt_uint8_t data[RINGBUFFER_STRESS_DATA_MAX] = { 0 };
     rt_bool_t ok = RT_TRUE;
     rt_uint32_t fail_step = 0;
     rt_uint32_t fail_op = 0;
