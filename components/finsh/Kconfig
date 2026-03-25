@@ -31,24 +31,55 @@ if RT_USING_MSH
     config FINSH_USING_HISTORY
         bool "Enable command history feature"
         default y
+        if FINSH_USING_HISTORY
+            config FINSH_HISTORY_LINES
+                int "The command history line number"
+                default 5
+        endif
 
-    if FINSH_USING_HISTORY
-        config FINSH_HISTORY_LINES
-            int "The command history line number"
-            default 5
-    endif
+    config FINSH_USING_SNAPSHOT
+        bool "Enable command Ctrl+Z/Ctrl+Y snapshot feature"
+        default n
+        help
+            Enable snapshot feature for command history. Ctrl+Z undoes recent edits,
+            Ctrl+Y redoes undone edits. This feature requires additional memory
+            based on FINSH_SNAPSHOT_DEPTH settings.
+        if FINSH_USING_SNAPSHOT
+            config FINSH_SNAPSHOT_DEPTH
+                int "The command snapshot depth"
+                default 10
+                help
+                    The number of command snapshots to keep.
+        endif
 
     config FINSH_USING_WORD_OPERATION
-        bool "Enable word-based cursor operations"
+        bool "Enable Ctrl+W/Backspace/Ctrl+Left/Right word-based cursor operations"
         default n
         help
-            Enable Ctrl+Backspace to delete words and Ctrl+Arrow to move cursor by word
-        
+            Enable word-based cursor operations in the shell:
+            - Ctrl+Backspace: delete previous word
+            - Ctrl+Left/Right Arrow: move cursor by word
+            - Ctrl+W: delete word before cursor
+            This feature improves command line editing efficiency.
+    
+    config FINSH_USING_EXTEND_FEATURE
+        bool "Enable insert/delete/home/end extend feature"
+        default n
+        help
+            Enable insert/delete/home/end extend feature in the shell:
+            - Insert: toggle insert mode
+            - Delete: delete character backward
+            - Home: move cursor to the beginning of the command
+            - End: move cursor to the end of the command
+            This feature improves command line editing efficiency.
+
     config FINSH_USING_FUNC_EXT
-        bool "Enable function extension home end ins del"
+        bool "DEPRECATED: Use FINSH_USING_EXTEND_FEATURE instead"
         default n
+        select FINSH_USING_EXTEND_FEATURE
         help
-            Enable function extension home end ins del.
+            This option is deprecated and will be removed in future releases.
+            Please migrate to FINSH_USING_EXTEND_FEATURE.
 
     config FINSH_USING_SYMTAB
         bool "Using symbol table for commands"
@@ -69,24 +100,31 @@ if RT_USING_MSH
     config FINSH_ECHO_DISABLE_DEFAULT
         bool "Disable the echo mode in default"
         default n
+    
+    config FINSH_PROMPT_ENABLE_DEFAULT
+        bool "Enable the prompt mode in default"
+        default y
+
+    config FINSH_PROMPT_TEXT_DEFAULT
+        string "The default prompt text"
+        default "msh "
 
     config FINSH_USING_AUTH
         bool "shell support authentication"
         default n
+        if FINSH_USING_AUTH
+            config FINSH_DEFAULT_PASSWORD
+                string "The default password for shell authentication"
+                default "rtthread"
 
-    if FINSH_USING_AUTH
-        config FINSH_DEFAULT_PASSWORD
-            string "The default password for shell authentication"
-            default "rtthread"
+            config FINSH_PASSWORD_MIN
+                int "The password min length"
+                default 6
 
-        config FINSH_PASSWORD_MIN
-            int "The password min length"
-            default 6
-
-        config FINSH_PASSWORD_MAX
-            int "The password max length"
-            default RT_NAME_MAX
-    endif
+            config FINSH_PASSWORD_MAX
+                int "The password max length"
+                default RT_NAME_MAX
+        endif
 
     config FINSH_ARG_MAX
         int "The number of arguments for a shell command"
