@@ -9,4 +9,8 @@ config RT_UTEST_WORKQUEUE
     bool "IPC Workqueue Test"
     default n
 
+config RT_UTEST_RINGBUFFER
+    bool "IPC Ringbuffer Test"
+    default n
+
 endmenu
