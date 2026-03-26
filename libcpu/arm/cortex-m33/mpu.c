@@ -108,12 +108,12 @@ rt_bool_t rt_hw_mpu_region_valid(rt_mem_region_t *region)
         LOG_E("Region size is too small");
         return RT_FALSE;
     }
-    if (region->size & (~(MPU_MIN_REGION_SIZE - 1U)) != region->size)
+    if ((region->size & (~(MPU_MIN_REGION_SIZE - 1U))) != region->size)
     {
         LOG_E("Region size is not a multiple of 32 bytes");
         return RT_FALSE;
     }
-    if ((rt_uint32_t)region->start & (MPU_MIN_REGION_SIZE - 1U) != 0U)
+    if (((rt_uint32_t)region->start & (MPU_MIN_REGION_SIZE - 1U)) != 0U)
     {
         LOG_E("Region is not aligned by 32 bytes");
         return RT_FALSE;
