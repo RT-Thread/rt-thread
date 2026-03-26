@@ -86,6 +86,25 @@
 #define TRNG_v1_VERSION_CODE            0x46bc
 /* end of TRNG_V1 register define */
 
+/* start of RKRNG register define */
+#define RKRNG_CTRL                      0x0010
+#define RKRNG_CTRL_INST_REQ             RT_BIT(0)
+#define RKRNG_CTRL_RESEED_REQ           RT_BIT(1)
+#define RKRNG_CTRL_TEST_REQ             RT_BIT(2)
+#define RKRNG_CTRL_SW_DRNG_REQ          RT_BIT(3)
+#define RKRNG_CTRL_SW_TRNG_REQ          RT_BIT(4)
+
+#define RKRNG_STATE                     0x0014
+#define RKRNG_STATE_INST_ACK            RT_BIT(0)
+#define RKRNG_STATE_RESEED_ACK          RT_BIT(1)
+#define RKRNG_STATE_TEST_ACK            RT_BIT(2)
+#define RKRNG_STATE_SW_DRNG_ACK         RT_BIT(3)
+#define RKRNG_STATE_SW_TRNG_ACK         RT_BIT(4)
+
+/* DRNG_DATA_0 ~ DNG_DATA_7 */
+#define RKRNG_DRNG_DATA_0               0x0070
+#define RKRNG_DRNG_DATA_7               0x008C
+
 struct rockchip_rng;
 
 struct rockchip_rng_soc_data
@@ -319,6 +338,49 @@ _time_out:
     return res;
 }
 
+static rt_err_t rkrng_init(struct rockchip_rng *rk_rng)
+{
+    rt_uint32_t reg;
+
+    rockchip_rng_writel(rk_rng, HIWORD_UPDATE(0, 0xffff, 0), RKRNG_CTRL);
+    reg = rockchip_rng_readl(rk_rng, RKRNG_STATE);
+    rockchip_rng_writel(rk_rng, reg, RKRNG_STATE);
+
+    return 0;
+}
+
+static rt_uint32_t rkrng_read(struct rockchip_rng *rk_rng, void *buf,
+        rt_size_t max, rt_bool_t wait)
+{
+    rt_err_t err;
+    rt_uint32_t reg_ctrl = RKRNG_CTRL_SW_DRNG_REQ;
+
+    rockchip_rng_writel(rk_rng, HIWORD_UPDATE(reg_ctrl, 0xffff, 0), RKRNG_CTRL);
+
+    err = readl_poll_timeout(rk_rng->regs + RKRNG_STATE, reg_ctrl,
+            (reg_ctrl & RKRNG_STATE_SW_DRNG_ACK),
+            ROCKCHIP_POLL_PERIOD_US,
+            ROCKCHIP_POLL_TIMEOUT_US);
+
+    if (err)
+    {
+        goto _exit;
+    }
+
+
+    rockchip_rng_writel(rk_rng, reg_ctrl, RKRNG_STATE);
+
+    err = rt_min_t(rt_size_t, max, RK_MAX_RNG_BYTE);
+
+    rockchip_rng_read_regs(rk_rng, RKRNG_DRNG_DATA_0, buf, err);
+
+_exit:
+    /* Close TRNG */
+    rockchip_rng_writel(rk_rng, HIWORD_UPDATE(0, 0xffff, 0), RKRNG_CTRL);
+
+    return err;
+}
+
 static rt_uint32_t rockchip_rng_read(struct rockchip_rng *rk_rng, void *buf,
         rt_size_t max, rt_bool_t wait)
 {
@@ -546,11 +608,19 @@ static const struct rockchip_rng_soc_data rk_trng_v1_soc_data =
     .read = rockchip_trng_v1_read,
 };
 
+static const struct rockchip_rng_soc_data rkrng_soc_data =
+{
+    .default_offset = 0,
+    .init = rkrng_init,
+    .read = rkrng_read,
+};
+
 static const struct rt_ofw_node_id rockchip_rng_ofw_ids[] =
 {
     { .compatible = "rockchip,cryptov1-rng", .data = &rk_crypto_v1_soc_data, },
     { .compatible = "rockchip,cryptov2-rng", .data = &rk_crypto_v2_soc_data, },
     { .compatible = "rockchip,trngv1", .data = &rk_trng_v1_soc_data, },
+    { .compatible = "rockchip,rkrng", .data = &rkrng_soc_data, },
     { /* sentinel */ }
 };
 

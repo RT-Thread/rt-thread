@@ -223,6 +223,23 @@ static const struct rockchip_saradc_soc_data rk3399_saradc_data =
     .power_down = rockchip_saradc_power_down_v1,
 };
 
+static const struct saradc_channel rockchip_rk3528_channels[] =
+{
+    SARADC_CHANNEL(0, "adc0", 10),
+    SARADC_CHANNEL(1, "adc1", 10),
+    SARADC_CHANNEL(2, "adc2", 10),
+    SARADC_CHANNEL(3, "adc3", 10),
+};
+
+static const struct rockchip_saradc_soc_data rk3528_saradc_data =
+{
+    .channels = rockchip_rk3528_channels,
+    .num_channels = RT_ARRAY_SIZE(rockchip_rk3528_channels),
+    .clk_rate = 1000000,
+    .start = rockchip_saradc_start_v2,
+    .read = rockchip_saradc_read_v2,
+};
+
 static const struct saradc_channel rk3568_saradc_channels[] =
 {
     SARADC_CHANNEL(0, "adc0", 10),
@@ -503,6 +520,7 @@ static const struct rt_ofw_node_id rockchip_saradc_ofw_ids[] =
     { .compatible = "rockchip,saradc", .data = &saradc_data },
     { .compatible = "rockchip,rk3066-tsadc", .data = &rk3066_tsadc_data },
     { .compatible = "rockchip,rk3399-saradc", .data = &rk3399_saradc_data },
+    { .compatible = "rockchip,rk3528-saradc", .data = &rk3528_saradc_data, },
     { .compatible = "rockchip,rk3568-saradc", .data = &rk3568_saradc_data },
     { .compatible = "rockchip,rk3588-saradc", .data = &rk3588_saradc_data, },
     { /* sentinel */ }
