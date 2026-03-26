@@ -34,7 +34,10 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
-    DEVICE = ' -g -march=armv8.2-a -mtune=cortex-a55 -fdiagnostics-color=always'
+    # For Cortex-A55/A76
+    # DEVICE = ' -g -march=armv8.2-a -mtune=cortex-a55 -fdiagnostics-color=always'
+    # For Cortex-A53/A72
+    DEVICE = ' -g -mcpu=cortex-a53 -fdiagnostics-color=always'
     CPPFLAGS= ' -nostdinc -undef -E -P -x assembler-with-cpp'
     CFLAGS = DEVICE + ' -Wall -Wno-cpp'
     AFLAGS = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
