@@ -20,6 +20,11 @@ config RT_CLK_ROCKCHIP_RK3308
     depends on RT_CLK_ROCKCHIP
     default n
 
+config RT_CLK_ROCKCHIP_RK3528
+    bool "Rockchip RK3528 clock controller support"
+    depends on RT_CLK_ROCKCHIP
+    default n
+
 config RT_CLK_ROCKCHIP_RK3568
     bool "Rockchip RK3568 clock controller support"
     depends on RT_CLK_ROCKCHIP

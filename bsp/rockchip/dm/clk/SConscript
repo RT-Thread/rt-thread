@@ -19,6 +19,9 @@ if GetDepend(['RT_CLK_ROCKCHIP']):
 if GetDepend(['RT_CLK_ROCKCHIP_RK3308']):
     src += ['clk-rk3308.c']
 
+if GetDepend(['RT_CLK_ROCKCHIP_RK3528']):
+    src += ['clk-rk3528.c']
+
 if GetDepend(['RT_CLK_ROCKCHIP_RK3568']):
     src += ['clk-rk3568.c']
 

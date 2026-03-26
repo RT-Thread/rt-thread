@@ -77,6 +77,22 @@
     .pull_type[3] = PULL3,                  \
 }
 
+#define PIN_BANK_IOMUX_FLAGS_OFFSET(ID,         \
+    PINS, LABEL, IOM0, IOM1, IOM2, IOM3,        \
+    OFFSET0, OFFSET1, OFFSET2, OFFSET3)         \
+{                                               \
+    .bank_num   = ID,                           \
+    .nr_pins    = PINS,                         \
+    .name       = LABEL,                        \
+    .iomux      =                               \
+    {                                           \
+        { .type = IOM0, .offset = OFFSET0 },    \
+        { .type = IOM1, .offset = OFFSET1 },    \
+        { .type = IOM2, .offset = OFFSET2 },    \
+        { .type = IOM3, .offset = OFFSET3 },    \
+    },                                          \
+}
+
 #define PIN_BANK_IOMUX_FLAGS_OFFSET_PULL_FLAGS( \
     ID, PINS, LABEL, IOM0, IOM1, IOM2, IOM3,    \
     OFFSET0, OFFSET1, OFFSET2, OFFSET3, PULL0,  \
@@ -432,6 +448,202 @@ static struct rockchip_pin_ctrl rk3308_pin_ctrl =
     .set_pull           = rk3308_set_pull,
     .set_drive          = rk3308_set_drive,
     .set_schmitt        = rk3308_set_schmitt,
+};
+
+static rt_err_t rk3528_set_mux(struct rockchip_pin_bank *pin_bank, int pin, int mux)
+{
+    rt_uint8_t bit;
+    rt_uint32_t data;
+    int iomux_num = (pin / 8), reg, mask;
+    struct rt_syscon *regmap;
+    struct rockchip_pin_data *drvdata = pin_bank->drvdata;
+
+    regmap = drvdata->regmap_base;
+    reg = pin_bank->iomux[iomux_num].offset;
+    if ((pin % 8) >= 4)
+    {
+        reg += 0x4;
+    }
+    bit = (pin % 4) * 4;
+    mask = 0xf;
+
+    data = (mask << (bit + 16));
+    data |= (mux & mask) << bit;
+
+    return rt_syscon_write(regmap, reg, data);
+}
+
+#define RK3528_PULL_BITS_PER_PIN   2
+#define RK3528_PULL_PINS_PER_REG   8
+#define RK3528_PULL_GPIO0_OFFSET   0x200
+#define RK3528_PULL_GPIO1_OFFSET   0x20210
+#define RK3528_PULL_GPIO2_OFFSET   0x30220
+#define RK3528_PULL_GPIO3_OFFSET   0x20230
+#define RK3528_PULL_GPIO4_OFFSET   0x10240
+
+static const int rk3528_pull_offsets[] =
+{
+    RK3528_PULL_GPIO0_OFFSET,
+    RK3528_PULL_GPIO1_OFFSET,
+    RK3528_PULL_GPIO2_OFFSET,
+    RK3528_PULL_GPIO3_OFFSET,
+    RK3528_PULL_GPIO4_OFFSET,
+};
+
+static rt_err_t rk3528_set_pull(struct rockchip_pin_bank *pin_bank, int pin, int pull)
+{
+    int reg, pull_value;
+    rt_uint32_t data;
+    rt_uint8_t bit, type;
+    struct rt_syscon *regmap;
+    struct rockchip_pin_data *drvdata = pin_bank->drvdata;
+
+    if (pull == PIN_CONFIG_BIAS_PULL_PIN_DEFAULT)
+    {
+        return -RT_ENOSYS;
+    }
+
+    if (pin_bank->bank_num >= RT_ARRAY_SIZE(rk3528_pull_offsets))
+    {
+        LOG_E("Unsupported bank_num %d", pin_bank->bank_num);
+        return -RT_EINVAL;
+    }
+
+    regmap = drvdata->regmap_base;
+    reg = rk3528_pull_offsets[pin_bank->bank_num];
+    reg += ((pin / RK3528_PULL_PINS_PER_REG) * 4);
+    bit = (pin % RK3528_PULL_PINS_PER_REG);
+    bit *= RK3528_PULL_BITS_PER_PIN;
+
+    type = pin_bank->pull_type[pin / 8];
+    pull_value = rockchip_translate_pull_value(type, pull);
+
+    if (pull_value < 0)
+    {
+        LOG_E("Not supported pull = %d, fixup the code or firmware", pull);
+        return pull_value;
+    }
+
+    /* enable the write to the equivalent lower bits */
+    data = ((1 << RK3528_PULL_BITS_PER_PIN) - 1) << (bit + 16);
+    data |= (pull_value << bit);
+
+    return rt_syscon_write(regmap, reg, data);
+}
+
+#define RK3528_DRV_BITS_PER_PIN     8
+#define RK3528_DRV_PINS_PER_REG    2
+#define RK3528_DRV_GPIO0_OFFSET    0x100
+#define RK3528_DRV_GPIO1_OFFSET    0x20120
+#define RK3528_DRV_GPIO2_OFFSET    0x30160
+#define RK3528_DRV_GPIO3_OFFSET    0x20190
+#define RK3528_DRV_GPIO4_OFFSET    0x101C0
+
+static const int rk3528_drv_offsets[] =
+{
+    RK3528_DRV_GPIO0_OFFSET,
+    RK3528_DRV_GPIO1_OFFSET,
+    RK3528_DRV_GPIO2_OFFSET,
+    RK3528_DRV_GPIO3_OFFSET,
+    RK3528_DRV_GPIO4_OFFSET,
+};
+
+static rt_err_t rk3528_set_drive(struct rockchip_pin_bank *pin_bank, int pin, int strength)
+{
+    int reg, drv = (1 << (strength + 1)) - 1;
+    rt_uint8_t bit;
+    rt_uint32_t data;
+    struct rt_syscon *regmap;
+    struct rockchip_pin_data *drvdata = pin_bank->drvdata;
+
+    if (pin_bank->bank_num >= RT_ARRAY_SIZE(rk3528_drv_offsets))
+    {
+        LOG_E("Unsupported bank_num %d", pin_bank->bank_num);
+        return -RT_EINVAL;
+    }
+
+    regmap = drvdata->regmap_base;
+    reg = rk3528_drv_offsets[pin_bank->bank_num];
+    reg += ((pin / RK3528_DRV_PINS_PER_REG) * 4);
+    bit = pin % RK3528_DRV_PINS_PER_REG;
+    bit *= RK3528_DRV_BITS_PER_PIN;
+
+    /* enable the write to the equivalent lower bits */
+    data = ((1 << RK3528_DRV_BITS_PER_PIN) - 1) << (bit + 16);
+    data |= (drv << bit);
+
+    return rt_syscon_write(regmap, reg, data);
+}
+
+#define RK3528_SMT_BITS_PER_PIN    1
+#define RK3528_SMT_PINS_PER_REG    8
+#define RK3528_SMT_GPIO0_OFFSET    0x400
+#define RK3528_SMT_GPIO1_OFFSET    0x20410
+#define RK3528_SMT_GPIO2_OFFSET    0x30420
+#define RK3528_SMT_GPIO3_OFFSET    0x20430
+#define RK3528_SMT_GPIO4_OFFSET    0x10440
+
+static const int rk3528_smt_offsets[] =
+{
+    RK3528_SMT_GPIO0_OFFSET,
+    RK3528_SMT_GPIO1_OFFSET,
+    RK3528_SMT_GPIO2_OFFSET,
+    RK3528_SMT_GPIO3_OFFSET,
+    RK3528_SMT_GPIO4_OFFSET,
+};
+
+static rt_err_t rk3528_set_schmitt(struct rockchip_pin_bank *pin_bank, int pin, int enable)
+{
+    int reg;
+    rt_uint8_t bit;
+    rt_uint32_t data;
+    struct rt_syscon *regmap;
+    struct rockchip_pin_data *drvdata = pin_bank->drvdata;
+
+    if (pin_bank->bank_num >= RT_ARRAY_SIZE(rk3528_smt_offsets))
+    {
+        LOG_E("Unsupported bank_num %d", pin_bank->bank_num);
+        return -RT_EINVAL;
+    }
+
+    regmap = drvdata->regmap_base;
+    reg = rk3528_smt_offsets[pin_bank->bank_num];
+    reg += ((pin / RK3528_SMT_PINS_PER_REG) * 4);
+    bit = pin % RK3528_SMT_PINS_PER_REG;
+    bit *= RK3528_SMT_BITS_PER_PIN;
+
+    /* enable the write to the equivalent lower bits */
+    data = ((1 << RK3528_SMT_BITS_PER_PIN) - 1) << (bit + 16);
+    data |= (enable << bit);
+
+    return rt_syscon_write(regmap, reg, data);
+}
+
+static struct rockchip_pin_bank rk3528_pin_banks[] =
+{
+    PIN_BANK_IOMUX_FLAGS_OFFSET(0, 32, "gpio0", IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT,
+            0, 0, 0, 0),
+    PIN_BANK_IOMUX_FLAGS_OFFSET(1, 32, "gpio1", IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT,
+            0x20020, 0x20028, 0x20030, 0x20038),
+    PIN_BANK_IOMUX_FLAGS_OFFSET(2, 32, "gpio2", IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT,
+            0x30040, 0, 0, 0),
+    PIN_BANK_IOMUX_FLAGS_OFFSET(3, 32, "gpio3", IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT,
+            0x20060, 0x20068, 0x20070, 0),
+    PIN_BANK_IOMUX_FLAGS_OFFSET(4, 32, "gpio4", IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT, IOMUX_WIDTH_4BIT,
+            0x10080, 0x10088, 0x10090, 0x10098),
+};
+
+static struct rockchip_pin_ctrl rk3528_pin_ctrl =
+{
+    .pin_banks          = rk3528_pin_banks,
+    .banks_nr           = RT_ARRAY_SIZE(rk3528_pin_banks),
+    .label              = "RK3528-GPIO",
+    .type               = RK3528,
+    .grf_mux_offset     = 0x0,
+    .set_mux            = rk3528_set_mux,
+    .set_pull           = rk3528_set_pull,
+    .set_drive          = rk3528_set_drive,
+    .set_schmitt        = rk3528_set_schmitt,
 };
 
 static struct rockchip_mux_route_data rk3568_mux_route_data[] =
@@ -1071,10 +1283,12 @@ static struct rockchip_pin_bank rk3576_pin_banks[] =
     PIN_BANK_OFFSET4(4, "gpio4", 0x4080, 0x4088, 0xA390, 0xB398),
 };
 
-static const struct rockchip_pin_ctrl rk3576_pin_ctrl =
+static struct rockchip_pin_ctrl rk3576_pin_ctrl =
 {
     .pin_banks      = rk3576_pin_banks,
     .banks_nr       = RT_ARRAY_SIZE(rk3576_pin_banks),
+    .label          = "RK3576-GPIO",
+    .type           = RK3576,
     .pins_nr        = 160,
     .grf_mux_offset = 0x0,
     .set_mux        = rk3576_set_mux,
@@ -1740,6 +1954,7 @@ _fail:
 static const struct rt_ofw_node_id rockchip_pinctrl_ofw_ids[] =
 {
     { .compatible = "rockchip,rk3308-pinctrl", .data = &rk3308_pin_ctrl },
+    { .compatible = "rockchip,rk3528-pinctrl", .data = &rk3528_pin_ctrl },
     { .compatible = "rockchip,rk3568-pinctrl", .data = &rk3568_pin_ctrl },
     { .compatible = "rockchip,rk3576-pinctrl", .data = &rk3576_pin_ctrl },
     { .compatible = "rockchip,rk3588-pinctrl", .data = &rk3588_pin_ctrl },

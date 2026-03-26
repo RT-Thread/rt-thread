@@ -880,6 +880,12 @@ static const struct rockchip_otp_data px30s_data =
     .read = px30s_otp_read,
 };
 
+static const struct rockchip_otp_data rk3528_data =
+{
+    .size = 0x80,
+    .read = rk3568_otp_read,
+};
+
 static const struct rockchip_otp_data rk3568_data =
 {
     .size = 0x80,
@@ -1018,6 +1024,7 @@ static const struct rt_ofw_node_id rockchip_otp_ofw_ids[] =
     { .compatible = "rockchip,px30s-otp", .data = &px30s_data, },
     { .compatible = "rockchip,rk3308-otp", .data = &px30_data, },
     { .compatible = "rockchip,rk3308bs-otp", .data = &px30s_data, },
+    { .compatible = "rockchip,rk3528-otp", .data = &rk3528_data, },
     { .compatible = "rockchip,rk3568-otp", .data = &rk3568_data, },
     { .compatible = "rockchip,rk3576-otp", .data = &rk3576_data, },
     { .compatible = "rockchip,rk3588-otp", .data = &rk3588_data, },
