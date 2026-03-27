@@ -22,7 +22,7 @@ static rt_uint8_t raw_pm_sleep_mode = PM_RUN_MODE_MAX;
 static rt_uint8_t last_pm_sleep_mode;
 #endif
 
-static rt_inline const char *power_supply_dev_name(struct rt_device *dev)
+rt_inline const char *power_supply_dev_name(struct rt_device *dev)
 {
 #ifdef RT_USING_DM
     return rt_dm_dev_get_name(dev);
