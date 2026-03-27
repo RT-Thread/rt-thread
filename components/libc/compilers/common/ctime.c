@@ -498,6 +498,11 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
             {
                 return 0;
             }
+            else
+            {
+                // if RTC device is not available, use tick count
+                tv->tv_sec = rt_tick_get() / RT_TICK_PER_SECOND;
+            }
         }
     }
 #endif /* RT_USING_RTC */
