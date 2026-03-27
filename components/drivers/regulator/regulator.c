@@ -38,7 +38,7 @@ static rt_err_t regulator_disable(struct rt_regulator_node *reg_np);
 
 static struct rt_regulator_record *regulator_find_record_by_name(const char *name)
 {
-    struct rt_regulator_record *record;
+    struct rt_regulator_record *record = RT_NULL;
 
     rt_list_for_each_entry(record, &_regulator_records, list)
     {
@@ -53,7 +53,7 @@ static struct rt_regulator_record *regulator_find_record_by_name(const char *nam
 
 static struct rt_regulator_record *regulator_find_record_by_node(struct rt_regulator_node *reg_np)
 {
-    struct rt_regulator_record *record;
+    struct rt_regulator_record *record = RT_NULL;
 
     rt_list_for_each_entry(record, &_regulator_records, list)
     {
