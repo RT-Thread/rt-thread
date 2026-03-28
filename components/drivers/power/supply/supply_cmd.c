@@ -324,7 +324,6 @@ static int power_supply_do_list(void)
         rt_kprintf("%s %s\n", rt_power_supply_name(nodes[i]), type_str[nodes[i]->type]);
         power_supply_dump_properties(nodes[i]);
         power_supply_dump_battery_info(nodes[i]);
-        rt_kputs("\n");
     }
 
     rt_power_supply_snapshot_free(nodes, count);
@@ -375,7 +374,7 @@ static int power_supply_do_get(const char *name, const char *prop_name)
 
 static int power_supply(int argc, char **argv)
 {
-    if (argc == 1 || (argc == 2 && !rt_strcmp(argv[1], "list")))
+    if (argc == 2 && !rt_strcmp(argv[1], "list"))
     {
         return power_supply_do_list();
     }
@@ -395,7 +394,7 @@ static int power_supply(int argc, char **argv)
     rt_kputs("  power_supply show <name>\n");
     rt_kputs("  power_supply get <name> <property>\n");
 
-    return -RT_EINVAL;
+    return RT_EOK;
 }
 MSH_CMD_EXPORT(power_supply, power supply helper use power_supply list);
 
