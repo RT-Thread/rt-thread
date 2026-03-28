@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,7 +8,6 @@
  * 2013-04-15     Bernard      the first version
  * 2013-05-05     Bernard      remove CRC for ramfs persistence
  */
-
 #ifndef __DFS_RAMFS_H__
 #define __DFS_RAMFS_H__
 
