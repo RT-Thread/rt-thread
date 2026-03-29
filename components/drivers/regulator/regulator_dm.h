@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-09-23     GuEe-GUI     first version
+ * 2026-03-27     Evlers       stub out regulator_ofw_parse when OFW disabled
  */
 
 #ifndef __REGULATOR_DM_H__
@@ -17,8 +18,10 @@
 #ifdef RT_USING_OFW
 rt_err_t regulator_ofw_parse(struct rt_ofw_node *np, struct rt_regulator_param *param);
 #else
-rt_inline rt_err_t regulator_ofw_parse(struct rt_ofw_node *np, struct rt_regulator_param *param);
+rt_inline rt_err_t regulator_ofw_parse(void *np, struct rt_regulator_param *param)
 {
+    RT_UNUSED(np);
+    RT_UNUSED(param);
     return RT_EOK;
 }
 #endif /* RT_USING_OFW */

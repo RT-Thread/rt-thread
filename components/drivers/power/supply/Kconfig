@@ -1,6 +1,5 @@
 menuconfig RT_USING_POWER_SUPPLY
     bool "Using Power supply class support"
-    depends on RT_USING_DM
     select RT_USING_ADT
     select RT_USING_ADT_REF
     select RT_USING_SYSTEM_WORKQUEUE
@@ -27,6 +26,8 @@ config RT_POWER_SUPPLY_EMU
 config RT_POWER_SUPPLY_CHARGER_GPIO
     bool "GPIO charger"
     depends on RT_USING_POWER_SUPPLY
+    depends on RT_USING_DM
+    depends on RT_USING_OFW
     depends on RT_USING_PIN
     default y
 

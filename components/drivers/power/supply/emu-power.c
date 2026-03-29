@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-25     GuEe-GUI     the first version
+ * 2026-03-27     Evlers       allow building without DM by naming parent directly
  */
 
 #include <rtthread.h>
@@ -299,7 +300,11 @@ static int emu_power_init(void)
 
     rt_memset(ep, 0, sizeof(*ep));
 
+#ifdef RT_USING_DM
     rt_dm_dev_set_name(&ep->parent, "emu-power");
+#else
+    ep->parent.parent.name = "emu-power";
+#endif
 
     ep->battery.dev = &ep->parent,
     ep->battery.type = RT_POWER_SUPPLY_TYPE_BATTERY,
