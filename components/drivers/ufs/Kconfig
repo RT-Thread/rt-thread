@@ -1,0 +1,16 @@
+menuconfig RT_USING_UFS
+    bool "Using Universal Flash Storage (UFS) device drivers"
+    depends on RT_USING_DM
+    depends on RT_USING_DMA
+    depends on RT_SCSI_SD
+    default n
+
+config RT_UFS_PCI
+    bool "UFS support on PCI bus"
+    depends on RT_USING_UFS
+    depends on RT_USING_PCI
+    default n
+
+if RT_USING_UFS
+    osource "$(SOC_DM_UFS_DIR)/Kconfig"
+endif

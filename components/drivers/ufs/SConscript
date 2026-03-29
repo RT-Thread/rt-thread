@@ -1,0 +1,18 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_UFS']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+src = ['ufs.c', 'ufs_pm.c']
+
+if GetDepend(['RT_UFS_PCI']):
+    src += ['ufs-pci.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
