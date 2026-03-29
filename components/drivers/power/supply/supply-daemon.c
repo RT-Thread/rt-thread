@@ -22,15 +22,6 @@ static rt_uint8_t raw_pm_sleep_mode = PM_RUN_MODE_MAX;
 static rt_uint8_t last_pm_sleep_mode;
 #endif
 
-rt_inline const char *power_supply_dev_name(struct rt_device *dev)
-{
-#ifdef RT_USING_DM
-    return rt_dm_dev_get_name(dev);
-#else
-    return dev ? dev->parent.name : "<no-dev>";
-#endif
-}
-
 static rt_err_t daemon_power_supply_notify(struct rt_power_supply_notifier *notifier,
         struct rt_power_supply *psy)
 {
@@ -76,11 +67,11 @@ _capacity_check:
         {
             if (full_power)
             {
-                LOG_I("%s: Power is full", power_supply_dev_name(psy->dev));
+                LOG_I("%s: Power is full", rt_power_supply_name(psy));
             }
             else
             {
-                LOG_I("%s: Power is sufficient", power_supply_dev_name(psy->dev));
+                LOG_I("%s: Power is sufficient", rt_power_supply_name(psy));
             }
         }
     }
@@ -119,12 +110,12 @@ _capacity_check:
                 if (!rt_power_supply_get_property(psy, RT_POWER_SUPPLY_PROP_SCOPE, &propval) &&
                     propval.intval == RT_POWER_SUPPLY_SCOPE_SYSTEM)
                 {
-                    LOG_E("%s: Power is critical, poweroff now", power_supply_dev_name(psy->dev));
+                    LOG_E("%s: Power is critical, poweroff now", rt_power_supply_name(psy));
                     rt_hw_cpu_shutdown();
                 }
             } while (0);
 
-            LOG_E("%s: Power is critical", power_supply_dev_name(psy->dev));
+            LOG_E("%s: Power is critical", rt_power_supply_name(psy));
         }
         else if (propval.intval <= 10)
         {
@@ -146,7 +137,7 @@ _capacity_check:
             pm_sleep_mode = PM_SLEEP_MODE_LIGHT;
             rt_pm_run_enter(PM_RUN_MODE_NORMAL_SPEED);
         #endif
-            LOG_W("%s: Power is low", power_supply_dev_name(psy->dev));
+            LOG_W("%s: Power is low", rt_power_supply_name(psy));
         }
 
     #ifdef RT_USING_PM
