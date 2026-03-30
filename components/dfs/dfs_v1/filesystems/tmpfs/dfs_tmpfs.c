@@ -26,13 +26,36 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
-static int _path_separate(const char *path, char *parent_path, char *file_name)
+static int _tmpfs_path_validate(const char *path)
+{
+    if (path == RT_NULL)
+    {
+        return -EINVAL;
+    }
+
+    if (path[0] != '/')
+    {
+        return -EINVAL;
+    }
+
+    return RT_EOK;
+}
+
+static int _path_separate(const char *path, char *parent_path, rt_size_t parent_size,
+                          char *file_name, rt_size_t file_size)
 {
     const char *path_p, *path_q;
+    rt_size_t parent_len, file_len;
+    int ret;
 
-    RT_ASSERT(path[0] == '/');
+    ret = _tmpfs_path_validate(path);
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
 
     file_name[0] = '\0';
+    parent_path[0] = '\0';
     path_p = path_q = &path[1];
 __next_dir:
     while (*path_q != '/' && *path_q != '\0')
@@ -49,10 +72,18 @@ __next_dir:
         }
         else /* Last level dir */
         {
-            rt_memcpy(parent_path, path, path_p - path - 1);
-            parent_path[path_p - path - 1] = '\0';
-            rt_memcpy(file_name, path_p, path_q - path_p);
-            file_name[path_q - path_p] = '\0';
+            parent_len = path_p - path - 1;
+            file_len = path_q - path_p;
+
+            if ((parent_len + 1 > parent_size) || (file_len + 1 > file_size))
+            {
+                return -ENAMETOOLONG;
+            }
+
+            rt_memcpy(parent_path, path, parent_len);
+            parent_path[parent_len] = '\0';
+            rt_memcpy(file_name, path_p, file_len);
+            file_name[file_len] = '\0';
         }
     }
     if (parent_path[0] == 0)
@@ -66,17 +97,31 @@ __next_dir:
     return 0;
 }
 
-static int _get_subdir(const char *path, char *name)
+static int _get_subdir(const char *path, char *name, rt_size_t name_size)
 {
     const char *subpath = path;
+    rt_size_t name_len = 0;
+
+    if (name_size == 0)
+    {
+        return -EINVAL;
+    }
+
     while (*subpath == '/' && *subpath)
         subpath ++;
     while (*subpath != '/' && *subpath)
     {
+        if (name_len + 1 >= name_size)
+        {
+            name[0] = '\0';
+            return -ENAMETOOLONG;
+        }
         *name = *subpath;
         name ++;
         subpath ++;
+        name_len ++;
     }
+    *name = '\0';
     return 0;
 }
 
@@ -222,6 +267,13 @@ struct tmpfs_file *dfs_tmpfs_lookup(struct tmpfs_sb  *superblock,
     char subdir_name[TMPFS_NAME_MAX];
     struct tmpfs_file *file, *curfile;
     rt_list_t *list;
+    int ret;
+
+    ret = _tmpfs_path_validate(path);
+    if (ret != RT_EOK)
+    {
+        return RT_NULL;
+    }
 
     subpath = path;
     while (*subpath == '/' && *subpath)
@@ -245,7 +297,10 @@ find_subpath:
         subpath ++; /* skip '/' */
 
     memset(subdir_name, 0, TMPFS_NAME_MAX);
-    _get_subdir(curpath, subdir_name);
+    if (_get_subdir(curpath, subdir_name, sizeof(subdir_name)) != 0)
+    {
+        return RT_NULL;
+    }
 
     rt_spin_lock(&superblock->lock);
 
@@ -364,6 +419,7 @@ int dfs_tmpfs_close(struct dfs_file *file)
 
 int dfs_tmpfs_open(struct dfs_file *file)
 {
+    int ret;
     rt_size_t size;
     struct tmpfs_sb *superblock;
     struct tmpfs_file *d_file, *p_file;
@@ -387,6 +443,12 @@ int dfs_tmpfs_open(struct dfs_file *file)
     superblock = (struct tmpfs_sb *)fs->data;
     RT_ASSERT(superblock != NULL);
 
+    ret = _tmpfs_path_validate(file->vnode->path);
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
+
     /* find file */
     d_file = dfs_tmpfs_lookup(superblock, file->vnode->path, &size);
     if (d_file == NULL && !(file->flags & O_CREAT))
@@ -398,7 +460,12 @@ int dfs_tmpfs_open(struct dfs_file *file)
         if (d_file == NULL)
         {
             /* find parent file */
-            _path_separate(file->vnode->path, parent_path, file_name);
+            ret = _path_separate(file->vnode->path, parent_path, sizeof(parent_path),
+                                 file_name, sizeof(file_name));
+            if (ret != RT_EOK)
+            {
+                return ret;
+            }
             if (file_name[0] == '\0') /* it's root dir */
                 return -ENOENT;
 
@@ -415,7 +482,8 @@ int dfs_tmpfs_open(struct dfs_file *file)
             }
             superblock->df_size += sizeof(struct tmpfs_file);
 
-            strncpy(d_file->name, file_name, TMPFS_NAME_MAX);
+            rt_strncpy(d_file->name, file_name, TMPFS_NAME_MAX);
+            d_file->name[TMPFS_NAME_MAX - 1] = '\0';
 
             rt_list_init(&(d_file->subdirs));
             rt_list_init(&(d_file->sibling));
@@ -592,6 +660,7 @@ int dfs_tmpfs_rename(struct dfs_filesystem *fs,
                      const char            *oldpath,
                      const char            *newpath)
 {
+    int ret;
     struct tmpfs_file *d_file, *p_file;
     struct tmpfs_sb *superblock;
     rt_size_t size;
@@ -599,6 +668,18 @@ int dfs_tmpfs_rename(struct dfs_filesystem *fs,
 
     superblock = (struct tmpfs_sb *)fs->data;
     RT_ASSERT(superblock != NULL);
+
+    ret = _tmpfs_path_validate(newpath);
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
+
+    ret = _tmpfs_path_validate(oldpath);
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
 
     d_file = dfs_tmpfs_lookup(superblock, newpath, &size);
     if (d_file != NULL)
@@ -609,7 +690,12 @@ int dfs_tmpfs_rename(struct dfs_filesystem *fs,
         return -ENOENT;
 
     /* find parent file */
-    _path_separate(newpath, parent_path, file_name);
+    ret = _path_separate(newpath, parent_path, sizeof(parent_path),
+                         file_name, sizeof(file_name));
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
     if (file_name[0] == '\0') /* it's root dir */
         return -ENOENT;
     /* open parent directory */
@@ -620,7 +706,8 @@ int dfs_tmpfs_rename(struct dfs_filesystem *fs,
     rt_list_remove(&(d_file->sibling));
     rt_spin_unlock(&superblock->lock);
 
-    strncpy(d_file->name, file_name, TMPFS_NAME_MAX);
+    rt_strncpy(d_file->name, file_name, TMPFS_NAME_MAX);
+    d_file->name[TMPFS_NAME_MAX - 1] = '\0';
 
     rt_spin_lock(&superblock->lock);
     rt_list_insert_after(&(p_file->subdirs), &(d_file->sibling));
