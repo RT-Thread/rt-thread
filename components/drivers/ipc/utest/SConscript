@@ -9,7 +9,7 @@ if GetDepend(['RT_UTEST_COMPLETION']):
     src += ['completion_tc.c', 'completion_timeout_tc.c']
 
 if GetDepend(['RT_UTEST_WORKQUEUE']):
-    src += ['workqueue_tc.c']
+    src += ['workqueue_tc_basic.c', 'workqueue_tc_cancel.c', 'workqueue_tc_destroy.c']
 
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
 
