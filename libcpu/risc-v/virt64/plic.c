@@ -151,6 +151,6 @@ extern struct rt_irq_desc irq_desc[MAX_HANDLERS];
 void plic_handle_irq(void)
 {
     int plic_irq = plic_claim();
-    plic_complete(plic_irq);
     irq_desc[plic_irq].handler(plic_irq, irq_desc[plic_irq].param);
+    plic_complete(plic_irq);
 }
