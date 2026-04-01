@@ -560,7 +560,7 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
         }
         else if (qualifier == 'H')
         {
-            num = (rt_int8_t)va_arg(args, rt_int32_t);
+            num = (rt_uint8_t)va_arg(args, rt_int32_t);
             if (flags & SIGN)
             {
                 num = (rt_int8_t)num;

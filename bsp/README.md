@@ -215,6 +215,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [gd32303e-eval](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32305r-start](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32307e-start](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
+| [gd32405rg](gd32) | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32407v-ickfb](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32407v-start](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32450z-eval](gd32) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
@@ -772,14 +773,15 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 | BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
 |----------|------|------|-----|-----|-----|-----|
-| [e901](xuantie/smartl/e901) | - | ✅ | - | - | - | - |
+| [e901plus](xuantie/smartl/e901plus) | - | ✅ | - | - | - | - |
 | [e902](xuantie/smartl/e902) | - | ✅ | - | - | - | - |
 | [e906](xuantie/smartl/e906) | - | ✅ | - | - | - | - |
 | [e907](xuantie/smartl/e907) | - | ✅ | - | - | - | - |
 | [c906 (RT-Smart)](xuantie/virt64/c906) | - | ✅ | - | - | - | - |
 | [c907](xuantie/xiaohui/c907) | - | ✅ | - | - | - | - |
 | [c908](xuantie/xiaohui/c908) | - | ✅ | - | - | - | - |
-| [c910](xuantie/xiaohui/c910) | - | ✅ | - | - | - | - |
+| [c908x](xuantie/xiaohui/c908x) | - | ✅ | - | - | - | - |
+| [c920](xuantie/xiaohui/c920) | - | ✅ | - | - | - | - |
 | [r908](xuantie/xiaohui/r908) | - | ✅ | - | - | - | - |
 | [r910](xuantie/xiaohui/r910) | - | ✅ | - | - | - | - |
 | [r920](xuantie/xiaohui/r920) | - | ✅ | - | - | - | - |

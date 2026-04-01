@@ -138,54 +138,54 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
     spi_handle->Init.NSS = SPI_NSS_SOFT;
 
-    uint32_t SPI_CLOCK = 0UL;
+    uint32_t spi_clock = 0UL;
     /* Some series may only have APBPERIPH_BASE, but don't have HAL_RCC_GetPCLK2Freq */
 #if defined(APBPERIPH_BASE)
-    SPI_CLOCK = HAL_RCC_GetPCLK1Freq();
+    spi_clock = HAL_RCC_GetPCLK1Freq();
 #elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
     /* The SPI clock for H7 cannot be configured with a peripheral bus clock, so it needs to be written separately */
 #if defined(SOC_SERIES_STM32H7)
     /* When the configuration is generated using CUBEMX, the configuration for the SPI clock is placed in the HAL_SPI_Init function.
     Therefore, it is necessary to initialize and configure the SPI clock to automatically configure the frequency division */
     HAL_SPI_Init(spi_handle);
-    SPI_CLOCK = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI123);
+    spi_clock = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI123);
 #else
     if ((rt_uint32_t)spi_drv->config->Instance >= APB2PERIPH_BASE)
     {
-        SPI_CLOCK = HAL_RCC_GetPCLK2Freq();
+        spi_clock = HAL_RCC_GetPCLK2Freq();
     }
     else
     {
-        SPI_CLOCK = HAL_RCC_GetPCLK1Freq();
+        spi_clock = HAL_RCC_GetPCLK1Freq();
     }
 #endif /* SOC_SERIES_STM32H7) */
 #endif /* APBPERIPH_BASE */
 
-    if (cfg->max_hz >= SPI_CLOCK / 2)
+    if (cfg->max_hz >= spi_clock / 2)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
     }
-    else if (cfg->max_hz >= SPI_CLOCK / 4)
+    else if (cfg->max_hz >= spi_clock / 4)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
     }
-    else if (cfg->max_hz >= SPI_CLOCK / 8)
+    else if (cfg->max_hz >= spi_clock / 8)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
     }
-    else if (cfg->max_hz >= SPI_CLOCK / 16)
+    else if (cfg->max_hz >= spi_clock / 16)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
     }
-    else if (cfg->max_hz >= SPI_CLOCK / 32)
+    else if (cfg->max_hz >= spi_clock / 32)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
     }
-    else if (cfg->max_hz >= SPI_CLOCK / 64)
+    else if (cfg->max_hz >= spi_clock / 64)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
     }
-    else if (cfg->max_hz >= SPI_CLOCK / 128)
+    else if (cfg->max_hz >= spi_clock / 128)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
     }
@@ -195,15 +195,21 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
     }
 
+#if defined(SOC_SERIES_STM32H7)
+    cfg->usage_freq = spi_clock / (rt_size_t)(1 << ((spi_handle->Init.BaudRatePrescaler >> SPI_CFG1_MBR_Pos) + 1));
+#else
+    cfg->usage_freq = spi_clock / (rt_size_t)(1 << ((spi_handle->Init.BaudRatePrescaler >> SPI_CR1_BR_Pos) + 1));
+#endif /* SOC_SERIES_STM32H7 */
+
     LOG_D("sys freq: %d, pclk freq: %d, SPI limiting freq: %d, SPI usage freq: %d",
 #if defined(SOC_SERIES_STM32MP1)
           HAL_RCC_GetSystemCoreClockFreq(),
 #else
           HAL_RCC_GetSysClockFreq(),
 #endif
-          SPI_CLOCK,
+          spi_clock,
           cfg->max_hz,
-          SPI_CLOCK / (rt_size_t)pow(2,(spi_handle->Init.BaudRatePrescaler >> 28) + 1));
+          cfg->usage_freq);
 
     if (cfg->mode & RT_SPI_MSB)
     {
@@ -294,6 +300,15 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 
     struct stm32_spi *spi_drv =  rt_container_of(device->bus, struct stm32_spi, spi_bus);
     SPI_HandleTypeDef *spi_handle = &spi_drv->handle;
+    rt_uint64_t total_byte_ms = (rt_uint64_t)message->length * 1000;
+    rt_uint32_t speed_bytes_per_sec = spi_drv->cfg->usage_freq / 8;
+    if (speed_bytes_per_sec == 0)
+    {
+        speed_bytes_per_sec = 1;
+    }
+
+    rt_uint32_t timeout_ms = total_byte_ms / speed_bytes_per_sec + 100;
+    rt_tick_t timeout_tick = rt_tick_from_millisecond(timeout_ms);
 
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
@@ -424,7 +439,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             }
             else
             {
-                state = HAL_SPI_TransmitReceive(spi_handle, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length, 1000);
+                state = HAL_SPI_TransmitReceive(spi_handle, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length, timeout_ms);
             }
         }
         else if (message->send_buf)
@@ -435,7 +450,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             }
             else
             {
-                state = HAL_SPI_Transmit(spi_handle, (uint8_t *)send_buf, send_length, 1000);
+                state = HAL_SPI_Transmit(spi_handle, (uint8_t *)send_buf, send_length, timeout_ms);
             }
 
             if (message->cs_release && (device->config.mode & RT_SPI_3WIRE))
@@ -455,7 +470,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             {
                 /* clear the old error flag */
                 __HAL_SPI_CLEAR_OVRFLAG(spi_handle);
-                state = HAL_SPI_Receive(spi_handle, (uint8_t *)recv_buf, send_length, 1000);
+                state = HAL_SPI_Receive(spi_handle, (uint8_t *)recv_buf, send_length, timeout_ms);
             }
         }
         else
@@ -482,7 +497,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         if ((spi_drv->spi_dma_flag & (SPI_USING_TX_DMA_FLAG | SPI_USING_RX_DMA_FLAG)) && (send_length >= DMA_TRANS_MIN_LEN))
         {
             /* blocking the thread,and the other tasks can run */
-            if (rt_completion_wait(&spi_drv->cpt, 1000) != RT_EOK)
+            if (rt_completion_wait(&spi_drv->cpt, timeout_tick) != RT_EOK)
             {
                 state = HAL_ERROR;
                 LOG_E("wait for DMA interrupt overtime!");
@@ -491,7 +506,20 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         }
         else
         {
-            while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY);
+            rt_uint32_t timeout = timeout_ms;
+            while (HAL_SPI_GetState(spi_handle) != HAL_SPI_STATE_READY)
+            {
+                if (timeout-- > 0)
+                {
+                    rt_thread_mdelay(1);
+                }
+                else
+                {
+                    LOG_E("timeout! SPI state did not become READY.");
+                    state = HAL_TIMEOUT;
+                    break;
+                }
+            }
         }
 
         if(dma_aligned_buffer != RT_NULL) /* re-aligned, so need to copy the data to recv_buf */

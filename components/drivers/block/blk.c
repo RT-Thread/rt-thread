@@ -536,7 +536,9 @@ static int list_blk(int argc, char**argv)
         }
 
         size_name = convert_size(&geome, geome.sector_count, &cap, &minor);
+        const char *mnt_path;
 
+        mnt_path = dfs_filesystem_get_mounted_path(&disk->parent);
         rt_kprintf("%-*.s %3u.%-3u  %u %u.%u%s\t%u  disk %s\n",
                 RT_NAME_MAX, to_disk_name(disk),
         #ifdef RT_USING_DM
@@ -546,12 +548,13 @@ static int list_blk(int argc, char**argv)
         #endif
                 disk->removable, cap, minor, size_name, disk->read_only,
                 disk->max_partitions != RT_BLK_PARTITION_NONE ? "\b" :
-                    (dfs_filesystem_get_mounted_path(&disk->parent) ? : "\b"));
+                    (mnt_path ? mnt_path : "\b"));
 
         rt_list_for_each_entry(blk_dev, &disk->part_nodes, list)
         {
             size_name = convert_size(&geome, blk_dev->sector_count, &cap, &minor);
 
+            mnt_path = dfs_filesystem_get_mounted_path(&blk_dev->parent);
             rt_kprintf("%c--%-*.s %3u.%-3u  %u %u.%u%s\t%u  part %s\n",
                     blk_dev->list.next != &disk->part_nodes ? '|' : '`',
                     RT_NAME_MAX - 3, to_blk_name(blk_dev),
@@ -561,7 +564,7 @@ static int list_blk(int argc, char**argv)
                     0, 0,
             #endif
                     disk->removable, cap, minor, size_name, disk->read_only,
-                    dfs_filesystem_get_mounted_path(&blk_dev->parent) ? : "");
+                    mnt_path ? mnt_path : "");
         }
     }
 

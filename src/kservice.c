@@ -208,6 +208,32 @@ rt_device_t rt_console_set_device(const char *name)
 RTM_EXPORT(rt_console_set_device);
 #endif /* RT_USING_DEVICE */
 
+#ifdef RT_USING_CONSOLE_OUTPUT_CTL
+static volatile rt_bool_t _console_output_enabled = RT_TRUE;
+
+/**
+ * @brief Enable or disable console log output.
+ *
+ * @param enabled RT_TRUE to enable output, RT_FALSE to disable output.
+ */
+void rt_console_output_set_enabled(rt_bool_t enabled)
+{
+    _console_output_enabled = enabled;
+}
+RTM_EXPORT(rt_console_output_set_enabled);
+
+/**
+ * @brief Get current console log output enable state.
+ *
+ * @return RT_TRUE if output is enabled, RT_FALSE otherwise.
+ */
+rt_bool_t rt_console_output_get_enabled(void)
+{
+    return _console_output_enabled;
+}
+RTM_EXPORT(rt_console_output_get_enabled);
+#endif /* RT_USING_CONSOLE_OUTPUT_CTL */
+
 rt_weak void rt_hw_console_output(const char *str)
 {
     /* empty console output */
@@ -346,6 +372,11 @@ void rt_kputs(const char *str)
         return;
     }
 
+    if (!rt_console_output_get_enabled())
+    {
+        return;
+    }
+
     _kputs(str, rt_strlen(str));
 }
 
@@ -361,6 +392,11 @@ rt_weak int rt_kprintf(const char *fmt, ...)
     va_list args;
     rt_size_t length = 0;
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
+
+    if (!rt_console_output_get_enabled())
+    {
+        return 0;
+    }
 
     va_start(args, fmt);
     PRINTF_BUFFER_TAKE;
@@ -1066,6 +1102,56 @@ rt_weak void rt_free_align(void *ptr)
 }
 RTM_EXPORT(rt_free_align);
 #endif /* RT_USING_HEAP */
+
+/**
+ * @brief Find the index of the most significant set bit in a 32-bit integer.
+ * @details The result is the position of the highest bit set to 1, counting
+ * from 1 for the least significant bit. If the input value is 0, the function
+ * returns 0.
+ *
+ * Examples:
+ * - fls(0) = 0
+ * - fls(1) = 1
+ * - fls(0x80000000) = 32
+ *
+ * @param val 32-bit integer value to examine.
+ * @return Position of the most significant set bit (1–32), or 0 if @p val is 0.
+ */
+int __rt_fls(int val)
+{
+    int bit = 32;
+
+    if (!val)
+    {
+        return 0;
+    }
+    if (!(val & 0xffff0000u))
+    {
+        val <<= 16;
+        bit -= 16;
+    }
+    if (!(val & 0xff000000u))
+    {
+        val <<= 8;
+        bit -= 8;
+    }
+    if (!(val & 0xf0000000u))
+    {
+        val <<= 4;
+        bit -= 4;
+    }
+    if (!(val & 0xc0000000u))
+    {
+        val <<= 2;
+        bit -= 2;
+    }
+    if (!(val & 0x80000000u))
+    {
+        bit -= 1;
+    }
+
+    return bit;
+}
 
 #ifndef RT_USING_CPU_FFS
 #ifdef RT_USING_TINY_FFS

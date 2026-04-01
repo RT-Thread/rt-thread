@@ -56,7 +56,7 @@ void rt_hw_pic_init()
 
 void rt_hw_interrupt_handle(int vector, void* param)
 {
-    rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
+    rt_kprintf("Unhandled interrupt %d occurred!!!\n", vector);
 }
 
 void rt_hw_isr(int vector)

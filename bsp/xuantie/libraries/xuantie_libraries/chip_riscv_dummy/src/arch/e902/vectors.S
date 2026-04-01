@@ -18,10 +18,10 @@
 
 #include "riscv_asm_macro.h"
 
-/* Enable interrupts when returning from the handler */
-#define MSTATUS_PRV1 0x1880
+#define RISCV_MCAUSE_IRQ_POS 31
+#define MSTATUS_IEN 8
 
-.section .stack
+.section .stack, "aw", @nobits
     .align  2
     .global g_trapstackbase
     .global g_top_trapstack
@@ -32,11 +32,19 @@ g_top_trapstack:
 #if CONFIG_SUPPORT_IRQ_NESTED
 #define IRQ_NESTED_MAX  (6)
 .section .bss
-irq_nested_level:
-.long 0
+    .align 2
+    irq_nested_level:
+    .long 0
 
-irq_nested_mcause:
-.long 0, 0, 0, 0, 0, 0
+    irq_nested_mcause:
+    .long 0, 0, 0, 0, 0, 0
+#endif
+
+/* for interrupt tail-chaining debug */
+#if CONFIG_DEBUG_TAIL_CHAINING
+    .global g_irq_tailchain_loops
+g_irq_tailchain_loops:
+    .long 0
 #endif
 
 .text
@@ -46,18 +54,24 @@ irq_nested_mcause:
     .weak   Default_IRQHandler
     .type   Default_IRQHandler, %function
 Default_IRQHandler:
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, -4
+    sw      s0, (sp)
+#endif
     csrw    mscratch, sp
     la      sp, g_top_irqstack
-    addi    sp, sp, -48
+    addi    sp, sp, -52
     sw      t0, 4(sp)
     sw      t1, 8(sp)
+    sw      t2, 12(sp)
     csrr    t0, mepc
     csrr    t1, mcause
+    csrr    t2, mstatus
     sw      t1, 40(sp)
     sw      t0, 44(sp)
+    sw      t2, 48(sp)
 
     sw      ra, 0(sp)
-    sw      t2, 12(sp)
     sw      a0, 16(sp)
     sw      a1, 20(sp)
     sw      a2, 24(sp)
@@ -81,12 +95,12 @@ Default_IRQHandler:
     and     a5, a4, a3
     sb      a5, 0(a2)
 
-    li      t0, MSTATUS_PRV1
-    csrs    mstatus, t0
     csrw    mcause, a1
 
     lw      t0, 44(sp)
+    lw      t1, 48(sp)
     csrw    mepc, t0
+    csrw    mstatus, t1
     lw      ra, 0(sp)
     lw      t0, 4(sp)
     lw      t1, 8(sp)
@@ -98,12 +112,17 @@ Default_IRQHandler:
     lw      a4, 32(sp)
     lw      a5, 36(sp)
 
-    addi    sp, sp, 48
+    addi    sp, sp, 52
     csrr    sp, mscratch
+
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, 4
+#endif
+
     mret
 #else
     .align  2
-    .weak  Default_IRQHandler
+    .weak   Default_IRQHandler
     .type   Default_IRQHandler, %function
 Default_IRQHandler:
     addi    sp, sp, -8
@@ -131,9 +150,12 @@ Default_IRQHandler:
     li      t0, 1
     bgt     t1, t0, .Lnested1
 
-    lw      t0, 0(sp)
-    lw      t1, 4(sp)
-    addi    sp, sp, 8
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, -8
+    sw      s0, (sp)
+    csrr    t0, mepc
+    sw      t0, 4(sp)
+#endif
 
     csrw    mscratch, sp
     la      sp, g_top_irqstack
@@ -143,18 +165,20 @@ Default_IRQHandler:
     lw      t1, 4(sp)
     addi    sp, sp, 8
 .Lnested2:
-    addi    sp, sp, -48
+    addi    sp, sp, -52
     sw      t0, 4(sp)
     sw      t1, 8(sp)
+    sw      t2, 12(sp)
     csrr    t0, mepc
     csrr    t1, mcause
+    csrr    t2, mstatus
     sw      t1, 40(sp)
     sw      t0, 44(sp)
+    sw      t2, 48(sp)
 
     csrs    mstatus, 8
 
     sw      ra, 0(sp)
-    sw      t2, 12(sp)
     sw      a0, 16(sp)
     sw      a1, 20(sp)
     sw      a2, 24(sp)
@@ -166,7 +190,6 @@ Default_IRQHandler:
     jalr    t0
 
     csrc    mstatus, 8
-
 
     lw      a1, 40(sp)
     andi    a0, a1, 0x3FF
@@ -187,12 +210,12 @@ Default_IRQHandler:
     sw      t1, (t0)
     bgt     t1, zero, .Lnested3
 
-    li      t0, MSTATUS_PRV1
-    csrs    mstatus, t0
     csrw    mcause, a1
 
     lw      t0, 44(sp)
+    lw      t1, 48(sp)
     csrw    mepc, t0
+    csrw    mstatus, t1
     lw      ra, 0(sp)
     lw      t0, 4(sp)
     lw      t1, 8(sp)
@@ -204,8 +227,14 @@ Default_IRQHandler:
     lw      a4, 32(sp)
     lw      a5, 36(sp)
 
-    addi    sp, sp, 48
+    addi    sp, sp, 52
     csrr    sp, mscratch
+#if CONFIG_PROFILING_PERF && CONFIG_PERF_BACKTRACE_USE_FP
+    addi    sp, sp, 8
+#endif
+    lw      t0, 0(sp)
+    lw      t1, 4(sp)
+    addi    sp, sp, 8
     mret
 
 .Lnested3:
@@ -220,10 +249,9 @@ Default_IRQHandler:
     or      t0, a0, t0
     csrw    mcause, t0
     lw      t0, 44(sp)
+    lw      t1, 48(sp)
     csrw    mepc, t0
-
-    li      t0, MSTATUS_PRV1
-    csrs    mstatus, t0
+    csrw    mstatus, t1
 
     lw      ra, 0(sp)
     lw      t0, 4(sp)
@@ -236,9 +264,11 @@ Default_IRQHandler:
     lw      a4, 32(sp)
     lw      a5, 36(sp)
 
-    addi    sp, sp, 48
+    addi    sp, sp, 52
     mret
 #endif
+
+    .size   Default_IRQHandler, . - Default_IRQHandler
 
 /******************************************************************************
  * Functions:
@@ -281,6 +311,7 @@ trap:
     la      a1, exceptionHandler
     jalr    a1
 
+    .size   trap, . - trap
 
     .align  6
     .weak   Default_Handler
@@ -291,6 +322,10 @@ Default_Handler:
     sw      t0, 0x0(sp)
     sw      t1, 0x4(sp)
     csrr    t0, mcause
+#if (CONFIG_SUPPORT_NON_VECTOR_IRQ) && (!CONFIG_SUPPORT_IRQ_NESTED)
+    srli    t1, t0, RISCV_MCAUSE_IRQ_POS
+    bnez    t1, is_interrupt
+#endif
     andi    t0, t0, 0x3FF
     li      t1, 24
     beq     t0, t1, .NMI_Handler
@@ -298,6 +333,82 @@ Default_Handler:
     lw      t1, 0x4(sp)
     addi    sp, sp, 8
     j      trap
+#if (CONFIG_SUPPORT_NON_VECTOR_IRQ) && (!CONFIG_SUPPORT_IRQ_NESTED)
+is_interrupt:
+    lw      t0, 0x0(sp)
+    lw      t1, 0x4(sp)
+    addi    sp, sp, 8
+    csrw    mscratch, sp
+    la      sp, g_top_irqstack
+    addi    sp, sp, -52
+    sw      t0, 4(sp)
+    sw      t1, 8(sp)
+    sw      t2, 12(sp)
+    csrr    t0, mepc
+    csrr    t1, mcause
+    csrr    t2, mstatus
+    sw      t1, 40(sp)
+    sw      t0, 44(sp)
+    sw      t2, 48(sp)
+
+    sw      ra, 0(sp)
+    sw      a0, 16(sp)
+    sw      a1, 20(sp)
+    sw      a2, 24(sp)
+    sw      a3, 28(sp)
+    sw      a4, 32(sp)
+    sw      a5, 36(sp)
+
+#if CONFIG_DEBUG_TAIL_CHAINING
+    li       t2, 0
+    la       t1, g_irq_tailchain_loops
+    sw       t2, 0(t1)
+#endif
+
+    csrrsi   t0, mnxti, MSTATUS_IEN
+    beqz     t0, irq_done
+
+irq_loop:
+#if CONFIG_DEBUG_TAIL_CHAINING
+    la       t2, g_irq_tailchain_loops
+    lw       t1, 0(t2)
+    addi     t1, t1, 1
+    sw       t1, 0(t2)
+#endif
+    lw       t1, 0(t0)
+    jalr     t1
+    csrrsi   t0, mnxti, MSTATUS_IEN
+    bnez     t0, irq_loop
+
+#if CONFIG_DEBUG_TAIL_CHAINING
+    li       t2, 0
+    la       a1, g_irq_tailchain_loops
+    sw       t2, 0(a1)
+#endif
+
+irq_done:
+    lw      t0, 40(sp)
+    lw      t1, 44(sp)
+    lw      t2, 48(sp)
+    csrw    mcause, t0
+    csrw    mepc, t1
+    csrw    mstatus, t2
+
+    lw      ra, 0(sp)
+    lw      t0, 4(sp)
+    lw      t1, 8(sp)
+    lw      t2, 12(sp)
+    lw      a0, 16(sp)
+    lw      a1, 20(sp)
+    lw      a2, 24(sp)
+    lw      a3, 28(sp)
+    lw      a4, 32(sp)
+    lw      a5, 36(sp)
+
+    addi    sp, sp, 52
+    csrr    sp, mscratch
+    mret
+#endif /* (CONFIG_SUPPORT_NON_VECTOR_IRQ) && (!CONFIG_SUPPORT_IRQ_NESTED) */
 .NMI_Handler:
     /* mscratch may be used before */
     addi    sp, sp, -4
@@ -306,16 +417,18 @@ Default_Handler:
 
     csrw    mscratch, sp
     la      sp, g_top_trapstack
-    addi    sp, sp, -48
+    addi    sp, sp, -52
     sw      t0, 4(sp)
     sw      t1, 8(sp)
+    sw      t2, 12(sp)
     csrr    t0, mepc
     csrr    t1, mcause
+    csrr    t2, mstatus
     sw      t1, 40(sp)
     sw      t0, 44(sp)
+    sw      t2, 48(sp)
 
     sw      ra, 0(sp)
-    sw      t2, 12(sp)
     sw      a0, 16(sp)
     sw      a1, 20(sp)
     sw      a2, 24(sp)
@@ -339,12 +452,12 @@ Default_Handler:
     and     a5, a4, a3
     sb      a5, 0(a2)
 
-    li      t0, MSTATUS_PRV1
-    csrs    mstatus, t0
     csrw    mcause, a1
 
     lw      t0, 44(sp)
+    lw      t1, 48(sp)
     csrw    mepc, t0
+    csrw    mstatus, t1
     lw      ra, 0(sp)
     lw      t0, 4(sp)
     lw      t1, 8(sp)
@@ -356,7 +469,7 @@ Default_Handler:
     lw      a4, 32(sp)
     lw      a5, 36(sp)
 
-    addi    sp, sp, 48
+    addi    sp, sp, 52
     csrr    sp, mscratch
 
     /* restore mscratch */

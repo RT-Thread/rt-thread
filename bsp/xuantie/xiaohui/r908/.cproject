@@ -47,7 +47,7 @@
               <option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.atomic.416146837" name="Atomic extension (RVA)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.atomic" useByScannerDiscovery="false" value="true" valueType="boolean" />
               <option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.compressed.1634763649" name="Compressed extension (RVC)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.isa.compressed" useByScannerDiscovery="false" value="true" valueType="boolean" />
               <option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.align.372039636" name="Align" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.align" useByScannerDiscovery="false" value="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.align.nostrict" valueType="enumerated" />
-              <option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.other.348153443" name="Other target flags" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.other" useByScannerDiscovery="true" value="-mcpu=r908" valueType="string" />
+              <option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.other.348153443" name="Other target flags" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.target.other" useByScannerDiscovery="true" value="-mcpu=r908fdv" valueType="string" />
               <option id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.other.2008859536" name="Other optimization flags" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.optimization.other" useByScannerDiscovery="true" value="-DCONFIG_KERNEL_RTTHREAD=1 -D__RT_KERNEL_SOURCE__=1 -DCONFIG_CSI_V2=1 -DCONFIG_SUPPORT_TSPEND=0 -DCONFIG_SUPPORT_IRQ_NESTED=0 -DCONFIG_XIP=1 -DCONFIG_ARCH_MAINSTACK=8192 -DCONFIG_ARCH_INTERRUPTSTACK=8192 -DCONFIG_BOARD_XIAOHUI_EVB=1 -DCLI_CONFIG_STACK_SIZE=8192 -DCONFIG_PLIC_BASE=134217728 -DCONFIG_VIC_TSPDR=201326592 -DCONFIG_CLIC_BASE=201392128 -DCONFIG_FPP_ENABLE=0 -DCONFIG_INTC_CLIC_PLIC=1 -DCONFIG_INIT_TASK_STACK_SIZE=8192 -DCONFIG_APP_TASK_STACK_SIZE=8192 -DCONFIG_SYSTICK_HZ=100 -DCONFIG_DEBUG=1" valueType="string" />
               <targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="ilg.gnumcueclipse.managedbuild.cross.riscv.targetPlatform.631468712" isAbstract="false" osList="all" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.targetPlatform" />
               <builder buildPath="${workspace_loc:/${ProjName}}" cleanBuildTarget="clean" id="ilg.gnumcueclipse.managedbuild.cross.riscv.builder.56173494" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.builder" />
@@ -65,7 +65,7 @@
               </tool>
               <tool id="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler.2003680225" name="GNU RISC-V Cross C Compiler" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.tool.c.compiler">
                 <option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.include.paths.1466730804" name="Include paths (-I)" superClass="ilg.gnumcueclipse.managedbuild.cross.riscv.option.c.compiler.include.paths" useByScannerDiscovery="true" valueType="includePath">
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908fdv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/xuantie_libraries/pre_main}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/device_drivers}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/xuantie_libraries/chip_riscv_dummy/include/asm}&quot;" />
@@ -88,7 +88,7 @@
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/asm}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/drv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908fdv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/drivers}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/sys}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/csi/csi2/include/core}&quot;" />
@@ -142,7 +142,7 @@
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/asm}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/drv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908fdv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/drivers}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/sys}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/csi/csi2/include/core}&quot;" />
@@ -309,7 +309,7 @@
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/asm}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/drv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908fdv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/drivers}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/sys}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/csi/csi2/include/core}&quot;" />
@@ -362,7 +362,7 @@
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/asm}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/drv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908fdv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/drivers}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/sys}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/csi/csi2/include/core}&quot;" />
@@ -529,7 +529,7 @@
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/asm}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/drv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908fdv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/drivers}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/sys}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/csi/csi2/include/core}&quot;" />
@@ -582,7 +582,7 @@
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/asm}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/drv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908fdv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/drivers}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/sys}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/csi/csi2/include/core}&quot;" />
@@ -749,7 +749,7 @@
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/asm}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/drv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908fdv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/drivers}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/sys}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/csi/csi2/include/core}&quot;" />
@@ -801,7 +801,7 @@
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/asm}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include/drv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/include}&quot;" />
-                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908}&quot;" />
+                  <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/arch/r908fdv}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/drivers}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/src/sys}&quot;" />
                   <listOptionValue builtIn="false" value="&quot;${workspace_loc://${ProjName}//rt-thread/bsp/xuantie/libraries/xuantie_libraries/csi/csi2/include/core}&quot;" />

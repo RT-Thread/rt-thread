@@ -15,4 +15,8 @@ if RT_USING_CLOCK_TIME
         depends on RT_USING_DM
         depends on ARCH_ARM_CORTEX_A || ARCH_ARMV8
         default n
+
+if RT_USING_DM
+    osource "$(SOC_DM_CLOCK_TIME_DIR)/Kconfig"
+endif
 endif
