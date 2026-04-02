@@ -16,6 +16,11 @@
 #define MAX_HANDLERS    32
 #define SVCMODE         0x13
 
+rt_inline rt_bool_t _interrupt_vector_is_valid(int vector)
+{
+    return (vector >= 0) && (vector < MAX_HANDLERS);
+}
+
 extern rt_atomic_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
@@ -116,6 +121,11 @@ void rt_hw_interrupt_init(void)
  */
 void rt_hw_interrupt_mask(int vector)
 {
+    if (!_interrupt_vector_is_valid(vector))
+    {
+        return;
+    }
+
     VICIntEnClr = (1 << vector);
 }
 
@@ -125,6 +135,11 @@ void rt_hw_interrupt_mask(int vector)
  */
 void rt_hw_interrupt_umask(int vector)
 {
+    if (!_interrupt_vector_is_valid(vector))
+    {
+        return;
+    }
+
     VICIntEnable = (1 << vector);
 }
 

@@ -15,6 +15,11 @@
 
 #define MAX_HANDLERS    32
 
+rt_inline rt_bool_t _interrupt_vector_is_valid(int vector)
+{
+    return (vector >= 0) && (vector < MAX_HANDLERS);
+}
+
 /* exception and interrupt handler table */
 struct rt_irq_desc irq_desc[MAX_HANDLERS];
 
@@ -65,11 +70,21 @@ void rt_hw_interrupt_init(void)
 
 void rt_hw_interrupt_mask(int vector)
 {
+    if (!_interrupt_vector_is_valid(vector))
+    {
+        return;
+    }
+
     VICIntEnClr = (1 << vector);
 }
 
 void rt_hw_interrupt_umask(int vector)
 {
+    if (!_interrupt_vector_is_valid(vector))
+    {
+        return;
+    }
+
     VICIntEnable = (1 << vector);
 }
 
