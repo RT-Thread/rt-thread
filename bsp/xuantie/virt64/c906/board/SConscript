@@ -12,4 +12,5 @@ src += ['drv_virtio.c']
 path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+group = group + SConscript(os.path.join('../../../../../qemu-virt64-riscv/driver/virtio', 'SConscript'))
 Return('group')
