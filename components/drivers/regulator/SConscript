@@ -8,7 +8,7 @@ if not GetDepend(['RT_USING_REGULATOR']):
 cwd = GetCurrentDir()
 CPPPATH = [cwd + '/../include']
 
-src = ['regulator.c', 'regulator_dm.c']
+src = ['regulator.c', 'regulator_dm.c', 'regulator_cmd.c']
 
 if GetDepend(['RT_REGULATOR_FIXED']):
     src += ['regulator-fixed.c']

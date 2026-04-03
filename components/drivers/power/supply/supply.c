@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-25     GuEe-GUI     the first version
+ * 2026-03-27     Evlers       add CLI snapshot/name helpers and OFW guards
  */
 
 #include <rtdevice.h>
@@ -25,6 +26,17 @@
 static RT_DEFINE_SPINLOCK(nodes_lock);
 static rt_list_t power_supply_nodes = RT_LIST_OBJECT_INIT(power_supply_nodes);
 static rt_list_t power_supply_notifier_nodes = RT_LIST_OBJECT_INIT(power_supply_notifier_nodes);
+
+const char *rt_power_supply_name(struct rt_power_supply *psy)
+{
+    struct rt_device *dev = psy ? psy->dev : RT_NULL;
+
+#ifdef RT_USING_DM
+    return rt_dm_dev_get_name(dev);
+#else
+    return dev ? dev->parent.name : "<no-dev>";
+#endif
+}
 
 static rt_bool_t power_supply_have_property(struct rt_power_supply *psy,
         enum rt_power_supply_property prop);
@@ -68,10 +80,16 @@ rt_err_t power_supply_thermal_register(struct rt_power_supply *psy)
             return -RT_ENOMEM;
         }
 
+#ifdef RT_USING_DM
         rt_dm_dev_set_name(&psy->thermal_dev->parent, rt_dm_dev_get_name(psy->dev));
+#else
+        psy->thermal_dev->parent.parent.name = rt_power_supply_name(psy);
+#endif
         psy->thermal_dev->zone_id = 0;
         psy->thermal_dev->ops = &power_supply_thermal_zone_ops;
+#ifdef RT_USING_OFW
         psy->thermal_dev->parent.ofw_node = psy->dev->ofw_node;
+#endif
         psy->thermal_dev->priv = psy;
 
         if ((err = rt_thermal_zone_device_register(psy->thermal_dev)))
@@ -229,10 +247,14 @@ rt_err_t rt_power_supply_register(struct rt_power_supply *psy)
     rt_list_insert_before(&power_supply_nodes, &psy->list);
     rt_spin_unlock(&nodes_lock);
 
+#ifdef RT_USING_OFW
     if (psy->dev->ofw_node)
     {
+#ifdef RT_USING_DM
         rt_dm_dev_bind_fwdata(psy->dev, RT_NULL, psy);
+#endif
     }
+#endif
 
     return RT_EOK;
 }
@@ -256,10 +278,14 @@ rt_err_t rt_power_supply_unregister(struct rt_power_supply *psy)
 
     rt_list_remove(&psy->list);
 
+#ifdef RT_USING_OFW
     if (psy->dev->ofw_node)
     {
+#ifdef RT_USING_DM
         rt_dm_dev_unbind_fwdata(psy->dev, RT_NULL);
+#endif
     }
+#endif
 
 _unlock:
     rt_spin_unlock(&nodes_lock);
@@ -562,133 +588,62 @@ void rt_power_supply_put(struct rt_power_supply *psy)
     rt_ref_put(&psy->ref, power_supply_release);
 }
 
-#if defined(RT_USING_CONSOLE) && defined(RT_USING_MSH)
-const char * const type_str[] =
-{
-    [RT_POWER_SUPPLY_TYPE_UNKNOWN] = "UnKnown",
-    [RT_POWER_SUPPLY_TYPE_BATTERY] = "Battery",
-    [RT_POWER_SUPPLY_TYPE_UPS] = "UPS",
-    [RT_POWER_SUPPLY_TYPE_MAINS] = "Mains",
-    [RT_POWER_SUPPLY_TYPE_USB_SDP] = "USB SDP",
-    [RT_POWER_SUPPLY_TYPE_USB_DCP] = "USB DCP",
-    [RT_POWER_SUPPLY_TYPE_USB_CDP] = "USB CDP",
-    [RT_POWER_SUPPLY_TYPE_USB_ACA] = "USB ACA",
-    [RT_POWER_SUPPLY_TYPE_USB_TYPE_C] = "USB TypeC",
-    [RT_POWER_SUPPLY_TYPE_USB_PD] = "USB PD",
-    [RT_POWER_SUPPLY_TYPE_USB_PD_DRP] = "USB PD DRP",
-    [RT_POWER_SUPPLY_TYPE_USB_PD_PPS] = "USB PD PPS",
-    [RT_POWER_SUPPLY_TYPE_WIRELESS] = "Wireless",
-};
-
-const char * const status_str[] =
-{
-    [RT_POWER_SUPPLY_STATUS_UNKNOWN] = "UnKnown",
-    [RT_POWER_SUPPLY_STATUS_CHARGING] = "Charging",
-    [RT_POWER_SUPPLY_STATUS_DISCHARGING] = "Discharging",
-    [RT_POWER_SUPPLY_STATUS_NOT_CHARGING] = "Not Charging",
-    [RT_POWER_SUPPLY_STATUS_FULL] = "Full",
-};
-
-const char * const charge_type_str[] =
-{
-    [RT_POWER_SUPPLY_CHARGE_TYPE_UNKNOWN] = "Unknown",
-    [RT_POWER_SUPPLY_CHARGE_TYPE_NONE] = "None",
-    [RT_POWER_SUPPLY_CHARGE_TYPE_TRICKLE] = "Trickle",
-    [RT_POWER_SUPPLY_CHARGE_TYPE_FAST] = "Fast",
-    [RT_POWER_SUPPLY_CHARGE_TYPE_STANDARD] = "Standard",
-    [RT_POWER_SUPPLY_CHARGE_TYPE_ADAPTIVE] = "Adaptive",
-    [RT_POWER_SUPPLY_CHARGE_TYPE_CUSTOM] = "Custom",
-    [RT_POWER_SUPPLY_CHARGE_TYPE_LONGLIFE] = "Longlife",
-    [RT_POWER_SUPPLY_CHARGE_TYPE_BYPASS] = "Bypass",
-};
-
-const char * const health_str[] =
-{
-    [RT_POWER_SUPPLY_HEALTH_UNKNOWN] = "Unknown",
-    [RT_POWER_SUPPLY_HEALTH_GOOD] = "Good",
-    [RT_POWER_SUPPLY_HEALTH_OVERHEAT] = "Overheat",
-    [RT_POWER_SUPPLY_HEALTH_DEAD] = "Dead",
-    [RT_POWER_SUPPLY_HEALTH_OVERVOLTAGE] = "Overvoltage",
-    [RT_POWER_SUPPLY_HEALTH_UNSPEC_FAILURE] = "Unspec Failure",
-    [RT_POWER_SUPPLY_HEALTH_COLD] = "Cold",
-    [RT_POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE] = "Watchdog Timer Expire",
-    [RT_POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE] = "Safety Timer Expire",
-    [RT_POWER_SUPPLY_HEALTH_OVERCURRENT] = "Overcurrent",
-    [RT_POWER_SUPPLY_HEALTH_CALIBRATION_REQUIRED] = "Calibration Required",
-    [RT_POWER_SUPPLY_HEALTH_WARM] = "Warm",
-    [RT_POWER_SUPPLY_HEALTH_COOL] = "Cool",
-    [RT_POWER_SUPPLY_HEALTH_HOT] = "Hot",
-    [RT_POWER_SUPPLY_HEALTH_NO_BATTERY] = "No Battery",
-};
-
-const char * const tech_str[] =
-{
-    [RT_POWER_SUPPLY_TECHNOLOGY_UNKNOWN] = "UnKnown",
-    [RT_POWER_SUPPLY_TECHNOLOGY_NiMH] = "NiMH",
-    [RT_POWER_SUPPLY_TECHNOLOGY_LION] = "LION",
-    [RT_POWER_SUPPLY_TECHNOLOGY_LIPO] = "LIPO",
-    [RT_POWER_SUPPLY_TECHNOLOGY_LiFe] = "LiFe",
-    [RT_POWER_SUPPLY_TECHNOLOGY_NiCd] = "NiCd",
-    [RT_POWER_SUPPLY_TECHNOLOGY_LiMn] = "LiMn",
-};
-
-static int list_power_supply(int argc, char**argv)
+struct rt_power_supply **rt_power_supply_snapshot(rt_size_t *count)
 {
     struct rt_power_supply *psy, *psy_next;
-    union rt_power_supply_property_val propval = {};
+    struct rt_power_supply **nodes;
+    rt_size_t total = 0;
+    rt_size_t idx = 0;
 
-    rt_spin_lock(&nodes_lock);
-
-    rt_list_for_each_entry_safe(psy, psy_next, &power_supply_nodes, list)
+    if (!count)
     {
-        rt_spin_unlock(&nodes_lock);
-
-        rt_kprintf("%s %s\n", rt_dm_dev_get_name(psy->dev), type_str[psy->type]);
-
-        rt_power_supply_get_property(psy, RT_POWER_SUPPLY_PROP_STATUS, &propval);
-        rt_kprintf("status: %s\n", status_str[propval.intval]), propval.intval = 0;
-
-        rt_power_supply_get_property(psy, RT_POWER_SUPPLY_PROP_CHARGE_TYPE, &propval);
-        rt_kprintf("charge type: %s\n", charge_type_str[propval.intval]), propval.intval = 0;
-
-        rt_power_supply_get_property(psy, RT_POWER_SUPPLY_PROP_HEALTH, &propval);
-        rt_kprintf("health: %s\n", health_str[propval.intval]), propval.intval = 0;
-
-        if (psy->battery_info)
-        {
-            struct rt_power_supply_battery_info *info = psy->battery_info;
-
-            rt_power_supply_get_property(psy, RT_POWER_SUPPLY_PROP_CAPACITY, &propval);
-            rt_kprintf("capacity:                       %d%%\n", propval.intval), propval.intval = 0;
-
-            rt_kprintf("technology:                     %s\n", tech_str[info->technology]);
-            rt_kprintf("energy full design:             %u uWh\n", info->energy_full_design_uwh);
-            rt_kprintf("charge full design:             %u uAh\n", info->charge_full_design_uah);
-            rt_kprintf("voltage design range:           %u~%u uV\n", info->voltage_min_design_uv, info->voltage_max_design_uv);
-            rt_kprintf("precharge current:              %u uA\n", info->precharge_current_ua);
-            rt_kprintf("charge term current:            %u uA\n", info->charge_term_current_ua);
-            rt_kprintf("charge restart voltage:         %u uV\n", info->charge_restart_voltage_uv);
-            rt_kprintf("constant charge current max:    %u uA\n", info->constant_charge_current_max_ua);
-            rt_kprintf("constant charge voltage max:    %u uV\n", info->constant_charge_voltage_max_uv);
-            rt_kprintf("temp ambient alert range:       %+d.%u~%+d.%u C\n",
-                    info->temp_ambient_alert_min / 1000, rt_abs(info->temp_ambient_alert_min) % 1000,
-                    info->temp_ambient_alert_max / 1000, rt_abs(info->temp_ambient_alert_max) % 1000);
-            rt_kprintf("temp alert range:               %+d.%u~%+d.%u C\n",
-                    info->temp_alert_min / 1000, rt_abs(info->temp_alert_min) % 1000,
-                    info->temp_alert_max / 1000, rt_abs(info->temp_alert_max) % 1000);
-            rt_kprintf("temp range:                     %+d.%u~%+d.%u C\n",
-                    info->temp_min / 1000, rt_abs(info->temp_min) % 1000,
-                    info->temp_max / 1000, rt_abs(info->temp_max) % 1000);
-        }
-
-        rt_kputs("\n");
-
-        rt_spin_lock(&nodes_lock);
+        return RT_NULL;
     }
 
+    *count = 0;
+
+    rt_spin_lock(&nodes_lock);
+    rt_list_for_each_entry_safe(psy, psy_next, &power_supply_nodes, list)
+    {
+        total++;
+    }
     rt_spin_unlock(&nodes_lock);
 
-    return 0;
+    if (!total)
+    {
+        return RT_NULL;
+    }
+
+    nodes = rt_calloc(total, sizeof(*nodes));
+    if (!nodes)
+    {
+        return RT_NULL;
+    }
+
+    rt_spin_lock(&nodes_lock);
+    rt_list_for_each_entry_safe(psy, psy_next, &power_supply_nodes, list)
+    {
+        nodes[idx] = psy;
+        rt_ref_get(&psy->ref);
+        idx++;
+    }
+    rt_spin_unlock(&nodes_lock);
+
+    *count = total;
+    return nodes;
 }
-MSH_CMD_EXPORT(list_power_supply, dump all of power supply information);
-#endif /* RT_USING_CONSOLE && RT_USING_MSH */
+
+void rt_power_supply_snapshot_free(struct rt_power_supply **nodes, rt_size_t count)
+{
+    if (!nodes)
+    {
+        return;
+    }
+
+    while (count--)
+    {
+        rt_ref_put(&nodes[count]->ref, power_supply_release);
+    }
+
+    rt_free(nodes);
+}
