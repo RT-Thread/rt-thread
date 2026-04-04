@@ -33,7 +33,8 @@ void* dlopen(const char *filename, int flags)
 {
     struct rt_dlmodule *module;
     char *fullpath;
-    const char*def_path = MODULE_ROOT_DIR;
+    const char *def_path = MODULE_ROOT_DIR;
+    char module_name[RT_NAME_MAX];
 
     /* check parameters */
     RT_ASSERT(filename != RT_NULL);
@@ -48,15 +49,21 @@ void* dlopen(const char *filename, int flags)
     }
     else
     {
-        fullpath = (char*)filename; /* absolute path, use it directly */
+        fullpath = (char *)filename; /* absolute path, use it directly */
     }
+
+    /* Extract module name from path (strip directory and extension)
+     * This matches the logic in _dlmodule_set_name() so that dlmodule_find()
+     * can properly locate already-loaded modules by their stored name.
+     */
+    dlmodule_extract_name(fullpath, module_name, RT_NAME_MAX);
 
     rt_enter_critical();
 
-    /* find in module list */
-    module = dlmodule_find(fullpath);
+    /* find in module list using the stripped module name */
+    module = dlmodule_find(module_name);
 
-    if(module != RT_NULL)
+    if (module != RT_NULL)
     {
         rt_exit_critical();
         module->nref++;
@@ -67,11 +74,11 @@ void* dlopen(const char *filename, int flags)
         module = dlmodule_load(fullpath);
     }
 
-    if(fullpath != filename)
+    if (fullpath != filename)
     {
         rt_free(fullpath);
     }
 
-    return (void*)module;
+    return (void *)module;
 }
 RTM_EXPORT(dlopen);
