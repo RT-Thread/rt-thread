@@ -200,7 +200,7 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
         R_GPT_Stop(tim->g_ctrl);
         uint32_t wp = tim->g_ctrl->p_reg->GTWP;
         tim->g_ctrl->p_reg->GTWP = GPT_GTWP_RESET_VALUE;
-        tim->g_ctrl->p_reg->GTWP;
+        (void) tim->g_ctrl->p_reg->GTWP;
         tim->g_ctrl->p_reg->GTCR_b.TPCS = (source_div >> BSP_FEATURE_GPT_TPCS_SHIFT);
         tim->g_ctrl->p_reg->GTWP = (wp | GPT_GTWP_RESET_VALUE);
 
