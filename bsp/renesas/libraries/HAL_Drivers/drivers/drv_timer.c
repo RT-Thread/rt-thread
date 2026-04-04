@@ -17,6 +17,14 @@
 
 #ifdef RT_USING_CLOCK_TIME
 
+#define GPT_GTWP_RESET_VALUE (0xA500U)
+
+#ifdef SOC_SERIES_R9A07G0
+    #define TIMER_FSP_PRIV_CLOCK FSP_PRIV_CLOCK_PCLKGPTL
+#else
+    #define TIMER_FSP_PRIV_CLOCK FSP_PRIV_CLOCK_PCLKD
+#endif
+
 static struct ra_clock_timer ra_clock_timer_obj[BSP_TIMERS_NUM] =
 {
 #ifdef BSP_USING_TIM0
@@ -156,17 +164,48 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
     {
     case CLOCK_TIMER_CTRL_FREQ_SET:
     {
-        rt_uint8_t index = 0;
-        rt_uint32_t freq = *((rt_uint32_t *)arg);
+        rt_uint32_t req_freq = *((rt_uint32_t *)arg);
+        rt_uint32_t source_div = 0;
+        rt_uint32_t actual_freq = 0;
+        rt_uint32_t src_clk_hz = R_FSP_SystemClockHzGet(TIMER_FSP_PRIV_CLOCK);
 
-        for (rt_uint8_t i = 0; i < PLCKD_PRESCALER_MAX_SELECT; i++)
+#if (2U == BSP_FEATURE_GPT_CLOCK_DIVIDER_STEP_SIZE)
+        for (rt_uint32_t div = 0; div <= 10U; div++)
+#else
+        for (rt_uint32_t div = 0; div <= 10U; div += 2U)
+#endif
         {
-            if (freq <= PLCKD_FREQ_PRESCALER[i])
+#if (2U == BSP_FEATURE_GPT_CLOCK_DIVIDER_STEP_SIZE) && (0U == BSP_FEATURE_GPT_CLOCK_DIVIDER_VALUE_7_9_VALID)
+            if ((7U == div) || (9U == div))
             {
-                index = i;
+                continue;
+            }
+#endif
+            rt_uint32_t cand = src_clk_hz >> div;
+            if (req_freq <= cand)
+            {
+                source_div = div;
+                actual_freq = cand;
             }
         }
-        tim->g_ctrl->p_reg->GTCR_b.TPCS = index;
+
+        if (0U == actual_freq)
+        {
+            /* Keep behavior bounded even with an unexpected input. */
+            source_div = 10U;
+            actual_freq = src_clk_hz >> source_div;
+        }
+
+        /* GPT TPCS can only be updated when counter is stopped and GTWP is unlocked. */
+        R_GPT_Stop(tim->g_ctrl);
+        uint32_t wp = tim->g_ctrl->p_reg->GTWP;
+        tim->g_ctrl->p_reg->GTWP = GPT_GTWP_RESET_VALUE;
+        (void) tim->g_ctrl->p_reg->GTWP;
+        tim->g_ctrl->p_reg->GTCR_b.TPCS = (source_div >> BSP_FEATURE_GPT_TPCS_SHIFT);
+        tim->g_ctrl->p_reg->GTWP = (wp | GPT_GTWP_RESET_VALUE);
+
+        /* Return real hardware frequency to clock_timer core to keep conversion consistent. */
+        *((rt_uint32_t *)arg) = actual_freq;
     }
     break;
     default:
@@ -271,13 +310,50 @@ static int rt_hw_clock_timer_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_clock_timer_init);
 
-/* This is a clock_timer example */
-#define CLOCK_TIMER_DEV_NAME "timer0" /* device name */
+/* This is a clock_timer example.
+ * Use timer1 by default to avoid conflicting with the clock_time default event timer (timer0). */
+#ifdef BSP_USING_TIM1
+#define CLOCK_TIMER_DEV_NAME "timer1" /* device name */
+#else
+#define CLOCK_TIMER_DEV_NAME "timer0" /* fallback */
+#endif
+
+static rt_tick_t s_last_cb_tick = 0;
+
+static void clock_timer_sample_prepare(rt_device_t hw_dev)
+{
+    struct ra_clock_timer *tim = (struct ra_clock_timer *)hw_dev->user_data;
+
+    if (tim && tim->g_ctrl && tim->g_cfg)
+    {
+        R_GPT_Stop(tim->g_ctrl);
+        R_GPT_CounterSet(tim->g_ctrl, 0);
+        if (tim->g_cfg->cycle_end_irq >= 0)
+        {
+            R_BSP_IrqClearPending(tim->g_cfg->cycle_end_irq);
+        }
+    }
+}
 
 static rt_err_t timeout_cb(rt_device_t dev, rt_size_t size)
 {
+    rt_tick_t now_tick = rt_tick_get();
+
     rt_kprintf("this is clock_timer timeout callback fucntion!\n");
-    rt_kprintf("tick is :%d !\n", rt_tick_get());
+    if (s_last_cb_tick)
+    {
+        rt_tick_t dt_tick = now_tick - s_last_cb_tick;
+        rt_uint32_t dt_ms = (rt_uint32_t)(((rt_uint64_t)dt_tick * 1000ULL) / RT_TICK_PER_SECOND);
+        rt_kprintf("tick is :%d ! dt_tick=%d, dt_ms=%d\n",
+                   (int)now_tick,
+                   (int)dt_tick,
+                   (int)dt_ms);
+    }
+    else
+    {
+        rt_kprintf("tick is :%d ! dt_tick=0, dt_ms=0 (first)\n", (int)now_tick);
+    }
+    s_last_cb_tick = now_tick;
 
     return RT_EOK;
 }
@@ -288,7 +364,7 @@ int clock_timer_sample(void)
     rt_clock_timerval_t timeout_s;
     rt_device_t hw_dev = RT_NULL;
     rt_clock_timer_mode_t mode;
-    rt_uint32_t freq = 1875000; /* 1Mhz */
+    rt_uint32_t freq = 1875000; /* 1.875MHz */
 
     hw_dev = rt_device_find(CLOCK_TIMER_DEV_NAME);
     if (hw_dev == RT_NULL)
@@ -296,6 +372,7 @@ int clock_timer_sample(void)
         rt_kprintf("clock_timer sample run failed! can't find %s device!\n", CLOCK_TIMER_DEV_NAME);
         return -RT_ERROR;
     }
+    rt_kprintf("clock_timer sample using %s\n", CLOCK_TIMER_DEV_NAME);
 
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
     if (ret != RT_EOK)
@@ -303,6 +380,11 @@ int clock_timer_sample(void)
         rt_kprintf("open %s device failed!\n", CLOCK_TIMER_DEV_NAME);
         return ret;
     }
+
+    /* Stop old run and clear pending flag before a new period is configured. */
+    rt_device_control(hw_dev, CLOCK_TIMER_CTRL_STOP, RT_NULL);
+    clock_timer_sample_prepare(hw_dev);
+    s_last_cb_tick = 0;
 
     rt_device_set_rx_indicate(hw_dev, timeout_cb);
 
