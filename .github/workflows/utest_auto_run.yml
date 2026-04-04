@@ -55,6 +55,10 @@ jobs:
           - { UTEST: "AARCH64-rtsmart", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
           - { UTEST: "AARCH64-smp",   RTT_BSP: "bsp/qemu-virt64-aarch64",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "standard",  "SMP_RUN":"smp" }
 
+          - { UTEST: "AARCH64",       RTT_BSP: "bsp/zynqmp-a53-dfzu2eg",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "xlnx-zcu102",  SD_FILE: "None", KERNEL: "standard",  "SMP_RUN":"" }
+          - { UTEST: "AARCH64-rtsmart", RTT_BSP: "bsp/zynqmp-a53-dfzu2eg", QEMU_ARCH: "aarch64", QEMU_MACHINE: "xlnx-zcu102",  SD_FILE: "None", KERNEL: "rtsmart",  "SMP_RUN":"" }
+          - { UTEST: "AARCH64-smp",   RTT_BSP: "bsp/zynqmp-a53-dfzu2eg",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "xlnx-zcu102",  SD_FILE: "None", KERNEL: "standard",  "SMP_RUN":"smp" }
+
         config_file:
           - "default.cfg"
 
@@ -97,7 +101,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -yqq install scons qemu-system git
+          sudo apt-get -yqq install scons qemu-system git device-tree-compiler
           pip3 install kconfiglib
 
       - name: Install ToolChains
@@ -223,10 +227,24 @@ jobs:
           fi
 
           if [[ "${{ matrix.platform.QEMU_ARCH }}"  == "aarch64" ]]; then 
-            qemu-system-$TEST_QEMU_ARCH -M virt,gic-version=2 -cpu cortex-a53 -smp 4 -kernel $TEST_BSP_ROOT/rtthread.bin  -nographic \
-            -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0 \
-            -netdev user,id=net0 -device virtio-net-device,netdev=net0,bus=virtio-mmio-bus.1 \
-            > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
+            sudo apt-get -yqq install device-tree-compiler
+            if [[ "${{ matrix.platform.QEMU_MACHINE }}"  == "virt" ]]; then
+              qemu-system-$TEST_QEMU_ARCH -M virt,gic-version=2 -cpu cortex-a53 -smp 4 -kernel $TEST_BSP_ROOT/rtthread.bin  -nographic \
+              -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0 \
+              -netdev user,id=net0 -device virtio-net-device,netdev=net0,bus=virtio-mmio-bus.1 \
+              > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
+            elif [[ "${{ matrix.platform.QEMU_MACHINE }}"  == "xlnx-zcu102" ]]; then
+              heap=$(grep -E '^#define[[:space:]]+ARCH_HEAP_SIZE' $TEST_BSP_ROOT/rtconfig.h | awk '{print $3}')
+              page=$(grep -E '^#define[[:space:]]+ARCH_INIT_PAGE_SIZE' $TEST_BSP_ROOT/rtconfig.h | awk '{print $3}')
+              heap=$(echo "$heap" | tr -d '()')
+              page=$(echo "$page" | tr -d '()')
+              heap_val=$((heap))
+              page_val=$((page))
+              mem=$((heap_val + page_val))
+              mem=$((128 + mem / (1024 * 1024)))
+              qemu-system-$TEST_QEMU_ARCH -M xlnx-zcu102 -m $mem -kernel $TEST_BSP_ROOT/rtthread.bin -nographic \
+              > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
+            fi
           elif [[ "${{ matrix.platform.UTEST }}"  == "XUANTIE-rtsmart" ]]; then
             sudo apt-get install -y dos2unix libcapstone-dev libbrlapi-dev
             wget -q https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1736318325160/Xuantie-qemu-x86_64-Ubuntu-20.04-V5.0.5-B20250108-0335.tar.gz
