@@ -870,7 +870,7 @@ do                                                                            \
 {                                                                             \
     if (need_check)                                                           \
     {                                                                         \
-        if (rt_critical_level() != 0)                                         \
+        if ((rt_critical_level() != 0) || rt_hw_interrupt_is_disabled())      \
         {                                                                     \
             rt_kprintf("Function[%s]: scheduler is not available\n",          \
                     __FUNCTION__);                                            \
