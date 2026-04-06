@@ -50,7 +50,6 @@ rt_uint32_t rt_thread_ready_priority_group;
 rt_uint8_t rt_thread_ready_table[32];
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
-extern volatile rt_atomic_t rt_interrupt_nest;
 static rt_atomic_t rt_scheduler_lock_nest;
 rt_uint8_t rt_current_priority;
 
@@ -347,13 +346,13 @@ void rt_schedule(void)
                 LOG_D("[%d]switch to priority#%d "
                          "thread:%.*s(sp:0x%08x), "
                          "from thread:%.*s(sp: 0x%08x)",
-                         rt_interrupt_nest, highest_ready_priority,
+                         rt_interrupt_get_nest(), highest_ready_priority,
                          RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                          RT_NAME_MAX, from_thread->parent.name, from_thread->sp);
 
                 RT_SCHEDULER_STACK_CHECK(to_thread);
 
-                if (rt_interrupt_nest == 0)
+                if (rt_interrupt_get_nest() == 0)
                 {
                     extern void rt_thread_handle_sig(rt_bool_t clean_state);
 

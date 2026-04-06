@@ -26,8 +26,8 @@
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 
-static void (*rt_interrupt_enter_hook)(void);
-static void (*rt_interrupt_leave_hook)(void);
+void (*rt_interrupt_enter_hook)(void);
+void (*rt_interrupt_leave_hook)(void);
 
 /**
  * @ingroup group_hook
