@@ -304,6 +304,24 @@ _pthread_data_t *_pthread_get_self_data(rt_bool_t create)
     return ptd;
 }
 
+rt_bool_t _pthread_data_is_created(rt_thread_t tid)
+{
+    _pthread_data_t *ptd;
+
+    if (tid == RT_NULL)
+    {
+        return RT_FALSE;
+    }
+
+    ptd = (_pthread_data_t *)tid->pthread_data;
+    if (ptd == RT_NULL)
+    {
+        return RT_FALSE;
+    }
+
+    return ptd->thread_entry != RT_NULL ? RT_TRUE : RT_FALSE;
+}
+
 /**
  * @brief Perform final cleanup of thread resources during thread termination
  *
@@ -451,7 +469,7 @@ int pthread_create(pthread_t            *pid,
     static rt_uint16_t pthread_number = 0;
 
     pthread_t pth_id;
-    _pthread_data_t *ptd;
+    _pthread_data_t *ptd = RT_NULL;
 
     /* pid shall be provided */
     RT_ASSERT(pid != RT_NULL);

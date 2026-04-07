@@ -30,10 +30,15 @@ void __rt_libc_exit(int status)
 #ifdef RT_USING_PTHREADS
         if (self->pthread_data != RT_NULL)
         {
+            extern rt_bool_t _pthread_data_is_created(rt_thread_t tid);
             extern void pthread_exit(void *value);
-            pthread_exit((void *)(intptr_t)status);
+
+            if (_pthread_data_is_created(self))
+            {
+                pthread_exit((void *)(intptr_t)status);
+                return;
+            }
         }
-        else
 #endif
         {
             rt_thread_control(self, RT_THREAD_CTRL_CLOSE, RT_NULL);
