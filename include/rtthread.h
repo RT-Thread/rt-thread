@@ -218,6 +218,7 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void));
 rt_err_t rt_thread_idle_delhook(void (*hook)(void));
 #endif /* defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK) */
 rt_thread_t rt_thread_idle_gethandler(void);
+rt_bool_t rt_thread_is_idle_thread(rt_thread_t thread);
 
 /*
  * schedule service

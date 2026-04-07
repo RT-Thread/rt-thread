@@ -943,6 +943,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+    RT_ASSERT(!rt_thread_is_idle_thread(thread));
 
     LOG_D("thread suspend: %s", thread->parent.name);
 
