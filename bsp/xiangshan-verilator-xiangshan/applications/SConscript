@@ -1,78 +1,217 @@
+import glob
 import os
 import subprocess
 
 from building import *
 
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 
-def _get_verilator_include_dir():
+def _unique(seq):
+    """Deduplicate a list while preserving order."""
+    seen = set()
+    return [x for x in seq if not (x in seen or seen.add(x))]
+
+
+def _workspace_root():
+    """Three levels up from applications/: bsp/<board>/applications -> repo root."""
+    return os.path.dirname(os.path.dirname(os.path.dirname(GetCurrentDir())))
+
+
+def _get_verilator_dirs():
+    """Return (include_dir, vltstd_dir) from the installed Verilator."""
     try:
-        verilator_root = subprocess.check_output(
+        root = subprocess.check_output(
             ['verilator', '--getenv', 'VERILATOR_ROOT'], universal_newlines=True
         ).strip()
     except (OSError, subprocess.CalledProcessError) as exc:
         raise RuntimeError(
             'Failed to query VERILATOR_ROOT via "verilator --getenv VERILATOR_ROOT"'
         ) from exc
+    if not root:
+        raise RuntimeError('verilator --getenv VERILATOR_ROOT returned an empty path')
 
-    if not verilator_root:
-        raise RuntimeError('`verilator --getenv VERILATOR_ROOT` returned an empty path')
+    inc = os.path.join(root, 'include')
+    vltstd = os.path.join(inc, 'vltstd')
+    for d in (inc, vltstd):
+        if not os.path.isdir(d):
+            raise RuntimeError('Verilator directory not found: %s' % d)
+    return inc, vltstd
 
-    include_dir = os.path.join(verilator_root, 'include')
-    if not os.path.isdir(include_dir):
-        raise RuntimeError('Verilator include directory not found: %s' % include_dir)
 
-    return include_dir
+def _get_xiangshan_root():
+    """Locate XiangShan root via env vars or workspace default."""
+    candidates = []
+    for name in ('RTT_XIANGSHAN_ROOT', 'NOOP_HOME'):
+        val = os.getenv(name)
+        if val:
+            candidates.append(os.path.abspath(os.path.expanduser(val)))
+    candidates.append(os.path.join(_workspace_root(), 'XiangShan'))
+
+    for c in _unique(candidates):
+        if os.path.isdir(c):
+            return c
+    raise RuntimeError(
+        'XiangShan root not found. '
+        'Export RTT_XIANGSHAN_ROOT or NOOP_HOME to the XiangShan absolute path.'
+    )
+
+
+def _collect_xiangshan_inputs(xs_root):
+    """Return (sources, include_paths, cppdefines) for the XiangShan host-side build."""
+    build       = os.path.join(xs_root, 'build')
+    gen_dir     = os.path.join(build, 'generated-src')
+    vcomp_dir   = os.path.join(build, 'verilator-compile')
+    difftest    = os.path.join(xs_root, 'difftest')
+    csrc        = os.path.join(difftest, 'src', 'test', 'csrc')
+    common_dir  = os.path.join(csrc, 'common')
+    config_dir  = os.path.join(difftest, 'config')
+    emu_dir     = os.path.join(csrc, 'emu')
+    verilator_d = os.path.join(csrc, 'verilator')
+    plugin_inc  = os.path.join(csrc, 'plugin', 'include')
+    spikedasm_d = os.path.join(csrc, 'plugin', 'spikedasm')
+    workload_d  = os.path.join(xs_root, 'ready-to-run')
+    hello_bin   = os.path.join(workload_d, 'hello.bin')
+
+    # Minimal host-side source set (task 2 conclusion)
+    common_names = [
+        'elfloader.cpp', 'uart.cpp', 'compress.cpp', 'common.cpp',
+        'golden.cpp', 'flash.cpp', 'coverage.cpp', 'device.cpp',
+        'stopwatch.cpp', 'dut.cpp', 'ram.cpp', 'sdcard.cpp',
+    ]
+    sources = [os.path.join(common_dir, n) for n in common_names]
+    sources += [
+        os.path.join(config_dir, 'config.cpp'),
+        os.path.join(gen_dir, 'difftest-dpic.cpp'),
+        os.path.join(verilator_d, 'verilator.cpp'),
+    ]
+
+    # VSimTop generated sources
+    vsimtop = sorted(glob.glob(os.path.join(vcomp_dir, 'VSimTop*.cpp')))
+    if not vsimtop:
+        raise RuntimeError(
+            'No VSimTop generated sources under %s. '
+            'Run `export NOOP_HOME=%s && make emu ...` in XiangShan first.'
+            % (vcomp_dir, xs_root)
+        )
+    sources += vsimtop
+
+    # Validate all required paths exist
+    required = [
+        gen_dir, vcomp_dir, workload_d, hello_bin,
+        common_dir, config_dir, emu_dir, verilator_d, plugin_inc, spikedasm_d,
+    ] + sources
+    missing = [p for p in required if not os.path.exists(p)]
+    if missing:
+        raise RuntimeError(
+            'XiangShan generated inputs incomplete. Missing:\n  '
+            + '\n  '.join(missing)
+        )
+
+    include_paths = [
+        common_dir, config_dir, gen_dir, plugin_inc,
+        spikedasm_d, emu_dir, verilator_d, vcomp_dir,
+    ]
+
+    cppdefines = [
+        'CONFIG_NO_DIFFTEST', 'VERILATOR', 'VERILATOR_4_210',
+        ('NUM_CORES', 1),
+        ('NOOP_HOME', '\\"%s\\"' % xs_root),
+        ('NOOP_HOME_PATH', xs_root),
+        'NO_GZ_COMPRESSION', 'NO_ZSTD_COMPRESSION',
+    ]
+
+    return sources, include_paths, cppdefines
+
+
+def _build_objects(env_proto, sources, build_dir, cpppath, cppdefines, cxxflags):
+    """Compile a list of source files into a private build directory."""
+    ws = _workspace_root()
+    e = env_proto.Clone()
+    e.AppendUnique(CPPPATH=cpppath, CPPDEFINES=cppdefines)
+    if cxxflags:
+        e['CXXFLAGS'] = e.get('CXXFLAGS', '') + ' ' + ' '.join(cxxflags)
+
+    objs = []
+    for src in sources:
+        src_abs = os.path.abspath(str(src))
+        if src_abs.startswith(ws + os.sep):
+            rel = os.path.relpath(src_abs, ws)
+        else:
+            rel = os.path.basename(src_abs)
+        target = os.path.join(build_dir, os.path.splitext(rel)[0] + e['OBJSUFFIX'])
+        tdir = os.path.dirname(target)
+        if not os.path.isdir(tdir):
+            os.makedirs(tdir)
+        objs.append(e.Object(target=target, source=src)[0])
+    return objs
+
+
+# ---------------------------------------------------------------------------
+# Main build logic
+# ---------------------------------------------------------------------------
 
 cwd = GetCurrentDir()
+bsp_dir = os.path.dirname(cwd)
+ws_root = _workspace_root()
 
-# Application sources
-src = Glob('*.c') + Glob('*.cpp')
+verilator_inc, verilator_vltstd = _get_verilator_dirs()
+xs_root = _get_xiangshan_root()
+xs_src, xs_inc, xs_defines = _collect_xiangshan_inputs(xs_root)
 
-# Verilated DUT and runtime support
-verilated_dut_dir = os.path.join(cwd, 'verilated_dut_150')
-verilator_rt_dir = _get_verilator_include_dir()
-verilator_runtime_build_dir = os.path.join(
-    os.path.dirname(cwd), 'build', 'applications', 'verilator_runtime'
-)
+# Include paths (deduplicated, order-preserving)
+local_cpppath = _unique([cwd, verilator_inc, verilator_vltstd] + xs_inc)
+local_cppdefines = ['VL_RT_THREAD'] + xs_defines
+local_cxxflags = ['-std=gnu++17']
 
-# Only pull in the bits of the Verilated runtime we need for a single-threaded,
-# non-tracing simulation on RT-Thread.
-verilator_runtime_src = [
-    os.path.join(verilator_rt_dir, name)
-    for name in [
-        'verilated.cpp',
-        'verilated_random.cpp',
-        'verilated_threads.cpp',
-    ]
-]
+# Application-local sources (*.c + *.cpp + *.S minus main.cpp)
+app_c   = Glob('*.c')
+app_cpp = [n for n in Glob('*.cpp') if os.path.basename(str(n)) != 'main.cpp']
+app_asm = Glob('*.S')
 
-verilator_runtime_objs = [
-    Env.Object(
-        target=os.path.join(
-            verilator_runtime_build_dir,
-            os.path.splitext(os.path.basename(source))[0] + Env['OBJSUFFIX'],
-        ),
-        source=source,
-    )[0]
-    for source in verilator_runtime_src
-]
+# External sources: XiangShan host-side (hello.bin blob is now in app_asm)
+external_src = xs_src
 
-src += Glob(os.path.join('verilated_dut_150', '*.cpp'))
+# Verilator runtime sources
+verilator_rt_names = ['verilated.cpp', 'verilated_random.cpp',
+                      'verilated_threads.cpp', 'verilated_dpi.cpp']
+verilator_rt_src = [os.path.join(verilator_inc, n) for n in verilator_rt_names]
 
-CPPPATH = [cwd, verilated_dut_dir, verilator_rt_dir]
-CPPDEFINES = ['VL_RT_THREAD']
-
-group = DefineGroup(
-    'Applications', src, depend=[''], CPPPATH=CPPPATH, CPPDEFINES=CPPDEFINES
-)
-
+# Register the application group with RT-Thread build system
+group_kwargs = {
+    'LOCAL_CPPPATH': local_cpppath,
+    'LOCAL_CPPDEFINES': local_cppdefines,
+    'LOCAL_CXXFLAGS': ' ' + ' '.join(local_cxxflags),
+}
+group = DefineGroup('Applications', app_c + app_cpp + app_asm, depend=[''], **group_kwargs)
 objs = [group]
-objs += verilator_runtime_objs
 
-list = os.listdir(cwd)
-
-for item in list:
+# Recurse into subdirectories
+for item in os.listdir(cwd):
     if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
-        objs = objs + SConscript(os.path.join(item, 'SConscript'))
+        objs += SConscript(os.path.join(item, 'SConscript'))
+
+# Deferred compilation of external and Verilator runtime objects
+external_objs = []
+runtime_objs  = []
+
+def _register_deferred_objects():
+    if not external_objs and external_src:
+        external_objs.extend(_build_objects(
+            Env, external_src,
+            os.path.join(bsp_dir, 'build', 'applications', 'xiangshan_objects_xiangshan'),
+            local_cpppath, local_cppdefines, local_cxxflags,
+        ))
+    if not runtime_objs:
+        runtime_objs.extend(_build_objects(
+            Env, verilator_rt_src,
+            os.path.join(bsp_dir, 'build', 'applications', 'verilator_runtime_xiangshan'),
+            local_cpppath, local_cppdefines, local_cxxflags,
+        ))
+
+RegisterPreBuildingAction(_register_deferred_objects)
+objs.append(external_objs)
+objs.append(runtime_objs)
 
 Return('objs')

@@ -16,12 +16,12 @@ OUTPUT_ARCH( "riscv" )
 /*
  * Memory layout:
  * 0x80000000 - 0x80200000: SBI
- * 0x80200000 - 0x81200000: Kernel
+ * 0x80200000 - 0x90000000: Kernel and runtime memory under QEMU -m 256M
  */
 
 MEMORY
 {
-   SRAM : ORIGIN = 0x80200000, LENGTH = 0x1000000
+    SRAM : ORIGIN = 0x80200000, LENGTH = 0x0fe00000
 }
 
 ENTRY(_start)

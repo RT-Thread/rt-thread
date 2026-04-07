@@ -34,7 +34,7 @@ if PLATFORM == 'llvm-riscv':
 
     DEVICE  = ' -mcmodel=medany -march=rv64imac -mabi=lp64 '
     # Enable emulated TLS
-    CFLAGS  = DEVICE + '-fno-omit-frame-pointer -flax-vector-conversions -Wno-cpp -fno-common -ffunction-sections -fdata-sections -fdiagnostics-color=always -Xclang -fexperimental-max-bitint-width=20000 -fbracket-depth=2048 -Wno-parentheses-equality -DGSIM -femulated-tls'
+    CFLAGS  = DEVICE + '-fno-omit-frame-pointer -flax-vector-conversions -Wno-cpp -fno-common -ffunction-sections -fdata-sections -fdiagnostics-color=always -Xclang -fexperimental-max-bitint-width=20000 -fbracket-depth=2048 -Wno-parentheses-equality -femulated-tls'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__ '
     LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds' + ' -stdlib=libstdc++ -lc -lsupc++ -lgcc -lstdc++ -static'
     CPATH   = ''
