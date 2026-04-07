@@ -18,7 +18,6 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-
 struct rt_regulator
 {
     struct rt_regulator_node *reg_np;
@@ -359,7 +358,6 @@ static rt_err_t regulator_enable(struct rt_regulator_node *reg_np)
                 regulator_delay(enable_delay);
             }
 
-            rt_atomic_add(&reg_np->enabled_count, 1);
             err = regulator_notifier_call_chain(reg_np, RT_REGULATOR_MSG_ENABLE, RT_NULL);
         }
     }
@@ -434,7 +432,7 @@ static rt_err_t regulator_disable(struct rt_regulator_node *reg_np)
 
 rt_err_t rt_regulator_disable(struct rt_regulator *reg)
 {
-    rt_err_t err;
+    rt_err_t err = RT_EOK;
     int enabled_cnt;
 
     if (!reg)
@@ -450,19 +448,12 @@ rt_err_t rt_regulator_disable(struct rt_regulator *reg)
     rt_hw_spin_lock(&_regulator_lock.lock);
 
     enabled_cnt = rt_atomic_load(&reg->reg_np->enabled_count);
-    if (enabled_cnt > 0)
+    rt_atomic_sub(&reg->reg_np->enabled_count, 1);
+
+    if (enabled_cnt == 1)
     {
-        rt_atomic_sub(&reg->reg_np->enabled_count, 1);
-        enabled_cnt--;
-
-        if (enabled_cnt > 0)
-        {
-            rt_hw_spin_unlock(&_regulator_lock.lock);
-            return RT_EOK;
-        }
+        err = regulator_disable(reg->reg_np);
     }
-
-    err = regulator_disable(reg->reg_np);
 
     rt_hw_spin_unlock(&_regulator_lock.lock);
 
@@ -473,7 +464,7 @@ rt_bool_t rt_regulator_is_enabled(struct rt_regulator *reg)
 {
     if (!reg)
     {
-        return -RT_EINVAL;
+        return RT_FALSE;
     }
 
     if (reg->reg_np->ops->is_enabled)
