@@ -284,6 +284,7 @@ void rt_schedule(void)
     struct rt_thread *to_thread;
     struct rt_thread *from_thread;
     struct rt_thread *curr_thread;
+    rt_base_t interrupt_nest;
 
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
@@ -343,16 +344,17 @@ void rt_schedule(void)
                 RT_SCHED_CTX(to_thread).stat = RT_THREAD_RUNNING | (RT_SCHED_CTX(to_thread).stat & ~RT_THREAD_STAT_MASK);
 
                 /* switch to new thread */
+                interrupt_nest = rt_interrupt_get_nest();
                 LOG_D("[%d]switch to priority#%d "
                          "thread:%.*s(sp:0x%08x), "
                          "from thread:%.*s(sp: 0x%08x)",
-                         rt_interrupt_get_nest(), highest_ready_priority,
+                         interrupt_nest, highest_ready_priority,
                          RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                          RT_NAME_MAX, from_thread->parent.name, from_thread->sp);
 
                 RT_SCHEDULER_STACK_CHECK(to_thread);
 
-                if (rt_interrupt_get_nest() == 0)
+                if (interrupt_nest == 0)
                 {
                     extern void rt_thread_handle_sig(rt_bool_t clean_state);
 
