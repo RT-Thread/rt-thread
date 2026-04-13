@@ -554,9 +554,9 @@ int RT_hw_i2c_bus_init(void)
 #endif
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
             i2c_objs[i].dma.handle_rx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
-            i2c_objs[i].dma.handle_tx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
-            i2c_objs[i].dma.handle_tx.Init.MemBurst            = DMA_MBURST_INC4;
-            i2c_objs[i].dma.handle_tx.Init.PeriphBurst         = DMA_PBURST_INC4;
+            i2c_objs[i].dma.handle_rx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
+            i2c_objs[i].dma.handle_rx.Init.MemBurst            = DMA_MBURST_INC4;
+            i2c_objs[i].dma.handle_rx.Init.PeriphBurst         = DMA_PBURST_INC4;
 #endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) */
             {
                 rt_uint32_t tmpreg = 0x00U;
@@ -577,7 +577,6 @@ int RT_hw_i2c_bus_init(void)
             }
         }
 
-#ifdef BSP_I2C_USING_DMA
         if (i2c_objs[i].i2c_dma_flag & RT_DEVICE_FLAG_DMA_TX)
         {
             i2c_objs[i].dma.handle_tx.Instance = i2c_config[i].dma_tx->Instance;
