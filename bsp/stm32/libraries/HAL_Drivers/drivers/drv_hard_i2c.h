@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2024-02-17     Dyyt587      first version
  * 2024-06-23     wdfk-prog    Add mode selection scaffolding
+ * 2024-06-23     wdfk-prog    Distinguish STM32 I2C timing semantics by IP generation
  */
 
 #ifndef __DRV_HARD_I2C_H__
@@ -97,10 +98,39 @@ extern "C"
 #define BSP_I2C_USING_IRQ
 #endif
 
+/*
+ * timing semantics are intentionally split by I2C IP generation:
+ *
+ * - legacy I2C IP:
+ *   use bus frequency in Hz (for example 100000/400000), because HAL
+ *   configures the peripheral through ClockSpeed/DutyCycle.
+ *
+ * - TIMINGR-based I2C IP:
+ *   keep using the raw TIMINGR register value for now. Exact timing
+ *   generation depends on board-level inputs such as kernel clock,
+ *   rise/fall time, digital/analog filter settings, and target bus mode,
+ *   so this change does not convert TIMINGR platforms to a unified Hz API.
+ */
+#if defined(SOC_SERIES_STM32F1)  \
+ || defined(SOC_SERIES_STM32F2)  \
+ || defined(SOC_SERIES_STM32F4)  \
+ || defined(SOC_SERIES_STM32L1)
+#define STM32_I2C_LEGACY_IP
+#else
+#define STM32_I2C_TIMINGR_IP
+#endif
+
+#define BSP_I2C_CTRL_SET_TIMING 0x40
+
 struct stm32_i2c_config
 {
     const char              *name;
     I2C_TypeDef             *Instance;
+    /*
+     * timing semantics depend on the I2C IP generation:
+     * - legacy IP  (F1/F4): bus speed in Hz
+     * - TIMINGR IP (F7/H7): raw TIMINGR register value
+     */
     rt_uint32_t             timing;
     rt_uint32_t             timeout;
     IRQn_Type               evirq_type;
@@ -139,4 +169,4 @@ struct stm32_i2c
 }
 #endif
 
-#endif /* __DRV_I2C_H__ */
+#endif /* __DRV_HARD_I2C_H__ */

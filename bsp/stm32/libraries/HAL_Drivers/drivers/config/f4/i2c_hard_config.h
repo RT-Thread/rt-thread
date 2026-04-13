@@ -23,7 +23,7 @@ extern "C" {
 #define I2C1_BUS_CONFIG                             \
     {                                               \
         .Instance = I2C1,                           \
-        .timing=0x10707DBC,                         \
+        .timing = 100000,                           \
         .timeout=0x1000,                            \
         .name = "hwi2c1",                           \
         .evirq_type = I2C1_EV_IRQn,                 \
@@ -81,7 +81,7 @@ extern "C" {
 #define I2C2_BUS_CONFIG                             \
     {                                               \
         .Instance = I2C2,                           \
-        .timing=0x10707DBC,                         \
+        .timing = 100000,                           \
         .timeout=0x1000,                            \
         .name = "hwi2c2",                           \
         .evirq_type = I2C2_EV_IRQn,                 \
@@ -139,7 +139,7 @@ extern "C" {
 #define I2C3_BUS_CONFIG                             \
     {                                               \
         .Instance = I2C3,                           \
-        .timing=0x10707DBC,                         \
+        .timing = 100000,                           \
         .timeout=0x1000,                            \
         .name = "hwi2c3",                           \
         .evirq_type = I2C3_EV_IRQn,                 \
@@ -197,7 +197,7 @@ extern "C" {
 #define I2C4_BUS_CONFIG                             \
     {                                               \
         .Instance = I2C4,                           \
-        .timing = 0x10707DBC,                       \
+        .timing = 100000,                           \
         .timeout = 0x1000,                          \
         .name = "hwi2c4",                           \
         .evirq_type = I2C4_EV_IRQn,                 \

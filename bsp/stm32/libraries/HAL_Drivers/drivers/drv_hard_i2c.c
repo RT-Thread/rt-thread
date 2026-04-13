@@ -9,6 +9,7 @@
  * 2024-04-23     Zeidan    fix bugs, test on STM32F429IGTx
  * 2024-12-10     zzk597    add support for STM32F1 series
  * 2024-06-23     wdfk-prog Add blocking modes and distinguish POLL,INT,DMA modes
+ * 2024-06-23     wdfk-prog Distinguish STM32 I2C timing semantics by IP generation
  */
 
 #include "drv_hard_i2c.h"
@@ -18,6 +19,18 @@
 // #define DRV_DEBUG
 #define LOG_TAG "drv.i2c.hw"
 #include <drv_log.h>
+
+/*
+ * Default timing values follow the IP generation split declared in
+ * drv_hard_i2c.h:
+ * - legacy IP  (F1/F4): timing is the bus speed in Hz
+ * - TIMINGR IP (F7/H7): timing is the raw I2C_TIMINGR value
+ */
+#if defined(STM32_I2C_TIMINGR_IP)
+#define DEFAULT_I2C_TIMING_VALUE 0x307075B1U    // 100K
+#else
+#define DEFAULT_I2C_TIMING_VALUE (100*1000U)    //HZ
+#endif
 
 /* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
 #define DMA_TRANS_MIN_LEN 2
@@ -56,6 +69,16 @@ static struct stm32_i2c_config i2c_config[] =
 
 static struct stm32_i2c i2c_objs[sizeof(i2c_config) / sizeof(i2c_config[0])] = {0};
 
+static void stm32_i2c_apply_default_config(struct stm32_i2c_config *cfg)
+{
+    RT_ASSERT(cfg != RT_NULL);
+
+    if (cfg->timing == 0U)
+    {
+        cfg->timing = DEFAULT_I2C_TIMING_VALUE;
+    }
+}
+
 static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
 {
     RT_ASSERT(i2c_drv != RT_NULL);
@@ -64,14 +87,16 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
     struct stm32_i2c_config *cfg = i2c_drv->config;
 
     rt_memset(i2c_handle, 0, sizeof(I2C_HandleTypeDef));
+    stm32_i2c_apply_default_config(cfg);
+
     i2c_handle->Instance = cfg->Instance;
-#if defined(SOC_SERIES_STM32H7)
+#if defined(STM32_I2C_TIMINGR_IP)
     i2c_handle->Init.Timing = cfg->timing;
     i2c_handle->Init.OwnAddress2Masks = I2C_OA2_NOMASK;
 #else
-    i2c_handle->Init.ClockSpeed = 100000;
+    i2c_handle->Init.ClockSpeed = cfg->timing;
     i2c_handle->Init.DutyCycle = I2C_DUTYCYCLE_2;
-#endif /* defined(SOC_SERIES_STM32H7) */
+#endif /* defined(STM32_I2C_TIMINGR_IP) */
     i2c_handle->Init.OwnAddress1 = 0;
     i2c_handle->Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
     i2c_handle->Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -87,7 +112,7 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
     {
         return -RT_EFAULT;
     }
-#if defined(SOC_SERIES_STM32H7)
+#if defined(STM32_I2C_TIMINGR_IP)
     /* Configure Analogue filter */
     if (HAL_I2CEx_ConfigAnalogFilter(i2c_handle, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
     {
@@ -99,7 +124,7 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
     {
         return -RT_EFAULT;
     }
-#endif /* defined(SOC_SERIES_STM32H7) */
+#endif /* defined(STM32_I2C_TIMINGR_IP) */
 #if defined(BSP_I2C_RX_USING_DMA)
     /* I2C2 DMA Init */
     if (i2c_drv->i2c_dma_flag & RT_DEVICE_FLAG_DMA_RX)
@@ -325,6 +350,10 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                                         struct rt_i2c_msg msgs[],
                                         rt_uint32_t num)
 {
+    /* timeout = data_time + dev_addr_time + reserve_time */
+#define TIMEOUT_FREQ_KHZ(freq) (((freq) / 1000U) ? ((freq) / 1000U) : 1U)
+#define TIMEOUT_CALC(msg) (((msg)->len * 8U) / TIMEOUT_FREQ_KHZ(bus->config.usage_freq) + 1U + 5U)
+
     rt_uint32_t i = 0;
     rt_int32_t ret = 0;
     struct rt_i2c_msg *msg = RT_NULL;
@@ -348,13 +377,6 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     completion = &i2c_obj->completion;
 #endif /* defined(BSP_I2C_USING_IRQ) */
     LOG_D("xfer start %d megs", num);
-
-    rt_uint32_t freq_khz = bus->config.usage_freq / 1000;
-    if (freq_khz == 0)
-    {
-        freq_khz = 1;
-    }
-
     for (i = 0; i < num; i++)
     {
         rt_bool_t need_wait = RT_FALSE;
@@ -363,10 +385,11 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         next_msg = is_last ? RT_NULL : &msgs[i + 1];
         mode = stm32_i2c_get_xfer_mode(i, msg, next_msg, is_last);
         LOG_D("xfer       msgs[%d] addr=0x%2x buf=0x%x len= 0x%x flags= 0x%x", i, msg->addr, msg->buf, msg->len, msg->flags);
-
-        // timeout= data_time + dev_addr_time + reserve_time
-        timeout = (msg->len * 8) / freq_khz + 1 + 5;
-
+#if defined(STM32_I2C_TIMINGR_IP)
+        timeout = bus->timeout ? bus->timeout : 100U;
+#else
+        timeout = TIMEOUT_CALC(msg);
+#endif
         if (msg->flags & RT_I2C_RD)
         {
             LOG_D("xfer  rec  msgs[%d] hal mode = %s", i, stm32_i2c_mode_name(mode));
@@ -421,38 +444,78 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
 out:
     ret = i;
     /*
-    * On STM32H7, STOPI only enables STOP-event interrupt handling.
+    * On TIMINGR-based STM32 I2C IPs (currently F7/H7 in this driver),
+    * STOPI only enables STOP-event interrupt handling.
     * It does not actively generate a STOP condition on the bus.
     *
-    * For non-H7 STM32 series, the legacy HAL error handler already
-    * generates a STOP condition on AF in master/memory modes, so
-    * this driver does not manually issue another STOP in the AF path.
+    * For legacy STM32 I2C IPs, the HAL error handler already generates a
+    * STOP condition on AF in master/memory modes, so this driver does not
+    * manually issue another STOP in the AF path.
     */
     if (handle->ErrorCode & HAL_I2C_ERROR_AF)
     {
         LOG_W("I2C[%s] NACK Error", bus->parent.parent.name);
-#if defined(SOC_SERIES_STM32H7)
+#if defined(STM32_I2C_TIMINGR_IP)
         handle->Instance->CR1 |= I2C_IT_STOPI;
-#endif  /* defined(SOC_SERIES_STM32H7) */
+#endif  /* defined(STM32_I2C_TIMINGR_IP) */
     }
     if (handle->ErrorCode & HAL_I2C_ERROR_BERR)
     {
         LOG_W("I2C[%s] BUS Error", bus->parent.parent.name);
-#if defined(SOC_SERIES_STM32H7)
+#if defined(STM32_I2C_TIMINGR_IP)
         handle->Instance->CR1 |= I2C_IT_STOPI;
 #else
         handle->Instance->CR1 |= I2C_CR1_STOP;
-#endif  /* defined(SOC_SERIES_STM32H7) */
+#endif  /* defined(STM32_I2C_TIMINGR_IP) */
     }
 
     return ret;
+#undef TIMEOUT_FREQ_KHZ
+#undef TIMEOUT_CALC
+}
+
+rt_err_t stm_i2c_bus_control(struct rt_i2c_bus_device *bus, int cmd, void *args)
+{
+    struct stm32_i2c *i2c_obj;
+    RT_ASSERT(bus != RT_NULL);
+
+    i2c_obj = rt_container_of(bus, struct stm32_i2c, i2c_bus);
+    RT_ASSERT(i2c_obj != RT_NULL);
+
+    switch (cmd)
+    {
+        case BSP_I2C_CTRL_SET_TIMING:
+        {
+            if (args == RT_NULL)
+            {
+                return -RT_EINVAL;
+            }
+
+            rt_uint32_t timing = *(rt_uint32_t *)args;
+            if(timing <= 0)
+            {
+                return -RT_ERROR;
+            }
+
+            i2c_obj->i2c_bus.config.usage_freq = i2c_obj->config->timing = timing;
+            return stm32_i2c_configure(&i2c_obj->i2c_bus);
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+    return -RT_EINVAL;
 }
 
 static const struct rt_i2c_bus_device_ops stm32_i2c_ops =
 {
     .master_xfer = stm32_i2c_master_xfer,
-    RT_NULL,
-    RT_NULL,
+#if defined(STM32_I2C_LEGACY_IP)
+    .i2c_bus_control = stm_i2c_bus_control,
+#endif
+    .slave_xfer = RT_NULL,
 };
 
 int RT_hw_i2c_bus_init(void)
@@ -465,6 +528,12 @@ int RT_hw_i2c_bus_init(void)
         i2c_objs[i].i2c_bus.ops = &stm32_i2c_ops;
         i2c_objs[i].config = &i2c_config[i];
         i2c_objs[i].i2c_bus.timeout = i2c_config[i].timeout;
+        stm32_i2c_apply_default_config(&i2c_config[i]);
+#if defined(STM32_I2C_LEGACY_IP)
+        i2c_objs[i].i2c_bus.config.max_hz = i2c_config[i].timing;
+        i2c_objs[i].i2c_bus.config.usage_freq = i2c_config[i].timing;
+#endif
+
 #ifdef BSP_I2C_USING_DMA
         if ((i2c_objs[i].i2c_dma_flag & RT_DEVICE_FLAG_DMA_RX))
         {
@@ -525,7 +594,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
             i2c_objs[i].dma.handle_tx.Init.Mode                = DMA_NORMAL;
             i2c_objs[i].dma.handle_tx.Init.Priority            = DMA_PRIORITY_LOW;
-#endif
+#endif /* SOC_SERIES_STM32U5 */
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
 
             i2c_objs[i].dma.handle_tx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
@@ -685,7 +754,7 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 #endif /* I2C4 */
                                 : "unknown",
                                 hi2c->ErrorCode);
-#if defined(SOC_SERIES_STM32H7)
+#if defined(STM32_I2C_TIMINGR_IP)
     /* Send stop signal to prevent bus lock-up */
     if (hi2c->ErrorCode == HAL_I2C_ERROR_AF)
     {
@@ -697,7 +766,7 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
         LOG_W("I2C BUS Error now stoped");
         hi2c->Instance->CR1 |= I2C_IT_STOPI;
     }
-#endif /* defined(SOC_SERIES_STM32H7) */
+#endif /* defined(STM32_I2C_TIMINGR_IP) */
 }
 
 #ifdef BSP_USING_HARD_I2C1
