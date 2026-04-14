@@ -650,19 +650,21 @@ static void stm32_get_info(void)
 
 #if defined (BSP_I2C1_TX_USING_INT)
     i2c_objs[I2C1_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_INT_TX;
-#elif defined(BSP_I2C1_TX_USING_DMA)
+#endif /* defined (BSP_I2C1_TX_USING_INT) */
+#if defined(BSP_I2C1_TX_USING_DMA)
     i2c_objs[I2C1_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static struct dma_config I2C1_dma_tx = I2C1_TX_DMA_CONFIG;
     i2c_config[I2C1_INDEX].dma_tx = &I2C1_dma_tx;
-#endif /* defined (BSP_I2C1_TX_USING_INT) */
+#endif /* defined (BSP_I2C1_TX_USING_DMA) */
 
 #if defined (BSP_I2C1_RX_USING_INT)
     i2c_objs[I2C1_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_INT_RX;
-#elif defined(BSP_I2C1_RX_USING_DMA)
+#endif /* defined (BSP_I2C1_RX_USING_INT) */
+#if defined(BSP_I2C1_RX_USING_DMA)
     i2c_objs[I2C1_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config I2C1_dma_rx = I2C1_RX_DMA_CONFIG;
     i2c_config[I2C1_INDEX].dma_rx = &I2C1_dma_rx;
-#endif /* defined (BSP_I2C1_RX_USING_INT) */
+#endif /* defined (BSP_I2C1_RX_USING_DMA) */
 
 #endif /* defined(BSP_USING_HARD_I2C1) */
 
@@ -671,19 +673,21 @@ static void stm32_get_info(void)
 
 #if defined (BSP_I2C2_TX_USING_INT)
     i2c_objs[I2C2_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_INT_TX;
-#elif defined(BSP_I2C2_TX_USING_DMA)
+#endif /* defined (BSP_I2C2_TX_USING_INT) */
+#if defined(BSP_I2C2_TX_USING_DMA)
     i2c_objs[I2C2_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static struct dma_config I2C2_dma_tx = I2C2_TX_DMA_CONFIG;
     i2c_config[I2C2_INDEX].dma_tx = &I2C2_dma_tx;
-#endif /* defined (BSP_I2C2_TX_USING_INT) */
+#endif /* defined (BSP_I2C2_TX_USING_DMA) */
 
 #if defined (BSP_I2C2_RX_USING_INT)
     i2c_objs[I2C2_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_INT_RX;
-#elif defined(BSP_I2C2_RX_USING_DMA)
+#endif /* defined (BSP_I2C2_RX_USING_INT) */
+#if defined(BSP_I2C2_RX_USING_DMA)
     i2c_objs[I2C2_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config I2C2_dma_rx = I2C2_RX_DMA_CONFIG;
     i2c_config[I2C2_INDEX].dma_rx = &I2C2_dma_rx;
-#endif /* defined (BSP_I2C2_RX_USING_INT) */
+#endif /* defined (BSP_I2C2_RX_USING_DMA) */
 
 #endif /* defined(BSP_USING_HARD_I2C2) */
 
@@ -692,19 +696,21 @@ static void stm32_get_info(void)
 
 #if defined (BSP_I2C3_TX_USING_INT)
     i2c_objs[I2C3_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_INT_TX;
-#elif defined(BSP_I2C3_TX_USING_DMA)
+#endif /* defined (BSP_I2C3_TX_USING_INT) */
+#if defined(BSP_I2C3_TX_USING_DMA)
     i2c_objs[I2C3_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static struct dma_config I2C3_dma_tx = I2C3_TX_DMA_CONFIG;
     i2c_config[I2C3_INDEX].dma_tx = &I2C3_dma_tx;
-#endif /* defined (BSP_I2C3_TX_USING_INT) */
+#endif /* defined (BSP_I2C3_TX_USING_DMA) */
 
 #if defined (BSP_I2C3_RX_USING_INT)
     i2c_objs[I2C3_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_INT_RX;
-#elif defined(BSP_I2C3_RX_USING_DMA)
+#endif /* defined (BSP_I2C3_RX_USING_INT) */
+#if defined(BSP_I2C3_RX_USING_DMA)
     i2c_objs[I2C3_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config I2C3_dma_rx = I2C3_RX_DMA_CONFIG;
     i2c_config[I2C3_INDEX].dma_rx = &I2C3_dma_rx;
-#endif /* defined (BSP_I2C3_RX_USING_INT) */
+#endif /* defined (BSP_I2C3_RX_USING_DMA) */
 
 #endif /* defined(BSP_USING_HARD_I2C3) */
 
@@ -713,19 +719,21 @@ static void stm32_get_info(void)
 
 #if defined (BSP_I2C4_TX_USING_INT)
     i2c_objs[I2C4_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_INT_TX;
-#elif defined(BSP_I2C4_TX_USING_DMA)
+#endif /* defined (BSP_I2C4_TX_USING_INT) */
+#if defined(BSP_I2C4_TX_USING_DMA)
     i2c_objs[I2C4_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static struct dma_config I2C4_dma_tx = I2C4_TX_DMA_CONFIG;
     i2c_config[I2C4_INDEX].dma_tx = &I2C4_dma_tx;
-#endif /* defined (BSP_I2C4_TX_USING_INT) */
+#endif /* defined (BSP_I2C4_TX_USING_DMA) */
 
 #if defined (BSP_I2C4_RX_USING_INT)
     i2c_objs[I2C4_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_INT_RX;
-#elif defined(BSP_I2C4_RX_USING_DMA)
+#endif /* defined (BSP_I2C4_RX_USING_INT) */
+#if defined(BSP_I2C4_RX_USING_DMA)
     i2c_objs[I2C4_INDEX].i2c_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static struct dma_config I2C4_dma_rx = I2C4_RX_DMA_CONFIG;
     i2c_config[I2C4_INDEX].dma_rx = &I2C4_dma_rx;
-#endif /* defined (BSP_I2C4_RX_USING_INT) */
+#endif /* defined (BSP_I2C4_RX_USING_DMA) */
 
 #endif /* defined(BSP_USING_HARD_I2C4) */
 }
