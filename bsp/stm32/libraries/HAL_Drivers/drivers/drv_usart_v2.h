@@ -47,6 +47,7 @@ int rt_hw_usart_init(void);
 #define UART_RX_DMA_IT_HT_FLAG          0x01
 #define UART_RX_DMA_IT_TC_FLAG          0x02
 
+#define UART_CTRL_SET_ERROR_CALLBACK    0x100
 
 /* stm32 config class */
 struct stm32_uart_config
@@ -66,7 +67,8 @@ struct stm32_uart
 {
     UART_HandleTypeDef handle;
     struct stm32_uart_config *config;
-
+    /* device call back */
+    rt_err_t (*error_indicate)(rt_device_t dev, rt_uint32_t error_code);
 #ifdef RT_SERIAL_USING_DMA
     struct
     {
