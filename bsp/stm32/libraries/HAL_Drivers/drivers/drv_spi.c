@@ -10,8 +10,9 @@
  * 2019-01-03     zylx         modify DMA initialization and spixfer function
  * 2020-01-15     whj4674672   Porting for stm32h7xx
  * 2020-06-18     thread-liu   Porting for stm32mp1xx
- * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
+ * 2020-10-14     PeakRacing   Porting for stm32wbxx
  * 2025-09-22     wdfk_prog    Refactor spixfer to fix DMA reception bug, correct timeout calculation.
+ * 2026-04-14     wdfk_prog    Refine SPI DMA config hierarchy
  */
 
 #include <rtthread.h>
@@ -20,11 +21,13 @@
 
 #ifdef BSP_USING_SPI
 
-#if defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) || defined(BSP_USING_SPI4) || defined(BSP_USING_SPI5) || defined(BSP_USING_SPI6)
-
 #include "drv_spi.h"
 #include "drv_config.h"
 #include <string.h>
+
+#ifndef BSP_SPI_DMA_TRANS_MIN_LEN
+#define BSP_SPI_DMA_TRANS_MIN_LEN 10U
+#endif /* BSP_SPI_DMA_TRANS_MIN_LEN */
 
 /*#define DRV_DEBUG*/
 #define LOG_TAG              "drv.spi"
@@ -81,22 +84,28 @@ static struct stm32_spi_config spi_config[] =
 
 static struct stm32_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])] = {0};
 
+#ifdef BSP_SPI_USING_DMA
 static void stm32_spi_dma_rollback(struct stm32_spi *spi_drv, rt_uint16_t dma_flags)
 {
-    if ((dma_flags & SPI_USING_RX_DMA_FLAG) && (spi_drv->config->dma_rx != RT_NULL))
+#if defined(BSP_SPI_RX_USING_DMA)
+    if ((dma_flags & RT_DEVICE_FLAG_DMA_RX) && (spi_drv->config->dma_rx != RT_NULL))
     {
         (void)stm32_dma_deinit(&spi_drv->dma.handle_rx, spi_drv->config->dma_rx, RT_FALSE);
         spi_drv->dma.handle_rx.Parent = RT_NULL;
         spi_drv->handle.hdmarx = RT_NULL;
     }
+#endif /* BSP_SPI_RX_USING_DMA */
 
-    if ((dma_flags & SPI_USING_TX_DMA_FLAG) && (spi_drv->config->dma_tx != RT_NULL))
+#if defined(BSP_SPI_TX_USING_DMA)
+    if ((dma_flags & RT_DEVICE_FLAG_DMA_TX) && (spi_drv->config->dma_tx != RT_NULL))
     {
         (void)stm32_dma_deinit(&spi_drv->dma.handle_tx, spi_drv->config->dma_tx, RT_FALSE);
         spi_drv->dma.handle_tx.Parent = RT_NULL;
         spi_drv->handle.hdmatx = RT_NULL;
     }
+#endif /* BSP_SPI_TX_USING_DMA */
 }
+#endif /* BSP_SPI_USING_DMA */
 
 static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configuration *cfg)
 {
@@ -269,36 +278,42 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     SET_BIT(spi_handle->Instance->CR2, SPI_RXFIFO_THRESHOLD_HF);
 #endif
 
+#ifdef BSP_SPI_USING_DMA
     /* DMA configuration */
-    if (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
+#if defined(BSP_SPI_RX_USING_DMA)
+    if (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_RX)
     {
         if (stm32_dma_setup(&spi_drv->dma.handle_rx,
                             &spi_drv->handle,
                             &spi_drv->handle.hdmarx,
                             spi_drv->config->dma_rx) != RT_EOK)
         {
-            stm32_spi_dma_rollback(spi_drv, SPI_USING_RX_DMA_FLAG);
+            stm32_spi_dma_rollback(spi_drv, RT_DEVICE_FLAG_DMA_RX);
             return -RT_EIO;
         }
     }
+#endif /* BSP_SPI_RX_USING_DMA */
 
-    if (spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG)
+#if defined(BSP_SPI_TX_USING_DMA)
+    if (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_TX)
     {
         if (stm32_dma_setup(&spi_drv->dma.handle_tx,
                             &spi_drv->handle,
                             &spi_drv->handle.hdmatx,
                             spi_drv->config->dma_tx) != RT_EOK)
         {
-            stm32_spi_dma_rollback(spi_drv, SPI_USING_TX_DMA_FLAG | (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG));
+            stm32_spi_dma_rollback(spi_drv, RT_DEVICE_FLAG_DMA_TX | (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_RX));
             return -RT_EIO;
         }
     }
+#endif /* BSP_SPI_TX_USING_DMA */
 
-    if(spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG || spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
+    if ((spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_TX) || (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_RX))
     {
         HAL_NVIC_SetPriority(spi_drv->config->irq_type, 2, 0);
         HAL_NVIC_EnableIRQ(spi_drv->config->irq_type);
     }
+#endif /* BSP_SPI_USING_DMA */
 
     LOG_D("%s init done", spi_drv->config->bus_name);
     return RT_EOK;
@@ -306,8 +321,6 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
 static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-#define DMA_TRANS_MIN_LEN  10 /* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
-
     HAL_StatusTypeDef state = HAL_OK;
     rt_size_t message_length, already_send_length;
     rt_uint16_t send_length;
@@ -329,7 +342,9 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     }
 
     rt_uint32_t timeout_ms = total_byte_ms / speed_bytes_per_sec + 100;
+#ifdef BSP_SPI_USING_DMA
     rt_tick_t timeout_tick = rt_tick_from_millisecond(timeout_ms);
+#endif /* BSP_SPI_USING_DMA */
 
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
@@ -378,6 +393,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
         }
 
+#ifdef BSP_SPI_USING_DMA
         const rt_uint8_t *dma_send_buf = send_buf;
         rt_uint8_t *dma_recv_buf = recv_buf;
 
@@ -427,26 +443,31 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             if (dma_recv_buf) rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, dma_recv_buf, send_length);
 #endif
         }
+#endif /* BSP_SPI_USING_DMA */
 
         /* Start data exchange in full-duplex DMA mode. */
         if (message->send_buf && message->recv_buf)
         {
+#ifdef BSP_SPI_USING_DMA
             if (use_tx_dma && use_rx_dma)
             {
                 state = HAL_SPI_TransmitReceive_DMA(spi_handle, (uint8_t *)dma_send_buf, dma_recv_buf, send_length);
             }
             else
+#endif /* BSP_SPI_USING_DMA */
             {
                 state = HAL_SPI_TransmitReceive(spi_handle, (uint8_t *)send_buf, recv_buf, send_length, timeout_ms);
             }
         }
         else if (message->send_buf)
         {
+#ifdef BSP_SPI_USING_DMA
             if (use_tx_dma)
             {
                 state = HAL_SPI_Transmit_DMA(spi_handle, (uint8_t *)dma_send_buf, send_length);
             }
             else
+#endif /* BSP_SPI_USING_DMA */
             {
                 state = HAL_SPI_Transmit(spi_handle, (uint8_t *)send_buf, send_length, timeout_ms);
             }
@@ -459,12 +480,14 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         }
         else if(message->recv_buf)
         {
+#ifdef BSP_SPI_USING_DMA
             rt_memset(dma_recv_buf, 0xFF, send_length);
             if (use_rx_dma)
             {
                 state = HAL_SPI_Receive_DMA(spi_handle, dma_recv_buf, send_length);
             }
             else
+#endif /* BSP_SPI_USING_DMA */
             {
                 /* clear the old error flag */
                 __HAL_SPI_CLEAR_OVRFLAG(spi_handle);
@@ -489,6 +512,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             LOG_D("%s transfer done", spi_drv->config->bus_name);
         }
 
+#ifdef BSP_SPI_USING_DMA
         if (use_tx_dma || use_rx_dma)
         {
             /* blocking the thread,and the other tasks can run */
@@ -519,6 +543,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         }
 
 transfer_cleanup:
+#ifdef BSP_SPI_USING_DMA
         /* Post-transfer processing */
         if (state == HAL_OK)
         {
@@ -534,7 +559,7 @@ transfer_cleanup:
         // Free any temporary buffers that were allocated
         if (aligned_send_buf) rt_free_align(aligned_send_buf);
         if (aligned_recv_buf) rt_free_align(aligned_recv_buf);
-
+#endif /* BSP_SPI_USING_DMA */
         if (state != HAL_OK)
         {
             break;
@@ -584,8 +609,10 @@ static int rt_hw_spi_bus_init(void)
         spi_bus_obj[i].spi_bus.parent.user_data = &spi_config[i];
         spi_bus_obj[i].handle.Instance = spi_config[i].Instance;
 
+#ifdef BSP_SPI_USING_DMA
         /* initialize completion object */
         rt_completion_init(&spi_bus_obj[i].cpt);
+#endif /* BSP_SPI_USING_DMA */
 
         result = rt_spi_bus_register(&spi_bus_obj[i].spi_bus, spi_config[i].bus_name, &stm_spi_ops);
         RT_ASSERT(result == RT_EOK);
@@ -665,7 +692,7 @@ rt_err_t rt_hw_spi_device_detach(const char *device_name)
     return RT_EOK;
 }
 
-#if defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI1_RX_USING_DMA)
+#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_USING_DMA)
 void SPI1_IRQHandler(void)
 {
     /* enter interrupt */
@@ -676,9 +703,8 @@ void SPI1_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
 
-#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_RX_USING_DMA)
+#ifdef BSP_SPI1_RX_USING_DMA
 /**
   * @brief  This function handles DMA Rx interrupt request.
   * @param  None
@@ -694,9 +720,9 @@ void SPI1_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_SPI1_RX_USING_DMA */
 
-#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_TX_USING_DMA)
+#ifdef BSP_SPI1_TX_USING_DMA
 /**
   * @brief  This function handles DMA Tx interrupt request.
   * @param  None
@@ -712,9 +738,10 @@ void SPI1_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* defined(BSP_USING_SPI1) && defined(BSP_SPI_USING_DMA) */
+#endif /* BSP_SPI1_TX_USING_DMA */
+#endif /* defined(BSP_USING_SPI1) && defined(BSP_SPI1_USING_DMA) */
 
-#if defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI2_RX_USING_DMA)
+#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_USING_DMA)
 void SPI2_IRQHandler(void)
 {
     /* enter interrupt */
@@ -725,9 +752,8 @@ void SPI2_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
 
-#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_RX_USING_DMA)
+#ifdef BSP_SPI2_RX_USING_DMA
 /**
   * @brief  This function handles DMA Rx interrupt request.
   * @param  None
@@ -743,9 +769,9 @@ void SPI2_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_SPI2_RX_USING_DMA */
 
-#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_TX_USING_DMA)
+#ifdef BSP_SPI2_TX_USING_DMA
 /**
   * @brief  This function handles DMA Tx interrupt request.
   * @param  None
@@ -761,9 +787,10 @@ void SPI2_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* defined(BSP_USING_SPI2) && defined(BSP_SPI_USING_DMA) */
+#endif /* BSP_SPI2_TX_USING_DMA */
+#endif /* defined(BSP_USING_SPI2) && defined(BSP_SPI2_USING_DMA) */
 
-#if defined(BSP_SPI3_TX_USING_DMA) || defined(BSP_SPI3_RX_USING_DMA)
+#if defined(BSP_USING_SPI3) && defined(BSP_SPI3_USING_DMA)
 void SPI3_IRQHandler(void)
 {
     /* enter interrupt */
@@ -774,9 +801,8 @@ void SPI3_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
 
-#if defined(BSP_USING_SPI3) && defined(BSP_SPI3_RX_USING_DMA)
+#ifdef BSP_SPI3_RX_USING_DMA
 /**
   * @brief  This function handles DMA Rx interrupt request.
   * @param  None
@@ -792,9 +818,9 @@ void SPI3_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_SPI3_RX_USING_DMA */
 
-#if defined(BSP_USING_SPI3) && defined(BSP_SPI3_TX_USING_DMA)
+#ifdef BSP_SPI3_TX_USING_DMA
 /**
   * @brief  This function handles DMA Tx interrupt request.
   * @param  None
@@ -810,9 +836,10 @@ void SPI3_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* defined(BSP_USING_SPI3) && defined(BSP_SPI_USING_DMA) */
+#endif /* BSP_SPI3_TX_USING_DMA */
+#endif /* defined(BSP_USING_SPI3) && defined(BSP_SPI3_USING_DMA) */
 
-#if defined(BSP_SPI4_TX_USING_DMA) || defined(BSP_SPI4_RX_USING_DMA)
+#if defined(BSP_USING_SPI4) && defined(BSP_SPI4_USING_DMA)
 void SPI4_IRQHandler(void)
 {
     /* enter interrupt */
@@ -823,9 +850,8 @@ void SPI4_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
 
-#if defined(BSP_USING_SPI4) && defined(BSP_SPI4_RX_USING_DMA)
+#ifdef BSP_SPI4_RX_USING_DMA
 /**
   * @brief  This function handles DMA Rx interrupt request.
   * @param  None
@@ -841,9 +867,9 @@ void SPI4_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_SPI4_RX_USING_DMA */
 
-#if defined(BSP_USING_SPI4) && defined(BSP_SPI4_TX_USING_DMA)
+#ifdef BSP_SPI4_TX_USING_DMA
 /**
   * @brief  This function handles DMA Tx interrupt request.
   * @param  None
@@ -859,9 +885,10 @@ void SPI4_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* defined(BSP_USING_SPI4) && defined(BSP_SPI_USING_DMA) */
+#endif /* BSP_SPI4_TX_USING_DMA */
+#endif /* defined(BSP_USING_SPI4) && defined(BSP_SPI4_USING_DMA) */
 
-#if defined(BSP_SPI5_TX_USING_DMA) || defined(BSP_SPI5_RX_USING_DMA)
+#if defined(BSP_USING_SPI5) && defined(BSP_SPI5_USING_DMA)
 void SPI5_IRQHandler(void)
 {
     /* enter interrupt */
@@ -872,9 +899,8 @@ void SPI5_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
 
-#if defined(BSP_USING_SPI5) && defined(BSP_SPI5_RX_USING_DMA)
+#ifdef BSP_SPI5_RX_USING_DMA
 /**
   * @brief  This function handles DMA Rx interrupt request.
   * @param  None
@@ -890,9 +916,9 @@ void SPI5_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_SPI5_RX_USING_DMA */
 
-#if defined(BSP_USING_SPI5) && defined(BSP_SPI5_TX_USING_DMA)
+#ifdef BSP_SPI5_TX_USING_DMA
 /**
   * @brief  This function handles DMA Tx interrupt request.
   * @param  None
@@ -908,9 +934,22 @@ void SPI5_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* defined(BSP_USING_SPI5) && defined(BSP_SPI_USING_DMA) */
+#endif /* BSP_SPI5_TX_USING_DMA */
+#endif /* defined(BSP_USING_SPI5) && defined(BSP_SPI5_USING_DMA) */
 
-#if defined(BSP_USING_SPI6) && defined(BSP_SPI6_RX_USING_DMA)
+#if defined(BSP_USING_SPI6) && defined(BSP_SPI6_USING_DMA)
+void SPI6_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+
+    HAL_SPI_IRQHandler(&spi_bus_obj[SPI6_INDEX].handle);
+
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+
+#ifdef BSP_SPI6_RX_USING_DMA
 /**
   * @brief  This function handles DMA Rx interrupt request.
   * @param  None
@@ -926,9 +965,9 @@ void SPI6_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_SPI6_RX_USING_DMA */
 
-#if defined(BSP_USING_SPI6) && defined(BSP_SPI6_TX_USING_DMA)
+#ifdef BSP_SPI6_TX_USING_DMA
 /**
   * @brief  This function handles DMA Tx interrupt request.
   * @param  None
@@ -944,72 +983,74 @@ void SPI6_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* defined(BSP_USING_SPI6) && defined(BSP_SPI_USING_DMA) */
+#endif /* BSP_SPI6_TX_USING_DMA */
+#endif /* defined(BSP_USING_SPI6) && defined(BSP_SPI6_USING_DMA) */
 
+#ifdef BSP_SPI_USING_DMA
 static void stm32_get_dma_info(void)
 {
 #ifdef BSP_SPI1_RX_USING_DMA
-    spi_bus_obj[SPI1_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
+    spi_bus_obj[SPI1_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static const struct stm32_dma_config spi1_dma_rx = SPI1_RX_DMA_CONFIG;
     spi_config[SPI1_INDEX].dma_rx = &spi1_dma_rx;
 #endif
 #ifdef BSP_SPI1_TX_USING_DMA
-    spi_bus_obj[SPI1_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
+    spi_bus_obj[SPI1_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static const struct stm32_dma_config spi1_dma_tx = SPI1_TX_DMA_CONFIG;
     spi_config[SPI1_INDEX].dma_tx = &spi1_dma_tx;
 #endif
 
 #ifdef BSP_SPI2_RX_USING_DMA
-    spi_bus_obj[SPI2_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
+    spi_bus_obj[SPI2_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static const struct stm32_dma_config spi2_dma_rx = SPI2_RX_DMA_CONFIG;
     spi_config[SPI2_INDEX].dma_rx = &spi2_dma_rx;
 #endif
 #ifdef BSP_SPI2_TX_USING_DMA
-    spi_bus_obj[SPI2_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
+    spi_bus_obj[SPI2_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static const struct stm32_dma_config spi2_dma_tx = SPI2_TX_DMA_CONFIG;
     spi_config[SPI2_INDEX].dma_tx = &spi2_dma_tx;
 #endif
 
 #ifdef BSP_SPI3_RX_USING_DMA
-    spi_bus_obj[SPI3_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
+    spi_bus_obj[SPI3_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static const struct stm32_dma_config spi3_dma_rx = SPI3_RX_DMA_CONFIG;
     spi_config[SPI3_INDEX].dma_rx = &spi3_dma_rx;
 #endif
 #ifdef BSP_SPI3_TX_USING_DMA
-    spi_bus_obj[SPI3_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
+    spi_bus_obj[SPI3_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static const struct stm32_dma_config spi3_dma_tx = SPI3_TX_DMA_CONFIG;
     spi_config[SPI3_INDEX].dma_tx = &spi3_dma_tx;
 #endif
 
 #ifdef BSP_SPI4_RX_USING_DMA
-    spi_bus_obj[SPI4_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
+    spi_bus_obj[SPI4_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static const struct stm32_dma_config spi4_dma_rx = SPI4_RX_DMA_CONFIG;
     spi_config[SPI4_INDEX].dma_rx = &spi4_dma_rx;
 #endif
 #ifdef BSP_SPI4_TX_USING_DMA
-    spi_bus_obj[SPI4_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
+    spi_bus_obj[SPI4_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static const struct stm32_dma_config spi4_dma_tx = SPI4_TX_DMA_CONFIG;
     spi_config[SPI4_INDEX].dma_tx = &spi4_dma_tx;
 #endif
 
 #ifdef BSP_SPI5_RX_USING_DMA
-    spi_bus_obj[SPI5_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
+    spi_bus_obj[SPI5_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static const struct stm32_dma_config spi5_dma_rx = SPI5_RX_DMA_CONFIG;
     spi_config[SPI5_INDEX].dma_rx = &spi5_dma_rx;
 #endif
 #ifdef BSP_SPI5_TX_USING_DMA
-    spi_bus_obj[SPI5_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
+    spi_bus_obj[SPI5_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static const struct stm32_dma_config spi5_dma_tx = SPI5_TX_DMA_CONFIG;
     spi_config[SPI5_INDEX].dma_tx = &spi5_dma_tx;
 #endif
 
 #ifdef BSP_SPI6_RX_USING_DMA
-    spi_bus_obj[SPI6_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
+    spi_bus_obj[SPI6_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
     static const struct stm32_dma_config spi6_dma_rx = SPI6_RX_DMA_CONFIG;
     spi_config[SPI6_INDEX].dma_rx = &spi6_dma_rx;
 #endif
 #ifdef BSP_SPI6_TX_USING_DMA
-    spi_bus_obj[SPI6_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
+    spi_bus_obj[SPI6_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static const struct stm32_dma_config spi6_dma_tx = SPI6_TX_DMA_CONFIG;
     spi_config[SPI6_INDEX].dma_tx = &spi6_dma_tx;
 #endif
@@ -1032,6 +1073,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
     struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
     rt_completion_done(&spi_drv->cpt);
 }
+#endif /* BSP_SPI_USING_DMA */
 
 #if defined(SOC_SERIES_STM32F0)
 void SPI1_DMA_RX_TX_IRQHandler(void)
@@ -1056,26 +1098,26 @@ void SPI2_DMA_RX_TX_IRQHandler(void)
 #endif
 }
 #elif defined(SOC_SERIES_STM32G0)
-#if defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI1_RX_USING_DMA)
+#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_USING_DMA)
 void SPI1_DMA_RX_TX_IRQHandler(void)
 {
-#if defined(BSP_SPI1_TX_USING_DMA)
+#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_TX_USING_DMA)
     SPI1_DMA_TX_IRQHandler();
 #endif
 
-#if defined(BSP_SPI1_RX_USING_DMA)
+#if defined(BSP_USING_SPI1) && defined(BSP_SPI1_RX_USING_DMA)
     SPI1_DMA_RX_IRQHandler();
 #endif
 }
 #endif /* defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI1_RX_USING_DMA) */
-#if defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI2_RX_USING_DMA)
+#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_USING_DMA)
 void SPI2_DMA_RX_TX_IRQHandler(void)
 {
-#if defined(BSP_SPI2_TX_USING_DMA)
+#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_TX_USING_DMA)
     SPI2_DMA_TX_IRQHandler();
 #endif
 
-#if defined(BSP_SPI2_RX_USING_DMA)
+#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_RX_USING_DMA)
     SPI2_DMA_RX_IRQHandler();
 #endif
 }
@@ -1084,10 +1126,10 @@ void SPI2_DMA_RX_TX_IRQHandler(void)
 #if defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3)
 void SPI2_3_IRQHandler(void)
 {
-#if defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI2_RX_USING_DMA)
+#if defined(BSP_USING_SPI2) && defined(BSP_SPI2_USING_DMA)
     SPI2_IRQHandler();
 #endif
-#if defined(BSP_SPI3_TX_USING_DMA) || defined(BSP_SPI3_RX_USING_DMA)
+#if defined(BSP_USING_SPI3) && defined(BSP_SPI3_USING_DMA)
     SPI3_IRQHandler();
 #endif
 }
@@ -1097,10 +1139,12 @@ void SPI2_3_IRQHandler(void)
 
 int rt_hw_spi_init(void)
 {
+#ifdef BSP_SPI_USING_DMA
     stm32_get_dma_info();
+#endif /* BSP_SPI_USING_DMA */
     return rt_hw_spi_bus_init();
 }
 INIT_BOARD_EXPORT(rt_hw_spi_init);
 
-#endif /* BSP_USING_SPI1 || BSP_USING_SPI2 || BSP_USING_SPI3 || BSP_USING_SPI4 || BSP_USING_SPI5 */
 #endif /* BSP_USING_SPI */
+
