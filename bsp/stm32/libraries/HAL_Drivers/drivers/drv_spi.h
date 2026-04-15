@@ -18,6 +18,53 @@
 #include "drv_dma.h"
 #include <ipc/completion.h>
 
+/* hardware bus */
+#if defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) || defined(BSP_USING_SPI4) || defined(BSP_USING_SPI5) || defined(BSP_USING_SPI6)
+#define BSP_HARDWARE_SPI
+#endif
+
+/* DMA */
+#if defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI3_TX_USING_DMA) || defined(BSP_SPI4_TX_USING_DMA) || defined(BSP_SPI5_TX_USING_DMA) || defined(BSP_SPI6_TX_USING_DMA)
+#define BSP_SPI_TX_USING_DMA
+#endif
+
+#if defined(BSP_SPI1_RX_USING_DMA) || defined(BSP_SPI2_RX_USING_DMA) || defined(BSP_SPI3_RX_USING_DMA) || defined(BSP_SPI4_RX_USING_DMA) || defined(BSP_SPI5_RX_USING_DMA) || defined(BSP_SPI6_RX_USING_DMA)
+#define BSP_SPI_RX_USING_DMA
+#endif
+
+#if defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI1_RX_USING_DMA)
+#define BSP_SPI1_USING_DMA
+#endif
+
+#if defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI2_RX_USING_DMA)
+#define BSP_SPI2_USING_DMA
+#endif
+
+#if defined(BSP_SPI3_TX_USING_DMA) || defined(BSP_SPI3_RX_USING_DMA)
+#define BSP_SPI3_USING_DMA
+#endif
+
+#if defined(BSP_SPI4_TX_USING_DMA) || defined(BSP_SPI4_RX_USING_DMA)
+#define BSP_SPI4_USING_DMA
+#endif
+
+#if defined(BSP_SPI5_TX_USING_DMA) || defined(BSP_SPI5_RX_USING_DMA)
+#define BSP_SPI5_USING_DMA
+#endif
+
+#if defined(BSP_SPI6_TX_USING_DMA) || defined(BSP_SPI6_RX_USING_DMA)
+#define BSP_SPI6_USING_DMA
+#endif
+
+#if defined(BSP_SPI_TX_USING_DMA) || defined(BSP_SPI_RX_USING_DMA)
+#define BSP_SPI_USING_DMA
+#endif
+
+#if defined(BSP_SPI_USING_DMA)
+#define BSP_SPI_USING_IRQ
+#endif
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -34,7 +81,14 @@ struct stm32_spi_config
     SPI_TypeDef *Instance;
     char *bus_name;
     IRQn_Type irq_type;
-    const struct stm32_dma_config *dma_rx, *dma_tx;
+#ifdef BSP_SPI_USING_DMA
+#ifdef BSP_SPI_RX_USING_DMA
+    const struct stm32_dma_config *dma_rx;
+#endif /* BSP_SPI_RX_USING_DMA */
+#ifdef BSP_SPI_TX_USING_DMA
+    const struct stm32_dma_config *dma_tx;
+#endif /* BSP_SPI_TX_USING_DMA */
+#endif /* BSP_SPI_USING_DMA */
 };
 
 struct stm32_spi_device
@@ -44,26 +98,26 @@ struct stm32_spi_device
     char *device_name;
 };
 
-#define SPI_USING_RX_DMA_FLAG   (1<<0)
-#define SPI_USING_TX_DMA_FLAG   (1<<1)
-
 /* stm32 spi dirver class */
 struct stm32_spi
 {
     SPI_HandleTypeDef handle;
     struct stm32_spi_config *config;
     struct rt_spi_configuration *cfg;
-
+    struct rt_spi_bus spi_bus;
+#ifdef BSP_SPI_USING_DMA
+    rt_uint16_t spi_dma_flag;
+    struct rt_completion cpt;
     struct
     {
+#ifdef BSP_SPI_RX_USING_DMA
         DMA_HandleTypeDef handle_rx;
+#endif /* BSP_SPI_RX_USING_DMA */
+#ifdef BSP_SPI_TX_USING_DMA
         DMA_HandleTypeDef handle_tx;
+#endif /* BSP_SPI_TX_USING_DMA */
     } dma;
-
-    rt_uint8_t spi_dma_flag;
-    struct rt_spi_bus spi_bus;
-
-    struct rt_completion cpt;
+#endif /* BSP_SPI_USING_DMA */
 };
 
 #endif /*__DRV_SPI_H__ */
