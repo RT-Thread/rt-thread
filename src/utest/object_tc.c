@@ -8,6 +8,7 @@
  * 2025-07-18     kurisaW      First commit
  * 2025-11-13     CYFS         Add standardized documentation block for object_tc
  * 2025-11-19     Rbb666       Refactor tests, add stress and error-path coverage
+ * 2025-12-12     CYFS         add strict name-check tests
  */
 
 /**
@@ -139,6 +140,30 @@ static rt_err_t generate_unique_name(char *buf,
 
     return -RT_ENOMEM;
 }
+
+#if defined(RT_USING_STRICT_NAME_CHECKS) && defined(RT_DEBUGING_ASSERT)
+struct strict_assert_capture
+{
+    rt_bool_t armed;
+    rt_uint16_t hit_count;
+    const char *expr;
+    const char *func;
+    rt_size_t line;
+};
+
+static struct strict_assert_capture strict_assert_capture_state;
+
+static void strict_assert_hook(const char *ex, const char *func, rt_size_t line)
+{
+    if (!strict_assert_capture_state.armed)
+        return;
+
+    strict_assert_capture_state.hit_count++;
+    strict_assert_capture_state.expr = ex;
+    strict_assert_capture_state.func = func;
+    strict_assert_capture_state.line = line;
+}
+#endif /* defined(RT_USING_STRICT_NAME_CHECKS) && defined(RT_DEBUGING_ASSERT) */
 
 static void test_object_name_handling(void)
 {
@@ -415,6 +440,57 @@ static void test_object_error_paths(void)
     rt_object_detach(&obj);
 }
 
+#if defined(RT_USING_STRICT_NAME_CHECKS) && defined(RT_DEBUGING_ASSERT)
+static void test_object_strict_name_checks(void)
+{
+    struct rt_object base_obj;
+    struct rt_object duplicate_obj;
+    struct rt_object overflow_obj;
+    char duplicate_name[TEST_RT_NAME_MAX];
+    char overflow_name[TEST_RT_NAME_MAX + 8];
+    rt_size_t base_len;
+    void (*prev_hook)(const char *, const char *, rt_size_t) = rt_assert_hook;
+
+    uassert_true(generate_unique_name(duplicate_name, sizeof(duplicate_name), "strict", RT_Object_Class_Thread) == RT_EOK);
+    rt_object_init(&base_obj, RT_Object_Class_Thread, duplicate_name);
+
+    rt_assert_set_hook(strict_assert_hook);
+
+    strict_assert_capture_state.hit_count = 0;
+    strict_assert_capture_state.expr = RT_NULL;
+    strict_assert_capture_state.func = RT_NULL;
+    strict_assert_capture_state.line = 0;
+    strict_assert_capture_state.armed = RT_TRUE;
+    rt_object_init(&duplicate_obj, RT_Object_Class_Thread, duplicate_name);
+    uassert_true(strict_assert_capture_state.hit_count >= 1);
+    uassert_not_null(strict_assert_capture_state.expr);
+    uassert_str_equal(strict_assert_capture_state.expr, "duplicate == RT_NULL");
+    strict_assert_capture_state.armed = RT_FALSE;
+    rt_object_detach(&duplicate_obj);
+
+    uassert_true(generate_unique_name(overflow_name, sizeof(overflow_name), "strict", RT_Object_Class_Thread) == RT_EOK);
+    base_len = rt_strlen(overflow_name);
+    rt_memset(overflow_name + base_len, 'x', sizeof(overflow_name) - base_len - 1);
+    overflow_name[sizeof(overflow_name) - 1] = '\0';
+    uassert_true(rt_strlen(overflow_name) > TEST_RT_NAME_MAX - 1);
+
+    strict_assert_capture_state.hit_count = 0;
+    strict_assert_capture_state.expr = RT_NULL;
+    strict_assert_capture_state.func = RT_NULL;
+    strict_assert_capture_state.line = 0;
+    strict_assert_capture_state.armed = RT_TRUE;
+    rt_object_init(&overflow_obj, RT_Object_Class_Thread, overflow_name);
+    uassert_true(strict_assert_capture_state.hit_count >= 1);
+    uassert_not_null(strict_assert_capture_state.expr);
+    uassert_str_equal(strict_assert_capture_state.expr, "obj_name_len <= RT_NAME_MAX - 1");
+    strict_assert_capture_state.armed = RT_FALSE;
+    rt_object_detach(&overflow_obj);
+
+    rt_assert_set_hook(prev_hook);
+    rt_object_detach(&base_obj);
+}
+#endif /* defined(RT_USING_STRICT_NAME_CHECKS) && defined(RT_DEBUGING_ASSERT) */
+
 #ifdef RT_USING_HEAP
 static rt_err_t custom_destroy_cb(void *data)
 {
@@ -516,6 +592,9 @@ static void test_object_suite(void)
     UTEST_UNIT_RUN(test_object_error_paths);
 #ifdef RT_USING_HEAP
     UTEST_UNIT_RUN(test_custom_object_lifecycle);
+#endif
+#if defined(RT_USING_STRICT_NAME_CHECKS) && defined(RT_DEBUGING_ASSERT)
+    UTEST_UNIT_RUN(test_object_strict_name_checks);
 #endif
     UTEST_UNIT_RUN(test_object_pressure);
 }
