@@ -136,10 +136,10 @@ struct stm32_i2c_config
     IRQn_Type               evirq_type;
     IRQn_Type               erirq_type;
 #ifdef BSP_I2C_RX_USING_DMA
-    struct dma_config       *dma_rx;
+    const struct stm32_dma_config *dma_rx;
 #endif /* BSP_I2C_RX_USING_DMA */
 #ifdef BSP_I2C_TX_USING_DMA
-    struct dma_config       *dma_tx;
+    const struct stm32_dma_config *dma_tx;
 #endif /* BSP_I2C_TX_USING_DMA */
 };
 
