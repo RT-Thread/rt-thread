@@ -60,11 +60,16 @@ static void clic_init(void)
 
     for (i = 0; i < 64; i++) {
         CLIC->CLICINT[i].IP = 0;
+#if !CONFIG_SUPPORT_NON_VECTOR_IRQ
         CLIC->CLICINT[i].ATTR = 1; /* use vector interrupt */
+#else
+        CLIC->CLICINT[i].ATTR = 0; /* use non-vector interrupt */
+#endif
+        csi_vic_set_prio(i, 3);
     }
-
-    /* tspend use positive interrupt */
+    /* tspend use vector&positive interrupt */
     CLIC->CLICINT[Machine_Software_IRQn].ATTR = 0x3;
+    csi_vic_set_prio(Machine_Software_IRQn, 1);
     csi_irq_enable(Machine_Software_IRQn);
 }
 
@@ -84,6 +89,9 @@ static void interrupt_init(void)
   */
 void SystemInit(void)
 {
+    extern int cpu_features_init(void);
+    cpu_features_init();
+
     /* enable theadisaee & MM */
     uint32_t status = __get_MXSTATUS();
     status |= (1 << 22 | 1 << 15);
@@ -107,7 +115,7 @@ void SystemInit(void)
     cache_init();
     section_init();
     interrupt_init();
-    soc_set_sys_freq(10000000);
+    soc_set_sys_freq(20000000);
     csi_tick_init();
 }
 

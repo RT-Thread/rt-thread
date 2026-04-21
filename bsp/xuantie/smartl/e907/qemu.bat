@@ -31,9 +31,9 @@ if exist "!CONFIG_FILE!" (
 :: Load CPU parameter from config file or set default
 if exist "!CPU_CONFIG_FILE!" (
     set /p CPU_PARAM=<"!CPU_CONFIG_FILE!"
-    if not defined CPU_PARAM set "CPU_PARAM=e907fd"
+    if not defined CPU_PARAM set "CPU_PARAM=e907fdp"
 ) else (
-    set "CPU_PARAM=e907fd"
+    set "CPU_PARAM=e907fdp"
 )
 
 :: Prompt for new QEMU directory

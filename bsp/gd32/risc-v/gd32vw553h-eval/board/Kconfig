@@ -107,6 +107,27 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM16"
                 default n
         endif
+    
+    menuconfig BSP_USING_WDT
+        bool "Enable WDT"
+        default n
+        if BSP_USING_WDT
+            config BSP_USING_FWDT
+                bool "Enable FWDT"
+                default y
+            config BSP_USING_WWDT
+                bool "Enable WWDT"
+                default n
+            choice
+                prompt "Select WDT type"
+                default BSP_USING_FWDT
+                config BSP_USING_FWDT
+                    bool "Enable FWDT"
+                config BSP_USING_WWDT
+                    bool "Enable WWDT"
+            endchoice
+        endif
+    
     menuconfig BSP_USING_HW_I2C
         bool "Enable Hardware I2C"
         default n
@@ -163,6 +184,27 @@ menu "On-chip Peripheral Drivers"
                 default 100
                 depends on BSP_USING_HW_I2C1
                 range 10 1000
+        endif
+
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0 BUS"
+                default n
+
+            config BSP_SPI0_TX_USING_DMA
+                bool "Enable SPI0 TX DMA"
+                depends on BSP_USING_SPI0
+                default n
+
+            config BSP_SPI0_RX_USING_DMA
+                bool "Enable SPI0 RX DMA"
+                depends on BSP_USING_SPI0
+                select BSP_SPI0_TX_USING_DMA
         endif
 
     menuconfig BSP_USING_HWTIMER
@@ -222,4 +264,3 @@ menu "Board extended module Drivers"
 endmenu
 
 endmenu
-

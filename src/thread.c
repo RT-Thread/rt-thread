@@ -277,6 +277,13 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->system_time = 0;
 #endif
 
+#ifdef RT_USING_CPU_USAGE_TRACER
+    thread->user_time = 0;
+    thread->system_time = 0;
+    thread->total_time_prev = 0;
+    thread->cpu_usage = 0;
+#endif /* RT_USING_CPU_USAGE_TRACER */
+
 #ifdef RT_USING_PTHREADS
     thread->pthread_data = RT_NULL;
 #endif /* RT_USING_PTHREADS */
@@ -943,6 +950,7 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+    RT_ASSERT(!rt_thread_is_idle_thread(thread));
 
     LOG_D("thread suspend: %s", thread->parent.name);
 

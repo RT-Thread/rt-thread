@@ -1115,6 +1115,7 @@ static rt_err_t append_rk8xx_regulator(struct rk8xx *rk8xx, struct rt_ofw_node *
     rgp = &rk8xx_reg->parent;
     rgp->ops = rk8xx_reg->desc->ops;
     rgp->param = &rk8xx_reg->param;
+    rgp->supply_name = rgp->param->name;
     rgp->dev = &rk8xx_reg->device;
 
     rgp->dev->ofw_node = np;

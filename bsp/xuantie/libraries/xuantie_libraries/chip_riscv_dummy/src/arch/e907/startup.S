@@ -17,7 +17,8 @@
  */
 
 #include <csi_config.h>
-.global __rt_rvstack 
+
+#if !CONFIG_SUPPORT_NON_VECTOR_IRQ
 .section .vectors, "aw", @progbits
     .align  6
     .globl  __Vectors
@@ -109,10 +110,65 @@ __Vectors:
     .long   Default_IRQHandler
     .long   Default_IRQHandler
     .long   Default_IRQHandler
+#else
+.section .vectors, "aw", @progbits
+    .align  6
+    .globl  __Vectors
+    .type   __Vectors, @object
+__Vectors:
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   tspend_handler
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+
+    /* External interrupts */
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+    .long   do_irq
+#endif
 
     .size   __Vectors, . - __Vectors
 
-    .globl   Reset_Handler
     .text
     .align   2
     j        Reset_Handler
@@ -122,8 +178,8 @@ __Vectors:
     .align   2
 _start:
     .text
-    .long    Reset_Handler
     .align  2
+    .global Reset_Handler
     .type   Reset_Handler, %function
 Reset_Handler:
 .option push
@@ -154,14 +210,13 @@ Reset_Handler:
 __exit:
     j      __exit
 
-.section .stack
+.section .stack, "aw", @nobits
     .align  4
     .global g_base_irqstack
     .global g_top_irqstack
 g_base_irqstack:
     .space CONFIG_ARCH_INTERRUPTSTACK
 g_top_irqstack:
-__rt_rvstack:
 #ifdef CONFIG_KERNEL_NONE
     .align  4
     .global g_base_mainstack

@@ -8,7 +8,7 @@ if not GetDepend(['RT_USING_POWER_SUPPLY']):
 cwd = GetCurrentDir()
 CPPPATH = [cwd + '/../../include']
 
-src = ['supply.c']
+src = ['supply.c', 'supply_cmd.c']
 
 if GetDepend(['RT_POWER_SUPPLY_DAEMON']):
     src += ['supply-daemon.c']

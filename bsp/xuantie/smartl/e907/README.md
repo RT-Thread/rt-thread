@@ -58,13 +58,18 @@ E907 处理器体系结构的主要特点如下：
    e907 e907f e907fd e907p e907fp e907fdp 
   ```
 
-- 当前BSP默认设置的内核是e907fd，该架构支持[F] [D]扩展，可以通过menuconfig工具使能[F]扩展或者[F] [D] 扩展。
+- 当前BSP默认设置的内核是e907fdp，该架构支持[F][D][P]扩展，可以通过menuconfig工具使能[F]、[D]、[P]扩展。
 
 - 当使用其他内核架构时需要修改，rtconfig.py文件中的`MCPU`字段。
 
 ### 4.运行QEMU
 
 - BSP根目录下存在`qemu.bat`脚本，生成可执行文件后可点击该脚本直接启动QEMU.
+
+- Linux用户可以直接使用`qemu-system-riscv32`命令启动QEMU.
+```shell
+qemu-system-riscv32 -machine smartl -nographic -kernel rtthread.elf -cpu e907fdp
+```
 
 ## 二 工具
 
@@ -84,12 +89,6 @@ E907 处理器体系结构的主要特点如下：
 使用前执行一次**menuconfig**命令，更新rtconfig.h配置，然后在当前目录执行**scons -j12**命令编译生成可可执行文件。
 
 <img src="figures/2.scons.png" alt="env">
-
-生成可执行文件，可以直接在命令行启动qemu或者配置vscode脚本借助vscode强大的插件进行图形化调试，qemu的相关命令可以查看玄铁qemu的[用户手册](https://www.xrvm.cn/community/download?id=4397435198627713024)，下述是启动qemu的命令，在powershell或命令行可直接执行下述命令，注意qemu需要导出至环境变量或者使用绝对路径。
-
-```shell
-qemu-system-riscv32 -machine smartl -nographic -kernel rtthread.elf -cpu e907fdp
-```
 
 下述是使用vscode调试的展示。
 

@@ -12,7 +12,7 @@
 #include "utest.h"
 
 #define UTEST_NAME      "thread_overflow_tc"
-#define TEST_STACK_SIZE 512
+#define TEST_STACK_SIZE UTEST_THR_STACK_SIZE
 
 /* Test thread stack overflow */
 static rt_thread_t        test_thread       = RT_NULL;
@@ -34,7 +34,7 @@ static rt_err_t stack_overflow_hook(struct rt_thread *thread)
 static void stack_usage_test(void)
 {
     rt_thread_t current_thread;
-    rt_uint32_t total_stack, used_stack;
+    rt_uintptr_t total_stack, used_stack;
 
     current_thread = rt_thread_self();
     uassert_not_null(current_thread);
@@ -49,10 +49,10 @@ static void stack_usage_test(void)
 
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
     /* For upward growing stacks */
-    used_stack = (rt_uint32_t)current_thread->sp - (rt_uint32_t)current_thread->stack_addr;
+    used_stack = (rt_uintptr_t)current_thread->sp - (rt_uintptr_t)current_thread->stack_addr;
 #else
     /* For downward growing stacks (most common) */
-    used_stack = (rt_uint32_t)current_thread->stack_addr + total_stack - (rt_uint32_t)current_thread->sp;
+    used_stack = (rt_uintptr_t)current_thread->stack_addr + total_stack - (rt_uintptr_t)current_thread->sp;
 #endif
 
     rt_kprintf("Used stack: %d bytes (%d%%)\n",
@@ -142,11 +142,11 @@ static void stack_overflow_hook_test(void)
 /* Fake thread test entry function */
 static void fake_thread_entry(void *parameter)
 {
-    /* This function should never actually run */
-    rt_kprintf("Fake thread is running - this should not happen!\n");
+    RT_UNUSED(parameter);
+
     while (1)
     {
-        rt_thread_mdelay(1000);
+        rt_thread_mdelay(100);
     }
 }
 
@@ -178,14 +178,18 @@ static void fake_thread_stack_overflow_test(void)
     }
 
     rt_kprintf("Fake thread created successfully\n");
+    uassert_int_equal(rt_thread_startup(fake_thread), RT_EOK);
+    rt_thread_mdelay(10);
 
-    rt_kprintf("Corrupting fake thread stack with pattern 0x11...\n");
-    rt_memset(fake_thread->stack_addr, 0x11, fake_thread->stack_size);
-
-    /* Also corrupt the magic number area if stack checking is enabled */
+    rt_kprintf("Corrupting fake thread stack sentinel...\n");
 #ifdef RT_USING_OVERFLOW_CHECK
-    /* For downward growing stacks, magic is typically at the beginning */
-    rt_memset(fake_thread->stack_addr, 0x11, 4); /* Corrupt first 4 bytes */
+    /* Only corrupt the sentinel bytes used by overflow detection. */
+#ifdef ARCH_CPU_STACK_GROWS_UPWARD
+    rt_memset((rt_uint8_t *)fake_thread->stack_addr + fake_thread->stack_size - sizeof(rt_ubase_t),
+              0x11, sizeof(rt_ubase_t));
+#else
+    rt_memset(fake_thread->stack_addr, 0x11, sizeof(rt_ubase_t));
+#endif
     rt_kprintf("Stack magic number area corrupted\n");
 #endif
 
@@ -204,6 +208,11 @@ static void fake_thread_stack_overflow_test(void)
     if (fake_thread != RT_NULL)
     {
         rt_thread_delete(fake_thread);
+        for (int i = 0; i < 10 && rt_thread_find("fake_thread") != RT_NULL; i++)
+        {
+            rt_thread_mdelay(10);
+        }
+        uassert_null(rt_thread_find("fake_thread"));
         fake_thread = RT_NULL;
         rt_kprintf("Fake thread deleted\n");
     }
@@ -250,6 +259,10 @@ static rt_err_t utest_tc_cleanup(void)
     if (fake_thread != RT_NULL)
     {
         rt_thread_delete(fake_thread);
+        for (int i = 0; i < 10 && rt_thread_find("fake_thread") != RT_NULL; i++)
+        {
+            rt_thread_mdelay(10);
+        }
         fake_thread = RT_NULL;
     }
 

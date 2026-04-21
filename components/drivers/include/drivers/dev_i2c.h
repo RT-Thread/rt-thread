@@ -7,6 +7,7 @@
  * Date           Author        Notes
  * 2012-04-25     weety         first version
  * 2021-04-20     RiceChen      added support for bus control api
+ * 2024-06-23     wdfk-prog     Add the config struct
  */
 
 #ifndef __DEV_I2C_H__
@@ -185,6 +186,8 @@ extern "C" {
 #define RT_I2C_NO_READ_ACK      (1u << 6)  /* when I2C reading, we do not ACK */
 #define RT_I2C_NO_STOP          (1u << 7)  /*!< do not generate STOP condition */
 
+#define RT_I2C_CTRL_SET_MAX_HZ  0x20
+
 #define RT_I2C_DEV_CTRL_10BIT        (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x01)
 #define RT_I2C_DEV_CTRL_ADDR         (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x02)
 #define RT_I2C_DEV_CTRL_TIMEOUT      (RT_DEVICE_CTRL_BASE(I2CBUS) + 0x03)
@@ -234,6 +237,21 @@ struct rt_i2c_bus_device_ops
 };
 
 /**
+ * I2C configuration structure.
+ * mode : master: 0x00; slave: 0x01;
+ * max_hz: Maximum limit baud rate.
+ * usage_freq: Actual usage baud rate.
+ */
+struct rt_i2c_configuration
+{
+    rt_uint8_t  mode;
+    rt_uint8_t  reserved[3];
+
+    rt_uint32_t max_hz;
+    rt_uint32_t usage_freq;
+};
+
+/**
  * @brief I2C Bus Device
  */
 struct rt_i2c_bus_device
@@ -244,6 +262,7 @@ struct rt_i2c_bus_device
     struct rt_mutex lock;
     rt_uint32_t  timeout;
     rt_uint32_t  retries;
+    struct rt_i2c_configuration config;
     void *priv;
 };
 

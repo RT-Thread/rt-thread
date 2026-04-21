@@ -20,14 +20,19 @@ jobs:
       - name: Check if first commit and add comment
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_ACTION: ${{ github.event.action }}
+          REPO_FULL_NAME: ${{ github.repository }}
         run: |
-          echo "Event action: ${{ github.event.action }}"
+          echo "Event action: $PR_ACTION"
           
           # 获取 PR 的提交信息
           commits=$(curl -s \
             -H "Accept: application/vnd.github.v3+json" \
             -H "Authorization: Bearer $GITHUB_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits")
+            "https://api.github.com/repos/${REPO_FULL_NAME}/pulls/${PR_NUMBER}/commits")
 
           # 检查 API 响应是否为数组
           if echo "$commits" | jq -e 'type == "array"' > /dev/null; then
@@ -35,9 +40,9 @@ jobs:
             echo "PR commit count: $commit_count"
 
             should_comment=false
-            if [ "${{ github.event.action }}" = "opened" ]; then
+            if [ "$PR_ACTION" = "opened" ]; then
               should_comment=true
-            elif [ "${{ github.event.action }}" = "synchronize" ] && [ "$commit_count" -eq 1 ]; then
+            elif [ "$PR_ACTION" = "synchronize" ] && [ "$commit_count" -eq 1 ]; then
               should_comment=true
             fi
 
@@ -45,8 +50,8 @@ jobs:
               echo "Adding format notification comment..."
               
               # 构建工作流链接
-              branch="${{ github.event.pull_request.head.ref }}"
-              fork_repo="${{ github.event.pull_request.head.repo.full_name }}"
+              branch="$PR_HEAD_REF"
+              fork_repo="$PR_HEAD_REPO"
               workflow_url="https://github.com/${fork_repo}/actions/workflows/pr_clang_format.yml"
               direct_link="${workflow_url}?branch=${branch}"
 
@@ -69,7 +74,7 @@ jobs:
                 "- 设置需排除的文件/目录（目录请以\"/\"结尾）"
                 "Set files/directories to exclude (directories should end with \"/\")"
                 "- 将目标分支设置为 \ Set the target branch to：**\`${branch}\`**"
-                "- 设置PR number为 \ Set the PR number to：**\`${{ github.event.pull_request.number }}\`**"
+                "- 设置PR number为 \ Set the PR number to：**\`${PR_NUMBER}\`**"
                 ""
                 "3. **等待工作流完成 | Wait for the workflow to complete**"
                 "格式化后的代码将自动推送至你的分支。"
@@ -92,7 +97,7 @@ jobs:
               existing_comment=$(curl -s \
                 -H "Accept: application/vnd.github.v3+json" \
                 -H "Authorization: Bearer $GITHUB_TOKEN" \
-                "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments" | \
+                "https://api.github.com/repos/${REPO_FULL_NAME}/issues/${PR_NUMBER}/comments" | \
                 jq -r '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- PR Format Notification Comment -->"))) | {id: .id, body: .body} | @base64')
 
               # 使用 jq 安全地构建 JSON 负载
@@ -107,7 +112,7 @@ jobs:
                   -H "Accept: application/vnd.github.v3+json" \
                   -H "Authorization: Bearer $GITHUB_TOKEN" \
                   -d "$json_payload" \
-                  "https://api.github.com/repos/${{ github.repository }}/issues/comments/$comment_id")
+                  "https://api.github.com/repos/${REPO_FULL_NAME}/issues/comments/$comment_id")
               else
                 # 创建新评论
                 echo "Creating new comment"
@@ -116,7 +121,7 @@ jobs:
                   -H "Accept: application/vnd.github.v3+json" \
                   -H "Authorization: Bearer $GITHUB_TOKEN" \
                   -d "$json_payload" \
-                  "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments")
+                  "https://api.github.com/repos/${REPO_FULL_NAME}/issues/${PR_NUMBER}/comments")
               fi
 
               # 提取 HTTP 状态码和响应体

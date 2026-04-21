@@ -19,6 +19,13 @@ devices.i2c:
       - CONFIG_BSP_HW_I2C1_PIN_PB12_PB13=y
       - CONFIG_BSP_HW_I2C1_CLK=100
 
+      
+devices.spi:
+    kconfig:
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI0=y
+
+
 devices.wlan:
     kconfig:
       - CONFIG_BSP_USING_WLAN=y

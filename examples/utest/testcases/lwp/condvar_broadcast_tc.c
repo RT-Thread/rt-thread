@@ -6,6 +6,40 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-11-20     Shell        add test suites
+ * 2026-03-19     cl2t         Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Condition Variable Broadcast Test
+ *
+ * Test Objectives:
+ * - Verify that rt_condvar_broadcast() correctly wakes up all threads
+ *   waiting on a condition variable.
+ * - Test core APIs: rt_condvar_broadcast(), rt_condvar_timedwait(),
+ *   rt_mutex_take(), rt_mutex_release(), rt_mutex_get_owner().
+ *
+ * Test Scenarios:
+ * - Creates 8 worker threads, each acquiring a mutex and then waiting on
+ *   a condition variable via rt_condvar_timedwait().
+ * - The main thread calls rt_condvar_broadcast() to wake all waiters.
+ * - Each woken thread verifies it re-acquired the mutex, increments a
+ *   counter, and releases the mutex.
+ * - The main thread verifies all 8 threads were successfully woken.
+ *
+ * Verification Metrics:
+ * - All waiting threads must be woken after broadcast (waken_num == THREAD_NUM).
+ * - Each woken thread must hold the mutex (verified via rt_mutex_get_owner()).
+ * - rt_condvar_timedwait() must return 0 on successful wake.
+ * - Mutex release must succeed for each woken thread.
+ *
+ * Dependencies:
+ * - Software configuration: RT_USING_SMART must be enabled.
+ * - Environmental assumptions: The platform must support multi-threading
+ *   with at least 8 concurrent threads.
+ *
+ * Expected Results:
+ * - Final output: "[ PASSED ] [ result ] testcase (testcases.ipc.condvar.broadcast)"
+ * - No assertion failures during test execution.
  */
 
 #include "common.h"

@@ -212,4 +212,42 @@ rt_thread_t rt_thread_idle_gethandler(void)
     return (rt_thread_t)(&idle_thread[id]);
 }
 
+/**
+ * @brief Check whether the specified thread is one of the system idle threads.
+ *
+ * @details
+ * RT-Thread creates an idle thread for each CPU. These idle threads are special
+ * scheduler-owned threads that act as the fallback runnable threads when no
+ * other ready thread exists.
+ *
+ * This helper is mainly used for defensive checks in code paths that may block
+ * or suspend a thread, because an idle thread must never enter a blocking or
+ * suspended state. Suspending an idle thread may leave the system with no ready
+ * thread and break scheduling.
+ *
+ * @param thread The thread to test.
+ *
+ * @return RT_TRUE if @p thread is an idle thread of any CPU; otherwise RT_FALSE.
+ *
+ * @note
+ * - In SMP configurations, there is one idle thread per CPU, so this function
+ *   checks against all idle thread objects.
+ * - Passing RT_NULL returns RT_FALSE.
+ */
+rt_bool_t rt_thread_is_idle_thread(rt_thread_t thread)
+{
+    rt_ubase_t i;
+
+    if (thread != RT_NULL)
+    {
+        for (i = 0; i < _CPUS_NR; i++)
+        {
+            if (thread == &idle_thread[i])
+                return RT_TRUE;
+        }
+    }
+
+    return RT_FALSE;
+}
+
 /** @} group_thread_management */

@@ -59,6 +59,56 @@ int dfs_ramfs_ioctl(struct dfs_file *file, int cmd, void *args)
     return -EIO;
 }
 
+
+static int _ramfs_set_name(char *name, rt_size_t name_size, const char *path)
+{
+    const char *name_ptr = path;
+    const char *name_scan;
+    rt_size_t name_len;
+
+    if (path == RT_NULL)
+    {
+        return -EINVAL;
+    }
+
+    if (path[0] != '/')
+    {
+        return -EINVAL;
+    }
+
+    while (*name_ptr == '/' && *name_ptr)
+    {
+        name_ptr ++;
+    }
+
+    if (*name_ptr == '\0')
+    {
+        return -ENOENT;
+    }
+
+    name_scan = name_ptr;
+    while (*name_scan)
+    {
+        if (*name_scan == '/')
+        {
+            return -EINVAL;
+        }
+
+        name_scan ++;
+    }
+
+    name_len = rt_strlen(name_ptr);
+    if (name_len >= name_size)
+    {
+        return -ENAMETOOLONG;
+    }
+
+    rt_memcpy(name, name_ptr, name_len);
+    name[name_len] = '\0';
+
+    return RT_EOK;
+}
+
 struct ramfs_dirent *dfs_ramfs_lookup(struct dfs_ramfs *ramfs,
                                       const char       *path,
                                       rt_size_t        *size)
@@ -182,6 +232,7 @@ int dfs_ramfs_open(struct dfs_file *file)
     struct dfs_ramfs *ramfs;
     struct ramfs_dirent *dirent;
     struct dfs_filesystem *fs;
+    int ret;
 
     RT_ASSERT(file->vnode->ref_count > 0);
     if (file->vnode->ref_count > 1)
@@ -245,11 +296,12 @@ int dfs_ramfs_open(struct dfs_file *file)
 
                 /* remove '/' separator */
                 name_ptr = file->vnode->path;
-                while (*name_ptr == '/' && *name_ptr)
+                ret = _ramfs_set_name(dirent->name, sizeof(dirent->name), name_ptr);
+                if (ret != RT_EOK)
                 {
-                    name_ptr++;
+                    rt_memheap_free(dirent);
+                    return ret;
                 }
-                strncpy(dirent->name, name_ptr, RAMFS_NAME_MAX);
 
                 rt_list_init(&(dirent->list));
                 dirent->data = NULL;
@@ -390,6 +442,7 @@ int dfs_ramfs_rename(struct dfs_filesystem *fs,
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
     rt_size_t size;
+    int ret;
 
     ramfs = (struct dfs_ramfs *)fs->data;
     RT_ASSERT(ramfs != NULL);
@@ -402,7 +455,11 @@ int dfs_ramfs_rename(struct dfs_filesystem *fs,
     if (dirent == NULL)
         return -ENOENT;
 
-    strncpy(dirent->name, newpath, RAMFS_NAME_MAX);
+    ret = _ramfs_set_name(dirent->name, sizeof(dirent->name), newpath);
+    if (ret != RT_EOK)
+    {
+        return ret;
+    }
 
     return RT_EOK;
 }
@@ -476,4 +533,3 @@ struct dfs_ramfs *dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size)
 
     return ramfs;
 }
-

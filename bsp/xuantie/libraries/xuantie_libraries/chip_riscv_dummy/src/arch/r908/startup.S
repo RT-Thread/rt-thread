@@ -21,8 +21,6 @@
 #ifndef CONFIG_NR_CPUS
 #define CONFIG_NR_CPUS 1
 #endif
-.global __rt_rvstack 
-.globl  Reset_Handler
 
 .section .vectors
     .align  6
@@ -158,6 +156,7 @@ __Vectors:
     .endr
     .long    Reset_Handler
 _start:
+    .globl  Reset_Handler
     .type   Reset_Handler, %function
 Reset_Handler:
 .option push
@@ -273,7 +272,6 @@ hart_out_of_bounds_loop:
 g_base_irqstack:
     .space CONFIG_ARCH_INTERRUPTSTACK * CONFIG_NR_CPUS
 g_top_irqstack:
-__rt_rvstack:
 
 #ifdef CONFIG_KERNEL_NONE
     .align  4

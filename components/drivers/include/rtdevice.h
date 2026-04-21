@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2012-01-08     bernard      first version.
  * 2014-07-12     bernard      Add workqueue implementation.
+ * 2026-03-27     Evlers       reorder regulator/power supply headers after DM deps
  */
 
 #ifndef __RT_DEVICE_H__
@@ -118,10 +119,6 @@ extern "C" {
 #endif /* RT_PCI_ENDPOINT */
 #endif /* RT_USING_PCI */
 
-#ifdef RT_USING_REGULATOR
-#include "drivers/regulator.h"
-#endif /* RT_USING_REGULATOR */
-
 #ifdef RT_USING_RESET
 #include "drivers/reset.h"
 #endif /* RT_USING_RESET */
@@ -148,14 +145,18 @@ extern "C" {
 #include "drivers/hwcache.h"
 #endif /* RT_USING_HWCACHE */
 
-#ifdef RT_USING_POWER_SUPPLY
-#include "drivers/power_supply.h"
-#endif /* RT_USING_POWER_SUPPLY */
-
 #ifdef RT_USING_NVMEM
 #include "drivers/nvmem.h"
 #endif /* RT_USING_NVMEM */
 #endif /* RT_USING_DM */
+
+#ifdef RT_USING_REGULATOR
+#include "drivers/regulator.h"
+#endif /* RT_USING_REGULATOR */
+
+#ifdef RT_USING_POWER_SUPPLY
+#include "drivers/power_supply.h"
+#endif /* RT_USING_POWER_SUPPLY */
 
 #ifdef RT_USING_RTC
 #include "drivers/dev_rtc.h"

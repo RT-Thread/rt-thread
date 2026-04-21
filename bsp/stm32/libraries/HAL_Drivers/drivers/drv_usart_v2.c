@@ -280,25 +280,39 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
         {
 #ifdef RT_SERIAL_USING_DMA
             stm32_dma_config(serial, ctrl_arg);
+#else
+            return -RT_ENOSYS;
 #endif
         }
         else
-            stm32_control(serial, RT_DEVICE_CTRL_SET_INT, (void *)ctrl_arg);
+        {
+            return stm32_control(serial, RT_DEVICE_CTRL_SET_INT, (void *)ctrl_arg);
+        }
         break;
 
-    case RT_DEVICE_CHECK_OPTMODE: {
+    case RT_DEVICE_CHECK_OPTMODE:
+    {
         if (ctrl_arg & RT_DEVICE_FLAG_DMA_TX)
             return RT_SERIAL_TX_BLOCKING_NO_BUFFER;
         else
             return RT_SERIAL_TX_BLOCKING_BUFFER;
     }
     case RT_DEVICE_CTRL_CLOSE:
+    {
+        uart->error_indicate = RT_NULL;
         if (HAL_UART_DeInit(&(uart->handle)) != HAL_OK)
         {
             RT_ASSERT(0)
         }
         break;
     }
+    case UART_CTRL_SET_ERROR_CALLBACK:
+    {
+        uart->error_indicate = (rt_err_t (*)(rt_device_t dev, rt_uint32_t error_code))arg;
+        break;
+    }
+    }
+
     return RT_EOK;
 }
 
@@ -1242,6 +1256,10 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
     struct stm32_uart *uart = (struct stm32_uart *)huart;
     LOG_D("%s: %s %d\n", __FUNCTION__, uart->config->name, huart->ErrorCode);
     UNUSED(uart);
+    if(uart->error_indicate != RT_NULL)
+    {
+        uart->error_indicate(&uart->serial.parent, huart->ErrorCode);
+    }
 }
 
 /**
@@ -1304,12 +1322,13 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 #endif /* RT_SERIAL_USING_DMA */
 
 static const struct rt_uart_ops stm32_uart_ops =
-    {
-        .configure = stm32_configure,
-        .control   = stm32_control,
-        .putc      = stm32_putc,
-        .getc      = stm32_getc,
-        .transmit  = stm32_transmit};
+{
+    .configure = stm32_configure,
+    .control   = stm32_control,
+    .putc      = stm32_putc,
+    .getc      = stm32_getc,
+    .transmit  = stm32_transmit
+};
 
 int rt_hw_usart_init(void)
 {

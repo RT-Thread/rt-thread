@@ -13,6 +13,11 @@
 
 #define MAX_HANDLERS    32
 
+rt_inline rt_bool_t _interrupt_vector_is_valid(int vector)
+{
+    return (vector >= 0) && (vector < MAX_HANDLERS);
+}
+
 extern rt_atomic_t rt_interrupt_nest;
 
 rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
@@ -53,6 +58,11 @@ void rt_hw_interrupt_init()
  */
 void rt_hw_interrupt_mask(int vector)
 {
+    if (!_interrupt_vector_is_valid(vector))
+    {
+        return;
+    }
+
     /* disable interrupt */
     AT91C_AIC_IDCR = 1 << vector;
 
@@ -66,6 +76,11 @@ void rt_hw_interrupt_mask(int vector)
  */
 void rt_hw_interrupt_umask(int vector)
 {
+    if (!_interrupt_vector_is_valid(vector))
+    {
+        return;
+    }
+
     AT91C_AIC_IECR = 1 << vector;
 }
 

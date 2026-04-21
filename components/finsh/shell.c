@@ -542,7 +542,7 @@ static void finsh_thread_entry(void *parameter)
     finsh_wait_auth();
 #endif
 
-    rt_kprintf(FINSH_PROMPT);
+    rt_kprintf("%s", FINSH_PROMPT);
 
     while (1)
     {
@@ -842,7 +842,7 @@ static void finsh_thread_entry(void *parameter)
                 rt_kprintf("\n");
             msh_exec(shell->line, shell->line_position);
 
-            rt_kprintf(FINSH_PROMPT);
+            rt_kprintf("%s", FINSH_PROMPT);
             rt_memset(shell->line, 0, sizeof(shell->line));
             shell->line_curpos = shell->line_position = 0;
             continue;
@@ -1019,4 +1019,3 @@ int finsh_system_init(void)
 INIT_APP_EXPORT(finsh_system_init);
 
 #endif /* RT_USING_FINSH */
-

@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-25     GuEe-GUI     the first version
+ * 2026-03-27     Evlers       support builds without DM names and improve logging
  */
 
 #include <rtdevice.h>
@@ -66,11 +67,11 @@ _capacity_check:
         {
             if (full_power)
             {
-                LOG_I("%s: Power is full", rt_dm_dev_get_name(psy->dev));
+                LOG_I("%s: Power is full", rt_power_supply_name(psy));
             }
             else
             {
-                LOG_I("%s: Power is sufficient", rt_dm_dev_get_name(psy->dev));
+                LOG_I("%s: Power is sufficient", rt_power_supply_name(psy));
             }
         }
     }
@@ -109,12 +110,12 @@ _capacity_check:
                 if (!rt_power_supply_get_property(psy, RT_POWER_SUPPLY_PROP_SCOPE, &propval) &&
                     propval.intval == RT_POWER_SUPPLY_SCOPE_SYSTEM)
                 {
-                    LOG_E("%s: Power is critical, poweroff now", rt_dm_dev_get_name(psy->dev));
+                    LOG_E("%s: Power is critical, poweroff now", rt_power_supply_name(psy));
                     rt_hw_cpu_shutdown();
                 }
             } while (0);
 
-            LOG_E("%s: Power is critical", rt_dm_dev_get_name(psy->dev));
+            LOG_E("%s: Power is critical", rt_power_supply_name(psy));
         }
         else if (propval.intval <= 10)
         {
@@ -136,7 +137,7 @@ _capacity_check:
             pm_sleep_mode = PM_SLEEP_MODE_LIGHT;
             rt_pm_run_enter(PM_RUN_MODE_NORMAL_SPEED);
         #endif
-            LOG_W("%s: Power is low", rt_dm_dev_get_name(psy->dev));
+            LOG_W("%s: Power is low", rt_power_supply_name(psy));
         }
 
     #ifdef RT_USING_PM
