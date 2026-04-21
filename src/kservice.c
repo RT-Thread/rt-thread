@@ -430,9 +430,10 @@ RTM_EXPORT(rt_kprintf);
  */
 rt_weak rt_err_t rt_backtrace(void)
 {
-    struct rt_hw_backtrace_frame frame;
+    struct rt_hw_backtrace_frame frame = {0};
     rt_thread_t thread = rt_thread_self();
 
+    /* cppcheck-suppress uninitvar */
     RT_HW_BACKTRACE_FRAME_GET_SELF(&frame);
     if (!frame.fp)
         return -RT_EINVAL;
@@ -511,7 +512,7 @@ rt_weak rt_err_t rt_backtrace_to_buffer(rt_thread_t thread,
                                         long buflen)
 {
     long nesting = 0;
-    struct rt_hw_backtrace_frame cur_frame;
+    struct rt_hw_backtrace_frame cur_frame = {0};
 
     if (!thread)
         return -RT_EINVAL;
@@ -521,6 +522,7 @@ rt_weak rt_err_t rt_backtrace_to_buffer(rt_thread_t thread,
     if (!frame)
     {
         frame = &cur_frame;
+        /* cppcheck-suppress uninitvar */
         RT_HW_BACKTRACE_FRAME_GET_SELF(frame);
         if (!frame->fp)
             return -RT_EINVAL;
@@ -745,12 +747,133 @@ rt_uint8_t rt_thread_get_usage(rt_thread_t thread)
 #endif /* RT_USING_CPU_USAGE_TRACER */
 
 #if defined(RT_USING_LIBC) && defined(RT_USING_FINSH)
+#include <limits.h>
 #include <stdlib.h> /* for string service */
+
+struct cmd_backtrace_find_ctx
+{
+    rt_uintptr_t pid;
+    rt_thread_t thread;
+};
+
+static rt_err_t cmd_backtrace_match_thread(struct rt_object *object, void *data)
+{
+    struct cmd_backtrace_find_ctx *ctx = data;
+
+    if ((rt_uintptr_t)object == ctx->pid)
+    {
+        ctx->thread = (rt_thread_t)object;
+
+        return 1;
+    }
+
+    return RT_EOK;
+}
+
+#if UINTPTR_MAX > ULONG_MAX
+static void cmd_backtrace_format_pid(rt_uintptr_t pid, char *buf, rt_size_t size)
+{
+    static const char hex[] = "0123456789abcdef";
+    char digits[sizeof(rt_uintptr_t) * 2];
+    rt_size_t count = 0;
+    rt_size_t index;
+
+    if ((buf == RT_NULL) || (size < 4))
+    {
+        if ((buf != RT_NULL) && (size > 0))
+        {
+            buf[0] = '\0';
+        }
+        return;
+    }
+
+    do
+    {
+        digits[count++] = hex[pid & 0xf];
+        pid >>= 4;
+    }
+    while ((pid != 0) && (count < sizeof(digits)));
+
+    buf[0] = '0';
+    buf[1] = 'x';
+
+    for (index = 0; index < count; index++)
+    {
+        buf[2 + index] = digits[count - index - 1];
+    }
+
+    buf[2 + count] = '\0';
+}
+#endif
+
+static rt_bool_t cmd_backtrace_parse_pid(const char *arg, rt_uintptr_t *pid)
+{
+    char *end_ptr;
+#if UINTPTR_MAX > ULONG_MAX
+    unsigned long long parsed_value;
+#else
+    unsigned long parsed_value;
+#endif
+    rt_uintptr_t value;
+
+    if ((arg == RT_NULL) || (pid == RT_NULL))
+    {
+        return RT_FALSE;
+    }
+
+    if ((*arg == '+') || (*arg == '-'))
+    {
+        return RT_FALSE;
+    }
+
+    errno = 0;
+#if UINTPTR_MAX > ULONG_MAX
+    parsed_value = strtoull(arg, &end_ptr, 0);
+#else
+    parsed_value = strtoul(arg, &end_ptr, 0);
+#endif
+    if ((end_ptr == arg) || (*end_ptr != '\0') ||
+        (errno == ERANGE) ||
+#if UINTPTR_MAX > ULONG_MAX
+        (parsed_value > (unsigned long long)(rt_uintptr_t)-1))
+#else
+        (parsed_value > (unsigned long)(rt_uintptr_t)-1))
+#endif
+    {
+        return RT_FALSE;
+    }
+
+    value = (rt_uintptr_t)parsed_value;
+    if (value == 0)
+    {
+        return RT_FALSE;
+    }
+
+    *pid = value;
+
+    return RT_TRUE;
+}
+
+static rt_thread_t cmd_backtrace_find_thread(rt_uintptr_t pid)
+{
+    struct cmd_backtrace_find_ctx ctx =
+    {
+        .pid = pid,
+        .thread = RT_NULL,
+    };
+
+    rt_object_for_each(RT_Object_Class_Thread, cmd_backtrace_match_thread, &ctx);
+
+    return ctx.thread;
+}
 
 static void cmd_backtrace(int argc, char** argv)
 {
     rt_uintptr_t pid;
-    char *end_ptr;
+    rt_thread_t target;
+#if UINTPTR_MAX > ULONG_MAX
+    char pid_buf[sizeof(rt_uintptr_t) * 2 + 3];
+#endif
 
     if (argc != 2)
     {
@@ -770,21 +893,34 @@ static void cmd_backtrace(int argc, char** argv)
         }
     }
 
-    pid = strtoul(argv[1], &end_ptr, 0);
-    if (end_ptr == argv[1])
+    if (!cmd_backtrace_parse_pid(argv[1], &pid))
     {
         rt_kprintf("Invalid input: %s\n", argv[1]);
         return ;
     }
 
-    if (pid && rt_object_get_type((void *)pid) == RT_Object_Class_Thread)
+    target = cmd_backtrace_find_thread(pid);
+#if UINTPTR_MAX > ULONG_MAX
+    cmd_backtrace_format_pid(pid, pid_buf, sizeof(pid_buf));
+#endif
+    if (target != RT_NULL)
     {
-        rt_thread_t target = (rt_thread_t)pid;
-        rt_kprintf("backtrace %s(0x%lx), from %s\n", target->parent.name, pid, argv[1]);
+#if UINTPTR_MAX > ULONG_MAX
+        rt_kprintf("backtrace %s(%s), from %s\n", target->parent.name, pid_buf, argv[1]);
+#else
+        rt_kprintf("backtrace %s(0x%lx), from %s\n",
+                   target->parent.name, (unsigned long)pid, argv[1]);
+#endif
         rt_backtrace_thread(target);
     }
     else
-        rt_kprintf("Invalid pid: %ld\n", pid);
+    {
+#if UINTPTR_MAX > ULONG_MAX
+        rt_kprintf("Invalid pid: %s\n", pid_buf);
+#else
+        rt_kprintf("Invalid pid: %lx\n", (unsigned long)pid);
+#endif
+    }
 }
 MSH_CMD_EXPORT_ALIAS(cmd_backtrace, backtrace, print backtrace of a thread);
 
