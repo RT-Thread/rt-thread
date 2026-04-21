@@ -457,6 +457,38 @@ static void shell_push_history(struct finsh_shell *shell)
 }
 #endif
 
+static void finsh_shell_reset_line(struct finsh_shell *shell)
+{
+    rt_memset(shell->line, 0, sizeof(shell->line));
+    shell->line_position = 0;
+    shell->line_curpos = 0;
+}
+
+static rt_bool_t finsh_shell_check_line(struct finsh_shell *shell)
+{
+    if ((shell->line_position > FINSH_CMD_SIZE) ||
+        (shell->line_curpos > shell->line_position))
+    {
+        finsh_shell_reset_line(shell);
+
+        return RT_FALSE;
+    }
+
+    shell->line[FINSH_CMD_SIZE] = '\0';
+
+    return RT_TRUE;
+}
+
+static void finsh_shell_update_line_length(struct finsh_shell *shell)
+{
+    rt_size_t length;
+
+    shell->line[FINSH_CMD_SIZE] = '\0';
+    length = rt_strnlen(shell->line, FINSH_CMD_SIZE);
+    shell->line[length] = '\0';
+    shell->line_curpos = shell->line_position = (rt_uint16_t)length;
+}
+
 #if defined(FINSH_USING_WORD_OPERATION)
 static int find_prev_word_start(const char *line, int curpos)
 {
@@ -683,6 +715,12 @@ static void finsh_thread_entry(void *parameter)
 #if defined(FINSH_USING_FUNC_EXT)
             else if (ch >= 0x31 && ch <= 0x34) /* home(0x31), insert(0x32), del(0x33), end(0x34) */
             {
+                if (shell->line_position >= FINSH_CMD_SIZE)
+                {
+                    finsh_shell_reset_line(shell);
+                    continue;
+                }
+
                 shell->stat                           = WAIT_EXT_KEY;
                 shell->line[shell->line_position + 1] = ch; /* store the key code */
                 continue;
@@ -714,7 +752,8 @@ static void finsh_thread_entry(void *parameter)
                 else if (key_code == 0x33) /* del key */
                 {
                     /* delete character at current cursor position */
-                    if (shell->line_curpos < shell->line_position)
+                    if (finsh_shell_check_line(shell) &&
+                        (shell->line_curpos < shell->line_position))
                     {
                         int i;
                         shell->line_position--;
@@ -745,6 +784,9 @@ static void finsh_thread_entry(void *parameter)
 #endif /*defined(FINSH_USING_FUNC_EXT) */
         }
 
+        if (!finsh_shell_check_line(shell))
+            continue;
+
         /* received null or error */
         if (ch == '\0' || ch == 0xFF) continue;
         /* handle tab key */
@@ -758,7 +800,7 @@ static void finsh_thread_entry(void *parameter)
             /* auto complete */
             shell_auto_complete(&shell->line[0]);
             /* re-calculate position */
-            shell->line_curpos = shell->line_position = (rt_uint16_t)rt_strlen(shell->line);
+            finsh_shell_update_line_length(shell);
 
             continue;
         }
@@ -843,14 +885,16 @@ static void finsh_thread_entry(void *parameter)
             msh_exec(shell->line, shell->line_position);
 
             rt_kprintf("%s", FINSH_PROMPT);
-            rt_memset(shell->line, 0, sizeof(shell->line));
-            shell->line_curpos = shell->line_position = 0;
+            finsh_shell_reset_line(shell);
             continue;
         }
 
         /* it's a large line, discard it */
         if (shell->line_position >= FINSH_CMD_SIZE)
-            shell->line_position = 0;
+        {
+            finsh_shell_reset_line(shell);
+            continue;
+        }
 
         /* normal character */
         if (shell->line_curpos < shell->line_position)
@@ -899,8 +943,7 @@ static void finsh_thread_entry(void *parameter)
         if (shell->line_position >= FINSH_CMD_SIZE)
         {
             /* clear command line */
-            shell->line_position = 0;
-            shell->line_curpos = 0;
+            finsh_shell_reset_line(shell);
         }
     } /* end of device read */
 }
