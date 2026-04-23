@@ -81,7 +81,7 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
 void rt_hw_aspace_switch(rt_aspace_t aspace)
 {
     // It is necessary to find the MMU page table specific to each core.
-    uint32_t hartid = rt_cpu_get_id();
+    uint32_t hartid = rt_hw_cpu_id();
     uintptr_t ptr = (uintptr_t)aspace->page_table + (uintptr_t)(hartid * ARCH_PAGE_SIZE);
     uintptr_t page_table = (uintptr_t)rt_kmem_v2p((void *)ptr);
 #ifndef RT_USING_SMP
@@ -116,12 +116,21 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
 {
     rt_ubase_t l1_off, l2_off, l3_off;
     rt_ubase_t *mmu_l1, *mmu_l2, *mmu_l3;
+    int nr_cpus = RT_CPUS_NR;
 
     l1_off = GET_L1((size_t)va);
     l2_off = GET_L2((size_t)va);
     l3_off = GET_L3((size_t)va);
+
+#if defined(RT_USING_SMP)
+    /* For user address spaces, all harts share the same L2/L3 page tables.
+     * Only build the page table tree for hart 0, then sync L1 to other harts. */
+    if (aspace != &rt_kernel_space)
+        nr_cpus = 1;
+#endif
+
     /* Create a separate page table for each hart to facilitate access to the .percpu section. */
-    for (int hartid = 0; hartid < RT_CPUS_NR; hartid++)
+    for (int hartid = 0; hartid < nr_cpus; hartid++)
     {
         mmu_l1 = (rt_ubase_t *)((rt_ubase_t)aspace->page_table + (rt_ubase_t)(hartid * ARCH_PAGE_SIZE)) + l1_off;
 
@@ -180,6 +189,21 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
         *(mmu_l3 + l3_off) = COMBINEPTE((rt_ubase_t)pa, attr);
         rt_hw_cpu_dcache_clean(mmu_l3 + l3_off, sizeof(*(mmu_l3 + l3_off)));
     }
+
+#if defined(RT_USING_SMP)
+    /* For user address spaces, sync L1 entry from hart 0 to all other harts */
+    if (aspace != &rt_kernel_space)
+    {
+        rt_ubase_t *mmu_l1_0 = (rt_ubase_t *)aspace->page_table + l1_off;
+        for (int h = 1; h < RT_CPUS_NR; h++)
+        {
+            rt_ubase_t *mmu_l1_h = (rt_ubase_t *)((rt_ubase_t)aspace->page_table +
+                                    (rt_ubase_t)(h * ARCH_PAGE_SIZE)) + l1_off;
+            *mmu_l1_h = *mmu_l1_0;
+            rt_hw_cpu_dcache_clean(mmu_l1_h, sizeof(*mmu_l1_h));
+        }
+    }
+#endif
 
     return 0;
 }
@@ -508,6 +532,23 @@ static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr)
     {
         unmapped = 0; /* invalid pte, return 0. */
     }
+
+#if defined(RT_USING_SMP)
+    /* For user address spaces, sync L1 entry from hart 0 to all other harts.
+     * This ensures that if L1 was cleared (due to L2 being freed), all harts
+     * see the updated L1 consistently. */
+    if (aspace != &rt_kernel_space && unmapped > 0)
+    {
+        rt_ubase_t *mmu_l1_0 = (rt_ubase_t *)aspace->page_table + lvl_off[0];
+        for (int h = 1; h < RT_CPUS_NR; h++)
+        {
+            rt_ubase_t *mmu_l1_h = (rt_ubase_t *)((rt_ubase_t)aspace->page_table +
+                                    (rt_ubase_t)(h * ARCH_PAGE_SIZE)) + lvl_off[0];
+            *mmu_l1_h = *mmu_l1_0;
+            rt_hw_cpu_dcache_clean(mmu_l1_h, sizeof(*mmu_l1_h));
+        }
+    }
+#endif
 
     return unmapped;
 }
@@ -976,6 +1017,32 @@ void rt_hw_mem_setup_early(void *pgtbl, rt_uint64_t hartid)
 void *rt_hw_mmu_pgtbl_create(void)
 {
     rt_ubase_t *mmu_table;
+
+#if defined(RT_USING_SMP)
+    /* Each hart needs its own L1 page table (for per-hart kernel .percpu mappings),
+     * so allocate RT_CPUS_NR pages. Compute allocation order: smallest order where
+     * 2^order >= RT_CPUS_NR. */
+    int order = 0;
+    while ((1 << order) < RT_CPUS_NR)
+        order++;
+    mmu_table = (rt_ubase_t *)rt_pages_alloc_ext(order, PAGE_ANY_AVAILABLE);
+    if (!mmu_table)
+    {
+        return RT_NULL;
+    }
+    /* Copy each hart's kernel L1 to the corresponding user L1 page.
+     * This preserves per-hart .percpu kernel mappings. */
+    for (int h = 0; h < RT_CPUS_NR; h++)
+    {
+        rt_ubase_t *src = (rt_ubase_t *)((rt_ubase_t)rt_kernel_space.page_table +
+                           (rt_ubase_t)(h * ARCH_PAGE_SIZE));
+        rt_ubase_t *dst = (rt_ubase_t *)((rt_ubase_t)mmu_table +
+                           (rt_ubase_t)(h * ARCH_PAGE_SIZE));
+        rt_memcpy(dst, src, ARCH_PAGE_SIZE);
+    }
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table,
+                         (rt_ubase_t)(1 << order) * ARCH_PAGE_SIZE);
+#else
     mmu_table = (rt_ubase_t *)rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
     if (!mmu_table)
     {
@@ -983,6 +1050,7 @@ void *rt_hw_mmu_pgtbl_create(void)
     }
     rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
+#endif
 
     return mmu_table;
 }
@@ -996,5 +1064,12 @@ void *rt_hw_mmu_pgtbl_create(void)
  */
 void rt_hw_mmu_pgtbl_delete(void *pgtbl)
 {
+#if defined(RT_USING_SMP)
+    int order = 0;
+    while ((1 << order) < RT_CPUS_NR)
+        order++;
+    rt_pages_free(pgtbl, order);
+#else
     rt_pages_free(pgtbl, 0);
+#endif
 }
