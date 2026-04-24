@@ -2,26 +2,16 @@
 
 # QEMU virt64 AArch64 多核启动流程
 
-本文以 `bsp/qemu-virt64-aarch64` 为例，对 RT-Thread 在 AArch64 平台上的多核启动做一份“初学者友好”的拆解，覆盖从 `_start` 汇编、MMU 打开、`rtthread_startup()`，到 PSCI 唤醒次级核并全部进入调度器的完整链路。全文基于当前 BSP 的真实实现，顺手补全一些容易忽略的细节，并把原有 PlantUML 图改成可在 GitHub 直接渲染的 Mermaid。
+本文以 `bsp/qemu-virt64-aarch64` 为例，对 RT-Thread 在 AArch64 平台上的多核启动做一份“初学者友好”的拆解，覆盖从 `_start` 汇编、MMU 打开、`rtthread_startup()`，到 PSCI 唤醒次级核并全部进入调度器的完整链路。全文基于当前 BSP 的真实实现，顺手补全一些容易忽略的细节，并补上更清晰的静态 SVG 图，方便在 GitHub 和生成文档里稳定阅读。
 
 - 适用环境：QEMU `-machine virt`、`-cpu cortex-a57`、`-smp >=2`，`RT_USING_SMP` 已开启，设备树包含 `enable-method = "psci"`。
 - 读完你将能：看懂每一步是谁做的、代码在哪、如果多核没起来要检查什么。
 
 ## 全局先看一眼
 
-```mermaid
-flowchart TD
-    ROM[BootROM/BL1<br/>QEMU 固件] --> START["_start<br/>(entry_point.S)"]
-    START --> MMU["init_mmu_early<br/>enable_mmu_early"]
-    MMU --> CBOOT[rtthread_startup()]
-    CBOOT --> BOARD["rt_hw_board_init<br/>-> rt_hw_common_setup"]
-    BOARD --> MAIN[main_thread_entry]
-    MAIN --> PSCI["rt_hw_secondary_cpu_up<br/>(PSCI CPU_ON)"]
-    PSCI --> SECASM["_secondary_cpu_entry<br/>(ASM)"]
-    SECASM --> SECC[rt_hw_secondary_cpu_bsp_start]
-    SECC --> SCHED[rt_system_scheduler_start]
-    SCHED --> RUN[多核调度运行态]
-```
+![QEMU virt64 AArch64 多核启动总览图](figures/smp_boot_overview.svg)
+
+这张总览图把关键分界线拆开画清楚了：CPU0 先完成早期汇编和公共板级初始化，随后由 `rt_hw_secondary_cpu_up()` 发起唤核，次级核再沿着自己的 ASM 加 C 初始化路径进入调度器。
 
 ## Boot CPU：从 `_start` 到 MMU 打开
 
@@ -80,35 +70,11 @@ flowchart TD
   - 解除三种 IPI 屏蔽，必要时重新校准 `loops_per_tick`（us 延时）。
   - 调用 `rt_dm_secondary_cpu_init()` 注册 CPU 设备，最后 `rt_system_scheduler_start()` 让该核进入调度。
 
-### 时序图（Mermaid）
+### 启动时序图
 
-```mermaid
-sequenceDiagram
-    participant ROM as BootROM/BL1
-    participant START as _start (ASM)
-    participant CBOOT as rtthread_startup
-    participant MAIN as main_thread_entry
-    participant FW as PSCI 固件
-    participant SECASM as _secondary_cpu_entry
-    participant SECC as rt_hw_secondary_cpu_bsp_start
-    participant SCHED as Scheduler(全部CPU)
+![QEMU virt64 AArch64 多核拉起时序图](figures/smp_boot_timeline.svg)
 
-    ROM->>START: x0=DTB，跳转 _start
-    START->>START: init_cpu_el / 清 BSS / 设栈
-    START->>START: init_mmu_early + enable_mmu_early
-    START-->>CBOOT: 跳到 rtthread_startup()
-    CBOOT->>CBOOT: rt_hw_board_init -> rt_hw_common_setup
-    CBOOT-->>SCHED: rt_system_scheduler_start()
-    SCHED-->>MAIN: 调度 main_thread_entry
-    MAIN->>FW: rt_hw_secondary_cpu_up (CPU_ON)
-    FW-->>SECASM: entry = _secondary_cpu_entry
-    SECASM->>SECASM: 栈/TPIDR/EL 初始化
-    SECASM-->>SECC: enable_mmu_early -> rt_hw_secondary_cpu_bsp_start
-    SECC->>SECC: GIC/Timer/IPI 本地初始化
-    SECC-->>SCHED: rt_system_scheduler_start()
-    SCHED-->>MAIN: 继续 main()
-    SCHED-->>其他线程: 多核调度
-```
+这张图建议按从上到下的顺序看：CPU0 先走完整个 `rtthread_startup()` 主线并率先进入调度，然后 `main_thread_entry()` 调用 `CPU_ON`，次级核补完本地初始化后再进入同一个调度体系。
 
 ## 关键代码位置对照表
 

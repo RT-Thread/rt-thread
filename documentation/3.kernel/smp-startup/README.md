@@ -2,26 +2,16 @@
 
 # QEMU virt64 AArch64 SMP Boot Flow
 
-This guide walks through the multi-core boot path of RT-Thread on AArch64 using `bsp/qemu-virt64-aarch64` as the concrete reference. It is written to be beginner-friendly and mirrors the current BSP implementation: from `_start` assembly, early MMU bring-up, `rtthread_startup()`, PSCI wakeup of secondary cores, to all CPUs entering the scheduler. The original PlantUML diagram is replaced by Mermaid so it renders directly on GitHub.
+This guide walks through the multi-core boot path of RT-Thread on AArch64 using `bsp/qemu-virt64-aarch64` as the concrete reference. It is written to be beginner-friendly and mirrors the current BSP implementation: from `_start` assembly, early MMU bring-up, `rtthread_startup()`, PSCI wakeup of secondary cores, to all CPUs entering the scheduler. The key transitions are paired with static SVG diagrams so the flow stays readable on GitHub and in generated documentation.
 
 - Target setup: QEMU `-machine virt`, `-cpu cortex-a57`, `-smp >=2`, `RT_USING_SMP` enabled, device tree contains `enable-method = "psci"`.
 - Goal: Know who does what, where the code lives, and what to check when SMP does not come up.
 
 ## Big Picture First
 
-```mermaid
-flowchart TD
-    ROM[BootROM/BL1<br/>QEMU firmware] --> START["_start<br/>(entry_point.S)"]
-    START --> MMU["init_mmu_early<br/>enable_mmu_early"]
-    MMU --> CBOOT[rtthread_startup()]
-    CBOOT --> BOARD["rt_hw_board_init<br/>-> rt_hw_common_setup"]
-    BOARD --> MAIN[main_thread_entry]
-    MAIN --> PSCI["rt_hw_secondary_cpu_up<br/>(PSCI CPU_ON)"]
-    PSCI --> SECASM["_secondary_cpu_entry<br/>(ASM)"]
-    SECASM --> SECC[rt_hw_secondary_cpu_bsp_start]
-    SECC --> SCHED[rt_system_scheduler_start]
-    SCHED --> RUN[SMP scheduling]
-```
+![QEMU virt64 AArch64 SMP boot overview](figures/smp_boot_overview.svg)
+
+The overview highlights the two key boundaries in this BSP: CPU0 completes the early assembly and common board bring-up, then `rt_hw_secondary_cpu_up()` hands secondary cores over to their own ASM plus C initialization path before everyone meets in the scheduler.
 
 ## Boot CPU: from `_start` to MMU on
 
@@ -80,35 +70,11 @@ flowchart TD
   - Unmask the three SMP IPIs; re-calibrate `loops_per_tick` for microsecond delay if needed.
   - Call `rt_dm_secondary_cpu_init()` to register the CPU device, then enter the scheduler via `rt_system_scheduler_start()`.
 
-### Timeline (Mermaid)
+### Bring-up timeline
 
-```mermaid
-sequenceDiagram
-    participant ROM as BootROM/BL1
-    participant START as _start (ASM)
-    participant CBOOT as rtthread_startup
-    participant MAIN as main_thread_entry
-    participant FW as PSCI firmware
-    participant SECASM as _secondary_cpu_entry
-    participant SECC as rt_hw_secondary_cpu_bsp_start
-    participant SCHED as Scheduler (all CPUs)
+![QEMU virt64 AArch64 SMP bring-up timeline](figures/smp_boot_timeline.svg)
 
-    ROM->>START: x0=DTB, jump to _start
-    START->>START: init_cpu_el / clear BSS / set stack
-    START->>START: init_mmu_early + enable_mmu_early
-    START-->>CBOOT: branch to rtthread_startup()
-    CBOOT->>CBOOT: rt_hw_board_init -> rt_hw_common_setup
-    CBOOT-->>SCHED: rt_system_scheduler_start()
-    SCHED-->>MAIN: run main_thread_entry
-    MAIN->>FW: rt_hw_secondary_cpu_up (CPU_ON)
-    FW-->>SECASM: entry = _secondary_cpu_entry
-    SECASM->>SECASM: stack/TPIDR/EL setup
-    SECASM-->>SECC: enable_mmu_early -> rt_hw_secondary_cpu_bsp_start
-    SECC->>SECC: local GIC/Timer/IPI init
-    SECC-->>SCHED: rt_system_scheduler_start()
-    SCHED-->>MAIN: continue main()
-    SCHED-->>Others: SMP scheduling
-```
+Read this figure from top to bottom: CPU0 reaches `rt_system_scheduler_start()` first, `main_thread_entry()` triggers `CPU_ON`, and each secondary CPU repeats the minimal EL plus MMU path before entering `rt_hw_secondary_cpu_bsp_start()`.
 
 ## Source map (where to read the code)
 
