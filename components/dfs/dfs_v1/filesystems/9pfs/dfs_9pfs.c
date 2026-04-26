@@ -31,9 +31,9 @@
 #define ORCLOSE 64      /* or'ed in, remove on close */
 #define OAPPEND 128     /* or'ed in, append */
 
-#define NOTAG   ((rt_uint16_t)~0)
-#define NOFID   ((rt_uint32_t)~0)
-#define TAG     1
+#define NOTAG ((rt_uint16_t)~0)
+#define NOFID ((rt_uint32_t)~0)
+#define TAG   1
 
 static rt_list_t _protocol_nodes = RT_LIST_OBJECT_INIT(_protocol_nodes);
 static struct rt_spinlock _protocol_lock = { 0 };
@@ -45,37 +45,37 @@ static struct rt_spinlock _protocol_lock = { 0 };
 #define rt_cpu_to_le8
 #endif
 
-#define P9_OF_OPS_GET(width, dir) \
-rt_inline rt_uint##width##_t get_##dir##_##value##width##_of(   \
-        struct p9_connection *conn, unsigned idx)               \
-{                                                               \
-    rt_uint##width##_t *vp = (void *)&conn->dir##_buffer[idx];  \
-    return rt_le##width##_to_cpu(*vp);                          \
-}
+#define P9_OF_OPS_GET(width, dir)                                  \
+    rt_inline rt_uint##width##_t get_##dir##_##value##width##_of(  \
+        struct p9_connection *conn, unsigned idx)                  \
+    {                                                              \
+        rt_uint##width##_t *vp = (void *)&conn->dir##_buffer[idx]; \
+        return rt_le##width##_to_cpu(*vp);                         \
+    }
 
-#define P9_OF_OPS_PUT(width, dir) \
-rt_inline void put_##dir##_##value##width##_of(                 \
-        struct p9_connection *conn, unsigned idx,               \
-        rt_uint##width##_t value)                               \
-{                                                               \
-    rt_uint##width##_t *vp = (void *)&conn->dir##_buffer[idx];  \
-    *vp = rt_cpu_to_le##width(value);                           \
-}
+#define P9_OF_OPS_PUT(width, dir)                                  \
+    rt_inline void put_##dir##_##value##width##_of(                \
+        struct p9_connection *conn, unsigned idx,                  \
+        rt_uint##width##_t value)                                  \
+    {                                                              \
+        rt_uint##width##_t *vp = (void *)&conn->dir##_buffer[idx]; \
+        *vp = rt_cpu_to_le##width(value);                          \
+    }
 
-#define P9_OPS_PUT(width) \
-rt_inline rt_off_t put_value##width(struct p9_connection *conn, \
-        rt_off_t off, rt_uint##width##_t value)                 \
-{                                                               \
-    ((rt_uint##width##_t *)(conn->tx_buffer + off))[0] =        \
-            rt_cpu_to_le##width(value);                         \
-    return off + sizeof(value);                                 \
-}
+#define P9_OPS_PUT(width)                                                       \
+    rt_inline rt_off_t put_value##width(struct p9_connection *conn,             \
+                                        rt_off_t off, rt_uint##width##_t value) \
+    {                                                                           \
+        ((rt_uint##width##_t *)(conn->tx_buffer + off))[0] =                    \
+            rt_cpu_to_le##width(value);                                         \
+        return off + sizeof(value);                                             \
+    }
 
-#define P9_OPS_GROUP(width)     \
-    P9_OF_OPS_GET(width, rx)    \
-    P9_OF_OPS_GET(width, tx)    \
-    P9_OF_OPS_PUT(width, rx)    \
-    P9_OF_OPS_PUT(width, tx)    \
+#define P9_OPS_GROUP(width)  \
+    P9_OF_OPS_GET(width, rx) \
+    P9_OF_OPS_GET(width, tx) \
+    P9_OF_OPS_PUT(width, rx) \
+    P9_OF_OPS_PUT(width, tx) \
     P9_OPS_PUT(width)
 
 P9_OPS_GROUP(8)
@@ -88,7 +88,7 @@ P9_OPS_GROUP(64)
 #undef P9_OPS_GROUP
 
 rt_inline rt_uint32_t put_header(struct p9_connection *conn,
-        rt_uint8_t hd, rt_uint16_t tag_flags)
+                                 rt_uint8_t hd, rt_uint16_t tag_flags)
 {
     rt_uint8_t *stack = conn->tx_buffer;
 
@@ -105,7 +105,7 @@ rt_inline rt_uint32_t put_header(struct p9_connection *conn,
 }
 
 rt_inline rt_off_t put_bytes(struct p9_connection *conn, rt_off_t off,
-        rt_uint8_t *bytes, rt_uint32_t count)
+                             rt_uint8_t *bytes, rt_uint32_t count)
 {
     rt_uint8_t *stack = conn->tx_buffer + off;
 
@@ -119,7 +119,7 @@ rt_inline rt_off_t put_bytes(struct p9_connection *conn, rt_off_t off,
 }
 
 rt_inline rt_off_t put_string(struct p9_connection *conn, rt_off_t off,
-        char *string)
+                              char *string)
 {
     rt_uint32_t len = rt_strlen(string);
     rt_uint8_t *stack = conn->tx_buffer + off;
@@ -134,7 +134,7 @@ rt_inline rt_off_t put_string(struct p9_connection *conn, rt_off_t off,
 }
 
 struct p9_connection *p9_connection_alloc(struct p9_protocol *p9p,
-        const char *aname, rt_uint32_t buffer_size)
+                                          const char *aname, rt_uint32_t buffer_size)
 {
     struct p9_connection *conn;
 
@@ -177,7 +177,7 @@ rt_err_t p9_connection_free(struct p9_connection *conn)
 }
 
 int p9_transaction(struct p9_connection *conn,
-        rt_uint32_t tx_size, rt_uint32_t *out_rx_size)
+                   rt_uint32_t tx_size, rt_uint32_t *out_rx_size)
 {
     rt_err_t err;
     rt_uint32_t rx_size;
@@ -187,7 +187,7 @@ int p9_transaction(struct p9_connection *conn,
 
     rx_size = conn->msg_size;
     if ((err = conn->protocol->transport(conn->protocol,
-            conn->tx_buffer, tx_size, conn->rx_buffer, &rx_size)))
+                                         conn->tx_buffer, tx_size, conn->rx_buffer, &rx_size)))
     {
         return P9_TRANSPORT_ERROR;
     }
@@ -201,7 +201,7 @@ int p9_transaction(struct p9_connection *conn,
     if (get_rx_value8_of(conn, P9_MSG_ID) == P9_MSG_ERR)
     {
         rt_uint32_t err_len = rt_min_t(rt_uint32_t, sizeof(conn->error) - 1,
-                get_rx_value16_of(conn, P9_MSG_ERR_STR_LEN));
+                                       get_rx_value16_of(conn, P9_MSG_ERR_STR_LEN));
 
         rt_strncpy(conn->error, (void *)&conn->rx_buffer[P9_MSG_ERR_STR], err_len);
 
@@ -367,8 +367,7 @@ rt_err_t dfs_9pfs_del_tag(struct p9_protocol *p9p)
 
 static int p9_to_fs_err(int rc)
 {
-    const int p9_err[] =
-    {
+    const int p9_err[] = {
         [0] = RT_EOK,
         [-P9_ERROR] = -EIO,
         [-P9_UNKNOWN_VERSION] = -ENOSYS,
@@ -428,10 +427,18 @@ static rt_uint8_t fs_to_p9_flags(rt_uint32_t raw_flags)
 
     switch (raw_flags & 3)
     {
-    case O_RDONLY: flags = OREAD; break;
-    case O_WRONLY: flags = OWRITE; break;
-    case O_RDWR: flags = ORDWR; break;
-    default: RT_ASSERT(0); break;
+    case O_RDONLY:
+        flags = OREAD;
+        break;
+    case O_WRONLY:
+        flags = OWRITE;
+        break;
+    case O_RDWR:
+        flags = ORDWR;
+        break;
+    default:
+        RT_ASSERT(0);
+        break;
     }
 
     if (raw_flags & O_TRUNC)
@@ -460,7 +467,7 @@ static char *p9_basename(const char *path)
 }
 
 static int p9_walk_path_raw(struct p9_connection *conn, const char *path,
-        rt_bool_t submode)
+                            rt_bool_t submode)
 {
     rt_uint32_t size;
     const char *split;
@@ -490,7 +497,8 @@ static int p9_walk_path_raw(struct p9_connection *conn, const char *path,
     size = put_value32(conn, size, new_fid);
     size = put_value16(conn, size, 0);  /* Fill later */
 
-    do {
+    do
+    {
         split = strchrnul(path, '/');
 
         len = split - path;
@@ -880,8 +888,8 @@ static int dfs_9pfs_getdents(struct dfs_file *fd, struct dirent *dirp, uint32_t 
             dirp->d_namlen = get_rx_value16_of(conn, off + P9_MSG_STAT_NAME_LEN);
             dirp->d_reclen = (rt_uint16_t)sizeof(struct dirent);
             rt_strncpy(dirp->d_name,
-                    (void *)conn->rx_buffer + off + P9_MSG_STAT_NAME,
-                    dirp->d_namlen);
+                       (void *)conn->rx_buffer + off + P9_MSG_STAT_NAME,
+                       dirp->d_namlen);
             dirp->d_name[dirp->d_namlen] = '\0';
 
             if (!rt_strcmp(dirp->d_name, ".") || !rt_strcmp(dirp->d_name, ".."))
@@ -908,19 +916,18 @@ static int dfs_9pfs_getdents(struct dfs_file *fd, struct dirent *dirp, uint32_t 
     return count;
 }
 
-static const struct dfs_file_ops _9pfs_fops =
-{
-    .open       = dfs_9pfs_open,
-    .close      = dfs_9pfs_close,
-    .read       = dfs_9pfs_read,
-    .write      = dfs_9pfs_write,
-    .flush      = dfs_9pfs_flush,
-    .lseek      = dfs_9pfs_lseek,
-    .getdents   = dfs_9pfs_getdents,
+static const struct dfs_file_ops _9pfs_fops = {
+    .open = dfs_9pfs_open,
+    .close = dfs_9pfs_close,
+    .read = dfs_9pfs_read,
+    .write = dfs_9pfs_write,
+    .flush = dfs_9pfs_flush,
+    .lseek = dfs_9pfs_lseek,
+    .getdents = dfs_9pfs_getdents,
 };
 
 static int dfs_9pfs_mount(struct dfs_filesystem *fs,
-        unsigned long rwflag, const void *data)
+                          unsigned long rwflag, const void *data)
 {
     rt_ubase_t level;
     struct p9_protocol *p9p = RT_NULL, *p9p_tmp;
@@ -1042,7 +1049,7 @@ static int dfs_9pfs_unlink(struct dfs_filesystem *fs, const char *pathname)
 }
 
 static int dfs_9pfs_stat(struct dfs_filesystem *fs,
-        const char *filename, struct stat *st)
+                         const char *filename, struct stat *st)
 {
     int rc = 0, fid;
     rt_uint32_t size, mode;
@@ -1133,7 +1140,7 @@ static int dfs_9pfs_stat(struct dfs_filesystem *fs,
 }
 
 static int dfs_9pfs_rename(struct dfs_filesystem *fs,
-        const char *oldpath, const char *newpath)
+                           const char *oldpath, const char *newpath)
 {
     int rc = 0, fid;
     rt_uint32_t size;
@@ -1162,20 +1169,19 @@ static int dfs_9pfs_rename(struct dfs_filesystem *fs,
     return p9_to_fs_err(rc);
 }
 
-static const struct dfs_filesystem_ops _9pfs =
-{
-    .name       = "9p",
-    .flags      = DFS_FS_FLAG_DEFAULT,
-    .fops       = &_9pfs_fops,
+static const struct dfs_filesystem_ops _9pfs = {
+    .name = "9p",
+    .flags = DFS_FS_FLAG_DEFAULT,
+    .fops = &_9pfs_fops,
 
-    .mount      = dfs_9pfs_mount,
-    .unmount    = dfs_9pfs_unmount,
+    .mount = dfs_9pfs_mount,
+    .unmount = dfs_9pfs_unmount,
 
-    .statfs     = dfs_9pfs_statfs,
+    .statfs = dfs_9pfs_statfs,
 
-    .unlink     = dfs_9pfs_unlink,
-    .stat       = dfs_9pfs_stat,
-    .rename     = dfs_9pfs_rename,
+    .unlink = dfs_9pfs_unlink,
+    .stat = dfs_9pfs_stat,
+    .rename = dfs_9pfs_rename,
 };
 
 int dfs_9pfs_init(void)
