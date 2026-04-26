@@ -923,7 +923,7 @@ static int dfs_9pfs_mount(struct dfs_filesystem *fs,
         unsigned long rwflag, const void *data)
 {
     rt_ubase_t level;
-    struct p9_protocol *p9p, *p9p_tmp;
+    struct p9_protocol *p9p = RT_NULL, *p9p_tmp;
     struct p9_connection *conn = RT_NULL;
 
     if (!data)
