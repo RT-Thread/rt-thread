@@ -21,6 +21,8 @@
 #include "usb_osal.h"
 #include "usbh_hub.h"
 #include "usb_memcpy.h"
+#include "usb_ringbuffer.h"
+#include "usb_mempool.h"
 #include "usb_dcache.h"
 #include "usb_version.h"
 
@@ -201,7 +203,7 @@ struct usbh_bus {
     struct usbh_devaddr_map devgen;
     usb_osal_thread_t hub_thread;
     usb_osal_mq_t hub_mq;
-    usb_osal_mutex_t mutex;
+    usb_osal_sem_t hub_sem;
     usbh_event_handler_t event_handler;
 };
 

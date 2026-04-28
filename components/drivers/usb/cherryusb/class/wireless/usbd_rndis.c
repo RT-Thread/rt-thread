@@ -365,14 +365,9 @@ static int rndis_set_cmd_handler(uint8_t *data, uint32_t len)
 
     switch (cmd->Oid) {
         case OID_GEN_RNDIS_CONFIG_PARAMETER:
-            param = (rndis_config_parameter_t *)((uint8_t *)&(cmd->RequestId) + cmd->InformationBufferOffset);
-            USB_LOG_WRN("RNDIS cfg param: NameOfs=%d, NameLen=%d, ValueOfs=%d, ValueLen=%d\r\n",
-                        param->ParameterNameOffset, param->ParameterNameLength,
-                        param->ParameterValueOffset, param->ParameterValueLength);
             break;
         case OID_GEN_CURRENT_PACKET_FILTER:
             if (cmd->InformationBufferLength < sizeof(g_usbd_rndis.net_filter)) {
-                USB_LOG_WRN("PACKET_FILTER!\r\n");
                 resp->Status = RNDIS_STATUS_INVALID_DATA;
             } else {
                 uint32_t *filter;

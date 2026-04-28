@@ -14,102 +14,12 @@
 #define DEV_FORMAT_VENDOR  "/dev/ttyUSB%d"
 #define DEV_FORMAT_CDC_ACM "/dev/ttyACM%d"
 
-#define CONFIG_USBHOST_MAX_SERIAL_CLASS 4
-
 static struct usbh_serial g_serial_class[CONFIG_USBHOST_MAX_SERIAL_CLASS];
 
 static uint32_t g_devinuse = 0;
 static uint32_t g_cdcacm_devinuse = 0;
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t g_serial_iobuffer[CONFIG_USBHOST_MAX_SERIAL_CLASS][USB_ALIGN_UP((USBH_SERIAL_RX2_NOCACHE_OFFSET + USBH_SERIAL_RX2_NOCACHE_SIZE), CONFIG_USB_ALIGN_SIZE)];
-
-/* refer to cherryrb */
-static int usbh_serial_ringbuffer_init(usbh_serial_ringbuf_t *rb, void *pool, uint32_t size)
-{
-    if (NULL == rb) {
-        return -1;
-    }
-
-    if (NULL == pool) {
-        return -1;
-    }
-
-    if ((size < 2) || (size & (size - 1))) {
-        return -1;
-    }
-
-    rb->in = 0;
-    rb->out = 0;
-    rb->mask = size - 1;
-    rb->pool = pool;
-
-    return 0;
-}
-
-static void usbh_serial_ringbuffer_reset(usbh_serial_ringbuf_t *rb)
-{
-    rb->in = 0;
-    rb->out = 0;
-}
-
-static uint32_t usbh_serial_ringbuffer_get_used(usbh_serial_ringbuf_t *rb)
-{
-    return rb->in - rb->out;
-}
-
-static uint32_t usbh_serial_ringbuffer_write(usbh_serial_ringbuf_t *rb, void *data, uint32_t size)
-{
-    uint32_t unused;
-    uint32_t offset;
-    uint32_t remain;
-
-    unused = (rb->mask + 1) - (rb->in - rb->out);
-
-    if (size > unused) {
-        size = unused;
-    }
-
-    offset = rb->in & rb->mask;
-
-    remain = rb->mask + 1 - offset;
-    remain = remain > size ? size : remain;
-
-    memcpy(((uint8_t *)(rb->pool)) + offset, data, remain);
-    memcpy(rb->pool, (uint8_t *)data + remain, size - remain);
-
-    rb->in += size;
-
-    return size;
-}
-
-static uint32_t usbh_serial_ringbuffer_peek(usbh_serial_ringbuf_t *rb, void *data, uint32_t size)
-{
-    uint32_t used;
-    uint32_t offset;
-    uint32_t remain;
-
-    used = rb->in - rb->out;
-    if (size > used) {
-        size = used;
-    }
-
-    offset = rb->out & rb->mask;
-
-    remain = rb->mask + 1 - offset;
-    remain = remain > size ? size : remain;
-
-    memcpy(data, ((uint8_t *)(rb->pool)) + offset, remain);
-    memcpy((uint8_t *)data + remain, rb->pool, size - remain);
-
-    return size;
-}
-
-static uint32_t usbh_serial_ringbuffer_read(usbh_serial_ringbuf_t *rb, void *data, uint32_t size)
-{
-    size = usbh_serial_ringbuffer_peek(rb, data, size);
-    rb->out += size;
-    return size;
-}
 
 static struct usbh_serial *usbh_serial_alloc(bool is_cdcacm)
 {
@@ -193,9 +103,9 @@ static void usbh_serial_callback(void *arg, int nbytes)
             return;
         }
 
-        usbh_serial_ringbuffer_write(&serial->rx_rb,
-                                     &serial->iobuffer[(serial->rx_buf_index ? USBH_SERIAL_RX2_NOCACHE_OFFSET : USBH_SERIAL_RX_NOCACHE_OFFSET) + serial->driver->ignore_rx_header],
-                                     (nbytes - serial->driver->ignore_rx_header));
+        usb_ringbuffer_write(&serial->rx_rb,
+                             &serial->iobuffer[(serial->rx_buf_index ? USBH_SERIAL_RX2_NOCACHE_OFFSET : USBH_SERIAL_RX_NOCACHE_OFFSET) + serial->driver->ignore_rx_header],
+                             (nbytes - serial->driver->ignore_rx_header));
 
         if (serial->rx_complete_callback) {
             serial->rx_complete_callback(serial, nbytes - serial->driver->ignore_rx_header);
@@ -319,7 +229,7 @@ struct usbh_serial *usbh_serial_open(const char *devname, uint32_t open_flags)
         }
     }
 
-    usbh_serial_ringbuffer_init(&serial->rx_rb, serial->rx_rb_pool, CONFIG_USBHOST_SERIAL_RX_SIZE);
+    usb_ringbuffer_init(&serial->rx_rb, serial->rx_rb_pool, CONFIG_USBHOST_SERIAL_RX_SIZE);
 
     serial->ref_count++;
     serial->open_flags = open_flags;
@@ -454,7 +364,7 @@ int usbh_serial_control(struct usbh_serial *serial, int cmd, void *arg)
                 return ret;
             }
 
-            usbh_serial_ringbuffer_reset(&serial->rx_rb);
+            usb_ringbuffer_reset(&serial->rx_rb);
             usb_osal_sem_reset(serial->rx_complete_sem);
             serial->rx_buf_index = 0;
             usbh_bulk_urb_fill(&serial->bulkin_urb, serial->hport, serial->bulkin, &serial->iobuffer[serial->rx_buf_index ? USBH_SERIAL_RX2_NOCACHE_OFFSET : USBH_SERIAL_RX_NOCACHE_OFFSET], serial->bulkin->wMaxPacketSize,
@@ -561,9 +471,9 @@ int usbh_serial_read(struct usbh_serial *serial, void *buffer, uint32_t buflen)
     }
 
     if (serial->open_flags & USBH_SERIAL_O_NONBLOCK) {
-        return usbh_serial_ringbuffer_read(&serial->rx_rb, buffer, buflen);
+        return usb_ringbuffer_read(&serial->rx_rb, buffer, buflen);
     } else {
-        if (usbh_serial_ringbuffer_get_used(&serial->rx_rb) == 0) {
+        if (usb_ringbuffer_get_used(&serial->rx_rb) == 0) {
             ret = usb_osal_sem_take(serial->rx_complete_sem, serial->rx_timeout_ms == 0 ? USB_OSAL_WAITING_FOREVER : serial->rx_timeout_ms);
             if (ret < 0) {
                 return ret;
@@ -572,7 +482,7 @@ int usbh_serial_read(struct usbh_serial *serial, void *buffer, uint32_t buflen)
                 return serial->rx_errorcode;
             }
         }
-        return usbh_serial_ringbuffer_read(&serial->rx_rb, buffer, buflen);
+        return usb_ringbuffer_read(&serial->rx_rb, buffer, buflen);
     }
 }
 

@@ -722,7 +722,7 @@ void USBD_IRQHandler(uint8_t busid)
                         if (ep_addr & 0x80) {
                             usbd_event_ep_in_complete_handler(busid, ep_addr, transfer_len);
                         } else {
-                            usb_dcache_invalidate((uintptr_t)g_chipidea_udc[busid].out_ep[ep_idx].xfer_buf, USB_ALIGN_UP(transfer_len, CONFIG_USB_ALIGN_SIZE));
+                            usb_dcache_invalidate((uintptr_t)g_chipidea_udc[busid].out_ep[ep_idx / 2].xfer_buf, USB_ALIGN_UP(transfer_len, CONFIG_USB_ALIGN_SIZE));
                             usbd_event_ep_out_complete_handler(busid, ep_addr, transfer_len);
                         }
                     }
