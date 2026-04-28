@@ -91,8 +91,17 @@ static int serial_fops_open(struct dfs_file *fd)
     if ((fd->flags & O_ACCMODE) != O_WRONLY)
         rt_device_set_rx_indicate(device, serial_fops_rx_ind);
 
+    flags |= RT_SERIAL_RX_BLOCKING | RT_SERIAL_TX_BLOCKING;
+
+    /* preserve RT_DEVICE_FLAG_STREAM if it was set before close */
+    if (device->open_flag & RT_DEVICE_FLAG_STREAM)
+    {
+        flags |= RT_DEVICE_FLAG_STREAM;
+    }
+
     rt_device_close(device);
-    ret = rt_device_open(device, flags | RT_SERIAL_RX_BLOCKING | RT_SERIAL_TX_BLOCKING);
+    ret = rt_device_open(device, flags);
+    
     if (ret == RT_EOK)
     {
         serial                = (struct rt_serial_device *)device;
