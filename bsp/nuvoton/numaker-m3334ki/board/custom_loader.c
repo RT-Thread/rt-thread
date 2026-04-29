@@ -17,7 +17,7 @@
 #include "NuMicro.h"
 
 #ifndef __CUSTOM_LOADER_INFO_ATTRIBUTE
-#define __CUSTOM_LOADER_INFO_ATTRIBUTE  __attribute__((used, section("CLINFO")))
+    #define __CUSTOM_LOADER_INFO_ATTRIBUTE  __attribute__((used, section("CLINFO")))
 #endif
 
 /* Use an unsigned integer number as version number. */

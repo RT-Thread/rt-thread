@@ -35,17 +35,17 @@
 
 /* Static Function Prototypes ------------------------------------------------*/
 #if defined(RT_USING_FAL)
-static int aprom_read(long offset, uint8_t *buf, size_t size);
-static int aprom_write(long offset, const uint8_t *buf, size_t size);
-static int aprom_erase(long offset, size_t size);
+    static int aprom_read(long offset, uint8_t *buf, size_t size);
+    static int aprom_write(long offset, const uint8_t *buf, size_t size);
+    static int aprom_erase(long offset, size_t size);
 
-static int ldrom_read(long offset, uint8_t *buf, size_t size);
-static int ldrom_write(long offset, const uint8_t *buf, size_t size);
-static int ldrom_erase(long offset, size_t size);
+    static int ldrom_read(long offset, uint8_t *buf, size_t size);
+    static int ldrom_write(long offset, const uint8_t *buf, size_t size);
+    static int ldrom_erase(long offset, size_t size);
 
-static int dataflash_read(long offset, uint8_t *buf, size_t size);
-static int dataflash_write(long offset, const uint8_t *buf, size_t size);
-static int dataflash_erase(long offset, size_t size);
+    static int dataflash_read(long offset, uint8_t *buf, size_t size);
+    static int dataflash_write(long offset, const uint8_t *buf, size_t size);
+    static int dataflash_erase(long offset, size_t size);
 #endif  /* RT_USING_FAL */
 static int nu_fmc_init(void);
 

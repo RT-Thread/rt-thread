@@ -73,7 +73,7 @@ static struct nu_spi nu_qspi_arr [] =
 /* Functions Implementation --------------------------------------------------*/
 static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device,
                                       struct rt_spi_configuration *configuration)
-                                      {
+{
     struct nu_spi *spi_bus;
     rt_uint32_t u32SPIMode;
     rt_uint32_t u32BusClock;
@@ -107,7 +107,7 @@ static rt_err_t nu_qspi_bus_configure(struct rt_spi_device *device,
             configuration->data_width == 16 ||
             configuration->data_width == 24 ||
             configuration->data_width == 32))
-            {
+    {
         ret = RT_EINVAL;
         goto exit_nu_qspi_bus_configure;
     }
@@ -389,7 +389,7 @@ rt_err_t nu_qspi_bus_attach_device(const char *bus_name, const char *device_name
     RT_ASSERT(data_line_width == 1 || data_line_width == 2 || data_line_width == 4);
 
     qspi_device = (struct rt_qspi_device *)
-rt_malloc(sizeof(struct rt_qspi_device));
+                  rt_malloc(sizeof(struct rt_qspi_device));
     if (qspi_device == RT_NULL)
     {
         LOG_E("no memory, qspi bus attach device failed!\n");

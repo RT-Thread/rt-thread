@@ -12,12 +12,12 @@
 #include "NuMicro.h"
 #include "nu_bitutil.h"
 #if defined(BSP_USING_SPI_PDMA)
- 
-#include "drv_pdma.h"
+
+    #include "drv_pdma.h"
 #endif
 #ifndef NU_SPI_USE_PDMA_MIN_THRESHOLD
- 
-#define NU_SPI_USE_PDMA_MIN_THRESHOLD (128)
+
+    #define NU_SPI_USE_PDMA_MIN_THRESHOLD (128)
 #endif
 
 struct nu_spi
@@ -26,7 +26,7 @@ struct nu_spi
     char *name;
     SPI_T *spi_base;
     uint32_t rstidx;
-    uint32_t* dummy;
+    uint32_t *dummy;
 #if defined(BSP_USING_SPI_PDMA)
     int32_t  pdma_perp_tx;
     int32_t  pdma_chanid_tx;

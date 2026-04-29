@@ -1,3 +1,10 @@
+/* Functions Implementation --------------------------------------------------*/
+/*
+ * @copyright (C) 2026 Nuvoton Technology Corp. All rights reserved.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /* Includes ------------------------------------------------------------------*/
 #include "rtthread.h"
 #include "NuMicro.h"
@@ -8,13 +15,6 @@
 #define DBG_TAG LOG_TAG
 #include "drv_log.h"
 
-/* Functions Implementation --------------------------------------------------*/
-/*
- * @copyright (C) 2026 Nuvoton Technology Corp. All rights reserved.
- *
- * SPDX-License-Identifier: Apache-2.0
- */
- 
 
 #if defined(PKG_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM)
 void cdc_acm_init(uint8_t busid, uint32_t reg_base);

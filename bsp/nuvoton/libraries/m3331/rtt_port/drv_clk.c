@@ -46,7 +46,7 @@
     * CLK_PMUCTL_WKTMRIS_2097152 - Select Wake-up Timer Time-out Interval is 2097152 LIRC clocks (65536 ms)
     * CLK_PMUCTL_WKTMRIS_4194304 - Select Wake-up Timer Time-out Interval is 4194304 LIRC clocks (131072 ms)
     */
-#define WKTMR_INTERVAL          (CLK_PMUCTL_WKTMRIS_131072)
+    #define WKTMR_INTERVAL          (CLK_PMUCTL_WKTMRIS_131072)
 #endif
 
 /* Timer module assigned for pm device usage. */

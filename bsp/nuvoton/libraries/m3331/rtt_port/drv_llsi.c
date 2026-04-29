@@ -24,9 +24,9 @@
 #define MAKE_PDMA_ELLSI_TX(x)     PDMA_ELLSI##x##_TX
 
 #if defined(BSP_USING_PDMA_LLSI_TX)
-#define MAKE_LLSI_PDMA_TX_REQ(t)    .pdma_perp_tx = t
+    #define MAKE_LLSI_PDMA_TX_REQ(t)    .pdma_perp_tx = t
 #else
-#define MAKE_LLSI_PDMA_TX_REQ(t)
+    #define MAKE_LLSI_PDMA_TX_REQ(t)
 #endif
 #define MAKE_LLSI_INSTANCE(x, t) \
     { \

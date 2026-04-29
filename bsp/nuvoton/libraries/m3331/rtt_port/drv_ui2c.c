@@ -97,7 +97,7 @@ static rt_err_t nu_ui2c_wait_ready_with_timeout(nu_ui2c_t psNuUi2c)
                           UI2C_PROTSTS_ACKIF_Msk |
                           UI2C_PROTSTS_NACKIF_Msk |
                           UI2C_PROTSTS_STORIF_Msk)) == 0)
-                          {
+    {
         if ((rt_tick_get() - start) > psNuUi2c->parent.timeout)
         {
             LOG_E("timeout! (%d - %d > %d) ProtSts=0x%08x",  rt_tick_get(), start, psNuUi2c->parent.timeout, u32ProtSts);
@@ -118,7 +118,7 @@ static rt_err_t nu_ui2c_send_data(nu_ui2c_t psNuUi2c, rt_uint8_t data)
 
 static rt_err_t nu_ui2c_send_address(nu_ui2c_t psNuUi2c,
                                      struct rt_i2c_msg  *msg)
-                                     {
+{
     rt_uint16_t flags = msg->flags;
     rt_uint16_t ignore_nack = msg->flags & RT_I2C_IGNORE_NACK;
     rt_uint8_t addr1, addr2;
@@ -202,7 +202,7 @@ static rt_err_t nu_ui2c_send_address(nu_ui2c_t psNuUi2c,
 
         if (((UI2C_GET_PROT_STATUS(psNuUi2c->base) & UI2C_PROTSTS_ACKIF_Msk) != UI2C_PROTSTS_ACKIF_Msk)
                 && !ignore_nack)
-                {
+        {
             LOG_E("sending addr fail\n");
             return -RT_EIO;
         }
@@ -215,7 +215,7 @@ static rt_err_t nu_ui2c_send_address(nu_ui2c_t psNuUi2c,
 static rt_size_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                   struct rt_i2c_msg msgs[],
                                   rt_uint32_t num)
-                                  {
+{
     struct rt_i2c_msg *msg;
     rt_size_t i = 0;
     rt_uint32_t cnt_data;
@@ -269,7 +269,7 @@ static rt_size_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
 
             if ((RT_EOK != nu_ui2c_send_address(psNuUi2c, msg))
                     && !ignore_nack)
-                    {
+            {
                 i = 0;
                 //LOG_E("Send Address Fail");
                 break;
@@ -331,7 +331,7 @@ static rt_size_t nu_ui2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 if (((UI2C_GET_PROT_STATUS(psNuUi2c->base) & UI2C_PROTSTS_ACKIF_Msk) != UI2C_PROTSTS_ACKIF_Msk)
                         && !ignore_nack
                    ) /* Send data and get Ack */
-                   {
+                {
                     i = 0;
                     break;
                 }

@@ -146,14 +146,14 @@ static const char *szIR[] =
 
 /* Functions Implementation --------------------------------------------------*/
 #if defined(BSP_USING_CANFD0)
-/* CAN0 interrupt entry */
-DEFINE_CANFD_IRQ_HANDLER(00, 0)
-DEFINE_CANFD_IRQ_HANDLER(01, 0)
+    /* CAN0 interrupt entry */
+    DEFINE_CANFD_IRQ_HANDLER(00, 0)
+    DEFINE_CANFD_IRQ_HANDLER(01, 0)
 #endif
 
 #if defined(BSP_USING_CANFD1)
-DEFINE_CANFD_IRQ_HANDLER(10, 1)
-DEFINE_CANFD_IRQ_HANDLER(11, 1)
+    DEFINE_CANFD_IRQ_HANDLER(10, 1)
+    DEFINE_CANFD_IRQ_HANDLER(11, 1)
 #endif
 
 static void dump_interrupt_event(uint32_t u32Status)
@@ -479,7 +479,7 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
                 (argval == RT_CAN_MODE_LISTEN) ||
                 (argval == RT_CAN_MODE_LOOPBACK) ||
                 (argval == RT_CAN_MODE_LOOPBACKANLISTEN))
-                {
+        {
             if (argval != can->config.mode)
             {
                 can->config.mode = argval;
@@ -504,7 +504,7 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
                 (argval == CAN50kBaud) ||
                 (argval == CAN20kBaud) ||
                 (argval == CAN10kBaud))
-                {
+        {
             if (argval != can->config.baud_rate)
             {
                 can->config.baud_rate = argval;
@@ -522,7 +522,7 @@ static rt_err_t nu_canfd_control(struct rt_can_device *can, int cmd, void *arg)
     {
         if (argval != RT_CAN_MODE_PRIV &&
                 argval != RT_CAN_MODE_NOPRIV)
-                {
+        {
             return -(RT_ERROR);
         }
         if (argval != can->config.privmode)

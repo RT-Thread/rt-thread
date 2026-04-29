@@ -98,11 +98,11 @@ static const struct rt_pulse_encoder_ops nu_eqei_ops =
 
 /* Functions Implementation --------------------------------------------------*/
 #if defined(BSP_USING_EQEI0) && defined(EQEI0)
-DEFINE_EQEI_IRQ_HANDLER(0)
+    DEFINE_EQEI_IRQ_HANDLER(0)
 #endif
 
 #if defined(BSP_USING_EQEI1) && defined(EQEI1)
-DEFINE_EQEI_IRQ_HANDLER(1)
+    DEFINE_EQEI_IRQ_HANDLER(1)
 #endif
 
 static rt_uint32_t nu_eqei_type(struct rt_pulse_encoder_device *pulse_encoder)

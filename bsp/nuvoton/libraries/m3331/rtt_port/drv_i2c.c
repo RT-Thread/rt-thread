@@ -125,7 +125,7 @@ static inline rt_err_t nu_i2c_send_data(nu_i2c_bus_t nu_i2c, rt_uint8_t data)
 
 static rt_err_t nu_i2c_send_address(nu_i2c_bus_t nu_i2c,
                                     struct rt_i2c_msg  *msg)
-                                    {
+{
     rt_uint16_t flags = msg->flags;
     rt_uint16_t ignore_nack = msg->flags & RT_I2C_IGNORE_NACK;
     rt_uint8_t addr1, addr2;
@@ -206,7 +206,7 @@ static rt_err_t nu_i2c_send_address(nu_i2c_bus_t nu_i2c,
         if ((I2C_GET_STATUS(nu_i2c->base)
                 != ((flags & RT_I2C_RD) ? NU_I2C_MASTER_STATUS_RECEIVE_ADDRESS_ACK : NU_I2C_MASTER_STATUS_TRANSMIT_ADDRESS_ACK))
                 && !ignore_nack)
-                {
+        {
             //LOG_E("sending address failed\n");
             return -RT_EIO;
         }
@@ -216,9 +216,9 @@ static rt_err_t nu_i2c_send_address(nu_i2c_bus_t nu_i2c,
 }
 
 static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
-                                 struct rt_i2c_msg msgs[],
-                                 rt_uint32_t num)
-                                 {
+                                  struct rt_i2c_msg msgs[],
+                                  rt_uint32_t num)
+{
     struct rt_i2c_msg *msg;
     nu_i2c_bus_t nu_i2c;
     rt_size_t i;
@@ -269,7 +269,7 @@ static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 
             if ((RT_EOK != nu_i2c_send_address(nu_i2c, msg))
                     && !ignore_nack)
-                    {
+            {
                 i = 0;
                 //LOG_E("Send Address Fail");
                 break;
@@ -327,7 +327,7 @@ static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 if (I2C_GET_STATUS(nu_i2c->base) != NU_I2C_MASTER_STATUS_TRANSMIT_DATA_ACK
                         && !ignore_nack
                    ) /* Send aata and get Ack */
-                   {
+                {
                     i = 0;
                     break;
                 }

@@ -9,7 +9,7 @@
 #include "rtthread.h"
 
 #if defined(RT_USING_FAL)
-#include "fal.h"
+    #include "fal.h"
 
     extern const struct fal_flash_dev g_falFMC_AP;
     extern const struct fal_flash_dev g_falFMC_LD;

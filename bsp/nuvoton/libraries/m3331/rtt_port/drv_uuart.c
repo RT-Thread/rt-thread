@@ -21,9 +21,9 @@
 
 #if defined(RT_SERIAL_USING_DMA)
 #if defined(BSP_USING_UUART0_TX_DMA)
-#define UUART0_DMA_TX_INIT    .pdma_perp_tx = PDMA_USCI0_TX,
+    #define UUART0_DMA_TX_INIT    .pdma_perp_tx = PDMA_USCI0_TX,
 #else
-#define UUART0_DMA_TX_INIT    .pdma_perp_tx = NU_PDMA_UNUSED,
+    #define UUART0_DMA_TX_INIT    .pdma_perp_tx = NU_PDMA_UNUSED,
 #endif
 #if defined(BSP_USING_UUART0_RX_DMA)
 #define UUART0_DMA_RX_INIT    .pdma_perp_rx = PDMA_USCI0_RX, \
@@ -33,9 +33,9 @@
 #endif
 
 #if defined(BSP_USING_UUART1_TX_DMA)
-#define UUART1_DMA_TX_INIT    .pdma_perp_tx = PDMA_USCI1_TX,
+    #define UUART1_DMA_TX_INIT    .pdma_perp_tx = PDMA_USCI1_TX,
 #else
-#define UUART1_DMA_TX_INIT    .pdma_perp_tx = NU_PDMA_UNUSED,
+    #define UUART1_DMA_TX_INIT    .pdma_perp_tx = NU_PDMA_UNUSED,
 #endif
 #if defined(BSP_USING_UUART1_RX_DMA)
 #define UUART1_DMA_RX_INIT    .pdma_perp_rx = PDMA_USCI1_RX, \
@@ -134,33 +134,33 @@ static struct nu_uuart nu_uuart_arr [] =
 #if defined(BSP_USING_UUART0)
     DEFINE_NU_UUART(0, USCI0_RST, USCI0_IRQn,
 #if defined(RT_SERIAL_USING_DMA)
-            UUART0_DMA_TX_INIT,
-            UUART0_DMA_RX_INIT
+                    UUART0_DMA_TX_INIT,
+                    UUART0_DMA_RX_INIT
 #else
-            ,
+                    ,
 #endif
-           ),
+                   ),
 #endif
 
 #if defined(BSP_USING_UUART1)
     DEFINE_NU_UUART(1, USCI1_RST, USCI1_IRQn,
 #if defined(RT_SERIAL_USING_DMA)
-            UUART1_DMA_TX_INIT,
-            UUART1_DMA_RX_INIT
+                    UUART1_DMA_TX_INIT,
+                    UUART1_DMA_RX_INIT
 #else
-            , 
+                    ,
 #endif
-           ),
+                   ),
 #endif
 }; /* uuart nu_uuart */
 
 /* Functions Implementation --------------------------------------------------*/
 #if defined(BSP_USING_UUART0)
-DEFINE_UUART_IRQ_HANDLER(0)
+    DEFINE_UUART_IRQ_HANDLER(0)
 #endif
 
 #if defined(BSP_USING_UUART1)
-DEFINE_UUART_IRQ_HANDLER(1)
+    DEFINE_UUART_IRQ_HANDLER(1)
 #endif
 
 /**

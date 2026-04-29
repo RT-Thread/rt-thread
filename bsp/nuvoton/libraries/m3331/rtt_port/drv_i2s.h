@@ -11,11 +11,11 @@
 #include "drv_pdma.h"
 
 #if !defined(NU_I2S_DMA_FIFO_SIZE)
-#define NU_I2S_DMA_FIFO_SIZE (RT_AUDIO_RECORD_PIPE_SIZE)
+    #define NU_I2S_DMA_FIFO_SIZE (RT_AUDIO_RECORD_PIPE_SIZE)
 #endif
 #if !defined(NU_I2S_DMA_BUF_BLOCK_NUMBER)
- 
-#define NU_I2S_DMA_BUF_BLOCK_NUMBER (2)
+
+    #define NU_I2S_DMA_BUF_BLOCK_NUMBER (2)
 #endif
 #if ( (NU_I2S_DMA_FIFO_SIZE % NU_I2S_DMA_BUF_BLOCK_NUMBER) != 0 )
     #error "Please give an aligned definition"

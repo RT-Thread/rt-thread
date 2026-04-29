@@ -48,7 +48,7 @@ static rt_err_t nu_rtc_control(rt_device_t dev, int cmd, void *args);
 static rt_err_t nu_rtc_is_date_valid(const time_t t);
 static rt_err_t nu_rtc_init(void);
 #if defined(RT_USING_ALARM)
-static void nu_rtc_alarm_reset(void);
+    static void nu_rtc_alarm_reset(void);
 #endif
 
 /* Static Variables ----------------------------------------------------------*/

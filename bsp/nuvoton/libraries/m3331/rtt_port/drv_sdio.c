@@ -19,9 +19,9 @@
 #include "drv_log.h"
 
 #if defined(RT_USING_CACHE)
-#define SDH_ALIGN_LEN   32
+    #define SDH_ALIGN_LEN   32
 #else
-#define SDH_ALIGN_LEN   4
+    #define SDH_ALIGN_LEN   4
 #endif
 #define SDH_BUFF_SIZE   512
 #define SDH_SetClock SDH_Set_clock
@@ -78,7 +78,7 @@ static int SDH_GetBusStatus(SDH_T *sdh, uint32_t mask);
 
 /* Static Variables ----------------------------------------------------------*/
 #if defined(BSP_USING_SDH0)
-static uint32_t g_au32CacheBuf_SDH0[SDH_BUFF_SIZE / 4];
+    static uint32_t g_au32CacheBuf_SDH0[SDH_BUFF_SIZE / 4];
 #endif
 
 static struct nu_sdh nu_sdh_arr [] =
@@ -119,7 +119,7 @@ static int SDH_GetBusStatus(SDH_T *sdh, uint32_t mask)
     {
         sdh->CTL |= SDH_CTL_CLK8OEN_Msk;
         while (sdh->CTL & SDH_CTL_CLK8OEN_Msk)
-{ }
+        { }
 
         if (SDH_GET_INT_FLAG(sdh, SDH_INTSTS_DAT0STS_Msk))
             break;
@@ -646,11 +646,11 @@ static void nu_sdh_isr(nu_sdh_t NuSdh)
 }
 
 #if defined(BSP_USING_SDH0)
-DEFINE_SDH_IRQ_HANDLER(0)
+    DEFINE_SDH_IRQ_HANDLER(0)
 #endif
 
 #if defined(BSP_USING_SDH1)
-DEFINE_SDH_IRQ_HANDLER(1)
+    DEFINE_SDH_IRQ_HANDLER(1)
 #endif
 
 /**

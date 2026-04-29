@@ -161,11 +161,11 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 
     rt_err_t ret = RT_EOK;
     struct rt_spi_device *spi_device = (struct rt_spi_device *)
-rt_malloc(sizeof(struct rt_spi_device));
+                                       rt_malloc(sizeof(struct rt_spi_device));
     RT_ASSERT(spi_device != RT_NULL);
 
     rt_uint32_t *cs_pin = (rt_uint32_t *)
-rt_malloc(sizeof(rt_uint32_t));
+                          rt_malloc(sizeof(rt_uint32_t));
     RT_ASSERT(cs_pin != RT_NULL);
 
     *cs_pin = pin;

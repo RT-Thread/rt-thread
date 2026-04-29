@@ -78,7 +78,7 @@ static rt_uint32_t nu_crc_run(
     uint32_t u32Attr,
     uint8_t *pu8InData,
     uint32_t u32DataLen)
-    {
+{
     uint32_t u32CalChecksum = 0;
     uint32_t i = 0;
     rt_err_t result;

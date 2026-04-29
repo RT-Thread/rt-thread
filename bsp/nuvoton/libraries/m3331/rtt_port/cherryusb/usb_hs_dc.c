@@ -931,7 +931,7 @@ static void process_epxif(uint8_t busid)
 
             if ((u32Len < s_sUDC.ep[HWEP].ep_mps) ||
                     (s_sUDC.ep[HWEP].xfer_len == 0))
-                    {
+            {
                 usbd_event_ep_out_complete_handler(busid, SWEP, s_sUDC.ep[HWEP].actual_xfer_len);
             }
             else

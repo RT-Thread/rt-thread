@@ -265,19 +265,19 @@ static int rt_hw_timer_init(void)
 
 INIT_BOARD_EXPORT(rt_hw_timer_init);
 #if defined(BSP_USING_TIMER0)
-DEFINE_TIMER_IRQ_HANDLER(0)
+    DEFINE_TIMER_IRQ_HANDLER(0)
 #endif
 
 #if defined(BSP_USING_TIMER1)
-DEFINE_TIMER_IRQ_HANDLER(1)
+    DEFINE_TIMER_IRQ_HANDLER(1)
 #endif
 
 #if defined(BSP_USING_TIMER2)
-DEFINE_TIMER_IRQ_HANDLER(2)
+    DEFINE_TIMER_IRQ_HANDLER(2)
 #endif
 
 #if defined(BSP_USING_TIMER3)
-DEFINE_TIMER_IRQ_HANDLER(3)
+    DEFINE_TIMER_IRQ_HANDLER(3)
 #endif
 
 #endif //#if (defined(BSP_USING_TIMER) && defined(RT_USING_HWTIMER))

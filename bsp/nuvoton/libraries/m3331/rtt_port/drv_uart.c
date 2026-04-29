@@ -29,14 +29,14 @@
 #define CONFIG_UART_USE_IDLE_TIMER
 
 #if defined(CONFIG_UART_USE_IDLE_TIMER)
-#define CONFIG_PDMA_USE_IT               (NU_PDMA_EVENT_TRANSFER_DONE)
-#define CONFIG_UART_USE_RXDMA_IT         (UART_INTEN_RLSIEN_Msk | UART_INTEN_RXPDMAEN_Msk | UART_INTEN_RXTOIEN_Msk | UART_INTEN_TOCNTEN_Msk)
-#define CONFIG_UART_IDLE_TIMEOUT_VALUE   (50)
-#define CONFIG_PDMA_IDLE_TIMEOUT_VALUE   (0)
+    #define CONFIG_PDMA_USE_IT               (NU_PDMA_EVENT_TRANSFER_DONE)
+    #define CONFIG_UART_USE_RXDMA_IT         (UART_INTEN_RLSIEN_Msk | UART_INTEN_RXPDMAEN_Msk | UART_INTEN_RXTOIEN_Msk | UART_INTEN_TOCNTEN_Msk)
+    #define CONFIG_UART_IDLE_TIMEOUT_VALUE   (50)
+    #define CONFIG_PDMA_IDLE_TIMEOUT_VALUE   (0)
 #else
-#define CONFIG_PDMA_USE_IT               (NU_PDMA_EVENT_TRANSFER_DONE | NU_PDMA_EVENT_TIMEOUT)
-#define CONFIG_UART_USE_RXDMA_IT         (UART_INTEN_RLSIEN_Msk | UART_INTEN_RXPDMAEN_Msk)
-#define CONFIG_PDMA_IDLE_TIMEOUT_VALUE   (1000000 * 10 * (1 + psNuUart->dev.config.data_bits + (psNuUart->dev.config.stop_bits + 1)) / psNuUart->dev.config.baud_rate)
+    #define CONFIG_PDMA_USE_IT               (NU_PDMA_EVENT_TRANSFER_DONE | NU_PDMA_EVENT_TIMEOUT)
+    #define CONFIG_UART_USE_RXDMA_IT         (UART_INTEN_RLSIEN_Msk | UART_INTEN_RXPDMAEN_Msk)
+    #define CONFIG_PDMA_IDLE_TIMEOUT_VALUE   (1000000 * 10 * (1 + psNuUart->dev.config.data_bits + (psNuUart->dev.config.stop_bits + 1)) / psNuUart->dev.config.baud_rate)
 #endif
 #define CONFIG_UART_USE_TXDMA_IT             (UART_INTEN_TXPDMAEN_Msk)
 #define MAKE_UART_NAME(x)         #x
@@ -220,7 +220,9 @@ static struct nu_uart nu_uart_arr [] =
 #endif
                       )
 #endif
-    {0}
+    {
+        0
+    }
 };
 
 /* Functions Implementation --------------------------------------------------*/

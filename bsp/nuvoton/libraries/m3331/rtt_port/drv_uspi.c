@@ -22,7 +22,7 @@
 #include "drv_log.h"
 
 #ifndef NU_SPI_USE_PDMA_MIN_THRESHOLD
-#define NU_SPI_USE_PDMA_MIN_THRESHOLD (128)
+    #define NU_SPI_USE_PDMA_MIN_THRESHOLD (128)
 #endif
 
 #if defined(BSP_USING_USPI_PDMA)
@@ -121,7 +121,7 @@ static struct nu_uspi nu_uspi_arr [] =
 /* Functions Implementation --------------------------------------------------*/
 static rt_err_t nu_uspi_bus_configure(struct rt_spi_device *device,
                                       struct rt_spi_configuration *configuration)
-                                      {
+{
     struct nu_uspi *uspi_bus;
     uint32_t u32SPIMode;
     uint32_t u32BusClock;
@@ -155,7 +155,7 @@ static rt_err_t nu_uspi_bus_configure(struct rt_spi_device *device,
     }
     if (!(configuration->data_width == 8  ||
             configuration->data_width == 16))
-            {
+    {
         ret = RT_EINVAL;
         goto exit_nu_uspi_bus_configure;
     }

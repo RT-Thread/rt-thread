@@ -53,7 +53,7 @@ static int isConnectedUSBRole(const rt_int16_t *cc_sum)
         /* Check if CC1+CC2 voltage is within the threshold range. */
         if ((cc_sum[role] >= s_swotg_ccx_threshold[role][0]) &&
                 (cc_sum[role] <= s_swotg_ccx_threshold[role][1]))
-                {
+        {
             /* Found the connected USB role */
             return role;
         }

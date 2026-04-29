@@ -183,39 +183,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 2048
-#define RT_USING_CAN
-#define RT_CANMSG_BOX_SZ 16
-#define RT_CANSND_BOX_NUM 1
-#define RT_CANSND_MSG_TIMEOUT 100
-#define RT_CAN_NB_TX_FIFO_SIZE 256
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
-#define RT_USING_ADC
-#define RT_USING_PWM
-#define RT_USING_PULSE_ENCODER
-#define RT_USING_INPUT_CAPTURE
-#define RT_INPUT_CAPTURE_RB_SIZE 100
-#define RT_USING_PM
-#define PM_TICKLESS_THRESHOLD_TIME 2
-#define RT_USING_RTC
-#define RT_USING_SPI
-#define RT_USING_SPI_ISR
-#define RT_USING_QSPI
-#define RT_USING_WDT
-#define RT_USING_AUDIO
-#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
-#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
-#define RT_AUDIO_RECORD_PIPE_SIZE 2048
-#define RT_USING_HWCRYPTO
-#define RT_HWCRYPTO_DEFAULT_NAME "hwcryto"
-#define RT_HWCRYPTO_IV_MAX_SIZE 16
-#define RT_HWCRYPTO_KEYBIT_MAX_SIZE 256
-#define RT_HWCRYPTO_USING_CRC
-#define RT_HWCRYPTO_USING_CRC_07
-#define RT_HWCRYPTO_USING_CRC_8005
-#define RT_HWCRYPTO_USING_CRC_1021
-#define RT_HWCRYPTO_USING_CRC_3D65
-#define RT_HWCRYPTO_USING_CRC_04C11DB7
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -268,6 +235,10 @@
 #define ULOG_OUTPUT_TAG
 /* end of log format */
 #define ULOG_BACKEND_USING_CONSOLE
+#define RT_USING_UTEST
+#define UTEST_THR_STACK_SIZE 4096
+#define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 /* end of Utilities */
 
 /* Using USB legacy version */
@@ -277,6 +248,55 @@
 
 /* RT-Thread Utestcases */
 
+#define RT_USING_UTESTCASES
+
+/* Kernel Core */
+
+/* end of Kernel Core */
+
+/* Kernel Components */
+
+/* Drivers */
+
+
+/* IPC Test */
+
+/* end of IPC Test */
+
+/* Serial Test */
+
+/* end of Serial Test */
+
+/* SMP-Call Test */
+
+/* end of SMP-Call Test */
+/* end of Drivers */
+
+/* File System */
+
+/* end of File System */
+
+/* CPP11 */
+
+/* end of CPP11 */
+
+/* Network */
+
+/* end of Network */
+
+/* Utest Framework */
+
+#define RT_UTEST_SELF_PASS
+/* end of Utest Framework */
+/* end of Kernel Components */
+
+/* Memory Management Subsytem Testcase */
+
+/* end of Memory Management Subsytem Testcase */
+
+/* Tmpfs Testcase */
+
+/* end of Tmpfs Testcase */
 /* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */
@@ -498,91 +518,14 @@
 
 #define SOC_FAMILY_NUMICRO
 #define SOC_SERIES_M3331
-#define BSP_USING_BPWM
-#define BSP_USING_BPWM_CAPTURE
-#define BSP_USING_BPWM0
-#define BSP_USING_BPWM1_CAPTURE
-#define BSP_USING_BPWM2
-#define BSP_USING_BPWM3
-#define BSP_USING_BPWM4
-#define BSP_USING_BPWM5
-#define BSP_USING_CANFD
-#define BSP_USING_CANFD0
-#define BSP_USING_CANFD1
-#define BSP_USING_CLK
-#define BSP_USING_CRC
-#define BSP_USING_CRC0
-#define BSP_USING_CRYPTO
-#define BSP_USING_CRYPTO0
-#define BSP_USING_EADC
-#define BSP_USING_EADC0
-#define BSP_USING_EPWM
-#define BSP_USING_EPWM0
-#define BSP_USING_EPWM1
-#define BSP_USING_EQEI
-#define BSP_USING_EQEI0
-#define BSP_USING_EQEI1
-#define BSP_USING_EQEI2
-#define BSP_USING_EQEI3
 #define BSP_USING_FMC
 #define BSP_USING_GPIO
-#define BSP_USING_I2C
-#define BSP_USING_I2C0
-#define BSP_USING_I2C1
-#define BSP_USING_I2C2
-#define BSP_USING_I2C3
 #define BSP_USING_PDMA
 #define BSP_USING_PDMA0
 #define NU_PDMA_SGTBL_POOL_SIZE 16
 #define NU_PDMA_MEMFUN_ACTOR_MAX 2
-#define BSP_USING_QSPI
-#define BSP_USING_QSPI0
-#define BSP_USING_QSPI0_PDMA
-#define BSP_USING_RTC
-#define BSP_USING_RTC_INTERNAL
-#define BSP_USING_SC
-#define BSP_USING_SC0
-#define BSP_USING_SC1
-#define BSP_USING_SC2
-#define BSP_USING_SPI
-#define BSP_USING_SPI_PDMA
-#define BSP_USING_SPII2S
-#define BSP_USING_SPI0
-#define BSP_USING_SPI0_PDMA
-#define BSP_USING_SPII2S1
-#define BSP_USING_SPI2
-#define BSP_USING_SPI2_PDMA
-#define BSP_USING_TMR
-#define BSP_USING_TIMER
-#define BSP_USING_TPWM
-#define BSP_USING_TMR0
-#define BSP_USING_TPWM0
-#define BSP_USING_TMR1
-#define BSP_USING_TIMER1
-#define BSP_USING_TMR2
-#define BSP_USING_TMR3
-#define BSP_USING_TPWM3
 #define BSP_USING_UART
 #define BSP_USING_UART0
-#define BSP_USING_UART1
-#define BSP_USING_UART2
-#define BSP_USING_UART3
-#define BSP_USING_UART4
-#define BSP_USING_UART5
-#define BSP_USING_USCI
-#define BSP_USING_UUART
-#define BSP_USING_USCI0
-#define BSP_USING_USCI1
-#define BSP_USING_UUART0
-#define BSP_USING_UUART0_TX_DMA
-#define BSP_USING_UUART0_RX_DMA
-#define BSP_USING_UUART1
-#define BSP_USING_UUART1_TX_DMA
-#define BSP_USING_UUART1_RX_DMA
-#define BSP_USING_HSUSBD
-#define BSP_USING_HSUSBH
-#define BSP_USING_HSOTG
-#define BSP_USING_WDT
 /* end of On-chip Peripheral Drivers */
 
 /* On-board Peripheral Drivers */
@@ -599,8 +542,9 @@
 /* Nuvoton Packages Config */
 
 #define NU_PKG_USING_UTILS
-#define NU_PKG_USING_DEMO
 /* end of Nuvoton Packages Config */
 /* end of Hardware Drivers Config */
+#define UTEST_CMD_PREFIX "bsp.nuvoton.utest."
+#define BOARD_USE_UTEST
 
 #endif
