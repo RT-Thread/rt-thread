@@ -299,6 +299,77 @@ menu "On-chip Peripheral Drivers"
                         endchoice
                     endif
             endif  #BSP_USING_TIM3_PWM
+		menuconfig BSP_USING_TIM4_PWM
+            bool "Enable TIM4 output PWM"
+            default n
+            if BSP_USING_TIM4_PWM
+                config BSP_USING_TIM4_PWM_CH1_PB6
+                    bool "Enable TIM4 channel 1 PB6 AF2"
+                    default n
+				config BSP_USING_TIM4_PWM_CH2_PB7
+                    bool "Enable TIM4 channel 2 PB7 AF2"
+                    default n
+				config BSP_USING_TIM4_PWM_CH3_PB8
+                    bool "Enable TIM4 channel 3 PB8 AF2"
+                    default n
+				config BSP_USING_TIM4_PWM_CH4_PB9
+                    bool "Enable TIM4 channel 4 PB9 AF2"
+                    default n
+			endif #BSP_USING_TIM4_PWM
+
+		menuconfig BSP_USING_TIM5_PWM
+            bool "Enable TIM5 output PWM"
+            default n
+            if BSP_USING_TIM5_PWM
+                config BSP_USING_TIM5_PWM_CH1_PA0
+                    bool "Enable TIM5 channel 1 PA0 AF1"
+                    default n
+				config BSP_USING_TIM5_PWM_CH2_PA1
+                    bool "Enable TIM5 channel 2 PA1 AF7"
+                    default n
+				config BSP_USING_TIM5_PWM_CH3_PA2
+                    bool "Enable TIM5 channel 3 PA2 AF6"
+                    default n
+				config BSP_USING_TIM5_PWM_CH4_PA3
+                    bool "Enable TIM5 channel 4 PA3 AF7"
+                    default n
+			endif #BSP_USING_TIM5_PWM
+
+		menuconfig BSP_USING_TIM8_PWM
+            bool "Enable TIM8 output PWM"
+            default n
+            if BSP_USING_TIM8_PWM
+                config BSP_USING_TIM8_PWM_CH1_PC6
+                    bool "Enable TIM8 channel 1 PC6 AF6"
+                    default n
+				config BSP_USING_TIM8_PWM_CH2_PC7
+                    bool "Enable TIM8 channel 2 PC7 AF6"
+                    default n
+				config BSP_USING_TIM8_PWM_CH3_PC8
+                    bool "Enable TIM8 channel 3 PC8 AF6"
+                    default n
+				config BSP_USING_TIM8_PWM_CH4_PC9
+                    bool "Enable TIM8 channel 4 PC9 AF6"
+                    default n
+			endif #BSP_USING_TIM8_PWM
+
+		menuconfig BSP_USING_TIM9_PWM
+            bool "Enable TIM9 output PWM"
+            default n
+            if BSP_USING_TIM9_PWM
+                config BSP_USING_TIM9_PWM_CH1_PB12
+                    bool "Enable TIM9 channel 1 PB12 AF1"
+                    default n
+				config BSP_USING_TIM9_PWM_CH2_PB13
+                    bool "Enable TIM9 channel 2 PB13 AF1"
+                    default n
+				config BSP_USING_TIM9_PWM_CH3_PB14
+                    bool "Enable TIM9 channel 3 PB14 AF1"
+                    default n
+				config BSP_USING_TIM9_PWM_CH4_PB15
+                    bool "Enable TIM9 channel 4 PB15 AF1"
+                    default n
+			endif #BSP_USING_TIM9_PWM
     endif#BSP_USING_PWM
     rsource "../../libraries/n32_drivers/Kconfig"
 
