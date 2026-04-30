@@ -43,19 +43,19 @@ int dfs_romfs_ioctl(struct dfs_file *file, int cmd, void *args)
     switch (cmd)
     {
     case RT_FIOGETADDR:
+    {
+        if (args == RT_NULL)
         {
-            if (args == RT_NULL)
-            {
-                ret = -RT_EINVAL;
-                break;
-            }
-            *(rt_ubase_t*)args = (rt_ubase_t)dirent->data;
+            ret = -RT_EINVAL;
             break;
         }
+        *(rt_ubase_t *)args = (rt_ubase_t)dirent->data;
+        break;
+    }
     case RT_FIOFTRUNCATE:
-        {
-            break;
-        }
+    {
+        break;
+    }
     default:
         ret = -RT_EINVAL;
         break;
@@ -65,8 +65,7 @@ int dfs_romfs_ioctl(struct dfs_file *file, int cmd, void *args)
 
 rt_inline int check_dirent(struct romfs_dirent *dirent)
 {
-    if ((dirent->type != ROMFS_DIRENT_FILE && dirent->type != ROMFS_DIRENT_DIR)
-        || dirent->size == ~0U)
+    if ((dirent->type != ROMFS_DIRENT_FILE && dirent->type != ROMFS_DIRENT_DIR) || dirent->size == ~0U)
         return -1;
     return 0;
 }
@@ -96,31 +95,31 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
     subpath_end = path;
     /* skip /// */
     while (*subpath_end && *subpath_end == '/')
-        subpath_end ++;
+        subpath_end++;
     subpath = subpath_end;
     while ((*subpath_end != '/') && *subpath_end)
-        subpath_end ++;
+        subpath_end++;
 
     while (dirent != NULL)
     {
         found = 0;
 
         /* search in folder */
-        for (index = 0; index < dirent_size; index ++)
+        for (index = 0; index < dirent_size; index++)
         {
             if (check_dirent(&dirent[index]) != 0)
                 return NULL;
-            if (rt_strlen(dirent[index].name) ==  (rt_size_t)(subpath_end - subpath) &&
-                    rt_strncmp(dirent[index].name, subpath, (subpath_end - subpath)) == 0)
+            if (rt_strlen(dirent[index].name) == (rt_size_t)(subpath_end - subpath) &&
+                rt_strncmp(dirent[index].name, subpath, (subpath_end - subpath)) == 0)
             {
                 dirent_size = dirent[index].size;
 
                 /* skip /// */
                 while (*subpath_end && *subpath_end == '/')
-                    subpath_end ++;
+                    subpath_end++;
                 subpath = subpath_end;
                 while ((*subpath_end != '/') && *subpath_end)
-                    subpath_end ++;
+                    subpath_end++;
 
                 if (!(*subpath))
                 {
@@ -215,8 +214,7 @@ int dfs_romfs_open(struct dfs_file *file)
     RT_ASSERT(file->vnode->ref_count > 0);
     if (file->vnode->ref_count > 1)
     {
-        if (file->vnode->type == FT_DIRECTORY
-                && !(file->flags & O_DIRECTORY))
+        if (file->vnode->type == FT_DIRECTORY && !(file->flags & O_DIRECTORY))
         {
             return -ENOENT;
         }
@@ -345,14 +343,13 @@ int dfs_romfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t coun
         rt_strncpy(d->d_name, name, DIRENT_NAME_MAX);
 
         /* move to next position */
-        ++ file->pos;
+        ++file->pos;
     }
 
     return index * sizeof(struct dirent);
 }
 
-static const struct dfs_file_ops _rom_fops =
-{
+static const struct dfs_file_ops _rom_fops = {
     dfs_romfs_open,
     dfs_romfs_close,
     dfs_romfs_ioctl,
@@ -363,8 +360,7 @@ static const struct dfs_file_ops _rom_fops =
     dfs_romfs_getdents,
     NULL,
 };
-static const struct dfs_filesystem_ops _romfs =
-{
+static const struct dfs_filesystem_ops _romfs = {
     "rom",
     DFS_FS_FLAG_DEFAULT,
     &_rom_fops,
@@ -388,29 +384,56 @@ int dfs_romfs_init(void)
 INIT_COMPONENT_EXPORT(dfs_romfs_init);
 
 #ifndef RT_USING_DFS_ROMFS_USER_ROOT
-static const unsigned char _dummy_dummy_txt[] =
-{
-    0x74, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x20, 0x66, 0x69, 0x6c, 0x65, 0x21, 0x0d, 0x0a,
+static const unsigned char _dummy_dummy_txt[] = {
+    0x74,
+    0x68,
+    0x69,
+    0x73,
+    0x20,
+    0x69,
+    0x73,
+    0x20,
+    0x61,
+    0x20,
+    0x66,
+    0x69,
+    0x6c,
+    0x65,
+    0x21,
+    0x0d,
+    0x0a,
 };
 
-static const struct romfs_dirent _dummy[] =
-{
-    {ROMFS_DIRENT_FILE, "dummy.txt", _dummy_dummy_txt, sizeof(_dummy_dummy_txt)},
+static const struct romfs_dirent _dummy[] = {
+    { ROMFS_DIRENT_FILE, "dummy.txt", _dummy_dummy_txt, sizeof(_dummy_dummy_txt) },
 };
 
-static const unsigned char _dummy_txt[] =
-{
-    0x74, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x20, 0x66, 0x69, 0x6c, 0x65, 0x21, 0x0d, 0x0a,
+static const unsigned char _dummy_txt[] = {
+    0x74,
+    0x68,
+    0x69,
+    0x73,
+    0x20,
+    0x69,
+    0x73,
+    0x20,
+    0x61,
+    0x20,
+    0x66,
+    0x69,
+    0x6c,
+    0x65,
+    0x21,
+    0x0d,
+    0x0a,
 };
 
-rt_weak const struct romfs_dirent _root_dirent[] =
-{
-    {ROMFS_DIRENT_DIR, "dummy", (rt_uint8_t *)_dummy, sizeof(_dummy) / sizeof(_dummy[0])},
-    {ROMFS_DIRENT_FILE, "dummy.txt", _dummy_txt, sizeof(_dummy_txt)},
+rt_weak const struct romfs_dirent _root_dirent[] = {
+    { ROMFS_DIRENT_DIR, "dummy", (rt_uint8_t *)_dummy, sizeof(_dummy) / sizeof(_dummy[0]) },
+    { ROMFS_DIRENT_FILE, "dummy.txt", _dummy_txt, sizeof(_dummy_txt) },
 };
 
-rt_weak const struct romfs_dirent romfs_root =
-{
+rt_weak const struct romfs_dirent romfs_root = {
     ROMFS_DIRENT_DIR, "/", (rt_uint8_t *)_root_dirent, sizeof(_root_dirent) / sizeof(_root_dirent[0])
 };
 #endif
