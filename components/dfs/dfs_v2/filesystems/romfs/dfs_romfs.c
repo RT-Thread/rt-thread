@@ -22,15 +22,16 @@
 
 static const struct dfs_file_ops _rom_fops;
 
-static const mode_t romfs_modemap[] = {
-    S_IFREG | 0644,    /* regular file */
-    S_IFDIR | 0644,    /* directory */
+static const mode_t romfs_modemap[] =
+{
+    S_IFREG  | 0644,    /* regular file */
+    S_IFDIR  | 0644,    /* directory */
     0,                  /* hard link */
-    S_IFLNK | 0777,    /* symlink */
-    S_IFBLK | 0600,    /* blockdev */
-    S_IFCHR | 0600,    /* chardev */
+    S_IFLNK  | 0777,    /* symlink */
+    S_IFBLK  | 0600,    /* blockdev */
+    S_IFCHR  | 0600,    /* chardev */
     S_IFSOCK | 0644,    /* socket */
-    S_IFIFO | 0644     /* FIFO */
+    S_IFIFO  | 0644     /* FIFO */
 };
 
 static int dfs_romfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data)
@@ -62,19 +63,19 @@ int dfs_romfs_ioctl(struct dfs_file *file, int cmd, void *args)
     switch (cmd)
     {
     case RT_FIOGETADDR:
-    {
-        if (args == RT_NULL)
         {
-            ret = -RT_EINVAL;
+            if (args == RT_NULL)
+            {
+                ret = -RT_EINVAL;
+                break;
+            }
+            *(rt_ubase_t*)args = (rt_ubase_t)dirent->data;
             break;
         }
-        *(rt_ubase_t *)args = (rt_ubase_t)dirent->data;
-        break;
-    }
     case RT_FIOFTRUNCATE:
-    {
-        break;
-    }
+        {
+            break;
+        }
     default:
         ret = -RT_EINVAL;
         break;
@@ -84,7 +85,9 @@ int dfs_romfs_ioctl(struct dfs_file *file, int cmd, void *args)
 
 rt_inline int check_dirent(struct romfs_dirent *dirent)
 {
-    if (dirent == NULL || (dirent->type != ROMFS_DIRENT_FILE && dirent->type != ROMFS_DIRENT_DIR) || dirent->size == ~0)
+    if (dirent == NULL
+        ||(dirent->type != ROMFS_DIRENT_FILE && dirent->type != ROMFS_DIRENT_DIR)
+        || dirent->size == ~0)
         return -1;
     return 0;
 }
@@ -114,31 +117,31 @@ struct romfs_dirent *__dfs_romfs_lookup(struct romfs_dirent *root_dirent, const 
     subpath_end = path;
     /* skip /// */
     while (*subpath_end && *subpath_end == '/')
-        subpath_end++;
+        subpath_end ++;
     subpath = subpath_end;
     while ((*subpath_end != '/') && *subpath_end)
-        subpath_end++;
+        subpath_end ++;
 
     while (dirent != NULL)
     {
         found = 0;
 
         /* search in folder */
-        for (index = 0; index < dirent_size; index++)
+        for (index = 0; index < dirent_size; index ++)
         {
             if (check_dirent(&dirent[index]) != 0)
                 return NULL;
             if (rt_strlen(dirent[index].name) == (subpath_end - subpath) &&
-                rt_strncmp(dirent[index].name, subpath, (subpath_end - subpath)) == 0)
+                    rt_strncmp(dirent[index].name, subpath, (subpath_end - subpath)) == 0)
             {
                 dirent_size = dirent[index].size;
 
                 /* skip /// */
                 while (*subpath_end && *subpath_end == '/')
-                    subpath_end++;
+                    subpath_end ++;
                 subpath = subpath_end;
                 while ((*subpath_end != '/') && *subpath_end)
-                    subpath_end++;
+                    subpath_end ++;
 
                 if (!(*subpath))
                 {
@@ -169,7 +172,7 @@ struct romfs_dirent *__dfs_romfs_lookup(struct romfs_dirent *root_dirent, const 
     return NULL;
 }
 
-static struct dfs_vnode *dfs_romfs_lookup(struct dfs_dentry *dentry)
+static struct dfs_vnode *dfs_romfs_lookup (struct dfs_dentry *dentry)
 {
     rt_size_t size;
     struct dfs_vnode *vnode = RT_NULL;
@@ -357,34 +360,37 @@ static int dfs_romfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32
         rt_strncpy(d->d_name, name, DIRENT_NAME_MAX);
 
         /* move to next position */
-        ++file->fpos;
+        ++ file->fpos;
     }
 
     return index * sizeof(struct dirent);
 }
 
-static const struct dfs_file_ops _rom_fops = {
-    .open = dfs_romfs_open,
-    .close = dfs_romfs_close,
-    .ioctl = dfs_romfs_ioctl,
-    .lseek = generic_dfs_lseek,
-    .read = dfs_romfs_read,
-    .getdents = dfs_romfs_getdents,
+static const struct dfs_file_ops _rom_fops =
+{
+    .open             = dfs_romfs_open,
+    .close            = dfs_romfs_close,
+    .ioctl            = dfs_romfs_ioctl,
+    .lseek            = generic_dfs_lseek,
+    .read             = dfs_romfs_read,
+    .getdents         = dfs_romfs_getdents,
 };
 
-static const struct dfs_filesystem_ops _romfs_ops = {
-    .name = "rom",
-    .flags = 0,
-    .default_fops = &_rom_fops,
-    .mount = dfs_romfs_mount,
-    .umount = dfs_romfs_umount,
-    .stat = dfs_romfs_stat,
-    .lookup = dfs_romfs_lookup,
-    .free_vnode = dfs_romfs_free_vnode
+static const struct dfs_filesystem_ops _romfs_ops =
+{
+    .name             ="rom",
+    .flags            = 0,
+    .default_fops     = &_rom_fops,
+    .mount            = dfs_romfs_mount,
+    .umount           = dfs_romfs_umount,
+    .stat             = dfs_romfs_stat,
+    .lookup           = dfs_romfs_lookup,
+    .free_vnode       = dfs_romfs_free_vnode
 };
 
-static struct dfs_filesystem_type _romfs = {
-    .fs_ops = &_romfs_ops,
+static struct dfs_filesystem_type _romfs =
+{
+    .fs_ops           = &_romfs_ops,
 };
 
 int dfs_romfs_init(void)
