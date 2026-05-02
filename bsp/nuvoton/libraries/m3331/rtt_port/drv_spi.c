@@ -405,8 +405,7 @@ exit_nu_hw_spi_pdma_allocate:
 
     return -(RT_ERROR);
 }
-#endif /* 
-#if defined(BSP_USING_SPI_PDMA) */
+#endif /* #if defined(BSP_USING_SPI_PDMA) */
 
 void nu_spi_drain_rxfifo(SPI_T *spi_base)
 {
