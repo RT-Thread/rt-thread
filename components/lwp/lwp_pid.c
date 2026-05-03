@@ -336,6 +336,35 @@ void lwp_pid_put(struct rt_lwp *lwp)
 }
 
 /**
+ * @brief Roll back a PID allocated for a process that never became runnable.
+ *
+ * @param[in,out] lwp The lightweight process whose PID allocation should be
+ *                    undone. The LWP must have been allocated a PID, but must
+ *                    not have been made visible as a runnable user task.
+ *
+ * @note This helper is intended for exec/spawn failure paths after PID
+ *       allocation and before task startup. It removes the PID table entry,
+ *       clears lwp->pid, and drops the initial LWP reference.
+ *
+ *       Do not use lwp_pid_put() for this case. lwp_pid_put() has process-exit
+ *       semantics: when the PID tree becomes empty it wakes waiters and keeps
+ *       the PID lock held to prevent new PID allocation. A failed exec rollback
+ *       must release the PID lock unconditionally so later LWP launches can
+ *       still allocate PIDs, especially in init-less boot flows.
+ */
+void lwp_pid_rollback(struct rt_lwp *lwp)
+{
+    _free_proc_dentry(lwp);
+
+    lwp_pid_lock_take();
+    lwp_pid_put_locked(lwp->pid);
+    lwp_pid_lock_release();
+
+    lwp->pid = 0;
+    lwp_ref_dec(lwp);
+}
+
+/**
  * @brief Set the LWP for a given PID while holding the PID lock
  *
  * @param[in] pid The process ID to set the LWP for
