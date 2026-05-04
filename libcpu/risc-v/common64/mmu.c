@@ -11,6 +11,7 @@
  */
 
 #include <rtthread.h>
+#include <rthw.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -84,12 +85,35 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     uint32_t hartid = rt_cpu_get_id();
     uintptr_t ptr = (uintptr_t)aspace->page_table + (uintptr_t)(hartid * ARCH_PAGE_SIZE);
     uintptr_t page_table = (uintptr_t)rt_kmem_v2p((void *)ptr);
+
+    if (page_table == (uintptr_t)ARCH_MAP_FAILED)
+    {
+        /*
+         * During early K230 bring-up the kernel still runs with low physical
+         * pointers after relocation, including MMUTable. The formal kernel
+         * aspace does not translate that low pointer yet, but SATP needs the
+         * physical page-table address, so use the low address directly.
+         */
+        if (ptr < KERNEL_VADDR_START)
+        {
+            page_table = ptr;
+        }
+    }
 #ifndef RT_USING_SMP
     current_mmu_table = aspace->page_table;
 #else
     current_mmu_table[rt_hw_cpu_id()] = (void *)ptr;
 #endif
 
+#ifdef ARCH_REMAP_KERNEL
+    /*
+     * Bring-up guard: keep low physical memory identity-mapped while switching
+     * away from the early page table. This validates whether any low-address
+     * boot context is still live during the transition.
+     */
+    ((rt_ubase_t *)ptr)[0] = COMBINEPTE(0, MMU_MAP_EARLY);
+    rt_hw_cpu_dcache_clean((void *)ptr, sizeof(rt_ubase_t));
+#endif
     write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
                         ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
     rt_hw_tlb_invalidate_all_local();
@@ -561,14 +585,14 @@ static inline void _init_region(void *vaddr, size_t size)
 {
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
-    rt_mpr_start = rt_ioremap_start - rt_mpr_size;
+    rt_mpr_start = (void *)((rt_ubase_t)rt_ioremap_start - rt_mpr_size);
     LOG_D("rt_ioremap_start: %p, rt_mpr_start: %p", rt_ioremap_start,
           rt_mpr_start);
 }
 #else
 static inline void _init_region(void *vaddr, size_t size)
 {
-    rt_mpr_start = vaddr - rt_mpr_size;
+    rt_mpr_start = (void *)((rt_ubase_t)vaddr - rt_mpr_size);
 }
 #endif
 
@@ -955,6 +979,9 @@ void rt_hw_mem_setup_early(void *pgtbl, rt_uint64_t hartid)
             vs += L2_PAGE_SIZE;
         }
 #endif
+        /* flush page table entries from data cache before enabling MMU */
+        rt_hw_cpu_dcache_clean(early_pgtbl, ARCH_PAGE_SIZE);
+
         /* apply new mapping */
         asm volatile("sfence.vma x0, x0");
         write_csr(satp, SATP_BASE | ((size_t)early_pgtbl >> PAGE_OFFSET_BIT));
