@@ -12,6 +12,10 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#define DBG_TAG    "board"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #include "board.h"
 #include "tick.h"
 
@@ -39,7 +43,6 @@ extern unsigned int __bss_end;
 #define RT_HW_PAGE_END      ((void *)(RAM_END))
 
 #ifdef RT_USING_SMART
-
 rt_region_t init_page_region = {(rt_size_t)RT_HW_PAGE_START, (rt_size_t)RT_HW_PAGE_END};
 
 extern size_t MMUTable[];
@@ -47,9 +50,7 @@ extern size_t MMUTable[];
 struct mem_desc platform_mem_desc[] = {
     {KERNEL_VADDR_START, (rt_size_t)(KERNEL_VADDR_START + CONFIG_MEM_MMZ_BASE + CONFIG_MEM_MMZ_SIZE - 1), (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
 };
-
 #define NUM_MEM_DESC (sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]))
-
 #endif /* RT_USING_SMART */
 
 #ifndef ARCH_REMAP_KERNEL
@@ -76,34 +77,42 @@ static void __rt_assert_handler(const char *ex_string, const char *func, rt_size
     asm volatile("ebreak":::"memory");
 }
 
-//BSP的C入口
+/* C entry point, this gets called on primary CPU after stack setup. */
 void primary_cpu_entry(void)
 {
-    //关中断
+    LOG_I("primary_cpu_entry");
+
     rt_hw_interrupt_disable();
+
+#ifdef RT_DEBUGING_ASSERT
     rt_assert_set_hook(__rt_assert_handler);
-    //启动RT-Thread Smart内核
+#endif
+
     entry();
 }
 
 #define IOREMAP_SIZE (1ul << 30)
 
-//这个初始化程序由内核主动调用，此时调度器还未启动，因此在此不能使用依赖线程上下文的函数
+/*
+ * This function is called by the kernel during initialization. At this point,
+ * the scheduler has not started, so functions that depend on thread context
+ * cannot be used.
+ */
 void rt_hw_board_init(void)
 {
-#ifdef RT_USING_SMART
-    /* init data structure */
-    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(IOREMAP_VEND - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, PV_OFFSET);
+    LOG_D("board init: heap %p-%p, page %p-%p",
+          RT_HW_HEAP_BEGIN, RT_HW_HEAP_END,
+          RT_HW_PAGE_START, RT_HW_PAGE_END);
 
-    /* init page allocator */
+#ifdef RT_USING_SMART
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)(IOREMAP_VEND - IOREMAP_SIZE), IOREMAP_SIZE, (rt_size_t *)MMUTable, PV_OFFSET);
     rt_page_init(init_page_region);
 
-    /* setup region, and enable MMU */
+    LOG_D("mmu setup: %d regions", NUM_MEM_DESC);
     rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, NUM_MEM_DESC);
 #endif
 
 #ifdef RT_USING_HEAP
-    /* initialize memory system */
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
     /* initalize interrupt */
