@@ -2,23 +2,88 @@ menuconfig RT_USING_ADT
     bool "Enable ADT(abstract data type)"
     default y if ARCH_MM_MMU
     default n
+    help
+        ADT(abstract data type) are a set of general interfaces that encapsulate commonly used data structures.
+        
+        ADT's Core Functions and Components:
+        AVL Tree (RT_USING_ADT_AVL)
+        Bitmap (RT_USING_ADT_BITMAP)
+        Hash Table (RT_USING_ADT_HASHMAP)
+        Reference Counting API (RT_USING_ADT_REF)        
+
+        Features and Advantages of ADT:
+        Abstract Interface: Hides the implementation details of data structures; only a unified interface needs to be called.
+        Customizability: Reduces system resource consumption through Kconfig configuration.
+        Generality: Applicable to various scenarios.
+
+        Once enabled, you can use the AVL tree, bitmap, hash table, and reference counting APIs.
 
 config RT_USING_ADT_AVL
     bool "AVL tree"
     depends on RT_USING_ADT
     default y
+    help
+        An AVL tree (RT_USING_ADT_AVL) is a self-balancing binary search tree.
+
+        Core capabilities:
+        Supports efficient insertion, deletion, and search operations; 
+        Data is naturally ordered, facilitating range queries.
+
+        Typical scenarios:
+        Task priority sorting; 
+        Log timestamp indexing; 
+        Ordered management of dynamic configuration items.
+
+        Once enabled, AVL trees can be used (ADT must be enabled).
 
 config RT_USING_ADT_BITMAP
     bool "Bitmap"
     depends on RT_USING_ADT
     default y
+    help
+        A bitmap (RT_USING_ADT_BITMAP) represents a set of states using consecutive binary bits.
+
+        Core capabilities: 
+        Extreme memory efficiency;
+        Fast set, clear, and query operations based on bitwise operations.
+
+        Typical scenarios: 
+        Resource allocation flags; 
+        Permission switches; 
+        State set management.
+
+        Once enabled, bitmaps can be used (ADT must be enabled).
 
 config RT_USING_ADT_HASHMAP
     bool "HashMap"
     depends on RT_USING_ADT
     default y
+    help
+        Hash Table (RT_USING_ADT_HASHMAP) is a storage structure based on key-value mapping. 
+
+        Core capabilities: 
+        Average lookup, insertion, and deletion times are close to O(1); 
+        Supports custom hash functions and key comparison rules, adapting to different key types. 
+        
+        Typical scenarios: 
+        Scenarios requiring fast object lookup using unique identifiers; 
+        String key-value pair configuration; 
+        High-frequency query scenarios.
+
+        Once enabled, HashMap can be used (ADT must be enabled).
 
 config RT_USING_ADT_REF
     bool "Reference API"
     depends on RT_USING_ADT
     default y
+    help
+        The Reference Counting API (RT_USING_ADT_REF) is a mechanism for managing object lifecycles through a counter.
+
+        Core capabilities: 
+        Simplifies the release logic of shared resources across multiple modules; 
+        automatically maintains the lifecycle without requiring manual tracking of object users.
+
+        Typical scenarios: 
+        Multi-threaded/multi-module shared resources.
+
+        Once enabled, Reference API can be used (ADT must be enabled).
