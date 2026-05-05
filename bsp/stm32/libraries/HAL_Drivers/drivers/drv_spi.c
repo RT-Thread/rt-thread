@@ -81,6 +81,23 @@ static struct stm32_spi_config spi_config[] =
 
 static struct stm32_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])] = {0};
 
+static void stm32_spi_dma_rollback(struct stm32_spi *spi_drv, rt_uint16_t dma_flags)
+{
+    if ((dma_flags & SPI_USING_RX_DMA_FLAG) && (spi_drv->config->dma_rx != RT_NULL))
+    {
+        (void)stm32_dma_deinit(&spi_drv->dma.handle_rx, spi_drv->config->dma_rx, RT_FALSE);
+        spi_drv->dma.handle_rx.Parent = RT_NULL;
+        spi_drv->handle.hdmarx = RT_NULL;
+    }
+
+    if ((dma_flags & SPI_USING_TX_DMA_FLAG) && (spi_drv->config->dma_tx != RT_NULL))
+    {
+        (void)stm32_dma_deinit(&spi_drv->dma.handle_tx, spi_drv->config->dma_tx, RT_FALSE);
+        spi_drv->dma.handle_tx.Parent = RT_NULL;
+        spi_drv->handle.hdmatx = RT_NULL;
+    }
+}
+
 static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configuration *cfg)
 {
     RT_ASSERT(spi_drv != RT_NULL);
@@ -255,24 +272,26 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     /* DMA configuration */
     if (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
     {
-        HAL_DMA_Init(&spi_drv->dma.handle_rx);
-
-        __HAL_LINKDMA(&spi_drv->handle, hdmarx, spi_drv->dma.handle_rx);
-
-        /* NVIC configuration for DMA transfer complete interrupt */
-        HAL_NVIC_SetPriority(spi_drv->config->dma_rx->dma_irq, 0, 0);
-        HAL_NVIC_EnableIRQ(spi_drv->config->dma_rx->dma_irq);
+        if (stm32_dma_setup(&spi_drv->dma.handle_rx,
+                            &spi_drv->handle,
+                            &spi_drv->handle.hdmarx,
+                            spi_drv->config->dma_rx) != RT_EOK)
+        {
+            stm32_spi_dma_rollback(spi_drv, SPI_USING_RX_DMA_FLAG);
+            return -RT_EIO;
+        }
     }
 
     if (spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG)
     {
-        HAL_DMA_Init(&spi_drv->dma.handle_tx);
-
-        __HAL_LINKDMA(&spi_drv->handle, hdmatx, spi_drv->dma.handle_tx);
-
-        /* NVIC configuration for DMA transfer complete interrupt */
-        HAL_NVIC_SetPriority(spi_drv->config->dma_tx->dma_irq, 1, 0);
-        HAL_NVIC_EnableIRQ(spi_drv->config->dma_tx->dma_irq);
+        if (stm32_dma_setup(&spi_drv->dma.handle_tx,
+                            &spi_drv->handle,
+                            &spi_drv->handle.hdmatx,
+                            spi_drv->config->dma_tx) != RT_EOK)
+        {
+            stm32_spi_dma_rollback(spi_drv, SPI_USING_TX_DMA_FLAG | (spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG));
+            return -RT_EIO;
+        }
     }
 
     if(spi_drv->spi_dma_flag & SPI_USING_TX_DMA_FLAG || spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG)
@@ -564,94 +583,6 @@ static int rt_hw_spi_bus_init(void)
         spi_bus_obj[i].config = &spi_config[i];
         spi_bus_obj[i].spi_bus.parent.user_data = &spi_config[i];
         spi_bus_obj[i].handle.Instance = spi_config[i].Instance;
-
-        if (spi_bus_obj[i].spi_dma_flag & SPI_USING_RX_DMA_FLAG)
-        {
-            /* Configure the DMA handler for Transmission process */
-            spi_bus_obj[i].dma.handle_rx.Instance = spi_config[i].dma_rx->Instance;
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-            spi_bus_obj[i].dma.handle_rx.Init.Channel = spi_config[i].dma_rx->channel;
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-            spi_bus_obj[i].dma.handle_rx.Init.Request = spi_config[i].dma_rx->request;
-#endif
-#ifndef SOC_SERIES_STM32U5
-            spi_bus_obj[i].dma.handle_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
-            spi_bus_obj[i].dma.handle_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
-            spi_bus_obj[i].dma.handle_rx.Init.MemInc              = DMA_MINC_ENABLE;
-            spi_bus_obj[i].dma.handle_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-            spi_bus_obj[i].dma.handle_rx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
-            spi_bus_obj[i].dma.handle_rx.Init.Mode                = DMA_NORMAL;
-            spi_bus_obj[i].dma.handle_rx.Init.Priority            = DMA_PRIORITY_HIGH;
-#endif
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
-            spi_bus_obj[i].dma.handle_rx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
-            spi_bus_obj[i].dma.handle_rx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
-            spi_bus_obj[i].dma.handle_rx.Init.MemBurst            = DMA_MBURST_INC4;
-            spi_bus_obj[i].dma.handle_rx.Init.PeriphBurst         = DMA_PBURST_INC4;
-#endif
-
-            {
-                rt_uint32_t tmpreg = 0x00U;
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0)
-                /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
-                SET_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
-                tmpreg = READ_BIT(RCC->AHBENR, spi_config[i].dma_rx->dma_rcc);
-#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-                SET_BIT(RCC->AHB1ENR, spi_config[i].dma_rx->dma_rcc);
-                /* Delay after an RCC peripheral clock enabling */
-                tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_rx->dma_rcc);
-#elif defined(SOC_SERIES_STM32MP1)
-                __HAL_RCC_DMAMUX_CLK_ENABLE();
-                SET_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_rx->dma_rcc);
-                tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_rx->dma_rcc);
-#endif
-                UNUSED(tmpreg); /* To avoid compiler warnings */
-            }
-        }
-
-        if (spi_bus_obj[i].spi_dma_flag & SPI_USING_TX_DMA_FLAG)
-        {
-            /* Configure the DMA handler for Transmission process */
-            spi_bus_obj[i].dma.handle_tx.Instance = spi_config[i].dma_tx->Instance;
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-            spi_bus_obj[i].dma.handle_tx.Init.Channel = spi_config[i].dma_tx->channel;
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-            spi_bus_obj[i].dma.handle_tx.Init.Request = spi_config[i].dma_tx->request;
-#endif
-#ifndef SOC_SERIES_STM32U5
-            spi_bus_obj[i].dma.handle_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
-            spi_bus_obj[i].dma.handle_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
-            spi_bus_obj[i].dma.handle_tx.Init.MemInc              = DMA_MINC_ENABLE;
-            spi_bus_obj[i].dma.handle_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-            spi_bus_obj[i].dma.handle_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_BYTE;
-            spi_bus_obj[i].dma.handle_tx.Init.Mode                = DMA_NORMAL;
-            spi_bus_obj[i].dma.handle_tx.Init.Priority            = DMA_PRIORITY_LOW;
-#endif
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
-            spi_bus_obj[i].dma.handle_tx.Init.FIFOMode            = DMA_FIFOMODE_DISABLE;
-            spi_bus_obj[i].dma.handle_tx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
-            spi_bus_obj[i].dma.handle_tx.Init.MemBurst            = DMA_MBURST_INC4;
-            spi_bus_obj[i].dma.handle_tx.Init.PeriphBurst         = DMA_PBURST_INC4;
-#endif
-
-            {
-                rt_uint32_t tmpreg = 0x00U;
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0)
-                /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
-                SET_BIT(RCC->AHBENR, spi_config[i].dma_tx->dma_rcc);
-                tmpreg = READ_BIT(RCC->AHBENR, spi_config[i].dma_tx->dma_rcc);
-#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-                SET_BIT(RCC->AHB1ENR, spi_config[i].dma_tx->dma_rcc);
-                /* Delay after an RCC peripheral clock enabling */
-                tmpreg = READ_BIT(RCC->AHB1ENR, spi_config[i].dma_tx->dma_rcc);
-#elif defined(SOC_SERIES_STM32MP1)
-                __HAL_RCC_DMAMUX_CLK_ENABLE();
-                SET_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_tx->dma_rcc);
-                tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, spi_config[i].dma_tx->dma_rcc);
-#endif
-                UNUSED(tmpreg); /* To avoid compiler warnings */
-            }
-        }
 
         /* initialize completion object */
         rt_completion_init(&spi_bus_obj[i].cpt);
@@ -1019,67 +950,67 @@ static void stm32_get_dma_info(void)
 {
 #ifdef BSP_SPI1_RX_USING_DMA
     spi_bus_obj[SPI1_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
-    static struct dma_config spi1_dma_rx = SPI1_RX_DMA_CONFIG;
+    static const struct stm32_dma_config spi1_dma_rx = SPI1_RX_DMA_CONFIG;
     spi_config[SPI1_INDEX].dma_rx = &spi1_dma_rx;
 #endif
 #ifdef BSP_SPI1_TX_USING_DMA
     spi_bus_obj[SPI1_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
-    static struct dma_config spi1_dma_tx = SPI1_TX_DMA_CONFIG;
+    static const struct stm32_dma_config spi1_dma_tx = SPI1_TX_DMA_CONFIG;
     spi_config[SPI1_INDEX].dma_tx = &spi1_dma_tx;
 #endif
 
 #ifdef BSP_SPI2_RX_USING_DMA
     spi_bus_obj[SPI2_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
-    static struct dma_config spi2_dma_rx = SPI2_RX_DMA_CONFIG;
+    static const struct stm32_dma_config spi2_dma_rx = SPI2_RX_DMA_CONFIG;
     spi_config[SPI2_INDEX].dma_rx = &spi2_dma_rx;
 #endif
 #ifdef BSP_SPI2_TX_USING_DMA
     spi_bus_obj[SPI2_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
-    static struct dma_config spi2_dma_tx = SPI2_TX_DMA_CONFIG;
+    static const struct stm32_dma_config spi2_dma_tx = SPI2_TX_DMA_CONFIG;
     spi_config[SPI2_INDEX].dma_tx = &spi2_dma_tx;
 #endif
 
 #ifdef BSP_SPI3_RX_USING_DMA
     spi_bus_obj[SPI3_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
-    static struct dma_config spi3_dma_rx = SPI3_RX_DMA_CONFIG;
+    static const struct stm32_dma_config spi3_dma_rx = SPI3_RX_DMA_CONFIG;
     spi_config[SPI3_INDEX].dma_rx = &spi3_dma_rx;
 #endif
 #ifdef BSP_SPI3_TX_USING_DMA
     spi_bus_obj[SPI3_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
-    static struct dma_config spi3_dma_tx = SPI3_TX_DMA_CONFIG;
+    static const struct stm32_dma_config spi3_dma_tx = SPI3_TX_DMA_CONFIG;
     spi_config[SPI3_INDEX].dma_tx = &spi3_dma_tx;
 #endif
 
 #ifdef BSP_SPI4_RX_USING_DMA
     spi_bus_obj[SPI4_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
-    static struct dma_config spi4_dma_rx = SPI4_RX_DMA_CONFIG;
+    static const struct stm32_dma_config spi4_dma_rx = SPI4_RX_DMA_CONFIG;
     spi_config[SPI4_INDEX].dma_rx = &spi4_dma_rx;
 #endif
 #ifdef BSP_SPI4_TX_USING_DMA
     spi_bus_obj[SPI4_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
-    static struct dma_config spi4_dma_tx = SPI4_TX_DMA_CONFIG;
+    static const struct stm32_dma_config spi4_dma_tx = SPI4_TX_DMA_CONFIG;
     spi_config[SPI4_INDEX].dma_tx = &spi4_dma_tx;
 #endif
 
 #ifdef BSP_SPI5_RX_USING_DMA
     spi_bus_obj[SPI5_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
-    static struct dma_config spi5_dma_rx = SPI5_RX_DMA_CONFIG;
+    static const struct stm32_dma_config spi5_dma_rx = SPI5_RX_DMA_CONFIG;
     spi_config[SPI5_INDEX].dma_rx = &spi5_dma_rx;
 #endif
 #ifdef BSP_SPI5_TX_USING_DMA
     spi_bus_obj[SPI5_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
-    static struct dma_config spi5_dma_tx = SPI5_TX_DMA_CONFIG;
+    static const struct stm32_dma_config spi5_dma_tx = SPI5_TX_DMA_CONFIG;
     spi_config[SPI5_INDEX].dma_tx = &spi5_dma_tx;
 #endif
 
 #ifdef BSP_SPI6_RX_USING_DMA
     spi_bus_obj[SPI6_INDEX].spi_dma_flag |= SPI_USING_RX_DMA_FLAG;
-    static struct dma_config spi6_dma_rx = SPI6_RX_DMA_CONFIG;
+    static const struct stm32_dma_config spi6_dma_rx = SPI6_RX_DMA_CONFIG;
     spi_config[SPI6_INDEX].dma_rx = &spi6_dma_rx;
 #endif
 #ifdef BSP_SPI6_TX_USING_DMA
     spi_bus_obj[SPI6_INDEX].spi_dma_flag |= SPI_USING_TX_DMA_FLAG;
-    static struct dma_config spi6_dma_tx = SPI6_TX_DMA_CONFIG;
+    static const struct stm32_dma_config spi6_dma_tx = SPI6_TX_DMA_CONFIG;
     spi_config[SPI6_INDEX].dma_tx = &spi6_dma_tx;
 #endif
 }

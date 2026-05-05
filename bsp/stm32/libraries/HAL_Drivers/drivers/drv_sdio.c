@@ -680,133 +680,66 @@ struct rt_mmcsd_host *sdio_host_create(struct stm32_sdio_des *sdio_des)
 }
 
 /**
-  * @brief  This function configures the DMATX.
-  * @param  BufferSRC: pointer to the source buffer
-  * @param  BufferSize: buffer size
-  * @retval None
+  * @brief  Configure the SDIO DMA TX transfer.
+  * @param  src Pointer to the source buffer.
+  * @param  dst Pointer to the destination address.
+  * @param  BufferSize Number of DMA data units to transfer.
+  * @retval RT_EOK DMA TX transfer is configured and started successfully.
+  * @retval -RT_ERROR DMA TX initialization or start failed.
   */
-void SD_LowLevel_DMA_TxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
+static rt_err_t SD_LowLevel_DMA_TxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
 {
-#if defined(SOC_SERIES_STM32F1)
-    static uint32_t size = 0;
-    size += BufferSize * 4;
     sdio_obj.cfg = &sdio_config;
-    sdio_obj.dma.handle_tx.Instance = sdio_config.dma_tx.Instance;
-    sdio_obj.dma.handle_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
-    sdio_obj.dma.handle_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_WORD;
-    sdio_obj.dma.handle_tx.Init.MemInc              = DMA_MINC_ENABLE;
-    sdio_obj.dma.handle_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    sdio_obj.dma.handle_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
-    sdio_obj.dma.handle_tx.Init.Priority            = DMA_PRIORITY_MEDIUM;
-    /* DMA_PFCTRL */
-    HAL_DMA_DeInit(&sdio_obj.dma.handle_tx);
-    HAL_DMA_Init(&sdio_obj.dma.handle_tx);
 
-    HAL_DMA_Start(&sdio_obj.dma.handle_tx, (uint32_t)src, (uint32_t)dst, BufferSize);
+    if (stm32_dma_init(&sdio_obj.dma.handle_tx, &sdio_config.dma_tx) != RT_EOK)
+    {
+        LOG_E("sdio dma tx init failed");
+        return -RT_ERROR;
+    }
 
-#elif defined(SOC_SERIES_STM32L4)
-    static uint32_t size = 0;
-    size += BufferSize * 4;
-    sdio_obj.cfg = &sdio_config;
-    sdio_obj.dma.handle_tx.Instance = sdio_config.dma_tx.Instance;
-    sdio_obj.dma.handle_tx.Init.Request             = sdio_config.dma_tx.request;
-    sdio_obj.dma.handle_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
-    sdio_obj.dma.handle_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
-    sdio_obj.dma.handle_tx.Init.MemInc              = DMA_MINC_ENABLE;
-    sdio_obj.dma.handle_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    sdio_obj.dma.handle_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_WORD;
-    sdio_obj.dma.handle_tx.Init.Mode                = DMA_NORMAL;
-    sdio_obj.dma.handle_tx.Init.Priority            = DMA_PRIORITY_MEDIUM;
+    if (HAL_DMA_Start(&sdio_obj.dma.handle_tx, (uint32_t)src, (uint32_t)dst, BufferSize) != HAL_OK)
+    {
+        LOG_E("sdio dma tx start failed");
+        if (stm32_dma_deinit(&sdio_obj.dma.handle_tx, &sdio_config.dma_tx, RT_FALSE) != RT_EOK)
+        {
+            LOG_E("sdio dma tx rollback failed");
+        }
+        return -RT_ERROR;
+    }
 
-    HAL_DMA_DeInit(&sdio_obj.dma.handle_tx);
-    HAL_DMA_Init(&sdio_obj.dma.handle_tx);
-
-    HAL_DMA_Start(&sdio_obj.dma.handle_tx, (uint32_t)src, (uint32_t)dst, BufferSize);
-#else
-    static uint32_t size = 0;
-    size += BufferSize * 4;
-    sdio_obj.cfg = &sdio_config;
-    sdio_obj.dma.handle_tx.Instance = sdio_config.dma_tx.Instance;
-    sdio_obj.dma.handle_tx.Init.Channel = sdio_config.dma_tx.channel;
-    sdio_obj.dma.handle_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
-    sdio_obj.dma.handle_tx.Init.PeriphInc           = DMA_PINC_DISABLE;
-    sdio_obj.dma.handle_tx.Init.MemInc              = DMA_MINC_ENABLE;
-    sdio_obj.dma.handle_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    sdio_obj.dma.handle_tx.Init.MemDataAlignment    = DMA_MDATAALIGN_WORD;
-    sdio_obj.dma.handle_tx.Init.Mode                = DMA_PFCTRL;
-    sdio_obj.dma.handle_tx.Init.Priority            = DMA_PRIORITY_MEDIUM;
-    sdio_obj.dma.handle_tx.Init.FIFOMode            = DMA_FIFOMODE_ENABLE;
-    sdio_obj.dma.handle_tx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
-    sdio_obj.dma.handle_tx.Init.MemBurst            = DMA_MBURST_INC4;
-    sdio_obj.dma.handle_tx.Init.PeriphBurst         = DMA_PBURST_INC4;
-    /* DMA_PFCTRL */
-    HAL_DMA_DeInit(&sdio_obj.dma.handle_tx);
-    HAL_DMA_Init(&sdio_obj.dma.handle_tx);
-
-    HAL_DMA_Start(&sdio_obj.dma.handle_tx, (uint32_t)src, (uint32_t)dst, BufferSize);
-#endif
+    return RT_EOK;
 }
 
 /**
-  * @brief  This function configures the DMARX.
-  * @param  BufferDST: pointer to the destination buffer
-  * @param  BufferSize: buffer size
-  * @retval None
+  * @brief  Configure the SDIO DMA RX transfer.
+  * @param  src Pointer to the source address.
+  * @param  dst Pointer to the destination buffer.
+  * @param  BufferSize Number of DMA data units to transfer.
+  * @retval RT_EOK DMA RX transfer is configured and started successfully.
+  * @retval -RT_ERROR DMA RX initialization or start failed.
   */
-void SD_LowLevel_DMA_RxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
+static rt_err_t SD_LowLevel_DMA_RxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
+static rt_err_t SD_LowLevel_DMA_RxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
 {
-#if defined(SOC_SERIES_STM32F1)
     sdio_obj.cfg = &sdio_config;
-    sdio_obj.dma.handle_rx.Instance = sdio_config.dma_tx.Instance;
-    sdio_obj.dma.handle_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
-    sdio_obj.dma.handle_rx.Init.MemDataAlignment    = DMA_MDATAALIGN_WORD;
-    sdio_obj.dma.handle_rx.Init.MemInc              = DMA_MINC_ENABLE;
-    sdio_obj.dma.handle_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    sdio_obj.dma.handle_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
-    sdio_obj.dma.handle_rx.Init.Priority            = DMA_PRIORITY_MEDIUM;
 
-    HAL_DMA_DeInit(&sdio_obj.dma.handle_rx);
-    HAL_DMA_Init(&sdio_obj.dma.handle_rx);
+    if (stm32_dma_init(&sdio_obj.dma.handle_rx, &sdio_config.dma_rx) != RT_EOK)
+    {
+        LOG_E("sdio dma rx init failed");
+        return -RT_ERROR;
+    }
 
-    HAL_DMA_Start(&sdio_obj.dma.handle_rx, (uint32_t)src, (uint32_t)dst, BufferSize);
-#elif defined(SOC_SERIES_STM32L4)
-    sdio_obj.cfg = &sdio_config;
-    sdio_obj.dma.handle_rx.Instance = sdio_config.dma_tx.Instance;
-    sdio_obj.dma.handle_rx.Init.Request             = sdio_config.dma_tx.request;
-    sdio_obj.dma.handle_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
-    sdio_obj.dma.handle_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
-    sdio_obj.dma.handle_rx.Init.MemInc              = DMA_MINC_ENABLE;
-    sdio_obj.dma.handle_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    sdio_obj.dma.handle_rx.Init.MemDataAlignment    = DMA_MDATAALIGN_WORD;
-    sdio_obj.dma.handle_rx.Init.Mode                = DMA_NORMAL;
-    sdio_obj.dma.handle_rx.Init.Priority            = DMA_PRIORITY_LOW;
+    if (HAL_DMA_Start(&sdio_obj.dma.handle_rx, (uint32_t)src, (uint32_t)dst, BufferSize) != HAL_OK)
+    {
+        LOG_E("sdio dma rx start failed");
+        if (stm32_dma_deinit(&sdio_obj.dma.handle_rx, &sdio_config.dma_rx, RT_FALSE) != RT_EOK)
+        {
+            LOG_E("sdio dma rx rollback failed");
+        }
+        return -RT_ERROR;
+    }
 
-    HAL_DMA_DeInit(&sdio_obj.dma.handle_rx);
-    HAL_DMA_Init(&sdio_obj.dma.handle_rx);
-
-    HAL_DMA_Start(&sdio_obj.dma.handle_rx, (uint32_t)src, (uint32_t)dst, BufferSize);
-#else
-    sdio_obj.cfg = &sdio_config;
-    sdio_obj.dma.handle_rx.Instance = sdio_config.dma_tx.Instance;
-    sdio_obj.dma.handle_rx.Init.Channel = sdio_config.dma_tx.channel;
-    sdio_obj.dma.handle_rx.Init.Direction           = DMA_PERIPH_TO_MEMORY;
-    sdio_obj.dma.handle_rx.Init.PeriphInc           = DMA_PINC_DISABLE;
-    sdio_obj.dma.handle_rx.Init.MemInc              = DMA_MINC_ENABLE;
-    sdio_obj.dma.handle_rx.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-    sdio_obj.dma.handle_rx.Init.MemDataAlignment    = DMA_MDATAALIGN_WORD;
-    sdio_obj.dma.handle_rx.Init.Mode                = DMA_PFCTRL;
-    sdio_obj.dma.handle_rx.Init.Priority            = DMA_PRIORITY_MEDIUM;
-    sdio_obj.dma.handle_rx.Init.FIFOMode            = DMA_FIFOMODE_ENABLE;
-    sdio_obj.dma.handle_rx.Init.FIFOThreshold       = DMA_FIFO_THRESHOLD_FULL;
-    sdio_obj.dma.handle_rx.Init.MemBurst            = DMA_MBURST_INC4;
-    sdio_obj.dma.handle_rx.Init.PeriphBurst         = DMA_PBURST_INC4;
-
-    HAL_DMA_DeInit(&sdio_obj.dma.handle_rx);
-    HAL_DMA_Init(&sdio_obj.dma.handle_rx);
-
-    HAL_DMA_Start(&sdio_obj.dma.handle_rx, (uint32_t)src, (uint32_t)dst, BufferSize);
-#endif
-
+    return RT_EOK;
 }
 
 /**
@@ -821,14 +754,12 @@ static rt_uint32_t stm32_sdio_clock_get(struct stm32_sdio *hw_sdio)
 
 static rt_err_t DMA_TxConfig(rt_uint32_t *src, rt_uint32_t *dst, int Size)
 {
-    SD_LowLevel_DMA_TxConfig((uint32_t *)src, (uint32_t *)dst, Size / 4);
-    return RT_EOK;
+    return SD_LowLevel_DMA_TxConfig((uint32_t *)src, (uint32_t *)dst, Size / 4);
 }
 
 static rt_err_t DMA_RxConfig(rt_uint32_t *src, rt_uint32_t *dst, int Size)
 {
-    SD_LowLevel_DMA_RxConfig((uint32_t *)src, (uint32_t *)dst, Size / 4);
-    return RT_EOK;
+    return SD_LowLevel_DMA_RxConfig((uint32_t *)src, (uint32_t *)dst, Size / 4);
 }
 
 void SDIO_IRQHandler(void)
@@ -847,19 +778,6 @@ int rt_hw_sdio_init(void)
     struct stm32_sdio_des sdio_des;
     SD_HandleTypeDef hsd;
     hsd.Instance = SDCARD_INSTANCE;
-    {
-        rt_uint32_t tmpreg = 0x00U;
-#if defined(SOC_SERIES_STM32F1)
-        /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
-        SET_BIT(RCC->AHBENR, sdio_config.dma_rx.dma_rcc);
-        tmpreg = READ_BIT(RCC->AHBENR, sdio_config.dma_rx.dma_rcc);
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F2)
-        SET_BIT(RCC->AHB1ENR, sdio_config.dma_rx.dma_rcc);
-        /* Delay after an RCC peripheral clock enabling */
-        tmpreg = READ_BIT(RCC->AHB1ENR, sdio_config.dma_rx.dma_rcc);
-#endif
-        UNUSED(tmpreg); /* To avoid compiler warnings */
-    }
     HAL_NVIC_SetPriority(SDIO_IRQn, 2, 0);
     HAL_NVIC_EnableIRQ(SDIO_IRQn);
     HAL_SD_MspInit(&hsd);

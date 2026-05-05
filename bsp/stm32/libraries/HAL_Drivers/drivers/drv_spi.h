@@ -34,7 +34,7 @@ struct stm32_spi_config
     SPI_TypeDef *Instance;
     char *bus_name;
     IRQn_Type irq_type;
-    struct dma_config *dma_rx, *dma_tx;
+    const struct stm32_dma_config *dma_rx, *dma_tx;
 };
 
 struct stm32_spi_device
