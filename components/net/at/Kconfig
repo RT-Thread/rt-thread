@@ -22,7 +22,7 @@ if RT_USING_AT
         bool "Enable AT commands server"
         default n
         help
-            AT_USING_SERVERAT is the AT server function switch.
+            AT_USING_SERVER is the AT server function switch.
             Its core function is to expand the AT command framework from "local serial port interaction mode" to "network/multi-channel service mode."
             When enabled, AT commands are no longer limited to local serial port transmission and reception.
             They can also receive and respond to AT commands through network channels such as TCP/UDP/virtual serial ports, enabling "remote AT debugging/control."
@@ -86,18 +86,21 @@ if RT_USING_AT
             select SAL_USING_AT
             default n
             help
+                AT_USING_SOCKET is an AT socket adaptation switch within the AT command framework. Its core function is to enable the AT framework to provide a "BSD Socket standard API wrapper."
+                When enabled, network modules adapted to AT commands can directly call the standard BSD Socket API without needing to concern themselves with the underlying AT command details.
 
+                It is disabled by default; enabling it will also enable RT_USING_SAL and SAL_USING_AT.
 
         if AT_USING_SOCKET
 
             config AT_USING_SOCKET_SERVER
                 bool "Enable BSD Socket API support about AT server"
                 default n
-                help    
-                    AT_USING_SOCKET is an AT socket adaptation switch within the AT command framework. Its core function is to enable the AT framework to provide a "BSD Socket standard API wrapper."
-                    When enabled, network modules adapted to AT commands can directly call the standard BSD Socket API without needing to concern themselves with the underlying AT command details.
+                help
+                    AT_USING_SOCKET_SERVER is used to enable the AT socket server function within the AT command framework.
+                    When enabled, the AT server can be accessed through BSD Socket API.
 
-                    It is disabled by default; enabling it will also enable RT_USING_SAL and SAL_USING_AT.
+                    It is disabled by default.
 
         endif
 

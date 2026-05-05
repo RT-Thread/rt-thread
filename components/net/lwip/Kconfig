@@ -37,12 +37,12 @@ if RT_USING_LWIP
         config RT_USING_LWIP203
             bool "lwIP v2.0.3"
             help
-                RT_USING_LWIP141 is used to control the enabling of lwip version 2.0.3.
+                RT_USING_LWIP203 is used to control the enabling of lwip version 2.0.3.
 
         config RT_USING_LWIP212
             bool "lwIP v2.1.2"
             help
-                RT_USING_LWIP141 is used to control the enabling of lwip version 2.1.2.
+                RT_USING_LWIP212 is used to control the enabling of lwip version 2.1.2.
         # online version
         if !RT_USING_LWIP_LOCAL_VERSION
             config RT_USING_LWIP_LATEST
@@ -450,7 +450,7 @@ if RT_USING_LWIP
         bool "Enable netif loopback"
         default n
         help
-            LWIP_SO_LINGER enables the "Loopback" function of the LwIP network interface (netif).
+            RT_LWIP_NETIF_LOOPBACK enables the "Loopback" function of the LwIP network interface (netif).
             Essentially, it allows data to be transmitted in a closed loop within the protocol stack (data packets sent to the local machine do not need to pass through the physical network card).
 
             It is disabled by default.

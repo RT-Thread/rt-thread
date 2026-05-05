@@ -29,10 +29,15 @@ if RT_USING_CPLUSPLUS
         help
             RT_USING_CPP_WRAPPER is used to enable the C++ wrapper for the RT-Thread core API.
 
-            When this option is enabled(Off by default), RT-Thread provides an additional set of C++ code that encapsulates the underlying C API using classes and objects.
+            When this option is enabled (Off by default), RT-Thread provides an additional set of C++ code that encapsulates the underlying C API using classes and objects.
     config RT_USING_CPP_EXCEPTIONS
         bool "Enable C++ exceptions (will increase overhead)"
         default n
         help
             RT_USING_CPP_EXCEPTIONS is used to enable C++ exception handling.
+
+            It is disabled by default. Enabling this option pulls in the C++ exception runtime support, which typically increases
+            code size (flash/ROM usage), RAM consumption, and may add extra runtime overhead for stack unwinding and exception
+            bookkeeping. On resource-constrained or strict real-time systems, this additional overhead should be evaluated carefully
+            before turning the option on.
 endif
