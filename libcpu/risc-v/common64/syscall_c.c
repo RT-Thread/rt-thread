@@ -54,8 +54,12 @@ void syscall_handler(struct rt_hw_stack_frame *regs)
 
     LOG_I("[0x%lx] %s(0x%lx, 0x%lx, 0x%lx, 0x%lx, 0x%lx, 0x%lx, 0x%lx)", rt_thread_self(), syscall_name,
         regs->a0, regs->a1, regs->a2, regs->a3, regs->a4, regs->a5, regs->a6);
+    /* Save original a0 (1st argument) in kernel-stored t0 context:
+     * - a0 serves as both system call's 1st argument (input) and return value (output)
+     * - t0 is caller-saved, user code must preserve it before ecall if needed
+     */
+    regs->t0 = regs->a0;
     regs->a0 = syscallfunc(regs->a0, regs->a1, regs->a2, regs->a3, regs->a4, regs->a5, regs->a6);
-    regs->a7 = 0;
     regs->epc += 4; // skip ecall instruction
     LOG_I("[0x%lx] %s ret: 0x%lx", rt_thread_self(), syscall_name, regs->a0);
 }
