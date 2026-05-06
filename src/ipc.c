@@ -44,7 +44,7 @@
  * 2022-04-08     Stanley      Correct descriptions
  * 2022-10-15     Bernard      add nested mutex feature
  * 2022-10-16     Bernard      add prioceiling feature in mutex
- * 2023-04-16     Xin-zheqi    redesigen queue recv and send function return real message size
+ * 2023-04-16     Xin-zheqi    redesign queue recv and send function return real message size
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
@@ -140,7 +140,7 @@ struct rt_thread *rt_susp_list_dequeue(rt_list_t *susp_list, rt_err_t thread_err
     }
     rt_sched_unlock(slvl);
 
-    LOG_D("resume thread:%s\n", thread->parent.name);
+    LOG_D("resume thread:%s\n", (thread == RT_NULL) ? "NULL" : thread->parent.name);
 
     return thread;
 }
