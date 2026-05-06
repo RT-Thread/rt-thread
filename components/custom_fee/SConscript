@@ -1,0 +1,32 @@
+from building import *
+
+objs = []
+cwd = GetCurrentDir()
+
+if not GetDepend("COMPONENT_USING_CUSTOM_FEE"):
+    Return('objs')
+
+src = [
+    'fee_api.c',
+    'fee_sched.c',
+    'fee_core.c',
+    'fee_gc.c',
+    'fee_recovery.c',
+    'fee_cache.c',
+    'fee_ckpt.c',
+    'fee_lane_fast.c',
+    'fee_lane_log.c',
+    'fee_lane_bulk.c',
+    'fee_onflash.c',
+]
+
+if GetDepend("CUSTOM_FEE_USING_RAM_MOCK"):
+    src += ['fee_port_mock_ram.c']
+
+if GetDepend("CUSTOM_FEE_USING_FLS_PORT"):
+    src += ['fee_port_fls.c']
+
+CPPPATH = [cwd]
+group = DefineGroup('custom_fee', src, depend = ['COMPONENT_USING_CUSTOM_FEE'], CPPPATH = CPPPATH)
+
+Return('group')

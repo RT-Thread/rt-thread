@@ -1,0 +1,196 @@
+#include "fee_internal.h"
+
+#define FEE_CKPT_FLAG_CUR_VALID   (0x01UL)
+#define FEE_CKPT_FLAG_PREV_VALID  (0x02UL)
+
+typedef struct
+{
+    uint8_t used;
+    uint16_t block_id;
+    fee_cache_entry_t entry;
+} fee_cache_slot_t;
+
+static fee_cache_slot_t g_fee_cache[FEE_CACHE_MAX_ENTRIES];
+
+static fee_cache_slot_t *fee_cache_find_slot(uint16_t block_id)
+{
+    uint32_t idx;
+
+    for (idx = 0U; idx < FEE_CACHE_MAX_ENTRIES; ++idx)
+    {
+        if ((g_fee_cache[idx].used != 0U) && (g_fee_cache[idx].block_id == block_id))
+        {
+            return &g_fee_cache[idx];
+        }
+    }
+
+    return RT_NULL;
+}
+
+static fee_cache_slot_t *fee_cache_alloc_slot(uint16_t block_id)
+{
+    uint32_t idx;
+
+    for (idx = 0U; idx < FEE_CACHE_MAX_ENTRIES; ++idx)
+    {
+        if (g_fee_cache[idx].used == 0U)
+        {
+            g_fee_cache[idx].used = 1U;
+            g_fee_cache[idx].block_id = block_id;
+            g_fee_cache[idx].entry.cur_addr = FEE_INVALID_ADDR;
+            g_fee_cache[idx].entry.prev_addr = FEE_INVALID_ADDR;
+            return &g_fee_cache[idx];
+        }
+    }
+
+    return RT_NULL;
+}
+
+void fee_cache_init(void)
+{
+    (void)memset(g_fee_cache, 0, sizeof(g_fee_cache));
+}
+
+fee_cache_entry_t *fee_cache_lookup(uint16_t block_id)
+{
+    fee_cache_slot_t *slot = fee_cache_find_slot(block_id);
+
+    if (slot == RT_NULL)
+    {
+        return RT_NULL;
+    }
+
+    return &slot->entry;
+}
+
+void fee_cache_update_data(uint16_t block_id, uint8_t lane, uint32_t addr, uint16_t len, uint32_t seq)
+{
+    fee_cache_slot_t *slot = fee_cache_find_slot(block_id);
+
+    if (slot == RT_NULL)
+    {
+        slot = fee_cache_alloc_slot(block_id);
+    }
+
+    if (slot == RT_NULL)
+    {
+        return;
+    }
+
+    if (slot->entry.cur_valid != 0U)
+    {
+        slot->entry.prev_addr = slot->entry.cur_addr;
+        slot->entry.prev_valid = slot->entry.cur_valid;
+        slot->entry.prev_sector = slot->entry.cur_sector;
+    }
+
+    slot->entry.lane = lane;
+    slot->entry.cur_addr = addr;
+    slot->entry.cur_valid = 1U;
+    slot->entry.cur_sector = 0U;
+    slot->entry.len = len;
+    slot->entry.seq = seq;
+}
+
+void fee_cache_update_tombstone(uint16_t block_id, uint8_t lane, uint32_t addr, uint32_t seq)
+{
+    fee_cache_slot_t *slot = fee_cache_find_slot(block_id);
+
+    if (slot == RT_NULL)
+    {
+        slot = fee_cache_alloc_slot(block_id);
+    }
+
+    if (slot == RT_NULL)
+    {
+        return;
+    }
+
+    if (slot->entry.cur_valid != 0U)
+    {
+        slot->entry.prev_addr = slot->entry.cur_addr;
+        slot->entry.prev_valid = slot->entry.cur_valid;
+        slot->entry.prev_sector = slot->entry.cur_sector;
+    }
+
+    slot->entry.lane = lane;
+    slot->entry.cur_addr = addr;
+    slot->entry.cur_valid = 0U;
+    slot->entry.cur_sector = 0U;
+    slot->entry.seq = seq;
+}
+
+uint16_t fee_cache_export_ckpt(fee_ckpt_cache_entry_t *entries, uint16_t max_entries)
+{
+    uint16_t count = 0U;
+    uint32_t idx;
+
+    if (entries == RT_NULL)
+    {
+        return 0U;
+    }
+
+    for (idx = 0U; idx < FEE_CACHE_MAX_ENTRIES; ++idx)
+    {
+        uint32_t flags = 0U;
+
+        if ((g_fee_cache[idx].used == 0U) || (count >= max_entries))
+        {
+            continue;
+        }
+
+        if (g_fee_cache[idx].entry.cur_valid != 0U)
+        {
+            flags |= FEE_CKPT_FLAG_CUR_VALID;
+        }
+
+        if (g_fee_cache[idx].entry.prev_valid != 0U)
+        {
+            flags |= FEE_CKPT_FLAG_PREV_VALID;
+        }
+
+        entries[count].block_id = g_fee_cache[idx].block_id;
+        entries[count].lane = g_fee_cache[idx].entry.lane;
+        entries[count].flags = flags;
+        entries[count].len = g_fee_cache[idx].entry.len;
+        entries[count].cur_addr = g_fee_cache[idx].entry.cur_addr;
+        entries[count].prev_addr = g_fee_cache[idx].entry.prev_addr;
+        entries[count].seq = g_fee_cache[idx].entry.seq;
+        entries[count].reserved = 0U;
+        ++count;
+    }
+
+    return count;
+}
+
+void fee_cache_import_ckpt(const fee_ckpt_cache_entry_t *entries, uint16_t entry_count)
+{
+    uint16_t idx;
+
+    fee_cache_init();
+
+    if (entries == RT_NULL)
+    {
+        return;
+    }
+
+    for (idx = 0U; (idx < entry_count) && (idx < FEE_CACHE_MAX_ENTRIES); ++idx)
+    {
+        fee_cache_slot_t *slot = fee_cache_alloc_slot((uint16_t)entries[idx].block_id);
+
+        if (slot == RT_NULL)
+        {
+            break;
+        }
+
+        slot->entry.lane = (uint8_t)entries[idx].lane;
+        slot->entry.cur_addr = entries[idx].cur_addr;
+        slot->entry.prev_addr = entries[idx].prev_addr;
+        slot->entry.seq = entries[idx].seq;
+        slot->entry.len = (uint16_t)entries[idx].len;
+        slot->entry.cur_valid = ((entries[idx].flags & FEE_CKPT_FLAG_CUR_VALID) != 0UL) ? 1U : 0U;
+        slot->entry.prev_valid = ((entries[idx].flags & FEE_CKPT_FLAG_PREV_VALID) != 0UL) ? 1U : 0U;
+        slot->entry.cur_sector = 0U;
+        slot->entry.prev_sector = 0U;
+    }
+}
