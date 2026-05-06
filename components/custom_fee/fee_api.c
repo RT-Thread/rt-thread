@@ -161,6 +161,8 @@ fee_ret_t fee_rollback(uint16_t block_id)
 
 void fee_mainfunction(void)
 {
+    rt_bool_t has_pending_work;
+
     if (g_fee_ctx.status == FEE_STATUS_UNINIT)
     {
         return;
@@ -174,6 +176,18 @@ void fee_mainfunction(void)
     }
 
     fee_sched_mainfunction();
+    has_pending_work = fee_sched_has_pending_work();
+
+    if (has_pending_work != RT_FALSE)
+    {
+        if (g_fee_ctx.init_state == FEE_INIT_FULL_READY)
+        {
+            g_fee_ctx.status = FEE_STATUS_BUSY_INTERNAL;
+            g_fee_ctx.job_result = FEE_JOB_PENDING;
+        }
+        return;
+    }
+
     fee_gc_mainfunction();
     fee_core_mainfunction();
 }

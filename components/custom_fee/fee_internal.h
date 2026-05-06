@@ -66,6 +66,14 @@ typedef struct
     uint8_t *dst;
 } fee_request_t;
 
+typedef enum
+{
+    FEE_REQ_NONE = 0,
+    FEE_REQ_WRITE,
+    FEE_REQ_INVALIDATE,
+    FEE_REQ_ROLLBACK
+} fee_request_type_t;
+
 typedef struct
 {
     uint32_t block_id;
@@ -93,6 +101,7 @@ fee_ret_t fee_sched_submit_write(uint16_t block_id, const uint8_t *src, uint16_t
 fee_ret_t fee_sched_submit_invalidate(uint16_t block_id);
 fee_ret_t fee_sched_submit_rollback(uint16_t block_id);
 void fee_sched_mainfunction(void);
+rt_bool_t fee_sched_has_pending_work(void);
 
 fee_ret_t fee_recovery_start(void);
 fee_ret_t fee_recovery_step(void);
