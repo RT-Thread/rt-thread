@@ -8,14 +8,14 @@
  * 2024-07-04     rcitach        init ver.
  */
  
-#include <vdso_config.h>
+#include <vdso_constants.h>
 
-    .globl __vdso_text_start, __vdso_text_end
+    .globl __rt_vdso_image_start, __rt_vdso_image_end
     .section .rodata
-    .balign VDSO_PAGE_SIZE
-__vdso_text_start:
-    .incbin VDSO_PATH
-    .balign VDSO_PAGE_SIZE
-__vdso_text_end:
+    .balign RT_VDSO_PAGE_SIZE
+__rt_vdso_image_start:
+    .incbin RT_VDSO_IMAGE_PATH
+    .balign RT_VDSO_PAGE_SIZE
+__rt_vdso_image_end:
 
     .previous

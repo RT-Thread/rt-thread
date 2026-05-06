@@ -5,14 +5,13 @@
  *
  * Change Logs:
  * Date           Author         Notes
- * 2024-07-04     rcitach        init ver.
- * 2026-04-27     rcitach        Update the header file
+ * 2026-04-27     rcitach        init ver.
  */
 
 #include <vdso_constants.h>
 
-OUTPUT_FORMAT("elf64-littleaarch64", "elf64-littleaarch64", "elf64-littleaarch64")
-OUTPUT_ARCH(aarch64)
+OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
+OUTPUT_ARCH(arm)
 
 SECTIONS
 {
@@ -48,9 +47,9 @@ PHDRS
 
 VERSION
 {
-    LINUX_2.6.39 {
+    LINUX_2.6 {
     global:
-        __kernel_clock_gettime;
+        __vdso_clock_gettime;
     local:
         *;
     };
