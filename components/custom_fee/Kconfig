@@ -1,0 +1,11 @@
+config COMPONENT_USING_CUSTOM_FEE
+    bool "using component custom fee"
+    default n
+
+if COMPONENT_USING_CUSTOM_FEE
+
+config CUSTOM_FEE_MOCK_FLASH_SIZE
+    hex "RAM mock flash size"
+    default 0xA0000
+
+endif

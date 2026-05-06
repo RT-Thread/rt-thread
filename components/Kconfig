@@ -32,6 +32,7 @@ endif
 if !RT_USING_NANO
 rsource "dfs/Kconfig"
 rsource "fal/Kconfig"
+rsource "custom_fee/Kconfig"
 rsource "drivers/Kconfig"
 rsource "libc/Kconfig"
 rsource "net/Kconfig"
