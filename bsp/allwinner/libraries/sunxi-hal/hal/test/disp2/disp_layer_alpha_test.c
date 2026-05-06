@@ -130,5 +130,3 @@ int disp_layer_alpha_test(int argc, char **argv)
     disp_mem_clear(1);
     return 0;
 }
-
-FINSH_FUNCTION_EXPORT_ALIAS(disp_layer_alpha_test, __cmd_disp_layer_alpha_test, disp_layer_alpha_test);
