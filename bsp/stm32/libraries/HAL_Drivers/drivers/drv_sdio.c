@@ -719,7 +719,6 @@ static rt_err_t SD_LowLevel_DMA_TxConfig(uint32_t *src, uint32_t *dst, uint32_t 
   * @retval -RT_ERROR DMA RX initialization or start failed.
   */
 static rt_err_t SD_LowLevel_DMA_RxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
-static rt_err_t SD_LowLevel_DMA_RxConfig(uint32_t *src, uint32_t *dst, uint32_t BufferSize)
 {
     sdio_obj.cfg = &sdio_config;
 
