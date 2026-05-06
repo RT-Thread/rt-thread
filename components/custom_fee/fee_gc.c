@@ -13,7 +13,8 @@ typedef struct
 
 static rt_bool_t fee_gc_lane_supports_reclaim(uint8_t lane)
 {
-    if ((lane == (uint8_t)FEE_LANE_NORMAL) &&
+    if ((lane > (uint8_t)FEE_LANE_META) &&
+        (lane < (uint8_t)FEE_LANE_COUNT) &&
         (g_fee_ctx.lane[lane].sector_count > 1U))
     {
         return RT_TRUE;
@@ -226,9 +227,9 @@ static void fee_gc_apply_moves(const fee_gc_move_t *moves, uint16_t move_count)
     }
 }
 
-static fee_ret_t fee_gc_run_normal_lane(void)
+static fee_ret_t fee_gc_run_lane(uint8_t lane)
 {
-    fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[FEE_LANE_NORMAL];
+    fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
     fee_flash_caps_t caps;
     fee_gc_move_t moves[FEE_GC_MOVE_MAX];
     uint16_t move_count = 0U;
@@ -242,7 +243,7 @@ static fee_ret_t fee_gc_run_normal_lane(void)
     uint32_t dst_data_start;
     fee_ret_t ret;
 
-    if (fee_gc_lane_supports_reclaim((uint8_t)FEE_LANE_NORMAL) == RT_FALSE)
+    if (fee_gc_lane_supports_reclaim(lane) == RT_FALSE)
     {
         return FEE_E_NOT_OK;
     }
@@ -262,14 +263,14 @@ static fee_ret_t fee_gc_run_normal_lane(void)
     dst_data_start = fee_gc_sector_data_start(dst_base, &caps);
     dst_cursor = dst_data_start;
 
-    ret = fee_gc_prepare_sector((uint8_t)FEE_LANE_NORMAL, dst_sector, (uint8_t)FEE_SECTOR_GC_DST,
+    ret = fee_gc_prepare_sector(lane, dst_sector, (uint8_t)FEE_SECTOR_GC_DST,
         lane_ctx->active_generation + 1U, &caps);
     if (ret != FEE_E_OK)
     {
         return ret;
     }
 
-    ret = fee_gc_copy_live_entries((uint8_t)FEE_LANE_NORMAL, src_base, src_limit, dst_limit,
+    ret = fee_gc_copy_live_entries(lane, src_base, src_limit, dst_limit,
         &dst_cursor, &moves[0], &move_count, &caps);
     if (ret != FEE_E_OK)
     {
@@ -308,29 +309,20 @@ static fee_ret_t fee_gc_run_normal_lane(void)
 
 fee_ret_t fee_gc_reclaim_sync(uint8_t lane)
 {
-    if (lane != (uint8_t)FEE_LANE_NORMAL)
+    if (fee_gc_lane_supports_reclaim(lane) == RT_FALSE)
     {
         return FEE_E_NOT_OK;
     }
 
-    return fee_gc_run_normal_lane();
+    return fee_gc_run_lane(lane);
 }
 
 void fee_gc_mainfunction(void)
 {
-    fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[FEE_LANE_NORMAL];
+    uint8_t lane;
+    uint8_t target_lane = (uint8_t)FEE_LANE_COUNT;
 
     if (fee_recovery_is_full_ready() == RT_FALSE)
-    {
-        return;
-    }
-
-    if (fee_gc_lane_supports_reclaim((uint8_t)FEE_LANE_NORMAL) == RT_FALSE)
-    {
-        return;
-    }
-
-    if ((lane_ctx->gc_requested == 0U) && (lane_ctx->gc_force == 0U))
     {
         return;
     }
@@ -340,5 +332,31 @@ void fee_gc_mainfunction(void)
         return;
     }
 
-    (void)fee_gc_run_normal_lane();
+    for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
+    {
+        if ((fee_gc_lane_supports_reclaim(lane) != RT_FALSE) &&
+            (g_fee_ctx.lane[lane].gc_force != 0U))
+        {
+            target_lane = lane;
+            break;
+        }
+    }
+
+    if (target_lane == (uint8_t)FEE_LANE_COUNT)
+    {
+        for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
+        {
+            if ((fee_gc_lane_supports_reclaim(lane) != RT_FALSE) &&
+                (g_fee_ctx.lane[lane].gc_requested != 0U))
+            {
+                target_lane = lane;
+                break;
+            }
+        }
+    }
+
+    if (target_lane < (uint8_t)FEE_LANE_COUNT)
+    {
+        (void)fee_gc_run_lane(target_lane);
+    }
 }

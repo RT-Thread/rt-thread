@@ -32,7 +32,7 @@ static void fee_core_update_gc_request(uint8_t lane)
     fee_lane_ctx_t *lane_ctx;
     uint32_t remaining_bytes;
 
-    if (lane != (uint8_t)FEE_LANE_NORMAL)
+    if ((lane <= (uint8_t)FEE_LANE_META) || (lane >= (uint8_t)FEE_LANE_COUNT))
     {
         return;
     }
@@ -224,7 +224,7 @@ static fee_ret_t fee_core_append_record(uint16_t block_id, const uint8_t *src, u
     next_addr = addr + fee_core_record_next_addr(cfg, len);
     if (next_addr > lane_ctx->limit_addr)
     {
-        if (lane == (uint8_t)FEE_LANE_NORMAL)
+        if (lane_ctx->sector_count > 1U)
         {
             lane_ctx->gc_requested = 1U;
             lane_ctx->gc_force = 1U;

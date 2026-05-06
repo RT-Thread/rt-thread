@@ -2,7 +2,7 @@
 #include <string.h>
 
 #ifndef CUSTOM_FEE_MOCK_FLASH_SIZE
-#define CUSTOM_FEE_MOCK_FLASH_SIZE 0x60000U
+#define CUSTOM_FEE_MOCK_FLASH_SIZE 0x80000U
 #endif
 
 static uint8_t g_fee_mock_flash[CUSTOM_FEE_MOCK_FLASH_SIZE];
