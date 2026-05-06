@@ -55,6 +55,18 @@ typedef struct
 #define FEE_CFG_FAST_SINGLE_RECORD_LIMIT    (512U)
 #define FEE_CFG_MAX_PENDING_REQUESTS        (8U)
 #define FEE_CFG_MAX_BLOCK_LEN               (1024U)
+#define FEE_CFG_CKPT_BG_RECORDS_FAST        (1U)
+#define FEE_CFG_CKPT_BG_RECORDS_NORMAL      (2U)
+#define FEE_CFG_CKPT_BG_RECORDS_BULK        (1U)
+#define FEE_CFG_CKPT_FORCE_RECORDS_FAST     (1U)
+#define FEE_CFG_CKPT_FORCE_RECORDS_NORMAL   (8U)
+#define FEE_CFG_CKPT_FORCE_RECORDS_BULK     (2U)
+#define FEE_CFG_CKPT_BG_BYTES_FAST          (FEE_CFG_FAST_SINGLE_RECORD_LIMIT)
+#define FEE_CFG_CKPT_BG_BYTES_NORMAL        (512U)
+#define FEE_CFG_CKPT_BG_BYTES_BULK          (1024U)
+#define FEE_CFG_CKPT_FORCE_BYTES_FAST       (FEE_CFG_FAST_SINGLE_RECORD_LIMIT)
+#define FEE_CFG_CKPT_FORCE_BYTES_NORMAL     (2048U)
+#define FEE_CFG_CKPT_FORCE_BYTES_BULK       (2048U)
 
 const fee_block_cfg_t *fee_cfg_find_block(uint16_t block_id);
 const fee_block_cfg_t *fee_cfg_get_block_table(void);

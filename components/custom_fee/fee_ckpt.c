@@ -105,6 +105,17 @@ void fee_ckpt_init(void)
     g_fee_ckpt_active_base = FEE_INVALID_ADDR;
 }
 
+static void fee_ckpt_reset_dirty_accounting(void)
+{
+    uint8_t lane;
+
+    for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
+    {
+        g_fee_ctx.lane[lane].dirty_record_count = 0U;
+        g_fee_ctx.lane[lane].dirty_bytes = 0U;
+    }
+}
+
 fee_ret_t fee_ckpt_restore(void)
 {
     fee_ckpt_image_t image0;
@@ -213,6 +224,7 @@ fee_ret_t fee_ckpt_flush(void)
     g_fee_ckpt_active_base = target_base;
     g_fee_ctx.checkpoint_generation = image.generation;
     g_fee_ctx.checkpoint_dirty = 0U;
+    fee_ckpt_reset_dirty_accounting();
 
     return FEE_E_OK;
 }

@@ -27,6 +27,119 @@ static uint32_t fee_core_record_next_addr(const fee_block_cfg_t *cfg, uint16_t d
     return fee_onflash_calc_record_span(cfg, data_len);
 }
 
+static uint32_t fee_core_ckpt_record_threshold(uint8_t lane, rt_bool_t force_flush)
+{
+    if (lane == (uint8_t)FEE_LANE_FAST)
+    {
+        return force_flush ? FEE_CFG_CKPT_FORCE_RECORDS_FAST : FEE_CFG_CKPT_BG_RECORDS_FAST;
+    }
+
+    if (lane == (uint8_t)FEE_LANE_NORMAL)
+    {
+        return force_flush ? FEE_CFG_CKPT_FORCE_RECORDS_NORMAL : FEE_CFG_CKPT_BG_RECORDS_NORMAL;
+    }
+
+    if (lane == (uint8_t)FEE_LANE_BULK)
+    {
+        return force_flush ? FEE_CFG_CKPT_FORCE_RECORDS_BULK : FEE_CFG_CKPT_BG_RECORDS_BULK;
+    }
+
+    return 0U;
+}
+
+static uint32_t fee_core_ckpt_byte_threshold(uint8_t lane, rt_bool_t force_flush)
+{
+    if (lane == (uint8_t)FEE_LANE_FAST)
+    {
+        return force_flush ? FEE_CFG_CKPT_FORCE_BYTES_FAST : FEE_CFG_CKPT_BG_BYTES_FAST;
+    }
+
+    if (lane == (uint8_t)FEE_LANE_NORMAL)
+    {
+        return force_flush ? FEE_CFG_CKPT_FORCE_BYTES_NORMAL : FEE_CFG_CKPT_BG_BYTES_NORMAL;
+    }
+
+    if (lane == (uint8_t)FEE_LANE_BULK)
+    {
+        return force_flush ? FEE_CFG_CKPT_FORCE_BYTES_BULK : FEE_CFG_CKPT_BG_BYTES_BULK;
+    }
+
+    return 0U;
+}
+
+static rt_bool_t fee_core_lane_hits_ckpt_threshold(uint8_t lane, rt_bool_t force_flush)
+{
+    fee_lane_ctx_t *lane_ctx;
+    uint32_t record_threshold;
+    uint32_t byte_threshold;
+
+    if ((lane >= FEE_LANE_COUNT) || (lane == (uint8_t)FEE_LANE_META))
+    {
+        return RT_FALSE;
+    }
+
+    lane_ctx = &g_fee_ctx.lane[lane];
+    record_threshold = fee_core_ckpt_record_threshold(lane, force_flush);
+    byte_threshold = fee_core_ckpt_byte_threshold(lane, force_flush);
+
+    if ((record_threshold != 0U) && (lane_ctx->dirty_record_count >= record_threshold))
+    {
+        return RT_TRUE;
+    }
+
+    if ((byte_threshold != 0U) && (lane_ctx->dirty_bytes >= byte_threshold))
+    {
+        return RT_TRUE;
+    }
+
+    return RT_FALSE;
+}
+
+static rt_bool_t fee_core_should_force_ckpt(const fee_block_cfg_t *cfg)
+{
+    if (cfg == RT_NULL)
+    {
+        return RT_FALSE;
+    }
+
+    if ((cfg->boot_critical != 0U) || (cfg->lane_type == (uint8_t)FEE_LANE_FAST))
+    {
+        return RT_TRUE;
+    }
+
+    return fee_core_lane_hits_ckpt_threshold(cfg->lane_type, RT_TRUE);
+}
+
+static rt_bool_t fee_core_should_flush_ckpt_background(void)
+{
+    uint8_t lane;
+
+    if (g_fee_ctx.checkpoint_dirty == 0U)
+    {
+        return RT_FALSE;
+    }
+
+    for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
+    {
+        if (fee_core_lane_hits_ckpt_threshold(lane, RT_FALSE) == RT_TRUE)
+        {
+            return RT_TRUE;
+        }
+    }
+
+    return RT_FALSE;
+}
+
+static fee_ret_t fee_core_checkpoint_after_update(const fee_block_cfg_t *cfg)
+{
+    if (fee_core_should_force_ckpt(cfg) == RT_FALSE)
+    {
+        return FEE_E_OK;
+    }
+
+    return fee_ckpt_flush();
+}
+
 static fee_ret_t fee_core_append_record(uint16_t block_id, const uint8_t *src, uint16_t len,
     uint8_t record_type, uint8_t lane, uint32_t *out_addr, uint32_t *out_seq)
 {
@@ -266,7 +379,7 @@ fee_ret_t fee_core_write(uint16_t block_id, const uint8_t *src, uint16_t len)
     }
 
     fee_cache_update_data(block_id, cfg->lane_type, addr, len, seq);
-    ret = fee_ckpt_flush();
+    ret = fee_core_checkpoint_after_update(cfg);
     if (ret != FEE_E_OK)
     {
         g_fee_ctx.job_result = FEE_JOB_FAILED;
@@ -305,7 +418,7 @@ fee_ret_t fee_core_invalidate(uint16_t block_id)
     }
 
     fee_cache_update_tombstone(block_id, cfg->lane_type, addr, seq);
-    ret = fee_ckpt_flush();
+    ret = fee_core_checkpoint_after_update(cfg);
     if (ret != FEE_E_OK)
     {
         g_fee_ctx.job_result = FEE_JOB_FAILED;
@@ -359,6 +472,14 @@ void fee_core_mainfunction(void)
 {
     if (g_fee_ctx.init_state == FEE_INIT_FULL_READY)
     {
+        if (fee_core_should_flush_ckpt_background() == RT_TRUE)
+        {
+            if (fee_ckpt_flush() != FEE_E_OK)
+            {
+                g_fee_ctx.job_result = FEE_JOB_FAILED;
+            }
+        }
+
         g_fee_ctx.status = FEE_STATUS_IDLE;
         if (g_fee_ctx.job_result == FEE_JOB_PENDING)
         {
