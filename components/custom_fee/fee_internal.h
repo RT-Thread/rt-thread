@@ -10,6 +10,15 @@
 #define FEE_INVALID_ADDR         (0xFFFFFFFFUL)
 #define FEE_CACHE_MAX_ENTRIES    (32U)
 
+typedef enum
+{
+    FEE_GC_IDLE = 0,
+    FEE_GC_PREPARE_DST,
+    FEE_GC_COPY_ONE,
+    FEE_GC_SWITCH_ACTIVE,
+    FEE_GC_ERASE_OLD
+} fee_gc_state_t;
+
 typedef struct
 {
     uint8_t lane;
@@ -28,6 +37,7 @@ typedef struct
     uint8_t active_sector;
     uint8_t dst_sector;
     uint8_t spare_sector;
+    uint8_t gc_old_sector;
     uint8_t sector_count;
     uint16_t gc_cursor;
     uint8_t gc_state;
@@ -40,6 +50,7 @@ typedef struct
     uint32_t limit_addr;
     uint32_t scan_start;
     uint32_t free_offset;
+    uint32_t gc_write_offset;
     uint32_t active_generation;
     uint32_t gc_start_threshold;
     uint32_t gc_force_threshold;
@@ -55,6 +66,8 @@ typedef struct
     fee_init_state_t init_state;
     uint32_t checkpoint_generation;
     uint8_t checkpoint_dirty;
+    uint8_t checkpoint_requested;
+    uint8_t checkpoint_force;
 } fee_super_ctx_t;
 
 typedef struct
@@ -110,6 +123,9 @@ rt_bool_t fee_recovery_is_full_ready(void);
 
 void fee_gc_mainfunction(void);
 fee_ret_t fee_gc_reclaim_sync(uint8_t lane);
+rt_bool_t fee_gc_lane_blocks_io(uint8_t lane);
+rt_bool_t fee_gc_has_background_work(void);
+rt_bool_t fee_gc_allows_checkpoint(void);
 void fee_cache_init(void);
 fee_cache_entry_t *fee_cache_lookup(uint16_t block_id);
 void fee_cache_update_data(uint16_t block_id, uint8_t lane, uint32_t addr, uint16_t len, uint32_t seq);

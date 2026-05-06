@@ -25,16 +25,6 @@ static uint32_t fee_recovery_lane_sector_base(uint8_t lane, uint8_t sector_idx)
     return g_fee_ctx.lane[lane].range_base + ((uint32_t)sector_idx * g_fee_caps.erase_unit);
 }
 
-static rt_bool_t fee_recovery_addr_in_sector(uint32_t sector_base, uint32_t addr)
-{
-    if ((addr >= sector_base) && (addr <= (sector_base + g_fee_caps.erase_unit)))
-    {
-        return RT_TRUE;
-    }
-
-    return RT_FALSE;
-}
-
 static void fee_recovery_set_lane_range(uint8_t lane, uint32_t range_base, uint8_t sector_count)
 {
     fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
@@ -46,11 +36,17 @@ static void fee_recovery_set_lane_range(uint8_t lane, uint32_t range_base, uint8
     lane_ctx->active_sector = 0U;
     lane_ctx->dst_sector = 0U;
     lane_ctx->spare_sector = (sector_count > 1U) ? 1U : 0U;
+    lane_ctx->gc_old_sector = 0U;
     lane_ctx->base_addr = range_base;
     lane_ctx->data_start = fee_recovery_sector_data_start(range_base);
     lane_ctx->limit_addr = range_base + g_fee_caps.erase_unit;
     lane_ctx->scan_start = FEE_INVALID_ADDR;
+    lane_ctx->gc_write_offset = FEE_INVALID_ADDR;
     lane_ctx->active_generation = 0U;
+    lane_ctx->gc_cursor = 0U;
+    lane_ctx->gc_state = (uint8_t)FEE_GC_IDLE;
+    lane_ctx->gc_requested = 0U;
+    lane_ctx->gc_force = 0U;
 
     max_span = fee_cfg_get_lane_max_span(lane);
     if (max_span == 0U)
@@ -72,15 +68,26 @@ static void fee_recovery_set_lane_range(uint8_t lane, uint32_t range_base, uint8
 
 static fee_ret_t fee_recovery_assign_layout(void)
 {
-    if (g_fee_caps.total_size < (g_fee_caps.erase_unit * 8U))
+    uint32_t range_base = 0U;
+    uint8_t lane;
+
+    if (g_fee_caps.total_size < (g_fee_caps.erase_unit * fee_cfg_get_total_sector_count()))
     {
         return FEE_E_NOT_OK;
     }
 
-    fee_recovery_set_lane_range((uint8_t)FEE_LANE_META, 0U, 2U);
-    fee_recovery_set_lane_range((uint8_t)FEE_LANE_FAST, g_fee_caps.erase_unit * 2U, 2U);
-    fee_recovery_set_lane_range((uint8_t)FEE_LANE_NORMAL, g_fee_caps.erase_unit * 4U, 2U);
-    fee_recovery_set_lane_range((uint8_t)FEE_LANE_BULK, g_fee_caps.erase_unit * 6U, 2U);
+    for (lane = (uint8_t)FEE_LANE_META; lane < (uint8_t)FEE_LANE_COUNT; ++lane)
+    {
+        uint8_t sector_count = fee_cfg_get_lane_sector_count(lane);
+
+        if ((sector_count == 0U) || (sector_count > FEE_CFG_MAX_LANE_SECTOR_COUNT))
+        {
+            return FEE_E_NOT_OK;
+        }
+
+        fee_recovery_set_lane_range(lane, range_base, sector_count);
+        range_base += (uint32_t)sector_count * g_fee_caps.erase_unit;
+    }
 
     return FEE_E_OK;
 }
@@ -132,7 +139,8 @@ static rt_bool_t fee_recovery_is_valid_lane_header(uint8_t lane, const fee_secto
     }
 
     if ((header->state != (uint8_t)FEE_SECTOR_ACTIVE) &&
-        (header->state != (uint8_t)FEE_SECTOR_GC_DST))
+        (header->state != (uint8_t)FEE_SECTOR_GC_DST) &&
+        (header->state != (uint8_t)FEE_SECTOR_OLD_PENDING_ERASE))
     {
         return RT_FALSE;
     }
@@ -140,21 +148,55 @@ static rt_bool_t fee_recovery_is_valid_lane_header(uint8_t lane, const fee_secto
     return RT_TRUE;
 }
 
-static void fee_recovery_select_active_sector(uint8_t lane, uint8_t sector_idx, uint32_t generation)
+static uint8_t fee_recovery_pick_lane_sector(uint8_t lane, uint8_t exclude0, uint8_t exclude1,
+    const rt_bool_t *valid)
 {
     fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
-    uint32_t sector_base = fee_recovery_lane_sector_base(lane, sector_idx);
+    uint8_t idx;
+
+    for (idx = 0U; idx < lane_ctx->sector_count; ++idx)
+    {
+        if ((idx == exclude0) || (idx == exclude1))
+        {
+            continue;
+        }
+
+        if ((valid != RT_NULL) && (valid[idx] == RT_FALSE))
+        {
+            return idx;
+        }
+    }
+
+    for (idx = 0U; idx < lane_ctx->sector_count; ++idx)
+    {
+        if ((idx != exclude0) && (idx != exclude1))
+        {
+            return idx;
+        }
+    }
+
+    return exclude0;
+}
+
+static void fee_recovery_select_active_sector(uint8_t lane, uint8_t active_sector, uint8_t dst_sector,
+    uint8_t spare_sector, uint32_t generation)
+{
+    fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
+    uint32_t sector_base = fee_recovery_lane_sector_base(lane, active_sector);
     uint32_t data_start = fee_recovery_sector_data_start(sector_base);
     uint32_t data_end = sector_base + g_fee_caps.erase_unit;
 
-    lane_ctx->active_sector = sector_idx;
-    lane_ctx->dst_sector = sector_idx;
-    lane_ctx->spare_sector = (lane_ctx->sector_count > 1U) ?
-        (uint8_t)((sector_idx + 1U) % lane_ctx->sector_count) : sector_idx;
+    lane_ctx->active_sector = active_sector;
+    lane_ctx->dst_sector = dst_sector;
+    lane_ctx->spare_sector = spare_sector;
+    lane_ctx->gc_old_sector = active_sector;
     lane_ctx->base_addr = sector_base;
     lane_ctx->data_start = data_start;
     lane_ctx->limit_addr = data_end;
     lane_ctx->active_generation = generation;
+    lane_ctx->gc_cursor = 0U;
+    lane_ctx->gc_state = (uint8_t)FEE_GC_IDLE;
+    lane_ctx->gc_write_offset = FEE_INVALID_ADDR;
 
     if ((lane_ctx->free_offset < data_start) || (lane_ctx->free_offset > data_end))
     {
@@ -190,27 +232,34 @@ static fee_ret_t fee_recovery_open_single_sector_lane(uint8_t lane)
 
         lane_ctx->free_offset = fee_recovery_sector_data_start(sector_base);
         lane_ctx->scan_start = lane_ctx->free_offset;
-        fee_recovery_select_active_sector(lane, 0U, 1U);
+        fee_recovery_select_active_sector(lane, 0U, 0U, 0U, 1U);
         g_fee_ctx.checkpoint_dirty = 1U;
         return FEE_E_OK;
     }
 
-    fee_recovery_select_active_sector(lane, 0U, header.generation);
+    fee_recovery_select_active_sector(lane, 0U, 0U, 0U, header.generation);
     return FEE_E_OK;
 }
 
 static fee_ret_t fee_recovery_open_multi_sector_lane(uint8_t lane)
 {
     fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
-    fee_sector_header_t headers[2];
-    rt_bool_t valid[2];
+    fee_sector_header_t headers[FEE_CFG_MAX_LANE_SECTOR_COUNT];
+    rt_bool_t valid[FEE_CFG_MAX_LANE_SECTOR_COUNT];
     uint8_t idx;
-    uint8_t selected_idx = 0xFFU;
     uint8_t selected_active = 0xFFU;
     uint8_t selected_gc_dst = 0xFFU;
+    uint8_t active_sector;
+    uint8_t dst_sector;
+    uint8_t spare_sector;
     fee_ret_t ret;
 
-    for (idx = 0U; idx < 2U; ++idx)
+    if (lane_ctx->sector_count > FEE_CFG_MAX_LANE_SECTOR_COUNT)
+    {
+        return FEE_E_NOT_OK;
+    }
+
+    for (idx = 0U; idx < lane_ctx->sector_count; ++idx)
     {
         uint32_t sector_base = fee_recovery_lane_sector_base(lane, idx);
 
@@ -226,11 +275,6 @@ static fee_ret_t fee_recovery_open_multi_sector_lane(uint8_t lane)
             continue;
         }
 
-        if (fee_recovery_addr_in_sector(sector_base, lane_ctx->free_offset) != RT_FALSE)
-        {
-            selected_idx = idx;
-        }
-
         if (headers[idx].state == (uint8_t)FEE_SECTOR_ACTIVE)
         {
             if ((selected_active == 0xFFU) || (headers[idx].generation > headers[selected_active].generation))
@@ -244,7 +288,7 @@ static fee_ret_t fee_recovery_open_multi_sector_lane(uint8_t lane)
         }
     }
 
-    if ((valid[0] == RT_FALSE) && (valid[1] == RT_FALSE))
+    if ((selected_active == 0xFFU) && (selected_gc_dst == 0xFFU))
     {
         ret = fee_recovery_format_lane_sector(lane, 0U,
             (uint8_t)FEE_SECTOR_ACTIVE, 1U, RT_TRUE);
@@ -253,36 +297,46 @@ static fee_ret_t fee_recovery_open_multi_sector_lane(uint8_t lane)
             return ret;
         }
 
-        ret = fee_port_erase(fee_recovery_lane_sector_base(lane, 1U), g_fee_caps.erase_unit);
-        if (ret != FEE_E_OK)
+        for (idx = 1U; idx < lane_ctx->sector_count; ++idx)
         {
-            return ret;
+            ret = fee_port_erase(fee_recovery_lane_sector_base(lane, idx), g_fee_caps.erase_unit);
+            if (ret != FEE_E_OK)
+            {
+                return ret;
+            }
         }
 
         lane_ctx->free_offset = fee_recovery_sector_data_start(fee_recovery_lane_sector_base(lane, 0U));
         lane_ctx->scan_start = lane_ctx->free_offset;
-        fee_recovery_select_active_sector(lane, 0U, 1U);
-        lane_ctx->spare_sector = 1U;
+        dst_sector = (lane_ctx->sector_count > 1U) ? 1U : 0U;
+        spare_sector = (lane_ctx->sector_count > 2U) ? 2U : dst_sector;
+        fee_recovery_select_active_sector(lane, 0U, dst_sector, spare_sector, 1U);
         g_fee_ctx.checkpoint_dirty = 1U;
         return FEE_E_OK;
     }
 
-    if ((selected_idx == 0xFFU) && (selected_active != 0xFFU))
+    active_sector = (selected_active != 0xFFU) ? selected_active : selected_gc_dst;
+    dst_sector = (selected_gc_dst != 0xFFU) ? selected_gc_dst :
+        fee_recovery_pick_lane_sector(lane, active_sector, 0xFFU, &valid[0]);
+    if (dst_sector == active_sector)
     {
-        selected_idx = selected_active;
+        dst_sector = fee_recovery_pick_lane_sector(lane, active_sector, 0xFFU, RT_NULL);
     }
 
-    if ((selected_idx == 0xFFU) && (selected_gc_dst != 0xFFU))
+    spare_sector = fee_recovery_pick_lane_sector(lane, active_sector, dst_sector, &valid[0]);
+    if (spare_sector == active_sector)
     {
-        selected_idx = selected_gc_dst;
+        spare_sector = dst_sector;
     }
 
-    if (selected_idx == 0xFFU)
+    fee_recovery_select_active_sector(lane, active_sector, dst_sector, spare_sector,
+        headers[active_sector].generation);
+
+    if ((selected_active != 0xFFU) && (selected_gc_dst != 0xFFU) && (selected_gc_dst != selected_active))
     {
-        selected_idx = (valid[0] != RT_FALSE) ? 0U : 1U;
+        lane_ctx->gc_requested = 1U;
     }
 
-    fee_recovery_select_active_sector(lane, selected_idx, headers[selected_idx].generation);
     return FEE_E_OK;
 }
 

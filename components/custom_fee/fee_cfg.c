@@ -167,3 +167,33 @@ uint32_t fee_cfg_get_lane_max_span(uint8_t lane)
 
     return max_span;
 }
+
+uint8_t fee_cfg_get_lane_sector_count(uint8_t lane)
+{
+    if (lane == (uint8_t)FEE_LANE_META)
+    {
+        return FEE_CFG_META_SECTOR_COUNT;
+    }
+
+    if (lane == (uint8_t)FEE_LANE_FAST)
+    {
+        return FEE_CFG_FAST_SECTOR_COUNT;
+    }
+
+    if (lane == (uint8_t)FEE_LANE_NORMAL)
+    {
+        return FEE_CFG_NORMAL_SECTOR_COUNT;
+    }
+
+    if (lane == (uint8_t)FEE_LANE_BULK)
+    {
+        return FEE_CFG_BULK_SECTOR_COUNT;
+    }
+
+    return 0U;
+}
+
+uint32_t fee_cfg_get_total_sector_count(void)
+{
+    return FEE_CFG_TOTAL_SECTOR_COUNT;
+}

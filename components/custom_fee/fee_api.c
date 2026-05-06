@@ -162,6 +162,7 @@ fee_ret_t fee_rollback(uint16_t block_id)
 void fee_mainfunction(void)
 {
     rt_bool_t has_pending_work;
+    rt_bool_t has_background_work;
 
     if (g_fee_ctx.status == FEE_STATUS_UNINIT)
     {
@@ -176,20 +177,35 @@ void fee_mainfunction(void)
     }
 
     fee_sched_mainfunction();
-    has_pending_work = fee_sched_has_pending_work();
-
-    if (has_pending_work != RT_FALSE)
-    {
-        if (g_fee_ctx.init_state == FEE_INIT_FULL_READY)
-        {
-            g_fee_ctx.status = FEE_STATUS_BUSY_INTERNAL;
-            g_fee_ctx.job_result = FEE_JOB_PENDING;
-        }
-        return;
-    }
-
     fee_gc_mainfunction();
     fee_core_mainfunction();
+
+    has_pending_work = fee_sched_has_pending_work();
+    has_background_work = fee_gc_has_background_work();
+    if ((g_fee_ctx.checkpoint_requested != 0U) || (g_fee_ctx.checkpoint_force != 0U))
+    {
+        has_background_work = RT_TRUE;
+    }
+
+    if (g_fee_ctx.init_state == FEE_INIT_FULL_READY)
+    {
+        if ((has_pending_work != RT_FALSE) || (has_background_work != RT_FALSE))
+        {
+            g_fee_ctx.status = FEE_STATUS_BUSY_INTERNAL;
+            if (g_fee_ctx.job_result != FEE_JOB_FAILED)
+            {
+                g_fee_ctx.job_result = FEE_JOB_PENDING;
+            }
+        }
+        else
+        {
+            g_fee_ctx.status = FEE_STATUS_IDLE;
+            if (g_fee_ctx.job_result != FEE_JOB_FAILED)
+            {
+                g_fee_ctx.job_result = FEE_JOB_OK;
+            }
+        }
+    }
 }
 
 fee_status_t fee_get_memif_status(void)

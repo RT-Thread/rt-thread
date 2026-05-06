@@ -1,15 +1,7 @@
 #include "fee_internal.h"
 
 #define FEE_GC_PREV_VALID_FLAG      (0x02UL)
-#define FEE_GC_MOVE_MAX             (FEE_CACHE_MAX_ENTRIES * 2U)
 #define FEE_GC_COPY_BUFFER_SIZE     (2048U)
-
-typedef struct
-{
-    uint16_t block_id;
-    uint32_t old_addr;
-    uint32_t new_addr;
-} fee_gc_move_t;
 
 static rt_bool_t fee_gc_lane_supports_reclaim(uint8_t lane)
 {
@@ -43,8 +35,8 @@ static uint32_t fee_gc_sector_data_start(uint32_t sector_base, const fee_flash_c
     return sector_base + fee_onflash_align_up((uint32_t)sizeof(fee_sector_header_t), caps->program_unit);
 }
 
-static fee_ret_t fee_gc_prepare_sector(uint8_t lane, uint8_t sector_idx, uint8_t state,
-    uint32_t generation, const fee_flash_caps_t *caps)
+static fee_ret_t fee_gc_write_sector_header(uint8_t lane, uint8_t sector_idx, uint8_t state,
+    uint32_t generation, const fee_flash_caps_t *caps, rt_bool_t erase_first)
 {
     fee_sector_header_t header;
     fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
@@ -60,7 +52,7 @@ static fee_ret_t fee_gc_prepare_sector(uint8_t lane, uint8_t sector_idx, uint8_t
     header.data_end = sector_base + caps->erase_unit;
     header.commit_marker = FEE_COMMIT_MARKER;
 
-    if (fee_port_erase(sector_base, caps->erase_unit) != FEE_E_OK)
+    if ((erase_first != RT_FALSE) && (fee_port_erase(sector_base, caps->erase_unit) != FEE_E_OK))
     {
         return FEE_E_NOT_OK;
     }
@@ -139,19 +131,14 @@ static fee_ret_t fee_gc_copy_record(uint32_t src_addr, uint32_t dst_addr, uint32
     return FEE_E_OK;
 }
 
-static fee_ret_t fee_gc_copy_cache_record(uint16_t block_id, uint32_t src_addr, uint32_t dst_limit,
-    uint32_t *dst_cursor, fee_gc_move_t *moves, uint16_t *move_count, const fee_flash_caps_t *caps)
+static fee_ret_t fee_gc_copy_one_cache_record(uint16_t block_id, uint32_t src_addr, uint32_t dst_limit,
+    uint32_t *dst_cursor, const fee_flash_caps_t *caps)
 {
     const fee_block_cfg_t *cfg = fee_cfg_find_block(block_id);
     uint32_t span;
     fee_ret_t ret;
 
-    if ((cfg == RT_NULL) || (dst_cursor == RT_NULL) || (moves == RT_NULL) || (move_count == RT_NULL))
-    {
-        return FEE_E_NOT_OK;
-    }
-
-    if (*move_count >= FEE_GC_MOVE_MAX)
+    if ((cfg == RT_NULL) || (dst_cursor == RT_NULL))
     {
         return FEE_E_NOT_OK;
     }
@@ -162,85 +149,105 @@ static fee_ret_t fee_gc_copy_cache_record(uint16_t block_id, uint32_t src_addr, 
         return ret;
     }
 
-    moves[*move_count].block_id = block_id;
-    moves[*move_count].old_addr = src_addr;
-    moves[*move_count].new_addr = *dst_cursor;
+    fee_cache_relocate_address(block_id, src_addr, *dst_cursor);
     *dst_cursor += span;
-    *move_count = (uint16_t)(*move_count + 1U);
-
     return FEE_E_OK;
 }
 
-static fee_ret_t fee_gc_copy_live_entries(uint8_t lane, uint32_t src_base, uint32_t src_limit,
-    uint32_t dst_limit, uint32_t *dst_cursor, fee_gc_move_t *moves, uint16_t *move_count,
-    const fee_flash_caps_t *caps)
+static fee_ret_t fee_gc_copy_one_live_record(uint8_t lane, const fee_flash_caps_t *caps, rt_bool_t *copied)
 {
+    fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
     fee_ckpt_cache_entry_t entries[FEE_CACHE_MAX_ENTRIES];
     uint16_t entry_count;
-    uint16_t idx;
+    uint32_t cursor;
+    uint32_t total_cursor;
+    uint32_t src_base;
+    uint32_t src_limit;
+    uint32_t dst_limit;
 
-    entry_count = fee_cache_export_ckpt(&entries[0], FEE_CACHE_MAX_ENTRIES);
-
-    for (idx = 0U; idx < entry_count; ++idx)
+    if (copied == RT_NULL)
     {
-        if (entries[idx].lane != lane)
+        return FEE_E_PARAM;
+    }
+
+    src_base = fee_gc_sector_base(lane_ctx, caps, lane_ctx->gc_old_sector);
+    src_limit = src_base + caps->erase_unit;
+    dst_limit = fee_gc_sector_base(lane_ctx, caps, lane_ctx->dst_sector) + caps->erase_unit;
+    entry_count = fee_cache_export_ckpt(&entries[0], FEE_CACHE_MAX_ENTRIES);
+    total_cursor = (uint32_t)entry_count * 2U;
+
+    for (cursor = (uint32_t)lane_ctx->gc_cursor; cursor < total_cursor; ++cursor)
+    {
+        uint16_t entry_idx = (uint16_t)(cursor / 2U);
+        rt_bool_t use_prev = ((cursor & 1UL) == 0UL) ? RT_TRUE : RT_FALSE;
+        uint32_t src_addr = FEE_INVALID_ADDR;
+
+        if (entries[entry_idx].lane != lane)
         {
             continue;
         }
 
-        if (((entries[idx].flags & FEE_GC_PREV_VALID_FLAG) != 0UL) &&
-            fee_gc_addr_in_sector(src_base, src_limit, entries[idx].prev_addr))
+        if (use_prev != RT_FALSE)
         {
-            fee_ret_t ret = fee_gc_copy_cache_record((uint16_t)entries[idx].block_id, entries[idx].prev_addr,
-                dst_limit, dst_cursor, moves, move_count, caps);
-
-            if (ret != FEE_E_OK)
+            if (((entries[entry_idx].flags & FEE_GC_PREV_VALID_FLAG) != 0UL) &&
+                fee_gc_addr_in_sector(src_base, src_limit, entries[entry_idx].prev_addr))
             {
-                return ret;
+                src_addr = entries[entry_idx].prev_addr;
             }
         }
-
-        if ((entries[idx].cur_addr != FEE_INVALID_ADDR) &&
-            (entries[idx].cur_addr != entries[idx].prev_addr) &&
-            fee_gc_addr_in_sector(src_base, src_limit, entries[idx].cur_addr))
+        else if ((entries[entry_idx].cur_addr != FEE_INVALID_ADDR) &&
+                 (entries[entry_idx].cur_addr != entries[entry_idx].prev_addr) &&
+                 fee_gc_addr_in_sector(src_base, src_limit, entries[entry_idx].cur_addr))
         {
-            fee_ret_t ret = fee_gc_copy_cache_record((uint16_t)entries[idx].block_id, entries[idx].cur_addr,
-                dst_limit, dst_cursor, moves, move_count, caps);
-
-            if (ret != FEE_E_OK)
-            {
-                return ret;
-            }
+            src_addr = entries[entry_idx].cur_addr;
         }
+
+        if (src_addr == FEE_INVALID_ADDR)
+        {
+            continue;
+        }
+
+        if (fee_gc_copy_one_cache_record((uint16_t)entries[entry_idx].block_id, src_addr, dst_limit,
+            &lane_ctx->gc_write_offset, caps) != FEE_E_OK)
+        {
+            return FEE_E_NOT_OK;
+        }
+
+        lane_ctx->gc_cursor = (uint16_t)(cursor + 1U);
+        *copied = RT_TRUE;
+        return FEE_E_OK;
     }
 
+    lane_ctx->gc_cursor = (uint16_t)total_cursor;
+    *copied = RT_FALSE;
     return FEE_E_OK;
 }
 
-static void fee_gc_apply_moves(const fee_gc_move_t *moves, uint16_t move_count)
+static uint8_t fee_gc_choose_dst_sector(const fee_lane_ctx_t *lane_ctx)
 {
-    uint16_t idx;
+    uint8_t idx;
 
-    for (idx = 0U; idx < move_count; ++idx)
+    if ((lane_ctx->spare_sector < lane_ctx->sector_count) &&
+        (lane_ctx->spare_sector != lane_ctx->active_sector))
     {
-        fee_cache_relocate_address(moves[idx].block_id, moves[idx].old_addr, moves[idx].new_addr);
+        return lane_ctx->spare_sector;
     }
+
+    for (idx = 0U; idx < lane_ctx->sector_count; ++idx)
+    {
+        if (idx != lane_ctx->active_sector)
+        {
+            return idx;
+        }
+    }
+
+    return lane_ctx->active_sector;
 }
 
-static fee_ret_t fee_gc_run_lane(uint8_t lane)
+static fee_ret_t fee_gc_step_lane(uint8_t lane)
 {
     fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
     fee_flash_caps_t caps;
-    fee_gc_move_t moves[FEE_GC_MOVE_MAX];
-    uint16_t move_count = 0U;
-    uint8_t src_sector;
-    uint8_t dst_sector;
-    uint32_t src_base;
-    uint32_t dst_base;
-    uint32_t src_limit;
-    uint32_t dst_limit;
-    uint32_t dst_cursor;
-    uint32_t dst_data_start;
     fee_ret_t ret;
 
     if (fee_gc_lane_supports_reclaim(lane) == RT_FALSE)
@@ -254,67 +261,185 @@ static fee_ret_t fee_gc_run_lane(uint8_t lane)
         return ret;
     }
 
-    src_sector = lane_ctx->active_sector;
-    dst_sector = (uint8_t)((src_sector + 1U) % lane_ctx->sector_count);
-    src_base = lane_ctx->base_addr;
-    src_limit = lane_ctx->limit_addr;
-    dst_base = fee_gc_sector_base(lane_ctx, &caps, dst_sector);
-    dst_limit = dst_base + caps.erase_unit;
-    dst_data_start = fee_gc_sector_data_start(dst_base, &caps);
-    dst_cursor = dst_data_start;
-
-    ret = fee_gc_prepare_sector(lane, dst_sector, (uint8_t)FEE_SECTOR_GC_DST,
-        lane_ctx->active_generation + 1U, &caps);
-    if (ret != FEE_E_OK)
+    if (lane_ctx->gc_state == (uint8_t)FEE_GC_IDLE)
     {
-        return ret;
+        if ((lane_ctx->gc_requested == 0U) && (lane_ctx->gc_force == 0U))
+        {
+            return FEE_E_OK;
+        }
+
+        lane_ctx->gc_old_sector = lane_ctx->active_sector;
+        lane_ctx->dst_sector = fee_gc_choose_dst_sector(lane_ctx);
+        if (lane_ctx->dst_sector == lane_ctx->active_sector)
+        {
+            return FEE_E_NOT_OK;
+        }
+
+        lane_ctx->gc_state = (uint8_t)FEE_GC_PREPARE_DST;
+        lane_ctx->gc_cursor = 0U;
+        lane_ctx->gc_write_offset = FEE_INVALID_ADDR;
+        return FEE_E_OK;
     }
 
-    ret = fee_gc_copy_live_entries(lane, src_base, src_limit, dst_limit,
-        &dst_cursor, &moves[0], &move_count, &caps);
-    if (ret != FEE_E_OK)
+    if (lane_ctx->gc_state == (uint8_t)FEE_GC_PREPARE_DST)
     {
-        return ret;
+        uint32_t dst_base = fee_gc_sector_base(lane_ctx, &caps, lane_ctx->dst_sector);
+
+        ret = fee_gc_write_sector_header(lane, lane_ctx->dst_sector, (uint8_t)FEE_SECTOR_GC_DST,
+            lane_ctx->active_generation + 1U, &caps, RT_TRUE);
+        if (ret != FEE_E_OK)
+        {
+            return ret;
+        }
+
+        lane_ctx->gc_write_offset = fee_gc_sector_data_start(dst_base, &caps);
+        lane_ctx->gc_state = (uint8_t)FEE_GC_COPY_ONE;
+        return FEE_E_OK;
     }
 
-    fee_gc_apply_moves(&moves[0], move_count);
-    lane_ctx->active_sector = dst_sector;
-    lane_ctx->dst_sector = dst_sector;
-    lane_ctx->spare_sector = src_sector;
-    lane_ctx->base_addr = dst_base;
-    lane_ctx->data_start = dst_data_start;
-    lane_ctx->limit_addr = dst_limit;
-    lane_ctx->scan_start = dst_cursor;
-    lane_ctx->free_offset = dst_cursor;
-    lane_ctx->active_generation += 1U;
-    lane_ctx->gc_requested = 0U;
-    lane_ctx->gc_force = 0U;
-
-    ret = fee_ckpt_flush();
-    if (ret != FEE_E_OK)
+    if (lane_ctx->gc_state == (uint8_t)FEE_GC_COPY_ONE)
     {
-        lane_ctx->gc_requested = 1U;
-        return ret;
+        rt_bool_t copied = RT_FALSE;
+
+        ret = fee_gc_copy_one_live_record(lane, &caps, &copied);
+        if (ret != FEE_E_OK)
+        {
+            return ret;
+        }
+
+        if (copied == RT_FALSE)
+        {
+            lane_ctx->gc_state = (uint8_t)FEE_GC_SWITCH_ACTIVE;
+        }
+
+        return FEE_E_OK;
     }
 
-    ret = fee_port_erase(src_base, caps.erase_unit);
-    if (ret != FEE_E_OK)
+    if (lane_ctx->gc_state == (uint8_t)FEE_GC_SWITCH_ACTIVE)
     {
-        lane_ctx->gc_requested = 1U;
-        return ret;
+        uint32_t dst_base = fee_gc_sector_base(lane_ctx, &caps, lane_ctx->dst_sector);
+
+        ret = fee_gc_write_sector_header(lane, lane_ctx->dst_sector, (uint8_t)FEE_SECTOR_ACTIVE,
+            lane_ctx->active_generation + 1U, &caps, RT_FALSE);
+        if (ret != FEE_E_OK)
+        {
+            return ret;
+        }
+
+        lane_ctx->active_sector = lane_ctx->dst_sector;
+        lane_ctx->base_addr = dst_base;
+        lane_ctx->data_start = fee_gc_sector_data_start(dst_base, &caps);
+        lane_ctx->limit_addr = dst_base + caps.erase_unit;
+        lane_ctx->free_offset = lane_ctx->gc_write_offset;
+        lane_ctx->scan_start = lane_ctx->free_offset;
+        lane_ctx->active_generation += 1U;
+        lane_ctx->spare_sector = lane_ctx->gc_old_sector;
+        g_fee_ctx.checkpoint_dirty = 1U;
+        g_fee_ctx.checkpoint_requested = 1U;
+        lane_ctx->gc_state = (uint8_t)FEE_GC_ERASE_OLD;
+        return FEE_E_OK;
     }
 
-    return FEE_E_OK;
+    if (lane_ctx->gc_state == (uint8_t)FEE_GC_ERASE_OLD)
+    {
+        ret = fee_port_erase(fee_gc_sector_base(lane_ctx, &caps, lane_ctx->gc_old_sector), caps.erase_unit);
+        if (ret != FEE_E_OK)
+        {
+            return ret;
+        }
+
+        lane_ctx->dst_sector = lane_ctx->spare_sector;
+        lane_ctx->gc_state = (uint8_t)FEE_GC_IDLE;
+        lane_ctx->gc_cursor = 0U;
+        lane_ctx->gc_requested = 0U;
+        lane_ctx->gc_force = 0U;
+        lane_ctx->gc_write_offset = FEE_INVALID_ADDR;
+        return FEE_E_OK;
+    }
+
+    return FEE_E_NOT_OK;
 }
 
 fee_ret_t fee_gc_reclaim_sync(uint8_t lane)
 {
+    uint16_t step_budget = (uint16_t)(FEE_CACHE_MAX_ENTRIES * 2U + 8U);
+    fee_ret_t ret = FEE_E_OK;
+
     if (fee_gc_lane_supports_reclaim(lane) == RT_FALSE)
     {
         return FEE_E_NOT_OK;
     }
 
-    return fee_gc_run_lane(lane);
+    g_fee_ctx.lane[lane].gc_requested = 1U;
+    g_fee_ctx.lane[lane].gc_force = 1U;
+
+    while (step_budget > 0U)
+    {
+        ret = fee_gc_step_lane(lane);
+        if (ret != FEE_E_OK)
+        {
+            return ret;
+        }
+
+        if (g_fee_ctx.lane[lane].gc_state == (uint8_t)FEE_GC_IDLE)
+        {
+            return FEE_E_OK;
+        }
+
+        --step_budget;
+    }
+
+    return FEE_E_BUSY;
+}
+
+rt_bool_t fee_gc_lane_blocks_io(uint8_t lane)
+{
+    if ((lane >= (uint8_t)FEE_LANE_COUNT) || (lane <= (uint8_t)FEE_LANE_META))
+    {
+        return RT_FALSE;
+    }
+
+    if ((g_fee_ctx.lane[lane].gc_state != (uint8_t)FEE_GC_IDLE) &&
+        (g_fee_ctx.lane[lane].gc_state != (uint8_t)FEE_GC_ERASE_OLD))
+    {
+        return RT_TRUE;
+    }
+
+    return RT_FALSE;
+}
+
+rt_bool_t fee_gc_has_background_work(void)
+{
+    uint8_t lane;
+
+    for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
+    {
+        if ((g_fee_ctx.lane[lane].gc_state != (uint8_t)FEE_GC_IDLE) ||
+            (g_fee_ctx.lane[lane].gc_requested != 0U) ||
+            (g_fee_ctx.lane[lane].gc_force != 0U))
+        {
+            return RT_TRUE;
+        }
+    }
+
+    return RT_FALSE;
+}
+
+rt_bool_t fee_gc_allows_checkpoint(void)
+{
+    uint8_t lane;
+
+    for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
+    {
+        if ((g_fee_ctx.lane[lane].gc_state == (uint8_t)FEE_GC_PREPARE_DST) ||
+            (g_fee_ctx.lane[lane].gc_state == (uint8_t)FEE_GC_COPY_ONE) ||
+            (g_fee_ctx.lane[lane].gc_state == (uint8_t)FEE_GC_SWITCH_ACTIVE))
+        {
+            return RT_FALSE;
+        }
+    }
+
+    return RT_TRUE;
 }
 
 void fee_gc_mainfunction(void)
@@ -327,18 +452,25 @@ void fee_gc_mainfunction(void)
         return;
     }
 
-    if (g_fee_ctx.status != FEE_STATUS_IDLE)
-    {
-        return;
-    }
-
     for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
     {
-        if ((fee_gc_lane_supports_reclaim(lane) != RT_FALSE) &&
-            (g_fee_ctx.lane[lane].gc_force != 0U))
+        if (g_fee_ctx.lane[lane].gc_state != (uint8_t)FEE_GC_IDLE)
         {
             target_lane = lane;
             break;
+        }
+    }
+
+    if (target_lane == (uint8_t)FEE_LANE_COUNT)
+    {
+        for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
+        {
+            if ((fee_gc_lane_supports_reclaim(lane) != RT_FALSE) &&
+                (g_fee_ctx.lane[lane].gc_force != 0U))
+            {
+                target_lane = lane;
+                break;
+            }
         }
     }
 
@@ -357,6 +489,9 @@ void fee_gc_mainfunction(void)
 
     if (target_lane < (uint8_t)FEE_LANE_COUNT)
     {
-        (void)fee_gc_run_lane(target_lane);
+        if (fee_gc_step_lane(target_lane) != FEE_E_OK)
+        {
+            g_fee_ctx.job_result = FEE_JOB_FAILED;
+        }
     }
 }

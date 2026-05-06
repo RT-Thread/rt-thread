@@ -124,7 +124,17 @@ static rt_bool_t fee_core_lane_hits_ckpt_threshold(uint8_t lane, rt_bool_t force
     return RT_FALSE;
 }
 
-static rt_bool_t fee_core_should_force_ckpt(const fee_block_cfg_t *cfg)
+static rt_bool_t fee_core_should_force_ckpt(uint8_t lane)
+{
+    if ((lane <= (uint8_t)FEE_LANE_META) || (lane >= (uint8_t)FEE_LANE_COUNT))
+    {
+        return RT_FALSE;
+    }
+
+    return fee_core_lane_hits_ckpt_threshold(lane, RT_TRUE);
+}
+
+static rt_bool_t fee_core_should_request_ckpt(const fee_block_cfg_t *cfg)
 {
     if (cfg == RT_NULL)
     {
@@ -136,37 +146,32 @@ static rt_bool_t fee_core_should_force_ckpt(const fee_block_cfg_t *cfg)
         return RT_TRUE;
     }
 
-    return fee_core_lane_hits_ckpt_threshold(cfg->lane_type, RT_TRUE);
+    if (fee_core_should_force_ckpt(cfg->lane_type) != RT_FALSE)
+    {
+        return RT_TRUE;
+    }
+
+    return fee_core_lane_hits_ckpt_threshold(cfg->lane_type, RT_FALSE);
 }
 
-static rt_bool_t fee_core_should_flush_ckpt_background(void)
+static void fee_core_request_checkpoint(const fee_block_cfg_t *cfg)
 {
-    uint8_t lane;
-
-    if (g_fee_ctx.checkpoint_dirty == 0U)
+    if ((cfg == RT_NULL) || (g_fee_ctx.checkpoint_dirty == 0U))
     {
-        return RT_FALSE;
+        return;
     }
 
-    for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
+    if (fee_core_should_force_ckpt(cfg->lane_type) != RT_FALSE)
     {
-        if (fee_core_lane_hits_ckpt_threshold(lane, RT_FALSE) == RT_TRUE)
-        {
-            return RT_TRUE;
-        }
+        g_fee_ctx.checkpoint_force = 1U;
+        g_fee_ctx.checkpoint_requested = 1U;
+        return;
     }
 
-    return RT_FALSE;
-}
-
-static fee_ret_t fee_core_checkpoint_after_update(const fee_block_cfg_t *cfg)
-{
-    if (fee_core_should_force_ckpt(cfg) == RT_FALSE)
+    if (fee_core_should_request_ckpt(cfg) != RT_FALSE)
     {
-        return FEE_E_OK;
+        g_fee_ctx.checkpoint_requested = 1U;
     }
-
-    return fee_ckpt_flush();
 }
 
 static fee_ret_t fee_core_append_record(uint16_t block_id, const uint8_t *src, uint16_t len,
@@ -213,6 +218,11 @@ static fee_ret_t fee_core_append_record(uint16_t block_id, const uint8_t *src, u
         return FEE_E_NOT_OK;
     }
 
+    if (fee_gc_lane_blocks_io(lane) != RT_FALSE)
+    {
+        return FEE_E_BUSY;
+    }
+
     addr = lane_ctx->free_offset;
     stored_len = fee_onflash_align_up((uint32_t)len, caps.program_unit);
 
@@ -228,17 +238,8 @@ static fee_ret_t fee_core_append_record(uint16_t block_id, const uint8_t *src, u
         {
             lane_ctx->gc_requested = 1U;
             lane_ctx->gc_force = 1U;
-            if (fee_gc_reclaim_sync(lane) == FEE_E_OK)
-            {
-                addr = lane_ctx->free_offset;
-                next_addr = addr + fee_core_record_next_addr(cfg, len);
-            }
         }
-
-        if (next_addr > lane_ctx->limit_addr)
-        {
-            return FEE_E_BUSY;
-        }
+        return FEE_E_BUSY;
     }
 
     entry = fee_cache_lookup(block_id);
@@ -424,20 +425,11 @@ fee_ret_t fee_core_write(uint16_t block_id, const uint8_t *src, uint16_t len)
     ret = fee_core_append_record(block_id, src, len, FEE_RECORD_DATA, cfg->lane_type, &addr, &seq);
     if (ret != FEE_E_OK)
     {
-        g_fee_ctx.job_result = FEE_JOB_FAILED;
         return ret;
     }
 
     fee_cache_update_data(block_id, cfg->lane_type, addr, len, seq);
-    ret = fee_core_checkpoint_after_update(cfg);
-    if (ret != FEE_E_OK)
-    {
-        g_fee_ctx.job_result = FEE_JOB_FAILED;
-        return ret;
-    }
-    g_fee_ctx.status = FEE_STATUS_IDLE;
-    g_fee_ctx.job_result = FEE_JOB_OK;
-
+    fee_core_request_checkpoint(cfg);
     return FEE_E_OK;
 }
 
@@ -463,20 +455,11 @@ fee_ret_t fee_core_invalidate(uint16_t block_id)
         cfg->lane_type, &addr, &seq);
     if (ret != FEE_E_OK)
     {
-        g_fee_ctx.job_result = FEE_JOB_FAILED;
         return ret;
     }
 
     fee_cache_update_tombstone(block_id, cfg->lane_type, addr, seq);
-    ret = fee_core_checkpoint_after_update(cfg);
-    if (ret != FEE_E_OK)
-    {
-        g_fee_ctx.job_result = FEE_JOB_FAILED;
-        return ret;
-    }
-    g_fee_ctx.status = FEE_STATUS_IDLE;
-    g_fee_ctx.job_result = FEE_JOB_OK;
-
+    fee_core_request_checkpoint(cfg);
     return FEE_E_OK;
 }
 
@@ -520,20 +503,33 @@ fee_ret_t fee_core_rollback(uint16_t block_id)
 
 void fee_core_mainfunction(void)
 {
-    if (g_fee_ctx.init_state == FEE_INIT_FULL_READY)
+    if (g_fee_ctx.init_state != FEE_INIT_FULL_READY)
     {
-        if (fee_core_should_flush_ckpt_background() == RT_TRUE)
-        {
-            if (fee_ckpt_flush() != FEE_E_OK)
-            {
-                g_fee_ctx.job_result = FEE_JOB_FAILED;
-            }
-        }
+        return;
+    }
 
-        g_fee_ctx.status = FEE_STATUS_IDLE;
-        if (g_fee_ctx.job_result == FEE_JOB_PENDING)
-        {
-            g_fee_ctx.job_result = FEE_JOB_OK;
-        }
+    if ((g_fee_ctx.checkpoint_requested == 0U) || (g_fee_ctx.checkpoint_dirty == 0U))
+    {
+        return;
+    }
+
+    if (fee_gc_allows_checkpoint() == RT_FALSE)
+    {
+        return;
+    }
+
+    if ((g_fee_ctx.checkpoint_force == 0U) && (fee_sched_has_pending_work() != RT_FALSE))
+    {
+        return;
+    }
+
+    if (fee_ckpt_flush() == FEE_E_OK)
+    {
+        g_fee_ctx.checkpoint_requested = 0U;
+        g_fee_ctx.checkpoint_force = 0U;
+    }
+    else
+    {
+        g_fee_ctx.job_result = FEE_JOB_FAILED;
     }
 }

@@ -89,6 +89,17 @@ static rt_bool_t fee_sched_queue_pop(fee_sched_slot_t *queue, uint16_t queue_len
     return RT_TRUE;
 }
 
+static fee_ret_t fee_sched_queue_requeue(fee_sched_slot_t *queue, uint16_t queue_len,
+    const fee_sched_slot_t *slot)
+{
+    if ((slot == RT_NULL) || (slot->used == 0U))
+    {
+        return FEE_E_PARAM;
+    }
+
+    return fee_sched_queue_push(queue, queue_len, (fee_request_type_t)slot->type, &slot->request);
+}
+
 static fee_ret_t fee_sched_enqueue_request(fee_request_type_t type, const fee_request_t *request)
 {
     const fee_block_cfg_t *cfg;
@@ -132,6 +143,53 @@ static fee_ret_t fee_sched_dispatch_one(const fee_sched_slot_t *slot)
     }
 
     return FEE_E_PARAM;
+}
+
+static fee_ret_t fee_sched_try_dispatch_queue(fee_sched_slot_t *queue, uint16_t queue_len,
+    rt_bool_t *made_progress)
+{
+    fee_sched_slot_t slot;
+    uint16_t attempts = 0U;
+    fee_ret_t ret;
+
+    if (made_progress != RT_NULL)
+    {
+        *made_progress = RT_FALSE;
+    }
+
+    while (attempts < queue_len)
+    {
+        if (fee_sched_queue_pop(queue, queue_len, &slot) == RT_FALSE)
+        {
+            return FEE_E_OK;
+        }
+
+        ret = fee_sched_dispatch_one(&slot);
+        if (ret == FEE_E_BUSY)
+        {
+            if (fee_sched_queue_requeue(queue, queue_len, &slot) != FEE_E_OK)
+            {
+                return FEE_E_NOT_OK;
+            }
+
+            ++attempts;
+            continue;
+        }
+
+        if (ret != FEE_E_OK)
+        {
+            return ret;
+        }
+
+        if (made_progress != RT_NULL)
+        {
+            *made_progress = RT_TRUE;
+        }
+
+        return FEE_E_OK;
+    }
+
+    return FEE_E_OK;
 }
 
 fee_ret_t fee_sched_submit_read(uint16_t block_id, uint16_t offset, uint8_t *dst, uint16_t len)
@@ -207,8 +265,8 @@ fee_ret_t fee_sched_submit_rollback(uint16_t block_id)
 
 void fee_sched_mainfunction(void)
 {
-    fee_sched_slot_t slot;
     fee_ret_t ret;
+    rt_bool_t dispatched = RT_FALSE;
     rt_bool_t has_work = RT_FALSE;
 
     if (g_fee_ctx.init_state == FEE_INIT_FAILED)
@@ -229,23 +287,32 @@ void fee_sched_mainfunction(void)
         return;
     }
 
-    if (fee_sched_queue_pop(&g_fee_sched_urgent[0], FEE_CFG_MAX_PENDING_REQUESTS, &slot) == RT_FALSE)
+    g_fee_ctx.status = FEE_STATUS_BUSY_INTERNAL;
+    g_fee_ctx.job_result = FEE_JOB_PENDING;
+
+    ret = fee_sched_try_dispatch_queue(&g_fee_sched_urgent[0], FEE_CFG_MAX_PENDING_REQUESTS, &dispatched);
+    if (ret != FEE_E_OK)
     {
-        if (fee_sched_queue_pop(&g_fee_sched_normal[0], FEE_CFG_MAX_PENDING_REQUESTS, &slot) == RT_FALSE)
+        g_fee_ctx.job_result = FEE_JOB_FAILED;
+        g_fee_ctx.status = FEE_STATUS_BUSY_INTERNAL;
+        return;
+    }
+
+    if (dispatched == RT_FALSE)
+    {
+        ret = fee_sched_try_dispatch_queue(&g_fee_sched_normal[0], FEE_CFG_MAX_PENDING_REQUESTS, &dispatched);
+        if (ret != FEE_E_OK)
         {
+            g_fee_ctx.job_result = FEE_JOB_FAILED;
+            g_fee_ctx.status = FEE_STATUS_BUSY_INTERNAL;
             return;
         }
     }
 
-    g_fee_ctx.status = FEE_STATUS_BUSY_INTERNAL;
-    g_fee_ctx.job_result = FEE_JOB_PENDING;
-
-    ret = fee_sched_dispatch_one(&slot);
     has_work = fee_sched_has_pending_work();
-
-    if (ret != FEE_E_OK)
+    if (dispatched == RT_FALSE)
     {
-        g_fee_ctx.job_result = FEE_JOB_FAILED;
+        g_fee_ctx.job_result = (has_work != RT_FALSE) ? FEE_JOB_PENDING : FEE_JOB_OK;
         g_fee_ctx.status = (has_work != RT_FALSE) ? FEE_STATUS_BUSY_INTERNAL : FEE_STATUS_IDLE;
         return;
     }

@@ -55,6 +55,14 @@ typedef struct
 #define FEE_CFG_FAST_SINGLE_RECORD_LIMIT    (512U)
 #define FEE_CFG_MAX_PENDING_REQUESTS        (8U)
 #define FEE_CFG_MAX_BLOCK_LEN               (1024U)
+#define FEE_CFG_META_SECTOR_COUNT           (2U)
+#define FEE_CFG_FAST_SECTOR_COUNT           (3U)
+#define FEE_CFG_NORMAL_SECTOR_COUNT         (3U)
+#define FEE_CFG_BULK_SECTOR_COUNT           (2U)
+#define FEE_CFG_MAX_LANE_SECTOR_COUNT       (3U)
+#define FEE_CFG_TOTAL_SECTOR_COUNT          \
+    (FEE_CFG_META_SECTOR_COUNT + FEE_CFG_FAST_SECTOR_COUNT + \
+     FEE_CFG_NORMAL_SECTOR_COUNT + FEE_CFG_BULK_SECTOR_COUNT)
 #define FEE_CFG_CKPT_BG_RECORDS_FAST        (1U)
 #define FEE_CFG_CKPT_BG_RECORDS_NORMAL      (2U)
 #define FEE_CFG_CKPT_BG_RECORDS_BULK        (1U)
@@ -74,5 +82,7 @@ uint16_t fee_cfg_get_block_count(void);
 fee_ret_t fee_cfg_validate_table(void);
 rt_bool_t fee_cfg_is_boot_critical(uint16_t block_id);
 uint32_t fee_cfg_get_lane_max_span(uint8_t lane);
+uint8_t fee_cfg_get_lane_sector_count(uint8_t lane);
+uint32_t fee_cfg_get_total_sector_count(void);
 
 #endif

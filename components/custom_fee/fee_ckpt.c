@@ -54,7 +54,7 @@ static fee_ret_t fee_ckpt_get_layout(uint32_t *meta0_base, uint32_t *meta1_base)
         return ret;
     }
 
-    if (caps.total_size < (caps.erase_unit * 8U))
+    if (caps.total_size < (caps.erase_unit * fee_cfg_get_total_sector_count()))
     {
         return FEE_E_NOT_OK;
     }
@@ -178,6 +178,8 @@ fee_ret_t fee_ckpt_restore(void)
     g_fee_ctx.lane[FEE_LANE_NORMAL].free_offset = selected->payload.normal_free_offset;
     g_fee_ctx.lane[FEE_LANE_BULK].free_offset = selected->payload.bulk_free_offset;
     g_fee_ctx.checkpoint_dirty = 0U;
+    g_fee_ctx.checkpoint_requested = 0U;
+    g_fee_ctx.checkpoint_force = 0U;
 
     return FEE_E_OK;
 }
@@ -224,6 +226,8 @@ fee_ret_t fee_ckpt_flush(void)
     g_fee_ckpt_active_base = target_base;
     g_fee_ctx.checkpoint_generation = image.generation;
     g_fee_ctx.checkpoint_dirty = 0U;
+    g_fee_ctx.checkpoint_requested = 0U;
+    g_fee_ctx.checkpoint_force = 0U;
     fee_ckpt_reset_dirty_accounting();
 
     return FEE_E_OK;
