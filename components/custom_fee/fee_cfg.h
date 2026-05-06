@@ -2,6 +2,7 @@
 #define CUSTOM_FEE_CFG_H
 
 #include <stdint.h>
+#include "fee_api.h"
 
 typedef enum
 {
@@ -53,40 +54,12 @@ typedef struct
 #define FEE_CFG_WORDLINE_SIZE               (512U)
 #define FEE_CFG_FAST_SINGLE_RECORD_LIMIT    (512U)
 #define FEE_CFG_MAX_PENDING_REQUESTS        (8U)
-#define FEE_CFG_DEFAULT_MAX_LEN             (512U)
+#define FEE_CFG_MAX_BLOCK_LEN               (1024U)
 
-static inline const fee_block_cfg_t *fee_cfg_find_block(uint16_t block_id)
-{
-    static const fee_block_cfg_t default_cfg =
-    {
-        1U,
-        FEE_CFG_DEFAULT_MAX_LEN,
-        FEE_BLOCK_NORMAL,
-        FEE_LANE_NORMAL,
-        FEE_ENDURANCE_WARM,
-        1U,
-        1U,
-        FEE_CRC32,
-        FEE_CFG_ALIGN_UNIT,
-        0U
-    };
-
-    if (block_id == 0U)
-    {
-        return (const fee_block_cfg_t *)0;
-    }
-
-    return &default_cfg;
-}
-
-static inline const fee_block_cfg_t *fee_cfg_get_block_table(void)
-{
-    return fee_cfg_find_block(1U);
-}
-
-static inline uint16_t fee_cfg_get_block_count(void)
-{
-    return 1U;
-}
+const fee_block_cfg_t *fee_cfg_find_block(uint16_t block_id);
+const fee_block_cfg_t *fee_cfg_get_block_table(void);
+uint16_t fee_cfg_get_block_count(void);
+fee_ret_t fee_cfg_validate_table(void);
+rt_bool_t fee_cfg_is_boot_critical(uint16_t block_id);
 
 #endif

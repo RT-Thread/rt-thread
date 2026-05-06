@@ -32,6 +32,10 @@ typedef struct
     uint8_t gc_state;
     uint8_t gc_requested;
     uint8_t gc_force;
+    uint32_t base_addr;
+    uint32_t data_start;
+    uint32_t limit_addr;
+    uint32_t scan_start;
     uint32_t free_offset;
     uint32_t gc_start_threshold;
     uint32_t gc_force_threshold;

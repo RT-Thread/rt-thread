@@ -36,7 +36,8 @@ fee_ret_t fee_init(void)
         return ret;
     }
 
-    while ((g_fee_ctx.init_state != FEE_INIT_FULL_READY) &&
+    while ((g_fee_ctx.init_state != FEE_INIT_CKPT_READY) &&
+           (g_fee_ctx.init_state != FEE_INIT_FULL_READY) &&
            (g_fee_ctx.init_state != FEE_INIT_FAILED))
     {
         ret = fee_recovery_step();
@@ -101,7 +102,8 @@ fee_ret_t fee_invalidate(uint16_t block_id)
 
 fee_ret_t fee_get_status(uint16_t block_id, fee_block_status_t *status)
 {
-    (void)block_id;
+    const fee_block_cfg_t *cfg;
+    fee_cache_entry_t *entry;
 
     if (status == RT_NULL)
     {
@@ -113,7 +115,37 @@ fee_ret_t fee_get_status(uint16_t block_id, fee_block_status_t *status)
         return FEE_E_UNINIT;
     }
 
-    *status = FEE_BLOCK_STATUS_EMPTY;
+    cfg = fee_cfg_find_block(block_id);
+    if (cfg == RT_NULL)
+    {
+        return FEE_E_PARAM;
+    }
+
+    if (!fee_recovery_can_read_block(block_id))
+    {
+        return FEE_E_BUSY;
+    }
+
+    entry = fee_cache_lookup(block_id);
+    if (entry == RT_NULL)
+    {
+        *status = FEE_BLOCK_STATUS_EMPTY;
+        return FEE_E_OK;
+    }
+
+    if (entry->cur_valid != 0U)
+    {
+        *status = FEE_BLOCK_STATUS_VALID;
+    }
+    else if (entry->prev_valid != 0U)
+    {
+        *status = FEE_BLOCK_STATUS_INVALIDATED;
+    }
+    else
+    {
+        *status = FEE_BLOCK_STATUS_EMPTY;
+    }
+
     return FEE_E_OK;
 }
 

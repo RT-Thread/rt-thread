@@ -7,8 +7,17 @@ static fee_ret_t fee_core_read_header(uint32_t addr, fee_record_header_t *header
 
 static fee_ret_t fee_core_read_tail(uint32_t addr, uint16_t data_len, fee_commit_tail_t *tail)
 {
-    uint32_t stored_len = fee_onflash_align_up((uint32_t)data_len, FEE_CFG_ALIGN_UNIT);
-    uint32_t tail_addr = addr + (uint32_t)sizeof(fee_record_header_t) + stored_len;
+    fee_flash_caps_t caps;
+    uint32_t stored_len;
+    uint32_t tail_addr;
+
+    if (fee_port_get_caps(&caps) != FEE_E_OK)
+    {
+        return FEE_E_NOT_OK;
+    }
+
+    stored_len = fee_onflash_align_up((uint32_t)data_len, caps.program_unit);
+    tail_addr = addr + (uint32_t)sizeof(fee_record_header_t) + stored_len;
 
     return fee_port_read(tail_addr, (uint8_t *)tail, (uint32_t)sizeof(*tail));
 }
@@ -26,7 +35,8 @@ static fee_ret_t fee_core_append_record(uint16_t block_id, const uint8_t *src, u
     fee_flash_caps_t caps;
     fee_record_header_t header;
     fee_commit_tail_t tail;
-    uint8_t padded_buf[FEE_CFG_DEFAULT_MAX_LEN + FEE_CFG_ALIGN_UNIT];
+    uint8_t padded_buf[FEE_CFG_MAX_BLOCK_LEN + FEE_CFG_ALIGN_UNIT];
+    fee_lane_ctx_t *lane_ctx;
     uint32_t addr;
     uint32_t next_addr;
     uint32_t seq;
@@ -49,13 +59,25 @@ static fee_ret_t fee_core_append_record(uint16_t block_id, const uint8_t *src, u
         return FEE_E_NOT_OK;
     }
 
-    addr = g_fee_ctx.lane[lane].free_offset;
+    if (lane >= FEE_LANE_COUNT)
+    {
+        return FEE_E_PARAM;
+    }
+
+    lane_ctx = &g_fee_ctx.lane[lane];
+    if ((lane_ctx->free_offset == FEE_INVALID_ADDR) ||
+        (lane_ctx->data_start == 0U) || (lane_ctx->limit_addr <= lane_ctx->data_start))
+    {
+        return FEE_E_NOT_OK;
+    }
+
+    addr = lane_ctx->free_offset;
     entry = fee_cache_lookup(block_id);
     seq = (entry == RT_NULL) ? 1U : (entry->seq + 1U);
     next_addr = addr + fee_core_record_next_addr(cfg, len);
     stored_len = fee_onflash_align_up((uint32_t)len, caps.program_unit);
 
-    if (next_addr > caps.total_size)
+    if ((stored_len > sizeof(padded_buf)) || (next_addr > lane_ctx->limit_addr))
     {
         return FEE_E_BUSY;
     }
@@ -96,9 +118,9 @@ static fee_ret_t fee_core_append_record(uint16_t block_id, const uint8_t *src, u
         return ret;
     }
 
-    g_fee_ctx.lane[lane].free_offset = next_addr;
-    g_fee_ctx.lane[lane].dirty_record_count++;
-    g_fee_ctx.lane[lane].dirty_bytes += (next_addr - addr);
+    lane_ctx->free_offset = next_addr;
+    lane_ctx->dirty_record_count++;
+    lane_ctx->dirty_bytes += (next_addr - addr);
     g_fee_ctx.checkpoint_dirty = 1U;
 
     if (out_addr != RT_NULL)
@@ -160,6 +182,14 @@ void fee_core_reset_context(void)
 
 fee_ret_t fee_core_init(void)
 {
+    fee_ret_t ret;
+
+    ret = fee_cfg_validate_table();
+    if (ret != FEE_E_OK)
+    {
+        return ret;
+    }
+
     fee_cache_init();
     fee_ckpt_init();
     fee_lane_fast_init();
@@ -171,6 +201,9 @@ fee_ret_t fee_core_init(void)
     g_fee_ctx.lane[FEE_LANE_FAST].free_offset = FEE_INVALID_ADDR;
     g_fee_ctx.lane[FEE_LANE_NORMAL].free_offset = FEE_INVALID_ADDR;
     g_fee_ctx.lane[FEE_LANE_BULK].free_offset = FEE_INVALID_ADDR;
+    g_fee_ctx.lane[FEE_LANE_FAST].scan_start = FEE_INVALID_ADDR;
+    g_fee_ctx.lane[FEE_LANE_NORMAL].scan_start = FEE_INVALID_ADDR;
+    g_fee_ctx.lane[FEE_LANE_BULK].scan_start = FEE_INVALID_ADDR;
 
     return fee_recovery_start();
 }
@@ -178,7 +211,14 @@ fee_ret_t fee_core_init(void)
 fee_ret_t fee_core_read(uint16_t block_id, uint16_t offset, uint8_t *dst, uint16_t len)
 {
     fee_cache_entry_t *entry;
+    const fee_block_cfg_t *cfg;
     fee_ret_t ret;
+
+    cfg = fee_cfg_find_block(block_id);
+    if (cfg == RT_NULL)
+    {
+        return FEE_E_PARAM;
+    }
 
     if (!fee_recovery_can_read_block(block_id))
     {
@@ -280,7 +320,7 @@ fee_ret_t fee_core_invalidate(uint16_t block_id)
 fee_ret_t fee_core_rollback(uint16_t block_id)
 {
     fee_cache_entry_t *entry;
-    uint8_t buffer[FEE_CFG_DEFAULT_MAX_LEN];
+    uint8_t buffer[FEE_CFG_MAX_BLOCK_LEN];
     fee_record_header_t prev_header;
     fee_ret_t ret;
 

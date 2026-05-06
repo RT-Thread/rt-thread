@@ -5,15 +5,22 @@
 
 typedef struct
 {
+    uint32_t fast_free_offset;
+    uint32_t normal_free_offset;
+    uint32_t bulk_free_offset;
+    uint32_t entry_count;
+    fee_ckpt_cache_entry_t entries[FEE_CKPT_ENTRY_MAX];
+} fee_ckpt_payload_t;
+
+typedef struct
+{
     uint32_t magic;
     uint32_t format_version;
     uint32_t generation;
-    uint32_t normal_free_offset;
-    uint32_t entry_count;
+    fee_ckpt_payload_t payload;
     uint32_t payload_crc;
     uint32_t commit_marker;
-    uint32_t reserved;
-    fee_ckpt_cache_entry_t entries[FEE_CKPT_ENTRY_MAX];
+    uint32_t reserved[4];
 } fee_ckpt_image_t;
 
 static uint32_t g_fee_ckpt_active_base = FEE_INVALID_ADDR;
@@ -36,7 +43,7 @@ static uint32_t fee_ckpt_crc32_accumulate(const uint8_t *data, uint32_t len)
     return crc;
 }
 
-static fee_ret_t fee_ckpt_get_layout(uint32_t *meta0_base, uint32_t *meta1_base, uint32_t *normal_base)
+static fee_ret_t fee_ckpt_get_layout(uint32_t *meta0_base, uint32_t *meta1_base)
 {
     fee_flash_caps_t caps;
     fee_ret_t ret;
@@ -47,7 +54,7 @@ static fee_ret_t fee_ckpt_get_layout(uint32_t *meta0_base, uint32_t *meta1_base,
         return ret;
     }
 
-    if (caps.total_size < (caps.erase_unit * 3U))
+    if (caps.total_size < (caps.erase_unit * 5U))
     {
         return FEE_E_NOT_OK;
     }
@@ -62,18 +69,13 @@ static fee_ret_t fee_ckpt_get_layout(uint32_t *meta0_base, uint32_t *meta1_base,
         *meta1_base = caps.erase_unit;
     }
 
-    if (normal_base != RT_NULL)
-    {
-        *normal_base = caps.erase_unit * 2U;
-    }
-
     return FEE_E_OK;
 }
 
 static uint32_t fee_ckpt_payload_crc(const fee_ckpt_image_t *image)
 {
-    return fee_ckpt_crc32_accumulate((const uint8_t *)&image->entries[0],
-        (uint32_t)sizeof(image->entries));
+    return fee_ckpt_crc32_accumulate((const uint8_t *)&image->payload,
+        (uint32_t)sizeof(image->payload));
 }
 
 static rt_bool_t fee_ckpt_is_valid(const fee_ckpt_image_t *image)
@@ -90,7 +92,7 @@ static rt_bool_t fee_ckpt_is_valid(const fee_ckpt_image_t *image)
         return RT_FALSE;
     }
 
-    if (image->entry_count > FEE_CKPT_ENTRY_MAX)
+    if (image->payload.entry_count > FEE_CKPT_ENTRY_MAX)
     {
         return RT_FALSE;
     }
@@ -112,7 +114,7 @@ fee_ret_t fee_ckpt_restore(void)
     uint32_t meta1_base;
     fee_ret_t ret;
 
-    ret = fee_ckpt_get_layout(&meta0_base, &meta1_base, RT_NULL);
+    ret = fee_ckpt_get_layout(&meta0_base, &meta1_base);
     if (ret != FEE_E_OK)
     {
         return ret;
@@ -159,9 +161,11 @@ fee_ret_t fee_ckpt_restore(void)
         return FEE_E_NOT_OK;
     }
 
-    fee_cache_import_ckpt(&selected->entries[0], (uint16_t)selected->entry_count);
+    fee_cache_import_ckpt(&selected->payload.entries[0], (uint16_t)selected->payload.entry_count);
     g_fee_ctx.checkpoint_generation = selected->generation;
-    g_fee_ctx.lane[FEE_LANE_NORMAL].free_offset = selected->normal_free_offset;
+    g_fee_ctx.lane[FEE_LANE_FAST].free_offset = selected->payload.fast_free_offset;
+    g_fee_ctx.lane[FEE_LANE_NORMAL].free_offset = selected->payload.normal_free_offset;
+    g_fee_ctx.lane[FEE_LANE_BULK].free_offset = selected->payload.bulk_free_offset;
     g_fee_ctx.checkpoint_dirty = 0U;
 
     return FEE_E_OK;
@@ -175,7 +179,7 @@ fee_ret_t fee_ckpt_flush(void)
     uint32_t target_base;
     fee_ret_t ret;
 
-    ret = fee_ckpt_get_layout(&meta0_base, &meta1_base, RT_NULL);
+    ret = fee_ckpt_get_layout(&meta0_base, &meta1_base);
     if (ret != FEE_E_OK)
     {
         return ret;
@@ -187,8 +191,10 @@ fee_ret_t fee_ckpt_flush(void)
     image.magic = FEE_CKPT_MAGIC;
     image.format_version = FEE_CFG_FORMAT_VERSION;
     image.generation = g_fee_ctx.checkpoint_generation + 1U;
-    image.normal_free_offset = g_fee_ctx.lane[FEE_LANE_NORMAL].free_offset;
-    image.entry_count = fee_cache_export_ckpt(&image.entries[0], FEE_CKPT_ENTRY_MAX);
+    image.payload.fast_free_offset = g_fee_ctx.lane[FEE_LANE_FAST].free_offset;
+    image.payload.normal_free_offset = g_fee_ctx.lane[FEE_LANE_NORMAL].free_offset;
+    image.payload.bulk_free_offset = g_fee_ctx.lane[FEE_LANE_BULK].free_offset;
+    image.payload.entry_count = fee_cache_export_ckpt(&image.payload.entries[0], FEE_CKPT_ENTRY_MAX);
     image.payload_crc = fee_ckpt_payload_crc(&image);
     image.commit_marker = FEE_COMMIT_MARKER;
 

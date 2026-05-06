@@ -176,8 +176,15 @@ void fee_cache_import_ckpt(const fee_ckpt_cache_entry_t *entries, uint16_t entry
 
     for (idx = 0U; (idx < entry_count) && (idx < FEE_CACHE_MAX_ENTRIES); ++idx)
     {
-        fee_cache_slot_t *slot = fee_cache_alloc_slot((uint16_t)entries[idx].block_id);
+        const fee_block_cfg_t *cfg = fee_cfg_find_block((uint16_t)entries[idx].block_id);
+        fee_cache_slot_t *slot;
 
+        if ((cfg == RT_NULL) || (cfg->lane_type != (uint8_t)entries[idx].lane))
+        {
+            continue;
+        }
+
+        slot = fee_cache_alloc_slot((uint16_t)entries[idx].block_id);
         if (slot == RT_NULL)
         {
             break;
