@@ -120,6 +120,26 @@ void fee_cache_update_tombstone(uint16_t block_id, uint8_t lane, uint32_t addr, 
     slot->entry.seq = seq;
 }
 
+void fee_cache_relocate_address(uint16_t block_id, uint32_t old_addr, uint32_t new_addr)
+{
+    fee_cache_slot_t *slot = fee_cache_find_slot(block_id);
+
+    if ((slot == RT_NULL) || (old_addr == FEE_INVALID_ADDR) || (new_addr == FEE_INVALID_ADDR))
+    {
+        return;
+    }
+
+    if (slot->entry.cur_addr == old_addr)
+    {
+        slot->entry.cur_addr = new_addr;
+    }
+
+    if (slot->entry.prev_addr == old_addr)
+    {
+        slot->entry.prev_addr = new_addr;
+    }
+}
+
 uint16_t fee_cache_export_ckpt(fee_ckpt_cache_entry_t *entries, uint16_t max_entries)
 {
     uint16_t count = 0U;

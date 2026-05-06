@@ -27,6 +27,35 @@ static uint32_t fee_core_record_next_addr(const fee_block_cfg_t *cfg, uint16_t d
     return fee_onflash_calc_record_span(cfg, data_len);
 }
 
+static void fee_core_update_gc_request(uint8_t lane)
+{
+    fee_lane_ctx_t *lane_ctx;
+    uint32_t remaining_bytes;
+
+    if (lane != (uint8_t)FEE_LANE_NORMAL)
+    {
+        return;
+    }
+
+    lane_ctx = &g_fee_ctx.lane[lane];
+    if ((lane_ctx->sector_count < 2U) || (lane_ctx->limit_addr <= lane_ctx->free_offset))
+    {
+        return;
+    }
+
+    remaining_bytes = lane_ctx->limit_addr - lane_ctx->free_offset;
+
+    if ((lane_ctx->gc_start_threshold != 0U) && (remaining_bytes <= lane_ctx->gc_start_threshold))
+    {
+        lane_ctx->gc_requested = 1U;
+    }
+
+    if ((lane_ctx->gc_force_threshold != 0U) && (remaining_bytes <= lane_ctx->gc_force_threshold))
+    {
+        lane_ctx->gc_force = 1U;
+    }
+}
+
 static uint32_t fee_core_ckpt_record_threshold(uint8_t lane, rt_bool_t force_flush)
 {
     if (lane == (uint8_t)FEE_LANE_FAST)
@@ -185,15 +214,35 @@ static fee_ret_t fee_core_append_record(uint16_t block_id, const uint8_t *src, u
     }
 
     addr = lane_ctx->free_offset;
-    entry = fee_cache_lookup(block_id);
-    seq = (entry == RT_NULL) ? 1U : (entry->seq + 1U);
-    next_addr = addr + fee_core_record_next_addr(cfg, len);
     stored_len = fee_onflash_align_up((uint32_t)len, caps.program_unit);
 
-    if ((stored_len > sizeof(padded_buf)) || (next_addr > lane_ctx->limit_addr))
+    if (stored_len > sizeof(padded_buf))
     {
-        return FEE_E_BUSY;
+        return FEE_E_PARAM;
     }
+
+    next_addr = addr + fee_core_record_next_addr(cfg, len);
+    if (next_addr > lane_ctx->limit_addr)
+    {
+        if (lane == (uint8_t)FEE_LANE_NORMAL)
+        {
+            lane_ctx->gc_requested = 1U;
+            lane_ctx->gc_force = 1U;
+            if (fee_gc_reclaim_sync(lane) == FEE_E_OK)
+            {
+                addr = lane_ctx->free_offset;
+                next_addr = addr + fee_core_record_next_addr(cfg, len);
+            }
+        }
+
+        if (next_addr > lane_ctx->limit_addr)
+        {
+            return FEE_E_BUSY;
+        }
+    }
+
+    entry = fee_cache_lookup(block_id);
+    seq = (entry == RT_NULL) ? 1U : (entry->seq + 1U);
 
     ret = fee_onflash_encode_record_header(&header, block_id, record_type, len, seq);
     if (ret != FEE_E_OK)
@@ -235,6 +284,7 @@ static fee_ret_t fee_core_append_record(uint16_t block_id, const uint8_t *src, u
     lane_ctx->dirty_record_count++;
     lane_ctx->dirty_bytes += (next_addr - addr);
     g_fee_ctx.checkpoint_dirty = 1U;
+    fee_core_update_gc_request(lane);
 
     if (out_addr != RT_NULL)
     {

@@ -142,3 +142,28 @@ rt_bool_t fee_cfg_is_boot_critical(uint16_t block_id)
 
     return (cfg->boot_critical != 0U) ? RT_TRUE : RT_FALSE;
 }
+
+uint32_t fee_cfg_get_lane_max_span(uint8_t lane)
+{
+    uint32_t max_span = 0U;
+    uint16_t idx;
+
+    for (idx = 0U; idx < fee_cfg_get_block_count(); ++idx)
+    {
+        const fee_block_cfg_t *cfg = &g_fee_block_table[idx];
+        uint32_t span;
+
+        if (cfg->lane_type != lane)
+        {
+            continue;
+        }
+
+        span = fee_onflash_calc_record_span(cfg, cfg->max_len);
+        if (span > max_span)
+        {
+            max_span = span;
+        }
+    }
+
+    return max_span;
+}

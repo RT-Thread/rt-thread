@@ -73,5 +73,6 @@ const fee_block_cfg_t *fee_cfg_get_block_table(void);
 uint16_t fee_cfg_get_block_count(void);
 fee_ret_t fee_cfg_validate_table(void);
 rt_bool_t fee_cfg_is_boot_critical(uint16_t block_id);
+uint32_t fee_cfg_get_lane_max_span(uint8_t lane);
 
 #endif

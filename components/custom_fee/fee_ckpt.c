@@ -54,7 +54,7 @@ static fee_ret_t fee_ckpt_get_layout(uint32_t *meta0_base, uint32_t *meta1_base)
         return ret;
     }
 
-    if (caps.total_size < (caps.erase_unit * 5U))
+    if (caps.total_size < (caps.erase_unit * 6U))
     {
         return FEE_E_NOT_OK;
     }

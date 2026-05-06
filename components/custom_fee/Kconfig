@@ -18,6 +18,6 @@ endchoice
 
 config CUSTOM_FEE_MOCK_FLASH_SIZE
     hex "RAM mock flash size"
-    default 0x50000
+    default 0x60000
 
 endif
