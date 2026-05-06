@@ -2661,6 +2661,12 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
         }
     }
 
+    if(mb->entry >= RT_MB_ENTRY_MAX)
+    {
+        rt_spin_unlock_irqrestore(&(mb->spinlock), level);
+        return -RT_EFULL; /* value overflowed */
+    }
+
     /* set ptr */
     mb->msg_pool[mb->in_offset] = value;
     /* increase input offset */
@@ -2668,16 +2674,8 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
     if (mb->in_offset >= mb->size)
         mb->in_offset = 0;
 
-    if(mb->entry < RT_MB_ENTRY_MAX)
-    {
-        /* increase message entry */
-        mb->entry ++;
-    }
-    else
-    {
-        rt_spin_unlock_irqrestore(&(mb->spinlock), level);
-        return -RT_EFULL; /* value overflowed */
-    }
+    /* increase message entry */
+    mb->entry ++;
 
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
@@ -3503,6 +3501,16 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
 
     /* disable interrupt */
     level = rt_spin_lock_irqsave(&(mq->spinlock));
+
+    if(mq->entry >= RT_MQ_ENTRY_MAX)
+    {
+        /* return message to free list */
+        msg->next = (struct rt_mq_message *)mq->msg_queue_free;
+        mq->msg_queue_free = msg;
+        rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+        return -RT_EFULL; /* value overflowed */
+    }
+
 #ifdef RT_USING_MESSAGEQUEUE_PRIORITY
     msg->prio = prio;
     if (mq->msg_queue_head == RT_NULL)
@@ -3544,16 +3552,8 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         mq->msg_queue_head = msg;
 #endif
 
-    if(mq->entry < RT_MQ_ENTRY_MAX)
-    {
-        /* increase message entry */
-        mq->entry ++;
-    }
-    else
-    {
-        rt_spin_unlock_irqrestore(&(mq->spinlock), level);
-        return -RT_EFULL; /* value overflowed */
-    }
+    /* increase message entry */
+    mq->entry ++;
 
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
@@ -3694,6 +3694,15 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
 
     level = rt_spin_lock_irqsave(&(mq->spinlock));
 
+    if(mq->entry >= RT_MQ_ENTRY_MAX)
+    {
+        /* return message to free list */
+        msg->next = (struct rt_mq_message *)mq->msg_queue_free;
+        mq->msg_queue_free = msg;
+        rt_spin_unlock_irqrestore(&(mq->spinlock), level);
+        return -RT_EFULL; /* value overflowed */
+    }
+
     /* link msg to the beginning of message queue */
     msg->next = (struct rt_mq_message *)mq->msg_queue_head;
     mq->msg_queue_head = msg;
@@ -3702,16 +3711,8 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     if (mq->msg_queue_tail == RT_NULL)
         mq->msg_queue_tail = msg;
 
-    if(mq->entry < RT_MQ_ENTRY_MAX)
-    {
-        /* increase message entry */
-        mq->entry ++;
-    }
-    else
-    {
-        rt_spin_unlock_irqrestore(&(mq->spinlock), level);
-        return -RT_EFULL; /* value overflowed */
-    }
+    /* increase message entry */
+    mq->entry ++;
 
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
