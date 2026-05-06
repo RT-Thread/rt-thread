@@ -369,6 +369,45 @@ static fee_ret_t fee_recovery_open_all_lanes(void)
     return FEE_E_OK;
 }
 
+static rt_bool_t fee_recovery_has_valid_current_copy(uint16_t block_id)
+{
+    fee_cache_entry_t *entry = fee_cache_lookup(block_id);
+
+    if (entry == RT_NULL)
+    {
+        return RT_FALSE;
+    }
+
+    if ((entry->cur_valid == 0U) || (entry->cur_addr == FEE_INVALID_ADDR))
+    {
+        return RT_FALSE;
+    }
+
+    return RT_TRUE;
+}
+
+static rt_bool_t fee_recovery_boot_critical_ready(void)
+{
+    const fee_block_cfg_t *table = fee_cfg_get_block_table();
+    uint16_t count = fee_cfg_get_block_count();
+    uint16_t idx;
+
+    for (idx = 0U; idx < count; ++idx)
+    {
+        if (table[idx].boot_critical == 0U)
+        {
+            continue;
+        }
+
+        if (fee_recovery_has_valid_current_copy(table[idx].block_id) == RT_FALSE)
+        {
+            return RT_FALSE;
+        }
+    }
+
+    return RT_TRUE;
+}
+
 static fee_ret_t fee_recovery_scan_lane_records(uint8_t lane)
 {
     fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
@@ -466,11 +505,15 @@ fee_ret_t fee_recovery_start(void)
 fee_ret_t fee_recovery_step(void)
 {
     fee_ret_t ret;
+    rt_bool_t ckpt_restored = RT_FALSE;
 
     if (g_fee_ctx.init_state == FEE_INIT_META_SCAN)
     {
         ret = fee_ckpt_restore();
-        (void)ret;
+        if (ret == FEE_E_OK)
+        {
+            ckpt_restored = RT_TRUE;
+        }
 
         ret = fee_recovery_open_all_lanes();
         if (ret != FEE_E_OK)
@@ -479,7 +522,15 @@ fee_ret_t fee_recovery_step(void)
             return ret;
         }
 
-        g_fee_ctx.init_state = FEE_INIT_CKPT_READY;
+        if ((ckpt_restored != RT_FALSE) && (fee_recovery_boot_critical_ready() != RT_FALSE))
+        {
+            g_fee_ctx.init_state = FEE_INIT_CKPT_READY;
+        }
+        else
+        {
+            g_fee_ctx.init_state = FEE_INIT_TAIL_SCAN;
+        }
+
         return FEE_E_OK;
     }
 
@@ -539,9 +590,19 @@ rt_bool_t fee_recovery_can_read_block(uint16_t block_id)
         return RT_TRUE;
     }
 
-    if ((g_fee_ctx.init_state == FEE_INIT_CKPT_READY) || (g_fee_ctx.init_state == FEE_INIT_TAIL_SCAN))
+    if (g_fee_ctx.init_state == FEE_INIT_CKPT_READY)
     {
-        return fee_cfg_is_boot_critical(block_id);
+        if (fee_cfg_is_boot_critical(block_id) == RT_FALSE)
+        {
+            return RT_FALSE;
+        }
+
+        return fee_recovery_has_valid_current_copy(block_id);
+    }
+
+    if (g_fee_ctx.init_state == FEE_INIT_TAIL_SCAN)
+    {
+        return fee_recovery_has_valid_current_copy(block_id);
     }
 
     return RT_FALSE;
