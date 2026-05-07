@@ -12,6 +12,13 @@
 #include "utest.h"
 #include <interrupt.h>
 
+#ifdef RT_USING_PIC
+#include <drivers/pic.h>
+
+#define rt_hw_interrupt_get_priority rt_pic_irq_get_priority
+#define rt_hw_interrupt_set_priority rt_pic_irq_set_priority
+#endif
+
 /**
  * @brief   Setting the Interrupt Priority Test.
  *
