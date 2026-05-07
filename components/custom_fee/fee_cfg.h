@@ -75,6 +75,7 @@ typedef struct
 #define FEE_CFG_CKPT_FORCE_BYTES_FAST       (FEE_CFG_FAST_SINGLE_RECORD_LIMIT)
 #define FEE_CFG_CKPT_FORCE_BYTES_NORMAL     (2048U)
 #define FEE_CFG_CKPT_FORCE_BYTES_BULK       (2048U)
+#define FEE_CFG_RECOVERY_TAIL_RECORDS_PER_STEP  (4U)
 
 const fee_block_cfg_t *fee_cfg_find_block(uint16_t block_id);
 const fee_block_cfg_t *fee_cfg_get_block_table(void);

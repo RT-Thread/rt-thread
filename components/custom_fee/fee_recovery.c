@@ -429,7 +429,7 @@ static rt_bool_t fee_recovery_boot_critical_ready(void)
     return RT_TRUE;
 }
 
-static fee_ret_t fee_recovery_scan_lane_records(uint8_t lane)
+static fee_ret_t fee_recovery_scan_lane_records(uint8_t lane, rt_bool_t *lane_done)
 {
     fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
     fee_record_header_t header;
@@ -438,16 +438,30 @@ static fee_ret_t fee_recovery_scan_lane_records(uint8_t lane)
     uint32_t addr;
     uint32_t start_addr;
     uint32_t next_addr;
+    uint32_t step_records;
     uint32_t scanned_records;
     uint32_t tail_addr;
     fee_ret_t ret;
 
+    if (lane_done == RT_NULL)
+    {
+        return FEE_E_PARAM;
+    }
+
     addr = lane_ctx->scan_start;
     start_addr = addr;
+    step_records = 0U;
     scanned_records = 0U;
+    *lane_done = RT_TRUE;
 
     while ((addr + (uint32_t)sizeof(header) + (uint32_t)sizeof(tail)) <= lane_ctx->limit_addr)
     {
+        if (step_records >= FEE_CFG_RECOVERY_TAIL_RECORDS_PER_STEP)
+        {
+            *lane_done = RT_FALSE;
+            break;
+        }
+
         ret = fee_port_read(addr, (uint8_t *)&header, (uint32_t)sizeof(header));
         if (ret != FEE_E_OK)
         {
@@ -495,6 +509,7 @@ static fee_ret_t fee_recovery_scan_lane_records(uint8_t lane)
         }
 
         addr = next_addr;
+        ++step_records;
         ++scanned_records;
     }
 
@@ -579,6 +594,8 @@ fee_ret_t fee_recovery_step(void)
 
     if (g_fee_ctx.init_state == FEE_INIT_TAIL_SCAN)
     {
+        rt_bool_t lane_done = RT_FALSE;
+
         while ((g_fee_tail_scan_lane < (uint8_t)FEE_LANE_COUNT) &&
                (fee_recovery_is_business_lane(g_fee_tail_scan_lane) == RT_FALSE))
         {
@@ -593,14 +610,17 @@ fee_ret_t fee_recovery_step(void)
             return FEE_E_OK;
         }
 
-        ret = fee_recovery_scan_lane_records(g_fee_tail_scan_lane);
+        ret = fee_recovery_scan_lane_records(g_fee_tail_scan_lane, &lane_done);
         if (ret != FEE_E_OK)
         {
             g_fee_ctx.init_state = FEE_INIT_FAILED;
             return ret;
         }
 
-        ++g_fee_tail_scan_lane;
+        if (lane_done != RT_FALSE)
+        {
+            ++g_fee_tail_scan_lane;
+        }
 
         if (g_fee_tail_scan_lane >= (uint8_t)FEE_LANE_COUNT)
         {
