@@ -15,6 +15,24 @@ typedef struct
 static fee_cache_slot_t g_fee_cache[FEE_CACHE_MAX_ENTRIES];
 static uint16_t g_fee_cache_index[FEE_CACHE_INDEX_SIZE];
 
+static rt_bool_t fee_cache_addr_in_lane(uint8_t lane, uint32_t addr)
+{
+    const fee_lane_ctx_t *lane_ctx;
+
+    if ((lane >= (uint8_t)FEE_LANE_COUNT) || (addr == FEE_INVALID_ADDR))
+    {
+        return RT_FALSE;
+    }
+
+    lane_ctx = &g_fee_ctx.lane[lane];
+    if ((addr < lane_ctx->range_base) || (addr >= lane_ctx->range_limit))
+    {
+        return RT_FALSE;
+    }
+
+    return RT_TRUE;
+}
+
 static uint32_t fee_cache_hash_block_id(uint16_t block_id)
 {
     return ((uint32_t)block_id % FEE_CACHE_INDEX_SIZE);
@@ -250,8 +268,18 @@ void fee_cache_import_ckpt(const fee_ckpt_cache_entry_t *entries, uint16_t entry
     {
         const fee_block_cfg_t *cfg = fee_cfg_find_block((uint16_t)entries[idx].block_id);
         fee_cache_slot_t *slot;
+        uint8_t lane = (uint8_t)entries[idx].lane;
 
-        if ((cfg == RT_NULL) || (cfg->lane_type != (uint8_t)entries[idx].lane))
+        if ((cfg == RT_NULL) || (cfg->lane_type != lane) ||
+            ((entries[idx].cur_addr != FEE_INVALID_ADDR) &&
+             (fee_cache_addr_in_lane(lane, entries[idx].cur_addr) == RT_FALSE)) ||
+            ((entries[idx].prev_addr != FEE_INVALID_ADDR) &&
+             (fee_cache_addr_in_lane(lane, entries[idx].prev_addr) == RT_FALSE)) ||
+            (((entries[idx].flags & FEE_CKPT_FLAG_PREV_VALID) != 0UL) &&
+             (entries[idx].prev_addr == FEE_INVALID_ADDR)) ||
+            (((entries[idx].flags & FEE_CKPT_FLAG_CUR_VALID) != 0UL) &&
+             (entries[idx].cur_addr == FEE_INVALID_ADDR)) ||
+            ((entries[idx].prev_addr != FEE_INVALID_ADDR) && (entries[idx].prev_addr == entries[idx].cur_addr)))
         {
             continue;
         }

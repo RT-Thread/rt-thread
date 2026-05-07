@@ -136,6 +136,7 @@ void fee_cache_import_ckpt(const fee_ckpt_cache_entry_t *entries, uint16_t entry
 void fee_ckpt_init(void);
 fee_ret_t fee_ckpt_restore(void);
 fee_ret_t fee_ckpt_flush(void);
+rt_bool_t fee_ckpt_has_restored_image(void);
 void fee_lane_fast_init(void);
 void fee_lane_log_init(void);
 void fee_lane_bulk_init(void);

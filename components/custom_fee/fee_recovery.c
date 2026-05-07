@@ -15,6 +15,12 @@ static rt_bool_t fee_recovery_is_business_lane(uint8_t lane)
     return RT_FALSE;
 }
 
+static void fee_recovery_mark_checkpoint_stale(void)
+{
+    g_fee_ctx.checkpoint_dirty = 1U;
+    g_fee_ctx.checkpoint_requested = 1U;
+}
+
 static uint32_t fee_recovery_sector_data_start(uint32_t sector_base)
 {
     return sector_base + fee_onflash_align_up((uint32_t)sizeof(fee_sector_header_t), g_fee_caps.program_unit);
@@ -230,8 +236,15 @@ static fee_ret_t fee_recovery_open_single_sector_lane(uint8_t lane)
         lane_ctx->free_offset = fee_recovery_sector_data_start(sector_base);
         lane_ctx->scan_start = lane_ctx->free_offset;
         fee_recovery_select_active_sector(lane, 0U, 0U, 0U, 1U);
-        g_fee_ctx.checkpoint_dirty = 1U;
+        fee_recovery_mark_checkpoint_stale();
         return FEE_E_OK;
+    }
+
+    if ((fee_ckpt_has_restored_image() != RT_FALSE) &&
+        ((lane_ctx->active_sector != 0U) || (lane_ctx->dst_sector != 0U) || (lane_ctx->spare_sector != 0U) ||
+         (lane_ctx->active_generation != header.generation)))
+    {
+        fee_recovery_mark_checkpoint_stale();
     }
 
     fee_recovery_select_active_sector(lane, 0U, 0U, 0U, header.generation);
@@ -246,6 +259,10 @@ static fee_ret_t fee_recovery_open_multi_sector_lane(uint8_t lane)
     uint8_t idx;
     uint8_t selected_active = 0xFFU;
     uint8_t selected_gc_dst = 0xFFU;
+    uint8_t ckpt_active = lane_ctx->active_sector;
+    uint8_t ckpt_dst = lane_ctx->dst_sector;
+    uint8_t ckpt_spare = lane_ctx->spare_sector;
+    uint32_t ckpt_generation = lane_ctx->active_generation;
     uint8_t active_sector;
     uint8_t dst_sector;
     uint8_t spare_sector;
@@ -308,7 +325,7 @@ static fee_ret_t fee_recovery_open_multi_sector_lane(uint8_t lane)
         dst_sector = (lane_ctx->sector_count > 1U) ? 1U : 0U;
         spare_sector = (lane_ctx->sector_count > 2U) ? 2U : dst_sector;
         fee_recovery_select_active_sector(lane, 0U, dst_sector, spare_sector, 1U);
-        g_fee_ctx.checkpoint_dirty = 1U;
+        fee_recovery_mark_checkpoint_stale();
         return FEE_E_OK;
     }
 
@@ -324,6 +341,13 @@ static fee_ret_t fee_recovery_open_multi_sector_lane(uint8_t lane)
     if (spare_sector == active_sector)
     {
         spare_sector = dst_sector;
+    }
+
+    if ((fee_ckpt_has_restored_image() != RT_FALSE) &&
+        ((ckpt_active != active_sector) || (ckpt_dst != dst_sector) ||
+         (ckpt_spare != spare_sector) || (ckpt_generation != headers[active_sector].generation)))
+    {
+        fee_recovery_mark_checkpoint_stale();
     }
 
     fee_recovery_select_active_sector(lane, active_sector, dst_sector, spare_sector,
