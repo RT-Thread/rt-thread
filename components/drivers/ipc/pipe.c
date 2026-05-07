@@ -190,6 +190,11 @@ static int pipe_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 
     pipe = (rt_pipe_t *)fd->vnode->data;
 
+    if (args == RT_NULL)
+    {
+        return -EINVAL;
+    }
+
     switch ((rt_ubase_t)cmd)
     {
     case FIONREAD:
