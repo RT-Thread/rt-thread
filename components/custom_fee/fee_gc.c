@@ -41,16 +41,14 @@ static fee_ret_t fee_gc_write_sector_header(uint8_t lane, uint8_t sector_idx, ui
     fee_sector_header_t header;
     fee_lane_ctx_t *lane_ctx = &g_fee_ctx.lane[lane];
     uint32_t sector_base = fee_gc_sector_base(lane_ctx, caps, sector_idx);
+    fee_ret_t ret;
 
-    (void)memset(&header, 0, sizeof(header));
-    header.magic = FEE_SECTOR_MAGIC;
-    header.format_version = FEE_CFG_FORMAT_VERSION;
-    header.lane_id = lane;
-    header.state = state;
-    header.generation = generation;
-    header.data_start = fee_gc_sector_data_start(sector_base, caps);
-    header.data_end = sector_base + caps->erase_unit;
-    header.commit_marker = FEE_COMMIT_MARKER;
+    ret = fee_onflash_encode_sector_header(&header, lane, state, generation,
+        fee_gc_sector_data_start(sector_base, caps), sector_base + caps->erase_unit);
+    if (ret != FEE_E_OK)
+    {
+        return ret;
+    }
 
     if ((erase_first != RT_FALSE) && (fee_port_erase(sector_base, caps->erase_unit) != FEE_E_OK))
     {
@@ -82,7 +80,7 @@ static fee_ret_t fee_gc_copy_record(uint32_t src_addr, uint32_t dst_addr, uint32
         return ret;
     }
 
-    if ((header.magic != FEE_RECORD_MAGIC) || (cfg == RT_NULL))
+    if ((cfg == RT_NULL) || (fee_onflash_validate_record_header(&header, cfg) == RT_FALSE))
     {
         return FEE_E_NOT_OK;
     }
@@ -112,7 +110,8 @@ static fee_ret_t fee_gc_copy_record(uint32_t src_addr, uint32_t dst_addr, uint32
     }
 
     (void)memcpy(&tail, &buffer[tail_addr], sizeof(tail));
-    if (!fee_onflash_is_record_committed(&tail))
+    if ((fee_onflash_validate_commit_tail(&tail) == RT_FALSE) ||
+        (fee_onflash_validate_payload_crc(&tail, &buffer[sizeof(header)], header.data_len) == RT_FALSE))
     {
         return FEE_E_NOT_OK;
     }

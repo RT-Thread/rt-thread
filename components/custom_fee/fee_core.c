@@ -304,6 +304,8 @@ static fee_ret_t fee_core_read_payload(uint32_t addr, uint16_t offset, uint8_t *
 {
     fee_record_header_t header;
     fee_commit_tail_t tail;
+    const fee_block_cfg_t *cfg;
+    uint8_t verify_buf[FEE_CFG_MAX_BLOCK_LEN];
     fee_ret_t ret;
 
     ret = fee_core_read_header(addr, &header);
@@ -312,7 +314,10 @@ static fee_ret_t fee_core_read_payload(uint32_t addr, uint16_t offset, uint8_t *
         return ret;
     }
 
-    if ((header.magic != FEE_RECORD_MAGIC) || (header.record_type != FEE_RECORD_DATA))
+    cfg = fee_cfg_find_block(header.block_id);
+    if ((cfg == RT_NULL) ||
+        (fee_onflash_validate_record_header(&header, cfg) == RT_FALSE) ||
+        (header.record_type != (uint8_t)FEE_RECORD_DATA))
     {
         return FEE_E_NOT_OK;
     }
@@ -323,7 +328,7 @@ static fee_ret_t fee_core_read_payload(uint32_t addr, uint16_t offset, uint8_t *
         return ret;
     }
 
-    if (!fee_onflash_is_record_committed(&tail))
+    if (fee_onflash_validate_commit_tail(&tail) == RT_FALSE)
     {
         return FEE_E_NOT_OK;
     }
@@ -331,6 +336,37 @@ static fee_ret_t fee_core_read_payload(uint32_t addr, uint16_t offset, uint8_t *
     if (((uint32_t)offset + (uint32_t)len) > (uint32_t)header.data_len)
     {
         return FEE_E_PARAM;
+    }
+
+    if ((cfg->crc_mode != (uint8_t)FEE_CRC_NONE) && (header.data_len > 0U))
+    {
+        if (header.data_len > (uint16_t)sizeof(verify_buf))
+        {
+            return FEE_E_NOT_OK;
+        }
+
+        ret = fee_port_read(addr + (uint32_t)sizeof(header), &verify_buf[0], header.data_len);
+        if (ret != FEE_E_OK)
+        {
+            return ret;
+        }
+
+        if (fee_onflash_validate_payload_crc(&tail, &verify_buf[0], header.data_len) == RT_FALSE)
+        {
+            return FEE_E_NOT_OK;
+        }
+
+        if (len > 0U)
+        {
+            (void)memcpy(dst, &verify_buf[offset], len);
+        }
+
+        return FEE_E_OK;
+    }
+
+    if (len == 0U)
+    {
+        return FEE_E_OK;
     }
 
     return fee_port_read(addr + (uint32_t)sizeof(header) + (uint32_t)offset, dst, len);
@@ -466,6 +502,7 @@ fee_ret_t fee_core_invalidate(uint16_t block_id)
 fee_ret_t fee_core_rollback(uint16_t block_id)
 {
     fee_cache_entry_t *entry;
+    const fee_block_cfg_t *cfg;
     uint8_t buffer[FEE_CFG_MAX_BLOCK_LEN];
     fee_record_header_t prev_header;
     fee_ret_t ret;
@@ -481,13 +518,21 @@ fee_ret_t fee_core_rollback(uint16_t block_id)
         return FEE_E_NOT_OK;
     }
 
+    cfg = fee_cfg_find_block(block_id);
+    if (cfg == RT_NULL)
+    {
+        return FEE_E_PARAM;
+    }
+
     ret = fee_core_read_header(entry->prev_addr, &prev_header);
     if (ret != FEE_E_OK)
     {
         return ret;
     }
 
-    if (prev_header.data_len > (uint16_t)sizeof(buffer))
+    if ((fee_onflash_validate_record_header(&prev_header, cfg) == RT_FALSE) ||
+        (prev_header.record_type != (uint8_t)FEE_RECORD_DATA) ||
+        (prev_header.data_len > (uint16_t)sizeof(buffer)))
     {
         return FEE_E_NOT_OK;
     }

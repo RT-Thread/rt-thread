@@ -67,10 +67,15 @@ typedef struct
 
 uint32_t fee_onflash_align_up(uint32_t value, uint32_t align);
 uint32_t fee_onflash_calc_record_span(const fee_block_cfg_t *cfg, uint16_t data_len);
+fee_ret_t fee_onflash_encode_sector_header(fee_sector_header_t *header,
+    uint8_t lane_id, uint8_t state, uint32_t generation, uint32_t data_start, uint32_t data_end);
 fee_ret_t fee_onflash_encode_record_header(fee_record_header_t *header,
     uint16_t block_id, uint8_t record_type, uint16_t data_len, uint32_t seq);
 fee_ret_t fee_onflash_encode_commit_tail(fee_commit_tail_t *tail, const uint8_t *data, uint16_t len);
 rt_bool_t fee_onflash_is_record_committed(const fee_commit_tail_t *tail);
 rt_bool_t fee_onflash_validate_sector_header(const fee_sector_header_t *header);
+rt_bool_t fee_onflash_validate_record_header(const fee_record_header_t *header, const fee_block_cfg_t *cfg);
+rt_bool_t fee_onflash_validate_commit_tail(const fee_commit_tail_t *tail);
+rt_bool_t fee_onflash_validate_payload_crc(const fee_commit_tail_t *tail, const uint8_t *data, uint16_t len);
 
 #endif

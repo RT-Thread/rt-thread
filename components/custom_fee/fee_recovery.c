@@ -99,16 +99,13 @@ static fee_ret_t fee_recovery_format_lane_sector(uint8_t lane, uint8_t sector_id
     uint32_t sector_base = fee_recovery_lane_sector_base(lane, sector_idx);
     uint32_t data_start = fee_recovery_sector_data_start(sector_base);
     uint32_t data_end = sector_base + g_fee_caps.erase_unit;
+    fee_ret_t ret;
 
-    (void)memset(&header, 0, sizeof(header));
-    header.magic = FEE_SECTOR_MAGIC;
-    header.format_version = FEE_CFG_FORMAT_VERSION;
-    header.lane_id = lane;
-    header.state = state;
-    header.generation = generation;
-    header.data_start = data_start;
-    header.data_end = data_end;
-    header.commit_marker = FEE_COMMIT_MARKER;
+    ret = fee_onflash_encode_sector_header(&header, lane, state, generation, data_start, data_end);
+    if (ret != FEE_E_OK)
+    {
+        return ret;
+    }
 
     if ((erase_first != RT_FALSE) && (fee_port_erase(sector_base, g_fee_caps.erase_unit) != FEE_E_OK))
     {
@@ -435,9 +432,16 @@ static fee_ret_t fee_recovery_scan_lane_records(uint8_t lane)
         }
 
         cfg = fee_cfg_find_block(header.block_id);
-        if ((cfg == RT_NULL) || (cfg->lane_type != lane))
+        if ((cfg == RT_NULL) || (cfg->lane_type != lane) ||
+            (fee_onflash_validate_record_header(&header, cfg) == RT_FALSE))
         {
-            return FEE_E_NOT_OK;
+            break;
+        }
+
+        next_addr = addr + fee_onflash_calc_record_span(cfg, header.data_len);
+        if ((next_addr <= addr) || (next_addr > lane_ctx->limit_addr))
+        {
+            break;
         }
 
         tail_addr = addr + (uint32_t)sizeof(header) +
@@ -448,7 +452,7 @@ static fee_ret_t fee_recovery_scan_lane_records(uint8_t lane)
             return ret;
         }
 
-        if (!fee_onflash_is_record_committed(&tail))
+        if (fee_onflash_validate_commit_tail(&tail) == RT_FALSE)
         {
             break;
         }
@@ -460,12 +464,6 @@ static fee_ret_t fee_recovery_scan_lane_records(uint8_t lane)
         else if (header.record_type == FEE_RECORD_TOMBSTONE)
         {
             fee_cache_update_tombstone(header.block_id, cfg->lane_type, addr, header.seq);
-        }
-
-        next_addr = addr + fee_onflash_calc_record_span(cfg, header.data_len);
-        if (next_addr <= addr)
-        {
-            return FEE_E_NOT_OK;
         }
 
         addr = next_addr;
