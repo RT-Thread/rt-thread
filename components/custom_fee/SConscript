@@ -9,6 +9,7 @@ if not GetDepend("COMPONENT_USING_CUSTOM_FEE"):
 src = [
     'fee_cfg.c',
     'fee_api.c',
+    'fee_port.c',
     'fee_sched.c',
     'fee_core.c',
     'fee_gc.c',
@@ -21,9 +22,6 @@ src = [
     'fee_onflash.c',
     'fee_test.c',
 ]
-
-if GetDepend("CUSTOM_FEE_USING_RAM_MOCK") or GetDepend("CUSTOM_FEE_USING_FLS_PORT"):
-    src += ['fee_port_fls.c']
 
 CPPPATH = [cwd]
 group = DefineGroup('custom_fee', src, depend = ['COMPONENT_USING_CUSTOM_FEE'], CPPPATH = CPPPATH)

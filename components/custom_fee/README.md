@@ -6,9 +6,9 @@ Current scope:
 
 - public API and internal type definitions
 - on-flash helper interfaces
+- unified fee_port entry with overridable flash driver hooks
 - scheduler / recovery / GC / lane module skeletons
-- RAM mock flash backend
-- optional Fls_17_Dmu backend stub
+- default RAM-backed flash backend for bring-up and QEMU tests
 
 This is not a feature-complete implementation yet. It is intended to freeze module
 boundaries and enable incremental bring-up.

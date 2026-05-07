@@ -4,18 +4,6 @@ config COMPONENT_USING_CUSTOM_FEE
 
 if COMPONENT_USING_CUSTOM_FEE
 
-choice
-    prompt "custom fee port backend"
-    default CUSTOM_FEE_USING_RAM_MOCK
-
-config CUSTOM_FEE_USING_RAM_MOCK
-    bool "use RAM mock flash backend"
-
-config CUSTOM_FEE_USING_FLS_PORT
-    bool "use Fls_17_Dmu backend"
-
-endchoice
-
 config CUSTOM_FEE_MOCK_FLASH_SIZE
     hex "RAM mock flash size"
     default 0xA0000
