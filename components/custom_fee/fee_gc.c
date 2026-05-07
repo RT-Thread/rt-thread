@@ -3,6 +3,8 @@
 #define FEE_GC_PREV_VALID_FLAG      (0x02UL)
 #define FEE_GC_COPY_BUFFER_SIZE     (2048U)
 
+static uint8_t g_fee_gc_rr_next = (uint8_t)FEE_LANE_FAST;
+
 static rt_bool_t fee_gc_lane_supports_reclaim(uint8_t lane)
 {
     if ((lane > (uint8_t)FEE_LANE_META) &&
@@ -13,6 +15,55 @@ static rt_bool_t fee_gc_lane_supports_reclaim(uint8_t lane)
     }
 
     return RT_FALSE;
+}
+
+static uint8_t fee_gc_next_business_lane(uint8_t lane)
+{
+    if ((lane < (uint8_t)FEE_LANE_FAST) || (lane >= (uint8_t)FEE_LANE_BULK))
+    {
+        return (uint8_t)FEE_LANE_FAST;
+    }
+
+    return (uint8_t)(lane + 1U);
+}
+
+static uint8_t fee_gc_find_active_lane_rr(uint8_t start_lane)
+{
+    uint8_t lane = start_lane;
+    uint8_t count;
+
+    for (count = 0U; count < 3U; ++count)
+    {
+        if ((lane >= (uint8_t)FEE_LANE_FAST) &&
+            (lane <= (uint8_t)FEE_LANE_BULK) &&
+            (g_fee_ctx.lane[lane].gc_state != (uint8_t)FEE_GC_IDLE))
+        {
+            return lane;
+        }
+
+        lane = fee_gc_next_business_lane(lane);
+    }
+
+    return (uint8_t)FEE_LANE_COUNT;
+}
+
+static uint8_t fee_gc_find_requested_lane_rr(uint8_t start_lane)
+{
+    uint8_t lane = start_lane;
+    uint8_t count;
+
+    for (count = 0U; count < 3U; ++count)
+    {
+        if ((fee_gc_lane_supports_reclaim(lane) != RT_FALSE) &&
+            (g_fee_ctx.lane[lane].gc_requested != 0U))
+        {
+            return lane;
+        }
+
+        lane = fee_gc_next_business_lane(lane);
+    }
+
+    return (uint8_t)FEE_LANE_COUNT;
 }
 
 static rt_bool_t fee_gc_addr_in_sector(uint32_t sector_base, uint32_t sector_limit, uint32_t addr)
@@ -443,7 +494,6 @@ rt_bool_t fee_gc_allows_checkpoint(void)
 
 void fee_gc_mainfunction(void)
 {
-    uint8_t lane;
     uint8_t target_lane = (uint8_t)FEE_LANE_COUNT;
 
     if (fee_recovery_is_full_ready() == RT_FALSE)
@@ -451,17 +501,12 @@ void fee_gc_mainfunction(void)
         return;
     }
 
-    for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
-    {
-        if (g_fee_ctx.lane[lane].gc_state != (uint8_t)FEE_GC_IDLE)
-        {
-            target_lane = lane;
-            break;
-        }
-    }
+    target_lane = fee_gc_find_active_lane_rr(g_fee_gc_rr_next);
 
     if (target_lane == (uint8_t)FEE_LANE_COUNT)
     {
+        uint8_t lane;
+
         for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
         {
             if ((fee_gc_lane_supports_reclaim(lane) != RT_FALSE) &&
@@ -475,15 +520,7 @@ void fee_gc_mainfunction(void)
 
     if (target_lane == (uint8_t)FEE_LANE_COUNT)
     {
-        for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
-        {
-            if ((fee_gc_lane_supports_reclaim(lane) != RT_FALSE) &&
-                (g_fee_ctx.lane[lane].gc_requested != 0U))
-            {
-                target_lane = lane;
-                break;
-            }
-        }
+        target_lane = fee_gc_find_requested_lane_rr(g_fee_gc_rr_next);
     }
 
     if (target_lane < (uint8_t)FEE_LANE_COUNT)
@@ -491,6 +528,10 @@ void fee_gc_mainfunction(void)
         if (fee_gc_step_lane(target_lane) != FEE_E_OK)
         {
             g_fee_ctx.job_result = FEE_JOB_FAILED;
+        }
+        else
+        {
+            g_fee_gc_rr_next = fee_gc_next_business_lane(target_lane);
         }
     }
 }
