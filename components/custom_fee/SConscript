@@ -19,12 +19,10 @@ src = [
     'fee_lane_log.c',
     'fee_lane_bulk.c',
     'fee_onflash.c',
+    'fee_test.c',
 ]
 
-if GetDepend("CUSTOM_FEE_USING_RAM_MOCK"):
-    src += ['fee_port_mock_ram.c']
-
-if GetDepend("CUSTOM_FEE_USING_FLS_PORT"):
+if GetDepend("CUSTOM_FEE_USING_RAM_MOCK") or GetDepend("CUSTOM_FEE_USING_FLS_PORT"):
     src += ['fee_port_fls.c']
 
 CPPPATH = [cwd]
