@@ -10,6 +10,7 @@
  * 2024-12-10     zzk597    add support for STM32F1 series
  * 2024-06-23     wdfk-prog Add blocking modes and distinguish POLL,INT,DMA modes
  * 2024-06-23     wdfk-prog Distinguish STM32 I2C timing semantics by IP generation
+ * 2026-04-20     wdfk-prog Stabilize async completion and recovery flow
  */
 
 #include "drv_hard_i2c.h"
@@ -176,8 +177,8 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
     }
 #endif /* defined(BSP_I2C_TX_USING_DMA) */
 #if defined(BSP_I2C_USING_IRQ)
-    if ((i2c_drv->i2c_dma_flag & RT_DEVICE_FLAG_DMA_TX || i2c_drv->i2c_dma_flag & RT_DEVICE_FLAG_DMA_RX)
-    || (i2c_drv->i2c_dma_flag & RT_DEVICE_FLAG_INT_TX || i2c_drv->i2c_dma_flag & RT_DEVICE_FLAG_INT_RX))
+    if (((i2c_drv->i2c_dma_flag & RT_DEVICE_FLAG_DMA_TX) || (i2c_drv->i2c_dma_flag & RT_DEVICE_FLAG_DMA_RX))
+     || ((i2c_drv->i2c_dma_flag & RT_DEVICE_FLAG_INT_TX) || (i2c_drv->i2c_dma_flag & RT_DEVICE_FLAG_INT_RX)))
     {
         /* In the data transfer function stm32_i2c_master_xfer(), the IT transfer function
         HAL_I2C_Master_Seq_Transmit_IT() is used when DMA is not used, so the IT interrupt
@@ -185,6 +186,8 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
         the rt_completion_wait() will always timeout. */
         HAL_NVIC_SetPriority(i2c_drv->config->evirq_type, 2, 0);
         HAL_NVIC_EnableIRQ(i2c_drv->config->evirq_type);
+        HAL_NVIC_SetPriority(i2c_drv->config->erirq_type, 2, 0);
+        HAL_NVIC_EnableIRQ(i2c_drv->config->erirq_type);
     }
 #endif /* defined(BSP_I2C_USING_IRQ) */
 
@@ -205,7 +208,8 @@ static rt_err_t stm32_i2c_configure(struct rt_i2c_bus_device *bus)
  * @param handle Pointer to the HAL I2C handle.
  * @param msg Pointer to the RT-Thread I2C message descriptor.
  * @param mode HAL sequential transfer mode.
- * @param timeout Timeout in RT-Thread ticks for polling transfer.
+ * @param timeout Timeout in milliseconds for polling transfer.
+ * @param async_allowed RT_TRUE when the current context allows IRQ/DMA wait.
  * @param need_wait Output flag set to RT_TRUE when IT/DMA path is used.
  * @return HAL status returned by the selected HAL receive API.
  * @retval HAL_OK Transfer start succeeded.
@@ -216,6 +220,7 @@ static HAL_StatusTypeDef stm32_i2c_master_receive_start(struct stm32_i2c *i2c_ob
                                                         struct rt_i2c_msg *msg,
                                                         uint32_t mode,
                                                         rt_uint32_t timeout,
+                                                        rt_bool_t async_allowed,
                                                         rt_bool_t *need_wait)
 {
     RT_UNUSED(i2c_obj);
@@ -229,7 +234,7 @@ static HAL_StatusTypeDef stm32_i2c_master_receive_start(struct stm32_i2c *i2c_ob
     *need_wait = RT_FALSE;
 
 #if defined(BSP_I2C_RX_USING_DMA)
-    if ((i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_DMA_RX) && (msg->len >= DMA_TRANS_MIN_LEN))
+    if (async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_DMA_RX) && (msg->len >= DMA_TRANS_MIN_LEN))
     {
         *need_wait = RT_TRUE;
         return HAL_I2C_Master_Seq_Receive_DMA(handle, (msg->addr << 1), msg->buf, msg->len, mode);
@@ -237,7 +242,7 @@ static HAL_StatusTypeDef stm32_i2c_master_receive_start(struct stm32_i2c *i2c_ob
 #endif /* defined(BSP_I2C_RX_USING_DMA) */
 
 #if defined(BSP_I2C_RX_USING_INT)
-    if (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_INT_RX)
+    if (async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_INT_RX))
     {
         *need_wait = RT_TRUE;
         return HAL_I2C_Master_Seq_Receive_IT(handle, (msg->addr << 1), msg->buf, msg->len, mode);
@@ -257,7 +262,8 @@ static HAL_StatusTypeDef stm32_i2c_master_receive_start(struct stm32_i2c *i2c_ob
  * @param handle Pointer to the HAL I2C handle.
  * @param msg Pointer to the RT-Thread I2C message descriptor.
  * @param mode HAL sequential transfer mode.
- * @param timeout Timeout in RT-Thread ticks for polling transfer.
+ * @param timeout Timeout in milliseconds for polling transfer.
+ * @param async_allowed RT_TRUE when the current context allows IRQ/DMA wait.
  * @param need_wait Output flag set to RT_TRUE when IT/DMA path is used.
  * @return HAL status returned by the selected HAL transmit API.
  * @retval HAL_OK Transfer start succeeded.
@@ -268,6 +274,7 @@ static HAL_StatusTypeDef stm32_i2c_master_transmit_start(struct stm32_i2c *i2c_o
                                                          struct rt_i2c_msg *msg,
                                                          uint32_t mode,
                                                          rt_uint32_t timeout,
+                                                         rt_bool_t async_allowed,
                                                          rt_bool_t *need_wait)
 {
     RT_UNUSED(i2c_obj);
@@ -281,7 +288,7 @@ static HAL_StatusTypeDef stm32_i2c_master_transmit_start(struct stm32_i2c *i2c_o
     *need_wait = RT_FALSE;
 
 #if defined(BSP_I2C_TX_USING_DMA)
-    if ((i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_DMA_TX) && (msg->len >= DMA_TRANS_MIN_LEN))
+    if (async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_DMA_TX) && (msg->len >= DMA_TRANS_MIN_LEN))
     {
         *need_wait = RT_TRUE;
         return HAL_I2C_Master_Seq_Transmit_DMA(handle, (msg->addr << 1), msg->buf, msg->len, mode);
@@ -289,7 +296,7 @@ static HAL_StatusTypeDef stm32_i2c_master_transmit_start(struct stm32_i2c *i2c_o
 #endif /* defined(BSP_I2C_TX_USING_DMA) */
 
 #if defined(BSP_I2C_TX_USING_INT)
-    if (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_INT_TX)
+    if (async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_INT_TX))
     {
         *need_wait = RT_TRUE;
         return HAL_I2C_Master_Seq_Transmit_IT(handle, (msg->addr << 1), msg->buf, msg->len, mode);
@@ -386,7 +393,8 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     struct stm32_i2c *i2c_obj;
     rt_bool_t is_last = RT_FALSE;
     uint32_t mode = 0;
-    rt_uint32_t timeout;
+    rt_uint32_t timeout_ms;
+
     if (num == 0)
     {
         return 0;
@@ -398,6 +406,7 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     I2C_HandleTypeDef *handle = &i2c_obj->handle;
     RT_ASSERT(handle != RT_NULL);
 #if defined(BSP_I2C_USING_IRQ)
+    rt_bool_t need_abort = RT_FALSE;
     struct rt_completion *completion;
     completion = &i2c_obj->completion;
 #endif /* defined(BSP_I2C_USING_IRQ) */
@@ -405,32 +414,49 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     for (i = 0; i < num; i++)
     {
         rt_bool_t need_wait = RT_FALSE;
+        const rt_bool_t scheduler_available = rt_scheduler_is_available();
+        const rt_bool_t irq_disabled = rt_hw_interrupt_is_disabled();
+        const rt_bool_t async_allowed = (scheduler_available && !irq_disabled);
+
         msg = &msgs[i];
         is_last = (i == (num - 1));
         next_msg = is_last ? RT_NULL : &msgs[i + 1];
         mode = stm32_i2c_get_xfer_mode(i, msg, next_msg, is_last);
         LOG_D("xfer       msgs[%d] addr=0x%2x buf=0x%x len= 0x%x flags= 0x%x", i, msg->addr, msg->buf, msg->len, msg->flags);
 #if defined(STM32_I2C_TIMINGR_IP)
-        timeout = bus->timeout ? bus->timeout : 100U;
+        timeout_ms = bus->timeout ? (bus->timeout * 1000U + RT_TICK_PER_SECOND - 1U) / RT_TICK_PER_SECOND : 100U;
 #else
-        timeout = TIMEOUT_CALC(msg);
-#endif
+        timeout_ms = TIMEOUT_CALC(msg);
+#endif /* defined(STM32_I2C_TIMINGR_IP) */
+
+#if defined(BSP_I2C_USING_IRQ)
+        rt_tick_t timeout_tick = rt_tick_from_millisecond(timeout_ms);
+        rt_completion_init(completion);
+#endif /* defined(BSP_I2C_USING_IRQ) */
         if (msg->flags & RT_I2C_RD)
         {
             LOG_D("xfer  rec  msgs[%d] hal mode = %s", i, stm32_i2c_mode_name(mode));
-            ret = stm32_i2c_master_receive_start(i2c_obj, handle, msg, mode, timeout, &need_wait);
+            ret = stm32_i2c_master_receive_start(i2c_obj, handle, msg, mode, timeout_ms, async_allowed, &need_wait);
             if (ret != HAL_OK)
             {
-                LOG_E("I2C[%s] Read error(%d)!\n", bus->parent.parent.name, ret);
+                LOG_E("I2C[%s] Read error(%d)!", bus->parent.parent.name, ret);
                 goto out;
             }
 #if defined(BSP_I2C_USING_IRQ)
             if (need_wait)
             {
-                ret = rt_completion_wait(completion, timeout);
+                ret = rt_completion_wait(completion, timeout_tick);
                 if (ret != RT_EOK)
                 {
-                    LOG_W("I2C[%s] receive wait failed %d, timeout %d", bus->parent.parent.name, ret, timeout);
+                    need_abort = RT_TRUE;
+                    LOG_W("I2C[%s] receive wait failed %d, timeout %u ms", bus->parent.parent.name, ret, timeout_ms);
+                    goto out;
+                }
+
+                if (handle->ErrorCode != HAL_I2C_ERROR_NONE)
+                {
+                    need_abort = RT_TRUE;
+                    LOG_E("I2C[%s] receive failed, error code: 0x%08x", bus->parent.parent.name, handle->ErrorCode);
                     goto out;
                 }
             }
@@ -439,19 +465,27 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         else
         {
             LOG_D("xfer trans msgs[%d] hal mode = %s", i, stm32_i2c_mode_name(mode));
-            ret = stm32_i2c_master_transmit_start(i2c_obj, handle, msg, mode, timeout, &need_wait);
+            ret = stm32_i2c_master_transmit_start(i2c_obj, handle, msg, mode, timeout_ms, async_allowed, &need_wait);
             if (ret != HAL_OK)
             {
-                LOG_E("I2C[%s] Write error(%d)!\n", bus->parent.parent.name, ret);
+                LOG_E("I2C[%s] Write error(%d)!", bus->parent.parent.name, ret);
                 goto out;
             }
 #if defined(BSP_I2C_USING_IRQ)
             if (need_wait)
             {
-                ret = rt_completion_wait(completion, timeout);
+                ret = rt_completion_wait(completion, timeout_tick);
                 if (ret != RT_EOK)
                 {
-                    LOG_W("I2C[%s] transmit wait failed %d, timeout %d", bus->parent.parent.name, ret, timeout);
+                    need_abort = RT_TRUE;
+                    LOG_W("I2C[%s] transmit wait failed %d, timeout %u ms", bus->parent.parent.name, ret, timeout_ms);
+                    goto out;
+                }
+
+                if (handle->ErrorCode != HAL_I2C_ERROR_NONE)
+                {
+                    need_abort = RT_TRUE;
+                    LOG_E("I2C[%s] transmit failed, error code: 0x%08x", bus->parent.parent.name, handle->ErrorCode);
                     goto out;
                 }
             }
@@ -469,20 +503,20 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
 out:
     ret = i;
     /*
-    * On TIMINGR-based STM32 I2C IPs (currently F7/H7 in this driver),
-    * STOPI only enables STOP-event interrupt handling.
-    * It does not actively generate a STOP condition on the bus.
-    *
-    * For legacy STM32 I2C IPs, the HAL error handler already generates a
-    * STOP condition on AF in master/memory modes, so this driver does not
-    * manually issue another STOP in the AF path.
-    */
+     * On TIMINGR-based STM32 I2C IPs (currently F7/H7 in this driver),
+     * STOPI only enables STOP-event interrupt handling.
+     * It does not actively generate a STOP condition on the bus.
+     *
+     * For legacy STM32 I2C IPs, the HAL error handler already generates a
+     * STOP condition on AF in master/memory modes, so this driver does not
+     * manually issue another STOP in the AF path.
+     */
     if (handle->ErrorCode & HAL_I2C_ERROR_AF)
     {
         LOG_W("I2C[%s] NACK Error", bus->parent.parent.name);
 #if defined(STM32_I2C_TIMINGR_IP)
         handle->Instance->CR1 |= I2C_IT_STOPI;
-#endif  /* defined(STM32_I2C_TIMINGR_IP) */
+#endif /* defined(STM32_I2C_TIMINGR_IP) */
     }
     if (handle->ErrorCode & HAL_I2C_ERROR_BERR)
     {
@@ -491,8 +525,46 @@ out:
         handle->Instance->CR1 |= I2C_IT_STOPI;
 #else
         handle->Instance->CR1 |= I2C_CR1_STOP;
-#endif  /* defined(STM32_I2C_TIMINGR_IP) */
+#endif /* defined(STM32_I2C_TIMINGR_IP) */
     }
+#if defined(BSP_I2C_USING_IRQ)
+    if (need_abort && (msg != RT_NULL))
+    {
+        if (HAL_I2C_Master_Abort_IT(handle, (msg->addr << 1)) != HAL_OK)
+        {
+            LOG_W("I2C[%s] abort start failed, state: %d, error: 0x%08x",
+                  bus->parent.parent.name,
+                  handle->State,
+                  handle->ErrorCode);
+        }
+        else
+        {
+            rt_uint32_t timeout = timeout_ms;
+            const rt_bool_t scheduler_available = rt_scheduler_is_available();
+            const rt_bool_t irq_disabled = rt_hw_interrupt_is_disabled();
+
+            while (HAL_I2C_GetState(handle) != HAL_I2C_STATE_READY)
+            {
+                if (timeout-- > 0)
+                {
+                    if (scheduler_available && !irq_disabled)
+                    {
+                        rt_thread_mdelay(1);
+                    }
+                    else
+                    {
+                        rt_hw_us_delay(1000);
+                    }
+                }
+                else
+                {
+                    LOG_E("I2C[%s] timeout! state did not become READY after abort.", bus->parent.parent.name);
+                    break;
+                }
+            }
+        }
+    }
+#endif /* defined(BSP_I2C_USING_IRQ) */
 
     return ret;
 #undef TIMEOUT_FREQ_KHZ
@@ -690,27 +762,24 @@ void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c)
 
 void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 {
-    LOG_W("%s error code %d",   hi2c->Instance == I2C1 ? "I2C1"
-                                : hi2c->Instance == I2C2 ? "I2C2"
-                                : hi2c->Instance == I2C3 ? "I2C3"
-#ifdef I2C4
-                                : hi2c->Instance == I2C4 ? "I2C4"
-#endif /* I2C4 */
-                                : "unknown",
-                                hi2c->ErrorCode);
+    struct stm32_i2c *i2c_drv = rt_container_of(hi2c, struct stm32_i2c, handle);
+
+    LOG_W("%s error code 0x%08x", i2c_drv->config->name, hi2c->ErrorCode);
 #if defined(STM32_I2C_TIMINGR_IP)
-    /* Send stop signal to prevent bus lock-up */
-    if (hi2c->ErrorCode == HAL_I2C_ERROR_AF)
+    /*
+     * Trigger STOP handling immediately in IRQ context so the peripheral can
+     * leave the error state before the waiting thread starts its recovery path.
+     */
+    if (hi2c->ErrorCode & HAL_I2C_ERROR_AF)
     {
-        LOG_W("I2C NACK Error now stoped");
         hi2c->Instance->CR1 |= I2C_IT_STOPI;
     }
-    if (hi2c->ErrorCode == HAL_I2C_ERROR_BERR)
+    if (hi2c->ErrorCode & HAL_I2C_ERROR_BERR)
     {
-        LOG_W("I2C BUS Error now stoped");
         hi2c->Instance->CR1 |= I2C_IT_STOPI;
     }
 #endif /* defined(STM32_I2C_TIMINGR_IP) */
+    rt_completion_done(&i2c_drv->completion);
 }
 
 #ifdef BSP_USING_HARD_I2C1
