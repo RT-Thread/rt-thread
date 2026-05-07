@@ -266,7 +266,7 @@ dhcp_alloc_again:
     {
         return NULL;
     }
-    SMEMCPY(node->chaddr, msg->chaddr, msg->hlen);
+    SMEMCPY(node->chaddr, msg->chaddr, (msg->hlen > sizeof(node->chaddr)) ? sizeof(node->chaddr) : msg->hlen);
     node->ipaddr = dhcpserver->current;
 
     node->next = dhcpserver->node_list;
@@ -731,10 +731,10 @@ void dhcpd_start(const char *netif_name)
         }
         p = p + 1; /* move to xxx.xxx.xxx.^ */
 
-        sprintf(p, "%d", DHCPD_CLIENT_IP_MIN);
+        snprintf(p, (size_t)(str_tmp + sizeof(str_tmp) - p), "%d", DHCPD_CLIENT_IP_MIN);
         ip4addr_aton(str_tmp, &ip_start);
         DEBUG_PRINTF("ip_start: [%s]\r\n", str_tmp);
-        sprintf(p, "%d", DHCPD_CLIENT_IP_MAX);
+        snprintf(p, (size_t)(str_tmp + sizeof(str_tmp) - p), "%d", DHCPD_CLIENT_IP_MAX);
         ip4addr_aton(str_tmp, &ip_end);
         DEBUG_PRINTF("ip_end: [%s]\r\n", str_tmp);
 
