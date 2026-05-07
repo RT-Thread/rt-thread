@@ -455,10 +455,48 @@ static void fee_test_dump_hex_window(const char *label, const uint8_t *storage,
     }
 }
 
+static void fee_test_dump_record_raw(const uint8_t *storage, uint32_t flash_size,
+    uint32_t addr, const fee_record_header_t *record_header, uint32_t stored_len, uint32_t tail_addr)
+{
+    uint32_t payload_dump_len;
+
+    if ((storage == RT_NULL) || (record_header == RT_NULL))
+    {
+        return;
+    }
+
+    fee_test_dump_hex_window("record header raw", storage, flash_size, addr,
+        (uint32_t)sizeof(fee_record_header_t));
+
+    payload_dump_len = record_header->data_len;
+    if (payload_dump_len > 64U)
+    {
+        payload_dump_len = 64U;
+    }
+
+    if (payload_dump_len > 0U)
+    {
+        fee_test_dump_hex_window("record payload raw", storage, flash_size,
+            addr + (uint32_t)sizeof(fee_record_header_t), payload_dump_len);
+    }
+
+    if (stored_len > payload_dump_len)
+    {
+        rt_kprintf("custom_fee_diag_test: record padding bytes=%u\n",
+            (unsigned)(stored_len - payload_dump_len));
+    }
+
+    fee_test_dump_hex_window("record tail raw", storage, flash_size, tail_addr,
+        (uint32_t)sizeof(fee_commit_tail_t));
+}
+
 static void fee_test_dump_checkpoint_layout(const uint8_t *storage, uint32_t flash_size,
     const fee_flash_caps_t *caps)
 {
     uint32_t idx;
+    uint32_t active_meta_base = 0U;
+    uint32_t active_meta_generation = 0U;
+    rt_bool_t active_meta_found = RT_FALSE;
 
     if ((storage == RT_NULL) || (caps == RT_NULL))
     {
@@ -498,6 +536,13 @@ static void fee_test_dump_checkpoint_layout(const uint8_t *storage, uint32_t fla
 
         if (valid != RT_FALSE)
         {
+            if ((active_meta_found == RT_FALSE) || (image.generation >= active_meta_generation))
+            {
+                active_meta_base = base;
+                active_meta_generation = image.generation;
+                active_meta_found = RT_TRUE;
+            }
+
             for (lane = (uint8_t)FEE_LANE_FAST; lane <= (uint8_t)FEE_LANE_BULK; ++lane)
             {
                 const fee_test_ckpt_lane_state_t *state = &image.payload.lane[lane];
@@ -515,6 +560,11 @@ static void fee_test_dump_checkpoint_layout(const uint8_t *storage, uint32_t fla
             }
         }
 
+    }
+
+    if (active_meta_found != RT_FALSE)
+    {
+        fee_test_dump_hex_window("meta active raw", storage, flash_size, active_meta_base, 64U);
     }
 }
 
@@ -566,8 +616,23 @@ static void fee_test_dump_business_lane_layout(uint8_t lane, const uint8_t *stor
 
         if (!fee_onflash_validate_sector_header(&sector_header))
         {
-            rt_kprintf("custom_fee_diag_test:   sector=%u base=0x%08x raw/unknown\n",
-                (unsigned)sector_idx, (unsigned)sector_base);
+            if (sector_header.magic == FEE_SECTOR_MAGIC)
+            {
+                rt_kprintf(
+                    "custom_fee_diag_test:   sector=%u base=0x%08x header-valid=0 "
+                    "state=%s generation=%lu data=[0x%08x,0x%08x)\n",
+                    (unsigned)sector_idx,
+                    (unsigned)sector_base,
+                    fee_test_sector_state_name(sector_header.state),
+                    (unsigned long)sector_header.generation,
+                    (unsigned)sector_header.data_start,
+                    (unsigned)sector_header.data_end);
+            }
+            else
+            {
+                rt_kprintf("custom_fee_diag_test:   sector=%u base=0x%08x raw/unknown\n",
+                    (unsigned)sector_idx, (unsigned)sector_base);
+            }
             fee_test_dump_hex_window("sector raw", storage, flash_size, sector_base, 64U);
             continue;
         }
@@ -634,6 +699,11 @@ static void fee_test_dump_business_lane_layout(uint8_t lane, const uint8_t *stor
                     (unsigned)record_header.data_len,
                     (unsigned)committed,
                     (unsigned)record_header.prev_addr_hint);
+                if (record_count == 0U)
+                {
+                    fee_test_dump_record_raw(storage, flash_size, addr, &record_header,
+                        stored_len, tail_addr);
+                }
                 ++printed_records;
             }
 
@@ -963,8 +1033,18 @@ static int fee_test_run_gc_bench(uint8_t *fast_buf, uint16_t len, rt_bool_t verb
         fee_port_debug_stats_t stats;
         rt_bool_t stats_valid = RT_FALSE;
         uint32_t wait_loops = 0U;
+        uint8_t before_sector;
+        uint8_t after_sector;
+        uint32_t before_generation;
+        uint32_t after_generation;
+        uint32_t before_free_offset;
+        uint32_t after_free_offset;
+        rt_bool_t gc_switched;
 
         fee_test_fill_pattern(fast_buf, len, (uint8_t)(0x60U + idx));
+        before_sector = g_fee_ctx.lane[FEE_LANE_FAST].active_sector;
+        before_generation = g_fee_ctx.lane[FEE_LANE_FAST].active_generation;
+        before_free_offset = g_fee_ctx.lane[FEE_LANE_FAST].free_offset;
         (void)fee_port_debug_reset_stats();
         start = fee_test_stamp_now();
 
@@ -984,11 +1064,16 @@ static int fee_test_run_gc_bench(uint8_t *fast_buf, uint16_t len, rt_bool_t verb
         duration = fee_test_elapsed(start, end);
         total_ticks += duration.ticks;
         total_ms += duration.ms;
+        after_sector = g_fee_ctx.lane[FEE_LANE_FAST].active_sector;
+        after_generation = g_fee_ctx.lane[FEE_LANE_FAST].active_generation;
+        after_free_offset = g_fee_ctx.lane[FEE_LANE_FAST].free_offset;
+        gc_switched = ((after_sector != before_sector) || (after_generation != before_generation)) ?
+            RT_TRUE : RT_FALSE;
 
         if (verbose != RT_FALSE)
         {
             stats_valid = fee_test_fetch_debug_stats(&stats);
-            if ((stats_valid != RT_FALSE) && (stats.erase_calls > 0U))
+            if (gc_switched != RT_FALSE)
             {
                 ++gc_events;
                 gc_total_ticks += duration.ticks;
@@ -1003,11 +1088,19 @@ static int fee_test_run_gc_bench(uint8_t *fast_buf, uint16_t len, rt_bool_t verb
             {
                 rt_kprintf(
                     "custom_fee_diag_test: gc_write[%03u] time=%u ms ticks=%lu wait_loops=%u "
+                    "fast_lane[sector=%u->%u gen=%lu->%lu free=0x%08x->0x%08x gc=%u] "
                     "driver[read=%u/%uB write=%u/%uB erase=%u/%uB poll=%u]\n",
                     (unsigned)idx,
                     (unsigned)duration.ms,
                     (unsigned long)duration.ticks,
                     (unsigned)wait_loops,
+                    (unsigned)before_sector,
+                    (unsigned)after_sector,
+                    (unsigned long)before_generation,
+                    (unsigned long)after_generation,
+                    (unsigned)before_free_offset,
+                    (unsigned)after_free_offset,
+                    (unsigned)gc_switched,
                     (unsigned)stats.read_calls,
                     (unsigned)stats.read_bytes,
                     (unsigned)stats.write_calls,
@@ -1020,11 +1113,19 @@ static int fee_test_run_gc_bench(uint8_t *fast_buf, uint16_t len, rt_bool_t verb
             {
                 rt_kprintf(
                     "custom_fee_diag_test: gc_write[%03u] time=%u ms ticks=%lu wait_loops=%u "
+                    "fast_lane[sector=%u->%u gen=%lu->%lu free=0x%08x->0x%08x gc=%u] "
                     "driver[unavailable]\n",
                     (unsigned)idx,
                     (unsigned)duration.ms,
                     (unsigned long)duration.ticks,
-                    (unsigned)wait_loops);
+                    (unsigned)wait_loops,
+                    (unsigned)before_sector,
+                    (unsigned)after_sector,
+                    (unsigned long)before_generation,
+                    (unsigned long)after_generation,
+                    (unsigned)before_free_offset,
+                    (unsigned)after_free_offset,
+                    (unsigned)gc_switched);
             }
         }
     }
