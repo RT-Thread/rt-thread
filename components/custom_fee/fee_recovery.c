@@ -412,11 +412,15 @@ static fee_ret_t fee_recovery_scan_lane_records(uint8_t lane)
     fee_commit_tail_t tail;
     const fee_block_cfg_t *cfg;
     uint32_t addr;
+    uint32_t start_addr;
     uint32_t next_addr;
+    uint32_t scanned_records;
     uint32_t tail_addr;
     fee_ret_t ret;
 
     addr = lane_ctx->scan_start;
+    start_addr = addr;
+    scanned_records = 0U;
 
     while ((addr + (uint32_t)sizeof(header) + (uint32_t)sizeof(tail)) <= lane_ctx->limit_addr)
     {
@@ -467,10 +471,21 @@ static fee_ret_t fee_recovery_scan_lane_records(uint8_t lane)
         }
 
         addr = next_addr;
+        ++scanned_records;
     }
 
     lane_ctx->free_offset = addr;
     lane_ctx->scan_start = addr;
+
+    if (addr > start_addr)
+    {
+        /* Rebuild post-checkpoint tail accounting so the next boot remains bounded. */
+        lane_ctx->dirty_record_count += scanned_records;
+        lane_ctx->dirty_bytes += (addr - start_addr);
+        g_fee_ctx.checkpoint_dirty = 1U;
+        g_fee_ctx.checkpoint_requested = 1U;
+    }
+
     return FEE_E_OK;
 }
 
