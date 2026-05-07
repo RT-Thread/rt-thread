@@ -2,6 +2,8 @@
 
 #define FEE_CKPT_FLAG_CUR_VALID   (0x01UL)
 #define FEE_CKPT_FLAG_PREV_VALID  (0x02UL)
+#define FEE_CACHE_INDEX_SIZE      (64U)
+#define FEE_CACHE_INDEX_EMPTY     (0xFFFFU)
 
 typedef struct
 {
@@ -11,18 +13,62 @@ typedef struct
 } fee_cache_slot_t;
 
 static fee_cache_slot_t g_fee_cache[FEE_CACHE_MAX_ENTRIES];
+static uint16_t g_fee_cache_index[FEE_CACHE_INDEX_SIZE];
+
+static uint32_t fee_cache_hash_block_id(uint16_t block_id)
+{
+    return ((uint32_t)block_id % FEE_CACHE_INDEX_SIZE);
+}
+
+static rt_bool_t fee_cache_bind_slot(uint16_t block_id, uint16_t slot_idx)
+{
+    uint32_t probe;
+    uint32_t start;
+
+    probe = fee_cache_hash_block_id(block_id);
+    start = probe;
+
+    do
+    {
+        if ((g_fee_cache_index[probe] == FEE_CACHE_INDEX_EMPTY) ||
+            (g_fee_cache_index[probe] == slot_idx))
+        {
+            g_fee_cache_index[probe] = slot_idx;
+            return RT_TRUE;
+        }
+
+        probe = (probe + 1U) % FEE_CACHE_INDEX_SIZE;
+    } while (probe != start);
+
+    return RT_FALSE;
+}
 
 static fee_cache_slot_t *fee_cache_find_slot(uint16_t block_id)
 {
-    uint32_t idx;
+    uint32_t probe;
+    uint32_t start;
 
-    for (idx = 0U; idx < FEE_CACHE_MAX_ENTRIES; ++idx)
+    probe = fee_cache_hash_block_id(block_id);
+    start = probe;
+
+    do
     {
-        if ((g_fee_cache[idx].used != 0U) && (g_fee_cache[idx].block_id == block_id))
+        uint16_t slot_idx = g_fee_cache_index[probe];
+
+        if (slot_idx == FEE_CACHE_INDEX_EMPTY)
         {
-            return &g_fee_cache[idx];
+            return RT_NULL;
         }
-    }
+
+        if ((slot_idx < FEE_CACHE_MAX_ENTRIES) &&
+            (g_fee_cache[slot_idx].used != 0U) &&
+            (g_fee_cache[slot_idx].block_id == block_id))
+        {
+            return &g_fee_cache[slot_idx];
+        }
+
+        probe = (probe + 1U) % FEE_CACHE_INDEX_SIZE;
+    } while (probe != start);
 
     return RT_NULL;
 }
@@ -35,6 +81,11 @@ static fee_cache_slot_t *fee_cache_alloc_slot(uint16_t block_id)
     {
         if (g_fee_cache[idx].used == 0U)
         {
+            if (fee_cache_bind_slot(block_id, (uint16_t)idx) == RT_FALSE)
+            {
+                return RT_NULL;
+            }
+
             g_fee_cache[idx].used = 1U;
             g_fee_cache[idx].block_id = block_id;
             g_fee_cache[idx].entry.cur_addr = FEE_INVALID_ADDR;
@@ -49,6 +100,7 @@ static fee_cache_slot_t *fee_cache_alloc_slot(uint16_t block_id)
 void fee_cache_init(void)
 {
     (void)memset(g_fee_cache, 0, sizeof(g_fee_cache));
+    (void)memset(g_fee_cache_index, 0xFF, sizeof(g_fee_cache_index));
 }
 
 fee_cache_entry_t *fee_cache_lookup(uint16_t block_id)
