@@ -19,6 +19,8 @@ static fee_flash_caps_t g_fee_mock_caps =
 static fee_status_t g_fee_mock_status = FEE_STATUS_UNINIT;
 static fee_job_result_t g_fee_mock_job_result = FEE_JOB_NONE;
 static uint8_t g_fee_mock_initialized = 0U;
+static uint8_t g_fee_mock_debug_active = 0U;
+static fee_port_debug_stats_t g_fee_mock_stats;
 
 static fee_ret_t fee_port_check_range(uint32_t addr, uint32_t len)
 {
@@ -80,6 +82,21 @@ fee_job_result_t fee_port_get_job_result(void)
     return fee_flash_driver_get_job_result();
 }
 
+fee_ret_t fee_port_debug_reset_stats(void)
+{
+    return fee_flash_driver_debug_reset_stats();
+}
+
+fee_ret_t fee_port_debug_get_stats(fee_port_debug_stats_t *stats)
+{
+    return fee_flash_driver_debug_get_stats(stats);
+}
+
+fee_ret_t fee_port_debug_get_storage(const uint8_t **storage, uint32_t *size)
+{
+    return fee_flash_driver_debug_get_storage(storage, size);
+}
+
 rt_weak fee_ret_t fee_flash_driver_init(void)
 {
     if (g_fee_mock_initialized == 0U)
@@ -88,6 +105,8 @@ rt_weak fee_ret_t fee_flash_driver_init(void)
         g_fee_mock_initialized = 1U;
     }
 
+    g_fee_mock_debug_active = 1U;
+    g_fee_mock_stats.init_calls++;
     g_fee_mock_status = FEE_STATUS_IDLE;
     g_fee_mock_job_result = FEE_JOB_OK;
     return FEE_E_OK;
@@ -125,6 +144,9 @@ rt_weak fee_ret_t fee_flash_driver_read(uint32_t addr, uint8_t *dst, uint32_t le
         return ret;
     }
 
+    g_fee_mock_debug_active = 1U;
+    g_fee_mock_stats.read_calls++;
+    g_fee_mock_stats.read_bytes += len;
     g_fee_mock_status = FEE_STATUS_BUSY;
     (void)memcpy(dst, &g_fee_mock_flash[addr], len);
     g_fee_mock_status = FEE_STATUS_IDLE;
@@ -154,6 +176,9 @@ rt_weak fee_ret_t fee_flash_driver_write(uint32_t addr, const uint8_t *src, uint
         return ret;
     }
 
+    g_fee_mock_debug_active = 1U;
+    g_fee_mock_stats.write_calls++;
+    g_fee_mock_stats.write_bytes += len;
     g_fee_mock_status = FEE_STATUS_BUSY;
     {
         uint32_t idx;
@@ -190,6 +215,9 @@ rt_weak fee_ret_t fee_flash_driver_erase(uint32_t addr, uint32_t len)
         return ret;
     }
 
+    g_fee_mock_debug_active = 1U;
+    g_fee_mock_stats.erase_calls++;
+    g_fee_mock_stats.erase_bytes += len;
     g_fee_mock_status = FEE_STATUS_BUSY;
     (void)memset(&g_fee_mock_flash[addr], 0xFF, len);
     g_fee_mock_status = FEE_STATUS_IDLE;
@@ -200,6 +228,7 @@ rt_weak fee_ret_t fee_flash_driver_erase(uint32_t addr, uint32_t len)
 
 rt_weak void fee_flash_driver_mainfunction(void)
 {
+    g_fee_mock_stats.poll_calls++;
 }
 
 rt_weak fee_status_t fee_flash_driver_get_status(void)
@@ -210,4 +239,52 @@ rt_weak fee_status_t fee_flash_driver_get_status(void)
 rt_weak fee_job_result_t fee_flash_driver_get_job_result(void)
 {
     return g_fee_mock_job_result;
+}
+
+rt_weak fee_ret_t fee_flash_driver_debug_reset_stats(void)
+{
+    if (g_fee_mock_debug_active == 0U)
+    {
+        (void)memset(&g_fee_mock_stats, 0, sizeof(g_fee_mock_stats));
+        return FEE_E_NOT_OK;
+    }
+
+    (void)memset(&g_fee_mock_stats, 0, sizeof(g_fee_mock_stats));
+    return FEE_E_OK;
+}
+
+rt_weak fee_ret_t fee_flash_driver_debug_get_stats(fee_port_debug_stats_t *stats)
+{
+    if (stats == RT_NULL)
+    {
+        return FEE_E_PARAM;
+    }
+
+    if (g_fee_mock_debug_active == 0U)
+    {
+        (void)memset(stats, 0, sizeof(*stats));
+        return FEE_E_NOT_OK;
+    }
+
+    *stats = g_fee_mock_stats;
+    return FEE_E_OK;
+}
+
+rt_weak fee_ret_t fee_flash_driver_debug_get_storage(const uint8_t **storage, uint32_t *size)
+{
+    if ((storage == RT_NULL) || (size == RT_NULL))
+    {
+        return FEE_E_PARAM;
+    }
+
+    if (g_fee_mock_debug_active == 0U)
+    {
+        *storage = RT_NULL;
+        *size = 0U;
+        return FEE_E_NOT_OK;
+    }
+
+    *storage = &g_fee_mock_flash[0];
+    *size = (uint32_t)sizeof(g_fee_mock_flash);
+    return FEE_E_OK;
 }

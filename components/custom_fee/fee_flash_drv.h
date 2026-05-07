@@ -16,5 +16,8 @@ fee_ret_t fee_flash_driver_erase(uint32_t addr, uint32_t len);
 void fee_flash_driver_mainfunction(void);
 fee_status_t fee_flash_driver_get_status(void);
 fee_job_result_t fee_flash_driver_get_job_result(void);
+fee_ret_t fee_flash_driver_debug_reset_stats(void);
+fee_ret_t fee_flash_driver_debug_get_stats(fee_port_debug_stats_t *stats);
+fee_ret_t fee_flash_driver_debug_get_storage(const uint8_t **storage, uint32_t *size);
 
 #endif
