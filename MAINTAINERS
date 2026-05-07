@@ -66,10 +66,6 @@
 
 # Below are existing maintainer entries, divided by module:
 
-tag: bsp_cvitek
-path: bsp/cvitek
-owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
-
 tag: bsp_esp32_c3
 path: bsp/ESP32_C3/builtin_imgs
 path: bsp/ESP32_C3/drivers
@@ -90,10 +86,6 @@ owners: 蒙蒙plus(meng-plus)<chengmeng_2@outlook.com>
 tag: bsp_hc32
 path: bsp/hc32
 owners: Levi Zhang(levizh)<levizhangxl@gmail.com>
-
-tag: bsp_k230
-path: bsp/k230
-owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>
 
 tag: bsp_lpc4088
 path: bsp/nxp/lpc/lpc408x
@@ -219,7 +211,7 @@ owners: Liya Huang(wdfk-prog)<1425075683@qq.com>
 
 tag: documentation
 path: documentation
-owners: Chen Wang(unicornx)<unicorn_wang@outlook.com>, Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Xiansong Cao(CXSforHPU)<19511928573@163.com>
+owners: Guorui Li(GorrayLi)<liguorui1213@163.com>, Lian Wang(lianux-mm)<lianux.mm@gmail.com>, Xiansong Cao(CXSforHPU)<19511928573@163.com>
 
 tag: kernel
 path: src
