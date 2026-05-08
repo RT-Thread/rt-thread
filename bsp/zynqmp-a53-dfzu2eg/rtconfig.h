@@ -7,17 +7,6 @@
 
 /* rt_vsnprintf options */
 
-#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
-#define RT_KLIBC_USING_VSNPRINTF_STANDARD
-#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
-#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
-#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
-#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
-#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
-#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
-#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
-#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
-#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
 /* end of rt_vsnprintf options */
 
 /* rt_vsscanf options */
@@ -73,7 +62,8 @@
 /* end of rt_strnlen options */
 /* end of klibc options */
 #define RT_NAME_MAX 16
-#define RT_CPUS_NR 1
+#define RT_USING_SMP
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -84,9 +74,11 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 8192
+#define SYSTEM_THREAD_STACK_SIZE 8192
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
+#define RT_USING_CPU_USAGE_TRACER
 
 /* kservice options */
 
@@ -95,6 +87,7 @@
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_CRITICAL
 
 /* Inter-Thread communication */
 
@@ -122,7 +115,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -196,6 +190,7 @@
 
 /* Device Drivers */
 
+#define RT_USING_DM
 #define RT_USING_DEV_BUS
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
@@ -206,23 +201,37 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
+#define RT_USING_SERIAL_BYPASS
+#define RT_SERIAL_XILINX_PS
+#define RT_USING_CLOCK_TIME
+#define RT_CLOCK_TIME_ARM_ARCH
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
-#define RT_USING_PM
-#define PM_TICKLESS_THRESHOLD_TIME 2
 #define RT_USING_RTC
-#define RT_USING_SOFT_RTC
-#define RT_USING_VIRTIO
-#define RT_USING_VIRTIO10
-#define RT_USING_VIRTIO_MMIO_ALIGN
-#define RT_USING_VIRTIO_BLK
-#define RT_USING_VIRTIO_CONSOLE
-#define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
-#define RT_USING_VIRTIO_GPU
-#define RT_USING_VIRTIO_INPUT
-#define RT_USING_PIN
-#define RT_USING_KTIME
+#define RT_USING_ALARM
+#define RT_ALARM_STACK_SIZE 8192
+#define RT_ALARM_TIMESLICE 5
+#define RT_ALARM_PRIORITY 10
+#define RT_RTC_ZYNQMP
+#define RT_USING_RESET
+
+/* Power Management (PM) Domains device drivers */
+
+/* end of Power Management (PM) Domains device drivers */
+#define RT_USING_OFW
+#define RT_USING_BUILTIN_FDT
+#define RT_BUILTIN_FDT_PATH "zynqmp.dtb"
+#define RT_FDT_EARLYCON_MSG_SIZE 128
+#define RT_USING_OFW_BUS_RANGES_NUMBER 8
+#define RT_USING_PIC
+#define MAX_HANDLERS 256
+#define RT_PIC_ARM_GIC
+#define RT_PIC_ARM_GIC_MAX_NR 1
+#define RT_USING_CLK
+
+/* SoC (System on Chip) Drivers */
+
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -283,6 +292,8 @@
 
 #define RT_PAGE_AFFINITY_BLOCK_SIZE 0x1000
 #define RT_PAGE_MAX_ORDER 11
+#define RT_USING_MEMBLOCK
+#define RT_INIT_MEMORY_REGIONS 128
 
 /* Debugging */
 
@@ -499,14 +510,5 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define SOC_ZYNQMP_AARCH64
-
-/* Hardware Drivers Config */
-
-#define BSP_SUPPORT_FPU
-#define BSP_USING_UART
-#define BSP_USING_UART0
-#define BSP_USING_GIC
-#define BSP_USING_GICV2
-/* end of Hardware Drivers Config */
 
 #endif

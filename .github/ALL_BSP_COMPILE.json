@@ -392,7 +392,8 @@
         "qemu-virt64-aarch64",
         "raspberry-pi/raspi3-64",
         "raspberry-pi/raspi4-64",
-        "nxp/imx/imx91"
+        "nxp/imx/imx91",
+        "zynqmp-a53-dfzu2eg"
       ]
     },
     {
