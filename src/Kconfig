@@ -116,6 +116,12 @@ config RT_TICK_PER_SECOND
     help
         System's tick frequency, Hz.
 
+config RT_TICK_USING_64BIT
+    bool "Using 64-bit integer for rt_tick_t"
+    default n
+    help
+        Using long long as tick unit, this is useful when the tick frequency is very high or long running device.
+
 config RT_USING_OVERFLOW_CHECK
     bool "Using stack overflow checking"
     default y if RT_USING_DEBUG
