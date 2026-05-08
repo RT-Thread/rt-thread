@@ -7,7 +7,7 @@ RTT_DIR := ../../
 PKGS_DIR := packages
 
 source "$(RTT_DIR)/Kconfig"
-osource "$PKGS_DIR/Kconfig"
+osource "$(PKGS_DIR)/Kconfig"
 rsource "driver/Kconfig"
 
 config BOARD_QEMU_VIRT_RV64

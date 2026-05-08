@@ -1,0 +1,21 @@
+config PKG_USING_LVGL
+    bool "LVGL: powerful and easy-to-use embedded GUI library"
+    default n
+    help
+        LVGL is a free and open-source embedded graphic library.
+
+if PKG_USING_LVGL
+
+config PKG_LVGL_THREAD_STACK_SIZE
+    int "LVGL thread stack size"
+    default 8192
+
+config PKG_LVGL_THREAD_PRIO
+    int "LVGL thread priority"
+    default 10
+
+config PKG_LVGL_DISP_REFR_PERIOD
+    int "LVGL display refresh period (ms)"
+    default 33
+
+endif

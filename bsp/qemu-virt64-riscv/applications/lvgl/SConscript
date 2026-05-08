@@ -1,0 +1,16 @@
+from building import *
+import os
+
+cwd = GetCurrentDir()
+
+src = Glob('*.c')
+inc = [cwd]
+
+lvgl_root = cwd + '/../../packages/lvgl-latest'
+inc += [lvgl_root]
+inc += [lvgl_root + '/src']
+inc += [lvgl_root + '/env_support/rt-thread']
+
+group = DefineGroup('LVGL-app', src, depend = ['PKG_USING_LVGL'], CPPPATH = inc)
+
+Return('group')
