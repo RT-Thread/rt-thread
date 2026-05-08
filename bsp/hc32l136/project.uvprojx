@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--diag_suppress=186,66</MiscControls>
-              <Define>RT_USING_ARMLIBC, RT_USING_LIBC, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, HC32L136, USE_DDL_DRIVER, __DEBUG</Define>
+              <Define>__DEBUG, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, HC32L136, __STDC_LIMIT_MACROS, USE_DDL_DRIVER, __RTTHREAD__, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>board;..\..\libcpu\arm\cortex-m0;..\..\components\libc\posix\ipc;..\..\components\drivers\phy;drivers;..\..\components\finsh;..\..\components\drivers\smp_call;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\drivers\include;.;..\..\components\drivers\include;Libraries\CMSIS\Device\HDSC\HC32L136\Include;Libraries\CMSIS\Include;..\..\components\libc\posix\io\poll;applications;Libraries\HC32L136_StdPeriph_Driver\inc;..\..\components\libc\posix\io\epoll;..\..\components\libc\posix\io\eventfd;..\..\include;..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\components\net\utest;..\..\libcpu\arm\common;..\..\components\drivers\include;.;drivers;..\..\components\finsh;..\..\components\libc\compilers\common\extension;Libraries\CMSIS\Include;board;Libraries\CMSIS\Device\HDSC\HC32L136\Include;..\..\components\drivers\smp_call;..\..\libcpu\arm\cortex-m0;..\..\include;..\..\components\libc\posix\io\eventfd;..\..\components\libc\posix\io\poll;Libraries\HC32L136_StdPeriph_Driver\inc;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\libc\compilers\common\extension\fcntl\octal;applications;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\libc\compilers\common\include;..\..\components\drivers\phy;..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -388,61 +388,33 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cctype.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstdlib.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -705,6 +677,13 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\msh.c</FilePath>
@@ -722,13 +701,6 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\finsh\cmd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -750,51 +722,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lpuart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\lpuart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_hc32l136.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\ARM\startup_hc32l136.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>trim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\trim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ddl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\ddl.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>interrupts_hc32l136.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\interrupts_hc32l136.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_hc32l13x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\system_hc32l13x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timer3.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\timer3.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -806,6 +750,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>timer3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\timer3.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>trim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\trim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>flash.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\flash.c</FilePath>
@@ -813,16 +771,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>uart.c</FileName>
+              <FileName>ddl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\uart.c</FilePath>
+              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\ddl.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>lpuart.c</FileName>
+              <FileName>system_hc32l13x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\lpuart.c</FilePath>
+              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\system_hc32l13x.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>interrupts_hc32l136.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\interrupts_hc32l136.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_hc32l136.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\ARM\startup_hc32l136.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -1115,12 +1087,61 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1128,6 +1149,13 @@
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1149,37 +1177,6 @@
               <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libcpu</GroupName>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>

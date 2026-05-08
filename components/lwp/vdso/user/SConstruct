@@ -1,0 +1,102 @@
+import os
+import subprocess
+
+arch = ARGUMENTS.get('RTT_VDSO_ARCH') or os.getenv('RTT_VDSO_ARCH')
+user_dir = os.path.normpath(Dir('.').abspath)
+vdso_root = os.path.normpath(os.path.join(user_dir, '..'))
+
+arch_def_config = {
+    'aarch64': {
+        'prefix': 'aarch64-none-elf-',
+        'device': '-march=armv8-a -mtune=cortex-a53',
+        'linker': os.path.join(user_dir, 'arch', 'aarch64', 'vdso.lds.S'),
+    },
+    'arm': {
+        'prefix': 'arm-none-eabi-',
+        'device': '-march=armv7-a -marm',
+        'linker': os.path.join(user_dir, 'arch', 'arm', 'vdso.lds.S'),
+    },
+    'risc-v': {
+        'prefix': 'riscv64-none-elf-',
+        'device': '-march=rv64imafdc -mabi=lp64',
+        'linker': os.path.join(user_dir, 'arch', 'risc-v', 'vdso.lds.S'),
+    },
+}
+
+if arch not in arch_def_config:
+    raise RuntimeError('Unsupported vDSO arch: %s' % arch)
+
+exec_path = os.getenv('RTT_EXEC_PATH') or '/usr/bin'
+prefix = os.getenv('RTT_CC_PREFIX') or arch_def_config[arch]['prefix']
+device = os.getenv('RTT_DEVICE') or arch_def_config[arch]['device']
+linker_script_src = arch_def_config[arch]['linker']
+
+cc = prefix + 'gcc'
+cpp = prefix + 'cpp'
+ar = prefix + 'ar'
+
+common_dir = os.path.join(user_dir, 'common')
+arch_dir = os.path.join(user_dir, 'arch', arch)
+build_dir = os.path.join(user_dir, 'build', arch)
+os.makedirs(build_dir, exist_ok=True)
+linker_script = os.path.join(build_dir, 'vdso.lds')
+
+cflags = ' '.join([
+    device,
+    '-Wall',
+    '-Wextra',
+    '-Wno-unused-parameter',
+    '-Wno-cpp',
+    '-std=gnu99',
+    '-O2',
+    '-fPIC',
+    '-ffreestanding',
+    '-fno-builtin',
+    '-fvisibility=hidden',
+    '-nostdlib',
+    '-nostartfiles',
+])
+
+linkflags = ' '.join([
+    device,
+    '-nostdlib',
+    '-nostartfiles',
+    '-shared',
+    '-Wl,--gc-sections',
+    '-Wl,--build-id=none',
+    '-Wl,-soname=rtt-vdso.so.1',
+    '-T %s' % linker_script,
+])
+
+env = Environment(
+    tools=['gcc', 'link'],
+    AS=cc,
+    ASFLAGS='-x assembler-with-cpp',
+    CC=cc,
+    CFLAGS=cflags,
+    CPP=cpp,
+    AR=ar,
+    LINK=cc,
+    LINKFLAGS=linkflags,
+    CPPPATH=[user_dir, common_dir, arch_dir, vdso_root],
+)
+env.PrependENVPath('PATH', exec_path)
+
+def preprocess_linker_script(target, source, env):
+    cmd = [env['CC'], '-E', '-P', '-x', 'assembler-with-cpp']
+    for include_dir in env['CPPPATH']:
+        cmd.append('-I' + include_dir)
+    cmd.extend([str(source[0]), '-o', str(target[0])])
+    return subprocess.call(cmd)
+
+preprocessed_linker = env.Command(linker_script, linker_script_src, preprocess_linker_script)
+
+target = os.path.join(build_dir, 'libvdso.so')
+source = os.path.join(common_dir, 'vdso_clock_gettime.c')
+objects = [env.SharedObject(target=os.path.join(build_dir, 'vdso_clock_gettime'), source=source)]
+shared_lib = env.SharedLibrary(target=target, source=objects)
+env.Depends(shared_lib, preprocessed_linker)
+
+Clean(shared_lib, build_dir)
+Clean(shared_lib, '.sconsign.dblite')
+env.Default(shared_lib)

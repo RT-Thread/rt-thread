@@ -14,6 +14,7 @@
 
 #include <board.h>
 #include <rtdevice.h>
+#include "drv_dma.h"
 
 #ifdef __cplusplus
 extern "C" {

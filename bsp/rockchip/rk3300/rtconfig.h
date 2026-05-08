@@ -81,6 +81,7 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
 #define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -117,6 +118,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart2"
+#define RT_USING_CONSOLE_OUTPUT_CTL
 #define RT_VER_NUM 0x50300
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
@@ -220,6 +222,7 @@
 #define RT_USING_SERIAL_BYPASS
 #define RT_SERIAL_8250
 #define RT_SERIAL_8250_DW
+#define RT_USING_CLOCK_TIME
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_I2C_RK3X
@@ -300,13 +303,16 @@
 #define RT_PIN_ROCKCHIP
 #define RT_USING_PINCTRL
 #define RT_PINCTRL_ROCKCHIP
-#define RT_USING_KTIME
 #define RT_USING_CLK
 #define RT_CLK_ROCKCHIP
 #define RT_CLK_ROCKCHIP_RK3308
-#define RT_USING_HWTIMER
-#define RT_HWTIMER_ARM_ARCH
-#define RT_HWTIMER_ROCKCHIP
+
+/* SoC (System on Chip) Drivers */
+
+#define RT_SOC_ROCKCHIP_FIQ_DEBUGGER
+#define RT_SOC_ROCKCHIP_GRF
+#define RT_SOC_ROCKCHIP_IODOMAIN
+/* end of SoC (System on Chip) Drivers */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -518,6 +524,14 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

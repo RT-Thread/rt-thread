@@ -135,6 +135,10 @@ extern "C" {
 #include "drivers/thermal.h"
 #endif /* RT_USING_THERMAL */
 
+#ifdef RT_USING_UFS
+#include "drivers/ufs.h"
+#endif /* RT_USING_UFS */
+
 #ifdef RT_USING_FIRMWARE
 #ifdef RT_FIRMWARE_ARM_SCMI
 #include "drivers/scmi.h"

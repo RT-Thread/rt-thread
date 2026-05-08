@@ -101,7 +101,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_HW_ATOMIC
@@ -315,6 +316,10 @@
 /* HPMicro SDK */
 
 /* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -403,6 +408,8 @@
 
 /* Onboard Peripheral Drivers */
 
+/* end of Onboard Peripheral Drivers */
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
@@ -412,6 +419,7 @@
 
 /* Board extended module Drivers */
 
+/* end of Board extended module Drivers */
 /* end of Hardware Drivers Config */
 
 #endif

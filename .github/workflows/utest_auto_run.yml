@@ -7,17 +7,41 @@ on:
   push:
     branches:
       - master
-    paths-ignore:
-      - documentation/**
-      - '**/README.md'
-      - '**/README_zh.md'
+    paths:
+      - '.github/workflows/utest_auto_run.yml'
+      - 'Kconfig'
+      - 'Kconfig.utestcases'
+      - 'bsp/qemu-vexpress-a9/**'
+      - 'bsp/qemu-virt64-aarch64/**'
+      - 'bsp/qemu-virt64-riscv/**'
+      - 'bsp/xuantie/virt64/c906/**'
+      - 'components/**'
+      - 'examples/utest/**'
+      - 'include/**'
+      - 'libcpu/**'
+      - 'src/**'
+      - 'tools/**'
+      - '!**/README.md'
+      - '!**/README_zh.md'
   pull_request:
     branches:
       - master
-    paths-ignore:
-      - documentation/**
-      - '**/README.md'
-      - '**/README_zh.md'
+    paths:
+      - '.github/workflows/utest_auto_run.yml'
+      - 'Kconfig'
+      - 'Kconfig.utestcases'
+      - 'bsp/qemu-vexpress-a9/**'
+      - 'bsp/qemu-virt64-aarch64/**'
+      - 'bsp/qemu-virt64-riscv/**'
+      - 'bsp/xuantie/virt64/c906/**'
+      - 'components/**'
+      - 'examples/utest/**'
+      - 'include/**'
+      - 'libcpu/**'
+      - 'src/**'
+      - 'tools/**'
+      - '!**/README.md'
+      - '!**/README_zh.md'
   workflow_dispatch:
     inputs:
       trigger_type:
