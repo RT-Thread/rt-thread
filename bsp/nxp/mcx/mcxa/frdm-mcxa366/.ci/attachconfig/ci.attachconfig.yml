@@ -8,6 +8,24 @@ component.can:
       - CONFIG_BSP_USING_CAN=y
       - CONFIG_BSP_USING_CAN0=y
 
+component.cherryusb_cdc:
+    kconfig:
+      - CONFIG_RT_USING_CHERRYUSB=y
+      - CONFIG_RT_CHERRYUSB_DEVICE=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_SPEED_FS=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_KINETIS_MCX=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_CDC_ACM=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM=y
+
+component.cherryusb_hid:
+    kconfig:
+      - CONFIG_RT_USING_CHERRYUSB=y
+      - CONFIG_RT_CHERRYUSB_DEVICE=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_SPEED_FS=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_KINETIS_MCX=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_HID=y
+      - CONFIG_RT_CHERRYUSB_DEVICE_TEMPLATE_HID_MOUSE=y
+
 # ------ Peripheral CI ------
 Peripheral.arduino:
     kconfig:
