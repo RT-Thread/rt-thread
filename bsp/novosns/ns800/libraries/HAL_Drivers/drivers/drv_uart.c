@@ -31,12 +31,18 @@
 #endif
 
 #ifdef RT_USING_SERIAL_V2
-#define NS800_UART_CONFIG_V2(_rxbuf, _txbuf)               \
+#define NS800_UART_BUF_CONFIG(_rxbuf, _txbuf)              \
     .rx_bufsz = (_rxbuf),                                  \
     .tx_bufsz = (_txbuf),
 #define NS800_UART_DEFAULT_TX_TIMEOUT 0U
 #else
-#define NS800_UART_CONFIG_V2(_rxbuf, _txbuf)
+#ifndef RT_SERIAL_RB_BUFSZ
+#define RT_SERIAL_RB_BUFSZ 64
+#endif
+
+#define NS800_UART_BUF_CONFIG(_rxbuf, _txbuf)              \
+    .rx_bufsz = RT_SERIAL_RB_BUFSZ,                        \
+    .tx_bufsz = 0U,
 #define NS800_UART_DEFAULT_TX_TIMEOUT BSP_NS800_UART_TX_TIMEOUT
 #endif
 
@@ -87,13 +93,11 @@ static struct ns800_uart_config uart_config[] =
         .tx_port = GPIOA,
         .tx_pin = GPIO_PIN_12,
         .tx_mux = ALT6_FUNCTION,
-        .tx_pad = GPIO_PIN_TYPE_PULLUP,
-        .tx_direction = GPIO_DIR_MODE_IN,
+        .tx_pad = GPIO_PIN_TYPE_STD,
+        .tx_direction = GPIO_DIR_MODE_OUT,
         .tx_drive_max = RT_FALSE,
         .tx_block_timeout = NS800_UART_DEFAULT_TX_TIMEOUT,
-#ifdef RT_USING_SERIAL_V2
-        NS800_UART_CONFIG_V2(BSP_UART1_RX_BUFSIZE, BSP_UART1_TX_BUFSIZE)
-#endif
+        NS800_UART_BUF_CONFIG(BSP_UART1_RX_BUFSIZE, BSP_UART1_TX_BUFSIZE)
     },
 #endif
 #ifdef BSP_USING_UART2
@@ -116,9 +120,7 @@ static struct ns800_uart_config uart_config[] =
         .tx_direction = GPIO_DIR_MODE_OUT,
         .tx_drive_max = RT_TRUE,
         .tx_block_timeout = NS800_UART_DEFAULT_TX_TIMEOUT,
-#ifdef RT_USING_SERIAL_V2
-        NS800_UART_CONFIG_V2(BSP_UART2_RX_BUFSIZE, BSP_UART2_TX_BUFSIZE)
-#endif
+        NS800_UART_BUF_CONFIG(BSP_UART2_RX_BUFSIZE, BSP_UART2_TX_BUFSIZE)
     },
 #endif
 #ifdef BSP_USING_UART3
@@ -141,9 +143,7 @@ static struct ns800_uart_config uart_config[] =
         .tx_direction = GPIO_DIR_MODE_OUT,
         .tx_drive_max = RT_TRUE,
         .tx_block_timeout = NS800_UART_DEFAULT_TX_TIMEOUT,
-#ifdef RT_USING_SERIAL_V2
-        NS800_UART_CONFIG_V2(BSP_UART3_RX_BUFSIZE, BSP_UART3_TX_BUFSIZE)
-#endif
+        NS800_UART_BUF_CONFIG(BSP_UART3_RX_BUFSIZE, BSP_UART3_TX_BUFSIZE)
     },
 #endif
 #ifdef BSP_USING_UART4
@@ -166,9 +166,7 @@ static struct ns800_uart_config uart_config[] =
         .tx_direction = GPIO_DIR_MODE_OUT,
         .tx_drive_max = RT_TRUE,
         .tx_block_timeout = NS800_UART_DEFAULT_TX_TIMEOUT,
-#ifdef RT_USING_SERIAL_V2
-        NS800_UART_CONFIG_V2(BSP_UART4_RX_BUFSIZE, BSP_UART4_TX_BUFSIZE)
-#endif
+        NS800_UART_BUF_CONFIG(BSP_UART4_RX_BUFSIZE, BSP_UART4_TX_BUFSIZE)
     },
 #endif
 };
@@ -226,6 +224,15 @@ static void ns800_uart_apply_runtime_cfg(struct ns800_uart *uart, struct serial_
     uart->handle.parity = cfg->parity;
 }
 
+static void ns800_uart_clear_errors(UART_TypeDef *instance)
+{
+    UART_clearErrorFlags(instance,
+                         UART_STAT_OR_M |
+                         UART_STAT_NF_M |
+                         UART_STAT_FE_M |
+                         UART_STAT_PF_M);
+}
+
 static rt_err_t ns800_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct ns800_uart *uart;
@@ -270,14 +277,27 @@ static rt_err_t ns800_configure(struct rt_serial_device *serial, struct serial_c
         break;
     }
 
+    ns800_uart_clear_errors(uart->handle.Instance);
+
+#ifdef RT_USING_SERIAL_V2
     UART_enableTxFifo(uart->handle.Instance);
     UART_resetTxFifo(uart->handle.Instance);
     UART_setTxFifoWatermark(uart->handle.Instance, UART_FIFO_TX6);
 
     UART_enableRxFifo(uart->handle.Instance);
     UART_resetRxFifo(uart->handle.Instance);
-    UART_setRxFifoWatermark(uart->handle.Instance, UART_FIFO_RX6);
-    UART_setRxIdleCharacter(uart->handle.Instance, UART_IDLE_CHARACTER_CNT1);
+    UART_setRxFifoWatermark(uart->handle.Instance, UART_FIFO_RX1);
+    UART_setRxIdleCharacter(uart->handle.Instance, UART_IDLE_CHARACTER_CNT0);
+#else
+    /*
+     * RT-Thread serial v1 consumes RX data byte-by-byte from getc().
+     * Keep the hardware in the simplest non-FIFO mode to avoid RDRF
+     * reasserting on idle-partial FIFO conditions.
+     */
+    UART_disableTxFifo(uart->handle.Instance);
+    UART_disableRxFifo(uart->handle.Instance);
+    UART_setRxIdleCharacter(uart->handle.Instance, UART_IDLE_CHARACTER_CNT0);
+#endif
 
     UART_enableTxModule(uart->handle.Instance);
     UART_enableRxModule(uart->handle.Instance);
@@ -367,7 +387,16 @@ static int ns800_putc(struct rt_serial_device *serial, char c)
     uart = rt_container_of(serial, struct ns800_uart, serial);
     block_timeout = uart->tx_block_timeout;
 
-    uart->handle.Instance->DATA.WORDVAL = c;
+    while (!UART_isSpaceAvailable(uart->handle.Instance))
+    {
+        if (block_timeout-- == 0U)
+        {
+            return -1;
+        }
+    }
+
+    UART_writeChar(uart->handle.Instance, (rt_uint8_t)c);
+
     while ((uart->handle.Instance->STAT.BIT.TC == false) && (--block_timeout != 0U))
     {
     }
@@ -382,9 +411,9 @@ static int ns800_getc(struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct ns800_uart, serial);
 
-    if (UART_getRxFifoStatus(uart->handle.Instance) > UART_FIFO_RX0)
+    if (UART_isDataAvailable(uart->handle.Instance))
     {
-        return (int)uart->handle.Instance->DATA.WORDVAL;
+        return (int)UART_readChar(uart->handle.Instance);
     }
 
     return -1;
@@ -396,6 +425,14 @@ static void uart_isr(struct rt_serial_device *serial)
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct ns800_uart, serial);
+
+    if (UART_getStatusFlag(uart->handle.Instance, UART_RX_OVERRUN) ||
+        UART_getStatusFlag(uart->handle.Instance, UART_NOISE_DETECT) ||
+        UART_getStatusFlag(uart->handle.Instance, UART_FRAME_ERR) ||
+        UART_getStatusFlag(uart->handle.Instance, UART_PARITY_ERR))
+    {
+        ns800_uart_clear_errors(uart->handle.Instance);
+    }
 
     if (UART_getStatusFlag(uart->handle.Instance, UART_RX_DATA_REG_FULL))
     {

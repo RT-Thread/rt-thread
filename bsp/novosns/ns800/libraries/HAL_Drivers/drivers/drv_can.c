@@ -176,6 +176,34 @@ static FLEXCANDRV_DataLenCodeType ns800_can_len_to_dlc(rt_uint8_t len)
     return DLC_BYTE_64;
 }
 
+static rt_uint8_t ns800_can_dlc_to_len(rt_uint8_t dlc, rt_bool_t is_canfd)
+{
+    if (!is_canfd)
+    {
+        return (dlc <= 8U) ? dlc : 8U;
+    }
+
+    switch (dlc)
+    {
+    case DLC_BYTE_12:
+        return 12U;
+    case DLC_BYTE_16:
+        return 16U;
+    case DLC_BYTE_20:
+        return 20U;
+    case DLC_BYTE_24:
+        return 24U;
+    case DLC_BYTE_32:
+        return 32U;
+    case DLC_BYTE_48:
+        return 48U;
+    case DLC_BYTE_64:
+        return 64U;
+    default:
+        return (dlc <= 8U) ? dlc : 8U;
+    }
+}
+
 static rt_uint8_t ns800_can_msg_buf_size(rt_bool_t use_canfd)
 {
     return use_canfd ? FLEXCANDRV_MB_SIZE_BYTE_64 : FLEXCANDRV_MB_SIZE_BYTE_8;
@@ -711,7 +739,6 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
 
     pmsg = (struct rt_can_msg *)buf;
     pmsg->id = drv->rx_cache[0].msgId;
-    pmsg->len = drv->rx_cache[0].dlc;
     pmsg->ide = drv->rx_ide[0];
     pmsg->rtr = drv->rx_rtr[0];
     pmsg->hdr_index = 0;
@@ -719,6 +746,9 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
 #ifdef RT_CAN_USING_CANFD
     pmsg->fd_frame = drv->rx_cache[0].isFd ? 1U : 0U;
     pmsg->brs = drv->rx_brs[0];
+    pmsg->len = ns800_can_dlc_to_len(drv->rx_cache[0].dlc, drv->rx_cache[0].isFd ? RT_TRUE : RT_FALSE);
+#else
+    pmsg->len = ns800_can_dlc_to_len(drv->rx_cache[0].dlc, RT_FALSE);
 #endif
     rt_memcpy(pmsg->data, drv->rx_cache[0].data, pmsg->len);
 

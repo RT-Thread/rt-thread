@@ -282,6 +282,7 @@ static rt_base_t ns800_pin_get(const char *name)
     int pin_index;
     uint8_t port_index;
     GPIO_TypeDef *port = RT_NULL;
+    char *endptr;
 
     if ((name == RT_NULL) || (name[0] == '\0'))
     {
@@ -299,7 +300,12 @@ static rt_base_t ns800_pin_get(const char *name)
         goto out;
     }
 
-    pin_index = atoi(&name[3]);
+    pin_index = (int)strtol(&name[3], &endptr, 10);
+    if ((endptr == &name[3]) || (*endptr != '\0'))
+    {
+        goto out;
+    }
+
     if ((pin_index < 0) || (pin_index > 31))
     {
         goto out;

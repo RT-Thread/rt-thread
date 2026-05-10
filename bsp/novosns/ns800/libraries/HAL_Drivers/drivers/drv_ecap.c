@@ -18,69 +18,21 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-void ECAP1_IRQHandler (void);
-static void rt_hw_ecap1_isr(void);
-
-#ifndef BSP_ECAP1_NAME
-#define BSP_ECAP1_NAME           "ecap1"
-#endif
-#ifndef BSP_ECAP1_GPIO_NUM
-#define BSP_ECAP1_GPIO_NUM       16
-#endif
-#ifndef BSP_ECAP1_GPIO_MUX
-#define BSP_ECAP1_GPIO_MUX       0
-#endif
-#ifndef BSP_ECAP1_INPUT_XBAR
-#define BSP_ECAP1_INPUT_XBAR     7
-#endif
-#ifndef BSP_ECAP1_INPUT_SOURCE
-#define BSP_ECAP1_INPUT_SOURCE   16
-#endif
-
-static GPIO_TypeDef *ns800_ecap_gpio_port(rt_uint32_t gpio_num)
+static const struct rt_ecap_config ecap1_config =
 {
-    if (gpio_num <= 31U) return GPIOA;
-    if (gpio_num <= 63U) return GPIOB;
-    if (gpio_num <= 95U) return GPIOC;
-    if (gpio_num <= 127U) return GPIOD;
-    if (gpio_num <= 159U) return GPIOE;
-    if (gpio_num <= 191U) return GPIOF;
-    if (gpio_num <= 223U) return GPIOG;
-    return GPIOH;
-}
-
-static GPIO_PinNum ns800_ecap_gpio_pin(rt_uint32_t gpio_num)
-{
-    return (GPIO_PinNum)(gpio_num % 32U);
-}
-
-static XBAR_InputNum ns800_ecap_xbar_input(rt_uint32_t input_idx)
-{
-    return (XBAR_InputNum)(input_idx - 1U);
-}
-
-static rt_uint32_t ns800_ecap_input_sel(rt_uint32_t input_idx)
-{
-    return (rt_uint32_t)(input_idx - 1U);
-}
-
-#ifdef BSP_USING_ECAP1
-static struct rt_ecap_config ecap1_config =
-{
-    .name         = BSP_ECAP1_NAME,
+    .name         = "ecap1",
     .instance     = ECAP1,
     .irq_type     = ECAP1_IRQn,
-    .input_xbar   = (rt_uint32_t)XBAR_INPUT7,
-    .ecap_input   = (rt_uint32_t)ECAP_INPUT_XBAR_INPUT7,
-    .input_source = BSP_ECAP1_INPUT_SOURCE,
+    .input_xbar   = XBAR_INPUT7,
+    .input_source = GPIO_PIN_16,
     .gpio_port    = GPIOA,
     .gpio_pin     = GPIO_PIN_16,
-    .gpio_mux     = (GPIO_AltFunc)BSP_ECAP1_GPIO_MUX,
-    .irq_handler  = ECAP1_IRQHandler,
+    .gpio_mux     = ALT0_FUNCTION,
 };
 
 static struct rt_ecap_device ecap1_dev;
-#endif
+
+void ECAP1_IRQHandler (void);
 
 /*
  * 
@@ -148,7 +100,7 @@ static void ecap_hw_init (const struct rt_ecap_config *config)
     ECAP_enableCounterResetOnEvent(config->instance, ECAP_EVENT_3);
     ECAP_enableCounterResetOnEvent(config->instance, ECAP_EVENT_4);
 
-    ECAP_selectECAPInput(config->instance, config->ecap_input);
+    ECAP_selectECAPInput(config->instance, ECAP_INPUT_XBAR_INPUT7);
 
     ECAP_setPhaseShiftCount(config->instance, 0U);
     ECAP_enableLoadCounter(config->instance);
@@ -263,7 +215,7 @@ static rt_err_t rt_ecap_open (rt_device_t dev, rt_uint16_t oflag)
         ECAP_reArm(ecap->config->instance);
         ECAP_enableInterrupt(ecap->config->instance, ECAP_ECEINT_CEVT4_M);
 
-        Interrupt_register(ecap->config->irq_type, ecap->config->irq_handler);
+        Interrupt_register(ecap->config->irq_type, &ECAP1_IRQHandler);
         Interrupt_enable(ecap->config->irq_type);
     }
 
@@ -397,7 +349,7 @@ static rt_err_t rt_ecap_control (rt_device_t dev, int cmd, void *args)
 
         case ECAP_CMD_ENABLE_IRQ:
             ECAP_enableInterrupt(ecap->config->instance, ECAP_ECEINT_CEVT4_M);
-            Interrupt_register(ecap->config->irq_type, ecap->config->irq_handler);
+            Interrupt_register(ecap->config->irq_type, &ECAP1_IRQHandler);
             Interrupt_enable(ecap->config->irq_type);
             break;
 
@@ -463,12 +415,6 @@ int rt_hw_ecap_init (void)
 {
     rt_err_t ret;
 
-#ifdef BSP_USING_ECAP1
-    ecap1_config.input_xbar = (rt_uint32_t)ns800_ecap_xbar_input(BSP_ECAP1_INPUT_XBAR);
-    ecap1_config.ecap_input = ns800_ecap_input_sel(BSP_ECAP1_INPUT_XBAR);
-    ecap1_config.gpio_port = ns800_ecap_gpio_port(BSP_ECAP1_GPIO_NUM);
-    ecap1_config.gpio_pin = ns800_ecap_gpio_pin(BSP_ECAP1_GPIO_NUM);
-
     ret = rt_hw_ecap_register(&ecap1_dev, &ecap1_config);
 
     if (ret != RT_EOK)
@@ -478,23 +424,19 @@ int rt_hw_ecap_init (void)
     }
 
     LOG_I("ecap1 register done");
-#else
-    ret = -RT_ENOSYS;
-#endif
 
-    return ret;
+    return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_ecap_init);
 
 /*
  *
  */
-static void rt_hw_ecap1_isr(void)
+void rt_hw_ecap1_isr(void)
 {
     struct rt_ecap_device *ecap;
     struct rt_ecap_capture cap;
 
-#ifdef BSP_USING_ECAP1
     ecap = &ecap1_dev;
 
     rt_interrupt_enter();
@@ -525,7 +467,6 @@ static void rt_hw_ecap1_isr(void)
     }
 
     rt_interrupt_leave();
-#endif
 }
 
 void ECAP1_IRQHandler (void)
