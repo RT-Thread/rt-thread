@@ -65,7 +65,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 12
+#define RT_NAME_MAX 16
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -105,7 +105,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart3"
+#define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_USING_CONSOLE_OUTPUT_CTL
 #define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
@@ -148,10 +148,6 @@
 #define RT_CANSND_BOX_NUM 1
 #define RT_CANSND_MSG_TIMEOUT 100
 #define RT_CAN_NB_TX_FIFO_SIZE 256
-#define RT_USING_HWCRYPTO
-#define RT_HWCRYPTO_DEFAULT_NAME "hwcryto"
-#define RT_HWCRYPTO_IV_MAX_SIZE 16
-#define RT_HWCRYPTO_KEYBIT_MAX_SIZE 256
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -418,7 +414,6 @@
 #define BSP_USING_UART
 #define BSP_NS800_UART_TX_TIMEOUT 6000
 #define BSP_USING_UART1
-#define BSP_USING_UART3
 #define BSP_USING_ECAP
 #define BSP_USING_ECAP1
 #define BSP_ECAP1_NAME "ecap1"
