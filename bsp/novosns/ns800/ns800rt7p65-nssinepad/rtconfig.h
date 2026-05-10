@@ -144,6 +144,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CAN
+#define RT_CAN_USING_CANFD
 #define RT_CANMSG_BOX_SZ 16
 #define RT_CANSND_BOX_NUM 1
 #define RT_CANSND_MSG_TIMEOUT 100
@@ -415,14 +416,8 @@
 #define BSP_NS800_UART_TX_TIMEOUT 6000
 #define BSP_USING_UART1
 #define BSP_USING_ECAP
-#define BSP_USING_ECAP1
-#define BSP_ECAP1_NAME "ecap1"
-#define BSP_ECAP1_GPIO_NUM 16
-#define BSP_ECAP1_GPIO_MUX 0
-#define BSP_ECAP1_INPUT_XBAR 7
-#define BSP_ECAP1_INPUT_SOURCE 16
 #define BSP_USING_CAN
-#define BSP_USING_CAN1
+#define BSP_USING_CANFD1
 /* end of On-chip Peripheral Drivers */
 
 #endif
