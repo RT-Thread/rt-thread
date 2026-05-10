@@ -92,56 +92,17 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ECAP
         bool "Enable ECAP"
         default n
-        if BSP_USING_ECAP
-            config BSP_USING_ECAP1
-                bool "Enable ECAP1"
-                default y
-
-            if BSP_USING_ECAP1
-                config BSP_ECAP1_NAME
-                    string "ECAP1 device name"
-                    default "ecap1"
-
-                config BSP_ECAP1_GPIO_NUM
-                    int "ECAP1 input GPIO number"
-                    range 0 224
-                    default 16
-
-                config BSP_ECAP1_GPIO_MUX
-                    int "ECAP1 input GPIO mux"
-                    range 0 15
-                    default 0
-
-                config BSP_ECAP1_INPUT_XBAR
-                    int "ECAP1 XBAR input index"
-                    range 1 16
-                    default 7
-
-                config BSP_ECAP1_INPUT_SOURCE
-                    int "ECAP1 XBAR source GPIO number"
-                    range 0 224
-                    default 16
-            endif
-        endif
 
     menuconfig BSP_USING_CAN
         bool "Enable CAN"
         select RT_USING_CAN
         default n
         if BSP_USING_CAN
-            config BSP_USING_CAN1
-                bool "Enable CAN1"
-                default n
-
             config BSP_USING_CANFD1
                 bool "Enable CANFD1"
                 select RT_CAN_USING_CANFD
                 default n
 
-            config BSP_USING_CANFD2
-                bool "Enable CANFD2"
-                select RT_CAN_USING_CANFD
-                default n
         endif
 
 endmenu
