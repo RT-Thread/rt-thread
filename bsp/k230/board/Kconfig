@@ -4,6 +4,17 @@ menu "Drivers Configuration"
         bool "Enable KPU and AI2D"
         default n
 
+    menuconfig BSP_USING_DISPLAY
+        bool "Enable MIPI DSI Display (ST7701)"
+        select RT_USING_DEVICE
+        select RT_USING_DEVICE_OPS
+        select RT_USING_PIN
+        default n
+        help
+            Enable MIPI DSI display support for the atk_k230d board.
+            This registers lcd and fb0 graphic devices for the
+            480x640 ST7701 panel over 2-lane MIPI DSI.
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
         select RT_USING_SPI

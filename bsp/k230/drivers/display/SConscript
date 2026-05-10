@@ -1,0 +1,20 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c') + Glob('lib/*.c')
+src    += [
+    'vo/vo_remap.c',
+    'vo/kd_vo_reg.c',
+    'vo/kd_dsi_reg.c',
+]
+CPPPATH = [cwd, cwd + '/include', cwd + '/vo']
+
+group = DefineGroup('Display', src, depend=['BSP_USING_DISPLAY'],
+                    CPPPATH=CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')
