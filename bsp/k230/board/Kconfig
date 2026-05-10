@@ -4,11 +4,17 @@ menu "Drivers Configuration"
         bool "Enable KPU and AI2D"
         default n
 
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default n
+
     menuconfig BSP_USING_DISPLAY
         bool "Enable MIPI DSI Display (ST7701)"
         select RT_USING_DEVICE
         select RT_USING_DEVICE_OPS
         select RT_USING_PIN
+        select BSP_USING_GPIO
         default n
         help
             Enable MIPI DSI display support for the atk_k230d board.
