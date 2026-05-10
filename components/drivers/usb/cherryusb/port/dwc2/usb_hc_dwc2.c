@@ -293,11 +293,10 @@ static void dwc2_chan_init(struct usbh_bus *bus,
                            uint8_t ep_mult,
                            uint8_t speed)
 {
+    USB_OTG_HC((uint32_t)ch_num)->HCINTMSK = 0U;
+
     /* Clear old interrupt conditions for this host channel. */
     USB_OTG_HC((uint32_t)ch_num)->HCINT = 0xFFFFFFFFU;
-
-    /* Enable channel interrupts required for this transfer. */
-    USB_OTG_HC((uint32_t)ch_num)->HCINTMSK = USB_OTG_HCINTMSK_CHHM;
 
     /* Enable the top level host channel interrupt. */
     USB_OTG_HOST->HAINTMSK |= 1UL << (ch_num & 0xFU);
@@ -310,6 +309,7 @@ static inline void dwc2_chan_transfer(struct usbh_bus *bus, uint8_t ch_num, uint
 {
     __IO uint32_t tmpreg;
     uint8_t is_oddframe;
+    size_t flags;
 
     /* Initialize the HCTSIZn register */
     USB_OTG_HC(ch_num)->HCTSIZ = (size & USB_OTG_HCTSIZ_XFRSIZ) |
@@ -318,6 +318,11 @@ static inline void dwc2_chan_transfer(struct usbh_bus *bus, uint8_t ch_num, uint
 
     /* xfer_buff MUST be 32-bits aligned */
     USB_OTG_HC(ch_num)->HCDMA = (uint32_t)buf;
+
+    flags = usb_osal_enter_critical_section();
+
+    /* Enable channel interrupts required for this transfer. */
+    USB_OTG_HC((uint32_t)ch_num)->HCINTMSK = USB_OTG_HCINTMSK_CHHM;
 
     is_oddframe = (((uint32_t)USB_OTG_HOST->HFNUM & 0x01U) != 0U) ? 0U : 1U;
     USB_OTG_HC(ch_num)->HCCHAR &= ~USB_OTG_HCCHAR_ODDFRM;
@@ -328,6 +333,8 @@ static inline void dwc2_chan_transfer(struct usbh_bus *bus, uint8_t ch_num, uint
     tmpreg &= ~USB_OTG_HCCHAR_CHDIS;
     tmpreg |= USB_OTG_HCCHAR_CHENA;
     USB_OTG_HC(ch_num)->HCCHAR = tmpreg;
+
+    usb_osal_leave_critical_section(flags);
 }
 
 static inline void dwc2_chan_enable_csplit(struct usbh_bus *bus, uint8_t ch_num, bool enable)

@@ -26,7 +26,7 @@
 #endif
 
 #ifdef RT_USING_VDSO
-#include <vdso.h>
+#include <vdso_kernel.h>
 #endif
 
 #define DBG_TAG "load.elf"
@@ -37,27 +37,27 @@
 #endif
 #include <rtdbg.h>
 
-#define ELF_INVALID_FD -1
+#define ELF_INVALID_FD   -1
 #define ELF_PHDR_NUM_MAX 128
-#define FILE_LENGTH_MAX 0xC0000000
-#define MEM_SIZE_MAX 0xC0000000
-#define ELF_PATH_MAX 256
-#define FLF_PATH_MIN 1
+#define FILE_LENGTH_MAX  0xC0000000
+#define MEM_SIZE_MAX     0xC0000000
+#define ELF_PATH_MAX     256
+#define FLF_PATH_MIN     1
 
-#define ELF_PAGESTART(_v) ((_v) & ~(rt_ubase_t)(ARCH_PAGE_SIZE - 1))
+#define ELF_PAGESTART(_v)  ((_v) & ~(rt_ubase_t)(ARCH_PAGE_SIZE - 1))
 #define ELF_PAGEOFFSET(_v) ((_v) & (ARCH_PAGE_SIZE - 1))
-#define ELF_PAGEALIGN(_v) (((_v) + ARCH_PAGE_SIZE - 1) & ~(ARCH_PAGE_SIZE - 1))
+#define ELF_PAGEALIGN(_v)  (((_v) + ARCH_PAGE_SIZE - 1) & ~(ARCH_PAGE_SIZE - 1))
 
-#define ELF_EXEC_LOAD_ADDR  USER_VADDR_START
+#define ELF_EXEC_LOAD_ADDR   USER_VADDR_START
 #define ELF_INTERP_LOAD_ADDR LDSO_LOAD_VADDR
 
-#define ELF_AUX_ENT(aux, id, val)                           \
-    do                                                      \
-    {                                                       \
-        rt_base_t a = id;                                   \
-        lwp_data_put(lwp, aux++, &a, sizeof(rt_ubase_t));   \
-        a = val;                                            \
-        lwp_data_put(lwp, aux++, &a, sizeof(rt_ubase_t));   \
+#define ELF_AUX_ENT(aux, id, val)                         \
+    do                                                    \
+    {                                                     \
+        rt_base_t a = id;                                 \
+        lwp_data_put(lwp, aux++, &a, sizeof(rt_ubase_t)); \
+        a = val;                                          \
+        lwp_data_put(lwp, aux++, &a, sizeof(rt_ubase_t)); \
     } while (0)
 
 /**
@@ -127,10 +127,10 @@ static void elf_user_dump(struct rt_lwp *lwp, void *va, size_t len)
 
     for (size_t i = 0; i < len; i += 16)
     {
-        rt_kprintf("  %02x %02x %02x %02x %02x %02x %02x %02x ", k_va[i], k_va[i+1], k_va[i+2], k_va[i+3],
-            k_va[i+4], k_va[i+5], k_va[i+6], k_va[i+7]);
-        rt_kprintf("  %02x %02x %02x %02x %02x %02x %02x %02x \n", k_va[i+8], k_va[i+9], k_va[i+10], k_va[i+11],
-            k_va[i+12], k_va[i+13], k_va[i+14], k_va[i+15]);
+        rt_kprintf("  %02x %02x %02x %02x %02x %02x %02x %02x ", k_va[i], k_va[i + 1], k_va[i + 2], k_va[i + 3],
+                   k_va[i + 4], k_va[i + 5], k_va[i + 6], k_va[i + 7]);
+        rt_kprintf("  %02x %02x %02x %02x %02x %02x %02x %02x \n", k_va[i + 8], k_va[i + 9], k_va[i + 10], k_va[i + 11],
+                   k_va[i + 12], k_va[i + 13], k_va[i + 14], k_va[i + 15]);
     }
     rt_kprintf("\r\n");
     rt_free(k_va);
@@ -169,7 +169,7 @@ rt_ubase_t elf_random_offset(void)
  * @return Virtual address where the file is mapped on success, NULL on failure.
  */
 static void *file_mmap(struct rt_lwp *lwp, int fd, rt_ubase_t load_addr,
-        rt_ubase_t map_size, size_t prot, size_t flags, rt_ubase_t offset)
+                       rt_ubase_t map_size, size_t prot, size_t flags, rt_ubase_t offset)
 {
     uint8_t *map_va;
 
@@ -478,7 +478,7 @@ static int elf_load_interp(elf_load_info_t *load_info)
         }
 
         ret = elf_file_read(load_info->exec_info.fd, (rt_uint8_t *)load_info->interp_info.filename,
-            phdr->p_filesz, phdr->p_offset);
+                            phdr->p_filesz, phdr->p_offset);
         if (ret != RT_EOK)
         {
             LOG_E("%s : elf_file_read failed, ret = %d", __func__, ret);
@@ -543,7 +543,7 @@ static int total_mapping_size(elf_info_t *elf_info)
         return -1;
 
     elf_info->map_size = elf_info->phdr[last_idx].p_vaddr + elf_info->phdr[last_idx].p_memsz -
-        ELF_PAGESTART(elf_info->phdr[first_idx].p_vaddr);
+                         ELF_PAGESTART(elf_info->phdr[first_idx].p_vaddr);
 
     return 0;
 }
@@ -592,7 +592,7 @@ static rt_ubase_t elf_map(struct rt_lwp *lwp, const Elf_Phdr *elf_phdr, int fd, 
 }
 
 static int elf_zero_bss(struct rt_lwp *lwp, int fd, const Elf_Phdr *phdr, rt_ubase_t bss_start,
-    rt_ubase_t bss_end)
+                        rt_ubase_t bss_end)
 {
     lwp_data_set(lwp, (void *)bss_start, 0, bss_end - bss_start);
 
@@ -617,7 +617,7 @@ static int elf_zero_bss(struct rt_lwp *lwp, int fd, const Elf_Phdr *phdr, rt_uba
  * @return -ENOMEM if memory allocation fails.
  */
 static int elf_file_mmap(elf_load_info_t *load_info, elf_info_t *elf_info, rt_ubase_t *elfload_addr,
-    rt_uint32_t map_size, rt_ubase_t *load_base)
+                         rt_uint32_t map_size, rt_ubase_t *load_base)
 {
     int ret, i;
     rt_ubase_t map_va, bss_start, bss_end;
@@ -688,7 +688,7 @@ static int elf_file_mmap(elf_load_info_t *load_info, elf_info_t *elf_info, rt_ub
         {
             *elfload_addr = map_va + ELF_PAGEOFFSET(tmp_phdr->p_vaddr);
             LOG_D("%s elf_load_addr : %p, vAddr : %p, load_base : %p, map_va : %p", __func__,
-                *elfload_addr, tmp_phdr->p_vaddr, *load_base, map_va);
+                  *elfload_addr, tmp_phdr->p_vaddr, *load_base, map_va);
         }
 
         if ((*load_base == 0) && (ehdr->e_type == ET_DYN))
@@ -722,7 +722,7 @@ static int load_elf_interp(elf_load_info_t *load_info, rt_ubase_t *interp_base)
     LOG_D("%s : total_mapping_size 0x%x", __func__, load_info->interp_info.map_size);
 
     return elf_file_mmap(load_info, &load_info->interp_info, interp_base,
-        load_info->interp_info.map_size, &load_base);
+                         load_info->interp_info.map_size, &load_base);
 }
 
 /**
@@ -783,13 +783,13 @@ static int elf_aux_fill(elf_load_info_t *load_info)
     ELF_AUX_ENT(aux_info, AT_SECURE, 0);
 
 #ifdef RT_USING_VDSO
-    if(RT_EOK == arch_setup_additional_pages(load_info->lwp))
+    if (RT_EOK == rt_vdso_map_process_image(load_info->lwp))
     {
         ELF_AUX_ENT(aux_info, AT_SYSINFO_EHDR, (size_t)load_info->lwp->vdso_vbase);
     }
     else
     {
-        LOG_W("vdso map error,VDSO currently only supports aarch64 architecture!");
+        LOG_W("vdso map error, skip AT_SYSINFO_EHDR setup");
     }
 #endif
 
@@ -834,7 +834,7 @@ static int elf_load_segment(elf_load_info_t *load_info)
 
     /* Map the segments of the ELF file into memory */
     ret = elf_file_mmap(load_info, &load_info->exec_info, &load_info->load_addr,
-        load_info->exec_info.map_size, &app_load_base);
+                        load_info->exec_info.map_size, &app_load_base);
     elf_file_close(load_info->exec_info.fd);
     if (ret != RT_EOK)
     {
@@ -1015,7 +1015,7 @@ OUT:
  * @see dfs_normalize_path, elf_file_load
  */
 int lwp_load(const char *filename, struct rt_lwp *lwp, uint8_t *load_addr, size_t addr_size,
-    struct process_aux *aux_ua)
+             struct process_aux *aux_ua)
 {
     elf_load_info_t load_info = { 0 };
     int len;

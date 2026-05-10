@@ -46,6 +46,7 @@
 #define TSADCV2_AUTO_PERIOD_HT              0x6c
 #define TSADCV3_AUTO_PERIOD                 0x154
 #define TSADCV3_AUTO_PERIOD_HT              0x158
+#define TSADCV9_Q_MAX                       0x210
 
 #define TSADCV2_AUTO_EN                     RT_BIT(0)
 #define TSADCV2_AUTO_EN_MASK                RT_BIT(16)
@@ -56,6 +57,7 @@
 #define TSADCV2_AUTO_TSHUT_POLARITY_MASK    RT_BIT(24)
 
 #define TSADCV3_AUTO_Q_SEL_EN               RT_BIT(1)
+#define TSADCV3_AUTO_Q_SEL_EN_MASK          RT_BIT(17)
 
 #define TSADCV2_INT_SRC_EN(chn)             RT_BIT(chn)
 #define TSADCV2_INT_SRC_EN_MASK(chn)        RT_BIT(16 + (chn))
@@ -69,6 +71,7 @@
 #define TSADCV2_DATA_MASK                   0xfff
 #define TSADCV3_DATA_MASK                   0x3ff
 #define TSADCV4_DATA_MASK                   0x1ff
+#define TSADCV5_DATA_MASK                   0x7ff
 
 #define TSADCV2_HIGHT_INT_DEBOUNCE_COUNT    4
 #define TSADCV2_HIGHT_TSHUT_DEBOUNCE_COUNT  4
@@ -81,6 +84,10 @@
 #define TSADCV5_AUTO_PERIOD_HT_TIME         1622 /* 2.5ms */
 #define TSADCV6_AUTO_PERIOD_TIME            5000 /* 2.5ms */
 #define TSADCV6_AUTO_PERIOD_HT_TIME         5000 /* 2.5ms */
+#define TSADCV7_AUTO_PERIOD_TIME            3000 /* 2.5ms */
+#define TSADCV7_AUTO_PERIOD_HT_TIME         3000 /* 2.5ms */
+
+#define TSADCV3_Q_MAX_VAL                   0x7ff /* 11bit 2047 */
 
 #define TSADCV2_USER_INTER_PD_SOC           0x340 /* 13 clocks */
 #define TSADCV5_USER_INTER_PD_SOC           0xfc0 /* 97us, at least 90us */
@@ -90,6 +97,8 @@
 #define GRF_TSADC_TESTBIT_H                 0x0e64c
 
 #define PX30_GRF_SOC_CON2                   0x0408
+
+#define RK3528_GRF_TSADC_CON                0x40030
 
 #define RK3568_GRF_TSADC_CON                0x0600
 #define RK3568_GRF_TSADC_ANA_REG0           (0x10001 << 0)
@@ -499,6 +508,38 @@ static void rk_tsadcv8_initialize(struct rt_syscon *grf, void *regs,
     else
     {
         HWREG32(regs + TSADCV2_AUTO_CON) = TSADCV2_AUTO_TSHUT_POLARITY_MASK;
+    }
+}
+
+static void rk_tsadcv11_initialize(struct rt_syscon *grf, void *regs,
+        enum tshut_polarity tshut_polarity)
+{
+    HWREG32(regs + TSADCV3_AUTO_PERIOD) = TSADCV7_AUTO_PERIOD_TIME;
+    HWREG32(regs + TSADCV3_AUTO_PERIOD_HT) = TSADCV7_AUTO_PERIOD_HT_TIME;
+    HWREG32(regs + TSADCV3_HIGHT_INT_DEBOUNCE) = TSADCV2_HIGHT_INT_DEBOUNCE_COUNT;
+    HWREG32(regs + TSADCV3_HIGHT_TSHUT_DEBOUNCE) = TSADCV2_HIGHT_TSHUT_DEBOUNCE_COUNT;
+    HWREG32(regs + TSADCV9_Q_MAX) = TSADCV3_Q_MAX_VAL;
+    HWREG32(regs + TSADCV2_AUTO_CON) = TSADCV3_AUTO_Q_SEL_EN | TSADCV3_AUTO_Q_SEL_EN_MASK;
+
+    if (tshut_polarity == TSHUT_HIGH_ACTIVE)
+    {
+        HWREG32(regs + TSADCV2_AUTO_CON) = TSADCV2_AUTO_TSHUT_POLARITY_HIGH |
+                TSADCV2_AUTO_TSHUT_POLARITY_MASK;
+    }
+    else
+    {
+        HWREG32(regs + TSADCV2_AUTO_CON) = TSADCV2_AUTO_TSHUT_POLARITY_MASK;
+    }
+
+    if (grf)
+    {
+        rt_syscon_write(grf, RK3528_GRF_TSADC_CON, RK3568_GRF_TSADC_TSEN);
+        rt_hw_us_delay(15);
+
+        rt_syscon_write(grf, RK3528_GRF_TSADC_CON, RK3568_GRF_TSADC_ANA_REG0);
+        rt_syscon_write(grf, RK3528_GRF_TSADC_CON, RK3568_GRF_TSADC_ANA_REG1);
+        rt_syscon_write(grf, RK3528_GRF_TSADC_CON, RK3568_GRF_TSADC_ANA_REG2);
+        rt_hw_us_delay(150);
     }
 }
 
@@ -1250,6 +1291,75 @@ static const struct rockchip_tsadc_chip rk3399_tsadc_data =
     },
 };
 
+static const struct tsadc_table rk3528_code_table[] =
+{
+    { 0, -60000 },
+    { 1386, -60000 },
+    { 1410, -40000 },
+    { 1419, -35000 },
+    { 1428, -30000 },
+    { 1436, -25000 },
+    { 1445, -20000 },
+    { 1454, -15000 },
+    { 1463, -10000 },
+    { 1471, -5000 },
+    { 1480, 0 },
+    { 1489, 5000 },
+    { 1498, 10000 },
+    { 1506, 15000 },
+    { 1515, 20000 },
+    { 1524, 25000 },
+    { 1533, 30000 },
+    { 1541, 35000 },
+    { 1550, 40000 },
+    { 1558, 45000 },
+    { 1567, 50000 },
+    { 1575, 55000 },
+    { 1584, 60000 },
+    { 1593, 65000 },
+    { 1602, 70000 },
+    { 1610, 75000 },
+    { 1619, 80000 },
+    { 1628, 85000 },
+    { 1637, 90000 },
+    { 1646, 95000 },
+    { 1654, 100000 },
+    { 1663, 105000 },
+    { 1672, 110000 },
+    { 1680, 115000 },
+    { 1689, 120000 },
+    { 1697, 125000 },
+    { 1790, 180000 },
+    { TSADCV5_DATA_MASK, 180000 },
+};
+
+static const struct rockchip_tsadc_chip rk3528_tsadc_data =
+{
+    .chn_offset = 0,
+    .chn_num = 1, /* one channels for tsadc */
+    .chn_name = chn_name_common,
+
+    .tshut_mode = TSHUT_MODE_OTP, /* default TSHUT via GPIO give PMIC */
+    .tshut_polarity = TSHUT_LOW_ACTIVE, /* default TSHUT LOW ACTIVE */
+    .tshut_temp = 95000,
+
+    .initialize = rk_tsadcv11_initialize,
+    .irq_ack = rk_tsadcv4_irq_ack,
+    .control = rk_tsadcv4_control,
+    .get_temp = rk_tsadcv4_get_temp,
+    .set_alarm_temp = rk_tsadcv3_alarm_temp,
+    .set_tshut_temp = rk_tsadcv3_tshut_temp,
+    .set_tshut_mode = rk_tsadcv4_tshut_mode,
+
+    .table =
+    {
+        .id = rk3528_code_table,
+        .length = RT_ARRAY_SIZE(rk3528_code_table),
+        .data_mask = TSADCV2_DATA_MASK,
+        .mode = ADC_INCREMENT,
+    },
+};
+
 static const struct tsadc_table rk3568_code_table[] =
 {
     {    0, -40000 },
@@ -1678,6 +1788,7 @@ static const struct rt_ofw_node_id rockchip_tsadc_ofw_ids[] =
     { .compatible = "rockchip,rk3366-tsadc", .data = &rk3366_tsadc_data, },
     { .compatible = "rockchip,rk3368-tsadc", .data = &rk3368_tsadc_data, },
     { .compatible = "rockchip,rk3399-tsadc", .data = &rk3399_tsadc_data, },
+    { .compatible = "rockchip,rk3528-tsadc", .data = &rk3528_tsadc_data, },
     { .compatible = "rockchip,rk3568-tsadc", .data = &rk3568_tsadc_data, },
     { .compatible = "rockchip,rk3576-tsadc", .data = &rk3576_tsadc_data, },
     { .compatible = "rockchip,rk3588-tsadc", .data = &rk3588_tsadc_data, },

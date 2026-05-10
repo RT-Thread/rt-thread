@@ -48,13 +48,20 @@ FP16/BF16/FP32 运算格式，使用 chaining 的优化运算带宽技术；
   c907 c907fd c907fd-rv32 c907fdv c907fdvm c907fdvm-rv32 c907fdv-rv32 c907-rv32
   ```
 
-- 当前BSP默认设置的内核是c907fd，该架构支持[F] [D]扩展，可以通过menuconfig工具使能[F]扩展或者[F] [D] 扩展。
+- 当前BSP默认设置的内核是c907fdvm，该架构支持[F][D][V][M]扩展，可以通过menuconfig工具使能[F][D]、[V]、[M]扩展。
 
 - 当使用其他内核架构时需要修改，rtconfig.py文件中的`MCPU`字段。
+
+- 当需要使用SMP多核时，请使用`scons --menuconfig`使能SMP功能并配置CPU个数。
 
 ### 4.运行QEMU
 
 - BSP根目录下存在`qemu.bat`脚本，生成可执行文件后可点击该脚本直接启动QEMU.
+
+- Linux用户可以直接使用`qemu-system-riscv64`命令启动QEMU.
+```shell
+qemu-system-riscv64 -machine xiaohui -smp cpus=2 -nographic -kernel rtthread.elf -cpu c907fdvm
+```
 
 ## 二 工具
 
@@ -74,12 +81,6 @@ FP16/BF16/FP32 运算格式，使用 chaining 的优化运算带宽技术；
 使用前执行一次**menuconfig**命令，更新rtconfig.h配置，然后在当前目录执行**scons -j12**命令编译生成可可执行文件。
 
 <img src="figures/2.scons.png" alt="env" style="zoom: 95%;" />
-
-生成可执行文件，可以直接在命令行启动qemu或者配置vscode脚本借助vscode强大的插件进行图形化调试，qemu的相关命令可以查看玄铁qemu的[用户手册](https://www.xrvm.cn/community/download?id=4397435198627713024)，下述是启动qemu的命令，在powershell或命令行可直接执行下述命令，注意qemu需要导出至环境变量或者使用绝对路径。
-
-```shell
-qemu-system-riscv64 -machine xiaohui -nographic -kernel rtthread.elf -cpu c907fdvm
-```
 
 下述是使用vscode调试的展示。
 

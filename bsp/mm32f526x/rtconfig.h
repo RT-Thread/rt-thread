@@ -105,7 +105,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart3"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 
@@ -330,6 +331,14 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -340,6 +349,12 @@
 
 /* end of touch drivers */
 #define PKG_USING_AT24CXX
+
+/* Select the Type of AT24CXX EEPROM */
+
+#define PKG_AT24CXX_EE_TYPE_AT24C02
+#define PKG_AT24CXX_EE_TYPE 1
+/* end of Select the Type of AT24CXX EEPROM */
 #define PKG_USING_AT24CXX_LATEST_VERSION
 /* end of peripheral libraries and drivers */
 

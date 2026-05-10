@@ -13,11 +13,11 @@ static int xinput_vendor_class_request_handler(uint8_t busid, struct usb_setup_p
 {
     struct xinput_in_report xinput_report;
 
-    memset(&xinput_report, 0, sizeof(xinput_report));
+    memset(&xinput_report, 0, sizeof(struct xinput_in_report));
     xinput_report.report_size = 20;
 
-    memcpy(*data, &xinput_report, sizeof(xinput_report));
-    *len = sizeof(xinput_report);
+    memcpy(*data, &xinput_report, sizeof(struct xinput_in_report));
+    *len = sizeof(struct xinput_in_report);
     return 0;
 }
 
@@ -26,7 +26,7 @@ int usbd_gamepad_xinput_send_report(uint8_t ep, struct usb_gamepad_report *repor
     struct xinput_in_report *xinput_report;
 
     xinput_report = (struct xinput_in_report *)gamepad_report_buffer;
-    memset(xinput_report, 0, sizeof(xinput_report));
+    memset(xinput_report, 0, sizeof(struct xinput_in_report));
     xinput_report->report_size = 20;
 
     if (report->buttons & USB_GAMEPAD_BUTTON_DU)
@@ -105,7 +105,7 @@ int usbd_gamepad_switch_send_report(uint8_t ep, struct usb_gamepad_report *repor
     struct switch_in_report *switch_report;
 
     switch_report = (struct switch_in_report *)gamepad_report_buffer;
-    memset(switch_report, 0, sizeof(switch_report));
+    memset(switch_report, 0, sizeof(struct switch_in_report));
 
     if (report->buttons & USB_GAMEPAD_BUTTON_S1)
         switch_report->buttons |= SWITCH_MASK_MINUS;

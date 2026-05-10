@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>USE_STDPERIPH_DRIVER, RT_USING_ARMLIBC, N32L43X, RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, N32L43X, USE_STDPERIPH_DRIVER, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\drivers\include;.;..\libraries\N32L43x_Firmware_Library\CMSIS\core;..\libraries\N32L43x_Firmware_Library\CMSIS\device;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include;..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\inc;..\..\..\..\include;..\..\..\..\components\libc\compilers\common\include;..\libraries\n32_drivers\config;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\phy;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;applications;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\libraries\n32_drivers;..\..\..\..\components\net\utest;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\smp_call;..\libraries\N32L43x_Firmware_Library\CMSIS\core;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\libraries\N32L43x_Firmware_Library\CMSIS\device;board;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\libcpu\arm\cortex-m4;..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\inc;..\..\..\..\components\libc\posix\io\poll;.;..\libraries\n32_drivers;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\phy;..\..\..\..\components\drivers\include;..\libraries\n32_drivers\config;..\..\..\..\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\net\utest;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;applications</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -444,25 +444,6 @@
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\core\device.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls> </MiscControls>
-                      <Define>__RT_IPC_SOURCE__</Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>clock_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\clock_time\clock_timer.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -900,13 +881,6 @@
               <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\n32_drivers\drv_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\n32_drivers\drv_timer.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1447,13 +1421,6 @@
               <FileName>n32l43x_dac.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_dac.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>n32l43x_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_tim.c</FilePath>
             </File>
           </Files>
           <Files>

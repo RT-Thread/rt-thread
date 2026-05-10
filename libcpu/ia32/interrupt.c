@@ -20,6 +20,11 @@ struct rt_irq_desc irq_desc[MAX_HANDLERS];
 
 rt_uint16_t irq_mask_8259A = 0xFFFF;
 
+rt_inline rt_bool_t _interrupt_vector_is_valid(int vector)
+{
+    return (vector >= 0) && (vector < MAX_HANDLERS);
+}
+
 void rt_hw_interrupt_handle(int vector, void* param);
 
 /**
@@ -92,14 +97,24 @@ void rt_hw_interrupt_init(void)
 
 void rt_hw_interrupt_umask(int vector)
 {
-    irq_mask_8259A = irq_mask_8259A&~(1<<vector);
+    if (!_interrupt_vector_is_valid(vector))
+    {
+        return;
+    }
+
+    irq_mask_8259A = irq_mask_8259A & ~(rt_uint16_t)(1U << vector);
     outb(IO_PIC1+1, (char)irq_mask_8259A);
     outb(IO_PIC2+1, (char)(irq_mask_8259A >> 8));
 }
 
 void rt_hw_interrupt_mask(int vector)
 {
-    irq_mask_8259A = irq_mask_8259A | (1<<vector);
+    if (!_interrupt_vector_is_valid(vector))
+    {
+        return;
+    }
+
+    irq_mask_8259A = irq_mask_8259A | (rt_uint16_t)(1U << vector);
     outb(IO_PIC1+1, (char)irq_mask_8259A);
     outb(IO_PIC2+1, (char)(irq_mask_8259A >> 8));
 }

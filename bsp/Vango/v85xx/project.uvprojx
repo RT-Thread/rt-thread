@@ -331,9 +331,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>V85xx, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, RT_USING_LIBC, USE_TARGET_DRIVER, __STDC_LIMIT_MACROS, __RTTHREAD__, USE_STDPERIPH_DRIVER</Define>
+              <Define>USE_TARGET_DRIVER, V85xx, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_ARMLIBC, RT_USING_LIBC, USE_STDPERIPH_DRIVER</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\include;..\..\..\libcpu\arm\cortex-m0;Libraries\CMSIS\Vango\V85xx\Include;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\eventfd;Libraries\VangoV85xx_standard_peripheral\Include;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\finsh;..\..\..\components\drivers\include;drivers;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\epoll;applications;..\..\..\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\poll;Libraries\CMSIS;..\..\..\components\drivers\include;.;..\..\..\components\drivers\phy</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\include;..\..\..\components\drivers\phy;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;Libraries\CMSIS\Vango\V85xx\Include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;Libraries\CMSIS;..\..\..\components\drivers\smp_call;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;applications;.;..\..\..\components\dfs\dfs_v1\include;..\..\..\components\libc\posix\ipc;Libraries\VangoV85xx_standard_peripheral\Include;..\..\..\components\net\utest;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\io\eventfd;drivers;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -385,61 +385,33 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cctype.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstdlib.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -685,16 +657,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_gpio.c</FileName>
+              <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_gpio.c</FilePath>
+              <FilePath>drivers\drv_usart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_usart.c</FileName>
+              <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_usart.c</FilePath>
+              <FilePath>drivers\drv_gpio.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -800,13 +772,6 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh_parse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
@@ -814,16 +779,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1123,26 +1095,61 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>cctype.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1154,40 +1161,30 @@
           </Files>
           <Files>
             <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>libcpu</GroupName>
           <Files>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>showmem.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1195,163 +1192,9 @@
           <GroupName>Vango_Lib</GroupName>
           <Files>
             <File>
-              <FileName>system_target.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\system_target.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_crypt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_crypt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_pmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_pmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_ana.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_ana.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_target.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\Keil5\startup_target.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_cortex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_cortex.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_tmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_tmr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_CodeRAM.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_CodeRAM.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_pwm.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>lib_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_iso7816.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_iso7816.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_wdt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_comp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_comp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_u32k.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_u32k.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_LoadNVR.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_LoadNVR.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_version.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_version.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_lcd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lib_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_spi.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1363,9 +1206,93 @@
           </Files>
           <Files>
             <File>
+              <FileName>lib_ana.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_ana.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>lib_clk.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_clk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_comp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_comp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_crypt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_crypt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_iso7816.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_iso7816.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_lcd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_pmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_pwm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1377,9 +1304,79 @@
           </Files>
           <Files>
             <File>
-              <FileName>lib_misc.c</FileName>
+              <FileName>lib_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_misc.c</FilePath>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_tmr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_tmr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_u32k.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_u32k.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_version.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_version.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\VangoV85xx_standard_peripheral\Source\lib_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_target.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\system_target.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_CodeRAM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_CodeRAM.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_cortex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_cortex.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lib_LoadNVR.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\lib_LoadNVR.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_target.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\Vango\V85xx\Source\Keil5\startup_target.S</FilePath>
             </File>
           </Files>
         </Group>

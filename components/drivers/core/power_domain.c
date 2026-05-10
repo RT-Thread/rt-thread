@@ -105,6 +105,12 @@ rt_err_t rt_dm_power_domain_register_child(struct rt_dm_power_domain *domain,
     dm_power_domain_init(child_domain);
     child_domain->parent_domain = domain;
 
+    rt_hw_spin_lock(&domain->lock.lock);
+
+    rt_list_insert_before(&domain->child_nodes, &child_domain->list);
+
+    rt_hw_spin_unlock(&domain->lock.lock);
+
     return RT_EOK;
 }
 

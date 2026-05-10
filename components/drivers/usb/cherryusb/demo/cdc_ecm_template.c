@@ -82,7 +82,7 @@ static const uint8_t *device_quality_descriptor_callback(uint8_t speed)
 
 static const char *string_descriptor_callback(uint8_t speed, uint8_t index)
 {
-    if (index > 4) {
+    if (index >= (sizeof(string_descriptors) / sizeof(char *))) {
         return NULL;
     }
     return string_descriptors[index];
@@ -351,7 +351,7 @@ struct usbd_interface intf1;
 /* ecm only supports in linux, and you should input the following command
  *
  * sudo ifconfig enxaabbccddeeff up
- * sudo dhcpclient enxaabbccddeeff
+ * sudo dhclient enxaabbccddeeff
 */
 void cdc_ecm_init(uint8_t busid, uintptr_t reg_base)
 {

@@ -33,7 +33,7 @@ if GetDepend('RT_USING_SFUD'):
     src += ['drv_spi_flash.c', 'drv_spi.c']
 
 # add wdt drivers.
-if GetDepend('RT_USING_WDT'):
+if GetDepend(['RT_USING_WDT', 'SOC_GD32VW553H']):
     src += ['drv_wdt.c']
 
 # add rtc drivers.
@@ -51,6 +51,7 @@ if GetDepend('RT_USING_ADC'):
 # add pwm drivers.
 if GetDepend(['RT_USING_PWM', 'SOC_GD32VW553H']):
     src += ['drv_pwm.c']
+
 
 path = [cwd]
 path += [cwd + "/config"]

@@ -642,7 +642,7 @@ struct audio_cs_if_ac_feature_unit_descriptor {
     uint8_t bUnitID;
     uint8_t bSourceID;
     uint8_t bControlSize;
-    uint8_t bmaControls[1];
+    uint8_t bmaControls[33]; // variable
     uint8_t iFeature;
 } __PACKED;
 
@@ -1318,10 +1318,10 @@ struct audio_v2_control_range3_param_block {
 
 // clang-format on
 
-#define AUDIO_V2_AS_DESCRIPTOR_LEN            (0x09 + 0x09 + 0x10 + 0x06 + 0x07 + 0x08)
+#define AUDIO_V2_AS_DESCRIPTOR_LEN             (0x09 + 0x09 + 0x10 + 0x06 + 0x07 + 0x08)
 #define AUDIO_V2_AS_ALTSETTING0_DESCRIPTOR_LEN (0x09)
-#define AUDIO_V2_AS_ALTSETTING_DESCRIPTOR_LEN (0x09 + 0x10 + 0x06 + 0x07 + 0x08)
-#define AUDIO_V2_AS_FEEDBACK_DESCRIPTOR_LEN   (0x09 + 0x09 + 0x10 + 0x06 + 0x07 + 0x08 + 0x07)
+#define AUDIO_V2_AS_ALTSETTING_DESCRIPTOR_LEN  (0x09 + 0x10 + 0x06 + 0x07 + 0x08)
+#define AUDIO_V2_AS_FEEDBACK_DESCRIPTOR_LEN    (0x09 + 0x09 + 0x10 + 0x06 + 0x07 + 0x08 + 0x07)
 
 #define AUDIO_SAMPLE_FREQ_NUM(num) (uint8_t)(num), (uint8_t)((num >> 8))
 #define AUDIO_SAMPLE_FREQ_3B(frq)  (uint8_t)(frq), (uint8_t)((frq >> 8)), (uint8_t)((frq >> 16))

@@ -17,6 +17,8 @@ path += [cwd + '/class/dfu']
 path += [cwd + '/class/serial']
 path += [cwd + '/class/vendor/net']
 path += [cwd + '/class/vendor/wifi']
+path += [cwd + '/class/vendor/display']
+path += [cwd + '/class/vendor/xbox']
 src = []
 
 LIBS    = []
@@ -136,13 +138,17 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         src += Glob('class/cdc/usbd_cdc_ncm.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_DFU']):
         src += Glob('class/dfu/usbd_dfu.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_DISPLAY']):
+        src += Glob('class/vendor/display/usbd_display.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_ADB']):
         src += Glob('class/adb/usbd_adb.c')
         src += Glob('platform/rtthread/usbd_adb_shell.c')
 
     if GetDepend(['RT_CHERRYUSB_DEVICE_CDC_ACM_CHARDEV']):
-        src += Glob('platform/rtthread/usbd_serial.c')
+        src += Glob('platform/rtthread/rt_usbd_serial.c')
 
+    if GetDepend(['PKG_CHERRYUSB_DEVICE_MSC_BLKDEV']):
+        src += Glob('platform/rtthread/rt_usbd_msc.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM']):
         src += Glob('demo/cdc_acm_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_MSC']) or GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_MSC_BLKDEV']):
@@ -165,6 +171,8 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         src += Glob('demo/cdc_ecm_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_NCM']):
         src += Glob('demo/cdc_ncm_template.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_DFU']):
+        src += Glob('demo/dfu_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM_MSC']):
         src += Glob('demo/cdc_acm_msc_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM_MSC_HID']):
@@ -177,6 +185,8 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         src += Glob('demo/winusb2.0_cdc_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_WEBUSB_HID']):
         src += Glob('demo/webusb_hid_template.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_DISPLAY']):
+        src += Glob('demo/display/usbdisplay_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_ADB']):
         src += Glob('demo/adb/usbd_adb_template.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM_CHARDEV']):
@@ -313,6 +323,8 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
         src += Glob('class/serial/usbh_cp210x.c')
     if GetDepend(['RT_CHERRYUSB_HOST_PL2303']):
         src += Glob('class/serial/usbh_pl2303.c')
+    if GetDepend(['RT_CHERRYUSB_HOST_XBOX']):
+        src += Glob('class/vendor/xbox/usbh_xbox.c')
 
     if GetDepend(['RT_TEST_USBH_HID']):
         CPPDEFINES+=['CONFIG_TEST_USBH_HID']
@@ -325,20 +337,20 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
         or GetDepend(['RT_CHERRYUSB_HOST_PL2303']) \
         or GetDepend(['RT_CHERRYUSB_HOST_GSM']):
         src += Glob('class/serial/usbh_serial.c')
-        src += Glob('platform/rtthread/usbh_rtserial.c')
+        src += Glob('platform/rtthread/rt_usbh_serial.c')
 
     if GetDepend('RT_USING_DFS') and GetDepend(['RT_CHERRYUSB_HOST_MSC']):
-       src += Glob('platform/rtthread/usbh_dfs.c')
+       src += Glob('platform/rtthread/rt_usbh_msc.c')
 
     if GetDepend('RT_CHERRYUSB_HOST_CDC_ECM') \
         or GetDepend('RT_CHERRYUSB_HOST_CDC_RNDIS') \
         or GetDepend('RT_CHERRYUSB_HOST_CDC_NCM') \
         or GetDepend('RT_CHERRYUSB_HOST_ASIX') \
         or GetDepend('RT_CHERRYUSB_HOST_RTL8152'):
-       src += Glob('platform/rtthread/usbh_lwip.c')
+       src += Glob('platform/rtthread/rt_usbh_lwip.c')
 
-src += Glob('platform/rtthread/usb_msh.c')
-src += Glob('platform/rtthread/usb_check.c')
+src += Glob('platform/rtthread/rt_usb_msh.c')
+src += Glob('platform/rtthread/rt_usb_check.c')
 
 group = DefineGroup('UsbStack', src, depend = ['RT_USING_CHERRYUSB'], LIBS = LIBS, LIBPATH=LIBPATH, CPPPATH = path, CPPDEFINES = CPPDEFINES)
 

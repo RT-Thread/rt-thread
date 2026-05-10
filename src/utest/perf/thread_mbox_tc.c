@@ -81,7 +81,6 @@ static void perf_thread_mbox1(void *parameter)
 static void perf_thread_mbox2(void *parameter)
 {
     rt_perf_t *perf = (rt_perf_t *)parameter;
-    rt_err_t ret = RT_EOK;
     while (1)
     {
         if (perf->count >= RT_UTEST_SYS_PERF_TC_COUNT)

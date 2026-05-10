@@ -11,14 +11,15 @@ https://www.rock-chips.com/a/cn/product/RK35xilie/index.html
 ### Condition
 
 | SoC | Condition | Earlycon |
-| ------ | ----  | ----  |
+| ------ | ---- | ---- |
 | RK3576 | Support | earlycon=uart8250,mmio32,0x2ad40000 |
 | RK3588 | Support | earlycon=uart8250,mmio32,0xfeb50000 |
 | RK3562 | - | - |
 | RK3568J | Support | earlycon=uart8250,mmio32,0xfe660000 |
 | RK3568 | Support | earlycon=uart8250,mmio32,0xfe660000 |
 | RK3566 | Support | earlycon=uart8250,mmio32,0xfe660000 |
-| RK3506 | - |
+| RK3528 | Support | earlycon=uart8250,mmio32,0xff9f0000 |
+| RK3506 | - | - |
 
 ## 2. Compiling
 

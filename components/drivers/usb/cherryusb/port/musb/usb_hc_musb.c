@@ -924,13 +924,6 @@ void handle_ep0(struct usbh_bus *bus)
         musb_urb_waitup(urb);
         return;
     }
-    if (ep0_status & USB_CSRL0_STALL) {
-        HWREGB(USB_TXCSRL_BASE(ep_idx)) &= ~USB_CSRL0_STALL;
-        pipe->ep0_state = USB_EP0_STATE_SETUP;
-        urb->errorcode = -USB_ERR_STALL;
-        musb_urb_waitup(urb);
-        return;
-    }
 
     switch (pipe->ep0_state) {
         case USB_EP0_STATE_SETUP:
@@ -1097,8 +1090,8 @@ void USBH_IRQHandler(uint8_t busid)
                 HWREGB(USB_TXCSRL_BASE(ep_idx)) &= ~USB_TXCSRL1_NAKTO;
                 urb->errorcode = -USB_ERR_NAK;
                 musb_urb_waitup(urb);
-            } else if (ep_csrl_status & USB_TXCSRL1_STALL) {
-                HWREGB(USB_TXCSRL_BASE(ep_idx)) &= ~USB_TXCSRL1_STALL;
+            } else if (ep_csrl_status & USB_TXCSRL1_STALLED) {
+                HWREGB(USB_TXCSRL_BASE(ep_idx)) &= ~USB_TXCSRL1_STALLED;
                 urb->errorcode = -USB_ERR_STALL;
                 musb_urb_waitup(urb);
             } else {
@@ -1146,8 +1139,8 @@ void USBH_IRQHandler(uint8_t busid)
                 HWREGB(USB_RXCSRL_BASE(ep_idx)) &= ~USB_RXCSRL1_NAKTO;
                 urb->errorcode = -USB_ERR_NAK;
                 musb_urb_waitup(urb);
-            } else if (ep_csrl_status & USB_RXCSRL1_STALL) {
-                HWREGB(USB_RXCSRL_BASE(ep_idx)) &= ~USB_RXCSRL1_STALL;
+            } else if (ep_csrl_status & USB_RXCSRL1_STALLED) {
+                HWREGB(USB_RXCSRL_BASE(ep_idx)) &= ~USB_RXCSRL1_STALLED;
                 urb->errorcode = -USB_ERR_STALL;
                 musb_urb_waitup(urb);
             } else if (ep_csrl_status & USB_RXCSRL1_RXRDY) {

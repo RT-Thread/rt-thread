@@ -1,6 +1,6 @@
 import os
 ARCH     = 'risc-v'
-CPU      = 'c906fd'
+CPU      = 'c906'
 # toolchains options
 CROSS_TOOL  = 'gcc'
 
@@ -51,8 +51,6 @@ if PLATFORM == 'gcc':
         ' -D__RT_KERNEL_SOURCE__=1 '
         ' -DCONFIG_CSI_V2=1 '
         ' -DCONFIG_CSI="csi2" '
-        ' -DCONFIG_SUPPORT_TSPEND=0 '
-        ' -DCONFIG_SUPPORT_IRQ_NESTED=0 '
         ' -DCONFIG_XIP=1 '
         ' -DCONFIG_ARCH_MAINSTACK=8192 '
         ' -DCONFIG_ARCH_INTERRUPTSTACK=8192 '
@@ -60,19 +58,19 @@ if PLATFORM == 'gcc':
         ' -DCLI_CONFIG_STACK_SIZE=8192 '
         ' -DCONFIG_PLIC_BASE=134217728 '
         ' -DCONFIG_VIC_TSPDR=201326592 '
-        ' -DCONFIG_CLIC_BASE=201392128 '
-        ' -DCONFIG_FPP_ENABLE=0 '
-        ' -DCONFIG_INTC_CLIC_PLIC=1 '
+        ' -DCONFIG_CLINT_BASE=201326592 '
+        ' -DCONFIG_INTC_PLIC=1 '
         ' -DCONFIG_INIT_TASK_STACK_SIZE=8192 '
         ' -DCONFIG_APP_TASK_STACK_SIZE=8192 '
-        ' -DCONFIG_SYSTICK_HZ=100 '
         ' -DCONFIG_DEBUG=1 '
     )
+
+    GLOBAL_DEFINES += ' -DCONFIG_SYSTICK_HZ=RT_TICK_PER_SECOND '
 
     CFLAGS = DEVICE + ' -c -Wno-unused-function -g -Wpointer-arith -Wno-undef -Wall -ffunction-sections -fdata-sections -fno-inline-functions \
                         -fno-builtin -fno-strict-aliasing -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast' + GLOBAL_DEFINES
     
-    AFLAGS = DEVICE + ' -D"Default_IRQHandler=SW_handler" ' + GLOBAL_DEFINES
+    AFLAGS = DEVICE + GLOBAL_DEFINES
     
     LFLAGS = DEVICE + ' -Wl,-zmax-page-size=1024 -Wl,-Map=yoc.map -nostartfiles -Wl,--gc-sections '
     LFLAGS += ' -T ' + LINK_FILE

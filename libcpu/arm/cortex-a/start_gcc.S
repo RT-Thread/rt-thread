@@ -182,7 +182,7 @@ continue_exit:
 
     /* invalidate TLB, I-cache and branch predictor */
     mov r0, #0
-    mcr p15, 0, r0, c8, c7, 0    /* ITLBIALL */
+    mcr p15, 0, r0, c8, c7, 0    /* TLBIALL */
     mcr p15, 0, r0, c7, c5, 0    /* ICIALLU */
     mcr p15, 0, r0, c7, c5, 6    /* BPIALL */
     dsb
@@ -268,7 +268,7 @@ enable_mmu_page_table_early:
 
     /* invalidate TLB, I-cache and branch predictor */
     mov r0, #0
-    mcr p15, 0, r0, c8, c7, 0           /* ITLBIALL */
+    mcr p15, 0, r0, c8, c7, 0           /* TLBIALL */
     mcr p15, 0, r0, c7, c5, 0           /* ICIALLU */
     mcr p15, 0, r0, c7, c5, 6           /* BPIALL */
 
@@ -660,7 +660,7 @@ rt_hw_mmu_switch:
 
     /* invalidate TLB, I-cache and branch predictor */
     mov r0, #0
-    mcr p15, 0, r0, c8, c7, 0       /* ITLBIALL */
+    mcr p15, 0, r0, c8, c7, 0       /* TLBIALL */
     mcr p15, 0, r0, c7, c5, 0       /* ICIALLU */
     mcr p15, 0, r0, c7, c5, 6       /* BPIALL */
 

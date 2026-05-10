@@ -218,6 +218,7 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void));
 rt_err_t rt_thread_idle_delhook(void (*hook)(void));
 #endif /* defined(RT_USING_HOOK) || defined(RT_USING_IDLE_HOOK) */
 rt_thread_t rt_thread_idle_gethandler(void);
+rt_bool_t rt_thread_is_idle_thread(rt_thread_t thread);
 
 /*
  * schedule service
@@ -809,6 +810,7 @@ rt_device_t rt_console_get_device(void);
 #endif /* RT_USING_THREADSAFE_PRINTF */
 #endif /* defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE) */
 
+int __rt_fls(int val);
 int __rt_ffs(int value);
 unsigned long __rt_ffsl(unsigned long value);
 unsigned long __rt_clz(unsigned long value);

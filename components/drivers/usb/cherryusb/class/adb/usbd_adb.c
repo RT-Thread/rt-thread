@@ -114,10 +114,8 @@ void usbd_adb_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
     (void)ep;
 
     if (adb_client.common_state == ADB_STATE_READ_MSG) {
-        if (nbytes != sizeof(struct adb_msg)) {
-            USB_LOG_ERR("invalid adb msg size:%d\r\n", (unsigned int)nbytes);
-            return;
-        }
+        USB_ASSERT(nbytes == sizeof(struct adb_msg));
+        USB_ASSERT(rx_packet.msg.data_length <= sizeof(rx_packet.payload));
 
         USB_LOG_DBG("command:%x arg0:%x arg1:%x len:%d\r\n",
                      rx_packet.msg.command,

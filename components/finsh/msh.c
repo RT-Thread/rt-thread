@@ -10,6 +10,7 @@
  * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
  */
 #include <rtthread.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 

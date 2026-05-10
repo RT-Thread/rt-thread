@@ -11,13 +11,14 @@ https://www.rock-chips.com/a/cn/product/RK35xilie/index.html
 ### 支持列表
 
 | 驱动 | 支持情况  | Earlycon |
-| ------ | ----  | ----  |
+| ------ | ---- | ---- |
 | RK3576 | 支持 | earlycon=uart8250,mmio32,0x2ad40000 |
 | RK3588 | 支持 | earlycon=uart8250,mmio32,0xfeb50000 |
 | RK3562 | - | - |
 | RK3568J | 支持 | earlycon=uart8250,mmio32,0xfe660000 |
 | RK3568 | 支持 | earlycon=uart8250,mmio32,0xfe660000 |
 | RK3566 | 支持 | earlycon=uart8250,mmio32,0xfe660000 |
+| RK3528 | 支持 | earlycon=uart8250,mmio32,0xff9f0000 |
 | RK3506 | - | - |
 
 ## 2. 编译
