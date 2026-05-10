@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +12,7 @@
 #define __SDIO_CONFIG_H__
 
 #include <rtthread.h>
-//#include "stm32h7xx_hal.h"
+/* #include "stm32h7xx_hal.h" */
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,6 +39,4 @@ extern "C" {
 #endif
 
 #endif /*__SDIO_CONFIG_H__ */
-
-
 

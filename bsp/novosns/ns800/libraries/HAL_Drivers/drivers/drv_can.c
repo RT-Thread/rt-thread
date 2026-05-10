@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2025, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -84,14 +84,14 @@ static void _can_gpio_init(void)
     GPIO_setPinConfig(GPIO_4_CANFD1_TX);
     GPIO_setPinConfig(GPIO_10_CANFD1_RX);
 #endif
-    
+
 #ifdef BSP_USING_CANFD1
     GPIO_setAnalogMode(GPIO_4, GPIO_ANALOG_DISABLED);
     GPIO_setAnalogMode(GPIO_10, GPIO_ANALOG_DISABLED);
     GPIO_setPinConfig(GPIO_4_CANFD1_TX);
     GPIO_setPinConfig(GPIO_10_CANFD1_RX);
 #endif
-    
+
 #ifdef BSP_USING_CANFD2
     GPIO_setAnalogMode(GPIO_4, GPIO_ANALOG_DISABLED);
     GPIO_setAnalogMode(GPIO_10, GPIO_ANALOG_DISABLED);
@@ -168,7 +168,7 @@ static rt_err_t _can_sendBlocking(ns800rt7_can *base, FLEXCANDRV_MsgObjType *TxM
     }
     else
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 }
 
@@ -183,7 +183,7 @@ static rt_err_t _can_receiveNonBlocking(ns800rt7_can *base, FLEXCANDRV_MsgObjTyp
     }
     else
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 }
 
@@ -197,10 +197,10 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     RT_ASSERT(cfg);
     drv_can = (ns800rt7_can *)can->parent.user_data;
     RT_ASSERT(drv_can);
-    
+
     _can_gpio_init();
     _can_clock_init();
-    
+
     FLEXCANDRV_InitHwParType initHwPar;
     initHwPar.canRamNum = 4;
     initHwPar.canInstanceIdx = 1;
@@ -208,16 +208,16 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
 
     /* get FLEXCAN controller default configuration */
     FLEXCANDRV_GetDefaultCfg(&(drv_can->CanCfg));
-    
+
     baud_index = get_can_baud_index(cfg->baud_rate);
-    
+
     FLEXCANDRV_BitTimingCalc(&(drv_can->CanCfg.bitTiming),
                              FlexcanClockFreq,        /* module clock source*/
                              BAUD_DATA(baud_index),   /* baudrate: 500K */
                              7500,                    /* sample point: 75% */
                              2500,                    /* SJW: 25% */
                              0);                      /* classic CAN bit timing */
-                             
+
     FLEXCANDRV_BitTimingCalc(&(drv_can->CanCfg.fdBitTiming),
                              FlexcanClockFreq,        /* module clock source*/
                              BAUD_DATA(baud_index),   /* baudrate: 500K */
@@ -300,6 +300,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         {
             return -RT_ERROR;
         }
+
         if (argval != drv_can->device.config.mode)
         {
             drv_can->device.config.mode = argval;
@@ -320,6 +321,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         {
             return -RT_ERROR;
         }
+
         if (argval != drv_can->device.config.baud_rate)
         {
             drv_can->device.config.baud_rate = argval;
@@ -332,8 +334,8 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_GET_STATUS:
         drv_can->device.status.rcverrcnt = FLEXCANREG_GetEcrRxerrcnt(canReg);
         drv_can->device.status.snderrcnt = FLEXCANREG_GetEcrTxerrcnt(canReg);
-        //drv_can->device.status.lasterrtype = errtype & 0x70;
-        //drv_can->device.status.errcode = errtype & 0x07;
+        /* drv_can->device.status.lasterrtype = errtype & 0x70; */
+        /* drv_can->device.status.errcode = errtype & 0x07; */
 
         rt_memcpy(arg, &drv_can->device.status, sizeof(drv_can->device.status));
         break;
@@ -369,9 +371,9 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
 
     /* Check the parameters */
     RT_ASSERT(IS_CAN_DLC(pmsg->len));
-    
+
     fdTxMsgObj.msgBufId = box_num;
-    
+
     /* Set up the DLC */
     fdTxMsgObj.dlc = pmsg->len & 0x0FU;
     /* Set up the data field */
@@ -379,9 +381,9 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     {
         fdTxMsgObj.data[i] = pmsg->data[i];
     }
-    
+
     status = _can_sendBlocking(hcan, &fdTxMsgObj);
-    
+
     return status;
 }
 
@@ -394,7 +396,7 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
 
     hcan = &(((ns800rt7_can *)can->parent.user_data)->CanHandle);
     pmsg = (struct rt_can_msg *) buf;
-    
+
     rt_uint8_t index;
 
     pmsg->hdr_index = index;      /* one hdr filter per MB */
@@ -422,7 +424,7 @@ static const struct rt_can_ops _can_ops =
 
 static uint32_t FLEXCANREG_GetMsgBufInterruptFlagAll(FLEXCANREG_TypeDef *obj)
 {
-    return obj->IFLAG1 | obj->IFLAG2 | obj->IFLAG3 | obj->IFLAG4;    
+    return obj->IFLAG1 | obj->IFLAG2 | obj->IFLAG3 | obj->IFLAG4;
 }
 
 static uint8_t FLEXCANREG_GetMsgBufInterruptMask (FLEXCANREG_TypeDef *obj, uint32_t msgBufferIdx)
@@ -466,7 +468,7 @@ static void _can_tx_rx_isr(struct rt_can_device *can)
     ns800rt7_can *hcan;
     hcan = (ns800rt7_can *) can->parent.user_data;
     FLEXCANDRV_MsgObjType msgObj;
-    
+
     /* Assertion. */
     RT_ASSERT(hcan);
 
@@ -523,7 +525,7 @@ static void _can_tx_rx_isr(struct rt_can_device *can)
 
 static void _can_err_isr(struct rt_can_device *can)
 {
-    
+
 }
 
 #ifdef BSP_USING_CAN1
@@ -536,7 +538,7 @@ void CAN1_1_IRQHandler(void)
 #if 0
     if()
     {
-        _can_rx_isr(&drv_can1.device);  
+        _can_rx_isr(&drv_can1.device);
     }
     else
     {
@@ -555,7 +557,7 @@ void CAN1_2_IRQHandler(void)
 #if 0
     if()
     {
-        _can_rx_isr(&drv_can1.device);  
+        _can_rx_isr(&drv_can1.device);
     }
     else
     {
@@ -613,7 +615,7 @@ int rt_hw_can_init(void)
 #endif
     /* config default filter */
     FLEXCANDRV_MsgCfgType fdMsgCfgObj[2] = {0};
-    
+
     drv_can1.FilterConfig[0].msgBufId = 0;
     drv_can1.FilterConfig[0].msgBufLen = 1;
     drv_can1.FilterConfig[0].msgId = 0x78;
@@ -625,7 +627,7 @@ int rt_hw_can_init(void)
     drv_can1.FilterConfig[0].individualMask = 0xFFFFFFFF;
     drv_can1.FilterConfig[0].rtrmask = false;
     drv_can1.FilterConfig[0].rtrfilter = false;
-    
+
     drv_can1.FilterConfig[1].msgBufId = 1;
     drv_can1.FilterConfig[1].msgBufLen = 1;
     drv_can1.FilterConfig[1].msgId = 0x400;
@@ -637,7 +639,7 @@ int rt_hw_can_init(void)
     drv_can1.FilterConfig[1].individualMask = 0;
     drv_can1.FilterConfig[1].rtrmask = false;
     drv_can1.FilterConfig[1].rtrfilter = false;
-    
+
     drv_can1.FilterNum = 2;
 
 #ifdef BSP_USING_CANFD1
@@ -657,3 +659,4 @@ INIT_BOARD_EXPORT(rt_hw_can_init);
 #endif /* BSP_USING_CAN */
 
 /************************** end of file ******************/
+

@@ -35,7 +35,7 @@ static struct rt_ecap_device ecap1_dev;
 void ECAP1_IRQHandler (void);
 
 /*
- * 
+ *
  */
 static void ecap_gpio_init (const struct rt_ecap_config *config)
 {
@@ -49,7 +49,7 @@ static void ecap_gpio_init (const struct rt_ecap_config *config)
 }
 
 /*
- * 
+ *
  */
 static void ecap_xbar_init (const struct rt_ecap_config *config)
 {
@@ -59,7 +59,7 @@ static void ecap_xbar_init (const struct rt_ecap_config *config)
 }
 
 /*
- * 
+ *
  */
 static void ecap_hw_init (const struct rt_ecap_config *config)
 {
@@ -109,18 +109,18 @@ static void ecap_hw_init (const struct rt_ecap_config *config)
     ECAP_setEmulationMode(config->instance, ECAP_EMULATION_STOP);
     ECAP_setSyncInPulseSource(config->instance, ECAP_SYNC_IN_PULSE_SRC_DISABLE);
 
-    // ECAP_startCounter(config->instance);
-    // ECAP_enableTimeStampCapture(config->instance);
-    // ECAP_reArm(config->instance);
+    /* ECAP_startCounter(config->instance); */
+    /* ECAP_enableTimeStampCapture(config->instance); */
+    /* ECAP_reArm(config->instance); */
 
     /*
      * 当前配置是 Event4 完成后产生中断。
      */
-    // ECAP_enableInterrupt(config->instance, ECAP_ECEINT_CEVT4_M);
+    /* ECAP_enableInterrupt(config->instance, ECAP_ECEINT_CEVT4_M); */
 }
 
 /*
- * 
+ *
  */
 static void ecap_hw_deinit (const struct rt_ecap_config *config)
 {
@@ -475,4 +475,5 @@ void ECAP1_IRQHandler (void)
 }
 
 
-#endif //#if defined(BSP_USING_ECAP)
+#endif /* #if defined(BSP_USING_ECAP) */
+

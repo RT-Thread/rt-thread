@@ -55,3 +55,4 @@ int rt_ecap_test_init (void)
     return 0;
 }
 MSH_CMD_EXPORT(rt_ecap_test_init, ecap capture test);
+

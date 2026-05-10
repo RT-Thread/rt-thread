@@ -103,14 +103,14 @@ extern int Image$$RW_RT_HEAD$$Limit;
   * @{
   * @brief  Defines configuration macros for the Phase-Locked Loop (PLL).
   * @note   Will configure the clock as follows:
-  *          PLL_SYSCLK = PLLSOURCE  * PLLM / ( (PLLN+1) * (2 * (PLLP+1))) 
-  * 
+  *          PLL_SYSCLK = PLLSOURCE  * PLLM / ( (PLLN+1) * (2 * (PLLP+1)))
+  *
   *          PLLSOURCE optional: \b HXTL_FREQ_VALUE
   *                              \b MIRC1_FREQ_VALUE
   *                              \b MIRC2_FREQ_VALUE
-  *          Example: 
+  *          Example:
   *           if PLLSOURCE = HXTL_FREQ_VALUE = 20Mhz, PLLM_40, PLLN_DIV1, PLLP_DIV2,
-  *         
+  *
   *             PLL_SYSCLK = 20Mhz * 40 / ( (0+1) * (2 * (0+1)) ) = 400MHz
   */
 #ifdef SYSCLK_USE_PLL
@@ -119,22 +119,22 @@ extern int Image$$RW_RT_HEAD$$Limit;
                        (RCC_PLLN_DIV1 << 4) | \
                        (RCC_PLLP_DIV2 << 17) | \
                        (RCC_PLLSOURCE_HXTL))
-#else  // ndef PLLCLK_SOURCE_USE_HXTL
+#else  /* ndef PLLCLK_SOURCE_USE_HXTL */
 #ifdef PLLCLK_SOURCE_USE_MIRC2
 #define PLL_CONFIG    ((RCC_PLLM_80 << 8) | \
                        (RCC_PLLN_DIV1 << 4) | \
                        (RCC_PLLP_DIV2 << 17) | \
                        (RCC_PLLSOURCE_MIRC2))
-#else  // ndef PLLCLK_SOURCE_USE_MIRC2
+#else  /* ndef PLLCLK_SOURCE_USE_MIRC2 */
 #define PLL_CONFIG    ((RCC_PLLM_52 << 8) | \
                        (RCC_PLLN_DIV1 << 4) | \
                        (RCC_PLLP_DIV2 << 17) | \
                        (RCC_PLLSOURCE_MIRC1))
-#endif  // PLLCLK_SOURCE_USE_MIRC2
-#endif  // PLLCLK_SOURCE_USE_HXTL
-#else  // ndef SYSCLK_USE_PLL
+#endif  /* PLLCLK_SOURCE_USE_MIRC2 */
+#endif  /* PLLCLK_SOURCE_USE_HXTL */
+#else  /* ndef SYSCLK_USE_PLL */
 #define PLL_CONFIG    0U
-#endif  // SYSCLK_USE_PLL
+#endif  /* SYSCLK_USE_PLL */
 
 /**
   * @}
@@ -178,7 +178,7 @@ extern int Image$$RW_RT_HEAD$$Limit;
                                       (RCC_EMIF_DIV_2 << 8) | \
                                       (RCC_EPWM_DIV_1 << 12))
 
-#else 
+#else
 #define SYSCLOCK_CFGR_DIV_CONFIG    ((RCC_APB5_HCLK_DIV1 << 28) | \
                                      (RCC_APB2_4_HCLK_DIV1 << 24) | \
                                      (RCC_APB1_3_HCLK_DIV1 << 20) | \
@@ -194,8 +194,8 @@ extern int Image$$RW_RT_HEAD$$Limit;
 /**
   * @}
   */
-  
-#define SYSTICK_TIME_UNIT    (1000UL)    /*!< Uint: 1M */  
+
+#define SYSTICK_TIME_UNIT    (1000UL)    /*!< Uint: 1M */
 
 
 
@@ -243,37 +243,37 @@ void Device_enableAllPeripheralsInCpu1 (void);
 
 /**
  * \brief  Board Initialization.
- * \note   Call this function in your application if you wish to do all module 
+ * \note   Call this function in your application if you wish to do all module
  *         initialization.
- *         If you wish to not use some of the initializations, instead of the 
+ *         If you wish to not use some of the initializations, instead of the
  *         Board_init use the individual Module_inits.
  */
 void Board_init (void);
 
 /**
  * \brief  PinMux Initialization.
- * \note   Call this function in your application if you want all 
+ * \note   Call this function in your application if you want all
  *         PinMux initialization to be done.
  */
 void PinMux_init (void);
 
 /**
  * \brief  Board Serial Communication Interface Initialization.
- * \note   Call this function in the application to initialize the SCI serial port 
+ * \note   Call this function in the application to initialize the SCI serial port
  *         on the board for outputting debugging information.
  */
 void SerialCOM_init(void);
 
 /**
  * \brief  Board LED Initialization.
- * \note   Call this function in the application to initialize the LED 
+ * \note   Call this function in the application to initialize the LED
  *         on the board.
  */
 void LED_init (void);
 
 /**
  * \brief  Board Switch Initialization.
- * \note   Call this function in the application to initialize the Switch 
+ * \note   Call this function in the application to initialize the Switch
  *         on the board.
  */
 void Switch_init (void);
@@ -285,3 +285,4 @@ void Switch_init (void);
 
 
 #endif  /* __BOARD_H__ */
+

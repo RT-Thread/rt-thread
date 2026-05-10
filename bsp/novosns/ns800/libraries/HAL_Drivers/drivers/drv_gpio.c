@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2025, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,7 +19,7 @@
 #define PIN_ENTRY(pin_macro) {pin_macro}
 
 static const rt_pin_info_t pin_map_table[225] = {
-    // 0-21: 连续
+    /* 0-21: 连续 */
     [0] = PIN_ENTRY(GPIO_0),
     [1] = PIN_ENTRY(GPIO_1),
     [2] = PIN_ENTRY(GPIO_2),
@@ -42,8 +42,8 @@ static const rt_pin_info_t pin_map_table[225] = {
     [19] = PIN_ENTRY(GPIO_19),
     [20] = PIN_ENTRY(GPIO_20),
     [21] = PIN_ENTRY(GPIO_21),
-    
-    // 22-32: 不连续
+
+    /* 22-32: 不连续 */
     [22] = PIN_ENTRY(GPIO_22),
     [23] = PIN_ENTRY(GPIO_23),
     [24] = PIN_ENTRY(GPIO_24),
@@ -55,8 +55,8 @@ static const rt_pin_info_t pin_map_table[225] = {
     [30] = PIN_ENTRY(GPIO_30),
     [31] = PIN_ENTRY(GPIO_31),
     [32] = PIN_ENTRY(GPIO_32),
-    
-    // 33-63: 连续
+
+    /* 33-63: 连续 */
     [33] = PIN_ENTRY(GPIO_33),
     [34] = PIN_ENTRY(GPIO_34),
     [35] = PIN_ENTRY(GPIO_35),
@@ -88,8 +88,8 @@ static const rt_pin_info_t pin_map_table[225] = {
     [61] = PIN_ENTRY(GPIO_61),
     [62] = PIN_ENTRY(GPIO_62),
     [63] = PIN_ENTRY(GPIO_63),
-    
-    // 64-94: 连续
+
+    /* 64-94: 连续 */
     [64] = PIN_ENTRY(GPIO_64),
     [65] = PIN_ENTRY(GPIO_65),
     [66] = PIN_ENTRY(GPIO_66),
@@ -121,8 +121,8 @@ static const rt_pin_info_t pin_map_table[225] = {
     [92] = PIN_ENTRY(GPIO_92),
     [93] = PIN_ENTRY(GPIO_93),
     [94] = PIN_ENTRY(GPIO_94),
-    
-    // 不连续引脚
+
+    /* 不连续引脚 */
     [99] = PIN_ENTRY(GPIO_99),
     [100] = PIN_ENTRY(GPIO_100),
     [103] = PIN_ENTRY(GPIO_103),
@@ -150,7 +150,7 @@ static const rt_pin_info_t pin_map_table[225] = {
     [213] = PIN_ENTRY(GPIO_213),
     [214] = PIN_ENTRY(GPIO_214),
     [215] = PIN_ENTRY(GPIO_215),
-    [216] = PIN_ENTRY(GPIO_216), 
+    [216] = PIN_ENTRY(GPIO_216),
     [217] = PIN_ENTRY(GPIO_217),
     [218] = PIN_ENTRY(GPIO_218),
     [219] = PIN_ENTRY(GPIO_219),
@@ -161,23 +161,25 @@ static const rt_pin_info_t pin_map_table[225] = {
     [224] = PIN_ENTRY(GPIO_224),
 };
 
-// 1. PIN_NUM: 从(port, pin)获取引脚编号
+/* 1. PIN_NUM: 从(port, pin)获取引脚编号 */
 int get_pin_num(GPIO_TypeDef *port, GPIO_PinNum pin)
 {
-    // 遍历数组查找匹配
-    for (int i = 0; i < 225; i++) {
-        if (pin_map_table[i].port == port && 
-            pin_map_table[i].pin == (uint16_t)pin) {
-            return i;  // 返回引脚编号
+    /* 遍历数组查找匹配 */
+    for (int i = 0; i < 225; i++)
+    {
+        if (pin_map_table[i].port == port &&
+            pin_map_table[i].pin == (uint16_t)pin)
+            {
+            return i;  /* 返回引脚编号 */
         }
     }
-    return -1;  // 未找到
+    return -1;  /* 未找到 */
 }
 
-// 2. PIN_PORT: 从引脚编号获取端口索引
+/* 2. PIN_PORT: 从引脚编号获取端口索引 */
 uint8_t get_port_index(GPIO_TypeDef *port)
 {
-    // 由于新平台端口地址可能不连续，需要映射
+    /* 由于新平台端口地址可能不连续，需要映射 */
     if (port == GPIOA) return 0;
     if (port == GPIOB) return 1;
     if (port == GPIOC) return 2;
@@ -186,15 +188,16 @@ uint8_t get_port_index(GPIO_TypeDef *port)
     if (port == GPIOF) return 5;
     if (port == GPIOG) return 6;
     if (port == GPIOH) return 7;
-    // 如果有更多端口继续添加
-    return 0xFF;  // 无效端口
+    /* 如果有更多端口继续添加 */
+    return 0xFF;  /* 无效端口 */
 }
 
-// 3. PIN_NO: 从引脚编号获取引脚索引
+/* 3. PIN_NO: 从引脚编号获取引脚索引 */
 uint8_t get_pin_index(uint16_t pin)
 {
-    // 提取引脚位的位置
-    switch (pin) {
+    /* 提取引脚位的位置 */
+    switch (pin)
+    {
         case GPIO_PIN_0:  return 0;
         case GPIO_PIN_1:  return 1;
         case GPIO_PIN_2:  return 2;
@@ -227,7 +230,7 @@ uint8_t get_pin_index(uint16_t pin)
         case GPIO_PIN_29: return 29;
         case GPIO_PIN_30: return 30;
         case GPIO_PIN_31: return 31;
-        default: return 0xFF;  // 无效引脚
+        default: return 0xFF;  /* 无效引脚 */
     }
 }
 
@@ -260,7 +263,8 @@ const rt_pin_info_t* get_pin_info(int pin_num)
     if(pin_num < 0 || pin_num >=225)
         return NULL;
 
-    if(pin_map_table[pin_num].port == NULL) {
+    if(pin_map_table[pin_num].port == NULL)
+    {
         return NULL;
     }
 
@@ -345,7 +349,7 @@ static void ns800rt7_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     if(value == 0)
     {
         GPIO_clearPin(info->port, info->pin);
-    } 
+    }
     else if(value == 1)
     {
         GPIO_setPin(info->port, info->pin);
@@ -454,3 +458,4 @@ int rt_hw_pin_init(void)
 }
 
 #endif /* BSP_USING_GPIO */
+

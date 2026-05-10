@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -54,3 +54,4 @@ extern "C" {
 #endif
 
 #endif /* __QSPI_CONFIG_H__ */
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,13 +18,14 @@
 int main(void)
 {
     rt_pin_mode(LED1_PIN, PIN_MODE_OUTPUT);
-    
+
     while (1)
     {
-//        rt_kprintf("\r\n led1_thread_entry running! \r\n");
+/*        rt_kprintf("\r\n led1_thread_entry running! \r\n"); */
         rt_pin_write(LED1_PIN, PIN_HIGH);
         rt_thread_mdelay(1000);
         rt_pin_write(LED1_PIN, PIN_LOW);
         rt_thread_mdelay(1000);
     }
 }
+

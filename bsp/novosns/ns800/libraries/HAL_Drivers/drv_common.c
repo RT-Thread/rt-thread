@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 
+ *
  */
 
 #include "drv_common.h"
@@ -58,7 +58,7 @@ volatile rt_tick_t g_tick_test;
 void SysTick_Handler(void)
 {
     rt_interrupt_enter();
-    
+
     rt_tick_increase();
     g_tick_test = rt_tick_get();
 
@@ -142,7 +142,7 @@ rt_weak void rt_hw_board_init(void)
     Interrupt_initVectorTable();
 
     rt_hw_systick_init();
-    
+
 #if defined(RT_USING_HEAP)
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
@@ -176,7 +176,7 @@ void rt_hw_console_output(const char *str)
 {
 #if defined(__ICCARM__)
     rt_size_t size = rt_strlen(str);
-    
+
     __write(0, str, size);
 #else
     rt_size_t i = 0, size = 0;
@@ -192,7 +192,7 @@ void rt_hw_console_output(const char *str)
             fputc(a, &f);
         }
         fputc(str[i], &f);
-    }    
+    }
 #endif
 }
 #endif
@@ -202,7 +202,7 @@ char rt_hw_console_getchar(void)
 {
     /* Note: the initial value of ch must < 0 */
     int ch = -1;
-    
+
     if (UART1->STAT.BIT.RDRF)
     {
         ch = (uint8_t)UART1->DATA.WORDVAL;
@@ -214,3 +214,4 @@ char rt_hw_console_getchar(void)
     return ch;
 }
 #endif
+

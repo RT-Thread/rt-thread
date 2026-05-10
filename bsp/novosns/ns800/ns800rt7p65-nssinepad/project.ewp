@@ -77,7 +77,7 @@
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
-          <state>Default	None</state>
+          <state>STM32H743ZI	ST STM32H743ZI</state>
         </option>
         <option>
           <name>GenLowLevelInterface</name>
@@ -137,7 +137,7 @@
         </option>
         <option>
           <name>GFPUDeviceSlave</name>
-          <state>Default	None</state>
+          <state>STM32H743ZI	ST STM32H743ZI</state>
         </option>
         <option>
           <name>FPU2</name>
@@ -224,11 +224,11 @@
         <option>
           <name>CCDefines</name>
           <state />
+          <state>__RTTHREAD__</state>
           <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
-          <state>__RTTHREAD__</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -356,29 +356,33 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\config</state>
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\Device\Inc</state>
-          <state>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Inc</state>
-          <state>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Inc\ti</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\packages/CMSIS-Core-latest/Include</state>
+          <state>$PROJ_DIR$\../../../../libcpu/arm/common</state>
+          <state>$PROJ_DIR$\../../../../libcpu/arm/cortex-m7</state>
+          <state>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/Device/Inc</state>
+          <state>$PROJ_DIR$\../../../../components/drivers/include</state>
+          <state>$PROJ_DIR$\../../../../components/drivers/smp_call</state>
+          <state>$PROJ_DIR$\../../../../components/drivers/phy</state>
           <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Inc</state>
+          <state>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Inc/ti</state>
+          <state>$PROJ_DIR$\libraries/HAL_Drivers</state>
+          <state>$PROJ_DIR$\libraries/HAL_Drivers/drivers</state>
+          <state>$PROJ_DIR$\../../../../components/finsh</state>
+          <state>$PROJ_DIR$\../libraries/HAL_Drivers</state>
+          <state>$PROJ_DIR$\../libraries/HAL_Drivers/drivers</state>
+          <state>$PROJ_DIR$\../libraries/HAL_Drivers/drivers/config</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\../../../../include</state>
+          <state>$PROJ_DIR$\../../../../components/libc/compilers/common/include</state>
+          <state>$PROJ_DIR$\../../../../components/libc/compilers/common/extension</state>
+          <state>$PROJ_DIR$\../../../../components/libc/compilers/common/extension/fcntl/octal</state>
+          <state>$PROJ_DIR$\../../../../components/libc/posix/ipc</state>
+          <state>$PROJ_DIR$\../../../../components/libc/posix/io/poll</state>
+          <state>$PROJ_DIR$\../../../../components/libc/posix/io/eventfd</state>
+          <state>$PROJ_DIR$\../../../../components/libc/posix/io/epoll</state>
+          <state>$PROJ_DIR$\../../../../components/net/utest</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1289,11 +1293,11 @@
         <option>
           <name>CCDefines</name>
           <state />
+          <state>__RTTHREAD__</state>
           <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
-          <state>__RTTHREAD__</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
         </option>
@@ -1421,29 +1425,33 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\config</state>
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\Device\Inc</state>
-          <state>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Inc</state>
-          <state>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Inc\ti</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\smp_call</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\phy</state>
+          <state>$PROJ_DIR$\packages/CMSIS-Core-latest/Include</state>
+          <state>$PROJ_DIR$\../../../../libcpu/arm/common</state>
+          <state>$PROJ_DIR$\../../../../libcpu/arm/cortex-m7</state>
+          <state>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/Device/Inc</state>
+          <state>$PROJ_DIR$\../../../../components/drivers/include</state>
+          <state>$PROJ_DIR$\../../../../components/drivers/smp_call</state>
+          <state>$PROJ_DIR$\../../../../components/drivers/phy</state>
           <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Inc</state>
+          <state>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Inc/ti</state>
+          <state>$PROJ_DIR$\libraries/HAL_Drivers</state>
+          <state>$PROJ_DIR$\libraries/HAL_Drivers/drivers</state>
+          <state>$PROJ_DIR$\../../../../components/finsh</state>
+          <state>$PROJ_DIR$\../libraries/HAL_Drivers</state>
+          <state>$PROJ_DIR$\../libraries/HAL_Drivers/drivers</state>
+          <state>$PROJ_DIR$\../libraries/HAL_Drivers/drivers/config</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\../../../../include</state>
+          <state>$PROJ_DIR$\../../../../components/libc/compilers/common/include</state>
+          <state>$PROJ_DIR$\../../../../components/libc/compilers/common/extension</state>
+          <state>$PROJ_DIR$\../../../../components/libc/compilers/common/extension/fcntl/octal</state>
+          <state>$PROJ_DIR$\../../../../components/libc/posix/ipc</state>
+          <state>$PROJ_DIR$\../../../../components/libc/posix/io/poll</state>
+          <state>$PROJ_DIR$\../../../../components/libc/posix/io/eventfd</state>
+          <state>$PROJ_DIR$\../../../../components/libc/posix/io/epoll</state>
+          <state>$PROJ_DIR$\../../../../components/net/utest</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2133,272 +2141,404 @@
   <group>
     <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
+      <name>$PROJ_DIR$\applications/main.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\applications/rt_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\applications/rt_ecap.c</name>
     </file>
   </group>
   <group>
-    <name>Compiler</name>
+    <name>CMSIS-Core</name>
+  </group>
+  <group>
+    <name>CPU</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
+      <name>$PROJ_DIR$\../../../../libcpu/arm/common/div0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdlib.c</name>
+      <name>$PROJ_DIR$\../../../../libcpu/arm/common/showmem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstring.c</name>
+      <name>$PROJ_DIR$\../../../../libcpu/arm/cortex-m7/context_iar.S</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\ctime.c</name>
+      <name>$PROJ_DIR$\../../../../libcpu/arm/cortex-m7/cpu_cache.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cunistd.c</name>
+      <name>$PROJ_DIR$\../../../../libcpu/arm/cortex-m7/cpuport.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Device</name>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/Device/Src/system_NS800RT7xxx.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cwchar.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/Device/Src/iar/startup_NS800RT7xxx.s</name>
     </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/can/dev_can.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion_comm.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/core/device.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion_up.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/ipc/completion_comm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\condvar.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/ipc/completion_up.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/ipc/condvar.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\pipe.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/ipc/dataqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringblk_buf.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/ipc/pipe.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringbuffer.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/ipc/ringblk_buf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\waitqueue.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/ipc/ringbuffer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/ipc/waitqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\pin\dev_pin.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/ipc/workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\serial\dev_serial.c</name>
+      <name>$PROJ_DIR$\../../../../components/drivers/pin/dev_pin.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/drivers/serial/dev_serial.c</name>
     </file>
   </group>
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\drv_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\board\board.c</name>
-    </file>
-  </group>
-  <group>
-    <name>NS800RT7-CMSIS</name>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\Device\Src\system_NS800RT7xxx.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\Device\Src\iar\startup_NS800RT7xxx.s</name>
-    </file>
-  </group>
-  <group>
-    <name>NS800RT7-StdDriver</name>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\debug.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\interrupt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\rcc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\sram.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\syscon.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\xbar.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\exti.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\dmamux.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\edma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\ecap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\packages\novosns-series\NS800RT7XXX\StdDriver\Src\flexcan.c</name>
+      <name>$PROJ_DIR$\board/board.c</name>
     </file>
   </group>
   <group>
     <name>Finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
+      <name>$PROJ_DIR$\../../../../components/finsh/shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\../../../../components/finsh/msh.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\../../../../components/finsh/msh_parse.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
+      <name>$PROJ_DIR$\../../../../components/finsh/cmd.c</name>
+    </file>
+  </group>
+  <group>
+    <name>HAL_Driver</name>
+    <file>
+      <name>$PROJ_DIR$\../libraries/HAL_Drivers/drv_common.c</name>
+    </file>
+  </group>
+  <group>
+    <name>HAL_Drivers</name>
+    <file>
+      <name>$PROJ_DIR$\../libraries/HAL_Drivers/drivers/drv_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../libraries/HAL_Drivers/drivers/drv_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../libraries/HAL_Drivers/drivers/drv_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../libraries/HAL_Drivers/drivers/drv_ecap.c</name>
     </file>
   </group>
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
+      <name>$PROJ_DIR$\../../../../src/clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
+      <name>$PROJ_DIR$\../../../../src/components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\cpu_up.c</name>
+      <name>$PROJ_DIR$\../../../../src/cpu_up.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\defunct.c</name>
+      <name>$PROJ_DIR$\../../../../src/defunct.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
+      <name>$PROJ_DIR$\../../../../src/idle.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
+      <name>$PROJ_DIR$\../../../../src/ipc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
+      <name>$PROJ_DIR$\../../../../src/irq.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
+      <name>$PROJ_DIR$\../../../../src/kservice.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
+      <name>$PROJ_DIR$\../../../../src/mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
+      <name>$PROJ_DIR$\../../../../src/mempool.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
+      <name>$PROJ_DIR$\../../../../src/object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler_comm.c</name>
+      <name>$PROJ_DIR$\../../../../src/scheduler_comm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
+      <name>$PROJ_DIR$\../../../../src/scheduler_up.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
+      <name>$PROJ_DIR$\../../../../src/thread.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+      <name>$PROJ_DIR$\../../../../src/timer.c</name>
     </file>
   </group>
   <group>
-    <name>klibc</name>
+    <name>Libc</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/common/cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kerrno.c</name>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/common/cstdlib.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/common/cstring.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsscanf.c</name>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/common/ctime.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\klibc\rt_vsnprintf_tiny.c</name>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/common/cunistd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/common/cwchar.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/dlib/environ.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/dlib/syscall_close.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/dlib/syscall_lseek.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/dlib/syscall_mem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/dlib/syscall_open.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/dlib/syscall_read.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/dlib/syscall_remove.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/dlib/syscall_write.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../components/libc/compilers/dlib/syscalls.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../src/klibc/kerrno.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../src/klibc/kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../src/klibc/kstring.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../src/klibc/rt_vsnprintf_tiny.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\../../../../src/klibc/rt_vsscanf.c</name>
     </file>
   </group>
   <group>
-    <name>libcpu</name>
+    <name>StdDriver</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/adc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/aeshash.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/anass.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\context_iar.S</name>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/awk.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpu_cache.c</name>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/bgcrc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7\cpuport.c</name>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/btim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/clb.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/cmpss.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/dac.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/dcc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/debug.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/dmamux.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/ecap.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/edma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/emath_basic.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/emath_filter.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/emath_matrix.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/emath_transform.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/epg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/epwm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/eqep.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/exti.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/flash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/flexcan.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/fmu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/interrupt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/iwdg1.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/iwdg2.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/lin.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/lptim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/mcm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/mu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/pmbus.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/pwr.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/qspi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/rcc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/sdfm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/sema.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/smpu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/sram.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/stim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/syscon.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/tim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/trng.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/upp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/version.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/wwdg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages/novosns-series/NS800RT7XXX/StdDriver/Src/xbar.c</name>
     </file>
   </group>
   <group>
-    <name>POSIX</name>
+    <name>utc_UTest</name>
   </group>
   <group>
     <name>utestcases</name>

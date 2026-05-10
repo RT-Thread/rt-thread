@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -42,16 +42,16 @@ struct ns800rt7_baud_rate_tab
 
 
 /* stm32 can device */
-typedef struct 
+typedef struct
 {
     char                         *name;
     FLEXCANDRV_ControllerCfgType CanCfg;
     IRQn_Type                    irqn1;
     IRQn_Type                    irqn2;
-    FLEXCANDRV_Type              CanHandle; 
+    FLEXCANDRV_Type              CanHandle;
     FLEXCANDRV_MsgCfgType        FilterConfig[CAN_FILTER_NUM_MAX];
     uint8_t                      FilterNum;
-    volatile uint8_t             mbState[128];    
+    volatile uint8_t             mbState[128];
     struct rt_can_device         device;     /* inherit from can device */
 } ns800rt7_can;
 
@@ -64,3 +64,4 @@ int rt_hw_can_init(void);
 #endif /*__DRV_CAN_H__ */
 
 /************************** end of file ******************/
+

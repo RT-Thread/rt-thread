@@ -120,3 +120,4 @@ int rt_hw_ecap_init(void);
 #endif
 
 #endif  /* __DRV_USART_H__ */
+

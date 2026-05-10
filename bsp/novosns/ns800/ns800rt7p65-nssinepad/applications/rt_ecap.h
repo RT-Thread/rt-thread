@@ -8,11 +8,12 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 int rt_ecap_test_init (void);
-    
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif
+

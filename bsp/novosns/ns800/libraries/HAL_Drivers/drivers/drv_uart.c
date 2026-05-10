@@ -530,3 +530,4 @@ int rt_hw_uart_init(void)
 }
 
 #endif /* RT_USING_SERIAL */
+
