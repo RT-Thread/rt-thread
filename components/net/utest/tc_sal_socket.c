@@ -67,6 +67,42 @@ static char local_ip[16] = "127.0.0.1";
 /* Thread synchronization structures */
 static struct rt_event test_event;
 static volatile int    server_ready = 0;
+static volatile int    close_race_stop = 0;
+static volatile int    close_race_done = 0;
+static volatile int    close_call_done = 0;
+static volatile int    close_call_ret = -1;
+
+static void init_loopback_addr(struct sockaddr_in *addr, int port)
+{
+    memset(addr, 0, sizeof(*addr));
+    addr->sin_family = AF_INET;
+    addr->sin_addr.s_addr = inet_addr(local_ip);
+    addr->sin_port = htons(port);
+}
+
+static void close_race_thread(void *parameter)
+{
+    int sock = (int)(rt_size_t)parameter;
+    struct sockaddr_in addr;
+    socklen_t addr_len;
+
+    while (!close_race_stop)
+    {
+        addr_len = sizeof(addr);
+        sal_getsockname(sock, (struct sockaddr *)&addr, &addr_len);
+        rt_thread_mdelay(1);
+    }
+
+    close_race_done = 1;
+}
+
+static void close_call_thread(void *parameter)
+{
+    int sock = (int)(rt_size_t)parameter;
+
+    close_call_ret = sal_closesocket(sock);
+    close_call_done = 1;
+}
 
 /* Test helper functions */
 static int get_available_port(int base_port)
@@ -161,6 +197,79 @@ static void close_test_socket(int sock)
     {
         sal_closesocket(sock);
         LOG_I("Closed socket %d", sock);
+    }
+}
+
+static void wait_test_flag(volatile int *flag, int timeout_ms)
+{
+    rt_tick_t start = rt_tick_get();
+    rt_tick_t timeout_tick = rt_tick_from_millisecond(timeout_ms);
+
+    while (!*flag)
+    {
+        if ((rt_tick_get() - start) > timeout_tick)
+        {
+            break;
+        }
+        rt_thread_mdelay(1);
+    }
+}
+
+static void verify_closed_stream_socket_ops(int sock)
+{
+    int ret;
+    int opt = 0;
+    int mode = 0;
+    struct sockaddr_in addr;
+    socklen_t addr_len = sizeof(addr);
+
+    init_loopback_addr(&addr, TEST_SERVER_BASE_PORT);
+
+    ret = sal_getsockname(sock, (struct sockaddr *)&addr, &addr_len);
+    uassert_int_equal(ret, -1);
+
+    addr_len = sizeof(addr);
+    ret = sal_getpeername(sock, (struct sockaddr *)&addr, &addr_len);
+    uassert_int_equal(ret, -1);
+
+    ret = sal_shutdown(sock, SHUT_RDWR);
+    uassert_int_equal(ret, -1);
+
+    ret = sal_setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    uassert_int_equal(ret, -1);
+
+    ret = sal_ioctlsocket(sock, FIONBIO, &mode);
+    uassert_int_equal(ret, -1);
+}
+
+static void verify_closed_datagram_socket_ops(int sock)
+{
+    int ret;
+    struct sockaddr_in addr;
+    char data[] = "sal";
+
+    init_loopback_addr(&addr, TEST_SERVER_BASE_PORT + TEST_CLIENT_PORT_OFFSET);
+    ret = sal_sendto(sock, data, sizeof(data), 0, (struct sockaddr *)&addr, sizeof(addr));
+    uassert_int_equal(ret, -1);
+}
+
+static void exercise_socket_cache_reuse(int rounds)
+{
+    int i;
+
+    for (i = 0; i < rounds; i++)
+    {
+        int tcp_sock = create_test_socket(AF_INET, SOCK_STREAM, 0);
+        int udp_sock = create_test_socket(AF_INET, SOCK_DGRAM, 0);
+
+        uassert_true(tcp_sock >= 0);
+        uassert_true(udp_sock >= 0);
+
+        uassert_int_equal(sal_closesocket(tcp_sock), 0);
+        uassert_int_equal(sal_closesocket(udp_sock), 0);
+
+        verify_closed_stream_socket_ops(tcp_sock);
+        verify_closed_datagram_socket_ops(udp_sock);
     }
 }
 
@@ -922,6 +1031,10 @@ cleanup:
 static void TC_sal_socket_close(void)
 {
     int sock = -1;
+    int udp_sock = -1;
+    int ret;
+    struct sockaddr_in addr;
+    socklen_t addr_len = sizeof(addr);
 
     LOG_I("Starting TC_sal_socket_close tests...");
 
@@ -941,8 +1054,90 @@ static void TC_sal_socket_close(void)
     sock = create_test_socket(AF_INET, SOCK_STREAM, 0);
     sal_closesocket(sock);
     LOG_I("Double closing socket %d (should be safe)", sock);
+    uassert_int_equal(sal_closesocket(sock), -1);
+
+    /* Closed socket must fail safely on follow-up use */
+    ret = sal_getsockname(sock, (struct sockaddr *)&addr, &addr_len);
+    uassert_int_equal(ret, -1);
+    verify_closed_stream_socket_ops(sock);
+
+    udp_sock = create_test_socket(AF_INET, SOCK_DGRAM, 0);
+    uassert_true(udp_sock >= 0);
+    uassert_int_equal(sal_closesocket(udp_sock), 0);
+    verify_closed_datagram_socket_ops(udp_sock);
+
+    /* Race close against lookup/use on another thread */
+    sock = create_test_socket(AF_INET, SOCK_STREAM, 0);
+    if (sock >= 0)
+    {
+        rt_thread_t worker;
+
+        close_race_stop = 0;
+        close_race_done = 0;
+        worker = rt_thread_create("salrace", close_race_thread, (void *)(rt_size_t)sock,
+                                  2048, RT_THREAD_PRIORITY_MAX / 2, 10);
+        uassert_true(worker != RT_NULL);
+        if (worker != RT_NULL)
+        {
+            rt_thread_startup(worker);
+            rt_thread_mdelay(20);
+            uassert_int_equal(sal_closesocket(sock), 0);
+            close_race_stop = 1;
+            wait_test_flag(&close_race_done, THREAD_WAIT_TIMEOUT);
+            uassert_true(close_race_done != 0);
+        }
+    }
 
     LOG_I("TC_sal_socket_close tests completed");
+}
+
+static void TC_sal_socketpair_invalid_fd(void)
+{
+    int sock = -1;
+    int fds[2];
+    rt_thread_t worker = RT_NULL;
+
+    LOG_I("Starting TC_sal_socketpair_invalid_fd tests...");
+
+    sock = create_test_socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0)
+    {
+        LOG_W("Skip socketpair invalid fd test because socket create failed");
+        return;
+    }
+
+    fds[0] = sock;
+    fds[1] = -1;
+    uassert_int_equal(sal_socketpair(AF_UNIX, SOCK_STREAM, 0, fds), -1);
+
+    close_call_done = 0;
+    close_call_ret = -1;
+    worker = rt_thread_create("salclose", close_call_thread, (void *)(rt_size_t)sock,
+                              2048, RT_THREAD_PRIORITY_MAX / 2, 10);
+    uassert_true(worker != RT_NULL);
+    if (worker != RT_NULL)
+    {
+        rt_thread_startup(worker);
+        wait_test_flag(&close_call_done, THREAD_WAIT_TIMEOUT);
+        uassert_true(close_call_done != 0);
+        uassert_int_equal(close_call_ret, 0);
+    }
+
+    LOG_I("TC_sal_socketpair_invalid_fd tests completed");
+}
+
+static void TC_sal_socket_reuse_stress(void)
+{
+    int i;
+
+    LOG_I("Starting TC_sal_socket_reuse_stress tests...");
+
+    for (i = 0; i < TEST_MAX_RETRY_ATTEMPTS; i++)
+    {
+        exercise_socket_cache_reuse(4);
+    }
+
+    LOG_I("TC_sal_socket_reuse_stress tests completed");
 }
 
 static void TC_sal_socket_getpeername_getsockname(void)
@@ -1022,6 +1217,8 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(TC_sal_socket_udp_communication);
     UTEST_UNIT_RUN(TC_sal_socket_getpeername_getsockname);
     UTEST_UNIT_RUN(TC_sal_socket_close);
+    UTEST_UNIT_RUN(TC_sal_socketpair_invalid_fd);
+    UTEST_UNIT_RUN(TC_sal_socket_reuse_stress);
 
     LOG_I("===========================================");
     LOG_I("SAL Socket Basic API Tests Completed");

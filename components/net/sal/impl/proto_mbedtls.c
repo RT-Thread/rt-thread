@@ -96,6 +96,7 @@ int mbedtls_net_send_cb(void *ctx, const unsigned char *buf, size_t len)
 
     /* Register scoket sendto option to TLS send data callback */
     ret = pf->skt_ops->sendto((int) sock->user_data, (void *)buf, len, 0, RT_NULL, RT_NULL);
+    sal_socket_put(sock);
     if (ret < 0)
     {
 #ifdef RT_USING_DFS
@@ -133,6 +134,7 @@ int mbedtls_net_recv_cb( void *ctx, unsigned char *buf, size_t len)
 
     /* Register scoket recvfrom option to TLS recv data callback */
     ret = pf->skt_ops->recvfrom((int) sock->user_data, (void *)buf, len, 0, RT_NULL, RT_NULL);
+    sal_socket_put(sock);
     if (ret < 0)
     {
 #ifdef RT_USING_DFS
@@ -199,24 +201,13 @@ __exit:
 
 static int mbedtls_closesocket(void *sock)
 {
-    struct sal_socket *ssock;
-    int socket;
-
     if (sock == RT_NULL)
     {
         return 0;
     }
 
-    socket = ((MbedTLSSession *) sock)->server_fd.fd;
-    ssock = sal_get_socket(socket);
-    if (ssock == RT_NULL)
-    {
-        return -1;
-    }
-
     /* Close TLS client session, and clean user-data in SAL socket */
     mbedtls_client_close((MbedTLSSession *) sock);
-    ssock->user_data_tls = RT_NULL;
 
     return 0;
 }

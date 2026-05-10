@@ -14,6 +14,7 @@
 #define SAL_LOW_LEVEL_H__
 
 #include <rtdevice.h>
+#include <ipc/completion.h>
 
 #ifdef SAL_USING_POSIX
 #include <dfs_file.h>
@@ -29,6 +30,14 @@ typedef uint32_t socklen_t;
 
 /* SAL socket magic word */
 #define SAL_SOCKET_MAGIC               0x5A10
+
+enum sal_socket_state
+{
+    SAL_SOCKET_STATE_INIT = 0,
+    SAL_SOCKET_STATE_OPEN,             /* visible in socket table */
+    SAL_SOCKET_STATE_CLOSING,          /* detached, waiting refcnt drop */
+    SAL_SOCKET_STATE_CLOSED,           /* ready for cache reuse */
+};
 
 /* The maximum number of sockets structure */
 #ifndef SAL_SOCKETS_NUM
@@ -63,6 +72,10 @@ struct sal_socket
 #ifdef SAL_USING_TLS
     void *user_data_tls;               /* user-specific TLS data */
 #endif
+    rt_atomic_t refcnt;                /* in-flight SAL references */
+    rt_uint8_t state;                  /* socket lifecycle state */
+    struct rt_completion close_completion; /* wake close waiter */
+    struct sal_socket *next_free;      /* internal cache link */
 };
 
 /* network interface socket opreations */
@@ -109,8 +122,10 @@ struct sal_proto_family
 
 /* SAL(Socket Abstraction Layer) initialize */
 int sal_init(void);
-/* Get SAL socket object by socket descriptor */
+/* Get socket object and hold a temporary reference. */
 struct sal_socket *sal_get_socket(int sock);
+/* Release reference returned by sal_get_socket(). */
+void sal_socket_put(struct sal_socket *sock);
 
 /* check SAL socket netweork interface device internet status */
 int sal_check_netdev_internet_up(struct netdev *netdev);
