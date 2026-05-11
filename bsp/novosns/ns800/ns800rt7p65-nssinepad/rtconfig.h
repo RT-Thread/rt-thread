@@ -329,6 +329,12 @@
 /* FT32 HAL & SDK Drivers */
 
 /* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+#define PKG_USING_NOVOSNS_SERIES_DRIVER
+#define PKG_USING_NOVOSNS_SERIES_DRIVER_LATEST_VERSION
+/* end of NOVOSNS Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -411,6 +417,10 @@
 
 /* On-chip Peripheral Drivers */
 
+#define BOARD_CLK_CONF
+#define SYSCLK_USE_PLL
+#define SYSCLK_SOURCE_USE_HXTL
+#define PLLCLK_SOURCE_USE_HXTL
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_NS800_UART_TX_TIMEOUT 6000
@@ -421,4 +431,3 @@
 /* end of On-chip Peripheral Drivers */
 
 #endif
-
