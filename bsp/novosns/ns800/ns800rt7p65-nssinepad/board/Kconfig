@@ -1,0 +1,126 @@
+menu "On-chip Peripheral Drivers"
+    menuconfig BOARD_CLK_CONF
+        bool "Clock Configuration"
+        default y
+        if BOARD_CLK_CONF
+            config SYSCLK_USE_PLL
+                bool "Use PLL as system clock source"
+                default y
+
+            config SYSCLK_SOURCE_USE_HXTL
+                bool "Use High-Speed Crystal Oscillator (HXTL) as system clock source"
+                default y
+                depends on SYSCLK_USE_PLL
+
+            config PLLCLK_SOURCE_USE_HXTL
+                bool "Use High-Speed Crystal Oscillator (HXTL) as PLL clock source"
+                default y
+                depends on SYSCLK_USE_PLL
+        endif
+  
+    menuconfig BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+        if BSP_USING_GPIO
+            config BSP_GPIO_PIN_IRQ
+                bool "Enable GPIO pin IRQ hooks"
+                default n
+        endif
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_NS800_UART_TX_TIMEOUT
+                int "UART TX timeout"
+                default 6000
+                depends on !RT_USING_SERIAL_V2
+
+            menuconfig BSP_USING_UART1
+                bool "Enable UART1"
+                default y
+                if BSP_USING_UART1
+                    config BSP_UART1_RX_BUFSIZE
+                        int "UART1 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+
+                    config BSP_UART1_TX_BUFSIZE
+                        int "UART1 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+
+            menuconfig BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+                if BSP_USING_UART2
+                    config BSP_UART2_RX_BUFSIZE
+                        int "UART2 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+
+                    config BSP_UART2_TX_BUFSIZE
+                        int "UART2 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+
+            menuconfig BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+                if BSP_USING_UART3
+                    config BSP_UART3_RX_BUFSIZE
+                        int "UART3 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+
+                    config BSP_UART3_TX_BUFSIZE
+                        int "UART3 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+
+            menuconfig BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+                if BSP_USING_UART4
+                    config BSP_UART4_RX_BUFSIZE
+                        int "UART4 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 256
+
+                    config BSP_UART4_TX_BUFSIZE
+                        int "UART4 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+        endif
+
+    menuconfig BSP_USING_ECAP
+        bool "Enable ECAP"
+        default n
+
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        select RT_USING_CAN
+        default n
+        if BSP_USING_CAN
+            config BSP_USING_CANFD1
+                bool "Enable CANFD1"
+                select RT_CAN_USING_CANFD
+                default n
+
+        endif
+
+endmenu

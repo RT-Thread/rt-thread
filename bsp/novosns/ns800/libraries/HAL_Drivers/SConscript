@@ -1,0 +1,13 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+import os
+
+cwd = GetCurrentDir()
+src = ['drv_common.c']
+path = [cwd]
+
+group = SConscript(os.path.join(cwd, 'drivers', 'SConscript'))
+group = group + DefineGroup('HAL_Driver', src, depend = [''], CPPPATH = path)
+
+Return('group')
