@@ -485,7 +485,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 #endif /* BSP_SPI_USING_DMA */
 
 #ifdef BSP_SPI_USING_INT
-         rt_bool_t int_eligible = (send_length >= BSP_SPI_INT_TRANS_MIN_LEN);
+        rt_bool_t int_eligible = (send_length >= BSP_SPI_INT_TRANS_MIN_LEN);
 #if defined(BSP_SPI_TX_USING_INT)
         rt_bool_t use_tx_int = int_eligible && spi_drv->spi_dma_flag & RT_DEVICE_FLAG_INT_TX;
 #else
@@ -602,10 +602,29 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 
             if (spi_handle->ErrorCode != HAL_SPI_ERROR_NONE)
             {
-                state = HAL_ERROR;
-                need_abort = RT_TRUE;
-                LOG_E("SPI async transfer failed, error code: 0x%08x", spi_handle->ErrorCode);
-                goto transfer_cleanup;
+                rt_uint32_t err = spi_handle->ErrorCode;
+                rt_bool_t tx_only = (message->send_buf != RT_NULL) && (message->recv_buf == RT_NULL);
+                rt_bool_t ovr_only = ((err & HAL_SPI_ERROR_OVR) != 0U) && ((err & ~(HAL_SPI_ERROR_OVR | HAL_SPI_ERROR_ABORT)) == 0U);
+
+                /**
+                 * Ignore the expected OVR from a completed Tx-only transfer.
+                 *
+                 * In 2-line SPI mode, Tx-only transfer still receives data from
+                 * MISO. Since no RX buffer is provided, the received data is not
+                 * read and HAL may latch OVR after async Tx completion.
+                 */
+                if (tx_only && ovr_only && (spi_handle->Init.Direction == SPI_DIRECTION_2LINES) && (spi_handle->TxXferCount == 0U))
+                {
+                    __HAL_SPI_CLEAR_OVRFLAG(spi_handle);
+                    spi_handle->ErrorCode = HAL_SPI_ERROR_NONE;
+                }
+                else
+                {
+                    state = HAL_ERROR;
+                    need_abort = RT_TRUE;
+                    LOG_E("SPI async transfer failed, error code: 0x%08x", spi_handle->ErrorCode);
+                    goto transfer_cleanup;
+                }
             }
         }
 #endif /* BSP_SPI_USING_IRQ */
