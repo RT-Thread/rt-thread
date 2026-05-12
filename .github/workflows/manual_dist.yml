@@ -35,6 +35,7 @@ on:
           - "sourcery-riscv64-unknown-elf"
           - "gcc"
           - "sourcery-riscv32-esp32"
+          - "i686-x86-newlib"
       bsp_config:
         description: 'Type a config you want mannual test in .config, like: CONFIG_RT_USING_DEBUG=y,CONFIG_RT_DEBUGING_COLOR=y,CONFIG_RT_DEBUGING_CONTEXT=y'
         required: false
@@ -126,6 +127,13 @@ jobs:
         if: ${{ github.event.inputs.bsp_tool_chain == 'gcc' && success() }}
         run: |
           sudo apt-get -qq install libsdl2-dev
+
+      - name: Install i686 X86 Newlib ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'i686-x86-newlib' && success() }}
+        run: |
+          source tools/ci/toolchain.sh i686-atxhua-newlib-elf-gcc
+          echo "RTT_EXEC_PATH=/opt/i686-atxhua-newlib-elf-gcc/bin" >> $GITHUB_ENV
+          echo "RTT_CC_PREFIX=i686-atxhua-newlib-elf-" >> $GITHUB_ENV
 
       - name: Bsp Scons Compile
         if: ${{ success() }}
