@@ -2,9 +2,9 @@
   * @file       board.c
   * @author     Haven-X
   * @brief      Board setup for NS800RTxxx examples.
-  * 
+  *
   * @note       Board Configurations
-  *             Initializes the rest of the modules. 
+  *             Initializes the rest of the modules.
   *
   * <h2><center>&copy; Copyright (c) 2025 Novosense Limited.
   * All rights reserved.</center></h2>
@@ -27,9 +27,9 @@
 
 /**
  * @brief  Board Initialization.
- * @note   Call this function in your application if you wish to do all module 
+ * @note   Call this function in your application if you wish to do all module
  *         initialization.
- *         If you wish to not use some of the initializations, instead of the 
+ *         If you wish to not use some of the initializations, instead of the
  *         Board_init use the individual Module_inits.
  */
 void Board_init (void)
@@ -42,7 +42,7 @@ void Board_init (void)
 
 /**
  * @brief  PinMux Initialization.
- * @note   Call this function in your application if you want all 
+ * @note   Call this function in your application if you want all
  *         PinMux initialization to be done.
  */
 void PinMux_init (void)
@@ -61,7 +61,7 @@ void PinMux_init (void)
 
 /**
  * @brief  Board Serial Communication Interface Initialization.
- * @note   Call this function in the application to initialize the SCI serial port 
+ * @note   Call this function in the application to initialize the SCI serial port
  *         on the board for outputting debugging information.
  */
 void SerialCOM_init(void)
@@ -90,7 +90,7 @@ void SerialCOM_init(void)
     UART_enableTxFifo(BOARD_SERIALCOM);
     UART_resetTxFifo(BOARD_SERIALCOM);
     UART_setTxFifoWatermark(BOARD_SERIALCOM, UART_FIFO_TX6);
-    
+
     /* Enable transmitter */
     UART_enableTxModule(BOARD_SERIALCOM);
     /* Enable receiver */
@@ -99,7 +99,7 @@ void SerialCOM_init(void)
 
 /**
  * @brief  Board LED Initialization.
- * @note   Call this function in the application to initialize the LED 
+ * @note   Call this function in the application to initialize the LED
  *         on the board.
  */
 void LED_init (void)
@@ -118,7 +118,7 @@ void LED_init (void)
 
 /**
  * @brief  Board Switch Initialization.
- * @note   Call this function in the application to initialize the Switch 
+ * @note   Call this function in the application to initialize the Switch
  *         on the board.
  */
 void Switch_init (void)
@@ -157,7 +157,7 @@ void System_setClock (void)
         RCC_configHxtl(HXTL_CONFIG, RCC_HXTL_NORMAL, RCC_FUN_ON);
 #endif
         RCC_configPll(PLL_CONFIG, PLL_EXT_CONFIG, RCC_FUN_ON);
-    
+
         RCC_setClock(RCC_SYSCLKSOURCE_PLL);
 #else  /* !SYSCLK_USE_PLL */
 #ifdef SYSCLK_SOURCE_USE_HXTL
@@ -297,7 +297,7 @@ void Device_disableAllPeripherals (void)
                                    RCC_HCLKEN1_DMAMUX1EN_M | RCC_HCLKEN1_SMPUEN_M | RCC_HCLKEN1_FMUEN_M);
 
     RCC_disableAhb2PeripheralClock(RCC_HCLKEN2_CANFD2EN_M | RCC_HCLKEN2_CANFD1EN_M | RCC_HCLKEN2_CAN1EN_M |
-                                   RCC_HCLKEN2_LIN2EN_M | RCC_HCLKEN2_LIN1EN_M | RCC_HCLKEN2_BGCRC2EN_M | 
+                                   RCC_HCLKEN2_LIN2EN_M | RCC_HCLKEN2_LIN1EN_M | RCC_HCLKEN2_BGCRC2EN_M |
                                    RCC_HCLKEN2_BGCRC1EN_M | RCC_HCLKEN2_CRC2EN_M | RCC_HCLKEN2_CRC1EN_M |
                                    RCC_HCLKEN2_AESHASHEN_M |RCC_HCLKEN2_TRNGEN_M);
 
