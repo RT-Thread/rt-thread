@@ -6,15 +6,25 @@
 
 编译RT-Thread for x86版本，还需要一份支持newlib的工具链，可以通过以下地址获得：
 
-*[i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2](http://117.143.63.254:9012/www/rt-smart/i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2)
+* [i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2](http://117.143.63.254:9012/www/rt-smart/i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2)
+* [ GCC 15.2.0 w/ Newlib 4.6.0.20260123: https://github.com/atxhua/i686-atxhua-newlib-elf/releases/download/15.2.0/i686-atxhua-newlib-elf-linux.tar.gz ](https://github.com/atxhua/i686-atxhua-newlib-elf/releases/download/15.2.0/i686-atxhua-newlib-elf-linux.tar.gz)
 
-下载后解压，然后在rtconfig.py中配置其中的EXEC_PATH变量
 
+下载后解压，然后配置RTT_EXEC_PATH & RTT_CC_PREFIX 变量
+```bash
+export RTT_EXEC_PATH='/path/to/i686-atxhua-newlib-elf-linux/bin'
+export RTT_CC_PREFIX='i686-atxhua-newlib-elf-'
+```
+
+rtconfig.py
 ```python
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     EXEC_PATH   = os.getenv('RTT_EXEC_PATH') or 'E:/Program Files/CodeSourcery/Sourcery_CodeBench_Lite_for_IA32_ELF/bin'
 
+if PLATFORM == 'gcc':
+    # toolchains
+    PREFIX = os.getenv('RTT_CC_PREFIX') or 'i386-unknown-elf-'
 ```
 
 然后在x86 bsp目录下执行scons命令来编译：
@@ -41,33 +51,28 @@ sudo apt install libncurses5-dev
 sudo apt install qemu-system-x86 grub-common xorriso
 ```
 
-然后执行`./run.sh`命令可以使用qemu来模拟执行(它也会生成可启动的iso文件)
+然后使用qemu来模拟执行
 
 ```bash
-~/workspace/rt-thread/bsp/x86$ ./run.sh
-xorriso 1.4.8 : RockRidge filesystem manipulator, libburnia project.
+$ qemu-system-i386 -M pc -kernel rtthread.elf -nographic
 
-Drive current: -outdev 'stdio:bootable.iso'
-Media current: stdio file, overwriteable
-Media status : is blank
-Media summary: 0 sessions, 0 data blocks, 0 data,  135g free
-Added to ISO image: directory '/'='/tmp/grub.uLz91i'
-xorriso : UPDATE : 578 files added in 1 seconds
-Added to ISO image: directory '/'='/home/bernard/workspace/rt-thread/bsp/x86/root'
-xorriso : UPDATE : 582 files added in 1 seconds
-xorriso : NOTE : Copying to System Area: 512 bytes from file '/usr/lib/grub/i386-pc/boot_hybrid.img'
-ISO image produced: 6007 sectors
-Written to medium : 6007 sectors at LBA 0
-Writing to 'stdio:bootable.iso' completed successfully.
+SeaBIOS (version 1.16.3-debian-1.16.3-2)
 
 
+iPXE (https://ipxe.org) 00:03.0 CA00 PCI2.10 PnP PMM+06FCAE00+06F0AE00 CA00
+                                                                               
+
+
+Booting from ROM..
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.4 build Aug 22 2021
- 2006 - 2021 Copyright by rt-thread team
+ / | \     5.3.0 build May 10 2026 21:25:36
+ 2006 - 2024 Copyright by RT-Thread team
 Floppy Inc : NEC765B controller  Floppy Type : 2.88MB
+[I/DBG] root filesystem mounted.
 hello!
 msh />
+
 ```
 
 在qemu下可以按Ctrl-A + X退出qemu。
