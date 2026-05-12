@@ -1,23 +1,5 @@
 menu "On-chip Peripheral Drivers"
-    menuconfig BOARD_CLK_CONF
-        bool "Clock Configuration"
-        default y
-        if BOARD_CLK_CONF
-            config SYSCLK_USE_PLL
-                bool "Use PLL as system clock source"
-                default y
 
-            config SYSCLK_SOURCE_USE_HXTL
-                bool "Use High-Speed Crystal Oscillator (HXTL) as system clock source"
-                default y
-                depends on SYSCLK_USE_PLL
-
-            config PLLCLK_SOURCE_USE_HXTL
-                bool "Use High-Speed Crystal Oscillator (HXTL) as PLL clock source"
-                default y
-                depends on SYSCLK_USE_PLL
-        endif
-  
     menuconfig BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
