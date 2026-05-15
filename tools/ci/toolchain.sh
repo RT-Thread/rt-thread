@@ -10,6 +10,7 @@ declare -A download_urls=(
 ["riscv32-esp-elf-gcc"]="https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz"
 ["clang"]="https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz"
 ["i686-atxhua-newlib-elf-gcc"]="https://github.com/atxhua/i686-atxhua-newlib-elf/releases/download/15.2.0/i686-atxhua-newlib-elf-linux.tar.gz"
+["i686-atxhua-picolib-elf-gcc"]="https://github.com/atxhua/i686-atxhua-picolib-elf/releases/download/15.2.0/i686-atxhua-picolib-elf-linux.tar.gz"
 )
 
 show_help() {

@@ -1,5 +1,59 @@
 # RT-Thread for x86
 
+## Intro
+This x86 BSP support both newlib & picolib, with toolchain available
+  - **Newlib:** `i686-atxhua-newlib-elf-`
+  - **Picolibc:** `i686-atxhua-picolib-elf-`
+
+## Install Toolchain
+To install toolchain run the following command:
+  - **Newlib:** sudo ../../tools/ci/toolchain.sh i686-atxhua-newlib-elf-gcc 
+  - **Picolibc:** sudo ../../tools/ci/toolchain.sh i686-atxhua-picolib-elf-gcc
+
+## Configuration
+Use `menuconfig` to select your preferred C library:
+  1. Run `scons --menuconfig`
+  2. Navigate to `X86 Features` -> `C Library type`
+  3. Select either `Newlib`(default) or `Picolibc`
+
+## Building
+After select the correct library in `menuconfig`, set the toolchain path and prefix:
+### Newlib
+```bash
+export RTT_EXEC_PATH=/opt/i686-atxhua-newlib-elf-gcc/bin
+export RTT_CC_PREFIX=i686-atxhua-newlib-elf-
+scons
+```
+
+### Picolib
+```bash
+export RTT_EXEC_PATH=/opt/i686-atxhua-picolib-elf-gcc/bin
+export RTT_CC_PREFIX=i686-atxhua-picolib-elf-
+scons           
+```
+
+##  Result ELF
+### Newlib
+```
+Memory region         Used Size  Region Size  %age Used
+i686-atxhua-newlib-elf-objcopy -O binary rtthread.elf rtthread.bin
+i686-atxhua-newlib-elf-size rtthread.elf
+   text	   data	    bss	    dec	    hex	filename
+ 212900	   3274	  10844	 227018	  376ca	rtthread.elf
+scons: done building targets.
+
+```
+
+### Picolib
+```
+Memory region         Used Size  Region Size  %age Used
+i686-atxhua-picolib-elf-objcopy -O binary rtthread.elf rtthread.bin
+i686-atxhua-picolib-elf-size rtthread.elf
+   text	   data	    bss	    dec	    hex	filename
+ 174122	   2568	  10528	 187218	  2db52	rtthread.elf
+scons: done building targets.
+```
+
 这是一份基础的RT-Thread针对x86的版本、移植，主要是能够在qemu中执行。以下说明主要针对Linux的环境，如果是Windows环境，请使用Env工具，同时请自行处理生成iso的方法。
 
 ## 编译
@@ -8,6 +62,7 @@
 
 * [i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2](http://117.143.63.254:9012/www/rt-smart/i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2)
 * [ GCC 15.2.0 w/ Newlib 4.6.0.20260123: https://github.com/atxhua/i686-atxhua-newlib-elf/releases/download/15.2.0/i686-atxhua-newlib-elf-linux.tar.gz ](https://github.com/atxhua/i686-atxhua-newlib-elf/releases/download/15.2.0/i686-atxhua-newlib-elf-linux.tar.gz)
+* [ GCC 15.2.0 w/ Picolib 1.8.11: https://github.com/atxhua/i686-atxhua-picolib-elf/releases/download/15.2.0/i686-atxhua-picolib-elf-linux.tar.gz ](https://github.com/atxhua/i686-atxhua-picolib-elf/releases/download/15.2.0/i686-atxhua-picolib-elf-linux.tar.gz)
 
 
 下载后解压，然后配置RTT_EXEC_PATH & RTT_CC_PREFIX 变量
