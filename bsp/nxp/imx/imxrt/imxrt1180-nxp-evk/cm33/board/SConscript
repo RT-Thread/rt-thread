@@ -1,0 +1,34 @@
+Import('rtconfig')
+
+from building import *
+import rtconfig
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+MCUX_Config/clock_config.c
+MCUX_Config/pin_mux.c
+""")
+
+# if GetDepend(['BSP_USING_VGLITE']):
+#     src += ['display_support.c', 'vglite_support.c', 'vglite_window.c']
+
+CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
+CPPDEFINES = ['CPU_MIMXRT1189CVM8C_cm33', 'MCUXPRESSO_SDK', 'MCUX_META_BUILD', 'MIMXRT1189_cm33_SERIES', 'XIP_BOOT_HEADER_ENABLE=1', 'XIP_BOOT_HEADER_DCD_ENABLE=1', 'XIP_EXTERNAL_FLASH=1', 'ARM_MATH_CM33']
+
+if rtconfig.PLATFORM in ['gcc']:
+    CPPDEFINES += ['__STARTUP_INITIALIZE_RAMFUNCTION']
+
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
+    # CPPDEFINES += ['SDK_DEBUGCONSOLE']
+    CPPDEFINES += ['NDEBUG']
+
+if rtconfig.PLATFORM in ['iccarm']:
+    CPPDEFINES += ['NDEBUG']
+    # CPPDEFINES += ['FSL_SDK_DRIVER_QUICK_ACCESS_ENABLE=1']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')
