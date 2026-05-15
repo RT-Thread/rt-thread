@@ -13,8 +13,8 @@
 #include "fsl_common.h"
 #include "board.h"
 #if defined(SDK_NETC_USED) && SDK_NETC_USED
-#include "fsl_netc_soc.h"
-#include "fsl_netc_ierb.h"
+    #include "fsl_netc_soc.h"
+    #include "fsl_netc_ierb.h"
 #endif /* SDK_NETC_USED */
 #include "fsl_iomuxc.h"
 #include "fsl_cache.h"
@@ -31,7 +31,7 @@
  * Variables
  ******************************************************************************/
 
-AT_QUICKACCESS_SECTION_DATA (volatile uint32_t g_systickCounter);
+AT_QUICKACCESS_SECTION_DATA(volatile uint32_t g_systickCounter);
 
 /*******************************************************************************
  * Code
@@ -434,13 +434,13 @@ void BOARD_ConfigMPU(void)
     ARM_MPU_SetRegion(9U, ARM_MPU_RBAR(0x20500000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x2053FFFF, 1U));
 #endif
 
-       // Region 11 (OCRAM1): [0x20480000, 0x204FFFFF, 512K]
-       // non-shareable, read/write in privilege and non-privilege, executable. Attr 3
-       ARM_MPU_SetRegion(11U, ARM_MPU_RBAR(0x20480000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x204FFFFF, 2U));
+    // Region 11 (OCRAM1): [0x20480000, 0x204FFFFF, 512K]
+    // non-shareable, read/write in privilege and non-privilege, executable. Attr 3
+    ARM_MPU_SetRegion(11U, ARM_MPU_RBAR(0x20480000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x204FFFFF, 2U));
 
-       // Region 12 (OCRAM2): [0x20500000, 0x2053FFFF, 256K]
-       // non-shareable, read/write in privilege and non-privilege, executable. Attr 3
-       ARM_MPU_SetRegion(12U, ARM_MPU_RBAR(0x20500000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x2053FFFF, 2U));
+    // Region 12 (OCRAM2): [0x20500000, 0x2053FFFF, 256K]
+    // non-shareable, read/write in privilege and non-privilege, executable. Attr 3
+    ARM_MPU_SetRegion(12U, ARM_MPU_RBAR(0x20500000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x2053FFFF, 2U));
 
     /* Enable MPU */
     ARM_MPU_Enable(MPU_CTRL_PRIVDEFENA_Msk | MPU_CTRL_HFNMIENA_Msk);
@@ -516,7 +516,7 @@ void BOARD_InitFlash(FLEXSPI_Type *base)
         {
             status = base->STS2;
             if ((status & (FLEXSPI_STS2_AREFLOCK_MASK | FLEXSPI_STS2_ASLVLOCK_MASK)) ==
-                (FLEXSPI_STS2_AREFLOCK_MASK | FLEXSPI_STS2_ASLVLOCK_MASK))
+                    (FLEXSPI_STS2_AREFLOCK_MASK | FLEXSPI_STS2_ASLVLOCK_MASK))
             {
                 /* Locked */
                 retry = 100;
@@ -532,7 +532,8 @@ void BOARD_InitFlash(FLEXSPI_Type *base)
                 retry      = BOARD_FLEXSPI_DLL_LOCK_RETRY;
                 lastStatus = status;
             }
-        } while (retry > 0);
+        }
+        while (retry > 0);
         /* According to ERR011377, need to delay at least 100 NOPs to ensure the DLL is locked. */
         for (; retry > 0U; retry--)
         {
@@ -584,7 +585,7 @@ void BOARD_SetFlexspiClock(FLEXSPI_Type *base, uint8_t src, uint32_t divider)
     }
 
     if (((CCM->CLOCK_ROOT[root].CONTROL & CCM_CLOCK_ROOT_CONTROL_MUX_MASK) != CCM_CLOCK_ROOT_CONTROL_MUX(src)) ||
-        ((CCM->CLOCK_ROOT[root].CONTROL & CCM_CLOCK_ROOT_CONTROL_DIV_MASK) != CCM_CLOCK_ROOT_CONTROL_DIV(divider - 1)))
+            ((CCM->CLOCK_ROOT[root].CONTROL & CCM_CLOCK_ROOT_CONTROL_DIV_MASK) != CCM_CLOCK_ROOT_CONTROL_DIV(divider - 1)))
     {
         /* Always deinit FLEXSPI and init FLEXSPI for the flash to make sure the flash works correctly after the
          FLEXSPI root clock changed as the default FLEXSPI configuration may does not work for the new root clock
@@ -629,12 +630,13 @@ void BOARD_FlexspiClockSafeConfig(void)
 void EdgeLock_SetClock(uint8_t mux, uint8_t div)
 {
     if ((CLOCK_GetRootClockDiv(kCLOCK_Root_Edgelock) != (uint32_t)div) ||
-        (CLOCK_GetRootClockMux(kCLOCK_Root_Edgelock) != (uint32_t)mux))
+            (CLOCK_GetRootClockMux(kCLOCK_Root_Edgelock) != (uint32_t)mux))
     {
         status_t sts;
         uint32_t ele_clk_mhz;
 
-        clock_root_config_t rootCfg = {
+        clock_root_config_t rootCfg =
+        {
             .div      = div,
             .mux      = mux,
             .clockOff = false,
@@ -643,7 +645,8 @@ void EdgeLock_SetClock(uint8_t mux, uint8_t div)
         do
         {
             sts = ELE_BaseAPI_ClockChangeStart(MU_RT_S3MUA);
-        } while (sts != kStatus_Success);
+        }
+        while (sts != kStatus_Success);
 
         CLOCK_SetRootClock(kCLOCK_Root_Edgelock, &rootCfg);
 
@@ -651,7 +654,8 @@ void EdgeLock_SetClock(uint8_t mux, uint8_t div)
         do
         {
             sts = ELE_BaseAPI_ClockChangeFinish(MU_RT_S3MUA, ele_clk_mhz, 0);
-        } while (sts != kStatus_Success);
+        }
+        while (sts != kStatus_Success);
     }
 }
 
@@ -771,13 +775,15 @@ void APP_CommonTrdcDACSetting(void)
                                                      .pidMask            = 0U,
                                                      .secureAttr         = kTRDC_ForceSecure,
                                                      .pid                = 0U,
-                                                     .lock               = false};
+                                                     .lock               = false
+                                                    };
 
     trdc_non_processor_domain_assignment_t nonProcAssign = {.domainId       = 0U,
                                                             .privilegeAttr  = kTRDC_ForcePrivilege,
                                                             .secureAttr     = kTRDC_ForceSecure,
                                                             .bypassDomainId = true,
-                                                            .lock           = false};
+                                                            .lock           = false
+                                                           };
 
     /* 1. Set the MDAC Configuration in TRDC1. */
     /* Configure the access control for CM33(master 1 for TRDC1, MDAC_A1). */
@@ -839,24 +845,24 @@ static bool TRDC_IsValidMbc(TRDC_Type *trdc, uint8_t mbc)
     {
         switch (mbc)
         {
-            case 0: /* TRDC1 MBC_A0   */
-            case 1: /* TRDC1 MBC_A1   */
-                r = true;
-                break;
-            default:
-                break;
+        case 0: /* TRDC1 MBC_A0   */
+        case 1: /* TRDC1 MBC_A1   */
+            r = true;
+            break;
+        default:
+            break;
         }
     }
     else if (trdc == TRDC2)
     {
         switch (mbc)
         {
-            case 0: /* TRDC2 MBC_W0   */
-            case 1: /* TRDC2 MBC_W1   */
-                r = true;
-                break;
-            default:
-                break;
+        case 0: /* TRDC2 MBC_W0   */
+        case 1: /* TRDC2 MBC_W1   */
+            r = true;
+            break;
+        default:
+            break;
         }
     }
     return r;
@@ -870,12 +876,12 @@ static uint32_t TRDC_GetMbcMemNum(TRDC_Type *trdc, uint32_t mbc)
         uint8_t MemNum[2] = {3, 2};
         switch (mbc)
         {
-            case 0: /* TRDC1 MBC_A0 AIPS1/Edgelock/GPIO1      */
-            case 1: /* TRDC1 MBC_A1 CM33 Code-TCM/CM33 System-TCM     */
-                memNumber = MemNum[mbc];
-                break;
-            default:
-                break;
+        case 0: /* TRDC1 MBC_A0 AIPS1/Edgelock/GPIO1      */
+        case 1: /* TRDC1 MBC_A1 CM33 Code-TCM/CM33 System-TCM     */
+            memNumber = MemNum[mbc];
+            break;
+        default:
+            break;
         }
     }
     else if (trdc == TRDC2)
@@ -883,12 +889,12 @@ static uint32_t TRDC_GetMbcMemNum(TRDC_Type *trdc, uint32_t mbc)
         uint8_t MemNum[2] = {4, 4};
         switch (mbc)
         {
-            case 0: /* TRDC2 MBC_A0 AIPS2/GPIO2, GPIO4, GPIO6/GPIO3, GPIO5/DAP (Debug) */
-            case 1: /* TRDC2 MBC_A1 AIPS3/AHB_ISPAP/NIC_MAIN GPV/SRAMC                 */
-                memNumber = MemNum[mbc];
-                break;
-            default:
-                break;
+        case 0: /* TRDC2 MBC_A0 AIPS2/GPIO2, GPIO4, GPIO6/GPIO3, GPIO5/DAP (Debug) */
+        case 1: /* TRDC2 MBC_A1 AIPS3/AHB_ISPAP/NIC_MAIN GPV/SRAMC                 */
+            memNumber = MemNum[mbc];
+            break;
+        default:
+            break;
         }
     }
     return memNumber;
@@ -901,70 +907,70 @@ static bool TRDC_IsValidMbcMem(TRDC_Type *trdc, uint8_t mbc, uint8_t mem)
     {
         switch (mbc)
         {
-            case 0: /* TRDC1 MBC_A0                      */
-                switch (mem)
-                {
-                    case 0: /* TRDC1 MBC_A0 AIPS1                */
-                        r = true;
-                        break;
-                    case 1: /* TRDC1 MBC_A0 Edgelock             */
-                        break; /* Intentional, Edgelock region not touched. */ 
-                    case 2: /* TRDC1 MBC_A0 GPIO1                */
-                        r = true;
-                        break;
-                    default:
-                        break;
-                }
+        case 0: /* TRDC1 MBC_A0                      */
+            switch (mem)
+            {
+            case 0: /* TRDC1 MBC_A0 AIPS1                */
+                r = true;
                 break;
-            case 1: /* TRDC1 MBC_A1                        */
-                switch (mem)
-                {
-                    case 0: /* TRDC1 MBC_A1 CM33 Code-TCM          */
-                    case 1: /* TRDC1 MBC_A1 CM33 System-TCM        */
-                        r = true;
-                        break;
-                    default:
-                        break;
-                }
+            case 1: /* TRDC1 MBC_A0 Edgelock             */
+                break; /* Intentional, Edgelock region not touched. */
+            case 2: /* TRDC1 MBC_A0 GPIO1                */
+                r = true;
                 break;
             default:
                 break;
+            }
+            break;
+        case 1: /* TRDC1 MBC_A1                        */
+            switch (mem)
+            {
+            case 0: /* TRDC1 MBC_A1 CM33 Code-TCM          */
+            case 1: /* TRDC1 MBC_A1 CM33 System-TCM        */
+                r = true;
+                break;
+            default:
+                break;
+            }
+            break;
+        default:
+            break;
         }
     }
     else if (trdc == TRDC2)
     {
         switch (mbc)
         {
-            case 0: /* TRDC2 MBC_W0                        */
-                switch (mem)
-                {
-                    case 0: /* TRDC2 MBC_W0 AIPS2                  */
-                    case 1: /* TRDC2 MBC_W0 GPIO2, GPIO4, GPIO6    */
-                    case 2: /* TRDC2 MBC_W0 GPIO3, GPIO5           */
-                    case 3: /* TRDC2 MBC_W0 DAP (Debug)            */
-                        r = true;
-                        break;
-
-                    default:
-                        break;
-                }
+        case 0: /* TRDC2 MBC_W0                        */
+            switch (mem)
+            {
+            case 0: /* TRDC2 MBC_W0 AIPS2                  */
+            case 1: /* TRDC2 MBC_W0 GPIO2, GPIO4, GPIO6    */
+            case 2: /* TRDC2 MBC_W0 GPIO3, GPIO5           */
+            case 3: /* TRDC2 MBC_W0 DAP (Debug)            */
+                r = true;
                 break;
-            case 1: /* TRDC2 MBC_W1                         */
-                switch (mem)
-                {
-                    case 0: /* TRDC2 MBC_W1 AIPS3                  */
-                    case 1: /* TRDC2 MBC_W1 AHB_ISPAP              */
-                    case 2: /* TRDC2 MBC_W1 NIC_MAIN GPV           */
-                    case 3: /* TRDC2 MBC_W1 SRAMC                  */
-                        r = true;
-                        break;
 
-                    default:
-                        break;
-                }
-                break;
             default:
                 break;
+            }
+            break;
+        case 1: /* TRDC2 MBC_W1                         */
+            switch (mem)
+            {
+            case 0: /* TRDC2 MBC_W1 AIPS3                  */
+            case 1: /* TRDC2 MBC_W1 AHB_ISPAP              */
+            case 2: /* TRDC2 MBC_W1 NIC_MAIN GPV           */
+            case 3: /* TRDC2 MBC_W1 SRAMC                  */
+                r = true;
+                break;
+
+            default:
+                break;
+            }
+            break;
+        default:
+            break;
         }
     }
     return r;
@@ -977,28 +983,28 @@ static bool TRDC_IsValidMrc(TRDC_Type *trdc, uint8_t mrc)
     {
         switch (mrc)
         {
-            case 0: /* TRDC1 MRC_A0   */
-            case 1: /* TRDC1 MRC_A1   */
-                r = true;
-                break;
-            default:
-                break;
+        case 0: /* TRDC1 MRC_A0   */
+        case 1: /* TRDC1 MRC_A1   */
+            r = true;
+            break;
+        default:
+            break;
         }
     }
     else if (trdc == TRDC2)
     {
         switch (mrc)
         {
-            case 1: /* TRDC2 MRC_W1   */
-            case 2: /* TRDC2 MRC_W2   */
-            case 3: /* TRDC2 MRC_W3   */
-            case 4: /* TRDC2 MRC_W4   */
-            case 5: /* TRDC2 MRC_W5   */
-            case 6: /* TRDC2 MRC_W6   */
-                r = true;
-                break;
-            default:
-                break;
+        case 1: /* TRDC2 MRC_W1   */
+        case 2: /* TRDC2 MRC_W2   */
+        case 3: /* TRDC2 MRC_W3   */
+        case 4: /* TRDC2 MRC_W4   */
+        case 5: /* TRDC2 MRC_W5   */
+        case 6: /* TRDC2 MRC_W6   */
+            r = true;
+            break;
+        default:
+            break;
         }
     }
     return r;
@@ -1011,50 +1017,50 @@ static bool TRDC_GetMrcRegionAddr(TRDC_Type *trdc, uint8_t mrc, uint32_t *pStart
     {
         switch (mrc)
         {
-            case 0: /* TRDC1 MRC_A0 CM33 ROM  */
-                *pStartAddr = 0x00000000UL;
-                *pStopAddr  = 0x00027FFFUL;
-                break;
-            case 1: /* TRDC1 MRC_A1 FlexSPI2  */
-                *pStartAddr = 0x04000000UL;
-                *pStopAddr  = 0x07FFFFFFUL;
-                break;
-            default:
-                r = false;
-                break;
+        case 0: /* TRDC1 MRC_A0 CM33 ROM  */
+            *pStartAddr = 0x00000000UL;
+            *pStopAddr  = 0x00027FFFUL;
+            break;
+        case 1: /* TRDC1 MRC_A1 FlexSPI2  */
+            *pStartAddr = 0x04000000UL;
+            *pStopAddr  = 0x07FFFFFFUL;
+            break;
+        default:
+            r = false;
+            break;
         }
     }
     else if (trdc == TRDC2)
     {
         switch (mrc)
         {
-            case 1: /* TRDC2 MRC_W1 FlexSPI1         */
-                *pStartAddr = 0x28000000UL;
-                *pStopAddr  = 0x2FFFFFFFUL;
-                break;
-            case 2: /* TRDC2 MRC_W2 CM7 I-TCM D-TCM  */
-                *pStartAddr = 0x203C0000UL;
-                *pStopAddr  = 0x2043FFFFUL;
-                break;
-            case 3: /* TRDC2 MRC_W3 OCRAM1           */
-                *pStartAddr = 0x20480000UL;
-                *pStopAddr  = 0x204FFFFFUL;
-                break;
-            case 4: /* TRDC2 MRC_W4 OCRAM2           */
-                *pStartAddr = 0x20500000UL;
-                *pStopAddr  = 0x2053FFFFUL;
-                break;
-            case 5: /* TRDC2 MRC_W5 SEMC             */
-                *pStartAddr = 0x80000000UL;
-                *pStopAddr  = 0x8FFFFFFFUL;
-                break;
-            case 6: /* TRDC2 MRC_W6 NETC             */
-                *pStartAddr = 0x60000000UL;
-                *pStopAddr  = 0x60FFFFFFUL;
-                break;
-            default:
-                r = false;
-                break;
+        case 1: /* TRDC2 MRC_W1 FlexSPI1         */
+            *pStartAddr = 0x28000000UL;
+            *pStopAddr  = 0x2FFFFFFFUL;
+            break;
+        case 2: /* TRDC2 MRC_W2 CM7 I-TCM D-TCM  */
+            *pStartAddr = 0x203C0000UL;
+            *pStopAddr  = 0x2043FFFFUL;
+            break;
+        case 3: /* TRDC2 MRC_W3 OCRAM1           */
+            *pStartAddr = 0x20480000UL;
+            *pStopAddr  = 0x204FFFFFUL;
+            break;
+        case 4: /* TRDC2 MRC_W4 OCRAM2           */
+            *pStartAddr = 0x20500000UL;
+            *pStopAddr  = 0x2053FFFFUL;
+            break;
+        case 5: /* TRDC2 MRC_W5 SEMC             */
+            *pStartAddr = 0x80000000UL;
+            *pStopAddr  = 0x8FFFFFFFUL;
+            break;
+        case 6: /* TRDC2 MRC_W6 NETC             */
+            *pStartAddr = 0x60000000UL;
+            *pStopAddr  = 0x60FFFFFFUL;
+            break;
+        default:
+            r = false;
+            break;
         }
     }
     return r;
@@ -1266,11 +1272,11 @@ void rt_hw_board_init()
 #endif
 
 #ifdef RT_USING_HEAP
-    rt_kprintf("SystemCoreClock: %d Hz\n", SystemCoreClock);		
-    rt_kprintf("Heap: 0x%08x - 0x%08x (Size: %d bytes)\n", 
-               HEAP_BEGIN, HEAP_END, 
+    rt_kprintf("SystemCoreClock: %d Hz\n", SystemCoreClock);
+    rt_kprintf("Heap: 0x%08x - 0x%08x (Size: %d bytes)\n",
+               HEAP_BEGIN, HEAP_END,
                (uint32_t)HEAP_END - (uint32_t)HEAP_BEGIN);
-    
+
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
