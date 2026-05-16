@@ -351,6 +351,10 @@
 /* FT32 HAL & SDK Drivers */
 
 /* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -431,5 +435,10 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define IA32
+
+/* X86 Features */
+
+#define X86_BSP_USING_LIBC
+/* end of X86 Features */
 
 #endif
