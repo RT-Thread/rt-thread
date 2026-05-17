@@ -417,10 +417,6 @@
 
 /* On-chip Peripheral Drivers */
 
-#define BOARD_CLK_CONF
-#define SYSCLK_USE_PLL
-#define SYSCLK_SOURCE_USE_HXTL
-#define PLLCLK_SOURCE_USE_HXTL
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_NS800_UART_TX_TIMEOUT 6000

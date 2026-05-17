@@ -138,7 +138,7 @@ void Switch_init (void)
 void Device_init(void)
 {
     System_setClock();
-#ifndef RT_USING_SMP
+#if (DUAL_CORE_ENABLE == 0)
     Device_enableAllPeripheralsInCpu1();
 #endif
     Device_enableAllPeripherals();

@@ -2,23 +2,11 @@ import os
 from building import *
 
 cwd = GetCurrentDir()
+src = ['board.c']
+path = [cwd]
 
-# add the general drivers.
-src = Glob('board.c')
-pkg_root = os.path.join(cwd, '..', 'packages', 'novosns-series', 'NS800RT7XXX')
-path = [
-    cwd,
-    os.path.join(pkg_root, 'Device', 'Inc'),
-    os.path.join(pkg_root, 'StdDriver', 'Inc'),
-    os.path.join(pkg_root, 'StdDriver', 'Inc', 'ti'),
-    os.path.join(cwd, '..', 'libraries', 'HAL_Drivers'),
-    os.path.join(cwd, '..', 'libraries', 'HAL_Drivers', 'drivers'),
-]
+cppdefines = ['NS800RT7P65X', 'USE_HAL_DRIVER', 'DUAL_CORE_ENABLE=0', 
+        'SYSCLK_USE_PLL', 'SYSCLK_SOURCE_USE_HXTL', 'PLLCLK_SOURCE_USE_HXTL']
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
-list = os.listdir(cwd)
-for item in list:
-    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
-        group = group + SConscript(os.path.join(item, 'SConscript'))
-
+group = DefineGroup('Board', src, depend = [''], CPPPATH = path, CPPDEFINES = cppdefines)
 Return('group')

@@ -1,6 +1,5 @@
 # for module compiling
 import os
-Import('env')
 from building import *
 
 cwd = GetCurrentDir()

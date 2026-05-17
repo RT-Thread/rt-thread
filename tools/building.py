@@ -48,6 +48,54 @@ Projects = []
 Rtt_Root = ''
 Env = None
 
+def _as_unicode(value):
+    try:
+        unicode
+    except NameError:
+        return value if isinstance(value, str) else str(value)
+
+    if isinstance(value, unicode):
+        return value
+
+    for encoding in (sys.getfilesystemencoding(), 'utf-8'):
+        if not encoding:
+            continue
+        try:
+            return value.decode(encoding)
+        except (AttributeError, UnicodeDecodeError):
+            pass
+
+    return unicode(value)
+
+def _check_invalid_option_dashes():
+    # Reject command line options typed with Unicode dash lookalikes.
+    invalid_dashes = (
+        u'\u2010', u'\u2011', u'\u2012', u'\u2013', u'\u2014',
+        u'\u2015', u'\u2212', u'\ufe58', u'\ufe63', u'\uff0d',
+    )
+
+    entries = []
+    entries.extend((key, value) for key, value in ARGUMENTS.items())
+    entries.extend((target, None) for target in COMMAND_LINE_TARGETS)
+
+    for key, value in entries:
+        option = _as_unicode(key)
+        normalized = option
+        for dash in invalid_dashes:
+            normalized = normalized.replace(dash, u'-')
+
+        if option != normalized and normalized.startswith(u'-'):
+            if value is not None:
+                display = u'%s=%s' % (option, _as_unicode(value))
+                hint = u'%s=%s' % (normalized, _as_unicode(value))
+            else:
+                display = option
+                hint = normalized
+
+            print("Invalid command line option: %s" % display)
+            print("Please use ASCII '-' instead: %s" % hint)
+            sys.exit(1)
+
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
 
     global BuildOptions
@@ -56,6 +104,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     global Rtt_Root
 
     AddOptions()
+    _check_invalid_option_dashes()
 
     Env = env
     # export the default environment
