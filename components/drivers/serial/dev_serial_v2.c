@@ -1466,6 +1466,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             if (serial->config.rx_bufsz == 0)
             {
                 ret = -RT_EPERM;
+                break;
             }
 
             struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
@@ -1487,6 +1488,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             if (serial->config.tx_bufsz == 0)
             {
                 ret = -RT_EPERM;
+                break;
             }
 
             struct rt_serial_tx_fifo *tx_fifo = RT_NULL;
@@ -1507,6 +1509,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             if (serial->config.rx_bufsz == 0)
             {
                 ret = -RT_EPERM;
+                break;
             }
 
             struct rt_serial_rx_fifo *rx_fifo = RT_NULL;
@@ -1527,6 +1530,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             if (serial->config.tx_bufsz == 0)
             {
                 ret = -RT_EPERM;
+                break;
             }
 
             struct rt_serial_tx_fifo *tx_fifo = RT_NULL;
