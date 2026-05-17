@@ -27,7 +27,9 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_MPU9250
         bool "Enable MPU 9250 (i2c2)"
-        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C2
         select PKG_USING_MPU6XXX
         default n
 
@@ -36,7 +38,9 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_ETH
         bool "Enable Ethernet"
-        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C2
         select PKG_USING_PCF8574
         select RT_USING_LWIP
         select PHY_USING_LAN8720A
@@ -216,42 +220,6 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC1
                 bool "Enable ADC1"
                 default n
-        endif
-
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            comment "Notice: PB8 --> 24; PB9 --> 25"
-            config BSP_I2C1_SCL_PIN
-                int "I2C1 scl pin number"
-                range 1 176
-                default 24
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                range 1 176
-                default 25
-        endif
-
-    menuconfig BSP_USING_I2C2
-        bool "Enable I2C2 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C2
-            comment "Notice: PH4 --> 116; PH5 --> 117"
-            config BSP_I2C2_SCL_PIN
-                int "i2c2 scl pin number"
-                range 1 176
-                default 116
-            config BSP_I2C2_SDA_PIN
-                int "I2C2 sda pin number"
-                range 1 176
-                default 117
         endif
 
     menuconfig BSP_USING_ONCHIP_RTC

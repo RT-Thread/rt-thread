@@ -8,3 +8,12 @@ nano:
   kconfig:
     - CONFIG_RT_USING_NANO=y
 
+devices.soft_i2c:
+  <<: *scons
+  kconfig:
+    - CONFIG_RT_USING_I2C=y
+    - CONFIG_RT_USING_SOFT_I2C=y
+    - CONFIG_RT_USING_SOFT_I2C2=y
+    - CONFIG_RT_SOFT_I2C2_SCL_PIN=116
+    - CONFIG_RT_SOFT_I2C2_SDA_PIN=117
+    - CONFIG_RT_SOFT_I2C2_BUS_NAME="swi2c2"

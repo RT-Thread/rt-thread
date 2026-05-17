@@ -124,43 +124,6 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C
-            config BSP_USING_I2C0
-                bool "Enable I2C0"
-                default n
-                if BSP_USING_I2C0
-                    comment "Notice: PC2 --> 28; PC3 --> 29"
-                    config BSP_I2C0_SCL_PIN
-                        int "I2C0 scl pin number"
-                        range 0 99
-                        default 28
-                    config BSP_I2C0_SDA_PIN
-                        int "I2C0 sda pin number"
-                        range 0 99
-                        default 29
-                endif
-            config BSP_USING_I2C1
-                bool "Enable I2C1"
-                default n
-                if BSP_USING_I2C1
-                    comment "Notice: PC6 --> 32; PC7 --> 33"
-                    config BSP_I2C1_SCL_PIN
-                        int "I2C1 scl pin number"
-                        range 0 99
-                        default 32
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 0 99
-                        default 33
-                endif
-        endif
-
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         default n
