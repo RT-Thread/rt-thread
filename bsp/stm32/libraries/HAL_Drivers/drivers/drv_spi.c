@@ -16,6 +16,11 @@
  * 2026-04-16     wdfk_prog    Add SPI interrupt transfer mode scaffolding
  */
 
+/**
+ * @file drv_spi.c
+ * @brief STM32 SPI bus driver implementation.
+ */
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"
@@ -27,8 +32,10 @@
 #include <string.h>
 
 #ifdef BSP_HARDWARE_SPI
-/*
- * SPI transfer route policy:
+/**
+ * @brief SPI transfer route policy.
+ *
+ * @details
  *
  * For a universal and most conservative strategy across all STM32 series
  * under full-duplex operation at the highest supported SPI clock rates,
@@ -45,9 +52,11 @@
  * This policy prioritizes robustness and portability over theoretical peak efficiency.
  */
 #ifndef BSP_SPI_DMA_TRANS_MIN_LEN
+/* Minimum transfer length that may use DMA mode. */
 #define BSP_SPI_DMA_TRANS_MIN_LEN 32U
 #endif /* BSP_SPI_DMA_TRANS_MIN_LEN */
 #ifndef BSP_SPI_INT_TRANS_MIN_LEN
+/* Minimum transfer length that may use interrupt mode. */
 #define BSP_SPI_INT_TRANS_MIN_LEN 32U
 #endif /* BSP_SPI_INT_TRANS_MIN_LEN */
 
@@ -55,58 +64,80 @@
 #define LOG_TAG              "drv.spi"
 #include <drv_log.h>
 
+/**
+ * @brief Runtime array indexes for enabled STM32 SPI instances.
+ *
+ * @note The index order must match @ref spi_config and @ref spi_bus_obj.
+ */
 enum
 {
 #ifdef BSP_USING_SPI1
-    SPI1_INDEX,
+    SPI1_INDEX, /**< Runtime array index for SPI1. */
 #endif
 #ifdef BSP_USING_SPI2
-    SPI2_INDEX,
+    SPI2_INDEX, /**< Runtime array index for SPI2. */
 #endif
 #ifdef BSP_USING_SPI3
-    SPI3_INDEX,
+    SPI3_INDEX, /**< Runtime array index for SPI3. */
 #endif
 #ifdef BSP_USING_SPI4
-    SPI4_INDEX,
+    SPI4_INDEX, /**< Runtime array index for SPI4. */
 #endif
 #ifdef BSP_USING_SPI5
-    SPI5_INDEX,
+    SPI5_INDEX, /**< Runtime array index for SPI5. */
 #endif
 #ifdef BSP_USING_SPI6
-    SPI6_INDEX,
+    SPI6_INDEX, /**< Runtime array index for SPI6. */
 #endif
 };
 
+/**
+ * @var spi_config
+ * @brief Static STM32 SPI bus configuration table.
+ *
+ * @details The table contains one conditional SPIx_BUS_CONFIG entry for
+ * each enabled BSP_USING_SPIx instance. The table order must match the
+ * SPIx_INDEX values and @ref spi_bus_obj.
+ */
 static struct stm32_spi_config spi_config[] =
 {
 #ifdef BSP_USING_SPI1
-    SPI1_BUS_CONFIG,
-#endif
+    SPI1_BUS_CONFIG, /**< Static bus configuration entry for SPI1. */
+#endif /* BSP_USING_SPI1 */
 
 #ifdef BSP_USING_SPI2
-    SPI2_BUS_CONFIG,
-#endif
+    SPI2_BUS_CONFIG, /**< Static bus configuration entry for SPI2. */
+#endif /* BSP_USING_SPI2 */
 
 #ifdef BSP_USING_SPI3
-    SPI3_BUS_CONFIG,
-#endif
+    SPI3_BUS_CONFIG, /**< Static bus configuration entry for SPI3. */
+#endif /* BSP_USING_SPI3 */
 
 #ifdef BSP_USING_SPI4
-    SPI4_BUS_CONFIG,
-#endif
+    SPI4_BUS_CONFIG, /**< Static bus configuration entry for SPI4. */
+#endif /* BSP_USING_SPI4 */
 
 #ifdef BSP_USING_SPI5
-    SPI5_BUS_CONFIG,
-#endif
+    SPI5_BUS_CONFIG, /**< Static bus configuration entry for SPI5. */
+#endif /* BSP_USING_SPI5 */
 
 #ifdef BSP_USING_SPI6
-    SPI6_BUS_CONFIG,
-#endif
+    SPI6_BUS_CONFIG, /**< Static bus configuration entry for SPI6. */
+#endif /* BSP_USING_SPI6 */
 };
 
+/**
+ * @brief Runtime STM32 SPI bus object table paired with @ref spi_config.
+ */
 static struct stm32_spi spi_bus_obj[sizeof(spi_config) / sizeof(spi_config[0])] = {0};
 
 #ifdef BSP_SPI_USING_DMA
+/**
+ * @brief Roll back SPI DMA setup that was partially initialized.
+ *
+ * @param spi_drv STM32 SPI driver context.
+ * @param dma_flags RT_DEVICE_FLAG_DMA_* bits indicating DMA channels to release.
+ */
 static void stm32_spi_dma_rollback(struct stm32_spi *spi_drv, rt_uint16_t dma_flags)
 {
 #if defined(BSP_SPI_RX_USING_DMA)
@@ -129,6 +160,13 @@ static void stm32_spi_dma_rollback(struct stm32_spi *spi_drv, rt_uint16_t dma_fl
 }
 #endif /* BSP_SPI_USING_DMA */
 
+/**
+ * @brief Initialize an STM32 SPI instance according to an RT-Thread SPI configuration.
+ *
+ * @param spi_drv STM32 SPI driver context.
+ * @param cfg RT-Thread SPI bus configuration.
+ * @return RT_EOK on success, otherwise an RT-Thread error code.
+ */
 static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configuration *cfg)
 {
     RT_ASSERT(spi_drv != RT_NULL);
@@ -302,7 +340,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 #ifdef BSP_SPI_USING_DMA
     /* DMA configuration */
 #if defined(BSP_SPI_RX_USING_DMA)
-    if (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_RX)
+    if (spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_DMA_RX)
     {
         if (stm32_dma_setup(&spi_drv->dma.handle_rx,
                             &spi_drv->handle,
@@ -316,14 +354,14 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 #endif /* BSP_SPI_RX_USING_DMA */
 
 #if defined(BSP_SPI_TX_USING_DMA)
-    if (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_TX)
+    if (spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_DMA_TX)
     {
         if (stm32_dma_setup(&spi_drv->dma.handle_tx,
                             &spi_drv->handle,
                             &spi_drv->handle.hdmatx,
                             spi_drv->config->dma_tx) != RT_EOK)
         {
-            stm32_spi_dma_rollback(spi_drv, RT_DEVICE_FLAG_DMA_TX | (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_RX));
+            stm32_spi_dma_rollback(spi_drv, RT_DEVICE_FLAG_DMA_TX | (spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_DMA_RX));
             return -RT_EIO;
         }
     }
@@ -331,8 +369,8 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 #endif /* BSP_SPI_USING_DMA */
 
 #ifdef BSP_SPI_USING_IRQ
-    if ((spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_TX) || (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_RX)
-     || (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_INT_TX) || (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_INT_RX))
+    if ((spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_DMA_TX) || (spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_DMA_RX)
+     || (spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_INT_TX) || (spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_INT_RX))
     {
         HAL_NVIC_SetPriority(spi_drv->config->irq_type, 2, 0);
         HAL_NVIC_EnableIRQ(spi_drv->config->irq_type);
@@ -343,6 +381,13 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     return RT_EOK;
 }
 
+/**
+ * @brief Transfer one RT-Thread SPI message over an STM32 SPI bus.
+ *
+ * @param device RT-Thread SPI device.
+ * @param message SPI message containing TX/RX buffers and transfer length.
+ * @return Transferred byte count on success, otherwise a negative RT-Thread error code.
+ */
 static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     HAL_StatusTypeDef state = HAL_OK;
@@ -428,12 +473,12 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 
         rt_bool_t dma_eligible = (send_length >= BSP_SPI_DMA_TRANS_MIN_LEN);
 #if defined(BSP_SPI_TX_USING_DMA)
-        rt_bool_t use_tx_dma = dma_eligible && (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_TX);
+        rt_bool_t use_tx_dma = dma_eligible && (spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_DMA_TX);
 #else
         rt_bool_t use_tx_dma = RT_FALSE;
 #endif /* BSP_SPI_TX_USING_DMA */
 #if defined(BSP_SPI_RX_USING_DMA)
-        rt_bool_t use_rx_dma = dma_eligible && (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_RX);
+        rt_bool_t use_rx_dma = dma_eligible && (spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_DMA_RX);
 #else
         rt_bool_t use_rx_dma = RT_FALSE;
 #endif /* BSP_SPI_RX_USING_DMA */
@@ -487,12 +532,12 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 #ifdef BSP_SPI_USING_INT
         rt_bool_t int_eligible = (send_length >= BSP_SPI_INT_TRANS_MIN_LEN);
 #if defined(BSP_SPI_TX_USING_INT)
-        rt_bool_t use_tx_int = int_eligible && spi_drv->spi_dma_flag & RT_DEVICE_FLAG_INT_TX;
+        rt_bool_t use_tx_int = int_eligible && spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_INT_TX;
 #else
         rt_bool_t use_tx_int = RT_FALSE;
 #endif /* BSP_SPI_TX_USING_INT */
 #if defined(BSP_SPI_RX_USING_INT)
-        rt_bool_t use_rx_int = int_eligible && spi_drv->spi_dma_flag & RT_DEVICE_FLAG_INT_RX;
+        rt_bool_t use_rx_int = int_eligible && spi_drv->spi_xfer_flags & RT_DEVICE_FLAG_INT_RX;
 #else
         rt_bool_t use_rx_int = RT_FALSE;
 #endif /* BSP_SPI_RX_USING_INT */
@@ -504,7 +549,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 
         rt_bool_t async_started = RT_TRUE;
 #ifdef BSP_SPI_USING_IRQ
-        /* Ensure that the current completion volume is solely associated with the current affairs.*/
+        /* Reinitialize the completion object for the current transfer. */
         rt_completion_init(&spi_drv->cpt);
 #endif /* BSP_SPI_USING_IRQ */
         /* Start data exchange in full-duplex DMA mode. */
@@ -552,10 +597,22 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         }
         else if (message->recv_buf)
         {
+            rt_uint8_t *rx_dummy_buf = recv_buf;
+
             /* clear the old error flag */
             __HAL_SPI_CLEAR_OVRFLAG(spi_handle);
 #ifdef BSP_SPI_USING_DMA
-            rt_memset(dma_recv_buf, 0xFF, send_length);
+            if (use_rx_dma)
+            {
+                rx_dummy_buf = dma_recv_buf;
+            }
+#endif /* BSP_SPI_USING_DMA */
+            /*
+             * STM32 HAL uses the receive buffer as dummy TX data in master
+             * receive-only mode, so preload the actual HAL buffer with 0xFF.
+             */
+            rt_memset(rx_dummy_buf, 0xFF, send_length);
+#ifdef BSP_SPI_USING_DMA
             if (use_rx_dma)
             {
                 state = HAL_SPI_Receive_DMA(spi_handle, dma_recv_buf, send_length);
@@ -688,6 +745,13 @@ transfer_cleanup:
     return message->length;
 }
 
+/**
+ * @brief Configure an RT-Thread SPI device backed by an STM32 SPI bus.
+ *
+ * @param device RT-Thread SPI device.
+ * @param configuration SPI mode, data width and clock configuration.
+ * @return RT_EOK on success, otherwise an RT-Thread error code.
+ */
 static rt_err_t spi_configure(struct rt_spi_device *device,
                               struct rt_spi_configuration *configuration)
 {
@@ -700,12 +764,20 @@ static rt_err_t spi_configure(struct rt_spi_device *device,
     return stm32_spi_init(spi_drv, configuration);
 }
 
+/**
+ * @brief RT-Thread SPI operation callbacks implemented by the STM32 driver.
+ */
 static const struct rt_spi_ops stm_spi_ops =
 {
     .configure = spi_configure,
     .xfer = spixfer,
 };
 
+/**
+ * @brief Register all enabled STM32 SPI buses with RT-Thread.
+ *
+ * @return RT_EOK on success, otherwise an RT-Thread error code.
+ */
 static int rt_hw_spi_bus_init(void)
 {
     rt_err_t result;
@@ -731,8 +803,13 @@ static int rt_hw_spi_bus_init(void)
 }
 
 /**
-  * Attach the spi device to SPI bus, this function must be used after initialization.
-  */
+ * @brief Attach an SPI device to a registered STM32 SPI bus.
+ *
+ * @param bus_name SPI bus name, such as "spi1".
+ * @param device_name SPI device name to register.
+ * @param cs_pin Chip-select pin used by the SPI device.
+ * @return RT_EOK on success, otherwise an RT-Thread error code.
+ */
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin)
 {
     RT_ASSERT(bus_name != RT_NULL);
@@ -759,10 +836,11 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 }
 
 /**
-  * Detach the spi device from SPI bus.
-  *
-  * @param device_name the name of the spi device to be detached.
-  */
+ * @brief Detach a previously attached STM32 SPI device.
+ *
+ * @param device_name SPI device name to detach.
+ * @return RT_EOK on success, otherwise an RT-Thread error code.
+ */
 rt_err_t rt_hw_spi_device_detach(const char *device_name)
 {
     RT_ASSERT(device_name != RT_NULL);
@@ -800,6 +878,9 @@ rt_err_t rt_hw_spi_device_detach(const char *device_name)
 }
 
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_USING_IRQ)
+/**
+ * @brief Handle the SPI1 peripheral interrupt.
+ */
 void SPI1_IRQHandler(void)
 {
     /* enter interrupt */
@@ -813,10 +894,8 @@ void SPI1_IRQHandler(void)
 
 #ifdef BSP_SPI1_RX_USING_DMA
 /**
-  * @brief  This function handles DMA Rx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI1 RX DMA interrupt.
+ */
 void SPI1_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -831,10 +910,8 @@ void SPI1_DMA_RX_IRQHandler(void)
 
 #ifdef BSP_SPI1_TX_USING_DMA
 /**
-  * @brief  This function handles DMA Tx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI1 TX DMA interrupt.
+ */
 void SPI1_DMA_TX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -849,6 +926,9 @@ void SPI1_DMA_TX_IRQHandler(void)
 #endif /* defined(BSP_USING_SPI1) && defined(BSP_SPI1_USING_IRQ) */
 
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_USING_IRQ)
+/**
+ * @brief Handle the SPI2 peripheral interrupt.
+ */
 void SPI2_IRQHandler(void)
 {
     /* enter interrupt */
@@ -862,10 +942,8 @@ void SPI2_IRQHandler(void)
 
 #ifdef BSP_SPI2_RX_USING_DMA
 /**
-  * @brief  This function handles DMA Rx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI2 RX DMA interrupt.
+ */
 void SPI2_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -880,10 +958,8 @@ void SPI2_DMA_RX_IRQHandler(void)
 
 #ifdef BSP_SPI2_TX_USING_DMA
 /**
-  * @brief  This function handles DMA Tx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI2 TX DMA interrupt.
+ */
 void SPI2_DMA_TX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -898,6 +974,9 @@ void SPI2_DMA_TX_IRQHandler(void)
 #endif /* defined(BSP_USING_SPI2) && defined(BSP_SPI2_USING_IRQ) */
 
 #if defined(BSP_USING_SPI3) && defined(BSP_SPI3_USING_IRQ)
+/**
+ * @brief Handle the SPI3 peripheral interrupt.
+ */
 void SPI3_IRQHandler(void)
 {
     /* enter interrupt */
@@ -911,10 +990,8 @@ void SPI3_IRQHandler(void)
 
 #ifdef BSP_SPI3_RX_USING_DMA
 /**
-  * @brief  This function handles DMA Rx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI3 RX DMA interrupt.
+ */
 void SPI3_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -929,10 +1006,8 @@ void SPI3_DMA_RX_IRQHandler(void)
 
 #ifdef BSP_SPI3_TX_USING_DMA
 /**
-  * @brief  This function handles DMA Tx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI3 TX DMA interrupt.
+ */
 void SPI3_DMA_TX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -947,6 +1022,9 @@ void SPI3_DMA_TX_IRQHandler(void)
 #endif /* defined(BSP_USING_SPI3) && defined(BSP_SPI3_USING_IRQ) */
 
 #if defined(BSP_USING_SPI4) && defined(BSP_SPI4_USING_IRQ)
+/**
+ * @brief Handle the SPI4 peripheral interrupt.
+ */
 void SPI4_IRQHandler(void)
 {
     /* enter interrupt */
@@ -960,10 +1038,8 @@ void SPI4_IRQHandler(void)
 
 #ifdef BSP_SPI4_RX_USING_DMA
 /**
-  * @brief  This function handles DMA Rx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI4 RX DMA interrupt.
+ */
 void SPI4_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -978,10 +1054,8 @@ void SPI4_DMA_RX_IRQHandler(void)
 
 #ifdef BSP_SPI4_TX_USING_DMA
 /**
-  * @brief  This function handles DMA Tx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI4 TX DMA interrupt.
+ */
 void SPI4_DMA_TX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -996,6 +1070,9 @@ void SPI4_DMA_TX_IRQHandler(void)
 #endif /* defined(BSP_USING_SPI4) && defined(BSP_SPI4_USING_IRQ) */
 
 #if defined(BSP_USING_SPI5) && defined(BSP_SPI5_USING_IRQ)
+/**
+ * @brief Handle the SPI5 peripheral interrupt.
+ */
 void SPI5_IRQHandler(void)
 {
     /* enter interrupt */
@@ -1009,10 +1086,8 @@ void SPI5_IRQHandler(void)
 
 #ifdef BSP_SPI5_RX_USING_DMA
 /**
-  * @brief  This function handles DMA Rx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI5 RX DMA interrupt.
+ */
 void SPI5_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -1027,10 +1102,8 @@ void SPI5_DMA_RX_IRQHandler(void)
 
 #ifdef BSP_SPI5_TX_USING_DMA
 /**
-  * @brief  This function handles DMA Tx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI5 TX DMA interrupt.
+ */
 void SPI5_DMA_TX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -1045,6 +1118,9 @@ void SPI5_DMA_TX_IRQHandler(void)
 #endif /* defined(BSP_USING_SPI5) && defined(BSP_SPI5_USING_IRQ) */
 
 #if defined(BSP_USING_SPI6) && defined(BSP_SPI6_USING_IRQ)
+/**
+ * @brief Handle the SPI6 peripheral interrupt.
+ */
 void SPI6_IRQHandler(void)
 {
     /* enter interrupt */
@@ -1058,10 +1134,8 @@ void SPI6_IRQHandler(void)
 
 #ifdef BSP_SPI6_RX_USING_DMA
 /**
-  * @brief  This function handles DMA Rx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI6 RX DMA interrupt.
+ */
 void SPI6_DMA_RX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -1076,10 +1150,8 @@ void SPI6_DMA_RX_IRQHandler(void)
 
 #ifdef BSP_SPI6_TX_USING_DMA
 /**
-  * @brief  This function handles DMA Tx interrupt request.
-  * @param  None
-  * @retval None
-  */
+ * @brief Handle the SPI6 TX DMA interrupt.
+ */
 void SPI6_DMA_TX_IRQHandler(void)
 {
     /* enter interrupt */
@@ -1094,147 +1166,182 @@ void SPI6_DMA_TX_IRQHandler(void)
 #endif /* defined(BSP_USING_SPI6) && defined(BSP_SPI6_USING_IRQ) */
 
 #ifdef BSP_SPI_USING_IRQ
+/**
+ * @brief Populate per-instance SPI transfer flags and DMA configuration pointers.
+ */
 static void stm32_get_xfer_info(void)
 {
 #ifdef BSP_USING_SPI1
-    spi_bus_obj[SPI1_INDEX].spi_dma_flag = 0;
+    spi_bus_obj[SPI1_INDEX].spi_xfer_flags = 0;
 #ifdef BSP_SPI1_RX_USING_INT
-    spi_bus_obj[SPI1_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_RX;
+    spi_bus_obj[SPI1_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_RX;
 #endif
 #ifdef BSP_SPI1_TX_USING_INT
-    spi_bus_obj[SPI1_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_TX;
+    spi_bus_obj[SPI1_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_TX;
 #endif
 #ifdef BSP_SPI1_RX_USING_DMA
-    spi_bus_obj[SPI1_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    spi_bus_obj[SPI1_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_RX;
+    /** SPI1 RX DMA configuration descriptor. */
     static const struct stm32_dma_config spi1_dma_rx = SPI1_RX_DMA_CONFIG;
     spi_config[SPI1_INDEX].dma_rx = &spi1_dma_rx;
 #endif
 #ifdef BSP_SPI1_TX_USING_DMA
-    spi_bus_obj[SPI1_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    spi_bus_obj[SPI1_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_TX;
+    /** SPI1 TX DMA configuration descriptor. */
     static const struct stm32_dma_config spi1_dma_tx = SPI1_TX_DMA_CONFIG;
     spi_config[SPI1_INDEX].dma_tx = &spi1_dma_tx;
 #endif
 #endif /* BSP_USING_SPI1 */
 
 #ifdef BSP_USING_SPI2
-    spi_bus_obj[SPI2_INDEX].spi_dma_flag = 0;
+    spi_bus_obj[SPI2_INDEX].spi_xfer_flags = 0;
 #ifdef BSP_SPI2_RX_USING_INT
-    spi_bus_obj[SPI2_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_RX;
+    spi_bus_obj[SPI2_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_RX;
 #endif
 #ifdef BSP_SPI2_TX_USING_INT
-    spi_bus_obj[SPI2_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_TX;
+    spi_bus_obj[SPI2_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_TX;
 #endif
 #ifdef BSP_SPI2_RX_USING_DMA
-    spi_bus_obj[SPI2_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    spi_bus_obj[SPI2_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_RX;
+    /** SPI2 RX DMA configuration descriptor. */
     static const struct stm32_dma_config spi2_dma_rx = SPI2_RX_DMA_CONFIG;
     spi_config[SPI2_INDEX].dma_rx = &spi2_dma_rx;
 #endif
 #ifdef BSP_SPI2_TX_USING_DMA
-    spi_bus_obj[SPI2_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    spi_bus_obj[SPI2_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_TX;
+    /** SPI2 TX DMA configuration descriptor. */
     static const struct stm32_dma_config spi2_dma_tx = SPI2_TX_DMA_CONFIG;
     spi_config[SPI2_INDEX].dma_tx = &spi2_dma_tx;
 #endif
 #endif /* BSP_USING_SPI2 */
 
 #ifdef BSP_USING_SPI3
-    spi_bus_obj[SPI3_INDEX].spi_dma_flag = 0;
+    spi_bus_obj[SPI3_INDEX].spi_xfer_flags = 0;
 #ifdef BSP_SPI3_RX_USING_INT
-    spi_bus_obj[SPI3_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_RX;
+    spi_bus_obj[SPI3_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_RX;
 #endif
 #ifdef BSP_SPI3_TX_USING_INT
-    spi_bus_obj[SPI3_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_TX;
+    spi_bus_obj[SPI3_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_TX;
 #endif
 #ifdef BSP_SPI3_RX_USING_DMA
-    spi_bus_obj[SPI3_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    spi_bus_obj[SPI3_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_RX;
+    /** SPI3 RX DMA configuration descriptor. */
     static const struct stm32_dma_config spi3_dma_rx = SPI3_RX_DMA_CONFIG;
     spi_config[SPI3_INDEX].dma_rx = &spi3_dma_rx;
 #endif
 #ifdef BSP_SPI3_TX_USING_DMA
-    spi_bus_obj[SPI3_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    spi_bus_obj[SPI3_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_TX;
+    /** SPI3 TX DMA configuration descriptor. */
     static const struct stm32_dma_config spi3_dma_tx = SPI3_TX_DMA_CONFIG;
     spi_config[SPI3_INDEX].dma_tx = &spi3_dma_tx;
 #endif
 #endif /* BSP_USING_SPI3 */
 
 #ifdef BSP_USING_SPI4
-    spi_bus_obj[SPI4_INDEX].spi_dma_flag = 0;
+    spi_bus_obj[SPI4_INDEX].spi_xfer_flags = 0;
 #ifdef BSP_SPI4_RX_USING_INT
-    spi_bus_obj[SPI4_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_RX;
+    spi_bus_obj[SPI4_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_RX;
 #endif
 #ifdef BSP_SPI4_TX_USING_INT
-    spi_bus_obj[SPI4_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_TX;
+    spi_bus_obj[SPI4_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_TX;
 #endif
 #ifdef BSP_SPI4_RX_USING_DMA
-    spi_bus_obj[SPI4_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    spi_bus_obj[SPI4_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_RX;
+    /** SPI4 RX DMA configuration descriptor. */
     static const struct stm32_dma_config spi4_dma_rx = SPI4_RX_DMA_CONFIG;
     spi_config[SPI4_INDEX].dma_rx = &spi4_dma_rx;
 #endif
 #ifdef BSP_SPI4_TX_USING_DMA
-    spi_bus_obj[SPI4_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    spi_bus_obj[SPI4_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_TX;
+    /** SPI4 TX DMA configuration descriptor. */
     static const struct stm32_dma_config spi4_dma_tx = SPI4_TX_DMA_CONFIG;
     spi_config[SPI4_INDEX].dma_tx = &spi4_dma_tx;
 #endif
 #endif /* BSP_USING_SPI4 */
 
 #ifdef BSP_USING_SPI5
-    spi_bus_obj[SPI5_INDEX].spi_dma_flag = 0;
+    spi_bus_obj[SPI5_INDEX].spi_xfer_flags = 0;
 #ifdef BSP_SPI5_RX_USING_INT
-    spi_bus_obj[SPI5_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_RX;
+    spi_bus_obj[SPI5_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_RX;
 #endif
 #ifdef BSP_SPI5_TX_USING_INT
-    spi_bus_obj[SPI5_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_TX;
+    spi_bus_obj[SPI5_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_TX;
 #endif
 #ifdef BSP_SPI5_RX_USING_DMA
-    spi_bus_obj[SPI5_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    spi_bus_obj[SPI5_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_RX;
+    /** SPI5 RX DMA configuration descriptor. */
     static const struct stm32_dma_config spi5_dma_rx = SPI5_RX_DMA_CONFIG;
     spi_config[SPI5_INDEX].dma_rx = &spi5_dma_rx;
 #endif
 #ifdef BSP_SPI5_TX_USING_DMA
-    spi_bus_obj[SPI5_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    spi_bus_obj[SPI5_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_TX;
+    /** SPI5 TX DMA configuration descriptor. */
     static const struct stm32_dma_config spi5_dma_tx = SPI5_TX_DMA_CONFIG;
     spi_config[SPI5_INDEX].dma_tx = &spi5_dma_tx;
 #endif
 #endif /* BSP_USING_SPI5 */
 
 #ifdef BSP_USING_SPI6
-    spi_bus_obj[SPI6_INDEX].spi_dma_flag = 0;
+    spi_bus_obj[SPI6_INDEX].spi_xfer_flags = 0;
 #ifdef BSP_SPI6_RX_USING_INT
-    spi_bus_obj[SPI6_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_RX;
+    spi_bus_obj[SPI6_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_RX;
 #endif
 #ifdef BSP_SPI6_TX_USING_INT
-    spi_bus_obj[SPI6_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_INT_TX;
+    spi_bus_obj[SPI6_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_INT_TX;
 #endif
 #ifdef BSP_SPI6_RX_USING_DMA
-    spi_bus_obj[SPI6_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    spi_bus_obj[SPI6_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_RX;
+    /** SPI6 RX DMA configuration descriptor. */
     static const struct stm32_dma_config spi6_dma_rx = SPI6_RX_DMA_CONFIG;
     spi_config[SPI6_INDEX].dma_rx = &spi6_dma_rx;
 #endif
 #ifdef BSP_SPI6_TX_USING_DMA
-    spi_bus_obj[SPI6_INDEX].spi_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+    spi_bus_obj[SPI6_INDEX].spi_xfer_flags |= RT_DEVICE_FLAG_DMA_TX;
+    /** SPI6 TX DMA configuration descriptor. */
     static const struct stm32_dma_config spi6_dma_tx = SPI6_TX_DMA_CONFIG;
     spi_config[SPI6_INDEX].dma_tx = &spi6_dma_tx;
 #endif
 #endif /* BSP_USING_SPI6 */
 }
 
+/**
+ * @brief Handle STM32 HAL full-duplex SPI transfer completion.
+ *
+ * @param hspi STM32 HAL SPI handle that completed the transfer.
+ */
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
     rt_completion_done(&spi_drv->cpt);
 }
 
+/**
+ * @brief Handle STM32 HAL SPI TX completion.
+ *
+ * @param hspi STM32 HAL SPI handle that completed the transfer.
+ */
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
     rt_completion_done(&spi_drv->cpt);
 }
 
+/**
+ * @brief Handle STM32 HAL SPI RX completion.
+ *
+ * @param hspi STM32 HAL SPI handle that completed the transfer.
+ */
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
     rt_completion_done(&spi_drv->cpt);
 }
 
+/**
+ * @brief Handle STM32 HAL SPI asynchronous transfer errors.
+ *
+ * @param hspi STM32 HAL SPI handle that reported the error.
+ */
 void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 {
     struct stm32_spi *spi_drv =  rt_container_of(hspi, struct stm32_spi, handle);
@@ -1244,6 +1351,9 @@ void HAL_SPI_ErrorCallback(SPI_HandleTypeDef *hspi)
 #endif /* BSP_SPI_USING_IRQ */
 
 #if defined(SOC_SERIES_STM32F0)
+/**
+ * @brief Dispatch the combined SPI1 DMA RX/TX interrupt.
+ */
 void SPI1_DMA_RX_TX_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_TX_USING_DMA)
@@ -1255,6 +1365,9 @@ void SPI1_DMA_RX_TX_IRQHandler(void)
 #endif
 }
 
+/**
+ * @brief Dispatch the combined SPI2 DMA RX/TX interrupt.
+ */
 void SPI2_DMA_RX_TX_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_TX_USING_DMA)
@@ -1267,6 +1380,9 @@ void SPI2_DMA_RX_TX_IRQHandler(void)
 }
 #elif defined(SOC_SERIES_STM32G0)
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_USING_DMA)
+/**
+ * @brief Dispatch the combined SPI1 DMA RX/TX interrupt.
+ */
 void SPI1_DMA_RX_TX_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI1) && defined(BSP_SPI1_TX_USING_DMA)
@@ -1279,6 +1395,9 @@ void SPI1_DMA_RX_TX_IRQHandler(void)
 }
 #endif /* defined(BSP_USING_SPI1) && defined(BSP_SPI1_USING_DMA) */
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_USING_DMA)
+/**
+ * @brief Dispatch the combined SPI2 DMA RX/TX interrupt.
+ */
 void SPI2_DMA_RX_TX_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_TX_USING_DMA)
@@ -1289,9 +1408,12 @@ void SPI2_DMA_RX_TX_IRQHandler(void)
     SPI2_DMA_RX_IRQHandler();
 #endif
 }
-#endif /* defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI2_RX_USING_DMA) */
+#endif /* defined(BSP_USING_SPI2) && defined(BSP_SPI2_USING_DMA) */
 #if defined(STM32G0B0xx) || defined(STM32G0B1xx) || defined(STM32G0C1xx)
 #if defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3)
+/**
+ * @brief Dispatch the shared SPI2/SPI3 peripheral interrupt.
+ */
 void SPI2_3_IRQHandler(void)
 {
 #if defined(BSP_USING_SPI2) && defined(BSP_SPI2_USING_IRQ)
@@ -1305,6 +1427,11 @@ void SPI2_3_IRQHandler(void)
 #endif /* defined(STM32G0B0xx) || defined(STM32G0B1xx) || defined(STM32G0C1xx) */
 #endif /* defined(SOC_SERIES_STM32F0) */
 
+/**
+ * @brief Initialize the STM32 SPI driver during board startup.
+ *
+ * @return RT_EOK on success, otherwise an RT-Thread error code.
+ */
 int rt_hw_spi_init(void)
 {
 #ifdef BSP_SPI_USING_IRQ
