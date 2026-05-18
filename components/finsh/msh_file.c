@@ -274,6 +274,7 @@ static int cmd_mv(int argc, char **argv)
                 if (*src == '/') break;
                 src --;
             }
+            if(*src == '/') src++;
 
             rt_snprintf(dest, DFS_PATH_MAX - 1, "%s/%s", argv[2], src);
         }

@@ -41,7 +41,6 @@ static int hid_class_interface_request_handler(uint8_t busid, struct usb_setup_p
             break;
 
         default:
-            USB_LOG_WRN("Unhandled HID Class bRequest 0x%02x\r\n", setup->bRequest);
             return -1;
     }
 

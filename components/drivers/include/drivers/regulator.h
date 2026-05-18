@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-09-23     GuEe-GUI     first version
+ * 2026-03-27     Evlers       add current control API and snapshot helpers
  */
 
 #ifndef __REGULATOR_H__
@@ -18,6 +19,7 @@
 #include <drivers/misc.h>
 
 #define RT_REGULATOR_UVOLT_INVALID  (((int)(RT_UINT32_MAX >> 1)))
+#define RT_REGULATOR_UAMP_INVALID   (((int)(RT_UINT32_MAX >> 1)))
 
 struct rt_regulator_param
 {
@@ -86,6 +88,8 @@ struct rt_regulator_ops
     rt_bool_t   (*is_enabled)(struct rt_regulator_node *reg);
     rt_err_t    (*set_voltage)(struct rt_regulator_node *reg, int min_uvolt, int max_uvolt);
     int         (*get_voltage)(struct rt_regulator_node *reg);
+    rt_err_t    (*set_current)(struct rt_regulator_node *reg, int min_uamp, int max_uamp);
+    int         (*get_current)(struct rt_regulator_node *reg);
     rt_err_t    (*set_mode)(struct rt_regulator_node *reg, rt_uint32_t mode);
     rt_int32_t  (*get_mode)(struct rt_regulator_node *reg);
     rt_err_t    (*set_ramp_delay)(struct rt_regulator_node *reg, int ramp);
@@ -98,6 +102,8 @@ struct rt_regulator_notifier;
 #define RT_REGULATOR_MSG_DISABLE            RT_BIT(1)
 #define RT_REGULATOR_MSG_VOLTAGE_CHANGE     RT_BIT(2)
 #define RT_REGULATOR_MSG_VOLTAGE_CHANGE_ERR RT_BIT(3)
+#define RT_REGULATOR_MSG_CURRENT_CHANGE     RT_BIT(4)
+#define RT_REGULATOR_MSG_CURRENT_CHANGE_ERR RT_BIT(5)
 
 union rt_regulator_notifier_args
 {
@@ -106,6 +112,12 @@ union rt_regulator_notifier_args
         int old_uvolt;
         int min_uvolt;
         int max_uvolt;
+    };
+    struct
+    {
+        int old_uamp;
+        int min_uamp;
+        int max_uamp;
     };
 };
 
@@ -140,8 +152,15 @@ rt_bool_t rt_regulator_is_supported_voltage(struct rt_regulator *reg, int min_uv
 rt_err_t rt_regulator_set_voltage(struct rt_regulator *reg, int min_uvolt, int max_uvolt);
 int rt_regulator_get_voltage(struct rt_regulator *reg);
 
+rt_bool_t rt_regulator_is_supported_current(struct rt_regulator *reg, int min_uamp, int max_uamp);
+rt_err_t rt_regulator_set_current(struct rt_regulator *reg, int min_uamp, int max_uamp);
+int rt_regulator_get_current(struct rt_regulator *reg);
+
 rt_err_t rt_regulator_set_mode(struct rt_regulator *reg, rt_uint32_t mode);
 rt_int32_t rt_regulator_get_mode(struct rt_regulator *reg);
+
+struct rt_regulator_node **rt_regulator_nodes_snapshot(rt_size_t *count);
+void rt_regulator_nodes_snapshot_free(struct rt_regulator_node **nodes, rt_size_t count);
 
 rt_inline rt_err_t rt_regulator_set_voltage_triplet(struct rt_regulator *reg,
         int min_uvolt, int target_uvolt, int max_uvolt)
@@ -152,6 +171,17 @@ rt_inline rt_err_t rt_regulator_set_voltage_triplet(struct rt_regulator *reg,
     }
 
     return rt_regulator_set_voltage(reg, min_uvolt, max_uvolt);
+}
+
+rt_inline rt_err_t rt_regulator_set_current_triplet(struct rt_regulator *reg,
+        int min_uamp, int target_uamp, int max_uamp)
+{
+    if (!rt_regulator_set_current(reg, target_uamp, max_uamp))
+    {
+        return RT_EOK;
+    }
+
+    return rt_regulator_set_current(reg, min_uamp, max_uamp);
 }
 
 #endif /* __REGULATOR_H__ */

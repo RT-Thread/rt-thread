@@ -20,7 +20,7 @@
 #include "ch32v20x_tim.h"
 #endif
 #include <drivers/dev_pwm.h>
-#include <drivers/hwtimer.h>
+#include <drivers/clock_time.h>
 #include <board.h>
 
 #define MAX_COUNTER     65535

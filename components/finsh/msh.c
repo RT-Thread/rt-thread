@@ -10,6 +10,7 @@
  * 2017-07-19     Aubr.Cool    limit argc to RT_FINSH_ARG_MAX
  */
 #include <rtthread.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
@@ -451,7 +452,7 @@ static char *_msh_exec_search_env(const char *pg_name)
        or hitting its end */
     while (1)
     {
-        /* env paths are seperated by ':' */
+        /* env paths are separated by ':' */
         if (*pos == ':' || *pos == '\0')
         {
             tmp_ch = *pos;

@@ -1,0 +1,5 @@
+config RT_HWCRYPTO_RNG_ROCKCHIP
+    bool "Rockchip Random Number Generator support"
+    depends on RT_HWCRYPTO_USING_RNG
+    depends on RT_USING_RESET
+    default n

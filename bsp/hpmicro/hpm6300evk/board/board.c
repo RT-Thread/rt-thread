@@ -24,7 +24,7 @@
 
 #include "hpm_debug_console.h"
 #include <rtconfig.h>
-
+#include <rthw.h>
 /**
  * @brief FLASH configuration option definitions:
  * option[0]:
@@ -193,12 +193,15 @@ uint32_t board_init_femc_clock(void)
 
 void board_delay_us(uint32_t us)
 {
-    clock_cpu_delay_us(us);
+    rt_hw_us_delay(us);
 }
 
 void board_delay_ms(uint32_t ms)
 {
-    clock_cpu_delay_ms(ms);
+    while (ms--)
+    {
+        rt_hw_us_delay(1000);
+    }
 }
 
 #if !defined(NO_BOARD_TIMER_SUPPORT) || !NO_BOARD_TIMER_SUPPORT
@@ -820,4 +823,3 @@ uint32_t board_init_gptmr_clock(GPTMR_Type *ptr)
     }
     return freq;
 }
-

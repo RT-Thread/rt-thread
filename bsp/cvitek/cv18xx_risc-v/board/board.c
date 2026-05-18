@@ -46,6 +46,11 @@ struct mem_desc platform_mem_desc[] = {
 
 #endif /* RT_USING_SMART */
 
+rt_uint64_t rt_hw_get_clock_timer_freq(void)
+{
+    return 25000000ULL;
+}
+
 void init_bss(void)
 {
     unsigned int *dst;

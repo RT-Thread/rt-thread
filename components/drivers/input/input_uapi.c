@@ -14,7 +14,7 @@
 
 #include <poll.h>
 #include <errno.h>
-#include <ktime.h>
+#include <drivers/clock_time.h>
 #include <dfs_file.h>
 
 #define DBG_TAG "input.uapi"
@@ -384,7 +384,7 @@ void input_uapi_event(struct rt_input_device *idev, struct rt_input_event *event
 
     uapi_event = &uapi->events[w_idx];
 
-    rt_ktime_boottime_get_us(&uapi_event->time);
+    rt_clock_boottime_get_us(&uapi_event->time);
     uapi_event->type = event->type;
     uapi_event->code = event->code;
     uapi_event->value = event->value;

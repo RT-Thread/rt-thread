@@ -22,7 +22,7 @@ scons --attach=devices.gpio
 scons -j4
 scons --attach=default
 
-scons --attach=devices.hwtimer
+scons --attach=devices.clock_timer
 scons -j4
 scons --attach=default
 

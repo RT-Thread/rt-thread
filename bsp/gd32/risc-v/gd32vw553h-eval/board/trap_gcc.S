@@ -2,18 +2,20 @@
 #include "riscv_encoding.h"
 
 .macro SAVE_CSR_CONTEXT
-    csrrwi  x0, CSR_PUSHMCAUSE, 11
-    csrrwi  x0, CSR_PUSHMEPC, 12
-    csrrwi  x0, CSR_PUSHMSUBM, 13
+    addi  sp, sp,  -16
+    csrrwi  x0, CSR_PUSHMCAUSE, 1
+    csrrwi  x0, CSR_PUSHMEPC, 2
+    csrrwi  x0, CSR_PUSHMSUBM, 3
 .endm
 
 .macro RESTORE_CSR_CONTEXT
-    LOAD x5,  13*REGBYTES(sp)
+    LOAD x5,  3*REGBYTES(sp)
     csrw CSR_MSUBM, x5
-    LOAD x5,  12*REGBYTES(sp)
+    LOAD x5,  2*REGBYTES(sp)
     csrw CSR_MEPC, x5
-    LOAD x5,  11*REGBYTES(sp)
+    LOAD x5,  1*REGBYTES(sp)
     csrw CSR_MCAUSE, x5
+    addi  sp, sp,  16
 .endm
 
 .macro DISABLE_MIE

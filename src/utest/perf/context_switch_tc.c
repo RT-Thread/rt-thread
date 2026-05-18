@@ -4,8 +4,41 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2025-07-03     rcitach      test case for context_switch
+ * Date           Author         Notes
+ * 2025-07-03     rcitach        test case for context_switch
+ * 2025-11-30     westcity-YOLO  Add standardized utest documentation block
+ */
+
+/*
+ * Test Case Name: Kernel Core Context Switch Performance Test
+ *
+ * Test Objectives:
+ * - Measures thread context switch overhead using semaphore synchronization
+ * - Validates interrupt-to-thread response time in switch scenarios
+ * - Provides quantitative results in microseconds (us)
+ *
+ * Test Scenarios:
+ * - **Thread Switch Simulation**: Two threads alternate using semaphores
+ * - **High-Resolution Timing**: Hardware timer measures switch duration
+ * - **Stress Cycles**: Repeated switch operations (RT_UTEST_SYS_PERF_TC_COUNT times)
+ * - **Priority Handling**: Higher-priority thread execution (THREAD_PRIORITY+1)
+ *
+ * Verification Metrics:
+ * - Switch time within reasonable limits (< 100 us)
+ * - Consistent results across multiple test cycles
+ * - No memory leaks during test execution
+ * - Correct thread priority handling
+ *
+ * Dependencies:
+ * - RT_USING_PERF_TEST must be enabled
+ * - RT_USING_UTEST framework must be enabled
+ * - Hardware timer support (for high-resolution timing)
+ *
+ * Expected Results:
+ * [  PASSED  ] [ result   ] testcase (core.context_switch)
+ * - Performance data printed in structured table format
+ * - Final line: "=== Context Switch Test Results End ==="
+ * - Test executed via: `utest_run core.context_switch` in msh
  */
 
 #include <rtthread.h>

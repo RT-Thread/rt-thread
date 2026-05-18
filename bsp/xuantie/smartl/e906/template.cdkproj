@@ -84,7 +84,7 @@
             <Init>yes</Init>
           </RAM5>
         </RAMBank>
-        <CPU>e906fd</CPU>
+        <CPU>e906fdp</CPU>
         <UseMiniLib>yes</UseMiniLib>
         <Endian>little</Endian>
         <UseHardFloat>no</UseHardFloat>

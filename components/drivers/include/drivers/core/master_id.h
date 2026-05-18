@@ -26,7 +26,7 @@
 #define MASTER_ID_SERIAL                                13
 
 /* Clock Timer */
-#define MASTER_ID_HWTIMER                               21
+#define MASTER_ID_CLOCK_TIMER                           21
 #define MASTER_ID_PTP                                   22
 #define MASTER_ID_RTC                                   23
 

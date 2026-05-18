@@ -135,16 +135,16 @@ typedef struct _timer
     char *name;
     dw_timer_regs_t *base;
     rt_uint32_t irqno;
-    rt_hwtimer_t timer;
+    rt_clock_timer_t timer;
 }_timer_t;
 
-static void _timer_init(rt_hwtimer_t *timer, rt_uint32_t state);
-static rt_err_t _timer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer_mode_t mode);
-static void _timer_stop(rt_hwtimer_t *timer);
-static rt_uint32_t _timer_count_get(rt_hwtimer_t *timer);
-static rt_err_t _timer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *args);
+static void _timer_init(rt_clock_timer_t *timer, rt_uint32_t state);
+static rt_err_t _timer_start(rt_clock_timer_t *timer, rt_uint32_t cnt, rt_clock_timer_mode_t mode);
+static void _timer_stop(rt_clock_timer_t *timer);
+static rt_uint32_t _timer_count_get(rt_clock_timer_t *timer);
+static rt_err_t _timer_control(rt_clock_timer_t *timer, rt_uint32_t cmd, void *args);
 
-static const struct rt_hwtimer_ops _timer_ops = {
+static const struct rt_clock_timer_ops _timer_ops = {
     .init = _timer_init,
     .start = _timer_start,
     .stop = _timer_stop,
@@ -152,11 +152,11 @@ static const struct rt_hwtimer_ops _timer_ops = {
     .control = _timer_control
 };
 
-static const struct rt_hwtimer_info _timer_info = {
+static const struct rt_clock_timer_info _timer_info = {
     .maxfreq = 25000000UL,
     .minfreq = 25000000UL,
     .maxcnt = 0xFFFFFFFF,
-    .cntmode = HWTIMER_MODE_PERIOD
+    .cntmode = CLOCK_TIMER_MODE_PERIOD
 };
 
 static _timer_t _timer_obj[] =
@@ -333,8 +333,8 @@ static void rt_hw_hwtmr_isr(int irqno, void *param)
         hal_timer_clear_irq(timer_base);
         hal_timer_set_disable(timer_base);
 
-        rt_device_hwtimer_isr(&_tmr->timer);
-        if(_tmr->timer.mode == HWTIMER_MODE_PERIOD)
+        rt_clock_timer_isr(&_tmr->timer);
+        if(_tmr->timer.mode == CLOCK_TIMER_MODE_PERIOD)
         {
             hal_timer_set_enable(timer_base);
             hal_timer_set_unmask(timer_base);
@@ -342,7 +342,7 @@ static void rt_hw_hwtmr_isr(int irqno, void *param)
     }
 }
 
-static void _timer_init(rt_hwtimer_t *timer, rt_uint32_t state)
+static void _timer_init(rt_clock_timer_t *timer, rt_uint32_t state)
 {
     _timer_t *_tmr = rt_container_of(timer, _timer_t, timer);
 
@@ -353,7 +353,7 @@ static void _timer_init(rt_hwtimer_t *timer, rt_uint32_t state)
     }
 }
 
-static rt_err_t _timer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer_mode_t mode)
+static rt_err_t _timer_start(rt_clock_timer_t *timer, rt_uint32_t cnt, rt_clock_timer_mode_t mode)
 {
     _timer_t *_tmr = rt_container_of(timer, _timer_t, timer);
     uint32_t tmp_load = cnt;
@@ -375,7 +375,7 @@ static rt_err_t _timer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtimer_mo
     return RT_EOK;
 }
 
-static void _timer_stop(rt_hwtimer_t *timer)
+static void _timer_stop(rt_clock_timer_t *timer)
 {
     _timer_t *_tmr = rt_container_of(timer, _timer_t, timer);
 
@@ -383,7 +383,7 @@ static void _timer_stop(rt_hwtimer_t *timer)
     hal_timer_set_disable(_tmr->base);
 }
 
-static rt_uint32_t _timer_count_get(rt_hwtimer_t *timer)
+static rt_uint32_t _timer_count_get(rt_clock_timer_t *timer)
 {
     _timer_t *_tmr = rt_container_of(timer, _timer_t, timer);
     rt_uint32_t cnt = hal_timer_get_current(_tmr->base);
@@ -391,23 +391,23 @@ static rt_uint32_t _timer_count_get(rt_hwtimer_t *timer)
     return cnt;
 }
 
-static rt_err_t _timer_control(rt_hwtimer_t *timer, rt_uint32_t cmd, void *args)
+static rt_err_t _timer_control(rt_clock_timer_t *timer, rt_uint32_t cmd, void *args)
 {
     rt_err_t err = RT_EOK;
     _timer_t *_tmr = rt_container_of(timer, _timer_t, timer);
 
     switch (cmd)
     {
-    case HWTIMER_CTRL_FREQ_SET:
+    case CLOCK_TIMER_CTRL_FREQ_SET:
         err = -RT_ERROR;
         break;
-    case HWTIMER_CTRL_INFO_GET:
-        *(rt_hwtimer_t*)args = _tmr->timer;
+    case CLOCK_TIMER_CTRL_INFO_GET:
+        *(rt_clock_timer_t*)args = _tmr->timer;
         break;
-    case HWTIMER_CTRL_MODE_SET:
+    case CLOCK_TIMER_CTRL_MODE_SET:
         _tmr->timer.mode = *(rt_uint32_t*)args;
         break;
-    case HWTIMER_CTRL_STOP:
+    case CLOCK_TIMER_CTRL_STOP:
         _timer_stop(timer);
         break;
     default:
@@ -428,7 +428,7 @@ int rt_hw_timer_init(void)
 
         _timer_obj[i].timer.info = &_timer_info;
         _timer_obj[i].timer.ops = &_timer_ops;
-        ret = rt_device_hwtimer_register(&_timer_obj[i].timer, _timer_obj[i].name, &_timer_obj[i]);
+        ret = rt_clock_timer_register(&_timer_obj[i].timer, _timer_obj[i].name, &_timer_obj[i]);
         if (ret != RT_EOK)
         {
             LOG_E("%s register failed", _timer_obj[i].name);

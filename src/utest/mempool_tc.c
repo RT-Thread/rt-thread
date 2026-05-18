@@ -4,9 +4,47 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2025-09-03     Rbb666       the first version for mempool utest
+ * Date           Author         Notes
+ * 2025-09-03     Rbb666         the first version for mempool utest
+ * 2025-11-30     westcity-YOLO  Add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Kernel Core MemPool Functional Test
+ *
+ * Test Objectives:
+ * - Validate static/dynamic memory pool functionality
+ * - Verify critical APIs: rt_mp_init, rt_mp_detach, rt_mp_alloc, rt_mp_free, rt_mp_create, rt_mp_delete
+ * - Test boundary conditions and stress scenarios
+ *
+ * Test Scenarios:
+ * - **Static Init**: Predefined block size/count; verify name/total/free counts
+ * - **Dynamic Create**: rt_mp_create; verify pool metadata
+ * - **Static Alloc/Free**: 3-block allocation; verify count changes
+ * - **Dynamic Alloc/Free**: Identical to static pool operations
+ * - **Exhaustion Test**: Full allocation → free=0 → next alloc=NULL
+ * - **Invalid Free**: NULL pointer free; no crash, count unchanged
+ * - **Stress Test**: 100x full alloc/free cycles; count restored each time
+ *
+ * Verification Metrics:
+ * - API returns: RT_EOK (success) / NULL (failure)
+ * - Block counts match expected values
+ * - Exhaustion: Allocation fails correctly
+ * - NULL free: Safe without crash
+ * - Stress: 0 errors/memory leaks
+ *
+ * Dependencies:
+ * - RT_USING_MEMPOOL must be enabled
+ * - RT_USING_UTEST framework must be enabled
+ *
+ * Expected Results:
+ * [  PASSED  ] [ result   ] testcase (core.mempool)
+ * - All 7 scenarios pass
+ * - 0 memory leaks
+ * - Stress test <10ms
+ * - Execute via: `utest_run core.mempool` in msh
+ */
+
 #include <rtthread.h>
 #include <stdlib.h>
 #include "utest.h"

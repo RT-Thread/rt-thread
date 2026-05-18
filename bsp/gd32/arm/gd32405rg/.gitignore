@@ -1,0 +1,4 @@
+﻿compile_commands*
+*.uvguix.*
+EventRecorderStub.*
+RTE/

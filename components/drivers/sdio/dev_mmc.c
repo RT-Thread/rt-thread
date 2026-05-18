@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -270,6 +270,64 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     return 0;
 }
 
+/*
+ * Send Status.
+ */
+static int mmc_send_status(struct rt_mmcsd_card *card, rt_uint32_t *status, unsigned retries)
+{
+    int err;
+    struct rt_mmcsd_cmd cmd = (struct rt_mmcsd_cmd){ 0 };
+
+    cmd.busy_timeout = 0;
+    cmd.cmd_code = SEND_STATUS;
+    cmd.arg = card->rca << 16;
+    cmd.flags = RESP_R1 | CMD_AC;
+    err = mmcsd_send_cmd(card->host, &cmd, retries);
+    if (err)
+        return err;
+
+    if (status)
+        *status = cmd.resp[0];
+
+    return 0;
+}
+
+/*
+ * Poll Busy.
+ */
+static int mmc_poll_for_busy(struct rt_mmcsd_card *card, rt_uint32_t timeout_ms, unsigned retries)
+{
+    int timeout = rt_tick_from_millisecond(timeout_ms);
+    int err = 0;
+    rt_uint32_t status;
+    rt_tick_t start;
+
+    start = rt_tick_get();
+    do
+    {
+        rt_bool_t out = (int)(rt_tick_get() - start) >= timeout;
+
+        if (out)
+        {
+            LOG_E("wait card busy timeout");
+            return -RT_ETIMEOUT;
+        }
+
+        rt_thread_mdelay(1);
+
+        err = mmc_send_status(card, &status, retries);
+        if (R1_STATUS(err))
+        {
+            LOG_E("error %d requesting status", err);
+            return err;
+        }
+    }
+    while (!(status & R1_READY_FOR_DATA) ||
+           (R1_CURRENT_STATE(status) == R1_STATE_PRG));
+
+    return err;
+}
+
 /**
  *   mmc_switch - modify EXT_CSD register
  *   @card: the MMC card associated with the data transfer
@@ -292,6 +350,13 @@ static int mmc_switch(struct rt_mmcsd_card *card, rt_uint8_t set,
     cmd.flags = RESP_R1B | CMD_AC;
 
     err = mmcsd_send_cmd(host, &cmd, 3);
+    if (err)
+        return err;
+
+    /*
+     * Poll the card status using CMD13 with a timeout of 500ms and a polling interval of 1ms.
+     */
+    err = mmc_poll_for_busy(card, 500, 3);
     if (err)
         return err;
 
@@ -490,7 +555,7 @@ rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host,
 
         err = -RT_ETIMEOUT;
 
-        rt_thread_mdelay(10); //delay 10ms
+        rt_thread_mdelay(10); /* delay 10ms */
     }
 
     if (rocr && !controller_is_spi(host))
@@ -815,3 +880,4 @@ err:
 
     return err;
 }
+

@@ -478,7 +478,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_TIM
         bool "Enable timer"
         default n
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         if BSP_USING_TIM
             config BSP_USING_TIM7
                 bool "Enable TIM7"

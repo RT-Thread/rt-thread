@@ -33,7 +33,7 @@ The current peripheral support status in this BSP is as follows:
 | ---------------------- | ------------------ | --------------------------- | ------------------ |
 | UART                   | Supported          | LWIP                        | Supported          |
 | GPIO                   | Supported          | TCP/UDP                     | Supported          |
-| HWTIMER                | Supported          | MQTT                        | Supported          |
+| CLOCK_TIMER                | Supported          | MQTT                        | Supported          |
 | I2C                    | Supported          | TFTP                        | Supported          |
 | WDT                    | Supported          | Telnet                      | Supported          |
 | RTC                    | Supported          | **Multicore Communication** | **Support Status** |

@@ -35,7 +35,7 @@ if GetDepend(['RT_USING_WDT']):
     src += ['TAE32F53xx_StdPeriph_Driver/src/tae32f53xx_ll_wwdg.c']
     src += ['TAE32F53xx_StdPeriph_Driver/src/tae32f53xx_ll_iwdg.c']
 
-if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM'] or GetDepend(['RT_USING_PULSE_ENCODER'])):
+if GetDepend(['RT_USING_CLOCK_TIME']) or GetDepend(['RT_USING_PWM'] or GetDepend(['RT_USING_PULSE_ENCODER'])):
     src += ['TAE32F53xx_StdPeriph_Driver/src/tae32f53xx_ll_tmr.c']
 
 #add for startup script

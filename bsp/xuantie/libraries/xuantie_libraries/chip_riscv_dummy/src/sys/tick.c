@@ -72,10 +72,8 @@ void tick_irq_handler(void *arg)
     extern void xPortSysTickHandler(void);
     xPortSysTickHandler();
 #elif defined(CONFIG_KERNEL_RTTHREAD)
-    rt_interrupt_enter();
     extern void rt_tick_increase(void);
     rt_tick_increase();
-    rt_interrupt_leave();
 #else
 #endif
 #endif /* end CONFIG_AOS_OSAL */

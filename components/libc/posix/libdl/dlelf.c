@@ -205,7 +205,10 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
         }
 
         if (unsolved)
+        {
+            unsolved = RT_FALSE;
             return -RT_ERROR;
+        }
     }
 
     /* construct module symbol table */

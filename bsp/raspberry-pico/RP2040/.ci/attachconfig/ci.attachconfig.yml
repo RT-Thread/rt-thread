@@ -191,7 +191,6 @@ online-packages.rtduino.other:
     kconfig:
       - CONFIG_BSP_USING_ARDUINO=y
       - CONFIG_PKG_USING_ARDUINO_ADAFRUIT_MFRC630=y
-      - CONFIG_PKG_USING_ARDUINO_ADAFRUIT_SI5351=y
 online-packages.rtduino.projects:
     <<: *scons
     kconfig:

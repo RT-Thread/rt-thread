@@ -1,0 +1,12 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+src = ['board.c']
+path = [cwd]
+
+cppdefines = ['NS800RT7P65X', 'USE_HAL_DRIVER', 'DUAL_CORE_ENABLE=0', 
+        'SYSCLK_USE_PLL', 'SYSCLK_SOURCE_USE_HXTL', 'PLLCLK_SOURCE_USE_HXTL']
+
+group = DefineGroup('Board', src, depend = [''], CPPPATH = path, CPPDEFINES = cppdefines)
+Return('group')

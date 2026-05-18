@@ -72,7 +72,7 @@ void rt_hw_fdt_install_early(void *fdt)
 #endif
 }
 
-#ifdef RT_USING_HWTIMER
+#ifdef RT_USING_CLOCK_TIME
 static rt_ubase_t loops_per_tick[RT_CPUS_NR];
 
 static rt_ubase_t cpu_get_cycles(void)
@@ -132,7 +132,7 @@ static void cpu_us_delay(rt_uint32_t us)
         rt_hw_cpu_relax();
     }
 }
-#endif /* RT_USING_HWTIMER */
+#endif /* RT_USING_CLOCK_TIME */
 
 rt_weak void rt_hw_idle_wfi(void)
 {
@@ -188,14 +188,14 @@ rt_inline void cpu_info_init(void)
 
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, rt_cpu_mpidr_table, sizeof(rt_cpu_mpidr_table));
 
-#ifdef RT_USING_HWTIMER
+#if defined(RT_USING_CLOCK_TIME) && defined(RT_USING_DM)
     cpu_loops_per_tick_init();
 
-    if (!rt_device_hwtimer_us_delay)
+    if (!rt_clock_timer_us_delay)
     {
-        rt_device_hwtimer_us_delay = &cpu_us_delay;
+        rt_clock_timer_us_delay = &cpu_us_delay;
     }
-#endif /* RT_USING_HWTIMER */
+#endif /* RT_USING_CLOCK_TIME && RT_USING_DM */
 }
 
 rt_inline rt_size_t string_to_size(const char *string, const char *who)
@@ -382,10 +382,10 @@ void rt_hw_common_setup(void)
     rt_hw_uart_init();
 #endif
 
-#ifndef RT_HWTIMER_ARM_ARCH
+#ifndef RT_CLOCK_TIME_ARM_ARCH
     /* initialize timer for os tick */
     rt_hw_gtimer_init();
-#endif /* !RT_HWTIMER_ARM_ARCH */
+#endif /* !RT_CLOCK_TIME_ARM_ARCH */
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
@@ -478,10 +478,10 @@ rt_weak void rt_hw_secondary_cpu_bsp_start(void)
 #endif /* BSP_USING_GICV3 */
 #endif
 
-#ifndef RT_HWTIMER_ARM_ARCH
+#ifndef RT_CLOCK_TIME_ARM_ARCH
     /* initialize timer for os tick */
     rt_hw_gtimer_local_enable();
-#endif /* !RT_HWTIMER_ARM_ARCH */
+#endif /* !RT_CLOCK_TIME_ARM_ARCH */
 
     rt_dm_secondary_cpu_init();
 
@@ -491,8 +491,8 @@ rt_weak void rt_hw_secondary_cpu_bsp_start(void)
 
     LOG_I("Call cpu %d on %s", cpu_id, "success");
 
-#ifdef RT_USING_HWTIMER
-    if (rt_device_hwtimer_us_delay == &cpu_us_delay)
+#if defined(RT_USING_CLOCK_TIME) && defined(RT_USING_DM)
+    if (rt_clock_timer_us_delay == &cpu_us_delay)
     {
         cpu_loops_per_tick_init();
     }

@@ -7,6 +7,14 @@ cwd = GetCurrentDir()
 objs = []
 list = os.listdir(cwd)
 
+# Include source files in current directory
+src = []
+if GetDepend(['RT_USING_SMP']):
+    src += ['smp_demo.c']
+if src:
+    objs = objs + DefineGroup('xuantie_libraries', src, depend=[''])
+
+# Include subdirectories with SConscript
 for d in list:
     path = os.path.join(cwd, d)
     if os.path.isfile(os.path.join(path, 'SConscript')):

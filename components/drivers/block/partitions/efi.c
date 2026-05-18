@@ -411,6 +411,11 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
     pt_size = (rt_uint64_t)rt_le32_to_cpu((*gpt)->num_partition_entries) *
             rt_le32_to_cpu((*gpt)->sizeof_partition_entry);
 
+    if (pt_size > (rt_uint64_t)RT_UINT32_MAX)
+    {
+        goto _fail;
+    }
+
     if (!(*ptes = alloc_read_gpt_entries(disk, *gpt)))
     {
         goto _fail;

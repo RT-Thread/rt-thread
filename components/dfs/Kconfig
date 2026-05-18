@@ -152,9 +152,29 @@ endif
             depends on RT_DFS_ELM_REENTRANT
 
         config RT_DFS_ELM_USE_EXFAT
-            bool "Enable RT_DFS_ELM_USE_EXFAT"
+            bool "Enable exFAT filesystem support"
             default n
             depends on RT_DFS_ELM_USE_LFN >= 1
+            help
+              exFAT (Extended File Allocation Table) is a file system
+              designed for large-capacity storage devices.
+
+              Key features and recommendations:
+              - Target scenarios: Primarily used for storage media requiring
+                support for very large files (>4GB) or large partitions
+                (>32GB), such as high-capacity SD cards or USB drives.
+
+              - Resource cost: Enabling exFAT support will significantly
+                increase the code size (ROM footprint) of the file system.
+
+              - Recommendation:
+                For small-capacity storage devices (e.g., SPI Flash or
+                eMMC under 32GB), the standard FAT16 or FAT32 file
+                systems are perfectly adequate. It is strongly recommended
+                to keep this option disabled unless you absolutely need to
+                handle large-capacity storage, in order to conserve
+                valuable code space.
+
         endmenu
     endif
 

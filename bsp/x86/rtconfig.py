@@ -19,7 +19,7 @@ BUILD = 'debug'
 
 if PLATFORM == 'gcc':
     # toolchains
-    PREFIX = 'i386-unknown-elf-'
+    PREFIX = os.getenv('RTT_CC_PREFIX') or 'i386-unknown-elf-'
     CC = PREFIX + 'gcc'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'

@@ -49,19 +49,19 @@ void ch32f1_i2c_config(I2C_TypeDef* i2cx);
    + BSP_USING_RTC
       + BSP_USING_RTC_LSI
       + LSI_VALUE
-+ HWTIMER 1/2/3/4
-   + RT_USING_HWTIMER
-   + BSP_USING_HWTIMER
-      + BSP_USING_TIM1_HWTIMER
-      + BSP_USING_TIM2_HWTIMER
-      + BSP_USING_TIM3_HWTIMER
-      + BSP_USING_TIM4_HWTIMER
++ CLOCK_TIMER 1/2/3/4
+   + RT_USING_CLOCK_TIME
+   + BSP_USING_CLOCK_TIMER
+      + BSP_USING_TIM1_CLOCK_TIMER
+      + BSP_USING_TIM2_CLOCK_TIMER
+      + BSP_USING_TIM3_CLOCK_TIMER
+      + BSP_USING_TIM4_CLOCK_TIMER
 ~~~c
 void ch32f1_tim_clock_init(TIM_TypeDef *timx);
 rt_uint32_t ch32f1_tim_clock_get(TIM_TypeDef *timx);
 ~~~
 ~~~c
-struct rt_hwtimer_info* ch32f1_hwtimer_info_config_get(TIM_TypeDef *timx);
+struct rt_clock_timer_info* ch32f1_clock_timer_info_config_get(TIM_TypeDef *timx);
 ~~~
 + PWM  4(timer) x 4 (channel)
    + RT_USING_PWM
@@ -189,8 +189,8 @@ void ch32f1_usart_clock_and_io_init(USART_TypeDef* usartx);
 void ch32f1_tim_clock_init(TIM_TypeDef *timx);
 rt_uint32_t ch32f1_tim_clock_get(TIM_TypeDef *timx);
 
-#ifdef BSP_USING_HWTIMER
-struct rt_hwtimer_info* ch32f1_hwtimer_info_config_get(TIM_TypeDef *timx);
+#ifdef BSP_USING_CLOCK_TIMER
+struct rt_clock_timer_info* ch32f1_clock_timer_info_config_get(TIM_TypeDef *timx);
 #endif
 
 #ifdef BSP_USING_PWM

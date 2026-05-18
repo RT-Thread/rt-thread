@@ -48,6 +48,54 @@ Projects = []
 Rtt_Root = ''
 Env = None
 
+def _as_unicode(value):
+    try:
+        unicode
+    except NameError:
+        return value if isinstance(value, str) else str(value)
+
+    if isinstance(value, unicode):
+        return value
+
+    for encoding in (sys.getfilesystemencoding(), 'utf-8'):
+        if not encoding:
+            continue
+        try:
+            return value.decode(encoding)
+        except (AttributeError, UnicodeDecodeError):
+            pass
+
+    return unicode(value)
+
+def _check_invalid_option_dashes():
+    # Reject command line options typed with Unicode dash lookalikes.
+    invalid_dashes = (
+        u'\u2010', u'\u2011', u'\u2012', u'\u2013', u'\u2014',
+        u'\u2015', u'\u2212', u'\ufe58', u'\ufe63', u'\uff0d',
+    )
+
+    entries = []
+    entries.extend((key, value) for key, value in ARGUMENTS.items())
+    entries.extend((target, None) for target in COMMAND_LINE_TARGETS)
+
+    for key, value in entries:
+        option = _as_unicode(key)
+        normalized = option
+        for dash in invalid_dashes:
+            normalized = normalized.replace(dash, u'-')
+
+        if option != normalized and normalized.startswith(u'-'):
+            if value is not None:
+                display = u'%s=%s' % (option, _as_unicode(value))
+                hint = u'%s=%s' % (normalized, _as_unicode(value))
+            else:
+                display = option
+                hint = normalized
+
+            print("Invalid command line option: %s" % display)
+            print("Please use ASCII '-' instead: %s" % hint)
+            sys.exit(1)
+
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
 
     global BuildOptions
@@ -56,6 +104,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     global Rtt_Root
 
     AddOptions()
+    _check_invalid_option_dashes()
 
     Env = env
     # export the default environment
@@ -318,7 +367,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         if env['LINK'].find('gcc') != -1:
             env['LINK'] = env['LINK'].replace('gcc', 'g++')
 
-    # we need to seperate the variant_dir for BSPs and the kernels. BSPs could
+    # we need to separate the variant_dir for BSPs and the kernels. BSPs could
     # have their own components etc. If they point to the same folder, SCons
     # would find the wrong source code to compile.
     bsp_vdir = 'build'
@@ -792,7 +841,7 @@ def DoBuilding(target, objects):
         for group in Projects:
             local_group(group, objects_in_group)
 
-        # sort seperately, because the data type of
+        # sort separately, because the data type of
         # the members of the two lists are different
         objects_in_group = sorted(objects_in_group)
         objects = sorted(objects)
@@ -869,7 +918,8 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'eclipse':
         from targets.eclipse import TargetEclipse
-        TargetEclipse(Env, GetOption('reset-project-config'), GetOption('project-name'))
+        project_name = os.path.basename(Dir('#').abspath)
+        TargetEclipse(Env, GetOption('reset-project-config'), project_name)
 
     if GetOption('target') == 'codelite':
         from targets.codelite import TargetCodelite

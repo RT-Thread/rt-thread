@@ -68,7 +68,20 @@
 #define __ASM_STR(x)    #x
 #endif
 
+#define     __I      volatile const       /*!< Defines 'read only' permissions */
+#define     __O      volatile             /*!< Defines 'write only' permissions */
+#define     __IO     volatile             /*!< Defines 'read / write' permissions */
+
+/* following defines should be used for structure members */
+#define     __IM     volatile const       /*! Defines 'read only' structure member permissions */
+#define     __OM     volatile             /*! Defines 'write only' structure member permissions */
+#define     __IOM    volatile             /*! Defines 'read / write' structure member permissions */
+
 #ifndef __ASSEMBLY__
+
+#define RISCV_FENCE(p, s) \
+    __asm__ __volatile__ ("fence " #p "," #s : : : "memory")
+
 #define rv_csr_read(csr)                                   \
     ({                                                  \
         register unsigned long __v;                     \
@@ -121,69 +134,291 @@
                              : : "rK"(__v)                 \
                              : "memory");                  \
     })
+
+#define rv_csr_read_write(csr, val)                              \
+     ({                                                          \
+         unsigned long __v = (unsigned long)(val);               \
+         __asm__ __volatile__("csrrw %0, " __ASM_STR(csr) ", %1" \
+                              : "=r"(__v)                        \
+                              : "rK"(__v)                        \
+                              : "memory");                       \
+         __v;                                                    \
+     })
+
+ __ALWAYS_STATIC_INLINE uint8_t rv_readb(uintptr_t addr)
+ {
+    uint8_t val;
+
+    val = *(volatile uint8_t *)addr;
+    RISCV_FENCE(ir, ir);
+    return val;
+ }
+
+ __ALWAYS_STATIC_INLINE uint16_t rv_readw(uintptr_t addr)
+ {
+    uint16_t val;
+
+    val = *(volatile uint16_t *)addr;
+    RISCV_FENCE(ir, ir);
+    return val;
+ }
+
+ __ALWAYS_STATIC_INLINE uint32_t rv_readl(uintptr_t addr)
+ {
+    uint32_t val;
+
+    val = *(volatile uint32_t *)addr;
+    RISCV_FENCE(ir, ir);
+    return val;
+ }
+
+ __ALWAYS_STATIC_INLINE uint64_t rv_readq(uintptr_t addr)
+ {
+    uint64_t val;
+
+    val = *(volatile uint64_t *)addr;
+    RISCV_FENCE(ir, ir);
+    return val;
+ }
+
+ __ALWAYS_STATIC_INLINE void rv_writeb(uint8_t val, uintptr_t addr)
+ {
+    *(volatile uint8_t *)addr = val;
+    RISCV_FENCE(ow, ow);
+ }
+
+ __ALWAYS_STATIC_INLINE void rv_writew(uint16_t val, uintptr_t addr)
+ {
+    *(volatile uint16_t *)addr = val;
+    RISCV_FENCE(ow, ow);
+ }
+
+ __ALWAYS_STATIC_INLINE void rv_writel(uint32_t val, uintptr_t addr)
+ {
+    *(volatile uint32_t *)addr = val;
+    RISCV_FENCE(ow, ow);
+ }
+
+ __ALWAYS_STATIC_INLINE void rv_writeq(uint64_t val, uintptr_t addr)
+ {
+    *(volatile uint64_t *)addr = val;
+    RISCV_FENCE(ow, ow);
+ }
+
+/**
+  \brief   Get low 32 bits of MSTATEEN0
+  \details Returns the current value of the MSTATEEN0 register.
+  \return               MSTATEEN0 Register value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_MSTATEEN0(void)
+{
+    volatile unsigned long result;
+    __ASM volatile("csrr %0, mstateen0" : "=r"(result));
+    return (result);
+}
+
+/**
+  \brief   Set low 32 bits of of MSTATEEN0
+  \details Assigns the given value to the MSTATEEN0 register.
+  \param [in]    mstateen0  MSTATEEN0 value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MSTATEEN0(unsigned long mstateen0)
+{
+    __ASM volatile("csrw mstateen0, %0" : : "r"(mstateen0));
+}
+
+/**
+  \brief   Get high 32 bits of MSTATEEN0
+  \details Returns the current value of the MSTATEEN0H register.
+  \return               MSTATEEN0 Register value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_MSTATEEN0H(void)
+{
+    volatile unsigned long result;
+    __ASM volatile("csrr %0, mstateen0h" : "=r"(result));
+    return (result);
+}
+
+/**
+  \brief   Set high 32 bits of of MSTATEEN0
+  \details Assigns the given value to the MSTATEEN0H register.
+  \param [in]    mstateen0  MSTATEEN0 value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MSTATEEN0H(unsigned long mstateen0h)
+{
+    __ASM volatile("csrw mstateen0h, %0" : : "r"(mstateen0h));
+}
+
+/**
+  \brief   Get MIREG
+  \details Returns the current value of the MIREG.
+  \return               MIREG Register value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_MIREG(void)
+{
+    register unsigned long result;
+    __ASM volatile("csrr %0, mireg" : "=r"(result));
+    return (result);
+}
+
+/**
+  \brief   Set MIREG
+  \details Assigns the given value to the MIREG.
+  \param [in]    mireg  MIREG value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MIREG(unsigned long mireg)
+{
+    __ASM volatile("csrw mireg, %0" : : "r"(mireg));
+}
+
+/**
+  \brief   Get MIREG2
+  \details Returns the current value of the MIREG2.
+  \return               MIREG2 Register value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_MIREG2(void)
+{
+    register unsigned long result;
+    __ASM volatile("csrr %0, mireg2" : "=r"(result));
+    return (result);
+}
+
+/**
+  \brief   Set MIREG2
+  \details Assigns the given value to the MIREG2.
+  \param [in]    mireg2  MIREG2 value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MIREG2(unsigned long mireg2)
+{
+    __ASM volatile("csrw mireg2, %0" : : "r"(mireg2));
+}
+
+/**
+  \brief   Get SIREG
+  \details Returns the current value of the SIREG.
+  \return               SIREG Register value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_SIREG(void)
+{
+    register unsigned long result;
+    __ASM volatile("csrr %0, sireg" : "=r"(result));
+    return (result);
+}
+
+/**
+  \brief   Set SIREG
+  \details Assigns the given value to the SIREG.
+  \param [in]    sireg  SIREG value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_SIREG(unsigned long sireg)
+{
+    __ASM volatile("csrw sireg, %0" : : "r"(sireg));
+}
+
+/**
+  \brief   Get SIREG2
+  \details Returns the current value of the SIREG2.
+  \return               SIREG2 Register value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_SIREG2(void)
+{
+    register unsigned long result;
+    __ASM volatile("csrr %0, sireg2" : "=r"(result));
+    return (result);
+}
+
+/**
+  \brief   Set SIREG2
+  \details Assigns the given value to the SIREG2.
+  \param [in]    sireg2  SIREG2 value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_SIREG2(unsigned long sireg2)
+{
+    __ASM volatile("csrw sireg2, %0" : : "r"(sireg2));
+}
+
+/**
+  \brief   Get MISELECT
+  \details Returns the current value of the MISELECT.
+  \return               MISELECT Register value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_MISELECT(void)
+{
+    register unsigned long result;
+    __ASM volatile("csrr %0, miselect" : "=r"(result));
+    return (result);
+}
+
+/**
+  \brief   Set MISELECT
+  \details Assigns the given value to the MISELECT.
+  \param [in]    miselect  MISELECT value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_MISELECT(unsigned long miselect)
+{
+    __ASM volatile("csrw miselect, %0" : : "r"(miselect));
+}
+
+/**
+  \brief   Get SISELECT
+  \details Returns the current value of the SISELECT.
+  \return               SISELECT Register value
+  */
+__ALWAYS_STATIC_INLINE unsigned long __get_SISELECT(void)
+{
+    register unsigned long result;
+    __ASM volatile("csrr %0, siselect" : "=r"(result));
+    return (result);
+}
+
+/**
+  \brief   Set SISELECT
+  \details Assigns the given value to the SISELECT.
+  \param [in]    siselect  SISELECT value to set
+  */
+__ALWAYS_STATIC_INLINE void __set_SISELECT(unsigned long siselect)
+{
+    __ASM volatile("csrw siselect, %0" : : "r"(siselect));
+}
+
+__ALWAYS_STATIC_INLINE uint8_t is_power_of_two(uint32_t x)
+{
+    return x && !(x & (x - 1));
+}
+
+__ALWAYS_STATIC_INLINE uint32_t log2_ulong(unsigned long x)
+{
+    uint32_t result = 0;
+    while (x > 1) {
+        x >>= 1;
+        result++;
+    }
+    return result;
+}
+
+__ALWAYS_STATIC_INLINE unsigned long align_to_power_of_two(unsigned long size)
+{
+    if (size <= 1) {
+        return size;
+    }
+
+#if defined(__GNUC__) || defined(__clang__)
+    unsigned long leading_zeros = __builtin_clzl(size - 1);
+    return 1UL << ((sizeof(unsigned long) << 3) - leading_zeros);
+#else
+    unsigned long value = size - 1;
+    value |= value >> 1;
+    value |= value >> 2;
+    value |= value >> 4;
+    value |= value >> 8;
+    value |= value >> 16;
+#if __SIZEOF_LONG__ == 8
+    value |= value >> 32;
 #endif
+    return value + 1;
+#endif
+}
 
-#define CSR_MCOR        0x7c2
-#define CSR_MHCR        0x7c1
-#define CSR_MCCR2       0x7c3
-#define CSR_MHINT       0x7c5
-#define CSR_MHINT2      0x7cc
-#define CSR_MHINT3      0x7cd
-#define CSR_MHINT4      0x7ce
-#define CSR_MXSTATUS    0x7c0
-#define CSR_PLIC_BASE   0xfc1
-#define CSR_MRMR        0x7c6
-#define CSR_MRVBR       0x7c7
-#define CSR_MCOUNTERWEN 0x7c9
-#define CSR_MSMPR       0x7f3
-
-#define CSR_MARCHID     0xf12
-#define CSR_MIMPID      0xf13
-#define CSR_MHARTID     0xf14
-#define CSR_MCPUID      0xfc0
-
-#define CSR_MSTATUS     0x300
-#define CSR_MISA        0x301
-#define CSR_MEDELEG     0x302
-#define CSR_MIDELEG     0x303
-#define CSR_MIE         0x304
-#define CSR_MTVEC       0x305
-#define CSR_MCOUNTEREN  0x306
-#define CSR_MENVCFG     0x30a
-#define CSR_MSTATUSH    0x310
-#define CSR_MSCRATCH    0x340
-#define CSR_MEPC        0x341
-#define CSR_MCAUSE      0x342
-#define CSR_MTVAL       0x343
-#define CSR_MIP         0x344
-#define CSR_MTINST      0x34a
-#define CSR_MTVAL2      0x34b
-
- /* Machine Memory Protection */
-#define CSR_PMPCFG0     0x3a0
-#define CSR_PMPCFG1     0x3a1
-#define CSR_PMPCFG2     0x3a2
-#define CSR_PMPCFG3     0x3a3
-#define CSR_PMPCFG4     0x3a4
-#define CSR_PMPCFG5     0x3a5
-#define CSR_PMPCFG6     0x3a6
-#define CSR_PMPCFG7     0x3a7
-#define CSR_PMPCFG8     0x3a8
-#define CSR_PMPCFG9     0x3a9
-#define CSR_PMPCFG10    0x3aa
-#define CSR_PMPCFG11    0x3ab
-#define CSR_PMPCFG12    0x3ac
-#define CSR_PMPCFG13    0x3ad
-#define CSR_PMPCFG14    0x3ae
-#define CSR_PMPCFG15    0x3af
-#define CSR_PMPADDR0    0x3b0
-#define CSR_PMPADDR1    0x3b1
-#define CSR_PMPADDR2    0x3b2
-#define CSR_PMPADDR3    0x3b3
-#define CSR_PMPADDR4    0x3b4
-#define CSR_PMPADDR5    0x3b5
-#define CSR_PMPADDR6    0x3b6
-#define CSR_PMPADDR7    0x3b7
+#endif /* __ASSEMBLY__ */
 
 #endif /* __CSI_RV_COMMON_H__ */
-

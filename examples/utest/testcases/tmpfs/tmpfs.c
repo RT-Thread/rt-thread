@@ -9,6 +9,9 @@
  */
 #include <rtthread.h>
 #include <stdlib.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <msh.h>
 #include "utest.h"
 #include "utest_assert.h"
@@ -52,6 +55,20 @@ void run_copy()
     uassert_true(1);
 }
 
+
+
+static void run_long_name_reject(void)
+{
+    static const char long_name[] =
+        "/tmp/abcdefghijklmnopqrstuvwxyz1234567890";
+    int fd;
+
+    errno = 0;
+    fd = open(long_name, O_CREAT | O_RDWR, 0);
+    uassert_int_equal(fd, -1);
+    uassert_int_equal(errno, -ENAMETOOLONG);
+}
+
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
@@ -64,5 +81,6 @@ static rt_err_t utest_tc_cleanup(void)
 static void testcase(void)
 {
     UTEST_UNIT_RUN(run_copy);
+    UTEST_UNIT_RUN(run_long_name_reject);
 }
 UTEST_TC_EXPORT(testcase, "testcase.tfs.tmpfs", utest_tc_init, utest_tc_cleanup, 10);

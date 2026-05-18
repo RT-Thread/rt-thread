@@ -1,0 +1,9 @@
+config RT_PHYE_ROCKCHIP_NANENG_COMBO
+    bool "NANENG COMBO PHY Driver"
+    depends on RT_MFD_SYSCON
+    default n
+
+config RT_PHYE_ROCKCHIP_SNPS_PCIE3
+    bool "Snps PCIe3 PHY Driver"
+    depends on RT_MFD_SYSCON
+    default n

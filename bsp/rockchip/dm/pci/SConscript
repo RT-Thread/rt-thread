@@ -1,0 +1,15 @@
+from building import *
+
+group = []
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/pci', cwd + '/../../../../components/drivers/pci/host/dw']
+
+src = []
+
+if GetDepend(['RT_PCI_DW_ROCKCHIP']):
+    src += ['pcie-dw-rockchip.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
