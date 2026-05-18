@@ -38,6 +38,7 @@ static int at_poll(struct dfs_file *file, struct rt_pollreq *req)
     }
 
     sock = at_get_socket((int)sal_sock->user_data);
+    sal_socket_put(sal_sock);
     if (sock != NULL)
     {
         rt_base_t level;
