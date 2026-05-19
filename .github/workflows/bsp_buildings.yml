@@ -261,6 +261,27 @@ jobs:
           source ~/.env/env.sh
           python tools/ci/bsp_buildings.py
 
+      - name: Project dist Tools
+        if: ${{ success() }}
+        shell: bash
+        env:
+          SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
+        run: |
+          source ~/.env/env.sh
+          IFS=',' read -ra TEST_BSP_LIST <<< "$SRTT_BSP"
+          for TEST_BSP in "${TEST_BSP_LIST[@]}"; do
+            TEST_BSP_ROOT="bsp/${TEST_BSP}"
+            echo "Test to dist project for ${TEST_BSP_ROOT}"
+            scons --dist -C "$TEST_BSP_ROOT"
+            scons --dist-ide -C "$TEST_BSP_ROOT"
+            ls "$TEST_BSP_ROOT"
+            ls "$TEST_BSP_ROOT/dist"
+            scons --pyconfig-silent -C "$TEST_BSP_ROOT/dist/project"
+            scons --pyconfig-silent -C "$TEST_BSP_ROOT/rt-studio-project"
+            scons -C "$TEST_BSP_ROOT/dist/project"
+            scons -C "$TEST_BSP_ROOT/rt-studio-project"
+          done
+
       - name: Upload output as artifact
         if: ${{ success() }}
         uses: actions/upload-artifact@main

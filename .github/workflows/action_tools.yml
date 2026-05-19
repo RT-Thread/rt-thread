@@ -10,22 +10,26 @@ on:
     branches:
       - master
     paths-ignore:
+      - .gitee/**
+      - .hook/**
       - documentation/**
+      - examples/**
       - '**/README.md'
       - '**/README_zh.md'
-      - '**/*.c'
-      - '**/*.h'
-      - '**/*.cpp'
+      - ChangeLog.md
+      - MAINTAINERS
   pull_request:
     branches:
       - master
     paths-ignore:
+      - .gitee/**
+      - .hook/**
       - documentation/**
+      - examples/**
       - '**/README.md'
       - '**/README_zh.md'
-      - '**/*.c'
-      - '**/*.h'
-      - '**/*.cpp'
+      - ChangeLog.md
+      - MAINTAINERS
   workflow_dispatch:
   repository_dispatch:
 
@@ -37,16 +41,48 @@ permissions:
   contents: read # to fetch code (actions/checkout)
 
 jobs:
+  generate-matrix:
+    runs-on: ubuntu-22.04
+    name: Summary of Git Diff Changes
+    outputs:
+      filtered_matrix: ${{ steps.filter.outputs.filtered_matrix }}
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@main
+      with:
+        persist-credentials: false
+        fetch-depth: 0
+
+    - name: Filter matrix
+      id: filter
+      run: |
+        git config --global http.postBuffer 524288000
+        git remote -v
+        git fetch origin
+        git branch
+        git branch -a
+        python tools/ci/git_diff_show.py origin/master
+        raw_matrix=$(cat .github/ALL_BSP_COMPILE_TEMP.json)
+
+        FILTER_CONDITION='.legs[]'
+        filtered_matrix=$(jq -c "{legs: [$FILTER_CONDITION]}" <<< "$raw_matrix")
+        echo "filtered_matrix=${filtered_matrix}" >> $GITHUB_OUTPUT
+        echo ${filtered_matrix}
+
   test:
     runs-on: ubuntu-22.04
-    name: Tools
+    needs: generate-matrix
+    name: Tools ${{ matrix.legs.RTT_BSP }}
     if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
-    env:
-      TEST_BSP_ROOT: bsp/stm32/stm32f407-atk-explorer
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.filtered_matrix) }}
     steps:
     - uses: actions/checkout@main
+    - name: Set up Python
+      uses: actions/setup-python@main
+      with:
+        python-version: 3.8
 
     - name: Install Tools
       shell: bash
@@ -54,47 +90,166 @@ jobs:
           wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
           chmod 777 install_ubuntu.sh
           ./install_ubuntu.sh
+          pip install -r tools/requirements.txt
+          git config --global http.postBuffer 524288000
+          echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
+          echo "RTT_CC=gcc" >> $GITHUB_ENV
+          echo "export PATH=~/.env/tools/scripts:$PATH" > ~/.env/env.sh
 
-    - name: Install Arm ToolChains
-      if: ${{ success() }}
+    - name: Cache GCC Arm Toolchain
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm'}}
+      id: cache-gcc-arm
+      uses: actions/cache@main
+      with:
+        path: /opt/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi
+        key: ${{ runner.os }}-arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi
+
+    - name: Download Arm ToolChains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && (steps.cache-gcc-arm.outputs.cache-hit != 'true') }}
       shell: bash
       run: |
-        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
-        sudo tar xjf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2 -C /opt
-        /opt/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-gcc --version
-        echo "RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin" >> $GITHUB_ENV
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.8/arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz
+        sudo tar -xf arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi.tar.xz -C /opt
 
-    - name: Build Tools
+    - name: Install Arm ToolChains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm'}}
+      shell: bash
       run: |
-        source ~/.env/env.sh
-        scons --pyconfig-silent -C $TEST_BSP_ROOT 2>menuconfig.log
-        cat menuconfig.log
-        if grep -q "warning:" menuconfig.log; then
-          echo "Errors found in menuconfig, failing the build."
-          exit 1
-        fi
-        pushd $TEST_BSP_ROOT && pkgs --update && popd
-        scons -j$(nproc) -C $TEST_BSP_ROOT
+        /opt/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc --version
+        echo "RTT_EXEC_PATH=/opt/arm-gnu-toolchain-13.2.Rel1-x86_64-arm-none-eabi/bin" >> $GITHUB_ENV
+
+    - name: Install LLVM-Arm ToolChains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'llvm-arm' && success() }}
+      shell: bash
+      run: |
+        wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz
+        sudo tar zxf LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz -C /opt
+        sudo apt-get -qq install libncurses5 libncurses5-dev libncursesw5-dev
+        /opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin/clang --version
+        echo "RTT_CC=llvm-arm" >> $GITHUB_ENV
+        echo "RTT_EXEC_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
+
+    - name: Install AArch64 ToolChains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-aarch64' && success() }}
+      shell: bash
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.6/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz
+        sudo tar -xf gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz -C /opt
+        /opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin/aarch64-none-elf-gcc --version
+        echo "RTT_EXEC_PATH=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin" >> $GITHUB_ENV
+
+    - name: Install Mips ToolChains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-mips' && success() }}
+      shell: bash
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.1/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2
+        sudo tar xjf mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 -C /opt
+        /opt/mips-2016.05/bin/mips-sde-elf-gcc --version
+        echo "RTT_EXEC_PATH=/opt/mips-2016.05/bin" >> $GITHUB_ENV
+
+    - name: Install Riscv64-unknown-elf ToolChains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv64-unknown-elf' && success() }}
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.4/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz
+        sudo tar zxf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
+        /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
+        echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+
+    - name: Install Riscv64 rt-thread smart general toolchain
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv64-general-toolchain' && success() }}
+      run: |
+        wget -q https://github.com/RT-Thread/rt-thread/releases/download/v5.2.0/riscv64gc-linux-musleabi_for_x86_64-pc-linux-gnu_252938-345d8b6e45.tar.bz2
+        sudo tar xjf riscv64gc-linux-musleabi_for_x86_64-pc-linux-gnu_252938-345d8b6e45.tar.bz2 -C /opt
+        /opt/riscv64gc-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
+        echo "RTT_EXEC_PATH=/opt/riscv64gc-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+
+    - name: Install Xuantie-900-gcc-elf-newlib Tools
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-Xuantie-900-gcc-elf-newlib' && success() }}
+      run: |
+        wget -q https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1751370399722/Xuantie-900-gcc-elf-newlib-x86_64-V3.2.0-20250627.tar.gz
+        sudo tar -zxvf Xuantie-900-gcc-elf-newlib-x86_64-V3.2.0-20250627.tar.gz -C /opt
+        /opt/Xuantie-900-gcc-elf-newlib-x86_64-V3.2.0/bin/riscv64-unknown-elf-gcc --version
+        echo "RTT_EXEC_PATH=/opt/Xuantie-900-gcc-elf-newlib-x86_64-V3.2.0/bin" >> $GITHUB_ENV
+
+    - name: Install Xuantie-900-gcc-linux-musl Tools
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-Xuantie-900-gcc-linux-musl' && success() }}
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.9/Xuantie-900-gcc-linux-6.6.0-musl64-x86_64-V3.0.2.tar.gz
+        sudo tar -zxvf Xuantie-900-gcc-linux-6.6.0-musl64-x86_64-V3.0.2.tar.gz -C /opt
+        /opt/Xuantie-900-gcc-linux-6.6.0-musl64-x86_64-V3.0.2/bin/riscv64-unknown-linux-musl-gcc --version
+        echo "RTT_EXEC_PATH=/opt/Xuantie-900-gcc-linux-6.6.0-musl64-x86_64-V3.0.2/bin" >> $GITHUB_ENV
+        echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
+
+    - name: Install k230 MUSL ToolChains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'riscv64-unknown-linux-musl-' && matrix.legs.RTT_BSP == 'K230' && success() }}
+      run: |
+        wget -q https://download.rt-thread.org/rt-smart/riscv64/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2
+        sudo tar xjf riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2 -C /opt
+        /opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
+        echo "RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+
+    - name: Install riscv32-unknown-elf Toolchains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'RISC-V-GCC-RV32' && success() }}
+      run: |
+         wget -q https://github.com/hpmicro/riscv-gnu-toolchain/releases/download/2022.05.15/riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz
+         sudo tar zxf riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz -C /opt
+         /opt/riscv32-unknown-elf-newlib-multilib/bin/riscv32-unknown-elf-gcc --version
+         echo "RTT_EXEC_PATH=/opt/riscv32-unknown-elf-newlib-multilib/bin/" >> $GITHUB_ENV
+
+    - name: Install Riscv-none-embed ToolChains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv-none-embed' && success() }}
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.5/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
+        sudo tar zxf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
+        /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
+        echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+
+    - name: Install riscv32-esp-elf ToolChains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv32-esp32' && success() }}
+      run: |
+        wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+        sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+        /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
+        pip3 install esptool
+        echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
+
+    - name: Install Arm Musl ToolChains
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-arm' && matrix.legs.RTT_SMART_TOOL_CHAIN == 'arm-linux-musleabi'  && success() }}
+      shell: bash
+      run: |
+        wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.7/arm-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2
+        sudo tar xjf arm-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2 -C /opt
+        /opt/arm-linux-musleabi_for_x86_64-pc-linux-gnu/bin/arm-linux-musleabi-gcc --version
+        echo "RTT_EXEC_PATH=/opt/arm-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+        echo "RTT_CC_PREFIX=arm-linux-musleabi-" >> $GITHUB_ENV
+
+    - name: Install Simulator Tools
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'gcc' && success() }}
+      run: |
+        sudo apt-get -qq install libsdl2-dev
+
+    - name: Install i386-unknown-elf Tools
+      if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-i386-unknown-elf' && success() }}
+      run: |
+        wget -q https://github.com/zhkag/toolchains/releases/download/i386-unknown/i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2
+        sudo tar -jxvf i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2 -C /opt
+        /opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin/i386-unknown-elf-gcc --version
+        echo "RTT_EXEC_PATH=/opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
 
     - name: Project generate Tools
       if: ${{ success() }}
+      shell: bash
+      env:
+        SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
       run: |
-        echo "Test to generate eclipse project"
-        scons --target=eclipse -s -C $TEST_BSP_ROOT
-        echo "Test to generate cmake project"
-        scons --target=cmake -s -C $TEST_BSP_ROOT
-        echo "Test to generate makefile project"
-        scons --target=makefile -s -C $TEST_BSP_ROOT
-
-    - name: Project dist Tools
-      if: ${{ success() }}
-      run: |
-        echo "Test to dist project"
-        scons --dist -C $TEST_BSP_ROOT
-        scons --dist-ide -C $TEST_BSP_ROOT
-        ls $TEST_BSP_ROOT
-        ls $TEST_BSP_ROOT/dist
-        scons --pyconfig-silent -C $TEST_BSP_ROOT/dist/project
-        scons --pyconfig-silent -C $TEST_BSP_ROOT/rt-studio-project
-        scons -C $TEST_BSP_ROOT/dist/project
-        scons -C $TEST_BSP_ROOT/rt-studio-project
+        source ~/.env/env.sh
+        IFS=',' read -ra TEST_BSP_LIST <<< "$SRTT_BSP"
+        for TEST_BSP in "${TEST_BSP_LIST[@]}"; do
+          TEST_BSP_ROOT="bsp/${TEST_BSP}"
+          echo "Test to generate eclipse project for ${TEST_BSP_ROOT}"
+          scons --target=eclipse -s -C "$TEST_BSP_ROOT"
+          echo "Test to generate cmake project for ${TEST_BSP_ROOT}"
+          scons --target=cmake -s -C "$TEST_BSP_ROOT"
+          echo "Test to generate makefile project for ${TEST_BSP_ROOT}"
+          scons --target=makefile -s -C "$TEST_BSP_ROOT"
+        done
