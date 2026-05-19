@@ -48,7 +48,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Wall -D__FPU_PRESENT -eentry'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb -D__START=entry'
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link_ram.lds'
 
     CPATH = ''
     LPATH = ''
@@ -84,7 +84,9 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu ' + CPU + '.fp.sp'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --libpath "' + EXEC_PATH + '\ARM\ARMCC\lib" --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter "board\linker_scripts\link.sct"'
+    LFLAGS = DEVICE + ' --libpath "' + EXEC_PATH + '\ARM\ARMCC\lib" --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter "board/linker_scripts/link_ram.scf"'
+
+    LFLAGS += ' --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)' 
 
     CFLAGS += ' --diag_suppress=66,1296,186,6314'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
@@ -103,6 +105,44 @@ elif PLATFORM == 'armcc':
 
     POST_ACTION = 'fromelf -z $TARGET'
     # POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
+
+elif PLATFORM == 'armclang':
+    # toolchains
+    CC = 'armclang'
+    CXX = 'armclang'
+    AS = 'armasm'
+    AR = 'armar'
+    LINK = 'armlink'
+    TARGET_EXT = 'axf'
+
+    DEVICE = ' --cpu ' + CPU
+    CFLAGS = ' --target=arm-arm-none-eabi'
+    CFLAGS += ' -mcpu=' + CPU
+    CFLAGS += ' -mfpu=fpv4-sp-d16'
+    CFLAGS += ' -mfloat-abi=hard'
+    CFLAGS += ' -c -fno-rtti -funsigned-char -fshort-enums -fshort-wchar '
+    CFLAGS += ' -gdwarf-3 -ffunction-sections '
+    AFLAGS = DEVICE + ' --apcs=interwork '
+    AFLAGS += ' -x assembler-with-cpp'
+    AFLAGS += ' -Wa,-mimplicit-it=thumb'
+    LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers '
+    LFLAGS += ' --list rt-thread.map '
+    LFLAGS += r' --strict --scatter "board/linker_scripts/link_ram" '
+    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCLANG/include'
+    LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib'
+
+    EXEC_PATH += '/ARM/ARMCLANG/bin/'
+
+    if BUILD == 'debug':
+        CFLAGS += ' -g -O1' # armclang recommend
+        AFLAGS += ' -g'
+    else:
+        CFLAGS += ' -O2'
+        
+    CXXFLAGS = CFLAGS
+    CFLAGS += ' -std=c99'
+
+    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'iccarm':
     CC = 'iccarm'

@@ -110,7 +110,6 @@ elif PLATFORM == 'armcc':
     POST_ACTION = 'fromelf -z $TARGET'
     # POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
-
 elif PLATFORM == 'armclang':
     # toolchains
     CC = 'armclang'

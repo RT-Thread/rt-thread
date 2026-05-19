@@ -18,26 +18,21 @@
 #include "fsl_rgpio.h"
 #include "fsl_clock.h"
 
-#if defined(__CC_ARM) || defined(__ARMCC_VERSION)
-extern int Image$$RTT_HEAP$$ZI$$Base;
-extern int Image$$RTT_HEAP$$ZI$$Limit;
-#define HEAP_BEGIN          (&Image$$RTT_HEAP$$ZI$$Base)
-#define HEAP_END            (&Image$$RTT_HEAP$$ZI$$Limit)
-s's
-#elif __ICCARM__
+#if defined(__ARMCC_VERSION)
+extern int Image$$ARM_LIB_HEAP$$ZI$$Base;
+extern int Image$$ARM_LIB_HEAP$$ZI$$Limit;
+#define HEAP_BEGIN  ((void *)&Image$$ARM_LIB_HEAP$$ZI$$Base)
+#define HEAP_END    ((void*)&Image$$ARM_LIB_HEAP$$ZI$$Limit)
+#elif defined(__ICCARM__)
 #pragma section="HEAP"
-#define HEAP_BEGIN          0x20530000//(__segment_end("HEAP"))
-extern void __RTT_HEAP_END;
-#define HEAP_END            (&__RTT_HEAP_END)
-
-#else
-extern int heap_start;
-extern int heap_end;
-#define HEAP_BEGIN          (&heap_start)
-#define HEAP_END            (&heap_end)
+#define HEAP_BEGIN    (__section_begin("HEAP"))
+#define HEAP_END      (__section_end("HEAP"))
+#elif defined(__GNUC__)
+extern int __HeapBase;
+extern int __HeapLimit;
+#define HEAP_BEGIN  ((void *)&__HeapBase)
+#define HEAP_END  ((void *)&__HeapLimit)
 #endif
-
-#define HEAP_SIZE           ((uint32_t)HEAP_END - (uint32_t)HEAP_BEGIN)
 
 /*! @brief The board flash size */
 #define BOARD_FLASH_SIZE (0x1000000U)

@@ -14,16 +14,16 @@
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>MIMXRT1176DVMAA:cm7</Device>
+          <Device>MIMXRT1189CVM8C:cm7</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.MIMXRT1176_DFP.13.1.0</PackID>
+          <PackID>NXP.MIMXRT1189_DFP.25.06.00</PackID>
           <PackURL>https://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
-          <Cpu>IRAM(0x20000000,0x020000) IRAM2(0x20000000,0x040000) IROM(0x00200000,0x040000) XRAM(0x1ffe0000,0x020000) XRAM2(0x00000000,0x040000) XRAM3(0x20240000,0x080000) CPUTYPE("Cortex-M7") FPU3(DFPU) CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20484000,0x07c000) IRAM2(0x20500000,0x040000) IROM(0x00000000,0x028000) CPUTYPE("Cortex-M7") FPU3(DFPU) CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC40000 -FN2 -FF0MIMXRT117x_QuadSPI_4KB_SEC -FS030000000 -FL01000000 -FF1MIMXRT117x_QuadSPI_4KB_SEC_Alias -FS18000000 -FL11000000 -FP0($$Device:MIMXRT1176DVMAA$arm\MIMXRT117x_QuadSPI_4KB_SEC.FLM) -FP1($$Device:MIMXRT1176DVMAA$arm\MIMXRT117x_QuadSPI_4KB_SEC_Alias.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC20000 -FN2 -FF0MIMXRT1180_EVK_FSPI1_QSPI_CM33 -FS028000000 -FL01000000 -FF1MIMXRT1180_EVK_FSPI1_QSPI_CM7 -FS128000000 -FL11000000 -FP0($$Device:MIMXRT1189CVM8C$devices\MIMXRT1189\arm\MIMXRT1180_EVK_FSPI1_QSPI_CM33.FLM) -FP1($$Device:MIMXRT1189CVM8C$devices\MIMXRT1189\arm\MIMXRT1180_EVK_FSPI1_QSPI_CM7.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:MIMXRT1176DVMAA$fsl_device_registers.h</RegisterFile>
+          <RegisterFile>$$Device:MIMXRT1189CVM8C$devices\MIMXRT1189\fsl_device_registers.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:MIMXRT1176DVMAA$MIMXRT1176_cm7.xml</SFDFile>
+          <SFDFile>$$Device:MIMXRT1189CVM8C$devices\MIMXRT1189\MIMXRT1189_cm7.xml</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -52,9 +52,9 @@
           <OutputName>rtthread</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
-          <BrowseInformation>0</BrowseInformation>
+          <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\build\keil\List\</ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -181,20 +181,21 @@
             <uocRam>0</uocRam>
             <hadIROM>1</hadIROM>
             <hadIRAM>1</hadIRAM>
-            <hadXRAM>1</hadXRAM>
+            <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>3</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
-            <RwSelD>3</RwSelD>
+            <RwSelD>4</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -211,7 +212,7 @@
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
             <Im1Chk>1</Im1Chk>
-            <Im2Chk>0</Im2Chk>
+            <Im2Chk>1</Im2Chk>
             <OnChipMemories>
               <Ocm1>
                 <Type>0</Type>
@@ -245,13 +246,13 @@
               </Ocm6>
               <IRAM>
                 <Type>0</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <StartAddress>0x20484000</StartAddress>
+                <Size>0x7c000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
-                <StartAddress>0x200000</StartAddress>
-                <Size>0x40000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x28000</Size>
               </IROM>
               <XRAM>
                 <Type>1</Type>
@@ -275,8 +276,8 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x200000</StartAddress>
-                <Size>0x40000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x28000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -285,28 +286,28 @@
               </OCR_RVCT5>
               <OCR_RVCT6>
                 <Type>0</Type>
-                <StartAddress>0x1ffe0000</StartAddress>
-                <Size>0x20000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT6>
               <OCR_RVCT7>
                 <Type>0</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x0</Size>
               </OCR_RVCT7>
               <OCR_RVCT8>
                 <Type>0</Type>
-                <StartAddress>0x20240000</StartAddress>
-                <Size>0x80000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <StartAddress>0x20484000</StartAddress>
+                <Size>0x7c000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0x20500000</StartAddress>
+                <Size>0x40000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -336,7 +337,7 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>-xc -std=gnu99 -mimplicit-float </MiscControls>
+              <MiscControls>-xc -std=gnu99 -mimplicit-float</MiscControls>
               <Define>RELOC_VECTOR</Define>
               <Undefine></Undefine>
               <IncludePath></IncludePath>
@@ -354,7 +355,7 @@
             <useXO>0</useXO>
             <ClangAsOpt>1</ClangAsOpt>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls>-x assembler-with-cpp</MiscControls>
               <Define></Define>
               <Undefine></Undefine>
               <IncludePath></IncludePath>
@@ -370,7 +371,7 @@
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x10000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
+            <ScatterFile>.\board\linker_scripts\link_ram.scf</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc>--legacyalign</Misc>

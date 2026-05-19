@@ -4,7 +4,7 @@
 
 本文档为 NXP i.MX RT1180 EVK 开发板提供的 BSP (板级支持包) 的初步说明。
 
-目前支持CM33和CM7的独立编译，CM33作为主核，CM7作为从核。CM33的工程可以从External Flash直接XIP，CM7的工程可以从ITCM加载运行。
+目前支持CM33和CM7的独立编译，CM33作为主核，CM7作为从核。CM33的工程可以从External Flash直接XIP，CM7的工程可以加载到ITCM运行。
 
 CM33对CM7的kick off将在后续版本中支持。
 
@@ -66,7 +66,9 @@ pkgs --update
 ```
 
 生成IAR工程：scons --target=iar
+
 生成KEIL MDK5工程：scons --target=mdk5
+
 或者直接编译GCC工程：scons -j8
 
 #### 硬件连接
