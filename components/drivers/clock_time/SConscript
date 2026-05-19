@@ -31,12 +31,6 @@ if os.path.isdir(arch_dir):
             src += Glob("arch/%s/*.c" % rtconfig.ARCH)
 
 CPPPATH = [cwd, os.path.join(cwd, '..', 'include')]
-LOCAL_CCFLAGS = ''
-if rtconfig.PLATFORM in ['gcc', 'armclang']:
-    LOCAL_CCFLAGS += ' -std=gnu99'
-elif rtconfig.PLATFORM in ['armcc']:
-    LOCAL_CCFLAGS += ' --c99 --gnu'
-
-group = DefineGroup('DeviceDrivers', src, depend=[''], CPPPATH=CPPPATH, LOCAL_CCFLAGS=LOCAL_CCFLAGS)
+group = DefineGroup('DeviceDrivers', src, depend=[''], CPPPATH=CPPPATH)
 
 Return('group')
