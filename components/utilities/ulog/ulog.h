@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2025 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-08-25     armink       the first version
+ * 2025-10-30     wdfk-prog    add emergency log flush mechanism
  */
 
 #ifndef _ULOG_H_
@@ -47,6 +48,44 @@ void ulog_deinit(void);
 #define LOG_RAW(...)                    ulog_raw(__VA_ARGS__)
 #define LOG_HEX(name, width, buf, size) ulog_hex(name, width, buf, size)
 
+/**
+ * @brief   Output an emergency log and attempt an immediate, safe flush.
+ *
+ * @details This macro is specifically designed for use in critical system states
+ *          where standard logging mechanisms might be unreliable, such as in
+ *          assertion handlers, HardFault handlers, or stack overflow hooks.
+ *
+ *          It operates in two steps:
+ *          1. It calls ulog_e() to place the log message into the ulog buffer.
+ *          2. It immediately calls ulog_emergency_flush(). This special flush
+ *             function is designed to bypass potentially unsafe OS services (like
+ *             mutexes or complex file systems). It will only flush the log to
+ *             backends that have been explicitly marked as "emergency safe"
+ *             (where is_emergency_backend is set to RT_TRUE), such as a simple
+ *             console or polled UART backend.
+ *
+ *          This provides the highest possible chance of outputting critical debug
+ *          information just before a system crash or lock-up.
+ *
+ * @note    The LOG_TAG macro must be defined before using this API.
+ *
+ * @example
+ * // In a stack overflow hook
+ * #define LOG_TAG "StackCheck"
+ * #include <ulog.h>
+ * void rt_err_hook(rt_err_t err, const char* msg, rt_uint32_t* sp)
+ * {
+ *     LOG_EMERGENCY("Stack overflow detected! Msg: %s, SP: 0x%08X", msg, sp);
+ *     // The system will likely halt after this.
+ * }
+ */
+#define LOG_EMERGENCY(...)              \
+    do                                  \
+    {                                   \
+        ulog_e(LOG_TAG, __VA_ARGS__);   \
+        ulog_emergency_flush();         \
+    } while (0)
+
 /*
  * backend register and unregister
  */
@@ -54,6 +93,7 @@ rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool
 rt_err_t ulog_backend_unregister(ulog_backend_t backend);
 rt_err_t ulog_backend_set_filter(ulog_backend_t backend, ulog_backend_filter_t filter);
 ulog_backend_t ulog_backend_find(const char *name);
+rt_err_t ulog_backend_set_emergency(const char *name, rt_bool_t is_emergency);
 
 #ifdef ULOG_USING_FILTER
 /*
@@ -74,12 +114,13 @@ const char *ulog_global_filter_kw_get(void);
  * flush all backends's log
  */
 void ulog_flush(void);
+void ulog_emergency_flush(void);
 
 #ifdef ULOG_USING_ASYNC_OUTPUT
 /*
  * asynchronous output API
  */
-void ulog_async_output(void);
+void ulog_async_output(rt_bool_t emergency_mode);
 void ulog_async_output_enabled(rt_bool_t enabled);
 rt_err_t ulog_async_waiting_log(rt_int32_t time);
 #endif
