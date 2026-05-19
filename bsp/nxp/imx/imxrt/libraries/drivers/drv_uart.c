@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2017-10-10     Tanek        the first version
  * 2019-5-10      misonyo      add DMA TX and RX function
- * 2026-4-29    Ran         Add RT1180 support.
+ * 2026-4-29      Ran          add RT1180 support
  */
 #include <rtthread.h>
 #ifdef BSP_USING_LPUART
