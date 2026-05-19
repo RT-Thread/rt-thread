@@ -229,7 +229,7 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
         }
         else
         {
-err_ret:
+        err_ret:
             level = rt_hw_local_irq_disable();
             can->status.dropedsndpkg++;
             rt_hw_local_irq_enable(level);
@@ -345,34 +345,41 @@ static rt_ssize_t _can_nonblocking_tx(struct rt_can_device *can, const struct rt
     {
         return -RT_EINVAL;
     }
-
+    level = rt_hw_local_irq_disable();
     while (sent_size < size)
     {
-        if (can->ops->sendmsg_nonblocking(can, pmsg) == RT_EOK)
+        if (rt_ringbuffer_data_len(&can->nb_tx_rb) >= sizeof(struct rt_can_msg))
         {
-            pmsg++;
-            sent_size += sizeof(struct rt_can_msg);
-            continue;
-        }
-
-        level = rt_hw_local_irq_disable();
-        if (rt_ringbuffer_space_len(&can->nb_tx_rb) >= sizeof(struct rt_can_msg))
-        {
-            rt_ringbuffer_put(&can->nb_tx_rb, (rt_uint8_t *)pmsg, sizeof(struct rt_can_msg));
-            rt_hw_local_irq_enable(level);
-
-            pmsg++;
-            sent_size += sizeof(struct rt_can_msg);
+            if (rt_ringbuffer_space_len(&can->nb_tx_rb) >= sizeof(struct rt_can_msg))
+            {
+                rt_ringbuffer_put(&can->nb_tx_rb, (rt_uint8_t *)pmsg, sizeof(struct rt_can_msg));
+                pmsg++;
+                sent_size += sizeof(struct rt_can_msg);
+                continue;
+            }
+            else
+            {
+                /* Buffer is full, cannot process this message or subsequent ones. */
+                can->status.dropedsndpkg += (size - sent_size) / sizeof(struct rt_can_msg);
+                break;
+            }
         }
         else
         {
-            /* Buffer is full, cannot process this message or subsequent ones. */
-            can->status.dropedsndpkg += (size - sent_size) / sizeof(struct rt_can_msg);
             rt_hw_local_irq_enable(level);
-            break;
+            if (can->ops->sendmsg_nonblocking(can, pmsg) != RT_EOK)
+            {
+                level = rt_hw_local_irq_disable();
+                rt_ringbuffer_put_force(&can->nb_tx_rb, (rt_uint8_t *)pmsg, sizeof(struct rt_can_msg));
+                rt_hw_local_irq_enable(level);
+            }
+
+            pmsg++;
+            sent_size += sizeof(struct rt_can_msg);
+            level = rt_hw_local_irq_disable();
         }
     }
-
+    rt_hw_local_irq_enable(level);
     return sent_size;
 }
 
@@ -409,7 +416,7 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
             struct rt_can_rx_fifo *rx_fifo;
 
             rx_fifo = (struct rt_can_rx_fifo *) rt_malloc(sizeof(struct rt_can_rx_fifo) +
-                      can->config.msgboxsz * sizeof(struct rt_can_msg_list));
+                                                         can->config.msgboxsz * sizeof(struct rt_can_msg_list));
             RT_ASSERT(rx_fifo != RT_NULL);
 
             rx_fifo->buffer = (struct rt_can_msg_list *)(rx_fifo + 1);
@@ -441,12 +448,12 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
             struct rt_can_tx_fifo *tx_fifo;
 
             tx_fifo = (struct rt_can_tx_fifo *) rt_malloc(sizeof(struct rt_can_tx_fifo) +
-                      can->config.sndboxnumber * sizeof(struct rt_can_sndbxinx_list));
+                                                         can->config.sndboxnumber * sizeof(struct rt_can_sndbxinx_list));
             RT_ASSERT(tx_fifo != RT_NULL);
 
             tx_fifo->buffer = (struct rt_can_sndbxinx_list *)(tx_fifo + 1);
             rt_memset(tx_fifo->buffer, 0,
-                    can->config.sndboxnumber * sizeof(struct rt_can_sndbxinx_list));
+                      can->config.sndboxnumber * sizeof(struct rt_can_sndbxinx_list));
             rt_list_init(&tx_fifo->freelist);
             for (i = 0;  i < can->config.sndboxnumber; i++)
             {
@@ -725,7 +732,6 @@ static rt_err_t rt_can_control(struct rt_device *dev,
                     }
                     rt_hw_local_irq_enable(level);
                 }
-
             }
             else
             {
@@ -1057,7 +1063,6 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
                     listmsg->owner = &can->hdr[hdr];
                     can->hdr[hdr].msgs++;
                 }
-
             }
 #endif
             rt_hw_local_irq_enable(level);
@@ -1132,7 +1137,8 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
                 level = rt_hw_local_irq_disable();
                 if (rt_ringbuffer_data_len(&can->nb_tx_rb) >= sizeof(struct rt_can_msg))
                 {
-                    rt_ringbuffer_get(&can->nb_tx_rb, (rt_uint8_t *)&msg_to_send, sizeof(struct rt_can_msg));
+                    struct rt_ringbuffer rb_shadow = can->nb_tx_rb;
+                    rt_ringbuffer_get(&rb_shadow, (rt_uint8_t *)&msg_to_send, sizeof(struct rt_can_msg));
                     msg_was_present = RT_TRUE;
                 }
                 rt_hw_local_irq_enable(level);
@@ -1141,14 +1147,13 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
                 {
                     break;
                 }
-
                 if (can->ops->sendmsg_nonblocking(can, &msg_to_send) != RT_EOK)
                 {
-                    level = rt_hw_local_irq_disable();
-                    rt_ringbuffer_put_force(&can->nb_tx_rb, (rt_uint8_t *)&msg_to_send, sizeof(struct rt_can_msg));
-                    rt_hw_local_irq_enable(level);
                     break;
                 }
+                level = rt_hw_local_irq_disable();
+                rt_ringbuffer_get(&can->nb_tx_rb, (rt_uint8_t *)&msg_to_send, sizeof(struct rt_can_msg));
+                rt_hw_local_irq_enable(level);
             }
         }
         break;
