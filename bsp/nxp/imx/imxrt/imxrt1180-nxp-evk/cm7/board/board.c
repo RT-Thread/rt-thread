@@ -1,16 +1,8 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright 2021-2025 NXP
+ * All rights reserved.
  *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2009-01-05     Bernard      first implementation
- * 2022-08-15     xjy198903    add sdram pin config
- * 2022-08-17     xjy198903    add rgmii pins
- * 2022-09-01     xjy198903    add can pins
- * 2022-09-07     xjy198903    add sdio pins
- * 2022-09-14     xjy198903    add flexspi pins
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
 #include <rthw.h>
@@ -249,38 +241,34 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
-
-
 void imxrt_uart_pins_init(void)
 {
 #ifdef BSP_USING_LPUART1
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);           /* Turn on LPCG: LPCG is ON. */
 
-  CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
-
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 is configured as LPUART1_TX */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 is configured as LPUART1_RX */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                 Drive Strength Field: high driver
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                 Drive Strength Field: high driver
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled */
-
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_08_LPUART1_TX,           /* GPIO_AON_08 is configured as LPUART1_TX */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_09_LPUART1_RX,           /* GPIO_AON_09 is configured as LPUART1_RX */
+        0U);                                      /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_08_LPUART1_TX,           /* GPIO_AON_08 PAD functional properties : */
+        0x02U);                                   /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: high driver
+                                                     Pull / Keep Select Field: Pull Disable, Highz
+                                                     Pull Up / Down Config. Field: Weak pull down
+                                                     Open Drain Field: Disabled */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_09_LPUART1_RX,           /* GPIO_AON_09 PAD functional properties : */
+        0x02U);                                   /* Slew Rate Field: Fast Slew Rate
+                                                     Drive Strength Field: high driver
+                                                     Pull / Keep Select Field: Pull Disable, Highz
+                                                     Pull Up / Down Config. Field: Weak pull down
+                                                     Open Drain Field: Disabled */
 #endif
 }
-	
+
 void rt_hw_board_init()
 {
     BOARD_ConfigMPU();
@@ -294,10 +282,6 @@ void rt_hw_board_init()
     imxrt_uart_pins_init();
 #endif
 
-#ifdef BSP_USING_SDRAM
-   imxrt_sdram_pins_init();
-#endif
-
 #ifdef RT_USING_HEAP
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
@@ -309,23 +293,5 @@ void rt_hw_board_init()
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
-
-#ifdef BSP_USING_SDIO
-    imxrt_SDcard_pins_init();
-#endif
-
-#ifdef BSP_USING_ETH
-    imxrt_eth_pins_init();
-#endif
-
-#ifdef BSP_USING_CAN
-    imxrt_can_pins_init();
-#endif
-
-#ifdef BSP_USING_FLEXSPI
-    imxrt_flexspi_pins_init();
-#endif
-
-
 }
 

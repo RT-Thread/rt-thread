@@ -1,14 +1,10 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright 2021-2025 NXP
+ * All rights reserved.
  *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Change Logs:
- * Date           Author       Notes
- * 2009-09-22     Bernard      add board.h to this bsp
+ * SPDX-License-Identifier: BSD-3-Clause
  */
 
-// <<< Use Configuration Wizard in Context Menu >>>
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
