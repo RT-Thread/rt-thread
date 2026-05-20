@@ -1,0 +1,37 @@
+mainmenu "RT-Thread Configuration"
+
+BSP_DIR := .
+
+# you can change the RTT_ROOT default "rt-thread"
+# example : default "F:/git_repositories/rt-thread"
+
+PKGS_DIR := packages
+
+ENV_DIR := /
+
+config SOC_S100
+    bool
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "S100 BSP Options"
+
+config RT_USING_FPU
+    bool "Enable Cortex-R52 VFP/FPU support"
+    default y
+    help
+        Enable hardware floating-point support for the S100 BSP.
+
+        When enabled, the BSP builds with hard-float ABI and enables
+        the VFP context save/restore path.
+
+        When disabled, the BSP switches to a soft-float build so O2 can
+        remain enabled without generating VFP instructions.
+
+endmenu
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+# rsource "$(BSP_DIR)/board/Kconfig"
+source "$(BSP_DIR)/drivers/Kconfig"
