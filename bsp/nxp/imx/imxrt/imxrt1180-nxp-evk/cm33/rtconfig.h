@@ -103,10 +103,13 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_HW_ATOMIC
+#define ARCH_USING_HW_ATOMIC_8
+#define ARCH_USING_HW_ATOMIC_16
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -256,12 +259,6 @@
 
 /* tools packages */
 
-#define PKG_USING_CMBACKTRACE
-#define PKG_CMBACKTRACE_PLATFORM_M33
-#define PKG_CMBACKTRACE_DUMP_STACK
-#define PKG_CMBACKTRACE_PRINT_ENGLISH
-#define PKG_USING_CMBACKTRACE_V10401
-#define PKG_CMBACKTRACE_VER_NUM 0x10401
 /* end of tools packages */
 
 /* system packages */

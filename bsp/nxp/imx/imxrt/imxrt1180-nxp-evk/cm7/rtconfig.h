@@ -257,12 +257,6 @@
 
 /* tools packages */
 
-#define PKG_USING_CMBACKTRACE
-#define PKG_CMBACKTRACE_PLATFORM_M33
-#define PKG_CMBACKTRACE_DUMP_STACK
-#define PKG_CMBACKTRACE_PRINT_ENGLISH
-#define PKG_USING_CMBACKTRACE_V10401
-#define PKG_CMBACKTRACE_VER_NUM 0x10401
 /* end of tools packages */
 
 /* system packages */
