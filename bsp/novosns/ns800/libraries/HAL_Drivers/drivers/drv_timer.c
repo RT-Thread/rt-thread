@@ -9,6 +9,8 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_config.h"
+#include "tim.h"
+#include "rcc.h"
 
 #ifdef BSP_USING_TIM
 
@@ -138,13 +140,43 @@ static rt_uint32_t ns800_clock_timer_count_get(rt_clock_timer_t *timer)
     return TIM_getCounter((TIM_TypeDef *)tim->instance);
 }
 
+static uint32_t __get_timer_src_clk(TIM_TypeDef *htim)
+{
+    if (htim == TIM1)
+    {
+        uint32_t pclk = RCC_getPclk2Frequency();
+        return (RCC_getApb2ClkDiv() == RCC_APB2_4_HCLK_DIV1) ? pclk : (pclk << 1);
+    }
+    else if (htim == TIM2)
+    {
+        uint32_t pclk = RCC_getPclk2Frequency();
+        return (RCC_getApb2ClkDiv() == RCC_APB2_4_HCLK_DIV1) ? pclk : (pclk << 1);
+    }
+
+    return 0;
+}
+
 static rt_err_t __set_timerx_freq(rt_clock_timer_t *timer, uint32_t freq)
 {
-    #define TIM_SRC_CLK    200000000UL
     struct ns800_clock_timer *tim = timer->parent.user_data;
+    TIM_TypeDef *htim = (TIM_TypeDef *)tim->instance;
+    uint32_t timer_clk;
+    uint32_t psc;
 
-    rt_uint32_t psc = (TIM_SRC_CLK / freq ) - 1;
-    TIM_setPrescaler(tim->instance, psc);
+    if (freq == 0)
+    {
+        return -RT_ERROR;
+    }
+
+    timer_clk = __get_timer_src_clk(htim);
+    if (timer_clk == 0)
+    {
+        LOG_E("timer %s does not use internal RCC clock source or clock query failed", tim->name);
+        return -RT_ERROR;
+    }
+
+    psc = (timer_clk / freq) - 1;
+    TIM_setPrescaler(htim, psc);
 
     return RT_EOK;
 }
