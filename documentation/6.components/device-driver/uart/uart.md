@@ -1,22 +1,37 @@
-@page page_device_uart UART Device
+@page page_device_uart UART
 
-# UART Introduction
+# UART (serial) device
 
-UART (Universal Asynchronous Receiver/Transmitter), as a kind of asynchronous serial communication protocol, the working principle is to transmit each character of the transmitted data one by one. It is the most frequently used data bus during application development.
+UART (Universal Asynchronous Receiver/Transmitter) is the usual **character-device** path for console, AT commands, and board bring-up. In RT-Thread the **driver stack** lives under **`components/drivers/serial/`** (Kconfig **`RT_USING_SERIAL`**), while applications see devices named **`uart0`**, **`uart1`**, …
 
-The UART serial port is characterized by sequentially transmitting data one bit at a time. As long as  two transmission lines can realize two-way communication, one line transmits data while the other receives data . There are several important functions for UART serial communication, namely baud rate, start bit, data bit, stop bit and parity bit. For two ports that use UART serial port communication, these functions must be matched, otherwise the communication can't be carried out normally. The data format of the UART serial port transmission is as shown below:
+![Serial transmission data format](figures/uart1.png)
 
-![Serial Transmission Data Format](figures/uart1.png)
+| Layer | Doc / source |
+| --- | --- |
+| Application (`rt_device_*`) | This page — **Application access** |
+| Framework (`rt_serial_device`, V1/V2) | `dev_serial.c` / `dev_serial_v2.c`, `dev_serial.h` |
+| DM naming, bootargs | @ref page_device_uart_dm — `serial_dm.c` |
+| Early printk | @ref page_device_uart_earlycon |
+| Controllers (8250, PL011, …) | `serial/device/*`, platform **`RT_PLATFORM_DRIVER_EXPORT`** |
 
-* Start bit: Indicates the start of data transfer and the level logic is "0".
-- Data bits: Possible values are 5, 6, 7, 8, and 9, indicating that these bits are transmitted. The value is generally 8, because an ASCII character value is 8 bits.
-- Parity check bit: It it used by the receiver to verify the received data. The number of bits is used in the check of "1" is even (even parity) or odd (odd parity) ,in order to verify the data transmission. It is also fine by not using this bit .
-- Stop Bit: Indicates the end of one frame of data. The level logic is "1".
-- Baudrate: It is the rate at which a serial port communicates, which expressed in bits per second (bps) of the binary code transmitted in unit time. The common baud rate values are 4800, 9600, 14400, 38400, 115200, etc. The higher the value is, the faster the data transmission will be.
+**Kconfig**: **`RT_USING_SERIAL`** (default on). **`RT_USING_SERIAL_V1`** vs **`RT_USING_SERIAL_V2`**; optional **`RT_SERIAL_USING_DMA`**, **`RT_USING_SERIAL_BYPASS`**. SoC drivers: **`RT_USING_DM && RT_USING_SERIAL`** → `serial/device/Kconfig`.
 
-# Access UART Device
+---
 
-The application accesses the serial port hardware through the I/O device management interface provided by RT-Thread. The related interfaces are as follows:
+## Driver writer (quick path)
+
+1. Implement **`struct rt_uart_ops`** / serial ops: **`configure`**, **`control`**, **`putc`**, **`getc`**, optional **`dma_transmit`**.
+2. With DM + OFW: map MMIO/IRQ, clocks/resets, **`serial_dev_set_name`**, then **`rt_hw_serial_register`** (see @ref page_device_uart_dm).
+3. Report RX/TX completion via **`rt_hw_serial_isr(serial, RT_SERIAL_EVENT_*)`**.
+4. Apply **pinctrl** and regulators (if any) before enabling TX.
+
+---
+
+## Application access
+
+The application uses the **generic device interface** (`rtdevice.h`). The UART is a **character device**; **`struct serial_configure`** and **`RT_DEVICE_CTRL_CONFIG`** are in **`drivers/dev_serial.h`** (V1) or **`dev_serial_v2.h`** (V2).
+
+Main APIs:
 
 | **Funtion** | **Description**                |
 | --------------------------- | -------------------------- |
@@ -77,9 +92,9 @@ oflags parameters support the following values (Use OR logic to support multiple
 /* Receive mode function */
 #define RT_DEVICE_FLAG_INT_RX       0x100     /* Interrupt receive mode */
 #define RT_DEVICE_FLAG_DMA_RX       0x200     /* DMA receiving mode */
-/* Receive mode function */
-#define RT_DEVICE_FLAG_INT_TX       0x400     /* Interrupt receive mode*/
-#define RT_DEVICE_FLAG_DMA_TX       0x800     /* DMA receive mode    */
+/* Transmit mode flags */
+#define RT_DEVICE_FLAG_INT_TX       0x400     /* Interrupt transmit mode */
+#define RT_DEVICE_FLAG_DMA_TX       0x800     /* DMA transmit mode */
 ```
 
 There are three modes of uart data receiving and sending: interrupt mode, polling mode and DMA mode. When used, only one of the three modes can be selected. If the open parameter oflag of the serial port does not specify the use of interrupt mode or DMA mode, the polling mode is used by default.
@@ -644,3 +659,10 @@ static int uart_dma_sample(int argc, char *argv[])
 MSH_CMD_EXPORT(uart_dma_sample, uart device dma sample);
 ```
 
+## See also (driver)
+
+- @ref page_device_uart_dm — naming, bootargs, platform probe
+- @ref page_device_uart_earlycon — earlycon, handoff to uartN
+- @ref page_device_pinctrl — pin mux before UART enable
+- @ref page_device_dma — RX/TX DMA
+- components/drivers/serial/SConscript — build matrix
