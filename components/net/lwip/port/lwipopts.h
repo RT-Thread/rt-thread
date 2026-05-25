@@ -594,8 +594,12 @@
 #define LWIP_NETIF_API                  1
 #endif
 
-/* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active timeouts. */
+/* MEMP_NUM_SYS_TIMEOUT: the number of simultaneously active timeouts. */
+#if RT_USING_LWIP_VER_NUM == 0x20102
+#define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_NUM_TIMEOUTS + (LWIP_IPV6 * (1 + LWIP_IPV6_REASS + LWIP_IPV6_MLD)))
+#else
 #define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT + (LWIP_IPV6 ? (1 + (2*LWIP_IPV6)) : 0))
+#endif
 
 /*
  * LWIP_COMPAT_SOCKETS==1: Enable BSD-style sockets functions names.

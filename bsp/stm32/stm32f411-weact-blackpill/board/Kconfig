@@ -10,6 +10,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
+        select RT_USING_PWM
         select BSP_USING_PWM1
         select BSP_USING_PWM4
         select BSP_USING_PWM4_CH4

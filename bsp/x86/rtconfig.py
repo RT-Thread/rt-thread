@@ -1,5 +1,9 @@
 import os
 
+def check_config_key_enable(key):
+    if not os.path.isfile('.config'): return False
+    return (key + '=y') in open('.config').read()
+
 # toolchains options
 ARCH='ia32'
 CPU=''
@@ -30,6 +34,9 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mtune=generic'
+    if check_config_key_enable('CONFIG_X86_BSP_USING_PICOLIBC_PORT'):
+       DEVICE  += ' -specs=picolibc.specs'
+
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T x86_ram.lds -nostartfiles'

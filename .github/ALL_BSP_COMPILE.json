@@ -525,6 +525,13 @@
       "SUB_RTT_BSP": [
         "novosns/ns800/ns800rt7p65-nssinepad"
       ]
+    },
+    {
+      "RTT_BSP": "RDK",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "rdk/s100"
+      ]
     }
   ]
 }
