@@ -17,6 +17,7 @@ config SOC_MIMXRT1189CVM8C_CM33
     default y
     depends on SOC_MIMXRT1189CVM8C
     select ARCH_ARM_CORTEX_M33
+    select ARCH_ARM_CORTEX_FPU       
     select ARCH_ARM_CORTEX_SECURE
 
 menu "On-chip Peripheral Drivers"
