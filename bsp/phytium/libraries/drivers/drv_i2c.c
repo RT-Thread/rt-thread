@@ -26,10 +26,6 @@
 #endif
 
 /*Please define the length of the mem_addr of the device*/
-#ifndef FI2C_DEVICE_MEMADDR_LEN
-    #define FI2C_DEVICE_MEMADDR_LEN 2
-#endif
-#define FI2C_DEFAULT_ID 0
 #if defined(I2C_USE_MIO)
     #include "fmio_hw.h"
     #include "fmio.h"
@@ -40,22 +36,60 @@ struct phytium_i2c_bus
 {
     struct rt_i2c_bus_device device;
     FI2c i2c_handle;
-    struct rt_i2c_msg *msg;
     const char *name;
 };
 
+static void FI2cReadDoneCallback(void *instance_p, void *param)
+{
+    FASSERT(instance_p);
+    printf("trigger tx\n");
+}
+
+static void FI2cTransAbortedCallback(void *instance_p, void *param)
+{
+    FASSERT(instance_p);
+    printf("trans aborted\n");
+}
+
+static void FI2cMasterStopCallback(void *instance_p, void *param)
+{
+    FASSERT(instance_p);
+    printf("stop\n");
+}
+
+static void FI2cMasterStartRxCallback(void *instance_p, void *param)
+{
+    FASSERT(instance_p);
+    printf("trigger rx\n");
+}
+
+static void FI2cMasterSetupInterrupt(FI2c *instance_p)
+{
+    rt_uint32_t cpu_id = rt_hw_cpu_id();
+    /*  callback function for FI2C_MASTER_INTR_EVT interrupt  */
+    instance_p->master_evt_handlers[FI2C_EVT_MASTER_TRANS_ABORTED] = FI2cTransAbortedCallback;
+    instance_p->master_evt_handlers[FI2C_EVT_MASTER_READ_DONE] = FI2cReadDoneCallback;
+    instance_p->master_evt_handlers[FI2C_EVT_MASTER_WRITE_DONE] = FI2cMasterStartRxCallback;
+    instance_p->master_evt_handlers[FI2C_EVT_MASTER_STOP_DEL] = FI2cMasterStopCallback;
+
+    rt_hw_interrupt_set_target_cpus(instance_p->config.irq_num, cpu_id);
+    rt_hw_interrupt_set_priority(instance_p->config.irq_num, instance_p->config.irq_priority);
+    rt_hw_interrupt_install(instance_p->config.irq_num, FI2cMasterIntrHandler, instance_p, "i2c_master");
+    rt_hw_interrupt_umask(instance_p->config.irq_num);
+}
+
 #if defined(I2C_USE_CONTROLLER)
+
 static rt_err_t i2c_config(struct phytium_i2c_bus *i2c_bus)
 {
     RT_ASSERT(i2c_bus);
     FI2cConfig input_cfg;
-    const FI2cConfig *config_p = NULL;
     FI2c *instance_p = &i2c_bus->i2c_handle;
     FError ret = FI2C_SUCCESS;
 
+    FIOPadSetI2CMux(instance_p->config.instance_id);
     /* Lookup default configs by instance id */
-    config_p = FI2cLookupConfig(instance_p->config.instance_id);
-    input_cfg = *config_p;
+    input_cfg = FI2cLookupConfig(instance_p->config.instance_id);
 #ifdef RT_USING_SMART
     input_cfg.base_addr = (uintptr)rt_ioremap((void *)input_cfg.base_addr, 0x1000);
 #endif
@@ -69,7 +103,7 @@ static rt_err_t i2c_config(struct phytium_i2c_bus *i2c_bus)
         LOG_E("Init master I2c failed, ret: 0x%x", ret);
         return -RT_ERROR;
     }
-        ret = FI2cSetAddress(&i2c_bus->i2c_handle, FI2C_MASTER, i2c_bus->i2c_handle.config.slave_addr);
+    ret = FI2cSetAddress(&i2c_bus->i2c_handle, FI2C_MASTER, i2c_bus->i2c_handle.config.slave_addr);
     if (FI2C_SUCCESS != ret)
     {
         return -RT_ERROR;
@@ -79,6 +113,8 @@ static rt_err_t i2c_config(struct phytium_i2c_bus *i2c_bus)
     {
         return -RT_ERROR;
     }
+
+    FI2cMasterSetupInterrupt(&i2c_bus->i2c_handle);
 
     return RT_EOK;
 }
@@ -91,8 +127,8 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
     FError ret = FI2C_SUCCESS;
     FI2cConfig i2c_config;
     FI2c *instance_p = &i2c_bus->i2c_handle;
-    FIOPadSetMioMux(instance_p->config.instance_id);
 
+    FIOPadSetMioMux(instance_p->config.instance_id);
     mio_handle.config = *FMioLookupConfig(instance_p->config.instance_id);
 #ifdef RT_USING_SMART
     mio_handle.config.func_base_addr = (uintptr)rt_ioremap((void *)mio_handle.config.func_base_addr, 0x1200);
@@ -109,7 +145,7 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
     rt_memset(&i2c_config, 0, sizeof(i2c_config));
     i2c_config.base_addr = FMioFuncGetAddress(&mio_handle, FMIO_FUNC_SET_I2C);
     i2c_config.irq_num = FMioFuncGetIrqNum(&mio_handle, FMIO_FUNC_SET_I2C);
-    i2c_config.irq_prority = 0;
+    i2c_config.irq_priority = 0;
     i2c_config.ref_clk_hz = FMIO_CLK_FREQ_HZ;
     i2c_config.work_mode = FI2C_MASTER;
     i2c_config.use_7bit_addr = TRUE;
@@ -137,6 +173,7 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
     mio_handle.is_ready = 0;
     rt_memset(&mio_handle, 0, sizeof(mio_handle));
 
+    FI2cMasterSetupInterrupt(instance_p);
     return RT_EOK;
 }
 #endif
@@ -184,40 +221,55 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
 {
     RT_ASSERT(device);
     u32 ret;
-    struct rt_i2c_msg *pmsg;
     rt_ssize_t i;
+    struct rt_i2c_msg *pmsg;
     struct phytium_i2c_bus *i2c_bus;
     i2c_bus = (struct phytium_i2c_bus *)(device);
     uintptr mem_addr = 0;
-
     for (i = 0; i < num; i++)
     {
         pmsg = &msgs[i];
-        for (u32 j = 0; j <FI2C_DEVICE_MEMADDR_LEN; j++)
+        for (u32 j = 0; j <2; j++)
         {
-            mem_addr |= msgs[i].buf[j] << (8 * (FI2C_DEVICE_MEMADDR_LEN - 1 - j));
+            mem_addr |= msgs[i].buf[j] << (8 * (1 - 1 - j));
         }
-
-        i2c_bus->i2c_handle.config.slave_addr = pmsg->addr;
-        if (pmsg->flags & RT_I2C_RD)
+        
+        if (pmsg->flags == FI2C_M_WE)
         {
-            rt_thread_delay(100);
-            ret = FI2cMasterReadPoll(&i2c_bus->i2c_handle, mem_addr, FI2C_DEVICE_MEMADDR_LEN, &pmsg->buf[0], pmsg->len - FI2C_DEVICE_MEMADDR_LEN);
-            if (ret != FI2C_SUCCESS)
-            {
-                LOG_E("I2C master read failed!\n");
-                return -RT_ERROR;
-            }
+            FI2cMsg fmsgs;
+            fmsgs.device_addr = pmsg->addr;
+            fmsgs.buf = (u8 *)pmsg->buf;
+            fmsgs.len = pmsg->len;
+            fmsgs.flags = FI2C_M_WE;
+            rt_kprintf("[i2c] fmsg: addr=0x%02X, len=%d, flags=0x%X (%s), buf=%p\n",
+                       fmsgs.device_addr,
+                       fmsgs.len,
+                       fmsgs.flags,
+                       (fmsgs.flags & FI2C_M_RD) ? "RD" : "WR",
+                       fmsgs.buf);
+            FI2cMasterXfer(&i2c_bus->i2c_handle, &fmsgs, 1);
         }
         else
         {
-            rt_thread_delay(100);
-            ret = FI2cMasterWritePoll(&i2c_bus->i2c_handle, mem_addr, FI2C_DEVICE_MEMADDR_LEN, &pmsg->buf[FI2C_DEVICE_MEMADDR_LEN], pmsg->len - FI2C_DEVICE_MEMADDR_LEN);
-            if (ret != FI2C_SUCCESS)
-            {
-                LOG_E("I2C master write failed!\n");
-                return -RT_ERROR;
-            }
+            FI2cMsg fmsgs[2];
+            u8 addr [2] = {0x0,0x0};
+            fmsgs[0].device_addr = pmsg->addr;
+            fmsgs[0].buf = addr;
+            fmsgs[0].len = 2;
+            fmsgs[0].flags = FI2C_M_WE;
+
+            fmsgs[1].device_addr = pmsg->addr;
+            fmsgs[1].buf = (u8 *)pmsg->buf;
+            fmsgs[1].len = pmsg->len;
+            fmsgs[1].flags = FI2C_M_RD;
+
+            rt_kprintf("[i2c] fmsg: addr=0x%02X, len=%d, flags=0x%X (%s), buf=%p\n",
+                       fmsgs[1].device_addr,
+                       fmsgs[1].len,
+                       fmsgs[1].flags,
+                       (fmsgs[1].flags & FI2C_M_RD) ? "RD" : "WR",
+                       fmsgs[1].buf);
+            FI2cMasterXfer(&i2c_bus->i2c_handle, fmsgs, 2);
         }
     }
 

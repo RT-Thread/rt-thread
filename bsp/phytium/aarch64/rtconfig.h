@@ -544,10 +544,15 @@
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_DRIVERS_EXAMPLE
 #define BSP_USING_IOPAD
 #define BSP_USING_UART_LAYER
 #define BSP_USING_UART
 #define RT_USING_UART1
+#define BSP_USING_I2C_LAYER
+#define BSP_USING_I2C
+#define I2C_USE_MIO
+#define RT_USING_MIO1
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

@@ -2,11 +2,11 @@
 #if defined BSP_USING_I2C
 #include "drv_log.h"
 #include "drv_i2c.h"
-#define TEST_DEVICE_ADDR 0x53
+#define TEST_DEVICE_ADDR 0x57
 static struct rt_i2c_bus_device *i2c_test_bus = RT_NULL;
 rt_err_t i2c_sample()
 {
-    rt_uint8_t write_content[] = {"Phytium Rt-thread I2C Driver Test Successfully !!"};
+    rt_uint8_t write_content[] = {"Phytium Rt-thread"};
     rt_uint8_t write_addr[2] = {0x0, 0x0};
     rt_uint8_t write_buf[2 + sizeof(write_content)];
     rt_memcpy(write_buf, write_addr, 2);
@@ -16,7 +16,7 @@ rt_err_t i2c_sample()
     rt_memcpy(read_buf, write_addr, 2);
 
     char name[RT_NAME_MAX];
-#if defined(FIREFLY_DEMO_BOARD)
+#if defined(PHYTIUMPI_FIREFLY_BOARD)
     rt_strncpy(name, "MIO1", RT_NAME_MAX);
 #endif
 #if defined(E2000D_DEMO_BOARD)||defined(E2000Q_DEMO_BOARD)
@@ -49,10 +49,19 @@ rt_err_t i2c_sample()
     read_msgs.len = sizeof(read_buf);
     rt_i2c_transfer(i2c_test_bus, &read_msgs, 1);
 
+    rt_kprintf("read_buf string:\n%s\n", read_buf);
+
+    rt_kprintf("write_content string:\n%s\n", write_content);
+
     for (rt_uint8_t i = 0; i < sizeof(write_content); i++)
     {
         if (read_buf[i] != write_content[i])
         {
+            rt_kprintf("[i2c] compare failed at index %d: read=0x%02X expect=0x%02X\n",
+                       i,
+                       read_buf[i],
+                       write_content[i]);
+
             return -RT_ERROR;
         }
     }
