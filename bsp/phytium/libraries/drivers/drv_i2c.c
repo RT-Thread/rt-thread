@@ -42,25 +42,25 @@ struct phytium_i2c_bus
 static void FI2cReadDoneCallback(void *instance_p, void *param)
 {
     FASSERT(instance_p);
-    printf("trigger tx\n");
+    LOG_D("trigger tx \n");
 }
 
 static void FI2cTransAbortedCallback(void *instance_p, void *param)
 {
     FASSERT(instance_p);
-    printf("trans aborted\n");
+    LOG_D("trans aborted\n");
 }
 
 static void FI2cMasterStopCallback(void *instance_p, void *param)
 {
     FASSERT(instance_p);
-    printf("stop\n");
+    LOG_D("stop");
 }
 
 static void FI2cMasterStartRxCallback(void *instance_p, void *param)
 {
     FASSERT(instance_p);
-    printf("trigger rx\n");
+    LOG_D("trigger rx\n");
 }
 
 static void FI2cMasterSetupInterrupt(FI2c *instance_p)
@@ -159,18 +159,12 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
         LOG_E("Init mio master failed, ret: 0x%x", ret);
         return -RT_ERROR;
     }
-    ret = FI2cSetAddress(instance_p, FI2C_MASTER, instance_p->config.slave_addr);
-    if (FI2C_SUCCESS != ret)
-    {
-        return -RT_ERROR;
-    }
     ret = FI2cSetSpeed(instance_p, FI2C_SPEED_STANDARD_RATE, TRUE);
     if (FI2C_SUCCESS != ret)
     {
         return -RT_ERROR;
     }
 
-    mio_handle.is_ready = 0;
     rt_memset(&mio_handle, 0, sizeof(mio_handle));
 
     FI2cMasterSetupInterrupt(instance_p);
@@ -241,13 +235,9 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
             fmsgs.buf = (u8 *)pmsg->buf;
             fmsgs.len = pmsg->len;
             fmsgs.flags = FI2C_M_WE;
-            rt_kprintf("[i2c] fmsg: addr=0x%02X, len=%d, flags=0x%X (%s), buf=%p\n",
-                       fmsgs.device_addr,
-                       fmsgs.len,
-                       fmsgs.flags,
-                       (fmsgs.flags & FI2C_M_RD) ? "RD" : "WR",
-                       fmsgs.buf);
-            FI2cMasterXfer(&i2c_bus->i2c_handle, &fmsgs, 1);
+
+            FI2cMasterIntrXfer(&i2c_bus->i2c_handle, &fmsgs, 1);
+            rt_thread_mdelay(5);
         }
         else
         {
@@ -263,13 +253,8 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
             fmsgs[1].len = pmsg->len;
             fmsgs[1].flags = FI2C_M_RD;
 
-            rt_kprintf("[i2c] fmsg: addr=0x%02X, len=%d, flags=0x%X (%s), buf=%p\n",
-                       fmsgs[1].device_addr,
-                       fmsgs[1].len,
-                       fmsgs[1].flags,
-                       (fmsgs[1].flags & FI2C_M_RD) ? "RD" : "WR",
-                       fmsgs[1].buf);
-            FI2cMasterXfer(&i2c_bus->i2c_handle, fmsgs, 2);
+            FI2cMasterIntrXfer(&i2c_bus->i2c_handle, fmsgs, 2);
+            rt_thread_mdelay(5);
         }
     }
 
