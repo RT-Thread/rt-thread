@@ -216,6 +216,7 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
     RT_ASSERT(device);
     u32 ret;
     rt_ssize_t i;
+    FI2cMsg fmsgs;
     struct rt_i2c_msg *pmsg;
     struct phytium_i2c_bus *i2c_bus;
     i2c_bus = (struct phytium_i2c_bus *)(device);
@@ -223,39 +224,13 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
     for (i = 0; i < num; i++)
     {
         pmsg = &msgs[i];
-        for (u32 j = 0; j <2; j++)
-        {
-            mem_addr |= msgs[i].buf[j] << (8 * (1 - 1 - j));
-        }
-        
-        if (pmsg->flags == FI2C_M_WE)
-        {
-            FI2cMsg fmsgs;
-            fmsgs.device_addr = pmsg->addr;
-            fmsgs.buf = (u8 *)pmsg->buf;
-            fmsgs.len = pmsg->len;
-            fmsgs.flags = FI2C_M_WE;
+        fmsgs.device_addr = pmsg->addr;
+        fmsgs.buf = (u8 *)pmsg->buf;
+        fmsgs.len = pmsg->len;
+        fmsgs.flags = (pmsg->flags & RT_I2C_RD) ? FI2C_M_RD : FI2C_M_WE;
 
-            FI2cMasterIntrXfer(&i2c_bus->i2c_handle, &fmsgs, 1);
-            rt_thread_mdelay(5);
-        }
-        else
-        {
-            FI2cMsg fmsgs[2];
-            u8 addr [2] = {0x0,0x0};
-            fmsgs[0].device_addr = pmsg->addr;
-            fmsgs[0].buf = addr;
-            fmsgs[0].len = 2;
-            fmsgs[0].flags = FI2C_M_WE;
-
-            fmsgs[1].device_addr = pmsg->addr;
-            fmsgs[1].buf = (u8 *)pmsg->buf;
-            fmsgs[1].len = pmsg->len;
-            fmsgs[1].flags = FI2C_M_RD;
-
-            FI2cMasterIntrXfer(&i2c_bus->i2c_handle, fmsgs, 2);
-            rt_thread_mdelay(5);
-        }
+        FI2cMasterIntrXfer(&i2c_bus->i2c_handle, &fmsgs, 1);
+        rt_thread_mdelay(5);
     }
 
     return i;

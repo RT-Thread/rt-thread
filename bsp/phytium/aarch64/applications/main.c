@@ -90,7 +90,7 @@ int main(void)
 {
 #ifdef BSP_USING_DRIVERS_EXAMPLE
     rt_thread_mdelay(2000);
-    // auto_test();
+    auto_test();
 #elif defined RT_USING_SMP
     demo_core();
 #endif
