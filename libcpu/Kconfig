@@ -288,6 +288,10 @@ config ARCH_RISCV64
     select ARCH_CPU_64BIT
     bool
 
+config ARCH_RISCV_XUANTIE
+    select ARCH_RISCV
+    bool
+
 if ARCH_RISCV64
     config ARCH_USING_NEW_CTX_SWITCH
         bool
@@ -300,6 +304,14 @@ if ARCH_RISCV64
         select ARCH_USING_NEW_CTX_SWITCH
         help
             Using the common64 implementation under ./libcpu/risc-v
+
+if RT_USING_SMART
+    config CONFIG_XUANTIE_SVPBMT
+        int
+        depends on ARCH_RISCV_XUANTIE
+        default 1
+endif
+
 endif
 
 config ARCH_REMAP_KERNEL
