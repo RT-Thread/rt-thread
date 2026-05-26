@@ -161,8 +161,6 @@ void rt_hw_board_aarch64_init(void)
 
     phytium_interrupt_init();
 
-    rt_hw_gtimer_init();
-
     FIOMuxInit();
 
     FEarlyUartProbe();
@@ -179,7 +177,8 @@ void rt_hw_board_aarch64_init(void)
 #endif
 
     rt_thread_idle_sethook(idle_wfi);
-
+    
+    rt_hw_gtimer_init();
 #ifdef RT_USING_SMP
     FPsciInit();
     /* install IPI handle */

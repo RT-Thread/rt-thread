@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 16
+#define RT_NAME_MAX 32
 #define RT_USING_SMP
 #define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
@@ -456,45 +456,9 @@
 
 /* end of STM32 HAL & SDK Drivers */
 
-/* Infineon HAL Packages */
-
-/* end of Infineon HAL Packages */
-
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
-
-/* WCH HAL & SDK Drivers */
-
-/* end of WCH HAL & SDK Drivers */
-
-/* AT32 HAL & SDK Drivers */
-
-/* end of AT32 HAL & SDK Drivers */
-
-/* HC32 DDL Drivers */
-
-/* end of HC32 DDL Drivers */
-
-/* NXP HAL & SDK Drivers */
-
-/* end of NXP HAL & SDK Drivers */
-
-/* NUVOTON Drivers */
-
-/* end of NUVOTON Drivers */
-
-/* GD32 Drivers */
-
-/* end of GD32 Drivers */
-
-/* HPMicro SDK */
-
-/* end of HPMicro SDK */
-
-/* FT32 HAL & SDK Drivers */
-
-/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -599,10 +563,10 @@
 
 /* Soc configuration */
 
-#define TARGET_PE2202
+#define TARGET_PE2204
 #define SOC_NAME "pe220x"
-#define TARGET_TYPE_NAME "pe2202"
-#define SOC_CORE_NUM 2
+#define TARGET_TYPE_NAME "pe2204"
+#define SOC_CORE_NUM 4
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
@@ -613,8 +577,8 @@
 
 /* Board Configuration */
 
-#define E2000D_DEMO_BOARD
-#define BOARD_NAME "pe2202_demo"
+#define BOARD_NAME "phytiumpi"
+#define PHYTIUMPI_FIREFLY_BOARD
 
 /* IO mux configuration when board start up */
 
@@ -626,6 +590,7 @@
 #define ELOG_LINE_BUF_SIZE 0x100
 #define LOG_DEBUG
 #define USE_NS_GTIMER
+#define SLEEP_USE_NS_GTIMER
 /* end of Sdk common configuration */
 /* end of Standalone Setting */
 #define KERNEL_ASPACE_START 0x1000
