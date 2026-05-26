@@ -459,7 +459,7 @@
       "RTT_BSP": "ESP32C3",
       "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
       "SUB_RTT_BSP": [
-        "ESP32_C3"
+        "ESP/ESP32_C3"
       ]
     },
     {
