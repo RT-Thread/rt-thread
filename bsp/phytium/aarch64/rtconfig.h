@@ -550,9 +550,8 @@
 #define BSP_USING_UART
 #define RT_USING_UART1
 #define BSP_USING_I2C_LAYER
-#define BSP_USING_I2C
-#define I2C_USE_MIO
-#define RT_USING_MIO1
+#define BSP_USING_I2C_MSG
+#define RT_USING_I2C3_MSG
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
@@ -568,22 +567,20 @@
 
 /* Soc configuration */
 
-#define TARGET_PE2204
-#define SOC_NAME "pe220x"
-#define TARGET_TYPE_NAME "pe2204"
-#define SOC_CORE_NUM 4
+#define TARGET_PD2408
+#define SOC_NAME "pd2408"
+#define SOC_CORE_NUM 8
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
 #define F64BIT_MEMORY_LENGTH 0x800000000
-#define TARGET_PE220X
 #define DEFAULT_DEBUG_PRINT_UART1
 /* end of Soc configuration */
 
 /* Board Configuration */
 
-#define BOARD_NAME "phytiumpi"
-#define PHYTIUMPI_FIREFLY_BOARD
+#define BOARD_NAME "pd2408_test_a"
+#define PD2408_TEST_A_BOARD
 
 /* IO mux configuration when board start up */
 
