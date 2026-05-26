@@ -171,17 +171,6 @@ if GetDepend(['I2C_USE_MIO']):
     src += Glob(PHYTIUM_SDK_DIR+'/drivers/mio/fmio/*.c')
     path += [PHYTIUM_SDK_DIR + '/drivers/mio/fmio/']
 
-## device
-if GetDepend(['BSP_USING_DEVICE']):
-    src += Glob(PHYTIUM_SDK_DIR+'/drivers/device/fdevice/fdevice.c')
-    path += [PHYTIUM_SDK_DIR + '/drivers/device/fdevice/']
-    if GetDepend(['BSP_USING_ES8336']):
-        src +=  Glob(PHYTIUM_SDK_DIR+'/drivers/device/fes8336/fes8336.c') + Glob(PHYTIUM_SDK_DIR+'/drivers/i2c/fi2c/*.c')
-        path += [PHYTIUM_SDK_DIR + '/drivers/device/fes8336/'] + [PHYTIUM_SDK_DIR + '/drivers/i2c/fi2c/']
-    if GetDepend(['BSP_USING_ES8388']):
-        src +=  Glob(PHYTIUM_SDK_DIR+'/drivers/device/fes8388/fes8388.c') + Glob(PHYTIUM_SDK_DIR+'/drivers/i2c/fi2c/*.c')
-        path += [PHYTIUM_SDK_DIR + '/drivers/device/fes8388/'] + [PHYTIUM_SDK_DIR + '/drivers/i2c/fi2c/']
-    
 ## drivers_example
 if GetDepend(['BSP_USING_DRIVERS_EXAMPLE']):
     src += Glob(DRIVERS_EXAMPLE_DIR+'/*.c')
