@@ -12,9 +12,9 @@
 #include <rtdevice.h>
 #include <board.h>
 
-/* defined the LED1 pin: PC1 */
+/* defined the LED1 pin: PF10 */
 #define LED1_PIN    GET_PIN(F, 10)
-/* defined the LED2 pin: PC0 */
+/* defined the LED2 pin: PF9 */
 #define LED2_PIN    GET_PIN(F, 9)
 
 #define KEY0_PIN        GET_PIN(A, 0)
@@ -63,6 +63,8 @@ int main(void)
     rt_pin_mode(LED2_PIN, PIN_MODE_OUTPUT);
 
     /* KEY0: pull-down + rising edge; KEY1: pull-up + falling edge (active low) */
+    rt_pin_mode(KEY0_PIN, PIN_MODE_INPUT_PULLDOWN);
+    rt_pin_mode(KEY1_PIN, PIN_MODE_INPUT_PULLUP);
     rt_pin_attach_irq(KEY0_PIN, PIN_IRQ_MODE_RISING, key0_irq_callback, RT_NULL);
     rt_pin_attach_irq(KEY1_PIN, PIN_IRQ_MODE_FALLING, key1_irq_callback, RT_NULL);
     rt_pin_irq_enable(KEY0_PIN, PIN_IRQ_ENABLE);
