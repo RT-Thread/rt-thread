@@ -20,6 +20,32 @@ menu "On-chip Peripheral Drivers"
                 default 6000
                 depends on !RT_USING_SERIAL_V2
 
+            config BSP_UART_DEFAULT_BAUDRATE
+                int "UART default baudrate"
+                default 115200
+                help
+                    Default baudrate for all UART ports.
+
+            choice BSP_UART_DEFAULT_DATABITS
+                prompt "UART default data bits"
+                default BSP_UART_DATABITS_8
+                config BSP_UART_DATABITS_7
+                    bool "7 bits"
+                config BSP_UART_DATABITS_8
+                    bool "8 bits"
+                config BSP_UART_DATABITS_9
+                    bool "9 bits"
+            endchoice
+
+            choice BSP_UART_DEFAULT_STOPBITS
+                prompt "UART default stop bits"
+                default BSP_UART_STOPBITS_1
+                config BSP_UART_STOPBITS_1
+                    bool "1 bit"
+                config BSP_UART_STOPBITS_2
+                    bool "2 bits"
+            endchoice
+
             menuconfig BSP_USING_UART1
                 bool "Enable UART1"
                 default y
