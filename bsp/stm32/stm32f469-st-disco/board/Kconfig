@@ -119,6 +119,15 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_LTDC
         select BSP_USING_LCD_MIPI
         default n
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 24 if BSP_USING_ARDUINO
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 25 if BSP_USING_ARDUINO
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

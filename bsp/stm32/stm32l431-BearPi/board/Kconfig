@@ -205,6 +205,14 @@ menu "Onboard Peripheral Drivers"
         imply RTDUINO_USING_SERVO
         default n
 
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 22 if BSP_USING_ARDUINO
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 23 if BSP_USING_ARDUINO
+
     config BSP_USING_MPU6050
         bool "Enable MPU6050 to read accel data"
         select RT_USING_I2C

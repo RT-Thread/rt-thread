@@ -54,8 +54,8 @@ const pin_map_t pin_map_table[]=
     {D29, GET_PIN(B,13), "spi2"},       /* SPI-SCK */
     {D30, GET_PIN(B,14), "spi2"},       /* SPI-MISO */
     {D31, GET_PIN(B,15), "spi2"},       /* SPI-MOSI */
-    {D32, GET_PIN(C,7), "i2c1"},        /* I2C-SDA (Wire) */
-    {D33, GET_PIN(C,6), "i2c1"},        /* I2C-SCL (Wire) */
+    {D32, GET_PIN(C,7), "swi2c1"},        /* I2C-SDA (Wire) */
+    {D33, GET_PIN(C,6), "swi2c1"},        /* I2C-SCL (Wire) */
     {D34, GET_PIN(A,2), "uart2"},       /* Serial2-Tx */
     {D35, GET_PIN(A,3), "uart2"},       /* Serial2-Rx */
     {D36, GET_PIN(D,7)},                /* BSP: LCD CS */

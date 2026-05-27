@@ -26,8 +26,8 @@ const pin_map_t pin_map_table[]=
     {D2, GET_PIN(A,9), "uart1"},        /* Serial-TX */
     {D3, GET_PIN(G,9), "uart6"},        /* Serial-RX */
     {D4, GET_PIN(G,14), "uart6"},       /* Serial-TX */
-    {D5, GET_PIN(F,1), "i2c1"},         /* I2C-SCL (Wire) */
-    {D6, GET_PIN(F,0), "i2c1"},         /* I2C-SDA (Wire) */
+    {D5, GET_PIN(F,1), "swi2c1"},         /* I2C-SCL (Wire) */
+    {D6, GET_PIN(F,0), "swi2c1"},         /* I2C-SDA (Wire) */
     {D7, GET_PIN(E,9), "pwm1", 1},      /* PWM */
     {D8, GET_PIN(E,11), "pwm1", 2},     /* PWM */
     {D9, GET_PIN(E,13), "pwm1", 3},     /* PWM */

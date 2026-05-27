@@ -112,7 +112,16 @@ menu "Hardware Drivers Config"
                     help
                         Enable this option to include LVGL stress demo. -- LVGL9.3.x
             endif
-    endmenu
+
+    config RT_SOFT_I2C0_SCL_PIN_DEFAULT
+        int
+        default 514 if BSP_USING_ARDUINO
+
+    config RT_SOFT_I2C0_SDA_PIN_DEFAULT
+        int
+        default 515 if BSP_USING_ARDUINO
+
+endmenu
 
     menu "On-chip Peripheral Drivers"
 

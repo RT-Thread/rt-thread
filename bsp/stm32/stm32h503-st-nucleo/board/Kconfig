@@ -21,10 +21,19 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM3_CH4
         select RT_USING_I2C
         select RT_USING_SOFT_I2C
-        select RT_USING_SOFT_I2C2
+        select RT_USING_SOFT_I2C1
         select RTDUINO_USING_WIRE
         imply RTDUINO_USING_SERVO
         default n
+
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 22 if BSP_USING_ARDUINO
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 23 if BSP_USING_ARDUINO
 
 endmenu
 

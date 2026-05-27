@@ -278,6 +278,23 @@ menu "Onboard Peripheral Drivers"
         endif
 
 
+
+    config RT_SOFT_I2C4_SCL_PIN_DEFAULT
+        int
+        default 103 if BSP_USING_ARDUINO
+
+    config RT_SOFT_I2C4_SDA_PIN_DEFAULT
+        int
+        default 55 if BSP_USING_ARDUINO
+
+    config RT_SOFT_I2C5_SCL_PIN_DEFAULT
+        int
+        default 22 if BSP_USING_ARDUINO
+
+    config RT_SOFT_I2C5_SDA_PIN_DEFAULT
+        int
+        default 23 if BSP_USING_ARDUINO
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

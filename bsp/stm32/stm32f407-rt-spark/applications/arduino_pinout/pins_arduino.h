@@ -64,8 +64,8 @@
 
 #define LED_BUILTIN D33 /* Default Built-in LED */
 
-/* i2c4 : PD.7-SDA PG.7-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
+/* swi2c4 : PD.7-SDA PG.7-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c4"
 
 #define SS D32 /* Chip select pin of default spi */
 /* sspi1 : PG.5-SCK  PG.3-MISO  PG.1-MOSI */
