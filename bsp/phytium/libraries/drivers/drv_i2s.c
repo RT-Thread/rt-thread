@@ -80,20 +80,19 @@ static void FDdmaSetupInterrupt(FDdma *const instance)
 
 void dma_rx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
 {
-    /* 先通知框架数据就绪（使用刚才接收完的 buffer） */
+    /* 清除中断状态 */
+    FDdmaClearChanIrq(i2s_dev0.ddmac.config.base_addr, i2s_dev0.rx_channel, i2s_dev0.ddmac.config.caps);
+
+    /* 通知框架数据就绪 */
     rt_audio_rx_done(&i2s_dev0.audio, trans_rx_buf + (rx_buf_idx * TX_RX_BUF_LEN * 4), TX_RX_BUF_LEN * 4);
 
     /* 切换到另一个 buffer */
     rx_buf_idx ^= 1;
 
-    /* 重新配置 RX 使用另一个 buffer 并启动 */
-    FI2sDdmaDeviceRX(&i2s_dev0,
-                      FI2S_PCM_STREAM_CAPTURE,
-                      (const void *)(trans_rx_buf + rx_buf_idx * TX_RX_BUF_LEN * 4),
-                      TX_RX_BUF_LEN * 4,
-                      TX_RX_BUF_LEN * 4);
+    /* 更新 DDR 地址并重新配置通道（不停止，只更新地址） */
+    i2s_dev0.rx_config.ddr_addr = (uintptr)(trans_rx_buf + rx_buf_idx * TX_RX_BUF_LEN * 4);
+    FDdmaChanConfigure(&i2s_dev0.ddmac, i2s_dev0.rx_channel, &i2s_dev0.rx_config);
     FDdmaChanActive(&i2s_dev0.ddmac, i2s_dev0.rx_channel);
-    FDdmaStart(&i2s_dev0.ddmac);
 }
 
 void dma_tx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
