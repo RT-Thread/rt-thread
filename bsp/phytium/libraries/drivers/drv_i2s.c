@@ -20,6 +20,7 @@
 #include "fddma.h"
 #include "fddma_hw.h"
 #include "fddma_bdl.h"
+#include "interrupt.h"
 
 #define DBG_TAG              "drv.i2s"
 #define DBG_LVL              DBG_INFO
@@ -84,8 +85,9 @@ static FError FI2sCodecInit(u32 word_length)
 
 static FError FI2sRxInit(struct phytium_i2s_device *i2s_dev, u32 word_length)
 {
+    LOG_E("FI2sRxInit");
     FError ret = FI2S_SUCCESS;
-
+    FIOPadSetI2sMux();
     i2s_dev->i2s_ctrl.data_config.word_length = word_length;
     i2s_dev->i2s_config = *FI2sLookupConfig(i2s_ctrl_id);
 
@@ -104,6 +106,7 @@ static FError FI2sRxInit(struct phytium_i2s_device *i2s_dev, u32 word_length)
 static FError FI2sRxDdmaInit(struct phytium_i2s_device *i2s_dev)
 {
     FError ret = FI2S_SUCCESS;
+
     i2s_dev->ddmac_config = *FDdmaLookupConfig(ddma_ctrl_id);
 
     ret = FDdmaCfgInitialize(&i2s_dev->ddmac, &i2s_dev->ddmac_config);
@@ -121,7 +124,7 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, u32 work_mode
     FError ret = FI2S_SUCCESS;
     fsize_t bdl_num = total_bytes / per_buff_len;
 
-    rt_hw_cpu_dcache_clean((uintptr)src, total_bytes);
+    rt_hw_cpu_dcache_invalidate((uintptr)src, total_bytes);
 
     for (u32 chan = FDDMA_CHAN_0; chan < FDDMA_NUM_OF_CHAN; chan++) /* 清除中断 */
     {
@@ -155,7 +158,7 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, u32 work_mode
     }
 
     i2s_dev->rx_config.slave_id = 0U,
-    i2s_dev->rx_config.req_mode = AUDIO_PCM_STREAM_CAPTURE;
+    i2s_dev->rx_config.req_mode = FI2S_PCM_STREAM_CAPTURE;
     i2s_dev->rx_config.ddr_addr = (uintptr)src;
     i2s_dev->rx_config.dev_addr = i2s_dev->i2s_config.base_addr + FI2S_RXDMA ;
     i2s_dev->rx_config.trans_len = total_bytes;
@@ -174,7 +177,6 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, u32 work_mode
 
     return ret;
 }
-
 
 static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, u32 work_mode, const void *src, fsize_t total_bytes, fsize_t per_buff_len)
 {
@@ -215,7 +217,7 @@ static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, u32 work_mode
     }
 
     i2s_dev->tx_config.slave_id = 0U,
-    i2s_dev->tx_config.req_mode = AUDIO_PCM_STREAM_PLAYBACK;
+    i2s_dev->tx_config.req_mode = FI2S_PCM_STREAM_PLAYBACK;
     i2s_dev->tx_config.ddr_addr = (uintptr)src;
     i2s_dev->tx_config.dev_addr = i2s_dev->i2s_config.base_addr + FI2S_TXDMA ;
     i2s_dev->tx_config.trans_len = total_bytes;
@@ -235,15 +237,25 @@ static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, u32 work_mode
     return ret;
 }
 
-void dma_transfer_callback(void *args)
+void dma_rx_channel_transfer_callback(void *args)
 {
+    LOG_E("dma_rx_channel_transfer_callback");
 #if defined(RT_USING_I2S0)
-    rt_audio_rx_done(&i2s_dev0.audio, &i2s_dev0.rx_fifo[0], TX_RX_BUF_LEN);
+    rt_audio_rx_done(&i2s_dev0.audio, i2s_dev0.rx_fifo, TX_RX_BUF_LEN);
+#endif
+}
+
+void dma_tx_channel_transfer_callback(void *args)
+{
+    LOG_E("dma_tx_channel_transfer_callback");
+#if defined(RT_USING_I2S0)
+    rt_audio_tx_complete(&i2s_dev0.audio);
 #endif
 }
 
 static rt_err_t i2s_getcaps(struct rt_audio_device *audio, struct rt_audio_caps *caps)
 {
+    LOG_E("i2s_getcaps");
     rt_err_t result = RT_EOK;
     struct phytium_i2s_device *i2s_dev;
 
@@ -257,7 +269,7 @@ static rt_err_t i2s_getcaps(struct rt_audio_device *audio, struct rt_audio_caps 
         switch (caps->sub_type)
         {
         case AUDIO_TYPE_QUERY:
-            caps->udata.mask = AUDIO_TYPE_OUTPUT | AUDIO_TYPE_MIXER;
+            caps->udata.mask = AUDIO_TYPE_INPUT | AUDIO_TYPE_OUTPUT | AUDIO_TYPE_MIXER;
             break;
 
         default:
@@ -318,6 +330,29 @@ static rt_err_t i2s_getcaps(struct rt_audio_device *audio, struct rt_audio_caps 
         break;
     }
 
+    case AUDIO_TYPE_INPUT:
+    {
+        switch (caps->sub_type)
+        {
+        case AUDIO_DSP_PARAM:
+        {
+            struct rt_audio_configure config = caps->udata.config;
+
+            i2s_dev->config.channels   = config.channels;
+            i2s_dev->config.samplebits = config.samplebits;
+            i2s_dev->config.samplerate = config.samplerate;
+
+            break;
+        }
+
+        default:
+            result = -RT_ERROR;
+            break;
+        }
+
+        break;
+    }
+
     default:
         result = -RT_ERROR;
         break;
@@ -328,6 +363,7 @@ static rt_err_t i2s_getcaps(struct rt_audio_device *audio, struct rt_audio_caps 
 
 static rt_err_t i2s_configure(struct rt_audio_device *audio, struct rt_audio_caps *caps)
 {
+    LOG_E("i2s_configure");
     rt_err_t result = RT_EOK;
     struct phytium_i2s_device *i2s_dev;
     struct rt_audio_replay *replay;
@@ -337,16 +373,57 @@ static rt_err_t i2s_configure(struct rt_audio_device *audio, struct rt_audio_cap
 
     switch (caps->main_type)
     {
-    case AUDIO_TYPE_INPUT:
+    case AUDIO_TYPE_MIXER:
+    {
+        switch (caps->sub_type)
+        {
+        case AUDIO_MIXER_VOLUME:
+        {
+            break;
+        }
+
+        case AUDIO_MIXER_EXTEND:
+
+        break;
+
+        default:
+            result = -RT_ERROR;
+            break;
+        }
+
+        break;
+    }
+
+    case AUDIO_TYPE_OUTPUT:
     {
         switch (caps->sub_type)
         {
         case AUDIO_DSP_PARAM:
         {
+
             struct rt_audio_configure config = caps->udata.config;
-            i2s_dev->config.channels = config.channels;
+
+            i2s_dev->config.channels   = config.channels;
             i2s_dev->config.samplebits = config.samplebits;
             i2s_dev->config.samplerate = config.samplerate;
+
+            break;
+        }
+
+        case AUDIO_DSP_SAMPLERATE:
+        {
+            break;
+        }
+
+        case AUDIO_DSP_CHANNELS:
+        {
+            break;
+        }
+
+        case AUDIO_DSP_SAMPLEBITS:
+        {
+            /* not support */
+            break;
         }
 
         default:
@@ -360,11 +437,13 @@ static rt_err_t i2s_configure(struct rt_audio_device *audio, struct rt_audio_cap
     default:
         break;
     }
+
     return result;
 }
 
 static rt_err_t i2s_init(struct rt_audio_device *audio)
 {
+    LOG_E("i2s_init");
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
@@ -389,26 +468,32 @@ static rt_err_t i2s_init(struct rt_audio_device *audio)
         printf("Init the I2S failed.\r\n");
         return ret;
     }
-
+    i2s_dev->rx_channel = 1;
+    i2s_dev->tx_channel = 0;
     FDdmaSetupInterrupt(&i2s_dev->ddmac);
-    FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->rx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_transfer_callback, (void *)i2s_dev);
+    FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->rx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_rx_channel_transfer_callback, (void *)i2s_dev);
+    FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, (void *)i2s_dev);
 
     return ret;
 }
 
 static rt_err_t i2s_start(struct rt_audio_device *audio, int stream)
 {
+    LOG_E("i2s_start");
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
 
     if (stream == AUDIO_STREAM_REPLAY)
     {
-
+        LOG_E("stream == AUDIO_STREAM_REPLAY");
+        FI2sDdmaDeviceTX(i2s_dev, FI2S_PCM_STREAM_PLAYBACK, i2s_dev->tx_fifo, TX_RX_BUF_LEN, PER_BUFFER_SIZE);
+        FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->tx_channel);
     }
     else if(stream == AUDIO_STREAM_RECORD)
     {
-        FI2sDdmaDeviceRX(i2s_dev, AUDIO_PCM_STREAM_CAPTURE, &i2s_dev->rx_fifo[0], TX_RX_BUF_LEN, PER_BUFFER_SIZE);
+        LOG_E("stream == AUDIO_STREAM_RECORD");
+        FI2sDdmaDeviceRX(i2s_dev, FI2S_PCM_STREAM_CAPTURE, i2s_dev->rx_fifo, TX_RX_BUF_LEN, PER_BUFFER_SIZE);
         FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->rx_channel);
     }
 
@@ -441,13 +526,13 @@ static int i2s_controller_init(struct phytium_i2s_device *i2s_dev)
 {
     struct rt_audio_device *audio = &i2s_dev->audio;
 
-    i2s_dev->rx_fifo = &trans_buf[0];
+    i2s_dev->rx_fifo = trans_buf[0];
     if (i2s_dev->rx_fifo == RT_NULL)
     {
         return -RT_ENOMEM;
     }
 
-    i2s_dev->tx_fifo = &trans_buf[1];
+    i2s_dev->tx_fifo = trans_buf[1];
     if (i2s_dev->tx_fifo == RT_NULL)
     {
         return -RT_ENOMEM;
