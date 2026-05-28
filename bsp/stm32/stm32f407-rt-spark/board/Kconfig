@@ -279,6 +279,30 @@ menu "Onboard Peripheral Drivers"
 
 
 
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 24 if BSP_USING_EEPROM
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 25 if BSP_USING_EEPROM
+
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 81 if BSP_USING_AP3216C || BSP_USING_ICM20608 || BSP_USING_AUDIO
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 80 if BSP_USING_AP3216C || BSP_USING_ICM20608 || BSP_USING_AUDIO
+
+    config RT_SOFT_I2C3_SCL_PIN_DEFAULT
+        int
+        default 64 if BSP_USING_AHT21
+
+    config RT_SOFT_I2C3_SDA_PIN_DEFAULT
+        int
+        default 65 if BSP_USING_AHT21
+
     config RT_SOFT_I2C4_SCL_PIN_DEFAULT
         int
         default 103 if BSP_USING_ARDUINO

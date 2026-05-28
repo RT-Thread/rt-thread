@@ -164,6 +164,14 @@ menu "Hardware Drivers Config"
                 endif
             endif
 
+        config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+            int
+            default 24 if BSP_USING_OV5640
+
+        config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+            int
+            default 25 if BSP_USING_OV5640
+
     endmenu
 
 endmenu

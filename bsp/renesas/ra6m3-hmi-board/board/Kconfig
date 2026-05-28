@@ -121,6 +121,14 @@ menu "Hardware Drivers Config"
         int
         default 515 if BSP_USING_ARDUINO
 
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 514 if BSP_USING_TOUCH
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 515 if BSP_USING_TOUCH
+
 endmenu
 
     menu "On-chip Peripheral Drivers"

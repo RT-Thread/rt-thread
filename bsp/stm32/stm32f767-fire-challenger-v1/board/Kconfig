@@ -54,6 +54,14 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_PIN
         default n
 
+    config RT_SOFT_I2C4_SCL_PIN_DEFAULT
+        int
+        default 22 if BSP_USING_MPU6050
+
+    config RT_SOFT_I2C4_SDA_PIN_DEFAULT
+        int
+        default 23 if BSP_USING_MPU6050
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

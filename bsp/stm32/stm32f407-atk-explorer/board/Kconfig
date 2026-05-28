@@ -169,6 +169,22 @@ menu "Onboard Peripheral Drivers"
                 default n
         endif
 
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 24 if BSP_USING_EEPROM || BSP_USING_MPU6050
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 25 if BSP_USING_EEPROM || BSP_USING_MPU6050
+
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 16 if BSP_USING_TOUCH_CAP
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 91 if BSP_USING_TOUCH_CAP
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

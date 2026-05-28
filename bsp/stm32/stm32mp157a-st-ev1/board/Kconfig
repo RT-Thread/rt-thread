@@ -118,6 +118,22 @@ menu "Onboard Peripheral Drivers"
 
         endif
 
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 116 if BSP_USING_AUDIO || BSP_USING_DCMI
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 117 if BSP_USING_AUDIO || BSP_USING_DCMI
+
+    config RT_SOFT_I2C3_SCL_PIN_DEFAULT
+        int
+        default 180 if BSP_USING_PMIC
+
+    config RT_SOFT_I2C3_SDA_PIN_DEFAULT
+        int
+        default 181 if BSP_USING_PMIC
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

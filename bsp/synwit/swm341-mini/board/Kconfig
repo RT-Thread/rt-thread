@@ -361,6 +361,14 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    config RT_SOFT_I2C0_SCL_PIN_DEFAULT
+        int
+        default 1 if BSP_USING_GT9147
+
+    config RT_SOFT_I2C0_SDA_PIN_DEFAULT
+        int
+        default 0 if BSP_USING_GT9147
+
 endmenu
 
 menu "Onboard Peripheral Drivers"

@@ -70,6 +70,14 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_MPU6XXX_SAMPLE
         select PKG_USING_MPU6XXX_LATEST_VERSION
         default n
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 22 if BSP_USING_MPU6050
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 25 if BSP_USING_MPU6050
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

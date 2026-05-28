@@ -42,6 +42,14 @@ menu "Onboard Peripheral Drivers"
         depends on BSP_USING_ETH
         default y
 
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 22 if BSP_USING_EEPROM
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 23 if BSP_USING_EEPROM
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

@@ -761,7 +761,7 @@ int rt_hw_gt9147_port(void)
     rt_uint8_t rst;
 
     rst = GT9147_RST_PIN;
-    config.dev_name = "i2c0";
+    config.dev_name = "swi2c0";
     config.irq_pin.pin = GT9147_IRQ_PIN;
     config.irq_pin.mode = PIN_MODE_INPUT_PULLDOWN;
     config.user_data = &rst;

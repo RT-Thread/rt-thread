@@ -37,6 +37,14 @@ menu "Onboard Peripheral Drivers"
         default n
 
     endmenu
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 116 if BSP_USING_TOUCH
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 117 if BSP_USING_TOUCH
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

@@ -64,6 +64,14 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SDRAM
         default n
 
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 116 if BSP_USING_MPU9250 || BSP_USING_ETH
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 117 if BSP_USING_MPU9250 || BSP_USING_ETH
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

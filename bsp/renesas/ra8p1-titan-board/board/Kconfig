@@ -743,7 +743,7 @@ menu "Hardware Drivers Config"
                 config SENSOR_BUS_NAME
                     string "Sensor I2C Bus Name"
                     depends on RT_USING_I2C
-                    default "i2c1"
+                    default "swi2c1"
 
                 config SENSOR_MT9V034
                     int "Sensor support MT9V034"
@@ -778,6 +778,14 @@ menu "Hardware Drivers Config"
                     range 0 1
                     default 0
             endif
+
+        config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+            int
+            default 1292 if BSP_USING_CEU_CAMERA
+
+        config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+            int
+            default 1291 if BSP_USING_CEU_CAMERA
 
         config BSP_USING_G2D
             bool

@@ -80,6 +80,14 @@ menu "Onboard Peripheral Drivers"
             default n
         endif
 
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 116 if BSP_USING_MPU9250 || BSP_USING_ETH || BSP_USING_AUDIO
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 117 if BSP_USING_MPU9250 || BSP_USING_ETH || BSP_USING_AUDIO
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

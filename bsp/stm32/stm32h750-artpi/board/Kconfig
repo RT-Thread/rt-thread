@@ -120,6 +120,22 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_SAL
         default n
 
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 127 if MEDIA_IO_USING_TOUCH
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 125 if MEDIA_IO_USING_TOUCH
+
+    config RT_SOFT_I2C3_SCL_PIN_DEFAULT
+        int
+        default 123 if MEDIA_IO_USING_TOUCH
+
+    config RT_SOFT_I2C3_SDA_PIN_DEFAULT
+        int
+        default 124 if MEDIA_IO_USING_TOUCH
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

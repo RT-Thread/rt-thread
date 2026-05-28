@@ -16,7 +16,7 @@
 #include "ft6236.h"
 
 #define TOUCH_DEVICE_NAME    "touch_ft"    /* Touch device name */
-#define TOUCH_DEVICE_I2C_BUS "i2c2"        /* SCL -> PH15(127), SDA -> PH13(125) */
+#define TOUCH_DEVICE_I2C_BUS "swi2c2"      /* SCL -> PH15(127), SDA -> PH13(125) */
 #define REST_PIN             GET_PIN(A, 3) /* reset pin */
 #define USER_BUTTON_PIN      GET_PIN(H, 4) /* Reserve for LV_INDEV_TYPE_BUTTON */
 

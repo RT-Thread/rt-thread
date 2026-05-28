@@ -33,6 +33,14 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_SOFT_I2C
         select RT_USING_SOFT_I2C2
         default n
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 26 if BSP_USING_EEPROM
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 27 if BSP_USING_EEPROM
+
 endmenu
 
 menu "On-chip Peripheral Drivers"

@@ -18,6 +18,14 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_SOFT_I2C1
         default n
 
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 24 if BSP_USING_OV2640
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 25 if BSP_USING_OV2640
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
