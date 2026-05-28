@@ -72,7 +72,8 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 24
+#define RT_NAME_MAX 32
+#define RT_USING_SMART
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -88,6 +89,7 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 16384
 #define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -120,13 +122,15 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
+#define KERNEL_VADDR_START 0xffffffc000000000
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV64
@@ -180,10 +184,24 @@
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
+#define RT_USING_DFS_PTYFS
+#define RT_USING_PAGECACHE
+
+/* page cache config */
+
+#define RT_PAGECACHE_COUNT 4096
+#define RT_PAGECACHE_ASPACE_COUNT 1024
+#define RT_PAGECACHE_PRELOAD 4
+#define RT_PAGECACHE_HASH_NR 1024
+#define RT_PAGECACHE_GC_WORK_LEVEL 90
+#define RT_PAGECACHE_GC_STOP_LEVEL 70
+/* end of page cache config */
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
 
+#define RT_USING_DM
+#define RT_USING_DEV_BUS
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
@@ -193,14 +211,18 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_CPUTIME
-#define RT_USING_CPUTIME_RISCV
-#define CPUTIME_TIMER_FREQ 10000000
+#define RT_USING_SERIAL_BYPASS
+#define RT_USING_CLOCK_TIME
+#define CLOCK_TIMER_FREQ 0
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
 #define RT_USING_RTC
 #define RT_USING_SOFT_RTC
+
+/* Power Management (PM) Domains device drivers */
+
+/* end of Power Management (PM) Domains device drivers */
 #define RT_USING_VIRTIO
 #define RT_USING_VIRTIO10
 #define RT_USING_VIRTIO_BLK
@@ -209,8 +231,14 @@
 #define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
 #define RT_USING_VIRTIO_GPU
 #define RT_USING_VIRTIO_INPUT
+#define RT_USING_OFW
+#define RT_FDT_EARLYCON_MSG_SIZE 128
+#define RT_USING_OFW_BUS_RANGES_NUMBER 8
 #define RT_USING_PIN
-#define RT_USING_KTIME
+#define RT_USING_CLK
+
+/* SoC (System on Chip) Drivers */
+
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -233,6 +261,9 @@
 #define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_SELECT
+#define RT_USING_POSIX_EPOLL
+#define RT_USING_POSIX_SIGNALFD
+#define RT_SIGNALFD_MAX_NUM 10
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_AIO
 #define RT_USING_POSIX_DELAY
@@ -320,6 +351,10 @@
 
 /* Utilities */
 
+#define RT_USING_UTEST
+#define UTEST_THR_STACK_SIZE 4096
+#define UTEST_THR_PRIORITY 20
+#define RT_UTEST_MAX_OPTIONS 64
 #define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
@@ -332,11 +367,23 @@
 
 #define RT_PAGE_AFFINITY_BLOCK_SIZE 0x1000
 #define RT_PAGE_MAX_ORDER 11
+#define RT_USING_MEMBLOCK
+#define RT_INIT_MEMORY_REGIONS 128
 
 /* Debugging */
 
 /* end of Debugging */
 /* end of Memory management */
+#define RT_USING_LWP
+#define LWP_USING_RUNTIME
+#define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
+#define RT_CH_MSG_MAX_NR 1024
+#define LWP_TID_MAX_NR 64
+#define RT_LWP_SHM_MAX_NR 64
+#define RT_USING_LDSO
+#define LWP_USING_TERMINAL
+#define LWP_PTY_MAX_PARIS_LIMIT 64
 
 /* Using USB legacy version */
 
@@ -346,207 +393,10 @@
 /* RT-Thread Utestcases */
 
 /* end of RT-Thread Utestcases */
-
-/* RT-Thread online packages */
-
-/* IoT - internet of things */
-
-
-/* Wi-Fi */
-
-/* Marvell WiFi */
-
-/* end of Marvell WiFi */
-
-/* Wiced WiFi */
-
-/* end of Wiced WiFi */
-
-/* CYW43012 WiFi */
-
-/* end of CYW43012 WiFi */
-
-/* BL808 WiFi */
-
-/* end of BL808 WiFi */
-
-/* CYW43439 WiFi */
-
-/* end of CYW43439 WiFi */
-/* end of Wi-Fi */
-
-/* IoT Cloud */
-
-/* end of IoT Cloud */
-/* end of IoT - internet of things */
-
-/* security packages */
-
-/* end of security packages */
-
-/* language packages */
-
-/* JSON: JavaScript Object Notation, a lightweight data-interchange format */
-
-/* end of JSON: JavaScript Object Notation, a lightweight data-interchange format */
-
-/* XML: Extensible Markup Language */
-
-/* end of XML: Extensible Markup Language */
-/* end of language packages */
-
-/* multimedia packages */
-
-/* LVGL: powerful and easy-to-use embedded GUI library */
-
-/* end of LVGL: powerful and easy-to-use embedded GUI library */
-
-/* u8g2: a monochrome graphic library */
-
-/* end of u8g2: a monochrome graphic library */
-/* end of multimedia packages */
-
-/* tools packages */
-
-/* end of tools packages */
-
-/* system packages */
-
-/* enhanced kernel services */
-
-/* end of enhanced kernel services */
-
-/* acceleration: Assembly language or algorithmic acceleration packages */
-
-/* end of acceleration: Assembly language or algorithmic acceleration packages */
-
-/* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
-
-/* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
-
-/* Micrium: Micrium software products porting for RT-Thread */
-
-/* end of Micrium: Micrium software products porting for RT-Thread */
-/* end of system packages */
-
-/* peripheral libraries and drivers */
-
-/* HAL & SDK Drivers */
-
-/* STM32 HAL & SDK Drivers */
-
-/* end of STM32 HAL & SDK Drivers */
-
-/* Infineon HAL Packages */
-
-/* end of Infineon HAL Packages */
-
-/* Kendryte SDK */
-
-/* end of Kendryte SDK */
-
-/* WCH HAL & SDK Drivers */
-
-/* end of WCH HAL & SDK Drivers */
-
-/* AT32 HAL & SDK Drivers */
-
-/* end of AT32 HAL & SDK Drivers */
-
-/* HC32 DDL Drivers */
-
-/* end of HC32 DDL Drivers */
-
-/* NXP HAL & SDK Drivers */
-
-/* end of NXP HAL & SDK Drivers */
-
-/* NUVOTON Drivers */
-
-/* end of NUVOTON Drivers */
-
-/* GD32 Drivers */
-
-/* end of GD32 Drivers */
-/* end of HAL & SDK Drivers */
-
-/* sensors drivers */
-
-/* end of sensors drivers */
-
-/* touch drivers */
-
-/* end of touch drivers */
-/* end of peripheral libraries and drivers */
-
-/* AI packages */
-
-/* end of AI packages */
-
-/* Signal Processing and Control Algorithm Packages */
-
-/* end of Signal Processing and Control Algorithm Packages */
-
-/* miscellaneous packages */
-
-/* project laboratory */
-
-/* end of project laboratory */
-
-/* samples: kernel and components samples */
-
-/* end of samples: kernel and components samples */
-
-/* entertainment: terminal games and other interesting software packages */
-
-/* end of entertainment: terminal games and other interesting software packages */
-/* end of miscellaneous packages */
-
-/* Arduino libraries */
-
-
-/* Projects and Demos */
-
-/* end of Projects and Demos */
-
-/* Sensors */
-
-/* end of Sensors */
-
-/* Display */
-
-/* end of Display */
-
-/* Timing */
-
-/* end of Timing */
-
-/* Data Processing */
-
-/* end of Data Processing */
-
-/* Data Storage */
-
-/* Communication */
-
-/* end of Communication */
-
-/* Device Control */
-
-/* end of Device Control */
-
-/* Other */
-
-/* end of Other */
-
-/* Signal IO */
-
-/* end of Signal IO */
-
-/* Uncategorized */
-
-/* end of Arduino libraries */
-/* end of RT-Thread online packages */
+#define PKG_USING_LVGL
+#define PKG_LVGL_THREAD_STACK_SIZE 8192
+#define PKG_LVGL_THREAD_PRIO 10
+#define PKG_LVGL_DISP_REFR_PERIOD 33
 
 /* RISC-V QEMU virt64 configs */
 
@@ -561,4 +411,6 @@
 #define ENABLE_FPU
 #define __STACKSIZE__ 16384
 
+#define PKG_USING_LWEXT4
+#define RT_USING_DFS_LWEXT4
 #endif

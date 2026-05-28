@@ -32,6 +32,12 @@
 #define DMA_BASE_ADDR               (0x80804000UL)
 #define DMA_IO_SIZE                 (0x00004000UL)
 
+#define VO_BASE_ADDR                (0x90840000UL)
+#define VO_IO_SIZE                  (0x00010000UL)
+
+#define DSI_BASE_ADDR               (0x90850000UL)
+#define DSI_IO_SIZE                 (0x00001000UL)
+
 #define PMU_BASE_ADDR               (0x91000000UL)
 #define PMU_IO_SIZE                 (0x00000C00UL)
 
@@ -67,6 +73,9 @@
 
 #define TS_BASE_ADDR                (0x91107000UL)
 #define TS_IO_SIZE                  (0x00000800UL)
+
+#define STC_BASE_ADDR               (0x91108000UL)
+#define STC_IO_SIZE                 (0x00001000UL)
 
 #define UART0_BASE_ADDR             (0x91400000UL)
 #define UART0_IO_SIZE               (0x00001000UL)

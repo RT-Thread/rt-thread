@@ -33,6 +33,9 @@ static int _fetch_page(rt_varea_t varea, struct rt_aspace_fault_msg *msg)
         err = rt_varea_map_with_msg(varea, msg);
         err = (err == RT_EOK ? MM_FAULT_FIXABLE_TRUE : MM_FAULT_FIXABLE_FALSE);
     }
+    else
+    {
+    }
     return err;
 }
 
@@ -100,6 +103,10 @@ static int _exec_fault(rt_varea_t varea, void *pa, struct rt_aspace_fault_msg *m
         RT_ASSERT(pa == ARCH_MAP_FAILED);
         RT_ASSERT(!(varea->flag & MMF_PREFETCH));
         err = _fetch_page(varea, msg);
+    }
+    else
+    {
+        /* signal a fault to user? */
     }
     return err;
 }

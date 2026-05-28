@@ -30,7 +30,7 @@ else:
 if PLATFORM == 'gcc':
     # toolchains
     #PREFIX  = 'riscv64-unknown-elf-'
-    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-linux-musl-'
+    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'riscv64-linux-musleabi-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'

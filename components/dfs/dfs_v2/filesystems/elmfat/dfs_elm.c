@@ -444,7 +444,7 @@ int dfs_elm_open(struct dfs_file *file)
         }
 
         file->vnode->data = dir;
-        rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
+        rt_mutex_init(&file->vnode->lock, "elm_vn", RT_IPC_FLAG_PRIO);
         return RT_EOK;
     }
     else
@@ -485,7 +485,7 @@ int dfs_elm_open(struct dfs_file *file)
             file->vnode->size = f_size(fd);
             file->vnode->type = FT_REGULAR;
             file->vnode->data = fd;
-            rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
+            rt_mutex_init(&file->vnode->lock, "elm_vn", RT_IPC_FLAG_PRIO);
 
             if (file->flags & O_APPEND)
             {

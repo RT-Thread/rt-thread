@@ -38,7 +38,7 @@ int mnt_init(void)
         rt_thread_mdelay(100); // Yield to the scheduler
     }
 
-    if (dfs_mount(BSP_SD_MNT_DEVNAME, "/", "elm", 0, 0) != 0)
+    if (dfs_mount(BSP_SD_MNT_DEVNAME, "/", "ext", 0, 0) != 0)
     {
         rt_kprintf("%s mounted on / failed!\n", BSP_SD_MNT_DEVNAME);
     }

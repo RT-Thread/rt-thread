@@ -2,26 +2,18 @@
 
 #include <rtthread.h>
 
+#include "board.h"
+#include "ioremap.h"
+
 #include <string.h>
 
-#define VO_REG_BASE_PHYS        0x09084000UL
-#define VO_REG_SIZE             0x00010000UL
-#define DSI_REG_BASE_PHYS       0x09085000UL
-#define DSI_REG_SIZE            0x00001000UL
-#define SYSCTL_REG_BASE_PHYS    0x91101000UL
-#define DSI_PHY_REG_BASE_PHYS   0x09085400UL
-#define CLOCK_REG_BASE_PHYS     0x91100000UL
-#define TIMESTAMP_REG_BASE_PHYS 0x91108000UL
-#define AUX_REG_SIZE            0x00001000UL
+#define DSI_PHY_REG_BASE_PHYS   (DSI_BASE_ADDR + 0x400UL)
+#define DSI_PHY_REG_SIZE        (DSI_IO_SIZE - 0x400UL)
 
 struct vo_display_remap *display_remap;
 
 static struct vo_display_remap g_display_remap;
 static int g_remap_ready;
-
-extern void *rt_ioremap(unsigned long phys_addr, unsigned long size);
-extern void *rt_ioremap_nocache(unsigned long phys_addr, unsigned long size);
-extern void rt_iounmap(void *addr);
 
 static void unmap_if_present(void **addr)
 {
@@ -60,12 +52,12 @@ int vo_display_remap_init(void)
 
     memset(&g_display_remap, 0, sizeof(g_display_remap));
 
-    g_display_remap.vo_base = rt_ioremap_nocache(VO_REG_BASE_PHYS, VO_REG_SIZE);
-    g_display_remap.dsi_base = rt_ioremap_nocache(DSI_REG_BASE_PHYS, DSI_REG_SIZE);
-    g_display_remap.sysctl_base = rt_ioremap(SYSCTL_REG_BASE_PHYS, AUX_REG_SIZE);
-    g_display_remap.phy_base = rt_ioremap(DSI_PHY_REG_BASE_PHYS, AUX_REG_SIZE);
-    g_display_remap.clock_base = rt_ioremap(CLOCK_REG_BASE_PHYS, AUX_REG_SIZE);
-    g_display_remap.timestamp_base = rt_ioremap(TIMESTAMP_REG_BASE_PHYS, AUX_REG_SIZE);
+    g_display_remap.vo_base = rt_ioremap_nocache((void *)VO_BASE_ADDR, VO_IO_SIZE);
+    g_display_remap.dsi_base = rt_ioremap_nocache((void *)DSI_BASE_ADDR, DSI_IO_SIZE);
+    g_display_remap.sysctl_base = rt_ioremap((void *)RMU_BASE_ADDR, RMU_IO_SIZE);
+    g_display_remap.phy_base = rt_ioremap_nocache((void *)DSI_PHY_REG_BASE_PHYS, DSI_PHY_REG_SIZE);
+    g_display_remap.clock_base = rt_ioremap((void *)CMU_BASE_ADDR, CMU_IO_SIZE);
+    g_display_remap.timestamp_base = rt_ioremap((void *)STC_BASE_ADDR, STC_IO_SIZE);
 
     if (g_display_remap.vo_base == RT_NULL ||
         g_display_remap.dsi_base == RT_NULL ||

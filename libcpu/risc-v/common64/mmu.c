@@ -105,15 +105,6 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     current_mmu_table[rt_hw_cpu_id()] = (void *)ptr;
 #endif
 
-#ifdef ARCH_REMAP_KERNEL
-    /*
-     * Bring-up guard: keep low physical memory identity-mapped while switching
-     * away from the early page table. This validates whether any low-address
-     * boot context is still live during the transition.
-     */
-    ((rt_ubase_t *)ptr)[0] = COMBINEPTE(0, MMU_MAP_EARLY);
-    rt_hw_cpu_dcache_clean((void *)ptr, sizeof(rt_ubase_t));
-#endif
     write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
                         ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
     rt_hw_tlb_invalidate_all_local();
@@ -1009,6 +1000,19 @@ void *rt_hw_mmu_pgtbl_create(void)
         return RT_NULL;
     }
     rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
+
+#ifdef RT_USING_SMART
+    {
+        int i;
+        int start_idx = USER_VADDR_START >> VPN2_SHIFT;
+        int end_idx = USER_VADDR_TOP >> VPN2_SHIFT;
+        for (i = start_idx; i <= end_idx; i++)
+        {
+            mmu_table[i] = 0;
+        }
+    }
+#endif
+
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
 
     return mmu_table;

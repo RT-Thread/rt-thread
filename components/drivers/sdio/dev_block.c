@@ -375,7 +375,6 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
             host->max_dma_segs * host->max_seg_size,
             host->max_blk_count * host->max_blk_size) >> 9;
     blk_dev->geometry.bytes_per_sector = 1 << 9;
-    blk_dev->geometry.block_size = card->card_blksize;
     blk_dev->geometry.sector_count = card->card_capacity * (1024 / 512);
 
     /* Set blk size before partitions probe, Why? */
@@ -383,6 +382,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     {
         goto _fail;
     }
+    blk_dev->geometry.block_size = blk_dev->geometry.bytes_per_sector;
     rt_thread_mdelay(1);
 
 #ifdef RT_USING_DM

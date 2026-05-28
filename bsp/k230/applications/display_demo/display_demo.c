@@ -13,7 +13,7 @@ static void display_demo(int argc, char** argv)
 {
     rt_device_t fb;
     struct rt_device_graphic_info info;
-    rt_uint16_t *line;
+    rt_uint16_t *fbmem;
     rt_uint16_t colors[] = {
         rgb565(255, 0, 0),
         rgb565(0, 255, 0),
@@ -45,14 +45,16 @@ static void display_demo(int argc, char** argv)
         return;
     }
 
-    line = rt_malloc(info.pitch);
-    if (!line) {
-        rt_kprintf("display_demo: no memory\n");
+    fbmem = (rt_uint16_t *)info.framebuffer;
+    if (!fbmem || info.pitch < info.width * sizeof(rt_uint16_t)) {
+        rt_kprintf("display_demo: invalid framebuffer\n");
         rt_device_close(fb);
         return;
     }
 
     for (rt_uint16_t y = 0; y < info.height; y++) {
+        rt_uint16_t *line = (rt_uint16_t *)((rt_uint8_t *)fbmem + y * info.pitch);
+
         for (rt_uint16_t x = 0; x < info.width; x++) {
             rt_uint16_t band = (x * color_count) / info.width;
             rt_uint16_t shade = (y * 31) / info.height;
@@ -61,11 +63,9 @@ static void display_demo(int argc, char** argv)
             if (band == color_count - 1)
                 line[x] = (shade << 11) | (shade << 6) | shade;
         }
-        rt_device_write(fb, y * info.pitch, line, info.pitch);
     }
 
     rt_device_control(fb, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
-    rt_free(line);
     rt_device_close(fb);
 
     rt_kprintf("display_demo: wrote %ux%u RGB565 test pattern\n", info.width, info.height);

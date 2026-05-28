@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 16
+#define RT_NAME_MAX 32
 #define RT_USING_SMART
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
@@ -90,6 +90,7 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
 #define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -120,7 +121,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -130,11 +132,10 @@
 #define KERNEL_VADDR_START 0xffffffc000000000
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
-#define ARCH_RISCV_VECTOR
-#define ARCH_VECTOR_VLEN_128
-#define ARCH_RISCV_FPU_D
 #define ARCH_RISCV64
+#define ARCH_RISCV_XUANTIE
 #define ARCH_USING_NEW_CTX_SWITCH
+#define CONFIG_XUANTIE_SVPBMT 1
 #define ARCH_REMAP_KERNEL
 
 /* RT-Thread Components */
@@ -183,7 +184,6 @@
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_PTYFS
-#define RT_USING_DFS_CROMFS
 #define RT_USING_DFS_TMPFS
 #define RT_USING_PAGECACHE
 
@@ -210,13 +210,13 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_SERIAL_BYPASS
-#define RT_USING_CPUTIME
-#define RT_USING_CPUTIME_RISCV
-#define CPUTIME_TIMER_FREQ 25000000
+#define RT_USING_CLOCK_TIME
+#define CLOCK_TIMER_FREQ 250000
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
 #define RT_USING_RTC
+#define RT_USING_SOFT_RTC
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 8192
 #define RT_SDIO_THREAD_PRIORITY 15
@@ -231,7 +231,6 @@
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
 #define RT_USING_PIN
-#define RT_USING_KTIME
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -265,6 +264,8 @@
 
 /* Interprocess Communication (IPC) */
 
+#define RT_USING_POSIX_PIPE
+#define RT_USING_POSIX_PIPE_SIZE 2048
 
 /* Socket is in the 'Network' category */
 
@@ -462,6 +463,9 @@
 /* Micrium: Micrium software products porting for RT-Thread */
 
 /* end of Micrium: Micrium software products porting for RT-Thread */
+#define PKG_USING_LWEXT4
+#define RT_USING_DFS_LWEXT4
+#define PKG_USING_LWEXT4_LATEST_VERSION
 /* end of system packages */
 
 /* peripheral libraries and drivers */
@@ -503,6 +507,14 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -535,8 +547,6 @@
 /* entertainment: terminal games and other interesting software packages */
 
 /* end of entertainment: terminal games and other interesting software packages */
-#define PKG_USING_ZLIB
-#define PKG_USING_ZLIB_LATEST_VERSION
 /* end of miscellaneous packages */
 
 /* Arduino libraries */
@@ -587,17 +597,20 @@
 
 /* Drivers Configuration */
 
+#define BSP_USING_GPIO
+#define BSP_USING_DISPLAY
 #define BSP_USING_UART
 #define BSP_UART_USING_DMA
 #define BSP_USING_UART0
 #define BSP_USING_HARDLOCK
 #define BSP_USING_SDIO
 #define BSP_USING_SDIO0
-#define BSP_SD_MNT_DEVNAME "sd0p1"
+#define BSP_SD_MNT_DEVNAME "sd0p0"
 /* end of Drivers Configuration */
+#define SOC_K230D
 #define BOARD_C908
 #define __STACKSIZE__ 65536
 #define BSP_ROOTFS_TYPE_ELMFAT
-#define BSP_RISCV_FPU_D
+#define BSP_RISCV_FPU_SOFT
 
 #endif

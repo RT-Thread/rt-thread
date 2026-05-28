@@ -7,6 +7,7 @@
 #include "connector_bus_dsi.h"
 
 #define DSI_PHY_REF_CLK 24000000
+#define DSI_DPI_BITS_PER_PIXEL 16U
 
 typedef struct {
     k_u64 min_freq;
@@ -59,7 +60,8 @@ static inline k_u32 dsi_bus_calc_lane_clk(const k_vo_timing* res, k_vo_dsi_lane_
     if (!res || res->pclk_khz == 0 || lane_count == 0)
         return 0;
 
-    return ((res->pclk_khz * 3 * 8 * 1000) / (lane_count * 2));
+    return ((res->pclk_khz * DSI_DPI_BITS_PER_PIXEL * 1000) /
+            (lane_count * 2));
 }
 
 static k_u32 dsi_phy_calc_hsfreqrange(k_u64 bitrate_hz)
@@ -176,13 +178,15 @@ k_u32 dsi_correct_pclk(k_u32 pclk_hz, k_vo_dsi_lane_num lanes)
     for (delta = 0; delta <= 10; delta++) {
         if (ratio + delta > 0) {
             candidate_pclk = VO_PIXEL_CLOCK_HZ / (ratio + delta);
-            lane_clk = (candidate_pclk / 1000 * 3 * 8 * 1000) / (lane_count * 2);
+            lane_clk = (candidate_pclk / 1000 * DSI_DPI_BITS_PER_PIXEL * 1000) /
+                       (lane_count * 2);
             if (dsi_bus_check_lane_clk(lane_clk) == 0)
                 return candidate_pclk;
         }
         if (delta > 0 && ratio > (k_u32)delta) {
             candidate_pclk = VO_PIXEL_CLOCK_HZ / (ratio - delta);
-            lane_clk = (candidate_pclk / 1000 * 3 * 8 * 1000) / (lane_count * 2);
+            lane_clk = (candidate_pclk / 1000 * DSI_DPI_BITS_PER_PIXEL * 1000) /
+                       (lane_count * 2);
             if (dsi_bus_check_lane_clk(lane_clk) == 0)
                 return candidate_pclk;
         }
@@ -243,11 +247,6 @@ static int dsi_bus_init(const struct panel_desc* desc)
     cfg.lp_speed_mhz = desc->bus.dsi.lp_cmd_speed_mhz;
 
     dwc_dsi_init(&cfg);
-
-    if (desc->ops && desc->ops->read_chip_id) {
-        k_u32 chipid = desc->ops->read_chip_id(desc);
-        rt_kprintf("panel %s, chip id: 0x%08x\n", desc->name, chipid);
-    }
 
     return 0;
 }

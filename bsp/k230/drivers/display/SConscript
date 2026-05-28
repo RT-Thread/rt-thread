@@ -7,7 +7,13 @@ src    += [
     'vo/kd_vo_reg.c',
     'vo/kd_dsi_reg.c',
 ]
-CPPPATH = [cwd, cwd + '/include', cwd + '/vo']
+CPPPATH = [
+    cwd,
+    cwd + '/include',
+    cwd + '/vo',
+    cwd + '/../interdrv/sysctl/sysctl_power',
+    cwd + '/../interdrv/sysctl/sysctl_reset',
+]
 
 group = DefineGroup('Display', src, depend=['BSP_USING_DISPLAY'],
                     CPPPATH=CPPPATH)

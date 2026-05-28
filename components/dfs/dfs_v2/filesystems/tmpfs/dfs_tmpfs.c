@@ -455,7 +455,7 @@ static int dfs_tmpfs_open(struct dfs_file *file)
     RT_ASSERT(file->vnode->ref_count > 0);
     if(file->vnode->ref_count == 1)
     {
-        rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
+        rt_mutex_init(&file->vnode->lock, "tmp_vn", RT_IPC_FLAG_PRIO);
     }
 
     return 0;

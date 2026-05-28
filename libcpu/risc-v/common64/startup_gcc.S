@@ -18,6 +18,10 @@
     .global boot_hartid    /* global varible rt_boot_hartid in .data section */
 boot_hartid:
     .word 0xdeadbeef
+    .align 3
+    .global boot_fdt_addr
+boot_fdt_addr:
+    .dword 0
 
     .global         _start
     .section ".start", "ax"
@@ -41,6 +45,8 @@ _start:
 #endif
     mv t1, a0                         /* get hartid in S-mode frome a0 register */
     sw t1, (t0)                       /* store t1 register low 4 bits in memory address which is stored in t0 */
+    la t0, boot_fdt_addr              /* QEMU/OpenSBI passes FDT address in a1 */
+    sd a1, (t0)
 
 #ifdef RT_USING_SMP
 system_init:

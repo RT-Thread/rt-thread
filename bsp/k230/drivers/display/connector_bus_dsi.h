@@ -33,7 +33,7 @@ void dwc_dsi_init(k_vo_dsi_config* cfg);
 int  dwc_dsi_enable(void);
 int  dwc_dsi_disable(void);
 int  dwc_dsi_send_packet(uint8_t type, uint8_t vc, const void* data,
-                          uint32_t len, bool req_ack);
+                          uint32_t len, uint8_t req_ack);
 int  dwc_dsi_dcs_write(const void* data, uint32_t len, uint8_t vc);
 int  dwc_dsi_dcs_read(uint8_t addr, void* buf, uint32_t len, uint8_t vc);
 int  dwc_dsi_generic_write(const void* data, uint32_t len, uint8_t vc);
