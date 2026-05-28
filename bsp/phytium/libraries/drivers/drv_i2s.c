@@ -26,17 +26,13 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
-#define PER_BUFFER_SIZE          16384
-#define TX_RX_BUF_LEN            16384
+#define TX_RX_BUF_LEN            2048
 
-static rt_uint8_t trans_tx_buf[2 * TX_RX_BUF_LEN * 4] __attribute__((aligned(FDDMA_DDR_ADDR_ALIGNMENT))) = {0};
-static rt_uint8_t trans_rx_buf[2 * TX_RX_BUF_LEN * 4] __attribute__((aligned(FDDMA_DDR_ADDR_ALIGNMENT))) = {0};
+static rt_uint8_t trans_buf[2][TX_RX_BUF_LEN] __attribute__((aligned(FDDMA_DDR_ADDR_ALIGNMENT))) = {0};
 
 static FDdmaBdlDesc *bdl_desc_list_tx = NULL;
 static FDdmaBdlDesc *bdl_desc_list_rx = NULL;
 
-static rt_size_t tx_buf_idx = 0;
-static rt_size_t rx_buf_idx = 0;
 struct phytium_i2s_device
 {
     const char *name;
@@ -59,11 +55,6 @@ struct phytium_i2s_device
 
 static struct phytium_i2s_device i2s_dev0;
 
-static void FDdmaSetupInterrupt(FDdma *const instance);
-
-static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, u32 work_mode, const void *src, fsize_t total_bytes, fsize_t per_buff_len);
-static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, u32 work_mode, const void *src, fsize_t total_bytes, fsize_t per_buff_len);
-
 static void FDdmaSetupInterrupt(FDdma *const instance)
 {
     FASSERT(instance);
@@ -78,33 +69,9 @@ static void FDdmaSetupInterrupt(FDdma *const instance)
     return;
 }
 
-void dma_rx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
+static FError i2s_ddma_init(struct phytium_i2s_device *i2s_dev, u32 word_length, u32 samplerate)
 {
-    /* 清除中断状态 */
-    FDdmaClearChanIrq(i2s_dev0.ddmac.config.base_addr, i2s_dev0.rx_channel, i2s_dev0.ddmac.config.caps);
-
-    /* 通知框架数据就绪 */
-    rt_audio_rx_done(&i2s_dev0.audio, trans_rx_buf + (rx_buf_idx * TX_RX_BUF_LEN * 4), TX_RX_BUF_LEN * 4);
-
-    /* 切换到另一个 buffer */
-    rx_buf_idx ^= 1;
-
-    /* 更新 DDR 地址并重新配置通道（不停止，只更新地址） */
-    i2s_dev0.rx_config.ddr_addr = (uintptr)(trans_rx_buf + rx_buf_idx * TX_RX_BUF_LEN * 4);
-    FDdmaChanConfigure(&i2s_dev0.ddmac, i2s_dev0.rx_channel, &i2s_dev0.rx_config);
-    FDdmaChanActive(&i2s_dev0.ddmac, i2s_dev0.rx_channel);
-}
-
-void dma_tx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
-{
-    LOG_E("dma_tx_channel_transfer_callback");
-    rt_audio_tx_complete(&i2s_dev0.audio);
-}
-
-
-static FError FI2sDdmaInit(struct phytium_i2s_device *i2s_dev, u32 word_length, u32 samplerate)
-{
-    LOG_E("FI2sDdmaInit");
+    LOG_E("i2s_ddma_init");
     FError ret = FI2S_SUCCESS;
     /*Init i2s*/
     FIOPadSetI2sMux();
@@ -126,20 +93,17 @@ static FError FI2sDdmaInit(struct phytium_i2s_device *i2s_dev, u32 word_length, 
         printf("DDMA config initialization failed.\r\n");
         return ret;
     }
-
-    i2s_dev->rx_channel = 1;
-    i2s_dev->tx_channel = 0;
     FDdmaSetupInterrupt(&i2s_dev->ddmac);
-    FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->rx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_rx_channel_transfer_callback, (void *)i2s_dev);
-    FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, (void *)i2s_dev);
 
     return ret;
 }
 
-static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, u32 work_mode, const void *src, fsize_t total_bytes, fsize_t per_buff_len)
+static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, uintptr src, fsize_t total_bytes, fsize_t per_buff_len)
 {
     FError ret = FI2S_SUCCESS;
     fsize_t bdl_num = total_bytes / per_buff_len;
+
+    rt_hw_cpu_dcache_clean(src, total_bytes);
 
     for (u32 chan = FDDMA_CHAN_0; chan < FDDMA_NUM_OF_CHAN; chan++)
     {
@@ -158,30 +122,32 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, u32 work_mode
         printf("FDdmaBdlDescConfig allocate failed.\r\n");
         return FDDMA_ERR_IS_USED;
     }
+
     for (fsize_t loop = 0; loop < bdl_num; loop++)
     {
         bdl_desc_config[loop].current_desc_num = loop;
         bdl_desc_config[loop].src_addr = (uintptr)(src + per_buff_len * loop);
         bdl_desc_config[loop].trans_length = per_buff_len;
     }
-       bdl_desc_config[bdl_num -1].ioc = TRUE;
-    for (fsize_t loop = 0; loop <  bdl_num; loop++)
+    bdl_desc_config[bdl_num - 1].ioc = TRUE;
+
+    for (fsize_t loop = 0; loop < bdl_num; loop++)
     {
         FDdmaBDLSetDesc(bdl_desc_list_rx, &bdl_desc_config[loop]);
     }
 
-    i2s_dev->rx_config.slave_id = 0U,
+    i2s_dev->rx_config.slave_id = 0U;
     i2s_dev->rx_config.req_mode = FI2S_PCM_STREAM_CAPTURE;
-    i2s_dev->rx_config.ddr_addr = (uintptr)src;
-    i2s_dev->rx_config.dev_addr = i2s_dev->i2s_config.base_addr + FI2S_RXDMA ;
+    i2s_dev->rx_config.ddr_addr = src;
+    i2s_dev->rx_config.dev_addr = i2s_dev->i2s_config.base_addr + FI2S_RXDMA;
     i2s_dev->rx_config.trans_len = total_bytes;
-    i2s_dev->rx_config.timeout = 0xffff,
+    i2s_dev->rx_config.timeout = 0xffff;
     i2s_dev->rx_config.first_desc_addr = (uintptr)bdl_desc_list_rx;
     i2s_dev->rx_config.valid_desc_num = bdl_num;
 
     ret = FDdmaChanBdlConfigure(&i2s_dev->ddmac, i2s_dev->rx_channel, &i2s_dev->rx_config);
 
-    if (ret !=  FI2S_SUCCESS)
+    if (ret != FI2S_SUCCESS)
     {
         printf("DDMA BDL configure failer.\r\n");
         return ret;
@@ -191,11 +157,12 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, u32 work_mode
     return ret;
 }
 
-static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, u32 work_mode, const void *src, fsize_t total_bytes, fsize_t per_buff_len)
+static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, uintptr src, fsize_t total_bytes, fsize_t per_buff_len)
 {
     FError ret = FI2S_SUCCESS;
     fsize_t bdl_num = total_bytes / per_buff_len;
 
+    rt_hw_cpu_dcache_clean(src, total_bytes);
     for (u32 chan = FDDMA_CHAN_0; chan < FDDMA_NUM_OF_CHAN; chan++)
     {
         FDdmaClearChanIrq(i2s_dev->ddmac_config.base_addr, chan, i2s_dev->ddmac_config.caps);
@@ -213,30 +180,32 @@ static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, u32 work_mode
         printf("FDdmaBdlDescConfig allocate failed.\r\n");
         return FDDMA_ERR_IS_USED;
     }
+
     for (fsize_t loop = 0; loop < bdl_num; loop++)
     {
         bdl_desc_config[loop].current_desc_num = loop;
         bdl_desc_config[loop].src_addr = (uintptr)(src + per_buff_len * loop);
         bdl_desc_config[loop].trans_length = per_buff_len;
     }
-       bdl_desc_config[bdl_num -1].ioc = TRUE;
-    for (fsize_t loop = 0; loop <  bdl_num; loop++)
+    bdl_desc_config[bdl_num - 1].ioc = TRUE;
+
+    for (fsize_t loop = 0; loop < bdl_num; loop++)
     {
         FDdmaBDLSetDesc(bdl_desc_list_tx, &bdl_desc_config[loop]);
     }
 
-    i2s_dev->tx_config.slave_id = 0U,
+    i2s_dev->tx_config.slave_id = 0U;
     i2s_dev->tx_config.req_mode = FI2S_PCM_STREAM_PLAYBACK;
-    i2s_dev->tx_config.ddr_addr = (uintptr)src;
-    i2s_dev->tx_config.dev_addr = i2s_dev->i2s_config.base_addr + FI2S_TXDMA ;
+    i2s_dev->tx_config.ddr_addr = src;
+    i2s_dev->tx_config.dev_addr = i2s_dev->i2s_config.base_addr + FI2S_TXDMA;
     i2s_dev->tx_config.trans_len = total_bytes;
-    i2s_dev->tx_config.timeout = 0xffff,
+    i2s_dev->tx_config.timeout = 0xffff;
     i2s_dev->tx_config.first_desc_addr = (uintptr)bdl_desc_list_tx;
     i2s_dev->tx_config.valid_desc_num = bdl_num;
 
     ret = FDdmaChanBdlConfigure(&i2s_dev->ddmac, i2s_dev->tx_channel, &i2s_dev->tx_config);
 
-    if (ret !=  FI2S_SUCCESS)
+    if (ret != FI2S_SUCCESS)
     {
         printf("DDMA BDL configure failer.\r\n");
         return ret;
@@ -244,6 +213,22 @@ static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, u32 work_mode
     rt_free(bdl_desc_config);
 
     return ret;
+}
+
+
+void dma_rx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
+{
+    int i;
+    rt_uint16_t *pcm = (rt_uint16_t *)trans_buf[1];
+
+    rt_audio_rx_done(&i2s_dev0.audio, trans_buf[1], TX_RX_BUF_LEN);
+    FI2sDdmaDeviceRX(&i2s_dev0, trans_buf[1], TX_RX_BUF_LEN, TX_RX_BUF_LEN);
+
+}
+
+void dma_tx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
+{
+    LOG_E("dma_tx_channel_transfer_callback");
 }
 
 static rt_err_t i2s_getcaps(struct rt_audio_device *audio, struct rt_audio_caps *caps)
@@ -381,52 +366,25 @@ static rt_err_t i2s_configure(struct rt_audio_device *audio, struct rt_audio_cap
     return RT_EOK;
 }
 
-static rt_err_t i2s_init(struct rt_audio_device *audio)
-{
-    LOG_E("i2s_init");
-    struct phytium_i2s_device *i2s_dev;
-    RT_ASSERT(audio != RT_NULL);
-    i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
-    FError ret = FT_SUCCESS;
-    rt_uint16_t samplebits = i2s_dev->config.samplebits; /* 16-bits word length */
-    rt_uint32_t samplerate = i2s_dev->config.samplerate;
-    rt_uint16_t channels = i2s_dev->config.channels;
-
-    ret = FI2sDdmaInit(i2s_dev, samplebits, samplerate);
-    if (FT_SUCCESS != ret)
-    {
-        printf("Init DDMA-2 failed.\r\n");
-        return ret;
-    }
-
-    return ret;
-}
-
 static rt_err_t i2s_start(struct rt_audio_device *audio, int stream)
 {
     LOG_E("i2s_start");
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
-    FI2sTxRxEnable(&i2s_dev->i2s_ctrl, TRUE); /* 模块使能 */
-
+    LOG_E("i2s_dev = %x", i2s_dev->i2s_ctrl.config.base_addr);
+    i2s_dev->rx_channel = 1;
+    i2s_dev->tx_channel = 0;
     if (stream == AUDIO_STREAM_REPLAY)
     {
-        LOG_E("stream == AUDIO_STREAM_REPLAY");
-        // FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->tx_channel);
-        // FDdmaStart(&i2s_dev->ddmac);
 
     }
     else if(stream == AUDIO_STREAM_RECORD)
     {
-        LOG_E("stream == AUDIO_STREAM_RECORD");
-
-        /* 启动双缓冲 RX DDMA */
-        FI2sDdmaDeviceRX(i2s_dev,
-                         FI2S_PCM_STREAM_CAPTURE,
-                         (const void *)trans_rx_buf,
-                         TX_RX_BUF_LEN * 4 * 2,
-                         TX_RX_BUF_LEN * 4);
+        rt_uint8_t *rx_buf = trans_buf[1];
+        FI2sTxRxEnable(&i2s_dev->i2s_ctrl, TRUE); /* 模块使能 */
+        FI2sDdmaDeviceRX(i2s_dev, (uintptr)rx_buf, TX_RX_BUF_LEN, TX_RX_BUF_LEN);
+        FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->rx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_rx_channel_transfer_callback, i2s_dev);
         FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->rx_channel);
         FDdmaStart(&i2s_dev->ddmac);
     }
@@ -439,55 +397,17 @@ static rt_err_t i2s_stop(struct rt_audio_device *audio, int stream)
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
 
-    if (stream == AUDIO_STREAM_REPLAY)
-    {
-        FDdmaStop(&i2s_dev->ddmac);
-    }
-    else if(stream == AUDIO_STREAM_RECORD)
-    {
-        FDdmaStop(&i2s_dev->ddmac);
-    }
-
     return RT_EOK;
 }
 
-static void i2s_ddma_buffer_info(struct rt_audio_device *audio, struct rt_audio_buf_info *info)
+static rt_err_t i2s_init(struct rt_audio_device* audio)
 {
-    info->buffer = trans_tx_buf;
-    info->block_size = TX_RX_BUF_LEN * 4;
-    info->block_count = 2;
-    info->total_size = TX_RX_BUF_LEN * 4 * 2;
-}
-
-static rt_ssize_t i2s_ddma_transmit(struct rt_audio_device *audio, const void *writeBuf, void *readBuf, rt_size_t size)
-{
-    LOG_E("i2s_ddma_transmit");
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
-    if (writeBuf != RT_NULL)
-    {
-        /* Playback: 复制数据到当前 ping/pong 缓冲区并启动 DDMA */
-        rt_uint8_t *active_buf = trans_tx_buf + tx_buf_idx * TX_RX_BUF_LEN * 4;
-        rt_memcpy(active_buf, writeBuf, size);
-        FI2sDdmaDeviceTX(i2s_dev, FI2S_PCM_STREAM_PLAYBACK, (const void *)active_buf, size, size);
-        FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->tx_channel);
-        FDdmaStart(&i2s_dev->ddmac);
-        /* 切换到另一个缓冲区 */
-        tx_buf_idx ^= 1;
-    }
-    if (readBuf != RT_NULL)
-    {
-        /* Record: 从当前 ping/pong 缓冲区读取数据 */
-        rt_uint8_t *active_buf = trans_rx_buf + rx_buf_idx * TX_RX_BUF_LEN * 4;
-        rt_memcpy(readBuf, active_buf, size);
-        FI2sDdmaDeviceRX(i2s_dev, FI2S_PCM_STREAM_CAPTURE, (const void *)active_buf, size, size);
-        FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->rx_channel);
-        FDdmaStart(&i2s_dev->ddmac);
-        /* 切换到另一个缓冲区 */
-        rx_buf_idx ^= 1;
-    }
-    return size;
+    i2s_ddma_init(i2s_dev, 16, 16000);
+
+    return RT_EOK;
 }
 
 static struct rt_audio_ops i2s_ops =
@@ -497,8 +417,8 @@ static struct rt_audio_ops i2s_ops =
     .init        = i2s_init,
     .start       = i2s_start,
     .stop        = i2s_stop,
-    .transmit    = i2s_ddma_transmit,
-    .buffer_info = i2s_ddma_buffer_info,
+    .transmit    = NULL,
+    .buffer_info = NULL,
 };
 
 static int i2s_controller_init(struct phytium_i2s_device *i2s_dev)

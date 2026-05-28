@@ -541,7 +541,6 @@
 
 /* Hardware Drivers */
 
-#define DRV_DEBUG
 
 /* On-chip Peripheral Drivers */
 
