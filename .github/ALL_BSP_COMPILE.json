@@ -86,9 +86,9 @@
         "yichip/yc3122-pos",
         "yichip/yc3121-pos",
         "mm32/mm32f3270-100ask-pitaya",
-        "mm32f327x",
-        "mm32f526x",
-        "mm32l07x",
+        "mm32/mm32f327x",
+        "mm32/mm32f526x",
+        "mm32/mm32l07x",
         "sam7x",
         "hk32/hk32f030c8-mini",
         "rm48x50",
@@ -459,7 +459,7 @@
       "RTT_BSP": "ESP32C3",
       "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
       "SUB_RTT_BSP": [
-        "ESP32_C3"
+        "ESP/ESP32_C3"
       ]
     },
     {
