@@ -67,3 +67,9 @@ if PLATFORM == 'gcc':
     os.system("chmod +x {0}".format(elf2uf2_path))
 
     POST_ACTION += "{0}  uf2 convert --quiet rtthread-pico.elf rtthread-pico.uf2 --family rp2350-arm-s --abs-block".format(elf2uf2_path) 
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

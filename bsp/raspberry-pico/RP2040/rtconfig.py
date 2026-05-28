@@ -71,3 +71,9 @@ if PLATFORM == 'gcc':
     else:
         elf2uf2_path = os.path.join(os.getcwd(), "tools", "elf2uf2.exe")
     POST_ACTION += "{0} rtthread-pico.elf rtthread-pico.uf2".format(elf2uf2_path) 
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)
