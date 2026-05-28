@@ -36,6 +36,15 @@ Export('rtconfig')
 SDK_ROOT = os.path.abspath('./')
 libraries_path_prefix = os.path.join(os.path.dirname(SDK_ROOT), 'libraries')
 
+f327x_cmsis_path = os.path.join(SDK_ROOT, 'packages', 'mm32f3270x-cmsis-latest', 'CMSIS')
+f327x_hal_path = os.path.join(SDK_ROOT, 'packages', 'mm32f3270x-hal-driver-latest')
+if os.path.isdir(f327x_hal_path):
+    env.AppendUnique(CPPPATH=[
+        os.path.join(f327x_cmsis_path, 'Include'),
+        os.path.join(f327x_cmsis_path, 'Device', 'MM32', 'MM32F3277', 'Include'),
+        os.path.join(f327x_hal_path, 'Inc'),
+    ])
+
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 

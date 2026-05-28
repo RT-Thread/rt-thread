@@ -36,6 +36,16 @@ Export('rtconfig')
 SDK_ROOT = os.path.abspath('./')
 libraries_path_prefix = os.path.join(os.path.dirname(SDK_ROOT), 'libraries')
 
+l07x_cmsis_path = os.path.join(SDK_ROOT, 'packages', 'mm32l0xx-cmsis-latest', 'CMSIS')
+l07x_hal_path = os.path.join(SDK_ROOT, 'packages', 'mm32l0xx-hal-driver-latest')
+if os.path.isdir(l07x_hal_path):
+    env.AppendUnique(CPPPATH=[
+        os.path.join(l07x_cmsis_path, 'CORE'),
+        os.path.join(l07x_hal_path, 'Include'),
+        os.path.join(l07x_hal_path, 'Source'),
+        os.path.join(l07x_hal_path, 'HAL_lib', 'inc'),
+    ])
+
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 

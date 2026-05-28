@@ -1,6 +1,8 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
+#define SOC_MM32F526x
+
 /* RT-Thread Kernel */
 
 /* klibc options */
@@ -109,6 +111,13 @@
 #define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
+#define RT_USING_HW_ATOMIC
+#define ARCH_USING_HW_ATOMIC_8
+#define ARCH_USING_HW_ATOMIC_16
+#define RT_USING_CPU_FFS
+#define ARCH_ARM
+#define ARCH_ARM_CORTEX_M
+#define ARCH_ARM_CORTEX_M33
 
 /* RT-Thread Components */
 
@@ -283,6 +292,8 @@
 
 /* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
+#define PKG_USING_CMSIS_CORE
+#define PKG_USING_CMSIS_CORE_LATEST_VERSION
 /* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -305,8 +316,14 @@
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
-#define PKG_USING_MM32
-#define PKG_USING_MM32_LATEST_VERSION
+
+/* MM32 HAL & SDK Drivers */
+
+#define PKG_USING_MM32F5260X_CMSIS
+#define PKG_USING_MM32F5260X_CMSIS_LATEST_VERSION
+#define PKG_USING_MM32F5260X_HAL_DRIVER
+#define PKG_USING_MM32F5260X_HAL_DRIVER_LATEST_VERSION
+/* end of MM32 HAL & SDK Drivers */
 
 /* WCH HAL & SDK Drivers */
 
@@ -339,6 +356,10 @@
 /* FT32 HAL & SDK Drivers */
 
 /* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -426,6 +447,8 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
+#define SOC_FAMILY_MM32
+#define SOC_SERIES_MM32F526
 
 /* Hardware Drivers Config */
 
@@ -448,10 +471,5 @@
 /* end of Flash Drivers */
 /* end of On-chip Peripheral Drivers */
 /* end of Hardware Drivers Config */
-#define SOC_FAMILY_MM32
-#define PKG_USING_MM32F5260X_CMSIS
-#define PKG_USING_MM32F5260X_HAL_DRIVER
-#define SOC_SERIES_MM32F526
-#define SOC_MM32F526x
 
 #endif
