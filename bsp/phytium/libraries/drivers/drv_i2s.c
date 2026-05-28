@@ -229,6 +229,7 @@ void dma_rx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
 void dma_tx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
 {
     LOG_E("dma_tx_channel_transfer_callback");
+    rt_audio_tx_complete(&i2s_dev0.audio);
 }
 
 static rt_err_t i2s_getcaps(struct rt_audio_device *audio, struct rt_audio_caps *caps)
@@ -375,14 +376,16 @@ static rt_err_t i2s_start(struct rt_audio_device *audio, int stream)
     LOG_E("i2s_dev = %x", i2s_dev->i2s_ctrl.config.base_addr);
     i2s_dev->rx_channel = 1;
     i2s_dev->tx_channel = 0;
+    FI2sTxRxEnable(&i2s_dev->i2s_ctrl, TRUE); /* 模块使能 */
+
     if (stream == AUDIO_STREAM_REPLAY)
     {
+        
 
     }
     else if(stream == AUDIO_STREAM_RECORD)
     {
         rt_uint8_t *rx_buf = trans_buf[1];
-        FI2sTxRxEnable(&i2s_dev->i2s_ctrl, TRUE); /* 模块使能 */
         FI2sDdmaDeviceRX(i2s_dev, (uintptr)rx_buf, TX_RX_BUF_LEN, TX_RX_BUF_LEN);
         FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->rx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_rx_channel_transfer_callback, i2s_dev);
         FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->rx_channel);
@@ -410,6 +413,25 @@ static rt_err_t i2s_init(struct rt_audio_device* audio)
     return RT_EOK;
 }
 
+static rt_ssize_t i2s_ddma_transmit(struct rt_audio_device *audio, const void *writeBuf, void *readBuf, rt_size_t size)
+{
+    LOG_E("i2s_ddma_transmit");
+    struct phytium_i2s_device *i2s_dev;
+    RT_ASSERT(audio != RT_NULL);
+    i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
+    if (writeBuf != RT_NULL)
+    {
+        rt_memcpy(trans_buf[0], writeBuf, size);
+        /* Playback: 复制数据到当前 ping/pong 缓冲区并启动 DDMA */
+        FI2sDdmaDeviceTX(&i2s_dev0, trans_buf[0], size, size);
+        FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, i2s_dev);
+        FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->tx_channel);
+        FDdmaStart(&i2s_dev->ddmac);
+    }
+
+    return size;
+}
+
 static struct rt_audio_ops i2s_ops =
 {
     .getcaps     = i2s_getcaps,
@@ -417,7 +439,7 @@ static struct rt_audio_ops i2s_ops =
     .init        = i2s_init,
     .start       = i2s_start,
     .stop        = i2s_stop,
-    .transmit    = NULL,
+    .transmit    = i2s_ddma_transmit,
     .buffer_info = NULL,
 };
 
