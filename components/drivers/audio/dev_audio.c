@@ -110,7 +110,10 @@ static rt_err_t _audio_send_replay_frame(struct rt_audio_device *audio)
             {
                 /* free memory */
                 audio->replay->read_index = 0;
+                LOG_E("rt_data_queue_pop");
                 rt_data_queue_pop(&audio->replay->queue, (const void **)&data, &src_size, RT_WAITING_NO);
+                LOG_E("rt_data_queue_pop2");
+
                 rt_mp_free(data);
 
                 /* notify transmitted complete. */
@@ -503,8 +506,8 @@ static rt_ssize_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const vo
 
     /* push a new frame to replay data queue */
     ptr = (rt_uint8_t *)buffer;
-    block_size = RT_AUDIO_REPLAY_MP_BLOCK_SIZE;
-
+    block_size = RT_AUDIO_REPLAY_MP_BLOCK_SIZE;/*2048*/
+    
     rt_mutex_take(&audio->replay->lock, RT_WAITING_FOREVER);
     while (index < size)
     {
@@ -525,10 +528,12 @@ static rt_ssize_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const vo
 
         if (audio->replay->write_index == 0)
         {
+            LOG_E("rt_data_queue_push");
             rt_data_queue_push(&audio->replay->queue,
                                audio->replay->write_data,
                                block_size,
                                RT_WAITING_FOREVER);
+            LOG_E("rt_data_queue_push IS OK");
         }
     }
     rt_mutex_release(&audio->replay->lock);

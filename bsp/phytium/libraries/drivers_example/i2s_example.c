@@ -19,7 +19,7 @@
      (AUDIO_SAMPLEBITS / 8) * RECORD_SECONDS)
 
 /* 每次读20ms */
-#define AUDIO_BUF_SIZE       640
+#define AUDIO_BUF_SIZE       2048
 
 static rt_device_t audio_dev = RT_NULL;
 
@@ -163,6 +163,7 @@ static int i2s_record_play_test(int argc, char **argv)
         {
             rt_thread_mdelay(10);
         }
+
     }
 
     rt_kprintf("\n");
@@ -182,6 +183,7 @@ static int i2s_record_play_test(int argc, char **argv)
 
     while (offset < RECORD_TOTAL_SIZE)
     {
+
         write_len = AUDIO_BUF_SIZE;
 
         if ((offset + write_len) > RECORD_TOTAL_SIZE)
@@ -198,13 +200,9 @@ static int i2s_record_play_test(int argc, char **argv)
         {
             offset += write_len;
 
-            rt_kprintf("\rPlayback: %d / %d bytes",
+            rt_kprintf("\rPlayback: %d / %d bytes\n",
                        offset,
                        RECORD_TOTAL_SIZE);
-        }
-        else
-        {
-            rt_thread_mdelay(10);
         }
     }
 

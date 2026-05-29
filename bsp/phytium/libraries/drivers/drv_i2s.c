@@ -26,9 +26,12 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
-#define TX_RX_BUF_LEN            2048
+#define TX_RX_BUF_LEN            4096
 
-static rt_uint8_t trans_buf[2][TX_RX_BUF_LEN] __attribute__((aligned(FDDMA_DDR_ADDR_ALIGNMENT))) = {0};
+static struct rt_thread tx_thread;
+static struct rt_semaphore tx_sem;
+
+static rt_uint8_t trans_buf[2][TX_RX_BUF_LEN  * 4] __attribute__((aligned(FDDMA_DDR_ADDR_ALIGNMENT))) = {0};
 
 static FDdmaBdlDesc *bdl_desc_list_tx = NULL;
 static FDdmaBdlDesc *bdl_desc_list_rx = NULL;
@@ -380,12 +383,11 @@ static rt_err_t i2s_start(struct rt_audio_device *audio, int stream)
 
     if (stream == AUDIO_STREAM_REPLAY)
     {
-        // LOG_E("stream == AUDIO_STREAM_REPLAY");
-        FI2sDdmaDeviceTX(&i2s_dev0, trans_buf[0], 2048, 2048);
-        FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, i2s_dev);
-        FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->tx_channel);
-        FDdmaStart(&i2s_dev->ddmac);
-
+        // FI2sDdmaDeviceTX(&i2s_dev0, trans_buf[0], TX_RX_BUF_LEN, TX_RX_BUF_LEN);
+        // FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, i2s_dev);
+        // FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->tx_channel);
+        // FDdmaStart(&i2s_dev->ddmac);
+        rt_audio_tx_complete(&i2s_dev0.audio);
     }
     else if(stream == AUDIO_STREAM_RECORD)
     {
@@ -423,11 +425,9 @@ static rt_ssize_t i2s_ddma_transmit(struct rt_audio_device *audio,
                                     rt_size_t size)
 {
     LOG_E("i2s_ddma_transmit");
-
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
-
     if (writeBuf != RT_NULL)
     {
         rt_int16_t *pcm = (rt_int16_t *)writeBuf;
@@ -438,18 +438,17 @@ static rt_ssize_t i2s_ddma_transmit(struct rt_audio_device *audio,
         {
             LOG_E("pcm[%d] = %d", i, pcm[i]);
         }
-
-        rt_memcpy(trans_buf[0], writeBuf, size);
-
-        FI2sDdmaDeviceTX(&i2s_dev0, trans_buf[0], size, size);
-        FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac,
-                                    i2s_dev->tx_channel,
-                                    FDDMA_CHAN_EVT_REQ_DONE,
-                                    dma_tx_channel_transfer_callback,
-                                    i2s_dev);
-
+        rt_uint8_t *tx_buf = trans_buf[0];
+        rt_memcpy(tx_buf, writeBuf, size);
+        FI2sDdmaDeviceTX(i2s_dev, (uintptr)tx_buf, size, size);
+        FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, i2s_dev);
         FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->tx_channel);
         FDdmaStart(&i2s_dev->ddmac);
+    }
+    else
+    {
+        LOG_E("i2s_ddma_transmit");
+
     }
 
     return size;
@@ -459,8 +458,8 @@ static void i2s_buffer_info(struct rt_audio_device *audio,
                              struct rt_audio_buf_info *info)
 {
     info->buffer      = trans_buf[0];   // 或 DMA buffer
-    info->total_size  = TX_RX_BUF_LEN;
-    info->block_size  = TX_RX_BUF_LEN;  // 或 1/2 ping-pong
+    info->total_size  = TX_RX_BUF_LEN * 4;
+    info->block_size  = TX_RX_BUF_LEN;
 }
 
 static struct rt_audio_ops i2s_ops =
