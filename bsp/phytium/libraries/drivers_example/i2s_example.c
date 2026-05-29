@@ -1,99 +1,234 @@
+
 #include <rtthread.h>
 #include <rtdevice.h>
 
 #define SOUND_DEVICE_NAME    "I2S0"
 
-#define RECORD_SAMPLERATE    16000
-#define RECORD_CHANNEL       1
-#define RECORD_SAMPLEBITS    16
+#define AUDIO_SAMPLERATE     16000
+#define AUDIO_CHANNELS       1
+#define AUDIO_SAMPLEBITS     16
 
-#define RECORD_BUF_SZ        640     /* 20ms:
-                                      * 16000 * 1 * 2 * 20 / 1000
-                                      */
+/* 16k * 1ch * 16bit * 5s
+ *
+ * 16000 * 2 * 5
+ */
+#define RECORD_SECONDS       5
 
-static rt_device_t mic_dev = RT_NULL;
+#define RECORD_TOTAL_SIZE \
+    (AUDIO_SAMPLERATE * AUDIO_CHANNELS * \
+     (AUDIO_SAMPLEBITS / 8) * RECORD_SECONDS)
 
-static int mic_test(int argc, char **argv)
+/* 每次读20ms */
+#define AUDIO_BUF_SIZE       640
+
+static rt_device_t audio_dev = RT_NULL;
+
+static int i2s_record_play_test(int argc, char **argv)
 {
     struct rt_audio_caps caps;
-    rt_int16_t *buffer;
-    int length;
-    int i;
 
-    buffer = rt_malloc(RECORD_BUF_SZ);
-    if (buffer == RT_NULL)
+    rt_uint8_t *record_buf = RT_NULL;
+    rt_uint8_t *tmp_buf = RT_NULL;
+
+    int read_len;
+    int write_len;
+
+    int offset = 0;
+
+    rt_kprintf("\n");
+    rt_kprintf("=================================\n");
+    rt_kprintf(" I2S Record And Playback Test\n");
+    rt_kprintf("=================================\n");
+
+    /******************************************************
+     * 分配录音总buffer
+     ******************************************************/
+    record_buf = rt_malloc(RECORD_TOTAL_SIZE);
+
+    if (record_buf == RT_NULL)
     {
-        rt_kprintf("malloc failed\n");
+        rt_kprintf("malloc record_buf failed\n");
         return -1;
     }
 
-    /* 查找录音设备 */
-    mic_dev = rt_device_find(SOUND_DEVICE_NAME);
-    if (mic_dev == RT_NULL)
+    rt_memset(record_buf, 0, RECORD_TOTAL_SIZE);
+
+    /******************************************************
+     * 分配临时buffer
+     ******************************************************/
+    tmp_buf = rt_malloc(AUDIO_BUF_SIZE);
+
+    if (tmp_buf == RT_NULL)
+    {
+        rt_kprintf("malloc tmp_buf failed\n");
+
+        rt_free(record_buf);
+
+        return -1;
+    }
+
+    /******************************************************
+     * 查找设备
+     ******************************************************/
+    audio_dev = rt_device_find(SOUND_DEVICE_NAME);
+
+    if (audio_dev == RT_NULL)
     {
         rt_kprintf("can't find %s\n", SOUND_DEVICE_NAME);
-        rt_free(buffer);
-        return -1;
+
+        goto __exit;
     }
 
     rt_kprintf("find device: %s\n", SOUND_DEVICE_NAME);
 
-    /* 打开录音设备 */
-    if (rt_device_open(mic_dev, RT_DEVICE_OFLAG_RDONLY) != RT_EOK)
+    /******************************************************
+     * 打开设备
+     ******************************************************/
+    if (rt_device_open(audio_dev, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
     {
         rt_kprintf("open device failed\n");
-        rt_free(buffer);
-        return -1;
+
+        goto __exit;
     }
 
     rt_kprintf("open success\n");
 
-    /* 配置录音参数 */
+    /******************************************************
+     * 配置输入
+     ******************************************************/
     caps.main_type               = AUDIO_TYPE_INPUT;
     caps.sub_type                = AUDIO_DSP_PARAM;
-    caps.udata.config.samplerate = RECORD_SAMPLERATE;
-    caps.udata.config.channels   = RECORD_CHANNEL;
-    caps.udata.config.samplebits = RECORD_SAMPLEBITS;
 
-    if (rt_device_control(mic_dev, AUDIO_CTL_CONFIGURE, &caps) != RT_EOK)
+    caps.udata.config.samplerate = AUDIO_SAMPLERATE;
+    caps.udata.config.channels   = AUDIO_CHANNELS;
+    caps.udata.config.samplebits = AUDIO_SAMPLEBITS;
+
+    if (rt_device_control(audio_dev,
+                          AUDIO_CTL_CONFIGURE,
+                          &caps) != RT_EOK)
     {
-        rt_kprintf("configure failed\n");
-        goto __exit;
+        rt_kprintf("input configure failed\n");
+
+        goto __close;
     }
 
-    rt_kprintf("record start ...\n");
+    /******************************************************
+     * 配置输出
+     ******************************************************/
+    caps.main_type               = AUDIO_TYPE_OUTPUT;
+    caps.sub_type                = AUDIO_DSP_PARAM;
 
-    while (1)
+    caps.udata.config.samplerate = AUDIO_SAMPLERATE;
+    caps.udata.config.channels   = AUDIO_CHANNELS;
+    caps.udata.config.samplebits = AUDIO_SAMPLEBITS;
+
+    if (rt_device_control(audio_dev,
+                          AUDIO_CTL_CONFIGURE,
+                          &caps) != RT_EOK)
     {
-        /* 读取录音数据 */
-        length = rt_device_read(mic_dev, 0, buffer, RECORD_BUF_SZ);
+        rt_kprintf("output configure failed\n");
 
-        if (length > 0)
+        goto __close;
+    }
+
+    /******************************************************
+     * 开始录音
+     ******************************************************/
+    rt_kprintf("\n");
+    rt_kprintf("Start recording %d seconds...\n",
+               RECORD_SECONDS);
+
+    offset = 0;
+
+    while (offset < RECORD_TOTAL_SIZE)
+    {
+        read_len = rt_device_read(audio_dev,
+                                  0,
+                                  tmp_buf,
+                                  AUDIO_BUF_SIZE);
+
+        if (read_len > 0)
         {
-            rt_kprintf("read %d bytes: ", length);
+            rt_memcpy(record_buf + offset,
+                      tmp_buf,
+                      read_len);
 
-            /* 打印前 8 个采样点 */
-            for (i = 0; i < 8; i++)
-            {
-                rt_kprintf("%d ", buffer[i]);
-            }
+            offset += read_len;
 
-            rt_kprintf("\n");
+            rt_kprintf("\rRecording: %d / %d bytes",
+                       offset,
+                       RECORD_TOTAL_SIZE);
         }
         else
         {
-            rt_kprintf("read no data\n");
+            rt_thread_mdelay(10);
+        }
+    }
+
+    rt_kprintf("\n");
+    rt_kprintf("Record finished.\n");
+
+    /******************************************************
+     * 等待1秒
+     ******************************************************/
+    rt_thread_mdelay(1000);
+
+    /******************************************************
+     * 开始播放
+     ******************************************************/
+    rt_kprintf("Start playback...\n");
+
+    offset = 0;
+
+    while (offset < RECORD_TOTAL_SIZE)
+    {
+        write_len = AUDIO_BUF_SIZE;
+
+        if ((offset + write_len) > RECORD_TOTAL_SIZE)
+        {
+            write_len = RECORD_TOTAL_SIZE - offset;
         }
 
-        rt_thread_mdelay(20);
+        write_len = rt_device_write(audio_dev,
+                                    0,
+                                    record_buf + offset,
+                                    write_len);
+
+        if (write_len > 0)
+        {
+            offset += write_len;
+
+            rt_kprintf("\rPlayback: %d / %d bytes",
+                       offset,
+                       RECORD_TOTAL_SIZE);
+        }
+        else
+        {
+            rt_thread_mdelay(10);
+        }
     }
+
+    rt_kprintf("\n");
+    rt_kprintf("Playback finished.\n");
+
+__close:
+
+    rt_device_close(audio_dev);
 
 __exit:
 
-    rt_device_close(mic_dev);
-    rt_free(buffer);
+    if (record_buf)
+    {
+        rt_free(record_buf);
+    }
+
+    if (tmp_buf)
+    {
+        rt_free(tmp_buf);
+    }
 
     return 0;
 }
 
-MSH_CMD_EXPORT(mic_test, mic record test);
+MSH_CMD_EXPORT(i2s_record_play_test,
+               i2s record 5s and playback 5s test);
