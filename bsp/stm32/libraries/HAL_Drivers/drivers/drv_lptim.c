@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author          Notes
  * 2019-05-06     Zero-Free       first version
- * 2024-07-04     wdfk-prog       lptimer is register with hwtimer, only supports pm calls,the timer function is not supported
+ * 2024-07-04     wdfk-prog       lptimer is register with clock_timer, only supports pm calls,the timer function is not supported
  */
 
 #include <board.h>
@@ -37,7 +37,7 @@ enum
 
 struct stm32_hw_lptimer
 {
-    rt_hwtimer_t        time_device;
+    rt_clock_timer_t        time_device;
     LPTIM_HandleTypeDef tim_handle;
     IRQn_Type           tim_irqn;
     char                *name;
@@ -56,9 +56,9 @@ static struct stm32_hw_lptimer stm32_hw_lptimer_obj[] =
 #endif
 };
 
-static const struct rt_hwtimer_info _info = LPTIM_DEV_INFO_CONFIG;
+static const struct rt_clock_timer_info _info = LPTIM_DEV_INFO_CONFIG;
 
-static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
+static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
 {
     if(timer == RT_NULL)
     {
@@ -118,7 +118,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
     }
 }
 
-static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_t opmode)
+static rt_err_t timer_start(rt_clock_timer_t *timer, rt_uint32_t t, rt_clock_timer_mode_t opmode)
 {
     if(timer == RT_NULL)
     {
@@ -153,7 +153,7 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
     }
 }
 
-static void timer_stop(rt_hwtimer_t *timer)
+static void timer_stop(rt_clock_timer_t *timer)
 {
     if(timer == RT_NULL)
     {
@@ -193,13 +193,13 @@ static rt_uint32_t timer_get_freq(LPTIM_HandleTypeDef *tim)
 }
 
 
-static rt_uint32_t timer_counter_get(rt_hwtimer_t *timer)
+static rt_uint32_t timer_counter_get(rt_clock_timer_t *timer)
 {
     LPTIM_HandleTypeDef *tim = (LPTIM_HandleTypeDef *)timer->parent.user_data;
     return HAL_LPTIM_ReadCounter(tim);
 }
 
-static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
+static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
 {
     if(timer == RT_NULL)
     {
@@ -236,7 +236,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         }
         case DRV_HW_LPTIMER_CTRL_START:
         {
-            timer_start(timer, *(rt_uint32_t *)arg, HWTIMER_MODE_ONESHOT);
+            timer_start(timer, *(rt_uint32_t *)arg, CLOCK_TIMER_MODE_ONESHOT);
             break;
         }
         case DRV_HW_LPTIMER_CTRL_GET_COUNT:
@@ -281,7 +281,7 @@ void LPTIM3_IRQHandler(void)
 }
 #endif
 
-static const struct rt_hwtimer_ops _ops =
+static const struct rt_clock_timer_ops _ops =
 {
     .init = timer_init,
     .start = timer_start,
@@ -302,7 +302,7 @@ static int stm32_hw_lptim_init(void)
     {
         stm32_hw_lptimer_obj[i].time_device.info = &_info;
         stm32_hw_lptimer_obj[i].time_device.ops  = &_ops;
-        if (rt_device_hwtimer_register(&stm32_hw_lptimer_obj[i].time_device, stm32_hw_lptimer_obj[i].name, &stm32_hw_lptimer_obj[i].tim_handle) == RT_EOK)
+        if (rt_clock_timer_register(&stm32_hw_lptimer_obj[i].time_device, stm32_hw_lptimer_obj[i].name, &stm32_hw_lptimer_obj[i].tim_handle) == RT_EOK)
         {
             LOG_D("%s register success", stm32_hw_lptimer_obj[i].name);
         }

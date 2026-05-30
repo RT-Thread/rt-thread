@@ -1,4 +1,4 @@
-config RT_USING_CAN
+menuconfig RT_USING_CAN
     bool "Using CAN device drivers"
     default n
     help
@@ -73,4 +73,8 @@ if RT_USING_CAN
             consumes static RAM but guarantees the memory is always available
             and avoids heap fragmentation.
 
+endif
+
+if RT_USING_DM && RT_USING_CAN
+    osource "$(SOC_DM_CAN_DIR)/Kconfig"
 endif

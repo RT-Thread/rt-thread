@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,6 +28,7 @@
  * 2023-10-21     Shell        support the common backtrace API which is arch-independent
  * 2023-12-10     xqyjlj       perf rt_hw_interrupt_disable/enable, fix memheap lock
  * 2024-03-10     Meco Man     move std libc related functions to rtklibc
+ * 2026-03-16     Rbb666       Change rt_thread_get_usage to incremental statistics.
  */
 
 #include <rtthread.h>
@@ -208,6 +209,32 @@ rt_device_t rt_console_set_device(const char *name)
 RTM_EXPORT(rt_console_set_device);
 #endif /* RT_USING_DEVICE */
 
+#ifdef RT_USING_CONSOLE_OUTPUT_CTL
+static volatile rt_bool_t _console_output_enabled = RT_TRUE;
+
+/**
+ * @brief Enable or disable console log output.
+ *
+ * @param enabled RT_TRUE to enable output, RT_FALSE to disable output.
+ */
+void rt_console_output_set_enabled(rt_bool_t enabled)
+{
+    _console_output_enabled = enabled;
+}
+RTM_EXPORT(rt_console_output_set_enabled);
+
+/**
+ * @brief Get current console log output enable state.
+ *
+ * @return RT_TRUE if output is enabled, RT_FALSE otherwise.
+ */
+rt_bool_t rt_console_output_get_enabled(void)
+{
+    return _console_output_enabled;
+}
+RTM_EXPORT(rt_console_output_get_enabled);
+#endif /* RT_USING_CONSOLE_OUTPUT_CTL */
+
 rt_weak void rt_hw_console_output(const char *str)
 {
     /* empty console output */
@@ -346,6 +373,11 @@ void rt_kputs(const char *str)
         return;
     }
 
+    if (!rt_console_output_get_enabled())
+    {
+        return;
+    }
+
     _kputs(str, rt_strlen(str));
 }
 
@@ -361,6 +393,11 @@ rt_weak int rt_kprintf(const char *fmt, ...)
     va_list args;
     rt_size_t length = 0;
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
+
+    if (!rt_console_output_get_enabled())
+    {
+        return 0;
+    }
 
     va_start(args, fmt);
     PRINTF_BUFFER_TAKE;
@@ -393,9 +430,10 @@ RTM_EXPORT(rt_kprintf);
  */
 rt_weak rt_err_t rt_backtrace(void)
 {
-    struct rt_hw_backtrace_frame frame;
+    struct rt_hw_backtrace_frame frame = {0};
     rt_thread_t thread = rt_thread_self();
 
+    /* cppcheck-suppress uninitvar */
     RT_HW_BACKTRACE_FRAME_GET_SELF(&frame);
     if (!frame.fp)
         return -RT_EINVAL;
@@ -474,7 +512,7 @@ rt_weak rt_err_t rt_backtrace_to_buffer(rt_thread_t thread,
                                         long buflen)
 {
     long nesting = 0;
-    struct rt_hw_backtrace_frame cur_frame;
+    struct rt_hw_backtrace_frame cur_frame = {0};
 
     if (!thread)
         return -RT_EINVAL;
@@ -484,6 +522,7 @@ rt_weak rt_err_t rt_backtrace_to_buffer(rt_thread_t thread,
     if (!frame)
     {
         frame = &cur_frame;
+        /* cppcheck-suppress uninitvar */
         RT_HW_BACKTRACE_FRAME_GET_SELF(frame);
         if (!frame->fp)
             return -RT_EINVAL;
@@ -536,59 +575,305 @@ rt_err_t rt_backtrace_thread(rt_thread_t thread)
 }
 
 #ifdef RT_USING_CPU_USAGE_TRACER
-/**
- * @brief Get thread usage percentage relative to total system CPU time
+
+#define RT_CPU_USAGE_CALC_INTERVAL_TICK \
+    ((RT_TICK_PER_SECOND * RT_CPU_USAGE_CALC_INTERVAL_MS + 999U) / 1000U)
+
+static rt_tick_t _cpu_usage_sample_tick;
+static rt_bool_t _cpu_usage_inited = RT_FALSE;
+static struct rt_cpu_usage_stats _cpu_usage_prev_cpu_stat[RT_CPUS_NR];
+static struct rt_spinlock _cpu_usage_lock = RT_SPINLOCK_INIT;
+
+/*
+ * Calculate total CPU-time delta for this sampling window and
+ * refresh per-CPU snapshots.
  *
- * This function calculates the CPU usage percentage of a specific thread
- * relative to the total CPU time consumed by all threads in the system.
+ * Each counter delta is computed in rt_ubase_t width first, so wrap-around
+ * on 32-bit targets is handled naturally by unsigned arithmetic.
+ */
+static rt_uint64_t _cpu_usage_calc_total_delta(void)
+{
+    rt_uint64_t total_delta = 0;
+    int i;
+
+    for (i = 0; i < RT_CPUS_NR; i++)
+    {
+        rt_cpu_t pcpu = rt_cpu_index(i);
+        rt_ubase_t user_now = pcpu->cpu_stat.user;
+        rt_ubase_t system_now = pcpu->cpu_stat.system;
+        rt_ubase_t idle_now = pcpu->cpu_stat.idle;
+
+        /* Per-counter delta first to avoid overflow artifacts after sum. */
+        rt_ubase_t user_delta = (rt_ubase_t)(user_now - _cpu_usage_prev_cpu_stat[i].user);
+        rt_ubase_t system_delta = (rt_ubase_t)(system_now - _cpu_usage_prev_cpu_stat[i].system);
+        rt_ubase_t idle_delta = (rt_ubase_t)(idle_now - _cpu_usage_prev_cpu_stat[i].idle);
+
+        total_delta += (rt_uint64_t)user_delta;
+        total_delta += (rt_uint64_t)system_delta;
+        total_delta += (rt_uint64_t)idle_delta;
+
+        _cpu_usage_prev_cpu_stat[i].user = user_now;
+        _cpu_usage_prev_cpu_stat[i].system = system_now;
+        _cpu_usage_prev_cpu_stat[i].idle = idle_now;
+    }
+
+    return total_delta;
+}
+
+static void _cpu_usage_snapshot_init(void)
+{
+    struct rt_object_information *info;
+    rt_list_t *list;
+    rt_list_t *node;
+    rt_base_t level;
+    int i;
+
+    info = rt_object_get_information(RT_Object_Class_Thread);
+    list = &info->object_list;
+
+    level = rt_spin_lock_irqsave(&info->spinlock);
+    for (node = list->next; node != list; node = node->next)
+    {
+        struct rt_object *obj = rt_list_entry(node, struct rt_object, list);
+        struct rt_thread *t = (struct rt_thread *)obj;
+
+        t->total_time_prev = 0U;
+        t->cpu_usage = 0U;
+    }
+    rt_spin_unlock_irqrestore(&info->spinlock, level);
+
+    for (i = 0; i < RT_CPUS_NR; i++)
+    {
+        _cpu_usage_prev_cpu_stat[i].user = 0U;
+        _cpu_usage_prev_cpu_stat[i].system = 0U;
+        _cpu_usage_prev_cpu_stat[i].idle = 0U;
+    }
+
+    _cpu_usage_sample_tick = rt_tick_get();
+    _cpu_usage_inited = RT_TRUE;
+}
+
+static void _cpu_usage_refresh_threads(rt_uint64_t total_delta)
+{
+    struct rt_object_information *info;
+    rt_list_t *list;
+    rt_list_t *node;
+    rt_base_t level;
+
+    info = rt_object_get_information(RT_Object_Class_Thread);
+    list = &info->object_list;
+
+    level = rt_spin_lock_irqsave(&info->spinlock);
+    for (node = list->next; node != list; node = node->next)
+    {
+        struct rt_object *obj = rt_list_entry(node, struct rt_object, list);
+        struct rt_thread *t = (struct rt_thread *)obj;
+        rt_ubase_t total_now = (rt_ubase_t)(t->user_time + t->system_time);
+        rt_ubase_t total_delta_now = (rt_ubase_t)(total_now - t->total_time_prev);
+        rt_uint64_t thread_delta = (rt_uint64_t)total_delta_now;
+
+        if (total_delta > 0U)
+        {
+            rt_uint64_t usage = (thread_delta * 100U) / total_delta;
+            t->cpu_usage = (rt_uint8_t)(usage > 100U ? 100U : usage);
+        }
+        else
+        {
+            t->cpu_usage = 0U;
+        }
+
+        t->total_time_prev = total_now;
+    }
+    rt_spin_unlock_irqrestore(&info->spinlock, level);
+}
+
+static void _cpu_usage_update(void)
+{
+    rt_tick_t tick_now;
+    rt_tick_t delta_tick;
+    rt_uint64_t total_delta;
+    rt_bool_t bypass_interval_check = RT_FALSE;
+
+    if (!_cpu_usage_inited)
+    {
+        _cpu_usage_snapshot_init();
+        bypass_interval_check = RT_TRUE;
+    }
+
+    tick_now = rt_tick_get();
+    delta_tick = rt_tick_get_delta(_cpu_usage_sample_tick);
+    if (!bypass_interval_check && delta_tick < RT_CPU_USAGE_CALC_INTERVAL_TICK)
+    {
+        return;
+    }
+
+    total_delta = _cpu_usage_calc_total_delta();
+    _cpu_usage_refresh_threads(total_delta);
+    _cpu_usage_sample_tick = tick_now;
+}
+
+/**
+ * @brief Get thread CPU usage percentage in the recent sampling window
+ *
+ * This function returns per-thread CPU usage based on delta runtime in the
+ * latest sampling window, rather than cumulative runtime since boot.
  *
  * @param thread Pointer to the thread object. Must not be NULL.
  *
  * @return The CPU usage percentage as an integer value (0-100).
- *         Returns 0 if total system time is 0 or if CPU usage tracing is not enabled.
+ *         If sampling interval has not elapsed yet, the previous cached value
+ *         is returned (initial value is 0).
  *
  * @note This function requires RT_USING_CPU_USAGE_TRACER to be enabled.
- * @note The percentage is calculated as: (thread_time * 100) / total_system_time
- * @note Due to integer arithmetic, the result is truncated and may not sum
- *       to exactly 100% across all threads due to rounding.
+ * @note The percentage is calculated as
+ *       (thread_time_delta * 100) / total_time_delta,
+ *       where total_time_delta is the sum of user/system/idle deltas of all CPUs.
+ * @note Sampling interval can be tuned with RT_CPU_USAGE_CALC_INTERVAL_MS.
  * @note If thread is NULL, an assertion will be triggered in debug builds.
  */
 rt_uint8_t rt_thread_get_usage(rt_thread_t thread)
 {
-    rt_ubase_t thread_time;
-    rt_ubase_t total_time = 0U;
-    int i;
-    rt_cpu_t pcpu;
+    rt_uint8_t usage;
 
     RT_ASSERT(thread != RT_NULL);
 
-    thread_time = thread->user_time + thread->system_time;
+    rt_spin_lock(&_cpu_usage_lock);
+    _cpu_usage_update();
+    usage = thread->cpu_usage;
+    rt_spin_unlock(&_cpu_usage_lock);
 
-    /* Calculate total system time by summing all CPUs' time */
-    for (i = 0; i < RT_CPUS_NR; i++)
-    {
-        pcpu = rt_cpu_index(i);
-        total_time += pcpu->cpu_stat.user + pcpu->cpu_stat.system + pcpu->cpu_stat.idle;
-    }
-
-    if (total_time > 0U)
-    {
-        /* Calculate thread usage percentage: (thread_time * 100) / total_time */
-        rt_ubase_t usage = (thread_time * 100U) / total_time;
-        return (rt_uint8_t)(usage > 100U ? 100U : usage);
-    }
-
-    return 0U;
+    return usage;
 }
 #endif /* RT_USING_CPU_USAGE_TRACER */
 
 #if defined(RT_USING_LIBC) && defined(RT_USING_FINSH)
+#include <limits.h>
 #include <stdlib.h> /* for string service */
+
+struct cmd_backtrace_find_ctx
+{
+    rt_uintptr_t pid;
+    rt_thread_t thread;
+};
+
+static rt_err_t cmd_backtrace_match_thread(struct rt_object *object, void *data)
+{
+    struct cmd_backtrace_find_ctx *ctx = data;
+
+    if ((rt_uintptr_t)object == ctx->pid)
+    {
+        ctx->thread = (rt_thread_t)object;
+
+        return 1;
+    }
+
+    return RT_EOK;
+}
+
+#if UINTPTR_MAX > ULONG_MAX
+static void cmd_backtrace_format_pid(rt_uintptr_t pid, char *buf, rt_size_t size)
+{
+    static const char hex[] = "0123456789abcdef";
+    char digits[sizeof(rt_uintptr_t) * 2];
+    rt_size_t count = 0;
+    rt_size_t index;
+
+    if ((buf == RT_NULL) || (size < 4))
+    {
+        if ((buf != RT_NULL) && (size > 0))
+        {
+            buf[0] = '\0';
+        }
+        return;
+    }
+
+    do
+    {
+        digits[count++] = hex[pid & 0xf];
+        pid >>= 4;
+    }
+    while ((pid != 0) && (count < sizeof(digits)));
+
+    buf[0] = '0';
+    buf[1] = 'x';
+
+    for (index = 0; index < count; index++)
+    {
+        buf[2 + index] = digits[count - index - 1];
+    }
+
+    buf[2 + count] = '\0';
+}
+#endif
+
+static rt_bool_t cmd_backtrace_parse_pid(const char *arg, rt_uintptr_t *pid)
+{
+    char *end_ptr;
+#if UINTPTR_MAX > ULONG_MAX
+    unsigned long long parsed_value;
+#else
+    unsigned long parsed_value;
+#endif
+    rt_uintptr_t value;
+
+    if ((arg == RT_NULL) || (pid == RT_NULL))
+    {
+        return RT_FALSE;
+    }
+
+    if ((*arg == '+') || (*arg == '-'))
+    {
+        return RT_FALSE;
+    }
+
+    errno = 0;
+#if UINTPTR_MAX > ULONG_MAX
+    parsed_value = strtoull(arg, &end_ptr, 0);
+#else
+    parsed_value = strtoul(arg, &end_ptr, 0);
+#endif
+    if ((end_ptr == arg) || (*end_ptr != '\0') ||
+        (errno == ERANGE) ||
+#if UINTPTR_MAX > ULONG_MAX
+        (parsed_value > (unsigned long long)(rt_uintptr_t)-1))
+#else
+        (parsed_value > (unsigned long)(rt_uintptr_t)-1))
+#endif
+    {
+        return RT_FALSE;
+    }
+
+    value = (rt_uintptr_t)parsed_value;
+    if (value == 0)
+    {
+        return RT_FALSE;
+    }
+
+    *pid = value;
+
+    return RT_TRUE;
+}
+
+static rt_thread_t cmd_backtrace_find_thread(rt_uintptr_t pid)
+{
+    struct cmd_backtrace_find_ctx ctx =
+    {
+        .pid = pid,
+        .thread = RT_NULL,
+    };
+
+    rt_object_for_each(RT_Object_Class_Thread, cmd_backtrace_match_thread, &ctx);
+
+    return ctx.thread;
+}
 
 static void cmd_backtrace(int argc, char** argv)
 {
     rt_uintptr_t pid;
-    char *end_ptr;
+    rt_thread_t target;
+#if UINTPTR_MAX > ULONG_MAX
+    char pid_buf[sizeof(rt_uintptr_t) * 2 + 3];
+#endif
 
     if (argc != 2)
     {
@@ -608,21 +893,34 @@ static void cmd_backtrace(int argc, char** argv)
         }
     }
 
-    pid = strtoul(argv[1], &end_ptr, 0);
-    if (end_ptr == argv[1])
+    if (!cmd_backtrace_parse_pid(argv[1], &pid))
     {
         rt_kprintf("Invalid input: %s\n", argv[1]);
         return ;
     }
 
-    if (pid && rt_object_get_type((void *)pid) == RT_Object_Class_Thread)
+    target = cmd_backtrace_find_thread(pid);
+#if UINTPTR_MAX > ULONG_MAX
+    cmd_backtrace_format_pid(pid, pid_buf, sizeof(pid_buf));
+#endif
+    if (target != RT_NULL)
     {
-        rt_thread_t target = (rt_thread_t)pid;
-        rt_kprintf("backtrace %s(0x%lx), from %s\n", target->parent.name, pid, argv[1]);
+#if UINTPTR_MAX > ULONG_MAX
+        rt_kprintf("backtrace %s(%s), from %s\n", target->parent.name, pid_buf, argv[1]);
+#else
+        rt_kprintf("backtrace %s(0x%lx), from %s\n",
+                   target->parent.name, (unsigned long)pid, argv[1]);
+#endif
         rt_backtrace_thread(target);
     }
     else
-        rt_kprintf("Invalid pid: %ld\n", pid);
+    {
+#if UINTPTR_MAX > ULONG_MAX
+        rt_kprintf("Invalid pid: %s\n", pid_buf);
+#else
+        rt_kprintf("Invalid pid: %lx\n", (unsigned long)pid);
+#endif
+    }
 }
 MSH_CMD_EXPORT_ALIAS(cmd_backtrace, backtrace, print backtrace of a thread);
 
@@ -1066,6 +1364,56 @@ rt_weak void rt_free_align(void *ptr)
 }
 RTM_EXPORT(rt_free_align);
 #endif /* RT_USING_HEAP */
+
+/**
+ * @brief Find the index of the most significant set bit in a 32-bit integer.
+ * @details The result is the position of the highest bit set to 1, counting
+ * from 1 for the least significant bit. If the input value is 0, the function
+ * returns 0.
+ *
+ * Examples:
+ * - fls(0) = 0
+ * - fls(1) = 1
+ * - fls(0x80000000) = 32
+ *
+ * @param val 32-bit integer value to examine.
+ * @return Position of the most significant set bit (1–32), or 0 if @p val is 0.
+ */
+int __rt_fls(int val)
+{
+    int bit = 32;
+
+    if (!val)
+    {
+        return 0;
+    }
+    if (!(val & 0xffff0000u))
+    {
+        val <<= 16;
+        bit -= 16;
+    }
+    if (!(val & 0xff000000u))
+    {
+        val <<= 8;
+        bit -= 8;
+    }
+    if (!(val & 0xf0000000u))
+    {
+        val <<= 4;
+        bit -= 4;
+    }
+    if (!(val & 0xc0000000u))
+    {
+        val <<= 2;
+        bit -= 2;
+    }
+    if (!(val & 0x80000000u))
+    {
+        bit -= 1;
+    }
+
+    return bit;
+}
 
 #ifndef RT_USING_CPU_FFS
 #ifdef RT_USING_TINY_FFS

@@ -45,6 +45,7 @@ void usb_osal_thread_delete(usb_osal_thread_t thread);
 void usb_osal_thread_schedule_other(void);
 
 usb_osal_sem_t usb_osal_sem_create(uint32_t initial_count);
+usb_osal_sem_t usb_osal_sem_create_counting(uint32_t max_count);
 void usb_osal_sem_delete(usb_osal_sem_t sem);
 int usb_osal_sem_take(usb_osal_sem_t sem, uint32_t timeout);
 int usb_osal_sem_give(usb_osal_sem_t sem);

@@ -11,15 +11,6 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <rtdef.h>
-
-extern unsigned char __bss_start;
-extern unsigned char __bss_end;
-
-#define HEAP_BEGIN  (void *)&__bss_end
-#define HEAP_END    ((void *)HEAP_BEGIN + 64 * 1024 * 1024)
-
-
 void rt_hw_board_init(void);
 
 #endif /* __BOARD_H__ */

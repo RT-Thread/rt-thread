@@ -198,7 +198,7 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 | ADC  | 支持     |                   |
 | RTC  | 支持     |                   |
 | WDT  | 支持     |                   |
-| HWTIMER  | 支持     |                   |
+| CLOCK_TIMER  | 支持     |                   |
 | FLASH  | 支持     |                   |
 | SDCARD  | 支持     |                   |
 | Wi-Fi  | 支持     | 仅 BL808 支持       |

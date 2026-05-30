@@ -19,6 +19,18 @@
 
 #undef PAGE_SIZE
 
+/*
+ * RISC-V Standard Svpbmt Extension (Bit 61-62)
+ * 00: PMA (Normal Memory, Cacheable, No change to implied PMA memory type)
+ * 01: NC  (Non-cacheable, Weakly-ordered)
+ * 10: IO  (Strongly-ordered, Non-cacheable, Non-idempotent)
+ * 11: Reserved
+ */
+#define PTE_PBMT_PMA  (0UL << 61)
+#define PTE_PBMT_NC   (1UL << 61)
+#define PTE_PBMT_IO   (2UL << 61)
+#define PTE_PBMT_MASK (3UL << 61)
+
 #define PAGE_OFFSET_SHIFT 0
 #define PAGE_OFFSET_BIT   12
 #define PAGE_SIZE         __SIZE(PAGE_OFFSET_BIT)

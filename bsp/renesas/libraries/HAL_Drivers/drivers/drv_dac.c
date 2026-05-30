@@ -21,6 +21,15 @@
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
+#if defined(SOC_SERIES_R7KA8P1)
+
+#define R_DAC_Open  R_DAC_B_Open
+#define R_DAC_Write R_DAC_B_Write
+#define R_DAC_Start R_DAC_B_Start
+#define R_DAC_Stop  R_DAC_B_Stop
+
+#endif
+
 struct ra_dac_map ra_dac[] =
 {
 #ifdef BSP_USING_DAC0

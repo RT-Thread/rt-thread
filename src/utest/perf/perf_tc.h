@@ -35,7 +35,7 @@ typedef struct rt_perf
     rt_bool_t dump_head;
 } rt_perf_t;
 
-void rt_perf_start_impl(rt_perf_t *perf, rt_hwtimerval_t *timeout);
+void rt_perf_start_impl(rt_perf_t *perf, rt_clock_timerval_t *timeout);
 void rt_perf_stop(rt_perf_t *perf);
 void rt_perf_dump( rt_perf_t *perf);
 

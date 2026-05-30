@@ -4,8 +4,47 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2025-07-03     rcitach      test case for irq latency
+ * Date           Author         Notes
+ * 2025-07-03     rcitach        test case for irq latency
+ * 2025-11-30     westcity-YOLO  Add standardized utest documentation block
+ */
+
+/**
+ * Test Case Name: Kernel Core Performance Benchmark Suite
+ *
+ * Test Objectives:
+ * - Measures key kernel performance metrics using high-resolution hardware timer
+ * - Validates context switch and IPC mechanism latency
+ * - Tests interrupt-to-thread response time (IRQ latency)
+ * - Provides quantitative results in microseconds (us)
+ *
+ * Test Scenarios:
+ * - **Context Switch Overhead**: Thread-to-thread switch time
+ * - **Semaphore Performance**: rt_sem_take/rt_sem_release round-trip latency
+ * - **Event Performance**: rt_event_recv/rt_event_send latency
+ * - **Message Queue Performance**: rt_mq_send/rt_mq_recv latency
+ * - **Mailbox Performance**: rt_mb_send/rt_mb_recv latency
+ * - **IRQ Latency**: Time from hardware timer interrupt to thread wakeup
+ *
+ * Verification Metrics:
+ * - All tests complete without crash or timeout
+ * - Measured times are within reasonable system limits (e.g., < 1000 us for IRQ)
+ * - Performance data is printed in structured table format
+ * - No memory leaks during test execution
+ *
+ * Dependencies:
+ * - RT_USING_PERF_TEST must be enabled
+ * - RT_USING_UTEST framework enabled
+ * - Hardware timer device named "hwtimer0" (or defined by RT_UTEST_HWTIMER_DEV_NAME)
+ * - System must support rt_device_find/open/close for HWTIMER
+ * - Sufficient heap memory for dynamic allocation in test runner
+ *
+ * Expected Results:
+ * - Console output shows a formatted table with:
+ *   Test No | Test Name | Count | Total/Max/Min/Avg Time (us)
+ * - Final line: "=== Performance Test Results End ==="
+ * - utest framework reports: [  PASSED  ] [ result   ] testcase (core.perf_test)
+ * - Test runs via: `utest_run core.perf_test` in msh
  */
 
 #include <rtthread.h>
@@ -22,7 +61,7 @@
 #define GET_DECIMALS(num) split_double(num, RET_DECIMALS)
 
 static rt_device_t hw_dev = RT_NULL;
-static rt_hwtimerval_t timeout_s = { 0 };
+static rt_clock_timerval_t timeout_s = { 0 };
 
 typedef rt_err_t (*testcase_function)(rt_perf_t *perf);
 testcase_function test_func_ptrs[] = {
@@ -37,21 +76,21 @@ testcase_function test_func_ptrs[] = {
 
 static rt_uint32_t rt_perf_get_timer_us(void)
 {
-    rt_hwtimerval_t timer_val = { 0 };
-    if (hw_dev && rt_device_read(hw_dev, 0, &timer_val, sizeof(rt_hwtimerval_t)))
+    rt_clock_timerval_t timer_val = { 0 };
+    if (hw_dev && rt_device_read(hw_dev, 0, &timer_val, sizeof(rt_clock_timerval_t)))
     {
         return (rt_uint32_t)(timer_val.sec * 1000000u + timer_val.usec); /* return us */
     }
     return 0;
 }
 
-void rt_perf_start_impl(rt_perf_t *perf, rt_hwtimerval_t *timeout)
+void rt_perf_start_impl(rt_perf_t *perf, rt_clock_timerval_t *timeout)
 {
     if (hw_dev)
     {
         if (timeout == RT_NULL)
             timeout = &timeout_s;
-        rt_device_write(hw_dev, 0, timeout, sizeof(rt_hwtimerval_t));
+        rt_device_write(hw_dev, 0, timeout, sizeof(rt_clock_timerval_t));
     }
     perf->begin_time = rt_perf_get_timer_us();
 }
@@ -76,7 +115,7 @@ void rt_perf_stop(rt_perf_t *perf)
     perf->tot_time += perf->real_time;
 
     if (hw_dev)
-        rt_device_control(hw_dev, HWTIMER_CTRL_STOP, NULL);
+        rt_device_control(hw_dev, CLOCK_TIMER_CTRL_STOP, NULL);
 }
 
 static rt_int32_t split_double(double num, rt_uint32_t type)
@@ -166,17 +205,17 @@ static rt_err_t utest_tc_init(void)
 {
     int ret = RT_EOK;
 
-    hw_dev = rt_device_find(RT_UTEST_HWTIMER_DEV_NAME);
+    hw_dev = rt_device_find(RT_UTEST_CLOCK_TIMER_DEV_NAME);
     if (hw_dev == RT_NULL)
     {
         ret = RT_ERROR;
-        LOG_E("hwtimer sample run failed! can't find %s device!", RT_UTEST_HWTIMER_DEV_NAME);
+        LOG_E("clock_timer sample run failed! can't find %s device!", RT_UTEST_CLOCK_TIMER_DEV_NAME);
         return ret;
     }
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
     if (ret != RT_EOK)
     {
-        LOG_E("open %s device failed!", RT_UTEST_HWTIMER_DEV_NAME);
+        LOG_E("open %s device failed!", RT_UTEST_CLOCK_TIMER_DEV_NAME);
         return ret;
     }
 
@@ -199,4 +238,3 @@ static void testcase(void)
 }
 
 UTEST_TC_EXPORT(testcase, "core.perf_test", utest_tc_init, utest_tc_cleanup, 10);
-

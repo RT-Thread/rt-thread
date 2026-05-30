@@ -6,7 +6,54 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-01-25     Shell        init ver.
+ * 2025-12-12     lhxj         Add standardized utest documentation block
  */
+
+/**
+ * Test Case Name: Timed Mutex Race Condition Test (core.scheduler_timed_mtx)
+ *
+ * Test Objectives:
+ * - Verify mutex behavior when a timeout race condition occurs between the timeout timer (scheduler) and mutex release.
+ * - Ensure strict round-robin ownership (Producer <-> Consumer) is maintained despite timeouts.
+ * - Validate that `rt_mutex_take_interruptible` correctly handles timeouts returning `-RT_ETIMEOUT`.
+ * - Ensure a thread does not hold the mutex if it reports a timeout.
+ * - List specific functions or APIs to be tested:
+ * - rt_mutex_take_interruptible
+ * - rt_mutex_take
+ * - rt_mutex_release
+ * - rt_tick_get
+ *
+ * Test Scenarios:
+ * - **Timeout vs Release Race:**
+ * 1. Create a Producer thread and a Consumer thread.
+ * 2. Producer acquires the mutex, aligns execution to the system tick edge (`_wait_until_edge`) with random latency, and releases the mutex.
+ * 3. Consumer attempts to acquire the mutex with a short timeout (1 tick) using `rt_mutex_take_interruptible`.
+ * 4. Verify that if Consumer times out, it does not hold the mutex.
+ * 5. Verify that if Consumer acquires the mutex, strict ownership order (Producer -> Consumer) was followed using magic flags.
+ * 6. Repeat for `TEST_LOOP_TICKS`.
+ *
+ * Verification Metrics:
+ * - **Pass:** The mutex ownership sequence (Consumer -> Producer -> Consumer) is never violated.
+ * - **Pass:** `rt_mutex_get_owner` returns NULL or not the current thread if `rt_mutex_take_interruptible` returns `-RT_ETIMEOUT`.
+ * - **Pass:** Both threads complete their loops and signal exit without asserting failure.
+ *
+ * Dependencies:
+ * - Hardware requirements (e.g., specific peripherals)
+ * - No specific hardware requirements.
+ * (This is met by the qemu-virt64-riscv BSP).
+ * - Software configuration (e.g., kernel options, driver initialization)
+ * - `RT_USING_UTEST` must be enabled (`RT-Thread Utestcases`).
+ * - `Scheduler Test` must be enabled (`RT-Thread Utestcases` -> `Kernel Core` -> 'Scheduler Test').
+ * - Environmental assumptions
+ * - No specific environmental assumptions.
+ * - Run the test case from the msh prompt:
+ * `utest_run core.scheduler_timed_mtx`
+ *
+ * Expected Results:
+ * - The test logs "Total failed times: X(in Y)" indicating valid timeouts handled correctly.
+ * - Final Output: `[ PASSED ] [ result ] testcase (core.scheduler_timed_mtx)`
+ */
+
 #define __RT_KERNEL_SOURCE__
 #include <rtthread.h>
 #include <stdlib.h>

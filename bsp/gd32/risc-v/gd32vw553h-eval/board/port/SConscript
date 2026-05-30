@@ -1,0 +1,28 @@
+import os
+from building import *
+
+objs = []
+cwd  = GetCurrentDir()
+
+# add general drivers
+src = []
+path =  [cwd]
+
+if GetDepend(['BSP_USING_AT24C02']):
+    path += [cwd + "/at24c02"]
+
+    if GetDepend(['BSP_USING_AT24C02_UTEST']):
+        src += ["./at24c02/test_at24c02.c"]
+
+    if GetDepend(['BSP_USING_AT24C02_INIT']):
+        src += ['./at24c02/at24c02.c']
+
+CPPDEFINES = ['GD32VW553H_EVAL']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

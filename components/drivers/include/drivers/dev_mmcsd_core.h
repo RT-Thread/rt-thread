@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2026 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -142,6 +142,8 @@ struct rt_mmcsd_req
 #define R1_READY_FOR_DATA   (1 << 8)    /* sx, a */
 #define R1_APP_CMD      (1 << 5)    /* sr, c */
 
+/*the programing is state*/
+#define R1_STATE_PRG    0x07
 
 #define R1_SPI_IDLE     (1 << 0)
 #define R1_SPI_ERASE_RESET  (1 << 1)
@@ -173,50 +175,6 @@ struct rt_mmcsd_req
 #define R5_STATUS(x)        (x & 0xCB00)
 #define R5_IO_CURRENT_STATE(x)  ((x & 0x3000) >> 12)
 
-
-
-/**
- * fls - find last (most-significant) bit set
- * @x: the word to search
- *
- * This is defined the same way as ffs.
- * Note fls(0) = 0, fls(1) = 1, fls(0x80000000) = 32.
- */
-
-rt_inline rt_uint32_t __rt_fls(rt_uint32_t val)
-{
-    rt_uint32_t  bit = 32;
-
-    if (!val)
-        return 0;
-    if (!(val & 0xffff0000u))
-    {
-        val <<= 16;
-        bit -= 16;
-    }
-    if (!(val & 0xff000000u))
-    {
-        val <<= 8;
-        bit -= 8;
-    }
-    if (!(val & 0xf0000000u))
-    {
-        val <<= 4;
-        bit -= 4;
-    }
-    if (!(val & 0xc0000000u))
-    {
-        val <<= 2;
-        bit -= 2;
-    }
-    if (!(val & 0x80000000u))
-    {
-        bit -= 1;
-    }
-
-    return bit;
-}
-
 #define MMCSD_HOST_PLUGED       0
 #define MMCSD_HOST_UNPLUGED     1
 
@@ -242,6 +200,12 @@ void mmcsd_set_bus_width(struct rt_mmcsd_host *host, rt_uint32_t width);
 void mmcsd_set_timing(struct rt_mmcsd_host *host, rt_uint32_t timing);
 void mmcsd_set_data_timeout(struct rt_mmcsd_data *data, const struct rt_mmcsd_card *card);
 rt_uint32_t mmcsd_select_voltage(struct rt_mmcsd_host *host, rt_uint32_t ocr);
+rt_err_t mmcsd_set_signal_voltage(struct rt_mmcsd_host *host, unsigned char signal_voltage);
+void mmcsd_set_initial_signal_voltage(struct rt_mmcsd_host *host);
+rt_err_t mmcsd_host_set_uhs_voltage(struct rt_mmcsd_host *host);
+rt_err_t mmcsd_set_uhs_voltage(struct rt_mmcsd_host *host, rt_uint32_t ocr);
+rt_err_t mmcsd_send_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode, rt_err_t *cmd_error);
+rt_err_t mmcsd_send_abort_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode);
 void mmcsd_change(struct rt_mmcsd_host *host);
 void mmcsd_detect(void *param);
 void mmcsd_host_init(struct rt_mmcsd_host *host);

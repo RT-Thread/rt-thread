@@ -17,8 +17,6 @@
 #include <drv_common.h>
 #include "drv_dma.h"
 #include <string.h>
-#include <drivers/dev_mmcsd_core.h>
-#include <drivers/dev_sdio.h>
 
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4)
 #define SDCARD_INSTANCE_TYPE              SDIO_TypeDef
@@ -79,7 +77,7 @@
 #define HW_SDIO_IT_RXDAVL                      (0x01U << 21)
 #define HW_SDIO_IT_SDIOIT                      (0x01U << 22)
 
-#define HW_SDIO_ERRORS \
+#define HW_SDIO_ERRORS                           \
     (HW_SDIO_IT_CCRCFAIL | HW_SDIO_IT_CTIMEOUT | \
      HW_SDIO_IT_DCRCFAIL | HW_SDIO_IT_DTIMEOUT | \
      HW_SDIO_IT_RXOVERR  | HW_SDIO_IT_TXUNDERR)
@@ -171,7 +169,7 @@ struct stm32_sdio_des
 struct stm32_sdio_config
 {
     SDCARD_INSTANCE_TYPE *Instance;
-    struct dma_config dma_rx, dma_tx;
+    struct stm32_dma_config dma_rx, dma_tx;
 };
 
 /* stm32 sdio dirver class */

@@ -45,8 +45,8 @@ endif
             bool "BSP_USING_EXAMPLE_ADC_VOL"
             default n
 
-        config BSP_USING_EXAMPLE_HWTIMER
-            bool "BSP_USING_EXAMPLE_HWTIMER"
+        config BSP_USING_EXAMPLE_CLOCK_TIMER
+            bool "BSP_USING_EXAMPLE_CLOCK_TIMER"
             default n
 
         config BSP_USING_EXAMPLE_I2C

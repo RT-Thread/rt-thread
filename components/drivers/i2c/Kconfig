@@ -1,4 +1,4 @@
-config RT_USING_I2C
+menuconfig RT_USING_I2C
     bool "Using I2C device drivers"
     default n
 
@@ -240,4 +240,8 @@ if RT_USING_I2C
                         default 10
                 endif
         endif
+endif
+
+if RT_USING_DM && RT_USING_I2C
+    osource "$(SOC_DM_I2C_DIR)/Kconfig"
 endif

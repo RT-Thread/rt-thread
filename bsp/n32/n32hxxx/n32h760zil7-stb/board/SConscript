@@ -1,0 +1,93 @@
+from building import *
+import os
+
+# Import environment variables
+Import('env')
+
+# Defined groups
+groups = []
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c        
+''')
+path =  [cwd]
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+# Append Drivers group to groups
+groups.append(group)
+
+# add std-library file
+path =  [os.path.join(cwd, 'Cube_Config/Driver/CMSIS/core')]
+path += [os.path.join(cwd, 'Cube_Config/Driver/CMSIS/device')]
+path += [os.path.join(cwd, 'Cube_Config/Driver/n32h76x_78x_std_periph_driver/inc')]
+
+# You can select chips from the list above
+CPPDEFINES = ['N32H76x', 'CORE_CM7', 'USING_TCM', 'USE_STDPERIPH_DRIVER']
+
+# You can select chip's startup file
+if rtconfig.PLATFORM in ['gcc', 'llvm-arm']:
+    src = [os.path.join(cwd, 'Cube_Config', 'startup', 'startup_n32h73x_76x_gcc.s')]
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src = [os.path.join(cwd, 'Cube_Config', 'startup', 'startup_n32h73x_76x.s')]
+elif rtconfig.PLATFORM in ['iccarm']:
+    src = [os.path.join(cwd, 'Cube_Config', 'startup', 'startup_n32h73x_76x_EWARM.s')]
+
+src_path = os.path.join(cwd, 'Cube_Config/Driver')
+
+# You can select library file
+src += [
+os.path.join(src_path, 'CMSIS/device/system_n32h76x_78x.c'),
+os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/misc.c'),
+os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_gpio.c'),
+os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_mmu.c'),
+os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_dma.c'),
+os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_dmamux.c'),
+os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_pwr.c'),
+os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_rcc.c'),
+os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_dbg.c'),
+os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_exti.c'),
+]
+
+if GetDepend(['RT_USING_SERIAL']) or GetDepend(['RT_USING_NANO', 'RT_USING_CONSOLE']):
+    src += [os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_usart.c')]
+
+if GetDepend(['RT_USING_I2C']):
+    src += [os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_i2c.c')]
+
+if GetDepend(['RT_USING_SPI']):
+    src += [os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_spi.c')]
+
+if GetDepend(['RT_USING_ADC']):
+    src += [os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_adc.c')]
+
+if GetDepend(['RT_USING_RTC']):
+    src += [os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_rtc.c')]
+
+if GetDepend(['RT_USING_WDT']):
+    src += [os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_iwdg.c')]
+    src += [os.path.join(src_path, 'n32h76x_78x_std_periph_driver/src/n32h76x_78x_wwdg.c')]
+
+# Defined Libraries group
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+# Append Libraries group to groups
+groups.append(group)
+
+# Defined Drivers group sorece file
+src = [os.path.join(cwd, 'Cube_Config', 'USER', 'src', 'n32h76x_78x_cfg.c')]
+# Defined Drivers group header file path
+path = [os.path.join(cwd, 'Cube_Config/USER/inc')]
+# Defined Drivers group
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+# Append Drivers group to groups
+groups.append(group)
+
+# if os.path.isfile(os.path.join(cwd, "ports", 'SConscript')):
+#     group = group + SConscript(os.path.join("ports", 'SConscript'))
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('groups')

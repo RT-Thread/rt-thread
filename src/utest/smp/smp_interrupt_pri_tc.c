@@ -18,6 +18,38 @@
  * @note    Without turning off interrupts, interrupts respond in the order in which they are triggered.
  *          With interrupts turned off, low and high priority interrupts are triggered sequentially,
  *          and when interrupts are turned on, high priority interrupts respond first.
+ *
+ * Test Case Name: [smp_interrupt_pri_tc]
+ *
+ * Test Objectives:
+ * - Test the correctness of the interrupt triggering order under two scenarios. Scenario 1: When interrupts
+ * - are not masked, the interrupt handling order shall depend on the triggering sequence. Scenario 2: When
+ * - interrupts are first masked, triggered, and then enabled, the interrupt handling order shall depend on
+ * - the interrupt priority.
+ *
+ * Test Scenarios:
+ * - First, two interrupts are registered, namely the low-priority interrupt RT_SPI_1 and the high-priority
+ * - interrupt RT_SPI_2.
+ * - Scenario 1 (int_pri1_tc, mode=0): RT_SPI_1 and RT_SPI_2 are triggered sequentially without interrupt masking.
+ * - At this point, the interrupt service routine (ISR) of RT_SPI_1 executes first to set ipi_val[0] = SET_VAL;
+ * - since the RT_SPI_2 interrupt has not been triggered yet, ipi_val[1] remains at the initial value RES_VAL,
+ * - making the judgment ipi_val[0] > ipi_val[1] hold true. When the RT_SPI_2 interrupt is triggered, both ipi_val[0]
+ * - and ipi_val[1] are reset to the initial value RES_VAL.
+ * - Scenario 2 (int_pri2_tc, mode=1): RT_SPI_1 and RT_SPI_2 are triggered under interrupt masking, and the interrupt
+ * - mask is lifted afterward. In this case, the interrupts are handled in the order of their priorities: the RT_SPI_2
+ * - interrupt is triggered first, followed by the RT_SPI_1 interrupt. At this point, the ISR of RT_SPI_2 first sets
+ * - ipi_val[1] = SET_VAL, and the judgment that ipi_val[1] is greater than ipi_val[0] (which remains RES_VAL) is
+ * - successfully validated. Subsequently, the ISR of RT_SPI_1 resets both ipi_val[0] and ipi_val[1] to the initial
+ * - value RES_VAL.
+ *
+ * Verification Metrics:
+ * - Output message: [ PASSED ] [ result ] testcase (core.smp_interrupt_pri_tc)
+ *
+ * Dependencies:
+ * - RT_USING_SMP needs to be enabled.
+ *
+ * Expected Results:
+ * - You will see the pass information of int_pri1_tc and int_pri2_tc, as well as the PASS message of smp_interrupt_pri_tc.
  */
 
 #define RES_VAL         0X0

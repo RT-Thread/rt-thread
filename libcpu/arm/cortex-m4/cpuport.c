@@ -20,6 +20,10 @@
 
 #include <rtthread.h>
 
+#define DBG_TAG           "cortex.m4"
+#define DBG_LVL           DBG_INFO
+#include <rtdbg.h>
+
 #if               /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP ))    \
                   /* Clang */ || (defined ( __clang__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) \
                   /* IAR */   || (defined ( __ICCARM__ ) && defined ( __ARMVFP__ ))        \
@@ -434,6 +438,107 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
 void rt_hw_cpu_reset(void)
 {
     SCB_AIRCR = SCB_RESET_VALUE;
+}
+
+/**
+  \brief   Get IPSR Register
+  \details Returns the content of the IPSR Register.
+  \return               IPSR Register value
+ */
+rt_inline rt_uint32_t rt_hw_get_ipsr(void)
+{
+#if defined(__CC_ARM)
+    register uint32_t __regIPSR __asm("ipsr");
+    return(__regIPSR);
+#elif defined(__clang__)
+    uint32_t result;
+    __asm volatile ("MRS %0, ipsr" : "=r" (result) );
+    return(result);
+#elif defined(__IAR_SYSTEMS_ICC__)
+    return __iar_builtin_rsr("IPSR");
+#elif defined ( __GNUC__ )
+    uint32_t result;
+    __asm volatile ("MRS %0, ipsr" : "=r" (result) );
+    return(result);
+#endif
+}
+
+/**
+ * @brief This function will be invoked by BSP, when enter interrupt service routine
+ *
+ * @note Please don't invoke this routine in application
+ *
+ * @see rt_interrupt_leave
+ */
+void rt_interrupt_enter(void)
+{
+    extern void (*rt_interrupt_enter_hook)(void);
+    RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
+    LOG_D("irq has come...");
+}
+
+/**
+ * @brief This function will be invoked by BSP, when leave interrupt service routine
+ *
+ * @note Please don't invoke this routine in application
+ *
+ * @see rt_interrupt_enter
+ */
+void rt_interrupt_leave(void)
+{
+    extern void (*rt_interrupt_leave_hook)(void);
+    LOG_D("irq is going to leave");
+    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
+}
+
+/**
+ * @brief This function will return the nest of interrupt.
+ *
+ * User application can invoke this function to get whether current
+ * context is interrupt context.
+ *
+ * @return the number of nested interrupts.
+ */
+rt_uint8_t rt_interrupt_get_nest(void)
+{
+    return (rt_hw_get_ipsr() != 0);
+}
+
+/**
+  \brief   Get PRIMASK Register
+  \details Returns the content of the PRIMASK Register.
+  \return  PRIMASK Register value
+ */
+rt_inline rt_uint32_t rt_hw_get_primask_value(void)
+{
+#if defined(__CC_ARM)
+    register uint32_t __regPRIMASK __asm("primask");
+    return (__regPRIMASK);
+#elif defined(__clang__)
+    uint32_t result;
+    __asm volatile ("MRS %0, primask" : "=r" (result));
+    return result;
+#elif defined(__IAR_SYSTEMS_ICC__)
+    return __iar_builtin_rsr("PRIMASK");
+#elif defined(__GNUC__)
+    uint32_t result;
+    __asm volatile ("MRS %0, primask" : "=r" (result));
+    return result;
+#endif
+}
+
+/**
+ * @brief Check whether maskable interrupts are currently disabled.
+ *
+ * @details
+ * For Cortex-M4, interrupts are considered disabled when either:
+ * - PRIMASK masks all configurable interrupts.
+ *
+ * @return RT_TRUE if interrupts are masked; otherwise RT_FALSE.
+ */
+rt_bool_t rt_hw_interrupt_is_disabled(void)
+{
+    return ((rt_hw_get_primask_value() & 0x1UL) != 0UL);
 }
 
 #ifdef RT_USING_CPU_FFS

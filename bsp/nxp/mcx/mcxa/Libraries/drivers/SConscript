@@ -25,8 +25,8 @@ if GetDepend('BSP_USING_I2C'):
 if GetDepend('BSP_USING_ADC'):
     src += ['drv_adc.c']
 
-if GetDepend('BSP_USING_HWTIMER'):
-    src += ['drv_hwtimer.c']
+if GetDepend('BSP_USING_CLOCK_TIMER'):
+    src += ['drv_timer.c']
 
 if GetDepend('BSP_USING_WDT'):
     src += ['drv_wdt.c']
@@ -36,6 +36,9 @@ if GetDepend('BSP_USING_PWM'):
 
 if GetDepend('BSP_USING_FLASH'):
     src += ['drv_chipflash.c']
+
+if GetDepend('BSP_USING_CAN'):
+    src += ['drv_can.c']
 
 path =  [cwd,cwd + '/config']
 

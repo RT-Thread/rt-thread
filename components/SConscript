@@ -5,13 +5,17 @@ from building import *
 
 objs = []
 cwd  = GetCurrentDir()
-list = os.listdir(cwd)
+entries = os.listdir(cwd)
 
-for item in list:
+for item in entries:
     if item in remove_components:
         continue
 
     if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
-        objs = objs + SConscript(os.path.join(item, 'SConscript'))
+        result = SConscript(os.path.join(item, 'SConscript'))
+        if isinstance(result, (list, tuple)):
+            objs.extend(result)
+        else:
+            objs.append(result)
 
 Return('objs')

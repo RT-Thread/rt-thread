@@ -162,14 +162,14 @@ static rt_err_t _memblock_add_range(struct rt_memblock *memblock,
 rt_err_t rt_memblock_add_memory(const char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags)
 {
     LOG_D("add physical address range [0x%.*lx-0x%.*lx) with flag 0x%x" \
-            " to overall memory regions\n", MIN_BIT, base, MIN_BIT, base + size, flag);
+            " to overall memory regions", MIN_BIT, start, MIN_BIT, end, flags);
 
     return _memblock_add_range(&mmblk_memory, name, start, end, flags);
 }
 
 rt_err_t rt_memblock_reserve_memory(const char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags)
 {
-    LOG_D("add physical address range %s [0x%.*lx-0x%.*lx) to reserved memory regions\n",
+    LOG_D("add physical address range %s [0x%.*lx-0x%.*lx) to reserved memory regions",
                                      name, MIN_BIT, start, MIN_BIT, end);
 
     return _memblock_add_range(&mmblk_reserved, name, start, end, flags);
@@ -389,7 +389,10 @@ void rt_memblock_setup_memory_environment(void)
                                     .map_size = reg.end - reg.start,
                                     .prefer = (void *)reg.start};
 
-        rt_aspace_map_phy(&rt_kernel_space, &hint, MMU_MAP_K_RWCB, (reg.start + PV_OFFSET) >> MM_PAGE_SHIFT, &err);
+        if (rt_aspace_map_phy(&rt_kernel_space, &hint, MMU_MAP_K_RWCB,
+                              (reg.start + PV_OFFSET) >> MM_PAGE_SHIFT, &err))
+            continue;
+
         rt_page_install(reg);
         mem += reg.end - reg.start;
     }

@@ -58,6 +58,45 @@ static const struct ra_baud_rate_tab can_baud_rate_tab[] =
 #define R_CAN_InfoGet               R_CANFD_InfoGet
 #define R_CAN_Write                 R_CANFD_Write
 
+#define can0_callback               canfd0_callback
+#define can1_callback               canfd1_callback
+
+const canfd_afl_entry_t p_canfd0_afl[CANFD_CFG_AFL_CH0_RULE_NUM] =
+{
+    {
+        .id =
+        {
+            .id         = 0x00,
+            .frame_type = CAN_FRAME_TYPE_DATA,
+            .id_mode    = CAN_ID_MODE_STANDARD
+        },
+        .destination =
+        {
+            .minimum_dlc       = CANFD_MINIMUM_DLC_0,
+            .rx_buffer         = CANFD_RX_MB_NONE,
+            .fifo_select_flags = CANFD_RX_FIFO_0
+        }
+    },
+};
+
+const canfd_afl_entry_t p_canfd1_afl[CANFD_CFG_AFL_CH1_RULE_NUM] =
+{
+    {
+        .id =
+        {
+            .id         = 0x01,
+            .frame_type = CAN_FRAME_TYPE_DATA,
+            .id_mode    = CAN_ID_MODE_STANDARD
+        },
+        .destination =
+        {
+            .minimum_dlc       = CANFD_MINIMUM_DLC_1,
+            .rx_buffer         = CANFD_RX_MB_NONE,
+            .fifo_select_flags = CANFD_RX_FIFO_1
+        }
+    },
+};
+
 #endif
 
 static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
@@ -193,7 +232,7 @@ rt_ssize_t ra_can_sendmsg(struct rt_can_device *can_dev, const void *buf, rt_uin
     g_can_tx_frame.id_mode = msg_rt->ide;
     g_can_tx_frame.type = msg_rt->rtr;
     g_can_tx_frame.data_length_code = msg_rt->len;
-#if defined(BSP_USING_CANFD) && defined(BSP_USING_CAN_RZ)
+#if defined(BSP_USING_CANFD) && (defined(BSP_USING_CAN_RZ) || defined(BSP_USING_CAN_RA))
     g_can_tx_frame.options = 0;
 #elif defined(BSP_USING_CANFD)
     g_can_tx_frame.options = CANFD_FRAME_OPTION_FD | CANFD_FRAME_OPTION_BRS;

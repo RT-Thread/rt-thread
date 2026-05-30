@@ -27,6 +27,7 @@
 # set(CONFIG_CHERRYUSB_HOST_ASIX 1)
 # set(CONFIG_CHERRYUSB_HOST_RTL8152 1)
 # set(CONFIG_CHERRYUSB_HOST_DWC2_ST 1)
+# set(CONFIG_CHERRYUSB_HOST_XBOX 1)
 
 # set(CONFIG_CHERRYUSB_OSAL "freertos")
 # cmake-format: on
@@ -47,10 +48,13 @@ list(
     ${CMAKE_CURRENT_LIST_DIR}/class/midi
     ${CMAKE_CURRENT_LIST_DIR}/class/adb
     ${CMAKE_CURRENT_LIST_DIR}/class/dfu
+    ${CMAKE_CURRENT_LIST_DIR}/class/serial
     ${CMAKE_CURRENT_LIST_DIR}/class/vendor/net
-    ${CMAKE_CURRENT_LIST_DIR}/class/vendor/serial
     ${CMAKE_CURRENT_LIST_DIR}/class/vendor/wifi
+    ${CMAKE_CURRENT_LIST_DIR}/class/vendor/display
+    ${CMAKE_CURRENT_LIST_DIR}/class/vendor/xbox
     ${CMAKE_CURRENT_LIST_DIR}/class/aoa
+    ${CMAKE_CURRENT_LIST_DIR}/class/gamepad
 )
 
 if(CONFIG_CHERRYUSB_DEVICE)
@@ -84,6 +88,12 @@ if(CONFIG_CHERRYUSB_DEVICE)
     endif()
     if(CONFIG_CHERRYUSB_DEVICE_ADB)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/adb/usbd_adb.c)
+    endif()
+    if(CONFIG_CHERRYUSB_DEVICE_GAMEPAD)
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/gamepad/usbd_gamepad.c)
+    endif()
+    if(CONFIG_CHERRYUSB_DEVICE_DISPLAY)
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/vendor/display/usbd_display.c)
     endif()
 
     if(CONFIG_CHERRYUSB_DEVICE_FSDEV_ST)
@@ -156,7 +166,7 @@ if(CONFIG_CHERRYUSB_HOST)
     )
 
     if(CONFIG_CHERRYUSB_HOST_CDC_ACM)
-        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/cdc/usbh_cdc_acm.c)
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/serial/usbh_cdc_acm.c)
     endif()
     if(CONFIG_CHERRYUSB_HOST_CDC_ECM)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/cdc/usbh_cdc_ecm.c)
@@ -235,22 +245,35 @@ if(CONFIG_CHERRYUSB_HOST)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/vendor/net/usbh_rtl8152.c)
     endif()
     if(CONFIG_CHERRYUSB_HOST_CH34X)
-        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/vendor/serial/usbh_ch34x.c)
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/serial/usbh_ch34x.c)
     endif()
     if(CONFIG_CHERRYUSB_HOST_CP210X)
-        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/vendor/serial/usbh_cp210x.c)
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/serial/usbh_cp210x.c)
     endif()
     if(CONFIG_CHERRYUSB_HOST_FTDI)
-        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/vendor/serial/usbh_ftdi.c)
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/serial/usbh_ftdi.c)
     endif()
     if(CONFIG_CHERRYUSB_HOST_PL2303)
-        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/vendor/serial/usbh_pl2303.c)
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/serial/usbh_pl2303.c)
     endif()
-    if(CONFIG_CHERRYUSB_HOST_BL616)
-        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/vendor/wifi/usbh_bl616.c)
+    if(CONFIG_CHERRYUSB_HOST_GSM)
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/serial/usbh_gsm.c)
     endif()
     if(CONFIG_CHERRYUSB_HOST_AOA)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/aoa/usbh_aoa.c)
+    endif()
+    if(CONFIG_CHERRYUSB_HOST_XBOX)
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/vendor/xbox/usbh_xbox.c)
+    endif()
+
+    if(CONFIG_CHERRYUSB_HOST_CDC_ACM
+    OR CONFIG_CHERRYUSB_HOST_CH34X
+    OR CONFIG_CHERRYUSB_HOST_CP210X
+    OR CONFIG_CHERRYUSB_HOST_FTDI
+    OR CONFIG_CHERRYUSB_HOST_PL2303
+    OR CONFIG_CHERRYUSB_HOST_GSM
+    )
+        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/class/serial/usbh_serial.c)
     endif()
 
     if(CONFIG_CHERRYUSB_HOST_CDC_ECM
@@ -258,7 +281,6 @@ if(CONFIG_CHERRYUSB_HOST)
     OR CONFIG_CHERRYUSB_HOST_CDC_NCM
     OR CONFIG_CHERRYUSB_HOST_ASIX
     OR CONFIG_CHERRYUSB_HOST_RTL8152
-    OR CONFIG_CHERRYUSB_HOST_BL616
     )
         if("${CONFIG_CHERRYUSB_OSAL}" STREQUAL "idf")
             list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/platform/idf/usbh_net.c)
@@ -335,9 +357,13 @@ if(CONFIG_CHERRYUSB_HOST)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/port/rp2040/usb_hc_rp2040.c)
     endif()
 
-    if(CONFIG_TEST_USBH_CDC_ACM OR CONFIG_TEST_USBH_HID OR CONFIG_TEST_USBH_MSC)
+    if(CONFIG_TEST_USBH_SERIAL OR CONFIG_TEST_USBH_HID OR CONFIG_TEST_USBH_MSC)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/demo/usb_host.c)
     endif()
+endif()
+
+if(CONFIG_CHERRYUSB_DEVICE AND CONFIG_CHERRYUSB_HOST)
+list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/core/usbotg_core.c)
 endif()
 
 if(DEFINED CONFIG_CHERRYUSB_OSAL)
@@ -352,20 +378,5 @@ if(DEFINED CONFIG_CHERRYUSB_OSAL)
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/osal/usb_osal_threadx.c)
     elseif("${CONFIG_CHERRYUSB_OSAL}" STREQUAL "zephyr")
         list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/osal/usb_osal_zephyr.c)
-    endif()
-endif()
-
-if(CONFIG_CHERRYRB)
-    list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherryrb/chry_ringbuffer.c)
-    list(APPEND cherryusb_incs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherryrb)
-endif()
-
-if(CONFIG_CHERRYMP)
-    list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp/chry_mempool.c)
-    list(APPEND cherryusb_incs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp)
-    if("${CONFIG_CHERRYUSB_OSAL}" STREQUAL "freertos")
-        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp/chry_mempool_osal_freertos.c)
-    elseif("${CONFIG_CHERRYUSB_OSAL}" STREQUAL "rtthread")
-        list(APPEND cherryusb_srcs ${CMAKE_CURRENT_LIST_DIR}/third_party/cherrymp/chry_mempool_osal_rtthread.c)
     endif()
 endif()

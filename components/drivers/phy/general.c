@@ -172,13 +172,13 @@ int rt_genphy_update_link(struct rt_phy_device *phydev)
         !(mii_reg & RT_BMSR_ANEGCOMPLETE))
         {
         int i = 0;
-        rt_kprintf("Waiting for PHY auto negotiation to complete");
+        LOG_I("Waiting for PHY auto negotiation to complete");
         while (!(mii_reg & RT_BMSR_ANEGCOMPLETE))
         {
 
             if (i > (RT_PHY_ANEG_TIMEOUT))
             {
-                LOG_E(" TIMEOUT !\n");
+                LOG_E(" TIMEOUT!");
                 phydev->link = 0;
                 return -ETIMEDOUT;
             }
@@ -186,8 +186,9 @@ int rt_genphy_update_link(struct rt_phy_device *phydev)
             mii_reg = rt_phy_read(phydev, RT_MDIO_DEVAD_NONE, RT_MII_BMSR);
 
             rt_thread_delay(100);
+            i += 100;
         }
-        LOG_D(" done\n");
+        LOG_D(" Done");
         phydev->link = 1;
     } else {
         mii_reg = rt_phy_read(phydev, RT_MDIO_DEVAD_NONE, RT_MII_BMSR);

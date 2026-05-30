@@ -1,0 +1,42 @@
+import os
+from building import *
+
+Import('rtconfig')
+
+cwd = GetCurrentDir()
+
+group = []
+build_clock_time = GetDepend('RT_USING_CLOCK_TIME')
+
+if not build_clock_time:
+    Return('group')
+
+src = [
+    'clock_time_core.c',
+    'clock_hrtimer.c',
+    'clock_boottime.c',
+    'clock_timer.c',
+]
+if GetDepend('RT_CLOCK_TIME_ARM_ARCH'):
+    src += ['clock_time_arm_arch.c']
+
+arch_dir = os.path.join(cwd, 'arch')
+if os.path.isdir(arch_dir):
+    arch_list = os.listdir(arch_dir)
+    if rtconfig.ARCH in arch_list:
+        cpu_dir = os.path.join(arch_dir, rtconfig.ARCH, rtconfig.CPU)
+        if os.path.exists(cpu_dir):
+            src += Glob("arch/%s/%s/*.c" % (rtconfig.ARCH, rtconfig.CPU))
+        else:
+            src += Glob("arch/%s/*.c" % rtconfig.ARCH)
+
+CPPPATH = [cwd, os.path.join(cwd, '..', 'include')]
+LOCAL_CCFLAGS = ''
+if rtconfig.PLATFORM in ['gcc', 'armclang']:
+    LOCAL_CCFLAGS += ' -std=gnu99'
+elif rtconfig.PLATFORM in ['armcc']:
+    LOCAL_CCFLAGS += ' --c99 --gnu'
+
+group = DefineGroup('DeviceDrivers', src, depend=[''], CPPPATH=CPPPATH, LOCAL_CCFLAGS=LOCAL_CCFLAGS)
+
+Return('group')

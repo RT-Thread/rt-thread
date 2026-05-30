@@ -12,19 +12,19 @@
 
 #ifdef BSP_USING_SYSTIMER
 
-static void raspi_systimer_init(rt_hwtimer_t *hwtimer, rt_uint32_t state)
+static void raspi_systimer_init(rt_clock_timer_t *clock_timer, rt_uint32_t state)
 {
     if (state == 0)
-        hwtimer->ops->stop(hwtimer);
+        clock_timer->ops->stop(clock_timer);
 }
 
-static rt_err_t raspi_systimer_start(rt_hwtimer_t *hwtimer, rt_uint32_t cnt, rt_hwtimer_mode_t mode)
+static rt_err_t raspi_systimer_start(rt_clock_timer_t *clock_timer, rt_uint32_t cnt, rt_clock_timer_mode_t mode)
 {
     rt_err_t result = RT_EOK;
-    rt_systimer_t *timer = (rt_systimer_t *)hwtimer->parent.user_data;
+    rt_systimer_t *timer = (rt_systimer_t *)clock_timer->parent.user_data;
     int timer_id = timer->timer_id;
 
-    if (mode == HWTIMER_MODE_PERIOD)
+    if (mode == CLOCK_TIMER_MODE_PERIOD)
         timer->cnt = cnt;
     else
         timer->cnt = 0;
@@ -48,9 +48,9 @@ static rt_err_t raspi_systimer_start(rt_hwtimer_t *hwtimer, rt_uint32_t cnt, rt_
     return result;
 }
 
-static void raspi_systimer_stop(rt_hwtimer_t *hwtimer)
+static void raspi_systimer_stop(rt_clock_timer_t *clock_timer)
 {
-    rt_systimer_t *timer = (rt_systimer_t *)hwtimer->parent.user_data;
+    rt_systimer_t *timer = (rt_systimer_t *)clock_timer->parent.user_data;
     int timer_id = timer->timer_id;
     if (timer_id == 1)
         rt_hw_interrupt_mask(IRQ_SYSTEM_TIMER_1);
@@ -59,10 +59,10 @@ static void raspi_systimer_stop(rt_hwtimer_t *hwtimer)
 
 }
 
-static rt_err_t raspi_systimer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
+static rt_err_t raspi_systimer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
 {
     /* The frequency value is an immutable value. */
-    if (cmd == HWTIMER_CTRL_FREQ_SET)
+    if (cmd == CLOCK_TIMER_CTRL_FREQ_SET)
     {
         return RT_EOK;
     }
@@ -76,8 +76,8 @@ static rt_err_t raspi_systimer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *
 void rt_device_systimer_isr(int vector, void *param)
 {
 
-    rt_hwtimer_t *hwtimer = (rt_hwtimer_t *) param;
-    rt_systimer_t *timer = (rt_systimer_t *)hwtimer->parent.user_data;
+    rt_clock_timer_t *clock_timer = (rt_clock_timer_t *) param;
+    rt_systimer_t *timer = (rt_systimer_t *)clock_timer->parent.user_data;
     RT_ASSERT(timer != RT_NULL);
 
     int timer_id = timer->timer_id;
@@ -95,16 +95,16 @@ void rt_device_systimer_isr(int vector, void *param)
     }
     __sync_synchronize();
 
-    rt_device_hwtimer_isr(hwtimer);
+    rt_clock_timer_isr(clock_timer);
 }
 
-static struct rt_hwtimer_device _hwtimer1;
-static struct rt_hwtimer_device _hwtimer3;
+static struct rt_clock_timer_device _clock_timer1;
+static struct rt_clock_timer_device _clock_timer3;
 
 static rt_systimer_t _systimer1;
 static rt_systimer_t _systimer3;
 
-const static struct rt_hwtimer_ops systimer_ops =
+const static struct rt_clock_timer_ops systimer_ops =
 {
     raspi_systimer_init,
     raspi_systimer_start,
@@ -113,12 +113,12 @@ const static struct rt_hwtimer_ops systimer_ops =
     raspi_systimer_ctrl
 };
 
-static const struct rt_hwtimer_info _info =
+static const struct rt_clock_timer_info _info =
 {
     1000000,            /* the maxinum count frequency can be set */
     1000000,            /* the maxinum count frequency can be set */
     0xFFFFFFFF,         /* the maximum counter value */
-    HWTIMER_CNTMODE_UP  /* count mode (inc/dec) */
+    CLOCK_TIMER_CNTMODE_UP  /* count mode (inc/dec) */
 };
 
 #endif
@@ -130,19 +130,19 @@ int rt_hw_systimer_init(void)
 
 #ifdef RT_USING_SYSTIMER1
     _systimer1.timer_id =1;
-    _hwtimer1.ops = &systimer_ops;
-    _hwtimer1.info = &_info;
-    rt_device_hwtimer_register(&_hwtimer1, "timer1",&_systimer1);
-    rt_hw_interrupt_install(IRQ_SYSTEM_TIMER_1, rt_device_systimer_isr, &_hwtimer1, "systimer1");
+    _clock_timer1.ops = &systimer_ops;
+    _clock_timer1.info = &_info;
+    rt_clock_timer_register(&_clock_timer1, "timer1",&_systimer1);
+    rt_hw_interrupt_install(IRQ_SYSTEM_TIMER_1, rt_device_systimer_isr, &_clock_timer1, "systimer1");
     rt_hw_interrupt_umask(IRQ_SYSTEM_TIMER_1);
 #endif
 
 #ifdef RT_USING_SYSTIMER3
     _systimer3.timer_id =3;
-    _hwtimer3.ops = &systimer_ops;
-    _hwtimer3.info = &_info;
-    rt_device_hwtimer_register(&_hwtimer3, "timer3",&_systimer3);
-    rt_hw_interrupt_install(IRQ_SYSTEM_TIMER_3, rt_device_systimer_isr, &_hwtimer3, "systimer3");
+    _clock_timer3.ops = &systimer_ops;
+    _clock_timer3.info = &_info;
+    rt_clock_timer_register(&_clock_timer3, "timer3",&_systimer3);
+    rt_hw_interrupt_install(IRQ_SYSTEM_TIMER_3, rt_device_systimer_isr, &_clock_timer3, "systimer3");
     rt_hw_interrupt_umask(IRQ_SYSTEM_TIMER_3);
 #endif
 

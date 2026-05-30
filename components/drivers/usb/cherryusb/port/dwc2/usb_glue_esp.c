@@ -151,7 +151,7 @@ void usb_dc_low_level_init(uint8_t busid)
     };
     phy_config.target = GET_USB_PHY_TARGET(reg_base);
     phy_config.otg_speed = GET_USB_PHY_SPEED(reg_base);
-    
+
     ret = usb_new_phy(&phy_config, &s_phy_handle[GET_USB_INDEX(reg_base)]);
     if (ret != ESP_OK) {
         USB_LOG_ERR("USB Phy Init Failed!\r\n");
@@ -260,6 +260,11 @@ void dwc2_get_user_params(uint32_t reg_base, struct dwc2_user_params *params)
 void usbd_dwc2_delay_ms(uint8_t ms)
 {
     vTaskDelay(pdMS_TO_TICKS(ms));
+}
+
+uint32_t usbd_dwc2_get_system_clock(void)
+{
+    return SystemCoreClock;
 }
 
 #ifdef CONFIG_USB_DCACHE_ENABLE

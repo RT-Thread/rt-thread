@@ -944,7 +944,7 @@ static rt_err_t _rt_wlan_dev_control(rt_device_t dev, int cmd, void *args)
     case RT_WLAN_CMD_GET_FAST_CONNECT_INFO:
     {
 
-        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_GET_FAST_INFO, "RT_WLAN_CMD_GET_FAST_INFO");
+        LOG_D("%s %d cmd[%d]:%s  run......", __FUNCTION__, __LINE__, RT_WLAN_CMD_GET_FAST_CONNECT_INFO, "RT_WLAN_CMD_GET_FAST_CONNECT_INFO");
         if (wlan->ops->wlan_get_fast_info)
         {
             err = wlan->ops->wlan_get_fast_info(args);

@@ -13,7 +13,7 @@
 #include <rtdevice.h>
 #include <rthw.h>
 #include <string.h>
-#include <drivers/hwtimer.h>
+#include <drivers/clock_time.h>
 #include <raspi.h>
 #include <sys/time.h>
 
@@ -237,15 +237,15 @@ static rt_err_t timer_timeout_cb(rt_device_t dev, rt_size_t size)
     return 0;
 }
 #endif
-rt_err_t test_hwtimer(void)
+rt_err_t test_clock_timer(void)
 {
 #ifdef BSP_USING_SYSTIMER
     rt_kprintf("Hello Test HW Timer!\n");
     rt_err_t err;
-    rt_hwtimerval_t val;
+    rt_clock_timerval_t val;
     rt_device_t dev = RT_NULL;
     rt_tick_t tick;
-    rt_hwtimer_mode_t mode;
+    rt_clock_timer_mode_t mode;
     int t = 5;
 
     if ((dev = rt_device_find(TIMER)) == RT_NULL)
@@ -260,8 +260,8 @@ rt_err_t test_hwtimer(void)
         return -1;
     }
 
-    mode = HWTIMER_MODE_PERIOD;
-    err = rt_device_control(dev, HWTIMER_CTRL_MODE_SET, &mode);
+    mode = CLOCK_TIMER_MODE_PERIOD;
+    err = rt_device_control(dev, CLOCK_TIMER_CTRL_MODE_SET, &mode);
 
     tick = rt_tick_get();
     rt_kprintf("Start Timer> Tick: %d\n", tick);
@@ -277,7 +277,7 @@ rt_err_t test_hwtimer(void)
     rt_kprintf("Sleep %d sec\n", t);
     rt_thread_delay(t*RT_TICK_PER_SECOND);
 
-    err = rt_device_control(dev, HWTIMER_CTRL_STOP, RT_NULL);
+    err = rt_device_control(dev, CLOCK_TIMER_CTRL_STOP, RT_NULL);
     rt_kprintf("Timer Stoped\n");
 
     rt_device_read(dev, 0, &val, sizeof(val));
@@ -285,8 +285,8 @@ rt_err_t test_hwtimer(void)
 
     rt_device_set_rx_indicate(dev, timer_timeout_cb);
 
-    mode = HWTIMER_MODE_PERIOD;
-    err = rt_device_control(dev, HWTIMER_CTRL_MODE_SET, &mode);
+    mode = CLOCK_TIMER_MODE_PERIOD;
+    err = rt_device_control(dev, CLOCK_TIMER_CTRL_MODE_SET, &mode);
 
     val.sec = t;
     val.usec = 0;
@@ -436,9 +436,9 @@ void test_device(int argc, char**argv)
         return;
     }
 
-    if (0 == strcmp(argv[1],"hwtimer"))
+    if (0 == strcmp(argv[1],"clock_timer"))
     {
-        test_hwtimer();
+        test_clock_timer();
         return;
     }
 
@@ -458,6 +458,6 @@ void test_device(int argc, char**argv)
         test_hdmi();
         return;
     }
-    rt_kprintf("param err, please entry test_device <smp|gpio|i2c|spi|hwtimer|wdt|rtc|hdmi>\n");
+    rt_kprintf("param err, please entry test_device <smp|gpio|i2c|spi|clock_timer|wdt|rtc|hdmi>\n");
 }
-MSH_CMD_EXPORT(test_device, sample: test_device <smp|gpio|i2c|spi|hwtimer|wdt|rtc>);
+MSH_CMD_EXPORT(test_device, sample: test_device <smp|gpio|i2c|spi|clock_timer|wdt|rtc>);

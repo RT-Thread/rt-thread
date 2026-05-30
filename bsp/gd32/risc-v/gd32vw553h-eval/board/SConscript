@@ -1,0 +1,38 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+trap_gcc.S
+''')
+
+# add WiFi driver
+if GetDepend(['BSP_USING_WLAN']):
+    src += ['drv_wlan.c']
+    src += ['wifi.c']
+
+path =  [cwd]
+
+# add startup txt path
+startup_path_prefix = os.getcwd() + '/../'
+
+if rtconfig.PLATFORM in ['gcc']:
+    # Use standard peripheral library startup files for compatibility
+    src += [startup_path_prefix + '/packages/gd32-riscv-series-latest/GD32VW55x/RISCV/env_Eclipse/start.S']
+    src += [startup_path_prefix + '/packages/gd32-riscv-series-latest/GD32VW55x/RISCV/env_Eclipse/entry.S']
+
+CPPDEFINES = ['GD32VW553H_EVAL']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

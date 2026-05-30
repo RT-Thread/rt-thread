@@ -117,6 +117,7 @@ static rt_ubase_t bitmap_region_alloc(struct rt_pci_ep_mem *mem, rt_size_t size)
             return mem->cpu_addr + bit * mem->page_size;
         }
     _next:
+        ;
     }
 
     return ~0ULL;

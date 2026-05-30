@@ -1,0 +1,17 @@
+from building import *
+import os
+
+cwd     = GetCurrentDir()
+CPPPATH = [cwd]
+src = ['cpuport.c', 'interrupt.c']
+src += ['context_gcc.S', 'interrupt_gcc.S']
+
+if GetDepend(['RT_USING_HW_ATOMIC']):
+    src += ['atomic_riscv.c']
+
+if GetDepend(['RT_USING_SMP']):
+    src += ['cpuport_smp.c', 'clint.c']
+
+group = DefineGroup('lib_cpu', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

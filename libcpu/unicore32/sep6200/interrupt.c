@@ -118,7 +118,7 @@ rt_inline void sep6200_irq_mask(rt_uint32_t irq)
 }
 rt_isr_handler_t rt_hw_interrupt_handle(rt_uint32_t vector)
 {
-    rt_kprintf("Unhandled interrupt %d occured!!!\n", vector);
+    rt_kprintf("Unhandled interrupt %d occurred!!!\n", vector);
     return RT_NULL;
 }
 

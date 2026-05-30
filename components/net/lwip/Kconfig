@@ -213,6 +213,7 @@ if RT_USING_LWIP
     config RT_LWIP_NETIF_NAMESIZE
         int "netif name length"
         default 6
+        range 3 32
 
     config SO_REUSE
         int "Enable SO_REUSEADDR option"

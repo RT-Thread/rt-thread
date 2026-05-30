@@ -180,7 +180,7 @@ If the compilation and flashing are successful, when you reset the device, you w
 | ADC    | Supported      |                        |
 | RTC    | Supported      |                        |
 | WDT    | Supported      |                        |
-| HWTIMER | Supported     |                          |
+| CLOCK_TIMER | Supported     |                          |
 | FLASH  | Supported      |                        |
 | SDCARD  | Supported      |                        |
 

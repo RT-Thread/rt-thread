@@ -141,6 +141,11 @@ extern "C" {
 #define QSPI_DMA_IRQHandler              DMA2_Stream7_IRQHandler
 #define QSPI_DMA_RCC                     RCC_AHB1ENR_DMA2EN
 #define QSPI_DMA_INSTANCE                DMA2_Stream7
+#if defined(DMA_REQUEST_QUADSPI)
+#define QSPI_DMA_REQUEST                 DMA_REQUEST_QUADSPI
+#elif defined(DMA_REQUEST_QUADSPI1)
+#define QSPI_DMA_REQUEST                 DMA_REQUEST_QUADSPI1
+#endif
 #define QSPI_DMA_IRQ                     DMA2_Stream7_IRQn
 #endif
 

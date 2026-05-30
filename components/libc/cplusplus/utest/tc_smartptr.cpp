@@ -35,16 +35,27 @@ static void test_shared_ptr(void)
     uassert_int_equal(p1.use_count(), 2);
 }
 
+/**
+ * @brief Test case initialization function.
+ * @return RT_EOK on success.
+ */
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
 }
 
+/**
+ * @brief Test case cleanup function.
+ * @return RT_EOK on success.
+ */
 static rt_err_t utest_tc_cleanup(void)
 {
     return RT_EOK;
 }
 
+/**
+ * @brief Main test case function that runs the test.
+ */
 static void testcase(void)
 {
     /* Test unique_ptr basic operations */
@@ -52,4 +63,6 @@ static void testcase(void)
     /* Test shared_ptr basic operations */
     UTEST_UNIT_RUN(test_shared_ptr);
 }
+
+/* Export the test case with initialization and cleanup functions and a timeout of 10 ticks. */
 UTEST_TC_EXPORT(testcase, "components.libc.cpp.smartptr_tc", utest_tc_init, utest_tc_cleanup, 10);

@@ -126,9 +126,9 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_TIM
-        bool "Enable HWTIMER"
+        bool "Enable CLOCK_TIMER"
         default n
-        select RT_USING_HWTIMER
+        select RT_USING_CLOCK_TIME
         if BSP_USING_TIM
             config BSP_USING_TIM0
                 bool "Enable TIM0"

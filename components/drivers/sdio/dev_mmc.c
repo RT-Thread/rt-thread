@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,45 +7,77 @@
  * Date           Author       Notes
  * 2015-06-15     hichard      first version
  * 2024-05-25     HPMicro      add HS400 support
+ * 2025-12-11     HPMicro      correct the sequence of switching to high-speed ddr mode
  */
 
 #include <drivers/dev_mmcsd_core.h>
 #include <drivers/dev_mmc.h>
 
-#define DBG_TAG               "SDIO"
+#define DBG_TAG "SDIO"
 #ifdef RT_SDIO_DEBUG
-#define DBG_LVL               DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LVL               DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif /* RT_SDIO_DEBUG */
 #include <rtdbg.h>
 
-static const rt_uint32_t tran_unit[] =
-{
+static const rt_uint32_t tran_unit[] = {
     10000, 100000, 1000000, 10000000,
-    0,     0,      0,       0
+    0, 0, 0, 0
 };
 
-static const rt_uint8_t tran_value[] =
-{
-    0,  10, 12, 13, 15, 20, 25, 30,
-    35, 40, 45, 50, 55, 60, 70, 80,
+static const rt_uint8_t tran_value[] = {
+    0,
+    10,
+    12,
+    13,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    70,
+    80,
 };
 
-static const rt_uint32_t tacc_uint[] =
-{
-    1, 10, 100, 1000, 10000, 100000, 1000000, 10000000,
+static const rt_uint32_t tacc_uint[] = {
+    1,
+    10,
+    100,
+    1000,
+    10000,
+    100000,
+    1000000,
+    10000000,
 };
 
-static const rt_uint8_t tacc_value[] =
-{
-    0,  10, 12, 13, 15, 20, 25, 30,
-    35, 40, 45, 50, 55, 60, 70, 80,
+static const rt_uint8_t tacc_value[] = {
+    0,
+    10,
+    12,
+    13,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    70,
+    80,
 };
 
 rt_inline rt_uint32_t GET_BITS(rt_uint32_t *resp,
-                               rt_uint32_t  start,
-                               rt_uint32_t  size)
+                               rt_uint32_t start,
+                               rt_uint32_t size)
 {
     const rt_int32_t __size = size;
     const rt_uint32_t __mask = (__size < 32 ? 1 << __size : 0) - 1;
@@ -198,22 +230,22 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     uint8_t device_type = ext_csd[EXT_CSD_CARD_TYPE];
     if ((host->flags & MMCSD_SUP_HS400) && (device_type & EXT_CSD_CARD_TYPE_HS400))
     {
-        card->flags |=  CARD_FLAG_HS400;
+        card->flags |= CARD_FLAG_HS400;
         card->max_data_rate = 200000000;
     }
     else if ((host->flags & MMCSD_SUP_HS200) && (device_type & EXT_CSD_CARD_TYPE_HS200))
     {
-        card->flags |=  CARD_FLAG_HS200;
+        card->flags |= CARD_FLAG_HS200;
         card->max_data_rate = 200000000;
     }
     else if ((host->flags & MMCSD_SUP_HIGHSPEED_DDR) && (device_type & EXT_CSD_CARD_TYPE_DDR_52))
     {
-        card->flags |=  CARD_FLAG_HIGHSPEED_DDR;
+        card->flags |= CARD_FLAG_HIGHSPEED_DDR;
         card->hs_max_data_rate = 52000000;
     }
     else
     {
-        card->flags |=  CARD_FLAG_HIGHSPEED;
+        card->flags |= CARD_FLAG_HIGHSPEED;
         card->hs_max_data_rate = 52000000;
     }
 
@@ -238,6 +270,64 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     return 0;
 }
 
+/*
+ * Send Status.
+ */
+static int mmc_send_status(struct rt_mmcsd_card *card, rt_uint32_t *status, unsigned retries)
+{
+    int err;
+    struct rt_mmcsd_cmd cmd = (struct rt_mmcsd_cmd){ 0 };
+
+    cmd.busy_timeout = 0;
+    cmd.cmd_code = SEND_STATUS;
+    cmd.arg = card->rca << 16;
+    cmd.flags = RESP_R1 | CMD_AC;
+    err = mmcsd_send_cmd(card->host, &cmd, retries);
+    if (err)
+        return err;
+
+    if (status)
+        *status = cmd.resp[0];
+
+    return 0;
+}
+
+/*
+ * Poll Busy.
+ */
+static int mmc_poll_for_busy(struct rt_mmcsd_card *card, rt_uint32_t timeout_ms, unsigned retries)
+{
+    int timeout = rt_tick_from_millisecond(timeout_ms);
+    int err = 0;
+    rt_uint32_t status;
+    rt_tick_t start;
+
+    start = rt_tick_get();
+    do
+    {
+        rt_bool_t out = (int)(rt_tick_get() - start) >= timeout;
+
+        if (out)
+        {
+            LOG_E("wait card busy timeout");
+            return -RT_ETIMEOUT;
+        }
+
+        rt_thread_mdelay(1);
+
+        err = mmc_send_status(card, &status, retries);
+        if (R1_STATUS(err))
+        {
+            LOG_E("error %d requesting status", err);
+            return err;
+        }
+    }
+    while (!(status & R1_READY_FOR_DATA) ||
+           (R1_CURRENT_STATE(status) == R1_STATE_PRG));
+
+    return err;
+}
+
 /**
  *   mmc_switch - modify EXT_CSD register
  *   @card: the MMC card associated with the data transfer
@@ -252,7 +342,7 @@ static int mmc_switch(struct rt_mmcsd_card *card, rt_uint8_t set,
 {
     int err;
     struct rt_mmcsd_host *host = card->host;
-    struct rt_mmcsd_cmd cmd = {0};
+    struct rt_mmcsd_cmd cmd = { 0 };
 
     cmd.cmd_code = SWITCH;
     cmd.arg = (MMC_SWITCH_MODE_WRITE_BYTE << 24) |
@@ -260,6 +350,13 @@ static int mmc_switch(struct rt_mmcsd_card *card, rt_uint8_t set,
     cmd.flags = RESP_R1B | CMD_AC;
 
     err = mmcsd_send_cmd(host, &cmd, 3);
+    if (err)
+        return err;
+
+    /*
+     * Poll the card status using CMD13 with a timeout of 500ms and a polling interval of 1ms.
+     */
+    err = mmc_poll_for_busy(card, 500, 3);
     if (err)
         return err;
 
@@ -326,14 +423,12 @@ out:
  */
 static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
 {
-    rt_uint32_t ext_csd_bits[][2] =
-    {
-        {EXT_CSD_BUS_WIDTH_8, EXT_CSD_DDR_BUS_WIDTH_8},
-        {EXT_CSD_BUS_WIDTH_4, EXT_CSD_DDR_BUS_WIDTH_4},
-        {EXT_CSD_BUS_WIDTH_1, EXT_CSD_BUS_WIDTH_1},
+    rt_uint32_t ext_csd_bits[][2] = {
+        { EXT_CSD_BUS_WIDTH_8, EXT_CSD_DDR_BUS_WIDTH_8 },
+        { EXT_CSD_BUS_WIDTH_4, EXT_CSD_DDR_BUS_WIDTH_4 },
+        { EXT_CSD_BUS_WIDTH_1, EXT_CSD_BUS_WIDTH_1 },
     };
-    rt_uint32_t bus_widths[] =
-    {
+    rt_uint32_t bus_widths[] = {
         MMCSD_BUS_WIDTH_8,
         MMCSD_BUS_WIDTH_4,
         MMCSD_BUS_WIDTH_1
@@ -403,22 +498,21 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
         }
     }
 
+    if (!err)
+    {
+        if (card->flags & (CARD_FLAG_HIGHSPEED | CARD_FLAG_HIGHSPEED_DDR))
+        {
+            err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+                             EXT_CSD_HS_TIMING,
+                             1);
+        }
+    }
+
     if (!err && ddr)
     {
         err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
                          EXT_CSD_BUS_WIDTH,
                          ext_csd_bits[idx][1]);
-    }
-
-    if (!err)
-    {
-        if (card->flags & (CARD_FLAG_HIGHSPEED | CARD_FLAG_HIGHSPEED_DDR))
-        {
-
-            err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-                             EXT_CSD_HS_TIMING,
-                             1);
-        }
     }
 
     return err;
@@ -461,7 +555,7 @@ rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host,
 
         err = -RT_ETIMEOUT;
 
-        rt_thread_mdelay(10); //delay 10ms
+        rt_thread_mdelay(10); /* delay 10ms */
     }
 
     if (rocr && !controller_is_spi(host))
@@ -514,7 +608,7 @@ static int mmc_switch_to_hs400(struct rt_mmcsd_card *card)
 
     /* Switch to HS_TIMING to 0x01 (High Speed) */
     err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-                           EXT_CSD_HS_TIMING, EXT_CSD_TIMING_HS);
+                     EXT_CSD_HS_TIMING, EXT_CSD_TIMING_HS);
     if (err != RT_EOK)
     {
         return err;
@@ -530,9 +624,7 @@ static int mmc_switch_to_hs400(struct rt_mmcsd_card *card)
      *  0x86 if enhanced data strobe is supported, or
      *  0x06 if enhanced data strobe is not supported
      */
-    ext_csd_bus_width = support_enhanced_ds ?
-                        EXT_CSD_DDR_BUS_WIDTH_8_EH_DS :
-                        EXT_CSD_DDR_BUS_WIDTH_8;
+    ext_csd_bus_width = support_enhanced_ds ? EXT_CSD_DDR_BUS_WIDTH_8_EH_DS : EXT_CSD_DDR_BUS_WIDTH_8;
 
     err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
                      EXT_CSD_BUS_WIDTH,
@@ -553,9 +645,7 @@ static int mmc_switch_to_hs400(struct rt_mmcsd_card *card)
     }
 
     /* Change the Host timing accordingly */
-    hs_timing = support_enhanced_ds ?
-                MMCSD_TIMING_MMC_HS400_ENH_DS :
-                MMCSD_TIMING_MMC_HS400;
+    hs_timing = support_enhanced_ds ? MMCSD_TIMING_MMC_HS400_ENH_DS : MMCSD_TIMING_MMC_HS400;
     mmcsd_set_timing(host, hs_timing);
 
     /* Host may changes frequency to <= 200MHz */
@@ -611,7 +701,7 @@ static int mmc_select_timing(struct rt_mmcsd_card *card)
 }
 
 static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
-                                      rt_uint32_t           ocr)
+                                      rt_uint32_t ocr)
 {
     rt_int32_t err;
     rt_uint32_t resp[4];
@@ -741,7 +831,7 @@ err:
 rt_int32_t init_mmc(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 {
     rt_int32_t err;
-    rt_uint32_t  current_ocr;
+    rt_uint32_t current_ocr;
     /*
      * We need to get OCR a different way for SPI.
      */
@@ -790,3 +880,4 @@ err:
 
     return err;
 }
+

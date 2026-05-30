@@ -670,7 +670,7 @@ void n32_msp_adc_init(void *Instance)
 }
 #endif /* BSP_USING_ADC */
 
-#ifdef BSP_USING_HWTIMER
+#ifdef BSP_USING_CLOCK_TIMER
 void n32_msp_hwtim_init(void *Instance)
 {
     TIM_Module *TIMx = (TIM_Module *)Instance;
@@ -881,25 +881,25 @@ static int adc_vol_sample(int argc, char *argv[])
 MSH_CMD_EXPORT(adc_vol_sample, adc voltage convert sample);
 #endif
 
-#ifdef BSP_USING_HWTIMER
+#ifdef BSP_USING_CLOCK_TIMER
 static rt_err_t timeout_cb(rt_device_t dev, rt_size_t size)
 {
-    rt_kprintf("this is hwtimer timeout callback fucntion!\n");
+    rt_kprintf("this is clock_timer timeout callback fucntion!\n");
     rt_kprintf("timer name is :%s.\n", dev->parent.name);
     rt_kprintf("tick is :%d !\n", rt_tick_get());
 
     return 0;
 }
-static int hwtimer_init(const char *name)
+static int clock_timer_init(const char *name)
 {
     rt_err_t ret = RT_EOK;
-    rt_hwtimerval_t timeout_s;
+    rt_clock_timerval_t timeout_s;
     rt_device_t hw_dev = RT_NULL;
-    rt_hwtimer_mode_t mode;
+    rt_clock_timer_mode_t mode;
     hw_dev = rt_device_find(name);
     if (hw_dev == RT_NULL)
     {
-        rt_kprintf("hwtimer sample run failed! can't find %s device!\n", name);
+        rt_kprintf("clock_timer sample run failed! can't find %s device!\n", name);
         return -RT_ERROR;
     }
     ret = rt_device_open(hw_dev, RT_DEVICE_OFLAG_RDWR);
@@ -909,8 +909,8 @@ static int hwtimer_init(const char *name)
         return ret;
     }
     rt_device_set_rx_indicate(hw_dev, timeout_cb);
-    mode = HWTIMER_MODE_PERIOD;
-    ret = rt_device_control(hw_dev, HWTIMER_CTRL_MODE_SET, &mode);
+    mode = CLOCK_TIMER_MODE_PERIOD;
+    ret = rt_device_control(hw_dev, CLOCK_TIMER_CTRL_MODE_SET, &mode);
     if (ret != RT_EOK)
     {
         rt_kprintf("set mode failed! ret is :%d\n", ret);
@@ -932,17 +932,17 @@ static int hwtimer_init(const char *name)
     return ret;
 }
 
-static int hwtimer_sample(int argc, char *argv[])
+static int clock_timer_sample(int argc, char *argv[])
 {
 #ifdef BSP_USING_HWTIM6
-    hwtimer_init("timer6");
+    clock_timer_init("timer6");
 #endif
 #ifdef BSP_USING_HWTIM7
-    hwtimer_init("timer7");
+    clock_timer_init("timer7");
 #endif
     return RT_EOK;
 }
-MSH_CMD_EXPORT(hwtimer_sample, hwtimer sample);
+MSH_CMD_EXPORT(clock_timer_sample, clock_timer sample);
 #endif
 
 #endif

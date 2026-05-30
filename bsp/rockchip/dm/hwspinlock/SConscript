@@ -1,0 +1,12 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/hwspinlock']
+
+if GetDepend(['RT_HWSPINLOCK_ROCKCHIP']):
+    src += ['hwspinlock-rockchip.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

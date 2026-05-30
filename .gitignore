@@ -1,4 +1,6 @@
 *.pyc
+**/Cargo.lock
+**/target/
 *.map
 *.dblite
 *.elf

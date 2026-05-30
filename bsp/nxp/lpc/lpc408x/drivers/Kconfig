@@ -7,9 +7,9 @@ menu "Hardware Drivers Config"
             select RT_USING_LWIP
             default n
 
-        config BSP_USING_HWTIMER0
+        config BSP_USING_CLOCK_TIMER0
             bool "Using timer0"
-            select RT_USING_HWTIMER
+            select RT_USING_CLOCK_TIME
             default n
 
         config BSP_USING_ADC

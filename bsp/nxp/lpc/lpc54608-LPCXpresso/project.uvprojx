@@ -332,7 +332,7 @@
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
               <Define>RT_USING_LIBC, CPU_LPC54608, RT_USING_ARMLIBC, SDK_DEBUGCONSOLE=0, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, CORE_M4, CPU_LPC54608J512ET180=1</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\libcpu\arm\cortex-m4;SDK_2.2_LPCXpresso54608\devices\LPC54608\drivers;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;drivers;..\..\..\..\components\net\sal\include\socket\sys_socket;..\..\..\..\components\libc\posix\pthreads;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;applications;..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\ktime;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;SDK_2.2_LPCXpresso54608\CMSIS\Include;..\..\..\..\components\net\sal\include\dfs_net;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\inc;..\..\..\..\components\net\sal\include;..\..\..\..\components\net\sal\include\socket;..\..\..\..\components\finsh;.;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\components\net\netdev\include;..\..\..\..\components\libc\posix\io\eventfd;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\src;..\..\..\..\components\net\lwip\port;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\include;SDK_2.2_LPCXpresso54608\devices\LPC54608;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\libc\cplusplus;..\..\..\..\components\net\sal\impl;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\delay;..\..\..\..\components\drivers\include;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif;SDK_2.2_LPCXpresso54608\devices\LPC54608\utilities;..\..\..\..\components\drivers\ktime\inc</IncludePath>
+              <IncludePath>..\..\..\..\libcpu\arm\cortex-m4;SDK_2.2_LPCXpresso54608\devices\LPC54608\drivers;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;drivers;..\..\..\..\components\net\sal\include\socket\sys_socket;..\..\..\..\components\libc\posix\pthreads;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;applications;..\..\..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\clock_time;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;SDK_2.2_LPCXpresso54608\CMSIS\Include;..\..\..\..\components\net\sal\include\dfs_net;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\inc;..\..\..\..\components\net\sal\include;..\..\..\..\components\net\sal\include\socket;..\..\..\..\components\finsh;.;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\components\net\netdev\include;..\..\..\..\components\libc\posix\io\eventfd;SDK_2.2_LPCXpresso54608\sdmmc_2.1.2\src;..\..\..\..\components\net\lwip\port;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\include;SDK_2.2_LPCXpresso54608\devices\LPC54608;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\libc\cplusplus;..\..\..\..\components\net\sal\impl;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\delay;..\..\..\..\components\drivers\include;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\components\net\lwip\lwip-2.0.3\src\include\netif;SDK_2.2_LPCXpresso54608\devices\LPC54608\utilities;..\..\..\..\components\drivers\clock_time\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1422,26 +1422,26 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>ktime</GroupName>
+          <GroupName>clock_time</GroupName>
           <Files>
             <File>
-              <FileName>boottime.c</FileName>
+              <FileName>clock_boottime.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ktime\src\boottime.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\clock_time\clock_boottime.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cputimer.c</FileName>
+              <FileName>clock_time_core.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ktime\src\cputimer.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\clock_time\clock_time_core.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>hrtimer.c</FileName>
+              <FileName>clock_hrtimer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ktime\src\hrtimer.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\clock_time\clock_hrtimer.c</FilePath>
             </File>
           </Files>
         </Group>

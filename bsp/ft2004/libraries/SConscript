@@ -61,7 +61,7 @@ if GetDepend(['BSP_USE_CAN']):
     None
 
 
-if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
+if GetDepend(['RT_USING_CLOCK_TIME']) or GetDepend(['RT_USING_PWM']):
     None
 
 if GetDepend(['RT_USING_ADC']):

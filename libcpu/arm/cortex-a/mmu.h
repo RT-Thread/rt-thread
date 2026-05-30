@@ -14,37 +14,71 @@
 #include <rtthread.h>
 #include <mm_aspace.h>
 
-#define DESC_SEC       (0x2)
+
+/**
+ * Level 1 translation table entry format
+ *
+ * It has 4 types:
+ *      Fault         type:     bit[1:0] = 0b00
+ *      Point L2 page type:     bit[1:0] = 0b01
+ *      Section       type:     bit[1:0] = 0b10 and bit[18] = 0
+ *      Supersection  type:     bit[1:0] = 0b10 and bit[18] = 1
+ *
+ * The following defines are for section type entry
+ *      bit[01:00]: 0b10
+ *      bit[02]   : B
+ *      bit[03]   : C
+ *      bit[04]   : XN
+ *      bit[08:05]: Domain
+ *      bit[09]   : P
+ *      bit[11:10]: AP
+ *      bit[14:12]: TEX
+ *      bit[15]   : APX
+ *      bit[16]   : S
+ *      bit[17]   : nG
+ *      bit[18]   : 0
+ *      bit[19]   : SBZ
+ *      bit[31:20]: Section Bass Address
+ */
+
+#define DESC_SEC       (0x2)                /* for section type */
+
+/* memory types and attributes(TEX C B) */
 #define MEMWBWA        ((1<<12)|(3<<2))     /* write back, write allocate */
-#define MEMWB          (3<<2)  /* write back, no write allocate */
-#define MEMWT          (2<<2)  /* write through, no write allocate */
-#define SHAREDEVICE    (1<<2)  /* shared device */
-#define STRONGORDER    (0<<2)  /* strong ordered */
-#define XN             (1<<4)  /* eXecute Never */
+#define MEMWB          (3<<2)               /* write back, no write allocate */
+#define MEMWT          (2<<2)               /* write through, no write allocate */
+#define SHAREDEVICE    (1<<2)               /* shared device */
+#define STRONGORDER    (0<<2)               /* strong ordered */
+
+#define XN             (1<<4)
+
+/* memory access permissions(AP APX) */
 #ifdef RT_USING_SMART
-#define AP_RW          (1<<10) /* supervisor=RW, user=No */
-#define AP_RO          ((1<<10) |(1 << 15)) /* supervisor=RW, user=No */
+#define AP_RW          (1<<10)                  /* supervisor=RW, user=No */
+#define AP_RO          ((1<<10) | (1 << 15))    /* supervisor=RO, user=No */
 #else
-#define AP_RW          (3<<10) /* supervisor=RW, user=RW */
-#define AP_RO          (2<<10) /* supervisor=RW, user=RO */
+#define AP_RW          (3<<10)                  /* supervisor=RW, user=RW */
+#define AP_RO          (2<<10)                  /* supervisor=RW, user=RO */
 #endif
 
-#define SHARED         (1<<16) /* shareable */
+#define SHARED         (1 << 16)
 
-#define DOMAIN_FAULT   (0x0)
-#define DOMAIN_CHK     (0x1)
-#define DOMAIN_NOTCHK  (0x3)
+/* DACR, Domain n access permission */
+#define DOMAIN_FAULT   (0x0)                    /* 0b00: No access */
+#define DOMAIN_CHK     (0x1)                    /* 0b01: Client */
+#define DOMAIN_NOTCHK  (0x3)                    /* 0b11: No check */
+
+/* Domain */
 #define DOMAIN0        (0x0<<5)
 #define DOMAIN1        (0x1<<5)
 
-#define DOMAIN0_ATTR   (DOMAIN_CHK<<0)
-#define DOMAIN1_ATTR   (DOMAIN_FAULT<<2)
+/* DACR */
+#define DOMAIN0_ATTR   (DOMAIN_CHK<<0)          /* domain0 use client mode */
+#define DOMAIN1_ATTR   (DOMAIN_FAULT<<2)        /* domain1 use no access mode */
 
-/* device mapping type */
-#define DEVICE_MEM     (SHARED|AP_RW|DOMAIN0|SHAREDEVICE|DESC_SEC|XN)
-/* normal memory mapping type */
-#define NORMAL_MEM     (SHARED|AP_RW|DOMAIN0|MEMWBWA|DESC_SEC)
-
+/* Memory types */
+#define DEVICE_MEM       (SHARED|AP_RW|DOMAIN0|SHAREDEVICE|DESC_SEC|XN)
+#define NORMAL_MEM       (SHARED|AP_RW|DOMAIN0|MEMWBWA|DESC_SEC)
 #define STRONG_ORDER_MEM (SHARED|AP_RO|XN|DESC_SEC)
 
 struct mem_desc
@@ -56,6 +90,26 @@ struct mem_desc
     struct rt_varea varea;
 };
 
+/**
+ * Level 2 translation table entry format
+ *
+ * It has 3 types:
+ *      Fault:       bit[1:0] = 0b00
+ *      Larger page: bit[1:0] = 0b01
+ *      Small  page: bit[1:0] = 0b1x
+ *
+ * The following defines are for small page type entry
+ *      bit[00]:    XN
+ *      bit[01]:    1
+ *      bit[02]:    B
+ *      bit[03]:    C
+ *      bit[05:04]: AP
+ *      bit[08:06]: TEX
+ *      bit[09]:    APX
+ *      bit[10]:    S
+ *      bit[11]:    nG
+ *      bit[31:12]: Small Page Base Address
+ */
 #define MMU_MAP_MTBL_XN       (1<<0)
 #define MMU_MAP_MTBL_A        (1<<1)
 #define MMU_MAP_MTBL_B        (1<<2)
@@ -101,12 +155,12 @@ struct mem_desc
  */
 #define ARCH_MAP_FAILED ((void *)-1)
 
-#define RT_HW_MMU_PROT_READ 1
-#define RT_HW_MMU_PROT_WRITE 2
+#define RT_HW_MMU_PROT_READ    1
+#define RT_HW_MMU_PROT_WRITE   2
 #define RT_HW_MMU_PROT_EXECUTE 4
-#define RT_HW_MMU_PROT_KERNEL 8
-#define RT_HW_MMU_PROT_USER 16
-#define RT_HW_MMU_PROT_CACHE 32
+#define RT_HW_MMU_PROT_KERNEL  8
+#define RT_HW_MMU_PROT_USER    16
+#define RT_HW_MMU_PROT_CACHE   32
 
 int rt_hw_mmu_ioremap_init(struct rt_aspace *aspace, void *v_address, size_t size);
 void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size);
@@ -128,7 +182,7 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size, enum r
 void *rt_hw_mmu_pgtbl_create(void);
 void rt_hw_mmu_pgtbl_delete(void *pgtbl);
 
-#define AP_APX_MASK (MMU_MAP_MTBL_AP2(0x1) | MMU_MAP_MTBL_AP01(0x3))
+#define AP_APX_MASK    (MMU_MAP_MTBL_AP2(0x1) | MMU_MAP_MTBL_AP01(0x3))
 #define AP_APX_URW_KRW (MMU_MAP_MTBL_AP2(0x0) | MMU_MAP_MTBL_AP01(0x3))
 #define AP_APX_URO_KRO (MMU_MAP_MTBL_AP2(0x1) | MMU_MAP_MTBL_AP01(0x2))
 

@@ -167,7 +167,8 @@ struct rt_device *fal_blk_device_create(const char *parition_name)
         return NULL;
     }
 
-    if ((fal_flash = fal_flash_device_find(fal_part->flash_name)) == NULL)
+    fal_flash = fal_flash_device_find(fal_part->flash_name);
+    if (fal_flash == NULL)
     {
         LOG_E("Error: the flash device name (%s) is not found.", fal_part->flash_name);
         return NULL;
@@ -309,7 +310,8 @@ struct rt_device *fal_mtd_nor_device_create(const char *parition_name)
         return NULL;
     }
 
-    if ((fal_flash = fal_flash_device_find(fal_part->flash_name)) == NULL)
+    fal_flash = fal_flash_device_find(fal_part->flash_name);
+    if (fal_flash == NULL)
     {
         LOG_E("Error: the flash device name (%s) is not found.", fal_part->flash_name);
         return NULL;
@@ -435,42 +437,56 @@ static int char_dev_fopen(struct dfs_file *fd)
     return RT_EOK;
 }
 
-static int char_dev_fread(struct dfs_file *fd, void *buf, rt_size_t count)
+#ifdef RT_USING_DFS_V2
+static rt_ssize_t char_dev_fread(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
+#else
+static rt_ssize_t char_dev_fread(struct dfs_file *fd, void *buf, size_t count)
+#endif
 {
-    int ret = 0;
+    rt_ssize_t ret = 0;
     struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
+#ifndef RT_USING_DFS_V2
+    off_t *pos = &(fd->pos);
+#endif
 
     RT_ASSERT(part != RT_NULL);
 
-    if (DFS_FILE_POS(fd) + count > part->fal_part->len)
-        count = part->fal_part->len - DFS_FILE_POS(fd);
+    if (*pos + count > part->fal_part->len)
+        count = part->fal_part->len - *pos;
 
-    ret = fal_partition_read(part->fal_part, DFS_FILE_POS(fd), buf, count);
+    ret = fal_partition_read(part->fal_part, *pos, buf, count);
 
-    if (ret != (int)(count))
+    if (ret != (rt_ssize_t)(count))
         return 0;
 
-    DFS_FILE_POS(fd) += ret;
+    *pos += ret;
 
     return ret;
 }
 
-static int char_dev_fwrite(struct dfs_file *fd, const void *buf, rt_size_t count)
+#ifdef RT_USING_DFS_V2
+static rt_ssize_t char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
+#else
+static rt_ssize_t char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t count)
+#endif
 {
-    int ret = 0;
+    rt_ssize_t ret = 0;
     struct fal_char_device *part = (struct fal_char_device *) fd->vnode->data;
+#ifndef RT_USING_DFS_V2
+    off_t *pos = &(fd->pos);
+#endif
 
     RT_ASSERT(part != RT_NULL);
 
-    if (DFS_FILE_POS(fd) + count > part->fal_part->len)
-        count = part->fal_part->len - DFS_FILE_POS(fd);
+    if (*pos + count > part->fal_part->len)
+        count = part->fal_part->len - *pos;
 
-    ret = fal_partition_write(part->fal_part, DFS_FILE_POS(fd), buf, count);
+    ret = fal_partition_write(part->fal_part, *pos, buf, count);
 
-    if (ret != (int) count)
+    if (ret != (rt_ssize_t) count)
         return 0;
 
-    DFS_FILE_POS(fd) += ret;
+    *pos += ret;
 
     return ret;
 }
@@ -606,19 +622,24 @@ static void fal(rt_uint8_t argc, char **argv) {
             if (argc >= 3)
             {
                 char *dev_name = argv[2];
-                if ((flash_dev = fal_flash_device_find(dev_name)) != NULL)
+                flash_dev = fal_flash_device_find(dev_name);
+                if (flash_dev != NULL)
                 {
                     part_dev = NULL;
-                }
-                else if ((part_dev = fal_partition_find(dev_name)) != NULL)
-                {
-                    flash_dev = NULL;
                 }
                 else
                 {
-                    rt_kprintf("Device %s NOT found. Probe failed.\n", dev_name);
-                    flash_dev = NULL;
-                    part_dev = NULL;
+                    part_dev = fal_partition_find(dev_name);
+                    if (part_dev != NULL)
+                    {
+                        flash_dev = NULL;
+                    }
+                    else
+                    {
+                        rt_kprintf("Device %s NOT found. Probe failed.\n", dev_name);
+                        flash_dev = NULL;
+                        part_dev = NULL;
+                    }
                 }
             }
 

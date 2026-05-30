@@ -2,7 +2,7 @@
 
 **English** | [中文](README_zh.md)
 
-## MCU: STM32U575ZI @110MHz, 2048 KB FLASH,  786 KB RAM
+## MCU: STM32U575ZI @160MHz, 2048 KB FLASH,  786 KB RAM
 
 The STM32U575xx devices belong to an ultra-low-power microcontrollers family (STM32U5 Series) based on the high-performance Arm® Cortex®-M33 32-bit RISC core. They operate at a frequency of up to 160 MHz.
 

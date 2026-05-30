@@ -81,9 +81,6 @@ int dfs_init(void);
 char *dfs_normalize_path(const char *directory, const char *filename);
 const char *dfs_subdir(const char *directory, const char *filename);
 
-int fd_is_open(const char *pathname);
-struct dfs_fdtable *dfs_fdtable_get(void);
-
 void dfs_lock(void);
 void dfs_unlock(void);
 
@@ -92,6 +89,8 @@ void dfs_file_unlock(void);
 
 void dfs_fm_lock(void);
 void dfs_fm_unlock(void);
+
+void fd_init(struct dfs_file *fd);
 
 #ifdef DFS_USING_POSIX
 
@@ -104,7 +103,7 @@ int fd_new(void);
 struct dfs_file *fd_get(int fd);
 void fd_release(int fd);
 
-void fd_init(struct dfs_file *fd);
+int fd_is_open(const char *pathname);
 int fd_associate(struct dfs_fdtable *fdt, int fd, struct dfs_file *file);
 int fd_get_fd_index(struct dfs_file *file);
 

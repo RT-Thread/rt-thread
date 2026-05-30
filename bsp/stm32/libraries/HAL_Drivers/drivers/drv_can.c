@@ -15,6 +15,7 @@
  * 2021-8-25      SVCHAO       The baud rate is configured according to the different APB1 frequencies.
                                f4-series only.
  * 2025-09-20     wdfk_prog    Implemented sendmsg_nonblocking op to support framework's async TX.
+ * 2026-02-02     wdfk_prog    Drain multiple RX frames per ISR with a bounded limit.
  */
 
 #include "drv_can.h"
@@ -23,6 +24,14 @@
 
 #define LOG_TAG    "drv_can"
 #include <drv_log.h>
+
+#ifndef CAN_ISR_DRAIN_LIMIT
+/*
+ * bxCAN FIFO depth is 3 (FMP[1:0]=0..3). Draining up to 3 frames can clear the FIFO in one ISR,
+ * reducing FULL/OVERRUN without letting ISR time grow unbounded.
+ */
+#define CAN_ISR_DRAIN_LIMIT 3
+#endif
 
 /* attention !!! baud calculation example: Tclk / ((ss + bs1 + bs2) * brp) = 36 / ((1 + 8 + 3) * 3) = 1MHz*/
 #if defined (SOC_SERIES_STM32F1)/* APB1 36MHz(max) */
@@ -330,6 +339,10 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
         else
         {
             filter_cfg = (struct rt_can_filter_config *)arg;
+            if (!IS_CAN_FILTER_BANK_DUAL(drv_can->FilterConfig.SlaveStartFilterBank))
+            {
+                LOG_W("can%s invalid SlaveStartFilterBank=%d", drv_can->name, drv_can->FilterConfig.SlaveStartFilterBank);
+            }
             /* get default filter */
             for (int i = 0; i < filter_cfg->count; i++)
             {
@@ -351,6 +364,11 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 {
                     /* use user-defined filter bank settings */
                     drv_can->FilterConfig.FilterBank = filter_cfg->items[i].hdr_bank;
+                }
+                if (!IS_CAN_FILTER_BANK_DUAL(drv_can->FilterConfig.FilterBank))
+                {
+                    LOG_W("can%s invalid FilterBank=%d, skip item %d", drv_can->name, drv_can->FilterConfig.FilterBank, i);
+                    continue;
                 }
                  /**
                  * ID     | CAN_FxR1[31:24] | CAN_FxR1[23:16] | CAN_FxR1[15:8] | CAN_FxR1[7:0]       |
@@ -736,10 +754,20 @@ static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
     switch (fifo)
     {
     case CAN_RX_FIFO0:
-        /* save to user list */
-        if (HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO0) && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO0_MSG_PENDING))
+        /* save to user list: drain multiple frames per ISR to reduce FULL/OVERRUN */
+        if (__HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO0_MSG_PENDING))
         {
-            rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
+            for (rt_uint32_t i = 0; i < CAN_ISR_DRAIN_LIMIT; i++)
+            {
+                if (HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO0) == 0)
+                {
+                    break;
+                }
+                else
+                {
+                    rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
+                }
+            }
         }
         /* Check FULL flag for FIFO0 */
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FF0) && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO0_FULL))
@@ -757,10 +785,20 @@ static void _can_rx_isr(struct rt_can_device *can, rt_uint32_t fifo)
         }
         break;
     case CAN_RX_FIFO1:
-        /* save to user list */
-        if (HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO1) && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO1_MSG_PENDING))
+        /* save to user list: drain multiple frames per ISR to reduce FULL/OVERRUN */
+        if (__HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO1_MSG_PENDING))
         {
-            rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
+            for (rt_uint32_t i = 0; i < CAN_ISR_DRAIN_LIMIT; i++)
+            {
+                if (HAL_CAN_GetRxFifoFillLevel(hcan, CAN_RX_FIFO1) == 0)
+                {
+                    break;
+                }
+                else
+                {
+                    rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | fifo << 8);
+                }
+            }
         }
         /* Check FULL flag for FIFO1 */
         if (__HAL_CAN_GET_FLAG(hcan, CAN_FLAG_FF1) && __HAL_CAN_GET_IT_SOURCE(hcan, CAN_IT_RX_FIFO1_FULL))

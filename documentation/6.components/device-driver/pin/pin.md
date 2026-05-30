@@ -1,6 +1,10 @@
 @page page_device_pin PIN Device
 
+@subpage page_device_pin_dm
+
 # Introduction of Pin
+
+With **`RT_USING_DM`**, GPIO controllers use a global virtual pin namespace and device-tree **`gpios`** properties — see @ref page_device_pin_dm. This page documents the **`rt_pin_*`** application API (BSP **`GET_PIN`** macros apply to legacy non-DM setups).
 
 The pins on the chip are generally divided into four categories: power supply, clock, control, and I/O. The I/O pins are further divided into General Purpose Input Output (GPIO) and function-multiplexed I/O (such as SPI/I2C/UART, etc.) pins, referring to their usage mode.
 

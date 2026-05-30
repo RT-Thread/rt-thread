@@ -32,7 +32,7 @@ void USB_ClockInit(void)
     CLOCK_EnableClock(kCLOCK_Usb0Fs);
     CLOCK_EnableUsbfsClock();
 }
-#elif defined(MCXA156_H_)
+#elif defined(MCXA156_H_) || defined(MCXA366_H_)
 #define USBD_IRQ USB0_IRQHandler
 void USB_ClockInit(void)
 {
@@ -86,8 +86,8 @@ void usbd_kinetis_delay_ms(uint8_t ms)
     rt_thread_mdelay(ms);
 #else
     for (uint32_t i = 0; i < ms; i++)
-	{
-		for (volatile uint32_t j = 0; j < 10000; j++);
+    {
+        for (volatile uint32_t j = 0; j < 10000; j++);
     }
 #endif
 }

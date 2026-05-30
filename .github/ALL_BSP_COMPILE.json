@@ -73,6 +73,7 @@
         "asm9260t",
         "allwinner_tina",
         "ft32/ft32f072xb-starter",
+        "ft32/ft32f407xe-starter",
         "mini2440",
         "at91/at91sam9g45",
         "at91/at91sam9260",
@@ -85,9 +86,9 @@
         "yichip/yc3122-pos",
         "yichip/yc3121-pos",
         "mm32/mm32f3270-100ask-pitaya",
-        "mm32f327x",
-        "mm32f526x",
-        "mm32l07x",
+        "mm32/mm32f327x",
+        "mm32/mm32f526x",
+        "mm32/mm32l07x",
         "sam7x",
         "hk32/hk32f030c8-mini",
         "rm48x50",
@@ -243,12 +244,15 @@
         "nxp/imx/imxrt/imxrt1064-nxp-evk",
         "nxp/imx/imxrt/imxrt1021-nxp-evk",
         "nxp/imx/imxrt/imxrt1170-nxp-evk",
+        "nxp/imx/imxrt/imxrt1180-nxp-evk/cm33",
+        "nxp/imx/imxrt/imxrt1180-nxp-evk/cm7",
         "nxp/mcx/mcxn/frdm-mcxn947",
         "nxp/mcx/mcxn/frdm-mcxn236",
         "nxp/mcx/mcxc/frdm-mcxc444",
         "nxp/mcx/mcxa/frdm-mcxa153",
         "nxp/mcx/mcxa/frdm-mcxa156",
-		"nxp/mcx/mcxa/frdm-mcxa346",
+        "nxp/mcx/mcxa/frdm-mcxa346",
+        "nxp/mcx/mcxa/frdm-mcxa366",
         "nxp/mcx/mcxe/frdm-mcxe247",
         "renesas/ebf_qi_min_6m5",
         "renesas/ra6m4-cpk",
@@ -259,12 +263,13 @@
 		"renesas/ra6e1-fpb",
         "renesas/ra6e2-fpb",
         "renesas/ra4e2-eco",
-		"renesas/ra4m1-ek",
+        "renesas/ra4m1-ek",
         "renesas/ra4m2-eco",
         "renesas/ra2l1-cpk",
         "renesas/ra8m1-ek",
         "renesas/ra8d1-ek",
         "renesas/ra8d1-vision-board",
+        "renesas/ra8p1-titan-board",
         "renesas/rzt2m_rsk",
         "renesas/rzn2l_rsk",
         "renesas/rzn2l_etherkit",
@@ -306,6 +311,7 @@
         "gd32/arm/gd32303c-start",
         "gd32/arm/gd32305r-start",
         "gd32/arm/gd32307e-start",
+        "gd32/arm/gd32405rg",
         "gd32/arm/gd32407v-start",
         "gd32/arm/gd32407v-lckfb",
         "gd32/arm/gd32450z-eval",
@@ -315,18 +321,19 @@
         "gd32/arm/gd32e503v-eval",
         "gd32/arm/gd32527I-eval",
         "gd32/arm/gd32e230-lckfb",
-        "n32/n32g43xcl-stb",
-        "n32/n32g45xcl-stb",
-        "n32/n32g45xml-stb",
-        "n32/n32g45xrl-stb",
-        "n32/n32g45xvl-stb",
-        "n32/n32g457qel-stb",
-        "n32/n32g4frml-stb",
-        "n32/n32l40xcl-stb",
-        "n32/n32l43xml-stb",
-        "n32/n32l43xrl-stb",
-        "n32/n32l436-evb",
-        "n32/n32wb45xl-evb",
+        "n32/n32gxx_lxx/n32g43xcl-stb",
+        "n32/n32gxx_lxx/n32g45xcl-stb",
+        "n32/n32gxx_lxx/n32g45xml-stb",
+        "n32/n32gxx_lxx/n32g45xrl-stb",
+        "n32/n32gxx_lxx/n32g45xvl-stb",
+        "n32/n32gxx_lxx/n32g457qel-stb",
+        "n32/n32gxx_lxx/n32g4frml-stb",
+        "n32/n32gxx_lxx/n32l40xcl-stb",
+        "n32/n32gxx_lxx/n32l43xml-stb",
+        "n32/n32gxx_lxx/n32l43xrl-stb",
+        "n32/n32gxx_lxx/n32l436-evb",
+        "n32/n32gxx_lxx/n32wb45xl-evb",
+		"n32/n32hxxx/n32h760zil7-stb",
         "apm32/apm32f103xe-minibroard",
         "apm32/apm32f407ig-minibroard",
         "apm32/apm32f407zg-evalboard",
@@ -387,7 +394,8 @@
       "SUB_RTT_BSP": [
         "qemu-virt64-aarch64",
         "raspberry-pi/raspi3-64",
-        "raspberry-pi/raspi4-64"
+        "raspberry-pi/raspi4-64",
+        "nxp/imx/imx91"
       ]
     },
     {
@@ -397,7 +405,8 @@
         "k210",
         "wch/risc-v/ch32v208w-r0",
         "wch/risc-v/ch32v307v-r1",
-        "wch/risc-v/yd-ch32v307vct6"
+        "wch/risc-v/yd-ch32v307vct6",
+        "gd32/risc-v/gd32vw553h-eval"
       ]
     },
     {
@@ -451,7 +460,7 @@
       "RTT_BSP": "ESP32C3",
       "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
       "SUB_RTT_BSP": [
-        "ESP32_C3"
+        "ESP/ESP32_C3"
       ]
     },
     {
@@ -485,14 +494,15 @@
       "RTT_BSP": "xuantie",
       "RTT_TOOL_CHAIN": "sourcery-Xuantie-900-gcc-elf-newlib",
       "SUB_RTT_BSP": [
-        "xuantie/smartl/e901",
+        "xuantie/smartl/e901plus",
         "xuantie/smartl/e902",
         "xuantie/smartl/e906",
         "xuantie/smartl/e907",
         "xuantie/xiaohui/c906",
         "xuantie/xiaohui/c907",
         "xuantie/xiaohui/c908",
-        "xuantie/xiaohui/c910",
+        "xuantie/xiaohui/c908x",
+        "xuantie/xiaohui/c920",
         "xuantie/xiaohui/r908",
         "xuantie/xiaohui/r910",
         "xuantie/xiaohui/r920"
@@ -510,6 +520,20 @@
       "RTT_TOOL_CHAIN": "sourcery-riscv64-general-toolchain",
       "SUB_RTT_BSP": [
         "allwinner/d1s"
+      ]
+    },
+    {
+      "RTT_BSP": "novosns",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "novosns/ns800/ns800rt7p65-nssinepad"
+      ]
+    },
+    {
+      "RTT_BSP": "RDK",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "rdk/s100"
       ]
     }
   ]

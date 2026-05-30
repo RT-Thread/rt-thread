@@ -33,28 +33,29 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟢 Renesas
 
-| BSP Name | GPIO | UART | ADC | CAN | CANFD | DAC | Ethernet | HWTimer | I2C | PWM | RTC | SPI | Soft SPI | Flash | SDHI | SCI | SDRAM | LCD | Other |
-|----------|------|------|-----|-----|-------|-----|----------|---------|-----|-----|-----|-----|----------|-------|------|-----|-------|-----|-------|
-| [ebf_qi_min_6m5](renesas/ebf_qi_min_6m5) | ✅ | ✅ | ✅ | - | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - |
-| [ra2a1-ek](renesas/ra2a1-ek) | ✅ | ✅ | ✅ | - | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - |
-| [ra2e2-ek](renesas/ra2e2-ek) | ✅ | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | - | ✅ | - | - | - | - | - | - | - |
-| [ra2l1-cpk](renesas/ra2l1-cpk) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | ✅ |
-| [ra4e2-eco](renesas/ra4e2-eco) | ✅ | ✅ | - | - | - | - | - | - | ✅ | - | - | ✅ | - | - | - | - | - | - | - |
-| [ra4e2-ek](renesas/ra4e2-ek) | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-| [ra4m1-ek](renesas/ra4m1-ek) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | - | - | - | - | - | - | - |
-| [ra4m2-eco](renesas/ra4m2-eco) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | ✅ | - | - | - | ✅ | - | - | - |
-| [ra6e2-ek](renesas/ra6e2-ek) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-| [ra6e2-fpb](renesas/ra6e2-fpb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-| [ra6m3-ek](renesas/ra6m3-ek) | ✅ | ✅ | - | - | - | - | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | ✅ | - |
-| [ra6m3-hmi-board](renesas/ra6m3-hmi-board) | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | ✅ |
-| [ra6m4-cpk](renesas/ra6m4-cpk) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | - | ✅ |
-| [ra6m4-iot](renesas/ra6m4-iot) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | - | - |
-| [ra8d1-ek](renesas/ra8d1-ek) | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [ra8d1-vision-board](renesas/ra8d1-vision-board) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [ra8m1-ek](renesas/ra8m1-ek) | ✅ | ✅ | ✅ | - | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | ✅ |
-| [rzn2l_etherkit](renesas/rzn2l_etherkit) | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | ✅ |
-| [rzn2l_rsk](renesas/rzn2l_rsk) | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | ✅ | - | - | ✅ | - | - | - | ✅ | - | - | ✅ |
-| [rzt2m_rsk](renesas/rzt2m_rsk) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | - | ✅ | - | - | - | ✅ | - | - | ✅ |
+| BSP Name | GPIO | UART | ADC | CAN | CANFD | DAC | Ethernet | HWTimer | I2C | PWM | RTC | SPI | Soft SPI | Flash | SDHI | SCI | SDRAM | LCD | **RS485** | Other |
+|----------|------|------|-----|-----|-------|-----|----------|---------|-----|-----|-----|-----|----------|-------|------|-----|-------|-----|-------|-------|
+| [ebf_qi_min_6m5](renesas/ebf_qi_min_6m5) | ✅ | ✅ | ✅ | - | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | - |
+| [ra2a1-ek](renesas/ra2a1-ek) | ✅ | ✅ | ✅ | - | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | - |
+| [ra2e2-ek](renesas/ra2e2-ek) | ✅ | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | - | ✅ | - | - | - | - | - | - | - | - |
+| [ra2l1-cpk](renesas/ra2l1-cpk) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | ✅ |
+| [ra4e2-eco](renesas/ra4e2-eco) | ✅ | ✅ | - | - | - | - | - | - | ✅ | - | - | ✅ | - | - | - | - | - | - | - | - |
+| [ra4e2-ek](renesas/ra4e2-ek) | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [ra4m1-ek](renesas/ra4m1-ek) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | - | - | - | - | - | - | - | - |
+| [ra4m2-eco](renesas/ra4m2-eco) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | ✅ | - | - | - | ✅ | - | - | - | - |
+| [ra6e2-ek](renesas/ra6e2-ek) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [ra6e2-fpb](renesas/ra6e2-fpb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [ra6m3-ek](renesas/ra6m3-ek) | ✅ | ✅ | - | - | - | - | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | ✅ | - | - |
+| [ra6m3-hmi-board](renesas/ra6m3-hmi-board) | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | ✅ |
+| [ra6m4-cpk](renesas/ra6m4-cpk) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | - | - | ✅ |
+| [ra6m4-iot](renesas/ra6m4-iot) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | - | - | - |
+| [ra8d1-ek](renesas/ra8d1-ek) | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | - | ✅ |
+| [ra8d1-vision-board](renesas/ra8d1-vision-board) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | - | ✅ |
+| [ra8p1-titan-board](renesas/ra8p1-titan-board) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ |
+| [ra8m1-ek](renesas/ra8m1-ek) | ✅ | ✅ | ✅ | - | - | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | ✅ |
+| [rzn2l_etherkit](renesas/rzn2l_etherkit) | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | ✅ |
+| [rzn2l_rsk](renesas/rzn2l_rsk) | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | ✅ | - | - | ✅ | - | - | - | ✅ | - | - | - | ✅ |
+| [rzt2m_rsk](renesas/rzt2m_rsk) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | - | ✅ | - | - | - | ✅ | - | - | - | ✅ |
 
 #### 🟢 STM32
 
@@ -88,6 +89,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [stm32f407-atk-explorer](stm32/stm32f407-atk-explorer) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | - | - | - | ✅ | - | ✅ |
 | [stm32f407-fk407m2-zgt6](stm32/stm32f407-fk407m2-zgt6) | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | ✅ | - | - | - | - | ✅ | - | ✅ |
 | [stm32f407-lckfb-skystar](stm32/stm32f407-lckfb-skystar) | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | ✅ | - | - | - | ✅ | ✅ | - | - |
+| [stm32f407-micu](stm32/stm32f407-micu) | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | - | - | - | - |
 | [stm32f407-robomaster-c](stm32/stm32f407-robomaster-c) | ✅ | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32f407-rt-spark](stm32/stm32f407-rt-spark) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | ✅ | - | ✅ |
 | [stm32f407-st-discovery](stm32/stm32f407-st-discovery) | ✅ | ✅ | - | - | - | - | - | - | ✅ | - | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
@@ -213,6 +215,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [gd32303e-eval](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32305r-start](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32307e-start](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
+| [gd32405rg](gd32) | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32407v-ickfb](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32407v-start](gd32) | ✅ | ✅ | ✅ | - | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
 | [gd32450z-eval](gd32) | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | - | ✅ | - | ✅ |
@@ -315,18 +318,19 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 | BSP Name | GPIO | UART | ADC | CAN | DAC | HWTimer | I2C | RTC | SPI | WDT |
 |----------|------|------|-----|-----|-----|---------|-----|-----|-----|-----|
-| [n32g43xcl-stb](n32/n32g43xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32g457gel-stb](n32) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32g45xcl-stb](n32/n32g45xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32g45xml-stb](n32/n32g45xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32g45xrl-stb](n32/n32g45xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32g45xvl-stb](n32/n32g45xvl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32g47rml-stb](n32/n32g47rml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32l40xcl-stb](n32/n32l40xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32l436-evb](n32/n32l436-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32l43xml-stb](n32/n32l43xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32l43xrl-stb](n32/n32l43xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32wb45xl-evb](n32/n32wb45xl-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32g43xcl-stb](n32/n32gxx_lxx/n32g43xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32g457gel-stb](n32/n32gxx_lxx/n32g457gel-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32g45xcl-stb](n32/n32gxx_lxx/n32g45xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32g45xml-stb](n32/n32gxx_lxx/n32g45xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32g45xrl-stb](n32/n32gxx_lxx/n32g45xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32g45xvl-stb](n32/n32gxx_lxx/n32g45xvl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32g47rml-stb](n32/n32gxx_lxx/n32g47rml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32l40xcl-stb](n32/n32gxx_lxx/n32l40xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32l436-evb](n32/n32gxx_lxx/n32l436-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32l43xml-stb](n32/n32gxx_lxx/n32l43xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32l43xrl-stb](n32/n32gxx_lxx/n32l43xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32wb45xl-evb](n32/n32gxx_lxx/n32wb45xl-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32h760zil7-stb](n32/n32hxxx/n32h760zil7-stb) | ✅ | ✅ | ✅ | - | - | - | ✅ | ✅ | ✅ | - |
 
 #### 🟡 NRF5x
 
@@ -340,11 +344,11 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟡 Rockchip
 
-| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
-|----------|------|------|-----|-----|-----|-----|
-| [rk2108](rockchip/rk2108) | - | ✅ | - | - | - | - |
-| [rk3500](rockchip/rk3500) | - | ✅ | - | - | - | - |
-| [rk3568](rockchip/rk3568) | - | ✅ | - | - | - | - |
+| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT | HWTimer | PWM | RTC | SDIO | CAN | PCI |
+|----------|------|------|-----|-----|-----|-----|---------|-----|-----|------|-----|------|
+| [rk2108](rockchip/rk2108) | - | ✅ | - | - | - | - | - | - | - | - | - | - |
+| [rk3300](rockchip/rk3300) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - |
+| [rk3500](rockchip/rk3500) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟡 APM32
 
@@ -415,22 +419,22 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [swm320-mini](synwit/swm320-mini) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [swm341-mini](synwit/swm341-mini) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-#### ⚪ N32G452xx 
+#### ⚪ N32G452xx
 | BSP Name | GPIO | UART | ADC | CAN | DAC | Flash | HWTimer | I2C | PWM | RTC | SDIO | SPI | WDT |
 |----------|------|------|-----|-----|-----|-------|---------|-----|-----|-----|------|-----|-----|
 | [n32g452xx-mini-system](n32g452xx/n32g452xx-mini-system) | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ |
 
-#### ⚪ W60x 
+#### ⚪ W60x
 | BSP Name | GPIO | UART | ADC | Crypto | Flash | HWTimer | WDT | PWM | I2C | SPI |
 |----------|------|------|-----|--------|-------|---------|-----|-----|-----|-----|
 | [w60x](w60x) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-#### ⚪ Allwinner Tina 
+#### ⚪ Allwinner Tina
 | BSP Name | GPIO | UART | SPI | SDIO |
 |----------|------|------|-----|------|
 | [allwinner_tina](allwinner_tina) | ✅ | ✅ | ✅ | ✅ |
 
-#### ⚪ HC321136 
+#### ⚪ HC321136
 | BSP Name | GPIO | UART | I2C |
 |----------|------|------|-----|
 | [hc321136](hc32/hc321136) | ✅ | ✅ | ✅ |
@@ -440,7 +444,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 |----------|------|------|
 | [hc321196](hc32/hc321196) | ✅ | ✅ |
 
-#### ⚪ Amebaz 
+#### ⚪ Amebaz
 | BSP Name | GPIO | UART | WLAN |
 |----------|------|------|------|
 | [amebaz](amebaz) | - | ✅ | ✅ |
@@ -541,6 +545,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | BSP Name | GPIO | UART |
 |----------|------|------|
 | [ft32f072xb-starter](ft32/ft32f072xb-starter) | ✅ | ✅ |
+| [ft32f407xe-starter](ft32/ft32f407xe-starter) | ✅ | ✅ |
 
 #### ⚪ Fujitsu
 
@@ -760,22 +765,23 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟢 K230 (RT-Smart)
 
-| BSP Name | GPIO | UART | I2C | RTC | ADC | PWM | SDIO | HWTimer | WDT | SPI |
-|----------|------|------|-----|-----|-----|-----|------|---------|-----|-----|
-| [k230](k230) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| BSP Name | GPIO | UART | I2C | RTC | ADC | PWM | SDIO | HWTimer | WDT | SPI | GNNE |
+|----------|------|------|-----|-----|-----|-----|------|---------|-----|-----|------|
+| [k230](k230) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟢 Xuantie (RT-Smart)
 
 | BSP Name | GPIO | UART | ADC | I2C | SPI | WDT |
 |----------|------|------|-----|-----|-----|-----|
-| [e901](xuantie/smartl/e901) | - | ✅ | - | - | - | - |
+| [e901plus](xuantie/smartl/e901plus) | - | ✅ | - | - | - | - |
 | [e902](xuantie/smartl/e902) | - | ✅ | - | - | - | - |
 | [e906](xuantie/smartl/e906) | - | ✅ | - | - | - | - |
 | [e907](xuantie/smartl/e907) | - | ✅ | - | - | - | - |
 | [c906 (RT-Smart)](xuantie/virt64/c906) | - | ✅ | - | - | - | - |
 | [c907](xuantie/xiaohui/c907) | - | ✅ | - | - | - | - |
 | [c908](xuantie/xiaohui/c908) | - | ✅ | - | - | - | - |
-| [c910](xuantie/xiaohui/c910) | - | ✅ | - | - | - | - |
+| [c908x](xuantie/xiaohui/c908x) | - | ✅ | - | - | - | - |
+| [c920](xuantie/xiaohui/c920) | - | ✅ | - | - | - | - |
 | [r908](xuantie/xiaohui/r908) | - | ✅ | - | - | - | - |
 | [r910](xuantie/xiaohui/r910) | - | ✅ | - | - | - | - |
 | [r920](xuantie/xiaohui/r920) | - | ✅ | - | - | - | - |
@@ -837,17 +843,17 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 |----------|------|------|-----|-------|---------|------|-----|-----|------|----------|-----|
 | [ab32vg1-ab-prougen](bluetrum/ab32vg1-ab-prougen) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-#### ⚪ Core-V-MCU 
+#### ⚪ Core-V-MCU
 | BSP Name | UART |
 |----------|------|
 | [core-v-cv32e40p](core-v-mcu/core-v-cv32e40p) | ✅ |
 
-#### ⚪ HiFive1 
+#### ⚪ HiFive1
 | BSP Name | GPIO | UART |
 |----------|------|------|
 | [hifive1](hifive1) | ✅ | ✅ |
 
-#### ⚪ Sparkfun-RedV 
+#### ⚪ Sparkfun-RedV
 | BSP Name | GPIO | UART | ADC | I2C | SPI | WDT | Timer | PWM | RTC |
 |----------|------|------|-----|-----|-----|-----|-------|-----|-----|
 | [sparkfun-redv](sparkfun-redv) | ✅ | ✅ | - | - | - | - | ✅ | - | - |

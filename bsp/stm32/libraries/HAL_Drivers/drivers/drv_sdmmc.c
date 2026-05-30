@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2026 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -8,6 +8,7 @@
  * 2020-05-23     liuduanfei   first version
  * 2020-08-25     wanghaijing  add sdmmmc2
  * 2023-03-26     wdfk-prog    Distinguish between SDMMC and SDIO drivers
+ * 2024-08-05     wdfk-prog    Optimize SDMMC timeout handling and clock divider
  */
 #include "board.h"
 
@@ -27,7 +28,6 @@
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
-static struct stm32_sdio_class sdio_obj;
 static struct rt_mmcsd_host *host1;
 static struct rt_mmcsd_host *host2;
 
@@ -54,6 +54,11 @@ struct rthw_sdio
 
 rt_align(SDIO_ALIGN_LEN)
 static rt_uint8_t cache_buf[SDIO_BUFF_SIZE];
+
+static rt_uint32_t stm32_sdio_clk_get(void)
+{
+    return SDIO_CLOCK_FREQ;
+}
 
 /**
   * @brief  This function get order from sdio.
@@ -154,10 +159,6 @@ static void rthw_sdio_wait_completed(struct rthw_sdio *sdio)
         return;
     }
 
-    if (sdio->pkg == RT_NULL)
-    {
-        return;
-    }
     /* Get Card Specific Data */
     cmd->resp[0] = hsd->RESP1;
     if (resp_type(cmd) == RESP_R2)
@@ -222,6 +223,38 @@ static void rthw_sdio_wait_completed(struct rthw_sdio *sdio)
 }
 
 /**
+ * @brief Calculate timeout for SDMMC data transfer.
+ *
+ * @note The timeout is estimated based on transfer size:
+ *       timeout = 100 ms + 2 ms per 512 bytes.
+ *       The result is clamped to the range [100 ms, 5000 ms].
+ *
+ * @param data Pointer to transfer data descriptor.
+ *
+ * @return Timeout in RT-Thread tick units.
+ */
+static rt_tick_t stm32_sdmmc_calc_timeout(struct rt_mmcsd_data *data)
+{
+    rt_size_t len;
+    rt_uint32_t timeout_ms;
+
+    if (data == RT_NULL)
+        return rt_tick_from_millisecond(100);
+
+    len = data->blks * data->blksize;
+
+    /* base timeout + size-based timeout */
+    timeout_ms = 100 + (len / 512) * 2;
+
+    if (timeout_ms < 100)
+        timeout_ms = 100;
+    if (timeout_ms > 5000)
+        timeout_ms = 5000;
+
+    return rt_tick_from_millisecond(timeout_ms);
+}
+
+/**
   * @brief  This function send command.
   * @param  sdio rthw_sdio
   * @param  pkg  sdio package
@@ -262,7 +295,7 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
     /* data pre configuration */
     if (data != RT_NULL)
     {
-        SCB_CleanInvalidateDCache();
+        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, cache_buf, data->blks * data->blksize);
 
         reg_cmd |= SDMMC_CMD_CMDTRANS;
         __HAL_SD_DISABLE_IT(&sdio->sdio_des.hw_sdio, SDMMC_MASK_CMDRENDIE | SDMMC_MASK_CMDSENTIE);
@@ -292,14 +325,19 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
     /* Waiting for data to be sent to completion */
     if (data != RT_NULL)
     {
-        volatile rt_uint32_t count = SDIO_TX_RX_COMPLETE_TIMEOUT_LOOPS;
+        rt_tick_t start = rt_tick_get();
+        rt_tick_t timeout = stm32_sdmmc_calc_timeout(data);
 
-        while (count && (hsd->STA & SDMMC_STA_DPSMACT))
+        while (hsd->STA & SDMMC_STA_DPSMACT)
         {
-            count--;
+            if ((rt_tick_get() - start) >= timeout)
+            {
+                cmd->err = -RT_ETIMEOUT;
+                break;
+            }
         }
 
-        if ((count == 0) || (hsd->STA & SDIO_ERRORS))
+        if ((hsd->STA & SDIO_ERRORS) != 0)
         {
             cmd->err = -RT_ERROR;
         }
@@ -311,7 +349,7 @@ static void rthw_sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
         if (data->flags & DATA_DIR_READ)
         {
             rt_memcpy(data->buf, cache_buf, data->blks * data->blksize);
-            SCB_CleanInvalidateDCache();
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, cache_buf, data->blks * data->blksize);
         }
     }
 }
@@ -371,142 +409,128 @@ static void rthw_sdio_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
   */
 static void rthw_sdio_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg)
 {
-    rt_uint32_t temp, clk_src;
-    rt_uint32_t clk = io_cfg->clock;
+    rt_uint32_t req_clk  = io_cfg->clock;
+    rt_uint32_t clk = req_clk;
     struct rthw_sdio *sdio = host->private_data;
     SD_HandleTypeDef *hsd = &sdio->sdio_des.hw_sdio;
     SDMMC_InitTypeDef Init = {0};
     rt_uint32_t sdmmc_clk  = sdio->sdio_des.clk_get();
 
-    if (sdmmc_clk < 400 * 1000)
-    {
-        LOG_E("The clock rate is too low! rata:%d", sdmmc_clk);
-        return;
-    }
-
-    if (clk > host->freq_max)
-        clk = host->freq_max;
-
-    if (clk > sdmmc_clk)
-    {
-        LOG_W("Setting rate is greater than clock source rate.");
-        clk = sdmmc_clk;
-    }
-
-    LOG_D("clk:%dK width:%s%s%s power:%s%s%s",
-          clk / 1000,
-          io_cfg->bus_width == MMCSD_BUS_WIDTH_8 ? "8" : "",
-          io_cfg->bus_width == MMCSD_BUS_WIDTH_4 ? "4" : "",
-          io_cfg->bus_width == MMCSD_BUS_WIDTH_1 ? "1" : "",
-          io_cfg->power_mode == MMCSD_POWER_OFF ? "OFF" : "",
-          io_cfg->power_mode == MMCSD_POWER_UP ? "UP" : "",
-          io_cfg->power_mode == MMCSD_POWER_ON ? "ON" : ""
-         );
-
-    if (sdmmc_clk != 0U)
-    {
-        hsd->Init.ClockDiv = sdmmc_clk / (2U * SD_INIT_FREQ);
-        /* Configure the SDMMC peripheral */
-        Init.ClockEdge           = hsd->Init.ClockEdge;
-        Init.ClockPowerSave      = hsd->Init.ClockPowerSave;
-        if (io_cfg->bus_width == MMCSD_BUS_WIDTH_4)
-        {
-            Init.BusWide             = SDMMC_BUS_WIDE_4B;
-        }
-        else if (io_cfg->bus_width == MMCSD_BUS_WIDTH_8)
-        {
-            Init.BusWide             = SDMMC_BUS_WIDE_8B;
-        }
-        else
-        {
-            Init.BusWide             = SDMMC_BUS_WIDE_1B;
-        }
-        Init.HardwareFlowControl = hsd->Init.HardwareFlowControl;
-        /* Check if user Clock div < Normal speed 25Mhz, no change in Clockdiv */
-        if (hsd->Init.ClockDiv >= (sdmmc_clk / (2U * SD_NORMAL_SPEED_FREQ)))
-        {
-            Init.ClockDiv = hsd->Init.ClockDiv;
-        }
-        //CARD_ULTRA_HIGH_SPEED :UHS-I SD Card <50Mo/s for SDR50, DDR5 Cards and <104Mo/s for SDR104, Spec version 3.01
-        else if (MMCSD_TIMING_UHS_SDR50 <= io_cfg->timing && io_cfg->timing <= MMCSD_TIMING_UHS_DDR50)
-        {
-            /* UltraHigh speed SD card,user Clock div */
-            Init.ClockDiv = hsd->Init.ClockDiv;
-        }
-        //CARD_HIGH_SPEED: High Speed Card <25Mo/s , Spec version 2.00
-        else if (io_cfg->timing == MMCSD_TIMING_SD_HS)
-        {
-            /* High speed SD card, Max Frequency = 50Mhz */
-            if (hsd->Init.ClockDiv == 0U)
-            {
-                if (sdmmc_clk > SD_HIGH_SPEED_FREQ)
-                {
-                    Init.ClockDiv = sdmmc_clk / (2U * SD_HIGH_SPEED_FREQ);
-                }
-                else
-                {
-                    Init.ClockDiv = hsd->Init.ClockDiv;
-                }
-            }
-            else
-            {
-                if ((sdmmc_clk/(2U * hsd->Init.ClockDiv)) > SD_HIGH_SPEED_FREQ)
-                {
-                    Init.ClockDiv = sdmmc_clk / (2U * SD_HIGH_SPEED_FREQ);
-                }
-                else
-                {
-                    Init.ClockDiv = hsd->Init.ClockDiv;
-                }
-            }
-        }
-        //CARD_NORMAL_SPEED: Normal Speed Card <12.5Mo/s , Spec Version 1.01
-        else if (io_cfg->timing == MMCSD_TIMING_LEGACY)
-        {
-            /* No High speed SD card, Max Frequency = 25Mhz */
-            if (hsd->Init.ClockDiv == 0U)
-            {
-                if (sdmmc_clk > SD_NORMAL_SPEED_FREQ)
-                {
-                    Init.ClockDiv = sdmmc_clk / (2U * SD_NORMAL_SPEED_FREQ);
-                }
-                else
-                {
-                    Init.ClockDiv = hsd->Init.ClockDiv;
-                }
-            }
-            else
-            {
-                if ((sdmmc_clk/(2U * hsd->Init.ClockDiv)) > SD_NORMAL_SPEED_FREQ)
-                {
-                    Init.ClockDiv = sdmmc_clk / (2U * SD_NORMAL_SPEED_FREQ);
-                }
-                else
-                {
-                    Init.ClockDiv = hsd->Init.ClockDiv;
-                }
-            }
-        }
-        (void)SDMMC_Init(hsd->Instance, Init);
-    }
-    switch ((io_cfg->power_mode)&0X03)
+    rt_bool_t stop_flag = RT_TRUE;
+    switch (io_cfg->power_mode & 0X03)
     {
     case MMCSD_POWER_OFF:
         /* Set Power State to OFF */
         (void)SDMMC_PowerState_OFF(hsd->Instance);
+        stop_flag = RT_TRUE;
         break;
     case MMCSD_POWER_UP:
         /* In  F4 series chips, 0X01 is reserved bit and has no practical effect.
            For F7 series chips, 0X01 is power-on after power-off,The SDMMC disables the function and the card clock stops.
            For H7 series chips, 0X03 is the power-on function.
         */
+        stop_flag = RT_TRUE;
+        break;
     case MMCSD_POWER_ON:
-        /* Set Power State to ON */
-        (void)SDMMC_PowerState_ON(hsd->Instance);
+        stop_flag = RT_FALSE;
         break;
     default:
         LOG_W("unknown power mode %d", io_cfg->power_mode);
+        stop_flag = RT_FALSE;
         break;
+    }
+    if(stop_flag == RT_TRUE)
+    {
+        return;
+    }
+
+    if (clk == 0U)
+    {
+        LOG_E("invalid target clock: 0");
+        return;
+    }
+
+    if (sdmmc_clk < 400 * 1000)
+    {
+        LOG_E("The clock rate is too low! rate:%u", sdmmc_clk);
+        return;
+    }
+
+    if (clk > host->freq_max)
+        clk = host->freq_max;
+
+    if (clk > (sdmmc_clk / 2U))
+    {
+        LOG_W("Setting rate is greater than controller max output rate.");
+        clk = sdmmc_clk / 2U;
+    }
+
+    /* Configure the SDMMC peripheral */
+    Init.ClockEdge           = hsd->Init.ClockEdge;
+    Init.ClockPowerSave      = hsd->Init.ClockPowerSave;
+    if (io_cfg->bus_width == MMCSD_BUS_WIDTH_4)
+    {
+        Init.BusWide             = SDMMC_BUS_WIDE_4B;
+    }
+    else if (io_cfg->bus_width == MMCSD_BUS_WIDTH_8)
+    {
+        Init.BusWide             = SDMMC_BUS_WIDE_8B;
+    }
+    else
+    {
+        Init.BusWide             = SDMMC_BUS_WIDE_1B;
+    }
+    Init.HardwareFlowControl = hsd->Init.HardwareFlowControl;
+
+    /* Identification mode: use initialization frequency */
+    if (clk <= SD_INIT_FREQ)
+    {
+        clk = SD_INIT_FREQ;
+    }
+    /* CARD_HIGH_SPEED: High Speed Card <50Mo/s , Spec version 2.00 */
+    else if (io_cfg->timing == MMCSD_TIMING_SD_HS)
+    {
+        /* High speed SD card, Max Frequency = 50Mhz */
+        if (clk > SD_HIGH_SPEED_FREQ)
+            clk = SD_HIGH_SPEED_FREQ;
+    }
+    /* CARD_NORMAL_SPEED: Normal Speed Card <12.5Mo/s , Spec Version 1.01 */
+    else if (io_cfg->timing == MMCSD_TIMING_LEGACY)
+    {
+        /* No High speed SD card, Max Frequency = 25Mhz */
+        if (clk > SD_NORMAL_SPEED_FREQ)
+            clk = SD_NORMAL_SPEED_FREQ;
+    }
+    /* CARD_ULTRA_HIGH_SPEED :UHS-I SD Card <50Mo/s for SDR50, DDR5 Cards and <104Mo/s for SDR104, Spec version 3.01 UltraHigh speed SD card */
+    else
+    {
+        /* UltraHigh speed SD card,user Clock div: keep clk */
+    }
+
+    /* Round-up division to ensure SDMMC_CK does not exceed target clk
+     * SDMMC_CK = SDMMCCLK / (2 * ClockDiv)
+    */
+    Init.ClockDiv = (sdmmc_clk + (2U * clk) - 1U) / (2U * clk);
+
+    LOG_D("clk_req:%uK clk_set:%uK clk_real:%uK div:%u width:%s%s%s power:%s%s%s",
+        req_clk / 1000U,
+        clk / 1000U,
+        (Init.ClockDiv != 0U) ? (sdmmc_clk / (2U * Init.ClockDiv)) / 1000U : 0U,
+        Init.ClockDiv,
+        io_cfg->bus_width == MMCSD_BUS_WIDTH_8 ? "8" : "",
+        io_cfg->bus_width == MMCSD_BUS_WIDTH_4 ? "4" : "",
+        io_cfg->bus_width == MMCSD_BUS_WIDTH_1 ? "1" : "",
+        (io_cfg->power_mode & 0x03) == MMCSD_POWER_OFF ? "OFF" : "",
+        (io_cfg->power_mode & 0x03) == MMCSD_POWER_UP  ? "UP"  : "",
+        (io_cfg->power_mode & 0x03) == MMCSD_POWER_ON  ? "ON"  : ""
+    );
+
+    (void)SDMMC_Init(hsd->Instance, Init);
+
+    if((io_cfg->power_mode & 0X03) == MMCSD_POWER_ON)
+    {
+        /* Set Power State to ON */
+        (void)SDMMC_PowerState_ON(hsd->Instance);
     }
 }
 
@@ -528,7 +552,7 @@ void rthw_sdio_irq_update(struct rt_mmcsd_host *host, rt_int32_t enable)
     else
     {
         LOG_D("disable sdio irq");
-        __HAL_SD_ENABLE_IT(&sdio->sdio_des.hw_sdio, SDMMC_IT_SDIOIT);
+        __HAL_SD_DISABLE_IT(&sdio->sdio_des.hw_sdio, SDMMC_IT_SDIOIT);
     }
 }
 
@@ -578,7 +602,7 @@ struct rt_mmcsd_host *sdio_host_create(struct stm32_sdio_des *sdio_des)
 
     if (sdio_des == RT_NULL)
     {
-        LOG_E("L:%d F:%s",(sdio_des == RT_NULL ? "sdio_des is NULL" : ""));
+        LOG_E("sdio_des is NULL");
         return RT_NULL;
     }
 
@@ -586,7 +610,7 @@ struct rt_mmcsd_host *sdio_host_create(struct stm32_sdio_des *sdio_des)
 
     if (sdio == RT_NULL)
     {
-        LOG_E("L:%d F:%s malloc rthw_sdio fail");
+        LOG_E("malloc rthw_sdio fail");
         return RT_NULL;
     }
 
@@ -596,12 +620,13 @@ struct rt_mmcsd_host *sdio_host_create(struct stm32_sdio_des *sdio_des)
 
     if (host == RT_NULL)
     {
-        LOG_E("L:%d F:%s mmcsd alloc host fail");
+        LOG_E("mmcsd alloc host fail");
         rt_free(sdio);
         return RT_NULL;
     }
 
     rt_memcpy(&sdio->sdio_des, sdio_des, sizeof(struct stm32_sdio_des));
+    sdio->sdio_des.clk_get = (sdio_des->clk_get == RT_NULL ? stm32_sdio_clk_get : sdio_des->clk_get);
 #ifdef BSP_USING_SDIO1
     if(sdio_des->hw_sdio.Instance == SDMMC1)
     {
@@ -630,14 +655,14 @@ struct rt_mmcsd_host *sdio_host_create(struct stm32_sdio_des *sdio_des)
 #endif
     host->max_seg_size = SDIO_BUFF_SIZE;
     host->max_dma_segs = 1;
-    host->max_blk_size = 512;
-    host->max_blk_count = 512;
+    host->max_blk_size = BLOCKSIZE;
+    host->max_blk_count = SDIO_BUFF_SIZE / host->max_blk_size;
 
     /* link up host and sdio */
     sdio->host = host;
     host->private_data = sdio;
 
-    rthw_sdio_irq_update(host, 1);
+    rthw_sdio_irq_update(host, RT_TRUE);
 
     /* ready to change */
     mmcsd_change(host);

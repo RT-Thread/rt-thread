@@ -46,7 +46,11 @@
 #define SDHI_BLK_TRANSFER (1 << 13)
 #define SDHI_BLK_NOT_AUTO_STOP (1 << 14)
 
-#define SDIO_MAX_FREQ 25000000
+#if defined(SOC_SERIES_R7KA8P1)
+#define SDIO_MAX_FREQ (50 * 1000 * 1000)
+#else
+#define SDIO_MAX_FREQ (25 * 1000 * 1000)
+#endif
 
 #define HW_SDHI_ERR_CRCE (0x01U << 17)
 #define HW_SDHI_ERR_RTIMEOUT (0x01U << 22)
@@ -61,6 +65,7 @@ struct ra_sdhi
 {
     const sdmmc_instance_t *instance;
     sdmmc_device_t *media_device;
+    rt_uint8_t bus_width; /* Store bus width (1 or 4) for each SDHI instance */
 };
 
 extern void sdcard_change(void);

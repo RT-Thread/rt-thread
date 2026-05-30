@@ -25,7 +25,7 @@ extern unsigned int __bss_end;
 #define RT_HW_HEAP_BEGIN ((void *)&__bss_end)
 #define RT_HW_HEAP_END   ((void *)(RT_HW_HEAP_BEGIN + 64 * 1024 * 1024))
 #define RT_HW_PAGE_START RT_HW_HEAP_END
-#define RT_HW_PAGE_END   ((void *)(KERNEL_VADDR_START + (256 * 1024 * 1024 - VIRT64_SBI_MEMSZ)))
+#define RT_HW_PAGE_END   ((void *)(KERNEL_VADDR_START + (128 * 1024 * 1024 - VIRT64_SBI_MEMSZ)))
 
 void rt_hw_board_init(void);
 void rt_init_user_mem(struct rt_thread *thread, const char *name,

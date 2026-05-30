@@ -33,7 +33,7 @@ if GetDepend(['RT_USING_SPI']):
 #if GetDepend(['RT_USING_CAN']):
 
 
-#if GetDepend(['RT_USING_HWTIMER'])
+#if GetDepend(['RT_USING_CLOCK_TIME'])
 
 if GetDepend(['RT_USING_PWM']) or GetDepend(['RT_USING_PULSE_ENCODER']):
     src += ['tm4c123_driverlib/src/pwm.c']

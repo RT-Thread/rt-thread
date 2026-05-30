@@ -57,8 +57,8 @@
  * 2023-12-01     Shell        Support of dynamic device
  * 2023-12-18     xqyjlj       add rt_always_inline
  * 2023-12-22     Shell        Support hook list
- * 2024-01-18     Shell        Seperate basical types to a rttypes.h
- *                             Seperate the compiler portings to rtcompiler.h
+ * 2024-01-18     Shell        Separate basical types to a rttypes.h
+ *                             Separate the compiler portings to rtcompiler.h
  * 2024-03-30     Meco Man     update version number to v5.2.0
  * 2025-11-10     Rbb666       update version number to v5.3.0
  */
@@ -935,6 +935,8 @@ struct rt_thread
 #ifdef RT_USING_CPU_USAGE_TRACER
     rt_ubase_t                  user_time;              /**< Ticks on user */
     rt_ubase_t                  system_time;            /**< Ticks on system */
+    rt_ubase_t                  total_time_prev;        /**< Previous total ticks snapshot */
+    rt_uint8_t                  cpu_usage;              /**< Recent CPU usage in percent */
 #endif /* RT_USING_CPU_USAGE_TRACER */
 
 #ifdef RT_USING_MEM_PROTECTION
