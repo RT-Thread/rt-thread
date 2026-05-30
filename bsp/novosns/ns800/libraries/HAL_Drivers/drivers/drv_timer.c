@@ -1,8 +1,11 @@
-/*
+﻿/*
  * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
- * Author: oxlm
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2026-05-16     oxlm         First Version
  */
 
 #include <board.h>
@@ -28,7 +31,6 @@ struct ns800_clock_timer
     rt_clock_timer_mode_t   mode;
 };
 
-
 enum
 {
 #ifdef BSP_USING_TIM1
@@ -38,7 +40,6 @@ enum
     TIM2_INDEX,
 #endif
 };
-
 
 #ifdef BSP_USING_TIM1
 void TIM1_IRQHandler(void);
@@ -64,27 +65,34 @@ static void ns800_clock_timer_isr(void *param)
     rt_interrupt_enter();
 
     struct ns800_clock_timer *tim = (struct ns800_clock_timer *)param;
-
     TIM_TypeDef *htim = (TIM_TypeDef *)tim->instance;
+
     if (TIM_getFlags(htim, TIM_FLAG_UPDATE))
     {
         TIM_clearFlags(htim, TIM_FLAG_UPDATE);
         rt_clock_timer_isr(&tim->timer);
 
         if (tim->mode == CLOCK_TIMER_MODE_ONESHOT)
+        {
             TIM_disableCounter(htim);
+        }
     }
 
     rt_interrupt_leave();
     __DSB();
 }
 
-
 #ifdef BSP_USING_TIM1
-void TIM1_IRQHandler(void) { ns800_clock_timer_isr(&ns800_timers[TIM1_INDEX]); }
+void TIM1_IRQHandler(void)
+{
+    ns800_clock_timer_isr(&ns800_timers[TIM1_INDEX]);
+}
 #endif
 #ifdef BSP_USING_TIM2
-void TIM2_IRQHandler(void) { ns800_clock_timer_isr(&ns800_timers[TIM2_INDEX]); }
+void TIM2_IRQHandler(void)
+{
+    ns800_clock_timer_isr(&ns800_timers[TIM2_INDEX]);
+}
 #endif
 
 static void ns800_clock_timer_init(rt_clock_timer_t *timer, rt_uint32_t state)
@@ -92,7 +100,7 @@ static void ns800_clock_timer_init(rt_clock_timer_t *timer, rt_uint32_t state)
     struct ns800_clock_timer *tim = (struct ns800_clock_timer *)timer->parent.user_data;
     TIM_TypeDef *htim = (TIM_TypeDef *)tim->instance;
 
-    if(state)
+    if (state)
     {
         __IO uint32_t cfg =
             TIM_PWMMODE_ONEPOINT |
@@ -101,7 +109,7 @@ static void ns800_clock_timer_init(rt_clock_timer_t *timer, rt_uint32_t state)
             TIM_COUNTERMODE_UP |
             TIM_ONEPULSEMODE_REPETITIVE;
 
-        TIM_configTimeBase(htim, 200-1, 100-1, cfg);
+        TIM_configTimeBase(htim, 200 - 1, 100 - 1, cfg);
         TIM_clearFlags(htim, TIM_FLAG_UPDATE);
         TIM_enableInterruptSource(htim, TIM_IT_UPDATE);
     }
@@ -119,10 +127,15 @@ static rt_err_t ns800_clock_timer_start(rt_clock_timer_t *timer, rt_uint32_t cnt
 
     TIM_TypeDef *htim = (TIM_TypeDef *)tim->instance;
 
-    if (cnt > 0xFFFF) cnt = 0xFFFF;
-    TIM_setAutoReload(htim, cnt-1);
+    if (cnt > 0xFFFF)
+    {
+        cnt = 0xFFFF;
+    }
+
+    TIM_setAutoReload(htim, cnt - 1);
     TIM_setCounter(htim, 0);
     TIM_enableCounter(htim);
+
     return RT_EOK;
 }
 
@@ -145,11 +158,13 @@ static uint32_t __get_timer_src_clk(TIM_TypeDef *htim)
     if (htim == TIM1)
     {
         uint32_t pclk = RCC_getPclk2Frequency();
+
         return (RCC_getApb2ClkDiv() == RCC_APB2_4_HCLK_DIV1) ? pclk : (pclk << 1);
     }
     else if (htim == TIM2)
     {
         uint32_t pclk = RCC_getPclk2Frequency();
+
         return (RCC_getApb2ClkDiv() == RCC_APB2_4_HCLK_DIV1) ? pclk : (pclk << 1);
     }
 
@@ -188,26 +203,24 @@ static rt_err_t ns800_clock_timer_control(rt_clock_timer_t *timer, rt_uint32_t c
 
     switch (cmd)
     {
-        case CLOCK_TIMER_CTRL_FREQ_SET:
-            freq = *(rt_uint32_t *)args;
-            __set_timerx_freq(timer, freq);
-            break;
-        case CLOCK_TIMER_CTRL_INFO_GET:
-            *(struct rt_clock_timer_info*)args = *timer->info;
-            err = RT_EOK;
-            break;
-
-        case CLOCK_TIMER_CTRL_MODE_SET:
-            timer->mode = *(rt_uint32_t *)args;
-            break;
-
-        case CLOCK_TIMER_CTRL_STOP:
-            ns800_clock_timer_stop(timer);
-            break;
+    case CLOCK_TIMER_CTRL_FREQ_SET:
+        freq = *(rt_uint32_t *)args;
+        __set_timerx_freq(timer, freq);
+        break;
+    case CLOCK_TIMER_CTRL_INFO_GET:
+        *(struct rt_clock_timer_info *)args = *timer->info;
+        err = RT_EOK;
+        break;
+    case CLOCK_TIMER_CTRL_MODE_SET:
+        timer->mode = *(rt_uint32_t *)args;
+        break;
+    case CLOCK_TIMER_CTRL_STOP:
+        ns800_clock_timer_stop(timer);
+        break;
     }
+
     return err;
 }
-
 
 static const struct rt_clock_timer_info ns800_clock_timer_info[] =
 {
@@ -229,14 +242,13 @@ static const struct rt_clock_timer_info ns800_clock_timer_info[] =
 #endif
 };
 
-
 static const struct rt_clock_timer_ops ns800_clock_timer_ops =
 {
-    .init       = ns800_clock_timer_init,
-    .start      = ns800_clock_timer_start,
-    .stop       = ns800_clock_timer_stop,
-    .count_get  = ns800_clock_timer_count_get,
-    .control    = ns800_clock_timer_control,
+    .init      = ns800_clock_timer_init,
+    .start     = ns800_clock_timer_start,
+    .stop      = ns800_clock_timer_stop,
+    .count_get = ns800_clock_timer_count_get,
+    .control   = ns800_clock_timer_control,
 };
 
 int rt_hw_clock_timer_init(void)
@@ -244,7 +256,9 @@ int rt_hw_clock_timer_init(void)
     rt_err_t ret = RT_EOK;
 
     if (NS800_TIMER_NUM == 0)
+    {
         return RT_EOK;
+    }
 
     uint8_t i;
     IRQn_Type last_irq = (IRQn_Type)0;
@@ -255,8 +269,8 @@ int rt_hw_clock_timer_init(void)
         ns800_timers[i].timer.ops  = &ns800_clock_timer_ops;
 
         ret = rt_clock_timer_register(&ns800_timers[i].timer,
-                               ns800_timers[i].name,
-                               &ns800_timers[i]);
+                                      ns800_timers[i].name,
+                                      &ns800_timers[i]);
 
         if ((ret == RT_EOK) && (ns800_timers[i].irqno != last_irq))
         {
