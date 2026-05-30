@@ -1252,11 +1252,13 @@ void rt_hw_board_init()
 {
 //    BOARD_CommonSetting();
     BOARD_ConfigMPU();
+	
+	/* MCU_Config start */
     BOARD_InitPins();
-
-    BOARD_InitLeds();
+    BOARD_InitPeripherals();
     BOARD_BootClockRUN();
-
+    /* MCU_Config end */
+	
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 

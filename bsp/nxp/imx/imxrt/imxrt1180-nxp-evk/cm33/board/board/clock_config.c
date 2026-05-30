@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2025 NXP
+ * Copyright 2026 NXP
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -18,11 +18,12 @@
 
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Clocks v13.0
+product: Clocks v20.0
 processor: MIMXRT1189xxxxx
 package_id: MIMXRT1189CVM8C
 mcu_data: ksdk2_0
-processor_version: 0.0.0
+processor_version: 26.03.10
+board: MIMXRT1180-EVK
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
 #include "clock_config.h"
@@ -31,8 +32,6 @@ processor_version: 0.0.0
 #include "fsl_pmu.h"
 #include "fsl_clock.h"
 #include "fsl_ele_base_api.h"
-
-#include "fsl_cache.h"
 
 /*******************************************************************************
  * Definitions
@@ -90,7 +89,6 @@ __attribute__((weak)) void EdgeLock_SetClock(uint8_t mux, uint8_t div)
 __attribute__((weak)) void DCDC_SetVoltage(uint8_t core, uint8_t targetVoltage)
 {
 }
-
 
 /*******************************************************************************
  ************************ BOARD_InitBootClocks function ************************
@@ -444,7 +442,6 @@ void BOARD_BootClockRUN(void)
     /* Init Sys Pll1. */
     CLOCK_InitSysPll1(&sysPll1Config_BOARD_BootClockRUN);
 
-    
 #ifndef USE_SDRAM
     /* Init Sys Pll2. */
     CLOCK_InitSysPll2(&sysPll2Config_BOARD_BootClockRUN);

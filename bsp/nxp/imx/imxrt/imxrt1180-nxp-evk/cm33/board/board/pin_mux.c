@@ -1,5 +1,6 @@
 /*
- * Copyright 2024 NXP
+ * Copyright 2026 NXP
+ * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -12,11 +13,13 @@
 /*
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!GlobalInfo
-product: Pins v15.0
+product: Pins v17.0
 processor: MIMXRT1189xxxxx
 package_id: MIMXRT1189CVM8C
 mcu_data: ksdk2_0
-processor_version: 0.15.9
+processor_version: 26.03.10
+board: MIMXRT1180-EVK
+external_user_signals: {}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -40,34 +43,33 @@ void BOARD_InitBootPins(void) {
 BOARD_InitPins:
 - options: {callFromInitBoot: 'true', coreID: cm33, enableClock: 'true'}
 - pin_list:
-  - {pin_num: A5, peripheral: LPUART1, signal: RXD, pin_signal: GPIO_AON_09, pull_up_down_config: Pull_Down, pull_keeper_select: Keeper, open_drain: Disable, drive_strength: High,
-    slew_rate: Slow}
-  - {pin_num: B1, peripheral: LPUART1, signal: TXD, pin_signal: GPIO_AON_08, pull_up_down_config: Pull_Down, pull_keeper_select: Keeper, open_drain: Disable, drive_strength: High,
-    slew_rate: Slow}
+  - {pin_num: B1, peripheral: LPUART1, signal: TXD, pin_signal: GPIO_AON_08}
+  - {pin_num: A5, peripheral: LPUART1, signal: RXD, pin_signal: GPIO_AON_09}
+  - {pin_num: M16, peripheral: RGPIO4, signal: 'gpio_io, 27', pin_signal: GPIO_AD_27, direction: OUTPUT, drive_strength: Normal}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
 /* FUNCTION ************************************************************************************************************
  *
  * Function Name : BOARD_InitPins, assigned for the Cortex-M33 core.
- * Description   : Configures pin routing and optionally pin electrical features.
+ * Description   : 
  *
  * END ****************************************************************************************************************/
 void BOARD_InitPins(void) {
   CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
   CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
 
-//   /* GPIO configuration on GPIO_AD_27 (pin M16) */
-//   rgpio_pin_config_t gpio4_pinM16_config = {
-//       .pinDirection = kRGPIO_DigitalOutput,
-//       .outputLogic = 1U,
-//   };
-//   /* Initialize GPIO functionality on GPIO_AD_27 (pin M16) */
-//   RGPIO_PinInit(RGPIO4, 27U, &gpio4_pinM16_config);
+  /* GPIO configuration of USER_LED_CTL1 on GPIO_AD_27 (pin M16) */
+  rgpio_pin_config_t USER_LED_CTL1_config = {
+      .pinDirection = kRGPIO_DigitalOutput,
+      .outputLogic = 0U,
+  };
+  /* Initialize GPIO functionality on GPIO_AD_27 (pin M16) */
+  RGPIO_PinInit(RGPIO4, 27U, &USER_LED_CTL1_config);
 
-//   IOMUXC_SetPinMux(
-//       IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
-//       0U);      
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
+      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 is configured as LPUART1_TX */
       0U);                                    /* Software Input On Field: Input Path is determined by functionality */
@@ -75,38 +77,14 @@ void BOARD_InitPins(void) {
       IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 is configured as LPUART1_RX */
       0U);                                    /* Software Input On Field: Input Path is determined by functionality */
   IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                 Drive Strength Field: high driver
-                                                 Pull / Keep Select Field: Pull Disable, Highz
+      IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 PAD functional properties : */
+      0x04U);                                 /* Slew Rate Field: Fast Slew Rate
+                                                 Drive Strength Field: normal driver
+                                                 Pull / Keep Select Field: Pull Enable
                                                  Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                 Drive Strength Field: high driver
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled */
+                                                 Open Drain Field: Disabled
+                                                 Force ibe off Field: Disabled */
 }
-
-void BOARD_InitLeds(void) {
-  CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
-  CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
-
-  /* GPIO configuration on GPIO_AD_27 (pin M16) */
-  rgpio_pin_config_t gpio4_pinM16_config = {
-      .pinDirection = kRGPIO_DigitalOutput,
-      .outputLogic = 1U,
-  };
-  /* Initialize GPIO functionality on GPIO_AD_27 (pin M16) */
-  RGPIO_PinInit(RGPIO4, 27U, &gpio4_pinM16_config);
-
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
-      0U);      
-}
-
 
 /***********************************************************************************************************************
  * EOF
