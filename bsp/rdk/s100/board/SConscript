@@ -1,0 +1,10 @@
+import os
+from building import *
+
+objs = []
+cwd  = GetCurrentDir()
+CPPPATH = [cwd]
+src = Glob('*.c')
+
+objs = DefineGroup('board', src, depend = [''], CPPPATH = CPPPATH)
+Return('objs')

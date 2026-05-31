@@ -1,0 +1,16 @@
+from building import *
+
+src = []
+
+if GetDepend('BSP_USING_GPIO'):
+    src += ['test_gpio.c']
+
+if GetDepend('BSP_USING_CAN5') or GetDepend('BSP_USING_CAN6') or GetDepend('BSP_USING_CAN7') or GetDepend('BSP_USING_CAN8') or GetDepend('BSP_USING_CAN9'):
+    src += ['test_can.c']
+
+if GetDepend('BSP_USING_UART'):
+    src += ['test_uart.c']
+
+group = DefineGroup('utestcases', src, depend = ['RT_UTEST_DRIVERS_CORE'])
+
+Return('group')

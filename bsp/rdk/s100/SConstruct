@@ -1,0 +1,78 @@
+import os
+import sys
+import rtconfig
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.join(os.getcwd(), '..', '..', '..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+from building import *
+
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+
+DefaultEnvironment(tools=[])
+env = Environment(tools = ['mingw'],
+    AS   = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC   = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    CXX  = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
+    AR   = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env['ASCOM'] = env['ASPPCOM']
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+# prepare building environment
+objs = PrepareBuilding(env, RTT_ROOT)
+
+def _replace_cortex_r52_with_startup(objects):
+    startup_dir = os.path.join(Dir('#').abspath, 'startup')
+    startup_names = set(
+        name for name in os.listdir(startup_dir)
+        if os.path.isfile(os.path.join(startup_dir, name))
+    )
+    cpu_dir = os.path.abspath(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, rtconfig.CPU))
+
+    def _source_path(node):
+        for attr in ('srcnode', 'rfile'):
+            if hasattr(node, attr):
+                source = getattr(node, attr)()
+                if hasattr(source, 'abspath'):
+                    return os.path.abspath(source.abspath)
+        if hasattr(node, 'abspath'):
+            return os.path.abspath(node.abspath)
+        return None
+
+    def _filter(items):
+        filtered = []
+        for item in items:
+            if isinstance(item, list):
+                filtered.append(_filter(item))
+                continue
+
+            if not hasattr(item, 'abspath'):
+                filtered.append(item)
+                continue
+
+            item_path = _source_path(item)
+            if item_path is None:
+                filtered.append(item)
+                continue
+
+            item_name = os.path.basename(item_path)
+            if item_name in startup_names and item_path.startswith(cpu_dir + os.sep):
+                continue
+
+            filtered.append(item)
+
+        return filtered
+
+    return _filter(objects)
+
+objs = _replace_cortex_r52_with_startup(objs)
+
+# make a building
+DoBuilding(TARGET, objs)
