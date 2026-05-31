@@ -25,6 +25,11 @@ typedef struct {
     GPIO_PinNum  pin;
 } rt_pin_info_t;
 
+struct pin_irq_map
+{
+    rt_uint16_t pinbit;
+    IRQn_Type irqno;
+};
 
 #define PIN_NUM(...)        get_pin_num(__VA_ARGS__)
 #define PIN_PORT(pin)       get_port_index_by_num(pin)

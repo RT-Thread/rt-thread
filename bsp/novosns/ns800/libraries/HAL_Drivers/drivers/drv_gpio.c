@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author            Notes
- *
+ *2026-05-17      Jeffery Yuan      add interrupt operation function
  */
 
 #include <board.h>
@@ -17,6 +17,40 @@
 #ifdef BSP_USING_GPIO
 
 #define PIN_ENTRY(pin_macro) {pin_macro}
+
+
+
+#if defined(GPIOZ)
+#define __NS800_PORT_MAX 12u
+#elif defined(GPIOK)
+#define __NS800_PORT_MAX 11u
+#elif defined(GPIOJ)
+#define __NS800_PORT_MAX 10u
+#elif defined(GPIOI)
+#define __NS800_PORT_MAX 9u
+#elif defined(GPIOH)
+#define __NS800_PORT_MAX 8u
+#elif defined(GPIOG)
+#define __NS800_PORT_MAX 7u
+#elif defined(GPIOF)
+#define __NS800_PORT_MAX 6u
+#elif defined(GPIOE)
+#define __NS800_PORT_MAX 5u
+#elif defined(GPIOD)
+#define __NS800_PORT_MAX 4u
+#elif defined(GPIOC)
+#define __NS800_PORT_MAX 3u
+#elif defined(GPIOB)
+#define __NS800_PORT_MAX 2u
+#elif defined(GPIOA)
+#define __NS800_PORT_MAX 1u
+#else
+#define __NS800_PORT_MAX 0u
+#error Unsupported NS800 GPIO peripheral.
+#endif
+
+#define PIN_STPORT_MAX __NS800_PORT_MAX
+
 
 static const rt_pin_info_t pin_map_table[225] = {
     /* 0-21: 连续 */
@@ -161,6 +195,84 @@ static const rt_pin_info_t pin_map_table[225] = {
     [224] = PIN_ENTRY(GPIO_224),
 };
 
+
+
+static struct rt_pin_irq_hdr pin_irq_hdr_table[32] =
+{
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+		{-1, 0, RT_NULL, RT_NULL},
+};
+
+
+static const struct pin_irq_map pin_irq_map[32] =
+{
+    {GPIO_PIN_0, EXTI3_0_IRQn},
+    {GPIO_PIN_1, EXTI3_0_IRQn},
+    {GPIO_PIN_2, EXTI3_0_IRQn},
+    {GPIO_PIN_3, EXTI3_0_IRQn},
+    {GPIO_PIN_4, EXTI7_4_IRQn},
+    {GPIO_PIN_5, EXTI7_4_IRQn},
+    {GPIO_PIN_6, EXTI7_4_IRQn},
+    {GPIO_PIN_7, EXTI7_4_IRQn},
+    {GPIO_PIN_8, EXTI11_8_IRQn},
+    {GPIO_PIN_9, EXTI11_8_IRQn},
+    {GPIO_PIN_10, EXTI11_8_IRQn},
+    {GPIO_PIN_11, EXTI11_8_IRQn},
+    {GPIO_PIN_12, EXTI15_12_IRQn},
+    {GPIO_PIN_13, EXTI15_12_IRQn},
+    {GPIO_PIN_14, EXTI15_12_IRQn},
+    {GPIO_PIN_15, EXTI15_12_IRQn},
+    {GPIO_PIN_16, EXTI3_0_IRQn},
+    {GPIO_PIN_17, EXTI3_0_IRQn},
+    {GPIO_PIN_18, EXTI3_0_IRQn},
+    {GPIO_PIN_19, EXTI3_0_IRQn},
+    {GPIO_PIN_20, EXTI7_4_IRQn},
+    {GPIO_PIN_21, EXTI7_4_IRQn},
+    {GPIO_PIN_22, EXTI7_4_IRQn},
+    {GPIO_PIN_23, EXTI7_4_IRQn},
+    {GPIO_PIN_24, EXTI11_8_IRQn},
+    {GPIO_PIN_25, EXTI11_8_IRQn},
+    {GPIO_PIN_26, EXTI11_8_IRQn},
+    {GPIO_PIN_27, EXTI11_8_IRQn},
+    {GPIO_PIN_28, EXTI15_12_IRQn},
+    {GPIO_PIN_29, EXTI15_12_IRQn},
+    {GPIO_PIN_30, EXTI15_12_IRQn},
+    {GPIO_PIN_31, EXTI15_12_IRQn},
+};
+
+
+
+
 /* 1. PIN_NUM: 从(port, pin)获取引脚编号 */
 int get_pin_num(GPIO_TypeDef *port, GPIO_PinNum pin)
 {
@@ -271,9 +383,6 @@ const rt_pin_info_t* get_pin_info(int pin_num)
     return &pin_map_table[pin_num];
 }
 
-#define PIN_STPORT(pin)     (pin_map_table[(pin)].port)
-#define PIN_STPIN(pin)      (pin_map_table[(pin)].pin)
-
 
 static uint32_t pin_irq_enable_mask = 0;
 
@@ -287,6 +396,7 @@ static rt_base_t ns800_pin_get(const char *name)
     uint8_t port_index;
     GPIO_TypeDef *port = RT_NULL;
     char *endptr;
+	  
 
     if ((name == RT_NULL) || (name[0] == '\0'))
     {
@@ -417,21 +527,610 @@ static void ns800rt7_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+rt_inline const struct pin_irq_map *get_pin_irq_map(rt_uint32_t pinbit)
+{
+    rt_int32_t mapindex = get_pin_index(pinbit);
+    if (mapindex < 0 || mapindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
+    {
+        return RT_NULL;
+    }
+    return &pin_irq_map[mapindex];
+}
+
+
+
+
 static rt_err_t ns800_pin_attach_irq(struct rt_device *device, rt_base_t pin,
                                      rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
+    rt_base_t level;
+    rt_int32_t irqindex = -1;
+		const rt_pin_info_t *info = get_pin_info(pin);
+    if (PIN_PORT(pin) >= PIN_STPORT_MAX)
+    {
+        return -RT_ENOSYS;
+    }
+    switch (mode)
+    {
+    case PIN_IRQ_MODE_RISING:
+    case PIN_IRQ_MODE_FALLING:
+    case PIN_IRQ_MODE_RISING_FALLING:
+        break;
+    case PIN_IRQ_MODE_HIGH_LEVEL:
+        /* hardware not supported */
+    case PIN_IRQ_MODE_LOW_LEVEL:
+        /* hardware not supported */
+    default:
+        return -RT_EINVAL;
+    }
+    irqindex = get_pin_index(info->pin);
+    if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_hdr_table))
+    {
+        return -RT_ENOSYS;
+    }
+
+    level = rt_hw_interrupt_disable();
+    if (pin_irq_hdr_table[irqindex].pin == info->pin &&
+        pin_irq_hdr_table[irqindex].hdr == hdr &&
+        pin_irq_hdr_table[irqindex].mode == mode &&
+        pin_irq_hdr_table[irqindex].args == args)
+    {
+        rt_hw_interrupt_enable(level);
+        return RT_EOK;
+    }
+    if (pin_irq_hdr_table[irqindex].pin != -1)
+    {
+        rt_hw_interrupt_enable(level);
+        return -RT_EBUSY;
+    }
+    pin_irq_hdr_table[irqindex].pin = info->pin;
+    pin_irq_hdr_table[irqindex].hdr = hdr;
+    pin_irq_hdr_table[irqindex].mode = mode;
+    pin_irq_hdr_table[irqindex].args = args;
+    rt_hw_interrupt_enable(level);
     return RT_EOK;
 }
 
 static rt_err_t ns800_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 {
+    rt_base_t level;
+    rt_int32_t irqindex = -1;
+		const rt_pin_info_t *info = get_pin_info(pin);
+	
+    if (PIN_PORT(pin) >= PIN_STPORT_MAX)
+    {
+        return -RT_ENOSYS;
+    }
+
+    irqindex = get_pin_index(info->pin);
+    if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
+    {
+        return -RT_ENOSYS;
+    }
+
+    level = rt_hw_interrupt_disable();
+    if (pin_irq_hdr_table[irqindex].pin == -1)
+    {
+        rt_hw_interrupt_enable(level);
+        return RT_EOK;
+    }
+    pin_irq_hdr_table[irqindex].pin = -1;
+    pin_irq_hdr_table[irqindex].hdr = RT_NULL;
+    pin_irq_hdr_table[irqindex].mode = 0;
+    pin_irq_hdr_table[irqindex].args = RT_NULL;
+    rt_hw_interrupt_enable(level);
     return RT_EOK;
 }
 
+
+static SYSCON_ExtiSel EXTI_enableGpioLine (GPIO_TypeDef *port, GPIO_PinNum pin)
+{
+    SYSCON_ExtiSel retLine;
+    retLine = (SYSCON_ExtiSel)((uint16_t)pin % 16);
+    /* Unlock SYSCON register writing function */
+    SYSCON_UNLOCK;
+	
+	
+	
+
+    if (port == GPIOA)
+    {
+        if (pin < GPIO_PIN_16)
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_0);
+        }
+        else
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_8);
+        }
+    }
+    else if (port == GPIOB)
+    {
+        if (pin < GPIO_PIN_16)
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_1);
+        }
+        else
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_9);
+        }
+    }
+    else if (port == GPIOC)
+    {
+        if (pin < GPIO_PIN_16)
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_2);
+        }
+        else
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_10);
+        }
+    }
+    else if (port == GPIOH)
+    {
+        if (pin < GPIO_PIN_16)
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_3);
+        }
+        else
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_11);
+        }
+    }
+    else if (port == GPIOD)
+    {
+        if (pin < GPIO_PIN_16)
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_4);
+        }
+        else
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_12);
+        }
+    }
+    else if (port == GPIOE)
+    {
+        if (pin < GPIO_PIN_16)
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_5);
+        }
+        else
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_13);
+        }
+    }
+    else if (port == GPIOF)
+    {
+        if (pin < GPIO_PIN_16)
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_6);
+        }
+        else
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_14);
+        }
+    }
+    else if (port == GPIOG)
+    {
+        if (pin < GPIO_PIN_16)
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_7);
+        }
+        else
+        {
+            SYSCON_setExtiSel(SYSCON, retLine, SYSCON_EXTI_PINSEL_15);
+        }
+    }
+
+    /* Lock SYSCON register writing function */
+    SYSCON_LOCK;
+
+    return retLine;
+}
+
+static IRQn_Type EXTI_getLineIrqn (SYSCON_ExtiSel line)
+{
+    IRQn_Type irq = EXTI3_0_IRQn;
+
+    switch (line)
+    {
+        case SYSCON_EXTISEL_0:
+        case SYSCON_EXTISEL_1:
+        case SYSCON_EXTISEL_2:
+        case SYSCON_EXTISEL_3:
+        {
+            irq = EXTI3_0_IRQn;
+        }
+        break;
+
+        case SYSCON_EXTISEL_4:
+        case SYSCON_EXTISEL_5:
+        case SYSCON_EXTISEL_6:
+        case SYSCON_EXTISEL_7:
+        {
+            irq = EXTI7_4_IRQn;
+        }
+        break;
+
+        case SYSCON_EXTISEL_8:
+        case SYSCON_EXTISEL_9:
+        case SYSCON_EXTISEL_10:
+        case SYSCON_EXTISEL_11:
+        {
+            irq = EXTI11_8_IRQn;
+        }
+        break;
+
+        case SYSCON_EXTISEL_12:
+        case SYSCON_EXTISEL_13:
+        case SYSCON_EXTISEL_14:
+        case SYSCON_EXTISEL_15:
+        {
+            irq = EXTI15_12_IRQn;
+        }
+        break;
+
+        default:
+            break;
+    }
+
+    return irq;
+}
+
+void EXTI_handler(void);
+
+
 static rt_err_t ns800_pin_irq_enable(struct rt_device *device, rt_base_t pin,
                                      rt_uint8_t enabled)
-{
+{    
+    const struct pin_irq_map *irqmap;
+    rt_base_t level;
+    rt_int32_t irqindex = -1;
+    rt_uint8_t gpio_port_souce=0;
+    const rt_pin_info_t *info = get_pin_info(pin);
+		uint32_t key_line_idx = 0;
+		IRQn_Type key_irq_idx;
+    if (PIN_PORT(pin) >= PIN_STPORT_MAX)
+    {
+        return -RT_ENOSYS;
+    }
+
+    if (enabled == PIN_IRQ_ENABLE)
+    {
+        irqindex = get_pin_index(info->pin);
+        if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
+        {
+            return -RT_ENOSYS;
+        }
+
+        level = rt_hw_interrupt_disable();
+
+        if (pin_irq_hdr_table[irqindex].pin == -1)
+        {
+            rt_hw_interrupt_enable(level);
+            return -RT_ENOSYS;
+        }
+
+        irqmap = &pin_irq_map[irqindex];
+
+				key_line_idx = EXTI_enableGpioLine(info->port,info->pin);
+				key_irq_idx = EXTI_getLineIrqn((SYSCON_ExtiSel)key_line_idx);
+				EXTI_setIntrMaskReg(EXTI, (1 << key_line_idx));
+				/* Interrupt handler function registration. */
+				Interrupt_register(key_irq_idx, &EXTI_handler);
+				/* Enable the interrupt signals. Enable global interrupts.*/
+				Interrupt_enable(key_irq_idx);
+
+        switch (pin_irq_hdr_table[irqindex].mode)
+        {
+        case PIN_IRQ_MODE_RISING:
+					  GPIO_setPadConfig(info->port,info->pin, GPIO_PIN_TYPE_PULLDOWN);
+            EXTI_setRiseEdgeTrigSelReg(EXTI, (1 << key_line_idx));
+            break;
+        case PIN_IRQ_MODE_FALLING:
+					  GPIO_setPadConfig(info->port,info->pin, GPIO_PIN_TYPE_PULLUP);
+            EXTI_setFallEdgeTrigSelReg(EXTI, (1 << key_line_idx));
+            break;
+        case PIN_IRQ_MODE_RISING_FALLING:
+					  GPIO_setPadConfig(info->port,info->pin, GPIO_PIN_TYPE_STD);
+						EXTI_setRiseEdgeTrigSelReg(EXTI, (1 << key_line_idx));
+            EXTI_setFallEdgeTrigSelReg(EXTI, (1 << key_line_idx));
+            break;
+        }
+				/* Enable the interrupt signals. Enable global interrupts.*/
+				Interrupt_enable(irqmap->irqno);
+				rt_kprintf("IRQn=%d\n",irqmap->irqno);
+
+        rt_hw_interrupt_enable(level);
+    }
+    else if (enabled == PIN_IRQ_DISABLE)
+    {
+        irqmap = get_pin_irq_map(info->pin);
+        if (irqmap == RT_NULL)
+        {
+            return -RT_ENOSYS;
+        }
+
+        level = rt_hw_interrupt_disable();
+
+        pin_irq_enable_mask &= ~irqmap->pinbit;
+
+        if ((irqmap->pinbit>=GPIO_PIN_0)&&(irqmap->pinbit<=GPIO_PIN_3))
+        {
+            if(!(pin_irq_enable_mask&(GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3)))
+            {
+							  Interrupt_disable(irqmap->irqno);
+            }
+        }
+        else if ((irqmap->pinbit>=GPIO_PIN_4)&&(irqmap->pinbit<=GPIO_PIN_7))
+        {
+            if(!(pin_irq_enable_mask&(GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7)))
+            {
+							  Interrupt_disable(irqmap->irqno);
+            }
+        }
+        else if ((irqmap->pinbit>=GPIO_PIN_8)&&(irqmap->pinbit<=GPIO_PIN_11))
+        {
+            if(!(pin_irq_enable_mask&(GPIO_PIN_8|GPIO_PIN_9|GPIO_PIN_10|GPIO_PIN_11)))
+            {
+                NVIC_DisableIRQ(irqmap->irqno);
+            }
+        }
+        else if ((irqmap->pinbit>=GPIO_PIN_12)&&(irqmap->pinbit<=GPIO_PIN_15))
+        {
+            if(!(pin_irq_enable_mask&(GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15)))
+            {
+                NVIC_DisableIRQ(irqmap->irqno);
+            }
+        }
+        else if ((irqmap->pinbit>=GPIO_PIN_16)&&(irqmap->pinbit<=GPIO_PIN_19))
+        {
+            if(!(pin_irq_enable_mask&(GPIO_PIN_16|GPIO_PIN_17|GPIO_PIN_18|GPIO_PIN_19)))
+            {
+							  Interrupt_disable(irqmap->irqno);
+            }
+        }
+        else if ((irqmap->pinbit>=GPIO_PIN_20)&&(irqmap->pinbit<=GPIO_PIN_23))
+        {
+            if(!(pin_irq_enable_mask&(GPIO_PIN_20|GPIO_PIN_21|GPIO_PIN_22|GPIO_PIN_23)))
+            {
+                NVIC_DisableIRQ(irqmap->irqno);
+            }
+        }
+        else if ((irqmap->pinbit>=GPIO_PIN_24)&&(irqmap->pinbit<=GPIO_PIN_27))
+        {
+            if(!(pin_irq_enable_mask&(GPIO_PIN_24|GPIO_PIN_25|GPIO_PIN_26|GPIO_PIN_27)))
+            {
+							  Interrupt_disable(irqmap->irqno);
+            }
+        }
+        else if ((irqmap->pinbit>=GPIO_PIN_28)&&(irqmap->pinbit<=GPIO_PIN_31))
+        {
+            if(!(pin_irq_enable_mask&(GPIO_PIN_28|GPIO_PIN_29|GPIO_PIN_30|GPIO_PIN_31)))
+            {
+							  Interrupt_disable(irqmap->irqno);
+            }
+        }
+        else
+        {
+            NVIC_DisableIRQ(irqmap->irqno);
+        }
+
+        rt_hw_interrupt_enable(level);
+    }
+    else
+    {
+        return -RT_ENOSYS;
+    }
+
     return RT_EOK;
+}
+
+
+
+
+rt_inline void pin_irq_hdr(int irqno)
+{
+    if (pin_irq_hdr_table[irqno].hdr)
+    {
+        pin_irq_hdr_table[irqno].hdr(pin_irq_hdr_table[irqno].args);
+    }
+}
+
+void HAL_GPIO_EXTI_Callback(rt_uint16_t GPIO_Pin)
+{
+    pin_irq_hdr(get_pin_index(GPIO_Pin));
+}
+
+
+void EXTI_handler(void)
+{
+    rt_interrupt_enter();
+
+    uint32_t tempPr = EXTI_getPendReg(EXTI);
+
+    if(tempPr & (1 << SYSCON_EXTISEL_0))
+    {
+			if(pin_irq_hdr_table[GPIO_PIN_0].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_0);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_16].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_16);
+			}
+    }
+		if(tempPr & (1 << SYSCON_EXTISEL_1))
+		{
+			if(pin_irq_hdr_table[GPIO_PIN_1].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_1);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_17].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_17);
+			}
+		}
+    if(tempPr & (1 << SYSCON_EXTISEL_2))
+    {
+			if(pin_irq_hdr_table[GPIO_PIN_2].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_2);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_18].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_18);
+			}
+    }
+		if(tempPr & (1 << SYSCON_EXTISEL_3))
+		{
+			if(pin_irq_hdr_table[GPIO_PIN_3].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_3);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_19].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_19);
+			}
+		}
+		if(tempPr & (1 << SYSCON_EXTISEL_4))
+    {
+			if(pin_irq_hdr_table[GPIO_PIN_4].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_4);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_20].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_20);
+			}
+    }
+		if(tempPr & (1 << SYSCON_EXTISEL_5))
+		{
+			if(pin_irq_hdr_table[GPIO_PIN_5].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_5);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_21].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_21);
+			}
+		}
+		if(tempPr & (1 << SYSCON_EXTISEL_6))
+		{
+			if(pin_irq_hdr_table[GPIO_PIN_6].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_6);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_22].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_22);
+			}
+		}
+    if(tempPr & (1 << SYSCON_EXTISEL_7))
+    {
+			if(pin_irq_hdr_table[GPIO_PIN_7].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_7);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_23].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_23);
+			}
+    }
+		if(tempPr & (1 << SYSCON_EXTISEL_8))
+		{
+			if(pin_irq_hdr_table[GPIO_PIN_8].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_8);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_24].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_24);
+			}
+		}
+		if(tempPr & (1 << SYSCON_EXTISEL_9))
+    {
+			if(pin_irq_hdr_table[GPIO_PIN_9].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_9);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_25].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_25);
+			}
+    }
+		if(tempPr & (1 << SYSCON_EXTISEL_10))
+		{
+			if(pin_irq_hdr_table[GPIO_PIN_10].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_10);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_26].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_26);
+			}
+		}
+		if(tempPr & (1 << SYSCON_EXTISEL_11))
+		{
+			if(pin_irq_hdr_table[GPIO_PIN_11].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_11);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_27].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_27);
+			}
+		}
+		if(tempPr & (1 << SYSCON_EXTISEL_12))
+    {
+			if(pin_irq_hdr_table[GPIO_PIN_12].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_12);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_28].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_28);
+			}
+    }
+		if(tempPr & (1 << SYSCON_EXTISEL_13))
+		{
+			if(pin_irq_hdr_table[GPIO_PIN_13].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_13);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_29].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_29);
+			}
+		}
+		if(tempPr & (1 << SYSCON_EXTISEL_14))
+		{
+			if(pin_irq_hdr_table[GPIO_PIN_14].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_14);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_30].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_30);
+			}
+		}
+		if(tempPr & (1 << SYSCON_EXTISEL_15))
+    {
+			if(pin_irq_hdr_table[GPIO_PIN_15].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_15);
+			}
+			else if(pin_irq_hdr_table[GPIO_PIN_31].hdr)
+			{
+				HAL_GPIO_EXTI_Callback(GPIO_PIN_31);
+			}
+    }
+		
+    EXTI_clearPendReg(EXTI, tempPr);
+
+    rt_interrupt_leave();
+
 }
 
 
@@ -447,10 +1146,6 @@ static const struct rt_pin_ops _ns800rt7_pin_ops =
     RT_NULL,
 };
 
-rt_inline void pin_irq_hdr(int irqno)
-{
-
-}
 
 int rt_hw_pin_init(void)
 {
