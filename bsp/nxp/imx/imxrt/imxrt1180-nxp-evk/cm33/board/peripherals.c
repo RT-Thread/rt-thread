@@ -187,12 +187,159 @@ static void RGPIO4_init(void) {
 } */
 
 /***********************************************************************************************************************
+ * ADC1 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'ADC1'
+- type: 'lpadc'
+- mode: 'LPADC'
+- custom_name_enabled: 'false'
+- type_id: 'lpadc_2.8.1'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'ADC1'
+- config_sets:
+  - fsl_lpadc:
+    - lpadcConfig:
+      - clockSource: 'AsynchronousFunctionClock'
+      - clockSourceFreq: 'ClocksTool_DefaultInit'
+      - enableJustifiedLeft: 'false'
+      - enableInDozeMode: 'true'
+      - conversionAverageMode: 'kLPADC_ConversionAverage2'
+      - offsetCalibration: 'no'
+      - autoCalibrate: 'true'
+      - enableAnalogPreliminary: 'false'
+      - powerUpDelay: '0x80'
+      - referenceVoltageSource: 'kLPADC_ReferenceVoltageAlt2'
+      - triggerPriorityPolicy: 'kLPADC_ConvPreemptImmediatelyNotAutoResumed'
+      - enableConvPause: 'false'
+      - convPauseDelay: '0'
+      - FIFO0Watermark: '0'
+      - FIFO1Watermark: '0'
+      - FIFO0WatermarkDMA: 'false'
+      - FIFO1WatermarkDMA: 'false'
+    - lpadcConvCommandConfig:
+      - 0:
+        - user_commandId: 'ADC1_GRPA'
+        - commandId: '1'
+        - chainedNextCommandNumber: '0'
+        - sampleChannelMode: 'kLPADC_SampleChannelSingleEndSideA'
+        - sampleScaleMode: 'kLPADC_SampleFullScale'
+        - channelNumber: 'A.1_4'
+        - enableChannelB_b: 'false'
+        - channelBScaleMode_e: 'kLPADC_SampleFullScale'
+        - channelBNumber: 'B.1_0'
+        - enableAutoChannelIncrement: 'true'
+        - loopCount: '4'
+        - hardwareAverageMode: 'kLPADC_HardwareAverageCount1'
+        - sampleTimeMode: 'kLPADC_SampleTimeADCK3'
+        - hardwareCompareMode: 'kLPADC_HardwareCompareDisabled'
+        - hardwareCompareValueHigh: '0'
+        - hardwareCompareValueLow: '0'
+        - conversionResoultuionMode: 'kLPADC_ConversionResolutionHigh'
+        - enableWaitTrigger: 'true'
+      - 1:
+        - user_commandId: 'ADC1_GRPB'
+        - commandId: '2'
+        - chainedNextCommandNumber: '0'
+        - sampleChannelMode: 'kLPADC_SampleChannelSingleEndSideB'
+        - sampleScaleMode: 'kLPADC_SampleFullScale'
+        - channelNumber: 'B.1_5'
+        - enableChannelB_b: 'false'
+        - channelBScaleMode_e: 'kLPADC_SampleFullScale'
+        - channelBNumber: 'B.1_0'
+        - enableAutoChannelIncrement: 'true'
+        - loopCount: '3'
+        - hardwareAverageMode: 'kLPADC_HardwareAverageCount1'
+        - sampleTimeMode: 'kLPADC_SampleTimeADCK3'
+        - hardwareCompareMode: 'kLPADC_HardwareCompareDisabled'
+        - hardwareCompareValueHigh: '0'
+        - hardwareCompareValueLow: '0'
+        - conversionResoultuionMode: 'kLPADC_ConversionResolutionHigh'
+        - enableWaitTrigger: 'false'
+    - lpadcConvTriggerConfig: []
+    - IRQ_cfg:
+      - interrupt_type: ''
+      - enable_irq: 'false'
+      - adc_interrupt:
+        - IRQn: 'ADC1_IRQn'
+        - enable_interrrupt: 'enabled'
+        - enable_priority: 'false'
+        - priority: '0'
+        - enable_custom_name: 'false'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const lpadc_config_t ADC1_config = {
+  .enableInDozeMode = true,
+  .conversionAverageMode = kLPADC_ConversionAverage2,
+  .enableAnalogPreliminary = false,
+  .powerUpDelay = 0x80UL,
+  .referenceVoltageSource = kLPADC_ReferenceVoltageAlt2,
+  .triggerPriorityPolicy = kLPADC_ConvPreemptImmediatelyNotAutoResumed,
+  .enableConvPause = false,
+  .convPauseDelay = 0UL,
+  .FIFO0Watermark = 0UL,
+  .FIFO1Watermark = 0UL
+};
+lpadc_conv_command_config_t ADC1_commandsConfig[2] = {
+  {
+    .sampleScaleMode = kLPADC_SampleFullScale,
+    .channelBScaleMode = kLPADC_SampleFullScale,
+    .sampleChannelMode = kLPADC_SampleChannelSingleEndSideA,
+    .channelNumber = 4U,
+    .channelBNumber = 0U,
+    .chainedNextCommandNumber = 0,
+    .enableChannelB = false,
+    .enableAutoChannelIncrement = true,
+    .loopCount = 4UL,
+    .hardwareAverageMode = kLPADC_HardwareAverageCount1,
+    .sampleTimeMode = kLPADC_SampleTimeADCK3,
+    .hardwareCompareMode = kLPADC_HardwareCompareDisabled,
+    .hardwareCompareValueHigh = 0UL,
+    .hardwareCompareValueLow = 0UL,
+    .conversionResolutionMode = kLPADC_ConversionResolutionHigh,
+    .enableWaitTrigger = true
+  },
+  {
+    .sampleScaleMode = kLPADC_SampleFullScale,
+    .channelBScaleMode = kLPADC_SampleFullScale,
+    .sampleChannelMode = kLPADC_SampleChannelSingleEndSideB,
+    .channelNumber = 5U,
+    .channelBNumber = 0U,
+    .chainedNextCommandNumber = 0,
+    .enableChannelB = false,
+    .enableAutoChannelIncrement = true,
+    .loopCount = 3UL,
+    .hardwareAverageMode = kLPADC_HardwareAverageCount1,
+    .sampleTimeMode = kLPADC_SampleTimeADCK3,
+    .hardwareCompareMode = kLPADC_HardwareCompareDisabled,
+    .hardwareCompareValueHigh = 0UL,
+    .hardwareCompareValueLow = 0UL,
+    .conversionResolutionMode = kLPADC_ConversionResolutionHigh,
+    .enableWaitTrigger = false
+  }
+};
+
+static void ADC1_init(void) {
+  /* Initialize LPADC converter */
+  LPADC_Init(ADC1_PERIPHERAL, &ADC1_config);
+  /* Perform auto calibration */
+  LPADC_DoAutoCalibration(ADC1_PERIPHERAL);
+  /* Configure conversion command 1. */
+  LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_ADC1_GRPA, &ADC1_commandsConfig[0]);
+  /* Configure conversion command 2. */
+  LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_ADC1_GRPB, &ADC1_commandsConfig[1]);
+}
+
+/***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/
 void BOARD_InitPeripherals(void)
 {
   /* Initialize components */
   LPUART1_init();
+  ADC1_init();
 }
 
 /***********************************************************************************************************************

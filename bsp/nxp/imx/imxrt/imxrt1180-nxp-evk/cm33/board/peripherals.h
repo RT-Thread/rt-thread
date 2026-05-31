@@ -20,6 +20,7 @@
 #include "fsl_lpuart.h"
 #include "fsl_clock.h"
 #include "fsl_rgpio.h"
+#include "fsl_lpadc.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -33,11 +34,19 @@ extern "C" {
 #define LPUART1_PERIPHERAL LPUART1
 /* Definition of the clock source frequency */
 #define LPUART1_CLOCK_SOURCE 24000000UL
+/* Alias for ADC1 peripheral */
+#define ADC1_PERIPHERAL ADC1
+/* Command 1 - ADC1_GRPA */
+#define ADC1_ADC1_GRPA 1U
+/* Command 2 - ADC1_GRPB */
+#define ADC1_ADC1_GRPB 2U
 
 /***********************************************************************************************************************
  * Global variables
  **********************************************************************************************************************/
 extern const lpuart_config_t LPUART1_config;
+extern const lpadc_config_t ADC1_config;
+extern lpadc_conv_command_config_t ADC1_commandsConfig[2];
 
 /***********************************************************************************************************************
  * Initialization functions

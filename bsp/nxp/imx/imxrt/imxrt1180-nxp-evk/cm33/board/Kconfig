@@ -22,6 +22,22 @@ config SOC_MIMXRT1189CVM8C_CM33
 
 menu "On-chip Peripheral Drivers"
 
+    menuconfig BSP_USING_LPADC
+        bool "Enable ADC"
+        default n
+		
+		if BSP_USING_LPADC
+        config BSP_USING_LPADC1
+            bool "Enable LPADC1"
+            default n
+			
+		    config BSP_LPADC1_USING_DMA
+                bool "Enable LPADC1 DMA"
+                depends on BSP_USING_LPADC1
+                select BSP_USING_DMA
+                default n
+		endif
+		
     config BSP_USING_DMA
         bool "Enable DMA"
         default n

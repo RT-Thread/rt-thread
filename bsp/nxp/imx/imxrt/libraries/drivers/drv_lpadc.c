@@ -42,18 +42,19 @@ uint32_t g_LpadcResultShift = 0U;
 uint32_t g_LpadcResultShift = 3U;
 #endif /* DEMO_LPADC_USE_HIGH_RESOLUTION */
 
-static rt_err_t imxrt_hp_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t imxrt_hp_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
+	
     return RT_EOK;
 }
 
-static rt_err_t imxrt_hp_adc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t imxrt_hp_adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
-    LPADC1_BASE *base;
+    ADC_Type *base;
     lpadc_conv_command_config_t mLpadcCommandConfigStruct;
     lpadc_conv_trigger_config_t mLpadcTriggerConfigStruct;
     lpadc_conv_result_t mLpadcResultConfigStruct;
-    base = (LPADC1_BASE *)(device->parent.user_data);
+    base = (ADC_Type *)(device->parent.user_data);
 
     //ADC_SetChannelConfig(base, 0, &adc_channel);
     LPADC_GetDefaultConvCommandConfig(&mLpadcCommandConfigStruct);
@@ -93,14 +94,9 @@ int rt_hw_adc_init(void)
 {
     int result = RT_EOK;
 
-    LPADC_GetDefaultConfig(&mLpadcConfigStruct);
-    mLpadcConfigStruct.enableAnalogPreliminary = true;
-#if defined(kLPADC_ReferenceVoltageAlt1)
-    mLpadcConfigStruct.referenceVoltageSource = kLPADC_ReferenceVoltageAlt1;
-#endif /* DEMO_LPADC_VREF_SOURCE */
 #if defined(BSP_USING_LPADC1)
-    LPADC_Init(LPADC1, &mLpadcConfigStruct);
-    result = rt_hw_adc_register(&lpadc1_device, "lpadc1", &imxrt_lpadc_ops, LPADC1);
+/* on-chip peripherals are initialized in BOARD_InitPeripherals function of board.c */
+    result = rt_hw_adc_register(&lpadc1_device, "lpadc1", &imxrt_lpadc_ops, ADC1);
     if (result != RT_EOK)
     {
         LOG_E("register lpadc1 device failed error code = %d\n", result);
