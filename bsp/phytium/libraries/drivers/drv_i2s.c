@@ -401,14 +401,14 @@ static rt_err_t i2s_stop(struct rt_audio_device *audio, int stream)
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
     FI2sStopWork(&i2s_dev->i2s_ctrl);
-    FI2sDeInitialize(&i2s_dev->i2s_ctrl);
-    FDdmaStop(&i2s_dev->ddmac);
-    FDdmaDisableGlobalIrq(i2s_dev->ddmac.config.base_addr, i2s_dev->ddmac.config.caps);
-    FDdmaDisableChanIrq(i2s_dev->ddmac.config.base_addr, 0, i2s_dev->ddmac.config.caps);
-    FDdmaDisableChanIrq(i2s_dev->ddmac.config.base_addr, 1, i2s_dev->ddmac.config.caps);
-    LOG_E("4");
+    // FI2sDeInitialize(&i2s_dev->i2s_ctrl);
+    // FDdmaStop(&i2s_dev->ddmac);
+    // FDdmaDisableGlobalIrq(i2s_dev->ddmac.config.base_addr, i2s_dev->ddmac.config.caps);
+    // FDdmaDisableChanIrq(i2s_dev->ddmac.config.base_addr, 0, i2s_dev->ddmac.config.caps);
+    // FDdmaDisableChanIrq(i2s_dev->ddmac.config.base_addr, 1, i2s_dev->ddmac.config.caps);
+    // LOG_E("4");
     // FDdmaDeInitialize(&i2s_dev->ddmac);
-    LOG_E("5");
+    // LOG_E("5");
     return RT_EOK;
 }
 
@@ -423,6 +423,7 @@ static rt_err_t i2s_init(struct rt_audio_device* audio)
 }
 
 static rt_thread_t my_tx_tid = RT_NULL;
+static rt_thread_t audio_wdg_tid = RT_NULL;
 
 static void my_tx_thread(void *parameter)
 {   
@@ -445,13 +446,19 @@ static void my_tx_thread(void *parameter)
             FDdmaStart(&i2s_dev->ddmac);
             rt_sem_take(tx_done_sem, RT_WAITING_FOREVER);
             rt_mp_free(data);
-            if (rt_data_queue_peek(&audio->replay->queue, (const void **)&data, &size) != RT_EOK)
-            {
-                /* ack stop event */
-                if (audio->replay->event & 0x02)
-                    rt_completion_done(&audio->replay->cmp);
-            }
+        }
+    }
+}
 
+static void audio_watchdog_thread(void *p)
+{
+    struct rt_audio_device *audio = p;
+    while (1)
+    {
+        rt_thread_mdelay(10);
+        if (audio->replay->event & 0x02)
+        {
+            rt_completion_done(&audio->replay->cmp);
         }
     }
 }
@@ -479,9 +486,21 @@ static int i2s_controller_init(struct phytium_i2s_device *i2s_dev)
                                      4096,           // stack size
                                      20,             // priority
                                      10);            // tick
-        
         if (my_tx_tid)
             rt_thread_startup(my_tx_tid);
+    }
+    if (audio_wdg_tid == RT_NULL)
+    {
+        audio_wdg_tid = rt_thread_create(
+                                "audio_wdg",
+                                audio_watchdog_thread,
+                                audio,   // 参数：audio device
+                                2048,              // stack size（够用即可）
+                                15,                // priority（建议比TX线程低一点）
+                                10                 // timeslice
+                                );
+        if (audio_wdg_tid)
+            rt_thread_startup(audio_wdg_tid);
     }
 
     int ret = rt_audio_register(audio, i2s_dev->name, RT_DEVICE_FLAG_RDWR, (void *)i2s_dev);
