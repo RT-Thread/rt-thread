@@ -200,9 +200,9 @@ static int i2s_record_play_test(int argc, char **argv)
         {
             offset += write_len;
 
-            rt_kprintf("\rPlayback: %d / %d bytes\n",
-                       offset,
-                       RECORD_TOTAL_SIZE);
+            // rt_kprintf("\rPlayback: %d / %d bytes\n",
+            //            offset,
+            //            RECORD_TOTAL_SIZE);
         }
     }
 
@@ -210,9 +210,11 @@ static int i2s_record_play_test(int argc, char **argv)
     rt_kprintf("Playback finished.\n");
 
 __close:
+    rt_kprintf("1\n");
 
     rt_device_close(audio_dev);
 
+    rt_kprintf("2\n");
 __exit:
 
     if (record_buf)
