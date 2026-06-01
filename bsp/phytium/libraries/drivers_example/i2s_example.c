@@ -19,7 +19,7 @@
      (AUDIO_SAMPLEBITS / 8) * RECORD_SECONDS)
 
 /* 每次读20ms */
-#define AUDIO_BUF_SIZE       2048
+#define AUDIO_BUF_SIZE       4096
 
 static rt_device_t audio_dev = RT_NULL;
 

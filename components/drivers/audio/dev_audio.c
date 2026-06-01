@@ -526,12 +526,10 @@ static rt_ssize_t _audio_dev_write(struct rt_device *dev, rt_off_t pos, const vo
 
         if (audio->replay->write_index == 0)
         {
-            rt_kprintf("rt_data_queue_push\n");
             rt_data_queue_push(&audio->replay->queue,
                                audio->replay->write_data,
                                block_size,
                                RT_WAITING_FOREVER);
-            rt_kprintf("rt_data_queue_push is ok\n");
         }
     }
     rt_mutex_release(&audio->replay->lock);

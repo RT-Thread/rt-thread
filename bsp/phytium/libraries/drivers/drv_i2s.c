@@ -26,7 +26,7 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
-#define TX_RX_BUF_LEN            4096
+#define TX_RX_BUF_LEN            RT_AUDIO_REPLAY_MP_BLOCK_SIZE
 static rt_sem_t tx_done_sem = RT_NULL;
 static struct rt_thread tx_thread;
 
@@ -437,7 +437,7 @@ static void my_tx_thread(void *parameter)
         {
             rt_memcpy(trans_buf[0], data, size);
 
-            FI2sDdmaDeviceTX(&i2s_dev0, trans_buf[0], RT_AUDIO_REPLAY_MP_BLOCK_SIZE, RT_AUDIO_REPLAY_MP_BLOCK_SIZE);
+            FI2sDdmaDeviceTX(&i2s_dev0, trans_buf[0], TX_RX_BUF_LEN, TX_RX_BUF_LEN);
             FDdmaSetupInterrupt(&i2s_dev0.ddmac);
             FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, i2s_dev);
             FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->tx_channel);
