@@ -13,8 +13,8 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-
 #include <drv_i2s.h>
+
 #include "fi2s.h"
 #include "fi2s_hw.h"
 #include "fddma.h"
@@ -26,12 +26,9 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
-#define TX_RX_BUF_LEN            RT_AUDIO_REPLAY_MP_BLOCK_SIZE
+#define TX_RX_BUF_LEN        RT_AUDIO_REPLAY_MP_BLOCK_SIZE
 static rt_sem_t tx_done_sem = RT_NULL;
-static struct rt_thread tx_thread;
-
 static rt_uint8_t trans_buf[2][TX_RX_BUF_LEN  * 4] __attribute__((aligned(FDDMA_DDR_ADDR_ALIGNMENT))) = {0};
-
 static FDdmaBdlDesc *bdl_desc_list_tx = NULL;
 static FDdmaBdlDesc *bdl_desc_list_rx = NULL;
 
@@ -73,7 +70,6 @@ static void FDdmaSetupInterrupt(FDdma *const instance)
 
 static FError i2s_ddma_init(struct phytium_i2s_device *i2s_dev, u32 word_length, u32 samplerate)
 {
-    LOG_E("i2s_ddma_init");
     FError ret = FI2S_SUCCESS;
     /*Init i2s*/
     FIOPadSetI2sMux();
@@ -220,20 +216,12 @@ static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, uintptr src, 
 
 void dma_rx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
 {
-    int i;
-    rt_uint16_t *pcm = (rt_uint16_t *)trans_buf[1];
-    
     rt_audio_rx_done(&i2s_dev0.audio, trans_buf[1], TX_RX_BUF_LEN);
     FI2sDdmaDeviceRX(&i2s_dev0, trans_buf[1], TX_RX_BUF_LEN, TX_RX_BUF_LEN);
-
 }
 
 void dma_tx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
 {
-    FDdmaDisableGlobalIrq(i2s_dev0.ddmac.config.base_addr, i2s_dev0.ddmac.config.caps);
-    FDdmaDisableChanIrq(i2s_dev0.ddmac.config.base_addr, 0, i2s_dev0.ddmac.config.caps);
-    FDdmaDisableChanIrq(i2s_dev0.ddmac.config.base_addr, 1, i2s_dev0.ddmac.config.caps);
-
     rt_sem_release(tx_done_sem);
 }
 
@@ -382,7 +370,8 @@ static rt_err_t i2s_start(struct rt_audio_device *audio, int stream)
 
     if (stream == AUDIO_STREAM_REPLAY)
     {
-        
+        FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, i2s_dev);
+
     }
     else if(stream == AUDIO_STREAM_RECORD)
     {
@@ -400,15 +389,20 @@ static rt_err_t i2s_stop(struct rt_audio_device *audio, int stream)
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
-    FI2sStopWork(&i2s_dev->i2s_ctrl);
-    // FI2sDeInitialize(&i2s_dev->i2s_ctrl);
-    // FDdmaStop(&i2s_dev->ddmac);
-    // FDdmaDisableGlobalIrq(i2s_dev->ddmac.config.base_addr, i2s_dev->ddmac.config.caps);
-    // FDdmaDisableChanIrq(i2s_dev->ddmac.config.base_addr, 0, i2s_dev->ddmac.config.caps);
-    // FDdmaDisableChanIrq(i2s_dev->ddmac.config.base_addr, 1, i2s_dev->ddmac.config.caps);
-    // LOG_E("4");
-    // FDdmaDeInitialize(&i2s_dev->ddmac);
-    // LOG_E("5");
+
+    if (i2s_dev->i2s_ctrl.is_ready == FT_COMPONENT_IS_READY)
+    {
+        FI2sStopWork(&i2s_dev->i2s_ctrl);
+        FI2sDeInitialize(&i2s_dev->i2s_ctrl);
+    }
+    if (i2s_dev->ddmac.is_ready == FT_COMPONENT_IS_READY)
+    {
+        FDdmaStop(&i2s_dev->ddmac);
+        FDdmaDisableChanIrq(i2s_dev->ddmac.config.base_addr, i2s_dev->rx_channel, i2s_dev->ddmac.config.caps);
+        FDdmaDisableChanIrq(i2s_dev->ddmac.config.base_addr, i2s_dev->tx_channel, i2s_dev->ddmac.config.caps);
+        FDdmaDeInitialize(&i2s_dev->ddmac);
+    }
+    
     return RT_EOK;
 }
 
@@ -438,10 +432,8 @@ static void my_tx_thread(void *parameter)
         rt_size_t size = 0;
         if (rt_data_queue_pop(&audio->replay->queue, (const void **)&data, &size, RT_WAITING_FOREVER) == RT_EOK)
         {
-            rt_memcpy(trans_buf[0], data, size);
-            FI2sDdmaDeviceTX(&i2s_dev0, trans_buf[0], size, size);
-            FDdmaSetupInterrupt(&i2s_dev0.ddmac);
-            FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, i2s_dev);
+            rt_memcpy(trans_buf[i2s_dev->tx_channel], data, size);
+            FI2sDdmaDeviceTX(i2s_dev, trans_buf[i2s_dev->tx_channel], size, size);
             FDdmaChanActive(&i2s_dev->ddmac, i2s_dev->tx_channel);
             FDdmaStart(&i2s_dev->ddmac);
             rt_sem_take(tx_done_sem, RT_WAITING_FOREVER);
