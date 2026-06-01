@@ -105,4 +105,26 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        default n
+        if BSP_USING_SPI
+            menuconfig BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+
+            menuconfig BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+
+            menuconfig BSP_USING_SPI3
+                bool "Enable SPI3"
+                default n
+
+            menuconfig BSP_USING_SPI4
+                bool "Enable SPI4"
+                default n
+        endif
+
 endmenu

@@ -149,6 +149,8 @@
 #define RT_CANSND_BOX_NUM 1
 #define RT_CANSND_MSG_TIMEOUT 100
 #define RT_CAN_NB_TX_FIFO_SIZE 256
+#define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -424,6 +426,8 @@
 #define BSP_USING_ECAP
 #define BSP_USING_CAN
 #define BSP_USING_CANFD1
+#define BSP_USING_SPI
+#define BSP_USING_SPI1
 /* end of On-chip Peripheral Drivers */
 
 #endif
