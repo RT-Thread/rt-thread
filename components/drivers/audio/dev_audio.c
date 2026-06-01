@@ -429,7 +429,7 @@ static rt_err_t _audio_dev_close(struct rt_device *dev)
     struct rt_audio_device *audio;
     RT_ASSERT(dev != RT_NULL);
     audio = (struct rt_audio_device *) dev;
-    LOG_E("_audio_dev_close");
+
     if (dev->open_flag & RT_DEVICE_OFLAG_WRONLY)
     {
         /* stop replay stream */
