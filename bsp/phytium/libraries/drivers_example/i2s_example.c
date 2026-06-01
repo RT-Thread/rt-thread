@@ -4,7 +4,7 @@
 
 #define SOUND_DEVICE_NAME    "I2S0"
 
-#define AUDIO_SAMPLERATE     16000
+#define AUDIO_SAMPLERATE     44100
 #define AUDIO_CHANNELS       1
 #define AUDIO_SAMPLEBITS     16
 
@@ -199,10 +199,6 @@ static int i2s_record_play_test(int argc, char **argv)
         if (write_len > 0)
         {
             offset += write_len;
-
-            // rt_kprintf("\rPlayback: %d / %d bytes\n",
-            //            offset,
-            //            RECORD_TOTAL_SIZE);
         }
     }
 
