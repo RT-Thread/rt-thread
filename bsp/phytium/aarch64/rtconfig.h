@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 16
+#define RT_NAME_MAX 32
 #define RT_USING_SMP
 #define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
@@ -225,7 +225,7 @@
 #define RT_USING_SPI_ISR
 #define RT_USING_QSPI
 #define RT_USING_AUDIO
-#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
+#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 2048
 #define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
 #define RT_AUDIO_RECORD_PIPE_SIZE 2048
 #define RT_USING_BLK
@@ -545,7 +545,6 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_DRIVERS_EXAMPLE
-#define BSP_USING_DRIVERS_AUTO_TEST
 #define BSP_USING_IOPAD
 #define BSP_USING_UART_LAYER
 #define BSP_USING_UART
