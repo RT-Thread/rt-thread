@@ -585,6 +585,7 @@
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO14
+#define RT_USING_MIO15
 #define BSP_USING_I2S
 #define RT_USING_I2S0
 #define BSP_USING_DEVICE

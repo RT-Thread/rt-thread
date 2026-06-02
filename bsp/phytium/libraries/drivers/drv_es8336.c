@@ -299,10 +299,12 @@ int es8336_open()
     return 0;
 }
 
-void es8336_test()
+int  es8336_test()
 {
     es8336_open();
     es8336_start(CODEC_DEV_WORK_MODE_BOTH);
+
+    return 0;
 }
 
 INIT_COMPONENT_EXPORT(es8336_test);

@@ -21,6 +21,7 @@
 #include "fio_mux.h"
 #include "drivers/dev_i2c.h"
 #include "fparameters.h"
+#include "interrupt.h"
 #ifdef RT_USING_SMART
     #include <ioremap.h>
 #endif
@@ -214,13 +215,11 @@ static rt_err_t i2c_bus_control(struct rt_i2c_bus_device *device, int cmd, void 
 static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     RT_ASSERT(device);
-    u32 ret;
     rt_ssize_t i;
     FI2cMsg fmsgs;
     struct rt_i2c_msg *pmsg;
     struct phytium_i2c_bus *i2c_bus;
     i2c_bus = (struct phytium_i2c_bus *)(device);
-    uintptr mem_addr = 0;
     for (i = 0; i < num; i++)
     {
         pmsg = &msgs[i];

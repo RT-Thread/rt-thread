@@ -21,7 +21,7 @@
 #include "fddma_hw.h"
 #include "fddma_bdl.h"
 #include "interrupt.h"
-
+#include "fio_mux.h"
 #define DBG_TAG              "drv.i2s"
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
@@ -116,7 +116,7 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, uintptr src, 
     FError ret = FI2S_SUCCESS;
     fsize_t bdl_num = total_bytes / per_buff_len;
 
-    rt_hw_cpu_dcache_clean(src, total_bytes);
+    rt_hw_cpu_dcache_invalidate((void *)src, total_bytes);
 #ifdef RT_USING_SMART
     src = (uintptr)rt_kmem_v2p((void *)src);
 #endif
@@ -186,7 +186,7 @@ static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, uintptr src, 
     FError ret = FI2S_SUCCESS;
     fsize_t bdl_num = total_bytes / per_buff_len;
 
-    rt_hw_cpu_dcache_clean(src, total_bytes);
+    rt_hw_cpu_dcache_invalidate((void *)src, total_bytes);
 
 #ifdef RT_USING_SMART
     src = (uintptr)rt_kmem_v2p((void *)src);
