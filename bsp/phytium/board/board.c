@@ -120,8 +120,8 @@ void rt_hw_timer_isr(int vector, void *parameter)
 
 int rt_hw_timer_init(void)
 {
-    rt_hw_interrupt_install(GENERIC_TIMER_NS_IRQ_NUM, rt_hw_timer_isr, RT_NULL, "tick");
-    rt_hw_interrupt_umask(GENERIC_TIMER_NS_IRQ_NUM);
+    rt_hw_interrupt_install(GENERIC_PTIMER_EL1_IRQ_NUM, rt_hw_timer_isr, RT_NULL, "tick");
+    rt_hw_interrupt_umask(GENERIC_PTIMER_EL1_IRQ_NUM);
     timer_step = gtimer_get_counter_frequency();
     FASSERT_MSG((timer_step > 1000000), "invalid freqency %ud", timer_step);
     timer_step /= RT_TICK_PER_SECOND;

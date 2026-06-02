@@ -431,12 +431,6 @@ menu "On-chip Peripheral Drivers"
             select RT_USING_AUDIO
             select BSP_USING_DEVICE
         if BSP_USING_I2S
-            config RT_I2S_SAMPLERATE
-                int "The samplerate param"
-                default 8000
-            config RT_I2S_SAMPLEBITS
-                int "The samplebits param"
-                default 16
             config RT_USING_I2S0
                 bool "Enable i2s0"
                 default n
@@ -448,9 +442,11 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_DEVICE
             config BSP_USING_ES8336
                 bool "Enable ES8336"
+                select BSP_USING_I2C_LAYER
                 default n
             config BSP_USING_ES8388
                 bool "Enable ES8388"
+                select BSP_USING_I2C_LAYER
                 default n
         endif
 endmenu

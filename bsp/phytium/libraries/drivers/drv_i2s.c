@@ -555,8 +555,8 @@ int rt_hw_i2s_init(void)
 #if defined(RT_USING_I2S0)
     i2s_dev0.name = "I2S0";
     i2s_dev0.config.channels = 1;
-    i2s_dev0.config.samplerate = RT_I2S_SAMPLERATE;
-    i2s_dev0.config.samplebits = RT_I2S_SAMPLEBITS;
+    i2s_dev0.config.samplerate = FI2S_PCM_STREAM_WORD_LENGTH_16;
+    i2s_dev0.config.samplebits = FI2S_SAMPLE_RATE_CD;
     i2s_dev0.ddma_ctrl_id = FDDMA2_I2S_ID;
     i2s_dev0.i2s_ctrl_id = FI2S0_ID;
 

@@ -554,10 +554,9 @@
 #define I2C_USE_MIO
 #define RT_USING_MIO14
 #define BSP_USING_I2S
-#define RT_I2S_SAMPLERATE 16000
-#define RT_I2S_SAMPLEBITS 16
 #define RT_USING_I2S0
 #define BSP_USING_DEVICE
+#define BSP_USING_ES8336
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

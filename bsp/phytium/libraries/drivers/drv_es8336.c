@@ -8,9 +8,9 @@
 #include "drv_i2c.h"
 
 #define ES_8336_ADDR             0x10
-#define ES_8388_ADDR             0x11
 
 static struct rt_i2c_bus_device *i2c_bus = RT_NULL;
+
 static int i2c_ctrl_init()
 {
     char name[RT_NAME_MAX];
@@ -213,7 +213,6 @@ int es8336_set_bits_per_sample(codec_dec_work_mode_t mode)
 
 int es8336_open()
 {
-    printf("es8336_open !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
     i2c_ctrl_init();
     int value = 0;
     value = es8336_read_reg(ES8336_RESET_REG00, &value);
@@ -296,8 +295,14 @@ int es8336_open()
     es8336_write_reg(ES8336_SYS_LP2_REG0F, 0xFF);
     es8336_write_reg(ES8336_CLKMGR_CLKSW_REG01, 0xF3);
     es8336_write_reg(ES8336_ADC_PDN_LINSEL_REG22, 0xD0); 
-    es8336_start(CODEC_DEV_WORK_MODE_BOTH);
+
     return 0;
+}
+
+void es8336_test()
+{
+    es8336_open();
+    es8336_start(CODEC_DEV_WORK_MODE_BOTH);
 }
 
 INIT_COMPONENT_EXPORT(es8336_open);
