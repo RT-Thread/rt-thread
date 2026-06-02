@@ -36,10 +36,12 @@ extern "C" {
 #define LPUART1_CLOCK_SOURCE 24000000UL
 /* Alias for ADC1 peripheral */
 #define ADC1_PERIPHERAL ADC1
-/* Command 1 - ADC1_GRPA */
-#define ADC1_ADC1_GRPA 1U
-/* Command 2 - ADC1_GRPB */
-#define ADC1_ADC1_GRPB 2U
+/* Command 1 - GRPA */
+#define ADC1_GRPA 1U
+/* Command 2 - GRPB */
+#define ADC1_GRPB 2U
+/* Trigger 0 - TRIG */
+#define ADC1_TRIG 0U
 
 /***********************************************************************************************************************
  * Global variables
@@ -47,6 +49,7 @@ extern "C" {
 extern const lpuart_config_t LPUART1_config;
 extern const lpadc_config_t ADC1_config;
 extern lpadc_conv_command_config_t ADC1_commandsConfig[2];
+extern lpadc_conv_trigger_config_t ADC1_triggersConfig[1];
 
 /***********************************************************************************************************************
  * Initialization functions

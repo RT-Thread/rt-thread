@@ -564,6 +564,11 @@
                   <data>true</data>
                </feature>
             </dependency>
+            <dependency resourceType="Tool" resourceId="Clocks" description="外围设备工具需要 Clocks 工具，但它已被禁用。" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data>true</data>
+               </feature>
+            </dependency>
          </dependencies>
          <generated_project_files>
             <file path="board/peripherals.c" update_enabled="true"/>
@@ -670,7 +675,7 @@
                            <setting name="enableJustifiedLeft" value="false"/>
                            <setting name="enableInDozeMode" value="true"/>
                            <setting name="conversionAverageMode" value="kLPADC_ConversionAverage2"/>
-                           <setting name="offsetCalibration" value="no"/>
+                           <setting name="offsetCalibration" value="yes"/>
                            <setting name="autoCalibrate" value="true"/>
                            <setting name="enableAnalogPreliminary" value="false"/>
                            <setting name="powerUpDelay" value="0x80"/>
@@ -685,32 +690,12 @@
                         </struct>
                         <array name="lpadcConvCommandConfig">
                            <struct name="0">
-                              <setting name="user_commandId" value="ADC1_GRPA"/>
+                              <setting name="user_commandId" value="GRPA"/>
                               <setting name="commandId" value="1"/>
-                              <setting name="chainedNextCommandNumber" value="0"/>
+                              <setting name="chainedNextCommandNumber" value="2"/>
                               <setting name="sampleChannelMode" value="kLPADC_SampleChannelSingleEndSideA"/>
-                              <setting name="sampleScaleMode" value="kLPADC_SampleFullScale"/>
+                              <setting name="sampleScaleMode" value="kLPADC_SamplePartScale"/>
                               <setting name="channelNumber" value="A.1_4"/>
-                              <setting name="enableChannelB_b" value="false"/>
-                              <setting name="channelBScaleMode_e" value="kLPADC_SampleFullScale"/>
-                              <setting name="channelBNumber" value="B.1_0"/>
-                              <setting name="enableAutoChannelIncrement" value="true"/>
-                              <setting name="loopCount" value="4"/>
-                              <setting name="hardwareAverageMode" value="kLPADC_HardwareAverageCount1"/>
-                              <setting name="sampleTimeMode" value="kLPADC_SampleTimeADCK3"/>
-                              <setting name="hardwareCompareMode" value="kLPADC_HardwareCompareDisabled"/>
-                              <setting name="hardwareCompareValueHigh" value="0"/>
-                              <setting name="hardwareCompareValueLow" value="0"/>
-                              <setting name="conversionResoultuionMode" value="kLPADC_ConversionResolutionHigh"/>
-                              <setting name="enableWaitTrigger" value="true"/>
-                           </struct>
-                           <struct name="1">
-                              <setting name="user_commandId" value="ADC1_GRPB"/>
-                              <setting name="commandId" value="2"/>
-                              <setting name="chainedNextCommandNumber" value="0"/>
-                              <setting name="sampleChannelMode" value="kLPADC_SampleChannelSingleEndSideB"/>
-                              <setting name="sampleScaleMode" value="kLPADC_SampleFullScale"/>
-                              <setting name="channelNumber" value="B.1_5"/>
                               <setting name="enableChannelB_b" value="false"/>
                               <setting name="channelBScaleMode_e" value="kLPADC_SampleFullScale"/>
                               <setting name="channelBNumber" value="B.1_0"/>
@@ -722,10 +707,41 @@
                               <setting name="hardwareCompareValueHigh" value="0"/>
                               <setting name="hardwareCompareValueLow" value="0"/>
                               <setting name="conversionResoultuionMode" value="kLPADC_ConversionResolutionHigh"/>
+                              <setting name="enableWaitTrigger" value="true"/>
+                           </struct>
+                           <struct name="1">
+                              <setting name="user_commandId" value="GRPB"/>
+                              <setting name="commandId" value="2"/>
+                              <setting name="chainedNextCommandNumber" value="0"/>
+                              <setting name="sampleChannelMode" value="kLPADC_SampleChannelSingleEndSideB"/>
+                              <setting name="sampleScaleMode" value="kLPADC_SamplePartScale"/>
+                              <setting name="channelNumber" value="B.1_5"/>
+                              <setting name="enableChannelB_b" value="false"/>
+                              <setting name="channelBScaleMode_e" value="kLPADC_SampleFullScale"/>
+                              <setting name="channelBNumber" value="B.1_0"/>
+                              <setting name="enableAutoChannelIncrement" value="true"/>
+                              <setting name="loopCount" value="2"/>
+                              <setting name="hardwareAverageMode" value="kLPADC_HardwareAverageCount1"/>
+                              <setting name="sampleTimeMode" value="kLPADC_SampleTimeADCK3"/>
+                              <setting name="hardwareCompareMode" value="kLPADC_HardwareCompareDisabled"/>
+                              <setting name="hardwareCompareValueHigh" value="0"/>
+                              <setting name="hardwareCompareValueLow" value="0"/>
+                              <setting name="conversionResoultuionMode" value="kLPADC_ConversionResolutionHigh"/>
                               <setting name="enableWaitTrigger" value="false"/>
                            </struct>
                         </array>
-                        <array name="lpadcConvTriggerConfig"/>
+                        <array name="lpadcConvTriggerConfig">
+                           <struct name="0">
+                              <setting name="user_triggerId" value="TRIG"/>
+                              <setting name="triggerId" value="0"/>
+                              <setting name="targetCommandId" value="1"/>
+                              <setting name="delayPower" value="0"/>
+                              <setting name="priority" value="false"/>
+                              <setting name="channelAFIFOSelect" value="0"/>
+                              <setting name="channelBFIFOSelect" value="0"/>
+                              <setting name="enableHardwareTrigger" value="false"/>
+                           </struct>
+                        </array>
                         <struct name="IRQ_cfg">
                            <set name="interrupt_type">
                               <selected/>
@@ -736,7 +752,7 @@
                               <setting name="enable_interrrupt" value="enabled"/>
                               <setting name="enable_priority" value="false"/>
                               <setting name="priority" value="0"/>
-                              <setting name="enable_custom_name" value="false"/>
+                              <setting name="enable_custom_name" value="true"/>
                            </struct>
                         </struct>
                      </config_set>

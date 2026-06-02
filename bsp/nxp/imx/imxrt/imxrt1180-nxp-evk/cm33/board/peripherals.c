@@ -207,7 +207,7 @@ instance:
       - enableJustifiedLeft: 'false'
       - enableInDozeMode: 'true'
       - conversionAverageMode: 'kLPADC_ConversionAverage2'
-      - offsetCalibration: 'no'
+      - offsetCalibration: 'yes'
       - autoCalibrate: 'true'
       - enableAnalogPreliminary: 'false'
       - powerUpDelay: '0x80'
@@ -221,31 +221,12 @@ instance:
       - FIFO1WatermarkDMA: 'false'
     - lpadcConvCommandConfig:
       - 0:
-        - user_commandId: 'ADC1_GRPA'
+        - user_commandId: 'GRPA'
         - commandId: '1'
-        - chainedNextCommandNumber: '0'
+        - chainedNextCommandNumber: '2'
         - sampleChannelMode: 'kLPADC_SampleChannelSingleEndSideA'
-        - sampleScaleMode: 'kLPADC_SampleFullScale'
+        - sampleScaleMode: 'kLPADC_SamplePartScale'
         - channelNumber: 'A.1_4'
-        - enableChannelB_b: 'false'
-        - channelBScaleMode_e: 'kLPADC_SampleFullScale'
-        - channelBNumber: 'B.1_0'
-        - enableAutoChannelIncrement: 'true'
-        - loopCount: '4'
-        - hardwareAverageMode: 'kLPADC_HardwareAverageCount1'
-        - sampleTimeMode: 'kLPADC_SampleTimeADCK3'
-        - hardwareCompareMode: 'kLPADC_HardwareCompareDisabled'
-        - hardwareCompareValueHigh: '0'
-        - hardwareCompareValueLow: '0'
-        - conversionResoultuionMode: 'kLPADC_ConversionResolutionHigh'
-        - enableWaitTrigger: 'true'
-      - 1:
-        - user_commandId: 'ADC1_GRPB'
-        - commandId: '2'
-        - chainedNextCommandNumber: '0'
-        - sampleChannelMode: 'kLPADC_SampleChannelSingleEndSideB'
-        - sampleScaleMode: 'kLPADC_SampleFullScale'
-        - channelNumber: 'B.1_5'
         - enableChannelB_b: 'false'
         - channelBScaleMode_e: 'kLPADC_SampleFullScale'
         - channelBNumber: 'B.1_0'
@@ -257,8 +238,36 @@ instance:
         - hardwareCompareValueHigh: '0'
         - hardwareCompareValueLow: '0'
         - conversionResoultuionMode: 'kLPADC_ConversionResolutionHigh'
+        - enableWaitTrigger: 'true'
+      - 1:
+        - user_commandId: 'GRPB'
+        - commandId: '2'
+        - chainedNextCommandNumber: '0'
+        - sampleChannelMode: 'kLPADC_SampleChannelSingleEndSideB'
+        - sampleScaleMode: 'kLPADC_SamplePartScale'
+        - channelNumber: 'B.1_5'
+        - enableChannelB_b: 'false'
+        - channelBScaleMode_e: 'kLPADC_SampleFullScale'
+        - channelBNumber: 'B.1_0'
+        - enableAutoChannelIncrement: 'true'
+        - loopCount: '2'
+        - hardwareAverageMode: 'kLPADC_HardwareAverageCount1'
+        - sampleTimeMode: 'kLPADC_SampleTimeADCK3'
+        - hardwareCompareMode: 'kLPADC_HardwareCompareDisabled'
+        - hardwareCompareValueHigh: '0'
+        - hardwareCompareValueLow: '0'
+        - conversionResoultuionMode: 'kLPADC_ConversionResolutionHigh'
         - enableWaitTrigger: 'false'
-    - lpadcConvTriggerConfig: []
+    - lpadcConvTriggerConfig:
+      - 0:
+        - user_triggerId: 'TRIG'
+        - triggerId: '0'
+        - targetCommandId: '1'
+        - delayPower: '0'
+        - priority: 'false'
+        - channelAFIFOSelect: '0'
+        - channelBFIFOSelect: '0'
+        - enableHardwareTrigger: 'false'
     - IRQ_cfg:
       - interrupt_type: ''
       - enable_irq: 'false'
@@ -267,7 +276,7 @@ instance:
         - enable_interrrupt: 'enabled'
         - enable_priority: 'false'
         - priority: '0'
-        - enable_custom_name: 'false'
+        - enable_custom_name: 'true'
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 const lpadc_config_t ADC1_config = {
@@ -284,30 +293,12 @@ const lpadc_config_t ADC1_config = {
 };
 lpadc_conv_command_config_t ADC1_commandsConfig[2] = {
   {
-    .sampleScaleMode = kLPADC_SampleFullScale,
+    .sampleScaleMode = kLPADC_SamplePartScale,
     .channelBScaleMode = kLPADC_SampleFullScale,
     .sampleChannelMode = kLPADC_SampleChannelSingleEndSideA,
     .channelNumber = 4U,
     .channelBNumber = 0U,
-    .chainedNextCommandNumber = 0,
-    .enableChannelB = false,
-    .enableAutoChannelIncrement = true,
-    .loopCount = 4UL,
-    .hardwareAverageMode = kLPADC_HardwareAverageCount1,
-    .sampleTimeMode = kLPADC_SampleTimeADCK3,
-    .hardwareCompareMode = kLPADC_HardwareCompareDisabled,
-    .hardwareCompareValueHigh = 0UL,
-    .hardwareCompareValueLow = 0UL,
-    .conversionResolutionMode = kLPADC_ConversionResolutionHigh,
-    .enableWaitTrigger = true
-  },
-  {
-    .sampleScaleMode = kLPADC_SampleFullScale,
-    .channelBScaleMode = kLPADC_SampleFullScale,
-    .sampleChannelMode = kLPADC_SampleChannelSingleEndSideB,
-    .channelNumber = 5U,
-    .channelBNumber = 0U,
-    .chainedNextCommandNumber = 0,
+    .chainedNextCommandNumber = 2,
     .enableChannelB = false,
     .enableAutoChannelIncrement = true,
     .loopCount = 3UL,
@@ -317,19 +308,51 @@ lpadc_conv_command_config_t ADC1_commandsConfig[2] = {
     .hardwareCompareValueHigh = 0UL,
     .hardwareCompareValueLow = 0UL,
     .conversionResolutionMode = kLPADC_ConversionResolutionHigh,
+    .enableWaitTrigger = true
+  },
+  {
+    .sampleScaleMode = kLPADC_SamplePartScale,
+    .channelBScaleMode = kLPADC_SampleFullScale,
+    .sampleChannelMode = kLPADC_SampleChannelSingleEndSideB,
+    .channelNumber = 5U,
+    .channelBNumber = 0U,
+    .chainedNextCommandNumber = 0,
+    .enableChannelB = false,
+    .enableAutoChannelIncrement = true,
+    .loopCount = 2UL,
+    .hardwareAverageMode = kLPADC_HardwareAverageCount1,
+    .sampleTimeMode = kLPADC_SampleTimeADCK3,
+    .hardwareCompareMode = kLPADC_HardwareCompareDisabled,
+    .hardwareCompareValueHigh = 0UL,
+    .hardwareCompareValueLow = 0UL,
+    .conversionResolutionMode = kLPADC_ConversionResolutionHigh,
     .enableWaitTrigger = false
+  }
+};
+lpadc_conv_trigger_config_t ADC1_triggersConfig[1] = {
+  {
+    .targetCommandId = 1,
+    .delayPower = 0UL,
+    .channelAFIFOSelect = 0,
+    .channelBFIFOSelect = 0,
+    .priority = 1,
+    .enableHardwareTrigger = false
   }
 };
 
 static void ADC1_init(void) {
   /* Initialize LPADC converter */
   LPADC_Init(ADC1_PERIPHERAL, &ADC1_config);
+  /* Perform offset calibration */
+  LPADC_DoOffsetCalibration(ADC1_PERIPHERAL);
   /* Perform auto calibration */
   LPADC_DoAutoCalibration(ADC1_PERIPHERAL);
   /* Configure conversion command 1. */
-  LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_ADC1_GRPA, &ADC1_commandsConfig[0]);
+  LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_GRPA, &ADC1_commandsConfig[0]);
   /* Configure conversion command 2. */
-  LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_ADC1_GRPB, &ADC1_commandsConfig[1]);
+  LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_GRPB, &ADC1_commandsConfig[1]);
+  /* Configure trigger 0. */
+  LPADC_SetConvTriggerConfig(ADC1_PERIPHERAL, ADC1_TRIG, &ADC1_triggersConfig[0]);
 }
 
 /***********************************************************************************************************************

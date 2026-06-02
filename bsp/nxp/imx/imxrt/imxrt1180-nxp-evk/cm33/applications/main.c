@@ -14,6 +14,7 @@
 #include <drv_gpio.h>
 #include <fsl_rgpio.h>
 
+
 int main(void)
 {
     rt_kprintf("MIMXRT1180_CM33 MCUX_Config_26.03\r\n");
