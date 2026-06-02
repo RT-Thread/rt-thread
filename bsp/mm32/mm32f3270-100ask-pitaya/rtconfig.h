@@ -416,6 +416,8 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define SOC_FAMILY_MM32
+#define PKG_USING_MM32F3270X_CMSIS
+#define PKG_USING_MM32F3270X_HAL_DRIVER
 #define SOC_SERIES_MM32F3277
 
 /* Hardware Drivers Config */

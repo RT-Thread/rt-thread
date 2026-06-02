@@ -514,14 +514,14 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 
     if ((tid = lwp_tid_get()) == 0)
     {
-        lwp_ref_dec(lwp);
+        lwp_pid_rollback(lwp);
         return -ENOMEM;
     }
 #ifdef ARCH_MM_MMU
     if (lwp_user_space_init(lwp, 0) != 0)
     {
         lwp_tid_put(tid);
-        lwp_ref_dec(lwp);
+        lwp_pid_rollback(lwp);
         return -ENOMEM;
     }
 #endif
@@ -529,7 +529,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
     if ((aux = argscopy(lwp, argc, argv, envp)) == RT_NULL)
     {
         lwp_tid_put(tid);
-        lwp_ref_dec(lwp);
+        lwp_pid_rollback(lwp);
         return -ENOMEM;
     }
 
@@ -629,7 +629,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
     }
 
     lwp_tid_put(tid);
-    lwp_ref_dec(lwp);
+    lwp_pid_rollback(lwp);
 
     return -RT_ERROR;
 }

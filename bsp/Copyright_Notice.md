@@ -550,8 +550,8 @@ Copyright: Copyright (c) 2009 - 2013 ARM LIMITED
 
 Path:
 
-- bsp/mm32l07x/Libraries/CMSIS
-- bsp/mm32l3xx/Libraries/CMSIS/IAR_CORE
+- bsp/mm32/mm32l07x/Libraries/CMSIS
+- bsp/mm32/mm32l3xx/Libraries/CMSIS/IAR_CORE
 
 ------
 
@@ -561,8 +561,8 @@ Copyright: (c) COPYRIGHT 2017 MindMotion
 
 Path:
 
-- bsp/mm32l07x/Libraries/MM32L0xx
-- bsp/mm32l3xx/Libraries/MM32L3xx
+- bsp/mm32/mm32l07x/Libraries/MM32L0xx
+- bsp/mm32/mm32l3xx/Libraries/MM32L3xx
 
 ### nrf
 
