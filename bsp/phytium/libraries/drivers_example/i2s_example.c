@@ -4,7 +4,7 @@
 
 #define SOUND_DEVICE_NAME    "I2S0"
 
-#define AUDIO_SAMPLERATE     44100
+#define AUDIO_SAMPLERATE     16000
 #define AUDIO_CHANNELS       1
 #define AUDIO_SAMPLEBITS     16
 

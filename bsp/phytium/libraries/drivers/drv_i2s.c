@@ -26,6 +26,10 @@
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
 
+#ifdef RT_USING_SMART
+    #include "ioremap.h"
+#endif
+
 #define TX_RX_BUF_LEN        RT_AUDIO_REPLAY_MP_BLOCK_SIZE
 static rt_uint8_t trans_buf[2][TX_RX_BUF_LEN  * 4] __attribute__((aligned(FDDMA_DDR_ADDR_ALIGNMENT))) = {0};
 static FDdmaBdlDesc *bdl_desc_list_tx = NULL;
@@ -77,6 +81,9 @@ static FError i2s_ddma_init(struct phytium_i2s_device *i2s_dev, u32 word_length,
     {
         i2s_dev->i2s_ctrl.data_config.word_length = word_length;
         i2s_dev->i2s_config = *FI2sLookupConfig(i2s_dev->i2s_ctrl_id);
+#ifdef RT_USING_SMART
+        i2s_dev->i2s_config.base_addr = (uintptr)rt_ioremap((void *)i2s_dev->i2s_config.base_addr, 0xd00);
+#endif
         ret = FI2sCfgInitialize(&i2s_dev->i2s_ctrl, &i2s_dev->i2s_config);
         if (FI2S_SUCCESS != ret)
         {
@@ -89,7 +96,11 @@ static FError i2s_ddma_init(struct phytium_i2s_device *i2s_dev, u32 word_length,
     {
         /*Init ddma*/
         i2s_dev->ddmac_config = *FDdmaLookupConfig(i2s_dev->ddma_ctrl_id);
+#ifdef RT_USING_SMART
+        i2s_dev->ddmac_config.base_addr = (uintptr)rt_ioremap((void *)i2s_dev->ddmac_config.base_addr, 0x1000);
+#endif
         ret = FDdmaCfgInitialize(&i2s_dev->ddmac, &i2s_dev->ddmac_config);
+
         if (FI2S_SUCCESS != ret)
         {
             printf("DDMA config initialization failed.\r\n");
