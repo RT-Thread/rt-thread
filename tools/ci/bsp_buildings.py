@@ -49,6 +49,54 @@ def run_cmd(cmd, output_info=True):
 
     return output_str_list, res
 
+def is_env_enabled(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+
+    return value.lower() not in ('', '0', 'false', 'no', 'off')
+
+def run_dist_build_check(bsp, scons_args=''):
+    """
+    build BSP distribution and verify that the generated project can compile.
+    """
+    os.chdir(rtt_root)
+    dist_root = os.path.join(rtt_root, 'bsp', bsp, 'dist')
+    dist_project = os.path.join(dist_root, 'project')
+    if os.path.exists(dist_root):
+        shutil.rmtree(dist_root)
+
+    old_rtt_root = None
+    try:
+        _, res = run_cmd(f'scons --dist -C bsp/{bsp} {scons_args}', output_info=True)
+        if res != 0:
+            print(f"::error::scons --dist failed for {bsp}")
+            return False
+
+        if not os.path.exists(dist_project):
+            print(f"::error::dist project not found: {dist_project}")
+            return False
+
+        old_rtt_root = os.environ.pop('RTT_ROOT', None)
+        _, res = run_cmd(f'scons --pyconfig-silent -C {dist_project}', output_info=True)
+        if res != 0:
+            print(f"::error::dist project pyconfig failed for {bsp}")
+            return False
+
+        nproc = multiprocessing.cpu_count()
+        _, res = run_cmd(f'scons -C {dist_project} -j{nproc}', output_info=True)
+        if res != 0:
+            print(f"::error::dist project build failed for {bsp}")
+            return False
+    finally:
+        if old_rtt_root is not None:
+            os.environ['RTT_ROOT'] = old_rtt_root
+        os.chdir(rtt_root)
+        if os.path.exists(dist_root):
+            shutil.rmtree(dist_root)
+
+    return True
+
 
 def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_build_command=None,build_check_result = None,bsp_build_env=None):
     """
@@ -115,6 +163,15 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
                 files = glob.glob(f'{rtt_root}/bsp/{bsp}/{file_type}')
                 for file in files:
                     shutil.copy(file, f'{rtt_root}/output/bsp/{bsp}/{name.replace("/", "_")}.{file_type[2:]}')
+            if is_env_enabled('RTT_CI_BUILD_DIST'):
+                print(f"::group::\tChecking dist project: {bsp} {name}")
+                dist_res = run_dist_build_check(bsp, scons_args)
+                print("::endgroup::")
+                if not dist_res:
+                    add_summary(f'\t- ❌ dist build {bsp} {name} failed.')
+                    success = False
+                else:
+                    add_summary(f'\t- ✅ dist build {bsp} {name} success.')
 
     os.chdir(f'{rtt_root}/bsp/{bsp}')
     if post_build_command is not None:

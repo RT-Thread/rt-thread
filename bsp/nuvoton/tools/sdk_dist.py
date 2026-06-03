@@ -5,6 +5,9 @@ cwd_path = os.getcwd()
 sys.path.append(os.path.join(os.path.dirname(cwd_path), 'rt-thread', 'tools'))
 
 def dist_modify_relative_path(board_kconfig_path):
+    if not os.path.isfile(board_kconfig_path):
+        return
+
     # Read in the file
     with open(board_kconfig_path, 'r') as file :
         filedata = file.read()
@@ -14,6 +17,23 @@ def dist_modify_relative_path(board_kconfig_path):
 
     # Write the file out again
     with open(board_kconfig_path, 'w') as file:
+        file.write(filedata)
+
+def dist_disable_rtp_startup(dist_dir):
+    rtp_bin = os.path.join(os.path.dirname(dist_dir), 'ma35-rtp', 'rtthread.bin')
+    if os.path.exists(rtp_bin):
+        return
+
+    config_path = os.path.join(dist_dir, '.config')
+    if not os.path.isfile(config_path):
+        return
+
+    with open(config_path, 'r') as file:
+        filedata = file.read()
+
+    filedata = filedata.replace('CONFIG_RTP_USING_AT_STARTUP=y', '# CONFIG_RTP_USING_AT_STARTUP is not set')
+
+    with open(config_path, 'w') as file:
         file.write(filedata)
 
 # BSP dist function
@@ -37,3 +57,6 @@ def dist_do_building(BSP_ROOT, dist_dir):
 
     print('=> Modify libraries relative path in board/Kconfig ')
     dist_modify_relative_path(os.path.join(dist_dir, 'board', 'Kconfig'))
+
+    print('=> Disable RTP startup firmware when dist binary is unavailable ')
+    dist_disable_rtp_startup(dist_dir)

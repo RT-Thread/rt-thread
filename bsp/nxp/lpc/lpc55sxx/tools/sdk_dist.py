@@ -25,6 +25,7 @@ def dist_do_building(BSP_ROOT, dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
         for line in data:
-            if line.find('source') != -1 and line.find('../libraries') != -1:
+            if line.find('source') != -1 and (line.find('../Libraries') != -1 or line.find('../libraries') != -1):
                 line = line.replace('../Libraries', 'Libraries')
+                line = line.replace('../libraries', 'Libraries')
             f.write(line)
