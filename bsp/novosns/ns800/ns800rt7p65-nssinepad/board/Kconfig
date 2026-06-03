@@ -148,6 +148,11 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        select RT_USING_ADC
+        default n
+
     menuconfig BSP_USING_CAN
         bool "Enable CAN"
         select RT_USING_CAN
