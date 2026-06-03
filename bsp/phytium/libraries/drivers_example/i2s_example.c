@@ -9,7 +9,7 @@
 #endif
 
 #define AUDIO_SAMPLERATE     44100
-#define AUDIO_CHANNELS       1
+#define AUDIO_CHANNELS       2
 #define AUDIO_SAMPLEBITS     16
 
 /* 16k * 1ch * 16bit * 5s
@@ -103,7 +103,7 @@ static int i2s_record_play_test(int argc, char **argv)
     caps.main_type               = AUDIO_TYPE_INPUT;
     caps.sub_type                = AUDIO_DSP_PARAM;
 
-    caps.udata.config.samplerate = AUDIO_SAMPLERATE;
+    caps.udata.config.samplerate = 96000;
     caps.udata.config.channels   = AUDIO_CHANNELS;
     caps.udata.config.samplebits = AUDIO_SAMPLEBITS;
 
@@ -122,7 +122,7 @@ static int i2s_record_play_test(int argc, char **argv)
     caps.main_type               = AUDIO_TYPE_OUTPUT;
     caps.sub_type                = AUDIO_DSP_PARAM;
 
-    caps.udata.config.samplerate = AUDIO_SAMPLERATE;
+    caps.udata.config.samplerate = 44100;
     caps.udata.config.channels   = AUDIO_CHANNELS;
     caps.udata.config.samplebits = AUDIO_SAMPLEBITS;
 

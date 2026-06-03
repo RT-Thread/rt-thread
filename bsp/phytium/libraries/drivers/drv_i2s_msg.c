@@ -90,6 +90,8 @@ static FError i2s_ddma_init(struct phytium_i2s_device *i2s_dev)
             printf("Init the i2s failed.\r\n");
             return ret;
         }
+        FI2sMsgHwSetParams(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_PLAYBACK, FI2S_SAMPLE_RATE_CD, 2, TRUE);
+        FI2sMsgHwSetParams(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_CAPTURE, FI2S_SAMPLE_RATE_CD, 2, TRUE);
     }
     if (i2s_dev->ddmac.is_ready != FT_COMPONENT_IS_READY)
     {
@@ -247,8 +249,6 @@ void dma_rx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
 {
     struct phytium_i2s_device *i2s_dev = (struct phytium_i2s_device *)args;
 
-    uint8_t *buf = (uint8_t *)trans_buf[i2s_dev->rx_channel];
-
     rt_audio_rx_done(&i2s_dev->audio,
                      trans_buf[i2s_dev->rx_channel],
                      TX_RX_BUF_LEN);
@@ -378,7 +378,7 @@ static rt_err_t i2s_configure(struct rt_audio_device *audio,
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
-    if (caps->main_type == AUDIO_TYPE_OUTPUT)
+    if (caps->main_type == AUDIO_TYPE_OUTPUT || caps->main_type == AUDIO_TYPE_INPUT)
     {
         switch (caps->sub_type)
         {
@@ -405,11 +405,14 @@ static rt_err_t i2s_configure(struct rt_audio_device *audio,
         default:
             break;
         }
-        FI2sMsgHwSetParams(&i2s_dev->i2s_msg_ctrl,
-                        FI2S_DIRECTION_PLAYBACK,
-                        i2s_dev->config.samplerate,
-                        i2s_dev->config.channels,
-                        TRUE);
+        if (caps->main_type == AUDIO_TYPE_OUTPUT)
+        {
+            FI2sMsgHwSetParams(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_PLAYBACK, i2s_dev->config.samplerate, i2s_dev->config.channels, TRUE);
+        }
+        else
+        {
+            FI2sMsgHwSetParams(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_CAPTURE, i2s_dev->config.samplerate, i2s_dev->config.channels, TRUE);
+        }
     }
     else if (caps->main_type == AUDIO_TYPE_MIXER)
     {
@@ -440,13 +443,11 @@ static rt_err_t i2s_start(struct rt_audio_device *audio, int stream)
 
     if (stream == AUDIO_STREAM_REPLAY)
     {
-        FI2sMsgHwSetParams(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_PLAYBACK, FI2S_SAMPLE_RATE_CD, 2, TRUE);
         FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, i2s_dev);
         FI2sMsgStart(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_PLAYBACK, TRUE);
     }
     else if(stream == AUDIO_STREAM_RECORD)
     {
-        FI2sMsgHwSetParams(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_CAPTURE, FI2S_SAMPLE_RATE_CD, 2, TRUE);
         FI2sMsgStart(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_CAPTURE, TRUE);
         rt_uint8_t *rx_buf = trans_buf[i2s_dev->rx_channel];
         FI2sDdmaDeviceRX(i2s_dev, (uintptr)rx_buf, TX_RX_BUF_LEN, TX_RX_BUF_LEN);
