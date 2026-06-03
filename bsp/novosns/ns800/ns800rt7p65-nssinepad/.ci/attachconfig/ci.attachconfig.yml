@@ -8,3 +8,7 @@ devices.ecap:
       - CONFIG_BSP_USING_ECAP1=y
       - CONFIG_BSP_USING_SPI=y
       - CONFIG_BSP_USING_SPI1=y
+devices.adc:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_ADC=y
