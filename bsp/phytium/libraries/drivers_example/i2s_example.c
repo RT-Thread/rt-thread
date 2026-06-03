@@ -1,7 +1,12 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define SOUND_DEVICE_NAME    "I2S0"
+#if defined(E2000D_DEMO_BOARD)||defined(E2000Q_DEMO_BOARD)
+    #define SOUND_DEVICE_NAME    "I2S0"
+#endif
+#if defined(PD2408_TEST_B_BOARD)
+    #define SOUND_DEVICE_NAME    "I2S0_MSG"
+#endif
 
 #define AUDIO_SAMPLERATE     44100
 #define AUDIO_CHANNELS       1

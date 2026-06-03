@@ -73,7 +73,6 @@
 /* end of rt_strnlen options */
 /* end of klibc options */
 #define RT_NAME_MAX 32
-#define RT_USING_SMART
 #define RT_USING_SMP
 #define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
@@ -147,7 +146,6 @@
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
-#define KERNEL_VADDR_START 0xffff000000000000
 #define ARCH_ARMV8
 #define ARCH_USING_ASID
 #define ARCH_USING_IRQ_CTX_LIST
@@ -179,7 +177,9 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
-#define RT_USING_DFS_V2
+#define RT_USING_DFS_V1
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -197,19 +197,7 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
-#define RT_USING_DFS_PTYFS
-#define RT_USING_DFS_PROCFS
-#define RT_USING_PAGECACHE
-
-/* page cache config */
-
-#define RT_PAGECACHE_COUNT 4096
-#define RT_PAGECACHE_ASPACE_COUNT 1024
-#define RT_PAGECACHE_PRELOAD 4
-#define RT_PAGECACHE_HASH_NR 1024
-#define RT_PAGECACHE_GC_WORK_LEVEL 90
-#define RT_PAGECACHE_GC_STOP_LEVEL 70
-/* end of page cache config */
+#define RT_USING_DFS_RAMFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -274,9 +262,6 @@
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
-#define RT_USING_POSIX_EPOLL
-#define RT_USING_POSIX_SIGNALFD
-#define RT_SIGNALFD_MAX_NUM 10
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
@@ -377,17 +362,6 @@
 
 /* end of Debugging */
 /* end of Memory management */
-#define RT_USING_LWP
-#define LWP_USING_RUNTIME
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_TID_MAX_NR 64
-#define RT_LWP_SHM_MAX_NR 64
-#define RT_USING_LDSO
-#define LWP_USING_TERMINAL
-#define LWP_PTY_MAX_PARIS_LIMIT 32
-#define RT_USING_VDSO
 
 /* Using USB legacy version */
 
@@ -577,18 +551,16 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_DRIVERS_EXAMPLE
-#define BSP_USING_DRIVERS_AUTO_TEST
 #define BSP_USING_IOPAD
 #define BSP_USING_UART_LAYER
 #define BSP_USING_UART
 #define RT_USING_UART1
 #define BSP_USING_I2C_LAYER
-#define BSP_USING_I2C
-#define I2C_USE_MIO
-#define RT_USING_MIO14
-#define RT_USING_MIO15
-#define BSP_USING_I2S
-#define RT_USING_I2S0
+#define BSP_USING_I2C_MSG
+#define RT_USING_I2C3_MSG
+#define BSP_USING_I2S_LAYER
+#define BSP_USING_I2S_MSG
+#define RT_USING_I2S0_MSG
 #define BSP_USING_DEVICE
 #define BSP_USING_ES8336
 /* end of On-chip Peripheral Drivers */
@@ -606,22 +578,20 @@
 
 /* Soc configuration */
 
-#define TARGET_PE2202
-#define SOC_NAME "pe220x"
-#define TARGET_TYPE_NAME "pe2202"
-#define SOC_CORE_NUM 2
+#define TARGET_PD2408
+#define SOC_NAME "pd2408"
+#define SOC_CORE_NUM 8
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
 #define F64BIT_MEMORY_LENGTH 0x800000000
-#define TARGET_PE220X
 #define DEFAULT_DEBUG_PRINT_UART1
 /* end of Soc configuration */
 
 /* Board Configuration */
 
-#define E2000D_DEMO_BOARD
-#define BOARD_NAME "pe2202_demo"
+#define BOARD_NAME "pd2408_test_b"
+#define PD2408_TEST_B_BOARD
 
 /* IO mux configuration when board start up */
 

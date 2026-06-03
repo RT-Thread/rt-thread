@@ -15,8 +15,8 @@
 #include <rtdevice.h>
 #include <drv_i2s.h>
 
-#include "fi2s.h"
-#include "fi2s_hw.h"
+#include "fi2s_msg.h"
+#include "fi2s_msg_hw.h"
 #include "fddma.h"
 #include "fddma_hw.h"
 #include "fddma_bdl.h"
@@ -45,9 +45,9 @@ struct phytium_i2s_device
     struct rt_audio_device audio;
     struct rt_audio_configure config;
 
-    u32 i2s_ctrl_id;
-    FI2s i2s_ctrl;
-    FI2sConfig i2s_config;
+    u32 i2s_msg_ctrl_id;
+    FI2sMsgCtrl i2s_msg_ctrl;
+    FI2sMsgConfig i2s_msg_config;
 
     u32 ddma_ctrl_id;
     FDdma ddmac;
@@ -73,25 +73,23 @@ static void FDdmaSetupInterrupt(FDdma *const instance)
     return;
 }
 
-static FError i2s_ddma_init(struct phytium_i2s_device *i2s_dev, u32 word_length, u32 samplerate)
+static FError i2s_ddma_init(struct phytium_i2s_device *i2s_dev)
 {
-    FError ret = FI2S_SUCCESS;
+    FError ret = FI2S_MSG_SUCCESS;
     /*Init i2s*/
-    FIOPadSetI2sMux();
-    if (i2s_dev->i2s_ctrl.is_ready != FT_COMPONENT_IS_READY)
+    if (i2s_dev->i2s_msg_ctrl.is_ready != FT_COMPONENT_IS_READY)
     {
-        i2s_dev->i2s_ctrl.data_config.word_length = word_length;
-        i2s_dev->i2s_config = *FI2sLookupConfig(i2s_dev->i2s_ctrl_id);
+        i2s_dev->i2s_msg_config = *FI2sMsgLookupConfig(i2s_dev->i2s_msg_ctrl_id);
 #ifdef RT_USING_SMART
-        i2s_dev->i2s_config.base_addr = (uintptr)rt_ioremap((void *)i2s_dev->i2s_config.base_addr, 0xd00);
+        i2s_dev->i2s_msg_config.msg.shmem = (uintptr)rt_ioremap((void *)i2s_dev->i2s_msg_config.msg.shmem, 0x1000);
+        i2s_dev->i2s_msg_config.msg.regfile= (uintptr)rt_ioremap((void *)i2s_dev->i2s_msg_config.msg.regfile, 0x1000);
 #endif
-        ret = FI2sCfgInitialize(&i2s_dev->i2s_ctrl, &i2s_dev->i2s_config);
-        if (FI2S_SUCCESS != ret)
+        ret = FI2sMsgCfgInitialize(&i2s_dev->i2s_msg_ctrl, &i2s_dev->i2s_msg_config);
+        if (FI2S_MSG_SUCCESS != ret)
         {
             printf("Init the i2s failed.\r\n");
             return ret;
         }
-        FI2sClkOutDiv(&i2s_dev->i2s_ctrl, samplerate);
     }
     if (i2s_dev->ddmac.is_ready != FT_COMPONENT_IS_READY)
     {
@@ -102,7 +100,7 @@ static FError i2s_ddma_init(struct phytium_i2s_device *i2s_dev, u32 word_length,
 #endif
         ret = FDdmaCfgInitialize(&i2s_dev->ddmac, &i2s_dev->ddmac_config);
 
-        if (FI2S_SUCCESS != ret)
+        if (FI2S_MSG_SUCCESS != ret)
         {
             printf("DDMA config initialization failed.\r\n");
             return ret;
@@ -114,7 +112,7 @@ static FError i2s_ddma_init(struct phytium_i2s_device *i2s_dev, u32 word_length,
 
 static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, uintptr src, fsize_t total_bytes, fsize_t per_buff_len)
 {
-    FError ret = FI2S_SUCCESS;
+    FError ret = FI2S_MSG_SUCCESS;
     fsize_t bdl_num = total_bytes / per_buff_len;
 
     rt_hw_cpu_dcache_invalidate((void *)src, total_bytes);
@@ -155,11 +153,7 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, uintptr src, 
     i2s_dev->rx_config.slave_id = 0U;
     i2s_dev->rx_config.req_mode = FI2S_PCM_STREAM_CAPTURE;
     i2s_dev->rx_config.ddr_addr = src;
-#ifdef RT_USING_SMART
-    i2s_dev->rx_config.dev_addr = (uintptr)rt_kmem_v2p((void *)i2s_dev->i2s_config.base_addr) + FI2S_RXDMA;
-#else
-    i2s_dev->rx_config.dev_addr = i2s_dev->i2s_config.base_addr + FI2S_RXDMA;
-#endif
+    i2s_dev->rx_config.dev_addr = FI2S_LSD_BASE + FI2S_CAPTURE_ADDRESS_OFFSET;
     i2s_dev->rx_config.trans_len = total_bytes;
     i2s_dev->rx_config.timeout = 0xffff;
 #ifdef RT_USING_SMART
@@ -171,7 +165,7 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, uintptr src, 
     i2s_dev->rx_config.valid_desc_num = bdl_num;
     ret = FDdmaChanBdlConfigure(&i2s_dev->ddmac, i2s_dev->rx_channel, &i2s_dev->rx_config);
 
-    if (ret != FI2S_SUCCESS)
+    if (ret != FI2S_MSG_SUCCESS)
     {
         printf("DDMA BDL configure failer.\r\n");
         return ret;
@@ -184,7 +178,7 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, uintptr src, 
 
 static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, uintptr src, fsize_t total_bytes, fsize_t per_buff_len)
 {
-    FError ret = FI2S_SUCCESS;
+    FError ret = FI2S_MSG_SUCCESS;
     fsize_t bdl_num = total_bytes / per_buff_len;
 
     rt_hw_cpu_dcache_invalidate((void *)src, total_bytes);
@@ -226,13 +220,7 @@ static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, uintptr src, 
     i2s_dev->tx_config.slave_id = 0U;
     i2s_dev->tx_config.req_mode = FI2S_PCM_STREAM_PLAYBACK;
     i2s_dev->tx_config.ddr_addr = src;
-
-#ifdef RT_USING_SMART
-    i2s_dev->tx_config.dev_addr = (uintptr)rt_kmem_v2p((void *)i2s_dev->i2s_config.base_addr) + FI2S_TXDMA;
-#else
-    i2s_dev->tx_config.dev_addr = i2s_dev->i2s_config.base_addr + FI2S_TXDMA;
-#endif
-
+    i2s_dev->tx_config.dev_addr = FI2S_LSD_BASE + FI2S_PLAYBACK_ADDRESS_OFFSET;
     i2s_dev->tx_config.trans_len = total_bytes;
     i2s_dev->tx_config.timeout = 0xffff;
 
@@ -245,7 +233,7 @@ static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, uintptr src, 
     i2s_dev->tx_config.valid_desc_num = bdl_num;
     ret = FDdmaChanBdlConfigure(&i2s_dev->ddmac, i2s_dev->tx_channel, &i2s_dev->tx_config);
 
-    if (ret != FI2S_SUCCESS)
+    if (ret != FI2S_MSG_SUCCESS)
     {
         printf("DDMA BDL configure failer.\r\n");
         return ret;
@@ -258,6 +246,9 @@ static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, uintptr src, 
 void dma_rx_channel_transfer_callback(FDdmaChanIrq *irq, void *args)
 {
     struct phytium_i2s_device *i2s_dev = (struct phytium_i2s_device *)args;
+
+    uint8_t *buf = (uint8_t *)trans_buf[i2s_dev->rx_channel];
+
     rt_audio_rx_done(&i2s_dev->audio,
                      trans_buf[i2s_dev->rx_channel],
                      TX_RX_BUF_LEN);
@@ -360,22 +351,22 @@ static void i2s_set_word_length(struct phytium_i2s_device *dev, rt_uint32_t bits
     switch (bits)
     {
     case 16:
-        dev->i2s_ctrl.data_config.word_length =
+        dev->i2s_msg_ctrl.data_width =
             FI2S_PCM_STREAM_WORD_LENGTH_16;
         break;
 
     case 24:
-        dev->i2s_ctrl.data_config.word_length =
+        dev->i2s_msg_ctrl.data_width =
             FI2S_PCM_STREAM_WORD_LENGTH_24;
         break;
 
     case 32:
-        dev->i2s_ctrl.data_config.word_length =
+        dev->i2s_msg_ctrl.data_width =
             FI2S_PCM_STREAM_WORD_LENGTH_32;
         break;
 
     default:
-        dev->i2s_ctrl.data_config.word_length =
+        dev->i2s_msg_ctrl.data_width =
             FI2S_PCM_STREAM_WORD_LENGTH_16;
         break;
     }
@@ -394,28 +385,31 @@ static rt_err_t i2s_configure(struct rt_audio_device *audio,
         case AUDIO_DSP_PARAM:
             i2s_dev->config.samplerate = caps->udata.config.samplerate;
             i2s_dev->config.samplebits = caps->udata.config.samplebits;
-            i2s_dev->config.channels = caps->udata.config.channels;
+            i2s_dev->config.channels   = caps->udata.config.channels;
             i2s_set_word_length(i2s_dev, caps->udata.config.samplebits);
             break;
+        
         case AUDIO_DSP_SAMPLERATE:
             i2s_dev->config.samplerate = caps->udata.config.samplerate;
             break;
-
+        
         case AUDIO_DSP_SAMPLEBITS:
             i2s_dev->config.samplebits = caps->udata.config.samplebits;
             i2s_set_word_length(i2s_dev, caps->udata.config.samplebits);
-
             break;
-
+        
         case AUDIO_DSP_CHANNELS:
             /* TODO */
             break;
-
+        
         default:
             break;
         }
-        FI2sClkOutDiv(&i2s_dev->i2s_ctrl, i2s_dev->config.samplerate);
-
+        FI2sMsgHwSetParams(&i2s_dev->i2s_msg_ctrl,
+                        FI2S_DIRECTION_PLAYBACK,
+                        i2s_dev->config.samplerate,
+                        i2s_dev->config.channels,
+                        TRUE);
     }
     else if (caps->main_type == AUDIO_TYPE_MIXER)
     {
@@ -433,10 +427,9 @@ static rt_err_t i2s_start(struct rt_audio_device *audio, int stream)
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
-    i2s_ddma_init(i2s_dev, FI2S_PCM_STREAM_WORD_LENGTH_16, FI2S_SAMPLE_RATE_CD);
+    i2s_ddma_init(i2s_dev);
     i2s_dev->rx_channel = 1;
     i2s_dev->tx_channel = 0;
-    FI2sTxRxEnable(&i2s_dev->i2s_ctrl, TRUE); /* 模块使能 */
     
     if (audio_tx_thread != NULL) {
         rt_thread_resume(audio_tx_thread);   // 安全，内部会判断是否挂起
@@ -447,11 +440,14 @@ static rt_err_t i2s_start(struct rt_audio_device *audio, int stream)
 
     if (stream == AUDIO_STREAM_REPLAY)
     {
+        FI2sMsgHwSetParams(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_PLAYBACK, FI2S_SAMPLE_RATE_CD, 2, TRUE);
         FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->tx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_tx_channel_transfer_callback, i2s_dev);
-
+        FI2sMsgStart(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_PLAYBACK, TRUE);
     }
     else if(stream == AUDIO_STREAM_RECORD)
     {
+        FI2sMsgHwSetParams(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_CAPTURE, FI2S_SAMPLE_RATE_CD, 2, TRUE);
+        FI2sMsgStart(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_CAPTURE, TRUE);
         rt_uint8_t *rx_buf = trans_buf[i2s_dev->rx_channel];
         FI2sDdmaDeviceRX(i2s_dev, (uintptr)rx_buf, TX_RX_BUF_LEN, TX_RX_BUF_LEN);
         FDdmaRegisterChanEvtHandler(&i2s_dev->ddmac, i2s_dev->rx_channel, FDDMA_CHAN_EVT_REQ_DONE, dma_rx_channel_transfer_callback, i2s_dev);
@@ -467,10 +463,11 @@ static rt_err_t i2s_stop(struct rt_audio_device *audio, int stream)
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
 
-    if (i2s_dev->i2s_ctrl.is_ready == FT_COMPONENT_IS_READY)
+    if (i2s_dev->i2s_msg_ctrl.is_ready == FT_COMPONENT_IS_READY)
     {
-        FI2sStopWork(&i2s_dev->i2s_ctrl);
-        FI2sDeInitialize(&i2s_dev->i2s_ctrl);
+        FI2sMsgStart(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_PLAYBACK, FALSE);
+        FI2sMsgStart(&i2s_dev->i2s_msg_ctrl, FI2S_DIRECTION_CAPTURE, FALSE);
+        FI2sMsgDeInitialize(&i2s_dev->i2s_msg_ctrl);
     }
     if (i2s_dev->ddmac.is_ready == FT_COMPONENT_IS_READY)
     {
@@ -503,7 +500,7 @@ static rt_err_t i2s_init(struct rt_audio_device* audio)
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
-    i2s_ddma_init(i2s_dev, FI2S_PCM_STREAM_WORD_LENGTH_16, FI2S_SAMPLE_RATE_CD);
+    i2s_ddma_init(i2s_dev);
 
     return RT_EOK;
 }
@@ -589,20 +586,20 @@ static int i2s_controller_init(struct phytium_i2s_device *i2s_dev)
     return ret;
 }
 
-#if defined(RT_USING_I2S0)
+#if defined(RT_USING_I2S0_MSG)
     static struct phytium_i2s_device i2s_dev0;
 #endif
 
 int rt_hw_i2s_init(void)
 {
-FI2S_SAMPLE_RATE_CD
-#if defined(RT_USING_I2S0)
-    i2s_dev0.name = "I2S0";
+
+#if defined(RT_USING_I2S0_MSG)
+    i2s_dev0.name = "I2S0_MSG";
     i2s_dev0.config.channels = 1;
     i2s_dev0.config.samplerate = FI2S_SAMPLE_RATE_CD;
     i2s_dev0.config.samplebits = FI2S_PCM_STREAM_WORD_LENGTH_16;
-    i2s_dev0.ddma_ctrl_id = FDDMA2_I2S_ID;
-    i2s_dev0.i2s_ctrl_id = FI2S0_ID;
+    i2s_dev0.ddma_ctrl_id = FDDMA0_ID;
+    i2s_dev0.i2s_msg_ctrl_id = FI2S0_MSG_ID;
 
     i2s_controller_init(&i2s_dev0);
 #endif

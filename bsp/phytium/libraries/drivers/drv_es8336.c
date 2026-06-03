@@ -3,9 +3,18 @@
 #include "fdebug.h"
 #include "fdrivers_port.h"
 #include "fparameters.h"
+#if defined(E2000D_DEMO_BOARD)||defined(E2000Q_DEMO_BOARD)
 #include "fi2c.h"
 #include "fi2c_hw.h"
 #include "drv_i2c.h"
+#endif
+#if defined(PD2408_TEST_B_BOARD)
+#include "fi2c_msg.h"
+#include "fi2c_msg_hw.h"
+#include "drv_i2c_msg.h"
+#endif
+
+#include "rtconfig.h"
 
 #define ES_8336_ADDR             0x10
 
@@ -14,7 +23,12 @@ static struct rt_i2c_bus_device *i2c_bus = RT_NULL;
 static int i2c_ctrl_init()
 {
     char name[RT_NAME_MAX];
+#if defined(E2000D_DEMO_BOARD)||defined(E2000Q_DEMO_BOARD)
     rt_strncpy(name, "MIO14", RT_NAME_MAX);
+#endif
+#if defined(PD2408_TEST_B_BOARD)
+    rt_strncpy(name, "I2C3_MSG", RT_NAME_MAX);
+#endif
     i2c_bus = (struct rt_i2c_bus_device *)rt_device_find(name);
     if (i2c_bus == RT_NULL)
     {

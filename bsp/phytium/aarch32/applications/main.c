@@ -89,7 +89,7 @@ void demo_core(void)
 
 int main(void)
 {
-#ifdef BSP_USING_DRIVERS_EXAMPLE
+#ifdef BSP_USING_DRIVERS_AUTO_TEST
     auto_test();
 #elif defined RT_USING_SMP
     demo_core();
