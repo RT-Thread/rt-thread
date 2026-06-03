@@ -92,6 +92,35 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ECAP
         bool "Enable ECAP"
         default n
+        if BSP_USING_ECAP
+            menuconfig BSP_USING_ECAP1
+                bool "Enable ECAP1"
+                default n
+            
+            menuconfig BSP_USING_ECAP2
+                bool "Enable ECAP2"
+                default n
+
+            menuconfig BSP_USING_ECAP3
+                bool "Enable ECAP3"
+                default n
+            
+            menuconfig BSP_USING_ECAP4
+                bool "Enable ECAP4"
+                default n
+
+            menuconfig BSP_USING_ECAP5
+                bool "Enable ECAP5"
+                default n
+
+            menuconfig BSP_USING_ECAP6
+                bool "Enable ECAP6"
+                default n
+
+            menuconfig BSP_USING_ECAP7
+                bool "Enable ECAP7"
+                default n
+        endif
 
     menuconfig BSP_USING_CAN
         bool "Enable CAN"

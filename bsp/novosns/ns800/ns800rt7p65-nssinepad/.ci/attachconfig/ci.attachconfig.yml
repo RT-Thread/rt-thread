@@ -1,0 +1,8 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+devices.ecap:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_ECAP=y
+      - CONFIG_BSP_USING_ECAP1=y
