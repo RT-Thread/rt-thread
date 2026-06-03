@@ -595,7 +595,7 @@ static int i2s_controller_init(struct phytium_i2s_device *i2s_dev)
 
 int rt_hw_i2s_init(void)
 {
-FI2S_SAMPLE_RATE_CD
+
 #if defined(RT_USING_I2S0)
     i2s_dev0.name = "I2S0";
     i2s_dev0.config.channels = 1;

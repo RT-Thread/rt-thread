@@ -103,7 +103,7 @@ static int i2s_record_play_test(int argc, char **argv)
     caps.main_type               = AUDIO_TYPE_INPUT;
     caps.sub_type                = AUDIO_DSP_PARAM;
 
-    caps.udata.config.samplerate = 96000;
+    caps.udata.config.samplerate = AUDIO_SAMPLERATE;
     caps.udata.config.channels   = AUDIO_CHANNELS;
     caps.udata.config.samplebits = AUDIO_SAMPLEBITS;
 
@@ -122,7 +122,7 @@ static int i2s_record_play_test(int argc, char **argv)
     caps.main_type               = AUDIO_TYPE_OUTPUT;
     caps.sub_type                = AUDIO_DSP_PARAM;
 
-    caps.udata.config.samplerate = 44100;
+    caps.udata.config.samplerate = AUDIO_SAMPLERATE;
     caps.udata.config.channels   = AUDIO_CHANNELS;
     caps.udata.config.samplebits = AUDIO_SAMPLEBITS;
 
