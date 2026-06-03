@@ -11,6 +11,7 @@
 import subprocess
 import logging
 import os
+import sys
 
 CONFIG_BSP_USING_X = ["CONFIG_BSP_USING_UART", "CONFIG_BSP_USING_I2C", "CONFIG_BSP_USING_SPI", "CONFIG_BSP_USING_ADC", "CONFIG_BSP_USING_DAC"]
 
@@ -81,13 +82,32 @@ def modify_config(file_path, configs):
             file.write("#define " + define1 + "\n")
             file.write("#define " + define2 + "\n")
 
+def check_scons_build_files(dir):
+    missing = []
+    for filename in ["SConstruct", "SConscript"]:
+        if not os.path.isfile(os.path.join(dir, filename)):
+            missing.append(filename)
+
+    if missing:
+        logging.error("missing %s in %s", ", ".join(missing), dir)
+        return False
+
+    return True
+
 def recompile_bsp(dir):
     logging.info("recomplie bsp: {}".format(dir))
-    os.system("scons -C " + dir)
+    if not check_scons_build_files(dir):
+        return 1
+
+    result = subprocess.run(["scons", "-C", dir])
+    if result.returncode != 0:
+        logging.error("scons failed for %s", dir)
+    return result.returncode
 
 if __name__ == '__main__':
     init_logger()
     recompile_bsp_dirs = diff()
+    failed = 0
     for dir in recompile_bsp_dirs:
         dot_config_path = dir + "/" + ".config"
         configs = check_config_in_file(dot_config_path)
@@ -95,4 +115,7 @@ if __name__ == '__main__':
         logging.info(configs)
         logging.info("Add configurations and recompile!")
         modify_config(dir, configs)
-        recompile_bsp(dir)
+        if recompile_bsp(dir) != 0:
+            failed += 1
+
+    sys.exit(failed)
