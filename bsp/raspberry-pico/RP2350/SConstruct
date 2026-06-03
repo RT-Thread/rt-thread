@@ -36,7 +36,7 @@ else:
     os.system("scons")
 os.chdir(ocwd)
 
-objs.extend(SConscript(os.path.join(os.getcwd(), '..', 'Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(os.getcwd(), '..', 'libraries', 'Drivers', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)
