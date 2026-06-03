@@ -577,6 +577,7 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_DRIVERS_EXAMPLE
+#define BSP_USING_DRIVERS_AUTO_TEST
 #define BSP_USING_IOPAD
 #define BSP_USING_UART_LAYER
 #define BSP_USING_UART
@@ -631,8 +632,7 @@
 
 #define ELOG_LINE_BUF_SIZE 0x100
 #define LOG_DEBUG
-#define USE_NS_GTIMER
-#define SLEEP_USE_NS_GTIMER
+#define USE_PHYSICAL_GTIMER
 /* end of Sdk common configuration */
 /* end of Standalone Setting */
 #define KERNEL_ASPACE_START 0x1000

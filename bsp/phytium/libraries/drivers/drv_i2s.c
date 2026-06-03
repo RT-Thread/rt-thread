@@ -22,6 +22,7 @@
 #include "fddma_bdl.h"
 #include "interrupt.h"
 #include "fio_mux.h"
+#include "cache.h"
 #define DBG_TAG              "drv.i2s"
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
@@ -162,12 +163,12 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, uintptr src, 
     i2s_dev->rx_config.trans_len = total_bytes;
     i2s_dev->rx_config.timeout = 0xffff;
 #ifdef RT_USING_SMART
-    i2s_dev->rx_config.first_desc_addr = (uintptr)rt_kmem_v2p(bdl_desc_list_rx);
+    i2s_dev->rx_config.first_desc_paddr = (uintptr)rt_kmem_v2p(bdl_desc_list_rx);
 #else
-    i2s_dev->rx_config.first_desc_addr = (uintptr)bdl_desc_list_rx;
+    i2s_dev->rx_config.first_desc_paddr = (uintptr)bdl_desc_list_rx;
 #endif
+    i2s_dev->rx_config.first_desc_vaddr = (uintptr)bdl_desc_list_rx;
     i2s_dev->rx_config.valid_desc_num = bdl_num;
-
     ret = FDdmaChanBdlConfigure(&i2s_dev->ddmac, i2s_dev->rx_channel, &i2s_dev->rx_config);
 
     if (ret != FI2S_SUCCESS)
@@ -236,13 +237,12 @@ static FError FI2sDdmaDeviceTX(struct phytium_i2s_device *i2s_dev, uintptr src, 
     i2s_dev->tx_config.timeout = 0xffff;
 
 #ifdef RT_USING_SMART
-    i2s_dev->tx_config.first_desc_addr = (uintptr)rt_kmem_v2p(bdl_desc_list_tx);
+    i2s_dev->tx_config.first_desc_paddr = (uintptr)rt_kmem_v2p(bdl_desc_list_tx);
 #else
-    i2s_dev->tx_config.first_desc_addr = (uintptr)bdl_desc_list_tx;
+    i2s_dev->tx_config.first_desc_paddr = (uintptr)bdl_desc_list_tx;
 #endif
-
+    i2s_dev->tx_config.first_desc_vaddr = (uintptr)bdl_desc_list_tx;
     i2s_dev->tx_config.valid_desc_num = bdl_num;
-
     ret = FDdmaChanBdlConfigure(&i2s_dev->ddmac, i2s_dev->tx_channel, &i2s_dev->tx_config);
 
     if (ret != FI2S_SUCCESS)
