@@ -11,8 +11,8 @@ def dist_do_building(BSP_ROOT, dist_dir):
     from mkdist import bsp_copy_files
     import rtconfig
 
-    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
-    library_dir = os.path.join(dist_dir, 'Libraries')
+    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
+    library_dir = os.path.join(dist_dir, 'libraries')
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'drivers'), os.path.join(library_dir, 'drivers'))
     shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
@@ -25,7 +25,6 @@ def dist_do_building(BSP_ROOT, dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
         for line in data:
-            if line.find('source') != -1 and (line.find('../Libraries') != -1 or line.find('../libraries') != -1):
-                line = line.replace('../Libraries', 'Libraries')
-                line = line.replace('../libraries', 'Libraries')
+            if line.find('source') != -1 and line.find('../libraries') != -1:
+                line = line.replace('../libraries', 'libraries')
             f.write(line)
