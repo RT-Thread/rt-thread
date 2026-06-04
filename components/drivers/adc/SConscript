@@ -1,0 +1,12 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_USING_ADC_V2']):
+    src += ['adc_v2.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_ADC_V2'], CPPPATH = CPPPATH)
+
+Return('group')

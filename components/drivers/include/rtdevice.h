@@ -263,6 +263,10 @@ extern "C" {
 #include "drivers/adc.h"
 #endif /* RT_USING_ADC */
 
+#ifdef RT_USING_ADC_V2
+#include "drivers/adc_v2.h"
+#endif /* RT_USING_ADC_V2 */
+
 #ifdef RT_USING_DAC
 #include "drivers/dac.h"
 #endif /* RT_USING_DAC */

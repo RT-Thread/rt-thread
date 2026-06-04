@@ -49,6 +49,9 @@ if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']) and not GetDepend(['SOC_STM32H7
 if GetDepend(['RT_USING_ADC']):
     src += ['drv_adc.c']
 
+if GetDepend(['BSP_USING_ADC_V2']):
+    src += ['drv_adc_v2.c']
+
 if GetDepend(['RT_USING_DAC']):
     src += ['drv_dac.c']
 

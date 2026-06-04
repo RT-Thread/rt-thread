@@ -1,0 +1,1404 @@
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2026-04-21     wdfk-prog    add stm32 adc v2 driver implementation
+ */
+
+/**
+ * @file drv_adc_v2.c
+ * @brief STM32 ADC V2 driver implementation.
+ */
+#include <rtconfig.h>
+
+#if defined(RT_USING_ADC_V2)
+
+#include "drv_config.h"
+#include "drv_adc_v2_private.h"
+
+#if defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2) || defined(BSP_USING_ADC3) || defined(BSP_USING_ADC4)
+
+#define DRV_DEBUG
+#define LOG_TAG "drv.adc"
+#include <drv_log.h>
+
+/**
+ * @brief Apply the STM32 private oversampling configuration to the ADC init structure.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_apply_oversampling(struct stm32_adc *adc)
+{
+#if defined(STM32_ADC_HAS_HW_OVERSAMPLING)
+    if (adc->config.oversampling_ratio == 0U)
+    {
+        adc->handle.Init.OversamplingMode = DISABLE;
+        return RT_EOK;
+    }
+
+    adc->handle.Init.OversamplingMode = ENABLE;
+    adc->handle.Init.Oversampling.Ratio = adc->config.oversampling_ratio;
+    adc->handle.Init.Oversampling.RightBitShift = adc->config.oversampling_right_shift;
+    adc->handle.Init.Oversampling.TriggeredMode = ADC_TRIGGEREDMODE_SINGLE_TRIGGER;
+    adc->handle.Init.Oversampling.OversamplingStopReset = ADC_REGOVERSAMPLING_CONTINUED_MODE;
+    return RT_EOK;
+#else
+    return (adc->config.oversampling_ratio == 0U) ? RT_EOK : -RT_ENOSYS;
+#endif /* defined(STM32_ADC_HAS_HW_OVERSAMPLING) */
+}
+
+/**
+ * @brief STM32 ADC object indexes.
+ */
+enum stm32_adc_index
+{
+#ifdef BSP_USING_ADC1
+    ADC1_INDEX,
+#endif /* BSP_USING_ADC1 */
+#ifdef BSP_USING_ADC2
+    ADC2_INDEX,
+#endif /* BSP_USING_ADC2 */
+#ifdef BSP_USING_ADC3
+    ADC3_INDEX,
+#endif /* BSP_USING_ADC3 */
+#ifdef BSP_USING_ADC4
+    ADC4_INDEX,
+#endif /* BSP_USING_ADC4 */
+};
+
+/**
+ * @brief STM32 ADC device table.
+ */
+static struct stm32_adc stm32_adc_obj[] = {
+#ifdef BSP_USING_ADC1
+    ADC1_V2_CONFIG,
+#endif /* BSP_USING_ADC1 */
+#ifdef BSP_USING_ADC2
+    ADC2_V2_CONFIG,
+#endif /* BSP_USING_ADC2 */
+#ifdef BSP_USING_ADC3
+    ADC3_V2_CONFIG,
+#endif /* BSP_USING_ADC3 */
+#ifdef BSP_USING_ADC4
+    ADC4_V2_CONFIG,
+#endif /* BSP_USING_ADC4 */
+};
+
+/**
+ * @brief ADC hardware channel mapping table.
+ */
+static const uint32_t stm32_adc_channel_table[STM32_ADC_MAX_CHANNELS] = {
+    ADC_CHANNEL_0,
+    ADC_CHANNEL_1,
+    ADC_CHANNEL_2,
+    ADC_CHANNEL_3,
+    ADC_CHANNEL_4,
+    ADC_CHANNEL_5,
+    ADC_CHANNEL_6,
+    ADC_CHANNEL_7,
+    ADC_CHANNEL_8,
+    ADC_CHANNEL_9,
+    ADC_CHANNEL_10,
+    ADC_CHANNEL_11,
+    ADC_CHANNEL_12,
+    ADC_CHANNEL_13,
+    ADC_CHANNEL_14,
+    ADC_CHANNEL_15,
+#if STM32_ADC_MAX_CHANNELS > 16
+    STM32_ADC_CHANNEL_16,
+#endif /* STM32_ADC_MAX_CHANNELS > 16 */
+#if STM32_ADC_MAX_CHANNELS > 17
+    STM32_ADC_CHANNEL_17,
+#endif /* STM32_ADC_MAX_CHANNELS > 17 */
+#if STM32_ADC_MAX_CHANNELS > 18
+    STM32_ADC_CHANNEL_18,
+#endif /* STM32_ADC_MAX_CHANNELS > 18 */
+#if STM32_ADC_MAX_CHANNELS > 19
+    STM32_ADC_CHANNEL_19,
+#endif /* STM32_ADC_MAX_CHANNELS > 19 */
+#if STM32_ADC_MAX_CHANNELS > 20
+    STM32_ADC_CHANNEL_20,
+#endif /* STM32_ADC_MAX_CHANNELS > 20 */
+#if STM32_ADC_MAX_CHANNELS > 21
+    STM32_ADC_CHANNEL_21,
+#endif /* STM32_ADC_MAX_CHANNELS > 21 */
+#if STM32_ADC_MAX_CHANNELS > 22
+    STM32_ADC_CHANNEL_22,
+#endif /* STM32_ADC_MAX_CHANNELS > 22 */
+#if STM32_ADC_MAX_CHANNELS > 23
+    STM32_ADC_CHANNEL_23,
+#endif /* STM32_ADC_MAX_CHANNELS > 23 */
+#if STM32_ADC_MAX_CHANNELS > 24
+    STM32_ADC_CHANNEL_24,
+#endif /* STM32_ADC_MAX_CHANNELS > 24 */
+#if STM32_ADC_MAX_CHANNELS > 25
+    STM32_ADC_CHANNEL_25,
+#endif /* STM32_ADC_MAX_CHANNELS > 25 */
+#if STM32_ADC_MAX_CHANNELS > 26
+    STM32_ADC_CHANNEL_26,
+#endif /* STM32_ADC_MAX_CHANNELS > 26 */
+#if STM32_ADC_MAX_CHANNELS > 27
+    STM32_ADC_CHANNEL_27,
+#endif /* STM32_ADC_MAX_CHANNELS > 27 */
+#if STM32_ADC_MAX_CHANNELS > 28
+    STM32_ADC_CHANNEL_28,
+#endif /* STM32_ADC_MAX_CHANNELS > 28 */
+#if STM32_ADC_MAX_CHANNELS > 29
+    STM32_ADC_CHANNEL_29,
+#endif /* STM32_ADC_MAX_CHANNELS > 29 */
+#if STM32_ADC_MAX_CHANNELS > 30
+    STM32_ADC_CHANNEL_30,
+#endif /* STM32_ADC_MAX_CHANNELS > 30 */
+#if STM32_ADC_MAX_CHANNELS > 31
+    STM32_ADC_CHANNEL_31,
+#endif /* STM32_ADC_MAX_CHANNELS > 31 */
+};
+
+/**
+ * @brief STM32 internal ADC channel capability entry.
+ */
+struct stm32_adc_internal_channel
+{
+    int logical_channel;                    /**< RT-Thread logical channel number, or negative if unsupported. */
+    uint32_t hal_channel;                   /**< Primary HAL channel identifier. */
+    rt_uint32_t instance_mask;              /**< ADC instances that can use the primary HAL channel. */
+    uint32_t alternate_hal_channel;         /**< Alternate HAL channel identifier for instance-specific mappings. */
+    rt_uint32_t alternate_instance_mask;    /**< ADC instances that can use the alternate HAL channel. */
+};
+
+/**
+ * @brief STM32 internal ADC channel capability table.
+ */
+static const struct stm32_adc_internal_channel stm32_adc_internal_channels[] = {
+    { STM32_ADC_TEMP_CHANNEL, STM32_ADC_TEMP_HAL_CHANNEL, STM32_ADC_TEMP_INSTANCE_MASK,
+      STM32_ADC_TEMP_ALT_HAL_CHANNEL, STM32_ADC_TEMP_ALT_INSTANCE_MASK },
+    { STM32_ADC_VBAT_CHANNEL, STM32_ADC_VBAT_HAL_CHANNEL, STM32_ADC_VBAT_INSTANCE_MASK,
+      STM32_ADC_VBAT_ALT_HAL_CHANNEL, STM32_ADC_VBAT_ALT_INSTANCE_MASK },
+    { STM32_ADC_VREF_CHANNEL, STM32_ADC_VREF_HAL_CHANNEL, STM32_ADC_VREF_INSTANCE_MASK,
+      STM32_ADC_VREF_ALT_HAL_CHANNEL, STM32_ADC_VREF_ALT_INSTANCE_MASK },
+};
+
+/**
+ * @brief Check whether an ADC channel is a valid HAL channel identifier.
+ * @param hal_channel HAL channel identifier.
+ * @return RT_TRUE if valid, otherwise RT_FALSE.
+ */
+static rt_bool_t stm32_adc_hal_channel_valid(uint32_t hal_channel)
+{
+    return (hal_channel != STM32_ADC_INVALID_CHANNEL) ? RT_TRUE : RT_FALSE;
+}
+
+/**
+ * @brief Check whether an ADC peripheral instance matches an instance mask.
+ * @param instance ADC peripheral instance.
+ * @param mask STM32_ADC_INSTANCE_MASK_x bit mask.
+ * @return RT_TRUE if the instance is included, otherwise RT_FALSE.
+ */
+rt_bool_t stm32_adc_instance_match(ADC_TypeDef *instance, rt_uint32_t mask)
+{
+#ifdef ADC1
+    if ((instance == ADC1) && ((mask & STM32_ADC_INSTANCE_MASK_ADC1) != 0U))
+    {
+        return RT_TRUE;
+    }
+#endif /* ADC1 */
+
+#ifdef ADC2
+    if ((instance == ADC2) && ((mask & STM32_ADC_INSTANCE_MASK_ADC2) != 0U))
+    {
+        return RT_TRUE;
+    }
+#endif /* ADC2 */
+
+#ifdef ADC3
+    if ((instance == ADC3) && ((mask & STM32_ADC_INSTANCE_MASK_ADC3) != 0U))
+    {
+        return RT_TRUE;
+    }
+#endif /* ADC3 */
+
+#ifdef ADC4
+    if ((instance == ADC4) && ((mask & STM32_ADC_INSTANCE_MASK_ADC4) != 0U))
+    {
+        return RT_TRUE;
+    }
+#endif /* ADC4 */
+
+#ifdef ADC5
+    if ((instance == ADC5) && ((mask & STM32_ADC_INSTANCE_MASK_ADC5) != 0U))
+    {
+        return RT_TRUE;
+    }
+#endif /* ADC5 */
+
+    return RT_FALSE;
+}
+
+/**
+ * @brief Check whether one internal HAL channel is supported by the current ADC instance.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param hal_channel HAL ADC channel identifier.
+ * @param instance_mask ADC instance mask allowed to access this internal channel.
+ * @return RT_TRUE if the channel is available on the current ADC instance, otherwise RT_FALSE.
+ */
+static rt_bool_t stm32_adc_internal_channel_supported(struct stm32_adc *adc, uint32_t hal_channel, rt_uint32_t instance_mask)
+{
+    if (stm32_adc_hal_channel_valid(hal_channel) != RT_TRUE)
+    {
+        return RT_FALSE;
+    }
+
+    return stm32_adc_instance_match(adc->handle.Instance, instance_mask);
+}
+
+/**
+ * @brief Find the internal ADC channel capability entry by logical channel.
+ * @param channel RT-Thread logical ADC channel identifier.
+ * @return Pointer to the internal-channel entry, or RT_NULL if the channel is not internal.
+ */
+static const struct stm32_adc_internal_channel *stm32_adc_find_internal_channel(rt_uint8_t channel)
+{
+    rt_size_t index;
+
+    for (index = 0U; index < RT_ARRAY_SIZE(stm32_adc_internal_channels); index++)
+    {
+        if ((stm32_adc_internal_channels[index].logical_channel >= 0) &&
+            ((rt_uint8_t)stm32_adc_internal_channels[index].logical_channel == channel))
+        {
+            return &stm32_adc_internal_channels[index];
+        }
+    }
+
+    return RT_NULL;
+}
+
+/**
+ * @brief Get an instance-aware HAL channel identifier for an ADC channel.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param channel RT-Thread logical ADC channel identifier.
+ * @param hal_channel Pointer to the output HAL ADC channel identifier.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_get_channel_for_instance(struct stm32_adc *adc, rt_uint8_t channel, uint32_t *hal_channel)
+{
+    const struct stm32_adc_internal_channel *internal_channel;
+    rt_err_t result;
+
+    internal_channel = stm32_adc_find_internal_channel(channel);
+    if (internal_channel != RT_NULL)
+    {
+        if (stm32_adc_internal_channel_supported(adc, internal_channel->hal_channel, internal_channel->instance_mask) == RT_TRUE)
+        {
+            *hal_channel = internal_channel->hal_channel;
+            return RT_EOK;
+        }
+
+        if (stm32_adc_internal_channel_supported(adc, internal_channel->alternate_hal_channel,
+                                                 internal_channel->alternate_instance_mask) == RT_TRUE)
+        {
+            *hal_channel = internal_channel->alternate_hal_channel;
+            return RT_EOK;
+        }
+
+        return -RT_ENOSYS;
+    }
+
+    result = stm32_adc_get_channel(channel, hal_channel);
+    if ((result == RT_EOK) && (stm32_adc_hal_channel_valid(*hal_channel) != RT_TRUE))
+    {
+        return -RT_EINVAL;
+    }
+
+    return result;
+}
+
+/**
+ * @brief Get the HAL ADC channel identifier.
+ * @param channel RT-Thread ADC channel identifier.
+ * @param hal_channel Pointer to the output HAL channel identifier.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_get_channel(rt_uint8_t channel, uint32_t *hal_channel)
+{
+    if (((rt_size_t)channel >= RT_ARRAY_SIZE(stm32_adc_channel_table)) ||
+        (stm32_adc_hal_channel_valid(stm32_adc_channel_table[(rt_size_t)channel]) != RT_TRUE))
+    {
+        return -RT_EINVAL;
+    }
+
+    *hal_channel = stm32_adc_channel_table[(rt_size_t)channel];
+    return RT_EOK;
+}
+
+/**
+ * @brief Get the logical channel used to sample STM32 VREF.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param channel Pointer to the output logical VREFINT channel.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_get_vref_logical_channel(struct stm32_adc *adc, rt_uint8_t *channel)
+{
+    uint32_t hal_channel;
+    rt_err_t result;
+
+    if (STM32_ADC_VREF_CHANNEL < 0)
+    {
+        return -RT_ENOSYS;
+    }
+
+    result = stm32_adc_get_channel_for_instance(adc, (rt_uint8_t)STM32_ADC_VREF_CHANNEL, &hal_channel);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    RT_UNUSED(hal_channel);
+    *channel = (rt_uint8_t)STM32_ADC_VREF_CHANNEL;
+    return RT_EOK;
+}
+
+/**
+ * @brief Get the current ADC resolution in bits.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @return Resolution in bits.
+ */
+rt_uint8_t stm32_adc_get_resolution_bits(const struct stm32_adc *adc)
+{
+#if defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION)
+    switch (adc->handle.Init.Resolution)
+    {
+#ifdef ADC_RESOLUTION_16B
+    case ADC_RESOLUTION_16B:
+        return 16U;
+#endif /* ADC_RESOLUTION_16B */
+#ifdef ADC_RESOLUTION_14B
+    case ADC_RESOLUTION_14B:
+        return 14U;
+#endif /* ADC_RESOLUTION_14B */
+#ifdef ADC_RESOLUTION_12B
+    case ADC_RESOLUTION_12B:
+        return 12U;
+#endif /* ADC_RESOLUTION_12B */
+#ifdef ADC_RESOLUTION_10B
+    case ADC_RESOLUTION_10B:
+        return 10U;
+#endif /* ADC_RESOLUTION_10B */
+#ifdef ADC_RESOLUTION_8B
+    case ADC_RESOLUTION_8B:
+        return 8U;
+#endif /* ADC_RESOLUTION_8B */
+#ifdef ADC_RESOLUTION_6B
+    case ADC_RESOLUTION_6B:
+        return 6U;
+#endif /* ADC_RESOLUTION_6B */
+    default:
+        return 12U;
+    }
+#else
+    RT_UNUSED(adc);
+    return 12U;
+#endif /* defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION) */
+}
+
+#if defined(STM32_ADC_HAS_ENUM_RANK)
+/**
+ * @brief STM32 ADC regular-rank mapping entry.
+ */
+struct stm32_adc_rank_map
+{
+    rt_bool_t valid;   /**< Whether this logical rank is supported by HAL. */
+    uint32_t hal_rank; /**< HAL regular-rank enumeration value. */
+};
+
+/**
+ * @brief HAL regular-rank values indexed by logical rank.
+ */
+static const struct stm32_adc_rank_map stm32_adc_rank_table[] = {
+    { RT_FALSE, 0U },
+#ifdef ADC_REGULAR_RANK_1
+    { RT_TRUE, ADC_REGULAR_RANK_1 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_1 */
+#ifdef ADC_REGULAR_RANK_2
+    { RT_TRUE, ADC_REGULAR_RANK_2 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_2 */
+#ifdef ADC_REGULAR_RANK_3
+    { RT_TRUE, ADC_REGULAR_RANK_3 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_3 */
+#ifdef ADC_REGULAR_RANK_4
+    { RT_TRUE, ADC_REGULAR_RANK_4 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_4 */
+#ifdef ADC_REGULAR_RANK_5
+    { RT_TRUE, ADC_REGULAR_RANK_5 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_5 */
+#ifdef ADC_REGULAR_RANK_6
+    { RT_TRUE, ADC_REGULAR_RANK_6 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_6 */
+#ifdef ADC_REGULAR_RANK_7
+    { RT_TRUE, ADC_REGULAR_RANK_7 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_7 */
+#ifdef ADC_REGULAR_RANK_8
+    { RT_TRUE, ADC_REGULAR_RANK_8 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_8 */
+#ifdef ADC_REGULAR_RANK_9
+    { RT_TRUE, ADC_REGULAR_RANK_9 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_9 */
+#ifdef ADC_REGULAR_RANK_10
+    { RT_TRUE, ADC_REGULAR_RANK_10 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_10 */
+#ifdef ADC_REGULAR_RANK_11
+    { RT_TRUE, ADC_REGULAR_RANK_11 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_11 */
+#ifdef ADC_REGULAR_RANK_12
+    { RT_TRUE, ADC_REGULAR_RANK_12 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_12 */
+#ifdef ADC_REGULAR_RANK_13
+    { RT_TRUE, ADC_REGULAR_RANK_13 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_13 */
+#ifdef ADC_REGULAR_RANK_14
+    { RT_TRUE, ADC_REGULAR_RANK_14 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_14 */
+#ifdef ADC_REGULAR_RANK_15
+    { RT_TRUE, ADC_REGULAR_RANK_15 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_15 */
+#ifdef ADC_REGULAR_RANK_16
+    { RT_TRUE, ADC_REGULAR_RANK_16 },
+#else
+    { RT_FALSE, 0U },
+#endif /* ADC_REGULAR_RANK_16 */
+};
+#endif /* defined(STM32_ADC_HAS_ENUM_RANK) */
+
+/**
+ * @brief Convert one STM32 HAL status code to an RT-Thread error code.
+ * @param status STM32 HAL operation status.
+ * @return RT-Thread operation status.
+ */
+static rt_err_t stm32_hal_status_to_rt_err(HAL_StatusTypeDef status)
+{
+    switch (status)
+    {
+    case HAL_OK:
+        return RT_EOK;
+
+    case HAL_BUSY:
+        return -RT_EBUSY;
+
+    case HAL_TIMEOUT:
+        return -RT_ETIMEOUT;
+
+    case HAL_ERROR:
+    default:
+        return -RT_ERROR;
+    }
+}
+
+/**
+ * @brief Get one HAL rank value from a logical rank index.
+ * @param rank Logical rank index starting from 1.
+ * @param hal_rank Pointer to the output HAL rank value.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_get_rank_value(rt_uint32_t rank, uint32_t *hal_rank)
+{
+#if defined(STM32_ADC_HAS_ENUM_RANK)
+    if ((rank >= RT_ARRAY_SIZE(stm32_adc_rank_table)) || (stm32_adc_rank_table[rank].valid != RT_TRUE))
+    {
+        return -RT_EINVAL;
+    }
+
+    *hal_rank = stm32_adc_rank_table[rank].hal_rank;
+#elif defined(STM32_ADC_HAS_CHANNEL_NUMBER_RANK)
+    RT_UNUSED(rank);
+    *hal_rank = ADC_RANK_CHANNEL_NUMBER;
+#else
+    *hal_rank = rank;
+#endif /* defined(STM32_ADC_HAS_ENUM_RANK) */
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Enable ADC analog support required by a specific series.
+ */
+static void stm32_adc_enable_analog_support(void)
+{
+#if defined(STM32_ADC_NEEDS_ANALOG_SUPPLY)
+    __HAL_RCC_PWR_CLK_ENABLE();
+    HAL_PWREx_EnableVddA();
+#endif /* defined(STM32_ADC_NEEDS_ANALOG_SUPPLY) */
+}
+
+#if defined(STM32_ADC_HAS_CALIBRATION)
+/**
+ * @brief Get the input-mode mask from STM32 private configuration.
+ * @param cfg Pointer to the STM32 backend private configuration.
+ * @return RT_ADC_INPUT_MODE_* mask used by calibration.
+ */
+static rt_uint8_t stm32_adc_get_input_modes(const struct stm32_adc_private_cfg *cfg)
+{
+    if (cfg->input_modes == 0U)
+    {
+        return RT_ADC_INPUT_MODE_SINGLE_ENDED;
+    }
+
+    return cfg->input_modes;
+}
+
+/**
+ * @brief Run one calibration pass for a selected ADC input mode.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param calibration_mode HAL calibration mode selector.
+ * @param input_mode HAL single-ended or differential selector.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_run_calibration_pass(struct stm32_adc *adc, uint32_t calibration_mode, uint32_t input_mode)
+{
+    HAL_StatusTypeDef status;
+#if defined(STM32_ADC_HAS_SIMPLE_CALIBRATION)
+    RT_UNUSED(calibration_mode);
+    status = HAL_ADCEx_Calibration_Start(&adc->handle, input_mode);
+    if (status != HAL_OK)
+    {
+        LOG_E("%s calibration failed", adc->name);
+        return stm32_hal_status_to_rt_err(status);
+    }
+    return RT_EOK;
+#elif defined(STM32_ADC_HAS_LINEAR_CALIBRATION)
+    status = HAL_ADCEx_Calibration_Start(&adc->handle, calibration_mode, input_mode);
+    if (status != HAL_OK)
+    {
+        LOG_E("%s calibration failed", adc->name);
+        return stm32_hal_status_to_rt_err(status);
+    }
+    return RT_EOK;
+#else
+    RT_UNUSED(status);
+    RT_UNUSED(calibration_mode);
+    RT_UNUSED(input_mode);
+    return -RT_ENOSYS;
+#endif /* calibration feature buckets */
+}
+
+/**
+ * @brief Run one series-specific ADC calibration from STM32 private configuration.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param private_cfg Pointer to the STM32 backend private configuration.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_run_calibration(struct stm32_adc *adc, const struct stm32_adc_private_cfg *private_cfg)
+{
+    rt_err_t result;
+    rt_uint8_t requested_input_modes;
+#if defined(STM32_ADC_HAS_LINEAR_CALIBRATION) && defined(ADC_CALIB_OFFSET)
+    rt_bool_t single_ended_calibrated;
+#endif /* defined(STM32_ADC_HAS_LINEAR_CALIBRATION) && defined(ADC_CALIB_OFFSET) */
+
+    requested_input_modes = stm32_adc_get_input_modes(private_cfg);
+    LOG_D("%s calibration request: modes=0x%02x", adc->name, requested_input_modes);
+
+#if defined(STM32_ADC_HAS_SIMPLE_CALIBRATION)
+    if ((requested_input_modes & RT_ADC_INPUT_MODE_SINGLE_ENDED) != 0U)
+    {
+        result = stm32_adc_run_calibration_pass(adc, 0U, STM32_ADC_SINGLE_ENDED_VALUE);
+        if (result != RT_EOK)
+        {
+            return result;
+        }
+        LOG_I("%s single-ended calibration done", adc->name);
+    }
+    if ((requested_input_modes & RT_ADC_INPUT_MODE_DIFFERENTIAL) != 0U)
+    {
+        result = stm32_adc_run_calibration_pass(adc, 0U, STM32_ADC_DIFFERENTIAL_VALUE);
+        if (result != RT_EOK)
+        {
+            return result;
+        }
+        LOG_I("%s differential calibration done", adc->name);
+    }
+    return RT_EOK;
+#elif defined(STM32_ADC_HAS_LINEAR_CALIBRATION)
+#if defined(ADC_CALIB_OFFSET)
+    single_ended_calibrated = RT_FALSE;
+#endif /* defined(ADC_CALIB_OFFSET) */
+    if ((requested_input_modes & RT_ADC_INPUT_MODE_SINGLE_ENDED) != 0U)
+    {
+        result = stm32_adc_run_calibration_pass(adc, ADC_CALIB_OFFSET_LINEARITY, STM32_ADC_SINGLE_ENDED_VALUE);
+        if (result != RT_EOK)
+        {
+            return result;
+        }
+#if defined(ADC_CALIB_OFFSET)
+        single_ended_calibrated = RT_TRUE;
+#endif /* defined(ADC_CALIB_OFFSET) */
+        LOG_I("%s single-ended calibration done", adc->name);
+    }
+    if ((requested_input_modes & RT_ADC_INPUT_MODE_DIFFERENTIAL) != 0U)
+    {
+        result = stm32_adc_run_calibration_pass(adc,
+#if defined(ADC_CALIB_OFFSET)
+                                                (single_ended_calibrated == RT_TRUE) ? ADC_CALIB_OFFSET : ADC_CALIB_OFFSET_LINEARITY,
+#else
+                                                ADC_CALIB_OFFSET_LINEARITY,
+#endif /* defined(ADC_CALIB_OFFSET) */
+                                                STM32_ADC_DIFFERENTIAL_VALUE);
+        if (result != RT_EOK)
+        {
+            return result;
+        }
+        LOG_I("%s differential calibration done", adc->name);
+    }
+    return RT_EOK;
+#else
+    RT_UNUSED(requested_input_modes);
+    return -RT_ENOSYS;
+#endif /* calibration feature buckets */
+}
+
+#endif /* defined(STM32_ADC_HAS_CALIBRATION) */
+
+/**
+ * @brief Fill the HAL ADC initialization structure from the device object.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_fill_init(struct stm32_adc *adc)
+{
+    ADC_TypeDef *instance;
+
+    LOG_D("%s fill init", adc->name);
+    instance = adc->handle.Instance;
+    rt_memset(&adc->handle, 0, sizeof(adc->handle));
+    adc->handle.Instance = instance;
+#ifdef ADC_DEFAULT_CLOCK_PRESCALER
+    adc->handle.Init.ClockPrescaler = ADC_DEFAULT_CLOCK_PRESCALER;
+#endif /* ADC_DEFAULT_CLOCK_PRESCALER */
+#if defined(STM32_ADC_HAS_INIT_DATA_ALIGN)
+    adc->handle.Init.DataAlign = (adc->config.data_align != 0U) ? adc->config.data_align : ADC_DEFAULT_DATA_ALIGN;
+#endif /* defined(STM32_ADC_HAS_INIT_DATA_ALIGN) */
+    adc->handle.Init.ScanConvMode = STM32_ADC_SCAN_MODE_DISABLE;
+#if defined(STM32_ADC_HAS_INIT_EOC_SELECTION)
+    adc->handle.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+#endif /* defined(STM32_ADC_HAS_INIT_EOC_SELECTION) */
+    adc->handle.Init.ContinuousConvMode = DISABLE;
+#if defined(STM32_ADC_HAS_INIT_CONVERSION_DATA_MANAGEMENT)
+    adc->handle.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DR;
+#endif /* defined(STM32_ADC_HAS_INIT_CONVERSION_DATA_MANAGEMENT) */
+#if defined(STM32_ADC_HAS_INIT_NBR_OF_CONVERSION)
+    adc->handle.Init.NbrOfConversion = 1;
+#endif /* defined(STM32_ADC_HAS_INIT_NBR_OF_CONVERSION) */
+    adc->handle.Init.DiscontinuousConvMode = DISABLE;
+#if defined(STM32_ADC_HAS_INIT_NBR_OF_DISC_CONVERSION)
+    adc->handle.Init.NbrOfDiscConversion = 1;
+#endif /* defined(STM32_ADC_HAS_INIT_NBR_OF_DISC_CONVERSION) */
+    adc->handle.Init.ExternalTrigConv = ADC_SOFTWARE_START;
+#if defined(STM32_ADC_HAS_INIT_EXT_TRIG_EDGE)
+    adc->handle.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
+#endif /* defined(STM32_ADC_HAS_INIT_EXT_TRIG_EDGE) */
+#if defined(STM32_ADC_HAS_INIT_DMA_CONT_REQUESTS)
+    adc->handle.Init.DMAContinuousRequests = DISABLE;
+#endif /* defined(STM32_ADC_HAS_INIT_DMA_CONT_REQUESTS) */
+#if defined(STM32_ADC_HAS_HW_OVERSAMPLING)
+    adc->handle.Init.OversamplingMode = DISABLE;
+    adc->handle.Init.Oversampling.Ratio = 0U;
+    adc->handle.Init.Oversampling.RightBitShift = 0U;
+    adc->handle.Init.Oversampling.TriggeredMode = ADC_TRIGGEREDMODE_SINGLE_TRIGGER;
+    adc->handle.Init.Oversampling.OversamplingStopReset = ADC_REGOVERSAMPLING_CONTINUED_MODE;
+#endif /* defined(STM32_ADC_HAS_HW_OVERSAMPLING) */
+
+#if defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION)
+    adc->handle.Init.Resolution = (adc->config.resolution != 0U) ? adc->config.resolution : ADC_DEFAULT_RESOLUTION;
+#else
+    if (adc->config.resolution != 0U)
+    {
+        return -RT_ENOSYS;
+    }
+#endif /* defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION) */
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Force one ADC device back to regular polling conversion mode.
+ * @param adc Pointer to the STM32 ADC device object.
+ *
+ * Sequence reads use HAL_ADC_Start() and HAL_ADC_PollForConversion(), so any
+ * DMA request state left by board initialization must be cleared before
+ * starting a polling conversion.
+ */
+static void stm32_adc_force_poll_mode(struct stm32_adc *adc)
+{
+#if defined(ADC_CR2_DMA)
+    CLEAR_BIT(adc->handle.Instance->CR2, ADC_CR2_DMA);
+#endif /* defined(ADC_CR2_DMA) */
+
+#if defined(ADC_CR2_DDS)
+    CLEAR_BIT(adc->handle.Instance->CR2, ADC_CR2_DDS);
+#endif /* defined(ADC_CR2_DDS) */
+
+#if defined(STM32_ADC_HAS_INIT_DMA_CONT_REQUESTS)
+    adc->handle.Init.DMAContinuousRequests = DISABLE;
+#endif /* defined(STM32_ADC_HAS_INIT_DMA_CONT_REQUESTS) */
+
+#if defined(STM32_ADC_HAS_INIT_CONVERSION_DATA_MANAGEMENT)
+    adc->handle.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DR;
+#endif /* defined(STM32_ADC_HAS_INIT_CONVERSION_DATA_MANAGEMENT) */
+}
+
+/**
+ * @brief Open one STM32 ADC device.
+ * @param device Pointer to the ADC device object.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_open(struct rt_adc_device *device)
+{
+    struct stm32_adc *adc;
+    HAL_StatusTypeDef status;
+    rt_err_t result;
+
+    if (device == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if (adc == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    LOG_D("%s open start", adc->name);
+    stm32_adc_enable_analog_support();
+    result = stm32_adc_fill_init(adc);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+    result = stm32_adc_apply_oversampling(adc);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+    status = HAL_ADC_Init(&adc->handle);
+    if (status != HAL_OK)
+    {
+        LOG_E("%s init failed", adc->name);
+        return stm32_hal_status_to_rt_err(status);
+    }
+#if defined(STM32_ADC_HAS_CALIBRATION)
+    result = stm32_adc_run_calibration(adc, &adc->config);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+#endif /* defined(STM32_ADC_HAS_CALIBRATION) */
+    LOG_I("%s opened", adc->name);
+    return RT_EOK;
+}
+
+/**
+ * @brief Close one STM32 ADC device.
+ * @param device Pointer to the ADC device object.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_close(struct rt_adc_device *device)
+{
+    struct stm32_adc *adc;
+    HAL_StatusTypeDef status;
+
+    if (device == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if (adc == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    status = HAL_ADC_Stop(&adc->handle);
+    if (status != HAL_OK)
+    {
+        LOG_W("%s stop during close failed", adc->name);
+    }
+    status = HAL_ADC_DeInit(&adc->handle);
+    if (status != HAL_OK)
+    {
+        LOG_W("%s deinit during close failed", adc->name);
+        return -RT_ERROR;
+    }
+    LOG_I("%s closed", adc->name);
+    return RT_EOK;
+}
+
+#if defined(STM32_ADC_HAS_SINGLE_DIFF_FIELDS)
+/**
+ * @brief Get the HAL single-ended/differential selector from private configuration.
+ * @param cfg Pointer to the STM32 backend private configuration.
+ * @param single_diff Pointer to the output HAL single-ended or differential selector.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_get_single_diff(const struct stm32_adc_private_cfg *cfg, uint32_t *single_diff)
+{
+    *single_diff = ((cfg->input_modes & RT_ADC_INPUT_MODE_DIFFERENTIAL) != 0U) ?
+                   STM32_ADC_DIFFERENTIAL_VALUE : STM32_ADC_SINGLE_ENDED_VALUE;
+    return RT_EOK;
+}
+#endif /* defined(STM32_ADC_HAS_SINGLE_DIFF_FIELDS) */
+
+/**
+ * @brief Get one HAL sampling-time value from STM32 private configuration.
+ * @param cfg Pointer to the STM32 backend private configuration.
+ * @param sampling_time Pointer to the output HAL sampling-time value.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_get_sampling_time(const struct stm32_adc_private_cfg *cfg, uint32_t *sampling_time)
+{
+    if ((cfg == RT_NULL) || (sampling_time == RT_NULL))
+    {
+        return -RT_EINVAL;
+    }
+
+    *sampling_time = (cfg->sampling_time != 0U) ? cfg->sampling_time : ADC_DEFAULT_SAMPLING_TIME;
+    return RT_EOK;
+}
+
+/**
+ * @brief Configure one ADC regular rank.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param channel RT-Thread ADC channel identifier.
+ * @param rank Logical regular rank index.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_configure_rank(struct stm32_adc *adc, rt_uint8_t channel, rt_uint32_t rank)
+{
+    ADC_ChannelConfTypeDef config;
+    HAL_StatusTypeDef status;
+    uint32_t hal_channel;
+    uint32_t hal_rank;
+    uint32_t sampling_time;
+    rt_err_t result;
+
+    result = stm32_adc_get_channel_for_instance(adc, channel, &hal_channel);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    result = stm32_adc_get_rank_value(rank, &hal_rank);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    result = stm32_adc_get_sampling_time(&adc->config, &sampling_time);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    rt_memset(&config, 0, sizeof(config));
+    config.Channel = hal_channel;
+    config.Rank = hal_rank;
+    config.SamplingTime = sampling_time;
+#if defined(STM32_ADC_HAS_CONFIG_OFFSET)
+    config.Offset = 0;
+#endif /* defined(STM32_ADC_HAS_CONFIG_OFFSET) */
+#if defined(STM32_ADC_HAS_CONFIG_OFFSET_NUMBER)
+    config.OffsetNumber = ADC_OFFSET_NONE;
+#endif /* defined(STM32_ADC_HAS_CONFIG_OFFSET_NUMBER) */
+#if defined(STM32_ADC_HAS_SINGLE_DIFF_FIELDS)
+    result = stm32_adc_get_single_diff(&adc->config, &config.SingleDiff);
+    if ((result != RT_EOK) && (result != -RT_ENOSYS))
+    {
+        return result;
+    }
+#endif /* defined(STM32_ADC_HAS_SINGLE_DIFF_FIELDS) */
+
+    status = HAL_ADC_ConfigChannel(&adc->handle, &config);
+    if (status != HAL_OK)
+    {
+        LOG_E("%s configure rank failed", adc->name);
+        return stm32_hal_status_to_rt_err(status);
+    }
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Clear backend ADC channel/rank configuration explicitly.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @return Operation status.
+ *
+ * This operation is intentionally not called from normal session configuration.
+ * It is an explicit escape hatch for users that need to clear stale
+ * channel-number rank configuration before rebuilding a conversion session.
+ */
+static rt_err_t stm32_adc_clear_channel_config(struct stm32_adc *adc)
+{
+#if defined(STM32_ADC_HAS_CHANNEL_NUMBER_RANK) && defined(ADC_RANK_NONE)
+    ADC_ChannelConfTypeDef config;
+    HAL_StatusTypeDef status;
+    rt_uint8_t channel;
+    uint32_t hal_channel;
+    uint32_t sampling_time;
+    rt_err_t result;
+
+    result = stm32_adc_get_sampling_time(&adc->config, &sampling_time);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    for (channel = 0U; channel < STM32_ADC_MAX_CHANNELS; channel++)
+    {
+        result = stm32_adc_get_channel_for_instance(adc, channel, &hal_channel);
+        if (result != RT_EOK)
+        {
+            continue;
+        }
+
+        rt_memset(&config, 0, sizeof(config));
+        config.Channel = hal_channel;
+        config.Rank = ADC_RANK_NONE;
+        config.SamplingTime = sampling_time;
+#if defined(STM32_ADC_HAS_CONFIG_OFFSET)
+        config.Offset = 0;
+#endif /* defined(STM32_ADC_HAS_CONFIG_OFFSET) */
+#if defined(STM32_ADC_HAS_CONFIG_OFFSET_NUMBER)
+        config.OffsetNumber = ADC_OFFSET_NONE;
+#endif /* defined(STM32_ADC_HAS_CONFIG_OFFSET_NUMBER) */
+#if defined(STM32_ADC_HAS_SINGLE_DIFF_FIELDS)
+        result = stm32_adc_get_single_diff(&adc->config, &config.SingleDiff);
+        if ((result != RT_EOK) && (result != -RT_ENOSYS))
+        {
+            return result;
+        }
+#endif /* defined(STM32_ADC_HAS_SINGLE_DIFF_FIELDS) */
+
+        status = HAL_ADC_ConfigChannel(&adc->handle, &config);
+        if (status != HAL_OK)
+        {
+            LOG_E("%s clear channel config failed: channel=%u", adc->name, (unsigned int)channel);
+            return stm32_hal_status_to_rt_err(status);
+        }
+    }
+
+    LOG_D("%s channel config cleared", adc->name);
+    return RT_EOK;
+#else
+    RT_UNUSED(adc);
+    return -RT_ENOSYS;
+#endif /* defined(STM32_ADC_HAS_CHANNEL_NUMBER_RANK) && defined(ADC_RANK_NONE) */
+}
+
+/**
+ * @brief Configure all regular ADC ranks for one session.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param channels ADC channel selection mask.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_configure_session_ranks(struct stm32_adc *adc, rt_uint32_t channels)
+{
+    rt_uint32_t rank;
+    rt_uint8_t channel;
+    rt_err_t result;
+
+    rank = 1U;
+    while (channels != 0U)
+    {
+        if (rank > STM32_ADC_MAX_SEQUENCE)
+        {
+            return -RT_EINVAL;
+        }
+
+        channel = rt_adc_channel_mask_take_lsb(&channels);
+        result = stm32_adc_configure_rank(adc, channel, rank);
+        if (result != RT_EOK)
+        {
+            LOG_E("%s rank config failed: channel=%u rank=%lu result=%d",
+                  adc->name, (unsigned int)channel, (unsigned long)rank, result);
+            return result;
+        }
+        rank++;
+    }
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Apply one complete regular ADC configuration to STM32 HAL.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param channels ADC channel selection mask.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_apply_regular_config(struct stm32_adc *adc, rt_uint32_t channels)
+{
+    HAL_StatusTypeDef status;
+    rt_size_t channel_count;
+    rt_err_t result;
+
+    channel_count = rt_adc_channel_mask_count(channels);
+    if ((channel_count == 0U) || (channel_count > STM32_ADC_MAX_SEQUENCE))
+    {
+        return -RT_EINVAL;
+    }
+
+    result = stm32_adc_fill_init(adc);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    result = stm32_adc_apply_oversampling(adc);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    adc->handle.Init.ScanConvMode = (channel_count > 1U) ? STM32_ADC_SCAN_MODE_ENABLE : STM32_ADC_SCAN_MODE_DISABLE;
+#if defined(STM32_ADC_HAS_INIT_NBR_OF_CONVERSION)
+    adc->handle.Init.NbrOfConversion = channel_count;
+#endif /* defined(STM32_ADC_HAS_INIT_NBR_OF_CONVERSION) */
+
+#if defined(STM32_ADC_HAS_INIT_EOC_SELECTION)
+    adc->handle.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+#endif /* defined(STM32_ADC_HAS_INIT_EOC_SELECTION) */
+
+    /* Multi-rank polling must not let one HAL_ADC_Start() drain the whole
+     * regular sequence, otherwise DR can be overwritten before the CPU reads it.
+     * Discontinuous mode makes each HAL_ADC_Start() convert one rank only.
+     */
+    adc->handle.Init.DiscontinuousConvMode = (channel_count > 1U) ? ENABLE : DISABLE;
+
+    stm32_adc_force_poll_mode(adc);
+
+    status = HAL_ADC_Init(&adc->handle);
+    if (status != HAL_OK)
+    {
+        LOG_E("%s regular init failed", adc->name);
+        return stm32_hal_status_to_rt_err(status);
+    }
+    return stm32_adc_configure_session_ranks(adc, channels);
+}
+
+/**
+ * @brief Configure one ADC conversion session on one STM32 ADC device.
+ * @param device Pointer to the ADC device object.
+ * @param channels ADC channel selection mask.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_session_config(struct rt_adc_device *device, rt_uint32_t channels)
+{
+    struct stm32_adc *adc;
+
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if (adc == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    return stm32_adc_apply_regular_config(adc, channels);
+}
+
+/**
+ * @brief Start one STM32 ADC finite sequence session.
+ * @param device Pointer to the ADC device object.
+ * @param channels ADC channel selection mask.
+ * @param cfg Pointer to the ADC sequence request object.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_sequence_start(struct rt_adc_device *device, rt_uint32_t channels,
+                                           const struct rt_adc_sequence_cfg *cfg)
+{
+    RT_UNUSED(device);
+    RT_UNUSED(channels);
+    RT_UNUSED(cfg);
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Read one sample from one STM32 ADC sequence session.
+ * @param device Pointer to the ADC device object.
+ * @param value Pointer to the output sample value.
+ * @param timeout_ms Read timeout in milliseconds.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_sequence_read(struct rt_adc_device *device, rt_uint32_t *value, rt_int32_t timeout_ms)
+{
+    struct stm32_adc *adc;
+    HAL_StatusTypeDef status;
+    uint32_t timeout;
+
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if (adc == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    status = HAL_ADC_Start(&adc->handle);
+    if (status != HAL_OK)
+    {
+        goto fail;
+    }
+
+    timeout = (timeout_ms < 0) ? HAL_MAX_DELAY : (uint32_t)timeout_ms;
+    status = HAL_ADC_PollForConversion(&adc->handle, timeout);
+    if (status != HAL_OK)
+    {
+        goto fail;
+    }
+
+    *value = (rt_uint32_t)HAL_ADC_GetValue(&adc->handle);
+    LOG_D("%s sample read: value=%lu", adc->name, (unsigned long)*value);
+
+    return RT_EOK;
+
+fail:
+    LOG_E("%s sequence read failed: status=%d state=0x%08lx error=0x%08lx",
+          adc->name, (int)status, (unsigned long)adc->handle.State, (unsigned long)adc->handle.ErrorCode);
+
+    return stm32_hal_status_to_rt_err(status);
+}
+
+/**
+ * @brief Stop one STM32 ADC sequence session.
+ * @param device Pointer to the ADC device object.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_sequence_stop(struct rt_adc_device *device)
+{
+    struct stm32_adc *adc;
+    HAL_StatusTypeDef status;
+    rt_err_t result;
+
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if (adc == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    LOG_D("%s sequence stop", adc->name);
+    result = RT_EOK;
+
+    status = HAL_ADC_Stop(&adc->handle);
+    if (status != HAL_OK)
+    {
+        LOG_W("%s sequence stop failed", adc->name);
+        return stm32_hal_status_to_rt_err(status);
+    }
+
+    return result;
+}
+
+#if defined(STM32_ADC_HAS_LL_VREF_CALC)
+/**
+ * @brief Calculate the ADC reference voltage from a raw VREF sample.
+ * @param device Pointer to the ADC device object.
+ * @param vref_mv Pointer to the input raw VREF code and output VDDA in mV.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_calc_vref_mv(struct rt_adc_device *device, rt_uint32_t *vref_mv)
+{
+    struct stm32_adc *adc;
+    rt_uint32_t raw_value;
+
+    if (*vref_mv == 0U)
+    {
+        return -RT_EINVAL;
+    }
+
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if (adc == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    raw_value = *vref_mv;
+    *vref_mv = (rt_uint32_t)STM32_ADC_CALC_VREF_MV(adc, raw_value);
+    if (*vref_mv == 0U)
+    {
+        return -RT_EINVAL;
+    }
+
+    LOG_D("%s VREF calculated: raw=%lu vref=%lu mV", adc->name, (unsigned long)raw_value, (unsigned long)*vref_mv);
+    return RT_EOK;
+}
+#endif /* defined(STM32_ADC_HAS_LL_VREF_CALC) */
+
+/**
+ * @brief Handle control commands on one STM32 ADC device.
+ * @param device Pointer to the ADC device object.
+ * @param cmd Control command.
+ * @param args Pointer to the control argument buffer.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_control(struct rt_adc_device *device, int cmd, void *args)
+{
+    struct stm32_adc *adc;
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if (adc == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    LOG_D("%s control cmd=%d", adc->name, cmd);
+    switch (cmd)
+    {
+    case RT_ADC_CMD_GET_RESOLUTION:
+        if (args == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
+        *((rt_uint8_t *)args) = stm32_adc_get_resolution_bits(adc);
+        return RT_EOK;
+
+    case RT_ADC_CMD_GET_VREF_CHANNEL:
+        if (args == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
+        return stm32_adc_get_vref_logical_channel(adc, (rt_uint8_t *)args);
+
+    case RT_ADC_CMD_CALC_VREF:
+        if (args == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
+#if defined(STM32_ADC_HAS_LL_VREF_CALC)
+        return stm32_adc_calc_vref_mv(device, (rt_uint32_t *)args);
+#else
+        if (device->default_vref_mv == 0U)
+        {
+            return -RT_ENOSYS;
+        }
+        *((rt_uint32_t *)args) = device->default_vref_mv;
+        return RT_EOK;
+#endif /* defined(STM32_ADC_HAS_LL_VREF_CALC) */
+
+    case RT_ADC_CMD_CALIBRATE:
+#if defined(STM32_ADC_HAS_CALIBRATION)
+        return stm32_adc_run_calibration(adc, &adc->config);
+#else
+        return -RT_ENOSYS;
+#endif /* defined(STM32_ADC_HAS_CALIBRATION) */
+
+    case RT_ADC_CMD_SET_CONFIG:
+        if (args == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
+
+        adc->config = *((const struct stm32_adc_private_cfg *)args);
+        return RT_EOK;
+
+    case RT_ADC_CMD_GET_CONFIG:
+        if (args == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
+        *((struct stm32_adc_private_cfg *)args) = adc->config;
+        return RT_EOK;
+
+    case RT_ADC_CMD_CLEAR_CHANNEL_CONFIG:
+        if (args != RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
+        return stm32_adc_clear_channel_config(adc);
+
+    default:
+        RT_UNUSED(args);
+        return -RT_ENOSYS;
+    }
+}
+
+/**
+ * @brief STM32 ADC core operation table.
+ */
+static const struct rt_adc_core_ops stm32_adc_core_ops = {
+    .open = stm32_adc_open,
+    .close = stm32_adc_close,
+    .session_config = stm32_adc_session_config,
+    .control = stm32_adc_control,
+};
+
+/**
+ * @brief STM32 ADC sequence-session operation table.
+ */
+static const struct rt_adc_sequence_ops stm32_adc_sequence_ops = {
+    .start = stm32_adc_sequence_start,
+    .read = stm32_adc_sequence_read,
+    .stop = stm32_adc_sequence_stop,
+};
+
+/**
+ * @brief STM32 ADC operation table.
+ */
+static const struct rt_adc_ops stm32_adc_ops = {
+    .core = &stm32_adc_core_ops,
+    .sequence = &stm32_adc_sequence_ops,
+};
+
+/**
+ * @brief Initialize and register STM32 ADC devices.
+ * @return Operation status.
+ */
+int stm32_adc_init(void)
+{
+    rt_size_t index;
+    int result;
+
+    result = RT_EOK;
+    for (index = 0; index < RT_ARRAY_SIZE(stm32_adc_obj); index++)
+    {
+        rt_atomic_store(&stm32_adc_obj[index].device.state, RT_ADC_STATE_IDLE);
+        stm32_adc_obj[index].device.default_vref_mv = 0;
+        if (rt_hw_adc_register(&stm32_adc_obj[index].device, stm32_adc_obj[index].name,
+                               &stm32_adc_ops, &stm32_adc_obj[index]) != RT_EOK)
+        {
+            result = -RT_ERROR;
+            continue;
+        }
+    }
+
+    return result;
+}
+INIT_BOARD_EXPORT(stm32_adc_init);
+#endif /* defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2) || defined(BSP_USING_ADC3) || defined(BSP_USING_ADC4) */
+
+#endif /* defined(RT_USING_ADC_V2) */

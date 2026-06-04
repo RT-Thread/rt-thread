@@ -1,0 +1,8 @@
+menuconfig RT_USING_ADC_V2
+    bool "Using ADC V2 device drivers"
+    depends on !RT_USING_ADC
+    default n
+    help
+        Enable the standalone ADC V2 framework. ADC V2 currently uses the
+        legacy ADC public namespace, so it cannot be enabled together with
+        RT_USING_ADC.
