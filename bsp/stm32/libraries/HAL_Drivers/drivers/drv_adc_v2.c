@@ -361,9 +361,63 @@ rt_err_t stm32_adc_get_vref_logical_channel(struct stm32_adc *adc, rt_uint8_t *c
 }
 
 /**
+ * @brief Get the logical channel used to sample STM32 internal temperature sensor.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param channel Pointer to the output logical temperature-sensor channel.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_get_tempsensor_logical_channel(struct stm32_adc *adc, rt_uint8_t *channel)
+{
+    uint32_t hal_channel;
+    rt_err_t result;
+
+    if (STM32_ADC_TEMP_CHANNEL < 0)
+    {
+        return -RT_ENOSYS;
+    }
+
+    result = stm32_adc_get_channel_for_instance(adc, (rt_uint8_t)STM32_ADC_TEMP_CHANNEL, &hal_channel);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    RT_UNUSED(hal_channel);
+    *channel = (rt_uint8_t)STM32_ADC_TEMP_CHANNEL;
+    return RT_EOK;
+}
+
+/**
+ * @brief Get the logical channel used to sample STM32 internal VBAT divider.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param channel Pointer to the output logical VBAT channel.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_get_vbat_logical_channel(struct stm32_adc *adc, rt_uint8_t *channel)
+{
+    uint32_t hal_channel;
+    rt_err_t result;
+
+    if (STM32_ADC_VBAT_CHANNEL < 0)
+    {
+        return -RT_ENOSYS;
+    }
+
+    result = stm32_adc_get_channel_for_instance(adc, (rt_uint8_t)STM32_ADC_VBAT_CHANNEL, &hal_channel);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    RT_UNUSED(hal_channel);
+    *channel = (rt_uint8_t)STM32_ADC_VBAT_CHANNEL;
+    return RT_EOK;
+}
+
+/**
  * @brief Get the current ADC resolution in bits.
  * @param adc Pointer to the STM32 ADC device object.
- * @return Resolution in bits.
+ * @return Resolution in bits, or 12 when it cannot be determined.
  */
 rt_uint8_t stm32_adc_get_resolution_bits(const struct stm32_adc *adc)
 {
@@ -401,6 +455,179 @@ rt_uint8_t stm32_adc_get_resolution_bits(const struct stm32_adc *adc)
     RT_UNUSED(adc);
     return 12U;
 #endif /* defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION) */
+}
+
+#if defined(STM32_ADC_HAS_LL_TEMPERATURE_CALC)
+/**
+ * @brief Convert an ADC resolution in bits to the HAL resolution token.
+ * @param resolution_bits ADC conversion resolution in bits.
+ * @param hal_resolution Pointer to the output HAL resolution token.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_get_hal_resolution(rt_uint8_t resolution_bits, uint32_t *hal_resolution)
+{
+    if (hal_resolution == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    switch (resolution_bits)
+    {
+#ifdef ADC_RESOLUTION_16B
+    case 16U:
+        *hal_resolution = ADC_RESOLUTION_16B;
+        return RT_EOK;
+#endif /* ADC_RESOLUTION_16B */
+#ifdef ADC_RESOLUTION_14B
+    case 14U:
+        *hal_resolution = ADC_RESOLUTION_14B;
+        return RT_EOK;
+#endif /* ADC_RESOLUTION_14B */
+#ifdef ADC_RESOLUTION_12B
+    case 12U:
+        *hal_resolution = ADC_RESOLUTION_12B;
+        return RT_EOK;
+#endif /* ADC_RESOLUTION_12B */
+#ifdef ADC_RESOLUTION_10B
+    case 10U:
+        *hal_resolution = ADC_RESOLUTION_10B;
+        return RT_EOK;
+#endif /* ADC_RESOLUTION_10B */
+#ifdef ADC_RESOLUTION_8B
+    case 8U:
+        *hal_resolution = ADC_RESOLUTION_8B;
+        return RT_EOK;
+#endif /* ADC_RESOLUTION_8B */
+#ifdef ADC_RESOLUTION_6B
+    case 6U:
+        *hal_resolution = ADC_RESOLUTION_6B;
+        return RT_EOK;
+#endif /* ADC_RESOLUTION_6B */
+    default:
+        return -RT_EINVAL;
+    }
+}
+#endif /* defined(STM32_ADC_HAS_LL_TEMPERATURE_CALC) */
+
+#if defined(STM32_ADC_HAS_TEMPSENSOR_CALIBRATION_DATA)
+/**
+ * @brief Normalize a raw ADC sample to the 12-bit temperature calibration scale.
+ * @param raw_value Raw ADC sample value.
+ * @param resolution_bits ADC conversion resolution used for @p raw_value.
+ * @param raw_12b Pointer to the output sample normalized to 12-bit scale.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_normalize_to_12b(rt_uint32_t raw_value, rt_uint8_t resolution_bits, rt_uint32_t *raw_12b)
+{
+    if ((raw_12b == RT_NULL) || (resolution_bits == 0U) || (resolution_bits > 16U))
+    {
+        return -RT_EINVAL;
+    }
+
+    if (resolution_bits > 12U)
+    {
+        *raw_12b = raw_value >> (resolution_bits - 12U);
+    }
+    else
+    {
+        *raw_12b = raw_value << (12U - resolution_bits);
+    }
+
+    return RT_EOK;
+}
+#endif /* defined(STM32_ADC_HAS_TEMPSENSOR_CALIBRATION_DATA) */
+
+/**
+ * @brief Calculate STM32 internal temperature sensor value in degrees Celsius.
+ * @param device ADC device handle.
+ * @param raw_value Raw ADC sample value from the temperature sensor channel.
+ * @param vref_mv Current analog reference voltage in millivolts.
+ * @param resolution_bits ADC conversion resolution used for @p raw_value.
+ * @param temperature_c Pointer to the output temperature in degrees Celsius.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_calc_temperature(rt_adc_device_t device, rt_uint32_t raw_value,
+                                    rt_uint32_t vref_mv, rt_uint8_t resolution_bits,
+                                    rt_int32_t *temperature_c)
+{
+#if defined(STM32_ADC_HAS_LL_TEMPERATURE_CALC)
+    struct stm32_adc *adc;
+    uint32_t hal_resolution;
+    rt_err_t result;
+
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if (adc == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    result = stm32_adc_get_hal_resolution(resolution_bits, &hal_resolution);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    *temperature_c = (rt_int32_t)STM32_ADC_CALC_TEMPERATURE(adc, vref_mv, raw_value, hal_resolution);
+    return RT_EOK;
+#elif defined(STM32_ADC_HAS_TEMPSENSOR_CALIBRATION_DATA)
+    struct stm32_adc *adc;
+    rt_uint32_t raw_12b;
+    rt_uint32_t raw_calibrated;
+    rt_int32_t cal1;
+    rt_int32_t cal2;
+    rt_int32_t denominator;
+    rt_int64_t numerator;
+    rt_err_t result;
+
+    if ((device == RT_NULL) || (vref_mv == 0U) || (temperature_c == RT_NULL))
+    {
+        return -RT_EINVAL;
+    }
+
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if (adc == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    result = stm32_adc_normalize_to_12b(raw_value, resolution_bits, &raw_12b);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    raw_calibrated = (rt_uint32_t)(((rt_uint64_t)raw_12b * (rt_uint64_t)vref_mv +
+                                    (TEMPSENSOR_CAL_VREFANALOG / 2U)) / TEMPSENSOR_CAL_VREFANALOG);
+    cal1 = (rt_int32_t)(*TEMPSENSOR_CAL1_ADDR);
+    cal2 = (rt_int32_t)(*TEMPSENSOR_CAL2_ADDR);
+    denominator = cal2 - cal1;
+    if (denominator == 0)
+    {
+        return -RT_EINVAL;
+    }
+
+    numerator = ((rt_int64_t)((rt_int32_t)raw_calibrated - cal1) *
+                 (rt_int64_t)(TEMPSENSOR_CAL2_TEMP - TEMPSENSOR_CAL1_TEMP));
+    if (numerator >= 0)
+    {
+        numerator += denominator / 2;
+    }
+    else
+    {
+        numerator -= denominator / 2;
+    }
+
+    *temperature_c = (rt_int32_t)(numerator / denominator) + TEMPSENSOR_CAL1_TEMP;
+    return RT_EOK;
+#else
+    RT_UNUSED(device);
+    RT_UNUSED(raw_value);
+    RT_UNUSED(vref_mv);
+    RT_UNUSED(resolution_bits);
+    RT_UNUSED(temperature_c);
+
+    return -RT_ENOSYS;
+#endif /* defined(STM32_ADC_HAS_LL_TEMPERATURE_CALC) */
 }
 
 #if defined(STM32_ADC_HAS_ENUM_RANK)
@@ -885,7 +1112,7 @@ static rt_err_t stm32_adc_get_single_diff(const struct stm32_adc_private_cfg *cf
  * @param sampling_time Pointer to the output HAL sampling-time value.
  * @return Operation status.
  */
-static rt_err_t stm32_adc_get_sampling_time(const struct stm32_adc_private_cfg *cfg, uint32_t *sampling_time)
+rt_err_t stm32_adc_get_sampling_time(const struct stm32_adc_private_cfg *cfg, uint32_t *sampling_time)
 {
     if ((cfg == RT_NULL) || (sampling_time == RT_NULL))
     {

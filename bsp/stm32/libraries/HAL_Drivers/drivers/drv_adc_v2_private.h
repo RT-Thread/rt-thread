@@ -114,6 +114,26 @@
 #endif /* defined(STM32_ADC_VREF_NEEDS_INSTANCE) */
 #endif /* defined(STM32_ADC_HAS_LL_VREF_CALC) */
 
+#if defined(__LL_ADC_CALC_TEMPERATURE) && defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION)
+#define STM32_ADC_HAS_LL_TEMPERATURE_CALC 1
+
+#if defined(STM32_ADC_TEMPERATURE_NEEDS_INSTANCE)
+/* Calculate temperature in degrees Celsius with an instance-aware LL helper. */
+#define STM32_ADC_CALC_TEMPERATURE(_adc, _vref_mv, _raw, _resolution) \
+    __LL_ADC_CALC_TEMPERATURE((_adc)->handle.Instance, (_vref_mv), (_raw), (_resolution))
+#else
+/* Calculate temperature in degrees Celsius with the generic LL helper. */
+#define STM32_ADC_CALC_TEMPERATURE(_adc, _vref_mv, _raw, _resolution) \
+    __LL_ADC_CALC_TEMPERATURE((_vref_mv), (_raw), (_resolution))
+#endif /* defined(STM32_ADC_TEMPERATURE_NEEDS_INSTANCE) */
+
+#endif /* defined(__LL_ADC_CALC_TEMPERATURE) && defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION) */
+
+#if defined(TEMPSENSOR_CAL1_ADDR) && defined(TEMPSENSOR_CAL2_ADDR) && defined(TEMPSENSOR_CAL1_TEMP) && \
+    defined(TEMPSENSOR_CAL2_TEMP) && defined(TEMPSENSOR_CAL_VREFANALOG)
+#define STM32_ADC_HAS_TEMPSENSOR_CALIBRATION_DATA 1
+#endif /* defined(TEMPSENSOR_CAL1_ADDR) && defined(TEMPSENSOR_CAL2_ADDR) && defined(TEMPSENSOR_CAL1_TEMP) && defined(TEMPSENSOR_CAL2_TEMP) && defined(TEMPSENSOR_CAL_VREFANALOG) */
+
 #if defined(ADC_OVERSAMPLING_RATIO_2) && defined(ADC_RIGHTBITSHIFT_1)
 #if defined(ADC_TRIGGEREDMODE_SINGLE_TRIGGER) && defined(ADC_REGOVERSAMPLING_CONTINUED_MODE)
 #define STM32_ADC_HAS_HW_OVERSAMPLING 1
@@ -348,39 +368,56 @@
 #ifndef STM32_ADC_TEMP_HAL_CHANNEL
 #if defined(ADC_CHANNEL_TEMPSENSOR_ADC1)
 #define STM32_ADC_TEMP_HAL_CHANNEL ADC_CHANNEL_TEMPSENSOR_ADC1
+#ifndef STM32_ADC_TEMP_CHANNEL_AVAILABLE
+#define STM32_ADC_TEMP_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_TEMP_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_TEMP_INSTANCE_MASK
 #define STM32_ADC_TEMP_INSTANCE_MASK STM32_ADC_INSTANCE_MASK_ADC1
 #endif /* STM32_ADC_TEMP_INSTANCE_MASK */
 #elif defined(ADC_CHANNEL_TEMPSENSOR_ADC3)
 #define STM32_ADC_TEMP_HAL_CHANNEL ADC_CHANNEL_TEMPSENSOR_ADC3
+#ifndef STM32_ADC_TEMP_CHANNEL_AVAILABLE
+#define STM32_ADC_TEMP_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_TEMP_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_TEMP_INSTANCE_MASK
 #define STM32_ADC_TEMP_INSTANCE_MASK STM32_ADC_INSTANCE_MASK_ADC3
 #endif /* STM32_ADC_TEMP_INSTANCE_MASK */
 #elif defined(ADC_CHANNEL_TEMPSENSOR)
 #define STM32_ADC_TEMP_HAL_CHANNEL ADC_CHANNEL_TEMPSENSOR
+#ifndef STM32_ADC_TEMP_CHANNEL_AVAILABLE
+#define STM32_ADC_TEMP_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_TEMP_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_TEMP_INSTANCE_MASK
 #define STM32_ADC_TEMP_INSTANCE_MASK STM32_ADC_INTERNAL_DEFAULT_INSTANCE_MASK
 #endif /* STM32_ADC_TEMP_INSTANCE_MASK */
 #else
 #define STM32_ADC_TEMP_HAL_CHANNEL STM32_ADC_INVALID_CHANNEL
+#ifndef STM32_ADC_TEMP_CHANNEL_AVAILABLE
+#define STM32_ADC_TEMP_CHANNEL_AVAILABLE 0
+#endif /* STM32_ADC_TEMP_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_TEMP_INSTANCE_MASK
 #define STM32_ADC_TEMP_INSTANCE_MASK 0UL
 #endif /* STM32_ADC_TEMP_INSTANCE_MASK */
 #endif /* defined(ADC_CHANNEL_TEMPSENSOR_ADC1) */
 #endif /* STM32_ADC_TEMP_HAL_CHANNEL */
 
+/** @brief Whether the primary temperature-sensor HAL channel can be used. */
+#ifndef STM32_ADC_TEMP_CHANNEL_AVAILABLE
+#define STM32_ADC_TEMP_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_TEMP_CHANNEL_AVAILABLE */
+
 #ifndef STM32_ADC_TEMP_INSTANCE_MASK
-#if STM32_ADC_TEMP_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL
-/** @brief ADC instances that can sample the temperature sensor. */
-#define STM32_ADC_TEMP_INSTANCE_MASK 0UL
-#else
+#if STM32_ADC_TEMP_CHANNEL_AVAILABLE
 /** @brief ADC instances that can sample the temperature sensor. */
 #define STM32_ADC_TEMP_INSTANCE_MASK STM32_ADC_INTERNAL_DEFAULT_INSTANCE_MASK
-#endif /* STM32_ADC_TEMP_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL */
+#else
+/** @brief ADC instances that can sample the temperature sensor. */
+#define STM32_ADC_TEMP_INSTANCE_MASK 0UL
+#endif /* STM32_ADC_TEMP_CHANNEL_AVAILABLE */
 #endif /* STM32_ADC_TEMP_INSTANCE_MASK */
 
 #ifndef STM32_ADC_TEMP_CHANNEL
-#if STM32_ADC_TEMP_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL
+#if !STM32_ADC_TEMP_CHANNEL_AVAILABLE
 #define STM32_ADC_TEMP_CHANNEL STM32_ADC_INVALID_LOGICAL_CHANNEL
 #elif defined(STM32_ADC_TEMP_LOGICAL_OVERRIDE)
 #define STM32_ADC_TEMP_CHANNEL STM32_ADC_TEMP_LOGICAL_OVERRIDE
@@ -388,51 +425,71 @@
 #define STM32_ADC_TEMP_CHANNEL STM32_ADC_HAL_CHANNEL_TO_LOGICAL(STM32_ADC_TEMP_HAL_CHANNEL)
 #else
 #error "STM32 ADC V2: define STM32_ADC_TEMP_LOGICAL_OVERRIDE for this legacy HAL series."
-#endif /* STM32_ADC_TEMP_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL */
+#endif /* !STM32_ADC_TEMP_CHANNEL_AVAILABLE */
 #endif /* STM32_ADC_TEMP_CHANNEL */
 
 /* Resolve VBAT HAL channel and supported ADC instances. */
 #ifndef STM32_ADC_VBAT_HAL_CHANNEL
 #if defined(ADC_CHANNEL_VBAT_ADC1)
 #define STM32_ADC_VBAT_HAL_CHANNEL ADC_CHANNEL_VBAT_ADC1
+#ifndef STM32_ADC_VBAT_CHANNEL_AVAILABLE
+#define STM32_ADC_VBAT_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_VBAT_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_VBAT_INSTANCE_MASK
 #define STM32_ADC_VBAT_INSTANCE_MASK STM32_ADC_INSTANCE_MASK_ADC1
 #endif /* STM32_ADC_VBAT_INSTANCE_MASK */
 #elif defined(ADC_CHANNEL_VBAT_ADC2)
 #define STM32_ADC_VBAT_HAL_CHANNEL ADC_CHANNEL_VBAT_ADC2
+#ifndef STM32_ADC_VBAT_CHANNEL_AVAILABLE
+#define STM32_ADC_VBAT_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_VBAT_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_VBAT_INSTANCE_MASK
 #define STM32_ADC_VBAT_INSTANCE_MASK STM32_ADC_INSTANCE_MASK_ADC2
 #endif /* STM32_ADC_VBAT_INSTANCE_MASK */
 #elif defined(ADC_CHANNEL_VBAT_ADC3)
 #define STM32_ADC_VBAT_HAL_CHANNEL ADC_CHANNEL_VBAT_ADC3
+#ifndef STM32_ADC_VBAT_CHANNEL_AVAILABLE
+#define STM32_ADC_VBAT_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_VBAT_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_VBAT_INSTANCE_MASK
 #define STM32_ADC_VBAT_INSTANCE_MASK STM32_ADC_INSTANCE_MASK_ADC3
 #endif /* STM32_ADC_VBAT_INSTANCE_MASK */
 #elif defined(ADC_CHANNEL_VBAT)
 #define STM32_ADC_VBAT_HAL_CHANNEL ADC_CHANNEL_VBAT
+#ifndef STM32_ADC_VBAT_CHANNEL_AVAILABLE
+#define STM32_ADC_VBAT_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_VBAT_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_VBAT_INSTANCE_MASK
 #define STM32_ADC_VBAT_INSTANCE_MASK STM32_ADC_INTERNAL_DEFAULT_INSTANCE_MASK
 #endif /* STM32_ADC_VBAT_INSTANCE_MASK */
 #else
 #define STM32_ADC_VBAT_HAL_CHANNEL STM32_ADC_INVALID_CHANNEL
+#ifndef STM32_ADC_VBAT_CHANNEL_AVAILABLE
+#define STM32_ADC_VBAT_CHANNEL_AVAILABLE 0
+#endif /* STM32_ADC_VBAT_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_VBAT_INSTANCE_MASK
 #define STM32_ADC_VBAT_INSTANCE_MASK 0UL
 #endif /* STM32_ADC_VBAT_INSTANCE_MASK */
 #endif /* defined(ADC_CHANNEL_VBAT_ADC1) */
 #endif /* STM32_ADC_VBAT_HAL_CHANNEL */
 
+/** @brief Whether the primary VBAT HAL channel can be used. */
+#ifndef STM32_ADC_VBAT_CHANNEL_AVAILABLE
+#define STM32_ADC_VBAT_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_VBAT_CHANNEL_AVAILABLE */
+
 #ifndef STM32_ADC_VBAT_INSTANCE_MASK
-#if STM32_ADC_VBAT_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL
-/** @brief ADC instances that can sample VBAT. */
-#define STM32_ADC_VBAT_INSTANCE_MASK 0UL
-#else
+#if STM32_ADC_VBAT_CHANNEL_AVAILABLE
 /** @brief ADC instances that can sample VBAT. */
 #define STM32_ADC_VBAT_INSTANCE_MASK STM32_ADC_INTERNAL_DEFAULT_INSTANCE_MASK
-#endif /* STM32_ADC_VBAT_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL */
+#else
+/** @brief ADC instances that can sample VBAT. */
+#define STM32_ADC_VBAT_INSTANCE_MASK 0UL
+#endif /* STM32_ADC_VBAT_CHANNEL_AVAILABLE */
 #endif /* STM32_ADC_VBAT_INSTANCE_MASK */
 
 #ifndef STM32_ADC_VBAT_CHANNEL
-#if STM32_ADC_VBAT_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL
+#if !STM32_ADC_VBAT_CHANNEL_AVAILABLE
 #define STM32_ADC_VBAT_CHANNEL STM32_ADC_INVALID_LOGICAL_CHANNEL
 #elif defined(STM32_ADC_VBAT_LOGICAL_OVERRIDE)
 #define STM32_ADC_VBAT_CHANNEL STM32_ADC_VBAT_LOGICAL_OVERRIDE
@@ -440,51 +497,71 @@
 #define STM32_ADC_VBAT_CHANNEL STM32_ADC_HAL_CHANNEL_TO_LOGICAL(STM32_ADC_VBAT_HAL_CHANNEL)
 #else
 #error "STM32 ADC V2: define STM32_ADC_VBAT_LOGICAL_OVERRIDE for this legacy HAL series."
-#endif /* STM32_ADC_VBAT_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL */
+#endif /* !STM32_ADC_VBAT_CHANNEL_AVAILABLE */
 #endif /* STM32_ADC_VBAT_CHANNEL */
 
 /* Resolve VREFINT HAL channel and supported ADC instances. */
 #ifndef STM32_ADC_VREF_HAL_CHANNEL
 #if defined(ADC_CHANNEL_VREFINT_ADC1)
 #define STM32_ADC_VREF_HAL_CHANNEL ADC_CHANNEL_VREFINT_ADC1
+#ifndef STM32_ADC_VREF_CHANNEL_AVAILABLE
+#define STM32_ADC_VREF_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_VREF_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_VREF_INSTANCE_MASK
 #define STM32_ADC_VREF_INSTANCE_MASK STM32_ADC_INSTANCE_MASK_ADC1
 #endif /* STM32_ADC_VREF_INSTANCE_MASK */
 #elif defined(ADC_CHANNEL_VREFINT_ADC2)
 #define STM32_ADC_VREF_HAL_CHANNEL ADC_CHANNEL_VREFINT_ADC2
+#ifndef STM32_ADC_VREF_CHANNEL_AVAILABLE
+#define STM32_ADC_VREF_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_VREF_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_VREF_INSTANCE_MASK
 #define STM32_ADC_VREF_INSTANCE_MASK STM32_ADC_INSTANCE_MASK_ADC2
 #endif /* STM32_ADC_VREF_INSTANCE_MASK */
 #elif defined(ADC_CHANNEL_VREFINT_ADC3)
 #define STM32_ADC_VREF_HAL_CHANNEL ADC_CHANNEL_VREFINT_ADC3
+#ifndef STM32_ADC_VREF_CHANNEL_AVAILABLE
+#define STM32_ADC_VREF_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_VREF_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_VREF_INSTANCE_MASK
 #define STM32_ADC_VREF_INSTANCE_MASK STM32_ADC_INSTANCE_MASK_ADC3
 #endif /* STM32_ADC_VREF_INSTANCE_MASK */
 #elif defined(ADC_CHANNEL_VREFINT)
 #define STM32_ADC_VREF_HAL_CHANNEL ADC_CHANNEL_VREFINT
+#ifndef STM32_ADC_VREF_CHANNEL_AVAILABLE
+#define STM32_ADC_VREF_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_VREF_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_VREF_INSTANCE_MASK
 #define STM32_ADC_VREF_INSTANCE_MASK STM32_ADC_INTERNAL_DEFAULT_INSTANCE_MASK
 #endif /* STM32_ADC_VREF_INSTANCE_MASK */
 #else
 #define STM32_ADC_VREF_HAL_CHANNEL STM32_ADC_INVALID_CHANNEL
+#ifndef STM32_ADC_VREF_CHANNEL_AVAILABLE
+#define STM32_ADC_VREF_CHANNEL_AVAILABLE 0
+#endif /* STM32_ADC_VREF_CHANNEL_AVAILABLE */
 #ifndef STM32_ADC_VREF_INSTANCE_MASK
 #define STM32_ADC_VREF_INSTANCE_MASK 0UL
 #endif /* STM32_ADC_VREF_INSTANCE_MASK */
 #endif /* defined(ADC_CHANNEL_VREFINT_ADC1) */
 #endif /* STM32_ADC_VREF_HAL_CHANNEL */
 
+/** @brief Whether the primary VREFINT HAL channel can be used. */
+#ifndef STM32_ADC_VREF_CHANNEL_AVAILABLE
+#define STM32_ADC_VREF_CHANNEL_AVAILABLE 1
+#endif /* STM32_ADC_VREF_CHANNEL_AVAILABLE */
+
 #ifndef STM32_ADC_VREF_INSTANCE_MASK
-#if STM32_ADC_VREF_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL
-/** @brief ADC instances that can sample VREFINT. */
-#define STM32_ADC_VREF_INSTANCE_MASK 0UL
-#else
+#if STM32_ADC_VREF_CHANNEL_AVAILABLE
 /** @brief ADC instances that can sample VREFINT. */
 #define STM32_ADC_VREF_INSTANCE_MASK STM32_ADC_INTERNAL_DEFAULT_INSTANCE_MASK
-#endif /* STM32_ADC_VREF_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL */
+#else
+/** @brief ADC instances that can sample VREFINT. */
+#define STM32_ADC_VREF_INSTANCE_MASK 0UL
+#endif /* STM32_ADC_VREF_CHANNEL_AVAILABLE */
 #endif /* STM32_ADC_VREF_INSTANCE_MASK */
 
 #ifndef STM32_ADC_VREF_CHANNEL
-#if STM32_ADC_VREF_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL
+#if !STM32_ADC_VREF_CHANNEL_AVAILABLE
 #define STM32_ADC_VREF_CHANNEL STM32_ADC_INVALID_LOGICAL_CHANNEL
 #elif defined(STM32_ADC_VREF_LOGICAL_OVERRIDE)
 #define STM32_ADC_VREF_CHANNEL STM32_ADC_VREF_LOGICAL_OVERRIDE
@@ -492,7 +569,7 @@
 #define STM32_ADC_VREF_CHANNEL STM32_ADC_HAL_CHANNEL_TO_LOGICAL(STM32_ADC_VREF_HAL_CHANNEL)
 #else
 #error "STM32 ADC V2: define STM32_ADC_VREF_LOGICAL_OVERRIDE for this legacy HAL series."
-#endif /* STM32_ADC_VREF_HAL_CHANNEL == STM32_ADC_INVALID_CHANNEL */
+#endif /* !STM32_ADC_VREF_CHANNEL_AVAILABLE */
 #endif /* STM32_ADC_VREF_CHANNEL */
 
 #ifndef STM32_ADC_TEMP_ALT_HAL_CHANNEL
@@ -545,6 +622,14 @@ extern "C" {
 #endif /* __cplusplus */
 
 /**
+ * @brief Check whether an ADC peripheral instance matches an instance mask.
+ * @param instance ADC peripheral instance.
+ * @param mask STM32_ADC_INSTANCE_MASK_x bit mask.
+ * @return RT_TRUE if the instance is included, otherwise RT_FALSE.
+ */
+rt_bool_t stm32_adc_instance_match(ADC_TypeDef *instance, rt_uint32_t mask);
+
+/**
  * @brief Get the HAL ADC channel identifier.
  * @param channel RT-Thread ADC channel identifier.
  * @param hal_channel Pointer to the output HAL ADC channel identifier.
@@ -561,11 +646,48 @@ rt_err_t stm32_adc_get_channel(rt_uint8_t channel, uint32_t *hal_channel);
 rt_err_t stm32_adc_get_vref_logical_channel(struct stm32_adc *adc, rt_uint8_t *channel);
 
 /**
- * @brief Get the active ADC resolution in bits.
+ * @brief Get the logical channel used to sample STM32 internal temperature sensor.
  * @param adc Pointer to the STM32 ADC device object.
- * @return ADC resolution in bits, or 0 if it cannot be determined.
+ * @param channel Pointer to the output logical temperature-sensor channel.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_get_tempsensor_logical_channel(struct stm32_adc *adc, rt_uint8_t *channel);
+
+/**
+ * @brief Get the logical channel used to sample STM32 internal VBAT divider.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param channel Pointer to the output logical VBAT channel.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_get_vbat_logical_channel(struct stm32_adc *adc, rt_uint8_t *channel);
+
+/**
+ * @brief Get one HAL sampling-time value from STM32 private configuration.
+ * @param cfg Pointer to the STM32 backend private configuration.
+ * @param sampling_time Pointer to the output HAL sampling-time value.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_get_sampling_time(const struct stm32_adc_private_cfg *cfg, uint32_t *sampling_time);
+
+/**
+ * @brief Get the current ADC resolution in bits.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @return Resolution in bits, or 12 when it cannot be determined.
  */
 rt_uint8_t stm32_adc_get_resolution_bits(const struct stm32_adc *adc);
+
+/**
+ * @brief Calculate STM32 internal temperature sensor value in degrees Celsius.
+ * @param device ADC device handle.
+ * @param raw_value Raw ADC sample value from the temperature sensor channel.
+ * @param vref_mv Current analog reference voltage in millivolts.
+ * @param resolution_bits ADC conversion resolution used for @p raw_value.
+ * @param temperature_c Pointer to the output temperature in degrees Celsius.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_calc_temperature(rt_adc_device_t device, rt_uint32_t raw_value,
+                                    rt_uint32_t vref_mv, rt_uint8_t resolution_bits,
+                                    rt_int32_t *temperature_c);
 
 /**
  * @brief Calculate VDDA from a raw VREFINT sample.

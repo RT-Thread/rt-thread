@@ -6,3 +6,18 @@ menuconfig RT_USING_ADC_V2
         Enable the standalone ADC V2 framework. ADC V2 currently uses the
         legacy ADC public namespace, so it cannot be enabled together with
         RT_USING_ADC.
+
+if RT_USING_ADC_V2
+
+config RT_ADC_V2_USING_MSH
+    bool "Enable ADC V2 MSH command"
+    depends on RT_USING_FINSH
+    default y
+    help
+        Enable the ADC V2 MSH command.
+
+        This option exports the "adc" shell command for probing ADC devices,
+        configuring channels, reading raw samples, reading voltage values, and
+        reading one ADC sequence.
+
+endif
