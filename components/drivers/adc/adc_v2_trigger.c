@@ -10,7 +10,7 @@
 
 /**
  * @file adc_v2_trigger.c
- * @brief ADC V2 timer trigger framework implementation.
+ * @brief ADC V2 trigger framework implementation.
  */
 
 #include <rtconfig.h>
@@ -51,9 +51,30 @@ static rt_err_t adc_validate_trigger_cfg_common(const struct rt_adc_trigger_cfg 
 #endif /* defined(RT_ADC_TRIGGER_USING_TIMER) */
 
     case RT_ADC_TRIGGER_TIMER_COMPARE:
+#if defined(RT_ADC_TRIGGER_USING_TIMER)
+        if ((cfg->event.timer.timer == RT_NULL) || (cfg->event.timer.timer->type != RT_Device_Class_Timer) ||
+            (cfg->event.timer.channel == 0U) || (cfg->event.timer.freq_hz == 0U))
+        {
+            return -RT_EINVAL;
+        }
+        return RT_EOK;
+#else
+        return -RT_ENOSYS;
+#endif /* defined(RT_ADC_TRIGGER_USING_TIMER) */
+
+    case RT_ADC_TRIGGER_ANALOG_COMPARE:
+#if defined(RT_ADC_TRIGGER_USING_COMPARE)
+        if ((cfg->event.compare.channel == 0U) || (cfg->event.compare.edge == RT_ADC_TRIGGER_EDGE_NONE))
+        {
+            return -RT_EINVAL;
+        }
+        return RT_EOK;
+#else
+        return -RT_ENOSYS;
+#endif /* defined(RT_ADC_TRIGGER_USING_COMPARE) */
+
     case RT_ADC_TRIGGER_PWM_EDGE:
     case RT_ADC_TRIGGER_EXTI_EDGE:
-    case RT_ADC_TRIGGER_ANALOG_COMPARE:
     case RT_ADC_TRIGGER_BACKEND:
         return -RT_ENOSYS;
 
@@ -98,13 +119,23 @@ static rt_err_t adc_trigger_timer_source_start(const struct rt_adc_trigger_cfg *
     struct rt_clock_timer_trigger_cfg timer_cfg = {0};
     rt_err_t result;
 
-    if (cfg->type != RT_ADC_TRIGGER_TIMER_UPDATE)
+    timer_cfg.freq_hz = cfg->event.timer.freq_hz;
+    timer_cfg.channel = cfg->event.timer.channel;
+
+    switch (cfg->type)
     {
+    case RT_ADC_TRIGGER_TIMER_UPDATE:
+        timer_cfg.event = CLOCK_TIMER_TRIGGER_EVENT_UPDATE;
+        timer_cfg.channel = 0U;
+        break;
+
+    case RT_ADC_TRIGGER_TIMER_COMPARE:
+        timer_cfg.event = CLOCK_TIMER_TRIGGER_EVENT_COMPARE;
+        break;
+
+    default:
         return -RT_ENOSYS;
     }
-
-    timer_cfg.freq_hz = cfg->event.timer.freq_hz;
-    timer_cfg.event = CLOCK_TIMER_TRIGGER_EVENT_UPDATE;
 
     result = rt_device_control(cfg->event.timer.timer, CLOCK_TIMER_CTRL_TRIGGER_CONFIG, &timer_cfg);
     if (result != RT_EOK)
@@ -137,7 +168,7 @@ static rt_err_t adc_trigger_timer_source_stop(const struct rt_adc_trigger_cfg *c
     rt_err_t stop_result;
     rt_err_t release_result;
 
-    if (cfg->type != RT_ADC_TRIGGER_TIMER_UPDATE)
+    if ((cfg->type != RT_ADC_TRIGGER_TIMER_UPDATE) && (cfg->type != RT_ADC_TRIGGER_TIMER_COMPARE))
     {
         return -RT_ENOSYS;
     }
@@ -172,6 +203,7 @@ static rt_err_t adc_trigger_source_start(rt_adc_device_t device)
     {
 #if defined(RT_ADC_TRIGGER_USING_TIMER)
     case RT_ADC_TRIGGER_TIMER_UPDATE:
+    case RT_ADC_TRIGGER_TIMER_COMPARE:
         return adc_trigger_timer_source_start(cfg);
 #endif /* defined(RT_ADC_TRIGGER_USING_TIMER) */
 
@@ -199,6 +231,7 @@ static rt_err_t adc_trigger_source_stop(rt_adc_device_t device)
     {
 #if defined(RT_ADC_TRIGGER_USING_TIMER)
     case RT_ADC_TRIGGER_TIMER_UPDATE:
+    case RT_ADC_TRIGGER_TIMER_COMPARE:
         return adc_trigger_timer_source_stop(cfg);
 #endif /* defined(RT_ADC_TRIGGER_USING_TIMER) */
 
@@ -269,12 +302,18 @@ rt_err_t adc_trigger_source_control(rt_adc_device_t device, enum adc_trigger_sou
  * @brief Preconfigure the active device-level ADC trigger before hardware configuration.
  * @param device Pointer to the ADC device object.
  * @return RT_EOK on success, otherwise an RT-Thread error code.
+ *
+ * @note A null active trigger still has to be passed to the backend when the
+ *       backend provides trigger_prepare(), because some backends cache the
+ *       previously prepared hardware trigger selector. Passing RT_NULL asks the
+ *       backend to prepare the software-start/default trigger path.
  */
 rt_err_t adc_trigger_preconfig(rt_adc_device_t device)
 {
     const struct rt_adc_trigger_cfg *cfg;
 
     cfg = adc_trigger_active_get(device);
+
     if ((device->ops == RT_NULL) || (device->ops->core == RT_NULL) || (device->ops->core->trigger_prepare == RT_NULL))
     {
         return (cfg == RT_NULL) ? RT_EOK : -RT_ENOSYS;
@@ -330,6 +369,7 @@ rt_err_t rt_adc_trigger_set(rt_adc_device_t device, const struct rt_adc_trigger_
  * @brief Clear the cached ADC trigger configuration.
  * @param device Pointer to the ADC device object.
  * @return Operation status.
+ * @note The ADC device must be idle so the cached trigger cannot be cleared while an active conversion is using it.
  */
 rt_err_t rt_adc_trigger_clear(rt_adc_device_t device)
 {

@@ -109,9 +109,16 @@
 #endif /* defined(BSP_ADC_USING_TRIGGER) && defined(RT_ADC_USING_TRIGGER) */
 
 #if defined(STM32_ADC_USING_TRIGGER) && defined(BSP_ADC_USING_TIMER_TRIGGER) && defined(RT_ADC_TRIGGER_USING_TIMER) && defined(BSP_USING_TIM)
-/** @brief Whether the STM32 ADC timer-update trigger selector backend is compiled in. */
+/** @brief Whether the STM32 ADC timer trigger selector backend is compiled in. */
 #define STM32_ADC_USING_TIMER_TRIGGER 1
 #endif /* defined(STM32_ADC_USING_TRIGGER) && defined(BSP_ADC_USING_TIMER_TRIGGER) && defined(RT_ADC_TRIGGER_USING_TIMER) && defined(BSP_USING_TIM) */
+
+#if defined(STM32_ADC_USING_TRIGGER) && defined(BSP_ADC_USING_ANALOG_COMPARE_TRIGGER)
+#if defined(RT_ADC_TRIGGER_USING_COMPARE)
+/** @brief Whether the STM32 ADC analog-comparator trigger selector backend is compiled in. */
+#define STM32_ADC_USING_ANALOG_COMPARE_TRIGGER 1
+#endif /* defined(RT_ADC_TRIGGER_USING_COMPARE) */
+#endif /* defined(STM32_ADC_USING_TRIGGER) && defined(BSP_ADC_USING_ANALOG_COMPARE_TRIGGER) */
 
 #if defined(__LL_ADC_CALC_VREFANALOG_VOLTAGE) && defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION)
 #define STM32_ADC_HAS_LL_VREF_CALC 1
@@ -189,6 +196,11 @@
 #ifndef STM32_ADC_INSTANCE_MASK_ADC5
 #define STM32_ADC_INSTANCE_MASK_ADC5 (1UL << 4)
 #endif /* STM32_ADC_INSTANCE_MASK_ADC5 */
+
+/** @brief Mask value that allows every known STM32 ADC instance. */
+#ifndef STM32_ADC_INSTANCE_MASK_ALL
+#define STM32_ADC_INSTANCE_MASK_ALL 0xffffffffUL
+#endif /* STM32_ADC_INSTANCE_MASK_ALL */
 
 /** @brief Convert a STM32 HAL ADC channel literal into a RT-Thread logical channel number. */
 #ifndef STM32_ADC_HAL_CHANNEL_TO_LOGICAL

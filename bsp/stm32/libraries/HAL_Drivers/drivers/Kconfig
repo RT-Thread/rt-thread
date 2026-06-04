@@ -67,7 +67,7 @@ if BSP_USING_ADC_V2
             owned by the ADC trigger framework and timer trigger backend.
 
     config BSP_ADC_USING_TIMER_TRIGGER
-        bool "Enable ADC V2 timer update trigger backend"
+        bool "Enable ADC V2 timer trigger selector backend"
         depends on BSP_ADC_USING_TRIGGER
         depends on BSP_USING_TIM
         depends on RT_USING_CLOCK_TIME
@@ -75,8 +75,20 @@ if BSP_USING_ADC_V2
         select RT_USING_CLOCK_TIMER_TRIGGER
         default n
         help
-            Enable STM32 TIMx update/TRGO to ADC external trigger selector
-            mapping for ADC V2 stream pacing.
+            Enable STM32 TIMx update/TRGO and compare event to ADC external
+            trigger selector mapping for ADC V2 stream pacing. Timer frequency,
+            TRGO/compare setup, and lifecycle are handled through the clock
+            timer trigger backend during ADC stream start and stop.
+
+    config BSP_ADC_USING_ANALOG_COMPARE_TRIGGER
+        bool "Enable ADC V2 analog comparator trigger selector backend"
+        depends on BSP_ADC_USING_TRIGGER
+        select RT_ADC_TRIGGER_USING_COMPARE
+        default n
+        help
+            Enable STM32 COMPx_OUT to ADC external trigger selector mapping for
+            ADC V2. Comparator input, threshold, polarity, and enable state are
+            owned by board code, application code, or a comparator driver.
 
     config BSP_ADC_USING_STREAM_DMA
         bool

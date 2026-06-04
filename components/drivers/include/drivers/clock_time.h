@@ -58,11 +58,14 @@ typedef enum
 
 #if defined(RT_USING_CLOCK_TIMER_TRIGGER)
 /**
- * @brief Hardware trigger output event type.
+ * @brief Hardware timer trigger output event type.
  */
 enum rt_clock_timer_trigger_event
 {
-    CLOCK_TIMER_TRIGGER_EVENT_UPDATE = 0 /**< Generate trigger on timer update event. */
+    CLOCK_TIMER_TRIGGER_EVENT_UPDATE = 0, /**< Generate trigger on timer update/overflow event. */
+    CLOCK_TIMER_TRIGGER_EVENT_COMPARE,    /**< Generate trigger on timer compare match event. */
+    CLOCK_TIMER_TRIGGER_EVENT_PWM_EDGE,   /**< Generate trigger on timer PWM output reference edge. */
+    CLOCK_TIMER_TRIGGER_EVENT_BACKEND     /**< Generate trigger from a backend-specific timer event. */
 };
 
 /**
@@ -74,6 +77,8 @@ struct rt_clock_timer_trigger_cfg
 {
     rt_uint32_t freq_hz;                     /**< Trigger output frequency in hertz. */
     enum rt_clock_timer_trigger_event event; /**< Timer event used as trigger output. */
+    rt_uint16_t channel;                     /**< Timer compare channel, or 0 for update event. */
+    rt_uint16_t reserved;                    /**< Reserved for future extension. */
 };
 #endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
 

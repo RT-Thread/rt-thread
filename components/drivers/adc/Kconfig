@@ -19,11 +19,19 @@ config RT_ADC_USING_TRIGGER
         start/stop are delegated to the timer trigger backend.
 
 config RT_ADC_TRIGGER_USING_TIMER
-    bool "Enable ADC timer update trigger support"
+    bool "Enable ADC timer trigger selector support"
     depends on RT_ADC_USING_TRIGGER
     default n
     help
-        Enable timer update/TRGO events as ADC stream trigger sources.
+        Enable timer update/TRGO and timer compare events as ADC stream
+        trigger sources.
+
+config RT_ADC_TRIGGER_USING_COMPARE
+    bool "Enable ADC analog comparator trigger selector support"
+    depends on RT_ADC_USING_TRIGGER
+    default n
+    help
+        Enable analog comparator output events as ADC stream trigger sources.
 
 
 config RT_ADC_USING_STREAM
@@ -98,3 +106,4 @@ config RT_ADC_V2_USING_MSH
         the ADC V2 framework and driver APIs available.
 
 endif
+

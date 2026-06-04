@@ -246,7 +246,7 @@ rt_bool_t stm32_adc_instance_match(ADC_TypeDef *instance, rt_uint32_t mask)
  */
 static rt_bool_t stm32_adc_internal_channel_supported(struct stm32_adc *adc, uint32_t hal_channel, rt_uint32_t instance_mask)
 {
-    if (stm32_adc_hal_channel_valid(hal_channel) != RT_TRUE)
+    if ((stm32_adc_hal_channel_valid(hal_channel) != RT_TRUE))
     {
         return RT_FALSE;
     }
@@ -1325,7 +1325,8 @@ static rt_err_t stm32_adc_apply_regular_config(struct stm32_adc *adc, rt_uint32_
     adc->handle.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
 #endif /* defined(STM32_ADC_HAS_INIT_EOC_SELECTION) */
 
-    /* Multi-rank polling must not let one HAL_ADC_Start() drain the whole
+    /*
+     * Multi-rank polling must not let one HAL_ADC_Start() drain the whole
      * regular sequence, otherwise DR can be overwritten before the CPU reads it.
      * Discontinuous mode makes each HAL_ADC_Start() convert one rank only.
      */
@@ -1341,7 +1342,6 @@ static rt_err_t stm32_adc_apply_regular_config(struct stm32_adc *adc, rt_uint32_
     }
     return stm32_adc_configure_session_ranks(adc, channels);
 }
-
 
 #if STM32_ADC_USING_DMA_STREAM
 /**
@@ -1505,7 +1505,6 @@ fail:
 
     return stm32_hal_status_to_rt_err(status);
 }
-
 /**
  * @brief Stop one STM32 ADC sequence session.
  * @param device Pointer to the ADC device object.
@@ -1740,7 +1739,6 @@ static rt_err_t stm32_adc_stream_start(struct rt_adc_device *device, rt_uint32_t
     {
         goto exit;
     }
-
     status = HAL_ADC_Start_DMA(&adc->handle, dma_buffer, (uint32_t)cfg->dma_buffer_length);
     if (status != HAL_OK)
     {

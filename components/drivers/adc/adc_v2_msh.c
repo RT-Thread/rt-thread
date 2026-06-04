@@ -71,7 +71,11 @@ static void adc_msh_usage_trigger(void)
 {
 #if defined(RT_ADC_TRIGGER_USING_TIMER)
     rt_kprintf("  adc trigger set timer_update <timer_device> <freq_hz>\n");
+    rt_kprintf("  adc trigger set timer_compare <timer_device> <timer_ch> <freq_hz>\n");
 #endif /* defined(RT_ADC_TRIGGER_USING_TIMER) */
+#if defined(RT_ADC_TRIGGER_USING_COMPARE)
+    rt_kprintf("  adc trigger set compare [comparator_device] <num> <rising|falling|both>, num: 0~31\n");
+#endif /* defined(RT_ADC_TRIGGER_USING_COMPARE) */
     rt_kprintf("  adc trigger clear\n");
     rt_kprintf("  adc trigger status\n");
 }
@@ -160,7 +164,7 @@ static rt_int32_t adc_msh_parse_timeout(const char *arg)
     return (rt_int32_t)strtol(arg, RT_NULL, 0);
 }
 
-#if defined(RT_ADC_USING_TRIGGER) && defined(RT_ADC_TRIGGER_USING_TIMER)
+#if defined(RT_ADC_USING_TRIGGER) && (defined(RT_ADC_TRIGGER_USING_TIMER) || defined(RT_ADC_TRIGGER_USING_COMPARE))
 /**
  * @brief Convert one shell argument to an unsigned integer.
  * @param arg Pointer to the shell argument string.
@@ -189,6 +193,43 @@ static rt_err_t adc_msh_parse_ulong(const char *arg, unsigned long max_value, un
     return RT_EOK;
 }
 
+#if defined(RT_ADC_TRIGGER_USING_COMPARE)
+/**
+ * @brief Convert one shell argument to an ADC trigger edge selector.
+ * @param arg Pointer to the shell argument string.
+ * @param edge Pointer to the output trigger edge selector.
+ * @return Operation status.
+ */
+static rt_err_t adc_msh_parse_trigger_edge(const char *arg, enum rt_adc_trigger_edge *edge)
+{
+    if ((arg == RT_NULL) || (edge == RT_NULL))
+    {
+        return -RT_EINVAL;
+    }
+
+    if (!rt_strcmp(arg, "rising"))
+    {
+        *edge = RT_ADC_TRIGGER_EDGE_RISING;
+        return RT_EOK;
+    }
+
+    if (!rt_strcmp(arg, "falling"))
+    {
+        *edge = RT_ADC_TRIGGER_EDGE_FALLING;
+        return RT_EOK;
+    }
+
+    if (!rt_strcmp(arg, "both"))
+    {
+        *edge = RT_ADC_TRIGGER_EDGE_BOTH;
+        return RT_EOK;
+    }
+
+    return -RT_EINVAL;
+}
+
+#endif /* defined(RT_ADC_TRIGGER_USING_COMPARE) */
+
 /**
  * @brief Find one trigger source device by shell argument.
  * @param name Pointer to the source device name string.
@@ -214,7 +255,7 @@ static rt_err_t adc_msh_find_trigger_source(const char *name, rt_device_t *sourc
     *source = dev;
     return RT_EOK;
 }
-#endif /* defined(RT_ADC_USING_TRIGGER) && defined(RT_ADC_TRIGGER_USING_TIMER) */
+#endif /* defined(RT_ADC_USING_TRIGGER) && (defined(RT_ADC_TRIGGER_USING_TIMER) || defined(RT_ADC_TRIGGER_USING_COMPARE)) */
 
 #ifdef RT_ADC_USING_STREAM
 /**
@@ -350,9 +391,91 @@ static rt_err_t adc_msh_trigger(rt_adc_device_t device, int argc, char **argv)
             trigger_cfg.event.timer.freq_hz = (rt_uint32_t)freq_hz;
             trigger_cfg.event.timer.channel = 0U;
         }
+        else if (!rt_strcmp(argv[1], "timer_compare"))
+        {
+            unsigned long channel;
+            unsigned long freq_hz;
+
+            if (argc != 5)
+            {
+                adc_msh_usage();
+                return -RT_EINVAL;
+            }
+
+            result = adc_msh_find_trigger_source(argv[2], &trigger_cfg.event.timer.timer);
+            if (result != RT_EOK)
+            {
+                return result;
+            }
+
+            result = adc_msh_parse_ulong(argv[3], 65535UL, &channel);
+            if ((result != RT_EOK) || (channel == 0UL))
+            {
+                rt_kprintf("invalid adc trigger timer channel: %s\n", argv[3]);
+                return (result != RT_EOK) ? result : -RT_EINVAL;
+            }
+
+            result = adc_msh_parse_ulong(argv[4], 0xffffffffUL, &freq_hz);
+            if ((result != RT_EOK) || (freq_hz == 0UL))
+            {
+                rt_kprintf("invalid adc trigger timer frequency: %s\n", argv[4]);
+                return (result != RT_EOK) ? result : -RT_EINVAL;
+            }
+
+            trigger_cfg.type = RT_ADC_TRIGGER_TIMER_COMPARE;
+            trigger_cfg.event.timer.freq_hz = (rt_uint32_t)freq_hz;
+            trigger_cfg.event.timer.channel = (rt_uint16_t)channel;
+        }
         else
 #endif /* defined(RT_ADC_TRIGGER_USING_TIMER) */
+#if defined(RT_ADC_TRIGGER_USING_COMPARE)
+            if (!rt_strcmp(argv[1], "compare"))
+        {
+            unsigned long channel;
+            int channel_arg;
+            int edge_arg;
 
+            if ((argc != 4) && (argc != 5))
+            {
+                adc_msh_usage();
+                return -RT_EINVAL;
+            }
+
+            if (argc == 5)
+            {
+                result = adc_msh_find_trigger_source(argv[2], &trigger_cfg.event.compare.comparator);
+                if (result != RT_EOK)
+                {
+                    return result;
+                }
+                channel_arg = 3;
+                edge_arg = 4;
+            }
+            else
+            {
+                channel_arg = 2;
+                edge_arg = 3;
+            }
+
+            result = adc_msh_parse_ulong(argv[channel_arg], 65535UL, &channel);
+            if ((result != RT_EOK) || (channel == 0UL))
+            {
+                rt_kprintf("invalid adc trigger compare channel: %s\n", argv[channel_arg]);
+                return (result != RT_EOK) ? result : -RT_EINVAL;
+            }
+
+            result = adc_msh_parse_trigger_edge(argv[edge_arg], &trigger_cfg.event.compare.edge);
+            if (result != RT_EOK)
+            {
+                rt_kprintf("invalid adc trigger edge: %s\n", argv[edge_arg]);
+                return result;
+            }
+
+            trigger_cfg.type = RT_ADC_TRIGGER_ANALOG_COMPARE;
+            trigger_cfg.event.compare.channel = (rt_uint16_t)channel;
+        }
+        else
+#endif /* defined(RT_ADC_TRIGGER_USING_COMPARE) */
         {
             adc_msh_usage();
             return -RT_EINVAL;
