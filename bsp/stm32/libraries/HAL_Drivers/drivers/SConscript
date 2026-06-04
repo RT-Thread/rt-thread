@@ -46,7 +46,7 @@ if GetDepend(['RT_USING_I2C']):
 if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']) and not GetDepend(['SOC_STM32H750_ARTPI']):
     src += ['drv_eth.c']
 
-if GetDepend(['RT_USING_ADC']):
+if GetDepend(['RT_USING_ADC']) and not GetDepend(['RT_USING_ADC_V2']):
     src += ['drv_adc.c']
 
 if GetDepend(['BSP_USING_ADC_V2']):

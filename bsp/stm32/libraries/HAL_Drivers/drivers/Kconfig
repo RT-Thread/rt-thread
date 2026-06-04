@@ -26,8 +26,8 @@ endif
 
 menuconfig BSP_USING_ADC_V2
     bool "Enable ADC V2"
+    select RT_USING_ADC
     select RT_USING_ADC_V2
-    depends on !RT_USING_ADC
     default n
 
 if BSP_USING_ADC_V2
