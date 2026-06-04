@@ -63,6 +63,19 @@ rt_weak rt_err_t rt_adc_msh_special(rt_adc_device_t device, int argc, char **arg
     return -RT_ENOSYS;
 }
 
+#if defined(RT_ADC_USING_TRIGGER)
+/**
+ * @brief Print ADC trigger MSH command usage.
+ */
+static void adc_msh_usage_trigger(void)
+{
+#if defined(RT_ADC_TRIGGER_USING_TIMER)
+    rt_kprintf("  adc trigger set timer_update <timer_device> <freq_hz>\n");
+#endif /* defined(RT_ADC_TRIGGER_USING_TIMER) */
+    rt_kprintf("  adc trigger clear\n");
+    rt_kprintf("  adc trigger status\n");
+}
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
 #if defined(RT_ADC_USING_STREAM)
 /**
@@ -94,6 +107,9 @@ static void adc_msh_usage(void)
     rt_kprintf("    voltage reads the current session configured by adc config\n");
     rt_kprintf("    if default_vref is absent, adc config must include the backend VREF channel\n");
     rt_kprintf("  adc seq <timeout_ms> <num0> [num1 ...], num: 0~31, eg: 0 1 10\n");
+#if defined(RT_ADC_USING_TRIGGER)
+    adc_msh_usage_trigger();
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
 #if defined(RT_ADC_USING_STREAM)
     adc_msh_usage_stream();
@@ -144,6 +160,61 @@ static rt_int32_t adc_msh_parse_timeout(const char *arg)
     return (rt_int32_t)strtol(arg, RT_NULL, 0);
 }
 
+#if defined(RT_ADC_USING_TRIGGER) && defined(RT_ADC_TRIGGER_USING_TIMER)
+/**
+ * @brief Convert one shell argument to an unsigned integer.
+ * @param arg Pointer to the shell argument string.
+ * @param max_value Maximum accepted value.
+ * @param value Pointer to the output value.
+ * @return Operation status.
+ */
+static rt_err_t adc_msh_parse_ulong(const char *arg, unsigned long max_value, unsigned long *value)
+{
+    char *endptr;
+    unsigned long parsed;
+
+    if ((arg == RT_NULL) || (value == RT_NULL) || (*arg == '\0') || (*arg == '-'))
+    {
+        return -RT_EINVAL;
+    }
+
+    endptr = RT_NULL;
+    parsed = strtoul(arg, &endptr, 0);
+    if ((endptr == arg) || (endptr == RT_NULL) || (*endptr != '\0') || (parsed > max_value))
+    {
+        return -RT_EINVAL;
+    }
+
+    *value = parsed;
+    return RT_EOK;
+}
+
+/**
+ * @brief Find one trigger source device by shell argument.
+ * @param name Pointer to the source device name string.
+ * @param source Pointer to the output source device object.
+ * @return Operation status.
+ */
+static rt_err_t adc_msh_find_trigger_source(const char *name, rt_device_t *source)
+{
+    rt_device_t dev;
+
+    if ((name == RT_NULL) || (source == RT_NULL))
+    {
+        return -RT_EINVAL;
+    }
+
+    dev = rt_device_find(name);
+    if (dev == RT_NULL)
+    {
+        rt_kprintf("trigger source %s not found\n", name);
+        return -RT_ERROR;
+    }
+
+    *source = dev;
+    return RT_EOK;
+}
+#endif /* defined(RT_ADC_USING_TRIGGER) && defined(RT_ADC_TRIGGER_USING_TIMER) */
 
 #ifdef RT_ADC_USING_STREAM
 /**
@@ -194,6 +265,111 @@ static rt_uint32_t stream_fifo_buffer[RT_ADC_MSH_FIFO_TEST_FIFO_BUFFER_SIZE];
 #endif /* RT_ADC_USING_STREAM */
 
 
+#if defined(RT_ADC_USING_TRIGGER)
+/**
+ * @brief Handle ADC trigger subcommands.
+ * @param device Pointer to the selected ADC device object.
+ * @param argc Argument count excluding "adc trigger".
+ * @param argv Argument vector excluding "adc trigger".
+ * @return Command status.
+ */
+static rt_err_t adc_msh_trigger(rt_adc_device_t device, int argc, char **argv)
+{
+    rt_err_t result;
+
+    if (argc < 1)
+    {
+        adc_msh_usage();
+        return -RT_EINVAL;
+    }
+
+    if (!rt_strcmp(argv[0], "clear"))
+    {
+        if (argc != 1)
+        {
+            adc_msh_usage();
+            return -RT_EINVAL;
+        }
+
+        result = rt_adc_trigger_clear(device);
+        if (result == RT_EOK)
+        {
+            rt_kprintf("adc trigger cleared\n");
+        }
+        return result;
+    }
+
+    if (!rt_strcmp(argv[0], "status"))
+    {
+        if (argc != 1)
+        {
+            adc_msh_usage();
+            return -RT_EINVAL;
+        }
+
+        rt_kprintf("adc trigger: %s\n", rt_adc_trigger_is_set(device) == RT_TRUE ? "set" : "clear");
+        return RT_EOK;
+    }
+
+    if (!rt_strcmp(argv[0], "set"))
+    {
+        struct rt_adc_trigger_cfg trigger_cfg;
+
+        if (argc < 2)
+        {
+            adc_msh_usage();
+            return -RT_EINVAL;
+        }
+
+        rt_memset(&trigger_cfg, 0, sizeof(trigger_cfg));
+#if defined(RT_ADC_TRIGGER_USING_TIMER)
+        if (!rt_strcmp(argv[1], "timer_update"))
+        {
+            unsigned long freq_hz;
+
+            if (argc != 4)
+            {
+                adc_msh_usage();
+                return -RT_EINVAL;
+            }
+
+            result = adc_msh_find_trigger_source(argv[2], &trigger_cfg.event.timer.timer);
+            if (result != RT_EOK)
+            {
+                return result;
+            }
+
+            result = adc_msh_parse_ulong(argv[3], 0xffffffffUL, &freq_hz);
+            if ((result != RT_EOK) || (freq_hz == 0UL))
+            {
+                rt_kprintf("invalid adc trigger timer frequency: %s\n", argv[3]);
+                return (result != RT_EOK) ? result : -RT_EINVAL;
+            }
+
+            trigger_cfg.type = RT_ADC_TRIGGER_TIMER_UPDATE;
+            trigger_cfg.event.timer.freq_hz = (rt_uint32_t)freq_hz;
+            trigger_cfg.event.timer.channel = 0U;
+        }
+        else
+#endif /* defined(RT_ADC_TRIGGER_USING_TIMER) */
+
+        {
+            adc_msh_usage();
+            return -RT_EINVAL;
+        }
+
+        result = rt_adc_trigger_set(device, &trigger_cfg);
+        if (result == RT_EOK)
+        {
+            rt_kprintf("adc trigger set: %s\n", argv[1]);
+        }
+        return result;
+    }
+
+    adc_msh_usage();
+    return -RT_EINVAL;
+}
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
 #ifdef RT_ADC_USING_STREAM
 /**
@@ -870,6 +1046,12 @@ static int adc(int argc, char **argv)
         return RT_EOK;
     }
 
+#if defined(RT_ADC_USING_TRIGGER)
+    if (!rt_strcmp(argv[1], "trigger"))
+    {
+        return adc_msh_trigger(device, argc - 2, &argv[2]);
+    }
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
     if (!rt_strcmp(argv[1], "close"))
     {

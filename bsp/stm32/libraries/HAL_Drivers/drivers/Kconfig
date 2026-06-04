@@ -56,6 +56,28 @@ if BSP_USING_ADC_V2
         depends on (SOC_SERIES_STM32F3 || SOC_SERIES_STM32G4 || SOC_SERIES_STM32U5)
         default n
 
+    config BSP_ADC_USING_TRIGGER
+        bool "Enable ADC V2 trigger backend"
+        select RT_ADC_USING_TRIGGER
+        default n
+        help
+            Enable STM32 ADC V2 trigger selector validation and backend
+            encoding. The ADC backend maps the framework-cached trigger to STM32
+            HAL ADC selector fields. Trigger-source frequency and lifecycle are
+            owned by the ADC trigger framework and timer trigger backend.
+
+    config BSP_ADC_USING_TIMER_TRIGGER
+        bool "Enable ADC V2 timer update trigger backend"
+        depends on BSP_ADC_USING_TRIGGER
+        depends on BSP_USING_TIM
+        depends on RT_USING_CLOCK_TIME
+        select RT_ADC_TRIGGER_USING_TIMER
+        select RT_USING_CLOCK_TIMER_TRIGGER
+        default n
+        help
+            Enable STM32 TIMx update/TRGO to ADC external trigger selector
+            mapping for ADC V2 stream pacing.
+
     config BSP_ADC_USING_STREAM_DMA
         bool
 

@@ -10,6 +10,22 @@ menuconfig RT_USING_ADC_V2
 if RT_USING_ADC_V2
 
 
+config RT_ADC_USING_TRIGGER
+    bool "Enable ADC trigger framework"
+    default n
+    help
+        Enable device-level ADC trigger requests, framework validation, caching,
+        and stream lifecycle coordination. Timer trigger frequency and TRGO
+        start/stop are delegated to the timer trigger backend.
+
+config RT_ADC_TRIGGER_USING_TIMER
+    bool "Enable ADC timer update trigger support"
+    depends on RT_ADC_USING_TRIGGER
+    default n
+    help
+        Enable timer update/TRGO events as ADC stream trigger sources.
+
+
 config RT_ADC_USING_STREAM
     bool "Enable ADC stream framework"
     default n

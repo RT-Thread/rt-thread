@@ -26,6 +26,9 @@
 #include <rtdevice.h>
 #include <rtthread.h>
 
+#if defined(RT_ADC_USING_TRIGGER)
+#include <drivers/adc_v2_trigger.h>
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
 #if defined(RT_ADC_USING_STREAM) && defined(RT_ADC_STREAM_USING_FIFO)
 #include <ipc/completion.h>
@@ -111,6 +114,18 @@ struct rt_adc_core_ops
      */
     rt_err_t (*session_config)(struct rt_adc_device *device, rt_uint32_t channels);
 
+#if defined(RT_ADC_USING_TRIGGER)
+    /**
+     * @brief Preconfigure the ADC backend trigger state for the next hardware configuration pass.
+     * @param device Pointer to the ADC device object.
+     * @param cfg Pointer to the active ADC trigger configuration object.
+     * @return Operation status.
+     * @note The implementation may only validate @p cfg, update pending driver
+     *       state, or fill HAL initialization fields. It must not start the
+     *       trigger source or arm ADC conversions.
+     */
+    rt_err_t (*trigger_prepare)(struct rt_adc_device *device, const struct rt_adc_trigger_cfg *cfg);
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
     /**
      * @brief Handle ADC control commands.
@@ -400,6 +415,9 @@ struct rt_adc_device
     struct rt_spinlock spinlock;             /**< Protects ADC stream FIFO shared by thread context and ISR. */
     rt_uint32_t default_vref_mv;             /**< Default reference voltage in millivolts. */
     struct rt_adc_session_ctrl session_ctrl; /**< ADC active session control block. */
+#if defined(RT_ADC_USING_TRIGGER)
+    struct rt_adc_trigger_ctrl trigger_ctrl; /**< ADC trigger runtime control block. */
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 #ifdef RT_ADC_USING_STREAM
     struct rt_adc_stream_ctrl stream_ctrl;   /**< ADC stream runtime control block. */
 #endif /* RT_ADC_USING_STREAM */

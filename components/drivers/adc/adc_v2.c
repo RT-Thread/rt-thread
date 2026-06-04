@@ -653,6 +653,9 @@ rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const stru
     rt_atomic_store(&device->state, (rt_atomic_t)RT_ADC_STATE_IDLE);
     device->default_vref_mv = 0;
     adc_clear_session_ctrl(device);
+#if defined(RT_ADC_USING_TRIGGER)
+    adc_trigger_init(device);
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 #ifdef RT_ADC_USING_STREAM
     rt_memset(&device->stream_ctrl, 0, sizeof(device->stream_ctrl));
 #endif /* RT_ADC_USING_STREAM */
@@ -1126,6 +1129,9 @@ rt_err_t rt_adc_stream_start(rt_adc_device_t device, rt_uint32_t channels, const
         return -RT_EBUSY;
     }
     start_called = RT_FALSE;
+#if defined(RT_ADC_USING_TRIGGER)
+    rt_bool_t trigger_started = RT_FALSE;
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
     frame_length = rt_adc_channel_mask_count(channels);
     result = adc_cache_session_ctrl(device, channels);
@@ -1140,6 +1146,13 @@ rt_err_t rt_adc_stream_start(rt_adc_device_t device, rt_uint32_t channels, const
         goto fail_after_lock;
     }
 
+#if defined(RT_ADC_USING_TRIGGER)
+    result = adc_trigger_preconfig(device);
+    if (result != RT_EOK)
+    {
+        goto fail_after_lock;
+    }
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
     start_called = RT_TRUE;
     result = device->ops->stream->start(device, channels, cfg);
@@ -1154,6 +1167,13 @@ rt_err_t rt_adc_stream_start(rt_adc_device_t device, rt_uint32_t channels, const
         goto fail_after_lock;
     }
 
+#if defined(RT_ADC_USING_TRIGGER)
+    result = adc_trigger_source_control(device, ADC_TRIGGER_SOURCE_START, &trigger_started, RT_EOK);
+    if (result != RT_EOK)
+    {
+        goto fail_after_lock;
+    }
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
     adc_set_state(device, RT_ADC_STATE_STREAM);
     return RT_EOK;
@@ -1163,6 +1183,9 @@ fail_after_lock:
     {
         LOG_E("stream start failed: device=%s result=%d", device->parent.parent.name, result);
     }
+#if defined(RT_ADC_USING_TRIGGER)
+    result = adc_trigger_source_control(device, ADC_TRIGGER_SOURCE_STOP, &trigger_started, result);
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
     if (start_called == RT_TRUE)
     {
@@ -1366,7 +1389,12 @@ rt_err_t rt_adc_stream_stop(rt_adc_device_t device)
         return -RT_EBUSY;
     }
 
+#if defined(RT_ADC_USING_TRIGGER)
+    rt_bool_t trigger_started = RT_TRUE;
+    trigger_result = adc_trigger_source_control(device, ADC_TRIGGER_SOURCE_STOP, &trigger_started, RT_EOK);
+#else
     trigger_result = RT_EOK;
+#endif /* defined(RT_ADC_USING_TRIGGER) */
 
     hardware_stopped = RT_FALSE;
     result = device->ops->stream->stop(device, &hardware_stopped);

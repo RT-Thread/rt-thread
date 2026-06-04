@@ -52,6 +52,9 @@ if GetDepend(['RT_USING_ADC']):
 if GetDepend(['BSP_USING_ADC_V2']):
     src += ['drv_adc_v2.c']
 
+    if GetDepend(['BSP_ADC_USING_TRIGGER']):
+        src += ['drv_adc_v2_trigger.c']
+
     if GetDepend(['RT_USING_FINSH', 'RT_ADC_V2_USING_MSH']):
         src += ['drv_adc_v2_msh.c']
 

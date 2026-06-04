@@ -103,6 +103,16 @@
 #define STM32_ADC_NEEDS_DMA_CACHE_MAINTENANCE 1
 #endif /* defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32H7RS) */
 
+#if defined(BSP_ADC_USING_TRIGGER) && defined(RT_ADC_USING_TRIGGER)
+/** @brief Whether the STM32 ADC trigger backend support is compiled in. */
+#define STM32_ADC_USING_TRIGGER 1
+#endif /* defined(BSP_ADC_USING_TRIGGER) && defined(RT_ADC_USING_TRIGGER) */
+
+#if defined(STM32_ADC_USING_TRIGGER) && defined(BSP_ADC_USING_TIMER_TRIGGER) && defined(RT_ADC_TRIGGER_USING_TIMER) && defined(BSP_USING_TIM)
+/** @brief Whether the STM32 ADC timer-update trigger selector backend is compiled in. */
+#define STM32_ADC_USING_TIMER_TRIGGER 1
+#endif /* defined(STM32_ADC_USING_TRIGGER) && defined(BSP_ADC_USING_TIMER_TRIGGER) && defined(RT_ADC_TRIGGER_USING_TIMER) && defined(BSP_USING_TIM) */
+
 #if defined(__LL_ADC_CALC_VREFANALOG_VOLTAGE) && defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION)
 #define STM32_ADC_HAS_LL_VREF_CALC 1
 #endif /* defined(__LL_ADC_CALC_VREFANALOG_VOLTAGE) && defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION) */
@@ -609,6 +619,18 @@
 #define STM32_ADC_USING_DMA_STREAM STM32_ADC_USING_STREAM
 #endif /* STM32_ADC_USING_DMA_STREAM */
 
+
+#if defined(STM32_ADC_USING_TRIGGER)
+/**
+ * @brief Prepared STM32 ADC external trigger fields.
+ */
+struct stm32_adc_trigger_fields
+{
+    rt_uint32_t selector; /**< HAL ADC external trigger selector. */
+    rt_uint32_t edge;     /**< HAL ADC external trigger edge selector. */
+};
+#endif /* defined(STM32_ADC_USING_TRIGGER) */
+
 /**
  * @brief STM32 ADC device object.
  *
@@ -629,6 +651,10 @@ struct stm32_adc
     rt_uint32_t *cache_dma_buffer;         /**< Cache-aligned stream DMA buffer when caller buffer is not safe. */
 #endif /* defined(STM32_ADC_NEEDS_DMA_CACHE_MAINTENANCE) */
 #endif /* STM32_ADC_USING_DMA_STREAM */
+#if defined(STM32_ADC_USING_TRIGGER)
+    struct stm32_adc_trigger_fields prepared_trigger; /**< Cached trigger selector fields for the next stream config. */
+    rt_bool_t prepared_trigger_valid;                 /**< Whether prepared_trigger contains a valid cached selector. */
+#endif /* defined(STM32_ADC_USING_TRIGGER) */
 };
 
 /*
@@ -716,6 +742,27 @@ rt_err_t stm32_adc_calc_temperature(rt_adc_device_t device, rt_uint32_t raw_valu
  * @return Operation status.
  */
 rt_err_t stm32_adc_calc_vref_mv(struct rt_adc_device *device, rt_uint32_t *vref_mv);
+
+
+#if defined(STM32_ADC_USING_TRIGGER)
+/**
+ * @brief Resolve STM32 ADC trigger selector fields.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param cfg Pointer to the ADC trigger configuration, or RT_NULL for software start.
+ * @param fields Pointer to the output STM32 trigger fields.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_trigger_fields_get(struct stm32_adc *adc, const struct rt_adc_trigger_cfg *cfg,
+                                      struct stm32_adc_trigger_fields *fields);
+
+/**
+ * @brief Preconfigure STM32 ADC trigger selector state for the next stream configuration.
+ * @param device Pointer to the ADC framework device object.
+ * @param cfg Pointer to the ADC trigger configuration, or RT_NULL for software start.
+ * @return Operation status.
+ */
+rt_err_t stm32_adc_trigger_prepare(struct rt_adc_device *device, const struct rt_adc_trigger_cfg *cfg);
+#endif /* defined(STM32_ADC_USING_TRIGGER) */
 
 #ifdef __cplusplus
 }

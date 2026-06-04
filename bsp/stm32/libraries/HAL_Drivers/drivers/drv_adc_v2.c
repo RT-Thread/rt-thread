@@ -1374,6 +1374,22 @@ static rt_err_t stm32_adc_apply_stream_regular_config(struct stm32_adc *adc, rt_
         return result;
     }
 
+#if defined(STM32_ADC_USING_TRIGGER)
+    struct stm32_adc_trigger_fields trigger_fields;
+    if (adc->prepared_trigger_valid == RT_TRUE)
+    {
+        trigger_fields = adc->prepared_trigger;
+    }
+    else
+    {
+        result = stm32_adc_trigger_fields_get(adc, RT_NULL, &trigger_fields);
+        if (result != RT_EOK)
+        {
+            return result;
+        }
+    }
+#endif /* defined(STM32_ADC_USING_TRIGGER) */
+
     adc->handle.Init.ScanConvMode = (channel_count > 1U) ? STM32_ADC_SCAN_MODE_ENABLE : STM32_ADC_SCAN_MODE_DISABLE;
 #if defined(STM32_ADC_HAS_INIT_NBR_OF_CONVERSION)
     adc->handle.Init.NbrOfConversion = channel_count;
@@ -1389,7 +1405,15 @@ static rt_err_t stm32_adc_apply_stream_regular_config(struct stm32_adc *adc, rt_
 #if defined(STM32_ADC_HAS_INIT_DMA_CONT_REQUESTS)
     adc->handle.Init.DMAContinuousRequests = ENABLE;
 #endif /* defined(STM32_ADC_HAS_INIT_DMA_CONT_REQUESTS) */
+#if defined(STM32_ADC_USING_TRIGGER)
+    adc->handle.Init.ContinuousConvMode = (trigger_fields.selector == ADC_SOFTWARE_START) ? ENABLE : DISABLE;
+    adc->handle.Init.ExternalTrigConv = trigger_fields.selector;
+#if defined(STM32_ADC_HAS_INIT_EXT_TRIG_EDGE)
+    adc->handle.Init.ExternalTrigConvEdge = trigger_fields.edge;
+#endif /* defined(STM32_ADC_HAS_INIT_EXT_TRIG_EDGE) */
+#else
     adc->handle.Init.ContinuousConvMode = ENABLE;
+#endif /* defined(STM32_ADC_USING_TRIGGER) */
 
     status = HAL_ADC_Init(&adc->handle);
     if (status != HAL_OK)
@@ -2142,6 +2166,9 @@ static const struct rt_adc_core_ops stm32_adc_core_ops = {
     .open = stm32_adc_open,
     .close = stm32_adc_close,
     .session_config = stm32_adc_session_config,
+#if defined(STM32_ADC_USING_TRIGGER)
+    .trigger_prepare = stm32_adc_trigger_prepare,
+#endif /* defined(STM32_ADC_USING_TRIGGER) */
     .control = stm32_adc_control,
 };
 

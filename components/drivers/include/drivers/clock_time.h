@@ -47,8 +47,35 @@ typedef enum
     CLOCK_TIMER_CTRL_FREQ_SET = RT_DEVICE_CTRL_BASE(Timer) + 0x01,
     CLOCK_TIMER_CTRL_STOP = RT_DEVICE_CTRL_BASE(Timer) + 0x02,
     CLOCK_TIMER_CTRL_INFO_GET = RT_DEVICE_CTRL_BASE(Timer) + 0x03,
-    CLOCK_TIMER_CTRL_MODE_SET = RT_DEVICE_CTRL_BASE(Timer) + 0x04
+    CLOCK_TIMER_CTRL_MODE_SET = RT_DEVICE_CTRL_BASE(Timer) + 0x04,
+#if defined(RT_USING_CLOCK_TIMER_TRIGGER)
+    CLOCK_TIMER_CTRL_TRIGGER_CONFIG  = RT_DEVICE_CTRL_BASE(Timer) + 0x05,
+    CLOCK_TIMER_CTRL_TRIGGER_START   = RT_DEVICE_CTRL_BASE(Timer) + 0x06,
+    CLOCK_TIMER_CTRL_TRIGGER_STOP    = RT_DEVICE_CTRL_BASE(Timer) + 0x07,
+    CLOCK_TIMER_CTRL_TRIGGER_RELEASE = RT_DEVICE_CTRL_BASE(Timer) + 0x08
+#endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
 } rt_clock_timer_ctrl_t;
+
+#if defined(RT_USING_CLOCK_TIMER_TRIGGER)
+/**
+ * @brief Hardware trigger output event type.
+ */
+enum rt_clock_timer_trigger_event
+{
+    CLOCK_TIMER_TRIGGER_EVENT_UPDATE = 0 /**< Generate trigger on timer update event. */
+};
+
+/**
+ * @brief Hardware trigger output configuration.
+ * @note This interface does not arbitrate timer ownership. Callers must
+ *       provide a timer dedicated to hardware trigger output.
+ */
+struct rt_clock_timer_trigger_cfg
+{
+    rt_uint32_t freq_hz;                     /**< Trigger output frequency in hertz. */
+    enum rt_clock_timer_trigger_event event; /**< Timer event used as trigger output. */
+};
+#endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
 
 typedef enum
 {
