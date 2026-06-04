@@ -6,12 +6,12 @@ menu "Hardware Drivers"
 
 menu "On-chip Peripheral Drivers"
     config BSP_USING_DRIVERS_EXAMPLE
-        bool "Enable drivers auto test"
+        bool "Enable drivers example"
         default n
 
     if BSP_USING_DRIVERS_EXAMPLE
         config BSP_USING_DRIVERS_AUTO_TEST
-        bool "Enable drivers example"
+        bool "Enable drivers auto test"
         default n
     endif
 

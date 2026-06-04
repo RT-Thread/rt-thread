@@ -19,6 +19,10 @@
 #include "auto_test.h"
 #endif
 
+#if defined(USE_OPENAMP)
+#include "openamp_for_linux_sample.h"
+#endif
+
 #define ASSERT_STATIC(expression) \
     extern int assert_static[(expression) ? 1 : -1]
 

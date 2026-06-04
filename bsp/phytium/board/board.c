@@ -44,7 +44,9 @@
 #include "fcpu_info.h"
 #include "fiopad.h"
 
-#ifdef RT_USING_SMP
+#ifdef RT_USING_SMP /* SMP */
+    #include "fpsci.h"
+#elif defined(RT_USING_AMP)
     #include "fpsci.h"
 #endif
 
@@ -179,6 +181,11 @@ void rt_hw_board_aarch64_init(void)
     rt_thread_idle_sethook(idle_wfi);
     
     rt_hw_gtimer_init();
+    
+#if defined(USE_OPENAMP)
+    FPsciInit();
+#endif
+
 #ifdef RT_USING_SMP
     FPsciInit();
     /* install IPI handle */

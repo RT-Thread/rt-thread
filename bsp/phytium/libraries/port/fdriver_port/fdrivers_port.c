@@ -60,6 +60,16 @@ void FDriverICacheRangeInvalidate(uintptr_t adr, size_t len)
     rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, (void *)adr, len);
 }
 
+void FDriverICacheInvalidate(void)
+{
+    __asm_invalidate_icache_all();
+}
+
+void FDriverDCacheInvalidate(void)
+{
+    __asm_invalidate_dcache_all();
+}
+
 #endif
 
 /* time delay */

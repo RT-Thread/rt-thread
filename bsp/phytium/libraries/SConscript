@@ -7,6 +7,7 @@ cwd  = GetCurrentDir()
 PORT_DRV_DIR = cwd + '/drivers'
 DRIVERS_EXAMPLE_DIR = cwd + '/drivers_example'
 PHYTIUM_SDK_DIR = cwd + '/phytium_standalone_sdk'
+SYSTEM_EXAMPLE_DIR = cwd + '/system_example'
 COMMON_DIR = cwd + '/common'
 
 # common source
@@ -226,7 +227,53 @@ if GetDepend(['PHYTIUMPI_FIREFLY_BOARD']):
     if GetDepend(['BSP_USING_SDIF_LAYER']):
         src += Glob(PHYTIUM_SDK_DIR+'/board/phytiumpi_firefly/fsdif_timing.c')
 
+
+## third-party
+if GetDepend(['USE_OPENAMP']):
+    ## libmetal
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/libmetal/metal/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/libmetal/metal/system/generic/*.c')
     
+    ## libmetal port
+    src += Glob(cwd + '/port/libmetal_port/*.c')
+    
+    path += [PHYTIUM_SDK_DIR + '/third-party/libmetal/']
+    path += [PHYTIUM_SDK_DIR + '/third-party/libmetal/compiler/gcc/']
+    path += [PHYTIUM_SDK_DIR + '/third-party/libmetal/processor/aarch64/']
+    path += [cwd + '/port/libmetal_port/']
+    
+    ## openamp
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/include']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/include/openamp']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/rpmsg']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/remoteproc']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/ports']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/service/rpmsg/rpc']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/virtio']
+    # openamp port
+    src += Glob(cwd + '/port/openamp_port/machine/phytium/*.c')
+    src += Glob(cwd + '/port/openamp_port/system/generic/machine/phytium/*.c')
+    path += [cwd + '/port/openamp_port/include']
+    path += [cwd + '/port/openamp_port/machine/phytium']
+    path += [cwd + '/port/openamp_port/system/generic/machine/phytium']
+    
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/rpmsg/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/version.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/proxy/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/remoteproc/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/virtio/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/services/rpmsg/rpc/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/utils/*.c')
+
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/ports/load_fw.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/ports/mem_image_store.c')
+    # system_example
+    if GetDepend(['BSP_USING_SYSTEM_EXAMPLE']):
+        if GetDepend(['BSP_USING_OPENAMP_EXAMPLE']):
+            src += Glob(SYSTEM_EXAMPLE_DIR+'/openamp/*.c')
+            path += [SYSTEM_EXAMPLE_DIR+'/openamp/']
+
 LIBS    = []
 LIBPATH = []
 

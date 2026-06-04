@@ -550,7 +550,6 @@
 
 /* On-chip Peripheral Drivers */
 
-#define BSP_USING_DRIVERS_EXAMPLE
 #define BSP_USING_IOPAD
 #define BSP_USING_UART_LAYER
 #define BSP_USING_UART
@@ -569,6 +568,10 @@
 /* Board extended module Drivers */
 
 /* end of Hardware Drivers */
+
+/* System Example */
+
+/* end of System Example */
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
 #define PHYTIUM_ARCH_AARCH64
@@ -607,6 +610,10 @@
 #define LOG_DEBUG
 #define USE_PHYSICAL_GTIMER
 /* end of Sdk common configuration */
+
+/* OpenAmp */
+
+/* end of OpenAmp */
 /* end of Standalone Setting */
 #define KERNEL_ASPACE_START 0x1000
 
