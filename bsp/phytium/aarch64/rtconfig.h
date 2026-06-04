@@ -73,8 +73,9 @@
 /* end of rt_strnlen options */
 /* end of klibc options */
 #define RT_NAME_MAX 18
-#define RT_USING_SMP
-#define RT_CPUS_NR 2
+#define RT_USING_AMP
+#define RT_AMP_SLAVE
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -85,7 +86,6 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 8192
-#define SYSTEM_THREAD_STACK_SIZE 8192
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
@@ -504,6 +504,8 @@
 
 /* System Example */
 
+#define BSP_USING_SYSTEM_EXAMPLE
+#define BSP_USING_OPENAMP_EXAMPLE
 /* end of System Example */
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
@@ -546,6 +548,11 @@
 
 /* OpenAmp */
 
+#define USE_OPENAMP
+#define USE_OPENAMP_IPI
+#define SKIP_SHBUF_IO_WRITE
+#define USE_MASTER_VRING_DEFINE
+#define USE_CACHE_COHERENCY
 /* end of OpenAmp */
 /* end of Standalone Setting */
 #define KERNEL_ASPACE_START 0x1000

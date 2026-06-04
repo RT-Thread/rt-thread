@@ -98,6 +98,9 @@ int main(void)
 #elif defined RT_USING_SMP
     demo_core();
 #endif
+#if defined(USE_OPENAMP)
+    creat_openamp_thread();
+#endif
     return RT_EOK;
 }
 

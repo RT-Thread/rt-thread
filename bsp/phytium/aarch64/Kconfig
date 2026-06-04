@@ -63,7 +63,6 @@ menu "Standalone Setting"
     source "$(BSP_DIR)/../board/board.kconfig"
     source "$(SDK_DIR)/common/common.kconfig"
     source "$(SDK_DIR)/third-party/openamp/ports/Kconfig"
-
 endmenu
 
 config KERNEL_ASPACE_START
