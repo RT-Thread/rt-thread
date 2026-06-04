@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 32
+#define RT_NAME_MAX 18
 #define RT_USING_SMP
 #define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
@@ -89,8 +89,6 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
-#define RT_USING_CPU_USAGE_TRACER
-#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -119,13 +117,11 @@
 #define RT_USING_HEAP
 /* end of Memory Management */
 #define RT_USING_DEVICE
-#define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_USING_CONSOLE_OUTPUT_CTL
 #define RT_VER_NUM 0x50300
-#define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 
@@ -212,27 +208,20 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_SERIAL_BYPASS
-#define RT_USING_CAN
-#define RT_CANMSG_BOX_SZ 16
-#define RT_CANSND_BOX_NUM 1
-#define RT_CANSND_MSG_TIMEOUT 100
-#define RT_CAN_NB_TX_FIFO_SIZE 256
 #define RT_USING_CLOCK_TIME
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
-#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SPI
 #define RT_USING_SPI_ISR
 #define RT_USING_QSPI
 #define RT_USING_AUDIO
-#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 2048
-#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
-#define RT_AUDIO_RECORD_PIPE_SIZE 2048
+#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
+#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 1
+#define RT_AUDIO_RECORD_PIPE_SIZE 4096
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -261,7 +250,6 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
-#define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
@@ -278,63 +266,6 @@
 
 /* Network */
 
-#define RT_USING_SAL
-#define SAL_INTERNET_CHECK
-#define SOCKET_TABLE_STEP_LEN 4
-
-/* Docking with protocol stacks */
-
-#define SAL_USING_LWIP
-/* end of Docking with protocol stacks */
-#define SAL_USING_POSIX
-#define RT_USING_NETDEV
-#define NETDEV_USING_IFCONFIG
-#define NETDEV_USING_PING
-#define NETDEV_USING_NETSTAT
-#define NETDEV_USING_AUTO_DEFAULT
-#define NETDEV_IPV4 1
-#define NETDEV_IPV6 0
-#define RT_USING_LWIP
-#define RT_USING_LWIP212
-#define RT_USING_LWIP_VER_NUM 0x20102
-#define RT_LWIP_MEM_ALIGNMENT 64
-#define RT_LWIP_ICMP
-#define RT_LWIP_DNS
-
-/* Static IPv4 Address */
-
-#define RT_LWIP_IPADDR "192.168.4.10"
-#define RT_LWIP_GWADDR "192.168.4.1"
-#define RT_LWIP_MSKADDR "255.255.255.0"
-/* end of Static IPv4 Address */
-#define RT_LWIP_UDP
-#define RT_LWIP_TCP
-#define RT_LWIP_RAW
-#define RT_MEMP_NUM_NETCONN 8
-#define RT_LWIP_PBUF_NUM 512
-#define RT_LWIP_RAW_PCB_NUM 4
-#define RT_LWIP_UDP_PCB_NUM 4
-#define RT_LWIP_TCP_PCB_NUM 4
-#define RT_LWIP_TCP_SEG_NUM 40
-#define RT_LWIP_TCP_SND_BUF 8196
-#define RT_LWIP_TCP_WND 8196
-#define RT_LWIP_TCPTHREAD_PRIORITY 12
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE 256
-#define RT_LWIP_TCPTHREAD_STACKSIZE 16184
-#define RT_LWIP_ETHTHREAD_PRIORITY 16
-#define RT_LWIP_ETHTHREAD_STACKSIZE 8192
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE 256
-#define RT_LWIP_REASSEMBLY_FRAG
-#define LWIP_NETIF_STATUS_CALLBACK 1
-#define LWIP_NETIF_LINK_CALLBACK 1
-#define RT_LWIP_NETIF_NAMESIZE 6
-#define SO_REUSE 1
-#define LWIP_SO_RCVTIMEO 1
-#define LWIP_SO_SNDTIMEO 1
-#define LWIP_SO_RCVBUF 1
-#define LWIP_SO_LINGER 0
-#define LWIP_NETIF_LOOPBACK 0
-#define RT_LWIP_USING_PING
 /* end of Network */
 
 /* Memory protection */
@@ -609,7 +540,7 @@
 /* Sdk common configuration */
 
 #define ELOG_LINE_BUF_SIZE 0x100
-#define LOG_DEBUG
+#define LOG_INFO
 #define USE_PHYSICAL_GTIMER
 /* end of Sdk common configuration */
 

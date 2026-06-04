@@ -1,4 +1,3 @@
-#include "rtconfig.h"
 OUTPUT_FORMAT("elf64-littleaarch64", "elf64-littleaarch64", "elf64-littleaarch64")
 OUTPUT_ARCH(aarch64)
 PHDRS
@@ -9,13 +8,8 @@ PHDRS
 }
 SECTIONS
 {
-#ifdef USE_OPENAMP
-    _text_offset = 0x0;
-    . = 0xb0100000 + _text_offset;
-#else
     _text_offset = 0x80000;
     . = 0x80000000 + _text_offset;
-#endif
     .text :
     {
         PROVIDE(__text_start = .);
@@ -110,12 +104,6 @@ SECTIONS
         . = ALIGN(8);
         PROVIDE(__bss_end = .);
     }
-#ifdef USE_OPENAMP
-    .resource_table 0xc0000000 : {
-        *(.resource_table)
-        . = ALIGN(4);
-    }
-#endif
     _end = .;
     .stab 0 : { *(.stab) }
     .stabstr 0 : { *(.stabstr) }
