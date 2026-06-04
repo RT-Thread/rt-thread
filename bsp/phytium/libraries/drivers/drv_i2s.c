@@ -38,6 +38,7 @@ static FDdmaBdlDesc *bdl_desc_list_rx = NULL;
 static rt_sem_t tx_done_sem = RT_NULL;
 static rt_thread_t audio_tx_thread = RT_NULL;
 static rt_thread_t audio_wdg_thread = RT_NULL;
+static volatile rt_bool_t audio_running = RT_FALSE;
 
 struct phytium_i2s_device
 {
@@ -437,13 +438,7 @@ static rt_err_t i2s_start(struct rt_audio_device *audio, int stream)
     i2s_dev->rx_channel = 1;
     i2s_dev->tx_channel = 0;
     FI2sTxRxEnable(&i2s_dev->i2s_ctrl, TRUE); /* 模块使能 */
-    
-    if (audio_tx_thread != NULL) {
-        rt_thread_resume(audio_tx_thread);   // 安全，内部会判断是否挂起
-    }
-    if (audio_wdg_thread != NULL) {
-        rt_thread_resume(audio_wdg_thread);
-    }
+    audio_running = RT_TRUE;
 
     if (stream == AUDIO_STREAM_REPLAY)
     {
@@ -466,7 +461,7 @@ static rt_err_t i2s_stop(struct rt_audio_device *audio, int stream)
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
-
+    audio_running = RT_FALSE;
     if (i2s_dev->i2s_ctrl.is_ready == FT_COMPONENT_IS_READY)
     {
         FI2sStopWork(&i2s_dev->i2s_ctrl);
@@ -492,9 +487,6 @@ static rt_err_t i2s_stop(struct rt_audio_device *audio, int stream)
     }
 
     rt_data_queue_reset(&audio->replay->queue);
-    rt_thread_suspend(audio_tx_thread);
-    rt_thread_suspend(audio_wdg_thread);
-
     return RT_EOK;
 }
 
@@ -514,9 +506,13 @@ static void audio_tx_thread_entry(void *parameter)
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
     i2s_dev = (struct phytium_i2s_device *)audio->parent.user_data;
-    tx_done_sem = rt_sem_create("tx_done", 0, RT_IPC_FLAG_FIFO);
     while (1)
     {
+        if (!audio_running)
+        {
+            rt_thread_mdelay(20);
+            continue;
+        }
         rt_uint8_t *data = RT_NULL;
         rt_size_t size = 0;
         if (rt_data_queue_pop(&audio->replay->queue, (const void **)&data, &size, 100) == RT_EOK)
@@ -536,6 +532,11 @@ static void audio_wdg_thread_entry(void *p)
     struct rt_audio_device *audio = p;
     while (1)
     {
+        if (!audio_running)
+        {
+            rt_thread_mdelay(20);
+            continue;
+        }
         rt_thread_mdelay(10);
         if (audio->replay->event & 0x02)
         {
@@ -582,6 +583,7 @@ static int i2s_controller_init(struct phytium_i2s_device *i2s_dev)
         if (audio_wdg_thread)
             rt_thread_startup(audio_wdg_thread);
     }
+    tx_done_sem = rt_sem_create("tx_done", 0, RT_IPC_FLAG_FIFO);
 
     int ret = rt_audio_register(audio, i2s_dev->name, RT_DEVICE_FLAG_RDWR, (void *)i2s_dev);
     RT_ASSERT(RT_EOK == ret);
