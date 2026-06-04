@@ -98,6 +98,11 @@
 #define STM32_ADC_HAS_CALIBRATION 1
 #endif /* defined(STM32_ADC_HAS_SIMPLE_CALIBRATION) || defined(STM32_ADC_HAS_LINEAR_CALIBRATION) */
 
+#if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32H7RS)
+/** @brief Enable D-Cache-safe ADC DMA stream handling for Cortex-M7 STM32 series. */
+#define STM32_ADC_NEEDS_DMA_CACHE_MAINTENANCE 1
+#endif /* defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32H7RS) */
+
 #if defined(__LL_ADC_CALC_VREFANALOG_VOLTAGE) && defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION)
 #define STM32_ADC_HAS_LL_VREF_CALC 1
 #endif /* defined(__LL_ADC_CALC_VREFANALOG_VOLTAGE) && defined(STM32_ADC_HAS_CONFIGURABLE_RESOLUTION) */
@@ -596,6 +601,14 @@
 #define STM32_ADC_VREF_ALT_INSTANCE_MASK 0UL
 #endif /* STM32_ADC_VREF_ALT_INSTANCE_MASK */
 
+#ifndef STM32_ADC_USING_STREAM
+#define STM32_ADC_USING_STREAM 0
+#endif /* STM32_ADC_USING_STREAM */
+
+#ifndef STM32_ADC_USING_DMA_STREAM
+#define STM32_ADC_USING_DMA_STREAM STM32_ADC_USING_STREAM
+#endif /* STM32_ADC_USING_DMA_STREAM */
+
 /**
  * @brief STM32 ADC device object.
  *
@@ -609,6 +622,13 @@ struct stm32_adc
     const char *name;                      /**< Device name. */
     struct stm32_adc_private_cfg config;   /**< Default STM32 backend private configuration. */
     struct rt_adc_device device;           /**< RT-Thread ADC device object. */
+#if STM32_ADC_USING_DMA_STREAM
+    const struct stm32_dma_config *dma_rx; /**< ADC stream DMA RX configuration. */
+    DMA_HandleTypeDef dma_handle;          /**< HAL DMA handle used by stream mode. */
+#if defined(STM32_ADC_NEEDS_DMA_CACHE_MAINTENANCE)
+    rt_uint32_t *cache_dma_buffer;         /**< Cache-aligned stream DMA buffer when caller buffer is not safe. */
+#endif /* defined(STM32_ADC_NEEDS_DMA_CACHE_MAINTENANCE) */
+#endif /* STM32_ADC_USING_DMA_STREAM */
 };
 
 /*

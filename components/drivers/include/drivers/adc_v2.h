@@ -26,6 +26,12 @@
 #include <rtdevice.h>
 #include <rtthread.h>
 
+
+#if defined(RT_ADC_USING_STREAM) && defined(RT_ADC_STREAM_USING_FIFO)
+#include <ipc/completion.h>
+#include <ipc/ringbuffer.h>
+#endif /* defined(RT_ADC_USING_STREAM) && defined(RT_ADC_STREAM_USING_FIFO) */
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -67,13 +73,15 @@ enum rt_adc_input_mode
 enum rt_adc_state
 {
     RT_ADC_STATE_IDLE = 0, /**< The ADC device is idle. */
-    RT_ADC_STATE_LOCKED   /**< The ADC device is temporarily locked by a framework operation. */
+    RT_ADC_STATE_LOCKED,  /**< The ADC device is temporarily locked by a framework operation. */
+    RT_ADC_STATE_STREAM   /**< The ADC device is owned by an active stream session. */
 };
 
 struct rt_adc_device;
 typedef struct rt_adc_device *rt_adc_device_t;
 
 struct rt_adc_sequence_cfg;
+struct rt_adc_stream_cfg;
 
 /**
  * @brief ADC core driver operation table.
@@ -102,6 +110,7 @@ struct rt_adc_core_ops
      * @return Operation status.
      */
     rt_err_t (*session_config)(struct rt_adc_device *device, rt_uint32_t channels);
+
 
     /**
      * @brief Handle ADC control commands.
@@ -144,6 +153,45 @@ struct rt_adc_sequence_ops
     rt_err_t (*stop)(struct rt_adc_device *device);
 };
 
+#ifdef RT_ADC_USING_STREAM
+/**
+ * @brief ADC stream operation table.
+ */
+struct rt_adc_stream_ops
+{
+    /**
+     * @brief Start one active stream session.
+     * @param device Pointer to the ADC device object.
+     * @param channels ADC channel selection mask.
+     * @param cfg Pointer to the stream configuration object.
+     * @return Operation status.
+     */
+    rt_err_t (*start)(struct rt_adc_device *device, rt_uint32_t channels, const struct rt_adc_stream_cfg *cfg);
+
+    /**
+     * @brief Synchronize a backend DMA sample range before CPU access.
+     * @param device Pointer to the ADC device object.
+     * @param sample_buffer Pointer to the DMA sample buffer.
+     * @param sample_count Number of samples to synchronize.
+     * @return Operation status.
+     */
+    rt_err_t (*sync)(struct rt_adc_device *device, const rt_uint32_t *sample_buffer, rt_size_t sample_count);
+
+    /**
+     * @brief Stop one active stream session.
+     * @param device Pointer to the ADC device object.
+     * @param hardware_stopped Pointer to the hardware-stop state output.
+     * @return Operation status.
+     *
+     * The backend sets @p hardware_stopped to RT_TRUE after the ADC hardware
+     * conversion path has stopped. When this callback returns an error with
+     * @p hardware_stopped set to RT_TRUE, the framework treats it as a
+     * post-stop cleanup failure and moves the stream to IDLE.
+     */
+    rt_err_t (*stop)(struct rt_adc_device *device, rt_bool_t *hardware_stopped);
+};
+#endif /* RT_ADC_USING_STREAM */
+
 
 /**
  * @brief ADC driver operation table.
@@ -152,6 +200,9 @@ struct rt_adc_ops
 {
     const struct rt_adc_core_ops *core;         /**< Core operation table. */
     const struct rt_adc_sequence_ops *sequence; /**< Sequence-session operations. */
+#ifdef RT_ADC_USING_STREAM
+    const struct rt_adc_stream_ops *stream;     /**< Stream-session operations. */
+#endif /* RT_ADC_USING_STREAM */
 };
 
 /**
@@ -163,6 +214,170 @@ struct rt_adc_sequence_cfg
     rt_size_t buffer_length; /**< Destination buffer length in samples. */
     rt_int32_t timeout_ms;   /**< Per-sample timeout; negative means wait forever. */
 };
+
+#ifdef RT_ADC_USING_STREAM
+/**
+ * @brief ADC stream backend event.
+ */
+enum rt_adc_stream_event
+{
+    RT_ADC_STREAM_EVENT_DMA_HALF = 0x01U, /**< ADC stream DMA half-transfer event. */
+    RT_ADC_STREAM_EVENT_DMA_DONE = 0x02U, /**< ADC stream DMA transfer-complete event. */
+    RT_ADC_STREAM_EVENT_ERROR = 0x03U     /**< ADC stream backend error event. */
+};
+
+/**
+ * @brief ADC stream buffering policy.
+ */
+enum rt_adc_stream_policy
+{
+#ifdef RT_ADC_STREAM_USING_LATEST
+    /**
+     * @brief Keep only the latest ADC rank values.
+     *
+     * This policy is intended for slow-changing ADC values such as battery
+     * voltage, temperature, potentiometer input, resistor-divider voltage, or
+     * board status monitoring. Old values may be overwritten.
+     *
+     * In this policy, @ref rt_adc_stream_cfg::dma_buffer_length must be exactly
+     * equal to the active ADC frame length, namely the number of enabled ADC
+     * ranks. The backend must expose the DMA buffer as a single latest-frame
+     * layout:
+     *
+     * - dma_buffer[0] stores the latest value of ADC rank 1.
+     * - dma_buffer[1] stores the latest value of ADC rank 2.
+     * - dma_buffer[n] stores the latest value of ADC rank n + 1.
+     *
+     * STM32 regular scan conversion with circular DMA naturally satisfies this
+     * layout when the DMA length equals the ADC rank count. Backends for other
+     * platforms may also support this policy if their DMA engine writes samples
+     * in scan-rank order. If a backend produces packed, interleaved,
+     * descriptor-based, hardware-FIFO, or otherwise non-rank-ordered data, it
+     * must either convert the data into this latest-frame layout internally or
+     * reject the configuration with -RT_ENOSYS.
+     *
+     * @note Latest mode is a low-overhead lockless DMA-buffer view. CPU-side
+     *       atomic operations, spin locks, mutexes, or read-write locks cannot
+     *       prevent the DMA engine from updating memory concurrently, because
+     *       DMA does not participate in CPU locking protocols. This mode only
+     *       guarantees that each buffer index maps to the corresponding ADC rank
+     *       latest value; it does not guarantee that the copied frame is a
+     *       single hardware scan-cycle snapshot. Use RT_ADC_STREAM_POLICY_FIFO
+     *       when ordered and frame-accurate samples are required.
+     */
+    RT_ADC_STREAM_POLICY_LATEST = 0,
+#endif /* RT_ADC_STREAM_USING_LATEST */
+#ifdef RT_ADC_STREAM_USING_FIFO
+    /**
+     * @brief Preserve ADC samples in FIFO order.
+     *
+     * This policy is intended for continuous and loss-sensitive sampling such
+     * as waveform, current, vibration, audio-like, motor-control, or
+     * control-loop data where each sample matters.
+     *
+     * The backend reports completed DMA blocks to the ADC framework. The
+     * framework copies those blocks into a ringbuffer and wakes blocking readers
+     * through a completion object.
+     */
+    RT_ADC_STREAM_POLICY_FIFO,
+#endif /* RT_ADC_STREAM_USING_FIFO */
+};
+
+/**
+ * @brief ADC stream DMA data event mode.
+ */
+enum rt_adc_stream_dma_event_mode
+{
+    RT_ADC_STREAM_DMA_EVENT_AUTO = 0,  /**< Use the default event mode for the selected stream policy. */
+    RT_ADC_STREAM_DMA_EVENT_NONE,      /**< Disable DMA half/full data events; DMA error events remain enabled. */
+    RT_ADC_STREAM_DMA_EVENT_FULL_ONLY, /**< Report only DMA transfer-complete data events to reduce interrupt rate. */
+    RT_ADC_STREAM_DMA_EVENT_HALF_FULL  /**< Report both DMA half-transfer and transfer-complete data events. */
+};
+
+/**
+ * @brief ADC stream FIFO data callback type.
+ * @param device Pointer to the ADC device object.
+ * @param sample_count Number of newly accepted samples.
+ * @param user_data Pointer to the user context.
+ * @note This callback is invoked from ADC stream ISR context. It must not
+ *       block, sleep, or call APIs that may suspend the current context.
+ */
+typedef void (*rt_adc_stream_callback_t)(struct rt_adc_device *device, rt_size_t sample_count, void *user_data);
+
+/**
+ * @brief ADC stream configuration.
+ * @note The DMA buffer belongs to the caller and must remain valid until
+ *       rt_adc_stream_stop() returns. The stream configuration object only
+ *       needs to remain valid for the duration of rt_adc_stream_start(). A
+ *       backend may use an internal cache-aligned DMA buffer when the caller
+ *       buffer is not safe for platform cache maintenance. Backend drivers must
+ *       copy scalar configuration fields they need after rt_adc_stream_start()
+ *       returns.
+ */
+struct rt_adc_stream_cfg
+{
+    enum rt_adc_stream_policy policy;                  /**< Stream buffering policy. */
+    enum rt_adc_stream_dma_event_mode dma_event_mode;  /**< DMA half/full data event mode. */
+
+    /**
+     * @brief DMA circular staging buffer.
+     *
+     * For RT_ADC_STREAM_POLICY_LATEST, this buffer stores exactly one latest
+     * ADC scan frame. dma_buffer_length must equal the active frame length.
+     * Each element maps to one configured ADC rank.
+     *
+     * For RT_ADC_STREAM_POLICY_FIFO, this buffer is a DMA staging buffer. The
+     * default rt_adc_stream_start() entry validates only basic buffer presence
+     * and capacity. It does not require each DMA data-event block to end on an
+     * ADC scan-frame boundary.
+     *
+     * Use rt_adc_stream_start_frame_aligned_fifo() when continuous FIFO sampling
+     * requires a strict frame-aligned DMA/FIFO layout before the stream starts.
+     */
+    rt_uint32_t *dma_buffer;
+
+    /**
+     * @brief DMA buffer length in samples.
+     */
+    rt_size_t dma_buffer_length;
+#ifdef RT_ADC_STREAM_USING_FIFO
+    rt_uint32_t *fifo_buffer;                          /**< FIFO storage for FIFO policy. */
+    rt_size_t fifo_buffer_length;                      /**< FIFO buffer length in samples. */
+    rt_size_t watermark;                               /**< FIFO wakeup or callback threshold in samples. */
+    rt_adc_stream_callback_t callback;                 /**< Optional ISR-context FIFO data callback. */
+    void *user_data;                                   /**< User data passed to the FIFO data callback. */
+#endif /* RT_ADC_STREAM_USING_FIFO */
+};
+
+/**
+ * @brief ADC stream runtime control block owned by the ADC framework.
+ */
+struct rt_adc_stream_ctrl
+{
+    rt_bool_t active;                                /**< Whether a stream backend session is active. */
+    enum rt_adc_stream_policy policy;                 /**< Active stream buffering policy. */
+    enum rt_adc_stream_dma_event_mode dma_event_mode; /**< Active DMA data event mode. */
+    rt_uint32_t *dma_buffer;                          /**< DMA circular staging buffer. */
+    rt_size_t dma_buffer_length;                      /**< DMA buffer length in samples. */
+    rt_size_t frame_length;                           /**< Samples in one ADC scan frame. */
+#ifdef RT_ADC_STREAM_USING_FIFO
+    struct rt_ringbuffer fifo;                        /**< FIFO storage for FIFO policy. */
+    rt_bool_t fifo_enabled;                           /**< FIFO initialized flag. */
+    /**
+     * @brief Reader wake completion for FIFO stream.
+     *
+     * The FIFO ringbuffer is the source of truth for available data. This
+     * completion object is only a wakeup edge for blocking reads.
+     */
+    struct rt_completion rx_cpt;
+    rt_size_t overflow_count;                         /**< FIFO overrun count. */
+    rt_size_t watermark;                              /**< FIFO wakeup or callback threshold. */
+    rt_adc_stream_callback_t callback;                /**< Optional FIFO data callback. */
+    void *user_data;                                  /**< Callback private data. */
+#endif /* RT_ADC_STREAM_USING_FIFO */
+    rt_atomic_t last_error;                           /**< Atomic last stream backend error. */
+};
+#endif /* RT_ADC_USING_STREAM */
 
 /**
  * @brief ADC active session runtime control block.
@@ -182,8 +397,12 @@ struct rt_adc_device
     struct rt_device parent;                 /**< RT-Thread device object. */
     const struct rt_adc_ops *ops;            /**< ADC driver operation table. */
     rt_atomic_t state;                       /**< Atomic ADC runtime state. */
+    struct rt_spinlock spinlock;             /**< Protects ADC stream FIFO shared by thread context and ISR. */
     rt_uint32_t default_vref_mv;             /**< Default reference voltage in millivolts. */
     struct rt_adc_session_ctrl session_ctrl; /**< ADC active session control block. */
+#ifdef RT_ADC_USING_STREAM
+    struct rt_adc_stream_ctrl stream_ctrl;   /**< ADC stream runtime control block. */
+#endif /* RT_ADC_USING_STREAM */
 };
 
 /**
@@ -269,6 +488,63 @@ rt_err_t rt_adc_session_channel_index(rt_uint32_t session_channels, rt_uint32_t 
  */
 rt_err_t rt_adc_read_sequence(rt_adc_device_t device, rt_uint32_t channels,
                               const struct rt_adc_sequence_cfg *cfg, rt_size_t *read_count);
+
+#ifdef RT_ADC_USING_STREAM
+/**
+ * @brief Start one ADC stream session.
+ * @param device Pointer to the ADC device object.
+ * @param channels ADC channel selection mask.
+ * @param cfg Pointer to the ADC stream configuration object.
+ * @return Operation status.
+ */
+rt_err_t rt_adc_stream_start(rt_adc_device_t device, rt_uint32_t channels, const struct rt_adc_stream_cfg *cfg);
+
+#ifdef RT_ADC_STREAM_USING_FIFO
+/**
+ * @brief Start one FIFO ADC stream with strict frame-aligned buffer layout.
+ * @param device Pointer to the ADC device object.
+ * @param channels ADC channel selection mask.
+ * @param cfg Pointer to the ADC stream configuration object.
+ * @return Operation status.
+ */
+rt_err_t rt_adc_stream_start_frame_aligned_fifo(rt_adc_device_t device, rt_uint32_t channels, const struct rt_adc_stream_cfg *cfg);
+#endif /* RT_ADC_STREAM_USING_FIFO */
+
+/**
+ * @brief Read converted samples from an active ADC stream session.
+ * @param device Pointer to the ADC device object.
+ * @param buffer Pointer to the destination sample buffer.
+ * @param sample_count Number of samples to read.
+ * @param timeout_ms Read timeout in milliseconds; negative means wait forever.
+ * @return Number of samples read, or a negative RT-Thread error code.
+ */
+rt_ssize_t rt_adc_stream_read(rt_adc_device_t device, rt_uint32_t *buffer, rt_size_t sample_count, rt_int32_t timeout_ms);
+
+/**
+ * @brief Cancel a blocked ADC stream reader before stream shutdown.
+ * @param device Pointer to the ADC device object.
+ * @return Operation status.
+ */
+rt_err_t rt_adc_stream_cancel(rt_adc_device_t device);
+
+/**
+ * @brief Stop one ADC stream session.
+ * @param device Pointer to the ADC device object.
+ * @return Operation status.
+ */
+rt_err_t rt_adc_stream_stop(rt_adc_device_t device);
+
+/**
+ * @brief Notify the ADC framework of one stream backend event.
+ * @param device Pointer to the ADC device object.
+ * @param event ADC stream event reported by the backend or ISR.
+ * @param sample_buffer Pointer to the completed sample buffer block.
+ * @param sample_count Number of samples in @p sample_buffer.
+ * @return Operation status.
+ */
+rt_err_t rt_hw_adc_stream_isr(rt_adc_device_t device, enum rt_adc_stream_event event,
+                               const rt_uint32_t *sample_buffer, rt_size_t sample_count);
+#endif /* RT_ADC_USING_STREAM */
 
 /**
  * @brief Convert one raw ADC sample to millivolts.

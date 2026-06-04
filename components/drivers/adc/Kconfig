@@ -9,6 +9,63 @@ menuconfig RT_USING_ADC_V2
 
 if RT_USING_ADC_V2
 
+
+config RT_ADC_USING_STREAM
+    bool "Enable ADC stream framework"
+    default n
+    help
+        Enable long-running ADC stream sessions.
+
+        Disable this option to remove ADC stream runtime state, stream APIs,
+        and stream backend hooks from the ADC V2 framework.
+
+if RT_ADC_USING_STREAM
+
+menu "ADC stream buffering policies"
+
+config RT_ADC_STREAM_USING_LATEST
+    bool "Enable ADC stream latest-frame policy"
+    default y
+    help
+        Enable the latest-frame ADC stream policy.
+
+        This mode is intended for slow-changing or status-like ADC values, such
+        as battery voltage, temperature, potentiometer input, resistor-divider
+        voltage, or board health monitoring.
+
+        The DMA buffer stores exactly one complete ADC scan frame. Old values
+        may be overwritten. This mode does not require DMA half-transfer or
+        transfer-complete data interrupts, and it does not allocate a framework
+        FIFO.
+
+        This option may be enabled together with RT_ADC_STREAM_USING_FIFO. The
+        active policy is selected per stream at runtime.
+
+config RT_ADC_STREAM_USING_FIFO
+    bool "Enable ADC stream FIFO policy"
+    default n
+    help
+        Enable the FIFO ADC stream policy.
+
+        This mode is intended for continuous and loss-sensitive sampling. The
+        DMA buffer is used as a staging buffer, and completed DMA data events
+        are copied into a ringbuffer for ordered blocking reads.
+
+        FIFO mode requires DMA data events. The default DMA event mode uses both
+        half-transfer and transfer-complete events to reduce read latency. A
+        stream configuration may select full-only events to reduce interrupt
+        frequency, at the cost of higher latency and larger data bursts.
+
+        This option may be enabled together with RT_ADC_STREAM_USING_LATEST. The
+        active policy is selected per stream at runtime.
+
+comment "At least one ADC stream buffering policy should be enabled"
+    depends on !RT_ADC_STREAM_USING_LATEST && !RT_ADC_STREAM_USING_FIFO
+
+endmenu
+
+endif
+
 config RT_ADC_V2_USING_MSH
     bool "Enable ADC V2 MSH command"
     depends on RT_USING_FINSH
@@ -18,6 +75,10 @@ config RT_ADC_V2_USING_MSH
 
         This option exports the "adc" shell command for probing ADC devices,
         configuring channels, reading raw samples, reading voltage values, and
-        reading one ADC sequence.
+        reading one ADC sequence. When RT_ADC_USING_STREAM is enabled, stream
+        subcommands are also available.
+
+        Disable this option to remove the ADC V2 shell command while keeping
+        the ADC V2 framework and driver APIs available.
 
 endif

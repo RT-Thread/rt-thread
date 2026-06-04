@@ -55,6 +55,49 @@ if BSP_USING_ADC_V2
         bool "Enable ADC4"
         depends on (SOC_SERIES_STM32F3 || SOC_SERIES_STM32G4 || SOC_SERIES_STM32U5)
         default n
+
+    config BSP_ADC_USING_STREAM_DMA
+        bool
+
+    config BSP_ADC1_USING_DMA
+        bool "Enable ADC1 stream DMA backend"
+        depends on BSP_USING_ADC1
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC1 DMA backend for ADC V2 stream sessions.
+
+            This option only enables the board-level DMA backend. The stream
+            framework and buffering policies are controlled by RT_ADC_USING_STREAM,
+            RT_ADC_STREAM_USING_LATEST, and RT_ADC_STREAM_USING_FIFO.
+
+    config BSP_ADC2_USING_DMA
+        bool "Enable ADC2 stream DMA backend"
+        depends on BSP_USING_ADC2
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC2 DMA backend for ADC V2 stream sessions.
+
+    config BSP_ADC3_USING_DMA
+        bool "Enable ADC3 stream DMA backend"
+        depends on BSP_USING_ADC3
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC3 DMA backend for ADC V2 stream sessions.
+
+    config BSP_ADC4_USING_DMA
+        bool "Enable ADC4 stream DMA backend"
+        depends on BSP_USING_ADC4
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC4 DMA backend for ADC V2 stream sessions.
 endif
 
 config BSP_USING_CRC

@@ -1342,6 +1342,66 @@ static rt_err_t stm32_adc_apply_regular_config(struct stm32_adc *adc, rt_uint32_
     return stm32_adc_configure_session_ranks(adc, channels);
 }
 
+
+#if STM32_ADC_USING_DMA_STREAM
+/**
+ * @brief Apply one complete regular ADC configuration for circular DMA stream mode.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param channels ADC channel selection mask.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_apply_stream_regular_config(struct stm32_adc *adc, rt_uint32_t channels)
+{
+    HAL_StatusTypeDef status;
+    rt_size_t channel_count;
+    rt_err_t result;
+
+    channel_count = rt_adc_channel_mask_count(channels);
+    if ((channel_count == 0U) || (channel_count > STM32_ADC_MAX_SEQUENCE))
+    {
+        return -RT_EINVAL;
+    }
+
+    result = stm32_adc_fill_init(adc);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    result = stm32_adc_apply_oversampling(adc);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    adc->handle.Init.ScanConvMode = (channel_count > 1U) ? STM32_ADC_SCAN_MODE_ENABLE : STM32_ADC_SCAN_MODE_DISABLE;
+#if defined(STM32_ADC_HAS_INIT_NBR_OF_CONVERSION)
+    adc->handle.Init.NbrOfConversion = channel_count;
+#endif /* defined(STM32_ADC_HAS_INIT_NBR_OF_CONVERSION) */
+#if defined(STM32_ADC_HAS_INIT_EOC_SELECTION) && defined(ADC_EOC_SEQ_CONV)
+    adc->handle.Init.EOCSelection = ADC_EOC_SEQ_CONV;
+#elif defined(STM32_ADC_HAS_INIT_EOC_SELECTION)
+    adc->handle.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
+#endif /* defined(STM32_ADC_HAS_INIT_EOC_SELECTION) && defined(ADC_EOC_SEQ_CONV) */
+#if defined(STM32_ADC_HAS_INIT_CONVERSION_DATA_MANAGEMENT)
+    adc->handle.Init.ConversionDataManagement = ADC_CONVERSIONDATA_DMA_CIRCULAR;
+#endif /* defined(STM32_ADC_HAS_INIT_CONVERSION_DATA_MANAGEMENT) */
+#if defined(STM32_ADC_HAS_INIT_DMA_CONT_REQUESTS)
+    adc->handle.Init.DMAContinuousRequests = ENABLE;
+#endif /* defined(STM32_ADC_HAS_INIT_DMA_CONT_REQUESTS) */
+    adc->handle.Init.ContinuousConvMode = ENABLE;
+
+    status = HAL_ADC_Init(&adc->handle);
+    if (status != HAL_OK)
+    {
+        LOG_E("%s stream regular init failed", adc->name);
+        return stm32_hal_status_to_rt_err(status);
+    }
+
+    return stm32_adc_configure_session_ranks(adc, channels);
+}
+#endif /* STM32_ADC_USING_DMA_STREAM */
+
 /**
  * @brief Configure one ADC conversion session on one STM32 ADC device.
  * @param device Pointer to the ADC device object.
@@ -1451,6 +1511,507 @@ static rt_err_t stm32_adc_sequence_stop(struct rt_adc_device *device)
 
     return result;
 }
+
+#if STM32_ADC_USING_DMA_STREAM
+#if defined(STM32_ADC_NEEDS_DMA_CACHE_MAINTENANCE)
+/** @brief STM32 Cortex-M7 D-Cache line size used by DMA buffers. */
+#define STM32_ADC_DMA_CACHE_LINE_SIZE 32U
+
+/**
+ * @brief Release any cache-aligned ADC stream DMA buffer owned by the driver.
+ * @param adc Pointer to the STM32 ADC device object.
+ */
+static void stm32_adc_stream_release_cache_buffer(struct stm32_adc *adc)
+{
+    if ((adc != RT_NULL) && (adc->cache_dma_buffer != RT_NULL))
+    {
+        LOG_D("%s stream cache buffer release: buffer=%p", adc->name, adc->cache_dma_buffer);
+        rt_free_align(adc->cache_dma_buffer);
+        adc->cache_dma_buffer = RT_NULL;
+    }
+}
+
+/**
+ * @brief Select a D-Cache-safe DMA buffer for one ADC stream session.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param cfg Pointer to the stream configuration object.
+ * @param dma_buffer Pointer to the selected DMA buffer output.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_stream_prepare_cache_buffer(struct stm32_adc *adc, const struct rt_adc_stream_cfg *cfg,
+                                                      rt_uint32_t **dma_buffer)
+{
+    rt_size_t bytes;
+    rt_size_t cache_bytes;
+
+    bytes = cfg->dma_buffer_length * sizeof(rt_uint32_t);
+    cache_bytes = RT_ALIGN(bytes, STM32_ADC_DMA_CACHE_LINE_SIZE);
+    stm32_adc_stream_release_cache_buffer(adc);
+
+    if (RT_IS_ALIGN((rt_ubase_t)cfg->dma_buffer, STM32_ADC_DMA_CACHE_LINE_SIZE) &&
+        RT_IS_ALIGN(bytes, STM32_ADC_DMA_CACHE_LINE_SIZE))
+    {
+        *dma_buffer = cfg->dma_buffer;
+        LOG_D("%s stream cache buffer direct: buffer=%p bytes=%u", adc->name, *dma_buffer, (unsigned int)bytes);
+    }
+    else
+    {
+        adc->cache_dma_buffer = (rt_uint32_t *)rt_malloc_align(cache_bytes, STM32_ADC_DMA_CACHE_LINE_SIZE);
+        if (adc->cache_dma_buffer == RT_NULL)
+        {
+            LOG_E("%s stream cache buffer alloc failed: bytes=%u aligned=%u",
+                  adc->name, (unsigned int)bytes, (unsigned int)cache_bytes);
+            return -RT_ENOMEM;
+        }
+
+        *dma_buffer = adc->cache_dma_buffer;
+        LOG_W("%s stream cache buffer fallback: caller=%p dma=%p bytes=%u",
+              adc->name, cfg->dma_buffer, *dma_buffer, (unsigned int)bytes);
+    }
+
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, *dma_buffer, cache_bytes);
+    adc->device.stream_ctrl.dma_buffer = *dma_buffer;
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Invalidate a completed ADC stream DMA RX sample range.
+ * @param device Pointer to the ADC device object.
+ * @param sample_buffer Pointer to the sample buffer to synchronize.
+ * @param sample_count Number of samples to synchronize.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_stream_sync(struct rt_adc_device *device, const rt_uint32_t *sample_buffer, rt_size_t sample_count)
+{
+    rt_ubase_t start;
+    rt_ubase_t end;
+    rt_ubase_t aligned_start;
+    rt_ubase_t aligned_end;
+
+    if ((device == RT_NULL) || (sample_buffer == RT_NULL) || (sample_count == 0U))
+    {
+        return -RT_EINVAL;
+    }
+
+    start = (rt_ubase_t)sample_buffer;
+    end = start + sample_count * sizeof(rt_uint32_t);
+    aligned_start = RT_ALIGN_DOWN(start, STM32_ADC_DMA_CACHE_LINE_SIZE);
+    aligned_end = RT_ALIGN(end, STM32_ADC_DMA_CACHE_LINE_SIZE);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, (void *)aligned_start, aligned_end - aligned_start);
+
+    return RT_EOK;
+}
+#else
+/**
+ * @brief Release any cache-aligned ADC stream DMA buffer owned by the driver.
+ * @param adc Pointer to the STM32 ADC device object.
+ */
+static void stm32_adc_stream_release_cache_buffer(struct stm32_adc *adc)
+{
+    RT_UNUSED(adc);
+}
+
+/**
+ * @brief Select the caller-owned DMA buffer for one ADC stream session.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param cfg Pointer to the stream configuration object.
+ * @param dma_buffer Pointer to the selected DMA buffer output.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_stream_prepare_cache_buffer(struct stm32_adc *adc, const struct rt_adc_stream_cfg *cfg,
+                                                      rt_uint32_t **dma_buffer)
+{
+    RT_UNUSED(adc);
+
+    *dma_buffer = cfg->dma_buffer;
+    return RT_EOK;
+}
+
+/**
+ * @brief Synchronize a backend DMA sample range before CPU access.
+ * @param device Pointer to the ADC device object.
+ * @param sample_buffer Pointer to the DMA sample buffer.
+ * @param sample_count Number of samples to synchronize.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_stream_sync(struct rt_adc_device *device, const rt_uint32_t *sample_buffer, rt_size_t sample_count)
+{
+    RT_UNUSED(device);
+    RT_UNUSED(sample_buffer);
+    RT_UNUSED(sample_count);
+
+    return RT_EOK;
+}
+#endif /* defined(STM32_ADC_NEEDS_DMA_CACHE_MAINTENANCE) */
+
+/**
+ * @brief Configure STM32 DMA transfer event interrupts for one stream session.
+ * @param dma_handle Pointer to the DMA handle linked to the ADC stream.
+ * @param mode Effective ADC stream DMA event mode.
+ */
+static void stm32_adc_stream_configure_dma_events(DMA_HandleTypeDef *dma_handle, enum rt_adc_stream_dma_event_mode mode)
+{
+    if (dma_handle == RT_NULL)
+    {
+        return;
+    }
+
+    if (mode == RT_ADC_STREAM_DMA_EVENT_NONE)
+    {
+        __HAL_DMA_DISABLE_IT(dma_handle, DMA_IT_HT);
+        __HAL_DMA_DISABLE_IT(dma_handle, DMA_IT_TC);
+    }
+    else if (mode == RT_ADC_STREAM_DMA_EVENT_FULL_ONLY)
+    {
+        __HAL_DMA_DISABLE_IT(dma_handle, DMA_IT_HT);
+        __HAL_DMA_ENABLE_IT(dma_handle, DMA_IT_TC);
+    }
+    else
+    {
+        __HAL_DMA_ENABLE_IT(dma_handle, DMA_IT_HT);
+        __HAL_DMA_ENABLE_IT(dma_handle, DMA_IT_TC);
+    }
+}
+
+/**
+ * @brief Start one STM32 ADC stream session using circular DMA.
+ * @param device Pointer to the ADC device object.
+ * @param channels ADC channel selection mask.
+ * @param cfg Pointer to the stream configuration object.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_stream_start(struct rt_adc_device *device, rt_uint32_t channels, const struct rt_adc_stream_cfg *cfg)
+{
+    struct stm32_adc *adc;
+    HAL_StatusTypeDef status;
+    rt_uint32_t *dma_buffer;
+    rt_err_t result;
+
+    adc = RT_NULL;
+    dma_buffer = RT_NULL;
+    result = RT_EOK;
+
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if ((adc == RT_NULL) || (adc->dma_rx == RT_NULL))
+    {
+        result = -RT_ENOSYS;
+        goto exit;
+    }
+
+    result = stm32_adc_apply_stream_regular_config(adc, channels);
+    if (result != RT_EOK)
+    {
+        goto exit;
+    }
+
+    result = stm32_adc_stream_prepare_cache_buffer(adc, cfg, &dma_buffer);
+    if (result != RT_EOK)
+    {
+        goto exit;
+    }
+
+    result = stm32_dma_setup(&adc->dma_handle, &adc->handle, &adc->handle.DMA_Handle, adc->dma_rx);
+    if (result != RT_EOK)
+    {
+        goto exit;
+    }
+
+    status = HAL_ADC_Start_DMA(&adc->handle, dma_buffer, (uint32_t)cfg->dma_buffer_length);
+    if (status != HAL_OK)
+    {
+        result = stm32_hal_status_to_rt_err(status);
+        goto exit;
+    }
+
+    stm32_adc_stream_configure_dma_events(&adc->dma_handle, adc->device.stream_ctrl.dma_event_mode);
+exit:
+    if (result != RT_EOK)
+    {
+        LOG_E("%s stream startfailed: result=%d", adc->name, result);
+    }
+
+    return result;
+}
+
+/**
+ * @brief Stop one STM32 ADC stream session and release DMA resources.
+ * @param device Pointer to the ADC device object.
+ * @param hardware_stopped Pointer to the hardware-stop state output.
+ * @return Operation status.
+ */
+static rt_err_t stm32_adc_stream_stop(struct rt_adc_device *device, rt_bool_t *hardware_stopped)
+{
+    struct stm32_adc *adc;
+    HAL_StatusTypeDef status;
+    rt_bool_t hal_stopped;
+    rt_bool_t dma_attached;
+    rt_bool_t dma_released;
+    rt_err_t result;
+
+    *hardware_stopped = RT_FALSE;
+    adc = (struct stm32_adc *)device->parent.user_data;
+    if (adc == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    result = RT_EOK;
+    hal_stopped = RT_FALSE;
+    dma_released = RT_FALSE;
+    dma_attached = (adc->handle.DMA_Handle == &adc->dma_handle) ? RT_TRUE : RT_FALSE;
+
+    if (dma_attached != RT_TRUE)
+    {
+        adc->handle.DMA_Handle = RT_NULL;
+        adc->dma_handle.Parent = RT_NULL;
+        stm32_adc_stream_release_cache_buffer(adc);
+        *hardware_stopped = RT_TRUE;
+        return RT_EOK;
+    }
+
+    status = HAL_ADC_Stop_DMA(&adc->handle);
+    if (status == HAL_OK)
+    {
+        hal_stopped = RT_TRUE;
+    }
+    else
+    {
+        result = stm32_hal_status_to_rt_err(status);
+        LOG_W("%s stream DMA stop returned %d, continue cleanup", adc->name, result);
+    }
+
+    if (adc->dma_rx != RT_NULL)
+    {
+        rt_err_t dma_result;
+
+        dma_result = stm32_dma_deinit(&adc->dma_handle, adc->dma_rx, (hal_stopped == RT_TRUE) ? RT_FALSE : RT_TRUE);
+        if (dma_result == RT_EOK)
+        {
+            dma_released = RT_TRUE;
+        }
+        else
+        {
+            LOG_E("%s stream DMA cleanup failed after stop: result=%d", adc->name, dma_result);
+            if (result == RT_EOK)
+            {
+                result = dma_result;
+            }
+        }
+    }
+    else if (hal_stopped == RT_TRUE)
+    {
+        dma_released = RT_TRUE;
+    }
+
+    if ((hal_stopped == RT_TRUE) || (dma_released == RT_TRUE))
+    {
+        adc->handle.DMA_Handle = RT_NULL;
+        adc->dma_handle.Parent = RT_NULL;
+        stm32_adc_stream_release_cache_buffer(adc);
+        *hardware_stopped = RT_TRUE;
+        return result;
+    }
+
+    return (result != RT_EOK) ? result : -RT_ERROR;
+}
+
+/**
+ * @brief Check whether a HAL ADC handle belongs to an active stream DMA session.
+ * @param adc Pointer to the STM32 ADC device object.
+ * @param hadc Pointer to the HAL ADC handle.
+ * @return RT_TRUE when the handle is attached to the stream DMA backend.
+ */
+static rt_bool_t stm32_adc_stream_dma_is_active(const struct stm32_adc *adc, const ADC_HandleTypeDef *hadc)
+{
+    if (hadc->DMA_Handle != &adc->dma_handle)
+    {
+        return RT_FALSE;
+    }
+
+    return (adc->device.stream_ctrl.active == RT_TRUE) ? RT_TRUE : RT_FALSE;
+}
+
+#ifdef RT_ADC_STREAM_USING_FIFO
+/**
+ * @brief Dispatch one ADC stream DMA completion event to the ADC framework.
+ * @param hadc Pointer to the HAL ADC handle.
+ * @param event DMA stream event to report.
+ */
+static void stm32_adc_stream_dma_callback(ADC_HandleTypeDef *hadc, enum rt_adc_stream_event event)
+{
+    struct stm32_adc *adc;
+    struct rt_adc_stream_ctrl *ctrl;
+    const rt_uint32_t *sample_buffer;
+    rt_size_t half;
+    rt_size_t sample_count;
+    rt_err_t result;
+
+    RT_ASSERT(hadc != RT_NULL);
+    adc = (struct stm32_adc *)hadc;
+    if (stm32_adc_stream_dma_is_active(adc, hadc) != RT_TRUE)
+    {
+        return;
+    }
+
+    ctrl = &adc->device.stream_ctrl;
+    sample_buffer = RT_NULL;
+    sample_count = 0U;
+
+    if (ctrl->policy != RT_ADC_STREAM_POLICY_FIFO)
+    {
+        return;
+    }
+
+    if (ctrl->dma_event_mode == RT_ADC_STREAM_DMA_EVENT_FULL_ONLY)
+    {
+        if (event != RT_ADC_STREAM_EVENT_DMA_DONE)
+        {
+            return;
+        }
+        sample_buffer = ctrl->dma_buffer;
+        sample_count = ctrl->dma_buffer_length;
+    }
+    else if (ctrl->dma_event_mode == RT_ADC_STREAM_DMA_EVENT_HALF_FULL)
+    {
+        half = ctrl->dma_buffer_length / 2U;
+        if (event == RT_ADC_STREAM_EVENT_DMA_DONE)
+        {
+            sample_buffer = &ctrl->dma_buffer[half];
+            sample_count = ctrl->dma_buffer_length - half;
+        }
+        else
+        {
+            sample_buffer = ctrl->dma_buffer;
+            sample_count = half;
+        }
+    }
+
+    if (sample_count == 0U)
+    {
+        return;
+    }
+
+    result = stm32_adc_stream_sync(&adc->device, sample_buffer, sample_count);
+    if (result != RT_EOK)
+    {
+        rt_atomic_store(&ctrl->last_error, (rt_atomic_t)result);
+        event = RT_ADC_STREAM_EVENT_ERROR;
+        sample_buffer = RT_NULL;
+        sample_count = 0U;
+    }
+
+    (void)rt_hw_adc_stream_isr(&adc->device, event, sample_buffer, sample_count);
+}
+
+/**
+ * @brief HAL ADC DMA half-transfer callback.
+ * @param hadc Pointer to the HAL ADC handle.
+ */
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    stm32_adc_stream_dma_callback(hadc, RT_ADC_STREAM_EVENT_DMA_HALF);
+}
+
+/**
+ * @brief HAL ADC DMA transfer-complete callback.
+ * @param hadc Pointer to the HAL ADC handle.
+ */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    stm32_adc_stream_dma_callback(hadc, RT_ADC_STREAM_EVENT_DMA_DONE);
+}
+
+#else
+/**
+ * @brief HAL ADC DMA half-transfer callback.
+ * @param hadc Pointer to the HAL ADC handle.
+ */
+void HAL_ADC_ConvHalfCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    RT_UNUSED(hadc);
+}
+
+/**
+ * @brief HAL ADC DMA transfer-complete callback.
+ * @param hadc Pointer to the HAL ADC handle.
+ */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+    RT_UNUSED(hadc);
+}
+#endif /* RT_ADC_STREAM_USING_FIFO */
+
+/**
+ * @brief HAL ADC error callback.
+ * @param hadc Pointer to the HAL ADC handle.
+ */
+void HAL_ADC_ErrorCallback(ADC_HandleTypeDef *hadc)
+{
+    struct stm32_adc *adc;
+    struct rt_adc_stream_ctrl *ctrl;
+
+    RT_ASSERT(hadc != RT_NULL);
+    adc = (struct stm32_adc *)hadc;
+    if (stm32_adc_stream_dma_is_active(adc, hadc) != RT_TRUE)
+    {
+        return;
+    }
+
+    ctrl = &adc->device.stream_ctrl;
+    rt_atomic_store(&ctrl->last_error, (rt_atomic_t)-RT_ERROR);
+    LOG_E("%s stream HAL ADC error: error_code=0x%08lx", adc->name, (unsigned long)hadc->ErrorCode);
+    (void)rt_hw_adc_stream_isr(&adc->device, RT_ADC_STREAM_EVENT_ERROR, RT_NULL, 0U);
+}
+
+#if defined(BSP_USING_ADC1) && defined(BSP_ADC1_USING_DMA)
+/**
+ * @brief ADC1 DMA interrupt handler.
+ */
+void ADC1_DMA_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    HAL_DMA_IRQHandler(&stm32_adc_obj[ADC1_INDEX].dma_handle);
+    rt_interrupt_leave();
+}
+#endif /* defined(BSP_USING_ADC1) && defined(BSP_ADC1_USING_DMA) */
+
+#if defined(BSP_USING_ADC2) && defined(BSP_ADC2_USING_DMA)
+/**
+ * @brief ADC2 DMA interrupt handler.
+ */
+void ADC2_DMA_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    HAL_DMA_IRQHandler(&stm32_adc_obj[ADC2_INDEX].dma_handle);
+    rt_interrupt_leave();
+}
+#endif /* defined(BSP_USING_ADC2) && defined(BSP_ADC2_USING_DMA) */
+
+#if defined(BSP_USING_ADC3) && defined(BSP_ADC3_USING_DMA)
+/**
+ * @brief ADC3 DMA interrupt handler.
+ */
+void ADC3_DMA_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    HAL_DMA_IRQHandler(&stm32_adc_obj[ADC3_INDEX].dma_handle);
+    rt_interrupt_leave();
+}
+#endif /* defined(BSP_USING_ADC3) && defined(BSP_ADC3_USING_DMA) */
+
+#if defined(BSP_USING_ADC4) && defined(BSP_ADC4_USING_DMA)
+/**
+ * @brief ADC4 DMA interrupt handler.
+ */
+void ADC4_DMA_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    HAL_DMA_IRQHandler(&stm32_adc_obj[ADC4_INDEX].dma_handle);
+    rt_interrupt_leave();
+}
+#endif /* defined(BSP_USING_ADC4) && defined(BSP_ADC4_USING_DMA) */
+#endif /* STM32_ADC_USING_DMA_STREAM */
 
 #if defined(STM32_ADC_HAS_LL_VREF_CALC)
 /**
@@ -1593,12 +2154,26 @@ static const struct rt_adc_sequence_ops stm32_adc_sequence_ops = {
     .stop = stm32_adc_sequence_stop,
 };
 
+#if STM32_ADC_USING_DMA_STREAM
+/**
+ * @brief STM32 ADC stream-session operation table.
+ */
+static const struct rt_adc_stream_ops stm32_adc_stream_ops = {
+    .start = stm32_adc_stream_start,
+    .sync = stm32_adc_stream_sync,
+    .stop = stm32_adc_stream_stop,
+};
+#endif /* STM32_ADC_USING_DMA_STREAM */
+
 /**
  * @brief STM32 ADC operation table.
  */
 static const struct rt_adc_ops stm32_adc_ops = {
     .core = &stm32_adc_core_ops,
     .sequence = &stm32_adc_sequence_ops,
+#if STM32_ADC_USING_DMA_STREAM
+    .stream = &stm32_adc_stream_ops,
+#endif /* STM32_ADC_USING_DMA_STREAM */
 };
 
 /**
