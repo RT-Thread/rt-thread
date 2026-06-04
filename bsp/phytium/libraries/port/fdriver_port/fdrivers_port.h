@@ -51,7 +51,6 @@ void FDriverICacheRangeInvalidate(uintptr_t adr, size_t len);
 void FDriverICacheInvalidate(void);
 
 void FDriverDCacheInvalidate(void);
-
 /* memory barrier */
 
 #define FDRIVER_DSB() DSB()

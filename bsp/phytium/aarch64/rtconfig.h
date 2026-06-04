@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 18
+#define RT_NAME_MAX 16
 #define RT_USING_AMP
 #define RT_AMP_SLAVE
 #define RT_CPUS_NR 1
@@ -209,8 +209,6 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CLOCK_TIME
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -218,10 +216,6 @@
 #define RT_USING_SPI
 #define RT_USING_SPI_ISR
 #define RT_USING_QSPI
-#define RT_USING_AUDIO
-#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
-#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 1
-#define RT_AUDIO_RECORD_PIPE_SIZE 4096
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -481,21 +475,10 @@
 
 /* On-chip Peripheral Drivers */
 
-#define BSP_USING_DRIVERS_EXAMPLE
 #define BSP_USING_IOPAD
 #define BSP_USING_UART_LAYER
 #define BSP_USING_UART
 #define RT_USING_UART1
-#define BSP_USING_I2C_LAYER
-#define BSP_USING_I2C
-#define I2C_USE_MIO
-#define RT_USING_MIO14
-#define RT_USING_MIO15
-#define BSP_USING_I2S_LAYER
-#define BSP_USING_I2S
-#define RT_USING_I2S0
-#define BSP_USING_DEVICE
-#define BSP_USING_ES8336
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
@@ -517,10 +500,10 @@
 
 /* Soc configuration */
 
-#define TARGET_PE2202
+#define TARGET_PE2204
 #define SOC_NAME "pe220x"
-#define TARGET_TYPE_NAME "pe2202"
-#define SOC_CORE_NUM 2
+#define TARGET_TYPE_NAME "pe2204"
+#define SOC_CORE_NUM 4
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
@@ -531,8 +514,8 @@
 
 /* Board Configuration */
 
-#define E2000D_DEMO_BOARD
-#define BOARD_NAME "pe2202_demo"
+#define BOARD_NAME "phytiumpi"
+#define PHYTIUMPI_FIREFLY_BOARD
 
 /* IO mux configuration when board start up */
 
