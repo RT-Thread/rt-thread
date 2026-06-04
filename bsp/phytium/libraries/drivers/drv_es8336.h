@@ -25,8 +25,8 @@
  *  1.0   wangzongqiang    2025/10/23    init
  */
 
-#ifndef ES8336_REG
-#define ES8336_REG
+#ifndef __DRV_ES8336_H__
+#define __DRV_ES8336_H__
 
 #ifdef __cplusplus
 extern "C" {
