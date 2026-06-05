@@ -11,7 +11,6 @@ board.e2000d_demo_rtthread:
       - devices.qspi
       - devices.xmac
       - devices.sdif
-      - devices.dc
       - devices.devices_auto_test
     kconfig:
       - CONFIG_TARGET_PE2202=y
@@ -34,8 +33,6 @@ board.e2000d_demo_rtthread:
       - CONFIG_USE_SDIF0_EMMC=y
       - CONFIG_RT_SDIO_STACK_SIZE=4096
       - CONFIG_RT_MMCSD_STACK_SIZE=4096
-      - CONFIG_RT_USING_DC_CHANNEL0=y
-      - CONFIG_RT_USING_DC_CHANNEL1=y
       - CONFIG_BSP_USING_ES8336=y
       - CONFIG_I2C_USE_MIO=y
 
@@ -52,11 +49,10 @@ board.e2000q_demo_rtthread:
       - devices.qspi
       - devices.xmac
       - devices.sdif
-      - devices.dc
     kconfig:
       - CONFIG_TARGET_PE2204=y
       - CONFIG_E2000Q_DEMO_BOARD=y
-      - CONFIG_RT_CPUS_NR=2
+      - CONFIG_RT_CPUS_NR=4
       - CONFIG_RT_USING_UART1=y
       - CONFIG_RT_USING_MIO15=y
       - CONFIG_RT_USING_CAN0=y
@@ -74,8 +70,6 @@ board.e2000q_demo_rtthread:
       - CONFIG_USE_SDIF0_EMMC=y
       - CONFIG_RT_SDIO_STACK_SIZE=4096
       - CONFIG_RT_MMCSD_STACK_SIZE=4096
-      - CONFIG_RT_USING_DC_CHANNEL0=y
-      - CONFIG_RT_USING_DC_CHANNEL1=y
       - CONFIG_BSP_USING_ES8336=y
       - CONFIG_I2C_USE_MIO=y
 
@@ -89,7 +83,6 @@ board.phytium_pi_rtthread:
       - devices.qspi
       - devices.xmac
       - devices.sdif
-      - devices.dc
       - devices.devices_auto_test
     kconfig:
       - CONFIG_TARGET_PE2204=y
@@ -105,7 +98,6 @@ board.phytium_pi_rtthread:
       - CONFIG_USING_SDIF1=y
       - CONFIG_USE_SDIF1_TF=y
       - CONFIG_RT_SDIO_STACK_SIZE=4096
-      - CONFIG_RT_USING_DC_CHANNEL0=y
       - CONFIG_I2C_USE_MIO=y
 
 board.e2000d_demo_rtthread_pusb2_dc:
