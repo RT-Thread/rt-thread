@@ -208,6 +208,11 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_CAN
+#define RT_CANMSG_BOX_SZ 16
+#define RT_CANSND_BOX_NUM 1
+#define RT_CANSND_MSG_TIMEOUT 100
+#define RT_CAN_NB_TX_FIFO_SIZE 256
 #define RT_USING_CLOCK_TIME
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
@@ -481,21 +486,10 @@
 
 /* On-chip Peripheral Drivers */
 
-#define BSP_USING_DRIVERS_EXAMPLE
 #define BSP_USING_IOPAD
 #define BSP_USING_UART_LAYER
 #define BSP_USING_UART
 #define RT_USING_UART1
-#define BSP_USING_I2C_LAYER
-#define BSP_USING_I2C
-#define I2C_USE_MIO
-#define RT_USING_MIO14
-#define RT_USING_MIO15
-#define BSP_USING_I2S_LAYER
-#define BSP_USING_I2S
-#define RT_USING_I2S0
-#define BSP_USING_DEVICE
-#define BSP_USING_ES8336
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
