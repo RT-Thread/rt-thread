@@ -1,29 +1,24 @@
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <rtconfig.h>
 
 #if defined(E2000D_DEMO_BOARD)||defined(E2000Q_DEMO_BOARD)
-    #define SOUND_DEVICE_NAME    "I2S0"
+    #define AUDIO_DEVICE_NAME    "I2S0"
 #endif
 #if defined(PD2408_TEST_B_BOARD)
-    #define SOUND_DEVICE_NAME    "I2S0_MSG"
+    #define AUDIO_DEVICE_NAME    "I2S0_MSG"
 #endif
 
 #define AUDIO_SAMPLERATE     16000
 #define AUDIO_CHANNELS       2
 #define AUDIO_SAMPLEBITS     16
-
-/* 16k * 1ch * 16bit * 5s
- *
- * 16000 * 2 * 5
- */
 #define RECORD_SECONDS       5
-
 #define RECORD_TOTAL_SIZE \
     (AUDIO_SAMPLERATE * AUDIO_CHANNELS * \
      (AUDIO_SAMPLEBITS / 8) * RECORD_SECONDS)
 
 /* 每次读20ms */
-#define AUDIO_BUF_SIZE       4096
+#define AUDIO_BUF_SIZE       RT_AUDIO_REPLAY_MP_BLOCK_SIZE
 
 static rt_device_t audio_dev = RT_NULL;
 
@@ -74,16 +69,16 @@ static int i2s_record_play_test(int argc, char **argv)
     /******************************************************
      * 查找设备
      ******************************************************/
-    audio_dev = rt_device_find(SOUND_DEVICE_NAME);
+    audio_dev = rt_device_find(AUDIO_DEVICE_NAME);
 
     if (audio_dev == RT_NULL)
     {
-        rt_kprintf("can't find %s\n", SOUND_DEVICE_NAME);
+        rt_kprintf("can't find %s\n", AUDIO_DEVICE_NAME);
 
         goto __exit;
     }
 
-    rt_kprintf("find device: %s\n", SOUND_DEVICE_NAME);
+    rt_kprintf("find device: %s\n", AUDIO_DEVICE_NAME);
 
     /******************************************************
      * 打开设备
