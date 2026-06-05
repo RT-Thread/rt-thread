@@ -263,10 +263,20 @@ devices.uart_msg:
       - CONFIG_BSP_USING_UART_MSG=y
 devices.xmac:    
     kconfig:      
+      - CONFIG_BSP_USING_ETH_LAYER=y
       - CONFIG_BSP_USING_ETH=y
+      - CONFIG_RT_USING_SAL=y
+      - CONFIG_RT_USING_LWIP=y
+      - CONFIG_RT_USING_LWIP212=y
+      - CONFIG_RT_LWIP_ETHTHREAD_STACKSIZE=8192
 devices.xmac_msg:    
     kconfig:      
+      - CONFIG_BSP_USING_ETH_LAYER=y
       - CONFIG_BSP_USING_ETH_MSG=y
+      - CONFIG_RT_USING_SAL=y
+      - CONFIG_RT_USING_LWIP=y
+      - CONFIG_RT_USING_LWIP212=y
+      - CONFIG_RT_LWIP_ETHTHREAD_STACKSIZE=8192
 devices.sdif:    
     kconfig:      
       - CONFIG_BSP_USING_SDIF=y
