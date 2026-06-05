@@ -183,7 +183,8 @@ devices.pwm:
     kconfig:      
       - CONFIG_BSP_USING_PWM=y
 devices.spi:    
-    kconfig:      
+    kconfig:
+      - CONFIG_BSP_USING_SPI_LAYER=y       
       - CONFIG_BSP_USING_SPI=y
 devices.qspi:    
     kconfig:      
@@ -199,6 +200,7 @@ devices.xmac:
       - CONFIG_RT_USING_LWIP=y
       - CONFIG_RT_USING_LWIP212=y
       - CONFIG_RT_LWIP_ETHTHREAD_STACKSIZE=8192
+      - CONFIG_RT_LWIP_TCPTHREAD_STACKSIZE=8192
 devices.sdif:    
     kconfig:      
       - CONFIG_BSP_USING_SDIF=y

@@ -4,7 +4,8 @@
 #include "drv_i2c.h"
 #define TEST_DEVICE_ADDR 0x57
 static struct rt_i2c_bus_device *i2c_test_bus = RT_NULL;
-int i2c_sample(void)
+
+rt_err_t i2c_sample(void)
 {
     rt_uint8_t write_content[] = {"write successfully"};
     rt_uint8_t write_addr[2] = {0x0, 0x0};
