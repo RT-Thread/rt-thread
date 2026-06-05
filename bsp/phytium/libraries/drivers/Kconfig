@@ -462,6 +462,9 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ES8336
                 bool "Enable ES8336"
                 select BSP_USING_I2C_LAYER
+                select RT_USING_MIO14 if E2000D_DEMO_BOARD
+                select RT_USING_MIO14 if E2000Q_DEMO_BOARD
+                select RT_USING_I2C3_MSG if PD2408_TEST_B_BOARD
                 default n
             config BSP_USING_ES8388
                 bool "Enable ES8388"

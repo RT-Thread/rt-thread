@@ -5,6 +5,7 @@ board.e2000d_demo_rtthread:
       - devices.can
       - devices.gpio
       - devices.i2s
+      - devices.es8336
       - devices.pwm
       - devices.spi
       - devices.qspi
@@ -45,6 +46,7 @@ board.e2000q_demo_rtthread:
       - devices.can
       - devices.gpio
       - devices.i2s
+      - devices.es8336
       - devices.pwm
       - devices.spi
       - devices.qspi
@@ -171,7 +173,12 @@ devices.gpio:
       - CONFIG_BSP_USING_GPIO=y
 devices.i2s:    
     kconfig:      
+      - CONFIG_BSP_USING_I2S_LAYER=y
       - CONFIG_BSP_USING_I2S=y
+devices.es8336:    
+    kconfig:      
+      - CONFIG_BSP_USING_DEVICE=y
+      - CONFIG_BSP_USING_ES8336=y
 devices.pwm:    
     kconfig:      
       - CONFIG_BSP_USING_PWM=y
