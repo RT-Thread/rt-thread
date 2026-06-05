@@ -18,12 +18,63 @@ import re
 import multiprocessing
 import yaml
 
+SCONS_FATAL_PATTERNS = (
+    re.compile(r'No SConstruct file found', re.IGNORECASE),
+    re.compile(r'SConscript.*No such file or directory', re.IGNORECASE),
+    re.compile(r'No such file or directory.*SConscript', re.IGNORECASE),
+    re.compile(r"(can'?t|cannot|unable to)\s+(read|open|find).*SConscript", re.IGNORECASE),
+    re.compile(r'FileNotFoundError:.*SConscript', re.IGNORECASE),
+    re.compile(r'scons:\s+\*\*\*', re.IGNORECASE),
+)
+
 def add_summary(text):
     """
     add summary to github action.
     """
-    os.system(f'echo "{text}" >> $GITHUB_STEP_SUMMARY ;')
+    summary_file = os.getenv('GITHUB_STEP_SUMMARY')
+    if summary_file:
+        with open(summary_file, 'a', encoding='utf-8') as file:
+            file.write(text + '\n')
 
+def normalize_returncode(status):
+    """
+    normalize os.system status to command exit code.
+    """
+    if status == 0:
+        return 0
+
+    if os.name == 'nt':
+        return status
+
+    if hasattr(os, 'waitstatus_to_exitcode'):
+        try:
+            return os.waitstatus_to_exitcode(status)
+        except ValueError:
+            return status
+
+    return status >> 8
+
+def contains_scons_fatal_error(output):
+    """
+    check whether scons output contains a fatal build-script error.
+    """
+    output_str = ''.join(output) if isinstance(output, list) else str(output)
+    return any(pattern.search(output_str) for pattern in SCONS_FATAL_PATTERNS)
+
+def check_bsp_build_scripts(bsp_dir):
+    """
+    check whether the BSP has the basic scons build entry files.
+    """
+    missing = []
+    for filename in ('SConstruct', 'SConscript'):
+        if not os.path.isfile(os.path.join(bsp_dir, filename)):
+            missing.append(filename)
+
+    if missing:
+        print(f"::error::missing {', '.join(missing)} in {bsp_dir}")
+        return False
+
+    return True
 
 def run_cmd(cmd, output_info=True):
     """
@@ -33,21 +84,84 @@ def run_cmd(cmd, output_info=True):
 
     output_str_list = []
     res = 0
+    output_file = f'output_{os.getpid()}_{threading.get_ident()}.txt'
+    devnull = os.devnull
 
     if output_info:
-        res = os.system(cmd + " > output.txt 2>&1")
+        res = os.system(cmd + f" > {output_file} 2>&1")
     else:
-        res = os.system(cmd + " > /dev/null 2>output.txt")
+        res = os.system(cmd + f" > {devnull} 2>{output_file}")
 
-    with open("output.txt", "r") as file:
+    with open(output_file, "r") as file:
         output_str_list = file.readlines()
 
     for line in output_str_list:
         print(line, end='')
 
-    os.remove("output.txt")
+    os.remove(output_file)
+
+    res = normalize_returncode(res)
+    if contains_scons_fatal_error(output_str_list):
+        print(f"::error::scons fatal error detected while running: {cmd}")
+        if res == 0:
+            res = 1
 
     return output_str_list, res
+
+def is_env_enabled(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+
+    return value.lower() not in ('', '0', 'false', 'no', 'off')
+
+def run_dist_build_check(bsp, scons_args=''):
+    """
+    build BSP distribution and verify that the generated project can compile.
+    """
+    os.chdir(rtt_root)
+    bsp_dir = os.path.join(rtt_root, 'bsp', bsp)
+    if not check_bsp_build_scripts(bsp_dir):
+        return False
+
+    dist_root = os.path.join(rtt_root, 'bsp', bsp, 'dist')
+    dist_project = os.path.join(dist_root, 'project')
+    if os.path.exists(dist_root):
+        shutil.rmtree(dist_root)
+
+    old_rtt_root = None
+    try:
+        _, res = run_cmd(f'scons --dist -C bsp/{bsp} {scons_args}', output_info=True)
+        if res != 0:
+            print(f"::error::scons --dist failed for {bsp}")
+            return False
+
+        if not os.path.exists(dist_project):
+            print(f"::error::dist project not found: {dist_project}")
+            return False
+
+        if not check_bsp_build_scripts(dist_project):
+            return False
+
+        old_rtt_root = os.environ.pop('RTT_ROOT', None)
+        _, res = run_cmd(f'scons --pyconfig-silent -C {dist_project}', output_info=True)
+        if res != 0:
+            print(f"::error::dist project pyconfig failed for {bsp}")
+            return False
+
+        nproc = multiprocessing.cpu_count()
+        _, res = run_cmd(f'scons -C {dist_project} -j{nproc}', output_info=True)
+        if res != 0:
+            print(f"::error::dist project build failed for {bsp}")
+            return False
+    finally:
+        if old_rtt_root is not None:
+            os.environ['RTT_ROOT'] = old_rtt_root
+        os.chdir(rtt_root)
+        if os.path.exists(dist_root):
+            shutil.rmtree(dist_root)
+
+    return True
 
 
 def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_build_command=None,build_check_result = None,bsp_build_env=None):
@@ -70,6 +184,15 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
 
     """
     success = True
+    bsp_dir = os.path.join(rtt_root, 'bsp', bsp)
+
+    if not os.path.isdir(bsp_dir):
+        print(f"::error::BSP directory not found: {bsp_dir}")
+        return False
+
+    if not check_bsp_build_scripts(bsp_dir):
+        return False
+
     # 设置环境变量
     if bsp_build_env is not None:
         print("Setting environment variables:")
@@ -80,41 +203,63 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
     os.makedirs(f'{rtt_root}/output/bsp/{bsp}', exist_ok=True)
     if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
         os.chdir(rtt_root)
-        run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=True)
+        _, res = run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=True)
+        if res != 0:
+            print(f"::error::pyconfig failed for {bsp}")
+            success = False
 
         os.chdir(f'{rtt_root}/bsp/{bsp}')
-        run_cmd('pkgs --update-force', output_info=True)
-        run_cmd('pkgs --list')
-
-        nproc = multiprocessing.cpu_count()
-        if pre_build_commands is not None:
-            print("Pre-build commands:")
-            print(pre_build_commands)
-            for command in pre_build_commands:
-                print(command)
-                output, returncode = run_cmd(command, output_info=True)
-                print(output)
-                if returncode != 0:
-                    print(f"Pre-build command failed: {command}")
-                    print(output)
-        os.chdir(rtt_root)
-        # scons 编译命令
-        cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args}' # --debug=time for debug time
-        output, res = run_cmd(cmd, output_info=True)
-        if build_check_result is not None:
-            if res != 0 or not check_output(output, build_check_result):
-                    print("Build failed or build check result not found")
-                    print(output)
+        _, res = run_cmd('pkgs --update-force', output_info=True)
         if res != 0:
+            print(f"::error::pkgs --update-force failed for {bsp}")
             success = False
-        else:
-            #拷贝当前的文件夹下面的所有以elf结尾的文件拷贝到rt-thread/output文件夹下
-            import glob
-            # 拷贝编译生成的文件到output目录,文件拓展为 elf,bin,hex
-            for file_type in ['*.elf', '*.bin', '*.hex']:
-                files = glob.glob(f'{rtt_root}/bsp/{bsp}/{file_type}')
-                for file in files:
-                    shutil.copy(file, f'{rtt_root}/output/bsp/{bsp}/{name.replace("/", "_")}.{file_type[2:]}')
+        _, res = run_cmd('pkgs --list')
+        if res != 0:
+            print(f"::error::pkgs --list failed for {bsp}")
+            success = False
+    else:
+        print(f"Kconfig not found, skip pyconfig and package update: {os.path.join(bsp_dir, 'Kconfig')}")
+
+    nproc = multiprocessing.cpu_count()
+    if pre_build_commands is not None:
+        print("Pre-build commands:")
+        print(pre_build_commands)
+        for command in pre_build_commands:
+            print(command)
+            output, returncode = run_cmd(command, output_info=True)
+            print(output)
+            if returncode != 0:
+                print(f"Pre-build command failed: {command}")
+                print(output)
+                success = False
+    os.chdir(rtt_root)
+    # scons 编译命令
+    cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args}' # --debug=time for debug time
+    output, res = run_cmd(cmd, output_info=True)
+    if build_check_result is not None:
+        if res != 0 or not check_output(output, build_check_result):
+                print("Build failed or build check result not found")
+                print(output)
+                success = False
+    if res != 0:
+        success = False
+    if success:
+        #拷贝当前的文件夹下面的所有以elf结尾的文件拷贝到rt-thread/output文件夹下
+        import glob
+        # 拷贝编译生成的文件到output目录,文件拓展为 elf,bin,hex
+        for file_type in ['*.elf', '*.bin', '*.hex']:
+            files = glob.glob(f'{rtt_root}/bsp/{bsp}/{file_type}')
+            for file in files:
+                shutil.copy(file, f'{rtt_root}/output/bsp/{bsp}/{name.replace("/", "_")}.{file_type[2:]}')
+        if is_env_enabled('RTT_CI_BUILD_DIST'):
+            print(f"::group::\tChecking dist project: {bsp} {name}")
+            dist_res = run_dist_build_check(bsp, scons_args)
+            print("::endgroup::")
+            if not dist_res:
+                add_summary(f'\t- ❌ dist build {bsp} {name} failed.')
+                success = False
+            else:
+                add_summary(f'\t- ✅ dist build {bsp} {name} success.')
 
     os.chdir(f'{rtt_root}/bsp/{bsp}')
     if post_build_command is not None:
@@ -124,7 +269,11 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
             if returncode != 0:
                 print(f"Post-build command failed: {command}")
                 print(output)
-    run_cmd('scons -c', output_info=False)
+                success = False
+    _, clean_res = run_cmd('scons -c', output_info=False)
+    if clean_res != 0:
+        print(f"::error::scons clean failed for {bsp}")
+        success = False
 
     return success
 
@@ -183,19 +332,27 @@ def build_bsp_attachconfig(bsp, attach_file):
     """
     config_file = os.path.join(rtt_root, 'bsp', bsp, '.config')
     config_bacakup = config_file+'.origin'
-    shutil.copyfile(config_file, config_bacakup)
+    if not os.path.isfile(config_file):
+        print(f"::error::.config not found: {config_file}")
+        return False
 
     attachconfig_dir = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
     attach_path = os.path.join(attachconfig_dir, attach_file)
+    if not os.path.isfile(attach_path):
+        print(f"::error::attach config not found: {attach_path}")
+        return False
 
-    append_file(attach_path, config_file)
+    shutil.copyfile(config_file, config_bacakup)
 
-    scons_args = check_scons_args(attach_path)
+    try:
+        append_file(attach_path, config_file)
 
-    res = build_bsp(bsp, scons_args,name=attach_file)
+        scons_args = check_scons_args(attach_path)
 
-    shutil.copyfile(config_bacakup, config_file)
-    os.remove(config_bacakup)
+        res = build_bsp(bsp, scons_args,name=attach_file)
+    finally:
+        shutil.copyfile(config_bacakup, config_file)
+        os.remove(config_bacakup)
 
     return res
 

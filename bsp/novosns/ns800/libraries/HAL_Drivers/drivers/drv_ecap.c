@@ -18,21 +18,163 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-static const struct rt_ecap_config ecap1_config =
+enum
 {
-    .name         = "ecap1",
-    .instance     = ECAP1,
-    .irq_type     = ECAP1_IRQn,
-    .input_xbar   = XBAR_INPUT7,
-    .input_source = GPIO_PIN_16,
-    .gpio_port    = GPIOA,
-    .gpio_pin     = GPIO_PIN_16,
-    .gpio_mux     = ALT0_FUNCTION,
+#ifdef BSP_USING_ECAP1
+    ECAP1_INDEX,
+#endif
+#ifdef BSP_USING_ECAP2
+    ECAP2_INDEX,
+#endif
+#ifdef BSP_USING_ECAP3
+    ECAP3_INDEX,
+#endif
+#ifdef BSP_USING_ECAP4
+    ECAP4_INDEX,
+#endif
+#ifdef BSP_USING_ECAP5
+    ECAP5_INDEX,
+#endif
+#ifdef BSP_USING_ECAP6
+    ECAP6_INDEX,
+#endif
+#ifdef BSP_USING_ECAP7
+    ECAP7_INDEX,
+#endif
 };
 
-static struct rt_ecap_device ecap1_dev;
-
+#ifdef BSP_USING_ECAP1
 void ECAP1_IRQHandler (void);
+#endif
+#ifdef BSP_USING_ECAP2
+void ECAP2_IRQHandler (void);
+#endif
+#ifdef BSP_USING_ECAP3
+void ECAP3_IRQHandler (void);
+#endif
+#ifdef BSP_USING_ECAP4
+void ECAP4_IRQHandler (void);
+#endif
+#ifdef BSP_USING_ECAP5
+void ECAP5_IRQHandler (void);
+#endif
+#ifdef BSP_USING_ECAP6
+void ECAP6_IRQHandler (void);
+#endif
+#ifdef BSP_USING_ECAP7
+void ECAP7_IRQHandler (void);
+#endif
+
+static const struct rt_ecap_config ecap_config[] =
+{
+#ifdef BSP_USING_ECAP1
+    {
+        .name         = "ecap1",
+        .instance     = ECAP1,
+        .irq_type     = ECAP1_IRQn,
+        .input_signal = ECAP_INPUT_XBAR_INPUT7,
+        .input_xbar   = XBAR_INPUT7,
+        .input_source = GPIO_PIN_16,
+        .pre_scaler   = 30U,
+        .gpio_port    = GPIOA,
+        .gpio_pin     = GPIO_PIN_16,
+        .gpio_mux     = ALT0_FUNCTION,
+        .irq_handler  = ECAP1_IRQHandler
+    },
+#endif
+#ifdef BSP_USING_ECAP2
+    {
+        .name         = "ecap2",
+        .instance     = ECAP2,
+        .irq_type     = ECAP2_IRQn,
+        .input_signal = ECAP_INPUT_XBAR_INPUT8,
+        .input_xbar   = XBAR_INPUT8,
+        .input_source = GPIO_PIN_17,
+        .pre_scaler   = 30U,
+        .gpio_port    = GPIOA,
+        .gpio_pin     = GPIO_PIN_17,
+        .gpio_mux     = ALT0_FUNCTION,
+        .irq_handler  = ECAP2_IRQHandler
+    }
+#endif
+#ifdef BSP_USING_ECAP3
+    {
+        .name         = "ecap3",
+        .instance     = ECAP3,
+        .irq_type     = ECAP3_IRQn,
+        .input_signal = ECAP_INPUT_XBAR_INPUT3,
+        .input_xbar   = XBAR_INPUT3,
+        .input_source = GPIO_PIN_14,
+        .pre_scaler   = 30U,
+        .gpio_port    = GPIOA,
+        .gpio_pin     = GPIO_PIN_14,
+        .gpio_mux     = ALT0_FUNCTION,
+        .irq_handler  = ECAP3_IRQHandler
+    }
+#endif
+#ifdef BSP_USING_ECAP4
+    {
+        .name         = "ecap4",
+        .instance     = ECAP4,
+        .irq_type     = ECAP4_IRQn,
+        .input_signal = ECAP_INPUT_XBAR_INPUT4,
+        .input_xbar   = XBAR_INPUT4,
+        .input_source = GPIO_PIN_15,
+        .pre_scaler   = 30U,
+        .gpio_port    = GPIOA,
+        .gpio_pin     = GPIO_PIN_15,
+        .gpio_mux     = ALT0_FUNCTION,
+        .irq_handler  = ECAP4_IRQHandler
+    }
+#endif
+#ifdef BSP_USING_ECAP5
+    {
+        .name         = "ecap5",
+        .instance     = ECAP5,
+        .irq_type     = ECAP5_IRQn,
+        .input_signal = ECAP_INPUT_XBAR_INPUT6,
+        .input_xbar   = XBAR_INPUT6,
+        .input_source = GPIO_PIN_9,
+        .pre_scaler   = 30U,
+        .gpio_port    = GPIOA,
+        .gpio_pin     = GPIO_PIN_9,
+        .gpio_mux     = ALT0_FUNCTION,
+        .irq_handler  = ECAP5_IRQHandler
+    }
+#endif
+#ifdef BSP_USING_ECAP6
+    {
+        .name         = "ecap6",
+        .instance     = ECAP6,
+        .irq_type     = ECAP6_IRQn,
+        .input_signal = ECAP_INPUT_XBAR_INPUT6,
+        .input_xbar   = XBAR_INPUT6,
+        .input_source = GPIO_PIN_9,
+        .pre_scaler   = 30U,
+        .gpio_port    = GPIOA,
+        .gpio_pin     = GPIO_PIN_9,
+        .gpio_mux     = ALT0_FUNCTION,
+        .irq_handler  = ECAP6_IRQHandler
+    }
+#endif
+#ifdef BSP_USING_ECAP7
+    {
+        .name         = "ecap7",
+        .instance     = ECAP7,
+        .irq_type     = ECAP7_IRQn,
+        .input_signal = ECAP_INPUT_XBAR_INPUT6,
+        .input_xbar   = XBAR_INPUT6,
+        .input_source = GPIO_PIN_9,
+        .pre_scaler   = 30U,
+        .gpio_port    = GPIOA,
+        .gpio_pin     = GPIO_PIN_9,
+        .gpio_mux     = ALT0_FUNCTION,
+        .irq_handler  = ECAP7_IRQHandler
+    }
+#endif
+};
+
+static struct rt_ecap_device ecap_dev[sizeof(ecap_config) / sizeof(ecap_config[0])] = {0};
 
 /*
  *
@@ -88,7 +230,7 @@ static void ecap_hw_init (const struct rt_ecap_config *config)
      */
     ECAP_enableCaptureMode(config->instance);
     ECAP_setCaptureMode(config->instance, ECAP_CONTINUOUS_CAPTURE_MODE, ECAP_EVENT_4);
-    ECAP_setEventPrescaler(config->instance, 0U);
+    ECAP_setEventPrescaler(config->instance, config->pre_scaler);
 
     ECAP_setEventPolarity(config->instance, ECAP_EVENT_1, ECAP_EVNT_FALLING_EDGE);
     ECAP_setEventPolarity(config->instance, ECAP_EVENT_2, ECAP_EVNT_RISING_EDGE);
@@ -100,7 +242,7 @@ static void ecap_hw_init (const struct rt_ecap_config *config)
     ECAP_enableCounterResetOnEvent(config->instance, ECAP_EVENT_3);
     ECAP_enableCounterResetOnEvent(config->instance, ECAP_EVENT_4);
 
-    ECAP_selectECAPInput(config->instance, ECAP_INPUT_XBAR_INPUT7);
+    ECAP_selectECAPInput(config->instance, config->input_signal);
 
     ECAP_setPhaseShiftCount(config->instance, 0U);
     ECAP_enableLoadCounter(config->instance);
@@ -215,7 +357,7 @@ static rt_err_t rt_ecap_open (rt_device_t dev, rt_uint16_t oflag)
         ECAP_reArm(ecap->config->instance);
         ECAP_enableInterrupt(ecap->config->instance, ECAP_ECEINT_CEVT4_M);
 
-        Interrupt_register(ecap->config->irq_type, &ECAP1_IRQHandler);
+        Interrupt_register(ecap->config->irq_type, ecap->config->irq_handler);
         Interrupt_enable(ecap->config->irq_type);
     }
 
@@ -273,7 +415,7 @@ static rt_ssize_t rt_ecap_read (rt_device_t dev, rt_off_t pos, void *buffer, rt_
      * 阻塞等待一次完整 capture。
      * 如果不希望阻塞，可以改成 RT_WAITING_NO。
      */
-    if (rt_sem_take(&ecap->rx_sem, RT_WAITING_FOREVER) != RT_EOK)
+    if (rt_sem_take(&ecap->rx_sem, RT_WAITING_NO) != RT_EOK)
     {
         return 0;
     }
@@ -349,7 +491,7 @@ static rt_err_t rt_ecap_control (rt_device_t dev, int cmd, void *args)
 
         case ECAP_CMD_ENABLE_IRQ:
             ECAP_enableInterrupt(ecap->config->instance, ECAP_ECEINT_CEVT4_M);
-            Interrupt_register(ecap->config->irq_type, &ECAP1_IRQHandler);
+            Interrupt_register(ecap->config->irq_type, ecap->config->irq_handler);
             Interrupt_enable(ecap->config->irq_type);
             break;
 
@@ -413,33 +555,25 @@ static rt_err_t rt_hw_ecap_register (struct rt_ecap_device *ecap, const struct r
 
 int rt_hw_ecap_init (void)
 {
-    rt_err_t ret;
+    rt_err_t result = RT_EOK;
+    rt_size_t i;
 
-    ret = rt_hw_ecap_register(&ecap1_dev, &ecap1_config);
-
-    if (ret != RT_EOK)
+    for (i = 0; i < (sizeof(ecap_config) / sizeof(ecap_config[0])); i++)
     {
-        LOG_E("register ecap1 failed, ret = %d", ret);
-        return ret;
+        result = rt_hw_ecap_register(&ecap_dev[i], &ecap_config[i]);
+        RT_ASSERT(result == RT_EOK);
     }
 
-    LOG_I("ecap1 register done");
-
-    return RT_EOK;
+    return result;
 }
 INIT_DEVICE_EXPORT(rt_hw_ecap_init);
 
 /*
  *
  */
-void rt_hw_ecap1_isr(void)
+void rt_hw_ecap_isr(struct rt_ecap_device *ecap)
 {
-    struct rt_ecap_device *ecap;
     struct rt_ecap_capture cap;
-
-    ecap = &ecap1_dev;
-
-    rt_interrupt_enter();
 
     rt_memset(&cap, 0, sizeof(cap));
 
@@ -465,15 +599,70 @@ void rt_hw_ecap1_isr(void)
         ecap->rx_callback((struct rt_ecap_capture *)&ecap->last_capture,
                           ecap->rx_user_data);
     }
-
-    rt_interrupt_leave();
 }
 
+#ifdef BSP_USING_ECAP1
 void ECAP1_IRQHandler (void)
 {
-    rt_hw_ecap1_isr();
+    rt_interrupt_enter();
+    rt_hw_ecap_isr(&ecap_dev[ECAP1_INDEX]);
+    rt_interrupt_leave();
 }
+#endif
 
+#ifdef BSP_USING_ECAP2
+void ECAP2_IRQHandler (void)
+{
+    rt_interrupt_enter();
+    rt_hw_ecap_isr(&ecap_dev[ECAP2_INDEX]);
+    rt_interrupt_leave();
+}
+#endif
+
+#ifdef BSP_USING_ECAP3
+void ECAP3_IRQHandler (void)
+{
+    rt_interrupt_enter();
+    rt_hw_ecap_isr(&ecap_dev[ECAP3_INDEX]);
+    rt_interrupt_leave();
+}
+#endif
+
+#ifdef BSP_USING_ECAP4
+void ECAP4_IRQHandler (void)
+{
+    rt_interrupt_enter();
+    rt_hw_ecap_isr(&ecap_dev[ECAP4_INDEX]);
+    rt_interrupt_leave();
+}
+#endif
+
+#ifdef BSP_USING_ECAP5
+void ECAP5_IRQHandler (void)
+{
+    rt_interrupt_enter();
+    rt_hw_ecap_isr(&ecap_dev[ECAP5_INDEX]);
+    rt_interrupt_leave();
+}
+#endif
+
+#ifdef BSP_USING_ECAP6
+void ECAP6_IRQHandler (void)
+{
+    rt_interrupt_enter();
+    rt_hw_ecap_isr(&ecap_dev[ECAP6_INDEX]);
+    rt_interrupt_leave();
+}
+#endif
+
+#ifdef BSP_USING_ECAP7
+void ECAP7_IRQHandler (void)
+{
+    rt_interrupt_enter();
+    rt_hw_ecap_isr(&ecap_dev[ECAP7_INDEX]);
+    rt_interrupt_leave();
+}
+#endif
 
 #endif /* #if defined(BSP_USING_ECAP) */
 

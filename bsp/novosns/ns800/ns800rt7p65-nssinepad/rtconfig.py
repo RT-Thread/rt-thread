@@ -19,9 +19,6 @@ if CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
     EXEC_PATH   = ''
 elif CROSS_TOOL == 'keil':
-    PLATFORM    = 'armcc'
-    EXEC_PATH   = r'C:/Keil_v5'
-elif CROSS_TOOL == 'armclang':
     PLATFORM    = 'armclang'
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
@@ -66,38 +63,6 @@ if PLATFORM == 'gcc':
     CFLAGS += ' -std=gnu99'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
-
-elif PLATFORM == 'armcc':
-    # toolchains
-    CC = 'armcc'
-    CXX = 'armcc'
-    AS = 'armasm'
-    AR = 'armar'
-    LINK = 'armlink'
-    TARGET_EXT = 'axf'
-
-    DEVICE = ' --cpu Cortex-M7.fp.sp'
-    CFLAGS = '-c ' + DEVICE + ' --apcs=interwork --c99'
-    AFLAGS = DEVICE + ' --apcs=interwork '
-    LFLAGS = DEVICE + r' --scatter "board\linker_scripts\link.sct" --info sizes --info totals --info unused --info veneers --list rtthread.map --strict'
-    CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCC/include'
-    LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCC/lib'
-
-    CFLAGS += ' -D__MICROLIB '
-    AFLAGS += ' --pd "__MICROLIB SETA 1" '
-    LFLAGS += ' --library_type=microlib '
-    EXEC_PATH += '/ARM/ARMCC/bin/'
-
-    if BUILD == 'debug':
-        CFLAGS += ' -g -O0'
-        AFLAGS += ' -g'
-    else:
-        CFLAGS += ' -O2'
-
-    CXXFLAGS = CFLAGS 
-    CFLAGS += ' -std=gnu99'
-
-    POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
 elif PLATFORM == 'armclang':
     # toolchains

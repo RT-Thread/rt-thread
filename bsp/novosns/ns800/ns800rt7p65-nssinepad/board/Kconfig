@@ -20,6 +20,32 @@ menu "On-chip Peripheral Drivers"
                 default 6000
                 depends on !RT_USING_SERIAL_V2
 
+            config BSP_UART_DEFAULT_BAUDRATE
+                int "UART default baudrate"
+                default 115200
+                help
+                    Default baudrate for all UART ports.
+
+            choice BSP_UART_DEFAULT_DATABITS
+                prompt "UART default data bits"
+                default BSP_UART_DATABITS_8
+                config BSP_UART_DATABITS_7
+                    bool "7 bits"
+                config BSP_UART_DATABITS_8
+                    bool "8 bits"
+                config BSP_UART_DATABITS_9
+                    bool "9 bits"
+            endchoice
+
+            choice BSP_UART_DEFAULT_STOPBITS
+                prompt "UART default stop bits"
+                default BSP_UART_STOPBITS_1
+                config BSP_UART_STOPBITS_1
+                    bool "1 bit"
+                config BSP_UART_STOPBITS_2
+                    bool "2 bits"
+            endchoice
+
             menuconfig BSP_USING_UART1
                 bool "Enable UART1"
                 default y
@@ -92,6 +118,35 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ECAP
         bool "Enable ECAP"
         default n
+        if BSP_USING_ECAP
+            menuconfig BSP_USING_ECAP1
+                bool "Enable ECAP1"
+                default n
+            
+            menuconfig BSP_USING_ECAP2
+                bool "Enable ECAP2"
+                default n
+
+            menuconfig BSP_USING_ECAP3
+                bool "Enable ECAP3"
+                default n
+            
+            menuconfig BSP_USING_ECAP4
+                bool "Enable ECAP4"
+                default n
+
+            menuconfig BSP_USING_ECAP5
+                bool "Enable ECAP5"
+                default n
+
+            menuconfig BSP_USING_ECAP6
+                bool "Enable ECAP6"
+                default n
+
+            menuconfig BSP_USING_ECAP7
+                bool "Enable ECAP7"
+                default n
+        endif
 
     menuconfig BSP_USING_CAN
         bool "Enable CAN"
@@ -103,6 +158,47 @@ menu "On-chip Peripheral Drivers"
                 select RT_CAN_USING_CANFD
                 default n
 
+        endif
+
+    menuconfig BSP_USING_TIM
+        bool "Enable TIM (Hardware Timer)"
+        select RT_USING_CLOCK_TIME
+        default n
+        help
+            Enable hardware timer TIM driver
+
+    if BSP_USING_TIM
+        menu "TIM Timer Configuration"
+            config BSP_USING_TIM1
+                bool "Enable TIM1"
+                default n
+            config BSP_USING_TIM2
+                bool "Enable TIM2"
+                default n
+        endmenu
+
+    endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        default n
+        if BSP_USING_SPI
+            menuconfig BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+
+            menuconfig BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+
+            menuconfig BSP_USING_SPI3
+                bool "Enable SPI3"
+                default n
+
+            menuconfig BSP_USING_SPI4
+                bool "Enable SPI4"
+                default n
         endif
 
 endmenu
