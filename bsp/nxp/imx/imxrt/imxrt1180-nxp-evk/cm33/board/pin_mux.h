@@ -90,18 +90,6 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_WL_DEV_WAKE_SIGNAL                                      B   /*!< Signal name */
 #define BOARD_INITPINS_WL_DEV_WAKE_CHANNEL                                    1U   /*!< Signal channel */
 
-/* GPIO_AD_18 (coord K16), I3C2_SCL/LPI2C3_eCAT_SCL/BT_WAKE_B_3V3/J41[12]/J70[5]/J50[1]/U46[13]/J51[3]/J36[20]/U48[6]/J47[13] */
-/* Routed pin properties */
-#define BOARD_INITPINS_I3C2_SCL_PERIPHERAL                                  ADC2   /*!< Peripheral name */
-#define BOARD_INITPINS_I3C2_SCL_SIGNAL                                         A   /*!< Signal name */
-#define BOARD_INITPINS_I3C2_SCL_CHANNEL                                       2U   /*!< Signal channel */
-
-/* GPIO_AD_19 (coord L13), I3C2_SDA/LPI2C3_eCAT_SDA/J41[10]/J70[6]/J50[2]/U46[14]/J51[5]/U48[5]/J47[15] */
-/* Routed pin properties */
-#define BOARD_INITPINS_I3C2_SDA_PERIPHERAL                                  ADC2   /*!< Peripheral name */
-#define BOARD_INITPINS_I3C2_SDA_SIGNAL                                         B   /*!< Signal name */
-#define BOARD_INITPINS_I3C2_SDA_CHANNEL                                       2U   /*!< Signal channel */
-
 /*!
  * @brief 
  *

@@ -16,6 +16,9 @@
 /***********************************************************************************************************************
  * Included files
  **********************************************************************************************************************/
+#include "fsl_edma.h"
+#include "stdlib.h"
+#include "fsl_memory.h"
 #include "fsl_common.h"
 #include "fsl_lpuart.h"
 #include "fsl_clock.h"
@@ -30,6 +33,20 @@ extern "C" {
  * Definitions
  **********************************************************************************************************************/
 /* Definitions for BOARD_InitPeripherals functional group */
+/* Used DMA device. */
+#define DMA4_DMA_BASEADDR (EDMA_Type *)DMA4
+
+  /* Channel CH0 definitions */
+/* DMA4 eDMA source request. */
+#define DMA4_CH0_DMA_REQUEST kDma4RequestMuxADC1Request0
+/* Selected eDMA channel number. */
+#define DMA4_CH0_DMA_CHANNEL 0
+/* TCD pool size */
+#define DMA4_CH0_TCD_SIZE 1
+/* DMA4 interrupt vector ID (number). */
+#define DMA4_DMA_CH_INT_DONE_0_IRQN DMA4_CH0_CH1_CH32_CH33_IRQn
+/* Transfer structure index 0 definition */
+#define DMA4_CH0_TRANSFER0_CONFIG DMA4_CH0_Transfers_config[0]
 /* Definition of peripheral ID */
 #define LPUART1_PERIPHERAL LPUART1
 /* Definition of the clock source frequency */
@@ -46,6 +63,14 @@ extern "C" {
 /***********************************************************************************************************************
  * Global variables
  **********************************************************************************************************************/
+extern edma_config_t DMA4_config;
+/* Source address extern definition */
+AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t srcAddr0[], 4);
+/* Destination address extern definition */
+AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t destAddr0[], 4);
+extern edma_handle_t DMA4_CH0_Handle;
+/* Transactional transfer configurations */
+extern edma_transfer_config_t DMA4_CH0_Transfers_config[1];
 extern const lpuart_config_t LPUART1_config;
 extern const lpadc_config_t ADC1_config;
 extern lpadc_conv_command_config_t ADC1_commandsConfig[2];

@@ -60,11 +60,6 @@
                         <data>true</data>
                      </feature>
                   </dependency>
-                  <dependency resourceType="Peripheral" resourceId="ADC2" description="Peripheral ADC2 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
-                     <feature name="initialized" evaluation="equal">
-                        <data>true</data>
-                     </feature>
-                  </dependency>
                   <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
                      <feature name="enabled" evaluation="equal" configuration="cm33">
                         <data>true</data>
@@ -96,8 +91,6 @@
                   <pin peripheral="ADC1" signal="B, 1_7" pin_num="R15" pin_signal="GPIO_AD_03"/>
                   <pin peripheral="ADC1" signal="A, 1_6" pin_num="P15" pin_signal="GPIO_AD_04"/>
                   <pin peripheral="ADC1" signal="B, 1_6" pin_num="P13" pin_signal="GPIO_AD_05"/>
-                  <pin peripheral="ADC2" signal="A, 2_0" pin_num="K16" pin_signal="GPIO_AD_18"/>
-                  <pin peripheral="ADC2" signal="B, 2_0" pin_num="L13" pin_signal="GPIO_AD_19"/>
                </pins>
             </function>
          </functions_list>
@@ -559,6 +552,16 @@
                   <data type="Version" maxValue="2.9.9">2.8.1</data>
                </feature>
             </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.drivers.edma4" description="工具链/IDE工程中未找到EDMA Driver。工程不会被编译！" problem_level="2" source="Peripherals">
+               <feature name="enabled" evaluation="equal">
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.drivers.edma4" description="工具链/IDE工程不支持EDMA Driver版本。所需值: ${required_value}, 实际值: ${actual_value}. 工程可能没有被正确编译。" problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="greaterOrEqual">
+                  <data type="Version" maxValue="2.10.99">2.9.0</data>
+               </feature>
+            </dependency>
             <dependency resourceType="Tool" resourceId="Pins" description="外围设备工具需要 Pins 工具，但它已被禁用。" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
                   <data>true</data>
@@ -616,7 +619,9 @@
                <instances>
                   <instance name="CM33_NVIC" uuid="c8e1acc8-1046-45d3-bac2-6b81b016b153" type="nvic" type_id="nvic" mode="general" peripheral="CM33_NVIC" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
                      <config_set name="nvic">
-                        <array name="interrupt_table"/>
+                        <array name="interrupt_table">
+                           <struct name="0"/>
+                        </array>
                         <array name="interrupts"/>
                      </config_set>
                   </instance>
@@ -685,7 +690,7 @@
                            <setting name="convPauseDelay" value="0"/>
                            <setting name="FIFO0Watermark" value="0"/>
                            <setting name="FIFO1Watermark" value="0"/>
-                           <setting name="FIFO0WatermarkDMA" value="false"/>
+                           <setting name="FIFO0WatermarkDMA" value="true"/>
                            <setting name="FIFO1WatermarkDMA" value="false"/>
                         </struct>
                         <array name="lpadcConvCommandConfig">
@@ -694,7 +699,7 @@
                               <setting name="commandId" value="1"/>
                               <setting name="chainedNextCommandNumber" value="2"/>
                               <setting name="sampleChannelMode" value="kLPADC_SampleChannelSingleEndSideA"/>
-                              <setting name="sampleScaleMode" value="kLPADC_SamplePartScale"/>
+                              <setting name="sampleScaleMode" value="kLPADC_SampleFullScale"/>
                               <setting name="channelNumber" value="A.1_4"/>
                               <setting name="enableChannelB_b" value="false"/>
                               <setting name="channelBScaleMode_e" value="kLPADC_SampleFullScale"/>
@@ -714,7 +719,7 @@
                               <setting name="commandId" value="2"/>
                               <setting name="chainedNextCommandNumber" value="0"/>
                               <setting name="sampleChannelMode" value="kLPADC_SampleChannelSingleEndSideB"/>
-                              <setting name="sampleScaleMode" value="kLPADC_SamplePartScale"/>
+                              <setting name="sampleScaleMode" value="kLPADC_SampleFullScale"/>
                               <setting name="channelNumber" value="B.1_5"/>
                               <setting name="enableChannelB_b" value="false"/>
                               <setting name="channelBScaleMode_e" value="kLPADC_SampleFullScale"/>
@@ -757,7 +762,7 @@
                         </struct>
                      </config_set>
                   </instance>
-                  <instance name="DMA4" uuid="e77f5248-6191-4aa7-85d3-5e9a00d14329" type="edma4" type_id="edma4_2.9.0" mode="general" peripheral="DMA4" enabled="false" comment="" custom_name_enabled="false" editing_lock="false">
+                  <instance name="DMA4" uuid="e77f5248-6191-4aa7-85d3-5e9a00d14329" type="edma4" type_id="edma4_2.9.0" mode="general" peripheral="DMA4" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
                      <config_set name="fsl_edma">
                         <array name="dmamux_devices"/>
                         <struct name="common_settings">
@@ -768,7 +773,9 @@
                            <setting name="enableGlobalChannelLink" value="true"/>
                            <setting name="enableMasterIdReplication" value="false"/>
                         </struct>
-                        <array name="dma_table"/>
+                        <array name="dma_table">
+                           <struct name="0"/>
+                        </array>
                         <array name="edma_channels">
                            <struct name="0">
                               <setting name="apiMode" value="trans"/>
@@ -809,7 +816,37 @@
                                  <setting name="tcd_size" value="1"/>
                                  <setting name="tcd_memory_ptr_id" value="default"/>
                               </struct>
-                              <array name="transfer_config"/>
+                              <array name="transfer_config">
+                                 <struct name="0">
+                                    <setting name="uid" value="1780716022754"/>
+                                    <setting name="tcdID" value="CH0_TRANSFER0"/>
+                                    <setting name="ssize" value="kEDMA_TransferSize2Bytes"/>
+                                    <setting name="saddr_expr" value="&amp;srcAddr0[0]"/>
+                                    <setting name="saddr_def" value="AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t srcAddr0[], 4);"/>
+                                    <setting name="soff" value="sizeof(srcAddr0[0])"/>
+                                    <setting name="soff_def" value=""/>
+                                    <setting name="smod" value="kEDMA_Modulo16bytes"/>
+                                    <setting name="dsize" value="kEDMA_TransferSize2Bytes"/>
+                                    <setting name="daddr_expr" value="&amp;destAddr0[0]"/>
+                                    <setting name="daddr_def" value="AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t destAddr0[], 4);"/>
+                                    <setting name="doff" value="sizeof(destAddr0[0])"/>
+                                    <setting name="doff_def" value=""/>
+                                    <setting name="dmod" value="kEDMA_Modulo16bytes"/>
+                                    <setting name="nbytes" value="2"/>
+                                    <struct name="MLconfig">
+                                       <setting name="offsetType" value="disabled"/>
+                                       <setting name="mloff" value="0"/>
+                                    </struct>
+                                    <setting name="enableChannelLinkMinor" value="false"/>
+                                    <setting name="linkedChannelMinor" value="1780195171347"/>
+                                    <setting name="citer" value="1"/>
+                                    <setting name="slast" value="0"/>
+                                    <setting name="dlast" value="0"/>
+                                    <setting name="enableChannelLinkMajor" value="false"/>
+                                    <setting name="linkedChannelMajor" value="1780195171347"/>
+                                    <setting name="submitTransfer" value="false"/>
+                                 </struct>
+                              </array>
                               <setting name="loopTransfer" value="false"/>
                               <setting name="no_init_uid" value="1780195171376"/>
                               <setting name="init_callback" value="false"/>

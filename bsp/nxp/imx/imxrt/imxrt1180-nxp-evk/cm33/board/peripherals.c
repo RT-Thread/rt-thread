@@ -62,6 +62,141 @@ component:
  * BOARD_InitPeripherals functional group
  **********************************************************************************************************************/
 /***********************************************************************************************************************
+ * DMA4 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'DMA4'
+- type: 'edma4'
+- mode: 'general'
+- custom_name_enabled: 'false'
+- type_id: 'edma4_2.9.0'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'DMA4'
+- config_sets:
+  - fsl_edma:
+    - dmamux_devices: []
+    - common_settings:
+      - vars: []
+      - enableHaltOnError: 'true'
+      - enableDebugMode: 'false'
+      - enableRoundRobinArbitration: 'fixedPriority'
+      - enableGlobalChannelLink: 'true'
+      - enableMasterIdReplication: 'false'
+    - dma_table:
+      - 0: []
+    - edma_channels:
+      - 0:
+        - apiMode: 'trans'
+        - edma_channel:
+          - channel_prefix_id: 'CH0'
+          - uid: '1780195171347'
+          - eDMAn: '0'
+          - eDMA_source: 'kDma4RequestMuxADC1Request0'
+          - init_channel_priority: 'false'
+          - edma_channel_Preemption:
+            - enableChannelPreemption: 'false'
+            - enablePreemptAbility: 'false'
+            - channelPriority: '0'
+          - initMemoryAttributes: 'false'
+          - memAttributes:
+            - writeCache: ''
+            - readCache: ''
+          - setChannelSwapSize: 'noInit'
+          - signExtension: 'noInit'
+          - setChannelAccessType: 'noInit'
+          - masterIdReplicationEnable: 'noInit'
+          - securityLevel: 'noInit'
+          - protectionLevel: 'noInit'
+          - enable_custom_name: 'false'
+        - resetChannel: 'true'
+        - enableChannelRequest: 'true'
+        - enableAsyncRequest: 'false'
+        - enableAutoStop: 'true'
+        - tcd_pool_enable: 'false'
+        - tcd_settings:
+          - tcd_size: '1'
+          - tcd_memory_ptr_id: 'default'
+        - transfer_config:
+          - 0:
+            - uid: '1780716022754'
+            - tcdID: 'CH0_TRANSFER0'
+            - ssize: 'kEDMA_TransferSize2Bytes'
+            - saddr_expr: '&srcAddr0[0]'
+            - saddr_def: 'AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t srcAddr0[], 4);'
+            - soff: 'sizeof(srcAddr0[0])'
+            - soff_def: ''
+            - smod: 'kEDMA_Modulo16bytes'
+            - dsize: 'kEDMA_TransferSize2Bytes'
+            - daddr_expr: '&destAddr0[0]'
+            - daddr_def: 'AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t destAddr0[], 4);'
+            - doff: 'sizeof(destAddr0[0])'
+            - doff_def: ''
+            - dmod: 'kEDMA_Modulo16bytes'
+            - nbytes: '2'
+            - MLconfig:
+              - offsetType: 'disabled'
+              - mloff: '0'
+            - enableChannelLinkMinor: 'false'
+            - linkedChannelMinor: '1780195171347'
+            - citer: '1'
+            - slast: '0'
+            - dlast: '0'
+            - enableChannelLinkMajor: 'false'
+            - linkedChannelMajor: '1780195171347'
+            - submitTransfer: 'false'
+        - loopTransfer: 'false'
+        - no_init_uid: '1780195171376'
+        - init_callback: 'false'
+        - callback_function: 'DMA_Callback'
+        - callback_user_data: ''
+        - channel_enabled_interrupts: ''
+        - interrupt_channel:
+          - IRQn: 'DMA4_CH0_CH1_CH32_CH33_IRQn'
+          - enable_priority: 'false'
+          - priority: '0'
+    - errInterruptConfig:
+      - enableErrInterrupt: 'false'
+      - errorInterrupt:
+        - IRQn: 'DMA_ERROR_IRQn'
+        - enable_interrrupt: 'enabled'
+        - enable_priority: 'false'
+        - priority: '0'
+        - enable_custom_name: 'false'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+edma_config_t DMA4_config = {
+  .enableMasterIdReplication = false,
+  .enableGlobalChannelLink = true,
+  .enableHaltOnError = true,
+  .enableDebugMode = false,
+  .enableRoundRobinArbitration = false
+};
+/* Tansactional transfer configurations */
+edma_transfer_config_t DMA4_CH0_Transfers_config[1];
+edma_handle_t DMA4_CH0_Handle;
+
+static void DMA4_init(void) {
+
+  /* Channel CH0 initialization */
+  /* Set the kDma4RequestMuxADC1Request0 request */
+  EDMA_SetChannelMux(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL, DMA4_CH0_DMA_REQUEST);
+  /* Create the eDMA DMA4_CH0_Handle handle */
+  EDMA_CreateHandle(&DMA4_CH0_Handle, DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL);
+  /* DMA4 channel 0 reset */
+  EDMA_ResetChannel(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL);
+  /* DMA4 transfer CH0_TRANSFER0 configuration */
+  EDMA_PrepareTransferConfig(&DMA4_CH0_TRANSFER0_CONFIG, (void *) &srcAddr0[0], 1 << kEDMA_TransferSize2Bytes, sizeof(srcAddr0[0]), (void *) &destAddr0[0], 1 << kEDMA_TransferSize2Bytes, sizeof(destAddr0[0]), 2U, 2U); 
+  DMA4_CH0_TRANSFER0_CONFIG.srcAddrModulo = kEDMA_Modulo16bytes;
+  DMA4_CH0_TRANSFER0_CONFIG.dstAddrModulo = kEDMA_Modulo16bytes;
+  /* DMA4 hardware channel 0 request auto stop */
+  EDMA_EnableAutoStopRequest(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL, true);
+  /* DMA4 channel 0 peripheral request */
+  EDMA_EnableChannelRequest(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL);
+}
+
+/***********************************************************************************************************************
  * CM33_NVIC initialization code
  **********************************************************************************************************************/
 /* clang-format off */
@@ -76,7 +211,8 @@ instance:
 - peripheral: 'CM33_NVIC'
 - config_sets:
   - nvic:
-    - interrupt_table: []
+    - interrupt_table:
+      - 0: []
     - interrupts: []
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
@@ -217,7 +353,7 @@ instance:
       - convPauseDelay: '0'
       - FIFO0Watermark: '0'
       - FIFO1Watermark: '0'
-      - FIFO0WatermarkDMA: 'false'
+      - FIFO0WatermarkDMA: 'true'
       - FIFO1WatermarkDMA: 'false'
     - lpadcConvCommandConfig:
       - 0:
@@ -225,7 +361,7 @@ instance:
         - commandId: '1'
         - chainedNextCommandNumber: '2'
         - sampleChannelMode: 'kLPADC_SampleChannelSingleEndSideA'
-        - sampleScaleMode: 'kLPADC_SamplePartScale'
+        - sampleScaleMode: 'kLPADC_SampleFullScale'
         - channelNumber: 'A.1_4'
         - enableChannelB_b: 'false'
         - channelBScaleMode_e: 'kLPADC_SampleFullScale'
@@ -244,7 +380,7 @@ instance:
         - commandId: '2'
         - chainedNextCommandNumber: '0'
         - sampleChannelMode: 'kLPADC_SampleChannelSingleEndSideB'
-        - sampleScaleMode: 'kLPADC_SamplePartScale'
+        - sampleScaleMode: 'kLPADC_SampleFullScale'
         - channelNumber: 'B.1_5'
         - enableChannelB_b: 'false'
         - channelBScaleMode_e: 'kLPADC_SampleFullScale'
@@ -293,7 +429,7 @@ const lpadc_config_t ADC1_config = {
 };
 lpadc_conv_command_config_t ADC1_commandsConfig[2] = {
   {
-    .sampleScaleMode = kLPADC_SamplePartScale,
+    .sampleScaleMode = kLPADC_SampleFullScale,
     .channelBScaleMode = kLPADC_SampleFullScale,
     .sampleChannelMode = kLPADC_SampleChannelSingleEndSideA,
     .channelNumber = 4U,
@@ -311,7 +447,7 @@ lpadc_conv_command_config_t ADC1_commandsConfig[2] = {
     .enableWaitTrigger = true
   },
   {
-    .sampleScaleMode = kLPADC_SamplePartScale,
+    .sampleScaleMode = kLPADC_SampleFullScale,
     .channelBScaleMode = kLPADC_SampleFullScale,
     .sampleChannelMode = kLPADC_SampleChannelSingleEndSideB,
     .channelNumber = 5U,
@@ -347,6 +483,8 @@ static void ADC1_init(void) {
   LPADC_DoOffsetCalibration(ADC1_PERIPHERAL);
   /* Perform auto calibration */
   LPADC_DoAutoCalibration(ADC1_PERIPHERAL);
+  /* Enable DMA request on FIFO 0 watermark event */
+  LPADC_EnableFIFO0WatermarkDMA(ADC1_PERIPHERAL, true);
   /* Configure conversion command 1. */
   LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_GRPA, &ADC1_commandsConfig[0]);
   /* Configure conversion command 2. */
@@ -360,7 +498,12 @@ static void ADC1_init(void) {
  **********************************************************************************************************************/
 void BOARD_InitPeripherals(void)
 {
+  /* Global initialization */
+  (void)memset(DMA4_config.channelConfig, 0, FSL_FEATURE_EDMA_INSTANCE_CHANNELn(DMA4_DMA_BASEADDR) * sizeof(edma_channel_config_t *));
+  EDMA_Init(DMA4_DMA_BASEADDR, &DMA4_config);
+
   /* Initialize components */
+  DMA4_init();
   LPUART1_init();
   ADC1_init();
 }

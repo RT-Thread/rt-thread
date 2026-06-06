@@ -27,6 +27,7 @@ menu "On-chip Peripheral Drivers"
         default n
 		
 		if BSP_USING_LPADC
+		
         config BSP_USING_LPADC1
             bool "Enable LPADC1"
             default n
@@ -35,7 +36,8 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable LPADC1 DMA"
                 depends on BSP_USING_LPADC1
                 select BSP_USING_DMA
-                default n
+                default n	
+
 		endif
 		
     config BSP_USING_DMA

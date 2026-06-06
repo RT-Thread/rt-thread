@@ -52,8 +52,6 @@ BOARD_InitPins:
   - {pin_num: R15, peripheral: ADC1, signal: 'B, 1_7', pin_signal: GPIO_AD_03}
   - {pin_num: P15, peripheral: ADC1, signal: 'A, 1_6', pin_signal: GPIO_AD_04}
   - {pin_num: P13, peripheral: ADC1, signal: 'B, 1_6', pin_signal: GPIO_AD_05}
-  - {pin_num: K16, peripheral: ADC2, signal: 'A, 2_0', pin_signal: GPIO_AD_18}
-  - {pin_num: L13, peripheral: ADC2, signal: 'B, 2_0', pin_signal: GPIO_AD_19}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -92,12 +90,6 @@ void BOARD_InitPins(void) {
       0U);                                    /* Software Input On Field: Input Path is determined by functionality */
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_AD_08_GPIO4_IO08,           /* GPIO_AD_08 is configured as GPIO4_IO08 */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_18_GPIO4_IO18,           /* GPIO_AD_18 is configured as GPIO4_IO18 */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_19_GPIO4_IO19,           /* GPIO_AD_19 is configured as GPIO4_IO19 */
       0U);                                    /* Software Input On Field: Input Path is determined by functionality */
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
