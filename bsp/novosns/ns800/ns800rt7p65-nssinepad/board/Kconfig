@@ -205,5 +205,10 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI4"
                 default n
         endif
+		
+	menuconfig BSP_USING_QSPI
+        bool "Enable QSPI"
+        select RT_USING_QSPI
+        default n
 
 endmenu

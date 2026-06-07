@@ -423,6 +423,7 @@
 #define BSP_USING_UART1
 #define BSP_USING_CAN
 #define BSP_USING_CANFD1
+#define BSP_USING_QSPI
 /* end of On-chip Peripheral Drivers */
 
 #endif
