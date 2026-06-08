@@ -131,7 +131,7 @@
  * or data set, or a peripheral device emulating a modem.
  */
 #define CDNS_UART_MODEMSR_DCD       RT_BIT(7) /* Data Carrier Detect */
-#define CDNS_UART_MODEMSR_RI        RT_BIT(6) /* Ting Indicator */
+#define CDNS_UART_MODEMSR_RI        RT_BIT(6) /* Ring Indicator */
 #define CDNS_UART_MODEMSR_DSR       RT_BIT(5) /* Data Set Ready */
 #define CDNS_UART_MODEMSR_CTS       RT_BIT(4) /* Clear To Send */
 
@@ -344,7 +344,7 @@ static rt_err_t cdns_uart_uart_configure(struct rt_serial_device *serial, struct
     }
 
     /* Write the mode register out */
-    HWREG32(cdns_uart->base + CDNS_UART_MR) = mode_reg & 1;
+    HWREG32(cdns_uart->base + CDNS_UART_MR) = mode_reg;
 
 _out_lock:
     rt_spin_unlock_irqrestore(&cdns_uart->spinlock, level);
@@ -707,9 +707,9 @@ static rt_err_t cdns_uart_probe(struct rt_platform_device *pdev)
     {
         cdns_uart->pclk = rt_clk_get_by_name(dev, "aper_clk");
 
-        if (rt_is_err(cdns_uart->clk))
+        if (rt_is_err(cdns_uart->pclk))
         {
-            err = rt_ptr_err(cdns_uart->clk);
+            err = rt_ptr_err(cdns_uart->pclk);
 
             goto _fail;
         }
