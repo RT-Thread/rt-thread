@@ -46,10 +46,10 @@ const pin_map_t pin_map_table[]=
     {D22, GET_PIN(G, 5), "sspi1"},          /* SOFT-SPI-SCK */
     {D23, GET_PIN(G, 3), "sspi1"},          /* SOFT-SPI-MISO */
     {D24, GET_PIN(G, 1), "sspi1"},          /* SOFT-SPI-MOSI */
-    {D25, GET_PIN(G, 7), "i2c4"},           /* I2C-SCL (Wire) */
-    {D26, GET_PIN(D, 7), "i2c4"},           /* I2C-SDA (Wire) */
-    {D27, GET_PIN(B, 6), "i2c5"},           /* I2C-SCL (Wire) */
-    {D28, GET_PIN(B, 7), "i2c5"},           /* I2C-SDA (Wire) */
+    {D25, GET_PIN(G, 7), "swi2c4"},           /* I2C-SCL (Wire) */
+    {D26, GET_PIN(D, 7), "swi2c4"},           /* I2C-SDA (Wire) */
+    {D27, GET_PIN(B, 6), "swi2c5"},           /* I2C-SCL (Wire) */
+    {D28, GET_PIN(B, 7), "swi2c5"},           /* I2C-SDA (Wire) */
     {D29, GET_PIN(G, 6)},                   /* SPI-SS */
     {D30, GET_PIN(G, 4)},
     {D31, GET_PIN(A, 2), "uart2"},          /* Serial2-TX */

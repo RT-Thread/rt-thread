@@ -181,29 +181,6 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable Software I2C Bus"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C
-            config BSP_USING_I2C1
-                bool "Enable I2C1 Bus (User I2C)"
-                default n
-                if BSP_USING_I2C1
-                    comment "Notice: P13_1 --> 105; P13_2 --> 106"
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 SCL pin number"
-                        range 1 113
-                        default 105
-                    config BSP_I2C1_SDA_PIN
-                        int "i2c1 SDA pin number"
-                        range 1 113
-                        default 106
-                endif
-        endif
-
     config BSP_USING_USBD
         bool "Enable USB Device"
         select RT_USING_USB_DEVICE

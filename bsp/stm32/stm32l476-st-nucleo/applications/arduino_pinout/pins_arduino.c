@@ -39,8 +39,8 @@ const pin_map_t pin_map_table[]=
     {D11, GET_PIN(A,7), "pwm17", 1},    /* PWM */
     {D12, GET_PIN(A,6)},
     {D13, GET_PIN(A,5)},
-    {D14, GET_PIN(B,9), "i2c1"},        /* I2C-SDA (Wire) */
-    {D15, GET_PIN(B,8), "i2c1"},        /* I2C-SCL (Wire) */
+    {D14, GET_PIN(B,9), "swi2c1"},        /* I2C-SDA (Wire) */
+    {D15, GET_PIN(B,8), "swi2c1"},        /* I2C-SCL (Wire) */
     {D16, GET_PIN(A,5)},
     {A0, GET_PIN(A,0), "adc1", 5},      /* ADC */
     {A1, GET_PIN(A,1), "adc1", 6},      /* ADC */

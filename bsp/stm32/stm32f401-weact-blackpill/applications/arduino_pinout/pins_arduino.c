@@ -22,8 +22,8 @@
 const pin_map_t pin_map_table[]=
 {
     {D0, GET_PIN(C,13)},                /* LED_BUILTIN */
-    {D1, GET_PIN(C,14), "i2c1"},        /* I2C-SDA (Wire) */
-    {D2, GET_PIN(C,15), "i2c1"},        /* I2C-SCL (Wire) */
+    {D1, GET_PIN(C,14), "swi2c1"},        /* I2C-SDA (Wire) */
+    {D2, GET_PIN(C,15), "swi2c1"},        /* I2C-SCL (Wire) */
     {D3, GET_PIN(A,2), "uart2"},        /* Serial2-TX */
     {D4, GET_PIN(A,3), "uart2"},        /* Serial2-RX */
     {D5, GET_PIN(B,2)},

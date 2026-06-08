@@ -875,47 +875,6 @@ config SOC_SERIES_M2354
             endif
 
 
-    menuconfig BSP_USING_SOFT_I2C
-        bool "Enable SOFT I2C"
-
-        if BSP_USING_SOFT_I2C
-            config BSP_USING_SOFT_I2C0
-            bool "Enable SOFT I2C0"
-            select RT_USING_I2C
-            select RT_USING_I2C_BITOPS
-            default n
-
-            if BSP_USING_SOFT_I2C0
-                config BSP_SOFT_I2C0_SCL_PIN
-                hex "Specify the pin index of SCL of SOFT I2C0"
-                range 0 0x7F
-                default 0x18
-
-                config BSP_SOFT_I2C0_SDA_PIN
-                hex "Specify the pin index of SDA of SOFT I2C0"
-                range 0 0x7F
-                default 0x17
-            endif
-
-            config BSP_USING_SOFT_I2C1
-            bool "Enable SOFT I2C1"
-            select RT_USING_I2C
-            select RT_USING_I2C_BITOPS
-            default n
-
-            if BSP_USING_SOFT_I2C1
-                config BSP_SOFT_I2C1_SCL_PIN
-                hex "Specify the pin index of SCL of SOFT I2C1"
-                range 0 0x7F
-                default 0x0B
-
-                config BSP_SOFT_I2C1_SDA_PIN
-                hex "Specify the pin index of SDA of SOFT I2C1"
-                range 0 0x7F
-                default 0x0A
-            endif
-        endif
-
     config BSP_USING_WDT
         bool "Enable Watchdog Timer(WDT)"
         select RT_USING_WDT

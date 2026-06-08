@@ -26,7 +26,7 @@
 #include <drv_log.h>
 
 #define CHIP_ADDRESS    0x3C /* OV5640 address */
-#define I2C_NAME        "i2c1"
+#define I2C_NAME        "swi2c1"
 #define RST_PIN    GET_PIN(A, 10)
 #define PWDN_PIN    GET_PIN(D, 7)
 

@@ -10,7 +10,9 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_EEPROM
         bool "Enable I2C EEPROM (i2c1)"
-        select BSP_USING_I2C1
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C1
         default n
 
     config BSP_USING_SPI_FLASH
@@ -26,6 +28,14 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC
         select BSP_USING_ADC1
         default n
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 22 if BSP_USING_EEPROM
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 23 if BSP_USING_EEPROM
 
 endmenu
 
@@ -150,23 +160,6 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_SPI2
                 select BSP_SPI2_TX_USING_DMA
                 default n
-        endif
-
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            config BSP_I2C1_SCL_PIN
-                int "i2c1 scl pin number"
-                range 0 63
-                default 22
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                range 0 63
-                default 23
         endif
 
     menuconfig BSP_USING_ADC

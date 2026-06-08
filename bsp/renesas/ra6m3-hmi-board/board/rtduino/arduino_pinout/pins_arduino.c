@@ -38,8 +38,8 @@ const pin_map_t pin_map_table[]=
     {D11, BSP_IO_PORT_05_PIN_12, "pwm0", 0},                     /* PWM */
     {D12, BSP_IO_PORT_05_PIN_11},
     {D13, BSP_IO_PORT_02_PIN_04},
-    {D14, BSP_IO_PORT_02_PIN_03, "i2c0"},                        /* I2C-SDA (Soft Wire) */
-    {D15, BSP_IO_PORT_02_PIN_02, "i2c0"},                        /* I2C-SCL (Soft Wire) */
+    {D14, BSP_IO_PORT_02_PIN_03, "swi2c0"},                        /* I2C-SDA (Soft Wire) */
+    {D15, BSP_IO_PORT_02_PIN_02, "swi2c0"},                        /* I2C-SCL (Soft Wire) */
     {A0, BSP_IO_PORT_00_PIN_00, "adc0", 0},                      /* ADC */
     {A1, BSP_IO_PORT_00_PIN_01, "adc0", 1},                      /* ADC */
     {A2, BSP_IO_PORT_00_PIN_02, "adc0", 2},                      /* ADC */

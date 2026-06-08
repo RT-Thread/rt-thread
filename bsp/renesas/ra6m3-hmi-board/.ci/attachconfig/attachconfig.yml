@@ -14,8 +14,16 @@ devices.gpio:
 devices.uart:
     kconfig:
       - CONFIG_BSP_USING_UART=y
+
 devices.soft_i2c:
-    kconfig:
-      - CONFIG_RT_USING_I2C=y
-      - CONFIG_RT_USING_SOFT_I2C=y
-      - CONFIG_RT_USING_SOFT_I2C0=y
+  kconfig:
+    - CONFIG_RT_USING_I2C=y
+    - CONFIG_RT_USING_SOFT_I2C=y
+    - CONFIG_RT_USING_SOFT_I2C0=y
+    - CONFIG_RT_SOFT_I2C0_SCL_PIN=0x202
+    - CONFIG_RT_SOFT_I2C0_SDA_PIN=0x203
+    - CONFIG_RT_SOFT_I2C0_BUS_NAME="swi2c0"
+    - CONFIG_RT_USING_SOFT_I2C1=y
+    - CONFIG_RT_SOFT_I2C1_SCL_PIN=0x202
+    - CONFIG_RT_SOFT_I2C1_SDA_PIN=0x203
+    - CONFIG_RT_SOFT_I2C1_BUS_NAME="swi2c1"

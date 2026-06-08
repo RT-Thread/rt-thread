@@ -35,8 +35,8 @@ const pin_map_t pin_map_table[]=
     {D11, GET_PIN(A,7), "spi1"},        /* SPI-MOSI */
     {D12, GET_PIN(A,6), "spi1"},        /* SPI-MISO */
     {D13, GET_PIN(A,5), "spi1"},        /* SPI-SCK */
-    {D14, GET_PIN(B,9), "i2c1"},        /* I2C-SDA (Wire) */
-    {D15, GET_PIN(B,8), "i2c1"},        /* I2C-SCL (Wire) */
+    {D14, GET_PIN(B,9), "swi2c1"},        /* I2C-SDA (Wire) */
+    {D15, GET_PIN(B,8), "swi2c1"},        /* I2C-SCL (Wire) */
     {A0, GET_PIN(A,3), "adc1", 8},      /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
     {A1, GET_PIN(A,2), "adc1", 7},      /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */
     {A2, GET_PIN(C,3), "adc1", 4},      /* ADC, On-Chip: internal reference voltage, ADC_CHANNEL_VREFINT */

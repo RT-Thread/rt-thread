@@ -35,7 +35,9 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_MPU6050
         bool "Enable MPU6050 (i2c1)"
-        select BSP_USING_I2C1
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C1
         select PKG_USING_MPU6XXX
         default n
 
@@ -71,6 +73,14 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         select RT_USING_PIN
         default n
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 22 if BSP_USING_MPU6050
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 23 if BSP_USING_MPU6050
 
 endmenu
 
@@ -232,24 +242,6 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_ADC1
                 bool "Enable ADC1"
                 default n
-        endif
-
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            comment "Notice: PB6 --> 22; PB7 --> 23"
-            config BSP_I2C1_SCL_PIN
-                int "I2C1 scl pin number"
-                range 1 176
-                default 22
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                range 1 176
-                default 23
         endif
 
     menuconfig BSP_USING_ONCHIP_RTC

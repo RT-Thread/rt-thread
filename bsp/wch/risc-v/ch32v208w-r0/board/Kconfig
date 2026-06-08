@@ -31,8 +31,6 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_TIM4_PWM_CH2
         select BSP_USING_TIM4_PWM_CH3
         select BSP_USING_TIM4_PWM_CH4
-        select BSP_USING_SOFT_I2C
-        select BSP_USING_I2C1
         select RTDUINO_USING_WIRE
         imply RTDUINO_USING_SERVO
         default n
@@ -119,48 +117,6 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_DAC_CHANNEL2
                 bool "Enable DAC CHANNEL2"
                 default n
-        endif
-
-    menuconfig BSP_USING_SOFT_I2C
-        bool "Enable I2C Bus"
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        default n
-
-        if BSP_USING_SOFT_I2C
-            config BSP_USING_I2C1
-                bool "Enable I2C1 Bus (software simulation)"
-                default n
-
-                if BSP_USING_I2C1
-                    comment "Notice: PC7 --> 39; PC6 --> 38"
-
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 SCL pin number"
-                        range 0 79
-                        default 38
-                    config BSP_I2C1_SDA_PIN
-                        int "i2c1 SDA pin number"
-                        range 0 79
-                        default 39
-                endif
-
-            config BSP_USING_I2C2
-                bool "Enable I2C2 Bus (software simulation)"
-                default n
-
-                if BSP_USING_I2C2
-                    comment "Notice: PC1 --> 33; PC0 --> 32"
-                    config BSP_I2C2_SCL_PIN
-                        int "i2c2 SCL pin number"
-                        range 0 79
-                        default 32
-                    config BSP_I2C2_SDA_PIN
-                        int "i2c2 SDA pin number"
-                        range 0 79
-                        default 33
-                endif
         endif
 
     menuconfig BSP_USING_SPI

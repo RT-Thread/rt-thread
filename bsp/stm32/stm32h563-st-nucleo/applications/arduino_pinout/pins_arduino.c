@@ -34,8 +34,8 @@ const pin_map_t pin_map_table[]=
     {D11, GET_PIN(B, 5), "pwm3", 2},        /* PWM */
     {D12, GET_PIN(G, 9)},
     {D13, GET_PIN(A, 5)},                   /* LED_BUILTIN */
-    {D14, GET_PIN(B, 9), "i2c1"},           /* I2C-SDA (Wire) */
-    {D15, GET_PIN(B, 8), "i2c1"},           /* I2C-SCL (Wire) */
+    {D14, GET_PIN(B, 9), "swi2c1"},           /* I2C-SDA (Wire) */
+    {D15, GET_PIN(B, 8), "swi2c1"},           /* I2C-SCL (Wire) */
     {A0, GET_PIN(A, 6), "adc2", 3},         /* ADC */
     {A1, GET_PIN(C, 0), "adc2", 10},        /* ADC */
     {A2, GET_PIN(C, 3), "adc2", 13},        /* ADC */

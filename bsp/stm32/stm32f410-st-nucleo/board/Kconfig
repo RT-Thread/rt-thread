@@ -19,11 +19,21 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM1_CH3
         select BSP_USING_PWM1_CH2
         select BSP_USING_PWM1_CH1
-        select BSP_USING_I2C
-        select BSP_USING_I2C1
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        select RT_USING_SOFT_I2C1
         select RTDUINO_USING_WIRE
         imply RTDUINO_USING_SERVO
         default n
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 24 if BSP_USING_ARDUINO
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 25 if BSP_USING_ARDUINO
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -140,24 +150,6 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM1 channel3"
                         default n
                 endif
-        endif
-
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
-        default n
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            comment "Notice: PB8 --> 24; PB9 --> 25"
-            config BSP_I2C1_SCL_PIN
-                int "i2c1 scl pin number"
-                range 0 80
-                default 24
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                range 0 80
-                default 25
         endif
 
     source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
