@@ -142,12 +142,12 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
         src += Glob('class/vendor/display/usbd_display.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_ADB']):
         src += Glob('class/adb/usbd_adb.c')
-        src += Glob('platform/rtthread/usbd_adb_shell.c')
+        src += Glob('platform/rtthread/rt_usbd_adb.c')
 
     if GetDepend(['RT_CHERRYUSB_DEVICE_CDC_ACM_CHARDEV']):
         src += Glob('platform/rtthread/rt_usbd_serial.c')
 
-    if GetDepend(['PKG_CHERRYUSB_DEVICE_MSC_BLKDEV']):
+    if GetDepend(['RT_CHERRYUSB_DEVICE_MSC_BLKDEV']):
         src += Glob('platform/rtthread/rt_usbd_msc.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM']):
         src += Glob('demo/cdc_acm_template.c')
@@ -355,4 +355,3 @@ src += Glob('platform/rtthread/rt_usb_check.c')
 group = DefineGroup('UsbStack', src, depend = ['RT_USING_CHERRYUSB'], LIBS = LIBS, LIBPATH=LIBPATH, CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
-

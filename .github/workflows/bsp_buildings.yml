@@ -151,6 +151,7 @@ jobs:
           sudo tar -xf gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz -C /opt
           /opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin/aarch64-none-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin" >> $GITHUB_ENV
+          sudo apt-get -qq install device-tree-compiler
 
       - name: Install Mips ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-mips' && success() }}
@@ -257,6 +258,7 @@ jobs:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
           SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
+          RTT_CI_BUILD_DIST: "1"
         run: |
           source ~/.env/env.sh
           python tools/ci/bsp_buildings.py
