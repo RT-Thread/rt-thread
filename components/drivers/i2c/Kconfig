@@ -37,7 +37,7 @@ if RT_USING_I2C
                         default 2
                     config RT_SOFT_I2C0_BUS_NAME
                         string "Bus name"
-                        default "i2c0"
+                        default "swi2c0"
                     config RT_SOFT_I2C0_TIMING_DELAY
                         int "Timing delay (us)"
                         range 0 32767
@@ -61,7 +61,7 @@ if RT_USING_I2C
                         default 4
                     config RT_SOFT_I2C1_BUS_NAME
                         string "Bus name"
-                        default "i2c1"
+                        default "swi2c1"
                     config RT_SOFT_I2C1_TIMING_DELAY
                         int "Timing delay (us)"
                         range 0 32767
@@ -85,7 +85,7 @@ if RT_USING_I2C
                         default 6
                     config RT_SOFT_I2C2_BUS_NAME
                         string "Bus name"
-                        default "i2c2"
+                        default "swi2c2"
                     config RT_SOFT_I2C2_TIMING_DELAY
                         int "Timing delay (us)"
                         range 0 32767
@@ -109,7 +109,7 @@ if RT_USING_I2C
                         default 8
                     config RT_SOFT_I2C3_BUS_NAME
                         string "Bus name"
-                        default "i2c3"
+                        default "swi2c3"
                     config RT_SOFT_I2C3_TIMING_DELAY
                         int "Timing delay (us)"
                         range 0 32767
@@ -133,7 +133,7 @@ if RT_USING_I2C
                         default 10
                     config RT_SOFT_I2C4_BUS_NAME
                         string "Bus name"
-                        default "i2c4"
+                        default "swi2c4"
                     config RT_SOFT_I2C4_TIMING_DELAY
                         int "Timing delay (us)"
                         range 0 32767
@@ -157,7 +157,7 @@ if RT_USING_I2C
                         default 12
                     config RT_SOFT_I2C5_BUS_NAME
                         string "Bus name"
-                        default "i2c5"
+                        default "swi2c5"
                     config RT_SOFT_I2C5_TIMING_DELAY
                         int "Timing delay (us)"
                         range 0 32767
@@ -181,7 +181,7 @@ if RT_USING_I2C
                         default 14
                     config RT_SOFT_I2C6_BUS_NAME
                         string "Bus name"
-                        default "i2c6"
+                        default "swi2c6"
                     config RT_SOFT_I2C6_TIMING_DELAY
                         int "Timing delay (us)"
                         range 0 32767
@@ -205,7 +205,7 @@ if RT_USING_I2C
                         default 16
                     config RT_SOFT_I2C7_BUS_NAME
                         string "Bus name"
-                        default "i2c7"
+                        default "swi2c7"
                     config RT_SOFT_I2C7_TIMING_DELAY
                         int "Timing delay (us)"
                         range 0 32767
@@ -229,7 +229,7 @@ if RT_USING_I2C
                         default 18
                     config RT_SOFT_I2C8_BUS_NAME
                         string "Bus name"
-                        default "i2c8"
+                        default "swi2c8"
                     config RT_SOFT_I2C8_TIMING_DELAY
                         int "Timing delay (us)"
                         range 0 32767

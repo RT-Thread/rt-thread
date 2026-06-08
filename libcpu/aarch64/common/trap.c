@@ -15,6 +15,9 @@
 #include <armv8.h>
 #include "interrupt.h"
 #include "mm_aspace.h"
+#ifdef RT_USING_PIC
+#include <drivers/pic.h>
+#endif
 
 #define DBG_TAG "libcpu.trap"
 #define DBG_LVL DBG_LOG
