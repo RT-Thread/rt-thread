@@ -290,7 +290,7 @@ rt_err_t lwp_ptmx_init(rt_device_t ptmx_device, const char *root_path)
     if (device_name)
     {
         /* Register device */
-        sprintf(device_name, "%s%s", root_path, dev_rel_path);
+        snprintf(device_name, root_len + sizeof("/ptmx"), "%s%s", root_path, dev_rel_path);
         rt_device_register(ptmx_device, device_name, 0);
 
         /* Setup fops */
@@ -318,7 +318,7 @@ static rt_err_t sysptmx_readlink(struct rt_device *dev, char *buf, int len)
     int rc = 0;
 
     /* TODO: support multi-root ? */
-    strncpy(buf, "pts/ptmx", len);
+    snprintf(buf, len, "pts/ptmx");
 
     return rc;
 }
