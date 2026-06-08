@@ -83,9 +83,9 @@ void metal_weak metal_generic_default_poll(void)
 {
     metal_asm volatile("wfi");
 }
- 
- 
- 
+
+
+
  void *metal_machine_io_mem_map(void *va, metal_phys_addr_t pa,
                                 size_t size, unsigned int flags)
  {	
@@ -95,17 +95,17 @@ void metal_weak metal_generic_default_poll(void)
     // printf("sys_io_mem_map: aspace=0x%p\n", aspace);
     // int err = RT_EOK;
     // void *ret;
-	// ret = rt_hw_mmu_map(aspace, va, pa, size, flags);
+    // ret = rt_hw_mmu_map(aspace, va, pa, size, flags);
     // if (ret == RT_NULL)
     // {
     //     err = -RT_ERROR;
     // }
     // return err;
     (void)va;
-	(void)pa;
-	(void)size;
-	(void)flags;
+    (void)pa;
+    (void)size;
+    (void)flags;
 
-	return va;
+    return va;
 }
- 
+

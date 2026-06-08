@@ -173,7 +173,7 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, uintptr src, 
         printf("DDMA BDL configure failer.\r\n");
         return ret;
     }
-    
+
     rt_free(bdl_desc_config);
 
     return ret;
@@ -389,20 +389,20 @@ static rt_err_t i2s_configure(struct rt_audio_device *audio,
             i2s_dev->config.channels   = caps->udata.config.channels;
             i2s_set_word_length(i2s_dev, caps->udata.config.samplebits);
             break;
-        
+
         case AUDIO_DSP_SAMPLERATE:
             i2s_dev->config.samplerate = caps->udata.config.samplerate;
             break;
-        
+
         case AUDIO_DSP_SAMPLEBITS:
             i2s_dev->config.samplebits = caps->udata.config.samplebits;
             i2s_set_word_length(i2s_dev, caps->udata.config.samplebits);
             break;
-        
+
         case AUDIO_DSP_CHANNELS:
             /* TODO */
             break;
-        
+
         default:
             break;
         }

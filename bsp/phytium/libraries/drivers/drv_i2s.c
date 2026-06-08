@@ -177,7 +177,7 @@ static FError FI2sDdmaDeviceRX(struct phytium_i2s_device *i2s_dev, uintptr src, 
         printf("DDMA BDL configure failer.\r\n");
         return ret;
     }
-    
+
     rt_free(bdl_desc_config);
 
     return ret;

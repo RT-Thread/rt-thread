@@ -108,16 +108,16 @@ int es8336_start(codec_dec_work_mode_t mode)
     es8336_write_reg(ES8336_SDP_DACFMT_REG0B, 0x0C);
     es8336_write_reg(ES8336_CLKMGR_CLKSW_REG01, 0x7F);
     if (mode == CODEC_DEV_WORK_MODE_DAC) {
-		es8336_write_reg(ES8336_SYS_LP1_REG0E, 0x3F);
-		es8336_write_reg(ES8336_SYS_LP2_REG0F, 0x1F);
-		es8336_write_reg(ES8336_HPMIX_SWITCH_REG14, 0x88);
-		es8336_write_reg(ES8336_HPMIX_PDN_REG15, 0x00);
-		es8336_write_reg(ES8336_HPMIX_VOL_REG16, 0x00);
-		es8336_write_reg(ES8336_CPHP_PDN2_REG1A, 0x10);
-		es8336_write_reg(ES8336_CPHP_LDOCTL_REG1B, 0x30);
-		es8336_write_reg(ES8336_CPHP_PDN1_REG19, 0x02);
-		es8336_write_reg(ES8336_DAC_PDN_REG2F, 0x00);
-		es8336_write_reg(ES8336_CPHP_OUTEN_REG17, 0x66);
+        es8336_write_reg(ES8336_SYS_LP1_REG0E, 0x3F);
+        es8336_write_reg(ES8336_SYS_LP2_REG0F, 0x1F);
+        es8336_write_reg(ES8336_HPMIX_SWITCH_REG14, 0x88);
+        es8336_write_reg(ES8336_HPMIX_PDN_REG15, 0x00);
+        es8336_write_reg(ES8336_HPMIX_VOL_REG16, 0x00);
+        es8336_write_reg(ES8336_CPHP_PDN2_REG1A, 0x10);
+        es8336_write_reg(ES8336_CPHP_LDOCTL_REG1B, 0x30);
+        es8336_write_reg(ES8336_CPHP_PDN1_REG19, 0x02);
+        es8336_write_reg(ES8336_DAC_PDN_REG2F, 0x00);
+        es8336_write_reg(ES8336_CPHP_OUTEN_REG17, 0x66);
         es8336_write_reg(ES8336_RESET_REG00, 0xc0);
         es8336_write_reg(ES8336_DAC_VOLL_REG33, 0x0);
         es8336_write_reg(ES8336_DAC_VOLR_REG34, 0x28);
@@ -129,13 +129,13 @@ int es8336_start(codec_dec_work_mode_t mode)
         es8336_write_reg(ES8336_ADC_VOLUME_REG27, 0x1);
         es8336_write_reg(ES8336_ADC_VOLUME_REG28, 0x1);
 
-	} else if(mode == CODEC_DEV_WORK_MODE_ADC) {
-		es8336_write_reg(ES8336_CLKMGR_CLKSW_REG01,
-				    ES8336_CLKMGR_ADC_MCLK_EN |
-				    ES8336_CLKMGR_ADC_ANALOG_EN);
-	}
+    } else if(mode == CODEC_DEV_WORK_MODE_ADC) {
+        es8336_write_reg(ES8336_CLKMGR_CLKSW_REG01,
+                    ES8336_CLKMGR_ADC_MCLK_EN |
+                    ES8336_CLKMGR_ADC_ANALOG_EN);
+    }
     else if(mode == CODEC_DEV_WORK_MODE_BOTH) {
-	    es8336_write_reg(ES8336_RESET_REG00, 0xC0);
+        es8336_write_reg(ES8336_RESET_REG00, 0xC0);
         es8336_write_reg(ES8336_SYS_PDN_REG0D, 0x00);
         es8336_write_reg(ES8336_CLKMGR_CLKSW_REG01, 0x7F); /*set the clock*/
         es8336_write_reg(ES8336_SYS_LP1_REG0E, 0x3F); /*low power mode of ADC*/
@@ -151,7 +151,7 @@ int es8336_start(codec_dec_work_mode_t mode)
         es8336_write_reg(ES8336_RESET_REG00, 0xc0);
         es8336_write_reg(ES8336_DAC_VOLL_REG33, 0x0);
         es8336_write_reg(ES8336_DAC_VOLR_REG34, 0x28);
-	}
+    }
 #if defined SOC_TARGET_PD2408
     es8336_write_reg(ES8336_ADC_PDN_LINSEL_REG22, 0x20); /*select the output and input source */
 #elif defined SOC_TARGET_PE220X
@@ -165,23 +165,23 @@ int es8336_stop(codec_dec_work_mode_t mode)
     int res = 0;
     if (mode == CODEC_DEV_WORK_MODE_DAC) {
         es8336_write_reg(ES8336_CPHP_OUTEN_REG17, 0x00);
-		es8336_write_reg(ES8336_DAC_PDN_REG2F, 0x11);
-		es8336_write_reg(ES8336_CPHP_LDOCTL_REG1B, 0x03);
-		es8336_write_reg(ES8336_CPHP_PDN2_REG1A, 0x22);
-		es8336_write_reg(ES8336_CPHP_PDN1_REG19, 0x06);
-		es8336_write_reg(ES8336_HPMIX_SWITCH_REG14, 0x00);
-		es8336_write_reg(ES8336_HPMIX_PDN_REG15, 0x33);
-		es8336_write_reg(ES8336_HPMIX_VOL_REG16, 0x00);
-		es8336_write_reg(ES8336_SYS_PDN_REG0D, 0x00);
-		es8336_write_reg(ES8336_SYS_LP1_REG0E, 0xFF);
-		es8336_write_reg(ES8336_SYS_LP2_REG0F, 0xFF);
-		es8336_write_reg(ES8336_CLKMGR_CLKSW_REG01,0x7F);
+        es8336_write_reg(ES8336_DAC_PDN_REG2F, 0x11);
+        es8336_write_reg(ES8336_CPHP_LDOCTL_REG1B, 0x03);
+        es8336_write_reg(ES8336_CPHP_PDN2_REG1A, 0x22);
+        es8336_write_reg(ES8336_CPHP_PDN1_REG19, 0x06);
+        es8336_write_reg(ES8336_HPMIX_SWITCH_REG14, 0x00);
+        es8336_write_reg(ES8336_HPMIX_PDN_REG15, 0x33);
+        es8336_write_reg(ES8336_HPMIX_VOL_REG16, 0x00);
+        es8336_write_reg(ES8336_SYS_PDN_REG0D, 0x00);
+        es8336_write_reg(ES8336_SYS_LP1_REG0E, 0xFF);
+        es8336_write_reg(ES8336_SYS_LP2_REG0F, 0xFF);
+        es8336_write_reg(ES8336_CLKMGR_CLKSW_REG01,0x7F);
     }
     if (mode == CODEC_DEV_WORK_MODE_ADC) {
         res |= es8336_write_reg(ES8336_ADC_PDN_LINSEL_REG22, 0xC0); /* power down adc and line in*/
-		res |= es8336_write_reg(ES8336_CLKMGR_CLKSW_REG01,
-				    ES8336_CLKMGR_ADC_MCLK_EN |
-				    ES8336_CLKMGR_ADC_ANALOG_DIS);
+        res |= es8336_write_reg(ES8336_CLKMGR_CLKSW_REG01,
+                    ES8336_CLKMGR_ADC_MCLK_EN |
+                    ES8336_CLKMGR_ADC_ANALOG_DIS);
     }
     if (mode == CODEC_DEV_WORK_MODE_BOTH) {
         es8336_write_reg(ES8336_SYS_PDN_REG0D, 0x3F);
@@ -293,7 +293,7 @@ int es8336_open()
     es8336_write_reg(ES8336_ADC_ALC4_REG2C, 0x05);
     es8336_write_reg(ES8336_ADC_ALC5_REG2D, 0x06);
     es8336_write_reg(ES8336_ADC_ALC6_REG2E, 0x61);
-    
+
     es8336_write_reg(ES8336_GPIO_SEL_REG4D, 0x02);
     /* max debance time, enable interrupt, low active */
     es8336_write_reg(ES8336_GPIO_DEBUNCE_INT_REG4E, 0xF3);

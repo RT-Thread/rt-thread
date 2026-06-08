@@ -31,48 +31,48 @@
 #include "fcache.h"
 
 static void system_metal_logger(enum metal_log_level level,
-				const char *format, ...)
+                const char *format, ...)
 {
-	char msg[1024];
-	va_list args;
-	static const char * const level_strs[] = {
-		"metal: emergency: ",
-		"metal: alert:     ",
-		"metal: critical:  ",
-		"metal: error:     ",
-		"metal: warning:   ",
-		"metal: notice:    ",
-		"metal: info:      ",
-		"metal: debug:     ",
-	};
+    char msg[1024];
+    va_list args;
+    static const char * const level_strs[] = {
+        "metal: emergency: ",
+        "metal: alert:     ",
+        "metal: critical:  ",
+        "metal: error:     ",
+        "metal: warning:   ",
+        "metal: notice:    ",
+        "metal: info:      ",
+        "metal: debug:     ",
+    };
 
-	va_start(args, format);
-	vsnprintf(msg, sizeof(msg), format, args);
-	va_end(args);
+    va_start(args, format);
+    vsnprintf(msg, sizeof(msg), format, args);
+    va_end(args);
 
-	if (level <= METAL_LOG_EMERGENCY || level > METAL_LOG_DEBUG)
-		level = METAL_LOG_EMERGENCY;
+    if (level <= METAL_LOG_EMERGENCY || level > METAL_LOG_DEBUG)
+        level = METAL_LOG_EMERGENCY;
 
-	printf("%s%s", level_strs[level], msg);
+    printf("%s%s", level_strs[level], msg);
 }
 
 /* Main hw machinery initialization entry point, called from main()*/
 /* return 0 on success */
 int init_system(void)
 {
-	int ret;
-	struct metal_init_params metal_param = {
-		.log_handler = system_metal_logger,
-		.log_level = METAL_LOG_INFO,
-	};
+    int ret;
+    struct metal_init_params metal_param = {
+        .log_handler = system_metal_logger,
+        .log_level = METAL_LOG_INFO,
+    };
 
-	/* Low level abstraction layer for openamp initialization */
-	ret = metal_init(&metal_param);
-	return ret;
+    /* Low level abstraction layer for openamp initialization */
+    ret = metal_init(&metal_param);
+    return ret;
 }
 
 void cleanup_system(void)
 {
-	metal_finish();
-	__asm_invalidate_icache_all();
+    metal_finish();
+    __asm_invalidate_icache_all();
 }

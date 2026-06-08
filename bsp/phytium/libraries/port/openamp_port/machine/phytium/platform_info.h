@@ -50,26 +50,26 @@ extern "C" {
 /**************************** Type Definitions *******************************/
 
 struct remoteproc_priv {
-	const char *kick_dev_name;
-	const char *kick_dev_bus_name;
-	struct metal_device *kick_dev;
-	struct metal_io_region *kick_io;
+    const char *kick_dev_name;
+    const char *kick_dev_bus_name;
+    struct metal_device *kick_dev;
+    struct metal_io_region *kick_io;
 #ifdef CONFIG_USE_OPENAMP_IPI
-	atomic_int ipi_nokick;
+    atomic_int ipi_nokick;
 #endif /* !RPMSG_NO_IPI */
-	unsigned int cpu_id ;
-	/* remoteproc elf address */
-	metal_phys_addr_t elf_addr;
-	unsigned int src_table_ready_flag ;
-	/* src_table memory */
-	u32 src_table_attribute ;
-	/* share_mem_size = |tx vring|rx vring|share buffer| */
-	metal_phys_addr_t share_mem_va ;
-	metal_phys_addr_t share_mem_pa ;
-	u32	share_mem_size ;
-	u32 share_buffer_offset ;
-	u32 share_mem_attribute ;
-	struct rpmsg_virtio_shm_pool shpool;
+    unsigned int cpu_id ;
+    /* remoteproc elf address */
+    metal_phys_addr_t elf_addr;
+    unsigned int src_table_ready_flag ;
+    /* src_table memory */
+    u32 src_table_attribute ;
+    /* share_mem_size = |tx vring|rx vring|share buffer| */
+    metal_phys_addr_t share_mem_va ;
+    metal_phys_addr_t share_mem_pa ;
+    u32	share_mem_size ;
+    u32 share_buffer_offset ;
+    u32 share_mem_attribute ;
+    struct rpmsg_virtio_shm_pool shpool;
 };
 
 /************************** Function Prototypes ******************************/
