@@ -78,9 +78,6 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 imxrt_library = 'MIMXRT1020'
 rtconfig.BSP_LIBRARY_TYPE = imxrt_library
 
-# include libraries
-objs.extend(SConscript(os.path.join("packages/nxp-imxrt-sdk-latest", imxrt_library, 'SConscript')))
-
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
 
