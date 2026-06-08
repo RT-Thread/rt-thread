@@ -15,5 +15,5 @@ config SOC_LPC55S16
 
 source "$(RTT_DIR)/Kconfig"
 osource "$PKGS_DIR/Kconfig"
-rsource "../Libraries/Kconfig"
+rsource "../libraries/Kconfig"
 rsource "board/Kconfig"
