@@ -1,6 +1,7 @@
+#include <rtconfig.h>
+#ifdef BSP_USING_I2S_LAYER
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <rtconfig.h>
 
 #if defined(E2000D_DEMO_BOARD)||defined(E2000Q_DEMO_BOARD)
     #define AUDIO_DEVICE_NAME    "I2S0"
@@ -221,3 +222,4 @@ __exit:
 
 MSH_CMD_EXPORT(i2s_record_play_test,
                i2s record 5s and playback 5s test);
+#endif
