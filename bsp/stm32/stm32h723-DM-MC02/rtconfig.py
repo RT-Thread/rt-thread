@@ -145,7 +145,10 @@ elif PLATFORM == 'iccarm':
 
 def dist_handle(BSP_ROOT, dist_dir):
     import sys
-    cwd_path = os.getcwd()
-    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    sdk_dist_path = os.path.normpath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'tools')
+    )
+    if sdk_dist_path not in sys.path:
+        sys.path.append(sdk_dist_path)
     from sdk_dist import dist_do_building
     dist_do_building(BSP_ROOT, dist_dir)
