@@ -499,7 +499,7 @@ static rt_err_t i2s_init(struct rt_audio_device* audio)
 }
 
 static void audio_tx_thread_entry(void *parameter)
-{   
+{
     struct rt_audio_device *audio = parameter;
     struct phytium_i2s_device *i2s_dev;
     RT_ASSERT(audio != RT_NULL);
@@ -576,8 +576,8 @@ static int i2s_controller_init(struct phytium_i2s_device *i2s_dev)
                                 "audio_wdg",
                                 audio_wdg_thread_entry,
                                 audio,
-                                2048, 
-                                15, 
+                                2048,
+                                15,
                                 10);
         if (audio_wdg_thread)
             rt_thread_startup(audio_wdg_thread);
