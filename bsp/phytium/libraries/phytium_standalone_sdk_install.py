@@ -2,7 +2,7 @@ import os
 import subprocess
 
 def clone_repository(branch, commit_hash):
-    repository_url = "https://gitlab.phytium.com.cn/zhangyan1491/phytium-standalone-sdk.git"
+    repository_url = "https://gitlab.phytium.com.cn/embedded/iot/phytium-standalone-sdk.git"
     target_folder =  "../libraries/phytium_standalone_sdk"
 
     # Clone the repository
@@ -18,7 +18,7 @@ def clone_repository(branch, commit_hash):
 
 if __name__ == "__main__":
 
-    branch_to_clone = "addr_debug"
-    commit_to_clone = "41950a4270122b20e636814eea078f68378a9d45"
+    branch_to_clone = "master"
+    commit_to_clone = "2d0f034fc0d61fdcb99da818e8bbba04922df1f1"
 
     clone_repository(branch_to_clone, commit_to_clone)
