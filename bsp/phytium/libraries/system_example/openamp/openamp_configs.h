@@ -1,26 +1,3 @@
-/*
- * Copyright : (C) 2024 Phytium Information Technology, Inc.
- * All Rights Reserved.
- * 
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
- * either version 1.0 of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details.
- * 
- * 
- * FilePath: memory_attr.h
- * Created Date: 2024-05-06 19:20:51
- * Last Modified: 2025-05-19 16:31:08
- * Description:  This file is for
- * 
- * Modify History:
- *  Ver      Who        Date               Changes
- * -----  ----------  --------  ---------------------------------
- */
-
 #ifndef OPENAMP_CONFIGS_H
 #define OPENAMP_CONFIGS_H
 

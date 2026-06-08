@@ -1,27 +1,3 @@
-/*
- * Copyright : (C) 2025 Phytium Information Technology, Inc.
- * All Rights Reserved.
- * 
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
- * either version 1.0 of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details.
- * 
- * 
- * FilePath: openamp_for_linux_sample.c
- * Created Date: 2025-04-24 19:15:05
- * Last Modified: 2025-05-23 16:18:06
- * Description:  This file is for
- * 
- * Modify History:
- *  Ver      Who        Date               Changes
- * -----  ----------  --------  ---------------------------------
- *  1.0    LiuSM    2025-04-24 19:15:05  First version
- */
-
 #include "rtconfig.h"
 
 #ifdef BSP_USING_SYSTEM_EXAMPLE
@@ -75,64 +51,64 @@ static ProtocolData protocol_data;
 
 /************************** 资源表定义，与linux协商一致 **********/
 static struct remote_resource_table __resource resources __attribute__((used)) = {
-	/* Version */
-	1,
+    /* Version */
+    1,
 
-	/* NUmber of table entries */
-	NUM_TABLE_ENTRIES,
-	/* reserved fields */
-	{0, 0,},
+    /* NUmber of table entries */
+    NUM_TABLE_ENTRIES,
+    /* reserved fields */
+    {0, 0,},
 
-	/* Offsets of rsc entries */
-	{
-	 offsetof(struct remote_resource_table, rpmsg_vdev),
-	},
+    /* Offsets of rsc entries */
+    {
+     offsetof(struct remote_resource_table, rpmsg_vdev),
+    },
 
-	/* Virtio device entry */
-	{
-	 RSC_VDEV, VIRTIO_ID_RPMSG_, VDEV_NOTIFYID, RPMSG_IPU_C0_FEATURES, 0, 0, 0,
-	 NUM_VRINGS, {0, 0},
-	},
-    
-	/* Vring rsc entry - part of vdev rsc entry */
-	{SLAVE00_TX_VRING_ADDR, VRING_ALIGN, SLAVE00_VRING_NUM, 1, 0},
-	{SLAVE00_RX_VRING_ADDR, VRING_ALIGN, SLAVE00_VRING_NUM, 2, 0},
+    /* Virtio device entry */
+    {
+     RSC_VDEV, VIRTIO_ID_RPMSG_, VDEV_NOTIFYID, RPMSG_IPU_C0_FEATURES, 0, 0, 0,
+     NUM_VRINGS, {0, 0},
+    },
+
+    /* Vring rsc entry - part of vdev rsc entry */
+    {SLAVE00_TX_VRING_ADDR, VRING_ALIGN, SLAVE00_VRING_NUM, 1, 0},
+    {SLAVE00_RX_VRING_ADDR, VRING_ALIGN, SLAVE00_VRING_NUM, 2, 0},
 };
 
 /********** 共享内存定义，与linux协商一致 **********/
 static metal_phys_addr_t poll_phys_addr = SLAVE00_KICK_IO_ADDR;
 struct metal_device kick_driver_00 = {
     .name = SLAVE_00_KICK_DEV_NAME,
-	.bus = NULL,
+    .bus = NULL,
     .num_regions = 1,
-	.regions = {
-		{
-			.virt = (void *)SLAVE00_KICK_IO_ADDR,
-			.physmap = &poll_phys_addr,
-			.size = 0x1000,
-			.page_shift = -1UL,
-			.page_mask = -1UL,
-			.mem_flags = SLAVE00_SOURCE_TABLE_ATTRIBUTE,
-			.ops = {NULL},
-		}
-	},
+    .regions = {
+        {
+            .virt = (void *)SLAVE00_KICK_IO_ADDR,
+            .physmap = &poll_phys_addr,
+            .size = 0x1000,
+            .page_shift = -1UL,
+            .page_mask = -1UL,
+            .mem_flags = SLAVE00_SOURCE_TABLE_ATTRIBUTE,
+            .ops = {NULL},
+        }
+    },
     .irq_num = 1,/* Number of IRQs per device */
-	.irq_info = (void *)SLAVE_00_SGI,
+    .irq_info = (void *)SLAVE_00_SGI,
 } ;
 
 struct remoteproc_priv slave_00_priv = {
     .kick_dev_name =           SLAVE_00_KICK_DEV_NAME  ,
-	.kick_dev_bus_name =        KICK_BUS_NAME ,
+    .kick_dev_bus_name =        KICK_BUS_NAME ,
     .cpu_id        =  MASTER_CORE_MASK,/* 给所有core发送中断 */
 
-	.src_table_attribute = SLAVE00_SOURCE_TABLE_ATTRIBUTE ,
-	
-	/* |rx vring|tx vring|share buffer| */
-	.share_mem_va = SLAVE00_SHARE_MEM_ADDR ,
-	.share_mem_pa = SLAVE00_SHARE_MEM_ADDR ,
-	.share_buffer_offset = SLAVE00_VRING_SIZE ,
-	.share_mem_size = SLAVE00_SHARE_MEM_SIZE ,
-	.share_mem_attribute = SLAVE00_SHARE_BUFFER_ATTRIBUTE
+    .src_table_attribute = SLAVE00_SOURCE_TABLE_ATTRIBUTE ,
+
+    /* |rx vring|tx vring|share buffer| */
+    .share_mem_va = SLAVE00_SHARE_MEM_ADDR ,
+    .share_mem_pa = SLAVE00_SHARE_MEM_ADDR ,
+    .share_buffer_offset = SLAVE00_VRING_SIZE ,
+    .share_mem_size = SLAVE00_SHARE_MEM_SIZE ,
+    .share_mem_attribute = SLAVE00_SHARE_BUFFER_ATTRIBUTE
 } ;
 
 /************************** Function Prototypes ******************************/
@@ -190,7 +166,7 @@ int assemble_protocol_data(const ProtocolData* input, char* output, size_t* outp
  *-----------------------------------------------------------------------------*/
 static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len, uint32_t src, void *priv)
 {
-	(void)priv;
+    (void)priv;
     (void)src;
 
     int ret;
@@ -237,9 +213,9 @@ static int rpmsg_endpoint_cb(struct rpmsg_endpoint *ept, void *data, size_t len,
 
 static void rpmsg_service_unbind(struct rpmsg_endpoint *ept)
 {
-	(void)ept;
-	printf("unexpected Remote endpoint destroy.");
-	shutdown_req = 1;
+    (void)ept;
+    printf("unexpected Remote endpoint destroy.");
+    shutdown_req = 1;
 }
 
 /*-----------------------------------------------------------------------------*
@@ -269,7 +245,7 @@ static int FRpmsgEchoApp(struct rpmsg_device *rdev, void *priv)
         /* we got a shutdown request, exit */
         if (shutdown_req || rproc_get_stop_flag())
         {
-	        rproc_clear_stop_flag();
+            rproc_clear_stop_flag();
             break;
         }
     }
@@ -301,7 +277,7 @@ int slave_init(void)
         OPENAMP_SLAVE_ERROR("Failed to setup src table for slave 00\r\n");
         return -1;  // Return with an error if setup fails
     }
-    
+
     printf("Setup resource tables for the created remoteproc instances is over \r\n");
 
     if (platform_setup_share_mems(&remoteproc_slave_00)) 
@@ -324,20 +300,20 @@ int slave_init(void)
 
 static void RpmsgEchoTask(void * args)
 {
-	int ret;
-	printf("openamp lib version: %s (", openamp_version());
-	printf("Major: %d, ", openamp_version_major());
-	printf("Minor: %d, ", openamp_version_minor());
-	printf("Patch: %d)\r\n", openamp_version_patch());
+    int ret;
+    printf("openamp lib version: %s (", openamp_version());
+    printf("Major: %d, ", openamp_version_major());
+    printf("Minor: %d, ", openamp_version_minor());
+    printf("Patch: %d)\r\n", openamp_version_patch());
 
-	printf("libmetal lib version: %s (", metal_ver());
-	printf("Major: %d, ", metal_ver_major());
-	printf("Minor: %d, ", metal_ver_minor());
-	printf("Patch: %d)\r\n", metal_ver_patch());
+    printf("libmetal lib version: %s (", metal_ver());
+    printf("Major: %d, ", metal_ver_major());
+    printf("Minor: %d, ", metal_ver_minor());
+    printf("Patch: %d)\r\n", metal_ver_patch());
 
-	/* Initialize platform */
-	printf("start application...");
-	if(!slave_init())
+    /* Initialize platform */
+    printf("start application...");
+    if(!slave_init())
     {
         ret = FRpmsgEchoApp(rpdev_slave_00,&remoteproc_slave_00) ;
         if (ret)
