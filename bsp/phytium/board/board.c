@@ -179,9 +179,9 @@ void rt_hw_board_aarch64_init(void)
 #endif
 
     rt_thread_idle_sethook(idle_wfi);
-    
+
     rt_hw_gtimer_init();
-    
+
 #if defined(USE_OPENAMP)
     FPsciInit();
 #endif

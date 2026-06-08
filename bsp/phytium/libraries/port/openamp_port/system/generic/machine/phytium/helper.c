@@ -12,14 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
- * 
+ *
+ *
  * FilePath: helper.c
  * Date: 2022-01-03 13:04:02
  * LastEditTime: 2022-01-06 21:51:08
  * Description:  This file is for helper
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
  * 1.0	 huanghe	2022/03/06   first release

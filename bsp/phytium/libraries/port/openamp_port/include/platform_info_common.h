@@ -45,9 +45,9 @@ int platform_init(int argc, char *argv[], void **platform);
  */
 struct rpmsg_device *
 platform_create_rpmsg_vdev(void *platform, unsigned int vdev_index,
-			   unsigned int role,
-			   void (*rst_cb)(struct virtio_device *vdev),
-			   rpmsg_ns_bind_cb ns_bind_cb);
+               unsigned int role,
+               void (*rst_cb)(struct virtio_device *vdev),
+               rpmsg_ns_bind_cb ns_bind_cb);
 
 /**
  * platform_poll - platform poll function

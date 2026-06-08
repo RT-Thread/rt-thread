@@ -1,21 +1,21 @@
 /*
  * Copyright : (C) 2025 Phytium Information Technology, Inc.
  * All Rights Reserved.
- * 
+ *
  * This program is OPEN SOURCE software: you can redistribute it and/or modify it
  * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
  * either version 1.0 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the Phytium Public License for more details.
- * 
- * 
+ *
+ *
  * FilePath: sys.c
  * Created Date: 2025-04-30 15:18:08
  * Last Modified: 2025-05-07 14:53:21
  * Description:  This file is for
- * 
+ *
  * Modify History:
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------
@@ -88,7 +88,7 @@ void metal_weak metal_generic_default_poll(void)
 
  void *metal_machine_io_mem_map(void *va, metal_phys_addr_t pa,
                                 size_t size, unsigned int flags)
- {	
+{
     // rt_aspace_t aspace = NULL;
     // aspace = (rt_aspace_t)rt_malloc(sizeof(*aspace));
     // printf("sys_io_mem_map: va=%p, pa=0x%lx, size=0x%lx, flags=0x%x\n", va, pa, size, flags);

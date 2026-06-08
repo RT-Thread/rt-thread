@@ -12,13 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
- * 
+ *
+ *
  * FilePath: platform_info.h
  * Created Date: 2024-04-28 17:13:17
  * Last Modified: 2024-06-26 14:47:43
  * Description:  This file is for
- * 
+ *
  * Modify History:
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------

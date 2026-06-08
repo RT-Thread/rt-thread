@@ -12,13 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
- * 
+ *
+ *
  * FilePath: platform_info.c
  * Created Date: 2024-04-28 17:13:10
  * Last Modified: 2025-02-28 09:57:15
  * Description:  This file is for
- * 
+ *
  * Modify History:
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------
@@ -112,8 +112,8 @@ int platform_setup_src_table(struct remoteproc *rproc_inst,metal_phys_addr_t *rs
     struct remoteproc_priv *priv = rproc_inst->priv;
     int ret;
     // metal_phys_addr_t *rsc_table = priv->src_table_va ;
-    size_t rsc_size = sizeof(struct remote_resource_table) ;
-    unsigned int attribute = priv->src_table_attribute ;	
+    size_t rsc_size = sizeof(struct remote_resource_table);
+    unsigned int attribute = priv->src_table_attribute;
 
     pa = (metal_phys_addr_t)rsc_table;
     /* rproc_inst.mems  rproc_inst.rsc_io*/

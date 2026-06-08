@@ -12,15 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
- * 
+ *
+ *
  * FilePath: phytium_rproc.c
  * Date: 2022-03-08 22:26:17
  * LastEditTime: 2022-03-09 13:16:04
  * Description:  This file define phytium platform specific remoteproc
  *       implementation.
- * 
- * Modify History: 
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0	 huanghe	2022/03/06   first release
@@ -224,10 +224,10 @@ PhytiumProcMmap(struct remoteproc *rproc, metal_phys_addr_t *pa,
     mem->pa = lpa;
     mem->da = lda;
     mem->io = tmpio;
-    mem->size = size; 
+    mem->size = size;
     */
     remoteproc_init_mem(mem, NULL, lpa, lda, size, tmpio);
-    /* 
+    /*
     va is the same as pa in this platform,
     tmpio->virt = lpa;
     tmpio->physmap = &mem->pa;
@@ -283,7 +283,7 @@ static int Phytium_rproc_start(struct remoteproc *rproc)
     if (ret != 0) {
         PHYTIUM_RPROC_MAIN_DEBUG_E("Failed to start core id 0x%x, ret=0x%x\n\r", priv->cpu_id, ret);
         return -1;
-    } 
+    }
 
     return 0;
 }

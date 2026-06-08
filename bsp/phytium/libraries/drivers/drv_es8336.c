@@ -304,11 +304,11 @@ int es8336_open()
     es8336_write_reg(ES8336_CPHP_PDN1_REG19, 0x06);
     es8336_write_reg(ES8336_HPMIX_SWITCH_REG14, 0x00);
     es8336_write_reg(ES8336_HPMIX_PDN_REG15, 0x33);
-    es8336_write_reg(ES8336_HPMIX_VOL_REG16, 0x00); 
+    es8336_write_reg(ES8336_HPMIX_VOL_REG16, 0x00);
     es8336_write_reg(ES8336_SYS_LP1_REG0E, 0xFF);
     es8336_write_reg(ES8336_SYS_LP2_REG0F, 0xFF);
     es8336_write_reg(ES8336_CLKMGR_CLKSW_REG01, 0xF3);
-    es8336_write_reg(ES8336_ADC_PDN_LINSEL_REG22, 0xD0); 
+    es8336_write_reg(ES8336_ADC_PDN_LINSEL_REG22, 0xD0);
 
     return 0;
 }

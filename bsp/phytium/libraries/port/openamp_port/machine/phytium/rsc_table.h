@@ -17,9 +17,9 @@
  * FilePath: rsc_table.h
  * Date: 2022-02-23 11:24:12
  * LastEditTime: 2022-02-23 11:44:06
- * Description:  This file populates resource table for BM remote 
- * 
- * Modify History: 
+ * Description:  This file populates resource table for BM remote
+ *
+ * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------
  * 1.0	 huanghe	2022/03/06   first release

@@ -113,7 +113,7 @@ struct remoteproc_priv slave_00_priv = {
 
 /************************** Function Prototypes ******************************/
 /*协议解析接口*/
-int parse_protocol_data(const char* input, size_t input_size, ProtocolData* output) 
+int parse_protocol_data(const char* input, size_t input_size, ProtocolData* output)
 {
 
     if (input_size < 6) { /* 确保最小长度（命令字+数据长度）*/
@@ -140,7 +140,7 @@ int parse_protocol_data(const char* input, size_t input_size, ProtocolData* outp
 }
 
 /*协议组装接口*/
-int assemble_protocol_data(const ProtocolData* input, char* output, size_t* output_size) 
+int assemble_protocol_data(const ProtocolData* input, char* output, size_t* output_size)
 {
     /* 检查预期的输出大小是否超出最大长度 */
     if (6 + input->length > MAX_DATA_LENGTH) {
@@ -265,14 +265,14 @@ int slave_init(void)
     //打印remoteproc_slave_00地址，slave_00_priv地址，kick_driver_00地址
     printf("remoteproc slave 00 address: 0x%x,0x%x,0x%x\r\n",&remoteproc_slave_00,&slave_00_priv,&kick_driver_00);
 
-    if (!platform_create_proc(&remoteproc_slave_00, &slave_00_priv, &kick_driver_00)) 
+    if (!platform_create_proc(&remoteproc_slave_00, &slave_00_priv, &kick_driver_00))
     {
         OPENAMP_SLAVE_ERROR("Failed to create remoteproc instance for slave 00\r\n");
         return -1;  // Return with an error if creation fails
     }
     remoteproc_slave_00.rsc_table = &resources;
     printf("remoteproc slave 00 rsc_table address: 0x%x\r\n",remoteproc_slave_00.rsc_table);
-    if (platform_setup_src_table(&remoteproc_slave_00,remoteproc_slave_00.rsc_table)) 
+    if (platform_setup_src_table(&remoteproc_slave_00,remoteproc_slave_00.rsc_table))
     {
         OPENAMP_SLAVE_ERROR("Failed to setup src table for slave 00\r\n");
         return -1;  // Return with an error if setup fails
@@ -280,7 +280,7 @@ int slave_init(void)
 
     printf("Setup resource tables for the created remoteproc instances is over \r\n");
 
-    if (platform_setup_share_mems(&remoteproc_slave_00)) 
+    if (platform_setup_share_mems(&remoteproc_slave_00))
     {
         OPENAMP_SLAVE_ERROR("Failed to setup shared memory for slave 00\r\n");
         return -1;  // Return with an error if setup fails
@@ -289,14 +289,14 @@ int slave_init(void)
     printf("Setup shared memory regions for both remoteproc instances is over \r\n");
 
     rpdev_slave_00 = platform_create_rpmsg_vdev(&remoteproc_slave_00, 0, VIRTIO_DEV_DEVICE, NULL, NULL);
-    if (!rpdev_slave_00) 
+    if (!rpdev_slave_00)
     {
         OPENAMP_SLAVE_ERROR("Failed to create rpmsg vdev for slave 00\r\n");
         return -1;  // Return with an error if creation fails
     }
     printf("platform_create_rpmsg_vdev for slave 00 is over\r\n ");
-    return 0 ;   
-} 
+    return 0;
+}
 
 static void RpmsgEchoTask(void * args)
 {
