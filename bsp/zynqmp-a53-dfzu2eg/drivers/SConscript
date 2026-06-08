@@ -4,7 +4,13 @@ from building import *
 
 cwd     = GetCurrentDir()
 src     = Glob('*.c')
-CPPPATH = [cwd , cwd + '/zynqmp']
+CPPPATH = [cwd, cwd + "/../../../components/drivers/rtc"]
+
+if GetDepend(['RT_RTC_ZYNQMP']):
+    src += ['rtc/rtc-zynqmp.c']
+
+if GetDepend(['RT_SERIAL_XILINX_PS']):
+    src += ['serial/xilinx_uartps.c']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
 
