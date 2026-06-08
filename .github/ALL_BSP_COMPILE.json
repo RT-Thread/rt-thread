@@ -198,7 +198,7 @@
         "stm32/stm32h503-st-nucleo",
         "stm32/stm32h723-st-nucleo",
         "stm32/stm32h723-lxb-disco",
-        "stm32/stm32h723-dm-mc02",
+        "stm32/stm32h723-DM-MC02",
         "stm32/stm32h730-esphosted-evb",
         "stm32/stm32h743-armfly-v7",
         "stm32/stm32h743-atk-apollo",
