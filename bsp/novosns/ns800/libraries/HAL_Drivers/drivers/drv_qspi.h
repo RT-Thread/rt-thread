@@ -19,3 +19,4 @@ int rt_hw_qspi_init(void);
 #endif
 
 #endif /* __DRV_QSPI_H__ */
+

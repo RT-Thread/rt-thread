@@ -106,14 +106,16 @@ static rt_ssize_t qspi_xfer(struct rt_spi_device *device,
     if (qspi_msg->instruction.content)
         *ptr++ = qspi_msg->instruction.content;
 
-    if (qspi_msg->address.size) {
+    if (qspi_msg->address.size)
+    {
         uint32_t addr = qspi_msg->address.content;
         uint8_t addr_bytes = qspi_msg->address.size / 8;
         for (uint8_t i = addr_bytes; i > 0; i--)
             *ptr++ = (addr >> (8*(i-1))) & 0xFF;
     }
 
-    if (qspi_msg->dummy_cycles) {
+    if (qspi_msg->dummy_cycles)
+    {
         uint8_t dummy_bytes = qspi_msg->dummy_cycles / 8;
         for (uint8_t i = 0; i < dummy_bytes; i++)
             *ptr++ = 0xFF;
@@ -122,21 +124,25 @@ static rt_ssize_t qspi_xfer(struct rt_spi_device *device,
     uint32_t cmd_len = ptr - cmd_buf;
 
     /* Execute transfer using direct API */
-    if (send_len && recv_len) {
+    if (send_len && recv_len)
+    {
         /* Half-duplex not supported in this driver */
         return 0;
     }
 
-    if (send_len) {
+    if (send_len)
+    {
         /* Append send data to command buffer */
-        if (cmd_len + send_len <= sizeof(cmd_buf)) {
+        if (cmd_len + send_len <= sizeof(cmd_buf))
+        {
             rt_memcpy(ptr, send_buf, send_len);
             QSPI_writeDirect(cmd_buf, cmd_len + send_len, 0);
         } else {
             /* Not enough buffer, split into two writes? Not needed for normal use */
             return 0;
         }
-    } else if (recv_len) {
+    } else if (recv_len)
+    {
         /* Write command, keep CS active, then read data */
         QSPI_writeDirect(cmd_buf, cmd_len, 1);
         QSPI_readDirect(recv_buf, recv_len);
@@ -183,3 +189,4 @@ int rt_hw_qspi_init(void)
 INIT_DEVICE_EXPORT(rt_hw_qspi_init);
 
 #endif
+
