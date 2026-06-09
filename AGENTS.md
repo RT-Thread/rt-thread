@@ -1,69 +1,28 @@
-# RT-Thread AI Agent Rules
+# RT-Thread AI Agent Rules / RT-Thread AI Agent 规则
 
-## English Summary
+## What this is / 这是什么
 
-- Follow the core principle: make only minimal, problem-oriented, verifiable changes.
-- Do not introduce unrelated refactors, generated artifacts, secrets, dependency churn, or history rewrites.
-- Use the existing directories only (`bsp/`, `components/`, `documentation/`, `examples/`, `include/`, `libcpu/`, `src/`, `tools/`).
-- Keep repository-level entry or rule documents such as `AGENTS.md`, `README.md`, and `LICENSE` in the repository root.
-- If any rule conflicts with a more specific repository document, follow `.github/CONTRIBUTING.md`, `documentation/7.contribution/coding_style_cn.md`, and `documentation/7.contribution/coding_style_en.md`.
+- Rules for AI agents working in this repository. / 约束在本仓库内工作的 AI Agent。
+- Core principle: make only minimal, task-focused, verifiable changes. / 核心原则：只做最小化、面向任务、可验证的改动。
 
-本文件用于约束在本仓库内工作的 AI Agent（如 Codex）。如无明确说明，所有修改都应遵循“**最小改动、问题导向、可验证**”原则。
+## Allowed / 可以做什么
 
-## 1. 可以做什么
+- Read files directly related to the task. / 阅读与任务直接相关的文件。
+- Make minimal required edits, and update directly related docs or tests when needed. / 仅做完成任务所需的最小改动，并在需要时同步更新直接相关的文档或测试。
+- Use existing directories, scripts, and checks. / 复用现有目录、脚本和检查流程。
 
-- 阅读仓库内与任务直接相关的代码、文档、配置和测试文件。
-- 仅针对当前任务做最小必要修改，并同步更新直接相关的文档或测试。
-- 优先复用现有目录结构、脚本、构建流程与测试流程。
-- 在提交前运行与改动直接相关的现有检查、构建或测试，并确认结果。
-- 在不改变原有行为的前提下，修复改动直接引入的问题。
+## Strictly forbidden / 严格禁止
 
-## 2. 明令禁止
+- Unrelated refactors, bulk renames, repo-wide formatting, or unrelated file changes. / 与任务无关的重构、批量重命名、全仓格式化或其他无关改动。
+- Generated artifacts, temporary files, logs, binaries, local environment files, or secrets. / 提交生成物、临时文件、日志、二进制文件、本地环境文件或任何密钥等敏感信息。
+- Dependency churn, third-party/imported code changes, or weakened/removed tests unless the task explicitly requires them. / 除非任务明确要求，否则禁止随意变更依赖、修改第三方/导入代码，或弱化/删除测试。
+- History rewrites or overwriting others' work. / 改写历史或覆盖他人工作成果。
 
-- 禁止修改与当前任务无关的代码、文档、格式或测试。
-- 禁止大规模重构、批量重命名、全仓格式化，除非任务明确要求。
-- 禁止提交生成物、临时文件、日志、二进制文件或本地环境文件。
-- 禁止引入密钥、口令、令牌、证书或其他敏感信息。
-- 禁止随意升级依赖、替换第三方代码或改动外部导入代码，除非任务明确要求且已验证影响。
-- 禁止删除或弱化已有测试来规避失败。
-- 禁止改写历史（rebase、squash、force push 等）或覆盖他人工作成果。
+## Placement / 放置规则
 
-## 3. 目录规则
+- Use existing directories such as `bsp/`, `components/`, `documentation/`, `examples/`, `include/`, `libcpu/`, `src/`, and `tools/`. / 使用现有目录，如 `bsp/`、`components/`、`documentation/`、`examples/`、`include/`、`libcpu/`、`src/`、`tools/`。
+- Keep repository-entry files such as `AGENTS.md`, `README.md`, and `LICENSE` in the root; put general documentation in `documentation/`. / `AGENTS.md`、`README.md`、`LICENSE` 等仓库入口文件放在根目录；通用文档放在 `documentation/`。
 
-请按照仓库既有职责放置文件，禁止随意新增同类平行目录：
+## Precedence / 优先级
 
-- `bsp/`：开发板、芯片、板级支持包相关代码。
-- `components/`：内核外围组件、中间件、软件包适配代码。
-- `documentation/`：通用文档、开发规范、使用说明。
-- `examples/`：示例、演示代码、utest 配置与样例。
-- `include/`：对外公开的头文件。
-- `libcpu/`：架构、CPU 相关移植代码。
-- `src/`：RT-Thread 内核核心源码。
-- `tools/`：构建、CI、辅助脚本。
-
-新增文件时请遵循以下要求：
-
-- 文档优先放在 `documentation/`；仅 `AGENTS.md`、`README.md`、`LICENSE` 等仓库级入口或规则文档放在根目录。
-- 公共接口声明放在 `include/` 或对应模块公开头文件中，不要散落在无关目录。
-- 板级、芯片级改动应限制在对应 `bsp/`、`libcpu/` 或驱动目录内。
-- 示例和测试代码不要放入内核核心目录。
-
-## 4. 文件规则
-
-- 目录名、文件名如无特殊原因，使用小写；引用的第三方或上游文件可保留原名。
-- 新增驱动源码文件命名遵循 `drv_class.c` 风格，例如 `drv_spi.c`。
-- 新增 C 头文件应使用统一的 include guard 风格，例如 `__FILE_H__`。
-- 新增源码文件应补齐版权、`SPDX-License-Identifier` 与必要的 Change Log，风格与现有代码保持一致。
-- 代码注释使用英文；文档可按所在文档语言编写。
-- 修改 README 或说明文档时，优先更新与改动内容直接对应的语言版本，避免制造互相矛盾的描述。
-- 非任务必须，不要修改第三方库、自动生成文件和体量巨大的导入文件。
-
-## 5. 提交流程要求
-
-- 修改前先确认影响范围，只处理当前 issue 或 review feedback。
-- 修改后至少执行与改动直接相关的现有校验；无法执行时需在说明中明确原因。
-- 提交内容应保持干净、聚焦，避免混入无关改动。
-- 若发现仓库现有规则与本文件冲突，以更具体的目录文档、贡献指南和编码规范为准：
-  - `.github/CONTRIBUTING.md`
-  - `documentation/7.contribution/coding_style_cn.md`
-  - `documentation/7.contribution/coding_style_en.md`
+- If a more specific repository rule conflicts with this file, follow `.github/CONTRIBUTING.md`, `documentation/7.contribution/coding_style_cn.md`, and `documentation/7.contribution/coding_style_en.md`. / 如与更具体的仓库规则冲突，以 `.github/CONTRIBUTING.md`、`documentation/7.contribution/coding_style_cn.md`、`documentation/7.contribution/coding_style_en.md` 为准。
