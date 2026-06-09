@@ -94,7 +94,7 @@ struct metal_device kick_driver_00 = {
     },
     .irq_num = 1,/* Number of IRQs per device */
     .irq_info = (void *)SLAVE_00_SGI,
-} ;
+};
 
 struct remoteproc_priv slave_00_priv = {
     .kick_dev_name =           SLAVE_00_KICK_DEV_NAME  ,
@@ -109,7 +109,7 @@ struct remoteproc_priv slave_00_priv = {
     .share_buffer_offset = SLAVE00_VRING_SIZE ,
     .share_mem_size = SLAVE00_SHARE_MEM_SIZE ,
     .share_mem_attribute = SLAVE00_SHARE_BUFFER_ATTRIBUTE
-} ;
+};
 
 /************************** Function Prototypes ******************************/
 /*协议解析接口*/
@@ -315,7 +315,7 @@ static void RpmsgEchoTask(void * args)
     printf("start application...");
     if(!slave_init())
     {
-        ret = FRpmsgEchoApp(rpdev_slave_00,&remoteproc_slave_00) ;
+        ret = FRpmsgEchoApp(rpdev_slave_00,&remoteproc_slave_00);
         if (ret)
         {
             OPENAMP_SLAVE_ERROR("Failed to running echoapp");
