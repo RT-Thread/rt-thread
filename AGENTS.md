@@ -2,9 +2,10 @@
 
 ## English Summary
 
-- Make only minimal, task-related, verifiable changes.
+- Follow the core principle: make only minimal, problem-oriented, verifiable changes.
 - Do not introduce unrelated refactors, generated artifacts, secrets, dependency churn, or history rewrites.
 - Use the existing directories only (`bsp/`, `components/`, `documentation/`, `examples/`, `include/`, `libcpu/`, `src/`, `tools/`).
+- Keep repository-level entry or rule documents such as `AGENTS.md`, `README.md`, and `LICENSE` in the repository root.
 - If any rule conflicts with a more specific repository document, follow `.github/CONTRIBUTING.md`, `documentation/7.contribution/coding_style_cn.md`, and `documentation/7.contribution/coding_style_en.md`.
 
 本文件用于约束在本仓库内工作的 AI Agent（如 Codex）。如无明确说明，所有修改都应遵循“**最小改动、问题导向、可验证**”原则。
