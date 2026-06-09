@@ -68,6 +68,8 @@ MSH_CMD_EXPORT(version, show RT-Thread version information);
 
 static int console(int argc, char **argv)
 {
+    rt_device_t dev = RT_NULL;
+
     if (argc > 1)
     {
         if (!rt_strcmp(argv[1], "set"))
@@ -77,18 +79,27 @@ static int console(int argc, char **argv)
                 goto _help;
             }
 
-            rt_kprintf("console change to %s\n", argv[2]);
-            rt_console_set_device(argv[2]);
-
-#ifdef RT_USING_POSIX
+            dev = rt_device_find(argv[2]);
+            if (dev == RT_NULL)
             {
-                rt_device_t dev = rt_device_find(argv[2]);
+                rt_kprintf("console: can not find device: %s\n", argv[2]);
+                return -RT_ERROR;
+            }
 
-                if (dev != RT_NULL)
+            if (rt_console_get_device() != dev)
+            {
+                rt_console_set_device(argv[2]);
+                if (rt_console_get_device() != dev)
                 {
-                    console_set_iodev(dev);
+                    rt_kprintf("console: can not use device as console: %s\n", argv[2]);
+                    return -RT_ERROR;
                 }
             }
+
+            rt_kprintf("console change to %s\n", argv[2]);
+
+#ifdef RT_USING_POSIX
+            console_set_iodev(dev);
 #elif !defined(RT_USING_POSIX_STDIO)
             finsh_set_device(argv[2]);
 #else
