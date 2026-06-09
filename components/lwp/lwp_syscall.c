@@ -7059,8 +7059,7 @@ sysret_t sys_getaddrinfo(const char *nodename,
     char *k_servname = NULL;
     struct addrinfo *k_hints = NULL;
     struct musl_addrinfo k_res_musl;
-    int hints_socktype = 0;
-    int hints_protocol = 0;
+    struct musl_sockaddr *u_res_ai_addr = NULL;
 #ifdef ARCH_MM_MMU
     int len = 0;
 #endif
@@ -7080,6 +7079,8 @@ sysret_t sys_getaddrinfo(const char *nodename,
 #else
     k_res_musl = *res;
 #endif
+    u_res_ai_addr = k_res_musl.ai_addr;
+
     if (nodename)
     {
 #ifdef ARCH_MM_MMU
@@ -7174,29 +7175,27 @@ sysret_t sys_getaddrinfo(const char *nodename,
         k_hints->ai_socktype = k_hints_musl.ai_socktype;
         k_hints->ai_protocol = k_hints_musl.ai_protocol;
         k_hints->ai_addrlen = k_hints_musl.ai_addrlen;
-        hints_socktype = k_hints_musl.ai_socktype;
-        hints_protocol = k_hints_musl.ai_protocol;
     }
 
     ret = sal_getaddrinfo(k_nodename, k_servname, k_hints, &k_res);
     if (ret == 0)
     {
         /* set sockaddr */
-        if (k_res->ai_addr && k_res_musl.ai_addr)
+        if (k_res->ai_addr && u_res_ai_addr)
         {
             struct musl_sockaddr k_sockaddr;
 
             sockaddr_tomusl(k_res->ai_addr, &k_sockaddr);
 #ifdef ARCH_MM_MMU
-            if (!lwp_user_accessable((void *)k_res_musl.ai_addr, sizeof(k_sockaddr)) ||
-                lwp_put_to_user(k_res_musl.ai_addr, &k_sockaddr, sizeof(k_sockaddr)) != sizeof(k_sockaddr))
+            if (!lwp_user_accessable((void *)u_res_ai_addr, sizeof(k_sockaddr)) ||
+                lwp_put_to_user(u_res_ai_addr, &k_sockaddr, sizeof(k_sockaddr)) != sizeof(k_sockaddr))
             {
                 SET_ERRNO(EFAULT);
                 ret = -1;
                 goto exit;
             }
 #else
-            sockaddr_tomusl(k_res->ai_addr, k_res_musl.ai_addr);
+            sockaddr_tomusl(k_res->ai_addr, u_res_ai_addr);
 #endif
         }
         k_res_musl.ai_addrlen = k_res->ai_addrlen;
@@ -7209,8 +7208,8 @@ sysret_t sys_getaddrinfo(const char *nodename,
         if (hints != NULL)
         {
             /* copy socktype & protocol from hints if specified */
-            k_res_musl.ai_socktype = hints_socktype;
-            k_res_musl.ai_protocol = hints_protocol;
+            k_res_musl.ai_socktype = k_hints->ai_socktype;
+            k_res_musl.ai_protocol = k_hints->ai_protocol;
         }
 
 #ifdef ARCH_MM_MMU
