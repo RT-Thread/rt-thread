@@ -7065,7 +7065,7 @@ sysret_t sys_getaddrinfo(const char *nodename,
 #endif
 
 #ifdef ARCH_MM_MMU
-    if (!lwp_user_accessable((void *)res, sizeof(*res)))
+    if (!lwp_user_accessable((void *)res, sizeof(k_res_musl)))
     {
         SET_ERRNO(EFAULT);
         goto exit;
@@ -7080,6 +7080,13 @@ sysret_t sys_getaddrinfo(const char *nodename,
     k_res_musl = *res;
 #endif
     u_res_ai_addr = k_res_musl.ai_addr;
+#ifdef ARCH_MM_MMU
+    if (u_res_ai_addr && !lwp_user_accessable((void *)u_res_ai_addr, sizeof(struct musl_sockaddr)))
+    {
+        SET_ERRNO(EFAULT);
+        goto exit;
+    }
+#endif
 
     if (nodename)
     {
@@ -7148,7 +7155,7 @@ sysret_t sys_getaddrinfo(const char *nodename,
     {
         struct musl_addrinfo k_hints_musl;
 #ifdef ARCH_MM_MMU
-        if (!lwp_user_accessable((void *)hints, sizeof(*hints)))
+        if (!lwp_user_accessable((void *)hints, sizeof(struct musl_addrinfo)))
         {
             SET_ERRNO(EFAULT);
             goto exit;
