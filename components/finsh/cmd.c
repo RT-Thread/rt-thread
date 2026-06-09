@@ -94,9 +94,13 @@ static int console(int argc, char **argv)
                     rt_kprintf("console: can not use device as console: %s\n", argv[2]);
                     return -RT_ERROR;
                 }
-            }
 
-            rt_kprintf("console change to %s\n", argv[2]);
+                rt_kprintf("console change to %s\n", argv[2]);
+            }
+            else
+            {
+                rt_kprintf("console already set to %s\n", argv[2]);
+            }
 
 #ifdef RT_USING_POSIX
             console_set_iodev(dev);

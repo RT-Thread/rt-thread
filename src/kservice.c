@@ -179,7 +179,7 @@ static rt_err_t _console_get_open_flags(rt_device_t device, rt_uint16_t *oflag)
     {
         if (device->flag & (RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_DMA_TX))
         {
-            console_oflag = (device->flag & RT_DEVICE_OFLAG_RDWR) |
+            console_oflag = (device->flag & RT_DEVICE_FLAG_RDWR) |
                             (device->flag & (RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_DMA_TX)) |
                             RT_DEVICE_FLAG_STREAM;
         }
@@ -187,7 +187,7 @@ static rt_err_t _console_get_open_flags(rt_device_t device, rt_uint16_t *oflag)
         {
             LOG_W("refuse to set device %.*s as console: missing console-safe output support",
                   RT_NAME_MAX, device->parent.name);
-            return result;
+            return -RT_EINVAL;
         }
     }
 
