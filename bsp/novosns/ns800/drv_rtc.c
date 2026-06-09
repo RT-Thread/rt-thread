@@ -8,7 +8,7 @@
  *
  * 添加新芯片: 在下方加 #elif 分支,实现 init/get_time/set_time 即可
  *
- * 引脚: PA14(SDA/IO14), PA15(SCL/IO15) 或 GP34(SDA), GP35(SCL)
+ * 引脚: GP34(SDA), GP35(SCL)
  */
 
 #include <rtthread.h>
