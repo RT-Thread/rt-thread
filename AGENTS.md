@@ -1,9 +1,11 @@
 # RT-Thread AI Agent Rules
 
-> English summary:
-> - Make only minimal, task-related, verifiable changes.
-> - Do not introduce unrelated refactors, generated artifacts, secrets, dependency churn, or history rewrites.
-> - Use the existing directories only (`bsp/`, `components/`, `documentation/`, `examples/`, `include/`, `libcpu/`, `src/`, `tools/`) and defer to `.github/CONTRIBUTING.md`, `documentation/7.contribution/coding_style_cn.md`, and `documentation/7.contribution/coding_style_en.md` when more specific rules already exist.
+## English Summary
+
+- Make only minimal, task-related, verifiable changes.
+- Do not introduce unrelated refactors, generated artifacts, secrets, dependency churn, or history rewrites.
+- Use the existing directories only (`bsp/`, `components/`, `documentation/`, `examples/`, `include/`, `libcpu/`, `src/`, `tools/`).
+- If any rule conflicts with a more specific repository document, follow `.github/CONTRIBUTING.md`, `documentation/7.contribution/coding_style_cn.md`, and `documentation/7.contribution/coding_style_en.md`.
 
 本文件用于约束在本仓库内工作的 AI Agent（如 Codex）。如无明确说明，所有修改都应遵循“**最小改动、问题导向、可验证**”原则。
 
@@ -40,7 +42,7 @@
 
 新增文件时请遵循以下要求：
 
-- 文档优先放在 `documentation/`；仅仓库级规则文档放在根目录。
+- 文档优先放在 `documentation/`；仅 `AGENTS.md`、`README.md`、`LICENSE` 等仓库级入口或规则文档放在根目录。
 - 公共接口声明放在 `include/` 或对应模块公开头文件中，不要散落在无关目录。
 - 板级、芯片级改动应限制在对应 `bsp/`、`libcpu/` 或驱动目录内。
 - 示例和测试代码不要放入内核核心目录。
