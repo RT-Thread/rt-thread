@@ -162,7 +162,7 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
             struct termio termio;
 #endif
             rt_uint16_t oflag;
-            rt_size_t recved;
+            rt_size_t unread_bytes;
             rt_int32_t timeout;
         } karg;
         size_t arg_size = 0;
@@ -202,8 +202,8 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
             copy_out = RT_TRUE;
             break;
         case FIONREAD:
-            arg_size = sizeof(karg.recved);
-            kptr = &karg.recved;
+            arg_size = sizeof(karg.unread_bytes);
+            kptr = &karg.unread_bytes;
             copy_out = RT_TRUE;
             break;
 #ifdef RT_USING_POSIX_TERMIOS
