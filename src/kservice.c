@@ -186,7 +186,7 @@ static rt_err_t _console_get_open_flags(rt_device_t device, rt_uint16_t *oflag)
         }
         else
         {
-            LOG_W("refuse to set device %.*s as console: missing console-safe output support",
+            LOG_W("refusing to set device %.*s as console: missing console-safe output support",
                   RT_NAME_MAX, device->parent.name);
             return -RT_EINVAL;
         }
@@ -196,7 +196,7 @@ static rt_err_t _console_get_open_flags(rt_device_t device, rt_uint16_t *oflag)
     if (access_mode != RT_DEVICE_OFLAG_WRONLY &&
         access_mode != RT_DEVICE_OFLAG_RDWR)
     {
-        LOG_W("refuse to set device %.*s as console: invalid open flags 0x%04x",
+        LOG_W("refusing to set device %.*s as console: invalid open flags 0x%04x",
               RT_NAME_MAX, device->parent.name, console_oflag);
         return -RT_EINVAL;
     }
