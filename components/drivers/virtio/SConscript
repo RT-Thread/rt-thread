@@ -28,6 +28,9 @@ if GetDepend(['RT_VIRTIO_CONSOLE']) or GetDepend(['RT_VIRTIO_RPROC_SERIAL']):
 if GetDepend(['RT_VIRTIO_RNG']):
     src += ['virtio-rng.c']
 
+if GetDepend(['RT_VIRTIO_RPMSG']):
+    src += ['virtio-rpmsg.c']
+
 if GetDepend(['RT_VIRTIO_SCSI']):
     src += ['virtio-scsi.c']
 
@@ -42,6 +45,9 @@ if GetDepend(['RT_VIRTIO_INPUT']):
 
 if GetDepend(['RT_VIRTIO_CRYPTO']):
     src += ['virtio-crypto.c']
+
+if GetDepend(['RT_VIRTIO_SOUND']):
+    src += ['virtio-sound.c']
 
 if GetDepend(['RT_VIRTIO_SCMI']):
     src += ['virtio-scmi.c']

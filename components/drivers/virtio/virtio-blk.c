@@ -257,6 +257,7 @@ static rt_err_t virtio_blk_probe(struct rt_virtio_device *vdev)
 
     if ((vblk->vblk_id = rt_dm_ida_alloc(&virtio_blk_ida)) < 0)
     {
+        rt_free(vblk);
         return -RT_EFULL;
     }
 

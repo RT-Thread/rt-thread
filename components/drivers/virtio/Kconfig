@@ -45,6 +45,12 @@ config RT_VIRTIO_RNG
     depends on RT_HWCRYPTO_USING_RNG
     default y
 
+config RT_VIRTIO_RPMSG
+    bool "VirtIO Rpmsg"
+    depends on RT_USING_VIRTIO
+    depends on RT_USING_RPMSG
+    default y
+
 config RT_VIRTIO_SCSI
     bool "VirtIO SCSI"
     depends on RT_USING_VIRTIO
@@ -90,6 +96,12 @@ config RT_VIRTIO_CRYPTO
     depends on RT_HWCRYPTO_USING_3DES_ECB
     depends on RT_HWCRYPTO_USING_3DES_CBC
     depends on RT_HWCRYPTO_USING_RC4
+    default y
+
+config RT_VIRTIO_SOUND
+    bool "VirtIO Sound"
+    depends on RT_USING_VIRTIO
+    depends on RT_USING_AUDIO
     default y
 
 config RT_VIRTIO_SCMI
