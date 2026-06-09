@@ -7169,7 +7169,7 @@ sysret_t sys_getaddrinfo(const char *nodename,
 #else
         k_hints_musl = *hints;
 #endif
-        k_hints = (struct addrinfo *)rt_malloc(sizeof(*k_hints));
+        k_hints = (struct addrinfo *)rt_malloc(sizeof(struct addrinfo));
         if (!k_hints)
         {
             SET_ERRNO(ENOMEM);
@@ -7194,8 +7194,7 @@ sysret_t sys_getaddrinfo(const char *nodename,
 
             sockaddr_tomusl(k_res->ai_addr, &k_sockaddr);
 #ifdef ARCH_MM_MMU
-            if (!lwp_user_accessable((void *)u_res_ai_addr, sizeof(k_sockaddr)) ||
-                lwp_put_to_user(u_res_ai_addr, &k_sockaddr, sizeof(k_sockaddr)) != sizeof(k_sockaddr))
+            if (lwp_put_to_user(u_res_ai_addr, &k_sockaddr, sizeof(k_sockaddr)) != sizeof(k_sockaddr))
             {
                 SET_ERRNO(EFAULT);
                 ret = -1;
