@@ -1,6 +1,9 @@
 # RT-Thread AI Agent Rules
 
-> English summary: AI agents may only make minimal, task-related, verifiable changes; they must not introduce unrelated refactors, generated artifacts, secrets, dependency churn, or history rewrites. Place changes in the existing directories only (`bsp/`, `components/`, `documentation/`, `examples/`, `include/`, `libcpu/`, `src/`, `tools/`), follow existing naming and file-style conventions, and defer to `.github/CONTRIBUTING.md`, `documentation/7.contribution/coding_style_cn.md`, and `documentation/7.contribution/coding_style_en.md` when more specific rules already exist.
+> English summary:
+> - Make only minimal, task-related, verifiable changes.
+> - Do not introduce unrelated refactors, generated artifacts, secrets, dependency churn, or history rewrites.
+> - Use the existing directories only (`bsp/`, `components/`, `documentation/`, `examples/`, `include/`, `libcpu/`, `src/`, `tools/`) and defer to `.github/CONTRIBUTING.md`, `documentation/7.contribution/coding_style_cn.md`, and `documentation/7.contribution/coding_style_en.md` when more specific rules already exist.
 
 本文件用于约束在本仓库内工作的 AI Agent（如 Codex）。如无明确说明，所有修改都应遵循“**最小改动、问题导向、可验证**”原则。
 
