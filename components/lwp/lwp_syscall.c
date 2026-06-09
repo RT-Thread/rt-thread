@@ -7058,8 +7058,9 @@ sysret_t sys_getaddrinfo(const char *nodename,
     char *k_nodename = NULL;
     char *k_servname = NULL;
     struct addrinfo *k_hints = NULL;
-    struct musl_addrinfo k_hints_musl, k_res_musl;
-    struct musl_sockaddr k_sockaddr;
+    struct musl_addrinfo k_res_musl;
+    int hints_socktype = 0;
+    int hints_protocol = 0;
 #ifdef ARCH_MM_MMU
     int len = 0;
 #endif
@@ -7144,6 +7145,7 @@ sysret_t sys_getaddrinfo(const char *nodename,
 
     if (hints)
     {
+        struct musl_addrinfo k_hints_musl;
 #ifdef ARCH_MM_MMU
         if (!lwp_user_accessable((void *)hints, sizeof(*hints)))
         {
@@ -7172,6 +7174,8 @@ sysret_t sys_getaddrinfo(const char *nodename,
         k_hints->ai_socktype = k_hints_musl.ai_socktype;
         k_hints->ai_protocol = k_hints_musl.ai_protocol;
         k_hints->ai_addrlen = k_hints_musl.ai_addrlen;
+        hints_socktype = k_hints_musl.ai_socktype;
+        hints_protocol = k_hints_musl.ai_protocol;
     }
 
     ret = sal_getaddrinfo(k_nodename, k_servname, k_hints, &k_res);
@@ -7180,6 +7184,8 @@ sysret_t sys_getaddrinfo(const char *nodename,
         /* set sockaddr */
         if (k_res->ai_addr && k_res_musl.ai_addr)
         {
+            struct musl_sockaddr k_sockaddr;
+
             sockaddr_tomusl(k_res->ai_addr, &k_sockaddr);
 #ifdef ARCH_MM_MMU
             if (!lwp_user_accessable((void *)k_res_musl.ai_addr, sizeof(k_sockaddr)) ||
@@ -7203,8 +7209,8 @@ sysret_t sys_getaddrinfo(const char *nodename,
         if (hints != NULL)
         {
             /* copy socktype & protocol from hints if specified */
-            k_res_musl.ai_socktype = k_hints_musl.ai_socktype;
-            k_res_musl.ai_protocol = k_hints_musl.ai_protocol;
+            k_res_musl.ai_socktype = hints_socktype;
+            k_res_musl.ai_protocol = hints_protocol;
         }
 
 #ifdef ARCH_MM_MMU
