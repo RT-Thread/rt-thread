@@ -57,6 +57,7 @@ struct test_console_context
 };
 
 static char _console_name[RT_NAME_MAX + 1];
+static rt_atomic_t _device_sequence;
 
 static rt_err_t test_console_open(rt_device_t dev, rt_uint16_t oflag)
 {
@@ -108,9 +109,9 @@ static const struct rt_device_ops test_console_ops =
 
 static void make_test_device_name(char *name, rt_size_t size, const char *prefix)
 {
-    static rt_uint32_t sequence;
+    rt_uint32_t sequence = (rt_uint32_t)rt_atomic_add(&_device_sequence, 1);
 
-    rt_snprintf(name, size, "%s%u", prefix, sequence++);
+    rt_snprintf(name, size, "%s%u", prefix, sequence);
 }
 
 static void init_test_console_device(struct rt_device *device,

@@ -170,6 +170,7 @@ static rt_err_t _console_get_open_flags(rt_device_t device, rt_uint16_t *oflag)
 {
     rt_err_t result;
     rt_uint16_t console_oflag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM;
+    rt_uint16_t access_mode;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(oflag != RT_NULL);
@@ -191,8 +192,9 @@ static rt_err_t _console_get_open_flags(rt_device_t device, rt_uint16_t *oflag)
         }
     }
 
-    if ((console_oflag & RT_DEVICE_OFLAG_RDWR) != RT_DEVICE_OFLAG_WRONLY &&
-        (console_oflag & RT_DEVICE_OFLAG_RDWR) != RT_DEVICE_OFLAG_RDWR)
+    access_mode = console_oflag & RT_DEVICE_OFLAG_RDWR;
+    if (access_mode != RT_DEVICE_OFLAG_WRONLY &&
+        access_mode != RT_DEVICE_OFLAG_RDWR)
     {
         LOG_W("refuse to set device %.*s as console: invalid open flags 0x%04x",
               RT_NAME_MAX, device->parent.name, console_oflag);
