@@ -429,7 +429,7 @@
 
 #define BSP_USING_LPADC
 #define BSP_USING_LPADC1
-#define BSP_USING_DMA
+#define BSP_LPADC1_USING_DMA
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
 /* end of On-chip Peripheral Drivers */

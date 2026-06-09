@@ -61,6 +61,7 @@ component:
 /***********************************************************************************************************************
  * BOARD_InitPeripherals functional group
  **********************************************************************************************************************/
+ #if defined(BSP_USING_DMA)
 /***********************************************************************************************************************
  * DMA4 initialization code
  **********************************************************************************************************************/
@@ -101,8 +102,8 @@ instance:
             - channelPriority: '0'
           - initMemoryAttributes: 'false'
           - memAttributes:
-            - writeCache: ''
-            - readCache: ''
+            - writeCache: 'buffer'
+            - readCache: 'buffer'
           - setChannelSwapSize: 'noInit'
           - signExtension: 'noInit'
           - setChannelAccessType: 'noInit'
@@ -110,10 +111,10 @@ instance:
           - securityLevel: 'noInit'
           - protectionLevel: 'noInit'
           - enable_custom_name: 'false'
-        - resetChannel: 'true'
+        - resetChannel: 'false'
         - enableChannelRequest: 'true'
         - enableAsyncRequest: 'false'
-        - enableAutoStop: 'true'
+        - enableAutoStop: 'false'
         - tcd_pool_enable: 'false'
         - tcd_settings:
           - tcd_size: '1'
@@ -122,33 +123,33 @@ instance:
           - 0:
             - uid: '1780716022754'
             - tcdID: 'CH0_TRANSFER0'
-            - ssize: 'kEDMA_TransferSize2Bytes'
-            - saddr_expr: '&srcAddr0[0]'
-            - saddr_def: 'AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t srcAddr0[], 4);'
-            - soff: 'sizeof(srcAddr0[0])'
+            - ssize: 'kEDMA_TransferSize4Bytes'
+            - saddr_expr: '&ADC1->RESFIFO[0]'
+            - saddr_def: ''
+            - soff: '0'
             - soff_def: ''
-            - smod: 'kEDMA_Modulo16bytes'
-            - dsize: 'kEDMA_TransferSize2Bytes'
-            - daddr_expr: '&destAddr0[0]'
-            - daddr_def: 'AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t destAddr0[], 4);'
-            - doff: 'sizeof(destAddr0[0])'
+            - smod: 'kEDMA_ModuloDisable'
+            - dsize: 'kEDMA_TransferSize4Bytes'
+            - daddr_expr: '&adc_result[0]'
+            - daddr_def: 'AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t adc_result[], sizeof(uint32_t));'
+            - doff: 'sizeof(uint32_t)'
             - doff_def: ''
-            - dmod: 'kEDMA_Modulo16bytes'
-            - nbytes: '2'
+            - dmod: 'kEDMA_ModuloDisable'
+            - nbytes: '4'
             - MLconfig:
               - offsetType: 'disabled'
               - mloff: '0'
             - enableChannelLinkMinor: 'false'
             - linkedChannelMinor: '1780195171347'
-            - citer: '1'
+            - citer: '7'
             - slast: '0'
-            - dlast: '0'
+            - dlast: '-28'
             - enableChannelLinkMajor: 'false'
             - linkedChannelMajor: '1780195171347'
-            - submitTransfer: 'false'
+            - submitTransfer: 'true'
         - loopTransfer: 'false'
         - no_init_uid: '1780195171376'
-        - init_callback: 'false'
+        - init_callback: 'true'
         - callback_function: 'DMA_Callback'
         - callback_user_data: ''
         - channel_enabled_interrupts: ''
@@ -159,7 +160,7 @@ instance:
     - errInterruptConfig:
       - enableErrInterrupt: 'false'
       - errorInterrupt:
-        - IRQn: 'DMA_ERROR_IRQn'
+        - IRQn: 'DMA4_ERROR_IRQn'
         - enable_interrrupt: 'enabled'
         - enable_priority: 'false'
         - priority: '0'
@@ -178,24 +179,28 @@ edma_transfer_config_t DMA4_CH0_Transfers_config[1];
 edma_handle_t DMA4_CH0_Handle;
 
 static void DMA4_init(void) {
+  status_t status;
+  (void)status;
 
   /* Channel CH0 initialization */
   /* Set the kDma4RequestMuxADC1Request0 request */
   EDMA_SetChannelMux(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL, DMA4_CH0_DMA_REQUEST);
   /* Create the eDMA DMA4_CH0_Handle handle */
   EDMA_CreateHandle(&DMA4_CH0_Handle, DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL);
-  /* DMA4 channel 0 reset */
-  EDMA_ResetChannel(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL);
+  /* DMA callback initialization */
+  EDMA_SetCallback(&DMA4_CH0_Handle, DMA_Callback, NULL);
   /* DMA4 transfer CH0_TRANSFER0 configuration */
-  EDMA_PrepareTransferConfig(&DMA4_CH0_TRANSFER0_CONFIG, (void *) &srcAddr0[0], 1 << kEDMA_TransferSize2Bytes, sizeof(srcAddr0[0]), (void *) &destAddr0[0], 1 << kEDMA_TransferSize2Bytes, sizeof(destAddr0[0]), 2U, 2U); 
-  DMA4_CH0_TRANSFER0_CONFIG.srcAddrModulo = kEDMA_Modulo16bytes;
-  DMA4_CH0_TRANSFER0_CONFIG.dstAddrModulo = kEDMA_Modulo16bytes;
+  EDMA_PrepareTransferConfig(&DMA4_CH0_TRANSFER0_CONFIG, (void *) &ADC1->RESFIFO[0], 1 << kEDMA_TransferSize4Bytes, 0, (void *) &adc_result[0], 1 << kEDMA_TransferSize4Bytes, sizeof(uint32_t), 4U, 28U); 
+  DMA4_CH0_TRANSFER0_CONFIG.dstMajorLoopOffset = -28;
+  /* DMA4 transfer CH0_TRANSFER0 submit */
+  status = EDMA_SubmitTransfer(&DMA4_CH0_Handle, &DMA4_CH0_TRANSFER0_CONFIG);
+  assert(status == kStatus_Success);
   /* DMA4 hardware channel 0 request auto stop */
-  EDMA_EnableAutoStopRequest(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL, true);
+  EDMA_EnableAutoStopRequest(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL, false);
   /* DMA4 channel 0 peripheral request */
   EDMA_EnableChannelRequest(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL);
 }
-
+#endif
 /***********************************************************************************************************************
  * CM33_NVIC initialization code
  **********************************************************************************************************************/
@@ -498,12 +503,14 @@ static void ADC1_init(void) {
  **********************************************************************************************************************/
 void BOARD_InitPeripherals(void)
 {
+#if defined(BSP_USING_DMA)
   /* Global initialization */
   (void)memset(DMA4_config.channelConfig, 0, FSL_FEATURE_EDMA_INSTANCE_CHANNELn(DMA4_DMA_BASEADDR) * sizeof(edma_channel_config_t *));
   EDMA_Init(DMA4_DMA_BASEADDR, &DMA4_config);
 
   /* Initialize components */
   DMA4_init();
+#endif
   LPUART1_init();
   ADC1_init();
 }

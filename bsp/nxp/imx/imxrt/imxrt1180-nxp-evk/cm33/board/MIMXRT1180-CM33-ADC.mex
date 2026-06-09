@@ -793,10 +793,14 @@
                                  <setting name="initMemoryAttributes" value="false"/>
                                  <struct name="memAttributes">
                                     <set name="writeCache">
-                                       <selected/>
+                                       <selected>
+                                          <id>buffer</id>
+                                       </selected>
                                     </set>
                                     <set name="readCache">
-                                       <selected/>
+                                       <selected>
+                                          <id>buffer</id>
+                                       </selected>
                                     </set>
                                  </struct>
                                  <setting name="setChannelSwapSize" value="noInit"/>
@@ -807,10 +811,10 @@
                                  <setting name="protectionLevel" value="noInit"/>
                                  <setting name="enable_custom_name" value="false"/>
                               </struct>
-                              <setting name="resetChannel" value="true"/>
+                              <setting name="resetChannel" value="false"/>
                               <setting name="enableChannelRequest" value="true"/>
                               <setting name="enableAsyncRequest" value="false"/>
-                              <setting name="enableAutoStop" value="true"/>
+                              <setting name="enableAutoStop" value="false"/>
                               <setting name="tcd_pool_enable" value="false"/>
                               <struct name="tcd_settings">
                                  <setting name="tcd_size" value="1"/>
@@ -820,36 +824,36 @@
                                  <struct name="0">
                                     <setting name="uid" value="1780716022754"/>
                                     <setting name="tcdID" value="CH0_TRANSFER0"/>
-                                    <setting name="ssize" value="kEDMA_TransferSize2Bytes"/>
-                                    <setting name="saddr_expr" value="&amp;srcAddr0[0]"/>
-                                    <setting name="saddr_def" value="AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t srcAddr0[], 4);"/>
-                                    <setting name="soff" value="sizeof(srcAddr0[0])"/>
+                                    <setting name="ssize" value="kEDMA_TransferSize4Bytes"/>
+                                    <setting name="saddr_expr" value="&amp;ADC1-&gt;RESFIFO[0]"/>
+                                    <setting name="saddr_def" value=""/>
+                                    <setting name="soff" value="0"/>
                                     <setting name="soff_def" value=""/>
-                                    <setting name="smod" value="kEDMA_Modulo16bytes"/>
-                                    <setting name="dsize" value="kEDMA_TransferSize2Bytes"/>
-                                    <setting name="daddr_expr" value="&amp;destAddr0[0]"/>
-                                    <setting name="daddr_def" value="AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t destAddr0[], 4);"/>
-                                    <setting name="doff" value="sizeof(destAddr0[0])"/>
+                                    <setting name="smod" value="kEDMA_ModuloDisable"/>
+                                    <setting name="dsize" value="kEDMA_TransferSize4Bytes"/>
+                                    <setting name="daddr_expr" value="&amp;adc_result[0]"/>
+                                    <setting name="daddr_def" value="AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t adc_result[], sizeof(uint32_t));"/>
+                                    <setting name="doff" value="sizeof(uint32_t)"/>
                                     <setting name="doff_def" value=""/>
-                                    <setting name="dmod" value="kEDMA_Modulo16bytes"/>
-                                    <setting name="nbytes" value="2"/>
+                                    <setting name="dmod" value="kEDMA_ModuloDisable"/>
+                                    <setting name="nbytes" value="4"/>
                                     <struct name="MLconfig">
                                        <setting name="offsetType" value="disabled"/>
                                        <setting name="mloff" value="0"/>
                                     </struct>
                                     <setting name="enableChannelLinkMinor" value="false"/>
                                     <setting name="linkedChannelMinor" value="1780195171347"/>
-                                    <setting name="citer" value="1"/>
+                                    <setting name="citer" value="7"/>
                                     <setting name="slast" value="0"/>
-                                    <setting name="dlast" value="0"/>
+                                    <setting name="dlast" value="-28"/>
                                     <setting name="enableChannelLinkMajor" value="false"/>
                                     <setting name="linkedChannelMajor" value="1780195171347"/>
-                                    <setting name="submitTransfer" value="false"/>
+                                    <setting name="submitTransfer" value="true"/>
                                  </struct>
                               </array>
                               <setting name="loopTransfer" value="false"/>
                               <setting name="no_init_uid" value="1780195171376"/>
-                              <setting name="init_callback" value="false"/>
+                              <setting name="init_callback" value="true"/>
                               <setting name="callback_function" value="DMA_Callback"/>
                               <setting name="callback_user_data" value=""/>
                               <set name="channel_enabled_interrupts">
@@ -865,7 +869,7 @@
                         <struct name="errInterruptConfig">
                            <setting name="enableErrInterrupt" value="false"/>
                            <struct name="errorInterrupt">
-                              <setting name="IRQn" value="DMA_ERROR_IRQn"/>
+                              <setting name="IRQn" value="DMA4_ERROR_IRQn"/>
                               <setting name="enable_interrrupt" value="enabled"/>
                               <setting name="enable_priority" value="false"/>
                               <setting name="priority" value="0"/>
@@ -908,9 +912,11 @@
       <tee name="TEE" version="12.0" enabled="false" update_project_code="true">
          <generated_project_files/>
          <tee_profile>
-            <processor_version>0.0.0</processor_version>
+            <processor_version>26.03.10</processor_version>
             <tool_options>
                <option id="_legacy_source_names_" value="no"/>
+               <option id="_resilient_code_reg_writes_" value="no"/>
+               <option id="_release_ele_" value="yes"/>
             </tool_options>
          </tee_profile>
          <functional_group name="BOARD_InitTEE" called_from_default_init="true" id_prefix="" prefix_user_defined="true">
@@ -1414,24 +1420,6 @@
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
                            </slave>
-                           <slave id="ROM">
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                           </slave>
                            <slave id="CP_CM33_IMX9RTC__CM33_TCM_MCM">
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
@@ -1882,24 +1870,6 @@
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
                            </slave>
-                           <slave id="TRDC1">
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                           </slave>
                            <slave id="SEMA1">
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
@@ -1955,6 +1925,24 @@
                               <domain security="s" template="NO_ACCESS"/>
                            </slave>
                            <slave id="BLK_CTRL_NS_AONMIX">
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="ROM">
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
@@ -2133,6 +2121,24 @@
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="TRDC1_ALIAS">
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
                            </slave>
                            <slave id="DMA3_TEE_ALIAS0">
                               <domain security="s" template="NO_ACCESS"/>
@@ -4239,24 +4245,6 @@
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
                            </slave>
-                           <slave id="TRDC2">
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                           </slave>
                            <slave id="SEMA2">
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
@@ -4312,24 +4300,6 @@
                               <domain security="s" template="NO_ACCESS"/>
                            </slave>
                            <slave id="BLK_CTRL_WAKEUPMIX">
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                           </slave>
-                           <slave id="TRDC3">
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
@@ -4418,6 +4388,24 @@
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="TRDC2_ALIAS">
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
                            </slave>
                            <slave id="DMA4_TEE_ALIAS0">
                               <domain security="s" template="NO_ACCESS"/>
@@ -5775,24 +5763,6 @@
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
                            </slave>
-                           <slave id="SFA">
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                              <domain security="s" template="NO_ACCESS"/>
-                           </slave>
                            <slave id="GPT2">
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
@@ -6639,6 +6609,24 @@
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
                            </slave>
+                           <slave id="SFA">
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                              <domain security="s" template="NO_ACCESS"/>
+                           </slave>
                            <slave id="TCU6">
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
@@ -6782,6 +6770,24 @@
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
                               <domain security="s" template="NO_ACCESS"/>
+                           </slave>
+                           <slave id="TRDC3_ALIAS">
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
+                              <domain security="ns" template="NO_ACCESS"/>
                            </slave>
                            <slave id="BLK_CTRL_MEGA">
                               <domain security="s" template="NO_ACCESS"/>
@@ -7118,14 +7124,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7136,14 +7134,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7154,14 +7144,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7172,14 +7154,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7190,14 +7164,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7208,14 +7174,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7226,14 +7184,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7244,14 +7194,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7262,14 +7204,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7280,14 +7214,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7298,14 +7224,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7316,14 +7234,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7334,14 +7244,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7352,14 +7254,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7370,14 +7264,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                            <domain>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="0"/>
@@ -7388,14 +7274,6 @@
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="5"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="6"/>
                               <region start="0" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="7"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="8"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="9"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="10"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="11"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="12"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="13"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="14"/>
-                              <region start="536870912" size="4194304" security="s" template="NO_ACCESS" enabled="false" index="15"/>
                            </domain>
                         </domains>
                      </mrc>
@@ -8949,54 +8827,6 @@
                            <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
                         </regions_properties>
                      </group>
-                     <group index="8" id="8" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="9" id="9" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="10" id="10" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="11" id="11" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="12" id="12" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="13" id="13" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="14" id="14" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="15" id="15" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
                   </attributes>
                   <regions>
                      <region start="0" size="32" security="priv" enabled="false" index="0" executable="false" read_only="false" shareability="non_shareable" attributes_index="0"/>
@@ -9062,54 +8892,6 @@
                         </regions_properties>
                      </group>
                      <group index="7" id="7" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="8" id="8" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="9" id="9" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="10" id="10" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="11" id="11" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="12" id="12" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="13" id="13" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="14" id="14" memory_type="device" device="nGnRE">
-                        <regions_properties>
-                           <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                           <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
-                        </regions_properties>
-                     </group>
-                     <group index="15" id="15" memory_type="device" device="nGnRE">
                         <regions_properties>
                            <region_properties id="inner" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>
                            <region_properties id="outer" cacheable="false" write_back="false" read_allocation="false" write_allocation="false" transientness="false"/>

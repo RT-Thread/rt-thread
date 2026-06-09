@@ -63,19 +63,25 @@ extern "C" {
 /***********************************************************************************************************************
  * Global variables
  **********************************************************************************************************************/
+#if defined(BSP_USING_DMA)
 extern edma_config_t DMA4_config;
-/* Source address extern definition */
-AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t srcAddr0[], 4);
 /* Destination address extern definition */
-AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t destAddr0[], 4);
+AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t adc_result[], sizeof(uint32_t));
 extern edma_handle_t DMA4_CH0_Handle;
 /* Transactional transfer configurations */
 extern edma_transfer_config_t DMA4_CH0_Transfers_config[1];
+#endif
 extern const lpuart_config_t LPUART1_config;
 extern const lpadc_config_t ADC1_config;
 extern lpadc_conv_command_config_t ADC1_commandsConfig[2];
 extern lpadc_conv_trigger_config_t ADC1_triggersConfig[1];
-
+#if defined(BSP_USING_DMA)
+/***********************************************************************************************************************
+ * Callback functions
+ **********************************************************************************************************************/
+/* eDMA callback function for the 0 channel.*/
+extern void DMA_Callback(edma_handle_t*, void*, bool, uint32_t);
+#endif
 /***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/

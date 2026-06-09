@@ -36,7 +36,22 @@ static struct rt_adc_device lpadc1_device;
 static struct rt_adc_device lpadc2_device;
 #endif
 
+#if defined(BSP_USING_DMA)
+#include "fsl_edma.h"
+#include "peripherals.h"
 
+volatile bool g_Transfer_Done = false;
+AT_NONCACHEABLE_SECTION_ALIGN_INIT(uint32_t adc_result[7], sizeof(uint32_t));
+
+/* User callback function for EDMA transfer. */
+void DMA_Callback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds)
+{
+    if (transferDone)
+    {
+        g_Transfer_Done = true;
+    }
+}
+#endif
 /*
 this is something important to consider:
 1. if MCU_Config software is used for lpadc peripheral initialization, low-level driver has already configured there, 
@@ -48,7 +63,10 @@ this is something important to consider:
 /*
 LIMITATIONS FOR drv_lpadc driver:
 1. deeply depends on MCU_Config software, customized driver.
-2. 
+*/
+/*
+IMPORTANT: For imxrt1180-evk platform, it is required to have a convention for multi-layer development.
+ e.g. low-level configuration comes from MCU Config software, only generating codes about clock,pin_mux,necessary boot-up drivers, decoupling with HAL layer. 
 */
 static rt_err_t imxrt_lp_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
@@ -72,35 +90,48 @@ static rt_err_t imxrt_lp_adc_convert(struct rt_adc_device *device, rt_int8_t cha
 {
     ADC_Type *base;
     uint8_t i=0;
-	uint32_t adc_result[7];  /* conv sequence: 
-	A1_4, A1_5(INVALID), A1_6, A1_7, B1_5, B1_6, B1_7 */
+	uint32_t data_mask=0xffffffff;
+#if defined(BSP_USING_DMA)
+	
+#else
+	uint32_t adc_result[7];  /* conv sequence: A1_4, A1_5(INVALID), A1_6, A1_7, B1_5, B1_6, B1_7 */
+#endif
+	
 	
     lpadc_conv_result_t mLpadcResultConfigStruct;
     base = (ADC_Type *)(device->parent.user_data);
 
     LPADC_DoSoftwareTrigger(base, 1U);
-
-	for(i=0;i<7;i++) {
-#if (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2U))
-    while (!LPADC_GetConvResult(base, &mLpadcResultConfigStruct, 0U))
-#else
-    while (!LPADC_GetConvResult(base, &mLpadcResultConfigStruct))
-#endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
+#if defined(BSP_USING_DMA)
+	data_mask = 0xffff;
+	EDMA_StartTransfer(&DMA4_CH0_Handle);
+	/* Wait for EDMA transfer finish */
+    while (g_Transfer_Done != true)
     {
     }
+#else
+	for(i=0;i<7;i++) {
+#if (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2U))
+		while (!LPADC_GetConvResult(base, &mLpadcResultConfigStruct, 0U))
+#else
+		while (!LPADC_GetConvResult(base, &mLpadcResultConfigStruct))
+#endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
+		{
+		}	
 		adc_result[i] = (mLpadcResultConfigStruct.convValue);
 	}
-    
+#endif    
 	switch(channel)
 	{
-		case 4: *value = adc_result[0];
+		case 4: *value = adc_result[0] & data_mask;
 		break;
-		case 5: *value = adc_result[4];
+		case 5: *value = adc_result[4] & data_mask;
 		break;
-		case 6: *value = adc_result[2];
+		case 6: *value = adc_result[2] & data_mask;
 		break;
-		case 7: *value = adc_result[3];
+		case 7: *value = adc_result[3] & data_mask;
 		break;
+		default: *value = 0xdeadbeef; return -RT_ERROR;
 	}
 
     return RT_EOK;

@@ -39,10 +39,6 @@ menu "On-chip Peripheral Drivers"
                 default n	
 
 		endif
-		
-    config BSP_USING_DMA
-        bool "Enable DMA"
-        default n
 
     config BSP_USING_GPIO
         bool "Enable GPIO"
