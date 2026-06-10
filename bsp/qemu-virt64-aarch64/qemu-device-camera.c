@@ -14,6 +14,19 @@ exit
  * 2026-04-07     GuEe-GUI     the first version
  */
 
+/*
+ * Install libvfio-user
+ *  1. Dependency library
+ *      Debian:
+ *          sudo apt install libjson-c-dev libcmocka-dev
+ *      RedHat:
+ *          sudo yum install json-c-devel libcmocka-devel
+ *
+ *  2. git clone https://github.com/nutanix/libvfio-user.git
+ *  3. meson build
+ *  4. ninja -C build
+ */
+
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>

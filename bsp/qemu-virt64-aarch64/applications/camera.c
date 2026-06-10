@@ -52,7 +52,7 @@ static void blend_camera_to_fb(rt_uint8_t *cam_fb, rt_uint8_t *fb,
             src_row = cam_fb + y * cam_w * 3;
             dst = fb + (dst_y + y) * fb_pitch + dst_x * 2;
             dst_pixel = (rt_uint16_t*)dst;
-            
+
             for (x = 0; x < draw_w; ++x)
             {
                 rt_uint8_t r = src_row[x * 3 + 0];
@@ -63,7 +63,7 @@ static void blend_camera_to_fb(rt_uint8_t *cam_fb, rt_uint8_t *fb,
         }
         break;
     }
-    
+
     case RTGRAPHIC_PIXEL_FORMAT_ARGB888:
     {
         rt_uint32_t *dst_pixel;
@@ -72,7 +72,7 @@ static void blend_camera_to_fb(rt_uint8_t *cam_fb, rt_uint8_t *fb,
             src_row = cam_fb + y * cam_w * 3;
             dst = fb + (dst_y + y) * fb_pitch + dst_x * 4;
             dst_pixel = (rt_uint32_t*)dst;
-            
+
             for (x = 0; x < draw_w; ++x)
             {
                 rt_uint8_t r = src_row[x * 3 + 0];
@@ -83,7 +83,7 @@ static void blend_camera_to_fb(rt_uint8_t *cam_fb, rt_uint8_t *fb,
         }
         break;
     }
-    
+
     case RTGRAPHIC_PIXEL_FORMAT_ABGR888:
     {
         rt_uint32_t *dst_pixel;
@@ -92,7 +92,7 @@ static void blend_camera_to_fb(rt_uint8_t *cam_fb, rt_uint8_t *fb,
             src_row = cam_fb + y * cam_w * 3;
             dst = fb + (dst_y + y) * fb_pitch + dst_x * 4;
             dst_pixel = (rt_uint32_t*)dst;
-            
+
             for (x = 0; x < draw_w; ++x)
             {
                 rt_uint8_t r = src_row[x * 3 + 0];
@@ -103,7 +103,7 @@ static void blend_camera_to_fb(rt_uint8_t *cam_fb, rt_uint8_t *fb,
         }
         break;
     }
-    
+
     default:
         /* Fallback: direct copy for RGB888 */
         for (y = 0; y < draw_h; ++y)

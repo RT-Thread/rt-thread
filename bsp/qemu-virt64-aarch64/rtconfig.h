@@ -61,7 +61,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 16
+#define RT_NAME_MAX 24
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 8
@@ -78,6 +78,8 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
+#define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -100,6 +102,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
 #define RT_USING_MEMHEAP_AS_HEAP
@@ -151,7 +154,7 @@
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_THREAD_STACK_SIZE 8192
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 10
 #define FINSH_USING_SYMTAB
@@ -167,9 +170,7 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 32
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 8
+#define RT_USING_DFS_V2
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -187,7 +188,6 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
-#define RT_USING_DFS_9PFS
 #define RT_USING_DFS_ROMFS
 /* end of DFS: device virtual file system */
 
@@ -204,6 +204,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
+#define RT_USING_SERIAL_BYPASS
 #define RT_SERIAL_PL011
 #define RT_SERIAL_8250
 #define RT_SERIAL_8250_PCI
@@ -222,6 +223,12 @@
 #define RT_RTC_PL031
 #define RT_USING_WDT
 #define RT_WDT_I6300ESB
+#define RT_USING_AUDIO
+#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
+#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
+#define RT_AUDIO_RECORD_PIPE_SIZE 2048
+#define RT_AUDIO_INTEL_HDA
+#define RT_USING_TOUCH
 #define RT_USING_LCD
 #define RT_USING_GRAPHIC
 #define RT_GRAPHIC_FB
@@ -247,9 +254,19 @@
 #define RT_INPUT_POWER
 #define RT_INPUT_KEYBOARD
 #define RT_INPUT_KEYBOARD_GPIO
+#define RT_INPUT_TOUCHSCREEN
+#define RT_USING_MBOX
+#define RT_MBOX_PIC
+#define RT_USING_RPMSG
+#define RT_RPMSG_CHAR_MSG_MAX 64
+#define RT_RPMSG_CHAR_MSG_SIZE_MAX 256
+#define RT_RPMSG_RT_THREAD_VIRTIO
 #define RT_USING_ATA
 #define RT_ATA_AHCI
 #define RT_ATA_AHCI_PCI
+#define RT_USING_NVME
+#define RT_USING_NVME_IO_QUEUE 4
+#define RT_NVME_PCI
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -260,9 +277,12 @@
 #define RT_USING_SCSI
 #define RT_SCSI_SD
 #define RT_SCSI_CDROM
+#define RT_USING_UFS
+#define RT_UFS_PCI
 #define RT_USING_FIRMWARE
 #define RT_FIRMWARE_QEMU_FW_CFG
 #define RT_USING_REGULATOR
+#define RT_USING_RESET
 
 /* Power Management (PM) Domains device drivers */
 
@@ -273,10 +293,13 @@
 #define RT_VIRTIO_BLK
 #define RT_VIRTIO_CONSOLE
 #define RT_VIRTIO_RNG
+#define RT_VIRTIO_RPMSG
 #define RT_VIRTIO_SCSI
 #define RT_VIRTIO_RPROC_SERIAL
 #define RT_VIRTIO_GPU
+#define RT_VIRTIO_INPUT
 #define RT_VIRTIO_CRYPTO
+#define RT_VIRTIO_SOUND
 #define RT_USING_DMA
 #define RT_USING_MFD
 #define RT_MFD_EDU
@@ -308,6 +331,10 @@
 
 /* SoC (System on Chip) Drivers */
 
+#define RT_GRAPHIC_ROMFB_WIDTH 800
+#define RT_GRAPHIC_ROMFB_HEIGHT 600
+#define RT_SOC_CAMERA
+/* end of SoC (System on Chip) Drivers */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -333,6 +360,7 @@
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
+#define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 
@@ -505,14 +533,6 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
-
-/* HPMicro SDK */
-
-/* end of HPMicro SDK */
-
-/* FT32 HAL & SDK Drivers */
-
-/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
