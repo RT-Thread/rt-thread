@@ -96,6 +96,7 @@ q_flash = "flash"
 q_emmc = "emmc"
 q_nvme = "nvme"
 q_ahci = "ahci"
+q_sound = "hda"
 q_gl = None
 q_9p = ""
 q_ufs = "ufs"
@@ -129,6 +130,7 @@ for i in range(len(opt)):
 	if is_opt("flash", inkey): q_flash = opt[i + 1]
 	if is_opt("emmc", inkey): q_emmc = opt[i + 1]
 	if is_opt("nvme", inkey): q_nvme = opt[i + 1]
+	if is_opt("sound", inkey): q_sound = opt[i + 1]
 	if is_opt("gl", inkey): q_gl = "-device virtio-gpu-gl-pci -display {},gl=on ".format(opt[i + 1])
 	if is_opt("9p", inkey): q_9p = opt[i + 1]
 	if is_opt("ufs", inkey): q_ufs = opt[i + 1]
@@ -162,6 +164,18 @@ if q_graphic != "-nographic":
 		q_graphic += "-device virtio-gpu-device "
 elif q_gl != None:
 	print("Error: GL should in graphic mode")
+	exit(-1)
+
+# Sound
+if q_sound == "hda":
+	q_sound = "-device intel-hda -device hda-duplex "
+elif q_sound == "virtio":
+	if qemu_version < '8.2.0':
+		print("Error: VirtIO Sound is not in this version: {}".format(qemu_version.toString()))
+		exit(-1)
+	q_sound = "-device virtio-sound-pci,audiodev=vsnd -audiodev alsa,id=vsnd "
+else:
+	print("Error: Invalid -sound {}".format(q_sound))
 	exit(-1)
 
 # Net
@@ -284,6 +298,7 @@ cmd_base = """
 	-device virtio-serial-device \
 		-chardev socket,host=127.0.0.1,port=4321,server=on,wait=off,telnet=on,id=console0 \
 		-device virtserialport,chardev=console0,name=org.rt-thread.console \
+	{} \
 	-drive if=pflash,file={}.qcow2,format=qcow2,index=1 \
 	-device pci-serial,chardev=console1 \
 		-chardev socket,host=127.0.0.1,port=4322,server=on,wait=off,telnet=on,id=console1 \
@@ -304,7 +319,7 @@ cmd_base = """
 def cmd():
 	return cmd_base.format(RTT_QEMU_ROOT, q_gic, q_dumpdtb, q_el, q_smp, q_mem, q_bootargs, q_dtb, q_initrd,
 		q_graphic, q_debug, q_block, q_net, q_scsi, cdrom_cfg, virtfs_cfg,
-		q_flash, q_emmc, q_nvme, q_ahci, ufs_cfg, camera_cfg, amp_cfg)
+		q_sound, q_flash, q_emmc, q_nvme, q_ahci, ufs_cfg, camera_cfg, amp_cfg)
 
 def dumpdtb():
 	dtb = q_dumpdtb.split('=')[-1]
