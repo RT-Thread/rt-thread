@@ -78,7 +78,7 @@
 #if defined(__heap_size__)
   #define heap_size                    __heap_size__
 #else
-  #define heap_size                    0x04000
+  #define heap_size                    0x20000
 #endif
 
 /* Target specific definition, code & data allocation */
