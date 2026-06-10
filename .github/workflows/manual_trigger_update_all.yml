@@ -53,7 +53,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          wget https://raw.githubusercontent.com/CYFS3/env/feat_env/install_ubuntu.sh
           chmod 777 install_ubuntu.sh
           ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
