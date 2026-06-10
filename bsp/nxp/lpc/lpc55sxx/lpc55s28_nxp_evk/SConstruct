@@ -10,19 +10,15 @@ else:
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 try:
     from building import *
+    from env_package import find_package_path
+    from env_package import packages_available
 except:
     print('Cannot found RT-Thread root directory, please check RTT_ROOT')
     print(RTT_ROOT)
     exit(-1)
 
 def bsp_pkg_check():
-    import subprocess
-
-    check_paths = [
-        os.path.join("packages", "nxp-lpc55s-series-latest"),
-    ]
-
-    need_update = not all(os.path.exists(p) for p in check_paths)
+    need_update = not packages_available(os.path.abspath('.'), ['nxp-lpc55s-series-latest'])
 
     if need_update:
         print("\n===============================================================================")
@@ -79,7 +75,8 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
 
 # include cmsis
-objs.extend(SConscript(os.path.join("packages/nxp-lpc55s-series-latest", rtconfig.BSP_LIBRARY_TYPE, 'SConscript')))
+lpc55s_package_path = find_package_path(SDK_ROOT, 'nxp-lpc55s-series-latest')
+objs.extend(SConscript(os.path.join(lpc55s_package_path, rtconfig.BSP_LIBRARY_TYPE, 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)
