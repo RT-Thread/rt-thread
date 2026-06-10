@@ -118,34 +118,62 @@ menu "On-chip Peripheral Drivers"
                         int "Set LPUART1 TX DMA channel (0-32)"
                         default 1
 
-            config BSP_USING_LPUART3
-                bool "Enable LPUART3"
-                default n
+             config BSP_USING_LPUART10
+                 bool "Enable LPUART10"
+                 default n
 
-                config BSP_LPUART3_RX_USING_DMA
-                    bool "Enable LPUART3 RX DMA"
-                    depends on BSP_USING_LPUART3
-                    select BSP_USING_DMA
-                    select RT_SERIAL_USING_DMA
-                    default n
+                 config BSP_LPUART10_RX_USING_DMA
+                     bool "Enable LPUART10 RX DMA"
+                     depends on BSP_USING_LPUART10
+                     select BSP_USING_DMA
+                     select RT_SERIAL_USING_DMA
+                     default n
 
-                    config BSP_LPUART3_RX_DMA_CHANNEL
-                        depends on BSP_LPUART3_RX_USING_DMA
-                        int "Set LPUART3 RX DMA channel (0-32)"
-                        default 0
+                     config BSP_LPUART10_RX_DMA_CHANNEL
+                         depends on BSP_LPUART10_RX_USING_DMA
+                         int "Set LPUART10 RX DMA channel (0-32)"
+                         default 0
 
-                config BSP_LPUART3_TX_USING_DMA
-                    bool "Enable LPUART3 TX DMA"
-                    depends on BSP_USING_LPUART3
-                    select BSP_USING_DMA
-                    select RT_SERIAL_USING_DMA
-                    default n
+                 config BSP_LPUART10_TX_USING_DMA
+                     bool "Enable LPUART10 TX DMA"
+                     depends on BSP_USING_LPUART10
+                     select BSP_USING_DMA
+                     select RT_SERIAL_USING_DMA
+                     default n
 
-                    config BSP_LPUART3_TX_DMA_CHANNEL
-                        depends on BSP_LPUART3_TX_USING_DMA
-                        int "Set LPUART3 TX DMA channel (0-32)"
-                        default 1
-        endif
+                     config BSP_LPUART10_TX_DMA_CHANNEL
+                         depends on BSP_LPUART10_TX_USING_DMA
+                         int "Set LPUART10 TX DMA channel (0-32)"
+                         default 1
+
+             config BSP_USING_LPUART12
+                 bool "Enable LPUART12"
+                 default n
+
+                 config BSP_LPUART12_RX_USING_DMA
+                     bool "Enable LPUART12 RX DMA"
+                     depends on BSP_USING_LPUART12
+                     select BSP_USING_DMA
+                     select RT_SERIAL_USING_DMA
+                     default n
+
+                     config BSP_LPUART12_RX_DMA_CHANNEL
+                         depends on BSP_LPUART12_RX_USING_DMA
+                         int "Set LPUART12 RX DMA channel (0-32)"
+                         default 2
+
+                 config BSP_LPUART12_TX_USING_DMA
+                     bool "Enable LPUART12 TX DMA"
+                     depends on BSP_USING_LPUART12
+                     select BSP_USING_DMA
+                     select RT_SERIAL_USING_DMA
+                     default n
+
+                     config BSP_LPUART12_TX_DMA_CHANNEL
+                         depends on BSP_LPUART12_TX_USING_DMA
+                         int "Set LPUART12 TX DMA channel (0-32)"
+                         default 3
+         endif
 
         menuconfig BSP_USING_I2C
             bool "Enable I2C"
