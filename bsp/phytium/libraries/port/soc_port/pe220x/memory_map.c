@@ -51,6 +51,14 @@ struct mem_desc platform_mem_desc[] =
         0x80000000,
         NORMAL_MEM
     },
+#if defined(USE_OPENAMP)
+    {
+        0xb0000000,
+        (0xb0000000 + 0x20000000 - 1),
+        0xb0000000,
+        NORMAL_MEM
+    },
+#endif
     {
         0x00080000U,
         0x32B36FFFU,

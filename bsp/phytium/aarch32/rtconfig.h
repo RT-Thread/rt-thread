@@ -62,7 +62,8 @@
 /* end of rt_strnlen options */
 /* end of klibc options */
 #define RT_NAME_MAX 16
-#define RT_CPUS_NR 1
+#define RT_USING_SMP
+#define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -73,9 +74,12 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 4096
+#define SYSTEM_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
+#define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -84,6 +88,7 @@
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_CRITICAL
 
 /* Inter-Thread communication */
 
@@ -106,11 +111,13 @@
 #define RT_USING_HEAP
 /* end of Memory Management */
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_USING_CONSOLE_OUTPUT_CTL
 #define RT_VER_NUM 0x50300
+#define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_CACHE
@@ -187,6 +194,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 1024
+#define RT_USING_SERIAL_BYPASS
 #define RT_USING_CAN
 #define RT_CAN_USING_CANFD
 #define RT_CANMSG_BOX_SZ 16
@@ -454,45 +462,9 @@
 
 /* end of STM32 HAL & SDK Drivers */
 
-/* Infineon HAL Packages */
-
-/* end of Infineon HAL Packages */
-
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
-
-/* WCH HAL & SDK Drivers */
-
-/* end of WCH HAL & SDK Drivers */
-
-/* AT32 HAL & SDK Drivers */
-
-/* end of AT32 HAL & SDK Drivers */
-
-/* HC32 DDL Drivers */
-
-/* end of HC32 DDL Drivers */
-
-/* NXP HAL & SDK Drivers */
-
-/* end of NXP HAL & SDK Drivers */
-
-/* NUVOTON Drivers */
-
-/* end of NUVOTON Drivers */
-
-/* GD32 Drivers */
-
-/* end of GD32 Drivers */
-
-/* HPMicro SDK */
-
-/* end of HPMicro SDK */
-
-/* FT32 HAL & SDK Drivers */
-
-/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -624,7 +596,7 @@
 
 #define ELOG_LINE_BUF_SIZE 0x100
 #define LOG_ERROR
-#define USE_NS_GTIMER
+#define USE_PHYSICAL_GTIMER
 #define USE_DEFAULT_INTERRUPT_CONFIG
 #define INTERRUPT_ROLE_MASTER
 /* end of Sdk common configuration */
