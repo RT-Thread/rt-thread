@@ -18,27 +18,27 @@ extern "C" {
 #endif
 
 #ifndef RT_WLAN_SCAN_WAIT_MS
-#define RT_WLAN_SCAN_WAIT_MS       (10 * 1000)
+#define RT_WLAN_SCAN_WAIT_MS (10 * 1000)
 #endif
 
 #ifndef RT_WLAN_SCAN_CACHE_NUM
-#define RT_WLAN_SCAN_CACHE_NUM     (50)
+#define RT_WLAN_SCAN_CACHE_NUM (50)
 #endif
 
 #ifndef RT_WLAN_CONNECT_WAIT_MS
-#define RT_WLAN_CONNECT_WAIT_MS    (10 * 1000)
+#define RT_WLAN_CONNECT_WAIT_MS (10 * 1000)
 #endif
 
 #ifndef RT_WLAN_START_AP_WAIT_MS
-#define RT_WLAN_START_AP_WAIT_MS    (10 * 1000)
+#define RT_WLAN_START_AP_WAIT_MS (10 * 1000)
 #endif
 
 #ifndef RT_WLAN_EBOX_NUM
-#define RT_WLAN_EBOX_NUM           (10)
+#define RT_WLAN_EBOX_NUM (10)
 #endif
 
 #ifndef RT_WLAN_SCAN_RETRY_CNT
-#define RT_WLAN_SCAN_RETRY_CNT      (3)
+#define RT_WLAN_SCAN_RETRY_CNT (3)
 #endif
 
 #ifndef AUTO_CONNECTION_PERIOD_MS
@@ -46,16 +46,16 @@ extern "C" {
 #endif
 
 /*state fot station*/
-#define RT_WLAN_STATE_CONNECT     (1UL << 0)
-#define RT_WLAN_STATE_CONNECTING  (1UL << 1)
-#define RT_WLAN_STATE_READY       (1UL << 2)
-#define RT_WLAN_STATE_POWERSAVE   (1UL << 3)
+#define RT_WLAN_STATE_CONNECT    (1UL << 0)
+#define RT_WLAN_STATE_CONNECTING (1UL << 1)
+#define RT_WLAN_STATE_READY      (1UL << 2)
+#define RT_WLAN_STATE_POWERSAVE  (1UL << 3)
 
 /*flags fot station*/
-#define RT_WLAN_STATE_AUTOEN      (1UL << 0)
+#define RT_WLAN_STATE_AUTOEN (1UL << 0)
 
 /*state fot ap*/
-#define RT_WLAN_STATE_ACTIVE      (1UL << 0)
+#define RT_WLAN_STATE_ACTIVE (1UL << 0)
 
 typedef enum
 {
@@ -95,8 +95,8 @@ rt_err_t rt_wlan_connect_adv(struct rt_wlan_info *info, const char *password);
 rt_err_t rt_wlan_disconnect(void);
 rt_bool_t rt_wlan_is_connected(void);
 rt_bool_t rt_wlan_is_ready(void);
-rt_err_t rt_wlan_set_mac(rt_uint8_t *mac);
-rt_err_t rt_wlan_get_mac(rt_uint8_t *mac);
+rt_err_t rt_wlan_set_mac(rt_uint8_t mac[6]);
+rt_err_t rt_wlan_get_mac(rt_uint8_t mac[6]);
 rt_err_t rt_wlan_get_info(struct rt_wlan_info *info);
 int rt_wlan_get_rssi(void);
 
