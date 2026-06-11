@@ -95,8 +95,8 @@ rt_err_t rt_wlan_connect_adv(struct rt_wlan_info *info, const char *password);
 rt_err_t rt_wlan_disconnect(void);
 rt_bool_t rt_wlan_is_connected(void);
 rt_bool_t rt_wlan_is_ready(void);
-rt_err_t rt_wlan_set_mac(rt_uint8_t *mac);
-rt_err_t rt_wlan_get_mac(rt_uint8_t *mac);
+rt_err_t rt_wlan_set_mac(rt_uint8_t mac[6]);
+rt_err_t rt_wlan_get_mac(rt_uint8_t mac[6]);
 rt_err_t rt_wlan_get_info(struct rt_wlan_info *info);
 int rt_wlan_get_rssi(void);
 
