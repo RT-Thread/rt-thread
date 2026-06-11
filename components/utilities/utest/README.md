@@ -4,11 +4,9 @@
 
 为了保证某一部分代码的质量，通常可以通过编写测试用例的方式，验证此代码的功能。为了保证 RT-Thread 相关仓库的代码质量，我们基于 utest 框架搭建了一套简易的自动化测试环境。有兴趣，有精力的小伙伴可以利用这套机制完善自己的代码检查。如果有意愿让社区上更多的小伙伴受益，也可以在提交代码的时候，把对应的测试用例也提交上来。
 
-## 目录结构
+## 相关配置
 
-| 目录      | 用途                                                         |
-| --------- | ------------------------------------------------------------ |
-| configs   | 配置文件集合（每一个目录代表一种功能集合，如：kernel,net等） |
+自动化测试使用的配置文件维护在 [examples/utest/configs](../../../examples/utest/configs)，每一个目录代表一种功能集合，如：kernel, net 等。
 
 ## 如何贡献
 
@@ -53,7 +51,7 @@ msh />utest_run
 
 ### 3. 提交
 
-1. 如果是对已有测试集合的完善，需要把添加的测试用例的配置项，以及对应的依赖项添加到对应测试集合的配置文件里，如：[examples\utest\configs\kernel\mem.conf](./configs/kernel/mem.conf)。
+1. 如果是对已有测试集合的完善，需要把添加的测试用例的配置项，以及对应的依赖项添加到对应测试集合的配置文件里，如：[examples/utest/configs/kernel/mem.cfg](../../../examples/utest/configs/kernel/mem.cfg)。
 
 ```
 CONFIG_RT_UTEST_MEMHEAP=y
@@ -62,11 +60,11 @@ CONFIG_RT_UTEST_MEMHEAP=y
 CONFIG_RT_USING_MEMHEAP=y
 ```
 
-2. 如果要添加新的测试集合，需要参考已有的测试集合，在 [examples\utest\configs](./configs) 目录下添加新的测试集合配置项。并更新 [.github\workflows\action_utest.yml](../../.github/workflows/action_utest.yml) 内的测试集合。
+2. 如果要添加新的测试集合，需要参考已有的测试集合，在 [examples/utest/configs](../../../examples/utest/configs) 目录下添加新的测试集合配置项。并更新 [.github/workflows/utest_auto_run.yml](../../../.github/workflows/utest_auto_run.yml) 内的测试集合。
 
 ```
-- {UTEST: "kernel/mem",       RTT_BSP: "bsp/qemu-vexpress-a9",   QEMU_ARCH: "arm", QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/mem.conf", SD_FILE: "sd.bin"}
-- {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9",   QEMU_ARCH: "arm", QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "utest_self/self.conf", SD_FILE: "sd.bin"}
+- platform: { UTEST: "A9", RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "arm", QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", SMP_RUN: "" }
+  config_file: "kernel/mem.cfg"
 ```
 
 3. 向 RT-Thread 主仓库提交合并请求。
