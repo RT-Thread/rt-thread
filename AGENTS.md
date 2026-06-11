@@ -29,4 +29,5 @@
 
 ## Precedence / 优先级
 
-- If a more specific repository rule conflicts with this file, follow `.github/CONTRIBUTING.md`, `documentation/7.contribution/coding_style_cn.md`, and `documentation/7.contribution/coding_style_en.md`. / 如与更具体的仓库规则冲突，以 `.github/CONTRIBUTING.md`、`documentation/7.contribution/coding_style_cn.md`、`documentation/7.contribution/coding_style_en.md` 为准。
+- GitHub Copilot should also follow `.github/copilot-instructions.md`. / GitHub Copilot 还应遵循 `.github/copilot-instructions.md`。
+- If a more specific repository rule conflicts with this file, follow `.github/copilot-instructions.md`, `.github/CONTRIBUTING.md`, `documentation/7.contribution/coding_style_cn.md`, and `documentation/7.contribution/coding_style_en.md`. / 如与更具体的仓库规则冲突，以 `.github/copilot-instructions.md`、`.github/CONTRIBUTING.md`、`documentation/7.contribution/coding_style_cn.md`、`documentation/7.contribution/coding_style_en.md` 为准。
