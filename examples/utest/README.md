@@ -9,13 +9,12 @@
 | 目录      | 用途                                                         |
 | --------- | ------------------------------------------------------------ |
 | configs   | 配置文件集合（每一个目录代表一种功能集合，如：kernel,net等） |
-| testcases | 测试用例源代码                                               |
 
 ## 如何贡献
 
 ### 1. 编写测试用例
 
-参考已有的测试用例在 [examples\utest\testcases](./testcases) 目录下添加自己的测试用例。测试用例的编写方法参考文档中心[《utest 测试框架》章节](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/utest/utest)。
+参考已有的测试用例，在对应模块目录下添加 `utest` 目录并维护自己的测试用例，例如串口测试用例位于 `components/drivers/serial/utest`。测试用例的编写方法参考文档中心[《utest 测试框架》章节](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/programming-manual/utest/utest)。
 
 ### 2. 本地测试
 
