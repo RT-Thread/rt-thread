@@ -1,5 +1,5 @@
 # Automation utest run script for the QEMU platform
-# Generate the corresponding config configuration for CI based on the configuration file under examples/utest/configs.
+# Generate the corresponding config configuration for CI based on the configuration file under .github/utest/configs.
 
 name: utest_auto_run
 
@@ -9,8 +9,9 @@ on:
       - master
     paths:
       - '.github/workflows/utest_auto_run.yml'
+      - '.github/utest/configs/**'
       - 'Kconfig'
-      - 'Kconfig.utestcases'
+      - 'components/utilities/utest/Kconfig'
       - 'bsp/qemu-vexpress-a9/**'
       - 'bsp/qemu-virt64-aarch64/**'
       - 'bsp/qemu-virt64-riscv/**'
@@ -28,8 +29,9 @@ on:
       - master
     paths:
       - '.github/workflows/utest_auto_run.yml'
+      - '.github/utest/configs/**'
       - 'Kconfig'
-      - 'Kconfig.utestcases'
+      - 'components/utilities/utest/Kconfig'
       - 'bsp/qemu-vexpress-a9/**'
       - 'bsp/qemu-virt64-aarch64/**'
       - 'bsp/qemu-virt64-riscv/**'
@@ -155,6 +157,7 @@ jobs:
       TEST_BSP_ROOT: ${{ matrix.platform.RTT_BSP }}
       TEST_CONFIG_FILE: ${{ matrix.config_file }}
       TEST_SD_FILE: ${{ matrix.platform.SD_FILE }}
+      UTEST_CONFIG_ROOT: .github/utest/configs
     steps:
       - uses: actions/checkout@main
 
@@ -266,16 +269,16 @@ jobs:
         run: |
           # Whether plan to run SMP?
           if [[ "${{ matrix.platform.SMP_RUN }}"  == "smp" ]]; then
-            cat examples/utest/configs/smp/smp.cfg >> $TEST_BSP_ROOT/.config
+            cat $UTEST_CONFIG_ROOT/smp/smp.cfg >> $TEST_BSP_ROOT/.config
           fi
 
           # Is the kernel rtsmart?
           if [[ "${{ matrix.platform.KERNEL }}"  == "rtsmart" ]]; then
-            cat examples/utest/configs/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
+            cat $UTEST_CONFIG_ROOT/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
           fi
 
           echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
-          cat examples/utest/configs/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
+          cat $UTEST_CONFIG_ROOT/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
           scons --pyconfig-silent -C $TEST_BSP_ROOT
           scons -j$(nproc) --strict -C $TEST_BSP_ROOT
 

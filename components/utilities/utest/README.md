@@ -6,7 +6,7 @@
 
 ## 相关配置
 
-自动化测试使用的配置文件维护在 [examples/utest/configs](../../../examples/utest/configs)，每一个目录代表一种功能集合，如：kernel, net 等。
+自动化测试使用的配置文件维护在 [.github/utest/configs](../../../.github/utest/configs)，每一个目录代表一种功能集合，如：kernel, net 等。
 
 ## 如何贡献
 
@@ -51,7 +51,7 @@ msh />utest_run
 
 ### 3. 提交
 
-1. 如果是对已有测试集合的完善，需要把添加的测试用例的配置项，以及对应的依赖项添加到对应测试集合的配置文件里，如：[examples/utest/configs/kernel/mem.cfg](../../../examples/utest/configs/kernel/mem.cfg)。
+1. 如果是对已有测试集合的完善，需要把添加的测试用例的配置项，以及对应的依赖项添加到对应测试集合的配置文件里，如：[.github/utest/configs/kernel/mem.cfg](../../../.github/utest/configs/kernel/mem.cfg)。
 
 ```
 CONFIG_RT_UTEST_MEMHEAP=y
@@ -60,7 +60,7 @@ CONFIG_RT_UTEST_MEMHEAP=y
 CONFIG_RT_USING_MEMHEAP=y
 ```
 
-2. 如果要添加新的测试集合，需要参考已有的测试集合，在 [examples/utest/configs](../../../examples/utest/configs) 目录下添加新的测试集合配置项。并更新 [.github/workflows/utest_auto_run.yml](../../../.github/workflows/utest_auto_run.yml) 内的测试集合。
+2. 如果要添加新的测试集合，需要参考已有的测试集合，在 [.github/utest/configs](../../../.github/utest/configs) 目录下添加新的测试集合配置项。并更新 [.github/workflows/utest_auto_run.yml](../../../.github/workflows/utest_auto_run.yml) 内的测试集合。
 
 ```
 - platform: { UTEST: "A9", RTT_BSP: "bsp/qemu-vexpress-a9", QEMU_ARCH: "arm", QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", SMP_RUN: "" }
