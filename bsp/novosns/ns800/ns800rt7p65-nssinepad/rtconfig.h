@@ -149,6 +149,8 @@
 #define RT_CANSND_BOX_NUM 1
 #define RT_CANSND_MSG_TIMEOUT 100
 #define RT_CAN_NB_TX_FIFO_SIZE 256
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -423,6 +425,9 @@
 #define BSP_USING_UART1
 #define BSP_USING_CAN
 #define BSP_USING_CANFD1
+#define BSP_USING_I2C
+#define BSP_USING_HARD_I2C2
+#define BSP_I2C2_BAUDRATE 100000
 /* end of On-chip Peripheral Drivers */
 
 #endif

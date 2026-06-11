@@ -27,6 +27,9 @@ if GetDepend('BSP_USING_TIM'):
 
 if GetDepend('BSP_USING_SPI'):
     src += ['drv_spi.c']
+	
+if GetDepend('BSP_USING_I2C'):
+    src += ['drv_hard_i2c.c']
 
 group = DefineGroup('HAL_Drivers', src, depend = [''], CPPPATH = path)
 
