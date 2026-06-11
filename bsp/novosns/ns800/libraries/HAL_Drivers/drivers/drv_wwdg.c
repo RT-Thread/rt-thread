@@ -13,6 +13,7 @@
 
 #include "board.h"
 #include "drv_wwdg.h"
+#include "rcc.h"
 #include "wwdg.h"
 
 #ifdef RT_USING_WDT
@@ -22,13 +23,9 @@
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
-#ifndef HCLK_FREQ_HZ
-#define HCLK_FREQ_HZ           200000000ULL
-#endif
-
 #define NS800_WWDG_COUNTER_MIN 0x40U
 #define NS800_WWDG_COUNTER_MAX 0x7FU
-#define NS800_WWDG_TICK_BASE   4096ULL
+#define NS800_WWDG_TICK_BASE   4096ULL /* Fixed WWDG counter clock divider from the reference manual. */
 #define NS800_USEC_PER_SEC     1000000ULL
 #define NS800_MSEC_PER_SEC     1000ULL
 #define NS800_ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
@@ -42,7 +39,6 @@ struct ns800_wwdg
     rt_uint8_t window;
     rt_uint64_t timeout_us;
     rt_bool_t started;
-    rt_bool_t early_wakeup_irq;
 };
 
 static struct ns800_wwdg wwdg_dev;
@@ -52,52 +48,76 @@ static const rt_uint8_t wwdg_prescaler_div[] =
     1U, 2U, 4U, 8U, 16U, 32U, 64U, 128U,
 };
 
-static rt_uint64_t wwdg_abs_diff_u64(rt_uint64_t a, rt_uint64_t b)
+static rt_uint32_t wwdg_get_clock_hz(void)
 {
-    return (a > b) ? (a - b) : (b - a);
+    rt_uint32_t clock_hz = RCC_getPclk5Frequency();
+
+    if (clock_hz == 0U || clock_hz == 0xFFFFFFFFU)
+    {
+        LOG_E("%s clock query failed", WWDG_DEVICE_NAME);
+        return 0U;
+    }
+
+    return clock_hz;
 }
 
-static rt_uint64_t wwdg_calc_timeout_us(rt_uint32_t div, rt_uint32_t reload)
+static rt_uint64_t wwdg_calc_timeout_us(rt_uint32_t div, rt_uint32_t reload, rt_uint32_t clock_hz)
 {
     rt_uint32_t ticks = reload - (NS800_WWDG_COUNTER_MIN - 1U);
 
-    return ((rt_uint64_t)ticks * NS800_WWDG_TICK_BASE * div * NS800_USEC_PER_SEC +
-            HCLK_FREQ_HZ / 2ULL) / HCLK_FREQ_HZ;
+    return (rt_uint64_t)ticks * NS800_WWDG_TICK_BASE * div * NS800_USEC_PER_SEC / clock_hz;
+}
+
+static rt_uint64_t wwdg_calc_max_timeout_us(rt_uint32_t clock_hz)
+{
+    return wwdg_calc_timeout_us(wwdg_prescaler_div[NS800_ARRAY_SIZE(wwdg_prescaler_div) - 1],
+                                NS800_WWDG_COUNTER_MAX,
+                                clock_hz);
 }
 
 static rt_uint32_t wwdg_timeout_to_ms(rt_uint64_t timeout_us)
 {
-    return (rt_uint32_t)((timeout_us + NS800_MSEC_PER_SEC - 1ULL) / NS800_MSEC_PER_SEC);
+    return (rt_uint32_t)(timeout_us / NS800_MSEC_PER_SEC);
 }
 
-static void wwdg_select_config(rt_uint32_t timeout_s, struct ns800_wwdg *dev)
+static void wwdg_select_max_config(struct ns800_wwdg *dev)
+{
+    rt_uint32_t clock_hz = wwdg_get_clock_hz();
+    rt_uint32_t max_prescaler = NS800_ARRAY_SIZE(wwdg_prescaler_div) - 1U;
+
+    dev->prescaler = (WWDG_Prescaler)max_prescaler;
+    dev->reload = NS800_WWDG_COUNTER_MAX;
+    dev->window = NS800_WWDG_COUNTER_MAX;
+    dev->timeout_us = clock_hz ? wwdg_calc_max_timeout_us(clock_hz) : 0U;
+}
+
+static rt_err_t wwdg_select_config(rt_uint32_t timeout_s, struct ns800_wwdg *dev)
 {
     rt_uint64_t target_us = (rt_uint64_t)timeout_s * NS800_USEC_PER_SEC;
-    rt_uint64_t best_diff = (rt_uint64_t)-1;
+    rt_uint64_t best_timeout_us = (rt_uint64_t)-1;
     rt_uint32_t best_prescaler = 0;
     rt_uint32_t best_reload = NS800_WWDG_COUNTER_MAX;
+    rt_uint32_t clock_hz = wwdg_get_clock_hz();
     rt_uint32_t psc;
 
-    if (target_us == 0)
+    if (timeout_s == 0U || clock_hz == 0U)
     {
-        target_us = wwdg_calc_timeout_us(wwdg_prescaler_div[0], NS800_WWDG_COUNTER_MIN);
+        return -RT_EINVAL;
+    }
+
+    if (target_us > wwdg_calc_max_timeout_us(clock_hz))
+    {
+        return -RT_EINVAL;
     }
 
     for (psc = 0; psc < NS800_ARRAY_SIZE(wwdg_prescaler_div); psc++)
     {
-        rt_uint64_t tick_us = (NS800_WWDG_TICK_BASE * wwdg_prescaler_div[psc] * NS800_USEC_PER_SEC +
-                               HCLK_FREQ_HZ / 2ULL) / HCLK_FREQ_HZ;
+        rt_uint64_t tick_unit = (rt_uint64_t)NS800_WWDG_TICK_BASE * wwdg_prescaler_div[psc] * NS800_USEC_PER_SEC;
         rt_uint64_t ticks;
         rt_uint32_t reload;
         rt_uint64_t actual_us;
-        rt_uint64_t diff;
 
-        if (tick_us == 0)
-        {
-            tick_us = 1;
-        }
-
-        ticks = (target_us + tick_us / 2ULL) / tick_us;
+        ticks = (target_us * clock_hz + tick_unit - 1ULL) / tick_unit;
         if (ticks == 0)
         {
             ticks = 1;
@@ -105,47 +125,38 @@ static void wwdg_select_config(rt_uint32_t timeout_s, struct ns800_wwdg *dev)
 
         if (ticks > 64ULL)
         {
-            ticks = 64ULL;
+            continue;
         }
 
         reload = (rt_uint32_t)(ticks + (NS800_WWDG_COUNTER_MIN - 1U));
-        actual_us = wwdg_calc_timeout_us(wwdg_prescaler_div[psc], reload);
-        diff = wwdg_abs_diff_u64(actual_us, target_us);
-        if (diff < best_diff)
+        actual_us = wwdg_calc_timeout_us(wwdg_prescaler_div[psc], reload, clock_hz);
+        if (actual_us >= target_us && actual_us < best_timeout_us)
         {
-            best_diff = diff;
             best_prescaler = psc;
             best_reload = reload;
-            dev->timeout_us = actual_us;
+            best_timeout_us = actual_us;
         }
+    }
+
+    if (best_timeout_us == (rt_uint64_t)-1)
+    {
+        return -RT_EINVAL;
     }
 
     dev->prescaler = (WWDG_Prescaler)best_prescaler;
     dev->reload = (rt_uint8_t)best_reload;
     dev->window = (rt_uint8_t)best_reload;
+    dev->timeout_us = best_timeout_us;
+
+    return RT_EOK;
 }
 
 static void wwdg_apply_config(struct ns800_wwdg *dev)
 {
     WWDG_configModule(dev->base,
-                      dev->early_wakeup_irq ? WWDG_EARLY_WAKEUP_INT : WWDG_DIRECT_RESET,
+                      WWDG_DIRECT_RESET,
                       dev->prescaler,
                       dev->window);
-}
-
-void wwdg_isr(void)
-{
-    rt_interrupt_enter();
-    if (WWDG_getIntStatus(wwdg_dev.base))
-    {
-        WWDG_refreshModule(wwdg_dev.base, wwdg_dev.reload);
-        WWDG_clearIntStatus(wwdg_dev.base);
-        while (WWDG_getIntStatus(wwdg_dev.base))
-        {
-            ;
-        }
-    }
-    rt_interrupt_leave();
 }
 
 static rt_err_t wwdg_init(rt_watchdog_t *wdt)
@@ -157,6 +168,7 @@ static rt_err_t wwdg_init(rt_watchdog_t *wdt)
 static rt_err_t wwdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
 {
     struct ns800_wwdg *dev;
+    rt_err_t ret;
 
     RT_ASSERT(wdt != RT_NULL);
     dev = (struct ns800_wwdg *)wdt->parent.user_data;
@@ -173,7 +185,17 @@ static rt_err_t wwdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
         {
             return -RT_EINVAL;
         }
-        wwdg_select_config(*(rt_uint32_t *)arg, dev);
+        ret = wwdg_select_config(*(rt_uint32_t *)arg, dev);
+        if (ret != RT_EOK)
+        {
+            rt_uint32_t clock_hz = wwdg_get_clock_hz();
+
+            LOG_W("%s timeout request=%u s exceeds max=%u ms",
+                  WWDG_DEVICE_NAME,
+                  *(rt_uint32_t *)arg,
+                  clock_hz ? wwdg_timeout_to_ms(wwdg_calc_max_timeout_us(clock_hz)) : 0U);
+            return ret;
+        }
         if (dev->started)
         {
             wwdg_apply_config(dev);
@@ -190,7 +212,7 @@ static rt_err_t wwdg_control(rt_watchdog_t *wdt, int cmd, void *arg)
         {
             return -RT_EINVAL;
         }
-        *(rt_uint32_t *)arg = (rt_uint32_t)((dev->timeout_us + NS800_USEC_PER_SEC - 1ULL) / NS800_USEC_PER_SEC);
+        *(rt_uint32_t *)arg = (rt_uint32_t)(dev->timeout_us / NS800_USEC_PER_SEC);
         break;
 
     case RT_DEVICE_CTRL_WDT_GET_TIMELEFT:
@@ -227,8 +249,10 @@ int rt_hw_wwdg_init(void)
 {
     wwdg_dev.base = WWDG;
     wwdg_dev.started = RT_FALSE;
-    wwdg_dev.early_wakeup_irq = RT_FALSE;
-    wwdg_select_config(1U, &wwdg_dev);
+    if (wwdg_select_config(1U, &wwdg_dev) != RT_EOK)
+    {
+        wwdg_select_max_config(&wwdg_dev);
+    }
     wwdg_dev.watchdog.ops = &wwdg_ops;
 
     if (rt_hw_watchdog_register(&wwdg_dev.watchdog,
