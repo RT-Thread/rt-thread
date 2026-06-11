@@ -1,16 +1,17 @@
 /*
- * QSPI driver for NS800RT7xxx + W25Q128
- * Fully supports RT-Thread QSPI (rt_qspi_transfer_message)
- * All transfers use QSPI_writeDirect / QSPI_readDirect (same as working direct API)
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author            Notes
+ * 2026-05-17     lugl              first version
  */
-
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "qspi.h"
 #include "board.h"
-
-
 
 #ifdef RT_USING_QSPI
 
