@@ -211,4 +211,22 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_QSPI
         default n
 
+    menuconfig BSP_USING_WDT
+        bool "Enable Watchdog"
+        select RT_USING_WDT
+        default n
+        if BSP_USING_WDT
+            config BSP_USING_IWDG1
+                bool "Enable IWDG1"
+                default n
+
+            config BSP_USING_IWDG2
+                bool "Enable IWDG2"
+                default n
+
+            config BSP_USING_WWDG
+                bool "Enable WWDG"
+                default n
+        endif
+
 endmenu
