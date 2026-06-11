@@ -27,6 +27,8 @@ if GetDepend('BSP_USING_TIM'):
 
 if GetDepend('BSP_USING_SPI'):
     src += ['drv_spi.c']
+if GetDepend('BSP_USING_QSPI'):   
+    src += ['drv_qspi.c']
 
 group = DefineGroup('HAL_Drivers', src, depend = [''], CPPPATH = path)
 
