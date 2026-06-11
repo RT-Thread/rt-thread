@@ -22,12 +22,12 @@ menu "RT-Thread Utestcases"
 
             rsource "components/dfs/utest/Kconfig"
             rsource "components/libc/cplusplus/utest/Kconfig"
+            rsource "components/mm/utest/Kconfig"
             rsource "components/net/utest/Kconfig"
             rsource "components/utilities/utest/utest/Kconfig"
 
         endmenu
 
-        rsource "examples/utest/testcases/mm/Kconfig"
         rsource "examples/utest/testcases/tmpfs/Kconfig"
 
 endif
