@@ -23,12 +23,12 @@ menu "RT-Thread Utestcases"
             rsource "components/dfs/utest/Kconfig"
             rsource "components/dfs/dfs_v2/filesystems/tmpfs/utest/Kconfig"
             rsource "components/libc/cplusplus/utest/Kconfig"
+            rsource "components/lwp/utest/Kconfig"
             rsource "components/mm/utest/Kconfig"
             rsource "components/net/utest/Kconfig"
             rsource "components/utilities/utest/utest/Kconfig"
 
         endmenu
-
 
 endif
 
