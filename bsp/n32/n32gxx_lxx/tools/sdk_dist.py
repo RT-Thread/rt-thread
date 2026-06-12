@@ -14,9 +14,8 @@ def bsp_update_board_kconfig(dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'board/Kconfig'), 'w') as f:
         for line in data:
-            if line.find('../libraries/n32_drivers/Kconfig') != -1:
-                position = line.find('../libraries/n32_drivers/Kconfig')
-                line = line[0:position] + 'libraries/n32_drivers/Kconfig"\n'
+            if line.find('n32_drivers/Kconfig') != -1:
+                line = '    rsource "$BSP_DIR/libraries/n32_drivers/Kconfig"\n'
             f.write(line)
             
 # BSP dist function

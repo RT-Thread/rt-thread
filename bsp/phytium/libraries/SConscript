@@ -7,6 +7,7 @@ cwd  = GetCurrentDir()
 PORT_DRV_DIR = cwd + '/drivers'
 DRIVERS_EXAMPLE_DIR = cwd + '/drivers_example'
 PHYTIUM_SDK_DIR = cwd + '/phytium_standalone_sdk'
+SYSTEM_EXAMPLE_DIR = cwd + '/system_example'
 COMMON_DIR = cwd + '/common'
 
 # common source
@@ -137,9 +138,23 @@ if GetDepend(['BSP_USING_GPIO']):
 if GetDepend(['BSP_USING_I2S']):
     src += Glob(PHYTIUM_SDK_DIR+'/drivers/i2s/fi2s/*.c') \
            + Glob(PHYTIUM_SDK_DIR+'/drivers/dma/fddma/*.c') \
-           + Glob(PORT_DRV_DIR+'/drv_i2s.c') 
+           + Glob(PORT_DRV_DIR+'/drv_i2s.c')
+
     path += [PHYTIUM_SDK_DIR + '/drivers/i2s/fi2s/'] \
            + [PHYTIUM_SDK_DIR + '/drivers/dma/fddma/'] 
+
+## i2s
+if GetDepend(['BSP_USING_I2S_MSG']):
+    src += Glob(PHYTIUM_SDK_DIR+'/drivers/i2s/fi2s_v2/*.c') \
+           + Glob(PHYTIUM_SDK_DIR+'/drivers/dma/fddma/*.c') \
+           + Glob(PORT_DRV_DIR+'/drv_i2s_msg.c')
+
+    path += [PHYTIUM_SDK_DIR + '/drivers/i2s/fi2s_v2/'] \
+           + [PHYTIUM_SDK_DIR + '/drivers/dma/fddma/'] 
+    
+## pwm
+if GetDepend(['BSP_USING_ES8336']):
+    src += Glob(PORT_DRV_DIR+'/drv_es8336.c')
 
 ## pwm
 if GetDepend(['BSP_USING_PWM']):
@@ -171,17 +186,6 @@ if GetDepend(['I2C_USE_MIO']):
     src += Glob(PHYTIUM_SDK_DIR+'/drivers/mio/fmio/*.c')
     path += [PHYTIUM_SDK_DIR + '/drivers/mio/fmio/']
 
-## device
-if GetDepend(['BSP_USING_DEVICE']):
-    src += Glob(PHYTIUM_SDK_DIR+'/drivers/device/fdevice/fdevice.c')
-    path += [PHYTIUM_SDK_DIR + '/drivers/device/fdevice/']
-    if GetDepend(['BSP_USING_ES8336']):
-        src +=  Glob(PHYTIUM_SDK_DIR+'/drivers/device/fes8336/fes8336.c') + Glob(PHYTIUM_SDK_DIR+'/drivers/i2c/fi2c/*.c')
-        path += [PHYTIUM_SDK_DIR + '/drivers/device/fes8336/'] + [PHYTIUM_SDK_DIR + '/drivers/i2c/fi2c/']
-    if GetDepend(['BSP_USING_ES8388']):
-        src +=  Glob(PHYTIUM_SDK_DIR+'/drivers/device/fes8388/fes8388.c') + Glob(PHYTIUM_SDK_DIR+'/drivers/i2c/fi2c/*.c')
-        path += [PHYTIUM_SDK_DIR + '/drivers/device/fes8388/'] + [PHYTIUM_SDK_DIR + '/drivers/i2c/fi2c/']
-    
 ## drivers_example
 if GetDepend(['BSP_USING_DRIVERS_EXAMPLE']):
     src += Glob(DRIVERS_EXAMPLE_DIR+'/*.c')
@@ -191,7 +195,7 @@ if GetDepend(['BSP_USING_DRIVERS_EXAMPLE']):
 if GetDepend(['E2000D_DEMO_BOARD']):
     src += Glob(PHYTIUM_SDK_DIR+'/board/e2000d_demo/fio_mux.c')
     path += [PHYTIUM_SDK_DIR + '/board/e2000d_demo/']
-
+    
     if GetDepend(['BSP_USING_SDIF_LAYER']):
         src += Glob(PHYTIUM_SDK_DIR+'/board/e2000d_demo/fsdif_timing.c')
 
@@ -223,7 +227,53 @@ if GetDepend(['PHYTIUMPI_FIREFLY_BOARD']):
     if GetDepend(['BSP_USING_SDIF_LAYER']):
         src += Glob(PHYTIUM_SDK_DIR+'/board/phytiumpi_firefly/fsdif_timing.c')
 
+
+## third-party
+if GetDepend(['USE_OPENAMP']):
+    ## libmetal
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/libmetal/metal/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/libmetal/metal/system/generic/*.c')
     
+    ## libmetal port
+    src += Glob(cwd + '/port/libmetal_port/*.c')
+    
+    path += [PHYTIUM_SDK_DIR + '/third-party/libmetal/']
+    path += [PHYTIUM_SDK_DIR + '/third-party/libmetal/compiler/gcc/']
+    path += [PHYTIUM_SDK_DIR + '/third-party/libmetal/processor/aarch64/']
+    path += [cwd + '/port/libmetal_port/']
+    
+    ## openamp
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/include']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/include/openamp']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/rpmsg']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/remoteproc']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/ports']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/service/rpmsg/rpc']
+    path += [PHYTIUM_SDK_DIR + '/third-party/openamp/lib/virtio']
+    # openamp port
+    src += Glob(cwd + '/port/openamp_port/machine/phytium/*.c')
+    src += Glob(cwd + '/port/openamp_port/system/generic/machine/phytium/*.c')
+    path += [cwd + '/port/openamp_port/include']
+    path += [cwd + '/port/openamp_port/machine/phytium']
+    path += [cwd + '/port/openamp_port/system/generic/machine/phytium']
+    
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/rpmsg/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/version.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/proxy/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/remoteproc/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/virtio/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/services/rpmsg/rpc/*.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/lib/utils/*.c')
+
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/ports/load_fw.c')
+    src += Glob(PHYTIUM_SDK_DIR+'/third-party/openamp/ports/mem_image_store.c')
+    # system_example
+    if GetDepend(['BSP_USING_SYSTEM_EXAMPLE']):
+        if GetDepend(['BSP_USING_OPENAMP_EXAMPLE']):
+            src += Glob(SYSTEM_EXAMPLE_DIR+'/openamp/*.c')
+            path += [SYSTEM_EXAMPLE_DIR+'/openamp/']
+
 LIBS    = []
 LIBPATH = []
 

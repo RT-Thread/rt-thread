@@ -81,10 +81,10 @@ struct rt_ecap_config
 
     ECAP_TypeDef *instance;
     IRQn_Type     irq_type;
-
+    ECAP_InputCaptureSignals input_signal;
     rt_uint32_t input_xbar;
-    rt_uint32_t ecap_input;
     rt_uint32_t input_source;
+    rt_uint32_t pre_scaler;
 
     GPIO_TypeDef *gpio_port;
     GPIO_PinNum gpio_pin;

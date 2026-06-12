@@ -46,6 +46,29 @@
 #define NS800_UART_DEFAULT_TX_TIMEOUT BSP_NS800_UART_TX_TIMEOUT
 #endif
 
+/* Default UART configuration from Kconfig */
+#ifndef BSP_UART_DEFAULT_BAUDRATE
+#define BSP_UART_DEFAULT_BAUDRATE 115200
+#endif
+
+/* Data bits mapping */
+#if defined(BSP_UART_DATABITS_7)
+#define NS800_UART_DEFAULT_DATA_BITS DATA_BITS_7
+#elif defined(BSP_UART_DATABITS_8)
+#define NS800_UART_DEFAULT_DATA_BITS DATA_BITS_8
+#elif defined(BSP_UART_DATABITS_9)
+#define NS800_UART_DEFAULT_DATA_BITS DATA_BITS_9
+#else
+#define NS800_UART_DEFAULT_DATA_BITS DATA_BITS_8
+#endif
+
+/* Stop bits mapping */
+#ifdef BSP_UART_STOPBITS_2
+#define NS800_UART_DEFAULT_STOP_BITS STOP_BITS_2
+#else
+#define NS800_UART_DEFAULT_STOP_BITS STOP_BITS_1
+#endif
+
 enum
 {
 #ifdef BSP_USING_UART1
@@ -377,31 +400,48 @@ static rt_err_t ns800_control(struct rt_serial_device *serial, int cmd, void *ar
     return RT_EOK;
 }
 
+static rt_err_t ns800_wait_tx_space(struct ns800_uart *uart, rt_uint32_t timeout_ms)
+{
+    rt_tick_t start_tick;
+    rt_tick_t timeout_tick;
+
+    RT_ASSERT(uart != RT_NULL);
+
+    if (UART_isSpaceAvailable(uart->handle.Instance))
+    {
+        return RT_EOK;
+    }
+
+    timeout_tick = rt_tick_from_millisecond(timeout_ms);
+    start_tick = rt_tick_get();
+
+    while (!UART_isSpaceAvailable(uart->handle.Instance))
+    {
+        if ((rt_tick_get() - start_tick) > timeout_tick)
+        {
+            return -RT_ETIMEOUT;
+        }
+    }
+
+    return RT_EOK;
+}
+
 static int ns800_putc(struct rt_serial_device *serial, char c)
 {
     struct ns800_uart *uart;
-    rt_uint32_t block_timeout;
+    rt_err_t result;
 
     RT_ASSERT(serial != RT_NULL);
 
     uart = rt_container_of(serial, struct ns800_uart, serial);
-    block_timeout = uart->tx_block_timeout;
-
-    while (!UART_isSpaceAvailable(uart->handle.Instance))
+    result = ns800_wait_tx_space(uart, uart->tx_block_timeout);
+    if (result != RT_EOK)
     {
-        if (block_timeout-- == 0U)
-        {
-            return -1;
-        }
+        return -1;
     }
 
     UART_writeChar(uart->handle.Instance, (rt_uint8_t)c);
-
-    while ((uart->handle.Instance->STAT.BIT.TC == false) && (--block_timeout != 0U))
-    {
-    }
-
-    return (block_timeout != 0U) ? 1 : -1;
+    return 1;
 }
 
 static int ns800_getc(struct rt_serial_device *serial)
@@ -488,6 +528,11 @@ static void ns800_uart_fill_default_config(struct serial_configure *config,
     RT_ASSERT(hw != RT_NULL);
 
     *config = (struct serial_configure)RT_SERIAL_CONFIG_DEFAULT;
+
+    /* Override with Kconfig settings */
+    config->baud_rate = BSP_UART_DEFAULT_BAUDRATE;
+    config->data_bits = NS800_UART_DEFAULT_DATA_BITS;
+    config->stop_bits = NS800_UART_DEFAULT_STOP_BITS;
 
 #ifdef RT_USING_SERIAL_V2
     config->rx_bufsz = hw->rx_bufsz;

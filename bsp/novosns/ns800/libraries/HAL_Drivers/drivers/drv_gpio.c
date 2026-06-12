@@ -5,18 +5,55 @@
  *
  * Change Logs:
  * Date           Author            Notes
- *
+ * 2026-05-17     swtblue           add interrupt operation function
  */
 
 #include <board.h>
 #include "drv_gpio.h"
-#include "NS800RT7xxx_TI_gpio.h"
+#include "gpio.h"
+#include "exti.h"
+#include "syscon.h"
+#include "interrupt.h"
 #include <ctype.h>
 #include <stdlib.h>
 
 #ifdef BSP_USING_GPIO
 
 #define PIN_ENTRY(pin_macro) {pin_macro}
+#define NS800_PIN_MAP_SIZE  (sizeof(pin_map_table) / sizeof(pin_map_table[0]))
+#define NS800_EXTI_LINES    16U
+
+#if defined(GPIOZ)
+#define __NS800_PORT_MAX 12u
+#elif defined(GPIOK)
+#define __NS800_PORT_MAX 11u
+#elif defined(GPIOJ)
+#define __NS800_PORT_MAX 10u
+#elif defined(GPIOI)
+#define __NS800_PORT_MAX 9u
+#elif defined(GPIOH)
+#define __NS800_PORT_MAX 8u
+#elif defined(GPIOG)
+#define __NS800_PORT_MAX 7u
+#elif defined(GPIOF)
+#define __NS800_PORT_MAX 6u
+#elif defined(GPIOE)
+#define __NS800_PORT_MAX 5u
+#elif defined(GPIOD)
+#define __NS800_PORT_MAX 4u
+#elif defined(GPIOC)
+#define __NS800_PORT_MAX 3u
+#elif defined(GPIOB)
+#define __NS800_PORT_MAX 2u
+#elif defined(GPIOA)
+#define __NS800_PORT_MAX 1u
+#else
+#define __NS800_PORT_MAX 0u
+#error Unsupported NS800 GPIO peripheral.
+#endif
+
+#define PIN_STPORT_MAX __NS800_PORT_MAX
+
 
 static const rt_pin_info_t pin_map_table[225] = {
     /* 0-21: 连续 */
@@ -161,77 +198,52 @@ static const rt_pin_info_t pin_map_table[225] = {
     [224] = PIN_ENTRY(GPIO_224),
 };
 
-/* 1. PIN_NUM: 从(port, pin)获取引脚编号 */
+struct ns800_pin_irq
+{
+    struct rt_pin_irq_hdr hdr;
+    GPIO_TypeDef *port;
+    GPIO_PinNum gpio_pin;
+    IRQn_Type irqno;
+    rt_bool_t enabled;
+};
+
+static struct ns800_pin_irq pin_irq_table[NS800_EXTI_LINES];
+static rt_uint32_t pin_irq_enable_mask;
+static rt_uint32_t pin_irq_rising_mask;
+static rt_uint32_t pin_irq_falling_mask;
+
 int get_pin_num(GPIO_TypeDef *port, GPIO_PinNum pin)
 {
-    /* 遍历数组查找匹配 */
-    for (int i = 0; i < 225; i++)
+    rt_uint32_t i;
+
+    for (i = 0U; i < NS800_PIN_MAP_SIZE; i++)
     {
-        if (pin_map_table[i].port == port &&
-            pin_map_table[i].pin == (uint16_t)pin)
-            {
-            return i;  /* 返回引脚编号 */
+        if ((pin_map_table[i].port == port) && (pin_map_table[i].pin == pin))
+        {
+            return (int)i;
         }
     }
-    return -1;  /* 未找到 */
+
+    return -1;
 }
 
-/* 2. PIN_PORT: 从引脚编号获取端口索引 */
 uint8_t get_port_index(GPIO_TypeDef *port)
 {
-    /* 由于新平台端口地址可能不连续，需要映射 */
-    if (port == GPIOA) return 0;
-    if (port == GPIOB) return 1;
-    if (port == GPIOC) return 2;
-    if (port == GPIOD) return 3;
-    if (port == GPIOE) return 4;
-    if (port == GPIOF) return 5;
-    if (port == GPIOG) return 6;
-    if (port == GPIOH) return 7;
-    /* 如果有更多端口继续添加 */
-    return 0xFF;  /* 无效端口 */
+    if (port == GPIOA) return 0U;
+    if (port == GPIOB) return 1U;
+    if (port == GPIOC) return 2U;
+    if (port == GPIOD) return 3U;
+    if (port == GPIOE) return 4U;
+    if (port == GPIOF) return 5U;
+    if (port == GPIOG) return 6U;
+    if (port == GPIOH) return 7U;
+
+    return 0xFFU;
 }
 
-/* 3. PIN_NO: 从引脚编号获取引脚索引 */
 uint8_t get_pin_index(uint16_t pin)
 {
-    /* 提取引脚位的位置 */
-    switch (pin)
-    {
-        case GPIO_PIN_0:  return 0;
-        case GPIO_PIN_1:  return 1;
-        case GPIO_PIN_2:  return 2;
-        case GPIO_PIN_3:  return 3;
-        case GPIO_PIN_4:  return 4;
-        case GPIO_PIN_5:  return 5;
-        case GPIO_PIN_6:  return 6;
-        case GPIO_PIN_7:  return 7;
-        case GPIO_PIN_8:  return 8;
-        case GPIO_PIN_9:  return 9;
-        case GPIO_PIN_10: return 10;
-        case GPIO_PIN_11: return 11;
-        case GPIO_PIN_12: return 12;
-        case GPIO_PIN_13: return 13;
-        case GPIO_PIN_14: return 14;
-        case GPIO_PIN_15: return 15;
-        case GPIO_PIN_16: return 16;
-        case GPIO_PIN_17: return 17;
-        case GPIO_PIN_18: return 18;
-        case GPIO_PIN_19: return 19;
-        case GPIO_PIN_20: return 20;
-        case GPIO_PIN_21: return 21;
-        case GPIO_PIN_22: return 22;
-        case GPIO_PIN_23: return 23;
-        case GPIO_PIN_24: return 24;
-        case GPIO_PIN_25: return 25;
-        case GPIO_PIN_26: return 26;
-        case GPIO_PIN_27: return 27;
-        case GPIO_PIN_28: return 28;
-        case GPIO_PIN_29: return 29;
-        case GPIO_PIN_30: return 30;
-        case GPIO_PIN_31: return 31;
-        default: return 0xFF;  /* 无效引脚 */
-    }
+    return (pin <= GPIO_PIN_31) ? (uint8_t)pin : 0xFFU;
 }
 
 uint8_t get_port_index_by_num(int pin_num)
@@ -240,7 +252,7 @@ uint8_t get_port_index_by_num(int pin_num)
 
     if (info == RT_NULL)
     {
-        return 0xFF;
+        return 0xFFU;
     }
 
     return get_port_index(info->port);
@@ -252,32 +264,26 @@ uint8_t get_pin_index_by_num(int pin_num)
 
     if (info == RT_NULL)
     {
-        return 0xFF;
+        return 0xFFU;
     }
 
     return get_pin_index(info->pin);
 }
 
-const rt_pin_info_t* get_pin_info(int pin_num)
+const rt_pin_info_t *get_pin_info(int pin_num)
 {
-    if(pin_num < 0 || pin_num >=225)
-        return NULL;
-
-    if(pin_map_table[pin_num].port == NULL)
+    if ((pin_num < 0) || (pin_num >= (int)NS800_PIN_MAP_SIZE))
     {
-        return NULL;
+        return RT_NULL;
+    }
+
+    if (pin_map_table[pin_num].port == RT_NULL)
+    {
+        return RT_NULL;
     }
 
     return &pin_map_table[pin_num];
 }
-
-#define PIN_STPORT(pin)     (pin_map_table[(pin)].port)
-#define PIN_STPIN(pin)      (pin_map_table[(pin)].pin)
-
-
-static uint32_t pin_irq_enable_mask = 0;
-
-#define ITEM_NUM(items) (sizeof(items) / sizeof((items)[0]))
 
 /* e.g. PE.7 */
 static rt_base_t ns800_pin_get(const char *name)
@@ -290,29 +296,29 @@ static rt_base_t ns800_pin_get(const char *name)
 
     if ((name == RT_NULL) || (name[0] == '\0'))
     {
-        goto out;
+        return -RT_EINVAL;
     }
 
     if ((name[0] != 'P') && (name[0] != 'p'))
     {
-        goto out;
+        return -RT_EINVAL;
     }
 
     port_name = (char)toupper((unsigned char)name[1]);
     if (name[2] != '.')
     {
-        goto out;
+        return -RT_EINVAL;
     }
 
     pin_index = (int)strtol(&name[3], &endptr, 10);
     if ((endptr == &name[3]) || (*endptr != '\0'))
     {
-        goto out;
+        return -RT_EINVAL;
     }
 
     if ((pin_index < 0) || (pin_index > 31))
     {
-        goto out;
+        return -RT_EINVAL;
     }
 
     port_index = (uint8_t)(port_name - 'A');
@@ -327,30 +333,28 @@ static rt_base_t ns800_pin_get(const char *name)
     case 6: port = GPIOG; break;
     case 7: port = GPIOH; break;
     default:
-        goto out;
+        return -RT_EINVAL;
     }
 
     return get_pin_num(port, (GPIO_PinNum)pin_index);
-
-out:
-    rt_kprintf("Px.y  x:A~H  y:0-31, e.g. PA.0\n");
-    return -RT_EINVAL;
 }
 
 static void ns800rt7_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     const rt_pin_info_t *info = get_pin_info(pin);
 
+    RT_UNUSED(dev);
+
     if (info == RT_NULL)
     {
-        return ;
+        return;
     }
 
-    if(value == 0)
+    if (value == PIN_LOW)
     {
         GPIO_clearPin(info->port, info->pin);
     }
-    else if(value == 1)
+    else
     {
         GPIO_setPin(info->port, info->pin);
     }
@@ -360,80 +364,400 @@ static rt_ssize_t ns800rt7_pin_read(rt_device_t dev, rt_base_t pin)
 {
     const rt_pin_info_t *info = get_pin_info(pin);
 
+    RT_UNUSED(dev);
+
     if (info == RT_NULL)
     {
         return -RT_EINVAL;
     }
 
-    return (GPIO_readPin(info->port, info->pin)) ? PIN_HIGH : PIN_LOW;
+    return GPIO_readPin(info->port, info->pin) ? PIN_HIGH : PIN_LOW;
 }
 
 static void ns800rt7_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     const rt_pin_info_t *info = get_pin_info(pin);
 
+    RT_UNUSED(dev);
+
     if (info == RT_NULL)
     {
-        return ;
+        return;
+    }
+
+    switch (mode)
+    {
+    case PIN_MODE_OUTPUT:
+        GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_STD);
+        GPIO_setDirectionMode(info->port, info->pin, GPIO_DIR_MODE_OUT);
+        break;
+    case PIN_MODE_INPUT:
+        GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_STD);
+        GPIO_setDirectionMode(info->port, info->pin, GPIO_DIR_MODE_IN);
+        break;
+    case PIN_MODE_INPUT_PULLUP:
+        GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_PULLUP);
+        GPIO_setDirectionMode(info->port, info->pin, GPIO_DIR_MODE_IN);
+        break;
+    case PIN_MODE_INPUT_PULLDOWN:
+        GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_PULLDOWN);
+        GPIO_setDirectionMode(info->port, info->pin, GPIO_DIR_MODE_IN);
+        break;
+    case PIN_MODE_OUTPUT_OD:
+        GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_OD);
+        GPIO_setDirectionMode(info->port, info->pin, GPIO_DIR_MODE_OUT);
+        break;
+    default:
+        return;
     }
 
     GPIO_setAnalogMode(info->port, info->pin, GPIO_ANALOG_DISABLED);
+    GPIO_setPinConfig(info->port, info->pin, ALT0_FUNCTION);
     GPIO_setQualificationMode(info->port, info->pin, GPIO_QUAL_SYNC);
-    GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_STD);
     GPIO_setDriveLevel(info->port, info->pin, GPIO_DRV_MAX);
+}
 
-    if (mode == PIN_MODE_OUTPUT )
+static rt_bool_t ns800_pin_irq_mode_valid(rt_uint8_t mode)
+{
+    return (mode == PIN_IRQ_MODE_RISING) ||
+           (mode == PIN_IRQ_MODE_FALLING) ||
+           (mode == PIN_IRQ_MODE_RISING_FALLING);
+}
+
+static int ns800_pin_to_exti_line(GPIO_PinNum pin)
+{
+    uint8_t pin_index = get_pin_index(pin);
+
+    if (pin_index == 0xFFU)
     {
-        GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_STD);
-        GPIO_setPinConfig(info->port, info->pin, ALT0_FUNCTION);
-        GPIO_clearPin(info->port, info->pin);
-        GPIO_setDirectionMode(info->port, info->pin, GPIO_DIR_MODE_OUT);
-    }
-    else if (mode == PIN_MODE_INPUT)
-    {
-        GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_STD);
-        GPIO_setPinConfig(info->port, info->pin, ALT0_FUNCTION);
-        GPIO_setDirectionMode(info->port, info->pin, GPIO_DIR_MODE_IN);
-    }
-    else if (mode == PIN_MODE_INPUT_PULLUP)
-    {
-        GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_PULLUP);
-        GPIO_setPinConfig(info->port, info->pin, ALT0_FUNCTION);
-        GPIO_setDirectionMode(info->port, info->pin, GPIO_DIR_MODE_IN);
-    }
-    else if (mode == PIN_MODE_INPUT_PULLDOWN)
-    {
-        GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_PULLDOWN);
-        GPIO_setPinConfig(info->port, info->pin, ALT0_FUNCTION);
-        GPIO_setDirectionMode(info->port, info->pin, GPIO_DIR_MODE_IN);
-    }
-    else if (mode == PIN_MODE_OUTPUT_OD)
-    {
-        GPIO_setPadConfig(info->port, info->pin, GPIO_PIN_TYPE_OD);
-        GPIO_setPinConfig(info->port, info->pin, ALT0_FUNCTION);
-        GPIO_clearPin(info->port, info->pin);
-        GPIO_setDirectionMode(info->port, info->pin, GPIO_DIR_MODE_OUT);
+        return -1;
     }
 
+    return (int)(pin_index & 0x0FU);
+}
+
+static IRQn_Type ns800_exti_get_irqn(uint32_t line)
+{
+    if (line < 4U)
+    {
+        return EXTI3_0_IRQn;
+    }
+    else if (line < 8U)
+    {
+        return EXTI7_4_IRQn;
+    }
+    else if (line < 12U)
+    {
+        return EXTI11_8_IRQn;
+    }
+
+    return EXTI15_12_IRQn;
+}
+
+static uint32_t ns800_exti_irq_group_mask(IRQn_Type irqno)
+{
+    switch (irqno)
+    {
+    case EXTI3_0_IRQn:
+        return 0x000FU;
+    case EXTI7_4_IRQn:
+        return 0x00F0U;
+    case EXTI11_8_IRQn:
+        return 0x0F00U;
+    case EXTI15_12_IRQn:
+        return 0xF000U;
+    default:
+        return 0U;
+    }
+}
+
+static SYSCON_ExtiPinSel ns800_exti_get_pin_sel(GPIO_TypeDef *port, GPIO_PinNum pin)
+{
+    uint8_t port_sel;
+
+    if (port == GPIOA) port_sel = 0U;
+    else if (port == GPIOB) port_sel = 1U;
+    else if (port == GPIOC) port_sel = 2U;
+    else if (port == GPIOH) port_sel = 3U;
+    else if (port == GPIOD) port_sel = 4U;
+    else if (port == GPIOE) port_sel = 5U;
+    else if (port == GPIOF) port_sel = 6U;
+    else if (port == GPIOG) port_sel = 7U;
+    else port_sel = 0xFFU;
+
+    if ((port_sel != 0xFFU) && (pin >= GPIO_PIN_16))
+    {
+        port_sel += 8U;
+    }
+
+    return (SYSCON_ExtiPinSel)port_sel;
+}
+
+static rt_err_t ns800_exti_select_gpio(GPIO_TypeDef *port, GPIO_PinNum pin,
+                                       uint32_t line)
+{
+    SYSCON_ExtiPinSel pin_sel = ns800_exti_get_pin_sel(port, pin);
+
+    if ((uint32_t)pin_sel > (uint32_t)SYSCON_EXTI_PINSEL_15)
+    {
+        return -RT_EINVAL;
+    }
+
+    SYSCON_UNLOCK;
+    SYSCON_setExtiSel(SYSCON, (SYSCON_ExtiSel)line, pin_sel);
+    SYSCON_LOCK;
+
+    return RT_EOK;
+}
+
+static void ns800_exti_apply_edge_mask(void)
+{
+    EXTI_setRiseEdgeTrigSelReg(EXTI, pin_irq_rising_mask);
+    EXTI_setFallEdgeTrigSelReg(EXTI, pin_irq_falling_mask);
+}
+
+static void ns800_exti_disable_line_locked(uint32_t line)
+{
+    uint32_t line_mask = 1UL << line;
+    IRQn_Type irqno = ns800_exti_get_irqn(line);
+
+    pin_irq_enable_mask &= ~line_mask;
+    pin_irq_rising_mask &= ~line_mask;
+    pin_irq_falling_mask &= ~line_mask;
+
+    EXTI_clearIntrMaskReg(EXTI, line_mask);
+    ns800_exti_apply_edge_mask();
+    EXTI_clearPendReg(EXTI, line_mask);
+
+    if ((pin_irq_enable_mask & ns800_exti_irq_group_mask(irqno)) == 0U)
+    {
+        Interrupt_disable(irqno);
+    }
 }
 
 static rt_err_t ns800_pin_attach_irq(struct rt_device *device, rt_base_t pin,
                                      rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
+    const rt_pin_info_t *info = get_pin_info(pin);
+    struct ns800_pin_irq *pin_irq;
+    rt_base_t level;
+    int line;
+
+    RT_UNUSED(device);
+
+    if ((info == RT_NULL) || (PIN_PORT(pin) >= PIN_STPORT_MAX) || (hdr == RT_NULL))
+    {
+        return -RT_EINVAL;
+    }
+
+    if (!ns800_pin_irq_mode_valid(mode))
+    {
+        return -RT_EINVAL;
+    }
+
+    line = ns800_pin_to_exti_line(info->pin);
+    if ((line < 0) || (line >= (int)NS800_EXTI_LINES))
+    {
+        return -RT_ENOSYS;
+    }
+
+    pin_irq = &pin_irq_table[line];
+
+    level = rt_hw_interrupt_disable();
+    if ((pin_irq->hdr.pin == pin) &&
+        (pin_irq->hdr.hdr == hdr) &&
+        (pin_irq->hdr.mode == mode) &&
+        (pin_irq->hdr.args == args))
+    {
+        rt_hw_interrupt_enable(level);
+        return RT_EOK;
+    }
+
+    if (pin_irq->hdr.pin != -1)
+    {
+        rt_hw_interrupt_enable(level);
+        return -RT_EBUSY;
+    }
+
+    pin_irq->hdr.pin = pin;
+    pin_irq->hdr.hdr = hdr;
+    pin_irq->hdr.mode = mode;
+    pin_irq->hdr.args = args;
+    pin_irq->port = info->port;
+    pin_irq->gpio_pin = info->pin;
+    pin_irq->irqno = ns800_exti_get_irqn((uint32_t)line);
+    pin_irq->enabled = RT_FALSE;
+
+    rt_hw_interrupt_enable(level);
+
     return RT_EOK;
 }
 
-static rt_err_t ns800_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
+static rt_err_t ns800_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
+    const rt_pin_info_t *info = get_pin_info(pin);
+    struct ns800_pin_irq *pin_irq;
+    rt_base_t level;
+    int line;
+
+    RT_UNUSED(device);
+
+    if ((info == RT_NULL) || (PIN_PORT(pin) >= PIN_STPORT_MAX))
+    {
+        return -RT_EINVAL;
+    }
+
+    line = ns800_pin_to_exti_line(info->pin);
+    if ((line < 0) || (line >= (int)NS800_EXTI_LINES))
+    {
+        return -RT_ENOSYS;
+    }
+
+    pin_irq = &pin_irq_table[line];
+
+    level = rt_hw_interrupt_disable();
+    if (pin_irq->hdr.pin == -1)
+    {
+        rt_hw_interrupt_enable(level);
+        return RT_EOK;
+    }
+
+    if (pin_irq->hdr.pin != pin)
+    {
+        rt_hw_interrupt_enable(level);
+        return -RT_EINVAL;
+    }
+
+    if (pin_irq->enabled)
+    {
+        ns800_exti_disable_line_locked((uint32_t)line);
+    }
+
+    pin_irq->hdr.pin = -1;
+    pin_irq->hdr.hdr = RT_NULL;
+    pin_irq->hdr.mode = 0U;
+    pin_irq->hdr.args = RT_NULL;
+    pin_irq->port = RT_NULL;
+    pin_irq->gpio_pin = GPIO_PIN_0;
+    pin_irq->enabled = RT_FALSE;
+    rt_hw_interrupt_enable(level);
+
     return RT_EOK;
 }
+
+void EXTI_handler(void);
 
 static rt_err_t ns800_pin_irq_enable(struct rt_device *device, rt_base_t pin,
                                      rt_uint8_t enabled)
 {
+    const rt_pin_info_t *info = get_pin_info(pin);
+    struct ns800_pin_irq *pin_irq;
+    rt_base_t level;
+    uint32_t line_mask;
+    int line;
+
+    RT_UNUSED(device);
+
+    if ((info == RT_NULL) || (PIN_PORT(pin) >= PIN_STPORT_MAX))
+    {
+        return -RT_EINVAL;
+    }
+
+    line = ns800_pin_to_exti_line(info->pin);
+    if ((line < 0) || (line >= (int)NS800_EXTI_LINES))
+    {
+        return -RT_ENOSYS;
+    }
+
+    pin_irq = &pin_irq_table[line];
+    line_mask = 1UL << (uint32_t)line;
+
+    if (enabled == PIN_IRQ_ENABLE)
+    {
+        if (pin_irq->hdr.pin != pin)
+        {
+            return -RT_ENOSYS;
+        }
+
+        level = rt_hw_interrupt_disable();
+
+        if (ns800_exti_select_gpio(info->port, info->pin, (uint32_t)line) != RT_EOK)
+        {
+            rt_hw_interrupt_enable(level);
+            return -RT_EINVAL;
+        }
+
+        switch (pin_irq->hdr.mode)
+        {
+        case PIN_IRQ_MODE_RISING:
+            pin_irq_rising_mask |= line_mask;
+            pin_irq_falling_mask &= ~line_mask;
+            break;
+        case PIN_IRQ_MODE_FALLING:
+            pin_irq_rising_mask &= ~line_mask;
+            pin_irq_falling_mask |= line_mask;
+            break;
+        case PIN_IRQ_MODE_RISING_FALLING:
+            pin_irq_rising_mask |= line_mask;
+            pin_irq_falling_mask |= line_mask;
+            break;
+        default:
+            rt_hw_interrupt_enable(level);
+            return -RT_EINVAL;
+        }
+
+        pin_irq_enable_mask |= line_mask;
+        pin_irq->irqno = ns800_exti_get_irqn((uint32_t)line);
+        pin_irq->enabled = RT_TRUE;
+
+        EXTI_clearPendReg(EXTI, line_mask);
+        ns800_exti_apply_edge_mask();
+        EXTI_setIntrMaskReg(EXTI, line_mask);
+        Interrupt_register(pin_irq->irqno, &EXTI_handler);
+        Interrupt_enable(pin_irq->irqno);
+
+        rt_hw_interrupt_enable(level);
+    }
+    else if (enabled == PIN_IRQ_DISABLE)
+    {
+        level = rt_hw_interrupt_disable();
+
+        if ((pin_irq->hdr.pin == pin) && pin_irq->enabled)
+        {
+            ns800_exti_disable_line_locked((uint32_t)line);
+            pin_irq->enabled = RT_FALSE;
+        }
+
+        rt_hw_interrupt_enable(level);
+    }
+    else
+    {
+        return -RT_EINVAL;
+    }
+
     return RT_EOK;
 }
 
+void EXTI_handler(void)
+{
+    uint32_t pending;
+    uint32_t line;
+
+    rt_interrupt_enter();
+
+    pending = EXTI_getPendReg(EXTI) & pin_irq_enable_mask & 0xFFFFU;
+    EXTI_clearPendReg(EXTI, pending);
+
+    for (line = 0U; line < NS800_EXTI_LINES; line++)
+    {
+        if ((pending & (1UL << line)) && pin_irq_table[line].hdr.hdr)
+        {
+            pin_irq_table[line].hdr.hdr(pin_irq_table[line].hdr.args);
+        }
+    }
+
+    rt_interrupt_leave();
+}
 
 static const struct rt_pin_ops _ns800rt7_pin_ops =
 {
@@ -441,19 +765,21 @@ static const struct rt_pin_ops _ns800rt7_pin_ops =
     ns800rt7_pin_write,
     ns800rt7_pin_read,
     ns800_pin_attach_irq,
-    ns800_pin_dettach_irq,
+    ns800_pin_detach_irq,
     ns800_pin_irq_enable,
     ns800_pin_get,
     RT_NULL,
 };
 
-rt_inline void pin_irq_hdr(int irqno)
-{
-
-}
-
 int rt_hw_pin_init(void)
 {
+    rt_uint32_t i;
+
+    for (i = 0U; i < NS800_EXTI_LINES; i++)
+    {
+        pin_irq_table[i].hdr.pin = -1;
+    }
+
     return rt_device_pin_register("pin", &_ns800rt7_pin_ops, RT_NULL);
 }
 

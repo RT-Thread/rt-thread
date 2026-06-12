@@ -7,6 +7,7 @@ Import('rtconfig')
 cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
 CPPPATH = [cwd, cwd + '/include']
+bsp_path = Dir('#').abspath
 
 if GetDepend('RT_USING_SMP'):
     core_model = 'mp'
@@ -17,6 +18,15 @@ src += Glob(core_model + '/*.S')
 
 if GetDepend('RT_USING_OFW') == False:
     SrcRemove(src, ['setup.c', 'cpu_psci.c', 'psci.c'])
+else:
+    if GetDepend('RT_BUILTIN_FDT_PATH'):
+        dtb_path = os.path.join(bsp_path, GetDepend('RT_BUILTIN_FDT_PATH').strip('"'))
+        obj_path = os.path.join(os.getcwd(), 'builtin_fdt_gcc.o')
+        if os.path.exists(dtb_path) and os.path.exists(obj_path):
+            dtb_mtime = os.path.getmtime(dtb_path)
+            obj_mtime = os.path.getmtime(obj_path)
+            if dtb_mtime > obj_mtime:
+                os.remove(obj_path)
 
 if GetDepend('RT_USING_PIC') == True:
     SrcRemove(src, ['gicv3.c', 'gic.c', 'gtimer.c', 'interrupt.c'])

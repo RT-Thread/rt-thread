@@ -57,9 +57,9 @@ static FError FSpimSetupInterrupt(FSpim *instance_p)
     rt_uint32_t cpu_id = rt_hw_cpu_id();
 
     LOG_D("cpu_id is %d, irq_num is %d\n", cpu_id, config_p->irq_num);
-    config_p->irq_prority = 0xd0;
+    config_p->irq_priority = 0xd0;
     rt_hw_interrupt_set_target_cpus(config_p->irq_num, cpu_id);
-    rt_hw_interrupt_set_priority(config_p->irq_num, config_p->irq_prority);
+    rt_hw_interrupt_set_priority(config_p->irq_num, config_p->irq_priority);
 
     /* register intr callback */
     rt_hw_interrupt_install(config_p->irq_num,

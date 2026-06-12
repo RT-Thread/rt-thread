@@ -115,6 +115,7 @@ menu "On-chip Peripheral Drivers"
                         depends on RT_USING_SERIAL_V2 && BSP_UART2_RX_USING_DMA
                         default 64
                 endif
+        endif
 
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
