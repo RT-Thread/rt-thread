@@ -1,3 +1,4 @@
+import os
 from building import *
 
 group = []
@@ -20,5 +21,10 @@ if GetDepend(['RT_PIN_PL061']):
     src += ['pin-pl061.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')
