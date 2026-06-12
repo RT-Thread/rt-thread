@@ -262,11 +262,16 @@ static void utest_do_run(const char *utest_name)
             }
             is_find = RT_TRUE;
 
+            rt_bool_t tc_failed = RT_FALSE;
+
             LOG_I("[----------] [ testcase ] (%s) started", tc_table[i].name);
             if (tc_table[i].init != RT_NULL)
             {
                 if (tc_table[i].init() != RT_EOK)
                 {
+                    TC_FAIL_LIST_MARK_FAILED(i);
+                    tc_fail_num ++;
+                    tc_failed = RT_TRUE;
                     LOG_E("[  FAILED  ] [ result   ] testcase init (%s)", tc_table[i].name);
                     goto __tc_continue;
                 }
@@ -283,11 +288,15 @@ static void utest_do_run(const char *utest_name)
                 {
                     TC_FAIL_LIST_MARK_FAILED(i);
                     tc_fail_num ++;
+                    tc_failed = RT_TRUE;
                     LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
                 }
             }
             else
             {
+                TC_FAIL_LIST_MARK_FAILED(i);
+                tc_fail_num ++;
+                tc_failed = RT_TRUE;
                 LOG_E("[  FAILED  ] [ result   ] testcase (%s)", tc_table[i].name);
             }
 
@@ -295,6 +304,11 @@ static void utest_do_run(const char *utest_name)
             {
                 if (tc_table[i].cleanup() != RT_EOK)
                 {
+                    if (tc_failed == RT_FALSE)
+                    {
+                        TC_FAIL_LIST_MARK_FAILED(i);
+                        tc_fail_num ++;
+                    }
                     LOG_E("[  FAILED  ] [ result   ] testcase cleanup (%s)", tc_table[i].name);
                     goto __tc_continue;
                 }
