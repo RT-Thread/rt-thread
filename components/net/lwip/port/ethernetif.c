@@ -485,23 +485,10 @@ static err_t eth_netif_device_init(struct netif *netif)
     ethif = (struct eth_device*)netif->state;
     if (ethif != RT_NULL)
     {
-        rt_device_t device;
-
 #ifdef RT_USING_NETDEV
         /* network interface device register */
         netdev_add(netif);
 #endif /* RT_USING_NETDEV */
-
-        /* get device object */
-        device = (rt_device_t) ethif;
-        if (rt_device_init(device) != RT_EOK)
-        {
-            return ERR_IF;
-        }
-        if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
-        {
-            return ERR_IF;
-        }
 
         /* copy device flags to netif flags */
         netif->flags = (ethif->flags & 0xff);
@@ -544,6 +531,19 @@ static err_t eth_netif_device_init(struct netif *netif)
         /* if this interface uses DHCP, start the DHCP client */
         dhcp_start(netif);
 #endif
+
+        rt_device_t device;
+        /* get device object */
+        device = (rt_device_t) ethif;
+        if (rt_device_init(device) != RT_EOK)
+        {
+            return ERR_IF;
+        }
+        if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+        {
+            return ERR_IF;
+        }
+        netif->flags |= (ethif->flags & 0xff);
 
         if (ethif->flags & ETHIF_LINK_PHYUP)
         {
@@ -673,23 +673,10 @@ static err_t af_unix_eth_netif_device_init(struct netif *netif)
     ethif = (struct eth_device*)netif->state;
     if (ethif != RT_NULL)
     {
-        rt_device_t device;
-
 #ifdef RT_USING_NETDEV
         /* network interface device register */
         netdev_add(netif);
 #endif /* RT_USING_NETDEV */
-
-        /* get device object */
-        device = (rt_device_t) ethif;
-        if (rt_device_init(device) != RT_EOK)
-        {
-            return ERR_IF;
-        }
-        if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
-        {
-            return ERR_IF;
-        }
 
         /* copy device flags to netif flags */
         netif->flags = (ethif->flags & 0xff);
@@ -727,6 +714,20 @@ static err_t af_unix_eth_netif_device_init(struct netif *netif)
 
         /* set interface up */
         netif_set_up(netif);
+
+        rt_device_t device;
+        /* get device object */
+        device = (rt_device_t) ethif;
+        if (rt_device_init(device) != RT_EOK)
+        {
+            return ERR_IF;
+        }
+        if (rt_device_open(device, RT_DEVICE_FLAG_RDWR) != RT_EOK)
+        {
+            return ERR_IF;
+        }
+
+        netif->flags |= (ethif->flags & 0xff);
 
         if (ethif->flags & ETHIF_LINK_PHYUP)
         {
