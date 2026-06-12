@@ -336,7 +336,7 @@ void BOARD_ConfigMPU(void)
 
     /* Region 4 (CM7 I/D TCM): [0x303C0000, 0x3043FFFF, 512K] */
     /* non-shareable, read/write in privilege and non-privilege, execute-never. Attr 1 (non cacheable). */
-    ARM_MPU_SetRegion(4U, ARM_MPU_RBAR(0x303C0000, ARM_MPU_SH_NON, 0U, 1U, 1U), ARM_MPU_RLAR(0x3043FFFF, 1U));
+    ARM_MPU_SetRegion(4U, ARM_MPU_RBAR(0x303C0000, ARM_MPU_SH_OUTER, 0U, 1U, 1U), ARM_MPU_RLAR(0x3043FFFF, 1U));
 
     /*
        As common setting, not set this region to avoid potential overlapping setting with NCACHE(region 8)
@@ -436,7 +436,7 @@ void BOARD_ConfigMPU(void)
 
     // Region 11 (OCRAM1): [0x20480000, 0x204FFFFF, 512K]
     // non-shareable, read/write in privilege and non-privilege, executable. Attr 3
-    ARM_MPU_SetRegion(11U, ARM_MPU_RBAR(0x20480000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x204FFFFF, 2U));
+//    ARM_MPU_SetRegion(11U, ARM_MPU_RBAR(0x20480000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x204FFFFF, 2U));
 
     // Region 12 (OCRAM2): [0x20500000, 0x2053FFFF, 256K]
     // non-shareable, read/write in privilege and non-privilege, executable. Attr 3
@@ -1250,13 +1250,15 @@ void imxrt_uart_pins_init(void)
 
 void rt_hw_board_init()
 {
-//    BOARD_CommonSetting();
+    BOARD_CommonSetting();
     BOARD_ConfigMPU();
+	
+	/* MCU_Config start */
+	BOARD_BootClockRUN();
     BOARD_InitPins();
-
-    BOARD_InitLeds();
-    BOARD_BootClockRUN();
-
+    BOARD_InitPeripherals();
+    /* MCU_Config end */
+	
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
