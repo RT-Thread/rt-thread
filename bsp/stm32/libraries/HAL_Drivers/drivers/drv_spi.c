@@ -416,6 +416,24 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     rt_tick_t timeout_tick = rt_tick_from_millisecond(timeout_ms);
 #endif /* BSP_SPI_USING_IRQ */
 
+#if defined(BSP_SPI_USING_DMA) || defined(BSP_SPI_USING_INT)
+    /*
+     * Snapshot the call context once for the whole SPI message.
+     *
+     * The async route decision must stay stable across all chunks split from
+     * one message. Re-evaluating scheduler/IRQ state per chunk could route
+     * one logical SPI transfer through different async/polling policies.
+     *
+     * A thread switch or interrupt can happen while waiting for async transfer
+     * completion, but execution still resumes in the same spixfer() call
+     * context. Therefore, the route policy should follow this message-level
+     * context instead of re-sampling a transient runtime state.
+     */
+    const rt_bool_t scheduler_available = rt_scheduler_is_available();
+    const rt_bool_t irq_disabled = rt_hw_interrupt_is_disabled();
+    const rt_bool_t async_allowed = (scheduler_available && !irq_disabled);
+#endif /* defined(BSP_SPI_USING_DMA) || defined(BSP_SPI_USING_INT) */
+
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
@@ -462,8 +480,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         {
             recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
         }
-        const rt_bool_t scheduler_available = rt_scheduler_is_available();
-        const rt_bool_t irq_disabled = rt_hw_interrupt_is_disabled();
+
 #ifdef BSP_SPI_USING_DMA
         const rt_uint8_t *dma_send_buf = send_buf;
         rt_uint8_t *dma_recv_buf = recv_buf;
@@ -483,7 +500,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         rt_bool_t use_rx_dma = RT_FALSE;
 #endif /* BSP_SPI_RX_USING_DMA */
 
-        if (!scheduler_available || irq_disabled)
+        if (!async_allowed)
         {
             use_rx_dma = use_tx_dma = dma_eligible = RT_FALSE;
         }
@@ -541,7 +558,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 #else
         rt_bool_t use_rx_int = RT_FALSE;
 #endif /* BSP_SPI_RX_USING_INT */
-        if (!scheduler_available || irq_disabled)
+        if (!async_allowed)
         {
             use_rx_int = use_tx_int = int_eligible = RT_FALSE;
         }
