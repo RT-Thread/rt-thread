@@ -72,7 +72,7 @@ void *rt_memset(void *s, int c, size_t count)
          */
         for (i = 0; i < LBLOCKSIZE; i++)
         {
-            *(((unsigned char *)&buffer)+i) = d;
+            buffer = (buffer << 8) | (char) d;
         }
 
         while (count >= LBLOCKSIZE * 4)
