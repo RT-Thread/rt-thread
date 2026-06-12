@@ -24,6 +24,116 @@ if BSP_USING_USBD
         # "ULPI: UTMI+ Low Pin Interface"
 endif
 
+menuconfig BSP_USING_ADC_V2
+    bool "Enable ADC V2"
+    select RT_USING_ADC
+    select RT_USING_ADC_V2
+    default n
+
+if BSP_USING_ADC_V2
+    config BSP_USING_ADC1
+        bool "Enable ADC1"
+        default n
+
+    config BSP_USING_ADC2
+        bool "Enable ADC2"
+        depends on (SOC_SERIES_STM32F1 || SOC_SERIES_STM32F2 || SOC_SERIES_STM32F3 || \
+                    SOC_SERIES_STM32F4 || SOC_SERIES_STM32G4 || SOC_SERIES_STM32F7 || \
+                    SOC_SERIES_STM32H5 || SOC_SERIES_STM32H7 || SOC_SERIES_STM32H7RS || \
+                    SOC_SERIES_STM32L4 || SOC_SERIES_STM32L5 || SOC_SERIES_STM32MP1 || \
+                    SOC_SERIES_STM32U5)
+        default n
+
+    config BSP_USING_ADC3
+        bool "Enable ADC3"
+        depends on (SOC_SERIES_STM32F1 || SOC_SERIES_STM32F2 || SOC_SERIES_STM32F3 || \
+                    SOC_SERIES_STM32F4 || SOC_SERIES_STM32G4 || SOC_SERIES_STM32F7 || \
+                    SOC_SERIES_STM32H7 || SOC_SERIES_STM32L4 || SOC_SERIES_STM32MP1)
+        default n
+
+    config BSP_USING_ADC4
+        bool "Enable ADC4"
+        depends on (SOC_SERIES_STM32F3 || SOC_SERIES_STM32G4 || SOC_SERIES_STM32U5)
+        default n
+
+    config BSP_ADC_USING_TRIGGER
+        bool "Enable ADC V2 trigger backend"
+        select RT_ADC_USING_TRIGGER
+        default n
+        help
+            Enable STM32 ADC V2 trigger selector validation and backend
+            encoding. The ADC backend maps the framework-cached trigger to STM32
+            HAL ADC selector fields. Trigger-source frequency and lifecycle are
+            owned by the ADC trigger framework and timer trigger backend.
+
+    config BSP_ADC_USING_TIMER_TRIGGER
+        bool "Enable ADC V2 timer trigger selector backend"
+        depends on BSP_ADC_USING_TRIGGER
+        depends on BSP_USING_TIM
+        depends on RT_USING_CLOCK_TIME
+        select RT_ADC_TRIGGER_USING_TIMER
+        select RT_USING_CLOCK_TIMER_TRIGGER
+        default n
+        help
+            Enable STM32 TIMx update/TRGO and compare event to ADC external
+            trigger selector mapping for ADC V2 stream pacing. Timer frequency,
+            TRGO/compare setup, and lifecycle are handled through the clock
+            timer trigger backend during ADC stream start and stop.
+
+    config BSP_ADC_USING_ANALOG_COMPARE_TRIGGER
+        bool "Enable ADC V2 analog comparator trigger selector backend"
+        depends on BSP_ADC_USING_TRIGGER
+        select RT_ADC_TRIGGER_USING_COMPARE
+        default n
+        help
+            Enable STM32 COMPx_OUT to ADC external trigger selector mapping for
+            ADC V2. Comparator input, threshold, polarity, and enable state are
+            owned by board code, application code, or a comparator driver.
+
+    config BSP_ADC_USING_STREAM_DMA
+        bool
+
+    config BSP_ADC1_USING_DMA
+        bool "Enable ADC1 stream DMA backend"
+        depends on BSP_USING_ADC1
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC1 DMA backend for ADC V2 stream sessions.
+
+            This option only enables the board-level DMA backend. The stream
+            framework and buffering policies are controlled by RT_ADC_USING_STREAM,
+            RT_ADC_STREAM_USING_LATEST, and RT_ADC_STREAM_USING_FIFO.
+
+    config BSP_ADC2_USING_DMA
+        bool "Enable ADC2 stream DMA backend"
+        depends on BSP_USING_ADC2
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC2 DMA backend for ADC V2 stream sessions.
+
+    config BSP_ADC3_USING_DMA
+        bool "Enable ADC3 stream DMA backend"
+        depends on BSP_USING_ADC3
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC3 DMA backend for ADC V2 stream sessions.
+
+    config BSP_ADC4_USING_DMA
+        bool "Enable ADC4 stream DMA backend"
+        depends on BSP_USING_ADC4
+        select RT_ADC_USING_STREAM
+        select BSP_ADC_USING_STREAM_DMA
+        default n
+        help
+            Enable the STM32 ADC4 DMA backend for ADC V2 stream sessions.
+endif
+
 config BSP_USING_CRC
     bool "Enable CRC (CRC-32 0x04C11DB7 Polynomial)"
     select RT_USING_HWCRYPTO
@@ -59,4 +169,3 @@ config BSP_USING_UDID
     bool "Enable UDID (Unique Device Identifier)"
     select RT_USING_HWCRYPTO
     default n
-
