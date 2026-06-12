@@ -4,6 +4,12 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 
+if not GetDepend(['RT_USING_SMART']):
+    SrcRemove(src, ['amp.c'])
+
+if not GetDepend(['RT_SOC_CAMERA']):
+    SrcRemove(src, ['camera.c'])
+
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

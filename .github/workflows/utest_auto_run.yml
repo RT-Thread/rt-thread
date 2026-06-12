@@ -293,8 +293,9 @@ jobs:
           if [[ "${{ matrix.platform.QEMU_ARCH }}"  == "aarch64" ]]; then 
             sudo apt-get -yqq install device-tree-compiler
             if [[ "${{ matrix.platform.QEMU_MACHINE }}"  == "virt" ]]; then
-              qemu-system-$TEST_QEMU_ARCH -M virt,gic-version=2 -cpu cortex-a53 -smp 4 -kernel $TEST_BSP_ROOT/rtthread.bin  -nographic \
-              -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0 \
+              qemu-system-$TEST_QEMU_ARCH -M virt -cpu max -smp 4 -m 128M -kernel $TEST_BSP_ROOT/rtthread.bin -nographic \
+              -append "console=ttyAMA0 earlycon cma=8M coherent_pool=2M root=vda0 rootfstype=elm rootwait rw" \
+              -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0 \
               -netdev user,id=net0 -device virtio-net-device,netdev=net0,bus=virtio-mmio-bus.1 \
               > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
             elif [[ "${{ matrix.platform.QEMU_MACHINE }}"  == "xlnx-zcu102" ]]; then
