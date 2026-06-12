@@ -6,6 +6,7 @@
 // Date           Author       Notes
 // 2025-03-22     Supperthomas 添加upload 上传编译固件
 // 2025-03-31     Hydevcode    将需要编译的bsp列表分离，根据修改的文件对相应的bsp编译
+// 2026-06-12     CYFS3        拆分耗时较长的HC32构建分组，缩短CI等待时间
 //
 {
   "legs": [
@@ -25,7 +26,7 @@
       ]
     },
     {
-      "RTT_BSP": "at32_hc32_ht32",
+      "RTT_BSP": "at32_hc32l_ht32",
       "RTT_TOOL_CHAIN": "sourcery-arm",
       "SUB_RTT_BSP": [
         "at32/at32a403a-start",
@@ -46,18 +47,36 @@
         "at32/at32f457-start",
         "at32/at32m412-start",
         "at32/at32m416-start",
-        "hc32/ev_hc32f4a0_lqfp176",
-        "hc32/ev_hc32f4a8_lqfp176",
-        "hc32/ev_hc32f334_lqfp64",
-        "hc32/ev_hc32f448_lqfp80",
-        "hc32/ev_hc32f460_lqfp100_v2",
-        "hc32/ev_hc32f472_lqfp100",
-        "hc32/lckfb-hc32f4a0-lqfp100",
         "hc32l196",
         "hc32l136",
         "ht32/ht32f52352",
         "ht32/ht32f12366",
         "ht32/ht32f53252"
+      ]
+    },
+    {
+      "RTT_BSP": "hc32_f4a8_f334",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "hc32/ev_hc32f4a8_lqfp176",
+        "hc32/ev_hc32f334_lqfp64",
+        "hc32/lckfb-hc32f4a0-lqfp100"
+      ]
+    },
+    {
+      "RTT_BSP": "hc32_f4a0_f448",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "hc32/ev_hc32f4a0_lqfp176",
+        "hc32/ev_hc32f448_lqfp80"
+      ]
+    },
+    {
+      "RTT_BSP": "hc32_f460_f472",
+      "RTT_TOOL_CHAIN": "sourcery-arm",
+      "SUB_RTT_BSP": [
+        "hc32/ev_hc32f460_lqfp100_v2",
+        "hc32/ev_hc32f472_lqfp100"
       ]
     },
     {
