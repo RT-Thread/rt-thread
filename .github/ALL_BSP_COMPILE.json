@@ -293,7 +293,8 @@
         "nuvoton/ma35-rtp",
         "nuvoton/nk-980iot",
         "nuvoton/numaker-iot-ma35d1",
-        "nuvoton/numaker-m2354"
+        "nuvoton/numaker-m2354",
+        "nuvoton/numaker-m3334ki"
       ]
     },
     {

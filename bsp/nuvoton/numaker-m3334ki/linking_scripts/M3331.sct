@@ -1,0 +1,89 @@
+#! armclang -E --target=arm-arm-none-eabi -mcpu=cortex-m23 -xc
+; command above MUST be in first line (no comment above!)
+/*
+;-------- <<< Use Configuration Wizard in Context Menu >>> -------------------
+*/
+
+/*--------------------- Flash Configuration ----------------------------------
+; <h> Flash Configuration
+;   <o0> Flash Base Address    <0x0-0xFFFFFFFF:8>
+;   <o1> Flash Size (in Bytes) <0x0-0xFFFFFFFF:8>
+; </h>
+ *----------------------------------------------------------------------------*/
+#define FLASH_START     0x00000000
+#define FLASH_SIZE      0x00080000
+
+/*--------------------- Cacheable SRAM Configuration ---------------------------
+; <h> SRAM Configuration
+;   <o0> SRAM Size (in Bytes)    <0x0-0x00150000:8>
+;   <o0> SRAM Base Address    <0x20100000-0x2024FFFF:8>
+;   <o1> SRAM Size (in Bytes) <0x0-0x00150000:8>
+; </h>
+ *----------------------------------------------------------------------------*/
+#define SRAM_START      0x20000000
+#define SRAM_SIZE       0x00050000 
+
+/*--------------------- Stack / Heap Configuration ---------------------------
+; <h> Stack / Heap Configuration
+;   <o0> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
+;   <o1> Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
+; </h>
+ *----------------------------------------------------------------------------*/
+#define STACK_SIZE      0x00001000
+#define HEAP_SIZE       0x00000000
+
+/*
+;------------- <<< end of configuration section >>> ---------------------------
+*/
+
+/*----------------------------------------------------------------------------
+  User Stack & Heap boundary definition
+ *----------------------------------------------------------------------------*/
+/* Starts at end*/
+#define __STACK_TOP         (SRAM_START + SRAM_SIZE - 0)
+/* Starts after RW_RAM section, 8 byte aligned */
+#define __HEAP_BASE         (AlignExpr(+0, 8))
+
+/*----------------------------------------------------------------------------
+  Region base & size definition
+ *----------------------------------------------------------------------------*/
+#define RO_ROM_BASE         ( FLASH_START )
+#define RO_ROM_SIZE         ( FLASH_SIZE  )
+
+#define RW_RAM_BASE         ( SRAM_START )
+#define RW_RAM_SIZE         ( SRAM_SIZE - STACK_SIZE - HEAP_SIZE )
+
+/*----------------------------------------------------------------------------
+  Scatter Region definition
+ *----------------------------------------------------------------------------*/
+LR_ROM RO_ROM_BASE RO_ROM_SIZE  {                       ; load region size_region
+    ER_ROM0 RO_ROM_BASE RO_ROM_SIZE  {                   ; load address = execution address
+        startup_m3331.o (RESET, +First)
+    }
+
+    ER_ROM1 AlignExpr(+0, 4) {                   ; load address = execution address
+        //*.o (CLINFO, +First)
+        //custom_loader.o (+RO)
+        startup_m3331.o (+RO)
+
+    }
+
+    ER_ROM2 AlignExpr(+0, 4)  {                   ; load address = execution address
+        * (InRoot$$Sections)
+        ; Make sure reset_handler ends up in root segment
+        .ANY (+RO)
+    }
+
+    RW_RAM RW_RAM_BASE RW_RAM_SIZE              ; RW data
+    {
+        .ANY (+RW +ZI)
+    }
+
+#if HEAP_SIZE > 0
+    ARM_LIB_HEAP  __HEAP_BASE EMPTY  HEAP_SIZE {}       ; Reserve empty region for heap
+#endif
+
+#if STACK_SIZE > 0
+    ARM_LIB_STACK __STACK_TOP EMPTY - STACK_SIZE {}     ; Reserve empty region for stack
+#endif
+}

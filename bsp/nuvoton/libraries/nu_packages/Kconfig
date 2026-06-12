@@ -50,21 +50,18 @@ menu "Nuvoton Packages Config"
 
         if NU_PKG_USING_ILI9341
 
-            choice
-                prompt "Select ili9341 interface"
+            config NU_PKG_USING_ILI9341_SPI
+                select BSP_USING_SPI
+                bool "ILI9341_SPI"
+            help
+                Choose this option if you the ili9341 device is with SPI interface.
 
-                config NU_PKG_USING_ILI9341_SPI
-                    select BSP_USING_SPI
-                    bool "ILI9341_SPI"
-                help
-                    Choose this option if you the ili9341 device is with SPI interface.
-
-                config NU_PKG_USING_ILI9341_EBI
-                    select BSP_USING_EBI
-                    bool "ILI9341_EBI"
-                help
-                    Choose this option if you the ili9341 device is with EBI interface.
-            endchoice
+            config NU_PKG_USING_ILI9341_EBI
+                select BSP_USING_EBI
+                depends on !NU_PKG_USING_ILI9341_SPI
+                bool "ILI9341_EBI"
+            help
+                Choose this option if you the ili9341 device is with EBI interface.
 
             if NU_PKG_USING_ILI9341_SPI
                 config NU_PKG_USING_ILI9341_SPI_CLK_FREQ
@@ -110,15 +107,11 @@ menu "Nuvoton Packages Config"
 
         if NU_PKG_USING_SSD1963
 
-            choice
-                prompt "Select SSD1963 interface"
-
-                config NU_PKG_USING_SSD1963_EBI
-                    select BSP_USING_EBI
-                    bool "SSD1963_EBI"
-                help
-                    Choose this option if you the SSD1963 device is with EBI interface.
-            endchoice
+            config NU_PKG_USING_SSD1963_EBI
+                select BSP_USING_EBI
+                bool "SSD1963_EBI"
+            help
+                Choose this option if you the SSD1963 device is with EBI interface.
 
             config NU_PKG_SSD1963_WITH_OFFSCREEN_FRAMEBUFFER
                 bool "Create an offscreen framebuffer."
@@ -152,15 +145,11 @@ menu "Nuvoton Packages Config"
 
         if NU_PKG_USING_FSA506
 
-            choice
-                prompt "Select FSA506 interface"
-
-                config NU_PKG_USING_FSA506_EBI
-                    select BSP_USING_EBI
-                    bool "FSA506_EBI"
-                help
-                    Choose this option if you the FSA506 device is with EBI interface.
-            endchoice
+            config NU_PKG_USING_FSA506_EBI
+                select BSP_USING_EBI
+                bool "FSA506_EBI"
+            help
+                Choose this option if you the FSA506 device is with EBI interface.
 
             config NU_PKG_FSA506_WITH_OFFSCREEN_FRAMEBUFFER
                 bool "Create an offscreen framebuffer."

@@ -639,8 +639,6 @@
 #define BSP_USING_QSPI0_PDMA
 #define BSP_USING_CRYPTO
 #define BSP_USING_WDT
-#define BSP_USING_USBD
-#define BSP_USING_USBH
 /* end of On-chip Peripheral Drivers */
 
 /* On-board Peripheral Drivers */
@@ -650,8 +648,6 @@
 #define BOARD_USING_NAU8822
 #define BOARD_USING_STORAGE_SDCARD
 #define BOARD_USING_STORAGE_SPINAND
-#define BOARD_USING_USB0_DEVICE_HOST
-#define BOARD_USING_USB1_HOST
 /* end of On-board Peripheral Drivers */
 
 /* Board extended module drivers */
@@ -661,7 +657,6 @@
 /* Nuvoton Packages Config */
 
 #define NU_PKG_USING_UTILS
-#define NU_PKG_USING_DEMO
 #define NU_PKG_USING_NAU8822
 #define NU_PKG_USING_SPINAND
 /* end of Nuvoton Packages Config */
