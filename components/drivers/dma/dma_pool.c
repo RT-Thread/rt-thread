@@ -41,9 +41,9 @@ static rt_list_t dma_pool_nodes = RT_LIST_OBJECT_INIT(dma_pool_nodes);
 static struct rt_dma_pool *dma_pool_install(rt_region_t *region);
 
 static void *dma_alloc(struct rt_device *dev, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags);
+                       rt_ubase_t *dma_handle, rt_ubase_t flags);
 static void dma_free(struct rt_device *dev, rt_size_t size,
-        void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags);
+                     void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags);
 
 /** @brief Acquire the DMA pool spinlock */
 rt_inline void region_pool_lock(void)
@@ -72,7 +72,7 @@ rt_inline void region_pool_unlock(void)
  * @return RT_EOK
  */
 static rt_err_t dma_map_coherent_sync_out_data(struct rt_device *dev,
-        void *data, rt_size_t size, rt_ubase_t *dma_handle, rt_ubase_t flags)
+                                               void *data, rt_size_t size, rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     if (dma_handle)
     {
@@ -98,7 +98,7 @@ static rt_err_t dma_map_coherent_sync_out_data(struct rt_device *dev,
  * @return RT_EOK
  */
 static rt_err_t dma_map_coherent_sync_in_data(struct rt_device *dev,
-        void *out_data, rt_size_t size, rt_ubase_t dma_handle, rt_ubase_t flags)
+                                              void *out_data, rt_size_t size, rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, out_data, size);
 
@@ -106,8 +106,7 @@ static rt_err_t dma_map_coherent_sync_in_data(struct rt_device *dev,
 }
 
 /** @brief DMA map operations for cache-coherent devices */
-static const struct rt_dma_map_ops dma_map_coherent_ops =
-{
+static const struct rt_dma_map_ops dma_map_coherent_ops = {
     .sync_out_data = dma_map_coherent_sync_out_data,
     .sync_in_data = dma_map_coherent_sync_in_data,
 };
@@ -127,7 +126,7 @@ static const struct rt_dma_map_ops dma_map_coherent_ops =
  * @return RT_EOK
  */
 static rt_err_t dma_map_nocoherent_sync_out_data(struct rt_device *dev,
-        void *data, rt_size_t size, rt_ubase_t *dma_handle, rt_ubase_t flags)
+                                                 void *data, rt_size_t size, rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     if (dma_handle)
     {
@@ -151,14 +150,13 @@ static rt_err_t dma_map_nocoherent_sync_out_data(struct rt_device *dev,
  * @return RT_EOK
  */
 static rt_err_t dma_map_nocoherent_sync_in_data(struct rt_device *dev,
-        void *out_data, rt_size_t size, rt_ubase_t dma_handle, rt_ubase_t flags)
+                                                void *out_data, rt_size_t size, rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     return RT_EOK;
 }
 
 /** @brief DMA map operations for non-cache-coherent devices */
-static const struct rt_dma_map_ops dma_map_nocoherent_ops =
-{
+static const struct rt_dma_map_ops dma_map_nocoherent_ops = {
     .sync_out_data = dma_map_nocoherent_sync_out_data,
     .sync_in_data = dma_map_nocoherent_sync_in_data,
 };
@@ -202,7 +200,7 @@ rt_inline rt_ubase_t ofw_addr_dma2cpu(struct rt_device *dev, rt_ubase_t addr)
  * @return Virtual address of the buffer, or RT_NULL on failure
  */
 static void *ofw_dma_map_alloc(struct rt_device *dev, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags)
+                               rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     void *cpu_addr = dma_alloc(dev, size, dma_handle, flags);
 
@@ -224,7 +222,7 @@ static void *ofw_dma_map_alloc(struct rt_device *dev, rt_size_t size,
  * @param[in] flags      Allocation flags
  */
 static void ofw_dma_map_free(struct rt_device *dev, rt_size_t size,
-        void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
+                             void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     dma_handle = ofw_addr_dma2cpu(dev, dma_handle);
 
@@ -246,8 +244,8 @@ static void ofw_dma_map_free(struct rt_device *dev, rt_size_t size,
  * @return RT_EOK on success
  */
 static rt_err_t ofw_dma_map_sync_out_data(struct rt_device *dev,
-        void *data, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags)
+                                          void *data, rt_size_t size,
+                                          rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     rt_err_t err;
 
@@ -283,8 +281,8 @@ static rt_err_t ofw_dma_map_sync_out_data(struct rt_device *dev,
  * @return RT_EOK on success
  */
 static rt_err_t ofw_dma_map_sync_in_data(struct rt_device *dev,
-        void *out_data, rt_size_t size,
-        rt_ubase_t dma_handle, rt_ubase_t flags)
+                                         void *out_data, rt_size_t size,
+                                         rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     dma_handle = ofw_addr_dma2cpu(dev, dma_handle);
 
@@ -297,8 +295,7 @@ static rt_err_t ofw_dma_map_sync_in_data(struct rt_device *dev,
 }
 
 /** @brief DMA map operations with device tree address translation */
-static const struct rt_dma_map_ops ofw_dma_map_ops =
-{
+static const struct rt_dma_map_ops ofw_dma_map_ops = {
     .alloc = ofw_dma_map_alloc,
     .free = ofw_dma_map_free,
     .sync_out_data = ofw_dma_map_sync_out_data,
@@ -346,7 +343,7 @@ static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
         if ((err = rt_ofw_get_address(mem_np, 0, &addr, &size)))
         {
             LOG_E("%s: Read '%s' error = %s", rt_ofw_node_full_name(mem_np),
-                    "memory-region", rt_strerror(err));
+                  "memory-region", rt_strerror(err));
 
             rt_ofw_node_put(mem_np);
             continue;
@@ -463,18 +460,17 @@ static rt_ubase_t dma_pool_alloc(struct rt_dma_pool *pool, rt_size_t size)
 
         if (next_bit == end_bit)
         {
-            while (next_bit --> bit)
+            while (next_bit-- > bit)
             {
                 rt_bitmap_set_bit(pool->map, next_bit);
             }
 
             LOG_D("%s offset = %p, pages = %d", "Alloc",
-                    pool->start + bit * ARCH_PAGE_SIZE, size);
+                  pool->start + bit * ARCH_PAGE_SIZE, size);
 
             return pool->start + bit * ARCH_PAGE_SIZE;
         }
-    _next:
-        ;
+    _next:;
     }
 
     return RT_NULL;
@@ -518,7 +514,7 @@ static void dma_pool_free(struct rt_dma_pool *pool, rt_ubase_t offset, rt_size_t
  * @return Kernel virtual address, or RT_NULL on failure
  */
 static void *dma_alloc(struct rt_device *dev, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags)
+                       rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     void *dma_buffer = RT_NULL;
     struct rt_dma_pool *pool;
@@ -600,7 +596,7 @@ static void *dma_alloc(struct rt_device *dev, rt_size_t size,
  * @param[in] flags      Allocation flags
  */
 static void dma_free(struct rt_device *dev, rt_size_t size,
-        void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
+                     void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     struct rt_dma_pool *pool;
 
@@ -636,7 +632,7 @@ static void dma_free(struct rt_device *dev, rt_size_t size,
  * @return Kernel virtual address of the buffer, or RT_NULL on failure
  */
 void *rt_dma_alloc(struct rt_device *dev, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags)
+                   rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     void *dma_buffer = RT_NULL;
     rt_ubase_t dma_handle_s = 0;
@@ -681,7 +677,7 @@ void *rt_dma_alloc(struct rt_device *dev, rt_size_t size,
  * @param[in] flags      Allocation flags used when allocating
  */
 void rt_dma_free(struct rt_device *dev, rt_size_t size,
-        void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
+                 void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     const struct rt_dma_map_ops *ops;
 
@@ -717,7 +713,7 @@ void rt_dma_free(struct rt_device *dev, rt_size_t size,
  * @return RT_EOK on success, -RT_EINVAL if data or size is 0
  */
 rt_err_t rt_dma_sync_out_data(struct rt_device *dev, void *data, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags)
+                              rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
     rt_err_t err;
     rt_ubase_t dma_handle_s = 0;
@@ -754,7 +750,7 @@ rt_err_t rt_dma_sync_out_data(struct rt_device *dev, void *data, rt_size_t size,
  * @return RT_EOK on success, -RT_EINVAL if out_data or size is 0
  */
 rt_err_t rt_dma_sync_in_data(struct rt_device *dev, void *out_data, rt_size_t size,
-        rt_ubase_t dma_handle, rt_ubase_t flags)
+                             rt_ubase_t dma_handle, rt_ubase_t flags)
 {
     rt_err_t err;
     const struct rt_dma_map_ops *ops;
@@ -791,7 +787,7 @@ static struct rt_dma_pool *dma_pool_install(rt_region_t *region)
     if (!(pool = rt_calloc(1, sizeof(*pool))))
     {
         LOG_E("Install pool[%p, %p] error = %s",
-                region->start, region->end, rt_strerror(-RT_ENOMEM));
+              region->start, region->end, rt_strerror(-RT_ENOMEM));
 
         return RT_NULL;
     }
@@ -834,7 +830,7 @@ _fail:
     rt_free(pool);
 
     LOG_E("Install pool[%p, %p] error = %s",
-            region->start, region->end, rt_strerror(err));
+          region->start, region->end, rt_strerror(err));
 
     return RT_NULL;
 }
@@ -862,10 +858,10 @@ struct rt_dma_pool *rt_dma_pool_install(rt_region_t *region)
         region = &pool->region;
 
         LOG_I("%s: Reserved %u.%u MiB at %p",
-                region->name,
-                (region->end - region->start) / SIZE_MB,
-                (region->end - region->start) / SIZE_KB & (SIZE_KB - 1),
-                region->start);
+              region->name,
+              (region->end - region->start) / SIZE_MB,
+              (region->end - region->start) / SIZE_KB & (SIZE_KB - 1),
+              region->start);
     }
 
     return pool;
@@ -989,7 +985,7 @@ _found:
  *
  * @return 0
  */
-static int list_dma_pool(int argc, char**argv)
+static int list_dma_pool(int argc, char **argv)
 {
     int count = 0;
     rt_region_t *region;
@@ -1004,7 +1000,7 @@ static int list_dma_pool(int argc, char**argv)
         region = &pool->region;
 
         rt_kprintf("%-*.s [%p, %p]\n", RT_NAME_MAX, region->name,
-                region->start, region->end);
+                   region->start, region->end);
 
         ++count;
     }

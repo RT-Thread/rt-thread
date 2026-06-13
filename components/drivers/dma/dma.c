@@ -285,7 +285,7 @@ rt_err_t rt_dma_chan_stop(struct rt_dma_chan *chan)
  *         -RT_ENOSYS if direction not supported
  */
 rt_err_t rt_dma_chan_config(struct rt_dma_chan *chan,
-        struct rt_dma_slave_config *conf)
+                            struct rt_dma_slave_config *conf)
 {
     rt_err_t err;
     struct rt_dma_controller *ctrl;
@@ -323,7 +323,7 @@ rt_err_t rt_dma_chan_config(struct rt_dma_chan *chan,
     if (!chan->name && dir != RT_DMA_MEM_TO_MEM)
     {
         LOG_E("%s: illegal config for uname channels",
-                rt_dm_dev_get_name(ctrl->dev));
+              rt_dm_dev_get_name(ctrl->dev));
 
         err = -RT_EINVAL;
         goto _end;
@@ -383,7 +383,7 @@ rt_err_t rt_dma_chan_done(struct rt_dma_chan *chan, rt_size_t size)
  * @return RT_TRUE if addr0 is below addr1 (illegal), RT_FALSE otherwise
  */
 static rt_bool_t range_is_illegal(const char *name, const char *desc,
-        rt_ubase_t addr0, rt_ubase_t addr1)
+                                  rt_ubase_t addr0, rt_ubase_t addr1)
 {
     rt_bool_t illegal = addr0 < addr1;
 
@@ -406,7 +406,7 @@ static rt_bool_t range_is_illegal(const char *name, const char *desc,
  * @return RT_TRUE if any bits outside the mask are set (unsupported), RT_FALSE otherwise
  */
 static rt_bool_t addr_is_supported(const char *name, const char *desc,
-        rt_uint64_t mask, rt_ubase_t addr)
+                                   rt_uint64_t mask, rt_ubase_t addr)
 {
     rt_bool_t illegal = !!(addr & ~mask);
 
@@ -431,7 +431,7 @@ static rt_bool_t addr_is_supported(const char *name, const char *desc,
  *         range violations, -RT_ENOSYS if prep_memcpy not supported
  */
 rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
-        struct rt_dma_slave_transfer *transfer)
+                            struct rt_dma_slave_transfer *transfer)
 {
     rt_err_t err;
     rt_size_t len;
@@ -460,25 +460,25 @@ rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
     len = transfer->buffer_len;
 
     if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "source",
-        ctrl->addr_mask, conf->src_addr))
+                          ctrl->addr_mask, conf->src_addr))
     {
         return -RT_ENOSYS;
     }
 
     if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "dest",
-        ctrl->addr_mask, conf->dst_addr))
+                          ctrl->addr_mask, conf->dst_addr))
     {
         return -RT_ENOSYS;
     }
 
     if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "source",
-        dma_addr_src, conf->src_addr))
+                         dma_addr_src, conf->src_addr))
     {
         return -RT_EINVAL;
     }
 
     if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "dest",
-        dma_addr_dst, conf->dst_addr))
+                         dma_addr_dst, conf->dst_addr))
     {
         return -RT_EINVAL;
     }
@@ -520,7 +520,7 @@ rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
  *         -RT_ENOSYS if prep_cyclic not supported
  */
 rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
-        struct rt_dma_slave_transfer *transfer)
+                            struct rt_dma_slave_transfer *transfer)
 {
     rt_err_t err;
     rt_ubase_t dma_buf_addr;
@@ -550,13 +550,13 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
         dma_buf_addr = transfer->src_addr;
 
         if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "source",
-            ctrl->addr_mask, conf->src_addr))
+                              ctrl->addr_mask, conf->src_addr))
         {
             return -RT_ENOSYS;
         }
 
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "source",
-            dma_buf_addr, conf->src_addr))
+                             dma_buf_addr, conf->src_addr))
         {
             return -RT_EINVAL;
         }
@@ -566,13 +566,13 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
         dma_buf_addr = transfer->dst_addr;
 
         if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "dest",
-            ctrl->addr_mask, conf->dst_addr))
+                              ctrl->addr_mask, conf->dst_addr))
         {
             return -RT_ENOSYS;
         }
 
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "dest",
-            dma_buf_addr, conf->dst_addr))
+                             dma_buf_addr, conf->dst_addr))
         {
             return -RT_EINVAL;
         }
@@ -587,7 +587,7 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
         dma_lock(ctrl);
 
         err = ctrl->ops->prep_cyclic(chan, dma_buf_addr,
-                transfer->buffer_len, transfer->period_len, dir);
+                                     transfer->buffer_len, transfer->period_len, dir);
 
         dma_unlock(ctrl);
     }
@@ -619,7 +619,7 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
  *         -RT_ENOSYS if prep_single not supported
  */
 rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
-        struct rt_dma_slave_transfer *transfer)
+                            struct rt_dma_slave_transfer *transfer)
 {
     rt_err_t err;
     rt_ubase_t dma_buf_addr;
@@ -649,13 +649,13 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
         dma_buf_addr = transfer->src_addr;
 
         if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "source",
-            ctrl->addr_mask, conf->src_addr))
+                              ctrl->addr_mask, conf->src_addr))
         {
             return -RT_ENOSYS;
         }
 
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "source",
-            dma_buf_addr, conf->src_addr))
+                             dma_buf_addr, conf->src_addr))
         {
             return -RT_EINVAL;
         }
@@ -665,13 +665,13 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
         dma_buf_addr = transfer->dst_addr;
 
         if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "dest",
-            ctrl->addr_mask, conf->dst_addr))
+                              ctrl->addr_mask, conf->dst_addr))
         {
             return -RT_ENOSYS;
         }
 
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "dest",
-            dma_buf_addr, conf->dst_addr))
+                             dma_buf_addr, conf->dst_addr))
         {
             return -RT_EINVAL;
         }
@@ -686,7 +686,7 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
         dma_lock(ctrl);
 
         err = ctrl->ops->prep_single(chan, dma_buf_addr,
-                transfer->buffer_len, dir);
+                                     transfer->buffer_len, dir);
 
         dma_unlock(ctrl);
     }
@@ -719,7 +719,7 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
  * @return DMA controller pointer on success, RT_NULL if not found
  */
 static struct rt_dma_controller *ofw_find_dma_controller(struct rt_device *dev,
-        const char *name, struct rt_ofw_cell_args *args)
+                                                         const char *name, struct rt_ofw_cell_args *args)
 {
     struct rt_dma_controller *ctrl = RT_NULL;
 #ifdef RT_USING_OFW

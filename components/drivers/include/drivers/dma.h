@@ -57,16 +57,16 @@ enum rt_dma_transfer_direction
  */
 enum rt_dma_slave_buswidth
 {
-    RT_DMA_SLAVE_BUSWIDTH_UNDEFINED     = 0,    /**< Undefined / not configured */
-    RT_DMA_SLAVE_BUSWIDTH_1_BYTE        = 1,    /**< 8-bit transfers */
-    RT_DMA_SLAVE_BUSWIDTH_2_BYTES       = 2,    /**< 16-bit transfers */
-    RT_DMA_SLAVE_BUSWIDTH_3_BYTES       = 3,    /**< 24-bit transfers */
-    RT_DMA_SLAVE_BUSWIDTH_4_BYTES       = 4,    /**< 32-bit transfers */
-    RT_DMA_SLAVE_BUSWIDTH_8_BYTES       = 8,    /**< 64-bit transfers */
-    RT_DMA_SLAVE_BUSWIDTH_16_BYTES      = 16,   /**< 128-bit transfers */
-    RT_DMA_SLAVE_BUSWIDTH_32_BYTES      = 32,   /**< 256-bit transfers */
-    RT_DMA_SLAVE_BUSWIDTH_64_BYTES      = 64,   /**< 512-bit transfers */
-    RT_DMA_SLAVE_BUSWIDTH_128_BYTES     = 128,  /**< 1024-bit transfers */
+    RT_DMA_SLAVE_BUSWIDTH_UNDEFINED = 0,    /**< Undefined / not configured */
+    RT_DMA_SLAVE_BUSWIDTH_1_BYTE = 1,    /**< 8-bit transfers */
+    RT_DMA_SLAVE_BUSWIDTH_2_BYTES = 2,    /**< 16-bit transfers */
+    RT_DMA_SLAVE_BUSWIDTH_3_BYTES = 3,    /**< 24-bit transfers */
+    RT_DMA_SLAVE_BUSWIDTH_4_BYTES = 4,    /**< 32-bit transfers */
+    RT_DMA_SLAVE_BUSWIDTH_8_BYTES = 8,    /**< 64-bit transfers */
+    RT_DMA_SLAVE_BUSWIDTH_16_BYTES = 16,   /**< 128-bit transfers */
+    RT_DMA_SLAVE_BUSWIDTH_32_BYTES = 32,   /**< 256-bit transfers */
+    RT_DMA_SLAVE_BUSWIDTH_64_BYTES = 64,   /**< 512-bit transfers */
+    RT_DMA_SLAVE_BUSWIDTH_128_BYTES = 128,  /**< 1024-bit transfers */
 
     RT_DMA_SLAVE_BUSWIDTH_BYTES_MAX,            /**< Sentinel: maximum bus width enum value */
 };
@@ -153,7 +153,7 @@ struct rt_dma_controller_ops
      * @return Channel pointer, RT_NULL, or error pointer
      */
     struct rt_dma_chan *(*request_chan)(struct rt_dma_controller *ctrl,
-            struct rt_device *slave, void *fw_data);
+                                        struct rt_device *slave, void *fw_data);
 
     /**
      * @brief Release a DMA channel (optional)
@@ -214,7 +214,7 @@ struct rt_dma_controller_ops
      * @return RT_EOK on success
      */
     rt_err_t (*prep_memcpy)(struct rt_dma_chan *chan,
-            rt_ubase_t dma_addr_src, rt_ubase_t dma_addr_dst, rt_size_t len);
+                            rt_ubase_t dma_addr_src, rt_ubase_t dma_addr_dst, rt_size_t len);
 
     /**
      * @brief Prepare a cyclic (repeating) transfer (optional)
@@ -228,8 +228,8 @@ struct rt_dma_controller_ops
      * @return RT_EOK on success
      */
     rt_err_t (*prep_cyclic)(struct rt_dma_chan *chan,
-            rt_ubase_t dma_buf_addr, rt_size_t buf_len, rt_size_t period_len,
-            enum rt_dma_transfer_direction dir);
+                            rt_ubase_t dma_buf_addr, rt_size_t buf_len, rt_size_t period_len,
+                            enum rt_dma_transfer_direction dir);
 
     /**
      * @brief Prepare a single (one-shot) transfer (optional)
@@ -242,8 +242,8 @@ struct rt_dma_controller_ops
      * @return RT_EOK on success
      */
     rt_err_t (*prep_single)(struct rt_dma_chan *chan,
-            rt_ubase_t dma_buf_addr, rt_size_t buf_len,
-            enum rt_dma_transfer_direction dir);
+                            rt_ubase_t dma_buf_addr, rt_size_t buf_len,
+                            enum rt_dma_transfer_direction dir);
 };
 
 /**
@@ -313,7 +313,7 @@ struct rt_dma_map_ops
      * @return Kernel virtual address, or RT_NULL on failure
      */
     void *(*alloc)(struct rt_device *dev, rt_size_t size,
-            rt_ubase_t *dma_handle, rt_ubase_t flags);
+                   rt_ubase_t *dma_handle, rt_ubase_t flags);
 
     /**
      * @brief Free a DMA buffer (optional)
@@ -325,7 +325,7 @@ struct rt_dma_map_ops
      * @param[in] flags      Allocation flags
      */
     void (*free)(struct rt_device *dev, rt_size_t size,
-            void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags);
+                 void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags);
 
     /**
      * @brief Synchronize data for DMA output (CPU → device)
@@ -341,7 +341,7 @@ struct rt_dma_map_ops
      * @return RT_EOK on success
      */
     rt_err_t (*sync_out_data)(struct rt_device *dev, void *data, rt_size_t size,
-            rt_ubase_t *dma_handle, rt_ubase_t flags);
+                              rt_ubase_t *dma_handle, rt_ubase_t flags);
 
     /**
      * @brief Synchronize data for DMA input (device → CPU)
@@ -357,7 +357,7 @@ struct rt_dma_map_ops
      * @return RT_EOK on success
      */
     rt_err_t (*sync_in_data)(struct rt_device *dev, void *out_data, rt_size_t size,
-            rt_ubase_t dma_handle, rt_ubase_t flags);
+                             rt_ubase_t dma_handle, rt_ubase_t flags);
 };
 
 /**
@@ -369,7 +369,7 @@ struct rt_dma_map_ops
  * @param[in] dir   Transfer direction to add
  */
 rt_inline void rt_dma_controller_add_direction(struct rt_dma_controller *ctrl,
-        enum rt_dma_transfer_direction dir)
+                                               enum rt_dma_transfer_direction dir)
 {
     RT_ASSERT(ctrl != RT_NULL);
     RT_ASSERT(dir < RT_DMA_DIR_MAX);
@@ -387,7 +387,7 @@ rt_inline void rt_dma_controller_add_direction(struct rt_dma_controller *ctrl,
  * @param[in] mask  Address bit mask
  */
 rt_inline void rt_dma_controller_set_addr_mask(struct rt_dma_controller *ctrl,
-        rt_uint64_t mask)
+                                               rt_uint64_t mask)
 {
     RT_ASSERT(ctrl != RT_NULL);
 
@@ -411,22 +411,22 @@ rt_err_t rt_dma_chan_stop(struct rt_dma_chan *chan);
 
 /** @brief Configure a DMA channel with slave-specific parameters */
 rt_err_t rt_dma_chan_config(struct rt_dma_chan *chan,
-        struct rt_dma_slave_config *conf);
+                            struct rt_dma_slave_config *conf);
 
 /** @brief Signal transfer completion (called by controller ISR) */
 rt_err_t rt_dma_chan_done(struct rt_dma_chan *chan, rt_size_t size);
 
 /** @brief Prepare a memory-to-memory DMA transfer */
 rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
-        struct rt_dma_slave_transfer *transfer);
+                            struct rt_dma_slave_transfer *transfer);
 
 /** @brief Prepare a cyclic (repeating) DMA transfer */
 rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
-        struct rt_dma_slave_transfer *transfer);
+                            struct rt_dma_slave_transfer *transfer);
 
 /** @brief Prepare a single (one-shot) DMA transfer */
 rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
-        struct rt_dma_slave_transfer *transfer);
+                            struct rt_dma_slave_transfer *transfer);
 
 /** @brief Request a DMA channel for a slave device (by DT name or auto) */
 struct rt_dma_chan *rt_dma_chan_request(struct rt_device *dev, const char *name);
@@ -435,28 +435,28 @@ struct rt_dma_chan *rt_dma_chan_request(struct rt_device *dev, const char *name)
 rt_err_t rt_dma_chan_release(struct rt_dma_chan *chan);
 
 /** @brief DMA pool: linear address space (all DMA pools have this flag) */
-#define RT_DMA_F_LINEAR     RT_BIT(0)
+#define RT_DMA_F_LINEAR RT_BIT(0)
 /** @brief DMA pool: limited to 32-bit addressable memory (below 4GB) */
-#define RT_DMA_F_32BITS     RT_BIT(1)
+#define RT_DMA_F_32BITS RT_BIT(1)
 /** @brief DMA allocation: use non-cacheable memory mapping */
-#define RT_DMA_F_NOCACHE    RT_BIT(2)
+#define RT_DMA_F_NOCACHE RT_BIT(2)
 /** @brief DMA pool: device-private pool (matches pool->dev) */
-#define RT_DMA_F_DEVICE     RT_BIT(3)
+#define RT_DMA_F_DEVICE RT_BIT(3)
 /** @brief DMA allocation: do not map virtual address, return physical */
-#define RT_DMA_F_NOMAP      RT_BIT(4)
+#define RT_DMA_F_NOMAP RT_BIT(4)
 /** @brief DMA allocation: use write-through cache mapping */
-#define RT_DMA_F_WT         RT_BIT(5)
+#define RT_DMA_F_WT RT_BIT(5)
 
 /** @brief DMA pool page size matches architecture page size */
-#define RT_DMA_PAGE_SIZE    ARCH_PAGE_SIZE
+#define RT_DMA_PAGE_SIZE ARCH_PAGE_SIZE
 
 /** @brief Allocate a DMA-capable memory buffer */
 void *rt_dma_alloc(struct rt_device *dev, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags);
+                   rt_ubase_t *dma_handle, rt_ubase_t flags);
 
 /** @brief Free a DMA buffer previously allocated with rt_dma_alloc() */
 void rt_dma_free(struct rt_device *dev, rt_size_t size,
-        void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags);
+                 void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags);
 
 /**
  * @brief Allocate a coherent (non-cacheable) DMA buffer
@@ -470,10 +470,10 @@ void rt_dma_free(struct rt_device *dev, rt_size_t size,
  * @return Kernel virtual address, or RT_NULL on failure
  */
 rt_inline void *rt_dma_alloc_coherent(struct rt_device *dev, rt_size_t size,
-        rt_ubase_t *dma_handle)
+                                      rt_ubase_t *dma_handle)
 {
     return rt_dma_alloc(dev, size, dma_handle,
-            RT_DMA_F_NOCACHE | RT_DMA_F_LINEAR);
+                        RT_DMA_F_NOCACHE | RT_DMA_F_LINEAR);
 }
 
 /**
@@ -485,19 +485,19 @@ rt_inline void *rt_dma_alloc_coherent(struct rt_device *dev, rt_size_t size,
  * @param[in] dma_handle Physical DMA address
  */
 rt_inline void rt_dma_free_coherent(struct rt_device *dev, rt_size_t size,
-        void *cpu_addr, rt_ubase_t dma_handle)
+                                    void *cpu_addr, rt_ubase_t dma_handle)
 {
     rt_dma_free(dev, size, cpu_addr, dma_handle,
-            RT_DMA_F_NOCACHE | RT_DMA_F_LINEAR);
+                RT_DMA_F_NOCACHE | RT_DMA_F_LINEAR);
 }
 
 /** @brief Synchronize CPU cache for DMA output (CPU → device) */
 rt_err_t rt_dma_sync_out_data(struct rt_device *dev, void *data, rt_size_t size,
-        rt_ubase_t *dma_handle, rt_ubase_t flags);
+                              rt_ubase_t *dma_handle, rt_ubase_t flags);
 
 /** @brief Synchronize CPU cache for DMA input (device → CPU) */
 rt_err_t rt_dma_sync_in_data(struct rt_device *dev, void *out_data, rt_size_t size,
-        rt_ubase_t dma_handle, rt_ubase_t flags);
+                             rt_ubase_t dma_handle, rt_ubase_t flags);
 
 /**
  * @brief Check if a device is DMA-coherent
@@ -521,7 +521,7 @@ rt_inline rt_bool_t rt_dma_device_is_coherent(struct rt_device *dev)
  * @param[in] ops  Custom DMA map operations (or NULL to reset)
  */
 rt_inline void rt_dma_device_set_ops(struct rt_device *dev,
-        const struct rt_dma_map_ops *ops)
+                                     const struct rt_dma_map_ops *ops)
 {
     dev->dma_ops = ops;
 }

@@ -36,213 +36,213 @@
 #include <rtdbg.h>
 
 /** @brief Extract a bit field from a register value */
-#define _FIELD_READ(h, l, x)                ((RT_GENMASK(h, l) & (x)) >> l)
+#define _FIELD_READ(h, l, x) ((RT_GENMASK(h, l) & (x)) >> l)
 
 /** @brief DMA Manager Status Register */
-#define PL330_REG_DSR                       0x000
+#define PL330_REG_DSR 0x000
 /** @brief DMA Program Counter Register */
-#define PL330_REG_DPC                       0x004
+#define PL330_REG_DPC 0x004
 /** @brief Interrupt Enable Register */
-#define PL330_REG_INTEN                     0x020
+#define PL330_REG_INTEN 0x020
 /** @brief Event-Interrupt Raw Status Register */
-#define PL330_REG_INT_EVENT_RIS             0x024
+#define PL330_REG_INT_EVENT_RIS 0x024
 /** @brief Interrupt Status Register */
-#define PL330_REG_INTMIS                    0x028
+#define PL330_REG_INTMIS 0x028
 /** @brief Interrupt Clear Register */
-#define PL330_REG_INTCLR                    0x02c
+#define PL330_REG_INTCLR 0x02c
 /** @brief Fault Status DMA Manager Register */
-#define PL330_REG_FSRD                      0x030
+#define PL330_REG_FSRD 0x030
 /** @brief Fault Status DMA Channel Register */
-#define PL330_REG_FSRC                      0x034
+#define PL330_REG_FSRC 0x034
 /** @brief Fault Type DMA Manager Register */
-#define PL330_REG_FTRD                      0x038
+#define PL330_REG_FTRD 0x038
 /** @brief Fault Type DMA Channel [n] Register */
-#define PL330_REG_FTR(n)                    (0x040 + (n) * 0x4)
+#define PL330_REG_FTR(n) (0x040 + (n) * 0x4)
 /** @brief Undefined instruction fault flag */
-#define   PL330_FT_UNDEF_INSTR              RT_BIT(0)
+#define PL330_FT_UNDEF_INSTR RT_BIT(0)
 /** @brief Invalid operand fault flag */
-#define   PL330_FT_OPERAND_INVALID          RT_BIT(1)
+#define PL330_FT_OPERAND_INVALID RT_BIT(1)
 /** @brief DMAGO error fault flag */
-#define   PL330_FT_DMAGO_ERR                RT_BIT(4)
+#define PL330_FT_DMAGO_ERR RT_BIT(4)
 /** @brief Event error fault flag */
-#define   PL330_FT_EVENT_ERR                RT_BIT(5)
+#define PL330_FT_EVENT_ERR RT_BIT(5)
 /** @brief Channel peripheral error fault flag */
-#define   PL330_FT_CH_PERIPH_ERR            RT_BIT(6)
+#define PL330_FT_CH_PERIPH_ERR RT_BIT(6)
 /** @brief Channel read/write error fault flag */
-#define   PL330_FT_CH_RDWR_ERR              RT_BIT(7)
+#define PL330_FT_CH_RDWR_ERR RT_BIT(7)
 /** @brief Store data unavailable fault flag */
-#define   PL330_FT_ST_DATA_UNAVAILABLE      RT_BIT(12)
+#define PL330_FT_ST_DATA_UNAVAILABLE RT_BIT(12)
 /** @brief FIFO empty error fault flag */
-#define   PL330_FT_FIFOEMPTY_ERR            RT_BIT(13)
+#define PL330_FT_FIFOEMPTY_ERR RT_BIT(13)
 /** @brief Instruction fetch error fault flag */
-#define   PL330_FT_INSTR_FETCH_ERR          RT_BIT(16)
+#define PL330_FT_INSTR_FETCH_ERR RT_BIT(16)
 /** @brief Data write error fault flag */
-#define   PL330_FT_DATA_WRITE_ERR           RT_BIT(17)
+#define PL330_FT_DATA_WRITE_ERR RT_BIT(17)
 /** @brief Data read error fault flag */
-#define   PL330_FT_DATA_READ_ERR            RT_BIT(18)
+#define PL330_FT_DATA_READ_ERR RT_BIT(18)
 /** @brief Debug instruction fault flag */
-#define   PL330_FT_DBG_INSTR                RT_BIT(30)
+#define PL330_FT_DBG_INSTR RT_BIT(30)
 /** @brief Lockup error fault flag */
-#define   PL330_FT_LOCKUP_ERR               RT_BIT(31)
+#define PL330_FT_LOCKUP_ERR RT_BIT(31)
 /** @brief Channel [n] Status Register */
-#define PL330_REG_CSR(n)                    (0x100 + (n) * 0x8)
+#define PL330_REG_CSR(n) (0x100 + (n) * 0x8)
 /** @brief Channel stopped */
-#define   PL330_CS_STOP                     0x0
+#define PL330_CS_STOP 0x0
 /** @brief Channel executing */
-#define   PL330_CS_EXEC                     0x1
+#define PL330_CS_EXEC 0x1
 /** @brief Channel cache miss */
-#define   PL330_CS_CMISS                    0x2
+#define PL330_CS_CMISS 0x2
 /** @brief Channel updating PC */
-#define   PL330_CS_UPDTPC                   0x3
+#define PL330_CS_UPDTPC 0x3
 /** @brief Channel waiting for event */
-#define   PL330_CS_WFE                      0x4
+#define PL330_CS_WFE 0x4
 /** @brief Channel at barrier */
-#define   PL330_CS_ATBRR                    0x5
+#define PL330_CS_ATBRR 0x5
 /** @brief Channel queue busy */
-#define   PL330_CS_QBUSY                    0x6
+#define PL330_CS_QBUSY 0x6
 /** @brief Channel waiting for peripheral */
-#define   PL330_CS_WFP                      0x7
+#define PL330_CS_WFP 0x7
 /** @brief Channel killed */
-#define   PL330_CS_KILL                     0x8
+#define PL330_CS_KILL 0x8
 /** @brief Channel completed */
-#define   PL330_CS_CMPLT                    0x9
+#define PL330_CS_CMPLT 0x9
 /** @brief Channel fault completed */
-#define   PL330_CS_FLTCMP                   0xe
+#define PL330_CS_FLTCMP 0xe
 /** @brief Channel fault */
-#define   PL330_CS_FAULT                    0xf
+#define PL330_CS_FAULT 0xf
 /** @brief Channel [n] Program Counter Register */
-#define PL330_REG_CPC(n)                    (0x104 + (n) * 0x8)
+#define PL330_REG_CPC(n) (0x104 + (n) * 0x8)
 /** @brief Channel [n] Source Address Register */
-#define pl330_REG_SAR(n)                    (0x0400 + (n) * 0x20)
+#define pl330_REG_SAR(n) (0x0400 + (n) * 0x20)
 /** @brief Channel [n] Destination Address Register */
-#define pl330_REG_DAR(n)                    (0x0404 + (n) * 0x20)
+#define pl330_REG_DAR(n) (0x0404 + (n) * 0x20)
 /** @brief Channel [n] Channel Control Register */
-#define pl330_REG_CCR(n)                    (0x0408 + (n) * 0x20)
+#define pl330_REG_CCR(n) (0x0408 + (n) * 0x20)
 /** @brief Channel [n] Loop Counter 0 Register */
-#define pl330_REG_LC0(n)                    (0x040c + (n) * 0x20)
+#define pl330_REG_LC0(n) (0x040c + (n) * 0x20)
 /** @brief Channel [n] Loop Counter 1 Register */
-#define pl330_REG_LC1(n)                    (0x0410 + (n) * 0x20)
+#define pl330_REG_LC1(n) (0x0410 + (n) * 0x20)
 /** @brief Debug Status Register */
-#define PL330_REG_DBGSTATUS                 0xd00
+#define PL330_REG_DBGSTATUS 0xd00
 /** @brief Debug unit idle */
-#define   PL330_DBGSTATUS_IDLE              0
+#define PL330_DBGSTATUS_IDLE 0
 /** @brief Debug unit busy */
-#define   PL330_DBGSTATUS_BUSY              RT_BIT(0)
+#define PL330_DBGSTATUS_BUSY RT_BIT(0)
 /** @brief Debug Command Register */
-#define PL330_REG_DBGCMD                    0xd04
+#define PL330_REG_DBGCMD 0xd04
 /** @brief Debug Instruction-0 Register */
-#define PL330_REG_DBGINST0                  0xd08
+#define PL330_REG_DBGINST0 0xd08
 /** @brief Debug Instruction-1 Register */
-#define PL330_REG_DBGINST1                  0xd0c
+#define PL330_REG_DBGINST1 0xd0c
 /** @brief Configuration Register [n] */
-#define PL330_REG_CR(n)                     (0xe00 + (n) * 0x4)
+#define PL330_REG_CR(n) (0xe00 + (n) * 0x4)
 /** @brief Peripheral request set at reset */
-#define   PL330_CR0_PERIPH_REQ_SET          RT_BIT(0)
+#define PL330_CR0_PERIPH_REQ_SET RT_BIT(0)
 /** @brief Manager non-secure at reset flag */
-#define   PL330_CR0_MGR_NS_AT_RST(x)        _FIELD_READ(2, 2, x)
+#define PL330_CR0_MGR_NS_AT_RST(x) _FIELD_READ(2, 2, x)
 /** @brief Number of channels field */
-#define   PL330_CR0_NUM_CHNLS(x)            _FIELD_READ(6, 4, x)
+#define PL330_CR0_NUM_CHNLS(x) _FIELD_READ(6, 4, x)
 /** @brief Number of peripherals field */
-#define   PL330_CR0_NUM_PERIPH(x)           _FIELD_READ(16, 12, x)
+#define PL330_CR0_NUM_PERIPH(x) _FIELD_READ(16, 12, x)
 /** @brief Number of events field */
-#define   PL330_CR0_NUM_EVENTS(x)           _FIELD_READ(21, 17, x)
+#define PL330_CR0_NUM_EVENTS(x) _FIELD_READ(21, 17, x)
 /** @brief Configuration Data Register */
-#define PL330_REG_CRD                       0x0e14
+#define PL330_REG_CRD 0x0e14
 /** @brief Data width field */
-#define   PL330_CRD_DATA_WIDTH(x)           _FIELD_READ(2, 0, x)
+#define PL330_CRD_DATA_WIDTH(x) _FIELD_READ(2, 0, x)
 /** @brief Write capability field */
-#define   PL330_CRD_WR_CAP(x)               _FIELD_READ(6, 4, x)
+#define PL330_CRD_WR_CAP(x) _FIELD_READ(6, 4, x)
 /** @brief Write queue depth field */
-#define   PL330_CRD_WR_Q_DEP(x)             _FIELD_READ(11, 8, x)
+#define PL330_CRD_WR_Q_DEP(x) _FIELD_READ(11, 8, x)
 /** @brief Read capability field */
-#define   PL330_CRD_RD_CAP(x)               _FIELD_READ(14, 12, x)
+#define PL330_CRD_RD_CAP(x) _FIELD_READ(14, 12, x)
 /** @brief Read queue depth field */
-#define   PL330_CRD_RD_Q_DEP(x)             _FIELD_READ(19, 16, x)
+#define PL330_CRD_RD_Q_DEP(x) _FIELD_READ(19, 16, x)
 /** @brief Data buffer depth field */
-#define   PL330_CRD_DATA_BUFFER_DEP(x)      _FIELD_READ(29, 20, x)
+#define PL330_CRD_DATA_BUFFER_DEP(x) _FIELD_READ(29, 20, x)
 /** @brief DMA Watchdog Register */
-#define PL330_REG_WDT                       0x0e80
+#define PL330_REG_WDT 0x0e80
 /** @brief Peripheral ID Register */
-#define PL330_REG_PERIPH_ID                 0x0fe0
+#define PL330_REG_PERIPH_ID 0x0fe0
 /** @brief Peripheral revision field */
-#define   PL330_PERIPH_REV(x)               _FIELD_READ(23, 20, x)
+#define PL330_PERIPH_REV(x) _FIELD_READ(23, 20, x)
 /** @brief PL330 revision r0p0 */
-#define   PL330_PERIPH_REV_R0P0             0
+#define PL330_PERIPH_REV_R0P0 0
 /** @brief PL330 revision r1p0 */
-#define   PL330_PERIPH_REV_R1P0             1
+#define PL330_PERIPH_REV_R1P0 1
 /** @brief PL330 revision r1p1 */
-#define   PL330_PERIPH_REV_R1P1             2
+#define PL330_PERIPH_REV_R1P1 2
 
 /** @brief Microcode instruction: add halfword to address */
-#define PL330_CMD_DMAADDH                   0x54
+#define PL330_CMD_DMAADDH 0x54
 /** @brief Microcode instruction: end program */
-#define PL330_CMD_DMAEND                    0x00
+#define PL330_CMD_DMAEND 0x00
 /** @brief Microcode instruction: flush pipeline */
-#define PL330_CMD_DMAFLUSHP                 0x35
+#define PL330_CMD_DMAFLUSHP 0x35
 /** @brief Microcode instruction: go (execute channel) */
-#define PL330_CMD_DMAGO                     0xa0
+#define PL330_CMD_DMAGO 0xa0
 /** @brief Microcode instruction: load (read from source) */
-#define PL330_CMD_DMALD                     0x04
+#define PL330_CMD_DMALD 0x04
 /** @brief Microcode instruction: load peripheral */
-#define PL330_CMD_DMALDP                    0x25
+#define PL330_CMD_DMALDP 0x25
 /** @brief Microcode instruction: loop */
-#define PL330_CMD_DMALP                     0x20
+#define PL330_CMD_DMALP 0x20
 /** @brief Microcode instruction: loop end */
-#define PL330_CMD_DMALPEND                  0x28
+#define PL330_CMD_DMALPEND 0x28
 /** @brief Microcode instruction: kill */
-#define PL330_CMD_DMAKILL                   0x01
+#define PL330_CMD_DMAKILL 0x01
 /** @brief Microcode instruction: move immediate */
-#define PL330_CMD_DMAMOV                    0xbc
+#define PL330_CMD_DMAMOV 0xbc
 /** @brief Microcode instruction: no operation */
-#define PL330_CMD_DMANOP                    0x18
+#define PL330_CMD_DMANOP 0x18
 /** @brief Microcode instruction: memory barrier */
-#define PL330_CMD_DMARMB                    0x12
+#define PL330_CMD_DMARMB 0x12
 /** @brief Microcode instruction: send event */
-#define PL330_CMD_DMASEV                    0x34
+#define PL330_CMD_DMASEV 0x34
 /** @brief Microcode instruction: store (write to dest) */
-#define PL330_CMD_DMAST                     0x08
+#define PL330_CMD_DMAST 0x08
 /** @brief Microcode instruction: store peripheral */
-#define PL330_CMD_DMASTP                    0x29
+#define PL330_CMD_DMASTP 0x29
 /** @brief Microcode instruction: store zero */
-#define PL330_CMD_DMASTZ                    0x0c
+#define PL330_CMD_DMASTZ 0x0c
 /** @brief Microcode instruction: wait for event */
-#define PL330_CMD_DMAWFE                    0x36
+#define PL330_CMD_DMAWFE 0x36
 /** @brief Microcode instruction: wait for peripheral */
-#define PL330_CMD_DMAWFP                    0x30
+#define PL330_CMD_DMAWFP 0x30
 /** @brief Microcode instruction: write memory barrier */
-#define PL330_CMD_DMAWMB                    0x13
+#define PL330_CMD_DMAWMB 0x13
 
 /** @brief DMAMOV to Source Address Register */
-#define PL330_DIR_SAR                       0
+#define PL330_DIR_SAR 0
 /** @brief DMAMOV to Channel Control Register */
-#define PL330_DIR_CCR                       1
+#define PL330_DIR_CCR 1
 /** @brief DMAMOV to Destination Address Register */
-#define PL330_DIR_DAR                       2
+#define PL330_DIR_DAR 2
 
 /** @brief Source address increment flag in CCR */
-#define PL330_SRC_INC                       RT_BIT(0)
+#define PL330_SRC_INC RT_BIT(0)
 /** @brief Source burst size shift in CCR */
-#define PL330_SRC_BURST_SIZE_SHIFT          1
+#define PL330_SRC_BURST_SIZE_SHIFT 1
 /** @brief Source burst length shift in CCR */
-#define PL330_SRC_BURST_LEN_SHIFT           4
+#define PL330_SRC_BURST_LEN_SHIFT 4
 /** @brief Destination address increment flag in CCR */
-#define PL330_DST_INC                       RT_BIT(14)
+#define PL330_DST_INC RT_BIT(14)
 /** @brief Destination burst size shift in CCR */
-#define PL330_DST_BURST_SIZE_SHIFT          15
+#define PL330_DST_BURST_SIZE_SHIFT 15
 /** @brief Destination burst length shift in CCR */
-#define PL330_DST_BURST_LEN_SHIFT           18
+#define PL330_DST_BURST_LEN_SHIFT 18
 
 /** @brief Single transfer condition */
-#define PL330_COND_SINGLE                   0
+#define PL330_COND_SINGLE 0
 /** @brief Burst transfer condition */
-#define PL330_COND_BURST                    1
+#define PL330_COND_BURST 1
 /** @brief Always execute (unconditional) */
-#define PL330_COND_ALWAYS                   2
+#define PL330_COND_ALWAYS 2
 
 /** @brief Maximum microcode program size in bytes (128 instructions) */
-#define PL330_MICROCODE_SIZE                128
+#define PL330_MICROCODE_SIZE 128
 /** @brief Maximum number of AMBA IRQs */
-#define AMBA_NR_IRQS                        9
+#define AMBA_NR_IRQS 9
 
 /**
  * @brief PL330 DMA channel descriptor
@@ -275,8 +275,8 @@ struct pl330
     int irqs_nr;                                     /**< Number of IRQ lines */
     int irqs[AMBA_NR_IRQS];                          /**< IRQ numbers */
 
-#define PL330_QUIRK_BROKEN_NO_FLUSHP    RT_BIT(0)    /**< Quirk: broken FLUSHP instruction */
-#define PL330_QUIRK_PERIPH_BURST        RT_BIT(1)    /**< Quirk: peripheral burst support */
+#define PL330_QUIRK_BROKEN_NO_FLUSHP RT_BIT(0)    /**< Quirk: broken FLUSHP instruction */
+#define PL330_QUIRK_PERIPH_BURST     RT_BIT(1)    /**< Quirk: peripheral burst support */
     rt_uint32_t quirk;                               /**< Hardware quirk flags */
 
     rt_uint32_t mode_ns;                             /**< Non-secure mode flag */
@@ -294,7 +294,7 @@ struct pl330
     struct rt_reset_control *rstc_ocp;               /**< OCP (Open Core Protocol) reset control */
 };
 /** @brief Cast from rt_dma_controller to pl330 */
-#define raw_to_pl330(raw)   rt_container_of(raw, struct pl330, parent)
+#define raw_to_pl330(raw) rt_container_of(raw, struct pl330, parent)
 
 /**
  * @brief Read PL330 configuration from hardware registers
@@ -410,11 +410,7 @@ static int pl330_cmd_dmamov(rt_uint8_t *microcode, rt_uint8_t rd, rt_uint32_t im
     *microcode++ = imm >> 16;
     *microcode++ = imm >> 24;
 
-    LOG_D("DMAMOV %s, %#x", ((const char *const []){
-            [PL330_DIR_SAR] = "SAR",
-            [PL330_DIR_CCR] = "CCR",
-            [PL330_DIR_DAR] = "DAR"
-        })[rd], imm);
+    LOG_D("DMAMOV %s, %#x", ((const char * const[]){ [PL330_DIR_SAR] = "SAR", [PL330_DIR_CCR] = "CCR", [PL330_DIR_DAR] = "DAR" })[rd], imm);
 
     return PL330_SIZE_DMAMOV;
 }
@@ -450,11 +446,10 @@ static int pl330_cmd_dmald(rt_uint8_t *microcode, rt_uint32_t cond)
         *microcode |= (1 << 1) | (1 << 0);
     }
 
-    LOG_D("DMALD %c", ((char []){
-            [PL330_COND_SINGLE] = 'S',
-            [PL330_COND_BURST] = 'B',
-            [PL330_COND_ALWAYS] = 'A'
-        })[cond]);
+    LOG_D("DMALD %c", ((char[]){
+                          [PL330_COND_SINGLE] = 'S',
+                          [PL330_COND_BURST] = 'B',
+                          [PL330_COND_ALWAYS] = 'A' })[cond]);
 
     return PL330_SIZE_DMALD;
 }
@@ -488,11 +483,10 @@ static int pl330_cmd_dmast(rt_uint8_t *microcode, rt_uint32_t cond)
         *microcode |= (1 << 1) | (1 << 0);
     }
 
-    LOG_D("DMAST %c", ((char []){
-            [PL330_COND_SINGLE] = 'S',
-            [PL330_COND_BURST] = 'B',
-            [PL330_COND_ALWAYS] = 'A'
-        })[cond]);
+    LOG_D("DMAST %c", ((char[]){
+                          [PL330_COND_SINGLE] = 'S',
+                          [PL330_COND_BURST] = 'B',
+                          [PL330_COND_ALWAYS] = 'A' })[cond]);
 
     return PL330_SIZE_DMAST;
 }
@@ -541,7 +535,7 @@ static int pl330_cmd_dmalp(rt_uint8_t *microcode, rt_uint8_t lc, rt_uint16_t loo
  * @return Number of bytes written (always 2)
  */
 static int pl330_cmd_dmalpend(rt_uint8_t *microcode, rt_uint32_t cond,
-        rt_bool_t forever, rt_uint32_t loop, rt_uint8_t bjump)
+                              rt_bool_t forever, rt_uint32_t loop, rt_uint8_t bjump)
 {
     /*
      * DMALPEND encoding
@@ -573,11 +567,7 @@ static int pl330_cmd_dmalpend(rt_uint8_t *microcode, rt_uint32_t cond,
 
     *microcode = bjump;
 
-    LOG_D("DMALPEND %c (%sloop: %c bjump: %d)", ((char []){
-            [PL330_COND_SINGLE] = 'S',
-            [PL330_COND_BURST] = 'B',
-            [PL330_COND_ALWAYS] = 'A'
-        })[cond], forever ? "FE, " : "", loop ? 'Y' : 'N', bjump);
+    LOG_D("DMALPEND %c (%sloop: %c bjump: %d)", ((char[]){ [PL330_COND_SINGLE] = 'S', [PL330_COND_BURST] = 'B', [PL330_COND_ALWAYS] = 'A' })[cond], forever ? "FE, " : "", loop ? 'Y' : 'N', bjump);
 
     return PL330_SIZE_DMALPEND;
 }
@@ -653,7 +643,7 @@ static rt_uint32_t pl330_chan_id(struct pl330 *pl330, struct pl330_chan *pc)
  * @return DMA channel pointer, or RT_NULL/error pointer on failure
  */
 static struct rt_dma_chan *pl330_dma_request_chan(struct rt_dma_controller *ctrl,
-        struct rt_device *slave, void *fw_data)
+                                                  struct rt_device *slave, void *fw_data)
 {
     int idx = -1;
     struct pl330_chan *pc;
@@ -785,7 +775,7 @@ static rt_err_t pl330_dma_stop(struct rt_dma_chan *chan)
  * @return RT_EOK
  */
 static rt_err_t pl330_dma_config(struct rt_dma_chan *chan,
-        struct rt_dma_slave_config *conf)
+                                 struct rt_dma_slave_config *conf)
 {
     return RT_EOK;
 }
@@ -815,7 +805,7 @@ static rt_err_t pl330_dma_config(struct rt_dma_chan *chan,
  * @return RT_EOK on success, -RT_EINVAL if parameters are invalid
  */
 static rt_err_t pl330_dma_prep_memcpy(struct rt_dma_chan *chan,
-        rt_ubase_t dma_addr_src, rt_ubase_t dma_addr_dst, rt_size_t len)
+                                      rt_ubase_t dma_addr_src, rt_ubase_t dma_addr_dst, rt_size_t len)
 {
     void *mc;
     rt_err_t err;
@@ -934,8 +924,8 @@ static rt_err_t pl330_dma_prep_memcpy(struct rt_dma_chan *chan,
  * @return RT_EOK on success, -RT_EINVAL on invalid parameters
  */
 static rt_err_t pl330_dma_prep_cyclic(struct rt_dma_chan *chan,
-        rt_ubase_t dma_buf_addr, rt_size_t buf_len, rt_size_t period_len,
-        enum rt_dma_transfer_direction dir)
+                                      rt_ubase_t dma_buf_addr, rt_size_t buf_len, rt_size_t period_len,
+                                      enum rt_dma_transfer_direction dir)
 {
     void *mc;
     rt_err_t err;
@@ -1043,8 +1033,8 @@ static rt_err_t pl330_dma_prep_cyclic(struct rt_dma_chan *chan,
  * @return RT_EOK on success, -RT_EINVAL on invalid parameters
  */
 static rt_err_t pl330_dma_prep_single(struct rt_dma_chan *chan,
-        rt_ubase_t dma_buf_addr, rt_size_t buf_len,
-        enum rt_dma_transfer_direction dir)
+                                      rt_ubase_t dma_buf_addr, rt_size_t buf_len,
+                                      enum rt_dma_transfer_direction dir)
 {
     void *mc;
     rt_err_t err;
@@ -1099,10 +1089,10 @@ static rt_err_t pl330_dma_prep_single(struct rt_dma_chan *chan,
     mc += pl330_cmd_dmast(mc, PL330_COND_ALWAYS);
 
     mc += pl330_cmd_dmalpend(mc,
-            PL330_COND_ALWAYS,
-            RT_FALSE,
-            0, /* LC0 */
-            mc - pc->microcode - ljmp);
+                             PL330_COND_ALWAYS,
+                             RT_FALSE,
+                             0, /* LC0 */
+                             mc - pc->microcode - ljmp);
 
     mc += pl330_cmd_dmasev(mc, pl330_chan_id(pl330, pc));
 
@@ -1115,8 +1105,7 @@ static rt_err_t pl330_dma_prep_single(struct rt_dma_chan *chan,
 }
 
 /** @brief PL330 DMA controller operations vtable */
-static const struct rt_dma_controller_ops pl330_dma_ops =
-{
+static const struct rt_dma_controller_ops pl330_dma_ops = {
     .request_chan = pl330_dma_request_chan,
     .release_chan = pl330_dma_release_chan,
     .start = pl330_dma_start,
@@ -1414,15 +1403,13 @@ static rt_err_t pl330_remove(struct rt_platform_device *pdev)
 }
 
 /** @brief Device tree compatible IDs for the PL330 driver */
-static const struct rt_ofw_node_id pl330_ofw_ids[] =
-{
+static const struct rt_ofw_node_id pl330_ofw_ids[] = {
     { .compatible = "arm,pl330" },
     { /* sentinel */ }
 };
 
 /** @brief PL330 platform driver descriptor */
-static struct rt_platform_driver pl330_driver =
-{
+static struct rt_platform_driver pl330_driver = {
     .name = "dma-pl330",
     .ids = pl330_ofw_ids,
 
