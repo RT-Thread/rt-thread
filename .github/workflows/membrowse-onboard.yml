@@ -1,0 +1,139 @@
+name: Onboard to MemBrowse
+
+on:
+  workflow_dispatch:
+    inputs:
+      num_commits:
+        description: 'Number of commits to process'
+        required: true
+        default: '100'
+        type: string
+
+jobs:
+  load-targets:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Load target matrix
+        id: set-matrix
+        run: echo "matrix=$(jq -c '.' .github/membrowse-targets.json)" >> $GITHUB_OUTPUT
+
+  onboard:
+    needs: load-targets
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.load-targets.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install env tool and Python build deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq python3 python3-pip wget xz-utils build-essential
+          wget -qO install_ubuntu.sh https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          bash install_ubuntu.sh
+
+      - name: Install toolchain
+        run: |
+          set -e
+          case "${{ matrix.toolchain }}" in
+            arm-none-eabi)
+              sudo apt-get install -y -qq gcc-arm-none-eabi
+              echo "TOOLCHAIN_PATH=/usr/bin" >> $GITHUB_ENV
+              ;;
+            aarch64-none-elf)
+              wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.6/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz
+              sudo tar -xf gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz -C /opt
+              echo "TOOLCHAIN_PATH=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin" >> $GITHUB_ENV
+              ;;
+            llvm-arm)
+              wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz
+              sudo tar zxf LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz -C /opt
+              sudo apt-get install -y -qq libncurses5 libncurses5-dev libncursesw5-dev
+              echo "TOOLCHAIN_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
+              ;;
+            mips-sde-elf)
+              wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.1/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2
+              sudo tar xjf mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 -C /opt
+              echo "TOOLCHAIN_PATH=/opt/mips-2016.05/bin" >> $GITHUB_ENV
+              ;;
+            i386-unknown-elf)
+              wget -q https://github.com/zhkag/toolchains/releases/download/i386-unknown/i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2
+              sudo tar -jxf i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2 -C /opt
+              echo "TOOLCHAIN_PATH=/opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+              ;;
+            riscv-none-embed)
+              wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.5/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
+              sudo tar zxf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
+              echo "TOOLCHAIN_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+              ;;
+            riscv32-unknown-elf-multilib)
+              wget -q https://github.com/hpmicro/riscv-gnu-toolchain/releases/download/2022.05.15/riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz
+              sudo tar zxf riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz -C /opt
+              echo "TOOLCHAIN_PATH=/opt/riscv32-unknown-elf-newlib-multilib/bin" >> $GITHUB_ENV
+              ;;
+            xuantie-elf-newlib)
+              wget -q https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1751370399722/Xuantie-900-gcc-elf-newlib-x86_64-V3.2.0-20250627.tar.gz
+              sudo tar -zxf Xuantie-900-gcc-elf-newlib-x86_64-V3.2.0-20250627.tar.gz -C /opt
+              echo "TOOLCHAIN_PATH=/opt/Xuantie-900-gcc-elf-newlib-x86_64-V3.2.0/bin" >> $GITHUB_ENV
+              ;;
+            riscv32-esp-elf)
+              wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+              sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+              pip3 install --user esptool
+              echo "TOOLCHAIN_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
+              ;;
+            riscv64-linux-musl-k230)
+              wget -q https://download.rt-thread.org/rt-smart/riscv64/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2
+              sudo tar xjf riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2 -C /opt
+              echo "TOOLCHAIN_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+              ;;
+            gcc-host)
+              sudo apt-get install -y -qq libsdl2-dev
+              echo "TOOLCHAIN_PATH=/usr/bin" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "Unknown toolchain: ${{ matrix.toolchain }}"; exit 1 ;;
+          esac
+
+      - name: Run MemBrowse Onboard Action
+        uses: membrowse/membrowse-action/onboard-action@v1
+        with:
+          target_name: ${{ matrix.target_name }}
+          num_commits: ${{ github.event.inputs.num_commits }}
+          build_script: |
+            . $HOME/.env/env.sh
+            pip install -r tools/requirements.txt
+            export RTT_EXEC_PATH="$TOOLCHAIN_PATH"
+            export RTT_ROOT="$PWD"
+            export RTT_CC="${{ matrix.rtt_cc || 'gcc' }}"
+            [ -n "${{ matrix.rtt_cc_prefix }}" ] && export RTT_CC_PREFIX="${{ matrix.rtt_cc_prefix }}"
+            cd "${{ matrix.bsp_path }}"
+            pkgs --update --force-update
+            scons --pyconfig-silent
+            scons -j$(nproc)
+            build_status=$?
+            # The build regenerates tracked files (rtconfig.h/.config), leaving a
+            # dirty work tree. In binary-search mode onboard checks out another
+            # commit next, which git aborts ("local changes would be overwritten").
+            # git clean only removes untracked files, so restore tracked ones here.
+            # Runs unconditionally but preserves the build's exit status.
+            git -C "$RTT_ROOT" checkout -- . || true
+            exit $build_status
+          elf: ${{ matrix.elf }}
+          ld: ${{ matrix.ld }}
+          map_file: ${{ matrix.map_file }}
+          linker_vars: ${{ matrix.linker_vars }}
+          binary_search: 'true'
+          api_key: ${{ secrets.MEMBROWSE_API_KEY }}
+          api_url: ${{ vars.MEMBROWSE_API_URL }}
