@@ -8,6 +8,20 @@
  * 2024-07-07     GuEe-GUI     first version
  */
 
+/**
+ * @file procfs.c
+ * @brief PCI procfs interface for userspace configuration space access
+ *
+ * Provides:
+ * - /proc/pci/devices: A list of all PCI devices with their BARs and drivers
+ * - /proc/pci/<BDF>: Per-device config space read/write (like Linux's sysfs config)
+ *
+ * The per-device file allows userspace tools (e.g. lspci equivalent) to
+ * read and write PCI configuration space directly, with proper endian
+ * conversion (little-endian to CPU byte order). PM runtime wake is
+ * managed so that config space accesses work even on suspended devices.
+ */
+
 #include <rtdef.h>
 #include <drivers/byteorder.h>
 
@@ -23,6 +37,7 @@
 static struct rt_bus *pci_bus;
 static struct proc_dentry *pci_proc_dentry;
 
+/** @brief Copy data to userspace (with LWP support) */
 rt_inline void copy_to_user(void *to, void *from, size_t size)
 {
 #ifdef RT_USING_LWP
@@ -33,6 +48,7 @@ rt_inline void copy_to_user(void *to, void *from, size_t size)
     }
 }
 
+/** @brief Copy data from userspace (with LWP support) */
 rt_inline void copy_from_user(void *to, const void *from, size_t size)
 {
 #ifdef RT_USING_LWP
@@ -43,6 +59,15 @@ rt_inline void copy_from_user(void *to, const void *from, size_t size)
     }
 }
 
+/**
+ * @brief Ensure the device is powered on for config space access
+ *
+ * If PM is disabled on the device, temporarily enables it for the
+ * duration of the access. The original state is saved in out_flags.
+ *
+ * @param[in]  pdev      PCI device
+ * @param[out] out_flags Original PM enabled state
+ */
 static void pci_pm_runtime_get(struct rt_pci_device *pdev, rt_ubase_t *out_flags)
 {
     *out_flags = pdev->pm_enabled;
@@ -53,6 +78,14 @@ static void pci_pm_runtime_get(struct rt_pci_device *pdev, rt_ubase_t *out_flags
     }
 }
 
+/**
+ * @brief Restore PM state after config space access
+ *
+ * If PM was off before the access, disables it again.
+ *
+ * @param[in] pdev  PCI device
+ * @param[in] flags Original PM enabled state
+ */
 static void pci_pm_runtime_put(struct rt_pci_device *pdev, rt_ubase_t *flags)
 {
     if (!*flags)
@@ -61,6 +94,18 @@ static void pci_pm_runtime_put(struct rt_pci_device *pdev, rt_ubase_t *flags)
     }
 }
 
+/**
+ * @brief Read PCI config space from userspace (/proc/pci/<BDF>)
+ *
+ * Handles arbitrary offsets and sizes with proper alignment.
+ * Data is converted to little-endian for userspace consumption.
+ *
+ * @param[in]  file  File descriptor
+ * @param[out] buf   User buffer
+ * @param[in]  count Number of bytes to read
+ * @param[in]  ppos  File position (offset in config space)
+ * @return Number of bytes read
+ */
 static ssize_t pci_read(struct dfs_file *file, void *buf, size_t count, off_t *ppos)
 {
     off_t pos = *ppos;
@@ -142,6 +187,18 @@ static ssize_t pci_read(struct dfs_file *file, void *buf, size_t count, off_t *p
     return res;
 }
 
+/**
+ * @brief Write PCI config space from userspace (/proc/pci/<BDF>)
+ *
+ * Handles arbitrary offsets and sizes with proper alignment.
+ * Data is converted from little-endian (userspace) to CPU byte order.
+ *
+ * @param[in] file  File descriptor
+ * @param[in] buf   User buffer
+ * @param[in] count Number of bytes to write
+ * @param[in] ppos  File position (offset in config space)
+ * @return Number of bytes written
+ */
 static ssize_t pci_write(struct dfs_file *file, const void *buf, size_t count, off_t *ppos)
 {
     off_t pos = *ppos;
@@ -217,6 +274,14 @@ static ssize_t pci_write(struct dfs_file *file, const void *buf, size_t count, o
     return res;
 }
 
+/**
+ * @brief Seek within PCI config space (used by pread/pwrite-like operations)
+ *
+ * @param[in] file    File descriptor
+ * @param[in] offset  Seek offset
+ * @param[in] wherece SEEK_SET, SEEK_CUR, or SEEK_END (config space size)
+ * @return New position, or negative error
+ */
 static off_t pci_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
     struct proc_dentry *dentry = file->vnode->data;
@@ -247,6 +312,7 @@ static off_t pci_lseek(struct dfs_file *file, off_t offset, int wherece)
     return -EIO;
 }
 
+/** @brief File operations for per-device config space access */
 static const struct dfs_file_ops pci_fops =
 {
     .read = pci_read,
@@ -254,6 +320,11 @@ static const struct dfs_file_ops pci_fops =
     .lseek = pci_lseek,
 };
 
+/**
+ * @brief Create /proc/pci/<BDF> entry for a PCI device
+ *
+ * @param[in] pdev PCI device
+ */
 void pci_procfs_attach(struct rt_pci_device *pdev)
 {
     const char *name;
@@ -275,6 +346,11 @@ void pci_procfs_attach(struct rt_pci_device *pdev)
     proc_release(dentry);
 }
 
+/**
+ * @brief Remove /proc/pci/<BDF> entry for a PCI device
+ *
+ * @param[in] pdev PCI device
+ */
 void pci_procfs_detach(struct rt_pci_device *pdev)
 {
     if (!pci_proc_dentry)
@@ -285,6 +361,16 @@ void pci_procfs_detach(struct rt_pci_device *pdev)
     proc_remove_dentry(rt_dm_dev_get_name(&pdev->parent), pci_proc_dentry);
 }
 
+/**
+ * @brief Show all PCI devices in /proc/pci/devices
+ *
+ * Output format for each device:
+ *   BBDF\tVVVVDDDD\tIRQ\tBAR0_base...\tROM_base\tBAR0_size...\tROM_size\tdriver
+ *
+ * @param[in] seq Seq-file output buffer
+ * @param[in] data Unused
+ * @return 0 on success
+ */
 static int pci_single_show(struct dfs_seq_file *seq, void *data)
 {
     struct rt_device *dev;
@@ -337,6 +423,13 @@ static int pci_single_show(struct dfs_seq_file *seq, void *data)
     return 0;
 }
 
+/**
+ * @brief Initialize PCI procfs: create /proc/pci and /proc/pci/devices
+ *
+ * Called at the INIT_PREV_EXPORT level (before most other init calls).
+ *
+ * @return 0 on success, negative on error
+ */
 static int pci_procfs_init(void)
 {
     struct proc_dentry *dentry;

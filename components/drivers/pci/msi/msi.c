@@ -8,6 +8,21 @@
  * 2022-11-07     GuEe-GUI     first version
  */
 
+/**
+ * @file msi.c
+ * @brief PCI MSI (Message Signaled Interrupts) core implementation
+ *
+ * Implements MSI and MSI-X interrupt management:
+ * - MSI: Up to 32 vectors per device, config-space based
+ * - MSI-X: Up to 2048 vectors per device, table-based (MMIO)
+ *
+ * Key operations:
+ * - Vector allocation with affinity support
+ * - Interrupt mask/unmask (per-vector for MSI-X, bulk for MSI)
+ * - MSI message composition and delivery
+ * - NUMA-aware memory affinity for MSI data addresses
+ */
+
 #include <drivers/pci_msi.h>
 #include <drivers/core/numa.h>
 
@@ -15,29 +30,34 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-/* PCI has 2048 max IRQs in MSI-X */
+/** @brief Default affinity bitmap for up to 2048 MSI-X IRQs */
 static RT_IRQ_AFFINITY_DECLARE(msi_affinity_default[2048]) rt_section(".bss.noclean.pci.msi");
 
+/** @brief Convenience wrapper for spinlock acquire */
 rt_inline void spin_lock(struct rt_spinlock *lock)
 {
     rt_hw_spin_lock(&lock->lock);
 }
 
+/** @brief Convenience wrapper for spinlock release */
 rt_inline void spin_unlock(struct rt_spinlock *lock)
 {
     rt_hw_spin_unlock(&lock->lock);
 }
 
+/** @brief Get the base address of an MSI-X table entry */
 rt_inline void *msix_table_base(struct rt_pci_msix_conf *msix)
 {
     return msix->table_base + msix->index * PCIM_MSIX_ENTRY_SIZE;
 }
 
+/** @brief Get the vector control register address for an MSI-X entry */
 rt_inline void *msix_vector_ctrl_base(struct rt_pci_msix_conf *msix)
 {
     return msix_table_base(msix) + PCIM_MSIX_ENTRY_VECTOR_CTRL;
 }
 
+/** @brief Write the vector control register for an MSI-X entry */
 rt_inline void msix_write_vector_ctrl(struct rt_pci_msix_conf *msix,
         rt_uint32_t ctrl)
 {
@@ -46,6 +66,7 @@ rt_inline void msix_write_vector_ctrl(struct rt_pci_msix_conf *msix,
     HWREG32(vc_addr) = ctrl;
 }
 
+/** @brief Mask an MSI-X vector (set mask bit in vector control) */
 rt_inline void msix_mask(struct rt_pci_msix_conf *msix)
 {
     msix->msg_ctrl |= PCIM_MSIX_ENTRYVECTOR_CTRL_MASK;
@@ -55,6 +76,13 @@ rt_inline void msix_mask(struct rt_pci_msix_conf *msix)
     HWREG32(msix->table_base);
 }
 
+/**
+ * @brief Update MSI-X global control register (read-modify-write)
+ *
+ * @param[in] pdev  PCI device
+ * @param[in] clear Bits to clear in the control register
+ * @param[in] set   Bits to set in the control register
+ */
 static void msix_update_ctrl(struct rt_pci_device *pdev,
         rt_uint16_t clear, rt_uint16_t set)
 {
@@ -66,12 +94,22 @@ static void msix_update_ctrl(struct rt_pci_device *pdev,
     rt_pci_write_config_u16(pdev, pdev->msix_cap + PCIR_MSIX_CTRL, msgctl);
 }
 
+/** @brief Unmask an MSI-X vector (clear mask bit in vector control) */
 rt_inline void msix_unmask(struct rt_pci_msix_conf *msix)
 {
     msix->msg_ctrl &= ~PCIM_MSIX_ENTRYVECTOR_CTRL_MASK;
     msix_write_vector_ctrl(msix, msix->msg_ctrl);
 }
 
+/**
+ * @brief Compute the full mask for a multi-MSI capability
+ *
+ * For devices supporting multiple MSI vectors, this computes
+ * a bitmask covering all allocated vectors (1 << (1 << multi_msg_max)).
+ *
+ * @param[in] msi MSI configuration
+ * @return Bitmask for all multi-MSI vectors
+ */
 rt_inline rt_uint32_t msi_multi_mask(struct rt_pci_msi_conf *msi)
 {
     if (msi->cap.multi_msg_max >= 5)
@@ -82,6 +120,16 @@ rt_inline rt_uint32_t msi_multi_mask(struct rt_pci_msi_conf *msi)
     return (1 << (1 << msi->cap.multi_msg_max)) - 1;
 }
 
+/**
+ * @brief Modify the MSI mask register (with per-vector mask support)
+ *
+ * Only available if the MSI capability supports per-vector masking.
+ *
+ * @param[in] msi   MSI configuration
+ * @param[in] clear Bits to clear in the mask
+ * @param[in] set   Bits to set in the mask
+ * @param[in] pdev  PCI device
+ */
 static void msi_write_mask(struct rt_pci_msi_conf *msi,
         rt_uint32_t clear, rt_uint32_t set, struct rt_pci_device *pdev)
 {
@@ -97,18 +145,26 @@ static void msi_write_mask(struct rt_pci_msi_conf *msi,
     }
 }
 
+/** @brief Set mask bits for MSI vectors */
 rt_inline void msi_mask(struct rt_pci_msi_conf *msi,
         rt_uint32_t mask, struct rt_pci_device *pdev)
 {
     msi_write_mask(msi, 0, mask, pdev);
 }
 
+/** @brief Clear mask bits for MSI vectors */
 rt_inline void msi_unmask(struct rt_pci_msi_conf *msi,
         rt_uint32_t mask, struct rt_pci_device *pdev)
 {
     msi_write_mask(msi, mask, 0, pdev);
 }
 
+/**
+ * @brief Enable or disable MSI globally for a device
+ *
+ * @param[in] pdev   PCI device
+ * @param[in] enable RT_TRUE to enable MSI
+ */
 static void msi_write_enable(struct rt_pci_device *pdev, rt_bool_t enable)
 {
     rt_uint16_t msgctl;
@@ -125,6 +181,16 @@ static void msi_write_enable(struct rt_pci_device *pdev, rt_bool_t enable)
     rt_pci_write_config_u16(pdev, pdev->msi_cap + PCIR_MSI_CTRL, msgctl);
 }
 
+/**
+ * @brief Initialize IRQ affinity for an MSI descriptor
+ *
+ * Sets up per-vector CPU affinity and handles NUMA memory affinity
+ * for the MSI data address.
+ *
+ * @param[in] desc       MSI descriptor
+ * @param[in] msi_index  Vector index within the MSI group
+ * @param[in] cpumasks   CPU affinity bitmaps
+ */
 static void msi_affinity_init(struct rt_pci_msi_desc *desc, int msi_index,
         rt_bitmap_t *cpumasks)
 {
@@ -176,6 +242,11 @@ static void msi_affinity_init(struct rt_pci_msi_desc *desc, int msi_index,
     }
 }
 
+/**
+ * @brief Shutdown MSI for a device (disable MSI, re-enable INTx)
+ *
+ * @param[in] pdev PCI device
+ */
 void rt_pci_msi_shutdown(struct rt_pci_device *pdev)
 {
     struct rt_pci_msi_desc *desc;
@@ -198,6 +269,13 @@ void rt_pci_msi_shutdown(struct rt_pci_device *pdev)
     pdev->msi_enabled = RT_FALSE;
 }
 
+/**
+ * @brief Shutdown MSI-X for a device (disable MSI-X, re-enable INTx)
+ *
+ * Masks all MSI-X vectors and disables MSI-X in the global control register.
+ *
+ * @param[in] pdev PCI device
+ */
 void rt_pci_msix_shutdown(struct rt_pci_device *pdev)
 {
     struct rt_pci_msi_desc *desc;
@@ -218,6 +296,14 @@ void rt_pci_msix_shutdown(struct rt_pci_device *pdev)
     pdev->msix_enabled = RT_FALSE;
 }
 
+/**
+ * @brief Free all IRQs allocated for MSI/MSI-X on a device
+ *
+ * Unmaps MSI-X table if present, cleans up IRQs, and frees
+ * all MSI descriptors.
+ *
+ * @param[in] pdev PCI device
+ */
 void rt_pci_msi_free_irqs(struct rt_pci_device *pdev)
 {
     struct rt_pci_msi_desc *desc, *last_desc = RT_NULL;
@@ -254,6 +340,15 @@ void rt_pci_msi_free_irqs(struct rt_pci_device *pdev)
     }
 }
 
+/**
+ * @brief Write an MSI/MSI-X message to the device
+ *
+ * For MSI-X: writes address/data to the MSI-X table entry in MMIO space.
+ * For MSI: writes address/data to the MSI capability registers in config space.
+ *
+ * @param[in] desc MSI descriptor
+ * @param[in] msg  New MSI message (address_lo, address_hi, data)
+ */
 void rt_pci_msi_write_msg(struct rt_pci_msi_desc *desc, struct rt_pci_msi_msg *msg)
 {
     struct rt_pci_device *pdev = desc->pdev;
@@ -330,6 +425,11 @@ void rt_pci_msi_write_msg(struct rt_pci_msi_desc *desc, struct rt_pci_msi_msg *m
     }
 }
 
+/**
+ * @brief Mask an MSI/MSI-X IRQ
+ *
+ * @param[in] pirq PIC IRQ with associated MSI descriptor
+ */
 void rt_pci_msi_mask_irq(struct rt_pic_irq *pirq)
 {
     struct rt_pci_msi_desc *desc;
@@ -347,6 +447,11 @@ void rt_pci_msi_mask_irq(struct rt_pic_irq *pirq)
     }
 }
 
+/**
+ * @brief Unmask an MSI/MSI-X IRQ
+ *
+ * @param[in] pirq PIC IRQ with associated MSI descriptor
+ */
 void rt_pci_msi_unmask_irq(struct rt_pic_irq *pirq)
 {
     struct rt_pci_msi_desc *desc;
@@ -364,6 +469,19 @@ void rt_pci_msi_unmask_irq(struct rt_pic_irq *pirq)
     }
 }
 
+/**
+ * @brief Allocate interrupt vectors for a PCI device
+ *
+ * Tries MSI-X first (if RT_PCI_IRQ_F_MSIX flag set), then MSI,
+ * and finally falls back to legacy INTx.
+ *
+ * @param[in]  pdev       PCI device
+ * @param[in]  min        Minimum number of vectors required
+ * @param[in]  max        Maximum number of vectors desired
+ * @param[in]  flags      IRQ type flags (RT_PCI_IRQ_F_MSIX, RT_PCI_IRQ_F_MSI, RT_PCI_IRQ_F_LEGACY)
+ * @param[in]  affinities CPU affinity bitmaps for each vector (can be NULL)
+ * @return Number of allocated vectors on success, or negative error code
+ */
 rt_ssize_t rt_pci_alloc_vector(struct rt_pci_device *pdev, int min, int max,
         rt_uint32_t flags, RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
@@ -435,6 +553,11 @@ rt_ssize_t rt_pci_alloc_vector(struct rt_pci_device *pdev, int min, int max,
     return res;
 }
 
+/**
+ * @brief Free all vectors allocated for a PCI device
+ *
+ * @param[in] pdev PCI device
+ */
 void rt_pci_free_vector(struct rt_pci_device *pdev)
 {
     if (!pdev)
@@ -447,6 +570,15 @@ void rt_pci_free_vector(struct rt_pci_device *pdev)
     rt_pci_irq_mask(pdev);
 }
 
+/**
+ * @brief Verify that all MSI entries respect the device's 64-bit capability
+ *
+ * If a device is marked no_64bit_msi but the MSI controller assigned a
+ * 64-bit address (address_hi != 0), the configuration is invalid.
+ *
+ * @param[in] pdev PCI device
+ * @return RT_EOK if valid, -RT_EIO otherwise
+ */
 static rt_err_t msi_verify_entries(struct rt_pci_device *pdev)
 {
     if (pdev->no_64bit_msi)
@@ -470,6 +602,16 @@ static rt_err_t msi_verify_entries(struct rt_pci_device *pdev)
     return RT_EOK;
 }
 
+/**
+ * @brief Insert an MSI descriptor into the device's descriptor list
+ *
+ * Allocates memory for the descriptor plus per-vector affinity pointers
+ * (for MSI, not needed for MSI-X).
+ *
+ * @param[in] pdev      PCI device
+ * @param[in] init_desc Initialized descriptor template to copy
+ * @return RT_EOK on success, -RT_ENOMEM on allocation failure
+ */
 static rt_err_t msi_insert_desc(struct rt_pci_device *pdev,
         struct rt_pci_msi_desc *init_desc)
 {
@@ -502,6 +644,14 @@ static rt_err_t msi_insert_desc(struct rt_pci_device *pdev,
     return RT_EOK;
 }
 
+/**
+ * @brief Get the number of MSI vectors supported by a device
+ *
+ * Reads the Multiple Message Capable field from the MSI control register.
+ *
+ * @param[in] pdev PCI device
+ * @return Number of vectors (1, 2, 4, 8, 16, or 32), or negative error
+ */
 rt_ssize_t rt_pci_msi_vector_count(struct rt_pci_device *pdev)
 {
     rt_uint16_t msgctl;
@@ -521,6 +671,12 @@ rt_ssize_t rt_pci_msi_vector_count(struct rt_pci_device *pdev)
     return 1 << ((msgctl & PCIM_MSICTRL_MMC_MASK) >> 1);
 }
 
+/**
+ * @brief Disable MSI on a device
+ *
+ * @param[in] pdev PCI device
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_msi_disable(struct rt_pci_device *pdev)
 {
     if (!pdev)
@@ -543,6 +699,16 @@ rt_err_t rt_pci_msi_disable(struct rt_pci_device *pdev)
     return RT_EOK;
 }
 
+/**
+ * @brief Set up an MSI descriptor from the device's MSI capability
+ *
+ * Reads the MSI control register to determine 64-bit support,
+ * per-vector masking support, and multi-message capability.
+ *
+ * @param[in] pdev PCI device
+ * @param[in] nvec Number of vectors to allocate
+ * @return RT_EOK on success
+ */
 static rt_err_t msi_setup_msi_desc(struct rt_pci_device *pdev, int nvec)
 {
     rt_uint16_t msgctl;
@@ -590,6 +756,17 @@ static rt_err_t msi_setup_msi_desc(struct rt_pci_device *pdev, int nvec)
     return msi_insert_desc(pdev, &desc);
 }
 
+/**
+ * @brief Initialize MSI capability and allocate vectors
+ *
+ * Disables MSI first, sets up the descriptor, masks all vectors,
+ * allocates IRQs from the MSI PIC, and finally enables MSI.
+ *
+ * @param[in] pdev       PCI device
+ * @param[in] nvec       Number of vectors
+ * @param[in] affinities CPU affinity bitmaps
+ * @return Number of allocated vectors, or negative error
+ */
 static rt_ssize_t msi_capability_init(struct rt_pci_device *pdev,
         int nvec, RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
@@ -650,6 +827,15 @@ static rt_ssize_t msi_capability_init(struct rt_pci_device *pdev,
     return nvec;
 }
 
+/**
+ * @brief Enable MSI with a range of vectors and affinity
+ *
+ * @param[in] pdev       PCI device
+ * @param[in] min        Minimum vectors
+ * @param[in] max        Maximum vectors
+ * @param[in] affinities CPU affinity bitmaps
+ * @return Number of allocated vectors, or negative error
+ */
 rt_ssize_t rt_pci_msi_enable_range_affinity(struct rt_pci_device *pdev,
         int min, int max, RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
@@ -693,6 +879,12 @@ rt_ssize_t rt_pci_msi_enable_range_affinity(struct rt_pci_device *pdev,
     return msi_capability_init(pdev, nvec, affinities);
 }
 
+/**
+ * @brief Get the number of MSI-X vectors supported
+ *
+ * @param[in] pdev PCI device
+ * @return Number of MSI-X table entries, or negative error
+ */
 rt_ssize_t rt_pci_msix_vector_count(struct rt_pci_device *pdev)
 {
     rt_uint16_t msgctl;
@@ -712,6 +904,12 @@ rt_ssize_t rt_pci_msix_vector_count(struct rt_pci_device *pdev)
     return rt_pci_msix_table_size(msgctl);
 }
 
+/**
+ * @brief Disable MSI-X on a device
+ *
+ * @param[in] pdev PCI device
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_msix_disable(struct rt_pci_device *pdev)
 {
     if (!pdev)
@@ -734,6 +932,16 @@ rt_err_t rt_pci_msix_disable(struct rt_pci_device *pdev)
     return RT_EOK;
 }
 
+/**
+ * @brief Remap the MSI-X table from a device's BAR to virtual memory
+ *
+ * Reads the MSI-X Table Offset / Table BIR register, locates the
+ * corresponding BAR, and maps the table region into kernel space.
+ *
+ * @param[in] pdev        PCI device
+ * @param[in] entries_nr  Number of table entries to map
+ * @return Virtual address of the MSI-X table, or RT_NULL on failure
+ */
 static void *msix_table_remap(struct rt_pci_device *pdev, rt_size_t entries_nr)
 {
     rt_uint8_t bir;
@@ -755,6 +963,18 @@ static void *msix_table_remap(struct rt_pci_device *pdev, rt_size_t entries_nr)
     return rt_ioremap((void *)table_base_phys, entries_nr * PCIM_MSIX_ENTRY_SIZE);
 }
 
+/**
+ * @brief Set up MSI-X descriptors for an array of entries
+ *
+ * Creates one MSI descriptor per MSI-X entry, recording each entry's
+ * current vector control state.
+ *
+ * @param[in] pdev       PCI device
+ * @param[in] table_base Virtual address of the MSI-X table
+ * @param[in] entries    Array of MSI-X entry specifications
+ * @param[in] nvec       Number of entries
+ * @return RT_EOK on success
+ */
 static rt_err_t msix_setup_msi_descs(struct rt_pci_device *pdev,
         void *table_base, struct rt_pci_msix_entry *entries, int nvec)
 {
@@ -788,6 +1008,21 @@ static rt_err_t msix_setup_msi_descs(struct rt_pci_device *pdev,
     return err;
 }
 
+/**
+ * @brief Initialize MSI-X capability and allocate vectors
+ *
+ * 1. Enable MSI-X with all vectors masked
+ * 2. Map the MSI-X table from device BAR
+ * 3. Set up descriptors and allocate IRQs
+ * 4. Update entry IRQ numbers and affinity
+ * 5. Unmask vectors at the function level
+ *
+ * @param[in] pdev       PCI device
+ * @param[in] entries    MSI-X entry specifications
+ * @param[in] nvec       Number of entries
+ * @param[in] affinities CPU affinity bitmaps
+ * @return Number of allocated vectors, or negative error
+ */
 static rt_ssize_t msix_capability_init(struct rt_pci_device *pdev,
         struct rt_pci_msix_entry *entries, int nvec,
         RT_IRQ_AFFINITY_DECLARE((*affinities)))
@@ -878,6 +1113,16 @@ _out_disbale_msix:
     return err;
 }
 
+/**
+ * @brief Enable MSI-X with a range of vectors and affinity
+ *
+ * @param[in] pdev       PCI device
+ * @param[in] entries    MSI-X entry specifications (array of rt_pci_msix_entry)
+ * @param[in] min        Minimum vectors
+ * @param[in] max        Maximum vectors
+ * @param[in] affinities CPU affinity bitmaps
+ * @return Number of allocated vectors, or negative error
+ */
 rt_ssize_t rt_pci_msix_enable_range_affinity(struct rt_pci_device *pdev,
         struct rt_pci_msix_entry *entries, int min, int max,
         RT_IRQ_AFFINITY_DECLARE((*affinities)))

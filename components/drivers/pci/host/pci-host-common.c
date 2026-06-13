@@ -8,10 +8,32 @@
  * 2022-10-24     GuEe-GUI     first version
  */
 
+/**
+ * @file pci-host-common.c
+ * @brief Common PCI host controller probe/remove logic
+ *
+ * Provides a shared probe sequence for ECAM-based PCI host controllers:
+ * 1. Allocate host bridge
+ * 2. IOMap the ECAM configuration space window
+ * 3. Parse device tree properties (bus-range, ranges, domain)
+ * 4. Create ECAM config window
+ * 5. Probe the host bridge (register root bus + scan)
+ */
+
 #include <rtthread.h>
 
 #include "../ecam.h"
 
+/**
+ * @brief Common probe function for ECAM-based PCI host controllers
+ *
+ * Maps the config space MMIO region, initializes the host bridge
+ * from device tree data, creates an ECAM configuration window,
+ * and probes the PCI hierarchy.
+ *
+ * @param[in] pdev Platform device representing the PCI host controller
+ * @return RT_EOK on success, error code otherwise
+ */
 rt_err_t pci_host_common_probe(struct rt_platform_device *pdev)
 {
     void *base;
@@ -69,6 +91,15 @@ _fail:
     return err;
 }
 
+/**
+ * @brief Common remove function for ECAM-based PCI host controllers
+ *
+ * Removes the host bridge and all enumerated devices, unmaps the
+ * ECAM window, and frees the host bridge.
+ *
+ * @param[in] pdev Platform device to remove
+ * @return RT_EOK
+ */
 rt_err_t pci_host_common_remove(struct rt_platform_device *pdev)
 {
     struct pci_ecam_config_window *conf_win;

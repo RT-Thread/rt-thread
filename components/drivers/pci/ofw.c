@@ -8,6 +8,17 @@
  * 2022-10-24     GuEe-GUI     first version
  */
 
+/**
+ * @file ofw.c
+ * @brief PCI Device Tree (Open Firmware) integration
+ *
+ * Integrates PCI bus enumeration with the device tree framework:
+ * - Parses "bus-range", "ranges", and "dma-ranges" properties for host bridges
+ * - Parses "interrupt-map" for INTx interrupt routing
+ * - Discovers MSI parent controllers via "msi-parent" and "msi-map"
+ * - Associates device tree nodes with enumerated PCI devices
+ */
+
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -21,6 +32,19 @@
 #include <drivers/ofw_irq.h>
 #include <drivers/ofw_fdt.h>
 
+/**
+ * @brief Parse interrupt routing for a PCI device from device tree
+ *
+ * Follows the PCI interrupt mapping rules from the Devicetree Specification:
+ * 1. Check the device's own device tree node for "interrupts" property
+ * 2. Check for a local "interrupt-map" in the device node
+ * 3. Walk up the PCI tree through bridges, swizzling INTx pins
+ * 4. At the root bus, use the host bridge's "interrupt-map" property
+ *
+ * @param[in]  pdev    PCI device
+ * @param[out] out_irq Parsed interrupt specifier
+ * @return RT_EOK on success, -RT_ENOSYS if no interrupt pin, error code otherwise
+ */
 static rt_err_t pci_ofw_irq_parse(struct rt_pci_device *pdev, struct rt_ofw_cell_args *out_irq)
 {
     rt_err_t err = RT_EOK;
@@ -128,6 +152,17 @@ _err:
     return err;
 }
 
+/**
+ * @brief Parse and map an IRQ for a PCI device from device tree
+ *
+ * Wrapper around pci_ofw_irq_parse() + rt_ofw_map_irq().
+ * Called by the host bridge's irq_map callback.
+ *
+ * @param[in] pdev PCI device
+ * @param[in] slot Slot number at root bus (after swizzling)
+ * @param[in] pin  INTx pin number (after swizzling)
+ * @return IRQ number on success, -1 on failure
+ */
 int rt_pci_ofw_irq_parse_and_map(struct rt_pci_device *pdev,
         rt_uint8_t slot, rt_uint8_t pin)
 {
@@ -158,6 +193,29 @@ _end:
     return irq;
 }
 
+/**
+ * @brief Parse PCI "ranges" or "dma-ranges" property from device tree
+ *
+ * The ranges property defines the mapping between CPU address space
+ * and PCI bus address space. Each entry contains:
+ *   phys.hi: npt000ss bbbbbbbb dddddfff rrrrrrrr
+ *   phys.mid/phys.lo: PCI address
+ *   cpu.addr: CPU physical address
+ *   size: region size
+ *
+ * where:
+ *   n: relocatable flag, p: prefetchable, t: aliased
+ *   ss: space code (00=config, 01=I/O, 10=32-bit mem, 11=64-bit mem)
+ *
+ * @param[in]  dev_np         Device tree node containing the ranges property
+ * @param[in]  propname       Property name ("ranges" or "dma-ranges")
+ * @param[in]  phy_addr_cells Number of cells for PCI address (typically 3)
+ * @param[in]  phy_size_cells Number of cells for size
+ * @param[in]  cpu_addr_cells Number of cells for CPU address
+ * @param[out] out_regions    Parsed bus regions array (caller must free)
+ * @param[out] out_regions_nr Number of parsed regions
+ * @return RT_EOK on success
+ */
 static rt_err_t pci_ofw_parse_ranges(struct rt_ofw_node *dev_np, const char *propname,
         int phy_addr_cells, int phy_size_cells, int cpu_addr_cells,
         struct rt_pci_bus_region **out_regions, rt_size_t *out_regions_nr)
@@ -245,6 +303,17 @@ static rt_err_t pci_ofw_parse_ranges(struct rt_ofw_node *dev_np, const char *pro
     return RT_EOK;
 }
 
+/**
+ * @brief Parse bus address ranges from device tree for a host bridge
+ *
+ * Reads #address-cells (must be 3), #size-cells, and parses
+ * both "ranges" (CPU→PCI mapping) and "dma-ranges" (PCI→CPU mapping)
+ * properties. Calls rt_pci_region_setup() to finalize bus_start values.
+ *
+ * @param[in] dev_np      Device tree node for the host bridge
+ * @param[in] host_bridge PCI host bridge to populate
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
         struct rt_pci_host_bridge *host_bridge)
 {
@@ -298,6 +367,17 @@ rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
     return RT_EOK;
 }
 
+/**
+ * @brief Initialize a host bridge from device tree
+ *
+ * Sets up the IRQ slot/pin swizzling and mapping callbacks,
+ * parses "bus-range" (default: 0x00-0xff), discovers the
+ * PCI domain from device tree, and parses address ranges.
+ *
+ * @param[in] dev_np      Device tree node for the host bridge
+ * @param[in] host_bridge PCI host bridge to initialize
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node *dev_np,
         struct rt_pci_host_bridge *host_bridge)
 {
@@ -328,6 +408,12 @@ rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node *dev_np,
     return err;
 }
 
+/**
+ * @brief Initialize OFW data for a PCI bus (currently a no-op)
+ *
+ * @param[in] bus PCI bus
+ * @return RT_EOK
+ */
 rt_err_t rt_pci_ofw_bus_init(struct rt_pci_bus *bus)
 {
     rt_err_t err = RT_EOK;
@@ -335,6 +421,12 @@ rt_err_t rt_pci_ofw_bus_init(struct rt_pci_bus *bus)
     return err;
 }
 
+/**
+ * @brief Free OFW data for a PCI bus (currently a no-op)
+ *
+ * @param[in] bus PCI bus
+ * @return RT_EOK
+ */
 rt_err_t rt_pci_ofw_bus_free(struct rt_pci_bus *bus)
 {
     rt_err_t err = RT_EOK;
@@ -460,6 +552,19 @@ rt_err_t rt_pci_ofw_bus_free(struct rt_pci_bus *bus)
  *      };
  *  };
  */
+
+/**
+ * @brief Initialize the MSI PIC for a device from device tree
+ *
+ * Finds the MSI parent controller by:
+ * 1. Checking the host bridge's "msi-parent" phandle
+ * 2. Falling back to "msi-map" lookup using the device's Requester ID
+ *
+ * Validates that the MSI PIC supports the required operations:
+ * irq_compose_msi_msg, irq_alloc_msi, irq_free_msi.
+ *
+ * @param[in] pdev PCI device
+ */
 static void ofw_msi_pic_init(struct rt_pci_device *pdev)
 {
 #ifdef RT_PCI_MSI
@@ -528,6 +633,15 @@ _out_put_msi_parent_node:
 #endif
 }
 
+/**
+ * @brief Extract the devfn from a device tree node's "reg" property
+ *
+ * PCI devices in device tree have reg = <(bus << 16) | (devfn << 8) 0 0 0 0>
+ * The bus portion is ignored here; only devfn (bits 15:8) is extracted.
+ *
+ * @param[in] np Device tree node
+ * @return devfn on success, negative error code on failure
+ */
 static rt_int32_t ofw_pci_devfn(struct rt_ofw_node *np)
 {
     rt_int32_t res;
@@ -538,6 +652,16 @@ static rt_int32_t ofw_pci_devfn(struct rt_ofw_node *np)
     return res > 0 ? ((reg[0] >> 8) & 0xff) : res;
 }
 
+/**
+ * @brief Find a device tree child node matching a given devfn
+ *
+ * Iterates through the parent's children. Also checks inside
+ * "multifunc-device" containers for multi-function PCI devices.
+ *
+ * @param[in] np    Parent device tree node
+ * @param[in] devfn Device/function number to find
+ * @return Matching device tree node, or RT_NULL if not found
+ */
 static struct rt_ofw_node *ofw_find_device(struct rt_ofw_node *np, rt_uint32_t devfn)
 {
     struct rt_ofw_node *dev_np, *mfd_np;
@@ -566,6 +690,16 @@ static struct rt_ofw_node *ofw_find_device(struct rt_ofw_node *np, rt_uint32_t d
     return RT_NULL;
 }
 
+/**
+ * @brief Associate a device tree node with an enumerated PCI device
+ *
+ * Initializes the MSI PIC from device tree, then walks the DT to
+ * find the node matching this device's devfn. This is called
+ * during device setup (rt_pci_setup_device).
+ *
+ * @param[in] pdev PCI device (ofw_node set on success)
+ * @return RT_EOK
+ */
 rt_err_t rt_pci_ofw_device_init(struct rt_pci_device *pdev)
 {
     struct rt_ofw_node *np = RT_NULL;
@@ -599,6 +733,12 @@ rt_err_t rt_pci_ofw_device_init(struct rt_pci_device *pdev)
     return RT_EOK;
 }
 
+/**
+ * @brief Release the device tree node reference for a PCI device
+ *
+ * @param[in] pdev PCI device
+ * @return RT_EOK
+ */
 rt_err_t rt_pci_ofw_device_free(struct rt_pci_device *pdev)
 {
     if (!pdev)

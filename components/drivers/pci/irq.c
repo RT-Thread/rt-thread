@@ -8,6 +8,17 @@
  * 2022-11-07     GuEe-GUI     first version
  */
 
+/**
+ * @file irq.c
+ * @brief PCI interrupt routing and assignment
+ *
+ * Handles INTx interrupt assignment for PCI devices, including:
+ * - Reading the Interrupt Pin register from config space
+ * - Route mapping via the host bridge's irq_map callback
+ * - Swizzling through PCI-to-PCI bridges (if the host bridge provides irq_slot)
+ * - Writing the assigned IRQ number back to the Interrupt Line register
+ */
+
 #include <rtthread.h>
 
 #define DBG_TAG "pci.irq"
@@ -16,6 +27,20 @@
 
 #include <drivers/pci.h>
 
+/**
+ * @brief Assign an IRQ to a PCI device
+ *
+ * The assignment flow:
+ * 1. Read the Interrupt Pin register (INTA=1, INTB=2, INTC=3, INTD=4)
+ * 2. Optionally perform swizzling through bridges via irq_slot callback
+ * 3. Map the (slot, pin) pair to an IRQ number via irq_map callback
+ * 4. Write the assigned IRQ to the Interrupt Line register
+ *
+ * The host bridge must provide the irq_map callback. Without it,
+ * INTx interrupts are not available and the device must use MSI/MSI-X.
+ *
+ * @param[in] pdev PCI device to assign an IRQ to
+ */
 void rt_pci_assign_irq(struct rt_pci_device *pdev)
 {
     int irq = 0;

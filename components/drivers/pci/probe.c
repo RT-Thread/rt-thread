@@ -8,6 +8,23 @@
  * 2022-10-24     GuEe-GUI     first version
  */
 
+/**
+ * @file probe.c
+ * @brief PCI bus scanning and device probing
+ *
+ * Implements the PCI bus enumeration process:
+ * - Host bridge allocation and registration
+ * - Bus scanning (depth-first tree walk)
+ * - Device probing (vendor/device ID readout, resource allocation)
+ * - Bridge scanning (recursive child bus discovery)
+ * - Device and bus teardown
+ *
+ * The enumeration flow:
+ * 1. Allocate host bridge → register root bus → scan child buses
+ * 2. For each slot (devfn): read vendor, probe device, allocate BARs
+ * 3. For each bridge: create child bus, configure bridge window, recurse
+ */
+
 #include <rtthread.h>
 
 #define DBG_TAG "pci.probe"
@@ -19,16 +36,24 @@
 
 #include "procfs.h"
 
+/** @brief Convenience wrapper for spinlock acquire */
 rt_inline void spin_lock(struct rt_spinlock *spinlock)
 {
     rt_hw_spin_lock(&spinlock->lock);
 }
 
+/** @brief Convenience wrapper for spinlock release */
 rt_inline void spin_unlock(struct rt_spinlock *spinlock)
 {
     rt_hw_spin_unlock(&spinlock->lock);
 }
 
+/**
+ * @brief Allocate a PCI host bridge structure
+ *
+ * @param[in] priv_size Size in bytes of private data to reserve after the bridge
+ * @return New host bridge (zeroed), or RT_NULL on allocation failure
+ */
 struct rt_pci_host_bridge *rt_pci_host_bridge_alloc(rt_size_t priv_size)
 {
     struct rt_pci_host_bridge *bridge = rt_calloc(1, sizeof(*bridge) + priv_size);
@@ -36,6 +61,12 @@ struct rt_pci_host_bridge *rt_pci_host_bridge_alloc(rt_size_t priv_size)
     return bridge;
 }
 
+/**
+ * @brief Free a PCI host bridge and its associated regions
+ *
+ * @param[in] bridge Host bridge to free
+ * @return RT_EOK on success, -RT_EINVAL if bridge is NULL
+ */
 rt_err_t rt_pci_host_bridge_free(struct rt_pci_host_bridge *bridge)
 {
     if (!bridge)
@@ -58,6 +89,15 @@ rt_err_t rt_pci_host_bridge_free(struct rt_pci_host_bridge *bridge)
     return RT_EOK;
 }
 
+/**
+ * @brief Initialize a host bridge from device tree data
+ *
+ * If the host bridge has an ofw_node (device tree node), parses
+ * bus-range, domain, and ranges properties from the DT.
+ *
+ * @param[in] host_bridge PCI host bridge to initialize
+ * @return RT_EOK on success, error code otherwise
+ */
 rt_err_t rt_pci_host_bridge_init(struct rt_pci_host_bridge *host_bridge)
 {
     rt_err_t err = RT_EOK;
@@ -70,6 +110,16 @@ rt_err_t rt_pci_host_bridge_init(struct rt_pci_host_bridge *host_bridge)
     return err;
 }
 
+/**
+ * @brief Allocate and initialize a new PCI device on a bus
+ *
+ * Initializes the device's linked list node, associates it with the bus,
+ * sets default subsystem IDs to PCI_ANY_ID (wildcard), marks all resources
+ * as unused, and initializes MSI descriptor list and lock.
+ *
+ * @param[in] bus Parent PCI bus (may be NULL for host bridge devices)
+ * @return New PCI device (zeroed), or RT_NULL on failure
+ */
 struct rt_pci_device *rt_pci_alloc_device(struct rt_pci_bus *bus)
 {
     struct rt_pci_device *pdev = rt_calloc(1, sizeof(*pdev));
@@ -107,6 +157,17 @@ struct rt_pci_device *rt_pci_alloc_device(struct rt_pci_bus *bus)
     return pdev;
 }
 
+/**
+ * @brief Scan and probe a single PCI device at a given devfn
+ *
+ * Reads vendor and device IDs from config space. If valid,
+ * allocates a pci_device structure, reads basic configuration,
+ * sets up BAR resources, and registers the device on the PCI bus.
+ *
+ * @param[in] bus   PCI bus to scan on
+ * @param[in] devfn Device/function number to probe
+ * @return Pointer to the new PCI device, or RT_NULL if no device present
+ */
 struct rt_pci_device *rt_pci_scan_single_device(struct rt_pci_bus *bus, rt_uint32_t devfn)
 {
     rt_err_t err;
@@ -155,6 +216,16 @@ _end:
     return pdev;
 }
 
+/**
+ * @brief Detect whether INTx masking is broken on this device
+ *
+ * Writes a toggled INTx disable bit and reads back to verify.
+ * If the read value doesn't match, the device doesn't support
+ * INTx masking (common on some older PCI devices).
+ *
+ * @param[in] pdev PCI device
+ * @return RT_TRUE if INTx masking is broken
+ */
 static rt_bool_t pci_intx_mask_broken(struct rt_pci_device *pdev)
 {
     rt_bool_t res = RT_FALSE;
@@ -175,6 +246,11 @@ static rt_bool_t pci_intx_mask_broken(struct rt_pci_device *pdev)
     return res;
 }
 
+/**
+ * @brief Read Interrupt Pin and Interrupt Line from config space
+ *
+ * @param[in] pdev PCI device (updated in place)
+ */
 static void pci_read_irq(struct rt_pci_device *pdev)
 {
     rt_uint8_t irq = 0;
@@ -189,6 +265,11 @@ static void pci_read_irq(struct rt_pci_device *pdev)
     pdev->irq = irq;
 }
 
+/**
+ * @brief Detect and record PCIe port type from the PCI Express capability
+ *
+ * @param[in] pdev PCI device (pcie_cap field updated in place)
+ */
 static void pcie_set_port_type(struct rt_pci_device *pdev)
 {
     int pos;
@@ -201,6 +282,15 @@ static void pcie_set_port_type(struct rt_pci_device *pdev)
     pdev->pcie_cap = pos;
 }
 
+/**
+ * @brief Configure ARI (Alternative Routing-ID Interpretation) on a PCIe device
+ *
+ * ARI extends the function number field from 3 to 8 bits, allowing
+ * up to 256 functions per device (instead of 8). This must be
+ * enabled on both the downstream port (bridge) and the device.
+ *
+ * @param[in] pdev PCI device (function 0 of a multi-function device)
+ */
 static void pci_configure_ari(struct rt_pci_device *pdev)
 {
     rt_uint32_t cap, ctl2_ari;
@@ -240,6 +330,15 @@ static void pci_configure_ari(struct rt_pci_device *pdev)
     rt_pci_write_config_u32(bridge, bridge->pcie_cap + PCIER_DEVICE_CTL2, ctl2_ari);
 }
 
+/**
+ * @brief Determine the extended configuration space size
+ *
+ * Tries reading beyond the standard 256-byte config space (at offset 256).
+ * If accessible, the device has PCIe extended config space (4KB).
+ *
+ * @param[in] pdev PCI device
+ * @return PCIE_REGMAX+1 (4096) for extended space, or PCI_REGMAX+1 (256) for standard
+ */
 static rt_uint16_t pci_cfg_space_size_ext(struct rt_pci_device *pdev)
 {
     rt_uint32_t status;
@@ -252,6 +351,15 @@ static rt_uint16_t pci_cfg_space_size_ext(struct rt_pci_device *pdev)
     return PCIE_REGMAX + 1;
 }
 
+/**
+ * @brief Determine the configuration space size for a device
+ *
+ * Host bridges, PCIe devices, and PCI-X 266/533-capable devices
+ * have extended (4KB) config space. Others have standard 256 bytes.
+ *
+ * @param[in] pdev PCI device
+ * @return Total config space size in bytes
+ */
 static rt_uint16_t pci_cfg_space_size(struct rt_pci_device *pdev)
 {
     int pos;
@@ -283,6 +391,14 @@ static rt_uint16_t pci_cfg_space_size(struct rt_pci_device *pdev)
     return PCI_REGMAX + 1;
 }
 
+/**
+ * @brief Initialize all capabilities for a newly probed device
+ *
+ * Sets up PME, MSI/MSI-X (disables them initially), PCIe port type,
+ * config space size, and ARI configuration.
+ *
+ * @param[in] pdev PCI device
+ */
 static void pci_init_capabilities(struct rt_pci_device *pdev)
 {
     rt_pci_pme_init(pdev);
@@ -301,6 +417,16 @@ static void pci_init_capabilities(struct rt_pci_device *pdev)
     pdev->msix_enabled = RT_FALSE;
 }
 
+/**
+ * @brief Complete PCI device setup after initial probe
+ *
+ * Reads revision ID, class code, header type. Clears error status.
+ * Detects multi-function devices. Checks INTx masking capability.
+ * Allocates BAR resources. Initializes capabilities.
+ *
+ * @param[in] pdev PCI device (populated in place)
+ * @return RT_EOK on success, -RT_EIO for unsupported header types
+ */
 rt_err_t rt_pci_setup_device(struct rt_pci_device *pdev)
 {
     rt_uint8_t pos;
@@ -400,6 +526,19 @@ rt_err_t rt_pci_setup_device(struct rt_pci_device *pdev)
 
 static struct rt_pci_bus *pci_alloc_bus(struct rt_pci_bus *parent);
 
+/**
+ * @brief Initialize a child PCI bus (for bridge devices)
+ *
+ * Sets up the bus number, attaches the bridge device as bus->self,
+ * inherits sysdata and ops from the parent, and calls the bus's
+ * add() operation if present.
+ *
+ * @param[in] bus         Child bus to initialize
+ * @param[in] bus_no      Bus number to assign
+ * @param[in] host_bridge Host bridge for this hierarchy
+ * @param[in] pdev        Bridge device (bus->self)
+ * @return RT_EOK on success
+ */
 static rt_err_t pci_child_bus_init(struct rt_pci_bus *bus, rt_uint32_t bus_no,
         struct rt_pci_host_bridge *host_bridge, struct rt_pci_device *pdev)
 {
@@ -431,6 +570,14 @@ static rt_err_t pci_child_bus_init(struct rt_pci_bus *bus, rt_uint32_t bus_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Check if the Enhanced Allocation capability specifies fixed bus numbers
+ *
+ * @param[in]  pdev Bridge device
+ * @param[out] sec  Secondary bus number from EA
+ * @param[out] sub  Subordinate bus number from EA
+ * @return RT_TRUE if EA provides valid fixed bus numbers
+ */
 static rt_bool_t pci_ea_fixed_busnrs(struct rt_pci_device *pdev,
         rt_uint8_t *sec, rt_uint8_t *sub)
 {
@@ -459,6 +606,14 @@ static rt_bool_t pci_ea_fixed_busnrs(struct rt_pci_device *pdev,
     return RT_TRUE;
 }
 
+/**
+ * @brief Fix up PCIe link speed after enumeration
+ *
+ * For PCIe root ports, downstream ports, and bridges:
+ * retrain the link to negotiate the optimal speed.
+ *
+ * @param[in] pdev PCIe bridge device
+ */
 static void pcie_fixup_link(struct rt_pci_device *pdev)
 {
     int pos = pdev->pcie_cap;
@@ -507,6 +662,20 @@ _status_sync:
     rt_thread_mdelay(100);
 }
 
+/**
+ * @brief Scan behind a PCI bridge, extending the bus topology
+ *
+ * Creates a child bus, configures the bridge's primary/secondary/subordinate
+ * bus numbers, scans child buses recursively, and writes back the final
+ * subordinate bus number.
+ *
+ * @param[in] bus          Parent bus
+ * @param[in] pdev         Bridge PCI device
+ * @param[in] bus_no_start Starting bus number for allocation
+ * @param[in] buses        Maximum number of buses to allocate (0 = unlimited)
+ * @param[in] reconfigured Whether this is a reconfiguration
+ * @return Final bus number allocated
+ */
 static rt_uint32_t pci_scan_bridge_extend(struct rt_pci_bus *bus, struct rt_pci_device *pdev,
         rt_uint32_t bus_no_start, rt_uint32_t buses, rt_bool_t reconfigured)
 {
@@ -597,6 +766,15 @@ _end:
     return bus_no;
 }
 
+/**
+ * @brief Scan behind a PCI bridge (convenience wrapper)
+ *
+ * @param[in] bus          Parent bus
+ * @param[in] pdev         Bridge device
+ * @param[in] bus_no_start Starting bus number
+ * @param[in] reconfigured Whether reconfiguring
+ * @return Final bus number
+ */
 rt_uint32_t rt_pci_scan_bridge(struct rt_pci_bus *bus, struct rt_pci_device *pdev,
         rt_uint32_t bus_no_start, rt_bool_t reconfigured)
 {
@@ -608,6 +786,16 @@ rt_uint32_t rt_pci_scan_bridge(struct rt_pci_bus *bus, struct rt_pci_device *pde
     return pci_scan_bridge_extend(bus, pdev, bus_no_start, 0, reconfigured);
 }
 
+/**
+ * @brief Check if a PCI bus has only one child (for enumeration optimization)
+ *
+ * PCIe root ports, downstream ports, and PCIe bridges typically have
+ * only one device on their secondary bus. This is used to avoid
+ * scanning beyond function 0 on such buses.
+ *
+ * @param[in] bus PCI bus (must be non-root)
+ * @return RT_TRUE if the bus is likely a point-to-point link
+ */
 rt_inline rt_bool_t only_one_child(struct rt_pci_bus *bus)
 {
     struct rt_pci_device *pdev;
@@ -634,6 +822,17 @@ rt_inline rt_bool_t only_one_child(struct rt_pci_bus *bus)
     return RT_FALSE;
 }
 
+/**
+ * @brief Get the next function number to scan
+ *
+ * Handles ARI (Alternative Routing-ID Interpretation) where function
+ * numbers go beyond the standard 0-7 range (up to 255).
+ *
+ * @param[in] bus  PCI bus
+ * @param[in] pdev Current device (may be NULL for first call)
+ * @param[in] fn   Current function number
+ * @return Next function number, or negative on error/end
+ */
 static int next_fn(struct rt_pci_bus *bus, struct rt_pci_device *pdev, int fn)
 {
     if (!rt_pci_is_root_bus(bus) && bus->self->ari_enabled)
@@ -677,6 +876,17 @@ static int next_fn(struct rt_pci_bus *bus, struct rt_pci_device *pdev, int fn)
     return fn + 1;
 }
 
+/**
+ * @brief Scan all functions in a PCI slot
+ *
+ * Iterates through function numbers starting from devfn, probing
+ * each function. Stops when function 0 returns nothing (no device
+ * in this slot) or when a non-multi-function device is found.
+ *
+ * @param[in] bus   PCI bus
+ * @param[in] devfn Starting device/function number
+ * @return Number of devices found in this slot
+ */
 rt_size_t rt_pci_scan_slot(struct rt_pci_bus *bus, rt_uint32_t devfn)
 {
     rt_size_t nr = 0;
@@ -714,6 +924,17 @@ rt_size_t rt_pci_scan_slot(struct rt_pci_bus *bus, rt_uint32_t devfn)
     return nr;
 }
 
+/**
+ * @brief Recursively scan child buses of a PCI bus
+ *
+ * Scans all slots (devfn 0..255 step 8), then for each bridge found,
+ * creates a child bus and scans behind it. Bus numbers are allocated
+ * incrementally.
+ *
+ * @param[in] bus   Parent PCI bus
+ * @param[in] buses Maximum number of buses to allocate (0 = unlimited)
+ * @return Final bus number used
+ */
 rt_uint32_t rt_pci_scan_child_buses(struct rt_pci_bus *bus, rt_size_t buses)
 {
     rt_uint32_t bus_no;
@@ -756,11 +977,23 @@ _end:
     return bus_no;
 }
 
+/**
+ * @brief Scan all child buses of a PCI bus (unlimited buses)
+ *
+ * @param[in] bus PCI bus
+ * @return Final bus number
+ */
 rt_uint32_t rt_pci_scan_child_bus(struct rt_pci_bus *bus)
 {
     return rt_pci_scan_child_buses(bus, 0);
 }
 
+/**
+ * @brief Allocate and initialize a new PCI bus structure
+ *
+ * @param[in] parent Parent bus (or NULL for root bus)
+ * @return New bus, or RT_NULL on failure
+ */
 static struct rt_pci_bus *pci_alloc_bus(struct rt_pci_bus *parent)
 {
     struct rt_pci_bus *bus = rt_calloc(1, sizeof(*bus));
@@ -781,6 +1014,15 @@ static struct rt_pci_bus *pci_alloc_bus(struct rt_pci_bus *parent)
     return bus;
 }
 
+/**
+ * @brief Register a host bridge's root bus
+ *
+ * Creates the root bus, links it to the host bridge, and calls
+ * the bus's add() operation.
+ *
+ * @param[in] host_bridge Host bridge to register
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_host_bridge_register(struct rt_pci_host_bridge *host_bridge)
 {
     struct rt_pci_bus *bus = pci_alloc_bus(RT_NULL);
@@ -812,6 +1054,15 @@ rt_err_t rt_pci_host_bridge_register(struct rt_pci_host_bridge *host_bridge)
     return RT_EOK;
 }
 
+/**
+ * @brief Register a host bridge and scan its root bus
+ *
+ * This is the main entry point for initializing a PCI hierarchy:
+ * register the root bus, then scan and enumerate all devices.
+ *
+ * @param[in] host_bridge Host bridge
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_scan_root_bus_bridge(struct rt_pci_host_bridge *host_bridge)
 {
     rt_err_t err;
@@ -826,6 +1077,12 @@ rt_err_t rt_pci_scan_root_bus_bridge(struct rt_pci_host_bridge *host_bridge)
     return err;
 }
 
+/**
+ * @brief Probe a host bridge (register + scan)
+ *
+ * @param[in] host_bridge Host bridge
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_host_bridge_probe(struct rt_pci_host_bridge *host_bridge)
 {
     rt_err_t err;
@@ -835,6 +1092,13 @@ rt_err_t rt_pci_host_bridge_probe(struct rt_pci_host_bridge *host_bridge)
     return err;
 }
 
+/**
+ * @brief Enumeration callback: remove a device from its bus
+ *
+ * @param[in] pdev PCI device to remove
+ * @param[in] data Unused
+ * @return Always RT_FALSE (continue removal for all devices)
+ */
 static rt_bool_t pci_remove_bus_device(struct rt_pci_device *pdev, void *data)
 {
     /* Bus will free if this is the last device */
@@ -844,6 +1108,14 @@ static rt_bool_t pci_remove_bus_device(struct rt_pci_device *pdev, void *data)
     return RT_FALSE;
 }
 
+/**
+ * @brief Remove a host bridge and all its devices
+ *
+ * Enumerates all devices under the root bus and removes them.
+ *
+ * @param[in] host_bridge Host bridge to remove
+ * @return RT_EOK on success, -RT_EINVAL if bridge is NULL
+ */
 rt_err_t rt_pci_host_bridge_remove(struct rt_pci_host_bridge *host_bridge)
 {
     rt_err_t err = RT_EOK;
@@ -861,6 +1133,15 @@ rt_err_t rt_pci_host_bridge_remove(struct rt_pci_host_bridge *host_bridge)
     return err;
 }
 
+/**
+ * @brief Remove a PCI bus if it has no children or devices
+ *
+ * A bus can only be removed when both its children_nodes and
+ * devices_nodes lists are empty.
+ *
+ * @param[in] bus PCI bus to remove
+ * @return RT_EOK on success, -RT_EBUSY if bus still has children/devices
+ */
 rt_err_t rt_pci_bus_remove(struct rt_pci_bus *bus)
 {
     rt_err_t err = RT_EOK;
@@ -898,6 +1179,15 @@ rt_err_t rt_pci_bus_remove(struct rt_pci_bus *bus)
     return err;
 }
 
+/**
+ * @brief Remove a PCI device from its bus
+ *
+ * Waits for any remaining references to be released (yielding),
+ * then removes the device from the bus's device list and frees it.
+ *
+ * @param[in] pdev PCI device to remove
+ * @return RT_EOK on success, -RT_EINVAL if device is NULL
+ */
 rt_err_t rt_pci_device_remove(struct rt_pci_device *pdev)
 {
     rt_err_t err = RT_EOK;

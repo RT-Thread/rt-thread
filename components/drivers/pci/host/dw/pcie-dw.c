@@ -8,12 +8,38 @@
  * 2023-09-23     GuEe-GUI     first version
  */
 
+/**
+ * @file pcie-dw.c
+ * @brief Synopsys DesignWare PCIe Controller core library
+ *
+ * Provides the low-level DBI (Data Bus Interface) access methods,
+ * capability discovery in the controller's own config space,
+ * ATU (Address Translation Unit) programming for both inbound
+ * and outbound address translation, link training, and controller
+ * setup (lane count, speed, FTS configuration).
+ *
+ * The DesignWare PCIe controller is one of the most widely used
+ * PCIe IP blocks in the embedded industry.
+ */
+
 #define DBG_TAG "pcie.dw"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include "pcie-dw.h"
 
+/**
+ * @brief Recursively find the next capability in DW controller's config space
+ *
+ * Walks the PCI capability linked list starting from cap_ptr.
+ * The DW controller's config space is accessed via DBI (Data Bus Interface)
+ * rather than ECAM.
+ *
+ * @param[in] pci     DW PCIe controller
+ * @param[in] cap_ptr Current capability offset
+ * @param[in] cap     Target capability ID
+ * @return Capability offset, or 0 if not found
+ */
 static rt_uint8_t __dw_pcie_find_next_cap(struct dw_pcie *pci,
         rt_uint8_t cap_ptr, rt_uint8_t cap)
 {
@@ -42,6 +68,13 @@ static rt_uint8_t __dw_pcie_find_next_cap(struct dw_pcie *pci,
     return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
 }
 
+/**
+ * @brief Find a standard PCI capability in the DW controller's config space
+ *
+ * @param[in] pci DW PCIe controller
+ * @param[in] cap Capability ID to find
+ * @return Capability offset, or 0 if not found
+ */
 rt_uint8_t dw_pcie_find_capability(struct dw_pcie *pci, rt_uint8_t cap)
 {
     rt_uint16_t reg;
@@ -53,6 +86,18 @@ rt_uint8_t dw_pcie_find_capability(struct dw_pcie *pci, rt_uint8_t cap)
     return __dw_pcie_find_next_cap(pci, next_cap_ptr, cap);
 }
 
+/**
+ * @brief Find next PCIe extended capability starting from a given offset
+ *
+ * PCIe extended capabilities form a linked list in the extended
+ * configuration space (offset 0x100-0xFFF). Each entry has an
+ * ID, version, and next-pointer in a single DWORD.
+ *
+ * @param[in] pci   DW PCIe controller
+ * @param[in] start Starting offset (0 to search from 0x100)
+ * @param[in] cap   Extended capability ID
+ * @return Extended capability offset, or 0 if not found
+ */
 static rt_uint16_t dw_pcie_find_next_ext_capability(struct dw_pcie *pci,
         rt_uint16_t start, rt_uint8_t cap)
 {
@@ -97,11 +142,26 @@ static rt_uint16_t dw_pcie_find_next_ext_capability(struct dw_pcie *pci,
     return 0;
 }
 
+/**
+ * @brief Find a PCIe extended capability in the DW controller
+ *
+ * @param[in] pci DW PCIe controller
+ * @param[in] cap Extended capability ID
+ * @return Extended capability offset, or 0 if not found
+ */
 rt_uint16_t dw_pcie_find_ext_capability(struct dw_pcie *pci, rt_uint8_t cap)
 {
     return dw_pcie_find_next_ext_capability(pci, 0, cap);
 }
 
+/**
+ * @brief Read from a MMIO address with size and alignment checking
+ *
+ * @param[in]  addr    MMIO address (must be naturally aligned)
+ * @param[in]  size    Access size (1, 2, or 4)
+ * @param[out] out_val Read value
+ * @return RT_EOK on success, -RT_EINVAL if misaligned
+ */
 rt_err_t dw_pcie_read(void *addr, rt_size_t size, rt_uint32_t *out_val)
 {
     /* Check aligned */
@@ -132,6 +192,14 @@ rt_err_t dw_pcie_read(void *addr, rt_size_t size, rt_uint32_t *out_val)
     return RT_EOK;
 }
 
+/**
+ * @brief Write to a MMIO address with size and alignment checking
+ *
+ * @param[in] addr MMIO address (must be naturally aligned)
+ * @param[in] size Access size (1, 2, or 4)
+ * @param[in] val  Value to write
+ * @return RT_EOK on success, -RT_EINVAL if misaligned
+ */
 rt_err_t dw_pcie_write(void *addr, rt_size_t size, rt_uint32_t val)
 {
     /* Check aligned */
@@ -160,6 +228,17 @@ rt_err_t dw_pcie_write(void *addr, rt_size_t size, rt_uint32_t val)
     return RT_EOK;
 }
 
+/**
+ * @brief Read from the DW controller's DBI (Data Bus Interface) space
+ *
+ * Uses the controller's custom read_dbi callback if available,
+ * otherwise falls back to direct MMIO access.
+ *
+ * @param[in] pci  DW PCIe controller
+ * @param[in] reg  Register offset within DBI space
+ * @param[in] size Access size (1, 2, or 4)
+ * @return Register value (0 on error)
+ */
 rt_uint32_t dw_pcie_read_dbi(struct dw_pcie *pci, rt_uint32_t reg, rt_size_t size)
 {
     rt_err_t err;
@@ -178,6 +257,14 @@ rt_uint32_t dw_pcie_read_dbi(struct dw_pcie *pci, rt_uint32_t reg, rt_size_t siz
     return val;
 }
 
+/**
+ * @brief Write to the DW controller's DBI space
+ *
+ * @param[in] pci  DW PCIe controller
+ * @param[in] reg  Register offset within DBI space
+ * @param[in] size Access size (1, 2, or 4)
+ * @param[in] val  Value to write
+ */
 void dw_pcie_write_dbi(struct dw_pcie *pci, rt_uint32_t reg, rt_size_t size, rt_uint32_t val)
 {
     rt_err_t err;
@@ -194,6 +281,17 @@ void dw_pcie_write_dbi(struct dw_pcie *pci, rt_uint32_t reg, rt_size_t size, rt_
     }
 }
 
+/**
+ * @brief Write to the DW controller's secondary DBI space (DBI2)
+ *
+ * DBI2 is used for endpoint mode to access the controller's
+ * own configuration from the EP perspective.
+ *
+ * @param[in] pci  DW PCIe controller
+ * @param[in] reg  Register offset within DBI2 space
+ * @param[in] size Access size
+ * @param[in] val  Value to write
+ */
 void dw_pcie_write_dbi2(struct dw_pcie *pci, rt_uint32_t reg, rt_size_t size, rt_uint32_t val)
 {
     rt_err_t err;
@@ -210,6 +308,13 @@ void dw_pcie_write_dbi2(struct dw_pcie *pci, rt_uint32_t reg, rt_size_t size, rt
     }
 }
 
+/**
+ * @brief Read a 32-bit value from the ATU register space
+ *
+ * @param[in] pci DW PCIe controller
+ * @param[in] reg Register offset within ATU space
+ * @return Register value
+ */
 rt_uint32_t dw_pcie_readl_atu(struct dw_pcie *pci, rt_uint32_t reg)
 {
     rt_err_t err;
@@ -228,6 +333,13 @@ rt_uint32_t dw_pcie_readl_atu(struct dw_pcie *pci, rt_uint32_t reg)
     return val;
 }
 
+/**
+ * @brief Write a 32-bit value to the ATU register space
+ *
+ * @param[in] pci DW PCIe controller
+ * @param[in] reg Register offset within ATU space
+ * @param[in] val Value to write
+ */
 void dw_pcie_writel_atu(struct dw_pcie *pci, rt_uint32_t reg, rt_uint32_t val)
 {
     rt_err_t err;
@@ -244,6 +356,21 @@ void dw_pcie_writel_atu(struct dw_pcie *pci, rt_uint32_t reg, rt_uint32_t val)
     }
 }
 
+/**
+ * @brief Program an outbound iATU region (unroll mode)
+ *
+ * Outbound ATU translates CPU memory addresses to PCI bus addresses.
+ * This is used for the RC to access EP memory (e.g., config space via ECAM,
+ * or memory-mapped BAR regions).
+ *
+ * @param[in] pci      DW PCIe controller
+ * @param[in] func_no  Function number (0 for RC, 0-N for EP)
+ * @param[in] index    ATU region index
+ * @param[in] type     Transaction type (MEM, IO, CFG0, CFG1)
+ * @param[in] cpu_addr CPU physical address
+ * @param[in] pci_addr Target PCI bus address
+ * @param[in] size     Region size
+ */
 static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, rt_uint8_t func_no,
         int index, int type, rt_uint64_t cpu_addr, rt_uint64_t pci_addr, rt_size_t size)
 {
@@ -266,10 +393,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, rt_uint8_t fun
     dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
             PCIE_ATU_ENABLE);
 
-    /*
-     * Make sure ATU enable takes effect before any subsequent config
-     * and I/O accesses.
-     */
+    /* Wait for ATU enable to take effect */
     for (int retries = 0; retries < LINK_WAIT_MAX_IATU_RETRIES; ++retries)
     {
         if (dw_pcie_readl_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2) & PCIE_ATU_ENABLE)
@@ -283,6 +407,17 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, rt_uint8_t fun
     LOG_E("Outbound iATU is not being enabled");
 }
 
+/**
+ * @brief Program an outbound iATU region (with cpu_addr fixup if needed)
+ *
+ * @param[in] pci      DW PCIe controller
+ * @param[in] func_no  Function number
+ * @param[in] index    ATU region index
+ * @param[in] type     Transaction type
+ * @param[in] cpu_addr CPU physical address (may be fixed up)
+ * @param[in] pci_addr PCI bus address
+ * @param[in] size     Region size
+ */
 static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, rt_uint8_t func_no,
         int index, int type, rt_uint64_t cpu_addr, rt_uint64_t pci_addr, rt_size_t size)
 {
@@ -308,10 +443,7 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, rt_uint8_t func_no,
     dw_pcie_writel_dbi(pci, PCIE_ATU_CR1, type | PCIE_ATU_FUNC_NUM(func_no));
     dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, PCIE_ATU_ENABLE);
 
-    /*
-     * Make sure ATU enable takes effect before any subsequent config
-     * and I/O accesses.
-     */
+    /* Wait for ATU enable to take effect */
     for (int retries = 0; retries < LINK_WAIT_MAX_IATU_RETRIES; ++retries)
     {
         if (dw_pcie_readl_dbi(pci, PCIE_ATU_CR2) & PCIE_ATU_ENABLE)
@@ -325,18 +457,53 @@ static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, rt_uint8_t func_no,
     LOG_E("Outbound iATU is not being enabled");
 }
 
+/**
+ * @brief Program an outbound ATU region (RC mode, function 0)
+ *
+ * @param[in] pci      DW PCIe controller
+ * @param[in] index    ATU region index
+ * @param[in] type     Transaction type (MEM, IO, CFG0, CFG1)
+ * @param[in] cpu_addr CPU physical address
+ * @param[in] pci_addr Target PCI bus address
+ * @param[in] size     Region size
+ */
 void dw_pcie_prog_outbound_atu(struct dw_pcie *pci,
         int index, int type, rt_uint64_t cpu_addr, rt_uint64_t pci_addr, rt_size_t size)
 {
     __dw_pcie_prog_outbound_atu(pci, 0, index, type, cpu_addr, pci_addr, size);
 }
 
+/**
+ * @brief Program an outbound ATU region (EP mode, with function number)
+ *
+ * @param[in] pci      DW PCIe controller
+ * @param[in] func_no  Function number
+ * @param[in] index    ATU region index
+ * @param[in] type     Transaction type
+ * @param[in] cpu_addr CPU physical address
+ * @param[in] pci_addr Target PCI bus address
+ * @param[in] size     Region size
+ */
 void dw_pcie_prog_ep_outbound_atu(struct dw_pcie *pci, rt_uint8_t func_no,
         int index, int type, rt_uint64_t cpu_addr, rt_uint64_t pci_addr, rt_size_t size)
 {
     __dw_pcie_prog_outbound_atu(pci, func_no, index, type, cpu_addr, pci_addr, size);
 }
 
+/**
+ * @brief Program an inbound iATU region (unroll mode)
+ *
+ * Inbound ATU translates PCI bus addresses to CPU memory addresses.
+ * This is used in EP mode so the host can access EP local memory.
+ *
+ * @param[in] pci         DW PCIe controller
+ * @param[in] func_no     Function number
+ * @param[in] index       ATU region index
+ * @param[in] bar         BAR number this ATU entry is associated with
+ * @param[in] cpu_addr    Target CPU physical address
+ * @param[in] aspace_type Address space type (MEM or IO)
+ * @return RT_EOK on success, -RT_EBUSY if ATU enable times out
+ */
 static rt_err_t dw_pcie_prog_inbound_atu_unroll(struct dw_pcie *pci,
         rt_uint8_t func_no, int index, int bar, rt_uint64_t cpu_addr,
         enum dw_pcie_aspace_type aspace_type)
@@ -368,10 +535,6 @@ static rt_err_t dw_pcie_prog_inbound_atu_unroll(struct dw_pcie *pci,
             PCIE_ATU_FUNC_NUM_MATCH_EN | PCIE_ATU_ENABLE |
             PCIE_ATU_BAR_MODE_ENABLE | (bar << 8));
 
-    /*
-     * Make sure ATU enable takes effect before any subsequent config
-     * and I/O accesses.
-     */
     for (int retries = 0; retries < LINK_WAIT_MAX_IATU_RETRIES; ++retries)
     {
         if (dw_pcie_readl_ib_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2) & PCIE_ATU_ENABLE)
@@ -387,6 +550,17 @@ static rt_err_t dw_pcie_prog_inbound_atu_unroll(struct dw_pcie *pci,
     return -RT_EBUSY;
 }
 
+/**
+ * @brief Program an inbound iATU region
+ *
+ * @param[in] pci         DW PCIe controller
+ * @param[in] func_no     Function number
+ * @param[in] index       ATU region index
+ * @param[in] bar         BAR number
+ * @param[in] cpu_addr    Target CPU physical address
+ * @param[in] aspace_type Address space type (MEM or IO)
+ * @return RT_EOK on success
+ */
 rt_err_t dw_pcie_prog_inbound_atu(struct dw_pcie *pci,
         rt_uint8_t func_no, int index, int bar, rt_uint64_t cpu_addr,
         enum dw_pcie_aspace_type aspace_type)
@@ -421,10 +595,6 @@ rt_err_t dw_pcie_prog_inbound_atu(struct dw_pcie *pci,
     dw_pcie_writel_dbi(pci, PCIE_ATU_CR2, PCIE_ATU_ENABLE |
             PCIE_ATU_FUNC_NUM_MATCH_EN | PCIE_ATU_BAR_MODE_ENABLE | (bar << 8));
 
-    /*
-     * Make sure ATU enable takes effect before any subsequent config
-     * and I/O accesses.
-     */
     for (int retries = 0; retries < LINK_WAIT_MAX_IATU_RETRIES; ++retries)
     {
         if (dw_pcie_readl_dbi(pci, PCIE_ATU_CR2) & PCIE_ATU_ENABLE)
@@ -440,6 +610,13 @@ rt_err_t dw_pcie_prog_inbound_atu(struct dw_pcie *pci,
     return -RT_EBUSY;
 }
 
+/**
+ * @brief Disable an ATU region
+ *
+ * @param[in] pci   DW PCIe controller
+ * @param[in] index ATU region index
+ * @param[in] type  Region direction (INBOUND or OUTBOUND)
+ */
 void dw_pcie_disable_atu(struct dw_pcie *pci, int index, enum dw_pcie_region_type type)
 {
     rt_uint32_t region;
@@ -478,6 +655,14 @@ void dw_pcie_disable_atu(struct dw_pcie *pci, int index, enum dw_pcie_region_typ
     }
 }
 
+/**
+ * @brief Wait for the PCIe link to come up
+ *
+ * Polls the link status register with a timeout.
+ *
+ * @param[in] pci DW PCIe controller
+ * @return RT_EOK on link up, -RT_ETIMEOUT on timeout
+ */
 rt_err_t dw_pcie_wait_for_link(struct dw_pcie *pci)
 {
     /* Check if the link is up or not */
@@ -498,6 +683,14 @@ rt_err_t dw_pcie_wait_for_link(struct dw_pcie *pci)
     return -RT_ETIMEOUT;
 }
 
+/**
+ * @brief Check if the PCIe link is currently up
+ *
+ * Reads PORT_DEBUG1 register, checking LINK_UP and LINK_IN_TRAINING bits.
+ *
+ * @param[in] pci DW PCIe controller
+ * @return RT_TRUE if link is up
+ */
 rt_bool_t dw_pcie_link_up(struct dw_pcie *pci)
 {
     rt_uint32_t val;
@@ -512,6 +705,11 @@ rt_bool_t dw_pcie_link_up(struct dw_pcie *pci)
     return (val & PCIE_PORT_DEBUG1_LINK_UP) && (!(val & PCIE_PORT_DEBUG1_LINK_IN_TRAINING));
 }
 
+/**
+ * @brief Enable upstream configuration support
+ *
+ * Sets the UPCFG_SUPPORT bit in the multi-lane control register.
+ */
 void dw_pcie_upconfig_setup(struct dw_pcie *pci)
 {
     rt_uint32_t val;
@@ -521,6 +719,15 @@ void dw_pcie_upconfig_setup(struct dw_pcie *pci)
     dw_pcie_writel_dbi(pci, PCIE_PORT_MULTI_LANE_CTRL, val);
 }
 
+/**
+ * @brief Set the maximum PCIe link speed
+ *
+ * Configures both the Link Capability and Link Control 2 registers
+ * for the desired generation.
+ *
+ * @param[in] pci      DW PCIe controller
+ * @param[in] link_gen Target link generation (1-4, or 0 for hardware default)
+ */
 static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, rt_uint32_t link_gen)
 {
     rt_uint32_t cap, ctrl2, link_speed;
@@ -549,6 +756,20 @@ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci, rt_uint32_t link_gen
     dw_pcie_writel_dbi(pci, offset + PCIER_LINK_CAP, cap | link_speed);
 }
 
+/**
+ * @brief Perform full DesignWare PCIe controller setup
+ *
+ * Handles:
+ * - iATU unroll detection (version >= 4.80a)
+ * - Link speed configuration
+ * - FTS (Fast Training Sequence) configuration for Gen1 and Gen2+
+ * - DLL link enable
+ * - CDM (Configuration Dependent Module) check
+ * - Lane count configuration
+ * - Link width speed control
+ *
+ * @param[in] pci DW PCIe controller
+ */
 void dw_pcie_setup(struct dw_pcie *pci)
 {
     rt_uint32_t val;
