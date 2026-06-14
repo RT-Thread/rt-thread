@@ -64,6 +64,10 @@ extern "C" {
 #include "drivers/led.h"
 #endif /* RT_USING_LED */
 
+#ifdef RT_USING_PTP
+#include "drivers/ptp.h"
+#endif /* RT_USING_PTP */
+
 #ifdef RT_USING_INPUT
 #include "drivers/input.h"
 #ifdef RT_INPUT_UAPI
