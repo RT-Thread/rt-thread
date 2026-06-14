@@ -25,8 +25,7 @@
 #define ARD_SEQ_INDEX                0           /* Sequence ID for AHB read command */
 #define AWR_SEQ_NUMBER               0           /* Sequence number for AHB write command */
 #define AWR_SEQ_INDEX                0           /* Sequence ID for AHB write command */
-//#define ARD_SEQ_CMD                  0xBB        /* cmd for read */
-//#define AWR_SEQ_CMD                  0xAA        /* cmd for write */
+
 #define FLEXSPI_RX_SAMPLE_CLOCK      kFLEXSPI_ReadSampleClkExternalInputFromDqsPad
 
 #define FLASH_PORT                   kFLEXSPI_PortA1
@@ -34,8 +33,14 @@
 #define CLOCK_DIV                    2U
 #define CUSTOM_LUT_LENGTH            60U
 
+/* DMA related. */
+#define EXAMPLE_FLEXSPI_DMA (DMA4)
 
-#define FLEXSPI1_AHB_DATA_ADDRESS    (0x30000000U)
+#define FLEXSPI_TX_DMA_REQUEST_SOURCE kDma4RequestMuxFlexSPI1Tx
+#define FLEXSPI_RX_DMA_REQUEST_SOURCE kDma4RequestMuxFlexSPI1Rx
+
+#define FLEXSPI_TX_DMA_CHANNEL 0U
+#define FLEXSPI_RX_DMA_CHANNEL 2U
 
 
 #define NOR_CMD_LUT_SEQ_IDX_READ            0

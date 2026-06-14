@@ -136,7 +136,11 @@ INIT_DEVICE_EXPORT(rt_hw_imxrt_flexspi_init);
 /*******************************************************************************
  * Variables
  ******************************************************************************/
+#ifdef BSP_USING_DMA
+AT_NONCACHEABLE_SECTION_ALIGN(static uint8_t s_nor_program_buffer[256], 4);
+#else
 static uint8_t s_nor_program_buffer[256];
+#endif
 static uint8_t s_nor_read_buffer[256];
 
 /* read write hyper flase test */
@@ -145,36 +149,59 @@ static void flexspi_test(void)
 	uint32_t i = 0;
     status_t status;
     uint8_t vendorID = 0;
-    LOG_I("\r\nFLEXSPI example started!\r\n");
-
+#ifdef BSP_USING_DMA
+	LOG_W("\r\nFLEXSPI example started! -- DMA mode\r\n");
+#else
+    LOG_W("\r\nFLEXSPI example started!\r\n");
+#endif
 #if defined(FLASH_ENABLE_OCTAL_CMD)
     /* Enter octal mode unless the FLASH boots in octal mode after reset */
     status = flexspi_nor_enable_octal_mode(FLEXSPI1_CONTROL_BASE);
     if (status != kStatus_Success)
     {
-        LOG_W("Enable octal mode failure !\r\n");
+    #ifdef BSP_USING_DMA
+        LOG_E("Enable octal mode failure ! -- DMA mode\r\n");
+    #else
+		LOG_E("Enable octal mode failure !\r\n");
+    #endif
         return ;
     }
-	LOG_I("Enabled octal mode.\r\n");
+#ifdef BSP_USING_DMA
+	LOG_W("Enabled octal mode. -- DMA mode\r\n");
+#else
+	LOG_W("Enabled octal mode.\r\n");
+#endif
 #endif
 
-#if !(defined(FLASH_ADESTO) && FLASH_ADESTO)
     /* Get vendor ID. */
     status = flexspi_nor_get_vendor_id(FLEXSPI1_CONTROL_BASE, &vendorID);
     if (status != kStatus_Success)
     {
-		LOG_W("Get vendor id failure !\r\n");
+	#ifdef BSP_USING_DMA
+		LOG_E("Get vendor id failure ! -- DMA mode\r\n");
+	#else
+		LOG_E("Get vendor id failure !\r\n");
+	#endif
         return ;
     }
-    LOG_I("Vendor ID: 0x%x\r\n", vendorID);
+#ifdef BSP_USING_DMA
+	LOG_W("Vendor ID: 0x%x -- DMA mode\r\n", vendorID);
+	/* Erase sectors. */
+    LOG_W("Erasing Serial NOR over FlexSPI... -- DMA mode\r\n");
+#else
+    LOG_W("Vendor ID: 0x%x\r\n", vendorID);
+	/* Erase sectors. */
+    LOG_W("Erasing Serial NOR over FlexSPI...\r\n");
 #endif
-
-    /* Erase sectors. */
-    LOG_I("Erasing Serial NOR over FlexSPI...\r\n");
+    
     status = flexspi_nor_flash_erase_sector(FLEXSPI1_CONTROL_BASE, EXAMPLE_SECTOR * SECTOR_SIZE);
     if (status != kStatus_Success)
     {
-        LOG_W("Erase sector failure !\r\n");
+	#ifdef BSP_USING_DMA
+		LOG_E("Erase sector failure ! -- DMA mode\r\n");
+	#else
+        LOG_E("Erase sector failure !\r\n");
+	#endif
         return ;
     }
 
@@ -188,12 +215,20 @@ static void flexspi_test(void)
 
     if (memcmp(s_nor_program_buffer, s_nor_read_buffer, sizeof(s_nor_program_buffer)))
     {
-        LOG_W("Erase data -  read out data value incorrect !\r\n ");
+	#ifdef BSP_USING_DMA
+		LOG_E("Erase data -  read out data value incorrect ! -- DMA mode\r\n ");
+	#else
+        LOG_E("Erase data -  read out data value incorrect !\r\n ");
+	#endif
         return ;
     }
     else
     {
-        LOG_I("Erase data - successfully. \r\n");
+	#ifdef BSP_USING_DMA
+		LOG_W("Erase data - successfully. -- DMA mode\r\n");
+	#else
+        LOG_W("Erase data - successfully. \r\n");
+	#endif
     }
 
     for (i = 0; i < 0xFFU; i++)
@@ -205,7 +240,11 @@ static void flexspi_test(void)
         flexspi_nor_flash_page_program(FLEXSPI1_CONTROL_BASE, EXAMPLE_SECTOR * SECTOR_SIZE, (void *)s_nor_program_buffer);
     if (status != kStatus_Success)
     {
-        LOG_W("Page program failure !\r\n");
+	#ifdef BSP_USING_DMA
+		LOG_E("Page program failure ! -- DMA mode\r\n");
+	#else
+        LOG_E("Page program failure !\r\n");
+	#endif
         return ;
     }
 
@@ -218,12 +257,20 @@ static void flexspi_test(void)
 
     if (memcmp(s_nor_read_buffer, s_nor_program_buffer, sizeof(s_nor_program_buffer)) != 0)
     {
-        LOG_W("Program data -  read out data value incorrect !\r\n ");
+	#ifdef BSP_USING_DMA
+		LOG_E("Program data -  read out data value incorrect ! -- DMA mode\r\n ");
+	#else
+        LOG_E("Program data -  read out data value incorrect !\r\n ");
+	#endif
         return ;
     }
     else
     {
-        LOG_I("Program data - successfully. \r\n");
+	#ifdef BSP_USING_DMA
+		LOG_W("Program data - successfully. -- DMA mode\r\n");
+	#else
+        LOG_W("Program data - successfully. \r\n");
+	#endif
     }
 	
 }

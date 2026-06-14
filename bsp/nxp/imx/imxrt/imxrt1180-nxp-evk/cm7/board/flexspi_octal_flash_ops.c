@@ -6,6 +6,11 @@
 
 #include "fsl_flexspi.h"
 #include "flexspi_port.h"
+#include "rtconfig.h"
+
+#ifdef BSP_USING_DMA
+#include "fsl_flexspi_edma.h"
+#endif
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -18,14 +23,27 @@
 
 extern flexspi_device_config_t deviceconfig;
 extern const uint32_t customLUTOctalMode[CUSTOM_LUT_LENGTH];
-#if defined(EXAMPLE_FLASH_RESET_CONFIG) || defined(FLASH_ADESTO)
-extern const uint32_t FastReadSDRLUTCommandSeq[4];
-extern const uint32_t OctalReadDDRLUTCommandSeq[4];
+#ifdef BSP_USING_DMA
+static volatile bool g_completionFlag = false;
+edma_handle_t dmaTxHandle;
+edma_handle_t dmaRxHandle;
+static flexspi_edma_handle_t flexspiHandle;
 #endif
 
 /*******************************************************************************
  * Code
  ******************************************************************************/
+#ifdef BSP_USING_DMA
+static void flexspi_callback(FLEXSPI_Type *base, flexspi_edma_handle_t *handle, status_t status, void *userData)
+{
+    /* Signal transfer success when received success status. */
+    if (status == kStatus_Success)
+    {
+        g_completionFlag = true;
+    }
+}
+#endif
+
 void flexspi_nor_disable_cache(flexspi_cache_status_t *cacheStatus)
 {
     (void)memset(cacheStatus, 0, sizeof(flexspi_cache_status_t));
@@ -137,7 +155,7 @@ status_t flexspi_nor_wait_bus_busy(FLEXSPI_Type *base, bool enableOctal)
 {
     /* Wait status ready. */
     bool isBusy;
-    uint32_t readValue;
+    uint32_t readValue=0;
     status_t status;
     flexspi_transfer_t flashXfer;
 
@@ -159,7 +177,10 @@ status_t flexspi_nor_wait_bus_busy(FLEXSPI_Type *base, bool enableOctal)
 
     do
     {
-        readValue = 0;
+        /* For flash targets, after doing erase/program, need to call flexspi_nor_wait_bus_busy to wait for the
+        operation finish, Use blocking way to read back the status instead of using DMA. The reason is that the called
+        DMA API calls memset which is placed in flash region, because the external flash is being erase/propgram, so
+        load instruction from external flash at this time may read back some invalid instructions. */
         status = FLEXSPI_TransferBlocking(base, &flashXfer);
 
         if (status != kStatus_Success)
@@ -200,187 +221,19 @@ status_t flexspi_nor_enable_octal_mode(FLEXSPI_Type *base)
     flexspi_transfer_t flashXfer;
     status_t status;
 
-    /* Copy LUT information from flash region into RAM region, because flash boot mode maybe not same with application's
-       required mode.
-       If yes, doesn't need to memory copy operation; if no, need to memory opeation before flash access failure due to
-       mismatch LUT read command sequence. */
-#if defined(EXAMPLE_FLASH_RESET_CONFIG)
-    uint32_t TempOctalReadDDRLUTCommandSeq[4];
-
-    memcpy(TempOctalReadDDRLUTCommandSeq, OctalReadDDRLUTCommandSeq, sizeof(OctalReadDDRLUTCommandSeq));
-#endif
 #if defined(CACHE_MAINTAIN) && CACHE_MAINTAIN
     flexspi_cache_status_t cacheStatus;
     flexspi_nor_disable_cache(&cacheStatus);
 #endif
 
-#if defined(FLASH_ADESTO) && FLASH_ADESTO
-    uint32_t tempLUT[4] = {0};
-    uint32_t readValue;
-
-    /* Update LUT table for octal mode. */
-    FLEXSPI_UpdateLUT(base, 4 * NOR_CMD_LUT_SEQ_IDX_READ, OctalReadDDRLUTCommandSeq, 4);
-
-    /* Set the command instruction of read status register for LUT in octal sdr mode. */
-    tempLUT[0] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_8PAD, 0x05, kFLEXSPI_Command_DUMMY_SDR, kFLEXSPI_8PAD, 0x04);
-    tempLUT[1] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_SDR, kFLEXSPI_8PAD, 0x04, kFLEXSPI_Command_STOP, kFLEXSPI_8PAD, 0x0);
-    /* Update LUT table. */
-    FLEXSPI_UpdateLUT(base, 4 * NOR_CMD_LUT_SEQ_IDX_READSTATUS_OPI, tempLUT, 4);
-
-    /* Write enable */
-    status = flexspi_nor_write_enable(base, 0, false);
-
-    /* Enable quad mode. */
-    flashXfer.deviceAddress = 0;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Command;
-    flashXfer.SeqNumber     = 1;
-    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_ENTEROPI;
-
-    status = FLEXSPI_TransferBlocking(base, &flashXfer);
-    if (status != kStatus_Success)
-    {
-        return status;
-    }
-
-    status = flexspi_nor_wait_bus_busy(base, true);
-    if (status != kStatus_Success)
-    {
-        return status;
-    }
-
-    /* Check global protect or ont. */
-    flashXfer.deviceAddress = 0;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Read;
-    flashXfer.SeqNumber     = 1;
-    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_READSTATUS_OPI;
-
-    flashXfer.data     = &readValue;
-    flashXfer.dataSize = 1;
-
-    status = FLEXSPI_TransferBlocking(base, &flashXfer);
-    if (status != kStatus_Success)
-    {
-        return status;
-    }
-
-    /* Global protected. */
-    if ((readValue & 0x0CU) == 0x0CU)
-    {
-        /* Global unprotect entire memory region if it was protected by default, such as Adesto's octal flash. */
-        tempLUT[0] =
-            FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_8PAD, 0x01, kFLEXSPI_Command_WRITE_SDR, kFLEXSPI_8PAD, 0x04);
-        tempLUT[1] = 0x00U;
-
-        /* Update LUT table. */
-        FLEXSPI_UpdateLUT(base, 4 * NOR_CMD_LUT_SEQ_IDX_CONFIG, tempLUT, 4);
-
-        uint32_t globalUnprotect = FLASH_UNPROTECTVALUE;
-
-        /* Write enable */
-        status = flexspi_nor_write_enable(base, 0, true);
-
-        if (status != kStatus_Success)
-        {
-            return status;
-        }
-
-        flashXfer.deviceAddress = 0;
-        flashXfer.port          = FLASH_PORT;
-        flashXfer.cmdType       = kFLEXSPI_Write;
-        flashXfer.SeqNumber     = 1;
-        flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_CONFIG;
-        flashXfer.data          = &globalUnprotect;
-        flashXfer.dataSize      = 1;
-
-        status = FLEXSPI_TransferBlocking(base, &flashXfer);
-        if (status != kStatus_Success)
-        {
-            return status;
-        }
-
-        status = flexspi_nor_wait_bus_busy(base, true);
-
-        if (status != kStatus_Success)
-        {
-            return status;
-        }
-
-        /* Check unprotect successfully or not. */
-        flashXfer.deviceAddress = 0;
-        flashXfer.port          = FLASH_PORT;
-        flashXfer.cmdType       = kFLEXSPI_Read;
-        flashXfer.SeqNumber     = 1;
-        flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_READSTATUS_OPI;
-
-        flashXfer.data     = &readValue;
-        flashXfer.dataSize = 1;
-
-        status = FLEXSPI_TransferBlocking(base, &flashXfer);
-        if (status != kStatus_Success)
-        {
-            return status;
-        }
-
-        status = flexspi_nor_wait_bus_busy(base, true);
-        if (status != kStatus_Success)
-        {
-            return status;
-        }
-
-        if ((readValue & 0x0CU) != 0x00U)
-        {
-            return -1;
-        }
-    }
-
-    /* Enable DDR mode. */
-    /* Update LUT table for configure status register2.*/
-    tempLUT[0] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_8PAD, 0x31, kFLEXSPI_Command_WRITE_SDR, kFLEXSPI_8PAD, 0x01);
-    /* Update LUT table. */
-    FLEXSPI_UpdateLUT(base, 4 * NOR_CMD_LUT_SEQ_IDX_CONFIG, tempLUT, 4);
-
-    /* Set the command instruction of read status register for LUT in octal ddr mode. */
-    tempLUT[0] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_8PAD, 0x05, kFLEXSPI_Command_DUMMY_DDR, kFLEXSPI_8PAD, 0x04);
-    tempLUT[1] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_DDR, kFLEXSPI_8PAD, 0x04, kFLEXSPI_Command_STOP, kFLEXSPI_8PAD, 0x0);
-    /* Update LUT table. */
-    FLEXSPI_UpdateLUT(base, 4 * NOR_CMD_LUT_SEQ_IDX_READSTATUS_OPI, tempLUT, 4);
-
-    /* Adesto enable octal mode needs to configures status register2. */
-    uint32_t enableDdrMode = FLASH_ENABLE_OCTAL_DDRMODE;
-
-    /* Write enable */
-    status = flexspi_nor_write_enable(base, 0, true);
-    if (status != kStatus_Success)
-    {
-        return status;
-    }
-
-    flashXfer.deviceAddress = 0;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Write;
-    flashXfer.SeqNumber     = 1;
-    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_CONFIG;
-    flashXfer.data          = &enableDdrMode;
-    flashXfer.dataSize      = 1;
-
-    status = FLEXSPI_TransferBlocking(base, &flashXfer);
-    if (status != kStatus_Success)
-    {
-        return status;
-    }
-
-    status = flexspi_nor_wait_bus_busy(base, true);
-
-#else /* MXIC's octal flash. */
-
     uint32_t writeValue = FLASH_ENABLE_OCTAL_CMD;
+
+    /* Make sure external flash is not in busy status. */
+    status = flexspi_nor_wait_bus_busy(base, false);
+    if (status != kStatus_Success)
+    {
+        return status;
+    }
 
     /* Write enable */
     status = flexspi_nor_write_enable(base, 0, false);
@@ -406,12 +259,6 @@ status_t flexspi_nor_enable_octal_mode(FLEXSPI_Type *base)
     }
 
     status             = flexspi_nor_wait_bus_busy(base, true);
-#endif
-
-#if defined(EXAMPLE_FLASH_RESET_CONFIG)
-    /* 8DTRD: enter octal DDR and update read LUT entry into 8DTRD. */
-    FLEXSPI_UpdateLUT(base, 4 * NOR_CMD_LUT_SEQ_IDX_READ, TempOctalReadDDRLUTCommandSeq, 4);
-#endif
 
     /* Do software reset. */
     FLEXSPI_SoftwareReset(base);
@@ -496,13 +343,22 @@ status_t flexspi_nor_flash_page_program(FLEXSPI_Type *base, uint32_t dstAddr, co
     flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM;
     flashXfer.data          = (uint32_t *)src;
     flashXfer.dataSize      = FLASH_PAGE_SIZE;
+#ifdef BSP_USING_DMA
+	g_completionFlag = false;
+    status                  = FLEXSPI_TransferEDMA(base, &flexspiHandle, &flashXfer);
+#else
     status                  = FLEXSPI_TransferBlocking(base, &flashXfer);
-
+#endif
     if (status != kStatus_Success)
     {
         return status;
     }
-
+#ifdef BSP_USING_DMA
+	/*  Wait for transfer completed. */
+    while (!g_completionFlag)
+    {
+    }
+#endif
     status = flexspi_nor_wait_bus_busy(base, true);
 
     /* Do software reset. */
@@ -529,9 +385,23 @@ status_t flexspi_nor_read_data(FLEXSPI_Type *base, uint32_t startAddress, uint32
     flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_READ;
     flashXfer.data          = buffer;
     flashXfer.dataSize      = length;
-
+#ifdef BSP_USING_DMA
+	g_completionFlag        = false;
+	
+    status = FLEXSPI_TransferEDMA(base, &flexspiHandle, &flashXfer);
+	
+    if (status != kStatus_Success)
+    {
+        return status;
+    }
+	
+    /*  Wait for transfer completed. */
+    while (!g_completionFlag)
+    {
+    }
+#else
     status = FLEXSPI_TransferBlocking(base, &flashXfer);
-
+#endif
     return status;
 }
 
@@ -548,11 +418,7 @@ status_t flexspi_nor_get_vendor_id(FLEXSPI_Type *base, uint8_t *vendorId)
     flashXfer.port          = FLASH_PORT;
     flashXfer.cmdType       = kFLEXSPI_Read;
     flashXfer.SeqNumber     = 1;
-#if defined(FLASH_ADESTO) && FLASH_ADESTO
-    flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_READID_SPI;
-#else
     flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_READID_OPI;
-#endif
     flashXfer.data     = (uint32_t *)id;
     flashXfer.dataSize = 10U;
 
@@ -570,6 +436,37 @@ status_t flexspi_nor_get_vendor_id(FLEXSPI_Type *base, uint8_t *vendorId)
     return status;
 }
 
+status_t flexspi_nor_erase_chip(FLEXSPI_Type *base)
+{
+    status_t status;
+    flexspi_transfer_t flashXfer;
+
+    /* Write enable */
+    status = flexspi_nor_write_enable(base, 0, true);
+
+    if (status != kStatus_Success)
+    {
+        return status;
+    }
+
+    flashXfer.deviceAddress = 0;
+    flashXfer.port          = FLASH_PORT;
+    flashXfer.cmdType       = kFLEXSPI_Command;
+    flashXfer.SeqNumber     = 1;
+    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_CHIPERASE;
+
+    status = FLEXSPI_TransferBlocking(base, &flashXfer);
+
+    if (status != kStatus_Success)
+    {
+        return status;
+    }
+
+    status = flexspi_nor_wait_bus_busy(base, true);
+
+    return status;
+}
+
 void flexspi_nor_flash_init(FLEXSPI_Type *base)
 {
     flexspi_config_t config;
@@ -580,7 +477,28 @@ void flexspi_nor_flash_init(FLEXSPI_Type *base)
     flexspi_cache_status_t cacheStatus;
     flexspi_nor_disable_cache(&cacheStatus);
 #endif
-
+#ifdef BSP_USING_DMA
+	edma_config_t userConfig;
+	
+    /* EDMA init */
+    /*
+     * userConfig.enableRoundRobinArbitration = false;
+     * userConfig.enableHaltOnError = true;
+     * userConfig.enableContinuousLinkMode = false;
+     * userConfig.enableDebugMode = false;
+     */
+    EDMA_GetDefaultConfig(&userConfig);
+#if defined(BOARD_GetEDMAConfig)
+    BOARD_GetEDMAConfig(userConfig);
+#endif
+    EDMA_Init(EXAMPLE_FLEXSPI_DMA, &userConfig);
+    /* Set request */
+    EDMA_SetChannelMux(EXAMPLE_FLEXSPI_DMA, FLEXSPI_TX_DMA_CHANNEL, FLEXSPI_TX_DMA_REQUEST_SOURCE);
+	EDMA_SetChannelMux(EXAMPLE_FLEXSPI_DMA, FLEXSPI_RX_DMA_CHANNEL, FLEXSPI_RX_DMA_REQUEST_SOURCE);
+    /* Create the EDMA channel handles */
+    EDMA_CreateHandle(&dmaTxHandle, EXAMPLE_FLEXSPI_DMA, FLEXSPI_TX_DMA_CHANNEL);
+    EDMA_CreateHandle(&dmaRxHandle, EXAMPLE_FLEXSPI_DMA, FLEXSPI_RX_DMA_CHANNEL);	
+#endif
     /* Copy LUT information from flash region into RAM region, because LUT update maybe corrupt read sequence(LUT[0])
      * and load wrong LUT table from FLASH region. */
     memcpy(tempCustomLUT, customLUTOctalMode, sizeof(tempCustomLUT));
@@ -590,33 +508,17 @@ void flexspi_nor_flash_init(FLEXSPI_Type *base)
 
     /*Set AHB buffer size for reading data through AHB bus. */
     config.ahbConfig.enableAHBPrefetch = true;
+	config.ahbConfig.enableAHBBufferable = true;
+	config.ahbConfig.enableReadAddressOpt = true;
+	config.ahbConfig.enableAHBCachable   = true;
     config.rxSampleClock               = FLEXSPI_RX_SAMPLE_CLOCK;
 #if !(defined(FSL_FEATURE_FLEXSPI_HAS_NO_MCR0_COMBINATIONEN) && FSL_FEATURE_FLEXSPI_HAS_NO_MCR0_COMBINATIONEN)
     config.enableCombination = true;
 #endif
-    config.ahbConfig.enableAHBBufferable = true;
-    config.ahbConfig.enableAHBCachable   = true;
     FLEXSPI_Init(base, &config);
 
     /* Configure flash settings according to serial flash feature. */
     FLEXSPI_SetFlashConfig(base, &deviceconfig, FLASH_PORT);
-
-    /* Copy LUT information from flash region into RAM region, because flash will be reset and back to single mode;
-       In lately time, LUT table assignment maybe failed after flash reset due to LUT read entry is application's
-       required mode(such as octal DDR mode) and flash is being in single SDR mode, they don't matched. */
-#if defined(EXAMPLE_FLASH_RESET_CONFIG)
-    uint32_t TempFastReadSDRLUTCommandSeq[4];
-
-    memcpy(TempFastReadSDRLUTCommandSeq, FastReadSDRLUTCommandSeq, sizeof(FastReadSDRLUTCommandSeq));
-#endif
-
-#if (defined(XIP_EXTERNAL_FLASH) && XIP_EXTERNAL_FLASH == 1) && (FLASH_ADESTO == 1)
-    uint32_t tempLUT[4] = {0};
-    uint32_t tmpFastReadSDRLUTCommandSeq[4];
-    /* Exit octal mode command. */
-    tempLUT[0] = FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_8PAD, 0xFF, kFLEXSPI_Command_STOP, kFLEXSPI_8PAD, 0x0);
-    memcpy(tmpFastReadSDRLUTCommandSeq, FastReadSDRLUTCommandSeq, sizeof(FastReadSDRLUTCommandSeq));
-#endif
 
     /* Update LUT table into a specific mode, such as octal SDR mode or octal DDR mode based on application's
      * requirement. */
@@ -624,46 +526,74 @@ void flexspi_nor_flash_init(FLEXSPI_Type *base)
 
     /* Do software reset. */
     FLEXSPI_SoftwareReset(base);
-
-#if (defined(XIP_EXTERNAL_FLASH) && XIP_EXTERNAL_FLASH == 1) && (FLASH_ADESTO == 1)
-    status_t status;
-    flexspi_transfer_t flashXfer;
-
-    /* Update for standard mode. */
-    FLEXSPI_UpdateLUT(base, 4 * NOR_CMD_LUT_SEQ_IDX_READ, tmpFastReadSDRLUTCommandSeq, 4);
-    /* Update for exit octal mode. */
-    FLEXSPI_UpdateLUT(base, 4 * NOR_CMD_LUT_SEQ_IDX_CONFIG, tempLUT, 4);
-
-    /* Write enable */
-    status = flexspi_nor_write_enable(base, 0, true);
-
-    /* Back to standard SPI mode. */
-    flashXfer.deviceAddress = 0;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Command;
-    flashXfer.SeqNumber     = 1;
-    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_CONFIG;
-
-    status = FLEXSPI_TransferBlocking(base, &flashXfer);
-
-    if (status == kStatus_Success)
-    {
-        status = flexspi_nor_wait_bus_busy(base, false);
-    }
+#ifdef BSP_USING_DMA
+    /* Create handle for flexspi. */
+    FLEXSPI_TransferCreateHandleEDMA(FLEXSPI1_CONTROL_BASE, &flexspiHandle, flexspi_callback, NULL, &dmaTxHandle,
+                                     &dmaRxHandle);
 #endif
-
-#if defined(EXAMPLE_FLASH_RESET_CONFIG)
-    EXAMPLE_FLASH_RESET_CONFIG();
-    /* FAST_READ4B: back to single mode and update read LUT entry into FAST_READ4B after flash reset,
-           to make sure fetch code/data from flash is right. */
-    FLEXSPI_UpdateLUT(base, 4 * NOR_CMD_LUT_SEQ_IDX_READ, TempFastReadSDRLUTCommandSeq, 4);
-#endif
-
-#if defined(EXAMPLE_INVALIDATE_FLEXSPI_CACHE)
-    EXAMPLE_INVALIDATE_FLEXSPI_CACHE();
-#endif
-
 #if defined(CACHE_MAINTAIN) && CACHE_MAINTAIN
     flexspi_nor_enable_cache(cacheStatus);
 #endif
+}
+
+status_t flexspi_nor_flash_program(FLEXSPI_Type *base, uint32_t dstAddr, const uint32_t *src, uint32_t length)
+{
+    status_t status;
+    flexspi_transfer_t flashXfer;
+
+    /* Flash program limits program size smaller than flash page size for one program command sequence. */
+    assert(length <= FLASH_PAGE_SIZE);
+
+    /* Make sure external flash is not in busy status. */
+    status = flexspi_nor_wait_bus_busy(base, true);
+    if (status != kStatus_Success)
+    {
+        return status;
+    }
+
+    /* Write enable */
+    status = flexspi_nor_write_enable(base, dstAddr, true);
+
+    if (status != kStatus_Success)
+    {
+        return status;
+    }
+
+    /* Prepare page program command */
+    flashXfer.deviceAddress = dstAddr;
+    flashXfer.port          = FLASH_PORT;
+    flashXfer.cmdType       = kFLEXSPI_Write;
+    flashXfer.SeqNumber     = 1;
+    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM;
+    flashXfer.data          = (uint32_t *)src;
+    flashXfer.dataSize      = length;
+#ifdef BSP_USING_DMA
+    g_completionFlag        = false;
+
+    status                  = FLEXSPI_TransferEDMA(base, &flexspiHandle, &flashXfer);
+#else
+	status                  = FLEXSPI_TransferBlocking(base, &flashXfer);
+#endif
+    if (status != kStatus_Success)
+    {
+        return status;
+    }
+#ifdef BSP_USING_DMA
+    /*  Wait for transfer completed. */
+    while (!g_completionFlag)
+    {
+    }
+#endif
+    status = flexspi_nor_wait_bus_busy(base, true);
+
+    /* Do software reset. */
+#if defined(FSL_FEATURE_SOC_OTFAD_COUNT) && defined(FLEXSPI_AHBCR_CLRAHBRXBUF_MASK) && \
+    defined(FLEXSPI_AHBCR_CLRAHBTXBUF_MASK)
+    base->AHBCR |= FLEXSPI_AHBCR_CLRAHBRXBUF_MASK | FLEXSPI_AHBCR_CLRAHBTXBUF_MASK;
+    base->AHBCR &= ~(FLEXSPI_AHBCR_CLRAHBRXBUF_MASK | FLEXSPI_AHBCR_CLRAHBTXBUF_MASK);
+#else
+    FLEXSPI_SoftwareReset(base);
+#endif
+
+    return status;
 }
