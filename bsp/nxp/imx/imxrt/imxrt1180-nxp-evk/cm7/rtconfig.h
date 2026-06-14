@@ -427,6 +427,8 @@
 
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
+#define BSP_USING_FLEXSPI
+#define BSP_USING_FLEXSPI1
 /* end of On-chip Peripheral Drivers */
 
 /* Onboard Peripheral Drivers */

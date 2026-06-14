@@ -58,11 +58,11 @@ void BOARD_InitBootClocks(void);
 #define BOARD_BOOTCLOCKRUN_ECAT_CLK_ROOT              24000000UL     /* Clock consumers of ECAT_CLK_ROOT output : ECAT */
 #define BOARD_BOOTCLOCKRUN_ECAT_PORT0_REF_CLK         0UL            /* Clock consumers of ECAT_PORT0_REF_CLK output : N/A */
 #define BOARD_BOOTCLOCKRUN_ECAT_PORT1_REF_CLK         0UL            /* Clock consumers of ECAT_PORT1_REF_CLK output : N/A */
-#define BOARD_BOOTCLOCKRUN_EDGELOCK_CLK_ROOT          198000000UL    /* Clock consumers of EDGELOCK_CLK_ROOT output : N/A */
+#define BOARD_BOOTCLOCKRUN_EDGELOCK_CLK_ROOT          200000000UL    /* Clock consumers of EDGELOCK_CLK_ROOT output : N/A */
 #define BOARD_BOOTCLOCKRUN_ENET_REFCLK_ROOT           24000000UL     /* Clock consumers of ENET_REFCLK_ROOT output : N/A */
 #define BOARD_BOOTCLOCKRUN_FLEXIO1_CLK_ROOT           120000000UL    /* Clock consumers of FLEXIO1_CLK_ROOT output : FLEXIO1 */
 #define BOARD_BOOTCLOCKRUN_FLEXIO2_CLK_ROOT           48000000UL     /* Clock consumers of FLEXIO2_CLK_ROOT output : FLEXIO2 */
-#define BOARD_BOOTCLOCKRUN_FLEXSPI1_CLK_ROOT          352000000UL    /* Clock consumers of FLEXSPI1_CLK_ROOT output : FLEXSPI1 */
+#define BOARD_BOOTCLOCKRUN_FLEXSPI1_CLK_ROOT          400000000UL    /* Clock consumers of FLEXSPI1_CLK_ROOT output : FLEXSPI1 */
 #define BOARD_BOOTCLOCKRUN_FLEXSPI2_CLK_ROOT          270000000UL    /* Clock consumers of FLEXSPI2_CLK_ROOT output : FLEXSPI2 */
 #define BOARD_BOOTCLOCKRUN_FLEXSPI_SLV_CLK_ROOT       132000000UL    /* Clock consumers of FLEXSPI_SLV_CLK_ROOT output : N/A */
 #define BOARD_BOOTCLOCKRUN_GPT1_CLK_ROOT              240000000UL    /* Clock consumers of GPT1_CLK_ROOT output : GPT1 */

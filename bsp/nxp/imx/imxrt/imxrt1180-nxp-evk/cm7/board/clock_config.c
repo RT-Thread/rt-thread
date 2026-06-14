@@ -112,11 +112,11 @@ outputs:
 - {id: CCM_CKO2_CLK_ROOT.outFreq, value: 24 MHz}
 - {id: CLK_1M.outFreq, value: 1 MHz}
 - {id: ECAT_CLK_ROOT.outFreq, value: 24 MHz}
-- {id: EDGELOCK_CLK_ROOT.outFreq, value: 198 MHz}
+- {id: EDGELOCK_CLK_ROOT.outFreq, value: 200 MHz}
 - {id: ENET_REFCLK_ROOT.outFreq, value: 24 MHz}
 - {id: FLEXIO1_CLK_ROOT.outFreq, value: 120 MHz}
 - {id: FLEXIO2_CLK_ROOT.outFreq, value: 48 MHz}
-- {id: FLEXSPI1_CLK_ROOT.outFreq, value: 352 MHz}
+- {id: FLEXSPI1_CLK_ROOT.outFreq, value: 400 MHz}
 - {id: FLEXSPI2_CLK_ROOT.outFreq, value: 270 MHz}
 - {id: FLEXSPI_SLV_CLK_ROOT.outFreq, value: 132 MHz}
 - {id: GPT1_CLK_ROOT.outFreq, value: 240 MHz}
@@ -235,10 +235,10 @@ settings:
 - {id: CCM.CLOCK_ROOT18.MUX.sel, value: ANADIG_PLL.SYS_PLL3_DIV2_CLK}
 - {id: CCM.CLOCK_ROOT19.MUX.sel, value: ANADIG_PLL.SYS_PLL3_DIV2_CLK}
 - {id: CCM.CLOCK_ROOT2.DIV.scale, value: '2', locked: true}
-- {id: CCM.CLOCK_ROOT2.MUX.sel, value: ANADIG_PLL.SYS_PLL2_PFD1_CLK}
+- {id: CCM.CLOCK_ROOT2.MUX.sel, value: ANADIG_OSC.OSC_RC_400M}
 - {id: CCM.CLOCK_ROOT20.MUX.sel, value: ANADIG_PLL.SYS_PLL3_DIV2_CLK}
 - {id: CCM.CLOCK_ROOT21.DIV.scale, value: '1', locked: true}
-- {id: CCM.CLOCK_ROOT21.MUX.sel, value: ANADIG_PLL.SYS_PLL2_PFD0_CLK}
+- {id: CCM.CLOCK_ROOT21.MUX.sel, value: ANADIG_OSC.OSC_RC_400M}
 - {id: CCM.CLOCK_ROOT22.MUX.sel, value: ANADIG_PLL.SYS_PLL3_PFD2_CLK}
 - {id: CCM.CLOCK_ROOT23.DIV.scale, value: '4', locked: true}
 - {id: CCM.CLOCK_ROOT23.MUX.sel, value: ANADIG_PLL.SYS_PLL2_CLK}
@@ -392,8 +392,8 @@ void BOARD_BootClockRUN(void)
     CLOCK_SetRootClock(kCLOCK_Root_M33, &rootCfg);
 #endif
 
-    /* Configure EDGELOCK using SYS_PLL2_PFD1_CLK */
-    EdgeLock_SetClock(kCLOCK_EDGELOCK_ClockRoot_MuxSysPll2Pfd1, 2);
+    /* Configure EDGELOCK using OSC_RC_400M */
+    EdgeLock_SetClock(kCLOCK_EDGELOCK_ClockRoot_MuxOscRc400M, 2);
 
     /* Configure BUS_AON using SYS_PLL2_CLK */
     rootCfg.mux = kCLOCK_BUS_AON_ClockRoot_MuxSysPll2Out;
@@ -489,8 +489,8 @@ void BOARD_BootClockRUN(void)
     rootCfg.div = 1;
     CLOCK_SetRootClock(kCLOCK_Root_Gpt2, &rootCfg);
 
-    /* Configure FLEXSPI1 using SYS_PLL2_PFD0_CLK */
-    BOARD_SetFlexspiClock(FLEXSPI1, kCLOCK_FLEXSPI1_ClockRoot_MuxSysPll2Pfd0, 1U);
+    /* Configure FLEXSPI1 using OSC_RC_400M */
+    BOARD_SetFlexspiClock(FLEXSPI1, kCLOCK_FLEXSPI1_ClockRoot_MuxOscRc400M, 1U);
 
     /* Configure FLEXSPI2 using SYS_PLL3_PFD2_CLK */
 #ifndef USE_HYPERRAM

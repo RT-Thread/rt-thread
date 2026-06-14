@@ -52,6 +52,11 @@
                         <data>true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="Peripheral" resourceId="FLEXSPI1" description="Peripheral FLEXSPI1 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
                   <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
                      <feature name="enabled" evaluation="equal" configuration="cm7">
                         <data>true</data>
@@ -77,6 +82,45 @@
                      </pin_features>
                   </pin>
                   <pin peripheral="ARM" signal="arm_trace_swo" pin_num="A4" pin_signal="GPIO_AON_11"/>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_SCLK" pin_num="A7" pin_signal="GPIO_B2_08">
+                     <pin_features>
+                        <pin_feature name="software_input_on" value="Disable"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_SS0_B" pin_num="D10" pin_signal="GPIO_B2_09">
+                     <pin_features>
+                        <pin_feature name="software_input_on" value="Disable"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA0" pin_num="A10" pin_signal="GPIO_B2_10">
+                     <pin_features>
+                        <pin_feature name="software_input_on" value="Disable"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA1" pin_num="B9" pin_signal="GPIO_B2_11">
+                     <pin_features>
+                        <pin_feature name="software_input_on" value="Disable"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA2" pin_num="A8" pin_signal="GPIO_B2_12">
+                     <pin_features>
+                        <pin_feature name="software_input_on" value="Disable"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA3" pin_num="B8" pin_signal="GPIO_B2_13">
+                     <pin_features>
+                        <pin_feature name="software_input_on" value="Disable"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA4" pin_num="D9" pin_signal="GPIO_B2_03"/>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA5" pin_num="C9" pin_signal="GPIO_B2_04"/>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA6" pin_num="A9" pin_signal="GPIO_B2_05"/>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DATA7" pin_num="E8" pin_signal="GPIO_B2_06"/>
+                  <pin peripheral="FLEXSPI1" signal="FLEXSPI_A_DQS" pin_num="A6" pin_signal="GPIO_B2_07">
+                     <pin_features>
+                        <pin_feature name="software_input_on" value="Disable"/>
+                     </pin_features>
+                  </pin>
                </pins>
             </function>
          </functions_list>
@@ -215,7 +259,7 @@
                   <clock_output id="ENET_REFCLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXIO1_CLK_ROOT.outFreq" value="120 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXIO2_CLK_ROOT.outFreq" value="48 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FLEXSPI1_CLK_ROOT.outFreq" value="352 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXSPI1_CLK_ROOT.outFreq" value="400 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXSPI2_CLK_ROOT.outFreq" value="270 MHz" locked="false" accuracy=""/>
                   <clock_output id="FLEXSPI_SLV_CLK_ROOT.outFreq" value="132 MHz" locked="false" accuracy=""/>
                   <clock_output id="GPT1_CLK_ROOT.outFreq" value="240 MHz" locked="false" accuracy=""/>
@@ -338,7 +382,7 @@
                   <setting id="CCM.CLOCK_ROOT2.MUX.sel" value="ANADIG_OSC.OSC_RC_400M" locked="false"/>
                   <setting id="CCM.CLOCK_ROOT20.MUX.sel" value="ANADIG_PLL.SYS_PLL3_DIV2_CLK" locked="false"/>
                   <setting id="CCM.CLOCK_ROOT21.DIV.scale" value="1" locked="true"/>
-                  <setting id="CCM.CLOCK_ROOT21.MUX.sel" value="ANADIG_PLL.SYS_PLL2_PFD0_CLK" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT21.MUX.sel" value="ANADIG_OSC.OSC_RC_400M" locked="false"/>
                   <setting id="CCM.CLOCK_ROOT22.MUX.sel" value="ANADIG_PLL.SYS_PLL3_PFD2_CLK" locked="false"/>
                   <setting id="CCM.CLOCK_ROOT23.DIV.scale" value="4" locked="true"/>
                   <setting id="CCM.CLOCK_ROOT23.MUX.sel" value="ANADIG_PLL.SYS_PLL2_CLK" locked="false"/>
