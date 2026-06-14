@@ -1,0 +1,8 @@
+menuconfig RT_USING_PTP
+    bool "Using Precision Time Protocol (PTP) IEEE 1588 clock support"
+    depends on RT_USING_DM
+    default n
+
+if RT_USING_PTP
+    osource "$(SOC_DM_PTP_DIR)/Kconfig"
+endif
