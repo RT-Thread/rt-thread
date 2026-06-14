@@ -5,11 +5,12 @@ cwd = GetCurrentDir()
 # add the general drivers.
 src = Split("""
 board.c
-MCUX_Config/clock_config.c
-MCUX_Config/pin_mux.c
+clock_config.c
+pin_mux.c
+peripherals.c
 """)
 
-CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
+CPPPATH = [cwd,cwd + '/ports']
 CPPDEFINES = ['CPU_MIMXRT1189CVM8C_cm7', 'MIMXRT1189_cm7_SERIES', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1', 'ARM_MATH_CM7']
 
 if rtconfig.PLATFORM in ['gcc']:

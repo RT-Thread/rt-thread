@@ -16,7 +16,7 @@
 
 int main(void)
 {
-    rt_kprintf("MIMXRT1180_CM7 Hello_World\r\n");
+    rt_kprintf("MIMXRT1180_CM7 MCU_Config_26.03\r\n");
 
      while (1)
      {

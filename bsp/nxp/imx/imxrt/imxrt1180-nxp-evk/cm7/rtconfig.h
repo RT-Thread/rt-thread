@@ -106,6 +106,7 @@
 #define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
+#define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
 #define ARCH_USING_HW_ATOMIC_8
 #define ARCH_USING_HW_ATOMIC_16
@@ -113,7 +114,7 @@
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
 #define ARCH_ARM_CORTEX_FPU
-#define ARCH_ARM_CORTEX_M33
+#define ARCH_ARM_CORTEX_M7
 
 /* RT-Thread Components */
 
@@ -294,6 +295,10 @@
 
 /* end of Kendryte SDK */
 
+/* MM32 HAL & SDK Drivers */
+
+/* end of MM32 HAL & SDK Drivers */
+
 /* WCH HAL & SDK Drivers */
 
 /* end of WCH HAL & SDK Drivers */
@@ -327,6 +332,10 @@
 /* FT32 HAL & SDK Drivers */
 
 /* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
