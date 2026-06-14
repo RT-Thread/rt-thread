@@ -20,4 +20,6 @@ def dist_do_building(BSP_ROOT, dist_dir):
 
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))
-    shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
+    kconfig = os.path.join(library_path, 'Kconfig')
+    if os.path.exists(kconfig):
+        shutil.copyfile(kconfig, os.path.join(library_dir, 'Kconfig'))
