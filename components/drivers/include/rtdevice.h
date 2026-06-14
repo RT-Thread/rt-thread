@@ -149,6 +149,10 @@ extern "C" {
 #endif /* RT_FIRMWARE_ARM_SCMI */
 #endif /* RT_USING_FIRMWARE */
 
+#ifdef RT_USING_TEE
+#include "drivers/tee.h"
+#endif /* RT_USING_TEE */
+
 #ifdef RT_USING_HWCACHE
 #include "drivers/hwcache.h"
 #endif /* RT_USING_HWCACHE */
