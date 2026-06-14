@@ -29,6 +29,26 @@ MODULE_VER_NUM = 6
 source_pattern = ['*.c', '*.cpp', '*.cxx', '*.cc', '*.s', '*.S', '*.asm','*.cmd']
 
 
+def _write_text_if_changed(path, content, encoding='utf-8'):
+    old_content = None
+    if os.path.exists(path):
+        with open(path, 'r', encoding=encoding, errors='ignore') as f:
+            old_content = f.read()
+
+    if old_content == content:
+        return False
+
+    with open(path, 'w', encoding=encoding, newline='\n') as f:
+        f.write(content)
+
+    return True
+
+
+def _serialize_xml(root, xml_decl):
+    xml_indent(root)
+    return xml_decl + etree.tostring(root, encoding='utf-8').decode('utf-8')
+
+
 def OSPath(path):
     import platform
 
@@ -257,11 +277,11 @@ def HandleToolOption(tools, env, project, reset):
         file_tail = '\n#endif /*RTCONFIG_PREINC_H__*/\n'
         rtt_pre_inc_item = '"${workspace_loc:/${ProjName}/rtconfig_preinc.h}"'
         # save the CPPDEFINES in to rtconfig_preinc.h
-        with open('rtconfig_preinc.h', mode = 'w+') as f:
-            f.write(file_header)
-            for cppdef in CPPDEFINES:
-                f.write("#define " + cppdef.replace('=', ' ') + '\n')
-            f.write(file_tail)
+        preinc_content = file_header
+        for cppdef in CPPDEFINES:
+            preinc_content += "#define " + cppdef.replace('=', ' ') + '\n'
+        preinc_content += file_tail
+        _write_text_if_changed('rtconfig_preinc.h', preinc_content)
         #  change the c.compiler.include.files
         files = option.findall('listOptionValue')
         find_ok = False
@@ -380,11 +400,8 @@ def UpdateProjectStructure(env, prj_name):
             name = SubElement(root, 'name')
         name.text = prj_name
 
-    out = open('.project', 'w')
-    out.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-    xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8').decode('utf-8'))
-    out.close()
+    project_content = _serialize_xml(root, '<?xml version="1.0" encoding="UTF-8"?>\n')
+    _write_text_if_changed('.project', project_content)
 
     return
 
@@ -518,12 +535,11 @@ def UpdateCproject(env, project, excluding, reset, prj_name):
             SubElement(configuration, 'resource', {'resourceType': "PROJECT", 'workspacePath': prj_name})
 
     # write back to .cproject
-    out = open('.cproject', 'w')
-    out.write('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
-    out.write('<?fileVersion 4.0.0?>')
-    xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8').decode('utf-8'))
-    out.close()
+    cproject_content = _serialize_xml(
+        root,
+        '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n<?fileVersion 4.0.0?>'
+    )
+    _write_text_if_changed('.cproject', cproject_content)
 
 
 def TargetEclipse(env, reset=False, prj_name=None):
