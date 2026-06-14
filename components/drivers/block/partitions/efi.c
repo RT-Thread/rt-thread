@@ -454,9 +454,13 @@ _fail:
  */
 rt_inline rt_bool_t is_pte_valid(const gpt_entry *pte, const rt_size_t lastlba)
 {
+    rt_uint64_t start = rt_le64_to_cpu(pte->starting_lba);
+    rt_uint64_t end = rt_le64_to_cpu(pte->ending_lba);
+
     if ((!efi_guidcmp(pte->partition_type_guid, NULL_GUID)) ||
-        rt_le64_to_cpu(pte->starting_lba) > lastlba ||
-        rt_le64_to_cpu(pte->ending_lba) > lastlba)
+        start > lastlba ||
+        end > lastlba ||
+        end < start)
     {
         return RT_FALSE;
     }
