@@ -29,6 +29,8 @@
 
 
 #define RX_MB_COUNT     (2)
+#define TX_MB_COUNT     (1)  /* MB0 is dedicated TX */
+#define TOTAL_MB_COUNT  (TX_MB_COUNT + RX_MB_COUNT)
 static FLEXCANDRV_MsgObjType frame[RX_MB_COUNT];    /* one frame buffer per RX MB */
 
 void CAN_Handler(void);
@@ -156,10 +158,33 @@ static rt_uint32_t get_can_baud_index(rt_uint32_t baud)
 }
 
 static rt_err_t _can_sendBlocking(ns800rt7_can *base, FLEXCANDRV_MsgObjType *TxMsgObj,
-                                   rt_uint32_t msg_id, rt_uint8_t is_ext_id)
+                                   rt_uint32_t msg_id, rt_uint8_t is_ext_id,
+                                   rt_uint8_t brs)
 {
-    /* Check if Message Buffer is idle. */
-    if (StateIdle == base->mbState[TxMsgObj->msgBufId])
+    /* Check if Message Buffer is idle.
+     * In loopback mode the controller may generate a spurious TX-done event
+     * right after FLEXCANDRV_Configure, leaving the software state in limbo.
+     * If the MB is not idle, wait briefly for the ISR to catch up. */
+    if (StateIdle != base->mbState[TxMsgObj->msgBufId])
+    {
+        rt_uint32_t retry;
+        for (retry = 0; retry < 50; retry++)
+        {
+            rt_thread_mdelay(1);
+            if (StateIdle == base->mbState[TxMsgObj->msgBufId])
+            {
+                break;
+            }
+        }
+        if (StateIdle != base->mbState[TxMsgObj->msgBufId])
+        {
+            LOG_E("sendBlocking: MB%u not idle, state=%u",
+                  (unsigned int)TxMsgObj->msgBufId,
+                  (unsigned int)base->mbState[TxMsgObj->msgBufId]);
+            return -RT_EBUSY;
+        }
+    }
+
     {
         base->mbState[TxMsgObj->msgBufId] = StateTxData;
 
@@ -172,19 +197,34 @@ static rt_err_t _can_sendBlocking(ns800rt7_can *base, FLEXCANDRV_MsgObjType *TxM
                                    &base->CanHandle, TxMsgObj->msgBufId);
         FLEXCANDRV_SetMsgId(msgBufPtr, msg_id, (bool)is_ext_id);
         FLEXCANDRV_SetMsgDLC(msgBufPtr, (FLEXCANDRV_DataLenCodeType)TxMsgObj->dlc);
-        /* Also re-apply FD enable (EDL/BRS bits) per-frame.
-         * The hardware may modify CS bits after TX completion. */
-        FLEXCANDRV_SetFDEnable(msgBufPtr, TxMsgObj->isFd);
+
+        /* Set FD/EDL and BRS bits independently in the CS word.
+         * FLEXCANDRV_SetFDEnable() forces BRS=1 when fdEnable=true,
+         * which prevents sending FD frames with BRS=0.
+         * Direct CS-word manipulation allows per-frame BRS control. */
+        if (TxMsgObj->isFd)
+        {
+            msgBufPtr[MESSAGE_BUFFER_CS_WORD_NUM] |= MESSAGE_BUFFER_CS_EDL_MASK;
+            if (brs)
+            {
+                msgBufPtr[MESSAGE_BUFFER_CS_WORD_NUM] |= MESSAGE_BUFFER_CS_BRS_MASK;
+            }
+            else
+            {
+                msgBufPtr[MESSAGE_BUFFER_CS_WORD_NUM] &= ~MESSAGE_BUFFER_CS_BRS_MASK;
+            }
+        }
+        else
+        {
+            msgBufPtr[MESSAGE_BUFFER_CS_WORD_NUM] &= ~(MESSAGE_BUFFER_CS_EDL_MASK
+                                                       | MESSAGE_BUFFER_CS_BRS_MASK);
+        }
 
         FLEXCANDRV_SetTxMsg(&base->CanHandle, TxMsgObj);
         /* transmit canfd Tx message */
         FLEXCANDRV_TransmitMsg(&base->CanHandle, TxMsgObj);
 
         return RT_EOK;
-    }
-    else
-    {
-        return -RT_ERROR;
     }
 }
 
@@ -382,29 +422,58 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 return RT_EOK;
             }
 
-            if (filter_cfg->count > CAN_FILTER_NUM_MAX)
+            if (filter_cfg->count > (CAN_FILTER_NUM_MAX - TX_MB_COUNT))
             {
                 return -RT_ERROR;
             }
 
+            /* Write user filters starting from FilterConfig[TX_MB_COUNT],
+             * preserving FilterConfig[0] which is the TX mailbox (MB0).
+             * This prevents TX MB configuration from being overwritten
+             * by RX filter settings. */
             for (i = 0; i < filter_cfg->count; i++)
             {
                 struct rt_can_filter_item *item = &filter_cfg->items[i];
+                rt_uint8_t idx = (rt_uint8_t)(TX_MB_COUNT + i);
 
-                drv_can->FilterConfig[i].msgBufId  = (uint16_t)(item->hdr_bank >= 0 ? item->hdr_bank : i);
-                drv_can->FilterConfig[i].msgBufLen = 1;
-                drv_can->FilterConfig[i].msgId     = item->id;
-                drv_can->FilterConfig[i].isExtMsgId = (item->ide == RT_CAN_EXTID);
-                drv_can->FilterConfig[i].msgType    = FLEXCANDRV_MSGTYPE_RX; /* default RX */
-                drv_can->FilterConfig[i].dlc        = DLC_BYTE_8;
-                drv_can->FilterConfig[i].isFd       = drv_can->device.config.enable_canfd;
-                drv_can->FilterConfig[i].intEnable  = true;
-                drv_can->FilterConfig[i].individualMask = item->mask;
-                drv_can->FilterConfig[i].rtrmask    = false;
-                drv_can->FilterConfig[i].rtrfilter  = false;
+                /* Map user hdr_bank to hardware MB index, offsetting past TX MB0.
+                 * hdr_bank=-1: to-assign sequentially (MB1, MB2, ...)
+                 * hdr_bank=N : explicit hardware MB index (N still maps
+                 *                to FilterConfig idx, via offset) */
+                drv_can->FilterConfig[idx].msgBufId  =
+                    (uint16_t)(item->hdr_bank >= 0
+                               ? (rt_uint32_t)(TX_MB_COUNT + (rt_uint16_t)item->hdr_bank)
+                               : idx);
+                drv_can->FilterConfig[idx].msgBufLen = 1;
+                drv_can->FilterConfig[idx].msgId     = item->id;
+                drv_can->FilterConfig[idx].isExtMsgId = (item->ide == RT_CAN_EXTID);
+                drv_can->FilterConfig[idx].msgType    = FLEXCANDRV_MSGTYPE_RX; /* default RX */
+                drv_can->FilterConfig[idx].dlc        = DLC_BYTE_8;
+                drv_can->FilterConfig[idx].isFd       = drv_can->device.config.enable_canfd;
+                drv_can->FilterConfig[idx].intEnable  = true;
+                /* FLEXCAN stores standard IDs at ID-word bits 18-28,
+                 * extended IDs at bits 0-28.  The RXIMR mask register
+                 * is bit-aligned with the ID word, so standard-frame
+                 * masks must be shifted left by 18 bits. */
+                if (item->ide == RT_CAN_EXTID)
+                {
+                    drv_can->FilterConfig[idx].individualMask =
+                        item->mask & 0x1FFFFFFFUL;
+                }
+                else
+                {
+                    drv_can->FilterConfig[idx].individualMask =
+                        (item->mask & 0x7FFUL) << MESSAGE_BUFFER_ID_STD_ID_SHIFT;
+                }
+                drv_can->FilterConfig[idx].rtrmask    = false;
+                drv_can->FilterConfig[idx].rtrfilter  = false;
             }
 
-            drv_can->FilterNum = filter_cfg->count;
+            /* Update FilterNum to include TX MB + user filters */
+            drv_can->FilterNum = (rt_uint8_t)(TX_MB_COUNT + filter_cfg->count);
+
+            /* Apply the new filter configuration to hardware immediately */
+            _can_config(&drv_can->device, &drv_can->device.config);
         }
         break;
     case RT_CAN_CMD_SET_MODE:
@@ -570,8 +639,10 @@ static rt_uint8_t _can_dlc_to_len(rt_uint8_t dlc)
     };
     return dlc2len[dlc & 0x0FU];
 }
+#define IS_CAN_LEN_VALID(LEN)    ((LEN) <= 64U)
 #else
 #define IS_CAN_DLC_VALID(DLC)    (((DLC) & 0x0FU) <= 0x08U)
+#define IS_CAN_LEN_VALID(LEN)    ((LEN) <= 8U)
 #endif
 
 /**
@@ -599,29 +670,28 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     hcan = (ns800rt7_can *) can->parent.user_data;
     pmsg = (struct rt_can_msg *) buf;
 
-    /* Validate DLC */
-    RT_ASSERT(IS_CAN_DLC_VALID(pmsg->len));
+    /* Validate payload byte length (rt_can_msg.len is byte count, not DLC code).
+     * Classic CAN: 0-8 bytes; CAN-FD: 0-64 bytes. */
+    RT_ASSERT(IS_CAN_LEN_VALID(pmsg->len));
 
     rt_memset(&fdTxMsgObj, 0, sizeof(fdTxMsgObj));
     fdTxMsgObj.msgBufId = box_no;
 
-    /* Set up the DLC */
-    fdTxMsgObj.dlc = pmsg->len & 0x0FU;
-
-    /* Determine data length from DLC */
+    /* Convert byte length to hardware DLC code and determine payload size */
+    data_len = pmsg->len;
 #ifdef RT_CAN_USING_CANFD
-    data_len = _can_dlc_to_len((rt_uint8_t)(pmsg->len & 0x0FU));
+    fdTxMsgObj.dlc = _can_len_to_dlc(pmsg->len);  /* byte len ¡ú DLC code */
     fdTxMsgObj.isFd = (pmsg->fd_frame != 0) ? true : false;
 #else
-    data_len = (rt_uint8_t)(pmsg->len & 0x0FU);
-    if (data_len > 8) { data_len = 8; }
+    fdTxMsgObj.dlc = pmsg->len;  /* classic CAN: DLC == byte length (0-8) */
 #endif
 
     /* Copy payload */
     rt_memcpy(fdTxMsgObj.data, pmsg->data, data_len);
 
     status = _can_sendBlocking(hcan, &fdTxMsgObj,
-                               pmsg->id, (pmsg->ide == RT_CAN_EXTID) ? 1 : 0);
+                               pmsg->id, (pmsg->ide == RT_CAN_EXTID) ? 1 : 0,
+                               (rt_uint8_t)(pmsg->brs != 0 ? 1 : 0));
 
     return status;
 }
@@ -655,8 +725,8 @@ static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void
         return -RT_EBUSY;
     }
 
-    /* Validate DLC */
-    if (!IS_CAN_DLC_VALID(pmsg->len))
+    /* Validate payload byte length */
+    if (!IS_CAN_LEN_VALID(pmsg->len))
     {
         return -RT_ERROR;
     }
@@ -664,63 +734,75 @@ static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void
     rt_memset(&fdTxMsgObj, 0, sizeof(fdTxMsgObj));
     fdTxMsgObj.msgBufId = 0;  /* MB0 is the dedicated TX mailbox */
 
-    fdTxMsgObj.dlc = pmsg->len & 0x0FU;
-
+    /* Convert byte length to hardware DLC code */
+    data_len = pmsg->len;
 #ifdef RT_CAN_USING_CANFD
-    data_len = _can_dlc_to_len((rt_uint8_t)(pmsg->len & 0x0FU));
+    fdTxMsgObj.dlc = _can_len_to_dlc(pmsg->len);
     fdTxMsgObj.isFd = (pmsg->fd_frame != 0) ? true : false;
 #else
-    data_len = (rt_uint8_t)(pmsg->len & 0x0FU);
-    if (data_len > 8) { data_len = 8; }
+    fdTxMsgObj.dlc = pmsg->len;
 #endif
 
     rt_memcpy(fdTxMsgObj.data, pmsg->data, data_len);
 
     return _can_sendBlocking(hcan, &fdTxMsgObj,
-                             pmsg->id, (pmsg->ide == RT_CAN_EXTID) ? 1 : 0);
+                             pmsg->id, (pmsg->ide == RT_CAN_EXTID) ? 1 : 0,
+                             (rt_uint8_t)(pmsg->brs != 0 ? 1 : 0));
 }
 
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     struct rt_can_msg *pmsg;
+    ns800rt7_can *hcan;
     rt_uint8_t data_len;
     rt_uint8_t frame_idx;
+    rt_uint8_t mb_idx;
 
     RT_ASSERT(can);
-
+    hcan = (ns800rt7_can *)can->parent.user_data;
     pmsg = (struct rt_can_msg *) buf;
 
     /* Zero out the message, then fill from hardware frame buffer */
     rt_memset(pmsg, 0, sizeof(struct rt_can_msg));
-    pmsg->hdr_index = -1;
     pmsg->rxfifo    = (rt_uint32_t)fifo;
 
     /* Select the correct frame buffer: MB1:frame[0], MB2:frame[1] */
     frame_idx = (fifo >= 1 && fifo <= RX_MB_COUNT) ? (rt_uint8_t)(fifo - 1) : 0;
+    mb_idx   = (rt_uint8_t)fifo;  /* hardware MB index (1 or 2) */
+
+    /* Set hdr_index to the filter bank index (0 for MB1, 1 for MB2).
+     * When RT_CAN_USING_HDR is enabled, rt_hw_can_isr() asserts
+     * hdr_index >= 0 and hdr_index < maxhdr.  -1 would trigger
+     * an assertion failure. */
+    pmsg->hdr_index = (rt_int8_t)frame_idx;
 
     /* frame[N].dlc is already converted from DLC code to byte length
      * by FLEXCANDRV_DLC2DataLen() inside FLEXCANDRV_GetRxMsg().
-     * Convert back to DLC code for the RT-Thread message len field. */
+     * Store as byte length in the RT-Thread message len field. */
     pmsg->id  = frame[frame_idx].msgId;
-#ifdef RT_CAN_USING_CANFD
-    pmsg->len = _can_len_to_dlc((rt_uint8_t)frame[frame_idx].dlc);
-#else
-    pmsg->len = (rt_uint8_t)frame[frame_idx].dlc;
-    if (pmsg->len > 8) { pmsg->len = 8; }
-#endif
-
-    /* Copy frame metadata */
-#ifdef RT_CAN_USING_CANFD
-    pmsg->fd_frame = frame[frame_idx].isFd ? 1 : 0;
-    /* BRS is not available from FLEXCANDRV_GetRxMsg()  set to 1 for FD frames */
-    pmsg->brs      = frame[frame_idx].isFd ? 1 : 0;
-#endif
-
-    /* Determine actual byte length to copy */
     data_len = (rt_uint8_t)frame[frame_idx].dlc;
     if (data_len > sizeof(pmsg->data))
     {
         data_len = sizeof(pmsg->data);
+    }
+    pmsg->len = data_len;
+
+    /* Read IDE, RTR, and BRS from the hardware MB CS word.
+     * FLEXCANDRV_GetRxMsg() does not report these fields individually,
+     * but they are available in the CS word of the received frame.
+     * CS word bits: 31=EDL(FD), 30=BRS, 21=IDE, 20=RTR */
+    {
+        uint32_t *msgBufPtr = (uint32_t *)FLEXCANDRV_GetMsgBufStartAddr(
+                                   &hcan->CanHandle, mb_idx);
+        uint32_t cs_word = msgBufPtr[MESSAGE_BUFFER_CS_WORD_NUM];
+        pmsg->ide = (cs_word & MESSAGE_BUFFER_CS_IDE_MASK)
+                        ? RT_CAN_EXTID : RT_CAN_STDID;
+        pmsg->rtr = (cs_word & MESSAGE_BUFFER_CS_RTR_MASK)
+                        ? RT_CAN_RTR : RT_CAN_DTR;
+#ifdef RT_CAN_USING_CANFD
+        pmsg->fd_frame = (cs_word & MESSAGE_BUFFER_CS_EDL_MASK) ? 1 : 0;
+        pmsg->brs      = (cs_word & MESSAGE_BUFFER_CS_BRS_MASK) ? 1 : 0;
+#endif
     }
 
     /* Bulk copy payload from frame buffer */
@@ -949,7 +1031,7 @@ int rt_hw_can_init(void)
     config.privmode = RT_CAN_MODE_NOPRIV;
 
     config.ticks = 50;
-    config.sndboxnumber = 1;
+    config.sndboxnumber = TX_MB_COUNT;
     config.msgboxsz = RX_MB_COUNT;
 #ifdef RT_CAN_USING_HDR
     config.maxhdr = RX_MB_COUNT;          /* filter count,one filter per MB */
@@ -1010,7 +1092,7 @@ int rt_hw_can_init(void)
     drv_can1.FilterConfig[2].rtrmask   = false;
     drv_can1.FilterConfig[2].rtrfilter = false;
 
-    drv_can1.FilterNum = 3;
+    drv_can1.FilterNum = TOTAL_MB_COUNT;
 
 #ifdef BSP_USING_CANFD1
     drv_can1.device.config = config;
