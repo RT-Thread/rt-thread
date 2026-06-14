@@ -7058,17 +7058,37 @@ sysret_t sys_getaddrinfo(const char *nodename,
     char *k_nodename = NULL;
     char *k_servname = NULL;
     struct addrinfo *k_hints = NULL;
+    struct musl_addrinfo k_hints_musl;
+    struct musl_addrinfo k_res_musl;
+    struct musl_sockaddr *u_res_ai_addr = NULL;
 #ifdef ARCH_MM_MMU
     int len = 0;
 #endif
 
 #ifdef ARCH_MM_MMU
-    if (!lwp_user_accessable((void *)res, sizeof(*res)))
+    if (!lwp_user_accessable((void *)res, sizeof(k_res_musl)))
+    {
+        SET_ERRNO(EFAULT);
+        goto exit;
+    }
+
+    if (lwp_get_from_user(&k_res_musl, (void *)res, sizeof(k_res_musl)) != sizeof(k_res_musl))
+    {
+        SET_ERRNO(EFAULT);
+        goto exit;
+    }
+#else
+    k_res_musl = *res;
+#endif
+    u_res_ai_addr = k_res_musl.ai_addr;
+#ifdef ARCH_MM_MMU
+    if (u_res_ai_addr && !lwp_user_accessable((void *)u_res_ai_addr, sizeof(struct musl_sockaddr)))
     {
         SET_ERRNO(EFAULT);
         goto exit;
     }
 #endif
+
     if (nodename)
     {
 #ifdef ARCH_MM_MMU
@@ -7135,13 +7155,21 @@ sysret_t sys_getaddrinfo(const char *nodename,
     if (hints)
     {
 #ifdef ARCH_MM_MMU
-        if (!lwp_user_accessable((void *)hints, sizeof(*hints)))
+        if (!lwp_user_accessable((void *)hints, sizeof(struct musl_addrinfo)))
         {
             SET_ERRNO(EFAULT);
             goto exit;
         }
+
+        if (lwp_get_from_user(&k_hints_musl, (void *)hints, sizeof(k_hints_musl)) != sizeof(k_hints_musl))
+        {
+            SET_ERRNO(EFAULT);
+            goto exit;
+        }
+#else
+        k_hints_musl = *hints;
 #endif
-        k_hints = (struct addrinfo *)rt_malloc(sizeof *hints);
+        k_hints = (struct addrinfo *)rt_malloc(sizeof(struct addrinfo));
         if (!k_hints)
         {
             SET_ERRNO(ENOMEM);
@@ -7149,31 +7177,57 @@ sysret_t sys_getaddrinfo(const char *nodename,
         }
 
         rt_memset(k_hints, 0x0, sizeof(struct addrinfo));
-        k_hints->ai_flags = hints->ai_flags;
-        k_hints->ai_family = hints->ai_family;
-        k_hints->ai_socktype = hints->ai_socktype;
-        k_hints->ai_protocol = hints->ai_protocol;
-        k_hints->ai_addrlen = hints->ai_addrlen;
+        k_hints->ai_flags = k_hints_musl.ai_flags;
+        k_hints->ai_family = k_hints_musl.ai_family;
+        k_hints->ai_socktype = k_hints_musl.ai_socktype;
+        k_hints->ai_protocol = k_hints_musl.ai_protocol;
+        k_hints->ai_addrlen = k_hints_musl.ai_addrlen;
     }
 
     ret = sal_getaddrinfo(k_nodename, k_servname, k_hints, &k_res);
     if (ret == 0)
     {
         /* set sockaddr */
-        sockaddr_tomusl(k_res->ai_addr, res->ai_addr);
-        res->ai_addrlen = k_res->ai_addrlen;
+        if (k_res->ai_addr && u_res_ai_addr)
+        {
+            struct musl_sockaddr k_sockaddr;
+
+            sockaddr_tomusl(k_res->ai_addr, &k_sockaddr);
+#ifdef ARCH_MM_MMU
+            if (lwp_put_to_user(u_res_ai_addr, &k_sockaddr, sizeof(k_sockaddr)) != sizeof(k_sockaddr))
+            {
+                SET_ERRNO(EFAULT);
+                ret = -1;
+                goto exit;
+            }
+#else
+            sockaddr_tomusl(k_res->ai_addr, u_res_ai_addr);
+#endif
+        }
+        k_res_musl.ai_addrlen = k_res->ai_addrlen;
 
         /* set up addrinfo */
-        res->ai_family = k_res->ai_family;
-        res->ai_flags = k_res->ai_flags;
-        res->ai_next = NULL;
+        k_res_musl.ai_family = k_res->ai_family;
+        k_res_musl.ai_flags = k_res->ai_flags;
+        k_res_musl.ai_next = NULL;
 
         if (hints != NULL)
         {
             /* copy socktype & protocol from hints if specified */
-            res->ai_socktype = hints->ai_socktype;
-            res->ai_protocol = hints->ai_protocol;
+            k_res_musl.ai_socktype = k_hints_musl.ai_socktype;
+            k_res_musl.ai_protocol = k_hints_musl.ai_protocol;
         }
+
+#ifdef ARCH_MM_MMU
+        if (lwp_put_to_user(res, &k_res_musl, sizeof(k_res_musl)) != sizeof(k_res_musl))
+        {
+            SET_ERRNO(EFAULT);
+            ret = -1;
+            goto exit;
+        }
+#else
+        *res = k_res_musl;
+#endif
 
         sal_freeaddrinfo(k_res);
         k_res = NULL;
@@ -7209,6 +7263,10 @@ exit:
     if (k_hints)
     {
         rt_free(k_hints);
+    }
+    if (k_res)
+    {
+        sal_freeaddrinfo(k_res);
     }
 
     return ret;
