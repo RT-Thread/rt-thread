@@ -308,7 +308,7 @@ The utest_run tool now supports dynamic auto-completion for test case names. Aft
 
 # How-to add utest cases into RT-Thread for your module
 
-The source code of utest cases is recommended to be placed in each module for maintenance, but the entry of Kconfig should all be placed(rsourced) in `Kconfig.utestcases` for unified maintenance. In this way, when executing menuconfig, people can enter and configure from one place, avoiding searching for utest configuration switches scattering in the menuconfig interface.
+The source code of utest cases is recommended to be placed in each module for maintenance, but the entry of Kconfig should all be placed(rsourced) in `components/utilities/utest/Kconfig` for unified maintenance. In this way, when executing menuconfig, people can enter and configure from one place, avoiding searching for utest configuration switches scattering in the menuconfig interface.
     
 For each module, you can maintain unit testcases in a unified manner in the following way:
 
@@ -322,7 +322,7 @@ For each module, you can maintain unit testcases in a unified manner in the foll
 
   - `SConscript` file, when adding src files, you need to rely on `RT_UTEST_XXXX`.
     
-After completing the above steps, rsource the path of the Kconfig file of utest of this module to the file `Kconfig.utestcases`.
+After completing the above steps, rsource the path of the Kconfig file of utest of this module to the file `components/utilities/utest/Kconfig`.
 
 You can find a good example in <a href="https://github.com/RT-Thread/rt-thread/blob/master/src/klibc/utest/">"klibc"</a>.
 

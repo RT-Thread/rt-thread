@@ -72,7 +72,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 16
+#define RT_NAME_MAX 32
 #define RT_USING_SMP
 #define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
@@ -219,7 +219,6 @@
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
-#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SPI
 #define RT_USING_SPI_ISR
@@ -227,7 +226,7 @@
 #define RT_USING_AUDIO
 #define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
 #define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
-#define RT_AUDIO_RECORD_PIPE_SIZE 2048
+#define RT_AUDIO_RECORD_PIPE_SIZE 4096
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -272,63 +271,6 @@
 
 /* Network */
 
-#define RT_USING_SAL
-#define SAL_INTERNET_CHECK
-#define SOCKET_TABLE_STEP_LEN 4
-
-/* Docking with protocol stacks */
-
-#define SAL_USING_LWIP
-/* end of Docking with protocol stacks */
-#define SAL_USING_POSIX
-#define RT_USING_NETDEV
-#define NETDEV_USING_IFCONFIG
-#define NETDEV_USING_PING
-#define NETDEV_USING_NETSTAT
-#define NETDEV_USING_AUTO_DEFAULT
-#define NETDEV_IPV4 1
-#define NETDEV_IPV6 0
-#define RT_USING_LWIP
-#define RT_USING_LWIP212
-#define RT_USING_LWIP_VER_NUM 0x20102
-#define RT_LWIP_MEM_ALIGNMENT 64
-#define RT_LWIP_ICMP
-#define RT_LWIP_DNS
-
-/* Static IPv4 Address */
-
-#define RT_LWIP_IPADDR "192.168.4.10"
-#define RT_LWIP_GWADDR "192.168.4.1"
-#define RT_LWIP_MSKADDR "255.255.255.0"
-/* end of Static IPv4 Address */
-#define RT_LWIP_UDP
-#define RT_LWIP_TCP
-#define RT_LWIP_RAW
-#define RT_MEMP_NUM_NETCONN 8
-#define RT_LWIP_PBUF_NUM 512
-#define RT_LWIP_RAW_PCB_NUM 4
-#define RT_LWIP_UDP_PCB_NUM 4
-#define RT_LWIP_TCP_PCB_NUM 4
-#define RT_LWIP_TCP_SEG_NUM 40
-#define RT_LWIP_TCP_SND_BUF 8196
-#define RT_LWIP_TCP_WND 8196
-#define RT_LWIP_TCPTHREAD_PRIORITY 12
-#define RT_LWIP_TCPTHREAD_MBOX_SIZE 256
-#define RT_LWIP_TCPTHREAD_STACKSIZE 16184
-#define RT_LWIP_ETHTHREAD_PRIORITY 16
-#define RT_LWIP_ETHTHREAD_STACKSIZE 8192
-#define RT_LWIP_ETHTHREAD_MBOX_SIZE 256
-#define RT_LWIP_REASSEMBLY_FRAG
-#define LWIP_NETIF_STATUS_CALLBACK 1
-#define LWIP_NETIF_LINK_CALLBACK 1
-#define RT_LWIP_NETIF_NAMESIZE 6
-#define SO_REUSE 1
-#define LWIP_SO_RCVTIMEO 1
-#define LWIP_SO_SNDTIMEO 1
-#define LWIP_SO_RCVBUF 1
-#define LWIP_SO_LINGER 0
-#define LWIP_NETIF_LOOPBACK 0
-#define RT_LWIP_USING_PING
 /* end of Network */
 
 /* Memory protection */
@@ -456,45 +398,9 @@
 
 /* end of STM32 HAL & SDK Drivers */
 
-/* Infineon HAL Packages */
-
-/* end of Infineon HAL Packages */
-
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
-
-/* WCH HAL & SDK Drivers */
-
-/* end of WCH HAL & SDK Drivers */
-
-/* AT32 HAL & SDK Drivers */
-
-/* end of AT32 HAL & SDK Drivers */
-
-/* HC32 DDL Drivers */
-
-/* end of HC32 DDL Drivers */
-
-/* NXP HAL & SDK Drivers */
-
-/* end of NXP HAL & SDK Drivers */
-
-/* NUVOTON Drivers */
-
-/* end of NUVOTON Drivers */
-
-/* GD32 Drivers */
-
-/* end of GD32 Drivers */
-
-/* HPMicro SDK */
-
-/* end of HPMicro SDK */
-
-/* FT32 HAL & SDK Drivers */
-
-/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -589,6 +495,10 @@
 /* Board extended module Drivers */
 
 /* end of Hardware Drivers */
+
+/* System Example */
+
+/* end of System Example */
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
 #define PHYTIUM_ARCH_AARCH64
@@ -624,9 +534,13 @@
 /* Sdk common configuration */
 
 #define ELOG_LINE_BUF_SIZE 0x100
-#define LOG_DEBUG
-#define USE_NS_GTIMER
+#define LOG_INFO
+#define USE_PHYSICAL_GTIMER
 /* end of Sdk common configuration */
+
+/* OpenAmp */
+
+/* end of OpenAmp */
 /* end of Standalone Setting */
 #define KERNEL_ASPACE_START 0x1000
 

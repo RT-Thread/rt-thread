@@ -83,5 +83,25 @@ if not IS_EXPORTED: # if project is not exported, libraries and board need to ma
     objs.extend(SConscript(os.path.join(BSP_ROOT,'board','SConscript')))
 
 # make a building
+# Preprocess linker script
+import subprocess
+lds_src = os.path.join(os.getcwd(), 'link.lds')
+lds_out = os.path.join(os.getcwd(), 'link_preprocessed.lds')
+try:
+    subprocess.run([
+        rtconfig.CC,
+        '-E', '-P', '-x', 'c',
+        '-I', os.getcwd(),
+        lds_src, '-o', lds_out
+    ], check=True, capture_output=True)
+except subprocess.CalledProcessError as e:
+    print(f"Warning: Failed to preprocess linker script: {e.stderr.decode() if e.stderr else str(e)}")
+
+# Update LFLAGS to use preprocessed linker script
+env['LINKFLAGS'] = env['LINKFLAGS'].replace('-T link.lds', '-T link_preprocessed.lds')
+
+# Clean generated linker script
+Clean(TARGET, lds_out)
+
 DoBuilding(TARGET, objs)
 

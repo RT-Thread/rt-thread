@@ -1,0 +1,8 @@
+menu "LWP Testcase"
+
+config RT_UTEST_LWP
+    bool "Enable LWP condvar test"
+    depends on RT_USING_SMART
+    default n
+
+endmenu

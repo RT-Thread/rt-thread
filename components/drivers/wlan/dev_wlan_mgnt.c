@@ -1132,9 +1132,15 @@ rt_bool_t rt_wlan_is_ready(void)
     return _ready;
 }
 
-rt_err_t rt_wlan_set_mac(rt_uint8_t mac[6])
+rt_err_t rt_wlan_set_mac(rt_uint8_t *mac)
 {
     rt_err_t err = RT_EOK;
+
+    if (mac == RT_NULL)
+    {
+        RT_WLAN_LOG_E("mac addr is null");
+        return -RT_EINVAL;
+    }
 
     if (_sta_is_null())
     {
@@ -1155,9 +1161,15 @@ rt_err_t rt_wlan_set_mac(rt_uint8_t mac[6])
     return err;
 }
 
-rt_err_t rt_wlan_get_mac(rt_uint8_t mac[6])
+rt_err_t rt_wlan_get_mac(rt_uint8_t *mac)
 {
     rt_err_t err = RT_EOK;
+
+    if (mac == RT_NULL)
+    {
+        RT_WLAN_LOG_E("mac addr is null");
+        return -RT_EINVAL;
+    }
 
     if (_sta_is_null())
     {
