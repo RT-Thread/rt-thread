@@ -24,4 +24,6 @@ rt_err_t thermal_bind(struct rt_thermal_cooling_device *cdev,
 rt_err_t thermal_unbind(struct rt_thermal_cooling_device *cdev,
         struct rt_thermal_zone_device *zdev);
 
+void thermal_cooling_device_bind_zones(struct rt_thermal_cooling_device *cdev);
+
 #endif /* __THERMAL_DM_H__ */

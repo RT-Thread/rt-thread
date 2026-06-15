@@ -21,6 +21,12 @@ if RT_USING_THERMAL
     comment "Thermal Cool Drivers"
 endif
 
+config RT_THERMAL_COOL_DVFS
+    bool "DVFS"
+    depends on RT_USING_THERMAL
+    depends on RT_USING_DVFS
+    default n
+
 config RT_THERMAL_COOL_PWM_FAN
     bool "PWM Fan"
     depends on RT_USING_THERMAL

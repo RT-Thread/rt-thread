@@ -34,6 +34,7 @@
 - @subpage page_device_disk
 - @subpage page_device_partitions
 - @subpage page_device_hwcache
+- @subpage page_device_dvfs
 - @subpage page_device_can
 - @subpage page_device_can_dm
 - @subpage page_device_clk
