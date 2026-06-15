@@ -269,7 +269,7 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
         if (ctrl_arg & (RT_DEVICE_FLAG_DMA_RX | RT_DEVICE_FLAG_DMA_TX))
         {
 #ifdef RT_SERIAL_USING_DMA
-            stm32_uart_dma_config(serial, ctrl_arg);
+            return stm32_uart_dma_config(serial, ctrl_arg);
 #else
             return -RT_ENOSYS;
 #endif
@@ -411,12 +411,113 @@ static rt_ssize_t stm32_transmit(struct rt_serial_device *serial,
 }
 
 #ifdef RT_SERIAL_USING_DMA
+/**
+ * @brief Resolve effective STM32 UART RX DMA event mode.
+ * @param request Requested RX DMA event mode.
+ * @param effective Pointer to the output effective mode.
+ * @return Operation status.
+ */
+static rt_err_t stm32_uart_resolve_rx_dma_event_mode(enum rt_serial_rx_dma_event_mode request,
+                                                     enum rt_serial_rx_dma_event_mode *effective)
+{
+    if (effective == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    if (request == RT_SERIAL_RX_DMA_EVENT_AUTO)
+    {
+        *effective = RT_SERIAL_RX_DMA_EVENT_HALF_FULL;
+        return RT_EOK;
+    }
+
+    if ((request != RT_SERIAL_RX_DMA_EVENT_NONE) &&
+        (request != RT_SERIAL_RX_DMA_EVENT_FULL_ONLY) &&
+        (request != RT_SERIAL_RX_DMA_EVENT_HALF_FULL))
+    {
+        return -RT_EINVAL;
+    }
+
+    *effective = request;
+    return RT_EOK;
+}
+
+/**
+ * @brief Configure STM32 UART RX DMA transfer event interrupts.
+ * @param dma_handle Pointer to the RX DMA handle linked to the UART.
+ * @param mode Effective serial RX DMA event mode.
+ */
+static void stm32_uart_configure_rx_dma_events(DMA_HandleTypeDef *dma_handle, enum rt_serial_rx_dma_event_mode mode)
+{
+    if (dma_handle == RT_NULL)
+    {
+        return;
+    }
+
+    if (mode == RT_SERIAL_RX_DMA_EVENT_NONE)
+    {
+        __HAL_DMA_DISABLE_IT(dma_handle, DMA_IT_HT);
+        __HAL_DMA_DISABLE_IT(dma_handle, DMA_IT_TC);
+    }
+    else if (mode == RT_SERIAL_RX_DMA_EVENT_FULL_ONLY)
+    {
+        __HAL_DMA_DISABLE_IT(dma_handle, DMA_IT_HT);
+        __HAL_DMA_ENABLE_IT(dma_handle, DMA_IT_TC);
+    }
+    else
+    {
+        __HAL_DMA_ENABLE_IT(dma_handle, DMA_IT_HT);
+        __HAL_DMA_ENABLE_IT(dma_handle, DMA_IT_TC);
+    }
+}
+
+/**
+ * @brief Check whether one STM32 UART RX DMA event should be handled.
+ * @param serial Pointer to the serial device.
+ * @param isr_flag UART RX DMA ISR source flag.
+ * @return RT_TRUE if the event should be handled.
+ */
+static rt_bool_t stm32_uart_rx_dma_event_enabled(struct rt_serial_device *serial, rt_uint8_t isr_flag)
+{
+    enum rt_serial_rx_dma_event_mode mode;
+
+    RT_ASSERT(serial != RT_NULL);
+
+    if (isr_flag == UART_RX_DMA_IT_IDLE_FLAG)
+    {
+        return RT_TRUE;
+    }
+
+    if (stm32_uart_resolve_rx_dma_event_mode(serial->config.rx_dma_event_mode, &mode) != RT_EOK)
+    {
+        return RT_FALSE;
+    }
+
+    if (isr_flag == UART_RX_DMA_IT_HT_FLAG)
+    {
+        return (mode == RT_SERIAL_RX_DMA_EVENT_HALF_FULL) ? RT_TRUE : RT_FALSE;
+    }
+
+    if (isr_flag == UART_RX_DMA_IT_TC_FLAG)
+    {
+        return (mode != RT_SERIAL_RX_DMA_EVENT_NONE) ? RT_TRUE : RT_FALSE;
+    }
+
+    return RT_FALSE;
+}
+
 static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
 {
     struct stm32_uart *uart;
     rt_size_t          recv_len, counter;
 
     RT_ASSERT(serial != RT_NULL);
+
+    if (stm32_uart_rx_dma_event_enabled(serial, isr_flag) != RT_TRUE)
+    {
+        return;
+    }
+
     uart = rt_container_of(serial, struct stm32_uart, serial);
 
     counter = __HAL_DMA_GET_COUNTER(&(uart->dma_rx.handle));
@@ -431,7 +532,7 @@ static void dma_recv_isr(struct rt_serial_device *serial, rt_uint8_t isr_flag)
         rt_uint8_t *ptr = NULL;
         rt_hw_serial_control_isr(serial, RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF, (void *)&ptr);
         SCB_InvalidateDCache_by_Addr((uint32_t *)ptr, serial->config.dma_ping_bufsz);
-#endif
+#endif /* defined(__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U) */
         uart->dma_rx.remaining_cnt = counter;
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
     }
@@ -494,13 +595,13 @@ static void uart_isr(struct rt_serial_device *serial)
     }
 
 #ifdef RT_SERIAL_USING_DMA
-    if ((uart->uart_dma_flag) && (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_IDLE))
+    if ((uart->uart_dma_flag & RT_DEVICE_FLAG_DMA_RX) && (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_IDLE))
         && (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_IDLE)))
     {
         dma_recv_isr(serial, UART_RX_DMA_IT_IDLE_FLAG);
         __HAL_UART_CLEAR_IDLEFLAG(&uart->handle);
     }
-#endif
+#endif /* RT_SERIAL_USING_DMA */
 
     if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_ORE))
     {
@@ -1113,6 +1214,7 @@ static rt_err_t stm32_uart_dma_config(struct rt_serial_device *serial, rt_ubase_
     DMA_HandleTypeDef *DMA_Handle;
     const struct stm32_dma_config *dma_config;
     struct stm32_uart *uart;
+    enum rt_serial_rx_dma_event_mode event_mode;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(flag == RT_DEVICE_FLAG_DMA_TX || flag == RT_DEVICE_FLAG_DMA_RX);
@@ -1122,6 +1224,11 @@ static rt_err_t stm32_uart_dma_config(struct rt_serial_device *serial, rt_ubase_
     {
         DMA_Handle = &uart->dma_rx.handle;
         dma_config = uart->config->dma_rx;
+        if (stm32_uart_resolve_rx_dma_event_mode(serial->config.rx_dma_event_mode, &event_mode) != RT_EOK)
+        {
+            LOG_E("%s invalid uart dma rx event mode", uart->config->name);
+            return -RT_EINVAL;
+        }
     }
     else /* RT_DEVICE_FLAG_DMA_TX == flag */
     {
@@ -1172,6 +1279,7 @@ static rt_err_t stm32_uart_dma_config(struct rt_serial_device *serial, rt_ubase_
             DMA_Handle->Parent = RT_NULL;
             return -RT_ERROR;
         }
+        stm32_uart_configure_rx_dma_events(DMA_Handle, event_mode);
         CLEAR_BIT(uart->handle.Instance->CR3, USART_CR3_EIE);
         __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_IDLE);
     }
