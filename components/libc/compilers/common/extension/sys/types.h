@@ -12,6 +12,7 @@
 #ifndef __SYS_TYPES_H__
 #define __SYS_TYPES_H__
 
+#include <rtconfig.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <time.h>
@@ -25,7 +26,11 @@ typedef int32_t          key_t;         /* Used for interprocess communication. 
 typedef int              pid_t;         /* Used for process IDs and process group IDs. */
 typedef unsigned short   uid_t;
 typedef unsigned short   gid_t;
+#ifdef RT_USING_DFS_LARGE_FILE
+typedef int64_t          off_t;
+#else
 typedef signed long      off_t;
+#endif
 typedef int              mode_t;
 typedef signed long      ssize_t;       /* Used for a count of bytes or an error indication. */
 typedef unsigned long    __timer_t;

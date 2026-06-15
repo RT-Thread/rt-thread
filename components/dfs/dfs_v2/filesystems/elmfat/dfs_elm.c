@@ -109,6 +109,18 @@ static int elm_result_to_dfs(FRESULT result)
     return status;
 }
 
+static int dfs_elm_off_to_fsize(off_t offset, FSIZE_t *fsize)
+{
+    if (offset < 0)
+        return -EINVAL;
+
+    if ((uint64_t)offset > (uint64_t)(FSIZE_t)-1)
+        return -EFBIG;
+
+    *fsize = (FSIZE_t)offset;
+    return 0;
+}
+
 /* results:
  *  -1, no space to install fatfs driver
  *  >= 0, there is an space to install fatfs driver
@@ -549,7 +561,7 @@ int dfs_elm_ioctl(struct dfs_file *file, int cmd, void *args)
     {
     case RT_FIOFTRUNCATE:
     {
-        off_t offset = (off_t)(size_t)(args);
+        off_t offset = *(off_t *)args;
         return dfs_elm_truncate(file, offset);
     }
     case F_GETLK:
@@ -565,6 +577,8 @@ ssize_t dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
     FIL *fd;
     FRESULT result = FR_OK;
     UINT byte_read;
+    FSIZE_t fsize;
+    int ret;
 
     if (file->vnode->type == FT_DIRECTORY)
     {
@@ -573,13 +587,20 @@ ssize_t dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
 
     if (file->vnode->size > *pos)
     {
+        ret = dfs_elm_off_to_fsize(*pos, &fsize);
+        if (ret < 0)
+            return ret;
+
         fd = (FIL *)(file->vnode->data);
         RT_ASSERT(fd != RT_NULL);
         rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
-        f_lseek(fd, *pos);
-        result = f_read(fd, buf, len, &byte_read);
-        /* update position */
-        *pos = fd->fptr;
+        result = f_lseek(fd, fsize);
+        if (result == FR_OK)
+        {
+            result = f_read(fd, buf, len, &byte_read);
+            /* update position */
+            *pos = fd->fptr;
+        }
         rt_mutex_release(&file->vnode->lock);
         if (result == FR_OK)
             return byte_read;
@@ -593,6 +614,8 @@ ssize_t dfs_elm_write(struct dfs_file *file, const void *buf, size_t len, off_t 
     FIL *fd;
     FRESULT result;
     UINT byte_write;
+    FSIZE_t fsize;
+    int ret;
 
     if (file->vnode->type == FT_DIRECTORY)
     {
@@ -601,12 +624,19 @@ ssize_t dfs_elm_write(struct dfs_file *file, const void *buf, size_t len, off_t 
 
     fd = (FIL *)(file->vnode->data);
     RT_ASSERT(fd != RT_NULL);
+    ret = dfs_elm_off_to_fsize(*pos, &fsize);
+    if (ret < 0)
+        return ret;
+
     rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
-    f_lseek(fd, *pos);
-    result = f_write(fd, buf, len, &byte_write);
-    /* update position and file size */
-    *pos = fd->fptr;
-    file->vnode->size = f_size(fd);
+    result = f_lseek(fd, fsize);
+    if (result == FR_OK)
+    {
+        result = f_write(fd, buf, len, &byte_write);
+        /* update position and file size */
+        *pos = fd->fptr;
+        file->vnode->size = f_size(fd);
+    }
     rt_mutex_release(&file->vnode->lock);
     if (result == FR_OK)
         return byte_write;
@@ -650,12 +680,18 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
     if (file->vnode->type == FT_REGULAR)
     {
         FIL *fd;
+        FSIZE_t fsize;
+        int ret;
 
         /* regular file type */
         fd = (FIL *)(file->vnode->data);
         RT_ASSERT(fd != RT_NULL);
+        ret = dfs_elm_off_to_fsize(offset, &fsize);
+        if (ret < 0)
+            return ret;
+
         rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
-        result = f_lseek(fd, offset);
+        result = f_lseek(fd, fsize);
         pos = fd->fptr;
         rt_mutex_release(&file->vnode->lock);
         if (result == FR_OK)
@@ -687,21 +723,26 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
 static int dfs_elm_truncate(struct dfs_file *file, off_t offset)
 {
     FIL *fd;
-    FSIZE_t fptr;
+    FSIZE_t fptr, fsize;
     FRESULT result = FR_OK;
+    int ret;
     fd = (FIL *)(file->vnode->data);
     RT_ASSERT(fd != RT_NULL);
 
+    ret = dfs_elm_off_to_fsize(offset, &fsize);
+    if (ret < 0)
+        return ret;
+
     /* save file read/write point */
     fptr = fd->fptr;
-    if (offset <= fd->obj.objsize)
+    if (fsize <= fd->obj.objsize)
     {
-        fd->fptr = offset;
+        fd->fptr = fsize;
         result = f_truncate(fd);
     }
     else
     {
-        result = f_lseek(fd, offset);
+        result = f_lseek(fd, fsize);
     }
     /* restore file read/write point */
     fd->fptr = fptr;
@@ -1042,6 +1083,8 @@ ssize_t dfs_elm_page_write(struct dfs_page *page)
     FIL *fd;
     FRESULT result;
     UINT byte_write;
+    FSIZE_t fsize;
+    int ret;
 
     if (page->aspace->vnode->type == FT_DIRECTORY)
     {
@@ -1050,9 +1093,16 @@ ssize_t dfs_elm_page_write(struct dfs_page *page)
 
     fd = (FIL *)(page->aspace->vnode->data);
     RT_ASSERT(fd != RT_NULL);
+    ret = dfs_elm_off_to_fsize(page->fpos, &fsize);
+    if (ret < 0)
+        return ret;
+
     rt_mutex_take(&page->aspace->vnode->lock, RT_WAITING_FOREVER);
-    f_lseek(fd, page->fpos);
-    result = f_write(fd, page->page, page->len, &byte_write);
+    result = f_lseek(fd, fsize);
+    if (result == FR_OK)
+    {
+        result = f_write(fd, page->page, page->len, &byte_write);
+    }
     rt_mutex_release(&page->aspace->vnode->lock);
     if (result == FR_OK)
     {
