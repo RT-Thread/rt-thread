@@ -102,7 +102,7 @@ static int serial_fops_open(struct dfs_file *fd)
 
     rt_device_close(device);
     ret = rt_device_open(device, flags);
-    
+
     if (ret == RT_EOK)
     {
         serial = (struct rt_serial_device *)device;
@@ -1388,6 +1388,21 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
 }
 #endif /* RT_USING_POSIX_TERMIOS */
 
+#ifdef RT_SERIAL_USING_DMA
+/**
+ * @brief Check whether one serial RX DMA event mode value is valid.
+ * @param mode RX DMA event mode value.
+ * @return RT_TRUE if the mode value is valid.
+ */
+static rt_bool_t rt_serial_rx_dma_event_mode_valid(enum rt_serial_rx_dma_event_mode mode)
+{
+    return ((mode == RT_SERIAL_RX_DMA_EVENT_AUTO) ||
+            (mode == RT_SERIAL_RX_DMA_EVENT_NONE) ||
+            (mode == RT_SERIAL_RX_DMA_EVENT_FULL_ONLY) ||
+            (mode == RT_SERIAL_RX_DMA_EVENT_HALF_FULL)) ? RT_TRUE : RT_FALSE;
+}
+#endif /* RT_SERIAL_USING_DMA */
+
 /**
   * @brief Control the serial device.
   * @param dev The pointer of device driver structure
@@ -1425,20 +1440,36 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         else
         {
             struct serial_configure *pconfig = (struct serial_configure *)args;
+            struct serial_configure old_config = serial->config;
+
+#ifdef RT_SERIAL_USING_DMA
+            if (rt_serial_rx_dma_event_mode_valid(pconfig->rx_dma_event_mode) != RT_TRUE)
+            {
+                ret = -RT_EINVAL;
+                break;
+            }
+#endif /* RT_SERIAL_USING_DMA */
+
             if (((pconfig->rx_bufsz != serial->config.rx_bufsz) || (pconfig->tx_bufsz != serial->config.tx_bufsz)
 #ifdef RT_SERIAL_USING_DMA
                  || (pconfig->dma_ping_bufsz != serial->config.dma_ping_bufsz)
-#endif
+                 || (pconfig->rx_dma_event_mode != serial->config.rx_dma_event_mode)
+#endif /* RT_SERIAL_USING_DMA */
                      ) &&
                 serial->parent.ref_count != 0)
             {
-                /*can not change buffer size*/
+                /* can not change buffer or DMA event configuration while opened */
                 ret = -RT_EBUSY;
                 break;
             }
+
             /* set serial configure */
             serial->config = *pconfig;
-            serial->ops->configure(serial, (struct serial_configure *)args);
+            ret = serial->ops->configure(serial, (struct serial_configure *)args);
+            if (ret != RT_EOK)
+            {
+                serial->config = old_config;
+            }
         }
         break;
     case RT_SERIAL_CTRL_GET_CONFIG:
