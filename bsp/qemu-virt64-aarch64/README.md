@@ -110,13 +110,13 @@ msh />
 
 | Option | Default | Description |
 | ------ | ------- | ----------- |
-| `-gic` | `2` | GIC version (`2` / `3` / `max`); auto-switches to GICv3 when `-smp` > 8 |
-| `-smp` | `RT_CPUS_NR` (4) | Number of CPU cores |
+| `-gic` | `2` | GIC version (`2` or `3`); auto-switches to GICv3 when `-smp` > 8; with `-el 2` and GICv3, internally uses `gic-version=max` (not passable via `-gic max`) |
+| `-smp` | `RT_CPUS_NR` (4) | Number of CPU cores; `-dtbo` adds 1 automatically when `amp_soc` is present |
 | `-mem` | `128` | Memory size (MB) |
 | `-el` | `1` | Exception level: `1` default; `2` virtualization on; `3` secure on |
 | `-bootargs` | see below | Kernel boot arguments |
 | `-initrd` | — | Path to initrd image |
-| `-graphic` | — | Graphics mode (ramfb + VirtIO keyboard/tablet), replaces `-nographic` |
+| `-graphic` | — | Graphics mode (ramfb + `virtio-gpu-device` + VirtIO keyboard/tablet), replaces `-nographic` |
 | `-gl` | — | In graphics mode, attach `virtio-gpu-gl-pci` and enable QEMU display OpenGL (e.g. `-gl gtk`); requires QEMU built with `--enable-opengl` and `--enable-virglrenderer`; must be used with `-graphic` |
 | `-debug` | — | Enable GDB debugging (`-S -s`) |
 | `-dumpdtb` | — | Export runtime DTB and convert to DTS |
@@ -133,8 +133,8 @@ msh />
 | `-tap` | — | Use TAP networking (replaces user mode) |
 | `-ssh` | `12055` | SSH port forwarding in user mode (`hostfwd=tcp::PORT-:22`) |
 | `-9p` | — | VirtIO 9P shared directory path (enable VirtIO 9P in menuconfig) |
-| `-camera` | — | Enable vfio-user camera (Linux only, with `qemu-device-camera`) |
-| `-dtbo` | — | AMP mode: DTBO overlay file (e.g. `amp.dtsi`); **requires Smart kernel** (see below) |
+| `-camera` | — | Host V4L2 device path (e.g. `/dev/video0`); Linux only; read access to the device is required (usually add your user to the `video` group); compiles and runs `qemu-device-camera.c` in the background, then attaches a vfio-user PCI camera (requires **libvfio-user**) |
+| `-dtbo` | — | AMP mode: DTBO overlay file (e.g. `amp.dtsi`); auto-increments `-smp` by 1; **requires Smart kernel** and sufficient `-mem` (see below) |
 
 Default `-bootargs`:
 
@@ -156,7 +156,7 @@ QEMU OpenGL display (`-gl`):
 ./qemu.py -graphic -gl gtk
 ```
 
-> **Note**: `-gl` enables OpenGL only on the QEMU / host display path (`virtio-gpu-gl-pci` + VirGL). This BSP includes only the VirtIO GPU 2D framebuffer driver by default — **no OpenGL / VirGL user-space or kernel implementation**. `-gl` does not provide OpenGL acceleration inside RT-Thread. For graphics demos, use `-graphic` (`virtio-gpu-device`) with framebuffer / HMI tests.
+> **Note**: `-gl` enables OpenGL only on the QEMU / host display path (`virtio-gpu-gl-pci` + VirGL). This BSP includes only the VirtIO GPU 2D framebuffer driver by default — **no OpenGL / VirGL user-space or kernel implementation**. `-gl` does not provide OpenGL acceleration inside RT-Thread. For graphics demos, use `-graphic` (`virtio-gpu-device`) with the framebuffer stack.
 
 GDB debugging:
 
@@ -194,13 +194,15 @@ AMP heterogeneous multi-core (RPMSG slave, **requires Smart version**):
 ./qemu.py -dtbo amp.dtsi -mem 258
 ```
 
-> **Note**: The AMP demo requires the **Smart version** (`RT_USING_SMART`). The standard kernel must run in a region where virtual addresses equal physical addresses. The slave image is loaded by QEMU `loader` to fixed physical addresses specified in `amp.dtsi` (e.g. `kernel-entry = 0x48480000`), which differs from the primary MMU layout; the standard kernel cannot boot correctly in that address space. Enable Smart in menuconfig and rebuild.
+> **Note**: The AMP demo requires the **Smart version** (`RT_USING_SMART`) and **`-mem 258`** (memory layout in `amp.dtsi` needs ~258 MB; the default 128 MB is insufficient). `qemu.py` also increments `-smp` by 1 when `amp_soc` is detected (e.g. `RT_CPUS_NR=4` runs as `-smp 5`). QEMU `loader` pre-loads `amp.dtb` and `rtthread.bin` to fixed physical addresses in `amp.dtsi` (e.g. `kernel-entry = 0x48480000`); the primary core then starts the slave via PSCI. The standard kernel must run in a region where virtual addresses equal physical addresses and cannot be used for the slave address space. Enable Smart in menuconfig and rebuild.
 
-Camera demo:
+Camera demo (requires `-graphic` for framebuffer overlay in `camera.c`):
 
 ```
-./qemu.py -graphic -camera
+./qemu.py -graphic -camera /dev/video0
 ```
+
+> **Note**: `-camera` requires a host V4L2 device path. On Linux, install [libvfio-user](https://github.com/nutanix/libvfio-user) first (see comments in `qemu-device-camera.c`), and ensure your user can read the device node (e.g. `sudo usermod -aG video $USER` then log in again, or check with `ls -l /dev/video0`). Open will also fail if another program is using the camera. The script compiles `qemu-device-camera.c`, waits for `/tmp/qemu-device-camera.sock`, starts QEMU, and stops the helper process when QEMU exits.
 
 ### 3.6 Console and Telnet
 
@@ -231,7 +233,7 @@ TAP requires bridge setup on Linux; support on Windows / WSL is limited. SSH por
 
 ## 4. Default QEMU Devices
 
-`qemu.py` attaches the following devices by default (matching the default driver configuration):
+`qemu.py` attaches the following devices by default (matching the default driver configuration). UFS is included only when QEMU ≥ 8.2.0; optional devices are listed with their triggering option.
 
 | QEMU device | Image file | RT-Thread side |
 | ----------- | ---------- | -------------- |
@@ -242,7 +244,7 @@ TAP requires bridge setup on Linux; support on Windows / WSL is limited. SSH por
 | `sdhci-pci` + `sd-card` | `emmc.qcow2` | SDHCI eMMC (enable SDIO) |
 | `nvme` + `nvme-ns` | `nvme.qcow2` | NVMe |
 | `ahci` + `ide-hd` | `ahci.qcow2` | AHCI SATA |
-| `ufs` + `ufs-lu` | `ufs.qcow2` | UFS (QEMU ≥ 8.2.0) |
+| `ufs` + `ufs-lu` (QEMU ≥ 8.2.0 only) | `ufs.qcow2` | UFS |
 | `virtio-net-device` | — | VirtIO Net (enable network stack) |
 | `virtio-rng-device` | — | VirtIO RNG |
 | `virtio-crypto-device` | — | VirtIO Crypto |
@@ -256,7 +258,7 @@ TAP requires bridge setup on Linux; support on Windows / WSL is limited. SSH por
 | `virtio-keyboard-device` / `virtio-tablet-device` | — | VirtIO Input |
 | `virtio-9p-device` (`-9p`) | — | VirtIO 9P (enable driver) |
 | `virtio-sound-pci` (`-sound virtio`) | — | VirtIO Sound |
-| vfio-user camera (`-camera`) | — | PCI camera (BSP `drv_camera`) |
+| vfio-user camera (`-camera <path>`) | host V4L2 device | PCI camera (BSP `drv_camera`) |
 
 ## 5. Driver Support
 
@@ -268,7 +270,6 @@ TAP requires bridge setup on Linux; support on Windows / WSL is limited. SSH por
 | Serial | 8250 PCI | PCI serial, Telnet port 4322 |
 | RTC | PL031 | Real-time clock |
 | GPIO | PL061 | GPIO controller |
-| Clock | ARM Architected Timer | System tick |
 | Watchdog | I6300ESB | PCI watchdog |
 | Storage | VirtIO Block | Block device, `vda` |
 | Storage | VirtIO SCSI | SD / CD-ROM |
@@ -278,31 +279,19 @@ TAP requires bridge setup on Linux; support on Windows / WSL is limited. SSH por
 | Storage | MTD NOR CFI | pflash flash |
 | Storage | BLK partition | DFS / EFI partition table |
 | Graphics | VirtIO GPU | 2D framebuffer (`-graphic`); no OpenGL / VirGL |
-| Graphics | Framebuffer | ROMFB 800×600, HMI / graphics tests |
+| Graphics | Framebuffer | RAMFB 800×600 (`RT_GRAPHIC_ROMFB_WIDTH` / `HEIGHT`, `drv_romfb.c`) |
 | Graphics | LCD | LCD device framework |
 | Input | VirtIO Input | Keyboard, mouse, tablet (`-graphic`) |
-| Input | Touchscreen | Touchscreen framework |
-| Input | Keyboard GPIO | GPIO keyboard |
-| Input | Power | Power key |
 | Audio | Intel HDA | Default `-sound hda` |
 | Audio | VirtIO Sound | `-sound virtio` |
-| Crypto | HwCrypto | AES / DES / 3DES / RC4 / RNG |
 | Crypto | VirtIO Crypto | VirtIO crypto backend |
 | Random | VirtIO RNG | Hardware random number |
 | Comm | VirtIO Console | Telnet 4321 |
-| Comm | VirtIO RPROC Serial | Remoteproc serial link |
 | Comm | RPMSG | VirtIO RPMSG character device |
 | Comm | Mailbox PIC | Mailbox interrupt controller |
 | Firmware | QEMU FW_CFG | Firmware configuration interface |
 | Bus | PCI | ECAM + Generic Host, MSI / MSI-X |
-| Bus | VirtIO | MMIO + PCI transport |
-| IRQ | GICv2 / GICv3 / ITS | Including GICv2m MSI |
-| Devicetree | OFW / FDT | Dynamic devicetree parsing |
-| Other | DMA | DMA framework |
-| Other | MFD EDU / SYSCON | Multi-function devices |
-| Other | Regulator / Reset | Power and reset framework |
-| Filesystem | DFS v2 | FatFs, devfs, romfs |
-| POSIX | Partial APIs | poll / select / termios / pipe, etc. |
+| Other | MFD EDU | Multi-function device |
 
 ### 5.2 Not Enabled by Default but Available via menuconfig
 
@@ -313,16 +302,6 @@ This BSP enables the PCI bus and VirtIO PCI transport; QEMU also attaches the co
 | VirtIO Net | `RT_USING_SAL` + `RT_USING_LWIP` + `RT_USING_ETHERNET` | `virtio-net-device` | Network stack not enabled by default |
 | VirtIO 9P | `RT_VIRTIO_9P` | `virtio-9p-device` | Use with `-9p` shared directory |
 | SDHCI eMMC | `RT_USING_SDIO` + `RT_SDIO_SDHCI_PCI` | `sdhci-pci` | eMMC storage |
-| SDIO DW MMC PCI | `RT_USING_SDIO` + `RT_SDIO_DW_MMC_PCI` | — | DesignWare MMC |
-| USB | `RT_USING_USB_HOST` / `RT_USING_USB_DEVICE` | Add USB controller manually | Not a default QEMU device |
-| CherryUSB | `RT_USING_CHERRYUSB` | Add USB controller manually | — |
-| I2C / SPI | `RT_USING_I2C` / `RT_USING_SPI` | Depends on PCI device | Requires matching PCI controller driver |
-| CAN | `RT_USING_CAN` | Depends on PCI device | — |
-| Sensor | `RT_USING_SENSOR` | — | — |
-| WiFi | `RT_USING_WIFI` | — | — |
-| PM | `RT_USING_PM` | — | — |
-| Pinctrl | `RT_USING_PINCTRL` | — | — |
-| SCMI firmware | `RT_FIRMWARE_ARM_SCMI` + `RT_VIRTIO_SCMI` | — | — |
 
 > **Note**: Any PCI driver marked `depends on RT_USING_PCI` can be enabled on this BSP via menuconfig. If QEMU does not attach the device by default, add the corresponding `-device` argument in `qemu.py`.
 
@@ -330,9 +309,8 @@ This BSP enables the PCI bus and VirtIO PCI transport; QEMU also attaches the co
 
 | Feature | Config | Startup |
 | ------- | ------ | ------- |
-| HMI graphics test | `RT_GRAPHIC_HMI_TEST` | `-graphic` (embedded in `drv_romfb.c`) |
-| Graphics draw test | `RT_GRAPHIC_GRAPHIC_TEST` | `-graphic` (embedded in `drv_romfb.c`) |
-| Camera driver | `RT_SOC_CAMERA` | `-graphic -camera` |
+| RAMFB resolution | `RT_GRAPHIC_ROMFB_WIDTH` / `RT_GRAPHIC_ROMFB_HEIGHT` | `-graphic` (`drv_romfb.c` supplies size to RAMFB) |
+| Camera driver | `RT_SOC_CAMERA` | `-camera <v4l2-path>`; use `-graphic` for `camera.c` preview |
 
 ### 5.4 Sample Applications (`applications/`)
 
@@ -348,9 +326,9 @@ Default application. Prints `hello rt-thread` after boot, then enters msh.
 
 **`amp.c` (AMP + RPMSG)**
 
-The primary core boots an additional CPU running RT-Thread as slave via the `amp_soc` devicetree node and PSCI. Primary and slave communicate through VirtIO RPMSG and Mailbox. The primary writes VirtIO Block `vdb` resource info into the slave DTB before starting the slave.
+QEMU `loader` pre-loads `amp.dtb` and `rtthread.bin` to addresses in `amp.dtsi`; the primary core then boots the slave CPU via the `amp_soc` devicetree node and PSCI. Primary and slave communicate through VirtIO RPMSG and Mailbox. The primary writes VirtIO Block `vdb` resource info into the slave DTB before starting the slave. `qemu.py` increments `-smp` by 1 for the extra CPU.
 
-**Version requirement**: **Smart version** required (`RT_USING_SMART` in menuconfig). The standard kernel must run with virtual addresses equal to physical addresses. The AMP slave is loaded by QEMU into a separate physical memory region (see `amp_memory`, `kernel-entry` in `amp.dtsi`), which violates that constraint — the standard kernel cannot be used for AMP demos.
+**Version requirement**: **Smart version** required (`RT_USING_SMART` in menuconfig), plus **`-mem 258`**. The standard kernel must run with virtual addresses equal to physical addresses. The AMP slave is loaded into a separate physical memory region (see `amp_memory`, `kernel-entry` in `amp.dtsi`), which violates that constraint — the standard kernel cannot be used for AMP demos.
 
 Startup:
 
@@ -374,10 +352,10 @@ An RPMSG endpoint is created automatically at boot (`rpmsg_char0`, endpoint name
 
 Centers and overlays the vfio-user PCI camera feed onto the framebuffer. Default devices `camera0` → `fb0`, runs for about 10 seconds (300 frames).
 
-Startup:
+Startup (Linux host with libvfio-user and a V4L2 camera):
 
 ```
-./qemu.py -graphic -camera
+./qemu.py -graphic -camera /dev/video0
 ```
 
 msh command:
@@ -414,9 +392,10 @@ Optional VirtIO device arguments (add in `qemu.py` as needed):
 
 ## 8. Notes After Configuration Changes
 
-- After changing CPU count, adjust `qemu.py -smp` or rebuild so `RT_CPUS_NR` matches.
-- GIC auto-switches to v3 when exceeding 8 cores; or specify `-gic 3` manually.
+- After changing CPU count, rebuild so `RT_CPUS_NR` matches (or override with `qemu.py -smp`). In `-dtbo` mode, `qemu.py` adds 1 to the CPU count automatically.
+- GIC auto-switches to v3 when exceeding 8 cores; or specify `-gic 3` manually. `gic-version=max` is set only internally when using `-el 2` with GICv3.
 - 9P directory sharing requires QEMU built with virtfs (`--enable-virtfs`).
 - `-gl` requires QEMU built with OpenGL / VirGL (`--enable-opengl`, `--enable-virglrenderer`); this is independent of RT-Thread OpenGL support — the default software stack is 2D graphics only.
-- AMP (`-dtbo`) requires Smart kernel (`RT_USING_SMART`); the standard kernel requires VA=PA and cannot be used with slave images loaded at fixed physical addresses.
+- AMP (`-dtbo`) requires Smart kernel (`RT_USING_SMART`), `-mem 258`, and auto-increments CPU count; the standard kernel requires VA=PA and cannot be used with slave images loaded at fixed physical addresses.
+- `-camera` requires a host V4L2 device path, Linux, and libvfio-user; your user must have read access to the device (typically via the `video` group); `-graphic` is needed only for the `camera.c` framebuffer preview demo.
 - Override root device or boot parameters via `-bootargs`.
