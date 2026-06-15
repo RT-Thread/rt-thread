@@ -11,13 +11,7 @@
  *                           add smp ipi init
  */
 
-#include <mmu.h>
-#include <board.h>
-#include <mm_aspace.h>
-#include <mm_page.h>
 #include <setup.h>
-
-extern size_t MMUTable[];
 
 void rt_hw_board_init(void)
 {

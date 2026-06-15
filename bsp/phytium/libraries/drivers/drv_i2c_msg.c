@@ -26,17 +26,10 @@
     #include <ioremap.h>
 #endif
 
-/*Please define the length of the mem_addr of the device*/
-#ifndef FI2C_DEVICE_MEMADDR_LEN
-    #define FI2C_DEVICE_MEMADDR_LEN 2
-#endif
-#define I2C_TIMEOUT_MS 1000
-
 struct phytium_i2c_msg_bus
 {
     struct rt_i2c_bus_device device;
     FI2cMsgCtrl i2c_handle;
-    struct rt_i2c_msg *msg;
     const char *name;
 };
 
@@ -64,11 +57,10 @@ static rt_err_t i2c_msg_config(struct phytium_i2c_msg_bus *i2c_bus)
         return -RT_ERROR;
     }
     instance_p->speed_mode = FI2C_STANDARD_SPEED;
-    instance_p->timeout_ms = I2C_TIMEOUT_MS;
     instance_p->clk_clock_frequency = FI2C_CLK_FREQ_HZ;
 
     rt_hw_interrupt_set_target_cpus(instance_p->config.irq_num, cpu_id);
-    rt_hw_interrupt_set_priority(instance_p->config.irq_num, instance_p->config.irq_prority);
+    rt_hw_interrupt_set_priority(instance_p->config.irq_num, instance_p->config.irq_priority);
     rt_hw_interrupt_install(instance_p->config.irq_num, FI2cMsgMasterRegfileIsr, instance_p, i2c_bus->name);
     rt_hw_interrupt_umask(instance_p->config.irq_num);
 
@@ -135,6 +127,7 @@ static rt_ssize_t i2c_msg_master_xfer(struct rt_i2c_bus_device *device, struct r
     u32 ret;
     struct rt_i2c_msg *pmsg;
     rt_ssize_t i;
+    FI2cMsg fmsgs;
     struct phytium_i2c_msg_bus *i2c_bus;
     i2c_bus = (struct phytium_i2c_msg_bus *)(device);
     FI2cMsgCtrl *instance_p = &i2c_bus->i2c_handle;
@@ -142,40 +135,18 @@ static rt_ssize_t i2c_msg_master_xfer(struct rt_i2c_bus_device *device, struct r
     for (i = 0; i < num; i++)
     {
         pmsg = &msgs[i];
-        if (pmsg->flags & RT_I2C_RD)
-        {
-            /*When performing a read operation, first write to the input memaddr, and then read*/
-            struct FI2cMsg msg[2];
-            msg[0].addr = pmsg->addr;
-            msg[0].flags = FI2C_MSG_WD;
-            msg[0].len = FI2C_DEVICE_MEMADDR_LEN;
-            msg[0].buf = pmsg->buf;
+        fmsgs.device_addr = pmsg->addr;
+        fmsgs.buf = (u8 *)pmsg->buf;
+        fmsgs.len = pmsg->len;
+        fmsgs.flags = (pmsg->flags & RT_I2C_RD) ? FI2C_M_RD : FI2C_M_WE;
 
-            msg[1].addr = pmsg->addr;
-            msg[1].flags = FI2C_MSG_RD;
-            msg[1].len = pmsg->len;
-            msg[1].buf = pmsg->buf;
-            ret = FI2cMsgMasterVirtXfer(instance_p, msg, 2);
-            if (ret != FI2C_MSG_SUCCESS)
-            {
-                LOG_E("FI2cMsgMasterVirtProbe read failed, ret = %d", ret);
-            }
-        }
-        else
+        ret = FI2cMsgMasterVirtXfer(instance_p, &fmsgs, 1);
+        if (ret != FI2C_MSG_SUCCESS)
         {
-            struct FI2cMsg msg;
-            msg.addr = pmsg->addr;
-            msg.buf = pmsg->buf;
-            msg.len = pmsg->len;
-            msg.flags = FI2C_MSG_WD;
-            ret = FI2cMsgMasterVirtXfer(instance_p, &msg, 1); /*num = 1 ,只需发送一次写命令*/
-            if (ret != FI2C_MSG_SUCCESS)
-            {
-                LOG_E("FI2cMsgMasterVirtProbe write failed, ret = %d", ret);
-            }
+            LOG_E("FI2cMsgMasterVirtProbe read failed, ret = %d", ret);
         }
+        rt_thread_mdelay(5);
     }
-
     return i;
 }
 

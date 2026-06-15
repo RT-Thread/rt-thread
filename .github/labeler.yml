@@ -51,6 +51,30 @@ BSP:
 - changed-files:
   - any-glob-to-any-file: bsp/wch/**
 
+'BSP: Raspberry-Pi':
+- changed-files:
+  - any-glob-to-any-file: bsp/raspberry-pi/**
+
+'BSP: Rockchip':
+- changed-files:
+  - any-glob-to-any-file: bsp/rockchip/**
+
+'BSP: Loongson':
+- changed-files:
+  - any-glob-to-any-file: bsp/loongson/**
+
+'BSP: ESP32':
+- changed-files:
+  - any-glob-to-any-file: bsp/ESP/**
+
+'BSP: HC32':
+- changed-files:
+  - any-glob-to-any-file: bsp/hc32/**
+
+'BSP: Novosns':
+- changed-files:
+  - any-glob-to-any-file: bsp/novosns/**
+
 testcase:
 - changed-files:
   - any-glob-to-any-file: examples/**

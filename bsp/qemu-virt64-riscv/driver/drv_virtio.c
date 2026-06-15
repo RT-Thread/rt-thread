@@ -11,7 +11,7 @@
 #include <rtthread.h>
 #include <virt.h>
 
-#ifdef BSP_USING_VIRTIO
+#ifdef RT_USING_LEGACY_VIRTIO
 
 #include <virtio.h>
 #ifdef BSP_USING_VIRTIO_BLK
@@ -97,4 +97,4 @@ int rt_virtio_devices_init(void)
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_virtio_devices_init);
-#endif  /* BSP_USING_VIRTIO */
+#endif  /* RT_USING_LEGACY_VIRTIO */

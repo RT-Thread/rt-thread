@@ -19,6 +19,22 @@ if GetDepend('BSP_USING_CAN'):
 if GetDepend('BSP_USING_ECAP'):
     src += ['drv_ecap.c']
 
+if GetDepend('BSP_USING_ADC'):
+    src += ['drv_adc.c']
+
+if GetDepend('BSP_USING_TIM'):
+    src += ['drv_timer.c']
+
+if GetDepend('BSP_USING_SPI'):
+    src += ['drv_spi.c']
+if GetDepend('BSP_USING_QSPI'):   
+    src += ['drv_qspi.c']
+
+if GetDepend('BSP_USING_WDT'):
+    src += ['drv_iwdg.c']
+    if GetDepend('BSP_USING_WWDG'):
+        src += ['drv_wwdg.c']
+
 group = DefineGroup('HAL_Drivers', src, depend = [''], CPPPATH = path)
 
 Return('group')

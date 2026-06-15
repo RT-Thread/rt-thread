@@ -469,8 +469,7 @@ static void ppp_do_connect(void *arg) {
  * ppp_netif_init_cb - netif init callback
  */
 static err_t ppp_netif_init_cb(struct netif *netif) {
-  netif->name[0] = 'p';
-  netif->name[1] = 'p';
+  rt_strncpy(netif->name, "pp", sizeof(netif->name));
 #if PPP_IPV4_SUPPORT
   netif->output = ppp_netif_output_ip4;
 #endif /* PPP_IPV4_SUPPORT */

@@ -421,7 +421,6 @@
 #define BSP_USING_UART
 #define BSP_NS800_UART_TX_TIMEOUT 6000
 #define BSP_USING_UART1
-#define BSP_USING_ECAP
 #define BSP_USING_CAN
 #define BSP_USING_CANFD1
 /* end of On-chip Peripheral Drivers */

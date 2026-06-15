@@ -70,6 +70,7 @@ SECTIONS
     } > CODE = 0
 
     /* .ARM.exidx is sorted, so has to go in its own output section.  */
+    .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } > CODE
     __exidx_start = .;
     .ARM.exidx :
     {
@@ -102,7 +103,7 @@ SECTIONS
         _edata = . ;
     } >RAM1
 
-    .stack :
+    .stack (NOLOAD):
     {
         . = ALIGN(4);
         _sstack = .;
@@ -112,7 +113,7 @@ SECTIONS
     } >RAM1
 
     __bss_start = .;
-    .bss :
+    .bss (NOLOAD):
     {
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .bss secion */

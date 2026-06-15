@@ -100,7 +100,7 @@ path: bsp/nxp/mcx/mcxn
 owners: 下里巴人(hywing)<hywing.sir@qq.com>
 
 tag: bsp_mm32f526x
-path: bsp/mm32f526x
+path: bsp/mm32/mm32f526x
 owners: Huanyi Mai(Maihuanyi)<m19825309307@163.com>
 
 tag: bsp_nrf5x
