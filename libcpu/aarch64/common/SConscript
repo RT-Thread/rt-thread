@@ -34,6 +34,9 @@ if GetDepend('RT_USING_PIC') == True:
 if GetDepend('RT_CLOCK_TIME_ARM_ARCH') == True:
     SrcRemove(src, ['gtimer.c'])
 
+if GetDepend('ARCH_USING_CPUIDLE') == False:
+    SrcRemove(src, ['cpuidle.c'])
+
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
 
 # build for sub-directory

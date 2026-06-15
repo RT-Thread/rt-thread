@@ -57,6 +57,9 @@ static struct cpu_ops_t *cpu_ops[] =
 #endif
 };
 
+#ifdef ARCH_USING_CPUIDLE
+struct rt_dvfs_idle *cpu_idle[RT_CPUS_NR] = {};
+#endif
 static struct rt_ofw_node *cpu_np[RT_CPUS_NR] = { };
 
 void rt_hw_fdt_install_early(void *fdt)
@@ -136,6 +139,21 @@ static void cpu_us_delay(rt_uint32_t us)
 
 rt_weak void rt_hw_idle_wfi(void)
 {
+#ifdef ARCH_USING_CPUIDLE
+    struct rt_dvfs_idle *cpuidle = cpu_idle[rt_hw_cpu_id()];
+
+    if (cpuidle)
+    {
+        rt_dvfs_idle_entry(cpuidle);
+
+        __asm__ volatile ("wfi");
+
+        rt_dvfs_idle_exit(cpuidle);
+
+        return;
+    }
+#endif /* ARCH_USING_CPUIDLE */
+
     __asm__ volatile ("wfi");
 }
 
@@ -409,6 +427,34 @@ void rt_hw_common_setup(void)
 #endif
 }
 
+#ifdef ARCH_USING_CPUIDLE
+static int cpuidle_init(void)
+{
+    static struct rt_device cpuidle_dev = {};
+
+    for (int i = 0; i < RT_ARRAY_SIZE(cpu_idle); ++i)
+    {
+        struct rt_dvfs_idle *cpuidle;
+
+        if (!cpu_np[i])
+        {
+            continue;
+        }
+
+        cpuidle_dev.ofw_node = cpu_np[i];
+        cpuidle = rt_dvfs_idle_get(&cpuidle_dev);
+
+        if (!rt_is_err(cpuidle))
+        {
+            cpu_idle[i] = cpuidle;
+        }
+    }
+
+    return 0;
+}
+INIT_PREV_EXPORT(cpuidle_init);
+#endif /* ARCH_USING_CPUIDLE */
+
 #ifdef RT_USING_SMP
 rt_weak void rt_hw_secondary_cpu_up(void)
 {
@@ -503,6 +549,21 @@ rt_weak void rt_hw_secondary_cpu_bsp_start(void)
 
 rt_weak void rt_hw_secondary_cpu_idle_exec(void)
 {
+#ifdef ARCH_USING_CPUIDLE
+    struct rt_dvfs_idle *cpuidle = cpu_idle[rt_hw_cpu_id()];
+
+    if (cpuidle)
+    {
+        rt_dvfs_idle_entry(cpuidle);
+
+        rt_hw_wfe();
+
+        rt_dvfs_idle_exit(cpuidle);
+
+        return;
+    }
+#endif /* ARCH_USING_CPUIDLE */
+
     rt_hw_wfe();
 }
 #endif
