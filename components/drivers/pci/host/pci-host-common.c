@@ -61,7 +61,7 @@ rt_err_t pci_host_common_probe(struct rt_platform_device *pdev)
     }
 
     host_bridge->sysdata = conf_win = pci_ecam_create(host_bridge,
-            (const struct pci_ecam_ops *)pdev->id->data);
+                                                      (const struct pci_ecam_ops *)pdev->id->data);
 
     if (!conf_win)
     {

@@ -75,10 +75,10 @@ struct rt_pci_msi_conf
 
     struct
     {
-        rt_uint8_t is_masking:1;     /**< Per-Vector Masking Capable (bit 8) */
-        rt_uint8_t is_64bit:1;       /**< 64-bit Address Capable (bit 7) */
-        rt_uint8_t multi_msg_max:3;  /**< Multiple Message Capable — log2 of max vectors (bits 3:1) */
-        rt_uint8_t multi_msg_use:3;  /**< Multiple Message Enable — log2 of vectors in use (bits 6:4) */
+        rt_uint8_t is_masking    : 1;     /**< Per-Vector Masking Capable (bit 8) */
+        rt_uint8_t is_64bit      : 1;       /**< 64-bit Address Capable (bit 7) */
+        rt_uint8_t multi_msg_max : 3;  /**< Multiple Message Capable — log2 of max vectors (bits 3:1) */
+        rt_uint8_t multi_msg_use : 3;  /**< Multiple Message Enable — log2 of vectors in use (bits 6:4) */
     } cap; /**< Capability flags parsed from Message Control register */
 };
 
@@ -204,8 +204,7 @@ struct rt_pci_msi_desc
 
 /** @brief Get the first MSI descriptor for a device, or RT_NULL if none */
 #define rt_pci_msi_first_desc(pdev) \
-    (rt_list_isempty(&(pdev)->msi_desc_nodes) ? RT_NULL : \
-        rt_list_first_entry(&(pdev)->msi_desc_nodes, struct rt_pci_msi_desc, list))
+    (rt_list_isempty(&(pdev)->msi_desc_nodes) ? RT_NULL : rt_list_first_entry(&(pdev)->msi_desc_nodes, struct rt_pci_msi_desc, list))
 
 /** @brief Iterate over all MSI descriptors for a device */
 #define rt_pci_msi_for_each_desc(pdev, desc) \

@@ -32,27 +32,27 @@
 #include <drivers/platform.h>
 
 /** @brief Bus number shift in ECAM address (20 bits for PCIe) */
-#define PCIE_ECAM_BUS_SHIFT     20
+#define PCIE_ECAM_BUS_SHIFT 20
 /** @brief Device/Function number shift in ECAM address */
-#define PCIE_ECAM_DEVFN_SHIFT   12
+#define PCIE_ECAM_DEVFN_SHIFT 12
 
 /** @brief Mask for bus number field (8 bits, 256 buses) */
-#define PCIE_ECAM_BUS_MASK      0xff
+#define PCIE_ECAM_BUS_MASK 0xff
 /** @brief Mask for device/function field (8 bits, 32 dev × 8 func) */
-#define PCIE_ECAM_DEVFN_MASK    0xff
+#define PCIE_ECAM_DEVFN_MASK 0xff
 /** @brief Mask for register offset (12 bits, 4KB max) */
-#define PCIE_ECAM_REG_MASK      0xfff
+#define PCIE_ECAM_REG_MASK 0xfff
 
 /** @brief Extract bus portion of ECAM address */
-#define PCIE_ECAM_BUS(x)        (((x) & PCIE_ECAM_BUS_MASK) << PCIE_ECAM_BUS_SHIFT)
+#define PCIE_ECAM_BUS(x) (((x) & PCIE_ECAM_BUS_MASK) << PCIE_ECAM_BUS_SHIFT)
 /** @brief Extract devfn portion of ECAM address */
-#define PCIE_ECAM_DEVFN(x)      (((x) & PCIE_ECAM_DEVFN_MASK) << PCIE_ECAM_DEVFN_SHIFT)
+#define PCIE_ECAM_DEVFN(x) (((x) & PCIE_ECAM_DEVFN_MASK) << PCIE_ECAM_DEVFN_SHIFT)
 /** @brief Extract register portion of ECAM address */
-#define PCIE_ECAM_REG(x)        ((x) & PCIE_ECAM_REG_MASK)
+#define PCIE_ECAM_REG(x) ((x) & PCIE_ECAM_REG_MASK)
 
 /** @brief Compute full ECAM MMIO offset from bus, devfn, and register */
 #define PCIE_ECAM_OFFSET(bus, devfn, where) \
-        (PCIE_ECAM_BUS(bus) |  PCIE_ECAM_DEVFN(devfn) | PCIE_ECAM_REG(where))
+    (PCIE_ECAM_BUS(bus) | PCIE_ECAM_DEVFN(devfn) | PCIE_ECAM_REG(where))
 
 /**
  * @brief ECAM operations descriptor
@@ -92,7 +92,7 @@ void *pci_ecam_map(struct rt_pci_bus *bus, rt_uint32_t devfn, int where);
 
 /** @brief Create an ECAM configuration window and attach it to a host bridge */
 struct pci_ecam_config_window *pci_ecam_create(struct rt_pci_host_bridge *host_bridge,
-        const struct pci_ecam_ops *ops);
+                                               const struct pci_ecam_ops *ops);
 
 /** @brief Common probe function for ECAM-based PCI host controllers */
 rt_err_t pci_host_common_probe(struct rt_platform_device *pdev);

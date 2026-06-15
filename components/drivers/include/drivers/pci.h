@@ -33,16 +33,16 @@
 #include "../../pci/pci_regs.h"
 
 /** @brief Maximum INTx pin number (INTA=1, INTB=2, INTC=3, INTD=4) */
-#define RT_PCI_INTX_PIN_MAX         4
+#define RT_PCI_INTX_PIN_MAX 4
 /** @brief Maximum number of BARs per PCI device */
-#define RT_PCI_BAR_NR_MAX           6
+#define RT_PCI_BAR_NR_MAX 6
 /** @brief Maximum number of devices per PCI bus */
-#define RT_PCI_DEVICE_MAX           32
+#define RT_PCI_DEVICE_MAX 32
 /** @brief Maximum number of functions per PCI device (without ARI) */
-#define RT_PCI_FUNCTION_MAX         8
+#define RT_PCI_FUNCTION_MAX 8
 
 /** @brief Maximum steps when searching the PCI capability linked list */
-#define RT_PCI_FIND_CAP_TTL         48
+#define RT_PCI_FIND_CAP_TTL 48
 
 /*
  * The PCI interface treats multi-function devices as independent
@@ -54,36 +54,35 @@
  */
 
 /** @brief Build a 16-bit device ID from bus and devfn */
-#define RT_PCI_DEVID(bus, devfn)    ((((rt_uint16_t)(bus)) << 8) | (devfn))
+#define RT_PCI_DEVID(bus, devfn) ((((rt_uint16_t)(bus)) << 8) | (devfn))
 /** @brief Encode slot and function into a devfn byte */
-#define RT_PCI_DEVFN(slot, func)    ((((slot) & 0x1f) << 3) | ((func) & 0x07))
+#define RT_PCI_DEVFN(slot, func) ((((slot) & 0x1f) << 3) | ((func) & 0x07))
 /** @brief Extract slot number from a devfn byte */
-#define RT_PCI_SLOT(devfn)          (((devfn) >> 3) & 0x1f)
+#define RT_PCI_SLOT(devfn) (((devfn) >> 3) & 0x1f)
 /** @brief Extract function number from a devfn byte */
-#define RT_PCI_FUNC(devfn)          ((devfn) & 0x07)
+#define RT_PCI_FUNC(devfn) ((devfn) & 0x07)
 
 /** @brief PCIe L0s link state */
-#define PCIE_LINK_STATE_L0S         RT_BIT(0)
+#define PCIE_LINK_STATE_L0S RT_BIT(0)
 /** @brief PCIe L1 link state */
-#define PCIE_LINK_STATE_L1          RT_BIT(1)
+#define PCIE_LINK_STATE_L1 RT_BIT(1)
 /** @brief PCIe clock PM link state */
-#define PCIE_LINK_STATE_CLKPM       RT_BIT(2)
+#define PCIE_LINK_STATE_CLKPM RT_BIT(2)
 /** @brief PCIe L1.1 substate */
-#define PCIE_LINK_STATE_L1_1        RT_BIT(3)
+#define PCIE_LINK_STATE_L1_1 RT_BIT(3)
 /** @brief PCIe L1.2 substate */
-#define PCIE_LINK_STATE_L1_2        RT_BIT(4)
+#define PCIE_LINK_STATE_L1_2 RT_BIT(4)
 /** @brief PCIe L1.1 with PCI-PM substate */
-#define PCIE_LINK_STATE_L1_1_PCIPM  RT_BIT(5)
+#define PCIE_LINK_STATE_L1_1_PCIPM RT_BIT(5)
 /** @brief PCIe L1.2 with PCI-PM substate */
-#define PCIE_LINK_STATE_L1_2_PCIPM  RT_BIT(6)
+#define PCIE_LINK_STATE_L1_2_PCIPM RT_BIT(6)
 /** @brief All PCIe ASPM link states combined */
-#define PCIE_LINK_STATE_ALL         \
-( \
-    PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 | \
-    PCIE_LINK_STATE_CLKPM | \
-    PCIE_LINK_STATE_L1_1 | PCIE_LINK_STATE_L1_2 | \
-    PCIE_LINK_STATE_L1_1_PCIPM | PCIE_LINK_STATE_L1_2_PCIPM \
-)
+#define PCIE_LINK_STATE_ALL                           \
+    (                                                 \
+        PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |    \
+        PCIE_LINK_STATE_CLKPM |                       \
+        PCIE_LINK_STATE_L1_1 | PCIE_LINK_STATE_L1_2 | \
+        PCIE_LINK_STATE_L1_1_PCIPM | PCIE_LINK_STATE_L1_2_PCIPM)
 
 /**
  * @brief PCI bus address region descriptor
@@ -99,10 +98,10 @@ struct rt_pci_bus_region
 
     rt_uint64_t bus_start;   /**< Current allocation cursor within the region */
 
-#define PCI_BUS_REGION_F_NONE       0xffffffff    /**< Region type: no memory (unused) */
-#define PCI_BUS_REGION_F_MEM        0x00000000    /**< Region type: PCI memory space */
-#define PCI_BUS_REGION_F_IO         0x00000001    /**< Region type: PCI I/O space */
-#define PCI_BUS_REGION_F_PREFETCH   0x00000008    /**< Region type: prefetchable PCI memory */
+#define PCI_BUS_REGION_F_NONE     0xffffffff    /**< Region type: no memory (unused) */
+#define PCI_BUS_REGION_F_MEM      0x00000000    /**< Region type: PCI memory space */
+#define PCI_BUS_REGION_F_IO       0x00000001    /**< Region type: PCI I/O space */
+#define PCI_BUS_REGION_F_PREFETCH 0x00000008    /**< Region type: prefetchable PCI memory */
     rt_ubase_t flags;        /**< Region flags (PCI_BUS_REGION_F_*) */
 };
 
@@ -151,7 +150,7 @@ struct rt_pci_bus;
  */
 struct rt_pci_device_id
 {
-#define PCI_ANY_ID   (~0)
+#define PCI_ANY_ID (~0)
 /** @brief Helper: initialize a device ID by vendor and device (subsystem = any) */
 #define RT_PCI_DEVICE_ID(vend, dev) \
     .vendor = (vend),               \
@@ -160,10 +159,10 @@ struct rt_pci_device_id
     .subsystem_device = PCI_ANY_ID
 
 /** @brief Helper: initialize a device ID by class code with mask */
-#define RT_PCI_DEVICE_CLASS(dev_class, dev_class_mask)  \
-    .vendor = PCI_ANY_ID, .device = PCI_ANY_ID,         \
-    .subsystem_vendor = PCI_ANY_ID,                     \
-    .subsystem_device = PCI_ANY_ID,                     \
+#define RT_PCI_DEVICE_CLASS(dev_class, dev_class_mask) \
+    .vendor = PCI_ANY_ID, .device = PCI_ANY_ID,        \
+    .subsystem_vendor = PCI_ANY_ID,                    \
+    .subsystem_device = PCI_ANY_ID,                    \
     .class = (dev_class), .class_mask = (dev_class_mask),
 
     rt_uint32_t vendor, device;           /**< Vendor and device ID (or PCI_ANY_ID for wildcard) */
@@ -223,15 +222,15 @@ struct rt_pci_device
     rt_uint8_t msix_cap;                                    /**< MSI-X capability offset */
     rt_uint8_t pcie_cap;                                    /**< PCI Express capability offset */
 
-    rt_uint8_t busmaster:1;             /**< Bus master (DMA capable) is enabled */
-    rt_uint8_t multi_function:1;        /**< Multi-function device (bit 7 of header type) */
-    rt_uint8_t ari_enabled:1;           /**< Alternative Routing-ID Interpretation enabled */
-    rt_uint8_t no_msi:1;                /**< MSI is not available for this device */
-    rt_uint8_t no_64bit_msi:1;          /**< Device only supports 32-bit MSI addresses */
-    rt_uint8_t msi_enabled:1;           /**< MSI is currently enabled */
-    rt_uint8_t msix_enabled:1;          /**< MSI-X is currently enabled */
-    rt_uint8_t broken_intx_masking:1;   /**< INTx masking does not work on this device */
-    rt_uint8_t pme_support:5;           /**< Bitmask of power states from which PME# can be generated */
+    rt_uint8_t busmaster           : 1;             /**< Bus master (DMA capable) is enabled */
+    rt_uint8_t multi_function      : 1;        /**< Multi-function device (bit 7 of header type) */
+    rt_uint8_t ari_enabled         : 1;           /**< Alternative Routing-ID Interpretation enabled */
+    rt_uint8_t no_msi              : 1;                /**< MSI is not available for this device */
+    rt_uint8_t no_64bit_msi        : 1;          /**< Device only supports 32-bit MSI addresses */
+    rt_uint8_t msi_enabled         : 1;           /**< MSI is currently enabled */
+    rt_uint8_t msix_enabled        : 1;          /**< MSI-X is currently enabled */
+    rt_uint8_t broken_intx_masking : 1;   /**< INTx masking does not work on this device */
+    rt_uint8_t pme_support         : 5;           /**< Bitmask of power states from which PME# can be generated */
 
 #ifdef RT_PCI_MSI
     void *msix_base;                     /**< Virtual address of the MSI-X table */
@@ -286,9 +285,9 @@ struct rt_pci_ops
     void *(*map)(struct rt_pci_bus *bus, rt_uint32_t devfn, int reg);  /**< Map config space register to virtual addr */
 
     rt_err_t (*read)(struct rt_pci_bus *bus,
-            rt_uint32_t devfn, int reg, int width, rt_uint32_t *value);   /**< Read from config space */
+                     rt_uint32_t devfn, int reg, int width, rt_uint32_t *value);   /**< Read from config space */
     rt_err_t (*write)(struct rt_pci_bus *bus,
-            rt_uint32_t devfn, int reg, int width, rt_uint32_t value);    /**< Write to config space */
+                      rt_uint32_t devfn, int reg, int width, rt_uint32_t value);    /**< Write to config space */
 };
 
 /**
@@ -380,7 +379,7 @@ void rt_pci_pme_active(struct rt_pci_device *pdev, rt_bool_t enable);
 
 /** @brief Enable or disable device wake-up from a given power state */
 rt_err_t rt_pci_enable_wake(struct rt_pci_device *pci_dev,
-        enum rt_pci_power state, rt_bool_t enable);
+                            enum rt_pci_power state, rt_bool_t enable);
 
 /**
  * @brief Check if a device can generate PME# from a given power state
@@ -391,7 +390,7 @@ rt_err_t rt_pci_enable_wake(struct rt_pci_device *pci_dev,
  * @return RT_TRUE if PME# can be generated from this state
  */
 rt_inline rt_bool_t rt_pci_pme_capable(struct rt_pci_device *pdev,
-        enum rt_pci_power state)
+                                       enum rt_pci_power state)
 {
     if (!pdev->pme_cap)
     {
@@ -536,7 +535,7 @@ rt_inline rt_bool_t rt_pci_is_root_bus(struct rt_pci_bus *bus)
 rt_inline rt_bool_t rt_pci_is_bridge(struct rt_pci_device *pdev)
 {
     return pdev->hdr_type == PCIM_HDRTYPE_BRIDGE ||
-            pdev->hdr_type == PCIM_HDRTYPE_CARDBUS;
+           pdev->hdr_type == PCIM_HDRTYPE_CARDBUS;
 }
 
 /**
@@ -553,91 +552,90 @@ rt_inline rt_bool_t rt_pci_is_pcie(struct rt_pci_device *pdev)
 
 /** @brief Iterate over all bridge devices on a PCI bus */
 #define rt_pci_foreach_bridge(pdev, bus) \
-    rt_list_for_each_entry(pdev, &bus->devices_nodes, list) \
-        if (rt_pci_is_bridge(pdev))
+    rt_list_for_each_entry(pdev, &bus->devices_nodes, list) if (rt_pci_is_bridge(pdev))
 
 /* === Configuration Space Access === */
 
 /** @brief Read a byte from PCI config space via bus operations */
 rt_err_t rt_pci_bus_read_config_u8(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int pos, rt_uint8_t *value);
+                                   rt_uint32_t devfn, int pos, rt_uint8_t *value);
 
 /** @brief Read a halfword from PCI config space via bus operations */
 rt_err_t rt_pci_bus_read_config_u16(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int pos, rt_uint16_t *value);
+                                    rt_uint32_t devfn, int pos, rt_uint16_t *value);
 
 /** @brief Read a word from PCI config space via bus operations */
 rt_err_t rt_pci_bus_read_config_u32(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int pos, rt_uint32_t *value);
+                                    rt_uint32_t devfn, int pos, rt_uint32_t *value);
 
 /** @brief Write a byte to PCI config space via bus operations */
 rt_err_t rt_pci_bus_write_config_u8(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, rt_uint8_t value);
+                                    rt_uint32_t devfn, int reg, rt_uint8_t value);
 
 /** @brief Write a halfword to PCI config space via bus operations */
 rt_err_t rt_pci_bus_write_config_u16(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, rt_uint16_t value);
+                                     rt_uint32_t devfn, int reg, rt_uint16_t value);
 
 /** @brief Write a word to PCI config space via bus operations */
 rt_err_t rt_pci_bus_write_config_u32(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, rt_uint32_t value);
+                                     rt_uint32_t devfn, int reg, rt_uint32_t value);
 
 /** @brief Read from config space with arbitrary width (memory-mapped access) */
 rt_err_t rt_pci_bus_read_config_uxx(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, int width, rt_uint32_t *value);
+                                    rt_uint32_t devfn, int reg, int width, rt_uint32_t *value);
 
 /** @brief Write to config space with arbitrary width (memory-mapped access) */
 rt_err_t rt_pci_bus_write_config_uxx(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, int width, rt_uint32_t value);
+                                     rt_uint32_t devfn, int reg, int width, rt_uint32_t value);
 
 /** @brief Read with 32-bit access and sub-word extraction (for 32-bit-only controllers) */
 rt_err_t rt_pci_bus_read_config_generic_u32(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, int width, rt_uint32_t *value);
+                                            rt_uint32_t devfn, int reg, int width, rt_uint32_t *value);
 
 /** @brief Write with read-modify-write for sub-32-bit access (for 32-bit-only controllers) */
 rt_err_t rt_pci_bus_write_config_generic_u32(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, int width, rt_uint32_t value);
+                                             rt_uint32_t devfn, int reg, int width, rt_uint32_t value);
 
 /* === Configuration Space Access (Device-Level Convenience) === */
 
 /** @brief Read a byte from a PCI device's config space */
 rt_inline rt_err_t rt_pci_read_config_u8(const struct rt_pci_device *pdev,
-        int reg, rt_uint8_t *value)
+                                         int reg, rt_uint8_t *value)
 {
     return rt_pci_bus_read_config_u8(pdev->bus, pdev->devfn, reg, value);
 }
 
 /** @brief Read a halfword from a PCI device's config space */
 rt_inline rt_err_t rt_pci_read_config_u16(const struct rt_pci_device *pdev,
-        int reg, rt_uint16_t *value)
+                                          int reg, rt_uint16_t *value)
 {
     return rt_pci_bus_read_config_u16(pdev->bus, pdev->devfn, reg, value);
 }
 
 /** @brief Read a word from a PCI device's config space */
 rt_inline rt_err_t rt_pci_read_config_u32(const struct rt_pci_device *pdev,
-        int reg, rt_uint32_t *value)
+                                          int reg, rt_uint32_t *value)
 {
     return rt_pci_bus_read_config_u32(pdev->bus, pdev->devfn, reg, value);
 }
 
 /** @brief Write a byte to a PCI device's config space */
 rt_inline rt_err_t rt_pci_write_config_u8(const struct rt_pci_device *pdev,
-        int reg, rt_uint8_t value)
+                                          int reg, rt_uint8_t value)
 {
     return rt_pci_bus_write_config_u8(pdev->bus, pdev->devfn, reg, value);
 }
 
 /** @brief Write a halfword to a PCI device's config space */
 rt_inline rt_err_t rt_pci_write_config_u16(const struct rt_pci_device *pdev,
-        int reg, rt_uint16_t value)
+                                           int reg, rt_uint16_t value)
 {
     return rt_pci_bus_write_config_u16(pdev->bus, pdev->devfn, reg, value);
 }
 
 /** @brief Write a word to a PCI device's config space */
 rt_inline rt_err_t rt_pci_write_config_u32(const struct rt_pci_device *pdev,
-        int reg, rt_uint32_t value)
+                                           int reg, rt_uint32_t value)
 {
     return rt_pci_bus_write_config_u32(pdev->bus, pdev->devfn, reg, value);
 }
@@ -647,15 +645,15 @@ rt_inline rt_err_t rt_pci_write_config_u32(const struct rt_pci_device *pdev,
 #ifdef RT_USING_OFW
 /** @brief Parse and map an IRQ for a PCI device from device tree */
 int rt_pci_ofw_irq_parse_and_map(struct rt_pci_device *pdev,
-        rt_uint8_t slot, rt_uint8_t pin);
+                                 rt_uint8_t slot, rt_uint8_t pin);
 
 /** @brief Parse PCI bus address ranges from device tree */
 rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
-        struct rt_pci_host_bridge *host_bridge);
+                                 struct rt_pci_host_bridge *host_bridge);
 
 /** @brief Initialize a host bridge from device tree data */
 rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node *dev_np,
-        struct rt_pci_host_bridge *host_bridge);
+                                     struct rt_pci_host_bridge *host_bridge);
 
 /** @brief Initialize OFW data for a PCI bus */
 rt_err_t rt_pci_ofw_bus_init(struct rt_pci_bus *bus);
@@ -670,7 +668,7 @@ rt_err_t rt_pci_ofw_device_init(struct rt_pci_device *pdev);
 rt_err_t rt_pci_ofw_device_free(struct rt_pci_device *pdev);
 #else
 rt_inline rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node *dev_np,
-        struct rt_pci_host_bridge *host_bridge)
+                                               struct rt_pci_host_bridge *host_bridge)
 {
     return RT_EOK;
 }
@@ -691,12 +689,12 @@ rt_inline rt_err_t rt_pci_ofw_device_free(struct rt_pci_device *pdev)
     return RT_EOK;
 }
 rt_inline int rt_pci_ofw_irq_parse_and_map(struct rt_pci_device *pdev,
-        rt_uint8_t slot, rt_uint8_t pin)
+                                           rt_uint8_t slot, rt_uint8_t pin)
 {
     return -1;
 }
 rt_inline rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
-        struct rt_pci_host_bridge *host_bridge)
+                                           struct rt_pci_host_bridge *host_bridge)
 {
     return -RT_ENOSYS;
 }
@@ -752,22 +750,22 @@ void rt_pci_irq_unmask(struct rt_pci_device *pdev);
 /* === IRQ Allocation Flags === */
 
 /** @brief Allow legacy INTx interrupts */
-#define RT_PCI_IRQ_F_LEGACY     RT_BIT(0)
+#define RT_PCI_IRQ_F_LEGACY RT_BIT(0)
 /** @brief Allow MSI interrupts */
-#define RT_PCI_IRQ_F_MSI        RT_BIT(1)
+#define RT_PCI_IRQ_F_MSI RT_BIT(1)
 /** @brief Allow MSI-X interrupts */
-#define RT_PCI_IRQ_F_MSIX       RT_BIT(2)
+#define RT_PCI_IRQ_F_MSIX RT_BIT(2)
 /** @brief Auto-assign CPU affinity */
-#define RT_PCI_IRQ_F_AFFINITY   RT_BIT(3)
+#define RT_PCI_IRQ_F_AFFINITY RT_BIT(3)
 /** @brief All interrupt types combined */
-#define RT_PCI_IRQ_F_ALL_TYPES  (RT_PCI_IRQ_F_LEGACY | RT_PCI_IRQ_F_MSI | RT_PCI_IRQ_F_MSIX)
+#define RT_PCI_IRQ_F_ALL_TYPES (RT_PCI_IRQ_F_LEGACY | RT_PCI_IRQ_F_MSI | RT_PCI_IRQ_F_MSIX)
 
 /* === MSI/MSI-X Vector Allocation === */
 
 #ifdef RT_PCI_MSI
 /** @brief Allocate interrupt vectors for a PCI device (MSI-X > MSI > INTx fallback) */
 rt_ssize_t rt_pci_alloc_vector(struct rt_pci_device *pdev, int min, int max,
-        rt_uint32_t flags, RT_IRQ_AFFINITY_DECLARE((*affinities)));
+                               rt_uint32_t flags, RT_IRQ_AFFINITY_DECLARE((*affinities)));
 
 /** @brief Free all vectors allocated for a PCI device */
 void rt_pci_free_vector(struct rt_pci_device *pdev);
@@ -780,7 +778,7 @@ rt_err_t rt_pci_msi_disable(struct rt_pci_device *pdev);
 
 /** @brief Enable MSI with a range of vectors and CPU affinity */
 rt_ssize_t rt_pci_msi_enable_range_affinity(struct rt_pci_device *pdev,
-        int min, int max, RT_IRQ_AFFINITY_DECLARE((*affinities)));
+                                            int min, int max, RT_IRQ_AFFINITY_DECLARE((*affinities)));
 
 /** @brief Get the number of MSI-X table entries the device supports */
 rt_ssize_t rt_pci_msix_vector_count(struct rt_pci_device *pdev);
@@ -790,11 +788,11 @@ rt_err_t rt_pci_msix_disable(struct rt_pci_device *pdev);
 
 /** @brief Enable MSI-X with a range of vectors and CPU affinity */
 rt_ssize_t rt_pci_msix_enable_range_affinity(struct rt_pci_device *pdev,
-        struct rt_pci_msix_entry *entries, int min, int max,
-        RT_IRQ_AFFINITY_DECLARE((*affinities)));
+                                             struct rt_pci_msix_entry *entries, int min, int max,
+                                             RT_IRQ_AFFINITY_DECLARE((*affinities)));
 #else
 rt_inline rt_ssize_t rt_pci_alloc_vector(struct rt_pci_device *pdev, int min, int max,
-        rt_uint32_t flags, RT_IRQ_AFFINITY_DECLARE((*affinities)))
+                                         rt_uint32_t flags, RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
     return -RT_ENOSYS;
 }
@@ -815,7 +813,7 @@ rt_inline rt_err_t rt_pci_msi_disable(struct rt_pci_device *pdev)
 }
 
 rt_inline rt_ssize_t rt_pci_msi_enable_range_affinity(struct rt_pci_device *pdev,
-        int min, int max, RT_IRQ_AFFINITY_DECLARE((*affinities)))
+                                                      int min, int max, RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
     return -RT_ENOSYS;
 }
@@ -831,8 +829,8 @@ rt_inline rt_err_t rt_pci_msix_disable(struct rt_pci_device *pdev)
 }
 
 rt_inline rt_ssize_t rt_pci_msix_enable_range_affinity(struct rt_pci_device *pdev,
-        struct rt_pci_msix_entry *entries, int min, int max,
-        RT_IRQ_AFFINITY_DECLARE((*affinities)))
+                                                       struct rt_pci_msix_entry *entries, int min, int max,
+                                                       RT_IRQ_AFFINITY_DECLARE((*affinities)))
 {
     return -RT_ENOSYS;
 }
@@ -845,7 +843,7 @@ rt_inline rt_ssize_t rt_pci_msix_enable_range_affinity(struct rt_pci_device *pde
  * @param[in] nvectors   Number of entries
  */
 rt_inline void rt_pci_msix_entry_index_linear(struct rt_pci_msix_entry *entries,
-        rt_size_t nvectors)
+                                              rt_size_t nvectors)
 {
     for (int i = 0; i < nvectors; ++i)
     {
@@ -863,7 +861,7 @@ rt_inline void rt_pci_msix_entry_index_linear(struct rt_pci_msix_entry *entries,
  * @return Number of vectors on success, negative error otherwise
  */
 rt_inline rt_ssize_t rt_pci_msi_enable_range(struct rt_pci_device *pdev,
-        int min, int max)
+                                             int min, int max)
 {
     return rt_pci_msi_enable_range_affinity(pdev, min, max, RT_NULL);
 }
@@ -892,7 +890,7 @@ rt_inline rt_err_t rt_pci_msi_enable(struct rt_pci_device *pdev)
  * @return Number of vectors on success, negative error otherwise
  */
 rt_inline rt_ssize_t rt_pci_msix_enable_range(struct rt_pci_device *pdev,
-        struct rt_pci_msix_entry *entries, int min, int max)
+                                              struct rt_pci_msix_entry *entries, int min, int max)
 {
     return rt_pci_msix_enable_range_affinity(pdev, entries, min, max, RT_NULL);
 }
@@ -907,7 +905,7 @@ rt_inline rt_ssize_t rt_pci_msix_enable_range(struct rt_pci_device *pdev,
  * @return Count on success, negative error otherwise
  */
 rt_inline rt_ssize_t rt_pci_msix_enable(struct rt_pci_device *pdev,
-        struct rt_pci_msix_entry *entries, int count)
+                                        struct rt_pci_msix_entry *entries, int count)
 {
     return rt_pci_msix_enable_range(pdev, entries, count, count);
 }
@@ -919,27 +917,27 @@ rt_err_t rt_pci_region_setup(struct rt_pci_host_bridge *host_bridge);
 
 /** @brief Allocate bus address space from the host bridge's regions */
 struct rt_pci_bus_region *rt_pci_region_alloc(struct rt_pci_host_bridge *host_bridge,
-        void **out_addr, rt_size_t size, rt_ubase_t flags, rt_bool_t mem64);
+                                              void **out_addr, rt_size_t size, rt_ubase_t flags, rt_bool_t mem64);
 
 /** @brief Allocate BAR and ROM resources for a device */
 rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
-        struct rt_pci_device *pdev);
+                                      struct rt_pci_device *pdev);
 
 /* === Bus Enumeration === */
 
 /** @brief Enumerate all PCI devices in a bus hierarchy with a callback */
 void rt_pci_enum_device(struct rt_pci_bus *bus,
-        rt_bool_t (callback(struct rt_pci_device *, void *)), void *data);
+                        rt_bool_t(callback(struct rt_pci_device *, void *)), void *data);
 
 /* === Driver Matching === */
 
 /** @brief Match a PCI device against a single device ID entry */
 const struct rt_pci_device_id *rt_pci_match_id(struct rt_pci_device *pdev,
-        const struct rt_pci_device_id *id);
+                                               const struct rt_pci_device_id *id);
 
 /** @brief Match a PCI device against an array of device IDs */
 const struct rt_pci_device_id *rt_pci_match_ids(struct rt_pci_device *pdev,
-        const struct rt_pci_device_id *ids);
+                                                const struct rt_pci_device_id *ids);
 
 /* === Registration === */
 
@@ -950,10 +948,10 @@ rt_err_t rt_pci_driver_register(struct rt_pci_driver *pdrv);
 rt_err_t rt_pci_device_register(struct rt_pci_device *pdev);
 
 /** @brief Find a BAR resource by type flags and index */
-struct rt_pci_bus_resource *rt_pci_find_bar(struct rt_pci_device* pdev,rt_ubase_t flags,int index);
+struct rt_pci_bus_resource *rt_pci_find_bar(struct rt_pci_device *pdev, rt_ubase_t flags, int index);
 
 /** @brief Export a PCI driver (built-in only) */
-#define RT_PCI_DRIVER_EXPORT(driver)    RT_DRIVER_EXPORT(driver, pci, BUILIN)
+#define RT_PCI_DRIVER_EXPORT(driver) RT_DRIVER_EXPORT(driver, pci, BUILIN)
 
 /** @brief Global PCI configuration space spinlock */
 extern struct rt_spinlock rt_pci_lock;

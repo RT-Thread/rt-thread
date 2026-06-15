@@ -182,8 +182,7 @@ static void dw_pcie_irq_free_msi(struct rt_pic *pic, int irq)
 }
 
 /** @brief DW PCIe MSI PIC operations */
-const static struct rt_pic_ops dw_pci_msi_ops =
-{
+const static struct rt_pic_ops dw_pci_msi_ops = {
     .name = "DWPCI-MSI",
     .irq_ack = dw_pcie_irq_ack,
     .irq_mask = dw_pcie_irq_mask,
@@ -219,7 +218,7 @@ rt_err_t dw_handle_msi_irq(struct dw_pcie_port *port)
     for (i = 0; i < num_ctrls; ++i)
     {
         status = dw_pcie_readl_dbi(pci, PCIE_MSI_INTR0_STATUS +
-                    (i * MSI_REG_CTRL_BLOCK_SIZE));
+                                            (i * MSI_REG_CTRL_BLOCK_SIZE));
 
         if (!status)
         {
@@ -272,7 +271,7 @@ void dw_pcie_free_msi(struct dw_pcie_port *port)
         struct dw_pcie *pci = to_dw_pcie_from_port(port);
 
         rt_dma_free_coherent(pci->dev, sizeof(rt_uint64_t), port->msi_data,
-                port->msi_data_phy);
+                             port->msi_data_phy);
         port->msi_data = RT_NULL;
     }
 }
@@ -451,7 +450,7 @@ rt_err_t dw_pcie_host_init(struct dw_pcie_port *port)
         }
 
         port->msi_data = rt_dma_alloc_coherent(pci->dev, sizeof(rt_uint64_t),
-                &port->msi_data_phy);
+                                               &port->msi_data_phy);
 
         if (!port->msi_data)
         {
@@ -572,7 +571,7 @@ static void *dw_pcie_other_conf_map(struct rt_pci_bus *bus, rt_uint32_t devfn, i
     }
 
     busdev = PCIE_ATU_BUS(bus->number) | PCIE_ATU_DEV(RT_PCI_SLOT(devfn)) |
-            PCIE_ATU_FUNC(RT_PCI_FUNC(devfn));
+             PCIE_ATU_FUNC(RT_PCI_FUNC(devfn));
 
     if (rt_pci_is_root_bus(bus->parent))
     {
@@ -602,7 +601,7 @@ static void *dw_pcie_other_conf_map(struct rt_pci_bus *bus, rt_uint32_t devfn, i
  * @return RT_EOK on success
  */
 static rt_err_t dw_pcie_other_read_conf(struct rt_pci_bus *bus,
-            rt_uint32_t devfn, int reg, int width, rt_uint32_t *value)
+                                        rt_uint32_t devfn, int reg, int width, rt_uint32_t *value)
 {
     rt_err_t err;
     struct dw_pcie_port *port = bus->sysdata;
@@ -613,7 +612,7 @@ static rt_err_t dw_pcie_other_read_conf(struct rt_pci_bus *bus,
     if (!err && (pci->iatu_unroll_enabled & DWC_IATU_IOCFG_SHARED))
     {
         dw_pcie_prog_outbound_atu(pci, 0, PCIE_ATU_TYPE_IO,
-                port->io_addr, port->io_bus_addr, port->io_size);
+                                  port->io_addr, port->io_bus_addr, port->io_size);
     }
 
     return err;
@@ -630,7 +629,7 @@ static rt_err_t dw_pcie_other_read_conf(struct rt_pci_bus *bus,
  * @return RT_EOK on success
  */
 static rt_err_t dw_pcie_other_write_conf(struct rt_pci_bus *bus,
-            rt_uint32_t devfn, int reg, int width, rt_uint32_t value)
+                                         rt_uint32_t devfn, int reg, int width, rt_uint32_t value)
 {
     rt_err_t err;
     struct dw_pcie_port *port = bus->sysdata;
@@ -641,15 +640,14 @@ static rt_err_t dw_pcie_other_write_conf(struct rt_pci_bus *bus,
     if (!err && (pci->iatu_unroll_enabled & DWC_IATU_IOCFG_SHARED))
     {
         dw_pcie_prog_outbound_atu(pci, 0, PCIE_ATU_TYPE_IO,
-                port->io_addr, port->io_bus_addr, port->io_size);
+                                  port->io_addr, port->io_bus_addr, port->io_size);
     }
 
     return err;
 }
 
 /** @brief PCI ops for child buses (through ATU) */
-static const struct rt_pci_ops dw_child_pcie_ops =
-{
+static const struct rt_pci_ops dw_child_pcie_ops = {
     .map = dw_pcie_other_conf_map,
     .read = dw_pcie_other_read_conf,
     .write = dw_pcie_other_write_conf,
@@ -680,8 +678,7 @@ void *dw_pcie_own_conf_map(struct rt_pci_bus *bus, rt_uint32_t devfn, int reg)
 }
 
 /** @brief PCI ops for root bus (own config via DBI) */
-static const struct rt_pci_ops dw_pcie_ops =
-{
+static const struct rt_pci_ops dw_pcie_ops = {
     .map = dw_pcie_own_conf_map,
     .read = rt_pci_bus_read_config_uxx,
     .write = rt_pci_bus_write_config_uxx,
@@ -724,10 +721,8 @@ void dw_pcie_setup_rc(struct dw_pcie_port *port)
         {
             port->irq_mask[ctrl] = ~0;
 
-            dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK +
-                    (ctrl * MSI_REG_CTRL_BLOCK_SIZE), port->irq_mask[ctrl]);
-            dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_ENABLE +
-                    (ctrl * MSI_REG_CTRL_BLOCK_SIZE), ~0);
+            dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK + (ctrl * MSI_REG_CTRL_BLOCK_SIZE), port->irq_mask[ctrl]);
+            dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_ENABLE + (ctrl * MSI_REG_CTRL_BLOCK_SIZE), ~0);
         }
     }
 
@@ -779,8 +774,8 @@ void dw_pcie_setup_rc(struct dw_pcie_port *port)
             }
 
             dw_pcie_prog_outbound_atu(pci, atu_idx,
-                    PCIE_ATU_TYPE_MEM, region->cpu_addr,
-                    region->phy_addr, region->size);
+                                      PCIE_ATU_TYPE_MEM, region->cpu_addr,
+                                      region->phy_addr, region->size);
         }
 
         if (port->io_size)
@@ -788,8 +783,8 @@ void dw_pcie_setup_rc(struct dw_pcie_port *port)
             if (pci->num_viewport > ++atu_idx)
             {
                 dw_pcie_prog_outbound_atu(pci, atu_idx,
-                        PCIE_ATU_TYPE_IO, port->io_addr,
-                        port->io_bus_addr, port->io_size);
+                                          PCIE_ATU_TYPE_IO, port->io_addr,
+                                          port->io_bus_addr, port->io_size);
             }
             else
             {

@@ -130,7 +130,7 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
                 err = irq;
 
                 LOG_E("Setup %s[%d] IRQ error = %s", "MSI-X",
-                        desc->msix.index, rt_strerror(err));
+                      desc->msix.index, rt_strerror(err));
 
                 break;
             }

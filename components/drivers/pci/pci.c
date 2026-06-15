@@ -80,7 +80,7 @@ rt_uint32_t rt_pci_domain(struct rt_pci_device *pdev)
  * @return Capability offset, or 0 if not found
  */
 static rt_uint8_t pci_find_next_cap_ttl(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, rt_uint8_t pos, int cap, int *ttl)
+                                        rt_uint32_t devfn, rt_uint8_t pos, int cap, int *ttl)
 {
     rt_uint8_t ret = 0, id;
     rt_uint16_t ent;
@@ -123,7 +123,7 @@ static rt_uint8_t pci_find_next_cap_ttl(struct rt_pci_bus *bus,
  * @return Capability offset, or 0 if not found
  */
 static rt_uint8_t pci_find_next_cap(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, rt_uint8_t pos, int cap)
+                                    rt_uint32_t devfn, rt_uint8_t pos, int cap)
 {
     int ttl = RT_PCI_FIND_CAP_TTL;
 
@@ -143,7 +143,7 @@ static rt_uint8_t pci_find_next_cap(struct rt_pci_bus *bus,
  * @return Starting capability offset, or 0 if no capabilities present
  */
 static rt_uint8_t pci_bus_find_cap_start(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, rt_uint8_t hdr_type)
+                                         rt_uint32_t devfn, rt_uint8_t hdr_type)
 {
     rt_uint8_t res = 0;
     rt_uint16_t status;
@@ -668,9 +668,7 @@ rt_err_t rt_pci_region_setup(struct rt_pci_host_bridge *host_bridge)
         region->bus_start = rt_max_t(rt_size_t, 0x1000, region->phy_addr);
 
         LOG_I("Bus %s region(%d):",
-            region->flags == PCI_BUS_REGION_F_MEM ? "Memory" :
-                    (region->flags == PCI_BUS_REGION_F_PREFETCH ? "Prefetchable Mem" :
-                            (region->flags == PCI_BUS_REGION_F_IO ? "I/O" : "Unknown")), i);
+              region->flags == PCI_BUS_REGION_F_MEM ? "Memory" : (region->flags == PCI_BUS_REGION_F_PREFETCH ? "Prefetchable Mem" : (region->flags == PCI_BUS_REGION_F_IO ? "I/O" : "Unknown")), i);
         LOG_I("  cpu:      [%p, %p]", region->cpu_addr, (region->cpu_addr + region->size - 1));
         LOG_I("  physical: [%p, %p]", region->phy_addr, (region->phy_addr + region->size - 1));
     }
@@ -694,7 +692,7 @@ rt_err_t rt_pci_region_setup(struct rt_pci_host_bridge *host_bridge)
  * @return Pointer to the matching bus region, or RT_NULL on failure
  */
 struct rt_pci_bus_region *rt_pci_region_alloc(struct rt_pci_host_bridge *host_bridge,
-        void **out_addr, rt_size_t size, rt_ubase_t flags, rt_bool_t mem64)
+                                              void **out_addr, rt_size_t size, rt_ubase_t flags, rt_bool_t mem64)
 {
     struct rt_pci_bus_region *bus_region, *region = RT_NULL;
 
@@ -761,7 +759,7 @@ struct rt_pci_bus_region *rt_pci_region_alloc(struct rt_pci_host_bridge *host_br
  * @return RT_EOK on success, -RT_ERROR if any BAR could not be allocated
  */
 rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
-        struct rt_pci_device *pdev)
+                                      struct rt_pci_device *pdev)
 {
     rt_err_t err = RT_EOK;
     rt_size_t size;
@@ -884,15 +882,15 @@ rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
             if (mem64)
             {
                 bar_base += sizeof(rt_uint32_t);
-            #ifdef RT_PCI_SYS_64BIT
+#ifdef RT_PCI_SYS_64BIT
                 rt_pci_write_config_u32(pdev, bar_base, (rt_uint32_t)(addr >> 32));
-            #else
+#else
                 /*
                  * If we are a 64-bit decoder then increment to the upper 32 bits
                  * of the bar and force it to locate in the lower 4GB of memory.
                  */
                 rt_pci_write_config_u32(pdev, bar_base, 0UL);
-            #endif
+#endif
             }
 
             pdev->resource[i].size = size;
@@ -962,7 +960,7 @@ rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
  * @param[in] index 1-based index of the matching BAR to return
  * @return Pointer to the matching BAR resource, or RT_NULL if not found
  */
-struct rt_pci_bus_resource *rt_pci_find_bar(struct rt_pci_device* pdev,rt_ubase_t flags,int index)
+struct rt_pci_bus_resource *rt_pci_find_bar(struct rt_pci_device *pdev, rt_ubase_t flags, int index)
 {
     for (int i = 0; i < RT_PCI_BAR_NR_MAX; i++)
     {
@@ -995,7 +993,7 @@ struct rt_pci_bus_resource *rt_pci_find_bar(struct rt_pci_device* pdev,rt_ubase_
  * @param[in] data     User data passed to callback
  */
 void rt_pci_enum_device(struct rt_pci_bus *bus,
-        rt_bool_t (callback(struct rt_pci_device *, void *)), void *data)
+                        rt_bool_t(callback(struct rt_pci_device *, void *)), void *data)
 {
     rt_bool_t is_end = RT_FALSE;
     struct rt_spinlock *lock;
@@ -1133,7 +1131,7 @@ void rt_pci_enum_device(struct rt_pci_bus *bus,
  * @return Pointer to id if matched, RT_NULL otherwise
  */
 const struct rt_pci_device_id *rt_pci_match_id(struct rt_pci_device *pdev,
-        const struct rt_pci_device_id *id)
+                                               const struct rt_pci_device_id *id)
 {
     if ((id->vendor == PCI_ANY_ID || id->vendor == pdev->vendor) &&
         (id->device == PCI_ANY_ID || id->device == pdev->device) &&
@@ -1158,7 +1156,7 @@ const struct rt_pci_device_id *rt_pci_match_id(struct rt_pci_device *pdev,
  * @return Pointer to matching ID, or RT_NULL if no match
  */
 const struct rt_pci_device_id *rt_pci_match_ids(struct rt_pci_device *pdev,
-        const struct rt_pci_device_id *ids)
+                                                const struct rt_pci_device_id *ids)
 {
     while (ids->vendor || ids->subsystem_vendor || ids->class_mask)
     {
@@ -1340,8 +1338,7 @@ static rt_err_t pci_shutdown(rt_device_t dev)
 }
 
 /** @brief PCI bus type descriptor */
-static struct rt_bus pci_bus =
-{
+static struct rt_bus pci_bus = {
     .name = "pci",
     .match = pci_match,
     .probe = pci_probe,

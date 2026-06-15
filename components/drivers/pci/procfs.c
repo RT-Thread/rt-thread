@@ -313,8 +313,7 @@ static off_t pci_lseek(struct dfs_file *file, off_t offset, int wherece)
 }
 
 /** @brief File operations for per-device config space access */
-static const struct dfs_file_ops pci_fops =
-{
+static const struct dfs_file_ops pci_fops = {
     .read = pci_read,
     .write = pci_write,
     .lseek = pci_lseek,
@@ -384,11 +383,11 @@ static int pci_single_show(struct dfs_seq_file *seq, void *data)
         pdev = rt_container_of(dev, struct rt_pci_device, parent);
 
         dfs_seq_printf(seq, "%02x%02x\t%04x%04x\t%x",
-                pdev->bus->number,
-                pdev->devfn,
-                pdev->vendor,
-                pdev->device,
-                pdev->irq);
+                       pdev->bus->number,
+                       pdev->devfn,
+                       pdev->vendor,
+                       pdev->device,
+                       pdev->irq);
 
         /* BAR, ROM base */
         for (int bar = 0; bar < RT_PCI_BAR_NR_MAX; ++bar)

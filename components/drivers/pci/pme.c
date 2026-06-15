@@ -61,7 +61,7 @@ void rt_pci_pme_init(struct rt_pci_device *pdev)
     if ((pmc & PCIM_PCAP_SPEC) > 3)
     {
         LOG_E("%s: Unsupported PME CAP regs spec %u",
-                rt_dm_dev_get_name(&pdev->parent), pmc & PCIM_PCAP_SPEC);
+              rt_dm_dev_get_name(&pdev->parent), pmc & PCIM_PCAP_SPEC);
 
         return;
     }
@@ -88,7 +88,7 @@ void rt_pci_pme_init(struct rt_pci_device *pdev)
  * @return RT_EOK on success, -RT_EINVAL on invalid parameters
  */
 rt_err_t rt_pci_enable_wake(struct rt_pci_device *pdev,
-        enum rt_pci_power state, rt_bool_t enable)
+                            enum rt_pci_power state, rt_bool_t enable)
 {
     if (!pdev || state >= RT_PCI_PME_MAX)
     {

@@ -40,7 +40,7 @@
  * @return New ECAM config window, or RT_NULL on allocation failure
  */
 struct pci_ecam_config_window *pci_ecam_create(struct rt_pci_host_bridge *host_bridge,
-        const struct pci_ecam_ops *ops)
+                                               const struct pci_ecam_ops *ops)
 {
     struct pci_ecam_config_window *conf_win = rt_calloc(1, sizeof(*conf_win));
 
@@ -98,10 +98,8 @@ void *pci_ecam_map(struct rt_pci_bus *bus, rt_uint32_t devfn, int where)
 }
 
 /** @brief Standard ECAM operations using direct MMIO read/write */
-const struct pci_ecam_ops pci_generic_ecam_ops =
-{
-    .pci_ops =
-    {
+const struct pci_ecam_ops pci_generic_ecam_ops = {
+    .pci_ops = {
         .map = pci_ecam_map,
         .read = rt_pci_bus_read_config_uxx,
         .write = rt_pci_bus_write_config_uxx,

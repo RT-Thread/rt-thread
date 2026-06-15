@@ -86,8 +86,7 @@ static void dw_platform_set_irq_count(struct dw_pcie_port *pp)
 }
 
 /** @brief Platform host ops */
-static const struct dw_pcie_host_ops dw_platform_pcie_host_ops =
-{
+static const struct dw_pcie_host_ops dw_platform_pcie_host_ops = {
     .host_init = dw_platform_pcie_host_init,
     .set_irq_count = dw_platform_set_irq_count,
 };
@@ -104,8 +103,7 @@ static rt_err_t dw_platform_pcie_establish_link(struct dw_pcie *pci)
 }
 
 /** @brief Platform PCIe ops */
-static const struct dw_pcie_ops dw_platform_pcie_ops =
-{
+static const struct dw_pcie_ops dw_platform_pcie_ops = {
     .start_link = dw_platform_pcie_establish_link,
 };
 
@@ -137,7 +135,7 @@ static rt_err_t dw_platform_pcie_ep_init(struct dw_pcie_ep *ep)
  * @return RT_EOK on success
  */
 static rt_err_t dw_platform_pcie_ep_raise_irq(struct dw_pcie_ep *ep,
-        rt_uint8_t func_no, enum rt_pci_ep_irq type, unsigned irq)
+                                              rt_uint8_t func_no, enum rt_pci_ep_irq type, unsigned irq)
 {
     switch (type)
     {
@@ -158,8 +156,7 @@ static rt_err_t dw_platform_pcie_ep_raise_irq(struct dw_pcie_ep *ep,
 }
 
 /** @brief Platform EP ops */
-static const struct dw_pcie_ep_ops dw_platform_pcie_ep_ops =
-{
+static const struct dw_pcie_ep_ops dw_platform_pcie_ep_ops = {
     .ep_init = dw_platform_pcie_ep_init,
     .raise_irq = dw_platform_pcie_ep_raise_irq,
 };
@@ -175,7 +172,7 @@ static const struct dw_pcie_ep_ops dw_platform_pcie_ep_ops =
  * @return RT_EOK on success
  */
 static rt_err_t dw_platform_add_pcie_port(struct dw_platform_pcie *plat_pcie,
-        struct rt_device *dev)
+                                          struct rt_device *dev)
 {
     rt_err_t err;
     struct dw_pcie *pci = plat_pcie->pci;
@@ -219,7 +216,7 @@ static rt_err_t dw_platform_add_pcie_port(struct dw_platform_pcie *plat_pcie,
  * @return RT_EOK on success
  */
 static rt_err_t dw_platform_add_pcie_ep(struct dw_platform_pcie *plat_pcie,
-        struct rt_device *dev)
+                                        struct rt_device *dev)
 {
     rt_err_t err;
     struct dw_pcie *pci = plat_pcie->pci;
@@ -368,28 +365,24 @@ static rt_err_t dw_platform_pcie_remove(struct rt_platform_device *pdev)
 }
 
 /** @brief RC mode SoC data */
-static const struct dw_dw_platform_pcie_soc_data dw_platform_pcie_rc_soc_data =
-{
+static const struct dw_dw_platform_pcie_soc_data dw_platform_pcie_rc_soc_data = {
     .mode = DW_PCIE_RC_TYPE,
 };
 
 /** @brief EP mode SoC data */
-static const struct dw_dw_platform_pcie_soc_data dw_platform_pcie_ep_soc_data =
-{
+static const struct dw_dw_platform_pcie_soc_data dw_platform_pcie_ep_soc_data = {
     .mode = DW_PCIE_EP_TYPE,
 };
 
 /** @brief Device tree compatible IDs */
-static const struct rt_ofw_node_id dw_platform_pcie_ofw_ids[] =
-{
+static const struct rt_ofw_node_id dw_platform_pcie_ofw_ids[] = {
     { .compatible = "snps,dw-pcie", .data = &dw_platform_pcie_rc_soc_data },
     { .compatible = "snps,dw-pcie-ep", .data = &dw_platform_pcie_ep_soc_data },
     { /* sentinel */ }
 };
 
 /** @brief DW PCIe platform driver */
-static struct rt_platform_driver dw_platform_pcie_driver =
-{
+static struct rt_platform_driver dw_platform_pcie_driver = {
     .name = "dw-pcie",
     .ids = dw_platform_pcie_ofw_ids,
 

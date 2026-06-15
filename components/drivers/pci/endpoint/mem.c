@@ -40,7 +40,7 @@
  * @return RT_EOK on success, -RT_ENOMEM on allocation failure
  */
 rt_err_t rt_pci_ep_mem_array_init(struct rt_pci_ep *ep,
-        struct rt_pci_ep_mem *mems, rt_size_t mems_nr)
+                                  struct rt_pci_ep_mem *mems, rt_size_t mems_nr)
 {
     rt_size_t idx;
     rt_err_t err = RT_EOK;
@@ -80,7 +80,7 @@ rt_err_t rt_pci_ep_mem_array_init(struct rt_pci_ep *ep,
 _out_lock:
     if (err)
     {
-        while (idx --> 0)
+        while (idx-- > 0)
         {
             rt_free(ep->mems[idx].map);
         }
@@ -107,7 +107,7 @@ _out_lock:
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_mem_init(struct rt_pci_ep *ep,
-        rt_ubase_t cpu_addr, rt_size_t size, rt_size_t page_size)
+                            rt_ubase_t cpu_addr, rt_size_t size, rt_size_t page_size)
 {
     struct rt_pci_ep_mem mem;
 
@@ -155,15 +155,14 @@ static rt_ubase_t bitmap_region_alloc(struct rt_pci_ep_mem *mem, rt_size_t size)
 
         if (next_bit == end_bit)
         {
-            while (next_bit --> bit)
+            while (next_bit-- > bit)
             {
                 rt_bitmap_set_bit(mem->map, next_bit);
             }
 
             return mem->cpu_addr + bit * mem->page_size;
         }
-    _next:
-        ;
+    _next:;
     }
 
     return ~0ULL;
@@ -179,7 +178,7 @@ static rt_ubase_t bitmap_region_alloc(struct rt_pci_ep_mem *mem, rt_size_t size)
  * @param[in] size     Size of the allocation in bytes
  */
 static void bitmap_region_free(struct rt_pci_ep_mem *mem,
-        rt_ubase_t cpu_addr, rt_size_t size)
+                               rt_ubase_t cpu_addr, rt_size_t size)
 {
     rt_size_t bit = (cpu_addr - mem->cpu_addr) / mem->page_size, end_bit;
 
@@ -205,7 +204,7 @@ static void bitmap_region_free(struct rt_pci_ep_mem *mem,
  * @return Kernel virtual address, or RT_NULL on failure
  */
 void *rt_pci_ep_mem_alloc(struct rt_pci_ep *ep,
-        rt_ubase_t *out_cpu_addr, rt_size_t size)
+                          rt_ubase_t *out_cpu_addr, rt_size_t size)
 {
     void *vaddr = RT_NULL;
 
@@ -258,7 +257,7 @@ void *rt_pci_ep_mem_alloc(struct rt_pci_ep *ep,
  * @param[in] size     Size of the allocation in bytes
  */
 void rt_pci_ep_mem_free(struct rt_pci_ep *ep,
-        void *vaddr, rt_ubase_t cpu_addr, rt_size_t size)
+                        void *vaddr, rt_ubase_t cpu_addr, rt_size_t size)
 {
     if (!ep || !vaddr || !size)
     {

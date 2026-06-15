@@ -82,7 +82,7 @@ static rt_uint8_t dw_pcie_ep_func_select(struct dw_pcie_ep *ep, rt_uint8_t func_
  * @param[in] flags   BAR flags (PCIM_BAR_MEM_TYPE_64 for 64-bit)
  */
 static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, rt_uint8_t func_no,
-        int bar_idx, int flags)
+                                   int bar_idx, int flags)
 {
     rt_uint32_t reg;
     rt_uint8_t func_offset = 0;
@@ -131,7 +131,7 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, int bar_idx)
  * @return Capability offset, or 0 if not found
  */
 static rt_uint8_t __dw_pcie_ep_find_next_cap(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        rt_uint8_t cap_ptr, rt_uint8_t cap)
+                                             rt_uint8_t cap_ptr, rt_uint8_t cap)
 {
     rt_uint16_t reg;
     rt_uint8_t func_offset = 0, cap_id, next_cap_ptr;
@@ -169,7 +169,7 @@ static rt_uint8_t __dw_pcie_ep_find_next_cap(struct dw_pcie_ep *ep, rt_uint8_t f
  * @return Capability offset, or 0 if not found
  */
 static rt_uint8_t dw_pcie_ep_find_capability(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        rt_uint8_t cap)
+                                             rt_uint8_t cap)
 {
     rt_uint16_t reg;
     rt_uint8_t func_offset = 0, next_cap_ptr;
@@ -197,7 +197,7 @@ static rt_uint8_t dw_pcie_ep_find_capability(struct dw_pcie_ep *ep, rt_uint8_t f
  * @return RT_EOK on success
  */
 rt_err_t dw_pcie_ep_inbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        int bar_idx, rt_ubase_t cpu_addr, enum dw_pcie_aspace_type aspace_type)
+                                int bar_idx, rt_ubase_t cpu_addr, enum dw_pcie_aspace_type aspace_type)
 {
     rt_err_t err;
     rt_uint32_t free_win;
@@ -237,7 +237,7 @@ rt_err_t dw_pcie_ep_inbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t dw_pcie_ep_outbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        rt_ubase_t phys_addr, rt_uint64_t pci_addr, rt_size_t size)
+                                 rt_ubase_t phys_addr, rt_uint64_t pci_addr, rt_size_t size)
 {
     rt_uint32_t free_win;
     struct dw_pcie *pci = to_dw_pcie_from_endpoint(ep);
@@ -250,7 +250,7 @@ rt_err_t dw_pcie_ep_outbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
     }
 
     dw_pcie_prog_ep_outbound_atu(pci, func_no, free_win, PCIE_ATU_TYPE_MEM,
-            phys_addr, pci_addr, size);
+                                 phys_addr, pci_addr, size);
 
     ep->outbound_addr[free_win] = phys_addr;
     rt_bitmap_set_bit(ep->ob_window_map, free_win);
@@ -270,7 +270,7 @@ rt_err_t dw_pcie_ep_outbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
  * @return 0 on success
  */
 static rt_err_t dw_pcie_ep_write_header(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        struct rt_pci_ep_header *hdr)
+                                        struct rt_pci_ep_header *hdr)
 {
     rt_uint8_t func_offset = 0;
     struct dw_pcie_ep *ep = epc->priv;
@@ -308,7 +308,7 @@ static rt_err_t dw_pcie_ep_write_header(struct rt_pci_ep *epc, rt_uint8_t func_n
  * @return RT_EOK
  */
 static rt_err_t dw_pcie_ep_clear_bar(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        struct rt_pci_ep_bar *bar, int bar_idx)
+                                     struct rt_pci_ep_bar *bar, int bar_idx)
 {
     rt_uint32_t atu_index;
     struct dw_pcie_ep *ep = epc->priv;
@@ -338,7 +338,7 @@ static rt_err_t dw_pcie_ep_clear_bar(struct rt_pci_ep *epc, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 static rt_err_t dw_pcie_ep_set_bar(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        struct rt_pci_ep_bar *bar, int bar_idx)
+                                   struct rt_pci_ep_bar *bar, int bar_idx)
 {
     rt_err_t err;
     rt_uint32_t reg;
@@ -393,7 +393,7 @@ static rt_err_t dw_pcie_ep_set_bar(struct rt_pci_ep *epc, rt_uint8_t func_no,
  * @return RT_EOK on success, -RT_EINVAL if not found
  */
 static rt_err_t dw_pcie_find_index(struct dw_pcie_ep *ep,
-        rt_ubase_t addr, rt_uint32_t *atu_index)
+                                   rt_ubase_t addr, rt_uint32_t *atu_index)
 {
     for (rt_uint32_t index = 0; index < ep->num_ob_windows; ++index)
     {
@@ -419,7 +419,7 @@ static rt_err_t dw_pcie_find_index(struct dw_pcie_ep *ep,
  * @return RT_EOK on success
  */
 static rt_err_t dw_pcie_ep_unmap_addr(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        rt_ubase_t addr)
+                                      rt_ubase_t addr)
 {
     rt_err_t err;
     rt_uint32_t atu_index;
@@ -451,7 +451,7 @@ static rt_err_t dw_pcie_ep_unmap_addr(struct rt_pci_ep *epc, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 static rt_err_t dw_pcie_ep_map_addr(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size)
+                                    rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size)
 {
     rt_err_t err;
     struct dw_pcie_ep *ep = epc->priv;
@@ -478,7 +478,7 @@ static rt_err_t dw_pcie_ep_map_addr(struct rt_pci_ep *epc, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 static rt_err_t dw_pcie_ep_set_msi(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        unsigned irq_nr)
+                                   unsigned irq_nr)
 {
     rt_uint32_t val, reg;
     rt_uint8_t func_offset = 0;
@@ -515,7 +515,7 @@ static rt_err_t dw_pcie_ep_set_msi(struct rt_pci_ep *epc, rt_uint8_t func_no,
  * @return RT_EOK on success, -RT_EINVAL if MSI is not enabled
  */
 static rt_err_t dw_pcie_ep_get_msi(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        unsigned *out_irq_nr)
+                                   unsigned *out_irq_nr)
 {
     rt_uint32_t val, reg;
     rt_uint8_t func_offset = 0;
@@ -557,7 +557,7 @@ static rt_err_t dw_pcie_ep_get_msi(struct rt_pci_ep *epc, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 static rt_err_t dw_pcie_ep_set_msix(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        unsigned irq_nr, int bar_idx, rt_off_t offset)
+                                    unsigned irq_nr, int bar_idx, rt_off_t offset)
 {
     rt_uint32_t val, reg;
     rt_uint8_t func_offset = 0;
@@ -603,7 +603,7 @@ static rt_err_t dw_pcie_ep_set_msix(struct rt_pci_ep *epc, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 static rt_err_t dw_pcie_ep_get_msix(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        unsigned *out_irq_nr)
+                                    unsigned *out_irq_nr)
 {
     rt_uint32_t val, reg;
     rt_uint8_t func_offset = 0;
@@ -641,7 +641,7 @@ static rt_err_t dw_pcie_ep_get_msix(struct rt_pci_ep *epc, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 static rt_err_t dw_pcie_ep_raise_irq(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        enum rt_pci_ep_irq type, unsigned irq)
+                                     enum rt_pci_ep_irq type, unsigned irq)
 {
     struct dw_pcie_ep *ep = epc->priv;
 
@@ -692,20 +692,19 @@ static rt_err_t dw_pcie_ep_start(struct rt_pci_ep *epc)
 }
 
 /** @brief DW PCIe EP operations vtable */
-static const struct rt_pci_ep_ops dw_pcie_ep_ops =
-{
-    .write_header   = dw_pcie_ep_write_header,
-    .set_bar        = dw_pcie_ep_set_bar,
-    .clear_bar      = dw_pcie_ep_clear_bar,
-    .map_addr       = dw_pcie_ep_map_addr,
-    .unmap_addr     = dw_pcie_ep_unmap_addr,
-    .set_msi        = dw_pcie_ep_set_msi,
-    .get_msi        = dw_pcie_ep_get_msi,
-    .set_msix       = dw_pcie_ep_set_msix,
-    .get_msix       = dw_pcie_ep_get_msix,
-    .raise_irq      = dw_pcie_ep_raise_irq,
-    .start          = dw_pcie_ep_start,
-    .stop           = dw_pcie_ep_stop,
+static const struct rt_pci_ep_ops dw_pcie_ep_ops = {
+    .write_header = dw_pcie_ep_write_header,
+    .set_bar = dw_pcie_ep_set_bar,
+    .clear_bar = dw_pcie_ep_clear_bar,
+    .map_addr = dw_pcie_ep_map_addr,
+    .unmap_addr = dw_pcie_ep_unmap_addr,
+    .set_msi = dw_pcie_ep_set_msi,
+    .get_msi = dw_pcie_ep_get_msi,
+    .set_msix = dw_pcie_ep_set_msix,
+    .get_msix = dw_pcie_ep_get_msix,
+    .raise_irq = dw_pcie_ep_raise_irq,
+    .start = dw_pcie_ep_start,
+    .stop = dw_pcie_ep_stop,
 };
 
 /**
@@ -735,7 +734,7 @@ rt_err_t dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, rt_uint8_t func_no)
  * @return RT_EOK on success
  */
 rt_err_t dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        unsigned irq)
+                                  unsigned irq)
 {
     rt_err_t err;
     rt_off_t aligned_offset;
@@ -801,7 +800,7 @@ rt_err_t dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t dw_pcie_ep_raise_msix_irq_doorbell(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        unsigned irq)
+                                            unsigned irq)
 {
     rt_uint32_t msg_data;
     struct dw_pcie_ep_func *ep_func;
@@ -831,7 +830,7 @@ rt_err_t dw_pcie_ep_raise_msix_irq_doorbell(struct dw_pcie_ep *ep, rt_uint8_t fu
  * @return RT_EOK on success, -RT_EINVAL if vector is masked
  */
 rt_err_t dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        unsigned irq)
+                                   unsigned irq)
 {
     rt_err_t err;
     int bar_idx;

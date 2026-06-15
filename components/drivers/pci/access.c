@@ -30,13 +30,21 @@
 struct rt_spinlock rt_pci_lock = { 0 };
 
 #ifdef RT_PCI_LOCKLESS
-#define pci_lock_config(l)      do { (void)(l); } while (0)
-#define pci_unlock_config(l)    do { (void)(l); } while (0)
+#define pci_lock_config(l) \
+    do                     \
+    {                      \
+        (void)(l);         \
+    } while (0)
+#define pci_unlock_config(l) \
+    do                       \
+    {                        \
+        (void)(l);           \
+    } while (0)
 #else
 /** @brief Acquire the PCI config space lock with IRQ save */
-#define pci_lock_config(l)      l = rt_spin_lock_irqsave(&rt_pci_lock)
+#define pci_lock_config(l)   l = rt_spin_lock_irqsave(&rt_pci_lock)
 /** @brief Release the PCI config space lock with IRQ restore */
-#define pci_unlock_config(l)    rt_spin_unlock_irqrestore(&rt_pci_lock, l)
+#define pci_unlock_config(l) rt_spin_unlock_irqrestore(&rt_pci_lock, l)
 #endif
 
 /**
@@ -52,18 +60,18 @@ struct rt_spinlock rt_pci_lock = { 0 };
  * @param[out] value Read value (all-ones on error)
  * @return RT_EOK on success, error code otherwise
  */
-#define PCI_OPS_READ(name, type) \
-rt_err_t rt_pci_bus_read_config_##name(struct rt_pci_bus *bus, rt_uint32_t devfn, int reg, type *value) \
-{                                                               \
-    rt_err_t err;                                               \
-    rt_ubase_t level;                                           \
-    rt_uint32_t data = 0;                                       \
-    pci_lock_config(level);                                     \
-    err = bus->ops->read(bus, devfn, reg, sizeof(type), &data); \
-    *value = err ? (type)(~0) : (type)data;                     \
-    pci_unlock_config(level);                                   \
-    return err;                                                 \
-}
+#define PCI_OPS_READ(name, type)                                                                            \
+    rt_err_t rt_pci_bus_read_config_##name(struct rt_pci_bus *bus, rt_uint32_t devfn, int reg, type *value) \
+    {                                                                                                       \
+        rt_err_t err;                                                                                       \
+        rt_ubase_t level;                                                                                   \
+        rt_uint32_t data = 0;                                                                               \
+        pci_lock_config(level);                                                                             \
+        err = bus->ops->read(bus, devfn, reg, sizeof(type), &data);                                         \
+        *value = err ? (type)(~0) : (type)data;                                                             \
+        pci_unlock_config(level);                                                                           \
+        return err;                                                                                         \
+    }
 
 /**
  * @def PCI_OPS_WRITE(name, type)
@@ -78,16 +86,16 @@ rt_err_t rt_pci_bus_read_config_##name(struct rt_pci_bus *bus, rt_uint32_t devfn
  * @param[in] value Value to write
  * @return RT_EOK on success, error code otherwise
  */
-#define PCI_OPS_WRITE(name, type) \
-rt_err_t rt_pci_bus_write_config_##name(struct rt_pci_bus *bus, rt_uint32_t devfn, int reg, type value) \
-{                                                                \
-    rt_err_t err;                                                \
-    rt_ubase_t level;                                            \
-    pci_lock_config(level);                                      \
-    err = bus->ops->write(bus, devfn, reg, sizeof(type), value); \
-    pci_unlock_config(level);                                    \
-    return err;                                                  \
-}
+#define PCI_OPS_WRITE(name, type)                                                                           \
+    rt_err_t rt_pci_bus_write_config_##name(struct rt_pci_bus *bus, rt_uint32_t devfn, int reg, type value) \
+    {                                                                                                       \
+        rt_err_t err;                                                                                       \
+        rt_ubase_t level;                                                                                   \
+        pci_lock_config(level);                                                                             \
+        err = bus->ops->write(bus, devfn, reg, sizeof(type), value);                                        \
+        pci_unlock_config(level);                                                                           \
+        return err;                                                                                         \
+    }
 
 #define PCI_OPS(name, type)  \
     PCI_OPS_READ(name, type) \
@@ -115,7 +123,7 @@ PCI_OPS(u32, rt_uint32_t)
  * @return RT_EOK on success, -RT_ERROR if mapping failed
  */
 rt_err_t rt_pci_bus_read_config_uxx(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, int width, rt_uint32_t *value)
+                                    rt_uint32_t devfn, int reg, int width, rt_uint32_t *value)
 {
     void *base;
 
@@ -151,7 +159,7 @@ rt_err_t rt_pci_bus_read_config_uxx(struct rt_pci_bus *bus,
  * @return RT_EOK on success, -RT_ERROR if mapping failed
  */
 rt_err_t rt_pci_bus_write_config_uxx(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, int width, rt_uint32_t value)
+                                     rt_uint32_t devfn, int reg, int width, rt_uint32_t value)
 {
     void *base;
 
@@ -190,7 +198,7 @@ rt_err_t rt_pci_bus_write_config_uxx(struct rt_pci_bus *bus,
  * @return RT_EOK on success, -RT_ERROR if mapping failed
  */
 rt_err_t rt_pci_bus_read_config_generic_u32(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, int width, rt_uint32_t *value)
+                                            rt_uint32_t devfn, int reg, int width, rt_uint32_t *value)
 {
     void *base;
 
@@ -224,7 +232,7 @@ rt_err_t rt_pci_bus_read_config_generic_u32(struct rt_pci_bus *bus,
  * @return RT_EOK on success, -RT_ERROR if mapping failed
  */
 rt_err_t rt_pci_bus_write_config_generic_u32(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, int reg, int width, rt_uint32_t value)
+                                             rt_uint32_t devfn, int reg, int width, rt_uint32_t value)
 {
     void *base;
 

@@ -45,14 +45,13 @@ struct host_bridge_pm_status
  * - STANDBY → D2
  * - SHUTDOWN→ D3cold
  */
-static const enum rt_pci_power system_pci_pm_mode[] =
-{
-    [PM_SLEEP_MODE_NONE]        = RT_PCI_D0,
-    [PM_SLEEP_MODE_IDLE]        = RT_PCI_D3HOT,
-    [PM_SLEEP_MODE_LIGHT]       = RT_PCI_D1,
-    [PM_SLEEP_MODE_DEEP]        = RT_PCI_D1,
-    [PM_SLEEP_MODE_STANDBY]     = RT_PCI_D2,
-    [PM_SLEEP_MODE_SHUTDOWN]    = RT_PCI_D3COLD,
+static const enum rt_pci_power system_pci_pm_mode[] = {
+    [PM_SLEEP_MODE_NONE] = RT_PCI_D0,
+    [PM_SLEEP_MODE_IDLE] = RT_PCI_D3HOT,
+    [PM_SLEEP_MODE_LIGHT] = RT_PCI_D1,
+    [PM_SLEEP_MODE_DEEP] = RT_PCI_D1,
+    [PM_SLEEP_MODE_STANDBY] = RT_PCI_D2,
+    [PM_SLEEP_MODE_SHUTDOWN] = RT_PCI_D3COLD,
 };
 
 /**
@@ -115,8 +114,7 @@ static void host_bridge_pm_resume(const struct rt_device *device, rt_uint8_t mod
 }
 
 /** @brief PM operations vtable for host bridge */
-static const struct rt_device_pm_ops host_bridge_pm_ops =
-{
+static const struct rt_device_pm_ops host_bridge_pm_ops = {
     .suspend = host_bridge_pm_suspend,
     .resume = host_bridge_pm_resume,
 };
@@ -194,8 +192,7 @@ static rt_err_t host_bridge_shutdown(struct rt_pci_device *pdev)
  * - Any subtractive PCI-to-PCI bridge (class PCIS_BRIDGE_PCI_SUBTRACTIVE)
  * - Any Root Complex Event Collector (class PCIS_SYSTEM_RCEC)
  */
-static const struct rt_pci_device_id host_bridge_pci_ids[] =
-{
+static const struct rt_pci_device_id host_bridge_pci_ids[] = {
     /* PCI host bridges */
     { RT_PCI_DEVICE_ID(PCI_VENDOR_ID_REDHAT, 0x0008) },
     /* Any PCI-Express port */
@@ -208,8 +205,7 @@ static const struct rt_pci_device_id host_bridge_pci_ids[] =
 };
 
 /** @brief Host bridge PCI driver descriptor */
-static struct rt_pci_driver host_bridge_driver =
-{
+static struct rt_pci_driver host_bridge_driver = {
     .name = "host-bridge",
 
     .ids = host_bridge_pci_ids,

@@ -50,7 +50,7 @@ void rt_pci_assign_irq(struct rt_pci_device *pdev)
     if (!host_bridge->irq_map)
     {
         LOG_D("PCI-Device<%s> runtime IRQ mapping not provided by platform",
-                rt_dm_dev_get_name(&pdev->parent));
+              rt_dm_dev_get_name(&pdev->parent));
 
         return;
     }

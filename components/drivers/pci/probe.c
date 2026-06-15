@@ -198,8 +198,8 @@ struct rt_pci_device *rt_pci_scan_single_device(struct rt_pci_bus *bus, rt_uint3
     pdev->device = device;
 
     rt_dm_dev_set_name(&pdev->parent, "%04x:%02x:%02x.%u",
-            rt_pci_domain(pdev), pdev->bus->number,
-            RT_PCI_SLOT(pdev->devfn), RT_PCI_FUNC(pdev->devfn));
+                       rt_pci_domain(pdev), pdev->bus->number,
+                       RT_PCI_SLOT(pdev->devfn), RT_PCI_FUNC(pdev->devfn));
 
     if (rt_pci_setup_device(pdev))
     {
@@ -466,7 +466,7 @@ rt_err_t rt_pci_setup_device(struct rt_pci_device *pdev)
     }
 
     rt_dm_dev_set_name(&pdev->parent, "%04x:%02x:%02x.%u", rt_pci_domain(pdev),
-            pdev->bus->number, RT_PCI_SLOT(pdev->devfn), RT_PCI_FUNC(pdev->devfn));
+                       pdev->bus->number, RT_PCI_SLOT(pdev->devfn), RT_PCI_FUNC(pdev->devfn));
 
     class = pdev->class >> 8;
 
@@ -540,14 +540,14 @@ static struct rt_pci_bus *pci_alloc_bus(struct rt_pci_bus *parent);
  * @return RT_EOK on success
  */
 static rt_err_t pci_child_bus_init(struct rt_pci_bus *bus, rt_uint32_t bus_no,
-        struct rt_pci_host_bridge *host_bridge, struct rt_pci_device *pdev)
+                                   struct rt_pci_host_bridge *host_bridge, struct rt_pci_device *pdev)
 {
     rt_err_t err;
     struct rt_pci_bus *parent_bus = bus->parent;
 
     bus->sysdata = parent_bus->sysdata;
     bus->self = pdev;
-    bus->ops = host_bridge->child_ops ? : parent_bus->ops;
+    bus->ops = host_bridge->child_ops ?: parent_bus->ops;
 
     bus->number = bus_no;
     rt_sprintf(bus->name, "%04x:%02x", host_bridge->domain, bus_no);
@@ -561,7 +561,7 @@ static rt_err_t pci_child_bus_init(struct rt_pci_bus *bus, rt_uint32_t bus_no,
             rt_pci_ofw_bus_free(bus);
 
             LOG_E("PCI-Bus<%s> add bus failed with err = %s",
-                    bus->name, rt_strerror(err));
+                  bus->name, rt_strerror(err));
 
             return err;
         }
@@ -579,7 +579,7 @@ static rt_err_t pci_child_bus_init(struct rt_pci_bus *bus, rt_uint32_t bus_no,
  * @return RT_TRUE if EA provides valid fixed bus numbers
  */
 static rt_bool_t pci_ea_fixed_busnrs(struct rt_pci_device *pdev,
-        rt_uint8_t *sec, rt_uint8_t *sub)
+                                     rt_uint8_t *sec, rt_uint8_t *sub)
 {
     int pos, offset;
     rt_uint32_t dw;
@@ -595,7 +595,7 @@ static rt_bool_t pci_ea_fixed_busnrs(struct rt_pci_device *pdev,
     rt_pci_read_config_u32(pdev, offset, &dw);
     ea_sec = PCIM_EA_SEC_NR(dw);
     ea_sub = PCIM_EA_SUB_NR(dw);
-    if (ea_sec  == 0 || ea_sub < ea_sec)
+    if (ea_sec == 0 || ea_sub < ea_sec)
     {
         return RT_FALSE;
     }
@@ -636,9 +636,9 @@ static void pcie_fixup_link(struct rt_pci_device *pdev)
     rt_pci_read_config_u16(pdev, pos + PCIER_LINK_CTL2, &exp_lnkctl2);
 
     rt_pci_write_config_u16(pdev, pos + PCIER_LINK_CTL2,
-            (exp_lnkctl2 & ~PCIEM_LNKCTL2_TLS) | PCIEM_LNKCTL2_TLS_2_5GT);
+                            (exp_lnkctl2 & ~PCIEM_LNKCTL2_TLS) | PCIEM_LNKCTL2_TLS_2_5GT);
     rt_pci_write_config_u16(pdev, pos + PCIER_LINK_CTL,
-            exp_lnkctl | PCIEM_LINK_CTL_RETRAIN_LINK);
+                            exp_lnkctl | PCIEM_LINK_CTL_RETRAIN_LINK);
 
     for (int i = 0; i < 20; ++i)
     {
@@ -655,7 +655,7 @@ static void pcie_fixup_link(struct rt_pci_device *pdev)
     /* Fail, restore */
     rt_pci_write_config_u16(pdev, pos + PCIER_LINK_CTL2, exp_lnkctl2);
     rt_pci_write_config_u16(pdev, pos + PCIER_LINK_CTL,
-            exp_lnkctl | PCIEM_LINK_CTL_RETRAIN_LINK);
+                            exp_lnkctl | PCIEM_LINK_CTL_RETRAIN_LINK);
 
 _status_sync:
     /* Wait a while for success or failure */
@@ -677,7 +677,7 @@ _status_sync:
  * @return Final bus number allocated
  */
 static rt_uint32_t pci_scan_bridge_extend(struct rt_pci_bus *bus, struct rt_pci_device *pdev,
-        rt_uint32_t bus_no_start, rt_uint32_t buses, rt_bool_t reconfigured)
+                                          rt_uint32_t bus_no_start, rt_uint32_t buses, rt_bool_t reconfigured)
 {
     rt_bool_t fixed_buses;
     rt_uint8_t fixed_sub, fixed_sec;
@@ -707,7 +707,7 @@ static rt_uint32_t pci_scan_bridge_extend(struct rt_pci_bus *bus, struct rt_pci_
         }
 
         LOG_I("Bridge configuration: primary(%02x) secondary(%02x) subordinate(%02x)",
-                primary, secondary, subordinate);
+              primary, secondary, subordinate);
     }
 
     if (pdev->pcie_cap)
@@ -776,7 +776,7 @@ _end:
  * @return Final bus number
  */
 rt_uint32_t rt_pci_scan_bridge(struct rt_pci_bus *bus, struct rt_pci_device *pdev,
-        rt_uint32_t bus_no_start, rt_bool_t reconfigured)
+                               rt_uint32_t bus_no_start, rt_bool_t reconfigured)
 {
     if (!bus || !pdev)
     {
@@ -950,8 +950,8 @@ rt_uint32_t rt_pci_scan_child_buses(struct rt_pci_bus *bus, rt_size_t buses)
     bus_no = bus->number;
 
     for (rt_uint32_t devfn = 0;
-        devfn < RT_PCI_DEVFN(RT_PCI_DEVICE_MAX - 1, RT_PCI_FUNCTION_MAX - 1);
-        devfn += RT_PCI_FUNCTION_MAX)
+         devfn < RT_PCI_DEVFN(RT_PCI_DEVICE_MAX - 1, RT_PCI_FUNCTION_MAX - 1);
+         devfn += RT_PCI_FUNCTION_MAX)
     {
         rt_pci_scan_slot(bus, devfn);
     }

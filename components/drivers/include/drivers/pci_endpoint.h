@@ -182,7 +182,7 @@ struct rt_pci_epf
     struct rt_pci_ep_header *header;             /**< Configuration header to present to the host */
     struct rt_pci_ep_bar bar[PCI_STD_NUM_BARS];  /**< BAR descriptors (6 standard BARs) */
 
-    rt_uint8_t  msi_interrupts;                  /**< Number of MSI vectors requested */
+    rt_uint8_t msi_interrupts;                  /**< Number of MSI vectors requested */
     rt_uint16_t msix_interrupts;                 /**< Number of MSI-X vectors requested */
     rt_uint8_t func_no;                          /**< Function number (0 to max_functions-1) */
 
@@ -207,7 +207,7 @@ struct rt_pci_ep_ops
      * @return RT_EOK on success
      */
     rt_err_t (*write_header)(struct rt_pci_ep *ep, rt_uint8_t func_no,
-            struct rt_pci_ep_header *hdr);
+                             struct rt_pci_ep_header *hdr);
 
     /**
      * @brief Set a BAR on an endpoint function
@@ -220,7 +220,7 @@ struct rt_pci_ep_ops
      * @return RT_EOK on success
      */
     rt_err_t (*set_bar)(struct rt_pci_ep *ep, rt_uint8_t func_no,
-            struct rt_pci_ep_bar *bar, int bar_idx);
+                        struct rt_pci_ep_bar *bar, int bar_idx);
 
     /**
      * @brief Clear a BAR on an endpoint function
@@ -233,7 +233,7 @@ struct rt_pci_ep_ops
      * @return RT_EOK on success
      */
     rt_err_t (*clear_bar)(struct rt_pci_ep *ep, rt_uint8_t func_no,
-            struct rt_pci_ep_bar *bar, int bar_idx);
+                          struct rt_pci_ep_bar *bar, int bar_idx);
 
     /**
      * @brief Map a CPU address to PCI bus address space
@@ -247,7 +247,7 @@ struct rt_pci_ep_ops
      * @return RT_EOK on success
      */
     rt_err_t (*map_addr)(struct rt_pci_ep *ep, rt_uint8_t func_no,
-            rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size);
+                         rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size);
 
     /**
      * @brief Unmap a previously mapped address
@@ -270,7 +270,7 @@ struct rt_pci_ep_ops
      * @return RT_EOK on success
      */
     rt_err_t (*set_msi)(struct rt_pci_ep *ep, rt_uint8_t func_no,
-            unsigned irq_nr);
+                        unsigned irq_nr);
 
     /**
      * @brief Get the current MSI configuration
@@ -282,7 +282,7 @@ struct rt_pci_ep_ops
      * @return RT_EOK on success
      */
     rt_err_t (*get_msi)(struct rt_pci_ep *ep, rt_uint8_t func_no,
-            unsigned *out_irq_nr);
+                        unsigned *out_irq_nr);
 
     /**
      * @brief Configure MSI-X for an endpoint function
@@ -296,7 +296,7 @@ struct rt_pci_ep_ops
      * @return RT_EOK on success
      */
     rt_err_t (*set_msix)(struct rt_pci_ep *ep, rt_uint8_t func_no,
-            unsigned irq_nr, int bar_idx, rt_off_t offset);
+                         unsigned irq_nr, int bar_idx, rt_off_t offset);
 
     /**
      * @brief Get the current MSI-X configuration
@@ -308,7 +308,7 @@ struct rt_pci_ep_ops
      * @return RT_EOK on success
      */
     rt_err_t (*get_msix)(struct rt_pci_ep *ep, rt_uint8_t func_no,
-            unsigned *out_irq_nr);
+                         unsigned *out_irq_nr);
 
     /**
      * @brief Raise an interrupt from the endpoint to the host
@@ -321,7 +321,7 @@ struct rt_pci_ep_ops
      * @return RT_EOK on success
      */
     rt_err_t (*raise_irq)(struct rt_pci_ep *ep, rt_uint8_t func_no,
-            enum rt_pci_ep_irq type, unsigned irq);
+                          enum rt_pci_ep_irq type, unsigned irq);
 
     /**
      * @brief Start the endpoint — make it visible on the PCIe bus
@@ -346,49 +346,49 @@ struct rt_pci_ep_ops
 
 /** @brief Write PCI configuration header for an endpoint function */
 rt_err_t rt_pci_ep_write_header(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        struct rt_pci_ep_header *hdr);
+                                struct rt_pci_ep_header *hdr);
 
 /** @brief Set a BAR on an endpoint function */
 rt_err_t rt_pci_ep_set_bar(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        struct rt_pci_ep_bar *bar, int bar_idx);
+                           struct rt_pci_ep_bar *bar, int bar_idx);
 
 /** @brief Clear a BAR on an endpoint function */
 rt_err_t rt_pci_ep_clear_bar(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        struct rt_pci_ep_bar *bar, int bar_idx);
+                             struct rt_pci_ep_bar *bar, int bar_idx);
 
 /* === Address Mapping API === */
 
 /** @brief Map CPU address to PCI bus address space for an endpoint */
 rt_err_t rt_pci_ep_map_addr(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size);
+                            rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size);
 
 /** @brief Unmap a previously mapped address */
 rt_err_t rt_pci_ep_unmap_addr(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        rt_ubase_t addr);
+                              rt_ubase_t addr);
 
 /* === MSI/MSI-X API === */
 
 /** @brief Configure MSI for an endpoint function */
 rt_err_t rt_pci_ep_set_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned irq_nr);
+                           unsigned irq_nr);
 
 /** @brief Get current MSI configuration */
 rt_err_t rt_pci_ep_get_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned *out_irq_nr);
+                           unsigned *out_irq_nr);
 
 /** @brief Configure MSI-X for an endpoint function */
 rt_err_t rt_pci_ep_set_msix(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned irq_nr, int bar_idx, rt_off_t offset);
+                            unsigned irq_nr, int bar_idx, rt_off_t offset);
 
 /** @brief Get current MSI-X configuration */
 rt_err_t rt_pci_ep_get_msix(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned *out_irq_nr);
+                            unsigned *out_irq_nr);
 
 /* === Interrupt and Control API === */
 
 /** @brief Raise an interrupt from the endpoint to the host */
 rt_err_t rt_pci_ep_raise_irq(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        enum rt_pci_ep_irq type, unsigned irq);
+                             enum rt_pci_ep_irq type, unsigned irq);
 
 /** @brief Start the endpoint — enable link and respond to config requests */
 rt_err_t rt_pci_ep_start(struct rt_pci_ep *ep);
@@ -408,19 +408,19 @@ rt_err_t rt_pci_ep_unregister(struct rt_pci_ep *ep);
 
 /** @brief Initialize an array of memory regions for the endpoint */
 rt_err_t rt_pci_ep_mem_array_init(struct rt_pci_ep *ep,
-        struct rt_pci_ep_mem *mems, rt_size_t mems_nr);
+                                  struct rt_pci_ep_mem *mems, rt_size_t mems_nr);
 
 /** @brief Initialize a single memory region (convenience wrapper) */
 rt_err_t rt_pci_ep_mem_init(struct rt_pci_ep *ep,
-        rt_ubase_t cpu_addr, rt_size_t size, rt_size_t page_size);
+                            rt_ubase_t cpu_addr, rt_size_t size, rt_size_t page_size);
 
 /** @brief Allocate memory from the endpoint's pool */
 void *rt_pci_ep_mem_alloc(struct rt_pci_ep *ep,
-        rt_ubase_t *out_cpu_addr, rt_size_t size);
+                          rt_ubase_t *out_cpu_addr, rt_size_t size);
 
 /** @brief Free memory back to the endpoint's pool */
 void rt_pci_ep_mem_free(struct rt_pci_ep *ep,
-        void *vaddr, rt_ubase_t cpu_addr, rt_size_t size);
+                        void *vaddr, rt_ubase_t cpu_addr, rt_size_t size);
 
 /* === Endpoint Function (EPF) API === */
 

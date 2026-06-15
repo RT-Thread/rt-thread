@@ -48,7 +48,7 @@ static RT_DEFINE_SPINLOCK(_ep_lock);
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_write_header(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        struct rt_pci_ep_header *hdr)
+                                struct rt_pci_ep_header *hdr)
 {
     rt_err_t err;
 
@@ -89,7 +89,7 @@ rt_err_t rt_pci_ep_write_header(struct rt_pci_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_set_bar(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        struct rt_pci_ep_bar *bar, int bar_idx)
+                           struct rt_pci_ep_bar *bar, int bar_idx)
 {
     rt_err_t err = RT_EOK;
 
@@ -151,7 +151,7 @@ rt_err_t rt_pci_ep_set_bar(struct rt_pci_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_clear_bar(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        struct rt_pci_ep_bar *bar, int bar_idx)
+                             struct rt_pci_ep_bar *bar, int bar_idx)
 {
     rt_err_t err;
 
@@ -188,7 +188,7 @@ rt_err_t rt_pci_ep_clear_bar(struct rt_pci_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_map_addr(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size)
+                            rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size)
 {
     rt_err_t err;
 
@@ -222,7 +222,7 @@ rt_err_t rt_pci_ep_map_addr(struct rt_pci_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_unmap_addr(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        rt_ubase_t addr)
+                              rt_ubase_t addr)
 {
     rt_err_t err;
 
@@ -259,7 +259,7 @@ rt_err_t rt_pci_ep_unmap_addr(struct rt_pci_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_set_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned irq_nr)
+                           unsigned irq_nr)
 {
     rt_err_t err;
 
@@ -301,7 +301,7 @@ rt_err_t rt_pci_ep_set_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_get_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned *out_irq_nr)
+                           unsigned *out_irq_nr)
 {
     rt_err_t err;
 
@@ -340,7 +340,7 @@ rt_err_t rt_pci_ep_get_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_set_msix(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned irq_nr, int bar_idx, rt_off_t offset)
+                            unsigned irq_nr, int bar_idx, rt_off_t offset)
 {
     rt_err_t err;
 
@@ -375,7 +375,7 @@ rt_err_t rt_pci_ep_set_msix(struct rt_pci_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_get_msix(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned *out_irq_nr)
+                            unsigned *out_irq_nr)
 {
     rt_err_t err;
 
@@ -412,7 +412,7 @@ rt_err_t rt_pci_ep_get_msix(struct rt_pci_ep *ep, rt_uint8_t func_no,
  * @return RT_EOK on success
  */
 rt_err_t rt_pci_ep_raise_irq(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        enum rt_pci_ep_irq type, unsigned irq)
+                             enum rt_pci_ep_irq type, unsigned irq)
 {
     rt_err_t err;
 
@@ -592,7 +592,7 @@ rt_err_t rt_pci_ep_add_epf(struct rt_pci_ep *ep, struct rt_pci_epf *epf)
     if (epf->func_no > ep->max_functions - 1)
     {
         LOG_E("%s function No(%d) > %s max function No(%d - 1)",
-                epf->name, epf->func_no, ep->name, ep->max_functions);
+              epf->name, epf->func_no, ep->name, ep->max_functions);
 
         return -RT_EINVAL;
     }

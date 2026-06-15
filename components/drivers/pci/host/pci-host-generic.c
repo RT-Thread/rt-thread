@@ -30,11 +30,9 @@
 #include "../ecam.h"
 
 /** @brief CAM-mode ECAM ops with 16-bit bus shift for legacy PCI */
-static const struct pci_ecam_ops gen_pci_cfg_cam_bus_ops =
-{
+static const struct pci_ecam_ops gen_pci_cfg_cam_bus_ops = {
     .bus_shift = 16,
-    .pci_ops =
-    {
+    .pci_ops = {
         .map = pci_ecam_map,
         .read = rt_pci_bus_read_config_uxx,
         .write = rt_pci_bus_write_config_uxx,
@@ -66,10 +64,8 @@ static void *pci_dw_ecam_map_bus(struct rt_pci_bus *bus, rt_uint32_t devfn, int 
 }
 
 /** @brief DesignWare ECAM ops (common across multiple DW-based SoCs) */
-static const struct pci_ecam_ops pci_dw_ecam_bus_ops =
-{
-    .pci_ops =
-    {
+static const struct pci_ecam_ops pci_dw_ecam_bus_ops = {
+    .pci_ops = {
         .map = pci_dw_ecam_map_bus,
         .read = rt_pci_bus_read_config_uxx,
         .write = rt_pci_bus_write_config_uxx,
@@ -77,8 +73,7 @@ static const struct pci_ecam_ops pci_dw_ecam_bus_ops =
 };
 
 /** @brief Device tree compatible IDs for supported PCI host controllers */
-static const struct rt_ofw_node_id gen_pci_ofw_ids[] =
-{
+static const struct rt_ofw_node_id gen_pci_ofw_ids[] = {
     { .compatible = "pci-host-cam-generic", .data = &gen_pci_cfg_cam_bus_ops },
     { .compatible = "pci-host-ecam-generic", .data = &pci_generic_ecam_ops },
     { .compatible = "marvell,armada8k-pcie-ecam", .data = &pci_dw_ecam_bus_ops },
@@ -88,8 +83,7 @@ static const struct rt_ofw_node_id gen_pci_ofw_ids[] =
 };
 
 /** @brief Generic PCI host platform driver */
-static struct rt_platform_driver gen_pci_driver =
-{
+static struct rt_platform_driver gen_pci_driver = {
     .name = "pci-host-generic",
     .ids = gen_pci_ofw_ids,
 
