@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,13 +9,15 @@
  * 2019-5-10      misonyo      add DMA TX and RX function
  * 2026-4-29      Ran          add RT1180 support
  * 2026-6-4       shannon      add LPUART10/12, Serial V2, DMA (V2)
+ * 2026-6-16      shannon      extract Serial V2 as standalone driver
  */
 #include <rtthread.h>
+#ifdef RT_USING_SERIAL_V2
 #ifdef BSP_USING_LPUART
 
 #include "rthw.h"
 #include <rtdevice.h>
-#include "drv_uart.h"
+#include "drv_uart_v2.h"
 #include "board.h"
 #include "fsl_lpuart.h"
 #include "fsl_lpuart_edma.h"
@@ -23,7 +25,7 @@
 #include "fsl_dmamux.h"
 #endif
 
-#define LOG_TAG             "drv.usart"
+#define LOG_TAG             "drv.usart.v2"
 #include <drv_log.h>
 
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
@@ -366,6 +368,8 @@ static void uart_isr(struct imxrt_uart *uart)
 
     if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxDataRegFullFlag)
     {
+        uint8_t ch = LPUART_ReadByte(uart->uart_base);
+        rt_hw_serial_control_isr(&uart->serial, RT_HW_SERIAL_CTRL_PUTC, &ch);
         rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_IND);
     }
 
@@ -374,27 +378,38 @@ static void uart_isr(struct imxrt_uart *uart)
         LPUART_ClearStatusFlags(uart->uart_base, kLPUART_RxOverrunFlag);
     }
 
+    if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag)
+    {
+        LPUART_DisableInterrupts(uart->uart_base, kLPUART_TxDataRegEmptyInterruptEnable);
+        rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_TX_DONE);
+    }
+
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
     if ((LPUART_GetStatusFlags(uart->uart_base) & kLPUART_IdleLineFlag) && (uart->dma_rx != RT_NULL))
     {
         LPUART_ClearStatusFlags(uart->uart_base, kLPUART_IdleLineFlag);
-        rt_size_t total_index, recv_len;
+        rt_size_t recv_len;
         rt_base_t level;
         level = rt_hw_interrupt_disable();
-        total_index = uart->serial.config.bufsz - EDMA_GetRemainingMajorLoopCount(uart->dma_rx->edma_base, uart->dma_rx->channel);
-        if (total_index > uart->dma_rx->last_index)
-            recv_len = total_index - uart->dma_rx->last_index;
-        else
-            recv_len = total_index + (uart->serial.config.bufsz - uart->dma_rx->last_index);
-        if ((recv_len > 0) && (recv_len < uart->serial.config.bufsz))
         {
+            edma_handle_t *edma_h = &uart->dma_rx->edma;
+            rt_size_t total_index = EDMA_TCD_CITER(&edma_h->tcdBase[edma_h->channel], EDMA_TCD_TYPE(edma_h->base)) & 0x7FFFU;
+            total_index = uart->serial.config.dma_ping_bufsz - total_index;
+            if (total_index > uart->dma_rx->last_index)
+                recv_len = total_index - uart->dma_rx->last_index;
+            else if (total_index < uart->dma_rx->last_index)
+                recv_len = total_index + (uart->serial.config.dma_ping_bufsz - uart->dma_rx->last_index);
+            else
+                recv_len = 0;
             uart->dma_rx->last_index = total_index;
-            rt_hw_interrupt_enable(level);
-            rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
         }
-        else
+        rt_hw_interrupt_enable(level);
+
+        if (recv_len > 0)
         {
-            rt_hw_interrupt_enable(level);
+            if (recv_len > uart->serial.config.dma_ping_bufsz)
+                recv_len = uart->serial.config.dma_ping_bufsz;
+            rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
         }
     }
 #endif
@@ -414,25 +429,26 @@ void edma_rx_callback(struct _edma_handle *handle, void *userData, bool transfer
         if ((EDMA_GetChannelStatusFlags(uart->dma_rx->edma_base, uart->dma_rx->channel) & kEDMA_DoneFlag) != 0U)
         {
             EDMA_ClearChannelStatusFlags(uart->dma_rx->edma_base, uart->dma_rx->channel, kEDMA_DoneFlag);
-            recv_len = uart->serial.config.bufsz - uart->dma_rx->last_index;
+            recv_len = uart->serial.config.dma_ping_bufsz - uart->dma_rx->last_index;
             uart->dma_rx->last_index = 0;
         }
         else
         {
             EDMA_ClearChannelStatusFlags(uart->dma_rx->edma_base, uart->dma_rx->channel, kEDMA_InterruptFlag);
-            rt_size_t total_index = uart->serial.config.bufsz - EDMA_GetRemainingMajorLoopCount(uart->dma_rx->edma_base, uart->dma_rx->channel);
+            rt_size_t total_index = EDMA_TCD_CITER(&handle->tcdBase[handle->channel], EDMA_TCD_TYPE(handle->base)) & 0x7FFFU;
+            total_index = uart->serial.config.dma_ping_bufsz - total_index;
             if (total_index > uart->dma_rx->last_index)
                 recv_len = total_index - uart->dma_rx->last_index;
             else
-                recv_len = total_index + (uart->serial.config.bufsz - uart->dma_rx->last_index);
+                recv_len = total_index + (uart->serial.config.dma_ping_bufsz - uart->dma_rx->last_index);
             uart->dma_rx->last_index = total_index;
         }
         rt_hw_interrupt_enable(level);
 
         if (recv_len)
         {
-            if (recv_len >= uart->serial.config.bufsz)
-                recv_len = uart->serial.config.bufsz - 1;
+            if (recv_len > uart->serial.config.dma_ping_bufsz)
+                recv_len = uart->serial.config.dma_ping_bufsz;
             rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
         }
     }
@@ -474,22 +490,22 @@ static void imxrt_dma_rx_config(struct imxrt_uart *uart)
     EDMA_CreateHandle(&uart->dma_rx->edma, base, uart->dma_rx->channel);
     EDMA_SetCallback(&uart->dma_rx->edma, edma_rx_callback, uart);
 
-    struct rt_serial_rx_fifo *rx_fifo;
-    rx_fifo = (struct rt_serial_rx_fifo *)uart->serial.serial_rx;
+    rt_uint8_t *ping_buf;
+    rt_hw_serial_control_isr(&uart->serial, RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF, (void *)&ping_buf);
 
     EDMA_PrepareTransfer(&xferConfig,
                          (void *)LPUART_GetDataRegisterAddress(uart->uart_base),
                          sizeof(uint8_t),
-                         rx_fifo->buffer,
+                         ping_buf,
                          sizeof(uint8_t),
                          sizeof(uint8_t),
-                         uart->serial.config.bufsz,
+                         uart->serial.config.dma_ping_bufsz,
                          kEDMA_PeripheralToMemory);
 
     EDMA_SubmitTransfer(&uart->dma_rx->edma, &xferConfig);
     EDMA_EnableChannelInterrupts(base, uart->dma_rx->channel, kEDMA_MajorInterruptEnable | kEDMA_HalfInterruptEnable);
     EDMA_EnableAutoStopRequest(base, uart->dma_rx->channel, false);
-    EDMA_TCD_DLAST_SGA(&uart->dma_rx->edma.tcdBase[uart->dma_rx->channel], EDMA_TCD_TYPE(uart->dma_rx->edma.base)) = -(int32_t)uart->serial.config.bufsz;
+    EDMA_TCD_DLAST_SGA(&uart->dma_rx->edma.tcdBase[uart->dma_rx->edma.channel], EDMA_TCD_TYPE(uart->dma_rx->edma.base)) = -(int32_t)uart->serial.config.dma_ping_bufsz;
     EDMA_StartTransfer(&uart->dma_rx->edma);
     LPUART_EnableRxDMA(uart->uart_base, true);
 
@@ -672,9 +688,27 @@ static rt_err_t imxrt_control(struct rt_serial_device *serial, int cmd, void *ar
         }
 #endif
 
+        if (RT_DEVICE_FLAG_RX_BLOCKING == ctrl_arg || RT_DEVICE_FLAG_RX_NON_BLOCKING == ctrl_arg)
+        {
+            LPUART_EnableInterrupts(uart->uart_base, kLPUART_RxDataRegFullInterruptEnable);
+            NVIC_SetPriority(uart->irqn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 4, 0));
+            EnableIRQ(uart->irqn);
+            break;
+        }
+        if (RT_DEVICE_FLAG_TX_BLOCKING == ctrl_arg || RT_DEVICE_FLAG_TX_NON_BLOCKING == ctrl_arg)
+        {
+            LPUART_EnableInterrupts(uart->uart_base, kLPUART_TxDataRegEmptyInterruptEnable);
+            NVIC_SetPriority(uart->irqn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 4, 0));
+            EnableIRQ(uart->irqn);
+            break;
+        }
         break;
     }
 
+    case RT_DEVICE_CHECK_OPTMODE:
+        if (uart->dma_flag & RT_DEVICE_FLAG_DMA_TX)
+            return RT_SERIAL_TX_BLOCKING_NO_BUFFER;
+        return RT_SERIAL_TX_BLOCKING_BUFFER;
     }
 
     return RT_EOK;
@@ -711,28 +745,40 @@ static int imxrt_getc(struct rt_serial_device *serial)
 }
 
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
-
-static rt_ssize_t dma_tx_xfer(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+static rt_ssize_t imxrt_transmit(struct rt_serial_device *serial,
+                                  rt_uint8_t *buf, rt_size_t size, rt_uint32_t tx_flag)
 {
     struct imxrt_uart *uart;
-    lpuart_transfer_t xfer;
-    rt_size_t xfer_size = 0;
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct imxrt_uart, serial);
 
-    if (0 != size)
+    if (uart->dma_flag & RT_DEVICE_FLAG_DMA_TX)
     {
-        if (RT_SERIAL_DMA_TX == direction)
-        {
-            xfer.data = buf;
-            xfer.dataSize = size;
-            if (LPUART_SendEDMA(uart->uart_base, &uart->dma_tx->uart_edma, &xfer) == kStatus_Success)
-                xfer_size = size;
-        }
+        lpuart_transfer_t xfer;
+        RT_ASSERT(buf != RT_NULL);
+        xfer.data = buf;
+        xfer.dataSize = size;
+        if (LPUART_SendEDMA(uart->uart_base, &uart->dma_tx->uart_edma, &xfer) == kStatus_Success)
+            return (rt_ssize_t)size;
+        return -RT_EIO;
     }
 
-    return xfer_size;
+    if (size == 0)
+    {
+        LPUART_EnableInterrupts(uart->uart_base, kLPUART_TxDataRegEmptyInterruptEnable);
+        return 0;
+    }
+
+    {
+        rt_uint8_t *ptr = buf;
+        while (size--)
+        {
+            LPUART_WriteByte(uart->uart_base, *ptr++);
+            while (!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag));
+        }
+        return (rt_ssize_t)(ptr - buf);
+    }
 }
 
 #endif
@@ -744,7 +790,7 @@ static const struct rt_uart_ops imxrt_uart_ops =
     imxrt_putc,
     imxrt_getc,
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
-    dma_tx_xfer
+    imxrt_transmit,
 #else
     RT_NULL
 #endif
@@ -755,9 +801,6 @@ int rt_hw_uart_init(void)
     int i;
     rt_err_t ret = RT_EOK;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-    rt_uint32_t flag;
-
-    flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
 
     uart_get_dma_config();
 
@@ -767,7 +810,7 @@ int rt_hw_uart_init(void)
         uarts[i].serial.config = config;
 
         ret = rt_hw_serial_register(&uarts[i].serial, uarts[i].name,
-                                     flag | uarts[i].dma_flag, NULL);
+                                     RT_DEVICE_FLAG_RDWR, NULL);
     }
 
     return ret;
@@ -775,3 +818,4 @@ int rt_hw_uart_init(void)
 INIT_BOARD_EXPORT(rt_hw_uart_init);
 
 #endif /* BSP_USING_LPUART */
+#endif /* RT_USING_SERIAL_V2 */

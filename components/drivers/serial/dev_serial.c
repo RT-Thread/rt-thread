@@ -33,7 +33,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-#ifndef RT_USING_SERIAL_V2
 
 #define DBG_TAG    "UART"
 #define DBG_LVL    DBG_INFO
@@ -1496,7 +1495,6 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             struct rt_serial_tx_fifo* tx_fifo;
 
             tx_fifo = (struct rt_serial_tx_fifo*)serial->serial_tx;
-            if (tx_fifo == RT_NULL) break;
             rt_completion_done(&(tx_fifo->completion));
             break;
         }
@@ -1509,7 +1507,6 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             struct rt_serial_tx_dma *tx_dma;
 
             tx_dma = (struct rt_serial_tx_dma*) serial->serial_tx;
-            if (tx_dma == RT_NULL) break;
 
             rt_data_queue_pop(&(tx_dma->data_queue), &last_data_ptr, &data_size, 0);
             if (rt_data_queue_peek(&(tx_dma->data_queue), &data_ptr, &data_size) == RT_EOK)
@@ -1570,4 +1567,3 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 #endif /* RT_SERIAL_USING_DMA */
     }
 }
-#endif /* RT_USING_SERIAL_V2 */
