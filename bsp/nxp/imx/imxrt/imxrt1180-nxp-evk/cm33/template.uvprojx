@@ -1142,9 +1142,9 @@
               <FilePath>..\libraries\drivers\drv_common.c</FilePath>
             </File>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>drv_uart_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\drivers\drv_uart.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_uart_v2.c</FilePath>
             </File>
           </Files>
         </Group>
