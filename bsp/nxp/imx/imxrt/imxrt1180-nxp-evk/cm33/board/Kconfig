@@ -232,6 +232,7 @@ menu "Onboard Peripheral Drivers"
 
             config BSP_USING_QSPI_FLASH_FS
                 bool "Enable QSPI Flash (LittleFS)"
+                select BSP_USING_FLEXSPI
                 select BSP_USING_FLEXSPI1
                 select RT_USING_FAL
                 select FAL_PART_HAS_TABLE_CFG
