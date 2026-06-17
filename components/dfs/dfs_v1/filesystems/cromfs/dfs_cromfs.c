@@ -788,7 +788,7 @@ static int dfs_cromfs_read(struct dfs_file *file, void *buf, size_t count)
     return length;
 }
 
-static int dfs_cromfs_lseek(struct dfs_file *file, off_t offset)
+static dfs_off_t dfs_cromfs_lseek(struct dfs_file *file, dfs_off_t offset)
 {
     if (offset <= file->vnode->size)
     {
@@ -1012,7 +1012,7 @@ end:
     return ret;
 }
 
-static int dfs_cromfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
+static int dfs_cromfs_stat(struct dfs_filesystem *fs, const char *path, struct dfs_stat *st)
 {
     uint32_t size = 0, osize = 0;
     int is_dir = 0;
@@ -1042,7 +1042,7 @@ static int dfs_cromfs_stat(struct dfs_filesystem *fs, const char *path, struct s
         st->st_size = osize;
     }
 
-    st->st_mtime = 0;
+    st->mtime = 0;
 
     return RT_EOK;
 }

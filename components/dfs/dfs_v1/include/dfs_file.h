@@ -28,7 +28,7 @@ struct dfs_file_ops
     ssize_t (*read)     (struct dfs_file *fd, void *buf, size_t count);
     ssize_t (*write)    (struct dfs_file *fd, const void *buf, size_t count);
     int (*flush)    (struct dfs_file *fd);
-    off_t (*lseek)    (struct dfs_file *fd, off_t offset);
+    dfs_off_t (*lseek)    (struct dfs_file *fd, dfs_off_t offset);
     int (*getdents) (struct dfs_file *fd, struct dirent *dirp, uint32_t count);
 
     int (*poll)     (struct dfs_file *fd, struct rt_pollreq *req);
@@ -50,7 +50,7 @@ struct dfs_vnode
     const struct dfs_file_ops *fops;
     uint32_t flags;              /* self flags, is dir etc.. */
 
-    size_t   size;               /* Size in bytes */
+    dfs_off_t size;              /* Size in bytes */
     void *data;                  /* Specific file system data */
 };
 
@@ -59,7 +59,7 @@ struct dfs_file
     uint16_t magic;              /* file descriptor magic number */
     uint32_t flags;              /* Descriptor flags */
     int ref_count;               /* Descriptor reference count */
-    off_t    pos;                /* Current file position */
+    dfs_off_t pos;               /* Current file position */
     struct dfs_vnode *vnode;     /* file node struct */
     void *data;                  /* Specific fd data */
 };
@@ -72,7 +72,7 @@ struct dfs_mmap2_args
     size_t length;
     int prot;
     int flags;
-    off_t pgoffset;
+    dfs_off_t pgoffset;
 
     struct rt_lwp *lwp;
     void *ret;
@@ -91,11 +91,11 @@ int dfs_file_getdents(struct dfs_file *fd, struct dirent *dirp, size_t nbytes);
 int dfs_file_unlink(const char *path);
 ssize_t dfs_file_write(struct dfs_file *fd, const void *buf, size_t len);
 int dfs_file_flush(struct dfs_file *fd);
-off_t dfs_file_lseek(struct dfs_file *fd, off_t offset);
+dfs_off_t dfs_file_lseek(struct dfs_file *fd, dfs_off_t offset);
 
-int dfs_file_stat(const char *path, struct stat *buf);
+int dfs_file_stat(const char *path, struct dfs_stat *buf);
 int dfs_file_rename(const char *oldpath, const char *newpath);
-int dfs_file_ftruncate(struct dfs_file *fd, off_t length);
+int dfs_file_ftruncate(struct dfs_file *fd, dfs_off_t length);
 #ifdef RT_USING_SMART
 int dfs_file_mmap2(struct dfs_file *fd, struct dfs_mmap2_args *mmap2);
 #endif

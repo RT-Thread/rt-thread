@@ -13,6 +13,7 @@
 #define __SYS_UNISTD_H__
 
 #include <stddef.h>
+#include <dfs_file.h>
 #include <sys/types.h>
 
 #ifdef __cplusplus
@@ -33,13 +34,13 @@ extern "C" {
 unsigned alarm(unsigned __secs);
 ssize_t read(int fd, void *buf, size_t len);
 ssize_t write(int fd, const void *buf, size_t len);
-off_t lseek(int fd, off_t offset, int whence);
+dfs_off_t lseek(int fd, dfs_off_t offset, int whence);
 int pause(void);
 int fsync(int fildes);
 long sysconf(int __name);
 int unlink(const char *pathname);
 int close(int d);
-int ftruncate(int fd, off_t length);
+int ftruncate(int fd, dfs_off_t length);
 int rmdir(const char *path);
 int chdir(const char *path);
 char *getcwd(char *buf, size_t size);

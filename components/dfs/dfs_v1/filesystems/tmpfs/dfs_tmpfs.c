@@ -392,9 +392,9 @@ ssize_t dfs_tmpfs_write(struct dfs_file *fd, const void *buf, size_t count)
     return count;
 }
 
-off_t dfs_tmpfs_lseek(struct dfs_file *file, off_t offset)
+dfs_off_t dfs_tmpfs_lseek(struct dfs_file *file, dfs_off_t offset)
 {
-    if (offset <= (off_t)file->vnode->size)
+    if (offset <= file->vnode->size)
     {
         file->pos = offset;
 
@@ -550,7 +550,7 @@ int dfs_tmpfs_open(struct dfs_file *file)
 
 int dfs_tmpfs_stat(struct dfs_filesystem *fs,
                    const char            *path,
-                   struct stat           *st)
+                   struct dfs_stat       *st)
 {
     rt_size_t size;
     struct tmpfs_file *d_file;
@@ -572,7 +572,7 @@ int dfs_tmpfs_stat(struct dfs_filesystem *fs,
     }
 
     st->st_size = d_file->size;
-    st->st_mtime = 0;
+    st->mtime = 0;
 
     return RT_EOK;
 }

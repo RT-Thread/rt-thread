@@ -201,9 +201,9 @@ ssize_t dfs_ramfs_write(struct dfs_file *fd, const void *buf, size_t count)
     return count;
 }
 
-off_t dfs_ramfs_lseek(struct dfs_file *file, off_t offset)
+dfs_off_t dfs_ramfs_lseek(struct dfs_file *file, dfs_off_t offset)
 {
-    if (offset <= (off_t)file->vnode->size)
+    if (offset <= file->vnode->size)
     {
         file->pos = offset;
 
@@ -346,7 +346,7 @@ int dfs_ramfs_open(struct dfs_file *file)
 
 int dfs_ramfs_stat(struct dfs_filesystem *fs,
                    const char            *path,
-                   struct stat           *st)
+                   struct dfs_stat       *st)
 {
     rt_size_t size;
     struct ramfs_dirent *dirent;
@@ -363,7 +363,7 @@ int dfs_ramfs_stat(struct dfs_filesystem *fs,
                   S_IWUSR | S_IWGRP | S_IWOTH;
 
     st->st_size = dirent->size;
-    st->st_mtime = 0;
+    st->mtime = 0;
 
     return RT_EOK;
 }

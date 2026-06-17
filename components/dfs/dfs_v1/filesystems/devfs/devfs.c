@@ -284,7 +284,7 @@ int dfs_device_fs_unlink(struct dfs_filesystem *fs, const char *path)
     return RT_EOK;
 }
 
-int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
+int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct dfs_stat *st)
 {
     st->st_dev = (dev_t)((size_t)dfs_filesystem_lookup(fs->path));
     /* stat root directory */
@@ -296,7 +296,7 @@ int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat 
         st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
 
         st->st_size  = 0;
-        st->st_mtime = 0;
+        st->mtime = 0;
 
         return RT_EOK;
     }
@@ -322,7 +322,7 @@ int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat 
                 st->st_mode |= S_IFREG;
 
             st->st_size  = 0;
-            st->st_mtime = 0;
+            st->mtime = 0;
 
             return RT_EOK;
         }

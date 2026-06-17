@@ -34,7 +34,7 @@ int dfs_skt_read(struct dfs_file *file, void *buf, rt_size_t count)
     return count;
 }
 
-int dfs_skt_lseek(struct dfs_file *file, rt_off_t offset)
+dfs_off_t dfs_skt_lseek(struct dfs_file *file, dfs_off_t offset)
 {
     return -RT_EIO;
 }
@@ -49,7 +49,7 @@ int dfs_skt_open(struct dfs_file *file)
     return RT_EOK;
 }
 
-int dfs_skt_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
+int dfs_skt_stat(struct dfs_filesystem *fs, const char *path, struct dfs_stat *st)
 {
     return RT_EOK;
 }

@@ -41,7 +41,7 @@ struct dfs_filesystem_ops
     int (*statfs)   (struct dfs_filesystem *fs, struct statfs *buf);
 
     int (*unlink)   (struct dfs_filesystem *fs, const char *pathname);
-    int (*stat)     (struct dfs_filesystem *fs, const char *filename, struct stat *buf);
+    int (*stat)     (struct dfs_filesystem *fs, const char *filename, struct dfs_stat *buf);
     int (*rename)   (struct dfs_filesystem *fs, const char *oldpath, const char *newpath);
 };
 
@@ -60,7 +60,7 @@ struct dfs_filesystem
 struct dfs_partition
 {
     uint8_t type;        /* file system type */
-    off_t  offset;       /* partition start offset */
+    dfs_off_t offset;    /* partition start offset */
     size_t size;         /* partition size */
     rt_sem_t lock;
 };

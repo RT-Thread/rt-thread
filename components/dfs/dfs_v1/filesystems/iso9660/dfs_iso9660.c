@@ -475,7 +475,7 @@ _end:
     return rcount;
 }
 
-static off_t dfs_iso9660_lseek(struct dfs_file *fd, off_t offset)
+static dfs_off_t dfs_iso9660_lseek(struct dfs_file *fd, dfs_off_t offset)
 {
     int ret = -EIO;
 
@@ -648,7 +648,7 @@ static int dfs_iso9660_unmount(struct dfs_filesystem *fs)
 }
 
 static int dfs_iso9660_stat(struct dfs_filesystem *fs,
-        const char *filename, struct stat *st)
+        const char *filename, struct dfs_stat *st)
 {
     struct iso9660 *iso = fs->data;
     struct iso9660_fd *fd = iso9660_lookup(iso, filename, RT_NULL);
@@ -668,9 +668,9 @@ static int dfs_iso9660_stat(struct dfs_filesystem *fs,
         st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
     }
 
-    st->st_atime = iso9660_convert_unixtime(iso->joliet ?
+    st->atime = iso9660_convert_unixtime(iso->joliet ?
             &iso->supp.created : &iso->primary.created);
-    st->st_mtime = iso9660_convert_unixtime2(&fd->dirent.mtime);
+    st->mtime = iso9660_convert_unixtime2(&fd->dirent.mtime);
     st->st_size = rt_le32_to_cpu(fd->dirent.size);
 
     rt_free(fd);

@@ -284,9 +284,10 @@ RTM_EXPORT(write);
  *
  * @return the resulting read/write position in the file, or -1 on failed.
  */
-off_t lseek(int fd, off_t offset, int whence)
+dfs_off_t lseek(int fd, dfs_off_t offset, int whence)
 {
-    int result;
+    dfs_off_t dfs_offset;
+    dfs_off_t result;
     struct dfs_file *d;
 
     d = fd_get(fd);
@@ -300,14 +301,15 @@ off_t lseek(int fd, off_t offset, int whence)
     switch (whence)
     {
     case SEEK_SET:
+        dfs_offset = (dfs_off_t)offset;
         break;
 
     case SEEK_CUR:
-        offset += d->pos;
+        dfs_offset = d->pos + (dfs_off_t)offset;
         break;
 
     case SEEK_END:
-        offset += d->vnode->size;
+        dfs_offset = d->vnode->size + (dfs_off_t)offset;
         break;
 
     default:
@@ -316,13 +318,13 @@ off_t lseek(int fd, off_t offset, int whence)
         return -1;
     }
 
-    if (offset < 0)
+    if (dfs_offset < 0)
     {
         rt_set_errno(-EINVAL);
 
         return -1;
     }
-    result = dfs_file_lseek(d, offset);
+    result = dfs_file_lseek(d, dfs_offset);
     if (result < 0)
     {
         rt_set_errno(result);
@@ -330,7 +332,7 @@ off_t lseek(int fd, off_t offset, int whence)
         return -1;
     }
 
-    return offset;
+    return result;
 }
 RTM_EXPORT(lseek);
 
@@ -398,14 +400,35 @@ RTM_EXPORT(unlink);
 int stat(const char *file, struct stat *buf)
 {
     int result;
+    struct dfs_stat dfs_buf;
 
-    result = dfs_file_stat(file, buf);
+    rt_memset(&dfs_buf, 0, sizeof(dfs_buf));
+    result = dfs_file_stat(file, &dfs_buf);
     if (result < 0)
     {
         rt_set_errno(result);
 
         return -1;
     }
+
+    rt_memset(buf, 0, sizeof(struct stat));
+    buf->st_dev = dfs_buf.st_dev;
+    buf->st_ino = dfs_buf.st_ino;
+    buf->st_mode = dfs_buf.st_mode;
+    buf->st_nlink = dfs_buf.st_nlink;
+    buf->st_uid = dfs_buf.st_uid;
+    buf->st_gid = dfs_buf.st_gid;
+#if defined(__ARMCC_VERSION) || defined(__ICCARM__)
+    buf->st_rdev = dfs_buf.st_rdev;
+#else
+    buf->st_rdev = (dev_t)(rt_ubase_t)dfs_buf.st_rdev;
+#endif
+    buf->st_size = dfs_buf.st_size;
+    buf->st_atime = dfs_buf.atime;
+    buf->st_mtime = dfs_buf.mtime;
+    buf->st_ctime = dfs_buf.ctime;
+    buf->st_blksize = dfs_buf.st_blksize;
+    buf->st_blocks = dfs_buf.st_blocks;
 
     return result;
 }
@@ -549,7 +572,7 @@ RTM_EXPORT(ioctl);
  * @return Upon successful completion, ftruncate() shall return 0;
  * otherwise, -1 shall be returned and errno set to indicate the error.
  */
-int ftruncate(int fd, off_t length)
+int ftruncate(int fd, dfs_off_t length)
 {
     int result;
     struct dfs_file *d;
@@ -568,7 +591,7 @@ int ftruncate(int fd, off_t length)
 
         return -1;
     }
-    result = dfs_file_ftruncate(d, length);
+    result = dfs_file_ftruncate(d, (dfs_off_t)length);
     if (result < 0)
     {
         rt_set_errno(result);

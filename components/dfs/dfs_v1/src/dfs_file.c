@@ -578,9 +578,9 @@ int dfs_file_flush(struct dfs_file *fd)
  *
  * @return the current position after seek.
  */
-off_t dfs_file_lseek(struct dfs_file *fd, off_t offset)
+dfs_off_t dfs_file_lseek(struct dfs_file *fd, dfs_off_t offset)
 {
-    int result;
+    dfs_off_t result;
 
     if (fd == NULL)
         return -EINVAL;
@@ -605,7 +605,7 @@ off_t dfs_file_lseek(struct dfs_file *fd, off_t offset)
  *
  * @return 0 on successful, -1 on failed.
  */
-int dfs_file_stat(const char *path, struct stat *buf)
+int dfs_file_stat(const char *path, struct dfs_stat *buf)
 {
     int result;
     char *fullpath;
@@ -734,7 +734,7 @@ __exit:
  *
  * @return the status of truncated.
  */
-int dfs_file_ftruncate(struct dfs_file *fd, off_t length)
+int dfs_file_ftruncate(struct dfs_file *fd, dfs_off_t length)
 {
     int result;
 
@@ -787,7 +787,7 @@ void ls(const char *pathname)
 {
     struct dfs_file fd;
     struct dirent dirent;
-    struct stat stat;
+    struct dfs_stat stat;
     int length;
     char *fullpath, *path;
 
@@ -819,7 +819,7 @@ void ls(const char *pathname)
             length = dfs_file_getdents(&fd, &dirent, sizeof(struct dirent));
             if (length > 0)
             {
-                rt_memset(&stat, 0, sizeof(struct stat));
+                rt_memset(&stat, 0, sizeof(struct dfs_stat));
 
                 /* build full path for each file */
                 fullpath = dfs_normalize_path(path, dirent.d_name);
@@ -835,7 +835,9 @@ void ls(const char *pathname)
                     }
                     else
                     {
-                        rt_kprintf(" %-25lu\n", (unsigned long)stat.st_size);
+                        rt_kprintf(" ");
+                        dfs_print_off_t((dfs_off_t)stat.st_size);
+                        rt_kprintf("\n");
                     }
                 }
                 else
@@ -959,7 +961,7 @@ extern int mkdir(const char *path, mode_t mode);
 static void copydir(const char *src, const char *dst)
 {
     struct dirent dirent;
-    struct stat stat;
+    struct dfs_stat stat;
     int length;
     struct dfs_file cpfd;
     if (dfs_file_open(&cpfd, src, O_DIRECTORY) < 0)
@@ -994,7 +996,7 @@ static void copydir(const char *src, const char *dst)
                 break;
             }
 
-            rt_memset(&stat, 0, sizeof(struct stat));
+            rt_memset(&stat, 0, sizeof(struct dfs_stat));
             if (dfs_file_stat(src_entry_full, &stat) != 0)
             {
                 rt_kprintf("open file: %s failed\n", dirent.d_name);
@@ -1041,7 +1043,7 @@ void copy(const char *src, const char *dst)
 #define FLAG_DST_IS_FILE   0x08
 #define FLAG_DST_NON_EXSIT 0x00
 
-    struct stat stat;
+    struct dfs_stat stat;
     uint32_t flag = 0;
 
     /* check the staus of src and dst */
