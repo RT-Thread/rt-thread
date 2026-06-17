@@ -109,7 +109,7 @@ static I2C_Status I2C_sendStopTimeout(I2C_TypeDef *i2c, uint32_t timeout_ms)
     {
         status = I2C_getMasterStatusFlags(i2c);
         LOG_D("I2C_sendStopTimeout: status=0x%x", status);
-        
+
         if (status & (uint32_t)I2C_MASTER_FLAG_STOP)
         {
             LOG_D("I2C_sendStopTimeout: STOP flag set");
@@ -117,7 +117,7 @@ static I2C_Status I2C_sendStopTimeout(I2C_TypeDef *i2c, uint32_t timeout_ms)
             I2C_clearMasterStatusFlags(i2c, (uint32_t)I2C_MASTER_FLAG_CLEAR);
             return result;
         }
-        
+
         if (status & (uint32_t)I2C_MASTER_FLAG_NACK)
         {
             LOG_E("I2C_sendStopTimeout: NACK received, status=0x%x", status);
@@ -125,7 +125,7 @@ static I2C_Status I2C_sendStopTimeout(I2C_TypeDef *i2c, uint32_t timeout_ms)
             I2C_clearMasterStatusFlags(i2c, (uint32_t)I2C_MASTER_FLAG_CLEAR);
             return result;
         }
-        
+
         rt_thread_mdelay(1);
     }
 
@@ -226,7 +226,7 @@ static rt_err_t ns800_i2c_init(struct ns800_i2c *i2c_drv)
     I2C_TypeDef *i2c = i2c_drv->config->Instance;
     struct ns800_i2c_config *cfg = i2c_drv->config;
 
-    LOG_D("I2C[%s] init start, Instance=%p, baudrate=%d", 
+    LOG_D("I2C[%s] init start, Instance=%p, baudrate=%d",
           cfg->name, (void *)i2c, cfg->baudrate);
 
     ns800_i2c_apply_default_config(cfg);
@@ -342,7 +342,7 @@ static rt_ssize_t ns800_i2c_master_xfer(struct rt_i2c_bus_device *bus,
             /* RT-Thread uses 7-bit address, SDK expects 8-bit address */
             /* Convert 7-bit address to 8-bit address by shifting left */
             uint8_t addr_8bit = msg->addr << 1;
-            
+
             if (msg->flags & RT_I2C_RD)
             {
                 status = I2C_sendStart(i2c, addr_8bit, I2C_DIRECTION_READ);
@@ -360,15 +360,15 @@ static rt_ssize_t ns800_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                 ret = -RT_EIO;
                 goto out;
             }
-            
+
             /* Wait a short time for slave to respond */
             rt_thread_mdelay(1);
-            
+
             /* Check if we got ACK from slave */
             uint32_t start_msr = I2C_getMasterStatusFlags(i2c);
             if (start_msr & I2C_MASTER_FLAG_NACK)
             {
-                LOG_E("I2C[%s] SendStart got NACK from slave addr=0x%x, MSR=0x%x", 
+                LOG_E("I2C[%s] SendStart got NACK from slave addr=0x%x, MSR=0x%x",
                       bus->parent.parent.name, msg->addr, start_msr);
                 /* Clear all flags and send STOP to release bus */
                 I2C_clearMasterStatusFlags(i2c, I2C_MASTER_FLAG_CLEAR);
@@ -579,27 +579,27 @@ static void ns800_i2c_scan_bus(I2C_TypeDef *i2c, const char *bus_name)
     for (uint8_t addr = 1; addr < 128; addr++)
     {
         I2C_Status status;
-        
+
         /* RT-Thread uses 7-bit address, SDK expects 8-bit address */
         uint8_t addr_8bit = addr << 1;
-        
+
         /* Send START with write direction */
         status = I2C_sendStart(i2c, addr_8bit, I2C_DIRECTION_WRITE);
-        
+
         if (status == I2C_STATUS_SUCCESS)
         {
             uint32_t msr = I2C_getMasterStatusFlags(i2c);
-            
+
             /* Check if we got ACK (no NACK) */
             if (!(msr & I2C_MASTER_FLAG_NACK))
             {
                 LOG_I("I2C device found at address: 0x%02X", addr);
                 found_count++;
             }
-            
+
             /* Clear any pending flags */
             I2C_clearMasterStatusFlags(i2c, I2C_MASTER_FLAG_NACK);
-            
+
             /* Send STOP to release bus */
             I2C_sendStopTimeout(i2c, timeout);
         }
@@ -609,7 +609,7 @@ static void ns800_i2c_scan_bus(I2C_TypeDef *i2c, const char *bus_name)
             I2C_resetMaster(i2c);
             I2C_enableMasterModule(i2c);
         }
-        
+
         /* Small delay between devices */
         rt_thread_mdelay(1);
     }
