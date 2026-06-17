@@ -229,7 +229,7 @@ regulator enable (if needed)
     → rt_dm_dev_iomap + driver init
 ```
 
-Power **off** for suspend (if implemented): reverse order per SoC manual — often **`idle clocks` → reset assert → power_off`**.
+Power **off** for suspend (if implemented): reverse order per SoC manual - often **`idle clocks` -> `reset assert` -> `power_off`**.
 
 ---
 
