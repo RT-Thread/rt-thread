@@ -1,5 +1,12 @@
-/* Copyright (c) 2006-2026, RT-Thread Development Team */
-
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2026-06-18     wenzhi346     add NS800 rtc driver
+ */
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <time.h>
