@@ -46,9 +46,9 @@
 #endif
 #elif defined(__ICCARM__) || defined(__ICCRX__) || defined(__ICCRISCV__)
 #if (__VER__ >= 8000000)
-  #define __ICCARM_V8 1
+#define __ICCARM_V8 1
 #else
-  #define __ICCARM_V8 0
+#define __ICCARM_V8 0
 #endif
 
 #ifndef __USED
@@ -228,8 +228,8 @@
 
 #define USB_MEM_ALIGNX __attribute__((aligned(CONFIG_USB_ALIGN_SIZE)))
 
-#define USB_ALIGN_UP(size, align) (((size) + (align)-1) & ~((align)-1))
-#define USB_ALIGN_DOWN(size, align) ((size) & ~((align)-1))
+#define USB_ALIGN_UP(size, align)   (((size) + (align) - 1) & ~((align) - 1))
+#define USB_ALIGN_DOWN(size, align) ((size) & ~((align) - 1))
 
 #ifndef usb_phyaddr2ramaddr
 #define usb_phyaddr2ramaddr(addr) (addr)
