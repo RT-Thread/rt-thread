@@ -1,5 +1,5 @@
 # Automation utest run script for the QEMU platform
-# Generate the corresponding config configuration for CI based on the configuration file under examples/utest/configs.
+# Generate the corresponding config configuration for CI based on the configuration file under .github/utest/configs.
 
 name: utest_auto_run
 
@@ -9,8 +9,9 @@ on:
       - master
     paths:
       - '.github/workflows/utest_auto_run.yml'
+      - '.github/utest/configs/**'
       - 'Kconfig'
-      - 'Kconfig.utestcases'
+      - 'components/utilities/utest/Kconfig'
       - 'bsp/qemu-vexpress-a9/**'
       - 'bsp/qemu-virt64-aarch64/**'
       - 'bsp/qemu-virt64-riscv/**'
@@ -28,8 +29,9 @@ on:
       - master
     paths:
       - '.github/workflows/utest_auto_run.yml'
+      - '.github/utest/configs/**'
       - 'Kconfig'
-      - 'Kconfig.utestcases'
+      - 'components/utilities/utest/Kconfig'
       - 'bsp/qemu-vexpress-a9/**'
       - 'bsp/qemu-virt64-aarch64/**'
       - 'bsp/qemu-virt64-riscv/**'
@@ -155,6 +157,7 @@ jobs:
       TEST_BSP_ROOT: ${{ matrix.platform.RTT_BSP }}
       TEST_CONFIG_FILE: ${{ matrix.config_file }}
       TEST_SD_FILE: ${{ matrix.platform.SD_FILE }}
+      UTEST_CONFIG_ROOT: .github/utest/configs
     steps:
       - uses: actions/checkout@main
 
@@ -266,16 +269,16 @@ jobs:
         run: |
           # Whether plan to run SMP?
           if [[ "${{ matrix.platform.SMP_RUN }}"  == "smp" ]]; then
-            cat examples/utest/configs/smp/smp.cfg >> $TEST_BSP_ROOT/.config
+            cat $UTEST_CONFIG_ROOT/smp/smp.cfg >> $TEST_BSP_ROOT/.config
           fi
 
           # Is the kernel rtsmart?
           if [[ "${{ matrix.platform.KERNEL }}"  == "rtsmart" ]]; then
-            cat examples/utest/configs/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
+            cat $UTEST_CONFIG_ROOT/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
           fi
 
           echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
-          cat examples/utest/configs/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
+          cat $UTEST_CONFIG_ROOT/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
           scons --pyconfig-silent -C $TEST_BSP_ROOT
           scons -j$(nproc) --strict -C $TEST_BSP_ROOT
 
@@ -290,8 +293,9 @@ jobs:
           if [[ "${{ matrix.platform.QEMU_ARCH }}"  == "aarch64" ]]; then 
             sudo apt-get -yqq install device-tree-compiler
             if [[ "${{ matrix.platform.QEMU_MACHINE }}"  == "virt" ]]; then
-              qemu-system-$TEST_QEMU_ARCH -M virt,gic-version=2 -cpu cortex-a53 -smp 4 -kernel $TEST_BSP_ROOT/rtthread.bin  -nographic \
-              -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0 \
+              qemu-system-$TEST_QEMU_ARCH -M virt -cpu max -smp 4 -m 128M -kernel $TEST_BSP_ROOT/rtthread.bin -nographic \
+              -append "console=ttyAMA0 earlycon cma=8M coherent_pool=2M root=vda0 rootfstype=elm rootwait rw" \
+              -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0 \
               -netdev user,id=net0 -device virtio-net-device,netdev=net0,bus=virtio-mmio-bus.1 \
               > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
             elif [[ "${{ matrix.platform.QEMU_MACHINE }}"  == "xlnx-zcu102" ]]; then

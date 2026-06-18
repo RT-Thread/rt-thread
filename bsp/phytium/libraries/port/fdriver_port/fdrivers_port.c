@@ -42,6 +42,16 @@ void FDriverICacheRangeInvalidate(uintptr_t adr, size_t len)
     __asm_invalidate_icache_all();
 }
 
+void FDriverICacheInvalidate(void)
+{
+    __asm_invalidate_icache_all();
+}
+
+void FDriverDCacheInvalidate(void)
+{
+    __asm_invalidate_dcache_all();
+}
+
 #else
 #include "rthw.h"
 /* cache */

@@ -82,13 +82,13 @@ static void can1_rx_thread(void *parameter)
     }
 }
 
-rt_err_t can_loopback_sample()
+rt_err_t can_loopback_sample(void)
 {
     struct rt_can_msg msg = {0};
-    rt_err_t res = RT_EOK;;
-    rt_thread_t thread;
+    rt_err_t res = RT_EOK;
+    rt_thread_t can0_rx_tid = RT_NULL;
+    rt_thread_t can1_rx_tid = RT_NULL;
 
-    /* Find CAN device */
     can0_dev = rt_device_find("CAN0");
     if (!can0_dev)
     {
@@ -96,7 +96,6 @@ rt_err_t can_loopback_sample()
         return -RT_ERROR;
     }
 
-    /* Find CAN device */
     can1_dev = rt_device_find("CAN1");
     if (!can1_dev)
     {
@@ -104,105 +103,177 @@ rt_err_t can_loopback_sample()
         return -RT_ERROR;
     }
 
-    /* Initialize CAN receive signal quantity */
     res = rt_sem_init(&can0_rx_sem, "can0_rx_sem", 0, RT_IPC_FLAG_FIFO);
     RT_ASSERT(res == RT_EOK);
 
     res = rt_sem_init(&can1_rx_sem, "can1_rx_sem", 0, RT_IPC_FLAG_FIFO);
     RT_ASSERT(res == RT_EOK);
 
-    /* Open the CAN device in the way of interrupt reception and transmission */
-    res = rt_device_open(can0_dev, RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX);
-    rt_device_control(can0_dev, RT_CAN_CMD_SET_BAUD, CAN800kBaud);
+    res = rt_device_open(can0_dev,
+                         RT_DEVICE_FLAG_INT_TX |
+                         RT_DEVICE_FLAG_INT_RX);
     RT_ASSERT(res == RT_EOK);
 
-    res = rt_device_open(can1_dev, RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_INT_RX);
-    rt_device_control(can1_dev, RT_CAN_CMD_SET_BAUD, CAN800kBaud);
+    rt_device_control(can0_dev,
+                      RT_CAN_CMD_SET_BAUD,
+                      CAN800kBaud);
+
+    res = rt_device_open(can1_dev,
+                         RT_DEVICE_FLAG_INT_TX |
+                         RT_DEVICE_FLAG_INT_RX);
     RT_ASSERT(res == RT_EOK);
 
-    /* Create data receiving thread */
-    thread = rt_thread_create("can0_rx", can0_rx_thread, RT_NULL, 4096, 10, 10);
-    if (thread != RT_NULL)
-    {
-        res = rt_thread_startup(thread);
-        RT_ASSERT(res == RT_EOK);
-    }
-    else
+    rt_device_control(can1_dev,
+                      RT_CAN_CMD_SET_BAUD,
+                      CAN800kBaud);
+
+    can0_rx_tid = rt_thread_create("can0_rx",
+                                   can0_rx_thread,
+                                   RT_NULL,
+                                   4096,
+                                   10,
+                                   10);
+
+    if (can0_rx_tid == RT_NULL)
     {
         rt_kprintf("Create can0_rx thread failed.\n");
+        res = -RT_ERROR;
+        goto exit;
     }
-    thread = rt_thread_create("can1_rx", can1_rx_thread, RT_NULL, 4096, 10, 10);
-    if (thread != RT_NULL)
-    {
-        res = rt_thread_startup(thread);
-        RT_ASSERT(res == RT_EOK);
-    }
-    else
+
+    rt_thread_startup(can0_rx_tid);
+
+    can1_rx_tid = rt_thread_create("can1_rx",
+                                   can1_rx_thread,
+                                   RT_NULL,
+                                   4096,
+                                   10,
+                                   10);
+
+    if (can1_rx_tid == RT_NULL)
     {
         rt_kprintf("Create can1_rx thread failed.\n");
+        res = -RT_ERROR;
+        goto exit;
     }
 
+    rt_thread_startup(can1_rx_tid);
 
-    msg.id = 0x78;              /* ID = 0x78 */
-    msg.ide = RT_CAN_STDID;     /* Standard format */
-    msg.rtr = RT_CAN_DTR;       /* Data frame */
-    msg.len = 8;                /* Data length is 8 */
-    /* Send CAN data */
-    for (int i = 0; i < 5; i++)
+    msg.id  = 0x78;
+    msg.ide = RT_CAN_STDID;
+    msg.rtr = RT_CAN_DTR;
+    msg.len = 8;
+
+    for (int cnt = 0; cnt < 5; cnt++)
     {
-        /* 8-byte data to be sent */
-        msg.data[0] = 0x0;
-        msg.data[1] = 0x1;
-        msg.data[2] = 0x2;
-        msg.data[3] = 0x3;
-        msg.data[4] = 0x4;
-        msg.data[5] = 0x5;
-        msg.data[6] = 0x6;
-        msg.data[7] = 0x7;
+        for (int i = 0; i < 8; i++)
+        {
+            msg.data[i] = i;
+        }
+
         rt_device_write(can0_dev, 0, &msg, sizeof(msg));
+
         rt_thread_mdelay(100);
+
         for (int i = 0; i < 8; i++)
         {
             if (msg.data[i] != rxmsg.data[i])
             {
-                res = RT_ERROR;
+                rt_kprintf("\nCAN0 compare failed at byte[%d]\n", i);
+
+                rt_kprintf("TX DATA: ");
+                for (int j = 0; j < 8; j++)
+                {
+                    rt_kprintf("%02X ", msg.data[j]);
+                }
+
+                rt_kprintf("\nRX DATA: ");
+                for (int j = 0; j < 8; j++)
+                {
+                    rt_kprintf("%02X ", rxmsg.data[j]);
+                }
+
+                rt_kprintf("\n");
+
+                res = -RT_ERROR;
                 goto exit;
             }
         }
     }
 
-    /* Send CAN data */
-    for (int i = 0; i < 5; i++)
+    for (int cnt = 0; cnt < 5; cnt++)
     {
-        /* 8-byte data to be sent */
-        msg.data[0] = 0x0;
-        msg.data[1] = 0x1;
-        msg.data[2] = 0x2;
-        msg.data[3] = 0x3;
-        msg.data[4] = 0x4;
-        msg.data[5] = 0x5;
-        msg.data[6] = 0x6;
-        msg.data[7] = 0x7;
+        for (int i = 0; i < 8; i++)
+        {
+            msg.data[i] = i;
+        }
+
         rt_device_write(can1_dev, 0, &msg, sizeof(msg));
+
         rt_thread_mdelay(100);
+
         for (int i = 0; i < 8; i++)
         {
             if (msg.data[i] != rxmsg.data[i])
             {
-                res = RT_ERROR;
+                rt_kprintf("\nCAN1 compare failed at byte[%d]\n", i);
+
+                rt_kprintf("TX DATA: ");
+                for (int j = 0; j < 8; j++)
+                {
+                    rt_kprintf("%02X ", msg.data[j]);
+                }
+
+                rt_kprintf("\nRX DATA: ");
+                for (int j = 0; j < 8; j++)
+                {
+                    rt_kprintf("%02X ", rxmsg.data[j]);
+                }
+
+                rt_kprintf("\n");
+
+                res = -RT_ERROR;
                 goto exit;
             }
         }
     }
+
 exit:
-    /* print message on example run result */
+
+    if (can0_rx_tid)
+    {
+        rt_thread_delete(can0_rx_tid);
+        can0_rx_tid = RT_NULL;
+    }
+
+    if (can1_rx_tid)
+    {
+        rt_thread_delete(can1_rx_tid);
+        can1_rx_tid = RT_NULL;
+    }
+
+    if (can0_dev)
+    {
+        rt_device_set_rx_indicate(can0_dev, RT_NULL);
+        rt_device_close(can0_dev);
+    }
+
+    if (can1_dev)
+    {
+        rt_device_set_rx_indicate(can1_dev, RT_NULL);
+        rt_device_close(can1_dev);
+    }
+
+    rt_sem_detach(&can0_rx_sem);
+    rt_sem_detach(&can1_rx_sem);
+
     if (res == RT_EOK)
     {
-        rt_kprintf("%s@%d:Can loopback test example [success].\r\n", __func__, __LINE__);
+        rt_kprintf("%s: CAN loopback test [success].\n", __func__);
     }
     else
     {
-        rt_kprintf("%s@%d:Can loopback test example [failure], res = %d\r\n", __func__, __LINE__, res);
+        rt_kprintf("%s: CAN loopback test [failure], res=%d\n", __func__, res);
     }
 
     return res;

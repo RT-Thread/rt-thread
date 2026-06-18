@@ -7,17 +7,6 @@
 
 /* rt_vsnprintf options */
 
-#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
-#define RT_KLIBC_USING_VSNPRINTF_STANDARD
-#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
-#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
-#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
-#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
-#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
-#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
-#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
-#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
-#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
 /* end of rt_vsnprintf options */
 
 /* rt_vsscanf options */
@@ -72,7 +61,7 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 16
+#define RT_NAME_MAX 24
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 8
@@ -89,6 +78,8 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
+#define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -111,6 +102,7 @@
 
 #define RT_USING_MEMPOOL
 #define RT_USING_SMALL_MEM
+#define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
 #define RT_USING_MEMHEAP_AS_HEAP
@@ -162,7 +154,7 @@
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_THREAD_STACK_SIZE 8192
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 10
 #define FINSH_USING_SYMTAB
@@ -178,9 +170,7 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 32
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 8
+#define RT_USING_DFS_V2
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -214,34 +204,137 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
+#define RT_USING_SERIAL_BYPASS
+#define RT_SERIAL_PL011
+#define RT_SERIAL_8250
+#define RT_SERIAL_8250_PCI
 #define RT_USING_CLOCK_TIME
+#define RT_CLOCK_TIME_ARM_ARCH
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
-#define RT_USING_PM
-#define PM_TICKLESS_THRESHOLD_TIME 2
+#define RT_USING_MTD_NOR
+#define RT_USING_MTD_NOR_CFI
 #define RT_USING_RTC
-#define RT_USING_SOFT_RTC
+#define RT_USING_ALARM
+#define RT_ALARM_STACK_SIZE 8192
+#define RT_ALARM_TIMESLICE 5
+#define RT_ALARM_PRIORITY 10
+#define RT_RTC_PL031
+#define RT_USING_WDT
+#define RT_WDT_I6300ESB
+#define RT_USING_AUDIO
+#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
+#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
+#define RT_AUDIO_RECORD_PIPE_SIZE 2048
+#define RT_AUDIO_INTEL_HDA
+#define RT_USING_TOUCH
+#define RT_USING_LCD
+#define RT_USING_GRAPHIC
+#define RT_GRAPHIC_FB
+#define RT_GRAPHIC_LOGO
+#define RT_GRAPHIC_LOGO_RT_THREAD_CLUT224
+#define RT_USING_HWCRYPTO
+#define RT_HWCRYPTO_DEFAULT_NAME "hwcryto"
+#define RT_HWCRYPTO_IV_MAX_SIZE 16
+#define RT_HWCRYPTO_KEYBIT_MAX_SIZE 256
+#define RT_HWCRYPTO_USING_AES
+#define RT_HWCRYPTO_USING_AES_ECB
+#define RT_HWCRYPTO_USING_AES_CBC
+#define RT_HWCRYPTO_USING_AES_CTR
+#define RT_HWCRYPTO_USING_DES
+#define RT_HWCRYPTO_USING_DES_ECB
+#define RT_HWCRYPTO_USING_DES_CBC
+#define RT_HWCRYPTO_USING_3DES
+#define RT_HWCRYPTO_USING_3DES_ECB
+#define RT_HWCRYPTO_USING_3DES_CBC
+#define RT_HWCRYPTO_USING_RC4
+#define RT_HWCRYPTO_USING_RNG
+#define RT_USING_INPUT
+#define RT_INPUT_POWER
+#define RT_INPUT_KEYBOARD
+#define RT_INPUT_KEYBOARD_GPIO
+#define RT_INPUT_TOUCHSCREEN
+#define RT_USING_MBOX
+#define RT_MBOX_PIC
+#define RT_USING_RPMSG
+#define RT_RPMSG_CHAR_MSG_MAX 64
+#define RT_RPMSG_CHAR_MSG_SIZE_MAX 256
+#define RT_RPMSG_RT_THREAD_VIRTIO
+#define RT_USING_ATA
+#define RT_ATA_AHCI
+#define RT_ATA_AHCI_PCI
+#define RT_USING_NVME
+#define RT_USING_NVME_IO_QUEUE 4
+#define RT_NVME_PCI
+#define RT_USING_BLK
+
+/* Partition Types */
+
+#define RT_BLK_PARTITION_DFS
+#define RT_BLK_PARTITION_EFI
+/* end of Partition Types */
+#define RT_USING_SCSI
+#define RT_SCSI_SD
+#define RT_SCSI_CDROM
+#define RT_USING_UFS
+#define RT_UFS_PCI
+#define RT_USING_FIRMWARE
+#define RT_FIRMWARE_QEMU_FW_CFG
+#define RT_USING_REGULATOR
+#define RT_USING_RESET
 
 /* Power Management (PM) Domains device drivers */
 
 /* end of Power Management (PM) Domains device drivers */
 #define RT_USING_VIRTIO
-#define RT_USING_VIRTIO10
-#define RT_USING_VIRTIO_MMIO_ALIGN
-#define RT_USING_VIRTIO_BLK
-#define RT_USING_VIRTIO_CONSOLE
-#define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
-#define RT_USING_VIRTIO_GPU
-#define RT_USING_VIRTIO_INPUT
+#define RT_VIRTIO_TRANSPORT_MMIO
+#define RT_VIRTIO_TRANSPORT_PCI
+#define RT_VIRTIO_BLK
+#define RT_VIRTIO_CONSOLE
+#define RT_VIRTIO_RNG
+#define RT_VIRTIO_RPMSG
+#define RT_VIRTIO_SCSI
+#define RT_VIRTIO_RPROC_SERIAL
+#define RT_VIRTIO_GPU
+#define RT_VIRTIO_INPUT
+#define RT_VIRTIO_CRYPTO
+#define RT_VIRTIO_SOUND
+#define RT_USING_DMA
+#define RT_USING_MFD
+#define RT_MFD_EDU
+#define RT_MFD_SYSCON
 #define RT_USING_OFW
 #define RT_FDT_EARLYCON_MSG_SIZE 128
 #define RT_USING_OFW_BUS_RANGES_NUMBER 8
+#define RT_USING_PCI
+#define RT_PCI_MSI
+#define RT_PCI_SYS_64BIT
+#define RT_PCI_CACHE_LINE_SIZE 8
+
+/* PCI Device Drivers */
+
+#define RT_PCI_ECAM
+#define RT_PCI_HOST_COMMON
+#define RT_PCI_HOST_GENERIC
+#define RT_USING_PIC
+#define MAX_HANDLERS 512
+#define RT_PIC_ARM_GIC
+#define RT_PIC_ARM_GIC_V2M
+#define RT_PIC_ARM_GIC_V3
+#define RT_PIC_ARM_GIC_V3_ITS
+#define RT_PIC_ARM_GIC_V3_ITS_IRQ_MAX 127
+#define RT_PIC_ARM_GIC_MAX_NR 1
 #define RT_USING_PIN
+#define RT_PIN_PL061
 #define RT_USING_CLK
 
 /* SoC (System on Chip) Drivers */
 
+#define RT_GRAPHIC_ROMFB_WIDTH 800
+#define RT_GRAPHIC_ROMFB_HEIGHT 600
+#define RT_SOC_CAMERA
+/* end of SoC (System on Chip) Drivers */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -267,6 +360,7 @@
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
+#define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 
@@ -439,14 +533,6 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
-
-/* HPMicro SDK */
-
-/* end of HPMicro SDK */
-
-/* FT32 HAL & SDK Drivers */
-
-/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -527,20 +613,5 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define SOC_VIRT64_AARCH64
-
-/* AARCH64 qemu virt64 configs */
-
-#define BSP_SUPPORT_FPU
-#define BSP_USING_UART
-#define RT_USING_UART0
-#define BSP_USING_RTC
-#define BSP_USING_PIN
-#define BSP_USING_VIRTIO_BLK
-#define BSP_USING_VIRTIO_CONSOLE
-#define BSP_USING_VIRTIO_GPU
-#define BSP_USING_VIRTIO_INPUT
-#define BSP_USING_GIC
-#define BSP_USING_GICV2
-/* end of AARCH64 qemu virt64 configs */
 
 #endif

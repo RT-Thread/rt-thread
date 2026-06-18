@@ -28,6 +28,8 @@ board.pd2408_test_b_rtthread:
       - devices.uart
       - devices.qspi
       - devices.i2c_msg
+      - devices.i2s_msg
+      - devices.es8336
       - devices.spi_msg
       - devices.xmac_msg
       - devices.pwm
@@ -40,6 +42,7 @@ board.pd2408_test_b_rtthread:
       - CONFIG_RT_USING_UART1=y      
       - CONFIG_RT_USING_QSPI0=y
       - CONFIG_USING_QSPI_CHANNEL0=y
+      - CONFIG_RT_USING_I2S0_MSG=y
       - CONFIG_RT_USING_I2C3_MSG=y
       - CONFIG_RT_USING_SPIM0_MSG=y
       - CONFIG_RT_USING_XMAC0_MSG=y
@@ -55,12 +58,12 @@ board.e2000d_demo_rtthread:
       - devices.can
       - devices.gpio
       - devices.i2s
+      - devices.es8336
       - devices.pwm
       - devices.spi
       - devices.qspi
       - devices.xmac
       - devices.sdif
-      - devices.dc
       - devices.devices_auto_test
     kconfig:
       - CONFIG_TARGET_PE2202=y
@@ -83,8 +86,6 @@ board.e2000d_demo_rtthread:
       - CONFIG_USE_SDIF0_EMMC=y
       - CONFIG_RT_SDIO_STACK_SIZE=4096
       - CONFIG_RT_MMCSD_STACK_SIZE=4096
-      - CONFIG_RT_USING_DC_CHANNEL0=y
-      - CONFIG_RT_USING_DC_CHANNEL1=y
       - CONFIG_BSP_USING_ES8336=y
       - CONFIG_I2C_USE_MIO=y
       
@@ -95,12 +96,12 @@ board.e2000q_demo_rtthread:
       - devices.can
       - devices.gpio
       - devices.i2s
+      - devices.es8336
       - devices.pwm
       - devices.spi
       - devices.qspi
       - devices.xmac
       - devices.sdif
-      - devices.dc
       - devices.devices_auto_test
     kconfig:
       - CONFIG_TARGET_PE2204=y
@@ -123,8 +124,6 @@ board.e2000q_demo_rtthread:
       - CONFIG_USE_SDIF0_EMMC=y
       - CONFIG_RT_SDIO_STACK_SIZE=4096
       - CONFIG_RT_MMCSD_STACK_SIZE=4096
-      - CONFIG_RT_USING_DC_CHANNEL0=y
-      - CONFIG_RT_USING_DC_CHANNEL1=y
       - CONFIG_BSP_USING_ES8336=y
       - CONFIG_I2C_USE_MIO=y
 
@@ -138,7 +137,6 @@ board.phytium_pi_rtthread:
       - devices.qspi
       - devices.xmac
       - devices.sdif
-      - devices.dc
     kconfig:
       - CONFIG_TARGET_PE2204=y
       - CONFIG_PHYTIUMPI_FIREFLY_BOARD=y
@@ -154,7 +152,6 @@ board.phytium_pi_rtthread:
       - CONFIG_USING_SDIF1=y
       - CONFIG_USE_SDIF1_TF=y
       - CONFIG_RT_SDIO_STACK_SIZE=4096
-      - CONFIG_RT_USING_DC_CHANNEL0=y
       - CONFIG_I2C_USE_MIO=y
 
 board.e2000d_demo_rtthread_pusb2_dc:
@@ -234,7 +231,16 @@ devices.gpio:
       - CONFIG_BSP_USING_GPIO=y
 devices.i2s:    
     kconfig:      
+      - CONFIG_BSP_USING_I2S_LAYER=y
       - CONFIG_BSP_USING_I2S=y
+devices.i2s_msg:    
+    kconfig:
+      - CONFIG_BSP_USING_I2S_LAYER=y       
+      - CONFIG_BSP_USING_I2S_MSG=y
+devices.es8336:    
+    kconfig:      
+      - CONFIG_BSP_USING_DEVICE=y
+      - CONFIG_BSP_USING_ES8336=y
 devices.pwm:    
     kconfig:      
       - CONFIG_BSP_USING_PWM=y
@@ -249,10 +255,22 @@ devices.uart_msg:
       - CONFIG_BSP_USING_UART_MSG=y
 devices.xmac:    
     kconfig:      
+      - CONFIG_BSP_USING_ETH_LAYER=y
       - CONFIG_BSP_USING_ETH=y
+      - CONFIG_RT_USING_SAL=y
+      - CONFIG_RT_USING_LWIP=y
+      - CONFIG_RT_USING_LWIP212=y
+      - CONFIG_RT_LWIP_ETHTHREAD_STACKSIZE=8192
+      - CONFIG_RT_LWIP_TCPTHREAD_STACKSIZE=8192
 devices.xmac_msg:    
     kconfig:      
+      - CONFIG_BSP_USING_ETH_LAYER=y
       - CONFIG_BSP_USING_ETH_MSG=y
+      - CONFIG_RT_USING_SAL=y
+      - CONFIG_RT_USING_LWIP=y
+      - CONFIG_RT_USING_LWIP212=y
+      - CONFIG_RT_LWIP_ETHTHREAD_STACKSIZE=8192
+      - CONFIG_RT_LWIP_TCPTHREAD_STACKSIZE=8192
 devices.sdif:    
     kconfig:      
       - CONFIG_BSP_USING_SDIF=y

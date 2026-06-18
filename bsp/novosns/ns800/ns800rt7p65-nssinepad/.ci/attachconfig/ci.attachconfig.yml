@@ -6,9 +6,20 @@ devices.ecap:
     kconfig:
       - CONFIG_BSP_USING_ECAP=y
       - CONFIG_BSP_USING_ECAP1=y
-      - CONFIG_BSP_USING_SPI=y
-      - CONFIG_BSP_USING_SPI1=y
 devices.adc:
     <<: *scons
     kconfig:
       - CONFIG_BSP_USING_ADC=y
+devices.spi:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI1=y
+      - CONFIG_BSP_USING_QSPI=y
+devices.wdt:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_WDT=y
+      - CONFIG_BSP_USING_IWDG1=y
+      - CONFIG_BSP_USING_IWDG2=y
+      - CONFIG_BSP_USING_WWDG=y

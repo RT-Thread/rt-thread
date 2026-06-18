@@ -11,6 +11,7 @@
  * 2024-06-23     wdfk-prog Add blocking modes and distinguish POLL,INT,DMA modes
  * 2024-06-23     wdfk-prog Distinguish STM32 I2C timing semantics by IP generation
  * 2026-04-20     wdfk-prog Stabilize async completion and recovery flow
+ * 2026-04-20     wdfk-prog stabilize hard i2c async transfer routing
  */
 
 #include "drv_hard_i2c.h"
@@ -33,8 +34,33 @@
 #define DEFAULT_I2C_TIMING_VALUE (100*1000U)    //HZ
 #endif
 
-/* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
-#define DMA_TRANS_MIN_LEN 2
+/**
+ * @brief I2C transfer route policy.
+ *
+ * @details
+ *
+ * I2C is normally used at much lower bus rates than SPI, and many I2C
+ * transfers are short register-address or register-data transactions.
+ * For those small transfers, DMA setup, asynchronous completion, and
+ * recovery overhead may be higher than the transfer itself.
+ *
+ * Therefore, use the following unified rule:
+ *   - single-message transfer below DMA threshold  : use interrupt mode if enabled, otherwise polling mode
+ *   - single-message transfer at/above threshold   : use DMA mode if enabled, otherwise interrupt/polling mode
+ *   - multi-message or no-stop sequential transfer : use sequential DMA/IT only
+ *
+ * Multi-message transfers require STM32 HAL sequential APIs because repeated-start
+ * and no-stop frames intentionally keep the I2C BUSY flag set between frames. The
+ * driver checks for sequential RX/TX capability before a multi-message transfer
+ * starts. If the driver is not capable of sequential transfers, it reports an
+ * error without starting the transaction. A single-message transfer has no such
+ * repeated-start constraint, so it can still choose DMA, interrupt, or polling
+ * according to the enabled backend and transfer length.
+ */
+#ifndef BSP_I2C_DMA_TRANS_MIN_LEN
+/* Minimum transfer length that may use DMA mode. */
+#define BSP_I2C_DMA_TRANS_MIN_LEN 16U
+#endif /* BSP_I2C_DMA_TRANS_MIN_LEN */
 
 typedef enum
 {
@@ -203,111 +229,113 @@ static rt_err_t stm32_i2c_configure(struct rt_i2c_bus_device *bus)
 }
 
 /**
- * @brief Start one master receive transfer and report whether wait is required.
+ * @brief Per-message I2C transfer route context.
+ */
+struct stm32_i2c_xfer_route
+{
+    uint32_t mode;              /**< HAL sequential transfer option. */
+    rt_uint32_t timeout;        /**< Timeout in milliseconds for polling transfer. */
+    rt_bool_t seq_required;     /**< RT_TRUE when this frame must use a sequential HAL API. */
+    rt_bool_t async_allowed;    /**< RT_TRUE when the current transaction context allows IRQ/DMA wait. */
+    rt_bool_t need_wait;        /**< RT_TRUE when IT/DMA path is used. */
+};
+
+/**
+ * @brief Start one master receive transfer.
  * @param i2c_obj Pointer to the STM32 I2C driver object.
- * @param handle Pointer to the HAL I2C handle.
  * @param msg Pointer to the RT-Thread I2C message descriptor.
- * @param mode HAL sequential transfer mode.
- * @param timeout Timeout in milliseconds for polling transfer.
- * @param async_allowed RT_TRUE when the current context allows IRQ/DMA wait.
- * @param need_wait Output flag set to RT_TRUE when IT/DMA path is used.
+ * @param route Pointer to the per-message route context.
  * @return HAL status returned by the selected HAL receive API.
  * @retval HAL_OK Transfer start succeeded.
  * @retval HAL_ERROR Transfer start failed or no receive backend is enabled.
  */
 static HAL_StatusTypeDef stm32_i2c_master_receive_start(struct stm32_i2c *i2c_obj,
-                                                        I2C_HandleTypeDef *handle,
                                                         struct rt_i2c_msg *msg,
-                                                        uint32_t mode,
-                                                        rt_uint32_t timeout,
-                                                        rt_bool_t async_allowed,
-                                                        rt_bool_t *need_wait)
+                                                        struct stm32_i2c_xfer_route *route)
 {
-    RT_UNUSED(i2c_obj);
-    RT_UNUSED(mode);
-    RT_UNUSED(timeout);
     RT_ASSERT(i2c_obj != RT_NULL);
-    RT_ASSERT(handle != RT_NULL);
     RT_ASSERT(msg != RT_NULL);
-    RT_ASSERT(need_wait != RT_NULL);
+    RT_ASSERT(route != RT_NULL);
 
-    *need_wait = RT_FALSE;
+    I2C_HandleTypeDef *handle = &i2c_obj->handle;
+    RT_UNUSED(handle);
+
+    route->need_wait = RT_FALSE;
 
 #if defined(BSP_I2C_RX_USING_DMA)
-    if (async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_DMA_RX) && (msg->len >= DMA_TRANS_MIN_LEN))
+    if (route->async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_DMA_RX)
+     && (route->seq_required || (msg->len >= BSP_I2C_DMA_TRANS_MIN_LEN)))
     {
-        *need_wait = RT_TRUE;
-        return HAL_I2C_Master_Seq_Receive_DMA(handle, (msg->addr << 1), msg->buf, msg->len, mode);
+        route->need_wait = RT_TRUE;
+        return HAL_I2C_Master_Seq_Receive_DMA(handle, (msg->addr << 1), msg->buf, msg->len, route->mode);
     }
 #endif /* defined(BSP_I2C_RX_USING_DMA) */
 
 #if defined(BSP_I2C_RX_USING_INT)
-    if (async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_INT_RX))
+    if (route->async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_INT_RX))
     {
-        *need_wait = RT_TRUE;
-        return HAL_I2C_Master_Seq_Receive_IT(handle, (msg->addr << 1), msg->buf, msg->len, mode);
+        route->need_wait = RT_TRUE;
+        return HAL_I2C_Master_Seq_Receive_IT(handle, (msg->addr << 1), msg->buf, msg->len, route->mode);
     }
 #endif /* defined(BSP_I2C_RX_USING_INT) */
 
 #if defined(BSP_I2C_RX_USING_POLL)
-    return HAL_I2C_Master_Receive(handle, (msg->addr << 1), msg->buf, msg->len, timeout);
-#else
-    return HAL_ERROR;
+    if (!route->seq_required)
+    {
+        return HAL_I2C_Master_Receive(handle, (msg->addr << 1), msg->buf, msg->len, route->timeout);
+    }
 #endif /* defined(BSP_I2C_RX_USING_POLL) */
+
+    return HAL_ERROR;
 }
 
 /**
- * @brief Start one master transmit transfer and report whether wait is required.
+ * @brief Start one master transmit transfer.
  * @param i2c_obj Pointer to the STM32 I2C driver object.
- * @param handle Pointer to the HAL I2C handle.
  * @param msg Pointer to the RT-Thread I2C message descriptor.
- * @param mode HAL sequential transfer mode.
- * @param timeout Timeout in milliseconds for polling transfer.
- * @param async_allowed RT_TRUE when the current context allows IRQ/DMA wait.
- * @param need_wait Output flag set to RT_TRUE when IT/DMA path is used.
+ * @param route Pointer to the per-message route context.
  * @return HAL status returned by the selected HAL transmit API.
  * @retval HAL_OK Transfer start succeeded.
  * @retval HAL_ERROR Transfer start failed or no transmit backend is enabled.
  */
 static HAL_StatusTypeDef stm32_i2c_master_transmit_start(struct stm32_i2c *i2c_obj,
-                                                         I2C_HandleTypeDef *handle,
                                                          struct rt_i2c_msg *msg,
-                                                         uint32_t mode,
-                                                         rt_uint32_t timeout,
-                                                         rt_bool_t async_allowed,
-                                                         rt_bool_t *need_wait)
+                                                         struct stm32_i2c_xfer_route *route)
 {
-    RT_UNUSED(i2c_obj);
-    RT_UNUSED(mode);
-    RT_UNUSED(timeout);
     RT_ASSERT(i2c_obj != RT_NULL);
-    RT_ASSERT(handle != RT_NULL);
     RT_ASSERT(msg != RT_NULL);
-    RT_ASSERT(need_wait != RT_NULL);
+    RT_ASSERT(route != RT_NULL);
 
-    *need_wait = RT_FALSE;
+    I2C_HandleTypeDef *handle = &i2c_obj->handle;
+    RT_UNUSED(handle);
+
+    route->need_wait = RT_FALSE;
 
 #if defined(BSP_I2C_TX_USING_DMA)
-    if (async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_DMA_TX) && (msg->len >= DMA_TRANS_MIN_LEN))
+    if (route->async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_DMA_TX)
+     && (route->seq_required || (msg->len >= BSP_I2C_DMA_TRANS_MIN_LEN)))
     {
-        *need_wait = RT_TRUE;
-        return HAL_I2C_Master_Seq_Transmit_DMA(handle, (msg->addr << 1), msg->buf, msg->len, mode);
+        route->need_wait = RT_TRUE;
+        return HAL_I2C_Master_Seq_Transmit_DMA(handle, (msg->addr << 1), msg->buf, msg->len, route->mode);
     }
 #endif /* defined(BSP_I2C_TX_USING_DMA) */
 
 #if defined(BSP_I2C_TX_USING_INT)
-    if (async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_INT_TX))
+    if (route->async_allowed && (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_INT_TX))
     {
-        *need_wait = RT_TRUE;
-        return HAL_I2C_Master_Seq_Transmit_IT(handle, (msg->addr << 1), msg->buf, msg->len, mode);
+        route->need_wait = RT_TRUE;
+        return HAL_I2C_Master_Seq_Transmit_IT(handle, (msg->addr << 1), msg->buf, msg->len, route->mode);
     }
 #endif /* defined(BSP_I2C_TX_USING_INT) */
 
 #if defined(BSP_I2C_TX_USING_POLL)
-    return HAL_I2C_Master_Transmit(handle, (msg->addr << 1), msg->buf, msg->len, timeout);
-#else
-    return HAL_ERROR;
+    if (!route->seq_required)
+    {
+        return HAL_I2C_Master_Transmit(handle, (msg->addr << 1), msg->buf, msg->len, route->timeout);
+    }
 #endif /* defined(BSP_I2C_TX_USING_POLL) */
+
+    return HAL_ERROR;
 }
 
 /**
@@ -352,6 +380,72 @@ static uint32_t stm32_i2c_get_xfer_mode(rt_int32_t index,
 }
 
 /**
+ * @brief Check whether the HAL transfer mode keeps sequential bus semantics.
+ * @param mode HAL sequential transfer option.
+ * @return RT_TRUE when the mode must be handled by a sequential HAL API.
+ */
+static rt_bool_t stm32_i2c_mode_requires_seq(uint32_t mode)
+{
+    return (mode != I2C_LAST_FRAME);
+}
+
+/**
+ * @brief Check whether the driver has full-direction sequential async capability.
+ *
+ * @details Multi-message transfers require STM32 HAL sequential APIs for the
+ * whole transaction. This driver intentionally requires both TX and RX
+ * sequential async backends before starting any multi-message transfer, because
+ * it does not pre-scan message directions and does not allow non-sequential
+ * polling fallback once a repeated-start/no-stop transaction begins.
+ *
+ * @param i2c_obj Pointer to the STM32 I2C driver object.
+ * @param async_allowed RT_TRUE when the current context allows IRQ/DMA wait.
+ * @return RT_TRUE when sequential TX and RX backends are both available.
+ */
+static rt_bool_t stm32_i2c_seq_backend_available(struct stm32_i2c *i2c_obj, rt_bool_t async_allowed)
+{
+    rt_bool_t tx_available = RT_FALSE;
+    rt_bool_t rx_available = RT_FALSE;
+
+    RT_ASSERT(i2c_obj != RT_NULL);
+
+    if (!async_allowed)
+    {
+        return RT_FALSE;
+    }
+
+#if defined(BSP_I2C_TX_USING_DMA)
+    if (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_DMA_TX)
+    {
+        tx_available = RT_TRUE;
+    }
+#endif /* defined(BSP_I2C_TX_USING_DMA) */
+
+#if defined(BSP_I2C_TX_USING_INT)
+    if (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_INT_TX)
+    {
+        tx_available = RT_TRUE;
+    }
+#endif /* defined(BSP_I2C_TX_USING_INT) */
+
+#if defined(BSP_I2C_RX_USING_DMA)
+    if (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_DMA_RX)
+    {
+        rx_available = RT_TRUE;
+    }
+#endif /* defined(BSP_I2C_RX_USING_DMA) */
+
+#if defined(BSP_I2C_RX_USING_INT)
+    if (i2c_obj->i2c_dma_flag & RT_DEVICE_FLAG_INT_RX)
+    {
+        rx_available = RT_TRUE;
+    }
+#endif /* defined(BSP_I2C_RX_USING_INT) */
+
+    return (tx_available && rx_available);
+}
+
+/**
  * @brief Convert HAL transfer mode value to a readable log string.
  * @param mode HAL sequential transfer option.
  * @return Constant string for logging.
@@ -392,8 +486,6 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     struct rt_i2c_msg *next_msg = RT_NULL;
     struct stm32_i2c *i2c_obj;
     rt_bool_t is_last = RT_FALSE;
-    uint32_t mode = 0;
-    rt_uint32_t timeout_ms;
 
     if (num == 0)
     {
@@ -401,55 +493,96 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     }
 
     RT_ASSERT((msgs != RT_NULL) && (bus != RT_NULL));
+
     i2c_obj = rt_container_of(bus, struct stm32_i2c, i2c_bus);
     RT_ASSERT(i2c_obj != RT_NULL);
+
     I2C_HandleTypeDef *handle = &i2c_obj->handle;
     RT_ASSERT(handle != RT_NULL);
+
 #if defined(BSP_I2C_USING_IRQ)
     rt_bool_t need_abort = RT_FALSE;
     struct rt_completion *completion;
     completion = &i2c_obj->completion;
 #endif /* defined(BSP_I2C_USING_IRQ) */
+
+    struct stm32_i2c_xfer_route route = {0};
+
+    /*
+     * Snapshot the call context once for the whole I2C transaction.
+     *
+     * The async route decision must stay stable across all frames in one
+     * transaction. Re-evaluating scheduler/IRQ state per frame could route
+     * one multi-message transfer through different async/polling policies.
+     *
+     * The abort recovery path also reuses this snapshot. need_abort is only
+     * set after an async DMA/IT transfer has been started, so the transaction
+     * was originally entered from a context where scheduler and IRQ waiting
+     * were allowed. Even if the thread is switched out and later resumed, the
+     * recovery wait policy should still follow this transaction-level context
+     * instead of re-sampling a transient runtime state.
+     */
+    const rt_bool_t scheduler_available = rt_scheduler_is_available();
+    const rt_bool_t irq_disabled = rt_hw_interrupt_is_disabled();
+    const rt_bool_t async_allowed = (scheduler_available && !irq_disabled);
+
     LOG_D("xfer start %d megs", num);
+
+    /*
+     * Multi-message transfers must use STM32 HAL sequential APIs for
+     * repeated-start/no-stop semantics. Check the driver-level sequential
+     * capability once before the first frame; single-message transfers do not
+     * have this restriction and may still use DMA, interrupt, or polling.
+     */
+    if ((num > 1U) && !stm32_i2c_seq_backend_available(i2c_obj, async_allowed))
+    {
+        LOG_E("I2C[%s] multi-message transfer requires both TX and RX sequential DMA/IT capability", bus->parent.parent.name);
+        return 0;
+    }
+
     for (i = 0; i < num; i++)
     {
-        rt_bool_t need_wait = RT_FALSE;
-        const rt_bool_t scheduler_available = rt_scheduler_is_available();
-        const rt_bool_t irq_disabled = rt_hw_interrupt_is_disabled();
-        const rt_bool_t async_allowed = (scheduler_available && !irq_disabled);
-
+        rt_memset(&route, 0, sizeof(route));
         msg = &msgs[i];
         is_last = (i == (num - 1));
         next_msg = is_last ? RT_NULL : &msgs[i + 1];
-        mode = stm32_i2c_get_xfer_mode(i, msg, next_msg, is_last);
+        route.mode = stm32_i2c_get_xfer_mode(i, msg, next_msg, is_last);
+        /*
+         * Multi-message transactions always need STM32 HAL sequential APIs
+         * because previous frames may intentionally keep the bus busy for a
+         * repeated start. A single-message transfer only needs the sequential
+         * API when its own mode requests no-stop/sequential bus semantics.
+         */
+        route.seq_required = ((num > 1U) || stm32_i2c_mode_requires_seq(route.mode));
+        route.async_allowed = async_allowed;
         LOG_D("xfer       msgs[%d] addr=0x%2x buf=0x%x len= 0x%x flags= 0x%x", i, msg->addr, msg->buf, msg->len, msg->flags);
 #if defined(STM32_I2C_TIMINGR_IP)
-        timeout_ms = bus->timeout ? (bus->timeout * 1000U + RT_TICK_PER_SECOND - 1U) / RT_TICK_PER_SECOND : 100U;
+        route.timeout = bus->timeout ? (bus->timeout * 1000U + RT_TICK_PER_SECOND - 1U) / RT_TICK_PER_SECOND : 100U;
 #else
-        timeout_ms = TIMEOUT_CALC(msg);
+        route.timeout = TIMEOUT_CALC(msg);
 #endif /* defined(STM32_I2C_TIMINGR_IP) */
 
 #if defined(BSP_I2C_USING_IRQ)
-        rt_tick_t timeout_tick = rt_tick_from_millisecond(timeout_ms);
+        rt_tick_t timeout_tick = rt_tick_from_millisecond(route.timeout);
         rt_completion_init(completion);
 #endif /* defined(BSP_I2C_USING_IRQ) */
         if (msg->flags & RT_I2C_RD)
         {
-            LOG_D("xfer  rec  msgs[%d] hal mode = %s", i, stm32_i2c_mode_name(mode));
-            ret = stm32_i2c_master_receive_start(i2c_obj, handle, msg, mode, timeout_ms, async_allowed, &need_wait);
+            LOG_D("xfer  rec  msgs[%d] hal mode = %s", i, stm32_i2c_mode_name(route.mode));
+            ret = stm32_i2c_master_receive_start(i2c_obj, msg, &route);
             if (ret != HAL_OK)
             {
                 LOG_E("I2C[%s] Read error(%d)!", bus->parent.parent.name, ret);
                 goto out;
             }
 #if defined(BSP_I2C_USING_IRQ)
-            if (need_wait)
+            if (route.need_wait)
             {
                 ret = rt_completion_wait(completion, timeout_tick);
                 if (ret != RT_EOK)
                 {
                     need_abort = RT_TRUE;
-                    LOG_W("I2C[%s] receive wait failed %d, timeout %u ms", bus->parent.parent.name, ret, timeout_ms);
+                    LOG_W("I2C[%s] receive wait failed %d, timeout %u ms", bus->parent.parent.name, ret, route.timeout);
                     goto out;
                 }
 
@@ -464,21 +597,21 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         }
         else
         {
-            LOG_D("xfer trans msgs[%d] hal mode = %s", i, stm32_i2c_mode_name(mode));
-            ret = stm32_i2c_master_transmit_start(i2c_obj, handle, msg, mode, timeout_ms, async_allowed, &need_wait);
+            LOG_D("xfer trans msgs[%d] hal mode = %s", i, stm32_i2c_mode_name(route.mode));
+            ret = stm32_i2c_master_transmit_start(i2c_obj, msg, &route);
             if (ret != HAL_OK)
             {
                 LOG_E("I2C[%s] Write error(%d)!", bus->parent.parent.name, ret);
                 goto out;
             }
 #if defined(BSP_I2C_USING_IRQ)
-            if (need_wait)
+            if (route.need_wait)
             {
                 ret = rt_completion_wait(completion, timeout_tick);
                 if (ret != RT_EOK)
                 {
                     need_abort = RT_TRUE;
-                    LOG_W("I2C[%s] transmit wait failed %d, timeout %u ms", bus->parent.parent.name, ret, timeout_ms);
+                    LOG_W("I2C[%s] transmit wait failed %d, timeout %u ms", bus->parent.parent.name, ret, route.timeout);
                     goto out;
                 }
 
@@ -539,9 +672,7 @@ out:
         }
         else
         {
-            rt_uint32_t timeout = timeout_ms;
-            const rt_bool_t scheduler_available = rt_scheduler_is_available();
-            const rt_bool_t irq_disabled = rt_hw_interrupt_is_disabled();
+            rt_uint32_t timeout = route.timeout;
 
             while (HAL_I2C_GetState(handle) != HAL_I2C_STATE_READY)
             {
