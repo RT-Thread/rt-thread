@@ -1,6 +1,10 @@
-/**
- * @file    drv_rtc.h
- * @brief   NS800RT7P65D RTC driver header file
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
  */
 
 #ifndef __DRV_RTC_H__
