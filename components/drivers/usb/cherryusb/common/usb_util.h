@@ -52,7 +52,7 @@
 #endif
 
 #ifndef __USED
-#if defined(__ICCARM_V8) || defined(__ICCRISCV__)
+#if defined(__ICCRISCV__)
 #define __USED __attribute__((used))
 #else
 #define __USED __root
