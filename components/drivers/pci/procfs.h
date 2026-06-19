@@ -12,7 +12,7 @@
  * @file procfs.h
  * @brief PCI procfs interface declarations
  *
- * Provides /proc/pci/<BDF> per-device configuration space files
+ * Provides /proc/pci/&lt;BDF&gt; per-device configuration space files
  * and /proc/pci/devices enumeration for userspace access.
  * When RT_USING_DFS_PROCFS is disabled, the attach/detach
  * functions are no-ops.
