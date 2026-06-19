@@ -437,8 +437,8 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 rt_uint8_t idx = (rt_uint8_t)(TX_MB_COUNT + i);
 
                 /* Map user hdr_bank to hardware MB index, offsetting past TX MB0.
-                 * hdr_bank=-1: to-assign sequentially (MB1, MB2, ...)
-                 * hdr_bank=N : explicit hardware MB index (N still maps
+                 * hdr_bank=-1 â†’ auto-assign sequentially (MB1, MB2, ...)
+                 * hdr_bank=N  â†’ explicit hardware MB index (N still maps
                  *                to FilterConfig idx, via offset) */
                 drv_can->FilterConfig[idx].msgBufId  =
                     (uint16_t)(item->hdr_bank >= 0
@@ -598,12 +598,11 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     return RT_EOK;
 }
 
-/* DLC validation helper classic CAN vs CAN-FD */
+/* DLC / byte-length validation helpers classic CAN vs CAN-FD */
 #ifdef RT_CAN_USING_CANFD
 #ifndef CANFD_MAX_DLC
 #define CANFD_MAX_DLC            15U     /* per ISO 11898-1 */
 #endif
-#define IS_CAN_DLC_VALID(DLC)    (((DLC) & 0x0FU) <= CANFD_MAX_DLC)
 
 /**
  * @brief Convert data byte length to CAN-FD DLC code (per ISO 11898-1).
@@ -627,21 +626,8 @@ static rt_uint8_t _can_len_to_dlc(rt_uint8_t len)
     return len < 65 ? len2dlc[len] : (rt_uint8_t)CANFD_MAX_DLC;
 }
 
-/**
- * @brief Convert CAN-FD DLC code to data byte length (per ISO 11898-1).
- */
-static rt_uint8_t _can_dlc_to_len(rt_uint8_t dlc)
-{
-    static const rt_uint8_t dlc2len[16] =
-    {
-        0, 1, 2, 3, 4, 5, 6, 7, 8,  /* DLC 0-8: direct mapping */
-        12, 16, 20, 24, 32, 48, 64   /* DLC 9-15: FD sizes */
-    };
-    return dlc2len[dlc & 0x0FU];
-}
 #define IS_CAN_LEN_VALID(LEN)    ((LEN) <= 64U)
 #else
-#define IS_CAN_DLC_VALID(DLC)    (((DLC) & 0x0FU) <= 0x08U)
 #define IS_CAN_LEN_VALID(LEN)    ((LEN) <= 8U)
 #endif
 
@@ -680,7 +666,7 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     /* Convert byte length to hardware DLC code and determine payload size */
     data_len = pmsg->len;
 #ifdef RT_CAN_USING_CANFD
-    fdTxMsgObj.dlc = _can_len_to_dlc(pmsg->len);  /* byte len ¡ú DLC code */
+    fdTxMsgObj.dlc = _can_len_to_dlc(pmsg->len);  /* byte len â†’ DLC code */
     fdTxMsgObj.isFd = (pmsg->fd_frame != 0) ? true : false;
 #else
     fdTxMsgObj.dlc = pmsg->len;  /* classic CAN: DLC == byte length (0-8) */
