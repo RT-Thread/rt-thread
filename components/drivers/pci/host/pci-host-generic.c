@@ -30,9 +30,11 @@
 #include "../ecam.h"
 
 /** @brief CAM-mode ECAM ops with 16-bit bus shift for legacy PCI */
-static const struct pci_ecam_ops gen_pci_cfg_cam_bus_ops = {
+static const struct pci_ecam_ops gen_pci_cfg_cam_bus_ops =
+{
     .bus_shift = 16,
-    .pci_ops = {
+    .pci_ops =
+    {
         .map = pci_ecam_map,
         .read = rt_pci_bus_read_config_uxx,
         .write = rt_pci_bus_write_config_uxx,

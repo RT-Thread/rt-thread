@@ -27,21 +27,21 @@
 #include <proc.h>
 
 /**
- * @brief Create /proc/pci/<BDF> entry for a PCI device
+ * @brief Create /proc/pci/&lt;BDF&gt; entry for a PCI device
  *
  * @param[in] pdev  PCI device to attach
  */
 void pci_procfs_attach(struct rt_pci_device *pdev);
 
 /**
- * @brief Remove /proc/pci/<BDF> entry for a PCI device
+ * @brief Remove /proc/pci/&lt;BDF&gt; entry for a PCI device
  *
  * @param[in] pdev  PCI device to detach
  */
 void pci_procfs_detach(struct rt_pci_device *pdev);
 #else
 /**
- * @brief No-op: create /proc/pci/<BDF> entry (procfs disabled)
+ * @brief No-op: create /proc/pci/&lt;BDF&gt; entry (procfs disabled)
  *
  * @param[in] pdev  PCI device
  */
@@ -50,7 +50,7 @@ rt_inline void pci_procfs_attach(struct rt_pci_device *pdev)
 }
 
 /**
- * @brief No-op: remove /proc/pci/<BDF> entry (procfs disabled)
+ * @brief No-op: remove /proc/pci/&lt;BDF&gt; entry (procfs disabled)
  *
  * @param[in] pdev  PCI device
  */

@@ -48,7 +48,7 @@ struct rt_spinlock rt_pci_lock = { 0 };
 #endif
 
 /**
- * @def PCI_OPS_READ(name, type)
+ * @def PCI_OPS_READ
  * @brief Generate a locked config-space read function
  *
  * Reads a value of the specified width from PCI config space
@@ -74,7 +74,7 @@ struct rt_spinlock rt_pci_lock = { 0 };
     }
 
 /**
- * @def PCI_OPS_WRITE(name, type)
+ * @def PCI_OPS_WRITE
  * @brief Generate a locked config-space write function
  *
  * Writes a value of the specified width to PCI config space

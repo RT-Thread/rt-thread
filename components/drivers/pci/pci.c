@@ -668,7 +668,9 @@ rt_err_t rt_pci_region_setup(struct rt_pci_host_bridge *host_bridge)
         region->bus_start = rt_max_t(rt_size_t, 0x1000, region->phy_addr);
 
         LOG_I("Bus %s region(%d):",
-              region->flags == PCI_BUS_REGION_F_MEM ? "Memory" : (region->flags == PCI_BUS_REGION_F_PREFETCH ? "Prefetchable Mem" : (region->flags == PCI_BUS_REGION_F_IO ? "I/O" : "Unknown")), i);
+              region->flags == PCI_BUS_REGION_F_MEM ? "Memory" : 
+                  (region->flags == PCI_BUS_REGION_F_PREFETCH ? "Prefetchable Mem" :
+                      (region->flags == PCI_BUS_REGION_F_IO ? "I/O" : "Unknown")), i);
         LOG_I("  cpu:      [%p, %p]", region->cpu_addr, (region->cpu_addr + region->size - 1));
         LOG_I("  physical: [%p, %p]", region->phy_addr, (region->phy_addr + region->size - 1));
     }
@@ -1338,7 +1340,8 @@ static rt_err_t pci_shutdown(rt_device_t dev)
 }
 
 /** @brief PCI bus type descriptor */
-static struct rt_bus pci_bus = {
+static struct rt_bus pci_bus =
+{
     .name = "pci",
     .match = pci_match,
     .probe = pci_probe,

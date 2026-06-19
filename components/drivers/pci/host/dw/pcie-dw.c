@@ -861,7 +861,7 @@ void dw_pcie_setup(struct dw_pcie *pci)
         val |= PORT_LINK_MODE_8_LANES;
         break;
     default:
-        LOG_E("Invail num-lanes = %d", pci->num_lanes);
+        LOG_E("Invalid num-lanes = %d", pci->num_lanes);
         return;
     }
     dw_pcie_writel_dbi(pci, PCIE_PORT_LINK_CONTROL, val);

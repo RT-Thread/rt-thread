@@ -14,7 +14,7 @@
  *
  * Provides:
  * - /proc/pci/devices: A list of all PCI devices with their BARs and drivers
- * - /proc/pci/<BDF>: Per-device config space read/write (like Linux's sysfs config)
+ * - /proc/pci/&lt;BDF&gt;: Per-device config space read/write (like Linux's sysfs config)
  *
  * The per-device file allows userspace tools (e.g. lspci equivalent) to
  * read and write PCI configuration space directly, with proper endian
@@ -95,7 +95,7 @@ static void pci_pm_runtime_put(struct rt_pci_device *pdev, rt_ubase_t *flags)
 }
 
 /**
- * @brief Read PCI config space from userspace (/proc/pci/<BDF>)
+ * @brief Read PCI config space from userspace (/proc/pci/&lt;BDF&gt;)
  *
  * Handles arbitrary offsets and sizes with proper alignment.
  * Data is converted to little-endian for userspace consumption.
@@ -188,7 +188,7 @@ static ssize_t pci_read(struct dfs_file *file, void *buf, size_t count, off_t *p
 }
 
 /**
- * @brief Write PCI config space from userspace (/proc/pci/<BDF>)
+ * @brief Write PCI config space from userspace (/proc/pci/&lt;BDF&gt;)
  *
  * Handles arbitrary offsets and sizes with proper alignment.
  * Data is converted from little-endian (userspace) to CPU byte order.
@@ -313,14 +313,15 @@ static off_t pci_lseek(struct dfs_file *file, off_t offset, int wherece)
 }
 
 /** @brief File operations for per-device config space access */
-static const struct dfs_file_ops pci_fops = {
+static const struct dfs_file_ops pci_fops =
+{
     .read = pci_read,
     .write = pci_write,
     .lseek = pci_lseek,
 };
 
 /**
- * @brief Create /proc/pci/<BDF> entry for a PCI device
+ * @brief Create /proc/pci/&lt;BDF&gt; entry for a PCI device
  *
  * @param[in] pdev PCI device
  */
@@ -346,7 +347,7 @@ void pci_procfs_attach(struct rt_pci_device *pdev)
 }
 
 /**
- * @brief Remove /proc/pci/<BDF> entry for a PCI device
+ * @brief Remove /proc/pci/&lt;BDF&gt; entry for a PCI device
  *
  * @param[in] pdev PCI device
  */
