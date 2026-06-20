@@ -1,0 +1,108 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-02-25     GuEe-GUI     the first version
+ */
+
+#include <dt-bindings/size.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+
+#define MEMORY_BASE     0x48000000
+#define MEMORY_SIZE     (130 * SIZE_MB)
+
+#define AMP_MEMORY_BASE 0x200000
+#define AMP_MEMORY_SIZE (128 * SIZE_MB)
+
+/*
+ * RUN COMMAND: ./qemu.py -dtbo amp.dtsi -mem 258
+ * REMOTE: telnet localhost 4323
+ */
+
+/ {
+    #address-cells = <2>;
+    #size-cells = <2>;
+
+    reserved-memory {
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges = <0x0 0x0 0x0 MEMORY_BASE 0x0 MEMORY_SIZE>;
+
+        pic_mailbox@1ffe00 {
+            reg = <0x0 0x1ffe00 0x0 0x200>;
+        };
+
+        virtio_sram: virtio_sram@0 {
+            reg = <0x0 0x0 0x0 0x1ffe00>;
+        };
+
+        amp_memory: amp_memory@200000 {
+            reg = <0x0 AMP_MEMORY_BASE 0x0 AMP_MEMORY_SIZE>;
+        };
+    };
+
+    soc {
+        compatible = "simple-bus";
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges = <0x0 0x0 0x0 MEMORY_BASE 0x0 MEMORY_SIZE>;
+
+        pic_mailbox0: pic_mailbox@1ffe00 {
+            compatible = "rt-thread,pic-mailbox";
+            reg = <0x0 0x1ffe00 0x0 0x200>;
+            position = <0>;
+            interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+            peer-interrupts = <(32 + 10)>;
+            uid = <0>;
+            #mbox-cells = <1>;
+        };
+
+        virtio_rpmsg {
+            compatible = "rt-thread,virtio-rpmsg";
+            shmem = <&virtio_sram>;
+            mboxes = <&pic_mailbox0 0>;
+            queue-max = <64>;
+            master;
+        };
+    };
+
+#ifndef AMP_SLAVE
+    /delete-node/ pl011@9040000;
+
+    aliases {
+        /delete-property/ serial1;
+    };
+#endif
+
+    amp_soc {
+        /* DO NOT set a 'compatible' property on this node */
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges = <0x0 0x0 0x0 MEMORY_BASE 0x0 MEMORY_SIZE>;
+        memory-region = <&amp_memory>;
+        dtb-entry = <0x48200000>;
+        kernel-entry = <0x48480000>;
+
+        pic_mailbox1: pic_mailbox@1ffe00 {
+            compatible = "rt-thread,pic-mailbox";
+            reg = <0x0 0x1ffe00 0x0 0x200>;
+            position = <1>;
+            interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+            peer-interrupts = <(32 + 9)>;
+            uid = <1>;
+            #mbox-cells = <1>;
+        };
+
+        virtio_rpmsg {
+            compatible = "rt-thread,virtio-rpmsg";
+            shmem = <&virtio_sram>;
+            mboxes = <&pic_mailbox1 0>;
+            queue-max = <64>;
+            slave;
+        };
+    };
+};

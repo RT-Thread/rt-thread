@@ -247,9 +247,9 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟢 QEMU Virt64 AArch64 (RT-Smart) (SMP)
 
-| BSP Name | GPIO | UART | RTC | VirtIO-BLK | VirtIO-NET | VirtIO-Console | VirtIO-GPU | VirtIO-Input |
-|----------|------|------|-----|-----------|-----------|---------------|-----------|--------------|
-| [qemu-virt64-aarch64](qemu-virt64-aarch64) | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ |
+| BSP Name | GPIO | UART | RTC | WDT | PCI | Storage | Flash | LCD | Input | Camera | Sound | Crypto | RNG | Net | Console | RPMSG |
+|----------|------|------|-----|-----|-----|---------|-------|-----|-------|--------|-------|--------|-----|-----|---------|-------|
+| [qemu-virt64-aarch64](qemu-virt64-aarch64) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟡 Phytium (RT-Smart) (SMP)
 

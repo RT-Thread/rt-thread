@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../include']
 
 src = ['rpmsg.c', 'rpmsg_char.c', 'rpmsg_ns.c']
 
+if GetDepend(['RT_RPMSG_RT_THREAD_VIRTIO']):
+    src += ['rpmsg-rt-thread-virtio.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
