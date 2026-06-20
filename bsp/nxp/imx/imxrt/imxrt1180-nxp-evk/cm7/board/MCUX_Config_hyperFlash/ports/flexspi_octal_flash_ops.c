@@ -5,7 +5,7 @@
  */
 
 #include "fsl_flexspi.h"
-#include "flexspi_port.h"
+#include "ports/flexspi_port.h"
 #include "rtconfig.h"
 
 #ifdef BSP_USING_DMA

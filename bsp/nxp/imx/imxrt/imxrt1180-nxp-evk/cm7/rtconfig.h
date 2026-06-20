@@ -148,6 +148,8 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SPI
+#define RT_USING_QSPI
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -425,7 +427,6 @@
 
 /* On-chip Peripheral Drivers */
 
-#define BSP_USING_DMA
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
 #define BSP_USING_FLEXSPI

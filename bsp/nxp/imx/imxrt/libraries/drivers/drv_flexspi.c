@@ -17,7 +17,7 @@
 #include <finsh.h>
 #endif
 
-#include "flexspi_port.h"
+#include "ports/flexspi_port.h"
 #include "fsl_flexspi.h"
 
 #define FLEXSPI_DEBUG
