@@ -229,4 +229,82 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_EPWM
+        bool "Enable EPWM"
+        select RT_USING_PWM
+        default n
+        if BSP_USING_EPWM
+            config BSP_USING_EPWM1
+                bool "Enable EPWM1"
+                default n
+
+            config BSP_USING_EPWM2
+                bool "Enable EPWM2"
+                default n
+
+            config BSP_USING_EPWM3
+                bool "Enable EPWM3"
+                default n
+
+            config BSP_USING_EPWM4
+                bool "Enable EPWM4"
+                default n
+            
+            config BSP_USING_EPWM5
+                bool "Enable EPWM5"
+                default n
+
+            config BSP_USING_EPWM6
+                bool "Enable EPWM6"
+                default n
+
+            config BSP_USING_EPWM7
+                bool "Enable EPWM7"
+                default n
+
+            config BSP_USING_EPWM8
+                bool "Enable EPWM8"
+                default n
+
+            config BSP_USING_EPWM9
+                bool "Enable EPWM9"
+                default n
+
+            config BSP_USING_EPWM10
+                bool "Enable EPWM10"
+                default n
+
+            config BSP_USING_EPWM11
+                bool "Enable EPWM11"
+                default n
+
+            config BSP_USING_EPWM12
+                bool "Enable EPWM12"
+                default n
+
+            config BSP_USING_EPWM13
+                bool "Enable EPWM13"
+                default n
+
+            config BSP_USING_EPWM14
+                bool "Enable EPWM14"
+                default n
+
+            config BSP_USING_EPWM15
+                bool "Enable EPWM15"
+                default n
+
+            config BSP_USING_EPWM16
+                bool "Enable EPWM16"
+                default n
+
+            config BSP_USING_EPWM17
+                bool "Enable EPWM17"
+                default n
+
+            config BSP_USING_EPWM18
+                bool "Enable EPWM18"
+                default n
+        endif
+
 endmenu
