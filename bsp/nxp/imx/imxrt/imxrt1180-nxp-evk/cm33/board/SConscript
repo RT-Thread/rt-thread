@@ -8,12 +8,12 @@ cwd = GetCurrentDir()
 # add the general drivers.
 src = Split("""
 board.c
-clock_config.c
-pin_mux.c
-peripherals.c
+MCUX_Config_LPADC1/clock_config.c
+MCUX_Config_LPADC1/pin_mux.c
+MCUX_Config_LPADC1/peripherals.c
 """)
 
-CPPPATH = [cwd,cwd + '/ports']
+CPPPATH = [cwd,cwd + '/MCUX_Config_LPADC1',cwd + '/ports']
 CPPDEFINES = ['CPU_MIMXRT1189CVM8C_cm33', 'MCUXPRESSO_SDK', 'MCUX_META_BUILD', 'MIMXRT1189_cm33_SERIES', 'XIP_BOOT_HEADER_ENABLE=1', 'XIP_BOOT_HEADER_DCD_ENABLE=1', 'XIP_EXTERNAL_FLASH=1', 'ARM_MATH_CM33']
 
 if rtconfig.PLATFORM in ['gcc']:

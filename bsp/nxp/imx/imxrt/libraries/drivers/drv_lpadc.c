@@ -36,7 +36,7 @@ static struct rt_adc_device lpadc1_device;
 static struct rt_adc_device lpadc2_device;
 #endif
 
-#if defined(BSP_USING_DMA)
+#if defined(BSP_LPADC1_USING_DMA)
 #include "fsl_edma.h"
 #include "peripherals.h"
 
@@ -52,22 +52,7 @@ void DMA_Callback(edma_handle_t *handle, void *userData, bool transferDone, uint
     }
 }
 #endif
-/*
-this is something important to consider:
-1. if MCU_Config software is used for lpadc peripheral initialization, low-level driver has already configured there, 
-   it is deeply impacted by MCU_Config in this file, only way to do is to check if the channel is what we want to use
-   in actual scenario. need further parameters check for this kind of usage.
-2. if no MCU_Config used for actual usage, more parameters can be configured by drv_lpadc.c .. 
-*/
 
-/*
-LIMITATIONS FOR drv_lpadc driver:
-1. deeply depends on MCU_Config software, customized driver.
-*/
-/*
-IMPORTANT: For imxrt1180-evk platform, it is required to have a convention for multi-layer development.
- e.g. low-level configuration comes from MCU Config software, only generating codes about clock,pin_mux,necessary boot-up drivers, decoupling with HAL layer. 
-*/
 static rt_err_t imxrt_lp_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
 	ADC_Type *base;
@@ -89,20 +74,19 @@ static rt_err_t imxrt_lp_adc_enabled(struct rt_adc_device *device, rt_int8_t cha
 static rt_err_t imxrt_lp_adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     ADC_Type *base;
-    uint8_t i=0;
 	uint32_t data_mask=0xffffffff;
-#if defined(BSP_USING_DMA)
+#if defined(BSP_LPADC1_USING_DMA)
 	
 #else
+	uint8_t i=0;
 	uint32_t adc_result[7];  /* conv sequence: A1_4, A1_5(INVALID), A1_6, A1_7, B1_5, B1_6, B1_7 */
 #endif
-	
 	
     lpadc_conv_result_t mLpadcResultConfigStruct;
     base = (ADC_Type *)(device->parent.user_data);
 
     LPADC_DoSoftwareTrigger(base, 1U);
-#if defined(BSP_USING_DMA)
+#if defined(BSP_LPADC1_USING_DMA)
 	data_mask = 0xffff;
 	EDMA_StartTransfer(&DMA4_CH0_Handle);
 	/* Wait for EDMA transfer finish */

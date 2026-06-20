@@ -61,7 +61,7 @@ component:
 /***********************************************************************************************************************
  * BOARD_InitPeripherals functional group
  **********************************************************************************************************************/
- #if defined(BSP_USING_DMA)
+#ifdef BSP_LPADC1_USING_DMA
 /***********************************************************************************************************************
  * DMA4 initialization code
  **********************************************************************************************************************/
@@ -503,7 +503,7 @@ static void ADC1_init(void) {
  **********************************************************************************************************************/
 void BOARD_InitPeripherals(void)
 {
-#if defined(BSP_USING_DMA)
+#ifdef BSP_LPADC1_USING_DMA
   /* Global initialization */
   (void)memset(DMA4_config.channelConfig, 0, FSL_FEATURE_EDMA_INSTANCE_CHANNELn(DMA4_DMA_BASEADDR) * sizeof(edma_channel_config_t *));
   EDMA_Init(DMA4_DMA_BASEADDR, &DMA4_config);

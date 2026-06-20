@@ -24,7 +24,7 @@
 #include "fsl_clock.h"
 #include "fsl_rgpio.h"
 #include "fsl_lpadc.h"
-
+#include "rtconfig.h"
 #if defined(__cplusplus)
 extern "C" {
 #endif /* __cplusplus */
@@ -63,19 +63,19 @@ extern "C" {
 /***********************************************************************************************************************
  * Global variables
  **********************************************************************************************************************/
-#if defined(BSP_USING_DMA)
+#ifdef BSP_LPADC1_USING_DMA
 extern edma_config_t DMA4_config;
 /* Destination address extern definition */
 AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t adc_result[], sizeof(uint32_t));
 extern edma_handle_t DMA4_CH0_Handle;
 /* Transactional transfer configurations */
 extern edma_transfer_config_t DMA4_CH0_Transfers_config[1];
-#endif
+#endif 
 extern const lpuart_config_t LPUART1_config;
 extern const lpadc_config_t ADC1_config;
 extern lpadc_conv_command_config_t ADC1_commandsConfig[2];
 extern lpadc_conv_trigger_config_t ADC1_triggersConfig[1];
-#if defined(BSP_USING_DMA)
+#ifdef BSP_LPADC1_USING_DMA
 /***********************************************************************************************************************
  * Callback functions
  **********************************************************************************************************************/

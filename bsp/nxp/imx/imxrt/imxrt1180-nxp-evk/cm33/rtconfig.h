@@ -427,6 +427,7 @@
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_DMA
 #define BSP_USING_LPADC
 #define BSP_USING_LPADC1
 #define BSP_LPADC1_USING_DMA
