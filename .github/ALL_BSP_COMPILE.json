@@ -399,6 +399,14 @@
       ]
     },
     {
+      "RTT_BSP": "aarch64-bsp-smart",
+      "RTT_TOOL_CHAIN": "sourcery-aarch64",
+      "RTT_SMART_TOOL_CHAIN": "aarch64-linux-musleabi",
+      "SUB_RTT_BSP": [
+        "rockchip/rk3500"
+      ]
+    },
+    {
       "RTT_BSP": "riscv-none",
       "RTT_TOOL_CHAIN": "sourcery-riscv-none-embed",
       "SUB_RTT_BSP": [

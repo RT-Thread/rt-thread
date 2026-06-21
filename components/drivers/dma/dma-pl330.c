@@ -212,6 +212,27 @@
 /** @brief Microcode instruction: write memory barrier */
 #define PL330_CMD_DMAWMB 0x13
 
+/** @brief Microcode instruction sizes */
+#define PL330_SIZE_DMAADDH 3
+#define PL330_SIZE_DMAEND 1
+#define PL330_SIZE_DMAFLUSHP 2
+#define PL330_SIZE_DMALD 1
+#define PL330_SIZE_DMALDP 2
+#define PL330_SIZE_DMALP 2
+#define PL330_SIZE_DMALPEND 2
+#define PL330_SIZE_DMAKILL 1
+#define PL330_SIZE_DMAMOV 6
+#define PL330_SIZE_DMANOP 1
+#define PL330_SIZE_DMARMB 1
+#define PL330_SIZE_DMASEV 2
+#define PL330_SIZE_DMAST 1
+#define PL330_SIZE_DMASTP 2
+#define PL330_SIZE_DMASTZ 1
+#define PL330_SIZE_DMAWFE 2
+#define PL330_SIZE_DMAWFP 2
+#define PL330_SIZE_DMAWMB 1
+#define PL330_SIZE_DMAGO 6
+
 /** @brief DMAMOV to Source Address Register */
 #define PL330_DIR_SAR 0
 /** @brief DMAMOV to Channel Control Register */
