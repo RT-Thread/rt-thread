@@ -1,11 +1,22 @@
-menuconfig RT_USING_ADC_V2
-    bool "Using ADC V2 device drivers"
-    depends on !RT_USING_ADC
+menuconfig RT_USING_ADC
+    bool "Using ADC device drivers"
     default n
-    help
-        Enable the standalone ADC V2 framework. ADC V2 currently uses the
-        legacy ADC public namespace, so it cannot be enabled together with
-        RT_USING_ADC.
+
+if RT_USING_ADC
+    config RT_USING_ADC_V2
+        bool "Using ADC V2 device drivers"
+        default n
+        help
+            Enable the standalone ADC V2 framework. ADC V2 uses the legacy ADC
+            public namespace, so it cannot be enabled together with ADC V1.
+
+    config RT_USING_ADC_V1
+        bool
+        default y if !RT_USING_ADC_V2
+
+if RT_USING_DM && RT_USING_ADC_V1
+    osource "$(SOC_DM_ADC_DIR)/Kconfig"
+endif
 
 if RT_USING_ADC_V2
 
@@ -107,3 +118,4 @@ config RT_ADC_V2_USING_MSH
 
 endif
 
+endif

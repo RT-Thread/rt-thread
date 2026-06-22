@@ -18,9 +18,9 @@
 
 #include <rtconfig.h>
 #include "misc.h"
-#if defined(RT_USING_ADC)
-#error "ADC V2 uses the legacy ADC namespace; disable RT_USING_ADC before enabling ADC V2."
-#endif /* defined(RT_USING_ADC) */
+#if !defined(RT_USING_ADC_V2)
+#error "ADC V2 interface requires RT_USING_ADC_V2."
+#endif /* !defined(RT_USING_ADC_V2) */
 
 #include <rtatomic.h>
 #include <rtdevice.h>
