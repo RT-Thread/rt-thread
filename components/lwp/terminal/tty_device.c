@@ -347,8 +347,7 @@ static void tty_init_termios(lwp_tty_t tp)
     t->__c_ispeed = TTYDEF_SPEED;
     t->__c_ospeed = TTYDEF_SPEED;
 
-    memcpy(&t->c_cc, tty_ctrl_charset,
-           sizeof(tty_ctrl_charset) / sizeof(tty_ctrl_charset[0]));
+    memcpy(&t->c_cc, tty_ctrl_charset, sizeof(t->c_cc));
 
 #ifdef USING_BSD_INIT_LOCK_DEVICE
     tp->t_termios_init_out = *t;
