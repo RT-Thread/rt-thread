@@ -9,7 +9,7 @@
 
 name: Post CI Status Comment
 
-#on:
+# on:
 #   workflow_call:
 #     inputs:
 #       workflow_name:
