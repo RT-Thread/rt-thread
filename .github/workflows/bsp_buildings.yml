@@ -269,6 +269,7 @@ jobs:
           RTT_BSP: ${{ matrix.legs.RTT_BSP }}
           RTT_TOOL_CHAIN: ${{ matrix.legs.RTT_TOOL_CHAIN }}
           SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
+          ATTACHCONFIG_RTT_BSP: ${{ join(matrix.legs.ATTACHCONFIG_RTT_BSP || fromJSON('[]'), ',') }}
           RTT_CI_BUILD_DIST: "1"
         run: |
           source ~/.env/env.sh
