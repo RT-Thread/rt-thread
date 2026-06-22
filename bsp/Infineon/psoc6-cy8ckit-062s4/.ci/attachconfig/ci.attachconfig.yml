@@ -7,4 +7,5 @@ utest.pin:
     <<: *scons
     kconfig:
       - CONFIG_RT_USING_UTESTCASES=y
+      - CONFIG_RT_CONSOLEBUF_SIZE=256
       - CONFIG_RT_UTEST_PIN=y
