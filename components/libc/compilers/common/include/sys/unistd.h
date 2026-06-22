@@ -13,8 +13,15 @@
 #define __SYS_UNISTD_H__
 
 #include <stddef.h>
-#include <dfs_file.h>
+#include <stdint.h>
+#include <rtconfig.h>
 #include <sys/types.h>
+
+#ifdef RT_USING_DFS_LARGE_FILE
+typedef int64_t dfs_off_t;
+#else
+typedef int32_t dfs_off_t;
+#endif
 
 #ifdef __cplusplus
 extern "C" {

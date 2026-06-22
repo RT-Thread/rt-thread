@@ -53,7 +53,7 @@ static int blk_fops_ioctl(struct dfs_file *file, int cmd, void *arg)
     return (int)rt_device_control(dev, cmd, arg);
 }
 
-static ssize_t blk_fops_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t blk_fops_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
     void *rbuf;
     rt_ssize_t res = 0;
@@ -118,7 +118,7 @@ static ssize_t blk_fops_read(struct dfs_file *file, void *buf, size_t count, off
     return rsize;
 }
 
-static ssize_t blk_fops_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+static ssize_t blk_fops_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos)
 {
     void *rbuf;
     rt_ssize_t res = 0;

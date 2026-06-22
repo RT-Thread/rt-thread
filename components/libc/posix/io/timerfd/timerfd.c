@@ -52,7 +52,7 @@ static int timerfd_poll(struct dfs_file *file, struct rt_pollreq *req);
 #ifndef RT_USING_DFS_V2
 static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count);
 #else
-static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos);
+static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos);
 #endif
 
 static const struct dfs_file_ops timerfd_fops =
@@ -116,7 +116,7 @@ static int timerfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 #ifndef RT_USING_DFS_V2
 static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count)
 #else
-static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 #endif
 {
     struct rt_timerfd *tfd;

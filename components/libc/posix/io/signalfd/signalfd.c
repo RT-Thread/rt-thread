@@ -40,7 +40,7 @@ static int signalfd_poll(struct dfs_file *file, struct rt_pollreq *req);
 #ifndef RT_USING_DFS_V2
 static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count);
 #else
-static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos);
+static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos);
 #endif
 static int signalfd_add_notify(struct rt_signalfd_ctx *sfd);
 
@@ -121,7 +121,7 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count)
  * @param   pos     Pointer to the file offset.
  * @return  Upon successful completion, returns the number of bytes read; otherwise, returns an negative error code.
  */
-static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 #endif
 {
     struct rt_signalfd_ctx *sfd = RT_NULL;
