@@ -123,6 +123,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [stm32h563-st-nucleo](stm32/stm32h563-st-nucleo) | ✅ | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32h723-lxb-disco](stm32) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32h723-st-nucleo](stm32/stm32h723-st-nucleo) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [stm32h723-DM-MC02](stm32/stm32h723-DM-MC02) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32h730-esphosted-evb](stm32/stm32h730-esphosted-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32h743-armfly-v7](stm32/stm32h743-armfly-v7) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32h743-atk-apollo](stm32/stm32h743-atk-apollo) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | - | - | ✅ | - | - | - | - | - |
