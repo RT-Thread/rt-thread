@@ -169,7 +169,7 @@ int dfs_remount(const char *path, rt_ubase_t flags, void *data)
         }
         else
         {
-            struct stat buf = {0};
+            struct dfs_stat buf = {0};
             if (dfs_file_stat(fullpath, &buf) == 0 && S_ISBLK(buf.st_mode))
             {
                 /* path was not already mounted on target */

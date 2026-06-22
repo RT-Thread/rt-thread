@@ -19,9 +19,9 @@
 #include <dfs_dentry.h>
 #include <dfs_fs.h>
 
-static void *seq_start(struct dfs_seq_file *seq, off_t *index)
+static void *seq_start(struct dfs_seq_file *seq, dfs_off_t *index)
 {
-    off_t i = *index; // seq->index
+    dfs_off_t i = *index; // seq->index
     struct dfs_filesystem_type *fs = dfs_filesystems();
 
     if (fs)
@@ -43,10 +43,10 @@ static void seq_stop(struct dfs_seq_file *seq, void *data)
 {
 }
 
-static void *seq_next(struct dfs_seq_file *seq, void *data, off_t *index)
+static void *seq_next(struct dfs_seq_file *seq, void *data, dfs_off_t *index)
 {
     /* data: The return value of the start or next*/
-    off_t i = *index + 1; // seq->index
+    dfs_off_t i = *index + 1; // seq->index
     struct dfs_filesystem_type *fs = (struct dfs_filesystem_type *)data;
 
     *index = i;

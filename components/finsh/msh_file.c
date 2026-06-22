@@ -429,10 +429,11 @@ static int cmd_rm(int argc, char **argv)
 
     for (index = 1; index < argc; index ++)
     {
-        struct stat s;
 #ifdef RT_USING_DFS_V2
+        struct dfs_stat s;
         if (dfs_file_lstat(argv[index], &s) == 0)
 #else
+        struct stat s;
         if (stat(argv[index], &s) == 0)
 #endif
         {

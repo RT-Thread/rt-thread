@@ -164,9 +164,9 @@ static int show_info(struct dfs_seq_file *seq)
     return 0;
 }
 
-static void *seq_start(struct dfs_seq_file *seq, off_t *index)
+static void *seq_start(struct dfs_seq_file *seq, dfs_off_t *index)
 {
-    off_t i = *index; // seq->index
+    dfs_off_t i = *index; // seq->index
 
     return NULL + (i == 0);
 }
@@ -175,10 +175,10 @@ static void seq_stop(struct dfs_seq_file *seq, void *data)
 {
 }
 
-static void *seq_next(struct dfs_seq_file *seq, void *data, off_t *index)
+static void *seq_next(struct dfs_seq_file *seq, void *data, dfs_off_t *index)
 {
     /* data: The return value of the start or next*/
-    off_t i = *index + 1; // seq->index
+    dfs_off_t i = *index + 1; // seq->index
 
     *index = i;
 

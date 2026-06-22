@@ -9,17 +9,19 @@
 
 #include <rtthread.h>
 #include <dfs.h>
+#include <dfs_dentry.h>
 #include <dfs_fs.h>
 #include <dfs_file.h>
+#include <dfs_mnt.h>
 
 #include "dfs_skt_fs.h"
 
-int dfs_skt_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data)
+int dfs_skt_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data)
 {
     return RT_EOK;
 }
 
-int dfs_skt_unmount(struct dfs_filesystem *fs)
+int dfs_skt_unmount(struct dfs_mnt *mnt)
 {
     return RT_EOK;
 }
@@ -29,12 +31,12 @@ int dfs_skt_ioctl(struct dfs_file *file, int cmd, void *args)
     return -RT_EIO;
 }
 
-int dfs_skt_read(struct dfs_file *file, void *buf, rt_size_t count)
+ssize_t dfs_skt_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
     return count;
 }
 
-int dfs_skt_lseek(struct dfs_file *file, rt_off_t offset)
+dfs_off_t dfs_skt_lseek(struct dfs_file *file, dfs_off_t offset, int wherece)
 {
     return -RT_EIO;
 }
@@ -49,7 +51,7 @@ int dfs_skt_open(struct dfs_file *file)
     return RT_EOK;
 }
 
-int dfs_skt_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
+int dfs_skt_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
 {
     return RT_EOK;
 }
@@ -61,36 +63,35 @@ int dfs_skt_getdents(struct dfs_file *file, struct dirent *dirp, rt_uint32_t cou
 
 static const struct dfs_file_ops _skt_fops =
 {
-    dfs_skt_open,
-    dfs_skt_close,
-    dfs_skt_ioctl,
-    dfs_skt_read,
-    NULL, /* write */
-    NULL, /* flush */
-    dfs_skt_lseek,
-    dfs_skt_getdents,
+    .open = dfs_skt_open,
+    .close = dfs_skt_close,
+    .ioctl = dfs_skt_ioctl,
+    .read = dfs_skt_read,
+    .lseek = dfs_skt_lseek,
+    .getdents = dfs_skt_getdents,
 };
 
 static const struct dfs_filesystem_ops _skt_fs =
 {
-    "skt",
-    DFS_FS_FLAG_DEFAULT,
-    &_skt_fops,
+    .name = "skt",
+    .flags = DFS_FS_FLAG_DEFAULT,
+    .default_fops = &_skt_fops,
 
-    dfs_skt_mount,
-    dfs_skt_unmount,
-    NULL, /* mkfs */
-    NULL, /* statfs */
+    .mount = dfs_skt_mount,
+    .umount = dfs_skt_unmount,
 
-    NULL, /* unlink */
-    dfs_skt_stat,
-    NULL, /* rename */
+    .stat = dfs_skt_stat,
+};
+
+static struct dfs_filesystem_type _skt_type =
+{
+    .fs_ops = &_skt_fs,
 };
 
 int dfs_skt_init(void)
 {
     /* register rom file system */
-    dfs_register(&_skt_fs);
+    dfs_register(&_skt_type);
     return 0;
 }
 INIT_COMPONENT_EXPORT(dfs_skt_init);

@@ -14,6 +14,6 @@
 
 int dfs_procfs_init(void);
 
-int proc_read_data(struct dfs_file *file, void *buf, size_t count, off_t *pos);
+int proc_read_data(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos);
 
 #endif

@@ -781,7 +781,7 @@ end:
     return ret;
 }
 
-static ssize_t dfs_cromfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t dfs_cromfs_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
     rt_err_t result = RT_EOK;
     file_info *fi = NULL;
@@ -791,13 +791,13 @@ static ssize_t dfs_cromfs_read(struct dfs_file *file, void *buf, size_t count, o
     ci = (cromfs_info *)file->dentry->mnt->data;
     fi = (file_info *)file->vnode->data;
 
-    if ((off_t)count < (off_t)file->vnode->size - *pos)
+    if ((dfs_off_t)count < (dfs_off_t)file->vnode->size - *pos)
     {
         length = count;
     }
     else
     {
-        length = (off_t)file->vnode->size - *pos;
+        length = (dfs_off_t)file->vnode->size - *pos;
     }
 
     if (length > 0)
@@ -1063,7 +1063,7 @@ end:
     return ret;
 }
 
-static int dfs_cromfs_stat(struct dfs_dentry *dentry, struct stat *st)
+static int dfs_cromfs_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
 {
     uint32_t size = 0, osize = 0;
     int file_type = 0;
@@ -1102,7 +1102,7 @@ static int dfs_cromfs_stat(struct dfs_dentry *dentry, struct stat *st)
 #endif
     }
 
-    st->st_mtime = 0;
+    st->mtime = 0;
 
     return RT_EOK;
 }
@@ -1323,7 +1323,7 @@ static ssize_t dfs_cromfs_page_read(struct dfs_file *file, struct dfs_page *page
 
     if (page->page)
     {
-        off_t fpos = page->fpos;
+        dfs_off_t fpos = page->fpos;
         ret = dfs_cromfs_read(file, page->page, page->size, &fpos);
     }
 

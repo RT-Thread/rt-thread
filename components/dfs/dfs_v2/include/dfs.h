@@ -83,9 +83,40 @@
 #define DFS_F_FREAD     0x01
 #define DFS_F_FWRITE    0x02
 
+#ifdef RT_USING_DFS_LARGE_FILE
+typedef int64_t dfs_off_t;
+#define DFS_OFF_MAX INT64_MAX
+#else
+typedef int32_t dfs_off_t;
+#define DFS_OFF_MAX INT32_MAX
+#endif
+
+struct dfs_stat
+{
+    dev_t st_dev;
+    uint16_t st_ino;
+    uint16_t st_mode;
+    uint16_t st_nlink;
+    uint16_t st_uid;
+    uint16_t st_gid;
+    struct rt_device *st_rdev;
+    dfs_off_t st_size;
+    time_t atime;
+    long st_spare1;
+    time_t mtime;
+    long st_spare2;
+    time_t ctime;
+    long st_spare3;
+    uint32_t st_blksize;
+    uint32_t st_blocks;
+    long st_spare4[2];
+};
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+void dfs_print_off_t(dfs_off_t value);
 
 rt_inline int dfs_fflags(int oflags)
 {

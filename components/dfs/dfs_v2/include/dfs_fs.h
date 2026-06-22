@@ -56,7 +56,7 @@ extern "C"
 struct dfs_partition
 {
     uint8_t type; /* file system type */
-    off_t offset; /* partition start offset */
+    dfs_off_t offset; /* partition start offset */
     size_t size;  /* partition size */
     rt_sem_t lock;
 };
@@ -96,7 +96,7 @@ struct dfs_filesystem_ops
     int (*symlink)(struct dfs_dentry *parent_dentry, const char *target, const char *newpath); /*soft link interface*/
 
     int (*rename)(struct dfs_dentry *old_dentry, struct dfs_dentry *new_dentry);
-    int (*stat)(struct dfs_dentry *dentry, struct stat *buf);
+    int (*stat)(struct dfs_dentry *dentry, struct dfs_stat *buf);
 
     int (*statfs)(struct dfs_mnt *mnt, struct statfs *buf);
 

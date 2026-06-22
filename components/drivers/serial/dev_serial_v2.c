@@ -102,7 +102,6 @@ static int serial_fops_open(struct dfs_file *fd)
 
     rt_device_close(device);
     ret = rt_device_open(device, flags);
-    
     if (ret == RT_EOK)
     {
         serial = (struct rt_serial_device *)device;

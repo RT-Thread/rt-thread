@@ -40,11 +40,11 @@ struct dfs_file_ops
     int (*open)(struct dfs_file *file);
     int (*close)(struct dfs_file *file);
     int (*ioctl)(struct dfs_file *file, int cmd, void *arg);
-    ssize_t (*read)(struct dfs_file *file, void *buf, size_t count, off_t *pos);
-    ssize_t (*write)(struct dfs_file *file, const void *buf, size_t count, off_t *pos);
+    ssize_t (*read)(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos);
+    ssize_t (*write)(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos);
     int (*flush)(struct dfs_file *file);
-    off_t (*lseek)(struct dfs_file *file, off_t offset, int wherece);
-    int (*truncate)(struct dfs_file *file, off_t offset);
+    dfs_off_t (*lseek)(struct dfs_file *file, dfs_off_t offset, int wherece);
+    int (*truncate)(struct dfs_file *file, dfs_off_t offset);
     int (*getdents)(struct dfs_file *file, struct dirent *dirp, uint32_t count);
     int (*poll)(struct dfs_file *file, struct rt_pollreq *req);
 
@@ -63,7 +63,7 @@ struct dfs_vnode
 
     struct dfs_mnt *mnt;    /* which mounted file system does this vnode belong to */
 
-    size_t size;
+    dfs_off_t size;
     uint32_t nlink;
 
     const struct dfs_file_ops *fops;
@@ -90,7 +90,7 @@ struct dfs_file
     uint32_t flags;
     rt_atomic_t ref_count;
 
-    off_t fpos;
+    dfs_off_t fpos;
     struct rt_mutex pos_lock;
 
     const struct dfs_file_ops *fops;
@@ -136,7 +136,7 @@ struct dfs_mmap2_args
     size_t length;
     int prot;
     int flags;
-    off_t pgoffset;
+    dfs_off_t pgoffset;
     size_t min_align_size;
 
     struct rt_lwp *lwp;
@@ -150,18 +150,18 @@ void dfs_file_deinit(struct dfs_file *file);
 int dfs_file_open(struct dfs_file *file, const char *path, int flags, mode_t mode);
 int dfs_file_close(struct dfs_file *file);
 
-off_t dfs_file_get_fpos(struct dfs_file *file);
-void dfs_file_set_fpos(struct dfs_file *file, off_t fpos);
-ssize_t dfs_file_pread(struct dfs_file *file, void *buf, size_t len, off_t offset);
+dfs_off_t dfs_file_get_fpos(struct dfs_file *file);
+void dfs_file_set_fpos(struct dfs_file *file, dfs_off_t fpos);
+ssize_t dfs_file_pread(struct dfs_file *file, void *buf, size_t len, dfs_off_t offset);
 ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len);
-ssize_t dfs_file_pwrite(struct dfs_file *file, const void *buf, size_t len, off_t offset);
+ssize_t dfs_file_pwrite(struct dfs_file *file, const void *buf, size_t len, dfs_off_t offset);
 ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len);
-off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence);
-off_t dfs_file_lseek(struct dfs_file *file, off_t offset, int wherece);
-int dfs_file_stat(const char *path, struct stat *buf);
-int dfs_file_lstat(const char *path, struct stat *buf);
+dfs_off_t generic_dfs_lseek(struct dfs_file *file, dfs_off_t offset, int whence);
+dfs_off_t dfs_file_lseek(struct dfs_file *file, dfs_off_t offset, int wherece);
+int dfs_file_stat(const char *path, struct dfs_stat *buf);
+int dfs_file_lstat(const char *path, struct dfs_stat *buf);
 int dfs_file_setattr(const char *path, struct dfs_attr *attr);
-int dfs_file_fstat(struct dfs_file *file, struct stat *buf);
+int dfs_file_fstat(struct dfs_file *file, struct dfs_stat *buf);
 int dfs_file_ioctl(struct dfs_file *file, int cmd, void *args);
 int dfs_file_fcntl(int fd, int cmd, unsigned long arg);
 int dfs_file_fsync(struct dfs_file *file);
@@ -170,7 +170,7 @@ int dfs_file_link(const char *oldname, const char *newname);
 int dfs_file_symlink(const char *oldname, const char *name);
 int dfs_file_readlink(const char *path, char *buf, int bufsize);
 int dfs_file_rename(const char *old_file, const char *new_file);
-int dfs_file_ftruncate(struct dfs_file *file, off_t length);
+int dfs_file_ftruncate(struct dfs_file *file, dfs_off_t length);
 int dfs_file_getdents(struct dfs_file *file, struct dirent *dirp, size_t nbytes);
 int dfs_file_mkdir(const char *path, mode_t mode);
 int dfs_file_rmdir(const char *pathname);

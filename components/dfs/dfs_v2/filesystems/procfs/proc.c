@@ -133,12 +133,12 @@ static int proc_find(struct proc_dentry **parent, const char **name, rt_bool_t f
     return ret;
 }
 
-static void *single_start(struct dfs_seq_file *seq, off_t *index)
+static void *single_start(struct dfs_seq_file *seq, dfs_off_t *index)
 {
     return NULL + (*index == 0);
 }
 
-static void *single_next(struct dfs_seq_file *seq, void *data, off_t *index)
+static void *single_next(struct dfs_seq_file *seq, void *data, dfs_off_t *index)
 {
     ++*index;
     return NULL;

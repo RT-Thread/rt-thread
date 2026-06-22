@@ -38,7 +38,7 @@
 
 
 static int dfs_elm_free_vnode(struct dfs_vnode *vnode);
-static int dfs_elm_truncate(struct dfs_file *file, off_t offset);
+static int dfs_elm_truncate(struct dfs_file *file, dfs_off_t offset);
 
 #ifdef RT_USING_PAGECACHE
 static ssize_t dfs_elm_page_read(struct dfs_file *file, struct dfs_page *page);
@@ -549,7 +549,7 @@ int dfs_elm_ioctl(struct dfs_file *file, int cmd, void *args)
     {
     case RT_FIOFTRUNCATE:
     {
-        off_t offset = (off_t)(size_t)(args);
+        dfs_off_t offset = *(dfs_off_t *)args;
         return dfs_elm_truncate(file, offset);
     }
     case F_GETLK:
@@ -560,7 +560,7 @@ int dfs_elm_ioctl(struct dfs_file *file, int cmd, void *args)
     return -ENOSYS;
 }
 
-ssize_t dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
+ssize_t dfs_elm_read(struct dfs_file *file, void *buf, size_t len, dfs_off_t *pos)
 {
     FIL *fd;
     FRESULT result = FR_OK;
@@ -576,7 +576,12 @@ ssize_t dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
         fd = (FIL *)(file->vnode->data);
         RT_ASSERT(fd != RT_NULL);
         rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
-        f_lseek(fd, *pos);
+        if (*pos < 0 || (dfs_off_t)(FSIZE_t)*pos != *pos)
+        {
+            rt_mutex_release(&file->vnode->lock);
+            return -EINVAL;
+        }
+        f_lseek(fd, (FSIZE_t)*pos);
         result = f_read(fd, buf, len, &byte_read);
         /* update position */
         *pos = fd->fptr;
@@ -588,7 +593,7 @@ ssize_t dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
     return elm_result_to_dfs(result);
 }
 
-ssize_t dfs_elm_write(struct dfs_file *file, const void *buf, size_t len, off_t *pos)
+ssize_t dfs_elm_write(struct dfs_file *file, const void *buf, size_t len, dfs_off_t *pos)
 {
     FIL *fd;
     FRESULT result;
@@ -602,7 +607,12 @@ ssize_t dfs_elm_write(struct dfs_file *file, const void *buf, size_t len, off_t 
     fd = (FIL *)(file->vnode->data);
     RT_ASSERT(fd != RT_NULL);
     rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
-    f_lseek(fd, *pos);
+    if (*pos < 0 || (dfs_off_t)(FSIZE_t)*pos != *pos)
+    {
+        rt_mutex_release(&file->vnode->lock);
+        return -EINVAL;
+    }
+    f_lseek(fd, (FSIZE_t)*pos);
     result = f_write(fd, buf, len, &byte_write);
     /* update position and file size */
     *pos = fd->fptr;
@@ -626,10 +636,10 @@ int dfs_elm_flush(struct dfs_file *file)
     return elm_result_to_dfs(result);
 }
 
-off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
+dfs_off_t dfs_elm_lseek(struct dfs_file *file, dfs_off_t offset, int wherece)
 {
     FRESULT result = FR_OK;
-    off_t pos = 0;
+    dfs_off_t pos = 0;
     switch (wherece)
     {
     case SEEK_SET:
@@ -647,6 +657,11 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
         return -EINVAL;
     }
 
+    if (offset < 0 || (dfs_off_t)(FSIZE_t)offset != offset)
+    {
+        return -EINVAL;
+    }
+
     if (file->vnode->type == FT_REGULAR)
     {
         FIL *fd;
@@ -655,7 +670,7 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
         fd = (FIL *)(file->vnode->data);
         RT_ASSERT(fd != RT_NULL);
         rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
-        result = f_lseek(fd, offset);
+        result = f_lseek(fd, (FSIZE_t)offset);
         pos = fd->fptr;
         rt_mutex_release(&file->vnode->lock);
         if (result == FR_OK)
@@ -684,24 +699,30 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
     return elm_result_to_dfs(result);
 }
 
-static int dfs_elm_truncate(struct dfs_file *file, off_t offset)
+static int dfs_elm_truncate(struct dfs_file *file, dfs_off_t offset)
 {
     FIL *fd;
-    FSIZE_t fptr;
+    FSIZE_t fptr, length;
     FRESULT result = FR_OK;
     fd = (FIL *)(file->vnode->data);
     RT_ASSERT(fd != RT_NULL);
 
+    if (offset < 0 || (dfs_off_t)(FSIZE_t)offset != offset)
+    {
+        return -EINVAL;
+    }
+    length = (FSIZE_t)offset;
+
     /* save file read/write point */
     fptr = fd->fptr;
-    if (offset <= fd->obj.objsize)
+    if (length <= fd->obj.objsize)
     {
-        fd->fptr = offset;
+        fd->fptr = length;
         result = f_truncate(fd);
     }
     else
     {
-        result = f_lseek(fd, offset);
+        result = f_lseek(fd, length);
     }
     /* restore file read/write point */
     fd->fptr = fptr;
@@ -829,7 +850,7 @@ int dfs_elm_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *new_dentry)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_stat(struct dfs_dentry *dentry, struct stat *st)
+int dfs_elm_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
 {
     FATFS  *fat;
     FILINFO file_info;
@@ -929,7 +950,7 @@ int dfs_elm_stat(struct dfs_dentry *dentry, struct stat *st)
             tm_file.tm_min  = min;         /* Minutes: 0-59 */
             tm_file.tm_sec  = sec;         /* Seconds: 0-59 */
 
-            st->st_mtime = timegm(&tm_file);
+            st->mtime = timegm(&tm_file);
         } /* get st_mtime. */
     }
 
@@ -938,7 +959,7 @@ int dfs_elm_stat(struct dfs_dentry *dentry, struct stat *st)
 
 static struct dfs_vnode *dfs_elm_lookup(struct dfs_dentry *dentry)
 {
-    struct stat st;
+    struct dfs_stat st;
     struct dfs_vnode *vnode = RT_NULL;
 
     if (dentry == NULL || dentry->mnt == NULL || dentry->mnt->data == NULL)
@@ -1030,7 +1051,7 @@ static ssize_t dfs_elm_page_read(struct dfs_file *file, struct dfs_page *page)
 
     if (page->page)
     {
-        off_t fpos = page->fpos;
+        dfs_off_t fpos = page->fpos;
         ret = dfs_elm_read(file, page->page, page->size, &fpos);
     }
 
@@ -1051,7 +1072,7 @@ ssize_t dfs_elm_page_write(struct dfs_page *page)
     fd = (FIL *)(page->aspace->vnode->data);
     RT_ASSERT(fd != RT_NULL);
     rt_mutex_take(&page->aspace->vnode->lock, RT_WAITING_FOREVER);
-    f_lseek(fd, page->fpos);
+    f_lseek(fd, (FSIZE_t)page->fpos);
     result = f_write(fd, page->page, page->len, &byte_write);
     rt_mutex_release(&page->aspace->vnode->lock);
     if (result == FR_OK)

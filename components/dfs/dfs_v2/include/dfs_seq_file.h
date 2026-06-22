@@ -26,8 +26,8 @@ struct dfs_seq_file
     size_t count;       /* Length of valid data in buffer */
     size_t pad_until;   /* Padding target position for alignment */
 
-    off_t index;        /* Current item index in sequence */
-    off_t read_pos;     /* Current read position in file */
+    dfs_off_t index;    /* Current item index in sequence */
+    dfs_off_t read_pos; /* Current read position in file */
 
     struct rt_mutex lock; /* Mutex for thread safety */
 
@@ -41,9 +41,9 @@ struct dfs_seq_file
  */
 struct dfs_seq_ops
 {
-    void *(*start)(struct dfs_seq_file *seq, off_t *index);  /* Start sequence traversal */
+    void *(*start)(struct dfs_seq_file *seq, dfs_off_t *index);  /* Start sequence traversal */
     void (*stop)(struct dfs_seq_file *seq, void *data);      /* Stop sequence traversal */
-    void *(*next)(struct dfs_seq_file *seq, void *data, off_t *index); /* Get next item in sequence */
+    void *(*next)(struct dfs_seq_file *seq, void *data, dfs_off_t *index); /* Get next item in sequence */
     int (*show)(struct dfs_seq_file *seq, void *data);  /* Show current item */
 };
 
@@ -64,8 +64,8 @@ static inline void dfs_seq_setwidth(struct dfs_seq_file *seq, size_t size)
 }
 
 int dfs_seq_open(struct dfs_file *file, const struct dfs_seq_ops *ops);
-ssize_t dfs_seq_read(struct dfs_file *file, void *buf, size_t size, off_t *pos);
-off_t dfs_seq_lseek(struct dfs_file *file, off_t offset, int whence);
+ssize_t dfs_seq_read(struct dfs_file *file, void *buf, size_t size, dfs_off_t *pos);
+dfs_off_t dfs_seq_lseek(struct dfs_file *file, dfs_off_t offset, int whence);
 int dfs_seq_release(struct dfs_file *file);
 int dfs_seq_write(struct dfs_seq_file *seq, const void *data, size_t len);
 

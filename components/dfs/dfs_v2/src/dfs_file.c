@@ -235,9 +235,9 @@ static int _insert_link_path(const char *link_fn, int link_len, char *tmp_path, 
  * @note rw_verify_area doesn't like huge counts. We limit them to something that fits in "int"
  *       so that others won't have to do range checks all the time.
  */
-ssize_t rw_verify_area(struct dfs_file *file, off_t *ppos, size_t count)
+ssize_t rw_verify_area(struct dfs_file *file, dfs_off_t *ppos, size_t count)
 {
-    off_t pos;
+    dfs_off_t pos;
     ssize_t retval = -EINVAL;
 
     if ((size_t)count < 0)
@@ -261,9 +261,9 @@ ssize_t rw_verify_area(struct dfs_file *file, off_t *ppos, size_t count)
  *
  * @param[in] file Pointer to the file structure containing position information
  *
- * @return off_t Current file position, or 0 if file pointer is NULL
+ * @return dfs_off_t Current file position, or 0 if file pointer is NULL
  */
-off_t dfs_file_get_fpos(struct dfs_file *file)
+dfs_off_t dfs_file_get_fpos(struct dfs_file *file)
 {
     if (file)
     {
@@ -288,7 +288,7 @@ off_t dfs_file_get_fpos(struct dfs_file *file)
  * @param[in] file Pointer to the file structure to modify
  * @param[in] fpos The new file position to set
  */
-void dfs_file_set_fpos(struct dfs_file *file, off_t fpos)
+void dfs_file_set_fpos(struct dfs_file *file, dfs_off_t fpos)
 {
     if (file)
     {
@@ -895,7 +895,7 @@ int dfs_file_close(struct dfs_file *file)
  *         -ENOSYS if read operation not supported
  *         -EINVAL if invalid parameters or not mounted
  */
-ssize_t dfs_file_pread(struct dfs_file *file, void *buf, size_t len, off_t offset)
+ssize_t dfs_file_pread(struct dfs_file *file, void *buf, size_t len, dfs_off_t offset)
 {
     ssize_t ret = -EBADF;
 
@@ -912,7 +912,7 @@ ssize_t dfs_file_pread(struct dfs_file *file, void *buf, size_t len, off_t offse
         }
         else if (file->vnode && file->vnode->type != FT_DIRECTORY)
         {
-            off_t pos = offset;
+            dfs_off_t pos = offset;
 
             ret = rw_verify_area(file, &pos, len);
             if (ret > 0)
@@ -974,7 +974,7 @@ ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len)
         else if (file->vnode && file->vnode->type != FT_DIRECTORY)
         {
             /* fpos lock */
-            off_t pos = dfs_file_get_fpos(file);
+            dfs_off_t pos = dfs_file_get_fpos(file);
 
             ret = rw_verify_area(file, &pos, len);
             if (ret > 0)
@@ -1023,7 +1023,7 @@ ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len)
  * @note If O_SYNC flag is set, the data will be immediately flushed to storage device
  *       after write operation.
  */
-ssize_t dfs_file_pwrite(struct dfs_file *file, const void *buf, size_t len, off_t offset)
+ssize_t dfs_file_pwrite(struct dfs_file *file, const void *buf, size_t len, dfs_off_t offset)
 {
     ssize_t ret = -EBADF;
 
@@ -1041,7 +1041,7 @@ ssize_t dfs_file_pwrite(struct dfs_file *file, const void *buf, size_t len, off_
         }
         else if (file->vnode && file->vnode->type != FT_DIRECTORY)
         {
-            off_t pos = offset;
+            dfs_off_t pos = offset;
 
             ret = rw_verify_area(file, &pos, len);
             if (ret > 0)
@@ -1114,7 +1114,7 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
         }
         else if (file->vnode && file->vnode->type != FT_DIRECTORY)
         {
-            off_t pos;
+            dfs_off_t pos;
 
             if (!(file->flags & O_APPEND))
             {
@@ -1180,11 +1180,11 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
  * @param[in] offset Offset value to seek
  * @param[in] whence Seek mode (SEEK_SET/SEEK_CUR/SEEK_END)
  *
- * @return off_t The calculated new file position, or -EINVAL for invalid whence
+ * @return dfs_off_t The calculated new file position, or -EINVAL for invalid whence
  */
-off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence)
+dfs_off_t generic_dfs_lseek(struct dfs_file *file, dfs_off_t offset, int whence)
 {
-    off_t foffset;
+    dfs_off_t foffset;
 
     if (whence == SEEK_SET)
         foffset = offset;
@@ -1208,19 +1208,19 @@ off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence)
  * @param[in] offset Number of bytes to offset from position
  * @param[in] whence Reference position (SEEK_SET/SEEK_CUR/SEEK_END)
  *
- * @return off_t New file position on success, or negative error code:
+ * @return dfs_off_t New file position on success, or negative error code:
  *         -EINVAL if invalid parameters or not mounted
  */
-off_t dfs_file_lseek(struct dfs_file *file, off_t offset, int wherece)
+dfs_off_t dfs_file_lseek(struct dfs_file *file, dfs_off_t offset, int wherece)
 {
-    off_t retval = -EINVAL;
+    dfs_off_t retval = -EINVAL;
 
     if (file && file->fops->lseek)
     {
         if (dfs_is_mounted(file->vnode->mnt) == 0)
         {
             /* fpos lock */
-            off_t pos = dfs_file_get_fpos(file);
+            dfs_off_t pos = dfs_file_get_fpos(file);
             retval = file->fops->lseek(file, offset, wherece);
             if (retval >= 0)
             {
@@ -1246,7 +1246,7 @@ off_t dfs_file_lseek(struct dfs_file *file, off_t offset, int wherece)
  *         -ENOMEM if memory allocation failed
  *         Other negative error codes from filesystem operations
  */
-int dfs_file_stat(const char *path, struct stat *buf)
+int dfs_file_stat(const char *path, struct dfs_stat *buf)
 {
     int ret = -ENOENT;
     char *fullpath = RT_NULL;
@@ -1315,7 +1315,7 @@ int dfs_file_stat(const char *path, struct stat *buf)
  * @note Unlike dfs_file_stat(), this function does not follow symbolic links
  * @see dfs_file_stat()
  */
-int dfs_file_lstat(const char *path, struct stat *buf)
+int dfs_file_lstat(const char *path, struct dfs_stat *buf)
 {
     int ret = -ENOENT;
     char *fullpath = RT_NULL;
@@ -1384,7 +1384,7 @@ int dfs_file_lstat(const char *path, struct stat *buf)
  *
  * @note Currently unimplemented (returns -ENOSYS)
  */
-int dfs_file_fstat(struct dfs_file *file, struct stat *buf)
+int dfs_file_fstat(struct dfs_file *file, struct dfs_stat *buf)
 {
     size_t ret = -EBADF;
 
@@ -1787,7 +1787,7 @@ int dfs_file_unlink(const char *path)
 int dfs_file_link(const char *oldname, const char *newname)
 {
     int ret = -1;
-    struct stat stat;
+    struct dfs_stat stat;
     struct dfs_mnt *mnt = RT_NULL;
     char *old_fullpath, *new_fullpath;
 
@@ -2208,7 +2208,7 @@ int dfs_file_rename(const char *old_file, const char *new_file)
  * @note If RT_USING_PAGECACHE is enabled, the page cache will be cleaned
  *       before truncation to ensure data consistency
  */
-int dfs_file_ftruncate(struct dfs_file *file, off_t length)
+int dfs_file_ftruncate(struct dfs_file *file, dfs_off_t length)
 {
     int ret = 0;
 
@@ -2383,7 +2383,7 @@ int dfs_file_isdir(const char *path)
                 DLOG(msg, "dentry", "dfs_file", DLOG_MSG_RET, "return dentry");
                 if (mnt->fs_ops->stat)
                 {
-                    struct stat stat = {0};
+                    struct dfs_stat stat = {0};
                     DLOG(msg, "dfs_file", mnt->fs_ops->name, DLOG_MSG, "fs_ops->stat(dentry, buf)");
 
                     if (dfs_is_mounted(mnt) == 0)
@@ -2537,7 +2537,7 @@ int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 void ls(const char *pathname)
 {
     struct dirent dirent;
-    struct stat stat;
+    struct dfs_stat stat;
     int length;
     char *fullpath, *path;
     struct dfs_file file;
@@ -2584,7 +2584,7 @@ void ls(const char *pathname)
                 if (length > 0)
                 {
                     DLOG(msg, "dfs_file", "dfs", DLOG_MSG_RET, "dirent.d_name=%s", dirent.d_name);
-                    memset(&stat, 0, sizeof(struct stat));
+                    memset(&stat, 0, sizeof(struct dfs_stat));
 
                     /* build full path for each file */
                     fullpath = dfs_normalize_path(path, dirent.d_name);
@@ -2655,7 +2655,9 @@ void ls(const char *pathname)
                         else if (stat.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
                         {
                             rt_kprintf(_COLOR_GREEN "%-20s" _COLOR_NORMAL, dirent.d_name);
-                            rt_kprintf(" %-25lu\n", (unsigned long)stat.st_size);
+                            rt_kprintf(" ");
+                            dfs_print_off_t(stat.st_size);
+                            rt_kprintf("\n");
                         }
                         else if (S_ISCHR(stat.st_mode))
                         {
@@ -2665,7 +2667,9 @@ void ls(const char *pathname)
                         else
                         {
                             rt_kprintf("%-20s", dirent.d_name);
-                            rt_kprintf(" %-25lu\n", (unsigned long)stat.st_size);
+                            rt_kprintf(" ");
+                            dfs_print_off_t(stat.st_size);
+                            rt_kprintf("\n");
                         }
                     }
                     else
@@ -2835,7 +2839,7 @@ extern int mkdir(const char *path, mode_t mode);
 static void copydir(const char *src, const char *dst)
 {
     struct dirent dirent;
-    struct stat stat;
+    struct dfs_stat stat;
     int length;
     struct dfs_file file;
 
@@ -2874,7 +2878,7 @@ static void copydir(const char *src, const char *dst)
                 break;
             }
 
-            rt_memset(&stat, 0, sizeof(struct stat));
+            rt_memset(&stat, 0, sizeof(struct dfs_stat));
             if (dfs_file_lstat(src_entry_full, &stat) != 0)
             {
                 rt_kprintf("open file: %s failed\n", dirent.d_name);
@@ -2948,7 +2952,7 @@ void copy(const char *src, const char *dst)
 #define FLAG_DST_IS_FILE   0x08
 #define FLAG_DST_NON_EXSIT 0x00
 
-    struct stat stat;
+    struct dfs_stat stat;
     uint32_t flag = 0;
 
     /* check the staus of src and dst */
