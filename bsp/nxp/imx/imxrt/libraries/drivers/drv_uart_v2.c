@@ -17,7 +17,7 @@
 
 #include "rthw.h"
 #include <rtdevice.h>
-#include "drv_uart_v2.h"
+#include "drv_uart.h"
 #include "board.h"
 #include "fsl_lpuart.h"
 #include "fsl_lpuart_edma.h"

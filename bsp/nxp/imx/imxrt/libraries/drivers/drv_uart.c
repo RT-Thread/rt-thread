@@ -8,7 +8,6 @@
  * 2017-10-10     Tanek        the first version
  * 2019-5-10      misonyo      add DMA TX and RX function
  * 2026-4-29      Ran          add RT1180 support
- * 2026-6-4       shannon      add LPUART10/12, Serial V2, DMA (V2)
  */
 #include <rtthread.h>
 #ifdef BSP_USING_LPUART
@@ -56,12 +55,6 @@ enum
 #ifdef BSP_USING_LPUART8
     LPUART8_INDEX,
 #endif
-#ifdef BSP_USING_LPUART10
-    LPUART10_INDEX,
-#endif
-#ifdef BSP_USING_LPUART12
-    LPUART12_INDEX,
-#endif
 };
 
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
@@ -71,7 +64,6 @@ struct dma_rx_config
     dma_request_source_t request;
     rt_uint8_t channel;
     rt_uint32_t last_index;
-    EDMA_Type *edma_base;
 };
 
 struct dma_tx_config
@@ -80,7 +72,6 @@ struct dma_tx_config
     lpuart_edma_handle_t uart_edma;
     dma_request_source_t request;
     rt_uint8_t channel;
-    EDMA_Type *edma_base;
 };
 
 #endif
@@ -196,174 +187,220 @@ static struct imxrt_uart uarts[] =
         .dma_flag = 0,
     },
 #endif
-#ifdef BSP_USING_LPUART10
-    {
-        .name = "uart10",
-        .uart_base = LPUART10,
-        .irqn = LPUART10_IRQn,
-#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
-        .dma_rx = RT_NULL,
-        .dma_tx = RT_NULL,
-#endif
-        .dma_flag = 0,
-    },
-#endif
-#ifdef BSP_USING_LPUART12
-    {
-        .name = "uart12",
-        .uart_base = LPUART12,
-        .irqn = LPUART12_IRQn,
-#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
-        .dma_rx = RT_NULL,
-        .dma_tx = RT_NULL,
-#endif
-        .dma_flag = 0,
-    },
-#endif
 };
 
 static void uart_get_dma_config(void)
 {
-#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
-#ifdef SOC_IMXRT1180_SERIES
 #ifdef BSP_LPUART1_RX_USING_DMA
-    static struct dma_rx_config uart1_dma_rx =
-        {.request = kDma3RequestMuxLPUART1Rx, .channel = BSP_LPUART1_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3};
+    static struct dma_rx_config uart1_dma_rx = {.request = kDmaRequestMuxLPUART1Rx, .channel = BSP_LPUART1_RX_DMA_CHANNEL, .last_index = 0};
     uarts[LPUART1_INDEX].dma_rx = &uart1_dma_rx;
     uarts[LPUART1_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART1_TX_USING_DMA
-    static struct dma_tx_config uart1_dma_tx =
-        {.request = kDma3RequestMuxLPUART1Tx, .channel = BSP_LPUART1_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3};
+    static struct dma_tx_config uart1_dma_tx = {.request = kDmaRequestMuxLPUART1Tx, .channel = BSP_LPUART1_TX_DMA_CHANNEL};
     uarts[LPUART1_INDEX].dma_tx = &uart1_dma_tx;
     uarts[LPUART1_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
+
+#ifdef BSP_LPUART2_RX_USING_DMA
+    static struct dma_rx_config uart2_dma_rx = {.request = kDmaRequestMuxLPUART2Rx, .channel = BSP_LPUART2_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART2_INDEX].dma_rx = &uart2_dma_rx;
+    uarts[LPUART2_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART2_TX_USING_DMA
+    static struct dma_tx_config uart2_dma_tx = {.request = kDmaRequestMuxLPUART2Tx, .channel = BSP_LPUART2_TX_DMA_CHANNEL};
+    uarts[LPUART2_INDEX].dma_tx = &uart2_dma_tx;
+    uarts[LPUART2_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
-#ifdef BSP_LPUART10_RX_USING_DMA
-    static struct dma_rx_config uart10_dma_rx =
-        {.request = kDma4RequestMuxLPUART10Rx, .channel = BSP_LPUART10_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA4};
-    uarts[LPUART10_INDEX].dma_rx = &uart10_dma_rx;
-    uarts[LPUART10_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#ifdef BSP_LPUART3_RX_USING_DMA
+    static struct dma_rx_config uart3_dma_rx = {.request = kDmaRequestMuxLPUART3Rx, .channel = BSP_LPUART3_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART3_INDEX].dma_rx = &uart3_dma_rx;
+    uarts[LPUART3_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
-#ifdef BSP_LPUART10_TX_USING_DMA
-    static struct dma_tx_config uart10_dma_tx =
-        {.request = kDma4RequestMuxLPUART10Tx, .channel = BSP_LPUART10_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA4};
-    uarts[LPUART10_INDEX].dma_tx = &uart10_dma_tx;
-    uarts[LPUART10_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#ifdef BSP_LPUART3_TX_USING_DMA
+    static struct dma_tx_config uart3_dma_tx = {.request = kDmaRequestMuxLPUART3Tx, .channel = BSP_LPUART3_TX_DMA_CHANNEL};
+    uarts[LPUART3_INDEX].dma_tx = &uart3_dma_tx;
+    uarts[LPUART3_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
-#ifdef BSP_LPUART12_RX_USING_DMA
-    static struct dma_rx_config uart12_dma_rx =
-        {.request = kDma3RequestMuxLPUART12Rx, .channel = BSP_LPUART12_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3};
-    uarts[LPUART12_INDEX].dma_rx = &uart12_dma_rx;
-    uarts[LPUART12_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#ifdef BSP_LPUART4_RX_USING_DMA
+    static struct dma_rx_config uart4_dma_rx = {.request = kDmaRequestMuxLPUART4Rx, .channel = BSP_LPUART4_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART4_INDEX].dma_rx = &uart4_dma_rx;
+    uarts[LPUART4_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
-#ifdef BSP_LPUART12_TX_USING_DMA
-    static struct dma_tx_config uart12_dma_tx =
-        {.request = kDma3RequestMuxLPUART12Tx, .channel = BSP_LPUART12_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3};
-    uarts[LPUART12_INDEX].dma_tx = &uart12_dma_tx;
-    uarts[LPUART12_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#ifdef BSP_LPUART4_TX_USING_DMA
+    static struct dma_tx_config uart4_dma_tx = {.request = kDmaRequestMuxLPUART4Tx, .channel = BSP_LPUART4_TX_DMA_CHANNEL};
+    uarts[LPUART4_INDEX].dma_tx = &uart4_dma_tx;
+    uarts[LPUART4_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
+
+#ifdef BSP_LPUART5_RX_USING_DMA
+    static struct dma_rx_config uart5_dma_rx = {.request = kDmaRequestMuxLPUART5Rx, .channel = BSP_LPUART5_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART5_INDEX].dma_rx = &uart5_dma_rx;
+    uarts[LPUART5_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART5_TX_USING_DMA
+    static struct dma_tx_config uart5_dma_tx = {.request = kDmaRequestMuxLPUART5Tx, .channel = BSP_LPUART5_TX_DMA_CHANNEL};
+    uarts[LPUART5_INDEX].dma_tx = &uart5_dma_tx;
+    uarts[LPUART5_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART6_RX_USING_DMA
+    static struct dma_rx_config uart6_dma_rx = {.request = kDmaRequestMuxLPUART6Rx, .channel = BSP_LPUART6_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART6_INDEX].dma_rx = &uart6_dma_rx;
+    uarts[LPUART6_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART6_TX_USING_DMA
+    static struct dma_tx_config uart6_dma_tx = {.request = kDmaRequestMuxLPUART6Tx, .channel = BSP_LPUART6_TX_DMA_CHANNEL};
+    uarts[LPUART6_INDEX].dma_tx = &uart6_dma_tx;
+    uarts[LPUART6_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART7_RX_USING_DMA
+    static struct dma_rx_config uart7_dma_rx = {.request = kDmaRequestMuxLPUART7Rx, .channel = BSP_LPUART7_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART7_INDEX].dma_rx = &uart7_dma_rx;
+    uarts[LPUART7_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART7_TX_USING_DMA
+    static struct dma_tx_config uart7_dma_tx = {.request = kDmaRequestMuxLPUART7Tx, .channel = BSP_LPUART7_TX_DMA_CHANNEL};
+    uarts[LPUART7_INDEX].dma_tx = &uart7_dma_tx;
+    uarts[LPUART7_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART8_RX_USING_DMA
+    static struct dma_rx_config uart8_dma_rx = {.request = kDmaRequestMuxLPUART8Rx, .channel = BSP_LPUART8_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART8_INDEX].dma_rx = &uart8_dma_rx;
+    uarts[LPUART8_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART8_TX_USING_DMA
+    static struct dma_tx_config uart8_dma_tx = {.request = kDmaRequestMuxLPUART8Tx, .channel = BSP_LPUART8_TX_DMA_CHANNEL};
+    uarts[LPUART8_INDEX].dma_tx = &uart8_dma_tx;
+    uarts[LPUART8_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 }
 
 static void uart_isr(struct imxrt_uart *uart);
 
 #if defined(BSP_USING_LPUART1)
+
 void LPUART1_IRQHandler(void)
 {
     rt_interrupt_enter();
+
     uart_isr(&uarts[LPUART1_INDEX]);
+
     rt_interrupt_leave();
 }
-#endif
+
+#endif /* BSP_USING_LPUART1 */
 
 #if defined(BSP_USING_LPUART2)
+struct rt_serial_device serial2;
+
 void LPUART2_IRQHandler(void)
 {
     rt_interrupt_enter();
+
     uart_isr(&uarts[LPUART2_INDEX]);
+
     rt_interrupt_leave();
 }
-#endif
+
+#endif /* BSP_USING_LPUART2 */
 
 #if defined(BSP_USING_LPUART3)
+struct rt_serial_device serial3;
+
 void LPUART3_IRQHandler(void)
 {
     rt_interrupt_enter();
+
     uart_isr(&uarts[LPUART3_INDEX]);
+
     rt_interrupt_leave();
 }
-#endif
+
+#endif /* BSP_USING_LPUART3 */
 
 #if defined(BSP_USING_LPUART4)
+
 void LPUART4_IRQHandler(void)
 {
     rt_interrupt_enter();
+
     uart_isr(&uarts[LPUART4_INDEX]);
+
     rt_interrupt_leave();
 }
-#endif
+
+#endif /* BSP_USING_LPUART4 */
 
 #if defined(BSP_USING_LPUART5)
+struct rt_serial_device serial5;
+
 void LPUART5_IRQHandler(void)
 {
     rt_interrupt_enter();
+
     uart_isr(&uarts[LPUART5_INDEX]);
+
     rt_interrupt_leave();
 }
-#endif
+
+#endif /* BSP_USING_LPUART5 */
 
 #if defined(BSP_USING_LPUART6)
+struct rt_serial_device serial6;
+
 void LPUART6_IRQHandler(void)
 {
     rt_interrupt_enter();
+
     uart_isr(&uarts[LPUART6_INDEX]);
+
     rt_interrupt_leave();
 }
-#endif
+
+#endif /* BSP_USING_LPUART6 */
 
 #if defined(BSP_USING_LPUART7)
+struct rt_serial_device serial7;
+
 void LPUART7_IRQHandler(void)
 {
     rt_interrupt_enter();
+
     uart_isr(&uarts[LPUART7_INDEX]);
+
     rt_interrupt_leave();
 }
-#endif
+
+#endif /* BSP_USING_LPUART7 */
 
 #if defined(BSP_USING_LPUART8)
+struct rt_serial_device serial8;
+
 void LPUART8_IRQHandler(void)
 {
     rt_interrupt_enter();
+
     uart_isr(&uarts[LPUART8_INDEX]);
-    rt_interrupt_leave();
-}
-#endif
 
-#if defined(BSP_USING_LPUART10)
-void LPUART10_IRQHandler(void)
-{
-    rt_interrupt_enter();
-    uart_isr(&uarts[LPUART10_INDEX]);
     rt_interrupt_leave();
 }
-#endif
 
-#if defined(BSP_USING_LPUART12)
-void LPUART12_IRQHandler(void)
-{
-    rt_interrupt_enter();
-    uart_isr(&uarts[LPUART12_INDEX]);
-    rt_interrupt_leave();
-}
-#endif
+#endif /* BSP_USING_LPUART8 */
 
 static void uart_isr(struct imxrt_uart *uart)
 {
     RT_ASSERT(uart != RT_NULL);
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
+    rt_size_t total_index, recv_len;
+    rt_base_t level;
+#endif
 
+    /* kLPUART_RxDataRegFullFlag can only cleared or set by hardware */
     if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxDataRegFullFlag)
     {
         rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_IND);
@@ -371,6 +408,7 @@ static void uart_isr(struct imxrt_uart *uart)
 
     if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxOverrunFlag)
     {
+        /* Clear overrun flag, otherwise the RX does not work. */
         LPUART_ClearStatusFlags(uart->uart_base, kLPUART_RxOverrunFlag);
     }
 
@@ -378,18 +416,23 @@ static void uart_isr(struct imxrt_uart *uart)
     if ((LPUART_GetStatusFlags(uart->uart_base) & kLPUART_IdleLineFlag) && (uart->dma_rx != RT_NULL))
     {
         LPUART_ClearStatusFlags(uart->uart_base, kLPUART_IdleLineFlag);
-        rt_size_t total_index, recv_len;
-        rt_base_t level;
         level = rt_hw_interrupt_disable();
-        total_index = uart->serial.config.bufsz - EDMA_GetRemainingMajorLoopCount(uart->dma_rx->edma_base, uart->dma_rx->channel);
+
+        total_index = uart->serial.config.bufsz - EDMA_GetRemainingMajorLoopCount(DMA0, uart->dma_rx->channel);
         if (total_index > uart->dma_rx->last_index)
+        {
             recv_len = total_index - uart->dma_rx->last_index;
+        }
         else
+        {
             recv_len = total_index + (uart->serial.config.bufsz - uart->dma_rx->last_index);
+        }
+
         if ((recv_len > 0) && (recv_len < uart->serial.config.bufsz))
         {
             uart->dma_rx->last_index = total_index;
             rt_hw_interrupt_enable(level);
+
             rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
         }
         else
@@ -403,7 +446,7 @@ static void uart_isr(struct imxrt_uart *uart)
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
 void edma_rx_callback(struct _edma_handle *handle, void *userData, bool transferDone, uint32_t tcds)
 {
-    rt_size_t recv_len = 0;
+    rt_size_t total_index, recv_len;
     rt_base_t level;
     struct imxrt_uart *uart = (struct imxrt_uart *)userData;
     RT_ASSERT(uart != RT_NULL);
@@ -411,28 +454,36 @@ void edma_rx_callback(struct _edma_handle *handle, void *userData, bool transfer
     if (transferDone)
     {
         level = rt_hw_interrupt_disable();
-        if ((EDMA_GetChannelStatusFlags(uart->dma_rx->edma_base, uart->dma_rx->channel) & kEDMA_DoneFlag) != 0U)
+
+        if ((EDMA_GetChannelStatusFlags(DMA0, uart->dma_rx->channel) & kEDMA_DoneFlag) != 0U)
         {
-            EDMA_ClearChannelStatusFlags(uart->dma_rx->edma_base, uart->dma_rx->channel, kEDMA_DoneFlag);
+            /* clear full interrupt */
+            EDMA_ClearChannelStatusFlags(DMA0, uart->dma_rx->channel,kEDMA_DoneFlag);
+
             recv_len = uart->serial.config.bufsz - uart->dma_rx->last_index;
             uart->dma_rx->last_index = 0;
         }
         else
         {
-            EDMA_ClearChannelStatusFlags(uart->dma_rx->edma_base, uart->dma_rx->channel, kEDMA_InterruptFlag);
-            rt_size_t total_index = uart->serial.config.bufsz - EDMA_GetRemainingMajorLoopCount(uart->dma_rx->edma_base, uart->dma_rx->channel);
+            /* clear half interrupt */
+            EDMA_ClearChannelStatusFlags(DMA0, uart->dma_rx->channel,kEDMA_InterruptFlag);
+
+            total_index = uart->serial.config.bufsz - EDMA_GetRemainingMajorLoopCount(DMA0, uart->dma_rx->channel);
             if (total_index > uart->dma_rx->last_index)
+            {
                 recv_len = total_index - uart->dma_rx->last_index;
+            }
             else
+            {
                 recv_len = total_index + (uart->serial.config.bufsz - uart->dma_rx->last_index);
+            }
             uart->dma_rx->last_index = total_index;
         }
+
         rt_hw_interrupt_enable(level);
 
         if (recv_len)
         {
-            if (recv_len >= uart->serial.config.bufsz)
-                recv_len = uart->serial.config.bufsz - 1;
             rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
         }
     }
@@ -448,36 +499,27 @@ void edma_tx_callback(LPUART_Type *base, lpuart_edma_handle_t *handle, status_t 
         rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_TX_DMADONE);
     }
 }
+  static void imxrt_dma_rx_config(struct imxrt_uart *uart)
+  {
+      RT_ASSERT(uart != RT_NULL);
 
-#ifdef SOC_IMXRT1180_SERIES
-static void imxrt_edma_mux_setup(EDMA_Type *base, rt_uint8_t channel, dma_request_source_t request)
-{
-    EDMA_SetChannelMux(base, channel, request);
-}
-#else
-static void imxrt_edma_mux_setup(EDMA_Type *base, rt_uint8_t channel, dma_request_source_t request)
-{
-    (void)base;
-    DMAMUX_SetSource(DMAMUX, channel, request);
-    DMAMUX_EnableChannel(DMAMUX, channel);
-}
-#endif
+      edma_transfer_config_t xferConfig;
+      struct rt_serial_rx_fifo *rx_fifo;
 
-static void imxrt_dma_rx_config(struct imxrt_uart *uart)
-{
-    RT_ASSERT(uart != RT_NULL);
-    edma_transfer_config_t xferConfig;
-    EDMA_Type *base = uart->dma_rx->edma_base;
+  #ifndef SOC_IMXRT1180_SERIES
+      DMAMUX_SetSource(DMAMUX, uart->dma_rx->channel, uart->dma_rx->request);
+      DMAMUX_EnableChannel(DMAMUX, uart->dma_rx->channel);
+  #else
+      /* RT1180 uses EDMA4, configure DMA request source differently */
+      EDMA_SetChannelMux(DMA0, uart->dma_rx->channel, uart->dma_rx->request);
+  #endif
+    
+      EDMA_CreateHandle(&uart->dma_rx->edma, DMA0, uart->dma_rx->channel);
+      EDMA_SetCallback(&uart->dma_rx->edma, edma_rx_callback, uart);
 
-    imxrt_edma_mux_setup(base, uart->dma_rx->channel, uart->dma_rx->request);
+      rx_fifo = (struct rt_serial_rx_fifo *)uart->serial.serial_rx;
 
-    EDMA_CreateHandle(&uart->dma_rx->edma, base, uart->dma_rx->channel);
-    EDMA_SetCallback(&uart->dma_rx->edma, edma_rx_callback, uart);
-
-    struct rt_serial_rx_fifo *rx_fifo;
-    rx_fifo = (struct rt_serial_rx_fifo *)uart->serial.serial_rx;
-
-    EDMA_PrepareTransfer(&xferConfig,
+      EDMA_PrepareTransfer(&xferConfig,
                          (void *)LPUART_GetDataRegisterAddress(uart->uart_base),
                          sizeof(uint8_t),
                          rx_fifo->buffer,
@@ -486,102 +528,123 @@ static void imxrt_dma_rx_config(struct imxrt_uart *uart)
                          uart->serial.config.bufsz,
                          kEDMA_PeripheralToMemory);
 
-    EDMA_SubmitTransfer(&uart->dma_rx->edma, &xferConfig);
-    EDMA_EnableChannelInterrupts(base, uart->dma_rx->channel, kEDMA_MajorInterruptEnable | kEDMA_HalfInterruptEnable);
-    EDMA_EnableAutoStopRequest(base, uart->dma_rx->channel, false);
-    EDMA_TCD_DLAST_SGA(&uart->dma_rx->edma.tcdBase[uart->dma_rx->channel], EDMA_TCD_TYPE(uart->dma_rx->edma.base)) = -(int32_t)uart->serial.config.bufsz;
-    EDMA_StartTransfer(&uart->dma_rx->edma);
-    LPUART_EnableRxDMA(uart->uart_base, true);
+      EDMA_SubmitTransfer(&uart->dma_rx->edma, &xferConfig);
+      EDMA_EnableChannelInterrupts(DMA0, uart->dma_rx->channel, kEDMA_MajorInterruptEnable | kEDMA_HalfInterruptEnable);
+      EDMA_EnableAutoStopRequest(DMA0, uart->dma_rx->channel, false);
+      /* complement to adjust final destination address */
+      uart->dma_rx->edma.base->TCD[uart->dma_rx->channel].DLAST_SGA = -(uart->serial.config.bufsz);
+      EDMA_StartTransfer(&uart->dma_rx->edma);
+      LPUART_EnableRxDMA(uart->uart_base, true);
 
-    LPUART_EnableInterrupts(uart->uart_base, kLPUART_IdleLineInterruptEnable);
-    NVIC_SetPriority(uart->irqn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 4, 0));
-    EnableIRQ(uart->irqn);
+      LPUART_EnableInterrupts(uart->uart_base, kLPUART_IdleLineInterruptEnable);
+      NVIC_SetPriority(uart->irqn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 4, 0));
+      EnableIRQ(uart->irqn);
 
-    LOG_D("%s dma rx config done\n", uart->name);
-}
+      LOG_D("%s dma rx config done\n", uart->name);
+  }
 
-static void imxrt_dma_tx_config(struct imxrt_uart *uart)
-{
-    RT_ASSERT(uart != RT_NULL);
-    EDMA_Type *base = uart->dma_tx->edma_base;
+  static void imxrt_dma_tx_config(struct imxrt_uart *uart)
+  {
+      RT_ASSERT(uart != RT_NULL);
 
-    imxrt_edma_mux_setup(base, uart->dma_tx->channel, uart->dma_tx->request);
+  #ifndef SOC_IMXRT1180_SERIES
+      DMAMUX_SetSource(DMAMUX, uart->dma_tx->channel, uart->dma_tx->request);
+      DMAMUX_EnableChannel(DMAMUX, uart->dma_tx->channel);
+  #else
+      /* RT1180 uses EDMA4, configure DMA request source differently */
+      EDMA_SetChannelMux(DMA0, uart->dma_tx->channel, uart->dma_tx->request);
+  #endif
+    
+      EDMA_CreateHandle(&uart->dma_tx->edma, DMA0, uart->dma_tx->channel);
 
-    EDMA_CreateHandle(&uart->dma_tx->edma, base, uart->dma_tx->channel);
+      LPUART_TransferCreateHandleEDMA(uart->uart_base,
+                                      &uart->dma_tx->uart_edma,
+                                      edma_tx_callback,
+                                      uart,
+                                      &uart->dma_tx->edma,
+                                      RT_NULL);
 
-    LPUART_TransferCreateHandleEDMA(uart->uart_base,
-                                    &uart->dma_tx->uart_edma,
-                                    edma_tx_callback,
-                                    uart,
-                                    &uart->dma_tx->edma,
-                                    RT_NULL);
-
-    LOG_D("%s dma tx config done\n", uart->name);
-}
+      LOG_D("%s dma tx config done\n", uart->name);
+  }
 #endif
+  uint32_t GetUartSrcFreq(LPUART_Type *uart_base)
+  {
+      uint32_t freq;
+  #if defined(SOC_IMXRT1170_SERIES)
+      uint32_t base = (uint32_t) uart_base;
+      switch (base)
+      {
+      case LPUART1_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1);
+          break;
+      case LPUART12_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart12);
+          break;
+      default:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart2);
+          break;
+      }
+  #elif defined(SOC_IMXRT1180_SERIES)
+      /* RT1180 uses different clock root architecture */
+      uint32_t base = (uint32_t) uart_base;
+      switch (base)
+      {
+      case LPUART1_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0102);
+          break;
+      case LPUART2_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0102);
+          break;
+      case LPUART3_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0304);
+          break;
+      case LPUART4_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0304);
+          break;
+      case LPUART5_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0506);
+          break;
+      case LPUART6_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0506);
+          break;
+      case LPUART7_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0708);
+          break;
+      case LPUART8_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0708);
+          break;
+      case LPUART9_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0910);
+          break;
+      case LPUART10_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0910);
+          break;
+      case LPUART11_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1112);
+          break;
+      case LPUART12_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1112);
+          break;
 
-uint32_t GetUartSrcFreq(LPUART_Type *uart_base)
-{
-    uint32_t freq;
-#if defined(SOC_IMXRT1170_SERIES)
-    uint32_t base = (uint32_t) uart_base;
-    switch (base)
-    {
-    case LPUART1_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1);
-        break;
-    case LPUART12_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart12);
-        break;
-    default:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart2);
-        break;
-    }
-#elif defined(SOC_IMXRT1180_SERIES)
-    uint32_t base = (uint32_t) uart_base;
-    switch (base)
-    {
-    case LPUART1_BASE:
-    case LPUART2_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0102);
-        break;
-    case LPUART3_BASE:
-    case LPUART4_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0304);
-        break;
-    case LPUART5_BASE:
-    case LPUART6_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0506);
-        break;
-    case LPUART7_BASE:
-    case LPUART8_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0708);
-        break;
-    case LPUART9_BASE:
-    case LPUART10_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0910);
-        break;
-    case LPUART11_BASE:
-    case LPUART12_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1112);
-        break;
-    default:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0102);
-        break;
-    }
-#else
-    if (CLOCK_GetMux(kCLOCK_UartMux) == 0)
-    {
-        freq = (CLOCK_GetPllFreq(kCLOCK_PllUsb1) / 6U) / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
-    }
-    else
-    {
-        freq = CLOCK_GetOscFreq() / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
-    }
-#endif
-    return freq;
-}
+      default:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0102);
+          break;
+      }
+  #else
+      /* To make it simple, we assume default PLL and divider settings, and the only variable
+       from application is use PLL3 source or OSC source */
+      if (CLOCK_GetMux(kCLOCK_UartMux) == 0) /* PLL3 div6 80M */
+      {
+          freq = (CLOCK_GetPllFreq(kCLOCK_PllUsb1) / 6U) / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
+      }
+      else
+      {
+          freq = CLOCK_GetOscFreq() / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
+      }
+  #endif
+      return freq;
 
+  }
 static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct imxrt_uart *uart;
@@ -600,6 +663,7 @@ static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_c
     case DATA_BITS_7:
         config.dataBitsCount = kLPUART_SevenDataBits;
         break;
+
     default:
         config.dataBitsCount = kLPUART_EightDataBits;
         break;
@@ -643,6 +707,10 @@ static rt_err_t imxrt_control(struct rt_serial_device *serial, int cmd, void *ar
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct imxrt_uart, serial);
 
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
+    rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
+#endif
+
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
@@ -655,26 +723,19 @@ static rt_err_t imxrt_control(struct rt_serial_device *serial, int cmd, void *ar
         EnableIRQ(uart->irqn);
         break;
 
-    case RT_DEVICE_CTRL_CONFIG:
-    {
-        rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
-
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
+    case RT_DEVICE_CTRL_CONFIG:
+
         if (RT_DEVICE_FLAG_DMA_RX == ctrl_arg)
         {
             imxrt_dma_rx_config(uart);
-            break;
         }
-        if (RT_DEVICE_FLAG_DMA_TX == ctrl_arg)
+        else if (RT_DEVICE_FLAG_DMA_TX == ctrl_arg)
         {
             imxrt_dma_tx_config(uart);
-            break;
         }
-#endif
-
         break;
-    }
-
+#endif
     }
 
     return RT_EOK;
@@ -711,8 +772,7 @@ static int imxrt_getc(struct rt_serial_device *serial)
 }
 
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
-
-static rt_ssize_t dma_tx_xfer(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+rt_size_t dma_tx_xfer(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     struct imxrt_uart *uart;
     lpuart_transfer_t xfer;
@@ -728,13 +788,14 @@ static rt_ssize_t dma_tx_xfer(struct rt_serial_device *serial, rt_uint8_t *buf, 
             xfer.data = buf;
             xfer.dataSize = size;
             if (LPUART_SendEDMA(uart->uart_base, &uart->dma_tx->uart_edma, &xfer) == kStatus_Success)
+            {
                 xfer_size = size;
+            }
         }
     }
 
     return xfer_size;
 }
-
 #endif
 
 static const struct rt_uart_ops imxrt_uart_ops =
@@ -753,9 +814,9 @@ static const struct rt_uart_ops imxrt_uart_ops =
 int rt_hw_uart_init(void)
 {
     int i;
+    rt_uint32_t flag;
     rt_err_t ret = RT_EOK;
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-    rt_uint32_t flag;
 
     flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
 
@@ -766,8 +827,7 @@ int rt_hw_uart_init(void)
         uarts[i].serial.ops    = &imxrt_uart_ops;
         uarts[i].serial.config = config;
 
-        ret = rt_hw_serial_register(&uarts[i].serial, uarts[i].name,
-                                     flag | uarts[i].dma_flag, NULL);
+        ret = rt_hw_serial_register(&uarts[i].serial, uarts[i].name, flag | uarts[i].dma_flag, NULL);
     }
 
     return ret;
