@@ -475,7 +475,7 @@ static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
         return -ENOENT;
 
     st->st_dev = (dev_t)(size_t)(dentry->mnt->dev_id);
-    st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
+    st->st_ino = (uint16_t)dfs_dentry_full_path_crc32(dentry);
 
     if (d_file->type == TMPFS_TYPE_DIR)
     {

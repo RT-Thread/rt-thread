@@ -294,7 +294,7 @@ static int dfs_procfs_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
         vnode = dentry->vnode;
 
         st->st_dev = (dev_t)(rt_ubase_t)(dentry->mnt->dev_id);
-        st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
+        st->st_ino = (uint16_t)dfs_dentry_full_path_crc32(dentry);
 
         st->st_gid = vnode->gid;
         st->st_uid = vnode->uid;

@@ -30,7 +30,11 @@ static void dfs_stat_to_posix_stat(const struct dfs_stat *dfs_buf, struct stat *
     buf->st_nlink = dfs_buf->st_nlink;
     buf->st_uid = dfs_buf->st_uid;
     buf->st_gid = dfs_buf->st_gid;
+#if defined(__ARMCC_VERSION) || defined(__ICCARM__)
+    buf->st_rdev = dfs_buf->st_rdev;
+#else
     buf->st_rdev = (dev_t)(rt_ubase_t)dfs_buf->st_rdev;
+#endif
     buf->st_size = dfs_buf->st_size;
     buf->st_atime = dfs_buf->atime;
     buf->st_mtime = dfs_buf->mtime;

@@ -885,7 +885,7 @@ int dfs_elm_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
     {
         /* convert to dfs stat structure */
         st->st_dev = (dev_t)(size_t)(dentry->mnt->dev_id);
-        st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
+        st->st_ino = (uint16_t)dfs_dentry_full_path_crc32(dentry);
 
         if (file_info.fattrib & AM_DIR)
         {
