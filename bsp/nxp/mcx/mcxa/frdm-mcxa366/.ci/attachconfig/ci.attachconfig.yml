@@ -31,3 +31,10 @@ Peripheral.arduino:
     kconfig:
       - CONFIG_BSP_USING_ARDUINO=y
 
+# ------ utest CI ------
+utest.pin:
+    <<: *scons
+    kconfig:
+      - CONFIG_RT_USING_UTESTCASES=y
+      - CONFIG_RT_UTEST_PIN=y
+
