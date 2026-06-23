@@ -41,7 +41,7 @@ static struct rt_adc_device lpadc2_device;
 #include "peripherals.h"
 
 volatile bool g_Transfer_Done = false;
-AT_NONCACHEABLE_SECTION_ALIGN_INIT(uint32_t adc_result[7], sizeof(uint32_t));
+AT_NONCACHEABLE_SECTION_ALIGN_INIT(uint32_t adc_result[7], sizeof(uint32_t)) = {0x0,0x0,0x0,0x0,0x0,0x0,0x0};
 
 /* User callback function for EDMA transfer. */
 void DMA_Callback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds)
@@ -58,13 +58,14 @@ static rt_err_t imxrt_lp_adc_enabled(struct rt_adc_device *device, rt_int8_t cha
 	ADC_Type *base;
 	/* channel check*/
 	
-	if(channel < 4) return -RT_ERROR;
-	
+	if(channel < 4) return -RT_EINVAL;
 	
 	base = (ADC_Type *)(device->parent.user_data);
-	if( RT_TRUE == enabled ) {
+	if( RT_TRUE == enabled ) 
+	{
 		LPADC_Enable(base, true);
-	} else {
+	} else 
+    {
 		LPADC_Enable(base, false);
 	}
 	
@@ -88,6 +89,7 @@ static rt_err_t imxrt_lp_adc_convert(struct rt_adc_device *device, rt_int8_t cha
     LPADC_DoSoftwareTrigger(base, 1U);
 #if defined(BSP_LPADC1_USING_DMA)
 	data_mask = 0xffff;
+	g_Transfer_Done = false;
 	EDMA_StartTransfer(&DMA4_CH0_Handle);
 	/* Wait for EDMA transfer finish */
     while (g_Transfer_Done != true)
@@ -115,7 +117,7 @@ static rt_err_t imxrt_lp_adc_convert(struct rt_adc_device *device, rt_int8_t cha
 		break;
 		case 7: *value = adc_result[3] & data_mask;
 		break;
-		default: *value = 0xdeadbeef; return -RT_ERROR;
+		default: *value = 0; return -RT_EINVAL;
 	}
 
     return RT_EOK;

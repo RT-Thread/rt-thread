@@ -17,7 +17,7 @@
  * Included files
  **********************************************************************************************************************/
 #include "fsl_edma.h"
-#include "stdlib.h"
+#include <stdlib.h>
 #include "fsl_memory.h"
 #include "fsl_common.h"
 #include "fsl_lpuart.h"
@@ -66,7 +66,7 @@ extern "C" {
 #ifdef BSP_LPADC1_USING_DMA
 extern edma_config_t DMA4_config;
 /* Destination address extern definition */
-AT_NONCACHEABLE_SECTION_ALIGN_INIT(extern uint32_t adc_result[], sizeof(uint32_t));
+extern AT_NONCACHEABLE_SECTION_ALIGN_INIT(uint32_t adc_result[], sizeof(uint32_t));
 extern edma_handle_t DMA4_CH0_Handle;
 /* Transactional transfer configurations */
 extern edma_transfer_config_t DMA4_CH0_Transfers_config[1];
