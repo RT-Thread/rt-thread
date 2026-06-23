@@ -35,7 +35,7 @@ struct imxrt_i2c_bus
     volatile rt_uint32_t msg_ptr;
     volatile rt_uint32_t dptr;
     char *device_name;
-#ifdef SOC_IMXRT1170_SERIES
+#if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
     clock_root_t clock_root;
 #endif
 };
@@ -162,6 +162,9 @@ static rt_err_t imxrt_lpi2c_configure(struct imxrt_i2c_bus *bus, lpi2c_master_co
     rootCfg.mux = LPI2C_CLOCK_SOURCE_SELECT;
     rootCfg.div = LPI2C_CLOCK_SOURCE_DIVIDER + 1;
     CLOCK_SetRootClock(bus->clock_root, &rootCfg);
+    volatile uint32_t freq = CLOCK_GetRootClockFreq(bus->clock_root);
+    LPI2C_MasterInit(bus->I2C, cfg, freq);
+#elif defined(SOC_IMXRT1180_SERIES)
     volatile uint32_t freq = CLOCK_GetRootClockFreq(bus->clock_root);
     LPI2C_MasterInit(bus->I2C, cfg, freq);
 #else
@@ -298,16 +301,6 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 }
             }
 
-            if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
-            {
-                i = 0;
-                break;
-            }
-
-            while (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
-            {
-            }
-
             if (LPI2C_MasterReceive(imxrt_i2c->I2C, imxrt_i2c->msg[i].buf, imxrt_i2c->msg[i].len) != kStatus_Success)
             {
                 i = 0;
@@ -391,6 +384,11 @@ int rt_hw_i2c_init(void)
 #elif defined(HW_I2C1_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
 #endif  /*HW_I2C1_BADURATE_400kHZ*/
+#if defined(SOC_IMXRT1170_SERIES)
+    lpi2c1.clock_root = kCLOCK_Root_Lpi2c1;
+#elif defined(SOC_IMXRT1180_SERIES)
+    lpi2c1.clock_root = kCLOCK_Root_Lpi2c0102;
+#endif
     imxrt_lpi2c_configure(&lpi2c1, &masterConfig);
     rt_i2c_bus_device_register(&lpi2c1.parent, lpi2c1.device_name);
 #endif  /* BSP_USING_I2C1 */
@@ -402,6 +400,11 @@ int rt_hw_i2c_init(void)
 #elif defined(HW_I2C2_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
 #endif  /* HW_I2C2_BADURATE_400kHZ */
+#if defined(SOC_IMXRT1170_SERIES)
+    lpi2c2.clock_root = kCLOCK_Root_Lpi2c2;
+#elif defined(SOC_IMXRT1180_SERIES)
+    lpi2c2.clock_root = kCLOCK_Root_Lpi2c0102;
+#endif
     imxrt_lpi2c_configure(&lpi2c2, &masterConfig);
     rt_i2c_bus_device_register(&lpi2c2.parent, lpi2c2.device_name);
 #endif  /* BSP_USING_I2C2 */
@@ -415,6 +418,11 @@ int rt_hw_i2c_init(void)
 #elif defined(HW_I2C3_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
 #endif  /* HW_I2C3_BADURATE_400kHZ */
+#if defined(SOC_IMXRT1170_SERIES)
+    lpi2c3.clock_root = kCLOCK_Root_Lpi2c3;
+#elif defined(SOC_IMXRT1180_SERIES)
+    lpi2c3.clock_root = kCLOCK_Root_Lpi2c0304;
+#endif
     imxrt_lpi2c_configure(&lpi2c3, &masterConfig);
     rt_i2c_bus_device_register(&lpi2c3.parent, lpi2c3.device_name);
 #endif  /* BSP_USING_I2C3 */
@@ -426,6 +434,11 @@ int rt_hw_i2c_init(void)
 #elif defined(HW_I2C4_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
 #endif  /* HW_I2C4_BADURATE_400kHZ */
+#if defined(SOC_IMXRT1170_SERIES)
+    lpi2c4.clock_root = kCLOCK_Root_Lpi2c4;
+#elif defined(SOC_IMXRT1180_SERIES)
+    lpi2c4.clock_root = kCLOCK_Root_Lpi2c0304;
+#endif
     imxrt_lpi2c_configure(&lpi2c4, &masterConfig);
     rt_i2c_bus_device_register(&lpi2c4.parent, lpi2c4.device_name);
 #endif /* BSP_USING_I2C4 */
@@ -437,7 +450,11 @@ int rt_hw_i2c_init(void)
 #elif defined(HW_I2C5_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
 #endif  /* HW_I2C5_BADURATE_400kHZ */
+#if defined(SOC_IMXRT1170_SERIES)
     lpi2c5.clock_root = kCLOCK_Root_Lpi2c5;
+#elif defined(SOC_IMXRT1180_SERIES)
+    lpi2c5.clock_root = kCLOCK_Root_Lpi2c0506;
+#endif
     imxrt_lpi2c_configure(&lpi2c5, &masterConfig);
     rt_i2c_bus_device_register(&lpi2c5.parent, lpi2c5.device_name);
 #endif /* BSP_USING_I2C5 */
@@ -449,7 +466,11 @@ int rt_hw_i2c_init(void)
 #elif defined(HW_I2C6_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
 #endif  /* HW_I2C6_BADURATE_400kHZ */
+#if defined(SOC_IMXRT1170_SERIES)
     lpi2c6.clock_root = kCLOCK_Root_Lpi2c6;
+#elif defined(SOC_IMXRT1180_SERIES)
+    lpi2c6.clock_root = kCLOCK_Root_Lpi2c0506;
+#endif
     imxrt_lpi2c_configure(&lpi2c6, &masterConfig);
     rt_i2c_bus_device_register(&lpi2c6.parent, lpi2c6.device_name);
 #endif /* BSP_USING_I2C6 */
