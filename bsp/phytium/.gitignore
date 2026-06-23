@@ -1,9 +1,0 @@
-*.dis
-*.asm
-/aarch32/tools/*
-/aarch64/tools/*
-**/**/makefile
-/libraries/tests/*
-/libraries/phytium_standalone_sdk/
-/aarch64/link_preprocessed.lds
-*.origin

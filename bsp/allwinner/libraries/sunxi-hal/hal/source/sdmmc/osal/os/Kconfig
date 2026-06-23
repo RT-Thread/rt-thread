@@ -1,6 +1,0 @@
-menu "sdmmc free rtos osal"
-
-config DRIVERS_SDMMC_FREE_RTOS_OSAL
-    bool "enable SDMMC device drivers freertos oal"
-        default y
-endmenu

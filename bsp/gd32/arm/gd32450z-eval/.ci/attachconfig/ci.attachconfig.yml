@@ -1,4 +1,0 @@
-peripheral.can0:
-    kconfig:
-      - CONFIG_BSP_USING_CAN=y
-      - CONFIG_BSP_USING_CAN0=y

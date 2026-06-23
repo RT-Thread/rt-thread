@@ -1,8 +1,0 @@
-from building import *
-
-cwd = GetCurrentDir()
-src = Split('board.c')
-
-group = DefineGroup('Board', src, depend = [''], CPPPATH = [cwd])
-
-Return('group')

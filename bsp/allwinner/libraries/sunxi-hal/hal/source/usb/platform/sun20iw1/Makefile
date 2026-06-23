@@ -1,1 +1,0 @@
-obj-y += usb_sun20iw1.o

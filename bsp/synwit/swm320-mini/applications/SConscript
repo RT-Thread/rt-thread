@@ -1,8 +1,0 @@
-from building import *
-
-cwd = GetCurrentDir()
-src = Glob('*.c') + Glob('*.cpp')
-
-group = DefineGroup('Applications', src, depend = [''], CPPPATH = [cwd])
-
-Return('group')

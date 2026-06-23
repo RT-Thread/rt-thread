@@ -1,5 +1,0 @@
-enable_uart=1
-kernel=u-boot64.bin
-#kernel=kernel7.img
-#kernel_address=0xc0000000
-arm_64bit=1

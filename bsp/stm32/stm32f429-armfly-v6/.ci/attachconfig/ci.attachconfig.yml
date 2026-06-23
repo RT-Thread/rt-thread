@@ -1,9 +1,0 @@
-# scons.args: &scons
-#     scons_arg:
-#       - '--strict'
-
-# ------ nano ------
-nano:
-  kconfig:
-    - CONFIG_RT_USING_NANO=y
-  

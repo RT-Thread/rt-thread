@@ -1,3 +1,0 @@
-#! armclang -mcpu=cortex-m23 --target=arm-arm-none-eabi -E -x c -I.
-#include "memory_regions.scat"
-#include "fsp_gen.scat"

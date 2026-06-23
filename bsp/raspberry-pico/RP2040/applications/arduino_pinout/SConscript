@@ -1,9 +1,0 @@
-from building import *
-
-cwd = GetCurrentDir()
-src = Glob('*.c') + Glob('*.cpp')
-inc = [cwd]
-
-group = DefineGroup('RTduino-pinout', src, depend = ['PKG_USING_RTDUINO'], CPPPATH = inc)
-
-Return('group')

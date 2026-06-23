@@ -1,5 +1,0 @@
-# NS800RT7P65-NSSinePad BSP Introduction
-
-[中文](README_zh.md)
-
-## MCU: NS800RT7P65D @400MHz, 1024KB FLASH,  770KB RAM

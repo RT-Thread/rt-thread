@@ -1,3 +1,0 @@
-config RT_MBOX_ROCKCHIP
-    bool "Rockchip Soc Integrated Mailbox Support"
-    default n

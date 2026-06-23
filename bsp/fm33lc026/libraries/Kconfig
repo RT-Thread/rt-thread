@@ -1,7 +1,0 @@
-config SOC_FAMILY_FM33
-    bool
-
-config SOC_SERIES_FM33LC0XX
-    bool
-    select ARCH_ARM_CORTEX_M0
-    select SOC_FAMILY_FM33

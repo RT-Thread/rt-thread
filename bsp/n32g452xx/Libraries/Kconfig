@@ -1,7 +1,0 @@
-config SOC_FAMILY_N32
-    bool
-
-config SOC_SERIES_N32G452XX
-    bool
-    select ARCH_ARM_CORTEX_M4
-    select SOC_FAMILY_N32

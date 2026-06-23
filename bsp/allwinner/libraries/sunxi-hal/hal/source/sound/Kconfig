@@ -1,9 +1,0 @@
-menuconfig DRIVERS_SOUND
-    bool "Sound card support"
-    default y
-
-if DRIVERS_SOUND
-rsource "codecs/Kconfig"
-rsource "platform/Kconfig"
-rsource "component/Kconfig"
-endif # SOUND

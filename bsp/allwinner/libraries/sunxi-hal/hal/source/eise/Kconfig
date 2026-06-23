@@ -1,7 +1,0 @@
-menu "EISE Devices"
-
-config DRIVERS_EISE
-    bool "enable eise driver"
-        default y
-
-endmenu

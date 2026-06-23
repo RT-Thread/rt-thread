@@ -1,5 +1,0 @@
-config RT_SDIO_DW_MMC_ROCKCHIP
-    bool "Rockchip"
-    depends on RT_SDIO_DW_MMC
-    depends on RT_USING_OFW
-    default n

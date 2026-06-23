@@ -1,7 +1,0 @@
-config SOC_RISCV_FAMILY_Core_V
-    bool
-
-config SOC_RISCV_SERIES_Core_V
-    bool
-    select ARCH_RISCV
-    select SOC_RISCV_FAMILY_Core_V

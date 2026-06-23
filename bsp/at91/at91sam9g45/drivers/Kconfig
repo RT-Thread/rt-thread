@@ -1,7 +1,0 @@
-menu "Hardware Drivers Config"
-
-config RT_USING_LED
-    bool "Using LED"
-    default n
-
-endmenu

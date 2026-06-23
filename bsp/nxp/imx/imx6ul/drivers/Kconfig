@@ -1,3 +1,0 @@
-config RT_USING_UART1
-    bool "Enable UART1"
-    default y

@@ -1,6 +1,0 @@
-config M4_JTAG_ENABLE
-    bool "Enable Cortex M4 JTAG"
-    default n
-    select RT_USING_UART2
-    help
-        you need set RT_CONSOLE_DEVICE_NAME=uart2 at the same time

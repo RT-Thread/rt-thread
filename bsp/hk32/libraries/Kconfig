@@ -1,9 +1,0 @@
-config SOC_FAMILY_HK32
-    bool
-
-config SOC_SERIES_HK32F0XX
-    bool
-    select ARCH_ARM_CORTEX_M0
-    select SOC_FAMILY_HK32
-
-

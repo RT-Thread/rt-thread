@@ -1,1 +1,0 @@
-%OPENOCD_HPMICRO%\openocd.exe -f board\debug_scripts\probes\ft2232.cfg -f board\debug_scripts\soc\hpm5300.cfg -f board\debug_scripts\boards\hpm5300evk.cfg -c "init; halt; flash write_image erase rtthread.elf; reset; shutdown"

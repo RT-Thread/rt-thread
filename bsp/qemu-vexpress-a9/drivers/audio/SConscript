@@ -1,9 +1,0 @@
-from building import *
-
-cwd = GetCurrentDir()
-src = Glob('*.c') + Glob('*.S')
-CPPPATH = [cwd]
-
-group = DefineGroup('Drivers', src, depend = ['BSP_DRV_AUDIO'], CPPPATH = CPPPATH)
-
-Return('group')

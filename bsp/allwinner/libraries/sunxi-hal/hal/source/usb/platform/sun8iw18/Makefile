@@ -1,1 +1,0 @@
-obj-y += usb_sun8iw18.o

@@ -1,3 +1,0 @@
-config RT_NVMEM_ROCKCHIP_OTP
-    bool "Rockchip OTP controller support"
-    default n

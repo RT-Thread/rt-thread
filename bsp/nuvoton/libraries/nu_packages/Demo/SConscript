@@ -1,9 +1,0 @@
-Import('RTT_ROOT')
-from building import *
-
-cwd = GetCurrentDir()
-src = Glob('*.c') + Glob('*.cpp')
-CPPPATH = [cwd]
-
-group = DefineGroup('nu_pkgs_demo', src, depend = ['NU_PKG_USING_DEMO'], CPPPATH = CPPPATH)
-Return('group')
