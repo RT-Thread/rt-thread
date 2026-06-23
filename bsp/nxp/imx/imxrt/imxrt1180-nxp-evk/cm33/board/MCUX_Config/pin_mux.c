@@ -73,7 +73,7 @@ void BOARD_InitPins(void) {
       0U);                                    /* Software Input On Field: Input Path is determined by functionality */
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 is configured as LPUART1_RX */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+      1U);                                    /* Software Input On Field: Force input path of pad GPIO_AON_09 */
   IOMUXC_SetPinConfig(
       IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 PAD functional properties : */
       0x02U);                                 /* Slew Rate Field: Fast Slew Rate
@@ -88,6 +88,25 @@ void BOARD_InitPins(void) {
                                                  Pull / Keep Select Field: Pull Disable, Highz
                                                  Pull Up / Down Config. Field: Weak pull down
                                                  Open Drain Field: Disabled */
+
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AON_16_LPI2C2_SCL,          /* GPIO_AON_16 is configured as LPI2C2_SCL */
+      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AON_15_LPI2C2_SDA,          /* GPIO_AON_15 is configured as LPI2C2_SDA */
+      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+  IOMUXC_SetPinConfig(
+      IOMUXC_GPIO_AON_16_LPI2C2_SCL,          /* GPIO_AON_16 PAD functional properties : */
+      0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
+                                                 Pull Enable Field: Pull Enable
+                                                 Pull Up / Down Config. Field: Weak pull up
+                                                 Open Drain Field: Enabled */
+  IOMUXC_SetPinConfig(
+      IOMUXC_GPIO_AON_15_LPI2C2_SDA,          /* GPIO_AON_15 PAD functional properties : */
+      0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
+                                                 Pull Enable Field: Pull Enable
+                                                 Pull Up / Down Config. Field: Weak pull up
+                                                 Open Drain Field: Enabled */
 }
 
 void BOARD_InitLeds(void) {
