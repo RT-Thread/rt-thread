@@ -229,6 +229,16 @@ menu "Onboard Peripheral Drivers"
                 select BSP_USING_SDIO
                 select RT_USING_DFS_ELMFAT
                 default n
+
+            config BSP_USING_QSPI_FLASH_FS
+                bool "Enable QSPI Flash (LittleFS)"
+                select BSP_USING_FLEXSPI
+                select BSP_USING_FLEXSPI1
+                select RT_USING_FAL
+                select FAL_PART_HAS_TABLE_CFG
+                select RT_USING_MTD_NOR
+                select PKG_USING_LITTLEFS
+                default n
         endif
 
 endmenu

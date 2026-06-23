@@ -173,6 +173,7 @@ LR_m_text   m_text_start   m_text_size
 
   ER_m_QuickAccessCode    m_qacode_start                                   m_qacode_size
   {
+    fsl_flexspi.o (+RO-CODE)
     .ANY (CodeQuickAccess)
   }
 
