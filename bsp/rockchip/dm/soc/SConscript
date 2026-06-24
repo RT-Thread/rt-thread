@@ -17,6 +17,9 @@ if GetDepend(['RT_SOC_ROCKCHIP_HW_DECOMPRESS']):
 if GetDepend(['RT_SOC_ROCKCHIP_IODOMAIN']):
     src += ['io-domain.c']
 
+if GetDepend(['RT_DVFS_ROCKCHIP_CPUFREQ']):
+    src += ['opp-select.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

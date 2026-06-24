@@ -1440,6 +1440,11 @@ void rockchip_pll_clk_cell_init(struct rockchip_clk_cell *rk_cell)
 {
     struct rockchip_pll_clk_cell *pll_clk_cell = cell_to_rockchip_pll_clk_cell(&rk_cell->cell);
 
+    if (rk_cell->cell.parents_nr == 1 && rk_cell->cell.parent_names)
+    {
+        rk_cell->cell.parent_name = rk_cell->cell.parent_names[0];
+    }
+
     rk_cell->muxdiv_offset = pll_clk_cell->mode_offset;
     rk_cell->mux_shift = pll_clk_cell->mode_shift;
 

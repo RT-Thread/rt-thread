@@ -382,6 +382,14 @@ if __name__ == "__main__":
 
     rtt_root = os.getcwd()
     srtt_bsp = os.getenv('SRTT_BSP').split(',')
+    attachconfig_rtt_bsp_env = os.getenv('ATTACHCONFIG_RTT_BSP')
+    attachconfig_rtt_bsp = None
+    if attachconfig_rtt_bsp_env:
+        attachconfig_rtt_bsp = {
+            bsp.strip()
+            for bsp in attachconfig_rtt_bsp_env.split(',')
+            if bsp.strip()
+        }
     print(srtt_bsp)
     for bsp in srtt_bsp:
         count += 1
@@ -394,6 +402,11 @@ if __name__ == "__main__":
         else:
             add_summary(f'- ✅ build {bsp} success.')
         print("::endgroup::")
+
+        if attachconfig_rtt_bsp is not None and bsp not in attachconfig_rtt_bsp:
+            print(f"Skip attachconfig build for {bsp}")
+            add_summary(f'\t- ⏭️ skip attachconfig build {bsp}.')
+            continue
 
         yml_files_content = []
         directory = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')

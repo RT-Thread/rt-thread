@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 # toolchains options
 ARCH        ='aarch64'
@@ -34,6 +35,17 @@ if PLATFORM == 'gcc':
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY  = PREFIX + 'objcopy'
 
+    def _ld_option_supported(ld_path, option):
+        try:
+            return subprocess.call([ld_path, option],
+                                 stdout=subprocess.DEVNULL,
+                                 stderr=subprocess.DEVNULL) == 0
+        except OSError:
+            return False
+
+    _ld_path = os.path.join(EXEC_PATH, PREFIX + 'ld')
+    _ldflags_rwx = ' -Wl,--no-warn-rwx-segments' if _ld_option_supported(_ld_path, '--no-warn-rwx-segments') else ''
+
     # For Cortex-A55/A76
     # DEVICE = ' -g -march=armv8.2-a -mtune=cortex-a55 -fdiagnostics-color=always'
     # For Cortex-A53/A72
@@ -41,7 +53,7 @@ if PLATFORM == 'gcc':
     CPPFLAGS= ' -nostdinc -undef -E -P -x assembler-with-cpp'
     CFLAGS = DEVICE + ' -Wall -Wno-cpp'
     AFLAGS = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--no-warn-rwx-segments -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
+    LFLAGS  = DEVICE + ' -nostartfiles' + _ldflags_rwx + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
     CPATH   = ''
     LPATH   = ''
 
@@ -58,3 +70,9 @@ if PLATFORM == 'gcc':
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 POST_ACTION += 'md5sum rtthread.bin\n'
+
+def dist_handle(BSP_ROOT, dist_dir):
+    import sys
+    sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
+    from sdk_dist import dist_do_building
+    dist_do_building(BSP_ROOT, dist_dir)

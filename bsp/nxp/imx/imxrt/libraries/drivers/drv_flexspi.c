@@ -6,10 +6,12 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-09-14     xjy198903    the first version for 1170
+ * 2026-06-03     CoreBoxer    support IMXRT1180-EVK
  */
 
 #include <rtthread.h>
-#ifdef BSP_USING_FLEXSPI
+#if defined(BSP_USING_FLEXSPI) && \
+    (defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES))
 #include "board.h"
 #include <rtdevice.h>
 
@@ -17,16 +19,23 @@
 #include <finsh.h>
 #endif
 
+#include "drv_flexspi.h"
 #include "flexspi_port.h"
 #include "fsl_flexspi.h"
 
+#ifndef COMBINATION_MODE
 #define COMBINATION_MODE 1U
+#endif
+
+#ifndef FREE_RUNNING_MODE
 #define FREE_RUNNING_MODE 1U
+#endif
 
 #define FLEXSPI_DEBUG
 #define LOG_TAG             "drv.flexspi"
 #include <drv_log.h>
 
+#if defined(SOC_IMXRT1170_SERIES)
 static flexspi_device_config_t deviceconfig = {
     .flexspiRootClk       = 12000000,
     .flashSize            = FLASH_SIZE,
@@ -50,6 +59,114 @@ const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
     [4 * ARD_SEQ_INDEX] =
         FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_DDR, kFLEXSPI_8PAD, 0x04, kFLEXSPI_Command_STOP, kFLEXSPI_8PAD, 0),
 };
+#elif defined(SOC_IMXRT1180_SERIES)
+static flexspi_device_config_t deviceconfig = {
+    .flexspiRootClk       = 12000000,
+    .flashSize            = FLASH_SIZE,
+    .CSIntervalUnit       = kFLEXSPI_CsIntervalUnit1SckCycle,
+    .CSInterval           = 2,
+    .CSHoldTime           = 3,
+    .CSSetupTime          = 3,
+    .dataValidTime        = 0,
+    .columnspace          = 0,
+    .enableWordAddress    = 0,
+    .AWRSeqIndex          = AWR_SEQ_INDEX,
+    .AWRSeqNumber         = AWR_SEQ_NUMBER,
+    .ARDSeqIndex          = ARD_SEQ_INDEX,
+    .ARDSeqNumber         = ARD_SEQ_NUMBER,
+    .AHBWriteWaitUnit     = kFLEXSPI_AhbWriteWaitUnit2AhbCycle,
+    .AHBWriteWaitInterval = 0,
+};
+
+const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
+    /* Normal read mode - SDR */
+    [4 * NOR_CMD_LUT_SEQ_IDX_READ_NORMAL] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0x03,
+                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_1PAD, 0x18),
+    [4 * NOR_CMD_LUT_SEQ_IDX_READ_NORMAL + 1] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_SDR,  kFLEXSPI_1PAD, 0x04,
+                        kFLEXSPI_Command_STOP,       kFLEXSPI_1PAD, 0),
+
+    /* Fast read mode - SDR */
+    [4 * NOR_CMD_LUT_SEQ_IDX_READ_FAST] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0x0B,
+                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_1PAD, 0x18),
+    [4 * NOR_CMD_LUT_SEQ_IDX_READ_FAST + 1] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DUMMY_SDR, kFLEXSPI_1PAD, 0x08,
+                        kFLEXSPI_Command_READ_SDR,   kFLEXSPI_1PAD, 0x04),
+
+    /* Fast read quad mode - SDR */
+    [4 * NOR_CMD_LUT_SEQ_IDX_READ_FAST_QUAD] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0xEB,
+                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_4PAD, 0x18),
+    [4 * NOR_CMD_LUT_SEQ_IDX_READ_FAST_QUAD + 1] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DUMMY_SDR, kFLEXSPI_4PAD, 0x06,
+                        kFLEXSPI_Command_READ_SDR,   kFLEXSPI_4PAD, 0x04),
+
+    /* Write Enable */
+    [4 * NOR_CMD_LUT_SEQ_IDX_WRITEENABLE] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,  kFLEXSPI_1PAD, 0x06,
+                        kFLEXSPI_Command_STOP,  kFLEXSPI_1PAD, 0),
+
+    /* Erase Sector */
+    [4 * NOR_CMD_LUT_SEQ_IDX_ERASESECTOR] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0x20,
+                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_1PAD, 0x18),
+
+    /* Page Program - single mode */
+    [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM_SINGLE] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0x02,
+                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_1PAD, 0x18),
+    [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM_SINGLE + 1] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_WRITE_SDR, kFLEXSPI_1PAD, 0x04,
+                        kFLEXSPI_Command_STOP,       kFLEXSPI_1PAD, 0),
+
+    /* Page Program - quad mode */
+    [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM_QUAD] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0x32,
+                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_1PAD, 0x18),
+    [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM_QUAD + 1] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_WRITE_SDR, kFLEXSPI_4PAD, 0x04,
+                        kFLEXSPI_Command_STOP,       kFLEXSPI_1PAD, 0),
+
+    /* Read ID */
+    [4 * NOR_CMD_LUT_SEQ_IDX_READID] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,      kFLEXSPI_1PAD, 0x9F,
+                        kFLEXSPI_Command_READ_SDR,  kFLEXSPI_1PAD, 0x04),
+
+    /* Write Status Register */
+    [4 * NOR_CMD_LUT_SEQ_IDX_WRITESTATUSREG] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,        kFLEXSPI_1PAD, 0x01,
+                        kFLEXSPI_Command_WRITE_SDR,   kFLEXSPI_1PAD, 0x04),
+
+    /* Read status register */
+    [4 * NOR_CMD_LUT_SEQ_IDX_READSTATUSREG] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,      kFLEXSPI_1PAD, 0x05,
+                        kFLEXSPI_Command_READ_SDR,  kFLEXSPI_1PAD, 0x04),
+
+    /* Erase whole chip */
+    [4 * NOR_CMD_LUT_SEQ_IDX_ERASECHIP] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,  kFLEXSPI_1PAD, 0xC7,
+                        kFLEXSPI_Command_STOP,  kFLEXSPI_1PAD, 0),
+};
+#else
+#error "Unsupported SOC for drv_flexspi"
+#endif
+
+/* --------------------------------------------------------------------------
+ * Internal handle
+ * -------------------------------------------------------------------------- */
+static imxrt_flexspi_handle_t s_flexspi_handle =
+{
+    .base     = FLEXSPI1_CONTROL_BASE,
+    .port     = FLASH_PORT,
+    .ahb_base = FLEXSPI1_AHB_DATA_ADDRESS
+};
+
+imxrt_flexspi_handle_t *imxrt_flexspi_get_handle(void)
+{
+    return &s_flexspi_handle;
+}
 
 static void flexspi_clock_init(clock_root_t root, uint8_t src, uint8_t div)
 {
@@ -58,19 +175,26 @@ static void flexspi_clock_init(clock_root_t root, uint8_t src, uint8_t div)
     CLOCK_SetRootClockMux(root, src);
 }
 
-static int rt_hw_imxrt_flexspi_init(void)
+FLEXSPI_RAM_CODE static int rt_hw_imxrt_flexspi_init(void)
 {
     flexspi_config_t config;
     FLEXSPI_Type *base;
 
 #ifdef BSP_USING_FLEXSPI1
     base = FLEXSPI1_CONTROL_BASE;
-#else
-    base = FLEXSPI2_CONTROL_BASE;
-#endif
-
+    s_flexspi_handle.base     = FLEXSPI1_CONTROL_BASE;
+    s_flexspi_handle.port     = FLASH_PORT;
+    s_flexspi_handle.ahb_base = FLEXSPI1_AHB_DATA_ADDRESS;
     //Set root clk 80MHz
     flexspi_clock_init(kCLOCK_Root_Flexspi1, CLOCK_SRC, CLOCK_DIV);
+#else
+    base = FLEXSPI2_CONTROL_BASE;
+    s_flexspi_handle.base     = FLEXSPI2_CONTROL_BASE;
+    s_flexspi_handle.port     = FLASH_PORT;
+    s_flexspi_handle.ahb_base = FLEXSPI2_AHB_DATA_ADDRESS;
+    flexspi_clock_init(kCLOCK_Root_Flexspi2, CLOCK_SRC, CLOCK_DIV);
+#endif
+
 
     /*Get FLEXSPI default settings and configure the flexspi. */
     FLEXSPI_GetDefaultConfig(&config);

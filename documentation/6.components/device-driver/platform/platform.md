@@ -53,7 +53,7 @@ INIT_PLATFORM      → DT nodes → platform devices on bus → match + probe if
 INIT_DEVICE        → RT_PLATFORM_DRIVER_EXPORT → register driver → probe every unmatched device
 ```
 
-**Takeaway**: DT devices appear at **`INIT_PLATFORM`**. Drivers using **`RT_PLATFORM_DRIVER_EXPORT`** register later and then bind via **`rt_bus_add_driver` → rt_bus_for_each_dev`**. Drivers that must run before the bulk DT scan use **`INIT_SUBSYS_EXPORT`** + manual **`rt_platform_driver_register`**.
+**Takeaway**: DT devices appear at **`INIT_PLATFORM`**. Drivers using **`RT_PLATFORM_DRIVER_EXPORT`** register later and then bind via **`rt_bus_add_driver` -> `rt_bus_for_each_dev`**. Drivers that must run before the bulk DT scan use **`INIT_SUBSYS_EXPORT`** + manual **`rt_platform_driver_register`**.
 
 ---
 

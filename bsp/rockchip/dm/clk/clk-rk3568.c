@@ -264,7 +264,7 @@ static const struct rockchip_cpu_clk_reg_data rk3568_cpu_clk_data =
     .mux_core_mask = 0x1,
 };
 
-PNAME(mux_pll_p)                            = "xin24m";
+PNAMES(mux_pll_p)                           = { "xin24m" };
 PNAMES(mux_usb480m_p)                       = { "xin24m", "usb480m_phy", "clk_rtc_32k" };
 PNAMES(clk_i2s0_8ch_tx_p)                   = { "clk_i2s0_8ch_tx_src", "clk_i2s0_8ch_tx_frac", "i2s0_mclkin", "xin_osc0_half" };
 PNAMES(clk_i2s0_8ch_rx_p)                   = { "clk_i2s0_8ch_rx_src", "clk_i2s0_8ch_rx_frac", "i2s0_mclkin", "xin_osc0_half" };
@@ -375,29 +375,29 @@ PNAMES(i2s3_mclk_ioe_p)                     = { "i2s3_mclkin", "i2s3_mclkout" };
 #define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
 
 static struct rockchip_pll_clk_cell rk3568_pmu_pll_ppll =
-    PLL_RAW(pll_type_rk3328, PLL_PPLL, "ppll", mux_pll_p, 1, 0, RK3568_PMU_PLL_CON(0), RK3568_PMU_MODE_CON0,
+    PLL_RAW(pll_type_rk3328, PLL_PPLL, "ppll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3568_PMU_PLL_CON(0), RK3568_PMU_MODE_CON0,
             0, 4, RK3568_GRF_SOC_STATUS0, 0, rk3568_pll_rates);
 static struct rockchip_pll_clk_cell rk3568_pmu_pll_hpll =
-    PLL_RAW(pll_type_rk3328, PLL_HPLL, "hpll", mux_pll_p, 1, 0, RK3568_PMU_PLL_CON(16), RK3568_PMU_MODE_CON0,
+    PLL_RAW(pll_type_rk3328, PLL_HPLL, "hpll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3568_PMU_PLL_CON(16), RK3568_PMU_MODE_CON0,
             2, 7, RK3568_GRF_SOC_STATUS0, 0, rk3568_pll_rates);
 
 static struct rockchip_pll_clk_cell rk3568_pll_apll =
-    PLL_RAW(pll_type_rk3328, PLL_APLL, "apll", mux_pll_p, 1, 0, RK3568_PLL_CON(0), RK3568_MODE_CON0,
+    PLL_RAW(pll_type_rk3328, PLL_APLL, "apll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3568_PLL_CON(0), RK3568_MODE_CON0,
             0, 0, RK3568_GRF_SOC_STATUS0, 0, rk3568_pll_rates);
 static struct rockchip_pll_clk_cell rk3568_pll_dpll =
-    PLL_RAW(pll_type_rk3328, PLL_DPLL, "dpll", mux_pll_p, 1, 0, RK3568_PLL_CON(8), RK3568_MODE_CON0,
+    PLL_RAW(pll_type_rk3328, PLL_DPLL, "dpll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3568_PLL_CON(8), RK3568_MODE_CON0,
             2, 1, RK3568_GRF_SOC_STATUS0, 0, RT_NULL);
 static struct rockchip_pll_clk_cell rk3568_pll_cpll =
-    PLL_RAW(pll_type_rk3328, PLL_CPLL, "cpll", mux_pll_p, 1, 0, RK3568_PLL_CON(24), RK3568_MODE_CON0,
+    PLL_RAW(pll_type_rk3328, PLL_CPLL, "cpll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3568_PLL_CON(24), RK3568_MODE_CON0,
             4, 2, RK3568_GRF_SOC_STATUS0, 0, rk3568_pll_rates);
 static struct rockchip_pll_clk_cell rk3568_pll_gpll =
-    PLL_RAW(pll_type_rk3328, PLL_GPLL, "gpll", mux_pll_p, 1, 0, RK3568_PLL_CON(16), RK3568_MODE_CON0,
+    PLL_RAW(pll_type_rk3328, PLL_GPLL, "gpll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3568_PLL_CON(16), RK3568_MODE_CON0,
             6, 3, RK3568_GRF_SOC_STATUS0, 0, rk3568_pll_rates);
 static struct rockchip_pll_clk_cell rk3568_pll_npll =
-    PLL_RAW(pll_type_rk3328, PLL_NPLL, "npll", mux_pll_p, 1, RT_CLK_F_IS_CRITICAL, RK3568_PLL_CON(32), RK3568_MODE_CON0,
+    PLL_RAW(pll_type_rk3328, PLL_NPLL, "npll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), RT_CLK_F_IS_CRITICAL, RK3568_PLL_CON(32), RK3568_MODE_CON0,
             10, 5, RK3568_GRF_SOC_STATUS0, 0, rk3568_pll_rates);
 static struct rockchip_pll_clk_cell rk3568_pll_vpll =
-    PLL_RAW(pll_type_rk3328, PLL_VPLL, "vpll", mux_pll_p, 1, 0, RK3568_PLL_CON(40), RK3568_MODE_CON0,
+    PLL_RAW(pll_type_rk3328, PLL_VPLL, "vpll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3568_PLL_CON(40), RK3568_MODE_CON0,
             12, 6, RK3568_GRF_SOC_STATUS0, 0, rk3568_pll_rates);
 
 static struct rockchip_clk_cell rk3568_i2s0_8ch_tx_fracmux =
