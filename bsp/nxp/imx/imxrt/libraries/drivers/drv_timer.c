@@ -38,6 +38,17 @@
 #define EXAMPLE_GPT_CLK_FREQ (CLOCK_GetFreq(kCLOCK_IpgClk) / (EXAMPLE_GPT_CLOCK_DIVIDER_SELECT + 1U))
 #endif
 
+/* The effective GPT input clock after root/prescaler configuration.
+ * 1170: 24 MHz root / 3 = 8 MHz; 1180: 240 MHz root / 3 = 80 MHz. */
+#if defined(SOC_IMXRT1180_SERIES)
+#define IMXRT_GPT_MAXFREQ   (80000000U)
+#elif defined(SOC_IMXRT1170_SERIES)
+#define IMXRT_GPT_MAXFREQ   (8000000U)
+#else
+#define IMXRT_GPT_MAXFREQ   (25000000U)
+#endif
+#define IMXRT_GPT_MINFREQ   (1U)
+
 static void NVIC_Configuration(void)
 {
 #ifdef BSP_USING_CLOCK_TIMER1
@@ -62,9 +73,36 @@ static rt_err_t imxrt_clock_timer_control(rt_clock_timer_t *timer, rt_uint32_t c
     case CLOCK_TIMER_CTRL_FREQ_SET:
     {
         uint32_t clk;
+        uint32_t freq;
         uint32_t pre;
+
+        if (args == RT_NULL)
+        {
+            err = -RT_EEMPTY;
+            break;
+        }
+
+        freq = *((uint32_t *)args);
+        if (freq == 0U)
+        {
+            err = -RT_EINVAL;
+            break;
+        }
+
         clk = EXAMPLE_GPT_CLK_FREQ;
-        pre = clk / *((uint32_t *)args) - 1;
+        if (freq > clk)
+        {
+            err = -RT_EINVAL;
+            break;
+        }
+
+        pre = clk / freq - 1U;
+        if (pre > 4095U)
+        {
+            err = -RT_EINVAL;
+            break;
+        }
+
         GPT_SetClockDivider(clock_timer_dev, pre);
     }
     break;
@@ -128,7 +166,16 @@ static rt_err_t imxrt_clock_timer_start(rt_clock_timer_t *timer, rt_uint32_t cnt
 
     RT_ASSERT(timer != RT_NULL);
 
-    clock_timer_dev->CR |= (mode != CLOCK_TIMER_MODE_PERIOD) ? GPT_CR_FRR_MASK : 0U;
+    if (mode == CLOCK_TIMER_MODE_PERIOD)
+    {
+        /* Restart mode: counter resets on output compare match, fixed interval */
+        clock_timer_dev->CR &= ~GPT_CR_FRR_MASK;
+    }
+    else
+    {
+        /* Free-run mode: counter keeps running, one-shot match */
+        clock_timer_dev->CR |= GPT_CR_FRR_MASK;
+    }
 
     GPT_SetOutputCompareValue(clock_timer_dev, kGPT_OutputCompare_Channel1, cnt);
 
@@ -148,6 +195,7 @@ static void imxrt_clock_timer_stop(rt_clock_timer_t *timer)
 
     RT_ASSERT(timer != RT_NULL);
 
+    GPT_DisableInterrupts(clock_timer_dev, kGPT_OutputCompare1InterruptEnable);
     GPT_StopTimer(clock_timer_dev);
 }
 
@@ -162,8 +210,8 @@ static const struct rt_clock_timer_ops imxrt_clock_timer_ops =
 
 static const struct rt_clock_timer_info imxrt_clock_timer_info =
 {
-    25000000,           /* the maximum count frequency can be set */
-    6103,               /* the minimum count frequency can be set */
+    IMXRT_GPT_MAXFREQ,  /* the maximum count frequency can be set */
+    IMXRT_GPT_MINFREQ,  /* the minimum count frequency can be set */
     0xFFFFFFFF,
     CLOCK_TIMER_CNTMODE_UP,
 };
@@ -179,6 +227,7 @@ static rt_clock_timer_t GPT_timer2;
 int rt_hw_clock_timer_init(void)
 {
     int ret = RT_EOK;
+    int err = RT_EOK;
 
 #ifdef BSP_USING_CLOCK_TIMER1
     GPT_timer1.info = &imxrt_clock_timer_info;
@@ -188,6 +237,10 @@ int rt_hw_clock_timer_init(void)
     if (ret != RT_EOK)
     {
         LOG_E("gpt1 register failed\n");
+        if (err == RT_EOK)
+        {
+            err = ret;
+        }
     }
 #endif
 
@@ -199,10 +252,14 @@ int rt_hw_clock_timer_init(void)
     if (ret != RT_EOK)
     {
         LOG_E("gpt2 register failed\n");
+        if (err == RT_EOK)
+        {
+            err = ret;
+        }
     }
 #endif
 
-    return ret;
+    return err;
 }
 
 #ifdef BSP_USING_CLOCK_TIMER1

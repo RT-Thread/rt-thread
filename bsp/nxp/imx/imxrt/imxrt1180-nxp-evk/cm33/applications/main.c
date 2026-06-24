@@ -15,9 +15,15 @@
 #include <fsl_rgpio.h>
 
 #ifdef BSP_USING_CLOCK_TIMER1
+static volatile rt_uint32_t gpt1_irq_count = 0;
+
 static rt_err_t gpt1_timeout_cb(rt_device_t dev, rt_size_t size)
 {
-    rt_kprintf("gpt1 timeout, tick: %d\r\n", rt_tick_get());
+    gpt1_irq_count++;
+    if (gpt1_irq_count % 1000 == 0)
+    {
+        rt_kprintf("gpt1 1ms x 1000, tick: %d, total irq: %d\r\n", rt_tick_get(), gpt1_irq_count);
+    }
     return RT_EOK;
 }
 
@@ -55,8 +61,8 @@ static void gpt1_sample_init(void)
         return;
     }
 
-    tv.sec = 1;
-    tv.usec = 0;
+    tv.sec = 0;
+    tv.usec = 1000;
     if (rt_device_write(dev, 0, &tv, sizeof(tv)) != sizeof(tv))
     {
         rt_kprintf("gpt1 write failed\r\n");
@@ -64,7 +70,7 @@ static void gpt1_sample_init(void)
         return;
     }
 
-    rt_kprintf("gpt1 periodic timer started (1s)\r\n");
+    rt_kprintf("gpt1 periodic timer started (1ms)\r\n");
 }
 #endif
 
