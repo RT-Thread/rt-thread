@@ -7,7 +7,6 @@ menuconfig RT_USING_SERIAL
     if RT_USING_SERIAL
         choice RT_USING_SERIAL_VERSION
             prompt "Choice Serial version"
-            default RT_USING_SERIAL_V2 if SOC_MIMXRT1189CVM8C_CM33
             default RT_USING_SERIAL_V1
             config RT_USING_SERIAL_V1
                 bool "RT_USING_SERIAL_V1"
