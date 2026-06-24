@@ -138,6 +138,20 @@ menu "On-chip Peripheral Drivers"
                     default n
             endif
 
+        menuconfig BSP_USING_CLOCK_TIMER
+            bool "Enable GPT"
+            default n
+            select RT_USING_CLOCK_TIME
+            if BSP_USING_CLOCK_TIMER
+                config BSP_USING_CLOCK_TIMER1
+                    bool "Enable GPT1"
+                    default n
+
+                config BSP_USING_CLOCK_TIMER2
+                    bool "Enable GPT2"
+                    default n
+            endif
+
         menuconfig BSP_USING_FLEXSPI
             bool "Enable FLEXSPI"
             default n

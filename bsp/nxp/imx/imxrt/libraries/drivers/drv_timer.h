@@ -14,7 +14,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-int rt_hw_wdt_init(void);
+int rt_hw_clock_timer_init(void);
 
 #endif
 

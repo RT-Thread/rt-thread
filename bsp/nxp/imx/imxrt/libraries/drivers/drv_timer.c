@@ -29,10 +29,10 @@
 /* Clock divider for PERCLK_CLK clock source */
 #define EXAMPLE_GPT_CLOCK_DIVIDER_SELECT (5U)
 /* Get source clock for GPT driver (GPT prescaler = 6) */
-#ifdef SOC_IMXRT1170_SERIES
+#if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
 #undef EXAMPLE_GPT_CLOCK_DIVIDER_SELECT
 #define EXAMPLE_GPT_CLOCK_DIVIDER_SELECT (2U)
-// 1170 use this root directly, we have already divide this clk, can read it directly
+// 1170/1180 use this root directly, we have already divide this clk, can read it directly
 #define EXAMPLE_GPT_CLK_FREQ (CLOCK_GetRootClockFreq(kCLOCK_Root_Gpt1))
 #else
 #define EXAMPLE_GPT_CLK_FREQ (CLOCK_GetFreq(kCLOCK_IpgClk) / (EXAMPLE_GPT_CLOCK_DIVIDER_SELECT + 1U))
@@ -98,7 +98,7 @@ static void imxrt_clock_timer_init(rt_clock_timer_t *timer, rt_uint32_t state)
 
     if (state == 1)
     {
-    #ifdef SOC_IMXRT1170_SERIES
+    #if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
     #ifdef BSP_USING_CLOCK_TIMER1
         /*Clock setting for GPT*/
         CLOCK_SetRootClockMux(kCLOCK_Root_Gpt1, EXAMPLE_GPT_CLOCK_SOURCE_SELECT);
@@ -198,7 +198,7 @@ int rt_hw_clock_timer_init(void)
 
     if (ret != RT_EOK)
     {
-        LOG_E("gpt1 register failed\n");
+        LOG_E("gpt2 register failed\n");
     }
 #endif
 
