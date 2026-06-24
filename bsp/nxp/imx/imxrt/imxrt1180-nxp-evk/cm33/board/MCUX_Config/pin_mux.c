@@ -26,10 +26,10 @@ processor_version: 0.15.9
 #include "pin_mux.h"
 
 /* FUNCTION ************************************************************************************************************
- * 
+ *
  * Function Name : BOARD_InitBootPins
  * Description   : Calls initialization functions.
- * 
+ *
  * END ****************************************************************************************************************/
 void BOARD_InitBootPins(void) {
     BOARD_InitPins();
@@ -111,7 +111,7 @@ void BOARD_InitLeds(void) {
 
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
-      0U);      
+      0U);
 }
 
 
