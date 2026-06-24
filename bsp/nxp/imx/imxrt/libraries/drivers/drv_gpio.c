@@ -56,8 +56,8 @@
 #define MUX_BASE         0x400E8010
 #define CONFIG_BASE      0x400E8254
 #elif defined(SOC_IMXRT1180_SERIES)
-#define MUX_BASE         (IOMUXC_BASE + 0x10u)
-#define CONFIG_BASE      (IOMUXC_BASE + 0x258u)
+#define MUX_BASE    (IOMUXC_BASE + 0x10u)
+#define CONFIG_BASE (IOMUXC_BASE + 0x258u)
 #else /* 1050 & 1060 & 1064 series*/
 #define MUX_BASE         0x401f8014
 #define CONFIG_BASE      0x401f8204
@@ -71,14 +71,14 @@
 #define GPIO13_CONFIG_BASE   0x40C94040
 
 #if defined(SOC_IMXRT1180_SERIES)
-#define AON_MUX_BASE         (IOMUXC_AON_BASE)
-#define AON_CONFIG_BASE      (IOMUXC_AON_BASE + 0x74u)
+#define AON_MUX_BASE    (IOMUXC_AON_BASE)
+#define AON_CONFIG_BASE (IOMUXC_AON_BASE + 0x74u)
 #endif
 
 struct pin_mask
 {
 #if defined(SOC_IMXRT1180_SERIES)
-    RGPIO_Type   *gpio;
+    RGPIO_Type *gpio;
 #else
     GPIO_Type    *gpio;
 #endif
@@ -92,43 +92,43 @@ const struct pin_mask mask_tab[6] =
 #else
 const struct pin_mask mask_tab[5] =
 #endif
-{
+    {
 #if defined(SOC_IMXRT1015_SERIES)
-    {GPIO1, 0xfc00ffff},     /* GPIO1,16~25 not supported */
-    {GPIO2, 0xffff03f8},     /* GPIO2,0~2,10~15 not supported */
-    {GPIO3, 0x7ff0000f},     /* GPIO3,4~19 not supported */
-    {GPIO4, 0x00000000},     /* GPIO4 not supported */
-    {GPIO5, 0x00000001}      /* GPIO5,0,2,3~31 not supported */
+        { GPIO1, 0xfc00ffff },     /* GPIO1,16~25 not supported */
+        { GPIO2, 0xffff03f8 },     /* GPIO2,0~2,10~15 not supported */
+        { GPIO3, 0x7ff0000f },     /* GPIO3,4~19 not supported */
+        { GPIO4, 0x00000000 },     /* GPIO4 not supported */
+        { GPIO5, 0x00000001 }      /* GPIO5,0,2,3~31 not supported */
 #elif defined(SOC_IMXRT1020_SERIES)
-    {GPIO1, 0xffffffff},     /* GPIO1 */
-    {GPIO2, 0xffffffff},     /* GPIO2 */
-    {GPIO3, 0xffffe3ff},     /* GPIO3,10~12 not supported */
-    {GPIO5, 0x00000000},     /* GPIO4 not supported */
-    {GPIO5, 0x00000007}      /* GPIO5,3~31 not supported */
+        { GPIO1, 0xffffffff },     /* GPIO1 */
+        { GPIO2, 0xffffffff },     /* GPIO2 */
+        { GPIO3, 0xffffe3ff },     /* GPIO3,10~12 not supported */
+        { GPIO5, 0x00000000 },     /* GPIO4 not supported */
+        { GPIO5, 0x00000007 }      /* GPIO5,3~31 not supported */
 #elif defined(SOC_IMXRT1170_SERIES)
-    {GPIO1, 0xffffffff},
-    {GPIO2, 0xffffffff},
-    {GPIO3, 0xffffffff},
-    {GPIO4, 0xffffffff},
-    {GPIO5, 0x0001ffff},
-    {GPIO6, 0x0000ffff},
-    {GPIO13, 0x00001fff},
+        { GPIO1, 0xffffffff },
+        { GPIO2, 0xffffffff },
+        { GPIO3, 0xffffffff },
+        { GPIO4, 0xffffffff },
+        { GPIO5, 0x0001ffff },
+        { GPIO6, 0x0000ffff },
+        { GPIO13, 0x00001fff },
 #elif defined(SOC_IMXRT1180_SERIES)
-    {RGPIO1, 0x0fffffff},   /* GPIO1, pins 28~31 not supported */
-    {RGPIO2, 0xffffffff},   /* GPIO2 */
-    {RGPIO3, 0x7fffffff},   /* GPIO3, pin 31 not supported */
-    {RGPIO4, 0xffffffff},   /* GPIO4 */
-    {RGPIO5, 0x007fffff},   /* GPIO5, pins 23~31 not supported */
-    {RGPIO6, 0x0fffffff},   /* GPIO6, pins 28~31 not supported */
+    { RGPIO1, 0x0fffffff },   /* GPIO1, pins 28~31 not supported */
+    { RGPIO2, 0xffffffff },   /* GPIO2 */
+    { RGPIO3, 0x7fffffff },   /* GPIO3, pin 31 not supported */
+    { RGPIO4, 0xffffffff },   /* GPIO4 */
+    { RGPIO5, 0x007fffff },   /* GPIO5, pins 23~31 not supported */
+    { RGPIO6, 0x0fffffff },   /* GPIO6, pins 28~31 not supported */
 #else   /* 1050 & 1060 & 1064 series*/
-    {GPIO1, 0xffffffff},     /* GPIO1 */
-    {GPIO2, 0xffffffff},     /* GPIO2 */
-    {GPIO3, 0x0fffffff},     /* GPIO3,28~31 not supported */
-    {GPIO4, 0xffffffff},     /* GPIO4 */
-    {GPIO5, 0x00000007}      /* GPIO5,3~31 not supported */
+    { GPIO1, 0xffffffff },     /* GPIO1 */
+    { GPIO2, 0xffffffff },     /* GPIO2 */
+    { GPIO3, 0x0fffffff },     /* GPIO3,28~31 not supported */
+    { GPIO4, 0xffffffff },     /* GPIO4 */
+    { GPIO5, 0x00000007 }      /* GPIO5,3~31 not supported */
 #endif
 
-};
+    };
 
 const rt_int32_t reg_offset[] =
 {
@@ -148,23 +148,203 @@ const rt_int32_t reg_offset[] =
     128,129, 130,131,132,133,134,135,136,137,138,139,140,141,142,143,144, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1, -1, -1, -1,
 #elif defined(SOC_IMXRT1180_SERIES)
     /* GPIO1 (AON domain) */
-     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
-    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, -1, -1, -1, -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    -1,
+    -1,
+    -1,
+    -1,
     /* GPIO2 (main domain) */
-     0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
-    16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
     /* GPIO3 (main domain) */
-    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-    48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, -1,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    -1,
     /* GPIO4 (main domain) */
-    63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78,
-    79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
     /* GPIO5 (main domain) */
-    95, 96, 97, 98, 99,100,101,102,103,104,105,106,107,108,109,110,
-   111,112,113,114,115,116,117, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
     /* GPIO6 (main domain) */
-   118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,
-   134,135,136,137,138,139,140,141,142,143,144,145, -1, -1, -1, -1,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144,
+    145,
+    -1,
+    -1,
+    -1,
+    -1,
 #else /* 1050 & 1060 & 1064 series*/
     42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73,
     74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,100,101,102,103,104,105,
@@ -174,8 +354,7 @@ const rt_int32_t reg_offset[] =
 
 };
 
-static const IRQn_Type irq_tab[] =
-{
+static const IRQn_Type irq_tab[] = {
 #if defined(SOC_IMXRT1180_SERIES)
     GPIO1_0_IRQn,
     GPIO1_1_IRQn,
@@ -210,63 +389,206 @@ static const IRQn_Type irq_tab[] =
 #endif
 };
 
-static struct rt_pin_irq_hdr hdr_tab[] =
-{
+static struct rt_pin_irq_hdr hdr_tab[] = {
 #if defined(SOC_IMXRT1180_SERIES)
     /* GPIO1 */
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
     /* GPIO2 */
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
     /* GPIO3 */
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
     /* GPIO4 */
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
     /* GPIO5 */
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
     /* GPIO6 */
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
-    __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT, __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
+    __IMXRT_HDR_DEFAULT,
 #else
     /* GPIO1 */
     __IMXRT_HDR_DEFAULT,
@@ -513,7 +835,7 @@ static void imxrt_isr(rt_int16_t index_offset, rt_int8_t pin_start, RGPIO_Type *
     pin_end = pin_start + 15;
     isr_status = RGPIO_GetPinsInterruptFlags(base, 0);
 
-    for (i = pin_start; i <= pin_end ; i++)
+    for (i = pin_start; i <= pin_end; i++)
     {
         if (isr_status & (1 << i))
         {

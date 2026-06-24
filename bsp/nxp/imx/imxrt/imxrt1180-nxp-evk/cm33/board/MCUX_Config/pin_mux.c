@@ -26,10 +26,10 @@ processor_version: 0.15.9
 #include "pin_mux.h"
 
 /* FUNCTION ************************************************************************************************************
- * 
+ *
  * Function Name : BOARD_InitBootPins
  * Description   : Calls initialization functions.
- * 
+ *
  * END ****************************************************************************************************************/
 void BOARD_InitBootPins(void) {
     BOARD_InitPins();
@@ -82,44 +82,44 @@ void BOARD_InitPins(void) {
       IOMUXC_GPIO_AD_33_LPUART10_RX,
       0x02U);
 
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_19_LPUART12_TX,
-      0U);
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_20_LPUART12_RX,
-      0U);
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_19_LPUART12_TX,
-      0x02U);
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_20_LPUART12_RX,
-      0x02U);
+      IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AON_19_LPUART12_TX,
+          0U);
+      IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AON_20_LPUART12_RX,
+          0U);
+      IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AON_19_LPUART12_TX,
+          0x02U);
+      IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AON_20_LPUART12_RX,
+          0x02U);
 
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_16_LPI2C2_SCL,
-      1U);
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_15_LPI2C2_SDA,
-      1U);
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_16_LPI2C2_SCL,
-      0x1DU);
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_15_LPI2C2_SDA,
-      0x1DU);
+      IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AON_16_LPI2C2_SCL,
+          1U);
+      IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AON_15_LPI2C2_SDA,
+          1U);
+      IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AON_16_LPI2C2_SCL,
+          0x1DU);
+      IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AON_15_LPI2C2_SDA,
+          0x1DU);
 
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_18_LPI2C3_SCL,
-      0U);
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_19_LPI2C3_SDA,
-      0U);
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AD_18_LPI2C3_SCL,
-      0x1DU);
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AD_19_LPI2C3_SDA,
-      0x1DU);
+      IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_18_LPI2C3_SCL,
+          0U);
+      IOMUXC_SetPinMux(
+          IOMUXC_GPIO_AD_19_LPI2C3_SDA,
+          0U);
+      IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_18_LPI2C3_SCL,
+          0x1DU);
+      IOMUXC_SetPinConfig(
+          IOMUXC_GPIO_AD_19_LPI2C3_SDA,
+          0x1DU);
 }
 
 void BOARD_InitLeds(void) {
@@ -136,7 +136,7 @@ void BOARD_InitLeds(void) {
 
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
-      0U);      
+      0U);
 }
 
 

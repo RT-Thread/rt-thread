@@ -13,7 +13,7 @@
 #include <rtdevice.h>
 #include <drv_gpio.h>
 
-#define LED_PIN  GET_PIN(4, 27)
+#define LED_PIN GET_PIN(4, 27)
 
 int main(void)
 {
