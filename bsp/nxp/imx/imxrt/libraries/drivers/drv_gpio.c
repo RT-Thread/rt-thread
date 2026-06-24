@@ -894,10 +894,8 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 
 static rt_ssize_t imxrt_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    rt_ssize_t value;
     rt_int8_t port, pin_num;
 
-    value = PIN_LOW;
     port = pin >> 5;
     pin_num = pin & 31;
 
