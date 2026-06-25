@@ -9,9 +9,9 @@ src = ['drv_common.c']
 path = [cwd]
 
 if GetDepend(['RT_USING_NANO']):
-    group = group + SConscript(os.path.join(cwd, 'nano', 'SConscript'))
+    group = group + SConscript(os.path.join('nano', 'SConscript'))
 else:
-    group = group + SConscript(os.path.join(cwd, 'drivers', 'SConscript'))
+    group = group + SConscript(os.path.join('drivers', 'SConscript'))
 
 group = group + DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
