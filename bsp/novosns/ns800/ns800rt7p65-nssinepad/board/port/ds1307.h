@@ -1,5 +1,12 @@
-/* Copyright (c) 2006-2026, RT-Thread Development Team */
-
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2026-06-24     coworkspace  first version
+ */
 #ifndef __DS1307_H__
 #define __DS1307_H__
 
