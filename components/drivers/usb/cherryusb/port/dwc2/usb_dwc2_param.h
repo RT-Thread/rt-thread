@@ -365,3 +365,4 @@ void dwc2_get_user_params(uint32_t reg_base, struct dwc2_user_params *params);
 void dwc2_get_user_fifo_config(uint32_t reg_base, struct usb_dwc2_user_fifo_config *config);
 
 #endif
+

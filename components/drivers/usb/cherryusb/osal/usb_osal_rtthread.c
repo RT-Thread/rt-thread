@@ -227,3 +227,4 @@ void usb_osal_free(void *ptr)
 {
     rt_free(ptr);
 }
+

@@ -123,3 +123,4 @@ __WEAK void usbd_hid_set_protocol(uint8_t busid, uint8_t intf, uint8_t protocol)
     (void)intf;
     (void)protocol;
 }
+

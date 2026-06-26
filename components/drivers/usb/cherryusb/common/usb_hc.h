@@ -51,7 +51,7 @@ struct usbh_urb {
     uint32_t start_frame;
     usbh_complete_callback_t complete;
     void *arg;
-#if defined(__ICCARM__) || defined(__ICCRISCV__) || defined(__ICCRX__)
+#if defined(__ICCARM__) || defined(__ICCRISCV__) || defined(__ICCRX__) || defined(__CC_ARM)
     struct usbh_iso_frame_packet *iso_packet;
 #else
     struct usbh_iso_frame_packet iso_packet[0];

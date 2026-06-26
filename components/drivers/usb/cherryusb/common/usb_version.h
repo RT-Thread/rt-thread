@@ -19,3 +19,4 @@
 #define CHERRYUSB_VERSION_STR "v1.6.1"
 
 #endif
+
