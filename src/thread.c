@@ -114,6 +114,22 @@ static void _thread_detach_from_mutex(rt_thread_t thread)
 static void _thread_detach_from_mutex(rt_thread_t thread) {}
 #endif
 
+static rt_err_t _thread_mark_defunct(rt_thread_t thread)
+{
+    rt_err_t error = -RT_ERROR;
+    rt_base_t level;
+
+    level = rt_spin_lock_irqsave(&thread->spinlock);
+    if (!RT_SCHED_CTX(thread).sched_flag_defunct)
+    {
+        RT_SCHED_CTX(thread).sched_flag_defunct = 1;
+        error = RT_EOK;
+    }
+    rt_spin_unlock_irqrestore(&thread->spinlock, level);
+
+    return error;
+}
+
 static void _thread_exit(void)
 {
     struct rt_thread *thread;
@@ -126,10 +142,13 @@ static void _thread_exit(void)
 
     rt_thread_close(thread);
 
-    _thread_detach_from_mutex(thread);
+    if (_thread_mark_defunct(thread) == RT_EOK)
+    {
+        _thread_detach_from_mutex(thread);
 
-    /* insert to defunct thread list */
-    rt_thread_defunct_enqueue(thread);
+        /* insert to defunct thread list */
+        rt_thread_defunct_enqueue(thread);
+    }
 
     rt_exit_critical_safe(critical_level);
 
@@ -513,10 +532,17 @@ static rt_err_t _thread_detach(rt_thread_t thread)
 
     error = rt_thread_close(thread);
 
-    _thread_detach_from_mutex(thread);
+    if (error == RT_EOK)
+    {
+        error = _thread_mark_defunct(thread);
+        if (error == RT_EOK)
+        {
+            _thread_detach_from_mutex(thread);
 
-    /* insert to defunct thread list */
-    rt_thread_defunct_enqueue(thread);
+            /* insert to defunct thread list */
+            rt_thread_defunct_enqueue(thread);
+        }
+    }
 
     rt_exit_critical_safe(critical_level);
     return error;
