@@ -44,7 +44,7 @@ static void usbhs_common_init(void)
     RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_USBHS, ENABLE);
 
     /* TX analog tuning for 8-bit UTMI PHY (N32H47x_48x USBHSCTRL2 layout). */
-    RCC->USBHSCTRL2 = (RCC->USBHSCTRL2 & (~(0xF << 4)))  | (0x5 << 4);  /* TX vref TUNE [7:4]        */
+    RCC->USBHSCTRL2 = (RCC->USBHSCTRL2 & (~(0xF << 4))) | (0x5 << 4);   /* TX vref TUNE [7:4]        */
     RCC->USBHSCTRL2 = (RCC->USBHSCTRL2 & (~(0x3 << 12))) | (0x3 << 12); /* TX Rise TUNE [13:12]      */
     RCC->USBHSCTRL2 = (RCC->USBHSCTRL2 & (~(0x3 << 14))) | (0x3 << 14); /* TX Res TUNE  [15:14]      */
     RCC->USBHSCTRL2 = (RCC->USBHSCTRL2 & (~(0x3 << 16))) | (0x3 << 16); /* TX preempamp TUNE [17:16] */
@@ -60,7 +60,9 @@ static void usbhs_common_init(void)
 
 /* Override in the board layer to configure USB DM/DP alternate-function pins.
  * In host mode, also drive any VBUS power-switch GPIO here (e.g. board/ports/usb_gpio.c). */
-__weak void n32h47x_48x_usbhs_gpio_init(void) { }
+__weak void n32h47x_48x_usbhs_gpio_init(void)
+{
+}
 
 void usb_dc_low_level_init(uint8_t busid)
 {
@@ -138,8 +140,7 @@ void usbd_dwc2_delay_ms(uint8_t ms)
     RCC_GetClocksFreqValue(&RCC_clocks);
 
     uint32_t count = RCC_clocks.SysclkFreq / 1000 * ms;
-    while (count--)
-    {
+    while (count--) {
         __asm volatile("nop");
     }
 }
@@ -176,8 +177,7 @@ uint32_t usbd_dwc2_get_system_clock(void)
  *   Total          1024 words  (4096 bytes)
  *
  */
-static const struct dwc2_user_params param_n32h47x_48x =
-{
+static const struct dwc2_user_params param_n32h47x_48x = {
     /* Built-in HS UTMI+ PHY; sets GUSBCFG.ULPI_UTMI_SEL = 0. */
     .phy_type = DWC2_PHY_TYPE_PARAM_UTMI,
 
@@ -186,7 +186,7 @@ static const struct dwc2_user_params param_n32h47x_48x =
      * CherryUSB only sets GUSBCFG.PHYIF16 when this field == 16. */
     .phy_utmi_width = 8,
 
-    /* Slave mode vs DMA mode; controlled by CONFIG_USB_DWC2_DMA_ENABLE.
+/* Slave mode vs DMA mode; controlled by CONFIG_USB_DWC2_DMA_ENABLE.
      * DMA mode frees the CPU from FIFO polling but requires aligned buffers. */
 #ifdef CONFIG_USB_DWC2_DMA_ENABLE
     .device_dma_enable = true,
@@ -226,16 +226,16 @@ static const struct dwc2_user_params param_n32h47x_48x =
      *             sum of all TX entries must stay <= (1024 - device_rx_fifo_size).
      * Per-FIFO hardware limit: INEPTXFDEP max = 768 words. */
     .device_tx_fifo_size = {
-        [0]  = 64,   /* EP0:  256 bytes, control */
-        [1]  = 256,  /* EP1: 1024 bytes, HS bulk/iso primary */
-        [2]  = 64,   /* EP2:  256 bytes */
-        [3]  = 64,   /* EP3:  256 bytes */
-        [4]  = 64,   /* EP4:  256 bytes */
-        [5]  = 0,    /* EP5..EP8: unallocated, use CUSTOM_FIFO to enable */
-        [6]  = 0,
-        [7]  = 0,
-        [8]  = 0,
-        [9]  = 0,    /* [9]..[15]: invalid for N32H47x_48x (only EP0..EP8 exist) */
+        [0] = 64,  /* EP0:  256 bytes, control */
+        [1] = 256, /* EP1: 1024 bytes, HS bulk/iso primary */
+        [2] = 64,  /* EP2:  256 bytes */
+        [3] = 64,  /* EP3:  256 bytes */
+        [4] = 64,  /* EP4:  256 bytes */
+        [5] = 0,   /* EP5..EP8: unallocated, use CUSTOM_FIFO to enable */
+        [6] = 0,
+        [7] = 0,
+        [8] = 0,
+        [9] = 0, /* [9]..[15]: invalid for N32H47x_48x (only EP0..EP8 exist) */
         [10] = 0,
         [11] = 0,
         [12] = 0,
@@ -299,8 +299,7 @@ void dwc2_get_user_params(uint32_t reg_base, struct dwc2_user_params *params)
     dwc2_get_user_fifo_config(reg_base, &s_dwc2_fifo_config);
 
     params->device_rx_fifo_size = s_dwc2_fifo_config.device_rx_fifo_size;
-    for (uint8_t i = 0; i < MAX_EPS_CHANNELS; i++)
-    {
+    for (uint8_t i = 0; i < MAX_EPS_CHANNELS; i++) {
         params->device_tx_fifo_size[i] = s_dwc2_fifo_config.device_tx_fifo_size[i];
     }
 #endif /* CONFIG_USB_DWC2_CUSTOM_FIFO */
@@ -345,7 +344,7 @@ static void usbhs_common_init(void)
     RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_USBHS, ENABLE);
 
     /* TX analog tuning for 8-bit UTMI PHY (N32H49x USBHSCTRL layout). */
-    RCC->USBHSCTRL2 = (RCC->USBHSCTRL2 & (~(0xF << 4)))  | (0xB << 4);  /* HDCVTRIM[7:4]              */
+    RCC->USBHSCTRL2 = (RCC->USBHSCTRL2 & (~(0xF << 4))) | (0xB << 4);   /* HDCVTRIM[7:4]              */
     RCC->USBHSCTRL1 = (RCC->USBHSCTRL1 & (~(0x7 << 12))) | (0x5 << 12); /* USBHSCTRL1[14:12]          */
     RCC->USBHSCTRL2 = (RCC->USBHSCTRL2 & (~(0x3 << 12))) | (0x0 << 14); /* RFTRIM[13:12] = 0 (clear)  */
     RCC->USBHSCTRL2 = (RCC->USBHSCTRL2 & (~(0x3 << 16))) | (0x1 << 16); /* USBHSCTRL2[17:16]          */
@@ -361,7 +360,9 @@ static void usbhs_common_init(void)
 
 /* Override in the board layer to configure USB DM/DP alternate-function pins.
  * In host mode, also drive any VBUS power-switch GPIO here (e.g. board/ports/usb_gpio.c). */
-__weak void n32h49x_usbhs_gpio_init(void) { }
+__weak void n32h49x_usbhs_gpio_init(void)
+{
+}
 
 void usb_dc_low_level_init(uint8_t busid)
 {
@@ -438,8 +439,7 @@ void usbd_dwc2_delay_ms(uint8_t ms)
 
     RCC_GetClocksFreqValue(&RCC_clocks);
     uint32_t count = RCC_clocks.SysclkFreq / 1000U * ms;
-    while (count--)
-    {
+    while (count--) {
         __asm volatile("nop");
     }
 }
@@ -474,8 +474,7 @@ uint32_t usbd_dwc2_get_system_clock(void)
  *   Periodic TX     256 words  (1024 bytes)
  *   Total          1024 words  (4096 bytes)
  */
-static const struct dwc2_user_params param_n32h49x =
-{
+static const struct dwc2_user_params param_n32h49x = {
     .phy_type = DWC2_PHY_TYPE_PARAM_UTMI,
 
     /* 8-bit UTMI data bus (GCFG.PHYIF = 0).
@@ -495,16 +494,16 @@ static const struct dwc2_user_params param_n32h49x =
     .device_rx_fifo_size = 512,
 
     .device_tx_fifo_size = {
-        [0]  = 64,   /* EP0:  256 bytes, control */
-        [1]  = 256,  /* EP1: 1024 bytes, HS bulk/iso primary */
-        [2]  = 64,   /* EP2:  256 bytes */
-        [3]  = 64,   /* EP3:  256 bytes */
-        [4]  = 64,   /* EP4:  256 bytes */
-        [5]  = 0,    /* EP5..EP8: unallocated, use CUSTOM_FIFO to enable */
-        [6]  = 0,
-        [7]  = 0,
-        [8]  = 0,
-        [9]  = 0,    /* [9]..[15]: invalid for N32H49x (only EP0..EP8 exist) */
+        [0] = 64,  /* EP0:  256 bytes, control */
+        [1] = 256, /* EP1: 1024 bytes, HS bulk/iso primary */
+        [2] = 64,  /* EP2:  256 bytes */
+        [3] = 64,  /* EP3:  256 bytes */
+        [4] = 64,  /* EP4:  256 bytes */
+        [5] = 0,   /* EP5..EP8: unallocated, use CUSTOM_FIFO to enable */
+        [6] = 0,
+        [7] = 0,
+        [8] = 0,
+        [9] = 0, /* [9]..[15]: invalid for N32H49x (only EP0..EP8 exist) */
         [10] = 0,
         [11] = 0,
         [12] = 0,
@@ -548,8 +547,7 @@ void dwc2_get_user_params(uint32_t reg_base, struct dwc2_user_params *params)
     dwc2_get_user_fifo_config(reg_base, &s_dwc2_fifo_config);
 
     params->device_rx_fifo_size = s_dwc2_fifo_config.device_rx_fifo_size;
-    for (uint8_t i = 0; i < MAX_EPS_CHANNELS; i++)
-    {
+    for (uint8_t i = 0; i < MAX_EPS_CHANNELS; i++) {
         params->device_tx_fifo_size[i] = s_dwc2_fifo_config.device_tx_fifo_size[i];
     }
 #endif /* CONFIG_USB_DWC2_CUSTOM_FIFO */
@@ -588,10 +586,10 @@ void dwc2_get_user_params(uint32_t reg_base, struct dwc2_user_params *params)
 #include "n32h7xx.h"
 #include "usb_dwc2_param.h"
 
-#define N32H7XX_USBHS1_BASE  0x40100000U
-#define N32H7XX_USBHS2_BASE  0x40060000U
-#define N32H7XX_USBHS1_WRAP  0x40140000U
-#define N32H7XX_USBHS2_WRAP  0x400A0000U
+#define N32H7XX_USBHS1_BASE 0x40100000U
+#define N32H7XX_USBHS2_BASE 0x40060000U
+#define N32H7XX_USBHS1_WRAP 0x40140000U
+#define N32H7XX_USBHS2_WRAP 0x400A0000U
 
 typedef void (*usb_dwc2_irq_fn)(uint8_t busid);
 
@@ -608,8 +606,7 @@ void usbd_dwc2_delay_ms(uint8_t ms)
 
     RCC_GetClocksFreqValue(&RCC_Clocks);
     uint32_t count = RCC_Clocks.SysClkFreq / 1000U * ms;
-    while (count--)
-    {
+    while (count--) {
         __asm volatile("nop");
     }
 }
@@ -646,7 +643,7 @@ static void n32h7xx_wrapper_init(uint32_t wrap_base, bool is_device, bool is_usb
     wrpcfg = wrap->WRPCFG;
     wrpcfg &= ~USBHS_WRPCFG_PHYCLKSEL;
 
-#if   (HSE_VALUE == 10000000U)
+#if (HSE_VALUE == 10000000U)
     wrpcfg |= USBHS_WRPCFG_PHYCLKSEL_10M;
 #elif (HSE_VALUE == 12000000U)
     wrpcfg |= USBHS_WRPCFG_PHYCLKSEL_12M;
@@ -668,27 +665,21 @@ static void n32h7xx_wrapper_init(uint32_t wrap_base, bool is_device, bool is_usb
 
     wrpcfg |= USBHS_WRPCFG_PLLEN;
 
-    if (is_device)
-    {
+    if (is_device) {
         wrpcfg |= USBHS_WRPCFG_IDSIG;
-    }
-    else
-    {
+    } else {
         wrpcfg &= ~USBHS_WRPCFG_IDSIG;
     }
 
     wrap->WRPCFG = wrpcfg;
 
-    wrpctrl  = wrap->WRPCTRL;
+    wrpctrl = wrap->WRPCTRL;
     wrpctrl |= USBHS_WRPCTRL_PINDETEN;
     wrap->WRPCTRL = wrpctrl;
 
-    if (is_usbhs1)
-    {
+    if (is_usbhs1) {
         RCC_EnableAHB2PeriphReset1(RCC_AHB2_PERIPHRST_USB1POR);
-    }
-    else
-    {
+    } else {
         RCC_EnableAHB1PeriphReset1(RCC_AHB1_PERIPHRST_USB2POR);
     }
 
@@ -701,8 +692,12 @@ static void n32h7xx_wrapper_init(uint32_t wrap_base, bool is_device, bool is_usb
  * the DM/DP pins (and optionally SOF/ID) for your specific board.
  * In host mode, also drive any VBUS power-switch GPIO here.
  * ----------------------------------------------------------------------- */
-__weak void n32h7xx_usbhs1_gpio_init(void) { }
-__weak void n32h7xx_usbhs2_gpio_init(void) { }
+__weak void n32h7xx_usbhs1_gpio_init(void)
+{
+}
+__weak void n32h7xx_usbhs2_gpio_init(void)
+{
+}
 
 /* -----------------------------------------------------------------------
  * NVIC + init
@@ -711,10 +706,10 @@ static void n32h7xx_usbhs1_irq_enable(void)
 {
     NVIC_InitType nvic;
 
-    nvic.NVIC_IRQChannel                   = USB1_HS_IRQn;
+    nvic.NVIC_IRQChannel = USB1_HS_IRQn;
     nvic.NVIC_IRQChannelPreemptionPriority = 1;
-    nvic.NVIC_IRQChannelSubPriority        = 3;
-    nvic.NVIC_IRQChannelCmd                = ENABLE;
+    nvic.NVIC_IRQChannelSubPriority = 3;
+    nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
 }
 
@@ -722,10 +717,10 @@ static void n32h7xx_usbhs2_irq_enable(void)
 {
     NVIC_InitType nvic;
 
-    nvic.NVIC_IRQChannel                   = USB2_HS_IRQn;
+    nvic.NVIC_IRQChannel = USB2_HS_IRQn;
     nvic.NVIC_IRQChannelPreemptionPriority = 1;
-    nvic.NVIC_IRQChannelSubPriority        = 3;
-    nvic.NVIC_IRQChannelCmd                = ENABLE;
+    nvic.NVIC_IRQChannelSubPriority = 3;
+    nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
 }
 
@@ -754,7 +749,7 @@ static void n32h7xx_usbhs1_hw_init(uint8_t busid, usb_dwc2_irq_fn irq_fn)
      * registers are inaccessible and the PHY will not start. */
     PWR_MoudlePowerEnable(HSC1_USB1_PWRCTRL, ENABLE);
 
-    g_n32h7xx_irq[0].fn    = irq_fn;
+    g_n32h7xx_irq[0].fn = irq_fn;
     g_n32h7xx_irq[0].busid = busid;
     n32h7xx_usbhs1_irq_enable();
 }
@@ -775,7 +770,7 @@ static void n32h7xx_usbhs2_hw_init(uint8_t busid, usb_dwc2_irq_fn irq_fn)
     /* Power up the USBHS2 hardware module. */
     PWR_MoudlePowerEnable(HSC2_USB2_PWRCTRL, ENABLE);
 
-    g_n32h7xx_irq[1].fn    = irq_fn;
+    g_n32h7xx_irq[1].fn = irq_fn;
     g_n32h7xx_irq[1].busid = busid;
     n32h7xx_usbhs2_irq_enable();
 }
@@ -787,13 +782,10 @@ void usb_dc_low_level_init(uint8_t busid)
 {
     /* Identify the controller by reg_base, not busid.
      * busid is a user-assigned index and does not imply a fixed controller mapping. */
-    if (g_usbdev_bus[busid].reg_base == N32H7XX_USBHS1_BASE)
-    {
+    if (g_usbdev_bus[busid].reg_base == N32H7XX_USBHS1_BASE) {
         n32h7xx_usbhs1_hw_init(busid, USBD_IRQHandler);
         n32h7xx_wrapper_init(N32H7XX_USBHS1_WRAP, true, true);
-    }
-    else
-    {
+    } else {
         n32h7xx_usbhs2_hw_init(busid, USBD_IRQHandler);
         n32h7xx_wrapper_init(N32H7XX_USBHS2_WRAP, true, false);
     }
@@ -803,17 +795,14 @@ void usb_dc_low_level_deinit(uint8_t busid)
 {
     NVIC_InitType nvic;
 
-    if (g_usbdev_bus[busid].reg_base == N32H7XX_USBHS1_BASE)
-    {
-        nvic.NVIC_IRQChannel    = USB1_HS_IRQn;
+    if (g_usbdev_bus[busid].reg_base == N32H7XX_USBHS1_BASE) {
+        nvic.NVIC_IRQChannel = USB1_HS_IRQn;
         nvic.NVIC_IRQChannelCmd = DISABLE;
         NVIC_Init(&nvic);
         RCC_EnableAHB2PeriphReset1(RCC_AHB2_PERIPHRST_USB1POR);
         RCC_EnableAHB2PeriphClk1(RCC_AHB2_PERIPHEN_M7_USB1, DISABLE);
-    }
-    else
-    {
-        nvic.NVIC_IRQChannel    = USB2_HS_IRQn;
+    } else {
+        nvic.NVIC_IRQChannel = USB2_HS_IRQn;
         nvic.NVIC_IRQChannelCmd = DISABLE;
         NVIC_Init(&nvic);
         RCC_EnableAHB1PeriphReset1(RCC_AHB1_PERIPHRST_USB2POR);
@@ -826,13 +815,10 @@ void usb_dc_low_level_deinit(uint8_t busid)
  * ----------------------------------------------------------------------- */
 void usb_hc_low_level_init(struct usbh_bus *bus)
 {
-    if (bus->hcd.reg_base == N32H7XX_USBHS1_BASE)
-    {
+    if (bus->hcd.reg_base == N32H7XX_USBHS1_BASE) {
         n32h7xx_usbhs1_hw_init(bus->busid, USBH_IRQHandler);
         n32h7xx_wrapper_init(N32H7XX_USBHS1_WRAP, false, true);
-    }
-    else
-    {
+    } else {
         n32h7xx_usbhs2_hw_init(bus->busid, USBH_IRQHandler);
         n32h7xx_wrapper_init(N32H7XX_USBHS2_WRAP, false, false);
     }
@@ -842,17 +828,14 @@ void usb_hc_low_level_deinit(struct usbh_bus *bus)
 {
     NVIC_InitType nvic;
 
-    if (bus->hcd.reg_base == N32H7XX_USBHS1_BASE)
-    {
-        nvic.NVIC_IRQChannel    = USB1_HS_IRQn;
+    if (bus->hcd.reg_base == N32H7XX_USBHS1_BASE) {
+        nvic.NVIC_IRQChannel = USB1_HS_IRQn;
         nvic.NVIC_IRQChannelCmd = DISABLE;
         NVIC_Init(&nvic);
         RCC_EnableAHB2PeriphReset1(RCC_AHB2_PERIPHRST_USB1POR);
         RCC_EnableAHB2PeriphClk1(RCC_AHB2_PERIPHEN_M7_USB1, DISABLE);
-    }
-    else
-    {
-        nvic.NVIC_IRQChannel    = USB2_HS_IRQn;
+    } else {
+        nvic.NVIC_IRQChannel = USB2_HS_IRQn;
         nvic.NVIC_IRQChannelCmd = DISABLE;
         NVIC_Init(&nvic);
         RCC_EnableAHB1PeriphReset1(RCC_AHB1_PERIPHRST_USB2POR);
@@ -909,8 +892,7 @@ void USB2_HS_IRQHandler(void)
  * Adjust via CONFIG_USB_DWC2_CUSTOM_FIFO or CONFIG_USB_DWC2_CUSTOM_PARAM;
  * keep RX + sum(TX) <= 1024 words.
  */
-static const struct dwc2_user_params param_n32h7xx =
-{
+static const struct dwc2_user_params param_n32h7xx = {
     /* Built-in HS UTMI+ PHY; GUSBCFG.ULPI_UTMI_SEL = 0. */
     .phy_type = DWC2_PHY_TYPE_PARAM_UTMI,
 
@@ -939,16 +921,16 @@ static const struct dwc2_user_params param_n32h7xx =
      * 512 TX + 512 RX = 1024 words total.
      * Per-FIFO hardware limit: INEPTXFDEP max = 768 words. */
     .device_tx_fifo_size = {
-        [0]  = 64,   /* EP0:  256 bytes, control; matches TX0_FIFO_HS_SIZE = 64 */
-        [1]  = 256,  /* EP1: 1024 bytes, HS bulk/iso; matches TX1_FIFO_HS_SIZE = 256 */
-        [2]  = 64,   /* EP2:  256 bytes */
-        [3]  = 64,   /* EP3:  256 bytes */
-        [4]  = 64,   /* EP4:  256 bytes */
-        [5]  = 0,    /* EP5..EP8: unallocated; use CONFIG_USB_DWC2_CUSTOM_FIFO to enable */
-        [6]  = 0,
-        [7]  = 0,
-        [8]  = 0,
-        [9]  = 0,
+        [0] = 64,  /* EP0:  256 bytes, control; matches TX0_FIFO_HS_SIZE = 64 */
+        [1] = 256, /* EP1: 1024 bytes, HS bulk/iso; matches TX1_FIFO_HS_SIZE = 256 */
+        [2] = 64,  /* EP2:  256 bytes */
+        [3] = 64,  /* EP3:  256 bytes */
+        [4] = 64,  /* EP4:  256 bytes */
+        [5] = 0,   /* EP5..EP8: unallocated; use CONFIG_USB_DWC2_CUSTOM_FIFO to enable */
+        [6] = 0,
+        [7] = 0,
+        [8] = 0,
+        [9] = 0,
         [10] = 0,
         [11] = 0,
         [12] = 0,
@@ -992,8 +974,7 @@ void dwc2_get_user_params(uint32_t reg_base, struct dwc2_user_params *params)
 
     dwc2_get_user_fifo_config(reg_base, &s_dwc2_fifo_config);
     params->device_rx_fifo_size = s_dwc2_fifo_config.device_rx_fifo_size;
-    for (uint8_t i = 0; i < MAX_EPS_CHANNELS; i++)
-    {
+    for (uint8_t i = 0; i < MAX_EPS_CHANNELS; i++) {
         params->device_tx_fifo_size[i] = s_dwc2_fifo_config.device_tx_fifo_size[i];
     }
 #endif /* CONFIG_USB_DWC2_CUSTOM_FIFO */

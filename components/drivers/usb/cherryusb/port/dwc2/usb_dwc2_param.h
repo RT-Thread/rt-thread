@@ -217,41 +217,41 @@ struct dwc2_hw_params {
     uint32_t snpsid;
     uint32_t dev_ep_dirs;
 
-    unsigned op_mode                  : 3;
-    unsigned arch                     : 2;
-    unsigned enable_dynamic_fifo      : 1;
-    unsigned host_channels            : 5;
-    unsigned hs_phy_type              : 2;
-    unsigned fs_phy_type              : 2;
-    unsigned num_dev_ep               : 4;
-    unsigned nperio_tx_q_depth        : 3;
-    unsigned host_perio_tx_q_depth    : 3;
-    unsigned dev_token_q_depth        : 5;
+    unsigned op_mode               : 3;
+    unsigned arch                  : 2;
+    unsigned enable_dynamic_fifo   : 1;
+    unsigned host_channels         : 5;
+    unsigned hs_phy_type           : 2;
+    unsigned fs_phy_type           : 2;
+    unsigned num_dev_ep            : 4;
+    unsigned nperio_tx_q_depth     : 3;
+    unsigned host_perio_tx_q_depth : 3;
+    unsigned dev_token_q_depth     : 5;
 
-    unsigned max_transfer_size        : 26;
-    unsigned max_packet_count         : 11;
-    unsigned i2c_enable               : 1;
-    unsigned total_fifo_size          : 16;
-    unsigned lpm_mode                 : 1;
+    unsigned max_transfer_size : 26;
+    unsigned max_packet_count  : 11;
+    unsigned i2c_enable        : 1;
+    unsigned total_fifo_size   : 16;
+    unsigned lpm_mode          : 1;
 
-    unsigned en_multiple_tx_fifo      : 1;
-    unsigned num_dev_in_eps           : 4;
-    unsigned num_dev_perio_in_ep      : 4;
-    unsigned dma_desc_enable          : 1;
-    unsigned power_optimized          : 1;
-    unsigned hibernation              : 1;
-    unsigned utmi_phy_data_width      : 2;
-    unsigned acg_enable               : 1;
-    unsigned ipg_isoc_en              : 1;
-    unsigned service_interval_mode    : 1;
+    unsigned en_multiple_tx_fifo   : 1;
+    unsigned num_dev_in_eps        : 4;
+    unsigned num_dev_perio_in_ep   : 4;
+    unsigned dma_desc_enable       : 1;
+    unsigned power_optimized       : 1;
+    unsigned hibernation           : 1;
+    unsigned utmi_phy_data_width   : 2;
+    unsigned acg_enable            : 1;
+    unsigned ipg_isoc_en           : 1;
+    unsigned service_interval_mode : 1;
 };
 
-#define DWC2_PHY_TYPE_PARAM_FS		0
-#define DWC2_PHY_TYPE_PARAM_UTMI	1
-#define DWC2_PHY_TYPE_PARAM_ULPI	2
+#define DWC2_PHY_TYPE_PARAM_FS   0
+#define DWC2_PHY_TYPE_PARAM_UTMI 1
+#define DWC2_PHY_TYPE_PARAM_ULPI 2
 
 struct dwc2_user_params {
-	uint8_t phy_type;
+    uint8_t phy_type;
     uint8_t phy_utmi_width;
 
     bool device_dma_enable;
@@ -261,18 +261,18 @@ struct dwc2_user_params {
     */
     uint16_t device_rx_fifo_size;
     /* IN Endpoints Max packet Size / 4 */
-	uint16_t device_tx_fifo_size[MAX_EPS_CHANNELS];
+    uint16_t device_tx_fifo_size[MAX_EPS_CHANNELS];
 
     bool host_dma_desc_enable;
     /*
     * (largest USB packet used / 4) + 1 for status information + 1 transfer complete +
     * 1 location each for Bulk/Control endpoint for handling NAK/NYET scenario
     */
-	uint16_t host_rx_fifo_size;
+    uint16_t host_rx_fifo_size;
     /* largest non-periodic USB packet used / 4 */
-	uint16_t host_nperio_tx_fifo_size;
+    uint16_t host_nperio_tx_fifo_size;
     /* largest periodic USB packet used / 4 */
-	uint16_t host_perio_tx_fifo_size;
+    uint16_t host_perio_tx_fifo_size;
 
     uint32_t device_gccfg;
     uint32_t host_gccfg;
@@ -282,7 +282,7 @@ struct dwc2_user_params {
 };
 
 struct usb_dwc2_user_fifo_config {
-     /* (5 * number of control endpoints + 8) + ((largest USB packet used / 4) + 1 for
+    /* (5 * number of control endpoints + 8) + ((largest USB packet used / 4) + 1 for
     * status information) + (2 * number of OUT endpoints) + 1 for Global NAK
     */
     uint16_t device_rx_fifo_size;
@@ -365,4 +365,3 @@ void dwc2_get_user_params(uint32_t reg_base, struct dwc2_user_params *params);
 void dwc2_get_user_fifo_config(uint32_t reg_base, struct usb_dwc2_user_fifo_config *config);
 
 #endif
-
