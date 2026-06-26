@@ -26,7 +26,11 @@
  *
  * Test Scenarios:
  * - Create, start, and delete a dynamic thread to verify dynamic thread lifecycle management
+ * - Let a dynamic thread exit normally, then call rt_thread_delete again in cleanup to verify duplicate delete handling
+ * - Delete an unstarted dynamic thread and reject another delete during its cleanup
  * - Initialize, start, and detach a static thread to verify static thread lifecycle management
+ * - On UP without SMART, reject repeated static detach and reuse the TCB after complete cleanup
+ * - On SMP, race two CPUs deleting one unstarted dynamic thread
  * - Delay a thread for a specific tick count and check timing accuracy
  * - Register and remove an idle hook, verifying it is called as expected
  * - Use thread yield to test scheduler fairness among threads of the same priority
@@ -37,6 +41,9 @@
  *
  * Verification Metrics:
  * - Threads are created, started, deleted, and detached successfully
+ * - Repeated deletion after normal thread exit returns an error without abnormal cleanup
+ * - Duplicate deletion/detachment cleans up each lifecycle once
+ * - Concurrent deletion returns RT_EOK once and -RT_ERROR once
  * - The precision of both relative delay and absolute delay is correct.
  * - Idle hook is invoked as expected during thread idle periods
  * - Thread yield causes correct scheduling among threads of the same priority
@@ -60,6 +67,7 @@
 
 #define THREAD_STACK_SIZE  UTEST_THR_STACK_SIZE
 #define THREAD_TIMESLICE   10
+#define THREAD_CLEANUP_TIMEOUT_MS 1000
 
 rt_align(RT_ALIGN_SIZE)
 static char thread2_stack[UTEST_THR_STACK_SIZE];
@@ -71,6 +79,7 @@ static struct rt_thread thread2;
     static rt_thread_t tid5 = RT_NULL;
     static rt_thread_t tid6 = RT_NULL;
     static rt_thread_t tid7 = RT_NULL;
+    static rt_thread_t tid9 = RT_NULL;
 #endif /* RT_USING_HEAP */
 
 static volatile rt_uint32_t tid3_delay_pass_flag = 0;
@@ -78,6 +87,10 @@ static volatile rt_uint32_t tid3_finish_flag = 0;
 static volatile rt_uint32_t tid4_finish_flag = 0;
 static volatile rt_uint32_t tid6_finish_flag = 0;
 static volatile rt_uint32_t thread5_source = 0;
+static rt_atomic_t thread9_exit_flag = 0;
+static rt_atomic_t thread9_cleanup_flag = 0;
+static rt_atomic_t thread9_delete_ret = -RT_ERROR;
+static rt_bool_t thread9_pending = RT_FALSE;
 
 #ifndef RT_USING_SMP
     static volatile rt_uint32_t thread_yield_flag = 0;
@@ -452,6 +465,353 @@ static void test_thread_priority(void)
     return;
 }
 
+#ifdef RT_USING_HEAP
+static rt_bool_t thread_wait_count(rt_atomic_t *value, rt_atomic_t expected)
+{
+    rt_tick_t start = rt_tick_get();
+    rt_tick_t timeout = rt_tick_from_millisecond(THREAD_CLEANUP_TIMEOUT_MS);
+
+    while (rt_atomic_load(value) < expected)
+    {
+        if (rt_tick_get() - start >= timeout)
+        {
+            return RT_FALSE;
+        }
+        rt_thread_mdelay(1);
+    }
+
+    return RT_TRUE;
+}
+
+static void thread9_entry(void *parameter)
+{
+    RT_UNUSED(parameter);
+
+    while (rt_atomic_load(&thread9_exit_flag) == 0)
+    {
+        rt_thread_mdelay(1);
+    }
+}
+
+static void thread9_cleanup(struct rt_thread *thread)
+{
+    rt_atomic_store(&thread9_delete_ret, rt_thread_delete(thread));
+    rt_atomic_add(&thread9_cleanup_flag, 1);
+}
+
+static void thread_test_delete_again(rt_bool_t exit_normally)
+{
+    rt_err_t ret;
+
+    if (thread9_pending && !thread_wait_count(&thread9_cleanup_flag, 1))
+    {
+        uassert_true(RT_FALSE);
+        return;
+    }
+    thread9_pending = RT_FALSE;
+    rt_atomic_store(&thread9_exit_flag, 0);
+    rt_atomic_store(&thread9_cleanup_flag, 0);
+    rt_atomic_store(&thread9_delete_ret, RT_EOK);
+
+    tid9 = rt_thread_create("thread9",
+                            thread9_entry,
+                            RT_NULL,
+                            THREAD_STACK_SIZE,
+                            UTEST_THR_PRIORITY - 1,
+                            THREAD_TIMESLICE);
+    if (tid9 == RT_NULL)
+    {
+        LOG_E("rt_thread_create failed!");
+        uassert_false(tid9 == RT_NULL);
+        return;
+    }
+
+    tid9->cleanup = thread9_cleanup;
+    thread9_pending = RT_TRUE;
+
+    if (exit_normally)
+    {
+        ret = rt_thread_startup(tid9);
+        if (ret != RT_EOK)
+        {
+            uassert_int_equal(ret, RT_EOK);
+            rt_thread_delete(tid9);
+            return;
+        }
+        rt_atomic_store(&thread9_exit_flag, 1);
+    }
+    else
+    {
+        uassert_int_equal(rt_thread_delete(tid9), RT_EOK);
+    }
+
+    /* The callback owns the still-live dynamic object during the second delete. */
+    uassert_true(thread_wait_count(&thread9_cleanup_flag, 1));
+    uassert_int_equal(rt_atomic_load(&thread9_cleanup_flag), 1);
+    uassert_int_equal(rt_atomic_load(&thread9_delete_ret), -RT_ERROR);
+}
+
+static void test_thread_exit_delete_again(void)
+{
+    thread_test_delete_again(RT_TRUE);
+}
+
+static void test_thread_delete_again(void)
+{
+    thread_test_delete_again(RT_FALSE);
+}
+
+#if !defined(RT_USING_SMP) && !defined(RT_USING_SMART)
+static struct rt_thread detach_thread;
+rt_align(RT_ALIGN_SIZE)
+static char detach_stack[THREAD_STACK_SIZE];
+static rt_thread_t detach_fence;
+static rt_atomic_t detach_cleanup_count;
+static rt_atomic_t detach_fence_done;
+static rt_atomic_t detach_fence_ret;
+static rt_bool_t detach_pending;
+
+static void detach_entry(void *parameter)
+{
+    RT_UNUSED(parameter);
+}
+
+static void detach_fence_cleanup(struct rt_thread *thread)
+{
+    RT_UNUSED(thread);
+    rt_atomic_store(&detach_fence_done, 1);
+}
+
+static void detach_cleanup(struct rt_thread *thread)
+{
+    RT_UNUSED(thread);
+    rt_atomic_add(&detach_cleanup_count, 1);
+    /* Its cleanup runs after the reaper has finished accessing this static TCB. */
+    rt_atomic_store(&detach_fence_ret, rt_thread_delete(detach_fence));
+}
+
+static void test_thread_detach_again(void)
+{
+    rt_sched_lock_level_t level;
+    rt_uint8_t priority;
+    rt_err_t ret, ret_again;
+    int cycle;
+
+    rt_sched_lock(&level);
+    priority = rt_sched_thread_get_curr_prio(rt_thread_self());
+    rt_sched_unlock(level);
+
+    for (cycle = 0; cycle < 2; cycle++)
+    {
+        if (detach_pending && !thread_wait_count(&detach_fence_done, 1))
+        {
+            uassert_true(RT_FALSE);
+            return;
+        }
+        detach_pending = RT_FALSE;
+        rt_atomic_store(&detach_cleanup_count, 0);
+        rt_atomic_store(&detach_fence_done, 0);
+        rt_atomic_store(&detach_fence_ret, -RT_ERROR);
+        detach_fence = rt_thread_create("detach_fence", detach_entry, RT_NULL,
+                                        THREAD_STACK_SIZE, priority, THREAD_TIMESLICE);
+        uassert_not_null(detach_fence);
+        if (detach_fence == RT_NULL)
+        {
+            return;
+        }
+        detach_fence->cleanup = detach_fence_cleanup;
+        detach_pending = RT_TRUE;
+
+        ret = rt_thread_init(&detach_thread, "detach_again", detach_entry, RT_NULL,
+                             detach_stack, sizeof(detach_stack),
+                             priority ? priority - 1 : 0, THREAD_TIMESLICE);
+        uassert_int_equal(ret, RT_EOK);
+        if (ret != RT_EOK)
+        {
+            rt_thread_delete(detach_fence);
+            return;
+        }
+        detach_thread.cleanup = detach_cleanup;
+
+        /* This READY test thread keeps the UP idle reaper from running. */
+        if (cycle == 0)
+        {
+            ret = rt_thread_detach(&detach_thread);
+        }
+        else
+        {
+            /* Reuse the same TCB after the previous lifecycle was fully reaped. */
+            ret = rt_thread_startup(&detach_thread);
+            if (ret != RT_EOK)
+            {
+                uassert_int_equal(ret, RT_EOK);
+                rt_thread_detach(&detach_thread);
+                return;
+            }
+            rt_thread_yield();
+        }
+        ret_again = rt_thread_detach(&detach_thread);
+        uassert_int_equal(ret, RT_EOK);
+        uassert_int_equal(ret_again, -RT_ERROR);
+
+        uassert_true(thread_wait_count(&detach_fence_done, 1));
+        uassert_int_equal(rt_atomic_load(&detach_cleanup_count), 1);
+        uassert_int_equal(rt_atomic_load(&detach_fence_ret), RT_EOK);
+    }
+}
+#endif /* !RT_USING_SMP && !RT_USING_SMART */
+
+#if defined(RT_USING_SMP) && RT_CPUS_NR > 1
+static struct
+{
+    struct rt_spinlock lock;
+    rt_thread_t target;
+    rt_atomic_t ready, start, done, active, attempts;
+    rt_atomic_t cleanup_count, cleanup_done, cleanup_timeout, result[2];
+    rt_bool_t accepting, pending;
+    int started;
+} delete_race;
+
+static void delete_race_cleanup(struct rt_thread *thread)
+{
+    rt_base_t level;
+    RT_UNUSED(thread);
+
+    rt_atomic_add(&delete_race.cleanup_count, 1);
+    /* SMP has a dedicated reaper; never block an UP idle cleanup this way. */
+    if (!thread_wait_count(&delete_race.done, delete_race.started))
+    {
+        rt_atomic_store(&delete_race.cleanup_timeout, 1);
+    }
+    level = rt_spin_lock_irqsave(&delete_race.lock);
+    delete_race.accepting = RT_FALSE;
+    rt_spin_unlock_irqrestore(&delete_race.lock, level);
+
+    /* Close admission before releasing any TCB. A stuck kernel call needs a watchdog. */
+    while (rt_atomic_load(&delete_race.active) != 0)
+    {
+        rt_thread_mdelay(1);
+    }
+    rt_atomic_store(&delete_race.cleanup_done, 1);
+}
+
+static void delete_race_entry(void *parameter)
+{
+    rt_ubase_t index = (rt_ubase_t)parameter;
+    rt_base_t level;
+    rt_bool_t admitted = RT_FALSE;
+    rt_err_t ret = -RT_ETIMEOUT;
+
+    rt_atomic_add(&delete_race.ready, 1);
+    if (thread_wait_count(&delete_race.start, 1) &&
+        rt_atomic_load(&delete_race.start) == 1)
+    {
+        level = rt_spin_lock_irqsave(&delete_race.lock);
+        if (delete_race.accepting)
+        {
+            rt_atomic_add(&delete_race.active, 1);
+            admitted = RT_TRUE;
+        }
+        rt_spin_unlock_irqrestore(&delete_race.lock, level);
+        if (admitted)
+        {
+            rt_atomic_add(&delete_race.attempts, 1);
+            ret = rt_thread_delete(delete_race.target);
+            rt_atomic_sub(&delete_race.active, 1);
+        }
+    }
+    rt_atomic_store(&delete_race.result[index], ret);
+    rt_atomic_add(&delete_race.done, 1);
+}
+
+static void test_thread_delete_race(void)
+{
+    rt_thread_t worker;
+    rt_base_t level;
+    rt_err_t ret;
+    rt_bool_t delete_unused;
+    int i;
+
+    if (delete_race.pending &&
+        (!thread_wait_count(&delete_race.done, delete_race.started) ||
+         !thread_wait_count(&delete_race.cleanup_done, 1)))
+    {
+        uassert_true(RT_FALSE);
+        return;
+    }
+    rt_memset(&delete_race, 0, sizeof(delete_race));
+    rt_spin_lock_init(&delete_race.lock);
+    delete_race.accepting = RT_TRUE;
+
+    /* Keep the target unstarted: running-thread reclamation is a separate issue. */
+    delete_race.target = rt_thread_create("delete_race", thread9_entry, RT_NULL,
+                                          THREAD_STACK_SIZE, UTEST_THR_PRIORITY, THREAD_TIMESLICE);
+    uassert_not_null(delete_race.target);
+    if (delete_race.target == RT_NULL)
+    {
+        return;
+    }
+    delete_race.target->cleanup = delete_race_cleanup;
+    delete_race.pending = RT_TRUE;
+
+    for (i = 0; i < 2; i++)
+    {
+        worker = rt_thread_create("delete_worker", delete_race_entry, (void *)(rt_ubase_t)i,
+                                  THREAD_STACK_SIZE, UTEST_THR_PRIORITY, THREAD_TIMESLICE);
+        uassert_not_null(worker);
+        if (worker == RT_NULL)
+        {
+            goto __exit;
+        }
+        ret = rt_thread_control(worker, RT_THREAD_CTRL_BIND_CPU, (void *)(rt_ubase_t)i);
+        if (ret == RT_EOK)
+        {
+            ret = rt_thread_startup(worker);
+        }
+        uassert_int_equal(ret, RT_EOK);
+        if (ret != RT_EOK)
+        {
+            rt_thread_delete(worker);
+            goto __exit;
+        }
+        delete_race.started++;
+    }
+    if (!thread_wait_count(&delete_race.ready, 2))
+    {
+        uassert_true(RT_FALSE);
+        goto __exit;
+    }
+    rt_atomic_store(&delete_race.start, 1);
+    uassert_true(thread_wait_count(&delete_race.done, 2));
+
+__exit:
+    rt_atomic_store(&delete_race.start, 2);
+    uassert_true(thread_wait_count(&delete_race.done, delete_race.started));
+    level = rt_spin_lock_irqsave(&delete_race.lock);
+    delete_race.accepting = RT_FALSE;
+    delete_unused = rt_atomic_load(&delete_race.attempts) == 0;
+    if (delete_unused)
+    {
+        /* Protect the fallback delete from an already-admitted, delayed worker. */
+        rt_atomic_add(&delete_race.active, 1);
+    }
+    rt_spin_unlock_irqrestore(&delete_race.lock, level);
+    if (delete_unused)
+    {
+        rt_thread_delete(delete_race.target);
+        rt_atomic_sub(&delete_race.active, 1);
+    }
+    uassert_true(thread_wait_count(&delete_race.cleanup_done, 1));
+    uassert_int_equal(rt_atomic_load(&delete_race.cleanup_timeout), 0);
+    uassert_int_equal(rt_atomic_load(&delete_race.cleanup_count), 1);
+    uassert_true((rt_atomic_load(&delete_race.result[0]) == RT_EOK &&
+                  rt_atomic_load(&delete_race.result[1]) == -RT_ERROR) ||
+                 (rt_atomic_load(&delete_race.result[1]) == RT_EOK &&
+                  rt_atomic_load(&delete_race.result[0]) == -RT_ERROR));
+}
+#endif /* RT_USING_SMP && RT_CPUS_NR > 1 */
+#endif /* RT_USING_HEAP */
+
 static void test_delay_until(void)
 {
     rt_tick_t tick;
@@ -772,6 +1132,17 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_static_thread);
     /* create, delete */
     UTEST_UNIT_RUN(test_dynamic_thread);
+    /* exit, duplicate delete */
+#ifdef RT_USING_HEAP
+    UTEST_UNIT_RUN(test_thread_exit_delete_again);
+    UTEST_UNIT_RUN(test_thread_delete_again);
+#if !defined(RT_USING_SMP) && !defined(RT_USING_SMART)
+    UTEST_UNIT_RUN(test_thread_detach_again);
+#endif
+#if defined(RT_USING_SMP) && RT_CPUS_NR > 1
+    UTEST_UNIT_RUN(test_thread_delete_race);
+#endif
+#endif
     /* delay */
     UTEST_UNIT_RUN(test_thread_delay);
     /* idle_sethook, idle_delhook */

@@ -947,6 +947,7 @@ struct rt_thread
 #endif /* RT_USING_MEM_PROTECTION */
 
     struct rt_spinlock          spinlock;
+    rt_uint8_t                  defunct;                /**< cleanup claimed, protected by spinlock */
     rt_ubase_t                  user_data;              /**< private user data beyond this thread */
 };
 typedef struct rt_thread *rt_thread_t;
