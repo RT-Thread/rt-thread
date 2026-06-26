@@ -358,21 +358,37 @@ jobs:
         if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
         timeout-minutes: 20
         run: |
+          LOG_FILE="qemu_output_${TEST_QEMU_ARCH}.log"
           FAILURE_DETECTED=false
           ERROR_LOGS=""
           export FAILURE_DETECTED ERROR_LOGS
+
+          if [[ ! -f "$LOG_FILE" ]]; then
+            echo "Error: QEMU log file $LOG_FILE was not created."
+            exit 1
+          fi
           
           echo "=========================================================================================="
           echo " ||                                                                                    || "
           echo " ||                          Start automatic running of Utest                          || "
           echo " VV                                                                                    VV "
           echo "=========================================================================================="
+          set +e
           timeout 20m bash -c '
-            tail -n 0 -f "qemu_output_${TEST_QEMU_ARCH}.log" | while IFS= read -r line; do
+            tail -n +1 -f "$1" | while IFS= read -r line; do
               echo "$line"
               if [[ "$line" == *"[  FAILED  ] [ result   ]"* ]]; then
                 ERROR_LOGS="${ERROR_LOGS}${line}"$'\''\n'\''
                 FAILURE_DETECTED=true
+              fi
+
+              if [[ "${line,,}" == *"assertion failed"* || "${line,,}" == *"assert failed"* ]]; then
+                echo "=========================================================================================="
+                echo " ||                                                                                    || "
+                echo " ||              Error: Assertion failure detected in QEMU log.                       || "
+                echo " VV                                                                                    VV "
+                echo "=========================================================================================="
+                exit 1
               fi
 
               if [[ "$line" == *"[==========] [ utest    ] finished"* ]]; then
@@ -388,11 +404,12 @@ jobs:
                 echo "=========================================================================================="
                 echo "                  Successed: Utest run completed. Exiting log monitoring                  "
                 echo "=========================================================================================="
-                break
+                exit 0
               fi
             done
-          '
+          ' bash "$LOG_FILE"
           monitor_status=$?
+          set -e
 
           if [[ $monitor_status -eq 124 ]]; then
             echo "=========================================================================================="
@@ -402,6 +419,10 @@ jobs:
             echo "=========================================================================================="
             pkill -f "qemu-system-${TEST_QEMU_ARCH}.*${TEST_BSP_ROOT}/rtthread.bin" || true
             exit 1
+          fi
+
+          if [[ $monitor_status -ne 0 ]]; then
+            pkill -f "qemu-system-${TEST_QEMU_ARCH}.*${TEST_BSP_ROOT}/rtthread.bin" || true
           fi
 
           exit $monitor_status
