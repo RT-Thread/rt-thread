@@ -2,9 +2,35 @@ name: MemBrowse Memory Report
 
 on:
   pull_request:
+    paths:
+      - '.github/membrowse-targets.json'
+      - '.github/workflows/membrowse-report.yml'
+      - 'Kconfig'
+      - 'bsp/**'
+      - 'components/**'
+      - 'include/**'
+      - 'libcpu/**'
+      - 'src/**'
+      - 'tools/**'
+      - '!**/README*'
+      - '!**/readme*'
+      - '!bsp/**/docs/**'
   push:
     branches:
       - master
+    paths:
+      - '.github/membrowse-targets.json'
+      - '.github/workflows/membrowse-report.yml'
+      - 'Kconfig'
+      - 'bsp/**'
+      - 'components/**'
+      - 'include/**'
+      - 'libcpu/**'
+      - 'src/**'
+      - 'tools/**'
+      - '!**/README*'
+      - '!**/readme*'
+      - '!bsp/**/docs/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}
@@ -15,16 +41,31 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+      target_count: ${{ steps.set-matrix.outputs.target_count }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Collect changed files
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
+          elif [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed_files.txt
+          else
+            git diff --name-only origin/${{ github.event.repository.default_branch }}...HEAD > changed_files.txt
+          fi
+          cat changed_files.txt
 
       - name: Load target matrix
         id: set-matrix
-        run: echo "matrix=$(jq -c '.' .github/membrowse-targets.json)" >> $GITHUB_OUTPUT
+        run: python3 tools/ci/membrowse_filter_targets.py --targets .github/membrowse-targets.json --changed-files changed_files.txt
 
   analyze:
     needs: load-targets
+    if: ${{ needs.load-targets.outputs.target_count != '0' }}
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
