@@ -14,6 +14,7 @@
 
 #include <board.h>
 #include <rtdevice.h>
+#include "drv_dma.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -104,6 +105,7 @@ extern "C" {
 #include "g0/adc_config.h"
 #include "g0/tim_config.h"
 #include "g0/pwm_config.h"
+#include "g0/usbd_config.h"
 #elif  defined(SOC_SERIES_STM32G4)
 #include "g4/dma_config.h"
 #include "g4/uart_config.h"

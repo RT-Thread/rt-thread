@@ -6,6 +6,9 @@ import os
 cwd = GetCurrentDir()
 group = []
 src = []
+# DMA-capable BSPs are expected to enable HAL_DMA_MODULE_ENABLED in the
+# STM32 HAL configuration, so keep the common DMA helper in the build.
+src += ['drv_dma.c']
 path = [cwd]
 
 if GetDepend(['RT_USING_PIN']):
@@ -35,7 +38,7 @@ if GetDepend('RT_USING_SOFT_SPI'):
 if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
     if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
         src += ['drv_soft_i2c.c']
-        
+
 if GetDepend(['RT_USING_I2C']):
     if GetDepend('BSP_USING_HARD_I2C1') or GetDepend('BSP_USING_HARD_I2C2') or GetDepend('BSP_USING_HARD_I2C3') or GetDepend('BSP_USING_HARD_I2C4'):
         src += ['drv_hard_i2c.c']

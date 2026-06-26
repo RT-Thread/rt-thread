@@ -24,6 +24,8 @@ extern "C" {
 #include "usb_dc.h"
 #include "usb_osal.h"
 #include "usb_memcpy.h"
+#include "usb_ringbuffer.h"
+#include "usb_mempool.h"
 #include "usb_dcache.h"
 #include "usb_version.h"
 

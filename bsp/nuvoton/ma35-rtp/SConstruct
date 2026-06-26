@@ -19,7 +19,6 @@ def bsp_pkg_check():
     import subprocess
 
     check_paths = [
-        os.path.join("packages", "nuvoton-cmsis-latest"),
         os.path.join("packages", "nuvoton-series-latest")
     ]
 

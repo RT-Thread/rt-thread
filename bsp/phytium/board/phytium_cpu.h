@@ -46,21 +46,21 @@
 
 rt_uint64_t get_main_cpu_affval(void);
 
-rt_inline rt_uint32_t platform_get_gic_dist_base(void)
+rt_inline rt_uintptr_t  platform_get_gic_dist_base(void)
 {
     return GICV3_DISTRIBUTOR_BASE_ADDR;
 }
 
 /* the basic constants and interfaces needed by gic */
-rt_inline uintptr_t platform_get_gic_redist_base(void)
+rt_inline rt_uintptr_t platform_get_gic_redist_base(void)
 {
-    uintptr_t redis_base, mpidr_aff, gicr_typer_aff;
-    mpidr_aff = (uintptr_t)(GetAffinity() & CORE_AFF_MASK);
+    rt_uintptr_t redis_base, mpidr_aff, gicr_typer_aff;
+    mpidr_aff = (rt_uintptr_t)(GetAffinity() & CORE_AFF_MASK);
 
     for (redis_base = GICV3_RD_BASE_ADDR; redis_base < GICV3_RD_BASE_ADDR + GICV3_RD_SIZE; redis_base += GICV3_RD_OFFSET)
     {
 #ifdef RT_USING_SMART
-        uintptr_t redis_base_virtual = (uintptr_t)rt_ioremap((void *)redis_base, GICV3_RD_OFFSET);
+        rt_uintptr_t redis_base_virtual = (rt_uintptr_t)rt_ioremap((void *)redis_base, GICV3_RD_OFFSET);
         rt_hw_tlb_invalidate_all();
         if (redis_base_virtual == 0)
         {
@@ -77,7 +77,7 @@ rt_inline uintptr_t platform_get_gic_redist_base(void)
         }
         else
         {
-            rt_iounmap(redis_base_virtual);
+            rt_iounmap((volatile void *)redis_base_virtual);
         }
 #else
 #if defined(TARGET_ARMV8_AARCH64)
@@ -98,7 +98,7 @@ rt_inline uintptr_t platform_get_gic_redist_base(void)
 
 #if defined(TARGET_ARMV8_AARCH64)
 
-rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
+rt_inline rt_uintptr_t platform_get_gic_cpu_base(void)
 {
     return 0; /* unused in gicv3 */
 }

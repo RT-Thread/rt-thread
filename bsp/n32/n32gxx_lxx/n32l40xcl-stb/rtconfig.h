@@ -104,6 +104,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "usart1"
+#define RT_USING_CONSOLE_OUTPUT_CTL
 #define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -158,7 +159,6 @@
 #define RT_USING_SPI_ISR
 #define RT_USING_WDT
 #define RT_USING_PIN
-#define RT_USING_HWTIMER
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */

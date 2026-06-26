@@ -52,6 +52,10 @@
 
 #define _WARNING_NO_RTC "Cannot find a RTC device!"
 
+#if defined(RT_USING_SMART) && defined(RT_USING_VDSO)
+#include <vdso_kernel.h>
+#endif
+
 /* days per month -- nonleap! */
 static const short __spm[13] =
 {
@@ -519,12 +523,26 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
     {
         if (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMEVAL, (void *)tv) == RT_EOK)
         {
+#if defined(RT_USING_SMART) && defined(RT_USING_VDSO)
+            struct timespec ts = {
+                .tv_sec = tv->tv_sec,
+                .tv_nsec = tv->tv_usec * 1000L,
+            };
+            rt_vdso_set_realtime(&ts);
+#endif
             return 0;
         }
         else
         {
             if (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIME, (void *)&tv->tv_sec) == RT_EOK)
             {
+#if defined(RT_USING_SMART) && defined(RT_USING_VDSO)
+                struct timespec ts = {
+                    .tv_sec = tv->tv_sec,
+                    .tv_nsec = 0,
+                };
+                rt_vdso_set_realtime(&ts);
+#endif
                 return 0;
             }
         }
@@ -736,7 +754,16 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
     {
 #ifdef RT_USING_RTC
         case CLOCK_REALTIME:
-            return _control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMESPEC, (void *)tp);
+        {
+            int ret = _control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMESPEC, (void *)tp);
+            if (ret == RT_EOK)
+            {
+#if defined(RT_USING_SMART) && defined(RT_USING_VDSO)
+                rt_vdso_set_realtime(tp);
+#endif
+            }
+            return ret;
+        }
 #endif /* RT_USING_RTC */
 
         case CLOCK_REALTIME_COARSE:

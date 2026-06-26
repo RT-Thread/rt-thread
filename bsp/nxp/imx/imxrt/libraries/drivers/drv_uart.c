@@ -7,8 +7,8 @@
  * Date           Author       Notes
  * 2017-10-10     Tanek        the first version
  * 2019-5-10      misonyo      add DMA TX and RX function
+ * 2026-4-29      Ran          add RT1180 support
  */
-
 #include <rtthread.h>
 #ifdef BSP_USING_LPUART
 
@@ -18,7 +18,9 @@
 #include "board.h"
 #include "fsl_lpuart.h"
 #include "fsl_lpuart_edma.h"
+#ifndef SOC_IMXRT1180_SERIES
 #include "fsl_dmamux.h"
+#endif
 
 #define LOG_TAG             "drv.usart"
 #include <drv_log.h>
@@ -497,22 +499,27 @@ void edma_tx_callback(LPUART_Type *base, lpuart_edma_handle_t *handle, status_t 
         rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_TX_DMADONE);
     }
 }
+  static void imxrt_dma_rx_config(struct imxrt_uart *uart)
+  {
+      RT_ASSERT(uart != RT_NULL);
 
-static void imxrt_dma_rx_config(struct imxrt_uart *uart)
-{
-    RT_ASSERT(uart != RT_NULL);
+      edma_transfer_config_t xferConfig;
+      struct rt_serial_rx_fifo *rx_fifo;
 
-    edma_transfer_config_t xferConfig;
-    struct rt_serial_rx_fifo *rx_fifo;
+  #ifndef SOC_IMXRT1180_SERIES
+      DMAMUX_SetSource(DMAMUX, uart->dma_rx->channel, uart->dma_rx->request);
+      DMAMUX_EnableChannel(DMAMUX, uart->dma_rx->channel);
+  #else
+      /* RT1180 uses EDMA4, configure DMA request source differently */
+      EDMA_SetChannelMux(DMA0, uart->dma_rx->channel, uart->dma_rx->request);
+  #endif
+    
+      EDMA_CreateHandle(&uart->dma_rx->edma, DMA0, uart->dma_rx->channel);
+      EDMA_SetCallback(&uart->dma_rx->edma, edma_rx_callback, uart);
 
-    DMAMUX_SetSource(DMAMUX, uart->dma_rx->channel, uart->dma_rx->request);
-    DMAMUX_EnableChannel(DMAMUX, uart->dma_rx->channel);
-    EDMA_CreateHandle(&uart->dma_rx->edma, DMA0, uart->dma_rx->channel);
-    EDMA_SetCallback(&uart->dma_rx->edma, edma_rx_callback, uart);
+      rx_fifo = (struct rt_serial_rx_fifo *)uart->serial.serial_rx;
 
-    rx_fifo = (struct rt_serial_rx_fifo *)uart->serial.serial_rx;
-
-    EDMA_PrepareTransfer(&xferConfig,
+      EDMA_PrepareTransfer(&xferConfig,
                          (void *)LPUART_GetDataRegisterAddress(uart->uart_base),
                          sizeof(uint8_t),
                          rx_fifo->buffer,
@@ -521,74 +528,123 @@ static void imxrt_dma_rx_config(struct imxrt_uart *uart)
                          uart->serial.config.bufsz,
                          kEDMA_PeripheralToMemory);
 
-    EDMA_SubmitTransfer(&uart->dma_rx->edma, &xferConfig);
-    EDMA_EnableChannelInterrupts(DMA0, uart->dma_rx->channel, kEDMA_MajorInterruptEnable | kEDMA_HalfInterruptEnable);
-    EDMA_EnableAutoStopRequest(DMA0, uart->dma_rx->channel, false);
-    /* complement to adjust final destination address */
-    uart->dma_rx->edma.base->TCD[uart->dma_rx->channel].DLAST_SGA = -(uart->serial.config.bufsz);
-    EDMA_StartTransfer(&uart->dma_rx->edma);
-    LPUART_EnableRxDMA(uart->uart_base, true);
+      EDMA_SubmitTransfer(&uart->dma_rx->edma, &xferConfig);
+      EDMA_EnableChannelInterrupts(DMA0, uart->dma_rx->channel, kEDMA_MajorInterruptEnable | kEDMA_HalfInterruptEnable);
+      EDMA_EnableAutoStopRequest(DMA0, uart->dma_rx->channel, false);
+      /* complement to adjust final destination address */
+      uart->dma_rx->edma.base->TCD[uart->dma_rx->channel].DLAST_SGA = -(uart->serial.config.bufsz);
+      EDMA_StartTransfer(&uart->dma_rx->edma);
+      LPUART_EnableRxDMA(uart->uart_base, true);
 
-    LPUART_EnableInterrupts(uart->uart_base, kLPUART_IdleLineInterruptEnable);
-    NVIC_SetPriority(uart->irqn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 4, 0));
-    EnableIRQ(uart->irqn);
+      LPUART_EnableInterrupts(uart->uart_base, kLPUART_IdleLineInterruptEnable);
+      NVIC_SetPriority(uart->irqn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 4, 0));
+      EnableIRQ(uart->irqn);
 
-    LOG_D("%s dma rx config done\n", uart->name);
-}
+      LOG_D("%s dma rx config done\n", uart->name);
+  }
 
-static void imxrt_dma_tx_config(struct imxrt_uart *uart)
-{
-    RT_ASSERT(uart != RT_NULL);
+  static void imxrt_dma_tx_config(struct imxrt_uart *uart)
+  {
+      RT_ASSERT(uart != RT_NULL);
 
-    DMAMUX_SetSource(DMAMUX, uart->dma_tx->channel, uart->dma_tx->request);
-    DMAMUX_EnableChannel(DMAMUX, uart->dma_tx->channel);
-    EDMA_CreateHandle(&uart->dma_tx->edma, DMA0, uart->dma_tx->channel);
+  #ifndef SOC_IMXRT1180_SERIES
+      DMAMUX_SetSource(DMAMUX, uart->dma_tx->channel, uart->dma_tx->request);
+      DMAMUX_EnableChannel(DMAMUX, uart->dma_tx->channel);
+  #else
+      /* RT1180 uses EDMA4, configure DMA request source differently */
+      EDMA_SetChannelMux(DMA0, uart->dma_tx->channel, uart->dma_tx->request);
+  #endif
+    
+      EDMA_CreateHandle(&uart->dma_tx->edma, DMA0, uart->dma_tx->channel);
 
-    LPUART_TransferCreateHandleEDMA(uart->uart_base,
-                                    &uart->dma_tx->uart_edma,
-                                    edma_tx_callback,
-                                    uart,
-                                    &uart->dma_tx->edma,
-                                    RT_NULL);
+      LPUART_TransferCreateHandleEDMA(uart->uart_base,
+                                      &uart->dma_tx->uart_edma,
+                                      edma_tx_callback,
+                                      uart,
+                                      &uart->dma_tx->edma,
+                                      RT_NULL);
 
-    LOG_D("%s dma tx config done\n", uart->name);
-}
-
+      LOG_D("%s dma tx config done\n", uart->name);
+  }
 #endif
+  uint32_t GetUartSrcFreq(LPUART_Type *uart_base)
+  {
+      uint32_t freq;
+  #if defined(SOC_IMXRT1170_SERIES)
+      uint32_t base = (uint32_t) uart_base;
+      switch (base)
+      {
+      case LPUART1_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1);
+          break;
+      case LPUART12_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart12);
+          break;
+      default:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart2);
+          break;
+      }
+  #elif defined(SOC_IMXRT1180_SERIES)
+      /* RT1180 uses different clock root architecture */
+      uint32_t base = (uint32_t) uart_base;
+      switch (base)
+      {
+      case LPUART1_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0102);
+          break;
+      case LPUART2_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0102);
+          break;
+      case LPUART3_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0304);
+          break;
+      case LPUART4_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0304);
+          break;
+      case LPUART5_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0506);
+          break;
+      case LPUART6_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0506);
+          break;
+      case LPUART7_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0708);
+          break;
+      case LPUART8_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0708);
+          break;
+      case LPUART9_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0910);
+          break;
+      case LPUART10_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0910);
+          break;
+      case LPUART11_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1112);
+          break;
+      case LPUART12_BASE:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1112);
+          break;
 
-uint32_t GetUartSrcFreq(LPUART_Type *uart_base)
-{
-    uint32_t freq;
-#ifdef SOC_IMXRT1170_SERIES
-    uint32_t base = (uint32_t) uart_base;
-    switch (base)
-    {
-    case LPUART1_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart1);
-        break;
-    case LPUART12_BASE:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart12);
-        break;
-    default:
-        freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart2);
-        break;
-    }
-#else
-    /* To make it simple, we assume default PLL and divider settings, and the only variable
+      default:
+          freq = CLOCK_GetRootClockFreq(kCLOCK_Root_Lpuart0102);
+          break;
+      }
+  #else
+      /* To make it simple, we assume default PLL and divider settings, and the only variable
        from application is use PLL3 source or OSC source */
-    if (CLOCK_GetMux(kCLOCK_UartMux) == 0) /* PLL3 div6 80M */
-    {
-        freq = (CLOCK_GetPllFreq(kCLOCK_PllUsb1) / 6U) / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
-    }
-    else
-    {
-        freq = CLOCK_GetOscFreq() / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
-    }
-#endif
-    return freq;
+      if (CLOCK_GetMux(kCLOCK_UartMux) == 0) /* PLL3 div6 80M */
+      {
+          freq = (CLOCK_GetPllFreq(kCLOCK_PllUsb1) / 6U) / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
+      }
+      else
+      {
+          freq = CLOCK_GetOscFreq() / (CLOCK_GetDiv(kCLOCK_UartDiv) + 1U);
+      }
+  #endif
+      return freq;
 
-}
-
+  }
 static rt_err_t imxrt_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
     struct imxrt_uart *uart;

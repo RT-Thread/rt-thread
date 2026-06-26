@@ -38,7 +38,7 @@ static void usbotg_host_initialize(uint8_t busid)
     USB_LOG_INFO("Switch to HOST mode\r\n");
 
     g_usbotg_core[busid].usbh_initialized = true;
-    usbh_initialize(busid, g_usbotg_core[busid].reg_base);
+    usbh_initialize(busid, g_usbotg_core[busid].reg_base, NULL);
 }
 
 static void usbotg_device_initialize(uint8_t busid)

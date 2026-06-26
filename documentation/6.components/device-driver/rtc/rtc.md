@@ -1,6 +1,11 @@
 @page page_device_rtc RTC Device
 
+@subpage page_device_rtc_dm
+
 # Introduction of RTC
+
+With **RT_USING_DM**, hardware RTC drivers register via platform / I2C / SPI **probe** — see @ref page_device_rtc_dm. This page documents the **set_date / set_time / time()** application API.
+
 
 The RTC (Real-Time Clock) provides accurate real-time clock time, which can be used to generate information such as year, month, day, hour, minute, and second. At present, most real-time clock chips use a higher precision crystal oscillator as a clock source. In order to work when the main power supply is powered down, some clock chips will be powered by a battery to keep the time information valid.
 

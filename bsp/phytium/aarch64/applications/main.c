@@ -19,6 +19,10 @@
 #include "auto_test.h"
 #endif
 
+#if defined(USE_OPENAMP)
+#include "openamp_for_linux_sample.h"
+#endif
+
 #define ASSERT_STATIC(expression) \
     extern int assert_static[(expression) ? 1 : -1]
 
@@ -88,11 +92,14 @@ void demo_core(void)
 
 int main(void)
 {
-#ifdef BSP_USING_DRIVERS_EXAMPLE
+#ifdef BSP_USING_DRIVERS_AUTO_TEST
     rt_thread_mdelay(2000);
     auto_test();
 #elif defined RT_USING_SMP
     demo_core();
+#endif
+#if defined(USE_OPENAMP)
+    creat_openamp_thread();
 #endif
     return RT_EOK;
 }

@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>HK32F030x8, __RTTHREAD__, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC</Define>
+              <Define>HK32F030x8, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, USE_STDPERIPH_DRIVER, RT_USING_ARMLIBC, RT_USING_LIBC, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\libraries\HK32F0xx_StdPeriph_Driver\inc;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\drivers\include;board;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension;..\..\..\include;..\..\..\components\drivers\include;.;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\Core;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\posix\ipc;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\HK32F0xx\Include;board\msp;..\libraries\rt_drivers;..\..\..\components\drivers\phy;..\..\..\components\drivers\smp_call;applications;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>board;..\libraries\rt_drivers;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\Core;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\net\utest;..\..\..\components\drivers\smp_call;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\ipc;applications;..\libraries\HK32F0xx_StdPeriph_Driver\CMSIS\HK32F0xx\Include;..\..\..\components\drivers\include;..\libraries\HK32F0xx_StdPeriph_Driver\inc;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;board\msp;.;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -388,61 +388,33 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cctype.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstdlib.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -790,16 +762,16 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>shell.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1087,19 +1059,61 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1111,6 +1125,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
@@ -1118,40 +1146,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libcpu</GroupName>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m0\cpuport.c</FilePath>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1159,44 +1156,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>hk32f0xx_i2c.c</FileName>
+              <FileName>hk32f0xx_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_rcc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_dbgmcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_dbgmcu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_exti.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_spi.c</FilePath>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_adc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1208,23 +1170,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>hk32f0xx_gpio.c</FileName>
+              <FileName>hk32f0xx_dbgmcu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_gpio.c</FilePath>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_dbgmcu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>hk32f0xx_iwdg.c</FileName>
+              <FileName>hk32f0xx_divsqrt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_iwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_pwr.c</FilePath>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_divsqrt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1236,6 +1191,41 @@
           </Files>
           <Files>
             <File>
+              <FileName>hk32f0xx_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_iwdg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_iwdg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>hk32f0xx_misc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_misc.c</FilePath>
@@ -1243,23 +1233,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>hk32f0xx_syscfg.c</FileName>
+              <FileName>hk32f0xx_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_syscfg.c</FilePath>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_pwr.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>hk32f0xx_usart.c</FileName>
+              <FileName>hk32f0xx_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_usart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hk32f0xx_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_adc.c</FilePath>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_rcc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1271,6 +1254,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>hk32f0xx_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hk32f0xx_syscfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_syscfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>hk32f0xx_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_tim.c</FilePath>
@@ -1278,9 +1275,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>hk32f0xx_divsqrt.c</FileName>
+              <FileName>hk32f0xx_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_divsqrt.c</FilePath>
+              <FilePath>..\libraries\HK32F0xx_StdPeriph_Driver\src\hk32f0xx_usart.c</FilePath>
             </File>
           </Files>
           <Files>

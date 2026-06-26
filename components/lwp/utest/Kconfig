@@ -1,0 +1,16 @@
+menu "LWP Testcase"
+
+config RT_UTEST_LWP
+    bool "Enable LWP condvar test"
+    depends on RT_USING_SMART
+    default n
+
+config RT_UTEST_LWP_TTY_PTMX
+    bool "Enable Utest for tty_ptmx buffer overflow regression (V-004)"
+    depends on RT_USING_SMART
+    default n
+    help
+        Regression guard for the snprintf buffer bounds fix in
+        components/lwp/terminal/tty_ptmx.c.
+
+endmenu

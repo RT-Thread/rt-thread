@@ -935,6 +935,8 @@ struct rt_thread
 #ifdef RT_USING_CPU_USAGE_TRACER
     rt_ubase_t                  user_time;              /**< Ticks on user */
     rt_ubase_t                  system_time;            /**< Ticks on system */
+    rt_ubase_t                  total_time_prev;        /**< Previous total ticks snapshot */
+    rt_uint8_t                  cpu_usage;              /**< Recent CPU usage in percent */
 #endif /* RT_USING_CPU_USAGE_TRACER */
 
 #ifdef RT_USING_MEM_PROTECTION
@@ -1375,6 +1377,9 @@ struct rt_device
     void *ofw_node;                                     /**< ofw node get from device tree */
 #endif /* RT_USING_OFW */
     void *power_domain_unit;
+#ifdef RT_USING_DVFS
+    void *dvfs_scaling;
+#endif
 #ifdef RT_USING_DMA
     const void *dma_ops;
 #endif

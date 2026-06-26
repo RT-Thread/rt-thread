@@ -77,6 +77,7 @@
 #define TEST_RT_NAME_MAX        RT_NAME_MAX
 #define OBJECT_STRESS_BATCH     24
 #define OBJECT_STRESS_ROUNDS    3
+#define OBJECT_THREAD_STACK_SIZE 1024
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
@@ -140,6 +141,16 @@ static rt_err_t generate_unique_name(char *buf,
     return -RT_ENOMEM;
 }
 
+static void object_find_test_thread_entry(void *parameter)
+{
+    RT_UNUSED(parameter);
+
+    while (1)
+    {
+        rt_thread_mdelay(10);
+    }
+}
+
 static void test_object_name_handling(void)
 {
     struct rt_object static_obj;
@@ -187,6 +198,7 @@ static void test_object_find_operations(void)
     rt_thread_t found_thread;
     rt_object_t found;
     char missing_name[] = "object.not.exists";
+    rt_err_t ret;
 
     uassert_true(generate_unique_name(name, sizeof(name), "sobj", RT_Object_Class_Thread) == RT_EOK);
     rt_object_init(&static_obj, RT_Object_Class_Thread, name);
@@ -197,14 +209,21 @@ static void test_object_find_operations(void)
     rt_object_detach(&static_obj);
 
     uassert_true(generate_unique_name(name, sizeof(name), "thr", RT_Object_Class_Thread) == RT_EOK);
-    thread = rt_thread_create(name, RT_NULL, RT_NULL, 512, RT_THREAD_PRIORITY_MAX / 2, 10);
+    thread = rt_thread_create(name, object_find_test_thread_entry, RT_NULL,
+                              OBJECT_THREAD_STACK_SIZE, RT_THREAD_PRIORITY_MAX / 2, 10);
     uassert_not_null(thread);
+    ret = rt_thread_startup(thread);
+    uassert_int_equal(ret, RT_EOK);
     found_thread = rt_thread_find(name);
     uassert_not_null(found_thread);
     uassert_ptr_equal(found_thread, thread);
     uassert_str_equal(found_thread->parent.name, name);
-    rt_thread_delete(thread);
-    rt_thread_mdelay(10);
+    ret = rt_thread_delete(thread);
+    uassert_int_equal(ret, RT_EOK);
+    for (int i = 0; i < 10 && rt_thread_find(name) != RT_NULL; i++)
+    {
+        rt_thread_mdelay(100);
+    }
     uassert_null(rt_thread_find(name));
 
 #ifdef RT_USING_DEVICE

@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>RT_USING_LIBC, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>__RTTHREAD__, RT_USING_LIBC, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\libcpu\arm\common;..\..\libcpu\arm\arm926;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;.;..\..\components\libc\posix\ipc;drivers;..\..\components\libc\posix\io\epoll;applications;..\..\components\libc\compilers\common\include;..\..\components\finsh;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;..\..\components\drivers\phy;..\..\components\drivers\smp_call;..\..\components\libc\compilers\common\extension;platform;..\..\include</IncludePath>
+              <IncludePath>..\..\components\libc\posix\ipc;..\..\include;.;..\..\libcpu\arm\arm926;..\..\components\libc\compilers\common\include;..\..\components\libc\posix\io\epoll;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\eventfd;..\..\components\net\utest;drivers;..\..\components\drivers\phy;..\..\components\drivers\include;..\..\components\drivers\include;applications;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\drivers\smp_call;..\..\components\drivers\include;..\..\components\finsh;platform;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -410,61 +410,68 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\arm926\context_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\cpuport.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cctype.c</FileName>
+              <FileName>machine.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\machine.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstdlib.c</FileName>
+              <FileName>mmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\mmu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cstring.c</FileName>
+              <FileName>stack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstring.c</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\stack.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+              <FileName>start_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\arm926\start_rvds.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cunistd.c</FileName>
+              <FileName>trap.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
+              <FilePath>..\..\libcpu\arm\arm926\trap.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cwchar.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -764,9 +771,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\components\finsh\msh.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -778,9 +785,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
+              <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1111,7 +1118,63 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
+          <Files>
+            <File>
+              <FileName>syscall_mem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscalls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cwchar.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>kerrno.c</FileName>
@@ -1135,82 +1198,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>libcpu</GroupName>
           <Files>
             <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>machine.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\machine.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\mmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\stack.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>start_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\start_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>trap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\arm926\trap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FilePath>..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>

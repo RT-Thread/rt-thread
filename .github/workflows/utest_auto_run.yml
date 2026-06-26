@@ -1,5 +1,5 @@
 # Automation utest run script for the QEMU platform
-# Generate the corresponding config configuration for CI based on the configuration file under examples/utest/configs.
+# Generate the corresponding config configuration for CI based on the configuration file under .github/utest/configs.
 
 name: utest_auto_run
 
@@ -7,17 +7,43 @@ on:
   push:
     branches:
       - master
-    paths-ignore:
-      - documentation/**
-      - '**/README.md'
-      - '**/README_zh.md'
+    paths:
+      - '.github/workflows/utest_auto_run.yml'
+      - '.github/utest/configs/**'
+      - 'Kconfig'
+      - 'components/utilities/utest/Kconfig'
+      - 'bsp/qemu-vexpress-a9/**'
+      - 'bsp/qemu-virt64-aarch64/**'
+      - 'bsp/qemu-virt64-riscv/**'
+      - 'bsp/xuantie/virt64/c906/**'
+      - 'components/**'
+      - 'examples/utest/**'
+      - 'include/**'
+      - 'libcpu/**'
+      - 'src/**'
+      - 'tools/**'
+      - '!**/README.md'
+      - '!**/README_zh.md'
   pull_request:
     branches:
       - master
-    paths-ignore:
-      - documentation/**
-      - '**/README.md'
-      - '**/README_zh.md'
+    paths:
+      - '.github/workflows/utest_auto_run.yml'
+      - '.github/utest/configs/**'
+      - 'Kconfig'
+      - 'components/utilities/utest/Kconfig'
+      - 'bsp/qemu-vexpress-a9/**'
+      - 'bsp/qemu-virt64-aarch64/**'
+      - 'bsp/qemu-virt64-riscv/**'
+      - 'bsp/xuantie/virt64/c906/**'
+      - 'components/**'
+      - 'examples/utest/**'
+      - 'include/**'
+      - 'libcpu/**'
+      - 'src/**'
+      - 'tools/**'
+      - '!**/README.md'
+      - '!**/README_zh.md'
   workflow_dispatch:
     inputs:
       trigger_type:
@@ -55,18 +81,59 @@ jobs:
           - { UTEST: "AARCH64-rtsmart", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
           - { UTEST: "AARCH64-smp",   RTT_BSP: "bsp/qemu-virt64-aarch64",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "standard",  "SMP_RUN":"smp" }
 
+          - { UTEST: "AARCH64",       RTT_BSP: "bsp/zynqmp-a53-dfzu2eg",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "xlnx-zcu102",  SD_FILE: "None", KERNEL: "standard",  "SMP_RUN":"" }
+          - { UTEST: "AARCH64-rtsmart", RTT_BSP: "bsp/zynqmp-a53-dfzu2eg", QEMU_ARCH: "aarch64", QEMU_MACHINE: "xlnx-zcu102",  SD_FILE: "None", KERNEL: "rtsmart",  "SMP_RUN":"" }
+          - { UTEST: "AARCH64-smp",   RTT_BSP: "bsp/zynqmp-a53-dfzu2eg",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "xlnx-zcu102",  SD_FILE: "None", KERNEL: "standard",  "SMP_RUN":"smp" }
+
         config_file:
           - "default.cfg"
 
         include:
-          # only run on qemu-vexpress-a9
+          # run kernel utest set on all QEMU boards
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "kernel/kernel_basic.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "kernel/ipc.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "kernel/mem.cfg"
-
+          - platform: { UTEST: "A9-rtsmart",    RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
+            config_file: "kernel/kernel_basic.cfg"
+          - platform: { UTEST: "A9-rtsmart",    RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
+            config_file: "kernel/ipc.cfg"
+          - platform: { UTEST: "A9-rtsmart",    RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
+            config_file: "kernel/mem.cfg"
+          - platform: { UTEST: "A9-smp",        RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"smp" }
+            config_file: "kernel/kernel_basic.cfg"
+          - platform: { UTEST: "A9-smp",        RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"smp" }
+            config_file: "kernel/ipc.cfg"
+          - platform: { UTEST: "A9-smp",        RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"smp" }
+            config_file: "kernel/mem.cfg"
+          - platform: { UTEST: "RISCV",         RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "kernel/kernel_basic.cfg"
+          - platform: { UTEST: "RISCV",         RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "kernel/ipc.cfg"
+          - platform: { UTEST: "RISCV",         RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "kernel/mem.cfg"
+          - platform: { UTEST: "RISCV-rtsmart", RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "rtsmart",  "SMP_RUN":"" }
+            config_file: "kernel/kernel_basic.cfg"
+          - platform: { UTEST: "RISCV-rtsmart", RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "rtsmart",  "SMP_RUN":"" }
+            config_file: "kernel/ipc.cfg"
+          - platform: { UTEST: "RISCV-rtsmart", RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "rtsmart",  "SMP_RUN":"" }
+            config_file: "kernel/mem.cfg"
+          - platform: { UTEST: "XUANTIE-rtsmart", RTT_BSP: "bsp/xuantie/virt64/c906", QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
+            config_file: "kernel/kernel_basic.cfg"
+          - platform: { UTEST: "XUANTIE-rtsmart", RTT_BSP: "bsp/xuantie/virt64/c906", QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
+            config_file: "kernel/ipc.cfg"
+          - platform: { UTEST: "XUANTIE-rtsmart", RTT_BSP: "bsp/xuantie/virt64/c906", QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
+            config_file: "kernel/mem.cfg"
+          - platform: { UTEST: "RISCV-smp",     RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"smp" }
+            config_file: "kernel/mem.cfg"
+          - platform: { UTEST: "AARCH64",       RTT_BSP: "bsp/qemu-virt64-aarch64",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "kernel/mem.cfg"
+          - platform: { UTEST: "AARCH64-rtsmart", RTT_BSP: "bsp/qemu-virt64-aarch64", QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "rtsmart",  "SMP_RUN":"" }
+            config_file: "kernel/mem.cfg"
+          - platform: { UTEST: "AARCH64-smp",   RTT_BSP: "bsp/qemu-virt64-aarch64",   QEMU_ARCH: "aarch64", QEMU_MACHINE: "virt",        SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"smp" }
+            config_file: "kernel/mem.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "kernel/atomic_c11.cfg"
           - platform: { UTEST: "RISCV",         RTT_BSP: "bsp/qemu-virt64-riscv",     QEMU_ARCH: "riscv64", QEMU_MACHINE: "virt",        SD_FILE: "None",   KERNEL: "standard", "SMP_RUN":"" }
@@ -90,6 +157,7 @@ jobs:
       TEST_BSP_ROOT: ${{ matrix.platform.RTT_BSP }}
       TEST_CONFIG_FILE: ${{ matrix.config_file }}
       TEST_SD_FILE: ${{ matrix.platform.SD_FILE }}
+      UTEST_CONFIG_ROOT: .github/utest/configs
     steps:
       - uses: actions/checkout@main
 
@@ -97,7 +165,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -yqq install scons qemu-system git
+          sudo apt-get -yqq install scons qemu-system git device-tree-compiler
           pip3 install kconfiglib
 
       - name: Install ToolChains
@@ -201,16 +269,16 @@ jobs:
         run: |
           # Whether plan to run SMP?
           if [[ "${{ matrix.platform.SMP_RUN }}"  == "smp" ]]; then
-            cat examples/utest/configs/smp/smp.cfg >> $TEST_BSP_ROOT/.config
+            cat $UTEST_CONFIG_ROOT/smp/smp.cfg >> $TEST_BSP_ROOT/.config
           fi
 
           # Is the kernel rtsmart?
           if [[ "${{ matrix.platform.KERNEL }}"  == "rtsmart" ]]; then
-            cat examples/utest/configs/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
+            cat $UTEST_CONFIG_ROOT/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
           fi
 
           echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
-          cat examples/utest/configs/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
+          cat $UTEST_CONFIG_ROOT/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
           scons --pyconfig-silent -C $TEST_BSP_ROOT
           scons -j$(nproc) --strict -C $TEST_BSP_ROOT
 
@@ -223,10 +291,25 @@ jobs:
           fi
 
           if [[ "${{ matrix.platform.QEMU_ARCH }}"  == "aarch64" ]]; then 
-            qemu-system-$TEST_QEMU_ARCH -M virt,gic-version=2 -cpu cortex-a53 -smp 4 -kernel $TEST_BSP_ROOT/rtthread.bin  -nographic \
-            -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0,bus=virtio-mmio-bus.0 \
-            -netdev user,id=net0 -device virtio-net-device,netdev=net0,bus=virtio-mmio-bus.1 \
-            > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
+            sudo apt-get -yqq install device-tree-compiler
+            if [[ "${{ matrix.platform.QEMU_MACHINE }}"  == "virt" ]]; then
+              qemu-system-$TEST_QEMU_ARCH -M virt -cpu max -smp 4 -m 128M -kernel $TEST_BSP_ROOT/rtthread.bin -nographic \
+              -append "console=ttyAMA0 earlycon cma=8M coherent_pool=2M root=vda0 rootfstype=elm rootwait rw" \
+              -drive if=none,file=$TEST_BSP_ROOT/sd.bin,format=raw,id=blk0 -device virtio-blk-device,drive=blk0 \
+              -netdev user,id=net0 -device virtio-net-device,netdev=net0,bus=virtio-mmio-bus.1 \
+              > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
+            elif [[ "${{ matrix.platform.QEMU_MACHINE }}"  == "xlnx-zcu102" ]]; then
+              heap=$(grep -E '^#define[[:space:]]+ARCH_HEAP_SIZE' $TEST_BSP_ROOT/rtconfig.h | awk '{print $3}')
+              page=$(grep -E '^#define[[:space:]]+ARCH_INIT_PAGE_SIZE' $TEST_BSP_ROOT/rtconfig.h | awk '{print $3}')
+              heap=$(echo "$heap" | tr -d '()')
+              page=$(echo "$page" | tr -d '()')
+              heap_val=$((heap))
+              page_val=$((page))
+              mem=$((heap_val + page_val))
+              mem=$((128 + mem / (1024 * 1024)))
+              qemu-system-$TEST_QEMU_ARCH -M xlnx-zcu102 -m $mem -kernel $TEST_BSP_ROOT/rtthread.bin -nographic \
+              > qemu_output_$TEST_QEMU_ARCH.log  2>&1 &
+            fi
           elif [[ "${{ matrix.platform.UTEST }}"  == "XUANTIE-rtsmart" ]]; then
             sudo apt-get install -y dos2unix libcapstone-dev libbrlapi-dev
             wget -q https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1736318325160/Xuantie-qemu-x86_64-Ubuntu-20.04-V5.0.5-B20250108-0335.tar.gz
@@ -273,38 +356,55 @@ jobs:
       
       - name: Monitor qemu log
         if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
+        timeout-minutes: 20
         run: |
           FAILURE_DETECTED=false
           ERROR_LOGS=""
+          export FAILURE_DETECTED ERROR_LOGS
           
           echo "=========================================================================================="
           echo " ||                                                                                    || "
           echo " ||                          Start automatic running of Utest                          || "
           echo " VV                                                                                    VV "
           echo "=========================================================================================="
-          tail -n 0 -f qemu_output_$TEST_QEMU_ARCH.log | while read line; do
-            echo $line
-            if [[ "$line" == *"[  FAILED  ] [ result   ]"* ]]; then
-              ERROR_LOGS="$ERROR_LOGS$line"$'\n'
-              FAILURE_DETECTED=true
-            fi
-            
-            if [[ "$line" == *"[==========] [ utest    ] finished"* ]]; then
-              if $FAILURE_DETECTED; then
-                echo "=========================================================================================="
-                echo " ||                                                                                    || "
-                echo " ||         Error: Failures detected in logs. Below are the failure details...         || "
-                echo " VV                                                                                    VV "
-                echo "=========================================================================================="
-                echo "$ERROR_LOGS"
-                exit 1
+          timeout 20m bash -c '
+            tail -n 0 -f "qemu_output_${TEST_QEMU_ARCH}.log" | while IFS= read -r line; do
+              echo "$line"
+              if [[ "$line" == *"[  FAILED  ] [ result   ]"* ]]; then
+                ERROR_LOGS="${ERROR_LOGS}${line}"$'\''\n'\''
+                FAILURE_DETECTED=true
               fi
-              echo "=========================================================================================="
-              echo "                  Successed: Utest run completed. Exiting log monitoring                  "
-              echo "=========================================================================================="
-              break
-            fi
-          done
+
+              if [[ "$line" == *"[==========] [ utest    ] finished"* ]]; then
+                if [[ "$FAILURE_DETECTED" == "true" ]]; then
+                  echo "=========================================================================================="
+                  echo " ||                                                                                    || "
+                  echo " ||         Error: Failures detected in logs. Below are the failure details...         || "
+                  echo " VV                                                                                    VV "
+                  echo "=========================================================================================="
+                  echo "$ERROR_LOGS"
+                  exit 1
+                fi
+                echo "=========================================================================================="
+                echo "                  Successed: Utest run completed. Exiting log monitoring                  "
+                echo "=========================================================================================="
+                break
+              fi
+            done
+          '
+          monitor_status=$?
+
+          if [[ $monitor_status -eq 124 ]]; then
+            echo "=========================================================================================="
+            echo " ||                                                                                    || "
+            echo " ||             Error: Utest run timed out after 20 minutes. Exiting...               || "
+            echo " VV                                                                                    VV "
+            echo "=========================================================================================="
+            pkill -f "qemu-system-${TEST_QEMU_ARCH}.*${TEST_BSP_ROOT}/rtthread.bin" || true
+            exit 1
+          fi
+
+          exit $monitor_status
   # # Post CI status to PR comment
   # post-ci-status:
   #   needs: test

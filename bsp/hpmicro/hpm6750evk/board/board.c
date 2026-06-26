@@ -24,10 +24,10 @@
 #include "hpm_enet_drv.h"
 #include "hpm_pcfg_drv.h"
 #include <rtconfig.h>
+#include <rthw.h>
 
 #if defined(ENET_MULTIPLE_PORT) && ENET_MULTIPLE_PORT
 #include "hpm_enet_phy_common.h"
-#include <rthw.h>
 #endif
 
 /**
@@ -88,6 +88,7 @@ __attribute__ ((section(".nor_cfg_option"), used)) const uint32_t option[4] = {0
 #endif
 
 #if defined(FLASH_UF2) && FLASH_UF2
+/* cppcheck-suppress unknownMacro */
 ATTR_PLACE_AT(".uf2_signature") __attribute__((used)) const uint32_t uf2_signature = BOARD_UF2_SIGNATURE;
 #endif
 
@@ -423,7 +424,7 @@ void board_init_i2c(I2C_Type *ptr)
     config.is_10bit_addressing = false;
     stat = i2c_init_master(ptr, freq, &config);
     if (stat != status_success) {
-        printf("failed to initialize i2c 0x%lx\n", (uint32_t) ptr);
+        printf("failed to initialize i2c %p\n", (void *)ptr);
         while (1) {
         }
     }
@@ -628,7 +629,7 @@ void board_init_clock(void)
     pcfg_dcdc_switch_to_dcm_mode(HPM_PCFG);
 
     if (status_success != pllctl_init_int_pll_with_freq(HPM_PLLCTL, 0, BOARD_CPU_FREQ)) {
-        printf("Failed to set pll0_clk0 to %ldHz\n", BOARD_CPU_FREQ);
+        printf("Failed to set pll0_clk0 to %luHz\n", BOARD_CPU_FREQ);
         while (1) {
         }
     }

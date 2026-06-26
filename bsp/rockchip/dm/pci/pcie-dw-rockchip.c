@@ -165,6 +165,7 @@ struct rockchip_pcie
     struct rt_work hot_rst_work;
 
     int intx_irq;
+    int intx_cpu;
     rt_uint32_t intx;
     struct rt_ofw_node *intx_np;
     struct rt_pic intx_pic;
@@ -225,6 +226,7 @@ static void rockchip_pcie_intx_irq_unmask(struct rt_pic_irq *pirq)
 static int rockchip_pcie_intx_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
 {
     int irq;
+    struct rockchip_pcie *rk_pcie = pic->priv_data;
     struct rt_pic_irq *pirq = rt_pic_find_irq(pic, hwirq);
 
     if (pirq)
@@ -236,7 +238,8 @@ static int rockchip_pcie_intx_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t
         else
         {
             irq = rt_pic_config_irq(pic, hwirq, hwirq);
-            rt_pic_irq_set_triger_mode(irq, RT_IRQ_MODE_LEVEL_HIGH);
+            pirq->mode = mode;
+            RT_IRQ_AFFINITY_SET(pirq->affinity, rk_pcie->intx_cpu);
         }
     }
     else
@@ -1486,6 +1489,8 @@ static rt_err_t rockchip_pcie_dw_probe(struct rt_platform_device *pdev)
 
     if (rk_pcie->intx_irq >= 0)
     {
+        RT_IRQ_AFFINITY_DECLARE(intx_affinity);
+
         /* Legacy (INTx) init */
         if (!(intx_np = rt_ofw_get_child_by_tag(np, "legacy-interrupt-controller")))
         {
@@ -1505,6 +1510,11 @@ static rt_err_t rockchip_pcie_dw_probe(struct rt_platform_device *pdev)
 
         rt_hw_interrupt_install(rk_pcie->intx_irq, rockchip_pcie_legacy_isr, rk_pcie, "rk-pcie-legacy");
         rt_hw_interrupt_umask(rk_pcie->intx_irq);
+
+        if (!rt_pic_irq_get_affinity(rk_pcie->intx_irq, intx_affinity))
+        {
+            rk_pcie->intx_cpu = rt_bitmap_next_set_bit(intx_affinity, 0, RT_CPUS_NR);
+        }
     }
     else
     {

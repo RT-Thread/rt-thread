@@ -112,7 +112,7 @@ struct rockchip_pll_clk_cell
 #define PLL_RAW(_type, _id, _name, _pnames, _pnames_nr, _flags, _con, _mode, _mshift, _lshift, _glock, _pflags, _rtable) \
 {                                                               \
     .rk_cell.cell.name = _name,                                 \
-    .rk_cell.cell.parent_names = (void *)_pnames,               \
+    .rk_cell.cell.parent_names = _pnames,                       \
     .rk_cell.cell.parents_nr = _pnames_nr,                      \
     .rk_cell.cell.flags = RT_CLK_F_GET_RATE_NOCACHE | _flags,   \
     .rk_cell.id = _id,                                          \

@@ -9,6 +9,7 @@
 ### TI
 
 - MSP432E4x
+- TM4Cx
 
 ### Bekencorp
 

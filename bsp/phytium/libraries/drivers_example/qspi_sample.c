@@ -6,6 +6,7 @@
     #include <ioremap.h>
 #endif
 #include "auto_test.h"
+#include <string.h>
 #include "rtdevice.h"
 #include "drv_qspi.h"
 #include "fqspi_flash.h"

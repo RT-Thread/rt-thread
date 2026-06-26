@@ -1,5 +1,19 @@
-@page page_device_spi SPI Device
+@page page_device_spi SPI device
 
+# SPI (Serial Peripheral Interface)
+
+SPI is a synchronous full-duplex bus (MOSI, MISO, SCLK, CS). RT-Thread exposes a **bus device** (`spi0`, ...) and **SPI slave devices** (`spi10`, `spi1_0`, or driver-specific names) for transfers.
+
+| Topic | Page |
+| --- | --- |
+| Application API (`rt_spi_transfer`, QSPI, ...) | This page |
+| DM bus, DT scan, **`RT_SPI_DRIVER_EXPORT`** | @ref page_device_spi_dm |
+
+**Kconfig**: **`RT_USING_SPI`**. With **`RT_USING_DM`**, **`dev_spi_bus.c`** / **`dev_spi_dm.c`** add automatic child binding from device tree (@ref page_device_spi_dm). Without DM, use manual mount below.
+
+Implementation: **`components/drivers/spi/`**, headers **`drivers/dev_spi.h`**.
+
+---
 # Introduction to SPI
 
 SPI (Serial Peripheral Interface) is a high-speed, full-duplex, synchronous communication bus commonly used for short-range communication. It is mainly used in EEPROM, FLASH, real-time clock, AD converter, and digital signal processing and between the device and the digital signal decoder. SPI generally uses 4 lines of communication, as shown in the following figure:
@@ -35,6 +49,8 @@ The slave's clock is provided by the master through SCLK, and MOSI and MISO comp
 So for SPI Flash, there are three types of standard SPI Flash, Dual SPI Flash, Quad SPI Flash. At the same clock, the higher the number of lines, the higher the transmission rate.
 
 # Mount SPI Device
+
+> **Device model (`RT_USING_DM`)**: After **`rt_spi_bus_register`**, children with **`compatible`** under the controller node are scanned automatically; use **`RT_SPI_DRIVER_EXPORT`** for chip drivers (@ref page_device_spi_dm). The APIs below are the **legacy manual attach** path (still supported for BSP init and boards without OFW).
 
 The SPI driver registers the SPI bus and the SPI device needs to be mounted to the SPI bus that has already been registered.
 
@@ -739,3 +755,15 @@ static void spi_w25q_sample(int argc, char *argv[])
 MSH_CMD_EXPORT(spi_w25q_sample, spi w25q sample);
 ```
 
+## See also (driver)
+
+- @ref page_device_spi_dm — DT scan, **spi_device_ofw_parse**, **RT_SPI_DRIVER_EXPORT**
+- @ref page_device_platform — SPI controller platform drivers
+- @ref page_device_pin — **cs-gpios**
+- components/drivers/spi/SConscript
+## See also (driver)
+
+- @ref page_device_spi_dm
+- @ref page_device_platform
+- @ref page_device_pin
+- `components/drivers/spi/SConscript`

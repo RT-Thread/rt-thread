@@ -95,13 +95,14 @@ static inline int dwc2_core_init(uint8_t busid)
                 regval &= ~USB_OTG_GUSBCFG_PHYIF16;
                 regval &= ~USB_OTG_GUSBCFG_DDR_SEL;
 
-                if (g_dwc2_udc[busid].user_params.phy_utmi_width == 16) {
-                    regval |= USB_OTG_GUSBCFG_PHYIF16;
-                }
                 break;
             case DWC2_PHY_TYPE_PARAM_UTMI:
                 regval &= ~USB_OTG_GUSBCFG_ULPI_UTMI_SEL;
                 regval &= ~USB_OTG_GUSBCFG_PHYIF16;
+
+                if (g_dwc2_udc[busid].user_params.phy_utmi_width == 16) {
+                    regval |= USB_OTG_GUSBCFG_PHYIF16;
+                }
                 break;
 
             default:
@@ -616,7 +617,7 @@ int usb_dc_init(uint8_t busid)
 
 int usb_dc_deinit(uint8_t busid)
 {
-    USB_OTG_GLB->GAHBCFG |= USB_OTG_GAHBCFG_GINT;
+    USB_OTG_GLB->GAHBCFG &= ~USB_OTG_GAHBCFG_GINT;
     USB_OTG_DEV->DCTL |= USB_OTG_DCTL_SDIS;
 
     /* Clear Pending interrupt */
@@ -629,6 +630,11 @@ int usb_dc_deinit(uint8_t busid)
     USB_OTG_DEV->DIEPMSK = 0U;
     USB_OTG_DEV->DOEPMSK = 0U;
     USB_OTG_DEV->DAINTMSK = 0U;
+
+    /* Disable all interrupts. */
+    USB_OTG_GLB->GINTMSK = 0U;
+    /* Clear any pending interrupts */
+    USB_OTG_GLB->GINTSTS = 0xBFFFFFFFU;
 
     /* Flush the FIFO */
     dwc2_flush_txfifo(busid, 0x10U);

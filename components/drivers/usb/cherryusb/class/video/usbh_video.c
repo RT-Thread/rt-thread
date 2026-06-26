@@ -174,12 +174,13 @@ int usbh_video_open(struct usbh_video *video_class,
                     frameidx = j + 1;
                     dwDefaultFrameInterval = video_class->format[i].frame[j].dwDefaultFrameInterval;
                     found = true;
-                    break;
+                    goto dev_found;
                 }
             }
         }
     }
 
+dev_found:
     if (found == false) {
         return -USB_ERR_NODEV;
     }
@@ -437,6 +438,9 @@ static int usbh_video_ctrl_connect(struct usbh_hubport *hport, uint8_t intf)
                             format_index = p[DESC_bFormatIndex];
                             num_of_frames = p[DESC_bNumFrameDescriptors];
 
+                            USB_ASSERT(format_index != 0);
+                            USB_ASSERT(format_index <= CONFIG_USBHOST_VIDEO_MAX_FORMATS);
+
                             video_class->format[format_index - 1].num_of_frames = num_of_frames;
                             video_class->format[format_index - 1].format_type = USBH_VIDEO_FORMAT_UNCOMPRESSED;
                             break;
@@ -444,11 +448,19 @@ static int usbh_video_ctrl_connect(struct usbh_hubport *hport, uint8_t intf)
                             format_index = p[DESC_bFormatIndex];
                             num_of_frames = p[DESC_bNumFrameDescriptors];
 
+                            USB_ASSERT(format_index != 0);
+                            USB_ASSERT(format_index <= CONFIG_USBHOST_VIDEO_MAX_FORMATS);
+
                             video_class->format[format_index - 1].num_of_frames = num_of_frames;
                             video_class->format[format_index - 1].format_type = USBH_VIDEO_FORMAT_MJPEG;
                             break;
                         case VIDEO_VS_FRAME_UNCOMPRESSED_DESCRIPTOR_SUBTYPE:
                             frame_index = p[DESC_bFrameIndex];
+
+                            USB_ASSERT(format_index != 0);
+                            USB_ASSERT(frame_index != 0);
+                            USB_ASSERT(format_index <= CONFIG_USBHOST_VIDEO_MAX_FORMATS);
+                            USB_ASSERT(frame_index <= CONFIG_USBHOST_VIDEO_MAX_FRAMES);
 
                             video_class->format[format_index - 1].frame[frame_index - 1].wWidth = ((struct video_cs_if_vs_frame_uncompressed_descriptor *)p)->wWidth;
                             video_class->format[format_index - 1].frame[frame_index - 1].wHeight = ((struct video_cs_if_vs_frame_uncompressed_descriptor *)p)->wHeight;
@@ -456,6 +468,11 @@ static int usbh_video_ctrl_connect(struct usbh_hubport *hport, uint8_t intf)
                             break;
                         case VIDEO_VS_FRAME_MJPEG_DESCRIPTOR_SUBTYPE:
                             frame_index = p[DESC_bFrameIndex];
+
+                            USB_ASSERT(format_index != 0);
+                            USB_ASSERT(frame_index != 0);
+                            USB_ASSERT(format_index <= CONFIG_USBHOST_VIDEO_MAX_FORMATS);
+                            USB_ASSERT(frame_index <= CONFIG_USBHOST_VIDEO_MAX_FRAMES);
 
                             video_class->format[format_index - 1].frame[frame_index - 1].wWidth = ((struct video_cs_if_vs_frame_mjpeg_descriptor *)p)->wWidth;
                             video_class->format[format_index - 1].frame[frame_index - 1].wHeight = ((struct video_cs_if_vs_frame_mjpeg_descriptor *)p)->wHeight;

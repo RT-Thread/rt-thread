@@ -106,6 +106,17 @@ return:
 .globl cpu_id_mapping
 cpu_id_mapping:
 #if defined(TARGET_PE2204)
+#if defined(USE_OPENAMP)
+cmp x0, #0 // compare cpu_id with 0
+beq map_cpu_id_0
+cmp x0, #1 // compare cpu_id with 2
+beq map_cpu_id_2
+cmp x0, #2 // compare cpu_id with 1
+beq map_cpu_id_1
+cmp x0, #3 // compare cpu_id with 3
+beq map_cpu_id_3
+RET // no mapping needed
+#else
 cmp x0, #0 // compare cpu_id with 0
 beq map_cpu_id_0
 cmp x0, #1 // compare cpu_id with 1
@@ -115,6 +126,7 @@ beq map_cpu_id_2
 cmp x0, #3 // compare cpu_id with 3
 beq map_cpu_id_3
 RET // no mapping needed
+#endif
 #endif
 RET // no mapping needed
 

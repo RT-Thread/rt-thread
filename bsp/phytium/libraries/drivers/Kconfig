@@ -11,7 +11,7 @@ menu "On-chip Peripheral Drivers"
 
     if BSP_USING_DRIVERS_EXAMPLE
         config BSP_USING_DRIVERS_AUTO_TEST
-        bool "Enable drivers example"
+        bool "Enable drivers auto test"
         default n
     endif
 
@@ -425,21 +425,34 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-        menuconfig BSP_USING_I2S
-        bool "Enable I2S"
-            default n
-            select RT_USING_AUDIO
-            select BSP_USING_DEVICE
-        if BSP_USING_I2S
-            config RT_I2S_SAMPLERATE
-                int "The samplerate param"
-                default 8000
-            config RT_I2S_SAMPLEBITS
-                int "The samplebits param"
-                default 16
-            config RT_USING_I2S0
-                bool "Enable i2s0"
-                default n
+        menuconfig BSP_USING_I2S_LAYER
+        bool "Enable I2S Layer"
+        default n
+        select RT_USING_AUDIO
+        select BSP_USING_DEVICE
+        if BSP_USING_I2S_LAYER
+            choice
+                prompt "Select I2S Mode"
+                config BSP_USING_I2S
+                    bool "Standard I2S"
+                    help
+                        Use standard I2S communication mode
+                config BSP_USING_I2S_MSG
+                    bool "IOP message-based I2S"
+                    help
+                        Use IOP message-based I2S communication
+            endchoice
+
+            if BSP_USING_I2S
+                config RT_USING_I2S0
+                    bool "Enable i2s0"
+                    default n
+            endif
+            if BSP_USING_I2S_MSG
+                config RT_USING_I2S0_MSG
+                    bool "Enable i2s0 msg"
+                    default n
+            endif
         endif
 
         menuconfig BSP_USING_DEVICE
@@ -448,9 +461,14 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_DEVICE
             config BSP_USING_ES8336
                 bool "Enable ES8336"
+                select BSP_USING_I2C_LAYER
+                select RT_USING_MIO14 if E2000D_DEMO_BOARD
+                select RT_USING_MIO14 if E2000Q_DEMO_BOARD
+                select RT_USING_I2C3_MSG if PD2408_TEST_B_BOARD
                 default n
             config BSP_USING_ES8388
                 bool "Enable ES8388"
+                select BSP_USING_I2C_LAYER
                 default n
         endif
 endmenu

@@ -28,17 +28,17 @@
 }
 
 #define GATE_NO_SET_RATE(_id, cname, pname, f, o, b, gf) \
-(void *)&(struct rockchip_clk_cell)             \
-{                                               \
-    .cell.name = cname,                         \
-    .cell.ops = &rockchip_gate_clk_ops,         \
-    .cell.parent_name = pname,                  \
-    .cell.parents_nr = 1,                       \
-    .cell.flags = f | RT_CLK_F_SET_RATE_PARENT, \
-    .id = _id,                                  \
-    .gate_offset = o,                           \
-    .gate_shift = b,                            \
-    .gate_flags = gf,                           \
+(void *)&(struct rockchip_clk_cell)                 \
+{                                                   \
+    .cell.name = cname,                             \
+    .cell.ops = &rockchip_gate_clk_ops,             \
+    .cell.parent_name = pname,                      \
+    .cell.parents_nr = 1,                           \
+    .cell.flags = (f) & ~RT_CLK_F_SET_RATE_PARENT,  \
+    .id = _id,                                      \
+    .gate_offset = o,                               \
+    .gate_shift = b,                                \
+    .gate_flags = gf,                               \
 }
 
 extern const struct rt_clk_ops rockchip_gate_clk_ops;

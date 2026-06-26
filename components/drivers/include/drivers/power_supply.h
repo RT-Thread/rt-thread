@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-11-21     GuEe-GUI     first version
+ * 2026-03-27     Evlers       add snapshot helpers and public name getter
  */
 
 #ifndef __POWER_SUPPLY_H__
@@ -273,5 +274,9 @@ void rt_power_supply_changed(struct rt_power_supply *psy);
 
 struct rt_power_supply *rt_power_supply_get(struct rt_device *dev, const char *id);
 void rt_power_supply_put(struct rt_power_supply *psy);
+
+const char *rt_power_supply_name(struct rt_power_supply *psy);
+struct rt_power_supply **rt_power_supply_snapshot(rt_size_t *count);
+void rt_power_supply_snapshot_free(struct rt_power_supply **nodes, rt_size_t count);
 
 #endif /* __POWER_SUPPLY_H__ */

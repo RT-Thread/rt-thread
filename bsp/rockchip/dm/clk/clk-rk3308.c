@@ -154,7 +154,7 @@ static const struct rockchip_cpu_clk_reg_data rk3308_cpu_clk_data =
     .mux_core_mask = 0x3,
 };
 
-PNAME(mux_pll_p)                                = "xin24m";
+PNAMES(mux_pll_p)                               = { "xin24m" };
 PNAMES(mux_usb480m_p)                           = { "xin24m", "usb480m_phy", "clk_rtc32k" };
 PNAMES(mux_dpll_vpll0_p)                        = { "dpll", "vpll0" };
 PNAMES(mux_dpll_vpll0_xin24m_p)                 = { "dpll", "vpll0", "xin24m" };
@@ -216,16 +216,16 @@ static rt_uint32_t uart_src_mux_idx[]   = { 3, 4, 0, 1, 2 };
 #define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
 
 static struct rockchip_pll_clk_cell rk3308_pll_apll =
-    PLL_RAW(pll_type_rk3328, PLL_APLL, "apll", mux_pll_p, 1, 0, RK3308_PLL_CON(0), RK3308_MODE_CON,
+    PLL_RAW(pll_type_rk3328, PLL_APLL, "apll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3308_PLL_CON(0), RK3308_MODE_CON,
             0, 0, RK3308_GRF_SOC_STATUS0, 0, rk3308_pll_rates);
 static struct rockchip_pll_clk_cell rk3308_pll_dpll =
-    PLL_RAW(pll_type_rk3328, PLL_DPLL, "dpll", mux_pll_p, 1, 0, RK3308_PLL_CON(8), RK3308_MODE_CON,
+    PLL_RAW(pll_type_rk3328, PLL_DPLL, "dpll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3308_PLL_CON(8), RK3308_MODE_CON,
             2, 1, RK3308_GRF_SOC_STATUS0, 0, rk3308_pll_rates);
 static struct rockchip_pll_clk_cell rk3308_pll_vpll0 =
-    PLL_RAW(pll_type_rk3328, PLL_VPLL0, "vpll0", mux_pll_p, 1, 0, RK3308_PLL_CON(16), RK3308_MODE_CON,
+    PLL_RAW(pll_type_rk3328, PLL_VPLL0, "vpll0", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3308_PLL_CON(16), RK3308_MODE_CON,
             4, 2, RK3308_GRF_SOC_STATUS0, 0, rk3308_pll_rates);
 static struct rockchip_pll_clk_cell rk3308_pll_vpll1 =
-    PLL_RAW(pll_type_rk3328, PLL_VPLL1, "vpll1", mux_pll_p, 1, 0, RK3308_PLL_CON(24), RK3308_MODE_CON,
+    PLL_RAW(pll_type_rk3328, PLL_VPLL1, "vpll1", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), 0, RK3308_PLL_CON(24), RK3308_MODE_CON,
             6, 3, RK3308_GRF_SOC_STATUS0, 0, rk3308_pll_rates);
 
 static struct rockchip_clk_cell rk3308_uart0_fracmux =

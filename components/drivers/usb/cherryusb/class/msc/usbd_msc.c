@@ -69,7 +69,6 @@ static void usdb_msc_set_max_lun(uint8_t busid)
 static void usbd_msc_reset(uint8_t busid)
 {
     g_usbd_msc[busid].stage = MSC_READ_CBW;
-    g_usbd_msc[busid].readonly = false;
 }
 
 static int msc_storage_class_interface_request_handler(uint8_t busid, struct usb_setup_packet *setup, uint8_t **data, uint32_t *len)
@@ -89,7 +88,6 @@ static int msc_storage_class_interface_request_handler(uint8_t busid, struct usb
             break;
 
         default:
-            USB_LOG_WRN("Unhandled MSC Class bRequest 0x%02x\r\n", setup->bRequest);
             return -1;
     }
 
@@ -153,8 +151,8 @@ static void usbd_msc_send_csw(uint8_t busid, uint8_t CSW_Status)
     g_usbd_msc[busid].csw.bStatus = CSW_Status;
 
     /* updating the State Machine , so that we wait CSW when this
-	 * transfer is complete, ie when we get a bulk in callback
-	 */
+    * transfer is complete, ie when we get a bulk in callback
+    */
     g_usbd_msc[busid].stage = MSC_WAIT_CSW;
 
     USB_LOG_DBG("Send csw\r\n");
@@ -166,8 +164,8 @@ static void usbd_msc_send_info(uint8_t busid, uint8_t *buffer, uint8_t size)
     size = MIN(size, g_usbd_msc[busid].cbw.dDataLength);
 
     /* updating the State Machine , so that we send CSW when this
-	 * transfer is complete, ie when we get a bulk in callback
-	 */
+    * transfer is complete, ie when we get a bulk in callback
+    */
     g_usbd_msc[busid].stage = MSC_SEND_CSW;
 
     usbd_ep_start_write(busid, mass_ep_data[busid][MSD_IN_EP_IDX].ep_addr, buffer, size);
@@ -290,7 +288,7 @@ static bool SCSI_inquiry(uint8_t busid, uint8_t **data, uint32_t *len)
         0x00,
         0x80,
         0x00,
-        0x08,
+        (0x08 - 4U),
         0x20, /* Put Product Serial number */
         0x20,
         0x20,

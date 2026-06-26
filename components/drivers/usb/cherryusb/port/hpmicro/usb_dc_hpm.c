@@ -7,6 +7,11 @@
 #include "usbd_core.h"
 #include "hpm_usb_device.h"
 #include "usb_glue_hpm.h"
+#include "hpm_sdk_version.h"
+
+#if SDK_VERSION_NUMBER < 0x10C00
+#error "Please use SDK version 1.12.0 or later because of USB api modification"
+#endif
 
 #define USB_NUM_BIDIR_ENDPOINTS USB_SOC_DCD_MAX_ENDPOINT_COUNT
 
@@ -46,6 +51,7 @@ struct hpm_udc {
 static USB_NOCACHE_RAM_SECTION ATTR_ALIGN(USB_SOC_DCD_DATA_RAM_ADDRESS_ALIGNMENT)
     uint8_t _dcd_data[CONFIG_USBDEV_MAX_BUS][HPM_ALIGN_UP(sizeof(dcd_data_t), USB_SOC_DCD_DATA_RAM_ADDRESS_ALIGNMENT)];
 static USB_NOCACHE_RAM_SECTION usb_device_handle_t usb_device_handle[CONFIG_USBDEV_MAX_BUS];
+static uint8_t _setup_data[8];
 
 /* Index to bit position in register */
 static inline uint8_t ep_idx2bit(uint8_t ep_idx)
@@ -234,12 +240,13 @@ int usbd_ep_start_write(uint8_t busid, const uint8_t ep, const uint8_t *data, ui
 {
     uint8_t ep_idx = USB_EP_GET_IDX(ep);
     usb_device_handle_t *handle = g_hpm_udc[busid].handle;
+    bool ret;
 
     if (!data && data_len) {
-        return -1;
+        return -USB_ERR_NOMEM;
     }
     if (!g_hpm_udc[busid].in_ep[ep_idx].ep_enable) {
-        return -2;
+        return -USB_ERR_NOTCONN;
     }
 
 #ifdef CONFIG_USB_DCACHE_ENABLE
@@ -251,21 +258,22 @@ int usbd_ep_start_write(uint8_t busid, const uint8_t ep, const uint8_t *data, ui
     g_hpm_udc[busid].in_ep[ep_idx].actual_xfer_len = 0;
 
     usb_dcache_clean((uintptr_t)data, USB_ALIGN_UP(data_len, CONFIG_USB_ALIGN_SIZE));
-    usb_device_edpt_xfer(handle, ep, (uint8_t *)data, data_len);
+    ret = usb_device_edpt_xfer(handle, ep, (uint8_t *)data, data_len);
 
-    return 0;
+    return ret ? 0 : -USB_ERR_INVAL;
 }
 
 int usbd_ep_start_read(uint8_t busid, const uint8_t ep, uint8_t *data, uint32_t data_len)
 {
     uint8_t ep_idx = USB_EP_GET_IDX(ep);
     usb_device_handle_t *handle = g_hpm_udc[busid].handle;
+    bool ret;
 
     if (!data && data_len) {
-        return -1;
+        return -USB_ERR_NOMEM;
     }
     if (!g_hpm_udc[busid].out_ep[ep_idx].ep_enable) {
-        return -2;
+        return -USB_ERR_NOTCONN;
     }
 
 #ifdef CONFIG_USB_DCACHE_ENABLE
@@ -277,9 +285,9 @@ int usbd_ep_start_read(uint8_t busid, const uint8_t ep, uint8_t *data, uint32_t 
     g_hpm_udc[busid].out_ep[ep_idx].actual_xfer_len = 0;
 
     usb_dcache_invalidate((uintptr_t)data, USB_ALIGN_UP(data_len, CONFIG_USB_ALIGN_SIZE));
-    usb_device_edpt_xfer(handle, ep, data, data_len);
+    ret = usb_device_edpt_xfer(handle, ep, data, data_len);
 
-    return 0;
+    return ret ? 0 : -USB_ERR_INVAL;
 }
 
 void USBD_IRQHandler(uint8_t busid)
@@ -310,6 +318,7 @@ void USBD_IRQHandler(uint8_t busid)
         memset(g_hpm_udc[busid].out_ep, 0, sizeof(struct hpm_ep_state) * USB_NUM_BIDIR_ENDPOINTS);
         usbd_event_reset_handler(busid);
         usb_device_bus_reset(handle, g_hpm_udc[busid].in_ep[0].ep_mps);
+        return;
     }
 
     if (int_status & intr_suspend) {
@@ -359,6 +368,11 @@ void USBD_IRQHandler(uint8_t busid)
                             break;
                         } else {
                             transfer_len += p_qtd->expected_bytes - p_qtd->total_bytes;
+                            if ((ep_idx & 0x01) != 0) {
+                                g_hpm_udc[busid].in_ep[ep_idx / 2].actual_xfer_len = transfer_len;
+                            } else {
+                                g_hpm_udc[busid].out_ep[ep_idx / 2].actual_xfer_len = transfer_len;
+                            }
                             p_qtd->in_use = false;
                         }
 
@@ -374,7 +388,7 @@ void USBD_IRQHandler(uint8_t busid)
                         if (ep_addr & 0x80) {
                             usbd_event_ep_in_complete_handler(busid, ep_addr, transfer_len);
                         } else {
-                            usb_dcache_invalidate((uintptr_t)g_hpm_udc[busid].out_ep[ep_idx].xfer_buf, USB_ALIGN_UP(transfer_len, CONFIG_USB_ALIGN_SIZE));
+                            usb_dcache_invalidate((uintptr_t)g_hpm_udc[busid].out_ep[ep_idx / 2].xfer_buf, USB_ALIGN_UP(transfer_len, CONFIG_USB_ALIGN_SIZE));
                             usbd_event_ep_out_complete_handler(busid, ep_addr, transfer_len);
                         }
                     }
@@ -383,10 +397,17 @@ void USBD_IRQHandler(uint8_t busid)
         }
 
         if (edpt_setup_status) {
-            /*------------- Set up Received -------------*/
-            usb_device_clear_setup_status(handle, edpt_setup_status);
+            /*------------- Setup Received -------------*/
             dcd_qhd_t *qhd0 = usb_device_qhd_get(handle, 0);
-            usbd_event_ep0_setup_complete_handler(busid, (uint8_t *)&qhd0->setup_request);
+
+            usb_device_clear_setup_status(handle, edpt_setup_status);
+            do {
+                usb_dcd_set_sutw(handle->regs, true);
+                memcpy(_setup_data, (uint8_t *)(&qhd0->setup_request), 8);
+            } while (!usb_dcd_get_sutw(handle->regs));
+            usb_dcd_set_sutw(handle->regs, false);
+
+            usbd_event_ep0_setup_complete_handler(busid, _setup_data);
         }
     }
 }

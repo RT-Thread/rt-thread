@@ -8,6 +8,17 @@
  * 2023-02-25     GuEe-GUI     the first version
  */
 
+/**
+ * @file dma.c
+ * @brief DMA (Direct Memory Access) controller framework core API
+ *
+ * Provides a unified interface for DMA controller management, channel
+ * lifecycle, transfer configuration, and transfer preparation (memcpy,
+ * cyclic, single). Controllers register themselves via
+ * rt_dma_controller_register(), and slave devices request channels
+ * via rt_dma_chan_request().
+ */
+
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -16,9 +27,18 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+/** @brief Global list of registered DMA controllers */
 static rt_list_t dmac_nodes = RT_LIST_OBJECT_INIT(dmac_nodes);
 static RT_DEFINE_SPINLOCK(dmac_nodes_lock);
 
+/**
+ * @brief Acquire the DMA controller mutex lock
+ *
+ * Only acquires the lock in thread context (not ISR) since mutex
+ * operations are not ISR-safe.
+ *
+ * @param[in] ctrl  DMA controller to lock
+ */
 static void dma_lock(struct rt_dma_controller *ctrl)
 {
     if (rt_thread_self())
@@ -27,6 +47,11 @@ static void dma_lock(struct rt_dma_controller *ctrl)
     }
 }
 
+/**
+ * @brief Release the DMA controller mutex lock
+ *
+ * @param[in] ctrl  DMA controller to unlock
+ */
 static void dma_unlock(struct rt_dma_controller *ctrl)
 {
     if (rt_thread_self())
@@ -35,6 +60,19 @@ static void dma_unlock(struct rt_dma_controller *ctrl)
     }
 }
 
+/**
+ * @brief Register a DMA controller with the framework
+ *
+ * Validates that the controller has valid dev and ops pointers, and
+ * that at least one direction capability is set. The controller is
+ * added to the global dmac_nodes list for later channel allocation.
+ * If the device has a device tree node, firmware data is bound.
+ *
+ * @param[in] ctrl  DMA controller to register
+ *
+ * @return RT_EOK on success, -RT_EINVAL if ctrl, dev, or ops are NULL
+ *         or no direction capability is set
+ */
 rt_err_t rt_dma_controller_register(struct rt_dma_controller *ctrl)
 {
     const char *dev_name;
@@ -73,6 +111,18 @@ rt_err_t rt_dma_controller_register(struct rt_dma_controller *ctrl)
     return RT_EOK;
 }
 
+/**
+ * @brief Unregister a DMA controller from the framework
+ *
+ * Fails with -RT_EBUSY if any channels are still active.
+ * Unbinds firmware data if device tree was used, detaches the mutex,
+ * and removes the controller from the global list.
+ *
+ * @param[in] ctrl  DMA controller to unregister
+ *
+ * @return RT_EOK on success, -RT_EINVAL if ctrl is NULL,
+ *         -RT_EBUSY if channels are still open
+ */
 rt_err_t rt_dma_controller_unregister(struct rt_dma_controller *ctrl)
 {
     if (!ctrl)
@@ -103,6 +153,16 @@ rt_err_t rt_dma_controller_unregister(struct rt_dma_controller *ctrl)
     return RT_EOK;
 }
 
+/**
+ * @brief Start a DMA transfer on a channel
+ *
+ * The channel must have been successfully prepared (no prep_err).
+ *
+ * @param[in] chan  DMA channel to start
+ *
+ * @return RT_EOK on success, -RT_EINVAL if chan is NULL,
+ *         or the last preparation error code
+ */
 rt_err_t rt_dma_chan_start(struct rt_dma_chan *chan)
 {
     rt_err_t err;
@@ -131,6 +191,16 @@ rt_err_t rt_dma_chan_start(struct rt_dma_chan *chan)
     return err;
 }
 
+/**
+ * @brief Pause a DMA transfer on a channel
+ *
+ * If the controller does not support pause, falls back to stop.
+ *
+ * @param[in] chan  DMA channel to pause
+ *
+ * @return RT_EOK on success, -RT_EINVAL if chan is NULL,
+ *         or the last preparation error code
+ */
 rt_err_t rt_dma_chan_pause(struct rt_dma_chan *chan)
 {
     rt_err_t err;
@@ -165,6 +235,14 @@ rt_err_t rt_dma_chan_pause(struct rt_dma_chan *chan)
     return err;
 }
 
+/**
+ * @brief Stop a DMA transfer on a channel
+ *
+ * @param[in] chan  DMA channel to stop
+ *
+ * @return RT_EOK on success, -RT_EINVAL if chan is NULL,
+ *         or the last preparation error code
+ */
 rt_err_t rt_dma_chan_stop(struct rt_dma_chan *chan)
 {
     rt_err_t err;
@@ -193,8 +271,21 @@ rt_err_t rt_dma_chan_stop(struct rt_dma_chan *chan)
     return err;
 }
 
+/**
+ * @brief Configure a DMA channel with slave-specific settings
+ *
+ * Validates direction, address width, and that the controller supports
+ * the requested direction. Saves the configuration to chan->conf on success.
+ *
+ * @param[in] chan  DMA channel to configure
+ * @param[in] conf  Slave configuration (direction, address widths, maxburst,
+ *                  source/destination addresses)
+ *
+ * @return RT_EOK on success, -RT_EINVAL on invalid parameters,
+ *         -RT_ENOSYS if direction not supported
+ */
 rt_err_t rt_dma_chan_config(struct rt_dma_chan *chan,
-        struct rt_dma_slave_config *conf)
+                            struct rt_dma_slave_config *conf)
 {
     rt_err_t err;
     struct rt_dma_controller *ctrl;
@@ -232,7 +323,7 @@ rt_err_t rt_dma_chan_config(struct rt_dma_chan *chan,
     if (!chan->name && dir != RT_DMA_MEM_TO_MEM)
     {
         LOG_E("%s: illegal config for uname channels",
-                rt_dm_dev_get_name(ctrl->dev));
+              rt_dm_dev_get_name(ctrl->dev));
 
         err = -RT_EINVAL;
         goto _end;
@@ -255,6 +346,17 @@ _end:
     return err;
 }
 
+/**
+ * @brief Signal transfer completion on a DMA channel
+ *
+ * Calls the channel's registered callback with the transfer size.
+ * The controller driver calls this from its ISR when a transfer completes.
+ *
+ * @param[in] chan  DMA channel that completed
+ * @param[in] size  Number of bytes transferred (0 indicates an error)
+ *
+ * @return RT_EOK on success, -RT_EINVAL if chan is NULL
+ */
 rt_err_t rt_dma_chan_done(struct rt_dma_chan *chan, rt_size_t size)
 {
     if (!chan)
@@ -270,8 +372,18 @@ rt_err_t rt_dma_chan_done(struct rt_dma_chan *chan, rt_size_t size)
     return RT_EOK;
 }
 
+/**
+ * @brief Check if an address falls below the configured boundary
+ *
+ * @param[in] name   Controller name for error logging
+ * @param[in] desc   Description of the address (e.g., "source", "dest")
+ * @param[in] addr0  Configured address
+ * @param[in] addr1  Transfer address to validate
+ *
+ * @return RT_TRUE if addr0 is below addr1 (illegal), RT_FALSE otherwise
+ */
 static rt_bool_t range_is_illegal(const char *name, const char *desc,
-        rt_ubase_t addr0, rt_ubase_t addr1)
+                                  rt_ubase_t addr0, rt_ubase_t addr1)
 {
     rt_bool_t illegal = addr0 < addr1;
 
@@ -283,8 +395,18 @@ static rt_bool_t range_is_illegal(const char *name, const char *desc,
     return illegal;
 }
 
+/**
+ * @brief Check if an address is within the controller's address mask
+ *
+ * @param[in] name   Controller name for error logging
+ * @param[in] desc   Description of the address (e.g., "source", "dest")
+ * @param[in] mask   Controller's address mask
+ * @param[in] addr   Address to validate
+ *
+ * @return RT_TRUE if any bits outside the mask are set (unsupported), RT_FALSE otherwise
+ */
 static rt_bool_t addr_is_supported(const char *name, const char *desc,
-        rt_uint64_t mask, rt_ubase_t addr)
+                                   rt_uint64_t mask, rt_ubase_t addr)
 {
     rt_bool_t illegal = !!(addr & ~mask);
 
@@ -296,8 +418,20 @@ static rt_bool_t addr_is_supported(const char *name, const char *desc,
     return illegal;
 }
 
+/**
+ * @brief Prepare a memory-to-memory DMA transfer
+ *
+ * Validates source and destination addresses against the controller's
+ * address mask and the configured boundary ranges.
+ *
+ * @param[in] chan      DMA channel (must be configured for RT_DMA_MEM_TO_MEM)
+ * @param[in] transfer  Transfer descriptor (src_addr, dst_addr, buffer_len)
+ *
+ * @return RT_EOK on success, -RT_EINVAL on invalid parameters or address
+ *         range violations, -RT_ENOSYS if prep_memcpy not supported
+ */
 rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
-        struct rt_dma_slave_transfer *transfer)
+                            struct rt_dma_slave_transfer *transfer)
 {
     rt_err_t err;
     rt_size_t len;
@@ -326,25 +460,25 @@ rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
     len = transfer->buffer_len;
 
     if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "source",
-        ctrl->addr_mask, conf->src_addr))
+                          ctrl->addr_mask, conf->src_addr))
     {
         return -RT_ENOSYS;
     }
 
     if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "dest",
-        ctrl->addr_mask, conf->dst_addr))
+                          ctrl->addr_mask, conf->dst_addr))
     {
         return -RT_ENOSYS;
     }
 
     if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "source",
-        dma_addr_src, conf->src_addr))
+                         dma_addr_src, conf->src_addr))
     {
         return -RT_EINVAL;
     }
 
     if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "dest",
-        dma_addr_dst, conf->dst_addr))
+                         dma_addr_dst, conf->dst_addr))
     {
         return -RT_EINVAL;
     }
@@ -372,8 +506,21 @@ rt_err_t rt_dma_prep_memcpy(struct rt_dma_chan *chan,
     return err;
 }
 
+/**
+ * @brief Prepare a cyclic (repeating) DMA transfer
+ *
+ * Cyclic transfers repeat automatically, useful for audio, ADC/DAC
+ * streaming, and other periodic data transfers. The buffer is divided
+ * into periods; each period completion triggers a callback.
+ *
+ * @param[in] chan      DMA channel
+ * @param[in] transfer  Transfer descriptor with buffer details and period_len
+ *
+ * @return RT_EOK on success, -RT_EINVAL on invalid parameters,
+ *         -RT_ENOSYS if prep_cyclic not supported
+ */
 rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
-        struct rt_dma_slave_transfer *transfer)
+                            struct rt_dma_slave_transfer *transfer)
 {
     rt_err_t err;
     rt_ubase_t dma_buf_addr;
@@ -403,13 +550,13 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
         dma_buf_addr = transfer->src_addr;
 
         if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "source",
-            ctrl->addr_mask, conf->src_addr))
+                              ctrl->addr_mask, conf->src_addr))
         {
             return -RT_ENOSYS;
         }
 
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "source",
-            dma_buf_addr, conf->src_addr))
+                             dma_buf_addr, conf->src_addr))
         {
             return -RT_EINVAL;
         }
@@ -419,13 +566,13 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
         dma_buf_addr = transfer->dst_addr;
 
         if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "dest",
-            ctrl->addr_mask, conf->dst_addr))
+                              ctrl->addr_mask, conf->dst_addr))
         {
             return -RT_ENOSYS;
         }
 
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "dest",
-            dma_buf_addr, conf->dst_addr))
+                             dma_buf_addr, conf->dst_addr))
         {
             return -RT_EINVAL;
         }
@@ -440,7 +587,7 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
         dma_lock(ctrl);
 
         err = ctrl->ops->prep_cyclic(chan, dma_buf_addr,
-                transfer->buffer_len, transfer->period_len, dir);
+                                     transfer->buffer_len, transfer->period_len, dir);
 
         dma_unlock(ctrl);
     }
@@ -459,8 +606,20 @@ rt_err_t rt_dma_prep_cyclic(struct rt_dma_chan *chan,
     return err;
 }
 
+/**
+ * @brief Prepare a single (one-shot) DMA transfer
+ *
+ * Used for simple device-to-memory or memory-to-device transfers
+ * that are not repeating.
+ *
+ * @param[in] chan      DMA channel
+ * @param[in] transfer  Transfer descriptor (src_addr or dst_addr, buffer_len)
+ *
+ * @return RT_EOK on success, -RT_EINVAL on invalid parameters,
+ *         -RT_ENOSYS if prep_single not supported
+ */
 rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
-        struct rt_dma_slave_transfer *transfer)
+                            struct rt_dma_slave_transfer *transfer)
 {
     rt_err_t err;
     rt_ubase_t dma_buf_addr;
@@ -490,13 +649,13 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
         dma_buf_addr = transfer->src_addr;
 
         if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "source",
-            ctrl->addr_mask, conf->src_addr))
+                              ctrl->addr_mask, conf->src_addr))
         {
             return -RT_ENOSYS;
         }
 
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "source",
-            dma_buf_addr, conf->src_addr))
+                             dma_buf_addr, conf->src_addr))
         {
             return -RT_EINVAL;
         }
@@ -506,13 +665,13 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
         dma_buf_addr = transfer->dst_addr;
 
         if (addr_is_supported(rt_dm_dev_get_name(ctrl->dev), "dest",
-            ctrl->addr_mask, conf->dst_addr))
+                              ctrl->addr_mask, conf->dst_addr))
         {
             return -RT_ENOSYS;
         }
 
         if (range_is_illegal(rt_dm_dev_get_name(ctrl->dev), "dest",
-            dma_buf_addr, conf->dst_addr))
+                             dma_buf_addr, conf->dst_addr))
         {
             return -RT_EINVAL;
         }
@@ -527,7 +686,7 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
         dma_lock(ctrl);
 
         err = ctrl->ops->prep_single(chan, dma_buf_addr,
-                transfer->buffer_len, dir);
+                                     transfer->buffer_len, dir);
 
         dma_unlock(ctrl);
     }
@@ -546,8 +705,21 @@ rt_err_t rt_dma_prep_single(struct rt_dma_chan *chan,
     return err;
 }
 
+/**
+ * @brief Find a DMA controller from device tree by name
+ *
+ * Looks up the "dmas" and "dma-names" properties in the device's
+ * device tree node. The controller must have been probed and registered
+ * via rt_dma_controller_register().
+ *
+ * @param[in]  dev   Slave device requesting a DMA channel
+ * @param[in]  name  DMA channel name (matches dma-names entry in DT)
+ * @param[out] args  Parsed DMA specifier from the dmas property
+ *
+ * @return DMA controller pointer on success, RT_NULL if not found
+ */
 static struct rt_dma_controller *ofw_find_dma_controller(struct rt_device *dev,
-        const char *name, struct rt_ofw_cell_args *args)
+                                                         const char *name, struct rt_ofw_cell_args *args)
 {
     struct rt_dma_controller *ctrl = RT_NULL;
 #ifdef RT_USING_OFW
@@ -582,6 +754,22 @@ static struct rt_dma_controller *ofw_find_dma_controller(struct rt_device *dev,
     return ctrl;
 }
 
+/**
+ * @brief Request a DMA channel for a slave device
+ *
+ * If a name is provided, the channel is looked up from device tree
+ * via the "dmas" property. If no name is provided, any available
+ * memory-to-memory capable controller is selected.
+ *
+ * The channel is added to the controller's channels_nodes list.
+ *
+ * @param[in] dev   Slave device requesting DMA service
+ * @param[in] name  Channel name (from dma-names in DT), or NULL for
+ *                  unnamed memory-to-memory allocation
+ *
+ * @return Pointer to the DMA channel on success, or an error pointer
+ *         (rt_err_ptr(-RT_ENOMEM), rt_err_ptr(-RT_ENOSYS), etc.)
+ */
 struct rt_dma_chan *rt_dma_chan_request(struct rt_device *dev, const char *name)
 {
     void *fw_data = RT_NULL;
@@ -662,6 +850,17 @@ struct rt_dma_chan *rt_dma_chan_request(struct rt_device *dev, const char *name)
     return chan;
 }
 
+/**
+ * @brief Release a DMA channel back to the controller
+ *
+ * Removes the channel from the controller's list. If the controller
+ * provides a release_chan operation, it is called; otherwise the
+ * channel memory is simply freed.
+ *
+ * @param[in] chan  DMA channel to release
+ *
+ * @return RT_EOK on success, -RT_EINVAL if chan is NULL
+ */
 rt_err_t rt_dma_chan_release(struct rt_dma_chan *chan)
 {
     rt_err_t err = RT_EOK;
