@@ -282,6 +282,76 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable TIM3 CH3"
                     default n
             endif#BSP_USING_TIM3_PWM
+		
+		menuconfig BSP_USING_TIM4_PWM
+            bool "Enable TIM4 output PWM"
+            default n
+            if BSP_USING_TIM4_PWM
+                 choice
+                    prompt "Select Pin"
+                    default TIM4_PB6_PB7_PB8_PB9
+                    config TIM4_PB6_PB7_PB8_PB9
+                        bool "PB6 PB7 PB8 PB9"
+                    config TIM4_PD12_PD13_PD14_PD15
+                        bool "PD12 PD13 PD14 PD15"
+                endchoice
+                config BSP_USING_TIM4_PWM_CH0
+                    bool "Enable TIM4 CH0"
+                    default n
+                config BSP_USING_TIM4_PWM_CH1
+                    bool "Enable TIM4 CH1"
+                    default n
+                config BSP_USING_TIM4_PWM_CH2
+                    bool "Enable TIM4 CH2"
+                    default n
+                config BSP_USING_TIM4_PWM_CH3
+                    bool "Enable TIM4 CH3"
+                    default n
+            endif#BSP_USING_TIM4_PWM
+		
+		menuconfig BSP_USING_TIM5_PWM
+            bool "Enable TIM5 output PWM "
+            default n
+            if BSP_USING_TIM5_PWM
+                config BSP_USING_TIM5_PWM_CH0
+                    bool "Enable TIM5 CH0 PA0"
+                    default n
+                config BSP_USING_TIM5_PWM_CH1
+                    bool "Enable TIM5 CH1 PA1"
+                    default n
+                config BSP_USING_TIM5_PWM_CH2
+                    bool "Enable TIM5 CH2 PA2"
+                    default n
+                config BSP_USING_TIM5_PWM_CH3
+                    bool "Enable TIM5 CH3 PA3"
+                    default n
+            endif#BSP_USING_TIM5_PWM
+
+        menuconfig BSP_USING_TIM8_PWM
+            bool "Enable TIM8 output PWM"
+            default n
+            if BSP_USING_TIM8_PWM
+                 choice
+                    prompt "Select Pin"
+                    default TIM8_PC6_PC7_PC8_PC9
+                    config TIM8_PC6_PC7_PC8_PC9
+                        bool "PC6 PC7 PC8 PC9"
+                    config TIM8_PD14_PD15_PC8_PC9
+                        bool "PD14 PD15 PC8 PC9"
+                endchoice
+                config BSP_USING_TIM8_PWM_CH0
+                    bool "Enable TIM8 CH0"
+                    default n
+                config BSP_USING_TIM8_PWM_CH1
+                    bool "Enable TIM8 CH1"
+                    default n
+                config BSP_USING_TIM8_PWM_CH2
+                    bool "Enable TIM8 CH2"
+                    default n
+                config BSP_USING_TIM8_PWM_CH3
+                    bool "Enable TIM8 CH3"
+                    default n
+            endif#BSP_USING_TIM8_PWM   
             
     endif#BSP_USING_PWM
     rsource "../../libraries/n32_drivers/Kconfig"
