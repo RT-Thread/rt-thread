@@ -233,7 +233,7 @@ static int dfs_romfs_free_vnode(struct dfs_vnode *vnode)
     return 0;
 }
 
-static ssize_t dfs_romfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t dfs_romfs_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
     rt_size_t length;
     struct romfs_dirent *dirent;
@@ -300,7 +300,7 @@ int dfs_romfs_open(struct dfs_file *file)
     return RT_EOK;
 }
 
-static int dfs_romfs_stat(struct dfs_dentry *dentry, struct stat *st)
+static int dfs_romfs_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
 {
     rt_err_t ret = dfs_file_lock();
     if (ret == RT_EOK)
@@ -309,7 +309,7 @@ static int dfs_romfs_stat(struct dfs_dentry *dentry, struct stat *st)
         st->st_mode = dentry->vnode->mode;
         st->st_size = dentry->vnode->size;
         st->st_nlink = dentry->vnode->nlink;
-        st->st_mtime = 0;
+        st->mtime = 0;
 
         dfs_file_unlock();
     }

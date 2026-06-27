@@ -178,7 +178,7 @@ ssize_t dfs_romfs_read(struct dfs_file *file, void *buf, size_t count)
     return length;
 }
 
-off_t dfs_romfs_lseek(struct dfs_file *file, off_t offset)
+dfs_off_t dfs_romfs_lseek(struct dfs_file *file, dfs_off_t offset)
 {
     if (offset <= file->vnode->size)
     {
@@ -269,7 +269,7 @@ int dfs_romfs_open(struct dfs_file *file)
     return RT_EOK;
 }
 
-int dfs_romfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
+int dfs_romfs_stat(struct dfs_filesystem *fs, const char *path, struct dfs_stat *st)
 {
     rt_size_t size;
     struct romfs_dirent *dirent;
@@ -294,7 +294,7 @@ int dfs_romfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     }
 
     st->st_size = dirent->size;
-    st->st_mtime = 0;
+    st->mtime = 0;
 
     return RT_EOK;
 }

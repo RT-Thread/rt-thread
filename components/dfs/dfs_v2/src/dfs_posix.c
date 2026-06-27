@@ -21,6 +21,28 @@
 #include <lwp.h>
 #endif
 
+static void dfs_stat_to_posix_stat(const struct dfs_stat *dfs_buf, struct stat *buf)
+{
+    rt_memset(buf, 0, sizeof(struct stat));
+    buf->st_dev = dfs_buf->st_dev;
+    buf->st_ino = dfs_buf->st_ino;
+    buf->st_mode = dfs_buf->st_mode;
+    buf->st_nlink = dfs_buf->st_nlink;
+    buf->st_uid = dfs_buf->st_uid;
+    buf->st_gid = dfs_buf->st_gid;
+#if defined(__ARMCC_VERSION) || defined(__ICCARM__)
+    buf->st_rdev = dfs_buf->st_rdev;
+#else
+    buf->st_rdev = (dev_t)(rt_ubase_t)dfs_buf->st_rdev;
+#endif
+    buf->st_size = dfs_buf->st_size;
+    buf->st_atime = dfs_buf->atime;
+    buf->st_mtime = dfs_buf->mtime;
+    buf->st_ctime = dfs_buf->ctime;
+    buf->st_blksize = dfs_buf->st_blksize;
+    buf->st_blocks = dfs_buf->st_blocks;
+}
+
 /**
  * @addtogroup group_fs_posix_api
  * @{
@@ -154,7 +176,7 @@ int openat(int dirfd, const char *path, int flag, ...)
 int utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
 {
     int ret;
-    struct stat buffer;
+    struct dfs_stat buffer;
     struct dfs_file *d;
     char *fullpath;
     struct dfs_attr attr;
@@ -169,7 +191,7 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
 
     if (__path[0] == '/' || __fd == AT_FDCWD)
     {
-        if (stat(__path, &buffer) < 0)
+        if (dfs_file_stat(__path, &buffer) < 0)
         {
             return -ENOENT;
         }
@@ -417,9 +439,9 @@ RTM_EXPORT(write);
  *
  * @return the resulting read/write position in the file, or -1 on failed.
  */
-off_t lseek(int fd, off_t offset, int whence)
+dfs_off_t lseek(int fd, dfs_off_t offset, int whence)
 {
-    off_t result;
+    dfs_off_t result;
     struct dfs_file *file;
 
     file = fd_get(fd);
@@ -486,7 +508,7 @@ RTM_EXPORT(rename);
 int unlink(const char *pathname)
 {
     int result;
-    struct stat stat;
+    struct dfs_stat stat;
 
     if (pathname == NULL)
     {
@@ -526,6 +548,7 @@ RTM_EXPORT(unlink);
 int stat(const char *file, struct stat *buf)
 {
     int result;
+    struct dfs_stat dfs_buf;
 
     if (file == NULL || buf == NULL)
     {
@@ -533,11 +556,15 @@ int stat(const char *file, struct stat *buf)
         return -1;
     }
 
-    result = dfs_file_stat(file, buf);
+    rt_memset(&dfs_buf, 0, sizeof(dfs_buf));
+    result = dfs_file_stat(file, &dfs_buf);
     if (result < 0)
     {
         rt_set_errno(-result);
+        return result;
     }
+
+    dfs_stat_to_posix_stat(&dfs_buf, buf);
 
     return result;
 }
@@ -555,6 +582,7 @@ int fstat(int fildes, struct stat *buf)
 {
     int ret = -1;
     struct dfs_file *file;
+    struct dfs_stat dfs_buf;
 
     if (buf == NULL)
     {
@@ -573,7 +601,12 @@ int fstat(int fildes, struct stat *buf)
 
     if (dfs_is_mounted(file->dentry->mnt) == 0)
     {
-        ret = file->dentry->mnt->fs_ops->stat(file->dentry, buf);
+        rt_memset(&dfs_buf, 0, sizeof(dfs_buf));
+        ret = file->dentry->mnt->fs_ops->stat(file->dentry, &dfs_buf);
+        if (ret == RT_EOK)
+        {
+            dfs_stat_to_posix_stat(&dfs_buf, buf);
+        }
     }
 
     return ret;
@@ -700,7 +733,7 @@ RTM_EXPORT(ioctl);
  * @return Upon successful completion, ftruncate() shall return 0;
  * otherwise, -1 shall be returned and errno set to indicate the error.
  */
-int ftruncate(int fd, off_t length)
+int ftruncate(int fd, dfs_off_t length)
 {
     int result;
     struct dfs_file *file;
@@ -812,7 +845,7 @@ RTM_EXPORT(fstatfs);
 int mkdir(const char *path, mode_t mode)
 {
     int result;
-    struct stat stat;
+    struct dfs_stat stat;
     struct dfs_file file;
 
     if (path == NULL)
@@ -863,7 +896,7 @@ int rmdir(const char *pathname)
 {
     int result;
     DIR *dir = RT_NULL;
-    struct stat stat;
+    struct dfs_stat stat;
 
     if (!pathname)
     {
@@ -1382,10 +1415,10 @@ RTM_EXPORT(getcwd);
  * @return the actual read data buffer length. If the returned value is 0, it
  * may be reach the end of file, please check errno.
  */
-ssize_t pread(int fd, void *buf, size_t len, off_t offset)
+ssize_t pread(int fd, void *buf, size_t len, dfs_off_t offset)
 {
     ssize_t result;
-    off_t fpos;
+    dfs_off_t fpos;
     struct dfs_file *file;
 
     if (buf == NULL)
@@ -1429,10 +1462,10 @@ RTM_EXPORT(pread);
  *
  * @return the actual written data buffer length.
  */
-ssize_t pwrite(int fd, const void *buf, size_t len, off_t offset)
+ssize_t pwrite(int fd, const void *buf, size_t len, dfs_off_t offset)
 {
     ssize_t result;
-    off_t fpos;
+    dfs_off_t fpos;
     struct dfs_file *file;
 
     if (buf == NULL)

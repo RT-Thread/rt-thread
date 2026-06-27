@@ -137,7 +137,7 @@ static rt_ubase_t _get_unit_shift(rt_device_t device)
     return shift;
 }
 
-static ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
     ssize_t ret = -RT_EIO;
     rt_device_t device;
@@ -173,7 +173,7 @@ static ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, of
     return ret;
 }
 
-static ssize_t dfs_devfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+static ssize_t dfs_devfs_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos)
 {
     ssize_t ret = -RT_EIO;
     rt_device_t device;
@@ -298,9 +298,9 @@ static int dfs_devfs_flush(struct dfs_file *file)
     return ret;
 }
 
-static off_t dfs_devfs_lseek(struct dfs_file *file, off_t offset, int wherece)
+static dfs_off_t dfs_devfs_lseek(struct dfs_file *file, dfs_off_t offset, int wherece)
 {
-    off_t ret = -EPERM;
+    dfs_off_t ret = -EPERM;
     rt_device_t device;
 
     RT_ASSERT(file != RT_NULL);
@@ -321,7 +321,7 @@ static off_t dfs_devfs_lseek(struct dfs_file *file, off_t offset, int wherece)
     return ret;
 }
 
-static int dfs_devfs_truncate(struct dfs_file *file, off_t offset)
+static int dfs_devfs_truncate(struct dfs_file *file, dfs_off_t offset)
 {
     int ret = RT_EOK;
     rt_device_t device;

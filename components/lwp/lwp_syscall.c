@@ -91,6 +91,26 @@
 #define SYSCALL_USPACE(f) SYSCALL_SIGN(sys_notimpl)
 #endif /* defined(RT_USING_DFS) && defined(ARCH_MM_MMU) */
 
+#if defined(RT_USING_DFS) && defined(RT_USING_DFS_V2)
+static void lwp_dfs_stat_to_posix_stat(const struct dfs_stat *dfs_buf, struct stat *buf)
+{
+    rt_memset(buf, 0, sizeof(struct stat));
+    buf->st_dev = dfs_buf->st_dev;
+    buf->st_ino = dfs_buf->st_ino;
+    buf->st_mode = dfs_buf->st_mode;
+    buf->st_nlink = dfs_buf->st_nlink;
+    buf->st_uid = dfs_buf->st_uid;
+    buf->st_gid = dfs_buf->st_gid;
+    buf->st_rdev = (dev_t)(rt_ubase_t)dfs_buf->st_rdev;
+    buf->st_size = dfs_buf->st_size;
+    buf->st_atime = dfs_buf->atime;
+    buf->st_mtime = dfs_buf->mtime;
+    buf->st_ctime = dfs_buf->ctime;
+    buf->st_blksize = dfs_buf->st_blksize;
+    buf->st_blocks = dfs_buf->st_blocks;
+}
+#endif
+
 #include "lwp_ipc_internal.h"
 #include <sched.h>
 
@@ -4536,6 +4556,9 @@ sysret_t sys_lstat(const char *file, struct stat *buf)
     size_t copy_len;
     char *copy_path;
     struct stat statbuff = { 0 };
+#ifdef RT_USING_DFS_V2
+    struct dfs_stat dfs_statbuff = { 0 };
+#endif
 
     if (!lwp_user_accessable((void *)buf, sizeof(struct stat)))
     {
@@ -4562,7 +4585,11 @@ sysret_t sys_lstat(const char *file, struct stat *buf)
     }
     copy_path[copy_len] = '\0';
 #ifdef RT_USING_DFS_V2
-    ret = _SYS_WRAP(dfs_file_lstat(copy_path, &statbuff));
+    ret = _SYS_WRAP(dfs_file_lstat(copy_path, &dfs_statbuff));
+    if (ret == 0)
+    {
+        lwp_dfs_stat_to_posix_stat(&dfs_statbuff, &statbuff);
+    }
 #else
     ret = _SYS_WRAP(stat(copy_path, &statbuff));
 #endif
@@ -9816,7 +9843,11 @@ sysret_t sys_mount(char *source, char *target, char *filesystemtype,
     size_t len_source, len_target, len_fs;
     char *tmp = NULL;
     int ret = 0;
+#ifdef RT_USING_DFS_V2
+    struct dfs_stat buf = { 0 };
+#else
     struct stat buf = { 0 };
+#endif
     char *dev_fullpath = RT_NULL;
 
     len_source = source ? lwp_user_strlen(source) : 0;
@@ -10514,7 +10545,7 @@ sysret_t sys_reboot(int magic, int magic2, int type, void *arg)
 ssize_t sys_pread64(int fd, void *buf, int size, size_t offset)
 #ifdef RT_USING_DFS_V2
 {
-    ssize_t pread(int fd, void *buf, size_t len, size_t offset);
+    ssize_t pread(int fd, void *buf, size_t len, dfs_off_t offset);
 #ifdef ARCH_MM_MMU
     ssize_t ret = -1;
     void *kmem = RT_NULL;
@@ -10588,7 +10619,7 @@ ssize_t sys_pread64(int fd, void *buf, int size, size_t offset)
 ssize_t sys_pwrite64(int fd, void *buf, int size, size_t offset)
 #ifdef RT_USING_DFS_V2
 {
-    ssize_t pwrite(int fd, const void *buf, size_t len, size_t offset);
+    ssize_t pwrite(int fd, const void *buf, size_t len, dfs_off_t offset);
 #ifdef ARCH_MM_MMU
     ssize_t ret = -1;
     void *kmem = RT_NULL;

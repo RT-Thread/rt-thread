@@ -427,7 +427,7 @@ static int ptyfs_ops_statfs(struct dfs_mnt *mnt, struct statfs *buf)
     return RT_EOK;
 }
 
-static int ptyfs_ops_stat(struct dfs_dentry *dentry, struct stat *st)
+static int ptyfs_ops_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
 {
     struct dfs_vnode *vnode;
 
@@ -437,19 +437,16 @@ static int ptyfs_ops_stat(struct dfs_dentry *dentry, struct stat *st)
 
         /* device id ? */
         st->st_dev = (dev_t)(long)(dentry->mnt->dev_id);
-        st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
+        st->st_ino = (uint16_t)dfs_dentry_full_path_crc32(dentry);
 
         st->st_gid = vnode->gid;
         st->st_uid = vnode->uid;
         st->st_mode = vnode->mode;
         st->st_nlink = vnode->nlink;
         st->st_size = vnode->size;
-        st->st_mtim.tv_nsec = vnode->mtime.tv_nsec;
-        st->st_mtim.tv_sec = vnode->mtime.tv_sec;
-        st->st_ctim.tv_nsec = vnode->ctime.tv_nsec;
-        st->st_ctim.tv_sec = vnode->ctime.tv_sec;
-        st->st_atim.tv_nsec = vnode->atime.tv_nsec;
-        st->st_atim.tv_sec = vnode->atime.tv_sec;
+        st->mtime = vnode->mtime.tv_sec;
+        st->ctime = vnode->ctime.tv_sec;
+        st->atime = vnode->atime.tv_sec;
     }
 
     return 0;

@@ -13,13 +13,15 @@
 #include <rtthread.h>
 #include <dfs.h>
 #include <dfs_fs.h>
+#include <dfs_dentry.h>
 #include <dfs_file.h>
+#include <dfs_mnt.h>
 
 #include "dfs_ramfs.h"
 
-int dfs_ramfs_mount(struct dfs_filesystem *fs,
-                    unsigned long          rwflag,
-                    const void            *data)
+int dfs_ramfs_mount(struct dfs_mnt *mnt,
+                    unsigned long rwflag,
+                    const void *data)
 {
     struct dfs_ramfs *ramfs;
 
@@ -27,23 +29,23 @@ int dfs_ramfs_mount(struct dfs_filesystem *fs,
         return -EIO;
 
     ramfs = (struct dfs_ramfs *)data;
-    fs->data = ramfs;
+    mnt->data = ramfs;
 
     return RT_EOK;
 }
 
-int dfs_ramfs_unmount(struct dfs_filesystem *fs)
+int dfs_ramfs_unmount(struct dfs_mnt *mnt)
 {
-    fs->data = NULL;
+    mnt->data = NULL;
 
     return RT_EOK;
 }
 
-int dfs_ramfs_statfs(struct dfs_filesystem *fs, struct statfs *buf)
+int dfs_ramfs_statfs(struct dfs_mnt *mnt, struct statfs *buf)
 {
     struct dfs_ramfs *ramfs;
 
-    ramfs = (struct dfs_ramfs *)fs->data;
+    ramfs = (struct dfs_ramfs *)mnt->data;
     RT_ASSERT(ramfs != NULL);
     RT_ASSERT(buf != NULL);
 
@@ -92,43 +94,43 @@ struct ramfs_dirent *dfs_ramfs_lookup(struct dfs_ramfs *ramfs,
     return NULL;
 }
 
-int dfs_ramfs_read(struct dfs_file *file, void *buf, size_t count)
+ssize_t dfs_ramfs_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
-    rt_size_t length;
+    ssize_t length;
     struct ramfs_dirent *dirent;
 
     dirent = (struct ramfs_dirent *)file->vnode->data;
     RT_ASSERT(dirent != NULL);
 
-    if (count < file->vnode->size - file->pos)
+    if ((dfs_off_t)count < file->vnode->size - *pos)
         length = count;
     else
-        length = file->vnode->size - file->pos;
+        length = file->vnode->size - *pos;
 
     if (length > 0)
-        rt_memcpy(buf, &(dirent->data[file->pos]), length);
+        rt_memcpy(buf, &(dirent->data[*pos]), length);
 
     /* update file current position */
-    file->pos += length;
+    *pos += length;
 
     return length;
 }
 
-int dfs_ramfs_write(struct dfs_file *fd, const void *buf, size_t count)
+ssize_t dfs_ramfs_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos)
 {
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
 
-    dirent = (struct ramfs_dirent *)fd->vnode->data;
+    dirent = (struct ramfs_dirent *)file->vnode->data;
     RT_ASSERT(dirent != NULL);
 
     ramfs = dirent->fs;
     RT_ASSERT(ramfs != NULL);
 
-    if (count + fd->pos > fd->vnode->size)
+    if ((dfs_off_t)count + *pos > file->vnode->size)
     {
         rt_uint8_t *ptr;
-        ptr = rt_memheap_realloc(&(ramfs->memheap), dirent->data, fd->pos + count);
+        ptr = rt_memheap_realloc(&(ramfs->memheap), dirent->data, *pos + count);
         if (ptr == NULL)
         {
             rt_set_errno(-ENOMEM);
@@ -138,26 +140,41 @@ int dfs_ramfs_write(struct dfs_file *fd, const void *buf, size_t count)
 
         /* update dirent and file size */
         dirent->data = ptr;
-        dirent->size = fd->pos + count;
-        fd->vnode->size = dirent->size;
+        dirent->size = *pos + count;
+        file->vnode->size = dirent->size;
     }
 
     if (count > 0)
-        rt_memcpy(dirent->data + fd->pos, buf, count);
+        rt_memcpy(dirent->data + *pos, buf, count);
 
     /* update file current position */
-    fd->pos += count;
+    *pos += count;
 
     return count;
 }
 
-int dfs_ramfs_lseek(struct dfs_file *file, off_t offset)
+dfs_off_t dfs_ramfs_lseek(struct dfs_file *file, dfs_off_t offset, int wherece)
 {
-    if (offset <= (off_t)file->vnode->size)
+    switch (wherece)
     {
-        file->pos = offset;
+    case SEEK_SET:
+        break;
 
-        return file->pos;
+    case SEEK_CUR:
+        offset += file->fpos;
+        break;
+
+    case SEEK_END:
+        offset += file->vnode->size;
+        break;
+
+    default:
+        return -EINVAL;
+    }
+
+    if (offset <= (dfs_off_t)file->vnode->size)
+    {
+        return offset;
     }
 
     return -EIO;
@@ -181,7 +198,6 @@ int dfs_ramfs_open(struct dfs_file *file)
     rt_size_t size;
     struct dfs_ramfs *ramfs;
     struct ramfs_dirent *dirent;
-    struct dfs_filesystem *fs;
 
     RT_ASSERT(file->vnode->ref_count > 0);
     if (file->vnode->ref_count > 1)
@@ -191,13 +207,11 @@ int dfs_ramfs_open(struct dfs_file *file)
         {
             return -ENOENT;
         }
-        file->pos = 0;
+        file->fpos = 0;
         return 0;
     }
 
-    fs = file->vnode->fs;
-
-    ramfs = (struct dfs_ramfs *)fs->data;
+    ramfs = (struct dfs_ramfs *)file->vnode->mnt->data;
     RT_ASSERT(ramfs != NULL);
 
     if (file->flags & O_DIRECTORY)
@@ -208,7 +222,7 @@ int dfs_ramfs_open(struct dfs_file *file)
         }
 
         /* open directory */
-        dirent = dfs_ramfs_lookup(ramfs, file->vnode->path, &size);
+        dirent = dfs_ramfs_lookup(ramfs, file->dentry->pathname, &size);
         if (dirent == NULL)
             return -ENOENT;
         if (dirent == &(ramfs->root)) /* it's root directory */
@@ -222,7 +236,7 @@ int dfs_ramfs_open(struct dfs_file *file)
     }
     else
     {
-        dirent = dfs_ramfs_lookup(ramfs, file->vnode->path, &size);
+        dirent = dfs_ramfs_lookup(ramfs, file->dentry->pathname, &size);
         if (dirent == &(ramfs->root)) /* it's root directory */
         {
             return -ENOENT;
@@ -244,7 +258,7 @@ int dfs_ramfs_open(struct dfs_file *file)
                 }
 
                 /* remove '/' separator */
-                name_ptr = file->vnode->path;
+                name_ptr = file->dentry->pathname;
                 while (*name_ptr == '/' && *name_ptr)
                 {
                     name_ptr++;
@@ -282,26 +296,24 @@ int dfs_ramfs_open(struct dfs_file *file)
     file->vnode->size = dirent->size;
     if (file->flags & O_APPEND)
     {
-        file->pos = file->vnode->size;
+        file->fpos = file->vnode->size;
     }
     else
     {
-        file->pos = 0;
+        file->fpos = 0;
     }
 
     return 0;
 }
 
-int dfs_ramfs_stat(struct dfs_filesystem *fs,
-                   const char            *path,
-                   struct stat           *st)
+int dfs_ramfs_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
 {
     rt_size_t size;
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
 
-    ramfs = (struct dfs_ramfs *)fs->data;
-    dirent = dfs_ramfs_lookup(ramfs, path, &size);
+    ramfs = (struct dfs_ramfs *)dentry->mnt->data;
+    dirent = dfs_ramfs_lookup(ramfs, dentry->pathname, &size);
 
     if (dirent == NULL)
         return -ENOENT;
@@ -311,7 +323,7 @@ int dfs_ramfs_stat(struct dfs_filesystem *fs,
                   S_IWUSR | S_IWGRP | S_IWOTH;
 
     st->st_size = dirent->size;
-    st->st_mtime = 0;
+    st->mtime = 0;
 
     return RT_EOK;
 }
@@ -338,14 +350,14 @@ int dfs_ramfs_getdents(struct dfs_file *file,
     if (count == 0)
         return -EINVAL;
 
-    end = file->pos + count;
+    end = file->fpos + count;
     index = 0;
     count = 0;
     for (dirent = rt_list_entry(dirent->list.next, struct ramfs_dirent, list);
          dirent != &(ramfs->root) && index < end;
          dirent = rt_list_entry(dirent->list.next, struct ramfs_dirent, list))
     {
-        if (index >= (rt_size_t)file->pos)
+        if (index >= (rt_size_t)file->fpos)
         {
             d = dirp + count;
             d->d_type = DT_REG;
@@ -354,7 +366,7 @@ int dfs_ramfs_getdents(struct dfs_file *file,
             rt_strncpy(d->d_name, dirent->name, RAMFS_NAME_MAX);
 
             count += 1;
-            file->pos += 1;
+            file->fpos += 1;
         }
         index += 1;
     }
@@ -362,16 +374,16 @@ int dfs_ramfs_getdents(struct dfs_file *file,
     return count * sizeof(struct dirent);
 }
 
-int dfs_ramfs_unlink(struct dfs_filesystem *fs, const char *path)
+int dfs_ramfs_unlink(struct dfs_dentry *dentry)
 {
     rt_size_t size;
     struct dfs_ramfs *ramfs;
     struct ramfs_dirent *dirent;
 
-    ramfs = (struct dfs_ramfs *)fs->data;
+    ramfs = (struct dfs_ramfs *)dentry->mnt->data;
     RT_ASSERT(ramfs != NULL);
 
-    dirent = dfs_ramfs_lookup(ramfs, path, &size);
+    dirent = dfs_ramfs_lookup(ramfs, dentry->pathname, &size);
     if (dirent == NULL)
         return -ENOENT;
 
@@ -383,62 +395,63 @@ int dfs_ramfs_unlink(struct dfs_filesystem *fs, const char *path)
     return RT_EOK;
 }
 
-int dfs_ramfs_rename(struct dfs_filesystem *fs,
-                     const char            *oldpath,
-                     const char            *newpath)
+int dfs_ramfs_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *new_dentry)
 {
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
     rt_size_t size;
 
-    ramfs = (struct dfs_ramfs *)fs->data;
+    ramfs = (struct dfs_ramfs *)old_dentry->mnt->data;
     RT_ASSERT(ramfs != NULL);
 
-    dirent = dfs_ramfs_lookup(ramfs, newpath, &size);
+    dirent = dfs_ramfs_lookup(ramfs, new_dentry->pathname, &size);
     if (dirent != NULL)
         return -EEXIST;
 
-    dirent = dfs_ramfs_lookup(ramfs, oldpath, &size);
+    dirent = dfs_ramfs_lookup(ramfs, old_dentry->pathname, &size);
     if (dirent == NULL)
         return -ENOENT;
 
-    strncpy(dirent->name, newpath, RAMFS_NAME_MAX);
+    strncpy(dirent->name, new_dentry->pathname, RAMFS_NAME_MAX);
 
     return RT_EOK;
 }
 
 static const struct dfs_file_ops _ram_fops =
 {
-    dfs_ramfs_open,
-    dfs_ramfs_close,
-    dfs_ramfs_ioctl,
-    dfs_ramfs_read,
-    dfs_ramfs_write,
-    NULL, /* flush */
-    dfs_ramfs_lseek,
-    dfs_ramfs_getdents,
+    .open = dfs_ramfs_open,
+    .close = dfs_ramfs_close,
+    .ioctl = dfs_ramfs_ioctl,
+    .read = dfs_ramfs_read,
+    .write = dfs_ramfs_write,
+    .lseek = dfs_ramfs_lseek,
+    .getdents = dfs_ramfs_getdents,
 };
 
 static const struct dfs_filesystem_ops _ramfs =
 {
-    "ram",
-    DFS_FS_FLAG_DEFAULT,
-    &_ram_fops,
+    .name = "ram",
+    .flags = DFS_FS_FLAG_DEFAULT,
+    .default_fops = &_ram_fops,
 
-    dfs_ramfs_mount,
-    dfs_ramfs_unmount,
-    NULL, /* mkfs */
-    dfs_ramfs_statfs,
+    .mount = dfs_ramfs_mount,
+    .umount = dfs_ramfs_unmount,
+    .statfs = dfs_ramfs_statfs,
 
-    dfs_ramfs_unlink,
-    dfs_ramfs_stat,
-    dfs_ramfs_rename,
+    .unlink = dfs_ramfs_unlink,
+    .stat = dfs_ramfs_stat,
+    .rename = dfs_ramfs_rename,
+};
+
+static struct dfs_filesystem_type _ramfs_type =
+{
+    .fs_ops = &_ramfs,
 };
 
 int dfs_ramfs_init(void)
 {
     /* register ram file system */
-    dfs_register(&_ramfs);
+    dfs_register(&_ramfs_type);
 
     return 0;
 }

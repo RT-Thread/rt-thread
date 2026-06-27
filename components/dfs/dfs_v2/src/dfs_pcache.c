@@ -64,7 +64,7 @@ struct dfs_pcache_mq_obj
     rt_uint32_t cmd;
 };
 
-static struct dfs_page *dfs_page_lookup(struct dfs_file *file, off_t pos);
+static struct dfs_page *dfs_page_lookup(struct dfs_file *file, dfs_off_t pos);
 static void dfs_page_ref(struct dfs_page *page);
 static int dfs_page_inactive(struct dfs_page *page);
 static int dfs_page_remove(struct dfs_page *page);
@@ -1002,7 +1002,7 @@ static int dfs_page_unmap(struct dfs_page *page)
  *
  * @return Pointer to the newly created page structure on success, NULL on failure
  */
-static struct dfs_page *dfs_page_create(off_t pos)
+static struct dfs_page *dfs_page_create(dfs_off_t pos)
 {
     struct dfs_page *page = RT_NULL;
     int affid = RT_PAGE_PICK_AFFID(pos);
@@ -1102,7 +1102,7 @@ static void dfs_page_release(struct dfs_page *page)
  * @return 0 if positions are in the same page, negative if fpos is before value,
  *         positive if fpos is after value
  */
-static int dfs_page_compare(off_t fpos, off_t value)
+static int dfs_page_compare(dfs_off_t fpos, dfs_off_t value)
 {
     return fpos / ARCH_PAGE_SIZE * ARCH_PAGE_SIZE - value;
 }
@@ -1380,7 +1380,7 @@ static int dfs_page_dirty(struct dfs_page *page)
  * @param[in] fpos The file position to search for
  * @return struct dfs_page* The found page, or RT_NULL if not found
  */
-static struct dfs_page *dfs_page_search(struct dfs_aspace *aspace, off_t fpos)
+static struct dfs_page *dfs_page_search(struct dfs_aspace *aspace, dfs_off_t fpos)
 {
     int cmp;
     struct dfs_page *page;
@@ -1439,7 +1439,7 @@ static struct dfs_page *dfs_page_search(struct dfs_aspace *aspace, off_t fpos)
  * @return Pointer to the newly created and loaded page on success,
  *         NULL on failure or invalid parameters
  */
-static struct dfs_page *dfs_aspace_load_page(struct dfs_file *file, off_t pos)
+static struct dfs_page *dfs_aspace_load_page(struct dfs_file *file, dfs_off_t pos)
 {
     struct dfs_page *page = RT_NULL;
 
@@ -1477,7 +1477,7 @@ static struct dfs_page *dfs_aspace_load_page(struct dfs_file *file, off_t pos)
  * @return Pointer to the found or newly loaded page on success,
  *         NULL if the page couldn't be found or loaded
  */
-static struct dfs_page *dfs_page_lookup(struct dfs_file *file, off_t pos)
+static struct dfs_page *dfs_page_lookup(struct dfs_file *file, dfs_off_t pos)
 {
     struct dfs_page *page = RT_NULL;
     struct dfs_aspace *aspace = file->vnode->aspace;
@@ -1488,7 +1488,7 @@ static struct dfs_page *dfs_page_lookup(struct dfs_file *file, off_t pos)
     {
         int count = RT_PAGECACHE_PRELOAD;
         struct dfs_page *tmp = RT_NULL;
-        off_t fpos = pos / ARCH_PAGE_SIZE * ARCH_PAGE_SIZE;
+        dfs_off_t fpos = pos / ARCH_PAGE_SIZE * ARCH_PAGE_SIZE;
 
         do
         {
@@ -1555,7 +1555,7 @@ static struct dfs_page *dfs_page_lookup(struct dfs_file *file, off_t pos)
  *
  * @return Number of bytes successfully read, or negative error code
  */
-int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
     int ret = -EINVAL;
 
@@ -1576,7 +1576,7 @@ int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
             page = dfs_page_lookup(file, *pos);
             if (page)
             {
-                off_t len;
+                dfs_off_t len;
 
                 dfs_aspace_lock(aspace);
                 if (aspace->vnode->size < page->fpos + ARCH_PAGE_SIZE)
@@ -1629,7 +1629,7 @@ int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
  *
  * @return Number of bytes successfully written, or negative error code
  */
-int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos)
 {
     int ret = -EINVAL;
 
@@ -1657,7 +1657,7 @@ int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t
             page = dfs_page_lookup(file, *pos);
             if (page)
             {
-                off_t len;
+                dfs_off_t len;
 
                 dfs_aspace_lock(aspace);
                 len = page->fpos + ARCH_PAGE_SIZE - *pos;
@@ -2056,9 +2056,9 @@ int dfs_aspace_page_dirty(struct dfs_file *file, struct rt_varea *varea, void *v
  *
  * @return The calculated file position offset
  */
-off_t dfs_aspace_fpos(struct rt_varea *varea, void *vaddr)
+dfs_off_t dfs_aspace_fpos(struct rt_varea *varea, void *vaddr)
 {
-    return (off_t)(intptr_t)vaddr - (off_t)(intptr_t)varea->start + varea->offset * ARCH_PAGE_SIZE;
+    return (dfs_off_t)(intptr_t)vaddr - (dfs_off_t)(intptr_t)varea->start + varea->offset * ARCH_PAGE_SIZE;
 }
 
 /**
@@ -2069,7 +2069,7 @@ off_t dfs_aspace_fpos(struct rt_varea *varea, void *vaddr)
  *
  * @return The virtual address corresponding to the file position
  */
-void *dfs_aspace_vaddr(struct rt_varea *varea, off_t fpos)
+void *dfs_aspace_vaddr(struct rt_varea *varea, dfs_off_t fpos)
 {
     return varea->start + fpos - varea->offset * ARCH_PAGE_SIZE;
 }
@@ -2098,7 +2098,7 @@ int dfs_aspace_mmap_read(struct dfs_file *file, struct rt_varea *varea, void *da
         struct rt_aspace_io_msg *msg = (struct rt_aspace_io_msg *)data;
         if (msg)
         {
-            off_t fpos = dfs_aspace_fpos(varea, msg->fault_vaddr);
+            dfs_off_t fpos = dfs_aspace_fpos(varea, msg->fault_vaddr);
             return dfs_aspace_read(file, msg->buffer_vaddr, ARCH_PAGE_SIZE, &fpos);
         }
     }
@@ -2130,7 +2130,7 @@ int dfs_aspace_mmap_write(struct dfs_file *file, struct rt_varea *varea, void *d
         struct rt_aspace_io_msg *msg = (struct rt_aspace_io_msg *)data;
         if (msg)
         {
-            off_t fpos = dfs_aspace_fpos(varea, msg->fault_vaddr);
+            dfs_off_t fpos = dfs_aspace_fpos(varea, msg->fault_vaddr);
             return dfs_aspace_write(file, msg->buffer_vaddr, ARCH_PAGE_SIZE, &fpos);
         }
     }

@@ -48,7 +48,7 @@ struct dfs_page
     rt_atomic_t ref_count;        /* Reference count for this page */
 
     void *page;                   /* Pointer to physical page data */
-    off_t fpos;                   /* File position this page represents */
+    dfs_off_t fpos;               /* File position this page represents */
     size_t size;                  /* Total size of the page */
     size_t len;                   /* Valid data length in the page */
     int is_dirty;                 /* Dirty flag indicating if page needs writeback */
@@ -105,8 +105,8 @@ struct dfs_pcache
 struct dfs_aspace *dfs_aspace_create(struct dfs_dentry *dentry, struct dfs_vnode *vnode, const struct dfs_aspace_ops *ops);
 int dfs_aspace_destroy(struct dfs_aspace *aspace);
 
-int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos);
-int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos);
+int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos);
+int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos);
 int dfs_aspace_flush(struct dfs_aspace *aspace);
 int dfs_aspace_clean(struct dfs_aspace *aspace);
 
@@ -115,8 +115,8 @@ int dfs_aspace_unmap(struct dfs_file *file, struct rt_varea *varea);
 int dfs_aspace_page_unmap(struct dfs_file *file, struct rt_varea *varea, void *vaddr);
 int dfs_aspace_page_dirty(struct dfs_file *file, struct rt_varea *varea, void *vaddr);
 
-off_t dfs_aspace_fpos(struct rt_varea *varea, void *vaddr);
-void *dfs_aspace_vaddr(struct rt_varea *varea, off_t fpos);
+dfs_off_t dfs_aspace_fpos(struct rt_varea *varea, void *vaddr);
+void *dfs_aspace_vaddr(struct rt_varea *varea, dfs_off_t fpos);
 
 int dfs_aspace_mmap_read(struct dfs_file *file, struct rt_varea *varea, void *data);
 int dfs_aspace_mmap_write(struct dfs_file *file, struct rt_varea *varea, void *data);

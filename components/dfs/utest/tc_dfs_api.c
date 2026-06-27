@@ -34,7 +34,11 @@ static void test_mkfs(void)
 
 static void test_dfs_mount(void)
 {
+#ifdef RT_USING_DFS_V2
+    struct dfs_stat stat_buf;
+#else
     struct stat stat_buf;
+#endif
 
     /* Check if filesystem is available */
     if (dfs_file_stat(TEST_MNT_PATH, &stat_buf) == 0)
@@ -165,7 +169,11 @@ static void test_dfs_close(void)
 
 static void test_dfs_stat(void)
 {
+#ifdef RT_USING_DFS_V2
+    struct dfs_stat stat_buf;
+#else
     struct stat stat_buf;
+#endif
     uassert_true(dfs_file_stat(TEST_FILE, &stat_buf) == 0);
     uassert_true(S_ISREG(stat_buf.st_mode));
 }
@@ -183,7 +191,11 @@ static void test_dfs_unlink(void)
 static void test_dfs_rename(void)
 {
     rt_err_t ret;
+#ifdef RT_USING_DFS_V2
+    struct dfs_stat stat_buf;
+#else
     struct stat stat_buf;
+#endif
 
     /* Force cleanup of any previous state */
     dfs_file_unlink(TEST_FILE);

@@ -47,8 +47,8 @@ static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t coun
 #else
 static int eventfd_close(struct dfs_file *file);
 static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req);
-static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos);
-static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos);
+static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos);
+static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos);
 #endif
 
 static const struct dfs_file_ops eventfd_fops =
@@ -123,7 +123,7 @@ static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count)
  * @param   pos Pointer to the file position (not used).
  * @return  Number of bytes read on success, otherwise an error code.
  */
-static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 #endif
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
@@ -190,7 +190,7 @@ static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t coun
  * @param   pos Pointer to the file position (not used).
  * @return  Number of bytes written on success, otherwise an error code.
  */
-static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos)
 #endif
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;

@@ -39,6 +39,35 @@ static struct dfs_fdtable _fdtab;
 static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
 #endif /* DFS_USING_POSIX */
 
+void dfs_print_off_t(dfs_off_t value)
+{
+    char buf[24];
+    int i = 0;
+    rt_uint64_t number;
+
+    if (value < 0)
+    {
+        rt_kprintf("-");
+        number = (rt_uint64_t)(-(value + 1)) + 1;
+    }
+    else
+    {
+        number = (rt_uint64_t)value;
+    }
+
+    do
+    {
+        buf[i++] = (char)('0' + number % 10);
+        number /= 10;
+    }
+    while (number != 0);
+
+    while (i > 0)
+    {
+        rt_kprintf("%c", buf[--i]);
+    }
+}
+
 /**
  * @addtogroup group_device_virtual_file_system
  * @{

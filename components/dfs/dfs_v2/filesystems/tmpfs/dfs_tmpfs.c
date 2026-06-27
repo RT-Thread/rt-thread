@@ -232,7 +232,7 @@ struct tmpfs_file *dfs_tmpfs_lookup(struct tmpfs_sb  *superblock,
 {
     const char *subpath, *curpath, *filename = RT_NULL;
     char subdir_name[TMPFS_NAME_MAX];
-    struct tmpfs_file *file, *curfile, *tmp;
+    struct tmpfs_file *file = RT_NULL, *curfile, *tmp;
 
     subpath = path;
     while (*subpath == '/' && *subpath)
@@ -266,6 +266,7 @@ find_subpath:
         {
             if (rt_strcmp(file->name, filename) == 0)
             {
+                /* cppcheck-suppress uninitvar */
                 *size = file->size;
 
                 rt_spin_unlock(&superblock->lock);
@@ -286,7 +287,7 @@ find_subpath:
     return NULL;
 }
 
-static ssize_t dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
     ssize_t length;
     struct tmpfs_file *d_file;
@@ -311,7 +312,7 @@ static ssize_t dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, of
     return length;
 }
 
-static ssize_t _dfs_tmpfs_write(struct tmpfs_file *d_file, const void *buf, size_t count, off_t *pos)
+static ssize_t _dfs_tmpfs_write(struct tmpfs_file *d_file, const void *buf, size_t count, dfs_off_t *pos)
 {
     struct tmpfs_sb *superblock;
 
@@ -348,7 +349,7 @@ static ssize_t _dfs_tmpfs_write(struct tmpfs_file *d_file, const void *buf, size
     return count;
 }
 
-static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos)
 {
     struct tmpfs_file *d_file;
 
@@ -364,7 +365,7 @@ static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t co
     return count;
 }
 
-static off_t dfs_tmpfs_lseek(struct dfs_file *file, off_t offset, int wherece)
+static dfs_off_t dfs_tmpfs_lseek(struct dfs_file *file, dfs_off_t offset, int wherece)
 {
     switch (wherece)
     {
@@ -383,7 +384,7 @@ static off_t dfs_tmpfs_lseek(struct dfs_file *file, off_t offset, int wherece)
         return -EINVAL;
     }
 
-    if (offset <= (off_t)file->vnode->size)
+    if (offset <= (dfs_off_t)file->vnode->size)
     {
         return offset;
     }
@@ -461,7 +462,7 @@ static int dfs_tmpfs_open(struct dfs_file *file)
     return 0;
 }
 
-static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
+static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
 {
     rt_size_t size;
     struct tmpfs_file *d_file;
@@ -474,7 +475,7 @@ static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
         return -ENOENT;
 
     st->st_dev = (dev_t)(size_t)(dentry->mnt->dev_id);
-    st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
+    st->st_ino = (uint16_t)dfs_dentry_full_path_crc32(dentry);
 
     if (d_file->type == TMPFS_TYPE_DIR)
     {
@@ -486,7 +487,7 @@ static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
     }
 
     st->st_size = d_file->size;
-    st->st_mtime = 0;
+    st->mtime = 0;
 
     return RT_EOK;
 }
@@ -789,7 +790,7 @@ static ssize_t dfs_tmp_page_read(struct dfs_file *file, struct dfs_page *page)
 
     if (page->page)
     {
-        off_t fpos = page->fpos;
+        dfs_off_t fpos = page->fpos;
         ret = dfs_tmpfs_read(file, page->page, page->size, &fpos);
     }
 
@@ -798,7 +799,7 @@ static ssize_t dfs_tmp_page_read(struct dfs_file *file, struct dfs_page *page)
 
 ssize_t dfs_tmp_page_write(struct dfs_page *page)
 {
-    off_t pos;
+    dfs_off_t pos;
     size_t count = 0;
     struct tmpfs_file *d_file;
 
@@ -822,7 +823,7 @@ ssize_t dfs_tmp_page_write(struct dfs_page *page)
 }
 #endif
 
-static int dfs_tmpfs_truncate(struct dfs_file *file, off_t offset)
+static int dfs_tmpfs_truncate(struct dfs_file *file, dfs_off_t offset)
 {
     struct tmpfs_file *d_file = RT_NULL;
     struct tmpfs_sb *superblock = RT_NULL;

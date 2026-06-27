@@ -84,11 +84,11 @@ int dfs_mqueue_open(struct dfs_file *file) {
     return 0;
 }
 
-int dfs_mqueue_stat(struct dfs_filesystem *fs, const char *path, struct stat *st) {
+int dfs_mqueue_stat(struct dfs_filesystem *fs, const char *path, struct dfs_stat *st) {
     st->st_dev = 0;
     st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH | S_IWUSR | S_IWGRP | S_IWOTH;
     st->st_size = 0;
-    st->st_mtime = 0;
+    st->mtime = 0;
     return RT_EOK;
 }
 

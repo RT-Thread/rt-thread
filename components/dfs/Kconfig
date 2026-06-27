@@ -16,6 +16,15 @@ if RT_USING_DFS
         bool "Using working directory"
         default y
 
+    config RT_USING_DFS_LARGE_FILE
+        bool "Enable 64-bit DFS internal file offset"
+        default n
+        help
+            Enable this option to use a signed 64-bit file offset type inside
+            DFS. The POSIX off_t type is still provided by the selected C
+            library/toolchain, but DFS filesystem drivers and DFS-native helper
+            APIs can handle file positions and file sizes larger than 2GB.
+
 if RT_USING_DFS_V1
     config RT_USING_DFS_MNTTABLE
         bool "Using mount table for file system"

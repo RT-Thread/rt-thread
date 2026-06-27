@@ -122,7 +122,7 @@ static int tty_fops_ioctl(struct dfs_file *file, int cmd, void *arg)
 }
 
 static ssize_t tty_fops_read(struct dfs_file *file, void *buf, size_t count,
-                             off_t *pos)
+                             dfs_off_t *pos)
 {
     ssize_t rc = 0;
     int error;
@@ -173,7 +173,7 @@ static ssize_t tty_fops_read(struct dfs_file *file, void *buf, size_t count,
 }
 
 static ssize_t tty_fops_write(struct dfs_file *file, const void *buf,
-                              size_t count, off_t *pos)
+                              size_t count, dfs_off_t *pos)
 {
     ssize_t rc = 0;
     int error;
@@ -227,12 +227,12 @@ static int tty_fops_flush(struct dfs_file *file)
     return -EINVAL;
 }
 
-static off_t tty_fops_lseek(struct dfs_file *file, off_t offset, int wherece)
+static dfs_off_t tty_fops_lseek(struct dfs_file *file, dfs_off_t offset, int wherece)
 {
     return -EINVAL;
 }
 
-static int tty_fops_truncate(struct dfs_file *file, off_t offset)
+static int tty_fops_truncate(struct dfs_file *file, dfs_off_t offset)
 {
     /**
      * regarding to POSIX.1, TRUNC is not supported for tty device.
@@ -347,8 +347,7 @@ static void tty_init_termios(lwp_tty_t tp)
     t->__c_ispeed = TTYDEF_SPEED;
     t->__c_ospeed = TTYDEF_SPEED;
 
-    memcpy(&t->c_cc, tty_ctrl_charset,
-           sizeof(tty_ctrl_charset) / sizeof(tty_ctrl_charset[0]));
+    memcpy(&t->c_cc, tty_ctrl_charset, sizeof(t->c_cc));
 
 #ifdef USING_BSD_INIT_LOCK_DEVICE
     tp->t_termios_init_out = *t;

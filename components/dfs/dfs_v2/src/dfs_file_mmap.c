@@ -53,7 +53,7 @@ static void *dfs_mem_obj_get_file(rt_mem_obj_t mem_obj);
  *       The actual mapping is performed by rt_aspace_map().
  */
 static void *_do_mmap(struct rt_lwp *lwp, void *map_vaddr, size_t map_size, size_t attr,
-                      mm_flag_t flags, off_t pgoffset, void *data, rt_err_t *code)
+                      mm_flag_t flags, dfs_off_t pgoffset, void *data, rt_err_t *code)
 {
     int ret = 0;
     void *vaddr = map_vaddr;

@@ -207,7 +207,7 @@ static int input_uapi_fops_ioctl(struct dfs_file *file, int cmd, void *args)
     return -EINVAL;
 }
 
-static ssize_t input_uapi_fops_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t input_uapi_fops_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
     int err;
     size_t read = 0;
@@ -292,7 +292,7 @@ static ssize_t input_uapi_fops_read(struct dfs_file *file, void *buf, size_t cou
     return read;
 }
 
-static ssize_t input_uapi_fops_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+static ssize_t input_uapi_fops_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos)
 {
     return -ENOSYS;
 }

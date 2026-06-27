@@ -63,7 +63,7 @@ int dfs_mqueue_open(struct dfs_file *file) {
     return 0;
 }
 
-int dfs_mqueue_stat(struct dfs_dentry *dentry, struct stat *st) {
+int dfs_mqueue_stat(struct dfs_dentry *dentry, struct dfs_stat *st) {
     struct dfs_vnode *vnode = RT_NULL;
     if (dentry && dentry->vnode) {
         vnode = dentry->vnode;
@@ -74,12 +74,9 @@ int dfs_mqueue_stat(struct dfs_dentry *dentry, struct stat *st) {
         st->st_mode = vnode->mode;
         st->st_nlink = vnode->nlink;
         st->st_size = vnode->size;
-        st->st_mtim.tv_nsec = vnode->mtime.tv_nsec;
-        st->st_mtim.tv_sec = vnode->mtime.tv_sec;
-        st->st_ctim.tv_nsec = vnode->ctime.tv_nsec;
-        st->st_ctim.tv_sec = vnode->ctime.tv_sec;
-        st->st_atim.tv_nsec = vnode->atime.tv_nsec;
-        st->st_atim.tv_sec = vnode->atime.tv_sec;
+        st->mtime = vnode->mtime.tv_sec;
+        st->ctime = vnode->ctime.tv_sec;
+        st->atime = vnode->atime.tv_sec;
     }
     return RT_EOK;
 }

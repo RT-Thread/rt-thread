@@ -102,7 +102,6 @@ static int serial_fops_open(struct dfs_file *fd)
 
     rt_device_close(device);
     ret = rt_device_open(device, flags);
-    
     if (ret == RT_EOK)
     {
         serial = (struct rt_serial_device *)device;
@@ -150,7 +149,7 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
 }
 
 #ifdef RT_USING_DFS_V2
-static ssize_t serial_fops_read(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
+static ssize_t serial_fops_read(struct dfs_file *fd, void *buf, size_t count, dfs_off_t *pos)
 #else
 static ssize_t serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
 #endif
@@ -190,7 +189,7 @@ static ssize_t serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
 }
 
 #ifdef RT_USING_DFS_V2
-static ssize_t serial_fops_write(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
+static ssize_t serial_fops_write(struct dfs_file *fd, const void *buf, size_t count, dfs_off_t *pos)
 #else
 static ssize_t serial_fops_write(struct dfs_file *fd, const void *buf, size_t count)
 #endif

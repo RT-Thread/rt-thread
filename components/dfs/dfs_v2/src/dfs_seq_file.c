@@ -96,9 +96,9 @@ int dfs_seq_open(struct dfs_file *file, const struct dfs_seq_ops *ops)
  *
  * @note Data output loop: start() -> show() -> next() -> show() -> ... -> next() -> stop()
  */
-static int dfs_seq_traverse(struct dfs_seq_file *seq, off_t offset)
+static int dfs_seq_traverse(struct dfs_seq_file *seq, dfs_off_t offset)
 {
-    off_t pos = 0;
+    dfs_off_t pos = 0;
     int error = 0;
     void *p;
 
@@ -172,7 +172,7 @@ Eoverflow:
  *          6. Handle buffer overflow by doubling size
  *          7. Copy data to user buffer and update positions
  */
-ssize_t dfs_seq_read(struct dfs_file *file, void *buf, size_t size, off_t *pos)
+ssize_t dfs_seq_read(struct dfs_file *file, void *buf, size_t size, dfs_off_t *pos)
 {
     struct dfs_seq_file *seq = file->data;
     size_t copied = 0;
@@ -270,7 +270,7 @@ Fill:
     while (1)
     {
         size_t offs = seq->count;
-        off_t pos = seq->index;
+        dfs_off_t pos = seq->index;
 
         p = seq->ops->next(seq, p, &seq->index);
         if (pos == seq->index)
@@ -325,13 +325,13 @@ Enomem:
  * @param[in] whence Reference position for offset:
  *                  - SEEK_SET: from file beginning
  *                  - SEEK_CUR: from current position
- * @return off_t New file offset on success, negative error code on failure:
+ * @return dfs_off_t New file offset on success, negative error code on failure:
  *         -EINVAL for invalid parameters
  */
-off_t dfs_seq_lseek(struct dfs_file *file, off_t offset, int whence)
+dfs_off_t dfs_seq_lseek(struct dfs_file *file, dfs_off_t offset, int whence)
 {
     struct dfs_seq_file *seq = file->data;
-    off_t retval = -EINVAL;
+    dfs_off_t retval = -EINVAL;
 
     rt_mutex_take(&seq->lock, RT_WAITING_FOREVER);
 

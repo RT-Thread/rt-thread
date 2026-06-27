@@ -74,7 +74,7 @@ static int ptm_fops_close(struct dfs_file *file)
 }
 
 static ssize_t ptm_fops_read(struct dfs_file *file, void *buf, size_t count,
-                             off_t *pos)
+                             dfs_off_t *pos)
 {
     ssize_t rc = 0;
     int error;
@@ -115,7 +115,7 @@ static ssize_t ptm_fops_read(struct dfs_file *file, void *buf, size_t count,
 }
 
 static ssize_t ptm_fops_write(struct dfs_file *file, const void *buf,
-                              size_t count, off_t *pos)
+                              size_t count, dfs_off_t *pos)
 {
     ssize_t rc = 0;
     int error;
@@ -215,12 +215,12 @@ static int ptm_fops_flush(struct dfs_file *file)
     return -EINVAL;
 }
 
-static off_t ptm_fops_lseek(struct dfs_file *file, off_t offset, int wherece)
+static dfs_off_t ptm_fops_lseek(struct dfs_file *file, dfs_off_t offset, int wherece)
 {
     return -EINVAL;
 }
 
-static int ptm_fops_truncate(struct dfs_file *file, off_t offset)
+static int ptm_fops_truncate(struct dfs_file *file, dfs_off_t offset)
 {
     return -EINVAL;
 }

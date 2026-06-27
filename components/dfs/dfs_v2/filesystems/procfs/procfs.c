@@ -71,7 +71,7 @@ static int dfs_procfs_close(struct dfs_file *file)
     return ret;
 }
 
-static ssize_t dfs_procfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+static ssize_t dfs_procfs_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
     ssize_t ret = -RT_ERROR;
     struct proc_dentry *entry = (struct proc_dentry *)file->vnode->data;
@@ -86,7 +86,7 @@ static ssize_t dfs_procfs_read(struct dfs_file *file, void *buf, size_t count, o
     return ret;
 }
 
-static ssize_t dfs_procfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+static ssize_t dfs_procfs_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos)
 {
     ssize_t ret = -RT_ERROR;
     struct proc_dentry *entry = (struct proc_dentry *)file->vnode->data;
@@ -284,7 +284,7 @@ static int dfs_procfs_unlink(struct dfs_dentry *dentry)
     return -RT_ERROR;
 }
 
-static int dfs_procfs_stat(struct dfs_dentry *dentry, struct stat *st)
+static int dfs_procfs_stat(struct dfs_dentry *dentry, struct dfs_stat *st)
 {
     int ret = RT_EOK;
     struct dfs_vnode *vnode;
@@ -294,19 +294,16 @@ static int dfs_procfs_stat(struct dfs_dentry *dentry, struct stat *st)
         vnode = dentry->vnode;
 
         st->st_dev = (dev_t)(rt_ubase_t)(dentry->mnt->dev_id);
-        st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
+        st->st_ino = (uint16_t)dfs_dentry_full_path_crc32(dentry);
 
         st->st_gid = vnode->gid;
         st->st_uid = vnode->uid;
         st->st_mode = vnode->mode;
         st->st_nlink = vnode->nlink;
         st->st_size = vnode->size;
-        st->st_mtim.tv_nsec = vnode->mtime.tv_nsec;
-        st->st_mtim.tv_sec = vnode->mtime.tv_sec;
-        st->st_ctim.tv_nsec = vnode->ctime.tv_nsec;
-        st->st_ctim.tv_sec = vnode->ctime.tv_sec;
-        st->st_atim.tv_nsec = vnode->atime.tv_nsec;
-        st->st_atim.tv_sec = vnode->atime.tv_sec;
+        st->mtime = vnode->mtime.tv_sec;
+        st->ctime = vnode->ctime.tv_sec;
+        st->atime = vnode->atime.tv_sec;
     }
 
     PROC_DEBUG(" %s %d >> %s ret: %d\n", __func__, __LINE__, dentry->pathname, ret);
@@ -423,7 +420,7 @@ int dfs_procfs_init(void)
 }
 INIT_COMPONENT_EXPORT(dfs_procfs_init);
 
-int proc_read_data(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+int proc_read_data(struct dfs_file *file, void *buf, size_t count, dfs_off_t *pos)
 {
     if (file->fpos >= file->vnode->size)
     {

@@ -504,13 +504,19 @@ int dfs_elm_ioctl(struct dfs_file *file, int cmd, void *args)
         {
             FIL *fd;
             FSIZE_t fptr, length;
+            dfs_off_t dfs_length;
             FRESULT result = FR_OK;
             fd = (FIL *)(file->data);
             RT_ASSERT(fd != RT_NULL);
 
             /* save file read/write point */
             fptr = fd->fptr;
-            length = *(off_t*)args;
+            dfs_length = *(dfs_off_t*)args;
+            if (dfs_length < 0 || (dfs_off_t)(FSIZE_t)dfs_length != dfs_length)
+            {
+                return -EINVAL;
+            }
+            length = (FSIZE_t)dfs_length;
             if (length <= fd->obj.objsize)
             {
                 fd->fptr = length;
@@ -591,9 +597,14 @@ int dfs_elm_flush(struct dfs_file *file)
     return elm_result_to_dfs(result);
 }
 
-off_t dfs_elm_lseek(struct dfs_file *file, off_t offset)
+dfs_off_t dfs_elm_lseek(struct dfs_file *file, dfs_off_t offset)
 {
     FRESULT result = FR_OK;
+    if (offset < 0 || (dfs_off_t)(FSIZE_t)offset != offset)
+    {
+        return -EINVAL;
+    }
+
     if (file->vnode->type == FT_REGULAR)
     {
         FIL *fd;
@@ -602,7 +613,7 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset)
         fd = (FIL *)(file->data);
         RT_ASSERT(fd != RT_NULL);
 
-        result = f_lseek(fd, offset);
+        result = f_lseek(fd, (FSIZE_t)offset);
         if (result == FR_OK)
         {
             /* return current position */
@@ -751,7 +762,7 @@ int dfs_elm_rename(struct dfs_filesystem *fs, const char *oldpath, const char *n
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
+int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct dfs_stat *st)
 {
     FATFS  *f;
     FILINFO file_info;
@@ -836,7 +847,7 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
             tm_file.tm_min  = min;         /* Minutes: 0-59 */
             tm_file.tm_sec  = sec;         /* Seconds: 0-59 */
 
-            st->st_mtime = timegm(&tm_file);
+            st->mtime = timegm(&tm_file);
         } /* get st_mtime. */
     }
 

@@ -367,24 +367,29 @@ rt_err_t dfs_9pfs_del_tag(struct p9_protocol *p9p)
 
 static int p9_to_fs_err(int rc)
 {
-    const int p9_err[] = {
-        [0] = RT_EOK,
-        [-P9_ERROR] = -EIO,
-        [-P9_UNKNOWN_VERSION] = -ENOSYS,
-        [-P9_R_ERROR] = -EIO,
-        [-P9_MSG_TOO_LONG] = -ENOSPC,
-        [-P9_UNEXPECTED_MSG] = -EINVAL,
-        [-P9_UNEXPECTED_TAG] = -EINVAL,
-        [-P9_TRANSPORT_ERROR] = -EIO,
-        [-P9_NO_TRANSPORT] = -EINVAL,
-        [-P9_NULL_PATH] = -EINVAL,
-        [-P9_PATH_ELEMENT_TOO_LONG] = -EINVAL,
-        [-P9_READ_UNEXPECTED_DATA] = -EINVAL,
-        [-P9_NO_BUFFER] = -ENOSPC,
-        [-P9_MSG_SIZE_TOO_BIG] = -ENOSPC,
-    };
-
-    return p9_err[-rc];
+    switch (rc)
+    {
+    case 0:
+        return RT_EOK;
+    case P9_UNKNOWN_VERSION:
+        return -ENOSYS;
+    case P9_MSG_TOO_LONG:
+    case P9_NO_BUFFER:
+    case P9_MSG_SIZE_TOO_BIG:
+        return -ENOSPC;
+    case P9_UNEXPECTED_MSG:
+    case P9_UNEXPECTED_TAG:
+    case P9_NO_TRANSPORT:
+    case P9_NULL_PATH:
+    case P9_PATH_ELEMENT_TOO_LONG:
+    case P9_READ_UNEXPECTED_DATA:
+        return -EINVAL;
+    case P9_ERROR:
+    case P9_R_ERROR:
+    case P9_TRANSPORT_ERROR:
+    default:
+        return -EIO;
+    }
 }
 
 static int p9_alloc_fid(struct p9_connection *conn)
@@ -547,7 +552,7 @@ rt_inline int p9_walk_subpath(struct p9_connection *conn, const char *path)
 
 static int dfs_9pfs_open(struct dfs_file *fd)
 {
-    int rc;
+    int rc = 0;
     rt_uint32_t size;
     rt_bool_t is_root;
     struct p9_connection *conn;
@@ -807,7 +812,7 @@ static int dfs_9pfs_flush(struct dfs_file *fd)
     return p9_to_fs_err(rc);
 }
 
-static off_t dfs_9pfs_lseek(struct dfs_file *fd, off_t offset)
+static dfs_off_t dfs_9pfs_lseek(struct dfs_file *fd, dfs_off_t offset)
 {
     int ret = -EIO;
 
@@ -1049,7 +1054,7 @@ static int dfs_9pfs_unlink(struct dfs_filesystem *fs, const char *pathname)
 }
 
 static int dfs_9pfs_stat(struct dfs_filesystem *fs,
-                         const char *filename, struct stat *st)
+                         const char *filename, struct dfs_stat *st)
 {
     int rc = 0, fid;
     rt_uint32_t size, mode;
@@ -1108,8 +1113,8 @@ static int dfs_9pfs_stat(struct dfs_filesystem *fs,
                 st->st_mode |= S_ISVTX;
             }
 
-            st->st_atime = get_rx_value32_of(conn, P9_MSG_STAT_ATIME);
-            st->st_mtime = get_rx_value32_of(conn, P9_MSG_STAT_MTIME);
+            st->atime = get_rx_value32_of(conn, P9_MSG_STAT_ATIME);
+            st->mtime = get_rx_value32_of(conn, P9_MSG_STAT_MTIME);
             st->st_size = get_rx_value64_of(conn, P9_MSG_STAT_LEN);
 
             /*

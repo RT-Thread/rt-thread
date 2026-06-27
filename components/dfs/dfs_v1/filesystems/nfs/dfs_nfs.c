@@ -685,7 +685,7 @@ int nfs_write(struct dfs_file *file, const void *buf, size_t count)
     return total;
 }
 
-int nfs_lseek(struct dfs_file *file, off_t offset)
+dfs_off_t nfs_lseek(struct dfs_file *file, dfs_off_t offset)
 {
     nfs_file *fd;
     nfs_filesystem *nfs;
@@ -837,7 +837,7 @@ int nfs_open(struct dfs_file *file)
     return 0;
 }
 
-int nfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
+int nfs_stat(struct dfs_filesystem *fs, const char *path, struct dfs_stat *st)
 {
     GETATTR3args args;
     GETATTR3res res;
@@ -880,7 +880,7 @@ int nfs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     }
 
     st->st_size  = info->size;
-    st->st_mtime = info->mtime.seconds;
+    st->mtime = info->mtime.seconds;
 
     xdr_free((xdrproc_t)xdr_GETATTR3res, (char *)&res);
     xdr_free((xdrproc_t)xdr_nfs_fh3, (char *)handle);

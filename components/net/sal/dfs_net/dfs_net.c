@@ -47,7 +47,7 @@ static int dfs_net_ioctl(struct dfs_file* file, int cmd, void* args)
 }
 
 #ifdef RT_USING_DFS_V2
-static ssize_t dfs_net_read(struct dfs_file* file, void *buf, size_t count, off_t *pos)
+static ssize_t dfs_net_read(struct dfs_file* file, void *buf, size_t count, dfs_off_t *pos)
 #else
 static ssize_t dfs_net_read(struct dfs_file* file, void *buf, size_t count)
 #endif
@@ -66,7 +66,7 @@ static ssize_t dfs_net_read(struct dfs_file* file, void *buf, size_t count)
 }
 
 #ifdef RT_USING_DFS_V2
-static ssize_t dfs_net_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+static ssize_t dfs_net_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *pos)
 #else
 static ssize_t dfs_net_write(struct dfs_file *file, const void *buf, size_t count)
 #endif

@@ -61,9 +61,9 @@ static void pci_pm_runtime_put(struct rt_pci_device *pdev, rt_ubase_t *flags)
     }
 }
 
-static ssize_t pci_read(struct dfs_file *file, void *buf, size_t count, off_t *ppos)
+static ssize_t pci_read(struct dfs_file *file, void *buf, size_t count, dfs_off_t *ppos)
 {
-    off_t pos = *ppos;
+    dfs_off_t pos = *ppos;
     size_t res = count;
     rt_ubase_t pm_flags;
     struct proc_dentry *dentry = file->vnode->data;
@@ -142,9 +142,9 @@ static ssize_t pci_read(struct dfs_file *file, void *buf, size_t count, off_t *p
     return res;
 }
 
-static ssize_t pci_write(struct dfs_file *file, const void *buf, size_t count, off_t *ppos)
+static ssize_t pci_write(struct dfs_file *file, const void *buf, size_t count, dfs_off_t *ppos)
 {
-    off_t pos = *ppos;
+    dfs_off_t pos = *ppos;
     size_t res = count;
     rt_ubase_t pm_flags;
     struct proc_dentry *dentry = file->vnode->data;
@@ -217,7 +217,7 @@ static ssize_t pci_write(struct dfs_file *file, const void *buf, size_t count, o
     return res;
 }
 
-static off_t pci_lseek(struct dfs_file *file, off_t offset, int wherece)
+static dfs_off_t pci_lseek(struct dfs_file *file, dfs_off_t offset, int wherece)
 {
     struct proc_dentry *dentry = file->vnode->data;
     struct rt_pci_device *pdev = dentry->data;
@@ -239,7 +239,7 @@ static off_t pci_lseek(struct dfs_file *file, off_t offset, int wherece)
         return -EINVAL;
     }
 
-    if (offset <= (off_t)pdev->cfg_size)
+    if (offset <= (dfs_off_t)pdev->cfg_size)
     {
         return offset;
     }
