@@ -232,12 +232,13 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
     RT_ASSERT(ping_resp);
 
     rt_memset(&hint, 0x00, sizeof(hint));
+    hint.ai_family = AF_INET;
     /* convert URL to IP */
     if (lwip_getaddrinfo(host, RT_NULL, &hint, &res) != 0)
     {
         return -RT_ERROR;
     }
-    SMEMCPY(&h, &res->ai_addr, sizeof(struct sockaddr_in *));
+    h = (struct sockaddr_in *)res->ai_addr;
     SMEMCPY(&ina, &h->sin_addr, sizeof(ina));
     lwip_freeaddrinfo(res);
     if (inet_aton(inet_ntoa(ina), &target_addr) == 0)
