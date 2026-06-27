@@ -86,6 +86,18 @@ static int elm_result_to_dfs(FRESULT result)
     return status;
 }
 
+static int dfs_elm_off_to_fsize(off_t offset, FSIZE_t *fsize)
+{
+    if (offset < 0)
+        return -EINVAL;
+
+    if ((uint64_t)offset > (uint64_t)(FSIZE_t)-1)
+        return -EFBIG;
+
+    *fsize = (FSIZE_t)offset;
+    return 0;
+}
+
 /* results:
  *  -1, no space to install fatfs driver
  *  >= 0, there is an space to install fatfs driver
@@ -505,12 +517,16 @@ int dfs_elm_ioctl(struct dfs_file *file, int cmd, void *args)
             FIL *fd;
             FSIZE_t fptr, length;
             FRESULT result = FR_OK;
+            int ret;
             fd = (FIL *)(file->data);
             RT_ASSERT(fd != RT_NULL);
 
             /* save file read/write point */
             fptr = fd->fptr;
-            length = *(off_t*)args;
+            ret = dfs_elm_off_to_fsize(*(off_t *)args, &length);
+            if (ret < 0)
+                return ret;
+
             if (length <= fd->obj.objsize)
             {
                 fd->fptr = length;
@@ -597,12 +613,18 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset)
     if (file->vnode->type == FT_REGULAR)
     {
         FIL *fd;
+        FSIZE_t fsize;
+        int ret;
 
         /* regular file type */
         fd = (FIL *)(file->data);
         RT_ASSERT(fd != RT_NULL);
 
-        result = f_lseek(fd, offset);
+        ret = dfs_elm_off_to_fsize(offset, &fsize);
+        if (ret < 0)
+            return ret;
+
+        result = f_lseek(fd, fsize);
         if (result == FR_OK)
         {
             /* return current position */

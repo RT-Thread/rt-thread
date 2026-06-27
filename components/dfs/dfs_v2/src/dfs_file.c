@@ -2521,6 +2521,48 @@ int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 #define _COLOR_WHITE    "\033[37m"
 #define _COLOR_NORMAL   "\033[0m"
 
+#ifdef RT_USING_DFS_LARGE_FILE
+static void dfs_print_file_size(off_t size)
+{
+    char tmp[21];
+    char buf[22];
+    int index = 0;
+    int out = 0;
+    uint64_t value;
+
+    if (size < 0)
+    {
+        value = (uint64_t)(-(size + 1)) + 1;
+        buf[out++] = '-';
+    }
+    else
+    {
+        value = (uint64_t)size;
+    }
+
+    if (value == 0)
+    {
+        tmp[index++] = '0';
+    }
+    else
+    {
+        while ((value != 0) && (index < (int)sizeof(tmp)))
+        {
+            tmp[index++] = (char)('0' + (value % 10));
+            value /= 10;
+        }
+    }
+
+    while ((index > 0) && (out + 1 < (int)sizeof(buf)))
+    {
+        buf[out++] = tmp[--index];
+    }
+    buf[out] = '\0';
+
+    rt_kprintf(" %-25s\n", buf);
+}
+#endif
+
 /**
  * @brief List directory contents with colored output
  *
@@ -2655,7 +2697,11 @@ void ls(const char *pathname)
                         else if (stat.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))
                         {
                             rt_kprintf(_COLOR_GREEN "%-20s" _COLOR_NORMAL, dirent.d_name);
+#ifdef RT_USING_DFS_LARGE_FILE
+                            dfs_print_file_size(stat.st_size);
+#else
                             rt_kprintf(" %-25lu\n", (unsigned long)stat.st_size);
+#endif
                         }
                         else if (S_ISCHR(stat.st_mode))
                         {
@@ -2665,7 +2711,11 @@ void ls(const char *pathname)
                         else
                         {
                             rt_kprintf("%-20s", dirent.d_name);
+#ifdef RT_USING_DFS_LARGE_FILE
+                            dfs_print_file_size(stat.st_size);
+#else
                             rt_kprintf(" %-25lu\n", (unsigned long)stat.st_size);
+#endif
                         }
                     }
                     else
