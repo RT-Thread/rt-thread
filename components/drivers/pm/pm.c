@@ -1299,7 +1299,6 @@ static void rt_pm_dump_status(void)
     }
     rt_kprintf("+--------+------+------------+-----------+\n");
 }
-FINSH_FUNCTION_EXPORT_ALIAS(rt_pm_dump_status, pm_dump, dump power management status);
 MSH_CMD_EXPORT_ALIAS(rt_pm_dump_status, pm_dump, dump power management status);
 #endif
 
