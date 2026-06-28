@@ -45,6 +45,7 @@
 static int hooker1_ent_count;
 static int hooker2_ent_count;
 static struct rt_thread thr_tobe_inited;
+static volatile rt_bool_t thr_tobe_inited_cleaned;
 
 static void thread_inited_hooker1(rt_thread_t thread)
 {
@@ -66,10 +67,46 @@ static void thr_tobe_inited_entry(void *param)
     rt_kprintf("Hello!\n");
 }
 
+static void thr_tobe_inited_cleanup(struct rt_thread *tid)
+{
+    if (tid == &thr_tobe_inited)
+    {
+        thr_tobe_inited_cleaned = RT_TRUE;
+    }
+}
+
+static rt_err_t cleanup_thr_tobe_inited(void)
+{
+    if (rt_object_get_type((rt_object_t)&thr_tobe_inited) == RT_Object_Class_Thread)
+    {
+        rt_tick_t timeout = 100;
+
+        thr_tobe_inited_cleaned = RT_FALSE;
+        thr_tobe_inited.cleanup = thr_tobe_inited_cleanup;
+        rt_thread_detach(&thr_tobe_inited);
+
+        /* cleanup is called after rt_defunct_execute() detaches the thread object. */
+        while (thr_tobe_inited_cleaned == RT_FALSE && timeout > 0)
+        {
+            rt_thread_mdelay(1);
+            timeout --;
+        }
+
+        if (thr_tobe_inited_cleaned == RT_FALSE)
+        {
+            return -RT_ETIMEOUT;
+        }
+    }
+
+    return RT_EOK;
+}
+
 static void hooklist_test(void)
 {
     hooker1_ent_count = 0;
     hooker2_ent_count = 0;
+    rt_thread_inited_rmhook(&hooker1_node);
+    rt_thread_inited_rmhook(&hooker2_node);
     rt_thread_inited_sethook(&hooker1_node);
     rt_thread_inited_sethook(&hooker2_node);
 
@@ -86,8 +123,7 @@ static void hooklist_test(void)
     uassert_int_equal(hooker1_ent_count, 1);
     uassert_int_equal(hooker2_ent_count, 1);
 
-    rt_thread_detach(&thr_tobe_inited);
-    rt_thread_mdelay(1); /* wait recycling done */
+    uassert_int_equal(cleanup_thr_tobe_inited(), RT_EOK);
 
     /* run 2 */
     rt_thread_inited_rmhook(&hooker2_node);
@@ -103,10 +139,19 @@ static void hooklist_test(void)
 
     uassert_int_equal(hooker1_ent_count, 2);
     uassert_int_equal(hooker2_ent_count, 1);
+
+    uassert_int_equal(cleanup_thr_tobe_inited(), RT_EOK);
 }
 
 static rt_err_t utest_tc_init(void)
 {
+    if (cleanup_thr_tobe_inited() != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
+
+    rt_thread_inited_rmhook(&hooker1_node);
+    rt_thread_inited_rmhook(&hooker2_node);
     hooker1_ent_count = 0;
     hooker2_ent_count = 0;
     return RT_EOK;
@@ -114,7 +159,11 @@ static rt_err_t utest_tc_init(void)
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    rt_thread_detach(&thr_tobe_inited);
+    if (cleanup_thr_tobe_inited() != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
+
     rt_thread_inited_rmhook(&hooker1_node);
     rt_thread_inited_rmhook(&hooker2_node);
     return RT_EOK;

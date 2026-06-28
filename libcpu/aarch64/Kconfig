@@ -22,4 +22,15 @@ menu "AArch64 Architecture Configuration"
     config ARCH_INIT_PAGE_SIZE
         hex "Size of init page region"
         default 0x200000
+
+    config ARCH_USING_CPUIDLE
+        bool "Using ARM PSCI CPU idle (cpuidle)"
+        depends on RT_USING_DVFS
+        depends on RT_USING_OFW
+        default n
+        help
+            Enable PSCI-based CPU idle states from /cpus/idle-states.
+            Standby states use CPU_SUSPEND with entry_point=0.
+            Power-down states are skipped until full suspend context save
+            is implemented.
 endmenu

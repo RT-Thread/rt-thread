@@ -213,7 +213,7 @@ Call **`update`** from the zone poller (automatic after register) or manually fo
 | **`thermal-scmi.c`** | **`RT_SCMI_DRIVER_EXPORT`**, protocol sensor `"thermal"` | One zone per SCMI temperature sensor |
 | **`thermal-cool-pwm-fan.c`** | **`compatible = "pwm-fan"`** | PWM + optional regulator — @ref page_device_thermal_cool |
 | **`thermal-cool-gpio-fan.c`** | GPIO + speed table | Discrete fan speeds |
-| **`thermal-cool-dvfs.c`** | DVFS OPP levels as cooling steps | Throttle CPU/GPU via @ref page_device_clk / DVFS |
+| **`thermal-cool-dvfs.c`** | DVFS OPP levels as cooling steps | Throttle CPU/GPU via @ref page_device_dvfs |
 
 BSP sensors (e.g. board thermal IC) typically **`rt_thermal_zone_device_register`** in platform **`probe`** after filling trips in code or relying entirely on **`thermal_ofw_setup`**.
 
@@ -251,6 +251,7 @@ Constants: **`RT_THERMAL_TEMP_INVALID`** (−274000), **`RT_THERMAL_NO_LIMIT`**.
 ## See also
 
 - @ref page_device_thermal_cool — PWM fan cooling device
+- @ref page_device_dvfs — DVFS framework and Rockchip cpufreq
 - @ref page_device_scmi — SCMI sensor protocol
 - @ref page_device_pwm
 - @ref page_device_regulator

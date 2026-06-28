@@ -195,6 +195,13 @@ peripheral.sram:
 peripheral.usb_mouse:
     kconfig:
       - CONFIG_BSP_USING_USB_MOUSE=y
+# ------ utest CI ------
+utest.pin:
+    <<: *scons
+    kconfig:
+      - CONFIG_RT_USING_UTESTCASES=y
+      - CONFIG_RT_CONSOLEBUF_SIZE=256
+      - CONFIG_RT_UTEST_PIN=y
 # ------ component CI ------
 component.cherryusb_cdc:
     kconfig:

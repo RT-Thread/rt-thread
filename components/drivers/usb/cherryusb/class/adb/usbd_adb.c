@@ -143,6 +143,7 @@ void usbd_adb_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 
                 break;
             case A_CNXN: /* CONNECT(version, maxdata, "system-id-string") */
+            {
                 char *support_feature = "device::"
                                         "ro.product.name=cherryadb;"
                                         "ro.product.model=cherrysh;"
@@ -158,6 +159,7 @@ void usbd_adb_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
                 adb_send_msg(&tx_packet);
 
                 adb_client.writable = false;
+            }
                 break;
             case A_OPEN: /* OPEN(local-id, 0, "destination") */
                 rx_packet.payload[rx_packet.msg.data_length] = '\0';

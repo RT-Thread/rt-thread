@@ -3,6 +3,11 @@ menuconfig RT_USING_FIRMWARE
     depends on RT_USING_DM
     default n
 
+config RT_FIRMWARE_QEMU_FW_CFG
+    bool "QEMU Firmware Configuration"
+    depends on RT_USING_FIRMWARE
+    default n
+
 if RT_USING_FIRMWARE
     rsource "arm_scmi/Kconfig"
     osource "$(SOC_DM_FIRMWARE_DIR)/Kconfig"

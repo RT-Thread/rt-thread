@@ -153,9 +153,18 @@ extern "C" {
 #include "drivers/hwcache.h"
 #endif /* RT_USING_HWCACHE */
 
+#ifdef RT_USING_DVFS
+#include "drivers/dvfs.h"
+#endif /* RT_USING_DVFS */
+
 #ifdef RT_USING_NVMEM
 #include "drivers/nvmem.h"
 #endif /* RT_USING_NVMEM */
+
+#ifdef RT_USING_VIRTIO
+#include "drivers/virtio.h"
+#include "drivers/virtq.h"
+#endif
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_REGULATOR

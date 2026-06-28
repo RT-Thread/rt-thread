@@ -6,6 +6,7 @@
 // Date           Author       Notes
 // 2025-03-22     Supperthomas 添加upload 上传编译固件
 // 2025-03-31     Hydevcode    将需要编译的bsp列表分离，根据修改的文件对相应的bsp编译
+// 2026-06-22     CYFS3        限制重复HC32附加配置构建，缩短CI等待时间
 //
 {
   "legs": [
@@ -27,6 +28,12 @@
     {
       "RTT_BSP": "at32_hc32_ht32",
       "RTT_TOOL_CHAIN": "sourcery-arm",
+      "ATTACHCONFIG_RTT_BSP": [
+        "hc32/ev_hc32f4a8_lqfp176",
+        "hc32/ev_hc32f334_lqfp64",
+        "hc32/ev_hc32f472_lqfp100",
+        "ht32/ht32f53252"
+      ],
       "SUB_RTT_BSP": [
         "at32/at32a403a-start",
         "at32/at32a423-start",
@@ -198,6 +205,7 @@
         "stm32/stm32h503-st-nucleo",
         "stm32/stm32h723-st-nucleo",
         "stm32/stm32h723-lxb-disco",
+        "stm32/stm32h723-DM-MC02",
         "stm32/stm32h730-esphosted-evb",
         "stm32/stm32h743-armfly-v7",
         "stm32/stm32h743-atk-apollo",
@@ -394,7 +402,16 @@
         "qemu-virt64-aarch64",
         "raspberry-pi/raspi3-64",
         "raspberry-pi/raspi4-64",
-        "nxp/imx/imx91"
+        "nxp/imx/imx91",
+        "zynqmp-a53-dfzu2eg"
+      ]
+    },
+    {
+      "RTT_BSP": "aarch64-bsp-smart",
+      "RTT_TOOL_CHAIN": "sourcery-aarch64",
+      "RTT_SMART_TOOL_CHAIN": "aarch64-linux-musleabi",
+      "SUB_RTT_BSP": [
+        "rockchip/rk3500"
       ]
     },
     {

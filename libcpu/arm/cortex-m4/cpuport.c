@@ -455,7 +455,9 @@ rt_inline rt_uint32_t rt_hw_get_ipsr(void)
     __asm volatile ("MRS %0, ipsr" : "=r" (result) );
     return(result);
 #elif defined(__IAR_SYSTEMS_ICC__)
-    return __iar_builtin_rsr("IPSR");
+    uint32_t result;
+    __asm volatile ("MRS %0, ipsr" : "=r" (result));
+    return result;
 #elif defined ( __GNUC__ )
     uint32_t result;
     __asm volatile ("MRS %0, ipsr" : "=r" (result) );
@@ -519,7 +521,9 @@ rt_inline rt_uint32_t rt_hw_get_primask_value(void)
     __asm volatile ("MRS %0, primask" : "=r" (result));
     return result;
 #elif defined(__IAR_SYSTEMS_ICC__)
-    return __iar_builtin_rsr("PRIMASK");
+    uint32_t result;
+    __asm volatile ("MRS %0, primask" : "=r" (result));
+    return result;
 #elif defined(__GNUC__)
     uint32_t result;
     __asm volatile ("MRS %0, primask" : "=r" (result));

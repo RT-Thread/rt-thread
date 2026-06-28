@@ -14,6 +14,12 @@ config RT_RPMSG_CHAR_MSG_SIZE_MAX
     depends on RT_USING_RPMSG
     default 256
 
+config RT_RPMSG_RT_THREAD_VIRTIO
+    bool "RT-Thread common VirtIO RPMSG"
+    depends on RT_USING_RPMSG
+    select RT_USING_SLAB
+    default y
+
 if RT_USING_RPMSG
     osource "$(SOC_DM_RPMSG_DIR)/Kconfig"
 endif

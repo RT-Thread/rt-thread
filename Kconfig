@@ -1,4 +1,4 @@
 rsource "src/Kconfig"
 rsource "libcpu/Kconfig"
 rsource "components/Kconfig"
-rsource "Kconfig.utestcases"
+rsource "components/utilities/utest/Kconfig"

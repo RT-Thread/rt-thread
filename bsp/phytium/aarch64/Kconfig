@@ -9,6 +9,7 @@ PKGS_DIR := packages
 source "$(RTT_DIR)/Kconfig"
 osource "$PKGS_DIR/Kconfig"
 source "$(BSP_DIR)/../libraries/drivers/Kconfig"
+source "$(BSP_DIR)/../libraries/system_example/Kconfig"
 
 config BSP_USING_GIC
     bool
@@ -61,7 +62,7 @@ menu "Standalone Setting"
     source "$(SDK_DIR)/soc/soc.kconfig"
     source "$(BSP_DIR)/../board/board.kconfig"
     source "$(SDK_DIR)/common/common.kconfig"
-
+    source "$(SDK_DIR)/third-party/openamp/ports/Kconfig"
 endmenu
 
 config KERNEL_ASPACE_START

@@ -1,0 +1,272 @@
+[
+  {
+    "target_name": "stm32f407-rt-spark",
+    "toolchain": "arm-none-eabi",
+    "bsp_path": "bsp/stm32/stm32f407-rt-spark",
+    "elf": "bsp/stm32/stm32f407-rt-spark/rt-thread.elf",
+    "ld": "bsp/stm32/stm32f407-rt-spark/board/linker_scripts/link.lds",
+    "map_file": "bsp/stm32/stm32f407-rt-spark/rt-thread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/stm32/stm32f407-rt-spark",
+      "bsp/stm32/libraries",
+      "bsp/stm32/tools"
+    ]
+  },
+  {
+    "target_name": "stm32l475-atk-pandora-llvm",
+    "toolchain": "llvm-arm",
+    "bsp_path": "bsp/stm32/stm32l475-atk-pandora",
+    "rtt_cc": "llvm-arm",
+    "elf": "bsp/stm32/stm32l475-atk-pandora/rt-thread.elf",
+    "ld": "bsp/stm32/stm32l475-atk-pandora/board/linker_scripts/link.lds",
+    "map_file": "bsp/stm32/stm32l475-atk-pandora/rt-thread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/stm32/stm32l475-atk-pandora",
+      "bsp/stm32/libraries",
+      "bsp/stm32/tools"
+    ]
+  },
+  {
+    "target_name": "raspberry-pico-rp2040",
+    "toolchain": "arm-none-eabi",
+    "bsp_path": "bsp/raspberry-pico/RP2040",
+    "elf": "bsp/raspberry-pico/RP2040/rtthread-pico.elf",
+    "ld": "bsp/raspberry-pico/RP2040/link.ld",
+    "map_file": "bsp/raspberry-pico/RP2040/rt-thread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/raspberry-pico/RP2040",
+      "bsp/raspberry-pico/libraries",
+      "bsp/raspberry-pico/tools"
+    ]
+  },
+  {
+    "target_name": "at32f415-start",
+    "toolchain": "arm-none-eabi",
+    "bsp_path": "bsp/at32/at32f415-start",
+    "elf": "bsp/at32/at32f415-start/rtthread.elf",
+    "ld": "bsp/at32/at32f415-start/board/linker_scripts/link.lds",
+    "map_file": "bsp/at32/at32f415-start/rt-thread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/at32/at32f415-start",
+      "bsp/at32/libraries",
+      "bsp/at32/tools"
+    ]
+  },
+  {
+    "target_name": "gd32105r-start",
+    "toolchain": "arm-none-eabi",
+    "bsp_path": "bsp/gd32/arm/gd32105r-start",
+    "elf": "bsp/gd32/arm/gd32105r-start/rtthread.elf",
+    "ld": "bsp/gd32/arm/gd32105r-start/board/linker_scripts/link.ld",
+    "map_file": "bsp/gd32/arm/gd32105r-start/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/gd32/arm/gd32105r-start",
+      "bsp/gd32/arm/libraries",
+      "bsp/gd32/arm/tools"
+    ]
+  },
+  {
+    "target_name": "hc32f334",
+    "toolchain": "arm-none-eabi",
+    "bsp_path": "bsp/hc32/ev_hc32f334_lqfp64",
+    "elf": "bsp/hc32/ev_hc32f334_lqfp64/rtthread.elf",
+    "ld": "bsp/hc32/ev_hc32f334_lqfp64/board/linker_scripts/link.ld",
+    "map_file": "bsp/hc32/ev_hc32f334_lqfp64/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/hc32/ev_hc32f334_lqfp64",
+      "bsp/hc32/libraries",
+      "bsp/hc32/platform",
+      "bsp/hc32/tools"
+    ]
+  },
+  {
+    "target_name": "nxp-lpc1114",
+    "toolchain": "arm-none-eabi",
+    "bsp_path": "bsp/nxp/lpc/lpc1114",
+    "elf": "bsp/nxp/lpc/lpc1114/rtthread-lpc1114.elf",
+    "ld": "bsp/nxp/lpc/lpc1114/link.lds",
+    "map_file": "bsp/nxp/lpc/lpc1114/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/nxp/lpc/lpc1114"
+    ]
+  },
+  {
+    "target_name": "nordic-nrf51822",
+    "toolchain": "arm-none-eabi",
+    "bsp_path": "bsp/nrf5x/nrf51822",
+    "elf": "bsp/nrf5x/nrf51822/rt-thread.elf",
+    "ld": "bsp/nrf5x/nrf51822/board/linker_scripts/link.lds",
+    "map_file": "bsp/nrf5x/nrf51822/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/nrf5x/nrf51822",
+      "bsp/nrf5x/libraries",
+      "bsp/nrf5x/tools"
+    ]
+  },
+  {
+    "target_name": "nuvoton-m487",
+    "toolchain": "arm-none-eabi",
+    "bsp_path": "bsp/nuvoton/numaker-iot-m487",
+    "elf": "bsp/nuvoton/numaker-iot-m487/rtthread.elf",
+    "ld": "bsp/nuvoton/numaker-iot-m487/linking_scripts/m480_link.ld",
+    "map_file": "bsp/nuvoton/numaker-iot-m487/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/nuvoton/numaker-iot-m487",
+      "bsp/nuvoton/libraries",
+      "bsp/nuvoton/tools"
+    ]
+  },
+  {
+    "target_name": "infineon-psoc6",
+    "toolchain": "arm-none-eabi",
+    "bsp_path": "bsp/Infineon/psoc6-cy8ckit-062s4",
+    "elf": "bsp/Infineon/psoc6-cy8ckit-062s4/rt-thread.elf",
+    "ld": "bsp/Infineon/psoc6-cy8ckit-062s4/board/linker_scripts/link.ld",
+    "map_file": "bsp/Infineon/psoc6-cy8ckit-062s4/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/Infineon/psoc6-cy8ckit-062s4",
+      "bsp/Infineon/libraries",
+      "bsp/Infineon/tools"
+    ]
+  },
+  {
+    "target_name": "renesas-ra2l1",
+    "toolchain": "arm-none-eabi",
+    "bsp_path": "bsp/renesas/ra2l1-cpk",
+    "elf": "bsp/renesas/ra2l1-cpk/rtthread.elf",
+    "ld": "bsp/renesas/ra2l1-cpk/script/fsp.ld",
+    "map_file": "bsp/renesas/ra2l1-cpk/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/renesas/ra2l1-cpk",
+      "bsp/renesas/libraries",
+      "bsp/renesas/tools"
+    ]
+  },
+  {
+    "target_name": "qemu-virt64-aarch64",
+    "toolchain": "aarch64-none-elf",
+    "bsp_path": "bsp/qemu-virt64-aarch64",
+    "elf": "bsp/qemu-virt64-aarch64/rtthread.elf",
+    "ld": "libcpu/aarch64/link.lds",
+    "map_file": "bsp/qemu-virt64-aarch64/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/qemu-virt64-aarch64"
+    ]
+  },
+  {
+    "target_name": "wch-ch32v208w-r0",
+    "toolchain": "riscv-none-embed",
+    "bsp_path": "bsp/wch/risc-v/ch32v208w-r0",
+    "elf": "bsp/wch/risc-v/ch32v208w-r0/rtthread.elf",
+    "ld": "bsp/wch/risc-v/ch32v208w-r0/board/linker_scripts/link.lds",
+    "map_file": "bsp/wch/risc-v/ch32v208w-r0/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/wch/risc-v/ch32v208w-r0",
+      "bsp/wch/risc-v/Libraries",
+      "bsp/wch/risc-v/tools"
+    ]
+  },
+  {
+    "target_name": "hpmicro-hpm5301evklite",
+    "toolchain": "riscv32-unknown-elf-multilib",
+    "bsp_path": "bsp/hpmicro/hpm5301evklite",
+    "elf": "bsp/hpmicro/hpm5301evklite/rtthread.elf",
+    "ld": "bsp/hpmicro/hpm5301evklite/board/linker_scripts/gcc/flash_rtt.ld",
+    "map_file": "",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/hpmicro/hpm5301evklite",
+      "bsp/hpmicro/libraries",
+      "bsp/hpmicro/tools"
+    ]
+  },
+  {
+    "target_name": "xuantie-e901plus",
+    "toolchain": "xuantie-elf-newlib",
+    "bsp_path": "bsp/xuantie/smartl/e901plus",
+    "elf": "bsp/xuantie/smartl/e901plus/rtthread.elf",
+    "ld": "bsp/xuantie/libraries/xuantie_libraries/chip_riscv_dummy/gcc_flash_smartl_lite.ld",
+    "map_file": "bsp/xuantie/smartl/e901plus/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/xuantie/smartl/e901plus",
+      "bsp/xuantie/libraries",
+      "bsp/xuantie/tools"
+    ]
+  },
+  {
+    "target_name": "esp32-c3",
+    "toolchain": "riscv32-esp-elf",
+    "bsp_path": "bsp/ESP/ESP32_C3",
+    "elf": "bsp/ESP/ESP32_C3/rtthread.elf",
+    "ld": "bsp/ESP/ESP32_C3/idf_port/ld/memory.ld bsp/ESP/ESP32_C3/idf_port/ld/sections.ld",
+    "map_file": "bsp/ESP/ESP32_C3/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/ESP/ESP32_C3",
+      "bsp/ESP/libraries",
+      "bsp/ESP/tools"
+    ]
+  },
+  {
+    "target_name": "k230",
+    "toolchain": "riscv64-linux-musl-k230",
+    "bsp_path": "bsp/k230",
+    "elf": "bsp/k230/rtthread.elf",
+    "ld": "bsp/k230/link.lds.generated",
+    "map_file": "bsp/k230/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/k230"
+    ]
+  },
+  {
+    "target_name": "loongson-ls1cdev",
+    "toolchain": "mips-sde-elf",
+    "bsp_path": "bsp/loongson/ls1cdev",
+    "elf": "bsp/loongson/ls1cdev/rtthread.elf",
+    "ld": "bsp/loongson/ls1cdev/ls1c_ram.lds",
+    "map_file": "bsp/loongson/ls1cdev/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/loongson/ls1cdev"
+    ]
+  },
+  {
+    "target_name": "x86",
+    "toolchain": "i386-unknown-elf",
+    "bsp_path": "bsp/x86",
+    "elf": "bsp/x86/rtthread.elf",
+    "ld": "bsp/x86/x86_ram.lds",
+    "map_file": "bsp/x86/rtthread.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/x86"
+    ]
+  },
+  {
+    "target_name": "simulator",
+    "toolchain": "gcc-host",
+    "bsp_path": "bsp/simulator",
+    "elf": "bsp/simulator/rtthread",
+    "ld": "bsp/simulator/gcc_elf64.ld",
+    "map_file": "bsp/simulator/rtthread-linux.map",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/simulator"
+    ]
+  }
+]

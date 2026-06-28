@@ -14,8 +14,10 @@ def dist_do_building(BSP_ROOT, dist_dir):
     print("=> copy mm32 bsp library")
     library_dir = os.path.join(dist_dir, 'libraries')
     library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
-    bsp_copy_files(os.path.join(library_path, rtconfig.BSP_LIBRARY_TYPE),
-                   os.path.join(library_dir, rtconfig.BSP_LIBRARY_TYPE))
+    library_type = getattr(rtconfig, 'BSP_LIBRARY_TYPE', None)
+    if library_type:
+        bsp_copy_files(os.path.join(library_path, library_type),
+                       os.path.join(library_dir, library_type))
 
     print("=> copy bsp drivers")
     bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))

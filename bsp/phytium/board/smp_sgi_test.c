@@ -39,7 +39,7 @@ static char *core_thread_name[] =
 };
 static rt_uint8_t core_stack[RT_CPUS_NR][4096];
 
-static rt_isr_handler_t smp_test_ipi_handle(int vector, void *param)
+static void  smp_test_ipi_handle(int vector, void *param)
 {
     rt_int32_t cpu_id = rt_hw_cpu_id();
     rt_kprintf("smp_test_ipi_handle, cpu_id = %d\n", cpu_id);

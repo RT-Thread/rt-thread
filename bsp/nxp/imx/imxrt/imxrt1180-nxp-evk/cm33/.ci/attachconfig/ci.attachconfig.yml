@@ -1,0 +1,11 @@
+scons.args: &scons
+  scons_arg:
+    - '--strict'
+
+# ------ component CI ------
+
+# ------ Peripheral CI ------
+Peripheral.flash_fs:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_QSPI_FLASH_FS=y
