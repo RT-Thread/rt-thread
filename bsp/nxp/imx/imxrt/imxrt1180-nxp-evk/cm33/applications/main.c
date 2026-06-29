@@ -14,7 +14,6 @@
 #include <drv_gpio.h>
 #include <fsl_rgpio.h>
 
-
 int main(void)
 {
     rt_kprintf("MIMXRT1180_CM33 Hello_World\r\n");

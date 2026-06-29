@@ -80,10 +80,10 @@ static rt_err_t imxrt_lp_adc_convert(struct rt_adc_device *device, rt_int8_t cha
 	
 #else
 	uint8_t i=0;
-	uint32_t adc_result[7];  /* conv sequence: A1_4, A1_5(INVALID), A1_6, A1_7, B1_5, B1_6, B1_7 */
+	uint32_t adc_result[7] = {0x0,0x0,0x0,0x0,0x0,0x0,0x0};  /* conv sequence: A1_4, A1_5(INVALID), A1_6, A1_7, B1_5, B1_6, B1_7 */
+	lpadc_conv_result_t mLpadcResultConfigStruct;
 #endif
 	
-    lpadc_conv_result_t mLpadcResultConfigStruct;
     base = (ADC_Type *)(device->parent.user_data);
 
     LPADC_DoSoftwareTrigger(base, 1U);

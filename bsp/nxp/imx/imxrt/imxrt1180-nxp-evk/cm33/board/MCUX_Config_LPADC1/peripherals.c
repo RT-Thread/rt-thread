@@ -178,7 +178,8 @@ edma_config_t DMA4_config = {
 edma_transfer_config_t DMA4_CH0_Transfers_config[1];
 edma_handle_t DMA4_CH0_Handle;
 
-static void DMA4_init(void) {
+static void DMA4_init(void)
+{
   status_t status;
   (void)status;
 
@@ -190,7 +191,7 @@ static void DMA4_init(void) {
   /* DMA callback initialization */
   EDMA_SetCallback(&DMA4_CH0_Handle, DMA_Callback, NULL);
   /* DMA4 transfer CH0_TRANSFER0 configuration */
-  EDMA_PrepareTransferConfig(&DMA4_CH0_TRANSFER0_CONFIG, (void *) &ADC1->RESFIFO[0], 1 << kEDMA_TransferSize4Bytes, 0, (void *) &adc_result[0], 1 << kEDMA_TransferSize4Bytes, sizeof(uint32_t), 4U, 28U); 
+  EDMA_PrepareTransferConfig(&DMA4_CH0_TRANSFER0_CONFIG, (void *) &ADC1->RESFIFO[0], 1 << kEDMA_TransferSize4Bytes, 0, (void *) &adc_result[0], 1 << kEDMA_TransferSize4Bytes, sizeof(uint32_t), 4U, 28U);
   DMA4_CH0_TRANSFER0_CONFIG.dstMajorLoopOffset = -28;
   /* DMA4 transfer CH0_TRANSFER0 submit */
   status = EDMA_SubmitTransfer(&DMA4_CH0_Handle, &DMA4_CH0_TRANSFER0_CONFIG);
@@ -223,7 +224,8 @@ instance:
 /* clang-format on */
 
 /* Empty initialization function (commented out)
-static void CM33_NVIC_init(void) {
+static void CM33_NVIC_init(void)
+{
 } */
 
 /***********************************************************************************************************************
@@ -292,7 +294,8 @@ const lpuart_config_t LPUART1_config = {
   .inverseTxd = false
 };
 
-static void LPUART1_init(void) {
+static void LPUART1_init(void)
+{
   LPUART_Init(LPUART1_PERIPHERAL, &LPUART1_config, LPUART1_CLOCK_SOURCE);
 }
 
@@ -324,9 +327,11 @@ instance:
 /* clang-format on */
 
 /* Empty initialization function (commented out)
-static void RGPIO4_init(void) {
+static void RGPIO4_init(void)
+{
 } */
 
+#ifdef BSP_USING_LPADC
 /***********************************************************************************************************************
  * ADC1 initialization code
  **********************************************************************************************************************/
@@ -481,7 +486,8 @@ lpadc_conv_trigger_config_t ADC1_triggersConfig[1] = {
   }
 };
 
-static void ADC1_init(void) {
+static void ADC1_init(void)
+{
   /* Initialize LPADC converter */
   LPADC_Init(ADC1_PERIPHERAL, &ADC1_config);
   /* Perform offset calibration */
@@ -497,22 +503,24 @@ static void ADC1_init(void) {
   /* Configure trigger 0. */
   LPADC_SetConvTriggerConfig(ADC1_PERIPHERAL, ADC1_TRIG, &ADC1_triggersConfig[0]);
 }
-
+#endif
 /***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/
 void BOARD_InitPeripherals(void)
 {
+#ifdef BSP_USING_LPADC
+    ADC1_init();
 #ifdef BSP_LPADC1_USING_DMA
-  /* Global initialization */
-  (void)memset(DMA4_config.channelConfig, 0, FSL_FEATURE_EDMA_INSTANCE_CHANNELn(DMA4_DMA_BASEADDR) * sizeof(edma_channel_config_t *));
-  EDMA_Init(DMA4_DMA_BASEADDR, &DMA4_config);
-
-  /* Initialize components */
-  DMA4_init();
+    /* Global initialization */
+    (void)memset(DMA4_config.channelConfig, 0, FSL_FEATURE_EDMA_INSTANCE_CHANNELn(DMA4_DMA_BASEADDR) * sizeof(edma_channel_config_t *));
+    EDMA_Init(DMA4_DMA_BASEADDR, &DMA4_config);
+    /* Initialize components */
+    DMA4_init();
+#endif
 #endif
   LPUART1_init();
-  ADC1_init();
+
 }
 
 /***********************************************************************************************************************
@@ -522,3 +530,4 @@ void BOARD_InitBootPeripherals(void)
 {
   BOARD_InitPeripherals();
 }
+
