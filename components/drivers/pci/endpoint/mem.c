@@ -8,14 +8,39 @@
  * 2022-08-25     GuEe-GUI     first version
  */
 
+/**
+ * @file mem.c
+ * @brief PCI Endpoint memory allocator
+ *
+ * Manages the endpoint's local memory pool used for exposing memory
+ * regions to the PCIe host. Uses a bitmap-based allocator to track
+ * free/used pages within the endpoint's address space.
+ *
+ * This is needed for:
+ * - BAR memory backing
+ * - MSI/MSI-X message memory
+ * - DMA buffer allocation visible to the host
+ */
+
 #include <drivers/pci_endpoint.h>
 
 #define DBG_TAG "pci.ep.mem"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+/**
+ * @brief Initialize an array of memory regions for an endpoint
+ *
+ * Each memory region is described by a CPU physical address, size,
+ * and page size. A bitmap is allocated for each region to track page usage.
+ *
+ * @param[in] ep       PCI endpoint controller
+ * @param[in] mems     Array of memory region descriptors
+ * @param[in] mems_nr  Number of regions in the array
+ * @return RT_EOK on success, -RT_ENOMEM on allocation failure
+ */
 rt_err_t rt_pci_ep_mem_array_init(struct rt_pci_ep *ep,
-        struct rt_pci_ep_mem *mems, rt_size_t mems_nr)
+                                  struct rt_pci_ep_mem *mems, rt_size_t mems_nr)
 {
     rt_size_t idx;
     rt_err_t err = RT_EOK;
@@ -55,7 +80,7 @@ rt_err_t rt_pci_ep_mem_array_init(struct rt_pci_ep *ep,
 _out_lock:
     if (err)
     {
-        while (idx --> 0)
+        while (idx-- > 0)
         {
             rt_free(ep->mems[idx].map);
         }
@@ -70,8 +95,19 @@ _out_lock:
     return err;
 }
 
+/**
+ * @brief Initialize a single memory region for an endpoint
+ *
+ * Convenience wrapper around rt_pci_ep_mem_array_init() for a single region.
+ *
+ * @param[in] ep        PCI endpoint controller
+ * @param[in] cpu_addr  CPU physical base address of the region
+ * @param[in] size      Total size of the region in bytes
+ * @param[in] page_size Allocation granularity (page size) in bytes
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_mem_init(struct rt_pci_ep *ep,
-        rt_ubase_t cpu_addr, rt_size_t size, rt_size_t page_size)
+                            rt_ubase_t cpu_addr, rt_size_t size, rt_size_t page_size)
 {
     struct rt_pci_ep_mem mem;
 
@@ -87,6 +123,16 @@ rt_err_t rt_pci_ep_mem_init(struct rt_pci_ep *ep,
     return rt_pci_ep_mem_array_init(ep, &mem, 1);
 }
 
+/**
+ * @brief Allocate a contiguous range of pages from a memory region
+ *
+ * Uses a first-fit bitmap scan. Each page is represented by one bit
+ * in the region's bitmap. Allocated pages are marked as used.
+ *
+ * @param[in] mem  PCI EP memory region to allocate from
+ * @param[in] size Allocation size in bytes (must be page-aligned)
+ * @return CPU physical address of the allocated range, or ~0ULL on failure
+ */
 static rt_ubase_t bitmap_region_alloc(struct rt_pci_ep_mem *mem, rt_size_t size)
 {
     rt_size_t bit, next_bit, end_bit, max_bits;
@@ -109,22 +155,30 @@ static rt_ubase_t bitmap_region_alloc(struct rt_pci_ep_mem *mem, rt_size_t size)
 
         if (next_bit == end_bit)
         {
-            while (next_bit --> bit)
+            while (next_bit-- > bit)
             {
                 rt_bitmap_set_bit(mem->map, next_bit);
             }
 
             return mem->cpu_addr + bit * mem->page_size;
         }
-    _next:
-        ;
+    _next:;
     }
 
     return ~0ULL;
 }
 
+/**
+ * @brief Free a previously allocated range of pages
+ *
+ * Clears the bits in the region's bitmap for the freed pages.
+ *
+ * @param[in] mem      PCI EP memory region
+ * @param[in] cpu_addr CPU physical address of the allocation
+ * @param[in] size     Size of the allocation in bytes
+ */
 static void bitmap_region_free(struct rt_pci_ep_mem *mem,
-        rt_ubase_t cpu_addr, rt_size_t size)
+                               rt_ubase_t cpu_addr, rt_size_t size)
 {
     rt_size_t bit = (cpu_addr - mem->cpu_addr) / mem->page_size, end_bit;
 
@@ -137,8 +191,20 @@ static void bitmap_region_free(struct rt_pci_ep_mem *mem,
     }
 }
 
+/**
+ * @brief Allocate memory from the endpoint's pool
+ *
+ * Iterates through all registered memory regions and tries to
+ * allocate a contiguous range. On success, also maps the physical
+ * address to a kernel virtual address via rt_ioremap().
+ *
+ * @param[in]  ep           PCI endpoint controller
+ * @param[out] out_cpu_addr CPU physical address of the allocation
+ * @param[in]  size         Allocation size in bytes
+ * @return Kernel virtual address, or RT_NULL on failure
+ */
 void *rt_pci_ep_mem_alloc(struct rt_pci_ep *ep,
-        rt_ubase_t *out_cpu_addr, rt_size_t size)
+                          rt_ubase_t *out_cpu_addr, rt_size_t size)
 {
     void *vaddr = RT_NULL;
 
@@ -178,8 +244,20 @@ void *rt_pci_ep_mem_alloc(struct rt_pci_ep *ep,
     return vaddr;
 }
 
+/**
+ * @brief Free memory from the endpoint's pool
+ *
+ * Finds the memory region containing the allocation (by checking
+ * if the address falls within each region's range), unmaps the
+ * virtual address, and frees the bitmap pages.
+ *
+ * @param[in] ep       PCI endpoint controller
+ * @param[in] vaddr    Kernel virtual address to free (unmapped)
+ * @param[in] cpu_addr CPU physical address of the allocation
+ * @param[in] size     Size of the allocation in bytes
+ */
 void rt_pci_ep_mem_free(struct rt_pci_ep *ep,
-        void *vaddr, rt_ubase_t cpu_addr, rt_size_t size)
+                        void *vaddr, rt_ubase_t cpu_addr, rt_size_t size)
 {
     if (!ep || !vaddr || !size)
     {

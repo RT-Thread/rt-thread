@@ -8,6 +8,15 @@
  * 2022-10-24     GuEe-GUI     first version
  */
 
+/**
+ * @file pci.c
+ * @brief PCI bus core API implementation
+ *
+ * Provides fundamental PCI device operations: capability discovery,
+ * bus master control, INTx interrupt control, resource allocation,
+ * driver-device matching, and bus enumeration.
+ */
+
 #include <rtthread.h>
 #include <rtservice.h>
 
@@ -19,16 +28,26 @@
 #include <drivers/misc.h>
 #include <drivers/core/bus.h>
 
+/** @brief Convenience wrapper for hardware spinlock acquire */
 rt_inline void spin_lock(struct rt_spinlock *spinlock)
 {
     rt_hw_spin_lock(&spinlock->lock);
 }
 
+/** @brief Convenience wrapper for hardware spinlock release */
 rt_inline void spin_unlock(struct rt_spinlock *spinlock)
 {
     rt_hw_spin_unlock(&spinlock->lock);
 }
 
+/**
+ * @brief Get the PCI domain number for a device
+ *
+ * Each independent PCI host bridge hierarchy belongs to a distinct domain.
+ *
+ * @param[in] pdev PCI device
+ * @return Domain number, or RT_UINT32_MAX on error
+ */
 rt_uint32_t rt_pci_domain(struct rt_pci_device *pdev)
 {
     struct rt_pci_host_bridge *host_bridge;
@@ -46,8 +65,22 @@ rt_uint32_t rt_pci_domain(struct rt_pci_device *pdev)
     return RT_UINT32_MAX;
 }
 
+/**
+ * @brief Find the next PCI capability entry in the linked list
+ *
+ * PCI capability structures form a linked list starting from the
+ * Capabilities Pointer register. This function walks the list with
+ * a TTL (time-to-live) limit to prevent infinite loops on broken hardware.
+ *
+ * @param[in]  bus   PCI bus
+ * @param[in]  devfn Device/function number (bits 7-3: device, 2-0: function)
+ * @param[in]  pos   Starting offset of the current capability
+ * @param[in]  cap   Target capability ID to find
+ * @param[in,out] ttl Remaining search depth counter (decremented each step)
+ * @return Capability offset, or 0 if not found
+ */
 static rt_uint8_t pci_find_next_cap_ttl(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, rt_uint8_t pos, int cap, int *ttl)
+                                        rt_uint32_t devfn, rt_uint8_t pos, int cap, int *ttl)
 {
     rt_uint8_t ret = 0, id;
     rt_uint16_t ent;
@@ -80,16 +113,37 @@ static rt_uint8_t pci_find_next_cap_ttl(struct rt_pci_bus *bus,
     return ret;
 }
 
+/**
+ * @brief Find next capability entry with default TTL
+ *
+ * @param[in] bus   PCI bus
+ * @param[in] devfn Device/function number
+ * @param[in] pos   Starting capability offset
+ * @param[in] cap   Capability ID to find
+ * @return Capability offset, or 0 if not found
+ */
 static rt_uint8_t pci_find_next_cap(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, rt_uint8_t pos, int cap)
+                                    rt_uint32_t devfn, rt_uint8_t pos, int cap)
 {
     int ttl = RT_PCI_FIND_CAP_TTL;
 
     return pci_find_next_cap_ttl(bus, devfn, pos, cap, &ttl);
 }
 
+/**
+ * @brief Get the starting offset of capabilities for a device
+ *
+ * Returns the Capabilities Pointer offset based on header type.
+ * Only type 0 (normal) and type 1 (PCI-to-PCI bridge) have their
+ * capabilities at offset 0x34; CardBus devices use 0x14.
+ *
+ * @param[in] bus      PCI bus
+ * @param[in] devfn    Device/function number
+ * @param[in] hdr_type Header type value from configuration space
+ * @return Starting capability offset, or 0 if no capabilities present
+ */
 static rt_uint8_t pci_bus_find_cap_start(struct rt_pci_bus *bus,
-        rt_uint32_t devfn, rt_uint8_t hdr_type)
+                                         rt_uint32_t devfn, rt_uint8_t hdr_type)
 {
     rt_uint8_t res = 0;
     rt_uint16_t status;
@@ -114,6 +168,14 @@ static rt_uint8_t pci_bus_find_cap_start(struct rt_pci_bus *bus,
     return res;
 }
 
+/**
+ * @brief Find a capability by ID on a specific bus/device/function
+ *
+ * @param[in] bus   PCI bus
+ * @param[in] devfn Device/function number
+ * @param[in] cap   Capability ID (e.g. PCIY_MSI, PCIY_EXPRESS)
+ * @return Capability offset, or RT_UINT8_MAX if not found
+ */
 rt_uint8_t rt_pci_bus_find_capability(struct rt_pci_bus *bus, rt_uint32_t devfn, int cap)
 {
     rt_uint8_t hdr_type, ret = RT_UINT8_MAX;
@@ -133,6 +195,15 @@ rt_uint8_t rt_pci_bus_find_capability(struct rt_pci_bus *bus, rt_uint32_t devfn,
     return ret;
 }
 
+/**
+ * @brief Find a standard PCI capability on a device
+ *
+ * Searches the PCI capability linked list for a specific capability ID.
+ *
+ * @param[in] pdev PCI device
+ * @param[in] cap  Capability ID (e.g. PCIY_MSI, PCIY_PMG, PCIY_EXPRESS)
+ * @return Capability register offset (0-255), or RT_UINT8_MAX if not found
+ */
 rt_uint8_t rt_pci_find_capability(struct rt_pci_device *pdev, int cap)
 {
     rt_uint8_t res = RT_UINT8_MAX;
@@ -150,6 +221,14 @@ rt_uint8_t rt_pci_find_capability(struct rt_pci_device *pdev, int cap)
     return res;
 }
 
+/**
+ * @brief Find the next instance of a capability (continue from a previous find)
+ *
+ * @param[in] pdev PCI device
+ * @param[in] pos  Current capability position (offset in config space)
+ * @param[in] cap  Capability ID to find
+ * @return Next capability offset, or RT_UINT8_MAX if no more found
+ */
 rt_uint8_t rt_pci_find_next_capability(struct rt_pci_device *pdev, rt_uint8_t pos, int cap)
 {
     rt_uint8_t res = RT_UINT8_MAX;
@@ -162,11 +241,29 @@ rt_uint8_t rt_pci_find_next_capability(struct rt_pci_device *pdev, rt_uint8_t po
     return res;
 }
 
+/**
+ * @brief Find a PCI Express extended capability on a device
+ *
+ * PCIe extended capabilities start at offset 0x100 and form a
+ * linked list in the extended configuration space (up to 4KB).
+ *
+ * @param[in] pdev PCI device
+ * @param[in] cap  Extended capability ID (e.g. PCIZ_AER, PCIZ_ARI)
+ * @return Extended capability offset (>= 0x100), or 0 if not found
+ */
 rt_uint16_t rt_pci_find_ext_capability(struct rt_pci_device *pdev, int cap)
 {
     return rt_pci_find_ext_next_capability(pdev, 0, cap);
 }
 
+/**
+ * @brief Find the next PCIe extended capability starting from a given position
+ *
+ * @param[in] pdev PCI device
+ * @param[in] pos  Starting offset in extended config space (0 to start from beginning)
+ * @param[in] cap  Extended capability ID
+ * @return Extended capability offset, or 0 if not found
+ */
 rt_uint16_t rt_pci_find_ext_next_capability(struct rt_pci_device *pdev, rt_uint16_t pos, int cap)
 {
     int ttl;
@@ -223,6 +320,14 @@ rt_uint16_t rt_pci_find_ext_next_capability(struct rt_pci_device *pdev, rt_uint1
     return 0;
 }
 
+/**
+ * @brief Internal helper: enable or disable bus mastering on a PCI device
+ *
+ * Bus mastering allows the device to initiate DMA transactions on the PCI bus.
+ *
+ * @param[in] pdev   PCI device
+ * @param[in] enable RT_TRUE to enable bus mastering, RT_FALSE to disable
+ */
 static void pci_set_master(struct rt_pci_device *pdev, rt_bool_t enable)
 {
     rt_uint16_t old_cmd, cmd;
@@ -246,6 +351,13 @@ static void pci_set_master(struct rt_pci_device *pdev, rt_bool_t enable)
     pdev->busmaster = !!enable;
 }
 
+/**
+ * @brief Enable bus mastering (DMA capability) on a PCI device
+ *
+ * Most PCI device drivers need to call this to enable DMA transfers.
+ *
+ * @param[in] pdev PCI device
+ */
 void rt_pci_set_master(struct rt_pci_device *pdev)
 {
     if (pdev)
@@ -254,6 +366,11 @@ void rt_pci_set_master(struct rt_pci_device *pdev)
     }
 }
 
+/**
+ * @brief Disable bus mastering on a PCI device
+ *
+ * @param[in] pdev PCI device
+ */
 void rt_pci_clear_master(struct rt_pci_device *pdev)
 {
     if (pdev)
@@ -262,6 +379,15 @@ void rt_pci_clear_master(struct rt_pci_device *pdev)
     }
 }
 
+/**
+ * @brief Enable or disable legacy INTx interrupts on a PCI device
+ *
+ * Controls the Interrupt Disable bit in the PCI Command register.
+ * When INTx is disabled, the device must use MSI or MSI-X for interrupts.
+ *
+ * @param[in] pdev   PCI device
+ * @param[in] enable RT_TRUE to enable INTx, RT_FALSE to disable
+ */
 void rt_pci_intx(struct rt_pci_device *pdev, rt_bool_t enable)
 {
     rt_uint16_t pci_command, new;
@@ -288,6 +414,16 @@ void rt_pci_intx(struct rt_pci_device *pdev, rt_bool_t enable)
     }
 }
 
+/**
+ * @brief Atomically check INTx status and optionally mask/unmask
+ *
+ * Reads the command/status DWORD, checks the INTx status bit,
+ * and conditionally sets/clears the INTx disable bit.
+ *
+ * @param[in] pdev PCI device
+ * @param[in] mask RT_TRUE to mask INTx, RT_FALSE to unmask
+ * @return RT_TRUE if the operation was performed, RT_FALSE if skipped
+ */
 static rt_bool_t pci_check_and_set_intx_mask(struct rt_pci_device *pdev, rt_bool_t mask)
 {
     rt_ubase_t level;
@@ -332,6 +468,15 @@ static rt_bool_t pci_check_and_set_intx_mask(struct rt_pci_device *pdev, rt_bool
     return res;
 }
 
+/**
+ * @brief Check if the device generated an INTx interrupt, and mask it
+ *
+ * Used by interrupt handlers to identify the interrupt source and
+ * prevent further interrupts while the handler runs.
+ *
+ * @param[in] pdev PCI device
+ * @return RT_TRUE if this device was the interrupt source
+ */
 rt_bool_t rt_pci_check_and_mask_intx(struct rt_pci_device *pdev)
 {
     rt_bool_t res = RT_FALSE;
@@ -344,6 +489,14 @@ rt_bool_t rt_pci_check_and_mask_intx(struct rt_pci_device *pdev)
     return res;
 }
 
+/**
+ * @brief Check interrupt status and unmask INTx
+ *
+ * Used to re-enable interrupts after the handler completes.
+ *
+ * @param[in] pdev PCI device
+ * @return RT_TRUE if interrupt is pending (next IRQ ready)
+ */
 rt_bool_t rt_pci_check_and_unmask_intx(struct rt_pci_device *pdev)
 {
     rt_bool_t res = RT_FALSE;
@@ -356,6 +509,11 @@ rt_bool_t rt_pci_check_and_unmask_intx(struct rt_pci_device *pdev)
     return res;
 }
 
+/**
+ * @brief Mask a PCI device's interrupt (disable INTx + mask at interrupt controller if unused)
+ *
+ * @param[in] pdev PCI device
+ */
 void rt_pci_irq_mask(struct rt_pci_device *pdev)
 {
     if (pdev)
@@ -379,6 +537,11 @@ void rt_pci_irq_mask(struct rt_pci_device *pdev)
     }
 }
 
+/**
+ * @brief Unmask a PCI device's interrupt (enable at controller + re-enable INTx)
+ *
+ * @param[in] pdev PCI device
+ */
 void rt_pci_irq_unmask(struct rt_pci_device *pdev)
 {
     if (pdev)
@@ -388,6 +551,12 @@ void rt_pci_irq_unmask(struct rt_pci_device *pdev)
     }
 }
 
+/**
+ * @brief Find the root PCI bus by walking up the parent chain
+ *
+ * @param[in] bus Starting bus (any level in the hierarchy)
+ * @return Root bus pointer, or RT_NULL on error
+ */
 struct rt_pci_bus *rt_pci_find_root_bus(struct rt_pci_bus *bus)
 {
     if (!bus)
@@ -403,6 +572,15 @@ struct rt_pci_bus *rt_pci_find_root_bus(struct rt_pci_bus *bus)
     return bus;
 }
 
+/**
+ * @brief Find the host bridge for a given PCI bus
+ *
+ * Walks up to the root bus, then retrieves the host bridge that
+ * manages that bus hierarchy.
+ *
+ * @param[in] bus PCI bus (any level)
+ * @return Host bridge pointer, or RT_NULL on error
+ */
 struct rt_pci_host_bridge *rt_pci_find_host_bridge(struct rt_pci_bus *bus)
 {
     if (!bus)
@@ -418,6 +596,17 @@ struct rt_pci_host_bridge *rt_pci_find_host_bridge(struct rt_pci_bus *bus)
     return RT_NULL;
 }
 
+/**
+ * @brief Perform INTx interrupt line swizzling for PCI-to-PCI bridges
+ *
+ * PCI Express and conventional PCI use a swizzling algorithm to route
+ * INTA-D pins through bridges. The output pin is rotated based on
+ * the device's slot number.
+ *
+ * @param[in] pdev PCI device
+ * @param[in] pin  Input INTx pin number (1=INTA, 2=INTB, 3=INTC, 4=INTD)
+ * @return Swizzled (rotated) pin number
+ */
 rt_uint8_t rt_pci_irq_intx(struct rt_pci_device *pdev, rt_uint8_t pin)
 {
     int slot = 0;
@@ -430,6 +619,16 @@ rt_uint8_t rt_pci_irq_intx(struct rt_pci_device *pdev, rt_uint8_t pin)
     return (((pin - 1) + slot) % 4) + 1;
 }
 
+/**
+ * @brief Perform INTx swizzling up through the PCI bridge hierarchy
+ *
+ * Follows the device's INTx pin through all PCI-to-PCI bridges
+ * to determine the final pin and slot at the root bus level.
+ *
+ * @param[in]     pdev PCI device
+ * @param[in,out] pinp INTx pin number (updated through bridge traversal)
+ * @return Slot number at the root bus
+ */
 rt_uint8_t rt_pci_irq_slot(struct rt_pci_device *pdev, rt_uint8_t *pinp)
 {
     rt_uint8_t pin = *pinp;
@@ -445,6 +644,15 @@ rt_uint8_t rt_pci_irq_slot(struct rt_pci_device *pdev, rt_uint8_t *pinp)
     return RT_PCI_SLOT(pdev->devfn);
 }
 
+/**
+ * @brief Initialize bus resource regions for a host bridge
+ *
+ * Ensures no PCI resource is allocated from address 0 (illegal per
+ * PCI 2.1+ spec). Sets bus_start to max(0x1000, phy_addr).
+ *
+ * @param[in] host_bridge PCI host bridge to initialize
+ * @return RT_EOK on success, -RT_EEMPTY if no regions defined
+ */
 rt_err_t rt_pci_region_setup(struct rt_pci_host_bridge *host_bridge)
 {
     rt_err_t err = host_bridge->bus_regions_nr == 0 ? -RT_EEMPTY : RT_EOK;
@@ -460,9 +668,9 @@ rt_err_t rt_pci_region_setup(struct rt_pci_host_bridge *host_bridge)
         region->bus_start = rt_max_t(rt_size_t, 0x1000, region->phy_addr);
 
         LOG_I("Bus %s region(%d):",
-            region->flags == PCI_BUS_REGION_F_MEM ? "Memory" :
-                    (region->flags == PCI_BUS_REGION_F_PREFETCH ? "Prefetchable Mem" :
-                            (region->flags == PCI_BUS_REGION_F_IO ? "I/O" : "Unknown")), i);
+              region->flags == PCI_BUS_REGION_F_MEM ? "Memory" : 
+                  (region->flags == PCI_BUS_REGION_F_PREFETCH ? "Prefetchable Mem" :
+                      (region->flags == PCI_BUS_REGION_F_IO ? "I/O" : "Unknown")), i);
         LOG_I("  cpu:      [%p, %p]", region->cpu_addr, (region->cpu_addr + region->size - 1));
         LOG_I("  physical: [%p, %p]", region->phy_addr, (region->phy_addr + region->size - 1));
     }
@@ -470,8 +678,23 @@ rt_err_t rt_pci_region_setup(struct rt_pci_host_bridge *host_bridge)
     return err;
 }
 
+/**
+ * @brief Allocate a region of bus address space from the host bridge
+ *
+ * Allocates from the host bridge's bus resource regions. The region
+ * is selected by matching the resource flags (I/O, Memory, Prefetchable).
+ * If a 64-bit allocation is requested but no 64-bit space is available,
+ * it falls back to 32-bit.
+ *
+ * @param[in]  host_bridge PCI host bridge with defined bus regions
+ * @param[out] out_addr    Allocated bus address on success
+ * @param[in]  size        Requested size in bytes
+ * @param[in]  flags       Resource type flags (PCI_BUS_REGION_F_*)
+ * @param[in]  mem64       RT_TRUE to require 64-bit address, RT_FALSE for 32-bit
+ * @return Pointer to the matching bus region, or RT_NULL on failure
+ */
 struct rt_pci_bus_region *rt_pci_region_alloc(struct rt_pci_host_bridge *host_bridge,
-        void **out_addr, rt_size_t size, rt_ubase_t flags, rt_bool_t mem64)
+                                              void **out_addr, rt_size_t size, rt_ubase_t flags, rt_bool_t mem64)
 {
     struct rt_pci_bus_region *bus_region, *region = RT_NULL;
 
@@ -525,8 +748,20 @@ struct rt_pci_bus_region *rt_pci_region_alloc(struct rt_pci_host_bridge *host_br
     return region;
 }
 
+/**
+ * @brief Allocate bus resources (BARs and ROM) for a PCI device
+ *
+ * Scans all BARs (Base Address Registers) of the device, determines
+ * their size and type (I/O, Memory 32-bit, Memory 64-bit), allocates
+ * bus address space, and programs the BARs with the assigned addresses.
+ * Also handles the Expansion ROM BAR if present.
+ *
+ * @param[in] host_bridge PCI host bridge providing address space
+ * @param[in] pdev        PCI device to allocate resources for
+ * @return RT_EOK on success, -RT_ERROR if any BAR could not be allocated
+ */
 rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
-        struct rt_pci_device *pdev)
+                                      struct rt_pci_device *pdev)
 {
     rt_err_t err = RT_EOK;
     rt_size_t size;
@@ -649,15 +884,15 @@ rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
             if (mem64)
             {
                 bar_base += sizeof(rt_uint32_t);
-            #ifdef RT_PCI_SYS_64BIT
+#ifdef RT_PCI_SYS_64BIT
                 rt_pci_write_config_u32(pdev, bar_base, (rt_uint32_t)(addr >> 32));
-            #else
+#else
                 /*
                  * If we are a 64-bit decoder then increment to the upper 32 bits
                  * of the bar and force it to locate in the lower 4GB of memory.
                  */
                 rt_pci_write_config_u32(pdev, bar_base, 0UL);
-            #endif
+#endif
             }
 
             pdev->resource[i].size = size;
@@ -716,7 +951,18 @@ rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
     return err;
 }
 
-struct rt_pci_bus_resource *rt_pci_find_bar(struct rt_pci_device* pdev,rt_ubase_t flags,int index)
+/**
+ * @brief Find a specific BAR resource by flags and index
+ *
+ * Searches a device's BAR resources for a BAR matching the given
+ * flags and satisfying the index count (1-based).
+ *
+ * @param[in] pdev  PCI device
+ * @param[in] flags Resource type flags (PCI_BUS_REGION_F_*)
+ * @param[in] index 1-based index of the matching BAR to return
+ * @return Pointer to the matching BAR resource, or RT_NULL if not found
+ */
+struct rt_pci_bus_resource *rt_pci_find_bar(struct rt_pci_device *pdev, rt_ubase_t flags, int index)
 {
     for (int i = 0; i < RT_PCI_BAR_NR_MAX; i++)
     {
@@ -730,8 +976,26 @@ struct rt_pci_bus_resource *rt_pci_find_bar(struct rt_pci_device* pdev,rt_ubase_
     return RT_NULL;
 }
 
+/**
+ * @brief Enumerate all PCI devices in a bus hierarchy
+ *
+ * Performs a depth-first walk of the PCI bus tree, calling the
+ * callback for each device. The callback can stop enumeration by
+ * returning RT_TRUE. Reference counting protects devices from
+ * being freed during enumeration.
+ *
+ * The tree walk algorithm:
+ * 1. Descend to the deepest leaf bus
+ * 2. Visit each device on the leaf bus
+ * 3. Ascend to the parent, visit parent devices
+ * 4. Move to next sibling bus and repeat
+ *
+ * @param[in] bus      Root bus to start enumeration from
+ * @param[in] callback Callback function for each device
+ * @param[in] data     User data passed to callback
+ */
 void rt_pci_enum_device(struct rt_pci_bus *bus,
-        rt_bool_t (callback(struct rt_pci_device *, void *)), void *data)
+                        rt_bool_t(callback(struct rt_pci_device *, void *)), void *data)
 {
     rt_bool_t is_end = RT_FALSE;
     struct rt_spinlock *lock;
@@ -858,8 +1122,18 @@ void rt_pci_enum_device(struct rt_pci_bus *bus,
     }
 }
 
+/**
+ * @brief Match a PCI device against a single device ID entry
+ *
+ * Checks vendor, device, subsystem vendor/device, and class mask.
+ * PCI_ANY_ID acts as a wildcard that matches any value.
+ *
+ * @param[in] pdev PCI device
+ * @param[in] id   Device ID entry to match against
+ * @return Pointer to id if matched, RT_NULL otherwise
+ */
 const struct rt_pci_device_id *rt_pci_match_id(struct rt_pci_device *pdev,
-        const struct rt_pci_device_id *id)
+                                               const struct rt_pci_device_id *id)
 {
     if ((id->vendor == PCI_ANY_ID || id->vendor == pdev->vendor) &&
         (id->device == PCI_ANY_ID || id->device == pdev->device) &&
@@ -873,8 +1147,18 @@ const struct rt_pci_device_id *rt_pci_match_id(struct rt_pci_device *pdev,
     return RT_NULL;
 }
 
+/**
+ * @brief Match a PCI device against an array of device IDs
+ *
+ * Iterates through the ID table until a match is found or the
+ * sentinel entry (all-zero) is reached.
+ *
+ * @param[in] pdev PCI device
+ * @param[in] ids  Array of device IDs, terminated by sentinel
+ * @return Pointer to matching ID, or RT_NULL if no match
+ */
 const struct rt_pci_device_id *rt_pci_match_ids(struct rt_pci_device *pdev,
-        const struct rt_pci_device_id *ids)
+                                                const struct rt_pci_device_id *ids)
 {
     while (ids->vendor || ids->subsystem_vendor || ids->class_mask)
     {
@@ -891,6 +1175,15 @@ const struct rt_pci_device_id *rt_pci_match_ids(struct rt_pci_device *pdev,
 
 static struct rt_bus pci_bus;
 
+/**
+ * @brief Register a PCI driver
+ *
+ * Associates the driver with the PCI bus and registers it with
+ * the driver framework.
+ *
+ * @param[in] pdrv PCI driver to register
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_driver_register(struct rt_pci_driver *pdrv)
 {
     RT_ASSERT(pdrv != RT_NULL);
@@ -905,6 +1198,12 @@ rt_err_t rt_pci_driver_register(struct rt_pci_driver *pdrv)
     return rt_driver_register(&pdrv->parent);
 }
 
+/**
+ * @brief Register a PCI device on the PCI bus
+ *
+ * @param[in] pdev PCI device to register
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_device_register(struct rt_pci_device *pdev)
 {
     rt_err_t err;
@@ -918,6 +1217,16 @@ rt_err_t rt_pci_device_register(struct rt_pci_device *pdev)
     return RT_EOK;
 }
 
+/**
+ * @brief Bus match callback: match a PCI driver to a PCI device
+ *
+ * First tries name-based matching, then falls back to ID-based
+ * matching using the driver's device ID table.
+ *
+ * @param[in] drv Driver to match
+ * @param[in] dev Device to match
+ * @return RT_TRUE if driver can handle this device
+ */
 static rt_bool_t pci_match(rt_driver_t drv, rt_device_t dev)
 {
     rt_bool_t match = RT_FALSE;
@@ -939,6 +1248,14 @@ static rt_bool_t pci_match(rt_driver_t drv, rt_device_t dev)
     return match;
 }
 
+/**
+ * @brief Bus probe callback: initialize a matched device
+ *
+ * Assigns IRQ, enables wake, and calls the driver's probe function.
+ *
+ * @param[in] dev Device to probe
+ * @return RT_EOK on success, driver probe error code otherwise
+ */
 static rt_err_t pci_probe(rt_device_t dev)
 {
     rt_err_t err = RT_EOK;
@@ -958,6 +1275,15 @@ static rt_err_t pci_probe(rt_device_t dev)
     return err;
 }
 
+/**
+ * @brief Bus remove callback: remove a device
+ *
+ * Calls the driver's remove method, disables wake, and
+ * removes the device from the bus.
+ *
+ * @param[in] dev Device to remove
+ * @return RT_EOK on success
+ */
 static rt_err_t pci_remove(rt_device_t dev)
 {
     rt_err_t err = RT_EOK;
@@ -983,6 +1309,15 @@ static rt_err_t pci_remove(rt_device_t dev)
     return err;
 }
 
+/**
+ * @brief Bus shutdown callback: shutdown a device
+ *
+ * Calls the driver's shutdown method, disables wake, and
+ * removes the device.
+ *
+ * @param[in] dev Device to shutdown
+ * @return RT_EOK
+ */
 static rt_err_t pci_shutdown(rt_device_t dev)
 {
     struct rt_pci_bus *bus;
@@ -1004,6 +1339,7 @@ static rt_err_t pci_shutdown(rt_device_t dev)
     return RT_EOK;
 }
 
+/** @brief PCI bus type descriptor */
 static struct rt_bus pci_bus =
 {
     .name = "pci",
@@ -1013,6 +1349,14 @@ static struct rt_bus pci_bus =
     .shutdown = pci_shutdown,
 };
 
+/**
+ * @brief Initialize the PCI bus subsystem
+ *
+ * Registers the PCI bus type with the driver framework.
+ * Called automatically at boot via INIT_CORE_EXPORT.
+ *
+ * @return 0 on success
+ */
 static int pci_bus_init(void)
 {
     rt_bus_register(&pci_bus);

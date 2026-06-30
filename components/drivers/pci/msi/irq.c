@@ -8,15 +8,39 @@
  * 2022-10-24     GuEe-GUI     first version
  */
 
+/**
+ * @file irq.c
+ * @brief MSI/MSI-X IRQ setup and cleanup
+ *
+ * Handles IRQ allocation from the MSI PIC (Programmable Interrupt
+ * Controller) and composition of MSI messages for delivery to devices.
+ */
+
 #include <drivers/pci_msi.h>
 
 #define DBG_TAG "pci.msi.irq"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+/** @brief Spinlock and bitmap for tracking allocated MSI IRQs */
 static RT_DEFINE_SPINLOCK(msi_irq_map_lock);
 static RT_BITMAP_DECLARE(msi_irq_map, MAX_HANDLERS) = {};
 
+/**
+ * @brief Set up MSI/MSI-X IRQs for a device
+ *
+ * For MSI: allocates a contiguous block of IRQs from the MSI PIC,
+ * ensures they are consecutive (re-allocates if not), composes
+ * the MSI message, and writes it to the device.
+ *
+ * For MSI-X: allocates one IRQ per descriptor, composes each
+ * MSI message independently, and writes to the MSI-X table.
+ *
+ * @param[in] pdev  PCI device
+ * @param[in] nvec  Number of vectors to set up
+ * @param[in] type  Interrupt type: PCIY_MSI or PCIY_MSIX
+ * @return RT_EOK on success, error code otherwise
+ */
 rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
 {
     int irq, index = 0, irq_nr = 0;
@@ -56,7 +80,7 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
 
             if (last_irq >= 0 && last_irq + 1 != irq)
             {
-                for (int idx = 0; idx < i; ++i, --last_irq)
+                for (int idx = 0; idx < i; ++idx, --last_irq)
                 {
                     rt_bitmap_set_bit(msi_irq_map, last_irq);
                 }
@@ -106,7 +130,7 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
                 err = irq;
 
                 LOG_E("Setup %s[%d] IRQ error = %s", "MSI-X",
-                        desc->msix.index, rt_strerror(err));
+                      desc->msix.index, rt_strerror(err));
 
                 break;
             }
@@ -145,6 +169,14 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
     return err;
 }
 
+/**
+ * @brief Clean up (free) all MSI/MSI-X IRQs for a device
+ *
+ * Calls irq_free_msi on the MSI PIC for each allocated IRQ.
+ *
+ * @param[in] pdev PCI device
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_msi_cleanup_irqs(struct rt_pci_device *pdev)
 {
     int type;

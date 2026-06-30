@@ -8,17 +8,47 @@
  * 2022-08-25     GuEe-GUI     first version
  */
 
+/**
+ * @file endpoint.c
+ * @brief PCI Endpoint (EP) framework core
+ *
+ * The PCI Endpoint framework allows RT-Thread devices to operate as
+ * PCIe endpoints rather than root complexes. This is essential for
+ * embedded systems that need to appear as PCIe devices to a host CPU.
+ *
+ * Provides APIs for:
+ * - Writing the PCI configuration space header (vendor/device IDs, BARs, etc.)
+ * - Setting up BARs (Base Address Registers)
+ * - Address mapping (CPU address → PCI bus address)
+ * - MSI/MSI-X configuration and IRQ raising
+ * - Starting and stopping the endpoint
+ * - Managing endpoint functions (EPF)
+ */
+
 #include <drivers/pci_endpoint.h>
 
 #define DBG_TAG "pci.ep"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+/** @brief Global list of registered PCI endpoints */
 static rt_list_t _ep_nodes = RT_LIST_OBJECT_INIT(_ep_nodes);
 static RT_DEFINE_SPINLOCK(_ep_lock);
 
+/**
+ * @brief Write the PCI configuration header for an endpoint function
+ *
+ * Sets vendor ID, device ID, revision, class code, subsystem IDs,
+ * and other standard PCI header fields that identify the endpoint
+ * to the host system.
+ *
+ * @param[in] ep      PCI endpoint controller
+ * @param[in] func_no Function number (0 to max_functions-1)
+ * @param[in] hdr     Header data to write
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_write_header(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        struct rt_pci_ep_header *hdr)
+                                struct rt_pci_ep_header *hdr)
 {
     rt_err_t err;
 
@@ -43,8 +73,23 @@ rt_err_t rt_pci_ep_write_header(struct rt_pci_ep *ep, rt_uint8_t func_no,
     return err;
 }
 
+/**
+ * @brief Set a BAR for an endpoint function
+ *
+ * Configures a Base Address Register on the endpoint. The BAR exposes
+ * a region of local memory to the PCIe host. Validates that:
+ * - The last BAR (index 5) cannot be 64-bit
+ * - Size exceeding 32 bits requires 64-bit BAR type
+ * - I/O BARs have valid flag settings
+ *
+ * @param[in] ep      PCI endpoint controller
+ * @param[in] func_no Function number
+ * @param[in] bar     BAR configuration (flags, base, size)
+ * @param[in] bar_idx BAR index (0-5)
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_set_bar(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        struct rt_pci_ep_bar *bar, int bar_idx)
+                           struct rt_pci_ep_bar *bar, int bar_idx)
 {
     rt_err_t err = RT_EOK;
 
@@ -96,8 +141,17 @@ rt_err_t rt_pci_ep_set_bar(struct rt_pci_ep *ep, rt_uint8_t func_no,
     return err;
 }
 
+/**
+ * @brief Clear a BAR on an endpoint function
+ *
+ * @param[in] ep      PCI endpoint controller
+ * @param[in] func_no Function number
+ * @param[in] bar     BAR configuration to clear
+ * @param[in] bar_idx BAR index
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_clear_bar(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        struct rt_pci_ep_bar *bar, int bar_idx)
+                             struct rt_pci_ep_bar *bar, int bar_idx)
 {
     rt_err_t err;
 
@@ -123,8 +177,18 @@ rt_err_t rt_pci_ep_clear_bar(struct rt_pci_ep *ep, rt_uint8_t func_no,
     return err;
 }
 
+/**
+ * @brief Map a CPU physical address to PCI bus address space for an endpoint
+ *
+ * @param[in] ep       PCI endpoint controller
+ * @param[in] func_no  Function number
+ * @param[in] addr     CPU physical address
+ * @param[in] pci_addr Target PCI bus address
+ * @param[in] size     Mapping size
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_map_addr(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size)
+                            rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size)
 {
     rt_err_t err;
 
@@ -149,8 +213,16 @@ rt_err_t rt_pci_ep_map_addr(struct rt_pci_ep *ep, rt_uint8_t func_no,
     return err;
 }
 
+/**
+ * @brief Unmap a previously mapped address
+ *
+ * @param[in] ep      PCI endpoint controller
+ * @param[in] func_no Function number
+ * @param[in] addr    CPU physical address to unmap
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_unmap_addr(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        rt_ubase_t addr)
+                              rt_ubase_t addr)
 {
     rt_err_t err;
 
@@ -175,8 +247,19 @@ rt_err_t rt_pci_ep_unmap_addr(struct rt_pci_ep *ep, rt_uint8_t func_no,
     return err;
 }
 
+/**
+ * @brief Configure MSI for an endpoint function
+ *
+ * Sets the number of MSI vectors and the Multi-Message Enable value.
+ * The endpoint uses this to request MSI interrupts from the host.
+ *
+ * @param[in] ep      PCI endpoint controller
+ * @param[in] func_no Function number
+ * @param[in] irq_nr  Number of MSI vectors
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_set_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned irq_nr)
+                           unsigned irq_nr)
 {
     rt_err_t err;
 
@@ -209,8 +292,16 @@ rt_err_t rt_pci_ep_set_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
     return err;
 }
 
+/**
+ * @brief Get the current MSI configuration
+ *
+ * @param[in]  ep         PCI endpoint controller
+ * @param[in]  func_no    Function number
+ * @param[out] out_irq_nr Number of MSI vectors configured
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_get_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned *out_irq_nr)
+                           unsigned *out_irq_nr)
 {
     rt_err_t err;
 
@@ -235,8 +326,21 @@ rt_err_t rt_pci_ep_get_msi(struct rt_pci_ep *ep, rt_uint8_t func_no,
     return err;
 }
 
+/**
+ * @brief Configure MSI-X for an endpoint function
+ *
+ * Sets up the MSI-X capability with the specified number of vectors
+ * and table location (BAR index + offset).
+ *
+ * @param[in] ep      PCI endpoint controller
+ * @param[in] func_no Function number
+ * @param[in] irq_nr  Number of MSI-X vectors (max 2048)
+ * @param[in] bar_idx BAR index for the MSI-X table
+ * @param[in] offset  Offset within the BAR for the table
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_set_msix(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned irq_nr, int bar_idx, rt_off_t offset)
+                            unsigned irq_nr, int bar_idx, rt_off_t offset)
 {
     rt_err_t err;
 
@@ -262,8 +366,16 @@ rt_err_t rt_pci_ep_set_msix(struct rt_pci_ep *ep, rt_uint8_t func_no,
     return err;
 }
 
+/**
+ * @brief Get the current MSI-X configuration
+ *
+ * @param[in]  ep         PCI endpoint controller
+ * @param[in]  func_no    Function number
+ * @param[out] out_irq_nr Number of MSI-X vectors configured
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_get_msix(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        unsigned *out_irq_nr)
+                            unsigned *out_irq_nr)
 {
     rt_err_t err;
 
@@ -288,8 +400,19 @@ rt_err_t rt_pci_ep_get_msix(struct rt_pci_ep *ep, rt_uint8_t func_no,
     return err;
 }
 
+/**
+ * @brief Raise an interrupt from the endpoint to the host
+ *
+ * Supports legacy INTx, MSI, and MSI-X interrupt types.
+ *
+ * @param[in] ep      PCI endpoint controller
+ * @param[in] func_no Function number
+ * @param[in] type    Interrupt type (RT_PCI_EP_IRQ_LEGACY, _MSI, or _MSIX)
+ * @param[in] irq     Vector number (for MSI/MSI-X)
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_raise_irq(struct rt_pci_ep *ep, rt_uint8_t func_no,
-        enum rt_pci_ep_irq type, unsigned irq)
+                             enum rt_pci_ep_irq type, unsigned irq)
 {
     rt_err_t err;
 
@@ -314,6 +437,15 @@ rt_err_t rt_pci_ep_raise_irq(struct rt_pci_ep *ep, rt_uint8_t func_no,
     return err;
 }
 
+/**
+ * @brief Start the PCI endpoint (make it visible on the PCIe bus)
+ *
+ * Typically called after all configuration is complete to enable
+ * the endpoint to respond to configuration requests from the host.
+ *
+ * @param[in] ep PCI endpoint controller
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_start(struct rt_pci_ep *ep)
 {
     rt_err_t err;
@@ -339,6 +471,12 @@ rt_err_t rt_pci_ep_start(struct rt_pci_ep *ep)
     return err;
 }
 
+/**
+ * @brief Stop the PCI endpoint
+ *
+ * @param[in] ep PCI endpoint controller
+ * @return RT_EOK on success
+ */
 rt_err_t rt_pci_ep_stop(struct rt_pci_ep *ep)
 {
     rt_err_t err;
@@ -364,6 +502,15 @@ rt_err_t rt_pci_ep_stop(struct rt_pci_ep *ep)
     return err;
 }
 
+/**
+ * @brief Register a PCI endpoint controller
+ *
+ * Adds the endpoint to the global endpoint list and initializes
+ * its internal structures (lock, function list, reference count).
+ *
+ * @param[in] ep PCI endpoint controller to register
+ * @return RT_EOK on success, -RT_EINVAL if ep or ep->ops is NULL
+ */
 rt_err_t rt_pci_ep_register(struct rt_pci_ep *ep)
 {
     rt_ubase_t level;
@@ -386,6 +533,15 @@ rt_err_t rt_pci_ep_register(struct rt_pci_ep *ep)
     return RT_EOK;
 }
 
+/**
+ * @brief Unregister a PCI endpoint controller
+ *
+ * Removes the endpoint from the global list. Fails with -RT_EBUSY
+ * if the endpoint's reference count is > 1 (still in use).
+ *
+ * @param[in] ep PCI endpoint controller
+ * @return RT_EOK on success, -RT_EBUSY if still referenced
+ */
 rt_err_t rt_pci_ep_unregister(struct rt_pci_ep *ep)
 {
     rt_ubase_t level;
@@ -413,6 +569,17 @@ rt_err_t rt_pci_ep_unregister(struct rt_pci_ep *ep)
     return err;
 }
 
+/**
+ * @brief Add an endpoint function (EPF) to an endpoint
+ *
+ * Associates a function with a specific function number. The function
+ * number must be within the endpoint's max_functions range and not
+ * already in use.
+ *
+ * @param[in] ep  PCI endpoint controller
+ * @param[in] epf Endpoint function to add
+ * @return RT_EOK on success, -RT_EINVAL if function number is taken
+ */
 rt_err_t rt_pci_ep_add_epf(struct rt_pci_ep *ep, struct rt_pci_epf *epf)
 {
     rt_err_t err = RT_EOK;
@@ -425,7 +592,7 @@ rt_err_t rt_pci_ep_add_epf(struct rt_pci_ep *ep, struct rt_pci_epf *epf)
     if (epf->func_no > ep->max_functions - 1)
     {
         LOG_E("%s function No(%d) > %s max function No(%d - 1)",
-                epf->name, epf->func_no, ep->name, ep->max_functions);
+              epf->name, epf->func_no, ep->name, ep->max_functions);
 
         return -RT_EINVAL;
     }
@@ -451,6 +618,13 @@ rt_err_t rt_pci_ep_add_epf(struct rt_pci_ep *ep, struct rt_pci_epf *epf)
     return err;
 }
 
+/**
+ * @brief Remove an endpoint function from an endpoint
+ *
+ * @param[in] ep  PCI endpoint controller
+ * @param[in] epf Endpoint function to remove
+ * @return RT_EOK
+ */
 rt_err_t rt_pci_ep_remove_epf(struct rt_pci_ep *ep, struct rt_pci_epf *epf)
 {
     if (!ep || !epf)
@@ -466,6 +640,15 @@ rt_err_t rt_pci_ep_remove_epf(struct rt_pci_ep *ep, struct rt_pci_epf *epf)
     return RT_EOK;
 }
 
+/**
+ * @brief Get a reference to a PCI endpoint controller by name
+ *
+ * Increments the endpoint's reference count. The caller must call
+ * rt_pci_ep_put() when done.
+ *
+ * @param[in] name Endpoint name (or NULL to get the first one)
+ * @return Pointer to the endpoint, or RT_NULL if not found
+ */
 struct rt_pci_ep *rt_pci_ep_get(const char *name)
 {
     rt_ubase_t level;
@@ -488,6 +671,11 @@ struct rt_pci_ep *rt_pci_ep_get(const char *name)
     return ep;
 }
 
+/**
+ * @brief Release callback: unregister the endpoint when refcount reaches zero
+ *
+ * @param[in] ref Reference counter
+ */
 static void pci_ep_release(struct rt_ref *ref)
 {
     struct rt_pci_ep *ep = rt_container_of(ref, struct rt_pci_ep, ref);
@@ -495,6 +683,14 @@ static void pci_ep_release(struct rt_ref *ref)
     rt_pci_ep_unregister(ep);
 }
 
+/**
+ * @brief Release a reference to a PCI endpoint controller
+ *
+ * Decrements the reference count. If it reaches zero, the endpoint
+ * is unregistered.
+ *
+ * @param[in] ep PCI endpoint controller
+ */
 void rt_pci_ep_put(struct rt_pci_ep *ep)
 {
     if (ep)

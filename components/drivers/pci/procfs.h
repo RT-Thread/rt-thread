@@ -8,6 +8,16 @@
  * 2024-07-07     GuEe-GUI     first version
  */
 
+/**
+ * @file procfs.h
+ * @brief PCI procfs interface declarations
+ *
+ * Provides /proc/pci/&lt;BDF&gt; per-device configuration space files
+ * and /proc/pci/devices enumeration for userspace access.
+ * When RT_USING_DFS_PROCFS is disabled, the attach/detach
+ * functions are no-ops.
+ */
+
 #ifndef __PCI_PROCFS_H__
 #define __PCI_PROCFS_H__
 
@@ -16,13 +26,34 @@
 #ifdef RT_USING_DFS_PROCFS
 #include <proc.h>
 
+/**
+ * @brief Create /proc/pci/&lt;BDF&gt; entry for a PCI device
+ *
+ * @param[in] pdev  PCI device to attach
+ */
 void pci_procfs_attach(struct rt_pci_device *pdev);
+
+/**
+ * @brief Remove /proc/pci/&lt;BDF&gt; entry for a PCI device
+ *
+ * @param[in] pdev  PCI device to detach
+ */
 void pci_procfs_detach(struct rt_pci_device *pdev);
 #else
+/**
+ * @brief No-op: create /proc/pci/&lt;BDF&gt; entry (procfs disabled)
+ *
+ * @param[in] pdev  PCI device
+ */
 rt_inline void pci_procfs_attach(struct rt_pci_device *pdev)
 {
 }
 
+/**
+ * @brief No-op: remove /proc/pci/&lt;BDF&gt; entry (procfs disabled)
+ *
+ * @param[in] pdev  PCI device
+ */
 rt_inline void pci_procfs_detach(struct rt_pci_device *pdev)
 {
 }

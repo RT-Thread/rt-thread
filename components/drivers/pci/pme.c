@@ -8,6 +8,29 @@
  * 2022-10-24     GuEe-GUI     first version
  */
 
+/**
+ * @file pme.c
+ * @brief PCI Power Management Event (PME) support
+ *
+ * Implements PCI Power Management capability handling:
+ * - PME capability detection and initialization
+ * - Device wake-up enable/disable (PME# signal control)
+ * - Power state transition tracking
+ *
+ * The PM Capability Register layout is documented in the PCI Power
+ * Management Specification:
+ *   bits 31:27 - PME Support (which power states support PME#)
+ *   bits 26    - D2 Support
+ *   bits 25    - D1 Support
+ *   bits 24:22 - Aux Current
+ *   bit  21    - Device Specific Initialization
+ *   bit  20    - Immediate Readiness on Return to D0
+ *   bit  19    - PME Clock
+ *   bits 18:16 - Version
+ *   bits 15:8  - Next Capability Pointer
+ *   bits 7:0   - Capability ID (always 0x01 for PM)
+ */
+
 #include <drivers/pci.h>
 #include <drivers/core/power_domain.h>
 
@@ -15,26 +38,15 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-/*
- * Power Management Capability Register:
+/**
+ * @brief Initialize PME (Power Management Event) for a PCI device
  *
- *   31      27 26  25 24    22  21  20  19 18  16 15        8 7              0
- *  +---------+---+---+--------+---+---+---+------+-----------+----------------+
- *  |         |   |   |        |   |   |   |      |           | Capabilitiy ID |
- *  +---------+---+---+--------+---+---+---+------+-----------+----------------+
- *       ^      ^   ^      ^     ^   ^   ^     ^        ^
- *       |      |   |      |     |   |   |     |        |
- *       |      |   |      |     |   |   |     |        +---- Next Capabilitiy Pointer
- *       |      |   |      |     |   |   |     +------------- Version
- *       |      |   |      |     |   |   +------------------- PME Clock
- *       |      |   |      |     |   +----------------------- Immediate Readiness on Return to D0
- *       |      |   |      |     +--------------------------- Device Specifiic Initializtion
- *       |      |   |      +--------------------------------- Aux Current
- *       |      |   +---------------------------------------- D1 Support
- *       |      +-------------------------------------------- D2 Support
- *       +--------------------------------------------------- PME Support
+ * Finds the PCI Power Management capability (PCIY_PMG) and reads the
+ * PM Capabilities register to determine which power states support PME#.
+ * If PME is supported, it disables PME# initially (safe default state).
+ *
+ * @param[in] pdev PCI device
  */
-
 void rt_pci_pme_init(struct rt_pci_device *pdev)
 {
     rt_uint16_t pmc;
@@ -49,7 +61,7 @@ void rt_pci_pme_init(struct rt_pci_device *pdev)
     if ((pmc & PCIM_PCAP_SPEC) > 3)
     {
         LOG_E("%s: Unsupported PME CAP regs spec %u",
-                rt_dm_dev_get_name(&pdev->parent), pmc & PCIM_PCAP_SPEC);
+              rt_dm_dev_get_name(&pdev->parent), pmc & PCIM_PCAP_SPEC);
 
         return;
     }
@@ -64,8 +76,19 @@ void rt_pci_pme_init(struct rt_pci_device *pdev)
     }
 }
 
+/**
+ * @brief Enable or disable device wake-up from a given power state
+ *
+ * If the device supports PME in the requested state (or D3cold as
+ * fallback), enables the PME# signal. Otherwise disables it.
+ *
+ * @param[in] pdev   PCI device
+ * @param[in] state  Power state to check PME capability for (RT_PCI_D0 through RT_PCI_D3COLD)
+ * @param[in] enable RT_TRUE to enable wake, RT_FALSE to disable
+ * @return RT_EOK on success, -RT_EINVAL on invalid parameters
+ */
 rt_err_t rt_pci_enable_wake(struct rt_pci_device *pdev,
-        enum rt_pci_power state, rt_bool_t enable)
+                            enum rt_pci_power state, rt_bool_t enable)
 {
     if (!pdev || state >= RT_PCI_PME_MAX)
     {
@@ -88,6 +111,16 @@ rt_err_t rt_pci_enable_wake(struct rt_pci_device *pdev,
     return RT_EOK;
 }
 
+/**
+ * @brief Internal: Activate or deactivate the PME# signal
+ *
+ * Modifies the PME_Status and PME_Enable bits in the Power Management
+ * Control/Status register (PMCSR). Writing 1 to PME_Status clears it
+ * (per PCI spec).
+ *
+ * @param[in] pdev   PCI device
+ * @param[in] enable RT_TRUE to enable PME#, RT_FALSE to disable
+ */
 static void pci_pme_active(struct rt_pci_device *pdev, rt_bool_t enable)
 {
     rt_uint16_t pmcsr;
@@ -110,6 +143,15 @@ static void pci_pme_active(struct rt_pci_device *pdev, rt_bool_t enable)
     pdev->pm_enabled = enable;
 }
 
+/**
+ * @brief Public API: Activate or deactivate PME# and manage power domain
+ *
+ * In addition to the PMCSR manipulation, also attaches/detaches
+ * the device's power domain for runtime PM.
+ *
+ * @param[in] pdev   PCI device
+ * @param[in] enable RT_TRUE to enable PME#, RT_FALSE to disable
+ */
 void rt_pci_pme_active(struct rt_pci_device *pdev, rt_bool_t enable)
 {
     if (!pdev)

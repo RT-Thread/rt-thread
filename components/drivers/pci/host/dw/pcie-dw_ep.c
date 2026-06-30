@@ -8,12 +8,31 @@
  * 2023-09-23     GuEe-GUI     first version
  */
 
+/**
+ * @file pcie-dw_ep.c
+ * @brief Synopsys DesignWare PCIe Endpoint (EP) mode implementation
+ *
+ * Implements EP-mode operations for the DesignWare PCIe controller:
+ * - Configuration header writing (vendor/device IDs, BARs, etc.)
+ * - BAR setup and teardown with inbound iATU mapping
+ * - Address space mapping (CPU addr → PCI addr via outbound ATU)
+ * - MSI and MSI-X configuration and IRQ raising
+ * - EP initialization (DBI2 mapping, function discovery, MSI memory)
+ */
+
 #define DBG_TAG "pcie.dw-ep"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include "pcie-dw.h"
 
+/**
+ * @brief Get the endpoint function descriptor for a given function number
+ *
+ * @param[in] ep      DW PCIe EP
+ * @param[in] func_no Function number
+ * @return Function descriptor, or RT_NULL if not found
+ */
 struct dw_pcie_ep_func *dw_pcie_ep_get_func_from_ep(struct dw_pcie_ep *ep, rt_uint8_t func_no)
 {
     struct dw_pcie_ep_func *ep_func;
@@ -29,6 +48,16 @@ struct dw_pcie_ep_func *dw_pcie_ep_get_func_from_ep(struct dw_pcie_ep *ep, rt_ui
     return RT_NULL;
 }
 
+/**
+ * @brief Select a function by applying the func_select offset
+ *
+ * Multi-function endpoints use a register offset to switch between
+ * function-specific register views.
+ *
+ * @param[in] ep      DW PCIe EP
+ * @param[in] func_no Function number
+ * @return Function offset in DBI space
+ */
 static rt_uint8_t dw_pcie_ep_func_select(struct dw_pcie_ep *ep, rt_uint8_t func_no)
 {
     rt_uint8_t func_offset = 0;
@@ -41,8 +70,19 @@ static rt_uint8_t dw_pcie_ep_func_select(struct dw_pcie_ep *ep, rt_uint8_t func_
     return func_offset;
 }
 
+/**
+ * @brief Reset a BAR to its default state (zeroed, disabled)
+ *
+ * Clears the BAR value in both DBI and DBI2 spaces.
+ * For 64-bit BARs, also clears the upper 32 bits.
+ *
+ * @param[in] pci     DW PCIe controller
+ * @param[in] func_no Function number
+ * @param[in] bar_idx BAR index (0-5)
+ * @param[in] flags   BAR flags (PCIM_BAR_MEM_TYPE_64 for 64-bit)
+ */
 static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, rt_uint8_t func_no,
-        int bar_idx, int flags)
+                                   int bar_idx, int flags)
 {
     rt_uint32_t reg;
     rt_uint8_t func_offset = 0;
@@ -65,6 +105,12 @@ static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, rt_uint8_t func_no,
     dw_pcie_dbi_ro_writable_enable(pci, RT_FALSE);
 }
 
+/**
+ * @brief Reset a BAR for all functions
+ *
+ * @param[in] pci     DW PCIe controller
+ * @param[in] bar_idx BAR index to reset
+ */
 void dw_pcie_ep_reset_bar(struct dw_pcie *pci, int bar_idx)
 {
     rt_uint8_t func_no, funcs = pci->endpoint.epc->max_functions;
@@ -75,8 +121,17 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, int bar_idx)
     }
 }
 
+/**
+ * @brief Recursively find next capability in EP DBI2 space for a specific function
+ *
+ * @param[in] ep      DW PCIe EP
+ * @param[in] func_no Function number
+ * @param[in] cap_ptr Current capability offset
+ * @param[in] cap     Target capability ID
+ * @return Capability offset, or 0 if not found
+ */
 static rt_uint8_t __dw_pcie_ep_find_next_cap(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        rt_uint8_t cap_ptr, rt_uint8_t cap)
+                                             rt_uint8_t cap_ptr, rt_uint8_t cap)
 {
     rt_uint16_t reg;
     rt_uint8_t func_offset = 0, cap_id, next_cap_ptr;
@@ -105,8 +160,16 @@ static rt_uint8_t __dw_pcie_ep_find_next_cap(struct dw_pcie_ep *ep, rt_uint8_t f
     return __dw_pcie_ep_find_next_cap(ep, func_no, next_cap_ptr, cap);
 }
 
+/**
+ * @brief Find a standard PCI capability for a specific EP function
+ *
+ * @param[in] ep      DW PCIe EP
+ * @param[in] func_no Function number
+ * @param[in] cap     Capability ID to find
+ * @return Capability offset, or 0 if not found
+ */
 static rt_uint8_t dw_pcie_ep_find_capability(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        rt_uint8_t cap)
+                                             rt_uint8_t cap)
 {
     rt_uint16_t reg;
     rt_uint8_t func_offset = 0, next_cap_ptr;
@@ -119,8 +182,22 @@ static rt_uint8_t dw_pcie_ep_find_capability(struct dw_pcie_ep *ep, rt_uint8_t f
     return __dw_pcie_ep_find_next_cap(ep, func_no, next_cap_ptr, cap);
 }
 
+/**
+ * @brief Program an inbound iATU region for an EP BAR
+ *
+ * Maps a host→device address translation: when the host reads/writes
+ * to the PCI address space covered by this BAR, the transaction is
+ * translated to the specified CPU physical address.
+ *
+ * @param[in] ep          DW PCIe EP
+ * @param[in] func_no     Function number
+ * @param[in] bar_idx     BAR index
+ * @param[in] cpu_addr    Target CPU physical address
+ * @param[in] aspace_type Address space type (MEM or IO)
+ * @return RT_EOK on success
+ */
 rt_err_t dw_pcie_ep_inbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        int bar_idx, rt_ubase_t cpu_addr, enum dw_pcie_aspace_type aspace_type)
+                                int bar_idx, rt_ubase_t cpu_addr, enum dw_pcie_aspace_type aspace_type)
 {
     rt_err_t err;
     rt_uint32_t free_win;
@@ -146,8 +223,21 @@ rt_err_t dw_pcie_ep_inbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Program an outbound iATU region for EP → host access
+ *
+ * Maps a local CPU address to a PCI bus address, allowing the
+ * EP to access host memory or raise MSI/MSI-X interrupts.
+ *
+ * @param[in] ep        DW PCIe EP
+ * @param[in] func_no   Function number
+ * @param[in] phys_addr CPU physical address
+ * @param[in] pci_addr  Target PCI bus address
+ * @param[in] size      Region size
+ * @return RT_EOK on success
+ */
 rt_err_t dw_pcie_ep_outbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        rt_ubase_t phys_addr, rt_uint64_t pci_addr, rt_size_t size)
+                                 rt_ubase_t phys_addr, rt_uint64_t pci_addr, rt_size_t size)
 {
     rt_uint32_t free_win;
     struct dw_pcie *pci = to_dw_pcie_from_endpoint(ep);
@@ -160,7 +250,7 @@ rt_err_t dw_pcie_ep_outbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
     }
 
     dw_pcie_prog_ep_outbound_atu(pci, func_no, free_win, PCIE_ATU_TYPE_MEM,
-            phys_addr, pci_addr, size);
+                                 phys_addr, pci_addr, size);
 
     ep->outbound_addr[free_win] = phys_addr;
     rt_bitmap_set_bit(ep->ob_window_map, free_win);
@@ -168,8 +258,19 @@ rt_err_t dw_pcie_ep_outbound_atu(struct dw_pcie_ep *ep, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Write the PCI configuration header for an EP function
+ *
+ * Programs vendor ID, device ID, revision, class code, subsystem IDs,
+ * and interrupt pin through the DBI (DBI2 for EP-visible config space).
+ *
+ * @param[in] epc     PCI EP controller
+ * @param[in] func_no Function number
+ * @param[in] hdr     Header data to write
+ * @return 0 on success
+ */
 static rt_err_t dw_pcie_ep_write_header(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        struct rt_pci_ep_header *hdr)
+                                        struct rt_pci_ep_header *hdr)
 {
     rt_uint8_t func_offset = 0;
     struct dw_pcie_ep *ep = epc->priv;
@@ -194,8 +295,20 @@ static rt_err_t dw_pcie_ep_write_header(struct rt_pci_ep *epc, rt_uint8_t func_n
     return 0;
 }
 
+/**
+ * @brief Clear a BAR on an EP function
+ *
+ * Resets the BAR to zero, disables the associated inbound ATU region,
+ * and frees the ATU window.
+ *
+ * @param[in] epc     PCI EP controller
+ * @param[in] func_no Function number
+ * @param[in] bar     BAR descriptor (unused)
+ * @param[in] bar_idx BAR index
+ * @return RT_EOK
+ */
 static rt_err_t dw_pcie_ep_clear_bar(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        struct rt_pci_ep_bar *bar, int bar_idx)
+                                     struct rt_pci_ep_bar *bar, int bar_idx)
 {
     rt_uint32_t atu_index;
     struct dw_pcie_ep *ep = epc->priv;
@@ -211,8 +324,21 @@ static rt_err_t dw_pcie_ep_clear_bar(struct rt_pci_ep *epc, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Set a BAR on an EP function
+ *
+ * Configures the BAR size (written to DBI2 for the host to read),
+ * sets the BAR flags (memory/IO, 32/64-bit, prefetchable),
+ * and programs an inbound ATU to translate host accesses.
+ *
+ * @param[in] epc     PCI EP controller
+ * @param[in] func_no Function number
+ * @param[in] bar     BAR configuration
+ * @param[in] bar_idx BAR index
+ * @return RT_EOK on success
+ */
 static rt_err_t dw_pcie_ep_set_bar(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        struct rt_pci_ep_bar *bar, int bar_idx)
+                                   struct rt_pci_ep_bar *bar, int bar_idx)
 {
     rt_err_t err;
     rt_uint32_t reg;
@@ -258,8 +384,16 @@ static rt_err_t dw_pcie_ep_set_bar(struct rt_pci_ep *epc, rt_uint8_t func_no,
     return 0;
 }
 
+/**
+ * @brief Find the ATU index for a given outbound CPU address
+ *
+ * @param[in]  ep        DW PCIe EP
+ * @param[in]  addr      CPU physical address
+ * @param[out] atu_index Found ATU region index
+ * @return RT_EOK on success, -RT_EINVAL if not found
+ */
 static rt_err_t dw_pcie_find_index(struct dw_pcie_ep *ep,
-        rt_ubase_t addr, rt_uint32_t *atu_index)
+                                   rt_ubase_t addr, rt_uint32_t *atu_index)
 {
     for (rt_uint32_t index = 0; index < ep->num_ob_windows; ++index)
     {
@@ -276,8 +410,16 @@ static rt_err_t dw_pcie_find_index(struct dw_pcie_ep *ep,
     return -RT_EINVAL;
 }
 
+/**
+ * @brief Unmap a previously mapped outbound address
+ *
+ * @param[in] epc     PCI EP controller
+ * @param[in] func_no Function number
+ * @param[in] addr    CPU physical address to unmap
+ * @return RT_EOK on success
+ */
 static rt_err_t dw_pcie_ep_unmap_addr(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        rt_ubase_t addr)
+                                      rt_ubase_t addr)
 {
     rt_err_t err;
     rt_uint32_t atu_index;
@@ -295,8 +437,21 @@ static rt_err_t dw_pcie_ep_unmap_addr(struct rt_pci_ep *epc, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Map a CPU address to PCI address space (EP → host access)
+ *
+ * Programs an outbound ATU entry to translate local CPU addresses
+ * to PCI bus addresses.
+ *
+ * @param[in] epc      PCI EP controller
+ * @param[in] func_no  Function number
+ * @param[in] addr     CPU physical address
+ * @param[in] pci_addr Target PCI bus address
+ * @param[in] size     Mapping size
+ * @return RT_EOK on success
+ */
 static rt_err_t dw_pcie_ep_map_addr(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size)
+                                    rt_ubase_t addr, rt_uint64_t pci_addr, rt_size_t size)
 {
     rt_err_t err;
     struct dw_pcie_ep *ep = epc->priv;
@@ -311,8 +466,19 @@ static rt_err_t dw_pcie_ep_map_addr(struct rt_pci_ep *epc, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Configure MSI Multi-Message Enable for an EP function
+ *
+ * Writes the number of MSI vectors (log2 encoded) to the MSI
+ * Message Control register.
+ *
+ * @param[in] epc     PCI EP controller
+ * @param[in] func_no Function number
+ * @param[in] irq_nr  Log2 of number of requested vectors
+ * @return RT_EOK on success
+ */
 static rt_err_t dw_pcie_ep_set_msi(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        unsigned irq_nr)
+                                   unsigned irq_nr)
 {
     rt_uint32_t val, reg;
     rt_uint8_t func_offset = 0;
@@ -340,8 +506,16 @@ static rt_err_t dw_pcie_ep_set_msi(struct rt_pci_ep *epc, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Get the current MSI configuration from an EP function
+ *
+ * @param[in]  epc         PCI EP controller
+ * @param[in]  func_no     Function number
+ * @param[out] out_irq_nr  Number of MSI vectors enabled
+ * @return RT_EOK on success, -RT_EINVAL if MSI is not enabled
+ */
 static rt_err_t dw_pcie_ep_get_msi(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        unsigned *out_irq_nr)
+                                   unsigned *out_irq_nr)
 {
     rt_uint32_t val, reg;
     rt_uint8_t func_offset = 0;
@@ -369,8 +543,21 @@ static rt_err_t dw_pcie_ep_get_msi(struct rt_pci_ep *epc, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Configure MSI-X for an EP function
+ *
+ * Sets the number of MSI-X vectors and the table/PBA location
+ * (BAR index + offset).
+ *
+ * @param[in] epc     PCI EP controller
+ * @param[in] func_no Function number
+ * @param[in] irq_nr  Number of MSI-X vectors
+ * @param[in] bar_idx BAR index for the MSI-X table
+ * @param[in] offset  Offset within the BAR
+ * @return RT_EOK on success
+ */
 static rt_err_t dw_pcie_ep_set_msix(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        unsigned irq_nr, int bar_idx, rt_off_t offset)
+                                    unsigned irq_nr, int bar_idx, rt_off_t offset)
 {
     rt_uint32_t val, reg;
     rt_uint8_t func_offset = 0;
@@ -407,8 +594,16 @@ static rt_err_t dw_pcie_ep_set_msix(struct rt_pci_ep *epc, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Get the current MSI-X configuration from an EP function
+ *
+ * @param[in]  epc         PCI EP controller
+ * @param[in]  func_no     Function number
+ * @param[out] out_irq_nr  Number of MSI-X vectors
+ * @return RT_EOK on success
+ */
 static rt_err_t dw_pcie_ep_get_msix(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        unsigned *out_irq_nr)
+                                    unsigned *out_irq_nr)
 {
     rt_uint32_t val, reg;
     rt_uint8_t func_offset = 0;
@@ -436,8 +631,17 @@ static rt_err_t dw_pcie_ep_get_msix(struct rt_pci_ep *epc, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Raise an interrupt from the EP to the host (delegates to platform ops)
+ *
+ * @param[in] epc     PCI EP controller
+ * @param[in] func_no Function number
+ * @param[in] type    Interrupt type
+ * @param[in] irq     Vector number
+ * @return RT_EOK on success
+ */
 static rt_err_t dw_pcie_ep_raise_irq(struct rt_pci_ep *epc, rt_uint8_t func_no,
-        enum rt_pci_ep_irq type, unsigned irq)
+                                     enum rt_pci_ep_irq type, unsigned irq)
 {
     struct dw_pcie_ep *ep = epc->priv;
 
@@ -449,6 +653,12 @@ static rt_err_t dw_pcie_ep_raise_irq(struct rt_pci_ep *epc, rt_uint8_t func_no,
     return ep->ops->raise_irq(ep, func_no, type, irq);
 }
 
+/**
+ * @brief Stop the EP (disable link)
+ *
+ * @param[in] epc PCI EP controller
+ * @return RT_EOK
+ */
 static rt_err_t dw_pcie_ep_stop(struct rt_pci_ep *epc)
 {
     struct dw_pcie_ep *ep = epc->priv;
@@ -462,6 +672,12 @@ static rt_err_t dw_pcie_ep_stop(struct rt_pci_ep *epc)
     return RT_EOK;
 }
 
+/**
+ * @brief Start the EP (enable link)
+ *
+ * @param[in] epc PCI EP controller
+ * @return RT_EOK on success
+ */
 static rt_err_t dw_pcie_ep_start(struct rt_pci_ep *epc)
 {
     struct dw_pcie_ep *ep = epc->priv;
@@ -475,22 +691,29 @@ static rt_err_t dw_pcie_ep_start(struct rt_pci_ep *epc)
     return RT_EOK;
 }
 
-static const struct rt_pci_ep_ops dw_pcie_ep_ops =
-{
-    .write_header   = dw_pcie_ep_write_header,
-    .set_bar        = dw_pcie_ep_set_bar,
-    .clear_bar      = dw_pcie_ep_clear_bar,
-    .map_addr       = dw_pcie_ep_map_addr,
-    .unmap_addr     = dw_pcie_ep_unmap_addr,
-    .set_msi        = dw_pcie_ep_set_msi,
-    .get_msi        = dw_pcie_ep_get_msi,
-    .set_msix       = dw_pcie_ep_set_msix,
-    .get_msix       = dw_pcie_ep_get_msix,
-    .raise_irq      = dw_pcie_ep_raise_irq,
-    .start          = dw_pcie_ep_start,
-    .stop           = dw_pcie_ep_stop,
+/** @brief DW PCIe EP operations vtable */
+static const struct rt_pci_ep_ops dw_pcie_ep_ops = {
+    .write_header = dw_pcie_ep_write_header,
+    .set_bar = dw_pcie_ep_set_bar,
+    .clear_bar = dw_pcie_ep_clear_bar,
+    .map_addr = dw_pcie_ep_map_addr,
+    .unmap_addr = dw_pcie_ep_unmap_addr,
+    .set_msi = dw_pcie_ep_set_msi,
+    .get_msi = dw_pcie_ep_get_msi,
+    .set_msix = dw_pcie_ep_set_msix,
+    .get_msix = dw_pcie_ep_get_msix,
+    .raise_irq = dw_pcie_ep_raise_irq,
+    .start = dw_pcie_ep_start,
+    .stop = dw_pcie_ep_stop,
 };
 
+/**
+ * @brief Raise a legacy INTx interrupt (not supported on DW EP)
+ *
+ * @param[in] ep      DW PCIe EP
+ * @param[in] func_no Function number
+ * @return Always -RT_EINVAL (not supported)
+ */
 rt_err_t dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, rt_uint8_t func_no)
 {
     LOG_E("EP cannot trigger legacy IRQs");
@@ -498,8 +721,20 @@ rt_err_t dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, rt_uint8_t func_no)
     return -RT_EINVAL;
 }
 
+/**
+ * @brief Raise an MSI interrupt from the EP
+ *
+ * Reads the MSI address and data from the MSI capability registers
+ * (configured by the host), maps the MSI target address via outbound
+ * ATU, and performs a posted memory write with the message data.
+ *
+ * @param[in] ep      DW PCIe EP
+ * @param[in] func_no Function number
+ * @param[in] irq     Vector number (1-based)
+ * @return RT_EOK on success
+ */
 rt_err_t dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        unsigned irq)
+                                  unsigned irq)
 {
     rt_err_t err;
     rt_off_t aligned_offset;
@@ -553,8 +788,19 @@ rt_err_t dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Raise an MSI-X interrupt via the doorbell mechanism
+ *
+ * Uses the DW controller's MSI-X doorbell register for faster
+ * interrupt delivery (avoids mapping the MSI-X table).
+ *
+ * @param[in] ep      DW PCIe EP
+ * @param[in] func_no Function number
+ * @param[in] irq     Vector number (1-based)
+ * @return RT_EOK on success
+ */
 rt_err_t dw_pcie_ep_raise_msix_irq_doorbell(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        unsigned irq)
+                                            unsigned irq)
 {
     rt_uint32_t msg_data;
     struct dw_pcie_ep_func *ep_func;
@@ -572,8 +818,19 @@ rt_err_t dw_pcie_ep_raise_msix_irq_doorbell(struct dw_pcie_ep *ep, rt_uint8_t fu
     return RT_EOK;
 }
 
+/**
+ * @brief Raise an MSI-X interrupt by performing a memory write to the MSI-X table entry
+ *
+ * Reads the MSI-X table entry (address + data + vector control),
+ * maps the target address via outbound ATU, and performs the write.
+ *
+ * @param[in] ep      DW PCIe EP
+ * @param[in] func_no Function number
+ * @param[in] irq     Vector number (1-based)
+ * @return RT_EOK on success, -RT_EINVAL if vector is masked
+ */
 rt_err_t dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, rt_uint8_t func_no,
-        unsigned irq)
+                                   unsigned irq)
 {
     rt_err_t err;
     int bar_idx;
@@ -623,6 +880,14 @@ rt_err_t dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, rt_uint8_t func_no,
     return RT_EOK;
 }
 
+/**
+ * @brief Clean up and free all EP resources
+ *
+ * Frees MSI memory, function descriptors, iATU window bitmaps,
+ * outbound address array, and the EPC structure.
+ *
+ * @param[in] ep DW PCIe EP
+ */
 void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
 {
     struct rt_pci_ep *epc = ep->epc;
@@ -664,6 +929,13 @@ void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
     }
 }
 
+/**
+ * @brief Find an extended capability in the controller's DBI space
+ *
+ * @param[in] pci DW PCIe controller
+ * @param[in] cap Extended capability ID
+ * @return Extended capability offset, or 0 if not found
+ */
 static rt_uint32_t dw_pcie_ep_find_ext_capability(struct dw_pcie *pci, int cap)
 {
     rt_uint32_t header;
@@ -687,6 +959,15 @@ static rt_uint32_t dw_pcie_ep_find_ext_capability(struct dw_pcie *pci, int cap)
     return 0;
 }
 
+/**
+ * @brief Complete EP initialization after dw_pcie_ep_init()
+ *
+ * Verifies the controller is in EP mode, disables any Resizable BAR
+ * capability left by firmware, and performs controller setup.
+ *
+ * @param[in] ep DW PCIe EP
+ * @return RT_EOK on success
+ */
 rt_err_t dw_pcie_ep_init_complete(struct dw_pcie_ep *ep)
 {
     rt_off_t offset;
@@ -723,6 +1004,22 @@ rt_err_t dw_pcie_ep_init_complete(struct dw_pcie_ep *ep)
     return RT_EOK;
 }
 
+/**
+ * @brief Initialize the DW PCIe endpoint
+ *
+ * Full initialization sequence:
+ * 1. Validate DBI/DBI2 bases
+ * 2. Read iATU window counts from device tree
+ * 3. Allocate window bitmaps and outbound address array
+ * 4. Register with the EP framework
+ * 5. Discover MSI and MSI-X capabilities for each function
+ * 6. Initialize endpoint memory pool
+ * 7. Allocate MSI/MSI-X memory
+ * 8. Complete initialization (controller setup)
+ *
+ * @param[in] ep DW PCIe EP
+ * @return RT_EOK on success
+ */
 rt_err_t dw_pcie_ep_init(struct dw_pcie_ep *ep)
 {
     rt_err_t err;
