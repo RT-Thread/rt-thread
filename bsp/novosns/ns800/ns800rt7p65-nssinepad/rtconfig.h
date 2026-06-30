@@ -420,9 +420,10 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_NS800_UART_TX_TIMEOUT 6000
+#define BSP_UART_DEFAULT_BAUDRATE 115200
+#define BSP_UART_DATABITS_8
+#define BSP_UART_STOPBITS_1
 #define BSP_USING_UART1
-#define BSP_USING_CAN
-#define BSP_USING_CANFD1
 /* end of On-chip Peripheral Drivers */
 
 #endif
