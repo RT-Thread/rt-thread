@@ -184,6 +184,70 @@ menu "On-chip Peripheral Drivers"
 
     endif
 
+    menuconfig BSP_USING_RTC
+        bool "Enable external RTC"
+        select RT_USING_RTC
+        default n
+        help
+            Enable the board-level RTC framework for an external RTC chip.
+
+        if BSP_USING_RTC
+            choice
+                prompt "External RTC backend"
+                default BSP_RTC_USING_DS1307
+
+                config BSP_RTC_USING_DS1307
+                    bool "DS1307 over I2C"
+                    select BSP_USING_I2C
+                    select BSP_USING_HARD_I2C1
+                    select RT_USING_I2C
+
+                config BSP_RTC_USING_SOFT
+                    bool "Software RTC"
+            endchoice
+
+            if BSP_RTC_USING_DS1307
+                config BSP_RTC_DS1307_I2C_BUS_NAME
+                    string "DS1307 I2C bus name"
+                    default "hwi2c1"
+
+                config BSP_RTC_DS1307_I2C_ADDR
+                    hex "DS1307 I2C address"
+                    default 0x68
+            endif
+
+            if BSP_RTC_USING_SOFT
+                config BSP_RTC_SOFT_DEFAULT_YEAR
+                    int "Software RTC default year"
+                    default 2026
+
+                config BSP_RTC_SOFT_DEFAULT_MONTH
+                    int "Software RTC default month"
+                    range 1 12
+                    default 1
+
+                config BSP_RTC_SOFT_DEFAULT_DAY
+                    int "Software RTC default day"
+                    range 1 31
+                    default 1
+
+                config BSP_RTC_SOFT_DEFAULT_HOUR
+                    int "Software RTC default hour"
+                    range 0 23
+                    default 0
+
+                config BSP_RTC_SOFT_DEFAULT_MIN
+                    int "Software RTC default minute"
+                    range 0 59
+                    default 0
+
+                config BSP_RTC_SOFT_DEFAULT_SEC
+                    int "Software RTC default second"
+                    range 0 59
+                    default 0
+            endif
+        endif
+
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
         select RT_USING_SPI
