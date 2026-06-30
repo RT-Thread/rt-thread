@@ -4,10 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2024-02-06     Dyyt587   first version
- * 2024-04-23     Zeidan    Add I2Cx_xx_DMA_CONFIG
- * 2024-06-23     wdfk-prog Add H7 hard I2C config
+ * Date           Author         Notes
+ * 2026-06-07     dirtwillfly    first version for NS800
  */
 #ifndef __I2C_HARD_CONFIG_H__
 #define __I2C_HARD_CONFIG_H__
@@ -18,242 +16,115 @@
 extern "C" {
 #endif
 
+/* I2C1 default GPIO configuration */
+/* GPIO_0 (SDA) -> GPIOA, GPIO_PIN_0 */
+/* GPIO_1 (SCL) -> GPIOA, GPIO_PIN_1 */
+#ifndef BSP_I2C1_SCL_PIN_NUM
+#define BSP_I2C1_SCL_PIN_NUM     1U
+#endif
+#ifndef BSP_I2C1_SDA_PIN_NUM
+#define BSP_I2C1_SDA_PIN_NUM     0U
+#endif
+#ifndef BSP_I2C1_SCL_PORT
+#define BSP_I2C1_SCL_PORT        GPIOA
+#endif
+#ifndef BSP_I2C1_SDA_PORT
+#define BSP_I2C1_SDA_PORT        GPIOA
+#endif
+#ifndef BSP_I2C1_SCL_PIN
+#define BSP_I2C1_SCL_PIN         GPIO_PIN_1
+#endif
+#ifndef BSP_I2C1_SDA_PIN
+#define BSP_I2C1_SDA_PIN         GPIO_PIN_0
+#endif
+#ifndef BSP_I2C1_SCL_ALT_FUNC
+#define BSP_I2C1_SCL_ALT_FUNC    ALT6_FUNCTION
+#endif
+#ifndef BSP_I2C1_SDA_ALT_FUNC
+#define BSP_I2C1_SDA_ALT_FUNC    ALT6_FUNCTION
+#endif
+
+/* I2C2 default GPIO configuration */
+/* GPIO_34 (SDA) -> GPIOB, GPIO_PIN_2 */
+/* GPIO_35 (SCL) -> GPIOB, GPIO_PIN_3 */
+#ifndef BSP_I2C2_SCL_PIN_NUM
+#define BSP_I2C2_SCL_PIN_NUM     35U
+#endif
+#ifndef BSP_I2C2_SDA_PIN_NUM
+#define BSP_I2C2_SDA_PIN_NUM     34U
+#endif
+#ifndef BSP_I2C2_SCL_PORT
+#define BSP_I2C2_SCL_PORT        GPIOB
+#endif
+#ifndef BSP_I2C2_SDA_PORT
+#define BSP_I2C2_SDA_PORT        GPIOB
+#endif
+#ifndef BSP_I2C2_SCL_PIN
+#define BSP_I2C2_SCL_PIN         GPIO_PIN_3
+#endif
+#ifndef BSP_I2C2_SDA_PIN
+#define BSP_I2C2_SDA_PIN         GPIO_PIN_2
+#endif
+#ifndef BSP_I2C2_SCL_ALT_FUNC
+#define BSP_I2C2_SCL_ALT_FUNC    ALT6_FUNCTION
+#endif
+#ifndef BSP_I2C2_SDA_ALT_FUNC
+#define BSP_I2C2_SDA_ALT_FUNC    ALT6_FUNCTION
+#endif
+
 #ifdef BSP_USING_HARD_I2C1
+#ifndef BSP_I2C1_BAUDRATE
+#define BSP_I2C1_BAUDRATE    100000
+#endif
+
 #ifndef I2C1_BUS_CONFIG
-#define I2C1_BUS_CONFIG                             \
-    {                                               \
-        .Instance = I2C1,                           \
-        .timing = 0x307075B1,                       \
-        .timeout = 1000,                            \
-        .name = "hwi2c1",                           \
-        .evirq_type = I2C1_EV_IRQn,                 \
-        .erirq_type = I2C1_ER_IRQn,                 \
+#define I2C1_BUS_CONFIG                                 \
+    {                                                   \
+        .name = "hwi2c1",                               \
+        .Instance = I2C1,                               \
+        .baudrate = BSP_I2C1_BAUDRATE,                  \
+        .timeout = 1000,                                \
+        .irq_type = I2C1_MST_IRQn,                      \
+        .scl_pin_num = BSP_I2C1_SCL_PIN_NUM,            \
+        .sda_pin_num = BSP_I2C1_SDA_PIN_NUM,            \
+        .scl_port = BSP_I2C1_SCL_PORT,                  \
+        .sda_port = BSP_I2C1_SDA_PORT,                  \
+        .scl_pin = BSP_I2C1_SCL_PIN,                    \
+        .sda_pin = BSP_I2C1_SDA_PIN,                    \
+        .scl_alt_func = BSP_I2C1_SCL_ALT_FUNC,          \
+        .sda_alt_func = BSP_I2C1_SDA_ALT_FUNC,          \
     }
 #endif /* I2C1_BUS_CONFIG */
 #endif /* BSP_USING_HARD_I2C1 */
 
-#ifdef BSP_I2C1_TX_USING_DMA
-#ifndef I2C1_TX_DMA_CONFIG
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-#define I2C1_TX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C1_TX_DMA_RCC,                 \
-        .Instance = I2C1_TX_DMA_INSTANCE,           \
-        .dma_irq = I2C1_TX_DMA_IRQ,                 \
-        .channel = I2C1_TX_DMA_CHANNEL              \
-    }
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-#define I2C1_TX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C1_TX_DMA_RCC,                 \
-        .Instance = I2C1_TX_DMA_INSTANCE,           \
-        .dma_irq = I2C1_TX_DMA_IRQ,                 \
-        .request = DMA_REQUEST_I2C1_TX              \
-    }
-#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
-#endif /* I2C1_TX_DMA_CONFIG */
-#endif /* BSP_I2C1_TX_USING_DMA */
-
-#ifdef BSP_I2C1_RX_USING_DMA
-#ifndef I2C1_RX_DMA_CONFIG
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-#define I2C1_RX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C1_RX_DMA_RCC,                 \
-        .Instance = I2C1_RX_DMA_INSTANCE,           \
-        .dma_irq = I2C1_RX_DMA_IRQ,                 \
-        .channel = I2C1_RX_DMA_CHANNEL,             \
-    }
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-#define I2C1_RX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C1_RX_DMA_RCC,                 \
-        .Instance = I2C1_RX_DMA_INSTANCE,           \
-        .dma_irq = I2C1_RX_DMA_IRQ,                 \
-        .request = DMA_REQUEST_I2C1_RX              \
-    }
-#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
-#endif /* I2C1_RX_DMA_CONFIG */
-#endif /* BSP_I2C1_RX_USING_DMA */
-
 #ifdef BSP_USING_HARD_I2C2
+#ifndef BSP_I2C2_BAUDRATE
+#define BSP_I2C2_BAUDRATE    100000
+#endif
+
 #ifndef I2C2_BUS_CONFIG
-#define I2C2_BUS_CONFIG                             \
-    {                                               \
-        .Instance = I2C2,                           \
-        .timing = 0x307075B1,                       \
-        .timeout = 1000,                            \
-        .name = "hwi2c2",                           \
-        .evirq_type = I2C2_EV_IRQn,                 \
-        .erirq_type = I2C2_ER_IRQn,                 \
+#define I2C2_BUS_CONFIG                                 \
+    {                                                   \
+        .name = "hwi2c2",                               \
+        .Instance = I2C2,                               \
+        .baudrate = BSP_I2C2_BAUDRATE,                  \
+        .timeout = 1000,                                \
+        .irq_type = I2C2_MST_IRQn,                      \
+        .scl_pin_num = BSP_I2C2_SCL_PIN_NUM,            \
+        .sda_pin_num = BSP_I2C2_SDA_PIN_NUM,            \
+        .scl_port = BSP_I2C2_SCL_PORT,                  \
+        .sda_port = BSP_I2C2_SDA_PORT,                  \
+        .scl_pin = BSP_I2C2_SCL_PIN,                    \
+        .sda_pin = BSP_I2C2_SDA_PIN,                    \
+        .scl_alt_func = BSP_I2C2_SCL_ALT_FUNC,          \
+        .sda_alt_func = BSP_I2C2_SDA_ALT_FUNC,          \
     }
 #endif /* I2C2_BUS_CONFIG */
 #endif /* BSP_USING_HARD_I2C2 */
-
-#ifdef BSP_I2C2_TX_USING_DMA
-#ifndef I2C2_TX_DMA_CONFIG
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-#define I2C2_TX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C2_TX_DMA_RCC,                 \
-        .Instance = I2C2_TX_DMA_INSTANCE,           \
-        .dma_irq = I2C2_TX_DMA_IRQ,                 \
-        .channel = I2C2_TX_DMA_CHANNEL,             \
-    }
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-#define I2C2_TX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C2_TX_DMA_RCC,                 \
-        .Instance = I2C2_TX_DMA_INSTANCE,           \
-        .dma_irq = I2C2_TX_DMA_IRQ,                 \
-        .request = DMA_REQUEST_I2C2_TX              \
-    }
-#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
-#endif /* I2C2_TX_DMA_CONFIG */
-#endif /* BSP_I2C2_TX_USING_DMA */
-
-#ifdef BSP_I2C2_RX_USING_DMA
-#ifndef I2C2_RX_DMA_CONFIG
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-#define I2C2_RX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C2_RX_DMA_RCC,                 \
-        .Instance = I2C2_RX_DMA_INSTANCE,           \
-        .dma_irq = I2C2_RX_DMA_IRQ,                 \
-        .channel = I2C2_RX_DMA_CHANNEL,             \
-    }
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-#define I2C2_RX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C2_RX_DMA_RCC,                 \
-        .Instance = I2C2_RX_DMA_INSTANCE,           \
-        .dma_irq = I2C2_RX_DMA_IRQ,                 \
-        .request = DMA_REQUEST_I2C2_RX              \
-    }
-#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
-#endif /* I2C2_RX_DMA_CONFIG */
-#endif /* BSP_I2C2_RX_USING_DMA */
-
-#ifdef BSP_USING_HARD_I2C3
-#ifndef I2C3_BUS_CONFIG
-#define I2C3_BUS_CONFIG                             \
-    {                                               \
-        .Instance = I2C3,                           \
-        .timing = 0x307075B1,                       \
-        .timeout = 1000,                            \
-        .name = "hwi2c3",                           \
-        .evirq_type = I2C3_EV_IRQn,                 \
-        .erirq_type = I2C3_ER_IRQn,                 \
-    }
-#endif /* I2C3_BUS_CONFIG */
-#endif /* BSP_USING_HARD_I2C3 */
-
-#ifdef BSP_I2C3_TX_USING_DMA
-#ifndef I2C3_TX_DMA_CONFIG
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-#define I2C3_TX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C3_TX_DMA_RCC,                 \
-        .Instance = I2C3_TX_DMA_INSTANCE,           \
-        .dma_irq = I2C3_TX_DMA_IRQ,                 \
-        .channel = I2C3_TX_DMA_CHANNEL,             \
-    }
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-#define I2C3_TX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C3_TX_DMA_RCC,                 \
-        .Instance = I2C3_TX_DMA_INSTANCE,           \
-        .dma_irq = I2C3_TX_DMA_IRQ,                 \
-        .request = DMA_REQUEST_I2C3_TX              \
-    }
-#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
-#endif /* I2C3_TX_DMA_CONFIG */
-#endif /* BSP_I2C3_TX_USING_DMA */
-
-#ifdef BSP_I2C3_RX_USING_DMA
-#ifndef I2C3_RX_DMA_CONFIG
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-#define I2C3_RX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C3_RX_DMA_RCC,                 \
-        .Instance = I2C3_RX_DMA_INSTANCE,           \
-        .dma_irq = I2C3_RX_DMA_IRQ,                 \
-        .channel = I2C3_RX_DMA_CHANNEL,             \
-    }
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-#define I2C3_RX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C3_RX_DMA_RCC,                 \
-        .Instance = I2C3_RX_DMA_INSTANCE,           \
-        .dma_irq = I2C3_RX_DMA_IRQ,                 \
-        .request = DMA_REQUEST_I2C3_RX              \
-    }
-#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
-#endif /* I2C3_RX_DMA_CONFIG */
-#endif /* BSP_I2C3_RX_USING_DMA */
-
-#ifdef BSP_USING_HARD_I2C4
-#ifndef I2C4_BUS_CONFIG
-#define I2C4_BUS_CONFIG                             \
-    {                                               \
-        .Instance = I2C4,                           \
-        .timing = 0x307075B1,                       \
-        .timeout = 1000,                            \
-        .name = "hwi2c4",                           \
-        .evirq_type = I2C4_EV_IRQn,                 \
-        .erirq_type = I2C4_ER_IRQn,                 \
-    }
-#endif /* I2C4_BUS_CONFIG */
-#endif /* BSP_USING_HARD_I2C4 */
-
-#ifdef BSP_I2C4_TX_USING_DMA
-#ifndef I2C4_TX_DMA_CONFIG
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-#define I2C4_TX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C4_TX_DMA_RCC,                 \
-        .Instance = I2C4_TX_DMA_INSTANCE,           \
-        .dma_irq = I2C4_TX_DMA_IRQ,                 \
-        .channel = I2C4_TX_DMA_CHANNEL,             \
-    }
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-#define I2C4_TX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C4_TX_DMA_RCC,                 \
-        .Instance = I2C4_TX_DMA_INSTANCE,           \
-        .dma_irq = I2C4_TX_DMA_IRQ,                 \
-        .request = DMA_REQUEST_I2C4_TX              \
-    }
-#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
-#endif /* I2C4_TX_DMA_CONFIG */
-#endif /* BSP_I2C4_TX_USING_DMA */
-
-#ifdef BSP_I2C4_RX_USING_DMA
-#ifndef I2C4_RX_DMA_CONFIG
-#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-#define I2C4_RX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C4_RX_DMA_RCC,                 \
-        .Instance = I2C4_RX_DMA_INSTANCE,           \
-        .dma_irq = I2C4_RX_DMA_IRQ,                 \
-        .channel = I2C4_RX_DMA_CHANNEL,             \
-    }
-#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
-#define I2C4_RX_DMA_CONFIG                          \
-    {                                               \
-        .dma_rcc = I2C4_RX_DMA_RCC,                 \
-        .Instance = I2C4_RX_DMA_INSTANCE,           \
-        .dma_irq = I2C4_RX_DMA_IRQ,                 \
-        .request = DMA_REQUEST_I2C4_RX              \
-    }
-#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
-#endif /* I2C4_RX_DMA_CONFIG */
-#endif /* BSP_I2C4_RX_USING_DMA */
-
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /*__I2C_HARD_CONFIG_H__ */
+#endif /* __I2C_HARD_CONFIG_H__ */
 

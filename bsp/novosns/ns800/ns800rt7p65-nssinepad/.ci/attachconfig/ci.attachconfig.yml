@@ -16,6 +16,12 @@ devices.spi:
       - CONFIG_BSP_USING_SPI=y
       - CONFIG_BSP_USING_SPI1=y
       - CONFIG_BSP_USING_QSPI=y
+devices.i2c:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_I2C=y
+      - CONFIG_BSP_USING_HARD_I2C1=y
+      - CONFIG_BSP_USING_HARD_I2C2=y
 devices.wdt:
     <<: *scons
     kconfig:

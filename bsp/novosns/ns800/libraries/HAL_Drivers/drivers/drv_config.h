@@ -20,7 +20,7 @@ extern "C" {
 
 #if  defined(SOC_SERIES_NS800RT7)
 #include "rt7/uart_config.h"
-
+#include "rt7/i2c_hard_config.h"
 #endif
 
 #ifdef __cplusplus
