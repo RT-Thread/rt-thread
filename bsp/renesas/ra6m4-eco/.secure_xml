@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<raConfiguration version="11">
+  <generalSettings>
+    <option key="#Board#" value="board.custom"/>
+    <option key="CPU" value="RA6M4"/>
+    <option key="Core" value="CM33"/>
+    <option key="#TargetName#" value="R7FA6M4AF3CFP"/>
+    <option key="#TargetARCHITECTURE#" value="cortex-m33"/>
+    <option key="#DeviceCommand#" value="R7FA6M4AF"/>
+    <option key="#RTOS#" value="_none"/>
+    <option key="#pinconfiguration#" value="R7FA6M4AF3CFP.pincfg"/>
+    <option key="#FSPVersion#" value="5.9.0"/>
+    <option key="#ConfigurationFragments#" value="RECH##BSP##Board##RA6M4_IoT##"/>
+    <option key="#SELECTED_TOOLCHAIN#" value="com.arm.toolchain"/>
+  </generalSettings>
+  <raBspConfiguration/>
+  <raClockConfiguration>
+    <node id="board.clock.xtal.freq" mul="24000000" option="_edit"/>
+    <node id="board.clock.hoco.freq" option="board.clock.hoco.freq.20m"/>
+    <node id="board.clock.loco.freq" option="board.clock.loco.freq.32768"/>
+    <node id="board.clock.moco.freq" option="board.clock.moco.freq.8m"/>
+    <node id="board.clock.subclk.freq" option="board.clock.subclk.freq.32768"/>
+    <node id="board.clock.pll.source" option="board.clock.pll.source.xtal"/>
+    <node id="board.clock.pll.div" option="board.clock.pll.div.3"/>
+    <node id="board.clock.pll.mul" option="board.clock.pll.mul.250"/>
+    <node id="board.clock.pll.display" option="board.clock.pll.display.value"/>
+    <node id="board.clock.pll2.source" option="board.clock.pll2.source.disabled"/>
+    <node id="board.clock.pll2.div" option="board.clock.pll2.div.2"/>
+    <node id="board.clock.pll2.mul" option="board.clock.pll2.mul.200"/>
+    <node id="board.clock.pll2.display" option="board.clock.pll2.display.value"/>
+    <node id="board.clock.clock.source" option="board.clock.clock.source.pll"/>
+    <node id="board.clock.clkout.source" option="board.clock.clkout.source.disabled"/>
+    <node id="board.clock.uclk.source" option="board.clock.uclk.source.disabled"/>
+    <node id="board.clock.octaspiclk.source" option="board.clock.octaspiclk.source.disabled"/>
+    <node id="board.clock.iclk.div" option="board.clock.iclk.div.1"/>
+    <node id="board.clock.pclka.div" option="board.clock.pclka.div.2"/>
+    <node id="board.clock.pclkb.div" option="board.clock.pclkb.div.4"/>
+    <node id="board.clock.pclkc.div" option="board.clock.pclkc.div.4"/>
+    <node id="board.clock.pclkd.div" option="board.clock.pclkd.div.2"/>
+    <node id="board.clock.bclk.div" option="board.clock.bclk.div.2"/>
+    <node id="board.clock.bclkout.div" option="board.clock.bclkout.div.2"/>
+    <node id="board.clock.fclk.div" option="board.clock.fclk.div.4"/>
+    <node id="board.clock.clkout.div" option="board.clock.clkout.div.1"/>
+    <node id="board.clock.uclk.div" option="board.clock.uclk.div.5"/>
+    <node id="board.clock.octaspiclk.div" option="board.clock.octaspiclk.div.1"/>
+    <node id="board.clock.iclk.display" option="board.clock.iclk.display.value"/>
+    <node id="board.clock.pclka.display" option="board.clock.pclka.display.value"/>
+    <node id="board.clock.pclkb.display" option="board.clock.pclkb.display.value"/>
+    <node id="board.clock.pclkc.display" option="board.clock.pclkc.display.value"/>
+    <node id="board.clock.pclkd.display" option="board.clock.pclkd.display.value"/>
+    <node id="board.clock.bclk.display" option="board.clock.bclk.display.value"/>
+    <node id="board.clock.bclkout.display" option="board.clock.bclkout.display.value"/>
+    <node id="board.clock.fclk.display" option="board.clock.fclk.display.value"/>
+    <node id="board.clock.clkout.display" option="board.clock.clkout.display.value"/>
+    <node id="board.clock.uclk.display" option="board.clock.uclk.display.value"/>
+    <node id="board.clock.octaspiclk.display" option="board.clock.octaspiclk.display.value"/>
+  </raClockConfiguration>
+  <raPinConfiguration>
+    <pincfg active="true" name="" symbol="">
+      <configSetting altId="adc0.an05.p005" configurationId="adc0.an05" peripheral="ADC0"/>
+      <configSetting altId="adc0.an07.p007" configurationId="adc0.an07" peripheral="ADC0"/>
+      <configSetting altId="cgc0.extal.p212" configurationId="cgc0.extal" isUsedByDriver="true" peripheral="CGC0"/>
+      <configSetting altId="cgc0.xtal.p213" configurationId="cgc0.xtal" isUsedByDriver="true" peripheral="CGC0"/>
+      <configSetting altId="dac0.da.p014" configurationId="dac0.da" peripheral="DAC0"/>
+      <configSetting altId="p114.output.high" configurationId="p114"/>
+      <configSetting altId="p210.output.low" configurationId="p210"/>
+      <configSetting altId="p211.output.low" configurationId="p211"/>
+      <configSetting altId="p214.output.low" configurationId="p214"/>
+      <configSetting altId="qspi0.qio0.p502" configurationId="qspi0.qio0" peripheral="QSPI0"/>
+      <configSetting altId="qspi0.qio1.p503" configurationId="qspi0.qio1" peripheral="QSPI0"/>
+      <configSetting altId="qspi0.qio2.p504" configurationId="qspi0.qio2" peripheral="QSPI0"/>
+      <configSetting altId="qspi0.qio3.p505" configurationId="qspi0.qio3" peripheral="QSPI0"/>
+      <configSetting altId="qspi0.qspclk.p500" configurationId="qspi0.qspclk" peripheral="QSPI0"/>
+      <configSetting altId="qspi0.qssl.p501" configurationId="qspi0.qssl" peripheral="QSPI0"/>
+      <configSetting altId="sci9.rxd.p110" configurationId="sci9.rxd" isUsedByDriver="true" peripheral="SCI9"/>
+      <configSetting altId="sci9.txd.p109" configurationId="sci9.txd" isUsedByDriver="true" peripheral="SCI9"/>
+      <configSetting altId="ssi0.ssirxd.p406" configurationId="ssi0.ssirxd" peripheral="SSI0"/>
+      <configSetting altId="ssi0.ssisck.p403" configurationId="ssi0.ssisck" peripheral="SSI0"/>
+      <configSetting altId="ssi0.ssitxd.p405" configurationId="ssi0.ssitxd" peripheral="SSI0"/>
+      <configSetting altId="ssi0.ssiws.p404" configurationId="ssi0.ssiws" peripheral="SSI0"/>
+      <configSetting altId="ssi_common0.audio_clk.p402" configurationId="ssi_common0.audio_clk" peripheral="SSI_COMMON0"/>
+      <configSetting altId="system0.md.p201" configurationId="system0.md" peripheral="SYSTEM0"/>
+    </pincfg>
+  </raPinConfiguration>
+</raConfiguration>
