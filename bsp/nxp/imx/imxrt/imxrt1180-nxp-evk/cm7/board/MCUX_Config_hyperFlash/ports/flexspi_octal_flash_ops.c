@@ -8,6 +8,8 @@
 #include "ports/flexspi_port.h"
 #include "rtconfig.h"
 
+#ifdef BSP_USING_FLEXSPI1
+
 #ifdef BSP_USING_DMA
 #include "fsl_flexspi_edma.h"
 #endif
@@ -599,4 +601,4 @@ status_t flexspi_nor_flash_program(FLEXSPI_Type *base, uint32_t dstAddr, const u
 
     return status;
 }
-
+#endif
