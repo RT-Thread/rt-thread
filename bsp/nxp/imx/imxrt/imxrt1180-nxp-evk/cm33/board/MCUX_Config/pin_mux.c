@@ -26,10 +26,10 @@ processor_version: 0.15.9
 #include "pin_mux.h"
 
 /* FUNCTION ************************************************************************************************************
- * 
+ *
  * Function Name : BOARD_InitBootPins
  * Description   : Calls initialization functions.
- * 
+ *
  * END ****************************************************************************************************************/
 void BOARD_InitBootPins(void) {
     BOARD_InitPins();
@@ -57,37 +57,44 @@ void BOARD_InitPins(void) {
   CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
   CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
 
-//   /* GPIO configuration on GPIO_AD_27 (pin M16) */
-//   rgpio_pin_config_t gpio4_pinM16_config = {
-//       .pinDirection = kRGPIO_DigitalOutput,
-//       .outputLogic = 1U,
-//   };
-//   /* Initialize GPIO functionality on GPIO_AD_27 (pin M16) */
-//   RGPIO_PinInit(RGPIO4, 27U, &gpio4_pinM16_config);
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AON_08_LPUART1_TX,
+      0U);
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AON_09_LPUART1_RX,
+      0U);
+  IOMUXC_SetPinConfig(
+      IOMUXC_GPIO_AON_08_LPUART1_TX,
+      0x02U);
+  IOMUXC_SetPinConfig(
+      IOMUXC_GPIO_AON_09_LPUART1_RX,
+      0x02U);
 
-//   IOMUXC_SetPinMux(
-//       IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
-//       0U);      
   IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 is configured as LPUART1_TX */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+      IOMUXC_GPIO_AD_32_LPUART10_TX,
+      0U);
   IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 is configured as LPUART1_RX */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+      IOMUXC_GPIO_AD_33_LPUART10_RX,
+      0U);
   IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                 Drive Strength Field: high driver
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled */
+      IOMUXC_GPIO_AD_32_LPUART10_TX,
+      0x02U);
   IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                 Drive Strength Field: high driver
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled */
+      IOMUXC_GPIO_AD_33_LPUART10_RX,
+      0x02U);
+
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AON_19_LPUART12_TX,
+      0U);
+  IOMUXC_SetPinMux(
+      IOMUXC_GPIO_AON_20_LPUART12_RX,
+      0U);
+  IOMUXC_SetPinConfig(
+      IOMUXC_GPIO_AON_19_LPUART12_TX,
+      0x02U);
+  IOMUXC_SetPinConfig(
+      IOMUXC_GPIO_AON_20_LPUART12_RX,
+      0x02U);
 }
 
 void BOARD_InitLeds(void) {
@@ -104,7 +111,7 @@ void BOARD_InitLeds(void) {
 
   IOMUXC_SetPinMux(
       IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
-      0U);      
+      0U);
 }
 
 

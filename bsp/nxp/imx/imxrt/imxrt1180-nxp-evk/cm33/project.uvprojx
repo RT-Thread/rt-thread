@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>MIMXRT1189CVM8C:cm33</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.MIMXRT1189_DFP.25.06.00</PackID>
+          <PackID>NXP.MIMXRT1189_DFP.26.03.00</PackID>
           <PackURL>https://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
           <Cpu>CPUTYPE("Cortex-M33") FPU3(SFPU) TZ DSP ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-fno-common  -fdata-sections  -fno-builtin  -mthumb</MiscControls>
-              <Define>__CLK_TCK=RT_TICK_PER_SECOND, XIP_EXTERNAL_FLASH=1, MCUXPRESSO_SDK, MCUX_META_BUILD, RT_USING_ARMLIBC, RT_USING_LIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, CPU_MIMXRT1189CVM8C_cm33, XIP_BOOT_HEADER_ENABLE=1, NDEBUG, MIMXRT1189_cm33_SERIES, ARM_MATH_CM33, XIP_BOOT_HEADER_DCD_ENABLE=1</Define>
+              <Define>ARM_MATH_CM33, NDEBUG, __RTTHREAD__, XIP_EXTERNAL_FLASH=1, RT_USING_ARMLIBC, CPU_MIMXRT1189CVM8C_cm33, XIP_BOOT_HEADER_ENABLE=1, MCUXPRESSO_SDK, MCUX_META_BUILD, RT_USING_LIBC, MIMXRT1189_cm33_SERIES, __CLK_TCK=RT_TICK_PER_SECOND, XIP_BOOT_HEADER_DCD_ENABLE=1, __STDC_LIMIT_MACROS</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\libcpu\arm\common;packages\nxp-imxrt-sdk-latest\MIMXRT1180\CMSIS\Core\Include;packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\utilities\debug_console_lite;..\..\..\..\..\libcpu\arm\cortex-m33;applications;packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\cm33;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\libc\compilers\common\include;packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\periph;board\ports;board;..\..\..\..\..\components\libc\posix\ipc;xip;..\libraries\drivers;..\..\..\..\..\components\finsh;..\..\..\..\..\components\drivers\include;..\..\..\..\..\include;..\..\..\..\..\components\drivers\phy;..\..\..\..\..\components\libc\posix\io\epoll;packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\net\utest;..\..\..\..\..\components\libc\posix\io\eventfd;board\MCUX_Config;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension;packages\nxp-imxrt-sdk-latest\MIMXRT1180\CMSIS\Core\m-profile;packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189;..\..\..\..\..\components\libc\posix\io\poll;.</IncludePath>
+              <IncludePath>board\ports;..\..\libraries\drivers;..\..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\..\components\drivers\include;packages\nxp-imxrt-sdk-latest\MIMXRT1180\CMSIS\Core\m-profile;..\..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\..\components\net\utest;..\..\..\..\..\..\components\libc\posix\io\poll;xip;..\..\..\..\..\..\components\drivers\include;..\..\..\..\..\..\components\drivers\include;..\..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\..\include;.;packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\periph;board\MCUX_Config;..\..\..\..\..\..\components\drivers\include;..\..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\..\components\drivers\phy;..\..\..\..\..\..\components\drivers\include;..\..\..\..\..\..\components\libc\posix\ipc;applications;packages\nxp-imxrt-sdk-latest\MIMXRT1180\CMSIS\Core\Include;packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers;..\..\..\..\..\..\components\drivers\include;board;..\..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\..\components\finsh;..\..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\..\components\libc\compilers\common\extension;packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189;packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\cm33</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -374,7 +374,7 @@
             <ScatterFile>.\board\linker_scripts\link.scf</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc>--keep=*(.boot_hdr.container) --keep=*(.boot_hdr.conf) --entry=Reset_Handler  --predefine="-DXIP_BOOT_HEADER_ENABLE=1" --predefine="-DXIP_EXTERNAL_FLASH=1"</Misc>
+            <Misc> --keep=*(.boot_hdr.container) --keep=*(.boot_hdr.conf) --entry=Reset_Handler  --predefine="-DXIP_BOOT_HEADER_ENABLE=1" --predefine="-DXIP_EXTERNAL_FLASH=1"</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings>6439,6314</DisabledWarnings>
           </LDads>
@@ -385,11 +385,6 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>mnt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\mnt.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
@@ -397,47 +392,42 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
+          <GroupName>CPU</GroupName>
           <Files>
             <File>
-              <FileName>syscall_mem.c</FileName>
+              <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\..\..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
             <File>
-              <FileName>syscalls.c</FileName>
+              <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
             <File>
-              <FileName>cctype.c</FileName>
+              <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FilePath>..\..\..\..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
             <File>
-              <FileName>cstdlib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\..\..\..\libcpu\arm\cortex-m33\context_rvds.S</FilePath>
             </File>
             <File>
-              <FileName>cstring.c</FileName>
+              <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+              <FilePath>..\..\..\..\..\..\libcpu\arm\cortex-m33\cpuport.c</FilePath>
             </File>
             <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+              <FileName>syscall_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\..\..\..\libcpu\arm\cortex-m33\syscall_rvds.S</FilePath>
             </File>
             <File>
-              <FileName>cunistd.c</FileName>
+              <FileName>trustzone.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\..\..\..\..\libcpu\arm\cortex-m33\trustzone.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -447,7 +437,7 @@
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\core\device.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\core\device.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -494,7 +484,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -503,7 +493,7 @@
             <File>
               <FileName>completion_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\ipc\completion_comm.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -550,7 +540,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -559,7 +549,7 @@
             <File>
               <FileName>completion_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\completion_up.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\ipc\completion_up.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -606,7 +596,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -615,7 +605,7 @@
             <File>
               <FileName>condvar.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -662,7 +652,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -671,7 +661,7 @@
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -718,7 +708,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -727,7 +717,7 @@
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\pipe.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\ipc\pipe.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -774,7 +764,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -783,7 +773,7 @@
             <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -830,7 +820,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -839,7 +829,7 @@
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -886,7 +876,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -895,7 +885,7 @@
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -942,7 +932,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -951,7 +941,7 @@
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\ipc\workqueue.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\ipc\workqueue.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -998,7 +988,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1007,7 +997,7 @@
             <File>
               <FileName>dev_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\pin\dev_pin.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\pin\dev_pin.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1054,7 +1044,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1063,7 +1053,7 @@
             <File>
               <FileName>dev_serial_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\serial\dev_serial_v2.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\drivers\serial\dev_serial_v2.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1110,7 +1100,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1139,12 +1129,17 @@
             <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\drivers\drv_common.c</FilePath>
+              <FilePath>..\..\libraries\drivers\drv_common.c</FilePath>
             </File>
             <File>
-              <FileName>drv_uart_v2.c</FileName>
+              <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\drivers\drv_uart_v2.c</FilePath>
+              <FilePath>..\..\libraries\drivers\drv_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libraries\drivers\drv_uart.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1152,24 +1147,24 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
-              <FileName>msh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\msh.c</FilePath>
-            </File>
-            <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\finsh\shell.c</FilePath>
             </File>
             <File>
-              <FileName>cmd.c</FileName>
+              <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\finsh\msh.c</FilePath>
             </File>
             <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\finsh\msh_parse.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\components\finsh\cmd.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1179,7 +1174,7 @@
             <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\clock.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\clock.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1226,7 +1221,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1235,7 +1230,7 @@
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\components.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\components.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1282,7 +1277,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1291,7 +1286,7 @@
             <File>
               <FileName>cpu_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\cpu_up.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\cpu_up.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1338,7 +1333,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1347,7 +1342,7 @@
             <File>
               <FileName>defunct.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\defunct.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\defunct.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1394,7 +1389,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1403,7 +1398,7 @@
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\idle.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\idle.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1450,7 +1445,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1459,7 +1454,7 @@
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\ipc.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1506,7 +1501,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1515,7 +1510,7 @@
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\irq.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\irq.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1562,7 +1557,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1571,7 +1566,7 @@
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\kservice.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\kservice.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1618,7 +1613,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1627,7 +1622,7 @@
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\mem.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\mem.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1674,7 +1669,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1683,7 +1678,7 @@
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\mempool.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\mempool.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1730,7 +1725,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1739,7 +1734,7 @@
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\object.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\object.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1786,7 +1781,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1795,7 +1790,7 @@
             <File>
               <FileName>scheduler_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\scheduler_comm.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\scheduler_comm.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1842,7 +1837,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1851,7 +1846,7 @@
             <File>
               <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\scheduler_up.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\scheduler_up.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1898,7 +1893,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1907,7 +1902,7 @@
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\thread.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\thread.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1954,7 +1949,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -1963,7 +1958,7 @@
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\timer.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\timer.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -2010,7 +2005,7 @@
                       <MiscControls> </MiscControls>
                       <Define>__RT_KERNEL_SOURCE__</Define>
                       <Undefine> </Undefine>
-                      <IncludePath></IncludePath>
+                      <IncludePath> </IncludePath>
                     </VariousControls>
                   </Cads>
                 </FileArmAds>
@@ -2019,72 +2014,72 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+            </File>
+            <File>
+              <FileName>cctype.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+            </File>
+            <File>
+              <FileName>cstdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+            </File>
+            <File>
+              <FileName>cstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+            </File>
+            <File>
+              <FileName>ctime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+            <File>
+              <FileName>cwchar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
             <File>
               <FileName>kerrno.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\klibc\kerrno.c</FilePath>
             </File>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>kstdio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\klibc\kstdio.c</FilePath>
             </File>
             <File>
               <FileName>kstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\klibc\kstring.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>libcpu</GroupName>
-          <Files>
             <File>
-              <FileName>atomic_arm.c</FileName>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
             </File>
             <File>
-              <FileName>div0.c</FileName>
+              <FileName>rt_vsscanf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\..\..\libcpu\arm\cortex-m33\context_rvds.S</FilePath>
-            </File>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\libcpu\arm\cortex-m33\cpuport.c</FilePath>
-            </File>
-            <File>
-              <FileName>syscall_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\..\..\libcpu\arm\cortex-m33\syscall_rvds.S</FilePath>
-            </File>
-            <File>
-              <FileName>trustzone.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\libcpu\arm\cortex-m33\trustzone.c</FilePath>
+              <FilePath>..\..\..\..\..\..\src\klibc\rt_vsscanf.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2092,9 +2087,19 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>fsl_memory.c</FileName>
+              <FileName>fsl_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_memory.c</FilePath>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_common_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_common_arm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_dcdc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_dcdc.c</FilePath>
             </File>
             <File>
               <FileName>fsl_pmu.c</FileName>
@@ -2102,34 +2107,9 @@
               <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_pmu.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_assert.c</FileName>
+              <FileName>fsl_clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\utilities\debug_console_lite\fsl_assert.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cache.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\cm33\fsl_cache.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_gpc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_gpc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_soc_src.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_soc_src.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_trdc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_trdc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_rgpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_rgpio.c</FilePath>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_clock.c</FilePath>
             </File>
             <File>
               <FileName>fsl_ele_base_api.c</FileName>
@@ -2137,34 +2117,39 @@
               <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_ele_base_api.c</FilePath>
             </File>
             <File>
-              <FileName>startup_MIMXRT1189_cm33.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\arm\startup_MIMXRT1189_cm33.s</FilePath>
+              <FileName>fsl_s3mu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_s3mu.c</FilePath>
             </File>
             <File>
-              <FileName>system_MIMXRT1189_cm33.c</FileName>
+              <FileName>fsl_trdc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\system_MIMXRT1189_cm33.c</FilePath>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_trdc.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_clock.c</FileName>
+              <FileName>fsl_gpc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_clock.c</FilePath>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_gpc.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_common.c</FileName>
+              <FileName>fsl_memory.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_common.c</FilePath>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_memory.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_soc_src.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_soc_src.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_rgpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_rgpio.c</FilePath>
             </File>
             <File>
               <FileName>fsl_lpuart.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_lpuart.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpuart_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_lpuart_edma.c</FilePath>
             </File>
             <File>
               <FileName>fsl_edma.c</FileName>
@@ -2177,19 +2162,24 @@
               <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_edma_soc.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_dcdc.c</FileName>
+              <FileName>fsl_lpuart_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_dcdc.c</FilePath>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_lpuart_edma.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_common_arm.c</FileName>
+              <FileName>system_MIMXRT1189_cm33.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_common_arm.c</FilePath>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\system_MIMXRT1189_cm33.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_s3mu.c</FileName>
+              <FileName>fsl_cache.c</FileName>
               <FileType>1</FileType>
-              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_s3mu.c</FilePath>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\cm33\fsl_cache.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_MIMXRT1189_cm33.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\arm\startup_MIMXRT1189_cm33.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -2197,14 +2187,14 @@
           <GroupName>xip</GroupName>
           <Files>
             <File>
-              <FileName>fsl_flexspi_nor_boot.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
-            </File>
-            <File>
               <FileName>evkmimxrt1180_flexspi_nor_config.c</FileName>
               <FileType>1</FileType>
               <FilePath>xip\evkmimxrt1180_flexspi_nor_config.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_flexspi_nor_boot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
             </File>
           </Files>
         </Group>
