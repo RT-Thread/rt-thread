@@ -70,7 +70,7 @@ extern AT_NONCACHEABLE_SECTION_ALIGN_INIT(uint32_t adc_result[], sizeof(uint32_t
 extern edma_handle_t DMA4_CH0_Handle;
 /* Transactional transfer configurations */
 extern edma_transfer_config_t DMA4_CH0_Transfers_config[1];
-#endif 
+#endif
 extern const lpuart_config_t LPUART1_config;
 extern const lpadc_config_t ADC1_config;
 extern lpadc_conv_command_config_t ADC1_commandsConfig[2];

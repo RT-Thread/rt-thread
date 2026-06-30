@@ -91,7 +91,7 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_WL_DEV_WAKE_CHANNEL                                    1U   /*!< Signal channel */
 
 /*!
- * @brief 
+ * @brief
  *
  */
 void BOARD_InitPins(void);                    /* Function assigned for the Cortex-M33 */

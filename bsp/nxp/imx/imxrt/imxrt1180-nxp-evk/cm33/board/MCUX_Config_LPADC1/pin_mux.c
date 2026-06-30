@@ -29,10 +29,10 @@ external_user_signals: {}
 #include "pin_mux.h"
 
 /* FUNCTION ************************************************************************************************************
- * 
+ *
  * Function Name : BOARD_InitBootPins
  * Description   : Calls initialization functions.
- * 
+ *
  * END ****************************************************************************************************************/
 void BOARD_InitBootPins(void) {
     BOARD_InitPins();
@@ -58,7 +58,7 @@ BOARD_InitPins:
 /* FUNCTION ************************************************************************************************************
  *
  * Function Name : BOARD_InitPins, assigned for the Cortex-M33 core.
- * Description   : 
+ * Description   :
  *
  * END ****************************************************************************************************************/
 void BOARD_InitPins(void) {

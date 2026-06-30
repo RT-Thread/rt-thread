@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -55,82 +55,83 @@ void DMA_Callback(edma_handle_t *handle, void *userData, bool transferDone, uint
 
 static rt_err_t imxrt_lp_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
-	ADC_Type *base;
-	/* channel check*/
-	
-	if(channel < 4) return -RT_EINVAL;
-	
-	base = (ADC_Type *)(device->parent.user_data);
-	if( RT_TRUE == enabled ) 
-	{
-		LPADC_Enable(base, true);
-	} else 
+    ADC_Type *base;
+    /* channel check*/
+
+    if(channel < 4) return -RT_EINVAL;
+
+    base = (ADC_Type *)(device->parent.user_data);
+    if( RT_TRUE == enabled )
     {
-		LPADC_Enable(base, false);
-	}
-	
+        LPADC_Enable(base, true);
+    } else
+    {
+        LPADC_Enable(base, false);
+    }
+
     return RT_EOK;
 }
 
 static rt_err_t imxrt_lp_adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     ADC_Type *base;
-	uint32_t data_mask=0xffffffff;
+    uint32_t data_mask=0xffffffff;
 #if defined(BSP_LPADC1_USING_DMA)
-	
+
 #else
-	uint8_t i=0;
-	uint32_t adc_result[7] = {0x0,0x0,0x0,0x0,0x0,0x0,0x0};  /* conv sequence: A1_4, A1_5(INVALID), A1_6, A1_7, B1_5, B1_6, B1_7 */
-	lpadc_conv_result_t mLpadcResultConfigStruct;
+    uint8_t i=0;
+    uint32_t adc_result[7] = {0x0,0x0,0x0,0x0,0x0,0x0,0x0};  /* conv sequence: A1_4, A1_5(INVALID), A1_6, A1_7, B1_5, B1_6, B1_7 */
+    lpadc_conv_result_t mLpadcResultConfigStruct;
 #endif
-	
+
     base = (ADC_Type *)(device->parent.user_data);
 
     LPADC_DoSoftwareTrigger(base, 1U);
 #if defined(BSP_LPADC1_USING_DMA)
-	data_mask = 0xffff;
-	g_Transfer_Done = false;
-	EDMA_StartTransfer(&DMA4_CH0_Handle);
-	/* Wait for EDMA transfer finish */
+    data_mask = 0xffff;
+    g_Transfer_Done = false;
+    EDMA_StartTransfer(&DMA4_CH0_Handle);
+    /* Wait for EDMA transfer finish */
     while (g_Transfer_Done != true)
     {
     }
 #else
-	for(i=0;i<7;i++) {
+    for(i=0;i<7;i++)
+    {
 #if (defined(FSL_FEATURE_LPADC_FIFO_COUNT) && (FSL_FEATURE_LPADC_FIFO_COUNT == 2U))
-		while (!LPADC_GetConvResult(base, &mLpadcResultConfigStruct, 0U))
+        while (!LPADC_GetConvResult(base, &mLpadcResultConfigStruct, 0U))
 #else
-		while (!LPADC_GetConvResult(base, &mLpadcResultConfigStruct))
+        while (!LPADC_GetConvResult(base, &mLpadcResultConfigStruct))
 #endif /* FSL_FEATURE_LPADC_FIFO_COUNT */
-		{
-		}	
-		adc_result[i] = (mLpadcResultConfigStruct.convValue);
-	}
-#endif    
-	switch(channel)
-	{
-		case 4: *value = adc_result[0] & data_mask;
-		break;
-		case 5: *value = adc_result[4] & data_mask;
-		break;
-		case 6: *value = adc_result[2] & data_mask;
-		break;
-		case 7: *value = adc_result[3] & data_mask;
-		break;
-		default: *value = 0; return -RT_EINVAL;
-	}
+        {
+        }
+        adc_result[i] = (mLpadcResultConfigStruct.convValue);
+    }
+#endif
+    switch(channel)
+    {
+        case 4: *value = adc_result[0] & data_mask;
+        break;
+        case 5: *value = adc_result[4] & data_mask;
+        break;
+        case 6: *value = adc_result[2] & data_mask;
+        break;
+        case 7: *value = adc_result[3] & data_mask;
+        break;
+        default: *value = 0; return -RT_EINVAL;
+    }
 
     return RT_EOK;
 }
 
 static rt_uint8_t imxrt_lp_adc_get_resolution(struct rt_adc_device *device)
 {
-	return 16;
+    return 16;
 }
 
 static rt_int16_t imxrt_lp_adc_get_vref(struct rt_adc_device *device)
 {
-	return 1800;
+    return 1800;
 }
 
 
@@ -138,8 +139,8 @@ static struct rt_adc_ops imxrt_lpadc_ops =
 {
     .enabled = imxrt_lp_adc_enabled,
     .convert = imxrt_lp_adc_convert,
-	.get_resolution = imxrt_lp_adc_get_resolution,
-	.get_vref = imxrt_lp_adc_get_vref,
+    .get_resolution = imxrt_lp_adc_get_resolution,
+    .get_vref = imxrt_lp_adc_get_vref,
 };
 
 int rt_hw_adc_init(void)
