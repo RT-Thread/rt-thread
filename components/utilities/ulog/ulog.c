@@ -9,6 +9,7 @@
  */
 
 #include <stdarg.h>
+#include <stdlib.h>
 #include "ulog.h"
 #include "rthw.h"
 
