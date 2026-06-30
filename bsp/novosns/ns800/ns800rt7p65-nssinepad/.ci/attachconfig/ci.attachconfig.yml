@@ -10,6 +10,13 @@ devices.adc:
     <<: *scons
     kconfig:
       - CONFIG_BSP_USING_ADC=y
+devices.can:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_CAN=y
+      - CONFIG_BSP_USING_CAN1=y
+      - CONFIG_BSP_USING_CANFD1=y
+      - CONFIG_BSP_USING_CANFD2=y
 devices.spi:
     <<: *scons
     kconfig:

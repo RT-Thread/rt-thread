@@ -158,8 +158,17 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_CAN
         default n
         if BSP_USING_CAN
+            config BSP_USING_CAN1
+                bool "Enable CAN1"
+                default n
+
             config BSP_USING_CANFD1
                 bool "Enable CANFD1"
+                select RT_CAN_USING_CANFD
+                default n
+
+            config BSP_USING_CANFD2
+                bool "Enable CANFD2"
                 select RT_CAN_USING_CANFD
                 default n
 
