@@ -83,6 +83,11 @@ BSP 的制作过程分为如下五个步骤：
 
 ![复制通用模板](./figures/copy.png)
 
+注意：不要直接在 `bsp/stm32/libraries/templates/<series>` 模板目录中执行 `menuconfig` 或 `scons`。
+模板目录比实际 BSP 目录多了 `libraries/templates` 两级，`Kconfig` 中的相对路径只在模板被复制到
+`bsp/stm32/<board>` 后才匹配。请先将同系列模板复制到 `bsp/stm32/` 目录下并重命名为目标 BSP 名称，
+再进入新的 BSP 目录执行 `menuconfig`、`pkgs --update` 和 `scons`。
+
 在接下来的 BSP 的制作过程中，将会修改 board 文件夹内的配置文件，将 F1 系列的 BSP 模板变成一个适用于正点原子 `stm32f103-atk-nano` 开发板的 BSP ，下表总结了 board 文件夹中需要修改的内容：
 
 | 项目 | 需要修改的内容说明 |
