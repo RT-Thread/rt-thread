@@ -64,6 +64,10 @@ extern "C" {
 #include "drivers/led.h"
 #endif /* RT_USING_LED */
 
+#ifdef RT_USING_PTP
+#include "drivers/ptp.h"
+#endif /* RT_USING_PTP */
+
 #ifdef RT_USING_INPUT
 #include "drivers/input.h"
 #ifdef RT_INPUT_UAPI
@@ -78,6 +82,10 @@ extern "C" {
 #ifdef RT_USING_HWSPINLOCK
 #include "drivers/hwspinlock.h"
 #endif /* RT_USING_HWSPINLOCK */
+
+#ifdef RT_USING_RPMSG
+#include "drivers/rpmsg.h"
+#endif /* RT_USING_RPMSG */
 
 #ifdef RT_USING_BLK
 #include "drivers/blk.h"
@@ -135,6 +143,10 @@ extern "C" {
 #include "drivers/thermal.h"
 #endif /* RT_USING_THERMAL */
 
+#ifdef RT_USING_UFS
+#include "drivers/ufs.h"
+#endif /* RT_USING_UFS */
+
 #ifdef RT_USING_FIRMWARE
 #ifdef RT_FIRMWARE_ARM_SCMI
 #include "drivers/scmi.h"
@@ -145,9 +157,18 @@ extern "C" {
 #include "drivers/hwcache.h"
 #endif /* RT_USING_HWCACHE */
 
+#ifdef RT_USING_DVFS
+#include "drivers/dvfs.h"
+#endif /* RT_USING_DVFS */
+
 #ifdef RT_USING_NVMEM
 #include "drivers/nvmem.h"
 #endif /* RT_USING_NVMEM */
+
+#ifdef RT_USING_VIRTIO
+#include "drivers/virtio.h"
+#include "drivers/virtq.h"
+#endif
 #endif /* RT_USING_DM */
 
 #ifdef RT_USING_REGULATOR

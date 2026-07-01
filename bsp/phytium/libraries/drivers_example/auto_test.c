@@ -77,12 +77,8 @@ int auto_test() {
 #if defined BSP_USING_GPIO
     register_test("gpio_sample", gpio_toggle_sample);
 #endif
-#if defined BSP_USING_I2C
-#if defined (PD2408_TEST_A_BOARD) || defined (PD2408_TEST_B_BOARD)
-    register_test("i2c_msg_sample", i2c_msg_sample);
-#else
+#if defined(BSP_USING_I2C) || defined(BSP_USING_I2C_MSG)
     register_test("i2c_sample", i2c_sample);
-#endif
 #endif
 #if defined BSP_USING_QSPI
 #if !defined(TARGET_PD2408)

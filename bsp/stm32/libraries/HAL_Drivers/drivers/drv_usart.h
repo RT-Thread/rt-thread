@@ -21,14 +21,6 @@
 
 int rt_hw_usart_init(void);
 
-#if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) \
-    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)|| defined(SOC_SERIES_STM32F3)
-#define DMA_INSTANCE_TYPE              DMA_Channel_TypeDef
-#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) \
-    || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1)
-#define DMA_INSTANCE_TYPE              DMA_Stream_TypeDef
-#endif /*  defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) */
-
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32WL) \
     || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) \
     || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)|| defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32U5) \
@@ -51,8 +43,8 @@ struct stm32_uart_config
     const char *name;
     USART_TypeDef *Instance;
     IRQn_Type irq_type;
-    struct dma_config *dma_rx;
-    struct dma_config *dma_tx;
+    const struct stm32_dma_config *dma_rx;
+    const struct stm32_dma_config *dma_tx;
 };
 
 /* stm32 uart dirver class */

@@ -23,7 +23,7 @@
 #define DFU_PROTOCOL_RUNTIME 0x01
 
 /** DFU Class DFU mode Protocol */
-#define DFU_PROTOCOL_MODE 0x02
+#define DFU_PROTOCOL_DFU 0x02
 
 /**
  * @brief DFU Class Specific Requests
@@ -76,21 +76,23 @@
 #define DFU_STATE_DFU_UPLOAD_IDLE         9U
 #define DFU_STATE_DFU_ERROR               10U
 
-/** DFU Manifestation State  */
-#define DFU_MANIFEST_COMPLETE    0U
-#define DFU_MANIFEST_IN_PROGRESS 1U
+/* Define DFU application notification signals.  */
+#define DFU_NOTIFICATION_BEGIN_DOWNLOAD 0x1u
+#define DFU_NOTIFICATION_END_DOWNLOAD   0x2u
+#define DFU_NOTIFICATION_ABORT_DOWNLOAD 0x3u
+#define DFU_NOTIFICATION_BEGIN_UPLOAD   0x5u
+#define DFU_NOTIFICATION_END_UPLOAD     0x6u
+#define DFU_NOTIFICATION_ABORT_UPLOAD   0x7u
 
-/** Special Commands  with Download Request  */
-#define DFU_CMD_GETCOMMANDS       0U
-#define DFU_CMD_SETADDRESSPOINTER 0x21U
-#define DFU_CMD_ERASE             0x41U
-#define DFU_MEDIA_ERASE           0x00U
-#define DFU_MEDIA_PROGRAM         0x01U
+/* Define DFU application notification signals.  */
+#define DFU_MEDIA_STATUS_OK    0
+#define DFU_MEDIA_STATUS_BUSY  1
+#define DFU_MEDIA_STATUS_ERROR 2
 
-/** Other defines  */
-/* Bit Detach capable = bit 3 in bmAttributes field */
-#define DFU_DETACH_MASK   (1U << 3)
-#define DFU_MANIFEST_MASK (1U << 2)
+/** Special Commands with Download Request for STM32, wValue = 0 */
+#define DFU_SPECIAL_CMD_SET_ADDRESS_POINTER 0x21U
+#define DFU_SPECIAL_CMD_ERASE               0x41U
+#define DFU_SPECIAL_READ_UNPROTECT          0x92U
 
 /** Run-Time Functional Descriptor */
 struct dfu_runtime_descriptor {
@@ -103,35 +105,36 @@ struct dfu_runtime_descriptor {
 } __PACKED;
 
 /**\brief Payload packet to response in DFU_GETSTATUS request */
-struct dfu_info {
-    uint8_t bStatus;       /**<\brief An indication of the status resulting from the
+struct dfu_status {
+    uint8_t bStatus;        /**<\brief An indication of the status resulting from the
                                      * execution of the most recent request.*/
-    uint8_t bPollTimeout;  /**<\brief Minimum time (LSB) in ms, that the host should wait
+    uint32_t bwPollTimeout; /**<\brief Minimum time in ms, that the host should wait
                                      * before sending a subsequent DFU_GETSTATUS request.*/
-    uint16_t wPollTimeout; /**<\brief Minimum time (MSB) in ms, that the host should wait
-                                     * before sending a subsequent DFU_GETSTATUS request.*/
-    uint8_t bState;        /**<\brief An indication of the state that the device is going
+    uint8_t bState;         /**<\brief An indication of the state that the device is going
                                      * to enter immediately following transmission of this response.*/
-    uint8_t iString;       /**<\brief Index of the status string descriptor.*/
+    uint8_t iString;        /**<\brief Index of the status string descriptor.*/
 };
 
+#define DFU_DESCRIPTOR_LEN 18
+
 // clang-format off
-#define DFU_DESCRIPTOR_INIT()                                                            \
+#define DFU_DESCRIPTOR_INIT(str_idx)                                                     \
     0x09,                          /* bLength */                                         \
     USB_DESCRIPTOR_TYPE_INTERFACE, /* bDescriptorType */                                 \
     0x00,                          /* bInterfaceNumber */                                \
     0x00,                          /* bAlternateSetting */                               \
     0x00,                          /* bNumEndpoints Default Control Pipe only */         \
     USB_DEVICE_CLASS_APP_SPECIFIC, /* bInterfaceClass */                                 \
-    0x01,                          /* bInterfaceSubClass Device Firmware Upgrade */      \
-    0x02,                          /* bInterfaceProtocol DFU mode */                     \
-    0x04, /* iInterface */         /*!< Device Firmware Update Functional Descriptor  */ \
+    DFU_SUBCLASS_DFU,              /* bInterfaceSubClass Device Firmware Upgrade */      \
+    DFU_PROTOCOL_DFU,              /* bInterfaceProtocol DFU mode */                     \
+    str_idx,                       /* iInterface */                                      \
+    /*!< Device Firmware Update Functional Descriptor  */                                \
     0x09,                          /* bLength */                                         \
     0x21,                          /* DFU Functional Descriptor */                       \
     0x0B,                          /* bmAttributes */                                    \
     WBVAL(0x00ff),                 /* wDetachTimeOut */                                  \
-    WBVAL(USBD_DFU_XFER_SIZE),     /* wTransferSize */                                   \
-    WBVAL(0x011a)                  /* bcdDFUVersion */
+    WBVAL(CONFIG_USBDEV_REQUEST_BUFFER_LEN),     /* wTransferSize */                     \
+    WBVAL(DFU_VERSION)             /* bcdDFUVersion */
 // clang-format on
 
 #endif /* USB_DFU_H */

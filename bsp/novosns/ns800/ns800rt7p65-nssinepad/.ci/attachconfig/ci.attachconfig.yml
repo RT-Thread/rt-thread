@@ -1,0 +1,48 @@
+scons.args: &scons
+    scons_arg:
+      - '--strict'
+devices.ecap:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_ECAP=y
+      - CONFIG_BSP_USING_ECAP1=y
+devices.adc:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_ADC=y
+devices.spi:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI1=y
+      - CONFIG_BSP_USING_QSPI=y
+devices.wdt:
+    <<: *scons
+    kconfig:
+      - CONFIG_BSP_USING_WDT=y
+      - CONFIG_BSP_USING_IWDG1=y
+      - CONFIG_BSP_USING_IWDG2=y
+      - CONFIG_BSP_USING_WWDG=y
+devices.epwm:
+    <<: *scons
+    kconfig:
+      - CONFIG_RT_USING_PWM=y
+      - CONFIG_BSP_USING_EPWM=y
+      - CONFIG_BSP_USING_EPWM1=y
+      - CONFIG_BSP_USING_EPWM2=y
+      - CONFIG_BSP_USING_EPWM3=y
+      - CONFIG_BSP_USING_EPWM4=y
+      - CONFIG_BSP_USING_EPWM5=y
+      - CONFIG_BSP_USING_EPWM6=y
+      - CONFIG_BSP_USING_EPWM7=y
+      - CONFIG_BSP_USING_EPWM8=y
+      - CONFIG_BSP_USING_EPWM9=y
+      - CONFIG_BSP_USING_EPWM10=y
+      - CONFIG_BSP_USING_EPWM11=y
+      - CONFIG_BSP_USING_EPWM12=y
+      - CONFIG_BSP_USING_EPWM13=y
+      - CONFIG_BSP_USING_EPWM14=y
+      - CONFIG_BSP_USING_EPWM15=y
+      - CONFIG_BSP_USING_EPWM16=y
+      - CONFIG_BSP_USING_EPWM17=y
+      - CONFIG_BSP_USING_EPWM18=y

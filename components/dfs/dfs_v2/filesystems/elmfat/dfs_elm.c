@@ -150,8 +150,6 @@ static int dfs_elm_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *
     }
     logic_nbr[0] = '0' + index;
 
-    /* save device */
-    disk[index] = mnt->dev_id;
     /* check sector size */
     if (rt_device_control(mnt->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
     {
@@ -162,6 +160,8 @@ static int dfs_elm_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *
             return -EINVAL;
         }
     }
+    /* save device */
+    disk[index] = mnt->dev_id;
 
     fat = (FATFS *)rt_malloc(sizeof(FATFS));
     if (fat == RT_NULL)

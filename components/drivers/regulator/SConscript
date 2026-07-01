@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../include']
 
 src = ['regulator.c', 'regulator_dm.c', 'regulator_cmd.c']
 
+if GetDepend(['RT_REGULATOR_FAN53555']):
+    src += ['regulator-fan53555.c']
+
 if GetDepend(['RT_REGULATOR_FIXED']):
     src += ['regulator-fixed.c']
 

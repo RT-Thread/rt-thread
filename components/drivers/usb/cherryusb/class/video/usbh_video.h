@@ -11,6 +11,14 @@
 #define USBH_VIDEO_FORMAT_UNCOMPRESSED 0
 #define USBH_VIDEO_FORMAT_MJPEG        1
 
+#ifndef CONFIG_USBHOST_VIDEO_MAX_FRAMES
+#define CONFIG_USBHOST_VIDEO_MAX_FRAMES 12
+#endif
+
+#ifndef CONFIG_USBHOST_VIDEO_MAX_FORMATS
+#define CONFIG_USBHOST_VIDEO_MAX_FORMATS 3
+#endif
+
 struct usbh_video_resolution {
     uint16_t wWidth;
     uint16_t wHeight;
@@ -18,7 +26,7 @@ struct usbh_video_resolution {
 };
 
 struct usbh_video_format {
-    struct usbh_video_resolution frame[12];
+    struct usbh_video_resolution frame[CONFIG_USBHOST_VIDEO_MAX_FRAMES];
     uint8_t format_type;
     uint8_t num_of_frames;
 };
@@ -55,7 +63,7 @@ struct usbh_video {
     uint16_t bcdVDC;
     uint8_t num_of_intf_altsettings;
     uint8_t num_of_formats;
-    struct usbh_video_format format[3];
+    struct usbh_video_format format[CONFIG_USBHOST_VIDEO_MAX_FORMATS];
 
     void *user_data;
 };

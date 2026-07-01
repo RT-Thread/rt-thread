@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding= "UTF-8" ?>
+<configuration name="" xsi:schemaLocation="http://mcuxpresso.nxp.com/XSD/mex_configuration_12 http://mcuxpresso.nxp.com/XSD/mex_configuration_12.xsd" uuid="2789973b-4e08-461b-a604-ca74c2c2a2cf" version="12" xmlns="http://mcuxpresso.nxp.com/XSD/mex_configuration_12" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+   <common>
+      <processor>MIMXRT1176xxxxx</processor>
+      <package>MIMXRT1176DVMAA</package>
+      <mcu_data>ksdk2_0</mcu_data>
+      <cores selected="cm7">
+         <core name="Cortex-M4F" id="cm4" description=""/>
+         <core name="Cortex-M7F" id="cm7" description=""/>
+      </cores>
+      <description></description>
+   </common>
+   <preferences>
+      <validate_boot_init_only>true</validate_boot_init_only>
+      <generate_extended_information>false</generate_extended_information>
+      <generate_code_modified_registers_only>false</generate_code_modified_registers_only>
+      <update_include_paths>true</update_include_paths>
+      <generate_registers_defines>false</generate_registers_defines>
+   </preferences>
+   <tools>
+      <pins name="Pins" version="12.0" enabled="true" update_project_code="true">
+         <pins_profile>
+            <processor_version>12.0.0</processor_version>
+            <power_domains/>
+         </pins_profile>
+         <functions_list>
+            <function name="BOARD_InitPins">
+               <description>Configures pin routing and optionally pin electrical features.</description>
+               <options>
+                  <callFromInitBoot>true</callFromInitBoot>
+                  <coreID>cm7</coreID>
+                  <enableClock>true</enableClock>
+               </options>
+               <dependencies>
+                  <dependency resourceType="Peripheral" resourceId="LPUART1" description="Peripheral LPUART1 is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="Peripheral" resourceId="ARM" description="Peripheral ARM is not initialized" problem_level="1" source="Pins:BOARD_InitPins">
+                     <feature name="initialized" evaluation="equal">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Pins initialization requires the COMMON Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.iomuxc" description="Pins initialization requires the IOMUXC Driver in the project." problem_level="2" source="Pins:BOARD_InitPins">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
+               <pins>
+                  <pin peripheral="LPUART1" signal="RXD" pin_num="M15" pin_signal="GPIO_AD_25">
+                     <pin_features>
+                        <pin_feature name="software_input_on" value="Disable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Down"/>
+                        <pin_feature name="pull_keeper_select" value="Keeper"/>
+                        <pin_feature name="open_drain" value="Disable"/>
+                        <pin_feature name="drive_strength" value="High"/>
+                        <pin_feature name="slew_rate" value="Slow"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="LPUART1" signal="TXD" pin_num="L13" pin_signal="GPIO_AD_24">
+                     <pin_features>
+                        <pin_feature name="software_input_on" value="Disable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Down"/>
+                        <pin_feature name="pull_keeper_select" value="Keeper"/>
+                        <pin_feature name="open_drain" value="Disable"/>
+                        <pin_feature name="drive_strength" value="High"/>
+                        <pin_feature name="slew_rate" value="Slow"/>
+                     </pin_features>
+                  </pin>
+                  <pin peripheral="ARM" signal="arm_trace_swo" pin_num="D6" pin_signal="GPIO_DISP_B2_07">
+                     <pin_features>
+                        <pin_feature name="software_input_on" value="Disable"/>
+                        <pin_feature name="pull_up_down_config" value="Pull_Down"/>
+                        <pin_feature name="pull_keeper_select" value="Keeper"/>
+                        <pin_feature name="open_drain" value="Disable"/>
+                        <pin_feature name="drive_strength" value="High"/>
+                        <pin_feature name="slew_rate" value="Slow"/>
+                     </pin_features>
+                  </pin>
+               </pins>
+            </function>
+         </functions_list>
+      </pins>
+      <clocks name="Clocks" version="10.0" enabled="true" update_project_code="true">
+         <clocks_profile>
+            <processor_version>12.0.0</processor_version>
+         </clocks_profile>
+         <clock_configurations>
+            <clock_configuration name="BOARD_BootClockRUN" id_prefix="" prefix_user_defined="false">
+               <description></description>
+               <options/>
+               <dependencies>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.xtali" description="&apos;XTALI&apos; (Pins tool id: ANADIG.xtali, Clocks tool id: ANADIG_OSC.XTALI) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.xtali" description="&apos;XTALI&apos; (Pins tool id: ANADIG.xtali, Clocks tool id: ANADIG_OSC.XTALI) needs to have &apos;INPUT&apos; direction" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="direction" evaluation="">
+                        <data>INPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.xtalo" description="&apos;XTALO&apos; (Pins tool id: ANADIG.xtalo, Clocks tool id: ANADIG_OSC.XTALO) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.xtalo" description="&apos;XTALO&apos; (Pins tool id: ANADIG.xtalo, Clocks tool id: ANADIG_OSC.XTALO) needs to have &apos;OUTPUT&apos; direction" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="direction" evaluation="">
+                        <data>OUTPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.rtc_xtali" description="&apos;RTC_XTALI&apos; (Pins tool id: ANADIG.rtc_xtali, Clocks tool id: ANADIG_OSC.RTC_XTALI) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.rtc_xtali" description="&apos;RTC_XTALI&apos; (Pins tool id: ANADIG.rtc_xtali, Clocks tool id: ANADIG_OSC.RTC_XTALI) needs to have &apos;INPUT&apos; direction" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="direction" evaluation="">
+                        <data>INPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.rtc_xtalo" description="&apos;RTC_XTALO&apos; (Pins tool id: ANADIG.rtc_xtalo, Clocks tool id: ANADIG_OSC.RTC_XTALO) needs to be routed" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="routed" evaluation="">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="ANADIG.rtc_xtalo" description="&apos;RTC_XTALO&apos; (Pins tool id: ANADIG.rtc_xtalo, Clocks tool id: ANADIG_OSC.RTC_XTALO) needs to have &apos;OUTPUT&apos; direction" problem_level="1" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="direction" evaluation="">
+                        <data>OUTPUT</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Clocks initialization requires the COMMON Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm4">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Clocks initialization requires the COMMON Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.iomuxc" description="Clocks initialization requires the IOMUXC Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm4">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.iomuxc" description="Clocks initialization requires the IOMUXC Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.dcdc_soc" description="Clocks initialization requires the DCDC_SOC Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm4">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.dcdc_soc" description="Clocks initialization requires the DCDC_SOC Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.pmu_1" description="Clocks initialization requires the PMU_1 Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm4">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.pmu_1" description="Clocks initialization requires the PMU_1 Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.clock" description="Clocks initialization requires the CLOCK Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm4">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.clock" description="Clocks initialization requires the CLOCK Driver in the project." problem_level="2" source="Clocks:BOARD_BootClockRUN">
+                     <feature name="enabled" evaluation="equal" configuration="cm7">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
+               <clock_sources/>
+               <clock_outputs>
+                  <clock_output id="ACMP_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ADC1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ADC2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ARM_PLL_CLK.outFreq" value="996 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ASRC_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="AXI_CLK_ROOT.outFreq" value="996 MHz" locked="false" accuracy=""/>
+                  <clock_output id="BUS_CLK_ROOT.outFreq" value="240 MHz" locked="false" accuracy=""/>
+                  <clock_output id="BUS_LPSR_CLK_ROOT.outFreq" value="160 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CAN1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CAN2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CAN3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CCM_CLKO1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CCM_CLKO2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CLK_1M.outFreq" value="1 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSI2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSI2_ESC_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSI2_UI_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSI_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSSYS_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CSTRACE_CLK_ROOT.outFreq" value="132 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ELCDIF_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="EMV1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="EMV2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_1G_TX_CLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_25M_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_QOS_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_TIMER1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_TIMER2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="ENET_TIMER3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXIO1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXIO2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXSPI1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FLEXSPI2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GC355_CLK_ROOT.outFreq" value="492.0000125 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT1_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT2_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT3_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT4_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT5_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT5_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT6_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="GPT6_ipg_clk_highfreq.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LCDIFV2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C5_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPI2C6_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI5_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPSPI6_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART10_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART11_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART12_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART5_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART6_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART7_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART8_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART9_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="M4_CLK_ROOT.outFreq" value="240 MHz" locked="false" accuracy=""/>
+                  <clock_output id="M4_SYSTICK_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="M7_CLK_ROOT.outFreq" value="996 MHz" locked="false" accuracy=""/>
+                  <clock_output id="M7_SYSTICK_CLK_ROOT.outFreq" value="100 kHz" locked="false" accuracy=""/>
+                  <clock_output id="MIC_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MIPI_DSI_TX_CLK_ESC_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MIPI_ESC_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MIPI_REF_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MQS_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="MQS_MCLK.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_24M.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_32K.outFreq" value="32.768 kHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_RC_16M.outFreq" value="16 MHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_RC_400M.outFreq" value="400 MHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_RC_48M.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="OSC_RC_48M_DIV2.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PLL_VIDEO_CLK.outFreq" value="984.000025 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI1_MCLK1.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI1_MCLK3.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI2_MCLK1.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI2_MCLK3.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI3_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI3_MCLK1.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI3_MCLK3.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI4_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SAI4_MCLK1.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SEMC_CLK_ROOT.outFreq" value="198 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SPDIF_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL2_CLK.outFreq" value="528 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL2_PFD0_CLK.outFreq" value="352 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL2_PFD1_CLK.outFreq" value="594 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL2_PFD2_CLK.outFreq" value="396 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL2_PFD3_CLK.outFreq" value="297 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_CLK.outFreq" value="480 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_DIV2_CLK.outFreq" value="240 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_PFD0_CLK.outFreq" value="8640/13 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_PFD1_CLK.outFreq" value="8640/17 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_PFD2_CLK.outFreq" value="270 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SYS_PLL3_PFD3_CLK.outFreq" value="4320/11 MHz" locked="false" accuracy=""/>
+                  <clock_output id="USDHC1_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="USDHC2_CLK_ROOT.outFreq" value="24 MHz" locked="false" accuracy=""/>
+               </clock_outputs>
+               <clock_settings>
+                  <setting id="CoreBusClockRootsInitializationConfig" value="selectedCore" locked="false"/>
+                  <setting id="SOCDomainVoltage" value="OD" locked="false"/>
+                  <setting id="ANADIG_OSC_OSC_24M_CTRL_LP_EN_CFG" value="Low" locked="false"/>
+                  <setting id="ANADIG_OSC_OSC_24M_CTRL_OSC_EN_CFG" value="Enabled" locked="false"/>
+                  <setting id="ANADIG_PLL.PLL_AUDIO_BYPASS.sel" value="ANADIG_OSC.OSC_24M" locked="false"/>
+                  <setting id="ANADIG_PLL.PLL_VIDEO.denom" value="960000" locked="false"/>
+                  <setting id="ANADIG_PLL.PLL_VIDEO.div" value="41" locked="false"/>
+                  <setting id="ANADIG_PLL.PLL_VIDEO.num" value="1" locked="false"/>
+                  <setting id="ANADIG_PLL.SYS_PLL1_BYPASS.sel" value="ANADIG_OSC.OSC_24M" locked="false"/>
+                  <setting id="ANADIG_PLL.SYS_PLL2.denom" value="268435455" locked="false"/>
+                  <setting id="ANADIG_PLL.SYS_PLL2.div" value="22" locked="false"/>
+                  <setting id="ANADIG_PLL.SYS_PLL2.num" value="0" locked="false"/>
+                  <setting id="ANADIG_PLL.SYS_PLL2_SS_DIV.scale" value="268435455" locked="false"/>
+                  <setting id="ANADIG_PLL.SYS_PLL3_PFD3_DIV.scale" value="22" locked="true"/>
+                  <setting id="ANADIG_PLL.SYS_PLL3_PFD3_MUL.scale" value="18" locked="true"/>
+                  <setting id="ANADIG_PLL_ARM_PLL_CTRL_POWERUP_CFG" value="Enabled" locked="false"/>
+                  <setting id="ANADIG_PLL_PLL_AUDIO_CTRL_GATE_CFG" value="Disabled" locked="false"/>
+                  <setting id="ANADIG_PLL_PLL_VIDEO_CTRL0_POWERUP_CFG" value="Enabled" locked="false"/>
+                  <setting id="ANADIG_PLL_SYS_PLL1_CTRL0_POWERUP_CFG" value="Disabled" locked="false"/>
+                  <setting id="ANADIG_PLL_SYS_PLL1_CTRL_GATE_CFG" value="Disabled" locked="false"/>
+                  <setting id="ANADIG_PLL_SYS_PLL2_CTRL_POWERUP_CFG" value="Enabled" locked="false"/>
+                  <setting id="ANADIG_PLL_SYS_PLL3_CTRL_POWERUP_CFG" value="Enabled" locked="false"/>
+                  <setting id="ANADIG_PLL_SYS_PLL3_CTRL_SYS_PLL3_DIV2_CFG" value="Enabled" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT0.MUX.sel" value="ANADIG_PLL.ARM_PLL_CLK" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT1.DIV.scale" value="2" locked="true"/>
+                  <setting id="CCM.CLOCK_ROOT1.MUX.sel" value="ANADIG_PLL.SYS_PLL3_CLK" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT2.DIV.scale" value="2" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT2.MUX.sel" value="ANADIG_PLL.SYS_PLL3_CLK" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT25.DIV.scale" value="22" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT25.MUX.sel" value="ANADIG_PLL.SYS_PLL2_CLK" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT26.DIV.scale" value="22" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT26.MUX.sel" value="ANADIG_PLL.SYS_PLL2_CLK" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT3.DIV.scale" value="3" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT3.MUX.sel" value="ANADIG_PLL.SYS_PLL3_CLK" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT4.DIV.scale" value="3" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT4.MUX.sel" value="ANADIG_PLL.SYS_PLL2_PFD1_CLK" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT6.DIV.scale" value="4" locked="true"/>
+                  <setting id="CCM.CLOCK_ROOT6.MUX.sel" value="ANADIG_PLL.SYS_PLL2_CLK" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT68.DIV.scale" value="2" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT68.MUX.sel" value="ANADIG_PLL.PLL_VIDEO_CLK" locked="false"/>
+                  <setting id="CCM.CLOCK_ROOT8.DIV.scale" value="240" locked="false"/>
+               </clock_settings>
+               <called_from_default_init>true</called_from_default_init>
+            </clock_configuration>
+         </clock_configurations>
+      </clocks>
+      <dcdx name="DCDx" version="3.0" enabled="true" update_project_code="true">
+         <dcdx_profile>
+            <processor_version>12.0.0</processor_version>
+            <output_format>c_array</output_format>
+         </dcdx_profile>
+         <dcdx_configurations>
+            <dcdx_configuration name="Device_configuration">
+               <description></description>
+               <options/>
+               <command_groups>
+                  <command_group name="Imported Commands" enabled="true">
+                     <commands>
+                        <command type="write_value" address="CCM_CLOCK_ROOT4_CONTROL" value="0x602" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_00" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_01" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_02" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_03" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_04" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_05" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_06" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_07" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_08" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_09" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_10" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_11" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_12" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_13" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_14" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_15" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_16" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_17" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_18" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_19" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_20" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_21" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_22" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_23" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_24" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_25" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_26" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_27" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_28" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_29" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_30" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_31" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_32" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_33" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_34" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_35" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_36" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_37" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_38" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_39" value="0x10" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_40" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B1_41" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_00" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_01" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_02" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_03" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_04" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_05" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_06" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_07" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_08" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_09" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_10" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_11" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_12" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_13" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_14" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_15" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_16" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_17" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_18" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_19" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_MUX_CTL_PAD_GPIO_EMC_B2_20" value="0x00" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_00" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_01" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_02" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_03" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_04" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_05" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_06" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_07" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_08" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_09" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_10" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_11" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_12" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_13" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_14" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_15" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_16" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_17" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_18" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_19" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_20" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_21" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_22" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_23" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_24" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_25" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_26" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_27" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_28" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_29" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_30" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_31" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_32" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_33" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_34" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_35" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_36" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_37" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_38" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_39" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_40" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B1_41" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_00" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_01" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_02" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_03" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_04" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_05" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_06" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_07" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_08" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_09" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_10" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_11" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_12" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_13" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_14" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_15" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_EMC_B2_16" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_SD_B2_02" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_SD_B2_03" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_SD_B2_04" value="0x08" value_width="4"/>
+                        <command type="write_value" address="IOMUXC_SW_PAD_CTL_PAD_GPIO_SD_B2_05" value="0x08" value_width="4"/>
+                        <command type="write_value" address="SEMC_MCR" value="0x10000004" value_width="4"/>
+                        <command type="write_value" address="SEMC_BMCR0" value="0x81" value_width="4"/>
+                        <command type="write_value" address="SEMC_BMCR1" value="0x81" value_width="4"/>
+                        <command type="write_value" address="SEMC_BR0" value="0x8000001D" value_width="4"/>
+                        <command type="write_value" address="SEMC_SDRAMCR0" value="0xF32" value_width="4"/>
+                        <command type="write_value" address="SEMC_SDRAMCR1" value="0x772A22" value_width="4"/>
+                        <command type="write_value" address="SEMC_SDRAMCR2" value="0x10A0D" value_width="4"/>
+                        <command type="write_value" address="SEMC_SDRAMCR3" value="0x21210408" value_width="4"/>
+                        <command type="write_value" address="SEMC_IPCR0" value="0x80000000" value_width="4"/>
+                        <command type="write_value" address="SEMC_IPCR1" value="0x02" value_width="4"/>
+                        <command type="write_value" address="SEMC_IPCR2" value="0x00" value_width="4"/>
+                        <command type="write_value" address="SEMC_IPCMD" value="0xA55A000F" value_width="4"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="write_value" address="SEMC_INTR" value="0x03" value_width="4"/>
+                        <command type="write_value" address="SEMC_IPCMD" value="0xA55A000C" value_width="4"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="write_value" address="SEMC_INTR" value="0x03" value_width="4"/>
+                        <command type="write_value" address="SEMC_IPCMD" value="0xA55A000C" value_width="4"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="write_value" address="SEMC_INTR" value="0x03" value_width="4"/>
+                        <command type="write_value" address="SEMC_IPTXDAT" value="0x33" value_width="4"/>
+                        <command type="write_value" address="SEMC_IPCMD" value="0xA55A000A" value_width="4"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="nop"/>
+                        <command type="write_value" address="SEMC_INTR" value="0x03" value_width="4"/>
+                        <command type="nop"/>
+                        <command type="write_value" address="SEMC_SDRAMCR3" value="0x21210409" value_width="4"/>
+                     </commands>
+                  </command_group>
+               </command_groups>
+            </dcdx_configuration>
+         </dcdx_configurations>
+      </dcdx>
+      <periphs name="Peripherals" version="11.0" enabled="true" update_project_code="true">
+         <peripherals_profile>
+            <processor_version>12.0.0</processor_version>
+         </peripherals_profile>
+         <functional_groups>
+            <functional_group name="BOARD_InitPeripherals" uuid="7ee8fc36-68c9-403c-a923-44701e1362da" called_from_default_init="true" id_prefix="" core="cm7">
+               <description></description>
+               <options/>
+               <dependencies/>
+               <instances>
+                  <instance name="NVIC" uuid="d4faf8dc-cf39-4bc4-9458-32aa9a8abad5" type="nvic" type_id="nvic_57b5eef3774cc60acaede6f5b8bddc67" mode="general" peripheral="NVIC" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="nvic">
+                        <array name="interrupt_table"/>
+                        <array name="interrupts"/>
+                     </config_set>
+                  </instance>
+               </instances>
+            </functional_group>
+         </functional_groups>
+         <components>
+            <component name="system" uuid="58d02eb0-c8a1-4795-aa02-b881f9b49f65" type_id="system_54b53072540eeeb8f8e9343e71f28176">
+               <config_set_global name="global_system_definitions">
+                  <setting name="user_definitions" value=""/>
+                  <setting name="user_includes" value=""/>
+               </config_set_global>
+            </component>
+            <component name="msg" uuid="fef81701-6364-47eb-be4e-1ff685c6f487" type_id="msg_6e2baaf3b97dbeef01c0043275f9a0e7">
+               <config_set_global name="global_messages"/>
+            </component>
+            <component name="generic_uart" uuid="82bb7638-b911-4bff-8d51-e85a18d5f0c8" type_id="generic_uart_8cae00565451cf2346eb1b8c624e73a6">
+               <config_set_global name="global_uart"/>
+            </component>
+            <component name="generic_can" uuid="72d70388-6163-458b-9bd7-e49b1b8c0e60" type_id="generic_can_1bfdd78b1af214566c1f23cf6a582d80">
+               <config_set_global name="global_can"/>
+            </component>
+            <component name="uart_cmsis_common" uuid="7caa4732-5e54-4482-8d2b-2648eb52adab" type_id="uart_cmsis_common_9cb8e302497aa696fdbb5a4fd622c2a8">
+               <config_set_global name="global_USART_CMSIS_common" quick_selection="default"/>
+            </component>
+            <component name="gpio_adapter_common" uuid="c2f350f4-c700-4bc8-8fb1-aa56fd3533d1" type_id="gpio_adapter_common_57579b9ac814fe26bf95df0a384c36b6">
+               <config_set_global name="global_gpio_adapter_common" quick_selection="default"/>
+            </component>
+            <component name="generic_enet" uuid="77d2c2b6-f8f5-4d79-9870-5662fd323401" type_id="generic_enet_74db5c914f0ddbe47d86af40cb77a619">
+               <config_set_global name="global_enet"/>
+            </component>
+         </components>
+      </periphs>
+      <tee name="TEE" version="3.0" enabled="false" update_project_code="true">
+         <tee_profile>
+            <processor_version>N/A</processor_version>
+         </tee_profile>
+      </tee>
+   </tools>
+</configuration>

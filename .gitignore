@@ -63,6 +63,7 @@ vdso.lds
 # cherryusb libraries
 !components/drivers/usb/cherryusb/port/pusb2/*.a
 !components/drivers/usb/cherryusb/port/xhci/phytium/*.a
+!components/drivers/usb/cherryusb/platform/rtthread
 
 # stm32cubemx
 **/CubeMX_Config/Drivers/

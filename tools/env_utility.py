@@ -327,7 +327,9 @@ def get_file_md5(file):
 
 # Exclude utestcases
 def exclude_utestcases(RTT_ROOT):
-    if os.path.isfile(os.path.join(RTT_ROOT, 'Kconfig.utestcases')):
+    utestcases_kconfig = os.path.join(RTT_ROOT, 'components', 'utilities', 'utest', 'Kconfig')
+
+    if os.path.isfile(utestcases_kconfig):
         return
 
     if not os.path.isfile(os.path.join(RTT_ROOT, 'Kconfig')):
@@ -337,7 +339,7 @@ def exclude_utestcases(RTT_ROOT):
         data = f.readlines()
     with open(os.path.join(RTT_ROOT, 'Kconfig'), 'w') as f:
         for line in data:
-            if line.find('Kconfig.utestcases') == -1:
+            if line.find('components/utilities/utest/Kconfig') == -1:
                 f.write(line)
 
 

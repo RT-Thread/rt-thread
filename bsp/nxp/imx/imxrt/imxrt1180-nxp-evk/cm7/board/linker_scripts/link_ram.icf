@@ -1,0 +1,154 @@
+/*
+** ###################################################################
+**     Processors:          MIMXRT1189CVM8B_cm7
+**                          MIMXRT1189CVM8C_cm7
+**                          MIMXRT1189XVM8B_cm7
+**                          MIMXRT1189XVM8C_cm7
+**
+**     Compiler:            IAR ANSI C/C++ Compiler for ARM
+**     Reference manual:    IMXRT1180RM, Rev 5, 01/2024
+**     Version:             rev. 2.0, 2024-01-18
+**     Build:               b250310
+**
+**     Abstract:
+**         Linker file for the IAR ANSI C/C++ Compiler for ARM
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2025 NXP
+**     SPDX-License-Identifier: BSD-3-Clause
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+/* Board memory map */
+define symbol m_itcm_start             = 0x00000000;
+define symbol m_itcm_size              = 0x00040000;
+
+define symbol m_dtcm_start             = 0x20000000;
+define symbol m_dtcm_size              = 0x00040000;
+
+define symbol m_ocram1_start           = 0x20484000;  /* OCRAM1 first 16K access is blocked by TRDC */
+define symbol m_ocram1_size            = 0x0007C000;
+
+define symbol m_ocram2_start           = 0x20500000;
+define symbol m_ocram2_size            = 0x00040000;
+
+define symbol m_sdram_start            = 0x80000000;
+define symbol m_sdram_size             = 0x01E00000;  /* Reserved 2M for CM33 usage, so size = physical memory size - 2M */
+define symbol m_hyperram_start         = 0x04000000;
+define symbol m_hyperram_size          = 0x00600000;  /* Reserved 2M for CM33 usage, so size = physical memory size - 2M */
+define symbol m_flash_start            = 0x28000000;
+define symbol m_flash_size             = 0x01000000;
+
+/* General definition */
+define symbol app_image_offset         = 0x0000B000;
+define symbol vector_table_size        = 0x00000400;
+if (isdefinedsymbol(__stack_size__)) {
+  define symbol __size_cstack__        = __stack_size__;
+} else {
+  define symbol __size_cstack__        = 0x1000;
+}
+
+if (isdefinedsymbol(__heap_size__)) {
+  define symbol __size_heap__          = __heap_size__;
+} else {
+  define symbol __size_heap__          = 0x4000;
+}
+
+define symbol m_qacode_start           = m_itcm_start + (isdefinedsymbol(__ram_vector_table__) ? vector_table_size : 0);
+define symbol m_qacode_end             = m_itcm_start + m_itcm_size - 1;
+define symbol m_qadata_start           = m_dtcm_start;
+define symbol m_qadata_end             = m_dtcm_start + m_dtcm_size - 1;
+define symbol m_ram_vector_table_start = m_itcm_start;
+
+/* Target specific definition, code & data allocation */
+define symbol m_code_size              = m_itcm_size;
+define symbol m_data_size              = m_dtcm_size;
+define symbol m_ncache_size            = isdefinedsymbol(__multicore__) ? 0x20000 : 0x40000;         /* m_ncache_size must be 2^N */
+define symbol m_shmem_size             = m_ocram2_size;   /* m_shmem_size must be 2^N */
+
+define symbol m_ocram1_size_for_cm7    = isdefinedsymbol(__multicore__) ? 0x40000 : m_ocram1_size;
+
+define symbol m_ram_vector_table_size  = isdefinedsymbol(__ram_vector_table__) ? 0 : 0;
+
+define symbol m_text_start             = m_itcm_start;
+define symbol m_text_end               = m_text_start + m_code_size - 1;
+define symbol m_interrupts_start       = m_text_start;
+
+define symbol m_data_start             = m_dtcm_start;
+define symbol m_data_end               = m_data_start + m_data_size - 1;
+
+define symbol m_ncache_start           = m_ocram1_start + m_ocram1_size - m_ncache_size;  /* (m_ncache_start %  m_ncache_size) must be 0 */
+define symbol m_ncache_end             = m_ncache_start + m_ncache_size - 1;
+
+define symbol m_heap_start             = m_ocram1_start + m_ocram1_size - m_ocram1_size_for_cm7;
+define symbol m_heap_end               = m_ncache_start - 1;
+
+if (isdefinedsymbol(__use_shmem__)) {
+  define symbol m_rpmsg_sh_mem_start   = m_ocram2_start; /* (m_rpmsg_sh_mem_start %  m_shmem_size) must be 0 */
+  define symbol m_rpmsg_sh_mem_end     = m_rpmsg_sh_mem_start + m_shmem_size - 1;
+}
+
+/* Exported symbol definition */
+define exported symbol __VECTOR_TABLE          = m_interrupts_start;
+define exported symbol __VECTOR_RAM            = m_ram_vector_table_start;
+define exported symbol __RAM_VECTOR_TABLE_SIZE = m_ram_vector_table_size;
+define exported symbol __NCACHE_REGION_START   = m_ncache_start;
+define exported symbol __NCACHE_REGION_SIZE    = m_ncache_end - m_ncache_start + 1;
+if (isdefinedsymbol(__use_shmem__)) {
+  define exported symbol rpmsg_sh_mem_start    = m_rpmsg_sh_mem_start;
+  define exported symbol rpmsg_sh_mem_end      = m_rpmsg_sh_mem_end;
+  define exported symbol __RPMSG_SH_MEM_START  = m_rpmsg_sh_mem_start;
+  define exported symbol __RPMSG_SH_MEM_SIZE   = m_rpmsg_sh_mem_end - m_rpmsg_sh_mem_start + 1;
+}
+
+define exported symbol __RTT_HEAP_END = m_ocram2_start + m_ocram2_size - 1;
+
+/* Region definition */
+define memory mem with size = 4G;
+define region TEXT_region   = mem:[from m_text_start to m_text_end];
+define region DATA_region   = mem:[from m_data_start to m_data_end-__size_cstack__];
+define region CSTACK_region = mem:[from m_data_end-__size_cstack__+1 to m_data_end];
+define region NCACHE_region = mem:[from m_ncache_start to m_ncache_end];
+define region HEAP_region   = mem:[from m_heap_start to m_heap_end];
+define region QACODE_region = mem:[from m_qacode_start to m_qacode_end];
+define region QADATA_region = mem:[from m_qadata_start to m_qadata_end];
+if (isdefinedsymbol(__use_shmem__)) {
+  define region rpmsg_sh_mem_region = mem:[from m_rpmsg_sh_mem_start to m_rpmsg_sh_mem_end];
+}
+
+/* Block definition */
+define block RW            { readwrite };
+define block ZI            { zi };
+define block NCACHE_VAR    { section NonCacheable , section NonCacheable.init };
+define block QACCESS_CODE  { section CodeQuickAccess };
+define block QACCESS_DATA  { section DataQuickAccess };
+define block CSTACK    with alignment = 8, size = __size_cstack__   { };
+define block HEAP      with alignment = 8, size = __size_heap__     { };
+
+initialize by copy { readwrite, section .textrw, section DataQuickAccess };
+do not initialize  { section .noinit };
+if (isdefinedsymbol(__use_shmem__)) {
+  do not initialize  { section rpmsg_sh_mem_section };
+}
+
+place at address mem: m_interrupts_start    { readonly section .intvec };
+
+place in TEXT_region                        { readonly };
+place in TEXT_region                        { block QACCESS_CODE };
+place in DATA_region                        { block RW };
+place in DATA_region                        { block ZI };
+place in DATA_region                        { block QACCESS_DATA };
+place in NCACHE_region                      { block NCACHE_VAR };
+place in CSTACK_region                      { block CSTACK };
+if (isdefinedsymbol(__heap_noncacheable__)) {
+  place in NCACHE_region                    { last block HEAP };
+} else {
+  place in HEAP_region                      { last block HEAP };
+}
+if (isdefinedsymbol(__use_shmem__)) {
+  place in rpmsg_sh_mem_region              { section rpmsg_sh_mem_section };
+}

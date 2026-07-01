@@ -123,6 +123,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [stm32h563-st-nucleo](stm32/stm32h563-st-nucleo) | ✅ | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32h723-lxb-disco](stm32) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32h723-st-nucleo](stm32/stm32h723-st-nucleo) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [stm32h723-DM-MC02](stm32/stm32h723-DM-MC02) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32h730-esphosted-evb](stm32/stm32h730-esphosted-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32h743-armfly-v7](stm32/stm32h743-armfly-v7) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32h743-atk-apollo](stm32/stm32h743-atk-apollo) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | - | - | ✅ | - | - | - | - | - |
@@ -247,9 +248,9 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟢 QEMU Virt64 AArch64 (RT-Smart) (SMP)
 
-| BSP Name | GPIO | UART | RTC | VirtIO-BLK | VirtIO-NET | VirtIO-Console | VirtIO-GPU | VirtIO-Input |
-|----------|------|------|-----|-----------|-----------|---------------|-----------|--------------|
-| [qemu-virt64-aarch64](qemu-virt64-aarch64) | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ |
+| BSP Name | GPIO | UART | RTC | WDT | PCI | Storage | Flash | LCD | Input | Camera | Sound | Crypto | RNG | Net | Console | RPMSG |
+|----------|------|------|-----|-----|-----|---------|-------|-----|-------|--------|-------|--------|-----|-----|---------|-------|
+| [qemu-virt64-aarch64](qemu-virt64-aarch64) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟡 Phytium (RT-Smart) (SMP)
 

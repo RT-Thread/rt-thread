@@ -160,7 +160,7 @@ static const struct rockchip_cpu_clk_reg_data rk3528_cpu_clk_data =
     .mux_core_mask = 0x1,
 };
 
-PNAME(mux_pll_p)                    = "xin24m";
+PNAMES(mux_pll_p)                   = { "xin24m" };
 PNAMES(mux_24m_32k_p)               = { "xin24m", "clk_32k" };
 PNAMES(mux_gpll_cpll_p)             = { "gpll", "cpll" };
 PNAMES(mux_gpll_cpll_xin24m_p)      = { "gpll", "cpll", "xin24m" };
@@ -200,19 +200,19 @@ PNAMES(clk_32k_p)                   = { "xin_osc0_div", "clk_pvtm_32k" };
 #define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
 
 static struct rockchip_pll_clk_cell rk3528_pll_apll =
-    PLL_RAW(pll_type_rk3328, PLL_APLL, "apll", mux_pll_p, 1, RT_CLK_F_IS_CRITICAL, RK3528_PLL_CON(0), RK3528_MODE_CON,
+    PLL_RAW(pll_type_rk3328, PLL_APLL, "apll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), RT_CLK_F_IS_CRITICAL, RK3528_PLL_CON(0), RK3528_MODE_CON,
             0, 0, RK3528_GRF_SOC_STATUS0, 0, rk3528_pll_rates);
 static struct rockchip_pll_clk_cell rk3528_pll_cpll =
-    PLL_RAW(pll_type_rk3328, PLL_CPLL, "cpll", mux_pll_p, 1, RT_CLK_F_IS_CRITICAL, RK3528_PLL_CON(8), RK3528_MODE_CON,
+    PLL_RAW(pll_type_rk3328, PLL_CPLL, "cpll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), RT_CLK_F_IS_CRITICAL, RK3528_PLL_CON(8), RK3528_MODE_CON,
             2, 0, RK3528_GRF_SOC_STATUS0, 0, rk3528_pll_rates);
 static struct rockchip_pll_clk_cell rk3528_pll_gpll =
-    PLL_RAW(pll_type_rk3328, PLL_GPLL, "gpll", mux_pll_p, 1, RT_CLK_F_IS_CRITICAL, RK3528_PLL_CON(24), RK3528_MODE_CON,
+    PLL_RAW(pll_type_rk3328, PLL_GPLL, "gpll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), RT_CLK_F_IS_CRITICAL, RK3528_PLL_CON(24), RK3528_MODE_CON,
             4, 0, RK3528_GRF_SOC_STATUS0, 0, rk3528_pll_rates);
 static struct rockchip_pll_clk_cell rk3528_pll_ppll =
-    PLL_RAW(pll_type_rk3328, PLL_PPLL, "ppll", mux_pll_p, 1, RT_CLK_F_IS_CRITICAL, RK3528_PCIE_PLL_CON(32), RK3528_MODE_CON,
+    PLL_RAW(pll_type_rk3328, PLL_PPLL, "ppll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), RT_CLK_F_IS_CRITICAL, RK3528_PCIE_PLL_CON(32), RK3528_MODE_CON,
             6, 0, RK3528_GRF_SOC_STATUS0, ROCKCHIP_PLL_FIXED_MODE, rk3528_pll_rates);
 static struct rockchip_pll_clk_cell rk3528_pll_dpll =
-    PLL_RAW(pll_type_rk3328, PLL_DPLL, "dpll", mux_pll_p, 1, RT_CLK_F_IGNORE_UNUSED, RK3528_DDRPHY_PLL_CON(16), RK3528_DDRPHY_MODE_CON,
+    PLL_RAW(pll_type_rk3328, PLL_DPLL, "dpll", mux_pll_p, RT_ARRAY_SIZE(mux_pll_p), RT_CLK_F_IGNORE_UNUSED, RK3528_DDRPHY_PLL_CON(16), RK3528_DDRPHY_MODE_CON,
             0, 0, RK3528_GRF_SOC_STATUS0, 0, rk3528_pll_rates);
 
 static struct rockchip_clk_cell rk3528_uart0_fracmux =

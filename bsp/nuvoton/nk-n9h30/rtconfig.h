@@ -107,7 +107,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 #define RT_USING_CACHE
@@ -170,6 +171,8 @@
 #define FAL_PART_HAS_TABLE_CFG
 #define FAL_USING_SFUD_PORT
 #define FAL_USING_NOR_FLASH_DEV_NAME "norflash0"
+#define FAL_DEV_NAME_MAX 24
+#define FAL_DEV_BLK_MAX 6
 
 /* Device Drivers */
 
@@ -186,6 +189,7 @@
 #define RT_CANSND_BOX_NUM 1
 #define RT_CANSND_MSG_TIMEOUT 100
 #define RT_CAN_NB_TX_FIFO_SIZE 256
+#define RT_USING_CLOCK_TIME
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_ADC
@@ -199,6 +203,7 @@
 #define RT_ALARM_TIMESLICE 5
 #define RT_ALARM_PRIORITY 10
 #define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_QSPI
 #define RT_USING_SFUD
 #define RT_SFUD_USING_SFDP
@@ -212,7 +217,6 @@
 #define RT_AUDIO_RECORD_PIPE_SIZE 2048
 #define RT_USING_TOUCH
 #define RT_USING_PIN
-#define RT_USING_HWTIMER
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -480,13 +484,21 @@
 
 /* NUVOTON Drivers */
 
-#define PKG_USING_NUVOTON_ARM926_LIB
-#define PKG_USING_NUVOTON_ARM926_LIB_LATEST_VERSION
+#define PKG_USING_NUVOTON_SERIES_DRIVER
+#define PKG_USING_NUVOTON_SERIES_DRIVER_LATEST_VERSION
 /* end of NUVOTON Drivers */
 
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

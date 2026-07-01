@@ -117,8 +117,6 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         return -ENOENT;
     logic_nbr[0] = '0' + index;
 
-    /* save device */
-    disk[index] = fs->dev_id;
     /* check sector size */
     if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
     {
@@ -128,6 +126,8 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
             return -EINVAL;
         }
     }
+    /* save device */
+    disk[index] = fs->dev_id;
 
     fat = (FATFS *)rt_malloc(sizeof(FATFS));
     if (fat == RT_NULL)
@@ -997,41 +997,41 @@ DWORD get_fattime(void)
 }
 
 #if FF_FS_REENTRANT
-int ff_cre_syncobj(BYTE drv, FF_SYNC_t *m)
+static rt_mutex_t Mutex[FF_VOLUMES + 1];
+
+int ff_mutex_create (int vol)
 {
     char name[8];
     rt_mutex_t mutex;
 
-    rt_snprintf(name, sizeof(name), "fat%d", drv);
+    rt_snprintf(name, sizeof(name), "fat%d", vol);
     mutex = rt_mutex_create(name, RT_IPC_FLAG_PRIO);
     if (mutex != RT_NULL)
     {
-        *m = mutex;
+        Mutex[vol] = mutex;
         return RT_TRUE;
     }
 
     return RT_FALSE;
 }
 
-int ff_del_syncobj(FF_SYNC_t m)
+void ff_mutex_delete (int vol)
 {
-    if (m != RT_NULL)
-        rt_mutex_delete(m);
-
-    return RT_TRUE;
+    if (Mutex[vol] != RT_NULL)
+        rt_mutex_delete(Mutex[vol]);
 }
 
-int ff_req_grant(FF_SYNC_t m)
+int ff_mutex_take (int vol)
 {
-    if (rt_mutex_take(m, FF_FS_TIMEOUT) == RT_EOK)
+    if (rt_mutex_take(Mutex[vol], FF_FS_TIMEOUT) == RT_EOK)
         return RT_TRUE;
 
     return RT_FALSE;
 }
 
-void ff_rel_grant(FF_SYNC_t m)
+void ff_mutex_give (int vol)
 {
-    rt_mutex_release(m);
+    rt_mutex_release(Mutex[vol]);
 }
 
 #endif

@@ -139,10 +139,25 @@ if RT_USING_CHERRYUSB
             prompt "Enable usb dfu device"
             default n
 
+        config RT_CHERRYUSB_DEVICE_DISPLAY
+            bool
+            prompt "Enable usb display device"
+            default n
+
         config RT_CHERRYUSB_DEVICE_CDC_ACM_CHARDEV
             bool
             prompt "Enable chardev for cdc acm device"
             default n
+
+        config RT_CHERRYUSB_DEVICE_MSC_BLKDEV
+            bool
+            prompt "Enable blkdev for msc device"
+            default n
+
+        config CONFIG_USBDEV_MSC_BLOCK_DEV_NAME
+            string "usb device msc block device name"
+            depends on RT_CHERRYUSB_DEVICE_MSC_BLKDEV
+            default "sd0"
 
         config CONFIG_USBDEV_REQUEST_BUFFER_LEN
             int
@@ -184,7 +199,7 @@ if RT_USING_CHERRYUSB
             config RT_CHERRYUSB_DEVICE_TEMPLATE_MSC_BLKDEV
                 bool
                 prompt "msc_blkdev"
-                depends on RT_CHERRYUSB_DEVICE_MSC
+                depends on RT_CHERRYUSB_DEVICE_MSC && RT_CHERRYUSB_DEVICE_MSC_BLKDEV
             config RT_CHERRYUSB_DEVICE_TEMPLATE_HID_KEYBOARD
                 bool
                 prompt "hid_keyboard"
@@ -221,6 +236,10 @@ if RT_USING_CHERRYUSB
                 bool
                 prompt "cdc_ncm"
                 depends on RT_CHERRYUSB_DEVICE_CDC_NCM
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_DFU
+                bool
+                prompt "dfu"
+                depends on RT_CHERRYUSB_DEVICE_DFU
             config RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM_MSC
                 bool
                 prompt "cdc_acm_msc"
@@ -243,6 +262,10 @@ if RT_USING_CHERRYUSB
                 bool
                 prompt "webusb_hid"
                 depends on RT_CHERRYUSB_DEVICE_HID
+            config RT_CHERRYUSB_DEVICE_TEMPLATE_DISPLAY
+                bool
+                prompt "display"
+                depends on RT_CHERRYUSB_DEVICE_DISPLAY
             config RT_CHERRYUSB_DEVICE_TEMPLATE_ADB
                 bool
                 prompt "adb"
@@ -252,11 +275,6 @@ if RT_USING_CHERRYUSB
                 prompt "cdc_acm_chardev"
                 depends on RT_CHERRYUSB_DEVICE_CDC_ACM_CHARDEV
         endchoice
-
-        config CONFIG_USBDEV_MSC_BLOCK_DEV_NAME
-            string "usb device msc block device name"
-            depends on RT_CHERRYUSB_DEVICE_TEMPLATE_MSC_BLKDEV
-            default "sd0"
 
     endif
 
@@ -470,22 +488,22 @@ if RT_USING_CHERRYUSB
             default "/"
 
         menu "Select USB host template, please select class driver first"
-            config CONFIG_TEST_USBH_SERIAL
+            config RT_TEST_USBH_SERIAL
                 bool
                 prompt "demo for test seial, cannot enable this demo, you can use rt-thread device api to test"
                 default n
                 depends on CONFIG_USBHOST_SERIAL
-            config CONFIG_TEST_USBH_HID
+            config RT_TEST_USBH_HID
                 int
                 prompt "demo for test hid"
                 default 0
                 depends on RT_CHERRYUSB_HOST_HID
-            config CONFIG_TEST_USBH_MSC
+            config RT_TEST_USBH_MSC
                 bool
                 prompt "demo for test msc, cannot enable this demo, you can use rt-thread dfs api to test"
                 default n
                 depends on RT_CHERRYUSB_HOST_MSC
-            config CONFIG_TEST_USBH_NET
+            config RT_TEST_USBH_NET
                 bool
                 prompt "demo for test net, cannot enable this demo, you can use lwip api to test"
                 default n

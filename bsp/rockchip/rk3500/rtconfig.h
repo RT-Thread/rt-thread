@@ -81,6 +81,7 @@
 #define RT_TIMER_THREAD_STACK_SIZE 32768
 #define RT_USING_TIMER_ALL_SOFT
 #define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -304,7 +305,23 @@
 #define RT_FIRMWARE_ARM_SCMI
 #define RT_FIRMWARE_ARM_SCMI_TRANSPORT_MAILBOX
 #define RT_FIRMWARE_ARM_SCMI_TRANSPORT_SMC
+#define RT_USING_DVFS
+#define RT_USING_DVFS_EVENT
+#define RT_USING_DVFS_OPP_RETRY_MAX 10
+
+/* DVFS Event Drivers */
+
+#define RT_DVFS_EVENT_ROCKCHIP_DFI
+
+/* DVFS CPUfreq Drivers */
+
+#define RT_DVFS_ROCKCHIP_CPUFREQ
+
+/* DVFS Devfreq Drivers */
+
+#define RT_DVFS_ROCKCHIP_DMC
 #define RT_USING_REGULATOR
+#define RT_REGULATOR_FAN53555
 #define RT_REGULATOR_FIXED
 #define RT_REGULATOR_GPIO
 #define RT_REGULATOR_SCMI
@@ -325,6 +342,7 @@
 
 /* Thermal Cool Drivers */
 
+#define RT_THERMAL_COOL_DVFS
 #define RT_THERMAL_COOL_PWM_FAN
 #define RT_USING_NVMEM
 #define RT_NVMEM_ROCKCHIP_OTP
@@ -575,9 +593,21 @@
 
 /* end of File System */
 
+/* Tmpfs Testcase */
+
+/* end of Tmpfs Testcase */
+
 /* CPP11 */
 
 /* end of CPP11 */
+
+/* LWP Testcase */
+
+/* end of LWP Testcase */
+
+/* Memory Management Subsytem Testcase */
+
+/* end of Memory Management Subsytem Testcase */
 
 /* Network */
 
@@ -587,14 +617,6 @@
 
 /* end of Utest Framework */
 /* end of Kernel Components */
-
-/* Memory Management Subsytem Testcase */
-
-/* end of Memory Management Subsytem Testcase */
-
-/* Tmpfs Testcase */
-
-/* end of Tmpfs Testcase */
 /* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */

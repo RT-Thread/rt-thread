@@ -91,6 +91,7 @@
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 16384
 #define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -120,7 +121,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50201
+#define RT_USING_CONSOLE_OUTPUT_CTL
+#define RT_VER_NUM 0x50300
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -220,6 +222,7 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_SERIAL_BYPASS
+#define RT_USING_CLOCK_TIME
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_NULL
@@ -235,9 +238,9 @@
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SDHCI
 #define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_WDT
 #define RT_USING_TOUCH
-#define RT_USING_LCD
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -245,6 +248,10 @@
 #define RT_BLK_PARTITION_DFS
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
+
+/* Power Management (PM) Domains device drivers */
+
+/* end of Power Management (PM) Domains device drivers */
 #define RT_USING_OFW
 #define RT_FDT_EARLYCON_MSG_SIZE 128
 #define RT_USING_OFW_BUS_RANGES_NUMBER 8
@@ -253,10 +260,10 @@
 #define RT_PIC_ARM_GIC
 #define RT_PIC_ARM_GIC_MAX_NR 1
 #define RT_USING_PIN
-#define RT_USING_KTIME
 #define RT_USING_CLK
-#define RT_USING_HWTIMER
-#define RT_HWTIMER_ARM_ARCH
+
+/* SoC (System on Chip) Drivers */
+
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -448,13 +455,9 @@
 
 /* end of CPP11 */
 
-/* LwIP */
+/* Network */
 
-/* end of LwIP */
-
-/* Netdev */
-
-/* end of Netdev */
+/* end of Network */
 
 /* Utest Framework */
 
@@ -591,6 +594,14 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
+
+/* HPMicro SDK */
+
+/* end of HPMicro SDK */
+
+/* FT32 HAL & SDK Drivers */
+
+/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

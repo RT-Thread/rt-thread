@@ -11,6 +11,7 @@
 
 #include "board.h"
 #include "drv_qspi.h"
+#include "drv_dma.h"
 #include "drv_config.h"
 
 #ifdef RT_USING_QSPI
@@ -32,6 +33,9 @@ struct stm32_qspi_bus
 
 struct rt_spi_bus _qspi_bus1;
 struct stm32_qspi_bus _stm32_qspi_bus;
+#ifdef BSP_QSPI_USING_DMA
+static const struct stm32_dma_config qspi_dma_config = QSPI_DMA_CONFIG;
+#endif
 
 static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configuration *qspi_cfg)
 {
@@ -92,29 +96,12 @@ static int stm32_qspi_init(struct rt_qspi_device *device, struct rt_qspi_configu
     /* QSPI interrupts must be enabled when using the HAL_QSPI_Receive_DMA */
     HAL_NVIC_SetPriority(QSPI_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(QSPI_IRQn);
-    HAL_NVIC_SetPriority(QSPI_DMA_IRQ, 0, 0);
-    HAL_NVIC_EnableIRQ(QSPI_DMA_IRQ);
-
     /* init QSPI DMA */
-    if(QSPI_DMA_RCC  == RCC_AHB1ENR_DMA1EN)
+    if (stm32_dma_setup(&qspi_bus->hdma_quadspi, &qspi_bus->QSPI_Handler, &qspi_bus->QSPI_Handler.hdma, &qspi_dma_config) != RT_EOK)
     {
-        __HAL_RCC_DMA1_CLK_ENABLE();
+        LOG_E("qspi dma init failed");
+        return -RT_ERROR;
     }
-    else
-    {
-        __HAL_RCC_DMA2_CLK_ENABLE();
-    }
-
-    HAL_DMA_DeInit(qspi_bus->QSPI_Handler.hdma);
-    DMA_HandleTypeDef hdma_quadspi_config = QSPI_DMA_CONFIG;
-    qspi_bus->hdma_quadspi = hdma_quadspi_config;
-
-    if (HAL_DMA_Init(&qspi_bus->hdma_quadspi) != HAL_OK)
-    {
-        LOG_E("qspi dma init failed (%d)!", result);
-    }
-
-    __HAL_LINKDMA(&qspi_bus->QSPI_Handler, hdma, qspi_bus->hdma_quadspi);
 #endif /* BSP_QSPI_USING_DMA */
 
     return result;

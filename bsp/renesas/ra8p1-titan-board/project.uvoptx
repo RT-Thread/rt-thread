@@ -189,7 +189,7 @@
 
   <Group>
     <GroupName>:Renesas RA Smart Configurator:Common Sources</GroupName>
-    <tvExp>0</tvExp>
+    <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>

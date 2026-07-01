@@ -274,8 +274,8 @@ static int parse_config_descriptor(struct usbh_hubport *hport, struct usb_config
                     break;
             }
             /* skip to next descriptor */
-            p += p[DESC_bLength];
             desc_len += p[DESC_bLength];
+            p += p[DESC_bLength];
         }
     }
     return 0;
@@ -603,9 +603,8 @@ void usbh_hubport_release(struct usbh_hubport *hport)
             hport->bus->event_handler(hport->bus->busid, hport->parent->index, hport->port, i, USBH_EVENT_INTERFACE_STOP);
         }
         hport->config.config_desc.bNumInterfaces = 0;
-        if (hport->mutex) {
-            usb_osal_mutex_delete(hport->mutex);
-        }
+        usb_osal_mutex_take(hport->mutex);
+        usb_osal_mutex_delete(hport->mutex);
         USB_LOG_INFO("Device on Bus %u, Hub %u, Port %u disconnected\r\n", hport->bus->busid, hport->parent->index, hport->port);
         hport->bus->event_handler(hport->bus->busid, hport->parent->index, hport->port, USB_INTERFACE_ANY, USBH_EVENT_DEVICE_DISCONNECTED);
     }
@@ -666,8 +665,6 @@ int usbh_deinitialize(uint8_t busid)
 
     bus = &g_usbhost_bus[busid];
 
-    bus->event_handler(bus->busid, USB_HUB_INDEX_ANY, USB_HUB_PORT_ANY, USB_INTERFACE_ANY, USBH_EVENT_DEINIT);
-
     usbh_hub_deinitialize(bus);
 
     usb_slist_remove(&g_bus_head, &bus->list);
@@ -683,6 +680,10 @@ int usbh_control_transfer(struct usbh_hubport *hport, struct usb_setup_packet *s
 
     if (!hport || !setup) {
         return -USB_ERR_INVAL;
+    }
+
+    if (!hport->connected) {
+        return -USB_ERR_NODEV;
     }
 
     urb = &hport->ep0_urb;

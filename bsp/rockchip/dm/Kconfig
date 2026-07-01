@@ -1,6 +1,9 @@
 SOC_DM_ADC_DIR          = $(SOC_DM_DIR)/adc
 SOC_DM_CAN_DIR          = $(SOC_DM_DIR)/can
 SOC_DM_CLK_DIR          = $(SOC_DM_DIR)/clk
+SOC_DM_DVFS_EVENT_DIR   = $(SOC_DM_DIR)/dvfs/event
+SOC_DM_DVFS_CPUFREQ_DIR = $(SOC_DM_DIR)/dvfs/cpufreq
+SOC_DM_DVFS_DEVFREQ_DIR = $(SOC_DM_DIR)/dvfs/devfreq
 SOC_DM_HWCRYPTO_DIR     = $(SOC_DM_DIR)/hwcrypto
 SOC_DM_HWSPINLOCK_DIR   = $(SOC_DM_DIR)/hwspinlock
 SOC_DM_CLOCK_TIME_DIR   = $(SOC_DM_DIR)/hwtimer

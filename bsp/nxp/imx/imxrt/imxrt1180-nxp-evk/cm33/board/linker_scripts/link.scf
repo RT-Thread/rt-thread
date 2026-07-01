@@ -1,0 +1,233 @@
+#!armclang --target=arm-arm-none-eabi -mcpu=cortex-m33 -E -x c
+/*
+** ###################################################################
+**     Processors:          MIMXRT1189CVM8B_cm33
+**                          MIMXRT1189CVM8C_cm33
+**                          MIMXRT1189XVM8B_cm33
+**                          MIMXRT1189XVM8C_cm33
+**
+**     Compiler:            Keil ARM C/C++ Compiler
+**     Reference manual:    IMXRT1180RM, Rev 5, 01/2024
+**     Version:             rev. 2.0, 2024-01-18
+**     Build:               b250310
+**
+**     Abstract:
+**         Linker file for the Keil ARM C/C++ Compiler
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2025 NXP
+**     SPDX-License-Identifier: BSD-3-Clause
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+
+/* Board memory map */
+
+#define m_code_tcm_start               0x0FFE0000
+#define m_code_tcm_size                0x00020000
+
+#define m_system_tcm_start             0x20000000
+#define m_system_tcm_size              0x00020000
+
+#define m_ocram1_start                 0x20484000 /* OCRAM1 first 16K access is blocked by TRDC */
+#define m_ocram1_size                  0x0007C000
+
+#define m_ocram2_start                 0x20500000
+#define m_ocram2_size                  0x00040000
+
+#if defined(__dual_image__)
+/* CM33 use last 2M bytes space of sdram and hyperram for dual image framework */
+#define m_sdram_start                  0x81E00000
+#define m_sdram_size                   0x00200000
+#define m_hyperram_start               0x04600000
+#define m_hyperram_size                0x00200000
+#else
+#define m_sdram_start                  0x80000000
+#define m_sdram_size                   0x02000000
+#define m_hyperram_start               0x04000000
+#define m_hyperram_size                0x00800000
+#endif
+
+#define m_flash_start                  0x28000000
+#define m_flash_size                   0x00800000
+#define m_core1_image_maximum_size     0x00040000
+
+/* General definition */
+#define app_image_offset               0x0000B000
+
+#define m_fcb_offset                   0x400
+#define m_fcb_size                     0x200
+#define m_xmcd_offset                  0x800
+#define m_xmcd_size                    0x400
+#define m_container_offset             0x1000
+#define m_container_size               0x2000
+
+#define vector_table_size              0x400
+#define m_ram_vector_table_start       m_code_tcm_start
+
+#if defined(__stack_size__)
+  #define stack_size                   __stack_size__
+#else
+  #define stack_size                   0x01000
+#endif
+
+#if defined(__heap_size__)
+  #define heap_size                    __heap_size__
+#else
+  #define heap_size                    0x04000
+#endif
+
+/* Target specific definition, code & data allocation */
+#if defined(__ram_vector_table__)
+#define m_ram_vector_table_size        vector_table_size
+#else
+#define m_ram_vector_table_size        0
+#endif
+
+#define m_qacode_start                 m_code_tcm_start + m_ram_vector_table_size
+#define m_qadata_start                 m_system_tcm_start
+#define m_qacode_size                  m_code_tcm_size - (m_qacode_start - m_code_tcm_start)
+#define m_qadata_size                  0
+
+#define m_text_size                    m_flash_size - app_image_offset
+#define m_data_size                    m_system_tcm_size
+#if defined(__multicore__)
+#define m_ncache_size                  0x20000         /* m_ncache_size must be 2^N */
+#define m_ocram1_size_for_cm7          0x40000
+#else
+#define m_ncache_size                  0x40000         /* m_ncache_size must be 2^N */
+#define m_ocram1_size_for_cm7          0
+#endif
+#define m_shmem_size                   m_ocram2_size   /* m_shmem_size must be 2^N */
+
+#define m_fcb_start                    m_flash_start + m_fcb_offset
+#define m_xmcd_start                   m_flash_start + m_xmcd_offset
+#define m_container_start              m_flash_start + m_container_offset
+#define m_text_start                   m_flash_start + app_image_offset
+#define m_interrupts_start             m_text_start
+#define m_data_start                   m_system_tcm_start
+#define m_ncache_start                 m_ocram1_start + m_ocram1_size - m_ocram1_size_for_cm7 - m_ncache_size
+#define m_heap_start                   m_ocram1_start
+
+#if defined(__use_shmem__)
+#define m_shmem_start                  m_ocram2_start
+#endif
+
+#if defined(XIP_BOOT_HEADER_ENABLE) && (XIP_BOOT_HEADER_ENABLE == 1)
+; load region
+LR_m_header   m_fcb_start   (m_container_start) + (m_container_size) - (m_fcb_start)
+{
+  ; Flash Configuration Block
+  FCB                          m_fcb_start                            FIXED         m_fcb_size
+  {
+    .ANY (.boot_hdr.conf)
+  }
+
+  ; XMCD Block
+  XMCD                         m_xmcd_start                           FIXED         m_xmcd_size
+  {
+    .ANY (.boot_hdr.xmcd_data)
+  }
+
+  ; Container
+  Container                    m_container_start                      FIXED         m_container_size
+  {
+    .ANY (.boot_hdr.container)
+  }
+
+  ; Empty region added for container configuration
+  ER_m_container_image_offset  (m_text_start) - (m_container_start)   EMPTY         0
+  {
+  }
+}
+#endif
+
+; load region
+LR_m_text   m_text_start   m_text_size
+{
+  ; load address = execution address
+  VECTOR_ROM              m_interrupts_start                 FIXED         vector_table_size
+  {
+    * (.isr_vector,+FIRST)
+  }
+
+  VECTOR_RAM              m_ram_vector_table_start           EMPTY         m_ram_vector_table_size
+  {
+  }
+
+  ; load address = execution address
+  ER_m_text               m_text_start + vector_table_size   FIXED         m_text_size - vector_table_size
+  {
+    * (InRoot$$Sections)
+    .ANY (+RO)
+  }
+
+  CORE1_REGION            +0                                 ALIGN 16      m_core1_image_maximum_size
+  {
+    .ANY (.core1_code)
+  }
+
+  ER_m_QuickAccessCode    m_qacode_start                                   m_qacode_size
+  {
+    fsl_flexspi.o (+RO-CODE)
+    .ANY (CodeQuickAccess)
+  }
+
+  ER_m_QuickAccessData    m_qadata_start                     EMPTY         m_qadata_size
+  {
+  }
+
+  RW_m_data               m_data_start                                     m_data_size-stack_size
+  {
+    .ANY (+RW +ZI)
+    .ANY (DataQuickAccess)
+  }
+
+  ; ncache data
+  RW_m_ncache             m_ncache_start                                   m_ncache_size
+  {
+    .ANY (NonCacheable.init)
+    .ANY (.bss.NonCacheable)
+  }
+
+#if defined(__heap_noncacheable__)
+  ; Heap region growing up
+  ARM_LIB_HEAP            +0             ALIGN 0x100         EMPTY         heap_size
+  {
+  }
+#endif
+
+  ; Empty region added for MPU configuration
+  RW_m_ncache_aux         m_ncache_start + m_ncache_size     EMPTY         0
+  {
+  }
+
+#if defined(__use_shmem__)
+  ; shared memory data
+  RPMSG_SH_MEM            m_shmem_start                                    m_shmem_size
+  {
+    .ANY (rpmsg_sh_mem_section)
+  }
+
+  ; Empty region added for MPU configuration
+  RPMSG_SH_MEM_aux        m_shmem_start + m_shmem_size       EMPTY         0
+  {
+  }
+#endif
+
+#if !defined(__heap_noncacheable__)
+  ; Heap region growing up
+  ARM_LIB_HEAP            m_heap_start                       EMPTY         heap_size
+  {
+  }
+#endif
+
+  ; Stack region growing down
+  ARM_LIB_STACK           m_data_start+m_data_size           EMPTY         -stack_size
+  {
+  }
+}

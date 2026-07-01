@@ -214,6 +214,7 @@ config RT_USING_UTEST
     if RT_USING_UTEST
         config UTEST_THR_STACK_SIZE
             int "The utest thread stack size"
+            default 8192 if ARCH_CPU_64BIT
             default 4096
         config UTEST_THR_PRIORITY
             int "The utest thread priority"

@@ -84,7 +84,7 @@ void usb_dc_low_level_init(uint8_t busid)
     USBHS_SS->PHY_FUNC_CTL_1 |= (7 << USBHS_SS_PHY_FUNC_CTL_1_PLL_FSEL_Pos);
     USBHS_SS->PHY_FUNC_CTL_2 |= (USBHS_SS_PHY_FUNC_CTL_2_RES_TUNING_SEL_Msk | USBHS_SS_PHY_FUNC_CTL_2_EFUSE_SEL_Msk);
 
-    rt_thread_mdelay(200); /* Wait for PHY stable */
+    rt_thread_mdelay(200); // Wait for PHY stable
 
     cy_stc_sysint_t usb_int_cfg = {
         .intrSrc = usbhs_interrupt_usbhsctrl_IRQn,
@@ -123,7 +123,7 @@ void usb_hc_low_level_init(struct usbh_bus *bus)
     USBHS_SS->PHY_FUNC_CTL_1 |= (7 << USBHS_SS_PHY_FUNC_CTL_1_PLL_FSEL_Pos);
     USBHS_SS->PHY_FUNC_CTL_2 |= (USBHS_SS_PHY_FUNC_CTL_2_RES_TUNING_SEL_Msk | USBHS_SS_PHY_FUNC_CTL_2_EFUSE_SEL_Msk);
 
-    rt_thread_mdelay(200); /* Wait for PHY stable */
+    rt_thread_mdelay(200); // Wait for PHY stable
 
     cy_stc_sysint_t usb_int_cfg = {
         .intrSrc = usbhs_interrupt_usbhsctrl_IRQn,

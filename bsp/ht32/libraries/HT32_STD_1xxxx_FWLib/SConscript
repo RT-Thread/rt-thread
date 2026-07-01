@@ -4,8 +4,11 @@ import rtconfig
 from building import *
 Import('rtconfig')
 
-tools_path = os.path.normpath(os.getcwd() + '../../..' + '/tools')
-sys.path.append(tools_path)
+tools_paths = [
+    os.path.normpath(os.path.join(GetCurrentDir(), '..', '..', 'tools')),
+    os.path.normpath(os.path.join(GetCurrentDir(), '..', '..')),
+]
+sys.path.extend(tools_paths)
 from sdk_dist import get_source
 
 source_file_path = os.path.join(os.getcwd(), 'Source_file')

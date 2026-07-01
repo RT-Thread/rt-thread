@@ -8,7 +8,7 @@
 #include "usbh_ch34x.h"
 
 #undef USB_DBG_TAG
-#define USB_DBG_TAG "usbh_ch43x"
+#define USB_DBG_TAG "usbh_ch34x"
 #include "usb_log.h"
 
 struct usbh_ch34x {

@@ -94,7 +94,7 @@ static const uint8_t *device_quality_descriptor_callback(uint8_t speed)
 
 static const char *string_descriptor_callback(uint8_t speed, uint8_t index)
 {
-    if (index > 3) {
+    if (index >= (sizeof(string_descriptors) / sizeof(char *))) {
         return NULL;
     }
     return string_descriptors[index];
@@ -112,49 +112,41 @@ static const uint8_t hid_mouse_report_desc[HID_MOUSE_REPORT_DESC_SIZE] = {
     0x05, 0x01, // USAGE_PAGE (Generic Desktop)
     0x09, 0x02, // USAGE (Mouse)
     0xA1, 0x01, // COLLECTION (Application)
-    0x09, 0x01, //   USAGE (Pointer)
-
-    0xA1, 0x00, //   COLLECTION (Physical)
-    0x05, 0x09, //     USAGE_PAGE (Button)
-    0x19, 0x01, //     USAGE_MINIMUM (Button 1)
-    0x29, 0x03, //     USAGE_MAXIMUM (Button 3)
-
-    0x15, 0x00, //     LOGICAL_MINIMUM (0)
-    0x25, 0x01, //     LOGICAL_MAXIMUM (1)
-    0x95, 0x03, //     REPORT_COUNT (3)
-    0x75, 0x01, //     REPORT_SIZE (1)
-
-    0x81, 0x02, //     INPUT (Data,Var,Abs)
-    0x95, 0x01, //     REPORT_COUNT (1)
-    0x75, 0x05, //     REPORT_SIZE (5)
-    0x81, 0x01, //     INPUT (Cnst,Var,Abs)
-
-    0x05, 0x01, //     USAGE_PAGE (Generic Desktop)
-    0x09, 0x30, //     USAGE (X)
-    0x09, 0x31, //     USAGE (Y)
-    0x09, 0x38,
-
-    0x15, 0x81, //     LOGICAL_MINIMUM (-127)
-    0x25, 0x7F, //     LOGICAL_MAXIMUM (127)
-    0x75, 0x08, //     REPORT_SIZE (8)
-    0x95, 0x03, //     REPORT_COUNT (2)
-
-    0x81, 0x06, //     INPUT (Data,Var,Rel)
-    0xC0, 0x09,
-    0x3c, 0x05,
-    0xff, 0x09,
-
-    0x01, 0x15,
-    0x00, 0x25,
-    0x01, 0x75,
-    0x01, 0x95,
-
-    0x02, 0xb1,
-    0x22, 0x75,
-    0x06, 0x95,
-    0x01, 0xb1,
-
-    0x01, 0xc0 //   END_COLLECTION
+    0x09, 0x01, // USAGE (Pointer)
+    0xA1, 0x00, // COLLECTION (Physical)
+    0x05, 0x09, // USAGE_PAGE (Button)
+    0x19, 0x01, // USAGE_MINIMUM (Button 1)
+    0x29, 0x03, // USAGE_MAXIMUM (Button 3)
+    0x15, 0x00, // LOGICAL_MINIMUM (0)
+    0x25, 0x01, // LOGICAL_MAXIMUM (1)
+    0x95, 0x03, // REPORT_COUNT (3)
+    0x75, 0x01, // REPORT_SIZE (1)
+    0x81, 0x02, // INPUT (Data,Var,Abs)
+    0x95, 0x01, // REPORT_COUNT (1)
+    0x75, 0x05, // REPORT_SIZE (5)
+    0x81, 0x01, // INPUT (Cnst,Var,Abs)
+    0x05, 0x01, // USAGE_PAGE (Generic Desktop)
+    0x09, 0x30, // USAGE (X)
+    0x09, 0x31, // USAGE (Y)
+    0x09, 0x38, // Usage (Wheel)
+    0x15, 0x81, // LOGICAL_MINIMUM (-127)
+    0x25, 0x7F, // LOGICAL_MAXIMUM (127)
+    0x75, 0x08, // REPORT_SIZE (8)
+    0x95, 0x03, // REPORT_COUNT (2)
+    0x81, 0x06, // INPUT (Data,Var,Rel)
+    0xC0,       // END_COLLECTION
+    0x09, 0x3c, // USAGE (Motion Wakeup)
+    0x05, 0xff, // USAGE_PAGE (Vendor Defined 0xFF)
+    0x09, 0x01, // USAGE (Vendor Usage 1)
+    0x15, 0x00, // LOGICAL_MINIMUM (0)
+    0x25, 0x01, // LOGICAL_MAXIMUM (1)
+    0x75, 0x01, // REPORT_SIZE (1)
+    0x95, 0x02, // REPORT_COUNT (2)
+    0xb1, 0x22, // FEATURE (Data,Var,Abs,NPrf)
+    0x75, 0x06, // REPORT_SIZE (6)
+    0x95, 0x01, // REPORT_COUNT (1)
+    0xb1, 0x01, // FEATURE (Cnst,Ary,Abs)
+    0xc0        // END_COLLECTION
 };
 
 /*!< mouse report struct */

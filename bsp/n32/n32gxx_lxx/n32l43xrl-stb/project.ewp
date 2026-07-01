@@ -2206,9 +2206,6 @@
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\core\device.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\clock_time\clock_timer.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\i2c\dev_i2c_bit_ops.c</name>
     </file>
     <file>
@@ -2288,9 +2285,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\n32_drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\n32_drivers\drv_timer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\n32_drivers\drv_rtc.c</name>
@@ -2468,9 +2462,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_tim.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\N32L43x_Firmware_Library\n32l43x_std_periph_driver\src\n32l43x_rtc.c</name>

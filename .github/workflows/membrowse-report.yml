@@ -1,0 +1,179 @@
+name: MemBrowse Memory Report
+
+on:
+  pull_request:
+    paths:
+      - '.github/membrowse-targets.json'
+      - '.github/workflows/membrowse-report.yml'
+      - 'Kconfig'
+      - 'bsp/**'
+      - 'components/**'
+      - 'include/**'
+      - 'libcpu/**'
+      - 'src/**'
+      - 'tools/**'
+      - '!**/README*'
+      - '!**/readme*'
+      - '!bsp/**/docs/**'
+  push:
+    branches:
+      - master
+    paths:
+      - '.github/membrowse-targets.json'
+      - '.github/workflows/membrowse-report.yml'
+      - 'Kconfig'
+      - 'bsp/**'
+      - 'components/**'
+      - 'include/**'
+      - 'libcpu/**'
+      - 'src/**'
+      - 'tools/**'
+      - '!**/README*'
+      - '!**/readme*'
+      - '!bsp/**/docs/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  load-targets:
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      target_count: ${{ steps.set-matrix.outputs.target_count }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Collect changed files
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
+          elif [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed_files.txt
+          else
+            git diff --name-only origin/${{ github.event.repository.default_branch }}...HEAD > changed_files.txt
+          fi
+          cat changed_files.txt
+
+      - name: Load target matrix
+        id: set-matrix
+        run: python3 tools/ci/membrowse_filter_targets.py --targets .github/membrowse-targets.json --changed-files changed_files.txt
+
+  analyze:
+    needs: load-targets
+    if: ${{ needs.load-targets.outputs.target_count != '0' }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.load-targets.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install env tool and Python build deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq python3 python3-pip wget xz-utils build-essential
+          wget -qO install_ubuntu.sh https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          bash install_ubuntu.sh
+
+      - name: Install toolchain
+        run: |
+          set -e
+          case "${{ matrix.toolchain }}" in
+            arm-none-eabi)
+              sudo apt-get install -y -qq gcc-arm-none-eabi
+              echo "TOOLCHAIN_PATH=/usr/bin" >> $GITHUB_ENV
+              ;;
+            aarch64-none-elf)
+              wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.6/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz
+              sudo tar -xf gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf.tar.xz -C /opt
+              echo "TOOLCHAIN_PATH=/opt/gcc-arm-10.2-2020.11-x86_64-aarch64-none-elf/bin" >> $GITHUB_ENV
+              ;;
+            llvm-arm)
+              wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz
+              sudo tar zxf LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz -C /opt
+              sudo apt-get install -y -qq libncurses5 libncurses5-dev libncursesw5-dev
+              echo "TOOLCHAIN_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
+              ;;
+            mips-sde-elf)
+              wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.1/mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2
+              sudo tar xjf mips-2016.05-7-mips-sde-elf-i686-pc-linux-gnu.tar.bz2 -C /opt
+              echo "TOOLCHAIN_PATH=/opt/mips-2016.05/bin" >> $GITHUB_ENV
+              ;;
+            i386-unknown-elf)
+              wget -q https://github.com/zhkag/toolchains/releases/download/i386-unknown/i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2
+              sudo tar -jxf i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2 -C /opt
+              echo "TOOLCHAIN_PATH=/opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+              ;;
+            riscv-none-embed)
+              wget -q https://github.com/RT-Thread/toolchains-ci/releases/download/v1.5/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
+              sudo tar zxf xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz -C /opt
+              echo "TOOLCHAIN_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
+              ;;
+            riscv32-unknown-elf-multilib)
+              wget -q https://github.com/hpmicro/riscv-gnu-toolchain/releases/download/2022.05.15/riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz
+              sudo tar zxf riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz -C /opt
+              echo "TOOLCHAIN_PATH=/opt/riscv32-unknown-elf-newlib-multilib/bin" >> $GITHUB_ENV
+              ;;
+            xuantie-elf-newlib)
+              wget -q https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1751370399722/Xuantie-900-gcc-elf-newlib-x86_64-V3.2.0-20250627.tar.gz
+              sudo tar -zxf Xuantie-900-gcc-elf-newlib-x86_64-V3.2.0-20250627.tar.gz -C /opt
+              echo "TOOLCHAIN_PATH=/opt/Xuantie-900-gcc-elf-newlib-x86_64-V3.2.0/bin" >> $GITHUB_ENV
+              ;;
+            riscv32-esp-elf)
+              wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+              sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+              pip3 install --user esptool
+              echo "TOOLCHAIN_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
+              ;;
+            riscv64-linux-musl-k230)
+              wget -q https://download.rt-thread.org/rt-smart/riscv64/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2
+              sudo tar xjf riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2 -C /opt
+              echo "TOOLCHAIN_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+              ;;
+            gcc-host)
+              sudo apt-get install -y -qq libsdl2-dev
+              echo "TOOLCHAIN_PATH=/usr/bin" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "Unknown toolchain: ${{ matrix.toolchain }}"; exit 1 ;;
+          esac
+
+      - name: Build
+        env:
+          MATRIX_RTT_CC: ${{ matrix.rtt_cc }}
+          MATRIX_RTT_CC_PREFIX: ${{ matrix.rtt_cc_prefix }}
+        run: |
+          source $HOME/.env/env.sh
+          pip install -r tools/requirements.txt
+          export RTT_EXEC_PATH="$TOOLCHAIN_PATH"
+          export RTT_ROOT="$PWD"
+          export RTT_CC="${MATRIX_RTT_CC:-gcc}"
+          [ -n "$MATRIX_RTT_CC_PREFIX" ] && export RTT_CC_PREFIX="$MATRIX_RTT_CC_PREFIX"
+          cd "${{ matrix.bsp_path }}"
+          pkgs --update --force-update
+          scons --pyconfig-silent
+          scons -j$(nproc)
+
+      - name: Run MemBrowse analysis
+        uses: membrowse/membrowse-action@v1
+        with:
+          target_name: ${{ matrix.target_name }}
+          elf: ${{ matrix.elf }}
+          ld: ${{ matrix.ld }}
+          map_file: ${{ matrix.map_file }}
+          linker_vars: ${{ matrix.linker_vars }}
+          api_key: ${{ secrets.MEMBROWSE_API_KEY }}
+          api_url: ${{ vars.MEMBROWSE_API_URL }}
+          verbose: INFO
+          # Uncomment to allow CI to pass even when memory budgets are exceeded
+          # dont_fail_on_alerts: true

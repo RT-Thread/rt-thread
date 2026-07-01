@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>__RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS</Define>
+              <Define>__STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\include;..\..\..\libcpu\arm\common;..\..\..\components\drivers\clock_time\inc;..\..\..\libcpu\arm\arm926;applications;..\..\..\components\libc\posix\tls;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\dfs\dfs_v1\include;..\..\..\components\drivers\phy;.;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\cplusplus;platform;..\..\..\components\libc\posix\pthreads;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\drivers\clock_time;..\..\..\components\drivers\smp_call;drivers;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\delay</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\tls;..\..\..\components\drivers\clock_time;applications;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\pthreads;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\components\drivers\include;.;..\..\..\components\drivers\phy;..\..\..\components\dfs\dfs_v1\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\delay;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\smp_call;drivers;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\drivers\include;..\..\..\components\drivers\include;platform;..\..\..\libcpu\arm\arm926;..\..\..\components\libc\cplusplus;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\net\utest</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -410,73 +410,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Compiler</GroupName>
-          <Files>
-            <File>
-              <FileName>syscall_mem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>syscalls.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cctype.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cstdlib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cstring.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ctime.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cunistd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cwchar.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>CPP</GroupName>
-          <Files>
-            <File>
-              <FileName>cxx_crt.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>cxx_crt_init.c</FileName>
@@ -484,9 +418,158 @@
               <FilePath>..\..\..\components\libc\cplusplus\cxx_crt_init.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>cxx_crt.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\..\..\components\libc\cplusplus\cxx_crt.cpp</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CPU</GroupName>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\arm926\context_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\arm926\cpuport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>machine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\arm926\machine.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\arm926\mmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\arm926\stack.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>start_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\arm926\start_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>trap.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\arm926\trap.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>clock_boottime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_boottime.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock_hrtimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_hrtimer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock_time_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_time_core.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>clock_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\clock_time\clock_timer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>device.c</FileName>
@@ -496,7 +579,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -515,7 +598,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -534,7 +617,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -553,7 +636,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -572,7 +655,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -591,7 +674,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -610,7 +693,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -629,7 +712,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -648,7 +731,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -667,7 +750,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -686,7 +769,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -705,7 +788,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -724,7 +807,7 @@
                 <FileArmAds>
                   <Cads>
                     <VariousControls>
-                      <MiscControls> </MiscControls>
+                      <MiscControls>  --c99 --gnu</MiscControls>
                       <Define>__RT_IPC_SOURCE__</Define>
                       <Undefine> </Undefine>
                       <IncludePath> </IncludePath>
@@ -861,6 +944,13 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
@@ -875,23 +965,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>msh_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>msh_file.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1184,202 +1267,63 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>klibc</GroupName>
+          <GroupName>Libc</GroupName>
           <Files>
             <File>
-              <FileName>kerrno.c</FileName>
+              <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>rt_vsscanf.c</FileName>
+              <FileName>cctype.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstdio.c</FileName>
+              <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>kstring.c</FileName>
+              <FileName>cstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>clock_time</GroupName>
           <Files>
             <File>
-              <FileName>clock_boottime.c</FileName>
+              <FileName>ctime.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\clock_time\clock_boottime.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  --c99 --gnu</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
+              <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>clock_time_core.c</FileName>
+              <FileName>cunistd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\clock_time\clock_time_core.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  --c99 --gnu</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>clock_hrtimer.c</FileName>
+              <FileName>cwchar.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\clock_time\clock_hrtimer.c</FilePath>
-              <FileOption>
-                <FileArmAds>
-                  <Cads>
-                    <VariousControls>
-                      <MiscControls>  --c99 --gnu</MiscControls>
-                      <Define> </Define>
-                      <Undefine> </Undefine>
-                      <IncludePath> </IncludePath>
-                    </VariousControls>
-                  </Cads>
-                </FileArmAds>
-              </FileOption>
+              <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>libcpu</GroupName>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\arm926\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\arm926\cpuport.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>machine.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\arm926\machine.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\arm926\mmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\arm926\stack.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>start_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\arm926\start_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>trap.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\arm926\trap.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Platform</GroupName>
-          <Files>
-            <File>
-              <FileName>system_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>platform\system_clock.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>reset.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>platform\reset.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_low_level_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>platform\rt_low_level_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>platform\interrupt.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>POSIX</GroupName>
           <Files>
             <File>
               <FileName>delay.c</FileName>
@@ -1455,6 +1399,72 @@
               <FileName>emutls.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\posix\tls\emutls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kerrno.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kerrno.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsnprintf_tiny.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsnprintf_tiny.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_vsscanf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\rt_vsscanf.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Platform</GroupName>
+          <Files>
+            <File>
+              <FileName>interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>platform\interrupt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>reset.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>platform\reset.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_low_level_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>platform\rt_low_level_init.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>platform\system_clock.c</FilePath>
             </File>
           </Files>
         </Group>

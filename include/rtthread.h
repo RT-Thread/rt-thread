@@ -861,17 +861,37 @@ do                                                                            \
 }                                                                             \
 while (0)
 
+#if defined(RT_USING_SMP)
+/**
+ * @brief Check whether disabled interrupts make scheduler unavailable.
+ *
+ * In SMP builds, some kernel-internal lockless wait paths may disable local
+ * interrupts while still using scheduler-related operations legally. Keep this
+ * IRQ-disabled context assertion for UP builds only.
+ */
+#define RT_DEBUG_SCHEDULER_IRQ_DISABLED() (RT_FALSE)
+#else
+/**
+ * @brief Check whether disabled interrupts make scheduler unavailable.
+ *
+ * In UP builds, globally disabled interrupts prevent normal scheduling and
+ * timeout progress, so blocking scheduler paths must reject this context.
+ */
+#define RT_DEBUG_SCHEDULER_IRQ_DISABLED() rt_hw_interrupt_is_disabled()
+#endif /* defined(RT_USING_SMP) */
+
 /* "scheduler available" means:
  *     1) the scheduler has been started.
  *     2) not in interrupt context.
  *     3) scheduler is not locked.
+ *     4) interrupts are not disabled on UP.
  */
 #define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)                              \
 do                                                                            \
 {                                                                             \
     if (need_check)                                                           \
     {                                                                         \
-        if (rt_critical_level() != 0)                                         \
+        if ((rt_critical_level() != 0) || RT_DEBUG_SCHEDULER_IRQ_DISABLED())  \
         {                                                                     \
             rt_kprintf("Function[%s]: scheduler is not available\n",          \
                     __FUNCTION__);                                            \

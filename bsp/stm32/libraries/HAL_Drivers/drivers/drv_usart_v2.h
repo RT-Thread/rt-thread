@@ -57,8 +57,8 @@ struct stm32_uart_config
     IRQn_Type irq_type;
 
 #ifdef RT_SERIAL_USING_DMA
-    struct dma_config *dma_rx;
-    struct dma_config *dma_tx;
+    const struct stm32_dma_config *dma_rx;
+    const struct stm32_dma_config *dma_tx;
 #endif
 };
 

@@ -642,6 +642,7 @@ static void usbh_hub_events(struct usbh_hub *hub)
                     child->speed = speed;
                     child->bus = hub->bus;
                     child->mutex = usb_osal_mutex_create();
+                    USB_ASSERT(child->mutex != NULL);
 
                     USB_LOG_INFO("New %s device on Bus %u, Hub %u, Port %u connected\r\n", speed_table[speed], hub->bus->busid, hub->index, port + 1);
 
@@ -677,21 +678,35 @@ static void usbh_hub_events(struct usbh_hub *hub)
 static void usbh_hub_thread(CONFIG_USB_OSAL_THREAD_SET_ARGV)
 {
     struct usbh_hub *hub;
+    struct usbh_hubport *hport;
     int ret = 0;
 
     struct usbh_bus *bus = (struct usbh_bus *)CONFIG_USB_OSAL_THREAD_GET_ARGV;
 
-    usb_hc_init(bus);
     bus->event_handler(bus->busid, USB_HUB_INDEX_ANY, USB_HUB_PORT_ANY, USB_INTERFACE_ANY, USBH_EVENT_INIT);
+    usb_hc_init(bus);
+
     while (1) {
         ret = usb_osal_mq_recv(bus->hub_mq, (uintptr_t *)&hub, USB_OSAL_WAITING_FOREVER);
         if (ret < 0) {
             continue;
         }
-        usb_osal_mutex_take(bus->mutex);
+        if (hub == NULL) {
+            break;
+        }
         usbh_hub_events(hub);
-        usb_osal_mutex_give(bus->mutex);
     }
+
+    hub = &bus->hcd.roothub;
+    for (uint8_t port = 0; port < hub->nports; port++) {
+        hport = &hub->child[port];
+
+        usbh_hubport_release(hport);
+    }
+    usb_hc_deinit(bus);
+    usb_osal_mq_delete(bus->hub_mq);
+    usb_osal_sem_give(bus->hub_sem);
+    usb_osal_thread_delete(NULL);
 }
 
 void usbh_hub_thread_wakeup(struct usbh_hub *hub)
@@ -720,9 +735,9 @@ int usbh_hub_initialize(struct usbh_bus *bus)
         return -1;
     }
 
-    bus->mutex = usb_osal_mutex_create();
-    if (bus->mutex == NULL) {
-        USB_LOG_ERR("Failed to create bus mutex\r\n");
+    bus->hub_sem = usb_osal_sem_create(0);
+    if (bus->hub_sem == NULL) {
+        USB_LOG_ERR("Failed to create hub sem\r\n");
         return -1;
     }
 
@@ -737,24 +752,18 @@ int usbh_hub_initialize(struct usbh_bus *bus)
 
 int usbh_hub_deinitialize(struct usbh_bus *bus)
 {
-    struct usbh_hubport *hport;
-    struct usbh_hub *hub;
-
-    usb_osal_mutex_take(bus->mutex);
-    hub = &bus->hcd.roothub;
-    for (uint8_t port = 0; port < hub->nports; port++) {
-        hport = &hub->child[port];
-
-        usbh_hubport_release(hport);
+    if (!bus->hub_mq || !bus->hub_sem) {
+        return -USB_ERR_INVAL;
     }
 
-    usb_hc_deinit(bus);
+    usb_osal_mq_send(bus->hub_mq, (uintptr_t)NULL);
+    usb_osal_sem_take(bus->hub_sem, USB_OSAL_WAITING_FOREVER);
+    usb_osal_sem_delete(bus->hub_sem);
+    bus->hub_mq = NULL;
+    bus->hub_sem = NULL;
 
-    usb_osal_thread_delete(bus->hub_thread);
-    usb_osal_mq_delete(bus->hub_mq);
+    bus->event_handler(bus->busid, USB_HUB_INDEX_ANY, USB_HUB_PORT_ANY, USB_INTERFACE_ANY, USBH_EVENT_DEINIT);
 
-    usb_osal_mutex_give(bus->mutex);
-    usb_osal_mutex_delete(bus->mutex);
     return 0;
 }
 
