@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-choice
+choice BSP_MICROCHIP_SAMD51_SEEED_WIO_TERMINAL_SOC_SAM_CHOICE
     prompt "select chip type"
     default SOC_SAMD51P19
 

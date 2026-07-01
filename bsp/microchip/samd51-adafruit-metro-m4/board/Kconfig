@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-choice
+choice BSP_MICROCHIP_SAMD51_ADAFRUIT_METRO_M4_SOC_SAM_CHOICE
     prompt "select chip type"
     default SOC_SAMD51J19
 

@@ -26,7 +26,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable UART"
         default y
         if BSP_USING_UART
-            choice
+            choice BSP_GD32_ARM_GD32305R_START_USING_SERIAL_V_CHOICE
                 prompt "Select UART framework version"
                 default BSP_USING_SERIAL_V1
                 
@@ -283,7 +283,7 @@ menu "On-chip Peripheral Drivers"
                 select RT_USING_ALARM
                 default n
             if BSP_USING_ALARM
-                choice
+                choice BSP_GD32_ARM_GD32305R_START_USING_ALARM_CHOICE
                     prompt "Select rtc alarm device"
                     default BSP_USING_ALARM0
 

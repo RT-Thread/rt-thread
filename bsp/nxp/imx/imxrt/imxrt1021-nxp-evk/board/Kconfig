@@ -118,7 +118,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_I2C1
                 bool "Enable I2C1"
                 default n
-            choice
+            choice BSP_NXP_IMX_IMXRT_IMXRT1021_NXP_EVK_HW_I2C1_BADURATE_CHOICE
                 prompt "Select I2C1 badurate"
                 default HW_I2C1_BADURATE_100kHZ
 

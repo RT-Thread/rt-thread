@@ -209,7 +209,7 @@ menu "On-chip Peripheral Drivers"
         default n
 
         if BSP_USING_RTC
-            choice
+            choice BSP_WCH_RISC_V_YD_CH32V307VCT6_USING_RTC_CHOICE
                 prompt "Using clock for RTC"
                 default BSP_USING_RTC_LSI
                 

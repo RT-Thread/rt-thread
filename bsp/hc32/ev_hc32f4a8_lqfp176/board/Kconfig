@@ -32,7 +32,7 @@ menu "Onboard Peripheral Drivers"
         select RT_LWIP_USING_HW_CHECKSUM
 
         if BSP_USING_ETH
-            choice
+            choice BSP_HC32_EV_HC32F4A8_LQFP176_ETH_PHY_USING_RTL8201F_CHOICE
                 prompt "Select ETH PHY type"
                 default ETH_PHY_USING_RTL8201F
 
@@ -43,7 +43,7 @@ menu "Onboard Peripheral Drivers"
                     select BSP_USING_TCA9539
             endchoice
 
-            choice
+            choice BSP_HC32_EV_HC32F4A8_LQFP176_ETH_INTERFACE_CHOICE
                 prompt "Select ETH Communication Interface"
                 default ETH_INTERFACE_USING_MII
 
@@ -58,7 +58,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable EXMC"
         default n
         if BSP_USING_EXMC
-            choice
+            choice BSP_HC32_EV_HC32F4A8_LQFP176_USING_NAND_CHOICE
                 prompt "Using SDRAM or NAND"
                 default BSP_USING_NAND
 
@@ -647,7 +647,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_WDT
         if BSP_USING_WDT_TMR
-            choice
+            choice BSP_HC32_EV_HC32F4A8_LQFP176_USING_SWDT_CHOICE
                 prompt "Select SWDT/WDT"
                 default BSP_USING_SWDT
 
@@ -667,7 +667,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
+            choice BSP_HC32_EV_HC32F4A8_LQFP176_RTC_CHOICE
                 prompt "Select clock source"
                 default BSP_RTC_USING_XTAL32
 
@@ -700,7 +700,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PM
         if BSP_USING_PM
-            choice
+            choice BSP_HC32_EV_HC32F4A8_LQFP176_USING_WKTM_CHOICE
                 prompt "Select WKTM Clock Src"
                 default BSP_USING_WKTM_LRC
 
@@ -744,7 +744,7 @@ menu "On-chip Peripheral Drivers"
             default n
             select RT_HWCRYPTO_USING_SHA2
             if BSP_USING_HASH
-                choice
+                choice BSP_HC32_EV_HC32F4A8_LQFP176_USING_SHA2_256_CHOICE
                     prompt "Select Hash Mode"
                     default BSP_USING_SHA2_256
 
@@ -844,7 +844,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Use USBFS Core "
                 default n
             if BSP_USING_USBFS
-                choice
+                choice BSP_HC32_EV_HC32F4A8_LQFP176_USING_USB_CHOICE
                     prompt "Select USB Mode"
                     default BSP_USING_USBD_FS
 
@@ -878,7 +878,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Use USBHS Core "
                 default n
             if BSP_USING_USBHS
-                choice
+                choice BSP_HC32_EV_HC32F4A8_LQFP176_USING_USB_CHOICE_2
                     prompt "Select USB Mode"
                     default BSP_USING_USBH_HS
 
@@ -894,7 +894,7 @@ menu "On-chip Peripheral Drivers"
                         select RT_USING_USB_HOST
                         depends on !BSP_USING_USBH_FS
                 endchoice
-                choice
+                choice BSP_HC32_EV_HC32F4A8_LQFP176_USING_USBHS_PHY_E_CHOICE
                     prompt "Select USB PHY"
                     default BSP_USING_USBHS_PHY_EMBED
 

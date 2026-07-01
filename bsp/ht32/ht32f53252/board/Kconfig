@@ -8,7 +8,7 @@ menu "Chip Configuration"
         select RT_USING_COMPONENTS_INIT
         select RT_USING_USER_MAIN
         default y
-        choice
+        choice BSP_HT32_HT32F53252_CORTEX_M_CHOICE
             prompt "Select the kernel"
             default CORTEX_M0
             config CORTEX_M0
@@ -17,7 +17,7 @@ menu "Chip Configuration"
                 bool "CORTEX_M3" 
         endchoice
 
-    choice
+    choice BSP_HT32_HT32F53252_SOC_HT32F_CHOICE
         prompt "Select the chip you are using"
         depends on CORTEX_M0
         default HT32F52352
@@ -85,7 +85,7 @@ menu "Chip Configuration"
                 bool "HT32F67741"
     endchoice
     
-    choice
+    choice BSP_HT32_HT32F53252_SOC_HT32F1_CHOICE
         prompt "Select the chip you are using"
         depends on CORTEX_M3
         default HT32F52352
@@ -318,7 +318,7 @@ menu "On-chip Peripheral Drivers"
         default "can"
         if BSP_USING_CAN
             config CAN_DEFAULT_BASE_CONFIGURATION  
-                choice
+                choice BSP_HT32_HT32F53252_USING_CAN_CHOICE
                     prompt "Default CAN baud rate"
                     default BSP_USING_CAN500kBaud
                     config BSP_USING_CAN1MBaud
@@ -340,7 +340,7 @@ menu "On-chip Peripheral Drivers"
                     config BSP_USING_CAN10kBaud
                         bool "CAN10kBaud"
                 endchoice
-                choice
+                choice BSP_HT32_HT32F53252_USING_RT_CAN_MODE_CHOICE
                     prompt "Default CAN mode"
                     default BSP_USING_RT_CAN_MODE_NORMAL
                     config BSP_USING_RT_CAN_MODE_NORMAL
@@ -373,7 +373,7 @@ menu "On-chip Peripheral Drivers"
                 default 3 if BSP_USING_RT_CAN_MODE_LOOPBACKANLISTEN
             
             config CAN_DEFAULT_FILTER_TABLE_CONFIGURATION
-                choice
+                choice BSP_HT32_HT32F53252_USING_CAN_CHOICE_2
                     prompt "Default filter id mode"
                     default BSP_USING_CAN_STD_ID
                     config BSP_USING_CAN_STD_ID
@@ -382,7 +382,7 @@ menu "On-chip Peripheral Drivers"
                         bool "CAN_EXT_ID"
                 endchoice
 
-                choice
+                choice BSP_HT32_HT32F53252_USING_CAN_CHOICE_3
                     prompt "Default filter frame mode"
                     default BSP_USING_CAN_DATA_FRAME
                     config BSP_USING_CAN_DATA_FRAME

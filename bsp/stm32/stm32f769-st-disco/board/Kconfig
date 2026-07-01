@@ -8,7 +8,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
         if BSP_USING_ETH
-            choice
+            choice BSP_STM32_STM32F769_ST_DISCO_PHY_USING_DP83848C_CHOICE
                 prompt "On-board PHY chip"
                 default PHY_USING_DP83848C
 

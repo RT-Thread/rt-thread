@@ -34,7 +34,7 @@ config SOC_TYPE_SG2002
     bool
     default n
 
-choice
+choice BSP_CVITEK_CV18XX_AARCH64_BOARD_TYPE_MILKV_DUO256M_CHOICE
     prompt "Board Type"
     default BOARD_TYPE_MILKV_DUO256M
 

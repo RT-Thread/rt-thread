@@ -168,7 +168,7 @@
             depends on BSP_USING_TMR && !USE_MA35D1_SUBM
 
         if BSP_USING_TMR0
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE
                 prompt "Select TIMER0 function mode"
 
                 config BSP_USING_TIMER0
@@ -193,7 +193,7 @@
             depends on BSP_USING_TMR && !USE_MA35D1_SUBM
 
         if BSP_USING_TMR1
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_2
                 prompt "Select TIMER1 function mode"
 
                 config BSP_USING_TIMER1
@@ -217,7 +217,7 @@
             depends on BSP_USING_TMR
 
          if BSP_USING_TMR2
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_3
                 prompt "Select TIMER2 function mode"
 
                 config BSP_USING_TIMER2
@@ -241,7 +241,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR3
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_4
                 prompt "Select TIMER3 function mode"
 
                 config BSP_USING_TIMER3
@@ -265,7 +265,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR4
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_5
                 prompt "Select TIMER4 function mode"
 
                 config BSP_USING_TIMER4
@@ -290,7 +290,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR5
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_6
                 prompt "Select TIMER5 function mode"
 
                 config BSP_USING_TIMER5
@@ -315,7 +315,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR6
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_7
                 prompt "Select TIMER6 function mode"
 
                 config BSP_USING_TIMER6
@@ -341,7 +341,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR7
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_8
                 prompt "Select TIMER7 function mode"
 
                 config BSP_USING_TIMER7
@@ -366,7 +366,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR8
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_9
                 prompt "Select TIMER8 function mode"
 
                 config BSP_USING_TIMER8
@@ -391,7 +391,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR9
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_10
                 prompt "Select TIMER9 function mode"
 
                 config BSP_USING_TIMER9
@@ -416,7 +416,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR10
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_11
                 prompt "Select TIMER10 function mode"
 
                 config BSP_USING_TIMER10
@@ -441,7 +441,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR11
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_T_CHOICE_12
                 prompt "Select TIMER11 function mode"
 
                 config BSP_USING_TIMER11
@@ -728,7 +728,7 @@
                 bool
 
             if BSP_USING_EPWM0
-                choice
+                choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_EPWM0_CHOICE
                 prompt "Select EPWM0 function mode"
                 config BSP_USING_EPWM0_PWM
                     select RT_USING_PWM
@@ -750,7 +750,7 @@
                 depends on BSP_USING_EPWM && !USE_MA35D1_SUBM
 
             if BSP_USING_EPWM1
-                choice
+                choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_EPWM1_CHOICE
                 prompt "Select EPWM1 function mode"
                 config BSP_USING_EPWM1_PWM
                     select RT_USING_PWM
@@ -772,7 +772,7 @@
                 depends on BSP_USING_EPWM && !USE_MA35D1_SUBM
 
             if BSP_USING_EPWM2
-                choice
+                choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_EPWM2_CHOICE
                 prompt "Select EPWM2 function mode"
                 config BSP_USING_EPWM2_PWM
                     select RT_USING_PWM
@@ -803,7 +803,7 @@
             config BSP_USING_SPII2S
             bool
 
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_SPI_CHOICE
                 prompt "Select SPI0 function mode"
                 config BSP_USING_SPI0_NONE
                 bool "NONE"
@@ -831,7 +831,7 @@
                        depends on BSP_USING_SPI0
             endif
 
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_SPI_CHOICE_2
                 prompt "Select SPI1 function mode"
                 config BSP_USING_SPI1_NONE
                 bool "NONE"
@@ -859,7 +859,7 @@
                     depends on BSP_USING_SPI1
             endif
 
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_SPI_CHOICE_3
                 prompt "Select SPI2 function mode"
                 config BSP_USING_SPI2_NONE
                 bool "NONE"
@@ -887,7 +887,7 @@
                     depends on BSP_USING_SPI2
             endif
 
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_USING_SPI_CHOICE_4
                 prompt "Select SPI3 function mode"
                 config BSP_USING_SPI3_NONE
                 bool "NONE"
@@ -1068,7 +1068,7 @@
         default y
 
         if BSP_USING_DISP
-            choice
+            choice BSP_NUVOTON_LIBRARIES_MA35_RTT_PORT_LCM_USING_F_CHOICE
                 prompt "Select Supported LCM panel"
                 default LCM_USING_FW070TFT_WSVGA
                 config LCM_USING_FW070TFT_WSVGA

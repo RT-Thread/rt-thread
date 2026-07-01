@@ -97,7 +97,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
+            choice BSP_N32_N32GXX_LXX_N32G45XML_STB_RTC_USING_LS_CHOICE
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 
@@ -200,7 +200,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable TIM1 output PWM"
             default n
             if BSP_USING_TIM1_PWM
-                choice
+                choice BSP_N32_N32GXX_LXX_N32G45XML_STB_TIM1_REMAP_CHOICE
                     prompt "Select Pin"
                     default TIM1_REMAP_0
                     config TIM1_REMAP_0
@@ -227,7 +227,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable TIM2 output PWM"
             default n
             if BSP_USING_TIM2_PWM
-                 choice
+                 choice BSP_N32_N32GXX_LXX_N32G45XML_STB_TIM2_REMAP_CHOICE
                     prompt "Select Pin"
                     default TIM2_REMAP_0
                     config TIM2_REMAP_0
@@ -258,7 +258,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable TIM3 output PWM"
             default n
             if BSP_USING_TIM3_PWM
-                 choice
+                 choice BSP_N32_N32GXX_LXX_N32G45XML_STB_TIM3_REMAP_CHOICE
                     prompt "Select Pin"
                     default TIM3_REMAP_0
                     config TIM3_REMAP_0

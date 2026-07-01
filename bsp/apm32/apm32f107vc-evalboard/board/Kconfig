@@ -88,7 +88,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_ONCHIP_RTC
-            choice
+            choice BSP_APM32_APM32F107VC_EVALBOARD_RTC_USING_LS_CHOICE
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 

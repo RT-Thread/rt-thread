@@ -16,7 +16,7 @@ config SOC_LS1C300
     select RT_USING_USER_MAIN
     default y
 
-choice
+choice BSP_LOONGSON_LS1CDEV_RT_LS1C_CHOICE
     prompt "Board Type"
         config RT_LS1C_OPENLOONGSON
             bool "OpenLoongson Board"
@@ -92,7 +92,7 @@ config RT_CAN_USING_HDR
     default y
 endif
 
-choice
+choice BSP_LOONGSON_LS1CDEV_NO_TOUCH_CHOICE
     prompt "Touch format"
     default NO_TOUCH
 

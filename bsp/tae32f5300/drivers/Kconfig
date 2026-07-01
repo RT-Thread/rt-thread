@@ -170,7 +170,7 @@ menu "On-chip Peripheral Drivers"
         default n
 
         if BSP_USING_RTC
-            choice
+            choice BSP_TAE32F5300_RTC_CHOICE
                 prompt "Select clock source"
                 default BSP_RTC_USING_LRC
 

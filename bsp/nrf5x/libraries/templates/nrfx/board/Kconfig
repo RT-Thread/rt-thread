@@ -10,7 +10,7 @@ config SOC_NORDIC
     bool
     default y
 
-choice
+choice BSP_NRF5X_LIBRARIES_TEMPLATES_NRFX_BOARD_PCA_10056_CHOICE
     prompt "Select BSP board "
     default BSP_BOARD_PCA_10056
 

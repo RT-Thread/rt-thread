@@ -13,7 +13,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
         if BSP_USING_ETH
-            choice
+            choice BSP_STM32_STM32F767_ST_NUCLEO_PHY_USING_LAN8720A_CHOICE
                 prompt "On-board PHY chip"
                 default PHY_USING_LAN8720A
 

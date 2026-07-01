@@ -446,7 +446,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_WDT
         if BSP_USING_WDT_TMR
-            choice
+            choice BSP_HC32_EV_HC32F472_LQFP100_USING_SWDT_CHOICE
                 prompt "Select SWDT/WDT"
                 default BSP_USING_SWDT
 
@@ -466,7 +466,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
+            choice BSP_HC32_EV_HC32F472_LQFP100_RTC_CHOICE
                 prompt "Select clock source"
                 default BSP_RTC_USING_XTAL32
 
@@ -490,7 +490,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PM
         if BSP_USING_PM
-            choice
+            choice BSP_HC32_EV_HC32F472_LQFP100_USING_WKTM_CHOICE
                 prompt "Select WKTM Clock Src"
                 default BSP_USING_WKTM_LRC
 
@@ -529,7 +529,7 @@ menu "On-chip Peripheral Drivers"
             default n
             select RT_HWCRYPTO_USING_AES
             if BSP_USING_AES
-                choice
+                choice BSP_HC32_EV_HC32F472_LQFP100_USING_AES_ECB_CHOICE
                     prompt "Select AES Mode"
                     default BSP_USING_AES_ECB
 
@@ -544,7 +544,7 @@ menu "On-chip Peripheral Drivers"
             default n
             select RT_HWCRYPTO_USING_SHA2
             if BSP_USING_HASH
-                choice
+                choice BSP_HC32_EV_HC32F472_LQFP100_USING_SHA2_256_CHOICE
                     prompt "Select Hash Mode"
                     default BSP_USING_SHA2_256
 
@@ -750,7 +750,7 @@ menu "On-chip Peripheral Drivers"
                 bool
                 default y
 
-            choice
+            choice BSP_HC32_EV_HC32F472_LQFP100_USING_USB_CHOICE
                 prompt "Select USB Mode"
                 default BSP_USING_USBD
 

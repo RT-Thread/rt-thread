@@ -124,7 +124,7 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM1
-                        choice
+                        choice BSP_WCH_ARM_CH32F203R_EVT_USING_TIM1_CHOICE
                                 prompt "using TIM1 as clock_timer or PWM mode"
                                 default BSP_USING_TIM1_CLOCK_TIMER
 
@@ -162,7 +162,7 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM2
-                        choice
+                        choice BSP_WCH_ARM_CH32F203R_EVT_USING_TIM2_CHOICE
                                 prompt "using TIM2 as clock_timer or PWM mode"
                                 default BSP_USING_TIM2_CLOCK_TIMER
 
@@ -200,7 +200,7 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM3
-                        choice
+                        choice BSP_WCH_ARM_CH32F203R_EVT_USING_TIM3_CHOICE
                                 prompt "using TIM3 as clock_timer or PWM mode"
                                 default BSP_USING_TIM3_CLOCK_TIMER
 
@@ -238,7 +238,7 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM4
-                        choice
+                        choice BSP_WCH_ARM_CH32F203R_EVT_USING_TIM4_CHOICE
                                 prompt "using TIM4 as clock_timer or PWM mode"
                                 default BSP_USING_TIM4_CLOCK_TIMER
 
@@ -276,7 +276,7 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM4
-                        choice
+                        choice BSP_WCH_ARM_CH32F203R_EVT_USING_TIM5_CHOICE
                                 prompt "using TIM5 as clock_timer or PWM mode"
                                 default BSP_USING_TIM5_CLOCK_TIMER
 
@@ -338,7 +338,7 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM8
-                        choice
+                        choice BSP_WCH_ARM_CH32F203R_EVT_USING_TIM8_CHOICE
                                 prompt "using TIM8 as clock_timer or PWM mode"
                                 default BSP_USING_TIM8_CLOCK_TIMER
 
@@ -376,7 +376,7 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM9
-                        choice
+                        choice BSP_WCH_ARM_CH32F203R_EVT_USING_TIM9_CHOICE
                                 prompt "using TIM9 as clock_timer or PWM mode"
                                 default BSP_USING_TIM9_CLOCK_TIMER
 
@@ -414,7 +414,7 @@ config BSP_USING_TIM
                         default n
 
                 if BSP_USING_TIM10
-                        choice
+                        choice BSP_WCH_ARM_CH32F203R_EVT_USING_TIM10_CHOICE
                                 prompt "using TIM10 as clock_timer or PWM mode"
                                 default BSP_USING_TIM10_CLOCK_TIMER
 

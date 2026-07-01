@@ -28,7 +28,7 @@ menu "Hardware Drivers Config"
             select BSP_USING_SDH0
             default n
 
-        choice
+        choice BSP_NUVOTON_NUMAKER_M2354_BOARD_CHOICE
             prompt "Select FS USB Ports"
 
             config BOARD_USING_USBD

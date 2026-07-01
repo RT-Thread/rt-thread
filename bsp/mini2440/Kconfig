@@ -14,7 +14,7 @@ config BOARD_MINI2440
     select RT_USING_USER_MAIN
     default y
 
-choice
+choice BSP_MINI2440_RT_MINI2440_LCD_CHOICE
     prompt "Lcd for mini2440"
     default RT_MINI2440_LCD_T35
     depends on PKG_USING_GUIENGINE

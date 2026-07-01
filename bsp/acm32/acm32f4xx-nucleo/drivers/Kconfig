@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-choice
+choice BSP_ACM32_ACM32F4XX_NUCLEO_SOC_ACM32F403_CHOICE
     prompt "select chip type"
     default SOC_ACM32F403RET7
 

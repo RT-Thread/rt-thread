@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-choice
+choice BSP_MICROCHIP_SAME54_SOC_SAME5_CHOICE
     prompt "select chip type"
     default SOC_SAME54P20
 
