@@ -116,6 +116,44 @@ void stm32_tim_pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_
 #endif /* defined(SOC_SERIES_STM32MP1) */
 }
 
+#if defined(RT_USING_CLOCK_TIMER_TRIGGER)
+/**
+ * @brief Get the effective input clock frequency of one STM32 timer.
+ * @param tim Pointer to the STM32 HAL timer handle.
+ * @param timer_clk Pointer to the output timer clock frequency in hertz.
+ * @return Operation status.
+ */
+static rt_err_t stm32_tim_clock_get(TIM_HandleTypeDef *tim, rt_uint32_t *timer_clk)
+{
+    rt_uint32_t pclk1_doubler;
+    rt_uint32_t pclk2_doubler;
+
+    stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
+
+#if defined(APBPERIPH_BASE)
+    *timer_clk = HAL_RCC_GetPCLK1Freq() * pclk1_doubler;
+#elif defined(APB1PERIPH_BASE) || defined(APB2PERIPH_BASE)
+    if ((rt_uint32_t)tim->Instance >= APB2PERIPH_BASE)
+    {
+        *timer_clk = HAL_RCC_GetPCLK2Freq() * pclk2_doubler;
+    }
+    else
+    {
+        *timer_clk = HAL_RCC_GetPCLK1Freq() * pclk1_doubler;
+    }
+#else
+#error "This driver has not supported this series yet!"
+#endif /* defined(APBPERIPH_BASE) */
+
+    if (*timer_clk == 0U)
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+#endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
+
 void stm32_tim_enable_clock(TIM_HandleTypeDef* htim_base)
 {
     RT_ASSERT(htim_base != RT_NULL);
@@ -304,6 +342,10 @@ struct stm32_clock_timer
     TIM_HandleTypeDef    tim_handle;
     IRQn_Type tim_irqn;
     char *name;
+#if defined(RT_USING_CLOCK_TIMER_TRIGGER)
+    enum rt_clock_timer_trigger_event trigger_event; /**< Cached trigger output event. */
+    rt_uint16_t trigger_channel;                     /**< Cached compare channel, or 0 for update event. */
+#endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
 };
 
 static struct stm32_clock_timer stm32_clock_timer_obj[] =
@@ -485,6 +527,448 @@ static void timer_stop(rt_clock_timer_t *timer)
     __HAL_TIM_SET_COUNTER(tim, 0);
 }
 
+#if defined(RT_USING_CLOCK_TIMER_TRIGGER)
+/**
+ * @brief Calculate STM32 timer divider values for hardware trigger output.
+ * @param timer Pointer to the RT-Thread clock timer device.
+ * @param freq_hz Target trigger frequency in hertz.
+ * @param prescaler Pointer to the output PSC register value.
+ * @param period Pointer to the output ARR register value.
+ * @return Operation status.
+ */
+static rt_err_t timer_trigger_calc(rt_clock_timer_t *timer, rt_uint32_t freq_hz, rt_uint32_t *prescaler, rt_uint32_t *period)
+{
+    TIM_HandleTypeDef *tim;
+    rt_uint32_t timer_clk;
+    rt_uint32_t max_period;
+    rt_uint64_t cycles;
+    rt_uint64_t prescaler_div;
+    rt_uint64_t period_count;
+    rt_err_t result;
+
+    tim = (TIM_HandleTypeDef *)timer->parent.user_data;
+    result = stm32_tim_clock_get(tim, &timer_clk);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    if (freq_hz > timer_clk)
+    {
+        return -RT_EINVAL;
+    }
+
+    cycles = ((rt_uint64_t)timer_clk + (freq_hz / 2U)) / freq_hz;
+    if (cycles == 0U)
+    {
+        return -RT_EINVAL;
+    }
+
+    max_period = ((timer->info != RT_NULL) && (timer->info->maxcnt != 0U)) ? timer->info->maxcnt : 0xffffU;
+    prescaler_div = (cycles + max_period - 1U) / max_period;
+    if ((prescaler_div == 0U) || (prescaler_div > 0x10000ULL))
+    {
+        return -RT_EINVAL;
+    }
+
+    period_count = cycles / prescaler_div;
+    if (period_count == 0U)
+    {
+        period_count = 1U;
+    }
+    if (period_count > max_period)
+    {
+        period_count = max_period;
+    }
+
+    *prescaler = (rt_uint32_t)(prescaler_div - 1U);
+    *period = (rt_uint32_t)(period_count - 1U);
+
+    return RT_EOK;
+}
+
+
+/** @brief Maximum compare channel index encoded by the STM32 TIM trigger backend. */
+#define STM32_TIM_TRIGGER_COMPARE_CHANNEL_MAX 4U
+
+/**
+ * @brief STM32 HAL timer compare channel slot.
+ */
+struct stm32_tim_compare_channel
+{
+    rt_uint32_t channel; /**< HAL TIM channel selector. */
+    rt_uint32_t flag;    /**< HAL TIM compare flag. */
+    rt_bool_t valid;     /**< Whether channel and flag are valid. */
+};
+
+/**
+ * @brief HAL TIM compare channel table indexed by 1-based timer channel number.
+ */
+static const struct stm32_tim_compare_channel stm32_tim_compare_channel_table[STM32_TIM_TRIGGER_COMPARE_CHANNEL_MAX + 1U] = {
+#if defined(TIM_CHANNEL_1) && defined(TIM_FLAG_CC1)
+    [1] = { TIM_CHANNEL_1, TIM_FLAG_CC1, RT_TRUE },
+#endif /* defined(TIM_CHANNEL_1) && defined(TIM_FLAG_CC1) */
+#if defined(TIM_CHANNEL_2) && defined(TIM_FLAG_CC2)
+    [2] = { TIM_CHANNEL_2, TIM_FLAG_CC2, RT_TRUE },
+#endif /* defined(TIM_CHANNEL_2) && defined(TIM_FLAG_CC2) */
+#if defined(TIM_CHANNEL_3) && defined(TIM_FLAG_CC3)
+    [3] = { TIM_CHANNEL_3, TIM_FLAG_CC3, RT_TRUE },
+#endif /* defined(TIM_CHANNEL_3) && defined(TIM_FLAG_CC3) */
+#if defined(TIM_CHANNEL_4) && defined(TIM_FLAG_CC4)
+    [4] = { TIM_CHANNEL_4, TIM_FLAG_CC4, RT_TRUE },
+#endif /* defined(TIM_CHANNEL_4) && defined(TIM_FLAG_CC4) */
+};
+
+/**
+ * @brief Get a HAL compare channel slot from a 1-based timer channel number.
+ * @param channel 1-based timer compare channel number.
+ * @return Pointer to a valid channel slot, or RT_NULL when unsupported.
+ */
+static const struct stm32_tim_compare_channel *timer_trigger_compare_channel_get(rt_uint16_t channel)
+{
+    const struct stm32_tim_compare_channel *slot;
+
+    if (channel >= RT_ARRAY_SIZE(stm32_tim_compare_channel_table))
+    {
+        return RT_NULL;
+    }
+
+    slot = &stm32_tim_compare_channel_table[channel];
+    return (slot->valid == RT_TRUE) ? slot : RT_NULL;
+}
+
+/**
+ * @brief Fill the common STM32 timer base configuration for trigger output.
+ * @param tim Pointer to the STM32 HAL timer handle.
+ * @param prescaler PSC register value.
+ * @param period ARR register value.
+ */
+static void timer_trigger_base_fill(TIM_HandleTypeDef *tim, rt_uint32_t prescaler, rt_uint32_t period)
+{
+    tim->Init.Prescaler = prescaler;
+    tim->Init.Period = period;
+    tim->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+    tim->Init.CounterMode = TIM_COUNTERMODE_UP;
+    tim->Init.RepetitionCounter = 0;
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)
+    tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+#endif /* defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) */
+}
+
+/**
+ * @brief Configure one STM32 timer update event as a hardware trigger source.
+ * @param timer_device Pointer to the STM32 clock timer object.
+ * @param prescaler PSC register value.
+ * @param period ARR register value.
+ * @return Operation status.
+ */
+static rt_err_t timer_trigger_update_config(struct stm32_clock_timer *timer_device, rt_uint32_t prescaler, rt_uint32_t period)
+{
+#if defined(TIM_TRGO_UPDATE)
+    TIM_HandleTypeDef *tim;
+    TIM_MasterConfigTypeDef master = {0};
+
+    tim = &timer_device->tim_handle;
+    HAL_TIM_Base_Stop(tim);
+    timer_trigger_base_fill(tim, prescaler, period);
+
+    if (HAL_TIM_Base_Init(tim) != HAL_OK)
+    {
+        LOG_E("TIM trigger base init failed");
+        return -RT_ERROR;
+    }
+
+    master.MasterOutputTrigger = TIM_TRGO_UPDATE;
+#if defined(TIM_MASTERSLAVEMODE_DISABLE)
+    master.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+#endif /* defined(TIM_MASTERSLAVEMODE_DISABLE) */
+    if (HAL_TIMEx_MasterConfigSynchronization(tim, &master) != HAL_OK)
+    {
+        LOG_E("TIM trigger master config failed");
+        return -RT_ERROR;
+    }
+
+    timer_device->trigger_event = CLOCK_TIMER_TRIGGER_EVENT_UPDATE;
+    timer_device->trigger_channel = 0U;
+    tim->Instance->CR1 &= (~TIM_OPMODE_SINGLE);
+    __HAL_TIM_SET_COUNTER(tim, 0);
+    __HAL_TIM_CLEAR_FLAG(tim, TIM_FLAG_UPDATE);
+
+    return RT_EOK;
+#else
+    RT_UNUSED(timer_device);
+    RT_UNUSED(prescaler);
+    RT_UNUSED(period);
+    return -RT_ENOSYS;
+#endif /* defined(TIM_TRGO_UPDATE) */
+}
+
+
+/**
+ * @brief Configure one STM32 timer compare event as a hardware trigger source.
+ * @param timer_device Pointer to the STM32 clock timer object.
+ * @param cfg Pointer to the hardware trigger configuration.
+ * @param prescaler PSC register value.
+ * @param period ARR register value.
+ * @return Operation status.
+ */
+static rt_err_t timer_trigger_compare_config(struct stm32_clock_timer *timer_device,
+                                            const struct rt_clock_timer_trigger_cfg *cfg,
+                                            rt_uint32_t prescaler, rt_uint32_t period)
+{
+#if defined(TIM_OCMODE_TIMING)
+    const struct stm32_tim_compare_channel *slot;
+    TIM_HandleTypeDef *tim;
+    TIM_OC_InitTypeDef oc = {0};
+    rt_uint32_t pulse;
+
+    slot = timer_trigger_compare_channel_get(cfg->channel);
+    if (slot == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    tim = &timer_device->tim_handle;
+    HAL_TIM_OC_Stop(tim, slot->channel);
+    HAL_TIM_Base_Stop(tim);
+    timer_trigger_base_fill(tim, prescaler, period);
+
+    if (HAL_TIM_Base_Init(tim) != HAL_OK)
+    {
+        LOG_E("TIM trigger compare base init failed");
+        return -RT_ERROR;
+    }
+    if (HAL_TIM_OC_Init(tim) != HAL_OK)
+    {
+        LOG_E("TIM trigger compare init failed");
+        return -RT_ERROR;
+    }
+
+    pulse = (period + 1U) / 2U;
+    if (pulse > period)
+    {
+        pulse = period;
+    }
+
+    oc.OCMode = TIM_OCMODE_PWM2;
+    oc.Pulse = pulse;
+#if defined(TIM_OCPOLARITY_HIGH)
+    oc.OCPolarity = TIM_OCPOLARITY_HIGH;
+#endif /* defined(TIM_OCPOLARITY_HIGH) */
+#if defined(TIM_OCNPOLARITY_HIGH)
+    oc.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+#endif /* defined(TIM_OCNPOLARITY_HIGH) */
+#if defined(TIM_OCFAST_DISABLE)
+    oc.OCFastMode = TIM_OCFAST_DISABLE;
+#endif /* defined(TIM_OCFAST_DISABLE) */
+#if defined(TIM_OCIDLESTATE_RESET)
+    oc.OCIdleState = TIM_OCIDLESTATE_RESET;
+#endif /* defined(TIM_OCIDLESTATE_RESET) */
+#if defined(TIM_OCNIDLESTATE_RESET)
+    oc.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+#endif /* defined(TIM_OCNIDLESTATE_RESET) */
+
+    if (HAL_TIM_OC_ConfigChannel(tim, &oc, slot->channel) != HAL_OK)
+    {
+        LOG_E("TIM trigger compare channel config failed");
+        return -RT_ERROR;
+    }
+
+    timer_device->trigger_event = CLOCK_TIMER_TRIGGER_EVENT_COMPARE;
+    timer_device->trigger_channel = cfg->channel;
+    tim->Instance->CR1 &= (~TIM_OPMODE_SINGLE);
+    __HAL_TIM_SET_COUNTER(tim, 0);
+    __HAL_TIM_CLEAR_FLAG(tim, slot->flag);
+
+    return RT_EOK;
+#else
+    RT_UNUSED(timer_device);
+    RT_UNUSED(cfg);
+    RT_UNUSED(prescaler);
+    RT_UNUSED(period);
+    return -RT_ENOSYS;
+#endif /* defined(TIM_OCMODE_TIMING) */
+}
+
+/**
+ * @brief Configure one STM32 timer as a hardware trigger source.
+ * @param timer Pointer to the RT-Thread clock timer device.
+ * @param cfg Pointer to the hardware trigger configuration.
+ * @return Operation status.
+ */
+static rt_err_t timer_trigger_config(rt_clock_timer_t *timer, const struct rt_clock_timer_trigger_cfg *cfg)
+{
+    struct stm32_clock_timer *timer_device;
+    rt_uint32_t prescaler;
+    rt_uint32_t period;
+    rt_err_t result;
+
+    if (cfg->freq_hz == 0U)
+    {
+        return -RT_EINVAL;
+    }
+
+    if ((cfg->event != CLOCK_TIMER_TRIGGER_EVENT_UPDATE) &&
+        (cfg->event != CLOCK_TIMER_TRIGGER_EVENT_COMPARE))
+    {
+        return -RT_EINVAL;
+    }
+
+    timer_device = (struct stm32_clock_timer *)timer;
+    if (timer_device->time_device.parent.user_data == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    result = timer_trigger_calc(timer, cfg->freq_hz, &prescaler, &period);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    stm32_tim_enable_clock(&timer_device->tim_handle);
+
+    switch (cfg->event)
+    {
+    case CLOCK_TIMER_TRIGGER_EVENT_UPDATE:
+        return timer_trigger_update_config(timer_device, prescaler, period);
+
+    case CLOCK_TIMER_TRIGGER_EVENT_COMPARE:
+        return timer_trigger_compare_config(timer_device, cfg, prescaler, period);
+
+    default:
+        return -RT_EINVAL;
+    }
+}
+
+/**
+ * @brief Start hardware trigger output on one STM32 timer.
+ * @param timer Pointer to the RT-Thread clock timer device.
+ * @return Operation status.
+ */
+static rt_err_t timer_trigger_start(rt_clock_timer_t *timer)
+{
+    struct stm32_clock_timer *timer_device;
+    const struct stm32_tim_compare_channel *slot;
+    TIM_HandleTypeDef *tim;
+
+    timer_device = (struct stm32_clock_timer *)timer;
+    if (timer_device->time_device.parent.user_data == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    tim = &timer_device->tim_handle;
+    tim->Instance->CR1 &= (~TIM_OPMODE_SINGLE);
+    __HAL_TIM_SET_COUNTER(tim, 0);
+
+    if (timer_device->trigger_event == CLOCK_TIMER_TRIGGER_EVENT_COMPARE)
+    {
+        slot = timer_trigger_compare_channel_get(timer_device->trigger_channel);
+        if (slot == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
+        __HAL_TIM_CLEAR_FLAG(tim, slot->flag);
+        return (HAL_TIM_OC_Start(tim, slot->channel) == HAL_OK) ? RT_EOK : -RT_ERROR;
+    }
+
+    __HAL_TIM_CLEAR_FLAG(tim, TIM_FLAG_UPDATE);
+    return (HAL_TIM_Base_Start(tim) == HAL_OK) ? RT_EOK : -RT_ERROR;
+}
+
+/**
+ * @brief Stop hardware trigger output on one STM32 timer.
+ * @param timer Pointer to the RT-Thread clock timer device.
+ * @return Operation status.
+ */
+static rt_err_t timer_trigger_stop(rt_clock_timer_t *timer)
+{
+    struct stm32_clock_timer *timer_device;
+    const struct stm32_tim_compare_channel *slot;
+    TIM_HandleTypeDef *tim;
+    rt_err_t result;
+
+    timer_device = (struct stm32_clock_timer *)timer;
+    if (timer_device->time_device.parent.user_data == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    tim = &timer_device->tim_handle;
+
+    if (timer_device->trigger_event == CLOCK_TIMER_TRIGGER_EVENT_COMPARE)
+    {
+        slot = timer_trigger_compare_channel_get(timer_device->trigger_channel);
+        if (slot == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
+        result = (HAL_TIM_OC_Stop(tim, slot->channel) == HAL_OK) ? RT_EOK : -RT_ERROR;
+        __HAL_TIM_CLEAR_FLAG(tim, slot->flag);
+    }
+    else
+    {
+        result = (HAL_TIM_Base_Stop(tim) == HAL_OK) ? RT_EOK : -RT_ERROR;
+        __HAL_TIM_CLEAR_FLAG(tim, TIM_FLAG_UPDATE);
+    }
+
+    __HAL_TIM_SET_COUNTER(tim, 0);
+    return result;
+}
+
+/**
+ * @brief Release and deinitialize hardware trigger output on one STM32 timer.
+ * @param timer Pointer to the RT-Thread clock timer device.
+ * @return Operation status.
+ * @note Timer trigger sources are dedicated to trigger output. Releasing a
+ *       trigger source stops the timer, clears the trigger output when the HAL
+ *       exposes a reset selector, and deinitializes the HAL TIM base state. It
+ *       does not unregister the RT-Thread timer device object.
+ */
+static rt_err_t timer_trigger_release(rt_clock_timer_t *timer)
+{
+    struct stm32_clock_timer *timer_device;
+    TIM_HandleTypeDef *tim;
+    rt_err_t result = RT_EOK;
+
+    timer_device = (struct stm32_clock_timer *)timer;
+    if (timer_device->time_device.parent.user_data == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    tim = &timer_device->tim_handle;
+
+    if (timer_trigger_stop(timer) != RT_EOK)
+    {
+        result = -RT_ERROR;
+    }
+
+#if defined(TIM_TRGO_RESET)
+    TIM_MasterConfigTypeDef master = {0};
+    master.MasterOutputTrigger = TIM_TRGO_RESET;
+#if defined(TIM_MASTERSLAVEMODE_DISABLE)
+    master.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+#endif /* defined(TIM_MASTERSLAVEMODE_DISABLE) */
+    if (HAL_TIMEx_MasterConfigSynchronization(tim, &master) != HAL_OK)
+    {
+        result = -RT_ERROR;
+    }
+#endif /* defined(TIM_TRGO_RESET) */
+
+    if (HAL_TIM_Base_DeInit(tim) != HAL_OK)
+    {
+        result = -RT_ERROR;
+    }
+
+    timer_device->trigger_event = CLOCK_TIMER_TRIGGER_EVENT_UPDATE;
+    timer_device->trigger_channel = 0U;
+    return result;
+}
+
+#endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
+
 static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
 {
     TIM_HandleTypeDef *tim = RT_NULL;
@@ -492,7 +976,6 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
     uint32_t pclk1_doubler, pclk2_doubler;
 
     RT_ASSERT(timer != RT_NULL);
-    RT_ASSERT(arg != RT_NULL);
 
     tim = (TIM_HandleTypeDef *)timer->parent.user_data;
 
@@ -502,6 +985,12 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
     {
         rt_uint32_t freq;
         rt_uint16_t val=0;
+
+        if (arg == RT_NULL)
+        {
+            result = -RT_EINVAL;
+            break;
+        }
 
         /* set timer frequence */
         freq = *((rt_uint32_t *)arg);
@@ -581,6 +1070,33 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
         result = RT_EOK;
     }
     break;
+#if defined(RT_USING_CLOCK_TIMER_TRIGGER)
+    case CLOCK_TIMER_CTRL_TRIGGER_CONFIG:
+    {
+        if (arg == RT_NULL)
+        {
+            result = -RT_EINVAL;
+            break;
+        }
+        result = timer_trigger_config(timer, (const struct rt_clock_timer_trigger_cfg *)arg);
+    }
+    break;
+    case CLOCK_TIMER_CTRL_TRIGGER_START:
+    {
+        result = timer_trigger_start(timer);
+    }
+    break;
+    case CLOCK_TIMER_CTRL_TRIGGER_STOP:
+    {
+        result = timer_trigger_stop(timer);
+    }
+    break;
+    case CLOCK_TIMER_CTRL_TRIGGER_RELEASE:
+    {
+        result = timer_trigger_release(timer);
+    }
+    break;
+#endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
     default:
     {
         result = -RT_EINVAL;

@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2018-10-30     SummerGift        first version
- * 2020-10-14     PeakRacing   Porting for stm32wbxx
+ * 2020-10-14     PeakRacing        Porting for stm32wbxx
  */
 
 #ifndef __DRV_CONFIG_H__
@@ -18,7 +18,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif /* __cplusplus */
 
 #if defined(SOC_SERIES_STM32F0)
 #include "f0/dma_config.h"
@@ -27,82 +27,92 @@ extern "C" {
 #include "f0/tim_config.h"
 #include "f0/pwm_config.h"
 #include "f0/adc_config.h"
+#include "f0/adc_config_v2.h"
 #elif defined(SOC_SERIES_STM32F1)
 #include "f1/dma_config.h"
 #include "f1/uart_config.h"
 #include "f1/spi_config.h"
 #include "f1/adc_config.h"
+#include "f1/adc_config_v2.h"
 #include "f1/tim_config.h"
 #include "f1/sdio_config.h"
 #include "f1/pwm_config.h"
 #include "f1/usbd_config.h"
 #include "f1/i2c_hard_config.h"
 #include "f1/pulse_encoder_config.h"
-#elif  defined(SOC_SERIES_STM32F2)
+#elif defined(SOC_SERIES_STM32F2)
 #include "f2/dma_config.h"
 #include "f2/uart_config.h"
 #include "f2/spi_config.h"
 #include "f2/adc_config.h"
+#include "f2/adc_config_v2.h"
 #include "f2/tim_config.h"
 #include "f2/sdio_config.h"
 #include "f2/pwm_config.h"
-#elif  defined(SOC_SERIES_STM32F3)
+#elif defined(SOC_SERIES_STM32F3)
 #include "f3/uart_config.h"
 #include "f3/tim_config.h"
 #include "f3/pwm_config.h"
 #include "f3/dma_config.h"
-#elif  defined(SOC_SERIES_STM32F4)
+#include "f3/adc_config_v2.h"
+#elif defined(SOC_SERIES_STM32F4)
 #include "f4/dma_config.h"
 #include "f4/uart_config.h"
 #include "f4/spi_config.h"
 #include "f4/qspi_config.h"
 #include "f4/usbd_config.h"
 #include "f4/adc_config.h"
+#include "f4/adc_config_v2.h"
 #include "f4/dac_config.h"
 #include "f4/tim_config.h"
 #include "f4/sdio_config.h"
 #include "f4/pwm_config.h"
 #include "f4/i2c_hard_config.h"
 #include "f4/pulse_encoder_config.h"
-#elif  defined(SOC_SERIES_STM32F7)
+#elif defined(SOC_SERIES_STM32F7)
 #include "f7/dma_config.h"
 #include "f7/uart_config.h"
 #include "f7/spi_config.h"
 #include "f7/qspi_config.h"
 #include "f7/adc_config.h"
+#include "f7/adc_config_v2.h"
 #include "f7/tim_config.h"
 #include "f7/sdio_config.h"
 #include "f7/pwm_config.h"
-#elif  defined(SOC_SERIES_STM32L0)
+#elif defined(SOC_SERIES_STM32L0)
 #include "l0/dma_config.h"
 #include "l0/uart_config.h"
-#elif  defined(SOC_SERIES_STM32L4)
+#include "l0/adc_config_v2.h"
+#elif defined(SOC_SERIES_STM32L4)
 #include "l4/dma_config.h"
 #include "l4/uart_config.h"
 #include "l4/spi_config.h"
 #include "l4/qspi_config.h"
 #include "l4/adc_config.h"
+#include "l4/adc_config_v2.h"
 #include "l4/dac_config.h"
 #include "l4/tim_config.h"
 #include "l4/sdio_config.h"
 #include "l4/pwm_config.h"
 #include "l4/usbd_config.h"
-#elif  defined(SOC_SERIES_STM32L5)
+#elif defined(SOC_SERIES_STM32L5)
 #include "l5/dma_config.h"
 #include "l5/uart_config.h"
 #include "l5/spi_config.h"
 #include "l5/qspi_config.h"
 #include "l5/adc_config.h"
+#include "l5/adc_config_v2.h"
 #include "l5/dac_config.h"
 #include "l5/tim_config.h"
 #include "l5/sdio_config.h"
 #include "l5/pwm_config.h"
 #include "l5/usbd_config.h"
-#elif  defined(SOC_SERIES_STM32G0)
+#elif defined(SOC_SERIES_STM32G0)
 #include "g0/dma_config.h"
 #include "g0/uart_config.h"
 #include "g0/spi_config.h"
 #include "g0/adc_config.h"
+#include "g0/adc_config_v2.h"
 #include "g0/tim_config.h"
 #include "g0/pwm_config.h"
 #include "g0/usbd_config.h"
@@ -113,16 +123,18 @@ extern "C" {
 #include "g4/qspi_config.h"
 #include "g4/usbd_config.h"
 #include "g4/adc_config.h"
+#include "g4/adc_config_v2.h"
 #include "g4/tim_config.h"
 #include "g4/sdio_config.h"
 #include "g4/pwm_config.h"
 #include "g4/pulse_encoder_config.h"
-#elif  defined(SOC_SERIES_STM32H7)
+#elif defined(SOC_SERIES_STM32H7)
 #include "h7/dma_config.h"
 #include "h7/uart_config.h"
 #include "h7/spi_config.h"
 #include "h7/qspi_config.h"
 #include "h7/adc_config.h"
+#include "h7/adc_config_v2.h"
 #include "h7/dac_config.h"
 #include "h7/tim_config.h"
 #include "h7/lptim_config.h"
@@ -130,23 +142,23 @@ extern "C" {
 #include "h7/pwm_config.h"
 #include "h7/usbd_config.h"
 #include "h7/i2c_hard_config.h"
-
-#elif  defined(SOC_SERIES_STM32H7RS)
+#elif defined(SOC_SERIES_STM32H7RS)
 #include "h7/dma_config.h"
 #include "h7/uart_config.h"
 #include "h7/spi_config.h"
 #include "h7/adc_config.h"
+#include "h7rs/adc_config_v2.h"
 #include "h7/dac_config.h"
 #include "h7/tim_config.h"
 #include "h7/pwm_config.h"
 #include "h7/usbd_config.h"
-
 #elif defined(SOC_SERIES_STM32U5)
 #include "u5/dma_config.h"
 #include "u5/uart_config.h"
 #include "u5/spi_config.h"
 #include "u5/qspi_config.h"
 #include "u5/adc_config.h"
+#include "u5/adc_config_v2.h"
 #include "u5/dac_config.h"
 #include "u5/tim_config.h"
 #include "u5/sdio_config.h"
@@ -156,22 +168,26 @@ extern "C" {
 #include "h5/uart_config.h"
 #include "h5/pwm_config.h"
 #include "h5/adc_config.h"
-#elif  defined(SOC_SERIES_STM32MP1)
+#include "h5/adc_config_v2.h"
+#elif defined(SOC_SERIES_STM32MP1)
 #include "mp1/dma_config.h"
 #include "mp1/uart_config.h"
 #include "mp1/qspi_config.h"
 #include "mp1/spi_config.h"
 #include "mp1/adc_config.h"
+#include "mp1/adc_config_v2.h"
 #include "mp1/dac_config.h"
 #include "mp1/tim_config.h"
 #include "mp1/pwm_config.h"
-#elif  defined(SOC_SERIES_STM32WL)
+#elif defined(SOC_SERIES_STM32WL)
 #include "wl/dma_config.h"
 #include "wl/uart_config.h"
 #include "wl/spi_config.h"
 #include "wl/tim_config.h"
-#elif  defined(SOC_SERIES_STM32WB)
+#include "wl/adc_config_v2.h"
+#elif defined(SOC_SERIES_STM32WB)
 #include "wb/adc_config.h"
+#include "wb/adc_config_v2.h"
 #include "wb/dma_config.h"
 #include "wb/pwm_config.h"
 #include "wb/qspi_config.h"
@@ -179,10 +195,10 @@ extern "C" {
 #include "wb/tim_config.h"
 #include "wb/uart_config.h"
 #include "wb/usbd_config.h"
-#endif
+#endif /* defined(SOC_SERIES_STM32F0) */
 
 #ifdef __cplusplus
 }
-#endif
+#endif /* __cplusplus */
 
-#endif
+#endif /* __DRV_CONFIG_H__ */

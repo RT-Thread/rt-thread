@@ -47,8 +47,40 @@ typedef enum
     CLOCK_TIMER_CTRL_FREQ_SET = RT_DEVICE_CTRL_BASE(Timer) + 0x01,
     CLOCK_TIMER_CTRL_STOP = RT_DEVICE_CTRL_BASE(Timer) + 0x02,
     CLOCK_TIMER_CTRL_INFO_GET = RT_DEVICE_CTRL_BASE(Timer) + 0x03,
-    CLOCK_TIMER_CTRL_MODE_SET = RT_DEVICE_CTRL_BASE(Timer) + 0x04
+    CLOCK_TIMER_CTRL_MODE_SET = RT_DEVICE_CTRL_BASE(Timer) + 0x04,
+#if defined(RT_USING_CLOCK_TIMER_TRIGGER)
+    CLOCK_TIMER_CTRL_TRIGGER_CONFIG  = RT_DEVICE_CTRL_BASE(Timer) + 0x05,
+    CLOCK_TIMER_CTRL_TRIGGER_START   = RT_DEVICE_CTRL_BASE(Timer) + 0x06,
+    CLOCK_TIMER_CTRL_TRIGGER_STOP    = RT_DEVICE_CTRL_BASE(Timer) + 0x07,
+    CLOCK_TIMER_CTRL_TRIGGER_RELEASE = RT_DEVICE_CTRL_BASE(Timer) + 0x08
+#endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
 } rt_clock_timer_ctrl_t;
+
+#if defined(RT_USING_CLOCK_TIMER_TRIGGER)
+/**
+ * @brief Hardware timer trigger output event type.
+ */
+enum rt_clock_timer_trigger_event
+{
+    CLOCK_TIMER_TRIGGER_EVENT_UPDATE = 0, /**< Generate trigger on timer update/overflow event. */
+    CLOCK_TIMER_TRIGGER_EVENT_COMPARE,    /**< Generate trigger on timer compare match event. */
+    CLOCK_TIMER_TRIGGER_EVENT_PWM_EDGE,   /**< Generate trigger on timer PWM output reference edge. */
+    CLOCK_TIMER_TRIGGER_EVENT_BACKEND     /**< Generate trigger from a backend-specific timer event. */
+};
+
+/**
+ * @brief Hardware trigger output configuration.
+ * @note This interface does not arbitrate timer ownership. Callers must
+ *       provide a timer dedicated to hardware trigger output.
+ */
+struct rt_clock_timer_trigger_cfg
+{
+    rt_uint32_t freq_hz;                     /**< Trigger output frequency in hertz. */
+    enum rt_clock_timer_trigger_event event; /**< Timer event used as trigger output. */
+    rt_uint16_t channel;                     /**< Timer compare channel, or 0 for update event. */
+    rt_uint16_t reserved;                    /**< Reserved for future extension. */
+};
+#endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
 
 typedef enum
 {
