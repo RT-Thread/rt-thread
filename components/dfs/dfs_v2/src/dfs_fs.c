@@ -650,6 +650,8 @@ int dfs_statfs(const char *path, struct statfs *buffer)
         }
     }
 
+    rt_free(fullpath);
+
     return ret;
 }
 

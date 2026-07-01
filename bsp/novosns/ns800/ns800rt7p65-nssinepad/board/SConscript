@@ -3,7 +3,13 @@ from building import *
 
 cwd = GetCurrentDir()
 src = ['board.c']
-path = [cwd]
+path = [cwd, cwd + '/port']
+
+if GetDepend('BSP_RTC_USING_DS1307'):
+    src += ['port/ds1307.c']
+
+if GetDepend('BSP_RTC_USING_SOFT'):
+    src += ['port/soft_rtc.c']
 
 cppdefines = ['NS800RT7P65X', 'USE_HAL_DRIVER', 'DUAL_CORE_ENABLE=0', 
         'SYSCLK_USE_PLL', 'SYSCLK_SOURCE_USE_HXTL', 'PLLCLK_SOURCE_USE_HXTL']
