@@ -89,9 +89,6 @@ static int serial_fops_open(struct dfs_file *fd)
         break;
     }
 
-    if ((fd->flags & O_ACCMODE) != O_WRONLY)
-        rt_device_set_rx_indicate(device, serial_fops_rx_ind);
-
     flags |= RT_SERIAL_RX_BLOCKING | RT_SERIAL_TX_BLOCKING;
 
     /* preserve RT_DEVICE_FLAG_STREAM if it was set before close */
@@ -105,6 +102,9 @@ static int serial_fops_open(struct dfs_file *fd)
 
     if (ret == RT_EOK)
     {
+        if ((fd->flags & O_ACCMODE) != O_WRONLY)
+            rt_device_set_rx_indicate(device, serial_fops_rx_ind);
+
         serial = (struct rt_serial_device *)device;
         serial->is_posix_mode = RT_TRUE;
     }
