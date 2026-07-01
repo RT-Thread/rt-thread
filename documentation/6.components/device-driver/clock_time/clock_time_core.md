@@ -49,13 +49,10 @@ struct rt_clock_time_device
 {
     struct rt_device parent;
     const struct rt_clock_time_ops *ops;
-    rt_uint64_t res_scale;
     rt_uint8_t caps; /* RT_CLOCK_TIME_CAP_SOURCE / RT_CLOCK_TIME_CAP_EVENT */
 };
 ```
 
-- res_scale provides extra precision in the conversion pipeline. If set to 0,
-  RT_CLOCK_TIME_RESMUL is used by default.
 - caps advertises whether the device can be used as a clock source, a clock
   event, or both.
 
@@ -75,7 +72,7 @@ struct rt_clock_time_device *rt_clock_time_get_default_event(void);
 
 - Purpose: register a clock_time device and its capabilities.
 - Parameters:
-  - `dev`: device object with ops and res_scale initialized.
+  - `dev`: device object with ops initialized.
   - `name`: device name; if NULL, only capability registration is performed.
   - `caps`: RT_CLOCK_TIME_CAP_SOURCE and/or RT_CLOCK_TIME_CAP_EVENT.
 - Behavior:
@@ -109,7 +106,6 @@ struct rt_clock_time_device *rt_clock_time_get_default_event(void);
 rt_uint64_t rt_clock_time_get_freq(void);
 rt_uint64_t rt_clock_time_get_counter(void);
 rt_uint64_t rt_clock_time_get_event_freq(void);
-rt_uint64_t rt_clock_time_get_event_res_scaled(void);
 ```
 
 ## rt_clock_time_get_freq
@@ -131,45 +127,25 @@ rt_uint64_t rt_clock_time_get_event_res_scaled(void);
 - Purpose: return the event device frequency in Hz.
 - Behavior: if no event device exists, falls back to the default source.
 
-## rt_clock_time_get_event_res_scaled
-
-- Purpose: return the scaled resolution for the event device.
-- Behavior: if no event device exists, falls back to the default source.
-
 # Conversion Helpers
 
 ```c
-rt_uint64_t rt_clock_time_get_res_scaled(void);
 rt_uint64_t rt_clock_time_counter_to_ns(rt_uint64_t cnt);
 rt_uint64_t rt_clock_time_ns_to_counter(rt_uint64_t ns);
 ```
 
-## rt_clock_time_get_res_scaled
-
-- Purpose: return the scaled resolution for the default source.
-- Return values:
-  - Non-zero scaled resolution when the source is ready.
-  - 0 when the source is missing or frequency is invalid.
-
 ## rt_clock_time_counter_to_ns
 
 - Purpose: convert a counter value to nanoseconds based on the default source.
-- Notes: returns 0 when resolution is unavailable.
+- Notes: returns 0 when frequency is unavailable.
 
 ## rt_clock_time_ns_to_counter
 
 - Purpose: convert nanoseconds to counter units for the default source.
-- Notes: returns 0 when resolution is unavailable.
+- Notes: returns 0 when frequency is unavailable.
 
-Internally, the core computes a scaled resolution:
-
-```
-res_scaled = (1e9 * res_scale) / freq
-```
-
-Nanoseconds are then derived using the scale factor RT_CLOCK_TIME_RESMUL to
-avoid floating-point math. This keeps precision stable even when freq is not a
-power of ten.
+Conversions use the source frequency directly with `rt_muldiv_u64()` to avoid
+floating-point math and preserve precision.
 
 # Event API
 
@@ -220,7 +196,6 @@ static const struct rt_clock_time_ops demo_src_ops =
 static struct rt_clock_time_device demo_src_dev =
 {
     .ops = &demo_src_ops,
-    .res_scale = RT_CLOCK_TIME_RESMUL,
 };
 
 void rt_clock_time_source_init(void)
@@ -250,7 +225,6 @@ static const struct rt_clock_time_ops demo_evt_ops =
 static struct rt_clock_time_device demo_evt_dev =
 {
     .ops = &demo_evt_ops,
-    .res_scale = RT_CLOCK_TIME_RESMUL,
 };
 
 static void demo_timer_isr(void)

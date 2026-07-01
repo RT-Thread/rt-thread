@@ -11,20 +11,13 @@
 #include <rtdevice.h>
 #include <rthw.h>
 #include <rtthread.h>
+#include <sys/time.h>
 
 #include <drivers/clock_time.h>
 
 #define DBG_SECTION_NAME               "drv.clock_time"
 #define DBG_LEVEL                      DBG_INFO
 #include <rtdbg.h>
-
-#define CLOCK_TIME_NSEC_PER_SEC (1000000000ULL)
-
-#ifdef ARCH_CPU_64BIT
-#define _HRTIMER_MAX_CNT UINT64_MAX
-#else
-#define _HRTIMER_MAX_CNT UINT32_MAX
-#endif
 
 static rt_list_t          _timer_list   = RT_LIST_OBJECT_INIT(_timer_list);
 static RT_DEFINE_SPINLOCK(_spinlock);
@@ -34,57 +27,51 @@ rt_inline rt_clock_hrtimer_t _first_hrtimer(void)
     return rt_list_isempty(&_timer_list) ? RT_NULL : rt_list_first_entry(&_timer_list, struct rt_clock_hrtimer, node);
 }
 
-rt_inline unsigned long _clock_time_get_cnt(void)
+rt_inline rt_tick_t _clock_time_get_cnt(void)
 {
-    return rt_clock_time_get_counter();
+    return (rt_tick_t)rt_clock_time_get_counter();
 }
 
-rt_inline rt_bool_t _cnt_before(unsigned long a, unsigned long b)
+rt_inline rt_bool_t _cnt_before(rt_tick_t a, rt_tick_t b)
 {
     return ((rt_base_t)(a - b)) < 0;
 }
 
-rt_inline rt_bool_t _cnt_after(unsigned long a, unsigned long b)
+rt_inline rt_bool_t _cnt_after(rt_tick_t a, rt_tick_t b)
 {
     return _cnt_before(b, a);
 }
 
-rt_weak rt_uint64_t rt_clock_hrtimer_getres(void)
+rt_weak rt_uint64_t rt_clock_hrtimer_getfrq(void)
 {
-    return rt_clock_time_get_event_res_scaled();
+    return rt_clock_time_get_event_freq();
 }
 
-rt_weak unsigned long rt_clock_hrtimer_getfrq(void)
+static rt_tick_t _hrtimer_cnt_to_tick(rt_uint64_t cnt)
 {
-    return (unsigned long)rt_clock_time_get_event_freq();
-}
+    rt_uint64_t freq = rt_clock_hrtimer_getfrq();
+    rt_uint64_t rem = 0;
+    rt_uint64_t tick;
 
-static rt_tick_t _hrtimer_cnt_to_tick(unsigned long cnt)
-{
-    rt_uint64_t res = rt_clock_hrtimer_getres();
-    rt_uint64_t ns;
-
-    if (res == 0)
+    if (freq == 0)
     {
         return 0;
     }
 
-    ns = ((rt_uint64_t)cnt * res) / RT_CLOCK_TIME_RESMUL;
-    if (ns == 0)
+    tick = rt_muldiv_u64(cnt, RT_TICK_PER_SECOND, freq, &rem);
+    if (rem != 0)
     {
-        return 1;
+        tick += 1; /* round up so a non-zero cnt never collapses to a 0-tick timeout */
+    }
+    if (tick == 0)
+    {
+        tick = 1; /* at least one tick */
     }
 
-    ns = (ns * RT_TICK_PER_SECOND + CLOCK_TIME_NSEC_PER_SEC - 1) / CLOCK_TIME_NSEC_PER_SEC;
-    if (ns == 0)
-    {
-        return 1;
-    }
-
-    return (rt_tick_t)ns;
+    return (rt_tick_t)tick;
 }
 
-rt_weak rt_err_t rt_clock_hrtimer_settimeout(unsigned long cnt)
+rt_weak rt_err_t rt_clock_hrtimer_settimeout(rt_uint64_t cnt)
 {
     static rt_timer_t timer = RT_NULL;
     static struct rt_timer _sh_rtimer;
@@ -124,29 +111,18 @@ rt_weak rt_err_t rt_clock_hrtimer_settimeout(unsigned long cnt)
     return RT_EOK;
 }
 
-static unsigned long _cnt_convert(unsigned long cnt)
+static rt_uint64_t _cnt_convert(rt_tick_t cnt)
 {
-    unsigned long count;
-    rt_uint64_t src_res;
-    rt_uint64_t event_res;
-    rt_uint64_t result;
+    rt_uint64_t rtn = 0;
+    rt_tick_t count = cnt - _clock_time_get_cnt();
 
-    count = cnt - _clock_time_get_cnt();
-    if (count > (_HRTIMER_MAX_CNT / 2))
+    if (count > (RT_TICK_MAX / 2))
     {
         return 0;
     }
 
-    src_res = rt_clock_time_get_res_scaled();
-    event_res = rt_clock_hrtimer_getres();
-    if (src_res == 0 || event_res == 0)
-    {
-        return 0;
-    }
-
-    result = ((rt_uint64_t)count * src_res) / event_res;
-
-    return result == 0 ? 1 : (unsigned long)result;
+    rtn = rt_muldiv_u64(count, rt_clock_hrtimer_getfrq(), rt_clock_time_get_freq(), NULL);
+    return rtn == 0 ? 1 : rtn;
 }
 
 static void _sleep_timeout(void *parameter)
@@ -177,7 +153,7 @@ static void _hrtimer_process_locked(void)
 
     while ((timer = _first_hrtimer()) != RT_NULL)
     {
-        unsigned long now = _clock_time_get_cnt();
+        rt_tick_t now = _clock_time_get_cnt();
 
         if (_cnt_before(now, timer->timeout_cnt))
         {
@@ -206,7 +182,7 @@ static void _hrtimer_process_locked(void)
 static void _set_next_timeout_locked(void)
 {
     rt_clock_hrtimer_t timer;
-    rt_ubase_t next_timeout_cnt;
+    rt_uint64_t next_timeout_cnt;
     rt_bool_t find_next;
 
     do
@@ -258,12 +234,12 @@ void rt_clock_hrtimer_init(rt_clock_hrtimer_t timer,
     rt_completion_init(&timer->completion);
 }
 
-rt_err_t rt_clock_hrtimer_start(rt_clock_hrtimer_t timer, unsigned long delay_cnt)
+rt_err_t rt_clock_hrtimer_start(rt_clock_hrtimer_t timer, rt_tick_t delay_cnt)
 {
     rt_base_t  level;
 
     RT_ASSERT(timer != RT_NULL);
-    RT_ASSERT(delay_cnt < (_HRTIMER_MAX_CNT / 2));
+    RT_ASSERT(delay_cnt < (RT_TICK_MAX / 2));
 
     timer->delay_cnt    = delay_cnt;
     timer->timeout_cnt  = timer->delay_cnt + _clock_time_get_cnt();
@@ -317,13 +293,13 @@ rt_err_t rt_clock_hrtimer_control(rt_clock_hrtimer_t timer, int cmd, void *arg)
     switch (cmd)
     {
     case RT_TIMER_CTRL_GET_TIME:
-        *(unsigned long *)arg = timer->delay_cnt;
+        *(rt_tick_t *)arg = timer->delay_cnt;
         break;
 
     case RT_TIMER_CTRL_SET_TIME:
-        RT_ASSERT((*(unsigned long *)arg) < (_HRTIMER_MAX_CNT / 2));
-        timer->delay_cnt    = *(unsigned long *)arg;
-        timer->timeout_cnt  = *(unsigned long *)arg + _clock_time_get_cnt();
+        RT_ASSERT((*(rt_tick_t *)arg) < (RT_TICK_MAX / 2));
+        timer->delay_cnt    = *(rt_tick_t *)arg;
+        timer->timeout_cnt  = *(rt_tick_t *)arg + _clock_time_get_cnt();
         break;
 
     case RT_TIMER_CTRL_SET_ONESHOT:
@@ -346,7 +322,7 @@ rt_err_t rt_clock_hrtimer_control(rt_clock_hrtimer_t timer, int cmd, void *arg)
         break;
 
     case RT_TIMER_CTRL_GET_REMAIN_TIME:
-        *(unsigned long *)arg = timer->timeout_cnt;
+        *(rt_tick_t *)arg = timer->timeout_cnt;
         break;
     case RT_TIMER_CTRL_GET_FUNC:
         if (arg != RT_NULL)
@@ -408,7 +384,7 @@ void rt_clock_hrtimer_delay_detach(struct rt_clock_hrtimer *timer)
     rt_clock_hrtimer_detach(timer);
 }
 
-rt_err_t rt_clock_hrtimer_sleep(struct rt_clock_hrtimer *timer, unsigned long cnt)
+rt_err_t rt_clock_hrtimer_sleep(struct rt_clock_hrtimer *timer, rt_tick_t cnt)
 {
     rt_err_t err;
 
@@ -430,23 +406,19 @@ rt_err_t rt_clock_hrtimer_sleep(struct rt_clock_hrtimer *timer, unsigned long cn
     return err;
 }
 
-rt_err_t rt_clock_hrtimer_ndelay(struct rt_clock_hrtimer *timer, unsigned long ns)
+rt_err_t rt_clock_hrtimer_ndelay(struct rt_clock_hrtimer *timer, rt_uint64_t ns)
 {
-    rt_uint64_t res = rt_clock_time_get_res_scaled();
-    if (res == 0)
-    {
-        return -RT_ERROR;
-    }
+    rt_tick_t cputimer_tick = (rt_tick_t)rt_muldiv_u64(ns, rt_clock_time_get_freq(), NANOSECOND_PER_SECOND, NULL);
 
-    return rt_clock_hrtimer_sleep(timer, (ns * RT_CLOCK_TIME_RESMUL) / res);
+    return rt_clock_hrtimer_sleep(timer, cputimer_tick);
 }
 
-rt_err_t rt_clock_hrtimer_udelay(struct rt_clock_hrtimer *timer, unsigned long us)
+rt_err_t rt_clock_hrtimer_udelay(struct rt_clock_hrtimer *timer, rt_uint64_t us)
 {
     return rt_clock_hrtimer_ndelay(timer, us * 1000);
 }
 
-rt_err_t rt_clock_hrtimer_mdelay(struct rt_clock_hrtimer *timer, unsigned long ms)
+rt_err_t rt_clock_hrtimer_mdelay(struct rt_clock_hrtimer *timer, rt_uint64_t ms)
 {
     return rt_clock_hrtimer_ndelay(timer, ms * 1000000);
 }
