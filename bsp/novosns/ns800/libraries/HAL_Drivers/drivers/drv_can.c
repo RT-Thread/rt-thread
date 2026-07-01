@@ -957,11 +957,6 @@ static const struct rt_can_ops _can_ops =
     .sendmsg_nonblocking   = _can_sendmsg_nonblocking,
 };
 
-static uint32_t FLEXCANREG_GetMsgBufInterruptFlagAll(FLEXCANREG_TypeDef *obj)
-{
-    return obj->IFLAG1 | obj->IFLAG2 | obj->IFLAG3 | obj->IFLAG4;
-}
-
 static uint8_t FLEXCANREG_GetMsgBufInterruptMask (FLEXCANREG_TypeDef *obj, uint32_t msgBufferIdx)
 {
     uint32_t temp, temp1 = 0;
@@ -1007,10 +1002,10 @@ static void _can_tx_rx_isr(struct rt_can_device *can)
     hcan = (ns800rt7_can *) can->parent.user_data;
     RT_ASSERT(hcan);
 
-    do
+    while (RT_TRUE)
     {
         /* For this implementation, we solve the Message with lowest MB index first. */
-        for (result = 0; result < 128; result++)
+        for (result = 0; result < TOTAL_MB_COUNT; result++)
         {
             flag = FLEXCANDRV_GetMsgObjFlag(&(hcan->CanHandle), result);
             mask = FLEXCANREG_GetMsgBufInterruptMask(hcan->CanHandle.flexCanReg, result);
@@ -1022,15 +1017,15 @@ static void _can_tx_rx_isr(struct rt_can_device *can)
         }
 
         /* Does not find Message to deal with. */
-        if (result == 128)
+        if (result == TOTAL_MB_COUNT)
         {
             break;
         }
 
         if (result == 0U)
         {
-            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (result << 8));
             hcan->mbState[result] = StateIdle;
+            rt_hw_can_isr(can, RT_CAN_EVENT_TX_DONE | (result << 8));
         }
         else if (result >= TX_MB_COUNT && result < TOTAL_MB_COUNT)
         {
@@ -1039,13 +1034,12 @@ static void _can_tx_rx_isr(struct rt_can_device *can)
             msgObj.msgBufId = result;
             FLEXCANDRV_GetRxMsg(&hcan->CanHandle, &msgObj);
             rt_memcpy(&hcan->rx_frame[frame_idx], &msgObj, sizeof(msgObj));
-            rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | (result << 8));
             hcan->mbState[result] = StateIdle;
+            rt_hw_can_isr(can, RT_CAN_EVENT_RX_IND | (result << 8));
         }
 
         FLEXCANDRV_ClearMsgObjFlag(&(hcan->CanHandle), result);
     }
-    while((0 != FLEXCANREG_GetMsgBufInterruptFlagAll(hcan->CanHandle.flexCanReg)));
 }
 
 static void _can_err_isr(struct rt_can_device *can)
@@ -1217,4 +1211,3 @@ INIT_BOARD_EXPORT(rt_hw_can_init);
 #endif /* BSP_USING_CAN */
 
 /************************** end of file ******************/
-
