@@ -3535,7 +3535,7 @@ static void sdhci_reinit(struct rt_sdhci_host *host)
 int rt_sdhci_init_host(struct rt_sdhci_host *host)
 {
     int ret, len;
-    char dev_name[32];
+    char dev_name[RT_NAME_MAX];
     struct rt_mmc_host *mmc = host->mmc;
 
     len = sdio_host_set_name(&mmc->rthost, dev_name);
