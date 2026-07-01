@@ -92,12 +92,12 @@ install_on_ubuntu() {
 
     # 根据检测结果决定是否使用--gitee参数
     if [ "$use_gitee" = true ]; then
-        wget https://gitee.com/RT-Thread-Mirror/env/raw/master/install_ubuntu.sh
+        wget https://raw.githubusercontent.com/CYFS3/env/feat_env/install_ubuntu.sh
         chmod 777 install_ubuntu.sh
         echo "Installing on China gitee..."
         ./install_ubuntu.sh --gitee
     else
-        wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+        wget https://raw.githubusercontent.com/CYFS3/env/feat_env/install_ubuntu.sh
         chmod 777 install_ubuntu.sh
         echo "Installing on no China..."
         ./install_ubuntu.sh
@@ -125,12 +125,12 @@ install_on_macos() {
 
     # 根据检测结果决定是否使用--gitee参数
     if [ "$use_gitee" = true ]; then
-        wget https://gitee.com/RT-Thread-Mirror/env/raw/master/install_macos.sh
+        wget https://raw.githubusercontent.com/CYFS3/env/feat_env/install_macos.sh
         chmod 777 install_macos.sh
         echo "Installing on China gitee..."
         ./install_macos.sh --gitee
     else
-        wget https://raw.githubusercontent.com/RT-Thread/env/master/install_macos.sh
+        wget https://raw.githubusercontent.com/CYFS3/env/feat_env/install_macos.sh
         chmod 777 install_macos.sh
         echo "Installing on no China..."
         ./install_macos.sh
@@ -148,11 +148,11 @@ install_on_windows() {
 
     # 根据检测结果决定是否使用--gitee参数
     if [ "$use_gitee" = true ]; then
-        wget https://gitee.com/RT-Thread-Mirror/env/raw/master/install_windows.ps1
+        wget https://raw.githubusercontent.com/CYFS3/env/feat_env/install_windows.ps1
         echo "Installing on China gitee..."
         ./install_windows.ps1 --gitee
     else
-        wget https://raw.githubusercontent.com/RT-Thread/env/master/install_windows.ps1
+        wget https://raw.githubusercontent.com/CYFS3/env/feat_env/install_windows.ps1
         echo "Installing on no China..."
         ./install_windows.ps1
     fi
@@ -163,12 +163,12 @@ install_on_opensuse() {
     echo "Installing on openSUSE..."
     use_gitee=$(check_if_china_ip)
     if [ "$use_gitee" = true ]; then
-        wget https://gitee.com/RT-Thread-Mirror/env/raw/master/install_suse.sh
+        wget https://raw.githubusercontent.com/CYFS3/env/feat_env/install_suse.sh
         chmod 777 install_suse.sh
         echo "Installing on China gitee..."
         ./install_suse.sh --gitee
     else
-        wget https://raw.githubusercontent.com/RT-Thread/env/master/install_suse.sh
+        wget https://raw.githubusercontent.com/CYFS3/env/feat_env/install_suse.sh
         chmod 777 install_suse.sh
         echo "Installing on no China..."
         ./install_suse.sh

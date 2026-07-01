@@ -22,6 +22,7 @@
 # 2017-10-04     Bernard      The first version
 # 2025-01-07     ZhaoCake     components copy and gen doc
 # 2025-03-02     ZhaoCake     Add MkDist_Strip
+# 2026-06-10     CYFS         Copy shared hal-sdk package libraries for dist
 
 
 import os
@@ -29,6 +30,8 @@ import subprocess
 import shutil
 from shutil import ignore_patterns
 from SCons.Script import *
+from env_package import find_libraries_path_upward
+from env_package import is_hal_sdk_package_bridge
 
 def do_copy_file(src, dst):
     # check source file
@@ -164,6 +167,33 @@ def bsp_update_kconfig_library(dist_dir):
                 line = line.replace('../libraries', 'libraries')
             f.write(line)
 
+def bsp_copy_hal_sdk_package_libraries(bsp_root, dist_dir):
+    packages_dir = os.path.join(dist_dir, 'packages')
+    if not os.path.isdir(packages_dir):
+        return
+
+    libraries_path = find_libraries_path_upward(bsp_root)
+    if not libraries_path:
+        return
+
+    copied = False
+    for package_name in os.listdir(packages_dir):
+        package_path = os.path.join(packages_dir, package_name)
+        if not os.path.isdir(package_path):
+            continue
+        if not is_hal_sdk_package_bridge(package_path):
+            continue
+
+        source_path = os.path.join(libraries_path, package_name)
+        if not os.path.isdir(source_path):
+            print('warning: hal-sdk package library not found: %s' % source_path)
+            continue
+
+        if not copied:
+            print('=> hal-sdk package libraries')
+            copied = True
+        bsp_copy_files(source_path, os.path.join(dist_dir, 'libraries', package_name))
+
 def zip_dist(dist_dir, dist_name):
     import zipfile
 
@@ -198,6 +228,8 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
         print("=> start dist handle")
         dist_handle = Env['dist_handle']
         dist_handle(BSP_ROOT, dist_dir)
+
+    bsp_copy_hal_sdk_package_libraries(BSP_ROOT, dist_dir)
 
     # copy tools directory
     print('=> components')

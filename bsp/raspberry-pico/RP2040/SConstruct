@@ -9,6 +9,7 @@ else:
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from building import *
+from env_package import find_package_path
 
 TARGET = 'rtthread-pico.' + rtconfig.TARGET_EXT
 
@@ -24,11 +25,12 @@ env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 Export('RTT_ROOT')
 Export('rtconfig')
 
+
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
 ocwd = os.getcwd()
-os.chdir('packages/raspberrypi-pico-sdk-latest')
+os.chdir(find_package_path(os.getcwd(), 'raspberrypi-pico-sdk-latest'))
 print("Enter " + os.getcwd())
 if GetOption('clean'):
     os.system("scons -c")
