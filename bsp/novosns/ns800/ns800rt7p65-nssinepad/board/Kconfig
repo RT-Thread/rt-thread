@@ -229,6 +229,28 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+        if BSP_USING_I2C
+            menuconfig BSP_USING_HARD_I2C1
+                bool "Enable Hardware I2C1"
+                default n
+                if BSP_USING_HARD_I2C1
+                    config BSP_I2C1_BAUDRATE
+                        int "I2C1 baud rate (Hz)"
+                        default 100000
+                endif
+
+            menuconfig BSP_USING_HARD_I2C2
+                bool "Enable Hardware I2C2"
+                default n
+                if BSP_USING_HARD_I2C2
+                    config BSP_I2C2_BAUDRATE
+                        int "I2C2 baud rate (Hz)"
+                        default 100000
+                endif
     menuconfig BSP_USING_EPWM
         bool "Enable EPWM"
         select RT_USING_PWM
