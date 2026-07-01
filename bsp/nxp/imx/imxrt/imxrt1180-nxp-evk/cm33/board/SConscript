@@ -29,6 +29,10 @@ if rtconfig.PLATFORM in ['iccarm']:
     CPPDEFINES += ['NDEBUG']
     # CPPDEFINES += ['FSL_SDK_DRIVER_QUICK_ACCESS_ENABLE=1']
 
+if GetDepend(['BSP_USING_CLOCK_TIMER']):
+    src += ['../packages/nxp-imxrt-sdk-latest/MIMXRT1180/MIMXRT1189/drivers/fsl_gpt.c']
+    CPPPATH += [cwd + '/../packages/nxp-imxrt-sdk-latest/MIMXRT1180/MIMXRT1189/drivers']
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 
 Return('group')
