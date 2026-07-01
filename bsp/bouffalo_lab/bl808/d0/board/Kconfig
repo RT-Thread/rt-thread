@@ -33,7 +33,7 @@ menu "General Drivers Configuration"
         bool "Enable UART3"
         default y
         if BSP_USING_UART3
-            choice
+            choice UART3_TX_GPIO_SEL
                 prompt "UART3 TX PIN"
                 default UART3_TX_USING_GPIO16
 
@@ -62,7 +62,7 @@ menu "General Drivers Configuration"
                 config UART3_TX_USING_GPIO44
                     bool "GPIO_44"
             endchoice
-            choice
+            choice UART3_RX_GPIO_SEL
                 prompt "UART3 RX PIN"
                 default UART3_RX_USING_GPIO17
 
@@ -106,7 +106,7 @@ menu "General Drivers Configuration"
                     bool "Enable I2C2 (hardware)"
                     default n
                     if BSP_USING_I2C2
-                        choice 
+                        choice I2C2_SCL_SEL
                             prompt "I2C2 SCL"
                             default I2C2_SCL_USING_GPIO14
 
@@ -169,7 +169,7 @@ menu "General Drivers Configuration"
                                 bool "GPIO_44"
                         endchoice
 
-                        choice
+                        choice I2C2_SDA_GPIO_SEL
                             prompt "I2C2 SDA"
                             default I2C2_SDA_USING_GPIO15
 
@@ -244,7 +244,7 @@ menu "General Drivers Configuration"
                     bool "Enable I2C3 (hardware)"
                     default n
                     if BSP_USING_I2C3
-                        choice 
+                        choice I2C3_SCL_SEL
                             prompt "I2C3 SCL"
                             default I2C3_SCL_USING_GPIO0
 
@@ -301,7 +301,7 @@ menu "General Drivers Configuration"
                                 bool "GPIO_44"
                         endchoice
 
-                        choice
+                        choice I2C3_SDA_GPIO_SEL
                             prompt "I2C3 SDA"
                             default I2C3_SDA_USING_GPIO1
 
@@ -374,7 +374,7 @@ menu "General Drivers Configuration"
         default n
 
         if BSP_USING_SPI
-            choice
+            choice SPI_SCK_GPIO_SEL
                 prompt "SPI SCK PIN"
                 default SPI_SCK_USING_GPIO19
 
@@ -402,7 +402,7 @@ menu "General Drivers Configuration"
                     bool "GPIO_43"
             endchoice
 
-            choice
+            choice SPI_MISO_GPIO_SEL
                 prompt "SPI MISO PIN"
                 default SPI_MISO_USING_GPIO22
 
@@ -432,7 +432,7 @@ menu "General Drivers Configuration"
                     bool "GPIO_42"
             endchoice
 
-            choice
+            choice SPI_MOSI_GPIO_SEL
                 prompt "SPI MOSI PIN"
                 default SPI_MOSI_USING_GPIO21
 

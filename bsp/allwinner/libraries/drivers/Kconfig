@@ -1,6 +1,6 @@
 menu "General Drivers Configuration"
 
-choice
+choice BOARD_SEL
     prompt "Choose Board"
 
     default BSP_USING_M7
@@ -15,7 +15,7 @@ menuconfig BSP_USING_UART0
     bool "Enable UART0"
     default y
     if BSP_USING_UART0
-        choice
+        choice UART0_TX_GPIO_SEL
             prompt "UART0 TX PIN"
             default UART0_TX_USING_GPIOE2 if BOARD_allwinnerd1s
             default UART0_TX_USING_GPIOB8 if BOARD_allwinnerd1
@@ -29,7 +29,7 @@ menuconfig BSP_USING_UART0
             config UART0_TX_USING_GPIOF2
                 bool "GPIOF02"
         endchoice
-        choice
+        choice UART0_RX_GPIO_SEL
             prompt "UART0 RX PIN"
             default UART0_RX_USING_GPIOE3 if BOARD_allwinnerd1s
             default UART0_RX_USING_GPIOB9 if BOARD_allwinnerd1
@@ -49,7 +49,7 @@ menuconfig BSP_USING_UART1
     bool "Enable UART1"
     default n
     if BSP_USING_UART1
-        choice
+        choice UART1_TX_GPIO_SEL
             prompt "UART1 TX PIN"
             config UART1_TX_USING_GPIOD21
                 bool "GPIOD21"
@@ -60,7 +60,7 @@ menuconfig BSP_USING_UART1
             config UART1_TX_USING_GPIOG12
                 bool "GPIOG12"
         endchoice
-        choice
+        choice UART1_RX_GPIO_SEL
             prompt "UART1 RX PIN"
             config UART1_RX_USING_GPIOD22
                 bool "GPIOD22"
@@ -77,14 +77,14 @@ menuconfig BSP_USING_UART2
     bool "Enable UART2"
     default n
     if BSP_USING_UART2
-        choice
+        choice UART2_TX_GPIO_SEL
             prompt "UART2 TX PIN"
             config UART2_TX_USING_GPIOD1
                 bool "GPIOD01"
             config UART2_TX_USING_GPIOE2
                 bool "GPIOE02"
         endchoice
-        choice
+        choice UART2_RX_GPIO_SEL
             prompt "UART2 RX PIN"
             config UART2_RX_USING_GPIOD2
                 bool "GPIOD02"
@@ -97,7 +97,7 @@ menuconfig BSP_USING_UART3
     bool "Enable UART3"
     default n
     if BSP_USING_UART3
-        choice
+        choice UART3_TX_GPIO_SEL
             prompt "UART3 TX PIN"
             config UART3_TX_USING_GPIOB6
                 bool "GPIOB06"
@@ -112,7 +112,7 @@ menuconfig BSP_USING_UART3
             config UART3_TX_USING_GPIOG8
                 bool "GPIOG08"
         endchoice
-        choice
+        choice UART3_RX_GPIO_SEL
             prompt "UART3 RX PIN"
             config UART3_RX_USING_GPIOB7
                 bool "GPIOB07"
@@ -133,7 +133,7 @@ menuconfig BSP_USING_UART4
     bool "Enable UART4"
     default n
     if BSP_USING_UART4
-        choice
+        choice UART4_TX_GPIO_SEL
             prompt "UART4 TX PIN"
             config UART4_TX_USING_GPIOB2
                 bool "GPIOB02"
@@ -144,7 +144,7 @@ menuconfig BSP_USING_UART4
             config UART4_TX_USING_GPIOG2
                 bool "GPIOG02"
         endchoice
-        choice
+        choice UART4_RX_PIN_SEL
             prompt "UART4 RX PIN"
             config UART4_RX_USING_GPIOB3
                 bool "GPIOB03"
@@ -161,7 +161,7 @@ menuconfig BSP_USING_UART5
     bool "Enable UART5"
     default n
     if BSP_USING_UART5
-        choice
+        choice UART5_TX_GPIO_SEL
             prompt "UART5 TX PIN"
             config UART5_TX_USING_GPIOB4
                 bool "GPIOB04"
@@ -172,7 +172,7 @@ menuconfig BSP_USING_UART5
             config UART5_TX_USING_GPIOG4
                 bool "GPIOG04"
         endchoice
-        choice
+        choice UART5_RX_GPIO_SEL
             prompt "UART5 RX PIN"
             config UART5_RX_USING_GPIOB5
                 bool "GPIOB05"

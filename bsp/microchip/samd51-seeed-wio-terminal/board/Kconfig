@@ -1,6 +1,6 @@
 menu "Hardware Drivers Config"
 
-choice
+choice CHIP_TYPE_SEL
     prompt "select chip type"
     default SOC_SAMD51P19
 

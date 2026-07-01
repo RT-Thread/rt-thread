@@ -489,7 +489,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI0 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice
+                    choice BSP_SPI0_CS_SEL
                         prompt "Select SPI0 CS TYPE"
                         default BSP_SPI0_USING_SOFT_CS
                         config BSP_SPI0_USING_SOFT_CS
@@ -497,7 +497,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI0_USING_HARD_CS
                             bool "Enable SPI0 hardware cs"
                     endchoice
-                    choice
+                    choice BSP_SPI0_IO_MODE_SEL
                         prompt "Select SPI0 IO mode"
                         default BSP_SPI0_USING_SINGLE_IO
                         config BSP_SPI0_USING_SINGLE_IO
@@ -519,7 +519,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI1 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice
+                    choice BSP_SPI1_CS_SEL
                         prompt "Select SPI1 CS TYPE"
                         default BSP_SPI1_USING_SOFT_CS
                         config BSP_SPI1_USING_SOFT_CS
@@ -527,7 +527,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI1_USING_HARD_CS
                             bool "Enable SPI1 hardware cs"
                     endchoice
-                    choice
+                    choice BSP_SPI1_IO_MODE_SEL
                         prompt "Select SPI1 IO mode"
                         default BSP_SPI1_USING_SINGLE_IO
                         config BSP_SPI1_USING_SINGLE_IO
@@ -549,7 +549,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI2 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice
+                    choice BSP_SPI2_CS_SEL
                         prompt "Select SPI2 CS TYPE"
                         default BSP_SPI2_USING_SOFT_CS
                         config BSP_SPI2_USING_SOFT_CS
@@ -557,7 +557,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI2_USING_HARD_CS
                             bool "Enable SPI2 hardware cs"
                     endchoice
-                    choice
+                    choice BSP_SPI2_IO_MODE_SEL
                         prompt "Select SPI2 IO mode"
                         default BSP_SPI2_USING_SINGLE_IO
                         config BSP_SPI2_USING_SINGLE_IO
@@ -579,7 +579,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI3 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice
+                    choice BSP_SPI3_CS_SEL
                         prompt "Select SPI3 CS TYPE"
                         default BSP_SPI3_USING_SOFT_CS
                         config BSP_SPI3_USING_SOFT_CS
@@ -587,7 +587,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI3_USING_HARD_CS
                             bool "Enable SPI3 hardware cs"
                     endchoice
-                    choice
+                    choice BSP_SPI3_IO_MODE_SEL
                         prompt "Select SPI3 IO mode"
                         default BSP_SPI3_USING_SINGLE_IO
                         config BSP_SPI3_USING_SINGLE_IO
@@ -609,7 +609,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI4 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice
+                    choice BSP_SPI4_CS_SEL
                         prompt "Select SPI4 CS TYPE"
                         default BSP_SPI4_USING_SOFT_CS
                         config BSP_SPI4_USING_SOFT_CS
@@ -617,7 +617,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI4_USING_HARD_CS
                             bool "Enable SPI4 hardware cs"
                     endchoice
-                    choice
+                    choice BSP_SPI4_IO_MODE_SEL
                         prompt "Select SPI4 IO mode"
                         default BSP_SPI4_USING_SINGLE_IO
                         config BSP_SPI4_USING_SINGLE_IO
@@ -639,7 +639,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI5 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice
+                    choice BSP_SPI5_CS_SEL
                         prompt "Select SPI5 CS TYPE"
                         default BSP_SPI5_USING_SOFT_CS
                         config BSP_SPI5_USING_SOFT_CS
@@ -647,7 +647,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI5_USING_HARD_CS
                             bool "Enable SPI5 hardware cs"
                     endchoice
-                    choice
+                    choice BSP_SPI5_IO_MODE_SEL
                         prompt "Select SPI5 IO mode"
                         default BSP_SPI5_USING_SINGLE_IO
                         config BSP_SPI5_USING_SINGLE_IO
@@ -669,7 +669,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI6 Interrupt Priority"
                         range 1 7
                         default 1
-                    choice
+                    choice BSP_SPI6_CS_SEL
                         prompt "Select SPI6 CS TYPE"
                         default BSP_SPI6_USING_SOFT_CS
                         config BSP_SPI6_USING_SOFT_CS
@@ -677,7 +677,7 @@ menu "On-chip Peripheral Drivers"
                         config BSP_SPI6_USING_HARD_CS
                             bool "Enable SPI6 hardware cs"
                     endchoice
-                    choice
+                    choice BSP_SPI6_IO_MODE_SEL
                         prompt "Select SPI6 IO mode"
                         default BSP_SPI6_USING_SINGLE_IO
                         config BSP_SPI6_USING_SINGLE_IO
@@ -699,7 +699,7 @@ menu "On-chip Peripheral Drivers"
                         int "SPI7 Interrupt Priority"
                         range 1 7
                         default 1
-                choice
+                choice BSP_SPI7_CS_SEL
                     prompt "Select SPI7 CS TYPE"
                     default BSP_SPI7_USING_SOFT_CS
                     config BSP_SPI7_USING_SOFT_CS
@@ -707,7 +707,7 @@ menu "On-chip Peripheral Drivers"
                     config BSP_SPI7_USING_HARD_CS
                         bool "Enable SPI7 hardware cs"
                 endchoice
-                    choice
+                    choice BSP_SPI7_IO_MODE_SEL
                         prompt "Select SPI7 IO mode"
                         default BSP_SPI7_USING_SINGLE_IO
                         config BSP_SPI7_USING_SINGLE_IO
@@ -740,7 +740,7 @@ menu "On-chip Peripheral Drivers"
        select RT_USING_PHY if BSP_USING_ETH
 
        if BSP_USING_ETH
-           choice
+           choice BSP_ETH0_SEL
                prompt "ETH"
                default BSP_USING_ETH0
 

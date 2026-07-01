@@ -30,7 +30,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable Flexcomm0 as UART"
                     default y
                     if BSP_USING_UART0
-                        choice
+                        choice HW_UART0_BAUD_SEL
                             prompt "Select UART0 badurate"
                             default HW_UART0_BAUDRATE_115200
 
@@ -46,7 +46,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable Flexcomm1 as UART"
                     default n
                     if BSP_USING_UART1
-                    choice
+                    choice HW_UART1_BAUD_SEL
                         prompt "Select UART1 badurate"
                         default HW_UART1_BAUDRATE_115200
 
@@ -62,7 +62,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable Flexcomm2 as UART"
                     default n
                     if BSP_USING_UART2
-                        choice
+                        choice HW_UART2_BAUD_SEL
                             prompt "Select UART2 badurate"
                             default HW_UART2_BAUDRATE_115200
 
@@ -88,7 +88,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                     if BSP_USING_I2C1
-                        choice
+                        choice HW_I2C1_BAUD_SEL
                             prompt "Select I2C1 badurate"
                             default HW_I2C1_BAUDRATE_100kHZ
 
@@ -104,7 +104,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable Flexcomm4 I2C"
                     default n
                     if BSP_USING_I2C4
-                        choice
+                        choice HW_I2C4_BAUD_SEL
                             prompt "Select I2C4 badurate"
                             default HW_I2C4_BAUDRATE_100kHZ
 

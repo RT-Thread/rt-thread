@@ -168,7 +168,7 @@
             depends on BSP_USING_TMR && !USE_MA35D1_SUBM
 
         if BSP_USING_TMR0
-            choice
+            choice BSP_TIMER0_FUNC_SEL
                 prompt "Select TIMER0 function mode"
 
                 config BSP_USING_TIMER0
@@ -193,7 +193,7 @@
             depends on BSP_USING_TMR && !USE_MA35D1_SUBM
 
         if BSP_USING_TMR1
-            choice
+            choice BSP_TIMER1_FUNC_SEL
                 prompt "Select TIMER1 function mode"
 
                 config BSP_USING_TIMER1
@@ -217,7 +217,7 @@
             depends on BSP_USING_TMR
 
          if BSP_USING_TMR2
-            choice
+            choice BSP_TIMER2_FUNC_SEL
                 prompt "Select TIMER2 function mode"
 
                 config BSP_USING_TIMER2
@@ -241,7 +241,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR3
-            choice
+            choice BSP_TIMER3_FUNC_SEL
                 prompt "Select TIMER3 function mode"
 
                 config BSP_USING_TIMER3
@@ -265,7 +265,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR4
-            choice
+            choice BSP_TIMER4_FUNC_SEL
                 prompt "Select TIMER4 function mode"
 
                 config BSP_USING_TIMER4
@@ -290,7 +290,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR5
-            choice
+            choice BSP_TIMER5_FUNC_SEL
                 prompt "Select TIMER5 function mode"
 
                 config BSP_USING_TIMER5
@@ -315,7 +315,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR6
-            choice
+            choice BSP_TIMER6_FUNC_SEL
                 prompt "Select TIMER6 function mode"
 
                 config BSP_USING_TIMER6
@@ -341,7 +341,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR7
-            choice
+            choice BSP_TIMER7_FUNC_SEL
                 prompt "Select TIMER7 function mode"
 
                 config BSP_USING_TIMER7
@@ -366,7 +366,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR8
-            choice
+            choice BSP_TIMER8_FUNC_SEL
                 prompt "Select TIMER8 function mode"
 
                 config BSP_USING_TIMER8
@@ -391,7 +391,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR9
-            choice
+            choice BSP_TIMER9_FUNC_SEL
                 prompt "Select TIMER9 function mode"
 
                 config BSP_USING_TIMER9
@@ -416,7 +416,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR10
-            choice
+            choice BSP_TIMER10_FUNC_SEL
                 prompt "Select TIMER10 function mode"
 
                 config BSP_USING_TIMER10
@@ -441,7 +441,7 @@
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR11
-            choice
+            choice BSP_TIMER11_FUNC_SEL
                 prompt "Select TIMER11 function mode"
 
                 config BSP_USING_TIMER11
@@ -728,7 +728,7 @@
                 bool
 
             if BSP_USING_EPWM0
-                choice
+                choice BSP_EPWM0_SEL
                 prompt "Select EPWM0 function mode"
                 config BSP_USING_EPWM0_PWM
                     select RT_USING_PWM
@@ -750,7 +750,7 @@
                 depends on BSP_USING_EPWM && !USE_MA35D1_SUBM
 
             if BSP_USING_EPWM1
-                choice
+                choice BSP_EPWM1_SEL
                 prompt "Select EPWM1 function mode"
                 config BSP_USING_EPWM1_PWM
                     select RT_USING_PWM
@@ -772,7 +772,7 @@
                 depends on BSP_USING_EPWM && !USE_MA35D1_SUBM
 
             if BSP_USING_EPWM2
-                choice
+                choice BSP_EPWM2_SEL
                 prompt "Select EPWM2 function mode"
                 config BSP_USING_EPWM2_PWM
                     select RT_USING_PWM
@@ -803,7 +803,7 @@
             config BSP_USING_SPII2S
             bool
 
-            choice
+            choice BSP_SPI0_FUNC_SEL
                 prompt "Select SPI0 function mode"
                 config BSP_USING_SPI0_NONE
                 bool "NONE"
@@ -831,7 +831,7 @@
                        depends on BSP_USING_SPI0
             endif
 
-            choice
+            choice BSP_SPI1_FUNC_SEL
                 prompt "Select SPI1 function mode"
                 config BSP_USING_SPI1_NONE
                 bool "NONE"
@@ -859,7 +859,7 @@
                     depends on BSP_USING_SPI1
             endif
 
-            choice
+            choice BSP_SPI2_FUNC_SEL
                 prompt "Select SPI2 function mode"
                 config BSP_USING_SPI2_NONE
                 bool "NONE"
@@ -887,7 +887,7 @@
                     depends on BSP_USING_SPI2
             endif
 
-            choice
+            choice BSP_SPI3_FUNC_SEL
                 prompt "Select SPI3 function mode"
                 config BSP_USING_SPI3_NONE
                 bool "NONE"
@@ -1059,7 +1059,7 @@
         default y
 
         if BSP_USING_DISP
-            choice
+            choice LCM_F_SEL
                 prompt "Select Supported LCM panel"
                 default LCM_USING_FW070TFT_WSVGA
                 config LCM_USING_FW070TFT_WSVGA

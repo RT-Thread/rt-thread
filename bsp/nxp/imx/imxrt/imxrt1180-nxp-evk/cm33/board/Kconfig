@@ -188,7 +188,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable I2C3"
                     default n
 
-                choice
+                choice I2C2_BAUD_SEL
                     prompt "Select I2C2 badurate"
                     default HW_I2C2_BADURATE_100kHZ
 
@@ -199,7 +199,7 @@ menu "On-chip Peripheral Drivers"
                         bool "Badurate 400kHZ"
                 endchoice
 
-                choice
+                choice I2C3_BAUD_SEL
                     prompt "Select I2C3 badurate"
                     default HW_I2C3_BADURATE_100kHZ
 

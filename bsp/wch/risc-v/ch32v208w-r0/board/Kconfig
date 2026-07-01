@@ -313,7 +313,7 @@ menu "On-chip Peripheral Drivers"
                 default n
 
                 if BSP_USING_TIM1
-                    choice
+                    choice BSP_TIM1_SEL
                         prompt "Using TIM1 as clock_timer or PWM mode"
                         default BSP_USING_TIM1_CLOCK_TIMER
 
@@ -349,7 +349,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM2
-                    choice
+                    choice BSP_TIM2_SEL
                         prompt "Using TIM2 as clock_timer or PWM mode"
                         default BSP_USING_TIM2_CLOCK_TIMER
 
@@ -385,7 +385,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM3
-                    choice
+                    choice BSP_TIM3_SEL
                         prompt "Using TIM3 as clock_timer or PWM mode"
                         default BSP_USING_TIM3_CLOCK_TIMER
 
@@ -421,7 +421,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM4
-                    choice
+                    choice BSP_TIM4_SEL
                         prompt "Using TIM4 as clock_timer or PWM mode"
                         default BSP_USING_TIM4_CLOCK_TIMER
 
@@ -457,7 +457,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM5
-                    choice
+                    choice BSP_TIM5_SEL
                         prompt "Using TIM5 as clock_timer or PWM mode"
                         default BSP_USING_TIM5_CLOCK_TIMER
 
@@ -493,7 +493,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM6
-                    choice
+                    choice TIM5_CLK_TMR_PWM_MO_SEL
                         prompt "Using TIM5 as clock_timer (PWM mode not supported)"
                         default BSP_USING_TIM6_CLOCK_TIMER
 
@@ -509,7 +509,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM7
-                    choice
+                    choice TIM7_CLK_TMR_PWM_MO_SEL
                         prompt "Using TIM7 as clock_timer (PWM mode not supported)"
                         default BSP_USING_TIM7_CLOCK_TIMER
 
@@ -525,7 +525,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM8
-                    choice
+                    choice BSP_TIM8_SEL
                         prompt "Using TIM8 as clock_timer or PWM mode"
                         default BSP_USING_TIM8_CLOCK_TIMER
 
@@ -561,7 +561,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM9
-                    choice
+                    choice BSP_TIM9_SEL
                         prompt "Using TIM9 as clock_timer or PWM mode"
                         default BSP_USING_TIM9_CLOCK_TIMER
 
@@ -597,7 +597,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                 if BSP_USING_TIM10
-                    choice
+                    choice BSP_TIM10_SEL
                         prompt "Using TIM10 as clock_timer or PWM mode"
                         default BSP_USING_TIM10_CLOCK_TIMER
 

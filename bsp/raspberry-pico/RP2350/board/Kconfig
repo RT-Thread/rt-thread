@@ -59,7 +59,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART0"
                 default y
             if BSP_USING_UART0
-                choice
+                choice BSP_UART0_TX_PIN_SEL
                     prompt "uart0 tx pin number (GP)"
                     depends on BSP_USING_UART0
                     default BSP_UART0_TX_PIN_0
@@ -76,7 +76,7 @@ menu "On-chip Peripheral Drivers"
                     default 12 if BSP_UART0_TX_PIN_12
                     default 16 if BSP_UART0_TX_PIN_16
 
-                choice
+                choice BSP_UART0_RX_PIN_1_SEL
                     prompt "uart0 rx pin number (GP)"
                     depends on BSP_USING_UART0
                     default BSP_UART0_RX_PIN_1
@@ -98,7 +98,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART1"
                 default n
             if BSP_USING_UART1
-                choice
+                choice BSP_UART1_TX_PIN_SEL
                     prompt "uart1 tx pin number (GP)"
                     depends on BSP_USING_UART1
                     default BSP_UART1_TX_PIN_8
@@ -112,7 +112,7 @@ menu "On-chip Peripheral Drivers"
                     default 4 if BSP_UART1_TX_PIN_4
                     default 8 if BSP_UART1_TX_PIN_8
 
-                choice
+                choice BSP_UART1_RX_PIN_SEL
                     prompt "uart1 rx pin number (GP)"
                     depends on BSP_USING_UART1
                     default BSP_UART1_RX_PIN_9
@@ -270,7 +270,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI0"
                 default n
             if BSP_USING_SPI0
-                choice
+                choice BSP_SPI0_MOSI_PIN_SEL
                     prompt "spi0 MOSI pin number (GP)"
                     depends on BSP_USING_SPI0
                     default BSP_SPI0_MOSI_PIN_19 if BSP_USING_ARDUINO
@@ -287,7 +287,7 @@ menu "On-chip Peripheral Drivers"
                     default 7 if BSP_SPI0_MOSI_PIN_7
                     default 19 if BSP_SPI0_MOSI_PIN_19
 
-                choice
+                choice BSP_SPI0_MISO_PIN_SEL
                     prompt "spi0 MISO pin number (GP)"
                     depends on BSP_USING_SPI0
                     default BSP_SPI0_MISO_PIN_16 if BSP_USING_ARDUINO
@@ -304,7 +304,7 @@ menu "On-chip Peripheral Drivers"
                     default 4 if BSP_SPI0_MISO_PIN_4
                     default 16 if BSP_SPI0_MISO_PIN_16
 
-                choice
+                choice BSP_SPI0_SCK_PIN_SEL
                     prompt "spi0 SCK pin number (GP)"
                     depends on BSP_USING_SPI0
                     default BSP_SPI0_SCK_PIN_18 if BSP_USING_ARDUINO
@@ -321,7 +321,7 @@ menu "On-chip Peripheral Drivers"
                     default 6 if BSP_SPI0_SCK_PIN_6
                     default 18 if BSP_SPI0_SCK_PIN_18
 
-                choice
+                choice BSP_SPI0_CS_PIN_SEL
                     prompt "spi0 CS pin number (GP)"
                     depends on BSP_USING_SPI0
                     default BSP_SPI0_CS_PIN_17 if BSP_USING_ARDUINO
@@ -343,7 +343,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1"
                 default n
             if BSP_USING_SPI1
-                choice
+                choice BSP_SPI1_MOSI_PIN_1_SEL
                     prompt "spi1 MOSI pin number (GP)"
                     depends on BSP_USING_SPI1
                     default BSP_SPI1_MOSI_PIN_15 if BSP_USING_ARDUINO
@@ -357,7 +357,7 @@ menu "On-chip Peripheral Drivers"
                     default 11 if BSP_SPI1_MOSI_PIN_11
                     default 15 if BSP_SPI1_MOSI_PIN_15
 
-                choice
+                choice BSP_SPI1_MISO_PIN_SEL
                     prompt "spi1 MISO pin number (GP)"
                     depends on BSP_USING_SPI1
                     default BSP_SPI1_MISO_PIN_12 if BSP_USING_ARDUINO
@@ -371,7 +371,7 @@ menu "On-chip Peripheral Drivers"
                     default 8 if BSP_SPI1_MISO_PIN_8
                     default 12 if BSP_SPI1_MISO_PIN_12
 
-                choice
+                choice BSP_SPI1_SCK_PIN_1_SEL
                     prompt "spi1 SCK pin number (GP)"
                     depends on BSP_USING_SPI1
                     default BSP_SPI1_SCK_PIN_14 if BSP_USING_ARDUINO
@@ -385,7 +385,7 @@ menu "On-chip Peripheral Drivers"
                     default 10 if BSP_SPI1_SCK_PIN_10
                     default 14 if BSP_SPI1_SCK_PIN_14
 
-                choice
+                choice BSP_SPI1_CS_PIN_SEL
                     prompt "spi1 CS pin number (GP)"
                     depends on BSP_USING_SPI1
                     default BSP_SPI1_CS_PIN_13 if BSP_USING_ARDUINO
@@ -410,7 +410,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM0"
                 default n
                 if BSP_USING_PWM0
-                    choice
+                    choice BSP_PWM0_A_PIN_SEL
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM0
                         default BSP_PWM0_A_PIN_16
@@ -423,7 +423,7 @@ menu "On-chip Peripheral Drivers"
                         int
                         default 0 if BSP_PWM0_A_PIN_0
                         default 16 if BSP_PWM0_A_PIN_16
-                    choice
+                    choice BSP_PWM0_B_PIN_1_SEL
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM0
                         default BSP_PWM0_B_PIN_17
@@ -448,7 +448,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM1"
                 default n
                 if BSP_USING_PWM1
-                    choice
+                    choice BSP_PWM1_A_PIN_SEL
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM1
                         default BSP_PWM1_A_PIN_18
@@ -461,7 +461,7 @@ menu "On-chip Peripheral Drivers"
                         int
                         default 2 if BSP_PWM1_A_PIN_2
                         default 18 if BSP_PWM1_A_PIN_18
-                    choice
+                    choice BSP_PWM1_B_PIN_SEL
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM1
                         default BSP_PWM1_B_PIN_19
@@ -486,7 +486,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM2"
                 default n
                 if BSP_USING_PWM2
-                    choice
+                    choice BSP_PWM2_A_PIN_SEL
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM2
                         default BSP_PWM2_A_PIN_20
@@ -499,7 +499,7 @@ menu "On-chip Peripheral Drivers"
                         int
                         default 4 if BSP_PWM2_A_PIN_4
                         default 20 if BSP_PWM2_A_PIN_20
-                    choice
+                    choice BSP_PWM2_B_PIN_SEL
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM2
                         default BSP_PWM2_B_PIN_21
@@ -524,7 +524,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM3"
                 default n
                 if BSP_USING_PWM3
-                    choice
+                    choice BSP_PWM3_A_PIN_SEL
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM3
                         default BSP_PWM3_A_PIN_22
@@ -537,7 +537,7 @@ menu "On-chip Peripheral Drivers"
                         int
                         default 6 if BSP_PWM3_A_PIN_6
                         default 22 if BSP_PWM3_A_PIN_22
-                    choice
+                    choice BSP_PWM3_B_PIN_SEL
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM3
                         default BSP_PWM3_B_PIN_23
@@ -562,7 +562,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM4"
                 default n
                 if BSP_USING_PWM4
-                    choice
+                    choice BSP_PWM4_A_PIN_SEL
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM4
                         default BSP_PWM4_A_PIN_24
@@ -575,7 +575,7 @@ menu "On-chip Peripheral Drivers"
                         int
                         default 8 if BSP_PWM4_A_PIN_8
                         default 24 if BSP_PWM4_A_PIN_24
-                    choice
+                    choice BSP_PWM4_B_PIN_SEL
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM4
                         default BSP_PWM4_B_PIN_25
@@ -600,7 +600,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM5"
                 default n
                 if BSP_USING_PWM5
-                    choice
+                    choice BSP_PWM5_A_PIN_SEL
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM5
                         default BSP_PWM5_A_PIN_10
@@ -613,7 +613,7 @@ menu "On-chip Peripheral Drivers"
                         int
                         default 10 if BSP_PWM5_A_PIN_10
                         default 26 if BSP_PWM5_A_PIN_26
-                    choice
+                    choice BSP_PWM5_B_PIN_SEL
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM5
                         default BSP_PWM5_B_PIN_11
@@ -638,7 +638,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM6"
                 default n
                 if BSP_USING_PWM6
-                    choice
+                    choice BSP_PWM6_A_PIN_SEL
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM6
                         default BSP_PWM6_A_PIN_12
@@ -651,7 +651,7 @@ menu "On-chip Peripheral Drivers"
                         int
                         default 12 if BSP_PWM6_A_PIN_12
                         default 28 if BSP_PWM6_A_PIN_28
-                    choice
+                    choice BSP_PWM6_B_PIN_SEL
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM6
                         default BSP_PWM6_B_PIN_13
@@ -676,7 +676,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable PWM7"
                 default n
                 if BSP_USING_PWM7
-                    choice
+                    choice PWM_SLICE_A_PIN_GP_SEL
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM7
                         default BSP_PWM7_A_PIN_14
@@ -686,7 +686,7 @@ menu "On-chip Peripheral Drivers"
                     config BSP_PWM7_A_PIN
                         int
                         default 14 if BSP_PWM7_A_PIN_14
-                    choice
+                    choice PWM_SLICE_B_PIN_GP_SEL
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM7
                         default BSP_PWM7_B_PIN_15
@@ -732,7 +732,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C0"
                 default n
                 if BSP_USING_I2C0
-                    choice
+                    choice BSP_I2C0_SCL_PIN_SEL
                         prompt "i2c0 scl pin number (GP)"
                         depends on BSP_USING_I2C0
                         default BSP_I2C0_SCL_PIN_5 if BSP_USING_ARDUINO
@@ -758,7 +758,7 @@ menu "On-chip Peripheral Drivers"
                         default 17 if BSP_I2C0_SCL_PIN_17
                         default 21 if BSP_I2C0_SCL_PIN_21
 
-                    choice
+                    choice BSP_I2C0_SDA_PIN_SEL
                         prompt "i2c0 sda pin number (GP)"
                         depends on BSP_USING_I2C0
                         default BSP_I2C0_SDA_PIN_4 if BSP_USING_ARDUINO
@@ -789,7 +789,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C1"
                 default n
                 if BSP_USING_I2C1
-                    choice
+                    choice BSP_I2C1_SCL_PIN_SEL
                         prompt "i2c1 scl pin number (GP)"
                         depends on BSP_USING_I2C1
                         config BSP_I2C1_SCL_PIN_3
@@ -814,7 +814,7 @@ menu "On-chip Peripheral Drivers"
                         default 19 if BSP_I2C1_SCL_PIN_19
                         default 27 if BSP_I2C1_SCL_PIN_27
 
-                    choice
+                    choice BSP_I2C1_SDA_PIN_SEL
                         prompt "i2c1 sda pin number (GP)"
                         depends on BSP_USING_I2C1
                         config BSP_I2C1_SDA_PIN_2

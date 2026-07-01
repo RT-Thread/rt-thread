@@ -10,7 +10,7 @@ config SOC_NORDIC
     bool
     default y
 
-choice
+choice BSP_BOARD_SEL
     prompt "Select BSP board "
     default BSP_BOARD_PCA_10056
 

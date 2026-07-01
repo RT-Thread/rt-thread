@@ -25,7 +25,7 @@ if BSP_USING_USBD
 endif
 
 if BSP_USING_HARD_I2C
-    choice
+    choice BSP_RECEIVING_SEL
         prompt "Select I2C Receiving Scheme"
         default BSP_USING_RECEIVING_A
 

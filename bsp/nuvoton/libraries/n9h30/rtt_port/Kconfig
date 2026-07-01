@@ -88,7 +88,7 @@ config SOC_SERIES_N9H30
             depends on BSP_USING_ETMR
 
         if BSP_USING_ETMR0
-            choice
+            choice BSP_ETIMER0_SEL
                 prompt "Select ETIMER0 function mode"
 
                 config BSP_USING_ETIMER0
@@ -113,7 +113,7 @@ config SOC_SERIES_N9H30
             depends on BSP_USING_ETMR
 
         if BSP_USING_ETMR1
-            choice
+            choice BSP_ETIMER1_SEL
                 prompt "Select ETIMER1 function mode"
 
                 config BSP_USING_ETIMER1
@@ -137,7 +137,7 @@ config SOC_SERIES_N9H30
             depends on BSP_USING_ETMR
 
          if BSP_USING_ETMR2
-            choice
+            choice BSP_ETIMER2_SEL
                 prompt "Select ETIMER2 function mode"
 
                 config BSP_USING_ETIMER2
@@ -161,7 +161,7 @@ config SOC_SERIES_N9H30
             depends on BSP_USING_ETMR
 
          if BSP_USING_ETMR3
-            choice
+            choice BSP_ETIMER3_SEL
                 prompt "Select ETIMER3 function mode"
 
                 config BSP_USING_ETIMER3
@@ -331,7 +331,7 @@ config SOC_SERIES_N9H30
        select RT_USING_SPI
 
        if BSP_USING_QSPI
-            choice
+            choice BSP_QSPI0_SEL
                 prompt "Select QSPI0 function mode"
                 config BSP_USING_QSPI0_NONE
                 bool "NONE"
@@ -344,7 +344,7 @@ config SOC_SERIES_N9H30
                     Choose this option if you need QSPI function mode.
             endchoice
 
-            choice
+            choice BSP_QSPI1_SEL
                 prompt "Select QSPI1 function mode"
                 config BSP_USING_QSPI1_NONE
                 bool "NONE"
@@ -459,7 +459,7 @@ config SOC_SERIES_N9H30
         default y
 
         if BSP_USING_VPOST
-            choice
+            choice SUPPORTED_LCM_PANEL_SEL
                 prompt "Select Supported LCM panel"
                 default LCM_USING_FW070TFT
                 config LCM_USING_E50A2V1

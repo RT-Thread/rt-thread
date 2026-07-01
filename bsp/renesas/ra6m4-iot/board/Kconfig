@@ -455,7 +455,7 @@ menu "Hardware Drivers Config"
                     bool "Enable SCI0"
                     default n
                     if BSP_USING_SCI0
-                        choice
+                        choice BSP_SCI0_SEL
                         prompt "choice sci mode"
                         default BSP_USING_SCI0_SPI
                         config BSP_USING_SCI0_SPI
@@ -486,7 +486,7 @@ menu "Hardware Drivers Config"
                     bool "Enable SCI1"
                     default n
                     if BSP_USING_SCI1
-                        choice
+                        choice BSP_SCI1_SEL
                         prompt "choice sci mode"
                         default BSP_USING_SCI1_SPI
                         config BSP_USING_SCI1_SPI
@@ -517,7 +517,7 @@ menu "Hardware Drivers Config"
                     bool "Enable SCI2"
                     default n
                     if BSP_USING_SCI2
-                        choice
+                        choice BSP_SCI2_SEL
                         prompt "choice sci mode"
                         default BSP_USING_SCI2_SPI
                         config BSP_USING_SCI2_SPI
@@ -548,7 +548,7 @@ menu "Hardware Drivers Config"
                     bool "Enable SCI3"
                     default n
                     if BSP_USING_SCI3
-                        choice
+                        choice BSP_SCI3_SEL
                         prompt "choice sci mode"
                         default BSP_USING_SCI3_SPI
                         config BSP_USING_SCI3_SPI
@@ -579,7 +579,7 @@ menu "Hardware Drivers Config"
                     bool "Enable SCI4"
                     default n
                     if BSP_USING_SCI4
-                        choice
+                        choice BSP_SCI4_SEL
                         prompt "choice sci mode"
                         default BSP_USING_SCI4_SPI
                         config BSP_USING_SCI4_SPI
@@ -610,7 +610,7 @@ menu "Hardware Drivers Config"
                     bool "Enable SCI5"
                     default n
                     if BSP_USING_SCI5
-                        choice
+                        choice BSP_SCI5_SEL
                         prompt "choice sci mode"
                         default BSP_USING_SCI5_SPI
                         config BSP_USING_SCI5_SPI
@@ -641,7 +641,7 @@ menu "Hardware Drivers Config"
                     bool "Enable SCI6"
                     default n
                     if BSP_USING_SCI6
-                        choice
+                        choice BSP_SCI6_SEL
                         prompt "choice sci mode"
                         default BSP_USING_SCI6_SPI
                         config BSP_USING_SCI6_SPI
@@ -672,7 +672,7 @@ menu "Hardware Drivers Config"
                     bool "Enable SCI7"
                     default n
                     if BSP_USING_SCI7
-                        choice
+                        choice BSP_SCI7_SEL
                         prompt "choice sci mode"
                         default BSP_USING_SCI7_SPI
                         config BSP_USING_SCI7_SPI
@@ -703,7 +703,7 @@ menu "Hardware Drivers Config"
                     bool "Enable SCI8"
                     default n
                     if BSP_USING_SCI8
-                        choice
+                        choice BSP_SCI8_SEL
                         prompt "choice sci mode"
                         default BSP_USING_SCI8_SPI
                         config BSP_USING_SCI8_SPI
@@ -734,7 +734,7 @@ menu "Hardware Drivers Config"
                     bool "Enable SCI9"
                     default n
                     if BSP_USING_SCI9
-                        choice
+                        choice BSP_SCI9_SEL
                         prompt "choice sci mode"
                         default BSP_USING_SCI9_SPI
                         config BSP_USING_SCI9_SPI

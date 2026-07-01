@@ -51,7 +51,7 @@ menu "Onboard Peripheral Drivers"
             default n
 
         if BSP_USING_ARDUINO_ST7789
-            choice
+            choice BSP_ARDUINO_ST7789_SEL
                 prompt "Arduino GUI Framework"
 
                 config BSP_USING_ARDUINO_ST7789_ADAFRUIT_GFX
@@ -613,7 +613,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_ONCHIP_RTC
-            choice
+            choice BSP_RTC_LS_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 

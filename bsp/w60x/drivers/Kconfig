@@ -5,7 +5,7 @@ config BSP_USING_WM_LIBRARIES
     default y
 
 menu "W60x Device config"
-    choice
+    choice SOC_TYPE_SEL
         prompt "SOC type"
         default SOC_W600_A8xx
         config SOC_W600_A8xx
@@ -14,7 +14,7 @@ menu "W60x Device config"
             bool "W601-A8xx"
     endchoice
 
-    choice
+    choice BOARD_TYPE_SEL
         prompt "Board type"
         if SOC_W600_A8xx
             config W600_EV_BOARD

@@ -35,7 +35,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
         if BSP_USING_LCD_SPI
-            choice
+            choice LCD_BACKLIGHT_SEL
                 prompt "choice back light"
                 default LCD_BACKLIGHT_USING_GPIO
                 config LCD_BACKLIGHT_USING_PWM

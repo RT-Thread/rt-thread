@@ -92,7 +92,7 @@ config SOC_SERIES_M2354
                 depends on BSP_USING_TMR
 
             if BSP_USING_TMR0
-                choice
+                choice BSP_TIMER0_FUNC_SEL
                     prompt "Select TIMER0 function mode"
 
                     config BSP_USING_TIMER0
@@ -124,7 +124,7 @@ config SOC_SERIES_M2354
                 depends on BSP_USING_TMR
 
             if BSP_USING_TMR1
-                choice
+                choice BSP_TIMER1_FUNC_SEL
                     prompt "Select TIMER1 function mode"
 
                     config BSP_USING_TIMER1
@@ -155,7 +155,7 @@ config SOC_SERIES_M2354
                 depends on BSP_USING_TMR
 
              if BSP_USING_TMR2
-                choice
+                choice BSP_TIMER2_FUNC_SEL
                     prompt "Select TIMER2 function mode"
 
                     config BSP_USING_TIMER2
@@ -186,7 +186,7 @@ config SOC_SERIES_M2354
                 depends on BSP_USING_TMR
 
             if BSP_USING_TMR3
-                choice
+                choice BSP_TIMER3_FUNC_SEL
                     prompt "Select TIMER3 function mode"
 
                     config BSP_USING_TIMER3
@@ -217,7 +217,7 @@ config SOC_SERIES_M2354
                 depends on BSP_USING_TMR
 
             if BSP_USING_TMR4
-                choice
+                choice BSP_TIMER4_FUNC_SEL
                     prompt "Select TIMER4 function mode"
 
                     config BSP_USING_TIMER4
@@ -248,7 +248,7 @@ config SOC_SERIES_M2354
                 depends on BSP_USING_TMR && !BSP_USING_CLK
 
             if BSP_USING_TMR5
-                choice
+                choice BSP_TIMER5_FUNC_SEL
                     prompt "Select TIMER5 function mode"
 
                     config BSP_USING_TIMER5
@@ -384,7 +384,7 @@ config SOC_SERIES_M2354
             bool "Enable USCI0"
 
         if BSP_USING_USCI0
-            choice
+            choice BSP_USCI0_FUNC_SEL
                 prompt "Select USCI0 function mode"
 
                 config BSP_USING_UUART0
@@ -427,7 +427,7 @@ config SOC_SERIES_M2354
             bool "Enable USCI1"
 
             if BSP_USING_USCI1
-                choice
+                choice BSP_USCI1_FUNC_SEL
                     prompt "Select USCI1 function mode"
 
                     config BSP_USING_UUART1
@@ -499,7 +499,7 @@ config SOC_SERIES_M2354
             config BSP_USING_BPWM_CAPTURE
                 bool
 
-            choice
+            choice BSP_BPWM0_SEL
                 prompt "Select BPWM0 function mode"
                 config BSP_USING_BPWM0
                     select RT_USING_PWM
@@ -522,7 +522,7 @@ config SOC_SERIES_M2354
                     default 0
             endif
 
-            choice
+            choice BSP_BPWM1_SEL
                 prompt "Select BPWM1 function mode"
                 config BSP_USING_BPWM1
                     select RT_USING_PWM
@@ -555,7 +555,7 @@ config SOC_SERIES_M2354
             config BSP_USING_EPWM_CAPTURE
                 bool
 
-            choice
+            choice BSP_EPWM0_SEL
                 prompt "Select EPWM0 function mode"
                 config BSP_USING_EPWM0
                     select RT_USING_PWM
@@ -578,7 +578,7 @@ config SOC_SERIES_M2354
                     default 0
             endif
 
-            choice
+            choice BSP_EPWM1_SEL
                 prompt "Select EPWM1 function mode"
                 config BSP_USING_EPWM1
                     select RT_USING_PWM
@@ -616,7 +616,7 @@ config SOC_SERIES_M2354
             bool
             default n
 
-            choice
+            choice BSP_SPI0_FUNC_SEL
                 prompt "Select SPI0 function mode"
                 config BSP_USING_SPI0_NONE
                 bool "NONE"
@@ -643,7 +643,7 @@ config SOC_SERIES_M2354
                        depends on BSP_USING_SPI0
             endif
 
-            choice
+            choice BSP_SPI1_FUNC_SEL
                 prompt "Select SPI1 function mode"
                 config BSP_USING_SPI1_NONE
                 bool "NONE"
@@ -670,7 +670,7 @@ config SOC_SERIES_M2354
                        depends on BSP_USING_SPI1
               endif
 
-            choice
+            choice BSP_SPI2_FUNC_SEL
                 prompt "Select SPI2 function mode"
                 config BSP_USING_SPI2_NONE
                 bool "NONE"
@@ -697,7 +697,7 @@ config SOC_SERIES_M2354
                        depends on BSP_USING_SPI2
               endif
 
-            choice
+            choice BSP_SPI3_FUNC_SEL
                 prompt "Select SPI3 function mode"
                 config BSP_USING_SPI3_NONE
                 bool "NONE"

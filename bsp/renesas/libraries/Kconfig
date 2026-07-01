@@ -86,7 +86,7 @@ config SOC_SERIES_R7FA2A1
     default n
 
 if RT_USING_NANO
-choice
+choice RT_NANO_CONSOLE_UART_SEL
 prompt "Choice nano console device(Renesas)"
 default RT_NANO_CONSOLE_UART0
 depends on RT_USING_CONSOLE

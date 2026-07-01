@@ -420,7 +420,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_WDT
         if BSP_USING_WDT_TMR
-            choice
+            choice SWDT_WDT_SEL
                 prompt "Select SWDT/WDT"
                 default BSP_USING_SWDT
 
@@ -440,7 +440,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
+            choice CLK_SRC_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_XTAL32
 
@@ -460,7 +460,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PM
         if BSP_USING_PM
-            choice
+            choice BSP_WKTM_SEL
                 prompt "Select WKTM Clock Src"
                 default BSP_USING_WKTM_LRC
 
@@ -499,7 +499,7 @@ menu "On-chip Peripheral Drivers"
             default n
             select RT_HWCRYPTO_USING_AES
             if BSP_USING_AES
-                choice
+                choice AES_MODE_SEL
                     prompt "Select AES Mode"
                     default BSP_USING_AES_ECB
 
@@ -514,7 +514,7 @@ menu "On-chip Peripheral Drivers"
             default n
             select RT_HWCRYPTO_USING_SHA2
             if BSP_USING_HASH
-                choice
+                choice HASH_MODE_SEL
                     prompt "Select Hash Mode"
                     default BSP_USING_SHA2_256
 

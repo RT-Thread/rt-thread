@@ -108,7 +108,7 @@ config SOC_SERIES_M460
                 bool "Enable TIMER0"
 
             if BSP_USING_TMR0
-                choice
+                choice BSP_TIMER0_FUNC_SEL
                     prompt "Select TIMER0 function mode"
 
                     config BSP_USING_TIMER0
@@ -139,7 +139,7 @@ config SOC_SERIES_M460
                 bool "Enable TIMER1"
 
             if BSP_USING_TMR1
-                choice
+                choice BSP_TIMER1_FUNC_SEL
                     prompt "Select TIMER1 function mode"
 
                     config BSP_USING_TIMER1
@@ -169,7 +169,7 @@ config SOC_SERIES_M460
                 bool "Enable TIMER2"
 
              if BSP_USING_TMR2
-                choice
+                choice BSP_TIMER2_FUNC_SEL
                     prompt "Select TIMER2 function mode"
 
                     config BSP_USING_TIMER2
@@ -199,7 +199,7 @@ config SOC_SERIES_M460
                 bool "Enable TIMER3"
 
             if BSP_USING_TMR3
-                choice
+                choice BSP_TIMER3_FUNC_SEL
                     prompt "Select TIMER3 function mode"
 
                     config BSP_USING_TIMER3
@@ -387,7 +387,7 @@ config SOC_SERIES_M460
             bool "Enable USCI0"
 
         if BSP_USING_USCI0
-            choice
+            choice BSP_U_SEL
                 prompt "Select USCI0 function mode"
 
                 config BSP_USING_UUART0
@@ -468,7 +468,7 @@ config SOC_SERIES_M460
             config BSP_USING_BPWM_CAPTURE
                 bool
 
-            choice
+            choice BSP_BPWM0_SEL
                 prompt "Select BPWM0 function mode"
                 config BSP_USING_BPWM0_NONE
                     bool "Disable BPWM0"
@@ -489,7 +489,7 @@ config SOC_SERIES_M460
                         Choose this option if you need PWM capture function mode.
             endchoice
 
-            choice
+            choice BSP_BPWM1_SEL
                 prompt "Select BPWM1 function mode"
                 config BSP_USING_BPWM1_NONE
                     bool "Disable BPWM1"
@@ -520,7 +520,7 @@ config SOC_SERIES_M460
             config BSP_USING_EPWM_CAPTURE
                 bool
 
-            choice
+            choice BSP_EPWM0_SEL
                 prompt "Select EPWM0 function mode"
                 config BSP_USING_EPWM0_NONE
                     bool "Disable EPWM0"
@@ -541,7 +541,7 @@ config SOC_SERIES_M460
                         Choose this option if you need PWM capture function mode.
             endchoice
 
-            choice
+            choice BSP_EPWM1_SEL
                 prompt "Select EPWM1 function mode"
                 config BSP_USING_EPWM1_NONE
                     bool "Disable EPWM1"
@@ -577,7 +577,7 @@ config SOC_SERIES_M460
             bool
             default n
 
-            choice
+            choice BSP_SPI0_FUNC_SEL
                 prompt "Select SPI0 function mode"
                 config BSP_USING_SPI0_NONE
                 bool "NONE"
@@ -604,7 +604,7 @@ config SOC_SERIES_M460
                     depends on BSP_USING_SPI0
             endif
 
-            choice
+            choice BSP_SPI1_FUNC_SEL
                 prompt "Select SPI1 function mode"
                 config BSP_USING_SPI1_NONE
                 bool "NONE"
@@ -631,7 +631,7 @@ config SOC_SERIES_M460
                     depends on BSP_USING_SPI1
             endif
 
-            choice
+            choice BSP_SPI2_FUNC_SEL
                 prompt "Select SPI2 function mode"
                 config BSP_USING_SPI2_NONE
                 bool "NONE"
@@ -658,7 +658,7 @@ config SOC_SERIES_M460
                     depends on BSP_USING_SPI2
             endif
 
-            choice
+            choice BSP_SPI3_FUNC_SEL
                 prompt "Select SPI3 function mode"
                 config BSP_USING_SPI3_NONE
                 bool "NONE"
@@ -685,7 +685,7 @@ config SOC_SERIES_M460
                     depends on BSP_USING_SPI3
             endif
 
-            choice
+            choice BSP_SPI4_FUNC_SEL
                 prompt "Select SPI4 function mode"
                 config BSP_USING_SPI4_NONE
                 bool "NONE"
@@ -712,7 +712,7 @@ config SOC_SERIES_M460
                     depends on BSP_USING_SPI4
             endif
 
-            choice
+            choice BSP_SPI5_FUNC_SEL
                 prompt "Select SPI5 function mode"
                 config BSP_USING_SPI5_NONE
                 bool "NONE"
@@ -739,7 +739,7 @@ config SOC_SERIES_M460
                     depends on BSP_USING_SPI5
             endif
 
-            choice
+            choice BSP_SPI6_FUNC_SEL
                 prompt "Select SPI6 function mode"
                 config BSP_USING_SPI6_NONE
                 bool "NONE"
@@ -766,7 +766,7 @@ config SOC_SERIES_M460
                     depends on BSP_USING_SPI6
             endif
 
-            choice
+            choice BSP_SPI7_FUNC_SEL
                 prompt "Select SPI7 function mode"
                 config BSP_USING_SPI7_NONE
                 bool "NONE"
@@ -793,7 +793,7 @@ config SOC_SERIES_M460
                     depends on BSP_USING_SPI7
             endif
 
-            choice
+            choice BSP_SPI8_FUNC_SEL
                 prompt "Select SPI8 function mode"
                 config BSP_USING_SPI8_NONE
                 bool "NONE"
@@ -821,7 +821,7 @@ config SOC_SERIES_M460
             endif
 
 
-            choice
+            choice BSP_SPI9_FUNC_SEL
                 prompt "Select SPI9 function mode"
                 config BSP_USING_SPI9_NONE
                 bool "NONE"
@@ -848,7 +848,7 @@ config SOC_SERIES_M460
                     depends on BSP_USING_SPI9
             endif
 
-            choice
+            choice BSP_SPI10_FUNC_SEL
                 prompt "Select SPI10 function mode"
                 config BSP_USING_SPI10_NONE
                 bool "NONE"

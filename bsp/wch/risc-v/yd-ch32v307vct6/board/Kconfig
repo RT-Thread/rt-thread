@@ -241,7 +241,7 @@ menu "On-chip Peripheral Drivers"
         default n
 
         if BSP_USING_RTC
-            choice
+            choice BSP_RTC_SEL
                 prompt "Using clock for RTC"
                 default BSP_USING_RTC_LSI
                 

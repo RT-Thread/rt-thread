@@ -95,7 +95,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SOFT_I2C
         select BSP_USING_SOFT_I2C1
 
-    choice
+    choice BSP_TOUCH_FT6_SEL
         prompt "Touch IC type"
         depends on BSP_USING_TOUCH
         default BSP_USING_TOUCH_FT6X36
