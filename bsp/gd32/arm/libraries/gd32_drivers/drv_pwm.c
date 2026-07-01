@@ -517,6 +517,7 @@ static void timer_config(void)
 static rt_err_t drv_pwm_enable(struct gd32_pwm *pwm, const struct rt_pwm_configuration *configuration,
                                rt_bool_t enable)
 {
+    uint8_t channel_num = configuration->channel;
     if(channel_num == 0)
     {
         LOG_E("GD32 PWM channel starts from 1!\n");
