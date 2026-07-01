@@ -26,6 +26,7 @@
  *
  * Test Scenarios:
  * - Create, start, and delete a dynamic thread to verify dynamic thread lifecycle management
+ * - Let a dynamic thread exit normally, then call rt_thread_delete again in cleanup to verify duplicate delete handling
  * - Initialize, start, and detach a static thread to verify static thread lifecycle management
  * - Delay a thread for a specific tick count and check timing accuracy
  * - Register and remove an idle hook, verifying it is called as expected
@@ -37,6 +38,7 @@
  *
  * Verification Metrics:
  * - Threads are created, started, deleted, and detached successfully
+ * - Repeated deletion after normal thread exit returns an error without abnormal cleanup
  * - The precision of both relative delay and absolute delay is correct.
  * - Idle hook is invoked as expected during thread idle periods
  * - Thread yield causes correct scheduling among threads of the same priority
@@ -71,6 +73,7 @@ static struct rt_thread thread2;
     static rt_thread_t tid5 = RT_NULL;
     static rt_thread_t tid6 = RT_NULL;
     static rt_thread_t tid7 = RT_NULL;
+    static rt_thread_t tid9 = RT_NULL;
 #endif /* RT_USING_HEAP */
 
 static volatile rt_uint32_t tid3_delay_pass_flag = 0;
@@ -78,6 +81,9 @@ static volatile rt_uint32_t tid3_finish_flag = 0;
 static volatile rt_uint32_t tid4_finish_flag = 0;
 static volatile rt_uint32_t tid6_finish_flag = 0;
 static volatile rt_uint32_t thread5_source = 0;
+static rt_atomic_t thread9_exit_flag = 0;
+static rt_atomic_t thread9_cleanup_flag = 0;
+static rt_atomic_t thread9_delete_ret = -RT_ERROR;
 
 #ifndef RT_USING_SMP
     static volatile rt_uint32_t thread_yield_flag = 0;
@@ -452,6 +458,66 @@ static void test_thread_priority(void)
     return;
 }
 
+#ifdef RT_USING_HEAP
+static void thread9_entry(void *parameter)
+{
+    RT_UNUSED(parameter);
+
+    while (rt_atomic_load(&thread9_exit_flag) == 0)
+    {
+        rt_thread_mdelay(1);
+    }
+}
+
+static void thread9_cleanup(struct rt_thread *thread)
+{
+    rt_atomic_store(&thread9_delete_ret, rt_thread_delete(thread));
+    rt_atomic_store(&thread9_cleanup_flag, 1);
+}
+
+static void test_thread_exit_delete_again(void)
+{
+    rt_err_t ret_startup = -RT_ERROR;
+
+    rt_atomic_store(&thread9_exit_flag, 0);
+    rt_atomic_store(&thread9_cleanup_flag, 0);
+    rt_atomic_store(&thread9_delete_ret, RT_EOK);
+
+    tid9 = rt_thread_create("thread9",
+                            thread9_entry,
+                            RT_NULL,
+                            THREAD_STACK_SIZE,
+                            UTEST_THR_PRIORITY - 1,
+                            THREAD_TIMESLICE);
+    if (tid9 == RT_NULL)
+    {
+        LOG_E("rt_thread_create failed!");
+        uassert_false(tid9 == RT_NULL);
+        return;
+    }
+
+    tid9->cleanup = thread9_cleanup;
+
+    ret_startup = rt_thread_startup(tid9);
+    if (ret_startup != RT_EOK)
+    {
+        LOG_E("rt_thread_startup failed!");
+        uassert_false(ret_startup != RT_EOK);
+        rt_thread_delete(tid9);
+        return;
+    }
+
+    rt_atomic_store(&thread9_exit_flag, 1);
+
+    while (rt_atomic_load(&thread9_cleanup_flag) == 0)
+    {
+        rt_thread_mdelay(1);
+    }
+
+    uassert_int_equal(rt_atomic_load(&thread9_delete_ret), -RT_ERROR);
+}
+#endif /* RT_USING_HEAP */
+
 static void test_delay_until(void)
 {
     rt_tick_t tick;
@@ -756,6 +822,9 @@ static rt_err_t utest_tc_init(void)
     tid3_finish_flag = 0;
     tid4_finish_flag = 0;
     tid6_finish_flag = 0;
+    rt_atomic_store(&thread9_exit_flag, 0);
+    rt_atomic_store(&thread9_cleanup_flag, 0);
+    rt_atomic_store(&thread9_delete_ret, -RT_ERROR);
     entry_idle_hook_times = 0;
     count = 0;
     return RT_EOK;
@@ -772,6 +841,8 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_static_thread);
     /* create, delete */
     UTEST_UNIT_RUN(test_dynamic_thread);
+    /* exit, duplicate delete */
+    UTEST_UNIT_RUN(test_thread_exit_delete_again);
     /* delay */
     UTEST_UNIT_RUN(test_thread_delay);
     /* idle_sethook, idle_delhook */
