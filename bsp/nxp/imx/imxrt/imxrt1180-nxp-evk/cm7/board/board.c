@@ -12,6 +12,10 @@
 #include "fsl_iomuxc.h"
 #include "fsl_rgpio.h"
 #include "fsl_cache.h"
+#include "fsl_ele_base_api.h"
+#include "fsl_dcdc.h"
+#include "fsl_trdc.h"
+#include "fsl_rgpio.h"
 
 #define NVIC_PRIORITYGROUP_0         0x00000007U /*!< 0 bits for pre-emption priority
                                                       4 bits for subpriority */
@@ -229,6 +233,478 @@ void BOARD_ConfigMPU(void)
     L1CACHE_EnableICache();
 }
 
+void BOARD_RequestTRDC(bool bRequestAON, bool bRequestWakeup, bool bReqeustMega)
+{
+#define ELE_TRDC_AON_ID    0x74
+#define ELE_TRDC_WAKEUP_ID 0x78
+#define ELE_TRDC_MEGA_ID   0x82
+#define ELE_CORE_CM33_ID   0x1
+#define ELE_CORE_CM7_ID    0x2
+
+#if (__CORTEX_M == 33)
+    uint8_t ele_core_id = ELE_CORE_CM33_ID;
+#elif (__CORTEX_M == 7)
+    uint8_t ele_core_id = ELE_CORE_CM7_ID;
+#endif
+
+    uint32_t ele_fw_sts;
+
+    /* Get ELE FW status */
+    ELE_BaseAPI_GetFwStatus(MU_RT_S3MUA, &ele_fw_sts);
+
+    if (bRequestAON)
+    {
+        /* Release TRDC AON to current core */
+        ELE_BaseAPI_ReleaseRDC(MU_RT_S3MUA, ELE_TRDC_AON_ID, ele_core_id);
+    }
+
+    /*
+     * TRDC MEGA request must be prior to TRDC WAKEUP, as TRDC MEGA access
+     * is controlled by the TRDC WAKEUP.
+     * note:
+     *   If TRDC WAKEUP has been release to one core firstly, then it will fail
+     *   to release TRDC MEGA to same/another core.
+     */
+    if (bReqeustMega)
+    {
+        /* Release TRDC MEGA to current core */
+        ELE_BaseAPI_ReleaseRDC(MU_RT_S3MUA, ELE_TRDC_MEGA_ID, ele_core_id);
+    }
+
+    if (bRequestWakeup)
+    {
+        /* Release TRDC WAKEUP to current core */
+        ELE_BaseAPI_ReleaseRDC(MU_RT_S3MUA, ELE_TRDC_WAKEUP_ID, ele_core_id);
+    }
+}
+
+void APP_CommonTrdcDACSetting(void)
+{
+    trdc_processor_domain_assignment_t procAssign = {.domainId           = 0U,
+                                                     .domainIdSelect     = kTRDC_DidInput,
+                                                     .pidDomainHitConfig = kTRDC_pidDomainHitNone0,
+                                                     .pidMask            = 0U,
+                                                     .secureAttr         = kTRDC_ForceSecure,
+                                                     .pid                = 0U,
+                                                     .lock               = false
+                                                    };
+
+    trdc_non_processor_domain_assignment_t nonProcAssign = {.domainId       = 0U,
+                                                            .privilegeAttr  = kTRDC_ForcePrivilege,
+                                                            .secureAttr     = kTRDC_ForceSecure,
+                                                            .bypassDomainId = true,
+                                                            .lock           = false
+                                                           };
+
+    /* 1. Set the MDAC Configuration in TRDC1. */
+    /* Configure the access control for CM33(master 1 for TRDC1, MDAC_A1). */
+    procAssign.domainId = 0x2U;
+    TRDC_SetProcessorDomainAssignment(TRDC1, (uint8_t)kTRDC1_MasterCM33, 0U, &procAssign);
+    /* Configure the access control for eDMA3(master 2 for TRDC1, MDAC_A2). */
+    nonProcAssign.domainId = 0x7U;
+    TRDC_SetNonProcessorDomainAssignment(TRDC1, (uint8_t)kTRDC1_MasterDMA3, &nonProcAssign);
+
+    /* 2. Set the MDAC Configuration in TRDC2. */
+    /* Configure the access control for CM7 AHBP(master 0 for TRDC2, MDAC_W0). */
+    procAssign.domainId = 0x4U;
+    TRDC_SetProcessorDomainAssignment(TRDC2, (uint8_t)kTRDC2_MasterCM7AHBP, 0U, &procAssign);
+    /* Configure the access control for CM7 AXI(master 1 for TRDC2, MDAC_W1). */
+    TRDC_SetProcessorDomainAssignment(TRDC2, (uint8_t)kTRDC2_MasterCM7AXI, 0U, &procAssign);
+    /* Configure the access control for DAP AHB_AP_SYS(master 2 for TRDC2, MDAC_W2). */
+    nonProcAssign.domainId = 0x9U;
+    TRDC_SetNonProcessorDomainAssignment(TRDC2, (uint8_t)kTRDC2_MasterDAP, &nonProcAssign);
+    /* Configure the access control for CoreSight(master 3 for TRDC2, MDAC_W3). */
+    nonProcAssign.domainId = 0x8U;
+    TRDC_SetNonProcessorDomainAssignment(TRDC2, (uint8_t)kTRDC2_MasterCoreSight, &nonProcAssign);
+    /* Configure the access control for DMA4(master 4 for TRDC2, MDAC_W4). */
+    nonProcAssign.domainId = 0x7U;
+    TRDC_SetNonProcessorDomainAssignment(TRDC2, (uint8_t)kTRDC2_MasterDMA4, &nonProcAssign);
+    /* Configure the access control for NETC(master 5 for TRDC2, MDAC_W5). */
+    procAssign.domainId = 0xAU;
+    TRDC_SetProcessorDomainAssignment(TRDC2, (uint8_t)kTRDC2_MasterNETC, 0U, &procAssign);
+
+    /* 3. Set the MDAC Configuration in TRDC3. */
+    /* Configure the access control for uSDHC1(master 0 for TRDC3, MDAC_M0). */
+    nonProcAssign.domainId = 0x5U;
+    TRDC_SetNonProcessorDomainAssignment(TRDC3, (uint8_t)kTRDC3_MasterUSDHC1, &nonProcAssign);
+    /* Configure the access control for uSDHC2(master 1 for TRDC3, MDAC_M1). */
+    nonProcAssign.domainId = 0x6U;
+    TRDC_SetNonProcessorDomainAssignment(TRDC3, (uint8_t)kTRDC3_MasterUSDHC2, &nonProcAssign);
+    /* Configure the access control for USB(master 3 for TRDC3, MDAC_M3). */
+    nonProcAssign.domainId = 0xBU;
+    TRDC_SetNonProcessorDomainAssignment(TRDC3, (uint8_t)kTRDC3_MasterUsb, &nonProcAssign);
+    /* Configure the access control for FlexSPI_FLR(master 4 for TRDC3, MDAC_M4). */
+    nonProcAssign.domainId = 0xAU;
+    TRDC_SetNonProcessorDomainAssignment(TRDC3, (uint8_t)kTRDC3_MasterFlexspiFlr, &nonProcAssign);
+}
+
+static bool TRDC_IsValidDomain(TRDC_Type *trdc, uint8_t domain)
+{
+    bool r = true;
+
+    if ((domain > 11) || (domain < 2) || (domain == 3))
+    {
+        r = false;
+    }
+    return r;
+}
+
+static bool TRDC_IsValidMbc(TRDC_Type *trdc, uint8_t mbc)
+{
+    bool r = false;
+    if (trdc == TRDC1)
+    {
+        switch (mbc)
+        {
+        case 0: /* TRDC1 MBC_A0   */
+        case 1: /* TRDC1 MBC_A1   */
+            r = true;
+            break;
+        default:
+            break;
+        }
+    }
+    else if (trdc == TRDC2)
+    {
+        switch (mbc)
+        {
+        case 0: /* TRDC2 MBC_W0   */
+        case 1: /* TRDC2 MBC_W1   */
+            r = true;
+            break;
+        default:
+            break;
+        }
+    }
+    return r;
+}
+
+static uint32_t TRDC_GetMbcMemNum(TRDC_Type *trdc, uint32_t mbc)
+{
+    uint32_t memNumber = 0U;
+    if (trdc == TRDC1)
+    {
+        uint8_t MemNum[2] = {3, 2};
+        switch (mbc)
+        {
+        case 0: /* TRDC1 MBC_A0 AIPS1/Edgelock/GPIO1      */
+        case 1: /* TRDC1 MBC_A1 CM33 Code-TCM/CM33 System-TCM     */
+            memNumber = MemNum[mbc];
+            break;
+        default:
+            break;
+        }
+    }
+    else if (trdc == TRDC2)
+    {
+        uint8_t MemNum[2] = {4, 4};
+        switch (mbc)
+        {
+        case 0: /* TRDC2 MBC_A0 AIPS2/GPIO2, GPIO4, GPIO6/GPIO3, GPIO5/DAP (Debug) */
+        case 1: /* TRDC2 MBC_A1 AIPS3/AHB_ISPAP/NIC_MAIN GPV/SRAMC                 */
+            memNumber = MemNum[mbc];
+            break;
+        default:
+            break;
+        }
+    }
+    return memNumber;
+}
+
+static bool TRDC_IsValidMbcMem(TRDC_Type *trdc, uint8_t mbc, uint8_t mem)
+{
+    bool r = false;
+    if (trdc == TRDC1)
+    {
+        switch (mbc)
+        {
+        case 0: /* TRDC1 MBC_A0                      */
+            switch (mem)
+            {
+            case 0: /* TRDC1 MBC_A0 AIPS1                */
+                r = true;
+                break;
+            case 1: /* TRDC1 MBC_A0 Edgelock             */
+                break; /* Intentional, Edgelock region not touched. */
+            case 2: /* TRDC1 MBC_A0 GPIO1                */
+                r = true;
+                break;
+            default:
+                break;
+            }
+            break;
+        case 1: /* TRDC1 MBC_A1                        */
+            switch (mem)
+            {
+            case 0: /* TRDC1 MBC_A1 CM33 Code-TCM          */
+            case 1: /* TRDC1 MBC_A1 CM33 System-TCM        */
+                r = true;
+                break;
+            default:
+                break;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    else if (trdc == TRDC2)
+    {
+        switch (mbc)
+        {
+        case 0: /* TRDC2 MBC_W0                        */
+            switch (mem)
+            {
+            case 0: /* TRDC2 MBC_W0 AIPS2                  */
+            case 1: /* TRDC2 MBC_W0 GPIO2, GPIO4, GPIO6    */
+            case 2: /* TRDC2 MBC_W0 GPIO3, GPIO5           */
+            case 3: /* TRDC2 MBC_W0 DAP (Debug)            */
+                r = true;
+                break;
+
+            default:
+                break;
+            }
+            break;
+        case 1: /* TRDC2 MBC_W1                         */
+            switch (mem)
+            {
+            case 0: /* TRDC2 MBC_W1 AIPS3                  */
+            case 1: /* TRDC2 MBC_W1 AHB_ISPAP              */
+            case 2: /* TRDC2 MBC_W1 NIC_MAIN GPV           */
+            case 3: /* TRDC2 MBC_W1 SRAMC                  */
+                r = true;
+                break;
+
+            default:
+                break;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+    return r;
+}
+
+static bool TRDC_IsValidMrc(TRDC_Type *trdc, uint8_t mrc)
+{
+    bool r = false;
+    if (trdc == TRDC1)
+    {
+        switch (mrc)
+        {
+        case 0: /* TRDC1 MRC_A0   */
+        case 1: /* TRDC1 MRC_A1   */
+            r = true;
+            break;
+        default:
+            break;
+        }
+    }
+    else if (trdc == TRDC2)
+    {
+        switch (mrc)
+        {
+        case 1: /* TRDC2 MRC_W1   */
+        case 2: /* TRDC2 MRC_W2   */
+        case 3: /* TRDC2 MRC_W3   */
+        case 4: /* TRDC2 MRC_W4   */
+        case 5: /* TRDC2 MRC_W5   */
+        case 6: /* TRDC2 MRC_W6   */
+            r = true;
+            break;
+        default:
+            break;
+        }
+    }
+    return r;
+}
+
+static bool TRDC_GetMrcRegionAddr(TRDC_Type *trdc, uint8_t mrc, uint32_t *pStartAddr, uint32_t *pStopAddr)
+{
+    bool r = true;
+    if (trdc == TRDC1)
+    {
+        switch (mrc)
+        {
+        case 0: /* TRDC1 MRC_A0 CM33 ROM  */
+            *pStartAddr = 0x00000000UL;
+            *pStopAddr  = 0x00027FFFUL;
+            break;
+        case 1: /* TRDC1 MRC_A1 FlexSPI2  */
+            *pStartAddr = 0x04000000UL;
+            *pStopAddr  = 0x07FFFFFFUL;
+            break;
+        default:
+            r = false;
+            break;
+        }
+    }
+    else if (trdc == TRDC2)
+    {
+        switch (mrc)
+        {
+        case 1: /* TRDC2 MRC_W1 FlexSPI1         */
+            *pStartAddr = 0x28000000UL;
+            *pStopAddr  = 0x2FFFFFFFUL;
+            break;
+        case 2: /* TRDC2 MRC_W2 CM7 I-TCM D-TCM  */
+            *pStartAddr = 0x203C0000UL;
+            *pStopAddr  = 0x2043FFFFUL;
+            break;
+        case 3: /* TRDC2 MRC_W3 OCRAM1           */
+            *pStartAddr = 0x20480000UL;
+            *pStopAddr  = 0x204FFFFFUL;
+            break;
+        case 4: /* TRDC2 MRC_W4 OCRAM2           */
+            *pStartAddr = 0x20500000UL;
+            *pStopAddr  = 0x2053FFFFUL;
+            break;
+        case 5: /* TRDC2 MRC_W5 SEMC             */
+            *pStartAddr = 0x80000000UL;
+            *pStopAddr  = 0x8FFFFFFFUL;
+            break;
+        case 6: /* TRDC2 MRC_W6 NETC             */
+            *pStartAddr = 0x60000000UL;
+            *pStopAddr  = 0x60FFFFFFUL;
+            break;
+        default:
+            r = false;
+            break;
+        }
+    }
+    return r;
+}
+
+void APP_CommonTrdcAccessControlSetting(TRDC_Type *trdc)
+{
+    trdc_hardware_config_t hwConfig;
+    trdc_memory_access_control_config_t memAccessConfig;
+    trdc_mbc_memory_block_config_t mbcBlockConfig;
+    trdc_mrc_region_descriptor_config_t mrcRegionConfig;
+
+    TRDC_GetHardwareConfig(trdc, &hwConfig);
+
+    /* Enable all read/write/execute access for MRC/MBC access control. */
+    (void)memset(&memAccessConfig, 0, sizeof(memAccessConfig));
+    memAccessConfig.nonsecureUsrX  = 1U;
+    memAccessConfig.nonsecureUsrW  = 1U;
+    memAccessConfig.nonsecureUsrR  = 1U;
+    memAccessConfig.nonsecurePrivX = 1U;
+    memAccessConfig.nonsecurePrivW = 1U;
+    memAccessConfig.nonsecurePrivR = 1U;
+    memAccessConfig.secureUsrX     = 1U;
+    memAccessConfig.secureUsrW     = 1U;
+    memAccessConfig.secureUsrR     = 1U;
+    memAccessConfig.securePrivX    = 1U;
+    memAccessConfig.securePrivW    = 1U;
+    memAccessConfig.securePrivR    = 1U;
+
+    for (uint32_t mrc = 0U; mrc < hwConfig.mrcNumber; mrc++)
+    {
+        if (TRDC_IsValidMrc(trdc, mrc))
+        {
+            for (uint32_t i = 0U; i < 8U; i++)
+            {
+                TRDC_MrcSetMemoryAccessConfig(trdc, &memAccessConfig, mrc, i);
+            }
+        }
+    }
+
+    for (uint32_t mbc = 0U; mbc < hwConfig.mbcNumber; mbc++)
+    {
+        if (TRDC_IsValidMbc(trdc, mbc))
+        {
+            for (uint32_t i = 0U; i < 8U; i++)
+            {
+                TRDC_MbcSetMemoryAccessConfig(trdc, &memAccessConfig, mbc, i);
+            }
+        }
+    }
+
+    memset(&mbcBlockConfig, 0, sizeof(mbcBlockConfig));
+    mbcBlockConfig.nseEnable                 = false;
+    mbcBlockConfig.memoryAccessControlSelect = 0;
+
+    memset(&mrcRegionConfig, 0, sizeof(mrcRegionConfig));
+    mrcRegionConfig.memoryAccessControlSelect = 0U;
+    mrcRegionConfig.valid                     = true;
+    mrcRegionConfig.nseEnable                 = false;
+    mrcRegionConfig.regionIdx                 = 0U;
+
+    for (uint32_t domain = 0; domain < hwConfig.domainNumber; domain++)
+    {
+        if (TRDC_IsValidDomain(trdc, domain))
+        {
+            /* Set the configuration for MBC. */
+            for (uint32_t mbc = 0U; mbc < hwConfig.mbcNumber; mbc++)
+            {
+                if (TRDC_IsValidMbc(trdc, mbc))
+                {
+                    uint32_t mem_num = TRDC_GetMbcMemNum(trdc, mbc);
+                    for (uint32_t mem = 0; mem < mem_num; mem++)
+                    {
+                        if (TRDC_IsValidMbcMem(trdc, mbc, mem))
+                        {
+                            trdc_slave_memory_hardware_config_t mbcHwConfig;
+                            TRDC_GetMbcHardwareConfig(trdc, &mbcHwConfig, mbc, mem);
+                            for (uint32_t block = 0; block < mbcHwConfig.blockNum; block++)
+                            {
+                                mbcBlockConfig.domainIdx      = domain;
+                                mbcBlockConfig.mbcIdx         = mbc;
+                                mbcBlockConfig.slaveMemoryIdx = mem;
+                                mbcBlockConfig.memoryBlockIdx = block;
+                                TRDC_MbcSetMemoryBlockConfig(trdc, &mbcBlockConfig);
+                            }
+                        }
+                    }
+                }
+            }
+
+            /* Set the configuration for MRC. */
+            for (uint32_t mrc = 0U; mrc < hwConfig.mrcNumber; mrc++)
+            {
+                if (TRDC_IsValidMrc(trdc, mrc))
+                {
+                    uint32_t start_addr, end_addr;
+
+                    if (TRDC_GetMrcRegionAddr(trdc, mrc, &start_addr, &end_addr))
+                    {
+                        mrcRegionConfig.startAddr = start_addr;
+                        mrcRegionConfig.endAddr   = end_addr;
+                        mrcRegionConfig.domainIdx = domain;
+                        mrcRegionConfig.mrcIdx    = mrc;
+                        TRDC_MrcSetRegionDescriptorConfig(trdc, &mrcRegionConfig);
+                    }
+                    else
+                    {
+                        assert(false);
+                    }
+                }
+            }
+        }
+    }
+}
+
+void BOARD_GrantTRDCFullPermissions(void)
+{
+    /* 1. Request TRDC ownership */
+    BOARD_RequestTRDC(true, true, true);
+
+    /* 2. Config DAC. */
+    APP_CommonTrdcDACSetting();
+
+    /* 3. Enable all access control */
+    APP_CommonTrdcAccessControlSetting(TRDC1);
+    APP_CommonTrdcAccessControlSetting(TRDC2);
+}
+
+void BOARD_CommonSetting(void)
+{
+    BOARD_GrantTRDCFullPermissions();
+}
+
 /* This is the timer interrupt service routine. */
 void SysTick_Handler(void)
 {
@@ -271,6 +747,7 @@ void imxrt_uart_pins_init(void)
 
 void rt_hw_board_init()
 {
+    BOARD_CommonSetting();
     BOARD_ConfigMPU();
     BOARD_InitPins();
     BOARD_BootClockRUN();

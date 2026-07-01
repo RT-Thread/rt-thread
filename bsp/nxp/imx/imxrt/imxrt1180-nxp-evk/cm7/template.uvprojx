@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>MIMXRT1189CVM8C:cm7</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.MIMXRT1189_DFP.25.06.00</PackID>
+          <PackID>NXP.MIMXRT1189_DFP.26.03.00</PackID>
           <PackURL>https://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
           <Cpu>IRAM(0x20484000,0x07c000) IRAM2(0x20500000,0x040000) IROM(0x00000000,0x028000) CPUTYPE("Cortex-M7") FPU3(DFPU) CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>

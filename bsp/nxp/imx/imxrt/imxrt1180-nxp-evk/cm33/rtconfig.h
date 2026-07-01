@@ -149,6 +149,7 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_ADC
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -296,6 +297,10 @@
 
 /* end of Kendryte SDK */
 
+/* MM32 HAL & SDK Drivers */
+
+/* end of MM32 HAL & SDK Drivers */
+
 /* WCH HAL & SDK Drivers */
 
 /* end of WCH HAL & SDK Drivers */
@@ -329,6 +334,10 @@
 /* FT32 HAL & SDK Drivers */
 
 /* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -419,6 +428,9 @@
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_DMA
+#define BSP_USING_LPADC
+#define BSP_USING_LPADC1
+#define BSP_LPADC1_USING_DMA
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
 /* end of On-chip Peripheral Drivers */

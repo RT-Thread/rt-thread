@@ -10,6 +10,7 @@
 
 #include "clock_config.h"
 #include "pin_mux.h"
+#include "peripherals.h"
 #include "fsl_common.h"
 #include "fsl_rgpio.h"
 #include "fsl_clock.h"
