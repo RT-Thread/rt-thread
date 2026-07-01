@@ -106,6 +106,8 @@ msh >
 
 3. 输入`pkgs --update`命令更新软件包。
 
+   STM32 HAL/CMSIS 驱动由软件包提供，首次从模板创建 BSP 或修改配置后，需要先执行该命令下载依赖；如果没有拉取到软件包，请先执行`pkgs --upgrade`更新软件包索引，再重新执行`pkgs --update`。
+
 4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
 
 本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
