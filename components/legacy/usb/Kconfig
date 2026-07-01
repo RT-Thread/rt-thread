@@ -119,6 +119,12 @@ menu "Using USB legacy version"
                     config RT_VCOM_TX_USE_DMA
                         bool "Enable to use dma for vcom tx"
                         default n
+                    config RT_VCOM_MANUFACTURER_STRING
+                        string "virtual com manufacturer string"
+                        default "RT-Thread Team."
+                    config RT_VCOM_PRODUCT_STRING
+                        string "virtual com product string"
+                        default "RTT Virtual Serial"
                     config RT_VCOM_SERNO
                         string "serial number of virtual com"
                         default "32021919830108"
