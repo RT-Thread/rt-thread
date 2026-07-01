@@ -17,7 +17,7 @@ config SOC_MIMXRT1189CVM8C_CM33
     default y
     depends on SOC_MIMXRT1189CVM8C
     select ARCH_ARM_CORTEX_M33
-    select ARCH_ARM_CORTEX_FPU       
+    select ARCH_ARM_CORTEX_FPU
     select ARCH_ARM_CORTEX_SECURE
 
 menu "On-chip Peripheral Drivers"
@@ -127,6 +127,42 @@ menu "On-chip Peripheral Drivers"
                         int "Set LPUART3 TX DMA channel (0-32)"
                         default 1
         endif
+
+        menuconfig BSP_USING_I2C
+            bool "Enable I2C"
+            select RT_USING_I2C
+            default n
+            if BSP_USING_I2C
+                config BSP_USING_I2C2
+                    bool "Enable I2C2"
+                    default y
+
+                config BSP_USING_I2C3
+                    bool "Enable I2C3"
+                    default n
+
+                choice
+                    prompt "Select I2C2 badurate"
+                    default HW_I2C2_BADURATE_100kHZ
+
+                    config HW_I2C2_BADURATE_100kHZ
+                        bool "Badurate 100kHZ"
+
+                    config HW_I2C2_BADURATE_400kHZ
+                        bool "Badurate 400kHZ"
+                endchoice
+
+                choice
+                    prompt "Select I2C3 badurate"
+                    default HW_I2C3_BADURATE_100kHZ
+
+                    config HW_I2C3_BADURATE_100kHZ
+                        bool "Badurate 100kHZ"
+
+                    config HW_I2C3_BADURATE_400kHZ
+                        bool "Badurate 400kHZ"
+                endchoice
+            endif
 
         menuconfig BSP_USING_CAN
             bool "Enable CAN"
