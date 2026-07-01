@@ -98,6 +98,7 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
     struct ustring_descriptor str_desc;
     rt_uint8_t index, i;
     rt_uint32_t len;
+    const char *string;
 
     /* parameter check */
     RT_ASSERT(device != RT_NULL);
@@ -113,13 +114,7 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
         index = USB_STRING_OS_INDEX;
     }
 
-    if(index > USB_STRING_MAX)
-    {
-        rt_kprintf("unknown string index\n");
-        rt_usbd_ep0_set_stall(device);
-        return -RT_ERROR;
-    }
-    else if(index == USB_STRING_LANGID_INDEX)
+    if(index == USB_STRING_LANGID_INDEX)
     {
         str_desc.bLength = 4;
         str_desc.String[0] = 0x09;
@@ -127,18 +122,47 @@ static rt_err_t _get_string_descriptor(struct udevice* device, ureq_t setup)
     }
     else
     {
-        if(index < 5)
-            len = rt_strlen(device->str[index]);
-        else
-            len = rt_strlen(device->str_intf[index]);
+        string = RT_NULL;
+
+        if(index < USB_STRING_INTERFACE_INDEX)
+        {
+            if(device->str != RT_NULL)
+            {
+                string = device->str[index];
+            }
+        }
+        else if(index == USB_STRING_OS_INDEX)
+        {
+            /* The Microsoft OS string is valid only when an OS compatible ID
+             * descriptor has been registered. */
+            if((device->os_comp_id_desc != RT_NULL) &&
+                    (rt_list_len(&device->os_comp_id_desc->func_desc) != 0))
+            {
+                string = USB_STRING_OS;
+            }
+            else if(index < MAX_INTF_STR)
+            {
+                string = device->str_intf[index];
+            }
+        }
+        else if(index < MAX_INTF_STR)
+        {
+            string = device->str_intf[index];
+        }
+
+        if(string == RT_NULL)
+        {
+            rt_kprintf("unknown string index\n");
+            rt_usbd_ep0_set_stall(device);
+            return -RT_ERROR;
+        }
+
+        len = rt_strlen(string);
         str_desc.bLength = len*2 + 2;
 
         for(i=0; i<len; i++)
         {
-            if(index < 5)
-                str_desc.String[i*2] = device->str[index][i];
-            else
-                str_desc.String[i*2] = device->str_intf[index][i];
+            str_desc.String[i*2] = string[i];
             str_desc.String[i*2 + 1] = 0;
         }
     }
