@@ -143,7 +143,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_ONCHIP_RTC
-            choice
+            choice BSP_STM32_STM32WB55_ST_NUCLEO_RTC_USING_LS_CHOICE
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 

@@ -7,7 +7,7 @@ menu "General Drivers Configuration"
         bool
         default y
 
-    choice
+    choice BSP_CVITEK_CV18XX_AARCH64_USING_GICV_CHOICE
         prompt "GIC Version"
         default BSP_USING_GICV2
 

@@ -202,7 +202,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
+            choice BSP_INFINEON_PSOC6_CY8CKIT_062_BLE_RTC_USING_LS_CHOICE
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 

@@ -32,7 +32,7 @@ config ENABLE_VECTOR
     default n
 
 if ENABLE_VECTOR
-    choice
+    choice BSP_QEMU_VIRT64_RISCV_ARCH_VECTOR_VLEN_CHOICE
     prompt "Vector Registers Length in Bits"
     default ARCH_VECTOR_VLEN_128
 

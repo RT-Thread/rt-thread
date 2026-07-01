@@ -69,7 +69,7 @@ menu "Hardware Drivers Config"
 
         if BOARD_USING_LCM
 
-            choice
+            choice BSP_NUVOTON_NK_N9H30_BOARD_USING_LCM_FW0_CHOICE
                 prompt "Select LCD panel devices.(Over VPOST)"
                     default BOARD_USING_LCM_FW070TFT_WVGA
 
@@ -95,7 +95,7 @@ menu "Hardware Drivers Config"
                         Choose this option if you use 7" 1024x600x32b LCD panel.
             endchoice
 
-            choice
+            choice BSP_NUVOTON_NK_N9H30_BOARD_CHOICE
                 prompt "Select Touch devices."
                     default BOARD_USING_ADCTOUCH
 

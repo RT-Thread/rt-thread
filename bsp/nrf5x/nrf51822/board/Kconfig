@@ -10,7 +10,7 @@ config SOC_NORDIC
     bool
     default y
 
-choice
+choice BSP_NRF5X_NRF51822_BOARD_MICROBIT_1_CHOICE
     prompt "Select BSP board "
     default BSP_BOARD_MICROBIT_1_5
 

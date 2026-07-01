@@ -35,7 +35,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
         if BSP_USING_LCD_SPI
-            choice
+            choice BSP_STM32_STM32H750_WEACT_MINISTM32H7XX_LCD_BACKLIGHT_CHOICE
                 prompt "choice back light"
                 default LCD_BACKLIGHT_USING_GPIO
                 config LCD_BACKLIGHT_USING_PWM

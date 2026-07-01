@@ -60,7 +60,7 @@ menu "Hardware Drivers Config"
                 Choose this option if you need USB function.
 
         if BOARD_USING_USB_D_H
-            choice
+            choice BSP_NUVOTON_NUMAKER_IOT_M487_BOARD_USING_HS_CHOICE
                 prompt "Select FS/HS USB Ports"
 
                 config BOARD_USING_HSUSBD

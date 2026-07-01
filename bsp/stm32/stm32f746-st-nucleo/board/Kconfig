@@ -13,7 +13,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
         if BSP_USING_ETH
-            choice
+            choice BSP_STM32_STM32F746_ST_NUCLEO_PHY_USING_LAN8720A_CHOICE
                 prompt "On-board PHY chip"
                 default PHY_USING_LAN8742A
 
@@ -240,7 +240,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_ONCHIP_RTC
-            choice
+            choice BSP_STM32_STM32F746_ST_NUCLEO_RTC_USING_LS_CHOICE
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 

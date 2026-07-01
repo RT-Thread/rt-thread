@@ -84,7 +84,7 @@ menu "Hardware Drivers Config"
 
         if BOARD_USING_LCM
 
-            choice
+            choice BSP_NUVOTON_NUMAKER_HMI_MA35D1_BOARD_USING_LCM_FW070TFT_W_CHOICE
                 prompt "Select LCD panel devices.(Over DISP)"
                     default BOARD_USING_LCM_FW070TFT_WSVGA
 
@@ -103,7 +103,7 @@ menu "Hardware Drivers Config"
                         Choose this option if you use 7" 1024x600x32b LCD panel.
             endchoice
 
-            choice
+            choice BSP_NUVOTON_NUMAKER_HMI_MA35D1_BOARD_CHOICE
                 prompt "Select Touch devices."
                     default BOARD_USING_GT911
 

@@ -21,7 +21,7 @@ menu "CPU Architecture Features"
         default y
 
     if ENABLE_FPU
-        choice
+        choice BSP_XUANTIE_SMARTL_E906_ARCH_RISCV_FPU_CHOICE
             prompt "FPU Configuration"
             default ARCH_RISCV_FPU_D
 

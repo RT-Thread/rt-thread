@@ -241,7 +241,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
         if BSP_USING_VGLITE
-            choice
+            choice BSP_NXP_IMX_IMXRT_IMXRT1180_NXP_EVK_CM7_DISPLAY_USING_RK055_CHOICE
                 prompt "Select display panel"
                 default DISPLAY_USING_RK055AHD091
                 
@@ -255,7 +255,7 @@ menu "Onboard Peripheral Drivers"
                     bool "RK055MHD091A0-CTG (RK055HDMIPI4MA0 720 * 1280)"
             endchoice
 
-            choice
+            choice BSP_NXP_IMX_IMXRT_IMXRT1180_NXP_EVK_CM7_USING_ELCDIF_CHOICE
                 prompt "Select display controller"
                 default BSP_USING_LCDIFV2
                 
