@@ -10,7 +10,7 @@
 
 #include <rtthread.h>
 
-#define _ISDIGIT(c)  ((unsigned)((c) - '0') < 10)
+#define _ISDIGIT(c) ((unsigned)((c) - '0') < 10)
 
 /**
  * @brief  This function will duplicate a string.
@@ -50,32 +50,32 @@ rt_inline int skip_atoi(const char **s)
     return i;
 }
 
-#define ZEROPAD     (1 << 0)    /* pad with zero */
-#define SIGN        (1 << 1)    /* unsigned/signed long */
-#define PLUS        (1 << 2)    /* show plus */
-#define SPACE       (1 << 3)    /* space if plus */
-#define LEFT        (1 << 4)    /* left justified */
-#define SPECIAL     (1 << 5)    /* 0x */
-#define LARGE       (1 << 6)    /* use 'ABCDEF' instead of 'abcdef' */
+#define ZEROPAD (1 << 0)    /* pad with zero */
+#define SIGN    (1 << 1)    /* unsigned/signed long */
+#define PLUS    (1 << 2)    /* show plus */
+#define SPACE   (1 << 3)    /* space if plus */
+#define LEFT    (1 << 4)    /* left justified */
+#define SPECIAL (1 << 5)    /* 0x */
+#define LARGE   (1 << 6)    /* use 'ABCDEF' instead of 'abcdef' */
 
 static char *print_number(char *buf,
                           char *end,
 #ifdef RT_KLIBC_USING_VSNPRINTF_LONGLONG
-                          unsigned long long  num,
+                          unsigned long long num,
 #else
-                          unsigned long  num,
+                          unsigned long num,
 #endif /* RT_KLIBC_USING_VSNPRINTF_LONGLONG */
-                          int   base,
-                          int   qualifier,
-                          int   s,
-                          int   precision,
-                          int   type)
+                          int base,
+                          int qualifier,
+                          int s,
+                          int precision,
+                          int type)
 {
     char c = 0, sign = 0;
 #ifdef RT_KLIBC_USING_VSNPRINTF_LONGLONG
-    char tmp[64] = {0};
+    char tmp[64] = { 0 };
 #else
-    char tmp[32] = {0};
+    char tmp[32] = { 0 };
 #endif /* RT_KLIBC_USING_VSNPRINTF_LONGLONG */
     int precision_bak = precision;
     const char *digits = RT_NULL;
@@ -181,7 +181,7 @@ static char *print_number(char *buf,
                 *buf = ' ';
             }
 
-            ++ buf;
+            ++buf;
         }
     }
 
@@ -191,8 +191,8 @@ static char *print_number(char *buf,
         {
             *buf = sign;
         }
-        -- size;
-        ++ buf;
+        --size;
+        ++buf;
     }
 
     if (type & SPECIAL)
@@ -201,16 +201,16 @@ static char *print_number(char *buf,
         {
             if (buf < end)
                 *buf = '0';
-            ++ buf;
+            ++buf;
             if (buf < end)
                 *buf = 'b';
-            ++ buf;
+            ++buf;
         }
         else if (base == 8)
         {
             if (buf < end)
                 *buf = '0';
-            ++ buf;
+            ++buf;
         }
         else if (base == 16)
         {
@@ -219,12 +219,12 @@ static char *print_number(char *buf,
                 *buf = '0';
             }
 
-            ++ buf;
+            ++buf;
             if (buf < end)
             {
                 *buf = type & LARGE ? 'X' : 'x';
             }
-            ++ buf;
+            ++buf;
         }
     }
 
@@ -238,7 +238,7 @@ static char *print_number(char *buf,
                 *buf = c;
             }
 
-            ++ buf;
+            ++buf;
         }
     }
 
@@ -249,7 +249,7 @@ static char *print_number(char *buf,
             *buf = '0';
         }
 
-        ++ buf;
+        ++buf;
     }
 
     /* put number in the temporary buffer.
@@ -265,7 +265,7 @@ static char *print_number(char *buf,
                 *buf = tmp[i];
             }
 
-            ++ buf;
+            ++buf;
         }
     }
 
@@ -276,7 +276,7 @@ static char *print_number(char *buf,
             *buf = ' ';
         }
 
-        ++ buf;
+        ++buf;
     }
 
     return buf;
@@ -324,11 +324,11 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
     /* Make sure end is always >= buf */
     if (end < buf)
     {
-        end  = ((char *) - 1);
+        end = ((char *)-1);
         size = end - buf;
     }
 
-    for (; *fmt ; ++fmt)
+    for (; *fmt; ++fmt)
     {
         if (*fmt != '%')
         {
@@ -337,7 +337,7 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 *str = *fmt;
             }
 
-            ++ str;
+            ++str;
             continue;
         }
 
@@ -348,12 +348,18 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
         {
             /* skips the first '%' also */
             ++fmt;
-            if (*fmt == '-') flags |= LEFT;
-            else if (*fmt == '+') flags |= PLUS;
-            else if (*fmt == ' ') flags |= SPACE;
-            else if (*fmt == '#') flags |= SPECIAL;
-            else if (*fmt == '0') flags |= ZEROPAD;
-            else break;
+            if (*fmt == '-')
+                flags |= LEFT;
+            else if (*fmt == '+')
+                flags |= PLUS;
+            else if (*fmt == ' ')
+                flags |= SPACE;
+            else if (*fmt == '#')
+                flags |= SPECIAL;
+            else if (*fmt == '0')
+                flags |= ZEROPAD;
+            else
+                break;
         }
 
         /* get field width */
@@ -429,8 +435,9 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
             {
                 while (--field_width > 0)
                 {
-                    if (str < end) *str = ' ';
-                    ++ str;
+                    if (str < end)
+                        *str = ' ';
+                    ++str;
                 }
             }
 
@@ -440,13 +447,14 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
             {
                 *str = c;
             }
-            ++ str;
+            ++str;
 
             /* put width */
             while (--field_width > 0)
             {
-                if (str < end) *str = ' ';
-                ++ str;
+                if (str < end)
+                    *str = ' ';
+                ++str;
             }
             continue;
 
@@ -457,7 +465,8 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 s = "(null)";
             }
 
-            for (len = 0; s[len] != '\0'; len++);
+            for (len = 0; s[len] != '\0'; len++)
+                ;
 
             if (precision >= 0 && len > precision)
             {
@@ -468,22 +477,25 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
             {
                 while (len < field_width--)
                 {
-                    if (str < end) *str = ' ';
-                    ++ str;
+                    if (str < end)
+                        *str = ' ';
+                    ++str;
                 }
             }
 
             for (i = 0; i < len; ++i)
             {
-                if (str < end) *str = *s;
-                ++ str;
-                ++ s;
+                if (str < end)
+                    *str = *s;
+                ++str;
+                ++s;
             }
 
             while (len < field_width--)
             {
-                if (str < end) *str = ' ';
-                ++ str;
+                if (str < end)
+                    *str = ' ';
+                ++str;
             }
             continue;
 
@@ -504,7 +516,7 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
             {
                 *str = '%';
             }
-            ++ str;
+            ++str;
             continue;
 
         /* integer number formats - set up the flags and "break" */
@@ -539,7 +551,7 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
             {
                 *str = '%';
             }
-            ++ str;
+            ++str;
 
             if (*fmt)
             {
@@ -547,11 +559,11 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 {
                     *str = *fmt;
                 }
-                ++ str;
+                ++str;
             }
             else
             {
-                -- fmt;
+                --fmt;
             }
             continue;
         }

@@ -13,10 +13,10 @@
 
 static void TC_rt_strcmp_unsigned_char_order(void)
 {
-    const char high[] = {(char)0x80, '\0'};
-    const char low[] = {(char)0x01, '\0'};
-    const char max_byte[] = {(char)0xFF, '\0'};
-    const char ascii_high[] = {(char)0x7F, '\0'};
+    const char high[] = { (char)0x80, '\0' };
+    const char low[] = { (char)0x01, '\0' };
+    const char max_byte[] = { (char)0xFF, '\0' };
+    const char ascii_high[] = { (char)0x7F, '\0' };
 
     /* strcmp compares bytes as unsigned char, so 0x80 and 0xFF are greater. */
     uassert_value_greater(rt_strcmp(high, low), 0);
@@ -26,10 +26,10 @@ static void TC_rt_strcmp_unsigned_char_order(void)
 
 static void TC_rt_strncmp_unsigned_char_order(void)
 {
-    const char high_first[] = {(char)0xC8, 'Z', '\0'};
-    const char low_first[] = {(char)0x01, 'Z', '\0'};
-    const char max_byte[] = {(char)0xFF, '\0'};
-    const char ascii_high[] = {(char)0x7F, '\0'};
+    const char high_first[] = { (char)0xC8, 'Z', '\0' };
+    const char low_first[] = { (char)0x01, 'Z', '\0' };
+    const char max_byte[] = { (char)0xFF, '\0' };
+    const char ascii_high[] = { (char)0x7F, '\0' };
 
     /* strncmp also compares the first different byte as unsigned char. */
     uassert_value_greater(rt_strncmp(high_first, low_first, 2), 0);
@@ -39,8 +39,8 @@ static void TC_rt_strncmp_unsigned_char_order(void)
 
 static void TC_rt_strncmp_count_zero(void)
 {
-    const char high[] = {(char)0x80, '\0'};
-    const char low[] = {(char)0x01, '\0'};
+    const char high[] = { (char)0x80, '\0' };
+    const char low[] = { (char)0x01, '\0' };
 
     uassert_int_equal(rt_strncmp(high, low, 0), 0);
 }
