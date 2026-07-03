@@ -440,15 +440,18 @@ int rt_strncmp(const char *cs, const char *ct, size_t count)
 #ifdef RT_KLIBC_USING_LIBC_STRNCMP
     return strncmp(cs, ct, count);
 #else
-    signed char res = 0;
+    int res = 0;
 
     while (count)
     {
-        if ((res = *cs - *ct++) != 0 || !*cs++)
+        res = (unsigned char)*cs - (unsigned char)*ct;
+        if (res != 0 || *cs == '\0')
         {
             break;
         }
 
+        cs ++;
+        ct ++;
         count --;
     }
 
@@ -482,7 +485,7 @@ int rt_strcmp(const char *cs, const char *ct)
         ct++;
     }
 
-    return (*cs - *ct);
+    return (unsigned char)*cs - (unsigned char)*ct;
 #endif /* RT_KLIBC_USING_LIBC_STRCMP */
 }
 #endif /* RT_KLIBC_USING_USER_STRCMP */

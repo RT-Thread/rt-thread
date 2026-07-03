@@ -985,6 +985,29 @@ SPRINTF_TEST_CASE(string_length)
 #endif /* RT_KLIBC_USING_VSNPRINTF_STANDARD */
 }
 
+
+SPRINTF_TEST_CASE(string_precision_zero_and_width)
+{
+    char buffer[base_buffer_size];
+
+    /* Width specifies the minimum field width and must not truncate strings. */
+    SPRINTF_CHECK("abcdefgh",                buffer, "%5s", "abcdefgh");
+
+    /* A string precision of zero means no characters are written. */
+    SPRINTF_CHECK("",                        buffer, "%.0s", "abc");
+    SPRINTF_CHECK("",                        buffer, "%.s", "abc");
+}
+
+SPRINTF_TEST_CASE(integer_precision_zero_nonzero)
+{
+    char buffer[base_buffer_size];
+
+    /* Precision zero suppresses only the zero value; non-zero values are printed. */
+    SPRINTF_CHECK("",                        buffer, "%.0d", 0);
+    SPRINTF_CHECK("5",                       buffer, "%.0d", 5);
+    SPRINTF_CHECK("-5",                      buffer, "%.0d", -5);
+}
+
 SPRINTF_TEST_CASE(misc)
 {
     char buffer[base_buffer_size];
@@ -1059,6 +1082,8 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(types__non_standard_format));
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(pointer));
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(string_length));
+    UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(string_precision_zero_and_width));
+    UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(integer_precision_zero_nonzero));
     UTEST_UNIT_RUN(SPRINTF_TEST_CASE_NAME(misc));
 }
 

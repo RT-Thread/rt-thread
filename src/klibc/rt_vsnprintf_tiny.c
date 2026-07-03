@@ -252,15 +252,21 @@ static char *print_number(char *buf,
         ++ buf;
     }
 
-    /* put number in the temporary buffer */
-    while (i-- > 0 && (precision_bak != 0))
+    /* put number in the temporary buffer.
+     * A precision of zero suppresses only the value zero. Non-zero values
+     * must still be emitted, for example "%.0d" with 5 should print "5".
+     */
+    if (!(precision_bak == 0 && i == 1 && tmp[0] == '0'))
     {
-        if (buf < end)
+        while (i-- > 0)
         {
-            *buf = tmp[i];
-        }
+            if (buf < end)
+            {
+                *buf = tmp[i];
+            }
 
-        ++ buf;
+            ++ buf;
+        }
     }
 
     while (size-- > 0)
@@ -451,9 +457,9 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 s = "(null)";
             }
 
-            for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
+            for (len = 0; s[len] != '\0'; len++);
 
-            if (precision > 0 && len > precision)
+            if (precision >= 0 && len > precision)
             {
                 len = precision;
             }
