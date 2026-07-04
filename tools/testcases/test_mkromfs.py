@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -54,6 +55,8 @@ class MkromfsCodeGenerationTestCase(unittest.TestCase):
         )
 
     def compile_c_file(self, source):
+        if shutil.which("gcc") is None:
+            self.skipTest("gcc is not available")
         return subprocess.run(
             [
                 "gcc",
@@ -72,9 +75,15 @@ class MkromfsCodeGenerationTestCase(unittest.TestCase):
         test_files = {
             "foo-bar.txt": "hyphen\n",
             "a b.txt": "space\n",
-            'a"b.txt': "quote\n",
-            r"a\b.txt": "backslash\n",
         }
+        if os.name != "nt":
+            test_files.update(
+                {
+                    'a"b.txt': "quote\n",
+                    r"a\b.txt": "backslash\n",
+                }
+            )
+
         for name, content in test_files.items():
             (self.rootdir / name).write_text(content, encoding="utf-8")
 
@@ -86,18 +95,19 @@ class MkromfsCodeGenerationTestCase(unittest.TestCase):
             msg=mkromfs_result.stderr,
         )
 
+        generated = output.read_text(encoding="utf-8")
+        self.assertIn('"foo-bar.txt"', generated)
+        self.assertIn('"a b.txt"', generated)
+        if os.name != "nt":
+            self.assertIn(r'"a\"b.txt"', generated)
+            self.assertIn(r'"a\\b.txt"', generated)
+
         compile_result = self.compile_c_file(output)
         self.assertEqual(
             compile_result.returncode,
             0,
             msg=compile_result.stderr,
         )
-
-        generated = output.read_text(encoding="utf-8")
-        self.assertIn('"foo-bar.txt"', generated)
-        self.assertIn('"a b.txt"', generated)
-        self.assertIn(r'"a\"b.txt"', generated)
-        self.assertIn(r'"a\\b.txt"', generated)
 
     def test_empty_file_with_special_name_generates_valid_null_entry(self):
         (self.rootdir / "empty-file.txt").write_bytes(b"")
@@ -110,16 +120,16 @@ class MkromfsCodeGenerationTestCase(unittest.TestCase):
             msg=mkromfs_result.stderr,
         )
 
+        generated = output.read_text(encoding="utf-8")
+        self.assertIn('"empty-file.txt"', generated)
+        self.assertIn("RT_NULL, 0", generated)
+
         compile_result = self.compile_c_file(output)
         self.assertEqual(
             compile_result.returncode,
             0,
             msg=compile_result.stderr,
         )
-
-        generated = output.read_text(encoding="utf-8")
-        self.assertIn('"empty-file.txt"', generated)
-        self.assertIn("RT_NULL, 0", generated)
 
 
 if __name__ == "__main__":
