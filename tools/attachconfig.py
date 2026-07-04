@@ -16,6 +16,9 @@ def GenAttachConfigProject(program = None):
         attachconfig=[]
         GetAttachConfig("get",attachconfig,0)
         print("\033[32m✅ AttachConfig has: \033[0m")
+        if attachconfig==[]:
+            print("No AttachConfig found.")
+            return
         prefix=attachconfig[0]
         for line in attachconfig:
             temp_prefix=line.split(".", 1)
