@@ -30,6 +30,9 @@ from utils import *
 from utils import _make_path_relative
 import rtconfig
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__))))
+import target_utils
+
 makefile = '''phony := all
 all:
 
@@ -79,10 +82,11 @@ def TargetMakefile(env):
     if ('LIBS' in env):
         make.write('EXTERN_LIB := ')
         for tlib in env['LIBS']:
-            make.write('-l%s ' % (tlib))
+            # quote so a lib name / path with a space cannot break the recipe
+            make.write('-l%s ' % target_utils.make_quote(tlib))
         if ('LIBPATH' in env):
             for tlibpath in env['LIBPATH']:
-                make.write('-L%s ' % (tlibpath))
+                make.write('-L%s ' % target_utils.make_quote(tlibpath))
         make.write('\n')
 
     make.write('\n')
@@ -111,7 +115,8 @@ def TargetMakefile(env):
     path = ''
     paths = CPPPATH
     for item in paths:
-        path += '\t-I%s \\\n' % item
+        # make_quote escapes spaces / '#' but keeps the $(BSP_ROOT) prefix intact
+        path += '\t-I%s \\\n' % target_utils.make_quote(item)
 
     make.write('CPPPATHS :=')
     if path[0] == '\t': path = path[1:]
@@ -121,11 +126,11 @@ def TargetMakefile(env):
     make.write('\n')
     make.write('\n')
 
-    defines = ''
-    for item in project['CPPDEFINES']:
-        defines += ' -D%s' % item
+    # -D<macro> list, make-quoted so a value with a space cannot split the flag
+    define_flags = ['-D' + d for d in target_utils.normalize_defines(project['CPPDEFINES'])]
     make.write('DEFINES :=')
-    make.write(defines)
+    if define_flags:
+        make.write(' ' + target_utils.make_join(define_flags))
     make.write('\n')
 
     files = Files
@@ -150,7 +155,9 @@ def TargetMakefile(env):
     files = Files
     src.write('SRC_FILES :=\n')
     for item in files:
-        src.write('SRC_FILES +=%s\n' % item.replace('\\', '/'))
+        # forward slashes, then make-quote so a space / '#' in the path is safe
+        # while the leading $(BSP_ROOT)/$(RTT_ROOT) variable is preserved
+        src.write('SRC_FILES +=%s\n' % target_utils.make_quote(item.replace('\\', '/')))
 
     make = open('Makefile', 'w')
     make.write(makefile)

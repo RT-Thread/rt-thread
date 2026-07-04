@@ -35,6 +35,9 @@ from utils import xml_indent
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import building
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
+
 import xml.etree.ElementTree as etree
 fs_encoding = sys.getfilesystemencoding()
 
@@ -45,29 +48,20 @@ def VS_AddGroup(ProjectFiles, parent, name, files, libs, project_path):
     for f in files:
         fn = f.rfile()
         name = fn.name
-        path = os.path.dirname(fn.abspath)
+        dir_path = os.path.dirname(fn.abspath)
 
-        path = _make_path_relative(project_path, path)
-        path = os.path.join(path, name)
-        try:
-            path = path.decode(fs_encoding)
-        except:
-            path = path
+        # stable, single-separator RelativePath (was _make_path_relative +
+        # os.path.join, which mixed '/' and '\\'); ElementTree escapes on write
+        path = target_utils.normalize_group_file_path(project_path, dir_path, name)
         File = SubElement(Filter, 'File')
         File.set('RelativePath', path)
 
     for lib in libs:
         name = os.path.basename(lib)
-        path = os.path.dirname(lib)
+        dir_path = os.path.dirname(lib)
 
-        path = _make_path_relative(project_path, path)
-        path = os.path.join(path, name)
-
+        path = target_utils.normalize_group_file_path(project_path, dir_path, name)
         File = SubElement(Filter, 'File')
-        try:
-            path = path.decode(fs_encoding)
-        except:
-            path = path
         File.set('RelativePath', path)
 
 def VS_AddHeadFilesGroup(program, elem, project_path):
@@ -79,12 +73,8 @@ def VS_AddHeadFilesGroup(program, elem, project_path):
     # print utils.source_list
 
     for f in utils.source_list:
-        path = _make_path_relative(project_path, f)
+        path = target_utils.normalize_group_file_path(project_path, f)
         File = SubElement(elem, 'File')
-        try:
-            path = path.decode(fs_encoding)
-        except:
-            path = path
         File.set('RelativePath', path)
 
 def VSProject(target, script, program):
@@ -128,14 +118,11 @@ def VSProject(target, script, program):
     # write head include path
     if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
-        paths  = set()
-        for path in cpp_path:
-            inc = _make_path_relative(project_path, os.path.normpath(path))
-            paths.add(inc) #.replace('\\', '/')
-
-        paths = [i for i in paths]
-        paths.sort()
-        cpp_path = ';'.join(paths)
+        paths = [_make_path_relative(project_path, os.path.normpath(path)) for path in cpp_path]
+        # de-duplicate (keep order) then sort for stable output; ElementTree
+        # escapes the attribute, so quotes/'&' in a path cannot break the XML
+        paths = sorted(target_utils.ordered_unique(paths))
+        cpp_path = target_utils.xml_list_value(paths)
 
         # write include path, definitions
         for elem in tree.iter(tag='Tool'):
@@ -146,14 +133,10 @@ def VSProject(target, script, program):
 
     # write cppdefinitons flags
     if 'CPPDEFINES' in building.Env:
-        CPPDEFINES = building.Env['CPPDEFINES']
-        definitions = []
-        if type(CPPDEFINES[0]) == type(()):
-            for item in CPPDEFINES:
-                definitions += [i for i in item]
-            definitions = ';'.join(definitions)
-        else:
-            definitions = ';'.join(building.Env['CPPDEFINES'])
+        # fold ('FOO','1') into 'FOO=1' -- the old code flattened tuples into
+        # separate 'FOO' and '1' entries, emitting a bogus "FOO;1" macro
+        definitions = target_utils.xml_list_value(
+            target_utils.normalize_defines(building.Env['CPPDEFINES']))
         elem.set('PreprocessorDefinitions', definitions)
     # write link flags
 
@@ -169,14 +152,9 @@ def VSProject(target, script, program):
     # write lib include path
     if 'LIBPATH' in building.Env:
         lib_path = building.Env['LIBPATH']
-        paths  = set()
-        for path in lib_path:
-            inc = _make_path_relative(project_path, os.path.normpath(path))
-            paths.add(inc) #.replace('\\', '/')
-
-        paths = [i for i in paths]
-        paths.sort()
-        lib_paths = ';'.join(paths)
+        paths = [_make_path_relative(project_path, os.path.normpath(path)) for path in lib_path]
+        paths = sorted(target_utils.ordered_unique(paths))
+        lib_paths = target_utils.xml_list_value(paths)
         elem.set('AdditionalLibraryDirectories', lib_paths)
 
     xml_indent(root)

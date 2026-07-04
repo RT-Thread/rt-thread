@@ -11,6 +11,9 @@ import utils
 import rtconfig
 from utils import _make_path_relative
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
+
 
 def get_zig_version():
     try:
@@ -33,8 +36,8 @@ def GenerateCFiles(env,project):
 
     ARCH = ".thumb" if rtconfig.CPU in ['cortex-m0', 'cortex-m3', 'cortex-m4', 'cortex-m7','cortex-m23','cortex-m33','cortex-m85'] else ".arm"
 
-    CFLAGS = rtconfig.CFLAGS.replace('\\', "/").replace('\"', "\\\"")
-    LFLAGS = rtconfig.LFLAGS.replace('\\', "/").replace('\"', "\\\"")
+    CFLAGS = target_utils.escape_quoted_flags(rtconfig.CFLAGS)
+    LFLAGS = target_utils.escape_quoted_flags(rtconfig.LFLAGS)
 
     zig_file = open('build.zig', 'w')
     if zig_file:
@@ -58,33 +61,31 @@ def GenerateCFiles(env,project):
             zig_file.write("    .abi = .eabi,\n")
             zig_file.write("};\n\n")
 
+        # include dirs: relative, de-duplicated, Zig-quoted list
+        inc_dirs = [_make_path_relative(os.getcwd(), i).replace("\\", "/") for i in info['CPPPATH']]
         zig_file.write("const c_includes = [_][]const u8{\n")
-        for i in info['CPPPATH']:
-            # use relative path
-            path = _make_path_relative(os.getcwd(), i)
-            zig_file.write("\t\"{}\",\n".format(path.replace("\\", "/")))
+        zig_file.write(target_utils.zig_list(target_utils.ordered_unique(inc_dirs)))
         zig_file.write("};\n\n")
 
-        zig_file.write("const c_sources = [_][]const u8{\n")
+        src_files = []
         for group in project:
             for f in group['src']:
-                # use relative path
                 path = _make_path_relative(os.getcwd(), os.path.normpath(f.rfile().abspath))
-                zig_file.write("\t\"{}\",\n".format(path.replace("\\", "/")))
+                src_files.append(path.replace("\\", "/"))
+        zig_file.write("const c_sources = [_][]const u8{\n")
+        zig_file.write(target_utils.zig_list(target_utils.ordered_unique(src_files)))
         zig_file.write("};\n\n")
 
+        # -D flags: tuple macros fold to FOO=1, global then per-group locals
+        flag_defs = ["-D" + d for d in target_utils.normalize_defines(info['CPPDEFINES'])]
+        for group in project:
+            if 'LOCAL_CPPDEFINES' in group and group['LOCAL_CPPDEFINES']:
+                flag_defs += ["-D" + d for d in target_utils.normalize_defines(group['LOCAL_CPPDEFINES'])]
         zig_file.write("const c_flags = [_][]const u8{\n")
         zig_file.write("\t\"-std=c99\",\n")
         zig_file.write("\t\"-ffunction-sections\",\n")
         zig_file.write("\t\"-fdata-sections\",\n")
-        # conver CDefines to CFlags
-        for i in info['CPPDEFINES']:
-            zig_file.write("\t\"-D{}\",\n".format(i))
-        # conver LocalCDefines to CFlags
-        for group in project:
-            if 'LOCAL_CPPDEFINES' in group and group['LOCAL_CPPDEFINES']:
-                for i in group['LOCAL_CPPDEFINES']:
-                    zig_file.write("\t\"-D{}\",\n".format(i))        
+        zig_file.write(target_utils.zig_list(target_utils.ordered_unique(flag_defs)))
         zig_file.write("};\n\n")
 
         zig_file.write("pub fn build(b: *std.Build) void {\n")
@@ -117,9 +118,12 @@ def GenerateCFiles(env,project):
 
         zig_file.write("    elf.entry = .{ .symbol_name = \"Reset_Handler\" };\n\n")
 
-        # find link script in rtconfig.LFLAGS
-        LINK_SCRIPT = re.search(r'-T\s*(\S+)', LFLAGS)
-        zig_file.write("    elf.setLinkerScript(b.path(\"{}\"));\n".format(LINK_SCRIPT.group(1)))
+        # find the linker script in LFLAGS -- handles -Tfoo, -T foo,
+        # -T "dir with space/link.lds" and -Wl,-T,foo without truncating
+        link_scripts = target_utils.normalize_link_script_flags(LFLAGS)
+        link_script = link_scripts[0].replace("\\", "/") if link_scripts else ""
+        zig_file.write("    elf.setLinkerScript(b.path({}));\n".format(
+            target_utils.zig_quote(link_script)))
 
         zig_file.write("    const copy_elf = b.addInstallArtifact(elf, .{});\n")
         zig_file.write("    b.default_step.dependOn(&copy_elf.step);\n\n")

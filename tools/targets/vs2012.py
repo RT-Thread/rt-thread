@@ -35,6 +35,9 @@ from utils import xml_indent
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import building
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
+
 import xml.etree.ElementTree as etree
 
 fs_encoding = sys.getfilesystemencoding()
@@ -59,18 +62,13 @@ def VS2012_AddGroup(parent, group_name, files, project_path):
     for f in files:
         fn = f.rfile()
         name = fn.name
-        path = os.path.dirname(fn.abspath)
+        dir_path = os.path.dirname(fn.abspath)
 
-        path = _make_path_relative(project_path, path)
-        path = os.path.join(path, name)
+        # stable, single-separator Include; ElementTree escapes on write
+        path = target_utils.normalize_group_file_path(project_path, dir_path, name)
 
         ClCompile = SubElement(parent, 'ClCompile')
-
-        if sys.version > '3':
-            ClCompile.set('Include', path)
-        else:
-            # python3 is no decode function
-            ClCompile.set('Include', path.decode(fs_encoding))
+        ClCompile.set('Include', path)
 
         Filter = SubElement(ClCompile, 'Filter')
         Filter.text='Source Files\\'+group_name
@@ -128,16 +126,12 @@ def VS_add_ItemGroup(parent, file_type, files, project_path):
                 objpath = ''.join('kernel'+objpath[len(RTT_ROOT):])
             else :
                 objpath = ''.join('bsp'+objpath[len(project_path):])
-        path = _make_path_relative(project_path, path)
-        path = os.path.join(path, name)
+        # stable, single-separator Include (objpath above is untouched);
+        # ElementTree escapes & < > " on write
+        rel_path = target_utils.normalize_group_file_path(project_path, path, name)
 
         File = SubElement(ItemGroup, item_tag)
-
-        if sys.version > '3':
-            File.set('Include', path)
-        else:
-            # python3 is no decode function
-            File.set('Include', path.decode(fs_encoding))
+        File.set('Include', rel_path)
 
         if file_type == 'C' :
             ObjName = SubElement(File, 'ObjectFileName')
@@ -154,23 +148,14 @@ def VS_add_HeadFiles(program, elem, project_path):
 
     filter_h_ItemGroup = SubElement(filter_project, 'ItemGroup')
     for f in utils.source_list:
-        path = _make_path_relative(project_path, f)
+        # stable, single-separator Include; ElementTree escapes on write
+        path = target_utils.normalize_group_file_path(project_path, f)
         File = SubElement(ItemGroup, 'ClInclude')
-
-        if sys.version > '3':
-            File.set('Include', path)
-        else:
-            # python3 is no decode function
-            File.set('Include', path.decode(fs_encoding))
+        File.set('Include', path)
 
         # add project.vcxproj.filter
         ClInclude = SubElement(filter_h_ItemGroup, 'ClInclude')
-
-        if sys.version > '3':
-            ClInclude.set('Include', path)
-        else:
-            # python3 is no decode function
-            ClInclude.set('Include', path.decode(fs_encoding))
+        ClInclude.set('Include', path)
 
         Filter = SubElement(ClInclude, 'Filter')
         Filter.text='Header Files'
@@ -200,14 +185,9 @@ def VS2012Project(target, script, program):
     # write head include path
     if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
-        paths = set()
-        for path in cpp_path:
-            inc = _make_path_relative(project_path, os.path.normpath(path))
-            paths.add(inc) #.replace('\\', '/')
-
-        paths = [i for i in paths]
-        paths.sort()
-        cpp_path = ';'.join(paths) + ';%(AdditionalIncludeDirectories)'
+        paths = [_make_path_relative(project_path, os.path.normpath(path)) for path in cpp_path]
+        paths = sorted(target_utils.ordered_unique(paths))
+        cpp_path = target_utils.xml_list_value(paths) + ';%(AdditionalIncludeDirectories)'
 
         # write include path
         for elem in tree.iter(tag='AdditionalIncludeDirectories'):
@@ -217,15 +197,9 @@ def VS2012Project(target, script, program):
     # write cppdefinitons flags
     if 'CPPDEFINES' in building.Env:
         for elem in tree.iter(tag='PreprocessorDefinitions'):
-            CPPDEFINES = building.Env['CPPDEFINES']
-            definitions = []
-            if type(CPPDEFINES[0]) == type(()):
-                for item in CPPDEFINES:
-                    definitions += [i for i in item]
-                definitions = ';'.join(definitions)
-            else:
-                definitions = ';'.join(building.Env['CPPDEFINES'])
-
+            # fold ('FOO','1') into 'FOO=1' instead of two macros 'FOO';'1'
+            definitions = target_utils.xml_list_value(
+                target_utils.normalize_defines(building.Env['CPPDEFINES']))
             definitions = definitions + ';%(PreprocessorDefinitions)'
             elem.text = definitions
             break
@@ -242,14 +216,9 @@ def VS2012Project(target, script, program):
     # write lib include path
     if 'LIBPATH' in building.Env:
         lib_path = building.Env['LIBPATH']
-        paths  = set()
-        for path in lib_path:
-            inc = _make_path_relative(project_path, os.path.normpath(path))
-            paths.add(inc)
-
-        paths = [i for i in paths]
-        paths.sort()
-        lib_paths = ';'.join(paths) + ';%(AdditionalLibraryDirectories)'
+        paths = [_make_path_relative(project_path, os.path.normpath(path)) for path in lib_path]
+        paths = sorted(target_utils.ordered_unique(paths))
+        lib_paths = target_utils.xml_list_value(paths) + ';%(AdditionalLibraryDirectories)'
         for elem in tree.iter(tag='AdditionalLibraryDirectories'):
             elem.text = lib_paths
             break
