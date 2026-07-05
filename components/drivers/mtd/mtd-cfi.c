@@ -1066,6 +1066,13 @@ static rt_err_t cfi_flash_dev_probe(struct rt_device *dev, struct cfi_flash_devi
     fdev->vendor = rt_le16_to_cpu(get_unaligned(&query->primary_id));
     fdev->ext_addr = rt_le16_to_cpu(get_unaligned(&query->primary_address));
     num_erase_regions = query->num_erase_regions;
+    if (num_erase_regions > RT_ARRAY_SIZE(query->erase_region_info))
+    {
+        LOG_E("Too many %d (> %d) erase regions found",
+               num_erase_regions, RT_ARRAY_SIZE(query->erase_region_info));
+        num_erase_regions = RT_ARRAY_SIZE(query->erase_region_info);
+        query->num_erase_regions = num_erase_regions;
+    }
 
     if (fdev->ext_addr)
     {
@@ -1138,13 +1145,6 @@ static rt_err_t cfi_flash_dev_probe(struct rt_device *dev, struct cfi_flash_devi
 
     for (int i = 0; i < num_erase_regions; ++i)
     {
-        if (i > RT_ARRAY_SIZE(query->erase_region_info))
-        {
-            LOG_E("Too many %d (> %d) erase regions found",
-                   num_erase_regions, RT_ARRAY_SIZE(query->erase_region_info));
-            break;
-        }
-
         value = rt_le32_to_cpu(get_unaligned(&query->erase_region_info[i]));
 
         erase_region_count = (value & 0xffff) + 1;
@@ -1158,7 +1158,7 @@ static rt_err_t cfi_flash_dev_probe(struct rt_device *dev, struct cfi_flash_devi
                 break;
             }
 
-            if (sect_count > RT_ARRAY_SIZE(fdev->sect))
+            if (sect_count >= RT_ARRAY_SIZE(fdev->sect))
             {
                 LOG_E("Too many %d (> %d) sector found",
                        sect_count, RT_ARRAY_SIZE(fdev->sect));
