@@ -88,7 +88,7 @@ static void turn_on_lcd_backlight(void)
 
 static void ra_bsp_lcd_clear(uint16_t color)
 {
-    for (uint32_t i = 0; i <= LCD_BUF_SIZE / sizeof(uint16_t); i++)
+    for (uint32_t i = 0; i < LCD_BUF_SIZE / sizeof(uint16_t); i++)
     {
         lcd_current_working_buffer[i] = color;
     }
@@ -97,7 +97,7 @@ static void ra_bsp_lcd_clear(uint16_t color)
 void lcd_draw_pixel(uint32_t x, uint32_t y, uint16_t color)
 {
     // Verify pixel is within LCD range
-    if ((x <= LCD_WIDTH) && (y <= LCD_HEIGHT))
+    if ((x < LCD_WIDTH) && (y < LCD_HEIGHT))
     {
         switch (screen_rotation)
         {
@@ -108,7 +108,7 @@ void lcd_draw_pixel(uint32_t x, uint32_t y, uint16_t color)
         }
         case ROTATION_180:
         {
-            lcd_current_working_buffer[((LCD_HEIGHT - y) * LCD_WIDTH) + (LCD_WIDTH - x)] = color;
+            lcd_current_working_buffer[(((LCD_HEIGHT - 1) - y) * LCD_WIDTH) + ((LCD_WIDTH - 1) - x)] = color;
             break;
         }
         default:
