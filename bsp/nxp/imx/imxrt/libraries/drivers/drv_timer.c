@@ -17,7 +17,6 @@
 #include <drv_log.h>
 
 #include <rtdevice.h>
-#include "drv_timer.h"
 #include "fsl_gpt.h"
 
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
