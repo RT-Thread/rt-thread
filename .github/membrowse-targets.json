@@ -175,7 +175,7 @@
     "linker_vars": "",
     "watch_paths": [
       "bsp/wch/risc-v/ch32v208w-r0",
-      "bsp/wch/risc-v/Libraries",
+      "bsp/wch/risc-v/libraries",
       "bsp/wch/risc-v/tools"
     ]
   },

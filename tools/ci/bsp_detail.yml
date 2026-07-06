@@ -1388,7 +1388,7 @@ nxp/lpc/lpc54608-LPCXpresso:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-nxp/lpc/lpc55sxx/Libraries/template/lpc55s6xxxx:
+nxp/lpc/lpc55sxx/libraries/template/lpc55s6xxxx:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc

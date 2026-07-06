@@ -38,14 +38,14 @@ Export('rtconfig')
 SDK_ROOT = os.path.abspath('./') #当前脚本所在路径的绝对地址
 #SDK_ROOT = E:\rt-thread\bsp\core-v-mcu\core-v-cv32e40p
 
-if os.path.exists(SDK_ROOT + '/Libraries'):
-    libraries_path_prefix = SDK_ROOT + '/Libraries'
+if os.path.exists(SDK_ROOT + '/libraries'):
+    libraries_path_prefix = SDK_ROOT + '/libraries'
 else:
-    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/Libraries'
-#libraries_path_prefix = E:\rt-thread\bsp\core-v-mcu\Libraries
+    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
+#libraries_path_prefix = E:\rt-thread\bsp\core-v-mcu\libraries
 SDK_LIB = libraries_path_prefix
 Export('SDK_LIB')
-#SDK_LIB = E:\rt-thread\bsp\core-v-mcu\Libraries
+#SDK_LIB = E:\rt-thread\bsp\core-v-mcu\libraries
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
@@ -56,7 +56,7 @@ rtconfig.BSP_LIBRARY_TYPE = core_v_library
 bsp_vdir = 'build'
 library_vdir = 'build/libraries'
 
-#libraries_path_prefix = E:\rt-thread\bsp\core-v-mcu\Libraries
+#libraries_path_prefix = E:\rt-thread\bsp\core-v-mcu\libraries
 #objs.extend 将扩展列表的元素都加到 objs列表中
 # include libraries
 objs.extend(SConscript(os.path.join(libraries_path_prefix, core_v_library, 'SConscript'), variant_dir=library_vdir + '/core_v_hal_libraries', duplicate=0))

@@ -12,8 +12,8 @@ def dist_do_building(BSP_ROOT, dist_dir):
     import rtconfig
 
     print("=> copy ch32 bsp library")
-    library_dir = os.path.join(dist_dir, 'Libraries')
-    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'Libraries')
+    library_dir = os.path.join(dist_dir, 'libraries')
+    library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
     library_type = getattr(rtconfig, 'BSP_LIBRARY_TYPE', None)
     if library_type is not None:
         bsp_copy_files(os.path.join(library_path, library_type),
@@ -29,7 +29,6 @@ def dist_do_building(BSP_ROOT, dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
         for line in data:
-            if line.find('source') != -1 and (line.find('../Libraries') != -1 or line.find('../libraries') != -1):
-                line = line.replace('../Libraries', 'Libraries')
-                line = line.replace('../libraries', 'Libraries')
+            if line.find('source') != -1 and line.find('../libraries') != -1:
+                line = line.replace('../libraries', 'libraries')
             f.write(line)
