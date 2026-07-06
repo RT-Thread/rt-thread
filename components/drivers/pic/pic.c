@@ -280,7 +280,7 @@ struct rt_pic_irq *rt_pic_find_ipi(struct rt_pic *pic, int ipi_index)
 
 struct rt_pic_irq *rt_pic_find_pirq(struct rt_pic *pic, int irq)
 {
-    if (pic && irq >= pic->irq_start && irq <= pic->irq_start + pic->irq_nr)
+    if (pic && irq >= pic->irq_start && irq < pic->irq_start + pic->irq_nr)
     {
         return &pic->pirqs[irq - pic->irq_start];
     }
