@@ -105,3 +105,25 @@ void MemManage_Handler(void)
     rt_kprintf("Memory Fault!\n");
     HardFault_Handler();
 }
+
+#ifndef NDEBUG
+#if defined(__ARMCC_VERSION) || defined(__ICCARM__)
+void __aeabi_assert(const char *failedExpr, const char *file, int line)
+{
+    rt_kprintf("ASSERT ERROR \" %s \": file \"%s\" Line \"%d\" \n", failedExpr, file, line);
+    for (;;)
+    {
+        __BKPT(0);
+    }
+}
+#elif defined(__GNUC__)
+void __assert_func(const char *file, int line, const char *func, const char *failedExpr)
+{
+    rt_kprintf("ASSERT ERROR \" %s \": file \"%s\" Line \"%d\" function \"%s\" \n", failedExpr, file, line, func);
+    for (;;)
+    {
+        __BKPT(0);
+    }
+}
+#endif /* __ARMCC_VERSION || __ICCARM__ */
+#endif /* NDEBUG */
