@@ -324,7 +324,7 @@ static void cmd05_check(void)
     cmd_pack.cmd = 0x6;
     FQSpi_CmdOperation(&_ft2004_qspi_bus.fqspi, &cmd_pack);
 
-    rt_memset(&cmd_pack, 0, sizeof(&cmd_pack));
+    rt_memset(&cmd_pack, 0, sizeof(cmd_pack));
     cmd_pack.cmd = 0x5;
     cmd_pack.flags = FQSPI_CMD_NEED_GET_MASK;
     cmd_pack.rxBuf = rx_buffer;
@@ -337,11 +337,11 @@ static void cmd05_check(void)
         LOG_I("cnt %d, 0x%x ", i, rx_buffer[i]);
     }
 
-    rt_memset(&cmd_pack, 0, sizeof(&cmd_pack));
+    rt_memset(&cmd_pack, 0, sizeof(cmd_pack));
     cmd_pack.cmd = 0x4;
     FQSpi_CmdOperation(&_ft2004_qspi_bus.fqspi, &cmd_pack);
 
-    rt_memset(&cmd_pack, 0, sizeof(&cmd_pack));
+    rt_memset(&cmd_pack, 0, sizeof(cmd_pack));
     cmd_pack.cmd = 0x5;
     cmd_pack.flags = FQSPI_CMD_NEED_GET_MASK;
     cmd_pack.rxBuf = rx_buffer;
@@ -366,7 +366,7 @@ static void cmd35_check(void)
     cmd_pack.cmd = 0x6;
     FQSpi_CmdOperation(&_ft2004_qspi_bus.fqspi, &cmd_pack);
 
-    rt_memset(&cmd_pack, 0, sizeof(&cmd_pack));
+    rt_memset(&cmd_pack, 0, sizeof(cmd_pack));
     cmd_pack.cmd = 0x5;
     cmd_pack.flags = FQSPI_CMD_NEED_GET_MASK;
     cmd_pack.rxBuf = rx_buffer;
@@ -382,7 +382,7 @@ static void cmd35_check(void)
     cmd_pack.cmd = 0xB7;
     FQSpi_CmdOperation(&_ft2004_qspi_bus.fqspi, &cmd_pack);
 
-    rt_memset(&cmd_pack, 0, sizeof(&cmd_pack));
+    rt_memset(&cmd_pack, 0, sizeof(cmd_pack));
     cmd_pack.cmd = 0x35;
     cmd_pack.flags = FQSPI_CMD_NEED_GET_MASK;
     cmd_pack.rxBuf = rx_buffer;
@@ -406,7 +406,7 @@ static void cmd15_check(void)
     // cmd_pack.cmd = 0xB7;
     // FQSpi_CmdOperation(&_ft2004_qspi_bus.fqspi, &cmd_pack);
 
-    rt_memset(&cmd_pack, 0, sizeof(&cmd_pack));
+    rt_memset(&cmd_pack, 0, sizeof(cmd_pack));
     cmd_pack.cmd = 0x15;
     cmd_pack.flags = FQSPI_CMD_NEED_GET_MASK;
     cmd_pack.rxBuf = rx_buffer;
