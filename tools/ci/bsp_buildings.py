@@ -115,6 +115,30 @@ def is_env_enabled(name, default=False):
 
     return value.lower() not in ('', '0', 'false', 'no', 'off')
 
+def parse_csv_env(name, required=False):
+    value = os.getenv(name)
+    if value is None or value.strip() == '':
+        if required:
+            print(f"::error::{name} is not set or empty")
+            sys.exit(1)
+        return None
+
+    items = [item.strip() for item in value.split(',') if item.strip()]
+    if required and items == []:
+        print(f"::error::{name} is not set or empty")
+        sys.exit(1)
+
+    return items
+
+def split_config_commands(value):
+    if value is None:
+        return None
+    if isinstance(value, str):
+        return value.splitlines()
+    if isinstance(value, (list, tuple)):
+        return list(value)
+    return [value]
+
 def run_dist_build_check(bsp, scons_args=''):
     """
     build BSP distribution and verify that the generated project can compile.
@@ -381,15 +405,10 @@ if __name__ == "__main__":
     qemu_timeout_second = 50
 
     rtt_root = os.getcwd()
-    srtt_bsp = os.getenv('SRTT_BSP').split(',')
-    attachconfig_rtt_bsp_env = os.getenv('ATTACHCONFIG_RTT_BSP')
-    attachconfig_rtt_bsp = None
-    if attachconfig_rtt_bsp_env:
-        attachconfig_rtt_bsp = {
-            bsp.strip()
-            for bsp in attachconfig_rtt_bsp_env.split(',')
-            if bsp.strip()
-        }
+    srtt_bsp = parse_csv_env('SRTT_BSP', required=True)
+    attachconfig_rtt_bsp = parse_csv_env('ATTACHCONFIG_RTT_BSP')
+    if attachconfig_rtt_bsp is not None:
+        attachconfig_rtt_bsp = set(attachconfig_rtt_bsp)
     print(srtt_bsp)
     for bsp in srtt_bsp:
         count += 1
@@ -444,9 +463,9 @@ if __name__ == "__main__":
                 # 如果是bsp_board_info，读取基本的信息
                 if(name == 'bsp_board_info'):
                     print(details)
-                    pre_build_commands = details.get("pre_build").splitlines()
-                    build_command = details.get("build_cmd").splitlines()
-                    post_build_command = details.get("post_build").splitlines()
+                    pre_build_commands = split_config_commands(details.get("pre_build"))
+                    build_command = split_config_commands(details.get("build_cmd"))
+                    post_build_command = split_config_commands(details.get("post_build"))
                     qemu_command = details.get("run_cmd")
                 
                 if details.get("kconfig") is not None:
@@ -455,7 +474,7 @@ if __name__ == "__main__":
                     else:
                         build_check_result = None
                     if details.get("msh_cmd") is not None:
-                        commands = details.get("msh_cmd").splitlines()
+                        commands = split_config_commands(details.get("msh_cmd"))
                     else:
                         msh_cmd = None
                     if details.get("checkresult") is not None:
@@ -467,54 +486,55 @@ if __name__ == "__main__":
                     else:
                         ci_build_run_flag = None
                     if details.get("pre_build") is not None:
-                        pre_build_commands = details.get("pre_build").splitlines()
+                        pre_build_commands = split_config_commands(details.get("pre_build"))
                     if details.get("env") is not None:
                         bsp_build_env = details.get("env")
                     else:
                         bsp_build_env = None
                     if details.get("build_cmd") is not None:
-                        build_command = details.get("build_cmd").splitlines()
+                        build_command = split_config_commands(details.get("build_cmd"))
                     else:
                         build_command = None
                     if details.get("post_build") is not None:
-                        post_build_command = details.get("post_build").splitlines()
+                        post_build_command = split_config_commands(details.get("post_build"))
                     if details.get("run_cmd") is not None:
                         qemu_command = details.get("run_cmd")
                     else:
                         qemu_command = None
+                if details.get("kconfig") is None:
+                    continue
                 count += 1
                 config_bacakup = config_file+'.origin'
                 shutil.copyfile(config_file, config_bacakup)
-                #加载yml中的配置放到.config文件
-                with open(config_file, 'a') as destination:
-                    if details.get("kconfig") is None:
-                        #如果没有Kconfig，读取下一个配置
-                        continue
-                    if(projects.get(name) is not None):
-                        # 获取Kconfig中所有的信息
-                        detail_list=get_details_and_dependencies([name],projects)
-                        for line in detail_list:
-                            destination.write(line + '\n')
-                scons_arg=[]
-                #如果配置中有scons_arg
-                if details.get('scons_arg') is not None:
-                    for line in details.get('scons_arg'):
-                        scons_arg.append(line)
-                scons_arg_str=' '.join(scons_arg) if scons_arg else ' '
-                print(f"::group::\tCompiling yml project: =={count}==={name}=scons_arg={scons_arg_str}==")
-                # #开始编译bsp
-                res = build_bsp(bsp, scons_arg_str,name=name,pre_build_commands=pre_build_commands,post_build_command=post_build_command,build_check_result=build_check_result,bsp_build_env =bsp_build_env)
-                if not res:
-                    print(f"::error::build {bsp} {name} failed.")
-                    add_summary(f'\t- ❌ build {bsp} {name} failed.')
-                    failed += 1
-                else:
-                    add_summary(f'\t- ✅ build {bsp} {name} success.')
-                print("::endgroup::")
+                try:
+                    #加载yml中的配置放到.config文件
+                    with open(config_file, 'a') as destination:
+                        if(projects.get(name) is not None):
+                            # 获取Kconfig中所有的信息
+                            detail_list=get_details_and_dependencies([name],projects)
+                            for line in detail_list:
+                                destination.write(line + '\n')
+                    scons_arg=[]
+                    #如果配置中有scons_arg
+                    if details.get('scons_arg') is not None:
+                        for line in details.get('scons_arg'):
+                            scons_arg.append(line)
+                    scons_arg_str=' '.join(scons_arg) if scons_arg else ' '
+                    print(f"::group::\tCompiling yml project: =={count}==={name}=scons_arg={scons_arg_str}==")
+                    # #开始编译bsp
+                    res = build_bsp(bsp, scons_arg_str,name=name,pre_build_commands=pre_build_commands,post_build_command=post_build_command,build_check_result=build_check_result,bsp_build_env =bsp_build_env)
+                    if not res:
+                        print(f"::error::build {bsp} {name} failed.")
+                        add_summary(f'\t- ❌ build {bsp} {name} failed.')
+                        failed += 1
+                    else:
+                        add_summary(f'\t- ✅ build {bsp} {name} success.')
+                    print("::endgroup::")
 
 
-                shutil.copyfile(config_bacakup, config_file)
-                os.remove(config_bacakup)
+                finally:
+                    shutil.copyfile(config_bacakup, config_file)
+                    os.remove(config_bacakup)
 
 
 
