@@ -225,9 +225,16 @@ static int parse_config_descriptor(struct usbh_hubport *hport, struct usb_config
 
         memset(hport->config.intf, 0, sizeof(struct usbh_interface) * CONFIG_USBHOST_MAX_INTERFACES);
 
-        while (p[DESC_bLength] && (desc_len <= length)) {
+        while ((desc_len + DESC_bDescriptorType < length) &&
+               (p[DESC_bLength] > DESC_bDescriptorType) &&
+               (desc_len + p[DESC_bLength] <= length)) {
             switch (p[DESC_bDescriptorType]) {
                 case USB_DESCRIPTOR_TYPE_INTERFACE:
+                    if (p[DESC_bLength] < USB_SIZEOF_INTERFACE_DESC) {
+                        USB_LOG_ERR("invalid interface bLength 0x%02x\r\n", p[DESC_bLength]);
+                        return -USB_ERR_INVAL;
+                    }
+
                     intf_desc = (struct usb_interface_descriptor *)p;
                     cur_iface = intf_desc->bInterfaceNumber;
                     cur_alt_setting = intf_desc->bAlternateSetting;
@@ -265,6 +272,11 @@ static int parse_config_descriptor(struct usbh_hubport *hport, struct usb_config
                     hport->config.intf[cur_iface].altsetting_num = cur_alt_setting + 1;
                     break;
                 case USB_DESCRIPTOR_TYPE_ENDPOINT:
+                    if (p[DESC_bLength] < USB_SIZEOF_ENDPOINT_DESC) {
+                        USB_LOG_ERR("invalid endpoint bLength 0x%02x\r\n", p[DESC_bLength]);
+                        return -USB_ERR_INVAL;
+                    }
+
                     ep_desc = (struct usb_endpoint_descriptor *)p;
                     memcpy(&hport->config.intf[cur_iface].altsetting[cur_alt_setting].ep[cur_ep].ep_desc, ep_desc, 7);
                     cur_ep++;
@@ -276,6 +288,11 @@ static int parse_config_descriptor(struct usbh_hubport *hport, struct usb_config
             /* skip to next descriptor */
             desc_len += p[DESC_bLength];
             p += p[DESC_bLength];
+        }
+        if (desc_len != length) {
+            USB_LOG_ERR("invalid config descriptor length %lu/%u\r\n",
+                        (unsigned long)desc_len, (unsigned int)length);
+            return -USB_ERR_INVAL;
         }
     }
     return 0;
@@ -797,6 +814,7 @@ static void *usbh_list_all_interface_name(struct usbh_hub *hub, const char *devn
 static struct usbh_hubport *usbh_list_all_hubport(struct usbh_hub *hub, uint8_t hub_index, uint8_t hub_port)
 {
     struct usbh_hubport *hport;
+    struct usbh_hubport *found_hport;
     struct usbh_hub *hub_next;
 
     if (hub->index == hub_index) {
@@ -816,9 +834,9 @@ static struct usbh_hubport *usbh_list_all_hubport(struct usbh_hub *hub, uint8_t 
                             hub_next = hport->config.intf[itf].priv;
 
                             if (hub_next && hub_next->connected) {
-                                hport = usbh_list_all_hubport(hub_next, hub_index, hub_port);
-                                if (hport) {
-                                    return hport;
+                                found_hport = usbh_list_all_hubport(hub_next, hub_index, hub_port);
+                                if (found_hport) {
+                                    return found_hport;
                                 }
                             }
                         }
