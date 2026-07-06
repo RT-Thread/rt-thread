@@ -42,6 +42,8 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       target_count: ${{ steps.set-matrix.outputs.target_count }}
+      skipped_matrix: ${{ steps.set-matrix.outputs.skipped_matrix }}
+      skipped_count: ${{ steps.set-matrix.outputs.skipped_count }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -177,3 +179,38 @@ jobs:
           verbose: INFO
           # Uncomment to allow CI to pass even when memory budgets are exceeded
           # dont_fail_on_alerts: true
+
+  # Targets not affected by this push are not rebuilt, but their binaries are
+  # unchanged. Report them as identical (metadata-only, no build) so every
+  # target keeps an unbroken per-commit chain instead of a hole on each commit
+  # that only touched other BSPs. Only runs on push to master; PRs are transient
+  # and keep the build-affected-only behavior above.
+  mark-identical:
+    needs: load-targets
+    if: ${{ github.event_name == 'push' && needs.load-targets.outputs.skipped_count != '0' }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.load-targets.outputs.skipped_matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Mark MemBrowse report identical
+        # Non-fatal: an identical upload needs the parent commit to already have
+        # a report for this target. Right after adoption some parents predate
+        # this job and the upload is rejected; it self-heals once the target is
+        # next built (a full report needs no parent) and every later commit is
+        # covered. Don't fail the run over that transient window.
+        continue-on-error: true
+        uses: membrowse/membrowse-action@v1
+        with:
+          target_name: ${{ matrix.target_name }}
+          identical: true
+          api_key: ${{ secrets.MEMBROWSE_API_KEY }}
+          api_url: ${{ vars.MEMBROWSE_API_URL }}
+          verbose: INFO
