@@ -239,6 +239,12 @@ menuconfig RT_USING_SPI
             select RT_USING_LWIP
             default n
 
+        config RT_USING_CH390
+            bool "Using WCH CH390 SPI Ethernet network interface"
+            select RT_USING_LWIP
+            select RT_USING_PIN
+            default n
+
         config RT_USING_SPI_WIFI
             bool "Using RW009/007 SPI Wi-Fi wireless interface"
             select RT_USING_LWIP

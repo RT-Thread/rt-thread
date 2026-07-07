@@ -25,6 +25,9 @@ if GetDepend('RT_USING_SPI_WIFI'):
 if GetDepend('RT_USING_ENC28J60'):
     src_device += ['enc28j60.c']
 
+if GetDepend('RT_USING_CH390'):
+    src_device += ['ch390.c']
+
 if GetDepend('RT_USING_SPI_MSD'):
     src_device += ['dev_spi_msd.c']
 
