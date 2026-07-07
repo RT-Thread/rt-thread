@@ -9,6 +9,9 @@ MCUX_Config/clock_config.c
 MCUX_Config/pin_mux.c
 """)
 
+if GetDepend(['BSP_USING_OSPI_FLASH']):
+    src += ['ports/flexspi_octal_flash_ops.c']
+
 CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
 CPPDEFINES = ['CPU_MIMXRT1189CVM8C_cm7', 'MIMXRT1189_cm7_SERIES', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1', 'ARM_MATH_CM7']
 

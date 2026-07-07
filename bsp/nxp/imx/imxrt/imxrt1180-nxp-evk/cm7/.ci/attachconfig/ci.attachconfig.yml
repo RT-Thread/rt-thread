@@ -1,0 +1,20 @@
+scons.args: &scons
+  scons_arg:
+    - '--strict'
+
+# ------ component CI ------
+
+# ------ Peripheral CI ------
+Peripheral.hyperflash_dma:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_DMA=y
+    - CONFIG_BSP_USING_FLEXSPI=y
+    - CONFIG_BSP_USING_FLEXSPI1=y
+    - CONFIG_BSP_USING_OSPI_FLASH=y
+Peripheral.hyperflash:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_FLEXSPI=y
+    - CONFIG_BSP_USING_FLEXSPI1=y
+    - CONFIG_BSP_USING_OSPI_FLASH=y

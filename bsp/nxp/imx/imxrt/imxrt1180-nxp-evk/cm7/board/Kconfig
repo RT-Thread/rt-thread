@@ -156,6 +156,11 @@ endmenu
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_OSPI_FLASH
+        bool "Enable HyperFlash Example"
+		depends on BSP_USING_FLEXSPI1
+        default n
+
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
