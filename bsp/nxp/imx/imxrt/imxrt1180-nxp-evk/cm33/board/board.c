@@ -436,7 +436,7 @@ void BOARD_ConfigMPU(void)
 
     // Region 11 (OCRAM1): [0x20480000, 0x204FFFFF, 512K]
     // non-shareable, read/write in privilege and non-privilege, executable. Attr 3
-    ARM_MPU_SetRegion(11U, ARM_MPU_RBAR(0x20480000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x204FFFFF, 2U));
+    // ARM_MPU_SetRegion(11U, ARM_MPU_RBAR(0x20480000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x204FFFFF, 2U));
 
     // Region 12 (OCRAM2): [0x20500000, 0x2053FFFF, 256K]
     // non-shareable, read/write in privilege and non-privilege, executable. Attr 3
@@ -1250,13 +1250,15 @@ void imxrt_uart_pins_init(void)
 
 void rt_hw_board_init()
 {
-//    BOARD_CommonSetting();
+	extern void BOARD_InitPeripherals(void);
+    BOARD_CommonSetting();
     BOARD_ConfigMPU();
     BOARD_InitPins();
 
-    BOARD_InitLeds();
+//    BOARD_InitLeds();
     BOARD_BootClockRUN();
-
+    BOARD_InitPeripherals();
+	
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 

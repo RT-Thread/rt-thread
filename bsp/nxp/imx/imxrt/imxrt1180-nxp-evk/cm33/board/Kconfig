@@ -26,6 +26,25 @@ menu "On-chip Peripheral Drivers"
         bool "Enable DMA"
         default n
 
+    menuconfig BSP_USING_LPADC
+        bool "Enable ADC"
+		select RT_USING_ADC
+        default n
+		
+        if BSP_USING_LPADC
+		
+        config BSP_USING_LPADC1
+            bool "Enable LPADC1"
+            default n
+			
+            config BSP_LPADC1_USING_DMA
+                bool "Enable LPADC1 DMA"
+                depends on BSP_USING_LPADC1
+                depends on BSP_USING_DMA
+                default n	
+
+        endif
+
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN

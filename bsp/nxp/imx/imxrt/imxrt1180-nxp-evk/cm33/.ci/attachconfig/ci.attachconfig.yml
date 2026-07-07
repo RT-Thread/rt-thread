@@ -9,3 +9,17 @@ Peripheral.flash_fs:
   <<: *scons
   kconfig:
     - CONFIG_BSP_USING_QSPI_FLASH_FS=y
+Peripheral.lpadc1_dma:
+  <<: *scons
+  kconfig:
+    - CONFIG_RT_USING_ADC=y
+    - CONFIG_BSP_USING_DMA=y
+    - CONFIG_BSP_USING_LPADC=y
+    - CONFIG_BSP_USING_LPADC1=y
+    - CONFIG_BSP_LPADC1_USING_DMA=y
+Peripheral.lpadc1:
+  <<: *scons
+  kconfig:
+    - CONFIG_RT_USING_ADC=y
+    - CONFIG_BSP_USING_LPADC=y
+    - CONFIG_BSP_USING_LPADC1=y
