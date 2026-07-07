@@ -19,17 +19,24 @@ jobs:
     name: Scan code format and license
     if: github.repository_owner == 'RT-Thread'
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Python
-        uses: actions/setup-python@main
+        uses: actions/setup-python@v5
         with:
           python-version: 3.8
-      
-      - name: Check Format and License
+
+      - name: Install clang-format
         shell: bash
         run: |
-          pip install click chardet PyYaml
-          python tools/ci/file_check.py check 'https://github.com/RT-Thread/rt-thread' 'master'
+          python -m pip install clang-format
+          clang-format --version
+
+      - name: Check clang-format
+        shell: bash
+        run: |
+          python tools/ci/clang_format_check.py --repo 'https://github.com/RT-Thread/rt-thread' --branch 'master'
 
   # # Post CI status to PR comment
   # post-ci-status:
