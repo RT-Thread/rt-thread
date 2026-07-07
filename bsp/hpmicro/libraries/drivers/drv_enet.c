@@ -19,6 +19,7 @@
 
 #ifdef BSP_USING_ETH0
 
+/* cppcheck-suppress-begin unknownMacro */
 ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_DESC_ADDR_ALIGNMENT)
 __RW enet_rx_desc_t enet0_dma_rx_desc_tab[ENET0_RX_BUFF_COUNT]; /* Ethernet0 Rx DMA Descriptor */
 
@@ -30,6 +31,7 @@ __RW uint8_t enet0_rx_buff[ENET0_RX_BUFF_COUNT][ENET0_RX_BUFF_SIZE]; /* Ethernet
 
 ATTR_PLACE_AT_WITH_ALIGNMENT(".fast_ram", ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t enet0_tx_buff[ENET0_TX_BUFF_COUNT][ENET0_TX_BUFF_SIZE]; /* Ethernet0 Transmit Buffer */
+/* cppcheck-suppress-end unknownMacro */
 
 LWIP_MEMPOOL_DECLARE(enet0_rx_pool, ENET0_RX_BUFF_COUNT, sizeof(my_custom_pbuf_t), "Custom RX PBUF pool");
 static enet_frame_t enet0_frame[ENET0_RX_BUFF_COUNT] = {0};
@@ -88,6 +90,7 @@ mac_init_t mac_init[] = {
 
 #ifdef BSP_USING_ETH1
 
+/* cppcheck-suppress-begin unknownMacro */
 ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_DESC_ADDR_ALIGNMENT)
 __RW enet_rx_desc_t enet1_dma_rx_desc_tab[ENET1_RX_BUFF_COUNT]; /* Ethernet1 Rx DMA Descriptor */
 
@@ -99,6 +102,7 @@ __RW uint8_t enet1_rx_buff[ENET1_RX_BUFF_COUNT][ENET1_RX_BUFF_SIZE]; /* Ethernet
 
 ATTR_PLACE_AT_WITH_ALIGNMENT(".fast_ram", ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t enet1_tx_buff[ENET1_TX_BUFF_COUNT][ENET1_TX_BUFF_SIZE]; /* Ethernet1 Transmit Buffer */
+/* cppcheck-suppress-end unknownMacro */
 
 LWIP_MEMPOOL_DECLARE(enet1_rx_pool, ENET1_RX_BUFF_COUNT, sizeof(my_custom_pbuf_t), "Custom RX PBUF pool");
 static enet_frame_t enet1_frame[ENET1_RX_BUFF_COUNT] = {0};
@@ -544,7 +548,7 @@ void isr_enet(hpm_enet_t *obj)
     status = obj->base->DMA_STATUS;
 
     if (ENET_DMA_STATUS_GLPII_GET(status)) {
-        obj->base->LPI_CSR;
+        (void)obj->base->LPI_CSR;
     }
 
     if (ENET_DMA_STATUS_RI_GET(status)) {
@@ -587,8 +591,10 @@ int rt_hw_eth_init(void)
         memset((uint8_t *)s_geths[i]->dma_rx_desc_tab, 0x00, sizeof(enet_rx_desc_t) * s_geths[i]->rx_buff_cfg->count);
         memset((uint8_t *)s_geths[i]->dma_tx_desc_tab, 0x00, sizeof(enet_tx_desc_t) * s_geths[i]->tx_buff_cfg->count);
 
-        memset((uint8_t *)s_geths[i]->rx_buff_cfg->buffer, 0x00, sizeof(s_geths[i]->rx_buff_cfg->size));
-        memset((uint8_t *)s_geths[i]->tx_buff_cfg->buffer, 0x00, sizeof(s_geths[i]->tx_buff_cfg->size));
+        memset((uint8_t *)s_geths[i]->rx_buff_cfg->buffer, 0x00,
+               s_geths[i]->rx_buff_cfg->count * s_geths[i]->rx_buff_cfg->size);
+        memset((uint8_t *)s_geths[i]->tx_buff_cfg->buffer, 0x00,
+               s_geths[i]->tx_buff_cfg->count * s_geths[i]->tx_buff_cfg->size);
 
         /* Set list heads */
         s_geths[i]->enet_dev->desc.tx_desc_list_head = (enet_tx_desc_t *)core_local_mem_to_sys_address(BOARD_RUNNING_CORE, (uint32_t)s_geths[i]->dma_tx_desc_tab);
