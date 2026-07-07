@@ -9,9 +9,8 @@ group = []
 CPPPATH = []
 
 if rtconfig.PLATFORM in ['iccarm'] + GetGCCLikePLATFORM():
-    if rtconfig.PLATFORM == 'iccarm' or GetOption('target') != 'mdk5':
-        src = Glob('*.c')
-        CPPPATH = [cwd+'/fsp_cfg', cwd + '/fsp_cfg/bsp']
+    src = Glob('*.c')
+    CPPPATH = [cwd+'/fsp_cfg', cwd + '/fsp_cfg/bsp']
 
 group += DefineGroup('RA_cfg', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')

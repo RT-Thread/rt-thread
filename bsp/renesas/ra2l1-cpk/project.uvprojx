@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-license-management -Wunused -Wuninitialized -Wall -Wmissing-declarations  -Wpointer-arith -Waggregate-return -Wfloat-equal</MiscControls>
-              <Define>__RTTHREAD__, RT_USING_LIBC, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS</Define>
+              <Define>__RTTHREAD__, RT_USING_LIBC, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>.;ra_cfg\fsp_cfg\bsp;board\ports;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m23;..\..\..\components\net\utest;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\phy;..\..\..\libcpu\arm\common;..\libraries\HAL_Drivers\drivers;..\libraries\HAL_Drivers;..\..\..\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\smp_call;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\ipc;..\libraries\HAL_Drivers\drivers\config;ra_cfg\fsp_cfg;..\..\..\components\libc\posix\io\eventfd;board;..\..\..\components\dfs\dfs_v1\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\ipc;..\libraries\HAL_Drivers\drivers\config;ra\fsp\inc;..\..\..\components\drivers\include;ra_gen;..\..\..\components\libc\compilers\common\extension;board;src;..\..\..\components\libc\posix\io\poll;ra\fsp\inc\api;ra_cfg\fsp_cfg\bsp;board\ports;..\..\..\libcpu\arm\cortex-m23;ra\fsp\inc\instances;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;.;ra\arm\CMSIS_5\CMSIS\Core\Include;..\libraries\HAL_Drivers\drivers;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\dfs\dfs_v1\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\phy;..\..\..\components\drivers\smp_call;..\..\..\components\net\utest;ra_cfg\fsp_cfg;..\..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -377,6 +377,16 @@
         </TargetArmAds>
       </TargetOption>
       <Groups>
+        <Group>
+          <GroupName>Applications</GroupName>
+          <Files>
+            <File>
+              <FileName>hal_entry.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>src\hal_entry.c</FilePath>
+            </File>
+          </Files>
+        </Group>
         <Group>
           <GroupName>CPU</GroupName>
           <Files>
@@ -1205,17 +1215,156 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>ra</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_clocks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_clocks.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_common.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_delay.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_group_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_group_irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_guard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_guard.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_io.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_io.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_register_protection.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_register_protection.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_rom_registers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_rom_registers.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_sbrk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_sbrk.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>bsp_security.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\mcu\all\bsp_security.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\cmsis\Device\RENESAS\Source\system.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\bsp\cmsis\Device\RENESAS\Source\startup.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>r_ioport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\r_ioport\r_ioport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>r_sci_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra\fsp\src\r_sci_uart\r_sci_uart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>ra_gen</GroupName>
+          <Files>
+            <File>
+              <FileName>common_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\common_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>hal_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\hal_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>main.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\main.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pin_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\pin_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>vector_data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>ra_gen\vector_data.c</FilePath>
+            </File>
+          </Files>
+        </Group>
       </Groups>
     </Target>
   </Targets>
   <RTE>
-    <gpdscs>
-      <gpdsc name="buildinfo.gpdsc">
-        <targetInfos>
-          <targetInfo name="Target 1" />
-        </targetInfos>
-      </gpdsc>
-    </gpdscs>
     <apis />
     <components>
       <component Cclass="Flex Software" Cgroup="RA Configuration" Cvendor="Renesas" Cversion="1.0.0" condition="RA Device" generator="Renesas RA Smart Configurator">

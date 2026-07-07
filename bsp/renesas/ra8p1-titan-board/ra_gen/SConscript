@@ -9,9 +9,8 @@ group = []
 CPPPATH = []
 
 if rtconfig.PLATFORM in ['iccarm'] + GetGCCLikePLATFORM():
-    if rtconfig.PLATFORM == 'iccarm' or GetOption('target') != 'mdk5':
-        src = Glob('*.c')
-        CPPPATH = [cwd, ]
+    src = Glob('*.c')
+    CPPPATH = [cwd, ]
 
 group = DefineGroup('RA_gen', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')
