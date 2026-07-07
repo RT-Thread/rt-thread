@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-01-10     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
  */
 
 /*
@@ -16,7 +17,8 @@
 * 默认配置
 *   input pin：
 *       icx: INPUT_CAPTURE_TMR6_x_PORT, INPUT_CAPTURE_TMR6_x_PIN (x=1~IC_DEV_CNT)
-        注：该引脚配置位于 board_config.h，若测试单元的input pin未配置，需测试人员自行添加
+        注：该引脚配置位于 board_config.h，若测试单元的input pin未配置，需测试人员自行添加,并于
+            board_config.c中做初始化
 *   watermark：
 *       默认值为 5
 *
@@ -58,9 +60,9 @@
 #define MSH_USAGE_IC_SET_WM             "  ic wm <unit> <wm>  - e.g., set warter mark of ic3 to 11: ic wm 3 11\n"
 #define MSH_USAGE_IC_CLR                "  ic clr <unit>      - e.g., clear data buffer of ic3: ic clr 3 \n"
 
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8)
     #define IC_DEV_CNT                  (8)
-#elif defined (HC32F460)
+#elif defined (HC32F460) || defined (HC32F467)
     #define IC_DEV_CNT                  (3)
 #elif defined (HC32F334)
     #define IC_DEV_CNT                  (4)
@@ -223,7 +225,7 @@ static rt_err_t _msh_cmd_parse_unit(char *n, uint32_t *u_out)
     return RT_EOK;
 }
 
-void _show_usage(void)
+static void _show_usage(void)
 {
     rt_kprintf("Usage: \n");
     rt_kprintf(MSH_USAGE_IC_OPEN);

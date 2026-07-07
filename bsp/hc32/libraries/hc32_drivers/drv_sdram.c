@@ -9,6 +9,8 @@
  * 2024-02-20     CDT          modify exclk clock max frequency to 40MHz for HC32F4A0
  *                             add t_rcd_p/t_rfc_p/t_rp_p configuration
  * 2024-12-24     CDT          modify sample clock to EXMC_DMC_SAMPLE_CLK_EXTCLK for HC32F4A0
+ * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-05     CDT          support HC32F467
  */
 
 
@@ -84,7 +86,7 @@ static rt_int32_t _sdram_verify_clock_frequency(void)
 {
     rt_int32_t ret = RT_EOK;
 
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467)
     /* EXCLK max frequency for SDRAM */
     if (CLK_GetBusClockFreq(CLK_BUS_EXCLK) > EXMC_EXCLK_DMC_MAX_FREQ)
     {
@@ -124,7 +126,7 @@ static rt_int32_t _sdram_init(void)
 
     /* configure DMC width && refresh period & chip & timing. */
     (void)EXMC_DMC_StructInit(&stcDmcInit);
-#if defined (HC32F4A0)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467)
     stcDmcInit.u32SampleClock          = EXMC_DMC_SAMPLE_CLK_EXTCLK;
 #endif
     stcDmcInit.u32RefreshPeriod        = SDRAM_REFRESH_COUNT;

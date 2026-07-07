@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-05-25     CDT          first version
+ * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-03     CDT          support HC32F467
  */
 
 /*******************************************************************************
@@ -24,7 +26,7 @@
 #include "irq_config.h"
 #include "drv_usbh.h"
 
-#if defined(HC32F472)
+#if defined (HC32F472)
     #define USBFS_DRVVBUS_PIN            (rt_base_t)(((rt_uint16_t)USBF_DRVVBUS_PORT * 16) + __CLZ(__RBIT(USBF_DRVVBUS_PIN)))
 #endif
 
@@ -52,13 +54,13 @@ void usb_mdelay(const uint32_t msec)
 
 void usb_bsp_cfgvbus(usb_core_instance *pdev)
 {
-#if defined(HC32F472)
+#if defined (HC32F472)
     rt_pin_mode(USBFS_DRVVBUS_PIN, PIN_MODE_OUTPUT);
 #endif
 }
 void usb_bsp_drivevbus(usb_core_instance *pdev, uint8_t state)
 {
-#if defined(HC32F472)
+#if defined (HC32F472)
     if (0x00U == state)
     {
         rt_pin_write(USBFS_DRVVBUS_PIN, PIN_LOW);
@@ -112,7 +114,8 @@ static void usb_host_chx_out_isr(usb_core_instance *pdev, uint8_t chnum)
     {
         usb_host_clrint(pdev, chnum, USBFS_HCINT_ACK);
     }
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F472) || defined (HC32F4A8) || \
+    defined (HC32F467)
     else if (0UL != (u32hcint & USBFS_HCINT_AHBERR))
     {
         usb_host_clrint(pdev, chnum, USBFS_HCINT_AHBERR);
@@ -236,7 +239,8 @@ static void usb_host_chx_in_isr(usb_core_instance *pdev, uint8_t chnum)
     {
         usb_host_clrint(pdev, chnum, USBFS_HCINT_ACK);
     }
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F472) || defined (HC32F4A8) || \
+    defined (HC32F467)
     else if (0UL != (u32hcint & USBFS_HCINT_AHBERR))
     {
         usb_host_clrint(pdev, chnum, USBFS_HCINT_AHBERR);
@@ -682,7 +686,7 @@ static void usbh_irq_handler(void)
     rt_interrupt_leave();
 }
 
-#if defined(HC32F472)
+#if defined (HC32F472)
 void USBFS_Handler(void)
 {
     usbh_irq_handler();
@@ -1106,7 +1110,7 @@ static rt_err_t _usbh_init(rt_device_t device)
 #else
     stcPortIdentify.u8CoreID = USBHS_CORE_ID;
 #endif
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467)
 #if !defined(BSP_USING_USBHS_PHY_EXTERN)
     stcPortIdentify.u8PhyType = USBHS_PHY_EMBED;
 #else

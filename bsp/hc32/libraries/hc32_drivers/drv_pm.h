@@ -89,15 +89,15 @@ struct pm_sleep_mode_shutdown_config
 /*******************************************************************************
  * Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
-#if defined(HC32F4A0) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8)
 #define PM_CHECK_EFM()                  ((EFM_GetStatus(EFM_FLAG_RDY) == SET) && (EFM_GetStatus(EFM_FLAG_RDY1) == SET))
-#elif defined(HC32F460) || defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
+#elif defined (HC32F460) || defined (HC32F448) || defined (HC32F472) || defined (HC32F334) || defined (HC32F467)
 #define PM_CHECK_EFM()                  ((EFM_GetStatus(EFM_FLAG_RDY) == SET))
 #endif
 #define PM_CHECK_XTAL()                 ((CM_CMU->XTALSTDCR & CLK_XTALSTD_ON) == 0)
-#if defined(HC32F334)
+#if defined (HC32F334)
 #define PM_CHECK_DMA()                  (DMA_GetTransStatus(CM_DMA, DMA_STAT_TRANS_DMA) == RESET)
-#elif defined(HC32F4A0) || defined(HC32F4A8) || defined(HC32F460) || defined (HC32F448) || defined (HC32F472)
+#elif defined (HC32F467) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F460) || defined (HC32F448) || defined (HC32F472)
 #define PM_CHECK_DMA()                                              \
 (                                       (DMA_GetTransStatus(CM_DMA1, DMA_STAT_TRANS_DMA) == RESET) && \
                                         (DMA_GetTransStatus(CM_DMA2, DMA_STAT_TRANS_DMA) == RESET))

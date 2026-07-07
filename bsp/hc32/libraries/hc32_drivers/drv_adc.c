@@ -10,6 +10,8 @@
  * 2022-06-14     CDT                  fix a bug of internal trigger
  * 2024-02-20     CDT                  support HC32F448
  *                                     add function for associating with the dma
+ * 2026-05-27     CDT                  support HC32F4A2
+ * 2026-06-05     CDT                  support HC32F467
  */
 
 #include <board.h>
@@ -87,7 +89,7 @@ static void _adc_internal_trigger0_set(adc_device *p_adc_dev)
     case (rt_uint32_t)CM_ADC2:
         u32TriggerSel = AOS_ADC2_0;
         break;
-#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334) || defined (HC32F467)
     case (rt_uint32_t)CM_ADC3:
         u32TriggerSel = AOS_ADC3_0;
         break;
@@ -118,7 +120,7 @@ static void _adc_internal_trigger1_set(adc_device *p_adc_dev)
     case (rt_uint32_t)CM_ADC2:
         u32TriggerSel = AOS_ADC2_1;
         break;
-#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
+#if defined (HC32F472) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334) || defined (HC32F467)
     case (rt_uint32_t)CM_ADC3:
         u32TriggerSel = AOS_ADC3_1;
         break;
@@ -214,6 +216,10 @@ static rt_err_t _adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt
                     {
                         (void)DMA_ChCmd(adc_eoca_dma->Instance, adc_eoca_dma->channel, DISABLE);
                         rt_ret = -RT_ETIMEOUT;
+                    }
+                    else
+                    {
+                        rt_ret = LL_OK;
                     }
                     if (adc_dev_priv->ops->dma_trig_stop != RT_NULL)
                     {
@@ -355,15 +361,16 @@ int rt_hw_adc_init(void)
 
         ADC_TriggerCmd(_g_adc_dev_array[i].instance, ADC_SEQ_A, (en_functional_state_t)_g_adc_dev_array[i].init.hard_trig_enable);
         ADC_TriggerConfig(_g_adc_dev_array[i].instance, ADC_SEQ_A, _g_adc_dev_array[i].init.hard_trig_src);
+        
+        if (_g_adc_dev_array[i].init.adc_eoca_dma != RT_NULL)
+        {
+            hc32_adc_dma_config(&_g_adc_dev_array[i]);
+        }
+        
         if (_g_adc_dev_array[i].init.hard_trig_enable && _g_adc_dev_array[i].init.hard_trig_src != ADC_HARDTRIG_ADTRG_PIN)
         {
             _adc_internal_trigger0_set(&_g_adc_dev_array[i]);
             _adc_internal_trigger1_set(&_g_adc_dev_array[i]);
-        }
-
-        if (_g_adc_dev_array[i].init.adc_eoca_dma != RT_NULL)
-        {
-            hc32_adc_dma_config(&_g_adc_dev_array[i]);
         }
 
         rt_hw_board_adc_init((void *)_g_adc_dev_array[i].instance);

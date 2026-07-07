@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2022-2024, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (c) 2022-2026, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2024-02-20     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
  */
 
 #include <rtthread.h>
@@ -27,12 +28,14 @@
 #define BSP_TCA9539_I2C_BUS_NAME        "i2c1"
 #define BSP_TCA9539_DEV_ADDR            (0x74U)
 
-#if defined(HC32F4A0) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8)
     #define TCA9539_RST_PIN             (45)    /* PC13 */
-#elif defined(HC32F448)
+#elif defined (HC32F448)
     #define TCA9539_RST_PIN             (31)    /* PB15 */
-#elif defined(HC32F472)
+#elif defined (HC32F472)
     #define TCA9539_RST_PIN             (44)    /* PC12 */
+#elif defined (HC32F467)
+    #define TCA9539_RST_PIN             (141)   /* PI13 */
 #endif
 
 /*******************************************************************************
@@ -137,6 +140,10 @@ static void TCA9539_Reset(void)
     rt_pin_write(TCA9539_RST_PIN, PIN_LOW);
     rt_thread_mdelay(3U);
     rt_pin_write(TCA9539_RST_PIN, PIN_HIGH);
+#if defined (HC32F467)
+    rt_thread_mdelay(3U);
+    rt_pin_write(TCA9539_RST_PIN, PIN_LOW); // reused MD pin, logic low level to reset
+#endif
 }
 
 /**

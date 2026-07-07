@@ -7,6 +7,8 @@
  * Date           Author       Notes
  * 2023-02-14     CDT          first version
  * 2025-07-25     CDT          support HC32F4A8
+ * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-03     CDT          support HC32F467
  */
 
 /*******************************************************************************
@@ -25,7 +27,7 @@
 #include "irq_config.h"
 #include "drv_usbd.h"
 
-#if defined(HC32F472)
+#if defined (HC32F472)
     #define USBFS_VBUS_INT_PIN            (rt_base_t)(((rt_uint16_t)USBF_VBUS_PORT * 16) + __CLZ(__RBIT(USBF_VBUS_PIN)))
 #endif
 
@@ -53,7 +55,7 @@ static struct ep_id _ep_pool[] =
     {0x4,  USB_EP_ATTR_INT,         USB_DIR_OUT,    64, ID_UNASSIGNED},
     {0x5,  USB_EP_ATTR_ISOC,        USB_DIR_IN,     64, ID_UNASSIGNED},
     {0x5,  USB_EP_ATTR_ISOC,        USB_DIR_OUT,    64, ID_UNASSIGNED},
-#if defined (HC32F4A0) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467)
     {0x6,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
     {0x6,  USB_EP_ATTR_BULK,        USB_DIR_OUT,    64, ID_UNASSIGNED},
     {0x7,  USB_EP_ATTR_BULK,        USB_DIR_IN,     64, ID_UNASSIGNED},
@@ -140,6 +142,21 @@ static void usb_shutdevep(usb_core_instance *pdev, uint8_t  ep_addr)
     ep->epidx  = tmp_2;
     ep->ep_dir = tmp_1;
     usb_epdeactive(&pdev->regs, ep);
+}
+
+static void usb_flsdevep(usb_core_instance *pdev, uint8_t epnum)
+{
+    __IO uint8_t tmp_1;
+
+    tmp_1 = epnum >> 7;     /* EP type, it is IN(=1) or OUT(=0) */
+    if (tmp_1 != 0U)
+    {
+        usb_txfifoflush(&pdev->regs, (uint32_t)epnum & (uint32_t)0x7F);
+    }
+    else
+    {
+        usb_rxfifoflush(&pdev->regs);
+    }
 }
 
 static void usb_readytorx(usb_core_instance *pdev, uint8_t ep_addr, uint8_t *pbuf, uint16_t buf_len)
@@ -400,7 +417,8 @@ static void usb_wrblanktxfifo(usb_core_instance *pdev, uint32_t epnum)
     }
 }
 
-#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F460) || defined (HC32F4A8) || \
+    defined (HC32F467)
 #ifdef VBUS_SENSING_ENABLED
 static void usb_sessionrequest_isr(usb_core_instance *pdev)
 {
@@ -718,7 +736,8 @@ static void usb_isr_handler(usb_core_instance *pdev)
         {
             usb_isooutincomplt_isr(pdev);
         }
-#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F460) || defined (HC32F4A8) || \
+    defined (HC32F467)
 #ifdef VBUS_SENSING_ENABLED
         if ((u32gintsts & VBUSV_INT) != 0UL)
         {
@@ -736,7 +755,7 @@ static void usbd_irq_handler(void)
     rt_interrupt_leave();
 }
 
-#if defined(HC32F472)
+#if defined (HC32F472)
 void USBFS_Handler(void)
 {
     usbd_irq_handler();
@@ -786,6 +805,7 @@ static rt_err_t _usbd_ep_enable(uep_t ep)
     RT_ASSERT(ep->ep_desc != RT_NULL);
     usb_opendevep(&_hc32_usbd, ep->ep_desc->bEndpointAddress,
                   ep->ep_desc->wMaxPacketSize, ep->ep_desc->bmAttributes);
+    usb_flsdevep(&_hc32_usbd, ep->ep_desc->bEndpointAddress);
     return RT_EOK;
 }
 
@@ -793,6 +813,7 @@ static rt_err_t _usbd_ep_disable(uep_t ep)
 {
     RT_ASSERT(ep != RT_NULL);
     RT_ASSERT(ep->ep_desc != RT_NULL);
+    usb_flsdevep(&_hc32_usbd, ep->ep_desc->bEndpointAddress);
     usb_shutdevep(&_hc32_usbd, ep->ep_desc->bEndpointAddress);
     return RT_EOK;
 }
@@ -852,7 +873,7 @@ static rt_err_t _usbd_init(rt_device_t device)
 #else
     stcPortIdentify.u8CoreID = USBHS_CORE_ID;
 #endif
-#if defined (HC32F4A0) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467)
 #if !defined(BSP_USING_USBHS_PHY_EXTERN)
     stcPortIdentify.u8PhyType = USBHS_PHY_EMBED;
 #else
@@ -885,7 +906,7 @@ static rt_err_t _usbd_init(rt_device_t device)
     hc32_install_irq_handler(&irq_config,
                              usbd_irq_handler,
                              RT_TRUE);
-#if defined(HC32F472)
+#if defined (HC32F472)
 #ifdef VBUS_SENSING_ENABLED
     /* VBUS Extint config */
     rt_pin_mode(USBFS_VBUS_INT_PIN, PIN_MODE_INPUT);

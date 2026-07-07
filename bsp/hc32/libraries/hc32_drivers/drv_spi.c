@@ -11,6 +11,8 @@
  * 2024-04-16     CDT          Support HC32F472
  * 2025-04-09     CDT          Support HC32F4A8
  * 2025-07-18     CDT          Support HC32F334
+ * 2026-05-27     CDT          Support HC32F4A2
+ * 2026-06-04     CDT          Support HC32F467
  */
 
 /*******************************************************************************
@@ -39,9 +41,9 @@
 #include <drv_log.h>
 
 /* SPI max division */
-#if defined(HC32F4A0) || defined(HC32F460)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F460) || defined (HC32F467)
     #define SPI_MAX_DIV_VAL                 (0x7U)  /* Div256 */
-#elif defined(HC32F448) || defined(HC32F472) || defined(HC32F4A8) || defined (HC32F334)
+#elif defined (HC32F448) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F334)
     #define SPI_MAX_DIV_VAL                 (0x39U)
 #endif
 
@@ -211,9 +213,9 @@ static rt_err_t hc32_spi_init(struct hc32_spi *spi_drv, struct rt_spi_configurat
             break;
         }
     }
-#if defined(HC32F4A0) || defined(HC32F460)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F460) || defined (HC32F467)
     stcSpiInit.u32BaudRatePrescaler = (u32Cnt << SPI_CFG2_MBR_POS);
-#elif defined(HC32F448) || defined(HC32F472) || defined(HC32F4A8) || defined (HC32F334)
+#elif defined (HC32F448) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F334)
     if (u32Cnt <= 15U)
     {
         stcSpiInit.u32BaudRatePrescaler = (u32Cnt << SPI_CFG1_CLKDIV_POS);
@@ -324,7 +326,7 @@ static rt_err_t hc32_spi_init(struct hc32_spi *spi_drv, struct rt_spi_configurat
 static void hc32_spi_enable(CM_SPI_TypeDef *SPIx)
 {
     /* Check if the SPI is already enabled */
-#if defined (HC32F460) || defined (HC32F4A0)
+#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467)
     if ((SPIx->CR1 & SPI_CR1_SPE) != SPI_CR1_SPE)
     {
         SPI_Cmd(SPIx, ENABLE);
@@ -341,7 +343,7 @@ static void hc32_spi_enable(CM_SPI_TypeDef *SPIx)
 
 static void hc32_spi_set_trans_mode(CM_SPI_TypeDef *SPIx, uint32_t u32Mode)
 {
-#if defined (HC32F460) || defined (HC32F4A0)
+#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467)
     if (SPI_SEND_ONLY == u32Mode)
     {
         SET_REG32_BIT(SPIx->CR1, SPI_CR1_TXMDS);
@@ -367,7 +369,7 @@ static void hc32_spi_set_trans_mode(CM_SPI_TypeDef *SPIx, uint32_t u32Mode)
 #ifdef BSP_SPI_USING_DMA
 static uint32_t hc32_spi_get_trans_mode(CM_SPI_TypeDef *SPIx)
 {
-#if defined (HC32F460) || defined (HC32F4A0)
+#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467)
     return READ_REG32_BIT(SPIx->CR1, SPI_CR1_TXMDS);
 #elif defined (HC32F448) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F334)
     return READ_REG32_BIT(SPIx->CR, SPI_CR_TXMDS);
@@ -913,7 +915,7 @@ static int hc32_hw_spi_bus_init(void)
         spi_bus_obj[i].config = &spi_config[i];
         spi_bus_obj[i].spi_bus.parent.user_data = &spi_config[i];
         /* register the handle */
-#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A8)
+#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467)
         hc32_install_irq_handler(&spi_config[i].err_irq.irq_config, spi_config[i].err_irq.irq_callback, RT_FALSE);
 #elif defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
         INTC_IntSrcCmd(spi_config[i].err_irq.irq_config.int_src, DISABLE);

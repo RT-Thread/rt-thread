@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-12-30     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
+ * 2026-06-03     CDT          Support HC32F467
  */
 
 /*
@@ -14,7 +16,7 @@
  *
  * 命令解释：命令第二个参数是要使用的串口设备名称，为空则使用默认的串口设备(uart1)
  * 程序功能：通过串口输出字符串:
- *     drv_usart: drv_usart_v1
+ *     drv_usart: drv_usart_v2
  *     commnucation：using DMA/interrupt,
  *     uart_ch: uartx (x对应测试通道)
  *     输出输入的字符
@@ -68,8 +70,8 @@
 
 #if defined(HC32F460) && defined(BSP_USING_UART2)
     #define SAMPLE_DEFAULT_UART_NAME       "uart2"
-#elif defined(HC32F4A0) && defined (BSP_USING_UART6)
-    #define SAMPLE_DEFAULT_UART_NAME       "uart6"
+#elif (defined(HC32F4A0) || defined(HC32F4A2)) && defined (BSP_USING_UART6)
+    #define SAMPLE_DEFAULT_UART_NAME       "uart6"          /* TX:PE6,  RX:PH6 */
 #elif defined(HC32F448) && defined (BSP_USING_UART1)
     #define SAMPLE_DEFAULT_UART_NAME       "uart1"
 #elif defined(HC32F472) && defined (BSP_USING_UART1)
@@ -78,6 +80,8 @@
     #define SAMPLE_DEFAULT_UART_NAME       "uart6"
 #elif defined(HC32F334) && defined (BSP_USING_UART1)
     #define SAMPLE_DEFAULT_UART_NAME       "uart1"
+#elif defined (HC32F467) && defined (BSP_USING_UART6)
+    #define SAMPLE_DEFAULT_UART_NAME       "uart6"
 #endif
 
 #if defined(SAMPLE_DEFAULT_UART_NAME)

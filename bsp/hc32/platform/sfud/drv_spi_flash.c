@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-04-28     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
+ * 2026-06-04     CDT          Support HC32F467
  */
 
 #include <board.h>
@@ -23,22 +25,22 @@
     #include "dev_spi_flash_sfud.h"
 #endif
 
-#if defined(HC32F4A0) || defined(HC32F448) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F467)
     #define SPI_BUS_NAME                "spi1"
     #define SPI_FLASH_DEVICE_NAME       "spi10"
     #define SPI_FLASH_CHIP              "w25q64"
     #define SPI_FLASH_SS_PIN            GET_PIN(C, 7)
-#elif defined(HC32F460)
+#elif defined (HC32F460)
     #define SPI_BUS_NAME                "spi3"
     #define SPI_FLASH_DEVICE_NAME       "spi30"
     #define SPI_FLASH_CHIP              "w25q64"
     #define SPI_FLASH_SS_PIN            GET_PIN(C, 7)
-#elif defined(HC32F472)
+#elif defined (HC32F472)
     #define SPI_BUS_NAME                "spi1"
     #define SPI_FLASH_DEVICE_NAME       "spi10"
     #define SPI_FLASH_CHIP              "w25q64"
     #define SPI_FLASH_SS_PIN            GET_PIN(B,12)
-#elif defined(HC32F334)
+#elif defined (HC32F334)
     #define SPI_BUS_NAME                "spi1"
     #define SPI_FLASH_DEVICE_NAME       "spi10"
     #define SPI_FLASH_CHIP              "w25q64"

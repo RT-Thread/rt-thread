@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-12-30     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
+ * 2026-06-10     CDT          Support HC32F467
  */
 
 /*
@@ -59,7 +61,7 @@
 #define W25Q_QSPI_DATA_BUF_LEN          0x2000
 #define W25Q_QSPI_WR_CMD                W25Q64_QUAD_INPUT_PAGE_PROGRAM
 
-#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F472)
+#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F472) || defined (HC32F467)
     #ifndef BSP_QSPI_USING_SOFT_CS
         #if (W25Q_QSPI_WR_CMD == W25Q64_QUAD_INPUT_PAGE_PROGRAM)
             #error "QUAD PAGE PROGRAM must use soft CS pin!!"
@@ -107,7 +109,7 @@ static int rt_hw_qspi_flash_init(void)
 #else
 #if defined (HC32F472)
     if (RT_EOK != rt_hw_qspi_bus_attach_device("qspi1", "qspi10", GET_PIN(B, 12), W25Q_QSPI_DATA_LINE_WIDTH, RT_NULL, RT_NULL))
-#elif defined (HC32F4A0) || defined (HC32F460) || defined (HC32F448) || defined (HC32F4A8)
+#elif defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F460) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F467)
     if (RT_EOK != rt_hw_qspi_bus_attach_device("qspi1", "qspi10", GET_PIN(C, 7), W25Q_QSPI_DATA_LINE_WIDTH, RT_NULL, RT_NULL))
 #endif
 #endif

@@ -36,7 +36,7 @@ struct dac_dev_init_params
              This parameter can be a value of @ref DAC_ADP_SELECT */
     rt_bool_t ch1_output_enable;
     rt_bool_t ch2_output_enable;
-#if defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467) || defined (HC32F448) || defined (HC32F4A8)
     uint16_t ch1_data_src;
     uint16_t ch2_data_src;
 #endif

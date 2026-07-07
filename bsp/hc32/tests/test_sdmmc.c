@@ -18,6 +18,11 @@
  *     stcPLLHInit.PLLCFGR_f.PLLN = 120UL - 1UL;
  *                    改为
  *     stcPLLHInit.PLLCFGR_f.PLLN = 100UL - 1UL;
+ *
+ * menuconfig:
+ *     Hardware Drivers Config  --->  Onboard Peripheral Drivers  ---->  Enable SDIO  ---->  Enable SDIOx（x：测试板硬件决定）
+ *
+ *     RT-Thread Components ---> Device Drivers ---> Using SD/MMC device drivers ---> (1024) The stack size for mmcsd thread
  */
 
 #include <stdlib.h>

@@ -8,6 +8,7 @@
  * 2022-04-28       CDT         first version
  * 2024-06-07       CDT         Modify the IRQ install implementation for F448/F472
  * 2025-07-16       CDT         Support HC32F334
+ * 2026-05-27       CDT         Support HC32F4A2
  */
 
 /*******************************************************************************
@@ -67,13 +68,13 @@ rt_err_t hc32_install_irq_handler(struct hc32_irq_config *irq_config,
     stcIrqSignConfig.enIntSrc    = irq_config->int_src;
     stcIrqSignConfig.pfnCallback = irq_hdr;
     if (LL_OK == INTC_IrqSignIn(&stcIrqSignConfig))
-#elif defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A8)
+nvic_config:
+#elif defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467)
     stcIrqSignConfig.enIRQn      = irq_config->irq_num;
     stcIrqSignConfig.enIntSrc    = irq_config->int_src;
     stcIrqSignConfig.pfnCallback = irq_hdr;
     if (LL_OK == INTC_IrqSignIn(&stcIrqSignConfig))
 #endif
-nvic_config:
     {
         NVIC_ClearPendingIRQ(irq_config->irq_num);
         NVIC_SetPriority(irq_config->irq_num, irq_config->irq_prio);

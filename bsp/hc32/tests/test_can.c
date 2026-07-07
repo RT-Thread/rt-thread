@@ -10,16 +10,23 @@
 
 /*
 * 功能
-*   展示 CAN1、CAN2、CAN3 接收消息和回发消息。
-* 代码使用方法
-*   在终端执行：can_sample 参数选择：can1 | can2 | can3 以启动CAN收发测试
+*   测试 can 和  mcan  接收消息和回发消息
+*       注：mcan 仅部分系列MCU支持(参考宏定义MCAN_DEV_CNT)
+*
+* 测试方法
+*   连接 can 测试设备与MCU can(mcan）：
+*       注：MCU can(mcan）通信引脚的配置位于 board_config.h，
+*           若测试单元的通信引脚未配置，需测试人员自行添加，并于board_config.c中做初始化
+*   初始化测试: 在终端按需执行：can_sample canx 或 can_sample mcany
+*               其中x和y是单元号， x = 1 ~ CAN_DEV_CNT, y = 1 ~ MCAN_DEV_CNT
+*   测试：can 测试设备发送满足过滤条件的消息（见后文：接收和发送消息）
+*         终端打印接收到的ID和消息，并将消息原样发回给测试设备。
 *
 * 默认波特率
 *   仲裁段:波特率500K,采样率80%
 *   数据段:波特率为4M,采样率80% (仅支持CAN FD的单元)
 *
 * 接收和发送消息
-*  CAN1:
 *  仅接收满足以下过滤条件的消息，并发送接收到的消息
 *   1）标准帧：match ID:0x100~0x1ff
 *   2）扩展帧：match ID:0x12345100~0x123451ff
@@ -56,6 +63,22 @@
 #include <rtthread.h>
 #include "rtdevice.h"
 #include "drv_can.h"
+
+#if defined (HC32F452) || defined (HC32F460)
+    #define CAN_DEV_CNT                  (1)
+#elif defined (HC32F472)
+    #define CAN_DEV_CNT                  (3)
+#elif defined (HC32F467) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8)
+    #define CAN_DEV_CNT                  (2)
+#endif
+
+#if defined (HC32F334) || defined (HC32F336) || defined (HC32F448) || defined (HC32F4A8)
+    #define MCAN_DEV_CNT                 (2)
+#elif defined (HC32K118)
+    #define MCAN_DEV_CNT                 (1)
+#elif defined (HC32F558)
+    #define MCAN_DEV_CNT                 (3)
+#endif
 
 #define MSH_USAGE_CAN_SAMPLE            "can_sample <can1 | can2 | mcan1 | mcan2>          - open can device and test\n"
 #define MSH_USAGE_CAN_SET_BAUD          "can set_baud <baud>        - set can baud\n"
@@ -173,7 +196,7 @@ static void _msh_cmd_set_baud(int argc, char **argv)
 }
 
 #ifdef RT_CAN_USING_CANFD
-void _msh_cmd_set_timing(int argc, char **argv)
+static void _msh_cmd_set_timing(int argc, char **argv)
 {
     rt_err_t result;
 
@@ -218,7 +241,7 @@ void _msh_cmd_set_timing(int argc, char **argv)
     }
 }
 
-void _msh_cmd_set_baudfd(int argc, char **argv)
+static void _msh_cmd_set_baudfd(int argc, char **argv)
 {
     rt_err_t result;
 
@@ -239,7 +262,7 @@ void _msh_cmd_set_baudfd(int argc, char **argv)
 }
 #endif
 
-void _msh_cmd_send_msg(int argc, char **argv)
+static void _msh_cmd_send_msg(int argc, char **argv)
 {
     rt_size_t  size;
     struct rt_can_msg msg = {0};
@@ -291,7 +314,7 @@ void _msh_cmd_send_msg(int argc, char **argv)
     }
 }
 
-void _show_usage(void)
+static void _show_usage(void)
 {
     rt_kprintf("Usage: \n");
     rt_kprintf(MSH_USAGE_CAN_SET_BAUD);

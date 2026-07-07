@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author               Notes
  * 2023-05-12     CDT                  first version
+ * 2026-05-27     CDT                  Support HC32F4A2
+ * 2026-06-05     CDT                  Support HC32F467
  */
 #include <board.h>
 
@@ -37,7 +39,7 @@ static dac_device _g_dac_dev_array[] =
 #ifdef BSP_USING_DAC1
     {
         {0},
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F334)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F334)
         CM_DAC1,
 #elif defined (HC32F448)
         CM_DAC,
@@ -148,7 +150,7 @@ static const struct rt_dac_ops g_dac_ops =
 static void _dac_clock_enable(void)
 {
 #if defined(BSP_USING_DAC1)
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F334)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F334)
     FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_DAC1, ENABLE);
 #elif defined (HC32F448)
     FCG_Fcg3PeriphClockCmd(FCG3_PERIPH_DAC, ENABLE);
@@ -180,12 +182,12 @@ int rt_hw_dac_init(void)
     {
         DAC_DeInit(_g_dac_dev_array[i].instance);
         stcDacInit.enOutput = (en_functional_state_t)_g_dac_dev_array[i].init.ch1_output_enable;
-#if defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467) || defined (HC32F448) || defined (HC32F4A8)
         stcDacInit.u16Src = _g_dac_dev_array[i].init.ch1_data_src;
 #endif
         ll_ret = DAC_Init((void *)_g_dac_dev_array[i].instance, DAC_CH1, &stcDacInit);
-#if defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F460)
-#if defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F460)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467) || defined (HC32F448) || defined (HC32F4A8)
         stcDacInit.u16Src = _g_dac_dev_array[i].init.ch2_data_src;
 #endif
         stcDacInit.enOutput = _g_dac_dev_array[i].init.ch2_output_enable;
@@ -213,7 +215,7 @@ int rt_hw_dac_init(void)
         DAC_SetAmpGain(_g_dac_dev_array[i].instance, DAC_CH2, _g_dac_dev_array[i].init.ch2_amp_gain);
 #endif
         DAC_AMPCmd(_g_dac_dev_array[i].instance, DAC_CH1, (en_functional_state_t)_g_dac_dev_array[i].init.ch1_amp_enable);
-#if defined (HC32F4A0) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F460)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467) || defined (HC32F448) || defined (HC32F4A8) || defined (HC32F460)
         DAC_AMPCmd(_g_dac_dev_array[i].instance, DAC_CH2, _g_dac_dev_array[i].init.ch2_amp_enable);
 #elif defined (HC32F334)
         if (CM_DAC1 == (void *)_g_dac_dev_array[i].instance)

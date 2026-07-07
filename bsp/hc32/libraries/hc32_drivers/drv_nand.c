@@ -6,7 +6,9 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-03-01     CDT          first version
- * 2042-12-24     CDT          fix compiler warning
+ * 2024-12-24     CDT          fix compiler warning
+ * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-05     CDT          support HC32F467
  */
 
 
@@ -84,7 +86,7 @@ static rt_err_t _nand_verify_clock_frequency(void)
 {
     rt_err_t ret = RT_EOK;
 
-#if defined (HC32F4A0)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467)
     /* EXCLK max frequency for Nand: 60MHz */
     if (CLK_GetBusClockFreq(CLK_BUS_EXCLK) > (60 * 1000000))
     {
@@ -128,7 +130,7 @@ static rt_err_t _nand_init(struct rt_mtd_nand_device *device)
     nfc_init_params.u32OpenPage = EXMC_NFC_OPEN_PAGE_DISABLE;
     nfc_init_params.stcBaseConfig.u32CapacitySize = NAND_EXMC_NFC_BANK_CAPACITY;
     nfc_init_params.stcBaseConfig.u32MemoryWidth = NAND_EXMC_NFC_MEMORY_WIDTH;
-    nfc_init_params.stcBaseConfig.u32BankNum = EXMC_NFC_1BANK;
+    nfc_init_params.stcBaseConfig.u32BankNum = NAND_EXMC_NFC_BANK_NUMBER;
     nfc_init_params.stcBaseConfig.u32PageSize = NAND_EXMC_NFC_PAGE_SIZE;
     nfc_init_params.stcBaseConfig.u32WriteProtect = EXMC_NFC_WR_PROTECT_DISABLE;
     nfc_init_params.stcBaseConfig.u32EccMode = NAND_EXMC_NFC_ECC_MD;

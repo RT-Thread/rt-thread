@@ -16,7 +16,8 @@
  *     menuconfig:
  *     RT-Thread Components  --->  FAL: flash abstraction layer
  *                           --->  Device Drivers  --->  Using SPI Bus/Device device drivers  --->  Using Serial Flash Universal Driver
- *     Hardware Drivers Config  --->  Onboard Peripheral Drivers  ---->  Enable on-chip FLASH
+ *     Hardware Drivers Config  --->  Onboard On-chip Peripheral Drivers  ---->  Enable on-chip FLASH
+ * NOTE: 忽略‘[E/SFUD] ERROR: Flash device w25q64 not found!’错误，不影响测试
 */
 #include <rtthread.h>
 #include <rtdevice.h>

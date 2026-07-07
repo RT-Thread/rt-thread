@@ -9,6 +9,8 @@
  * 2022-06-07     xiaoxiaolisunny      add hc32f460 series
  * 2022-06-08     CDT                  fix a bug of RT_CAN_CMD_SET_FILTER
  * 2022-06-15     lianghongquan        fix bug, CAN_FILTER_COUNT, RT_CAN_CMD_SET_FILTER, interrupt setup and processing.
+ * 2026-05-27     CDT                  support HC32F4A2.
+ * 2026-06-24     CDT                  Added _can_sendmsg_nonblocking.
  */
 
 #include "drv_can.h"
@@ -20,7 +22,7 @@
 
 #if defined(BSP_USING_CAN1) || defined(BSP_USING_CAN2) || defined(BSP_USING_CAN3)
 
-#if defined(RT_CAN_USING_CANFD) && defined(HC32F460)
+#if defined(RT_CAN_USING_CANFD) && (defined (HC32F460) || defined (HC32F467))
     #error "Selected mcu does not support canfd!"
 #endif
 
@@ -28,10 +30,10 @@
 #define TSEG1_MAX_FOR_CAN2_0                                (65U)
 #define TSEG2_MIN_FOR_CAN2_0                                (1U)
 #define TSEG2_MAX_FOR_CAN2_0                                (8U)
-#if defined(HC32F4A0) || defined(HC32F472) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F467)
     #define TSJW_MIN_FOR_CAN2_0                             (1U)
     #define TSJW_MAX_FOR_CAN2_0                             (16U)
-#elif defined(HC32F460)
+#elif defined (HC32F460)
     #define TSJW_MIN_FOR_CAN2_0                             (1U)
     #define TSJW_MAX_FOR_CAN2_0                             (8U)
 #endif
@@ -88,7 +90,7 @@
 #endif
 
 #define NUM_PRESCALE_MAX                                    (256U)
-#if defined(HC32F4A0) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467)
     #define CAN_FILTER_COUNT                                (16U)
     #define CAN1_INT_SRC                                    (INT_SRC_CAN1_HOST)
     #define CAN2_INT_SRC                                    (INT_SRC_CAN2_HOST)
@@ -236,7 +238,7 @@ static can_device _g_can_dev_array[] =
     {
         {0},
         CAN1_INIT_PARAMS,
-#if defined(HC32F4A0) || defined(HC32F472) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F467)
         .instance = CM_CAN1,
 #elif defined (HC32F460)
         .instance = CM_CAN,
@@ -811,7 +813,7 @@ static rt_err_t _canfd_control(can_device *p_can_dev, int cmd, void *arg)
         CAN_Init(p_can_dev->instance, &p_can_dev->ll_init);
         p_can_dev->rt_can.config.enable_canfd = argval;
         argval = (argval > CAN_FRAME_CLASSIC) ? ENABLE : DISABLE;
-#if defined(HC32F472) || defined(HC32F4A8)
+#if defined (HC32F472) || defined (HC32F4A8)
         CAN_FD_Cmd(p_can_dev->instance, (en_functional_state_t)argval);
 #endif
         break;
@@ -965,6 +967,7 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     stc_can_tx_frame_t stc_tx_frame = {0};
     int32_t ll_ret;
 
+    (void)box_num;
     RT_ASSERT(can != RT_NULL);
     can_device *p_can_dev = (can_device *)rt_container_of(can, can_device, rt_can);
     RT_ASSERT(p_can_dev);
@@ -1006,6 +1009,11 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     CAN_StartTx(p_can_dev->instance, CAN_TX_REQ_PTB);
 
     return RT_EOK;
+}
+
+rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+{
+    return _can_sendmsg(can, buf, 0);
 }
 
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
@@ -1064,6 +1072,7 @@ static const struct rt_can_ops _can_ops =
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
+    _can_sendmsg_nonblocking,
 };
 
 rt_inline void _isr_can_rx(can_device *p_can_dev)
@@ -1141,9 +1150,13 @@ rt_inline void _isr_can_tx(can_device *p_can_dev)
     if (need_check_single_trans)
     {
         if ((CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR) != SET) \
-                || (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) != SET))
+                && (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) != SET))
         {
             is_tx_done = RT_TRUE;
+        }
+        else
+        {
+            rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_FAIL);
         }
     }
     if (is_tx_done)
@@ -1153,7 +1166,6 @@ rt_inline void _isr_can_tx(can_device *p_can_dev)
 
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) == SET)
     {
-        rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_FAIL);
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST);
     }
 }
@@ -1223,7 +1235,7 @@ static void _irq_handler_can1(void)
     rt_interrupt_leave();
 }
 
-#if defined(HC32F472)
+#if defined (HC32F472)
 void CAN1_Handler(void)
 {
     _irq_handler_can1();
@@ -1239,7 +1251,7 @@ static void _irq_handler_can2(void)
     rt_interrupt_leave();
 }
 
-#if defined(HC32F472)
+#if defined (HC32F472)
 void CAN2_Handler(void)
 {
     _irq_handler_can2();
@@ -1255,7 +1267,7 @@ static void _irq_handler_can3(void)
     rt_interrupt_leave();
 }
 
-#if defined(HC32F472)
+#if defined (HC32F472)
 void CAN3_Handler(void)
 {
     _irq_handler_can3();
@@ -1266,9 +1278,9 @@ void CAN3_Handler(void)
 static void _enable_can_clock(void)
 {
 #if defined(BSP_USING_CAN1)
-#if defined(HC32F4A0) || defined(HC32F472) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F472) || defined (HC32F4A8) ||  defined (HC32F467)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN1, ENABLE);
-#elif defined(HC32F460)
+#elif defined (HC32F460)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN, ENABLE);
 #endif
 #endif

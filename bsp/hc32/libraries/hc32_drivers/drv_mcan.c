@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author               Notes
  * 2024-xx-xx     CDT                  first version
+ * 2026-06-24     CDT                  Added _can_sendmsg_nonblocking. Fixed comments.
  */
 
 #include "drv_mcan.h"
@@ -26,7 +27,7 @@ typedef struct hc32_mcan_config_struct
 
     uint32_t int0_sel;
     struct hc32_irq_config int0_cfg;    /* MCAN interrupt line 0 configuration */
-#if defined(HC32F4A8)
+#if defined (HC32F4A8)
     func_ptr_t irq_callback0;
 #endif
 } hc32_mcan_config_t;
@@ -186,43 +187,50 @@ static hc32_mcan_driver_t m_mcan_driver_list[] =
 ****************************************************************************************/
 /**
  * @brief Configure CAN controller
- * @param [in/out] can CAN device pointer
+ * @param [inout] device CAN device pointer
  * @param [in] cfg CAN configuration pointer
- * @retval RT_EOK for valid configuration
- * @retval -RT_ERROR for invalid configuration
+ * @retval RT_EOK No error
+ * @retval An error code on failure
  */
 static rt_err_t mcan_configure(struct rt_can_device *device, struct can_configure *cfg);
 
 /**
  * @brief Control/Get CAN state
  *        including:interrupt, mode, priority, baudrate, filter, status
- * @param [in/out] can CAN device pointer
+ * @param [inout] device CAN device pointer
  * @param [in] cmd Control command
- * @param [in/out] arg Argument pointer
- * @retval RT_EOK for valid control command and arg
- * @retval -RT_ERROR for invalid control command or arg
+ * @param [inout] arg Argument pointer
+ * @retval RT_EOK No error
+ * @retval An error code on failure
  */
 static rt_err_t mcan_control(struct rt_can_device *device, int cmd, void *arg);
 
 /**
  * @brief Send out CAN message
- * @param [in] can CAN device pointer
+ * @param [inout] device CAN device pointer
  * @param [in] buf CAN message buffer
  * @param [in] boxno Mailbox number, it is not used in this porting
  * @retval RT_EOK No error
- * @retval -RT_ETIMEOUT timeout happened
- * @retval -RT_EFULL Transmission buffer is full
+ * @retval An error code on failure
  */
 static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt_uint32_t boxno);
+
+/**
+ * @brief Send out CAN message non-blocking
+ * @param [inout] device CAN device pointer
+ * @param [in] buf CAN message buffer
+ * @retval RT_EOK No error
+ * @retval An error code on failure
+ */
+static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf);
 
 /**
  * @brief Receive message from CAN
  * @param [in] can CAN device pointer
  * @param [out] buf CAN receive buffer
  * @param [in] boxno Mailbox Number, it is not used in this porting
- * @retval RT_EOK no error
- * @retval -RT_ERROR Error happened during reading receive FIFO
- * @retval -RT_EMPTY no data in receive FIFO
+ * @retval RT_EOK No error
+ * @retval An error code on failure
  */
 static rt_ssize_t mcan_recvmsg(struct rt_can_device *device, void *buf, rt_uint32_t boxno);
 
@@ -236,6 +244,7 @@ static const struct rt_can_ops m_mcan_ops =
     mcan_control,
     mcan_sendmsg,
     mcan_recvmsg,
+    mcan_sendmsg_nonblocking,
 };
 
 /****************************************************************************************
@@ -763,6 +772,11 @@ static rt_ssize_t mcan_sendmsg(struct rt_can_device *device, const void *buf, rt
     return RT_EOK;
 }
 
+static rt_ssize_t mcan_sendmsg_nonblocking(struct rt_can_device *device, const void *buf)
+{
+    return mcan_sendmsg(device, buf, 0);
+}
+
 /****************************************************************************************
 * mcan receive message
 ****************************************************************************************/
@@ -951,7 +965,7 @@ rt_inline void mcan_isr(hc32_mcan_driver_t *driver, uint32_t int_sel)
 /****************************************************************************************
 * mcan irq handler
 ****************************************************************************************/
-#if defined(HC32F448) || defined(HC32F4A8) || defined(HC32F334)
+#if defined (HC32F448) || defined (HC32F4A8) || defined (HC32F334)
 #if defined(BSP_USING_MCAN1)
 void MCAN1_INT0_Handler(void)
 {
@@ -984,12 +998,12 @@ void MCAN2_INT0_Handler(void)
 ****************************************************************************************/
 static void mcan_irq_config(hc32_mcan_config_t *hard)
 {
-#if defined(HC32F448) || defined(HC32F334)
+#if defined (HC32F448) || defined (HC32F334)
     if (hard->int0_sel != 0)
     {
         hc32_install_irq_handler(&hard->int0_cfg, RT_NULL, RT_TRUE);
     }
-#elif defined(HC32F4A8)
+#elif defined (HC32F4A8)
     if (hard->int0_sel != 0)
     {
         hc32_install_irq_handler(&hard->int0_cfg, hard->irq_callback0, RT_TRUE);
@@ -999,14 +1013,14 @@ static void mcan_irq_config(hc32_mcan_config_t *hard)
 
 static void mcan_enable_periph_clock(void)
 {
-#if defined(HC32F448) || defined(HC32F4A8)
+#if defined (HC32F448) || defined (HC32F4A8)
 #if defined(BSP_USING_MCAN1)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_MCAN1, ENABLE);
 #endif
 #if defined(BSP_USING_MCAN2)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_MCAN2, ENABLE);
 #endif
-#elif defined(HC32F334)
+#elif defined (HC32F334)
 #if defined(BSP_USING_MCAN1) || defined(BSP_USING_MCAN2)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_MCAN1 | FCG1_PERIPH_MCAN2, ENABLE);
 #endif
@@ -1120,7 +1134,7 @@ static void init_can_cfg(hc32_mcan_driver_t *driver)
     driver->can_device.config = can_cfg;
 }
 
-#if defined(HC32F4A8)
+#if defined (HC32F4A8)
 /**
  * @brief  This function gets mcan irq handle.
  * @param  None
@@ -1147,7 +1161,7 @@ static int rt_hw_mcan_init(void)
 
     mcan_enable_periph_clock();
     mcan_set_init_para();
-#if defined(HC32F4A8)
+#if defined (HC32F4A8)
     mcan_get_irq_callback();
 #endif
     for (i = 0; i < MCAN_DEV_CNT; i++)

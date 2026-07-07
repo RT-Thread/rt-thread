@@ -15,7 +15,9 @@ if GetDepend(['RT_USING_SERIAL']):
         src += ['test_uart_v1.c']
 
 if GetDepend(['BSP_USING_SPI']):
-    src += ['test_spi.c']
+    # don't add test file when use RT_USB_DEVICE_MSTORAGE 
+    if not (GetDepend(['BSP_USING_USBD']) and GetDepend(['RT_USB_DEVICE_MSTORAGE'])):
+        src += ['test_spi.c']
 
 if GetDepend(['BSP_USING_QSPI']):
     src += ['test_qspi.c']
@@ -66,6 +68,7 @@ if GetDepend(['BSP_USING_INPUT_CAPTURE']):
 
 if GetDepend(['BSP_USING_PM']):
     src += ['test_pm.c']
+    src += ['test_wktm.c']
 
 if GetDepend('BSP_USING_HWCRYPTO'):
     src += ['test_crypto.c']

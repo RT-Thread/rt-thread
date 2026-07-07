@@ -7,6 +7,9 @@
  * Date           Author       Notes
  * 2023-06-12     CDT          first version
  * 2024-06-14     CDT          Move common function SysTick_Configuration to _pm_run
+ * 2026-05-27     CDT          Support HC32F4A2
+ * 2026-06-04     CDT          Support HC32F467
+ * 2026-06-24     CDT          rt_system_pm_init parameter timer_mask change to 0 for unsupport pm tickless timer
  */
 
 #include <board.h>
@@ -72,7 +75,7 @@ static void _sleep_enter_deep(void)
 
     (void)PWC_STOP_Config(&sleep_deep_cfg.cfg);
 
-#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F460) || defined (HC32F467) || defined (HC32F448) || defined (HC32F4A8)
     if (PWC_PWRC2_DVS == (READ_REG8(CM_PWC->PWRC2) & PWC_PWRC2_DVS))
     {
         CLR_REG8_BIT(CM_PWC->PWRC1, PWC_PWRC1_STPDAS);
@@ -128,7 +131,7 @@ static void _run_switch_high_to_low(void)
 
     st_run_mode_cfg.sys_clk_cfg(PM_RUN_MODE_LOW_SPEED);
 
-#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F460) || defined (HC32F467) || defined (HC32F448) || defined (HC32F4A8)
     PWC_HighSpeedToLowSpeed();
 #endif
 }
@@ -137,7 +140,7 @@ static void _run_switch_low_to_high(void)
 {
     struct pm_run_mode_config st_run_mode_cfg = PM_RUN_MODE_CFG;
 
-#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F460) || defined (HC32F467) || defined (HC32F448) || defined (HC32F4A8)
     PWC_LowSpeedToHighSpeed();
 #endif
 
@@ -229,9 +232,8 @@ int rt_hw_pm_init(void)
         _timer_get_tick,
     };
 
-    rt_uint8_t timer_mask = PM_TICKLESS_TIMER_ENABLE_MASK;
     /* initialize system pm module */
-    rt_system_pm_init(&_ops, timer_mask, RT_NULL);
+    rt_system_pm_init(&_ops, 0U, RT_NULL);
     return 0;
 }
 
