@@ -21,8 +21,7 @@
 
 /* C binding of definitions if building with C++ compiler */
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*******************************************************************************
@@ -31,48 +30,48 @@ extern "C"
 struct hc32_uart_irq_config
 {
     struct hc32_irq_config irq_config;
-    func_ptr_t             irq_callback;
+    func_ptr_t irq_callback;
 };
 
 /* HC32 config Rx timeout */
 struct hc32_uart_rxto
 {
-    CM_TMR0_TypeDef             *TMR0_Instance;
-    rt_uint32_t                 channel;
-    rt_uint32_t                 clock;
-    rt_size_t                   timeout_bits;
-#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A8)
-    struct hc32_irq_config      irq_config;
-    func_ptr_t                  irq_callback;
+    CM_TMR0_TypeDef *TMR0_Instance;
+    rt_uint32_t channel;
+    rt_uint32_t clock;
+    rt_size_t timeout_bits;
+#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
+    struct hc32_irq_config irq_config;
+    func_ptr_t irq_callback;
 #endif
 };
 
 /* HC32 config uart class */
 struct hc32_uart_config
 {
-    const char                  *name;
-    CM_USART_TypeDef            *Instance;
-    rt_uint32_t                 clock;
-#if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A8)
+    const char *name;
+    CM_USART_TypeDef *Instance;
+    rt_uint32_t clock;
+#if defined(HC32F460) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
     struct hc32_uart_irq_config rxerr_irq;
     struct hc32_uart_irq_config rx_irq;
     struct hc32_uart_irq_config tx_irq;
-#elif defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
-    IRQn_Type                   irq_num;
-    en_int_src_t                rxerr_int_src;
-    en_int_src_t                tx_int_src;
-    en_int_src_t                rx_int_src;
+#elif defined(HC32F448) || defined(HC32F472) || defined(HC32F334)
+    IRQn_Type irq_num;
+    en_int_src_t rxerr_int_src;
+    en_int_src_t tx_int_src;
+    en_int_src_t rx_int_src;
 #ifdef RT_SERIAL_USING_DMA
-    en_int_src_t                rxto_int_src;
+    en_int_src_t rxto_int_src;
 #endif
 #endif
 
 #ifdef RT_SERIAL_USING_DMA
-    struct hc32_uart_rxto       *rx_timeout;
-    stc_dma_llp_descriptor_t    llp_desc[2U];
-    struct dma_config           *dma_rx;
+    struct hc32_uart_rxto *rx_timeout;
+    stc_dma_llp_descriptor_t llp_desc[2U];
+    struct dma_config *dma_rx;
     struct hc32_uart_irq_config *tc_irq;
-    struct dma_config           *dma_tx;
+    struct dma_config *dma_tx;
 #endif
 };
 
@@ -81,9 +80,9 @@ struct hc32_uart
 {
     struct hc32_uart_config *config;
 #ifdef RT_SERIAL_USING_DMA
-    rt_size_t               dma_rx_remaining_cnt;
+    rt_size_t dma_rx_remaining_cnt;
 #endif
-    rt_uint16_t             uart_dma_flag;
+    rt_uint16_t uart_dma_flag;
     struct rt_serial_device serial;
 };
 

@@ -151,7 +151,8 @@ static int clock_timer_sample(int argc, char *argv[])
     }
 
     /* 确保oneshot模式cb函数执行一次后才关闭定时器 */
-    while (cb_run == RT_FALSE);
+    while (cb_run == RT_FALSE)
+        ;
     cb_run = RT_FALSE;
 
     /* close */
@@ -160,5 +161,5 @@ static int clock_timer_sample(int argc, char *argv[])
     return ret;
 }
 /* 导出到 msh 命令列表中 */
-MSH_CMD_EXPORT(clock_timer_sample, clock_timer sample: devname [oneshot | period] timeout);
+MSH_CMD_EXPORT(clock_timer_sample, clock_timer sample : devname[oneshot | period] timeout);
 #endif

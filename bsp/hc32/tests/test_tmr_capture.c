@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2025-01-10     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
  */
 
 /*
@@ -16,7 +17,8 @@
 * 默认配置
 *   input pin：
 *       icx: INPUT_CAPTURE_TMR6_x_PORT, INPUT_CAPTURE_TMR6_x_PIN (x=1~IC_DEV_CNT)
-        注：该引脚配置位于 board_config.h，若测试单元的input pin未配置，需测试人员自行添加
+        注：该引脚配置位于 board_config.h，若测试单元的input pin未配置，需测试人员自行添加,并于
+            board_config.c中做初始化
 *   watermark：
 *       默认值为 5
 *
@@ -53,23 +55,23 @@
 #include <board.h>
 #include <stdlib.h>
 
-#define MSH_USAGE_IC_OPEN               "  ic open <unit>     - e.g., open ic3: ic open 3 \n"
-#define MSH_USAGE_IC_CLOSE              "  ic close <unit>    - e.g., close ic3: ic close 3\n"
-#define MSH_USAGE_IC_SET_WM             "  ic wm <unit> <wm>  - e.g., set warter mark of ic3 to 11: ic wm 3 11\n"
-#define MSH_USAGE_IC_CLR                "  ic clr <unit>      - e.g., clear data buffer of ic3: ic clr 3 \n"
+#define MSH_USAGE_IC_OPEN   "  ic open <unit>     - e.g., open ic3: ic open 3 \n"
+#define MSH_USAGE_IC_CLOSE  "  ic close <unit>    - e.g., close ic3: ic close 3\n"
+#define MSH_USAGE_IC_SET_WM "  ic wm <unit> <wm>  - e.g., set warter mark of ic3 to 11: ic wm 3 11\n"
+#define MSH_USAGE_IC_CLR    "  ic clr <unit>      - e.g., clear data buffer of ic3: ic clr 3 \n"
 
-#if defined (HC32F4A0) || defined (HC32F4A8)
-    #define IC_DEV_CNT                  (8)
-#elif defined (HC32F460)
-    #define IC_DEV_CNT                  (3)
-#elif defined (HC32F334)
-    #define IC_DEV_CNT                  (4)
-#elif defined (HC32F448)
-    #define IC_DEV_CNT                  (2)
-#elif defined (HC32F472)
-    #define IC_DEV_CNT                  (10)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8)
+#define IC_DEV_CNT (8)
+#elif defined(HC32F460) || defined(HC32F467)
+#define IC_DEV_CNT (3)
+#elif defined(HC32F334)
+#define IC_DEV_CNT (4)
+#elif defined(HC32F448)
+#define IC_DEV_CNT (2)
+#elif defined(HC32F472)
+#define IC_DEV_CNT (10)
 #endif
-#define DEFAULT_WATER_MARK              (5)
+#define DEFAULT_WATER_MARK (5)
 
 #ifdef BSP_USING_INPUT_CAPTURE
 
@@ -82,7 +84,7 @@ typedef struct
     rt_thread_t thread;
 } test_ic_t;
 
-static test_ic_t g_arr_test_ic[IC_DEV_CNT] = {0};
+static test_ic_t g_arr_test_ic[IC_DEV_CNT] = { 0 };
 
 static int32_t _get_test_id(rt_device_t ic_dev)
 {
@@ -109,7 +111,7 @@ static rt_err_t ic_rx_all(rt_device_t dev, rt_size_t size)
 
 static void ic_rx_thread(void *parameter)
 {
-    rt_size_t  size;
+    rt_size_t size;
     rt_device_t ic_dev;
     test_ic_t *p_test_ic = parameter;
     ic_dev = p_test_ic->ic_dev;
@@ -223,7 +225,7 @@ static rt_err_t _msh_cmd_parse_unit(char *n, uint32_t *u_out)
     return RT_EOK;
 }
 
-void _show_usage(void)
+static void _show_usage(void)
 {
     rt_kprintf("Usage: \n");
     rt_kprintf(MSH_USAGE_IC_OPEN);
@@ -297,7 +299,7 @@ static rt_int32_t ic(int argc, char *argv[])
 }
 
 
-MSH_CMD_EXPORT(ic, ic [opt])
+MSH_CMD_EXPORT(ic, ic[opt])
 #endif
 /*
  EOF

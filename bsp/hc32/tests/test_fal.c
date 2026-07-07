@@ -16,7 +16,8 @@
  *     menuconfig:
  *     RT-Thread Components  --->  FAL: flash abstraction layer
  *                           --->  Device Drivers  --->  Using SPI Bus/Device device drivers  --->  Using Serial Flash Universal Driver
- *     Hardware Drivers Config  --->  Onboard Peripheral Drivers  ---->  Enable on-chip FLASH
+ *     Hardware Drivers Config  --->  Onboard On-chip Peripheral Drivers  ---->  Enable on-chip FLASH
+ * NOTE: 忽略‘[E/SFUD] ERROR: Flash device w25q64 not found!’错误，不影响测试
 */
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -26,15 +27,15 @@
 #include "board.h"
 #include <fal.h>
 
-#define FAL_PART_NAME                   "app"
-#define TEST_BUF_SIZE                   1024UL
-#define TEST_RW_CNT                     32UL
+#define FAL_PART_NAME "app"
+#define TEST_BUF_SIZE 1024UL
+#define TEST_RW_CNT   32UL
 
-#define TEST_RW_START_ADDR              HC32_FLASH_END_ADDRESS - (TEST_BUF_SIZE * TEST_RW_CNT)
+#define TEST_RW_START_ADDR HC32_FLASH_END_ADDRESS - (TEST_BUF_SIZE * TEST_RW_CNT)
 
 
-static uint8_t write_buffer[TEST_BUF_SIZE] = {0};
-static uint8_t read_buffer[TEST_BUF_SIZE] = {0};
+static uint8_t write_buffer[TEST_BUF_SIZE] = { 0 };
+static uint8_t read_buffer[TEST_BUF_SIZE] = { 0 };
 
 
 static int fal_sample(int argc, char **argv)
@@ -108,8 +109,7 @@ static int fal_sample(int argc, char **argv)
         for (int i = 0; i < TEST_BUF_SIZE; i++)
         {
 #if defined(HC32F460)
-            if ((j == (TEST_RW_CNT - 1)) && (i >= (TEST_BUF_SIZE - 32)) ?
-                    (read_buffer[i] != 0xFF) : (read_buffer[i] != write_buffer[i]))
+            if ((j == (TEST_RW_CNT - 1)) && (i >= (TEST_BUF_SIZE - 32)) ? (read_buffer[i] != 0xFF) : (read_buffer[i] != write_buffer[i]))
 #else
             if (read_buffer[i] != write_buffer[i])
 #endif

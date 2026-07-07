@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-12-30     CDT          first version
+ * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-05     CDT          support HC32F467
  */
 
 /*
@@ -21,11 +23,11 @@
 
 #ifdef BSP_USING_DAC
 
-#define REFER_VOLTAGE                   330     /* 参考电压 3.3V,数据精度乘以100保留2位小数*/
-#define DAC_MAX_OUTPUT_VALUE            4095
+#define REFER_VOLTAGE        330     /* 参考电压 3.3V,数据精度乘以100保留2位小数*/
+#define DAC_MAX_OUTPUT_VALUE 4095
 
-#if (defined (HC32F4A8) || defined (HC32F4A0)) && defined (BSP_USING_DAC2)
-    extern void EthPhyDisable(void);
+#if (defined(HC32F4A8) || defined(HC32F4A0) || defined(HC32F4A2)) && defined(BSP_USING_DAC2)
+extern void EthPhyDisable(void);
 #endif /* HC32F4A8 && BSP_USING_DAC2 */
 
 static int dac_vol_sample(int argc, char *argv[])
@@ -47,18 +49,18 @@ static int dac_vol_sample(int argc, char *argv[])
             rt_strcpy(dac_device_name, "dac1");
             max_channel = 2;
         }
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8) || defined (HC32F334)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F467) || defined(HC32F472) || defined(HC32F4A8) || defined(HC32F334)
         else if (0 == rt_strcmp(argv[1], "dac2"))
         {
             rt_strcpy(dac_device_name, "dac2");
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F467) || defined(HC32F472) || defined(HC32F4A8)
             max_channel = 2;
-#elif defined (HC32F334)
+#elif defined(HC32F334)
             max_channel = 1;
 #endif
         }
 #endif
-#if defined (HC32F472)
+#if defined(HC32F472)
         else if (0 == rt_strcmp(argv[1], "dac3"))
         {
             rt_strcpy(dac_device_name, "dac3");
@@ -76,7 +78,7 @@ static int dac_vol_sample(int argc, char *argv[])
             return -RT_ERROR;
         }
     }
-#if (defined (HC32F4A8) || defined (HC32F4A0)) && defined (BSP_USING_DAC2)
+#if (defined(HC32F4A8) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F467)) && defined(BSP_USING_DAC2)
     EthPhyDisable();
 #endif
     /* 查找设备 */
@@ -117,5 +119,5 @@ static int dac_vol_sample(int argc, char *argv[])
     return ret;
 }
 /* 导出到 msh 命令列表中 */
-MSH_CMD_EXPORT(dac_vol_sample, dac voltage convert sample < dac1 | dac2  value >);
+MSH_CMD_EXPORT(dac_vol_sample, dac voltage convert sample<dac1 | dac2 value>);
 #endif

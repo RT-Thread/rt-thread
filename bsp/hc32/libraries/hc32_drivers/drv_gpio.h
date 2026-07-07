@@ -16,14 +16,14 @@
 
 #if defined(RT_USING_PIN)
 
-#define __HC_PORT(port)                 GPIO_PORT_##port
-#define GET_PIN(PORT, PIN)              (rt_base_t)(((rt_uint16_t)__HC_PORT(PORT) * 16) + PIN)
+#define __HC_PORT(port)    GPIO_PORT_##port
+#define GET_PIN(PORT, PIN) (rt_base_t)(((rt_uint16_t)__HC_PORT(PORT) * 16) + PIN)
 
 struct hc32_pin_irq_map
 {
-    rt_uint16_t             pinbit;
-    func_ptr_t              irq_callback;
-    struct hc32_irq_config  irq_config;
+    rt_uint16_t pinbit;
+    func_ptr_t irq_callback;
+    struct hc32_irq_config irq_config;
 };
 
 int rt_hw_pin_init(void);

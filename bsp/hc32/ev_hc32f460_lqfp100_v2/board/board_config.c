@@ -127,7 +127,7 @@ rt_err_t rt_hw_board_can_init(CM_CAN_TypeDef *CANx)
 #endif
 
 
-#if defined (RT_USING_SPI)
+#if defined(RT_USING_SPI)
 rt_err_t rt_hw_spi_board_init(CM_SPI_TypeDef *CM_SPIx)
 {
     rt_err_t result = RT_EOK;
@@ -141,16 +141,16 @@ rt_err_t rt_hw_spi_board_init(CM_SPI_TypeDef *CM_SPIx)
     case (rt_uint32_t)CM_SPI3:
         GPIO_StructInit(&stcGpioInit);
         stcGpioInit.u16PinState = PIN_STAT_SET;
-        stcGpioInit.u16PinDir   = PIN_DIR_OUT;
+        stcGpioInit.u16PinDir = PIN_DIR_OUT;
         GPIO_Init(SPI3_WP_PORT, SPI3_WP_PIN, &stcGpioInit);
         GPIO_Init(SPI3_HOLD_PORT, SPI3_HOLD_PIN, &stcGpioInit);
 
         (void)GPIO_StructInit(&stcGpioInit);
         stcGpioInit.u16PinDrv = PIN_HIGH_DRV;
-        (void)GPIO_Init(SPI3_SCK_PORT,  SPI3_SCK_PIN,  &stcGpioInit);
+        (void)GPIO_Init(SPI3_SCK_PORT, SPI3_SCK_PIN, &stcGpioInit);
         (void)GPIO_Init(SPI3_MOSI_PORT, SPI3_MOSI_PIN, &stcGpioInit);
         (void)GPIO_Init(SPI3_MISO_PORT, SPI3_MISO_PIN, &stcGpioInit);
-        GPIO_SetFunc(SPI3_SCK_PORT,  SPI3_SCK_PIN,  SPI3_SCK_FUNC);
+        GPIO_SetFunc(SPI3_SCK_PORT, SPI3_SCK_PIN, SPI3_SCK_FUNC);
         GPIO_SetFunc(SPI3_MOSI_PORT, SPI3_MOSI_PIN, SPI3_MOSI_FUNC);
         GPIO_SetFunc(SPI3_MISO_PORT, SPI3_MISO_PIN, SPI3_MISO_FUNC);
         break;
@@ -164,7 +164,7 @@ rt_err_t rt_hw_spi_board_init(CM_SPI_TypeDef *CM_SPIx)
 }
 #endif
 
-#if defined (RT_USING_SDIO)
+#if defined(RT_USING_SDIO)
 rt_err_t rt_hw_board_sdio_init(CM_SDIOC_TypeDef *SDIOCx)
 {
     rt_err_t result = RT_EOK;
@@ -177,19 +177,19 @@ rt_err_t rt_hw_board_sdio_init(CM_SDIOC_TypeDef *SDIOCx)
         /************************* Set pin drive capacity *************************/
         (void)GPIO_StructInit(&stcGpioInit);
         stcGpioInit.u16PinDrv = PIN_HIGH_DRV;
-        (void)GPIO_Init(SDIOC1_CK_PORT,  SDIOC1_CK_PIN,  &stcGpioInit);
+        (void)GPIO_Init(SDIOC1_CK_PORT, SDIOC1_CK_PIN, &stcGpioInit);
         (void)GPIO_Init(SDIOC1_CMD_PORT, SDIOC1_CMD_PIN, &stcGpioInit);
-        (void)GPIO_Init(SDIOC1_D0_PORT,  SDIOC1_D0_PIN,  &stcGpioInit);
-        (void)GPIO_Init(SDIOC1_D1_PORT,  SDIOC1_D1_PIN,  &stcGpioInit);
-        (void)GPIO_Init(SDIOC1_D2_PORT,  SDIOC1_D2_PIN,  &stcGpioInit);
-        (void)GPIO_Init(SDIOC1_D3_PORT,  SDIOC1_D3_PIN,  &stcGpioInit);
+        (void)GPIO_Init(SDIOC1_D0_PORT, SDIOC1_D0_PIN, &stcGpioInit);
+        (void)GPIO_Init(SDIOC1_D1_PORT, SDIOC1_D1_PIN, &stcGpioInit);
+        (void)GPIO_Init(SDIOC1_D2_PORT, SDIOC1_D2_PIN, &stcGpioInit);
+        (void)GPIO_Init(SDIOC1_D3_PORT, SDIOC1_D3_PIN, &stcGpioInit);
 
-        GPIO_SetFunc(SDIOC1_CK_PORT,  SDIOC1_CK_PIN,  SDIOC1_CK_FUNC);
+        GPIO_SetFunc(SDIOC1_CK_PORT, SDIOC1_CK_PIN, SDIOC1_CK_FUNC);
         GPIO_SetFunc(SDIOC1_CMD_PORT, SDIOC1_CMD_PIN, SDIOC1_CMD_FUNC);
-        GPIO_SetFunc(SDIOC1_D0_PORT,  SDIOC1_D0_PIN,  SDIOC1_D0_FUNC);
-        GPIO_SetFunc(SDIOC1_D1_PORT,  SDIOC1_D1_PIN,  SDIOC1_D1_FUNC);
-        GPIO_SetFunc(SDIOC1_D2_PORT,  SDIOC1_D2_PIN,  SDIOC1_D2_FUNC);
-        GPIO_SetFunc(SDIOC1_D3_PORT,  SDIOC1_D3_PIN,  SDIOC1_D3_FUNC);
+        GPIO_SetFunc(SDIOC1_D0_PORT, SDIOC1_D0_PIN, SDIOC1_D0_FUNC);
+        GPIO_SetFunc(SDIOC1_D1_PORT, SDIOC1_D1_PIN, SDIOC1_D1_FUNC);
+        GPIO_SetFunc(SDIOC1_D2_PORT, SDIOC1_D2_PIN, SDIOC1_D2_FUNC);
+        GPIO_SetFunc(SDIOC1_D3_PORT, SDIOC1_D3_PIN, SDIOC1_D3_FUNC);
         break;
 #endif
     default:
@@ -298,24 +298,24 @@ rt_err_t rt_hw_board_pwm_tmr6_init(CM_TMR6_TypeDef *TMR6x)
 #endif
 #endif
 
-#if defined (BSP_USING_INPUT_CAPTURE)
+#if defined(BSP_USING_INPUT_CAPTURE)
 rt_err_t rt_hw_board_input_capture_init(uint32_t *tmr_instance)
 {
     rt_err_t result = RT_EOK;
 
     switch ((rt_uint32_t)tmr_instance)
     {
-#if defined (BSP_USING_INPUT_CAPTURE_TMR6_1)
+#if defined(BSP_USING_INPUT_CAPTURE_TMR6_1)
     case (rt_uint32_t)CM_TMR6_1:
         GPIO_SetFunc(INPUT_CAPTURE_TMR6_1_PORT, INPUT_CAPTURE_TMR6_1_PIN, GPIO_FUNC_3);
         break;
 #endif
-#if defined (BSP_USING_INPUT_CAPTURE_TMR6_2)
+#if defined(BSP_USING_INPUT_CAPTURE_TMR6_2)
     case (rt_uint32_t)CM_TMR6_2:
         GPIO_SetFunc(INPUT_CAPTURE_TMR6_2_PORT, INPUT_CAPTURE_TMR6_2_PIN, GPIO_FUNC_3);
         break;
 #endif
-#if defined (BSP_USING_INPUT_CAPTURE_TMR6_3)
+#if defined(BSP_USING_INPUT_CAPTURE_TMR6_3)
     case (rt_uint32_t)CM_TMR6_3:
         GPIO_SetFunc(INPUT_CAPTURE_TMR6_3_PORT, INPUT_CAPTURE_TMR6_3_PIN, GPIO_FUNC_3);
         break;
@@ -395,8 +395,8 @@ rt_err_t rt_hw_qspi_board_init(void)
     (void)GPIO_StructInit(&stcGpioInit);
     stcGpioInit.u16PinDrv = PIN_HIGH_DRV;
 #ifndef BSP_QSPI_USING_SOFT_CS
-    (void)GPIO_Init(QSPI_FLASH_CS_PORT,  QSPI_FLASH_CS_PIN,  &stcGpioInit);
-    GPIO_SetFunc(QSPI_FLASH_CS_PORT,  QSPI_FLASH_CS_PIN,  QSPI_FLASH_CS_FUNC);
+    (void)GPIO_Init(QSPI_FLASH_CS_PORT, QSPI_FLASH_CS_PIN, &stcGpioInit);
+    GPIO_SetFunc(QSPI_FLASH_CS_PORT, QSPI_FLASH_CS_PIN, QSPI_FLASH_CS_FUNC);
 #endif
     (void)GPIO_Init(QSPI_FLASH_SCK_PORT, QSPI_FLASH_SCK_PIN, &stcGpioInit);
     (void)GPIO_Init(QSPI_FLASH_IO0_PORT, QSPI_FLASH_IO0_PIN, &stcGpioInit);

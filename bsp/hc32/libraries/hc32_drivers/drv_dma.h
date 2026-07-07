@@ -23,14 +23,14 @@ extern "C" {
 
 struct dma_config
 {
-    CM_DMA_TypeDef          *Instance;
-    rt_uint32_t             channel;
-    rt_uint32_t             clock;
-    rt_uint32_t             trigger_select;
-    en_event_src_t          trigger_event;
-    rt_uint32_t             flag;
-    struct hc32_irq_config  irq_config;
-    func_ptr_t              irq_callback;
+    CM_DMA_TypeDef *Instance;
+    rt_uint32_t channel;
+    rt_uint32_t clock;
+    rt_uint32_t trigger_select;
+    en_event_src_t trigger_event;
+    rt_uint32_t flag;
+    struct hc32_irq_config irq_config;
+    func_ptr_t irq_callback;
 };
 
 #ifdef __cplusplus

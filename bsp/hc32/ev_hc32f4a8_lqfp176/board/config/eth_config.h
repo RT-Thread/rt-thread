@@ -22,11 +22,11 @@ extern "C" {
 #if defined(BSP_USING_ETH)
 
 #ifndef ETH_IRQ_CONFIG
-#define ETH_IRQ_CONFIG                                      \
-    {                                                       \
-        .irq_num    = BSP_ETH_IRQ_NUM,                      \
-        .irq_prio   = BSP_ETH_IRQ_PRIO,                     \
-        .int_src    = INT_SRC_ETH_GLB_INT,                  \
+#define ETH_IRQ_CONFIG                  \
+    {                                   \
+        .irq_num = BSP_ETH_IRQ_NUM,     \
+        .irq_prio = BSP_ETH_IRQ_PRIO,   \
+        .int_src = INT_SRC_ETH_GLB_INT, \
     }
 #endif /* ETH_IRQ_CONFIG */
 

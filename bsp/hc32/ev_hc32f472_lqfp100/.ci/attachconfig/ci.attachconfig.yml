@@ -29,11 +29,11 @@ devices.flash:
       - CONFIG_RT_USING_SPI=y
       - CONFIG_RT_USING_SFUD=y
 devices.gpio:
-    kconfig: 
-      - CONFIG_BSP_USING_GPIO=y
-devices.hwtimer:
     kconfig:
-      - CONFIG_BSP_USING_HWTIMER=y
+      - CONFIG_BSP_USING_GPIO=y
+devices.clock_timer:
+    kconfig:
+      - CONFIG_BSP_USING_CLOCK_TIMER=y
       - CONFIG_BSP_USING_TMRA_1=y
 devices.i2c:
     kconfig:

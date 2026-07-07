@@ -18,6 +18,11 @@
  *     stcPLLHInit.PLLCFGR_f.PLLN = 120UL - 1UL;
  *                    改为
  *     stcPLLHInit.PLLCFGR_f.PLLN = 100UL - 1UL;
+ *
+ * menuconfig:
+ *     Hardware Drivers Config  --->  Onboard Peripheral Drivers  ---->  Enable SDIO  ---->  Enable SDIOx（x：测试板硬件决定）
+ *
+ *     RT-Thread Components ---> Device Drivers ---> Using SD/MMC device drivers ---> (1024) The stack size for mmcsd thread
  */
 
 #include <stdlib.h>
@@ -27,14 +32,14 @@
 
 #if defined(BSP_USING_SDIO)
 
-#define SDMMC_DEVICE_NAME               "sd"
-#define SDMMC_SECTOR_SIZE               512UL
+#define SDMMC_DEVICE_NAME "sd"
+#define SDMMC_SECTOR_SIZE 512UL
 
-#define SDMMC_TEST_SECTORS_PER_TIME     100UL
-#define SDMMC_TEST_TIME                 10UL
+#define SDMMC_TEST_SECTORS_PER_TIME 100UL
+#define SDMMC_TEST_TIME             10UL
 
-#define SDMMC_TEST_SECTORS              (SDMMC_TEST_TIME * SDMMC_TEST_SECTORS_PER_TIME)
-#define SDMMC_TEST_BUF_SIZE             (SDMMC_SECTOR_SIZE * SDMMC_TEST_SECTORS_PER_TIME)
+#define SDMMC_TEST_SECTORS  (SDMMC_TEST_TIME * SDMMC_TEST_SECTORS_PER_TIME)
+#define SDMMC_TEST_BUF_SIZE (SDMMC_SECTOR_SIZE * SDMMC_TEST_SECTORS_PER_TIME)
 
 static void sdmmc_thread_entry(void *parameter)
 {
@@ -42,7 +47,8 @@ static void sdmmc_thread_entry(void *parameter)
     rt_uint32_t err_count = 0;
     rt_device_t sd_device;
     rt_uint32_t sector_start;
-    rt_uint32_t sector_end;;
+    rt_uint32_t sector_end;
+    ;
     rt_uint32_t sector_cur_start;
     rt_uint32_t sector_cur_end;
     rt_uint8_t *sector_rbuf;
@@ -138,7 +144,6 @@ static void sdmmc_thread_entry(void *parameter)
     if (err_count == 0)
     {
         rt_kprintf("sector=[%d, %d]: ...... test ok...... !\r\n\r\n", sector_start, sector_end);
-
     }
     else
     {

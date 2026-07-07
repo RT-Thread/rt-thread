@@ -9,6 +9,8 @@
  * 2022-06-07     xiaoxiaolisunny      add hc32f460 series
  * 2022-06-08     CDT                  fix a bug of RT_CAN_CMD_SET_FILTER
  * 2022-06-15     lianghongquan        fix bug, CAN_FILTER_COUNT, RT_CAN_CMD_SET_FILTER, interrupt setup and processing.
+ * 2026-05-27     CDT                  support HC32F4A2.
+ * 2026-06-24     CDT                  Added _can_sendmsg_nonblocking.
  */
 
 #include "drv_can.h"
@@ -16,90 +18,90 @@
 #include <board_config.h>
 
 #if defined(BSP_USING_CAN)
-#define LOG_TAG         "drv_can"
+#define LOG_TAG "drv_can"
 
 #if defined(BSP_USING_CAN1) || defined(BSP_USING_CAN2) || defined(BSP_USING_CAN3)
 
-#if defined(RT_CAN_USING_CANFD) && defined(HC32F460)
-    #error "Selected mcu does not support canfd!"
+#if defined(RT_CAN_USING_CANFD) && (defined(HC32F460) || defined(HC32F467))
+#error "Selected mcu does not support canfd!"
 #endif
 
-#define TSEG1_MIN_FOR_CAN2_0                                (2U)
-#define TSEG1_MAX_FOR_CAN2_0                                (65U)
-#define TSEG2_MIN_FOR_CAN2_0                                (1U)
-#define TSEG2_MAX_FOR_CAN2_0                                (8U)
-#if defined(HC32F4A0) || defined(HC32F472) || defined(HC32F4A8)
-    #define TSJW_MIN_FOR_CAN2_0                             (1U)
-    #define TSJW_MAX_FOR_CAN2_0                             (16U)
+#define TSEG1_MIN_FOR_CAN2_0 (2U)
+#define TSEG1_MAX_FOR_CAN2_0 (65U)
+#define TSEG2_MIN_FOR_CAN2_0 (1U)
+#define TSEG2_MAX_FOR_CAN2_0 (8U)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F4A8) || defined(HC32F467)
+#define TSJW_MIN_FOR_CAN2_0 (1U)
+#define TSJW_MAX_FOR_CAN2_0 (16U)
 #elif defined(HC32F460)
-    #define TSJW_MIN_FOR_CAN2_0                             (1U)
-    #define TSJW_MAX_FOR_CAN2_0                             (8U)
+#define TSJW_MIN_FOR_CAN2_0 (1U)
+#define TSJW_MAX_FOR_CAN2_0 (8U)
 #endif
-#define NUM_TQ_MIN_FOR_CAN2_0                               (8U)
-#define NUM_TQ_MAX_FOR_CAN2_0                               (TSEG1_MAX_FOR_CAN2_0 + TSEG2_MAX_FOR_CAN2_0)
+#define NUM_TQ_MIN_FOR_CAN2_0 (8U)
+#define NUM_TQ_MAX_FOR_CAN2_0 (TSEG1_MAX_FOR_CAN2_0 + TSEG2_MAX_FOR_CAN2_0)
 
-#define CAN_BIT_TIMING_CAN2_0                               (1U << 0)
+#define CAN_BIT_TIMING_CAN2_0 (1U << 0)
 
-#define IS_VALID_PRIV_MODE(mode)                            ((mode == RT_CAN_MODE_PRIV) || (mode == RT_CAN_MODE_NOPRIV))
-#define IS_VALID_WORK_MODE(mode)                            (mode <= RT_CAN_MODE_LOOPBACKANLISTEN)
-#define IS_VALID_BAUD_RATE_CAN2_0(baud)                     (baud == (CAN10kBaud)  || baud == (CAN20kBaud)  || \
-                                                             baud == (CAN50kBaud)  || baud == (CAN100kBaud) || \
-                                                             baud == (CAN125kBaud) || baud == (CAN250kBaud) || \
-                                                             baud == (CAN500kBaud) || baud == (CAN800kBaud) || \
-                                                             baud == (CAN1MBaud))
+#define IS_VALID_PRIV_MODE(mode)        ((mode == RT_CAN_MODE_PRIV) || (mode == RT_CAN_MODE_NOPRIV))
+#define IS_VALID_WORK_MODE(mode)        (mode <= RT_CAN_MODE_LOOPBACKANLISTEN)
+#define IS_VALID_BAUD_RATE_CAN2_0(baud) (baud == (CAN10kBaud) || baud == (CAN20kBaud) ||   \
+                                         baud == (CAN50kBaud) || baud == (CAN100kBaud) ||  \
+                                         baud == (CAN125kBaud) || baud == (CAN250kBaud) || \
+                                         baud == (CAN500kBaud) || baud == (CAN800kBaud) || \
+                                         baud == (CAN1MBaud))
 
 #if defined(RT_CAN_USING_CANFD)
-#define TSEG1_MIN_FOR_CANFD_ARBITRATION                     (2U)
-#define TSEG1_MAX_FOR_CANFD_ARBITRATION                     (65U)
-#define TSEG2_MIN_FOR_CANFD_ARBITRATION                     (1U)
-#define TSEG2_MAX_FOR_CANFD_ARBITRATION                     (32U)
-#define TSJW_MIN_FOR_CANFD_ARBITRATION                      (1U)
-#define TSJW_MAX_FOR_CANFD_ARBITRATION                      (16U)
+#define TSEG1_MIN_FOR_CANFD_ARBITRATION (2U)
+#define TSEG1_MAX_FOR_CANFD_ARBITRATION (65U)
+#define TSEG2_MIN_FOR_CANFD_ARBITRATION (1U)
+#define TSEG2_MAX_FOR_CANFD_ARBITRATION (32U)
+#define TSJW_MIN_FOR_CANFD_ARBITRATION  (1U)
+#define TSJW_MAX_FOR_CANFD_ARBITRATION  (16U)
 
-#define TSEG1_MIN_FOR_CANFD_DATA                            (2U)
-#define TSEG1_MAX_FOR_CANFD_DATA                            (17U)
-#define TSEG2_MIN_FOR_CANFD_DATA                            (1U)
-#define TSEG2_MAX_FOR_CANFD_DATA                            (8U)
-#define TSJW_MIN_FOR_CANFD_DATA                             (1U)
-#define TSJW_MAX_FOR_CANFD_DATA                             (8U)
+#define TSEG1_MIN_FOR_CANFD_DATA (2U)
+#define TSEG1_MAX_FOR_CANFD_DATA (17U)
+#define TSEG2_MIN_FOR_CANFD_DATA (1U)
+#define TSEG2_MAX_FOR_CANFD_DATA (8U)
+#define TSJW_MIN_FOR_CANFD_DATA  (1U)
+#define TSJW_MAX_FOR_CANFD_DATA  (8U)
 
-#define NUM_TQ_MIN_FOR_CANFD_ARBITRATION                    (8U)
-#define NUM_TQ_MAX_FOR_CANFD_ARBITRATION                    (TSEG1_MAX_FOR_CANFD_ARBITRATION + TSEG2_MAX_FOR_CANFD_ARBITRATION)
-#define NUM_TQ_MIN_FOR_CANFD_DATA                           (8U)
-#define NUM_TQ_MAX_FOR_CANFD_DATA                           (TSEG1_MAX_FOR_CANFD_DATA + TSEG2_MAX_FOR_CANFD_DATA)
+#define NUM_TQ_MIN_FOR_CANFD_ARBITRATION (8U)
+#define NUM_TQ_MAX_FOR_CANFD_ARBITRATION (TSEG1_MAX_FOR_CANFD_ARBITRATION + TSEG2_MAX_FOR_CANFD_ARBITRATION)
+#define NUM_TQ_MIN_FOR_CANFD_DATA        (8U)
+#define NUM_TQ_MAX_FOR_CANFD_DATA        (TSEG1_MAX_FOR_CANFD_DATA + TSEG2_MAX_FOR_CANFD_DATA)
 
-#define IS_VALID_BAUD_RATE_CANFD_ARBITRATION(baud)          IS_VALID_BAUD_RATE_CAN2_0(baud)
-#define IS_VALID_BAUD_RATE_CANFD_DATA(baud)                 (baud == (CAN10kBaud)  || baud == (CAN20kBaud)  || \
-                                                             baud == (CAN50kBaud)  || baud == (CAN100kBaud) || \
-                                                             baud == (CAN125kBaud) || baud == (CAN250kBaud) || \
-                                                             baud == (CAN500kBaud) || baud == (CAN800kBaud) || \
-                                                             baud == (CAN1MBaud)   ||                          \
-                                                             baud == (CANFD_DATA_BAUD_2M) ||                   \
-                                                             baud == (CANFD_DATA_BAUD_4M) ||                   \
-                                                             baud == (CANFD_DATA_BAUD_5M) ||                   \
-                                                             baud == (CANFD_DATA_BAUD_8M))
-#define IS_CAN_FRAME(frame)                                  ((frame) == CAN_FRAME_CLASSIC ||                  \
-                                                              (frame) == CAN_FRAME_ISO_FD  ||                  \
-                                                              (frame) == CAN_FRAME_NON_ISO_FD)
+#define IS_VALID_BAUD_RATE_CANFD_ARBITRATION(baud) IS_VALID_BAUD_RATE_CAN2_0(baud)
+#define IS_VALID_BAUD_RATE_CANFD_DATA(baud)        (baud == (CAN10kBaud) || baud == (CAN20kBaud) || \
+                                             baud == (CAN50kBaud) || baud == (CAN100kBaud) ||       \
+                                             baud == (CAN125kBaud) || baud == (CAN250kBaud) ||      \
+                                             baud == (CAN500kBaud) || baud == (CAN800kBaud) ||      \
+                                             baud == (CAN1MBaud) ||                                 \
+                                             baud == (CANFD_DATA_BAUD_2M) ||                        \
+                                             baud == (CANFD_DATA_BAUD_4M) ||                        \
+                                             baud == (CANFD_DATA_BAUD_5M) ||                        \
+                                             baud == (CANFD_DATA_BAUD_8M))
+#define IS_CAN_FRAME(frame) ((frame) == CAN_FRAME_CLASSIC || \
+                             (frame) == CAN_FRAME_ISO_FD ||  \
+                             (frame) == CAN_FRAME_NON_ISO_FD)
 
-#define CAN_BIT_TIMING_CANFD_ARBITRATION                    (1U << 1)
-#define CAN_BIT_TIMING_CANFD_DATA                           (1U << 2)
-#define CAN_BIT_TIMING_TABLE_NUM                            (3U)
+#define CAN_BIT_TIMING_CANFD_ARBITRATION (1U << 1)
+#define CAN_BIT_TIMING_CANFD_DATA        (1U << 2)
+#define CAN_BIT_TIMING_TABLE_NUM         (3U)
 #endif
 
-#define NUM_PRESCALE_MAX                                    (256U)
-#if defined(HC32F4A0) || defined(HC32F4A8)
-    #define CAN_FILTER_COUNT                                (16U)
-    #define CAN1_INT_SRC                                    (INT_SRC_CAN1_HOST)
-    #define CAN2_INT_SRC                                    (INT_SRC_CAN2_HOST)
-#elif defined (HC32F460)
-    #define CAN_FILTER_COUNT                                (8U)
-    #define CAN1_INT_SRC                                    (INT_SRC_CAN_INT)
-#elif defined (HC32F472)
-    #define CAN_FILTER_COUNT                                (16U)
-    #define CAN1_INT_SRC                                    (INT_SRC_CAN1_HOST)
-    #define CAN2_INT_SRC                                    (INT_SRC_CAN2_HOST)
-    #define CAN3_INT_SRC                                    (INT_SRC_CAN3_HOST)
+#define NUM_PRESCALE_MAX (256U)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
+#define CAN_FILTER_COUNT (16U)
+#define CAN1_INT_SRC     (INT_SRC_CAN1_HOST)
+#define CAN2_INT_SRC     (INT_SRC_CAN2_HOST)
+#elif defined(HC32F460)
+#define CAN_FILTER_COUNT (8U)
+#define CAN1_INT_SRC     (INT_SRC_CAN_INT)
+#elif defined(HC32F472)
+#define CAN_FILTER_COUNT (16U)
+#define CAN1_INT_SRC     (INT_SRC_CAN1_HOST)
+#define CAN2_INT_SRC     (INT_SRC_CAN2_HOST)
+#define CAN3_INT_SRC     (INT_SRC_CAN3_HOST)
 #endif
 
 
@@ -145,17 +147,16 @@ typedef struct
 } can_bit_timing_table_t;
 
 #ifndef RT_CAN_USING_CANFD
-static const struct can_baud_rate_tab _g_baudrate_tab[] =
-{
-    {CAN1MBaud,   CAN_BIT_TIME_CONFIG_1M_BAUD},
-    {CAN800kBaud, CAN_BIT_TIME_CONFIG_800K_BAUD},
-    {CAN500kBaud, CAN_BIT_TIME_CONFIG_500K_BAUD},
-    {CAN250kBaud, CAN_BIT_TIME_CONFIG_250K_BAUD},
-    {CAN125kBaud, CAN_BIT_TIME_CONFIG_125K_BAUD},
-    {CAN100kBaud, CAN_BIT_TIME_CONFIG_100K_BAUD},
-    {CAN50kBaud,  CAN_BIT_TIME_CONFIG_50K_BAUD},
-    {CAN20kBaud,  CAN_BIT_TIME_CONFIG_20K_BAUD},
-    {CAN10kBaud,  CAN_BIT_TIME_CONFIG_10K_BAUD},
+static const struct can_baud_rate_tab _g_baudrate_tab[] = {
+    { CAN1MBaud, CAN_BIT_TIME_CONFIG_1M_BAUD },
+    { CAN800kBaud, CAN_BIT_TIME_CONFIG_800K_BAUD },
+    { CAN500kBaud, CAN_BIT_TIME_CONFIG_500K_BAUD },
+    { CAN250kBaud, CAN_BIT_TIME_CONFIG_250K_BAUD },
+    { CAN125kBaud, CAN_BIT_TIME_CONFIG_125K_BAUD },
+    { CAN100kBaud, CAN_BIT_TIME_CONFIG_100K_BAUD },
+    { CAN50kBaud, CAN_BIT_TIME_CONFIG_50K_BAUD },
+    { CAN20kBaud, CAN_BIT_TIME_CONFIG_20K_BAUD },
+    { CAN10kBaud, CAN_BIT_TIME_CONFIG_10K_BAUD },
 };
 #endif
 
@@ -168,8 +169,7 @@ typedef struct
 } can_device;
 
 #ifdef RT_CAN_USING_CANFD
-static const can_bit_timing_table_t _g_can_bit_timing_tbl[CAN_BIT_TIMING_TABLE_NUM] =
-{
+static const can_bit_timing_table_t _g_can_bit_timing_tbl[CAN_BIT_TIMING_TABLE_NUM] = {
     {
         .tq_min = NUM_TQ_MIN_FOR_CAN2_0,
         .tq_max = NUM_TQ_MAX_FOR_CAN2_0,
@@ -205,54 +205,52 @@ static const can_bit_timing_table_t _g_can_bit_timing_tbl[CAN_BIT_TIMING_TABLE_N
     }
 };
 
-static const struct canfd_baud_rate_tab _g_baudrate_fd[] =
-{
-    {CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_250K, 1U, 64U, 16U, 16U},
-    {CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_500K, 1U, 32U, 8U, 8U},
-    {CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_1M, 1U, 16U, 4U, 4U},
-    {CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_2M, 1U, 8U, 2U, 2U},
-    {CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_4M, 1U, 4U, 1U, 1U},
-    {CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_5M, 1U, 3U, 1U, 1U},
-    {CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_250K, 2U, 64U, 16U, 16U},
-    {CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_500K, 1U, 64U, 16U, 16U},
-    {CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_1M, 2U, 16U, 4U, 4U},
-    {CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_2M, 1U, 16U, 4U, 4U},
-    {CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_4M, 1U, 8U, 2U, 2U},
-    {CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_5M, 1U, 6U, 2U, 2U},
-    {CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_8M, 1U, 4U, 1U, 1U},
-    {CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_250K, 4U, 64U, 16U},
-    {CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_500K, 2U, 64U, 16U},
-    {CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_1M, 4U, 16U, 4U, 4U},
-    {CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_2M, 2U, 16U, 4U, 4U},
-    {CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_4M, 1U, 16U, 4U, 4U},
-    {CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_5M, 1U, 12U, 4U, 4U},
-    {CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_8M, 1U, 8U, 2U, 2U},
+static const struct canfd_baud_rate_tab _g_baudrate_fd[] = {
+    { CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_250K, 1U, 64U, 16U, 16U },
+    { CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_500K, 1U, 32U, 8U, 8U },
+    { CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_1M, 1U, 16U, 4U, 4U },
+    { CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_2M, 1U, 8U, 2U, 2U },
+    { CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_4M, 1U, 4U, 1U, 1U },
+    { CAN_CLOCK_SRC_20M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_5M, 1U, 3U, 1U, 1U },
+    { CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_250K, 2U, 64U, 16U, 16U },
+    { CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_500K, 1U, 64U, 16U, 16U },
+    { CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_1M, 2U, 16U, 4U, 4U },
+    { CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_2M, 1U, 16U, 4U, 4U },
+    { CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_4M, 1U, 8U, 2U, 2U },
+    { CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_5M, 1U, 6U, 2U, 2U },
+    { CAN_CLOCK_SRC_40M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_8M, 1U, 4U, 1U, 1U },
+    { CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_250K, 4U, 64U, 16U },
+    { CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_ARBITRATION, CANFD_ARBITRATION_BAUD_500K, 2U, 64U, 16U },
+    { CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_1M, 4U, 16U, 4U, 4U },
+    { CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_2M, 2U, 16U, 4U, 4U },
+    { CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_4M, 1U, 16U, 4U, 4U },
+    { CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_5M, 1U, 12U, 4U, 4U },
+    { CAN_CLOCK_SRC_80M, CAN_BIT_TIMING_CANFD_DATA, CANFD_DATA_BAUD_8M, 1U, 8U, 2U, 2U },
 };
 #endif
 
-static can_device _g_can_dev_array[] =
-{
+static can_device _g_can_dev_array[] = {
 #ifdef BSP_USING_CAN1
     {
-        {0},
+        { 0 },
         CAN1_INIT_PARAMS,
-#if defined(HC32F4A0) || defined(HC32F472) || defined(HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F4A8) || defined(HC32F467)
         .instance = CM_CAN1,
-#elif defined (HC32F460)
+#elif defined(HC32F460)
         .instance = CM_CAN,
 #endif
     },
 #endif
 #ifdef BSP_USING_CAN2
     {
-        {0},
+        { 0 },
         CAN2_INIT_PARAMS,
         .instance = CM_CAN2,
     },
 #endif
 #ifdef BSP_USING_CAN3
     {
-        {0},
+        { 0 },
         CAN3_INIT_PARAMS,
         .instance = CM_CAN3,
     },
@@ -435,7 +433,7 @@ static uint32_t _get_can_clk_src(CM_CAN_TypeDef *CANx)
 }
 
 static rt_bool_t _get_can_bit_timing_default(uint32_t can_clk, rt_uint32_t baud, rt_uint32_t option,
-        stc_can_bit_time_config_t *p_stc_bit_cfg)
+                                             stc_can_bit_time_config_t *p_stc_bit_cfg)
 {
     rt_uint32_t len, index;
     rt_bool_t found = RT_FALSE;
@@ -443,9 +441,8 @@ static rt_bool_t _get_can_bit_timing_default(uint32_t can_clk, rt_uint32_t baud,
     len = sizeof(_g_baudrate_fd) / sizeof(_g_baudrate_fd[0]);
     for (index = 0; index < len; index++)
     {
-        if ((_g_baudrate_fd[index].clk_src == can_clk) && \
-                ((_g_baudrate_fd[index].phase & option) == option) \
-           )
+        if ((_g_baudrate_fd[index].clk_src == can_clk) &&
+            ((_g_baudrate_fd[index].phase & option) == option))
         {
             if (_g_baudrate_fd[index].baud == baud)
             {
@@ -484,7 +481,7 @@ static inline void _get_can_bit_timing_fd(stc_canfd_config_t *p_ll_time, struct 
 }
 
 static rt_err_t _get_can_closest_prescaler(uint32_t num_tq_mul_prescaler, uint32_t start_prescaler,
-        uint32_t max_tq, uint32_t min_tq)
+                                           uint32_t max_tq, uint32_t min_tq)
 {
     rt_bool_t has_found = RT_FALSE;
     uint32_t prescaler = start_prescaler;
@@ -559,8 +556,8 @@ static rt_err_t _calc_can_bit_timing(CM_CAN_TypeDef *CANx, int option, uint32_t 
         while (!has_found)
         {
             current_prescaler = _get_can_closest_prescaler(num_tq_mul_prescaler, start_prescaler,
-                                tbl->tq_max,
-                                tbl->tq_min);
+                                                           tbl->tq_max,
+                                                           tbl->tq_min);
             if ((current_prescaler < start_prescaler) || (current_prescaler > NUM_PRESCALE_MAX))
             {
                 break;
@@ -606,8 +603,7 @@ static rt_err_t _calc_can_bit_timing(CM_CAN_TypeDef *CANx, int option, uint32_t 
             p_stc_bit_cfg->u32Prescaler = current_prescaler;
             status = RT_EOK;
         }
-    }
-    while (RT_FALSE);
+    } while (RT_FALSE);
 
     return status;
 }
@@ -673,7 +669,7 @@ static rt_err_t _config_can_filter(can_device *p_can_dev, void *arg)
 static rt_err_t _config_can_work_mode(can_device *p_can_dev, void *arg)
 {
     rt_err_t rt_ret = RT_EOK;
-    rt_uint32_t argval = (rt_uint32_t) arg;
+    rt_uint32_t argval = (rt_uint32_t)arg;
 
     if (argval == p_can_dev->rt_can.config.mode)
     {
@@ -691,7 +687,7 @@ static rt_err_t _config_can_work_mode(can_device *p_can_dev, void *arg)
 static rt_err_t _config_can_priv_mode(can_device *p_can_dev, void *arg)
 {
     rt_err_t rt_ret = RT_EOK;
-    rt_uint32_t argval = (rt_uint32_t) arg;
+    rt_uint32_t argval = (rt_uint32_t)arg;
 
     RT_ASSERT(IS_VALID_PRIV_MODE(argval));
     p_can_dev->rt_can.config.privmode = argval;
@@ -779,15 +775,15 @@ static rt_err_t _canfd_control(can_device *p_can_dev, int cmd, void *arg)
     switch (cmd)
     {
     case RT_CAN_CMD_SET_BAUD:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         RT_ASSERT(IS_VALID_BAUD_RATE_CANFD_ARBITRATION(argval));
         if (p_can_dev->rt_can.config.baud_rate == argval)
         {
             break;
         }
-        timing_stat = _calc_can_bit_timing(p_can_dev->instance, \
-                                           CAN_BIT_TIMING_CANFD_ARBITRATION, \
-                                           argval, \
+        timing_stat = _calc_can_bit_timing(p_can_dev->instance,
+                                           CAN_BIT_TIMING_CANFD_ARBITRATION,
+                                           argval,
                                            &p_can_dev->ll_init.stcBitCfg);
         if (timing_stat != RT_EOK)
         {
@@ -797,7 +793,7 @@ static rt_err_t _canfd_control(can_device *p_can_dev, int cmd, void *arg)
         p_can_dev->rt_can.config.baud_rate = argval;
         break;
     case RT_CAN_CMD_SET_CANFD:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         if (p_can_dev->rt_can.config.enable_canfd == argval)
         {
             break;
@@ -816,15 +812,15 @@ static rt_err_t _canfd_control(can_device *p_can_dev, int cmd, void *arg)
 #endif
         break;
     case RT_CAN_CMD_SET_BAUD_FD:
-        argval = (rt_uint32_t) arg;
+        argval = (rt_uint32_t)arg;
         RT_ASSERT(IS_VALID_BAUD_RATE_CANFD_DATA(argval));
         if (p_can_dev->rt_can.config.baud_rate_fd == argval)
         {
             break;
         }
-        timing_stat = _calc_can_bit_timing(p_can_dev->instance, \
-                                           CAN_BIT_TIMING_CANFD_DATA, \
-                                           argval, \
+        timing_stat = _calc_can_bit_timing(p_can_dev->instance,
+                                           CAN_BIT_TIMING_CANFD_DATA,
+                                           argval,
                                            &p_can_dev->ll_init.pstcCanFd->stcBitCfg);
         if (timing_stat != RT_EOK)
         {
@@ -866,17 +862,17 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     {
         RT_ASSERT(IS_VALID_BAUD_RATE_CANFD_ARBITRATION(cfg->baud_rate));
         RT_ASSERT(IS_VALID_BAUD_RATE_CANFD_DATA(cfg->baud_rate_fd));
-        rt_ret = _calc_can_bit_timing(p_can_dev->instance, \
-                                      CAN_BIT_TIMING_CANFD_ARBITRATION, \
-                                      cfg->baud_rate, \
+        rt_ret = _calc_can_bit_timing(p_can_dev->instance,
+                                      CAN_BIT_TIMING_CANFD_ARBITRATION,
+                                      cfg->baud_rate,
                                       &p_can_dev->ll_init.stcBitCfg);
         if (rt_ret != RT_EOK)
         {
             return rt_ret;
         }
-        rt_ret = _calc_can_bit_timing(p_can_dev->instance, \
-                                      CAN_BIT_TIMING_CANFD_DATA, \
-                                      cfg->baud_rate_fd, \
+        rt_ret = _calc_can_bit_timing(p_can_dev->instance,
+                                      CAN_BIT_TIMING_CANFD_DATA,
+                                      cfg->baud_rate_fd,
                                       &p_can_dev->ll_init.pstcCanFd->stcBitCfg);
         if (rt_ret != RT_EOK)
         {
@@ -898,7 +894,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     /* restore unmodifiable member */
     if ((p_can_dev->rt_can.parent.open_flag & RT_DEVICE_OFLAG_OPEN) == RT_DEVICE_OFLAG_OPEN)
     {
-        p_can_dev->rt_can.config.msgboxsz =  pre_config.msgboxsz;
+        p_can_dev->rt_can.config.msgboxsz = pre_config.msgboxsz;
         p_can_dev->rt_can.config.ticks = pre_config.ticks;
     }
 #ifdef RT_CAN_USING_HDR
@@ -938,7 +934,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_GET_STATUS:
     {
         struct rt_can_status *rt_can_stat = (struct rt_can_status *)arg;
-        stc_can_error_info_t stcErr = {0};
+        stc_can_error_info_t stcErr = { 0 };
         CAN_GetErrorInfo(p_can_dev->instance, &stcErr);
         rt_can_stat->rcverrcnt = stcErr.u8RxErrorCount;
         rt_can_stat->snderrcnt = stcErr.u8TxErrorCount;
@@ -954,17 +950,17 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
 #endif
     default:
         return -(RT_EINVAL);
-
     }
     return RT_EOK;
 }
 
 static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
-    struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
-    stc_can_tx_frame_t stc_tx_frame = {0};
+    struct rt_can_msg *pmsg = (struct rt_can_msg *)buf;
+    stc_can_tx_frame_t stc_tx_frame = { 0 };
     int32_t ll_ret;
 
+    (void)box_num;
     RT_ASSERT(can != RT_NULL);
     can_device *p_can_dev = (can_device *)rt_container_of(can, can_device, rt_can);
     RT_ASSERT(p_can_dev);
@@ -1008,6 +1004,11 @@ static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_ui
     return RT_EOK;
 }
 
+rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
+{
+    return _can_sendmsg(can, buf, 0);
+}
+
 static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     int32_t ll_ret;
@@ -1018,7 +1019,7 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     can_device *p_can_dev = (can_device *)rt_container_of(can, can_device, rt_can);
     RT_ASSERT(p_can_dev);
 
-    pmsg = (struct rt_can_msg *) buf;
+    pmsg = (struct rt_can_msg *)buf;
     /* get data */
     ll_ret = CAN_GetRxFrame(p_can_dev->instance, &ll_rx_frame);
     if (ll_ret != LL_OK)
@@ -1058,12 +1059,12 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     return RT_EOK;
 }
 
-static const struct rt_can_ops _can_ops =
-{
+static const struct rt_can_ops _can_ops = {
     _can_config,
     _can_control,
     _can_sendmsg,
     _can_recvmsg,
+    _can_sendmsg_nonblocking,
 };
 
 rt_inline void _isr_can_rx(can_device *p_can_dev)
@@ -1140,10 +1141,13 @@ rt_inline void _isr_can_tx(can_device *p_can_dev)
 
     if (need_check_single_trans)
     {
-        if ((CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR) != SET) \
-                || (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) != SET))
+        if ((CAN_GetStatus(p_can_dev->instance, CAN_FLAG_BUS_ERR) != SET) && (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) != SET))
         {
             is_tx_done = RT_TRUE;
+        }
+        else
+        {
+            rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_FAIL);
         }
     }
     if (is_tx_done)
@@ -1153,7 +1157,6 @@ rt_inline void _isr_can_tx(can_device *p_can_dev)
 
     if (CAN_GetStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST) == SET)
     {
-        rt_hw_can_isr(&p_can_dev->rt_can, RT_CAN_EVENT_TX_FAIL);
         CAN_ClearStatus(p_can_dev->instance, CAN_FLAG_ARBITR_LOST);
     }
 }
@@ -1266,7 +1269,7 @@ void CAN3_Handler(void)
 static void _enable_can_clock(void)
 {
 #if defined(BSP_USING_CAN1)
-#if defined(HC32F4A0) || defined(HC32F472) || defined(HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F4A8) || defined(HC32F467)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN1, ENABLE);
 #elif defined(HC32F460)
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_CAN, ENABLE);
@@ -1329,7 +1332,7 @@ static void _init_ll_struct_filter(can_device *p_can_dev)
 
 static void _init_default_cfg(can_device *p_can_dev)
 {
-    struct can_configure rt_can_config  = CANDEFAULTCONFIG;
+    struct can_configure rt_can_config = CANDEFAULTCONFIG;
 
     rt_can_config.privmode = RT_CAN_MODE_NOPRIV;
     rt_can_config.ticks = 50;
@@ -1368,7 +1371,7 @@ int rt_hw_can_init(void)
 
         /* register CAN device */
         rt_hw_board_can_init(_g_can_dev_array[i].instance);
-        rt_hw_can_register(&_g_can_dev_array[i].rt_can, \
+        rt_hw_can_register(&_g_can_dev_array[i].rt_can,
                            _g_can_dev_array[i].init.name,
                            &_can_ops,
                            &_g_can_dev_array[i]);

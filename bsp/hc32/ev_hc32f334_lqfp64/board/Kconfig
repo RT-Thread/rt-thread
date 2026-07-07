@@ -528,24 +528,24 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_CLOCK_TIMER
-        bool "Enable Hw Timer"
+        bool "Enable Clock Timer"
         default n
         select RT_USING_CLOCK_TIME
         if BSP_USING_CLOCK_TIMER
             config BSP_USING_TMRA_1
-                bool "Use Timer_a1 As The Hw Timer"
+                bool "Use Timer_a1 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_2
-                bool "Use Timer_a2 As The Hw Timer"
+                bool "Use Timer_a2 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_3
-                bool "Use Timer_a3 As The Hw Timer"
+                bool "Use Timer_a3 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_4
-                bool "Use Timer_a4 As The Hw Timer"
+                bool "Use Timer_a4 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_5
-                bool "Use Timer_a5 As The Hw Timer"
+                bool "Use Timer_a5 As The Clock Timer"
                 default n
         endif
 

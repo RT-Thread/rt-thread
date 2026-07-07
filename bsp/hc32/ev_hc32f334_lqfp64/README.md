@@ -46,7 +46,7 @@ EV_F334_LQ64 开发板常用 **板载资源** 如下：
 | DAC           |     支持      |                                       |
 | FLASH         |     支持      |                                       |
 | GPIO          |     支持      | PA0，PA1...PF3 ---> PIN：0，1...68    |
-| HwTimer       |     支持      |                                       |
+| CLOCK_TIMER       |     支持      |                                       |
 | I2C           |     支持      | 软件、硬件 I2C                        |
 | InputCapture  |     支持      |                                       |
 | MCAN          |     支持      |                                       |

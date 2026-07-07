@@ -38,7 +38,7 @@
 */
 #include <unistd.h>
 #include <fcntl.h>
-#define TEST_FN     "/test_usbh.c"
+#define TEST_FN "/test_usbh.c"
 static char test_data[120], buffer[120];
 
 void usbh_readwrite(const char *filename)
@@ -53,7 +53,7 @@ void usbh_readwrite(const char *filename)
         return;
     }
 
-    for (index = 0; index < sizeof(test_data); index ++)
+    for (index = 0; index < sizeof(test_data); index++)
     {
         test_data[index] = index + 27;
     }
@@ -83,7 +83,7 @@ void usbh_readwrite(const char *filename)
         return;
     }
 
-    for (index = 0; index < sizeof(test_data); index ++)
+    for (index = 0; index < sizeof(test_data); index++)
     {
         if (test_data[index] != buffer[index])
         {

@@ -26,25 +26,25 @@ extern "C" {
 * but in range [CAN_SAMPLEPOINT_MIN/1000,CAN_SAMPLEPOINT_MAX/1000]
 * this may not match with your application
 */
-#define CAN_SAMPLEPOINT_MIN             (750U)
-#define CAN_SAMPLEPOINT_MAX             (800U)
+#define CAN_SAMPLEPOINT_MIN (750U)
+#define CAN_SAMPLEPOINT_MAX (800U)
 
-#define CAN_CLOCK_SRC_20M               (20*1000*1000UL)
-#define CAN_CLOCK_SRC_40M               (40*1000*1000UL)
-#define CAN_CLOCK_SRC_80M               (80*1000*1000UL)
+#define CAN_CLOCK_SRC_20M (20 * 1000 * 1000UL)
+#define CAN_CLOCK_SRC_40M (40 * 1000 * 1000UL)
+#define CAN_CLOCK_SRC_80M (80 * 1000 * 1000UL)
 
-#define CANFD_ARBITRATION_BAUD_250K     (250*1000UL)
-#define CANFD_ARBITRATION_BAUD_500K     (500*1000UL)
+#define CANFD_ARBITRATION_BAUD_250K (250 * 1000UL)
+#define CANFD_ARBITRATION_BAUD_500K (500 * 1000UL)
 
-#define CANFD_DATA_BAUD_1M              (1*1000*1000UL)
-#define CANFD_DATA_BAUD_2M              (2*1000*1000UL)
-#define CANFD_DATA_BAUD_4M              (4*1000*1000UL)
-#define CANFD_DATA_BAUD_5M              (5*1000*1000UL)
-#define CANFD_DATA_BAUD_8M              (8*1000*1000UL)
+#define CANFD_DATA_BAUD_1M (1 * 1000 * 1000UL)
+#define CANFD_DATA_BAUD_2M (2 * 1000 * 1000UL)
+#define CANFD_DATA_BAUD_4M (4 * 1000 * 1000UL)
+#define CANFD_DATA_BAUD_5M (5 * 1000 * 1000UL)
+#define CANFD_DATA_BAUD_8M (8 * 1000 * 1000UL)
 
-#define CAN_FRAME_CLASSIC               (0x0U)
-#define CAN_FRAME_ISO_FD                (0x2U)
-#define CAN_FRAME_NON_ISO_FD            (0x4U)
+#define CAN_FRAME_CLASSIC    (0x0U)
+#define CAN_FRAME_ISO_FD     (0x2U)
+#define CAN_FRAME_NON_ISO_FD (0x4U)
 
 /* hc32 can device */
 struct can_dev_init_params

@@ -16,13 +16,12 @@
 #include "board_config.h"
 
 #if defined(RT_CHERRYUSB_HOST) && defined(RT_CHERRYUSB_DEVICE)
-    #if defined(HC32F460) || defined(HC32F472)
-        #error "Only one USB role can be selected!"
-    #endif
+#if defined(HC32F460) || defined(HC32F472)
+#error "Only one USB role can be selected!"
+#endif
 #endif
 
-const struct dwc2_user_params param_fs_core =
-{
+const struct dwc2_user_params param_fs_core = {
     .phy_type = DWC2_PHY_TYPE_PARAM_FS,
 #ifdef CONFIG_USB_DWC2_DMA_ENABLE
     .device_dma_enable = true,
@@ -32,17 +31,17 @@ const struct dwc2_user_params param_fs_core =
     .device_dma_desc_enable = false,
     .device_rx_fifo_size = CONFIG_USB_FS_CORE_DEVICE_RX_FIFO_SIZE,
     .device_tx_fifo_size = {
-        [0] =  CONFIG_USB_FS_CORE_DEVICE_TX0_FIFO_SIZE,
-        [1] =  CONFIG_USB_FS_CORE_DEVICE_TX1_FIFO_SIZE,
-        [2] =  CONFIG_USB_FS_CORE_DEVICE_TX2_FIFO_SIZE,
-        [3] =  CONFIG_USB_FS_CORE_DEVICE_TX3_FIFO_SIZE,
-        [4] =  CONFIG_USB_FS_CORE_DEVICE_TX4_FIFO_SIZE,
-        [5] =  CONFIG_USB_FS_CORE_DEVICE_TX5_FIFO_SIZE,
+        [0] = CONFIG_USB_FS_CORE_DEVICE_TX0_FIFO_SIZE,
+        [1] = CONFIG_USB_FS_CORE_DEVICE_TX1_FIFO_SIZE,
+        [2] = CONFIG_USB_FS_CORE_DEVICE_TX2_FIFO_SIZE,
+        [3] = CONFIG_USB_FS_CORE_DEVICE_TX3_FIFO_SIZE,
+        [4] = CONFIG_USB_FS_CORE_DEVICE_TX4_FIFO_SIZE,
+        [5] = CONFIG_USB_FS_CORE_DEVICE_TX5_FIFO_SIZE,
 #if defined(HC32F4A0) || defined(HC32F4A8)
-        [6] =  CONFIG_USB_FS_CORE_DEVICE_TX6_FIFO_SIZE,
-        [7] =  CONFIG_USB_FS_CORE_DEVICE_TX7_FIFO_SIZE,
-        [8] =  CONFIG_USB_FS_CORE_DEVICE_TX8_FIFO_SIZE,
-        [9] =  CONFIG_USB_FS_CORE_DEVICE_TX9_FIFO_SIZE,
+        [6] = CONFIG_USB_FS_CORE_DEVICE_TX6_FIFO_SIZE,
+        [7] = CONFIG_USB_FS_CORE_DEVICE_TX7_FIFO_SIZE,
+        [8] = CONFIG_USB_FS_CORE_DEVICE_TX8_FIFO_SIZE,
+        [9] = CONFIG_USB_FS_CORE_DEVICE_TX9_FIFO_SIZE,
         [10] = CONFIG_USB_FS_CORE_DEVICE_TX10_FIFO_SIZE,
         [11] = CONFIG_USB_FS_CORE_DEVICE_TX11_FIFO_SIZE,
         [12] = CONFIG_USB_FS_CORE_DEVICE_TX12_FIFO_SIZE,
@@ -50,10 +49,10 @@ const struct dwc2_user_params param_fs_core =
         [14] = CONFIG_USB_FS_CORE_DEVICE_TX14_FIFO_SIZE,
         [15] = CONFIG_USB_FS_CORE_DEVICE_TX15_FIFO_SIZE
 #elif defined(HC32F460) || defined(HC32F472)
-        [6] =  0,
-        [7] =  0,
-        [8] =  0,
-        [9] =  0,
+        [6] = 0,
+        [7] = 0,
+        [8] = 0,
+        [9] = 0,
         [10] = 0,
         [11] = 0,
         [12] = 0,
@@ -78,8 +77,7 @@ const struct dwc2_user_params param_fs_core =
 };
 
 #if defined(HC32F4A0) || defined(HC32F4A8)
-const struct dwc2_user_params param_hs_core =
-{
+const struct dwc2_user_params param_hs_core = {
 #ifdef CONFIG_USB_HS
     .phy_type = DWC2_PHY_TYPE_PARAM_UTMI,
 #else
@@ -93,23 +91,22 @@ const struct dwc2_user_params param_hs_core =
     .device_dma_desc_enable = false,
     .device_rx_fifo_size = CONFIG_USB_HS_CORE_DEVICE_RX_FIFO_SIZE,
     .device_tx_fifo_size = {
-        [0] =  CONFIG_USB_HS_CORE_DEVICE_TX0_FIFO_SIZE,
-        [1] =  CONFIG_USB_HS_CORE_DEVICE_TX1_FIFO_SIZE,
-        [2] =  CONFIG_USB_HS_CORE_DEVICE_TX2_FIFO_SIZE,
-        [3] =  CONFIG_USB_HS_CORE_DEVICE_TX3_FIFO_SIZE,
-        [4] =  CONFIG_USB_HS_CORE_DEVICE_TX4_FIFO_SIZE,
-        [5] =  CONFIG_USB_HS_CORE_DEVICE_TX5_FIFO_SIZE,
-        [6] =  CONFIG_USB_HS_CORE_DEVICE_TX6_FIFO_SIZE,
-        [7] =  CONFIG_USB_HS_CORE_DEVICE_TX7_FIFO_SIZE,
-        [8] =  CONFIG_USB_HS_CORE_DEVICE_TX8_FIFO_SIZE,
-        [9] =  CONFIG_USB_HS_CORE_DEVICE_TX9_FIFO_SIZE,
+        [0] = CONFIG_USB_HS_CORE_DEVICE_TX0_FIFO_SIZE,
+        [1] = CONFIG_USB_HS_CORE_DEVICE_TX1_FIFO_SIZE,
+        [2] = CONFIG_USB_HS_CORE_DEVICE_TX2_FIFO_SIZE,
+        [3] = CONFIG_USB_HS_CORE_DEVICE_TX3_FIFO_SIZE,
+        [4] = CONFIG_USB_HS_CORE_DEVICE_TX4_FIFO_SIZE,
+        [5] = CONFIG_USB_HS_CORE_DEVICE_TX5_FIFO_SIZE,
+        [6] = CONFIG_USB_HS_CORE_DEVICE_TX6_FIFO_SIZE,
+        [7] = CONFIG_USB_HS_CORE_DEVICE_TX7_FIFO_SIZE,
+        [8] = CONFIG_USB_HS_CORE_DEVICE_TX8_FIFO_SIZE,
+        [9] = CONFIG_USB_HS_CORE_DEVICE_TX9_FIFO_SIZE,
         [10] = CONFIG_USB_HS_CORE_DEVICE_TX10_FIFO_SIZE,
         [11] = CONFIG_USB_HS_CORE_DEVICE_TX11_FIFO_SIZE,
         [12] = CONFIG_USB_HS_CORE_DEVICE_TX12_FIFO_SIZE,
         [13] = CONFIG_USB_HS_CORE_DEVICE_TX13_FIFO_SIZE,
         [14] = CONFIG_USB_HS_CORE_DEVICE_TX14_FIFO_SIZE,
-        [15] = CONFIG_USB_HS_CORE_DEVICE_TX15_FIFO_SIZE
-    },
+        [15] = CONFIG_USB_HS_CORE_DEVICE_TX15_FIFO_SIZE },
     .total_fifo_size = CONFIG_USB_HS_CORE_TOTAL_FIFO_SIZE,
 
     .host_dma_desc_enable = false,
@@ -149,13 +146,13 @@ void dwc2_get_user_params(uint32_t reg_base, struct dwc2_user_params *params)
 }
 #endif
 
-#define BOARD_INIT_USB_HOST_MODE    (0U)
-#define BOARD_INIT_USB_DEVICE_MODE  (1U)
+#define BOARD_INIT_USB_HOST_MODE   (0U)
+#define BOARD_INIT_USB_DEVICE_MODE (1U)
 extern rt_err_t rt_hw_usbfs_board_init(uint8_t devmode);
 static uint8_t g_usb_fs_busid = 0U;
 #if defined(HC32F4A0) || defined(HC32F4A8)
-    extern rt_err_t rt_hw_usbhs_board_init(uint8_t devmode);
-    static uint8_t g_usb_hs_busid = 0U;
+extern rt_err_t rt_hw_usbhs_board_init(uint8_t devmode);
+static uint8_t g_usb_hs_busid = 0U;
 #endif
 
 #if defined(RT_CHERRYUSB_HOST)
@@ -218,7 +215,6 @@ void usb_hc_low_level_init(struct usbh_bus *bus)
                                  usbh_fs_irq_handler,
                                  RT_TRUE);
     }
-
 }
 #endif
 

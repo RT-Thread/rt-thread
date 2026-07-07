@@ -23,9 +23,9 @@
 #ifdef BSP_USING_WDT_TMR
 
 #if defined(BSP_USING_WDT)
-    #define WDT_DEVICE_NAME     "wdt"
+#define WDT_DEVICE_NAME "wdt"
 #elif defined(BSP_USING_SWDT)
-    #define WDT_DEVICE_NAME     "swdt"
+#define WDT_DEVICE_NAME "swdt"
 #endif
 
 static rt_device_t wdg_dev;
@@ -120,6 +120,6 @@ static int wdt_sample(int argc, char *argv[])
     return ret;
 }
 
-MSH_CMD_EXPORT(wdt_sample, wdt_sample [option]);
+MSH_CMD_EXPORT(wdt_sample, wdt_sample[option]);
 
 #endif
