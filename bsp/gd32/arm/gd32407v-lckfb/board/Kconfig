@@ -245,6 +245,10 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_SPI
         if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0 BUS"
+                default n
+
             config BSP_USING_SPI1
                 bool "Enable SPI1 BUS"
                 default n
@@ -356,6 +360,53 @@ menu "On-chip Peripheral Drivers"
 endmenu
 
 menu "Board extended module Drivers"
+
+    config BSP_USING_CH390
+        bool "Enable WCH CH390 SPI Ethernet module"
+        select BSP_USING_SPI
+        select BSP_USING_SPI0
+        select RT_USING_CH390
+        select RT_USING_PIN
+        default n
+
+    if BSP_USING_CH390
+        config BSP_CH390_SPI_BUS_NAME
+            string "CH390 SPI bus name on this board"
+            default "spi0"
+
+        config BSP_CH390_SPI_DEVICE_NAME
+            string "CH390 SPI device name on this board"
+            default "spi10"
+
+        config BSP_CH390_NETIF_NAME
+            string "CH390 network interface name"
+            default "e0"
+
+        config BSP_CH390_CS_PIN
+            int "CH390 CS pin number on this board"
+            default 4
+
+        config BSP_CH390_RST_PIN
+            int "CH390 reset pin number on this board"
+            default -1
+
+        config BSP_CH390_INT_PIN
+            int "CH390 interrupt pin number on this board"
+            default 3
+
+        config BSP_CH390_SPI_MAX_HZ
+            int "CH390 SPI maximum frequency"
+            default 5000000
+
+        config BSP_CH390_POLL_INTERVAL_MS
+            int "CH390 RX polling interval in milliseconds"
+            default 20
+
+        config BSP_CH390_USING_DHCP
+            bool "Use DHCP for CH390 netif"
+            select RT_LWIP_DHCP
+            default n
+    endif
 
 endmenu
 

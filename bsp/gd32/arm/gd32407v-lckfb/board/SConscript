@@ -3,6 +3,7 @@ import rtconfig
 from building import *
 
 cwd = GetCurrentDir()
+objs = []
 
 # add general drivers
 src = Split('''
@@ -14,4 +15,9 @@ path =  [cwd]
 CPPDEFINES = ['GD32F407','LCKFB_SKYSTART_GD32F407V']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
-Return('group')
+objs += group
+
+if os.path.isfile(os.path.join(cwd, 'ports', 'SConscript')):
+    objs += SConscript(os.path.join('ports', 'SConscript'))
+
+Return('objs')

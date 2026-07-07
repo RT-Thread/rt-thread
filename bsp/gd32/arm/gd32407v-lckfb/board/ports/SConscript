@@ -1,0 +1,15 @@
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+
+src = []
+path = [cwd, cwd + '/..', cwd + '/../../../libraries/gd32_drivers',
+        RTT_ROOT + '/components/drivers/spi']
+
+if GetDepend('BSP_USING_CH390'):
+    src += ['ch390_port.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')
