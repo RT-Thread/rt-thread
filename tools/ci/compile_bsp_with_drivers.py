@@ -13,6 +13,8 @@ import logging
 import os
 import sys
 
+import ci_common
+
 CONFIG_BSP_USING_X = ["CONFIG_BSP_USING_UART", "CONFIG_BSP_USING_I2C", "CONFIG_BSP_USING_SPI", "CONFIG_BSP_USING_ADC", "CONFIG_BSP_USING_DAC"]
 
 def init_logger():
@@ -24,8 +26,13 @@ def init_logger():
                         )
 
 def diff():
-    result = subprocess.run(['git', 'diff', '--name-only', 'HEAD', 'origin/master', '--diff-filter=ACMR', '--no-renames', '--full-index'], stdout = subprocess.PIPE)
-    file_list = result.stdout.decode().strip().split('\n')
+    # Read-only diff against the configurable baseline. Returns None on git
+    # failure (so the caller can fail instead of trusting an unreliable empty
+    # result); an empty diff returns an empty set.
+    file_list = ci_common.get_changed_files(ci_common.resolve_target_ref())
+    if file_list is None:
+        logging.error("failed to determine changed files")
+        return None
     logging.info(file_list)
     bsp_paths = set()
     for file in file_list:
@@ -107,6 +114,9 @@ def recompile_bsp(dir):
 if __name__ == '__main__':
     init_logger()
     recompile_bsp_dirs = diff()
+    if recompile_bsp_dirs is None:
+        logging.error("failed to determine changed files, aborting")
+        sys.exit(1)
     failed = 0
     for dir in recompile_bsp_dirs:
         dot_config_path = dir + "/" + ".config"

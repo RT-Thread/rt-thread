@@ -11,7 +11,8 @@
 import yaml
 import logging
 import os
-import subprocess
+
+import ci_common
 
 def init_logger():
     log_format = "[%(filename)s %(lineno)d %(levelname)s] %(message)s "
@@ -72,13 +73,17 @@ class CheckOut:
         return 1
     
     def get_new_file(self):
-        result = subprocess.run(['git', 'diff', '--name-only', 'HEAD', 'origin/master', '--diff-filter=ACMR', '--no-renames', '--full-index'], stdout = subprocess.PIPE)
-        file_list = result.stdout.decode().strip().split('\n')
+        # Read-only diff against the configurable baseline (merge base of the
+        # target ref and HEAD). Returns None on git failure, [] on empty diff.
+        changed_files = ci_common.get_changed_files(ci_common.resolve_target_ref())
+        if changed_files is None:
+            logging.error("failed to determine changed files")
+            return None
+
         new_files = []
-        for line in file_list:
+        for line in changed_files:
             logging.info("modified file -> {}".format(line))
-            result = self.__exclude_file(line)
-            if result != 0:
+            if self.__exclude_file(line) != 0:
                 new_files.append(line)
-        
+
         return new_files
