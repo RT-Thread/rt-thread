@@ -21,77 +21,77 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#define CH390_VENDOR_ID           0x1C00
-#define CH390_PID_H_D             0x9151
-#define CH390_PID_L_F             0x9150
+#define CH390_VENDOR_ID 0x1C00
+#define CH390_PID_H_D   0x9151
+#define CH390_PID_L_F   0x9150
 
-#define CH390_PKT_MAX             1536
-#define CH390_PKT_MIN             64
-#define CH390_FCS_SIZE            4
-#define CH390_SPI_XFER_SIZE       (CH390_PKT_MAX + 1)
-#define CH390_TX_TIMEOUT_MS       100
-#define CH390_LINK_POLL_MS        1000
-#define CH390_DEFAULT_SPI_MAX_HZ  (5 * 1000 * 1000)
-#define CH390_DEFAULT_POLL_MS     20
-#define CH390_DEFAULT_NETIF_NAME  "e0"
+#define CH390_PKT_MAX            1536
+#define CH390_PKT_MIN            64
+#define CH390_FCS_SIZE           4
+#define CH390_SPI_XFER_SIZE      (CH390_PKT_MAX + 1)
+#define CH390_TX_TIMEOUT_MS      100
+#define CH390_LINK_POLL_MS       1000
+#define CH390_DEFAULT_SPI_MAX_HZ (5 * 1000 * 1000)
+#define CH390_DEFAULT_POLL_MS    20
+#define CH390_DEFAULT_NETIF_NAME "e0"
 
-#define CH390_NCR                 0x00
-#define CH390_NSR                 0x01
-#define CH390_TCR                 0x02
-#define CH390_RCR                 0x05
-#define CH390_RSR                 0x06
-#define CH390_PAR                 0x10
-#define CH390_MAR                 0x16
-#define CH390_GPR                 0x1F
-#define CH390_VIDL                0x28
-#define CH390_VIDH                0x29
-#define CH390_PIDL                0x2A
-#define CH390_PIDH                0x2B
-#define CH390_CHIPR               0x2C
-#define CH390_TCR2                0x2D
-#define CH390_TCSCR               0x31
-#define CH390_MPTRCR              0x55
-#define CH390_MRCMDX              0x70
-#define CH390_MRCMD               0x72
-#define CH390_MRRL                0x74
-#define CH390_MRRH                0x75
-#define CH390_MWCMD               0x78
-#define CH390_TXPLL               0x7C
-#define CH390_TXPLH               0x7D
-#define CH390_ISR                 0x7E
-#define CH390_IMR                 0x7F
+#define CH390_NCR    0x00
+#define CH390_NSR    0x01
+#define CH390_TCR    0x02
+#define CH390_RCR    0x05
+#define CH390_RSR    0x06
+#define CH390_PAR    0x10
+#define CH390_MAR    0x16
+#define CH390_GPR    0x1F
+#define CH390_VIDL   0x28
+#define CH390_VIDH   0x29
+#define CH390_PIDL   0x2A
+#define CH390_PIDH   0x2B
+#define CH390_CHIPR  0x2C
+#define CH390_TCR2   0x2D
+#define CH390_TCSCR  0x31
+#define CH390_MPTRCR 0x55
+#define CH390_MRCMDX 0x70
+#define CH390_MRCMD  0x72
+#define CH390_MRRL   0x74
+#define CH390_MRRH   0x75
+#define CH390_MWCMD  0x78
+#define CH390_TXPLL  0x7C
+#define CH390_TXPLH  0x7D
+#define CH390_ISR    0x7E
+#define CH390_IMR    0x7F
 
-#define CH390_NCR_RST             (1U << 0)
-#define CH390_NSR_LINKST          (1U << 6)
-#define CH390_NSR_WAKEST          (1U << 5)
-#define CH390_NSR_TX2END          (1U << 3)
-#define CH390_NSR_TX1END          (1U << 2)
-#define CH390_TCR_TXREQ           (1U << 0)
-#define CH390_RCR_DIS_CRC         (1U << 4)
-#define CH390_RCR_ALL             (1U << 3)
-#define CH390_RCR_RXEN            (1U << 0)
-#define CH390_RSR_FOE             (1U << 0)
-#define CH390_RSR_ERR_BITS        ((1U << 7) | (1U << 5) | (1U << 4) | \
-                                   (1U << 3) | (1U << 2) | (1U << 1) | \
-                                   CH390_RSR_FOE)
-#define CH390_GPR_PHY_ON          0x00
-#define CH390_ISR_LNKCHG          (1U << 5)
-#define CH390_ISR_ROO             (1U << 3)
-#define CH390_ISR_ROS             (1U << 2)
-#define CH390_ISR_PT              (1U << 1)
-#define CH390_ISR_PR              (1U << 0)
-#define CH390_IMR_PAR             (1U << 7)
+#define CH390_NCR_RST      (1U << 0)
+#define CH390_NSR_LINKST   (1U << 6)
+#define CH390_NSR_WAKEST   (1U << 5)
+#define CH390_NSR_TX2END   (1U << 3)
+#define CH390_NSR_TX1END   (1U << 2)
+#define CH390_TCR_TXREQ    (1U << 0)
+#define CH390_RCR_DIS_CRC  (1U << 4)
+#define CH390_RCR_ALL      (1U << 3)
+#define CH390_RCR_RXEN     (1U << 0)
+#define CH390_RSR_FOE      (1U << 0)
+#define CH390_RSR_ERR_BITS ((1U << 7) | (1U << 5) | (1U << 4) | \
+                            (1U << 3) | (1U << 2) | (1U << 1) | \
+                            CH390_RSR_FOE)
+#define CH390_GPR_PHY_ON 0x00
+#define CH390_ISR_LNKCHG (1U << 5)
+#define CH390_ISR_ROO    (1U << 3)
+#define CH390_ISR_ROS    (1U << 2)
+#define CH390_ISR_PT     (1U << 1)
+#define CH390_ISR_PR     (1U << 0)
+#define CH390_IMR_PAR    (1U << 7)
 
-#define CH390_PKT_NONE            0x00
-#define CH390_PKT_RDY             0x01
-#define CH390_PKT_ERR_MASK        0xFE
-#define CH390_RX_STATUS_ERR_MASK  0x3F
+#define CH390_PKT_NONE           0x00
+#define CH390_PKT_RDY            0x01
+#define CH390_PKT_ERR_MASK       0xFE
+#define CH390_RX_STATUS_ERR_MASK 0x3F
 
-#define CH390_RX_MEM_END          0x4000
-#define CH390_RX_MEM_SIZE         0x3400
+#define CH390_RX_MEM_END  0x4000
+#define CH390_RX_MEM_SIZE 0x3400
 
-#define CH390_SPI_REG_READ        0x00
-#define CH390_SPI_REG_WRITE       0x80
+#define CH390_SPI_REG_READ  0x00
+#define CH390_SPI_REG_WRITE 0x80
 
 struct ch390
 {
@@ -117,7 +117,7 @@ struct ch390
 };
 
 static struct ch390 ch390_dev;
-static const rt_uint8_t ch390_default_mac[6] = {0x02, 0x12, 0x34, 0x56, 0x78, 0x90};
+static const rt_uint8_t ch390_default_mac[6] = { 0x02, 0x12, 0x34, 0x56, 0x78, 0x90 };
 
 static rt_err_t ch390_init(rt_device_t dev);
 static rt_err_t ch390_open(rt_device_t dev, rt_uint16_t oflag);
@@ -130,8 +130,7 @@ static struct pbuf *ch390_rx(rt_device_t dev);
 static rt_err_t ch390_tx(rt_device_t dev, struct pbuf *p);
 
 #ifdef RT_USING_DEVICE_OPS
-static const struct rt_device_ops ch390_ops =
-{
+static const struct rt_device_ops ch390_ops = {
     ch390_init,
     ch390_open,
     ch390_close,
@@ -524,8 +523,7 @@ static void ch390_poll_thread_entry(void *parameter)
 
 static rt_err_t ch390_basic_init(struct ch390 *ch390)
 {
-    static const rt_uint8_t multicast_hash[8] =
-    {
+    static const rt_uint8_t multicast_hash[8] = {
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
     };
     rt_err_t ret;
@@ -831,8 +829,7 @@ rt_err_t ch390_attach(const struct ch390_config *config)
 
     ch390_dev.rst_pin = config->rst_pin;
     ch390_dev.int_pin = config->int_pin;
-    ch390_dev.poll_interval_ms = config->poll_interval_ms ?
-                                 config->poll_interval_ms : CH390_DEFAULT_POLL_MS;
+    ch390_dev.poll_interval_ms = config->poll_interval_ms ? config->poll_interval_ms : CH390_DEFAULT_POLL_MS;
     rt_memcpy(ch390_dev.mac, mac, sizeof(ch390_dev.mac));
 
     ret = rt_mutex_init(&ch390_dev.lock, "ch390", RT_IPC_FLAG_PRIO);
