@@ -17,6 +17,7 @@ import sys
 import shutil
 import hashlib
 import operator
+import subprocess
 
 
 def GetEnvPath():
@@ -102,6 +103,16 @@ def help_info():
     )
 
 
+def run_git_clone(url, dest):
+    '''Clone a git repo via an argv list (no shell), so paths that contain
+    spaces are not split. Returns True on success, False otherwise.'''
+    try:
+        return subprocess.run(['git', 'clone', url, dest], check=False).returncode == 0
+    except (OSError, ValueError):
+        # git not found / not on PATH, or invalid arguments
+        return False
+
+
 def touch_env(use_gitee=False):
     if sys.platform != 'win32':
         home_dir = os.environ['HOME']
@@ -133,98 +144,64 @@ def touch_env(use_gitee=False):
         kconfig.close()
 
     # git clone packages
-    if not os.path.exists(os.path.join(env_dir, 'packages', 'packages')):
-        try:
-            ret = os.system('git clone %s %s' % (pkg_url, os.path.join(env_dir, 'packages', 'packages')))
-            if ret != 0:
-                shutil.rmtree(os.path.join(env_dir, 'packages', 'packages'))
-                print(
-                    "********************************************************************************\n"
-                    "* Warnning:\n"
-                    "* Run command error for \"git clone https://github.com/RT-Thread/packages.git\".\n"
-                    "* This error may have been caused by not found a git tool or network error.\n"
-                    "* If the git tool is not installed, install the git tool first.\n"
-                    "* If the git utility is installed, check whether the git command is added to \n"
-                    "* the system PATH.\n"
-                    "* This error may cause the RT-Thread packages to not work properly.\n"
-                    "********************************************************************************\n"
-                )
-                help_info()
-            else:
-                kconfig = open(os.path.join(env_dir, 'packages', 'Kconfig'), 'w')
-                kconfig.write('source "$PKGS_DIR/packages/Kconfig"')
-                kconfig.close()
-        except:
+    packages_dir = os.path.join(env_dir, 'packages', 'packages')
+    if not os.path.exists(packages_dir):
+        if not run_git_clone(pkg_url, packages_dir):
+            shutil.rmtree(packages_dir, ignore_errors=True)
             print(
-                "**********************************************************************************\n"
+                "********************************************************************************\n"
                 "* Warnning:\n"
-                "* Run command error for \"git clone https://github.com/RT-Thread/packages.git\". \n"
-                "* This error may have been caused by not found a git tool or git tool not in \n"
-                "* the system PATH. \n"
-                "* This error may cause the RT-Thread packages to not work properly. \n"
-                "**********************************************************************************\n"
+                "* Run command error for \"git clone %s\".\n"
+                "* This error may have been caused by not found a git tool or network error.\n"
+                "* If the git tool is not installed, install the git tool first.\n"
+                "* If the git utility is installed, check whether the git command is added to \n"
+                "* the system PATH.\n"
+                "* This error may cause the RT-Thread packages to not work properly.\n"
+                "********************************************************************************\n" % pkg_url
             )
             help_info()
+            return False
+        kconfig = open(os.path.join(env_dir, 'packages', 'Kconfig'), 'w')
+        kconfig.write('source "$PKGS_DIR/packages/Kconfig"')
+        kconfig.close()
 
     # git clone env scripts
-    if not os.path.exists(os.path.join(env_dir, 'tools', 'scripts')):
-        try:
-            ret = os.system('git clone %s %s' % (env_url, os.path.join(env_dir, 'tools', 'scripts')))
-            if ret != 0:
-                shutil.rmtree(os.path.join(env_dir, 'tools', 'scripts'))
-                print(
-                    "********************************************************************************\n"
-                    "* Warnning:\n"
-                    "* Run command error for \"git clone https://github.com/RT-Thread/env.git\".\n"
-                    "* This error may have been caused by not found a git tool or network error.\n"
-                    "* If the git tool is not installed, install the git tool first.\n"
-                    "* If the git utility is installed, check whether the git command is added \n"
-                    "* to the system PATH.\n"
-                    "* This error may cause script tools to fail to work properly.\n"
-                    "********************************************************************************\n"
-                )
-                help_info()
-        except:
+    scripts_dir = os.path.join(env_dir, 'tools', 'scripts')
+    if not os.path.exists(scripts_dir):
+        if not run_git_clone(env_url, scripts_dir):
+            shutil.rmtree(scripts_dir, ignore_errors=True)
             print(
                 "********************************************************************************\n"
                 "* Warnning:\n"
-                "* Run command error for \"git clone https://github.com/RT-Thread/env.git\". \n"
-                "* This error may have been caused by not found a git tool or git tool not in \n"
-                "* the system PATH. \n"
-                "* This error may cause script tools to fail to work properly. \n"
-                "********************************************************************************\n"
+                "* Run command error for \"git clone %s\".\n"
+                "* This error may have been caused by not found a git tool or network error.\n"
+                "* If the git tool is not installed, install the git tool first.\n"
+                "* If the git utility is installed, check whether the git command is added \n"
+                "* to the system PATH.\n"
+                "* This error may cause script tools to fail to work properly.\n"
+                "********************************************************************************\n" % env_url
             )
             help_info()
+            return False
 
     # git clone sdk
-    if not os.path.exists(os.path.join(env_dir, 'packages', 'sdk')):
-        try:
-            ret = os.system('git clone %s %s' % (sdk_url, os.path.join(env_dir, 'packages', 'sdk')))
-            if ret != 0:
-                shutil.rmtree(os.path.join(env_dir, 'packages', 'sdk'))
-                print(
-                    "********************************************************************************\n"
-                    "* Warnning:\n"
-                    "* Run command error for \"git clone https://github.com/RT-Thread/sdk.git\".\n"
-                    "* This error may have been caused by not found a git tool or network error.\n"
-                    "* If the git tool is not installed, install the git tool first.\n"
-                    "* If the git utility is installed, check whether the git command is added \n"
-                    "* to the system PATH.\n"
-                    "* This error may cause the RT-Thread SDK to not work properly.\n"
-                    "********************************************************************************\n"
-                )
-                help_info()
-        except:
+    sdk_dir = os.path.join(env_dir, 'packages', 'sdk')
+    if not os.path.exists(sdk_dir):
+        if not run_git_clone(sdk_url, sdk_dir):
+            shutil.rmtree(sdk_dir, ignore_errors=True)
             print(
                 "********************************************************************************\n"
                 "* Warnning:\n"
-                "* Run command error for \"https://github.com/RT-Thread/sdk.git\".\n"
-                "* This error may have been caused by not found a git tool or git tool not in \n"
-                "* the system PATH. \n"
-                "* This error may cause the RT-Thread SDK to not work properly. \n"
-                "********************************************************************************\n"
+                "* Run command error for \"git clone %s\".\n"
+                "* This error may have been caused by not found a git tool or network error.\n"
+                "* If the git tool is not installed, install the git tool first.\n"
+                "* If the git utility is installed, check whether the git command is added \n"
+                "* to the system PATH.\n"
+                "* This error may cause the RT-Thread SDK to not work properly.\n"
+                "********************************************************************************\n" % sdk_url
             )
             help_info()
+            return False
 
     # try to create an empty .config file
     if not os.path.exists(os.path.join(env_dir, 'tools', '.config')):
@@ -232,7 +209,12 @@ def touch_env(use_gitee=False):
         kconfig.close()
 
     # copy env.sh or env.ps1, Kconfig
-    shutil.copy(os.path.join(env_dir, 'tools', 'scripts', 'Kconfig'), os.path.join(home_dir, '.env', 'tools'))
+    scripts_kconfig = os.path.join(env_dir, 'tools', 'scripts', 'Kconfig')
+    if not os.path.isfile(scripts_kconfig):
+        print("**ERROR**: env scripts are missing (%s not found), ENV was not "
+              "installed completely." % scripts_kconfig)
+        return False
+    shutil.copy(scripts_kconfig, os.path.join(home_dir, '.env', 'tools'))
     if sys.platform != 'win32':
         shutil.copy(os.path.join(env_dir, 'tools', 'scripts', 'env.sh'), os.path.join(home_dir, '.env', 'env.sh'))
     else:
@@ -247,6 +229,8 @@ def touch_env(use_gitee=False):
         #     for file in zip_file_obj.namelist():
         #         zip_file_obj.extract(file, zip_file_dir)
         #     zip_file_obj.close()
+
+    return True
 
 
 def is_pkg_special_config(config_str):
@@ -372,7 +356,9 @@ def kconfiglib_check_installed():
     if os.path.exists(pkg_dir):
         os.environ["PKGS_DIR"] = pkg_dir
     elif sys.platform != 'win32':
-        touch_env()
+        if not touch_env():
+            print("\033[1;31m**ERROR**: Failed to install RT-Thread ENV tools.\033[0m")
+            sys.exit(1)
         os.environ["PKGS_DIR"] = GetPkgPath()
     else:
         print("\033[1;33m**WARNING**: PKGS_DIR not found, please install ENV tools\033[0m")
