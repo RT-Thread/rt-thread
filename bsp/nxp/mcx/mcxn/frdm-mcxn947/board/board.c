@@ -18,6 +18,7 @@
 #include "drv_uart.h"
 #include "fsl_port.h"
 #include "fsl_cache_lpcac.h"
+#include "fsl_lpflexcomm.h"
 
 /**
  * This is the timer interrupt service routine.
@@ -34,6 +35,47 @@ void SysTick_Handler(void)
     rt_interrupt_leave();
 }
 
+/* One-time LP_FLEXCOMM function selection (upstream PR #11186). With
+ * LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER=1 the fsl drivers no longer re-run
+ * LP_FLEXCOMM_Init on every configure (which reset the peripheral and
+ * killed console RX), so the mode must be selected once here. */
+static void rt_hw_flexcomm_mode_init(void)
+{
+    /* One entry per FLEXCOMM instance, covering every peripheral the
+     * drv_uart/drv_i2c/drv_spi drivers can enable on it. Instances that
+     * support several functions are mutually exclusive per Kconfig,
+     * except FC2 whose LPI2CAndLPUART mode serves both users at once
+     * (this board routes FC2 I2C on P0/P1 and UART on P2/P3). */
+#ifdef BSP_USING_I2C0
+    LP_FLEXCOMM_Init(0, LP_FLEXCOMM_PERIPH_LPI2C);
+#endif
+#if defined(BSP_USING_SPI1)
+    LP_FLEXCOMM_Init(1, LP_FLEXCOMM_PERIPH_LPSPI);
+#elif defined(BSP_USING_I2C1)
+    LP_FLEXCOMM_Init(1, LP_FLEXCOMM_PERIPH_LPI2C);
+#endif
+#if defined(BSP_USING_UART2) || defined(BSP_USING_I2C2)
+    LP_FLEXCOMM_Init(2, LP_FLEXCOMM_PERIPH_LPI2CAndLPUART);
+#endif
+#ifdef BSP_USING_SPI3
+    LP_FLEXCOMM_Init(3, LP_FLEXCOMM_PERIPH_LPSPI);
+#endif
+#ifdef BSP_USING_UART4
+    LP_FLEXCOMM_Init(4, LP_FLEXCOMM_PERIPH_LPUART);
+#endif
+#ifdef BSP_USING_UART5
+    LP_FLEXCOMM_Init(5, LP_FLEXCOMM_PERIPH_LPUART);
+#endif
+#if defined(BSP_USING_UART6)
+    LP_FLEXCOMM_Init(6, LP_FLEXCOMM_PERIPH_LPUART);
+#elif defined(BSP_USING_SPI6)
+    LP_FLEXCOMM_Init(6, LP_FLEXCOMM_PERIPH_LPSPI);
+#endif
+#ifdef BSP_USING_SPI7
+    LP_FLEXCOMM_Init(7, LP_FLEXCOMM_PERIPH_LPSPI);
+#endif
+}
+
 /**
  * This function will initial board.
  */
@@ -41,6 +83,7 @@ void rt_hw_board_init()
 {
     /* Hardware Initialization */
     BOARD_InitBootPins();
+    rt_hw_flexcomm_mode_init();
     L1CACHE_EnableCodeCache();
 
     CLOCK_EnableClock(kCLOCK_Freqme);

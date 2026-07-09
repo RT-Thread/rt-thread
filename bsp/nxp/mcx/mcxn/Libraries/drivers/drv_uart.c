@@ -160,7 +160,18 @@ static rt_err_t mcx_configure(struct rt_serial_device *serial, struct serial_con
     config.enableTx     = true;
     config.enableRx     = true;
 
-    LPUART_Init(uart->uart_base, &config, CLOCK_GetFreq(uart->clock_src));
+    /* LPUART_Init resets the peripheral, wiping any RX interrupt enable set
+     * by a prior RT_DEVICE_CTRL_SET_INT (upstream fix, PR #11186). Preserve
+     * and restore it, or console RX goes permanently dead. */
+    {
+        rt_uint32_t irq_regval = LPUART_GetEnabledInterrupts(uart->uart_base);
+        LPUART_Init(uart->uart_base, &config, CLOCK_GetFreq(uart->clock_src));
+        if (irq_regval & kLPUART_RxDataRegFullInterruptEnable)
+        {
+            LPUART_EnableInterrupts(uart->uart_base, kLPUART_RxDataRegFullInterruptEnable);
+            EnableIRQ(uart->irqn);
+        }
+    }
 
     return RT_EOK;
 }
@@ -247,6 +258,12 @@ static void uart_isr(struct rt_serial_device *serial)
 
     /* UART in mode Receiver -------------------------------------------------*/
     rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+
+    /* Clear error flags: an uncleared overrun (OR) inhibits all further
+     * reception on LPUART, permanently wedging RX. */
+    LPUART_ClearStatusFlags(uart->uart_base,
+                            kLPUART_RxOverrunFlag | kLPUART_FramingErrorFlag |
+                            kLPUART_NoiseErrorFlag | kLPUART_ParityErrorFlag);
 
     /* leave interrupt */
     rt_interrupt_leave();
