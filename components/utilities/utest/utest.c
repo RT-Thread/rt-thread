@@ -22,7 +22,7 @@
 #endif
 #include <rtdbg.h>
 
-#if RT_CONSOLEBUF_SIZE < 256
+#if defined(RT_CONSOLEBUF_SIZE) && RT_CONSOLEBUF_SIZE < 256
 #error "RT_CONSOLEBUF_SIZE is less than 256!"
 #endif
 
@@ -108,8 +108,9 @@ int utest_init(void)
     extern const int UtestTcTab$$Base;
     extern const int UtestTcTab$$Limit;
     tc_table = (utest_tc_export_t)&UtestTcTab$$Base;
+    // cppcheck-suppress subtractPointers
     tc_num = (utest_tc_export_t)&UtestTcTab$$Limit - tc_table;
-#elif defined (__ICCARM__) || defined(__ICCRX__)    /* for IAR Compiler */
+#elif defined(__ICCARM__) || defined(__ICCRX__)    /* for IAR Compiler */
     tc_table = (utest_tc_export_t)__section_begin("UtestTcTab");
     tc_num = (utest_tc_export_t)__section_end("UtestTcTab") - tc_table;
 #else
@@ -124,21 +125,26 @@ int utest_init(void)
     ptr_end = (unsigned int *)&__tc_export_end;
     ptr_begin += (sizeof(struct utest_tc_export) / sizeof(unsigned int));
 #endif
-    while (*ptr_begin == 0) ptr_begin++;
+#if defined(__GNUC__) || defined(_MSC_VER)
+    while (*ptr_begin == 0)
+        ptr_begin++;
     ptr_end--;
-    while (*ptr_end == 0) ptr_end--;
+    while (*ptr_end == 0)
+        ptr_end--;
     /* copy tc_table from rodata section to ram */
     for (unsigned int *ptr = ptr_begin; ptr < ptr_end;)
     {
         if (!tc_table)
             tc_table = (utest_tc_export_t)rt_malloc(sizeof(struct utest_tc_export));
         else
-            tc_table = (utest_tc_export_t)rt_realloc(tc_table, (tc_num + 1)* sizeof(struct utest_tc_export));
+            tc_table = (utest_tc_export_t)rt_realloc(tc_table, (tc_num + 1) * sizeof(struct utest_tc_export));
         RT_ASSERT(tc_table);
         tc_table[tc_num++] = *((utest_tc_export_t)ptr);
         ptr += (sizeof(struct utest_tc_export) / sizeof(unsigned int));
-        while (*ptr == 0) ptr++;
+        while (*ptr == 0)
+            ptr++;
     }
+#endif
 #endif
 
     LOG_I("utest is initialize success.");
@@ -279,6 +285,10 @@ static void utest_do_run(const char *utest_name)
 
             if (tc_table[i].tc != RT_NULL)
             {
+                local_utest.error = UTEST_PASSED;
+                local_utest.passed_num = 0;
+                local_utest.failed_num = 0;
+
                 tc_table[i].tc();
                 if (local_utest.failed_num == 0)
                 {
@@ -433,6 +443,9 @@ utest_t utest_handle_get(void)
 
 void utest_unit_run(test_unit_func func, const char *unit_func_name)
 {
+    rt_uint32_t passed_num = local_utest.passed_num;
+    rt_uint32_t failed_num = local_utest.failed_num;
+
     LOG_I("[==========] utest unit name: (%s)", unit_func_name);
     local_utest.error = UTEST_PASSED;
     local_utest.passed_num = 0;
@@ -441,6 +454,16 @@ void utest_unit_run(test_unit_func func, const char *unit_func_name)
     if (func != RT_NULL)
     {
         func();
+    }
+
+    passed_num += local_utest.passed_num;
+    failed_num += local_utest.failed_num;
+
+    local_utest.passed_num = passed_num;
+    local_utest.failed_num = failed_num;
+    if (local_utest.failed_num != 0)
+    {
+        local_utest.error = UTEST_FAILED;
     }
 }
 
