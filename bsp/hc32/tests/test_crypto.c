@@ -247,9 +247,10 @@ static void hash_sha256_test(void)
     const char *in = "0123456789abcdefghijklmnopqrstuvwxyz";
     uint8_t calc_out[HASH_SHA256_MSG_DIGEST_SIZE];
     const uint8_t expect_out[HASH_SHA256_MSG_DIGEST_SIZE] = {0x74, 0xE7, 0xE5, 0xBB, 0x9D, 0x22, 0xD6, 0xDB, 0x26, 0xBF,
-                                                       0x76, 0x94, 0x6D, 0x40, 0xFF, 0xF3, 0xEA, 0x9F, 0x03, 0x46,
-                                                       0xB8, 0x84, 0xFD, 0x06, 0x94, 0x92, 0x0F, 0xCC, 0xFA, 0xD1,
-                                                       0x5E, 0x33};
+                                                             0x76, 0x94, 0x6D, 0x40, 0xFF, 0xF3, 0xEA, 0x9F, 0x03, 0x46,
+                                                             0xB8, 0x84, 0xFD, 0x06, 0x94, 0x92, 0x0F, 0xCC, 0xFA, 0xD1,
+                                                             0x5E, 0x33
+                                                            };
     struct rt_hwcrypto_ctx *ctx;
 
     ctx = rt_hwcrypto_hash_create(rt_hwcrypto_dev_default(), HWCRYPTO_TYPE_SHA256);

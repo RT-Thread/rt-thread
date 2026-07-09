@@ -20,11 +20,19 @@
 
 #if defined(BSP_USING_PM)
 
-#define WKTM_IRQn                   (INT131_IRQn)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467)
+    #define WKTM_IRQn                   (INT131_IRQn)
+#elif defined (HC32F460)
+    #define WKTM_IRQn                   (INT130_IRQn)
+#endif
 
 static volatile rt_uint32_t last_tick;
 
-void PWC_WakeupTimer_IrqHandler(void)
+#if defined (HC32F334) || defined (HC32F448) || defined (HC32F472)
+    void PWC_WKTM_Handler(void)
+#elif defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467) || defined (HC32F460)
+    void PWC_WakeupTimer_IrqHandler(void)
+#endif
 {
     static rt_uint32_t delta_tick;
 
@@ -37,6 +45,10 @@ void PWC_WakeupTimer_IrqHandler(void)
     rt_kprintf("Wakeup-timer irq interval ticks: approximate %d.\r\n", delta_tick);
 
     rt_interrupt_leave();
+
+#if defined (HC32F334) || defined (HC32F448) || defined (HC32F472)
+    __DSB();  /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+#endif
 }
 
 void wktm_sample(int argc, char **argv)
@@ -63,17 +75,19 @@ void wktm_sample(int argc, char **argv)
             /*********************** Hold the wakeup timer configuration ******/
             rt_kprintf("compare value %d is out of %d(max), so hold the wakeup timer configuration \n\n", cmp_value, cmp_max);
         }
-        else if (cmp_value < (cmp_max/2))
+        else if (cmp_value < (cmp_max / 2))
         {
             /*********************** Hold the wakeup timer configuration ******/
-            rt_kprintf("compare value %d is less of %d(max/2), so hold the wakeup timer configuration: ", cmp_value, cmp_max/2);
+            rt_kprintf("compare value %d is less of %d(max/2), so hold the wakeup timer configuration: ", cmp_value, cmp_max / 2);
             rt_kprintf("to avoid frequent interruptions: too much printed information affcets console commands \n\n");
         }
         else
         {
             /*********************** Start wakeup-timer ***********************/
             /* Wakeup timer NVIC config */
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467) || defined (HC32F460)
             (void)INTC_ShareIrqCmd(INT_SRC_WKTM_PRD, ENABLE);
+#endif
             NVIC_ClearPendingIRQ(WKTM_IRQn);
             NVIC_SetPriority(WKTM_IRQn, DDL_IRQ_PRIO_DEFAULT);
             NVIC_EnableIRQ(WKTM_IRQn);
@@ -94,8 +108,8 @@ void wktm_sample(int argc, char **argv)
     else
     {
         rt_kprintf("wktm_sample 0: stop wakeup-timer \n");
-        rt_kprintf("wktm_sample %d~%d: set wakeup-timer compare value and start timer \n\n", cmp_max/2, cmp_max);
+        rt_kprintf("wktm_sample %d~%d: set wakeup-timer compare value and start timer \n\n", cmp_max / 2, cmp_max);
     }
 }
-MSH_CMD_EXPORT(wktm_sample, wktm_sample compare-value);
+MSH_CMD_EXPORT(wktm_sample, wktm_sample compare_value);
 #endif

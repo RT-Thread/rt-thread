@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2023-02-14     CDT          first version
  * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-03     CDT          support HC32F467
  */
 
 
@@ -683,10 +684,10 @@ static const struct rt_mmcsd_host_ops _mmcsd_host_ops =
  */
 static rt_uint32_t _sdio_clock_get(CM_SDIOC_TypeDef *SDIOCx)
 {
-    rt_uint32_t clk;
+    rt_uint32_t clk = 0UL;
 
     (void)SDIOCx;
-#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F4A8) || defined (HC32F467)
     clk = CLK_GetBusClockFreq(CLK_BUS_PCLK1);
 #elif defined (HC32F460)
     clk = CLK_GetBusClockFreq(CLK_BUS_EXCLK);
@@ -897,7 +898,7 @@ static rt_err_t _sdio_verify_bus_clock_frequency(struct hc32_sdio_config *config
 {
     rt_err_t ret = RT_EOK;
 
-#if defined (HC32F4A0) || defined (HC32F4A2)
+#if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F467)
     rt_uint32_t pclk1;
     rt_uint32_t exlck;
 

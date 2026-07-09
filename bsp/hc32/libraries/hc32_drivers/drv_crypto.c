@@ -476,7 +476,7 @@ static rt_err_t _crypto_create(struct rt_hwcrypto_ctx *ctx)
     case HWCRYPTO_TYPE_GCM:
     {
 #if defined (HC32F460) || defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F448) || defined (HC32F472) || \
-    defined (HC32F467)
+defined (HC32F467)
         /* Enable AES peripheral clock. */
         FCG_Fcg0PeriphClockCmd(PWC_FCG0_AES, ENABLE);
 #elif defined (HC32F4A8)

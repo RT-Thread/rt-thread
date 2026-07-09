@@ -51,7 +51,7 @@
 #if defined (HC32F460)
     #define FCG_USART_CLK               FCG_Fcg1PeriphClockCmd
 #elif defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F448) || defined (HC32F472) || \
-      defined (HC32F4A8) || defined (HC32F334) || defined (HC32F467)
+    defined (HC32F4A8) || defined (HC32F334) || defined (HC32F467)
     #define FCG_USART_CLK               FCG_Fcg3PeriphClockCmd
 #endif
 

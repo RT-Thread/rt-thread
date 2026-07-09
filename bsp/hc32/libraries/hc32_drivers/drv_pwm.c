@@ -30,7 +30,7 @@
 #if defined (HC32F460) || defined (HC32F448)
     #define TMRA_CHANNEL_NUM_MAX     8U
 #elif defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F472) || defined (HC32F4A8) || \
-      defined (HC32F334) || defined (HC32F467)
+    defined (HC32F334) || defined (HC32F467)
     #define TMRA_CHANNEL_NUM_MAX     4U
 #endif
 
@@ -735,7 +735,7 @@ static struct hc32_pwm_tmr4 g_pwm_tmr4_array[] =
 
 static rt_uint32_t tmr4_get_clk_notdiv(CM_TMR4_TypeDef *TMR4x)
 {
-    rt_uint32_t u32clkFreq;
+    rt_uint32_t u32clkFreq = 0UL;
 #if defined (HC32F4A0) || defined (HC32F4A2) || defined (HC32F448) || defined (HC32F472) || defined (HC32F4A8) || \
     defined (HC32F334) || defined (HC32F467)
     u32clkFreq = CLK_GetBusClockFreq(CLK_BUS_PCLK0);

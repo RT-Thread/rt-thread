@@ -127,41 +127,41 @@
 /************************* ETH port ***********************/
 
 #if defined(BSP_USING_ETH)
-        #define ETH_SMI_MDIO_PORT       (GPIO_PORT_A)
-        #define ETH_SMI_MDIO_PIN        (GPIO_PIN_02)
-        #define ETH_SMI_MDIO_FUNC       (GPIO_FUNC_11)
+    #define ETH_SMI_MDIO_PORT       (GPIO_PORT_A)
+    #define ETH_SMI_MDIO_PIN        (GPIO_PIN_02)
+    #define ETH_SMI_MDIO_FUNC       (GPIO_FUNC_11)
 
-        #define ETH_SMI_MDC_PORT        (GPIO_PORT_C)
-        #define ETH_SMI_MDC_PIN         (GPIO_PIN_01)
-        #define ETH_SMI_MDC_FUNC        (GPIO_FUNC_11)
+    #define ETH_SMI_MDC_PORT        (GPIO_PORT_C)
+    #define ETH_SMI_MDC_PIN         (GPIO_PIN_01)
+    #define ETH_SMI_MDC_FUNC        (GPIO_FUNC_11)
 
-        #define ETH_RMII_TX_EN_PORT     (GPIO_PORT_G)
-        #define ETH_RMII_TX_EN_PIN      (GPIO_PIN_11)
-        #define ETH_RMII_TX_EN_FUNC     (GPIO_FUNC_11)
+    #define ETH_RMII_TX_EN_PORT     (GPIO_PORT_G)
+    #define ETH_RMII_TX_EN_PIN      (GPIO_PIN_11)
+    #define ETH_RMII_TX_EN_FUNC     (GPIO_FUNC_11)
 
-        #define ETH_RMII_TXD0_PORT      (GPIO_PORT_G)
-        #define ETH_RMII_TXD0_PIN       (GPIO_PIN_13)
-        #define ETH_RMII_TXD0_FUNC      (GPIO_FUNC_11)
+    #define ETH_RMII_TXD0_PORT      (GPIO_PORT_G)
+    #define ETH_RMII_TXD0_PIN       (GPIO_PIN_13)
+    #define ETH_RMII_TXD0_FUNC      (GPIO_FUNC_11)
 
-        #define ETH_RMII_TXD1_PORT      (GPIO_PORT_G)
-        #define ETH_RMII_TXD1_PIN       (GPIO_PIN_14)
-        #define ETH_RMII_TXD1_FUNC      (GPIO_FUNC_11)
+    #define ETH_RMII_TXD1_PORT      (GPIO_PORT_G)
+    #define ETH_RMII_TXD1_PIN       (GPIO_PIN_14)
+    #define ETH_RMII_TXD1_FUNC      (GPIO_FUNC_11)
 
-        #define ETH_RMII_REF_CLK_PORT   (GPIO_PORT_A)
-        #define ETH_RMII_REF_CLK_PIN    (GPIO_PIN_01)
-        #define ETH_RMII_REF_CLK_FUNC   (GPIO_FUNC_11)
+    #define ETH_RMII_REF_CLK_PORT   (GPIO_PORT_A)
+    #define ETH_RMII_REF_CLK_PIN    (GPIO_PIN_01)
+    #define ETH_RMII_REF_CLK_FUNC   (GPIO_FUNC_11)
 
-        #define ETH_RMII_CRS_DV_PORT    (GPIO_PORT_A)
-        #define ETH_RMII_CRS_DV_PIN     (GPIO_PIN_07)
-        #define ETH_RMII_CRS_DV_FUNC    (GPIO_FUNC_11)
+    #define ETH_RMII_CRS_DV_PORT    (GPIO_PORT_A)
+    #define ETH_RMII_CRS_DV_PIN     (GPIO_PIN_07)
+    #define ETH_RMII_CRS_DV_FUNC    (GPIO_FUNC_11)
 
-        #define ETH_RMII_RXD0_PORT      (GPIO_PORT_C)
-        #define ETH_RMII_RXD0_PIN       (GPIO_PIN_04)
-        #define ETH_RMII_RXD0_FUNC      (GPIO_FUNC_11)
+    #define ETH_RMII_RXD0_PORT      (GPIO_PORT_C)
+    #define ETH_RMII_RXD0_PIN       (GPIO_PIN_04)
+    #define ETH_RMII_RXD0_FUNC      (GPIO_FUNC_11)
 
-        #define ETH_RMII_RXD1_PORT      (GPIO_PORT_C)
-        #define ETH_RMII_RXD1_PIN       (GPIO_PIN_05)
-        #define ETH_RMII_RXD1_FUNC      (GPIO_FUNC_11)
+    #define ETH_RMII_RXD1_PORT      (GPIO_PORT_C)
+    #define ETH_RMII_RXD1_PIN       (GPIO_PIN_05)
+    #define ETH_RMII_RXD1_FUNC      (GPIO_FUNC_11)
 #endif
 
 /************************ NAND port **********************/

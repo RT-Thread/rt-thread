@@ -457,7 +457,7 @@ static int rt_hw_clock_timer_init(void)
         hc32_clock_timer_obj[i].time_device.info = &_info[i];
         hc32_clock_timer_obj[i].time_device.ops  = &_ops;
         if (rt_clock_timer_register(&hc32_clock_timer_obj[i].time_device,
-                                       hc32_clock_timer_obj[i].name, &hc32_clock_timer_obj[i].tmr_handle) == RT_EOK)
+                                    hc32_clock_timer_obj[i].name, &hc32_clock_timer_obj[i].tmr_handle) == RT_EOK)
         {
             LOG_D("%s register success", hc32_clock_timer_obj[i].name);
         }

@@ -122,15 +122,12 @@ static void eeprom_page_read(uint32_t page, uint8_t *pBuf)
     hc32_i2c = rt_i2c_bus_device_find(SW_I2C_DEV);  //sw i2c
 #endif
 
-    if (EE_WORD_ADR_SIZE == 2)
-    {
-        readAddr[0] = (page * EE_PAGE_SIZE) / 256;  // addrH
-        readAddr[1] = page * EE_PAGE_SIZE;          // addrL
-    }
-    else
-    {
-        readAddr[0] = page * EE_PAGE_SIZE;
-    }
+#if (EE_WORD_ADR_SIZE == 2)
+    readAddr[0] = (page * EE_PAGE_SIZE) / 256;  // addrH
+    readAddr[1] = page * EE_PAGE_SIZE;          // addrL
+#else
+    readAddr[0] = page * EE_PAGE_SIZE;
+#endif
 
 #if defined(USING_RT_I2C_TRANSFER)
     msg[0].addr  = EE_DEV_ADDR;
