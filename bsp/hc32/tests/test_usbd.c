@@ -40,6 +40,7 @@ static rt_err_t cdc_rx_handle(rt_device_t dev, rt_size_t size)
 {
     /* 读取虚拟串口接收内容 */
     rt_device_read(dev, 0, str_read, size);
+    str_read[size] = '\0';
     rt_kprintf("Read message:  %s\n", str_read);
 
     return RT_EOK;
@@ -249,7 +250,8 @@ static int hid_sample(void)
         }
     }
 
-    //return ret;
+    /* unreachable, but keeps static analyzers happy */
+    return ret;
 }
 /* 导出到 msh 命令列表中 */
 MSH_CMD_EXPORT(hid_sample, usbd hid sample);
@@ -286,6 +288,10 @@ uint8_t str_read[100];
 static rt_err_t winusb_rx_handle(rt_device_t dev, rt_size_t size)
 {
     uint8_t i;
+    if (size > sizeof(str_read))
+    {
+        size = sizeof(str_read);
+    }
     /* 读取定时器当前值 */
     rt_kprintf("Rx:");
     for (i = 0; i < size; i++)
