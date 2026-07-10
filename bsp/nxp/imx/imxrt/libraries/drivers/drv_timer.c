@@ -226,7 +226,6 @@ static rt_clock_timer_t GPT_timer2;
 int rt_hw_clock_timer_init(void)
 {
     int ret = RT_EOK;
-    int err = RT_EOK;
 
 #ifdef BSP_USING_CLOCK_TIMER1
     GPT_timer1.info = &imxrt_clock_timer_info;
@@ -236,10 +235,6 @@ int rt_hw_clock_timer_init(void)
     if (ret != RT_EOK)
     {
         LOG_E("gpt1 register failed\n");
-        if (err == RT_EOK)
-        {
-            err = ret;
-        }
     }
 #endif
 
@@ -251,14 +246,10 @@ int rt_hw_clock_timer_init(void)
     if (ret != RT_EOK)
     {
         LOG_E("gpt2 register failed\n");
-        if (err == RT_EOK)
-        {
-            err = ret;
-        }
     }
 #endif
 
-    return err;
+    return ret;
 }
 
 #ifdef BSP_USING_CLOCK_TIMER1
