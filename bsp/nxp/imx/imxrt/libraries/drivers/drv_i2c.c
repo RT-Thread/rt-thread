@@ -252,6 +252,93 @@ static status_t LPI2C_MasterWaitForTxFifoAllEmpty(LPI2C_Type *base)
     return kStatus_Success;
 }
 
+#ifdef SOC_IMXRT1180_SERIES
+static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
+                                    struct rt_i2c_msg msgs[],
+                                    rt_uint32_t num)
+{
+    struct imxrt_i2c_bus *imxrt_i2c;
+    rt_size_t i;
+    status_t status;
+    rt_bool_t is_read;
+    lpi2c_direction_t dir;
+    RT_ASSERT(bus != RT_NULL);
+    imxrt_i2c = (struct imxrt_i2c_bus *) bus;
+
+    imxrt_i2c->msg = msgs;
+    imxrt_i2c->msg_ptr = 0;
+    imxrt_i2c->msg_cnt = num;
+    imxrt_i2c->dptr = 0;
+
+    for (i = 0; i < num; i++)
+    {
+        is_read = (msgs[i].flags & RT_I2C_RD) != 0U;
+        dir = is_read ? kLPI2C_Read : kLPI2C_Write;
+
+        /* Issue START (first message) or Repeated START (subsequent messages). */
+        if ((msgs[i].flags & RT_I2C_NO_START) != RT_I2C_NO_START)
+        {
+            if (i == 0)
+            {
+                status = LPI2C_MasterStart(imxrt_i2c->I2C, msgs[i].addr, dir);
+            }
+            else
+            {
+                status = LPI2C_MasterRepeatedStart(imxrt_i2c->I2C, msgs[i].addr, dir);
+            }
+            if (status != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+
+            /* Wait for address byte to be sent and check ACK/NACK. */
+            status = LPI2C_MasterWaitForTxFifoAllEmpty(imxrt_i2c->I2C);
+            if (status != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+            if (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
+            {
+                i = 0;
+                break;
+            }
+        }
+
+        if (is_read)
+        {
+            status = LPI2C_MasterReceive(imxrt_i2c->I2C, msgs[i].buf, msgs[i].len);
+        }
+        else
+        {
+            status = LPI2C_MasterSend(imxrt_i2c->I2C, msgs[i].buf, msgs[i].len);
+            if (status == kStatus_Success)
+            {
+                status = LPI2C_MasterWaitForTxFifoAllEmpty(imxrt_i2c->I2C);
+            }
+        }
+        if (status != kStatus_Success)
+        {
+            i = 0;
+            break;
+        }
+    }
+
+    status = LPI2C_MasterStop(imxrt_i2c->I2C);
+    if (status != kStatus_Success)
+    {
+        i = 0;
+    }
+
+    imxrt_i2c->msg = RT_NULL;
+    imxrt_i2c->msg_ptr = 0;
+    imxrt_i2c->msg_cnt = 0;
+    imxrt_i2c->dptr = 0;
+
+    return i;
+}
+#else
 static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
                                     rt_uint32_t num)
@@ -299,6 +386,16 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 while (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
                 {
                 }
+            }
+
+            if (LPI2C_MasterStart(imxrt_i2c->I2C, imxrt_i2c->msg[i].addr, kLPI2C_Read) != kStatus_Success)
+            {
+                i = 0;
+                break;
+            }
+
+            while (LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterNackDetectFlag)
+            {
             }
 
             if (LPI2C_MasterReceive(imxrt_i2c->I2C, imxrt_i2c->msg[i].buf, imxrt_i2c->msg[i].len) != kStatus_Success)
@@ -357,6 +454,7 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 
     return i;
 }
+#endif
 
 static rt_ssize_t imxrt_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
                                     struct rt_i2c_msg msgs[],
