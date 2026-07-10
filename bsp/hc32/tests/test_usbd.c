@@ -34,14 +34,18 @@
  */
 
 #define USBD_DEV_NAME   "vcom"     /* 名称 */
-rt_uint8_t str_read[255];
+static rt_uint8_t cdc_str_read[256];
 
 static rt_err_t cdc_rx_handle(rt_device_t dev, rt_size_t size)
 {
+    if (size >= sizeof(cdc_str_read))
+    {
+        size = sizeof(cdc_str_read) - 1;
+    }
     /* 读取虚拟串口接收内容 */
-    rt_device_read(dev, 0, str_read, size);
-    str_read[size] = '\0';
-    rt_kprintf("Read message:  %s\n", str_read);
+    rt_device_read(dev, 0, cdc_str_read, size);
+    cdc_str_read[size] = '\0';
+    rt_kprintf("Read message:  %s\n", cdc_str_read);
 
     return RT_EOK;
 }
@@ -279,29 +283,29 @@ MSH_CMD_EXPORT(hid_sample, usbd hid sample);
  * 通过llcom.exe可发送bulk数据（100字符以内）到设备，设备收到后会回发给主机(llcom.exe)，同时通过MSH终端显示收到的HEX数据。
  * 注意：1、llcom.exe中的GUID与驱动程序中设定保持一致(通过设备管理器选择RTT Win USB设备的属性来查看)；
  *       2、win_usb_read()函数中的UIO_REQUEST_READ_FULL改为UIO_REQUEST_READ_BEST，实现数据即读即取;
- *          否则需要接满传入的sizeof(str_read)数量的数据，才会回调接收函数。
+ *          否则需要接满传入的sizeof(winusb_str_read)数量的数据，才会回调接收函数。
  *
  */
 #define WINUSB_DEV_NAME   "winusb"     /* 名称 */
-uint8_t str_read[100];
+static rt_uint8_t winusb_str_read[100];
 
 static rt_err_t winusb_rx_handle(rt_device_t dev, rt_size_t size)
 {
     uint8_t i;
-    if (size > sizeof(str_read))
+    if (size > sizeof(winusb_str_read))
     {
-        size = sizeof(str_read);
+        size = sizeof(winusb_str_read);
     }
     /* 读取定时器当前值 */
     rt_kprintf("Rx:");
     for (i = 0; i < size; i++)
     {
-        rt_kprintf("%x", str_read[i]);
+        rt_kprintf("%x", winusb_str_read[i]);
     }
     rt_kprintf("\r\n");
-    rt_device_write(dev, 0, str_read, size);
+    rt_device_write(dev, 0, winusb_str_read, size);
     /* prepare read config */
-    rt_device_read(dev, 0, str_read, sizeof(str_read));
+    rt_device_read(dev, 0, winusb_str_read, sizeof(winusb_str_read));
     return RT_EOK;
 }
 
@@ -331,7 +335,7 @@ static int winusb_sample(void)
     if (ret == RT_EOK)
     {
         /* prepare read config,set once,read once, */
-        rt_device_read(winusb_dev, 0, str_read, sizeof(str_read));
+        rt_device_read(winusb_dev, 0, winusb_str_read, sizeof(winusb_str_read));
     }
     return ret;
 }

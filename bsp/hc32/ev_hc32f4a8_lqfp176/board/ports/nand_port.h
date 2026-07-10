@@ -32,6 +32,9 @@
 /* device width: 8-bit */
 #define NAND_EXMC_NFC_MEMORY_WIDTH      EXMC_NFC_MEMORY_WIDTH_8BIT
 
+/* BankNum: 1BANK */
+#define NAND_EXMC_NFC_BANK_NUMBER       EXMC_NFC_1BANK
+
 /* page size: 2KByte */
 #define NAND_EXMC_NFC_PAGE_SIZE         EXMC_NFC_PAGE_SIZE_2KBYTE
 
