@@ -1069,7 +1069,7 @@ static rt_err_t cfi_flash_dev_probe(struct rt_device *dev, struct cfi_flash_devi
     if (num_erase_regions > RT_ARRAY_SIZE(query->erase_region_info))
     {
         LOG_E("Too many %d (> %d) erase regions found",
-               num_erase_regions, RT_ARRAY_SIZE(query->erase_region_info));
+              num_erase_regions, RT_ARRAY_SIZE(query->erase_region_info));
         err = -RT_EINVAL;
         goto _fail;
     }
