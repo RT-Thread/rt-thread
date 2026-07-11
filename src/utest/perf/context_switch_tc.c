@@ -57,6 +57,14 @@ static void local_modify_time(rt_perf_t *perf)
         perf->real_time = perf->real_time - perf->tmp_time;
 }
 
+//我的改动----------------------------------
+static void local_modify_time(rt_perf_t *perf)
+{
+    if(perf)
+        perf->real_time = perf->real_time - perf->tmp_time;
+}
+//我的改动----------------------------------
+
 static void perf_thread_event1(void *parameter)
 {
     while (1)
