@@ -65,7 +65,14 @@ static void perf_thread_event1(void *parameter)
         rt_sem_release(sem2);
     }
 }
-
+static void perf_thread_event1(void *parameter)
+{
+    while (1)
+    {
+        rt_sem_take(sem1, RT_WAITING_FOREVER);
+        rt_sem_release(sem2);
+    }
+}
 static void perf_thread_event2(void *parameter)
 {
     rt_perf_t *perf = (rt_perf_t *)parameter;
