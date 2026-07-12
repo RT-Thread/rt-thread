@@ -192,7 +192,10 @@ static int dfs_elm_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *
         /* open the root directory to test whether the fatfs is valid */
         result = f_opendir(dir, drive);
         if (result != FR_OK)
+        {
+            rt_free(dir);
             goto __err;
+        }
 
         /* mount succeed! */
         mnt->data = fat;
