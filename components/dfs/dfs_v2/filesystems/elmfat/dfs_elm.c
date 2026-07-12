@@ -522,6 +522,7 @@ int dfs_elm_close(struct dfs_file *file)
         dir = (DIR *)(file->vnode->data);
         RT_ASSERT(dir != RT_NULL);
 
+        f_closedir(dir);
         /* release memory */
         rt_free(dir);
     }
@@ -1014,10 +1015,27 @@ static struct dfs_vnode *dfs_elm_create_vnode(struct dfs_dentry *dentry, int typ
 
 static int dfs_elm_free_vnode(struct dfs_vnode *vnode)
 {
-    /* nothing to be freed */
-    if (vnode && vnode->ref_count <= 1)
+    /* free_vnode is the backstop destruction point: called from
+       dfs_vnode_unref when ref_count drops to 0, and from dfs_vnode_destroy on
+       a create/lookup failure (ref_count == 1). Normally dfs_elm_close has
+       already released the resource and set data = NULL, so this is a no-op.
+       It only tears down the resource when close bailed out early due to
+       ref_count > 1 (a transient lookup had raised it), which is exactly the
+       leak this guards against. data != NULL means the resource is still
+       live and the lock is still initialized, so both are released here. */
+    if (vnode && vnode->ref_count <= 1 && vnode->data != RT_NULL)
     {
-        vnode->data = NULL;
+        if (vnode->type == FT_DIRECTORY)
+        {
+            f_closedir((DIR *)vnode->data);
+        }
+        else if (vnode->type == FT_REGULAR)
+        {
+            f_close((FIL *)vnode->data);
+        }
+        rt_free(vnode->data);
+        vnode->data = RT_NULL;
+        rt_mutex_detach(&vnode->lock);
     }
 
     return 0;

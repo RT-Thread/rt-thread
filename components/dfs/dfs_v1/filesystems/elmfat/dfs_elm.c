@@ -478,6 +478,7 @@ int dfs_elm_close(struct dfs_file *file)
         dir = (DIR *)(file->data);
         RT_ASSERT(dir != RT_NULL);
 
+        f_closedir(dir);
         /* release memory */
         rt_free(dir);
     }
