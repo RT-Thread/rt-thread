@@ -1146,6 +1146,9 @@ DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, UINT count)
     rt_size_t result;
     rt_device_t device = disk[drv];
 
+    if (device == RT_NULL)
+        return RES_ERROR;
+
     result = rt_device_read(device, sector, buff, count);
     if (result == count)
     {
@@ -1160,6 +1163,9 @@ DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
+
+    if (device == RT_NULL)
+        return RES_ERROR;
 
     result = rt_device_write(device, sector, buff, count);
     if (result == count)
