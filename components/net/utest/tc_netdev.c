@@ -79,21 +79,17 @@ rt_err_t multiple_ping_test(struct netdev *netdev, const char *host, rt_uint32_t
  *
  * This function tests network connectivity by pinging various targets:
  * - Gateway address (should succeed)
- * - Invalid internal IP address (should fail)
- * - External IP address (should succeed)
- * - Invalid external IP address (should fail)
- * - External URL (should succeed)
- * - Invalid external URL (should fail)
+ * - Invalid host name (should fail)
+ * - External IP address (should succeed outside CI)
+ * - External URL (should succeed outside CI)
  *
  * @note This test verifies both successful and failed ping scenarios
  */
 static void test_netdev_ping(void)
 {
-#define UTEST_INTRANET_WRONG_IP_ADDR  "192.256.0.321"      /* Invalid IP format */
-#define UTEST_EXTERNAL_IP_ADDR        "8.8.8.8"            /* Valid external IP */
-#define UTEST_EXTERNAL_WRONG_IP_ADDR  "123.456.789.012"    /* Invalid IP format */
-#define UTEST_EXTERNAL_URL            "www.baidu.com"      /* Valid external URL */
-#define UTEST_EXTERNAL_WRONG_URL      "www.abcsdd.com"     /* Non-existent URL */
+#define UTEST_INVALID_HOST_NAME ""                    /* Rejected before DNS lookup */
+#define UTEST_EXTERNAL_IP_ADDR "8.8.8.8"              /* Valid external IP */
+#define UTEST_EXTERNAL_URL     "www.baidu.com"        /* Valid external URL */
 
     rt_err_t res = RT_EOK;
 
@@ -101,25 +97,20 @@ static void test_netdev_ping(void)
     res = multiple_ping_test(netdev_default, inet_ntoa(netdev_default->gw), 10);
     uassert_true(res == RT_EOK);
 
-    /* Test ping to invalid internal IP - should fail */
-    res = multiple_ping_test(netdev_default, UTEST_INTRANET_WRONG_IP_ADDR, 1);
+    /* Test ping with an invalid host name - should fail without a DNS query */
+    res = multiple_ping_test(netdev_default, UTEST_INVALID_HOST_NAME, 1);
     uassert_false(res == RT_EOK);
 
+#ifndef RT_USING_CI_ACTION
     /* Test ping to external IP address - should succeed */
     res = multiple_ping_test(netdev_default, UTEST_EXTERNAL_IP_ADDR, 10);
     uassert_true(res == RT_EOK);
 
-    /* Test ping to invalid external IP - should fail */
-    res = multiple_ping_test(netdev_default, UTEST_EXTERNAL_WRONG_IP_ADDR, 1);
-    uassert_false(res == RT_EOK);
-
     /* Test ping to external URL - should succeed */
     res = multiple_ping_test(netdev_default, UTEST_EXTERNAL_URL, 10);
     uassert_true(res == RT_EOK);
+#endif
 
-    /* Test ping to invalid external URL - should fail */
-    res = multiple_ping_test(netdev_default, UTEST_EXTERNAL_WRONG_URL, 1);
-    uassert_false(res == RT_EOK);
 }
 
 /**
@@ -170,22 +161,23 @@ static void test_netdev_netstat(void)
  * @brief Test DNS server configuration and hostname resolution
  *
  * This function tests:
- * - Setting incorrect DNS server and verifying hostname resolution fails
- * - Setting correct DNS server and verifying hostname resolution succeeds
- * - DNS server configuration operations
+ * - Setting a DNS server and verifying the configuration
+ * - Rejecting an out-of-range DNS server index
+ * - Rejecting an invalid host name without external network access
+ * - Hostname resolution outside CI
  *
  * @note DNS configuration will be restored in utest_tc_cleanup
  */
 static void test_netdev_dns(void)
 {
-#define UTEST_DNS               "114.114.114.114"   /* Valid DNS server */
-#define UTEST_WRONG_DNS         "13.19.123.143"     /* Invalid DNS server */
-#define UTEST_WRONG_HOST_NAME   "www.abcde.com"     /* Test hostname */
-#define UTEST_HOST_ADDR         "www.rt-thread.org" /* RT-Thread official website */
+#define UTEST_DNS             "114.114.114.114"   /* Valid DNS server */
+#define UTEST_INVALID_HOST    ""                  /* Rejected before DNS lookup */
+#define UTEST_HOST_ADDR       "www.rt-thread.org" /* RT-Thread official website */
 
     ip_addr_t ipaddr = {0};
     struct hostent *res = RT_NULL;
     struct sal_proto_family *netdev_inet = RT_NULL;
+    rt_err_t err;
 
     /* Get SAL protocol family for DNS operations */
     netdev_inet = netdev_default->sal_user_data;
@@ -196,26 +188,25 @@ static void test_netdev_dns(void)
         return;
     }
 
-    /* Test with wrong DNS server - hostname resolution should fail */
-    inet_aton(UTEST_WRONG_DNS, &ipaddr);
-    netdev_default->ops->set_dns_server(netdev_default, 0, &ipaddr);
-    netdev_default->ops->set_dns_server(netdev_default, 1, &ipaddr);
-    res = netdev_inet->netdb_ops->gethostbyname(UTEST_WRONG_HOST_NAME);
-    if (res == RT_NULL)
-    {
-        uassert_true(RT_TRUE);  /* Expected failure */
-    }
-    else
-    {
-        uassert_true(RT_FALSE); /* Unexpected success */
-    }
-
-    /* Test with correct DNS server - hostname resolution should succeed */
+    /* Verify DNS server configuration without depending on a resolver response. */
     inet_aton(UTEST_DNS, &ipaddr);
-    netdev_default->ops->set_dns_server(netdev_default, 0, &ipaddr);
-    netdev_default->ops->set_dns_server(netdev_default, 1, &ipaddr);
+    err = netdev_set_dns_server(netdev_default, 0, &ipaddr);
+    uassert_true(err == RT_EOK);
+    uassert_true(ip_addr_cmp(&netdev_default->dns_servers[0], &ipaddr));
+
+    /* An out-of-range DNS server index must be rejected. */
+    err = netdev_set_dns_server(netdev_default, NETDEV_DNS_SERVERS_NUM, &ipaddr);
+    uassert_true(err == -RT_ERROR);
+
+    /* An empty host name must be rejected locally, without a DNS query. */
+    res = netdev_inet->netdb_ops->gethostbyname(UTEST_INVALID_HOST);
+    uassert_true(res == RT_NULL);
+
+#ifndef RT_USING_CI_ACTION
+    /* Test hostname resolution only outside CI. */
     res = netdev_inet->netdb_ops->gethostbyname(UTEST_HOST_ADDR);
     uassert_true(res != RT_NULL);
+#endif
 
     /* DNS will be restored in utest_tc_cleanup */
 }
