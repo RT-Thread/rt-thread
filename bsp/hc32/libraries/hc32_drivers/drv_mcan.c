@@ -79,10 +79,10 @@ typedef struct mcan_baud_rate_struct
 /****************************************************************************************
 * Interrupt definitions
 ****************************************************************************************/
-#define MCAN_RX_INT  (MCAN_INT_RX_FIFO0_NEW_MSG | MCAN_INT_RX_FIFO1_NEW_MSG | MCAN_INT_RX_BUF_NEW_MSG)
-#define MCAN_TX_INT  (MCAN_INT_TX_CPLT)
-#define MCAN_ERR_INT (MCAN_INT_ARB_PHASE_ERROR | MCAN_INT_DATA_PHASE_ERROR | MCAN_INT_ERR_LOG_OVF | \
-                      MCAN_INT_ERR_PASSIVE | MCAN_INT_ERR_WARNING | MCAN_INT_BUS_OFF)
+#define MCAN_RX_INT   (MCAN_INT_RX_FIFO0_NEW_MSG | MCAN_INT_RX_FIFO1_NEW_MSG | MCAN_INT_RX_BUF_NEW_MSG)
+#define MCAN_TX_INT   (MCAN_INT_TX_CPLT)
+#define MCAN_ERR_INT  (MCAN_INT_ARB_PHASE_ERROR | MCAN_INT_DATA_PHASE_ERROR | MCAN_INT_ERR_LOG_OVF | \
+                       MCAN_INT_ERR_PASSIVE | MCAN_INT_ERR_WARNING | MCAN_INT_BUS_OFF)
 #define MCAN_INT0_SEL (MCAN_RX_INT | MCAN_TX_INT | MCAN_ERR_INT)
 
 /****************************************************************************************
