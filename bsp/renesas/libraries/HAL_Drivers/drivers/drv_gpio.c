@@ -374,8 +374,8 @@ static rt_base_t ra_pin_get(const char *name)
     if ((rt_strlen(name) == 4) &&
         (name[0] == 'P' || name[0] == 'p') &&
         (name[1] >= '0' && name[1] <= '9') &&
-        (name[2] >= '0' && name[1] <= '9') &&
-        (name[3] >= '0' && name[1] <= '9'))
+        (name[2] >= '0' && name[2] <= '9') &&
+        (name[3] >= '0' && name[3] <= '9'))
     {
         return (name[1] - '0') * 0x100 + (name[2] - '0') * 10 + (name[3] - '0');
     }

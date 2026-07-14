@@ -1,7 +1,7 @@
-#! armclang -mcpu=cortex-m4 --target=arm-arm-none-eabi -E -x c -I.
+#! armclang -mcpu=cortex-m85 --target=arm-arm-none-eabi -E -x c -I.
   /* generated memory regions file - do not edit */
   #define RAM_START 0x22000000
-  #define RAM_LENGTH 0x001d4000
+  #define RAM_LENGTH 0x00174000
   #define FLASH_START 0x02000000
   #define FLASH_LENGTH 0x00100000
   #define DATA_FLASH_START 0x27000000
@@ -142,6 +142,7 @@ LOAD_REGION_OSPI0_CS1 OSPI0_CS1_START NOCOMPRESS OSPI0_CS1_LENGTH
   
   __ram_dtc_vector +0 UNINIT
   {
+  *(.fsp_dtc_vector_table)
   *(.bss.fsp_dtc_vector_table)
   }
 
@@ -170,6 +171,7 @@ LOAD_REGION_OSPI0_CS1 OSPI0_CS1_START NOCOMPRESS OSPI0_CS1_LENGTH
   __ospi0_cs1_noinit +0 FIXED UNINIT
   {
   ; section.ospi0_cs1.noinit
+  *(.ospi0_cs1_noinit)
   *(.bss.ospi0_cs1_noinit)
   }
 
@@ -265,6 +267,7 @@ LOAD_REGION_OSPI1_CS1 OSPI1_CS1_START NOCOMPRESS OSPI1_CS1_LENGTH
   __ospi1_cs1_noinit +0 FIXED UNINIT
   {
   ; section.ospi1_cs1.noinit
+  *(.ospi1_cs1_noinit)
   *(.bss.ospi1_cs1_noinit)
   }
 
@@ -360,6 +363,7 @@ LOAD_REGION_DATA_FLASH DATA_FLASH_START NOCOMPRESS DATA_FLASH_LENGTH
   __data_flash_noinit +0 FIXED UNINIT
   {
   ; section.data_flash.noinit
+  *(.data_flash_noinit)
   *(.bss.data_flash_noinit)
   }
 
@@ -394,11 +398,37 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   *(.application_vectors)
   }
 
+  FSymTab +0 FIXED
+  {
+  *(FSymTab)
+  }
+
+  VSymTab +0 FIXED
+  {
+  *(VSymTab)
+  }
+
+  UtestTcTab +0 FIXED
+  {
+  *(UtestTcTab)
+  }
+
+  RTInitTab +0 FIXED
+  {
+  *(.rti_fn*)
+  }
+
+  FalPartTable +0 FIXED
+  {
+  *(FalPartTable)
+  }
+
         
   
   __flash_noinit +0 FIXED UNINIT
   {
   ; section.flash.noinit
+  *(.flash_noinit)
   *(.bss.flash_noinit)
   }
   __sdram_from_data_flash_jump ImageLimit(__sdram_from_data_flash) EMPTY 0 {}
@@ -415,6 +445,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __sdram_noinit_nocache AlignExpr(+0, 32) UNINIT
   {
   ; section.sdram.noinit_nocache
+  *(.sdram_noinit_nocache)
   *(.bss.sdram_noinit_nocache)
   }
 
@@ -422,6 +453,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __sdram_zero_nocache +0
   {
   ; section.sdram.zero_nocache
+  *(.sdram_nocache)
   *(.bss.sdram_nocache)
   }
   ; Execution region required to end align __sdram_zero_nocache on ac6
@@ -431,6 +463,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __sdram_noinit +0 UNINIT
   {
   ; section.sdram.noinit
+  *(.sdram_noinit)
   *(.bss.sdram_noinit)
   }
 
@@ -438,6 +471,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __sdram_zero +0
   {
   ; section.sdram.zero
+  *(.sdram)
   *(.bss.sdram)
   }
 
@@ -463,6 +497,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ospi0_cs0_noinit_nocache AlignExpr(+0, 32) UNINIT
   {
   ; section.ospi0_cs0.noinit_nocache
+  *(.ospi0_cs0_noinit_nocache)
   *(.bss.ospi0_cs0_noinit_nocache)
   }
 
@@ -470,6 +505,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ospi0_cs0_zero_nocache +0
   {
   ; section.ospi0_cs0.zero_nocache
+  *(.ospi0_cs0_nocache)
   *(.bss.ospi0_cs0_nocache)
   }
   ; Execution region required to end align __ospi0_cs0_zero_nocache on ac6
@@ -479,6 +515,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ospi0_cs0_noinit +0 UNINIT
   {
   ; section.ospi0_cs0.noinit
+  *(.ospi0_cs0_noinit)
   *(.bss.ospi0_cs0_noinit)
   }
 
@@ -486,6 +523,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ospi0_cs0_zero +0
   {
   ; section.ospi0_cs0.zero
+  *(.ospi0_cs0)
   *(.bss.ospi0_cs0)
   }
 
@@ -511,6 +549,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ospi1_cs0_noinit_nocache AlignExpr(+0, 32) UNINIT
   {
   ; section.ospi1_cs0.noinit_nocache
+  *(.ospi1_cs0_noinit_nocache)
   *(.bss.ospi1_cs0_noinit_nocache)
   }
 
@@ -518,6 +557,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ospi1_cs0_zero_nocache +0
   {
   ; section.ospi1_cs0.zero_nocache
+  *(.ospi1_cs0_nocache)
   *(.bss.ospi1_cs0_nocache)
   }
   ; Execution region required to end align __ospi1_cs0_zero_nocache on ac6
@@ -527,6 +567,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ospi1_cs0_noinit +0 UNINIT
   {
   ; section.ospi1_cs0.noinit
+  *(.ospi1_cs0_noinit)
   *(.bss.ospi1_cs0_noinit)
   }
 
@@ -534,6 +575,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ospi1_cs0_zero +0
   {
   ; section.ospi1_cs0.zero
+  *(.ospi1_cs0)
   *(.bss.ospi1_cs0)
   }
 
@@ -559,6 +601,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __itcm_noinit +0 UNINIT
   {
   ; section.itcm.noinit
+  *(.itcm_noinit)
   *(.bss.itcm_noinit)
   }
 
@@ -566,6 +609,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __itcm_zero +0
   {
   ; section.itcm.zero
+  *(.itcm)
   *(.bss.itcm)
   }
 
@@ -591,6 +635,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __dtcm_noinit +0 UNINIT
   {
   ; section.dtcm.noinit
+  *(.dtcm_noinit)
   *(.bss.dtcm_noinit)
   }
 
@@ -598,6 +643,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __dtcm_zero +0
   {
   ; section.dtcm.zero
+  *(.dtcm)
   *(.bss.dtcm)
   }
 
@@ -625,6 +671,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ram_noinit_nocache AlignExpr(+0, 32) UNINIT
   {
   ; section.ram.noinit_nocache
+  *(.ram_noinit_nocache)
   *(.bss.ram_noinit_nocache)
   }
 
@@ -632,6 +679,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ram_zero_nocache +0
   {
   ; section.ram.zero_nocache
+  *(.ram_nocache)
   *(.bss.ram_nocache)
   }
   ; Execution region required to end align __ram_zero_nocache on ac6
@@ -656,7 +704,9 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   {
     ; *(.bss.g_main_stack)
     *(.bss.g_main_stack)
+  *(.ram_noinit)
   *(.bss.ram_noinit)
+  *(.noinit)
   *(.bss.noinit)
   }
 
@@ -664,6 +714,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   __ram_zero +0
   {
   ; section.ram.zero
+  *(.ram)
   *(.bss.ram)
   .ANY(+ZI )
   }
@@ -671,6 +722,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   ; Thread Stacks
   __ram_thread_stack AlignExpr(+0, 8) UNINIT
   {
+  *(.stack?*)
   *(.bss.stack?*)
   }
 
@@ -686,6 +738,7 @@ LOAD_REGION_FLASH FLASH_START NOCOMPRESS FLASH_LENGTH
   {
   }
 
+  RAM_END +0 UNINIT EMPTY 0 {}
   __RAM_end +0 EMPTY 0 {}
   SCatterAssert( (LoadBase(__RAM_end) - LoadBase(__RAM_start)) <= RAM_LENGTH )
         } ; create a root region after the RAM init ERs for remainder of ROM ERs

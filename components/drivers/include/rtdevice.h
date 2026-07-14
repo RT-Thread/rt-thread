@@ -64,6 +64,10 @@ extern "C" {
 #include "drivers/led.h"
 #endif /* RT_USING_LED */
 
+#ifdef RT_USING_PTP
+#include "drivers/ptp.h"
+#endif /* RT_USING_PTP */
+
 #ifdef RT_USING_INPUT
 #include "drivers/input.h"
 #ifdef RT_INPUT_UAPI
@@ -268,9 +272,11 @@ extern "C" {
 #include "drivers/dev_audio.h"
 #endif /* RT_USING_AUDIO */
 
-#ifdef RT_USING_ADC
+#ifdef RT_USING_ADC_V2
+#include "drivers/adc_v2.h"
+#elif defined(RT_USING_ADC)
 #include "drivers/adc.h"
-#endif /* RT_USING_ADC */
+#endif /* RT_USING_ADC_V2 */
 
 #ifdef RT_USING_DAC
 #include "drivers/dac.h"

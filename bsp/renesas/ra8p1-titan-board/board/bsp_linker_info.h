@@ -135,6 +135,32 @@ extern bsp_init_info_t const g_init_info;
  * Objects allocated by bsp_linker.c
  **********************************************************************************************************************/
 /* DDSC symbol definitions */
+#if defined(__ARMCC_VERSION)
+#define __sdram_from_ospi0_cs1$$Load        Load$$__sdram_from_ospi0_cs1$$Base
+#define __sdram_from_ospi1_cs1$$Load        Load$$__sdram_from_ospi1_cs1$$Base
+#define __sdram_from_data_flash$$Load       Load$$__sdram_from_data_flash$$Base
+#define __sdram_from_flash$$Load            Load$$__sdram_from_flash$$Base
+#define __ospi0_cs0_from_ospi0_cs1$$Load    Load$$__ospi0_cs0_from_ospi0_cs1$$Base
+#define __ospi0_cs0_from_ospi1_cs1$$Load    Load$$__ospi0_cs0_from_ospi1_cs1$$Base
+#define __ospi0_cs0_from_data_flash$$Load   Load$$__ospi0_cs0_from_data_flash$$Base
+#define __ospi0_cs0_from_flash$$Load        Load$$__ospi0_cs0_from_flash$$Base
+#define __ospi1_cs0_from_ospi0_cs1$$Load    Load$$__ospi1_cs0_from_ospi0_cs1$$Base
+#define __ospi1_cs0_from_ospi1_cs1$$Load    Load$$__ospi1_cs0_from_ospi1_cs1$$Base
+#define __ospi1_cs0_from_data_flash$$Load   Load$$__ospi1_cs0_from_data_flash$$Base
+#define __ospi1_cs0_from_flash$$Load        Load$$__ospi1_cs0_from_flash$$Base
+#define __itcm_from_ospi0_cs1$$Load         Load$$__itcm_from_ospi0_cs1$$Base
+#define __itcm_from_ospi1_cs1$$Load         Load$$__itcm_from_ospi1_cs1$$Base
+#define __itcm_from_data_flash$$Load        Load$$__itcm_from_data_flash$$Base
+#define __itcm_from_flash$$Load             Load$$__itcm_from_flash$$Base
+#define __dtcm_from_ospi0_cs1$$Load         Load$$__dtcm_from_ospi0_cs1$$Base
+#define __dtcm_from_ospi1_cs1$$Load         Load$$__dtcm_from_ospi1_cs1$$Base
+#define __dtcm_from_data_flash$$Load        Load$$__dtcm_from_data_flash$$Base
+#define __dtcm_from_flash$$Load             Load$$__dtcm_from_flash$$Base
+#define __ram_from_ospi0_cs1$$Load          Load$$__ram_from_ospi0_cs1$$Base
+#define __ram_from_ospi1_cs1$$Load          Load$$__ram_from_ospi1_cs1$$Base
+#define __ram_from_data_flash$$Load         Load$$__ram_from_data_flash$$Base
+#define __ram_from_flash$$Load              Load$$__ram_from_flash$$Base
+#endif
 /* Zero initialization tables */
 extern uint32_t __sdram_zero_nocache$$Base;
 extern uint32_t __sdram_zero_nocache$$Limit;

@@ -225,21 +225,37 @@
 #define RT_SERIAL_FLOWCONTROL_CTSRTS    1
 #define RT_SERIAL_FLOWCONTROL_NONE      0
 
+#ifdef RT_SERIAL_USING_DMA
+/**
+ * @brief Serial RX DMA data event mode.
+ * @note This mode controls only DMA half/full transfer data events.
+ *       UART IDLE interrupt remains enabled in RX DMA mode.
+ */
+enum rt_serial_rx_dma_event_mode
+{
+    RT_SERIAL_RX_DMA_EVENT_AUTO = 0,  /**< Use the default RX DMA event mode. */
+    RT_SERIAL_RX_DMA_EVENT_NONE,      /**< Disable DMA half/full data events; UART IDLE still reports received data. */
+    RT_SERIAL_RX_DMA_EVENT_FULL_ONLY, /**< Report only DMA transfer-complete data events plus UART IDLE. */
+    RT_SERIAL_RX_DMA_EVENT_HALF_FULL  /**< Report both DMA half-transfer and transfer-complete data events plus UART IDLE. */
+};
+#endif /* RT_SERIAL_USING_DMA */
+
 /* Default config for serial_configure structure */
 #ifdef RT_SERIAL_USING_DMA
-#define RT_SERIAL_CONFIG_DEFAULT                      \
-{                                                     \
-    BAUD_RATE_115200,           /* 115200 bits/s */   \
-    DATA_BITS_8,                /* 8 databits */      \
-    STOP_BITS_1,                /* 1 stopbit */       \
-    PARITY_NONE,                /* No parity  */      \
-    BIT_ORDER_LSB,              /* LSB first sent */  \
-    NRZ_NORMAL,                 /* Normal mode */     \
-    RT_SERIAL_RX_MINBUFSZ,      /* rxBuf size */      \
-    RT_SERIAL_TX_MINBUFSZ,      /* txBuf size */      \
-    RT_SERIAL_FLOWCONTROL_NONE, /* Off flowcontrol */ \
-    0,                          /* reserved */        \
-    RT_SERIAL_RX_MINBUFSZ / 2,  /* dma_ping_bufsz */  \
+#define RT_SERIAL_CONFIG_DEFAULT                         \
+{                                                        \
+    BAUD_RATE_115200,             /* 115200 bits/s */    \
+    DATA_BITS_8,                  /* 8 databits */       \
+    STOP_BITS_1,                  /* 1 stopbit */        \
+    PARITY_NONE,                  /* No parity  */       \
+    BIT_ORDER_LSB,                /* LSB first sent */   \
+    NRZ_NORMAL,                   /* Normal mode */      \
+    RT_SERIAL_RX_MINBUFSZ,        /* rxBuf size */       \
+    RT_SERIAL_TX_MINBUFSZ,        /* txBuf size */       \
+    RT_SERIAL_FLOWCONTROL_NONE,   /* Off flowcontrol */  \
+    0,                            /* reserved */         \
+    RT_SERIAL_RX_MINBUFSZ / 2,    /* dma_ping_bufsz */   \
+    RT_SERIAL_RX_DMA_EVENT_AUTO,  /* rx dma event mode */ \
 }
 #else
 #define RT_SERIAL_CONFIG_DEFAULT                      \
@@ -255,7 +271,7 @@
     RT_SERIAL_FLOWCONTROL_NONE, /* Off flowcontrol */ \
     0,                          /* reserved */        \
 }
-#endif
+#endif /* RT_SERIAL_USING_DMA */
 
 /**
  * @brief Serial receive indicate hook function type
@@ -280,7 +296,8 @@ struct serial_configure
 
 #ifdef RT_SERIAL_USING_DMA
     rt_uint32_t dma_ping_bufsz          :16;
-#endif
+    enum rt_serial_rx_dma_event_mode rx_dma_event_mode; /**< RX DMA half/full data event mode. */
+#endif /* RT_SERIAL_USING_DMA */
 };
 
 /**

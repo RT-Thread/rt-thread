@@ -1,6 +1,5 @@
 import os
 import sys
-import rtconfig
 
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
@@ -8,21 +7,17 @@ else:
     RTT_ROOT = os.path.normpath(os.getcwd() + '/../../../..')
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+import rtconfig
 try:
     from building import *
+    from env_package import packages_available
 except:
     print('Cannot found RT-Thread root directory, please check RTT_ROOT')
     print(RTT_ROOT)
     exit(-1)
 
 def bsp_pkg_check():
-    import subprocess
-
-    check_paths = [
-        os.path.join("packages", "gd32-riscv-series-latest")
-    ]
-
-    need_update = not all(os.path.exists(p) for p in check_paths)
+    need_update = not packages_available(os.path.abspath('.'), ['gd32-riscv-series-latest'])
 
     if need_update:
         print("\n===============================================================================")

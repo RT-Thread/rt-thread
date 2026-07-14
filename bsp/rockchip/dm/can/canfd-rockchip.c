@@ -534,13 +534,13 @@ static rt_err_t rockchip_canfd_control(struct rt_can_device *can, int cmd, void 
         if (timing->count)
         {
             rt_memcpy(&can->config.can_timing, &timing->items[0],
-                    sizeof(&timing->items[0]));
+                    sizeof(timing->items[0]));
         }
 
         if (timing->count == 2)
         {
             rt_memcpy(&can->config.canfd_timing, &timing->items[1],
-                    sizeof(&timing->items[1]));
+                    sizeof(timing->items[1]));
         }
         break;
 

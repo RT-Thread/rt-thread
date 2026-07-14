@@ -211,16 +211,24 @@ When creating a new object, think twice on memory allocations: whether a static
 object could be created or it could only created dynamically on the heap. Allocations
 can be slower, but may be necessary in dynamic environments.
 
-# 14. Use astyle to format the code automatically
-parameters: --style=allman
-            --indent=spaces=4
-            --indent-preproc-block
-            --pad-oper
-            --pad-header
-            --unpad-paren
-            --suffix=none
-            --align-pointer=name
-            --lineend=linux
-            --convert-tabs
-            --verbose
+# 14. Format Code
+
+RT-Thread now uses clang-format as the unified code formatting tool. Before
+submitting C/C++ source files, header files, and related source files, format
+them with the `.clang-format` configuration in the repository root. Do not use
+manual formatting or old astyle parameters that conflict with this configuration.
+
+Common commands:
+
+    clang-format -style=file -i path/to/file.c
+    clang-format -style=file -i path/to/file.h
+
+When formatting files in batches, limit the command to files related to the
+current change and avoid large unrelated formatting changes. If a subdirectory
+has its own `.clang-format`, use the nearest configuration for files under that
+directory.
+
+In addition to clang-format, keep source files encoded as UTF-8, use `\n` line
+endings, remove trailing whitespace, and avoid committing unrelated formatting
+changes produced by editors.
 

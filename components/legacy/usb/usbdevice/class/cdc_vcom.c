@@ -49,6 +49,18 @@
 #define VCOM_TX_USE_DMA
 #endif /*RT_VCOM_TX_USE_DMA*/
 
+#ifdef RT_VCOM_MANUFACTURER_STRING
+#define VCOM_MANUFACTURER_STRING RT_VCOM_MANUFACTURER_STRING
+#else /*!RT_VCOM_MANUFACTURER_STRING*/
+#define VCOM_MANUFACTURER_STRING "RT-Thread Team."
+#endif /*RT_VCOM_MANUFACTURER_STRING*/
+
+#ifdef RT_VCOM_PRODUCT_STRING
+#define VCOM_PRODUCT_STRING RT_VCOM_PRODUCT_STRING
+#else /*!RT_VCOM_PRODUCT_STRING*/
+#define VCOM_PRODUCT_STRING "RTT Virtual Serial"
+#endif /*RT_VCOM_PRODUCT_STRING*/
+
 #ifdef RT_VCOM_SERNO
 #define _SER_NO RT_VCOM_SERNO
 #else /*!RT_VCOM_SERNO*/
@@ -250,8 +262,8 @@ rt_align(4)
 const static char* _ustring[] =
 {
     "Language",
-    "RT-Thread Team.",
-    "RTT Virtual Serial",
+    VCOM_MANUFACTURER_STRING,
+    VCOM_PRODUCT_STRING,
     serno,
     "Configuration",
     "Interface",

@@ -2,9 +2,35 @@ name: MemBrowse Memory Report
 
 on:
   pull_request:
+    paths:
+      - '.github/membrowse-targets.json'
+      - '.github/workflows/membrowse-report.yml'
+      - 'Kconfig'
+      - 'bsp/**'
+      - 'components/**'
+      - 'include/**'
+      - 'libcpu/**'
+      - 'src/**'
+      - 'tools/**'
+      - '!**/README*'
+      - '!**/readme*'
+      - '!bsp/**/docs/**'
   push:
     branches:
       - master
+    paths:
+      - '.github/membrowse-targets.json'
+      - '.github/workflows/membrowse-report.yml'
+      - 'Kconfig'
+      - 'bsp/**'
+      - 'components/**'
+      - 'include/**'
+      - 'libcpu/**'
+      - 'src/**'
+      - 'tools/**'
+      - '!**/README*'
+      - '!**/readme*'
+      - '!bsp/**/docs/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}
@@ -15,16 +41,33 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
+      target_count: ${{ steps.set-matrix.outputs.target_count }}
+      skipped_matrix: ${{ steps.set-matrix.outputs.skipped_matrix }}
+      skipped_count: ${{ steps.set-matrix.outputs.skipped_count }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Collect changed files
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git diff --name-only origin/${{ github.base_ref }}...HEAD > changed_files.txt
+          elif [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} > changed_files.txt
+          else
+            git diff --name-only origin/${{ github.event.repository.default_branch }}...HEAD > changed_files.txt
+          fi
+          cat changed_files.txt
 
       - name: Load target matrix
         id: set-matrix
-        run: echo "matrix=$(jq -c '.' .github/membrowse-targets.json)" >> $GITHUB_OUTPUT
+        run: python3 tools/ci/membrowse_filter_targets.py --targets .github/membrowse-targets.json --changed-files changed_files.txt
 
   analyze:
     needs: load-targets
+    if: ${{ needs.load-targets.outputs.target_count != '0' }}
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -136,3 +179,38 @@ jobs:
           verbose: INFO
           # Uncomment to allow CI to pass even when memory budgets are exceeded
           # dont_fail_on_alerts: true
+
+  # Targets not affected by this push are not rebuilt, but their binaries are
+  # unchanged. Report them as identical (metadata-only, no build) so every
+  # target keeps an unbroken per-commit chain instead of a hole on each commit
+  # that only touched other BSPs. Only runs on push to master; PRs are transient
+  # and keep the build-affected-only behavior above.
+  mark-identical:
+    needs: load-targets
+    if: ${{ github.event_name == 'push' && needs.load-targets.outputs.skipped_count != '0' }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.load-targets.outputs.skipped_matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Mark MemBrowse report identical
+        # Non-fatal: an identical upload needs the parent commit to already have
+        # a report for this target. Right after adoption some parents predate
+        # this job and the upload is rejected; it self-heals once the target is
+        # next built (a full report needs no parent) and every later commit is
+        # covered. Don't fail the run over that transient window.
+        continue-on-error: true
+        uses: membrowse/membrowse-action@v1
+        with:
+          target_name: ${{ matrix.target_name }}
+          identical: true
+          api_key: ${{ secrets.MEMBROWSE_API_KEY }}
+          api_url: ${{ vars.MEMBROWSE_API_URL }}
+          verbose: INFO

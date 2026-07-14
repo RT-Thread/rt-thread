@@ -198,6 +198,14 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp);
 #define CLOCK_TAI 11  // newlib says they don't have this definition,  make the compiler happy
 #endif /* CLOCK_TAI */
 
+#ifdef RT_USING_PTP
+#ifndef CLOCKFD
+#define CLOCKFD 3
+#endif /* CLOCKFD */
+#define FD_TO_CLOCKID(fd)       ((clockid_t)((~(clockid_t)(fd) << 3) | CLOCKFD))
+#define CLOCKID_TO_FD(clk)      ((unsigned int)(~((unsigned int)(clk) >> 3)))
+#endif /* RT_USING_PTP */
+
 #endif /* defined(RT_USING_POSIX_CLOCK) || defined (RT_USING_POSIX_TIMER) */
 
 #ifdef RT_USING_POSIX_CLOCK

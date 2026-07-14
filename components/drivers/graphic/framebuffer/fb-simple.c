@@ -111,6 +111,11 @@ static rt_err_t simplefb_regulator_probe(struct simplefb *sfb,
         }
     }
 
+    if (!sfb->supplys_nr)
+    {
+        return RT_EOK;
+    }
+
     sfb->supplys = rt_calloc(sfb->supplys_nr, sizeof(sfb->supplys[0]));
 
     if (!sfb->supplys)

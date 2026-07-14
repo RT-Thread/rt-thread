@@ -67,7 +67,7 @@ void n32_msp_usart_init(void *Instance)
 
 #elif defined (BSP_USING_UART2_PIN_RMP2)
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
-        GPIO_ConfigPinRemap(GPIO_RMCP2_USART2, ENABLE);
+        GPIO_ConfigPinRemap(GPIO_RMP2_USART2, ENABLE);
         RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GPIOC, ENABLE);
         GPIO_InitCtlStruct.GPIO_Mode = GPIO_Mode_AF_PP;
         GPIO_InitCtlStruct.Pin = GPIO_PIN_8;

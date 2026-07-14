@@ -140,7 +140,7 @@ rt_err_t ping(char* target_name, rt_uint32_t times, rt_size_t size)
     int timeout = (int)PING_RCV_TIMEO;
 #else
     struct timeval timeout = { PING_RCV_TIMEO / RT_TICK_PER_SECOND, PING_RCV_TIMEO % RT_TICK_PER_SECOND };
-#endif / * LWIP_SO_SNDRCVTIMEO_NONSTANDARD */
+#endif /* LWIP_SO_SNDRCVTIMEO_NONSTANDARD */
 
     int s, ttl, recv_len;
     ip_addr_t target_addr;
@@ -159,13 +159,14 @@ rt_err_t ping(char* target_name, rt_uint32_t times, rt_size_t size)
     }
 
     rt_memset(&hint, 0, sizeof(hint));
+    hint.ai_family = AF_INET;
     /* convert URL to IP */
     if (lwip_getaddrinfo(target_name, NULL, &hint, &res) != 0)
     {
         rt_kprintf("ping: unknown host %s\n", target_name);
         return -RT_ERROR;
     }
-    rt_memcpy(&h, &res->ai_addr, sizeof(struct sockaddr_in *));
+    h = (struct sockaddr_in *)res->ai_addr;
     rt_memcpy(&ina, &h->sin_addr, sizeof(ina));
     lwip_freeaddrinfo(res);
     if (inet_aton(inet_ntoa(ina), &target_addr) == 0)

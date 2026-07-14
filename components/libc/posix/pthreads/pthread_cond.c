@@ -434,6 +434,7 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
 
                 /* exit critical and do schedule */
                 rt_exit_critical();
+                rt_schedule();
 
                 result = thread->error;
 

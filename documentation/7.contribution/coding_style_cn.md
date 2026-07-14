@@ -289,30 +289,15 @@ rt_timer + 动词短语的形式表示能够应用于 timer 对象的方法。
 
 ## 14.格式化代码
 
-格式化代码是指通过脚本自动整理你的代码，并使其符合 RT-Thread 的编码规范。本文提供以下两种自动格式化代码方法，可以自行选择或配合使用。
+RT-Thread 现在使用 clang-format 作为统一的代码格式化工具。提交 C/C++、头文件及相关源文件前，请优先使用仓库根目录的 `.clang-format` 配置进行格式化，不要再使用与该配置不一致的手工排版或旧的 astyle 参数。
 
-### 使用 astyle 格式化
+常用命令如下：
 
-用 astyle 自动格式化代码，参数如下：
+```shell
+clang-format -style=file -i path/to/file.c
+clang-format -style=file -i path/to/file.h
+```
 
-          --style=allman
-          --indent=spaces=4
-          --indent-preproc-block
-          --pad-oper
-          --pad-header
-          --unpad-paren
-          --suffix=none
-          --align-pointer=name
-          --lineend=linux
-          --convert-tabs
-          --verbose
+批量格式化时应只处理本次修改相关的源文件，避免对无关文件做大范围格式化。若某个子目录存在自己的 `.clang-format`，以离文件最近的配置为准。
 
-能满足函数空格、缩进、函数语句等的规范。
-
-### 使用 formatting 格式化
-
-使用 [formatting](https://github.com/mysterywolf/formatting) 扫描文件来格式化代码：formatting 可以满足编码规则的基本要求，如：
-
-- 将源文件编码统一为 UTF-8
-- 将 TAB 键替换为 4 空格
-- 将每行末尾多余的空格删除，并统一换行符为 '\n'
+除 clang-format 外，仍需保持源文件编码为 UTF-8，行尾使用 `\n`，删除行尾多余空格，并避免提交由编辑器自动产生的无关格式化变更。

@@ -1,0 +1,16 @@
+Import('rtconfig')
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd, cwd + '/..', cwd + '/../sfud/inc']
+
+if GetDepend(['RT_UTEST_SPI_LOOPBACK']):
+    src += ['spi_loopback_tc.c']
+
+if GetDepend(['RT_UTEST_SPI_FLASH']):
+    src += ['spi_flash_tc.c']
+
+group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_SPI'], CPPPATH = CPPPATH)
+
+Return('group')

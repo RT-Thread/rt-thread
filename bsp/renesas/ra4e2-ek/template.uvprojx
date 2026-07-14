@@ -66,9 +66,9 @@
                         <nStopU2X>0</nStopU2X>
                     </BeforeCompile>
                     <BeforeMake>
-                        <RunUserProg1>1</RunUserProg1>
+                        <RunUserProg1>0</RunUserProg1>
                         <RunUserProg2>0</RunUserProg2>
-                        <UserProg1Name>cmd /c ""$Prasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --generate --compiler ARMv6 --devicefamily ra "$Pconfiguration.xml" 2&gt; "%%TEMP%%\rasc_stderr.out" &amp;&amp; echo. &gt; "$Poutput.rasc""</UserProg1Name>
+                        <UserProg1Name></UserProg1Name>
                         <UserProg2Name></UserProg2Name>
                         <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
                         <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -76,9 +76,9 @@
                         <nStopB2X>0</nStopB2X>
                     </BeforeMake>
                     <AfterMake>
-                        <RunUserProg1>1</RunUserProg1>
+                        <RunUserProg1>0</RunUserProg1>
                         <RunUserProg2>0</RunUserProg2>
-                        <UserProg1Name>cmd /c ""$Prasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --gensmartbundle --compiler ARMv6 --devicefamily ra "$Pconfiguration.xml" "$L%L" 2&gt; "%%TEMP%%\rasc_stderr.out""</UserProg1Name>
+                        <UserProg1Name></UserProg1Name>
                         <UserProg2Name></UserProg2Name>
                         <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
                         <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -332,7 +332,7 @@
                         <v6WtE>0</v6WtE>
                         <v6Rtti>0</v6Rtti>
                         <VariousControls>
-                            <MiscControls>@via/rasc_armclang.via</MiscControls>
+                            <MiscControls></MiscControls>
                             <Define></Define>
                             <Undefine></Undefine>
                             <IncludePath></IncludePath>
@@ -350,7 +350,7 @@
                         <useXO>0</useXO>
                         <ClangAsOpt>4</ClangAsOpt>
                         <VariousControls>
-                            <MiscControls>--via=via/rasc_armasm.via</MiscControls>
+                            <MiscControls></MiscControls>
                             <Define></Define>
                             <Undefine></Undefine>
                             <IncludePath></IncludePath>
@@ -369,7 +369,7 @@
                         <ScatterFile>.\script\fsp.scat</ScatterFile>
                         <IncludeLibs></IncludeLibs>
                         <IncludeLibsPath></IncludeLibsPath>
-                        <Misc>--via=via/rasc_armlink.via</Misc>
+                        <Misc></Misc>
                         <LinkerInputFile></LinkerInputFile>
                         <DisabledWarnings></DisabledWarnings>
                     </LDads>
@@ -386,13 +386,6 @@
         </Target>
     </Targets>
     <RTE>
-        <gpdscs>
-            <gpdsc name="buildinfo.gpdsc">
-                <targetInfos>
-                    <targetInfo name="Target_1"/>
-                </targetInfos>
-            </gpdsc>
-        </gpdscs>
         <apis/>
         <components>
             <component Cvendor="Renesas" Cclass="Flex Software" Cgroup="RA Configuration" Cversion="1.0.0" condition="RA Device" generator="Renesas RA Smart Configurator">

@@ -192,7 +192,10 @@ static int dfs_elm_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *
         /* open the root directory to test whether the fatfs is valid */
         result = f_opendir(dir, drive);
         if (result != FR_OK)
+        {
+            rt_free(dir);
             goto __err;
+        }
 
         /* mount succeed! */
         mnt->data = fat;
@@ -522,6 +525,7 @@ int dfs_elm_close(struct dfs_file *file)
         dir = (DIR *)(file->vnode->data);
         RT_ASSERT(dir != RT_NULL);
 
+        f_closedir(dir);
         /* release memory */
         rt_free(dir);
     }
@@ -1014,10 +1018,19 @@ static struct dfs_vnode *dfs_elm_create_vnode(struct dfs_dentry *dentry, int typ
 
 static int dfs_elm_free_vnode(struct dfs_vnode *vnode)
 {
-    /* nothing to be freed */
-    if (vnode && vnode->ref_count <= 1)
+    if (vnode && vnode->ref_count <= 1 && vnode->data != RT_NULL)
     {
-        vnode->data = NULL;
+        if (vnode->type == FT_DIRECTORY)
+        {
+            f_closedir((DIR *)vnode->data);
+        }
+        else if (vnode->type == FT_REGULAR)
+        {
+            f_close((FIL *)vnode->data);
+        }
+        rt_free(vnode->data);
+        vnode->data = RT_NULL;
+        rt_mutex_detach(&vnode->lock);
     }
 
     return 0;
