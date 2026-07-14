@@ -98,6 +98,7 @@ struct rt_clock_time_device *rt_clock_time_get_default_event(void);
 rt_uint64_t rt_clock_time_get_freq(void);
 rt_uint64_t rt_clock_time_get_counter(void);
 rt_uint64_t rt_clock_time_get_event_freq(void);
+rt_uint64_t rt_clock_time_get_res(void);
 ```
 
 ## rt_clock_time_get_freq
@@ -115,6 +116,11 @@ rt_uint64_t rt_clock_time_get_event_freq(void);
 - 作用：获取事件设备频率（Hz）。
 - 行为：若无事件设备则回退使用默认时钟源。
 
+## rt_clock_time_get_res
+
+- 作用：获取默认时钟源分辨率（纳秒）。
+- 返回值：成功返回非 0 分辨率；频率不可用时返回 0（避免除零）。
+
 # 换算接口
 
 ```c
@@ -125,14 +131,18 @@ rt_uint64_t rt_clock_time_ns_to_counter(rt_uint64_t ns);
 ## rt_clock_time_counter_to_ns
 
 - 作用：将计数值换算为纳秒。
-- 说明：当频率不可用时返回 0。
+- 说明：
+  - 当频率不可用时返回 0。
+  - 当结果超出 64 位范围时返回 `RT_UINT64_MAX`。
 
 ## rt_clock_time_ns_to_counter
 
 - 作用：将纳秒换算为计数值。
-- 说明：当频率不可用时返回 0。
+- 说明：
+  - 当频率不可用时返回 0。
+  - 当结果超出 64 位范围时返回 `RT_UINT64_MAX`。
 
-换算直接使用时钟源频率，并通过 `rt_muldiv_u64()` 避免浮点运算带来的精度损失。
+换算直接使用时钟源频率，并通过内部高精度 muldiv 辅助函数避免浮点运算带来的精度损失。
 
 # 事件接口
 

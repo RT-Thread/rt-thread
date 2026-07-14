@@ -106,6 +106,7 @@ struct rt_clock_time_device *rt_clock_time_get_default_event(void);
 rt_uint64_t rt_clock_time_get_freq(void);
 rt_uint64_t rt_clock_time_get_counter(void);
 rt_uint64_t rt_clock_time_get_event_freq(void);
+rt_uint64_t rt_clock_time_get_res(void);
 ```
 
 ## rt_clock_time_get_freq
@@ -127,6 +128,13 @@ rt_uint64_t rt_clock_time_get_event_freq(void);
 - Purpose: return the event device frequency in Hz.
 - Behavior: if no event device exists, falls back to the default source.
 
+## rt_clock_time_get_res
+
+- Purpose: return the default source resolution in nanoseconds.
+- Return values:
+  - Non-zero resolution on success.
+  - 0 if frequency is unavailable (avoids divide-by-zero).
+
 # Conversion Helpers
 
 ```c
@@ -137,15 +145,19 @@ rt_uint64_t rt_clock_time_ns_to_counter(rt_uint64_t ns);
 ## rt_clock_time_counter_to_ns
 
 - Purpose: convert a counter value to nanoseconds based on the default source.
-- Notes: returns 0 when frequency is unavailable.
+- Notes:
+  - Returns 0 when frequency is unavailable.
+  - Returns `RT_UINT64_MAX` when the result overflows 64-bit range.
 
 ## rt_clock_time_ns_to_counter
 
 - Purpose: convert nanoseconds to counter units for the default source.
-- Notes: returns 0 when frequency is unavailable.
+- Notes:
+  - Returns 0 when frequency is unavailable.
+  - Returns `RT_UINT64_MAX` when the result overflows 64-bit range.
 
-Conversions use the source frequency directly with `rt_muldiv_u64()` to avoid
-floating-point math and preserve precision.
+Conversions use the source frequency directly with an internal
+precision-preserving muldiv helper to avoid floating-point math.
 
 # Event API
 

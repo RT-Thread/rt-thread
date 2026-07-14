@@ -262,14 +262,6 @@ typedef struct rt_spinlock rt_spinlock_t;
 
 #define RT_DEFINE_SPINLOCK(x)  struct rt_spinlock x = RT_SPINLOCK_INIT
 
-/**
- * @brief lossless mul div, return `(a * b) / c`
- *
- * if r is not NULL then `*r = (a * b) % c`
- * @return rt_uint64_t
- */
-rt_uint64_t rt_muldiv_u64(rt_uint64_t a, rt_uint64_t b, rt_uint64_t c, rt_uint64_t *r);
-
 #ifdef __cplusplus
 }
 #endif

@@ -1,18 +1,24 @@
 /*
- * Copyright (c) 2006-2025, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
  * 2025-09-25     Yonggang Luo  the first version
+ * 2026-07-14     Yonggang Luo  keep muldiv private to clock_time
  */
 
-#include "rttypes.h"
-#include <rtdef.h>
+#include "clock_time_internal.h"
 
-/* Function to count leading zeros for an rt_uint64_t */
-static rt_int32_t u64_count_leading_zeros(rt_uint64_t n)
+/**
+ * @brief Count leading zero bits in a 64-bit value.
+ *
+ * @param n Input value.
+ *
+ * @return Number of leading zero bits; 64 when @p n is 0.
+ */
+static rt_int32_t _u64_count_leading_zeros(rt_uint64_t n)
 {
     if (n == 0)
     {
@@ -22,8 +28,7 @@ static rt_int32_t u64_count_leading_zeros(rt_uint64_t n)
     return __builtin_clzll(n);
 #else
     rt_int32_t count = 0;
-    rt_uint64_t mask =
-        1ULL << (sizeof(rt_uint64_t) * 8 - 1); // Most significant bit
+    rt_uint64_t mask = 1ULL << (sizeof(rt_uint64_t) * 8 - 1);
 
     while ((n & mask) == 0)
     {
@@ -35,19 +40,29 @@ static rt_int32_t u64_count_leading_zeros(rt_uint64_t n)
 }
 
 /**
- * https://ridiculousfish.com/blog/posts/labor-of-division-episode-v.html
- * Perform a narrowing division: 128 / 64 -> 64, and 64 / 32 -> 32.
- * The dividend's low and high words are given by \p numhi and \p numlo,
- * respectively. The divisor is given by \p den.
- * \return the quotient, and the remainder by reference in \p r, if not null.
- * If the quotient would require more than 64 bits, or if denom is 0, then
- * return the max value for both quotient and remainder.
+ * @brief Narrowing division of a 128-bit numerator by a 64-bit denominator.
  *
- * These functions are released into the public domain, where applicable, or the
- * CC0 license.
+ * Algorithm from:
+ * https://ridiculousfish.com/blog/posts/labor-of-division-episode-v.html
+ *
+ * The dividend is formed by high word @p numhi and low word @p numlo.
+ * When @p den is 0, both the quotient and the optional remainder are 0 and
+ * @p overflow is set. When the full quotient needs more than 64 bits,
+ * @c numhi %= den truncates to a 64-bit quotient and @p overflow is set.
+ *
+ * These functions are released into the public domain, where applicable, or
+ * the CC0 license.
+ *
+ * @param numhi    High 64 bits of the numerator.
+ * @param numlo    Low 64 bits of the numerator.
+ * @param den      Denominator.
+ * @param r        Optional remainder output; may be @c RT_NULL.
+ * @param overflow Optional overflow flag; may be @c RT_NULL.
+ *
+ * @return The truncated 64-bit quotient.
  */
-static rt_uint64_t u128_div_u64_u64(rt_uint64_t numhi, rt_uint64_t numlo, rt_uint64_t den,
-                                    rt_uint64_t *r)
+static rt_uint64_t _u128_div_u64_u64(rt_uint64_t numhi, rt_uint64_t numlo, rt_uint64_t den,
+                                     rt_uint64_t *r, rt_bool_t *overflow)
 {
     /*
      * We work in base 2**32.
@@ -84,8 +99,34 @@ static rt_uint64_t u128_div_u64_u64(rt_uint64_t numhi, rt_uint64_t numlo, rt_uin
     rt_uint64_t c1;
     rt_uint64_t c2;
 
-    /* Check for overflow and divide by 0. */
-    numhi = numhi % den;
+    if (overflow != RT_NULL)
+    {
+        *overflow = RT_FALSE;
+    }
+
+    /* Divide by 0: treat as a zero result. */
+    if (den == 0)
+    {
+        if (r != RT_NULL)
+        {
+            *r = 0;
+        }
+        if (overflow != RT_NULL)
+        {
+            *overflow = RT_TRUE;
+        }
+        return 0;
+    }
+
+    /* Truncate a wider-than-64-bit quotient to 64 bits. */
+    if (numhi >= den)
+    {
+        if (overflow != RT_NULL)
+        {
+            *overflow = RT_TRUE;
+        }
+        numhi = numhi % den;
+    }
 
     /*
      * Determine the normalization factor. We multiply den by this, so that its leading digit is at
@@ -96,7 +137,7 @@ static rt_uint64_t u128_div_u64_u64(rt_uint64_t numhi, rt_uint64_t numlo, rt_uin
      * by 64. The funny bitwise 'and' ensures that numlo does not get shifted into numhi if shift is 0.
      * clang 11 has an x86 codegen bug here: see LLVM bug 50118. The sequence below avoids it.
      */
-    shift = u64_count_leading_zeros(den);
+    shift = _u64_count_leading_zeros(den);
     den <<= shift;
     numhi <<= shift;
     numhi |= (numlo >> (-shift & 63)) & (-(rt_int64_t)shift >> 63);
@@ -137,16 +178,30 @@ static rt_uint64_t u128_div_u64_u64(rt_uint64_t numhi, rt_uint64_t numlo, rt_uin
     q0 = (rt_uint32_t)qhat;
 
     /* Return remainder if requested. */
-    if (r != NULL)
+    if (r != RT_NULL)
         *r = (rem * b + num0 - q0 * den) >> shift;
     return ((rt_uint64_t)q1 << 32) | q0;
 }
 
-rt_uint64_t rt_muldiv_u64(rt_uint64_t a, rt_uint64_t b, rt_uint64_t c, rt_uint64_t *r)
+rt_uint64_t rt_clock_time_muldiv_u64(rt_uint64_t a, rt_uint64_t b, rt_uint64_t c,
+                                     rt_uint64_t *r, rt_bool_t *overflow)
 {
     rt_uint64_t remainder = 0;
-    rt_uint64_t ret = 0;
-    if (c != 0) /* Handle division by zero. */
+    rt_uint64_t ret;
+
+    if (c == 0)
+    {
+        if (r != RT_NULL)
+        {
+            *r = 0;
+        }
+        if (overflow != RT_NULL)
+        {
+            *overflow = RT_TRUE;
+        }
+        return 0;
+    }
+
     {
         rt_uint64_t a_lo = a & 0xFFFFFFFF;
         rt_uint64_t a_hi = a >> 32;
@@ -163,9 +218,12 @@ rt_uint64_t rt_muldiv_u64(rt_uint64_t a, rt_uint64_t b, rt_uint64_t c, rt_uint64
 
         rt_uint64_t lo = (p0 & 0xFFFFFFFFULL) + ((carry & 0xFFFFFFFFULL) << 32);
         rt_uint64_t hi = p3 + (p1 >> 32) + (p2 >> 32) + (carry >> 32);
-        ret = u128_div_u64_u64(hi, lo, c, &remainder);
+        ret = _u128_div_u64_u64(hi, lo, c, &remainder, overflow);
     }
-    if (r)
+
+    if (r != RT_NULL)
+    {
         *r = remainder;
+    }
     return ret;
 }

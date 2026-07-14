@@ -13,6 +13,14 @@
 #include <rtdevice.h>
 
 #include <drivers/clock_time.h>
+#include "clock_time_internal.h"
+/*
+ * The muldiv implementation is textually included so it compiles as part of
+ * this translation unit. Keil/IAR project files list clock_time sources one
+ * by one; including the .c here keeps clock_time_internal.c out of build
+ * scripts and IDE projects while producing a single definition.
+ */
+#include "clock_time_internal.c"
 
 static rt_uint64_t _clock_time_tick_get_freq(struct rt_clock_time_device *dev)
 {
@@ -150,28 +158,55 @@ rt_uint64_t rt_clock_time_get_event_freq(void)
     return event->ops->get_freq(event);
 }
 
-rt_uint64_t rt_clock_time_counter_to_ns(rt_uint64_t cnt)
+/**
+ * @brief Get the default clock source resolution in nanoseconds.
+ *
+ * @return Non-zero resolution on success, or 0 when frequency is unavailable.
+ */
+rt_uint64_t rt_clock_time_get_res(void)
 {
     rt_uint64_t freq = rt_clock_time_get_freq();
+    rt_uint64_t res;
 
     if (freq == 0)
     {
         return 0;
     }
 
-    return rt_muldiv_u64(cnt, NANOSECOND_PER_SECOND, freq, NULL);
+    res = NANOSECOND_PER_SECOND / freq;
+    return res == 0 ? 1 : res;
+}
+
+rt_uint64_t rt_clock_time_counter_to_ns(rt_uint64_t cnt)
+{
+    rt_uint64_t freq = rt_clock_time_get_freq();
+    rt_bool_t overflow = RT_FALSE;
+    rt_uint64_t ns;
+
+    if (freq == 0)
+    {
+        return 0;
+    }
+
+    ns = rt_clock_time_muldiv_u64(cnt, NANOSECOND_PER_SECOND, freq, RT_NULL, &overflow);
+    /* Call-site policy: report unrepresentable results as the max value. */
+    return overflow ? RT_UINT64_MAX : ns;
 }
 
 rt_uint64_t rt_clock_time_ns_to_counter(rt_uint64_t ns)
 {
     rt_uint64_t freq = rt_clock_time_get_freq();
+    rt_bool_t overflow = RT_FALSE;
+    rt_uint64_t cnt;
 
     if (freq == 0)
     {
         return 0;
     }
 
-    return rt_muldiv_u64(ns, freq, NANOSECOND_PER_SECOND, NULL);
+    cnt = rt_clock_time_muldiv_u64(ns, freq, NANOSECOND_PER_SECOND, RT_NULL, &overflow);
+    /* Call-site policy: report unrepresentable delays as the max value. */
+    return overflow ? RT_UINT64_MAX : cnt;
 }
 
 rt_err_t rt_clock_time_set_timeout(rt_uint64_t delta)

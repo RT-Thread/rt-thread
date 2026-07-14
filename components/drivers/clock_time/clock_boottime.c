@@ -11,6 +11,8 @@
 #include <drivers/clock_time.h>
 #include <sys/time.h>
 
+#include "clock_time_internal.h"
+
 rt_err_t rt_clock_boottime_get_us(struct timeval *tv)
 {
     rt_uint64_t cnt;
@@ -26,7 +28,7 @@ rt_err_t rt_clock_boottime_get_us(struct timeval *tv)
     }
 
     tv->tv_sec = (time_t)(cnt / freq);
-    tv->tv_usec = rt_muldiv_u64(cnt % freq, MICROSECOND_PER_SECOND, freq, NULL);
+    tv->tv_usec = rt_clock_time_muldiv_u64(cnt % freq, MICROSECOND_PER_SECOND, freq, RT_NULL, RT_NULL);
 
     return RT_EOK;
 }
@@ -65,7 +67,7 @@ rt_err_t rt_clock_boottime_get_ns(struct timespec *ts)
     }
 
     ts->tv_sec = (time_t)(cnt / freq);
-    ts->tv_nsec = rt_muldiv_u64(cnt % freq, NANOSECOND_PER_SECOND, freq, NULL);
+    ts->tv_nsec = rt_clock_time_muldiv_u64(cnt % freq, NANOSECOND_PER_SECOND, freq, RT_NULL, RT_NULL);
 
     return RT_EOK;
 }

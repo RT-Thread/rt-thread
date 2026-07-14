@@ -161,6 +161,7 @@ void rt_clock_time_source_init(void);
 rt_uint64_t rt_clock_time_get_freq(void);
 rt_uint64_t rt_clock_time_get_counter(void);
 rt_uint64_t rt_clock_time_get_event_freq(void);
+rt_uint64_t rt_clock_time_get_res(void);
 
 rt_uint64_t rt_clock_time_counter_to_ns(rt_uint64_t cnt);
 rt_uint64_t rt_clock_time_ns_to_counter(rt_uint64_t ns);

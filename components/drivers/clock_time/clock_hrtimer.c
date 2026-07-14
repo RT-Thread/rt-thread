@@ -14,6 +14,7 @@
 #include <sys/time.h>
 
 #include <drivers/clock_time.h>
+#include "clock_time_internal.h"
 
 #define DBG_SECTION_NAME               "drv.clock_time"
 #define DBG_LEVEL                      DBG_INFO
@@ -52,16 +53,26 @@ static rt_tick_t _hrtimer_cnt_to_tick(rt_uint64_t cnt)
     rt_uint64_t freq = rt_clock_hrtimer_getfrq();
     rt_uint64_t rem = 0;
     rt_uint64_t tick;
+    rt_bool_t overflow = RT_FALSE;
 
     if (freq == 0)
     {
         return 0;
     }
 
-    tick = rt_muldiv_u64(cnt, RT_TICK_PER_SECOND, freq, &rem);
+    tick = rt_clock_time_muldiv_u64(cnt, RT_TICK_PER_SECOND, freq, &rem, &overflow);
+    if (overflow)
+    {
+        /* soft-timer path: clamp overflowed delay into the legal half-range */
+        return (rt_tick_t)(RT_TICK_MAX / 2 - 1);
+    }
     if (rem != 0)
     {
         tick += 1; /* round up so a non-zero cnt never collapses to a 0-tick timeout */
+    }
+    if (tick >= (RT_TICK_MAX / 2))
+    {
+        tick = RT_TICK_MAX / 2 - 1;
     }
     if (tick == 0)
     {
@@ -115,13 +126,30 @@ static rt_uint64_t _cnt_convert(rt_tick_t cnt)
 {
     rt_uint64_t rtn = 0;
     rt_tick_t count = cnt - _clock_time_get_cnt();
+    rt_uint64_t src_freq;
+    rt_uint64_t event_freq;
+    rt_bool_t overflow = RT_FALSE;
 
     if (count > (RT_TICK_MAX / 2))
     {
         return 0;
     }
 
-    rtn = rt_muldiv_u64(count, rt_clock_hrtimer_getfrq(), rt_clock_time_get_freq(), NULL);
+    src_freq = rt_clock_time_get_freq();
+    event_freq = rt_clock_hrtimer_getfrq();
+    if ((src_freq == 0) || (event_freq == 0))
+    {
+        /* frequency unavailable: never return 0, or the caller treats the
+         * timer as already expired and may busy-loop reprocessing it */
+        return 1;
+    }
+
+    rtn = rt_clock_time_muldiv_u64(count, event_freq, src_freq, RT_NULL, &overflow);
+    if (overflow)
+    {
+        /* keep a long delay; truncated overflow could schedule too soon */
+        return RT_UINT64_MAX;
+    }
     return rtn == 0 ? 1 : rtn;
 }
 
@@ -408,18 +436,33 @@ rt_err_t rt_clock_hrtimer_sleep(struct rt_clock_hrtimer *timer, rt_tick_t cnt)
 
 rt_err_t rt_clock_hrtimer_ndelay(struct rt_clock_hrtimer *timer, rt_uint64_t ns)
 {
-    rt_tick_t cputimer_tick = (rt_tick_t)rt_muldiv_u64(ns, rt_clock_time_get_freq(), NANOSECOND_PER_SECOND, NULL);
+    rt_uint64_t count = rt_clock_time_ns_to_counter(ns);
 
-    return rt_clock_hrtimer_sleep(timer, cputimer_tick);
+    if ((count == 0) || (count >= (RT_TICK_MAX / 2)))
+    {
+        return -RT_EINVAL;
+    }
+
+    return rt_clock_hrtimer_sleep(timer, (rt_tick_t)count);
 }
 
 rt_err_t rt_clock_hrtimer_udelay(struct rt_clock_hrtimer *timer, rt_uint64_t us)
 {
+    if (us > (RT_UINT64_MAX / 1000))
+    {
+        return -RT_EINVAL;
+    }
+
     return rt_clock_hrtimer_ndelay(timer, us * 1000);
 }
 
 rt_err_t rt_clock_hrtimer_mdelay(struct rt_clock_hrtimer *timer, rt_uint64_t ms)
 {
+    if (ms > (RT_UINT64_MAX / 1000000))
+    {
+        return -RT_EINVAL;
+    }
+
     return rt_clock_hrtimer_ndelay(timer, ms * 1000000);
 }
 
