@@ -7,6 +7,10 @@ cwd = GetCurrentDir()
 src = []
 group = []
 CPPPATH = []
+LINKFLAGS = ''
+
+if rtconfig.PLATFORM == 'armclang':
+    LINKFLAGS = ' --entry=Reset_Handler --no_startup'
 
 if rtconfig.PLATFORM in ['iccarm'] + GetGCCLikePLATFORM():
     src += Glob('./fsp/src/bsp/mcu/all/*.c')
@@ -54,5 +58,5 @@ if rtconfig.PLATFORM in ['iccarm'] + GetGCCLikePLATFORM():
 	cwd + '/fsp/src/r_vin'
     ]
 
-group = DefineGroup('RA', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('RA', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
 Return('group')

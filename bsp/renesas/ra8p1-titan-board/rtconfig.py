@@ -76,9 +76,9 @@ elif PLATFORM == 'armclang':
     CFLAGS += ' -fno-rtti -funsigned-char -ffunction-sections'
     CFLAGS += ' -Wno-license-management -Wuninitialized -Wall -Wmissing-declarations -Wpointer-arith -Waggregate-return -Wfloat-equal'
 
-    AFLAGS = DEVICE + ' --fpu=FPv5_D16 --apcs=interwork '
+    AFLAGS = ' -mcpu=Cortex-M85 --target=arm-arm-none-eabi -mfpu=fpv5-d16 -mfloat-abi=hard -c -x assembler-with-cpp'
 
-    LFLAGS = DEVICE + ' --scatter ' + 'script/fsp.scat'
+    LFLAGS = DEVICE + ' --scatter script/fsp.scat'
     LFLAGS +=' --info sizes --info totals --info unused --info veneers '
     LFLAGS += ' --list rt-thread.map --strict'
     LFLAGS += ' --diag_suppress 6319,6314 --summary_stderr --info summarysizes'

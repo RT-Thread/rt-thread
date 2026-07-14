@@ -374,7 +374,7 @@
             <ScatterFile>.\script\fsp.scat</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
+            <Misc>--entry=Reset_Handler --no_startup</Misc>
             <LinkerInputFile></LinkerInputFile>
             <DisabledWarnings>6319,6314</DisabledWarnings>
           </LDads>
