@@ -1,0 +1,143 @@
+    config BOARD_USING_QSPI_FLASH
+        bool "Enable QSPI Flash(Over QSPI0)"
+        select BSP_USING_SPI
+        select BSP_USING_QSPI
+        select BSP_USING_QSPI0
+        select RT_USING_FAL
+        select RT_USING_SFUD
+        select RT_SFUD_USING_QSPI
+        select FAL_USING_SFUD_PORT
+        default y
+
+    config BOARD_USING_NUFUN_I2C_EEPROM
+        bool "Enable I2C EEPROM(Over I2C0)"
+        select BSP_USING_I2C
+        select BSP_USING_I2C0
+        select RT_USING_I2C
+        select PKG_USING_AT24CXX
+        default y
+
+    config BOARD_USING_NUFUN_I2C_TEMPERATURE_SENSOR
+        bool "Enable I2C TEMPERATURE SENSOR(Over I2C2)"
+        select BSP_USING_I2C
+        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select NU_PKG_USING_TMP112
+        default y
+
+    config BOARD_USING_NUFUN_I2C_3AXIS_SENSOR
+        bool "Enable I2C 3-AXIS SENSOR(Over I2C2)"
+        select BSP_USING_I2C
+        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select NU_PKG_USING_LIS3DH
+        default y
+
+    config BOARD_USING_NUFUN_I3C_BAROMETER_SENSOR
+        bool "Enable I3C Barometer SENSOR(Over I3C0)"
+        select BSP_USING_I3C0
+        select NU_PKG_USING_LPS22HH
+        default y
+
+    config BOARD_USING_NUFUN_PWM_RGB_LED
+        bool "Enable BPWM RGB LED(Over BPWM0, CH0~CH2)"
+        select BSP_USING_BPWM
+        select BSP_USING_BPWM0
+        select RT_USING_PWM
+        default y
+
+    config BOARD_USING_NUFUN_LLSI_RGB_LED
+        bool "Enable LLSI RGB LED(Over LLSI0)"
+        select BSP_USING_LLSI
+        select BSP_USING_LLSI0
+        default y
+
+    config BOARD_USING_LCD_ILI9341
+        bool "Enable LCM(Over SPI1)"
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select NU_PKG_USING_ILI9341
+        select NU_PKG_USING_ILI9341_SPI
+        select NU_PKG_ILI9341_HORIZONTAL
+        default y
+
+        if BOARD_USING_LCD_ILI9341
+            config BOARD_USING_ILI9341_PIN_BACKLIGHT
+            hex "Specify the pin index of backlight pin index"
+                range 0x0 0x7F
+                default 0x7B
+
+            config BOARD_USING_ILI9341_PIN_RESET
+            hex "Specify the pin index of reset pin index"
+                range 0x0 0x7F
+                default 0x3E
+
+            config BOARD_USING_ILI9341_PIN_DC
+            hex "Specify the pin index of data&command switching"
+                range 0x0 0x7F
+                default 0x7A
+        endif
+
+    config BOARD_USING_NUFUN_ADC_TOUCH
+        bool "Enable ADC Touching(Over EADC0)"
+        select BSP_USING_EADC
+        select BSP_USING_EADC0
+        select RT_USING_TOUCH
+        select NU_PKG_USING_ADC_TOUCH
+        select NU_PKG_USING_ADC_TOUCH_SW
+        default y
+
+    config BOARD_USING_EQEI_MAGNETIC_ENCODER
+        bool "Enable Magnetic Encoder (Over EQEI0)"
+            select BSP_USING_EQEI
+            select BSP_USING_EQEI0
+            select RT_USING_PULSE_ENCODER
+        default y
+
+    config BOARD_USING_NUFUN_FAN
+        bool "Enable FAN (Over EPWM1.CH0)"
+            select BSP_USING_EPWM
+            select BSP_USING_EPWM1
+            select RT_USING_PWM
+        default y
+
+    config BOARD_USING_NUFUN_LED
+        bool "Enable Status LEDs"
+            select RT_USING_PIN
+        default y
+
+    config BOARD_USING_NUFUN_BUTTON
+        bool "Enable BUTTONs"
+            select RT_USING_PIN
+        default y
+
+    config BOARD_USING_SDCARD
+        bool "Enable SD Card(Over SD0)"
+            select BSP_USING_SDH
+            select BSP_USING_SDH0
+            select RT_USING_SDIO
+        default y
+
+    config BOARD_USING_CANFD
+        bool "Enable CANFD port(Over CANFD0)"
+            select BSP_USING_CANFD
+            select BSP_USING_CANFD0
+            select RT_USING_CAN
+        default y
+
+    config BOARD_USING_RS485
+        bool "Enable RS-485 port(Over UART2)"
+            select BSP_USING_UART
+            select BSP_USING_UART2
+            select RT_USING_SERIAL
+        default y
+
+    config BOARD_USING_AUDIO_CODEC
+        bool "Enable Audio Codec(Over I2S0)"
+            select BSP_USING_I2S
+            select BSP_USING_I2S0
+            select BSP_USING_I2C
+            select BSP_USING_I2C1
+            select RT_USING_AUDIO
+            select NU_PKG_USING_NAU8822
+        default y

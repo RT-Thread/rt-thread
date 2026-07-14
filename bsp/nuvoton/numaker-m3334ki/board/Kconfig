@@ -1,0 +1,82 @@
+menu "Hardware Drivers Config"
+
+    menu "On-chip Peripheral Drivers"
+        source "$BSP_DIR/../libraries/m3331/rtt_port/Kconfig"
+    endmenu
+
+    menu "On-board Peripheral Drivers"
+
+        config BOARD_USING_NULINKME
+            bool "Enable UART0 for RTT Console.(uart0)"
+            select BSP_USING_UART
+            select BSP_USING_UART0
+            default y
+
+        config BSP_USING_CUSTOM_LOADER
+            bool "Enable Custom Loader for Swapping Flash Bank."
+            select BSP_USING_RMC
+
+        choice
+            prompt "Select HSUSB Ports"
+
+            config BOARD_USING_HSUSBD
+                select BSP_USING_HSUSBD
+                bool "Enable HSUSBD"
+                help
+                    Choose this option if you need HSUSBD function mode.
+
+            config BOARD_USING_HSUSBH
+                select BSP_USING_HSUSBH
+                bool "Enable HSUSBH"
+                help
+                    Choose this option if you need HSUSBH function mode.
+
+            config BOARD_USING_USB_OTG
+                select BSP_USING_OTG
+                bool "Enable HSUSB OTG"
+                help
+                    Choose this option if you need HSUSB Device, Host and H/W OTG function.
+
+            config BOARD_USING_USB_SWOTG
+                select BSP_USING_HSUSBH
+                select BSP_USING_HSUSBD
+                select RT_USING_PIN
+                select RT_USING_ADC
+                select BSP_USING_EADC0
+                bool "Enable HSUSB S/W OTG"
+                help
+                    Choose this option if you need HSUSB Device, Host and S/W OTG function.
+
+            config BOARD_USING_USB_NONE
+                select BSP_USING_USB_NONE
+                bool "Disable HSUSB port"
+                help
+                    Choose this option if you need not USB function.
+        endchoice
+
+
+    endmenu
+
+    menu "Board extended module drivers"
+    choice
+        prompt "Select On-board Module"
+        config BOARD_USING_NONE
+            bool "None"
+        config BOARD_USING_NUFUN
+            bool "NuFUN V2.0"
+        config BOARD_USING_NUTFT
+            bool "NuTFT V1.3"
+    endchoice
+
+    if BOARD_USING_NUFUN
+        source "$BSP_DIR/board/Kconfig_Board_NUFUN"
+    endif
+
+    if BOARD_USING_NUTFT
+        source "$BSP_DIR/board/Kconfig_Board_NUTFT"
+    endif
+    endmenu
+
+    source "$BSP_DIR/../libraries/nu_packages/Kconfig"
+
+endmenu

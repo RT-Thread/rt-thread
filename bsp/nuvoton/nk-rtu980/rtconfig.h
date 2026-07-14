@@ -636,8 +636,6 @@
 #define BSP_USING_QSPI0_PDMA
 #define BSP_USING_CRYPTO
 #define BSP_USING_WDT
-#define BSP_USING_USBD
-#define BSP_USING_USBH
 /* end of On-chip Peripheral Drivers */
 
 /* On-board Peripheral Drivers */
@@ -645,7 +643,6 @@
 #define BSP_USING_CONSOLE
 #define BOARD_USING_UART8_RS485
 #define BOARD_USING_STORAGE_SPIFLASH
-#define BOARD_USING_USB0_DEVICE_HOST
 /* end of On-board Peripheral Drivers */
 
 /* Board extended module drivers */

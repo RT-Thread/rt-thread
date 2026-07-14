@@ -635,8 +635,6 @@
 #define BSP_LCD_WIDTH 800
 #define BSP_LCD_HEIGHT 480
 #define BSP_USING_VPOST_OSD
-#define BSP_USING_USBD
-#define BSP_USING_USBH
 /* end of On-chip Peripheral Drivers */
 
 /* On-board Peripheral Drivers */
@@ -647,8 +645,6 @@
 #define BOARD_USING_STORAGE_SDCARD
 #define BOARD_USING_STORAGE_SPIFLASH
 #define BOARD_USING_BUZZER
-#define BOARD_USING_USB0_DEVICE_HOST
-#define BOARD_USING_USB1_HOST
 /* end of On-board Peripheral Drivers */
 
 /* Board extended module drivers */
