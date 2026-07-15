@@ -5,17 +5,30 @@ import rtconfig
 
 cwd = GetCurrentDir()
 
-# add the general drivers.
-src = Split("""
-board.c
-MCUX_Config/clock_config.c
-MCUX_Config/pin_mux.c
-""")
+if GetDepend(['BSP_USING_LPADC1']):
+    # add the LPADC1 drivers.
+    src = Split("""
+    board.c
+    MCUX_Config_LPADC1/clock_config.c
+    MCUX_Config_LPADC1/pin_mux.c
+    MCUX_Config_LPADC1/peripherals.c
+    """)
+else:
+    # add the general drivers.
+    src = Split("""
+    board.c
+    MCUX_Config/clock_config.c
+    MCUX_Config/pin_mux.c
+    """)
 
 if GetDepend(['BSP_USING_QSPI_FLASH_FS']):
     src += ['ports/drv_flexspi_nor_flash.c', 'ports/fal_flash_port.c']
 
-CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
+if GetDepend(['BSP_USING_LPADC1']):
+    CPPPATH = [cwd,cwd + '/MCUX_Config_LPADC1',cwd + '/ports']
+else:
+    CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
+    
 CPPDEFINES = ['CPU_MIMXRT1189CVM8C_cm33', 'MCUXPRESSO_SDK', 'MCUX_META_BUILD', 'MIMXRT1189_cm33_SERIES', 'XIP_BOOT_HEADER_ENABLE=1', 'XIP_BOOT_HEADER_DCD_ENABLE=1', 'XIP_EXTERNAL_FLASH=1', 'ARM_MATH_CM33']
 
 if rtconfig.PLATFORM in ['gcc']:
