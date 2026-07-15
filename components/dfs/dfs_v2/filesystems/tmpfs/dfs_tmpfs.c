@@ -525,11 +525,11 @@ static int dfs_tmpfs_getdents(struct dfs_file *file,
         if (index >= (rt_size_t)file->fpos)
         {
             d = dirp + count;
-            if (d_file->type == TMPFS_TYPE_FILE)
+            if (n_file->type == TMPFS_TYPE_FILE)
             {
                 d->d_type = DT_REG;
             }
-            if (d_file->type == TMPFS_TYPE_DIR)
+            if (n_file->type == TMPFS_TYPE_DIR)
             {
                 d->d_type = DT_DIR;
             }
