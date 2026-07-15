@@ -6,6 +6,13 @@
 
 本文档为 RT-Thread Titan Board 开发板提供 BSP (板级支持包) 说明。通过阅读快速上手章节，开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
 
+本 BSP 包含两个相互独立的工程：
+
+- `m85`：Cortex-M85（CPU0），使用 UART8，并负责启动 CPU1。
+- `m33`：Cortex-M33（CPU1），使用 UART5，由 CPU0 启动。
+
+请进入对应核心目录运行 SCons。两个工程分别维护自己的 `configuration.xml`、`ra`、`ra_cfg`、`ra_gen` 和链接脚本。
+
 主要内容如下：
 
 - 开发板介绍
@@ -19,11 +26,11 @@ Titan Board 搭载频率 1GHz Arm® Cortex®-M85 与 250MHz Arm® Cortex®-M33 �
 
 开发板正面外观如下图：
 
-![big](figures/big.png)
+![big](m85/figures/big.png)
 
 该开发板常用 **板载资源** 如下：
 
-![titan_board_hw_resource](figures/titan_board_hw_resource.png)
+![titan_board_hw_resource](m85/figures/titan_board_hw_resource.png)
 
 ## 外设支持
 
@@ -65,7 +72,7 @@ Titan Board 搭载频率 1GHz Arm® Cortex®-M85 与 250MHz Arm® Cortex®-M33 �
 本 BSP 使用的是 FSP6.2.0 版本，进行外设相关开发需要下载并安装。
 
 - 下载链接：[rasc-6.2.0](https://github.com/renesas/fsp/releases/download/v6.2.0/setup_fsp_v6_2_0_rasc_v2025-10.exe)
-- 注意：BSP默认是最小系统，若需添加/使能其他外设需参考：[外设驱动使用教程 (rt-thread.org)](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
+- 注意：M85 的 `ra`、`ra_cfg` 和 `ra_gen` 保留板级外设及 CI 配置所需的生成模块，M33 只保留基础 GPIO 与串口配置。若需修改或使能外设，请从对应工程的 `configuration.xml` 重新生成 FSP 工程，并参考：[外设驱动使用教程 (rt-thread.org)](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
 
 ### 快速上手
 
@@ -75,31 +82,31 @@ Titan Board 搭载频率 1GHz Arm® Cortex®-M85 与 250MHz Arm® Cortex®-M33 �
 
 1. 安装编译工具链
 
-![image-20251127164450247](figures/image-20251127164450247.png)
+![image-20251127164450247](m85/figures/image-20251127164450247.png)
 
 2. 调试工具
 
 ​	下载 J-Link v8.48 和 PyOCD 0.2.9。
 
-![image-20251127164534568](figures/image-20251127164534568.png)
+![image-20251127164534568](m85/figures/image-20251127164534568.png)
 
 **创建工程**
 
 1. 点击左上角 文件-->导入。
 
-![image-20251127164859503](figures/image-20251127164859503.png)
+![image-20251127164859503](m85/figures/image-20251127164859503.png)
 
 2. 选择导入 RT-Thread Bsp 到工作空间，点击“下一步”。
 
-![image-20251127164952040](figures/image-20251127164952040.png)
+![image-20251127164952040](m85/figures/image-20251127164952040.png)
 
 3. 选择 BSP 根目录并填写好工程信息，点击“完成”。
 
-![image-20251127165319591](figures/image-20251127165319591.png)
+![image-20251127165319591](m85/figures/image-20251127165319591.png)
 
 4. 基于 BSP 创建工程就完成了。
 
-![image-20251127165406340](figures/image-20251127165406340.png)
+![image-20251127165406340](m85/figures/image-20251127165406340.png)
 
 **配置工程的调试下载设置**
 
@@ -107,13 +114,13 @@ Titan Board 搭载频率 1GHz Arm® Cortex®-M85 与 250MHz Arm® Cortex®-M33 �
 
 在”调试器“选项卡中修改调试器的配置。
 
-![image-20251127165957537](figures/image-20251127165957537.png)
+![image-20251127165957537](m85/figures/image-20251127165957537.png)
 
 在“下载”选项卡中将烧录方式改为“烧录Hex文件”，之后点击“确定“完成配置。
 
-![image-20251127170436152](figures/image-20251127170436152.png)
+![image-20251127170436152](m85/figures/image-20251127170436152.png)
 
-![image-20251127171037225](figures/image-20251127171037225.png)
+![image-20251127171037225](m85/figures/image-20251127171037225.png)
 
 **硬件连接**
 
@@ -121,7 +128,29 @@ Titan Board 搭载频率 1GHz Arm® Cortex®-M85 与 250MHz Arm® Cortex®-M33 �
 
 **编译下载**
 
-![image-20251127165554294](figures/image-20251127165554294.png)
+![image-20251127165554294](m85/figures/image-20251127165554294.png)
+
+使用 Keil 编译 `m85` 或 `m33` 工程时，链接完成后会调用 FSP Smart Configurator 6.2.0 生成对应的 `Objects/template.sbd`。SBD 保存该核的安全区和内存区域描述，供 RA8P1 双核 FSP solution 进行分区与组合；它不是可直接烧录的固件。工程只启用 SBD 的 after-build 生成，不会在编译前覆盖 FSP 已生成的源码和链接脚本。
+
+依次使用 Keil 编译 `m85/project.uvprojx` 和 `m33/project.uvprojx` 后，在本 BSP 根目录执行 `build_solution_sbd.bat`。脚本会检查两个核级 SBD 的核心、器件和 FSP 版本，并根据 `solution.xml` 生成 `build/ra8p1_titan_dualcore.sbd`。该板级 SBD 用于 FSP 双核 solution 的分区与配置交换，不是可直接烧录的固件。
+
+RA8P1 的 Code MRAM 由两个核心共享，但 J-Link Flash Algorithm 需要通过 CPU0/AP0 访问，M33 调试则需要连接 CPU1/AP2。Keil 的一个 Target 只有一个 Device 选择，下载和调试共用该设置，因此无法在同一个 Target 中同时选择 CPU0 烧录和 CPU1 调试。两个 M33 Target 复用同一个 `Objects/template.axf`，并不是生成两份 M33 镜像。
+
+| Target | Device | 用途 |
+| --- | --- | --- |
+| `M33_Debug_CPU1` | `R7KA8P1KF:CPU1` | 编译 Cortex-M33 镜像并连接 CPU1；该 Target 的 Flash Download 功能已禁用。 |
+| `M33_Download_CPU0` | `R7KA8P1KF:CPU0` | 通过 Keil 原生 J-Link Flash 驱动和 CPU0，将已有 M33 AXF 烧写到 `0x020C0000`。 |
+
+仓库中的 `project.uvprojx` 已包含 RT-Thread 源码分组；需要重新生成 Keil 工程时，在对应的 `m85` 或 `m33` 目录执行 `scons --target=mdk5`。两个 M33 Target 都定义在 `template.uvprojx` 中，重新生成工程后仍会保留。
+
+1. 使用 `m85` Keil 工程编译并下载 CPU0 固件。
+2. 在 `m33` 工程中选择并编译 `M33_Debug_CPU1`。
+3. 切换到 `M33_Download_CPU0`，不要编译该 Target，直接点击 Download；J-Link 日志必须显示 `R7KA8P1KF_CPU0`。
+4. 烧录完成后切回 `M33_Debug_CPU1`，连接 CPU1 调试。
+
+启用 `BSP_START_SECONDARY_CORE` 后，CPU0 会在 `bsp/renesas/libraries/HAL_Drivers/drv_common.c` 的 RA 公共板级初始化中启动一次 CPU1，`hal_entry()` 不应再次启动 CPU1。
+
+不要在 M33 工程中执行 Reset。需要重启时按开发板复位键同时复位两个核，等待 M85 再次启动 CPU1 后重新 attach。
 
 **查看运行结果**
 
@@ -207,17 +236,17 @@ void hal_entry(void)
 
 选择左上角 file->open 打开配置文件
 
-![image-20251030163423452](figures/image-20251030163423452.png)
+![image-20251030163423452](m85/figures/image-20251030163423452.png)
 
 * **生成 FSP 代码：**
 
-![image-20251030163707813](figures/image-20251030163707813.png)
+![image-20251030163707813](m85/figures/image-20251030163707813.png)
 
 **RT-Thread Settings**
 
 在 RT-Thread Settings 中可以对 RT-Thread 的内核、组件、软件包以及 Titan Board 的设备驱动进行配置。
 
-![image-20250819173700386](figures/image-20250819173700386.png)
+![image-20250819173700386](m85/figures/image-20250819173700386.png)
 
 ## 联系人信息
 
