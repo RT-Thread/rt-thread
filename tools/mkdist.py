@@ -151,8 +151,9 @@ def bsp_update_kconfig_library(dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
         for line in data:
-            if line.find('source') != -1 and line.find('../libraries') != -1:
-                line = line.replace('../libraries', 'libraries')
+            if line.find('source') != -1:
+                while '../libraries' in line:
+                    line = line.replace('../libraries', 'libraries')
             f.write(line)
 
     # change board/kconfig path
@@ -163,8 +164,13 @@ def bsp_update_kconfig_library(dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'board/Kconfig'), 'w') as f:
         for line in data:
-            if line.find('source') != -1 and line.find('../libraries') != -1:
-                line = line.replace('../libraries', 'libraries')
+            if line.find('source') != -1:
+                if 'BSP_DIR' in line:
+                    while '../libraries' in line:
+                        line = line.replace('../libraries', 'libraries')
+                else:
+                    while '../../libraries' in line:
+                        line = line.replace('../../libraries', '../libraries')
             f.write(line)
 
 def bsp_copy_hal_sdk_package_libraries(bsp_root, dist_dir):

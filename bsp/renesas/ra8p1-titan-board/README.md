@@ -6,6 +6,13 @@
 
 This document provides the BSP (Board Support Package) description for the RT-Thread **Titan Board** development board. By following the Quick Start Guide, developers can quickly get started with this BSP and run RT-Thread on the development board.
 
+This BSP contains two independent projects:
+
+- `m85`: Cortex-M85 (CPU0), using UART8 and responsible for starting CPU1.
+- `m33`: Cortex-M33 (CPU1), using UART5 and started by CPU0.
+
+Run SCons from the corresponding core directory. Each project has its own `configuration.xml`, `ra`, `ra_cfg`, `ra_gen`, and linker scripts.
+
 The main contents include:
 
 - Introduction to the development board
@@ -19,11 +26,11 @@ Titan Board integrates the **RA8P1** chip featuring a **1GHz Arm® Cortex®-M85*
 
 The front view of the development board is shown below:
 
-![big](figures/big.png)
+![big](m85/figures/big.png)
 
 Common **on-board resources** are as follows:
 
-![titan_board_hw_resource](figures/titan_board_hw_resource.png)
+![titan_board_hw_resource](m85/figures/titan_board_hw_resource.png)
 
 ## Peripheral Support
 
@@ -67,7 +74,7 @@ The user guide is divided into the following two sections:
 This BSP uses **FSP 6.2.0**. You must download and install it for peripheral development.
 
 - Download link: [rasc-6.2.0](https://github.com/renesas/fsp/releases/download/v6.2.0/setup_fsp_v6_2_0_rasc_v2025-10.exe)
-- Note: The BSP provides minimal configuration by default. To enable other peripherals, refer to: [Peripheral Driver Usage Guide](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
+- Note: The M85 `ra`, `ra_cfg`, and `ra_gen` directories retain the generated modules required by the supported board peripherals and CI configurations. The M33 directories contain only the basic GPIO and UART configuration. To change or enable peripherals, regenerate the corresponding FSP project from its `configuration.xml`, then refer to: [Peripheral Driver Usage Guide](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
 
 ### Quick Start
 
@@ -77,31 +84,31 @@ This BSP can be directly imported into **RT-Thread Studio v2.3.0**. The followin
 
 1. Install the compiler toolchain:
 
-![image-20251127164450247](figures/image-20251127164450247.png)
+![image-20251127164450247](m85/figures/image-20251127164450247.png)
 
 2. Install debugging tools:
 
 Download **J-Link v8.48** and **PyOCD 0.2.9**.
 
-![image-20251127164534568](figures/image-20251127164534568.png)
+![image-20251127164534568](m85/figures/image-20251127164534568.png)
 
 ### **Create a Project**
 
 1. Click **File → Import**.
 
-![image-20251127164859503](figures/image-20251127164859503.png)
+![image-20251127164859503](m85/figures/image-20251127164859503.png)
 
 2. Select **Import RT-Thread BSP**, then click **Next**.
 
-![image-20251127164952040](figures/image-20251127164952040.png)
+![image-20251127164952040](m85/figures/image-20251127164952040.png)
 
 3. Select the BSP root directory and fill in project information, then click **Finish**.
 
-![image-20251127165319591](figures/image-20251127165319591.png)
+![image-20251127165319591](m85/figures/image-20251127165319591.png)
 
 4. The project based on the BSP is created.
 
-![image-20251127165406340](figures/image-20251127165406340.png)
+![image-20251127165406340](m85/figures/image-20251127165406340.png)
 
 ### **Configure Debug/Download Settings**
 
@@ -109,13 +116,13 @@ Download **J-Link v8.48** and **PyOCD 0.2.9**.
 
 Modify the debugger configuration in the **Debugger** tab.
 
-![image-20251127165957537](figures/image-20251127165957537.png)
+![image-20251127165957537](m85/figures/image-20251127165957537.png)
 
 In the **Download** tab, change the download method to **Flash Hex File**, then click **OK**.
 
-![image-20251127170436152](figures/image-20251127170436152.png)
+![image-20251127170436152](m85/figures/image-20251127170436152.png)
 
-![image-20251127171037225](figures/image-20251127171037225.png)
+![image-20251127171037225](m85/figures/image-20251127171037225.png)
 
 **Hardware Connection**
 
@@ -123,7 +130,29 @@ Use a USB cable to connect the development board to the PC, and use the DAP-Link
 
 **Build and Download**
 
-![image-20251127165554294](figures/image-20251127165554294.png)
+![image-20251127165554294](m85/figures/image-20251127165554294.png)
+
+When either the `m85` or `m33` Keil project is built, FSP Smart Configurator 6.2.0 runs after linking and generates `Objects/template.sbd`. The SBD stores the core's security and memory-region metadata for RA8P1 dual-core FSP solution partitioning and composition; it is not a directly flashable image. Only the SBD after-build step is enabled, so the build does not regenerate or overwrite the FSP-generated sources and linker scripts.
+
+After building `m85/project.uvprojx` and `m33/project.uvprojx` with Keil, run `build_solution_sbd.bat` from this BSP root. The script validates the core, device, and FSP version of both core SBDs, then uses `solution.xml` to generate `build/ra8p1_titan_dualcore.sbd`. This solution SBD is used for FSP dual-core partition and configuration exchange; it is not a directly flashable firmware image.
+
+The RA8P1 code MRAM is shared by both cores, but the J-Link Flash Algorithm must access it through CPU0/AP0, while M33 debugging must attach to CPU1/AP2. A Keil target has only one Device selection shared by its download and debug settings, so one target cannot select CPU0 for programming and CPU1 for debugging. The two M33 targets therefore share the same `Objects/template.axf`; they do not produce two M33 images.
+
+| Target | Device | Purpose |
+| --- | --- | --- |
+| `M33_Debug_CPU1` | `R7KA8P1KF:CPU1` | Build the Cortex-M33 image and attach to CPU1. Its Flash Download utility is disabled. |
+| `M33_Download_CPU0` | `R7KA8P1KF:CPU0` | Program the existing M33 AXF at `0x020C0000` through CPU0 using Keil's native J-Link Flash driver. |
+
+The committed `project.uvprojx` files already contain the RT-Thread source groups. Run `scons --target=mdk5` in the corresponding `m85` or `m33` directory when the Keil project needs to be regenerated. Both M33 targets are defined in `template.uvprojx` and are preserved in the generated project.
+
+1. Build and download the CPU0 firmware from the `m85` Keil project.
+2. Select and build `M33_Debug_CPU1` in the `m33` project.
+3. Switch to `M33_Download_CPU0` and click Download without building this target. The J-Link log must report `R7KA8P1KF_CPU0`.
+4. Switch back to `M33_Debug_CPU1` and attach to CPU1 after programming.
+
+CPU0 starts CPU1 once from the common RA board initialization in `bsp/renesas/libraries/HAL_Drivers/drv_common.c` when `BSP_START_SECONDARY_CORE` is enabled. `hal_entry()` must not start CPU1 again.
+
+Do not use the M33 Reset command. Restart both cores with the board reset button, wait for M85 to start CPU1, and then attach again.
 
 **View Running Results**
 
@@ -209,17 +238,17 @@ Users can locate the `configuration.xml` file in the project and import it into 
 
 Select **File → Open** at the top-left corner to open the configuration file.
 
-![image-20251030163423452](figures/image-20251030163423452.png)
+![image-20251030163423452](m85/figures/image-20251030163423452.png)
 
 * **Generate FSP Code:**
 
-![image-20251030163707813](figures/image-20251030163707813.png)
+![image-20251030163707813](m85/figures/image-20251030163707813.png)
 
 **RT-Thread Settings**
 
 In **RT-Thread Settings**, you can configure the RT-Thread kernel, components, software packages, and Titan Board device drivers.
 
-![image-20250819173700386](figures/image-20250819173700386.png)
+![image-20250819173700386](m85/figures/image-20250819173700386.png)
 
 ## Contact Information
 

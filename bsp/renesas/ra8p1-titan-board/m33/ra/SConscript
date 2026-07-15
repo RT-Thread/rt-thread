@@ -1,0 +1,29 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+from gcc import *
+
+cwd = GetCurrentDir()
+src = []
+group = []
+CPPPATH = []
+LINKFLAGS = ''
+
+if rtconfig.PLATFORM == 'armclang':
+    LINKFLAGS = ' --entry=Reset_Handler --no_startup'
+
+if rtconfig.PLATFORM in ['iccarm'] + GetGCCLikePLATFORM():
+    src += Glob('./fsp/src/bsp/mcu/all/*.c')
+    src += Glob('./fsp/src/bsp/mcu/ra8p1/*.c')
+    src += Glob('./fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c')
+    src += Glob('./fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c')
+    src += Glob('./fsp/src/r_ioport/*.c')
+    src += Glob('./fsp/src/r_sci_b_uart/*.c')
+    CPPPATH = [ cwd + '/arm/CMSIS_6/CMSIS/Core/Include',
+                        cwd + '/fsp/inc',
+                        cwd + '/fsp/inc/api',
+                        cwd + '/fsp/inc/instances',
+              ]
+
+group = DefineGroup('RA', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS)
+Return('group')
