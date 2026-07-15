@@ -39,8 +39,8 @@
 
 #define F_CPU 120000000L /* CPU:120MHz */
 
-/* i2c0 : P203-SDA P202-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME "i2c0"
+/* swi2c0 : P203-SDA P202-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c0"
 
 /* Serial4(uart4) : P205-TX  P206-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME "uart4"

@@ -26,8 +26,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM3_CH2
         select BSP_USING_PWM3_CH3
         select BSP_USING_PWM3_CH4
-        select BSP_USING_I2C
-        select BSP_USING_I2C1
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C1
         select BSP_USING_SPI
         select BSP_USING_SPI2
         # select BSP_SPI2_TX_USING_DMA
@@ -36,6 +37,19 @@ menu "Onboard Peripheral Drivers"
         select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
         default n
+
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 24 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 25 if RT_USING_SOFT_I2C1
 
 endmenu
 
@@ -156,23 +170,25 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
         default n
         select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            config BSP_I2C1_SCL_PIN
-                int "i2c1 scl pin number (PB8)"
-                range 0 143
-                default 24
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number (PB9)"
-                range 0 143
-                default 25
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 24
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 25
+            endif
         endif
-
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         default n
@@ -274,5 +290,6 @@ endmenu
 menu "Board extended module Drivers"
 
 endmenu
+
 
 endmenu

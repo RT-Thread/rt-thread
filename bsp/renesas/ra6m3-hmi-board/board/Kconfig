@@ -14,8 +14,8 @@ menu "Hardware Drivers Config"
             select BSP_USING_PWM2
             select BSP_USING_PWM8
             select RT_USING_I2C
-            select RT_USING_SOFT_I2C
-            select RT_USING_SOFT_I2C0
+            select BSP_USING_SOFT_I2C
+            select BSP_USING_SOFT_I2C0
             select BSP_USING_SOFT_SPI
             select BSP_USING_SOFT_SPI1
             select RTDUINO_USING_WIRE
@@ -72,8 +72,8 @@ menu "Hardware Drivers Config"
             select RT_USING_TOUCH
             select RT_TOUCH_PIN_IRQ
             select RT_USING_I2C
-            select RT_USING_SOFT_I2C
-            select RT_USING_SOFT_I2C1
+            select BSP_USING_SOFT_I2C
+            select BSP_USING_SOFT_I2C1
             default n
 
         menuconfig BSP_USING_LVGL
@@ -112,7 +112,32 @@ menu "Hardware Drivers Config"
                     help
                         Enable this option to include LVGL stress demo. -- LVGL9.3.x
             endif
-    endmenu
+
+    config RT_SOFT_I2C0_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C0
+
+    config RT_SOFT_I2C0_SCL_PIN_DEFAULT
+        int
+        default 514 if RT_USING_SOFT_I2C0
+
+    config RT_SOFT_I2C0_SDA_PIN_DEFAULT
+        int
+        default 515 if RT_USING_SOFT_I2C0
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 514 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 515 if RT_USING_SOFT_I2C1
+
+endmenu
 
     menu "On-chip Peripheral Drivers"
 
@@ -217,68 +242,6 @@ menu "Hardware Drivers Config"
                             default 0x050B
                     endif
             endif
-
-        config RT_USING_I2C
-        bool 
-        default n
-        if RT_USING_I2C
-            config RT_USING_SOFT_I2C
-                bool "Enable soft I2C BUS"
-                default n
-                if RT_USING_SOFT_I2C
-                    menuconfig RT_USING_SOFT_I2C0
-                        bool "Enable I2C0 Bus (software simulation)"
-                        default n
-                        if RT_USING_SOFT_I2C0
-                            comment "Please refer to the 'bsp_io.h' file to configure the pins"
-                            config RT_SOFT_I2C0_SCL_PIN
-                                hex "i2c0 scl pin number (hex)"
-                                range 0x0000 0xFFFF
-                                default 0x202
-                            config RT_SOFT_I2C0_SDA_PIN
-                                hex "i2c0 sda pin number (hex)"
-                                range 0x0000 0xFFFF
-                                default 0x203
-                            config RT_SOFT_I2C0_BUS_NAME
-                                string "Bus name"
-                                default "i2c0"
-                            config RT_SOFT_I2C0_TIMING_DELAY
-                                int "Timing delay (us)"
-                                range 0 32767
-                                default 10
-                            config RT_SOFT_I2C0_TIMING_TIMEOUT
-                                int "Timing timeout (tick)"
-                                range 0 32767
-                                default 10
-                        endif
-                    
-                    menuconfig RT_USING_SOFT_I2C1
-                        bool "Enable I2C1 Bus (software simulation)"
-                        default n
-                        if RT_USING_SOFT_I2C1
-                            comment "Please refer to the 'bsp_io.h' file to configure the pins"
-                            config RT_SOFT_I2C1_SCL_PIN
-                                hex "i2c1 scl pin number (hex)"
-                                range 0x0000 0xFFFF
-                                default 0x202
-                            config RT_SOFT_I2C1_SDA_PIN
-                                hex "i2c1 sda pin number (hex)"
-                                range 0x0000 0xFFFF
-                                default 0x203
-                            config RT_SOFT_I2C1_BUS_NAME
-                                string "Bus name"
-                                default "i2c1"
-                            config RT_SOFT_I2C1_TIMING_DELAY
-                                int "Timing delay (us)"
-                                range 0 32767
-                                default 10
-                            config RT_SOFT_I2C1_TIMING_TIMEOUT
-                                int "Timing timeout (tick)"
-                                range 0 32767
-                                default 10
-                        endif
-                endif
-        endif
 
         menuconfig BSP_USING_ADC
             bool "Enable ADC"
@@ -709,6 +672,40 @@ menu "Hardware Drivers Config"
                         endif
                     endif
             endif
+
+        menuconfig BSP_USING_SOFT_I2C
+            bool "Enable software I2C (swi2c)"
+            default n
+            select RT_USING_I2C
+            select RT_USING_SOFT_I2C
+            if BSP_USING_SOFT_I2C
+            menuconfig BSP_USING_SOFT_I2C0
+                bool "Enable software I2C0 Bus (swi2c0)"
+                default n
+                select RT_USING_SOFT_I2C0
+                if BSP_USING_SOFT_I2C0
+                    config RT_SOFT_I2C0_SCL_PIN
+                        int "swi2c0 SCL pin number"
+                        default 514
+                    config RT_SOFT_I2C0_SDA_PIN
+                        int "swi2c0 SDA pin number"
+                        default 515
+                endif
+
+            menuconfig BSP_USING_SOFT_I2C1
+                bool "Enable software I2C1 Bus (swi2c1)"
+                default n
+                select RT_USING_SOFT_I2C1
+                if BSP_USING_SOFT_I2C1
+                    config RT_SOFT_I2C1_SCL_PIN
+                        int "swi2c1 SCL pin number"
+                        default 514
+                    config RT_SOFT_I2C1_SDA_PIN
+                        int "swi2c1 SDA pin number"
+                        default 515
+                endif
+            endif
+
 
     endmenu
 

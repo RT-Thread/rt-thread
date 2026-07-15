@@ -9,3 +9,13 @@ utest.pin:
       - CONFIG_RT_USING_UTESTCASES=y
       - CONFIG_RT_CONSOLEBUF_SIZE=256
       - CONFIG_RT_UTEST_PIN=y
+
+# ------ devices CI ------
+devices.soft_i2c:
+    kconfig:
+      - CONFIG_RT_USING_I2C=y
+      - CONFIG_RT_USING_SOFT_I2C=y
+      - CONFIG_RT_USING_SOFT_I2C1=y
+      - CONFIG_RT_SOFT_I2C1_SCL_PIN=105
+      - CONFIG_RT_SOFT_I2C1_SDA_PIN=106
+      - CONFIG_RT_SOFT_I2C1_BUS_NAME="swi2c1"

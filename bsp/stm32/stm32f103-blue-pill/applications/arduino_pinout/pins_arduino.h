@@ -53,8 +53,8 @@
 
 #define LED_BUILTIN     D8  /* Default Built-in LED */
 
-/* i2c1 : PB9-SDA PB8-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
+/* swi2c1 : PB9-SDA PB8-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c1"
 
 /* spi2 : PB13-SCK  PB14-MISO  PB15-MOSI */
 #define SS      D7  /* Chip select pin of default spi */

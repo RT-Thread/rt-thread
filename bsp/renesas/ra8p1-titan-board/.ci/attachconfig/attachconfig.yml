@@ -39,6 +39,15 @@ devices.rtc:
     kconfig:
       - CONFIG_BSP_USING_ONCHIP_RTC=y
 
+devices.soft_i2c:
+    kconfig:
+      - CONFIG_RT_USING_I2C=y
+      - CONFIG_RT_USING_SOFT_I2C=y
+      - CONFIG_RT_USING_SOFT_I2C1=y
+      - CONFIG_RT_SOFT_I2C1_SCL_PIN=0x050C
+      - CONFIG_RT_SOFT_I2C1_SDA_PIN=0x050B
+      - CONFIG_RT_SOFT_I2C1_BUS_NAME="swi2c1"
+
 # ------ utest CI ------
 utest.pin:
     kconfig:

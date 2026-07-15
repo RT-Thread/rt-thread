@@ -24,7 +24,7 @@ if GetDepend(['BSP_USING_QSPI']):
 
 if GetDepend(['BSP_USING_I2C']):
     src += ['test_i2c.c']
-    if GetDepend(['RT_USING_I2C_BITOPS']):
+    if GetDepend(['RT_USING_SOFT_I2C1']):
         src += ['test_soft_i2c.c']
 
 if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):

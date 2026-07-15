@@ -260,51 +260,52 @@ menu "On-chip Peripheral Drivers"
                 select BSP_SPI2_TX_USING_DMA
                 default n
         endif
-
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C BUS (software simulation)"
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
         default n
         select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C
-            config BSP_USING_I2C1
-                bool "Enable I2C1 BUS"
-                if BSP_USING_I2C1
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 scl pin number"
-                        range 0 63
-                        default 22
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 0 63
-                        default 23
-                endif
-            config BSP_USING_I2C2
-                bool "Enable I2C2 BUS"
-                if BSP_USING_I2C2
-                    config BSP_I2C2_SCL_PIN
-                        int "i2c2 scl pin number"
-                        range 0 63
-                        default 26
-                    config BSP_I2C2_SDA_PIN
-                        int "I2C2 sda pin number"
-                        range 0 63
-                        default 27
-                endif
-            config BSP_USING_I2C3
-                bool "Enable I2C3 BUS"
-                if BSP_USING_I2C3
-                    config BSP_I2C3_SCL_PIN
-                        int "i2c3 scl pin number"
-                        range 0 63
-                        default 8
-                    config BSP_I2C3_SDA_PIN
-                        int "I2C3 sda pin number"
-                        range 0 63
-                        default 41
-                endif
-        endif
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 22
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 23
+            endif
+
+        menuconfig BSP_USING_SOFT_I2C2
+            bool "Enable software I2C2 Bus (swi2c2)"
+            default n
+            select RT_USING_SOFT_I2C2
+            if BSP_USING_SOFT_I2C2
+                config RT_SOFT_I2C2_SCL_PIN
+                    int "swi2c2 SCL pin number"
+                    default 26
+                config RT_SOFT_I2C2_SDA_PIN
+                    int "swi2c2 SDA pin number"
+                    default 27
+            endif
+
+        menuconfig BSP_USING_SOFT_I2C3
+            bool "Enable software I2C3 Bus (swi2c3)"
+            default n
+            select RT_USING_SOFT_I2C3
+            if BSP_USING_SOFT_I2C3
+                config RT_SOFT_I2C3_SCL_PIN
+                    int "swi2c3 SCL pin number"
+                    default 8
+                config RT_SOFT_I2C3_SDA_PIN
+                    int "swi2c3 SDA pin number"
+                    default 41
+            endif
+    endif
+
 
     menuconfig BSP_USING_HARD_I2C
         bool "Enable I2C BUS (hardware driver)"
@@ -377,5 +378,41 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 endmenu
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 22 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 23 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C2_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 26 if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 27 if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C3_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C3
+
+    config RT_SOFT_I2C3_SCL_PIN_DEFAULT
+        int
+        default 8 if RT_USING_SOFT_I2C3
+
+    config RT_SOFT_I2C3_SDA_PIN_DEFAULT
+        int
+        default 41 if RT_USING_SOFT_I2C3
 
 endmenu

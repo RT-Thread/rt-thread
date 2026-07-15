@@ -25,22 +25,48 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_AHT20
-        bool "Enable AHT20(i2c1)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C1
+        bool "Enable AHT20(swi2c1)"
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C1
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_AHT10
         default n 
 
     config BSP_USING_ICM20608
-        bool "Enable ICM20608(i2c1)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C1
+        bool "Enable ICM20608(swi2c1)"
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C1
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_ICM20608
         default n
 
         
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 22 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 23 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C2_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 26 if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 27 if RT_USING_SOFT_I2C2
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -135,45 +161,38 @@ menu "On-chip Peripheral Drivers"
             endchoice
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C"
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
         default n
-        if BSP_USING_I2C
-            menuconfig BSP_USING_I2C1
-                bool "Enable I2C1 BUS (software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C1
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 scl pin number"
-                        range 0 143
-                        default 22
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 0 143
-                        default 23
-                endif
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 22
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 23
+            endif
 
-            menuconfig BSP_USING_I2C2
-                bool "Enable I2C2 BUS (software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C2
-                    config BSP_I2C2_SCL_PIN
-                        int "i2c2 scl pin number"
-                        range 0 143
-                        default 26
-                    config BSP_I2C2_SDA_PIN
-                        int "I2C2 sda pin number"
-                        range 0 143
-                        default 27
-                endif
+        menuconfig BSP_USING_SOFT_I2C2
+            bool "Enable software I2C2 Bus (swi2c2)"
+            default n
+            select RT_USING_SOFT_I2C2
+            if BSP_USING_SOFT_I2C2
+                config RT_SOFT_I2C2_SCL_PIN
+                    int "swi2c2 SCL pin number"
+                    default 26
+                config RT_SOFT_I2C2_SDA_PIN
+                    int "swi2c2 SDA pin number"
+                    default 27
+            endif
         endif
-        
     menuconfig BSP_USING_TIM
         bool "Enable timer"
         default n
@@ -245,8 +264,9 @@ menu "Board extended module Drivers"
 
     config BSP_USING_SSD1306
         bool "Enable SSD1306 OLED"
-        select BSP_USING_I2C
-        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C2
         select PKG_USING_SSD1306
         default n
         help
@@ -254,5 +274,6 @@ menu "Board extended module Drivers"
 
 
 endmenu
+
 
 endmenu

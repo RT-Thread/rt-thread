@@ -6,7 +6,6 @@ component.cplusplus:
     <<: *scons
     kconfig:
       - CONFIG_RT_USING_CPLUSPLUS=y
-# ------ online-packages CI ------
 online-packages.rtduino.core:
     <<: *scons
     kconfig:
@@ -225,3 +224,13 @@ online-packages.multimedia.lvgl-demo:
     kconfig:
       - CONFIG_BSP_USING_LVGL=y
       - CONFIG_BSP_USING_LVGL_DEMO=y
+
+devices.soft_i2c:
+  <<: *scons
+  kconfig:
+    - CONFIG_RT_USING_I2C=y
+    - CONFIG_RT_USING_SOFT_I2C=y
+    - CONFIG_RT_USING_SOFT_I2C1=y
+    - CONFIG_RT_SOFT_I2C1_SCL_PIN=2
+    - CONFIG_RT_SOFT_I2C1_SDA_PIN=3
+    - CONFIG_RT_SOFT_I2C1_BUS_NAME="swi2c1"

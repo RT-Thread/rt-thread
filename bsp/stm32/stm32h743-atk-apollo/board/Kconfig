@@ -6,7 +6,9 @@ menu "Onboard Peripheral Drivers"
         bool "Enable COM2(485)"
         select BSP_USING_UART
         select BSP_USING_UART2
-        select BSP_USING_I2C1
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C1
         select PKG_USING_PCF8574
         default n
 
@@ -37,9 +39,34 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_OV2640
         bool "Enable camera (ov2640)"
         select BSP_USING_DCMI
-        select BSP_USING_I2C
-        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C2
         default n
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 116 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 117 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C2_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 127 if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 125 if RT_USING_SOFT_I2C2
 
 endmenu
 
@@ -141,44 +168,38 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI
         default n
 
-    menuconfig BSP_USING_I2C
-    bool "Enable I2C BUS (software simulation)"
-    select RT_USING_I2C
-    select RT_USING_I2C_BITOPS
-    select RT_USING_PIN
-    default n
-    if BSP_USING_I2C
-        menuconfig BSP_USING_I2C1
-            bool "Enable I2C1 BUS (software simulation)"
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
             default n
-            if BSP_USING_I2C1
-                comment "Notice: PH4 --> 116; PH5 --> 117"
-                config BSP_I2C1_SCL_PIN
-                    int "i2c1 scl pin number"
-                    range 1 176
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
                     default 116
-                config BSP_I2C1_SDA_PIN
-                    int "I2C1 sda pin number"
-                    range 1 176
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
                     default 117
             endif
 
-            menuconfig BSP_USING_I2C2
-            bool "Enable I2C2 BUS (software simulation)"
+        menuconfig BSP_USING_SOFT_I2C2
+            bool "Enable software I2C2 Bus (swi2c2)"
             default n
-            if BSP_USING_I2C2
-                comment "Notice: PH13 --> 125; PH15 --> 127"
-                config BSP_I2C2_SCL_PIN
-                    int "i2c2 scl pin number"
-                    range 1 176
+            select RT_USING_SOFT_I2C2
+            if BSP_USING_SOFT_I2C2
+                config RT_SOFT_I2C2_SCL_PIN
+                    int "swi2c2 SCL pin number"
                     default 127
-                config BSP_I2C2_SDA_PIN
-                    int "I2C2 sda pin number"
-                    range 1 176
+                config RT_SOFT_I2C2_SDA_PIN
+                    int "swi2c2 SDA pin number"
                     default 125
             endif
-    endif
-
+        endif
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
@@ -237,5 +258,6 @@ endmenu
 menu "Board extended module Drivers"
 
 endmenu
+
 
 endmenu

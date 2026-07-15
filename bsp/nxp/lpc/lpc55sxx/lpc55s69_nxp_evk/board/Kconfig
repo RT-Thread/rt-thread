@@ -118,42 +118,37 @@ menu "On-chip Peripheral Drivers"
             endif
     
     menuconfig BSP_USING_SOFT_I2C
-        bool "Enable software I2C bus"
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
+        bool "Enable software I2C (swi2c)"
         default n
-
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
         if BSP_USING_SOFT_I2C
-            config BSP_USING_SOFT_I2C1
-                bool "Enable I2C1 Bus (software simulation)"
-                default n
-                if BSP_USING_SOFT_I2C1
-                    comment "Notice: num = 32 * PORTx + PINx + 1"
-                    comment "0_15 --> 16; 1_8 --> 41"
-                    config BSP_SOFT_I2C1_SCL_PIN
-                        int "si2c1 SCL pin number"
-                        default 16
-                    config BSP_SOFT_I2C1_SDA_PIN
-                        int "si2c1 SDA pin number"
-                        default 41
-                endif
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 16
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 41
+            endif
 
-            config BSP_USING_SOFT_I2C2
-                bool "Enable I2C2 Bus (software simulation)"
-                default n
-                if BSP_USING_SOFT_I2C2
-                    comment "Notice: num = 32 * PORTx + PINx + 1"
-                    comment "0_18 --> 19; 1_10 --> 43"
-                    config BSP_SOFT_I2C2_SCL_PIN
-                        int "si2c2 SCL pin number"
-                        default 19
-                    config BSP_SOFT_I2C2_SDA_PIN
-                        int "si2c2 SDA pin number"
-                        default 43
-                endif
+        menuconfig BSP_USING_SOFT_I2C2
+            bool "Enable software I2C2 Bus (swi2c2)"
+            default n
+            select RT_USING_SOFT_I2C2
+            if BSP_USING_SOFT_I2C2
+                config RT_SOFT_I2C2_SCL_PIN
+                    int "swi2c2 SCL pin number"
+                    default 19
+                config RT_SOFT_I2C2_SDA_PIN
+                    int "swi2c2 SDA pin number"
+                    default 43
+            endif
         endif
-
     menuconfig BSP_USING_SPI
         config BSP_USING_SPI
             bool "Enable SPI"
@@ -410,5 +405,29 @@ menu "Board extended module Drivers"
     endif
 
 endmenu
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 16 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 41 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C2_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 19 if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 43 if RT_USING_SOFT_I2C2
 
 endmenu

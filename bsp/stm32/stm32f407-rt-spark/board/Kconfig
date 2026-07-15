@@ -22,9 +22,10 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM2_CH4
         select BSP_USING_PWM4
         select BSP_USING_PWM4_CH1
-        select BSP_USING_I2C
-        select BSP_USING_I2C4
-        select BSP_USING_I2C5
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C4
+        select BSP_USING_SOFT_I2C5
         select BSP_USING_SOFT_SPI
         select BSP_USING_SOFT_SPI1
         imply RTDUINO_USING_SERVO
@@ -123,8 +124,10 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_EEPROM
-        bool "Enable I2C EEPROM (i2c1)"
-        select BSP_USING_I2C1
+        bool "Enable I2C EEPROM (swi2c1)"
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C1
         default n
 
     config BSP_USING_ENC28j60
@@ -213,25 +216,28 @@ menu "Onboard Peripheral Drivers"
         endif
 
     config BSP_USING_AHT21
-        bool "Enable AHT21(i2c3)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C3
+        bool "Enable AHT21(swi2c3)"
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C3
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_AHT10
         default n
 
     config BSP_USING_AP3216C
-        bool "Enable AP3216C(i2c2)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C2
+        bool "Enable AP3216C(swi2c2)"
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C2
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_AP3216C
         default n
 
     config BSP_USING_ICM20608
-        bool "Enable ICM20608(i2c2)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C2
+        bool "Enable ICM20608(swi2c2)"
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C2
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_ICM20608
         default n
@@ -256,8 +262,9 @@ menu "Onboard Peripheral Drivers"
     menuconfig BSP_USING_AUDIO
         bool "Enable Audio Device"
         select RT_USING_AUDIO
-        select BSP_USING_I2C
-        select BSP_USING_I2C2
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C2
         default n
 
         if BSP_USING_AUDIO
@@ -270,6 +277,67 @@ menu "Onboard Peripheral Drivers"
             default n
         endif
 
+
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 24 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 25 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C2_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 81 if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 80 if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C3_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C3
+
+    config RT_SOFT_I2C3_SCL_PIN_DEFAULT
+        int
+        default 64 if RT_USING_SOFT_I2C3
+
+    config RT_SOFT_I2C3_SDA_PIN_DEFAULT
+        int
+        default 65 if RT_USING_SOFT_I2C3
+
+    config RT_SOFT_I2C4_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C4
+
+    config RT_SOFT_I2C4_SCL_PIN_DEFAULT
+        int
+        default 103 if RT_USING_SOFT_I2C4
+
+    config RT_SOFT_I2C4_SDA_PIN_DEFAULT
+        int
+        default 55 if RT_USING_SOFT_I2C4
+
+    config RT_SOFT_I2C5_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C5
+
+    config RT_SOFT_I2C5_SCL_PIN_DEFAULT
+        int
+        default 22 if RT_USING_SOFT_I2C5
+
+    config RT_SOFT_I2C5_SDA_PIN_DEFAULT
+        int
+        default 23 if RT_USING_SOFT_I2C5
 
 endmenu
 
@@ -660,96 +728,77 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C"
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
         default n
-        if BSP_USING_I2C
-            menuconfig BSP_USING_I2C1
-                bool "Enable I2C1 BUS (software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C1
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 scl pin number"
-                        range 0 143
-                        default 24
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 0 143
-                        default 25
-                endif
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 24
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 25
+            endif
 
-            menuconfig BSP_USING_I2C2
-                bool "Enable I2C2 BUS for AP3216C/ICM20608/ES8388/ Onboard(software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C2
-                    config BSP_I2C2_SCL_PIN
-                        int "i2c2 scl pin number, PF1"
-                        range 0 143
-                        default 81
-                    config BSP_I2C2_SDA_PIN
-                        int "I2C2 sda pin number, PF0"
-                        range 0 143
-                        default 80
-                endif
+        menuconfig BSP_USING_SOFT_I2C2
+            bool "Enable software I2C2 Bus (swi2c2)"
+            default n
+            select RT_USING_SOFT_I2C2
+            if BSP_USING_SOFT_I2C2
+                config RT_SOFT_I2C2_SCL_PIN
+                    int "swi2c2 SCL pin number"
+                    default 81
+                config RT_SOFT_I2C2_SDA_PIN
+                    int "swi2c2 SDA pin number"
+                    default 80
+            endif
 
-            menuconfig BSP_USING_I2C3
-                bool "Enable I2C3 BUS for AHT21 Onboard(software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C3
-                    config BSP_I2C3_SCL_PIN
-                        int "i2c3 scl pin number, PE0"
-                        range 0 143
-                        default 64
-                    config BSP_I2C3_SDA_PIN
-                        int "I2C3 sda pin number, PE1"
-                        range 0 143
-                        default 65
-                endif
-            
-            menuconfig BSP_USING_I2C4
-                bool "Enable I2C4 BUS for RTduino(software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C4
-                    config BSP_I2C4_SCL_PIN
-                        int "i2c4 scl pin number, PG7"
-                        range 0 143
-                        default 103
-                    config BSP_I2C4_SDA_PIN
-                        int "I2C4 sda pin number, PD7"
-                        range 0 143
-                        default 55
-                endif
-                
-            menuconfig BSP_USING_I2C5
-                bool "Enable I2C5 BUS for RTduino(software simulation)"
-                default n
-                select RT_USING_I2C
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C5
-                    config BSP_I2C5_SCL_PIN
-                        int "i2c5 scl pin number, PB6"
-                        range 0 143
-                        default 22
-                    config BSP_I2C5_SDA_PIN
-                        int "I2C5 sda pin number, PB7"
-                        range 0 143
-                        default 23
-                endif
+        menuconfig BSP_USING_SOFT_I2C3
+            bool "Enable software I2C3 Bus (swi2c3)"
+            default n
+            select RT_USING_SOFT_I2C3
+            if BSP_USING_SOFT_I2C3
+                config RT_SOFT_I2C3_SCL_PIN
+                    int "swi2c3 SCL pin number"
+                    default 64
+                config RT_SOFT_I2C3_SDA_PIN
+                    int "swi2c3 SDA pin number"
+                    default 65
+            endif
+
+        menuconfig BSP_USING_SOFT_I2C4
+            bool "Enable software I2C4 Bus (swi2c4)"
+            default n
+            select RT_USING_SOFT_I2C4
+            if BSP_USING_SOFT_I2C4
+                config RT_SOFT_I2C4_SCL_PIN
+                    int "swi2c4 SCL pin number"
+                    default 103
+                config RT_SOFT_I2C4_SDA_PIN
+                    int "swi2c4 SDA pin number"
+                    default 55
+            endif
+
+        menuconfig BSP_USING_SOFT_I2C5
+            bool "Enable software I2C5 Bus (swi2c5)"
+            default n
+            select RT_USING_SOFT_I2C5
+            if BSP_USING_SOFT_I2C5
+                config RT_SOFT_I2C5_SCL_PIN
+                    int "swi2c5 SCL pin number"
+                    default 22
+                config RT_SOFT_I2C5_SDA_PIN
+                    int "swi2c5 SDA pin number"
+                    default 23
+            endif
         endif
-
     config BSP_USING_ONBOARD_PM
         bool "Enable Power Management"
         select RT_USING_PM
@@ -876,5 +925,6 @@ menu "Board extended module Drivers"
         endif
 
 endmenu
+
 
 endmenu

@@ -580,46 +580,37 @@ config SOC_SERIES_M032
         endif
 
     menuconfig BSP_USING_SOFT_I2C
-        bool "Enable SOFT I2C"
-
+        bool "Enable software I2C (swi2c)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
         if BSP_USING_SOFT_I2C
-            config BSP_USING_SOFT_I2C0
-            bool "Enable SOFT I2C0"
-            select RT_USING_I2C
-            select RT_USING_I2C_BITOPS
+        menuconfig BSP_USING_SOFT_I2C0
+            bool "Enable software I2C0 Bus (swi2c0)"
             default n
-
+            select RT_USING_SOFT_I2C0
             if BSP_USING_SOFT_I2C0
-                config BSP_SOFT_I2C0_SCL_PIN
-                hex "Specify the pin index of SCL of SOFT I2C0"
-                range 0 0x7F
-                default 0x18
-
-                config BSP_SOFT_I2C0_SDA_PIN
-                hex "Specify the pin index of SDA of SOFT I2C0"
-                range 0 0x7F
-                default 0x17
+                config RT_SOFT_I2C0_SCL_PIN
+                    int "swi2c0 SCL pin number"
+                    default 0x18
+                config RT_SOFT_I2C0_SDA_PIN
+                    int "swi2c0 SDA pin number"
+                    default 0x17
             endif
 
-            config BSP_USING_SOFT_I2C1
-            bool "Enable SOFT I2C1"
-            select RT_USING_I2C
-            select RT_USING_I2C_BITOPS
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
             default n
-
+            select RT_USING_SOFT_I2C1
             if BSP_USING_SOFT_I2C1
-                config BSP_SOFT_I2C1_SCL_PIN
-                hex "Specify the pin index of SCL of SOFT I2C1"
-                range 0 0x7F
-                default 0x0B
-
-                config BSP_SOFT_I2C1_SDA_PIN
-                hex "Specify the pin index of SDA of SOFT I2C1"
-                range 0 0x7F
-                default 0x0A
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 0x0B
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 0x0A
             endif
         endif
-
     config BSP_USING_WDT
         bool "Enable Watchdog Timer(WDT)"
         select RT_USING_WDT
@@ -631,5 +622,30 @@ config SOC_SERIES_M032
 
     config BSP_USING_USBD
         bool "Enable Full-Speed USB Device Controller(USBD)"
+
+
         select RT_USING_USB_DEVICE
 
+    config RT_SOFT_I2C0_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C0
+
+    config RT_SOFT_I2C0_SCL_PIN_DEFAULT
+        int
+        default 0x18 if RT_USING_SOFT_I2C0
+
+    config RT_SOFT_I2C0_SDA_PIN_DEFAULT
+        int
+        default 0x17 if RT_USING_SOFT_I2C0
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 0x0B if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 0x0A if RT_USING_SOFT_I2C1

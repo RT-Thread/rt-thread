@@ -57,8 +57,8 @@
 #define SS      D14  /* Chip select pin of default spi */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi1"
 
-/* i2c1 : PB2-SDA PB10-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
+/* swi2c1 : PB2-SDA PB10-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c1"
 
 /* Serial2 - PA2-TX  PA3-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME      "uart2"

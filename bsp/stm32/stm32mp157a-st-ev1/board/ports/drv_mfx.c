@@ -16,7 +16,7 @@
 #include <drv_log.h>
 
 #define CHIP_ADDRESS    0x42     /* mfx address */
-#define I2C_NAME       "i2c2"
+#define I2C_NAME        "swi2c2"
 
 struct st_mfx
 {

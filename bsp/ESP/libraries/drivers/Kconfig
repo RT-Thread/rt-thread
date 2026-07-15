@@ -75,25 +75,27 @@ menu "On-chip Peripheral Drivers"
             menuconfig BSP_USING_HW_I2C
                 bool "Enable HardWare I2C"
                 default n
-                
-            menuconfig BSP_USING_SW_I2C
-                bool "Enable SoftWare I2C"
+            menuconfig BSP_USING_SOFT_I2C
+                bool "Enable software I2C (swi2c)"
                 default n
-                if BSP_USING_SW_I2C
-                    config BSP_USING_SW_I2C0
-                        bool "Enable SoftWare I2C0"
-                        default n
-                        if BSP_USING_SW_I2C0
-                            config BSP_SW_I2C0_SDA_PIN
-                                int "SWI2C0 sda pin number"
-                                range 0 21
-                                default 18
-                            config BSP_SW_I2C0_SCL_PIN
-                                int "SWI2C0 scl pin number"
-                                range 0 21
-                                default 19
-                        endif
-                endif
+                select RT_USING_I2C
+                select RT_USING_SOFT_I2C
+                if BSP_USING_SOFT_I2C
+                menuconfig BSP_USING_SOFT_I2C0
+                    bool "Enable software I2C0 Bus (swi2c0)"
+                    default n
+                    select RT_USING_SOFT_I2C0
+                    if BSP_USING_SOFT_I2C0
+                        config RT_SOFT_I2C0_SCL_PIN
+                            int "swi2c0 SCL pin number"
+                            default 19
+                        config RT_SOFT_I2C0_SDA_PIN
+                            int "swi2c0 SDA pin number"
+                            default 18
+                    endif
+            endif
+
+
         endif
 
     menuconfig BSP_USING_SPI
@@ -170,5 +172,17 @@ endmenu
 config BSP_ENABLE_GDBSTUB
     bool "Enable ESP_GDBSTUB compontent"
     default n
+
+    config RT_SOFT_I2C0_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C0
+
+    config RT_SOFT_I2C0_SCL_PIN_DEFAULT
+        int
+        default 19 if RT_USING_SOFT_I2C0
+
+    config RT_SOFT_I2C0_SDA_PIN_DEFAULT
+        int
+        default 18 if RT_USING_SOFT_I2C0
 
 endmenu
