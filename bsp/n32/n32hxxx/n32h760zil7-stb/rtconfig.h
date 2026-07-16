@@ -74,7 +74,7 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 256
+#define IDLE_THREAD_STACK_SIZE 1024
 
 /* kservice options */
 
@@ -148,6 +148,7 @@
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
+#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 512
 #define RT_USING_PIN
 /* end of Device Drivers */
@@ -273,6 +274,8 @@
 
 /* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
+#define PKG_USING_CMSIS_CORE
+#define PKG_USING_CMSIS_CORE_LATEST_VERSION
 /* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
@@ -295,6 +298,10 @@
 /* Kendryte SDK */
 
 /* end of Kendryte SDK */
+
+/* MM32 HAL & SDK Drivers */
+
+/* end of MM32 HAL & SDK Drivers */
 
 /* WCH HAL & SDK Drivers */
 
@@ -327,6 +334,18 @@
 /* FT32 HAL & SDK Drivers */
 
 /* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
+
+/* N32 Drivers */
+
+#define PKG_USING_N32H7XX_STD_DRIVER
+#define PKG_USING_N32H7XX_STD_DRIVER_LATEST_VERSION
+#define PKG_USING_N32H7XX_CMSIS_DRIVER
+#define PKG_USING_N32H7XX_CMSIS_DRIVER_LATEST_VERSION
+/* end of N32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -412,6 +431,8 @@
 /* Hardware Drivers Config */
 
 /* Onboard Peripheral Drivers */
+
+/* end of Onboard Peripheral Drivers */
 
 /* On-chip Peripheral Drivers */
 
