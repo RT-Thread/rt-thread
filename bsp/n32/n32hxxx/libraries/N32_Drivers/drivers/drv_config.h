@@ -34,7 +34,7 @@ extern "C" {
 #elif defined(SOC_SERIES_N32H49x)
 #include "h49x/dma_config.h"
 #include "h49x/uart_config.h"
-#elif defined(SOC_SERIES_N32H47x_48x) 
+#elif defined(SOC_SERIES_N32H47x_48x)
 #include "h47x_48x/dma_config.h"
 #include "h47x_48x/uart_config.h"
 #endif /* defined(SOC_SERIES_N32H7xx) */

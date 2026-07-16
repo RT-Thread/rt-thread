@@ -423,11 +423,6 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [swm320-mini](synwit/swm320-mini) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [swm341-mini](synwit/swm341-mini) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
-#### ⚪ N32G452xx
-| BSP Name | GPIO | UART | ADC | CAN | DAC | Flash | HWTimer | I2C | PWM | RTC | SDIO | SPI | WDT |
-|----------|------|------|-----|-----|-----|-------|---------|-----|-----|-----|------|-----|-----|
-| [n32g452xx-mini-system](n32g452xx/n32g452xx-mini-system) | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ |
-
 #### ⚪ W60x
 | BSP Name | GPIO | UART | ADC | Crypto | Flash | HWTimer | WDT | PWM | I2C | SPI |
 |----------|------|------|-----|--------|-------|---------|-----|-----|-----|-----|
