@@ -148,47 +148,90 @@ menu "On-chip Peripheral Drivers"
             endif
         endif
     menuconfig BSP_USING_SOFT_SPI
-        bool "Enable soft SPI BUS"
+        bool "Enable software SPI (swspi)"
         default n
-        select RT_USING_PIN
-        select RT_USING_SOFT_SPI
         select RT_USING_SPI
+        select RT_USING_SOFT_SPI
         if BSP_USING_SOFT_SPI
-            config BSP_USING_SOFT_SPI0
-                bool "Enable SPI0 Bus (software simulation)"
-                default n
-                if BSP_USING_SOFT_SPI0
-                    config BSP_S_SPI0_SCK_PIN
-                        int "spi0 SCK pin number (GP)"
-                        range 0 28
-                        default 6
-                    config BSP_S_SPI0_MOSI_PIN
-                        int "spi0 MOSI pin number (GP)"
-                        range 0 28
-                        default 7
-                    config BSP_S_SPI0_MISO_PIN
-                        int "spi0 MISO pin number (GP)"
-                        range 0 28
-                        default 4
-                endif
-            config BSP_USING_SOFT_SPI1
-                bool "Enable SPI1 Bus (software simulation)"
-                default n
-                if BSP_USING_SOFT_SPI1
-                    config BSP_S_SPI1_SCK_PIN
-                        int "spi1 SCK pin number (GP)"
-                        range 0 28
-                        default 10
-                    config BSP_S_SPI1_MOSI_PIN
-                        int "spi1 MOSI pin number (GP)"
-                        range 0 28
-                        default 11
-                    config BSP_S_SPI1_MISO_PIN
-                        int "spi1 MISO pin number (GP)"
-                        range 0 28
-                        default 12
-                endif
+        menuconfig BSP_USING_SOFT_SPI0
+            bool "Enable software SPI0 Bus (swspi0)"
+            default n
+            select RT_USING_SOFT_SPI0
+            if BSP_USING_SOFT_SPI0
+                config RT_SOFT_SPI0_SCK_PIN
+                    int "swspi0 SCK pin number"
+                    default 6
+                config RT_SOFT_SPI0_MISO_PIN
+                    int "swspi0 MISO pin number"
+                    default 4
+                config RT_SOFT_SPI0_MOSI_PIN
+                    int "swspi0 MOSI pin number"
+                    default 7
+            endif
+
+        menuconfig BSP_USING_SOFT_SPI1
+            bool "Enable software SPI1 Bus (swspi1)"
+            default n
+            select RT_USING_SOFT_SPI1
+            if BSP_USING_SOFT_SPI1
+                config RT_SOFT_SPI1_SCK_PIN
+                    int "swspi1 SCK pin number"
+                    default 10
+                config RT_SOFT_SPI1_MISO_PIN
+                    int "swspi1 MISO pin number"
+                    default 12
+                config RT_SOFT_SPI1_MOSI_PIN
+                    int "swspi1 MOSI pin number"
+                    default 11
+            endif
         endif
+    config RT_SOFT_SPI0_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI0_SCK_PIN_DEFAULT
+        int
+        default 6 if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI0_MISO_PIN_DEFAULT
+        int
+        default 4 if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI0_MOSI_PIN_DEFAULT
+        int
+        default 7 if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI0_HAS_BUS_NAME_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI0_BUS_NAME_DEFAULT
+        string
+        default "swspi0" if RT_USING_SOFT_SPI0
+
+    config RT_SOFT_SPI1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_SCK_PIN_DEFAULT
+        int
+        default 10 if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_MISO_PIN_DEFAULT
+        int
+        default 12 if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_MOSI_PIN_DEFAULT
+        int
+        default 11 if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_HAS_BUS_NAME_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_BUS_NAME_DEFAULT
+        string
+        default "swspi1" if RT_USING_SOFT_SPI1
 
     menuconfig BSP_USING_ADC
         bool "Enable ADC"

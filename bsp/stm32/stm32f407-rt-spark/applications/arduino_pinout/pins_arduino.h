@@ -68,8 +68,8 @@
 #define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c4"
 
 #define SS D32 /* Chip select pin of default spi */
-/* sspi1 : PG.5-SCK  PG.3-MISO  PG.1-MOSI */
-#define RTDUINO_DEFAULT_SPI_BUS_NAME "sspi1"
+/* swspi1 : PG.5-SCK  PG.3-MISO  PG.1-MOSI */
+#define RTDUINO_DEFAULT_SPI_BUS_NAME "swspi1"
 
 /* Serial2(uart2) : PA.2-TX  PA.3-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME "uart2"

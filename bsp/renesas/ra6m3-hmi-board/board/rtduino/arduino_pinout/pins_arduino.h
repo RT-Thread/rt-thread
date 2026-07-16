@@ -12,28 +12,28 @@
 #define Pins_Arduino_h
 
 /* pins alias. Must keep in sequence */
-#define D0        (0)
-#define D1        (1)
-#define D2        (2)
-#define D3        (3)
-#define D4        (4)
-#define D5        (5)
-#define D6        (6)
-#define D7        (7)
-#define D8        (8)
-#define D9        (9)
-#define D10       (10)
-#define D11       (11)
-#define D12       (12)
-#define D13       (13)
-#define D14       (14)
-#define D15       (15)
-#define A0        (16)
-#define A1        (17)
-#define A2        (18)
-#define A3        (19)
-#define A4        (20)
-#define A5        (21)
+#define D0  (0)
+#define D1  (1)
+#define D2  (2)
+#define D3  (3)
+#define D4  (4)
+#define D5  (5)
+#define D6  (6)
+#define D7  (7)
+#define D8  (8)
+#define D9  (9)
+#define D10 (10)
+#define D11 (11)
+#define D12 (12)
+#define D13 (13)
+#define D14 (14)
+#define D15 (15)
+#define A0  (16)
+#define A1  (17)
+#define A2  (18)
+#define A3  (19)
+#define A4  (20)
+#define A5  (21)
 
 #define RTDUINO_PIN_MAX_LIMIT A5 /* pin number max limit check */
 
@@ -46,7 +46,7 @@
 #define RTDUINO_SERIAL2_DEVICE_NAME "uart4"
 
 /* soft spi1: P204-SS   P511-MISO   P512-MOSI */
-#define SS          D13
-#define RTDUINO_DEFAULT_SPI_BUS_NAME     "sspi1"
+#define SS                           D13
+#define RTDUINO_DEFAULT_SPI_BUS_NAME "swspi1"
 
 #endif /* Pins_Arduino_h */
