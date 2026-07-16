@@ -18,24 +18,24 @@
     defined(BSP_USING_FDCAN7) || defined(BSP_USING_FDCAN8)
 
 //#define DRV_DEBUG
-#define LOG_TAG    "drv.fdcan"
+#define LOG_TAG "drv.fdcan"
 #include <drv_log.h>
 
 /* FDCAN kernel clock: 40MHz (APB1/APB2 peripheral clock) */
-#define FDCAN_KERNEL_CLK        (40000000U)
+#define FDCAN_KERNEL_CLK (40000000U)
 
 /* FDCAN Message RAM base addresses */
-#define FDCAN_MSG_RAM_BASE1     ((uint32_t)0x30050000U)  /* SRAM5 BANK1: FDCAN1~4 */
-#define FDCAN_MSG_RAM_BASE2     ((uint32_t)0x30054000U)  /* SRAM5 BANK2: FDCAN5~8 */
+#define FDCAN_MSG_RAM_BASE1 ((uint32_t)0x30050000U)  /* SRAM5 BANK1: FDCAN1~4 */
+#define FDCAN_MSG_RAM_BASE2 ((uint32_t)0x30054000U)  /* SRAM5 BANK2: FDCAN5~8 */
 
 /* Message RAM offset per FDCAN instance within a bank (in words) */
-#define FDCAN_MSG_RAM_OFFSET_PER_INSTANCE   ((uint32_t)0x400U)
+#define FDCAN_MSG_RAM_OFFSET_PER_INSTANCE ((uint32_t)0x400U)
 
 /* Number of dedicated TX Buffers for blocking send */
-#define FDCAN_TX_BUF_NUM        (3U)
+#define FDCAN_TX_BUF_NUM (3U)
 
 /* Number of RX FIFO0 elements */
-#define FDCAN_RX_FIFO0_SIZE     (8U)
+#define FDCAN_RX_FIFO0_SIZE (8U)
 
 /* Default RX FIFO0 watermark (50%) */
 #define FDCAN_RX_FIFO0_WATERMARK (4U)
@@ -51,17 +51,16 @@
  *\*\brief  FDCAN arbitration segment (nominal) baud rate table.
  *\*\note   40MHz FDCAN kernel clock.
  */
-static const struct n32_fdcan_arb_timing _fdcan_arb_timing_table[] =
-{
-    {CAN1MBaud,   1,   8,  29,  10},  /* 1Mbps   : 40M / (1  * (29+10+1)) = 1.000M */
-    {CAN800kBaud, 1,   8,  37,  12},  /* 800kbps : 40M / (1  * (37+12+1)) = 800k  */
-    {CAN500kBaud, 1,   8,  59,  20},  /* 500kbps : 40M / (1  * (59+20+1)) = 500k  */
-    {CAN250kBaud, 2,   8,  63,  16},  /* 250kbps : 40M / (2  * (63+16+1)) = 250k  */
-    {CAN125kBaud, 5,   8,  55,   8},  /* 125kbps : 40M / (5  * (55+8+1))  = 125k  */
-    {CAN100kBaud, 8,   8,  41,   8},  /* 100kbps : 40M / (8  * (41+8+1))  = 100k  */
-    {CAN50kBaud,  16,  8,  41,   8},  /* 50kbps  : 40M / (16 * (41+8+1))  = 50k   */
-    {CAN20kBaud,  40,  8,  41,   8},  /* 20kbps  : 40M / (40 * (41+8+1))  = 20k   */
-    {CAN10kBaud,  100, 8,  31,   8},  /* 10kbps  : 40M / (100* (31+8+1))  = 10k   */
+static const struct n32_fdcan_arb_timing _fdcan_arb_timing_table[] = {
+    { CAN1MBaud, 1, 8, 29, 10 },  /* 1Mbps   : 40M / (1  * (29+10+1)) = 1.000M */
+    { CAN800kBaud, 1, 8, 37, 12 },  /* 800kbps : 40M / (1  * (37+12+1)) = 800k  */
+    { CAN500kBaud, 1, 8, 59, 20 },  /* 500kbps : 40M / (1  * (59+20+1)) = 500k  */
+    { CAN250kBaud, 2, 8, 63, 16 },  /* 250kbps : 40M / (2  * (63+16+1)) = 250k  */
+    { CAN125kBaud, 5, 8, 55, 8 },  /* 125kbps : 40M / (5  * (55+8+1))  = 125k  */
+    { CAN100kBaud, 8, 8, 41, 8 },  /* 100kbps : 40M / (8  * (41+8+1))  = 100k  */
+    { CAN50kBaud, 16, 8, 41, 8 },  /* 50kbps  : 40M / (16 * (41+8+1))  = 50k   */
+    { CAN20kBaud, 40, 8, 41, 8 },  /* 20kbps  : 40M / (40 * (41+8+1))  = 20k   */
+    { CAN10kBaud, 100, 8, 31, 8 },  /* 10kbps  : 40M / (100* (31+8+1))  = 10k   */
 };
 
 /**
@@ -69,15 +68,14 @@ static const struct n32_fdcan_arb_timing _fdcan_arb_timing_table[] =
  *\*\brief  FDCAN data segment baud rate table (for CAN FD with BRS).
  *\*\note   40MHz FDCAN kernel clock.
  */
-static const struct n32_fdcan_data_timing _fdcan_data_timing_table[] =
-{
-    {CAN1MBaud * 8,  1,  1,  3,  1},  /* 8Mbps   : 40M / (1  * (3+1+1))  = 8M    */
-    {CAN1MBaud * 5,  1,  2,  5,  2},  /* 5Mbps   : 40M / (1  * (5+2+1))  = 5M    */
-    {CAN1MBaud * 4,  1,  2,  7,  2},  /* 4Mbps   : 40M / (1  * (7+2+1))  = 4M    */
-    {CAN1MBaud * 2,  1,  4, 15,  4},  /* 2Mbps   : 40M / (4  * (3+1+1))  = 2M    */
-    {CAN1MBaud,      1,  8, 31,  8},  /* 1Mbps   : 40M / (1  * (31+8+1)) = 1M    */
-    {CAN800kBaud,    2,  5, 19,  5},  /* 800kbps : 40M / (2  * (19+5+1)) = 800k  */
-    {CAN500kBaud,    4,  4, 15,  4},  /* 400kbps : 40M / (4  * (15+4+1)) = 500k  */
+static const struct n32_fdcan_data_timing _fdcan_data_timing_table[] = {
+    { CAN1MBaud * 8, 1, 1, 3, 1 },  /* 8Mbps   : 40M / (1  * (3+1+1))  = 8M    */
+    { CAN1MBaud * 5, 1, 2, 5, 2 },  /* 5Mbps   : 40M / (1  * (5+2+1))  = 5M    */
+    { CAN1MBaud * 4, 1, 2, 7, 2 },  /* 4Mbps   : 40M / (1  * (7+2+1))  = 4M    */
+    { CAN1MBaud * 2, 1, 4, 15, 4 },  /* 2Mbps   : 40M / (4  * (3+1+1))  = 2M    */
+    { CAN1MBaud, 1, 8, 31, 8 },  /* 1Mbps   : 40M / (1  * (31+8+1)) = 1M    */
+    { CAN800kBaud, 2, 5, 19, 5 },  /* 800kbps : 40M / (2  * (19+5+1)) = 800k  */
+    { CAN500kBaud, 4, 4, 15, 4 },  /* 400kbps : 40M / (4  * (15+4+1)) = 500k  */
 };
 
 /*==============================================================================
@@ -85,57 +83,49 @@ static const struct n32_fdcan_data_timing _fdcan_data_timing_table[] =
  *============================================================================*/
 
 #ifdef BSP_USING_FDCAN1
-static struct n32_fdcan _drv_fdcan1 =
-{
+static struct n32_fdcan _drv_fdcan1 = {
     .name = "fdcan1",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN2
-static struct n32_fdcan _drv_fdcan2 =
-{
+static struct n32_fdcan _drv_fdcan2 = {
     .name = "fdcan2",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN3
-static struct n32_fdcan _drv_fdcan3 =
-{
+static struct n32_fdcan _drv_fdcan3 = {
     .name = "fdcan3",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN4
-static struct n32_fdcan _drv_fdcan4 =
-{
+static struct n32_fdcan _drv_fdcan4 = {
     .name = "fdcan4",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN5
-static struct n32_fdcan _drv_fdcan5 =
-{
+static struct n32_fdcan _drv_fdcan5 = {
     .name = "fdcan5",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN6
-static struct n32_fdcan _drv_fdcan6 =
-{
+static struct n32_fdcan _drv_fdcan6 = {
     .name = "fdcan6",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN7
-static struct n32_fdcan _drv_fdcan7 =
-{
+static struct n32_fdcan _drv_fdcan7 = {
     .name = "fdcan7",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN8
-static struct n32_fdcan _drv_fdcan8 =
-{
+static struct n32_fdcan _drv_fdcan8 = {
     .name = "fdcan8",
 };
 #endif
@@ -155,14 +145,14 @@ static struct n32_fdcan _drv_fdcan8 =
  */
 static uint8_t _dlc_to_length(uint32_t dlc)
 {
-    const uint8_t dlc_table[16] =
-    {
-        0,  1,  2,  3,  4,  5,  6,  7,
+    const uint8_t dlc_table[16] = {
+        0, 1, 2, 3, 4, 5, 6, 7,
         8, 12, 16, 20, 24, 32, 48, 64
     };
 
     dlc >>= FDCAN_ELEMENT_DLC_OFFSET;
-    if (dlc > 15) return 8;
+    if (dlc > 15)
+        return 8;
     return dlc_table[dlc];
 }
 
@@ -188,14 +178,22 @@ static uint32_t _length_to_dlc(uint8_t len)
 {
     uint32_t dlc;
 
-    if (len <= 8)        dlc = len;
-    else if (len <= 12)  dlc = 9;
-    else if (len <= 16)  dlc = 10;
-    else if (len <= 20)  dlc = 11;
-    else if (len <= 24)  dlc = 12;
-    else if (len <= 32)  dlc = 13;
-    else if (len <= 48)  dlc = 14;
-    else                 dlc = 15;
+    if (len <= 8)
+        dlc = len;
+    else if (len <= 12)
+        dlc = 9;
+    else if (len <= 16)
+        dlc = 10;
+    else if (len <= 20)
+        dlc = 11;
+    else if (len <= 24)
+        dlc = 12;
+    else if (len <= 32)
+        dlc = 13;
+    else if (len <= 48)
+        dlc = 14;
+    else
+        dlc = 15;
 
     return dlc << FDCAN_ELEMENT_DLC_OFFSET;
 }
@@ -220,7 +218,7 @@ static uint32_t _get_arb_baud_index(uint32_t baud_rate)
         if (_fdcan_arb_timing_table[i].baud_rate == baud_rate)
             return i;
     }
-    return (uint32_t) -1;
+    return (uint32_t)-1;
 }
 
 /**
@@ -239,7 +237,7 @@ static uint32_t _get_data_baud_index(uint32_t baud_rate)
         if (_fdcan_data_timing_table[i].baud_rate == baud_rate)
             return i;
     }
-    return (uint32_t) -1;
+    return (uint32_t)-1;
 }
 
 /*==============================================================================
@@ -262,13 +260,20 @@ static uint32_t _get_data_baud_index(uint32_t baud_rate)
  */
 static uint8_t _fdcan_get_index(FDCAN_Module *FDCANx)
 {
-    if (FDCANx == FDCAN1) return 0;
-    if (FDCANx == FDCAN2) return 1;
-    if (FDCANx == FDCAN3) return 2;
-    if (FDCANx == FDCAN4) return 3;
-    if (FDCANx == FDCAN5) return 4;
-    if (FDCANx == FDCAN6) return 5;
-    if (FDCANx == FDCAN7) return 6;
+    if (FDCANx == FDCAN1)
+        return 0;
+    if (FDCANx == FDCAN2)
+        return 1;
+    if (FDCANx == FDCAN3)
+        return 2;
+    if (FDCANx == FDCAN4)
+        return 3;
+    if (FDCANx == FDCAN5)
+        return 4;
+    if (FDCANx == FDCAN6)
+        return 5;
+    if (FDCANx == FDCAN7)
+        return 6;
     return 7; /* FDCAN8 */
 }
 
@@ -281,13 +286,20 @@ static uint8_t _fdcan_get_index(FDCAN_Module *FDCANx)
  */
 static IRQn_Type _fdcan_get_int0_irqn(FDCAN_Module *FDCANx)
 {
-    if (FDCANx == FDCAN1) return FDCAN1_INT0_IRQn;
-    if (FDCANx == FDCAN2) return FDCAN2_INT0_IRQn;
-    if (FDCANx == FDCAN3) return FDCAN3_INT0_IRQn;
-    if (FDCANx == FDCAN4) return FDCAN4_INT0_IRQn;
-    if (FDCANx == FDCAN5) return FDCAN5_INT0_IRQn;
-    if (FDCANx == FDCAN6) return FDCAN6_INT0_IRQn;
-    if (FDCANx == FDCAN7) return FDCAN7_INT0_IRQn;
+    if (FDCANx == FDCAN1)
+        return FDCAN1_INT0_IRQn;
+    if (FDCANx == FDCAN2)
+        return FDCAN2_INT0_IRQn;
+    if (FDCANx == FDCAN3)
+        return FDCAN3_INT0_IRQn;
+    if (FDCANx == FDCAN4)
+        return FDCAN4_INT0_IRQn;
+    if (FDCANx == FDCAN5)
+        return FDCAN5_INT0_IRQn;
+    if (FDCANx == FDCAN6)
+        return FDCAN6_INT0_IRQn;
+    if (FDCANx == FDCAN7)
+        return FDCAN7_INT0_IRQn;
     return FDCAN8_INT0_IRQn;
 }
 
@@ -300,13 +312,20 @@ static IRQn_Type _fdcan_get_int0_irqn(FDCAN_Module *FDCANx)
  */
 static IRQn_Type _fdcan_get_int1_irqn(FDCAN_Module *FDCANx)
 {
-    if (FDCANx == FDCAN1) return FDCAN1_INT1_IRQn;
-    if (FDCANx == FDCAN2) return FDCAN2_INT1_IRQn;
-    if (FDCANx == FDCAN3) return FDCAN3_INT1_IRQn;
-    if (FDCANx == FDCAN4) return FDCAN4_INT1_IRQn;
-    if (FDCANx == FDCAN5) return FDCAN5_INT1_IRQn;
-    if (FDCANx == FDCAN6) return FDCAN6_INT1_IRQn;
-    if (FDCANx == FDCAN7) return FDCAN7_INT1_IRQn;
+    if (FDCANx == FDCAN1)
+        return FDCAN1_INT1_IRQn;
+    if (FDCANx == FDCAN2)
+        return FDCAN2_INT1_IRQn;
+    if (FDCANx == FDCAN3)
+        return FDCAN3_INT1_IRQn;
+    if (FDCANx == FDCAN4)
+        return FDCAN4_INT1_IRQn;
+    if (FDCANx == FDCAN5)
+        return FDCAN5_INT1_IRQn;
+    if (FDCANx == FDCAN6)
+        return FDCAN6_INT1_IRQn;
+    if (FDCANx == FDCAN7)
+        return FDCAN7_INT1_IRQn;
     return FDCAN8_INT1_IRQn;
 }
 
@@ -335,11 +354,11 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     RT_ASSERT(p_drv != RT_NULL);
 
     /* Fill FDCAN init parameters */
-    p_drv->init_struct.FrameFormat        = FDCAN_FRAME_FD_BRS;
-    p_drv->init_struct.Mode               = FDCAN_MODE_NORMAL;
+    p_drv->init_struct.FrameFormat = FDCAN_FRAME_FD_BRS;
+    p_drv->init_struct.Mode = FDCAN_MODE_NORMAL;
     p_drv->init_struct.AutoRetransmission = ENABLE;
-    p_drv->init_struct.TransmitPause      = DISABLE;
-    p_drv->init_struct.ProtocolException  = ENABLE;
+    p_drv->init_struct.TransmitPause = DISABLE;
+    p_drv->init_struct.ProtocolException = ENABLE;
 
     /* Configure operation mode */
     switch (cfg->mode)
@@ -363,40 +382,40 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
 
     /* Lookup arbitration segment baud rate */
     uint32_t arb_idx = _get_arb_baud_index(cfg->baud_rate);
-    if (arb_idx == (uint32_t) -1)
+    if (arb_idx == (uint32_t)-1)
     {
         LOG_E("%s: baud rate %d not supported", p_drv->name, cfg->baud_rate);
         return -RT_ERROR;
     }
 
-    p_drv->init_struct.Prescaler     = _fdcan_arb_timing_table[arb_idx].prescaler;
+    p_drv->init_struct.Prescaler = _fdcan_arb_timing_table[arb_idx].prescaler;
     p_drv->init_struct.SyncJumpWidth = _fdcan_arb_timing_table[arb_idx].sjw;
-    p_drv->init_struct.TimeSeg1      = _fdcan_arb_timing_table[arb_idx].tseg1;
-    p_drv->init_struct.TimeSeg2      = _fdcan_arb_timing_table[arb_idx].tseg2;
+    p_drv->init_struct.TimeSeg1 = _fdcan_arb_timing_table[arb_idx].tseg1;
+    p_drv->init_struct.TimeSeg2 = _fdcan_arb_timing_table[arb_idx].tseg2;
 
 #ifdef RT_CAN_USING_CANFD
     /* Configure CAN FD data segment baud rate */
     if (cfg->enable_canfd && cfg->baud_rate_fd)
     {
         uint32_t data_idx = _get_data_baud_index(cfg->baud_rate_fd);
-        if (data_idx == (uint32_t) -1)
+        if (data_idx == (uint32_t)-1)
         {
             LOG_E("%s: FD baud rate %d not supported", p_drv->name, cfg->baud_rate_fd);
             return -RT_ERROR;
         }
 
-        p_drv->init_struct.DataPrescaler     = _fdcan_data_timing_table[data_idx].prescaler;
+        p_drv->init_struct.DataPrescaler = _fdcan_data_timing_table[data_idx].prescaler;
         p_drv->init_struct.DataSyncJumpWidth = _fdcan_data_timing_table[data_idx].sjw;
-        p_drv->init_struct.DataTimeSeg1      = _fdcan_data_timing_table[data_idx].tseg1;
-        p_drv->init_struct.DataTimeSeg2      = _fdcan_data_timing_table[data_idx].tseg2;
+        p_drv->init_struct.DataTimeSeg1 = _fdcan_data_timing_table[data_idx].tseg1;
+        p_drv->init_struct.DataTimeSeg2 = _fdcan_data_timing_table[data_idx].tseg2;
     }
     else
     {
         /* When CAN FD is not enabled, data phase parameters match arbitration */
-        p_drv->init_struct.DataPrescaler     = p_drv->init_struct.Prescaler;
+        p_drv->init_struct.DataPrescaler = p_drv->init_struct.Prescaler;
         p_drv->init_struct.DataSyncJumpWidth = p_drv->init_struct.SyncJumpWidth;
-        p_drv->init_struct.DataTimeSeg1      = p_drv->init_struct.TimeSeg1;
-        p_drv->init_struct.DataTimeSeg2      = p_drv->init_struct.TimeSeg2;
+        p_drv->init_struct.DataTimeSeg1 = p_drv->init_struct.TimeSeg1;
+        p_drv->init_struct.DataTimeSeg2 = p_drv->init_struct.TimeSeg2;
     }
 #endif
 
@@ -405,12 +424,12 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     if (instance_idx < 4)
     {
         p_drv->init_struct.MsgRamStrAddr = FDCAN_MSG_RAM_BASE1;
-        p_drv->init_struct.MsgRamOffset  = instance_idx * FDCAN_MSG_RAM_OFFSET_PER_INSTANCE;
+        p_drv->init_struct.MsgRamOffset = instance_idx * FDCAN_MSG_RAM_OFFSET_PER_INSTANCE;
     }
     else
     {
         p_drv->init_struct.MsgRamStrAddr = FDCAN_MSG_RAM_BASE2;
-        p_drv->init_struct.MsgRamOffset  = (instance_idx - 4) * FDCAN_MSG_RAM_OFFSET_PER_INSTANCE;
+        p_drv->init_struct.MsgRamOffset = (instance_idx - 4) * FDCAN_MSG_RAM_OFFSET_PER_INSTANCE;
     }
 
     /* Filter configuration */
@@ -418,25 +437,25 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     p_drv->init_struct.ExtFilterSize = 2;       /* 2 extended ID filters */
 
     /* RX FIFO0 configuration */
-    p_drv->init_struct.RxFifo0Size      = FDCAN_RX_FIFO0_SIZE;
-    p_drv->init_struct.RxFifo0DataSize  = FDCAN_DATA_BYTES_64;
+    p_drv->init_struct.RxFifo0Size = FDCAN_RX_FIFO0_SIZE;
+    p_drv->init_struct.RxFifo0DataSize = FDCAN_DATA_BYTES_64;
 
     /* RX FIFO1 configuration (not used) */
-    p_drv->init_struct.RxFifo1Size      = 0;
-    p_drv->init_struct.RxFifo1DataSize  = FDCAN_DATA_BYTES_64;
+    p_drv->init_struct.RxFifo1Size = 0;
+    p_drv->init_struct.RxFifo1DataSize = FDCAN_DATA_BYTES_64;
 
     /* RX Buffer configuration (not used) */
-    p_drv->init_struct.RxBufferSize     = 0;
+    p_drv->init_struct.RxBufferSize = 0;
     p_drv->init_struct.RxBufferDataSize = FDCAN_DATA_BYTES_64;
 
     /* TX Event FIFO configuration (not used) */
-    p_drv->init_struct.TxEventSize      = 0;
+    p_drv->init_struct.TxEventSize = 0;
 
     /* TX Buffer configuration: dedicated Tx Buffer mode */
-    p_drv->init_struct.TxBufferSize     = FDCAN_TX_BUF_NUM;
+    p_drv->init_struct.TxBufferSize = FDCAN_TX_BUF_NUM;
     p_drv->init_struct.TxBufferDataSize = FDCAN_DATA_BYTES_64;
-    p_drv->init_struct.TxFifoQueueMode  = FDCAN_TX_FIFO_MODE;
-    p_drv->init_struct.TxFifoQueueSize  = 0;  /* not using Tx FIFO, use Dedicated Tx Buffer */
+    p_drv->init_struct.TxFifoQueueMode = FDCAN_TX_FIFO_MODE;
+    p_drv->init_struct.TxFifoQueueSize = 0;  /* not using Tx FIFO, use Dedicated Tx Buffer */
 
     /* Message RAM info pointer */
     p_drv->init_struct.pMsgInfo = &p_drv->msg_ram;
@@ -452,7 +471,9 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
         rt_uint32_t cancel_mask = FDCAN_TX_BUFFER0 | FDCAN_TX_BUFFER1 | FDCAN_TX_BUFFER2;
         volatile uint32_t timeout = 1000000;
         FDCAN_AbortTxRequest(p_drv->fdcan_x, cancel_mask);
-        while ((p_drv->fdcan_x->TXBRP & cancel_mask) && --timeout) { }
+        while ((p_drv->fdcan_x->TXBRP & cancel_mask) && --timeout)
+        {
+        }
         p_drv->tx_pending_mask = 0;
     }
 
@@ -494,15 +515,15 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     FDCAN_EnableInt(p_drv->fdcan_x, FDCAN_INT_RX_FIFO0_NEW_MESSAGE);
 
     /* Initialize TX Header cache */
-    p_drv->tx_header.ID     = 0x000000;
-    p_drv->tx_header.IdType         = FDCAN_EXTENDED_ID;
-    p_drv->tx_header.TxFrameType    = FDCAN_DATA_FRAME;
-    p_drv->tx_header.DataLength     = FDCAN_DLC_BYTES_8;
-    p_drv->tx_header.ErrorState     = FDCAN_ESI_ACTIVE;
-    p_drv->tx_header.BitRateSwitch  = FDCAN_BRS_OFF;
-    p_drv->tx_header.FDFormat       = FDCAN_CLASSIC_CAN;
-    p_drv->tx_header.TxEventFifo    = FDCAN_NO_TX_EVENTS;
-    p_drv->tx_header.MsgMarker      = 0;
+    p_drv->tx_header.ID = 0x000000;
+    p_drv->tx_header.IdType = FDCAN_EXTENDED_ID;
+    p_drv->tx_header.TxFrameType = FDCAN_DATA_FRAME;
+    p_drv->tx_header.DataLength = FDCAN_DLC_BYTES_8;
+    p_drv->tx_header.ErrorState = FDCAN_ESI_ACTIVE;
+    p_drv->tx_header.BitRateSwitch = FDCAN_BRS_OFF;
+    p_drv->tx_header.FDFormat = FDCAN_CLASSIC_CAN;
+    p_drv->tx_header.TxEventFifo = FDCAN_NO_TX_EVENTS;
+    p_drv->tx_header.MsgMarker = 0;
 
     /* Start FDCAN */
     FDCAN_Start(p_drv->fdcan_x);
@@ -536,12 +557,12 @@ static rt_err_t _fdcan_filter_config(struct n32_fdcan *p_drv,
         /* Set ID type */
         if (filter_cfg->items[i].ide == RT_CAN_EXTID)
         {
-            p_drv->filter_cfg.IdType      = FDCAN_EXTENDED_ID;
+            p_drv->filter_cfg.IdType = FDCAN_EXTENDED_ID;
             p_drv->filter_cfg.FilterIndex = filter_cfg->items[i].hdr_bank;
         }
         else
         {
-            p_drv->filter_cfg.IdType      = FDCAN_STANDARD_ID;
+            p_drv->filter_cfg.IdType = FDCAN_STANDARD_ID;
             p_drv->filter_cfg.FilterIndex = filter_cfg->items[i].hdr_bank;
         }
 
@@ -550,7 +571,7 @@ static rt_err_t _fdcan_filter_config(struct n32_fdcan *p_drv,
         p_drv->filter_cfg.FilterID2 = filter_cfg->items[i].mask;
 
         /* Use Mask mode filtering */
-        p_drv->filter_cfg.FilterType   = FDCAN_FILTER_MASK;
+        p_drv->filter_cfg.FilterType = FDCAN_FILTER_MASK;
 
         /* Store matching messages into RX FIFO0 */
         p_drv->filter_cfg.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
@@ -675,9 +696,9 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-                argval != RT_CAN_MODE_LISTEN &&
-                argval != RT_CAN_MODE_LOOPBACK &&
-                argval != RT_CAN_MODE_LOOPBACKANLISTEN)
+            argval != RT_CAN_MODE_LISTEN &&
+            argval != RT_CAN_MODE_LOOPBACK &&
+            argval != RT_CAN_MODE_LOOPBACKANLISTEN)
         {
             return -RT_ERROR;
         }
@@ -694,7 +715,9 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
                 rt_uint32_t cm = FDCAN_TX_BUFFER0 | FDCAN_TX_BUFFER1 | FDCAN_TX_BUFFER2;
                 volatile uint32_t to = 1000000;
                 FDCAN_AbortTxRequest(fdcan, cm);
-                while ((fdcan->TXBRP & cm) && --to) { }
+                while ((fdcan->TXBRP & cm) && --to)
+                {
+                }
                 p_drv->tx_pending_mask = 0;
             }
 
@@ -702,7 +725,8 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
              * effect (Bosch M_CAN: writes to CCE are ignored while INIT=0).
              * INIT must therefore be requested and confirmed first. */
             fdcan->CCCR |= FDCAN_CCCR_INIT;
-            while ((fdcan->CCCR & FDCAN_CCCR_INIT) == 0);
+            while ((fdcan->CCCR & FDCAN_CCCR_INIT) == 0)
+                ;
             fdcan->CCCR |= FDCAN_CCCR_CCE;
             /* Clear previous mode bits */
             fdcan->CCCR &= ~(FDCAN_CCCR_TEST | FDCAN_CCCR_MON | FDCAN_CCCR_ASM);
@@ -719,7 +743,8 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
             else
                 fdcan->TEST &= ~FDCAN_TEST_LBCK;
             fdcan->CCCR &= ~FDCAN_CCCR_INIT;
-            while (fdcan->CCCR & FDCAN_CCCR_INIT);
+            while (fdcan->CCCR & FDCAN_CCCR_INIT)
+                ;
             p_drv->device.config.mode = argval;
             LOG_I("%s: mode changed to %d", p_drv->name, argval);
         }
@@ -727,7 +752,7 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
 
     case RT_CAN_CMD_SET_BAUD:
         argval = (rt_uint32_t)arg;
-        if (_get_arb_baud_index(argval) == (uint32_t) -1)
+        if (_get_arb_baud_index(argval) == (uint32_t)-1)
         {
             return -RT_ERROR;
         }
@@ -752,8 +777,8 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
         rt_uint32_t ecr_val = p_drv->fdcan_x->ECR;
         rt_uint32_t psr_val = p_drv->fdcan_x->PSR;
 
-        p_drv->device.status.rcverrcnt   = (ecr_val >> 8) & 0x000000FF;
-        p_drv->device.status.snderrcnt   = (ecr_val) & 0x000000FF;
+        p_drv->device.status.rcverrcnt = (ecr_val >> 8) & 0x000000FF;
+        p_drv->device.status.snderrcnt = (ecr_val) & 0x000000FF;
         p_drv->device.status.lasterrtype = psr_val & 0x00000007;
 
         rt_memcpy(arg, &p_drv->device.status, sizeof(p_drv->device.status));
@@ -764,7 +789,7 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
     {
 #ifdef RT_CAN_USING_CANFD
         argval = (rt_uint32_t)arg;
-        if (_get_data_baud_index(argval) == (uint32_t) -1)
+        if (_get_data_baud_index(argval) == (uint32_t)-1)
         {
             return -RT_ERROR;
         }
@@ -962,7 +987,7 @@ static rt_ssize_t _fdcan_recvmsg(struct rt_can_device *can, void *buf, rt_uint32
 #ifdef RT_CAN_USING_CANFD
     /* Extract CAN FD flags */
     p_msg->fd_frame = (p_drv->rx_header.FDFormat == FDCAN_FD_CAN) ? 1 : 0;
-    p_msg->brs      = (p_drv->rx_header.BitRateSwitch == FDCAN_BRS_ON) ? 1 : 0;
+    p_msg->brs = (p_drv->rx_header.BitRateSwitch == FDCAN_BRS_ON) ? 1 : 0;
 #endif
 
     return sizeof(struct rt_can_msg);
@@ -1013,14 +1038,14 @@ static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const vo
     p_msg = (struct rt_can_msg *)buf;
 
     /* Set TX Header */
-    p_drv->tx_header.IdType      = (p_msg->ide == RT_CAN_EXTID) ? FDCAN_EXTENDED_ID : FDCAN_STANDARD_ID;
-    p_drv->tx_header.TxFrameType = (p_msg->rtr == RT_CAN_DTR)  ? FDCAN_DATA_FRAME  : FDCAN_REMOTE_FRAME;
-    p_drv->tx_header.ID  = p_msg->id;
-    p_drv->tx_header.DataLength  = _length_to_dlc(p_msg->len);
+    p_drv->tx_header.IdType = (p_msg->ide == RT_CAN_EXTID) ? FDCAN_EXTENDED_ID : FDCAN_STANDARD_ID;
+    p_drv->tx_header.TxFrameType = (p_msg->rtr == RT_CAN_DTR) ? FDCAN_DATA_FRAME : FDCAN_REMOTE_FRAME;
+    p_drv->tx_header.ID = p_msg->id;
+    p_drv->tx_header.DataLength = _length_to_dlc(p_msg->len);
 
 #ifdef RT_CAN_USING_CANFD
-    p_drv->tx_header.FDFormat      = (p_msg->fd_frame == 1) ? FDCAN_FD_CAN     : FDCAN_CLASSIC_CAN;
-    p_drv->tx_header.BitRateSwitch = (p_msg->brs == 1)      ? FDCAN_BRS_ON     : FDCAN_BRS_OFF;
+    p_drv->tx_header.FDFormat = (p_msg->fd_frame == 1) ? FDCAN_FD_CAN : FDCAN_CLASSIC_CAN;
+    p_drv->tx_header.BitRateSwitch = (p_msg->brs == 1) ? FDCAN_BRS_ON : FDCAN_BRS_OFF;
 #endif
 
     /* Write message to the free dedicated TX Buffer */
@@ -1043,12 +1068,11 @@ static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const vo
  * FDCAN operations table
  *============================================================================*/
 
-static const struct rt_can_ops _fdcan_ops =
-{
-    .configure           = _fdcan_configure,
-    .control             = _fdcan_control,
-    .sendmsg             = _fdcan_sendmsg,
-    .recvmsg             = _fdcan_recvmsg,
+static const struct rt_can_ops _fdcan_ops = {
+    .configure = _fdcan_configure,
+    .control = _fdcan_control,
+    .sendmsg = _fdcan_sendmsg,
+    .recvmsg = _fdcan_recvmsg,
     .sendmsg_nonblocking = _fdcan_sendmsg_nonblocking,
 };
 
@@ -1107,7 +1131,7 @@ static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
          * our software pending mask and look for buffers whose TXBRP
          * was just cleared by the hardware (pending → !pending). */
         rt_uint32_t buffer_idx = 0;
-        rt_bool_t    found = RT_FALSE;
+        rt_bool_t found = RT_FALSE;
 
         for (rt_uint32_t i = 0; i < FDCAN_TX_BUF_NUM; i++)
         {
@@ -1197,8 +1221,8 @@ static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
             ecr_val = fdcan->ECR;
             psr_val = fdcan->PSR;
 
-            p_drv->device.status.rcverrcnt   = (ecr_val >> 8) & 0x000000FF;
-            p_drv->device.status.snderrcnt   = (ecr_val) & 0x000000FF;
+            p_drv->device.status.rcverrcnt = (ecr_val >> 8) & 0x000000FF;
+            p_drv->device.status.snderrcnt = (ecr_val) & 0x000000FF;
             p_drv->device.status.lasterrtype = psr_val & 0x00000007;
         }
     }
@@ -1369,14 +1393,14 @@ static int rt_hw_fdcan_init(void)
     FDCAN_FilterType default_filter;
 
     /* Default CAN configuration */
-    config.baud_rate    = CAN1MBaud;
-    config.msgboxsz     = RT_CANMSG_BOX_SZ;
+    config.baud_rate = CAN1MBaud;
+    config.msgboxsz = RT_CANMSG_BOX_SZ;
     config.sndboxnumber = FDCAN_TX_BUF_NUM;
-    config.mode         = RT_CAN_MODE_NORMAL;
-    config.privmode     = RT_CAN_MODE_NOPRIV;
-    config.ticks        = 50;
+    config.mode = RT_CAN_MODE_NORMAL;
+    config.privmode = RT_CAN_MODE_NOPRIV;
+    config.ticks = 50;
 #ifdef RT_CAN_USING_HDR
-    config.maxhdr       = 14;
+    config.maxhdr = 14;
 #endif
 #ifdef RT_CAN_USING_CANFD
     config.baud_rate_fd = CAN1MBaud * 5;
@@ -1384,16 +1408,16 @@ static int rt_hw_fdcan_init(void)
 #endif
 
     /* Default filter: accept all standard frames into RX FIFO0 */
-    default_filter.IdType       = FDCAN_STANDARD_ID;
-    default_filter.FilterIndex  = 0;
-    default_filter.FilterType   = FDCAN_FILTER_MASK;
+    default_filter.IdType = FDCAN_STANDARD_ID;
+    default_filter.FilterIndex = 0;
+    default_filter.FilterType = FDCAN_FILTER_MASK;
     default_filter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
-    default_filter.FilterID1    = 0x000;
-    default_filter.FilterID2    = 0x000;
+    default_filter.FilterID1 = 0x000;
+    default_filter.FilterID2 = 0x000;
     default_filter.RxBufferIndex = 0;
 
 #ifdef BSP_USING_FDCAN1
-    _drv_fdcan1.fdcan_x    = FDCAN1;
+    _drv_fdcan1.fdcan_x = FDCAN1;
     _drv_fdcan1.filter_cfg = default_filter;
     _drv_fdcan1.device.config = config;
     rt_hw_can_register(&_drv_fdcan1.device, _drv_fdcan1.name, &_fdcan_ops, &_drv_fdcan1);
@@ -1401,7 +1425,7 @@ static int rt_hw_fdcan_init(void)
 #endif
 
 #ifdef BSP_USING_FDCAN2
-    _drv_fdcan2.fdcan_x    = FDCAN2;
+    _drv_fdcan2.fdcan_x = FDCAN2;
     _drv_fdcan2.filter_cfg = default_filter;
     _drv_fdcan2.device.config = config;
     rt_hw_can_register(&_drv_fdcan2.device, _drv_fdcan2.name, &_fdcan_ops, &_drv_fdcan2);
@@ -1409,7 +1433,7 @@ static int rt_hw_fdcan_init(void)
 #endif
 
 #ifdef BSP_USING_FDCAN3
-    _drv_fdcan3.fdcan_x    = FDCAN3;
+    _drv_fdcan3.fdcan_x = FDCAN3;
     _drv_fdcan3.filter_cfg = default_filter;
     _drv_fdcan3.device.config = config;
     rt_hw_can_register(&_drv_fdcan3.device, _drv_fdcan3.name, &_fdcan_ops, &_drv_fdcan3);
@@ -1417,7 +1441,7 @@ static int rt_hw_fdcan_init(void)
 #endif
 
 #ifdef BSP_USING_FDCAN4
-    _drv_fdcan4.fdcan_x    = FDCAN4;
+    _drv_fdcan4.fdcan_x = FDCAN4;
     _drv_fdcan4.filter_cfg = default_filter;
     _drv_fdcan4.device.config = config;
     rt_hw_can_register(&_drv_fdcan4.device, _drv_fdcan4.name, &_fdcan_ops, &_drv_fdcan4);
@@ -1425,7 +1449,7 @@ static int rt_hw_fdcan_init(void)
 #endif
 
 #ifdef BSP_USING_FDCAN5
-    _drv_fdcan5.fdcan_x    = FDCAN5;
+    _drv_fdcan5.fdcan_x = FDCAN5;
     _drv_fdcan5.filter_cfg = default_filter;
     _drv_fdcan5.device.config = config;
     rt_hw_can_register(&_drv_fdcan5.device, _drv_fdcan5.name, &_fdcan_ops, &_drv_fdcan5);
@@ -1433,7 +1457,7 @@ static int rt_hw_fdcan_init(void)
 #endif
 
 #ifdef BSP_USING_FDCAN6
-    _drv_fdcan6.fdcan_x    = FDCAN6;
+    _drv_fdcan6.fdcan_x = FDCAN6;
     _drv_fdcan6.filter_cfg = default_filter;
     _drv_fdcan6.device.config = config;
     rt_hw_can_register(&_drv_fdcan6.device, _drv_fdcan6.name, &_fdcan_ops, &_drv_fdcan6);
@@ -1441,7 +1465,7 @@ static int rt_hw_fdcan_init(void)
 #endif
 
 #ifdef BSP_USING_FDCAN7
-    _drv_fdcan7.fdcan_x    = FDCAN7;
+    _drv_fdcan7.fdcan_x = FDCAN7;
     _drv_fdcan7.filter_cfg = default_filter;
     _drv_fdcan7.device.config = config;
     rt_hw_can_register(&_drv_fdcan7.device, _drv_fdcan7.name, &_fdcan_ops, &_drv_fdcan7);
@@ -1449,7 +1473,7 @@ static int rt_hw_fdcan_init(void)
 #endif
 
 #ifdef BSP_USING_FDCAN8
-    _drv_fdcan8.fdcan_x    = FDCAN8;
+    _drv_fdcan8.fdcan_x = FDCAN8;
     _drv_fdcan8.filter_cfg = default_filter;
     _drv_fdcan8.device.config = config;
     rt_hw_can_register(&_drv_fdcan8.device, _drv_fdcan8.name, &_fdcan_ops, &_drv_fdcan8);

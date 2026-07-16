@@ -17,7 +17,7 @@
 //#define ETH_RX_DUMP
 //#define ETH_TX_DUMP
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.eth"
+#define LOG_TAG "drv.eth"
 #include <drv_log.h>
 
 #define MAX_ADDR_LEN 6
@@ -33,13 +33,13 @@ struct rt_n32_eth
 #endif
 
     /* interface address info, hw address */
-    rt_uint8_t   dev_addr[MAX_ADDR_LEN];
+    rt_uint8_t dev_addr[MAX_ADDR_LEN];
     /* ETH_Speed */
-    rt_uint32_t  ETH_Speed;
+    rt_uint32_t ETH_Speed;
     /* ETH_Duplex_Mode */
-    rt_uint32_t  ETH_Mode;
+    rt_uint32_t ETH_Mode;
     /* PHY address */
-    rt_uint8_t   phy_addr;
+    rt_uint8_t phy_addr;
 };
 
 static ETH_DMADescType *DMARxDscrTab, *DMATxDscrTab;
@@ -102,21 +102,21 @@ static rt_err_t rt_n32_eth_init(rt_device_t dev)
     memset(&sEthInfo, 0, sizeof(ETH_InfoType));
 
     /* Set ETH operation-related information via sEthInfo */
-    sEthInfo.MDCClockMode   = ETH_MDCCLK_NORMAL;
+    sEthInfo.MDCClockMode = ETH_MDCCLK_NORMAL;
     sEthInfo.MediaInterface = ETH_MEDIA_INTERFACE;
-    sEthInfo.pMACAddr       = (rt_uint8_t *)&eth->dev_addr[0];
-    sEthInfo.pRxDesc        = DMARxDscrTab;
-    sEthInfo.pTxDesc        = DMATxDscrTab;
-    sEthInfo.RxBuffLen      = ETH_MAX_PACKET_SIZE;
+    sEthInfo.pMACAddr = (rt_uint8_t *)&eth->dev_addr[0];
+    sEthInfo.pRxDesc = DMARxDscrTab;
+    sEthInfo.pTxDesc = DMATxDscrTab;
+    sEthInfo.RxBuffLen = ETH_MAX_PACKET_SIZE;
 
     /* PHY register information */
-    sEthInfo.PHYInfo.bcRegAddr     = PHY_BASIC_CONTROL_REG;
-    sEthInfo.PHYInfo.bsRegAddr     = PHY_BASIC_STATUS_REG;
-    sEthInfo.PHYInfo.phyReset      = PHY_RESET_MASK;
-    sEthInfo.PHYInfo.phyAutoNeg    = PHY_AUTO_NEGOTIATION_MASK;
-    sEthInfo.PHYInfo.phyAutoNegOK  = PHY_AUTONEGO_COMPLETE_MASK;
-    sEthInfo.PHYInfo.phyLinkOK     = PHY_LINKED_STATUS_MASK;
-    sEthInfo.PHYInfo.phyAddr       = eth->phy_addr;
+    sEthInfo.PHYInfo.bcRegAddr = PHY_BASIC_CONTROL_REG;
+    sEthInfo.PHYInfo.bsRegAddr = PHY_BASIC_STATUS_REG;
+    sEthInfo.PHYInfo.phyReset = PHY_RESET_MASK;
+    sEthInfo.PHYInfo.phyAutoNeg = PHY_AUTO_NEGOTIATION_MASK;
+    sEthInfo.PHYInfo.phyAutoNegOK = PHY_AUTONEGO_COMPLETE_MASK;
+    sEthInfo.PHYInfo.phyLinkOK = PHY_LINKED_STATUS_MASK;
+    sEthInfo.PHYInfo.phyAddr = eth->phy_addr;
 
     /* DeInitializes the ETH peripheral */
     ETH_DeInit(ETH);
@@ -126,36 +126,36 @@ static rt_err_t rt_n32_eth_init(rt_device_t dev)
 
     /* Modify ETH initialization parameters (only override StructInit defaults) */
     /* MAC Configuration */
-    sETH_InitParam.AutoPadCRCStrip      = ((uint32_t)ENABLE << 20);
-    sETH_InitParam.CRCStripTypePacket   = ((uint32_t)ENABLE << 21);
-    sETH_InitParam.ProgramWatchdog      = ((uint32_t)ENABLE << 8);
+    sETH_InitParam.AutoPadCRCStrip = ((uint32_t)ENABLE << 20);
+    sETH_InitParam.CRCStripTypePacket = ((uint32_t)ENABLE << 21);
+    sETH_InitParam.ProgramWatchdog = ((uint32_t)ENABLE << 8);
     sETH_InitParam.GiantPacketSizeLimit = (0x618U);
 
     /* Duplex and Speed (updated after PHY auto-negotiation) */
-    sETH_InitParam.Duplex               = (EthDuplexType)eth->ETH_Mode;
-    sETH_InitParam.SpeedSelect          = (EthSpeedType)eth->ETH_Speed;
+    sETH_InitParam.Duplex = (EthDuplexType)eth->ETH_Mode;
+    sETH_InitParam.SpeedSelect = (EthSpeedType)eth->ETH_Speed;
 
     /* MTL Configuration */
-    sETH_InitParam.TxQueueOperateMode   = ETH_TXQUEUE_OPERATE_THRESHOLD_64;
-    sETH_InitParam.RxQueueOperateMode   = ETH_RXQUEUE_OPERATE_THRESHOLD_64;
+    sETH_InitParam.TxQueueOperateMode = ETH_TXQUEUE_OPERATE_THRESHOLD_64;
+    sETH_InitParam.RxQueueOperateMode = ETH_RXQUEUE_OPERATE_THRESHOLD_64;
 
     /* Checksum offload */
 #ifdef RT_LWIP_USING_HW_CHECKSUM
-    sETH_InitParam.ChecksumOffload      = ((uint32_t)ENABLE << 27);
+    sETH_InitParam.ChecksumOffload = ((uint32_t)ENABLE << 27);
 #endif
 
     /* DMA System Bus Mode Configuration */
-    sETH_InitParam.BurstMode            = ETH_BURST_MODE_FIXED;
-    sETH_InitParam.AddrAlignedBeats     = ((uint32_t)ENABLE << 12);
+    sETH_InitParam.BurstMode = ETH_BURST_MODE_FIXED;
+    sETH_InitParam.AddrAlignedBeats = ((uint32_t)ENABLE << 12);
 
     /* DMA Channel Configuration */
-    sETH_InitParam.DescriptorSkipLen    = ETH_DESC_SKIP_LEN_64BIT;
+    sETH_InitParam.DescriptorSkipLen = ETH_DESC_SKIP_LEN_64BIT;
 
     /* DMA Channel Transmit Configuration */
-    sETH_InitParam.TxBurstLength        = ETH_TX_PROGRAM_BURST_LEN_32;
+    sETH_InitParam.TxBurstLength = ETH_TX_PROGRAM_BURST_LEN_32;
 
     /* DMA Channel Receive Configuration */
-    sETH_InitParam.RxBurstLength        = ETH_RX_PROGRAM_BURST_LEN_32;
+    sETH_InitParam.RxBurstLength = ETH_RX_PROGRAM_BURST_LEN_32;
 
     /* 125M clock source must be configured when GMII (only ETH1 supports GMII) */
 #if defined(BSP_USING_ETH1)
@@ -183,7 +183,7 @@ static rt_err_t rt_n32_eth_init(rt_device_t dev)
      * Buf1Addr is the CPU-side backup for use in SMEMCPY during tx. */
     for (rt_size_t i = 0; i < ETH_TX_DESC_NUMBER; i++)
     {
-        sEthInfo.pTxDesc[i].DESC0    = (uint32_t)&Tx_Buff[i * ETH_MAX_PACKET_SIZE];
+        sEthInfo.pTxDesc[i].DESC0 = (uint32_t)&Tx_Buff[i * ETH_MAX_PACKET_SIZE];
         sEthInfo.pTxDesc[i].Buf1Addr = (uint32_t)&Tx_Buff[i * ETH_MAX_PACKET_SIZE];
     }
 
@@ -197,9 +197,9 @@ static rt_err_t rt_n32_eth_init(rt_device_t dev)
     for (rt_size_t i = 0; i < ETH_RX_DESC_NUMBER; i++)
     {
         // ETH_RxDescAssignMemory(&sEthInfo, i, (uint8_t *)&Rx_Buff[i * ETH_MAX_PACKET_SIZE], NULL);
-        sEthInfo.pRxDesc[i].DESC0    = (uint32_t)&Rx_Buff[i * ETH_MAX_PACKET_SIZE];
+        sEthInfo.pRxDesc[i].DESC0 = (uint32_t)&Rx_Buff[i * ETH_MAX_PACKET_SIZE];
         sEthInfo.pRxDesc[i].Buf1Addr = (uint32_t)&Rx_Buff[i * ETH_MAX_PACKET_SIZE];
-        sEthInfo.pRxDesc[i].DESC3   |= ETH_DMARXND3RF_BUF1V | ETH_DMARXND3RF_OWN;
+        sEthInfo.pRxDesc[i].DESC3 |= ETH_DMARXND3RF_BUF1V | ETH_DMARXND3RF_OWN;
     }
 
     /* ETH interrupt Init */
@@ -256,7 +256,7 @@ static rt_err_t rt_n32_eth_control(rt_device_t dev, int cmd, void *args)
         }
         break;
 
-    default :
+    default:
         break;
     }
 
@@ -268,15 +268,15 @@ static rt_err_t rt_n32_eth_control(rt_device_t dev, int cmd, void *args)
 rt_err_t rt_n32_eth_tx(rt_device_t dev, struct pbuf *p)
 {
     struct pbuf *q;
-    rt_uint32_t framelen  = 0;
-    rt_uint32_t offset    = 0;
+    rt_uint32_t framelen = 0;
+    rt_uint32_t offset = 0;
     rt_uint32_t remaining = 0;
-    rt_uint32_t copysize  = 0;
-    uint8_t    *src;
-    uint8_t    *buffer;
-    rt_uint32_t node_idx  = 0;
+    rt_uint32_t copysize = 0;
+    uint8_t *src;
+    uint8_t *buffer;
+    rt_uint32_t node_idx = 0;
     rt_uint32_t desc_idx;
-    ETH_BufferType   TxBufNodes[ETH_TX_DESC_NUMBER];
+    ETH_BufferType TxBufNodes[ETH_TX_DESC_NUMBER];
     ETH_TxPacketType TxPacket;
 
     /* Wait for descriptor to become available (interrupt-driven, no busy-poll) */
@@ -304,15 +304,15 @@ rt_err_t rt_n32_eth_tx(rt_device_t dev, struct pbuf *p)
 
     /* First buffer from current descriptor */
     buffer = (uint8_t *)(sEthInfo.pTxDesc->Buf1Addr);
-    TxBufNodes[0].pBuf  = buffer;
-    TxBufNodes[0].Len   = 0;
+    TxBufNodes[0].pBuf = buffer;
+    TxBufNodes[0].Len = 0;
     TxBufNodes[0].pNext = NULL;
 
     /* Copy pbuf chain into TX buffer pool, splitting at ETH_MAX_PACKET_SIZE boundaries */
     for (q = p; q != NULL; q = q->next)
     {
         remaining = q->len;
-        src       = (uint8_t *)q->payload;
+        src = (uint8_t *)q->payload;
 
         while (remaining > 0)
         {
@@ -342,8 +342,8 @@ rt_err_t rt_n32_eth_tx(rt_device_t dev, struct pbuf *p)
                     return ERR_USE;
                 }
 
-                TxBufNodes[node_idx].pBuf  = buffer;
-                TxBufNodes[node_idx].Len   = 0;
+                TxBufNodes[node_idx].pBuf = buffer;
+                TxBufNodes[node_idx].Len = 0;
                 TxBufNodes[node_idx].pNext = NULL;
                 offset = 0;
             }
@@ -355,9 +355,9 @@ rt_err_t rt_n32_eth_tx(rt_device_t dev, struct pbuf *p)
             }
 
             SMEMCPY(buffer + offset, src, copysize);
-            src       += copysize;
-            offset    += copysize;
-            framelen  += copysize;
+            src += copysize;
+            offset += copysize;
+            framelen += copysize;
             remaining -= copysize;
         }
     }
@@ -373,8 +373,8 @@ rt_err_t rt_n32_eth_tx(rt_device_t dev, struct pbuf *p)
 
     /* Build TX packet: linked list of buffer segments */
     memset(&TxPacket, 0, sizeof(ETH_TxPacketType));
-    TxPacket.pTxBuffer  = &TxBufNodes[0];
-    TxPacket.Length     = framelen;
+    TxPacket.pTxBuffer = &TxBufNodes[0];
+    TxPacket.Length = framelen;
     TxPacket.Attributes = ETH_TX_PACKETS_FEATURES_CRCPAD;
     TxPacket.CRCPadCtrl = ETH_CRC_PAD_INSERT;
 #ifdef RT_LWIP_USING_HW_CHECKSUM
@@ -415,7 +415,7 @@ struct pbuf *rt_n32_eth_rx(rt_device_t dev)
     rt_uint32_t remaining;
     rt_uint32_t copysize;
     ETH_BufferType *src_node;
-    ETH_BufferType  RxBufNodes[ETH_RX_DESC_NUMBER];
+    ETH_BufferType RxBufNodes[ETH_RX_DESC_NUMBER];
 
     /* Check if a complete frame has been received.
      * SDK internally scans descriptors, validates FD/LD, updates
@@ -467,12 +467,12 @@ struct pbuf *rt_n32_eth_rx(rt_device_t dev)
      *   src_offset — bytes already consumed from current src_node
      *   remaining — bytes still needed to fill current pbuf segment
      *   dst_offset — bytes already written into current pbuf segment */
-    src_node  = RxBufNodes;
+    src_node = RxBufNodes;
     src_offset = 0;
 
     for (q = p; q != NULL; q = q->next)
     {
-        remaining  = q->len;
+        remaining = q->len;
         dst_offset = 0;
 
         while (remaining > 0 && src_node != NULL)
@@ -480,7 +480,7 @@ struct pbuf *rt_n32_eth_rx(rt_device_t dev)
             /* Switch to next source node when current one is exhausted */
             if (src_offset >= src_node->Len)
             {
-                src_node   = src_node->pNext;
+                src_node = src_node->pNext;
                 src_offset = 0;
                 continue;
             }
@@ -496,9 +496,9 @@ struct pbuf *rt_n32_eth_rx(rt_device_t dev)
             SMEMCPY((uint8_t *)q->payload + dst_offset,
                     (uint8_t *)src_node->pBuf + src_offset,
                     copysize);
-            src_offset  += copysize;
-            dst_offset  += copysize;
-            remaining   -= copysize;
+            src_offset += copysize;
+            dst_offset += copysize;
+            remaining -= copysize;
         }
     }
 
@@ -598,8 +598,7 @@ static void phy_linkchange(void)
 
     /* Both auto-negotiation complete AND link up must be true.
      * Checking only one bit could report fake link-up during negotiation. */
-    if ((status & (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
-            == (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
+    if ((status & (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK)) == (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
     {
         rt_uint32_t SR = 0;
 
@@ -830,10 +829,10 @@ static void phy_monitor_thread_entry(void *parameter)
 #else /* PHY_USING_INTERRUPT_MODE */
     /* Use polling timer for link status detection */
     n32_eth_device.poll_link_timer = rt_timer_create("phylnk",
-                                     (void (*)(void *))phy_linkchange,
-                                     RT_NULL,
-                                     RT_TICK_PER_SECOND,
-                                     RT_TIMER_FLAG_PERIODIC);
+                                                     (void (*)(void *))phy_linkchange,
+                                                     RT_NULL,
+                                                     RT_TICK_PER_SECOND,
+                                                     RT_TIMER_FLAG_PERIODIC);
     if (!n32_eth_device.poll_link_timer || rt_timer_start(n32_eth_device.poll_link_timer) != RT_EOK)
     {
         LOG_E("Start link change detection timer failed");
@@ -890,14 +889,14 @@ static int rt_hw_n32_eth_init(void)
 #else
     n32_eth_device.ETH_Speed = ETH_SPEED_100M;
 #endif
-    n32_eth_device.ETH_Mode  = ETH_FULL_DUPLEX_MODE;
-    n32_eth_device.phy_addr  = 0x00;
+    n32_eth_device.ETH_Mode = ETH_FULL_DUPLEX_MODE;
+    n32_eth_device.phy_addr = 0x00;
 
     /* Set MAC address - should be configured by board/application layer.
      * If all zeros, use a locally administered unicast address as fallback. */
     if ((n32_eth_device.dev_addr[0] == 0x00) && (n32_eth_device.dev_addr[1] == 0x00) &&
-            (n32_eth_device.dev_addr[2] == 0x00) && (n32_eth_device.dev_addr[3] == 0x00) &&
-            (n32_eth_device.dev_addr[4] == 0x00) && (n32_eth_device.dev_addr[5] == 0x00))
+        (n32_eth_device.dev_addr[2] == 0x00) && (n32_eth_device.dev_addr[3] == 0x00) &&
+        (n32_eth_device.dev_addr[4] == 0x00) && (n32_eth_device.dev_addr[5] == 0x00))
     {
         n32_eth_device.dev_addr[0] = 0x10;
         n32_eth_device.dev_addr[1] = 0x32;
@@ -911,16 +910,16 @@ static int rt_hw_n32_eth_init(void)
     rt_sem_init(&tx_sem, "tx_sem", 0, RT_IPC_FLAG_FIFO);
 
     /* Register device operations */
-    n32_eth_device.parent.parent.init       = rt_n32_eth_init;
-    n32_eth_device.parent.parent.open       = rt_n32_eth_open;
-    n32_eth_device.parent.parent.close      = rt_n32_eth_close;
-    n32_eth_device.parent.parent.read       = rt_n32_eth_read;
-    n32_eth_device.parent.parent.write      = rt_n32_eth_write;
-    n32_eth_device.parent.parent.control    = rt_n32_eth_control;
-    n32_eth_device.parent.parent.user_data  = RT_NULL;
+    n32_eth_device.parent.parent.init = rt_n32_eth_init;
+    n32_eth_device.parent.parent.open = rt_n32_eth_open;
+    n32_eth_device.parent.parent.close = rt_n32_eth_close;
+    n32_eth_device.parent.parent.read = rt_n32_eth_read;
+    n32_eth_device.parent.parent.write = rt_n32_eth_write;
+    n32_eth_device.parent.parent.control = rt_n32_eth_control;
+    n32_eth_device.parent.parent.user_data = RT_NULL;
 
-    n32_eth_device.parent.eth_rx     = rt_n32_eth_rx;
-    n32_eth_device.parent.eth_tx     = rt_n32_eth_tx;
+    n32_eth_device.parent.eth_rx = rt_n32_eth_rx;
+    n32_eth_device.parent.eth_tx = rt_n32_eth_tx;
 
     /* Register eth device */
     state = eth_device_init(&(n32_eth_device.parent), "e0");

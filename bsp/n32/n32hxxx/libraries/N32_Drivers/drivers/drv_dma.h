@@ -19,7 +19,7 @@ extern "C" {
 #endif
 
 #if defined(SOC_SERIES_N32H7xx)
-#define DMA_BLOCK_SIZE   (4095)
+#define DMA_BLOCK_SIZE (4095)
 
 struct dma_config
 {

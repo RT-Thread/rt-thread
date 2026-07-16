@@ -19,15 +19,15 @@
 #include "n32h7xx_smu.h"
 
 #if defined(RT_USING_FAL)
-    #include "fal.h"
+#include "fal.h"
 #endif
 
 #define DRV_DEBUG
-#define LOG_TAG                "drv.flash"
+#define LOG_TAG "drv.flash"
 #include <drv_log.h>
 
-#define N32_FLASH_SECTOR_SIZE  ((rt_uint32_t)0x1000)  /* 4KB per erase sector */
-#define N32_FLASH_PAGE_SIZE    ((rt_uint32_t)0x1000)  /* 4KB per page */
+#define N32_FLASH_SECTOR_SIZE ((rt_uint32_t)0x1000)  /* 4KB per erase sector */
+#define N32_FLASH_PAGE_SIZE   ((rt_uint32_t)0x1000)  /* 4KB per page */
 
 /**
   * @brief  Gets the page of a given address
@@ -61,7 +61,7 @@ int n32_flash_read(rt_uint32_t addr, rt_uint8_t *buf, size_t size)
 
     for (i = 0; i < size; i++, buf++, addr++)
     {
-        *buf = *(rt_uint8_t *) addr;
+        *buf = *(rt_uint8_t *)addr;
     }
 
     return size;
@@ -79,8 +79,8 @@ int n32_flash_read(rt_uint32_t addr, rt_uint8_t *buf, size_t size)
  */
 int n32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 {
-    rt_err_t result        = RT_EOK;
-    rt_uint32_t end_addr   = addr + size;
+    rt_err_t result = RT_EOK;
+    rt_uint32_t end_addr = addr + size;
 
     if ((end_addr) > N32_FLASH_END_ADDRESS)
     {
@@ -156,7 +156,7 @@ static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_write(long offset, const rt_uint8_t *buf, size_t size);
 static int fal_flash_erase(long offset, size_t size);
 
-const struct fal_flash_dev n32_onchip_flash = { "onchip_flash", N32_FLASH_START_ADRESS, N32_FLASH_SIZE, N32_FLASH_SECTOR_SIZE, {NULL, fal_flash_read, fal_flash_write, fal_flash_erase} };
+const struct fal_flash_dev n32_onchip_flash = { "onchip_flash", N32_FLASH_START_ADRESS, N32_FLASH_SIZE, N32_FLASH_SECTOR_SIZE, { NULL, fal_flash_read, fal_flash_write, fal_flash_erase } };
 
 static int fal_flash_read(long offset, rt_uint8_t *buf, size_t size)
 {

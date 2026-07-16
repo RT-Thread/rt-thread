@@ -27,9 +27,9 @@ struct n32_fdcan_arb_timing
 {
     uint32_t baud_rate;         /**< baud rate in bps */
     uint16_t prescaler;         /**< prescaler (1~512) */
-    uint8_t  sjw;               /**< synchronization jump width (1~128) */
+    uint8_t sjw;               /**< synchronization jump width (1~128) */
     uint16_t tseg1;             /**< time segment 1 (2~256) */
-    uint8_t  tseg2;             /**< time segment 2 (2~128) */
+    uint8_t tseg2;             /**< time segment 2 (2~128) */
 };
 
 /**
@@ -40,9 +40,9 @@ struct n32_fdcan_data_timing
 {
     uint32_t baud_rate;         /**< data phase baud rate in bps */
     uint16_t prescaler;         /**< data phase prescaler (1~32) */
-    uint8_t  sjw;               /**< data phase synchronization jump width (1~16) */
+    uint8_t sjw;               /**< data phase synchronization jump width (1~16) */
     uint16_t tseg1;             /**< data phase time segment 1 (1~32) */
-    uint8_t  tseg2;             /**< data phase time segment 2 (1~16) */
+    uint8_t tseg2;             /**< data phase time segment 2 (1~16) */
 };
 
 /**
