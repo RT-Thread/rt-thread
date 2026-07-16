@@ -726,6 +726,7 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
         if (_path_separate(dentry->pathname, parent_path, DFS_PATH_MAX,
                            file_name, sizeof(file_name)) != RT_EOK)
         {
+            rt_set_errno(-ENAMETOOLONG);
             rt_free(parent_path);
             dfs_vnode_destroy(vnode);
             return NULL;

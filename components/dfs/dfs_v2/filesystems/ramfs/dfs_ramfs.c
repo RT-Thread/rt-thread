@@ -434,6 +434,7 @@ int dfs_ramfs_rename(struct dfs_filesystem *fs,
     struct ramfs_dirent *dirent;
     struct dfs_ramfs *ramfs;
     rt_size_t size;
+    int ret;
 
     ramfs = (struct dfs_ramfs *)fs->data;
     RT_ASSERT(ramfs != NULL);
