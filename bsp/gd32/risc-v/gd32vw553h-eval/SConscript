@@ -5,7 +5,6 @@ Import('RTT_ROOT')
 from building import *
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from env_package import find_package_path
-from env_package import is_libraries_package
 
 cwd = str(Dir('#'))
 
@@ -18,7 +17,7 @@ for d in list:
         objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
 wifi_pkg_path = find_package_path(cwd, 'gd32vw55x-wifi-latest')
-if wifi_pkg_path and is_libraries_package(wifi_pkg_path) and GetDepend(['PKG_USING_GD32VW55X_WIFI']):
+if wifi_pkg_path and GetDepend(['PKG_USING_GD32VW55X_WIFI']):
     lwip_mem = os.path.join(RTT_ROOT, 'components', 'net', 'lwip', 'lwip-2.1.2', 'src', 'core', 'mem.c')
 
     if os.path.isfile(lwip_mem):
