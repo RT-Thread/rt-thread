@@ -33,7 +33,7 @@ if GetDepend(['RT_USING_I2C']):
     if GetDepend('BSP_USING_HARD_I2C1') or GetDepend('BSP_USING_HARD_I2C2') or GetDepend('BSP_USING_HARD_I2C3') or GetDepend('BSP_USING_HARD_I2C4') or GetDepend('BSP_USING_HARD_I2C5') or GetDepend('BSP_USING_HARD_I2C6') or GetDepend('BSP_USING_HARD_I2C7') or GetDepend('BSP_USING_HARD_I2C8') or GetDepend('BSP_USING_HARD_I2C9') or GetDepend('BSP_USING_HARD_I2C10'):
         src += ['drv_hard_i2c.c']
 	
-if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']) and not GetDepend(['SOC_STM32H750_ARTPI']):
+if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
     src += ['drv_eth.c']
     
 if GetDepend(['RT_USING_ADC']):
