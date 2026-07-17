@@ -14,7 +14,7 @@
 
 #ifdef BSP_USING_ON_CHIP_FLASH
 #include "drv_config.h"
-#include "drv_flash.h"
+#include "drv_flash_h7xx.h"
 #include <board.h>
 #include "n32h7xx_smu.h"
 

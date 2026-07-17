@@ -9,8 +9,8 @@
  * 2026-06-16     li.mengmeng      implement for N32H7xx
  */
 
-#ifndef __DRV_FLASH_H__
-#define __DRV_FLASH_H__
+#ifndef __DRV_FLASH_H7XX_H__
+#define __DRV_FLASH_H7XX_H__
 
 #include <rtthread.h>
 #include "rtdevice.h"
@@ -29,4 +29,4 @@ int n32_flash_erase(rt_uint32_t addr, size_t size);
 }
 #endif
 
-#endif  /* __DRV_FLASH_H__ */
+#endif  /* __DRV_FLASH_H7XX_H__ */
