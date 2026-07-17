@@ -333,6 +333,69 @@ extern "C" {
 #endif /* SPI5_RX_DMA_CONFIG */
 #endif /* BSP_SPI5_RX_USING_DMA */
 
+#ifdef BSP_USING_SPI6
+#ifndef SPI6_BUS_CONFIG
+#define SPI6_BUS_CONFIG        \
+    {                          \
+        .Instance = SPI6,      \
+        .bus_name = "spi6",    \
+        .irq_type = SPI6_IRQn, \
+    }
+#endif /* SPI6_BUS_CONFIG */
+#endif /* BSP_USING_SPI6 */
+
+#ifdef BSP_SPI6_TX_USING_DMA
+#ifndef SPI6_TX_DMA_PRIORITY
+#define SPI6_TX_DMA_PRIORITY                  DMA_PRIORITY_LOW
+#endif /* SPI6_TX_DMA_PRIORITY */
+
+#ifndef SPI6_TX_DMA_PREEMPT_PRIORITY
+#define SPI6_TX_DMA_PREEMPT_PRIORITY          1
+#endif /* SPI6_TX_DMA_PREEMPT_PRIORITY */
+
+#ifndef SPI6_TX_DMA_SUB_PRIORITY
+#define SPI6_TX_DMA_SUB_PRIORITY              0
+#endif /* SPI6_TX_DMA_SUB_PRIORITY */
+#ifndef SPI6_TX_DMA_CONFIG
+#define SPI6_TX_DMA_CONFIG            \
+    STM32_DMA_TX_BYTE_CONFIG_INIT_EX( \
+        SPI6_TX_DMA_INSTANCE,         \
+        SPI6_TX_DMA_RCC,              \
+        SPI6_TX_DMA_IRQ,              \
+        0U,                           \
+        DMA_REQUEST_SPI6_TX,          \
+        SPI6_TX_DMA_PRIORITY,         \
+        SPI6_TX_DMA_PREEMPT_PRIORITY, \
+        SPI6_TX_DMA_SUB_PRIORITY)
+#endif /* SPI6_TX_DMA_CONFIG */
+#endif /* BSP_SPI6_TX_USING_DMA */
+
+#ifdef BSP_SPI6_RX_USING_DMA
+#ifndef SPI6_RX_DMA_PRIORITY
+#define SPI6_RX_DMA_PRIORITY                  DMA_PRIORITY_HIGH
+#endif /* SPI6_RX_DMA_PRIORITY */
+
+#ifndef SPI6_RX_DMA_PREEMPT_PRIORITY
+#define SPI6_RX_DMA_PREEMPT_PRIORITY          0
+#endif /* SPI6_RX_DMA_PREEMPT_PRIORITY */
+
+#ifndef SPI6_RX_DMA_SUB_PRIORITY
+#define SPI6_RX_DMA_SUB_PRIORITY              0
+#endif /* SPI6_RX_DMA_SUB_PRIORITY */
+#ifndef SPI6_RX_DMA_CONFIG
+#define SPI6_RX_DMA_CONFIG            \
+    STM32_DMA_RX_BYTE_CONFIG_INIT_EX( \
+        SPI6_RX_DMA_INSTANCE,         \
+        SPI6_RX_DMA_RCC,              \
+        SPI6_RX_DMA_IRQ,              \
+        0U,                           \
+        DMA_REQUEST_SPI6_RX,          \
+        SPI6_RX_DMA_PRIORITY,         \
+        SPI6_RX_DMA_PREEMPT_PRIORITY, \
+        SPI6_RX_DMA_SUB_PRIORITY)
+#endif /* SPI6_RX_DMA_CONFIG */
+#endif /* BSP_SPI6_RX_USING_DMA */
+
 #ifdef __cplusplus
 }
 #endif
