@@ -154,7 +154,11 @@ void rt_pin_write(rt_uint64_t pin, rt_uint8_t value)
 
     RT_ASSERT(value == PIN_LOW || value == PIN_HIGH);
 
+#if defined(SOC_SERIES_N32H7xx)
     GPIO_WriteBit(GPIOx, GPIO_Pin, ((value == PIN_LOW) ? Bit_RESET : Bit_SET));
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    GPIO_WriteBits(GPIOx, GPIO_Pin, ((value == PIN_LOW) ? Bit_RESET : Bit_SET));
+#endif
 }
 
 rt_int8_t rt_pin_read(rt_uint64_t pin)

@@ -51,7 +51,8 @@
  *\*\brief  FDCAN arbitration segment (nominal) baud rate table.
  *\*\note   40MHz FDCAN kernel clock.
  */
-static const struct n32_fdcan_arb_timing _fdcan_arb_timing_table[] = {
+static const struct n32_fdcan_arb_timing _fdcan_arb_timing_table[] =
+{
     { CAN1MBaud, 1, 8, 29, 10 },  /* 1Mbps   : 40M / (1  * (29+10+1)) = 1.000M */
     { CAN800kBaud, 1, 8, 37, 12 },  /* 800kbps : 40M / (1  * (37+12+1)) = 800k  */
     { CAN500kBaud, 1, 8, 59, 20 },  /* 500kbps : 40M / (1  * (59+20+1)) = 500k  */
@@ -68,7 +69,8 @@ static const struct n32_fdcan_arb_timing _fdcan_arb_timing_table[] = {
  *\*\brief  FDCAN data segment baud rate table (for CAN FD with BRS).
  *\*\note   40MHz FDCAN kernel clock.
  */
-static const struct n32_fdcan_data_timing _fdcan_data_timing_table[] = {
+static const struct n32_fdcan_data_timing _fdcan_data_timing_table[] =
+{
     { CAN1MBaud * 8, 1, 1, 3, 1 },  /* 8Mbps   : 40M / (1  * (3+1+1))  = 8M    */
     { CAN1MBaud * 5, 1, 2, 5, 2 },  /* 5Mbps   : 40M / (1  * (5+2+1))  = 5M    */
     { CAN1MBaud * 4, 1, 2, 7, 2 },  /* 4Mbps   : 40M / (1  * (7+2+1))  = 4M    */
@@ -83,49 +85,57 @@ static const struct n32_fdcan_data_timing _fdcan_data_timing_table[] = {
  *============================================================================*/
 
 #ifdef BSP_USING_FDCAN1
-static struct n32_fdcan _drv_fdcan1 = {
+static struct n32_fdcan _drv_fdcan1 =
+{
     .name = "fdcan1",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN2
-static struct n32_fdcan _drv_fdcan2 = {
+static struct n32_fdcan _drv_fdcan2 =
+{
     .name = "fdcan2",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN3
-static struct n32_fdcan _drv_fdcan3 = {
+static struct n32_fdcan _drv_fdcan3 =
+{
     .name = "fdcan3",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN4
-static struct n32_fdcan _drv_fdcan4 = {
+static struct n32_fdcan _drv_fdcan4 =
+{
     .name = "fdcan4",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN5
-static struct n32_fdcan _drv_fdcan5 = {
+static struct n32_fdcan _drv_fdcan5 =
+{
     .name = "fdcan5",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN6
-static struct n32_fdcan _drv_fdcan6 = {
+static struct n32_fdcan _drv_fdcan6 =
+{
     .name = "fdcan6",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN7
-static struct n32_fdcan _drv_fdcan7 = {
+static struct n32_fdcan _drv_fdcan7 =
+{
     .name = "fdcan7",
 };
 #endif
 
 #ifdef BSP_USING_FDCAN8
-static struct n32_fdcan _drv_fdcan8 = {
+static struct n32_fdcan _drv_fdcan8 =
+{
     .name = "fdcan8",
 };
 #endif
@@ -145,7 +155,8 @@ static struct n32_fdcan _drv_fdcan8 = {
  */
 static uint8_t _dlc_to_length(uint32_t dlc)
 {
-    const uint8_t dlc_table[16] = {
+    const uint8_t dlc_table[16] =
+    {
         0, 1, 2, 3, 4, 5, 6, 7,
         8, 12, 16, 20, 24, 32, 48, 64
     };
@@ -218,7 +229,7 @@ static uint32_t _get_arb_baud_index(uint32_t baud_rate)
         if (_fdcan_arb_timing_table[i].baud_rate == baud_rate)
             return i;
     }
-    return (uint32_t)-1;
+    return (uint32_t) -1;
 }
 
 /**
@@ -237,7 +248,7 @@ static uint32_t _get_data_baud_index(uint32_t baud_rate)
         if (_fdcan_data_timing_table[i].baud_rate == baud_rate)
             return i;
     }
-    return (uint32_t)-1;
+    return (uint32_t) -1;
 }
 
 /*==============================================================================
@@ -382,7 +393,7 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
 
     /* Lookup arbitration segment baud rate */
     uint32_t arb_idx = _get_arb_baud_index(cfg->baud_rate);
-    if (arb_idx == (uint32_t)-1)
+    if (arb_idx == (uint32_t) -1)
     {
         LOG_E("%s: baud rate %d not supported", p_drv->name, cfg->baud_rate);
         return -RT_ERROR;
@@ -398,7 +409,7 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     if (cfg->enable_canfd && cfg->baud_rate_fd)
     {
         uint32_t data_idx = _get_data_baud_index(cfg->baud_rate_fd);
-        if (data_idx == (uint32_t)-1)
+        if (data_idx == (uint32_t) -1)
         {
             LOG_E("%s: FD baud rate %d not supported", p_drv->name, cfg->baud_rate_fd);
             return -RT_ERROR;
@@ -696,9 +707,9 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
     case RT_CAN_CMD_SET_MODE:
         argval = (rt_uint32_t)arg;
         if (argval != RT_CAN_MODE_NORMAL &&
-            argval != RT_CAN_MODE_LISTEN &&
-            argval != RT_CAN_MODE_LOOPBACK &&
-            argval != RT_CAN_MODE_LOOPBACKANLISTEN)
+                argval != RT_CAN_MODE_LISTEN &&
+                argval != RT_CAN_MODE_LOOPBACK &&
+                argval != RT_CAN_MODE_LOOPBACKANLISTEN)
         {
             return -RT_ERROR;
         }
@@ -752,7 +763,7 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
 
     case RT_CAN_CMD_SET_BAUD:
         argval = (rt_uint32_t)arg;
-        if (_get_arb_baud_index(argval) == (uint32_t)-1)
+        if (_get_arb_baud_index(argval) == (uint32_t) -1)
         {
             return -RT_ERROR;
         }
@@ -789,7 +800,7 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
     {
 #ifdef RT_CAN_USING_CANFD
         argval = (rt_uint32_t)arg;
-        if (_get_data_baud_index(argval) == (uint32_t)-1)
+        if (_get_data_baud_index(argval) == (uint32_t) -1)
         {
             return -RT_ERROR;
         }
@@ -1068,7 +1079,8 @@ static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const vo
  * FDCAN operations table
  *============================================================================*/
 
-static const struct rt_can_ops _fdcan_ops = {
+static const struct rt_can_ops _fdcan_ops =
+{
     .configure = _fdcan_configure,
     .control = _fdcan_control,
     .sendmsg = _fdcan_sendmsg,

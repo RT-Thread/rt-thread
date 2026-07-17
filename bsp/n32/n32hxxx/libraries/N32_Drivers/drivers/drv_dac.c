@@ -38,7 +38,8 @@ typedef struct
     DAC_InitType Init;
 } DAC_InitInfo_t;
 
-static DAC_InitInfo_t dac_config[] = {
+static DAC_InitInfo_t dac_config[] =
+{
 #ifdef BSP_USING_DAC1
     DAC1_CONFIG,
 #endif
@@ -118,7 +119,8 @@ static rt_err_t n32_set_dac_value(struct rt_dac_device *device, rt_uint32_t chan
     return RT_EOK;
 }
 
-static const struct rt_dac_ops n32_dac_ops = {
+static const struct rt_dac_ops n32_dac_ops =
+{
     .disabled = n32_dac_disabled,
     .enabled = n32_dac_enabled,
     .convert = n32_set_dac_value,

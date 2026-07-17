@@ -19,7 +19,7 @@
 #include "n32h7xx_smu.h"
 
 #if defined(RT_USING_FAL)
-#include "fal.h"
+    #include "fal.h"
 #endif
 
 #define DRV_DEBUG

@@ -829,10 +829,10 @@ static void phy_monitor_thread_entry(void *parameter)
 #else /* PHY_USING_INTERRUPT_MODE */
     /* Use polling timer for link status detection */
     n32_eth_device.poll_link_timer = rt_timer_create("phylnk",
-                                                     (void (*)(void *))phy_linkchange,
-                                                     RT_NULL,
-                                                     RT_TICK_PER_SECOND,
-                                                     RT_TIMER_FLAG_PERIODIC);
+                                     (void (*)(void *))phy_linkchange,
+                                     RT_NULL,
+                                     RT_TICK_PER_SECOND,
+                                     RT_TIMER_FLAG_PERIODIC);
     if (!n32_eth_device.poll_link_timer || rt_timer_start(n32_eth_device.poll_link_timer) != RT_EOK)
     {
         LOG_E("Start link change detection timer failed");
@@ -895,8 +895,8 @@ static int rt_hw_n32_eth_init(void)
     /* Set MAC address - should be configured by board/application layer.
      * If all zeros, use a locally administered unicast address as fallback. */
     if ((n32_eth_device.dev_addr[0] == 0x00) && (n32_eth_device.dev_addr[1] == 0x00) &&
-        (n32_eth_device.dev_addr[2] == 0x00) && (n32_eth_device.dev_addr[3] == 0x00) &&
-        (n32_eth_device.dev_addr[4] == 0x00) && (n32_eth_device.dev_addr[5] == 0x00))
+            (n32_eth_device.dev_addr[2] == 0x00) && (n32_eth_device.dev_addr[3] == 0x00) &&
+            (n32_eth_device.dev_addr[4] == 0x00) && (n32_eth_device.dev_addr[5] == 0x00))
     {
         n32_eth_device.dev_addr[0] = 0x10;
         n32_eth_device.dev_addr[1] = 0x32;
