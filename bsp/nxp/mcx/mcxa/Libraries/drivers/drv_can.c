@@ -17,10 +17,10 @@
 #include "fsl_clock.h"
 #include "fsl_flexcan.h"
 
-#define TX_MB_IDX       (0)
-#define RX_MB_IDX       (1)
-#define RX_MB_COUNT     (1)
-#define CAN_TX_WAIT_MS   (2000U)
+#define TX_MB_IDX      (0)
+#define RX_MB_IDX      (1)
+#define RX_MB_COUNT    (1)
+#define CAN_TX_WAIT_MS (2000U)
 
 enum
 {
@@ -34,20 +34,20 @@ enum
 
 struct imxrt_can
 {
-    char                    *name;
-    CAN_Type                *base;
-    IRQn_Type               irqn;
-    uint32_t                instance;
-    clock_div_name_t        clock_div_name;
-    clock_attach_id_t       clock_attach_id;
-    flexcan_handle_t        handle;
-    struct rt_can_device    can_dev;
-    flexcan_frame_t         frame[RX_MB_COUNT];
+    char *name;
+    CAN_Type *base;
+    IRQn_Type irqn;
+    uint32_t instance;
+    clock_div_name_t clock_div_name;
+    clock_attach_id_t clock_attach_id;
+    flexcan_handle_t handle;
+    struct rt_can_device can_dev;
+    flexcan_frame_t frame[RX_MB_COUNT];
 #ifdef RT_CAN_USING_CANFD
-    flexcan_fd_frame_t      framefd[RX_MB_COUNT];
-    rt_bool_t               fd_enabled;
+    flexcan_fd_frame_t framefd[RX_MB_COUNT];
+    rt_bool_t fd_enabled;
 #endif
-    rt_uint32_t             filter_mask;
+    rt_uint32_t filter_mask;
 };
 
 static void _can_dump_err(struct imxrt_can *can, const char *stage)
@@ -129,18 +129,72 @@ static rt_uint8_t _can_dlc2len(rt_uint8_t dlc)
 
 static rt_uint8_t _can_len2dlc(rt_uint8_t len)
 {
-    static const rt_uint8_t table[] =
-    {
-        0, 1, 2, 3, 4, 5, 6, 7, 8,
-        9, 9, 9, 9,
-        10, 10, 10, 10,
-        11, 11, 11, 11,
-        12, 12, 12, 12,
-        13, 13, 13, 13, 13, 13, 13, 13,
-        14, 14, 14, 14, 14, 14, 14, 14,
-        14, 14, 14, 14, 14, 14, 14, 14,
-        15, 15, 15, 15, 15, 15, 15, 15,
-        15, 15, 15, 15, 15, 15, 15, 15,
+    static const rt_uint8_t table[] = {
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        9,
+        9,
+        9,
+        10,
+        10,
+        10,
+        10,
+        11,
+        11,
+        11,
+        11,
+        12,
+        12,
+        12,
+        12,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        14,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
     };
 
     if (len <= 64)
@@ -202,8 +256,7 @@ static void _can_parse_classic_frame(struct rt_can_msg *msg, const flexcan_frame
     msg->data[7] = frame->dataByte7;
 }
 
-struct imxrt_can flexcans[] =
-{
+struct imxrt_can flexcans[] = {
 #ifdef BSP_USING_CAN0
     {
         .name = "can0",
@@ -381,9 +434,9 @@ static void _can_start_rx(struct imxrt_can *can)
 static void _can_enable_controller_irq(struct imxrt_can *can)
 {
     FLEXCAN_EnableInterrupts(can->base, (uint32_t)kFLEXCAN_BusOffInterruptEnable |
-                                         (uint32_t)kFLEXCAN_ErrorInterruptEnable |
-                                         (uint32_t)kFLEXCAN_RxWarningInterruptEnable |
-                                         (uint32_t)kFLEXCAN_TxWarningInterruptEnable);
+                                            (uint32_t)kFLEXCAN_ErrorInterruptEnable |
+                                            (uint32_t)kFLEXCAN_RxWarningInterruptEnable |
+                                            (uint32_t)kFLEXCAN_TxWarningInterruptEnable);
     EnableIRQ(can->irqn);
 }
 
@@ -480,7 +533,7 @@ static rt_err_t _can_config(struct rt_can_device *can_dev, struct can_configure 
 #ifdef RT_CAN_USING_CANFD
         || (cfg->enable_canfd == 0)
 #endif
-       )
+    )
     {
         config.enableTransceiverDelayMeasure = false;
     }
@@ -496,12 +549,10 @@ static rt_err_t _can_config(struct rt_can_device *can_dev, struct can_configure 
 
     if (can->fd_enabled)
     {
-        bool brs_enable = _can_is_loopback(cfg) ? false :
-                          (cfg->baud_rate_fd > cfg->baud_rate);
+        bool brs_enable = _can_is_loopback(cfg) ? false : (cfg->baud_rate_fd > cfg->baud_rate);
         bool timing_ok;
 
-        config.bitRateFD = _can_is_loopback(cfg) ? config.baudRate :
-                           (cfg->baud_rate_fd ? cfg->baud_rate_fd : 2000000U);
+        config.bitRateFD = _can_is_loopback(cfg) ? config.baudRate : (cfg->baud_rate_fd ? cfg->baud_rate_fd : 2000000U);
 
         timing_ok = FLEXCAN_FDCalculateImprovedTimingValues(can->base, config.baudRate,
                                                             config.bitRateFD, clk_freq, &timing_config);
@@ -986,12 +1037,11 @@ static rt_ssize_t _can_sendmsg_nonblocking(struct rt_can_device *can_dev, const 
     return (ret == kStatus_Success) ? RT_EOK : -RT_ERROR;
 }
 
-static struct rt_can_ops imxrt_can_ops =
-{
-    .configure    = _can_config,
-    .control      = _can_control,
-    .sendmsg      = _can_sendmsg,
-    .recvmsg      = _can_recvmsg,
+static struct rt_can_ops imxrt_can_ops = {
+    .configure = _can_config,
+    .control = _can_control,
+    .sendmsg = _can_sendmsg,
+    .recvmsg = _can_recvmsg,
     .sendmsg_nonblocking = _can_sendmsg_nonblocking
 };
 
