@@ -48,10 +48,10 @@ print(SDK_LIB)
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'), variant_dir='build/libraries/HAL_Drivers', duplicate=0))
 
 # include cmsis
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'MAX32660PeriphDriver', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'MAX32660PeriphDriver', 'SConscript'), variant_dir='build/libraries/MAX32660PeriphDriver', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

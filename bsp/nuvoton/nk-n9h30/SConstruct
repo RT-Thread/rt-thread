@@ -64,10 +64,10 @@ nuvoton_library = 'n9h30'
 rtconfig.BSP_LIBRARY_TYPE = nuvoton_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, nuvoton_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, nuvoton_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', nuvoton_library), duplicate=0))
 
 # include nu_pkgs
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'nu_packages', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'nu_packages', 'SConscript'), variant_dir='build/libraries/nu_packages', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

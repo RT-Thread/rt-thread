@@ -48,10 +48,10 @@ Export('SDK_LIB')
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
 # include cmsis
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'CMSIS', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'CMSIS', 'SConscript'), variant_dir='build/libraries/CMSIS', duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'rt_drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'rt_drivers', 'SConscript'), variant_dir='build/libraries/rt_drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

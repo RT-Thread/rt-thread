@@ -58,8 +58,8 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-objs = objs + SConscript('../libraries/drivers/SConscript')
-objs = objs + SConscript('../libraries/LPC55S6X/SConscript')
+objs = objs + SConscript('../libraries/drivers/SConscript', variant_dir='build/libraries/drivers', duplicate=0)
+objs = objs + SConscript('../libraries/LPC55S6X/SConscript', variant_dir='build/libraries/LPC55S6X', duplicate=0)
 
 # make a building
 DoBuilding(TARGET, objs)

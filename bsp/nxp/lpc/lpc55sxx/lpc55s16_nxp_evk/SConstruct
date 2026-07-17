@@ -72,11 +72,11 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))
 
 # include cmsis
 lpc55s_package_path = find_package_path(SDK_ROOT, 'nxp-lpc55s-series-latest')
-objs.extend(SConscript(os.path.join(lpc55s_package_path, rtconfig.BSP_LIBRARY_TYPE, 'SConscript')))
+objs.extend(SConscript(os.path.join(lpc55s_package_path, rtconfig.BSP_LIBRARY_TYPE, 'SConscript'), variant_dir=os.path.join('build', 'packages', rtconfig.BSP_LIBRARY_TYPE), duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)
