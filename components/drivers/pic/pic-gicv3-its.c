@@ -1482,6 +1482,7 @@ rt_err_t gicv3_its_ofw_probe(struct rt_ofw_node *np, const struct rt_ofw_node_id
             goto _free_all;
         }
 
+        rt_list_init(&its->list);
         its->base = rt_ofw_iomap(its_np, 0);
 
         if (!its->base)
@@ -1501,7 +1502,6 @@ rt_err_t gicv3_its_ofw_probe(struct rt_ofw_node *np, const struct rt_ofw_node_id
         }
 
         its->np = its_np;
-        rt_list_init(&its->list);
         rt_list_insert_before(&its_nodes, &its->list);
     }
 
@@ -1577,8 +1577,7 @@ rt_err_t gicv3_its_ofw_probe(struct rt_ofw_node *np, const struct rt_ofw_node_id
 _free_all:
     rt_list_for_each_entry_safe(its, its_next, &its_nodes, list)
     {
-        rt_free(its);
-        rt_list_remove(&its->list);
+        its_init_fail(its);
     }
 
     return err;
