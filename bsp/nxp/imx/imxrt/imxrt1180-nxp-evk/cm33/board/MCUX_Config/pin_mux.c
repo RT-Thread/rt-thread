@@ -31,7 +31,8 @@ processor_version: 0.15.9
  * Description   : Calls initialization functions.
  *
  * END ****************************************************************************************************************/
-void BOARD_InitBootPins(void) {
+void BOARD_InitBootPins(void)
+{
     BOARD_InitPins();
 }
 
@@ -53,91 +54,93 @@ BOARD_InitPins:
  * Description   : Configures pin routing and optionally pin electrical features.
  *
  * END ****************************************************************************************************************/
-void BOARD_InitPins(void) {
-  CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
-  CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
+void BOARD_InitPins(void)
+{
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
 
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_08_LPUART1_TX,
-      0U);
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_09_LPUART1_RX,
-      0U);
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_08_LPUART1_TX,
-      0x02U);
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_09_LPUART1_RX,
-      0x02U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_08_LPUART1_TX,
+        0U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_09_LPUART1_RX,
+        0U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_08_LPUART1_TX,
+        0x02U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_09_LPUART1_RX,
+        0x02U);
 
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_32_LPUART10_TX,
-      0U);
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_33_LPUART10_RX,
-      0U);
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AD_32_LPUART10_TX,
-      0x02U);
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AD_33_LPUART10_RX,
-      0x02U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_32_LPUART10_TX,
+        0U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_33_LPUART10_RX,
+        0U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_32_LPUART10_TX,
+        0x02U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_33_LPUART10_RX,
+        0x02U);
 
-      IOMUXC_SetPinMux(
-          IOMUXC_GPIO_AON_19_LPUART12_TX,
-          0U);
-      IOMUXC_SetPinMux(
-          IOMUXC_GPIO_AON_20_LPUART12_RX,
-          0U);
-      IOMUXC_SetPinConfig(
-          IOMUXC_GPIO_AON_19_LPUART12_TX,
-          0x02U);
-      IOMUXC_SetPinConfig(
-          IOMUXC_GPIO_AON_20_LPUART12_RX,
-          0x02U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_19_LPUART12_TX,
+        0U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_20_LPUART12_RX,
+        0U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_19_LPUART12_TX,
+        0x02U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_20_LPUART12_RX,
+        0x02U);
 
-      IOMUXC_SetPinMux(
-          IOMUXC_GPIO_AON_16_LPI2C2_SCL,
-          1U);
-      IOMUXC_SetPinMux(
-          IOMUXC_GPIO_AON_15_LPI2C2_SDA,
-          1U);
-      IOMUXC_SetPinConfig(
-          IOMUXC_GPIO_AON_16_LPI2C2_SCL,
-          0x1DU);
-      IOMUXC_SetPinConfig(
-          IOMUXC_GPIO_AON_15_LPI2C2_SDA,
-          0x1DU);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_16_LPI2C2_SCL,
+        1U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_15_LPI2C2_SDA,
+        1U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_16_LPI2C2_SCL,
+        0x1DU);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_15_LPI2C2_SDA,
+        0x1DU);
 
-      IOMUXC_SetPinMux(
-          IOMUXC_GPIO_AD_18_LPI2C3_SCL,
-          0U);
-      IOMUXC_SetPinMux(
-          IOMUXC_GPIO_AD_19_LPI2C3_SDA,
-          0U);
-      IOMUXC_SetPinConfig(
-          IOMUXC_GPIO_AD_18_LPI2C3_SCL,
-          0x1DU);
-      IOMUXC_SetPinConfig(
-          IOMUXC_GPIO_AD_19_LPI2C3_SDA,
-          0x1DU);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_18_LPI2C3_SCL,
+        0U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_19_LPI2C3_SDA,
+        0U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_18_LPI2C3_SCL,
+        0x1DU);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_19_LPI2C3_SDA,
+        0x1DU);
 }
 
-void BOARD_InitLeds(void) {
-  CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
-  CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
+void BOARD_InitLeds(void)
+{
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
 
   /* GPIO configuration on GPIO_AD_27 (pin M16) */
-  rgpio_pin_config_t gpio4_pinM16_config = {
-      .pinDirection = kRGPIO_DigitalOutput,
-      .outputLogic = 1U,
-  };
+    rgpio_pin_config_t gpio4_pinM16_config = {
+        .pinDirection = kRGPIO_DigitalOutput,
+        .outputLogic = 1U,
+    };
   /* Initialize GPIO functionality on GPIO_AD_27 (pin M16) */
-  RGPIO_PinInit(RGPIO4, 27U, &gpio4_pinM16_config);
+    RGPIO_PinInit(RGPIO4, 27U, &gpio4_pinM16_config);
 
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
-      0U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
+        0U);
 }
 
 

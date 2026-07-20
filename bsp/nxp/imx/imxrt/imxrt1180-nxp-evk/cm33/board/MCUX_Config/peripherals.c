@@ -168,11 +168,11 @@ instance:
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 edma_config_t DMA4_config = {
-  .enableMasterIdReplication = false,
-  .enableGlobalChannelLink = true,
-  .enableHaltOnError = true,
-  .enableDebugMode = false,
-  .enableRoundRobinArbitration = false
+    .enableMasterIdReplication = false,
+    .enableGlobalChannelLink = true,
+    .enableHaltOnError = true,
+    .enableDebugMode = false,
+    .enableRoundRobinArbitration = false
 };
 /* Tansactional transfer configurations */
 edma_transfer_config_t DMA4_CH0_Transfers_config[1];
@@ -180,26 +180,26 @@ edma_handle_t DMA4_CH0_Handle;
 
 static void DMA4_init(void)
 {
-  status_t status;
-  (void)status;
+    status_t status;
+    (void)status;
 
   /* Channel CH0 initialization */
   /* Set the kDma4RequestMuxADC1Request0 request */
-  EDMA_SetChannelMux(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL, DMA4_CH0_DMA_REQUEST);
+    EDMA_SetChannelMux(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL, DMA4_CH0_DMA_REQUEST);
   /* Create the eDMA DMA4_CH0_Handle handle */
-  EDMA_CreateHandle(&DMA4_CH0_Handle, DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL);
+    EDMA_CreateHandle(&DMA4_CH0_Handle, DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL);
   /* DMA callback initialization */
-  EDMA_SetCallback(&DMA4_CH0_Handle, DMA_Callback, NULL);
+    EDMA_SetCallback(&DMA4_CH0_Handle, DMA_Callback, NULL);
   /* DMA4 transfer CH0_TRANSFER0 configuration */
-  EDMA_PrepareTransferConfig(&DMA4_CH0_TRANSFER0_CONFIG, (void *) &ADC1->RESFIFO[0], 1 << kEDMA_TransferSize4Bytes, 0, (void *) &adc_result[0], 1 << kEDMA_TransferSize4Bytes, sizeof(uint32_t), 4U, 28U);
-  DMA4_CH0_TRANSFER0_CONFIG.dstMajorLoopOffset = -28;
+    EDMA_PrepareTransferConfig(&DMA4_CH0_TRANSFER0_CONFIG, (void *)&ADC1->RESFIFO[0], 1 << kEDMA_TransferSize4Bytes, 0, (void *)&adc_result[0], 1 << kEDMA_TransferSize4Bytes, sizeof(uint32_t), 4U, 28U);
+    DMA4_CH0_TRANSFER0_CONFIG.dstMajorLoopOffset = -28;
   /* DMA4 transfer CH0_TRANSFER0 submit */
-  status = EDMA_SubmitTransfer(&DMA4_CH0_Handle, &DMA4_CH0_TRANSFER0_CONFIG);
-  assert(status == kStatus_Success);
+    status = EDMA_SubmitTransfer(&DMA4_CH0_Handle, &DMA4_CH0_TRANSFER0_CONFIG);
+    assert(status == kStatus_Success);
   /* DMA4 hardware channel 0 request auto stop */
-  EDMA_EnableAutoStopRequest(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL, false);
+    EDMA_EnableAutoStopRequest(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL, false);
   /* DMA4 channel 0 peripheral request */
-  EDMA_EnableChannelRequest(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL);
+    EDMA_EnableChannelRequest(DMA4_DMA_BASEADDR, DMA4_CH0_DMA_CHANNEL);
 }
 #endif
 /***********************************************************************************************************************
@@ -273,30 +273,30 @@ instance:
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 const lpuart_config_t LPUART1_config = {
-  .baudRate_Bps = 115200UL,
-  .parityMode = kLPUART_ParityDisabled,
-  .dataBitsCount = kLPUART_EightDataBits,
-  .isMsb = false,
-  .stopBitCount = kLPUART_OneStopBit,
-  .txFifoWatermark = 0U,
-  .rxFifoWatermark = 1U,
-  .enableRxRTS = false,
-  .enableTxRTS = false,
-  .enableTxCTS = false,
-  .txCtsSource = kLPUART_CtsSourcePin,
-  .txCtsConfig = kLPUART_CtsSampleAtStart,
-  .txRtsPolarity = kLPUART_RtsPolarityLow,
-  .rtsWatermark = 0U,
-  .rxIdleType = kLPUART_IdleTypeStartBit,
-  .rxIdleConfig = kLPUART_IdleCharacter1,
-  .enableTx = true,
-  .enableRx = true,
-  .inverseTxd = false
+    .baudRate_Bps = 115200UL,
+    .parityMode = kLPUART_ParityDisabled,
+    .dataBitsCount = kLPUART_EightDataBits,
+    .isMsb = false,
+    .stopBitCount = kLPUART_OneStopBit,
+    .txFifoWatermark = 0U,
+    .rxFifoWatermark = 1U,
+    .enableRxRTS = false,
+    .enableTxRTS = false,
+    .enableTxCTS = false,
+    .txCtsSource = kLPUART_CtsSourcePin,
+    .txCtsConfig = kLPUART_CtsSampleAtStart,
+    .txRtsPolarity = kLPUART_RtsPolarityLow,
+    .rtsWatermark = 0U,
+    .rxIdleType = kLPUART_IdleTypeStartBit,
+    .rxIdleConfig = kLPUART_IdleCharacter1,
+    .enableTx = true,
+    .enableRx = true,
+    .inverseTxd = false
 };
 
 static void LPUART1_init(void)
 {
-  LPUART_Init(LPUART1_PERIPHERAL, &LPUART1_config, LPUART1_CLOCK_SOURCE);
+    LPUART_Init(LPUART1_PERIPHERAL, &LPUART1_config, LPUART1_CLOCK_SOURCE);
 }
 
 /***********************************************************************************************************************
@@ -426,82 +426,76 @@ instance:
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 const lpadc_config_t ADC1_config = {
-  .enableInDozeMode = true,
-  .conversionAverageMode = kLPADC_ConversionAverage2,
-  .enableAnalogPreliminary = false,
-  .powerUpDelay = 0x80UL,
-  .referenceVoltageSource = kLPADC_ReferenceVoltageAlt2,
-  .triggerPriorityPolicy = kLPADC_ConvPreemptImmediatelyNotAutoResumed,
-  .enableConvPause = false,
-  .convPauseDelay = 0UL,
-  .FIFO0Watermark = 0UL,
-  .FIFO1Watermark = 0UL
+    .enableInDozeMode = true,
+    .conversionAverageMode = kLPADC_ConversionAverage2,
+    .enableAnalogPreliminary = false,
+    .powerUpDelay = 0x80UL,
+    .referenceVoltageSource = kLPADC_ReferenceVoltageAlt2,
+    .triggerPriorityPolicy = kLPADC_ConvPreemptImmediatelyNotAutoResumed,
+    .enableConvPause = false,
+    .convPauseDelay = 0UL,
+    .FIFO0Watermark = 0UL,
+    .FIFO1Watermark = 0UL
 };
 lpadc_conv_command_config_t ADC1_commandsConfig[2] = {
-  {
-    .sampleScaleMode = kLPADC_SampleFullScale,
-    .channelBScaleMode = kLPADC_SampleFullScale,
-    .sampleChannelMode = kLPADC_SampleChannelSingleEndSideA,
-    .channelNumber = 4U,
-    .channelBNumber = 0U,
-    .chainedNextCommandNumber = 2,
-    .enableChannelB = false,
-    .enableAutoChannelIncrement = true,
-    .loopCount = 3UL,
-    .hardwareAverageMode = kLPADC_HardwareAverageCount1,
-    .sampleTimeMode = kLPADC_SampleTimeADCK3,
-    .hardwareCompareMode = kLPADC_HardwareCompareDisabled,
-    .hardwareCompareValueHigh = 0UL,
-    .hardwareCompareValueLow = 0UL,
-    .conversionResolutionMode = kLPADC_ConversionResolutionHigh,
-    .enableWaitTrigger = true
-  },
-  {
-    .sampleScaleMode = kLPADC_SampleFullScale,
-    .channelBScaleMode = kLPADC_SampleFullScale,
-    .sampleChannelMode = kLPADC_SampleChannelSingleEndSideB,
-    .channelNumber = 5U,
-    .channelBNumber = 0U,
-    .chainedNextCommandNumber = 0,
-    .enableChannelB = false,
-    .enableAutoChannelIncrement = true,
-    .loopCount = 2UL,
-    .hardwareAverageMode = kLPADC_HardwareAverageCount1,
-    .sampleTimeMode = kLPADC_SampleTimeADCK3,
-    .hardwareCompareMode = kLPADC_HardwareCompareDisabled,
-    .hardwareCompareValueHigh = 0UL,
-    .hardwareCompareValueLow = 0UL,
-    .conversionResolutionMode = kLPADC_ConversionResolutionHigh,
-    .enableWaitTrigger = false
-  }
+    { .sampleScaleMode = kLPADC_SampleFullScale,
+      .channelBScaleMode = kLPADC_SampleFullScale,
+      .sampleChannelMode = kLPADC_SampleChannelSingleEndSideA,
+      .channelNumber = 4U,
+      .channelBNumber = 0U,
+      .chainedNextCommandNumber = 2,
+      .enableChannelB = false,
+      .enableAutoChannelIncrement = true,
+      .loopCount = 3UL,
+      .hardwareAverageMode = kLPADC_HardwareAverageCount1,
+      .sampleTimeMode = kLPADC_SampleTimeADCK3,
+      .hardwareCompareMode = kLPADC_HardwareCompareDisabled,
+      .hardwareCompareValueHigh = 0UL,
+      .hardwareCompareValueLow = 0UL,
+      .conversionResolutionMode = kLPADC_ConversionResolutionHigh,
+      .enableWaitTrigger = true },
+    { .sampleScaleMode = kLPADC_SampleFullScale,
+      .channelBScaleMode = kLPADC_SampleFullScale,
+      .sampleChannelMode = kLPADC_SampleChannelSingleEndSideB,
+      .channelNumber = 5U,
+      .channelBNumber = 0U,
+      .chainedNextCommandNumber = 0,
+      .enableChannelB = false,
+      .enableAutoChannelIncrement = true,
+      .loopCount = 2UL,
+      .hardwareAverageMode = kLPADC_HardwareAverageCount1,
+      .sampleTimeMode = kLPADC_SampleTimeADCK3,
+      .hardwareCompareMode = kLPADC_HardwareCompareDisabled,
+      .hardwareCompareValueHigh = 0UL,
+      .hardwareCompareValueLow = 0UL,
+      .conversionResolutionMode = kLPADC_ConversionResolutionHigh,
+      .enableWaitTrigger = false }
 };
 lpadc_conv_trigger_config_t ADC1_triggersConfig[1] = {
-  {
-    .targetCommandId = 1,
-    .delayPower = 0UL,
-    .channelAFIFOSelect = 0,
-    .channelBFIFOSelect = 0,
-    .priority = 1,
-    .enableHardwareTrigger = false
-  }
+    { .targetCommandId = 1,
+      .delayPower = 0UL,
+      .channelAFIFOSelect = 0,
+      .channelBFIFOSelect = 0,
+      .priority = 1,
+      .enableHardwareTrigger = false }
 };
 
 static void ADC1_init(void)
 {
   /* Initialize LPADC converter */
-  LPADC_Init(ADC1_PERIPHERAL, &ADC1_config);
+    LPADC_Init(ADC1_PERIPHERAL, &ADC1_config);
   /* Perform offset calibration */
-  LPADC_DoOffsetCalibration(ADC1_PERIPHERAL);
+    LPADC_DoOffsetCalibration(ADC1_PERIPHERAL);
   /* Perform auto calibration */
-  LPADC_DoAutoCalibration(ADC1_PERIPHERAL);
+    LPADC_DoAutoCalibration(ADC1_PERIPHERAL);
   /* Enable DMA request on FIFO 0 watermark event */
-  LPADC_EnableFIFO0WatermarkDMA(ADC1_PERIPHERAL, true);
+    LPADC_EnableFIFO0WatermarkDMA(ADC1_PERIPHERAL, true);
   /* Configure conversion command 1. */
-  LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_GRPA, &ADC1_commandsConfig[0]);
+    LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_GRPA, &ADC1_commandsConfig[0]);
   /* Configure conversion command 2. */
-  LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_GRPB, &ADC1_commandsConfig[1]);
+    LPADC_SetConvCommandConfig(ADC1_PERIPHERAL, ADC1_GRPB, &ADC1_commandsConfig[1]);
   /* Configure trigger 0. */
-  LPADC_SetConvTriggerConfig(ADC1_PERIPHERAL, ADC1_TRIG, &ADC1_triggersConfig[0]);
+    LPADC_SetConvTriggerConfig(ADC1_PERIPHERAL, ADC1_TRIG, &ADC1_triggersConfig[0]);
 }
 #endif
 /***********************************************************************************************************************
@@ -519,8 +513,7 @@ void BOARD_InitPeripherals(void)
     DMA4_init();
 #endif
 #endif
-  LPUART1_init();
-
+    LPUART1_init();
 }
 
 /***********************************************************************************************************************
@@ -528,6 +521,6 @@ void BOARD_InitPeripherals(void)
  **********************************************************************************************************************/
 void BOARD_InitBootPeripherals(void)
 {
-  BOARD_InitPeripherals();
+    BOARD_InitPeripherals();
 }
 

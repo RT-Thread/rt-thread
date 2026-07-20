@@ -80,7 +80,7 @@ extern lpadc_conv_trigger_config_t ADC1_triggersConfig[1];
  * Callback functions
  **********************************************************************************************************************/
 /* eDMA callback function for the 0 channel.*/
-extern void DMA_Callback(edma_handle_t*, void*, bool, uint32_t);
+extern void DMA_Callback(edma_handle_t *, void *, bool, uint32_t);
 #endif
 /***********************************************************************************************************************
  * Initialization functions
