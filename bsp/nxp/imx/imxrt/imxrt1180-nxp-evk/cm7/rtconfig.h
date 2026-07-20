@@ -425,16 +425,13 @@
 
 /* On-chip Peripheral Drivers */
 
-#define BSP_USING_DMA
+#define BSP_USING_GPIO
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART1
-#define BSP_USING_FLEXSPI
-#define BSP_USING_FLEXSPI1
 /* end of On-chip Peripheral Drivers */
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_OSPI_FLASH
 /* end of Onboard Peripheral Drivers */
 
 /* Board extended module Drivers */

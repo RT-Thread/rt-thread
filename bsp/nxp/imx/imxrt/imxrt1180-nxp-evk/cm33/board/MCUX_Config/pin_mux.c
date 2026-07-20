@@ -79,6 +79,7 @@ void BOARD_InitPins(void) {
   IOMUXC_SetPinConfig(
       IOMUXC_GPIO_AD_32_LPUART10_TX,
       0x02U);
+  IOMUXC_SetPinConfig(
       IOMUXC_GPIO_AD_33_LPUART10_RX,
       0x02U);
 
