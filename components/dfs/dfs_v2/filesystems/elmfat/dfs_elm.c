@@ -302,7 +302,7 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
              * just fill the FatFS[index] in elm fatfs to make mkfs work.
              */
             logic_nbr[0] = '0' + index;
-            f_mount(fat, logic_nbr, (BYTE)index);
+            f_mount(fat, logic_nbr, 0);  /* opt=0: delayed mount, just register FATFS object */
         }
     }
     else
@@ -322,7 +322,7 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
-        f_mount(RT_NULL, logic_nbr, (BYTE)index);
+        f_mount(RT_NULL, logic_nbr, 0);
         rt_free(fat);
         disk[index] = RT_NULL;
         /* close device */
