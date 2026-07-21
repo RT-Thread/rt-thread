@@ -9,7 +9,7 @@ menu "General Drivers Configuration"
         bool "Enable UART0"
         default y
         if BSP_USING_UART0
-            choice
+            choice UART0_TX_GPIO_SEL
                 prompt "UART0 TX PIN"
                 default UART0_TX_USING_GPIO16 if BSP_USING_BL60X
                 default UART0_TX_USING_GPIO21 if BSP_USING_BL61X
@@ -123,7 +123,7 @@ menu "General Drivers Configuration"
                     bool "GPIO_45"
             endchoice
 
-            choice
+            choice UART0_RX_GPIO_SEL
                 prompt "UART0 RX PIN"
                 default UART0_RX_USING_GPIO7 if BSP_USING_BL60X
                 default UART0_RX_USING_GPIO22 if BSP_USING_BL61X
@@ -241,7 +241,7 @@ menu "General Drivers Configuration"
         bool "Enable UART1"
         default n
         if BSP_USING_UART1
-            choice
+            choice UART1_TX_GPIO_SEL
                 prompt "UART1 TX PIN"
                 default UART1_TX_USING_GPIO4 if BSP_USING_BL60X
                 default UART1_TX_USING_GPIO16 if BSP_USING_BL61X
@@ -353,7 +353,7 @@ menu "General Drivers Configuration"
                     bool "GPIO_45"
             endchoice
 
-            choice
+            choice UART1_RX_GPIO_SEL
                 prompt "UART1 RX PIN"
                 default UART1_RX_USING_GPIO3 if BSP_USING_BL60X
                 default UART1_RX_USING_GPIO17 if BSP_USING_BL61X
@@ -471,7 +471,7 @@ menu "General Drivers Configuration"
             bool "Enable UART2"
             default n
             if BSP_USING_UART2
-                choice
+                choice UART2_TX_GPIO_SEL
                     prompt "UART2 TX PIN"
                     default UART2_TX_USING_GPIO20
 
@@ -560,7 +560,7 @@ menu "General Drivers Configuration"
                     config UART2_TX_USING_GPIO45
                         bool "GPIO_45"
                 endchoice
-                choice
+                choice UART2_RX_GPIO_SEL
                     prompt "UART2 RX PIN"
                     default UART2_RX_USING_GPIO21
 
@@ -817,7 +817,7 @@ menu "General Drivers Configuration"
                     bool "Enable I2C0 (hardware)"
                     default n
                     if BSP_USING_I2C0
-                        choice
+                        choice I2C0_SCL_SEL
                             prompt "I2C0 SCL"
                             default I2C0_SCL_USING_GPIO14
 
@@ -880,7 +880,7 @@ menu "General Drivers Configuration"
                                 bool "GPIO_44"
                         endchoice
 
-                        choice
+                        choice I2C0_SDA_GPIO_SEL
                             prompt "I2C0 SDA"
                             default I2C0_SDA_USING_GPIO15
 
@@ -955,7 +955,7 @@ menu "General Drivers Configuration"
                     bool "Enable I2C1 (hardware)"
                     default n
                     if BSP_USING_I2C1
-                        choice
+                        choice I2C1_SCL_SEL
                             prompt "I2C1 SCL"
                             default I2C1_SCL_USING_GPIO0
 
@@ -1012,7 +1012,7 @@ menu "General Drivers Configuration"
                                 bool "GPIO_44"
                         endchoice
 
-                        choice
+                        choice I2C1_SDA_GPIO_SEL
                             prompt "I2C1 SDA"
                             default I2C1_SDA_USING_GPIO1
 
@@ -1104,7 +1104,7 @@ menu "General Drivers Configuration"
         default n
 
         if BSP_USING_SPI
-            choice
+            choice SPI_SCK_GPIO_SEL
                 prompt "SPI SCK PIN"
                 default SPI_SCK_USING_GPIO3 if BSP_USING_BL60X
                 default SPI_SCK_USING_GPIO13 if BSP_USING_BL61X
@@ -1173,7 +1173,7 @@ menu "General Drivers Configuration"
                     bool "GPIO_43"
             endchoice
 
-            choice
+            choice SPI_MISO_GPIO_SEL
                 prompt "SPI MISO PIN"
                 default SPI_MISO_USING_GPIO0 if BSP_USING_BL60X
                 default SPI_MISO_USING_GPIO10 if BSP_USING_BL61X
@@ -1257,7 +1257,7 @@ menu "General Drivers Configuration"
                     bool "GPIO_42"
             endchoice
 
-            choice
+            choice SPI_MOSI_GPIO_SEL
                 prompt "SPI MOSI PIN"
                 default SPI_MOSI_USING_GPIO1 if BSP_USING_BL60X
                 default SPI_MOSI_USING_GPIO11 if BSP_USING_BL61X

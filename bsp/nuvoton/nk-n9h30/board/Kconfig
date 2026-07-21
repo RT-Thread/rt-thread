@@ -69,7 +69,7 @@ menu "Hardware Drivers Config"
 
         if BOARD_USING_LCM
 
-            choice
+            choice BOARD_LCM_FW0_SEL
                 prompt "Select LCD panel devices.(Over VPOST)"
                     default BOARD_USING_LCM_FW070TFT_WVGA
 
@@ -95,7 +95,7 @@ menu "Hardware Drivers Config"
                         Choose this option if you use 7" 1024x600x32b LCD panel.
             endchoice
 
-            choice
+            choice TOUCH_DEVICES_SEL
                 prompt "Select Touch devices."
                     default BOARD_USING_ADCTOUCH
 

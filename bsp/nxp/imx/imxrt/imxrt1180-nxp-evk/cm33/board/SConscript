@@ -19,6 +19,7 @@ else:
     board.c
     MCUX_Config/clock_config.c
     MCUX_Config/pin_mux.c
+    MCUX_Config/peripherals.c
     """)
 
 if GetDepend(['BSP_USING_QSPI_FLASH_FS']):

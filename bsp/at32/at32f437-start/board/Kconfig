@@ -72,7 +72,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_LWIP
         if BSP_USING_EMAC
-            choice
+            choice PHY_DM9162_SEL
                 prompt "Select phy"
                 default PHY_USING_DM9162
 
@@ -110,7 +110,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
+            choice BSP_RTC_L_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_LEXT
 

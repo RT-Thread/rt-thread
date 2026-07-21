@@ -172,7 +172,7 @@ menu "On-chip Peripheral Drivers"
         default n
 
         if BSP_USING_RTC
-            choice
+            choice CLK_SRC_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_LRC
 

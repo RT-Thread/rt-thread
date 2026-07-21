@@ -87,7 +87,7 @@ config SOC_SERIES_M032
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR0
-            choice
+            choice BSP_TIMER0_SEL
                 prompt "Select TIMER0 function mode"
 
                 config BSP_USING_TIMER0
@@ -112,7 +112,7 @@ config SOC_SERIES_M032
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR1
-            choice
+            choice BSP_TIMER1_SEL
                 prompt "Select TIMER1 function mode"
 
                 config BSP_USING_TIMER1
@@ -136,7 +136,7 @@ config SOC_SERIES_M032
             depends on BSP_USING_TMR
 
          if BSP_USING_TMR2
-            choice
+            choice BSP_TIMER2_SEL
                 prompt "Select TIMER2 function mode"
 
                 config BSP_USING_TIMER2
@@ -160,7 +160,7 @@ config SOC_SERIES_M032
             depends on BSP_USING_TMR && !BSP_USING_CLK
 
         if BSP_USING_TMR3
-            choice
+            choice BSP_TIMER3_SEL
                 prompt "Select TIMER3 function mode"
 
                 config BSP_USING_TIMER3
@@ -307,7 +307,7 @@ config SOC_SERIES_M032
             bool "Enable USCI0"
 
         if BSP_USING_USCI0
-            choice
+            choice BSP_USCI0_FUNC_SEL
                 prompt "Select USCI0 function mode"
 
                 config BSP_USING_UUART0
@@ -350,7 +350,7 @@ config SOC_SERIES_M032
             bool "Enable USCI1"
 
             if BSP_USING_USCI1
-                choice
+                choice BSP_USCI1_FUNC_SEL
                     prompt "Select USCI1 function mode"
 
                     config BSP_USING_UUART1
@@ -400,7 +400,7 @@ config SOC_SERIES_M032
             config BSP_USING_BPWM_CAPTURE
                 bool
 
-            choice
+            choice BSP_BPWM0_SEL
                 prompt "Select BPWM0 function mode"
                 config BSP_USING_BPWM0
                     select RT_USING_PWM
@@ -423,7 +423,7 @@ config SOC_SERIES_M032
                     default 0
             endif
 
-            choice
+            choice BSP_BPWM1_SEL
                 prompt "Select BPWM1 function mode"
                 config BSP_USING_BPWM1
                     select RT_USING_PWM
@@ -456,7 +456,7 @@ config SOC_SERIES_M032
             config BSP_USING_PWM_CAPTURE
                 bool
 
-            choice
+            choice BSP_PWM0_SEL
                 prompt "Select PWM0 function mode"
                 config BSP_USING_PWM0
                     select RT_USING_PWM
@@ -479,7 +479,7 @@ config SOC_SERIES_M032
                     default 0
             endif
 
-            choice
+            choice BSP_PWM1_SEL
                 prompt "Select PWM1 function mode"
                 config BSP_USING_PWM1
                     select RT_USING_PWM
@@ -517,7 +517,7 @@ config SOC_SERIES_M032
             bool
             default n
 
-            choice
+            choice BSP_SPI_SEL
                 prompt "Select SPI0 function mode"
                 config BSP_USING_SPI0_NONE
                 bool "NONE"

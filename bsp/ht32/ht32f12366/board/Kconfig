@@ -8,7 +8,7 @@ menu "Chip Configuration"
         select RT_USING_COMPONENTS_INIT
         select RT_USING_USER_MAIN
         default y
-        choice
+        choice CORTEX_M_SEL
             prompt "Select the kernel"
             default CORTEX_M0
             config CORTEX_M0
@@ -17,7 +17,7 @@ menu "Chip Configuration"
                 bool "CORTEX_M3" 
         endchoice
 
-    choice
+    choice SOC_HT32F_SEL
         prompt "Select the chip you are using"
         depends on CORTEX_M0
         default HT32F52352
@@ -85,7 +85,7 @@ menu "Chip Configuration"
                 bool "HT32F67741"
     endchoice
     
-    choice
+    choice SOC_HT32F1_SEL
         prompt "Select the chip you are using"
         depends on CORTEX_M3
         default HT32F52352
@@ -299,7 +299,7 @@ menu "On-chip Peripheral Drivers"
         default "can"
         if BSP_USING_CAN
             config CAN_DEFAULT_BASE_CONFIGURATION  
-                choice
+                choice BSP_CAN_BAUD_SEL
                     prompt "Default CAN baud rate"
                     default BSP_USING_CAN500kBaud
                     config BSP_USING_CAN1MBaud
@@ -321,7 +321,7 @@ menu "On-chip Peripheral Drivers"
                     config BSP_USING_CAN10kBaud
                         bool "CAN10kBaud"
                 endchoice
-                choice
+                choice BSP_RT_CAN_MODE_SEL
                     prompt "Default CAN mode"
                     default BSP_USING_RT_CAN_MODE_NORMAL
                     config BSP_USING_RT_CAN_MODE_NORMAL
@@ -354,7 +354,7 @@ menu "On-chip Peripheral Drivers"
                 default 3 if BSP_USING_RT_CAN_MODE_LOOPBACKANLISTEN
             
             config CAN_DEFAULT_FILTER_TABLE_CONFIGURATION
-                choice
+                choice BSP_CAN_MODE_STD_SEL
                     prompt "Default filter id mode"
                     default BSP_USING_CAN_STD_ID
                     config BSP_USING_CAN_STD_ID
@@ -363,7 +363,7 @@ menu "On-chip Peripheral Drivers"
                         bool "CAN_EXT_ID"
                 endchoice
 
-                choice
+                choice BSP_CAN_MODE_DATA_SEL
                     prompt "Default filter frame mode"
                     default BSP_USING_CAN_DATA_FRAME
                     config BSP_USING_CAN_DATA_FRAME

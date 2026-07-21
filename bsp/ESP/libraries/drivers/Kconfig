@@ -14,7 +14,7 @@ config SOC_ESP32_C3
 
 menu "Hardware Drivers Config"
 
-choice
+choice BSP_BOARD_SEL
     prompt "Select BSP board "
     default BSP_BOARD_LUATOS_ESP32C3
 

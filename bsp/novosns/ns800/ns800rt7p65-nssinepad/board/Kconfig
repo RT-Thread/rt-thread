@@ -201,7 +201,7 @@ menu "On-chip Peripheral Drivers"
             Enable the board-level RTC framework for an external RTC chip.
 
         if BSP_USING_RTC
-            choice
+            choice EXTERNAL_RTC_BACKEND_SEL
                 prompt "External RTC backend"
                 default BSP_RTC_USING_DS1307
 

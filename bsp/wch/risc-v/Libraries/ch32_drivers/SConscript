@@ -25,7 +25,7 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
         src += ['drv_i2c.c']
 
     if GetDepend('BSP_USING_SPI'):
-        src += ['drv_soft_spi.c','drv_spi.c']
+        src += ['drv_spi.c']
 
     if GetDepend('BSP_USING_RTC'):
         src += ['drv_rtc.c']

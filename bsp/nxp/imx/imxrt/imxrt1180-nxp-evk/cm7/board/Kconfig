@@ -144,7 +144,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable I2C3"
                     default n
 
-                choice
+                choice I2C2_BAUD_SEL
                     prompt "Select I2C2 badurate"
                     default HW_I2C2_BADURATE_100kHZ
 
@@ -155,7 +155,7 @@ menu "On-chip Peripheral Drivers"
                         bool "Badurate 400kHZ"
                 endchoice
 
-                choice
+                choice I2C3_BAUD_SEL
                     prompt "Select I2C3 badurate"
                     default HW_I2C3_BADURATE_100kHZ
 
@@ -296,7 +296,7 @@ menu "Onboard Peripheral Drivers"
         default n
 
         if BSP_USING_VGLITE
-            choice
+            choice DISP_RK055_SEL
                 prompt "Select display panel"
                 default DISPLAY_USING_RK055AHD091
 
@@ -310,7 +310,7 @@ menu "Onboard Peripheral Drivers"
                     bool "RK055MHD091A0-CTG (RK055HDMIPI4MA0 720 * 1280)"
             endchoice
 
-            choice
+            choice DISP_CTRL_SEL
                 prompt "Select display controller"
                 default BSP_USING_LCDIFV2
 

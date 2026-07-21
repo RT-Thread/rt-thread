@@ -1269,6 +1269,10 @@ void rt_hw_board_init()
     rt_components_board_init();
 #endif
 
+#ifdef RT_USING_HEAP
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
+
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
@@ -1278,8 +1282,6 @@ void rt_hw_board_init()
     rt_kprintf("Heap: 0x%08x - 0x%08x (Size: %d bytes)\n",
                HEAP_BEGIN, HEAP_END,
                (uint32_t)HEAP_END - (uint32_t)HEAP_BEGIN);
-
-    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
 }

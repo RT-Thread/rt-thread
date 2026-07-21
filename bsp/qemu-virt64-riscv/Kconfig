@@ -32,7 +32,7 @@ config ENABLE_VECTOR
     default n
 
 if ENABLE_VECTOR
-    choice
+    choice ARCH_VECTOR_VLEN_SEL
     prompt "Vector Registers Length in Bits"
     default ARCH_VECTOR_VLEN_128
 

@@ -253,10 +253,10 @@ int rt_soft_spi_init(void)
     {
         rt_memcpy(&spi_obj[i].ops, &soft_spi_ops, sizeof(struct rt_spi_bit_ops));
         spi_obj[i].ops.data = (void *)&soft_spi_config[i];
-        spi_obj[i].spi.ops = &soft_spi_ops;
+        spi_obj[i].ops.delay_us = soft_spi_config[i].timing_delay;
+        spi_obj[i].spi.ops = &spi_obj[i].ops;
         spi_obj[i].cfg = (void *)&soft_spi_config[i];
         spi_soft_pin_init(&spi_obj[i]);
-        spi_obj[i].spi.ops->delay_us = soft_spi_config[i].timing_delay;
         result = rt_spi_bit_add_bus(&spi_obj[i].spi, soft_spi_config[i].bus_name, &spi_obj[i].ops);
         RT_ASSERT(result == RT_EOK);
     }

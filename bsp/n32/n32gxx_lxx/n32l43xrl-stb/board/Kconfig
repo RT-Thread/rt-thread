@@ -88,7 +88,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
+            choice CLK_SRC_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 
@@ -199,7 +199,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable TIM2 channel 1"
                     default n
                     if BSP_USING_TIM2_PWM_CH1
-                        choice
+                        choice TIM2_PWM_CH1_PA_SEL
                         prompt "Select Pin"
                         default TIM2_PWM_CH1_PA0
                         config TIM2_PWM_CH1_PA0
@@ -212,7 +212,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable TIM2 channel 2"
                     default n
                     if BSP_USING_TIM2_PWM_CH2
-                        choice
+                        choice TIM2_PWM_CH2_P_SEL
                         prompt "Select Pin"
                         default TIM2_PWM_CH2_PA1
                         config TIM2_PWM_CH2_PA1
@@ -225,7 +225,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable TIM2 channel 3"
                     default n
                     if BSP_USING_TIM2_PWM_CH3
-                        choice
+                        choice TIM2_PWM_CH3_P_SEL
                         prompt "Select Pin"
                         default TIM2_PWM_CH3_PA2
                         config TIM2_PWM_CH3_PA2
@@ -247,7 +247,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable TIM3 channel 1"
                     default n
                     if BSP_USING_TIM3_PWM_CH1
-                        choice
+                        choice TIM3_PWM_CH1_P_SEL
                         prompt "Select Pin"
                         default TIM3_PWM_CH1_PA6
                         config TIM3_PWM_CH1_PA6
@@ -262,7 +262,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable TIM3 channel 2"
                     default n
                     if BSP_USING_TIM3_PWM_CH2
-                        choice
+                        choice TIM3_PWM_CH2_P_SEL
                         prompt "Select Pin"
                         default TIM3_PWM_CH2_PA7
                         config TIM3_PWM_CH2_PA7
@@ -277,7 +277,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable TIM3 channel 3"
                     default n
                     if BSP_USING_TIM3_PWM_CH3
-                        choice
+                        choice TIM3_PWM_CH3_P_SEL
                         prompt "Select Pin"
                         default TIM3_PWM_CH3_PB0
                         config TIM3_PWM_CH3_PB0
@@ -290,7 +290,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable TIM3 channel 4 AF2 PB11"
                     default n
                     if BSP_USING_TIM3_PWM_CH4
-                        choice
+                        choice TIM3_PWM_CH4_P_SEL
                         prompt "Select Pin"
                         default TIM3_PWM_CH4_PB1
                         config TIM3_PWM_CH4_PB1

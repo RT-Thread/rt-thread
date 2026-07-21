@@ -26,12 +26,13 @@ processor_version: 0.15.9
 #include "pin_mux.h"
 
 /* FUNCTION ************************************************************************************************************
- * 
+ *
  * Function Name : BOARD_InitBootPins
  * Description   : Calls initialization functions.
- * 
+ *
  * END ****************************************************************************************************************/
-void BOARD_InitBootPins(void) {
+void BOARD_InitBootPins(void)
+{
     BOARD_InitPins();
 }
 
@@ -53,96 +54,93 @@ BOARD_InitPins:
  * Description   : Configures pin routing and optionally pin electrical features.
  *
  * END ****************************************************************************************************************/
-void BOARD_InitPins(void) {
-  CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
-  CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
+void BOARD_InitPins(void)
+{
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
 
-//   /* GPIO configuration on GPIO_AD_27 (pin M16) */
-//   rgpio_pin_config_t gpio4_pinM16_config = {
-//       .pinDirection = kRGPIO_DigitalOutput,
-//       .outputLogic = 1U,
-//   };
-//   /* Initialize GPIO functionality on GPIO_AD_27 (pin M16) */
-//   RGPIO_PinInit(RGPIO4, 27U, &gpio4_pinM16_config);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_08_LPUART1_TX,
+        0U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_09_LPUART1_RX,
+        0U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_08_LPUART1_TX,
+        0x02U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_09_LPUART1_RX,
+        0x02U);
 
-//   IOMUXC_SetPinMux(
-//       IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
-//       0U);      
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 is configured as LPUART1_TX */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 is configured as LPUART1_RX */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                 Drive Strength Field: high driver
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 PAD functional properties : */
-      0x02U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                 Drive Strength Field: high driver
-                                                 Pull / Keep Select Field: Pull Disable, Highz
-                                                 Pull Up / Down Config. Field: Weak pull down
-                                                 Open Drain Field: Disabled */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_32_LPUART10_TX,
+        0U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_33_LPUART10_RX,
+        0U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_32_LPUART10_TX,
+        0x02U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_33_LPUART10_RX,
+        0x02U);
 
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_16_LPI2C2_SCL,          /* GPIO_AON_16 is configured as LPI2C2_SCL */
-      1U);                                    /* Software Input On Field: Force input path of pad GPIO_AON_16 */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AON_15_LPI2C2_SDA,          /* GPIO_AON_15 is configured as LPI2C2_SDA */
-      1U);                                    /* Software Input On Field: Force input path of pad GPIO_AON_15 */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_16_LPI2C2_SCL,          /* GPIO_AON_16 PAD functional properties : */
-      0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Pull Enable Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull up
-                                                 Open Drain Field: Enabled */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AON_15_LPI2C2_SDA,          /* GPIO_AON_15 PAD functional properties : */
-      0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Pull Enable Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull up
-                                                 Open Drain Field: Enabled */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_19_LPUART12_TX,
+        0U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_20_LPUART12_RX,
+        0U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_19_LPUART12_TX,
+        0x02U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_20_LPUART12_RX,
+        0x02U);
 
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_18_LPI2C3_SCL,           /* GPIO_AD_18 is configured as LPI2C3_SCL */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_19_LPI2C3_SDA,           /* GPIO_AD_19 is configured as LPI2C3_SDA */
-      0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AD_18_LPI2C3_SCL,           /* GPIO_AD_18 PAD functional properties : */
-      0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Pull Enable Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull up
-                                                 Open Drain Field: Enabled */
-  IOMUXC_SetPinConfig(
-      IOMUXC_GPIO_AD_19_LPI2C3_SDA,           /* GPIO_AD_19 PAD functional properties : */
-      0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
-                                                 Pull Enable Field: Pull Enable
-                                                 Pull Up / Down Config. Field: Weak pull up
-                                                 Open Drain Field: Enabled */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_16_LPI2C2_SCL,
+        1U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_15_LPI2C2_SDA,
+        1U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_16_LPI2C2_SCL,
+        0x1DU);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_15_LPI2C2_SDA,
+        0x1DU);
+
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_18_LPI2C3_SCL,
+        0U);
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_19_LPI2C3_SDA,
+        0U);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_18_LPI2C3_SCL,
+        0x1DU);
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_19_LPI2C3_SDA,
+        0x1DU);
 }
 
-void BOARD_InitLeds(void) {
-  CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
-  CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
+void BOARD_InitLeds(void)
+{
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
 
   /* GPIO configuration on GPIO_AD_27 (pin M16) */
-  rgpio_pin_config_t gpio4_pinM16_config = {
-      .pinDirection = kRGPIO_DigitalOutput,
-      .outputLogic = 1U,
-  };
+    rgpio_pin_config_t gpio4_pinM16_config = {
+        .pinDirection = kRGPIO_DigitalOutput,
+        .outputLogic = 1U,
+    };
   /* Initialize GPIO functionality on GPIO_AD_27 (pin M16) */
-  RGPIO_PinInit(RGPIO4, 27U, &gpio4_pinM16_config);
+    RGPIO_PinInit(RGPIO4, 27U, &gpio4_pinM16_config);
 
-  IOMUXC_SetPinMux(
-      IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
-      0U);      
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_27_GPIO4_IO27,           /* GPIO_AD_27 is configured as GPIO4_IO27 */
+        0U);
 }
 
 

@@ -31,7 +31,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable USART1"
                 default y
                 if BSP_USING_USART1
-                    choice
+                    choice BSP_USART1_AFIO_MODE_P_SEL
                         prompt "Set usart1 afio mode"
                         default BSP_USART1_AFIO_MODE_PA9_PA10
 
@@ -77,7 +77,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable USART2"
                 default n
                 if BSP_USING_USART2
-                    choice
+                    choice BSP_USART2_AFIO_MODE_P_SEL
                         prompt "Set usart2 afio mode"
                         default BSP_USART2_AFIO_MODE_PA2_PA3
 
@@ -131,7 +131,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable USART3"
                 default n
                 if BSP_USING_USART3
-                    choice
+                    choice BSP_USART3_AFIO_MODE_P_SEL
                         prompt "Set usart3 afio mode"
                         default BSP_USART3_AFIO_MODE_PB10_PB11
 
@@ -181,7 +181,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART4"
                 default n
                 if BSP_USING_UART4
-                    choice
+                    choice BSP_UART4_AFIO_MODE_P_SEL
                         prompt "Set uart4 afio mode"
                         default BSP_UART4_AFIO_MODE_PC10_PC11
 
@@ -235,7 +235,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART5"
                 default n
                 if BSP_USING_UART5
-                    choice
+                    choice BSP_UART5_AFIO_MODE_P_SEL
                         prompt "Set uart5 afio mode"
                         default BSP_UART5_AFIO_MODE_PC12_PD2
 
@@ -289,7 +289,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART6"
                 default n
                 if BSP_USING_UART6
-                    choice
+                    choice BSP_UART6_AFIO_MODE_P_SEL
                         prompt "Set uart6 afio mode"
                         default BSP_UART6_AFIO_MODE_PE2_PE3
 
@@ -339,7 +339,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART7"
                 default n
                 if BSP_USING_UART7
-                    choice
+                    choice BSP_UART_SEL
                         prompt "Set uart7 afio mode"
                         default BSP_UART7_AFIO_MODE_PC4_PC5
 
@@ -429,7 +429,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
+            choice CLK_SRC_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 
@@ -535,7 +535,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable TIM1 output PWM"
             default n
             if BSP_USING_TIM1_PWM
-                choice
+                choice TIM1_REMAP_SEL
                     prompt "Select Pin"
                     default TIM1_REMAP_0
                     config TIM1_REMAP_0
@@ -562,7 +562,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable TIM2 output PWM"
             default n
             if BSP_USING_TIM2_PWM
-                 choice
+                 choice TIM2_REMAP_SEL
                     prompt "Select Pin"
                     default TIM2_REMAP_0
                     config TIM2_REMAP_0
@@ -593,7 +593,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable TIM3 output PWM"
             default n
             if BSP_USING_TIM3_PWM
-                 choice
+                 choice TIM3_REMAP_SEL
                     prompt "Select Pin"
                     default TIM3_REMAP_0
                     config TIM3_REMAP_0

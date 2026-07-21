@@ -197,7 +197,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C0 BUS"
                 default n
             if BSP_USING_I2C0
-                choice
+                choice BSP_I2C0_CLK_SEL
                     prompt "I2C0 CLK frequency"
                     default BSP_I2C0_CLK_100
 
@@ -213,7 +213,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C1 BUS"
                 default n
             if BSP_USING_I2C1
-                choice
+                choice BSP_I2C1_CLK_SEL
                     prompt "I2C1 CLK frequency"
                     default BSP_I2C1_CLK_100
 
@@ -229,7 +229,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C2 BUS"
                 default n
             if BSP_USING_I2C2
-                choice
+                choice BSP_I2C2_CLK_SEL
                     prompt "I2C2 CLK frequency"
                     default BSP_I2C3_CLK_100
 
@@ -245,7 +245,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable I2C3 BUS"
                 default n
             if BSP_USING_I2C3
-                choice
+                choice BSP_I2C3_CLK_SEL
                     prompt "I2C3 CLK frequency"
                     default BSP_I2C4_CLK_100
 
@@ -339,7 +339,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_ONCHIP_RTC
-            choice
+            choice BSP_RTC_LS_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 

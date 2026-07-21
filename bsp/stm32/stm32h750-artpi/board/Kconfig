@@ -413,7 +413,7 @@ menu "On-chip Peripheral Drivers"
                 default "PA.3"
         endif
         if BSP_USING_ETH_H750
-            choice
+            choice ETH_PHY_SEL
                 prompt "Choose ETH PHY"
                 default PHY_USING_LAN8720A
                         config PHY_USING_LAN8720A

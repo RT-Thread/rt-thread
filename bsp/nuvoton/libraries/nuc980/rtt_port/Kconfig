@@ -98,7 +98,7 @@ config SOC_SERIES_NUC980
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR0
-            choice
+            choice BSP_TIMER0_SEL
                 prompt "Select TIMER0 function mode"
 
                 config BSP_USING_TIMER0
@@ -123,7 +123,7 @@ config SOC_SERIES_NUC980
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR1
-            choice
+            choice BSP_TIMER1_SEL
                 prompt "Select TIMER1 function mode"
 
                 config BSP_USING_TIMER1
@@ -147,7 +147,7 @@ config SOC_SERIES_NUC980
             depends on BSP_USING_TMR
 
          if BSP_USING_TMR2
-            choice
+            choice BSP_TIMER2_SEL
                 prompt "Select TIMER2 function mode"
 
                 config BSP_USING_TIMER2
@@ -171,7 +171,7 @@ config SOC_SERIES_NUC980
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR3
-            choice
+            choice BSP_TIMER3_SEL
                 prompt "Select TIMER3 function mode"
 
                 config BSP_USING_TIMER3
@@ -195,7 +195,7 @@ config SOC_SERIES_NUC980
             depends on BSP_USING_TMR
 
         if BSP_USING_TMR4
-            choice
+            choice BSP_TIMER4_SEL
                 prompt "Select TIMER4 function mode"
 
                 config BSP_USING_TIMER4
@@ -422,7 +422,7 @@ config SOC_SERIES_NUC980
             bool
             default n
 
-            choice
+            choice BSP_SPI0_SEL
                 prompt "Select SPI0 function mode"
                 config BSP_USING_SPI0_NONE
                 bool "NONE"
@@ -442,7 +442,7 @@ config SOC_SERIES_NUC980
                        depends on BSP_USING_SPI0
             endif
 
-            choice
+            choice BSP_SPI1_SEL
                 prompt "Select SPI1 function mode"
                 config BSP_USING_SPI1_NONE
                 bool "NONE"
