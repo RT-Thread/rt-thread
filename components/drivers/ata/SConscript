@@ -13,6 +13,9 @@ src = []
 if GetDepend(['RT_ATA_AHCI']):
     src += ['ahci.c']
 
+    if GetDepend(['RT_ATA_AHCI_DW']):
+        src += ['ahci-dw.c']
+
     if GetDepend(['RT_ATA_AHCI_PCI']):
         src += ['ahci-pci.c']
 
