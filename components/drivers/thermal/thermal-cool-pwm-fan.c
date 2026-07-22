@@ -30,7 +30,7 @@ struct pwm_fan_cool
     struct rt_pwm_configuration pwm_conf;
 
     struct rt_regulator *supply;
-    struct rt_spinlock lock;
+    struct rt_mutex lock;
 };
 
 #define raw_to_pwm_fan_cool(raw) rt_container_of(raw, struct pwm_fan_cool, parent)
@@ -100,12 +100,19 @@ static rt_err_t pwm_fan_cool_set_cur_level(struct rt_thermal_cooling_device *cde
     rt_err_t err = RT_EOK;
     struct pwm_fan_cool *pf_cool = raw_to_pwm_fan_cool(cdev);
 
-    if (pf_cool->pwm_fan_level == level)
+    if (level > pf_cool->pwm_fan_max_level)
     {
-        return RT_EOK;
+        return -RT_EINVAL;
     }
 
-    rt_spin_lock(&pf_cool->lock);
+    rt_mutex_take(&pf_cool->lock, RT_WAITING_FOREVER);
+
+    if (pf_cool->pwm_fan_level == level)
+    {
+        rt_mutex_release(&pf_cool->lock);
+
+        return RT_EOK;
+    }
 
     if ((pwm = pf_cool->pwm_fan_cooling_levels[level]))
     {
@@ -128,14 +135,14 @@ static rt_err_t pwm_fan_cool_set_cur_level(struct rt_thermal_cooling_device *cde
         err = pwm_fan_power_off(pf_cool);
     }
 
-    rt_spin_unlock(&pf_cool->lock);
-
     if (!err)
     {
         pf_cool->pwm_fan_level = level;
     }
 
-    return RT_EOK;
+    rt_mutex_release(&pf_cool->lock);
+
+    return err;
 }
 
 const static struct rt_thermal_cooling_device_ops pwm_fan_cool_ops =
@@ -157,6 +164,8 @@ static void pwm_fan_cool_free(struct pwm_fan_cool *pf_cool)
         rt_free(pf_cool->pwm_fan_cooling_levels);
     }
 
+    rt_mutex_detach(&pf_cool->lock);
+
     rt_free(pf_cool);
 }
 
@@ -173,6 +182,8 @@ static rt_err_t pwm_fan_cool_probe(struct rt_platform_device *pdev)
     {
         return -RT_ENOMEM;
     }
+
+    rt_mutex_init(&pf_cool->lock, rt_dm_dev_get_name(dev), RT_IPC_FLAG_PRIO);
 
     if (rt_ofw_parse_phandle_cells(np, "pwms", "#pwm-cells", 0, &pwm_args))
     {
@@ -231,8 +242,10 @@ static rt_err_t pwm_fan_cool_probe(struct rt_platform_device *pdev)
     pf_cool->pwm_fan_level = MAX_PWM;
     pf_cool->pwm_fan_max_level = levels_nr - 1;
 
-    rt_spin_lock_init(&pf_cool->lock);
-    pwm_fan_cool_set_cur_level(&pf_cool->parent, 0);
+    if ((err = pwm_fan_cool_set_cur_level(&pf_cool->parent, 0)))
+    {
+        goto _fail;
+    }
 
     rt_dm_dev_set_name(&pf_cool->parent.parent, "%s", rt_dm_dev_get_name(&pdev->parent));
     pf_cool->parent.parent.ofw_node = dev->ofw_node;
