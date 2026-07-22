@@ -1,17 +1,23 @@
 from building import *
 
-cwd     = GetCurrentDir()
+group = []
+
+if not GetDepend(['RT_USING_PHY']) and not GetDepend(['RT_USING_PHY_V2']):
+    Return('group')
+
+cwd = GetCurrentDir()
 CPPPATH = [cwd, cwd + '/../include']
-src = Glob('*.c')
-if GetDepend('RT_USING_OFW') == False:
-    SrcRemove(src, ['ofw.c'])
 
-if GetDepend('RT_USING_PHY_V2') == False:
-    SrcRemove(src, ['general.c','mdio.c','ofw.c'])
+src = ['phy.c']
 
-if GetDepend('RT_USING_PHY_V2') == False:
-    if GetDepend('RT_USING_PHY') == False:
-        SrcRemove(src, ['phy.c'])
+if GetDepend(['RT_USING_PHY_V2']):
+    src += ['general.c', 'mdio.c']
+
+    if GetDepend(['RT_USING_OFW']):
+        src += ['ofw.c']
+
+    if GetDepend(['RT_PHY_V2_REALTEK']):
+        src += ['phy-realtek.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 

@@ -379,6 +379,7 @@ static struct rt_phy_device *create_phy_by_mask(struct mii_bus *bus, unsigned in
             return rt_phy_device_create(bus, addr, id, is_c45);
         }
 
+        phy_mask &= ~(1U << addr);
     }
     return RT_NULL;
 }
@@ -512,7 +513,11 @@ rt_err_t rt_phy_device_register(struct rt_phy_device *pdev)
         return err;
     }
     if(!pdev->drv)
+    {
         pdev->drv = &genphy;
+        pdev->advertising = pdev->drv->features;
+        pdev->supported = pdev->drv->features;
+    }
 
     return RT_EOK;
 }
