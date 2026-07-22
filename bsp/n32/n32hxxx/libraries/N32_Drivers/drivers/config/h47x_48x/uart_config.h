@@ -17,15 +17,14 @@
 extern "C" {
 #endif
 
-
 #if defined(BSP_USING_UART1)
 #ifndef UART1_CONFIG
 #define UART1_CONFIG                                \
     {                                               \
-        .name = "uart1",                            \
-        .Instance = USART1,                         \
-        .irq_type = USART1_IRQn,                    \
-        .periph = RCC_APB2_PERIPH_USART1,           \
+        .name            = "uart1",                 \
+        .Instance        = USART1,                  \
+        .irq_type        = USART1_IRQn,             \
+        .periph          = RCC_APB2_PERIPH_USART1,  \
         .EnablePeriphClk = RCC_EnableAPB2PeriphClk, \
     }
 #endif /* UART1_CONFIG */
@@ -35,8 +34,8 @@ extern "C" {
 #ifndef UART1_DMA_RX_CONFIG
 #define UART1_DMA_RX_CONFIG              \
     {                                    \
-        .DMAy = UART1_RX_DMA,            \
-        .DMAChx = UART1_RX_DMA_CHType,   \
+        .DMAy    = UART1_RX_DMA,         \
+        .DMAChx  = UART1_RX_DMA_CHType,  \
         .dma_irq = UART1_RX_DMA_IRQ,     \
         .dma_rcc = UART1_RX_DMA_RCC,     \
         .request = UART1_RX_DMA_REQUEST, \
@@ -52,8 +51,8 @@ extern "C" {
 #ifndef UART1_DMA_TX_CONFIG
 #define UART1_DMA_TX_CONFIG              \
     {                                    \
-        .DMAy = UART1_TX_DMA,            \
-        .DMAChx = UART1_TX_DMA_CHType,   \
+        .DMAy    = UART1_TX_DMA,         \
+        .DMAChx  = UART1_TX_DMA_CHType,  \
         .dma_irq = UART1_TX_DMA_IRQ,     \
         .dma_rcc = UART1_TX_DMA_RCC,     \
         .request = UART1_TX_DMA_REQUEST, \
@@ -65,15 +64,14 @@ extern "C" {
 #endif /* UART1_TX_DMA */
 #endif /* BSP_UART1_TX_USING_DMA */
 
-
 #if defined(BSP_USING_UART2)
 #ifndef UART2_CONFIG
 #define UART2_CONFIG                                \
     {                                               \
-        .name = "uart2",                            \
-        .Instance = USART2,                         \
-        .irq_type = USART2_IRQn,                    \
-        .periph = RCC_APB1_PERIPH_USART2,           \
+        .name            = "uart2",                 \
+        .Instance        = USART2,                  \
+        .irq_type        = USART2_IRQn,             \
+        .periph          = RCC_APB1_PERIPH_USART2,  \
         .EnablePeriphClk = RCC_EnableAPB1PeriphClk, \
     }
 #endif /* UART2_CONFIG */
@@ -83,8 +81,8 @@ extern "C" {
 #ifndef UART2_DMA_RX_CONFIG
 #define UART2_DMA_RX_CONFIG              \
     {                                    \
-        .DMAy = UART2_RX_DMA,            \
-        .DMAChx = UART2_RX_DMA_CHType,   \
+        .DMAy    = UART2_RX_DMA,         \
+        .DMAChx  = UART2_RX_DMA_CHType,  \
         .dma_irq = UART2_RX_DMA_IRQ,     \
         .dma_rcc = UART2_RX_DMA_RCC,     \
         .request = UART2_RX_DMA_REQUEST, \
@@ -100,8 +98,8 @@ extern "C" {
 #ifndef UART2_DMA_TX_CONFIG
 #define UART2_DMA_TX_CONFIG              \
     {                                    \
-        .DMAy = UART2_TX_DMA,            \
-        .DMAChx = UART2_TX_DMA_CHType,   \
+        .DMAy    = UART2_TX_DMA,         \
+        .DMAChx  = UART2_TX_DMA_CHType,  \
         .dma_irq = UART2_TX_DMA_IRQ,     \
         .dma_rcc = UART2_TX_DMA_RCC,     \
         .request = UART2_TX_DMA_REQUEST, \
@@ -113,15 +111,14 @@ extern "C" {
 #endif /* UART2_TX_DMA */
 #endif /* BSP_UART2_TX_USING_DMA */
 
-
 #if defined(BSP_USING_UART3)
 #ifndef UART3_CONFIG
 #define UART3_CONFIG                                \
     {                                               \
-        .name = "uart3",                            \
-        .Instance = USART3,                         \
-        .irq_type = USART3_IRQn,                    \
-        .periph = RCC_APB1_PERIPH_USART3,           \
+        .name            = "uart3",                 \
+        .Instance        = USART3,                  \
+        .irq_type        = USART3_IRQn,             \
+        .periph          = RCC_APB1_PERIPH_USART3,  \
         .EnablePeriphClk = RCC_EnableAPB1PeriphClk, \
     }
 #endif /* UART3_CONFIG */
@@ -131,8 +128,8 @@ extern "C" {
 #ifndef UART3_DMA_RX_CONFIG
 #define UART3_DMA_RX_CONFIG              \
     {                                    \
-        .DMAy = UART3_RX_DMA,            \
-        .DMAChx = UART3_RX_DMA_CHType,   \
+        .DMAy    = UART3_RX_DMA,         \
+        .DMAChx  = UART3_RX_DMA_CHType,  \
         .dma_irq = UART3_RX_DMA_IRQ,     \
         .dma_rcc = UART3_RX_DMA_RCC,     \
         .request = UART3_RX_DMA_REQUEST, \
@@ -148,8 +145,8 @@ extern "C" {
 #ifndef UART3_DMA_TX_CONFIG
 #define UART3_DMA_TX_CONFIG              \
     {                                    \
-        .DMAy = UART3_TX_DMA,            \
-        .DMAChx = UART3_TX_DMA_CHType,   \
+        .DMAy    = UART3_TX_DMA,         \
+        .DMAChx  = UART3_TX_DMA_CHType,  \
         .dma_irq = UART3_TX_DMA_IRQ,     \
         .dma_rcc = UART3_TX_DMA_RCC,     \
         .request = UART3_TX_DMA_REQUEST, \
@@ -161,15 +158,14 @@ extern "C" {
 #endif /* UART3_TX_DMA */
 #endif /* BSP_UART3_TX_USING_DMA */
 
-
 #if defined(BSP_USING_UART4)
 #ifndef UART4_CONFIG
 #define UART4_CONFIG                                \
     {                                               \
-        .name = "uart4",                            \
-        .Instance = USART4,                         \
-        .irq_type = USART4_IRQn,                    \
-        .periph = RCC_APB2_PERIPH_USART4,           \
+        .name            = "uart4",                 \
+        .Instance        = USART4,                  \
+        .irq_type        = USART4_IRQn,             \
+        .periph          = RCC_APB2_PERIPH_USART4,  \
         .EnablePeriphClk = RCC_EnableAPB2PeriphClk, \
     }
 #endif /* UART4_CONFIG */
@@ -179,8 +175,8 @@ extern "C" {
 #ifndef UART4_DMA_RX_CONFIG
 #define UART4_DMA_RX_CONFIG              \
     {                                    \
-        .DMAy = UART4_RX_DMA,            \
-        .DMAChx = UART4_RX_DMA_CHType,   \
+        .DMAy    = UART4_RX_DMA,         \
+        .DMAChx  = UART4_RX_DMA_CHType,  \
         .dma_irq = UART4_RX_DMA_IRQ,     \
         .dma_rcc = UART4_RX_DMA_RCC,     \
         .request = UART4_RX_DMA_REQUEST, \
@@ -196,8 +192,8 @@ extern "C" {
 #ifndef UART4_DMA_TX_CONFIG
 #define UART4_DMA_TX_CONFIG              \
     {                                    \
-        .DMAy = UART4_TX_DMA,            \
-        .DMAChx = UART4_TX_DMA_CHType,   \
+        .DMAy    = UART4_TX_DMA,         \
+        .DMAChx  = UART4_TX_DMA_CHType,  \
         .dma_irq = UART4_TX_DMA_IRQ,     \
         .dma_rcc = UART4_TX_DMA_RCC,     \
         .request = UART4_TX_DMA_REQUEST, \
@@ -209,15 +205,14 @@ extern "C" {
 #endif /* UART4_TX_DMA */
 #endif /* BSP_UART4_TX_USING_DMA */
 
-
 #if defined(BSP_USING_UART5)
 #ifndef UART5_CONFIG
 #define UART5_CONFIG                                \
     {                                               \
-        .name = "uart5",                            \
-        .Instance = UART5,                          \
-        .irq_type = UART5_IRQn,                     \
-        .periph = RCC_APB1_PERIPH_UART5,            \
+        .name            = "uart5",                 \
+        .Instance        = UART5,                   \
+        .irq_type        = UART5_IRQn,              \
+        .periph          = RCC_APB1_PERIPH_UART5,   \
         .EnablePeriphClk = RCC_EnableAPB1PeriphClk, \
     }
 #endif /* UART5_CONFIG */
@@ -227,8 +222,8 @@ extern "C" {
 #ifndef UART5_DMA_RX_CONFIG
 #define UART5_DMA_RX_CONFIG              \
     {                                    \
-        .DMAy = UART5_RX_DMA,            \
-        .DMAChx = UART5_RX_DMA_CHType,   \
+        .DMAy    = UART5_RX_DMA,         \
+        .DMAChx  = UART5_RX_DMA_CHType,  \
         .dma_irq = UART5_RX_DMA_IRQ,     \
         .dma_rcc = UART5_RX_DMA_RCC,     \
         .request = UART5_RX_DMA_REQUEST, \
@@ -244,8 +239,8 @@ extern "C" {
 #ifndef UART5_DMA_TX_CONFIG
 #define UART5_DMA_TX_CONFIG              \
     {                                    \
-        .DMAy = UART5_TX_DMA,            \
-        .DMAChx = UART5_TX_DMA_CHType,   \
+        .DMAy    = UART5_TX_DMA,         \
+        .DMAChx  = UART5_TX_DMA_CHType,  \
         .dma_irq = UART5_TX_DMA_IRQ,     \
         .dma_rcc = UART5_TX_DMA_RCC,     \
         .request = UART5_TX_DMA_REQUEST, \
@@ -257,15 +252,14 @@ extern "C" {
 #endif /* UART5_TX_DMA */
 #endif /* BSP_UART5_TX_USING_DMA */
 
-
 #if defined(BSP_USING_UART6)
 #ifndef UART6_CONFIG
 #define UART6_CONFIG                                \
     {                                               \
-        .name = "uart6",                            \
-        .Instance = UART6,                          \
-        .irq_type = UART6_IRQn,                     \
-        .periph = RCC_APB2_PERIPH_UART6,            \
+        .name            = "uart6",                 \
+        .Instance        = UART6,                   \
+        .irq_type        = UART6_IRQn,              \
+        .periph          = RCC_APB2_PERIPH_UART6,   \
         .EnablePeriphClk = RCC_EnableAPB2PeriphClk, \
     }
 #endif /* UART6_CONFIG */
@@ -275,8 +269,8 @@ extern "C" {
 #ifndef UART6_DMA_RX_CONFIG
 #define UART6_DMA_RX_CONFIG              \
     {                                    \
-        .DMAy = UART6_RX_DMA,            \
-        .DMAChx = UART6_RX_DMA_CHType,   \
+        .DMAy    = UART6_RX_DMA,         \
+        .DMAChx  = UART6_RX_DMA_CHType,  \
         .dma_irq = UART6_RX_DMA_IRQ,     \
         .dma_rcc = UART6_RX_DMA_RCC,     \
         .request = UART6_RX_DMA_REQUEST, \
@@ -292,8 +286,8 @@ extern "C" {
 #ifndef UART6_DMA_TX_CONFIG
 #define UART6_DMA_TX_CONFIG              \
     {                                    \
-        .DMAy = UART6_TX_DMA,            \
-        .DMAChx = UART6_TX_DMA_CHType,   \
+        .DMAy    = UART6_TX_DMA,         \
+        .DMAChx  = UART6_TX_DMA_CHType,  \
         .dma_irq = UART6_TX_DMA_IRQ,     \
         .dma_rcc = UART6_TX_DMA_RCC,     \
         .request = UART6_TX_DMA_REQUEST, \
@@ -305,15 +299,14 @@ extern "C" {
 #endif /* UART6_TX_DMA */
 #endif /* BSP_UART6_TX_USING_DMA */
 
-
 #if defined(BSP_USING_UART7)
 #ifndef UART7_CONFIG
 #define UART7_CONFIG                                \
     {                                               \
-        .name = "uart7",                            \
-        .Instance = UART7,                          \
-        .irq_type = UART7_IRQn,                     \
-        .periph = RCC_APB2_PERIPH_UART7,            \
+        .name            = "uart7",                 \
+        .Instance        = UART7,                   \
+        .irq_type        = UART7_IRQn,              \
+        .periph          = RCC_APB2_PERIPH_UART7,   \
         .EnablePeriphClk = RCC_EnableAPB2PeriphClk, \
     }
 #endif /* UART7_CONFIG */
@@ -323,8 +316,8 @@ extern "C" {
 #ifndef UART7_DMA_RX_CONFIG
 #define UART7_DMA_RX_CONFIG              \
     {                                    \
-        .DMAy = UART7_RX_DMA,            \
-        .DMAChx = UART7_RX_DMA_CHType,   \
+        .DMAy    = UART7_RX_DMA,         \
+        .DMAChx  = UART7_RX_DMA_CHType,  \
         .dma_irq = UART7_RX_DMA_IRQ,     \
         .dma_rcc = UART7_RX_DMA_RCC,     \
         .request = UART7_RX_DMA_REQUEST, \
@@ -340,8 +333,8 @@ extern "C" {
 #ifndef UART7_DMA_TX_CONFIG
 #define UART7_DMA_TX_CONFIG              \
     {                                    \
-        .DMAy = UART7_TX_DMA,            \
-        .DMAChx = UART7_TX_DMA_CHType,   \
+        .DMAy    = UART7_TX_DMA,         \
+        .DMAChx  = UART7_TX_DMA_CHType,  \
         .dma_irq = UART7_TX_DMA_IRQ,     \
         .dma_rcc = UART7_TX_DMA_RCC,     \
         .request = UART7_TX_DMA_REQUEST, \
@@ -353,15 +346,14 @@ extern "C" {
 #endif /* UART7_TX_DMA */
 #endif /* BSP_UART7_TX_USING_DMA */
 
-
 #if defined(BSP_USING_UART8)
 #ifndef UART8_CONFIG
 #define UART8_CONFIG                                \
     {                                               \
-        .name = "uart8",                            \
-        .Instance = UART8,                          \
-        .irq_type = UART8_IRQn,                     \
-        .periph = RCC_APB1_PERIPH_UART8,            \
+        .name            = "uart8",                 \
+        .Instance        = UART8,                   \
+        .irq_type        = UART8_IRQn,              \
+        .periph          = RCC_APB1_PERIPH_UART8,   \
         .EnablePeriphClk = RCC_EnableAPB1PeriphClk, \
     }
 #endif /* UART8_CONFIG */
@@ -371,8 +363,8 @@ extern "C" {
 #ifndef UART8_DMA_RX_CONFIG
 #define UART8_DMA_RX_CONFIG              \
     {                                    \
-        .DMAy = UART8_RX_DMA,            \
-        .DMAChx = UART8_RX_DMA_CHType,   \
+        .DMAy    = UART8_RX_DMA,         \
+        .DMAChx  = UART8_RX_DMA_CHType,  \
         .dma_irq = UART8_RX_DMA_IRQ,     \
         .dma_rcc = UART8_RX_DMA_RCC,     \
         .request = UART8_RX_DMA_REQUEST, \
@@ -388,8 +380,8 @@ extern "C" {
 #ifndef UART8_DMA_TX_CONFIG
 #define UART8_DMA_TX_CONFIG              \
     {                                    \
-        .DMAy = UART8_TX_DMA,            \
-        .DMAChx = UART8_TX_DMA_CHType,   \
+        .DMAy    = UART8_TX_DMA,         \
+        .DMAChx  = UART8_TX_DMA_CHType,  \
         .dma_irq = UART8_TX_DMA_IRQ,     \
         .dma_rcc = UART8_TX_DMA_RCC,     \
         .request = UART8_TX_DMA_REQUEST, \

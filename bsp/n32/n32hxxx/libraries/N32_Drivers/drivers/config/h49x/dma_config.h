@@ -17,7 +17,6 @@
 extern "C" {
 #endif
 
-
 /* DMA1 channel1 */
 #if defined(BSP_UART1_RX_USING_DMA) && !defined(UART1_RX_DMA)
 #define UART1_RX_DMA            DMA1
@@ -256,7 +255,6 @@ extern "C" {
 #define SDIO_RX_DMA_CHANNEL       2U
 #endif
 
-
 /* DMA2 channel3 */
 #if defined(BSP_UART1_TX_USING_DMA) && !defined(UART1_TX_DMA)
 #define UART1_TX_DMA            DMA2
@@ -404,7 +402,6 @@ extern "C" {
 #define SPI1_TX_DMA_REQUEST    DMA_REMAP_SPI1_TX
 #define SPI1_TX_DMA_CHANNEL    8U
 #endif
-
 
 #ifdef __cplusplus
 }

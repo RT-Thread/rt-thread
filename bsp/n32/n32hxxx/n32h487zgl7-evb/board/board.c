@@ -10,7 +10,6 @@
 
 #include "board.h"
 
-
 /**
   * @brief  System_Initialize
   * @param  None

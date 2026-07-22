@@ -15,15 +15,15 @@
 #ifdef RT_USING_WDT
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.wdt"
+#define LOG_TAG "drv.wdt"
 #include <drv_log.h>
 
 struct n32_wdt_obj
 {
     rt_watchdog_t watchdog;
-    IWDG_Module *IWDGx;
-    uint32_t IWDG_Clk;
-    void (*IWDGX_ClkCmd)(uint32_t periph, FunctionalState Cmd);
+    IWDG_Module  *IWDGx;
+    uint32_t      IWDG_Clk;
+    void          (*IWDGX_ClkCmd)(uint32_t periph, FunctionalState Cmd);
 
     rt_uint32_t current_threshold_s;
     rt_uint32_t Reload;
@@ -31,7 +31,7 @@ struct n32_wdt_obj
     rt_uint16_t is_start;
 };
 
-static struct n32_wdt_obj n32_wdt;
+static struct n32_wdt_obj     n32_wdt;
 static struct rt_watchdog_ops ops;
 
 static rt_uint32_t wdt_get_prescaler_factor(rt_uint16_t prescaler)
@@ -85,7 +85,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             return -RT_EBUSY;
         }
 
-        reload_value = (*(rt_uint32_t *)arg);
+        reload_value     = (*(rt_uint32_t *)arg);
         prescaler_factor = wdt_get_prescaler_factor(n32_wdt.Prescaler);
 
         if (LSI_VALUE)
@@ -158,12 +158,12 @@ int rt_wdt_init(void)
     n32_wdt.IWDGX_ClkCmd = RCC_EnableAPB5PeriphClk2;
 #endif
 
-    n32_wdt.Prescaler   = IWDG_PRESCALER_DIV256;
-    n32_wdt.Reload      = 0xFFFU;
-    n32_wdt.is_start    = 0U;
+    n32_wdt.Prescaler = IWDG_PRESCALER_DIV256;
+    n32_wdt.Reload    = 0xFFFU;
+    n32_wdt.is_start  = 0U;
 
-    ops.init            = &wdt_init;
-    ops.control         = &wdt_control;
+    ops.init             = &wdt_init;
+    ops.control          = &wdt_control;
     n32_wdt.watchdog.ops = &ops;
 
     /* register watchdog device */

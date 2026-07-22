@@ -27,7 +27,7 @@ extern "C" {
  */
 struct n32_fdcan_config
 {
-    const char *name;                   /**< device name */
+    const char   *name;                   /**< device name */
     FDCAN_Module *Instance;             /**< FDCAN peripheral base address */
 };
 
@@ -41,80 +41,80 @@ struct n32_fdcan_config
 
 #if defined(BSP_USING_FDCAN1)
 #ifndef FDCAN1_CONFIG
-#define FDCAN1_CONFIG       \
-    {                       \
-        .name = "fdcan1",   \
-        .Instance = FDCAN1, \
+#define FDCAN1_CONFIG         \
+    {                         \
+        .name     = "fdcan1", \
+        .Instance = FDCAN1,   \
     }
 #endif
 #endif /* BSP_USING_FDCAN1 */
 
 #if defined(BSP_USING_FDCAN2)
 #ifndef FDCAN2_CONFIG
-#define FDCAN2_CONFIG       \
-    {                       \
-        .name = "fdcan2",   \
-        .Instance = FDCAN2, \
+#define FDCAN2_CONFIG         \
+    {                         \
+        .name     = "fdcan2", \
+        .Instance = FDCAN2,   \
     }
 #endif
 #endif /* BSP_USING_FDCAN2 */
 
 #if defined(BSP_USING_FDCAN3)
 #ifndef FDCAN3_CONFIG
-#define FDCAN3_CONFIG       \
-    {                       \
-        .name = "fdcan3",   \
-        .Instance = FDCAN3, \
+#define FDCAN3_CONFIG         \
+    {                         \
+        .name     = "fdcan3", \
+        .Instance = FDCAN3,   \
     }
 #endif
 #endif /* BSP_USING_FDCAN3 */
 
 #if defined(BSP_USING_FDCAN4)
 #ifndef FDCAN4_CONFIG
-#define FDCAN4_CONFIG       \
-    {                       \
-        .name = "fdcan4",   \
-        .Instance = FDCAN4, \
+#define FDCAN4_CONFIG         \
+    {                         \
+        .name     = "fdcan4", \
+        .Instance = FDCAN4,   \
     }
 #endif
 #endif /* BSP_USING_FDCAN4 */
 
 #if defined(BSP_USING_FDCAN5)
 #ifndef FDCAN5_CONFIG
-#define FDCAN5_CONFIG       \
-    {                       \
-        .name = "fdcan5",   \
-        .Instance = FDCAN5, \
+#define FDCAN5_CONFIG         \
+    {                         \
+        .name     = "fdcan5", \
+        .Instance = FDCAN5,   \
     }
 #endif
 #endif /* BSP_USING_FDCAN5 */
 
 #if defined(BSP_USING_FDCAN6)
 #ifndef FDCAN6_CONFIG
-#define FDCAN6_CONFIG       \
-    {                       \
-        .name = "fdcan6",   \
-        .Instance = FDCAN6, \
+#define FDCAN6_CONFIG         \
+    {                         \
+        .name     = "fdcan6", \
+        .Instance = FDCAN6,   \
     }
 #endif
 #endif /* BSP_USING_FDCAN6 */
 
 #if defined(BSP_USING_FDCAN7)
 #ifndef FDCAN7_CONFIG
-#define FDCAN7_CONFIG       \
-    {                       \
-        .name = "fdcan7",   \
-        .Instance = FDCAN7, \
+#define FDCAN7_CONFIG         \
+    {                         \
+        .name     = "fdcan7", \
+        .Instance = FDCAN7,   \
     }
 #endif
 #endif /* BSP_USING_FDCAN7 */
 
 #if defined(BSP_USING_FDCAN8)
 #ifndef FDCAN8_CONFIG
-#define FDCAN8_CONFIG       \
-    {                       \
-        .name = "fdcan8",   \
-        .Instance = FDCAN8, \
+#define FDCAN8_CONFIG         \
+    {                         \
+        .name     = "fdcan8", \
+        .Instance = FDCAN8,   \
     }
 #endif
 #endif /* BSP_USING_FDCAN8 */

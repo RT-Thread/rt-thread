@@ -37,10 +37,10 @@ extern "C" {
 
 #if defined(__ARMCC_VERSION)
 extern int Image$$RW_AXI_SRAM$$ZI$$Limit;
-#define HEAP_BEGIN      (&Image$$RW_AXI_SRAM$$ZI$$Limit)
+#define HEAP_BEGIN (&Image$$RW_AXI_SRAM$$ZI$$Limit)
 #else
 extern int _app_estack;
-#define HEAP_BEGIN      (&_app_estack)
+#define HEAP_BEGIN (&_app_estack)
 #endif
 
 #define HEAP_END        N32_SRAM_END

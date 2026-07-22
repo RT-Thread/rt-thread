@@ -11,7 +11,6 @@
 
 #include "board.h"
 
-
 /**
   * @brief  Configure MPU (Memory Protection Unit) memory region attributes.
   * @param  None
@@ -23,7 +22,7 @@
 void MPU_Config(void)
 {
 #ifdef BSP_USING_NAND
-    MPU_Region_InitType MPU_InitStruct = {0};
+    MPU_Region_InitType MPU_InitStruct = { 0 };
 
     /*
      * Configure NAND Flash address space as "Device" type memory
@@ -44,11 +43,11 @@ void MPU_Config(void)
     MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
 
 #ifdef BSP_USING_NAND_BANK1
-    MPU_InitStruct.BaseAddress      = ((uint32_t)0xA0000000);
+    MPU_InitStruct.BaseAddress = ((uint32_t)0xA0000000);
 #endif /* BSP_USING_NAND_BANK1 */
 
 #ifdef BSP_USING_NAND_BANK2
-    MPU_InitStruct.BaseAddress      = ((uint32_t)0xB0000000);
+    MPU_InitStruct.BaseAddress = ((uint32_t)0xB0000000);
 #endif /* BSP_USING_NAND_BANK2 */
 
     MPU_ConfigRegion(&MPU_InitStruct);

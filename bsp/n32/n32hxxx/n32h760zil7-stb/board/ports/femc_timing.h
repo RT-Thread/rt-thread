@@ -13,7 +13,6 @@
 
 #include "board.h"
 
-
 void FEMC_Nnad_Timing_Config(FEMC_TimingInitType *TimingCfg);
 
 #ifdef __cplusplus

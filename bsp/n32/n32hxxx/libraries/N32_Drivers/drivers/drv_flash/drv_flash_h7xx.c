@@ -19,7 +19,7 @@
 #include "n32h7xx_smu.h"
 
 #if defined(RT_USING_FAL)
-    #include "fal.h"
+#include "fal.h"
 #endif
 
 #define DRV_DEBUG
@@ -79,7 +79,7 @@ int n32_flash_read(rt_uint32_t addr, rt_uint8_t *buf, size_t size)
  */
 int n32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t    result   = RT_EOK;
     rt_uint32_t end_addr = addr + size;
 
     if ((end_addr) > N32_FLASH_END_ADDRESS)
@@ -118,7 +118,7 @@ int n32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
  */
 int n32_flash_erase(rt_uint32_t addr, size_t size)
 {
-    rt_err_t result = RT_EOK;
+    rt_err_t    result   = RT_EOK;
     rt_uint32_t end_addr = addr + size;
     rt_uint32_t erase_addr;
 

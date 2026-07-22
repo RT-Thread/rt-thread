@@ -14,7 +14,7 @@
 #include <rtdef.h>
 #include <board.h>
 
-void n32_tim_ahbx_div_get(TIM_Module* timer, rt_uint32_t *div);
-void n32_tim_enable_clock(TIM_Module* timer);
+void n32_tim_ahbx_div_get(TIM_Module *timer, rt_uint32_t *div);
+void n32_tim_enable_clock(TIM_Module *timer);
 
 #endif /* __DRV_TIM_H__ */

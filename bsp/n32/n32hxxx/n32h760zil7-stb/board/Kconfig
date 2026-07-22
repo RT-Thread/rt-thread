@@ -7,7 +7,7 @@ menu "Onboard Peripheral Drivers"
         default n
         select RT_USING_LWIP
         if BSP_USING_ETH
-            choice
+            choice BSP_ETH_SEL
                 prompt "Select ETH Instance"
                 default BSP_USING_ETH1
 
@@ -18,7 +18,7 @@ menu "Onboard Peripheral Drivers"
                     bool "ETH2 (MII/RMII, 10M/100M)"
             endchoice
 
-            choice
+            choice BSP_ETH_INTERFACE_SEL
                 prompt "Select Media Interface"
                 default ETH_INTERFACE_USING_RMII
 
@@ -33,7 +33,7 @@ menu "Onboard Peripheral Drivers"
                     bool "RMII"
             endchoice
 
-            choice
+            choice BSP_ETH_PHY_SEL
                 prompt "Select PHY Chip"
                 default PHY_USING_DM9119INP
 
@@ -739,7 +739,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_MTD_NAND
         if BSP_USING_NAND
-            choice
+            choice BSP_NAND_BANK_SEL
                 prompt "Select Bank"
                 default BSP_USING_NAND_BANK2
 
@@ -750,7 +750,7 @@ menu "On-chip Peripheral Drivers"
                     bool "USING FEMC NAND BANK2"
             endchoice
 
-            choice
+            choice BSP_NAND_BUS_WIDTH_SEL
                 prompt "Select Nand Bus Width"
                 default BSP_USING_NAND_BUS_WIDTH_8B
 

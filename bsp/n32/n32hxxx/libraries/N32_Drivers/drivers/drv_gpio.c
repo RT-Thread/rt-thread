@@ -25,21 +25,21 @@
 static uint32_t pin_irq_enable_mask = 0;
 
 #if defined(GPIOK)
-    #if defined(SOC_SERIES_N32H7xx)
-        #define __N32_PORT_MAX 8u
-    #endif
+#if defined(SOC_SERIES_N32H7xx)
+#define __N32_PORT_MAX 8u
+#endif
 #elif defined(GPIOJ)
     #define __N32_PORT_MAX 16u
 #elif defined(GPIOI)
     #define __N32_PORT_MAX 16u
 #elif defined(GPIOH)
-    #if defined(SOC_SERIES_N32H7xx)
-        #define __N32_PORT_MAX 16u
-    #elif defined(SOC_SERIES_N32H49x)
-        #define __N32_PORT_MAX 6u
-    #elif defined(SOC_SERIES_N32H47x_48x)
-        #define __N32_PORT_MAX 7u
-    #endif
+#if defined(SOC_SERIES_N32H7xx)
+#define __N32_PORT_MAX 16u
+#elif defined(SOC_SERIES_N32H49x)
+#define __N32_PORT_MAX 6u
+#elif defined(SOC_SERIES_N32H47x_48x)
+#define __N32_PORT_MAX 7u
+#endif
 #elif defined(GPIOG)
     #define __N32_PORT_MAX 16u
 #elif defined(GPIOF)
@@ -490,9 +490,7 @@ void N32_GPIO_EXTI_Callback(uint16_t line_num)
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
     {
         rt_int32_t idx = bit2bitno(line_num);
-        if (idx >= 0 && idx < (rt_int32_t)ITEM_NUM(pin_irq_hdr_tab)
-                && pin_irq_hdr_tab[idx].pin != -1
-                && EXTI_GetITStatus(line_num) != RESET)
+        if (idx >= 0 && idx < (rt_int32_t)ITEM_NUM(pin_irq_hdr_tab) && pin_irq_hdr_tab[idx].pin != -1 && EXTI_GetITStatus(line_num) != RESET)
         {
             /* Clear EXTI line pending bit */
             EXTI_ClrITPendBit(line_num);

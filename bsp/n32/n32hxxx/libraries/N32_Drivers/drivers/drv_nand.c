@@ -15,7 +15,7 @@
 #include "femc_timing.h"
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.nand"
+#define LOG_TAG "drv.nand"
 #include <drv_log.h>
 #include <rtdevice.h>
 #include <drivers/mtd_nand.h>
@@ -25,13 +25,13 @@ static FEMC_InitType NAND_InitStructure = { 0 };
 
 /* NAND chip select and bank address derived from Kconfig */
 #ifdef BSP_USING_NAND_BANK1
-    #define NAND_CHIP       NAND_CHIP_1
-    #define NAND_BANK_ADDR  ((uint32_t)0xA0000000)
+#define NAND_CHIP      NAND_CHIP_1
+#define NAND_BANK_ADDR ((uint32_t)0xA0000000)
 #endif
 
 #ifdef BSP_USING_NAND_BANK2
-    #define NAND_CHIP       NAND_CHIP_2
-    #define NAND_BANK_ADDR  ((uint32_t)0xB0000000)
+#define NAND_CHIP      NAND_CHIP_2
+#define NAND_BANK_ADDR ((uint32_t)0xB0000000)
 #endif
 
 #endif
@@ -49,8 +49,8 @@ static struct rt_mtd_nand_device _nand_dev;
  *   [10:3]   Start command
  *   [2:0]    Byte lane strobes (AXI standard)
  */
-#define NAND_CMD_AREA        ((uint32_t)0x00000000)   /* bit19 = 0 */
-#define NAND_DATA_AREA       ((uint32_t)0x00080000)   /* bit19 = 1 */
+#define NAND_CMD_AREA  ((uint32_t)0x00000000)   /* bit19 = 0 */
+#define NAND_DATA_AREA ((uint32_t)0x00080000)   /* bit19 = 1 */
 
 /*
  * Address cycle count auto-derived from Kconfig NAND chip parameters.
@@ -66,44 +66,44 @@ static struct rt_mtd_nand_device _nand_dev;
  * Erase:      row address cycles only (no column address).
  * READ_ID:    fixed at 1 address cycle per NAND standard.
  */
-#define NAND_TOTAL_PAGES        (BSP_NAND_PAGES_PER_BLOCK * BSP_NAND_BLOCK_COUNT)
+#define NAND_TOTAL_PAGES (BSP_NAND_PAGES_PER_BLOCK * BSP_NAND_BLOCK_COUNT)
 
 #if NAND_TOTAL_PAGES <= 65536
-    #define NAND_ROW_ADDR_CYCLES    2
+#define NAND_ROW_ADDR_CYCLES 2
 #elif NAND_TOTAL_PAGES <= 16777216
-    #define NAND_ROW_ADDR_CYCLES    3
+#define NAND_ROW_ADDR_CYCLES 3
 #else
-    #define NAND_ROW_ADDR_CYCLES    4
+#define NAND_ROW_ADDR_CYCLES 4
 #endif
 
-#define NAND_RW_ADDR_CYCLES     (2 + NAND_ROW_ADDR_CYCLES)
-#define NAND_ERASE_ADDR_CYCLES  NAND_ROW_ADDR_CYCLES
+#define NAND_RW_ADDR_CYCLES    (2 + NAND_ROW_ADDR_CYCLES)
+#define NAND_ERASE_ADDR_CYCLES NAND_ROW_ADDR_CYCLES
 
 /* Encode cycle count into AXI address bits [23:21] */
-#define NAND_ADDR_CYCLES(n)  ((uint32_t)(n) << 21)
+#define NAND_ADDR_CYCLES(n) ((uint32_t)(n) << 21)
 
-#define NAND_CMD_END_ENABLE  ((uint32_t)0x00100000)
-#define NAND_CMD_END_DISABLE ((uint32_t)0x00000000)
-#define NAND_CLEAR_CS_ENABLE ((uint32_t)0x00200000)
+#define NAND_CMD_END_ENABLE   ((uint32_t)0x00100000)
+#define NAND_CMD_END_DISABLE  ((uint32_t)0x00000000)
+#define NAND_CLEAR_CS_ENABLE  ((uint32_t)0x00200000)
 #define NAND_CLEAR_CS_DISABLE ((uint32_t)0x00000000)
 
 #define NAND_ECC_LAST_ENABLE  ((uint32_t)0x00000400)
 #define NAND_ECC_LAST_DISABLE ((uint32_t)0x00000000)
 
 /* Standard NAND flash commands */
-#define NAND_CMD_READ_1ST    ((uint8_t)0x00)
-#define NAND_CMD_READ_2ND    ((uint8_t)0x30)
-#define NAND_CMD_WRITE_1ST   ((uint8_t)0x80)
-#define NAND_CMD_WRITE_2ND   ((uint8_t)0x10)
-#define NAND_CMD_ERASE_1ST   ((uint8_t)0x60)
-#define NAND_CMD_ERASE_2ND   ((uint8_t)0xD0)
-#define NAND_CMD_READ_ID     ((uint8_t)0x90)
-#define NAND_CMD_STATUS      ((uint8_t)0x70)
-#define NAND_CMD_RESET       ((uint8_t)0xFF)
+#define NAND_CMD_READ_1ST  ((uint8_t)0x00)
+#define NAND_CMD_READ_2ND  ((uint8_t)0x30)
+#define NAND_CMD_WRITE_1ST ((uint8_t)0x80)
+#define NAND_CMD_WRITE_2ND ((uint8_t)0x10)
+#define NAND_CMD_ERASE_1ST ((uint8_t)0x60)
+#define NAND_CMD_ERASE_2ND ((uint8_t)0xD0)
+#define NAND_CMD_READ_ID   ((uint8_t)0x90)
+#define NAND_CMD_STATUS    ((uint8_t)0x70)
+#define NAND_CMD_RESET     ((uint8_t)0xFF)
 
 /* NAND status bits */
-#define NAND_STATUS_READY    ((uint32_t)0x40)
-#define NAND_STATUS_ERROR    ((uint32_t)0x01)
+#define NAND_STATUS_READY ((uint32_t)0x40)
+#define NAND_STATUS_ERROR ((uint32_t)0x01)
 
 /*
  * FEMC uses Hamming code with 1-bit correction / 2-bit detection.
@@ -115,11 +115,11 @@ static struct rt_mtd_nand_device _nand_dev;
  * Example: page_size = 2048 -> ECC = 2048/512 * 3 = 12 bytes
  *          oob_size  = 64   -> oob_free = 64 - 12 = 52 bytes
  */
-#define NAND_ECC_SECTOR_SIZE    512
+#define NAND_ECC_SECTOR_SIZE      512
 #define NAND_ECC_BYTES_PER_SECTOR 3
 
-#define ECC_BYTES(page_size)    ((page_size) / NAND_ECC_SECTOR_SIZE * NAND_ECC_BYTES_PER_SECTOR)
-#define OOB_FREE(page, oob)     ((oob) - ECC_BYTES(page))
+#define ECC_BYTES(page_size) ((page_size) / NAND_ECC_SECTOR_SIZE * NAND_ECC_BYTES_PER_SECTOR)
+#define OOB_FREE(page, oob)  ((oob) - ECC_BYTES(page))
 
 static rt_err_t rt_nand_init(void)
 {
@@ -130,11 +130,11 @@ static rt_err_t rt_nand_init(void)
     FEMC_InitStruct(&NAND_InitStructure);
 
 #ifdef BSP_USING_NAND_BUS_WIDTH_8B
-    NAND_InitStructure.ChipCfg.MemWidth  = FEMC_MEMORY_WIDTH_8BIT;
+    NAND_InitStructure.ChipCfg.MemWidth = FEMC_MEMORY_WIDTH_8BIT;
 #endif /* BSP_USING_NAND_BUS_WIDTH_8B */
 
 #ifdef BSP_USING_NAND_BUS_WIDTH_16B
-    NAND_InitStructure.ChipCfg.MemWidth  = FEMC_MEMORY_WIDTH_16BIT;
+    NAND_InitStructure.ChipCfg.MemWidth = FEMC_MEMORY_WIDTH_16BIT;
 #endif /* BSP_USING_NAND_BUS_WIDTH_16B */
 
     /* FEMC Nand Timing Configuration */
@@ -160,8 +160,7 @@ static rt_err_t rt_nand_init(void)
     {
         uint32_t reset_cmd;
 
-        reset_cmd = NAND_BANK_ADDR | NAND_ADDR_CYCLES(0) | NAND_CMD_END_DISABLE
-                    | NAND_CMD_AREA | (NAND_CMD_RESET << 3);
+        reset_cmd                     = NAND_BANK_ADDR | NAND_ADDR_CYCLES(0) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_RESET << 3);
         *((__IO uint16_t *)reset_cmd) = 0x0000;
     }
 #endif
@@ -210,15 +209,13 @@ static rt_err_t nand_check_status(uint32_t bank_addr)
     uint32_t cmd, stat_addr;
     uint8_t  status;
 
-    cmd  = bank_addr | NAND_ADDR_CYCLES(0) | NAND_CMD_END_DISABLE
-           | NAND_CMD_AREA | (NAND_CMD_STATUS << 3);
-    stat_addr = bank_addr | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_DISABLE
-                | NAND_DATA_AREA | NAND_ECC_LAST_DISABLE;
+    cmd       = bank_addr | NAND_ADDR_CYCLES(0) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_STATUS << 3);
+    stat_addr = bank_addr | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_DISABLE | NAND_DATA_AREA | NAND_ECC_LAST_DISABLE;
 
     do
     {
         *((__IO uint8_t *)cmd) = 0x00;
-        status = *(__IO uint8_t *)(stat_addr);
+        status                 = *(__IO uint8_t *)(stat_addr);
 
         if (status & NAND_STATUS_ERROR)
         {
@@ -230,8 +227,7 @@ static rt_err_t nand_check_status(uint32_t bank_addr)
         }
         timeout--;
         rt_thread_delay(rt_tick_from_millisecond(1));
-    }
-    while (timeout);
+    } while (timeout);
 
     return -RT_ETIMEOUT;
 }
@@ -250,14 +246,12 @@ static rt_err_t nand_check_status(uint32_t bank_addr)
  */
 static rt_err_t _read_id(struct rt_mtd_nand_device *device)
 {
-    uint32_t cmd_addr, data_addr;
-    uint8_t id_bytes[5];
+    uint32_t    cmd_addr, data_addr;
+    uint8_t     id_bytes[5];
     rt_uint32_t id;
 
-    cmd_addr  = NAND_BANK_ADDR | NAND_ADDR_CYCLES(1) | NAND_CMD_END_DISABLE
-                | NAND_CMD_AREA | (NAND_CMD_READ_ID << 3);
-    data_addr = NAND_BANK_ADDR | NAND_CLEAR_CS_DISABLE | NAND_CMD_END_DISABLE
-                | NAND_DATA_AREA | NAND_ECC_LAST_DISABLE;
+    cmd_addr  = NAND_BANK_ADDR | NAND_ADDR_CYCLES(1) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_READ_ID << 3);
+    data_addr = NAND_BANK_ADDR | NAND_CLEAR_CS_DISABLE | NAND_CMD_END_DISABLE | NAND_DATA_AREA | NAND_ECC_LAST_DISABLE;
 
     *((__IO uint8_t *)cmd_addr) = 0x00;
 
@@ -281,7 +275,7 @@ static rt_err_t _read_id(struct rt_mtd_nand_device *device)
 
 /* read one page (data + spare) */
 static rt_err_t _read_page(struct rt_mtd_nand_device *device,
-                           rt_off_t page,
+                           rt_off_t                   page,
                            rt_uint8_t *data, rt_uint32_t data_len,
                            rt_uint8_t *spare, rt_uint32_t spare_len)
 {
@@ -294,8 +288,7 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
     FEMC_ClrFlag(FEMC_NAND_FLAG_CLEAR);
 
     /* Command phase: READ_1ST + row address + READ_2ND */
-    cmd_addr = NAND_BANK_ADDR | NAND_ADDR_CYCLES(NAND_RW_ADDR_CYCLES) | NAND_CMD_END_ENABLE
-               | NAND_CMD_AREA | (NAND_CMD_READ_2ND << 11) | (NAND_CMD_READ_1ST << 3);
+    cmd_addr = NAND_BANK_ADDR | NAND_ADDR_CYCLES(NAND_RW_ADDR_CYCLES) | NAND_CMD_END_ENABLE | NAND_CMD_AREA | (NAND_CMD_READ_2ND << 11) | (NAND_CMD_READ_1ST << 3);
 
     *((__IO uint32_t *)cmd_addr) = row_addr << 16;
 
@@ -320,14 +313,13 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
     if (data && data_len)
     {
         uint32_t *p32;
-        uint32_t word_cnt;
+        uint32_t  word_cnt;
 
-        data_addr = NAND_BANK_ADDR | NAND_CLEAR_CS_DISABLE | NAND_CMD_END_DISABLE
-                    | NAND_DATA_AREA | NAND_ECC_LAST_DISABLE;
+        data_addr = NAND_BANK_ADDR | NAND_CLEAR_CS_DISABLE | NAND_CMD_END_DISABLE | NAND_DATA_AREA | NAND_ECC_LAST_DISABLE;
 
         /* 32-bit aligned bulk */
         word_cnt = data_len / 4;
-        p32 = (uint32_t *)data;
+        p32      = (uint32_t *)data;
         for (i = 0; i < word_cnt; i++)
         {
             p32[i] = *((__IO uint32_t *)data_addr);
@@ -352,7 +344,7 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
 
 /* write one page (data + spare) */
 static rt_err_t _write_page(struct rt_mtd_nand_device *device,
-                            rt_off_t page,
+                            rt_off_t                   page,
                             const rt_uint8_t *data, rt_uint32_t data_len,
                             const rt_uint8_t *spare, rt_uint32_t spare_len)
 {
@@ -365,8 +357,7 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
     FEMC_ClrFlag(FEMC_NAND_FLAG_CLEAR);
 
     /* Command phase: WRITE_1ST + row address */
-    cmd_addr = NAND_BANK_ADDR | NAND_ADDR_CYCLES(NAND_RW_ADDR_CYCLES) | NAND_CMD_END_DISABLE
-               | NAND_CMD_AREA | (NAND_CMD_WRITE_1ST << 3);
+    cmd_addr = NAND_BANK_ADDR | NAND_ADDR_CYCLES(NAND_RW_ADDR_CYCLES) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_WRITE_1ST << 3);
 
     *((__IO uint32_t *)cmd_addr) = row_addr << 16;
 
@@ -379,12 +370,10 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
         uint32_t addr_no_end, addr_end;
         uint32_t word_cnt, remain_start;
 
-        addr_no_end = NAND_BANK_ADDR | NAND_CLEAR_CS_DISABLE | NAND_CMD_END_DISABLE
-                      | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
-        addr_end   = NAND_BANK_ADDR | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_ENABLE
-                     | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
+        addr_no_end = NAND_BANK_ADDR | NAND_CLEAR_CS_DISABLE | NAND_CMD_END_DISABLE | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
+        addr_end    = NAND_BANK_ADDR | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_ENABLE | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
 
-        word_cnt    = data_len / 4;
+        word_cnt     = data_len / 4;
         remain_start = word_cnt * 4;
 
         /*
@@ -424,8 +413,7 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
     }
     else
     {
-        data_addr = NAND_BANK_ADDR | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_ENABLE
-                    | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
+        data_addr                    = NAND_BANK_ADDR | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_ENABLE | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
         *((__IO uint8_t *)data_addr) = 0x00;
     }
 
@@ -493,8 +481,7 @@ static rt_err_t _erase_block(struct rt_mtd_nand_device *device, rt_uint32_t bloc
     FEMC_ClrFlag(FEMC_NAND_FLAG_CLEAR);
 
     /* Command phase: ERASE_1ST (2 addr cycles) + ERASE_2ND */
-    cmd_addr = NAND_BANK_ADDR | NAND_ADDR_CYCLES(NAND_ERASE_ADDR_CYCLES) | NAND_CMD_END_ENABLE
-               | NAND_CMD_AREA | (NAND_CMD_ERASE_2ND << 11) | (NAND_CMD_ERASE_1ST << 3);
+    cmd_addr = NAND_BANK_ADDR | NAND_ADDR_CYCLES(NAND_ERASE_ADDR_CYCLES) | NAND_CMD_END_ENABLE | NAND_CMD_AREA | (NAND_CMD_ERASE_2ND << 11) | (NAND_CMD_ERASE_1ST << 3);
 
     /*
      * Erase uses only row address cycles (no column address).
@@ -544,8 +531,7 @@ static rt_err_t _mark_badblock(struct rt_mtd_nand_device *device, rt_uint32_t bl
     return -RT_ENOSYS;
 }
 
-static const struct rt_mtd_nand_driver_ops _nand_ops =
-{
+static const struct rt_mtd_nand_driver_ops _nand_ops = {
     _read_id,
     _read_page,
     _write_page,
@@ -566,8 +552,8 @@ int rt_hw_nand_init(void)
         return result;
     }
 
-    _nand_dev.page_size       = BSP_NAND_PAGE_SIZE;
-    _nand_dev.oob_size        = BSP_NAND_OOB_SIZE;
+    _nand_dev.page_size = BSP_NAND_PAGE_SIZE;
+    _nand_dev.oob_size  = BSP_NAND_OOB_SIZE;
     /*
      * oob_free: bytes in the spare area available for the upper layer.
      *

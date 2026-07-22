@@ -20,25 +20,25 @@
 extern "C" {
 #endif
 
-#define N32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
-#define N32_FLASH_SIZE             (512 * 1024)
-#define N32_FLASH_END_ADDRESS      ((uint32_t)(N32_FLASH_START_ADRESS + N32_FLASH_SIZE))
+#define N32_FLASH_START_ADRESS ((uint32_t)0x08000000)
+#define N32_FLASH_SIZE         (512 * 1024)
+#define N32_FLASH_END_ADDRESS  ((uint32_t)(N32_FLASH_START_ADRESS + N32_FLASH_SIZE))
 
-#define N32_SRAM_SIZE              (160)
-#define N32_SRAM_END               (0x20000000 + N32_SRAM_SIZE * 1024)
+#define N32_SRAM_SIZE (160)
+#define N32_SRAM_END  (0x20000000 + N32_SRAM_SIZE * 1024)
 
 #if defined(__ARMCC_VERSION)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define HEAP_BEGIN      (&Image$$RW_IRAM1$$ZI$$Limit)
+#define HEAP_BEGIN (&Image$$RW_IRAM1$$ZI$$Limit)
 #elif __ICCARM__
-#pragma section="CSTACK"
-#define HEAP_BEGIN      (__segment_end("CSTACK"))
+#pragma section = "CSTACK"
+#define HEAP_BEGIN (__segment_end("CSTACK"))
 #else
 extern int __bss_end;
-#define HEAP_BEGIN      (&__bss_end)
+#define HEAP_BEGIN (&__bss_end)
 #endif
 
-#define HEAP_END        N32_SRAM_END
+#define HEAP_END N32_SRAM_END
 
 void System_Initialize(void);
 

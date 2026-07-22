@@ -34,16 +34,15 @@ struct dma_config
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
 struct dma_config
 {
-    DMA_Module *DMAy;
+    DMA_Module      *DMAy;
     DMA_ChannelType *DMAChx;
-    IRQn_Type dma_irq;
-    rt_uint32_t dma_rcc;
-    rt_uint32_t request;
-    rt_uint32_t channel;
+    IRQn_Type        dma_irq;
+    rt_uint32_t      dma_rcc;
+    rt_uint32_t      request;
+    rt_uint32_t      channel;
 };
 
 #endif
-
 
 #ifdef __cplusplus
 }

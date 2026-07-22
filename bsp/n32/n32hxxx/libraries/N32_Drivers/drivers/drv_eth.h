@@ -30,22 +30,22 @@ extern "C" {
 #define ETH_RCC_ENABLE_AHB_PERIPHEN_CLK RCC_EnableAHB2PeriphClk2
 #define ETH_RCC_AHB_PERIPHEN_CLK        RCC_AHB2_PERIPHEN_M7_ETH1CLK
 #define ETH_RCC_AHB_PERIPHEN            (RCC_AHB2_PERIPHEN_M7_ETH1MAC | \
-                              RCC_AHB2_PERIPHEN_M7_ETH1TX |             \
-                              RCC_AHB2_PERIPHEN_M7_ETH1RX)
-#define ETH_GLOBAL_IRQ        ETH1_IRQn
-#define ETH_PWR_CTRL          HSC1_ETH1_PWRCTRL
-#define ETH_GLOBAL_IRQHANDLER ETH1_IRQHandler
+                                         RCC_AHB2_PERIPHEN_M7_ETH1TX |  \
+                                         RCC_AHB2_PERIPHEN_M7_ETH1RX)
+#define ETH_GLOBAL_IRQ                  ETH1_IRQn
+#define ETH_PWR_CTRL                    HSC1_ETH1_PWRCTRL
+#define ETH_GLOBAL_IRQHANDLER           ETH1_IRQHandler
 
 #elif defined(BSP_USING_ETH2)
 #define ETH                             ETH2
 #define ETH_RCC_ENABLE_AHB_PERIPHEN_CLK RCC_EnableAHB1PeriphClk2
 #define ETH_RCC_AHB_PERIPHEN_CLK        RCC_AHB1_PERIPHEN_M7_ETH2CLK
 #define ETH_RCC_AHB_PERIPHEN            (RCC_AHB1_PERIPHEN_M7_ETH2MAC | \
-                              RCC_AHB1_PERIPHEN_M7_ETH2TX |             \
-                              RCC_AHB1_PERIPHEN_M7_ETH2RX)
-#define ETH_GLOBAL_IRQ        ETH2_IRQn
-#define ETH_PWR_CTRL          HSC2_ETH2_PWRCTRL
-#define ETH_GLOBAL_IRQHANDLER ETH2_IRQHandler
+                                         RCC_AHB1_PERIPHEN_M7_ETH2TX |  \
+                                         RCC_AHB1_PERIPHEN_M7_ETH2RX)
+#define ETH_GLOBAL_IRQ                  ETH2_IRQn
+#define ETH_PWR_CTRL                    HSC2_ETH2_PWRCTRL
+#define ETH_GLOBAL_IRQHANDLER           ETH2_IRQHandler
 
 #endif /* BSP_USING_ETH1 / BSP_USING_ETH2 */
 

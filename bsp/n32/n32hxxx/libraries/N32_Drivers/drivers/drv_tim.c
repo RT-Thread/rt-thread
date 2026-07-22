@@ -12,65 +12,65 @@
 #include "drv_config.h"
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.tim"
+#define LOG_TAG "drv.tim"
 #include <drv_log.h>
 
 #if defined(BSP_USING_ATIM1) && !defined(ATIM1)
-    #error "A-timer1 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM1"
+#error "A-timer1 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM1"
 #endif
 #if defined(BSP_USING_ATIM2) && !defined(ATIM2)
-    #error "A-timer2 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM2"
+#error "A-timer2 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM2"
 #endif
 #if defined(BSP_USING_ATIM3) && !defined(ATIM3)
-    #error "A-timer3 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM3"
+#error "A-timer3 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM3"
 #endif
 #if defined(BSP_USING_ATIM4) && !defined(ATIM4)
-    #error "A-timer4 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM4"
+#error "A-timer4 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM4"
 #endif
 #if defined(BSP_USING_GTIMA1) && !defined(GTIMA1)
-    #error "G-timer-A1 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA1"
+#error "G-timer-A1 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA1"
 #endif
 #if defined(BSP_USING_GTIMA2) && !defined(GTIMA2)
-    #error "G-timer-A2 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA2"
+#error "G-timer-A2 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA2"
 #endif
 #if defined(BSP_USING_GTIMA3) && !defined(GTIMA3)
-    #error "G-timer-A3 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA3"
+#error "G-timer-A3 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA3"
 #endif
 #if defined(BSP_USING_GTIMA4) && !defined(GTIMA4)
-    #error "G-timer-A4 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA4"
+#error "G-timer-A4 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA4"
 #endif
 #if defined(BSP_USING_GTIMA5) && !defined(GTIMA5)
-    #error "G-timer-A5 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA5"
+#error "G-timer-A5 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA5"
 #endif
 #if defined(BSP_USING_GTIMA6) && !defined(GTIMA6)
-    #error "G-timer-A6 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA6"
+#error "G-timer-A6 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA6"
 #endif
 #if defined(BSP_USING_GTIMA7) && !defined(GTIMA7)
-    #error "G-timer-A7 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA7"
+#error "G-timer-A7 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMA7"
 #endif
 #if defined(BSP_USING_GTIMB1) && !defined(GTIMB1)
-    #error "G-timer-B1 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMB1"
+#error "G-timer-B1 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMB1"
 #endif
 #if defined(BSP_USING_GTIMB2) && !defined(GTIMB2)
-    #error "G-timer-B2 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMB2"
+#error "G-timer-B2 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMB2"
 #endif
 #if defined(BSP_USING_GTIMB3) && !defined(GTIMB3)
-    #error "G-timer-B3 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMB3"
+#error "G-timer-B3 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIMB3"
 #endif
 #if defined(BSP_USING_BTIM1) && !defined(BTIM1)
-    #error "B-timer1 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM1"
+#error "B-timer1 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM1"
 #endif
 #if defined(BSP_USING_BTIM2) && !defined(BTIM2)
-    #error "B-timer2 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM2"
+#error "B-timer2 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM2"
 #endif
 #if defined(BSP_USING_BTIM3) && !defined(BTIM3)
-    #error "B-timer3 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM3"
+#error "B-timer3 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM3"
 #endif
 #if defined(BSP_USING_BTIM4) && !defined(BTIM4)
-    #error "B-timer4 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM4"
+#error "B-timer4 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM4"
 #endif
 
-#define INT_MAX  (0x7FFFFFFF)
+#define INT_MAX (0x7FFFFFFF)
 
 static int int_pow(int x, int y)
 {
@@ -88,8 +88,8 @@ static int int_pow(int x, int y)
     if (y < 0)
         return -1;
 
-    int result = 1;
-    int base = x;
+    int result   = 1;
+    int base     = x;
     int exponent = y;
 
     /* Fast exponentiation algorithm (binary exponentiation) */
@@ -116,7 +116,7 @@ static int int_pow(int x, int y)
     return result;
 }
 
-void n32_tim_ahbx_div_get(TIM_Module* timer, rt_uint32_t *div)
+void n32_tim_ahbx_div_get(TIM_Module *timer, rt_uint32_t *div)
 {
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(div != RT_NULL);
@@ -124,8 +124,8 @@ void n32_tim_ahbx_div_get(TIM_Module* timer, rt_uint32_t *div)
     *div = 1;
 
 #if defined(SOC_SERIES_N32H7xx)
-    rt_uint8_t tim_div, i;
-    const rt_uint8_t div_group[] = {0x00U, 0x04U, 0x05U, 0x06U, 0x07U};
+    rt_uint8_t       tim_div, i;
+    const rt_uint8_t div_group[] = { 0x00U, 0x04U, 0x05U, 0x06U, 0x07U };
 
     if ((timer == BTIM1) || (timer == BTIM2) || (timer == BTIM3) || (timer == BTIM4))
     {
@@ -159,11 +159,12 @@ void n32_tim_ahbx_div_get(TIM_Module* timer, rt_uint32_t *div)
 #endif /* defined(SOC_SERIES_N32H7xx) */
 }
 
-void n32_tim_enable_clock(TIM_Module* timer)
+void n32_tim_enable_clock(TIM_Module *timer)
 {
     RT_ASSERT(timer != RT_NULL);
 
-    if (RT_FALSE);
+    if (RT_FALSE)
+        ;
 #ifdef ATIM1
     else if (timer == ATIM1)
     {
@@ -278,7 +279,6 @@ void n32_tim_enable_clock(TIM_Module* timer)
     }
 }
 
-
 #ifdef BSP_USING_CLOCK_TIMER
 
 enum
@@ -342,13 +342,12 @@ enum
 struct n32_clock_timer
 {
     rt_clock_timer_t time_device;
-    TIM_Module *timer;
-    IRQn_Type tim_irqn;
-    char *name;
+    TIM_Module      *timer;
+    IRQn_Type        tim_irqn;
+    char            *name;
 };
 
-static struct n32_clock_timer n32_clock_timer_obj[] =
-{
+static struct n32_clock_timer n32_clock_timer_obj[] = {
 #ifdef BSP_USING_ATIM1
     ATIM1_CONFIG,
 #endif
@@ -422,14 +421,13 @@ static struct n32_clock_timer n32_clock_timer_obj[] =
 #endif
 };
 
-
 static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
 {
-    uint32_t prescaler_value = 0;
-    rt_uint32_t tim_div;
+    uint32_t                prescaler_value = 0;
+    rt_uint32_t             tim_div;
     struct n32_clock_timer *tim_device = RT_NULL;
-    RCC_ClocksTypeDef RCC_Clocks;
-    TIM_TimeBaseInitType TIM_TimeBaseStructure;
+    RCC_ClocksTypeDef       RCC_Clocks;
+    TIM_TimeBaseInitType    TIM_TimeBaseStructure;
 
     RT_ASSERT(timer != RT_NULL);
     if (state)
@@ -468,9 +466,10 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
         n32_tim_enable_clock(tim_device->timer);
 
         TIM_InitTimBaseStruct(&TIM_TimeBaseStructure);
-        TIM_TimeBaseStructure.Period      = 10000 - 1;;
-        TIM_TimeBaseStructure.Prescaler   = prescaler_value;
-        TIM_TimeBaseStructure.ClkDiv      = TIM_CLK_DIV1;
+        TIM_TimeBaseStructure.Period = 10000 - 1;
+        ;
+        TIM_TimeBaseStructure.Prescaler = prescaler_value;
+        TIM_TimeBaseStructure.ClkDiv    = TIM_CLK_DIV1;
 
         if (timer->info->cntmode == CLOCK_TIMER_CNTMODE_UP)
         {
@@ -492,7 +491,6 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
         LOG_D("%s init success", tim_device->name);
     }
 }
-
 
 static rt_err_t timer_start(rt_clock_timer_t *timer, rt_uint32_t t, rt_clock_timer_mode_t opmode)
 {
@@ -523,7 +521,6 @@ static rt_err_t timer_start(rt_clock_timer_t *timer, rt_uint32_t t, rt_clock_tim
     return RT_EOK;
 }
 
-
 static void timer_stop(rt_clock_timer_t *timer)
 {
     struct n32_clock_timer *tim_device = RT_NULL;
@@ -541,14 +538,13 @@ static void timer_stop(rt_clock_timer_t *timer)
     TIM_SetCnt(tim_device->timer, 0);
 }
 
-
 static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
 {
-    struct n32_clock_timer *tim_device = RT_NULL;
-    rt_err_t result = -RT_ERROR;
-    uint32_t prescaler_value = 0;
-    rt_uint32_t tim_div;
-    RCC_ClocksTypeDef RCC_Clocks;
+    struct n32_clock_timer *tim_device      = RT_NULL;
+    rt_err_t                result          = -RT_ERROR;
+    uint32_t                prescaler_value = 0;
+    rt_uint32_t             tim_div;
+    RCC_ClocksTypeDef       RCC_Clocks;
 
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(arg != RT_NULL);
@@ -606,7 +602,6 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
     return result;
 }
 
-
 static rt_uint32_t timer_counter_get(rt_clock_timer_t *timer)
 {
     struct n32_clock_timer *tim_device = RT_NULL;
@@ -618,20 +613,15 @@ static rt_uint32_t timer_counter_get(rt_clock_timer_t *timer)
     return TIM_GetCnt(tim_device->timer);
 }
 
-
 static const struct rt_clock_timer_info _info = TIM_DEV_INFO_CONFIG;
 
-
-static const struct rt_clock_timer_ops _ops =
-{
+static const struct rt_clock_timer_ops _ops = {
     .init      = timer_init,
     .start     = timer_start,
     .stop      = timer_stop,
     .count_get = timer_counter_get,
     .control   = timer_ctrl,
 };
-
-
 
 #ifdef BSP_USING_ATIM1
 void ATIM1_UP_IRQHandler(void)
@@ -885,11 +875,10 @@ void BTIM4_IRQHandler(void)
 }
 #endif /* BSP_USING_BTIM4 */
 
-
 static int n32_clock_timer_init(void)
 {
-    rt_uint32_t i = 0;
-    int result = RT_EOK;
+    rt_uint32_t i      = 0;
+    int         result = RT_EOK;
 
     for (i = 0; i < sizeof(n32_clock_timer_obj) / sizeof(n32_clock_timer_obj[0]); i++)
     {

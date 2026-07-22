@@ -15,7 +15,7 @@
 
 #ifdef RT_USING_SERIAL
 
-#define BSP_N32_UART_V1_TX_TIMEOUT           2000
+#define BSP_N32_UART_V1_TX_TIMEOUT 2000
 
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.usart"
@@ -146,7 +146,6 @@ static struct n32_uart_config uart_config[] =
 #endif
 };
 
-
 static struct n32_uart uart_obj[sizeof(uart_config) / sizeof(uart_config[0])] = { 0 };
 
 #ifdef RT_SERIAL_USING_DMA
@@ -154,13 +153,12 @@ static void dma_recv_callback(struct rt_serial_device *serial, rt_uint8_t isr_fl
 {
     struct n32_uart *uart;
     rt_base_t level;
-    rt_size_t recv_len = 0;
+    rt_size_t        recv_len = 0;
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct n32_uart, serial);
 
     level = rt_hw_interrupt_disable();
-
 
 #if defined(SOC_SERIES_N32H7xx)
 
@@ -214,12 +212,11 @@ static void dma_recv_callback(struct rt_serial_device *serial, rt_uint8_t isr_fl
         /* Calculate received length: total size - remaining */
         if (counter <= uart->dma.rx_dma.remaining_cnt)
         {
-            recv_len = uart->dma.rx_dma.remaining_cnt  - counter;
+            recv_len = uart->dma.rx_dma.remaining_cnt - counter;
         }
         else
         {
-
-            recv_len = serial->config.bufsz + uart->dma.rx_dma.remaining_cnt  - counter;
+            recv_len = serial->config.bufsz + uart->dma.rx_dma.remaining_cnt - counter;
         }
         break;
 
@@ -256,7 +253,6 @@ static void dma_recv_callback(struct rt_serial_device *serial, rt_uint8_t isr_fl
     rt_hw_interrupt_enable(level);
 }
 
-
 #if defined(BSP_UART1_RX_USING_DMA)  || defined(BSP_UART2_RX_USING_DMA)  || defined(BSP_UART3_RX_USING_DMA)  || \
     defined(BSP_UART4_RX_USING_DMA)  || defined(BSP_UART5_RX_USING_DMA)  || defined(BSP_UART6_RX_USING_DMA)  || \
     defined(BSP_UART7_RX_USING_DMA)  || defined(BSP_UART8_RX_USING_DMA)  || defined(BSP_UART9_RX_USING_DMA)  || \
@@ -278,8 +274,8 @@ static void uart_rx_dma_isr(struct n32_uart *uart_drv)
     }
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
     DMA_Module *dma_module = (DMA_Module *)((uint32_t)uart_drv->config->dma_rx->DMAChx < DMA2_BASE ? DMA1 : DMA2);
-    uint32_t dma_int_ht = 0;
-    uint32_t dma_int_tc = 0;
+    uint32_t    dma_int_ht = 0;
+    uint32_t    dma_int_tc = 0;
 
     /* Obtain the corresponding interrupt flag macro based on the channel (refer to the TX implementation) */
     if (uart_drv->config->dma_rx->DMAChx == DMA1_CH1)
@@ -424,24 +420,40 @@ static void uart_tx_dma_isr(struct n32_uart *uart_drv)
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
 
     DMA_Module *dma_module = (DMA_Module *)((uint32_t)uart_drv->config->dma_tx->DMAChx < DMA2_BASE ? DMA1 : DMA2);
-    uint32_t dma_int_tc = 0;
+    uint32_t    dma_int_tc = 0;
 
-    if (uart_drv->config->dma_tx->DMAChx == DMA1_CH1)      dma_int_tc = DMA_INT_TXC1;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH2) dma_int_tc = DMA_INT_TXC2;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH3) dma_int_tc = DMA_INT_TXC3;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH4) dma_int_tc = DMA_INT_TXC4;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH5) dma_int_tc = DMA_INT_TXC5;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH6) dma_int_tc = DMA_INT_TXC6;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH7) dma_int_tc = DMA_INT_TXC7;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH8) dma_int_tc = DMA_INT_TXC8;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH1) dma_int_tc = DMA_INT_TXC1;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH2) dma_int_tc = DMA_INT_TXC2;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH3) dma_int_tc = DMA_INT_TXC3;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH4) dma_int_tc = DMA_INT_TXC4;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH5) dma_int_tc = DMA_INT_TXC5;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH6) dma_int_tc = DMA_INT_TXC6;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH7) dma_int_tc = DMA_INT_TXC7;
-    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH8) dma_int_tc = DMA_INT_TXC8;
+    if (uart_drv->config->dma_tx->DMAChx == DMA1_CH1)
+        dma_int_tc = DMA_INT_TXC1;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH2)
+        dma_int_tc = DMA_INT_TXC2;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH3)
+        dma_int_tc = DMA_INT_TXC3;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH4)
+        dma_int_tc = DMA_INT_TXC4;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH5)
+        dma_int_tc = DMA_INT_TXC5;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH6)
+        dma_int_tc = DMA_INT_TXC6;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH7)
+        dma_int_tc = DMA_INT_TXC7;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA1_CH8)
+        dma_int_tc = DMA_INT_TXC8;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH1)
+        dma_int_tc = DMA_INT_TXC1;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH2)
+        dma_int_tc = DMA_INT_TXC2;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH3)
+        dma_int_tc = DMA_INT_TXC3;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH4)
+        dma_int_tc = DMA_INT_TXC4;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH5)
+        dma_int_tc = DMA_INT_TXC5;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH6)
+        dma_int_tc = DMA_INT_TXC6;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH7)
+        dma_int_tc = DMA_INT_TXC7;
+    else if (uart_drv->config->dma_tx->DMAChx == DMA2_CH8)
+        dma_int_tc = DMA_INT_TXC8;
 
     if (dma_int_tc != 0 && DMA_GetIntStatus(dma_int_tc, dma_module) == SET)
     {
@@ -473,12 +485,11 @@ static void N32_UART_DMA_Config(struct rt_serial_device *serial, rt_ubase_t flag
 
 #if defined(SOC_SERIES_N32H7xx)
 
-    rt_size_t i = 0;
-    rt_err_t result = RT_EOK;
+    rt_size_t i      = 0;
+    rt_err_t  result = RT_EOK;
     /* DMA Initialize */
     if (RT_DEVICE_FLAG_DMA_RX == flag)
     {
-
         rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
 
         uart->dma.RX_DMA_ChInitStr.DstAddr = (uint32_t)rx_fifo->buffer;
@@ -579,7 +590,6 @@ static void N32_UART_DMA_Config(struct rt_serial_device *serial, rt_ubase_t flag
         uart->dma.rx_dma_inited = RT_TRUE;
 
         LOG_D("%s RX DMA config done", uart->config->name);
-
     }
     else if (RT_DEVICE_FLAG_DMA_TX == flag)
     {
@@ -665,7 +675,6 @@ static rt_err_t UART_DMA_Transmit(struct n32_uart *uart)
 
             USART_Enable(uart->config->Instance, ENABLE);
         }
-
     }
     else
     {
@@ -675,7 +684,7 @@ static rt_err_t UART_DMA_Transmit(struct n32_uart *uart)
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
 
     send_length = uart->dma.tx_dma.total_length;
-    send_buf = uart->dma.tx_dma.buf;
+    send_buf    = uart->dma.tx_dma.buf;
 
     if (send_length == 0 || send_buf == RT_NULL)
     {
@@ -686,26 +695,42 @@ static rt_err_t UART_DMA_Transmit(struct n32_uart *uart)
     DMA_EnableChannel(uart->config->dma_tx->DMAChx, DISABLE);
 
     /* Clear the previous transfer complete flag (to prevent false triggering). */
-    DMA_Module *dma_module = (DMA_Module *)((uint32_t)uart->config->dma_tx->DMAChx < DMA2_BASE ? DMA1 : DMA2);
-    uint32_t dma_flag_tc = 0;
+    DMA_Module *dma_module  = (DMA_Module *)((uint32_t)uart->config->dma_tx->DMAChx < DMA2_BASE ? DMA1 : DMA2);
+    uint32_t    dma_flag_tc = 0;
 
     /* Map the channel to the flag. */
-    if (uart->config->dma_tx->DMAChx == DMA1_CH1) dma_flag_tc = DMA_FLAG_TC1;
-    else if (uart->config->dma_tx->DMAChx == DMA1_CH2) dma_flag_tc = DMA_FLAG_TC2;
-    else if (uart->config->dma_tx->DMAChx == DMA1_CH3) dma_flag_tc = DMA_FLAG_TC3;
-    else if (uart->config->dma_tx->DMAChx == DMA1_CH4) dma_flag_tc = DMA_FLAG_TC4;
-    else if (uart->config->dma_tx->DMAChx == DMA1_CH5) dma_flag_tc = DMA_FLAG_TC5;
-    else if (uart->config->dma_tx->DMAChx == DMA1_CH6) dma_flag_tc = DMA_FLAG_TC6;
-    else if (uart->config->dma_tx->DMAChx == DMA1_CH7) dma_flag_tc = DMA_FLAG_TC7;
-    else if (uart->config->dma_tx->DMAChx == DMA1_CH8) dma_flag_tc = DMA_FLAG_TC8;
-    else if (uart->config->dma_tx->DMAChx == DMA2_CH1) dma_flag_tc = DMA_FLAG_TC1;
-    else if (uart->config->dma_tx->DMAChx == DMA2_CH2) dma_flag_tc = DMA_FLAG_TC2;
-    else if (uart->config->dma_tx->DMAChx == DMA2_CH3) dma_flag_tc = DMA_FLAG_TC3;
-    else if (uart->config->dma_tx->DMAChx == DMA2_CH4) dma_flag_tc = DMA_FLAG_TC4;
-    else if (uart->config->dma_tx->DMAChx == DMA2_CH5) dma_flag_tc = DMA_FLAG_TC5;
-    else if (uart->config->dma_tx->DMAChx == DMA2_CH6) dma_flag_tc = DMA_FLAG_TC6;
-    else if (uart->config->dma_tx->DMAChx == DMA2_CH7) dma_flag_tc = DMA_FLAG_TC7;
-    else if (uart->config->dma_tx->DMAChx == DMA2_CH8) dma_flag_tc = DMA_FLAG_TC8;
+    if (uart->config->dma_tx->DMAChx == DMA1_CH1)
+        dma_flag_tc = DMA_FLAG_TC1;
+    else if (uart->config->dma_tx->DMAChx == DMA1_CH2)
+        dma_flag_tc = DMA_FLAG_TC2;
+    else if (uart->config->dma_tx->DMAChx == DMA1_CH3)
+        dma_flag_tc = DMA_FLAG_TC3;
+    else if (uart->config->dma_tx->DMAChx == DMA1_CH4)
+        dma_flag_tc = DMA_FLAG_TC4;
+    else if (uart->config->dma_tx->DMAChx == DMA1_CH5)
+        dma_flag_tc = DMA_FLAG_TC5;
+    else if (uart->config->dma_tx->DMAChx == DMA1_CH6)
+        dma_flag_tc = DMA_FLAG_TC6;
+    else if (uart->config->dma_tx->DMAChx == DMA1_CH7)
+        dma_flag_tc = DMA_FLAG_TC7;
+    else if (uart->config->dma_tx->DMAChx == DMA1_CH8)
+        dma_flag_tc = DMA_FLAG_TC8;
+    else if (uart->config->dma_tx->DMAChx == DMA2_CH1)
+        dma_flag_tc = DMA_FLAG_TC1;
+    else if (uart->config->dma_tx->DMAChx == DMA2_CH2)
+        dma_flag_tc = DMA_FLAG_TC2;
+    else if (uart->config->dma_tx->DMAChx == DMA2_CH3)
+        dma_flag_tc = DMA_FLAG_TC3;
+    else if (uart->config->dma_tx->DMAChx == DMA2_CH4)
+        dma_flag_tc = DMA_FLAG_TC4;
+    else if (uart->config->dma_tx->DMAChx == DMA2_CH5)
+        dma_flag_tc = DMA_FLAG_TC5;
+    else if (uart->config->dma_tx->DMAChx == DMA2_CH6)
+        dma_flag_tc = DMA_FLAG_TC6;
+    else if (uart->config->dma_tx->DMAChx == DMA2_CH7)
+        dma_flag_tc = DMA_FLAG_TC7;
+    else if (uart->config->dma_tx->DMAChx == DMA2_CH8)
+        dma_flag_tc = DMA_FLAG_TC8;
 
     if (dma_flag_tc != 0)
     {
@@ -875,7 +900,7 @@ static rt_err_t n32_configure(struct rt_serial_device *serial, struct serial_con
 static rt_err_t n32_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
     struct n32_uart *uart;
-    rt_uint32_t direction;
+    rt_uint32_t      direction;
 #ifdef RT_SERIAL_USING_DMA
     rt_ubase_t ctrl_arg = (rt_ubase_t)arg;
 #endif
@@ -973,7 +998,6 @@ static rt_err_t n32_control(struct rt_serial_device *serial, int cmd, void *arg)
 
     default:
         break;
-
     }
     return RT_EOK;
 }
@@ -993,7 +1017,8 @@ static int n32_putc(struct rt_serial_device *serial, char c)
     /* Send data */
     USART_SendData(uart->config->Instance, c);
 
-    while ((USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TXC) == RESET) && --block_timeout);
+    while ((USART_GetFlagStatus(uart->config->Instance, USART_FLAG_TXC) == RESET) && --block_timeout)
+        ;
 
     return (block_timeout != 0) ? 1 : -1;
 }
@@ -1036,8 +1061,8 @@ static rt_ssize_t n32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *
         uart->dma.tx_dma.already_send_length = 0U;
         uart->dma.tx_dma.buf                 = buf;
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
-        uart->dma.tx_dma.total_length        = size;
-        uart->dma.tx_dma.buf                 = buf;
+        uart->dma.tx_dma.total_length = size;
+        uart->dma.tx_dma.buf          = buf;
 #endif /* SOC_SERIES_N32H7xx */
 
         /* start once data exchange in DMA mode */
@@ -1260,9 +1285,9 @@ void UART4_TX_DMA_IRQHandler(void)
 #if defined(BSP_USING_UART5)
 
 #if defined(SOC_SERIES_N32H7xx)
-    void USART5_IRQHandler(void)
+void USART5_IRQHandler(void)
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
-    void UART5_IRQHandler(void)
+void UART5_IRQHandler(void)
 #endif
 {
     /* enter interrupt */
@@ -1302,9 +1327,9 @@ void UART5_TX_DMA_IRQHandler(void)
 #if defined(BSP_USING_UART6)
 
 #if defined(SOC_SERIES_N32H7xx)
-    void USART6_IRQHandler(void)
+void USART6_IRQHandler(void)
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
-    void UART6_IRQHandler(void)
+void UART6_IRQHandler(void)
 #endif
 {
     /* enter interrupt */
@@ -1341,13 +1366,12 @@ void UART6_TX_DMA_IRQHandler(void)
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_UART6_TX_USING_DMA) && defined(UART6_TX_DMA_IRQHandler) */
 #endif /* BSP_USING_UART6 */
 
-
 #if defined(BSP_USING_UART7)
 
 #if defined(SOC_SERIES_N32H7xx)
-    void USART7_IRQHandler(void)
+void USART7_IRQHandler(void)
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
-    void UART7_IRQHandler(void)
+void UART7_IRQHandler(void)
 #endif
 {
     /* enter interrupt */
@@ -1387,9 +1411,9 @@ void UART7_TX_DMA_IRQHandler(void)
 
 #if defined(BSP_USING_UART8)
 #if defined(SOC_SERIES_N32H7xx)
-    void USART8_IRQHandler(void)
+void USART8_IRQHandler(void)
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
-    void UART8_IRQHandler(void)
+void UART8_IRQHandler(void)
 #endif
 {
     /* enter interrupt */
@@ -1428,9 +1452,9 @@ void UART8_TX_DMA_IRQHandler(void)
 
 #if defined(BSP_USING_UART9)
 #if defined(SOC_SERIES_N32H7xx)
-    void UART9_IRQHandler(void)
+void UART9_IRQHandler(void)
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
-    void USART9_IRQHandler(void)
+void USART9_IRQHandler(void)
 #endif
 {
     /* enter interrupt */
@@ -1902,7 +1926,6 @@ static void n32_uart_get_dma_config(void)
 #endif
 }
 
-
 static const struct rt_uart_ops n32_uart_ops =
 {
     .configure = n32_configure,
@@ -2139,11 +2162,7 @@ int rt_hw_usart_init(void)
 
         /* register UART device */
         result = rt_hw_serial_register(&uart_obj[i].serial, uart_obj[i].config->name,
-                                       RT_DEVICE_FLAG_RDWR
-                                       | RT_DEVICE_FLAG_INT_RX
-                                       | RT_DEVICE_FLAG_INT_TX
-                                       | uart_obj[i].uart_dma_flag
-                                       , RT_NULL);
+                                       RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_INT_TX | uart_obj[i].uart_dma_flag, RT_NULL);
         RT_ASSERT(result == RT_EOK);
     }
 

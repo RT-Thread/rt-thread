@@ -14,7 +14,7 @@
 #include "drv_tim.h"
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.pulse_encoder"
+#define LOG_TAG "drv.pulse_encoder"
 #include <drv_log.h>
 
 /* NOTE: A timer instance must NOT be enabled for both clock-timer (BSP_USING_ATIMx/GTIMx/BTIMx)
@@ -22,14 +22,8 @@
  * mutual exclusivity, otherwise ISR symbol conflicts will occur at link time.
  */
 
-#if !defined(BSP_USING_PULSE_ENCODER1) && !defined(BSP_USING_PULSE_ENCODER2) \
-    && !defined(BSP_USING_PULSE_ENCODER3) && !defined(BSP_USING_PULSE_ENCODER4) \
-    && !defined(BSP_USING_PULSE_ENCODER5) && !defined(BSP_USING_PULSE_ENCODER6) \
-    && !defined(BSP_USING_PULSE_ENCODER7) && !defined(BSP_USING_PULSE_ENCODER8) \
-    && !defined(BSP_USING_PULSE_ENCODER9) && !defined(BSP_USING_PULSE_ENCODER10) \
-    && !defined(BSP_USING_PULSE_ENCODER11) && !defined(BSP_USING_PULSE_ENCODER12) \
-    && !defined(BSP_USING_PULSE_ENCODER13) && !defined(BSP_USING_PULSE_ENCODER14)
-    #error "Please define at least one BSP_USING_PULSE_ENCODERx"
+#if !defined(BSP_USING_PULSE_ENCODER1) && !defined(BSP_USING_PULSE_ENCODER2) && !defined(BSP_USING_PULSE_ENCODER3) && !defined(BSP_USING_PULSE_ENCODER4) && !defined(BSP_USING_PULSE_ENCODER5) && !defined(BSP_USING_PULSE_ENCODER6) && !defined(BSP_USING_PULSE_ENCODER7) && !defined(BSP_USING_PULSE_ENCODER8) && !defined(BSP_USING_PULSE_ENCODER9) && !defined(BSP_USING_PULSE_ENCODER10) && !defined(BSP_USING_PULSE_ENCODER11) && !defined(BSP_USING_PULSE_ENCODER12) && !defined(BSP_USING_PULSE_ENCODER13) && !defined(BSP_USING_PULSE_ENCODER14)
+#error "Please define at least one BSP_USING_PULSE_ENCODERx"
 #endif
 
 /* Auto-reload value for encoder mode. Using half of the 16-bit range
@@ -94,14 +88,13 @@ enum
 struct n32_pulse_encoder_device
 {
     struct rt_pulse_encoder_device pulse_encoder;
-    TIM_Module *timer;
-    IRQn_Type tim_irqn;
-    rt_int32_t over_under_flowcount;
-    char *name;
+    TIM_Module                    *timer;
+    IRQn_Type                      tim_irqn;
+    rt_int32_t                     over_under_flowcount;
+    char                          *name;
 };
 
-static struct n32_pulse_encoder_device n32_pulse_encoder_obj[] =
-{
+static struct n32_pulse_encoder_device n32_pulse_encoder_obj[] = {
 #ifdef BSP_USING_PULSE_ENCODER1
     PULSE_ENCODER1_CONFIG,
 #endif
@@ -152,7 +145,7 @@ static struct n32_pulse_encoder_device n32_pulse_encoder_obj[] =
 static rt_err_t pulse_encoder_init(struct rt_pulse_encoder_device *pulse_encoder)
 {
     struct n32_pulse_encoder_device *n32_device;
-    TIM_TimeBaseInitType TIM_TimeBaseStructure;
+    TIM_TimeBaseInitType             TIM_TimeBaseStructure;
 
     n32_device = (struct n32_pulse_encoder_device *)pulse_encoder;
 
@@ -203,8 +196,7 @@ static rt_int32_t pulse_encoder_get_count(struct rt_pulse_encoder_device *pulse_
 
     n32_device = (struct n32_pulse_encoder_device *)pulse_encoder;
 
-    return (rt_int32_t)((rt_int16_t)TIM_GetCnt(n32_device->timer)
-                        + n32_device->over_under_flowcount * (AUTO_RELOAD_VALUE + 1));
+    return (rt_int32_t)((rt_int16_t)TIM_GetCnt(n32_device->timer) + n32_device->over_under_flowcount * (AUTO_RELOAD_VALUE + 1));
 }
 
 /**
@@ -227,11 +219,11 @@ static rt_err_t pulse_encoder_clear_count(struct rt_pulse_encoder_device *pulse_
  */
 static rt_err_t pulse_encoder_control(struct rt_pulse_encoder_device *pulse_encoder, rt_uint32_t cmd, void *args)
 {
-    rt_err_t result;
+    rt_err_t                         result;
     struct n32_pulse_encoder_device *n32_device;
 
     n32_device = (struct n32_pulse_encoder_device *)pulse_encoder;
-    result = RT_EOK;
+    result     = RT_EOK;
 
     switch (cmd)
     {
@@ -444,12 +436,11 @@ void GTIMB3_IRQHandler(void)
 
 /* ---- Device Registration ---- */
 
-static const struct rt_pulse_encoder_ops _ops =
-{
-    .init = pulse_encoder_init,
-    .get_count = pulse_encoder_get_count,
+static const struct rt_pulse_encoder_ops _ops = {
+    .init        = pulse_encoder_init,
+    .get_count   = pulse_encoder_get_count,
     .clear_count = pulse_encoder_clear_count,
-    .control = pulse_encoder_control,
+    .control     = pulse_encoder_control,
 };
 
 static int n32_pulse_encoder_init(void)
@@ -461,7 +452,7 @@ static int n32_pulse_encoder_init(void)
     for (i = 0; i < sizeof(n32_pulse_encoder_obj) / sizeof(n32_pulse_encoder_obj[0]); i++)
     {
         n32_pulse_encoder_obj[i].pulse_encoder.type = AB_PHASE_PULSE_ENCODER;
-        n32_pulse_encoder_obj[i].pulse_encoder.ops = &_ops;
+        n32_pulse_encoder_obj[i].pulse_encoder.ops  = &_ops;
 
         if (rt_device_pulse_encoder_register(&n32_pulse_encoder_obj[i].pulse_encoder,
                                              n32_pulse_encoder_obj[i].name, RT_NULL) != RT_EOK)

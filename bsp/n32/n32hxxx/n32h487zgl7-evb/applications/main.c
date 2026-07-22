@@ -12,11 +12,11 @@
 #include <rtthread.h>
 #include <drv_gpio.h>
 #ifndef RT_USING_NANO
-    #include <rtdevice.h>
+#include <rtdevice.h>
 #endif /* RT_USING_NANO */
 
 /* defined the LED1 pin: PA3 */
-#define LED1_PIN    GET_PIN(A, 3)
+#define LED1_PIN GET_PIN(A, 3)
 
 int main(void)
 {

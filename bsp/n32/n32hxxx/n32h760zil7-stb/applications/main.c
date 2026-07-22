@@ -12,11 +12,11 @@
 #include <rtthread.h>
 #include <drv_gpio.h>
 #ifndef RT_USING_NANO
-    #include <rtdevice.h>
+#include <rtdevice.h>
 #endif /* RT_USING_NANO */
 
 /* defined the LED0 pin: PA4 */
-#define LED0_PIN    GET_PIN(A, 4)
+#define LED0_PIN GET_PIN(A, 4)
 
 int main(void)
 {
@@ -31,6 +31,4 @@ int main(void)
         rt_thread_mdelay(500);
     }
 }
-
-
 

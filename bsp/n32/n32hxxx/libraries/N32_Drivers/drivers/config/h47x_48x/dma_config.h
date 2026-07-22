@@ -17,7 +17,6 @@
 extern "C" {
 #endif
 
-
 /* DMA1 channel1 */
 #if defined(BSP_UART1_RX_USING_DMA) && !defined(UART1_RX_DMA)
 #define UART1_RX_DMA            DMA1

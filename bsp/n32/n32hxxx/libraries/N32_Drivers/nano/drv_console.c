@@ -12,7 +12,6 @@
 #include <rtthread.h>
 #include <drv_common.h>
 
-
 static USART_Module *USARTx;
 
 void rt_hw_console_init(void)

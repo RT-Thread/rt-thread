@@ -701,7 +701,6 @@ extern "C" {
 #define UART7_TX_DMA_DMAMUX_REQUEST DMAMUX1_REQUEST_USART7_TX
 #endif
 
-
 #ifdef __cplusplus
 }
 #endif

@@ -22,7 +22,7 @@ extern "C" {
     {                                      \
         .maxfreq = 1000000,                \
         .minfreq = 3000,                   \
-        .maxcnt = 0xFFFF,                  \
+        .maxcnt  = 0xFFFF,                 \
         .cntmode = CLOCK_TIMER_CNTMODE_UP, \
     }
 #endif /* LPTIM_DEV_INFO_CONFIG */
@@ -31,9 +31,9 @@ extern "C" {
 #ifndef LPTIM1_CONFIG
 #define LPTIM1_CONFIG                 \
     {                                 \
-        .timer = LPTIM1,              \
+        .timer    = LPTIM1,           \
         .tim_irqn = LPTIM1_WKUP_IRQn, \
-        .name = "lptim1",             \
+        .name     = "lptim1",         \
     }
 #endif /* LPTIM1_CONFIG */
 #endif /* BSP_USING_LPTIM1 */
@@ -42,9 +42,9 @@ extern "C" {
 #ifndef LPTIM2_CONFIG
 #define LPTIM2_CONFIG                 \
     {                                 \
-        .timer = LPTIM2,              \
+        .timer    = LPTIM2,           \
         .tim_irqn = LPTIM2_WKUP_IRQn, \
-        .name = "lptim2",             \
+        .name     = "lptim2",         \
     }
 #endif /* LPTIM2_CONFIG */
 #endif /* BSP_USING_LPTIM2 */
@@ -53,9 +53,9 @@ extern "C" {
 #ifndef LPTIM3_CONFIG
 #define LPTIM3_CONFIG                 \
     {                                 \
-        .timer = LPTIM3,              \
+        .timer    = LPTIM3,           \
         .tim_irqn = LPTIM3_WKUP_IRQn, \
-        .name = "lptim3",             \
+        .name     = "lptim3",         \
     }
 #endif /* LPTIM3_CONFIG */
 #endif /* BSP_USING_LPTIM3 */
@@ -64,9 +64,9 @@ extern "C" {
 #ifndef LPTIM4_CONFIG
 #define LPTIM4_CONFIG                 \
     {                                 \
-        .timer = LPTIM4,              \
+        .timer    = LPTIM4,           \
         .tim_irqn = LPTIM4_WKUP_IRQn, \
-        .name = "lptim4",             \
+        .name     = "lptim4",         \
     }
 #endif /* LPTIM4_CONFIG */
 #endif /* BSP_USING_LPTIM4 */
@@ -75,9 +75,9 @@ extern "C" {
 #ifndef LPTIM5_CONFIG
 #define LPTIM5_CONFIG                 \
     {                                 \
-        .timer = LPTIM5,              \
+        .timer    = LPTIM5,           \
         .tim_irqn = LPTIM5_WKUP_IRQn, \
-        .name = "lptim5",             \
+        .name     = "lptim5",         \
     }
 #endif /* LPTIM5_CONFIG */
 #endif /* BSP_USING_LPTIM5 */

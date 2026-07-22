@@ -15,7 +15,7 @@
 #include "n32h7xx_exti.h"
 
 /*#define DRV_DEBUG*/
-#define LOG_TAG             "drv.lptim"
+#define LOG_TAG "drv.lptim"
 #include <drv_log.h>
 
 #ifdef BSP_USING_LPTIM
@@ -43,14 +43,13 @@ enum
 
 struct n32_hw_lptimer
 {
-    rt_clock_timer_t    time_device;
-    LPTIM_Module       *timer;
-    IRQn_Type           tim_irqn;
-    char               *name;
+    rt_clock_timer_t time_device;
+    LPTIM_Module    *timer;
+    IRQn_Type        tim_irqn;
+    char            *name;
 };
 
-static struct n32_hw_lptimer n32_hw_lptimer_obj[] =
-{
+static struct n32_hw_lptimer n32_hw_lptimer_obj[] = {
 #ifdef BSP_USING_LPTIM1
     LPTIM1_CONFIG,
 #endif
@@ -107,27 +106,32 @@ static void n32_lptim_enable_clock(LPTIM_Module *timer)
     if (timer == LPTIM1)
     {
         RCC_EnableRDPeriphClk1(RCC_RD_PERIPHEN_M7_LPTIM1 | RCC_RD_PERIPHEN_M4_LPTIM1 |
-                               RCC_RD_PERIPHEN_M7_LPTIM1LP | RCC_RD_PERIPHEN_M4_LPTIM1LP, ENABLE);
+                                   RCC_RD_PERIPHEN_M7_LPTIM1LP | RCC_RD_PERIPHEN_M4_LPTIM1LP,
+                               ENABLE);
     }
     else if (timer == LPTIM2)
     {
         RCC_EnableRDPeriphClk1(RCC_RD_PERIPHEN_M7_LPTIM2 | RCC_RD_PERIPHEN_M4_LPTIM2 |
-                               RCC_RD_PERIPHEN_M7_LPTIM2LP | RCC_RD_PERIPHEN_M4_LPTIM2LP, ENABLE);
+                                   RCC_RD_PERIPHEN_M7_LPTIM2LP | RCC_RD_PERIPHEN_M4_LPTIM2LP,
+                               ENABLE);
     }
     else if (timer == LPTIM3)
     {
         RCC_EnableRDPeriphClk1(RCC_RD_PERIPHEN_M7_LPTIM3 | RCC_RD_PERIPHEN_M4_LPTIM3 |
-                               RCC_RD_PERIPHEN_M7_LPTIM3LP | RCC_RD_PERIPHEN_M4_LPTIM3LP, ENABLE);
+                                   RCC_RD_PERIPHEN_M7_LPTIM3LP | RCC_RD_PERIPHEN_M4_LPTIM3LP,
+                               ENABLE);
     }
     else if (timer == LPTIM4)
     {
         RCC_EnableRDPeriphClk1(RCC_RD_PERIPHEN_M7_LPTIM4 | RCC_RD_PERIPHEN_M4_LPTIM4 |
-                               RCC_RD_PERIPHEN_M7_LPTIM4LP | RCC_RD_PERIPHEN_M4_LPTIM4LP, ENABLE);
+                                   RCC_RD_PERIPHEN_M7_LPTIM4LP | RCC_RD_PERIPHEN_M4_LPTIM4LP,
+                               ENABLE);
     }
     else if (timer == LPTIM5)
     {
         RCC_EnableRDPeriphClk1(RCC_RD_PERIPHEN_M7_LPTIM5 | RCC_RD_PERIPHEN_M4_LPTIM5 |
-                               RCC_RD_PERIPHEN_M7_LPTIM5LP | RCC_RD_PERIPHEN_M4_LPTIM5LP, ENABLE);
+                                   RCC_RD_PERIPHEN_M7_LPTIM5LP | RCC_RD_PERIPHEN_M4_LPTIM5LP,
+                               ENABLE);
     }
 }
 
@@ -138,12 +142,18 @@ static void n32_lptim_enable_clock(LPTIM_Module *timer)
  */
 static uint32_t n32_lptim_get_exti_line(LPTIM_Module *timer)
 {
-    if (timer == LPTIM1)      return EXTI_LINE66;
-    else if (timer == LPTIM2) return EXTI_LINE67;
-    else if (timer == LPTIM3) return EXTI_LINE68;
-    else if (timer == LPTIM4) return EXTI_LINE69;
-    else if (timer == LPTIM5) return EXTI_LINE86;
-    else                      return 0;
+    if (timer == LPTIM1)
+        return EXTI_LINE66;
+    else if (timer == LPTIM2)
+        return EXTI_LINE67;
+    else if (timer == LPTIM3)
+        return EXTI_LINE68;
+    else if (timer == LPTIM4)
+        return EXTI_LINE69;
+    else if (timer == LPTIM5)
+        return EXTI_LINE86;
+    else
+        return 0;
 }
 
 /**
@@ -152,14 +162,15 @@ static uint32_t n32_lptim_get_exti_line(LPTIM_Module *timer)
 static void n32_lptim_exti_config(LPTIM_Module *timer)
 {
     uint32_t exti_line = n32_lptim_get_exti_line(timer);
-    if (exti_line == 0) return;
+    if (exti_line == 0)
+        return;
 
     EXTI_InitType EXTI_InitStructure;
     EXTI_InitStruct(&EXTI_InitStructure);
-    EXTI_InitStructure.EXTI_Line     = exti_line;
-    EXTI_InitStructure.EXTI_LineCmd  = ENABLE;
-    EXTI_InitStructure.EXTI_Mode     = EXTI_Mode_Interrupt;
-    EXTI_InitStructure.EXTI_Trigger  = EXTI_Trigger_Rising;
+    EXTI_InitStructure.EXTI_Line    = exti_line;
+    EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+    EXTI_InitStructure.EXTI_Mode    = EXTI_Mode_Interrupt;
+    EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
     EXTI_InitPeripheral(&EXTI_InitStructure);
 }
 
@@ -188,7 +199,7 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
     if (state)
     {
         struct n32_hw_lptimer *tim_device = rt_container_of(timer, struct n32_hw_lptimer, time_device);
-        LPTIM_Module *lptim = tim_device->timer;
+        LPTIM_Module          *lptim      = tim_device->timer;
 
         if (tim_device == RT_NULL)
         {
@@ -205,7 +216,8 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
         RCC_EnableLsi(ENABLE);
 
         /* Wait for LSI ready */
-        while (RCC_GetFlagStatus(RCC_FLAG_LSIRD) == RESET);
+        while (RCC_GetFlagStatus(RCC_FLAG_LSIRD) == RESET)
+            ;
 
         /* Select LSI as LPTIM clock source */
         n32_lptim_clock_source_config(lptim);
@@ -250,7 +262,7 @@ static rt_err_t timer_start(rt_clock_timer_t *timer, rt_uint32_t t, rt_clock_tim
     }
 
     struct n32_hw_lptimer *tim_device = rt_container_of(timer, struct n32_hw_lptimer, time_device);
-    LPTIM_Module *lptim = tim_device->timer;
+    LPTIM_Module          *lptim      = tim_device->timer;
 
     if (tim_device == RT_NULL)
     {
@@ -298,7 +310,7 @@ static void timer_stop(rt_clock_timer_t *timer)
     }
 
     struct n32_hw_lptimer *tim_device = rt_container_of(timer, struct n32_hw_lptimer, time_device);
-    LPTIM_Module *lptim = tim_device->timer;
+    LPTIM_Module          *lptim      = tim_device->timer;
 
     if (tim_device == RT_NULL)
     {
@@ -343,7 +355,7 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
     }
 
     struct n32_hw_lptimer *tim_device = rt_container_of(timer, struct n32_hw_lptimer, time_device);
-    LPTIM_Module *lptim = tim_device->timer;
+    LPTIM_Module          *lptim      = tim_device->timer;
 
     if (tim_device == RT_NULL)
     {
@@ -461,8 +473,7 @@ void LPTIM5_WKUP_IRQHandler(void)
 }
 #endif
 
-static const struct rt_clock_timer_ops _ops =
-{
+static const struct rt_clock_timer_ops _ops = {
     .init      = timer_init,
     .start     = timer_start,
     .stop      = timer_stop,
@@ -475,7 +486,7 @@ static const struct rt_clock_timer_ops _ops =
  */
 static int n32_hw_lptim_init(void)
 {
-    int i = 0;
+    int i      = 0;
     int result = RT_EOK;
 
     for (i = 0; i < sizeof(n32_hw_lptimer_obj) / sizeof(n32_hw_lptimer_obj[0]); i++)

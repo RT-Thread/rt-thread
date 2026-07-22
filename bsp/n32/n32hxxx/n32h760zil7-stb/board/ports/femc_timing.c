@@ -59,21 +59,20 @@
 void FEMC_Nnad_Timing_Config(FEMC_TimingInitType *TimingCfg)
 {
     /* 12-cycle * 10ns = 120ns */
-    TimingCfg->Trc     = 12;
+    TimingCfg->Trc = 12;
     /* 12-cycle * 10ns = 120ns */
-    TimingCfg->Twc     = 12;
+    TimingCfg->Twc = 12;
     /* 6-cycle * 10ns = 60ns */
-    TimingCfg->Tcere   = 6;
+    TimingCfg->Tcere = 6;
     /* 4-cycle * 10ns = 40ns */
-    TimingCfg->Twp     = 4;
+    TimingCfg->Twp = 4;
     /* 2-cycle * 10ns = 20ns */
-    TimingCfg->Tpcclr  = 2;
+    TimingCfg->Tpcclr = 2;
     /* 2-cycle * 10ns = 20ns */
-    TimingCfg->Ttrar   = 2;
+    TimingCfg->Ttrar = 2;
     /* 0-cycle * 10ns = 0ns */
-    TimingCfg->Twerr   = 0;
+    TimingCfg->Twerr = 0;
 }
 
 #endif /* BSP_USING_NAND */
-
 
