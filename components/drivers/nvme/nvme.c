@@ -100,6 +100,11 @@ rt_inline rt_le16_t nvme_next_cmdid(struct rt_nvme_controller *nvme)
     return rt_cpu_to_le16((rt_uint16_t)rt_atomic_add(&nvme->cmdid, 1));
 }
 
+rt_inline rt_ubase_t nvme_queue_dma_flags(void)
+{
+    return RT_DMA_F_NOCACHE | RT_DMA_F_LINEAR;
+}
+
 static rt_err_t nvme_submit_cmd(struct rt_nvme_queue *queue,
         struct rt_nvme_command *cmd)
 {
@@ -397,7 +402,8 @@ static rt_ssize_t nvme_blk_rw(struct rt_nvme_device *ndev, rt_off_t slba,
                     prp_list_size = pages * (prps_per_page - 1) + 1;
                 }
                 prp_list_ptr = prp_list;
-                prp_list_dma = (rt_uint64_t)rt_kmem_v2p(prp_list_ptr);
+                rt_dma_sync_out_data(nvme->dev, prp_list_ptr, prp_list_size,
+                        (rt_ubase_t *)&prp_list_dma, nvme_queue_dma_flags());
 
                 prp2_addr = prp_list_dma;
 
@@ -452,7 +458,7 @@ static rt_ssize_t nvme_blk_read(struct rt_blk_disk *disk, rt_off_t sector,
     rt_uint32_t page_bits;
     rt_size_t buffer_size;
     rt_ubase_t buffer_dma;
-    void *temp_buffer = RT_NULL;
+    void *temp_buffer = RT_NULL, *dma_ptr = buffer;
     struct rt_nvme_device *ndev = rt_disk_to_nvme_device(disk);
     struct rt_nvme_controller *nvme = ndev->ctrl;
 
@@ -472,8 +478,10 @@ static rt_ssize_t nvme_blk_read(struct rt_blk_disk *disk, rt_off_t sector,
             return -RT_ENOMEM;
         }
 
-        buffer_dma = (rt_ubase_t)rt_kmem_v2p(temp_buffer);
+        dma_ptr = temp_buffer;
     }
+
+    rt_dma_sync_out_data(nvme->dev, dma_ptr, buffer_size, &buffer_dma, nvme_queue_dma_flags());
 
     res = nvme_blk_rw(ndev, sector, buffer_dma, sector_count, RT_NVME_CMD_READ);
 
@@ -515,6 +523,7 @@ static rt_ssize_t nvme_blk_write(struct rt_blk_disk *disk, rt_off_t sector,
     rt_size_t buffer_size;
     rt_ubase_t buffer_dma;
     void *temp_buffer = RT_NULL;
+    const void *dma_ptr = buffer;
     struct rt_nvme_device *ndev = rt_disk_to_nvme_device(disk);
     struct rt_nvme_controller *nvme = ndev->ctrl;
 
@@ -534,13 +543,12 @@ static rt_ssize_t nvme_blk_write(struct rt_blk_disk *disk, rt_off_t sector,
             return -RT_ENOMEM;
         }
 
-        buffer_dma = (rt_ubase_t)rt_kmem_v2p(temp_buffer);
-
         rt_memcpy(temp_buffer, buffer, buffer_size);
-        buffer = temp_buffer;
+        dma_ptr = temp_buffer;
     }
 
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)buffer, buffer_size);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)dma_ptr, buffer_size);
+    rt_dma_sync_out_data(nvme->dev, (void *)dma_ptr, buffer_size, &buffer_dma, nvme_queue_dma_flags());
 
     res = nvme_blk_rw(ndev, sector, buffer_dma, sector_count, RT_NVME_CMD_WRITE);
 
@@ -694,10 +702,14 @@ static rt_err_t nvme_identify(struct rt_nvme_controller *nvme,
         rt_uint32_t nsid, rt_uint32_t cns, void *data)
 {
     rt_err_t err;
-    rt_uint32_t page_size = nvme->page_size;
-    rt_ubase_t data_phy = (rt_ubase_t)rt_kmem_v2p(data);
-    int offset = data_phy & (page_size - 1);
+    rt_ssize_t offset;
+    rt_ubase_t data_phy = 0;
+    rt_size_t page_size = nvme->page_size;
     struct rt_nvme_command cmd;
+
+    rt_dma_sync_out_data(nvme->dev, data, sizeof(struct rt_nvme_id_ctrl),
+            &data_phy, nvme_queue_dma_flags());
+    offset = data_phy & (page_size - 1);
 
     rt_memset(&cmd, 0, sizeof(cmd));
     cmd.identify.opcode = RT_NVME_ADMIN_OPCODE_IDENTIFY;
@@ -710,8 +722,9 @@ static rt_err_t nvme_identify(struct rt_nvme_controller *nvme,
     }
     else
     {
-        data_phy += (page_size - offset);
-        cmd.identify.prp2 = rt_cpu_to_le64(data_phy);
+        rt_ubase_t data_phy2 = data_phy + (page_size - offset);
+
+        cmd.identify.prp2 = rt_cpu_to_le64(data_phy2);
     }
     cmd.identify.cns = rt_cpu_to_le32(cns);
 
@@ -781,11 +794,6 @@ static rt_err_t nvme_detach_queue(struct rt_nvme_queue *queue,
     cmd.delete_queue.qid = rt_cpu_to_le16(queue->qid);
 
     return nvme_submit_cmd(&nvme->admin_queue, &cmd);
-}
-
-rt_inline rt_ubase_t nvme_queue_dma_flags(void)
-{
-    return RT_DMA_F_NOCACHE | RT_DMA_F_LINEAR;
 }
 
 static void nvme_free_queue(struct rt_nvme_queue *queue)
@@ -863,7 +871,7 @@ static struct rt_nvme_queue *nvme_alloc_queue(struct rt_nvme_controller *nvme,
 
     if (nvme->ops->setup_queue)
     {
-        if (!(err = nvme->ops->setup_queue(queue)))
+        if ((err = nvme->ops->setup_queue(queue)))
         {
             LOG_E("Setup[%s] queue error = %s", nvme->ops->name, rt_strerror(err));
 
