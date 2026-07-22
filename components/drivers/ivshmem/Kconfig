@@ -1,0 +1,10 @@
+menuconfig RT_USING_IVSHMEM
+    bool "Using Inter-VM shared memory device drivers"
+    depends on RT_USING_DM
+    depends on RT_USING_PCI
+    default n
+
+config RT_IVSHMEM_QEMU
+    bool "QEMU"
+    depends on RT_USING_IVSHMEM
+    default n
