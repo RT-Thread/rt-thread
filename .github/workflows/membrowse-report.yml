@@ -134,7 +134,6 @@ jobs:
             riscv32-esp-elf)
               wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
               sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
-              pip3 install --user esptool
               echo "TOOLCHAIN_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
               ;;
             riscv64-linux-musl-k230)
@@ -157,6 +156,9 @@ jobs:
         run: |
           source $HOME/.env/env.sh
           pip install -r tools/requirements.txt
+          if [ "${{ matrix.toolchain }}" = "riscv32-esp-elf" ]; then
+            python -m pip install esptool
+          fi
           export RTT_EXEC_PATH="$TOOLCHAIN_PATH"
           export RTT_ROOT="$PWD"
           export RTT_CC="${MATRIX_RTT_CC:-gcc}"
