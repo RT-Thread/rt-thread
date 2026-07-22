@@ -135,10 +135,10 @@ rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_int8_t channel);
 rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_int8_t channel);
 
 /**
- * @brief get the adc resolution
+ * @brief get the converted voltage value from an ADC channel
  * @param dev adc device
  * @param channel adc channel
- * @return rt_int16_t adc resolution
+ * @return rt_int16_t voltage value (implementation-defined unit, typically mV)
  * @ingroup group_drivers_adc
  */
 rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_int8_t channel);
