@@ -43,6 +43,42 @@ rt_err_t rt_ufs_dme_set(struct rt_ufs_host *ufs, rt_uint32_t attr_sel, rt_uint32
     return RT_EOK;
 }
 
+rt_err_t rt_ufs_dme_reset(struct rt_ufs_host *ufs)
+{
+    rt_err_t err;
+    rt_uint32_t arg2 = 0;
+
+    if ((err = rt_ufs_uic_cmd_send(ufs, RT_UFS_CMDOP_DME_RESET, 0, &arg2, 0)))
+    {
+        return err;
+    }
+
+    if ((arg2 & RT_UFS_CMDRES_MASK) != RT_UFS_CMDRES_SUCCESS)
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
+rt_err_t rt_ufs_dme_enable(struct rt_ufs_host *ufs)
+{
+    rt_err_t err;
+    rt_uint32_t arg2 = 0;
+
+    if ((err = rt_ufs_uic_cmd_send(ufs, RT_UFS_CMDOP_DME_ENABLE, 0, &arg2, 0)))
+    {
+        return err;
+    }
+
+    if ((arg2 & RT_UFS_CMDRES_MASK) != RT_UFS_CMDRES_SUCCESS)
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
 rt_err_t rt_ufs_dme_get(struct rt_ufs_host *ufs, rt_uint32_t attr_sel, rt_uint32_t *value)
 {
     rt_uint32_t arg2 = 0;

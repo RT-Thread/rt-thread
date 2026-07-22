@@ -542,6 +542,7 @@ struct rt_ufs_ops
     rt_err_t (*init)(struct rt_ufs_host *ufs);
     rt_err_t (*exit)(struct rt_ufs_host *ufs);
     rt_err_t (*reset)(struct rt_ufs_host *ufs);
+    rt_err_t (*hce_enable_notify)(struct rt_ufs_host *ufs, enum rt_ufs_notify_change_status status);
     rt_err_t (*link_startup_notify)(struct rt_ufs_host *ufs, enum rt_ufs_notify_change_status status);
 };
 
@@ -586,6 +587,16 @@ void rt_ufs_pm_post_linkup(struct rt_ufs_host *ufs);
  * @return RT_EOK on success, otherwise an error code
  */
 rt_err_t rt_ufs_dme_set(struct rt_ufs_host *ufs, rt_uint32_t attr_sel, rt_uint32_t value);
+
+/**
+ * @brief UIC DME_RESET
+ */
+rt_err_t rt_ufs_dme_reset(struct rt_ufs_host *ufs);
+
+/**
+ * @brief UIC DME_ENABLE
+ */
+rt_err_t rt_ufs_dme_enable(struct rt_ufs_host *ufs);
 
 /**
  * @brief UIC DME_GET

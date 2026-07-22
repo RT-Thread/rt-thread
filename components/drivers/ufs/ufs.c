@@ -35,6 +35,88 @@
 /* UTRD dword_0 command type bits */
 #define RT_UFS_UTRD_CMD_TYPE_SCSI       (1U << RT_UFS_UPIU_COMMAND_TYPE_OFFSET)
 
+static rt_err_t ufs_wait_hce(struct rt_ufs_host *ufs)
+{
+    rt_tick_t deadline = rt_tick_get() + rt_tick_from_millisecond(1000);
+
+    while (!(HWREG32(ufs->regs + RT_UFS_REG_HCE) & 0x1))
+    {
+        if (rt_tick_get() >= deadline)
+        {
+            LOG_E("%s: UFS HCE enable timeout", rt_dm_dev_get_name(ufs->parent.dev));
+            return -RT_ETIMEOUT;
+        }
+
+        rt_thread_mdelay(1);
+    }
+
+    return RT_EOK;
+}
+
+static rt_err_t ufs_link_startup(struct rt_ufs_host *ufs)
+{
+    rt_err_t err;
+    rt_uint32_t value = 0;
+
+    if (ufs->ops->link_startup_notify)
+    {
+        ufs->ops->link_startup_notify(ufs, RT_UFS_NOTIFY_CHANGE_STATUS_PRE);
+    }
+
+    err = rt_ufs_uic_cmd_send(ufs, RT_UFS_CMDOP_DME_LINKSTARTUP, 0, &value, 0);
+
+    if (ufs->ops->link_startup_notify)
+    {
+        ufs->ops->link_startup_notify(ufs, RT_UFS_NOTIFY_CHANGE_STATUS_POST);
+    }
+
+    return err;
+}
+
+static rt_err_t ufs_wait_utrd_complete(struct rt_ufs_host *ufs, rt_tick_t timeout)
+{
+    rt_tick_t deadline = rt_tick_get() + timeout;
+    rt_bool_t db_seen = RT_FALSE;
+
+    while (rt_tick_get() < deadline)
+    {
+        rt_uint32_t is = HWREG32(ufs->regs + RT_UFS_REG_IS);
+        rt_uint32_t db = HWREG32(ufs->regs + RT_UFS_REG_UTRLDBR);
+
+        if (db & RT_BIT(RT_UFS_SLOT_ID))
+        {
+            db_seen = RT_TRUE;
+        }
+
+        if ((ufs->irq_status | is) & RT_UFS_REG_IS_UTRCS)
+        {
+            ufs->irq_status &= ~RT_UFS_REG_IS_UTRCS;
+            HWREG32(ufs->regs + RT_UFS_REG_IS) = RT_UFS_REG_IS_UTRCS;
+            return RT_EOK;
+        }
+
+        if (db_seen && !(db & RT_BIT(RT_UFS_SLOT_ID)))
+        {
+            return RT_EOK;
+        }
+
+        if ((ufs->irq_status | is) & (RT_UFS_REG_IS_UTPES | RT_UFS_REG_IS_DFES | RT_UFS_REG_IS_UE))
+        {
+            return -RT_ERROR;
+        }
+
+        rt_thread_mdelay(1);
+    }
+
+    return -RT_ETIMEOUT;
+}
+
+static rt_uint8_t ufs_utrd_ocs(struct rt_ufs_host *ufs)
+{
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, ufs->utrd, sizeof(*ufs->utrd));
+    return rt_le32_to_cpu(ufs->utrd->header.dword_2) & 0xf;
+}
+
 static rt_uint8_t ufs_scsi_cmd_data_dir(struct rt_scsi_cmd *cmd)
 {
     switch (cmd->op.unknow.opcode)
@@ -318,12 +400,16 @@ static rt_err_t ufs_utp_transfer(struct rt_ufs_host *ufs, struct rt_scsi_device 
     HWREG32(regs + RT_UFS_REG_UTRLDBR) = RT_BIT(RT_UFS_SLOT_ID);
     rt_spin_unlock(&ufs->lock);
 
-    /* Interrupt mode: wait for completion signaled by ISR */
-    if ((err = rt_completion_wait(&ufs->done, rt_tick_from_millisecond(RT_UFS_UTP_TIMEOUT_MS))))
+    /*
+     * Poll UTRCS directly. QEMU and some PCI hosts may complete the transfer
+     * before the INTx/MSI handler is wired up during early probe.
+     */
+    if ((err = ufs_wait_utrd_complete(ufs, rt_tick_from_millisecond(RT_UFS_UTP_TIMEOUT_MS))))
     {
-        LOG_E("%s: UFS UTP wait timeout: IS=%#08x irq_status=%#08x",
+        LOG_E("%s: UFS UTP wait timeout: IS=%#08x irq_status=%#08x UTRLDBR=%#08x OCS=%#x",
                 rt_dm_dev_get_name(ufs->parent.dev),
-                HWREG32(regs + RT_UFS_REG_IS), ufs->irq_status);
+                HWREG32(regs + RT_UFS_REG_IS), ufs->irq_status,
+                HWREG32(regs + RT_UFS_REG_UTRLDBR), ufs_utrd_ocs(ufs));
 
         /* Dump UPIU header and PRDT entry for post-mortem */
         LOG_E("%s: UTP UPIU: tx=%u flags=%#02x lun=%u tag=%u seg_len(be16)=%u",
@@ -334,16 +420,18 @@ static rt_err_t ufs_utp_transfer(struct rt_ufs_host *ufs, struct rt_scsi_device 
 
         if (cmd->data.size > 0)
         {
+            struct rt_ufs_sg_entry *prd = ((struct rt_utp_transfer_cmd_desc *)ufs->ucd_base)->prd_table;
+
             LOG_E("%s: UTP PRDT[0]: addr=%#llx size(le32)=%#08x",
                     rt_dm_dev_get_name(ufs->parent.dev),
-                    (rt_uint64_t)(&((struct rt_utp_transfer_cmd_desc *)ufs->ucd_base)->prd_table[0])->addr,
-                    (&((struct rt_utp_transfer_cmd_desc *)ufs->ucd_base)->prd_table[0])->size);
+                    (unsigned long long)rt_le64_to_cpu(prd[0].addr),
+                    rt_le32_to_cpu(prd[0].size));
         }
 
         goto _end;
     }
 
-    is = ufs->irq_status | HWREG32(regs + RT_UFS_REG_IS);
+    is = HWREG32(regs + RT_UFS_REG_IS);
     if (is & (RT_UFS_REG_IS_UTPES | RT_UFS_REG_IS_DFES | RT_UFS_REG_IS_UE))
     {
         err = -RT_ERROR;
@@ -423,8 +511,16 @@ _no_resp_buf:
         goto _end;
     }
 
-    if (rsp->header.status != 0)
+    /*
+     * SCSI status lives in the response UPIU header. CHECK CONDITION (0x02)
+     * may still carry valid data; sense is handled by the SCSI core if needed.
+     */
+    if (rsp->header.status != 0 && rsp->header.status != 0x02)
     {
+        LOG_E("%s: UFS SCSI status=%#02x sense_len=%u",
+                rt_dm_dev_get_name(ufs->parent.dev),
+                rsp->header.status,
+                rt_be16_to_cpu(rsp->sr.sense_data_len));
         err = -RT_ERROR;
         goto _end;
     }
@@ -527,7 +623,6 @@ static void ufs_isr(int irqno, void *param)
 rt_err_t rt_ufs_host_register(struct rt_ufs_host *ufs)
 {
     rt_err_t err;
-    rt_uint32_t value;
     char dev_name[RT_NAME_MAX];
     struct rt_scsi_host *scsi;
 
@@ -585,11 +680,21 @@ rt_err_t rt_ufs_host_register(struct rt_ufs_host *ufs)
         goto _fail;
     }
 
+    if (ufs->ops->hce_enable_notify &&
+        (err = ufs->ops->hce_enable_notify(ufs, RT_UFS_NOTIFY_CHANGE_STATUS_PRE)))
+    {
+        goto _fail;
+    }
+
     /* Enable controller (HCE 1) */
     HWREG32(ufs->regs + RT_UFS_REG_HCE) = 0;
     rt_thread_mdelay(1);
     HWREG32(ufs->regs + RT_UFS_REG_HCE) = 0x1;
-    rt_thread_mdelay(1);
+
+    if ((err = ufs_wait_hce(ufs)))
+    {
+        goto _fail;
+    }
 
     /* Program UTRD/UTMRD list base addresses */
     HWREG32(ufs->regs + RT_UFS_REG_UTRLBA) = rt_lower_32_bits(ufs->utrl_handle);
@@ -611,24 +716,16 @@ rt_err_t rt_ufs_host_register(struct rt_ufs_host *ufs)
     HWREG32(ufs->regs + RT_UFS_REG_UTRLRSR) = 0x1;
     HWREG32(ufs->regs + RT_UFS_REG_UTMRLRSR) = 0x1;
 
-    /* Link startup: set UTRLRDY/UTMRLRDY */
-    value = HWREG32(ufs->regs + RT_UFS_REG_HCS);
-    if (!(value & RT_UFS_REG_HCS_UTRLRDY) || !(value & RT_UFS_REG_HCS_UTMRLRDY) || !(value & RT_UFS_REG_HCS_UCRDY))
+    if (ufs->ops->hce_enable_notify &&
+        (err = ufs->ops->hce_enable_notify(ufs, RT_UFS_NOTIFY_CHANGE_STATUS_POST)))
     {
-        if (ufs->ops->link_startup_notify)
-        {
-            ufs->ops->link_startup_notify(ufs, RT_UFS_NOTIFY_CHANGE_STATUS_PRE);
-        }
+        goto _fail;
+    }
 
-        if ((err = rt_ufs_uic_cmd_send(ufs, RT_UFS_CMDOP_DME_LINKSTARTUP, 0, &value, 0)))
-        {
-            goto _fail;
-        }
-
-        if (ufs->ops->link_startup_notify)
-        {
-            ufs->ops->link_startup_notify(ufs, RT_UFS_NOTIFY_CHANGE_STATUS_POST);
-        }
+    /* Link startup: required before the first SCSI/UTP transfer */
+    if ((err = ufs_link_startup(ufs)))
+    {
+        goto _fail;
     }
 
     ufs->pwr_active_valid = 0;
