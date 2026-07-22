@@ -66,7 +66,8 @@ static rt_err_t rpmsg_ns_rx_callback(struct rt_rpmsg_device *rdev,
     }
     else if (rt_le32_to_cpu(msg->flags) == RT_RPMSG_NS_CREATE)
     {
-        ept = rt_rpmsg_create_endpoint(rdev, &info, RT_NULL);
+        ept = rt_rpmsg_create_endpoint(rdev, &info,
+                &rpmsg_ns_remote_default_rx);
 
         if (rt_is_err(ept))
         {
