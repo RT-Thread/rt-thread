@@ -171,29 +171,106 @@ _done:
 static rt_size_t read_lba(struct rt_blk_disk *disk,
         rt_uint64_t lba, rt_uint8_t *buffer, rt_size_t count)
 {
+    rt_uint32_t lbs;
+    rt_ssize_t cap_ss, lbs_ss;
     rt_size_t totalreadcount = 0;
+    rt_uint8_t *secbuf = RT_NULL;
+    rt_uint64_t capacity, disk_bytes, n512;
 
-    if (!buffer || lba > last_lba(disk))
+    if (!buffer || count == 0)
     {
         return 0;
     }
 
-    for (rt_uint64_t n = lba; count; ++n)
+    cap_ss = rt_blk_disk_get_capacity(disk);
+    lbs_ss = rt_blk_disk_get_logical_block_size(disk);
+    if (cap_ss < 0 || lbs_ss < 0)
+    {
+        return 0;
+    }
+
+    lbs = (rt_uint32_t)lbs_ss;
+    capacity = (rt_uint64_t)cap_ss;
+
+    if (lbs < 512 || (lbs % 512) != 0)
+    {
+        return 0;
+    }
+
+    if (lba >= capacity)
+    {
+        return 0;
+    }
+
+    disk_bytes = capacity * (rt_uint64_t)lbs;
+    n512 = lba * ((rt_uint64_t)lbs / 512);
+
+    secbuf = rt_malloc(lbs);
+    if (!secbuf)
+    {
+        return 0;
+    }
+
+    while (count > 0)
     {
         int copied = 512;
+        rt_ssize_t rd;
+        rt_uint32_t off;
+        rt_uint64_t log_sec, byte_off = n512 * 512;
 
-        disk->ops->read(disk, n, buffer, 1);
-
-        if (copied > count)
+        if (byte_off >= disk_bytes)
         {
-            copied = count;
+            break;
+        }
+
+        if (copied > (int)count)
+        {
+            copied = (int)count;
+        }
+
+        if ((rt_uint64_t)copied > disk_bytes - byte_off)
+        {
+            copied = (int)(disk_bytes - byte_off);
+        }
+
+        log_sec = byte_off / lbs;
+        off = (rt_uint32_t)(byte_off % lbs);
+
+        if (off + (rt_uint32_t)copied <= lbs)
+        {
+            rd = disk->ops->read(disk, (rt_off_t)log_sec, secbuf, 1);
+            if (rd != 1)
+            {
+                break;
+            }
+            rt_memcpy(buffer, secbuf + off, copied);
+        }
+        else
+        {
+            rt_uint32_t first = lbs - off;
+
+            rd = disk->ops->read(disk, (rt_off_t)log_sec, secbuf, 1);
+            if (rd != 1)
+            {
+                break;
+            }
+            rt_memcpy(buffer, secbuf + off, first);
+
+            rd = disk->ops->read(disk, (rt_off_t)(log_sec + 1), secbuf, 1);
+            if (rd != 1)
+            {
+                break;
+            }
+            rt_memcpy(buffer + first, secbuf, copied - first);
         }
 
         buffer += copied;
         totalreadcount += copied;
         count -= copied;
+        ++n512;
     }
 
+    rt_free(secbuf);
     return totalreadcount;
 }
 
@@ -255,7 +332,14 @@ static gpt_entry *alloc_read_gpt_entries(struct rt_blk_disk *disk,
 static gpt_header *alloc_read_gpt_header(struct rt_blk_disk *disk, rt_uint64_t lba)
 {
     gpt_header *gpt;
-    rt_uint32_t ssz = rt_blk_disk_get_logical_block_size(disk);
+    rt_uint32_t ssz;
+    rt_ssize_t lbs_ss = rt_blk_disk_get_logical_block_size(disk);
+
+    if (lbs_ss <= 0)
+    {
+        return RT_NULL;
+    }
+    ssz = (rt_uint32_t)lbs_ss;
 
     gpt = rt_malloc(ssz);
 
@@ -316,13 +400,17 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
 
     /* Check the GUID Partition Table header size is too big */
     logical_block_size = rt_blk_disk_get_logical_block_size(disk);
+    if (logical_block_size <= 0)
+    {
+        goto _fail;
+    }
 
-    if (rt_le32_to_cpu((*gpt)->header_size) > logical_block_size)
+    if (rt_le32_to_cpu((*gpt)->header_size) > (rt_uint32_t)logical_block_size)
     {
         LOG_D("%s: GUID Partition Table Header size is too large: %u > %u",
                 to_disk_name(disk),
                 rt_le32_to_cpu((*gpt)->header_size),
-                logical_block_size);
+                (rt_uint32_t)logical_block_size);
 
         goto _fail;
     }
@@ -410,11 +498,6 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
     /* Sanity check partition table size */
     pt_size = (rt_uint64_t)rt_le32_to_cpu((*gpt)->num_partition_entries) *
             rt_le32_to_cpu((*gpt)->sizeof_partition_entry);
-
-    if (pt_size > (rt_uint64_t)RT_UINT32_MAX)
-    {
-        goto _fail;
-    }
 
     if (!(*ptes = alloc_read_gpt_entries(disk, *gpt)))
     {
@@ -611,13 +694,20 @@ static rt_bool_t find_valid_gpt(struct rt_blk_disk *disk,
     gpt_header *pgpt = RT_NULL, *agpt = RT_NULL;
     gpt_entry *pptes = RT_NULL, *aptes = RT_NULL;
     legacy_mbr *legacymbr;
-    rt_size_t total_sectors = rt_blk_disk_get_capacity(disk);
+    rt_ssize_t cap_ss = rt_blk_disk_get_capacity(disk);
+    rt_size_t total_sectors;
     rt_size_t lastlba;
 
     if (!ptes)
     {
         return RT_FALSE;
     }
+
+    if (cap_ss < 0)
+    {
+        return RT_FALSE;
+    }
+    total_sectors = (rt_size_t)cap_ss;
 
     lastlba = last_lba(disk);
 
@@ -631,7 +721,11 @@ static rt_bool_t find_valid_gpt(struct rt_blk_disk *disk,
             return RT_FALSE;
         }
 
-        read_lba(disk, 0, (rt_uint8_t *)legacymbr, sizeof(*legacymbr));
+        if (read_lba(disk, 0, (rt_uint8_t *)legacymbr, sizeof(*legacymbr)) < sizeof(*legacymbr))
+        {
+            rt_free(legacymbr);
+            return RT_FALSE;
+        }
         good_pmbr = is_pmbr_valid(legacymbr, total_sectors);
         rt_free(legacymbr);
 
