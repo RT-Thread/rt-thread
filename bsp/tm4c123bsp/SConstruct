@@ -55,10 +55,10 @@ tm4c123_library = 'TivaWare_C_series'
 rtconfig.BSP_LIBRARY_TYPE = tm4c123_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, tm4c123_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, tm4c123_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', tm4c123_library), duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'Drivers', 'SConscript'), variant_dir='build/libraries/Drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

@@ -55,7 +55,7 @@ rtconfig.BSP_LIBRARY_TYPE = ch32_library
 bsp_vdir = 'build'
 
 # common include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'ch32_drivers','SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'ch32_drivers','SConscript'), variant_dir='build/libraries/ch32_drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

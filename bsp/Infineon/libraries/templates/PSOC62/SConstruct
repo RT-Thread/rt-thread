@@ -51,10 +51,10 @@ IFX_library = 'IFX_PSOC6_HAL'
 rtconfig.BSP_LIBRARY_TYPE = IFX_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, IFX_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, IFX_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', IFX_library), duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'), variant_dir='build/libraries/HAL_Drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

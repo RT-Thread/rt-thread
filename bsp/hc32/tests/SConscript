@@ -30,12 +30,13 @@ if GetDepend(['BSP_USING_I2C']):
 if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
     src += ['test_eth.c']
     #lwIP: HTTP server
-    lwiphttp_src = []
+    lwiphttp_path = os.path.join(RTT_ROOT, 'components', 'net', 'lwip', 'lwip-2.1.2', 'src', 'apps', 'http')
+    VariantDir('lwip_http', lwiphttp_path, duplicate=0)
     lwiphttp_src = Split("""
-    ../../../components/net/lwip/lwip-2.1.2/src/apps/http/altcp_proxyconnect.c
-    ../../../components/net/lwip/lwip-2.1.2/src/apps/http/fs.c
-    ../../../components/net/lwip/lwip-2.1.2/src/apps/http/http_client.c
-    ../../../components/net/lwip/lwip-2.1.2/src/apps/http/httpd.c
+    lwip_http/altcp_proxyconnect.c
+    lwip_http/fs.c
+    lwip_http/http_client.c
+    lwip_http/httpd.c
     """)
     src += lwiphttp_src
 
