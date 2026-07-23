@@ -314,6 +314,8 @@ rt_err_t rt_hw_qspi_device_attach(const char *bus_name, const char *device_name,
         goto __exit;
     }
 
+    rt_memset(qspi_device, 0, sizeof(struct rt_qspi_device));
+
     /* Safe type conversion to resolve interface contract mismatch.
      * Caller ensures the function pointer is compatible via adapter pattern.
      */
