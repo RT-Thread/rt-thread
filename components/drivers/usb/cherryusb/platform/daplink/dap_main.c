@@ -342,6 +342,7 @@ volatile uint8_t config_uart_transfer = 0;
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t uartrx_ringbuffer[CONFIG_UARTRX_RINGBUF_SIZE];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t usbrx_ringbuffer[CONFIG_USBRX_RINGBUF_SIZE];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t usb_tmpbuffer[DAP_PACKET_SIZE];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t usb_intmpbuffer[DAP_PACKET_SIZE];
 
 static volatile uint8_t usbrx_idle_flag = 0;
 static volatile uint8_t usbtx_idle_flag = 0;
@@ -447,7 +448,13 @@ void usbd_cdc_acm_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
     } else {
         if (chry_ringbuffer_get_used(&g_uartrx)) {
             buffer = chry_ringbuffer_linear_read_setup(&g_uartrx, &size);
-            usbd_ep_start_write(0, CDC_IN_EP, buffer, size);
+            if ((uint32_t)buffer & 0x3) {
+                if (size > DAP_PACKET_SIZE) size = DAP_PACKET_SIZE;
+                memcpy(usb_intmpbuffer, buffer, size);
+                usbd_ep_start_write(0, CDC_IN_EP, usb_intmpbuffer, size);
+            } else {
+                usbd_ep_start_write(0, CDC_IN_EP, buffer, size);
+            }
         } else {
             usbtx_idle_flag = 1;
         }
@@ -669,7 +676,14 @@ void chry_dap_usb2uart_handle(void)
             usbtx_idle_flag = 0;
             /* start first transfer */
             buffer = chry_ringbuffer_linear_read_setup(&g_uartrx, &size);
-            usbd_ep_start_write(0, CDC_IN_EP, buffer, size);
+            /* DWC2 requires 4-byte-aligned data; bounce if needed */
+            if ((uint32_t)buffer & 0x3) {
+                if (size > DAP_PACKET_SIZE) size = DAP_PACKET_SIZE;
+                memcpy(usb_intmpbuffer, buffer, size);
+                usbd_ep_start_write(0, CDC_IN_EP, usb_intmpbuffer, size);
+            } else {
+                usbd_ep_start_write(0, CDC_IN_EP, buffer, size);
+            }
         }
     }
 
