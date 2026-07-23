@@ -31,7 +31,7 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-objs.extend(SConscript('../Libraries/ch56x_drivers/SConscript',
+objs.extend(SConscript('../libraries/ch56x_drivers/SConscript',
     variant_dir='build/libraries/ch56x_drivers', duplicate=0))
 
 # make a building

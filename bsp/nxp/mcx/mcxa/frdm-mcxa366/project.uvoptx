@@ -590,7 +590,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\drivers\drv_pin.c</PathWithFileName>
+      <PathWithFileName>..\libraries\drivers\drv_pin.c</PathWithFileName>
       <FilenameWithoutPath>drv_pin.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -602,7 +602,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\drivers\drv_uart.c</PathWithFileName>
+      <PathWithFileName>..\libraries\drivers\drv_uart.c</PathWithFileName>
       <FilenameWithoutPath>drv_uart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>

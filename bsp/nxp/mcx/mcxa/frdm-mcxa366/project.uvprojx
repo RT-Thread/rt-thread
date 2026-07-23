@@ -340,7 +340,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__RTTHREAD__, CPU_MCXA366VLQ, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\libcpu\arm\cortex-m33;packages\nxp-mcx-series-latest\MCXA366\components\codec;packages\nxp-mcx-series-latest\MCXA366\periph2;..\..\..\..\..\components\finsh;board;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\phy;packages\nxp-mcx-cmsis-latest\Core\Include;.;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXA366;..\..\..\..\..\components\libc\compilers\common\extension;packages\nxp-mcx-series-latest\MCXA366\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\include;applications;..\Libraries\drivers;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\net\utest;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;board\MCUX_Config\board;..\Libraries\drivers\config</IncludePath>
+              <IncludePath>..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\libcpu\arm\cortex-m33;packages\nxp-mcx-series-latest\MCXA366\components\codec;packages\nxp-mcx-series-latest\MCXA366\periph2;..\..\..\..\..\components\finsh;board;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\phy;packages\nxp-mcx-cmsis-latest\Core\Include;.;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXA366;..\..\..\..\..\components\libc\compilers\common\extension;packages\nxp-mcx-series-latest\MCXA366\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\include;applications;..\libraries\drivers;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\net\utest;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;board\MCUX_Config\board;..\libraries\drivers\config</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1526,12 +1526,12 @@
             <File>
               <FileName>drv_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_pin.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_pin.c</FilePath>
             </File>
             <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_uart.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_uart.c</FilePath>
             </File>
           </Files>
         </Group>

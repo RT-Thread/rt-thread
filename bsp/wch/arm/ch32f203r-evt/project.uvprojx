@@ -335,7 +335,7 @@
               <MiscControls />
               <Define>RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\..\..\..\components\net\utest;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\libcpu\arm\common;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;.;..\..\..\..\components\drivers\phy;..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\inc;board;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;applications;..\Libraries\CH32F20x_StdPeriph_Driver\CMSIS;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\include;..\Libraries\CH32F20x_StdPeriph_Driver\CMSIS\WCH\CH32F20x\Include;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\ch32_drivers;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\Libraries\ch32_drivers\config;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\include;..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\..\..\..\components\net\utest;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\libcpu\arm\common;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;.;..\..\..\..\components\drivers\phy;..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\inc;board;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;applications;..\libraries\CH32F20x_StdPeriph_Driver\CMSIS;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\include;..\libraries\CH32F20x_StdPeriph_Driver\CMSIS\WCH\CH32F20x\Include;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\ch32_drivers;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\spi;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\libraries\ch32_drivers\config;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\include;..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -392,147 +392,147 @@
             <File>
               <FileName>ch32f20x_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_adc.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_adc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_bkp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_bkp.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_bkp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_can.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_can.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_crc.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_crc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_dac.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dac.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dac.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_dbgmcu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dbgmcu.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dbgmcu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dma.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_dma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_exti.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_exti.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_flash.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_flash.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_gpio.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_i2c.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_iwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_iwdg.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_iwdg.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_misc.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_misc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_pwr.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_pwr.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_rcc.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_rcc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_rtc.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_rtc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_spi.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_spi.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_tim.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_tim.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_usart.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_usart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ch32f20x_wwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_wwdg.c</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\src\ch32f20x_wwdg.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>startup_ch32f20x.s</FileName>
               <FileType>2</FileType>
-              <FilePath>..\Libraries\CH32F20x_StdPeriph_Driver\CMSIS\WCH\CH32F20x\Source\ARM\startup_ch32f20x.s</FilePath>
+              <FilePath>..\libraries\CH32F20x_StdPeriph_Driver\CMSIS\WCH\CH32F20x\Source\ARM\startup_ch32f20x.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -977,49 +977,49 @@
             <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_common.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_common.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_gpio_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_gpio_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_gpio_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_hwi2c_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_hwi2c_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_hwi2c_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_iwdt_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_iwdt_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_iwdt_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_rtc_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_rtc_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_rtc_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_spi_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_spi_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_spi_ch32f20x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>drv_uart_ch32f20x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\ch32_drivers\drv_uart_ch32f20x.c</FilePath>
+              <FilePath>..\libraries\ch32_drivers\drv_uart_ch32f20x.c</FilePath>
             </File>
           </Files>
         </Group>

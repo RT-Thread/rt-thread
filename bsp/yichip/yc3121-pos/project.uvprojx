@@ -334,7 +334,7 @@
               <MiscControls />
               <Define>__CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, __STDC_LIMIT_MACROS, RT_USING_LIBC, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>Libraries\sdk;..\..\..\components\libc\posix\io\poll;.;Libraries;drivers;..\..\..\components\finsh;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\phy;..\..\..\components\net\utest;..\..\..\libcpu\arm\common;..\..\..\components\drivers\smp_call;applications;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\posix\ipc;Libraries\core;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\libc\compilers\common\extension</IncludePath>
+              <IncludePath>libraries\sdk;..\..\..\components\libc\posix\io\poll;.;libraries;drivers;..\..\..\components\finsh;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\phy;..\..\..\components\net\utest;..\..\..\libcpu\arm\common;..\..\..\components\drivers\smp_call;applications;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\posix\ipc;libraries\core;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\eventfd;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\libc\compilers\common\extension</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1109,63 +1109,63 @@
             <File>
               <FileName>yc_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_dma.c</FilePath>
+              <FilePath>libraries\sdk\yc_dma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>yc_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_gpio.c</FilePath>
+              <FilePath>libraries\sdk\yc_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>yc_systick.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_systick.c</FilePath>
+              <FilePath>libraries\sdk\yc_systick.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>yc_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_uart.c</FilePath>
+              <FilePath>libraries\sdk\yc_uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>yc_wdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
+              <FilePath>libraries\sdk\yc_wdt.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\core\misc.c</FilePath>
+              <FilePath>libraries\core\misc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>system.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\core\system.c</FilePath>
+              <FilePath>libraries\core\system.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>startup.s</FileName>
               <FileType>2</FileType>
-              <FilePath>Libraries\startup\startup.s</FilePath>
+              <FilePath>libraries\startup\startup.s</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>flash_start.s</FileName>
               <FileType>2</FileType>
-              <FilePath>Libraries\startup\flash_start.s</FilePath>
+              <FilePath>libraries\startup\flash_start.s</FilePath>
             </File>
           </Files>
         </Group>
