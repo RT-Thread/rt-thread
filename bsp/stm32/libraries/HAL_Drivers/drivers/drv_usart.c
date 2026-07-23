@@ -1175,7 +1175,16 @@ static void _dma_tx_complete(struct rt_serial_device *serial)
     if (trans_total_index == 0)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DMADONE);
+        if (uart->dma_tx_done_callback)
+            uart->dma_tx_done_callback(serial);
     }
+}
+
+void stm32_uart_set_tx_done_callback(struct rt_serial_device *serial,
+                                      void (*callback)(struct rt_serial_device *))
+{
+    struct stm32_uart *uart = rt_container_of(serial, struct stm32_uart, serial);
+    uart->dma_tx_done_callback = callback;
 }
 
 /**

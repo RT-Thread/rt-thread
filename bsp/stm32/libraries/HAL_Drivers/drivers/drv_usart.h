@@ -68,6 +68,10 @@ struct stm32_uart
 #endif
     rt_uint16_t uart_dma_flag;
     struct rt_serial_device serial;
+    void (*dma_tx_done_callback)(struct rt_serial_device *serial);
 };
+
+void stm32_uart_set_tx_done_callback(struct rt_serial_device *serial,
+                                      void (*callback)(struct rt_serial_device *));
 
 #endif  /* __DRV_USART_H__ */
