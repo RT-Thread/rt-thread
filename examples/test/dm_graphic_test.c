@@ -11,6 +11,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#include <drivers/lcd.h>
 #include <drivers/misc.h>
 
 #ifdef RT_USING_GRAPHIC
@@ -225,7 +226,10 @@ rt_err_t graphic_start(const char *gdev, int count)
 {
     rt_err_t err;
     rt_uint8_t *vfb, *fb, *pixel, bpp;
+    rt_size_t frame_len, page_count, front_page;
+    struct rt_device_rect_info rect;
     struct rt_device_graphic_info info;
+    struct fb_var_screeninfo var;
     struct rt_device *dev = rt_device_find(gdev);
     void (*conv_func)(rt_uint8_t r, rt_uint8_t g, rt_uint8_t b, void *pixel);
 
@@ -244,7 +248,21 @@ rt_err_t graphic_start(const char *gdev, int count)
         goto _end;
     }
 
-    if (!(vfb = rt_malloc(info.smem_len)))
+    if ((err = rt_device_control(dev, FBIOGET_VSCREENINFO, &var)))
+    {
+        goto _end;
+    }
+
+    frame_len = (rt_size_t)info.pitch * info.height;
+    page_count = frame_len ? info.smem_len / frame_len : 0;
+
+    if (!page_count)
+    {
+        err = -RT_EINVAL;
+        goto _end;
+    }
+
+    if (!(vfb = rt_malloc(frame_len)))
     {
         err = -RT_ENOMEM;
         goto _end;
@@ -252,6 +270,19 @@ rt_err_t graphic_start(const char *gdev, int count)
 
     bpp = info.bits_per_pixel / 8;
     conv_func = conv_funcs[info.pixel_format];
+    front_page = var.yoffset / info.height;
+
+    if (page_count > 1)
+    {
+        /* Explicit page flips do not need the legacy periodic update timer. */
+        var.pixclock = 0;
+        var.activate = FB_ACTIVATE_NOW;
+
+        if ((err = rt_device_control(dev, FBIOPUT_VSCREENINFO, &var)))
+        {
+            goto _free_vfb;
+        }
+    }
 
     for (int frame = 0; frame < count; ++frame)
     {
@@ -275,9 +306,39 @@ rt_err_t graphic_start(const char *gdev, int count)
             fb += info.pitch;
         }
 
-        rt_memcpy(info.framebuffer, vfb, info.smem_len);
+        if (page_count > 1)
+        {
+            front_page = (front_page + 1) % page_count;
+            rt_memcpy((rt_uint8_t *)info.framebuffer + front_page * frame_len,
+                    vfb, frame_len);
+
+            var.xoffset = 0;
+            var.yoffset = front_page * info.height;
+            var.activate = FB_ACTIVATE_VBL;
+            err = rt_device_control(dev, FBIOPAN_DISPLAY, &var);
+        }
+        else
+        {
+            rt_memcpy(info.framebuffer, vfb, frame_len);
+            rect.x = 0;
+            rect.y = 0;
+            rect.width = info.width;
+            rect.height = info.height;
+            err = rt_device_control(dev, RTGRAPHIC_CTRL_RECT_UPDATE, &rect);
+
+            if (!err)
+            {
+                err = rt_device_control(dev, RTGRAPHIC_CTRL_WAIT_VSYNC, RT_NULL);
+            }
+        }
+
+        if (err)
+        {
+            break;
+        }
     }
 
+_free_vfb:
     rt_free(vfb);
 
 _end:
