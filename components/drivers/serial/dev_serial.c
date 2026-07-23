@@ -563,11 +563,20 @@ rt_inline int _serial_dma_rx(struct rt_serial_device *serial, rt_uint8_t *data, 
             recv_len = fifo_recved_len;
 
         if (rx_fifo->get_index + recv_len < serial->config.bufsz)
+        {
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE,
+                                 rx_fifo->buffer + rx_fifo->get_index, recv_len);
             rt_memcpy(data, rx_fifo->buffer + rx_fifo->get_index, recv_len);
+        }
         else
         {
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE,
+                                 rx_fifo->buffer + rx_fifo->get_index,
+                                 serial->config.bufsz - rx_fifo->get_index);
             rt_memcpy(data, rx_fifo->buffer + rx_fifo->get_index,
                     serial->config.bufsz - rx_fifo->get_index);
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, rx_fifo->buffer,
+                                 recv_len + rx_fifo->get_index - serial->config.bufsz);
             rt_memcpy(data + serial->config.bufsz - rx_fifo->get_index, rx_fifo->buffer,
                     recv_len + rx_fifo->get_index - serial->config.bufsz);
         }
