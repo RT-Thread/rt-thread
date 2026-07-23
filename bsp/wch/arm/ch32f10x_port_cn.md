@@ -1,9 +1,9 @@
 # CH32F10X系列BSP移植
 ## 1 工程结构
 + wch\arm\ch32f103c8-core
-+ wch\arm\Libraries
-+ wch\arm\Libraries\ch32_drivers
-+ wch\arm\Libraries\CH32F10x_StdPeriph_Driver
++ wch\arm\libraries
++ wch\arm\libraries\ch32_drivers
++ wch\arm\libraries\CH32F10x_StdPeriph_Driver
 + wch\arm\tools
 
 ch32f103c8-core为移植到具体芯片的BSP, Libraries存放的是厂商的驱动库(CH32F10x_StdPeriph_Driver等)和适配rt-thread的驱动(ch32_drivers),
@@ -136,7 +136,7 @@ config SOC_CH32F103C8
         select RT_USING_USER_MAIN
         default y
 ~~~
-SOC_CH32F103C8为具体的芯片，SOC_ARM_SERIES_CH32F103在Libraries\Kconfig下已定义。
+SOC_CH32F103C8为具体的芯片，SOC_ARM_SERIES_CH32F103在libraries\Kconfig下已定义。
 RT_USING_COMPONENTS_INIT，RT_USING_USER_MAIN为rt-thread设备框架默认选项。
 
 

@@ -513,7 +513,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\drivers\drv_pin.c</PathWithFileName>
+      <PathWithFileName>..\libraries\drivers\drv_pin.c</PathWithFileName>
       <FilenameWithoutPath>drv_pin.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -525,7 +525,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\drivers\drv_uart.c</PathWithFileName>
+      <PathWithFileName>..\libraries\drivers\drv_uart.c</PathWithFileName>
       <FilenameWithoutPath>drv_uart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -893,7 +893,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_lpadc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_lpadc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpadc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -905,7 +905,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\arm\startup_MCXA156.s</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\arm\startup_MCXA156.s</PathWithFileName>
       <FilenameWithoutPath>startup_MCXA156.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -917,7 +917,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_gpio.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_gpio.c</PathWithFileName>
       <FilenameWithoutPath>fsl_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -929,7 +929,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_crc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_crc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_crc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -941,7 +941,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -953,7 +953,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_ostimer.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_ostimer.c</PathWithFileName>
       <FilenameWithoutPath>fsl_ostimer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -965,7 +965,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_vbat.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_vbat.c</PathWithFileName>
       <FilenameWithoutPath>fsl_vbat.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -977,7 +977,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_common.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_common.c</PathWithFileName>
       <FilenameWithoutPath>fsl_common.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -989,7 +989,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_edma_soc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_edma_soc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_edma_soc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1001,7 +1001,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_lpuart_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_lpuart_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpuart_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1013,7 +1013,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_cmc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_cmc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_cmc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1025,7 +1025,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_eim.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_eim.c</PathWithFileName>
       <FilenameWithoutPath>fsl_eim.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1037,7 +1037,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_i3c.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_i3c.c</PathWithFileName>
       <FilenameWithoutPath>fsl_i3c.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1049,7 +1049,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_freqme.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_freqme.c</PathWithFileName>
       <FilenameWithoutPath>fsl_freqme.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1061,7 +1061,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_lpi2c.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_lpi2c.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpi2c.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1073,7 +1073,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_reset.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_reset.c</PathWithFileName>
       <FilenameWithoutPath>fsl_reset.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1085,7 +1085,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_eqdc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_eqdc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_eqdc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1097,7 +1097,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_waketimer.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_waketimer.c</PathWithFileName>
       <FilenameWithoutPath>fsl_waketimer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1109,7 +1109,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_glikey.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_glikey.c</PathWithFileName>
       <FilenameWithoutPath>fsl_glikey.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1121,7 +1121,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_inputmux.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_inputmux.c</PathWithFileName>
       <FilenameWithoutPath>fsl_inputmux.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1133,7 +1133,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_pwm.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_pwm.c</PathWithFileName>
       <FilenameWithoutPath>fsl_pwm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1145,7 +1145,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_erm.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_erm.c</PathWithFileName>
       <FilenameWithoutPath>fsl_erm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1157,7 +1157,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_spc.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_spc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_spc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1169,7 +1169,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_i3c_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_i3c_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_i3c_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1181,7 +1181,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_lpuart.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_lpuart.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpuart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1193,7 +1193,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_lpi2c_edma.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_lpi2c_edma.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpi2c_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1205,7 +1205,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_utick.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_utick.c</PathWithFileName>
       <FilenameWithoutPath>fsl_utick.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1217,7 +1217,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_ctimer.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_ctimer.c</PathWithFileName>
       <FilenameWithoutPath>fsl_ctimer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1229,7 +1229,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_common_arm.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_common_arm.c</PathWithFileName>
       <FilenameWithoutPath>fsl_common_arm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1241,7 +1241,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_lptmr.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_lptmr.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lptmr.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1253,7 +1253,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_wuu.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_wuu.c</PathWithFileName>
       <FilenameWithoutPath>fsl_wuu.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1265,7 +1265,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\system_MCXA156.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\system_MCXA156.c</PathWithFileName>
       <FilenameWithoutPath>system_MCXA156.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1277,7 +1277,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_wwdt.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_wwdt.c</PathWithFileName>
       <FilenameWithoutPath>fsl_wwdt.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1289,7 +1289,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_aoi.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_aoi.c</PathWithFileName>
       <FilenameWithoutPath>fsl_aoi.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1301,7 +1301,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_lpcmp.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_lpcmp.c</PathWithFileName>
       <FilenameWithoutPath>fsl_lpcmp.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
@@ -1313,7 +1313,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXA156\MCXA156\drivers\fsl_clock.c</PathWithFileName>
+      <PathWithFileName>..\libraries\MCXA156\MCXA156\drivers\fsl_clock.c</PathWithFileName>
       <FilenameWithoutPath>fsl_clock.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
