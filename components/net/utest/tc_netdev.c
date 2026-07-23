@@ -50,8 +50,8 @@ static rt_bool_t initial_dhcp_enabled; /**< Initial DHCP enable status */
  */
 rt_err_t multiple_ping_test(struct netdev *netdev, const char *host, rt_uint32_t n)
 {
-#define UTEST_PING_DATA_LEN           32                    /* Ping data packet size */
-#define UTEST_PING_TIMEOUT            (5 * RT_TICK_PER_SECOND)  /* Ping timeout: 5 seconds */
+#define UTEST_PING_DATA_LEN 32                    /* Ping data packet size */
+#define UTEST_PING_TIMEOUT  (5 * RT_TICK_PER_SECOND)  /* Ping timeout: 5 seconds */
 
     rt_uint32_t success_num = 0, i;
     rt_err_t res = RT_EOK;
@@ -88,8 +88,8 @@ rt_err_t multiple_ping_test(struct netdev *netdev, const char *host, rt_uint32_t
 static void test_netdev_ping(void)
 {
 #define UTEST_INVALID_HOST_NAME ""                    /* Rejected before DNS lookup */
-#define UTEST_EXTERNAL_IP_ADDR "8.8.8.8"              /* Valid external IP */
-#define UTEST_EXTERNAL_URL     "www.baidu.com"        /* Valid external URL */
+#define UTEST_EXTERNAL_IP_ADDR  "8.8.8.8"              /* Valid external IP */
+#define UTEST_EXTERNAL_URL      "www.baidu.com"        /* Valid external URL */
 
     rt_err_t res = RT_EOK;
 
@@ -110,7 +110,6 @@ static void test_netdev_ping(void)
     res = multiple_ping_test(netdev_default, UTEST_EXTERNAL_URL, 10);
     uassert_true(res == RT_EOK);
 #endif
-
 }
 
 /**
@@ -170,11 +169,11 @@ static void test_netdev_netstat(void)
  */
 static void test_netdev_dns(void)
 {
-#define UTEST_DNS             "114.114.114.114"   /* Valid DNS server */
-#define UTEST_INVALID_HOST    ""                  /* Rejected before DNS lookup */
-#define UTEST_HOST_ADDR       "www.rt-thread.org" /* RT-Thread official website */
+#define UTEST_DNS          "114.114.114.114"   /* Valid DNS server */
+#define UTEST_INVALID_HOST ""                  /* Rejected before DNS lookup */
+#define UTEST_HOST_ADDR    "www.rt-thread.org" /* RT-Thread official website */
 
-    ip_addr_t ipaddr = {0};
+    ip_addr_t ipaddr = { 0 };
     struct hostent *res = RT_NULL;
     struct sal_proto_family *netdev_inet = RT_NULL;
     rt_err_t err;
@@ -266,7 +265,7 @@ static void test_netdev_dhcp(void)
 
             /* Check if IP and gateway are properly restored */
             if (!ip_addr_isany(&netdev_default->ip_addr) &&
-                    !ip_addr_isany(&netdev_default->gw))
+                !ip_addr_isany(&netdev_default->gw))
             {
                 rt_kprintf("Network configuration restored after %d retries\n", retry_count);
                 rt_kprintf("Current IP: %s, Gateway: %s\n",
@@ -299,9 +298,9 @@ static void test_netdev_dhcp(void)
  */
 static void test_netdev_ifconfig_set(void)
 {
-#define UTEST_WRONG_IP_ADDR         "192.1.4.125"       /* Test IP address */
-#define UTEST_HOST_ADDR             "www.rt-thread.org" /* Test hostname */
-#define UTEST_WRONG_GW_IP_ADDR      "192.168.99.1"      /* Test gateway address */
+#define UTEST_WRONG_IP_ADDR    "192.1.4.125"       /* Test IP address */
+#define UTEST_HOST_ADDR        "www.rt-thread.org" /* Test hostname */
+#define UTEST_WRONG_GW_IP_ADDR "192.168.99.1"      /* Test gateway address */
 
     ip_addr_t ipaddr, true_ipaddr;
     rt_err_t res = RT_EOK;
@@ -397,9 +396,9 @@ static void test_netdev_set_default_netdev(void)
  */
 static void test_netdev_ipaddr_conversion(void)
 {
-#define UTEST_IP4_ADDR_STR     "192.168.1.1"        /* Valid IPv4 address */
-#define UTEST_IP4_ADDR_STR2    "10.0.0.1"           /* Another valid IPv4 address */
-#define UTEST_INVALID_IP_STR   "999.999.999.999"    /* Invalid IPv4 address */
+#define UTEST_IP4_ADDR_STR   "192.168.1.1"        /* Valid IPv4 address */
+#define UTEST_IP4_ADDR_STR2  "10.0.0.1"           /* Another valid IPv4 address */
+#define UTEST_INVALID_IP_STR "999.999.999.999"    /* Invalid IPv4 address */
 
     ip4_addr_t ip4_addr;
     char buf[16]; /* Maximum length for IPv4 string representation */
@@ -575,7 +574,7 @@ static void test_netdev_config_set(void)
     ip_addr_t original_netmask = netdev_default->netmask;
     ip_addr_t original_dns0 = netdev_default->dns_servers[0];
     ip_addr_t original_dns1 = netdev_default->dns_servers[1];
-    ip_addr_t test_netmask = {0}, test_dns = {0};
+    ip_addr_t test_netmask = { 0 }, test_dns = { 0 };
     rt_err_t res;
 
     /* Test set_netmask */
@@ -1055,19 +1054,24 @@ static rt_err_t utest_tc_cleanup(void)
 
         /* Restore network configuration */
         res = netdev_set_ipaddr(netdev_default, &initial_ip_addr);
-        if (res != RT_EOK) rt_kprintf("Warning: Failed to restore IP address: %d\n", res);
+        if (res != RT_EOK)
+            rt_kprintf("Warning: Failed to restore IP address: %d\n", res);
 
         res = netdev_set_netmask(netdev_default, &initial_netmask);
-        if (res != RT_EOK) rt_kprintf("Warning: Failed to restore netmask: %d\n", res);
+        if (res != RT_EOK)
+            rt_kprintf("Warning: Failed to restore netmask: %d\n", res);
 
         res = netdev_set_gw(netdev_default, &initial_gw);
-        if (res != RT_EOK) rt_kprintf("Warning: Failed to restore gateway: %d\n", res);
+        if (res != RT_EOK)
+            rt_kprintf("Warning: Failed to restore gateway: %d\n", res);
 
         res = netdev_set_dns_server(netdev_default, 0, &initial_dns0);
-        if (res != RT_EOK) rt_kprintf("Warning: Failed to restore DNS0: %d\n", res);
+        if (res != RT_EOK)
+            rt_kprintf("Warning: Failed to restore DNS0: %d\n", res);
 
         res = netdev_set_dns_server(netdev_default, 1, &initial_dns1);
-        if (res != RT_EOK) rt_kprintf("Warning: Failed to restore DNS1: %d\n", res);
+        if (res != RT_EOK)
+            rt_kprintf("Warning: Failed to restore DNS1: %d\n", res);
 
         /* Restore DHCP state */
         if (initial_dhcp_enabled)
