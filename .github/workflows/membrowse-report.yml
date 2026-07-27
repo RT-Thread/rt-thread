@@ -38,6 +38,7 @@ concurrency:
 
 jobs:
   load-targets:
+    if: ${{ github.repository == 'RT-Thread/rt-thread' }}
     runs-on: ubuntu-22.04
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
