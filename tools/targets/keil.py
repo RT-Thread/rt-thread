@@ -276,13 +276,14 @@ def MDK45Project(env, tree, target, script):
 
         # get each group's LIBS flags
         if 'LIBS' in group and group['LIBS']:
-            for item in group['LIBPATH']:
-                full_path = os.path.join(item, group['name'] + '.lib')
-                if os.path.isfile(full_path): # has this library
-                    if group_tree != None:
-                        MDK4AddLibToGroup(ProjectFiles, group_tree, group['name'], full_path, project_path)
-                    else:
-                        group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], full_path, project_path)
+            for libpath in group['LIBPATH']:
+                for libname in group["LIBS"]:
+                    full_path = os.path.join(libpath, libname + '.lib')
+                    if os.path.isfile(full_path): # has this library
+                        if group_tree != None:
+                            MDK4AddLibToGroup(ProjectFiles, group_tree, group['name'], full_path, project_path)
+                        else:
+                            group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], full_path, project_path)
 
     # write include path, definitions and link flags
     IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
