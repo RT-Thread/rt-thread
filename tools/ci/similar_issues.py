@@ -440,6 +440,16 @@ def format_comment(ranked):
     ).format(COMMENT_MARKER, references)
 
 
+def format_no_match_comment():
+    return (
+        "{}\n"
+        "未发现足够相似的 Issue。\n\n"
+        "如需认领并处理此 Issue，请评论 `/claim`。\n\n"
+        "No sufficiently similar issues were found.\n\n"
+        "To claim and work on this issue, comment `/claim`."
+    ).format(COMMENT_MARKER)
+
+
 def is_rate_limit(error):
     return error.status in (429,) or (
         error.status == 403 and "rate limit" in str(error).casefold()
@@ -447,7 +457,12 @@ def is_rate_limit(error):
 
 
 def suggest_for_issue(
-    client, repository, issue, dry_run=False, best_effort_rate_limit=True
+    client,
+    repository,
+    issue,
+    dry_run=False,
+    best_effort_rate_limit=True,
+    comment_when_empty=True,
 ):
     issue_number = int(issue.get("number", 0) or 0)
     if not issue_number or "pull_request" in issue:
@@ -471,9 +486,10 @@ def suggest_for_issue(
     ranked = rank_candidates(issue, response.get("items") or [])
     if not ranked:
         print("No sufficiently similar issues found for #{}".format(issue_number))
-        return []
+        if not comment_when_empty:
+            return []
 
-    comment = format_comment(ranked)
+    comment = format_comment(ranked) if ranked else format_no_match_comment()
     if dry_run:
         print("Dry run for #{}:\n{}".format(issue_number, comment))
     else:
@@ -497,6 +513,7 @@ def process_backfill(client, repository, max_issues, delay_seconds, dry_run):
                 issue,
                 dry_run=dry_run,
                 best_effort_rate_limit=False,
+                comment_when_empty=False,
             )
             if ranked:
                 summary["suggested"] += 1

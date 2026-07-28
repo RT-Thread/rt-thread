@@ -218,6 +218,20 @@ class SuggestionTests(unittest.TestCase):
         self.assertEqual(len(ranked), 1)
         self.assertFalse(any(call[0] == "create_comment" for call in client.calls))
 
+    def test_no_matches_comment_includes_claim_hint(self):
+        issue = make_issue(10, "rt_event_send timeout race resumes thread twice")
+        client = FakeClient()
+
+        ranked = similar_issues.suggest_for_issue(
+            client, "RT-Thread/rt-thread", issue
+        )
+
+        self.assertEqual(ranked, [])
+        comments = [call for call in client.calls if call[0] == "create_comment"]
+        self.assertEqual(len(comments), 1)
+        self.assertIn("如需认领", comments[0][3])
+        self.assertIn("`/claim`", comments[0][3])
+
     def test_rate_limit_is_best_effort(self):
         issue = make_issue(10, "rt_event_send timeout race resumes thread twice")
         client = FakeClient(
@@ -247,6 +261,22 @@ class SuggestionTests(unittest.TestCase):
 
         self.assertEqual(summary["processed"], 1)
         self.assertEqual(summary["failures"][0]["number"], 10)
+
+    def test_backfill_does_not_comment_when_no_matches(self):
+        issue = make_issue(10, "rt_event_send timeout race resumes thread twice")
+        client = FakeClient(open_issues=[issue])
+
+        summary = similar_issues.process_backfill(
+            client,
+            "RT-Thread/rt-thread",
+            max_issues=1,
+            delay_seconds=0,
+            dry_run=False,
+        )
+
+        self.assertEqual(summary["processed"], 1)
+        self.assertEqual(summary["suggested"], 0)
+        self.assertFalse(any(call[0] == "create_comment" for call in client.calls))
 
     def test_comment_is_bilingual_and_cautious(self):
         ranked = [{"candidate": make_issue(9, "Example"), "score": 1.0}]
