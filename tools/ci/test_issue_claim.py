@@ -75,8 +75,8 @@ class FakeClient:
         self.calls.append(("get_permission", repository, actor))
         return self.permission
 
-    def can_assign(self, repository, actor):
-        self.calls.append(("can_assign", repository, actor))
+    def can_assign(self, repository, issue_number, actor):
+        self.calls.append(("can_assign", repository, issue_number, actor))
         return self.assignable
 
     def get_label(self, repository, label):
@@ -91,6 +91,28 @@ class FakeClient:
 
 
 class ClientTests(unittest.TestCase):
+    def test_assignability_is_checked_for_specific_issue(self):
+        class RecordingClient(issue_claim.GitHubClient):
+            def __init__(self):
+                self.call = None
+
+            def request(self, *args, **kwargs):
+                self.call = (args, kwargs)
+
+        client = RecordingClient()
+
+        self.assertTrue(
+            client.can_assign("RT-Thread/rt-thread", 42, "external-user")
+        )
+        self.assertEqual(
+            client.call[0],
+            (
+                "GET",
+                "/repos/RT-Thread/rt-thread/issues/42/assignees/external-user",
+            ),
+        )
+        self.assertEqual(client.call[1]["expected"], (204,))
+
     def test_comment_creation_disables_automatic_retries(self):
         class RecordingClient(issue_claim.GitHubClient):
             def __init__(self):
@@ -254,6 +276,9 @@ class HandlerTests(unittest.TestCase):
         result = issue_claim.handle_event(make_event(), client)
 
         self.assertEqual(result, "claimed")
+        self.assertIn(
+            ("can_assign", "RT-Thread/rt-thread", 42, "alice"), client.calls
+        )
         self.assertIn(
             ("add_assignees", "RT-Thread/rt-thread", 42, ("alice",)),
             client.calls,

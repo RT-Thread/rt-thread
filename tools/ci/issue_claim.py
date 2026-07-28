@@ -228,12 +228,14 @@ class GitHubClient:
                 return {}
             raise
 
-    def can_assign(self, repository, actor):
+    def can_assign(self, repository, issue_number, actor):
         try:
             self.request(
                 "GET",
-                "{}/assignees/{}".format(
-                    self._repository_path(repository), quote(actor, safe="")
+                "{}/issues/{}/assignees/{}".format(
+                    self._repository_path(repository),
+                    issue_number,
+                    quote(actor, safe=""),
                 ),
                 expected=(204,),
             )
@@ -462,7 +464,9 @@ def handle_claim(client, context, comments):
         post_result(client, context, rejection_message("claim", latest))
         return "race_{}".format(latest.reason)
 
-    assignable = client.can_assign(context.repository, context.actor)
+    assignable = client.can_assign(
+        context.repository, context.issue_number, context.actor
+    )
     if assignable:
         client.add_assignees(context.repository, context.issue_number, (context.actor,))
     confirmed_issue = client.get_issue(context.repository, context.issue_number)
