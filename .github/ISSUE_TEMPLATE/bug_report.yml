@@ -1,9 +1,10 @@
 name: 🐛 Bug Report
 description: Create a report to help us improve
 title: "[Bug] "
-labels: ["bug-report"]
+labels: ["bug"]
 body:
   - type: input
+    id: version
     attributes:
       label: RT-Thread Version
       description: |
@@ -11,14 +12,79 @@ body:
     validations:
       required: true
 
-  - type: input
+  - type: dropdown
+    id: area
     attributes:
-      label: Hardware Type/Architectures
-      description: Specify your Hardware/BSP model.
+      label: Affected area
+      description: Select the area most directly related to the problem.
+      options:
+        - Other / Not sure
+        - Kernel
+        - Board Support Package (BSP)
+        - Device drivers
+        - File systems (DFS)
+        - Networking
+        - IPC
+        - FinSH
+        - RT-Smart
+        - Architecture / libcpu
+        - Documentation
+        - Build system and tools
+        - CI / GitHub Actions
+        - Tests and examples
     validations:
       required: true
 
   - type: dropdown
+    id: hardware_vendor
+    attributes:
+      label: Hardware/BSP vendor
+      description: Select the closest vendor family, or Not applicable for generic issues.
+      options:
+        - Not applicable / Other
+        - STM32
+        - NXP
+        - GD32
+        - AT32
+        - Infineon
+        - Renesas
+        - Phytium
+        - Cvitek
+        - WCH
+        - Raspberry Pi
+        - Rockchip
+        - Loongson
+        - ESP32
+        - HC32
+        - Novosns
+        - HPMicro
+        - Bluetrum
+        - K230
+        - Nuvoton
+    validations:
+      required: true
+
+  - type: dropdown
+    id: architecture
+    attributes:
+      label: Architecture
+      options:
+        - Not applicable / Other
+        - ARM / AArch64
+        - RISC-V
+    validations:
+      required: true
+
+  - type: input
+    id: hardware
+    attributes:
+      label: Board and hardware details
+      description: Specify the board/BSP model and relevant peripherals.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: toolchain
     attributes:
       label: Develop Toolchain
       description: which toolchain are you using?
@@ -33,6 +99,7 @@ body:
       required: true
 
   - type: textarea
+    id: description
     attributes:
       label: Describe the bug
       description: A clear and concise description of the bug.
@@ -44,6 +111,7 @@ body:
       required: true
 
   - type: textarea
+    id: context
     attributes:
       label: Other additional context
       description: Add any other context about the problem here.
