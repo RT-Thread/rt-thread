@@ -206,7 +206,9 @@ class SuggestionTests(unittest.TestCase):
         )
 
         self.assertEqual(ranked, [])
-        self.assertFalse(any(call[0] == "create_comment" for call in client.calls))
+        comments = [call for call in client.calls if call[0] == "create_comment"]
+        self.assertEqual(len(comments), 1)
+        self.assertIn(similar_issues.CLAIM_HINT_MARKER, comments[0][3])
 
     def test_dry_run_does_not_create_comment(self):
         issue = make_issue(10, "rt_event_send timeout race resumes thread twice")
@@ -218,7 +220,7 @@ class SuggestionTests(unittest.TestCase):
         self.assertEqual(len(ranked), 1)
         self.assertFalse(any(call[0] == "create_comment" for call in client.calls))
 
-    def test_no_matches_comment_includes_claim_hint(self):
+    def test_claim_hint_is_posted_when_no_matches(self):
         issue = make_issue(10, "rt_event_send timeout race resumes thread twice")
         client = FakeClient()
 
@@ -229,8 +231,26 @@ class SuggestionTests(unittest.TestCase):
         self.assertEqual(ranked, [])
         comments = [call for call in client.calls if call[0] == "create_comment"]
         self.assertEqual(len(comments), 1)
+        self.assertIn(similar_issues.CLAIM_HINT_MARKER, comments[0][3])
         self.assertIn("如需认领", comments[0][3])
         self.assertIn("`/claim`", comments[0][3])
+
+    def test_claim_hint_is_separate_from_similar_issue_comment(self):
+        issue = make_issue(10, "rt_event_send timeout race resumes thread twice")
+        candidate = make_issue(9, "rt_event_send timeout race resumes thread twice")
+        client = FakeClient(search_items=[candidate])
+
+        ranked = similar_issues.suggest_for_issue(
+            client, "RT-Thread/rt-thread", issue
+        )
+
+        self.assertEqual(len(ranked), 1)
+        comments = [call[3] for call in client.calls if call[0] == "create_comment"]
+        self.assertEqual(len(comments), 2)
+        self.assertIn(similar_issues.CLAIM_HINT_MARKER, comments[0])
+        self.assertNotIn(similar_issues.COMMENT_MARKER, comments[0])
+        self.assertIn(similar_issues.COMMENT_MARKER, comments[1])
+        self.assertNotIn(similar_issues.CLAIM_HINT_MARKER, comments[1])
 
     def test_rate_limit_is_best_effort(self):
         issue = make_issue(10, "rt_event_send timeout race resumes thread twice")
@@ -262,7 +282,7 @@ class SuggestionTests(unittest.TestCase):
         self.assertEqual(summary["processed"], 1)
         self.assertEqual(summary["failures"][0]["number"], 10)
 
-    def test_backfill_does_not_comment_when_no_matches(self):
+    def test_backfill_does_not_add_claim_hint(self):
         issue = make_issue(10, "rt_event_send timeout race resumes thread twice")
         client = FakeClient(open_issues=[issue])
 
