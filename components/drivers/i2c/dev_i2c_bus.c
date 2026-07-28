@@ -139,6 +139,13 @@ static rt_err_t i2c_probe(rt_device_t dev)
         return -RT_EINVAL;
     }
 
+#ifdef RT_USING_PINCTRL
+    if (rt_pin_ctrl_confs_apply_by_name(dev, RT_NULL))
+    {
+        rt_pin_ctrl_confs_apply(dev, 0);
+    }
+#endif
+
     err = driver->probe(client);
 
     return err;
