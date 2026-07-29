@@ -10,16 +10,23 @@
 
 /*
 * 功能
-*   展示 CAN1、CAN2、CAN3 接收消息和回发消息。
-* 代码使用方法
-*   在终端执行：can_sample 参数选择：can1 | can2 | can3 以启动CAN收发测试
+*   测试 can 和  mcan  接收消息和回发消息
+*       注：mcan 仅部分系列MCU支持(参考宏定义MCAN_DEV_CNT)
+*
+* 测试方法
+*   连接 can 测试设备与MCU can(mcan）：
+*       注：MCU can(mcan）通信引脚的配置位于 board_config.h，
+*           若测试单元的通信引脚未配置，需测试人员自行添加，并于board_config.c中做初始化
+*   初始化测试: 在终端按需执行：can_sample canx 或 can_sample mcany
+*               其中x和y是单元号， x = 1 ~ CAN_DEV_CNT, y = 1 ~ MCAN_DEV_CNT
+*   测试：can 测试设备发送满足过滤条件的消息（见后文：接收和发送消息）
+*         终端打印接收到的ID和消息，并将消息原样发回给测试设备。
 *
 * 默认波特率
 *   仲裁段:波特率500K,采样率80%
 *   数据段:波特率为4M,采样率80% (仅支持CAN FD的单元)
 *
 * 接收和发送消息
-*  CAN1:
 *  仅接收满足以下过滤条件的消息，并发送接收到的消息
 *   1）标准帧：match ID:0x100~0x1ff
 *   2）扩展帧：match ID:0x12345100~0x123451ff
@@ -57,13 +64,29 @@
 #include "rtdevice.h"
 #include "drv_can.h"
 
-#define MSH_USAGE_CAN_SAMPLE            "can_sample <can1 | can2 | mcan1 | mcan2>          - open can device and test\n"
-#define MSH_USAGE_CAN_SET_BAUD          "can set_baud <baud>        - set can baud\n"
-#define MSH_USAGE_CAN_SET_BAUDFD        "can set_baudfd <baudfd>    - set can baudfd\n"
-#define MSH_USAGE_CAN_SET_BITTIMING     "can set_bittiming <count> <rt_can_bit_timing_arbitration> <rt_can_bit_timing_data>  - set can bit timing,\n"
-#define MSH_USAGE_CAN_SEND_MSG          "can send_msg \n"
+#if defined(HC32F452) || defined(HC32F460)
+#define CAN_DEV_CNT (1)
+#elif defined(HC32F472)
+#define CAN_DEV_CNT (3)
+#elif defined(HC32F467) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8)
+#define CAN_DEV_CNT (2)
+#endif
 
-#define MSH_RESULT_STR(result)          ((result == RT_EOK) ? "success" : "failure")
+#if defined(HC32F334) || defined(HC32F336) || defined(HC32F448) || defined(HC32F4A8)
+#define MCAN_DEV_CNT (2)
+#elif defined(HC32K118)
+#define MCAN_DEV_CNT (1)
+#elif defined(HC32F558)
+#define MCAN_DEV_CNT (3)
+#endif
+
+#define MSH_USAGE_CAN_SAMPLE        "can_sample <can1 | can2 | mcan1 | mcan2>          - open can device and test\n"
+#define MSH_USAGE_CAN_SET_BAUD      "can set_baud <baud>        - set can baud\n"
+#define MSH_USAGE_CAN_SET_BAUDFD    "can set_baudfd <baudfd>    - set can baudfd\n"
+#define MSH_USAGE_CAN_SET_BITTIMING "can set_bittiming <count> <rt_can_bit_timing_arbitration> <rt_can_bit_timing_data>  - set can bit timing,\n"
+#define MSH_USAGE_CAN_SEND_MSG      "can send_msg \n"
+
+#define MSH_RESULT_STR(result) ((result == RT_EOK) ? "success" : "failure")
 
 static rt_device_t can_dev = RT_NULL;
 static struct rt_semaphore can_rx_sem;
@@ -71,15 +94,18 @@ static rt_mutex_t can_mutex = RT_NULL;
 static rt_thread_t rx_thread;
 
 #ifdef RT_CAN_USING_CANFD
-static const uint8_t mcan_data_size[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64};
+static const uint8_t mcan_data_size[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64 };
 #endif
 
-#define CAN_IF_INIT()                   do {                            \
-                                            if (can_dev == RT_NULL || can_mutex == RT_NULL) { \
-                                                rt_kprintf("failed! please first execute can_sample cmd!\n"); \
-                                                return;                 \
-                                            }                           \
-                                        } while (0)
+#define CAN_IF_INIT()                                                     \
+    do                                                                    \
+    {                                                                     \
+        if (can_dev == RT_NULL || can_mutex == RT_NULL)                   \
+        {                                                                 \
+            rt_kprintf("failed! please first execute can_sample cmd!\n"); \
+            return;                                                       \
+        }                                                                 \
+    } while (0)
 
 static rt_err_t can_rx_call(rt_device_t dev, rt_size_t size)
 {
@@ -90,13 +116,12 @@ static rt_err_t can_rx_call(rt_device_t dev, rt_size_t size)
 static void _set_default_filter(void)
 {
 #ifdef RT_CAN_USING_HDR
-    struct rt_can_filter_item can_items[3] =
-    {
+    struct rt_can_filter_item can_items[3] = {
         RT_CAN_FILTER_ITEM_INIT(0x100, RT_CAN_STDID, RT_CAN_DTR, 1, 0x700, RT_NULL, RT_NULL),           /* std,match ID:0x100~0x1ff，过滤表模式为1(0表示标识符列表模式，1表示标识符屏蔽位模式)，hdr = -1(表示不指定过滤表号)，设置默认过滤表，过滤表回调函数和参数均为NULL */
         RT_CAN_FILTER_ITEM_INIT(0x12345100, RT_CAN_EXTID, RT_CAN_DTR, 1, 0xFFFFFF00, RT_NULL, RT_NULL), /* ext,match ID:0x12345100~0x123451ff，hdr = -1 */
-        {0x555, RT_CAN_STDID, RT_CAN_DTR, 1, 0x7ff, 7}                                                  /* std,match ID:0x555，hdr= 7，指定设置7号过滤表 */
+        { 0x555, RT_CAN_STDID, RT_CAN_DTR, 1, 0x7ff, 7 }                                                  /* std,match ID:0x555，hdr= 7，指定设置7号过滤表 */
     };
-    struct rt_can_filter_config cfg = {3, 1, can_items}; /* 一共有3个过滤表，1表示初始化过滤表控制块 */
+    struct rt_can_filter_config cfg = { 3, 1, can_items }; /* 一共有3个过滤表，1表示初始化过滤表控制块 */
     rt_err_t res;
     res = rt_device_control(can_dev, RT_CAN_CMD_SET_FILTER, &cfg);
     RT_ASSERT(res == RT_EOK);
@@ -121,8 +146,8 @@ static uint8_t _get_can_data_bytes_len(uint32_t dlc)
 
 static void can_rx_thread(void *parameter)
 {
-    struct rt_can_msg rxmsg = {0};
-    rt_size_t  size;
+    struct rt_can_msg rxmsg = { 0 };
+    rt_size_t size;
     uint8_t data_len;
 
     while (1)
@@ -173,7 +198,7 @@ static void _msh_cmd_set_baud(int argc, char **argv)
 }
 
 #ifdef RT_CAN_USING_CANFD
-void _msh_cmd_set_timing(int argc, char **argv)
+static void _msh_cmd_set_timing(int argc, char **argv)
 {
     rt_err_t result;
 
@@ -190,17 +215,17 @@ void _msh_cmd_set_timing(int argc, char **argv)
         struct rt_can_bit_timing_config cfg;
         uint32_t pos = 3;
         items[0].prescaler = atoi(argv[pos++]);
-        items[0].num_seg1 =  atoi(argv[pos++]);
-        items[0].num_seg2 =  atoi(argv[pos++]);
-        items[0].num_sjw =   atoi(argv[pos++]);
+        items[0].num_seg1 = atoi(argv[pos++]);
+        items[0].num_seg2 = atoi(argv[pos++]);
+        items[0].num_sjw = atoi(argv[pos++]);
         items[0].num_sspoff = atoi(argv[pos++]);
         if (count > 1)
         {
-            items[1].prescaler =  atoi(argv[pos++]);
-            items[1].num_seg1 =  atoi(argv[pos++]);
-            items[1].num_seg2 =  atoi(argv[pos++]);
-            items[1].num_sjw =  atoi(argv[pos++]);
-            items[1].num_sspoff =  atoi(argv[pos]);
+            items[1].prescaler = atoi(argv[pos++]);
+            items[1].num_seg1 = atoi(argv[pos++]);
+            items[1].num_seg2 = atoi(argv[pos++]);
+            items[1].num_sjw = atoi(argv[pos++]);
+            items[1].num_sspoff = atoi(argv[pos]);
         }
         cfg.count = count;
         cfg.items = items;
@@ -218,7 +243,7 @@ void _msh_cmd_set_timing(int argc, char **argv)
     }
 }
 
-void _msh_cmd_set_baudfd(int argc, char **argv)
+static void _msh_cmd_set_baudfd(int argc, char **argv)
 {
     rt_err_t result;
 
@@ -239,10 +264,10 @@ void _msh_cmd_set_baudfd(int argc, char **argv)
 }
 #endif
 
-void _msh_cmd_send_msg(int argc, char **argv)
+static void _msh_cmd_send_msg(int argc, char **argv)
 {
-    rt_size_t  size;
-    struct rt_can_msg msg = {0};
+    rt_size_t size;
+    struct rt_can_msg msg = { 0 };
     uint8_t u8Tick;
 
     if (argc == 2)
@@ -250,7 +275,7 @@ void _msh_cmd_send_msg(int argc, char **argv)
         CAN_IF_INIT();
         rt_mutex_take(can_mutex, RT_WAITING_FOREVER);
 #ifdef RT_CAN_USING_CANFD
-        msg.id  = 0x300;
+        msg.id = 0x300;
         msg.ide = RT_CAN_STDID;
         msg.rtr = RT_CAN_DTR;
         msg.len = 0xFU;
@@ -261,7 +286,7 @@ void _msh_cmd_send_msg(int argc, char **argv)
             msg.data[u8Tick] = u8Tick + 1 + 0xA0;
         }
 #else
-        msg.id  = 0x300;
+        msg.id = 0x300;
         msg.ide = RT_CAN_STDID;
         msg.rtr = RT_CAN_DTR;
 #ifdef BSP_USING_MCAN
@@ -291,7 +316,7 @@ void _msh_cmd_send_msg(int argc, char **argv)
     }
 }
 
-void _show_usage(void)
+static void _show_usage(void)
 {
     rt_kprintf("Usage: \n");
     rt_kprintf(MSH_USAGE_CAN_SET_BAUD);
@@ -405,4 +430,4 @@ int can_sample(int argc, char **argv)
         return -RT_ERROR;
     }
 }
-MSH_CMD_EXPORT(can_sample, can sample: select < can1 | can2 | mcan1 | mcan2 >);
+MSH_CMD_EXPORT(can_sample, can sample : select<can1 | can2 | mcan1 | mcan2>);

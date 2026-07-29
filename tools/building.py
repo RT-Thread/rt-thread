@@ -48,6 +48,74 @@ Projects = []
 Rtt_Root = ''
 Env = None
 
+if not hasattr(rtconfig, 'CXXFLAGS') and hasattr(rtconfig, 'CFLAGS'):
+    rtconfig.CXXFLAGS = rtconfig.CFLAGS
+
+def _path_variants(path):
+    variants = set()
+    if not path:
+        return variants
+
+    normalized = path.replace('\\', '/').rstrip('/')
+    variants.add(normalized)
+    variants.add(normalized + '/')
+    variants.add(normalized.replace('/', '\\'))
+    variants.add((normalized + '/').replace('/', '\\'))
+
+    return variants
+
+def _split_exec_path(exec_path):
+    normalized = exec_path.replace('\\', '/').rstrip('/')
+    lower = normalized.lower()
+    for suffix in ('/arm/armclang/bin', '/arm/armcc/bin', '/arm/bin40', '/arm/bin', '/bin'):
+        if lower.endswith(suffix):
+            return normalized[:-len(suffix)], normalized[-len(suffix):]
+
+    return normalized, ''
+
+def _replace_exec_path(value, old_path, new_path):
+    if not isinstance(value, str):
+        return value
+
+    result = value
+    normalized_new_path = new_path.replace('\\', '/').rstrip('/')
+    for old in sorted(_path_variants(old_path), key=len, reverse=True):
+        replacement = normalized_new_path.replace('/', '\\') if '\\' in old else normalized_new_path
+        if old.endswith(('/', '\\')):
+            replacement += old[-1]
+        result = result.replace(old, replacement)
+
+    return result
+
+def _apply_exec_path_override(env, exec_path):
+    old_exec_path = getattr(rtconfig, 'EXEC_PATH', '')
+    old_root, suffix = _split_exec_path(old_exec_path)
+    new_root, new_suffix = _split_exec_path(exec_path)
+    new_exec_path = new_root + (new_suffix or suffix)
+
+    if old_root:
+        for name in ('CFLAGS', 'CXXFLAGS', 'AFLAGS', 'LFLAGS',
+                     'M_CFLAGS', 'M_CXXFLAGS', 'M_LFLAGS'):
+            if hasattr(rtconfig, name):
+                setattr(rtconfig, name, _replace_exec_path(getattr(rtconfig, name), old_root, new_root))
+
+    rtconfig.EXEC_PATH = new_exec_path
+    for key, name in (('CC', 'CC'), ('CXX', 'CXX'), ('AS', 'AS'), ('AR', 'AR'),
+                      ('LINK', 'LINK'), ('CFLAGS', 'CFLAGS'),
+                      ('CXXFLAGS', 'CXXFLAGS'), ('ASFLAGS', 'AFLAGS'),
+                      ('LINKFLAGS', 'LFLAGS')):
+        if hasattr(rtconfig, name):
+            env[key] = getattr(rtconfig, name)
+
+def _normalize_armclang_flags_for_host(env):
+    if rtconfig.PLATFORM == 'armclang' and env['PLATFORM'] != 'win32':
+        for name in ('LFLAGS', 'M_LFLAGS'):
+            if hasattr(rtconfig, name):
+                setattr(rtconfig, name, getattr(rtconfig, name).replace('\\', '/'))
+
+        if hasattr(rtconfig, 'LFLAGS'):
+            env['LINKFLAGS'] = rtconfig.LFLAGS
+
 def _as_unicode(value):
     try:
         unicode
@@ -208,6 +276,9 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         os.environ['RTT_EXEC_PATH'] = exec_path
 
     utils.ReloadModule(rtconfig) # update environment variables to rtconfig.py
+    if exec_path:
+        _apply_exec_path_override(env, exec_path)
+    _normalize_armclang_flags_for_host(env)
 
     # some env variables have loaded in Environment() of SConstruct before re-load rtconfig.py;
     # after update rtconfig.py's variables, those env variables need to synchronize
@@ -219,8 +290,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LINK'] = rtconfig.LINK
     if exec_path:
         env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
-    env['ASCOM']= env['ASPPCOM']
-
     if GetOption('strict-compiling'):
         STRICT_FLAGS = ''
         if rtconfig.PLATFORM in ['gcc']:
@@ -241,8 +310,16 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LIBLINKPREFIX'] = ''
         env['LIBLINKSUFFIX'] = '.lib'
         env['LIBDIRPREFIX'] = '--userlibpath '
+        if rtconfig.PLATFORM == 'armclang' and rtconfig.AS == 'armasm':
+            env['ASCOM'] = '$AS $ASFLAGS -o $TARGET $SOURCES'
+            env['ASPPCOM'] = env['ASCOM']
+        else:
+            env['ASCOM'] = env['ASPPCOM']
 
-    elif rtconfig.PLATFORM == 'iccarm':
+    else:
+        env['ASCOM'] = env['ASPPCOM']
+
+    if rtconfig.PLATFORM == 'iccarm':
         env['LIBPREFIX'] = ''
         env['LIBSUFFIX'] = '.a'
         env['LIBLINKPREFIX'] = ''

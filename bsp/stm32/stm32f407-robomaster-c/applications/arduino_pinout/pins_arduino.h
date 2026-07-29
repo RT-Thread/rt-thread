@@ -35,7 +35,7 @@
 
 #define LED_BUILTIN     D0  /* Default Built-in LED */
 
-/* i2c1 : PF0-SDA PF1-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
+/* swi2c1 : PF0-SDA PF1-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "swi2c1"
 
 #endif /* Pins_Arduino_h */

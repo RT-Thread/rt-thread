@@ -192,7 +192,10 @@ static int dfs_elm_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *
         /* open the root directory to test whether the fatfs is valid */
         result = f_opendir(dir, drive);
         if (result != FR_OK)
+        {
+            rt_free(dir);
             goto __err;
+        }
 
         /* mount succeed! */
         mnt->data = fat;
@@ -299,7 +302,7 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
              * just fill the FatFS[index] in elm fatfs to make mkfs work.
              */
             logic_nbr[0] = '0' + index;
-            f_mount(fat, logic_nbr, (BYTE)index);
+            f_mount(fat, logic_nbr, 0);  /* opt=0: delayed mount, just register FATFS object */
         }
     }
     else
@@ -319,7 +322,7 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
-        f_mount(RT_NULL, logic_nbr, (BYTE)index);
+        f_mount(RT_NULL, logic_nbr, 0);
         rt_free(fat);
         disk[index] = RT_NULL;
         /* close device */
@@ -522,6 +525,7 @@ int dfs_elm_close(struct dfs_file *file)
         dir = (DIR *)(file->vnode->data);
         RT_ASSERT(dir != RT_NULL);
 
+        f_closedir(dir);
         /* release memory */
         rt_free(dir);
     }
@@ -1014,10 +1018,19 @@ static struct dfs_vnode *dfs_elm_create_vnode(struct dfs_dentry *dentry, int typ
 
 static int dfs_elm_free_vnode(struct dfs_vnode *vnode)
 {
-    /* nothing to be freed */
-    if (vnode && vnode->ref_count <= 1)
+    if (vnode && vnode->ref_count <= 1 && vnode->data != RT_NULL)
     {
-        vnode->data = NULL;
+        if (vnode->type == FT_DIRECTORY)
+        {
+            f_closedir((DIR *)vnode->data);
+        }
+        else if (vnode->type == FT_REGULAR)
+        {
+            f_close((FIL *)vnode->data);
+        }
+        rt_free(vnode->data);
+        vnode->data = RT_NULL;
+        rt_mutex_detach(&vnode->lock);
     }
 
     return 0;
@@ -1133,6 +1146,9 @@ DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, UINT count)
     rt_size_t result;
     rt_device_t device = disk[drv];
 
+    if (device == RT_NULL)
+        return RES_ERROR;
+
     result = rt_device_read(device, sector, buff, count);
     if (result == count)
     {
@@ -1147,6 +1163,9 @@ DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
+
+    if (device == RT_NULL)
+        return RES_ERROR;
 
     result = rt_device_write(device, sector, buff, count);
     if (result == count)

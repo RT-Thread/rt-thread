@@ -38,11 +38,25 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM8_CH4
         select BSP_USING_PWM12
         select BSP_USING_PWM12_CH1
-        select BSP_USING_I2C
-        select BSP_USING_I2C1
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C1
         select RTDUINO_USING_WIRE
         imply RTDUINO_USING_SERVO
         default n
+
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 68 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 69 if RT_USING_SOFT_I2C1
 
 endmenu
 
@@ -258,30 +272,25 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C BUS"
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
         default n
         select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-
-        if BSP_USING_I2C
-            config BSP_USING_I2C1
-                bool "Enable I2C1 Bus (User I2C)"
-                default n
-                if BSP_USING_I2C1
-                    comment "Notice: PE4 --> 68; PE5 --> 69"
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 SCL pin number"
-                        range 1 176
-                        default 68
-                    config BSP_I2C1_SDA_PIN
-                        int "i2c1 SDA pin number"
-                        range 1 176
-                        default 69
-                endif
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 68
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 69
+            endif
         endif
-
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         default n

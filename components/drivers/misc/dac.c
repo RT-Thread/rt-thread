@@ -46,7 +46,7 @@ static rt_err_t _dac_control(rt_device_t dev, int cmd, void *args)
     {
         result = dac->ops->enabled(dac, (rt_uint32_t)args);
     }
-    else if (cmd == RT_DAC_CMD_DISABLE && dac->ops->enabled)
+    else if (cmd == RT_DAC_CMD_DISABLE && dac->ops->disabled)
     {
         result = dac->ops->disabled(dac, (rt_uint32_t)args);
     }

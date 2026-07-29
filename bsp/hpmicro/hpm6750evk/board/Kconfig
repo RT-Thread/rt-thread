@@ -185,7 +185,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SDXC0"
                 default n
             if BSP_USING_SDXC0
-                choice
+                choice BSP_SDXC0_BUS_WIDTH_SEL
                     prompt "Select BUS_WIDTH"
                     default BSP_SDXC0_BUS_WIDTH_8BIT
                     config BSP_SDXC0_BUS_WIDTH_1BIT
@@ -195,7 +195,7 @@ menu "On-chip Peripheral Drivers"
                     config BSP_SDXC0_BUS_WIDTH_8BIT
                         bool "8-bit"
                 endchoice
-                choice
+                choice BSP_SDXC0_VOLT_SEL
                     prompt "Select Voltage"
                     default BSP_SDXC0_VOLTAGE_3V3
                     config BSP_SDXC0_VOLTAGE_3V3
@@ -217,7 +217,7 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SDXC1"
                 default n
             if BSP_USING_SDXC1
-                choice
+                choice BSP_SDXC1_BUS_WIDTH_SEL
                     prompt "Select BUS_WIDTH"
                     default BSP_SDXC1_BUS_WIDTH_4BIT
                     config BSP_SDXC1_BUS_WIDTH_1BIT
@@ -225,7 +225,7 @@ menu "On-chip Peripheral Drivers"
                     config BSP_SDXC1_BUS_WIDTH_4BIT
                         bool "4-bit"
                 endchoice
-                choice
+                choice BSP_SDXC1_VOLT_SEL
                     prompt "Select Voltage"
                     default BSP_SDXC1_VOLTAGE_3V3
                     config BSP_SDXC1_VOLTAGE_3V3

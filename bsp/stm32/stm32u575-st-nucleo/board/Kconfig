@@ -15,8 +15,9 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM1_CH3
         select BSP_USING_PWM4
         select BSP_USING_PWM4_CH4
-        select BSP_USING_I2C
-        select BSP_USING_I2C1
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C1
         select BSP_USING_SPI
         select BSP_USING_SPI1
         select BSP_SPI1_TX_USING_DMA
@@ -34,9 +35,10 @@ menu "Onboard Peripheral Drivers"
         default n
 
     config BSP_USING_MPU6XXX
-        bool "Enable mpu6xxx (i2c2)"
-        select BSP_USING_I2C
-        select BSP_USING_I2C2
+        bool "Enable mpu6xxx (swi2c2)"
+        select RT_USING_I2C
+        select BSP_USING_SOFT_I2C
+        select BSP_USING_SOFT_I2C2
         select PKG_USING_SENSORS_DRIVERS
         select PKG_USING_MPU6XXX
         select PKG_USING_MPU6XXX_LATEST_VERSION
@@ -47,6 +49,31 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SPI
         select RT_USING_SFUD
         default n
+
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 24 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 25 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C2_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 24 if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 25 if RT_USING_SOFT_I2C2
 
 endmenu
 
@@ -222,29 +249,38 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C
-        bool "Enable I2C BUS"
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
         default n
         select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C
-            menuconfig BSP_USING_I2C1
-                bool "Enable I2C1 BUS (software simulation)"
-                default y
-                if BSP_USING_I2C1
-                    comment "Notice: PB8 --> 24; PB9 --> 25" 
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 scl pin number"
-                        range 1 176
-                        default 24
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 1 176
-                        default 25
-                endif
-        endif
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 24
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 25
+            endif
 
+        menuconfig BSP_USING_SOFT_I2C2
+            bool "Enable software I2C2 Bus (swi2c2)"
+            default n
+            select RT_USING_SOFT_I2C2
+            if BSP_USING_SOFT_I2C2
+                config RT_SOFT_I2C2_SCL_PIN
+                    int "swi2c2 SCL pin number"
+                    default 24
+                config RT_SOFT_I2C2_SDA_PIN
+                    int "swi2c2 SDA pin number"
+                    default 25
+            endif
+        endif
     source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
@@ -252,5 +288,6 @@ endmenu
 menu "Board extended module Drivers"
 
 endmenu
+
 
 endmenu

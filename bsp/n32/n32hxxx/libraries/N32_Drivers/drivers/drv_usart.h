@@ -19,8 +19,16 @@
 
 int rt_hw_usart_init(void);
 
-#define UART_RX_DMA_IT_IDLE_FLAG             0x00
-#define UART_RX_DMA_IT_BLOCK_TC_FLAG         0x01
+#if defined(SOC_SERIES_N32H7xx)
+#define UART_RX_DMA_IT_IDLE_FLAG     0x00
+#define UART_RX_DMA_IT_BLOCK_TC_FLAG 0x01
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+#define UART_RX_DMA_IT_IDLE_FLAG 0x00
+#define UART_RX_DMA_IT_HT_FLAG   0x01
+#define UART_RX_DMA_IT_TC_FLAG   0x02
+
+#define UART_CTRL_SET_BLOCK_TIMEOUT 0x20
+#endif
 
 /* n32 config class */
 struct n32_uart_config
@@ -39,8 +47,10 @@ struct n32_uart
 {
     struct n32_uart_config *config;
     rt_uint32_t DR_mask;
+    rt_uint32_t             tx_block_timeout;
 
 #ifdef RT_SERIAL_USING_DMA
+#if defined(SOC_SERIES_N32H7xx)
     struct
     {
         rt_bool_t DMA_Tx_Init;
@@ -69,8 +79,29 @@ struct n32_uart
         } rx_dma;
 
     } dma;
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    struct
+    {
+        DMA_InitType TX_DMA_ChInitStr;
+        struct
+        {
+            rt_size_t   total_length;
+            rt_uint8_t *buf;
+        } tx_dma;
 
-#endif
+        rt_bool_t tx_dma_inited;
+
+        DMA_InitType RX_DMA_ChInitStr;
+        struct
+        {
+            rt_size_t remaining_cnt;
+        } rx_dma;
+
+        rt_bool_t rx_dma_inited;
+
+    } dma;
+#endif /* SOC_SERIES_N32H7xx */
+#endif /* RT_SERIAL_USING_DMA */
     rt_uint16_t uart_dma_flag;
     struct rt_serial_device serial;
 };

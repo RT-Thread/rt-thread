@@ -262,8 +262,8 @@ static rt_err_t n32_i2c_init(struct n32_i2c *i2c_drv)
     I2C_Configuration();
     /* Disable IIC */
     I2C_Enable(cfg->Instance, DISABLE);
-    /* Get IIC BUSTIM Register value */
-    BusTim_Reg = cfg->Instance->BUSTIM;
+    /* Get IIC BUSTM Register value */
+    BusTim_Reg = cfg->Instance->BUSTM;
 
     if (BusTim_Reg == 0U)
     {

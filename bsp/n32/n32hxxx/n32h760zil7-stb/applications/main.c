@@ -15,8 +15,8 @@
 #include <rtdevice.h>
 #endif /* RT_USING_NANO */
 
-/* defined the LED0 pin: PA1 */
-#define LED0_PIN    GET_PIN(A, 1)
+/* defined the LED0 pin: PA4 */
+#define LED0_PIN GET_PIN(A, 4)
 
 int main(void)
 {
@@ -31,3 +31,4 @@ int main(void)
         rt_thread_mdelay(500);
     }
 }
+

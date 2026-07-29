@@ -12,82 +12,152 @@
 #include <rtthread.h>
 #include <drv_common.h>
 
-
-static USART_Module* USARTx;
+static USART_Module *USARTx;
 
 void rt_hw_console_init(void)
 {
     USART_InitType USART_InitStructure;
 
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_M7_AFIO, ENABLE);
+#elif defined(SOC_SERIES_N32H49x)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_AFIO, ENABLE);
+#elif defined(SOC_SERIES_N32H47x_48x)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+#endif
 
 #ifdef USART1
     if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart1") == 0)
     {
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB1PeriphClk3(RCC_APB1_PERIPHEN_M7_USART1, ENABLE);
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_USART1, ENABLE);
+#elif defined(SOC_SERIES_N32H47x_48x)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_USART1, ENABLE);
+#endif
         USARTx = USART1;
     }
 #endif /* USART1 */
 #ifdef USART2
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart2") == 0)
     {
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB1PeriphClk3(RCC_APB1_PERIPHEN_M7_USART2, ENABLE);
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_USART2, ENABLE);
+#elif defined(SOC_SERIES_N32H47x_48x)
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_USART2, ENABLE);
+#endif
         USARTx = USART2;
     }
 #endif /* USART2 */
 #ifdef USART3
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart3") == 0)
     {
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB1PeriphClk3(RCC_APB1_PERIPHEN_M7_USART3, ENABLE);
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_USART3, ENABLE);
+#elif defined(SOC_SERIES_N32H47x_48x)
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_USART3, ENABLE);
+#endif
         USARTx = USART3;
     }
 #endif /* USART3 */
 #ifdef USART4
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart4") == 0)
     {
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB1PeriphClk3(RCC_APB1_PERIPHEN_M7_USART4, ENABLE);
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_USART4, ENABLE);
+#elif defined(SOC_SERIES_N32H47x_48x)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_USART4, ENABLE);
+#endif
         USARTx = USART4;
     }
 #endif /* USART4 */
-#ifdef USART5
+#if defined(USART5) || defined(UART5)
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart5") == 0)
     {
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB2PeriphClk3(RCC_APB2_PERIPHEN_M7_USART5, ENABLE);
         USARTx = USART5;
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_UART5, ENABLE);
+        USARTx = UART5;
+#elif defined(SOC_SERIES_N32H47x_48x)
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_UART5, ENABLE);
+        USARTx = UART5;
+#endif
     }
-#endif /* USART5 */
-#ifdef USART6
+#endif /* defined(USART5) || defined(UART5) */
+#if defined(USART6) || defined(UART6)
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart6") == 0)
     {
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB2PeriphClk3(RCC_APB2_PERIPHEN_M7_USART6, ENABLE);
         USARTx = USART6;
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_UART6, ENABLE);
+        USARTx = UART6;
+#elif defined(SOC_SERIES_N32H47x_48x)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_UART6, ENABLE);
+        USARTx = UART6;
+#endif
     }
-#endif /* USART6 */
-#ifdef USART7
+#endif /* defined(USART6) || defined(UART6) */
+#if defined(USART7) || defined(UART7)
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart7") == 0)
     {
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB2PeriphClk3(RCC_APB2_PERIPHEN_M7_USART7, ENABLE);
         USARTx = USART7;
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_UART7, ENABLE);
+        USARTx = UART7;
+#elif defined(SOC_SERIES_N32H47x_48x)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_UART7, ENABLE);
+        USARTx = UART7;
+#endif
     }
-#endif /* USART7 */
-#ifdef USART8
+#endif /* defined(USART7) || defined(UART7) */
+#if defined(USART8) || defined(UART8)
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart8") == 0)
     {
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB2PeriphClk3(RCC_APB2_PERIPHEN_M7_USART8, ENABLE);
         USARTx = USART8;
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_UART8, ENABLE);
+        USARTx = UART8;
+#elif defined(SOC_SERIES_N32H47x_48x)
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_UART8, ENABLE);
+        USARTx = UART8;
+#endif
     }
-#endif /* USART8 */
-#ifdef UART9
+#endif /* defined(USART8) || defined(UART8) */
+#if defined(USART9) || defined(UART9)
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart9") == 0)
     {
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB1PeriphClk3(RCC_APB1_PERIPHEN_M7_UART9, ENABLE);
         USARTx = UART9;
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_USART9, ENABLE);
+        USARTx = USART9;
+#endif
     }
-#endif /* UART9 */
+#endif /* defined(USART9) || defined(UART9) */
 #ifdef UART10
     else if (rt_strcmp(RT_CONSOLE_DEVICE_NAME, "uart10") == 0)
     {
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB1PeriphClk3(RCC_APB1_PERIPHEN_M7_UART10, ENABLE);
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_UART10, ENABLE);
+#endif
         USARTx = UART10;
     }
 #endif /* UART10 */
@@ -161,7 +231,7 @@ void rt_hw_console_output(const char *str)
 
         while (USART_GetFlagStatus(USARTx, USART_FLAG_TXC) == RESET);
 
-        USART_SendData(USARTx, (uint8_t )(*(str + i)));
+        USART_SendData(USARTx, (uint8_t)(*(str + i)));
     }
 }
 

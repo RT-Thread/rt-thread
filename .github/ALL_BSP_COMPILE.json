@@ -53,12 +53,14 @@
         "at32/at32f457-start",
         "at32/at32m412-start",
         "at32/at32m416-start",
-        "hc32/ev_hc32f4a0_lqfp176",
-        "hc32/ev_hc32f4a8_lqfp176",
         "hc32/ev_hc32f334_lqfp64",
         "hc32/ev_hc32f448_lqfp80",
         "hc32/ev_hc32f460_lqfp100_v2",
+        "hc32/ev_hc32f467_lqfp144",
         "hc32/ev_hc32f472_lqfp100",
+        "hc32/ev_hc32f4a0_lqfp176",
+        "hc32/ev_hc32f4a2_lqfp176",
+        "hc32/ev_hc32f4a8_lqfp176",
         "hc32/lckfb-hc32f4a0-lqfp100",
         "hc32l196",
         "hc32l136",
@@ -276,7 +278,8 @@
         "renesas/ra8m1-ek",
         "renesas/ra8d1-ek",
         "renesas/ra8d1-vision-board",
-        "renesas/ra8p1-titan-board",
+        "renesas/ra8p1-titan-board/m33",
+        "renesas/ra8p1-titan-board/m85",
         "renesas/rzt2m_rsk",
         "renesas/rzn2l_rsk",
         "renesas/rzn2l_etherkit",
@@ -340,8 +343,9 @@
         "n32/n32gxx_lxx/n32l43xrl-stb",
         "n32/n32gxx_lxx/n32l436-evb",
         "n32/n32gxx_lxx/n32wb45xl-evb",
-        "n32g452xx/n32g452xx-mini-system",
-		"n32/n32hxxx/n32h760zil7-stb",
+        "n32/n32hxxx/n32h760zil7-stb",
+        "n32/n32hxxx/n32h487zgl7-evb",
+        "n32/n32hxxx/n32h497zgl7-evb",
         "apm32/apm32f103xe-minibroard",
         "apm32/apm32f407ig-minibroard",
         "apm32/apm32f407zg-evalboard",
@@ -464,6 +468,13 @@
       "RTT_TOOL_CHAIN": "llvm-arm",
       "SUB_RTT_BSP": [
         "stm32/stm32l475-atk-pandora"
+      ]
+    },
+    {
+      "RTT_BSP": "armclang-stm32",
+      "RTT_TOOL_CHAIN": "armclang",
+      "SUB_RTT_BSP": [
+        "stm32/stm32f407-rt-spark"
       ]
     },
     {

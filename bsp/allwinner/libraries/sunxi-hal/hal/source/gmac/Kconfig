@@ -4,7 +4,7 @@ config DRIVERS_GMAC
     bool "enable GMAC driver"
     default n
     if DRIVERS_GMAC
-        choice
+        choice GMAC_R_SEL
             prompt "GMAC media independent interface"
             default GMAC_USING_RMII if BOARD_allwinnerd1s
             default GMAC_USING_RGMII if BOARD_allwinnerd1
@@ -14,7 +14,7 @@ config DRIVERS_GMAC
             config GMAC_USING_RMII
                 bool "RMII"
         endchoice
-        choice
+        choice GMAC_GPIO_SEL
             prompt "GMAC GPIO GROUP"
             default GMAC_USING_GPIOG if BOARD_allwinnerd1s
             default GMAC_USING_GPIOE if BOARD_allwinnerd1

@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-12-30     CDT          first version
+ * 2026-05-27     CDT          Support HC32F4A2
+ * 2026-06-04     CDT          Support HC32F467
  */
 
 /*
@@ -41,106 +43,106 @@
 
 #if defined(BSP_USING_PM)
 
-#if defined (HC32F4A0) || defined (HC32F4A8)
-    #define PLL_SRC                             ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
-    #define BSP_KEY_PORT                        (GPIO_PORT_A)
-    #define BSP_KEY_PIN                         (GPIO_PIN_00)
-    #define BSP_KEY_EXTINT                      (EXTINT_CH00)
-    #define BSP_KEY_INT_SRC                     (INT_SRC_PORT_EIRQ0)
-    #define BSP_KEY_IRQn                        (INT001_IRQn)
-    #define BSP_KEY_INTC_STOP_WKUP_EXTINT       (INTC_STOP_WKUP_EXTINT_CH0)
-    #define BSP_KEY_EVT                         (EVT_SRC_PORT_EIRQ0)
-    #define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP       (PWC_PD_WKUP_TRIG_WKUP0)
-    #define BSP_KEY_PWC_PD_WKUP_WKUP            (PWC_PD_WKUP_WKUP00)
+#if defined(HC32F467) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8)
+#define PLL_SRC                       ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
+#define BSP_KEY_PORT                  (GPIO_PORT_A)
+#define BSP_KEY_PIN                   (GPIO_PIN_00)
+#define BSP_KEY_EXTINT                (EXTINT_CH00)
+#define BSP_KEY_INT_SRC               (INT_SRC_PORT_EIRQ0)
+#define BSP_KEY_IRQn                  (INT001_IRQn)
+#define BSP_KEY_INTC_STOP_WKUP_EXTINT (INTC_STOP_WKUP_EXTINT_CH0)
+#define BSP_KEY_EVT                   (INTC_EVT1)
+#define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP (PWC_PD_WKUP_TRIG_WKUP0)
+#define BSP_KEY_PWC_PD_WKUP_WKUP      (PWC_PD_WKUP_WKUP00)
 
-    #define LED_GREEN_PORT                      (GPIO_PORT_C)
-    #define LED_GREEN_PIN                       (GPIO_PIN_09)
+#define LED_GREEN_PORT (GPIO_PORT_C)
+#define LED_GREEN_PIN  (GPIO_PIN_09)
 
-    #define MCO_PORT                            (GPIO_PORT_A)
-    #define MCO_PIN                             (GPIO_PIN_08)
-    #define MCO_GPIO_FUNC                       (GPIO_FUNC_1)
+#define MCO_PORT      (GPIO_PORT_A)
+#define MCO_PIN       (GPIO_PIN_08)
+#define MCO_GPIO_FUNC (GPIO_FUNC_1)
 
-#elif defined (HC32F460)
-    #define PLL_SRC                             ((CM_CMU->PLLCFGR & CMU_PLLCFGR_PLLSRC) >> CMU_PLLCFGR_PLLSRC_POS)
-    #define BSP_KEY_PORT                        (GPIO_PORT_B)   /* Key10 */
-    #define BSP_KEY_PIN                         (GPIO_PIN_01)
-    #define BSP_KEY_EXTINT                      (EXTINT_CH01)
-    #define BSP_KEY_INT_SRC                     (INT_SRC_PORT_EIRQ1)
-    #define BSP_KEY_IRQn                        (INT001_IRQn)
-    #define BSP_KEY_INTC_STOP_WKUP_EXTINT       (INTC_STOP_WKUP_EXTINT_CH1)
-    #define BSP_KEY_EVT                         (EVT_SRC_PORT_EIRQ1)
-    #define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP       (PWC_PD_WKUP_TRIG_WKUP1)
-    #define BSP_KEY_PWC_PD_WKUP_WKUP            (PWC_PD_WKUP_WKUP01)
+#elif defined(HC32F460)
+#define PLL_SRC                       ((CM_CMU->PLLCFGR & CMU_PLLCFGR_PLLSRC) >> CMU_PLLCFGR_PLLSRC_POS)
+#define BSP_KEY_PORT                  (GPIO_PORT_B)   /* Key10 */
+#define BSP_KEY_PIN                   (GPIO_PIN_01)
+#define BSP_KEY_EXTINT                (EXTINT_CH01)
+#define BSP_KEY_INT_SRC               (INT_SRC_PORT_EIRQ1)
+#define BSP_KEY_IRQn                  (INT001_IRQn)
+#define BSP_KEY_INTC_STOP_WKUP_EXTINT (INTC_STOP_WKUP_EXTINT_CH1)
+#define BSP_KEY_EVT                   (INTC_EVT1)
+#define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP (PWC_PD_WKUP_TRIG_WKUP1)
+#define BSP_KEY_PWC_PD_WKUP_WKUP      (PWC_PD_WKUP_WKUP01)
 
-    #define LED_GREEN_PORT                      (GPIO_PORT_D)
-    #define LED_GREEN_PIN                       (GPIO_PIN_04)
+#define LED_GREEN_PORT (GPIO_PORT_D)
+#define LED_GREEN_PIN  (GPIO_PIN_04)
 
-    #define MCO_PORT                            (GPIO_PORT_A)
-    #define MCO_PIN                             (GPIO_PIN_08)
-    #define MCO_GPIO_FUNC                       (GPIO_FUNC_1)
+#define MCO_PORT      (GPIO_PORT_A)
+#define MCO_PIN       (GPIO_PIN_08)
+#define MCO_GPIO_FUNC (GPIO_FUNC_1)
 
-#elif defined (HC32F448)
-    #define PLL_SRC                             ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
-    #define BSP_KEY_PORT                        (GPIO_PORT_B)   /* Key5 */
-    #define BSP_KEY_PIN                         (GPIO_PIN_06)
-    #define BSP_KEY_EXTINT                      (EXTINT_CH06)
-    #define BSP_KEY_INT_SRC                     (INT_SRC_PORT_EIRQ6)
-    #define BSP_KEY_IRQn                        (INT001_IRQn)
-    #define BSP_KEY_INTC_STOP_WKUP_EXTINT       (INTC_STOP_WKUP_EXTINT_CH6)
-    #define BSP_KEY_EVT                         (EVT_SRC_PORT_EIRQ6)
-    #define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP       (PWC_PD_WKUP_TRIG_WKUP1)
-    #define BSP_KEY_PWC_PD_WKUP_WKUP            (PWC_PD_WKUP_WKUP12)
+#elif defined(HC32F448)
+#define PLL_SRC                       ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
+#define BSP_KEY_PORT                  (GPIO_PORT_B)   /* Key5 */
+#define BSP_KEY_PIN                   (GPIO_PIN_06)
+#define BSP_KEY_EXTINT                (EXTINT_CH06)
+#define BSP_KEY_INT_SRC               (INT_SRC_PORT_EIRQ6)
+#define BSP_KEY_IRQn                  (INT001_IRQn)
+#define BSP_KEY_INTC_STOP_WKUP_EXTINT (INTC_STOP_WKUP_EXTINT_CH6)
+#define BSP_KEY_EVT                   (INTC_EVT1)
+#define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP (PWC_PD_WKUP_TRIG_WKUP1)
+#define BSP_KEY_PWC_PD_WKUP_WKUP      (PWC_PD_WKUP_WKUP12)
 
-    #define LED_GREEN_PORT                      (GPIO_PORT_A)
-    #define LED_GREEN_PIN                       (GPIO_PIN_02)
+#define LED_GREEN_PORT (GPIO_PORT_A)
+#define LED_GREEN_PIN  (GPIO_PIN_02)
 
-    #define MCO_PORT                            (GPIO_PORT_A)
-    #define MCO_PIN                             (GPIO_PIN_08)
-    #define MCO_GPIO_FUNC                       (GPIO_FUNC_1)
+#define MCO_PORT      (GPIO_PORT_A)
+#define MCO_PIN       (GPIO_PIN_08)
+#define MCO_GPIO_FUNC (GPIO_FUNC_1)
 
-#elif defined (HC32F472)
-    #define PLL_SRC                             ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
-    #define BSP_KEY_PORT                        (GPIO_PORT_B)   /* Key5 */
-    #define BSP_KEY_PIN                         (GPIO_PIN_05)
-    #define BSP_KEY_EXTINT                      (EXTINT_CH05)
-    #define BSP_KEY_INT_SRC                     (INT_SRC_PORT_EIRQ5)
-    #define BSP_KEY_IRQn                        (INT001_IRQn)
-    #define BSP_KEY_INTC_STOP_WKUP_EXTINT       (INTC_STOP_WKUP_EXTINT_CH5)
-    #define BSP_KEY_EVT                         (EVT_SRC_PORT_EIRQ5)
-    #define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP       (PWC_PD_WKUP_TRIG_WKUP1)
-    #define BSP_KEY_PWC_PD_WKUP_WKUP            (PWC_PD_WKUP_WKUP11)
+#elif defined(HC32F472)
+#define PLL_SRC                       ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
+#define BSP_KEY_PORT                  (GPIO_PORT_B)   /* Key5 */
+#define BSP_KEY_PIN                   (GPIO_PIN_05)
+#define BSP_KEY_EXTINT                (EXTINT_CH05)
+#define BSP_KEY_INT_SRC               (INT_SRC_PORT_EIRQ5)
+#define BSP_KEY_IRQn                  (INT001_IRQn)
+#define BSP_KEY_INTC_STOP_WKUP_EXTINT (INTC_STOP_WKUP_EXTINT_CH5)
+#define BSP_KEY_EVT                   (INTC_EVT1)
+#define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP (PWC_PD_WKUP_TRIG_WKUP1)
+#define BSP_KEY_PWC_PD_WKUP_WKUP      (PWC_PD_WKUP_WKUP11)
 
-    #define LED_GREEN_PORT                      (GPIO_PORT_C)
-    #define LED_GREEN_PIN                       (GPIO_PIN_09)
+#define LED_GREEN_PORT (GPIO_PORT_C)
+#define LED_GREEN_PIN  (GPIO_PIN_09)
 
-#elif defined (HC32F334)
-    #define PLL_SRC                             ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
-    #define BSP_KEY_PORT                        (GPIO_PORT_B)   /* Key5 */
-    #define BSP_KEY_PIN                         (GPIO_PIN_09)
-    #define BSP_KEY_EXTINT                      (EXTINT_CH09)
-    #define BSP_KEY_INT_SRC                     (INT_SRC_PORT_EIRQ9)
-    #define BSP_KEY_IRQn                        (INT001_IRQn)
-    #define BSP_KEY_INTC_STOP_WKUP_EXTINT       (INTC_STOP_WKUP_EXTINT_CH9)
-    #define BSP_KEY_EVT                         (EVT_SRC_PORT_EIRQ9)
-    #define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP       (PWC_PD_WKUP_TRIG_WKUP2)
-    #define BSP_KEY_PWC_PD_WKUP_WKUP            (PWC_PD_WKUP_WKUP21)
+#elif defined(HC32F334)
+#define PLL_SRC                       ((CM_CMU->PLLHCFGR & CMU_PLLHCFGR_PLLSRC) >> CMU_PLLHCFGR_PLLSRC_POS)
+#define BSP_KEY_PORT                  (GPIO_PORT_B)   /* Key5 */
+#define BSP_KEY_PIN                   (GPIO_PIN_09)
+#define BSP_KEY_EXTINT                (EXTINT_CH09)
+#define BSP_KEY_INT_SRC               (INT_SRC_PORT_EIRQ9)
+#define BSP_KEY_IRQn                  (INT001_IRQn)
+#define BSP_KEY_INTC_STOP_WKUP_EXTINT (INTC_STOP_WKUP_EXTINT_CH9)
+#define BSP_KEY_EVT                   (INTC_EVT1)
+#define BSP_KEY_PWC_PD_WKUP_TRIG_WKUP (PWC_PD_WKUP_TRIG_WKUP2)
+#define BSP_KEY_PWC_PD_WKUP_WKUP      (PWC_PD_WKUP_WKUP21)
 
-    #define LED_GREEN_PORT                      (GPIO_PORT_C)
-    #define LED_GREEN_PIN                       (GPIO_PIN_13)
+#define LED_GREEN_PORT (GPIO_PORT_C)
+#define LED_GREEN_PIN  (GPIO_PIN_13)
 #endif
 
-#define KEYCNT_BACKUP_ADDR                      (uint32_t *)(0x200F0010)
-#define KEYCNT_CMD_SLEEP_NONE                   (0)
-#define KEYCNT_CMD_SLEEP_IDLE                   (1)
-#define KEYCNT_CMD_SLEEP_DEEP                   (3)
-#define KEYCNT_CMD_SLEEP_STANDBY                (5)
-#define KEYCNT_CMD_SLEEP_SHUTDOWN               (7)
+#define KEYCNT_BACKUP_ADDR        (uint32_t *)(0x200F0010)
+#define KEYCNT_CMD_SLEEP_NONE     (0)
+#define KEYCNT_CMD_SLEEP_IDLE     (1)
+#define KEYCNT_CMD_SLEEP_DEEP     (3)
+#define KEYCNT_CMD_SLEEP_STANDBY  (5)
+#define KEYCNT_CMD_SLEEP_SHUTDOWN (7)
 
 #define PM_DBG
 #if defined PM_DBG
-    #define pm_dbg  rt_kprintf
+#define pm_dbg rt_kprintf
 #else
-    #define pm_dbg
+#define pm_dbg
 #endif
 
 static volatile uint32_t g_keycnt_cmd;
@@ -188,7 +190,7 @@ static void _key_int_init(void)
 
     /* IRQ sign-in */
     stcIrqSignConfig.enIntSrc = BSP_KEY_INT_SRC;
-    stcIrqSignConfig.enIRQn   = BSP_KEY_IRQn;
+    stcIrqSignConfig.enIRQn = BSP_KEY_IRQn;
     stcIrqSignConfig.pfnCallback = KEY_IrqHandler;
     (void)INTC_IrqSignIn(&stcIrqSignConfig);
 
@@ -198,10 +200,10 @@ static void _key_int_init(void)
     NVIC_EnableIRQ(stcIrqSignConfig.enIRQn);
 }
 
-
 static void _wkup_cfg_sleep_deep()
 {
     INTC_WakeupSrcCmd(BSP_KEY_INTC_STOP_WKUP_EXTINT, ENABLE);
+    INTC_EventCmd(BSP_KEY_EVT, ENABLE);
 }
 
 static void _wkup_cfg_sleep_standby(void)
@@ -232,7 +234,7 @@ static void _sleep_enter_event_deep(void)
 static void _sleep_enter_event_standby(void)
 {
     _wkup_cfg_sleep_standby();
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined(HC32F467) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8)
     PWC_BKR_Write(0, g_keycnt_cmd & 0xFF);
 #endif
     *KEYCNT_BACKUP_ADDR = g_keycnt_cmd;
@@ -257,7 +259,7 @@ static void _sleep_exit_event_idle(void)
 
 static void _sleep_exit_event_deep(void)
 {
-#if defined (HC32F460)
+#if defined(HC32F460)
     PWC_STOP_ClockRecover();
 #endif
     rt_pm_release(PM_SLEEP_MODE_DEEP);
@@ -266,8 +268,7 @@ static void _sleep_exit_event_deep(void)
 }
 
 typedef void (*notify)(void);
-static notify sleep_enter_func[PM_SLEEP_MODE_MAX] =
-{
+static notify sleep_enter_func[PM_SLEEP_MODE_MAX] = {
     RT_NULL,
     _sleep_enter_event_idle,
     RT_NULL,
@@ -276,8 +277,7 @@ static notify sleep_enter_func[PM_SLEEP_MODE_MAX] =
     _sleep_enter_event_shutdown,
 };
 
-static notify sleep_exit_func[PM_SLEEP_MODE_MAX] =
-{
+static notify sleep_exit_func[PM_SLEEP_MODE_MAX] = {
     RT_NULL,
     _sleep_exit_event_idle,
     RT_NULL,
@@ -286,16 +286,18 @@ static notify sleep_exit_func[PM_SLEEP_MODE_MAX] =
     RT_NULL,
 };
 
-static void  _notify_func(uint8_t event, uint8_t mode, void *data)
+static void _notify_func(uint8_t event, uint8_t mode, void *data)
 {
     if (event == RT_PM_ENTER_SLEEP)
     {
-        SysTick_Suspend();
         if (sleep_enter_func[mode] == RT_NULL)
         {
             return;
         }
-        GPIO_ResetPins(LED_GREEN_PORT, LED_GREEN_PIN);
+        /* shutdown LED before enter sleep mode to decrease power consumption */
+        rt_pin_write(LED_GREEN_PIN, PIN_LOW);
+
+        SysTick_Suspend();
         sleep_enter_func[mode]();
     }
     else
@@ -319,8 +321,8 @@ static void pm_cmd_handler(void *parameter)
 
     while (1)
     {
-        if ((KEYCNT_CMD_SLEEP_IDLE == g_keycnt_cmd) || (KEYCNT_CMD_SLEEP_DEEP == g_keycnt_cmd) || \
-                (KEYCNT_CMD_SLEEP_STANDBY == g_keycnt_cmd) || (KEYCNT_CMD_SLEEP_SHUTDOWN == g_keycnt_cmd))
+        if ((KEYCNT_CMD_SLEEP_IDLE == g_keycnt_cmd) || (KEYCNT_CMD_SLEEP_DEEP == g_keycnt_cmd) ||
+            (KEYCNT_CMD_SLEEP_STANDBY == g_keycnt_cmd) || (KEYCNT_CMD_SLEEP_SHUTDOWN == g_keycnt_cmd))
         {
             switch (g_keycnt_cmd)
             {
@@ -350,12 +352,12 @@ static void pm_cmd_handler(void *parameter)
     }
 }
 
-#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
+#if defined(HC32F467) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
 static void pm_run_main(void *parameter)
 {
     static rt_uint8_t run_index = 0;
-    char *speed[] = {"low", "high"};
-    const rt_uint8_t run_mode[] = {PM_RUN_MODE_LOW_SPEED,  PM_RUN_MODE_HIGH_SPEED};
+    char *speed[] = { "low", "high" };
+    const rt_uint8_t run_mode[] = { PM_RUN_MODE_LOW_SPEED, PM_RUN_MODE_HIGH_SPEED };
 
     GPIO_SetFunc(MCO_PORT, MCO_PIN, MCO_GPIO_FUNC);
     /* Configure clock output system clock */
@@ -383,7 +385,7 @@ static void pm_run_main(void *parameter)
 static void _keycnt_cmd_init_after_power_on(void)
 {
     en_flag_status_t wkup_from_ptwk = PWC_PD_GetWakeupStatus(PWC_PD_WKUP_FLAG_WKUP0);
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined(HC32F467) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8)
     en_flag_status_t bakram_pd = PWC_BKR_GetStatus(PWC_BACKUP_RAM_FLAG_RAMPDF);
     uint8_t bkr0 = PWC_BKR_Read(0);
 
@@ -421,7 +423,7 @@ static void _keycnt_cmd_init_after_power_on(void)
 
     pm_dbg("KEYCNT_BACKUP_ADDR addr =0x%p,value = %d\n", KEYCNT_BACKUP_ADDR, *KEYCNT_BACKUP_ADDR);
     pm_dbg("wkup_from_ptwk = %d\n", wkup_from_ptwk);
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined(HC32F467) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8)
     pm_dbg("bakram_pd = %d\n", bakram_pd);
     pm_dbg("bkr0 = %d\n", bkr0);
 #endif
@@ -429,17 +431,17 @@ static void _keycnt_cmd_init_after_power_on(void)
 
 static void _vbat_init(void)
 {
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined(HC32F467) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8)
     while (PWC_BKR_GetStatus(PWC_BACKUP_RAM_FLAG_RAMVALID) == RESET)
     {
         rt_thread_delay(10);
     }
     FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_SRAMB, ENABLE);
-#elif defined (HC32F448) || defined (HC32F334)
+#elif defined(HC32F448) || defined(HC32F334)
     FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_SRAMB, ENABLE);
-#elif defined (HC32F460)
+#elif defined(HC32F460)
     FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_SRAMRET, ENABLE);
-#elif defined (HC32F472)
+#elif defined(HC32F472)
     FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_SRAMRET, ENABLE);
 #endif
     pm_dbg("vbat init success\n");
@@ -455,7 +457,7 @@ int pm_sample_init(void)
 
     rt_pm_notify_set(_notify_func, NULL);
 
-    rt_thread_t  thread = rt_thread_create("pm_cmd_handler", pm_cmd_handler, RT_NULL, 1024, 25, 10);
+    rt_thread_t thread = rt_thread_create("pm_cmd_handler", pm_cmd_handler, RT_NULL, 1024, 25, 10);
     if (thread != RT_NULL)
     {
         rt_thread_startup(thread);
@@ -465,7 +467,7 @@ int pm_sample_init(void)
         rt_kprintf("create pm sample thread failed!\n");
     }
 
-#if defined(HC32F4A0) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
+#if defined(HC32F467) || defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F460) || defined(HC32F448) || defined(HC32F4A8)
     thread = rt_thread_create("pm_run_main", pm_run_main, RT_NULL, 1024, 25, 10);
     if (thread != RT_NULL)
     {

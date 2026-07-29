@@ -20,24 +20,23 @@
 
 /* C binding of definitions if building with C++ compiler */
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 
 /*******************************************************************************
  * Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
-#define USB_FS_PORT                             (1U)
+#define USB_FS_PORT (1U)
 
-#define MAX_DATA_LENGTH                         (0x200U)
+#define MAX_DATA_LENGTH (0x200U)
 
-#define HCINT_NYET                              (1UL << 6)
+#define HCINT_NYET (1UL << 6)
 
 /* Macro definations for host mode */
-#define PID_DATA0                               (0U)
-#define PID_DATA2                               (1U)
-#define PID_DATA1                               (2U)
-#define PID_SETUP                               (3U)
+#define PID_DATA0 (0U)
+#define PID_DATA2 (1U)
+#define PID_DATA1 (2U)
+#define PID_SETUP (3U)
 /*******************************************************************************
  * Global type definitions ('typedef')
  ******************************************************************************/
@@ -85,11 +84,11 @@ typedef enum
 
 typedef struct
 {
-    uint8_t   bmRequest;
-    uint8_t   bRequest;
-    uint16_t  wValue;
-    uint16_t  wIndex;
-    uint16_t  wLength;
+    uint8_t bmRequest;
+    uint8_t bRequest;
+    uint16_t wValue;
+    uint16_t wIndex;
+    uint16_t wLength;
 } USB_SETUP_REQ;
 
 typedef struct
@@ -105,27 +104,26 @@ typedef struct
 
 typedef struct
 {
-    uint16_t                 channel[USB_MAX_TX_FIFOS];
-    USB_HOST_CH              hc[USB_MAX_TX_FIFOS];
-    __IO uint32_t            is_dev_connect;
-    uint8_t                  Rx_Buffer[MAX_DATA_LENGTH];
-    __IO uint32_t            ErrCnt[USB_MAX_TX_FIFOS];
-    __IO uint32_t            XferCnt[USB_MAX_TX_FIFOS];
-    __IO HOST_CH_STATUS      HC_Status[USB_MAX_TX_FIFOS];
-    __IO HOST_CH_XFER_STATE  URB_State[USB_MAX_TX_FIFOS];
-    __IO uint8_t             devspeed;
+    uint16_t channel[USB_MAX_TX_FIFOS];
+    USB_HOST_CH hc[USB_MAX_TX_FIFOS];
+    __IO uint32_t is_dev_connect;
+    uint8_t Rx_Buffer[MAX_DATA_LENGTH];
+    __IO uint32_t ErrCnt[USB_MAX_TX_FIFOS];
+    __IO uint32_t XferCnt[USB_MAX_TX_FIFOS];
+    __IO HOST_CH_STATUS HC_Status[USB_MAX_TX_FIFOS];
+    __IO HOST_CH_XFER_STATE URB_State[USB_MAX_TX_FIFOS];
+    __IO uint8_t devspeed;
 } USB_HOST_PARAM;
 
 typedef struct
 {
-    USB_CORE_BASIC_CFGS    basic_cfgs;
-    LL_USB_TypeDef            regs;
+    USB_CORE_BASIC_CFGS basic_cfgs;
+    LL_USB_TypeDef regs;
 #ifdef USE_HOST_MODE
-    USB_HOST_PARAM         host;
-    void                   *pData;
+    USB_HOST_PARAM host;
+    void *pData;
 #endif
 } usb_core_instance;
-
 
 
 /*******************************************************************************

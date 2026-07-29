@@ -265,6 +265,9 @@ struct stm32_dma_config
 #define STM32_DMA_RX_WORD_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _channel, _request, _priority, _preempt_priority, _sub_priority) \
     STM32_DMA_CONFIG_INIT_EX((_instance), (_dma_rcc), (_dma_irq), (_channel), (_request), (_priority), (_preempt_priority), (_sub_priority), DMA_PERIPH_TO_MEMORY, DMA_PINC_DISABLE, DMA_MINC_ENABLE, DMA_PDATAALIGN_WORD, DMA_MDATAALIGN_WORD, DMA_NORMAL)
 
+#define STM32_DMA_RX_WORD_CIRCULAR_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _channel, _request, _priority, _preempt_priority, _sub_priority) \
+    STM32_DMA_CONFIG_INIT_EX((_instance), (_dma_rcc), (_dma_irq), (_channel), (_request), (_priority), (_preempt_priority), (_sub_priority), DMA_PERIPH_TO_MEMORY, DMA_PINC_DISABLE, DMA_MINC_ENABLE, DMA_PDATAALIGN_WORD, DMA_MDATAALIGN_WORD, DMA_CIRCULAR)
+
 #define STM32_DMA_TX_WORD_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _channel, _request, _priority, _preempt_priority, _sub_priority) \
     STM32_DMA_CONFIG_INIT_EX((_instance), (_dma_rcc), (_dma_irq), (_channel), (_request), (_priority), (_preempt_priority), (_sub_priority), DMA_MEMORY_TO_PERIPH, DMA_PINC_DISABLE, DMA_MINC_ENABLE, DMA_PDATAALIGN_WORD, DMA_MDATAALIGN_WORD, DMA_NORMAL)
 
@@ -304,6 +307,9 @@ struct stm32_dma_config
 
 #define STM32_GPDMA_RX_WORD_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _request, _priority, _preempt_priority, _sub_priority) \
     STM32_GPDMA_CONFIG_INIT_EX((_instance), (_dma_rcc), (_dma_irq), (_request), (_priority), (_preempt_priority), (_sub_priority), DMA_PERIPH_TO_MEMORY, DMA_SINC_FIXED, DMA_DINC_INCREMENTED, DMA_SRC_DATAWIDTH_WORD, DMA_DEST_DATAWIDTH_WORD, DMA_NORMAL)
+
+#define STM32_GPDMA_RX_WORD_CIRCULAR_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _request, _priority, _preempt_priority, _sub_priority) \
+    STM32_GPDMA_CONFIG_INIT_EX((_instance), (_dma_rcc), (_dma_irq), (_request), (_priority), (_preempt_priority), (_sub_priority), DMA_PERIPH_TO_MEMORY, DMA_SINC_FIXED, DMA_DINC_INCREMENTED, DMA_SRC_DATAWIDTH_WORD, DMA_DEST_DATAWIDTH_WORD, DMA_CIRCULAR)
 
 #define STM32_GPDMA_TX_WORD_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _request, _priority, _preempt_priority, _sub_priority) \
     STM32_GPDMA_CONFIG_INIT_EX((_instance), (_dma_rcc), (_dma_irq), (_request), (_priority), (_preempt_priority), (_sub_priority), DMA_MEMORY_TO_PERIPH, DMA_SINC_INCREMENTED, DMA_DINC_FIXED, DMA_SRC_DATAWIDTH_WORD, DMA_DEST_DATAWIDTH_WORD, DMA_NORMAL)

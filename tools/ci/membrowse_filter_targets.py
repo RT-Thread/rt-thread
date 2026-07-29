@@ -79,13 +79,20 @@ def select_targets(targets, changed_files):
     return selected
 
 
-def write_github_output(matrix, output_path):
+def skipped_targets(targets, selected_targets):
+    selected_names = {target["target_name"] for target in selected_targets}
+    return [target for target in targets if target["target_name"] not in selected_names]
+
+
+def write_github_output(selected, skipped, output_path):
     if not output_path:
         return
 
     with open(output_path, "a", encoding="utf-8") as output:
-        output.write("matrix={}\n".format(json.dumps(matrix, separators=(",", ":"))))
-        output.write("target_count={}\n".format(len(matrix)))
+        output.write("matrix={}\n".format(json.dumps(selected, separators=(",", ":"))))
+        output.write("target_count={}\n".format(len(selected)))
+        output.write("skipped_matrix={}\n".format(json.dumps(skipped, separators=(",", ":"))))
+        output.write("skipped_count={}\n".format(len(skipped)))
 
 
 def main():
@@ -99,6 +106,10 @@ def main():
 
     changed_files = read_changed_files(args.changed_files)
     selected_targets = select_targets(targets, changed_files)
+    # Targets not affected by this change are built by nobody, but their
+    # binaries are unchanged, so they are reported as identical (metadata-only)
+    # to keep every target's per-commit chain unbroken. See membrowse-report.yml.
+    unselected_targets = skipped_targets(targets, selected_targets)
 
     print("Changed files:")
     for changed_file in changed_files:
@@ -108,8 +119,12 @@ def main():
     for target in selected_targets:
         print("  {}".format(target["target_name"]))
 
+    print("Skipped MemBrowse targets (reported as identical):")
+    for target in unselected_targets:
+        print("  {}".format(target["target_name"]))
+
     print("Selected {}/{} MemBrowse targets".format(len(selected_targets), len(targets)))
-    write_github_output(selected_targets, os.getenv("GITHUB_OUTPUT"))
+    write_github_output(selected_targets, unselected_targets, os.getenv("GITHUB_OUTPUT"))
 
 
 if __name__ == "__main__":

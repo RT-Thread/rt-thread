@@ -30,7 +30,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable Flexcomm0 as UART"
                     default y
                     if BSP_USING_UART0
-                        choice
+                        choice HW_UART0_BAUD_SEL
                             prompt "Select UART0 badurate"
                             default HW_UART0_BAUDRATE_115200
 
@@ -46,7 +46,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable Flexcomm1 as UART"
                     default n
                     if BSP_USING_UART1
-                    choice
+                    choice HW_UART1_BAUD_SEL
                         prompt "Select UART1 badurate"
                         default HW_UART1_BAUDRATE_115200
 
@@ -62,7 +62,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable Flexcomm2 as UART"
                     default n
                     if BSP_USING_UART2
-                        choice
+                        choice HW_UART2_BAUD_SEL
                             prompt "Select UART2 badurate"
                             default HW_UART2_BAUDRATE_115200
 
@@ -88,7 +88,7 @@ menu "On-chip Peripheral Drivers"
                     default n
 
                     if BSP_USING_I2C1
-                        choice
+                        choice HW_I2C1_BAUD_SEL
                             prompt "Select I2C1 badurate"
                             default HW_I2C1_BAUDRATE_100kHZ
 
@@ -104,7 +104,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable Flexcomm4 I2C"
                     default n
                     if BSP_USING_I2C4
-                        choice
+                        choice HW_I2C4_BAUD_SEL
                             prompt "Select I2C4 badurate"
                             default HW_I2C4_BAUDRATE_100kHZ
 
@@ -118,42 +118,37 @@ menu "On-chip Peripheral Drivers"
             endif
     
     menuconfig BSP_USING_SOFT_I2C
-        bool "Enable software I2C bus"
-        select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
+        bool "Enable software I2C (swi2c)"
         default n
-
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
         if BSP_USING_SOFT_I2C
-            config BSP_USING_SOFT_I2C1
-                bool "Enable I2C1 Bus (software simulation)"
-                default n
-                if BSP_USING_SOFT_I2C1
-                    comment "Notice: num = 32 * PORTx + PINx + 1"
-                    comment "0_15 --> 16; 1_8 --> 41"
-                    config BSP_SOFT_I2C1_SCL_PIN
-                        int "si2c1 SCL pin number"
-                        default 16
-                    config BSP_SOFT_I2C1_SDA_PIN
-                        int "si2c1 SDA pin number"
-                        default 41
-                endif
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 16
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 41
+            endif
 
-            config BSP_USING_SOFT_I2C2
-                bool "Enable I2C2 Bus (software simulation)"
-                default n
-                if BSP_USING_SOFT_I2C2
-                    comment "Notice: num = 32 * PORTx + PINx + 1"
-                    comment "0_18 --> 19; 1_10 --> 43"
-                    config BSP_SOFT_I2C2_SCL_PIN
-                        int "si2c2 SCL pin number"
-                        default 19
-                    config BSP_SOFT_I2C2_SDA_PIN
-                        int "si2c2 SDA pin number"
-                        default 43
-                endif
+        menuconfig BSP_USING_SOFT_I2C2
+            bool "Enable software I2C2 Bus (swi2c2)"
+            default n
+            select RT_USING_SOFT_I2C2
+            if BSP_USING_SOFT_I2C2
+                config RT_SOFT_I2C2_SCL_PIN
+                    int "swi2c2 SCL pin number"
+                    default 19
+                config RT_SOFT_I2C2_SDA_PIN
+                    int "swi2c2 SDA pin number"
+                    default 43
+            endif
         endif
-
     menuconfig BSP_USING_SPI
         config BSP_USING_SPI
             bool "Enable SPI"
@@ -171,46 +166,90 @@ menu "On-chip Peripheral Drivers"
             endif
 
     menuconfig BSP_USING_SOFT_SPI
-        bool "Enable soft SPI BUS"
+        bool "Enable software SPI (swspi)"
         default n
-        select RT_USING_PIN
-        select RT_USING_SOFT_SPI
         select RT_USING_SPI
+        select RT_USING_SOFT_SPI
         if BSP_USING_SOFT_SPI
-            config BSP_USING_SOFT_SPI1
-                bool "Enable soft SPI1 BUS (software simulation)"
-                default n
-                if BSP_USING_SOFT_SPI1
-                    comment "Notice: num = 32 * PORTx + PINx + 1"
-                    comment "1_11 --> 44; 0_15 --> 16; 1_8 --> 41"
-                    config BSP_S_SPI1_SCK_PIN
-                        int "sspi1 SCL pin number"
-                        default 44
-                    config BSP_S_SPI1_MOSI_PIN
-                        int "sspi1 MISO pin number"
-                        default 16
-                    config BSP_S_SPI1_MISO_PIN
-                        int "sspi1 MOSI pin number"
-                        default 41
-                endif
+        menuconfig BSP_USING_SOFT_SPI1
+            bool "Enable software SPI1 Bus (swspi1)"
+            default n
+            select RT_USING_SOFT_SPI1
+            if BSP_USING_SOFT_SPI1
+                config RT_SOFT_SPI1_SCK_PIN
+                    int "swspi1 SCK pin number"
+                    default 44
+                config RT_SOFT_SPI1_MISO_PIN
+                    int "swspi1 MISO pin number"
+                    default 41
+                config RT_SOFT_SPI1_MOSI_PIN
+                    int "swspi1 MOSI pin number"
+                    default 16
+            endif
 
-            config BSP_USING_SOFT_SPI2
-                bool "Enable soft SPI2 BUS (software simulation)"
-                default n
-                if BSP_USING_SOFT_SPI2
-                    comment "Notice: num = 32 * PORTx + PINx + 1"
-                    comment "1_9 --> 42; 0_18 --> 19; 1_10 --> 43"
-                    config BSP_S_SPI2_SCK_PIN
-                        int "sspi2 SCL pin number"
-                        default 42
-                    config BSP_S_SPI2_MOSI_PIN
-                        int "sspi2 MISO pin number"
-                        default 19
-                    config BSP_S_SPI2_MISO_PIN
-                        int "sspi2 MOSI pin number"
-                        default 43
-                endif
+        menuconfig BSP_USING_SOFT_SPI2
+            bool "Enable software SPI2 Bus (swspi2)"
+            default n
+            select RT_USING_SOFT_SPI2
+            if BSP_USING_SOFT_SPI2
+                config RT_SOFT_SPI2_SCK_PIN
+                    int "swspi2 SCK pin number"
+                    default 42
+                config RT_SOFT_SPI2_MISO_PIN
+                    int "swspi2 MISO pin number"
+                    default 43
+                config RT_SOFT_SPI2_MOSI_PIN
+                    int "swspi2 MOSI pin number"
+                    default 19
+            endif
         endif
+    config RT_SOFT_SPI1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_SCK_PIN_DEFAULT
+        int
+        default 44 if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_MISO_PIN_DEFAULT
+        int
+        default 41 if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_MOSI_PIN_DEFAULT
+        int
+        default 16 if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_HAS_BUS_NAME_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI1_BUS_NAME_DEFAULT
+        string
+        default "swspi1" if RT_USING_SOFT_SPI1
+
+    config RT_SOFT_SPI2_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI2
+
+    config RT_SOFT_SPI2_SCK_PIN_DEFAULT
+        int
+        default 42 if RT_USING_SOFT_SPI2
+
+    config RT_SOFT_SPI2_MISO_PIN_DEFAULT
+        int
+        default 43 if RT_USING_SOFT_SPI2
+
+    config RT_SOFT_SPI2_MOSI_PIN_DEFAULT
+        int
+        default 19 if RT_USING_SOFT_SPI2
+
+    config RT_SOFT_SPI2_HAS_BUS_NAME_DEFAULT
+        bool
+        default y if RT_USING_SOFT_SPI2
+
+    config RT_SOFT_SPI2_BUS_NAME_DEFAULT
+        string
+        default "swspi2" if RT_USING_SOFT_SPI2
             
     menuconfig BSP_USING_ADC
         config BSP_USING_ADC
@@ -410,5 +449,29 @@ menu "Board extended module Drivers"
     endif
 
 endmenu
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 16 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 41 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C2_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+        int
+        default 19 if RT_USING_SOFT_I2C2
+
+    config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+        int
+        default 43 if RT_USING_SOFT_I2C2
 
 endmenu

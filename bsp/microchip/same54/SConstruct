@@ -51,10 +51,10 @@ sam_board = 'board'
 rtconfig.BSP_LIBRARY_TYPE = sam_board
 
 # include libraries
-objs.extend(SConscript(os.path.join(common_path_prefix, sam_board, 'SConscript')))
+objs.extend(SConscript(os.path.join(common_path_prefix, sam_board, 'SConscript'), variant_dir=os.path.join('build', 'common', sam_board), duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(common_path_prefix, 'applications', 'SConscript')))
+objs.extend(SConscript(os.path.join(common_path_prefix, 'applications', 'SConscript'), variant_dir='build/common/applications', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

@@ -1185,7 +1185,7 @@
             <File>
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\misc\adc.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\adc\adc.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1541,12 +1541,12 @@
             <File>
               <FileName>drv_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_pin.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_pin.c</FilePath>
             </File>
             <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_uart.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_uart.c</FilePath>
             </File>
           </Files>
         </Group>

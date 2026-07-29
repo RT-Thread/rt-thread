@@ -63,8 +63,20 @@ config SOC_SERIES_R7FA8M85
 
 config SOC_SERIES_R7KA8P1
     bool
-    select ARCH_ARM_CORTEX_M85
     select SOC_FAMILY_RENESAS_RA
+    default n
+
+config SOC_SERIES_R7KA8P1_CORE0
+    bool
+    select SOC_SERIES_R7KA8P1
+    select ARCH_ARM_CORTEX_M85
+    default n
+
+config SOC_SERIES_R7KA8P1_CORE1
+    bool
+    select SOC_SERIES_R7KA8P1
+    select ARCH_ARM_CORTEX_M33
+    select ARCH_ARM_CORTEX_SECURE
     default n
 
 config SOC_SERIES_R9A07G0
@@ -86,7 +98,7 @@ config SOC_SERIES_R7FA2A1
     default n
 
 if RT_USING_NANO
-choice
+choice RT_NANO_CONSOLE_UART_SEL
 prompt "Choice nano console device(Renesas)"
 default RT_NANO_CONSOLE_UART0
 depends on RT_USING_CONSOLE

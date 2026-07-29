@@ -336,7 +336,7 @@
               <MiscControls>--diag_suppress=186,66</MiscControls>
               <Define>__DEBUG, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, HC32L136, __STDC_LIMIT_MACROS, USE_DDL_DRIVER, __RTTHREAD__, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\components\net\utest;..\..\libcpu\arm\common;..\..\components\drivers\include;.;drivers;..\..\components\finsh;..\..\components\libc\compilers\common\extension;Libraries\CMSIS\Include;board;Libraries\CMSIS\Device\HDSC\HC32L136\Include;..\..\components\drivers\smp_call;..\..\libcpu\arm\cortex-m0;..\..\include;..\..\components\libc\posix\io\eventfd;..\..\components\libc\posix\io\poll;Libraries\HC32L136_StdPeriph_Driver\inc;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\libc\compilers\common\extension\fcntl\octal;applications;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\libc\compilers\common\include;..\..\components\drivers\phy;..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\components\net\utest;..\..\libcpu\arm\common;..\..\components\drivers\include;.;drivers;..\..\components\finsh;..\..\components\libc\compilers\common\extension;libraries\CMSIS\Include;board;libraries\CMSIS\Device\HDSC\HC32L136\Include;..\..\components\drivers\smp_call;..\..\libcpu\arm\cortex-m0;..\..\include;..\..\components\libc\posix\io\eventfd;..\..\components\libc\posix\io\poll;libraries\HC32L136_StdPeriph_Driver\inc;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\libc\compilers\common\extension\fcntl\octal;applications;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\libc\compilers\common\include;..\..\components\drivers\phy;..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -710,91 +710,91 @@
             <File>
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\adc.c</FilePath>
+              <FilePath>libraries\HC32L136_StdPeriph_Driver\src\adc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\gpio.c</FilePath>
+              <FilePath>libraries\HC32L136_StdPeriph_Driver\src\gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\uart.c</FilePath>
+              <FilePath>libraries\HC32L136_StdPeriph_Driver\src\uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>lpuart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\lpuart.c</FilePath>
+              <FilePath>libraries\HC32L136_StdPeriph_Driver\src\lpuart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>rtc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\rtc.c</FilePath>
+              <FilePath>libraries\HC32L136_StdPeriph_Driver\src\rtc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>sysctrl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\sysctrl.c</FilePath>
+              <FilePath>libraries\HC32L136_StdPeriph_Driver\src\sysctrl.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>timer3.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\timer3.c</FilePath>
+              <FilePath>libraries\HC32L136_StdPeriph_Driver\src\timer3.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>trim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\trim.c</FilePath>
+              <FilePath>libraries\HC32L136_StdPeriph_Driver\src\trim.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\flash.c</FilePath>
+              <FilePath>libraries\HC32L136_StdPeriph_Driver\src\flash.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ddl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\HC32L136_StdPeriph_Driver\src\ddl.c</FilePath>
+              <FilePath>libraries\HC32L136_StdPeriph_Driver\src\ddl.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>system_hc32l13x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\system_hc32l13x.c</FilePath>
+              <FilePath>libraries\CMSIS\Device\HDSC\HC32L136\Source\system_hc32l13x.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>interrupts_hc32l136.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\interrupts_hc32l136.c</FilePath>
+              <FilePath>libraries\CMSIS\Device\HDSC\HC32L136\Source\interrupts_hc32l136.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>startup_hc32l136.s</FileName>
               <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Device\HDSC\HC32L136\Source\ARM\startup_hc32l136.s</FilePath>
+              <FilePath>libraries\CMSIS\Device\HDSC\HC32L136\Source\ARM\startup_hc32l136.s</FilePath>
             </File>
           </Files>
         </Group>

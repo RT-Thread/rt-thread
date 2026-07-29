@@ -18,7 +18,8 @@
 extern "C" {
 #endif
 
-#define DMA_BLOCK_SIZE   (4095)
+#if defined(SOC_SERIES_N32H7xx)
+#define DMA_BLOCK_SIZE (4095)
 
 struct dma_config
 {
@@ -30,6 +31,18 @@ struct dma_config
     rt_uint32_t dmamux_channel;
     rt_uint32_t dmamux_request;
 };
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+struct dma_config
+{
+    DMA_Module      *DMAy;
+    DMA_ChannelType *DMAChx;
+    IRQn_Type        dma_irq;
+    rt_uint32_t      dma_rcc;
+    rt_uint32_t      request;
+    rt_uint32_t      channel;
+};
+
+#endif
 
 #ifdef __cplusplus
 }

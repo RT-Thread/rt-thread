@@ -8,8 +8,8 @@
  * 2023-02-09     CDT          first version
  */
 
-#ifndef  __DRV_WKTM_H__
-#define  __DRV_WKTM_H__
+#ifndef __DRV_WKTM_H__
+#define __DRV_WKTM_H__
 
 #include <rtthread.h>
 

@@ -262,7 +262,7 @@ int msh_exec_module(const char *cmd_line, int size)
     if (size == 0)
         return -RT_ERROR;
     /* get the length of command0 */
-    while ((cmd_line[cmd_length] != ' ' && cmd_line[cmd_length] != '\t') && cmd_length < size)
+    while (cmd_length < size && cmd_line[cmd_length] != ' ' && cmd_line[cmd_length] != '\t')
         cmd_length ++;
 
     /* get name length */
@@ -487,7 +487,7 @@ int _msh_exec_lwp(int debug, char *cmd, rt_size_t length)
     int ret;
 
     /* find the size of first command */
-    while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
+    while (cmd0_size < length && cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t')
         cmd0_size ++;
     if (cmd0_size == 0)
         return -1;

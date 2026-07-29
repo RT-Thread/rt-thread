@@ -32,7 +32,7 @@ menu "Onboard Peripheral Drivers"
         select RT_LWIP_USING_HW_CHECKSUM
 
         if BSP_USING_ETH
-            choice
+            choice ETH_PHY_TYPE_SEL
                 prompt "Select ETH PHY type"
                 default ETH_PHY_USING_RTL8201F
 
@@ -43,7 +43,7 @@ menu "Onboard Peripheral Drivers"
                     select BSP_USING_TCA9539
             endchoice
 
-            choice
+            choice ETH_IF_SEL
                 prompt "Select ETH Communication Interface"
                 default ETH_INTERFACE_USING_MII
 
@@ -68,7 +68,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable EXMC"
         default n
         if BSP_USING_EXMC
-            choice
+            choice SDRAM_OR_NAND_SEL
                 prompt "Using SDRAM or NAND"
                 default BSP_USING_NAND
 
@@ -353,24 +353,25 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_I2C
 
-        if BSP_USING_I2C
-            menuconfig BSP_USING_I2C1_SW
-                bool "Enable I2C1 BUS (software simulation)"
-                default n
-                select RT_USING_I2C_BITOPS
-                select RT_USING_PIN
-                if BSP_USING_I2C1_SW
-                    config BSP_I2C1_SCL_PIN
-                        int "i2c1 scl pin number"
-                        range 1 176
-                        default 51
-                    config BSP_I2C1_SDA_PIN
-                        int "I2C1 sda pin number"
-                        range 1 176
-                        default 90
-                endif
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
+        default n
+        select RT_USING_I2C
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 51
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 90
+            endif
         endif
-
         if BSP_USING_I2C
             config BSP_I2C_USING_DMA
                 bool
@@ -623,7 +624,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_WDT
         if BSP_USING_WDT_TMR
-            choice
+            choice SWDT_WDT_SEL
                 prompt "Select SWDT/WDT"
                 default BSP_USING_SWDT
 
@@ -643,7 +644,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
+            choice CLK_SRC_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_XTAL32
 
@@ -673,7 +674,7 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PM
         if BSP_USING_PM
-            choice
+            choice BSP_WKTM_SEL
                 prompt "Select WKTM Clock Src"
                 default BSP_USING_WKTM_LRC
 
@@ -712,7 +713,7 @@ menu "On-chip Peripheral Drivers"
             default n
             select RT_HWCRYPTO_USING_AES
             if BSP_USING_AES
-                choice
+                choice AES_MODE_SEL
                     prompt "Select AES Mode"
                     default BSP_USING_AES_ECB
 
@@ -727,7 +728,7 @@ menu "On-chip Peripheral Drivers"
             default n
             select RT_HWCRYPTO_USING_SHA2
             if BSP_USING_HASH
-                choice
+                choice HASH_MODE_SEL
                     prompt "Select Hash Mode"
                     default BSP_USING_SHA2_256
 
@@ -818,7 +819,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_USB_DEVICE if BSP_USING_USBD
         select RT_USING_USB_HOST if BSP_USING_USBH
         if BSP_USING_USB
-            choice
+            choice BSP_USBFS_USB_SEL
                 prompt "Select USB FS/HS Core"
                 default BSP_USING_USBFS
 
@@ -829,7 +830,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Use USBHS Core"
             endchoice
 
-            choice
+            choice BSP_USBHS_PHY_E_SEL
                 depends on BSP_USING_USBHS
                 prompt "Select USB PHY"
                 default BSP_USING_USBHS_PHY_EMBED
@@ -843,7 +844,7 @@ menu "On-chip Peripheral Drivers"
                     select BSP_USING_TCA9539
             endchoice
 
-            choice
+            choice BSP_USBHS_MODE_SEL
                 prompt "Select USB Mode"
                 default BSP_USING_USBD
 
@@ -910,45 +911,45 @@ menu "On-chip Peripheral Drivers"
         endif
 
     menuconfig BSP_USING_CLOCK_TIMER
-        bool "Enable Hw Timer"
+        bool "Enable Clock Timer"
         default n
         select RT_USING_CLOCK_TIME
         if BSP_USING_CLOCK_TIMER
             config BSP_USING_TMRA_1
-                bool "Use Timer_a1 As The Hw Timer"
+                bool "Use Timer_a1 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_2
-                bool "Use Timer_a2 As The Hw Timer"
+                bool "Use Timer_a2 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_3
-                bool "Use Timer_a3 As The Hw Timer"
+                bool "Use Timer_a3 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_4
-                bool "Use Timer_a4 As The Hw Timer"
+                bool "Use Timer_a4 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_5
-                bool "Use Timer_a5 As The Hw Timer"
+                bool "Use Timer_a5 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_6
-                bool "Use Timer_a6 As The Hw Timer"
+                bool "Use Timer_a6 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_7
-                bool "Use Timer_a7 As The Hw Timer"
+                bool "Use Timer_a7 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_8
-                bool "Use Timer_a8 As The Hw Timer"
+                bool "Use Timer_a8 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_9
-                bool "Use Timer_a9 As The Hw Timer"
+                bool "Use Timer_a9 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_10
-                bool "Use Timer_a10 As The Hw Timer"
+                bool "Use Timer_a10 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_11
-                bool "Use Timer_a11 As The Hw Timer"
+                bool "Use Timer_a11 As The Clock Timer"
                 default n
             config BSP_USING_TMRA_12
-                bool "Use Timer_a12 As The Hw Timer"
+                bool "Use Timer_a12 As The Clock Timer"
                 default n
         endif
 
@@ -957,5 +958,17 @@ endmenu
 menu "Board extended module Drivers"
 
 endmenu
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 51 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 90 if RT_USING_SOFT_I2C1
 
 endmenu

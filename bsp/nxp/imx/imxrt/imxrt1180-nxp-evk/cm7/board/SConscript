@@ -2,14 +2,29 @@ from building import *
 
 cwd = GetCurrentDir()
 
-# add the general drivers.
-src = Split("""
-board.c
-MCUX_Config/clock_config.c
-MCUX_Config/pin_mux.c
-""")
+if GetDepend(['BSP_USING_OSPI_FLASH']):
+    # add the OSPI_hyperFlash drivers.
+    src = Split("""
+    board.c
+    MCUX_Config_hyperFlash/clock_config.c
+    MCUX_Config_hyperFlash/pin_mux.c
+    """)
+else:
+    # add the general drivers.
+    src = Split("""
+    board.c
+    MCUX_Config/clock_config.c
+    MCUX_Config/pin_mux.c
+    """)
 
-CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
+if GetDepend(['BSP_USING_OSPI_FLASH']):
+    src += ['ports/flexspi_octal_flash_ops.c']
+
+if GetDepend(['BSP_USING_OSPI_FLASH']):
+    CPPPATH = [cwd,cwd + '/MCUX_Config_hyperFlash',cwd + '/ports']
+else:
+    CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
+
 CPPDEFINES = ['CPU_MIMXRT1189CVM8C_cm7', 'MIMXRT1189_cm7_SERIES', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1', 'ARM_MATH_CM7']
 
 if rtconfig.PLATFORM in ['gcc']:

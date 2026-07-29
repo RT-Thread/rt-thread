@@ -20,11 +20,23 @@ extern "C" {
 
 
 #if defined(SOC_SERIES_N32H7xx)
-#include "h7/dma_config.h"
-#include "h7/uart_config.h"
-#include "h7/i2c_hard_config.h"
-#include "h7/adc_config.h"
-#include "h7/spi_config.h"
+#include "h7xx/dma_config.h"
+#include "h7xx/uart_config.h"
+#include "h7xx/i2c_hard_config.h"
+#include "h7xx/adc_config.h"
+#include "h7xx/spi_config.h"
+#include "h7xx/tim_config.h"
+#include "h7xx/dac_config.h"
+#include "h7xx/can_config.h"
+#include "h7xx/pwm_config.h"
+#include "h7xx/pulse_encoder_config.h"
+#include "h7xx/lptim_config.h"
+#elif defined(SOC_SERIES_N32H49x)
+#include "h49x/dma_config.h"
+#include "h49x/uart_config.h"
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include "h47x_48x/dma_config.h"
+#include "h47x_48x/uart_config.h"
 #endif /* defined(SOC_SERIES_N32H7xx) */
 
 #ifdef __cplusplus

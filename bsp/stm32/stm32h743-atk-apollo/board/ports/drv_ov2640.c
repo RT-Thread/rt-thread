@@ -27,7 +27,7 @@
 #include <drv_log.h>
 
 #define DEV_ADDRESS      0x30 /* OV2640 address */
-#define I2C_NAME        "i2c2"
+#define I2C_NAME         "swi2c2"
 
 #define RESET_PIN        GET_PIN(A, 15) /* camera reset pin */
 
@@ -593,7 +593,7 @@ int rt_ov2640_init(void)
     rt_device_t dcmi_dev = RT_NULL;
 
     sw_ov2640_mode();
-    pcf_dev = pcf8574_init("i2c1", RT_NULL);
+    pcf_dev = pcf8574_init("swi2c1", RT_NULL);
     if (pcf_dev == RT_NULL)
     {
         LOG_E("can't find pcf8574, please check it");

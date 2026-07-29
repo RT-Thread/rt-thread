@@ -970,6 +970,7 @@ sysret_t sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptf
 #ifdef ARCH_MM_MMU
     int ret = -1;
     fd_set *kreadfds = RT_NULL, *kwritefds = RT_NULL, *kexceptfds = RT_NULL;
+    struct timeval ktimeout, *ptimeout = RT_NULL;
 
     if (readfds)
     {
@@ -1016,8 +1017,18 @@ sysret_t sys_select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptf
         }
         lwp_get_from_user(kexceptfds, exceptfds, sizeof *kexceptfds);
     }
+    if (timeout)
+    {
+        if (!lwp_user_accessable((void *)timeout, sizeof *timeout))
+        {
+            SET_ERRNO(EFAULT);
+            goto quit;
+        }
+        lwp_get_from_user(&ktimeout, timeout, sizeof ktimeout);
+        ptimeout = &ktimeout;
+    }
 
-    ret = select(nfds, kreadfds, kwritefds, kexceptfds, timeout);
+    ret = select(nfds, kreadfds, kwritefds, kexceptfds, ptimeout);
     if (kreadfds)
     {
         lwp_put_to_user(readfds, kreadfds, sizeof *kreadfds);

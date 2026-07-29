@@ -27,10 +27,10 @@ extern "C" {
 /*******************************************************************************
  * Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
-#if defined (HC32F4A0)
-#define EXMC_EXCLK_DMC_MAX_FREQ             (40UL * 1000000UL)
-#elif defined (HC32F4A8)
-#define EXMC_EXCLK_DMC_MAX_FREQ             (120UL * 1000000UL)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F467)
+#define EXMC_EXCLK_DMC_MAX_FREQ (40UL * 1000000UL)
+#elif defined(HC32F4A8)
+#define EXMC_EXCLK_DMC_MAX_FREQ (120UL * 1000000UL)
 #endif
 
 /*******************************************************************************

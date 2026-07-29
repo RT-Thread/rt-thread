@@ -767,7 +767,7 @@ static void rt_link_frame_check(void)
             {
                 /* Check the receive sequence */
                 offset = rt_link_check_seq(receive_frame.head.sequence, rt_link_scb->rx_record.rx_seq) - 1;
-                if (offset > RT_LINK_FRAMES_MAX)
+                if (offset >= RT_LINK_FRAMES_MAX)
                 {
                     /* exceptional frame, ignore it */
                     LOG_D("seq (%d) failed, rx_seq (%d) offset=(%d) attr= (%d) status (%d)", receive_frame.head.sequence, rt_link_scb->rx_record.rx_seq, offset, receive_frame.attribute, rt_link_scb->state);

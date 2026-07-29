@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -333,8 +333,21 @@ extern "C" {
 #endif /* SPI5_RX_DMA_CONFIG */
 #endif /* BSP_SPI5_RX_USING_DMA */
 
+#ifdef BSP_USING_SPI6
+#ifndef SPI6_BUS_CONFIG
+#define SPI6_BUS_CONFIG        \
+    {                          \
+        .Instance = SPI6,      \
+        .bus_name = "spi6",    \
+        .irq_type = SPI6_IRQn, \
+    }
+#endif /* SPI6_BUS_CONFIG */
+#endif /* BSP_USING_SPI6 */
+
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /*__SPI_CONFIG_H__ */
+

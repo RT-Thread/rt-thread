@@ -153,6 +153,10 @@ extern "C" {
 #endif /* RT_FIRMWARE_ARM_SCMI */
 #endif /* RT_USING_FIRMWARE */
 
+#ifdef RT_USING_TEE
+#include "drivers/tee.h"
+#endif /* RT_USING_TEE */
+
 #ifdef RT_USING_HWCACHE
 #include "drivers/hwcache.h"
 #endif /* RT_USING_HWCACHE */
@@ -272,9 +276,11 @@ extern "C" {
 #include "drivers/dev_audio.h"
 #endif /* RT_USING_AUDIO */
 
-#ifdef RT_USING_ADC
+#ifdef RT_USING_ADC_V2
+#include "drivers/adc_v2.h"
+#elif defined(RT_USING_ADC)
 #include "drivers/adc.h"
-#endif /* RT_USING_ADC */
+#endif /* RT_USING_ADC_V2 */
 
 #ifdef RT_USING_DAC
 #include "drivers/dac.h"

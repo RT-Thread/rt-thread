@@ -42,13 +42,21 @@ static uint32_t _systick_ms = 1;
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
+#if defined(SOC_SERIES_N32H7xx)
     RCC_ClocksTypeDef RCC_Clocks = { 0 };
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+    RCC_ClocksType RCC_Clocks = { 0 };
+#endif
 
     /* Get clock frequency */
     RCC_GetClocksFreqValue(&RCC_Clocks);
 
     /* Set Systick */
+#if defined(SOC_SERIES_N32H7xx)
     SysTick_Config(RCC_Clocks.M7ClkFreq / RT_TICK_PER_SECOND);
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+    SysTick_Config(RCC_Clocks.SysclkFreq / RT_TICK_PER_SECOND);
+#endif
 
     NVIC_SetPriorityGrouping(SCB_AIRCR_PRIGROUP3);
     NVIC_SetPriority(SysTick_IRQn, 0xFF);

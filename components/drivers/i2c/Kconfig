@@ -18,22 +18,33 @@ if RT_USING_I2C
     endif
 
     menuconfig RT_USING_SOFT_I2C
-        bool "Use GPIO to soft simulate I2C"
+        bool "Use GPIO to simulate I2C (swi2c)"
         default n
         select RT_USING_PIN
         select RT_USING_I2C_BITOPS
         if RT_USING_SOFT_I2C
+            config RT_SOFT_I2C0_HAS_PIN_DEFAULT
+                bool
+
+            config RT_SOFT_I2C0_SCL_PIN_DEFAULT
+                int
+
+            config RT_SOFT_I2C0_SDA_PIN_DEFAULT
+                int
+
             menuconfig RT_USING_SOFT_I2C0
-                bool "Enable I2C0 Bus (software simulation)"
-                default y
+                bool "Enable software I2C0 Bus (swi2c0)"
+                default n
                 if RT_USING_SOFT_I2C0
                     config RT_SOFT_I2C0_SCL_PIN
                         int "SCL pin number"
                         range 0 32767
+                        default RT_SOFT_I2C0_SCL_PIN_DEFAULT if RT_SOFT_I2C0_HAS_PIN_DEFAULT
                         default 1
                     config RT_SOFT_I2C0_SDA_PIN
                         int "SDA pin number"
                         range 0 32767
+                        default RT_SOFT_I2C0_SDA_PIN_DEFAULT if RT_SOFT_I2C0_HAS_PIN_DEFAULT
                         default 2
                     config RT_SOFT_I2C0_BUS_NAME
                         string "Bus name"
@@ -47,17 +58,28 @@ if RT_USING_I2C
                         range 0 32767
                         default 10
                 endif
+            config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+                bool
+
+            config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+                int
+
+            config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+                int
+
             menuconfig RT_USING_SOFT_I2C1
-                bool "Enable I2C1 Bus (software simulation)"
-                default y
+                bool "Enable software I2C1 Bus (swi2c1)"
+                default n
                 if RT_USING_SOFT_I2C1
                     config RT_SOFT_I2C1_SCL_PIN
                         int "SCL pin number"
                         range 0 32767
+                        default RT_SOFT_I2C1_SCL_PIN_DEFAULT if RT_SOFT_I2C1_HAS_PIN_DEFAULT
                         default 3
                     config RT_SOFT_I2C1_SDA_PIN
                         int "SDA pin number"
                         range 0 32767
+                        default RT_SOFT_I2C1_SDA_PIN_DEFAULT if RT_SOFT_I2C1_HAS_PIN_DEFAULT
                         default 4
                     config RT_SOFT_I2C1_BUS_NAME
                         string "Bus name"
@@ -71,17 +93,28 @@ if RT_USING_I2C
                         range 0 32767
                         default 10
                 endif
+            config RT_SOFT_I2C2_HAS_PIN_DEFAULT
+                bool
+
+            config RT_SOFT_I2C2_SCL_PIN_DEFAULT
+                int
+
+            config RT_SOFT_I2C2_SDA_PIN_DEFAULT
+                int
+
             menuconfig RT_USING_SOFT_I2C2
-                bool "Enable I2C2 Bus (software simulation)"
+                bool "Enable software I2C2 Bus (swi2c2)"
                 default n
                 if RT_USING_SOFT_I2C2
                     config RT_SOFT_I2C2_SCL_PIN
                         int "SCL pin number"
                         range 0 32767
+                        default RT_SOFT_I2C2_SCL_PIN_DEFAULT if RT_SOFT_I2C2_HAS_PIN_DEFAULT
                         default 5
                     config RT_SOFT_I2C2_SDA_PIN
                         int "SDA pin number"
                         range 0 32767
+                        default RT_SOFT_I2C2_SDA_PIN_DEFAULT if RT_SOFT_I2C2_HAS_PIN_DEFAULT
                         default 6
                     config RT_SOFT_I2C2_BUS_NAME
                         string "Bus name"
@@ -95,17 +128,28 @@ if RT_USING_I2C
                         range 0 32767
                         default 10
                 endif
+            config RT_SOFT_I2C3_HAS_PIN_DEFAULT
+                bool
+
+            config RT_SOFT_I2C3_SCL_PIN_DEFAULT
+                int
+
+            config RT_SOFT_I2C3_SDA_PIN_DEFAULT
+                int
+
             menuconfig RT_USING_SOFT_I2C3
-                bool "Enable I2C3 Bus (software simulation)"
+                bool "Enable software I2C3 Bus (swi2c3)"
                 default n
                 if RT_USING_SOFT_I2C3
                     config RT_SOFT_I2C3_SCL_PIN
                         int "SCL pin number"
                         range 0 32767
+                        default RT_SOFT_I2C3_SCL_PIN_DEFAULT if RT_SOFT_I2C3_HAS_PIN_DEFAULT
                         default 7
                     config RT_SOFT_I2C3_SDA_PIN
                         int "SDA pin number"
                         range 0 32767
+                        default RT_SOFT_I2C3_SDA_PIN_DEFAULT if RT_SOFT_I2C3_HAS_PIN_DEFAULT
                         default 8
                     config RT_SOFT_I2C3_BUS_NAME
                         string "Bus name"
@@ -119,17 +163,28 @@ if RT_USING_I2C
                         range 0 32767
                         default 10
                 endif
+            config RT_SOFT_I2C4_HAS_PIN_DEFAULT
+                bool
+
+            config RT_SOFT_I2C4_SCL_PIN_DEFAULT
+                int
+
+            config RT_SOFT_I2C4_SDA_PIN_DEFAULT
+                int
+
             menuconfig RT_USING_SOFT_I2C4
-                bool "Enable I2C4 Bus (software simulation)"
+                bool "Enable software I2C4 Bus (swi2c4)"
                 default n
                 if RT_USING_SOFT_I2C4
                     config RT_SOFT_I2C4_SCL_PIN
                         int "SCL pin number"
                         range 0 32767
+                        default RT_SOFT_I2C4_SCL_PIN_DEFAULT if RT_SOFT_I2C4_HAS_PIN_DEFAULT
                         default 9
                     config RT_SOFT_I2C4_SDA_PIN
                         int "SDA pin number"
                         range 0 32767
+                        default RT_SOFT_I2C4_SDA_PIN_DEFAULT if RT_SOFT_I2C4_HAS_PIN_DEFAULT
                         default 10
                     config RT_SOFT_I2C4_BUS_NAME
                         string "Bus name"
@@ -143,17 +198,28 @@ if RT_USING_I2C
                         range 0 32767
                         default 10
                 endif
+            config RT_SOFT_I2C5_HAS_PIN_DEFAULT
+                bool
+
+            config RT_SOFT_I2C5_SCL_PIN_DEFAULT
+                int
+
+            config RT_SOFT_I2C5_SDA_PIN_DEFAULT
+                int
+
             menuconfig RT_USING_SOFT_I2C5
-                bool "Enable I2C5 Bus (software simulation)"
+                bool "Enable software I2C5 Bus (swi2c5)"
                 default n
                 if RT_USING_SOFT_I2C5
                     config RT_SOFT_I2C5_SCL_PIN
                         int "SCL pin number"
                         range 0 32767
+                        default RT_SOFT_I2C5_SCL_PIN_DEFAULT if RT_SOFT_I2C5_HAS_PIN_DEFAULT
                         default 11
                     config RT_SOFT_I2C5_SDA_PIN
                         int "SDA pin number"
                         range 0 32767
+                        default RT_SOFT_I2C5_SDA_PIN_DEFAULT if RT_SOFT_I2C5_HAS_PIN_DEFAULT
                         default 12
                     config RT_SOFT_I2C5_BUS_NAME
                         string "Bus name"
@@ -167,17 +233,28 @@ if RT_USING_I2C
                         range 0 32767
                         default 10
                 endif
+            config RT_SOFT_I2C6_HAS_PIN_DEFAULT
+                bool
+
+            config RT_SOFT_I2C6_SCL_PIN_DEFAULT
+                int
+
+            config RT_SOFT_I2C6_SDA_PIN_DEFAULT
+                int
+
             menuconfig RT_USING_SOFT_I2C6
-                bool "Enable I2C6 Bus (software simulation)"
+                bool "Enable software I2C6 Bus (swi2c6)"
                 default n
                 if RT_USING_SOFT_I2C6
                     config RT_SOFT_I2C6_SCL_PIN
                         int "SCL pin number"
                         range 0 32767
+                        default RT_SOFT_I2C6_SCL_PIN_DEFAULT if RT_SOFT_I2C6_HAS_PIN_DEFAULT
                         default 13
                     config RT_SOFT_I2C6_SDA_PIN
                         int "SDA pin number"
                         range 0 32767
+                        default RT_SOFT_I2C6_SDA_PIN_DEFAULT if RT_SOFT_I2C6_HAS_PIN_DEFAULT
                         default 14
                     config RT_SOFT_I2C6_BUS_NAME
                         string "Bus name"
@@ -191,17 +268,28 @@ if RT_USING_I2C
                         range 0 32767
                         default 10
                 endif
+            config RT_SOFT_I2C7_HAS_PIN_DEFAULT
+                bool
+
+            config RT_SOFT_I2C7_SCL_PIN_DEFAULT
+                int
+
+            config RT_SOFT_I2C7_SDA_PIN_DEFAULT
+                int
+
             menuconfig RT_USING_SOFT_I2C7
-                bool "Enable I2C7 Bus (software simulation)"
+                bool "Enable software I2C7 Bus (swi2c7)"
                 default n
                 if RT_USING_SOFT_I2C7
                     config RT_SOFT_I2C7_SCL_PIN
                         int "SCL pin number"
                         range 0 32767
+                        default RT_SOFT_I2C7_SCL_PIN_DEFAULT if RT_SOFT_I2C7_HAS_PIN_DEFAULT
                         default 15
                     config RT_SOFT_I2C7_SDA_PIN
                         int "SDA pin number"
                         range 0 32767
+                        default RT_SOFT_I2C7_SDA_PIN_DEFAULT if RT_SOFT_I2C7_HAS_PIN_DEFAULT
                         default 16
                     config RT_SOFT_I2C7_BUS_NAME
                         string "Bus name"
@@ -215,17 +303,28 @@ if RT_USING_I2C
                         range 0 32767
                         default 10
                 endif
+            config RT_SOFT_I2C8_HAS_PIN_DEFAULT
+                bool
+
+            config RT_SOFT_I2C8_SCL_PIN_DEFAULT
+                int
+
+            config RT_SOFT_I2C8_SDA_PIN_DEFAULT
+                int
+
             menuconfig RT_USING_SOFT_I2C8
-                bool "Enable I2C8 Bus (software simulation)"
+                bool "Enable software I2C8 Bus (swi2c8)"
                 default n
                 if RT_USING_SOFT_I2C8
                     config RT_SOFT_I2C8_SCL_PIN
                         int "SCL pin number"
                         range 0 32767
+                        default RT_SOFT_I2C8_SCL_PIN_DEFAULT if RT_SOFT_I2C8_HAS_PIN_DEFAULT
                         default 17
                     config RT_SOFT_I2C8_SDA_PIN
                         int "SDA pin number"
                         range 0 32767
+                        default RT_SOFT_I2C8_SDA_PIN_DEFAULT if RT_SOFT_I2C8_HAS_PIN_DEFAULT
                         default 18
                     config RT_SOFT_I2C8_BUS_NAME
                         string "Bus name"

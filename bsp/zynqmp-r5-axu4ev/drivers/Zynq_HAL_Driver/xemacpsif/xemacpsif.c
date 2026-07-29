@@ -632,7 +632,7 @@ static err_t xemacpsif_mac_filter_update (struct netif *netif, ip_addr_t *group,
     unsigned int i;
     u8_t * ip_addr = (u8_t *) group;
 
-    if ((ip_addr[0] < 224) && (ip_addr[0] > 239)) {
+    if ((ip_addr[0] < 224) || (ip_addr[0] > 239)) {
         LWIP_DEBUGF(NETIF_DEBUG,
                 ("%s: The requested MAC address is not a multicast address.\r\n", __func__));
         LWIP_DEBUGF(NETIF_DEBUG,

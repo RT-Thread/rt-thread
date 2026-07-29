@@ -21,7 +21,7 @@ menu "CPU Architecture Features"
         default y
 
     if ENABLE_FPU
-        choice
+        choice ARCH_RISCV_FPU_SEL
             prompt "FPU Configuration"
             default ARCH_RISCV_FPU_D
 

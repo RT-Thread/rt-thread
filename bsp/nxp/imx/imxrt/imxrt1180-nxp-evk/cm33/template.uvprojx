@@ -1061,9 +1061,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>dev_serial.c</FileName>
+              <FileName>dev_serial_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\serial\dev_serial.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\serial\dev_serial_v2.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1142,9 +1142,9 @@
               <FilePath>..\libraries\drivers\drv_common.c</FilePath>
             </File>
             <File>
-              <FileName>drv_uart.c</FileName>
+              <FileName>drv_uart_v2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\drivers\drv_uart.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_uart_v2.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2160,6 +2160,21 @@
               <FileName>fsl_lpuart.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_lpuart.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpuart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_lpuart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma_soc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\nxp-imxrt-sdk-latest\MIMXRT1180\MIMXRT1189\drivers\fsl_edma_soc.c</FilePath>
             </File>
             <File>
               <FileName>fsl_dcdc.c</FileName>

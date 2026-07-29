@@ -10,8 +10,8 @@
 
 /imx/imxrt/libraries/MIMXRT1060/
 
-/lpc/lpc55sxx/Libraries/LPC55*/
+/lpc/lpc55sxx/libraries/LPC55*/
 
-/mcx/mcxa/Libraries/MCXA153/
-/mcx/mcxc/Libraries/MCXC444/
-/mcx/mcxn/Libraries/MCXN947/
+/mcx/mcxa/libraries/MCXA153/
+/mcx/mcxc/libraries/MCXC444/
+/mcx/mcxn/libraries/MCXN947/

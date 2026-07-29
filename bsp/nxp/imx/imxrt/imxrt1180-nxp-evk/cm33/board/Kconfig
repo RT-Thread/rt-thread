@@ -17,7 +17,7 @@ config SOC_MIMXRT1189CVM8C_CM33
     default y
     depends on SOC_MIMXRT1189CVM8C
     select ARCH_ARM_CORTEX_M33
-    select ARCH_ARM_CORTEX_FPU       
+    select ARCH_ARM_CORTEX_FPU
     select ARCH_ARM_CORTEX_SECURE
 
 menu "On-chip Peripheral Drivers"
@@ -25,6 +25,25 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_DMA
         bool "Enable DMA"
         default n
+
+    menuconfig BSP_USING_LPADC
+        bool "Enable ADC"
+		select RT_USING_ADC
+        default n
+		
+        if BSP_USING_LPADC
+		
+        config BSP_USING_LPADC1
+            bool "Enable LPADC1"
+            default n
+			
+            config BSP_LPADC1_USING_DMA
+                bool "Enable LPADC1 DMA"
+                depends on BSP_USING_LPADC1
+                depends on BSP_USING_DMA
+                default n	
+
+        endif
 
     config BSP_USING_GPIO
         bool "Enable GPIO"
@@ -99,34 +118,98 @@ menu "On-chip Peripheral Drivers"
                         int "Set LPUART1 TX DMA channel (0-32)"
                         default 1
 
-            config BSP_USING_LPUART3
-                bool "Enable LPUART3"
-                default n
+             config BSP_USING_LPUART10
+                 bool "Enable LPUART10"
+                 default n
 
-                config BSP_LPUART3_RX_USING_DMA
-                    bool "Enable LPUART3 RX DMA"
-                    depends on BSP_USING_LPUART3
-                    select BSP_USING_DMA
-                    select RT_SERIAL_USING_DMA
+                 config BSP_LPUART10_RX_USING_DMA
+                     bool "Enable LPUART10 RX DMA"
+                     depends on BSP_USING_LPUART10
+                     select BSP_USING_DMA
+                     select RT_SERIAL_USING_DMA
+                     default n
+
+                     config BSP_LPUART10_RX_DMA_CHANNEL
+                         depends on BSP_LPUART10_RX_USING_DMA
+                         int "Set LPUART10 RX DMA channel (0-32)"
+                         default 0
+
+                 config BSP_LPUART10_TX_USING_DMA
+                     bool "Enable LPUART10 TX DMA"
+                     depends on BSP_USING_LPUART10
+                     select BSP_USING_DMA
+                     select RT_SERIAL_USING_DMA
+                     default n
+
+                     config BSP_LPUART10_TX_DMA_CHANNEL
+                         depends on BSP_LPUART10_TX_USING_DMA
+                         int "Set LPUART10 TX DMA channel (0-32)"
+                         default 1
+
+             config BSP_USING_LPUART12
+                 bool "Enable LPUART12"
+                 default n
+
+                 config BSP_LPUART12_RX_USING_DMA
+                     bool "Enable LPUART12 RX DMA"
+                     depends on BSP_USING_LPUART12
+                     select BSP_USING_DMA
+                     select RT_SERIAL_USING_DMA
+                     default n
+
+                     config BSP_LPUART12_RX_DMA_CHANNEL
+                         depends on BSP_LPUART12_RX_USING_DMA
+                         int "Set LPUART12 RX DMA channel (0-32)"
+                         default 2
+
+                 config BSP_LPUART12_TX_USING_DMA
+                     bool "Enable LPUART12 TX DMA"
+                     depends on BSP_USING_LPUART12
+                     select BSP_USING_DMA
+                     select RT_SERIAL_USING_DMA
+                     default n
+
+                     config BSP_LPUART12_TX_DMA_CHANNEL
+                         depends on BSP_LPUART12_TX_USING_DMA
+                         int "Set LPUART12 TX DMA channel (0-32)"
+                         default 3
+         endif
+
+        menuconfig BSP_USING_I2C
+            bool "Enable I2C"
+            select RT_USING_I2C
+            default n
+            if BSP_USING_I2C
+                config BSP_USING_I2C2
+                    bool "Enable I2C2"
+                    default y
+
+                config BSP_USING_I2C3
+                    bool "Enable I2C3"
                     default n
 
-                    config BSP_LPUART3_RX_DMA_CHANNEL
-                        depends on BSP_LPUART3_RX_USING_DMA
-                        int "Set LPUART3 RX DMA channel (0-32)"
-                        default 0
+                choice I2C2_BAUD_SEL
+                    prompt "Select I2C2 badurate"
+                    default HW_I2C2_BADURATE_100kHZ
 
-                config BSP_LPUART3_TX_USING_DMA
-                    bool "Enable LPUART3 TX DMA"
-                    depends on BSP_USING_LPUART3
-                    select BSP_USING_DMA
-                    select RT_SERIAL_USING_DMA
-                    default n
+                    config HW_I2C2_BADURATE_100kHZ
+                        bool "Badurate 100kHZ"
 
-                    config BSP_LPUART3_TX_DMA_CHANNEL
-                        depends on BSP_LPUART3_TX_USING_DMA
-                        int "Set LPUART3 TX DMA channel (0-32)"
-                        default 1
-        endif
+                    config HW_I2C2_BADURATE_400kHZ
+                        bool "Badurate 400kHZ"
+                endchoice
+
+                choice I2C3_BAUD_SEL
+                    prompt "Select I2C3 badurate"
+                    default HW_I2C3_BADURATE_100kHZ
+
+                    config HW_I2C3_BADURATE_100kHZ
+                        bool "Badurate 100kHZ"
+
+                    config HW_I2C3_BADURATE_400kHZ
+                        bool "Badurate 400kHZ"
+                endchoice
+            endif
 
         menuconfig BSP_USING_CAN
             bool "Enable CAN"
@@ -135,6 +218,20 @@ menu "On-chip Peripheral Drivers"
             if BSP_USING_CAN
                 config BSP_USING_CAN3
                     bool "Enable FLEXCAN3"
+                    default n
+            endif
+
+        menuconfig BSP_USING_CLOCK_TIMER
+            bool "Enable GPT"
+            default n
+            select RT_USING_CLOCK_TIME
+            if BSP_USING_CLOCK_TIMER
+                config BSP_USING_CLOCK_TIMER1
+                    bool "Enable GPT1"
+                    default n
+
+                config BSP_USING_CLOCK_TIMER2
+                    bool "Enable GPT2"
                     default n
             endif
 

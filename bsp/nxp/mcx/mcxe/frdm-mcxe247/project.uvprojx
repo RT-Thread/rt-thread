@@ -340,7 +340,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, CPU_MCXE247VLQ, RT_USING_LIBC, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\..\components\drivers\include;..\Libraries\drivers\config;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\..\include;packages\nxp-mcx-series-latest\MCXE247\drivers;..\..\..\..\..\components\libc\posix\io\eventfd;applications;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\drivers\include;..\Libraries\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;board;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-cmsis-latest\Core\Include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\phy;board\MCUX_Config\board;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\libcpu\arm\common;packages\nxp-mcx-series-latest\MCXE247;..\..\..\..\..\components\finsh;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXE247\periph0;.</IncludePath>
+              <IncludePath>..\..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\..\components\drivers\include;..\libraries\drivers\config;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\..\..\include;packages\nxp-mcx-series-latest\MCXE247\drivers;..\..\..\..\..\components\libc\posix\io\eventfd;applications;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\drivers\include;..\libraries\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;board;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-cmsis-latest\Core\Include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\phy;board\MCUX_Config\board;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\libcpu\arm\common;packages\nxp-mcx-series-latest\MCXE247;..\..\..\..\..\components\finsh;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXE247\periph0;.</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1587,12 +1587,12 @@
             <File>
               <FileName>drv_pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_pin.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_pin.c</FilePath>
             </File>
             <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\drivers\drv_uart.c</FilePath>
+              <FilePath>..\libraries\drivers\drv_uart.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -24,9 +24,9 @@ devices.flash:
 devices.gpio:
     kconfig:
       - CONFIG_BSP_USING_GPIO=y
-devices.hwtimer:
+devices.clock_timer:
     kconfig:
-      - CONFIG_BSP_USING_HWTIMER=y
+      - CONFIG_BSP_USING_CLOCK_TIMER=y
       - CONFIG_BSP_USING_TMRA_1=y
 devices.i2c:
     kconfig:
@@ -93,10 +93,6 @@ devices.rtc:
     kconfig:
       - CONFIG_BSP_USING_RTC=y
       - CONFIG_RT_USING_ALARM=y
-devices.soft_i2c:
-    kconfig:
-      - CONFIG_BSP_USING_I2C=y
-      - CONFIG_BSP_USING_I2C1_SW=y
 devices.spi:
     kconfig:
       - CONFIG_BSP_USING_SPI=y
@@ -135,3 +131,12 @@ peripheral.spi_flash:
       - CONFIG_BSP_USING_SPI_FLASH=y
       - CONFIG_BSP_USING_SPI=y
       - CONFIG_BSP_USING_SPI1=y
+
+devices.soft_i2c:
+  kconfig:
+    - CONFIG_RT_USING_I2C=y
+    - CONFIG_RT_USING_SOFT_I2C=y
+    - CONFIG_RT_USING_SOFT_I2C1=y
+    - CONFIG_RT_SOFT_I2C1_SCL_PIN=22
+    - CONFIG_RT_SOFT_I2C1_SDA_PIN=23
+    - CONFIG_RT_SOFT_I2C1_BUS_NAME="swi2c1"

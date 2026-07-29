@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-14     CDT          first version
+ * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-03     CDT          support HC32F467
  */
 
 
@@ -46,15 +48,15 @@ struct rthw_sdio
 #include <drv_log.h>
 
 #ifndef SDIO_BUFF_SIZE
-    #define SDIO_BUFF_SIZE          (4096)
+#define SDIO_BUFF_SIZE (4096)
 #endif
 
 #ifndef SDIO_ALIGN_LEN
-    #define SDIO_ALIGN_LEN          (4)
+#define SDIO_ALIGN_LEN (4)
 #endif
 
 #ifndef SDIO_MAX_FREQ
-    #define SDIO_MAX_FREQ           (50*1000*1000)
+#define SDIO_MAX_FREQ (50 * 1000 * 1000)
 #endif
 
 #define RTHW_SDIO_LOCK(_sdio)   rt_mutex_take(&(_sdio)->mutex, RT_WAITING_FOREVER)
@@ -69,11 +71,11 @@ extern rt_err_t rt_hw_board_sdio_init(CM_SDIOC_TypeDef *SDIOCx);
  * Local function prototypes ('static')
  ******************************************************************************/
 #ifdef BSP_USING_SDIO1
-    static void _sdio1_handler(void);
+static void _sdio1_handler(void);
 #endif
 
 #ifdef BSP_USING_SDIO2
-    static void _sdio2_handler(void);
+static void _sdio2_handler(void);
 #endif
 
 /*******************************************************************************
@@ -89,8 +91,7 @@ enum
 #endif
 };
 
-static struct hc32_sdio_config _sdio_config[] =
-{
+static struct hc32_sdio_config _sdio_config[] = {
 #ifdef BSP_USING_SDIO1
     SDIO1_BUS_CONFIG,
 #endif  /* BSP_USING_SDIO1 */
@@ -99,8 +100,7 @@ static struct hc32_sdio_config _sdio_config[] =
 #endif  /* BSP_USING_SDIO2 */
 };
 
-static const func_ptr_t _sdio_irq_handler[] =
-{
+static const func_ptr_t _sdio_irq_handler[] = {
 #ifdef BSP_USING_SDIO1
     _sdio1_handler,
 #endif  /* BSP_USING_SDIO1 */
@@ -110,17 +110,14 @@ static const func_ptr_t _sdio_irq_handler[] =
 };
 
 #ifdef BSP_USING_SDIO1
-    rt_align(SDIO_ALIGN_LEN)
-    static rt_uint8_t _sdio1_cache_buf[SDIO_BUFF_SIZE];
+rt_align(SDIO_ALIGN_LEN) static rt_uint8_t _sdio1_cache_buf[SDIO_BUFF_SIZE];
 #endif
 
 #ifdef BSP_USING_SDIO2
-    rt_align(SDIO_ALIGN_LEN)
-    static rt_uint8_t _sdio2_cache_buf[SDIO_BUFF_SIZE];
+rt_align(SDIO_ALIGN_LEN) static rt_uint8_t _sdio2_cache_buf[SDIO_BUFF_SIZE];
 #endif
 
-static rt_uint8_t *const _sdio_cache_buf[] =
-{
+static rt_uint8_t * const _sdio_cache_buf[] = {
 #ifdef BSP_USING_SDIO1
     _sdio1_cache_buf,
 #endif  /* BSP_USING_SDIO1 */
@@ -129,7 +126,7 @@ static rt_uint8_t *const _sdio_cache_buf[] =
 #endif  /* BSP_USING_SDIO2 */
 };
 
-static struct rt_mmcsd_host *_sdio_host[sizeof(_sdio_config) / sizeof(_sdio_config[0])] = {0};
+static struct rt_mmcsd_host *_sdio_host[sizeof(_sdio_config) / sizeof(_sdio_config[0])] = { 0 };
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -210,9 +207,9 @@ static void _sdio_wait_completed(struct rthw_sdio *sdio)
     else if (resp_type(cmd) == RESP_R2)
     {
         LOG_D("R2");
-        (void)SDIOC_GetResponse(instance, SDIOC_RESP_REG_BIT0_31,   &response[0]);
-        (void)SDIOC_GetResponse(instance, SDIOC_RESP_REG_BIT32_63,  &response[1]);
-        (void)SDIOC_GetResponse(instance, SDIOC_RESP_REG_BIT64_95,  &response[2]);
+        (void)SDIOC_GetResponse(instance, SDIOC_RESP_REG_BIT0_31, &response[0]);
+        (void)SDIOC_GetResponse(instance, SDIOC_RESP_REG_BIT32_63, &response[1]);
+        (void)SDIOC_GetResponse(instance, SDIOC_RESP_REG_BIT64_95, &response[2]);
         (void)SDIOC_GetResponse(instance, SDIOC_RESP_REG_BIT96_127, &response[3]);
 
         cmd->resp[0] = (response[3] << 8) + ((response[2] >> 24) & 0xFF);
@@ -235,7 +232,7 @@ static void _sdio_wait_completed(struct rthw_sdio *sdio)
             LOG_D("[%s cmd err] sta=0x%08X, %s%s%s%s cmd %d arg:0x%08X",
                   __func__,
                   status,
-                  status & SDIOC_INT_FLAG_CCE  ? "Command CRC Error "    : "",
+                  status & SDIOC_INT_FLAG_CCE ? "Command CRC Error " : "",
                   status & SDIOC_INT_FLAG_CEBE ? "Command End Bit Error" : "",
                   status & SDIOC_INT_FLAG_CTOE ? "Command Timeout Error" : "",
                   status == 0 ? "NULL" : "",
@@ -252,7 +249,7 @@ static void _sdio_wait_completed(struct rthw_sdio *sdio)
                 LOG_D("[%s dat err] sta=0x%08X, %s%s%s%s cmd %d arg:0x%08X rw:%c len:%d blksize:%d",
                       __func__,
                       status,
-                      status & SDIOC_INT_FLAG_DCE  ? "Data CRC Error "    : "",
+                      status & SDIOC_INT_FLAG_DCE ? "Data CRC Error " : "",
                       status & SDIOC_INT_FLAG_DEBE ? "Data End Bit Error" : "",
                       status & SDIOC_INT_FLAG_DTOE ? "Data Timeout Error" : "",
                       status == 0 ? "NULL" : "",
@@ -284,20 +281,34 @@ static void _sdio_wait_completed(struct rthw_sdio *sdio)
  */
 static void _sdio_transfer_by_dma(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
 {
-    struct rt_mmcsd_data *data = pkg->cmd->data;
+    struct rt_mmcsd_data *data = NULL;
 
-    if ((NULL == sdio) || (NULL == pkg) || (NULL == pkg->buf) || (NULL == pkg->cmd) || (NULL == pkg->cmd->data))
+    if ((NULL == sdio) || (NULL == pkg))
     {
-        LOG_E("%s function arguments error: %s %s %s %s %s",
+        LOG_E("%s function arguments error: %s %s",
               __func__,
-              (sdio == RT_NULL ? "sdio is NULL" : ""),
-              (pkg  == RT_NULL ? "pkg is NULL"  : ""),
-              (sdio ? (pkg->buf == RT_NULL ? "pkg->buf is NULL" : "") : ""),
-              (sdio ? (pkg->cmd == RT_NULL ? "pkg->cmd is NULL" : "") : ""),
-              (sdio ? (pkg->cmd->data == RT_NULL ? "pkg->cmd->data is NULL" : "") : "")
-             );
+              (sdio == NULL ? "sdio is NULL" : ""),
+              (pkg == NULL ? "pkg is NULL" : ""));
         return;
     }
+
+    if ((NULL == pkg->buf) || (NULL == pkg->cmd))
+    {
+        LOG_E("%s function arguments error: %s %s",
+              __func__,
+              (pkg->buf == NULL ? "pkg->buf is NULL" : ""),
+              (pkg->cmd == NULL ? "pkg->cmd is NULL" : ""));
+        return;
+    }
+
+    if ((NULL == pkg->cmd->data))
+    {
+        LOG_E("%s function arguments error: %s",
+              __func__,
+              (pkg->cmd->data == NULL ? "pkg->cmd->data is NULL" : ""));
+    }
+
+    data = pkg->cmd->data;
 
     if (data->flags & DATA_DIR_WRITE)
     {
@@ -352,7 +363,7 @@ static void _sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
     stcCmdConfig.u32Argument = cmd->arg;
 
     /* config command type */
-    stcCmdConfig.u16CmdType  = SDIOC_CMD_TYPE_NORMAL;
+    stcCmdConfig.u16CmdType = SDIOC_CMD_TYPE_NORMAL;
 
     /* config response type */
     stcCmdConfig.u16ResponseType = _sdio_get_cmd_resptype(resp_type(cmd));
@@ -360,12 +371,12 @@ static void _sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
     if (data != RT_NULL)
     {
         /* config data */
-        stcDataConfig.u16BlockSize   = data->blksize;
-        stcDataConfig.u16BlockCount  = data->blks;
-        stcDataConfig.u16TransDir    = (data->flags & DATA_DIR_READ) ? SDIOC_TRANS_DIR_TO_HOST : SDIOC_TRANS_DIR_TO_CARD;
-        stcDataConfig.u16AutoCmd12   = SDIOC_AUTO_SEND_CMD12_DISABLE;
+        stcDataConfig.u16BlockSize = data->blksize;
+        stcDataConfig.u16BlockCount = data->blks;
+        stcDataConfig.u16TransDir = (data->flags & DATA_DIR_READ) ? SDIOC_TRANS_DIR_TO_HOST : SDIOC_TRANS_DIR_TO_CARD;
+        stcDataConfig.u16AutoCmd12 = SDIOC_AUTO_SEND_CMD12_DISABLE;
         stcDataConfig.u16DataTimeout = SDIOC_DATA_TIMEOUT_CLK_2E27;
-        stcDataConfig.u16TransMode   = (data->blks > 1U) ? SDIOC_TRANS_MD_MULTI : SDIOC_TRANS_MD_SINGLE;
+        stcDataConfig.u16TransMode = (data->blks > 1U) ? SDIOC_TRANS_MD_MULTI : SDIOC_TRANS_MD_SINGLE;
         ret = SDIOC_ConfigData(instance, &stcDataConfig);
         if (ret != 0)
         {
@@ -375,7 +386,8 @@ static void _sdio_send_command(struct rthw_sdio *sdio, struct sdio_pkg *pkg)
         /* transfer config */
         _sdio_transfer_by_dma(sdio, pkg);
 
-        stcCmdConfig.u16DataLine = SDIOC_DATA_LINE_ENABLE;;
+        stcCmdConfig.u16DataLine = SDIOC_DATA_LINE_ENABLE;
+        ;
     }
     else
     {
@@ -407,19 +419,25 @@ static void _sdio_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
     rt_uint32_t mask;
     struct sdio_pkg pkg;
     struct rt_mmcsd_data *data;
-    struct rthw_sdio *sdio = host->private_data;
+    struct rthw_sdio *sdio = NULL;
 
-    if ((NULL == host) || (NULL == req) || (NULL == sdio) || (NULL == sdio->config))
+    if ((NULL == host) || (NULL == req))
     {
-        LOG_E("%s function arguments error: %s %s %s %s",
+        LOG_E("%s function arguments error: %s %s %s",
               __func__,
               (host == RT_NULL ? "host is NULL" : ""),
-              (req  == RT_NULL ? "req is NULL"  : ""),
-              (sdio == RT_NULL ? "sdio is NULL" : ""),
-              (sdio ? (sdio->config == RT_NULL ? "sdio->config is NULL" : "") : "")
-             );
+              (req == RT_NULL ? "req is NULL" : ""));
         return;
     }
+    if (NULL == host->private_data)
+    {
+        LOG_E("%s function arguments error: %s",
+              __func__,
+              (host->private_data == RT_NULL ? "host->private_data is NULL" : ""));
+        return;
+    }
+
+    sdio = host->private_data;
 
     RTHW_SDIO_LOCK(sdio);
 
@@ -495,20 +513,25 @@ static void _sdio_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_c
     rt_uint32_t clk;
     rt_uint16_t clk_div;
     rt_uint32_t clk_src;
-    struct rthw_sdio *sdio = host->private_data;
+    struct rthw_sdio *sdio = NULL;
     CM_SDIOC_TypeDef *instance;
 
-    if ((NULL == host) || (NULL == io_cfg) || (NULL == sdio) || (NULL == sdio->config))
+    if ((NULL == host) || (NULL == io_cfg))
     {
         LOG_E("%s function arguments error: %s %s %s %s",
               __func__,
-              (host   == RT_NULL ? "host is NULL"     : ""),
-              (io_cfg == RT_NULL ? "io_cfg is NULL"   : ""),
-              (sdio   == RT_NULL ? "sdio_des is NULL" : ""),
-              (sdio ? (sdio->config == RT_NULL ? "sdio->config is NULL" : "") : "")
-             );
+              (host == RT_NULL ? "host is NULL" : ""),
+              (io_cfg == RT_NULL ? "io_cfg is NULL" : ""));
         return;
     }
+    if (NULL == host->private_data)
+    {
+        LOG_E("%s function arguments error: %s",
+              __func__,
+              (host->private_data == RT_NULL ? "host->private_data is NULL" : ""));
+        return;
+    }
+    sdio = host->private_data;
 
     instance = sdio->config->instance;
 
@@ -667,8 +690,7 @@ static rt_int32_t _sdio_get_card_status(struct rt_mmcsd_host *host)
     return (rt_int32_t)SDIOC_GetHostStatus(sdio->config->instance, SDIOC_HOST_FLAG_CIN);
 }
 
-static const struct rt_mmcsd_host_ops _mmcsd_host_ops =
-{
+static const struct rt_mmcsd_host_ops _mmcsd_host_ops = {
     _sdio_request,
     _sdio_iocfg,
     _sdio_get_card_status,
@@ -682,12 +704,12 @@ static const struct rt_mmcsd_host_ops _mmcsd_host_ops =
  */
 static rt_uint32_t _sdio_clock_get(CM_SDIOC_TypeDef *SDIOCx)
 {
-    rt_uint32_t clk;
+    rt_uint32_t clk = 0UL;
 
     (void)SDIOCx;
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
     clk = CLK_GetBusClockFreq(CLK_BUS_PCLK1);
-#elif defined (HC32F460)
+#elif defined(HC32F460)
     clk = CLK_GetBusClockFreq(CLK_BUS_EXCLK);
 #endif
 
@@ -716,7 +738,7 @@ static void _sdio_dma_init(struct hc32_sdio_config *config)
     /* Configure DMA_RX Transfer */
     stcDmaInit.u32SrcAddr = (uint32_t)(&config->instance->BUF0);
     stcDmaInit.u32DestAddr = 0UL;
-    stcDmaInit.u32SrcAddrInc  = DMA_SRC_ADDR_FIX;
+    stcDmaInit.u32SrcAddrInc = DMA_SRC_ADDR_FIX;
     stcDmaInit.u32DestAddrInc = DMA_DEST_ADDR_INC;
     if (LL_OK != DMA_Init(config->dma_rx.Instance, config->dma_rx.channel, &stcDmaInit))
     {
@@ -727,7 +749,7 @@ static void _sdio_dma_init(struct hc32_sdio_config *config)
     /* Configure DMA_TX Transfer */
     stcDmaInit.u32SrcAddr = 0UL;
     stcDmaInit.u32DestAddr = (uint32_t)(&config->instance->BUF0);
-    stcDmaInit.u32SrcAddrInc  = DMA_SRC_ADDR_INC;
+    stcDmaInit.u32SrcAddrInc = DMA_SRC_ADDR_INC;
     stcDmaInit.u32DestAddrInc = DMA_DEST_ADDR_FIX;
     if (LL_OK != DMA_Init(config->dma_tx.Instance, config->dma_tx.channel, &stcDmaInit))
     {
@@ -896,7 +918,7 @@ static rt_err_t _sdio_verify_bus_clock_frequency(struct hc32_sdio_config *config
 {
     rt_err_t ret = RT_EOK;
 
-#if defined (HC32F4A0)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F467)
     rt_uint32_t pclk1;
     rt_uint32_t exlck;
 
@@ -941,22 +963,21 @@ static rt_err_t _sdio_clock_enable(struct hc32_sdio_config *config)
  * @retval rt_mmcsd_host
  */
 static struct rt_mmcsd_host *_sdio_host_create(struct hc32_sdio_config *config,
-        uint8_t *cache_buf,
-        const struct hc32_sdio_des *sdio_des)
+                                               uint8_t *cache_buf,
+                                               const struct hc32_sdio_des *sdio_des)
 {
     struct rt_mmcsd_host *host;
     struct rthw_sdio *sdio = RT_NULL;
 
-    if ((config == RT_NULL) || (cache_buf == RT_NULL) || \
-            (sdio_des == RT_NULL) || (sdio_des->txconfig == RT_NULL) || (sdio_des->rxconfig == RT_NULL))
+    if ((config == RT_NULL) || (cache_buf == RT_NULL) ||
+        (sdio_des == RT_NULL) || (sdio_des->txconfig == RT_NULL) || (sdio_des->rxconfig == RT_NULL))
     {
         LOG_E("function arguments error: %s %s %s %s %s",
               (config == RT_NULL ? "config is NULL" : ""),
               (cache_buf == RT_NULL ? "cache_buf is NULL" : ""),
               (sdio_des == RT_NULL ? "sdio_des is NULL" : ""),
               (sdio_des ? (sdio_des->txconfig ? "txconfig is NULL" : "") : ""),
-              (sdio_des ? (sdio_des->rxconfig ? "rxconfig is NULL" : "") : "")
-             );
+              (sdio_des ? (sdio_des->rxconfig ? "rxconfig is NULL" : "") : ""));
         return RT_NULL;
     }
 
@@ -1019,9 +1040,8 @@ int rt_hw_sdio_init(void)
     struct hc32_sdio_config *sdio_config;
     rt_size_t obj_num = sizeof(_sdio_config) / sizeof(struct hc32_sdio_config);
 
-    const struct hc32_sdio_des sdio_des =
-    {
-        .clk_get  = _sdio_clock_get,
+    const struct hc32_sdio_des sdio_des = {
+        .clk_get = _sdio_clock_get,
         .rxconfig = _sdio_dma_rxconfig,
         .txconfig = _sdio_dma_txconfig,
     };

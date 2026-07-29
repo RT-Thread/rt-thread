@@ -9,6 +9,8 @@
  * 2023-10-09       CDT         support HC32F448
  * 2024-06-12       CDT         support external interrupt for HC32F448/HC32F472
  * 2025-07-16       CDT         Support HC32F334
+ * 2026-05-27       CDT         Support HC32F4A2
+ * 2026-06-03       CDT         Support HC32F467
  */
 
 #include <rtthread.h>
@@ -20,31 +22,31 @@
 
 #if defined(BSP_USING_GPIO)
 
-#define GPIO_PIN_INDEX(pin)             ((uint8_t)((pin) & 0x0F))
-#define PIN_NUM(port, pin)              (((((port) & 0x0F) << 4) | ((pin) & 0x0F)))
-#define GPIO_PORT(pin)                  ((uint8_t)(((pin) >> 4) & 0x0F))
-#define GPIO_PIN(pin)                   ((uint16_t)(0x01U << GPIO_PIN_INDEX(pin)))
+#define GPIO_PIN_INDEX(pin) ((uint8_t)((pin) & 0x0F))
+#define PIN_NUM(port, pin)  (((((port) & 0x0F) << 4) | ((pin) & 0x0F)))
+#define GPIO_PORT(pin)      ((uint8_t)(((pin) >> 4) & 0x0F))
+#define GPIO_PIN(pin)       ((uint16_t)(0x01U << GPIO_PIN_INDEX(pin)))
 
-#if defined (HC32F4A0) || defined (HC32F4A8)
-    #define PIN_MAX_NUM                     ((GPIO_PORT_I * 16) + (__CLZ(__RBIT(GPIO_PIN_13))) + 1)
-#elif defined (HC32F460)
-    #define PIN_MAX_NUM                     ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
-#elif defined (HC32F448)
-    #define PIN_MAX_NUM                     ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
-#elif defined (HC32F472)
-    #define PIN_MAX_NUM                     ((GPIO_PORT_F * 16) + (__CLZ(__RBIT(GPIO_PIN_08))) + 1)
-#elif defined (HC32F334)
-    #define PIN_MAX_NUM                     ((GPIO_PORT_F * 16) + (__CLZ(__RBIT(GPIO_PIN_03))) + 1)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
+#define PIN_MAX_NUM ((GPIO_PORT_I * 16) + (__CLZ(__RBIT(GPIO_PIN_13))) + 1)
+#elif defined(HC32F460)
+#define PIN_MAX_NUM ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
+#elif defined(HC32F448)
+#define PIN_MAX_NUM ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
+#elif defined(HC32F472)
+#define PIN_MAX_NUM ((GPIO_PORT_F * 16) + (__CLZ(__RBIT(GPIO_PIN_08))) + 1)
+#elif defined(HC32F334)
+#define PIN_MAX_NUM ((GPIO_PORT_F * 16) + (__CLZ(__RBIT(GPIO_PIN_03))) + 1)
 #endif
 
-#define ITEM_NUM(items)                 sizeof(items) / sizeof(items[0])
+#define ITEM_NUM(items) sizeof(items) / sizeof(items[0])
 
 #ifndef HC32_PIN_CONFIG
-#define HC32_PIN_CONFIG(pin, callback, config)                                 \
-    {                                                                          \
-        .pinbit             = pin,                                             \
-        .irq_callback       = callback,                                        \
-        .irq_config         = config,                                          \
+#define HC32_PIN_CONFIG(pin, callback, config) \
+    {                                          \
+        .pinbit = pin,                         \
+        .irq_callback = callback,              \
+        .irq_config = config,                  \
     }
 #endif /* HC32_PIN_CONFIG */
 
@@ -65,18 +67,17 @@ static void extint13_irq_handler(void);
 static void extint14_irq_handler(void);
 static void extint15_irq_handler(void);
 
-static struct hc32_pin_irq_map pin_irq_map[] =
-{
-    HC32_PIN_CONFIG(GPIO_PIN_00, extint0_irq_handler,  EXTINT0_IRQ_CONFIG),
-    HC32_PIN_CONFIG(GPIO_PIN_01, extint1_irq_handler,  EXTINT1_IRQ_CONFIG),
-    HC32_PIN_CONFIG(GPIO_PIN_02, extint2_irq_handler,  EXTINT2_IRQ_CONFIG),
-    HC32_PIN_CONFIG(GPIO_PIN_03, extint3_irq_handler,  EXTINT3_IRQ_CONFIG),
-    HC32_PIN_CONFIG(GPIO_PIN_04, extint4_irq_handler,  EXTINT4_IRQ_CONFIG),
-    HC32_PIN_CONFIG(GPIO_PIN_05, extint5_irq_handler,  EXTINT5_IRQ_CONFIG),
-    HC32_PIN_CONFIG(GPIO_PIN_06, extint6_irq_handler,  EXTINT6_IRQ_CONFIG),
-    HC32_PIN_CONFIG(GPIO_PIN_07, extint7_irq_handler,  EXTINT7_IRQ_CONFIG),
-    HC32_PIN_CONFIG(GPIO_PIN_08, extint8_irq_handler,  EXTINT8_IRQ_CONFIG),
-    HC32_PIN_CONFIG(GPIO_PIN_09, extint9_irq_handler,  EXTINT9_IRQ_CONFIG),
+static struct hc32_pin_irq_map pin_irq_map[] = {
+    HC32_PIN_CONFIG(GPIO_PIN_00, extint0_irq_handler, EXTINT0_IRQ_CONFIG),
+    HC32_PIN_CONFIG(GPIO_PIN_01, extint1_irq_handler, EXTINT1_IRQ_CONFIG),
+    HC32_PIN_CONFIG(GPIO_PIN_02, extint2_irq_handler, EXTINT2_IRQ_CONFIG),
+    HC32_PIN_CONFIG(GPIO_PIN_03, extint3_irq_handler, EXTINT3_IRQ_CONFIG),
+    HC32_PIN_CONFIG(GPIO_PIN_04, extint4_irq_handler, EXTINT4_IRQ_CONFIG),
+    HC32_PIN_CONFIG(GPIO_PIN_05, extint5_irq_handler, EXTINT5_IRQ_CONFIG),
+    HC32_PIN_CONFIG(GPIO_PIN_06, extint6_irq_handler, EXTINT6_IRQ_CONFIG),
+    HC32_PIN_CONFIG(GPIO_PIN_07, extint7_irq_handler, EXTINT7_IRQ_CONFIG),
+    HC32_PIN_CONFIG(GPIO_PIN_08, extint8_irq_handler, EXTINT8_IRQ_CONFIG),
+    HC32_PIN_CONFIG(GPIO_PIN_09, extint9_irq_handler, EXTINT9_IRQ_CONFIG),
     HC32_PIN_CONFIG(GPIO_PIN_10, extint10_irq_handler, EXTINT10_IRQ_CONFIG),
     HC32_PIN_CONFIG(GPIO_PIN_11, extint11_irq_handler, EXTINT11_IRQ_CONFIG),
     HC32_PIN_CONFIG(GPIO_PIN_12, extint12_irq_handler, EXTINT12_IRQ_CONFIG),
@@ -85,24 +86,23 @@ static struct hc32_pin_irq_map pin_irq_map[] =
     HC32_PIN_CONFIG(GPIO_PIN_15, extint15_irq_handler, EXTINT15_IRQ_CONFIG),
 };
 
-struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
-{
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
-    {-1, 0, RT_NULL, RT_NULL},
+struct rt_pin_irq_hdr pin_irq_hdr_tab[] = {
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
 };
 
 static void pin_irq_handler(rt_uint16_t pinbit)
@@ -232,7 +232,7 @@ static void extint15_irq_handler(void)
     rt_interrupt_leave();
 }
 
-#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
+#if defined(HC32F448) || defined(HC32F472) || defined(HC32F334)
 void EXTINT00_SWINT16_Handler(void)
 {
     extint0_irq_handler();
@@ -327,25 +327,25 @@ static void hc32_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mo
     switch (mode)
     {
     case PIN_MODE_OUTPUT:
-        stcGpioInit.u16PinDir        = PIN_DIR_OUT;
+        stcGpioInit.u16PinDir = PIN_DIR_OUT;
         stcGpioInit.u16PinOutputType = PIN_OUT_TYPE_CMOS;
         break;
     case PIN_MODE_INPUT:
-        stcGpioInit.u16PinDir   = PIN_DIR_IN;
+        stcGpioInit.u16PinDir = PIN_DIR_IN;
         break;
     case PIN_MODE_INPUT_PULLUP:
-        stcGpioInit.u16PinDir   = PIN_DIR_IN;
-        stcGpioInit.u16PullUp   = PIN_PU_ON;
+        stcGpioInit.u16PinDir = PIN_DIR_IN;
+        stcGpioInit.u16PullUp = PIN_PU_ON;
         break;
     case PIN_MODE_INPUT_PULLDOWN:
-        stcGpioInit.u16PinDir   = PIN_DIR_IN;
-        stcGpioInit.u16PullUp   = PIN_PU_OFF;
-#if defined (HC32F448) || defined (HC32F472) || defined (HC32F334)
+        stcGpioInit.u16PinDir = PIN_DIR_IN;
+        stcGpioInit.u16PullUp = PIN_PU_OFF;
+#if defined(HC32F448) || defined(HC32F472) || defined(HC32F334)
         stcGpioInit.u16PullDown = PIN_PD_ON;
 #endif
         break;
     case PIN_MODE_OUTPUT_OD:
-        stcGpioInit.u16PinDir        = PIN_DIR_OUT;
+        stcGpioInit.u16PinDir = PIN_DIR_OUT;
         stcGpioInit.u16PinOutputType = PIN_OUT_TYPE_NMOS;
         break;
     default:
@@ -356,13 +356,13 @@ static void hc32_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mo
 
 static void hc32_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 {
-    uint8_t  gpio_port;
+    uint8_t gpio_port;
     uint16_t gpio_pin;
 
     if (pin < PIN_MAX_NUM)
     {
         gpio_port = GPIO_PORT(pin);
-        gpio_pin  = GPIO_PIN(pin);
+        gpio_pin = GPIO_PIN(pin);
         if (PIN_LOW == value)
         {
             GPIO_ResetPins(gpio_port, gpio_pin);
@@ -376,14 +376,14 @@ static void hc32_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t v
 
 static rt_ssize_t hc32_pin_read(struct rt_device *device, rt_base_t pin)
 {
-    uint8_t  gpio_port;
+    uint8_t gpio_port;
     uint16_t gpio_pin;
     int value = PIN_LOW;
 
     if (pin < PIN_MAX_NUM)
     {
         gpio_port = GPIO_PORT(pin);
-        gpio_pin  = GPIO_PIN(pin);
+        gpio_pin = GPIO_PIN(pin);
         if (PIN_RESET == GPIO_ReadInputPins(gpio_port, gpio_pin))
         {
             value = PIN_LOW;
@@ -418,10 +418,10 @@ static rt_err_t hc32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
     }
 
     level = rt_hw_interrupt_disable();
-    if (pin_irq_hdr_tab[irqindex].pin  == pin  &&
-            pin_irq_hdr_tab[irqindex].hdr  == hdr  &&
-            pin_irq_hdr_tab[irqindex].mode == mode &&
-            pin_irq_hdr_tab[irqindex].args == args)
+    if (pin_irq_hdr_tab[irqindex].pin == pin &&
+        pin_irq_hdr_tab[irqindex].hdr == hdr &&
+        pin_irq_hdr_tab[irqindex].mode == mode &&
+        pin_irq_hdr_tab[irqindex].args == args)
     {
         rt_hw_interrupt_enable(level);
         return RT_EOK;
@@ -431,8 +431,8 @@ static rt_err_t hc32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
         rt_hw_interrupt_enable(level);
         return -RT_EBUSY;
     }
-    pin_irq_hdr_tab[irqindex].pin  = pin;
-    pin_irq_hdr_tab[irqindex].hdr  = hdr;
+    pin_irq_hdr_tab[irqindex].pin = pin;
+    pin_irq_hdr_tab[irqindex].hdr = hdr;
     pin_irq_hdr_tab[irqindex].mode = mode;
     pin_irq_hdr_tab[irqindex].args = args;
     rt_hw_interrupt_enable(level);
@@ -461,8 +461,8 @@ static rt_err_t hc32_pin_detach_irq(struct rt_device *device, rt_base_t pin)
         rt_hw_interrupt_enable(level);
         return RT_EOK;
     }
-    pin_irq_hdr_tab[irqindex].pin  = -1;
-    pin_irq_hdr_tab[irqindex].hdr  = RT_NULL;
+    pin_irq_hdr_tab[irqindex].pin = -1;
+    pin_irq_hdr_tab[irqindex].hdr = RT_NULL;
     pin_irq_hdr_tab[irqindex].mode = 0;
     pin_irq_hdr_tab[irqindex].args = RT_NULL;
     rt_hw_interrupt_enable(level);
@@ -486,7 +486,7 @@ static rt_err_t hc32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
     rt_base_t level;
     rt_int32_t irqindex = -1;
     stc_extint_init_t stcExtIntInit;
-    uint8_t  gpio_port;
+    uint8_t gpio_port;
     uint16_t gpio_pin;
 
     if ((pin >= PIN_MAX_NUM) || ((PIN_IRQ_ENABLE != enabled) && (PIN_IRQ_DISABLE != enabled)))
@@ -499,9 +499,9 @@ static rt_err_t hc32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
         return -RT_ENOSYS;
     }
 
-    irq_map  = &pin_irq_map[irqindex];
+    irq_map = &pin_irq_map[irqindex];
     gpio_port = GPIO_PORT(pin);
-    gpio_pin  = GPIO_PIN(pin);
+    gpio_pin = GPIO_PIN(pin);
     if (enabled == PIN_IRQ_ENABLE)
     {
         level = rt_hw_interrupt_disable();
@@ -582,8 +582,7 @@ static rt_base_t hc32_pin_get(const char *name)
     return pin;
 }
 
-static const struct rt_pin_ops hc32_pin_ops =
-{
+static const struct rt_pin_ops hc32_pin_ops = {
     hc32_pin_mode,
     hc32_pin_write,
     hc32_pin_read,

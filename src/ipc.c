@@ -1613,13 +1613,30 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(mutex->parent.parent)));
 
-    /* mutex only can be released by owner */
+    /*
+     * Mutex can only be released by its owner.
+     * Exception: if the owner thread is already closed, allow other threads
+     * to release so the orphaned mutex can be cleaned up (e.g. cross-thread
+     * rt_thread_delete path in _thread_detach_from_mutex).
+     */
     if (thread != mutex->owner)
     {
-        thread->error = -RT_ERROR;
-        rt_spin_unlock(&(mutex->spinlock));
+        rt_bool_t owner_closed = RT_FALSE;
 
-        return -RT_ERROR;
+        if (mutex->owner != RT_NULL)
+        {
+            rt_sched_lock(&slvl);
+            owner_closed =
+                (rt_sched_thread_get_stat(mutex->owner) == RT_THREAD_CLOSE);
+            rt_sched_unlock(slvl);
+        }
+
+        if (!owner_closed)
+        {
+            thread->error = -RT_ERROR;
+            rt_spin_unlock(&(mutex->spinlock));
+            return -RT_ERROR;
+        }
     }
 
     /* decrease hold */
@@ -1627,13 +1644,16 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
     /* if no hold */
     if (mutex->hold == 0)
     {
+        /* always restore priority of the owner, not the caller */
+        struct rt_thread *owner = mutex->owner;
+
         rt_sched_lock(&slvl);
 
         /* remove mutex from thread's taken list */
         rt_list_remove(&mutex->taken_list);
 
         /* whether change the thread priority */
-        need_schedule = _check_and_update_prio(thread, mutex);
+        need_schedule = _check_and_update_prio(owner, mutex);
 
         /* wakeup suspended thread */
         if (!rt_list_isempty(&mutex->parent.suspend_thread))

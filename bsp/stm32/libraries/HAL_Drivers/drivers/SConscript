@@ -32,13 +32,6 @@ if GetDepend(['RT_USING_SPI']):
 if GetDepend(['RT_USING_QSPI']):
     src += ['drv_qspi.c']
 
-if GetDepend('RT_USING_SOFT_SPI'):
-    src += ['drv_soft_spi.c']
-
-if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
-    if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
-        src += ['drv_soft_i2c.c']
-
 if GetDepend(['RT_USING_I2C']):
     if GetDepend('BSP_USING_HARD_I2C1') or GetDepend('BSP_USING_HARD_I2C2') or GetDepend('BSP_USING_HARD_I2C3') or GetDepend('BSP_USING_HARD_I2C4'):
         src += ['drv_hard_i2c.c']
@@ -46,8 +39,17 @@ if GetDepend(['RT_USING_I2C']):
 if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']) and not GetDepend(['SOC_STM32H750_ARTPI']):
     src += ['drv_eth.c']
 
-if GetDepend(['RT_USING_ADC']):
+if GetDepend(['RT_USING_ADC']) and not GetDepend(['RT_USING_ADC_V2']):
     src += ['drv_adc.c']
+
+if GetDepend(['BSP_USING_ADC_V2']):
+    src += ['drv_adc_v2.c']
+
+    if GetDepend(['BSP_ADC_USING_TRIGGER']):
+        src += ['drv_adc_v2_trigger.c']
+
+    if GetDepend(['RT_USING_FINSH', 'RT_ADC_V2_USING_MSH']):
+        src += ['drv_adc_v2_msh.c']
 
 if GetDepend(['RT_USING_DAC']):
     src += ['drv_dac.c']

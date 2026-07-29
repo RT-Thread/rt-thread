@@ -18,7 +18,7 @@ config IA32
 
 menu "X86 Features"
 
-choice
+choice C_LIB_TYPE_SEL
     prompt "C Library type"
     default X86_BSP_USING_LIBC
 

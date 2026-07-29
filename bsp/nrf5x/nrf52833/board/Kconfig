@@ -10,7 +10,7 @@ config SOC_NORDIC
     bool
     default y
 
-choice
+choice BSP_BOARD_SEL
     prompt "Select BSP board "
     default BSP_BOARD_PCA_10100
 
@@ -91,7 +91,7 @@ if BSP_USING_UART
     depends on BSP_USING_UART0
 endif
 
-choice
+choice BLE_STACK_SEL
 prompt "BLE STACK"
 default BLE_STACK_USING_NULL
 help

@@ -9,18 +9,21 @@
  */
 
 #include <rtthread.h>
+#include <rtdevice.h>
 #include "dev_spi_flash.h"
 #include "dev_spi_flash_sfud.h"
 #include "drv_spi.h"
-#include "drv_soft_spi.h"
 
 #ifdef BSP_USING_SOFT_SPI_FLASH
 
+static struct rt_spi_device soft_spi_flash_device;
+
 static int rt_soft_spi_flash_init(void)
 {
-    rt_hw_softspi_device_attach("sspi2", "sspi20", GET_PIN(B, 14));
+    rt_spi_bus_attach_device_cspin(&soft_spi_flash_device, "swspi20", "swspi2",
+                                   GET_PIN(B, 14), RT_NULL);
 
-    if (RT_NULL == rt_sfud_flash_probe("W25Q128", "sspi20"))
+    if (RT_NULL == rt_sfud_flash_probe("W25Q128", "swspi20"))
     {
         return -RT_ERROR;
     }

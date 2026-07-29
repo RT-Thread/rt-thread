@@ -13,7 +13,7 @@
         <TargetCommonOption>
           <Device>N32H760xIx7</Device>
           <Vendor>Nationstech</Vendor>
-          <PackID>Nationstech.N32H76x_DFP.1.1.0</PackID>
+          <PackID>Nationstech.N32H7xx_DFP.1.2.0</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x24000000,0x20000) IROM(0x15000000,0x1E0000) CPUTYPE("Cortex-M7") FPU3(DFPU) CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec />
@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__RTTHREAD__, N32H76x, CORE_CM7, USING_TCM, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, USE_STDPERIPH_DRIVER, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC</Define>
+              <Define>USING_TCM, __DCACHE_PRESENT=1, RT_USING_LIBC, __STDC_LIMIT_MACROS, CORE_CM7, N32H76x, __RTTHREAD__, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, __ICACHE_PRESENT=1, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\drivers\include;.;..\..\..\..\components\finsh;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\libc\posix\io\epoll;..\libraries\N32_Drivers\drivers;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\cortex-m7;..\libraries\N32_Drivers;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\drivers\include;board\Cube_Config\USER\inc;..\libraries\N32_Drivers\drivers\config;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\libcpu\arm\common;board\Cube_Config\Driver\CMSIS\core;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\inc;board\Cube_Config\Driver\CMSIS\device;..\..\..\..\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\net\utest;applications;board;..\..\..\..\components\drivers\phy</IncludePath>
+              <IncludePath>board;..\libraries\N32_Drivers\drivers;..\..\..\..\libcpu\arm\cortex-m7;applications;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\io\poll;..\libraries\N32_Drivers\drivers\config;packages\n32h7xx_cmsis_driver-latest\device;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\epoll;.;board\Cube_Config\USER\inc;..\..\..\..\components\finsh;..\..\..\..\components\net\utest;..\..\..\..\components\drivers\smp_call;..\..\..\..\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\phy;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;packages\CMSIS-Core-latest\Include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\N32_Drivers;..\..\..\..\components\drivers\include;packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\inc;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include;board\ports;..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -370,7 +370,7 @@
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
             <IncludeLibs />
             <IncludeLibsPath />
-            <Misc />
+            <Misc>--entry Reset_Handler</Misc>
             <LinkerInputFile />
             <DisabledWarnings />
           </LDads>
@@ -688,9 +688,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>n32h76x_78x_cfg.c</FileName>
+              <FileName>n32h7xx_cfg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\USER\src\n32h76x_78x_cfg.c</FilePath>
+              <FilePath>board\Cube_Config\USER\src\n32h7xx_cfg.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1118,86 +1118,96 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>startup_n32h73x_76x.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>board\Cube_Config\startup\startup_n32h73x_76x.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_n32h76x_78x.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\CMSIS\device\system_n32h76x_78x.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>misc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\src\misc.c</FilePath>
+              <FilePath>packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\src\misc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32h76x_78x_gpio.c</FileName>
+              <FileName>n32h7xx_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\src\n32h76x_78x_gpio.c</FilePath>
+              <FilePath>packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\src\n32h7xx_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32h76x_78x_mmu.c</FileName>
+              <FileName>n32h7xx_mmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\src\n32h76x_78x_mmu.c</FilePath>
+              <FilePath>packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\src\n32h7xx_mmu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32h76x_78x_dma.c</FileName>
+              <FileName>n32h7xx_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\src\n32h76x_78x_dma.c</FilePath>
+              <FilePath>packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\src\n32h7xx_dma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32h76x_78x_dmamux.c</FileName>
+              <FileName>n32h7xx_dmamux.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\src\n32h76x_78x_dmamux.c</FilePath>
+              <FilePath>packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\src\n32h7xx_dmamux.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32h76x_78x_pwr.c</FileName>
+              <FileName>n32h7xx_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\src\n32h76x_78x_pwr.c</FilePath>
+              <FilePath>packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\src\n32h7xx_pwr.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32h76x_78x_rcc.c</FileName>
+              <FileName>n32h7xx_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\src\n32h76x_78x_rcc.c</FilePath>
+              <FilePath>packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\src\n32h7xx_rcc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32h76x_78x_dbg.c</FileName>
+              <FileName>n32h7xx_dbg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\src\n32h76x_78x_dbg.c</FilePath>
+              <FilePath>packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\src\n32h7xx_dbg.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32h76x_78x_exti.c</FileName>
+              <FileName>n32h7xx_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\src\n32h76x_78x_exti.c</FilePath>
+              <FilePath>packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\src\n32h7xx_exti.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>n32h76x_78x_usart.c</FileName>
+              <FileName>n32h7xx_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>board\Cube_Config\Driver\n32h76x_78x_std_periph_driver\src\n32h76x_78x_usart.c</FilePath>
+              <FilePath>packages\n32h7xx_std_driver-latest\n32h7xx_std_periph_driver\src\n32h7xx_usart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Libraries-CMSIS</GroupName>
+          <Files>
+            <File>
+              <FileName>system_n32h7xx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\n32h7xx_cmsis_driver-latest\device\system_n32h7xx.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_n32h73x_76x.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>packages\n32h7xx_cmsis_driver-latest\device\startup\startup_n32h73x_76x.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>soc_mdk.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\n32h7xx_cmsis_driver-latest\device\soc_mdk.c</FilePath>
             </File>
           </Files>
         </Group>

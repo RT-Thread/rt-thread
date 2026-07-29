@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author           Notes
  * 2026-01-24     ox-horse         first version
+ * 2026-04-07     ox-horse         Add N32H49X and N32H47X_48X
  */
 
 #include "drv_gpio.h"
@@ -24,13 +25,21 @@
 static uint32_t pin_irq_enable_mask = 0;
 
 #if defined(GPIOK)
-    #define __N32_PORT_MAX 8u
+#if defined(SOC_SERIES_N32H7xx)
+#define __N32_PORT_MAX 8u
+#endif
 #elif defined(GPIOJ)
     #define __N32_PORT_MAX 16u
 #elif defined(GPIOI)
     #define __N32_PORT_MAX 16u
 #elif defined(GPIOH)
-    #define __N32_PORT_MAX 16u
+#if defined(SOC_SERIES_N32H7xx)
+#define __N32_PORT_MAX 16u
+#elif defined(SOC_SERIES_N32H49x)
+#define __N32_PORT_MAX 6u
+#elif defined(SOC_SERIES_N32H47x_48x)
+#define __N32_PORT_MAX 7u
+#endif
 #elif defined(GPIOG)
     #define __N32_PORT_MAX 16u
 #elif defined(GPIOF)
@@ -362,8 +371,13 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         irqmap = &pin_irq_map[irqindex];
 
         /* EXTI Line Config */
+#if defined(SOC_SERIES_N32H7xx)
         GPIO_ConfigEXTILine(irqmap->exti_line, (PIN_NO(pin) * 11 + PIN_PORT(pin)));
-
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+        // PA8-->Pin8--> PIN_PORT(1000)=0, PIN_NO(1000)=8
+        // PB1-->Pin17--> PIN_PORT(10001)=1, PIN_NO(10001)=1
+        GPIO_ConfigEXTILine(PIN_NO(pin), PIN_PORT(pin), PIN_NO(pin));
+#endif
         GPIO_InitStruct(&GPIO_InitStructure);
         /* Configure GPIO_InitStructure */
         GPIO_InitStructure.Pin = PIN_STPIN(pin);
@@ -393,6 +407,9 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
         EXTI_InitStructure.EXTI_LineCmd = ENABLE;
         EXTI_InitPeripheral(&EXTI_InitStructure);
+
+        /* Clear spurious pending bit caused by GPIO pull reconfiguration */
+        EXTI_ClrITPendBit(irqmap->exti_line);
 
         NVIC_SetPriority(irqmap->irqno, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 5, 0));
         NVIC_EnableIRQ(irqmap->irqno);
@@ -462,6 +479,7 @@ rt_inline void pin_irq_hdr(int irqno)
 
 void N32_GPIO_EXTI_Callback(uint16_t line_num)
 {
+#if defined(SOC_SERIES_N32H7xx)
     if (pin_irq_hdr_tab[line_num].pin != -1 && EXTI_GetITStatus(line_num) != RESET)
     {
         /* Clear EXTI line pending bit */
@@ -469,6 +487,18 @@ void N32_GPIO_EXTI_Callback(uint16_t line_num)
 
         pin_irq_hdr(line_num);
     }
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    {
+        rt_int32_t idx = bit2bitno(line_num);
+        if (idx >= 0 && idx < (rt_int32_t)ITEM_NUM(pin_irq_hdr_tab) && pin_irq_hdr_tab[idx].pin != -1 && EXTI_GetITStatus(line_num) != RESET)
+        {
+            /* Clear EXTI line pending bit */
+            EXTI_ClrITPendBit(line_num);
+
+            pin_irq_hdr(idx);
+        }
+    }
+#endif
 }
 
 void EXTI0_IRQHandler(void)
@@ -531,95 +561,139 @@ void EXTI15_10_IRQHandler(void)
 
 int rt_hw_pin_init(void)
 {
+#ifdef AFIO
 #if defined(SOC_SERIES_N32H7xx)
-#if defined(AFIO)
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_M7_AFIO, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_M4_AFIO, ENABLE);
 #endif /* SOC_N32H78X */
+#elif defined(SOC_SERIES_N32H49x)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_AFIO, ENABLE);
+#elif defined(SOC_SERIES_N32H47x_48x)
+    RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
 #endif
+#endif /* AFIO */
 
-#if defined(EXTI)
+#ifdef EXTI
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAPB5PeriphClk2(RCC_APB5_PERIPHEN_EXTI, ENABLE);
 #endif
+#endif /* EXTI */
 
-#if defined(GPIOA)
+#ifdef GPIOA
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M7_GPIOA, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M4_GPIOA, ENABLE);
 #endif /* SOC_N32H78X */
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOA, ENABLE);
 #endif
+#endif /* GPIOA */
 
-#if defined(GPIOB)
+#ifdef GPIOB
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M7_GPIOB, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M4_GPIOB, ENABLE);
 #endif /* SOC_N32H78X */
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOB, ENABLE);
 #endif
+#endif /* GPIOB */
 
-#if defined(GPIOC)
+#ifdef GPIOC
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M7_GPIOC, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M4_GPIOC, ENABLE);
 #endif /* SOC_N32H78X */
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOC, ENABLE);
 #endif
+#endif /* GPIOC */
 
-#if defined(GPIOD)
+#ifdef GPIOD
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M7_GPIOD, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M4_GPIOD, ENABLE);
 #endif /* SOC_N32H78X */
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOD, ENABLE);
 #endif
+#endif /* GPIOD */
 
-#if defined(GPIOE)
+#ifdef GPIOE
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M7_GPIOE, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M4_GPIOE, ENABLE);
 #endif /* SOC_N32H78X */
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOE, ENABLE);
 #endif
+#endif /* GPIOE */
 
-#if defined(GPIOF)
+#ifdef GPIOF
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M7_GPIOF, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M4_GPIOF, ENABLE);
 #endif /* SOC_N32H78X */
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOF, ENABLE);
 #endif
+#endif /* GPIOF */
 
-#if defined(GPIOG)
+#ifdef GPIOG
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M7_GPIOG, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M4_GPIOG, ENABLE);
 #endif /* SOC_N32H78X */
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOG, ENABLE);
 #endif
+#endif /* GPIOG */
 
-#if defined(GPIOH)
+#ifdef GPIOH
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M7_GPIOH, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk1(RCC_AHB5_PERIPHEN_M4_GPIOH, ENABLE);
 #endif /* SOC_N32H78X */
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOH, ENABLE);
 #endif
+#endif /* GPIOH */
 
-#if defined(GPIOI)
+#ifdef GPIOI
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_M7_GPIOI, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_M4_GPIOI, ENABLE);
 #endif /* SOC_N32H78X */
 #endif
+#endif /* GPIOI */
 
-#if defined(GPIOJ)
+#ifdef GPIOJ
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_M7_GPIOJ, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_M4_GPIOJ, ENABLE);
 #endif /* SOC_N32H78X */
 #endif
+#endif /* GPIOJ */
 
-#if defined(GPIOK)
+#ifdef GPIOK
+#if defined(SOC_SERIES_N32H7xx)
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_M7_GPIOK, ENABLE);
 #if defined(SOC_N32H78X)
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_M4_GPIOK, ENABLE);
 #endif /* SOC_N32H78X */
 #endif
-#endif /* defined(SOC_SERIES_N32H7xx) */
+#endif /* GPIOK */
 
     return rt_device_pin_register("pin", &_n32_pin_ops, RT_NULL);
 }

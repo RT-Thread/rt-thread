@@ -26,9 +26,6 @@ if GetDepend(['BSP_USING_SPI']):
 if GetDepend(['BSP_USING_I2C_HW']):
     src += ['drv_i2c.c']
 
-if GetDepend(['BSP_USING_I2C_SW']):
-    src += ['drv_soft_i2c.c']
-
 if GetDepend(['BSP_USING_ADC']):
     src += ['drv_adc.c']
 

@@ -343,7 +343,7 @@
               <MiscControls />
               <Define>__STDC_LIMIT_MACROS, __RTTHREAD__, RT_USING_ARMLIBC, PART_LM4F232H5QD, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\libcpu\arm\cortex-m4;..\..\components\drivers\smp_call;..\..\components\drivers\phy;..\..\components\libc\posix\ipc;..\..\components\drivers\include;..\..\components\drivers\include;.;drivers;..\..\components\libc\posix\io\poll;applications;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;Libraries;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\posix\io\epoll;..\..\include;..\..\components\drivers\include;..\..\components\net\utest;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\posix\io\eventfd</IncludePath>
+              <IncludePath>..\..\libcpu\arm\cortex-m4;..\..\components\drivers\smp_call;..\..\components\drivers\phy;..\..\components\libc\posix\ipc;..\..\components\drivers\include;..\..\components\drivers\include;.;drivers;..\..\components\libc\posix\io\poll;applications;..\..\components\libc\compilers\common\include;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;libraries;..\..\libcpu\arm\common;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\posix\io\epoll;..\..\include;..\..\components\drivers\include;..\..\components\net\utest;..\..\components\drivers\include;..\..\components\finsh;..\..\components\libc\posix\io\eventfd</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1102,210 +1102,210 @@
             <File>
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\adc.c</FilePath>
+              <FilePath>libraries\driverlib\adc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>can.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\can.c</FilePath>
+              <FilePath>libraries\driverlib\can.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>comp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\comp.c</FilePath>
+              <FilePath>libraries\driverlib\comp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>cpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\cpu.c</FilePath>
+              <FilePath>libraries\driverlib\cpu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>eeprom.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\eeprom.c</FilePath>
+              <FilePath>libraries\driverlib\eeprom.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>epi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\epi.c</FilePath>
+              <FilePath>libraries\driverlib\epi.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ethernet.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\ethernet.c</FilePath>
+              <FilePath>libraries\driverlib\ethernet.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>fan.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\fan.c</FilePath>
+              <FilePath>libraries\driverlib\fan.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\flash.c</FilePath>
+              <FilePath>libraries\driverlib\flash.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>fpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\fpu.c</FilePath>
+              <FilePath>libraries\driverlib\fpu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\gpio.c</FilePath>
+              <FilePath>libraries\driverlib\gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>hibernate.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\hibernate.c</FilePath>
+              <FilePath>libraries\driverlib\hibernate.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\i2c.c</FilePath>
+              <FilePath>libraries\driverlib\i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>i2s.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\i2s.c</FilePath>
+              <FilePath>libraries\driverlib\i2s.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\interrupt.c</FilePath>
+              <FilePath>libraries\driverlib\interrupt.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>lpc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\lpc.c</FilePath>
+              <FilePath>libraries\driverlib\lpc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>mpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\mpu.c</FilePath>
+              <FilePath>libraries\driverlib\mpu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>peci.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\peci.c</FilePath>
+              <FilePath>libraries\driverlib\peci.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>pwm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\pwm.c</FilePath>
+              <FilePath>libraries\driverlib\pwm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>qei.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\qei.c</FilePath>
+              <FilePath>libraries\driverlib\qei.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ssi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\ssi.c</FilePath>
+              <FilePath>libraries\driverlib\ssi.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>sysctl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\sysctl.c</FilePath>
+              <FilePath>libraries\driverlib\sysctl.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>sysexc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\sysexc.c</FilePath>
+              <FilePath>libraries\driverlib\sysexc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>systick.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\systick.c</FilePath>
+              <FilePath>libraries\driverlib\systick.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>driverlib_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\timer.c</FilePath>
+              <FilePath>libraries\driverlib\timer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\uart.c</FilePath>
+              <FilePath>libraries\driverlib\uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>udma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\udma.c</FilePath>
+              <FilePath>libraries\driverlib\udma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>usb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\usb.c</FilePath>
+              <FilePath>libraries\driverlib\usb.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>watchdog.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\watchdog.c</FilePath>
+              <FilePath>libraries\driverlib\watchdog.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>start_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>Libraries\startup\arm\start_rvds.S</FilePath>
+              <FilePath>libraries\startup\arm\start_rvds.S</FilePath>
             </File>
           </Files>
         </Group>

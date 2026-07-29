@@ -103,6 +103,11 @@ struct rt_small_mem
 rt_inline void rt_smem_setname(struct rt_small_mem_item *mem, const char *name)
 {
     int index;
+    if (name == RT_NULL)
+    {
+        name = "";
+    }
+
     for (index = 0; index < sizeof(mem->thread); index ++)
     {
         if (name[index] == '\0') break;

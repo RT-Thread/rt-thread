@@ -156,7 +156,10 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
         /* open the root directory to test whether the fatfs is valid */
         result = f_opendir(dir, drive);
         if (result != FR_OK)
+        {
+            rt_free(dir);
             goto __err;
+        }
 
         /* mount succeed! */
         fs->data = fat;
@@ -261,7 +264,7 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
              * just fill the FatFS[index] in elm fatfs to make mkfs work.
              */
             logic_nbr[0] = '0' + index;
-            f_mount(fat, logic_nbr, (BYTE)index);
+            f_mount(fat, logic_nbr, 0);  /* opt=0: delayed mount, just register FATFS object */
         }
     }
     else
@@ -281,7 +284,7 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
     /* check flag status, we need clear the temp driver stored in disk[] */
     if (flag == FSM_STATUS_USE_TEMP_DRIVER)
     {
-        f_mount(RT_NULL, logic_nbr, (BYTE)index);
+        f_mount(RT_NULL, logic_nbr, 0);
         rt_free(fat);
         disk[index] = RT_NULL;
         /* close device */
@@ -478,6 +481,7 @@ int dfs_elm_close(struct dfs_file *file)
         dir = (DIR *)(file->data);
         RT_ASSERT(dir != RT_NULL);
 
+        f_closedir(dir);
         /* release memory */
         rt_free(dir);
     }
@@ -904,6 +908,9 @@ DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, UINT count)
     rt_size_t result;
     rt_device_t device = disk[drv];
 
+    if (device == RT_NULL)
+        return RES_ERROR;
+
     result = rt_device_read(device, sector, buff, count);
     if (result == count)
     {
@@ -918,6 +925,9 @@ DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, UINT count)
 {
     rt_size_t result;
     rt_device_t device = disk[drv];
+
+    if (device == RT_NULL)
+        return RES_ERROR;
 
     result = rt_device_write(device, sector, buff, count);
     if (result == count)

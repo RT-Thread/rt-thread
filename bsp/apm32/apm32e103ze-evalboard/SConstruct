@@ -51,10 +51,10 @@ apm32_library = 'APM32E10x_Library'
 rtconfig.BSP_LIBRARY_TYPE = apm32_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, apm32_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, apm32_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', apm32_library), duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'Drivers', 'SConscript'), variant_dir='build/libraries/Drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

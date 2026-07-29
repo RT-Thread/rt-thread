@@ -335,7 +335,7 @@
               <MiscControls />
               <Define>RT_USING_LIBC, __USE_YC_M0__, __RTTHREAD__, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>drivers\ports;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;Libraries\core;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\net\utest;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\include;applications;..\..\..\components\drivers\include;drivers;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\libcpu\arm\common;..\..\..\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;Libraries;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\finsh;.;..\..\..\components\drivers\spi\sfud\inc;Libraries\CMSIS\Device\YICHIP\YC3122\Include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;Libraries\sdk;Libraries\CMSIS\Include;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>drivers\ports;..\..\..\components\drivers\include;..\..\..\components\drivers\phy;libraries\core;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\net\utest;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\include;applications;..\..\..\components\drivers\include;drivers;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\smp_call;..\..\..\libcpu\arm\common;..\..\..\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;libraries;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\finsh;.;..\..\..\components\drivers\spi\sfud\inc;libraries\CMSIS\Device\YICHIP\YC3122\Include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;libraries\sdk;libraries\CMSIS\Include;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1224,56 +1224,56 @@
             <File>
               <FileName>yc_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_exti.c</FilePath>
+              <FilePath>libraries\sdk\yc_exti.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>yc_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_gpio.c</FilePath>
+              <FilePath>libraries\sdk\yc_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>yc_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_uart.c</FilePath>
+              <FilePath>libraries\sdk\yc_uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>yc_wdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
+              <FilePath>libraries\sdk\yc_wdt.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>system_yc3122.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</FilePath>
+              <FilePath>libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>system.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\core\system.c</FilePath>
+              <FilePath>libraries\core\system.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>sdk_yc_qspi.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>Libraries\sdk\yc_qspi.lib</FilePath>
+              <FilePath>libraries\sdk\yc_qspi.lib</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>startup_yc3122.s</FileName>
               <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\arm\startup_yc3122.s</FilePath>
+              <FilePath>libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\arm\startup_yc3122.s</FilePath>
             </File>
           </Files>
         </Group>

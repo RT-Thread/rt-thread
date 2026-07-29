@@ -25,29 +25,29 @@
 
 #if defined(RT_USING_I2C)
 
-#if defined(BSP_USING_I2C1_SW)
+#if defined(RT_USING_SOFT_I2C1)
 
 /* using i2c1 control oled12864 */
-#define SW_I2C_NAME         "i2c1_sw"
-#define SSD1306_ADDR        (0x78U >> 1)
-#define SSD1306_MD_CMD      (0x00U)
-#define SSD1306_MD_DATA     (0x40U)
+#define SW_I2C_NAME     RT_SOFT_I2C1_BUS_NAME
+#define SSD1306_ADDR    (0x78U >> 1)
+#define SSD1306_MD_CMD  (0x00U)
+#define SSD1306_MD_DATA (0x40U)
 
 /* symbol parameters: width pixles, lenght pixels */
-#define SYM_W_PIX           (8U)
-#define SYM_H_PIX           (8U)
+#define SYM_W_PIX (8U)
+#define SYM_H_PIX (8U)
 /* ssd ohysical parameters */
-#define SSD_PAGE_SIZE       (8U)
-#define SSD_COL_SIZE        (128U)
+#define SSD_PAGE_SIZE (8U)
+#define SSD_COL_SIZE  (128U)
 /* each page 8 pix */
-#define PAGE_PIX_SIZE       (8U)
+#define PAGE_PIX_SIZE (8U)
 
 /* each byte set horizontal 1 pix */
-#define SYM_W_BYTE          (SYM_W_PIX / 1)
+#define SYM_W_BYTE (SYM_W_PIX / 1)
 /* each byte set vertical 8 pix */
-#define SYM_H_BYTE          (SYM_H_PIX / 8)
+#define SYM_H_BYTE (SYM_H_PIX / 8)
 /* each character occupis */
-#define SYM_BYTE_SIZE       (SYM_W_BYTE * SYM_H_BYTE)
+#define SYM_BYTE_SIZE (SYM_W_BYTE * SYM_H_BYTE)
 
 /* soft i2c command defines */
 enum SW_I2C_CMD
@@ -175,8 +175,7 @@ static int sw_i2c_sample(int argc, char *argv[])
 /* ssd1306 de-init and turn off */
 static void ssd1306_deinit(struct rt_i2c_bus_device *i2c_dev)
 {
-    rt_uint8_t ssd_deinit_array[] =
-    {
+    rt_uint8_t ssd_deinit_array[] = {
         0X8D, /* set charge pump */
         0X10, /* turn off charge pump */
         0XAE, /* OLED sleep */
@@ -259,8 +258,7 @@ static void ssd1306_roll_display(struct rt_i2c_bus_device *i2c_dev)
     u16WriteTimes++;
 }
 
-rt_uint8_t ssd_init_array[] =
-{
+rt_uint8_t ssd_init_array[] = {
     0xAE, /* display off */
     0x20, /* Set Memory Addressing Mode */
     0x10, /* Set addressing orient */
@@ -293,18 +291,52 @@ rt_uint8_t ssd_init_array[] =
 };
 
 
-rt_uint8_t logo_array[][SYM_BYTE_SIZE] =
-{
-    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    0x44, 0x44, 0x6C, 0x74, 0x54, 0x6C, 0x44, 0x44, /*"X"*/
-    0x44, 0x7C, 0x54, 0x10, 0x10, 0x54, 0x7C, 0x44, /*"H"*/
-    0x00, 0x68, 0x54, 0x54, 0x54, 0x54, 0x24, 0x00, /*"S"*/
-    0x38, 0x6C, 0x44, 0x44, 0x44, 0x44, 0x24, 0x00, /*"C"*/
+rt_uint8_t logo_array[][SYM_BYTE_SIZE] = {
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x44,
+    0x44,
+    0x6C,
+    0x74,
+    0x54,
+    0x6C,
+    0x44,
+    0x44, /*"X"*/
+    0x44,
+    0x7C,
+    0x54,
+    0x10,
+    0x10,
+    0x54,
+    0x7C,
+    0x44, /*"H"*/
+    0x00,
+    0x68,
+    0x54,
+    0x54,
+    0x54,
+    0x54,
+    0x24,
+    0x00, /*"S"*/
+    0x38,
+    0x6C,
+    0x44,
+    0x44,
+    0x44,
+    0x44,
+    0x24,
+    0x00, /*"C"*/
 };
 
 MSH_CMD_EXPORT(sw_i2c_sample, soft i2c sample);
 
-#endif /* BSP_USING_I2C1_SW */
+#endif /* RT_USING_SOFT_I2C1 */
 
 #endif/* RT_USING_I2C */
 /*

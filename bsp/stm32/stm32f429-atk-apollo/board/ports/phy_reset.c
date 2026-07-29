@@ -16,7 +16,7 @@
 #include <drv_log.h>
 
 #define ETH_RESET_IO    7                //PHY RESET PIN
-#define I2C_BUS_NAME    "i2c1"
+#define I2C_BUS_NAME    "swi2c1"
 #define PCF8574_ADDR    0x20
 
 /* pcf8574 hardware init */

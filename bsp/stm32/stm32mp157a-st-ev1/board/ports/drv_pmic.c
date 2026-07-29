@@ -19,7 +19,7 @@
 #define LOG_TAG              "drv.pmic"
 #include <drv_log.h>
 
-#define I2C_NAME "i2c3"
+#define I2C_NAME "swi2c3"
 
 static struct rt_i2c_bus_device *pmic_dev = RT_NULL;
 

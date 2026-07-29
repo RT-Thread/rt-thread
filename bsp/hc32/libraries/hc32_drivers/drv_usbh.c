@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-05-25     CDT          first version
+ * 2026-05-27     CDT          support HC32F4A2
+ * 2026-06-03     CDT          support HC32F467
  */
 
 /*******************************************************************************
@@ -17,7 +19,7 @@
 #if defined(BSP_USING_USBH)
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.usbh"
+#define LOG_TAG "drv.usbh"
 #include <drv_log.h>
 
 #include "board_config.h"
@@ -25,13 +27,13 @@
 #include "drv_usbh.h"
 
 #if defined(HC32F472)
-    #define USBFS_DRVVBUS_PIN            (rt_base_t)(((rt_uint16_t)USBF_DRVVBUS_PORT * 16) + __CLZ(__RBIT(USBF_DRVVBUS_PIN)))
+#define USBFS_DRVVBUS_PIN (rt_base_t)(((rt_uint16_t)USBF_DRVVBUS_PORT * 16) + __CLZ(__RBIT(USBF_DRVVBUS_PIN)))
 #endif
 
 #if !defined(BSP_USING_USBH_HS)
-    extern rt_err_t rt_hw_usbfs_board_init(void);
+extern rt_err_t rt_hw_usbfs_board_init(void);
 #else
-    extern rt_err_t rt_hw_usbhs_board_init(void);
+extern rt_err_t rt_hw_usbhs_board_init(void);
 #endif
 extern void rt_hw_us_delay(rt_uint32_t us);
 
@@ -112,7 +114,8 @@ static void usb_host_chx_out_isr(usb_core_instance *pdev, uint8_t chnum)
     {
         usb_host_clrint(pdev, chnum, USBFS_HCINT_ACK);
     }
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F4A8) || \
+    defined(HC32F467)
     else if (0UL != (u32hcint & USBFS_HCINT_AHBERR))
     {
         usb_host_clrint(pdev, chnum, USBFS_HCINT_AHBERR);
@@ -152,7 +155,7 @@ static void usb_host_chx_out_isr(usb_core_instance *pdev, uint8_t chnum)
     {
         usb_host_int_unmskchhltd(pdev, chnum);
         usb_hchstop(&pdev->regs, chnum);
-        pdev->host.ErrCnt[chnum] ++;
+        pdev->host.ErrCnt[chnum]++;
         pdev->host.HC_Status[chnum] = HOST_CH_XACTERR;
         usb_host_clrint(pdev, chnum, USBFS_HCINT_TXERR);
     }
@@ -236,7 +239,8 @@ static void usb_host_chx_in_isr(usb_core_instance *pdev, uint8_t chnum)
     {
         usb_host_clrint(pdev, chnum, USBFS_HCINT_ACK);
     }
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F472) || defined(HC32F4A8) || \
+    defined(HC32F467)
     else if (0UL != (u32hcint & USBFS_HCINT_AHBERR))
     {
         usb_host_clrint(pdev, chnum, USBFS_HCINT_AHBERR);
@@ -277,11 +281,11 @@ static void usb_host_chx_in_isr(usb_core_instance *pdev, uint8_t chnum)
         if (pdev->basic_cfgs.dmaen == 1U)
         {
             u32hctsiz = READ_REG32(pdev->regs.HC_REGS[chnum]->HCTSIZ);
-            pdev->host.XferCnt[chnum] =  pdev->host.hc[chnum].xfer_len - (u32hctsiz & USBFS_HCTSIZ_XFRSIZ);
+            pdev->host.XferCnt[chnum] = pdev->host.hc[chnum].xfer_len - (u32hctsiz & USBFS_HCTSIZ_XFRSIZ);
             pdev->host.hc[chnum].xfer_count += pdev->host.XferCnt[chnum];
         }
         pdev->host.HC_Status[chnum] = HOST_CH_XFERCOMPL;
-        pdev->host.ErrCnt [chnum] = 0U;
+        pdev->host.ErrCnt[chnum] = 0U;
         usb_host_clrint(pdev, chnum, USBFS_HCINT_XFRC);
         switch (u32eptypetmp)
         {
@@ -332,7 +336,7 @@ static void usb_host_chx_in_isr(usb_core_instance *pdev, uint8_t chnum)
         }
         else if (pdev->host.HC_Status[chnum] == HOST_CH_BBLERR)
         {
-            pdev->host.ErrCnt[chnum] ++;
+            pdev->host.ErrCnt[chnum]++;
             pdev->host.URB_State[chnum] = HOST_CH_XFER_ERROR;
         }
         else if (u32eptypetmp == EP_TYPE_INTR)
@@ -349,7 +353,7 @@ static void usb_host_chx_in_isr(usb_core_instance *pdev, uint8_t chnum)
     else if (0UL != (u32hcint & USBFS_HCINT_TXERR))
     {
         usb_host_int_unmskchhltd(pdev, chnum);
-        pdev->host.ErrCnt[chnum] ++;
+        pdev->host.ErrCnt[chnum]++;
         pdev->host.HC_Status[chnum] = HOST_CH_XACTERR;
         usb_hchstop(&pdev->regs, chnum);
         usb_host_clrint(pdev, chnum, USBFS_HCINT_TXERR);
@@ -426,8 +430,8 @@ static void usb_host_disconn_isr(usb_core_instance *pdev)
     usb_device_disconnect_callback(pdev);
 }
 
-#define USBFS_HNPTXSTS_NPTXQTOP_CHEPNUM_POS     (27U)
-#define USBFS_HNPTXSTS_NPTXQTOP_CHEPNUM         (0x78000000UL)
+#define USBFS_HNPTXSTS_NPTXQTOP_CHEPNUM_POS (27U)
+#define USBFS_HNPTXSTS_NPTXQTOP_CHEPNUM     (0x78000000UL)
 
 static void usb_host_nptxfifoempty_isr(usb_core_instance *pdev)
 {
@@ -457,8 +461,8 @@ static void usb_host_nptxfifoempty_isr(usb_core_instance *pdev)
     }
 }
 
-#define USBFS_HPTXSTS_PTXQTOP_CHNUM_POS     (27U)
-#define USBFS_HPTXSTS_PTXQTOP_CHNUM         (0x78000000UL)
+#define USBFS_HPTXSTS_PTXQTOP_CHNUM_POS (27U)
+#define USBFS_HPTXSTS_PTXQTOP_CHNUM     (0x78000000UL)
 
 static void usb_host_ptxfifoempty_isr(usb_core_instance *pdev)
 {
@@ -585,7 +589,7 @@ static void usb_host_rxflvl_isr(usb_core_instance *pdev)
         {
             usb_rdpkt(&pdev->regs, pdev->host.hc[u8chnum].xfer_buff, u16bcnt);
             pdev->host.hc[u8chnum].xfer_buff += u16bcnt;
-            pdev->host.hc[u8chnum].xfer_count  += u16bcnt;
+            pdev->host.hc[u8chnum].xfer_count += u16bcnt;
             pdev->host.XferCnt[u8chnum] = pdev->host.hc[u8chnum].xfer_count;
 
             u32hctsiz = READ_REG32(pdev->regs.HC_REGS[u8chnum]->HCTSIZ);
@@ -690,41 +694,41 @@ void USBFS_Handler(void)
 #endif
 
 static void usb_host_chopen(usb_core_instance *pdev,
-                            uint8_t  hc_num,
-                            uint8_t  epnum,
-                            uint8_t  dev_address,
-                            uint8_t  speed,
-                            uint8_t  ep_type,
+                            uint8_t hc_num,
+                            uint8_t epnum,
+                            uint8_t dev_address,
+                            uint8_t speed,
+                            uint8_t ep_type,
                             uint16_t mps)
 {
     pdev->host.channel[hc_num] = epnum; /* assign channel here */
-    pdev->host.hc[hc_num].ep_idx     = (uint8_t) pdev->host.channel[hc_num] & 0x7FU;
-    pdev->host.hc[hc_num].is_epin    = (uint8_t)((pdev->host.channel[hc_num] & 0x80U) == 0x80U);
-    pdev->host.hc[hc_num].dev_addr   = dev_address;
-    pdev->host.hc[hc_num].ep_type    = ep_type;
+    pdev->host.hc[hc_num].ep_idx = (uint8_t)pdev->host.channel[hc_num] & 0x7FU;
+    pdev->host.hc[hc_num].is_epin = (uint8_t)((pdev->host.channel[hc_num] & 0x80U) == 0x80U);
+    pdev->host.hc[hc_num].dev_addr = dev_address;
+    pdev->host.hc[hc_num].ep_type = ep_type;
     pdev->host.hc[hc_num].max_packet = mps;
-    pdev->host.hc[hc_num].ch_speed   = speed;
-    pdev->host.hc[hc_num].in_toggle  = 0U;
+    pdev->host.hc[hc_num].ch_speed = speed;
+    pdev->host.hc[hc_num].in_toggle = 0U;
     pdev->host.hc[hc_num].out_toggle = 0U;
 
     (void)usb_inithch(&pdev->regs, hc_num, &pdev->host.hc[hc_num], pdev->basic_cfgs.dmaen);
 }
 
 static void usb_host_ch_init(usb_core_instance *pdev,
-                             uint8_t  hc_num,
-                             uint8_t  epnum,
-                             uint8_t  dev_address,
-                             uint8_t  speed,
-                             uint8_t  ep_type,
+                             uint8_t hc_num,
+                             uint8_t epnum,
+                             uint8_t dev_address,
+                             uint8_t speed,
+                             uint8_t ep_type,
                              uint16_t mps)
 {
     pdev->host.channel[hc_num] = epnum; /* assign channel here */
-    pdev->host.hc[hc_num].ep_idx     = (uint8_t) pdev->host.channel[hc_num] & 0x7FU;
-    pdev->host.hc[hc_num].is_epin    = (uint8_t)((pdev->host.channel[hc_num] & 0x80U) == 0x80U);
-    pdev->host.hc[hc_num].dev_addr   = dev_address;
-    pdev->host.hc[hc_num].ep_type    = ep_type;
+    pdev->host.hc[hc_num].ep_idx = (uint8_t)pdev->host.channel[hc_num] & 0x7FU;
+    pdev->host.hc[hc_num].is_epin = (uint8_t)((pdev->host.channel[hc_num] & 0x80U) == 0x80U);
+    pdev->host.hc[hc_num].dev_addr = dev_address;
+    pdev->host.hc[hc_num].ep_type = ep_type;
     pdev->host.hc[hc_num].max_packet = mps;
-    pdev->host.hc[hc_num].ch_speed   = speed;
+    pdev->host.hc[hc_num].ch_speed = speed;
 
     (void)usb_inithch(&pdev->regs, hc_num, &pdev->host.hc[hc_num], pdev->basic_cfgs.dmaen);
 }
@@ -739,7 +743,7 @@ static uint32_t usb_host_submitrequest(usb_core_instance *pdev,
                                        uint8_t do_ping)
 {
     pdev->host.hc[ch_num].is_epin = direction;
-    pdev->host.hc[ch_num].ep_type  = ep_type;
+    pdev->host.hc[ch_num].ep_type = ep_type;
 
     if (token == 0U)
     {
@@ -837,7 +841,7 @@ static uint32_t usb_host_submitrequest(usb_core_instance *pdev,
     }
 
     pdev->host.hc[ch_num].xfer_buff = pbuff;
-    pdev->host.hc[ch_num].xfer_len  = length;
+    pdev->host.hc[ch_num].xfer_len = length;
     pdev->host.hc[ch_num].xfer_count = 0U;
     pdev->host.HC_Status[ch_num] = HOST_CH_IDLE; /* state */
     pdev->host.URB_State[ch_num] = HOST_CH_XFER_IDLE; /* urb state */
@@ -870,7 +874,7 @@ static rt_err_t _usbh_reset_port(rt_uint8_t port)
 static int _usbh_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes, int timeouts)
 {
     int timeout = timeouts;
-    uint8_t  devspeed;
+    uint8_t devspeed;
     uint32_t u32NakCnt = 0;
 
     if (pipe->pipe_index >= USB_MAX_CH_NUM)
@@ -908,8 +912,8 @@ static int _usbh_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nby
         if (usb_hsot_get_ch_state(&_hc32_usbh, pipe->pipe_index) == HOST_CH_NAK)
         {
             LOG_D("nak");
-#define  MAX_NAK_CNT    (5U)
-            u32NakCnt ++;
+#define MAX_NAK_CNT (5U)
+            u32NakCnt++;
             if (u32NakCnt > MAX_NAK_CNT)
             {
 #if defined(RT_USBH_MSTORAGE) || defined(RT_USBH_HID)
@@ -981,9 +985,8 @@ static int _usbh_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nby
 }
 
 
-
 static rt_uint16_t pipe_index = 0;
-static rt_uint8_t  _usbh_get_free_pipe_index(void)
+static rt_uint8_t _usbh_get_free_pipe_index(void)
 {
     rt_uint8_t idx;
     for (idx = 0; idx < USB_MAX_CH_NUM; idx++)
@@ -1005,7 +1008,7 @@ static void _usbh_free_pipe_index(rt_uint8_t index)
 
 static rt_err_t _usbh_open_pipe(upipe_t pipe)
 {
-    uint8_t  devspeed;
+    uint8_t devspeed;
     pipe->pipe_index = _usbh_get_free_pipe_index();
 
     if (pipe->pipe_index >= USB_MAX_CH_NUM)
@@ -1049,8 +1052,7 @@ static rt_err_t _usbh_close_pipe(upipe_t pipe)
 }
 
 
-static struct uhcd_ops _uhcd_ops =
-{
+static struct uhcd_ops _uhcd_ops = {
     _usbh_reset_port,
     _usbh_pipe_xfer,
     _usbh_open_pipe,
@@ -1106,7 +1108,7 @@ static rt_err_t _usbh_init(rt_device_t device)
 #else
     stcPortIdentify.u8CoreID = USBHS_CORE_ID;
 #endif
-#if defined (HC32F4A0) || defined (HC32F4A8)
+#if defined(HC32F4A0) || defined(HC32F4A2) || defined(HC32F4A8) || defined(HC32F467)
 #if !defined(BSP_USING_USBHS_PHY_EXTERN)
     stcPortIdentify.u8PhyType = USBHS_PHY_EMBED;
 #else
@@ -1173,7 +1175,6 @@ int rt_hw_usbh_init(void)
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_usbh_init);
-
 
 
 #endif /* BSP_USING_USBH */

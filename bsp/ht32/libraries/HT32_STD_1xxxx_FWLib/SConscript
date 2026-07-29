@@ -11,7 +11,7 @@ tools_paths = [
 sys.path.extend(tools_paths)
 from sdk_dist import get_source
 
-source_file_path = os.path.join(os.getcwd(), 'Source_file')
+source_file_path = os.path.join(GetCurrentDir(), 'Source_file')
 base_path = 'library/HT32F1xxxx_Driver/src/'
 system_path = 'library/Device/Holtek/HT32F1xxxx/Source/'
 source_path = []

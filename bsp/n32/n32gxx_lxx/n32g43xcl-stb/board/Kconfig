@@ -64,30 +64,31 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable software I2C (swi2c)"
         default n
         select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            config BSP_I2C1_SCL_PIN
-                int "i2c1 scl pin number"
-                range 0 64
-                default 22
-
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                range 0 64
-                default 23
+        select RT_USING_SOFT_I2C
+        if BSP_USING_SOFT_I2C
+        menuconfig BSP_USING_SOFT_I2C1
+            bool "Enable software I2C1 Bus (swi2c1)"
+            default n
+            select RT_USING_SOFT_I2C1
+            if BSP_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "swi2c1 SCL pin number"
+                    default 22
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "swi2c1 SDA pin number"
+                    default 23
+            endif
         endif
-
     menuconfig BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
         default n
         if BSP_USING_RTC
-            choice
+            choice CLK_SRC_SEL
                 prompt "Select clock source"
                 default BSP_RTC_USING_LSE
 
@@ -176,7 +177,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable TIM1 output PWM"
             default n
             if BSP_USING_TIM1_PWM
-                choice
+                choice TIM1_REMAP_SEL
                     prompt "Select Pin"
                     default TIM1_REMAP_0
                     config TIM1_REMAP_0
@@ -202,7 +203,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable TIM2 output PWM"
             default n
             if BSP_USING_TIM2_PWM
-                 choice
+                 choice TIM2_REMAP_SEL
                     prompt "Select Pin"
                     default TIM2_REMAP_0
                     config TIM2_REMAP_0
@@ -232,7 +233,7 @@ menu "On-chip Peripheral Drivers"
             bool "Enable TIM3 output PWM"
             default n
             if BSP_USING_TIM3_PWM
-                 choice
+                 choice TIM3_REMAP_SEL
                     prompt "Select Pin"
                     default TIM3_REMAP_0
                     config TIM3_REMAP_0
@@ -264,5 +265,17 @@ endmenu
 menu "Board extended module Drivers"
 
 endmenu
+
+    config RT_SOFT_I2C1_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SCL_PIN_DEFAULT
+        int
+        default 22 if RT_USING_SOFT_I2C1
+
+    config RT_SOFT_I2C1_SDA_PIN_DEFAULT
+        int
+        default 23 if RT_USING_SOFT_I2C1
 
 endmenu

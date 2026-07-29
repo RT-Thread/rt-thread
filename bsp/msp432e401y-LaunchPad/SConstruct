@@ -54,10 +54,10 @@ msp432e401y_library = 'msp432e4'
 rtconfig.BSP_LIBRARY_TYPE = msp432e401y_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, msp432e401y_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, msp432e401y_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', msp432e401y_library), duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'Drivers', 'SConscript'), variant_dir='build/libraries/Drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)

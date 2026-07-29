@@ -1,6 +1,5 @@
 import os
 import sys
-import rtconfig
 from esptool.bin_image import ELFFile, ImageSegment, LoadFirmwareImage
 from esptool.targets import CHIP_DEFS, CHIP_LIST, ROM_LIST
 
@@ -40,6 +39,7 @@ else:
     RTT_ROOT = os.path.join(os.getcwd(), '..', '..', '..')
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+import rtconfig
 from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
@@ -68,7 +68,7 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, remove_components = ['libc'])
 
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))
 # make a building
 DoBuilding(TARGET, objs)
 
