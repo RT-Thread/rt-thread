@@ -313,8 +313,7 @@ static off_t pci_lseek(struct dfs_file *file, off_t offset, int wherece)
 }
 
 /** @brief File operations for per-device config space access */
-static const struct dfs_file_ops pci_fops =
-{
+static const struct dfs_file_ops pci_fops = {
     .read = pci_read,
     .write = pci_write,
     .lseek = pci_lseek,
