@@ -371,10 +371,22 @@ static void uart_isr(struct imxrt_uart *uart)
         LPUART_ClearStatusFlags(uart->uart_base, kLPUART_RxOverrunFlag);
     }
 
-    if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag)
+    if ((LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag) &&
+        (LPUART_GetEnabledInterrupts(uart->uart_base) & kLPUART_TxDataRegEmptyInterruptEnable))
     {
-        LPUART_DisableInterrupts(uart->uart_base, kLPUART_TxDataRegEmptyInterruptEnable);
-        rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_TX_DONE);
+        /* Feed the next byte from the Serial V2 ring buffer into the TX register.
+         * If the ring buffer is empty, disable the TX interrupt and signal TX_DONE
+         * so the Serial V2 framework can unblock the waiting writer. */
+        uint8_t tx_ch;
+        if (rt_hw_serial_control_isr(&uart->serial, RT_HW_SERIAL_CTRL_GETC, &tx_ch) == RT_EOK)
+        {
+            LPUART_WriteByte(uart->uart_base, tx_ch);
+        }
+        else
+        {
+            LPUART_DisableInterrupts(uart->uart_base, kLPUART_TxDataRegEmptyInterruptEnable);
+            rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_TX_DONE);
+        }
     }
 
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
@@ -690,7 +702,11 @@ static rt_err_t imxrt_control(struct rt_serial_device *serial, int cmd, void *ar
         }
         if (RT_DEVICE_FLAG_TX_BLOCKING == ctrl_arg || RT_DEVICE_FLAG_TX_NON_BLOCKING == ctrl_arg)
         {
-            LPUART_EnableInterrupts(uart->uart_base, kLPUART_TxDataRegEmptyInterruptEnable);
+            /* Do NOT enable kLPUART_TxDataRegEmptyInterruptEnable here: TX reg is already
+             * empty at open time, enabling it now would fire an immediate spurious TX_DONE
+             * event and corrupt the Serial V2 TX state machine (especially visible on CM7
+             * where IRQ latency is very short). The TX interrupt is enabled on demand by
+             * imxrt_transmit() when size == 0 (Serial V2 "kick TX" convention). */
             NVIC_SetPriority(uart->irqn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 4, 0));
             EnableIRQ(uart->irqn);
             break;
@@ -738,7 +754,6 @@ static int imxrt_getc(struct rt_serial_device *serial)
     return ch;
 }
 
-#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
 static rt_ssize_t imxrt_transmit(struct rt_serial_device *serial,
                                  rt_uint8_t *buf, rt_size_t size, rt_uint32_t tx_flag)
 {
@@ -747,6 +762,7 @@ static rt_ssize_t imxrt_transmit(struct rt_serial_device *serial,
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct imxrt_uart, serial);
 
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
     if (uart->dma_flag & RT_DEVICE_FLAG_DMA_TX)
     {
         lpuart_transfer_t xfer;
@@ -757,37 +773,23 @@ static rt_ssize_t imxrt_transmit(struct rt_serial_device *serial,
             return (rt_ssize_t)size;
         return -RT_EIO;
     }
-
-    if (size == 0)
-    {
-        LPUART_EnableInterrupts(uart->uart_base, kLPUART_TxDataRegEmptyInterruptEnable);
-        return 0;
-    }
-
-    {
-        rt_uint8_t *ptr = buf;
-        while (size--)
-        {
-            LPUART_WriteByte(uart->uart_base, *ptr++);
-            while (!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag))
-                ;
-        }
-        return (rt_ssize_t)(ptr - buf);
-    }
-}
-
 #endif
+
+    /* Interrupt TX path: the Serial V2 framework has already placed data into the
+     * TX ring buffer before calling transmit(). Enable the TX-empty interrupt so
+     * uart_isr will drain the ring buffer byte by byte via RT_HW_SERIAL_CTRL_GETC
+     * and fire RT_SERIAL_EVENT_TX_DONE when the buffer is empty.
+     * Return size immediately so the framework knows the transfer was accepted. */
+    LPUART_EnableInterrupts(uart->uart_base, kLPUART_TxDataRegEmptyInterruptEnable);
+    return (rt_ssize_t)size;
+}
 
 static const struct rt_uart_ops imxrt_uart_ops = {
     imxrt_configure,
     imxrt_control,
     imxrt_putc,
     imxrt_getc,
-#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
     imxrt_transmit,
-#else
-    RT_NULL
-#endif
 };
 
 int rt_hw_uart_init(void)
