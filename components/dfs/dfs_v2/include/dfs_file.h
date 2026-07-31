@@ -124,6 +124,7 @@ struct dfs_file
 int dfs_vnode_init(struct dfs_vnode *vnode, int type, const struct dfs_file_ops *fops);
 struct dfs_vnode *dfs_vnode_create(void);
 int dfs_vnode_destroy(struct dfs_vnode* vnode);
+rt_err_t dfs_vnode_lock_init(struct dfs_vnode *vnode, struct dfs_dentry *dentry);
 
 struct dfs_vnode *dfs_vnode_ref(struct dfs_vnode *vnode);
 void dfs_vnode_unref(struct dfs_vnode *vnode);
