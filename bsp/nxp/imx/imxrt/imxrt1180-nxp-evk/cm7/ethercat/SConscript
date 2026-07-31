@@ -1,0 +1,25 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+ecat_src = Split("""
+ethercat_init.c
+digital_io.c
+""")
+
+# add the SSC.
+ssc_src = Glob('SSC/Src/*.c')
+
+CPPPATH = [cwd, cwd + '/SSC/Src']
+
+CPPDEFINES = []
+
+group = []
+
+# Only include EtherCAT code when BSP_USING_ETHERCAT is enabled
+if GetDepend(['BSP_USING_ETHERCAT']):
+    group += DefineGroup('EtherCAT_APP', ecat_src, depend = ['BSP_USING_ETHERCAT'], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+    group += DefineGroup('EtherCAT_SSC', ssc_src, depend = ['BSP_USING_ETHERCAT'], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')
