@@ -26,6 +26,9 @@
 /* Entry Point */
 ENTRY(Reset_Handler)
 
+__use_shmem__ = 1;
+__multicore__ = 1;
+
 /* Board memory map */
 m_itcm_start             = 0x00000000;
 m_itcm_size              = 0x00040000;
@@ -51,7 +54,7 @@ m_qadata_start           = m_dtcm_start;
 m_qadata_end             = m_dtcm_start + m_dtcm_size - 1;
 m_ram_vector_table_start = m_itcm_start;
 m_stack_size             = DEFINED(__stack_size__) ? __stack_size__ : 0x1000;
-m_heap_size              = DEFINED(__heap_size__)  ? __heap_size__  : 0x4000;
+m_heap_size              = DEFINED(__heap_size__)  ? __heap_size__  : 0x8000;
 
 /* Target specific definition, code & data allocation */
 m_code_size              = m_itcm_size - vector_table_size;

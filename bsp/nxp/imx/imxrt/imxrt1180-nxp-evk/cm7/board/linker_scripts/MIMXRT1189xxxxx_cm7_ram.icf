@@ -55,7 +55,7 @@ if (isdefinedsymbol(__stack_size__)) {
 if (isdefinedsymbol(__heap_size__)) {
   define symbol __size_heap__          = __heap_size__;
 } else {
-  define symbol __size_heap__          = 0x4000;
+  define symbol __size_heap__          = 0x8000;
 }
 
 define symbol m_qacode_start           = m_itcm_start + (isdefinedsymbol(__ram_vector_table__) ? vector_table_size : 0);
@@ -104,8 +104,6 @@ if (isdefinedsymbol(__use_shmem__)) {
   define exported symbol __RPMSG_SH_MEM_START  = m_rpmsg_sh_mem_start;
   define exported symbol __RPMSG_SH_MEM_SIZE   = m_rpmsg_sh_mem_end - m_rpmsg_sh_mem_start + 1;
 }
-
-define exported symbol __RTT_HEAP_END = m_ocram2_start + m_ocram2_size - 1;
 
 /* Region definition */
 define memory mem with size = 4G;
