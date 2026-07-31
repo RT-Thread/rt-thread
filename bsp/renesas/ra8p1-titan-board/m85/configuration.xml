@@ -494,6 +494,10 @@
       <description>Serial Peripheral Interface</description>
       <originalPack>Renesas.RA.6.2.0.pack</originalPack>
     </component>
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_icu" variant="" vendor="Renesas" version="6.2.0">
+      <description>External Interrupt</description>
+      <originalPack>Renesas.RA.6.2.0.pack</originalPack>
+    </component>
   </raComponentSelection>
   <raElcConfiguration/>
   <raIcuConfiguration/>
@@ -1749,6 +1753,16 @@
       <property id="module.driver.uart.tei_ipl" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.uart.eri_ipl" value="board.icu.common.irq.priority12"/>
     </module>
+    <module id="module.driver.external_irq_on_icu.462017933">
+      <property id="module.driver.external_irq.name" value="g_external_irq20"/>
+      <property id="module.driver.external_irq.channel" value="20"/>
+      <property id="module.driver.external_irq.trigger" value="module.driver.external_irq.trigger.trig_falling"/>
+      <property id="module.driver.external_irq.filter_enable" value="module.driver.external_irq.filter_enable.false"/>
+      <property id="module.driver.external_irq.filter_source" value="module.driver.external_irq.filter_source.pclk"/>
+      <property id="module.driver.external_irq.clock_source_div" value="module.driver.external_irq.clock_source_div.clock_source_div_by_64"/>
+      <property id="module.driver.external_irq.p_callback" value="irq_callback"/>
+      <property id="module.driver.external_irq.ipl" value="board.icu.common.irq.priority12"/>
+    </module>
     <context id="_hal.0">
       <stack module="module.driver.ioport_on_ioport.0"/>
       <stack module="module.driver.uart_on_sci_b_uart.115874252"/>
@@ -1774,6 +1788,7 @@
       <stack module="module.driver.i2c_on_iic_master.2129583021"/>
       <stack module="module.driver.spi_on_spi_b.2079125247"/>
       <stack module="module.driver.uart_on_sci_b_uart.404954056"/>
+      <stack module="module.driver.external_irq_on_icu.462017933"/>
     </context>
     <config id="config.driver.ospi_b">
       <property id="config.driver.ospi_b.param_checking_enable" value="config.driver.ospi_b.param_checking_enable.bsp"/>
@@ -1840,6 +1855,9 @@
     <config id="config.driver.ioport">
       <property id="config.driver.ioport.checking" value="config.driver.ioport.checking.system"/>
       <property id="config.driver.ioport.ccd_support_enable" value="config.driver.ioport.ccd_support_enable.disabled"/>
+    </config>
+    <config id="config.driver.icu">
+      <property id="config.driver.icu.param_checking_enable" value="config.driver.icu.param_checking_enable.bsp"/>
     </config>
     <config id="config.driver.rtc">
       <property id="config.driver.rtc.param_checking_enable" value="config.driver.rtc.param_checking_enable.bsp"/>
@@ -2190,6 +2208,8 @@
       <configSetting altId="iic2.mode.custom.free" configurationId="iic2.mode"/>
       <configSetting altId="iic2.scl2.p709" configurationId="iic2.scl2"/>
       <configSetting altId="iic2.sda2.p708" configurationId="iic2.sda2"/>
+      <configSetting altId="irq.irq20.p110" configurationId="irq.irq20"/>
+      <configSetting altId="irq.mode.custom.free" configurationId="irq.mode"/>
       <configSetting altId="ospi1.mode.custom.free" configurationId="ospi1.mode"/>
       <configSetting altId="ospi1.om_1_cs0.pc08" configurationId="ospi1.om_1_cs0"/>
       <configSetting altId="ospi1.om_1_dqs.p607" configurationId="ospi1.om_1_dqs"/>
@@ -2233,6 +2253,9 @@
       <configSetting altId="p108.gpio_mode.gpio_mode_peripheral" configurationId="p108.gpio_mode"/>
       <configSetting altId="p109.gpt10.gtioc10a" configurationId="p109"/>
       <configSetting altId="p109.gpio_mode.gpio_mode_peripheral" configurationId="p109.gpio_mode"/>
+      <configSetting altId="p110.irq.irq20" configurationId="p110"/>
+      <configSetting altId="p110.gpio_irq.gpio_irq_enabled" configurationId="p110.gpio_irq"/>
+      <configSetting altId="p110.gpio_mode.gpio_mode_irq" configurationId="p110.gpio_mode"/>
       <configSetting altId="p111.sdhi0.sd0dat3" configurationId="p111"/>
       <configSetting altId="p111.gpio_mode.gpio_mode_peripheral" configurationId="p111.gpio_mode"/>
       <configSetting altId="p112.sci0.txd0" configurationId="p112"/>

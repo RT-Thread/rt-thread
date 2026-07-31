@@ -250,6 +250,16 @@ In **RT-Thread Settings**, you can configure the RT-Thread kernel, components, s
 
 ![image-20250819173700386](m85/figures/image-20250819173700386.png)
 
+### Enabling the Device Model (DM)
+
+The current DM GPIO and external-interrupt support targets the `m85` project. The `m33` project continues to use the legacy BSP drivers. The `m85` project uses `RT_USING_DM` to select one driver framework, so the DM and legacy drivers for the same GPIO controller are not built together.
+
+1. Enter the `m85` directory and run `scons --menuconfig`.
+2. Open `Device Drivers` and enable `Enable device driver model with device tree`.
+3. Save the configuration and run `scons -jN` for a GCC build.
+
+The BSP automatically selects OFW, built-in FDT, PIC, NVIC, and PIN support with `RT_USING_DM`, and uses `m85/board/dts/ra8p1-titan-m85.dts`. The build converts and embeds the DTB automatically.
+
 ## Contact Information
 
 If you have any thoughts or suggestions during usage, please feel free to contact us via the [RT-Thread Community Forum](https://club.rt-thread.org/).
