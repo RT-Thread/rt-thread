@@ -84,7 +84,7 @@ rt_err_t dfs_vnode_lock_init(struct dfs_vnode *vnode, struct dfs_dentry *dentry)
 
     path_hash = dfs_dentry_full_path_crc32(dentry);
     rt_snprintf(lock_name, sizeof(lock_name), "vn-%04x",
-            (unsigned int)(path_hash & 0xffffU));
+                (unsigned int)(path_hash & 0xffffU));
 
     return rt_mutex_init(&vnode->lock, lock_name, RT_IPC_FLAG_PRIO);
 }

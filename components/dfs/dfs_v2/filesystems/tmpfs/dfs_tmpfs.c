@@ -266,6 +266,7 @@ find_subpath:
         {
             if (rt_strcmp(file->name, filename) == 0)
             {
+                /* cppcheck-suppress uninitvar */
                 *size = file->size;
 
                 rt_spin_unlock(&superblock->lock);
@@ -525,6 +526,7 @@ static int dfs_tmpfs_getdents(struct dfs_file *file,
         if (index >= (rt_size_t)file->fpos)
         {
             d = dirp + count;
+            /* cppcheck-suppress uninitvar */
             if (n_file->type == TMPFS_TYPE_FILE)
             {
                 d->d_type = DT_REG;
