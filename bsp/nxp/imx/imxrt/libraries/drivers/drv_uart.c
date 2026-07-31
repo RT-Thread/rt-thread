@@ -28,35 +28,45 @@
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
     #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
-
-enum
-{
-#ifdef BSP_USING_LPUART1
-    LPUART1_INDEX,
-#endif
-#ifdef BSP_USING_LPUART2
-    LPUART2_INDEX,
-#endif
-#ifdef BSP_USING_LPUART3
-    LPUART3_INDEX,
-#endif
-#ifdef BSP_USING_LPUART4
-    LPUART4_INDEX,
-#endif
-#ifdef BSP_USING_LPUART5
-    LPUART5_INDEX,
-#endif
-#ifdef BSP_USING_LPUART6
-    LPUART6_INDEX,
-#endif
-#ifdef BSP_USING_LPUART7
-    LPUART7_INDEX,
-#endif
-#ifdef BSP_USING_LPUART8
-    LPUART8_INDEX,
-#endif
-};
-
+  enum
+  {
+  #ifdef BSP_USING_LPUART1
+      LPUART1_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART2
+      LPUART2_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART3
+      LPUART3_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART4
+      LPUART4_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART5
+      LPUART5_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART6
+      LPUART6_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART7
+      LPUART7_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART8
+      LPUART8_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART9
+      LPUART9_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART10
+      LPUART10_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART11
+      LPUART11_INDEX,
+  #endif
+  #ifdef BSP_USING_LPUART12
+      LPUART12_INDEX,
+  #endif
+  };
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
 struct dma_rx_config
 {
@@ -187,6 +197,54 @@ static struct imxrt_uart uarts[] =
         .dma_flag = 0,
     },
 #endif
+#ifdef BSP_USING_LPUART9
+    {
+        .name = "uart9",
+        .uart_base = LPUART9,
+        .irqn = LPUART9_IRQn,
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
+        .dma_rx = RT_NULL,
+        .dma_tx = RT_NULL,
+#endif
+        .dma_flag = 0,
+    },
+#endif
+#ifdef BSP_USING_LPUART10
+    {
+        .name = "uart10",
+        .uart_base = LPUART10,
+        .irqn = LPUART10_IRQn,
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
+        .dma_rx = RT_NULL,
+        .dma_tx = RT_NULL,
+#endif
+        .dma_flag = 0,
+    },
+#endif
+#ifdef BSP_USING_LPUART11
+    {
+        .name = "uart11",
+        .uart_base = LPUART11,
+        .irqn = LPUART11_IRQn,
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
+        .dma_rx = RT_NULL,
+        .dma_tx = RT_NULL,
+#endif
+        .dma_flag = 0,
+    },
+#endif
+#ifdef BSP_USING_LPUART12
+    {
+        .name = "uart12",
+        .uart_base = LPUART12,
+        .irqn = LPUART12_IRQn,
+#if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
+        .dma_rx = RT_NULL,
+        .dma_tx = RT_NULL,
+#endif
+        .dma_flag = 0,
+    },
+#endif
 };
 
 static void uart_get_dma_config(void)
@@ -278,8 +336,51 @@ static void uart_get_dma_config(void)
     uarts[LPUART8_INDEX].dma_tx = &uart8_dma_tx;
     uarts[LPUART8_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
-}
 
+#ifdef BSP_LPUART9_RX_USING_DMA
+    static struct dma_rx_config uart9_dma_rx = {.request = kDmaRequestMuxLPUART9Rx, .channel = BSP_LPUART9_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART9_INDEX].dma_rx = &uart9_dma_rx;
+    uarts[LPUART9_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART9_TX_USING_DMA
+    static struct dma_tx_config uart9_dma_tx = {.request = kDmaRequestMuxLPUART9Tx, .channel = BSP_LPUART9_TX_DMA_CHANNEL};
+    uarts[LPUART9_INDEX].dma_tx = &uart9_dma_tx;
+    uarts[LPUART9_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART10_RX_USING_DMA
+    static struct dma_rx_config uart10_dma_rx = {.request = kDmaRequestMuxLPUART10Rx, .channel = BSP_LPUART10_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART10_INDEX].dma_rx = &uart10_dma_rx;
+    uarts[LPUART10_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART10_TX_USING_DMA
+    static struct dma_tx_config uart10_dma_tx = {.request = kDmaRequestMuxLPUART10Tx, .channel = BSP_LPUART10_TX_DMA_CHANNEL};
+    uarts[LPUART10_INDEX].dma_tx = &uart10_dma_tx;
+    uarts[LPUART10_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART11_RX_USING_DMA
+    static struct dma_rx_config uart11_dma_rx = {.request = kDmaRequestMuxLPUART11Rx, .channel = BSP_LPUART11_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART11_INDEX].dma_rx = &uart11_dma_rx;
+    uarts[LPUART11_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART11_TX_USING_DMA
+    static struct dma_tx_config uart11_dma_tx = {.request = kDmaRequestMuxLPUART11Tx, .channel = BSP_LPUART11_TX_DMA_CHANNEL};
+    uarts[LPUART11_INDEX].dma_tx = &uart11_dma_tx;
+    uarts[LPUART11_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART12_RX_USING_DMA
+    static struct dma_rx_config uart12_dma_rx = {.request = kDmaRequestMuxLPUART12Rx, .channel = BSP_LPUART12_RX_DMA_CHANNEL, .last_index = 0};
+    uarts[LPUART12_INDEX].dma_rx = &uart12_dma_rx;
+    uarts[LPUART12_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART12_TX_USING_DMA
+    static struct dma_tx_config uart12_dma_tx = {.request = kDmaRequestMuxLPUART12Tx, .channel = BSP_LPUART12_TX_DMA_CHANNEL};
+    uarts[LPUART12_INDEX].dma_tx = &uart12_dma_tx;
+    uarts[LPUART12_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+}
 static void uart_isr(struct imxrt_uart *uart);
 
 #if defined(BSP_USING_LPUART1)
@@ -389,9 +490,59 @@ void LPUART8_IRQHandler(void)
 
     rt_interrupt_leave();
 }
+  #endif /* BSP_USING_LPUART8 */
 
-#endif /* BSP_USING_LPUART8 */
+  #if defined(BSP_USING_LPUART9)
 
+  void LPUART9_IRQHandler(void)
+  {
+      rt_interrupt_enter();
+
+      uart_isr(&uarts[LPUART9_INDEX]);
+
+      rt_interrupt_leave();
+  }
+
+  #endif /* BSP_USING_LPUART9 */
+
+  #if defined(BSP_USING_LPUART10)
+
+  void LPUART10_IRQHandler(void)
+  {
+      rt_interrupt_enter();
+
+      uart_isr(&uarts[LPUART10_INDEX]);
+
+      rt_interrupt_leave();
+  }
+
+  #endif /* BSP_USING_LPUART10 */
+
+  #if defined(BSP_USING_LPUART11)
+
+  void LPUART11_IRQHandler(void)
+  {
+      rt_interrupt_enter();
+
+      uart_isr(&uarts[LPUART11_INDEX]);
+
+      rt_interrupt_leave();
+  }
+
+  #endif /* BSP_USING_LPUART11 */
+
+  #if defined(BSP_USING_LPUART12)
+
+  void LPUART12_IRQHandler(void)
+  {
+      rt_interrupt_enter();
+
+      uart_isr(&uarts[LPUART12_INDEX]);
+
+      rt_interrupt_leave();
+  }
+
+  #endif /* BSP_USING_LPUART12 */
 static void uart_isr(struct imxrt_uart *uart)
 {
     RT_ASSERT(uart != RT_NULL);
