@@ -1,0 +1,56 @@
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# multicore libraries are stored in the nxp-imxrt-sdk package to avoid duplication
+sdk_multicore = cwd + '/../packages/nxp-imxrt-sdk-latest/MIMXRT1180/multicore'
+
+# Base multicore sources (always included when BSP_USE_MULTICORE is enabled)
+src = Split("""
+mcmgr/src/mcmgr.c
+mcmgr/src/mcmgr_internal_core_api_imxrt1180.c
+mcmgr/src/mcmgr_mu_internal.c
+""")
+
+src = [sdk_multicore + '/' + f.strip() for f in src]
+
+# Add RPMsg-Lite sources if enabled
+if GetDepend(['BSP_USE_MULTICORE_RPMSG_LITE']):
+    rpmsg_src = Split("""
+    rpmsg-lite/lib/common/llist.c
+    rpmsg-lite/lib/rpmsg_lite/rpmsg_lite.c
+    rpmsg-lite/lib/rpmsg_lite/rpmsg_queue.c
+    rpmsg-lite/lib/rpmsg_lite/rpmsg_ns.c
+    rpmsg-lite/lib/virtio/virtqueue.c
+    rpmsg-lite/lib/rpmsg_lite/porting/environment/rpmsg_env_rtthread.c
+    rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt1180/rpmsg_platform.c
+    """)
+    src += [sdk_multicore + '/' + f.strip() for f in rpmsg_src]
+
+# Base include paths
+CPPPATH = [
+    cwd,
+    sdk_multicore + '/mcmgr/inc',
+    sdk_multicore + '/mcmgr/inc/platform/imxrt1180'
+]
+
+# Add RPMsg-Lite include paths if enabled
+if GetDepend(['BSP_USE_MULTICORE_RPMSG_LITE']):
+    CPPPATH += [
+        sdk_multicore + '/rpmsg-lite/lib/include',
+        sdk_multicore + '/rpmsg-lite/lib/include/environment/rtthread',
+        sdk_multicore + '/rpmsg-lite/lib/include/platform/imxrt1180'
+    ]
+
+# Define preprocessor macros
+CPPDEFINES = []
+
+# Create component group with dependency on BSP_USE_MULTICORE
+group = DefineGroup('MultiCore',
+                    src,
+                    depend=['BSP_USE_MULTICORE'],
+                    CPPPATH=CPPPATH,
+                    CPPDEFINES=CPPDEFINES)
+
+Return('group')
