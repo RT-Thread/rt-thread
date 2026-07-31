@@ -214,4 +214,8 @@ rt_err_t rt_pic_irq_parent_set_triger_mode(struct rt_pic_irq *pirq, rt_uint32_t 
 
 rt_err_t rt_pic_init(void);
 
+#ifdef RT_PIC_ARM_NVIC
+void rt_hw_nvic_dispatch(void);
+#endif
+
 #endif /* __PIC_H__ */

@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../include']
 
 src = ['pic.c', 'pic_rthw.c']
 
+if GetDepend(['RT_PIC_ARM_NVIC']):
+    src += ['pic-arm-nvic.c']
+
 if GetDepend(['RT_PIC_ARM_GIC']) or GetDepend(['RT_PIC_ARM_GIC_V3']):
     src += ['pic-gic-common.c']
 

@@ -243,7 +243,7 @@ void rt_hw_cpu_shutdown(void)
 }
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_shutdown, shutdown, shutdown machine);
 
-void rt_hw_cpu_reset(void)
+rt_weak void rt_hw_cpu_reset(void)
 {
     register rt_ubase_t level;
 
