@@ -161,6 +161,7 @@ void DCDC_SetVoltage(uint8_t core, uint8_t targetVoltage);
 void BOARD_NETC_Init(void);
 void BOARD_RequestTRDC(bool bRequestAON, bool bRequestWakeup, bool bReqeustMega);
 void BOARD_CommonSetting(void);
+void PHY_Reset(void);
 
 /* </RDTConfigurator>*/
 #if defined(__ARMCC_VERSION)
@@ -179,10 +180,13 @@ extern int __HeapLimit;
 #define HEAP_END  ((void *)&__HeapLimit)
 #endif
 
-/*! @brief The board flash size */
-#define BOARD_FLASH_SIZE (0x1000000U)
-
 void rt_hw_board_init(void);
+
+status_t BOARD_GetCore1ImageAddrSize(uint32_t *pImageSrcAddr,
+                                     uint32_t *pImageDestAddr,
+                                     uint32_t *pImageSize,
+                                     uint32_t *pImageBootAddr);
+void BOARD_PrepareCore1(uint32_t image_src_addr, uint32_t image_dest_addr, uint32_t image_size, uint32_t boot_addr);
 
 #if defined(__cplusplus)
 }
