@@ -88,6 +88,9 @@ _start:
  *   x2 = 0 (reserved for future use)
  *   x3 = 0 (reserved for future use)
  */
+
+    /* Ensure CPU drops to EL1 before touching _el1 registers */
+    bl      init_cpu_el
     mov     dtb_paddr, x0
     mov     boot_arg0, x1
     mov     boot_arg1, x2
@@ -96,13 +99,8 @@ _start:
     /* Save cpu stack */
     get_phy stack_top, .boot_cpu_stack_top
     /* Save cpu id temp */
-#ifdef ARCH_USING_HW_THREAD_SELF
-    msr     tpidrro_el0, xzr
-    /* Save thread self */
-#endif /* ARCH_USING_HW_THREAD_SELF */
     msr     tpidr_el1, xzr
 
-    bl      init_cpu_el
     bl      init_kernel_bss
     bl      init_cpu_stack_early
 
@@ -113,15 +111,15 @@ _start:
 #endif
 
     /* Now we are in the end of boot cpu process */
-    ldr     x19, =rtthread_startup
+    ldr     x8, =rtthread_startup
     b       init_mmu_early
     /* never come back */
 
 kernel_start:
     /* jump to the PE's system entry */
     mov     x29, xzr
-    mov     x30, x19
-    br      x19
+    mov     x30, x8
+    br      x8
 
 cpu_idle:
     wfe
@@ -154,10 +152,11 @@ _secondary_cpu_entry:
 
     /* Get cpu id success */
     sub     x0, x2, #1
-#endif /* RT_USING_OFW */
-    /* Save cpu id global */
+    msr     tpidr_el1, x0           /* Save cpu id global */
+#else
     bl      rt_hw_cpu_id_set
-    bl      rt_hw_cpu_id
+    mrs     x0, tpidr_el1
+#endif /* RT_USING_OFW */
 
     /* Set current cpu's stack top */
     sub     x0, x0, #1
@@ -169,7 +168,7 @@ _secondary_cpu_entry:
     bl      init_cpu_stack_early
 
     /* secondary cpu start to startup */
-    ldr     x19, =rt_hw_secondary_cpu_bsp_start
+    ldr     x8, =rt_hw_secondary_cpu_bsp_start
     b       enable_mmu_early
 #endif /* RT_USING_SMP */
 
@@ -180,9 +179,9 @@ init_cpu_el:
 
     /* running at EL3? */
     cmp     x0, #3
-    bne     .init_cpu_hyp_test
+    bne     .init_cpu_hyp
 
-    /* should never be executed, just for completeness. (EL3) */
+    /* Drop from EL3 to EL2 */
     mov     x1, #(1 << 0)           /* EL0 and EL1 are in Non-Secure state */
     orr     x1, x1, #(1 << 4)       /* RES1 */
     orr     x1, x1, #(1 << 5)       /* RES1 */
@@ -200,12 +199,24 @@ init_cpu_el:
     msr     elr_el3, x1
     eret
 
-.init_cpu_hyp_test:
+.init_cpu_hyp:
+    /* Re-evaluate CurrentEL in case we dropped from EL3 */
+    mrs     x0, CurrentEL
+    lsr     x0, x0, #2
+    and     x0, x0, #3
+
     /* running at EL2? */
     cmp     x0, #2                  /* EL2 = 0b10  */
     bne     .init_cpu_sys
 
-.init_cpu_hyp:
+    /* Disable EL2 MMU and Caches */
+    mrs     x0, sctlr_el2
+    bic     x0, x0, #(1 << 0)       /* Clear M bit: disable EL2 MMU */
+    bic     x0, x0, #(1 << 2)       /* Clear C bit: disable D-Cache */
+    bic     x0, x0, #(1 << 12)      /* Clear I bit: disable I-Cache */
+    msr     sctlr_el2, x0
+    isb
+
     /* Enable CNTP for EL1 */
     mrs     x0, cnthctl_el2         /* Counter-timer Hypervisor Control register */
     orr     x0, x0, #(1 << 0)       /* Don't traps NS EL0/1 accesses to the physical counter */
@@ -213,10 +224,23 @@ init_cpu_el:
     msr     cnthctl_el2, x0
     msr     cntvoff_el2, xzr
 
-    mov     x0, #(1 << 31)          /* Enable AArch64 in EL1 */
+    /* Configure HCR_EL2: Enable AArch64 for EL1, disable Stage-2 MMU and traps */
+    mov     x0, #(1 << 31)          /* Bit 31: Enable AArch64 in EL1 */
     orr     x0, x0, #(1 << 1)       /* SWIO hardwired */
     msr     hcr_el2, x0
+    isb
 
+    /* Do not trap FP/SIMD instructions to EL2 */
+    msr     cptr_el2, xzr
+
+    /* Invalidate stale EL2 and Stage-2 TLBs left by bootloader */
+    tlbi    alle2is
+    tlbi    vmalle1is
+    ic      iallu
+    dsb     sy
+    isb
+
+    /* Configure target exception level (EL1h) */
     mov     x0, #5                  /* Next level is 0b0101->EL1h */
     orr     x0, x0, #(1 << 6)       /* Mask FIQ */
     orr     x0, x0, #(1 << 7)       /* Mask IRQ */
@@ -233,10 +257,6 @@ init_cpu_el:
     bic     x0, x0, #(3 << 3)       /* Disable SP Alignment check */
     bic     x0, x0, #(1 << 1)       /* Disable Alignment check */
     msr     sctlr_el1, x0
-
-    mrs     x0, cntkctl_el1
-    orr     x0, x0, #(1 << 1)      /* Set EL0VCTEN, enabling the EL0 Virtual Count Timer */
-    msr     cntkctl_el1, x0
 
     /* Avoid trap from SIMD or float point instruction */
     mov     x0, #0x00300000         /* Don't trap any SIMD/FP instructions in both EL0 and EL1 */
@@ -323,10 +343,6 @@ enable_mmu_early:
     isb
 
     ic      ialluis     /* Invalidate all instruction caches in Inner Shareable domain to Point of Unification */
-    dsb     ish
-    isb
-
-    tlbi    vmalle1     /* Invalidate all stage 1 translations used at EL1 with the current VMID */
     dsb     ish
     isb
 
