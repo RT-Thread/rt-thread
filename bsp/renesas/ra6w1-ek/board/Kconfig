@@ -1,0 +1,44 @@
+menu "Hardware Drivers Config"
+
+    menu "On-chip Peripheral Drivers"
+
+        config BSP_USING_GPIO_W
+            bool "Enable GPIO"
+            select RT_USING_PIN
+            default y
+
+        menuconfig BSP_USING_UART
+            bool "Enable UART"
+            default y
+            select RT_USING_SERIAL
+            if BSP_USING_UART
+                menuconfig BSP_USING_UART0
+                    bool "Enable UART0"
+                    default y
+                    if BSP_USING_UART0
+                        config BSP_UART0_RX_USING_DMA
+                            bool "Enable UART0 RX DMA"
+                            depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART0_TX_USING_DMA
+                            bool "Enable UART0 TX DMA"
+                            depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART0_RX_BUFSIZE
+                            int "Set UART0 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART0_TX_BUFSIZE
+                            int "Set UART0 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+
+            endif
+    endmenu 
+endmenu
