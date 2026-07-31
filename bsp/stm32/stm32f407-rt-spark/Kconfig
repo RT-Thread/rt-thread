@@ -11,13 +11,23 @@ config SOC_STM32F407ZG
     select SOC_SERIES_STM32F4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select RT_USING_OFW if RT_USING_DM
+    select RT_USING_BUILTIN_FDT if RT_USING_DM
+    select RT_USING_PIC if RT_USING_DM
+    select RT_PIC_ARM_NVIC if RT_USING_DM
+    select RT_USING_PIN if RT_USING_DM
     default y
 
 config BOARD_STM32F407_SPARK
     bool
     default y
 
+config RT_BUILTIN_FDT_PATH
+    string
+    default "board/dts/stm32f407-rt-spark.dtb" if RT_USING_DM
+
 source "$(RTT_DIR)/Kconfig"
+
 osource "$PKGS_DIR/Kconfig"
 rsource "../libraries/Kconfig"
 

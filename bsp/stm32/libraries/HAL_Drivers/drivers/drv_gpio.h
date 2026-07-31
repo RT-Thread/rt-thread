@@ -21,6 +21,8 @@
 extern "C" {
 #endif
 
+#ifndef RT_USING_DM
+
 #define __STM32_PORT(port)  GPIO##port##_BASE
 
 /**
@@ -79,6 +81,8 @@ extern "C" {
 #else
 #define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__STM32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x0400UL) )) + PIN)
 #endif
+
+#endif /* !RT_USING_DM */
 
 struct pin_irq_map
 {
