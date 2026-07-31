@@ -12,6 +12,8 @@
 #ifndef _PIN_MUX_H_
 #define _PIN_MUX_H_
 
+#include <rtthread.h>
+
 /*!
  * @addtogroup pin_mux
  * @{
@@ -36,6 +38,112 @@ void BOARD_InitBootPins(void);
  *
  */
 void BOARD_InitPins(void);                    /* Function assigned for the Cortex-M33 */
+
+#ifdef BSP_USING_ETH
+/* GPIO_AD_25 (coord M15), ENET0_RST_B */
+/* Routed pin properties */
+#define BOARD_INITPHYACCESSPINS_ENET0_RST_B_PERIPHERAL                    RGPIO4   /*!< Peripheral name */
+#define BOARD_INITPHYACCESSPINS_ENET0_RST_B_SIGNAL                       gpio_io   /*!< Signal name */
+#define BOARD_INITPHYACCESSPINS_ENET0_RST_B_CHANNEL                          25U   /*!< Signal channel */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPHYACCESSPINS_ENET0_RST_B_GPIO                          RGPIO4   /*!< GPIO peripheral base pointer */
+#define BOARD_INITPHYACCESSPINS_ENET0_RST_B_GPIO_PIN                         25U   /*!< GPIO pin number */
+#define BOARD_INITPHYACCESSPINS_ENET0_RST_B_GPIO_PIN_MASK            (1U << 25U)   /*!< GPIO pin mask */
+
+/* GPIO_B1_13 (coord B11), ENET1_RST_B */
+/* Routed pin properties */
+#define BOARD_INITPHYACCESSPINS_ENET1_RST_B_PERIPHERAL                    RGPIO6   /*!< Peripheral name */
+#define BOARD_INITPHYACCESSPINS_ENET1_RST_B_SIGNAL                       gpio_io   /*!< Signal name */
+#define BOARD_INITPHYACCESSPINS_ENET1_RST_B_CHANNEL                          13U   /*!< Signal channel */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPHYACCESSPINS_ENET1_RST_B_GPIO                          RGPIO6   /*!< GPIO peripheral base pointer */
+#define BOARD_INITPHYACCESSPINS_ENET1_RST_B_GPIO_PIN                         13U   /*!< GPIO pin number */
+#define BOARD_INITPHYACCESSPINS_ENET1_RST_B_GPIO_PIN_MASK            (1U << 13U)   /*!< GPIO pin mask */
+
+/* GPIO_AD_28 (coord L16), ENET2_RST_B */
+/* Routed pin properties */
+#define BOARD_INITPHYACCESSPINS_ENET2_RST_B_PERIPHERAL                    RGPIO4   /*!< Peripheral name */
+#define BOARD_INITPHYACCESSPINS_ENET2_RST_B_SIGNAL                       gpio_io   /*!< Signal name */
+#define BOARD_INITPHYACCESSPINS_ENET2_RST_B_CHANNEL                          28U   /*!< Signal channel */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPHYACCESSPINS_ENET2_RST_B_GPIO                          RGPIO4   /*!< GPIO peripheral base pointer */
+#define BOARD_INITPHYACCESSPINS_ENET2_RST_B_GPIO_PIN                         28U   /*!< GPIO pin number */
+#define BOARD_INITPHYACCESSPINS_ENET2_RST_B_GPIO_PIN_MASK            (1U << 28U)   /*!< GPIO pin mask */
+
+/* GPIO_B2_01 (coord E10), ENET3_RST_B */
+/* Routed pin properties */
+#define BOARD_INITPHYACCESSPINS_ENET3_RST_B_PERIPHERAL                    RGPIO6   /*!< Peripheral name */
+#define BOARD_INITPHYACCESSPINS_ENET3_RST_B_SIGNAL                       gpio_io   /*!< Signal name */
+#define BOARD_INITPHYACCESSPINS_ENET3_RST_B_CHANNEL                          15U   /*!< Signal channel */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPHYACCESSPINS_ENET3_RST_B_GPIO                          RGPIO6   /*!< GPIO peripheral base pointer */
+#define BOARD_INITPHYACCESSPINS_ENET3_RST_B_GPIO_PIN                         15U   /*!< GPIO pin number */
+#define BOARD_INITPHYACCESSPINS_ENET3_RST_B_GPIO_PIN_MASK            (1U << 15U)   /*!< GPIO pin mask */
+
+/* GPIO_AD_13 (coord N15), ENET4_RST_B */
+/* Routed pin properties */
+#define BOARD_INITPHYACCESSPINS_ENET4_RST_B_PERIPHERAL                    RGPIO4   /*!< Peripheral name */
+#define BOARD_INITPHYACCESSPINS_ENET4_RST_B_SIGNAL                       gpio_io   /*!< Signal name */
+#define BOARD_INITPHYACCESSPINS_ENET4_RST_B_CHANNEL                          13U   /*!< Signal channel */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPHYACCESSPINS_ENET4_RST_B_GPIO                          RGPIO4   /*!< GPIO peripheral base pointer */
+#define BOARD_INITPHYACCESSPINS_ENET4_RST_B_GPIO_PIN                         13U   /*!< GPIO pin number */
+#define BOARD_INITPHYACCESSPINS_ENET4_RST_B_GPIO_PIN_MASK            (1U << 13U)   /*!< GPIO pin mask */
+
+/* GPIO_AD_12 (coord P17), ENET4_INT_B */
+/* Routed pin properties */
+#define BOARD_INITPHYACCESSPINS_ENET4_INT_B_PERIPHERAL                    RGPIO4   /*!< Peripheral name */
+#define BOARD_INITPHYACCESSPINS_ENET4_INT_B_SIGNAL                       gpio_io   /*!< Signal name */
+#define BOARD_INITPHYACCESSPINS_ENET4_INT_B_CHANNEL                          12U   /*!< Signal channel */
+
+/* Symbols to be used with GPIO driver */
+#define BOARD_INITPHYACCESSPINS_ENET4_INT_B_GPIO                          RGPIO4   /*!< GPIO peripheral base pointer */
+#define BOARD_INITPHYACCESSPINS_ENET4_INT_B_GPIO_PIN                         12U   /*!< GPIO pin number */
+#define BOARD_INITPHYACCESSPINS_ENET4_INT_B_GPIO_PIN_MASK            (1U << 12U)   /*!< GPIO pin mask */
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitPhyAccessPins(void);           /* Function assigned for the Cortex-M33 */
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitEpPins(void);                  /* Function assigned for the Cortex-M33 */
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitSwtPort0Pins(void);            /* Function assigned for the Cortex-M33 */
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitSwtPort1Pins(void);            /* Function assigned for the Cortex-M33 */
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitSwtPort2Pins(void);            /* Function assigned for the Cortex-M33 */
+
+/*!
+ * @brief Configures pin routing and optionally pin electrical features.
+ *
+ */
+void BOARD_InitSwtPort3Pins(void);            /* Function assigned for the Cortex-M33 */
+
+#endif
+
 
 #if defined(__cplusplus)
 }

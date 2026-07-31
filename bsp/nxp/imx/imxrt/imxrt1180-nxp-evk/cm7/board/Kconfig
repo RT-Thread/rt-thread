@@ -19,10 +19,6 @@ config SOC_MIMXRT1189CVM8C_CM7
     select ARCH_ARM_CORTEX_M7
     select ARCH_ARM_CORTEX_FPU
 
-config BSP_USING_LCD_MIPI
-    bool
-    default n
-
 menu "On-chip Peripheral Drivers"
 
     config BSP_USING_DMA
@@ -39,18 +35,42 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_RTC
         default n
 
-    config BSP_USING_USB
-        bool "Enable USB"
-        select RT_USING_USB_HOST
+    menuconfig BSP_USING_USB
+        bool "Enable USB (CherryUSB)"
         default n
 
     if BSP_USING_USB
-    config BSP_USB0_HOST
-        bool "Enable USB0"
-        default n
+        choice
+            prompt "USB controller"
+            default BSP_CHERRYUSB_USING_OTG1
 
-    config BSP_USB1_HOST
-        bool "Enable USB1"
+            config BSP_CHERRYUSB_USING_OTG1
+                bool "USB OTG1"
+
+            config BSP_CHERRYUSB_USING_OTG2
+                bool "USB OTG2"
+        endchoice
+
+        choice
+            prompt "USB role"
+            default BSP_USING_CHERRYUSB_DEVICE
+
+            config BSP_USING_CHERRYUSB_DEVICE
+                bool "Enable USB Device"
+                select RT_USING_CHERRYUSB
+                select RT_CHERRYUSB_DEVICE
+
+            config BSP_USING_CHERRYUSB_HOST
+                bool "Enable USB Host"
+                select RT_USING_CHERRYUSB
+                select RT_CHERRYUSB_HOST
+                select RT_USING_TIMER_SOFT
+        endchoice
+
+    config BSP_CHERRYUSB_HOST_MOUSE_DEMO
+        bool "Enable CherryUSB host mouse shell demo"
+        depends on BSP_USING_CHERRYUSB_HOST
+        select RT_CHERRYUSB_HOST_HID
         default n
     endif
 
@@ -78,201 +98,445 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable LPUART1"
                 default y
 
-        config BSP_LPUART1_RX_USING_DMA
-            bool "Enable LPUART1 RX DMA"
-            depends on BSP_USING_LPUART1
-            select BSP_USING_DMA
-            select RT_SERIAL_USING_DMA
-            default n
+            config BSP_LPUART1_RX_USING_DMA
+                bool "Enable LPUART1 RX DMA"
+                depends on BSP_USING_LPUART1
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
 
-        config BSP_LPUART1_RX_DMA_CHANNEL
-        depends on BSP_LPUART1_RX_USING_DMA
-        int "Set LPUART1 RX DMA channel (0-32)"
-        default 0
+            config BSP_LPUART1_RX_DMA_CHANNEL
+                depends on BSP_LPUART1_RX_USING_DMA
+                int "Set LPUART1 RX DMA channel (0-32)"
+                default 0
 
-                config BSP_LPUART1_TX_USING_DMA
-                    bool "Enable LPUART1 TX DMA"
-                    depends on BSP_USING_LPUART1
-                    select BSP_USING_DMA
-                    select RT_SERIAL_USING_DMA
-                    default n
+            config BSP_LPUART1_TX_USING_DMA
+                bool "Enable LPUART1 TX DMA"
+                depends on BSP_USING_LPUART1
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
 
-                    config BSP_LPUART1_TX_DMA_CHANNEL
-                        depends on BSP_LPUART1_TX_USING_DMA
-                        int "Set LPUART1 TX DMA channel (0-32)"
-                        default 1
+            config BSP_LPUART1_TX_DMA_CHANNEL
+                depends on BSP_LPUART1_TX_USING_DMA
+                int "Set LPUART1 TX DMA channel (0-32)"
+                default 1
+
+            config BSP_USING_LPUART2
+                bool "Enable LPUART2"
+                default n
+
+            config BSP_LPUART2_RX_USING_DMA
+                bool "Enable LPUART2 RX DMA"
+                depends on BSP_USING_LPUART2
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART2_RX_DMA_CHANNEL
+                depends on BSP_LPUART2_RX_USING_DMA
+                int "Set LPUART2 RX DMA channel (0-32)"
+                default 2
+
+            config BSP_LPUART2_TX_USING_DMA
+                bool "Enable LPUART2 TX DMA"
+                depends on BSP_USING_LPUART2
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART2_TX_DMA_CHANNEL
+                depends on BSP_LPUART2_TX_USING_DMA
+                int "Set LPUART2 TX DMA channel (0-32)"
+                default 3
 
             config BSP_USING_LPUART3
                 bool "Enable LPUART3"
                 default n
 
-                config BSP_LPUART3_RX_USING_DMA
-                    bool "Enable LPUART3 RX DMA"
-                    depends on BSP_USING_LPUART3
-                    select BSP_USING_DMA
-                    select RT_SERIAL_USING_DMA
-                    default n
+            config BSP_LPUART3_RX_USING_DMA
+                bool "Enable LPUART3 RX DMA"
+                depends on BSP_USING_LPUART3
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
 
-                    config BSP_LPUART3_RX_DMA_CHANNEL
-                        depends on BSP_LPUART3_RX_USING_DMA
-                        int "Set LPUART3 RX DMA channel (0-32)"
-                        default 0
+            config BSP_LPUART3_RX_DMA_CHANNEL
+                depends on BSP_LPUART3_RX_USING_DMA
+                int "Set LPUART3 RX DMA channel (0-32)"
+                default 4
 
-                config BSP_LPUART3_TX_USING_DMA
-                    bool "Enable LPUART3 TX DMA"
-                    depends on BSP_USING_LPUART3
-                    select BSP_USING_DMA
-                    select RT_SERIAL_USING_DMA
-                    default n
+            config BSP_LPUART3_TX_USING_DMA
+                bool "Enable LPUART3 TX DMA"
+                depends on BSP_USING_LPUART3
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
 
-                    config BSP_LPUART3_TX_DMA_CHANNEL
-                        depends on BSP_LPUART3_TX_USING_DMA
-                        int "Set LPUART3 TX DMA channel (0-32)"
-                        default 1
+            config BSP_LPUART3_TX_DMA_CHANNEL
+                depends on BSP_LPUART3_TX_USING_DMA
+                int "Set LPUART3 TX DMA channel (0-32)"
+                default 5
+
+            config BSP_USING_LPUART4
+                bool "Enable LPUART4"
+                default n
+
+            config BSP_LPUART4_RX_USING_DMA
+                bool "Enable LPUART4 RX DMA"
+                depends on BSP_USING_LPUART4
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART4_RX_DMA_CHANNEL
+                depends on BSP_LPUART4_RX_USING_DMA
+                int "Set LPUART4 RX DMA channel (0-32)"
+                default 6
+
+            config BSP_LPUART4_TX_USING_DMA
+                bool "Enable LPUART4 TX DMA"
+                depends on BSP_USING_LPUART4
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART4_TX_DMA_CHANNEL
+                depends on BSP_LPUART4_TX_USING_DMA
+                int "Set LPUART4 TX DMA channel (0-32)"
+                default 7
+
+            config BSP_USING_LPUART5
+                bool "Enable LPUART5"
+                default n
+
+            config BSP_LPUART5_RX_USING_DMA
+                bool "Enable LPUART5 RX DMA"
+                depends on BSP_USING_LPUART5
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART5_RX_DMA_CHANNEL
+                depends on BSP_LPUART5_RX_USING_DMA
+                int "Set LPUART5 RX DMA channel (0-32)"
+                default 8
+
+            config BSP_LPUART5_TX_USING_DMA
+                bool "Enable LPUART5 TX DMA"
+                depends on BSP_USING_LPUART5
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART5_TX_DMA_CHANNEL
+                depends on BSP_LPUART5_TX_USING_DMA
+                int "Set LPUART5 TX DMA channel (0-32)"
+                default 9
+
+            config BSP_USING_LPUART6
+                bool "Enable LPUART6"
+                default n
+
+            config BSP_LPUART6_RX_USING_DMA
+                bool "Enable LPUART6 RX DMA"
+                depends on BSP_USING_LPUART6
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART6_RX_DMA_CHANNEL
+                depends on BSP_LPUART6_RX_USING_DMA
+                int "Set LPUART6 RX DMA channel (0-32)"
+                default 10
+
+            config BSP_LPUART6_TX_USING_DMA
+                bool "Enable LPUART6 TX DMA"
+                depends on BSP_USING_LPUART6
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART6_TX_DMA_CHANNEL
+                depends on BSP_LPUART6_TX_USING_DMA
+                int "Set LPUART6 TX DMA channel (0-32)"
+                default 11
+
+            config BSP_USING_LPUART7
+                bool "Enable LPUART7"
+                default n
+
+            config BSP_LPUART7_RX_USING_DMA
+                bool "Enable LPUART7 RX DMA"
+                depends on BSP_USING_LPUART7
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART7_RX_DMA_CHANNEL
+                depends on BSP_LPUART7_RX_USING_DMA
+                int "Set LPUART7 RX DMA channel (0-32)"
+                default 12
+
+            config BSP_LPUART7_TX_USING_DMA
+                bool "Enable LPUART7 TX DMA"
+                depends on BSP_USING_LPUART7
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART7_TX_DMA_CHANNEL
+                depends on BSP_LPUART7_TX_USING_DMA
+                int "Set LPUART7 TX DMA channel (0-32)"
+                default 13
+
+            config BSP_USING_LPUART8
+                bool "Enable LPUART8"
+                default n
+
+            config BSP_LPUART8_RX_USING_DMA
+                bool "Enable LPUART8 RX DMA"
+                depends on BSP_USING_LPUART8
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART8_RX_DMA_CHANNEL
+                depends on BSP_LPUART8_RX_USING_DMA
+                int "Set LPUART8 RX DMA channel (0-32)"
+                default 14
+
+            config BSP_LPUART8_TX_USING_DMA
+                bool "Enable LPUART8 TX DMA"
+                depends on BSP_USING_LPUART8
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART8_TX_DMA_CHANNEL
+                depends on BSP_LPUART8_TX_USING_DMA
+                int "Set LPUART8 TX DMA channel (0-32)"
+                default 15
+
+            config BSP_USING_LPUART9
+                bool "Enable LPUART9"
+                default n
+
+            config BSP_LPUART9_RX_USING_DMA
+                bool "Enable LPUART9 RX DMA"
+                depends on BSP_USING_LPUART9
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART9_RX_DMA_CHANNEL
+                depends on BSP_LPUART9_RX_USING_DMA
+                int "Set LPUART9 RX DMA channel (0-32)"
+                default 16
+
+            config BSP_LPUART9_TX_USING_DMA
+                bool "Enable LPUART9 TX DMA"
+                depends on BSP_USING_LPUART9
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART9_TX_DMA_CHANNEL
+                depends on BSP_LPUART9_TX_USING_DMA
+                int "Set LPUART9 TX DMA channel (0-32)"
+                default 17
+
+            config BSP_USING_LPUART10
+                bool "Enable LPUART10"
+                default n
+
+            config BSP_LPUART10_RX_USING_DMA
+                bool "Enable LPUART10 RX DMA"
+                depends on BSP_USING_LPUART10
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART10_RX_DMA_CHANNEL
+                depends on BSP_LPUART10_RX_USING_DMA
+                int "Set LPUART10 RX DMA channel (0-32)"
+                default 18
+
+            config BSP_LPUART10_TX_USING_DMA
+                bool "Enable LPUART10 TX DMA"
+                depends on BSP_USING_LPUART10
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART10_TX_DMA_CHANNEL
+                depends on BSP_LPUART10_TX_USING_DMA
+                int "Set LPUART10 TX DMA channel (0-32)"
+                default 19
+
+            config BSP_USING_LPUART11
+                bool "Enable LPUART11"
+                default n
+
+            config BSP_LPUART11_RX_USING_DMA
+                bool "Enable LPUART11 RX DMA"
+                depends on BSP_USING_LPUART11
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART11_RX_DMA_CHANNEL
+                depends on BSP_LPUART11_RX_USING_DMA
+                int "Set LPUART11 RX DMA channel (0-32)"
+                default 20
+
+            config BSP_LPUART11_TX_USING_DMA
+                bool "Enable LPUART11 TX DMA"
+                depends on BSP_USING_LPUART11
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART11_TX_DMA_CHANNEL
+                depends on BSP_LPUART11_TX_USING_DMA
+                int "Set LPUART11 TX DMA channel (0-32)"
+                default 21
+
+            config BSP_USING_LPUART12
+                bool "Enable LPUART12"
+                default n
+
+            config BSP_LPUART12_RX_USING_DMA
+                bool "Enable LPUART12 RX DMA"
+                depends on BSP_USING_LPUART12
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART12_RX_DMA_CHANNEL
+                depends on BSP_LPUART12_RX_USING_DMA
+                int "Set LPUART12 RX DMA channel (0-32)"
+                default 22
+
+            config BSP_LPUART12_TX_USING_DMA
+                bool "Enable LPUART12 TX DMA"
+                depends on BSP_USING_LPUART12
+                select BSP_USING_DMA
+                select RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_LPUART12_TX_DMA_CHANNEL
+                depends on BSP_LPUART12_TX_USING_DMA
+                int "Set LPUART12 TX DMA channel (0-32)"
+                default 23
         endif
 
-        menuconfig BSP_USING_I2C
-            bool "Enable I2C"
-            select RT_USING_I2C
-            default n
-            if BSP_USING_I2C
-                config BSP_USING_I2C2
-                    bool "Enable I2C2"
-                    default y
+    menuconfig BSP_USING_CAN
+        bool "Enable CAN"
+        select RT_USING_CAN
+        default n
+        if BSP_USING_CAN
+            config BSP_USING_CAN3
+                bool "Enable FLEXCAN3"
+                default n
+        endif
 
-                config BSP_USING_I2C3
-                    bool "Enable I2C3"
-                    default n
-
-                choice I2C2_BAUD_SEL
-                    prompt "Select I2C2 badurate"
-                    default HW_I2C2_BADURATE_100kHZ
-
-                    config HW_I2C2_BADURATE_100kHZ
-                        bool "Badurate 100kHZ"
-
-                    config HW_I2C2_BADURATE_400kHZ
-                        bool "Badurate 400kHZ"
-                endchoice
-
-                choice I2C3_BAUD_SEL
-                    prompt "Select I2C3 badurate"
-                    default HW_I2C3_BADURATE_100kHZ
-
-                    config HW_I2C3_BADURATE_100kHZ
-                        bool "Badurate 100kHZ"
-
-                    config HW_I2C3_BADURATE_400kHZ
-                        bool "Badurate 400kHZ"
-                endchoice
-            endif
-
-        menuconfig BSP_USING_CAN
-            bool "Enable CAN"
-            select RT_USING_CAN
-            default n
-            if BSP_USING_CAN
-                config BSP_USING_CAN3
-                    bool "Enable FLEXCAN3"
-                    default n
-            endif
-
-        menuconfig BSP_USING_FLEXSPI
-            bool "Enable FLEXSPI"
-            default n
-            if BSP_USING_FLEXSPI
-                config BSP_USING_FLEXSPI1
-                    bool "Enable FLEXSPI1"
-                    default n
-                config BSP_USING_FLEXSPI2
-                    bool "Enable FLEXSPI2"
-                    default n
-            endif
-
-        menuconfig BSP_USING_CLOCK_TIMER
-            bool "Enable GPT"
-            default n
-            select RT_USING_CLOCK_TIME
-            if BSP_USING_CLOCK_TIMER
-                config BSP_USING_CLOCK_TIMER1
-                    bool "Enable GPT1"
-                    default n
-
-                config BSP_USING_CLOCK_TIMER2
-                    bool "Enable GPT2"
-                    default n
-            endif
+    menuconfig BSP_USING_FLEXSPI
+        bool "Enable FLEXSPI"
+        default n
+        if BSP_USING_FLEXSPI
+            config BSP_USING_FLEXSPI1
+                bool "Enable FLEXSPI1"
+                default n
+            config BSP_USING_FLEXSPI2
+                bool "Enable FLEXSPI2"
+                default n
+        endif
 endmenu
 
 menu "Onboard Peripheral Drivers"
 
-    config BSP_USING_OSPI_FLASH
-        bool "Enable HyperFlash Example"
-		depends on BSP_USING_FLEXSPI1
+    # config BSP_USING_SDRAM
+    #     bool "Enable SDRAM"
+    #     default n
+
+    config BSP_USE_HYPERRAM
+        bool "Enable HyperRAM"
         default n
 
-    config BSP_USING_SDRAM
-        bool "Enable SDRAM"
+    menuconfig BSP_USE_MULTICORE
+        bool "Enable Multicore"
+        default n
+
+        if BSP_USE_MULTICORE
+            config BSP_USE_MULTICORE_KICK_OFF
+                bool "Enable CM33 Kick-off CM7"
+                default y
+                help
+                    Enable CM33 core to kick-off CM7 core startup. 
+                    This is required for proper initialization sequence 
+                    when CM33 (master) boots CM7 (remote) core.
+            
+            config BSP_USE_MULTICORE_RPMSG_LITE
+                bool "Enable RPMsg-Lite for Inter-Core Communication"
+                default y
+                help
+                    Enable RPMsg-Lite messaging system for communication between cores.
+                    RPMsg-Lite provides a lightweight implementation of the RPMsg protocol
+                    for inter-processor communication using shared memory.
+                    CM7 runs as remote core, CM33 runs as master core.
+
+            if BSP_USE_MULTICORE_RPMSG_LITE
+                config RPMSG_LITE_LINK_ID
+                    int "RPMsg-Lite Link ID"
+                    default 0
+                    help
+                        Specify the link ID for RPMsg-Lite communication.
+                        Default is RL_PLATFORM_IMXRT1180_M33_M7_LINK_ID (0).
+
+                config RPMSG_LOCAL_EPT_ADDR
+                    int "Local Endpoint Address (CM7 side)"
+                    range 0 65535
+                    default 30
+                    help
+                        Specify the local endpoint address for RPMsg communication on CM7 side.
+
+                config RPMSG_NS_ANNOUNCE_STRING
+                    string "RPMsg Nameservice Announce String"
+                    default "rpmsg-openamp-demo-channel"
+                    help
+                        The string used to announce the service to the CM33 master core.
+            endif
+        endif
+
+    config BSP_USING_ETHERCAT
+        bool "Enable ETHERCAT"
+        select RT_USING_ETHERCAT
         default n
 
     menuconfig BSP_USING_ETH
     bool "Enable Ethernet"
+	select RT_USING_SAL
     select RT_USING_NETDEV
     select RT_USING_LWIP
     default n
 
 
     if BSP_USING_ETH
+        config LWIP_SUPPORT_CUSTOM_PBUF
+            int
+            depends on RT_USING_LWIP_VER_NUM >= 0x20000
+            default 1
+
+        config NETC_USE_SWT
+            int "Enable NETC switch mode (0: EP0, 1: switch)"
+            range 0 1
+            default 0
+
         config BSP_USING_PHY
             select RT_USING_PHY
             bool "Enable ethernet phy"
             default y
-
-        if BSP_USING_PHY
-            config PHY_USING_KSZ8081
-                bool "i.MX RT1176EVK uses ksz8081 phy"
-                default y
-
-            if PHY_USING_KSZ8081
-                config PHY_KSZ8081_ADDRESS
-                int "Specify address of phy device"
-                default 2
-
-                config PHY_RESET_KSZ8081_PORT
-                    int "indicate port of reset"
-                    default 6
-
-                config PHY_RESET_KSZ8081_PIN
-                    int "indicate pin of reset"
-                    default 12
-
-                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
-                    bool "Enable the PHY ksz8081 RMII50M mode"
-                    depends on PHY_USING_KSZ8081
-                    default y
-            endif
-        endif
-
-        if BSP_USING_PHY
-                config PHY_USING_RTL8211F
-                    bool "i.MX RT1176EVK uses rtl8211f phy"
-                    default y
-
-                if PHY_USING_RTL8211F
-                    config PHY_RTL8211F_ADDRESS
-                    int "Specify address of phy device"
-                    default 1
-
-                    config PHY_RESET_RTL8211F_PORT
-                        int "indicate port of reset"
-                        default 5
-
-                    config PHY_RESET_RTL8211F_PIN
-                        int "indicate pin of reset"
-                        default 14
-
-                endif
-        endif
     endif
 
     menuconfig BSP_USING_FS
@@ -287,49 +551,56 @@ menu "Onboard Peripheral Drivers"
                 select BSP_USING_SDIO
                 select RT_USING_DFS_ELMFAT
                 default n
+            
+            config BSP_USING_QSPI_FLASH_FS
+                bool "Enable QSPI Flash (LittleFS)"
+                select BSP_USING_FLEXSPI
+                select BSP_USING_FLEXSPI1
+                select RT_USING_FAL
+                select FAL_PART_HAS_TABLE_CFG
+                select RT_USING_MTD_NOR
+                select PKG_USING_LITTLEFS
+                default n
         endif
 
-    menuconfig BSP_USING_VGLITE
-        bool "Enable VGLite"
-        select RT_USING_PIN
-        select BSP_USING_LCD_MIPI
+    config BSP_USING_OSPI_FLASH
+        bool "Enable HyperFlash Example"
+		depends on BSP_USING_FLEXSPI1
         default n
-
-        if BSP_USING_VGLITE
-            choice DISP_RK055_SEL
-                prompt "Select display panel"
-                default DISPLAY_USING_RK055AHD091
-
-                config DISPLAY_USING_RK055AHD091
-                    bool "RK055AHD091-CTG (RK055HDMIPI4M 720 * 1280)"
-
-                config DISPLAY_USING_RK055IQH091
-                    bool "RK055IQH091-CTG (540 * 960)"
-
-                config DISPLAY_USING_RK055MHD091
-                    bool "RK055MHD091A0-CTG (RK055HDMIPI4MA0 720 * 1280)"
-            endchoice
-
-            choice DISP_CTRL_SEL
-                prompt "Select display controller"
-                default BSP_USING_LCDIFV2
-
-                config BSP_USING_ELCDIF
-                    bool "ELCDIF"
-
-                config BSP_USING_LCDIFV2
-                    bool "LCDIFV2"
-            endchoice
-
-            config VGLITE_USING_ELM
-            bool "Enable Elementary"
-            default y
-        endif
 
 endmenu
 
 menu "Board extended module Drivers"
 
 endmenu
+
+choice
+    prompt "Linker Script Selection"
+    default BSP_LINKER_SCRIPT_RAM
+    help
+        Select the linker script that matches your target memory configuration.
+
+    config BSP_LINKER_SCRIPT_RAM
+        bool "RAM (internal SRAM only)"
+        help
+            Link the image to run entirely from internal SRAM.
+
+    config BSP_LINKER_SCRIPT_HYPERRAM
+        bool "HyperRAM (internal SRAM + external HyperRAM)"
+        help
+            Link the image to run from internal SRAM with HyperRAM support.
+
+    config BSP_LINKER_SCRIPT_FLEXSPI_NOR
+        bool "FlexSPI NOR Flash (XIP from external NOR flash)"
+        help
+            Link the image to execute-in-place (XIP) from external NOR flash
+            connected via FlexSPI.
+
+    config BSP_LINKER_SCRIPT_FLEXSPI_NOR_HYPERRAM
+        bool "FlexSPI NOR Flash + HyperRAM (XIP + external HyperRAM)"
+        help
+            Link the image to XIP from external NOR flash and use HyperRAM
+            as additional RAM.
+endchoice
 
 endmenu
