@@ -1,18 +1,20 @@
 /*
 ** ###################################################################
 **     Processors:          MIMXRT1189CVM8B_cm33
+**                          MIMXRT1189CVM8C_cm33
 **                          MIMXRT1189XVM8B_cm33
+**                          MIMXRT1189XVM8C_cm33
 **
 **     Compiler:            GNU C Compiler
-**     Reference manual:    IMXRT1180RM, Rev 2, 12/2022
-**     Version:             rev. 0.1, 2021-03-09
-**     Build:               b240109
+**     Reference manual:    IMXRT1180RM, Rev 5, 01/2024
+**     Version:             rev. 2.0, 2024-01-18
+**     Build:               b250310
 **
 **     Abstract:
 **         Linker file for the GNU C Compiler
 **
 **     Copyright 2016 Freescale Semiconductor, Inc.
-**     Copyright 2016-2024 NXP
+**     Copyright 2016-2025 NXP
 **     SPDX-License-Identifier: BSD-3-Clause
 **
 **     http:                 www.nxp.com
@@ -23,6 +25,9 @@
 
 /* Entry Point */
 ENTRY(Reset_Handler)
+
+__use_shmem__ = 1;
+__multicore__ = 1;
 
 /* Board memory map */
 m_code_tcm_start         = 0x0FFE0000;
@@ -40,7 +45,7 @@ m_sdram_size             = DEFINED(__dual_image__) ? 0x00200000 : 0x02000000;
 m_hyperram_start         = DEFINED(__dual_image__) ? 0x04600000 : 0x04000000;
 m_hyperram_size          = DEFINED(__dual_image__) ? 0x00200000 : 0x00800000;
 m_flash_start            = 0x28000000;
-m_flash_size             = 0x01000000;
+m_flash_size             = 0x00800000;
 
 m_core1_image_maximum_size = 0x00040000;
 
@@ -59,7 +64,7 @@ m_xmcd_end               = m_xmcd_start + m_xmcd_size - 1;
 m_container_start        = m_flash_start + m_container_offset;
 m_container_end          = m_container_start + m_container_size - 1;
 
-app_image_offset         = DEFINED(__dual_image__) ? 0x0010B000 : 0x0000B000;
+app_image_offset         = 0x0000B000;
 vector_table_size        = 0x00000400;
 m_qacode_start           = m_code_tcm_start + (DEFINED(__ram_vector_table__) ? vector_table_size : 0);
 m_qacode_end             = m_code_tcm_start + m_code_tcm_size - 1;
@@ -67,7 +72,7 @@ m_qadata_start           = m_system_tcm_start;
 m_qadata_end             = m_system_tcm_start + m_system_tcm_size - 1;
 m_ram_vector_table_start = m_code_tcm_start;
 m_stack_size             = DEFINED(__stack_size__) ? __stack_size__ : 0x1000;
-m_heap_size              = DEFINED(__heap_size__)  ? __heap_size__  : 0x4000;
+m_heap_size              = DEFINED(__heap_size__)  ? __heap_size__  : 0x8000;
 
 /* Target specific definition, code & data allocation */
 m_code_size              = m_flash_size - app_image_offset - vector_table_size;
@@ -277,7 +282,6 @@ SECTIONS
   {
     . = ALIGN(4);
     __data_start__ = .;      /* create a global symbol at data start */
-    *(m_usb_dma_init_data)
     *(.data)                 /* .data sections */
     *(.data*)                /* .data* sections */
     *(DataQuickAccess)       /* quick access data section */
@@ -336,7 +340,6 @@ SECTIONS
     /* This is used by the startup in order to initialize the .bss section */
     . = ALIGN(4);
     __bss_start__ = .;
-    *(m_usb_dma_noninit_data)
     *(.bss)
     *(.bss*)
     *(COMMON)
