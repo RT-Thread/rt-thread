@@ -1,0 +1,19 @@
+import os
+from building import *
+
+src = []
+objs = []
+cwd  = GetCurrentDir()
+CPPPATH = [cwd]
+
+if GetDepend(["BSP_USING_GPIO_W"]):
+    src += ["drv_gpio_w.c"]
+
+objs = DefineGroup('Port', src, depend = [''], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        objs = objs + SConscript(os.path.join(item, 'SConscript'))
+
+Return('objs')
