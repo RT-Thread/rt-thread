@@ -11,7 +11,14 @@
 #include "drv_common.h"
 #include <board.h>
 
-#ifdef RT_USING_PIN
+#ifdef RT_USING_BUILTIN_FDT
+#include <drivers/ofw_fdt.h>
+#include <drivers/pic.h>
+
+extern const unsigned char rt_hw_builtin_fdt[];
+#endif
+
+#if defined(RT_USING_PIN) && !defined(RT_USING_DM)
 #include <drv_gpio.h>
 #endif
 
@@ -196,7 +203,24 @@ rt_weak void rt_hw_board_init(void)
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
-#ifdef RT_USING_PIN
+#ifdef RT_USING_BUILTIN_FDT
+    if (rt_fdt_prefetch((void *)rt_hw_builtin_fdt) != RT_EOK ||
+        rt_fdt_unflatten() != RT_EOK)
+    {
+        LOG_E("Builtin FDT initialization failed");
+        RT_ASSERT(0);
+    }
+
+#ifdef RT_USING_PIC
+    if (rt_pic_init() != RT_EOK || rt_pic_irq_init() != RT_EOK)
+    {
+        LOG_E("PIC initialization failed");
+        RT_ASSERT(0);
+    }
+#endif
+#endif
+
+#if defined(RT_USING_PIN) && !defined(RT_USING_DM)
     rt_hw_pin_init();
 #endif
 
