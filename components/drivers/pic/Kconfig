@@ -24,6 +24,13 @@ config RT_PIC_ARM_GIC
     select RT_USING_OFW
     default n
 
+config RT_PIC_ARM_NVIC
+    bool "ARM Cortex-M NVIC"
+    depends on RT_USING_PIC
+    depends on ARCH_ARM_CORTEX_M
+    select RT_USING_OFW
+    default n
+
 config RT_PIC_ARM_GIC_V2M
     bool "ARM GIC V2M" if RT_PIC_ARM_GIC && RT_PCI_MSI
     depends on RT_USING_OFW

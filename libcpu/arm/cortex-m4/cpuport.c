@@ -24,6 +24,11 @@
 #define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
+rt_weak int rt_hw_cpu_id(void)
+{
+    return 0;
+}
+
 #if               /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP ))    \
                   /* Clang */ || (defined ( __clang__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) \
                   /* IAR */   || (defined ( __ICCARM__ ) && defined ( __ARMVFP__ ))        \
