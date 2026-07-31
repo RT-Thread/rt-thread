@@ -13,7 +13,9 @@
 #include <rtdevice.h>
 #include <board.h>
 
+#ifndef RT_USING_DM
 #define LED_PIN BSP_IO_PORT_00_PIN_12 /* Onboard LED pins */
+#endif
 
 void hal_entry(void)
 {
@@ -21,6 +23,7 @@ void hal_entry(void)
     rt_kprintf("Hello, Titan Board!\n");
     rt_kprintf("==================================================\n");
 
+#ifndef RT_USING_DM
     rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);
 
     while (1)
@@ -30,4 +33,10 @@ void hal_entry(void)
         rt_pin_write(LED_PIN, PIN_LOW);
         rt_thread_mdelay(1000);
     }
+#else
+    while (1)
+    {
+        rt_thread_mdelay(1000);
+    }
+#endif
 }
