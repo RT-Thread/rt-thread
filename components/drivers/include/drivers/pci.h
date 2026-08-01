@@ -295,6 +295,8 @@ void rt_pci_msix_init(struct rt_pci_device *pdev);
 
 void rt_pci_set_master(struct rt_pci_device *pdev);
 void rt_pci_clear_master(struct rt_pci_device *pdev);
+rt_err_t rt_pci_enable_device(struct rt_pci_device *pdev);
+rt_err_t rt_pci_disable_device(struct rt_pci_device *pdev);
 
 struct rt_pci_host_bridge *rt_pci_host_bridge_alloc(rt_size_t priv_size);
 rt_err_t rt_pci_host_bridge_free(struct rt_pci_host_bridge *);

@@ -321,7 +321,15 @@ rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node *dev_np,
     }
 
     propname = rt_ofw_get_prop_fuzzy_name(dev_np, ",pci-domain$");
-    rt_ofw_prop_read_u32(dev_np, propname, &host_bridge->domain);
+
+    if (propname)
+    {
+        rt_ofw_prop_read_u32(dev_np, propname, &host_bridge->domain);
+    }
+    else
+    {
+        host_bridge->domain = RT_UINT32_MAX;
+    }
 
     err = rt_pci_ofw_parse_ranges(dev_np, host_bridge);
 

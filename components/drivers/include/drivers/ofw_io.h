@@ -32,20 +32,46 @@ rt_inline rt_uint64_t rt_ofw_translate_dma2cpu(struct rt_ofw_node *np, rt_uint64
 {
     rt_uint64_t bus_addr, cpu_addr;
 
-    bus_addr = rt_ofw_reverse_address(np, "dma-ranges", address);
-    cpu_addr = rt_ofw_translate_address(np, "ranges", bus_addr);
+    cpu_addr = rt_ofw_translate_address(np, "dma-ranges", address);
+    if (cpu_addr != ~0ULL && cpu_addr != address)
+    {
+        return cpu_addr;
+    }
 
-    return cpu_addr != ~0ULL ? cpu_addr : address;
+    bus_addr = rt_ofw_translate_address(np, "dma-ranges", address);
+    if (bus_addr != ~0ULL && bus_addr != address)
+    {
+        cpu_addr = rt_ofw_translate_address(np, "ranges", bus_addr);
+        if (cpu_addr != ~0ULL && cpu_addr != address)
+        {
+            return cpu_addr;
+        }
+    }
+
+    return address;
 }
 
 rt_inline rt_uint64_t rt_ofw_translate_cpu2dma(struct rt_ofw_node *np, rt_uint64_t address)
 {
     rt_uint64_t bus_addr, dma_addr;
 
-    bus_addr = rt_ofw_reverse_address(np, "ranges", address);
-    dma_addr = rt_ofw_translate_address(np, "dma-ranges", bus_addr);
+    dma_addr = rt_ofw_reverse_address(np, "dma-ranges", address);
+    if (dma_addr != ~0ULL && dma_addr != address)
+    {
+        return dma_addr;
+    }
 
-    return dma_addr != ~0ULL ? dma_addr : address;
+    bus_addr = rt_ofw_reverse_address(np, "ranges", address);
+    if (bus_addr != ~0ULL && bus_addr != address)
+    {
+        dma_addr = rt_ofw_reverse_address(np, "dma-ranges", bus_addr);
+        if (dma_addr != ~0ULL && dma_addr != address)
+        {
+            return dma_addr;
+        }
+    }
+
+    return address;
 }
 
 void *rt_ofw_iomap(struct rt_ofw_node *np, int index);
