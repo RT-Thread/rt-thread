@@ -111,6 +111,7 @@ extern "C" {
 
 #ifdef RT_USING_PHYE
 #include "drivers/phye.h"
+#include "drivers/phye-mipi-dphy.h"
 #endif /* RT_USING_PHYE */
 
 #ifdef RT_USING_PIC

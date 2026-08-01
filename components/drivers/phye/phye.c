@@ -224,12 +224,44 @@ rt_err_t rt_phye_set_mode(struct rt_phye *phye, enum rt_phye_mode mode, int subm
             err = phye->ops->set_mode(phye, mode, submode);
         }
 
+        if (!err)
+        {
+            phye->mode = mode;
+        }
+
         rt_spin_unlock(&phye->lock);
     }
     else
     {
         err = -RT_EINVAL;
     }
+
+    return err;
+}
+
+rt_err_t rt_phye_configure(struct rt_phye *phye, union rt_phye_configure_opts *opts)
+{
+    rt_err_t err;
+
+    if (!phye || !opts)
+    {
+        return -RT_EINVAL;
+    }
+
+    err = RT_EOK;
+
+    rt_spin_lock(&phye->lock);
+
+    if (phye->ops->configure)
+    {
+        err = phye->ops->configure(phye, opts);
+    }
+    else
+    {
+        err = -RT_ENOSYS;
+    }
+
+    rt_spin_unlock(&phye->lock);
 
     return err;
 }

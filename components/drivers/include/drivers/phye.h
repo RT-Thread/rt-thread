@@ -13,6 +13,7 @@
 
 #include <rtthread.h>
 #include <drivers/ofw.h>
+#include <drivers/phye-mipi-dphy.h>
 
 enum rt_phye_mode
 {
@@ -47,12 +48,18 @@ enum rt_phye_mode
 
 struct rt_phye_ops;
 
+union rt_phye_configure_opts
+{
+    struct rt_phye_configure_opts_mipi_dphy mipi_dphy;
+};
+
 struct rt_phye
 {
     struct rt_device *dev;
 
     const struct rt_phye_ops *ops;
 
+    enum rt_phye_mode mode;
     int init_count;
     int power_count;
     struct rt_spinlock lock;
@@ -66,6 +73,7 @@ struct rt_phye_ops
     rt_err_t (*power_on)(struct rt_phye *phye);
     rt_err_t (*power_off)(struct rt_phye *phye);
     rt_err_t (*set_mode)(struct rt_phye *phye, enum rt_phye_mode mode, int submode);
+    rt_err_t (*configure)(struct rt_phye *phye, union rt_phye_configure_opts *opts);
     rt_err_t (*ofw_parse)(struct rt_phye *phye, struct rt_ofw_cell_args *phye_args);
 };
 
@@ -78,10 +86,16 @@ rt_err_t rt_phye_reset(struct rt_phye *phye);
 rt_err_t rt_phye_power_on(struct rt_phye *phye);
 rt_err_t rt_phye_power_off(struct rt_phye *phye);
 rt_err_t rt_phye_set_mode(struct rt_phye *phye, enum rt_phye_mode mode, int submode);
+rt_err_t rt_phye_configure(struct rt_phye *phye, union rt_phye_configure_opts *opts);
 
 rt_inline rt_err_t rt_phye_set_mode_simple(struct rt_phye *phye, enum rt_phye_mode mode)
 {
     return rt_phye_set_mode(phye, mode, RT_PHYE_MODE_INVALID);
+}
+
+rt_inline enum rt_phye_mode rt_phye_get_mode(struct rt_phye *phye)
+{
+    return phye ? phye->mode : RT_PHYE_MODE_INVALID;
 }
 
 struct rt_phye *rt_phye_get_by_index(struct rt_device *dev, int index);
