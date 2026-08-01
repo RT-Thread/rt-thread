@@ -19,6 +19,9 @@ if GetDepend(['RT_REGULATOR_FIXED']):
 if GetDepend(['RT_REGULATOR_GPIO']):
     src += ['regulator-gpio.c']
 
+if GetDepend(['RT_REGULATOR_PWM']):
+    src += ['regulator-pwm.c']
+
 if GetDepend(['RT_REGULATOR_SCMI']):
     src += ['regulator-scmi.c']
 
