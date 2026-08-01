@@ -987,7 +987,7 @@ rt_err_t rt_clk_set_max_rate(struct rt_clk *clk, rt_ubase_t rate)
 static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
 {
     rt_err_t err;
-    rt_ubase_t old_rate, prate;
+    rt_ubase_t old_rate, prate, current_rate, rounded_rate;
     rt_bool_t was_enabled = RT_FALSE;
     rt_bool_t was_disabled = RT_FALSE;
     struct rt_clk *parent = RT_NULL;
@@ -1015,7 +1015,7 @@ static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
 
     parent = clk_get_parent(clk);
 
-    if (cell->parents_nr > 1)
+    if (cell->parents_nr > 1 && !(cell->flags & RT_CLK_F_SET_RATE_NO_REPARENT))
     {
         rt_uint8_t best_idx = RT_UINT8_MAX;
         rt_ubase_t best_rounded = 0, best_diff = ~0UL;
@@ -1032,7 +1032,7 @@ static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
 
             if (!parent_cell->clk && !(parent_cell->clk = clk_cell_get_clk(parent_cell)))
             {
-                return RT_NULL;
+                return -RT_ENOMEM;
             }
 
             prate = clk_get_rate(parent_cell->clk);
@@ -1050,7 +1050,7 @@ static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
             }
         }
 
-        if (best_idx != RT_UINT8_MAX && parent->cell != best_parent_cell)
+        if (best_idx != RT_UINT8_MAX && (!parent || parent->cell != best_parent_cell))
         {
             parent = best_parent_cell->clk;
 
@@ -1079,6 +1079,21 @@ static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
     {
         prate = 0;
     }
+
+    /*
+     * Re-read the rate after parent selection / parent set_rate: it may
+     * already match the rounded target. Skip gate toggles, notify and
+     * set_rate when unchanged (old_rate above is kept for notify).
+     */
+    current_rate = clk_get_rate(clk);
+    rounded_rate = clk_round_rate(clk, rate);
+
+    if (rounded_rate == current_rate)
+    {
+        return RT_EOK;
+    }
+
+    rate = rounded_rate;
 
     if ((cell->flags & RT_CLK_F_SET_RATE_GATE) && cell->enable_count > 0)
     {
