@@ -26,7 +26,7 @@ static rt_err_t regulator_fixed_enable(struct rt_regulator_node *reg_np)
     struct regulator_fixed *rf = raw_to_regulator_fixed(reg_np);
     struct rt_regulator_param *param = &rf->param;
 
-    if (rf->enable_pin < 0 || param->always_on)
+    if (rf->enable_pin < 0)
     {
         return RT_EOK;
     }
@@ -42,7 +42,7 @@ static rt_err_t regulator_fixed_disable(struct rt_regulator_node *reg_np)
     struct regulator_fixed *rf = raw_to_regulator_fixed(reg_np);
     struct rt_regulator_param *param = &rf->param;
 
-    if (rf->enable_pin < 0 || param->always_on)
+    if (rf->enable_pin < 0)
     {
         return RT_EOK;
     }
@@ -59,12 +59,11 @@ static rt_bool_t regulator_fixed_is_enabled(struct rt_regulator_node *reg_np)
     struct regulator_fixed *rf = raw_to_regulator_fixed(reg_np);
     struct rt_regulator_param *param = &rf->param;
 
-    if (rf->enable_pin < 0 || param->always_on)
+    if (rf->enable_pin < 0)
     {
         return RT_TRUE;
     }
 
-    rt_pin_mode(rf->enable_pin, PIN_MODE_INPUT);
     active = rt_pin_read(rf->enable_pin);
 
     if (param->enable_active_high)

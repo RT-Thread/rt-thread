@@ -29,11 +29,35 @@ struct rt_regulator_record
     struct rt_regulator_node *reg_np;
 };
 
-static RT_DEFINE_SPINLOCK(_regulator_lock);
+static struct rt_mutex _regulator_lock;
 static rt_list_t _regulator_records = RT_LIST_OBJECT_INIT(_regulator_records);
 
 static rt_err_t regulator_enable(struct rt_regulator_node *reg_np);
 static rt_err_t regulator_disable(struct rt_regulator_node *reg_np);
+
+static int regulator_init(void)
+{
+    rt_mutex_init(&_regulator_lock, "REG", RT_IPC_FLAG_PRIO);
+
+    return RT_EOK;
+}
+INIT_CORE_EXPORT(regulator_init);
+
+static void regulator_lock(void)
+{
+    if (rt_thread_self())
+    {
+        rt_mutex_take(&_regulator_lock, RT_WAITING_FOREVER);
+    }
+}
+
+static void regulator_unlock(void)
+{
+    if (rt_thread_self())
+    {
+        rt_mutex_release(&_regulator_lock);
+    }
+}
 
 static struct rt_regulator_record *regulator_find_record_by_name(const char *name)
 {
@@ -96,11 +120,11 @@ rt_err_t rt_regulator_register(struct rt_regulator_node *reg_np)
         }
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     if (regulator_find_record_by_name(reg_np->supply_name))
     {
-        rt_hw_spin_unlock(&_regulator_lock.lock);
+        regulator_unlock();
         return -RT_EBUSY;
     }
 
@@ -108,7 +132,7 @@ rt_err_t rt_regulator_register(struct rt_regulator_node *reg_np)
 
     if (!record)
     {
-        rt_hw_spin_unlock(&_regulator_lock.lock);
+        regulator_unlock();
         return -RT_ENOMEM;
     }
 
@@ -116,7 +140,7 @@ rt_err_t rt_regulator_register(struct rt_regulator_node *reg_np)
     rt_list_init(&record->list);
     rt_list_insert_before(&_regulator_records, &record->list);
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
 #ifdef RT_USING_OFW
     if (reg_np->dev->ofw_node)
@@ -127,7 +151,10 @@ rt_err_t rt_regulator_register(struct rt_regulator_node *reg_np)
 
     if (param->boot_on || param->always_on)
     {
-        regulator_enable(reg_np);
+        if (!regulator_enable(reg_np) && param->always_on)
+        {
+            rt_atomic_store(&reg_np->enabled_count, 1);
+        }
     }
 
     return RT_EOK;
@@ -143,7 +170,7 @@ rt_err_t rt_regulator_unregister(struct rt_regulator_node *reg_np)
         return -RT_EINVAL;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     if (rt_atomic_load(&reg_np->enabled_count) != 0)
     {
@@ -177,7 +204,7 @@ rt_err_t rt_regulator_unregister(struct rt_regulator_node *reg_np)
     }
 
 _unlock:
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     if (!err && record)
     {
@@ -197,7 +224,7 @@ rt_err_t rt_regulator_notifier_register(struct rt_regulator *reg,
         return -RT_EINVAL;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     reg_np = reg->reg_np;
     notifier->regulator = reg;
@@ -205,7 +232,7 @@ rt_err_t rt_regulator_notifier_register(struct rt_regulator *reg,
     rt_list_init(&notifier->list);
     rt_list_insert_after(&reg_np->notifier_nodes, &notifier->list);
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     return RT_EOK;
 }
@@ -218,11 +245,11 @@ rt_err_t rt_regulator_notifier_unregister(struct rt_regulator *reg,
         return -RT_EINVAL;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     rt_list_remove(&notifier->list);
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     return RT_EOK;
 }
@@ -386,19 +413,19 @@ rt_err_t rt_regulator_enable(struct rt_regulator *reg)
         return RT_EOK;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     enabled_cnt = rt_atomic_load(&reg->reg_np->enabled_count);
     if (enabled_cnt > 0)
     {
         rt_atomic_add(&reg->reg_np->enabled_count, 1);
-        rt_hw_spin_unlock(&_regulator_lock.lock);
+        regulator_unlock();
         return RT_EOK;
     }
 
     err = regulator_enable(reg->reg_np);
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     return err;
 }
@@ -406,6 +433,11 @@ rt_err_t rt_regulator_enable(struct rt_regulator *reg)
 static rt_err_t regulator_disable(struct rt_regulator_node *reg_np)
 {
     rt_err_t err = RT_EOK;
+
+    if (reg_np->param->always_on)
+    {
+        return RT_EOK;
+    }
 
     if (reg_np->ops->disable)
     {
@@ -445,9 +477,16 @@ rt_err_t rt_regulator_disable(struct rt_regulator *reg)
         return RT_EOK;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     enabled_cnt = rt_atomic_load(&reg->reg_np->enabled_count);
+
+    if (reg->reg_np->param->always_on && enabled_cnt <= 1)
+    {
+        regulator_unlock();
+        return RT_EOK;
+    }
+
     rt_atomic_sub(&reg->reg_np->enabled_count, 1);
 
     if (enabled_cnt == 1)
@@ -455,7 +494,7 @@ rt_err_t rt_regulator_disable(struct rt_regulator *reg)
         err = regulator_disable(reg->reg_np);
     }
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     return err;
 }
@@ -465,6 +504,11 @@ rt_bool_t rt_regulator_is_enabled(struct rt_regulator *reg)
     if (!reg)
     {
         return RT_FALSE;
+    }
+
+    if (reg->reg_np->param->always_on)
+    {
+        return RT_TRUE;
     }
 
     if (reg->reg_np->ops->is_enabled)
@@ -581,11 +625,11 @@ rt_err_t rt_regulator_set_voltage(struct rt_regulator *reg, int min_uvolt, int m
         return -RT_EINVAL;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     err = regulator_set_voltage(reg->reg_np, min_uvolt, max_uvolt);
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     return err;
 }
@@ -600,7 +644,7 @@ int rt_regulator_get_voltage(struct rt_regulator *reg)
         return -RT_EINVAL;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     reg_np = reg->reg_np;
 
@@ -613,7 +657,7 @@ int rt_regulator_get_voltage(struct rt_regulator *reg)
         uvolt = -RT_ENOSYS;
     }
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     return uvolt;
 }
@@ -646,11 +690,11 @@ rt_err_t rt_regulator_set_current(struct rt_regulator *reg, int min_uamp, int ma
         return -RT_EINVAL;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     err = regulator_set_current(reg->reg_np, min_uamp, max_uamp);
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     return err;
 }
@@ -665,7 +709,7 @@ int rt_regulator_get_current(struct rt_regulator *reg)
         return -RT_EINVAL;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     reg_np = reg->reg_np;
 
@@ -678,7 +722,7 @@ int rt_regulator_get_current(struct rt_regulator *reg)
         uamp = -RT_ENOSYS;
     }
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     return uamp;
 }
@@ -693,7 +737,7 @@ rt_err_t rt_regulator_set_mode(struct rt_regulator *reg, rt_uint32_t mode)
         return -RT_EINVAL;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     reg_np = reg->reg_np;
 
@@ -706,7 +750,7 @@ rt_err_t rt_regulator_set_mode(struct rt_regulator *reg, rt_uint32_t mode)
         err = -RT_ENOSYS;
     }
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     return err;
 }
@@ -721,7 +765,7 @@ rt_int32_t rt_regulator_get_mode(struct rt_regulator *reg)
         return -RT_EINVAL;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     reg_np = reg->reg_np;
 
@@ -734,7 +778,7 @@ rt_int32_t rt_regulator_get_mode(struct rt_regulator *reg)
         mode = -RT_ENOSYS;
     }
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     return mode;
 }
@@ -824,13 +868,13 @@ struct rt_regulator *rt_regulator_get(struct rt_device *dev, const char *id)
     {
         struct rt_regulator_record *record;
 
-        rt_hw_spin_lock(&_regulator_lock.lock);
+        regulator_lock();
         record = regulator_find_record_by_name(id);
         if (record)
         {
             reg_np = record->reg_np;
         }
-        rt_hw_spin_unlock(&_regulator_lock.lock);
+        regulator_unlock();
     }
 
     if (!reg_np)
@@ -838,11 +882,11 @@ struct rt_regulator *rt_regulator_get(struct rt_device *dev, const char *id)
         goto _end;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
 
     regulator_check_parent(reg_np);
 
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     reg = rt_calloc(1, sizeof(*reg));
 
@@ -891,12 +935,12 @@ struct rt_regulator_node **rt_regulator_nodes_snapshot(rt_size_t *count)
 
     *count = 0;
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
     rt_list_for_each_entry(record, &_regulator_records, list)
     {
         total++;
     }
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     if (!total)
     {
@@ -909,14 +953,14 @@ struct rt_regulator_node **rt_regulator_nodes_snapshot(rt_size_t *count)
         return RT_NULL;
     }
 
-    rt_hw_spin_lock(&_regulator_lock.lock);
+    regulator_lock();
     rt_list_for_each_entry(record, &_regulator_records, list)
     {
         nodes[idx] = record->reg_np;
         rt_ref_get(&record->reg_np->ref);
         idx++;
     }
-    rt_hw_spin_unlock(&_regulator_lock.lock);
+    regulator_unlock();
 
     *count = total;
     return nodes;

@@ -51,11 +51,6 @@ static rt_err_t regulator_gpio_enable(struct rt_regulator_node *reg_np)
     struct regulator_gpio *rg = raw_to_regulator_gpio(reg_np);
     struct rt_regulator_param *param = &rg->param;
 
-    if (param->always_on)
-    {
-        return RT_EOK;
-    }
-
     if (rg->enable_pin >= 0)
     {
         rt_pin_mode(rg->enable_pin, PIN_MODE_OUTPUT);
@@ -70,11 +65,6 @@ static rt_err_t regulator_gpio_disable(struct rt_regulator_node *reg_np)
     struct regulator_gpio *rg = raw_to_regulator_gpio(reg_np);
     struct rt_regulator_param *param = &rg->param;
 
-    if (param->always_on)
-    {
-        return RT_EOK;
-    }
-
     if (rg->enable_pin >= 0)
     {
         rt_pin_mode(rg->enable_pin, PIN_MODE_OUTPUT);
@@ -88,11 +78,6 @@ static rt_bool_t regulator_gpio_is_enabled(struct rt_regulator_node *reg_np)
 {
     struct regulator_gpio *rg = raw_to_regulator_gpio(reg_np);
     struct rt_regulator_param *param = &rg->param;
-
-    if (param->always_on)
-    {
-        return RT_TRUE;
-    }
 
     if (rg->enable_pin >= 0)
     {
