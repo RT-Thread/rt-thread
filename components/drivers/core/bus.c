@@ -242,6 +242,29 @@ static int bus_probe_device(rt_driver_t drv, void *dev_ptr)
 }
 
 /**
+ *  @brief Retry matching an unbound device against the drivers on its bus
+ *
+ *  @param dev the device to probe
+ *
+ *  @return RT_EOK if the device is already bound or a probe succeeds
+ */
+rt_err_t rt_bus_probe_device(rt_device_t dev)
+{
+    if (!dev || !dev->bus)
+    {
+        return -RT_EINVAL;
+    }
+
+    if (dev->drv)
+    {
+        return RT_EOK;
+    }
+
+    return rt_bus_for_each_drv(dev->bus, dev, bus_probe_device);
+}
+RTM_EXPORT(rt_bus_probe_device);
+
+/**
  *  @brief This function add a driver to the drv_list of a specific bus
  *
  *  @param bus the bus to add
