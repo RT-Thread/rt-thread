@@ -187,10 +187,10 @@ VirtIO Sound 音频：
 AMP 异构多核（RPMSG 从核，**须 Smart 版本**）：
 
 ```
-./qemu.py -dtbo amp.dtsi -mem 258
+./qemu.py -dtbo amp.dtsi -mem 300
 ```
 
-> **说明**：AMP 示例要求启用 **Smart 版本**（`RT_USING_SMART`），且必须使用 **`-mem 258`**（`amp.dtsi` 内存布局约需 258 MB，默认 128 MB 不足）。`qemu.py` 检测到 `amp_soc` 时会将 `-smp` 自动加 1（例如 `RT_CPUS_NR=4` 时实际以 `-smp 5` 启动）。QEMU `loader` 会预先将 `amp.dtb` 与 `rtthread.bin` 加载到 `amp.dtsi` 指定的固定物理地址（如 `kernel-entry = 0x48480000`），主核再通过 PSCI 拉起从核。标准版内核要求在虚拟地址与物理地址相等的区域运行，无法用于从核地址空间。请在 menuconfig 中开启 Smart 后重新编译。
+> **说明**：AMP 示例要求启用 **Smart 版本**（`RT_USING_SMART`），且必须使用 **`-mem 300`**（`amp.dtsi` 内存布局约需 300 MB，默认 128 MB 不足）。`qemu.py` 检测到 `amp_soc` 时会将 `-smp` 自动加 1（例如 `RT_CPUS_NR=4` 时实际以 `-smp 5` 启动）。QEMU `loader` 会预先将 `amp.dtb` 与 `rtthread.bin` 加载到 `amp.dtsi` 指定的固定物理地址（如 `kernel-entry = 0x48480000`），主核再通过 PSCI 拉起从核。标准版内核要求在虚拟地址与物理地址相等的区域运行，无法用于从核地址空间。请在 menuconfig 中开启 Smart 后重新编译。
 
 摄像头演示（`camera.c` 叠加画面到 framebuffer，需配合 `-graphic`）：
 
@@ -324,12 +324,12 @@ Linux 下需预先配置 TAP 网桥，Windows / WSL 下 TAP 支持有限。TAP �
 
 QEMU `loader` 预先将 `amp.dtb` 与 `rtthread.bin` 加载到 `amp.dtsi` 指定地址，主核再通过 `amp_soc` 设备树节点与 PSCI 拉起从核 CPU。主从之间通过 VirtIO RPMSG + Mailbox 通信。主核将 VirtIO Block `vdb` 的资源信息写入从核 DTB 后启动从核。`qemu.py` 会为这颗额外 CPU 将 `-smp` 加 1。
 
-**版本要求**：须 **Smart 版本**（menuconfig 中 `RT_USING_SMART`），且须使用 **`-mem 258`**。标准版内核必须在虚拟地址与物理地址一致的映射下运行；AMP 从核加载到独立物理内存区域（见 `amp.dtsi` 中 `amp_memory`、`kernel-entry` 等），不满足该约束，因此标准版无法用于 AMP 演示。
+**版本要求**：须 **Smart 版本**（menuconfig 中 `RT_USING_SMART`），且须使用 **`-mem 300`**。标准版内核必须在虚拟地址与物理地址一致的映射下运行；AMP 从核加载到独立物理内存区域（见 `amp.dtsi` 中 `amp_memory`、`kernel-entry` 等），不满足该约束，因此标准版无法用于 AMP 演示。
 
 启动方式：
 
 ```
-./qemu.py -dtbo amp.dtsi -mem 258
+./qemu.py -dtbo amp.dtsi -mem 300
 ```
 
 从核控制台：`telnet localhost 4323`。
@@ -392,6 +392,6 @@ VirtIO 设备可选参数（在 `qemu.py` 中按需添加）：
 - 超过 8 核时 GIC 自动切换为 v3，也可手动指定 `-gic 3`。`gic-version=max` 仅在 `-el 2` 且 GICv3 时由脚本内部设置。
 - 启用 9P 目录共享需 QEMU 编译时包含 virtfs（`--enable-virtfs`）。
 - 使用 `-gl` 需 QEMU 编译时包含 OpenGL / VirGL（`--enable-opengl`、`--enable-virglrenderer`）；这与 RT-Thread 是否支持 OpenGL 无关，当前软件栈默认仅 2D 图形。
-- AMP（`-dtbo`）须 Smart 版本内核（`RT_USING_SMART`）、`-mem 258`，且自动增加 CPU 数；标准版要求 VA=PA 运行，无法用于从核固定物理地址加载场景。
+- AMP（`-dtbo`）须 Smart 版本内核（`RT_USING_SMART`）、`-mem 300`，且自动增加 CPU 数；标准版要求 VA=PA 运行，无法用于从核固定物理地址加载场景。
 - `-camera` 须传入宿主机 V4L2 设备路径，仅支持 Linux，且需 libvfio-user；当前用户须能访问该设备（通常加入 `video` 组）；`-graphic` 仅 `camera.c` framebuffer 预览演示需要。
 - 修改根设备或启动参数时，通过 `-bootargs` 覆盖默认参数。

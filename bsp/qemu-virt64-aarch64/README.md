@@ -191,10 +191,10 @@ VirtIO Sound:
 AMP heterogeneous multi-core (RPMSG slave, **requires Smart version**):
 
 ```
-./qemu.py -dtbo amp.dtsi -mem 258
+./qemu.py -dtbo amp.dtsi -mem 300
 ```
 
-> **Note**: The AMP demo requires the **Smart version** (`RT_USING_SMART`) and **`-mem 258`** (memory layout in `amp.dtsi` needs ~258 MB; the default 128 MB is insufficient). `qemu.py` also increments `-smp` by 1 when `amp_soc` is detected (e.g. `RT_CPUS_NR=4` runs as `-smp 5`). QEMU `loader` pre-loads `amp.dtb` and `rtthread.bin` to fixed physical addresses in `amp.dtsi` (e.g. `kernel-entry = 0x48480000`); the primary core then starts the slave via PSCI. The standard kernel must run in a region where virtual addresses equal physical addresses and cannot be used for the slave address space. Enable Smart in menuconfig and rebuild.
+> **Note**: The AMP demo requires the **Smart version** (`RT_USING_SMART`) and **`-mem 300`** (memory layout in `amp.dtsi` needs ~300 MB; the default 128 MB is insufficient). `qemu.py` also increments `-smp` by 1 when `amp_soc` is detected (e.g. `RT_CPUS_NR=4` runs as `-smp 5`). QEMU `loader` pre-loads `amp.dtb` and `rtthread.bin` to fixed physical addresses in `amp.dtsi` (e.g. `kernel-entry = 0x48480000`); the primary core then starts the slave via PSCI. The standard kernel must run in a region where virtual addresses equal physical addresses and cannot be used for the slave address space. Enable Smart in menuconfig and rebuild.
 
 Camera demo (requires `-graphic` for framebuffer overlay in `camera.c`):
 
@@ -328,12 +328,12 @@ Default application. Prints `hello rt-thread` after boot, then enters msh.
 
 QEMU `loader` pre-loads `amp.dtb` and `rtthread.bin` to addresses in `amp.dtsi`; the primary core then boots the slave CPU via the `amp_soc` devicetree node and PSCI. Primary and slave communicate through VirtIO RPMSG and Mailbox. The primary writes VirtIO Block `vdb` resource info into the slave DTB before starting the slave. `qemu.py` increments `-smp` by 1 for the extra CPU.
 
-**Version requirement**: **Smart version** required (`RT_USING_SMART` in menuconfig), plus **`-mem 258`**. The standard kernel must run with virtual addresses equal to physical addresses. The AMP slave is loaded into a separate physical memory region (see `amp_memory`, `kernel-entry` in `amp.dtsi`), which violates that constraint — the standard kernel cannot be used for AMP demos.
+**Version requirement**: **Smart version** required (`RT_USING_SMART` in menuconfig), plus **`-mem 300`**. The standard kernel must run with virtual addresses equal to physical addresses. The AMP slave is loaded into a separate physical memory region (see `amp_memory`, `kernel-entry` in `amp.dtsi`), which violates that constraint — the standard kernel cannot be used for AMP demos.
 
 Startup:
 
 ```
-./qemu.py -dtbo amp.dtsi -mem 258
+./qemu.py -dtbo amp.dtsi -mem 300
 ```
 
 Slave console: `telnet localhost 4323`.
@@ -396,6 +396,6 @@ Optional VirtIO device arguments (add in `qemu.py` as needed):
 - GIC auto-switches to v3 when exceeding 8 cores; or specify `-gic 3` manually. `gic-version=max` is set only internally when using `-el 2` with GICv3.
 - 9P directory sharing requires QEMU built with virtfs (`--enable-virtfs`).
 - `-gl` requires QEMU built with OpenGL / VirGL (`--enable-opengl`, `--enable-virglrenderer`); this is independent of RT-Thread OpenGL support — the default software stack is 2D graphics only.
-- AMP (`-dtbo`) requires Smart kernel (`RT_USING_SMART`), `-mem 258`, and auto-increments CPU count; the standard kernel requires VA=PA and cannot be used with slave images loaded at fixed physical addresses.
+- AMP (`-dtbo`) requires Smart kernel (`RT_USING_SMART`), `-mem 300`, and auto-increments CPU count; the standard kernel requires VA=PA and cannot be used with slave images loaded at fixed physical addresses.
 - `-camera` requires a host V4L2 device path, Linux, and libvfio-user; your user must have read access to the device (typically via the `video` group); `-graphic` is needed only for the `camera.c` framebuffer preview demo.
 - Override root device or boot parameters via `-bootargs`.

@@ -346,6 +346,9 @@ void rt_hw_common_setup(void)
         const char *bootargs;
         rt_ubase_t dma_pool_base;
         rt_size_t cma_size = 0, coherent_pool_size = 0;
+        rt_size_t pool_total;
+        struct rt_memblock *memory;
+        struct rt_mmblk_reg *mem_reg;
 
         if (!rt_fdt_bootargs_select("cma=", 0, &bootargs))
         {
@@ -369,9 +372,81 @@ void rt_hw_common_setup(void)
             coherent_pool_size = 2 * SIZE_MB;
         }
 
+        pool_total = cma_size + coherent_pool_size;
+
+        /*
+         * Default: place the pool after early boot reservations (kernel/heap/fdt),
+         * below 4G for RT_DMA_F_32BITS (PCIe).
+         *
+         * On a single contiguous RAM bank, keep the pool at the bank tail so
+         * memblock installs one contiguous free range (avoids an MMU hole).
+         * The platform must expose RAM through dma_pool_base + pool_total.
+         */
         dma_pool_base = platform_mem_region.end;
+
+        memory = rt_memblock_get_memory();
+        {
+            rt_uint32_t mem_count = 0;
+            rt_size_t mem_span_start = 0, mem_span_end = 0;
+
+            rt_slist_for_each_entry(mem_reg, &memory->reg_list, node)
+            {
+                mem_count++;
+                if (mem_count == 1)
+                {
+                    mem_span_start = mem_reg->memreg.start;
+                }
+                if (mem_reg->memreg.end > mem_span_end)
+                {
+                    mem_span_end = mem_reg->memreg.end;
+                }
+            }
+
+            if (mem_count == 1 &&
+                dma_pool_base + pool_total <= mem_span_end &&
+                dma_pool_base >= mem_span_start &&
+                dma_pool_base + pool_total < mem_span_end)
+            {
+                dma_pool_base = RT_ALIGN_DOWN(mem_span_end - pool_total, ARCH_PAGE_SIZE);
+            }
+        }
+
+        if (dma_pool_base + pool_total > (4UL * SIZE_GB))
+        {
+            rt_size_t zone_end = 0;
+
+            rt_slist_for_each_entry(mem_reg, &memory->reg_list, node)
+            {
+                rt_size_t start = mem_reg->memreg.start;
+                rt_size_t end = mem_reg->memreg.end;
+
+                if (start >= (4UL * SIZE_GB))
+                {
+                    continue;
+                }
+
+                if (end > (4UL * SIZE_GB))
+                {
+                    end = (4UL * SIZE_GB);
+                }
+
+                if (end > zone_end)
+                {
+                    zone_end = end;
+                }
+            }
+
+            if (zone_end < platform_mem_region.end + pool_total)
+            {
+                LOG_E("No room for sub-4G DMA pool (%u bytes)", pool_total);
+                break;
+            }
+
+            dma_pool_base = RT_ALIGN_DOWN(zone_end - pool_total, ARCH_PAGE_SIZE);
+        }
+
         rt_memblock_reserve_memory("dma-pool",
-                dma_pool_base, dma_pool_base + cma_size + coherent_pool_size, MEMBLOCK_NONE);
+                dma_pool_base, dma_pool_base + pool_total, MEMBLOCK_NONE);
 
         if (rt_dma_pool_extract(cma_size, coherent_pool_size))
         {
