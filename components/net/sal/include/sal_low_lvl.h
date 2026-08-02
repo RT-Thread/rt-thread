@@ -48,6 +48,7 @@ typedef uint32_t socklen_t;
 struct sockaddr;
 struct msghdr;
 struct addrinfo;
+struct sal_proto_family;
 struct sal_socket
 {
     uint32_t magic;                    /* SAL socket magic word */
@@ -58,6 +59,7 @@ struct sal_socket
     int protocol;
 
     struct netdev *netdev;             /* SAL network interface device */
+    const struct sal_proto_family *protocol_family; /* selected protocol provider */
 
     void *user_data;                   /* user-specific data */
 #ifdef SAL_USING_TLS
@@ -109,6 +111,9 @@ struct sal_proto_family
 
 /* SAL(Socket Abstraction Layer) initialize */
 int sal_init(void);
+/* Register and find protocol providers which do not require a netdev. */
+int sal_proto_family_register(const struct sal_proto_family *pf);
+const struct sal_proto_family *sal_proto_family_find(int family);
 /* Get SAL socket object by socket descriptor */
 struct sal_socket *sal_get_socket(int sock);
 
