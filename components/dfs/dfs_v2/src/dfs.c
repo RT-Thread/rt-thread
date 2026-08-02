@@ -349,23 +349,29 @@ int fdt_fd_new(struct dfs_fdtable *fdt)
  */
 void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
 {
-    if (fd < fdt->maxfd)
+    if (fdt == RT_NULL || dfs_file_lock() != RT_EOK)
+    {
+        return;
+    }
+
+    if (fd >= 0 && fd < (int)fdt->maxfd)
     {
         struct dfs_file *file;
 
         file = fdt_get_file(fdt, fd);
 
-        if (file && file->ref_count == 1)
+        if (file != RT_NULL && file->ref_count == 1)
         {
             dfs_file_destroy(file);
         }
-        else
+        else if (file != RT_NULL)
         {
             rt_atomic_sub(&(file->ref_count), 1);
         }
 
         fdt->fds[fd] = RT_NULL;
     }
+    dfs_file_unlock();
 }
 
 /**
@@ -491,6 +497,106 @@ struct dfs_file *fd_get(int fd)
     fdt = dfs_fdtable_get();
 
     return fdt_get_file(fdt, fd);
+}
+
+int dfs_file_get_refs(const int *fds, size_t count, struct dfs_file **files)
+{
+    size_t index;
+    struct dfs_fdtable *fdt;
+
+    if ((count != 0 && (fds == RT_NULL || files == RT_NULL)) ||
+        dfs_file_lock() != RT_EOK)
+    {
+        return -EINVAL;
+    }
+
+    fdt = dfs_fdtable_get();
+    for (index = 0; index < count; index++)
+    {
+        files[index] = fdt_get_file(fdt, fds[index]);
+        if (files[index] == RT_NULL ||
+            (files[index]->dentry == RT_NULL && files[index]->vnode == RT_NULL))
+        {
+            dfs_file_unlock();
+            return -EBADF;
+        }
+    }
+
+    for (index = 0; index < count; index++)
+    {
+        rt_atomic_add(&files[index]->ref_count, 1);
+    }
+    dfs_file_unlock();
+    return 0;
+}
+
+int dfs_file_install_refs(struct dfs_file **files, size_t count, int *fds)
+{
+    int fd;
+    int startfd;
+    size_t index;
+    struct dfs_fdtable *fdt;
+
+    if ((count != 0 && (files == RT_NULL || fds == RT_NULL)) ||
+        dfs_file_lock() != RT_EOK)
+    {
+        return -EINVAL;
+    }
+
+    fdt = dfs_fdtable_get();
+    startfd = (fdt == &_fdtab) ? DFS_STDIO_OFFSET : 0;
+    for (index = 0; index < count; index++)
+    {
+        if (files[index] == RT_NULL || files[index]->magic != DFS_FD_MAGIC)
+        {
+            break;
+        }
+
+        fd = _fdt_slot_alloc(fdt, startfd);
+        if (fd < 0)
+        {
+            break;
+        }
+        fdt->fds[fd] = files[index];
+        fds[index] = fd;
+    }
+
+    if (index != count)
+    {
+        while (index > 0)
+        {
+            index--;
+            fdt->fds[fds[index]] = RT_NULL;
+        }
+        dfs_file_unlock();
+        return -EMFILE;
+    }
+
+    dfs_file_unlock();
+    return 0;
+}
+
+void dfs_file_put_ref(struct dfs_file *file)
+{
+    if (file == RT_NULL || dfs_file_lock() != RT_EOK)
+    {
+        return;
+    }
+
+    if (file->magic == DFS_FD_MAGIC &&
+        rt_atomic_load(&file->ref_count) > 0 &&
+        dfs_file_close(file) == 0)
+    {
+        if (rt_atomic_load(&file->ref_count) == 1)
+        {
+            dfs_file_destroy(file);
+        }
+        else
+        {
+            rt_atomic_sub(&file->ref_count, 1);
+        }
+    }
+    dfs_file_unlock();
 }
 
 /**

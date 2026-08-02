@@ -19,6 +19,7 @@
 
 #define TMPFS_TYPE_FILE   0x00
 #define TMPFS_TYPE_DIR    0x01
+#define TMPFS_TYPE_SOCKET 0x02
 
 struct tmpfs_sb;
 
@@ -46,4 +47,3 @@ struct tmpfs_sb
 int dfs_tmpfs_init(void);
 
 #endif
-

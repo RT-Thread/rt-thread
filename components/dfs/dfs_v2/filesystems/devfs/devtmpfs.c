@@ -27,6 +27,7 @@
 #define TMPFS_TYPE_FILE     0x00
 #define TMPFS_TYPE_DIR      0x01
 #define TMPFS_TYPE_DYN_DEV  0x02    /* dynamic device */
+#define TMPFS_TYPE_SOCKET   0x03
 
 struct devtmpfs_sb;
 
@@ -325,6 +326,10 @@ static int devtmpfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_
                 {
                     d->d_type = DT_DIR;
                 }
+                if (n_file->type == TMPFS_TYPE_SOCKET)
+                {
+                    d->d_type = DT_SOCK;
+                }
 
                 d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
                 rt_strncpy(d->d_name, n_file->name, DIRENT_NAME_MAX);
@@ -540,6 +545,14 @@ static struct dfs_vnode *devtmpfs_create_vnode(struct dfs_dentry *dentry, int ty
             vnode->mode &= ~S_IFMT;
             vnode->mode |= S_IFDIR;
         }
+        else if (type == FT_SOCKET ||
+                 (type == FT_REGULAR && S_ISSOCK(mode)))
+        {
+            d_file->type = TMPFS_TYPE_SOCKET;
+            vnode->type = FT_SOCKET;
+            vnode->mode &= ~S_IFMT;
+            vnode->mode |= S_IFSOCK;
+        }
         else
         {
             d_file->type = TMPFS_TYPE_FILE;
@@ -584,6 +597,10 @@ static struct dfs_vnode *devtmpfs_lookup(struct dfs_dentry *dentry)
             if (d_file->type == TMPFS_TYPE_DIR)
             {
                 vnode->type = FT_DIRECTORY;
+            }
+            else if (d_file->type == TMPFS_TYPE_SOCKET)
+            {
+                vnode->type = FT_SOCKET;
             }
             else if (d_file->link)
             {

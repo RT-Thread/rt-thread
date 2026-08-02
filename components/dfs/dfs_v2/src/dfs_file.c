@@ -823,6 +823,128 @@ _ERR_RET:
     return ret;
 }
 
+int dfs_file_mknod(const char *path, int type, mode_t mode)
+{
+    int ret = -EINVAL;
+    int create_type = type;
+    mode_t create_mode = mode;
+    char *fullpath;
+    struct dfs_mnt *mnt;
+    struct dfs_dentry *dentry;
+
+    if (path == RT_NULL || type < FT_REGULAR || type > FT_NONLOCK)
+    {
+        return -EINVAL;
+    }
+
+    fullpath = dfs_normalize_path(RT_NULL, path);
+    if (fullpath == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    mnt = dfs_mnt_lookup(fullpath);
+    if (mnt == RT_NULL)
+    {
+        ret = -ENOENT;
+        goto __exit;
+    }
+
+    {
+        char *realpath;
+
+        realpath = dfs_file_realpath(&mnt, fullpath, DFS_REALPATH_EXCEPT_LAST);
+        if (realpath != RT_NULL)
+        {
+            rt_free(fullpath);
+            fullpath = realpath;
+        }
+    }
+
+    if (strcmp(mnt->fullpath, fullpath) == 0)
+    {
+        ret = -EEXIST;
+        goto __exit;
+    }
+
+    dentry = dfs_dentry_lookup(mnt, fullpath, 0);
+    if (dentry != RT_NULL)
+    {
+        dfs_dentry_unref(dentry);
+        ret = -EEXIST;
+        goto __exit;
+    }
+
+    if (mnt->fs_ops->create_vnode == RT_NULL)
+    {
+        ret = -ENOSYS;
+        goto __exit;
+    }
+
+    if (type == FT_SOCKET)
+    {
+        create_type = FT_REGULAR;
+        create_mode = (mode & ~S_IFMT) | S_IFSOCK;
+    }
+
+    ret = dfs_file_lock();
+    if (ret != RT_EOK)
+    {
+        goto __exit;
+    }
+
+    dentry = dfs_dentry_create(mnt, fullpath);
+    if (dentry != RT_NULL)
+    {
+        struct dfs_vnode *vnode = RT_NULL;
+
+        if (dfs_is_mounted(mnt) == 0)
+        {
+            vnode = mnt->fs_ops->create_vnode(dentry, create_type,
+                                               create_mode);
+        }
+        if (vnode != RT_NULL)
+        {
+            if (type == FT_SOCKET && !S_ISSOCK(vnode->mode))
+            {
+                if (mnt->fs_ops->unlink != RT_NULL)
+                {
+                    dentry->vnode = vnode;
+                    (void)mnt->fs_ops->unlink(dentry);
+                    dentry->vnode = RT_NULL;
+                }
+                dfs_vnode_unref(vnode);
+                ret = -EOPNOTSUPP;
+            }
+            else
+            {
+                vnode->type = type;
+                dentry->vnode = vnode;
+                dfs_dentry_insert(dentry);
+                ret = RT_EOK;
+            }
+        }
+        else
+        {
+            ret = -ENOENT;
+        }
+    }
+    else
+    {
+        ret = -ENOMEM;
+    }
+    dfs_file_unlock();
+
+    if (dentry != RT_NULL)
+    {
+        dfs_dentry_unref(dentry);
+    }
+
+__exit:
+    rt_free(fullpath);
+    return ret;
+}
+
 /**
  * @brief Close a file and release associated resources
  *
@@ -1588,6 +1710,15 @@ int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
                         O_APPEND | O_NONBLOCK;
 
             flags &= mask;
+            if (file->vnode->type == FT_SOCKET && file->fops != RT_NULL &&
+                file->fops->ioctl != RT_NULL)
+            {
+                ret = file->fops->ioctl(file, F_SETFL, (void *)(rt_base_t)flags);
+                if (ret < 0)
+                {
+                    break;
+                }
+            }
             file->flags &= ~mask;
             file->flags |= flags;
             break;
