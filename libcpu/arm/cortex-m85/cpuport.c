@@ -19,6 +19,10 @@
 
 #include <rtthread.h>
 
+#ifdef RT_USING_DM
+#include <drivers/core/power.h>
+#endif
+
 rt_weak int rt_hw_cpu_id(void)
 {
     return 0;
@@ -443,10 +447,28 @@ rt_weak void rt_hw_cpu_shutdown(void)
 /**
  * reset CPU
  */
-rt_weak void rt_hw_cpu_reset(void)
+static void cortex_m_cpu_reset(void)
 {
     SCB_AIRCR = SCB_RESET_VALUE;
 }
+
+#ifdef RT_USING_DM
+static int cortex_m_cpu_reset_init(void)
+{
+    if (!rt_dm_machine_reset)
+    {
+        rt_dm_machine_reset = cortex_m_cpu_reset;
+    }
+
+    return RT_EOK;
+}
+INIT_BOARD_EXPORT(cortex_m_cpu_reset_init);
+#else
+rt_weak void rt_hw_cpu_reset(void)
+{
+    cortex_m_cpu_reset();
+}
+#endif
 
 void TaskSwitch_StackCheck(void)
 {
