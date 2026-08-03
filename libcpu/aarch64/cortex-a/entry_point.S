@@ -89,8 +89,6 @@ _start:
  *   x3 = 0 (reserved for future use)
  */
 
-    /* Ensure CPU drops to EL1 before touching _el1 registers */
-    bl      init_cpu_el
     mov     dtb_paddr, x0
     mov     boot_arg0, x1
     mov     boot_arg1, x2
@@ -98,6 +96,10 @@ _start:
 
     /* Save cpu stack */
     get_phy stack_top, .boot_cpu_stack_top
+
+    /* Drop to EL1 and clean up hypervisor state */
+    bl      init_cpu_el
+    
     /* Save cpu id temp */
     msr     tpidr_el1, xzr
 
