@@ -391,35 +391,35 @@ RT_PIC_OFW_DECLARE(stm32_exti, exti_ofw_ids, exti_ofw_init);
 
 void EXTI0_IRQHandler(void)
 {
-    rt_hw_nvic_dispatch();
+    rt_pic_do_traps();
 }
 
 void EXTI1_IRQHandler(void)
 {
-    rt_hw_nvic_dispatch();
+    rt_pic_do_traps();
 }
 
 void EXTI2_IRQHandler(void)
 {
-    rt_hw_nvic_dispatch();
+    rt_pic_do_traps();
 }
 
 void EXTI3_IRQHandler(void)
 {
-    rt_hw_nvic_dispatch();
+    rt_pic_do_traps();
 }
 
 void EXTI4_IRQHandler(void)
 {
-    rt_hw_nvic_dispatch();
+    rt_pic_do_traps();
 }
 
 void EXTI9_5_IRQHandler(void)
 {
-    rt_hw_nvic_dispatch();
+    rt_pic_do_traps();
 }
 
 void EXTI15_10_IRQHandler(void)
 {
-    rt_hw_nvic_dispatch();
+    rt_pic_do_traps();
 }
