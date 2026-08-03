@@ -348,6 +348,10 @@ enable_mmu_early:
     dsb     ish
     isb
 
+    tlbi    vmalle1     /* Invalidate all stage 1 translations used at EL1 with the current VMID */
+    dsb     ish
+    isb
+
     ret
 
 /*
