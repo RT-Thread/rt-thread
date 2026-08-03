@@ -9,6 +9,7 @@
  */
 
 #include <rtthread.h>
+#include <cpuport.h>
 
 #define DBG_TAG "pic.nvic"
 #define DBG_LVL DBG_INFO
@@ -18,42 +19,46 @@
 #include <drivers/ofw.h>
 #include <drivers/ofw_io.h>
 
-#define NVIC_ICTR_ADDR          0xe000e004UL
-#define NVIC_ISER_OFFSET        0x000UL
-#define NVIC_ICER_OFFSET        0x080UL
-#define NVIC_ISPR_OFFSET        0x100UL
-#define NVIC_ICPR_OFFSET        0x180UL
-#define NVIC_IABR_OFFSET        0x200UL
-#define NVIC_IPR_OFFSET         0x300UL
-#define NVIC_REG_INDEX(irq)     ((rt_uint32_t)(irq) >> 5)
-#define NVIC_REG_MASK(irq)      RT_BIT((rt_uint32_t)(irq) & 0x1f)
+#define NVIC_ICTR_ADDR            0xe000e004UL
+#define NVIC_ICSR_ADDR            0xe000ed04UL
+#define NVIC_ICSR_VECTACTIVE_MASK 0x1ffUL
+#define NVIC_ISER_OFFSET          0x000UL
+#define NVIC_ICER_OFFSET          0x080UL
+#define NVIC_ISPR_OFFSET          0x100UL
+#define NVIC_ICPR_OFFSET          0x180UL
+#define NVIC_IABR_OFFSET          0x200UL
+#define NVIC_IPR_OFFSET           0x300UL
+#define NVIC_REG_INDEX(irq)       ((rt_uint32_t)(irq) >> 5)
+#define NVIC_REG_MASK(irq)        RT_BIT((rt_uint32_t)(irq) & 0x1f)
 
 struct arm_nvic
 {
     struct rt_pic parent;
-    volatile rt_uint8_t *base;
+    rt_ubase_t base;
     rt_uint32_t irq_nr;
     rt_uint8_t priority_bits;
 };
 
 rt_inline void nvic_sync(void)
 {
-    __asm volatile ("dsb 0xf\n\tisb 0xf" ::: "memory");
+    rt_hw_dsb();
+    rt_hw_isb();
 }
 
 static struct arm_nvic _nvic;
 
-static volatile rt_uint32_t *nvic_reg32(struct arm_nvic *nvic,
-        rt_ubase_t offset, int hwirq)
+static rt_ubase_t nvic_reg(struct arm_nvic *nvic,
+                           rt_ubase_t offset, int hwirq)
 {
-    return (volatile rt_uint32_t *)(nvic->base + offset) + NVIC_REG_INDEX(hwirq);
+    return nvic->base + offset + NVIC_REG_INDEX(hwirq) * sizeof(rt_uint32_t);
 }
 
 static void nvic_irq_mask(struct rt_pic_irq *pirq)
 {
     struct arm_nvic *nvic = pirq->pic->priv_data;
 
-    *nvic_reg32(nvic, NVIC_ICER_OFFSET, pirq->hwirq) = NVIC_REG_MASK(pirq->hwirq);
+    HWREG32(nvic_reg(nvic, NVIC_ICER_OFFSET, pirq->hwirq)) =
+        NVIC_REG_MASK(pirq->hwirq);
     nvic_sync();
 }
 
@@ -61,7 +66,8 @@ static void nvic_irq_unmask(struct rt_pic_irq *pirq)
 {
     struct arm_nvic *nvic = pirq->pic->priv_data;
 
-    *nvic_reg32(nvic, NVIC_ISER_OFFSET, pirq->hwirq) = NVIC_REG_MASK(pirq->hwirq);
+    HWREG32(nvic_reg(nvic, NVIC_ISER_OFFSET, pirq->hwirq)) =
+        NVIC_REG_MASK(pirq->hwirq);
     nvic_sync();
 }
 
@@ -75,18 +81,18 @@ static rt_err_t nvic_irq_set_priority(struct rt_pic_irq *pirq, rt_uint32_t prior
         return -RT_EINVAL;
     }
 
-    *(volatile rt_uint8_t *)(nvic->base + NVIC_IPR_OFFSET + pirq->hwirq) =
-            priority << (8 - nvic->priority_bits);
+    HWREG8(nvic->base + NVIC_IPR_OFFSET + pirq->hwirq) =
+        priority << (8 - nvic->priority_bits);
     pirq->priority = priority;
 
     return RT_EOK;
 }
 
 static rt_err_t nvic_irq_set_state(struct rt_pic *pic, int hwirq,
-        int type, rt_bool_t state)
+                                   int type, rt_bool_t state)
 {
     struct arm_nvic *nvic = pic->priv_data;
-    volatile rt_uint32_t *reg;
+    rt_ubase_t reg;
 
     if (hwirq < 0 || hwirq >= nvic->irq_nr)
     {
@@ -96,13 +102,13 @@ static rt_err_t nvic_irq_set_state(struct rt_pic *pic, int hwirq,
     switch (type)
     {
     case RT_IRQ_STATE_PENDING:
-        reg = nvic_reg32(nvic, state ? NVIC_ISPR_OFFSET : NVIC_ICPR_OFFSET, hwirq);
-        *reg = NVIC_REG_MASK(hwirq);
+        reg = nvic_reg(nvic, state ? NVIC_ISPR_OFFSET : NVIC_ICPR_OFFSET, hwirq);
+        HWREG32(reg) = NVIC_REG_MASK(hwirq);
         break;
 
     case RT_IRQ_STATE_MASKED:
-        reg = nvic_reg32(nvic, state ? NVIC_ICER_OFFSET : NVIC_ISER_OFFSET, hwirq);
-        *reg = NVIC_REG_MASK(hwirq);
+        reg = nvic_reg(nvic, state ? NVIC_ICER_OFFSET : NVIC_ISER_OFFSET, hwirq);
+        HWREG32(reg) = NVIC_REG_MASK(hwirq);
         break;
 
     default:
@@ -115,7 +121,7 @@ static rt_err_t nvic_irq_set_state(struct rt_pic *pic, int hwirq,
 }
 
 static rt_err_t nvic_irq_get_state(struct rt_pic *pic, int hwirq,
-        int type, rt_bool_t *out_state)
+                                   int type, rt_bool_t *out_state)
 {
     rt_ubase_t offset;
     struct arm_nvic *nvic = pic->priv_data;
@@ -143,7 +149,8 @@ static rt_err_t nvic_irq_get_state(struct rt_pic *pic, int hwirq,
         return -RT_ENOSYS;
     }
 
-    *out_state = !!(*nvic_reg32(nvic, offset, hwirq) & NVIC_REG_MASK(hwirq));
+    *out_state = !!(HWREG32(nvic_reg(nvic, offset, hwirq)) &
+                    NVIC_REG_MASK(hwirq));
     if (type == RT_IRQ_STATE_MASKED)
     {
         *out_state = !*out_state;
@@ -175,7 +182,7 @@ static int nvic_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t priority)
 }
 
 static rt_err_t nvic_irq_parse(struct rt_pic *pic,
-        struct rt_ofw_cell_args *args, struct rt_pic_irq *out_pirq)
+                               struct rt_ofw_cell_args *args, struct rt_pic_irq *out_pirq)
 {
     if (args->args_count != 2 || args->args[0] >= pic->irq_nr)
     {
@@ -188,8 +195,7 @@ static rt_err_t nvic_irq_parse(struct rt_pic *pic,
     return RT_EOK;
 }
 
-static const struct rt_pic_ops nvic_ops =
-{
+static const struct rt_pic_ops nvic_ops = {
     .name = "NVIC",
     .irq_enable = nvic_irq_unmask,
     .irq_disable = nvic_irq_mask,
@@ -202,32 +208,38 @@ static const struct rt_pic_ops nvic_ops =
     .irq_parse = nvic_irq_parse,
 };
 
-void rt_hw_nvic_dispatch(void)
+static rt_bool_t nvic_handler(void *data)
 {
-    rt_uint32_t exception;
+    int hwirq;
+    struct rt_pic_irq *pirq;
+    struct arm_nvic *nvic = data;
+    rt_uint32_t exception = HWREG32(NVIC_ICSR_ADDR) &
+                            NVIC_ICSR_VECTACTIVE_MASK;
 
-    __asm volatile ("mrs %0, ipsr" : "=r" (exception));
-
-    if (exception >= 16)
+    if (exception < 16)
     {
-        int hwirq = exception - 16;
-
-        if (hwirq < _nvic.irq_nr)
-        {
-            struct rt_pic_irq *pirq = rt_pic_find_irq(&_nvic.parent, hwirq);
-
-            if (pirq->irq >= 0)
-            {
-                rt_interrupt_enter();
-                rt_pic_handle_isr(pirq);
-                rt_interrupt_leave();
-            }
-        }
+        return RT_FALSE;
     }
+
+    hwirq = exception - 16;
+    if (hwirq >= nvic->irq_nr)
+    {
+        return RT_FALSE;
+    }
+
+    pirq = rt_pic_find_irq(&nvic->parent, hwirq);
+    if (pirq->irq < 0)
+    {
+        return RT_FALSE;
+    }
+
+    rt_pic_handle_isr(pirq);
+
+    return RT_TRUE;
 }
 
 static rt_err_t nvic_ofw_init(struct rt_ofw_node *np,
-        const struct rt_ofw_node_id *id)
+                              const struct rt_ofw_node_id *id)
 {
     rt_err_t err;
     rt_uint32_t value;
@@ -251,7 +263,7 @@ static rt_err_t nvic_ofw_init(struct rt_ofw_node *np,
         return -RT_EINVAL;
     }
 
-    hw_irq_nr = ((*(volatile rt_uint32_t *)NVIC_ICTR_ADDR & 0xf) + 1) * 32;
+    hw_irq_nr = ((HWREG32(NVIC_ICTR_ADDR) & 0xf) + 1) * 32;
     if (!rt_ofw_prop_read_u32(np, "arm,num-irqs", &value))
     {
         if (!value || value > hw_irq_nr)
@@ -271,7 +283,7 @@ static rt_err_t nvic_ofw_init(struct rt_ofw_node *np,
         _nvic.priority_bits = value;
     }
 
-    _nvic.base = (volatile rt_uint8_t *)(rt_ubase_t)reg;
+    _nvic.base = (rt_ubase_t)reg;
     _nvic.irq_nr = hw_irq_nr;
     _nvic.parent.priv_data = &_nvic;
     _nvic.parent.ops = &nvic_ops;
@@ -282,14 +294,15 @@ static rt_err_t nvic_ofw_init(struct rt_ofw_node *np,
         return err;
     }
 
+    rt_pic_add_traps(nvic_handler, &_nvic);
+
     rt_ofw_data(np) = &_nvic.parent;
     rt_pic_user_extends(&_nvic.parent);
 
     return RT_EOK;
 }
 
-static const struct rt_ofw_node_id nvic_ofw_ids[] =
-{
+static const struct rt_ofw_node_id nvic_ofw_ids[] = {
     { .compatible = "arm,v7m-nvic" },
     { .compatible = "arm,v8m-nvic" },
     { /* sentinel */ }
