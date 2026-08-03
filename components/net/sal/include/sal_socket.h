@@ -120,7 +120,7 @@ typedef uint16_t in_port_t;
 #define MSG_MORE     0x10    /* Sender will send more */
 
 /* Output-only flags returned through struct msghdr. */
-#define MSG_CTRUNC   0x08    /* Control data was discarded due to truncation */
+#define MSG_CTRUNC 0x08    /* Control data was discarded due to truncation */
 
 #define MSG_ERRQUEUE 0x2000  /* Fetch message from error queue */
 #define MSG_CONFIRM  0x0800  /* Confirm path validity */

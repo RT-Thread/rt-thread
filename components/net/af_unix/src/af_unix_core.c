@@ -748,8 +748,7 @@ static int af_unix_getsockopt(int handle, int level, int option,
             result = af_unix_error(EINVAL);
             break;
         }
-        af_unix_timeval_from_timeout(option == SO_RCVTIMEO ?
-                                     sock->receive_timeout : sock->send_timeout,
+        af_unix_timeval_from_timeout(option == SO_RCVTIMEO ? sock->receive_timeout : sock->send_timeout,
                                      &time_value);
         rt_memcpy(value, &time_value, sizeof(time_value));
         *length = sizeof(time_value);
@@ -772,8 +771,7 @@ static int af_unix_getsockopt(int handle, int level, int option,
         break;
     case SO_SNDBUF:
     case SO_RCVBUF:
-        int_value = sock->type == SOCK_DGRAM ? AF_UNIX_DGRAM_MAX_SIZE :
-                                               AF_UNIX_STREAM_BUFFER_SIZE;
+        int_value = sock->type == SOCK_DGRAM ? AF_UNIX_DGRAM_MAX_SIZE : AF_UNIX_STREAM_BUFFER_SIZE;
         break;
     default:
         result = af_unix_error(ENOPROTOOPT);
@@ -1085,8 +1083,7 @@ static int af_unix_poll(struct dfs_file *file, struct rt_pollreq *request)
     return mask;
 }
 
-static const struct sal_socket_ops af_unix_socket_ops =
-{
+static const struct sal_socket_ops af_unix_socket_ops = {
     .socket = af_unix_socket_create,
     .closesocket = af_unix_close,
     .bind = af_unix_bind,
@@ -1107,8 +1104,7 @@ static const struct sal_socket_ops af_unix_socket_ops =
     .poll = af_unix_poll,
 };
 
-static const struct sal_proto_family af_unix_family =
-{
+static const struct sal_proto_family af_unix_family = {
     .family = AF_UNIX,
     .sec_family = AF_UNIX,
     .skt_ops = &af_unix_socket_ops,

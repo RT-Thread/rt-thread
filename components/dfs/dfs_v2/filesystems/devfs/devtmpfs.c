@@ -224,6 +224,7 @@ find_subpath:
             if (rt_strcmp(file->name, filename) == 0)
             {
                 rt_spin_unlock(&superblock->lock);
+                /* cppcheck-suppress uninitvar */
                 return file;
             }
         }

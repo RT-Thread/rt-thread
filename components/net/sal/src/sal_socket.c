@@ -44,16 +44,14 @@
 #include <rtdbg.h>
 
 #define VALID_PROTOCOL(protocol) ((protocol) >= 0 && (protocol) <= IPPROTO_RAW)
-#define VALID_COMBO(domain, type, protocol)                                                                                         \
-    (                                                                                                                               \
-        (((domain) == AF_INET || (domain) == AF_INET6) &&                                                                           \
-         (((type) == SOCK_STREAM && ((protocol) == 0 || (protocol) == IPPROTO_TCP)) ||                                              \
-          ((type) == SOCK_DGRAM && ((protocol) == 0 || (protocol) == IPPROTO_UDP)) ||                                               \
-          ((type) == SOCK_RAW && ((protocol) == IPPROTO_RAW))                                                                       \
-          )) ||                                                                                                                     \
-        ((domain) == AF_UNIX && ((type) == SOCK_STREAM || (type) == SOCK_DGRAM) && (protocol) == 0) ||                              \
-        ((domain) == AF_NETLINK && (type) == SOCK_RAW && (protocol) == 0)                                                           \
-    )
+#define VALID_COMBO(domain, type, protocol)                                                            \
+    (                                                                                                  \
+        (((domain) == AF_INET || (domain) == AF_INET6) &&                                              \
+         (((type) == SOCK_STREAM && ((protocol) == 0 || (protocol) == IPPROTO_TCP)) ||                 \
+          ((type) == SOCK_DGRAM && ((protocol) == 0 || (protocol) == IPPROTO_UDP)) ||                  \
+          ((type) == SOCK_RAW && ((protocol) == IPPROTO_RAW)))) ||                                     \
+        ((domain) == AF_UNIX && ((type) == SOCK_STREAM || (type) == SOCK_DGRAM) && (protocol) == 0) || \
+        ((domain) == AF_NETLINK && (type) == SOCK_RAW && (protocol) == 0))
 
 /* the socket table used to dynamic allocate sockets */
 struct sal_socket_table
@@ -91,8 +89,8 @@ static rt_bool_t init_ok = RT_FALSE;
 static struct sal_netdev_res_table sal_dev_res_tbl[SAL_SOCKETS_NUM];
 static const struct sal_proto_family *local_proto_families[SAL_PROTO_FAMILIES_NUM];
 
-#define IS_SOCKET_PROTO_TLS(sock) (((sock)->protocol == PROTOCOL_TLS) || \
-                                   ((sock)->protocol == PROTOCOL_DTLS))
+#define IS_SOCKET_PROTO_TLS(sock)               (((sock)->protocol == PROTOCOL_TLS) || \
+                                                 ((sock)->protocol == PROTOCOL_DTLS))
 #define SAL_SOCKOPS_PROTO_TLS_VALID(sock, name) (proto_tls && (proto_tls->ops->name) && IS_SOCKET_PROTO_TLS(sock))
 
 #define SAL_SOCKOPT_PROTO_TLS_EXEC(sock, name, optval, optlen)                      \
@@ -135,21 +133,21 @@ static const struct sal_proto_family *local_proto_families[SAL_PROTO_FAMILIES_NU
         }                                                  \
     } while (0)
 
-#define SAL_NETDEV_SOCKETOPS_VALID(netdev, pf, ops)                  \
-    do                                                               \
-    {                                                                \
-        if ((netdev) == RT_NULL)                                     \
-        {                                                            \
-            rt_set_errno(EOPNOTSUPP);                                \
-            return -1;                                               \
-        }                                                            \
-        (pf) = (struct sal_proto_family *)(netdev)->sal_user_data;    \
-        if ((pf) == RT_NULL || (pf)->skt_ops == RT_NULL ||            \
-            (pf)->skt_ops->ops == RT_NULL)                            \
-        {                                                            \
-            rt_set_errno(EOPNOTSUPP);                                \
-            return -1;                                               \
-        }                                                            \
+#define SAL_NETDEV_SOCKETOPS_VALID(netdev, pf, ops)                \
+    do                                                             \
+    {                                                              \
+        if ((netdev) == RT_NULL)                                   \
+        {                                                          \
+            rt_set_errno(EOPNOTSUPP);                              \
+            return -1;                                             \
+        }                                                          \
+        (pf) = (struct sal_proto_family *)(netdev)->sal_user_data; \
+        if ((pf) == RT_NULL || (pf)->skt_ops == RT_NULL ||         \
+            (pf)->skt_ops->ops == RT_NULL)                         \
+        {                                                          \
+            rt_set_errno(EOPNOTSUPP);                              \
+            return -1;                                             \
+        }                                                          \
     } while (0)
 
 #define SAL_NETDEV_NETDBOPS_VALID(netdev, pf, ops)                             \

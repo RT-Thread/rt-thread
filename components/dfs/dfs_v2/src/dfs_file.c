@@ -901,7 +901,7 @@ int dfs_file_mknod(const char *path, int type, mode_t mode)
         if (dfs_is_mounted(mnt) == 0)
         {
             vnode = mnt->fs_ops->create_vnode(dentry, create_type,
-                                               create_mode);
+                                              create_mode);
         }
         if (vnode != RT_NULL)
         {

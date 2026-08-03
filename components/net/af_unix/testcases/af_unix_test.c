@@ -118,11 +118,14 @@ static void af_unix_test_dgram(void)
     }
 
     uassert_int_equal(bind(server, (struct sockaddr *)&server_address,
-                           sizeof(server_address)), 0);
+                           sizeof(server_address)),
+                      0);
     uassert_int_equal(bind(client, (struct sockaddr *)&client_address,
-                           sizeof(client_address)), 0);
+                           sizeof(client_address)),
+                      0);
     uassert_int_equal(connect(client, (struct sockaddr *)&server_address,
-                              sizeof(server_address)), 0);
+                              sizeof(server_address)),
+                      0);
     uassert_int_equal(send(client, payload, sizeof(payload), 0),
                       sizeof(payload));
 
@@ -172,7 +175,8 @@ static void af_unix_test_pathname_lifetime(void)
         goto __exit;
     }
     uassert_int_equal(bind(first, (struct sockaddr *)&address,
-                           sizeof(address)), 0);
+                           sizeof(address)),
+                      0);
     uassert_int_equal(stat(AF_UNIX_PERSIST_PATH, &file_stat), 0);
     uassert_true(S_ISSOCK(file_stat.st_mode));
 
@@ -194,7 +198,8 @@ static void af_unix_test_pathname_lifetime(void)
 
     uassert_int_equal(unlink(AF_UNIX_PERSIST_PATH), 0);
     uassert_int_equal(bind(second, (struct sockaddr *)&address,
-                           sizeof(address)), 0);
+                           sizeof(address)),
+                      0);
 
 __exit:
     if (second >= 0)
@@ -231,10 +236,12 @@ static void af_unix_test_stream(void)
     }
 
     uassert_int_equal(bind(listener, (struct sockaddr *)&address,
-                           sizeof(address)), 0);
+                           sizeof(address)),
+                      0);
     uassert_int_equal(listen(listener, 2), 0);
     uassert_int_equal(connect(client, (struct sockaddr *)&address,
-                              sizeof(address)), 0);
+                              sizeof(address)),
+                      0);
     accepted = accept(listener, RT_NULL, RT_NULL);
     uassert_true(accepted >= 0);
     if (accepted < 0)
@@ -277,7 +284,7 @@ static void af_unix_test_dgram_readiness(void)
     int error;
     int index;
     int result;
-    int sockets[2] = {-1, -1};
+    int sockets[2] = { -1, -1 };
     char buffer[2];
     const char payload[] = "x";
     struct pollfd poll_fd;
@@ -324,7 +331,7 @@ static void af_unix_test_dgram_readiness(void)
 static void af_unix_test_stream_readiness(void)
 {
     int result;
-    int sockets[2] = {-1, -1};
+    int sockets[2] = { -1, -1 };
     char buffer[8];
     const char payload[] = "poll";
     struct pollfd poll_fd;
@@ -383,10 +390,12 @@ static void af_unix_test_pending_close(void)
     }
 
     uassert_int_equal(bind(listener, (struct sockaddr *)&address,
-                           sizeof(address)), 0);
+                           sizeof(address)),
+                      0);
     uassert_int_equal(listen(listener, 1), 0);
     uassert_int_equal(connect(client, (struct sockaddr *)&address,
-                              sizeof(address)), 0);
+                              sizeof(address)),
+                      0);
     closesocket(listener);
     listener = -1;
 
@@ -410,7 +419,7 @@ __exit:
 static void af_unix_test_socketpair(void)
 {
     int type_index;
-    int types[2] = {SOCK_DGRAM, SOCK_STREAM};
+    int types[2] = { SOCK_DGRAM, SOCK_STREAM };
     int sockets[2];
     char buffer[8];
     char first_part[3];
@@ -424,7 +433,8 @@ static void af_unix_test_socketpair(void)
     for (type_index = 0; type_index < 2; type_index++)
     {
         uassert_int_equal(socketpair(AF_UNIX, types[type_index], 0,
-                                     sockets), 0);
+                                     sockets),
+                          0);
         uassert_int_equal(send(sockets[0], payload, sizeof(payload), 0),
                           sizeof(payload));
         uassert_int_equal(recv(sockets[1], buffer, sizeof(buffer), 0),
@@ -462,12 +472,12 @@ static void af_unix_test_rights_transfer(void)
 {
     char data;
     char payload;
-    int received_fds[2] = {-1, -1};
-    int pipe_fds[2][2] = {{-1, -1}, {-1, -1}};
+    int received_fds[2] = { -1, -1 };
+    int pipe_fds[2][2] = { { -1, -1 }, { -1, -1 } };
     int send_fds[2];
-    int sockets[2] = {-1, -1};
+    int sockets[2] = { -1, -1 };
     int type_index;
-    int types[2] = {SOCK_DGRAM, SOCK_STREAM};
+    int types[2] = { SOCK_DGRAM, SOCK_STREAM };
     size_t fd_count;
     int message_flags;
 
@@ -483,7 +493,8 @@ static void af_unix_test_rights_transfer(void)
         sockets[1] = -1;
 
         uassert_int_equal(socketpair(AF_UNIX, types[type_index], 0,
-                                     sockets), 0);
+                                     sockets),
+                          0);
         uassert_int_equal(pipe(pipe_fds[0]), 0);
         uassert_int_equal(pipe(pipe_fds[1]), 0);
         if (sockets[0] < 0 || pipe_fds[0][0] < 0 || pipe_fds[1][0] < 0)
@@ -496,7 +507,8 @@ static void af_unix_test_rights_transfer(void)
         send_fds[0] = pipe_fds[0][0];
         send_fds[1] = pipe_fds[1][0];
         uassert_int_equal(af_unix_send_rights(sockets[0], send_fds, 2,
-                                              'r'), 1);
+                                              'r'),
+                          1);
         close(pipe_fds[0][0]);
         pipe_fds[0][0] = -1;
         close(pipe_fds[1][0]);
@@ -507,7 +519,8 @@ static void af_unix_test_rights_transfer(void)
         uassert_int_equal(af_unix_receive_rights(
                               sockets[1], 0,
                               CMSG_SPACE(2 * sizeof(int)), received_fds,
-                              &fd_count, &message_flags, &payload), 1);
+                              &fd_count, &message_flags, &payload),
+                          1);
         uassert_int_equal(payload, 'r');
         uassert_int_equal(fd_count, 2);
         uassert_int_equal(message_flags & MSG_CTRUNC, 0);
@@ -556,10 +569,10 @@ static void af_unix_test_rights_truncation(void)
 {
     char payload;
     int message_flags = 0;
-    int pipe_fds[2][2] = {{-1, -1}, {-1, -1}};
-    int received_fds[2] = {-1, -1};
+    int pipe_fds[2][2] = { { -1, -1 }, { -1, -1 } };
+    int received_fds[2] = { -1, -1 };
     int send_fds[2];
-    int sockets[2] = {-1, -1};
+    int sockets[2] = { -1, -1 };
     size_t fd_count = 0;
 
     uassert_int_equal(socketpair(AF_UNIX, SOCK_DGRAM, 0, sockets), 0);
@@ -575,7 +588,8 @@ static void af_unix_test_rights_truncation(void)
     uassert_int_equal(af_unix_send_rights(sockets[0], send_fds, 2, 't'), 1);
     uassert_int_equal(af_unix_receive_rights(
                           sockets[1], 0, 0,
-                          received_fds, &fd_count, &message_flags, &payload), 1);
+                          received_fds, &fd_count, &message_flags, &payload),
+                      1);
     uassert_int_equal(fd_count, 0);
     uassert_true((message_flags & MSG_CTRUNC) != 0);
 
@@ -616,14 +630,15 @@ static void af_unix_test_rights_peek_and_invalid(void)
     int error;
     int invalid_fd = -1;
     int message_flags = 0;
-    int pipe_fds[2] = {-1, -1};
-    int received_fds[2] = {-1, -1};
-    int sockets[2] = {-1, -1};
+    int pipe_fds[2] = { -1, -1 };
+    int received_fds[2] = { -1, -1 };
+    int sockets[2] = { -1, -1 };
     int result;
     size_t fd_count = 0;
 
     uassert_int_equal(socketpair(AF_UNIX, SOCK_STREAM | SOCK_NONBLOCK, 0,
-                                 sockets), 0);
+                                 sockets),
+                      0);
     uassert_int_equal(pipe(pipe_fds), 0);
     if (sockets[0] < 0 || pipe_fds[0] < 0)
     {
@@ -639,7 +654,8 @@ static void af_unix_test_rights_peek_and_invalid(void)
     fd_count = 0;
     uassert_int_equal(af_unix_receive_rights(
                           sockets[1], MSG_PEEK, CMSG_SPACE(sizeof(int)),
-                          received_fds, &fd_count, &message_flags, &payload), 1);
+                          received_fds, &fd_count, &message_flags, &payload),
+                      1);
     uassert_int_equal(payload, 'p');
     uassert_int_equal(fd_count, 0);
 
@@ -647,7 +663,8 @@ static void af_unix_test_rights_peek_and_invalid(void)
     message_flags = 0;
     uassert_int_equal(af_unix_receive_rights(
                           sockets[1], 0, CMSG_SPACE(sizeof(int)),
-                          received_fds, &fd_count, &message_flags, &payload), 1);
+                          received_fds, &fd_count, &message_flags, &payload),
+                      1);
     uassert_int_equal(fd_count, 1);
 
 __exit:
@@ -677,10 +694,10 @@ static void af_unix_test_rights_socket(void)
 {
     char buffer = 0;
     char payload = 0;
-    int carrier[2] = {-1, -1};
+    int carrier[2] = { -1, -1 };
     int message_flags = 0;
-    int passed[2] = {-1, -1};
-    int received_fds[2] = {-1, -1};
+    int passed[2] = { -1, -1 };
+    int received_fds[2] = { -1, -1 };
     size_t fd_count = 0;
 
     uassert_int_equal(socketpair(AF_UNIX, SOCK_STREAM, 0, carrier), 0);
@@ -695,7 +712,8 @@ static void af_unix_test_rights_socket(void)
     passed[1] = -1;
     uassert_int_equal(af_unix_receive_rights(
                           carrier[1], 0, CMSG_SPACE(sizeof(int)),
-                          received_fds, &fd_count, &message_flags, &payload), 1);
+                          received_fds, &fd_count, &message_flags, &payload),
+                      1);
     uassert_int_equal(fd_count, 1);
     uassert_int_equal(send(passed[0], "q", 1, 0), 1);
     uassert_int_equal(recv(received_fds[0], &buffer, 1, 0), 1);

@@ -88,7 +88,7 @@ int af_unix_rights_create(const struct msghdr *message,
         }
 
         next = af_unix_cmsg_next(offset, cmsg->cmsg_len,
-                                message->msg_controllen);
+                                 message->msg_controllen);
         if (next <= offset || next > message->msg_controllen)
         {
             return af_unix_error(EINVAL);
