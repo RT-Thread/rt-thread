@@ -623,6 +623,11 @@ int dfs_elm_flush(struct dfs_file *file)
     FIL *fd;
     FRESULT result;
 
+    if (file->vnode->type == FT_DIRECTORY)
+    {
+        return -EISDIR;
+    }
+
     fd = (FIL *)(file->vnode->data);
     RT_ASSERT(fd != RT_NULL);
 
