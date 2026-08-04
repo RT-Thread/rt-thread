@@ -22,6 +22,8 @@ rt_err_t sdio_regulator_set_ocr(struct rt_mmcsd_host *host,
         struct rt_regulator *supply, rt_uint16_t vdd_bit);
 rt_err_t sdio_regulator_set_vqmmc(struct rt_mmcsd_host *host,
         struct rt_mmcsd_io_cfg *ios);
+rt_bool_t sdio_regulator_supports_vqmmc_voltage(struct rt_regulator *regulator,
+        int min_uvolt, int target_uvolt, int max_uvolt);
 rt_err_t sdio_regulator_get_supply(struct rt_device *dev, struct rt_mmcsd_host *host);
 rt_err_t sdio_regulator_enable_vqmmc(struct rt_mmcsd_host *host);
 void sdio_regulator_disable_vqmmc(struct rt_mmcsd_host *host);

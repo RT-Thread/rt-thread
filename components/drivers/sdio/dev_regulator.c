@@ -94,10 +94,26 @@ rt_err_t sdio_regulator_set_ocr(struct rt_mmcsd_host *host,
     return err;
 }
 
+rt_bool_t sdio_regulator_supports_vqmmc_voltage(struct rt_regulator *regulator,
+        int min_uvolt, int target_uvolt, int max_uvolt)
+{
+    if (!regulator)
+    {
+        return RT_FALSE;
+    }
+
+    if (rt_regulator_is_supported_voltage(regulator, min_uvolt, max_uvolt))
+    {
+        return RT_TRUE;
+    }
+
+    return rt_regulator_is_supported_voltage(regulator, target_uvolt, target_uvolt);
+}
+
 static int regulator_set_voltage_if_supported(struct rt_regulator *regulator,
         int min_uvolt, int target_uvolt, int max_uvolt)
 {
-    if (!rt_regulator_is_supported_voltage(regulator, min_uvolt, max_uvolt))
+    if (!regulator)
     {
         return -RT_EINVAL;
     }
@@ -107,8 +123,22 @@ static int regulator_set_voltage_if_supported(struct rt_regulator *regulator,
         return RT_EOK;
     }
 
-    return rt_regulator_set_voltage_triplet(regulator, min_uvolt, target_uvolt,
-            max_uvolt);
+    if (rt_regulator_is_supported_voltage(regulator, min_uvolt, max_uvolt))
+    {
+        return rt_regulator_set_voltage_triplet(regulator, min_uvolt, target_uvolt,
+                max_uvolt);
+    }
+
+    /*
+     * gpio regulator may declare min above the SDHCI nominal range
+     * (e.g. 1.8V only) while still supporting the target voltage.
+     */
+    if (rt_regulator_is_supported_voltage(regulator, target_uvolt, target_uvolt))
+    {
+        return rt_regulator_set_voltage(regulator, target_uvolt, target_uvolt);
+    }
+
+    return -RT_EINVAL;
 }
 
 rt_err_t sdio_regulator_set_vqmmc(struct rt_mmcsd_host *host,

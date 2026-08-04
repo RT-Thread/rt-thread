@@ -424,6 +424,8 @@ struct rt_sdhci_host
     char        *bounce_buffer;                         /* For packing SDMA reads/writes */
     rt_uint64_t  bounce_addr;
     unsigned int bounce_buffer_size;
+    void        *bounce_orig_buf;
+    rt_bool_t    bounce_active;
 
     const struct rt_sdhci_ops *ops;                     /* Low level hw interface */
 
@@ -484,6 +486,7 @@ struct rt_sdhci_host
 
     struct rt_workqueue *irq_wq;
     struct rt_work       irq_work;
+    struct rt_work       poll_work;
 
     struct rt_timer timer;                              /* Timer for timeouts */
     struct rt_timer data_timer;                         /* Timer for data timeouts */
