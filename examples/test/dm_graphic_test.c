@@ -226,10 +226,10 @@ rt_err_t graphic_start(const char *gdev, int count)
 {
     rt_err_t err;
     rt_uint8_t *vfb, *fb, *pixel, bpp;
-    rt_size_t frame_len, page_count, front_page;
-    struct rt_device_rect_info rect;
+    rt_size_t                     frame_len, page_count, front_page;
+    struct rt_device_rect_info    rect;
     struct rt_device_graphic_info info;
-    struct fb_var_screeninfo var;
+    struct fb_var_screeninfo      var;
     struct rt_device *dev = rt_device_find(gdev);
     void (*conv_func)(rt_uint8_t r, rt_uint8_t g, rt_uint8_t b, void *pixel);
 
@@ -253,7 +253,7 @@ rt_err_t graphic_start(const char *gdev, int count)
         goto _end;
     }
 
-    frame_len = (rt_size_t)info.pitch * info.height;
+    frame_len  = (rt_size_t)info.pitch * info.height;
     page_count = frame_len ? info.smem_len / frame_len : 0;
 
     if (!page_count)
@@ -310,21 +310,21 @@ rt_err_t graphic_start(const char *gdev, int count)
         {
             front_page = (front_page + 1) % page_count;
             rt_memcpy((rt_uint8_t *)info.framebuffer + front_page * frame_len,
-                    vfb, frame_len);
+                      vfb, frame_len);
 
-            var.xoffset = 0;
-            var.yoffset = front_page * info.height;
+            var.xoffset  = 0;
+            var.yoffset  = front_page * info.height;
             var.activate = FB_ACTIVATE_VBL;
-            err = rt_device_control(dev, FBIOPAN_DISPLAY, &var);
+            err          = rt_device_control(dev, FBIOPAN_DISPLAY, &var);
         }
         else
         {
             rt_memcpy(info.framebuffer, vfb, frame_len);
-            rect.x = 0;
-            rect.y = 0;
-            rect.width = info.width;
+            rect.x      = 0;
+            rect.y      = 0;
+            rect.width  = info.width;
             rect.height = info.height;
-            err = rt_device_control(dev, RTGRAPHIC_CTRL_RECT_UPDATE, &rect);
+            err         = rt_device_control(dev, RTGRAPHIC_CTRL_RECT_UPDATE, &rect);
 
             if (!err)
             {

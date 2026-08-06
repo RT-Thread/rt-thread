@@ -41,13 +41,13 @@
 #define FBIO_WAITFORVSYNC       0x4620
 
 /* fb_var_screeninfo.activate */
-#define FB_ACTIVATE_NOW         0
-#define FB_ACTIVATE_NXTOPEN     1
-#define FB_ACTIVATE_TEST        2
-#define FB_ACTIVATE_MASK        15
-#define FB_ACTIVATE_VBL         16
-#define FB_ACTIVATE_ALL         64
-#define FB_ACTIVATE_FORCE       128
+#define FB_ACTIVATE_NOW     0
+#define FB_ACTIVATE_NXTOPEN 1
+#define FB_ACTIVATE_TEST    2
+#define FB_ACTIVATE_MASK    15
+#define FB_ACTIVATE_VBL     16
+#define FB_ACTIVATE_ALL     64
+#define FB_ACTIVATE_FORCE   128
 
 struct fb_bitfield
 {

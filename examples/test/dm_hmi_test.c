@@ -18,11 +18,11 @@
 
 #if defined(RT_USING_GRAPHIC) && defined(RT_USING_INPUT)
 
-#define HMI_CURSOR_WIDTH          64
-#define HMI_CURSOR_HEIGHT         64
-#define HMI_MAX_MT_SLOTS          16
-#define HMI_MAX_INPUT_DEVICES     32
-#define HMI_MAX_GRAPHIC_DEVICES   8
+#define HMI_CURSOR_WIDTH        64
+#define HMI_CURSOR_HEIGHT       64
+#define HMI_MAX_MT_SLOTS        16
+#define HMI_MAX_INPUT_DEVICES   32
+#define HMI_MAX_GRAPHIC_DEVICES 8
 
 struct hmi_info
 {
@@ -30,34 +30,34 @@ struct hmi_info
     struct rt_device *idev;
 
     struct rt_device_graphic_info info;
-    struct fb_var_screeninfo var;
+    struct fb_var_screeninfo      var;
     struct rt_device_notify event_notify;
     struct rt_input_handler handler;
-    struct rt_semaphore wakeup;
+    struct rt_semaphore           wakeup;
 
     volatile rt_bool_t running;
     volatile rt_bool_t dirty;
     volatile rt_bool_t reconfigure;
-    rt_bool_t powered;
-    rt_bool_t notify_installed;
-    rt_bool_t handler_installed;
+    rt_bool_t          powered;
+    rt_bool_t          notify_installed;
+    rt_bool_t          handler_installed;
     rt_bool_t keydown;
-    rt_bool_t multitouch;
+    rt_bool_t          multitouch;
 
     rt_uint32_t dx;
     rt_uint32_t dy;
     rt_uint32_t bytes_per_pixel;
     rt_uint32_t mt_x[HMI_MAX_MT_SLOTS];
     rt_uint32_t mt_y[HMI_MAX_MT_SLOTS];
-    rt_int32_t mt_slot;
-    rt_ubase_t mt_active;
+    rt_int32_t  mt_slot;
+    rt_ubase_t  mt_active;
     rt_ubase_t line[2];
     rt_ubase_t colors[4];
 
     rt_size_t frame_len;
     rt_size_t page_count;
     rt_size_t front_page;
-    void *framebuffer;
+    void     *framebuffer;
 };
 
 static struct hmi_info *hmi_active;
@@ -88,7 +88,7 @@ static rt_ubase_t hmi_color_component(rt_uint8_t value, rt_ubase_t mask)
 }
 
 static rt_bool_t hmi_color_field_valid(const struct fb_bitfield *field,
-        rt_uint32_t bits_per_pixel)
+                                       rt_uint32_t               bits_per_pixel)
 {
     if (!field->length)
     {
@@ -96,23 +96,23 @@ static rt_bool_t hmi_color_field_valid(const struct fb_bitfield *field,
     }
 
     return field->offset < bits_per_pixel &&
-            field->length <= bits_per_pixel - field->offset &&
-            field->length <= RT_BITS_PER_TYPE(rt_ubase_t);
+           field->length <= bits_per_pixel - field->offset &&
+           field->length <= RT_BITS_PER_TYPE(rt_ubase_t);
 }
 
 static rt_ubase_t hmi_make_color(struct hmi_info *hmi,
-        rt_uint8_t red, rt_uint8_t green, rt_uint8_t blue,
-        rt_uint8_t alpha)
+                                 rt_uint8_t red, rt_uint8_t green, rt_uint8_t blue,
+                                 rt_uint8_t alpha)
 {
-    rt_ubase_t red_mask = hmi_color_mask(hmi->var.red.length);
+    rt_ubase_t red_mask   = hmi_color_mask(hmi->var.red.length);
     rt_ubase_t green_mask = hmi_color_mask(hmi->var.green.length);
-    rt_ubase_t blue_mask = hmi_color_mask(hmi->var.blue.length);
+    rt_ubase_t blue_mask  = hmi_color_mask(hmi->var.blue.length);
     rt_ubase_t alpha_mask = hmi_color_mask(hmi->var.transp.length);
 
     return (hmi_color_component(red, red_mask) << hmi->var.red.offset) |
-            (hmi_color_component(green, green_mask) << hmi->var.green.offset) |
-            (hmi_color_component(blue, blue_mask) << hmi->var.blue.offset) |
-            (hmi_color_component(alpha, alpha_mask) << hmi->var.transp.offset);
+           (hmi_color_component(green, green_mask) << hmi->var.green.offset) |
+           (hmi_color_component(blue, blue_mask) << hmi->var.blue.offset) |
+           (hmi_color_component(alpha, alpha_mask) << hmi->var.transp.offset);
 }
 
 static void hmi_swap_lines(struct hmi_info *hmi)
@@ -137,10 +137,10 @@ static void hmi_signal(struct hmi_info *hmi)
 }
 
 static rt_bool_t hmi_input_supported(struct rt_device *dev,
-        rt_bool_t *multitouch)
+                                     rt_bool_t        *multitouch)
 {
-    const char *name;
-    rt_bool_t mt;
+    const char             *name;
+    rt_bool_t               mt;
     struct rt_input_device *idev;
 
     if (!dev)
@@ -163,12 +163,12 @@ static rt_bool_t hmi_input_supported(struct rt_device *dev,
     }
 
     mt = rt_bitmap_test_bit(idev->abs_map, ABS_MT_SLOT) &&
-            rt_bitmap_test_bit(idev->abs_map, ABS_MT_TRACKING_ID) &&
-            rt_bitmap_test_bit(idev->abs_map, ABS_MT_POSITION_X) &&
-            rt_bitmap_test_bit(idev->abs_map, ABS_MT_POSITION_Y);
+         rt_bitmap_test_bit(idev->abs_map, ABS_MT_TRACKING_ID) &&
+         rt_bitmap_test_bit(idev->abs_map, ABS_MT_POSITION_X) &&
+         rt_bitmap_test_bit(idev->abs_map, ABS_MT_POSITION_Y);
 
     if (!mt && !(rt_bitmap_test_bit(idev->abs_map, ABS_X) &&
-            rt_bitmap_test_bit(idev->abs_map, ABS_Y)))
+                 rt_bitmap_test_bit(idev->abs_map, ABS_Y)))
     {
         return RT_FALSE;
     }
@@ -183,9 +183,9 @@ static rt_bool_t hmi_input_supported(struct rt_device *dev,
 
 static struct rt_device *hmi_find_graphic(const char *name)
 {
-    char device_name[16];
+    char              device_name[16];
     struct rt_device *dev;
-    int i;
+    int               i;
 
     if (name && rt_strcmp(name, "auto"))
     {
@@ -206,11 +206,11 @@ static struct rt_device *hmi_find_graphic(const char *name)
 }
 
 static struct rt_device *hmi_find_input(const char *name,
-        rt_bool_t *multitouch)
+                                        rt_bool_t  *multitouch)
 {
-    char device_name[16];
+    char              device_name[16];
     struct rt_device *dev;
-    int i;
+    int               i;
 
     if (name && rt_strcmp(name, "auto"))
     {
@@ -234,9 +234,9 @@ static struct rt_device *hmi_find_input(const char *name,
 }
 
 static rt_uint32_t hmi_scale_axis(struct rt_input_device *idev,
-        rt_uint16_t axis, rt_int32_t value, rt_uint32_t size)
+                                  rt_uint16_t axis, rt_int32_t value, rt_uint32_t size)
 {
-    rt_int32_t min, max;
+    rt_int32_t               min, max;
     struct rt_input_absinfo *absinfo;
 
     if (!idev->absinfo || axis >= ABS_CNT || size <= 1)
@@ -245,8 +245,8 @@ static rt_uint32_t hmi_scale_axis(struct rt_input_device *idev,
     }
 
     absinfo = &idev->absinfo[axis];
-    min = absinfo->minimum;
-    max = absinfo->maximum;
+    min     = absinfo->minimum;
+    max     = absinfo->maximum;
 
     if (max <= min)
     {
@@ -276,8 +276,8 @@ static void hmi_select_mt_position(struct hmi_info *hmi)
 static rt_bool_t hmi_input_callback(struct rt_input_handler *handler,
         struct rt_input_event *ev)
 {
-    rt_bool_t down;
-    rt_ubase_t slot_mask;
+    rt_bool_t        down;
+    rt_ubase_t       slot_mask;
     struct hmi_info *hmi = handler->priv;
 
     if (ev->type == EV_ABS)
@@ -285,10 +285,12 @@ static rt_bool_t hmi_input_callback(struct rt_input_handler *handler,
         if (hmi->multitouch && ev->code == ABS_MT_SLOT)
         {
             hmi->mt_slot = ev->value >= 0 &&
-                    ev->value < HMI_MAX_MT_SLOTS ? ev->value : -1;
+                                   ev->value < HMI_MAX_MT_SLOTS
+                               ? ev->value
+                               : -1;
         }
         else if (hmi->multitouch && ev->code == ABS_MT_TRACKING_ID &&
-                hmi->mt_slot >= 0)
+                 hmi->mt_slot >= 0)
         {
             slot_mask = RT_BIT(hmi->mt_slot);
 
@@ -304,28 +306,28 @@ static rt_bool_t hmi_input_callback(struct rt_input_handler *handler,
         else if (ev->code == ABS_X)
         {
             hmi->dx = hmi_scale_axis(handler->idev, ABS_X,
-                    ev->value, hmi->info.width);
+                                     ev->value, hmi->info.width);
         }
         else if (ev->code == ABS_Y)
         {
             hmi->dy = hmi_scale_axis(handler->idev, ABS_Y,
-                    ev->value, hmi->info.height);
+                                     ev->value, hmi->info.height);
         }
         else if (hmi->multitouch && hmi->mt_slot >= 0 &&
-                ev->code == ABS_MT_POSITION_X)
+                 ev->code == ABS_MT_POSITION_X)
         {
             hmi->mt_x[hmi->mt_slot] = hmi_scale_axis(handler->idev,
-                    ABS_MT_POSITION_X, ev->value, hmi->info.width);
+                                                     ABS_MT_POSITION_X, ev->value, hmi->info.width);
         }
         else if (hmi->multitouch && hmi->mt_slot >= 0 &&
-                ev->code == ABS_MT_POSITION_Y)
+                 ev->code == ABS_MT_POSITION_Y)
         {
             hmi->mt_y[hmi->mt_slot] = hmi_scale_axis(handler->idev,
-                    ABS_MT_POSITION_Y, ev->value, hmi->info.height);
+                                                     ABS_MT_POSITION_Y, ev->value, hmi->info.height);
         }
     }
     else if (ev->type == EV_KEY && !hmi->multitouch &&
-            (ev->code == BTN_LEFT || ev->code == BTN_TOUCH))
+             (ev->code == BTN_LEFT || ev->code == BTN_TOUCH))
     {
         if (hmi->keydown && ev->value == 0)
         {
@@ -368,13 +370,13 @@ static void hmi_graphic_notify(rt_device_t dev)
 }
 
 static void hmi_write_pixel(rt_uint8_t *pixel, rt_ubase_t color,
-        rt_uint32_t bytes_per_pixel)
+                            rt_uint32_t bytes_per_pixel)
 {
     rt_memcpy(pixel, &color, bytes_per_pixel);
 }
 
 static void hmi_fill_span(rt_uint8_t *pixel, rt_uint32_t width,
-        rt_ubase_t color, rt_uint32_t bytes_per_pixel)
+                          rt_ubase_t color, rt_uint32_t bytes_per_pixel)
 {
     rt_uint32_t x;
 
@@ -409,8 +411,8 @@ static void hmi_fill_span(rt_uint8_t *pixel, rt_uint32_t width,
 }
 
 static void hmi_fill_rect(struct hmi_info *hmi, rt_uint32_t x,
-        rt_uint32_t y, rt_uint32_t width, rt_uint32_t height,
-        rt_ubase_t color)
+                          rt_uint32_t y, rt_uint32_t width, rt_uint32_t height,
+                          rt_ubase_t color)
 {
     rt_uint8_t *row;
     rt_uint32_t line;
@@ -421,8 +423,8 @@ static void hmi_fill_rect(struct hmi_info *hmi, rt_uint32_t x,
     }
 
     row = (rt_uint8_t *)hmi->framebuffer +
-            (rt_size_t)y * hmi->info.pitch +
-            (rt_size_t)x * hmi->bytes_per_pixel;
+          (rt_size_t)y * hmi->info.pitch +
+          (rt_size_t)x * hmi->bytes_per_pixel;
 
     for (line = 0; line < height; ++line)
     {
@@ -432,7 +434,7 @@ static void hmi_fill_rect(struct hmi_info *hmi, rt_uint32_t x,
 }
 
 static void hmi_draw_lines(struct hmi_info *hmi,
-        rt_uint32_t x, rt_uint32_t y)
+                           rt_uint32_t x, rt_uint32_t y)
 {
     rt_uint8_t *pixel;
     rt_uint32_t line;
@@ -440,7 +442,7 @@ static void hmi_draw_lines(struct hmi_info *hmi,
     pixel = (rt_uint8_t *)hmi->framebuffer +
             (rt_size_t)y * hmi->info.pitch;
     hmi_fill_span(pixel, hmi->info.width, hmi->line[0],
-            hmi->bytes_per_pixel);
+                  hmi->bytes_per_pixel);
 
     pixel = (rt_uint8_t *)hmi->framebuffer +
             (rt_size_t)x * hmi->bytes_per_pixel;
@@ -454,15 +456,15 @@ static void hmi_draw_lines(struct hmi_info *hmi,
 
 static void hmi_setup_cursor(struct hmi_info *hmi)
 {
-    rt_ubase_t color;
+    rt_ubase_t  color;
     rt_uint8_t *cursor;
     rt_uint8_t *pixel;
-    rt_size_t cursor_len;
+    rt_size_t   cursor_len;
     rt_uint32_t count;
 
     cursor_len = HMI_CURSOR_WIDTH * HMI_CURSOR_HEIGHT *
-            hmi->bytes_per_pixel;
-    cursor = rt_malloc(cursor_len);
+                 hmi->bytes_per_pixel;
+    cursor     = rt_malloc(cursor_len);
 
     if (!cursor)
     {
@@ -484,27 +486,27 @@ static void hmi_setup_cursor(struct hmi_info *hmi)
 
 static rt_err_t hmi_configure(struct hmi_info *hmi)
 {
-    rt_err_t err;
-    rt_uint32_t slot;
-    rt_size_t frame_len, page_count, front_page;
+    rt_err_t                 err;
+    rt_uint32_t              slot;
+    rt_size_t                frame_len, page_count, front_page;
     struct fb_fix_screeninfo fix;
-    void *framebuffer;
+    void                    *framebuffer;
 
     if ((err = rt_device_control(hmi->gdev,
-            RTGRAPHIC_CTRL_GET_INFO, &hmi->info)))
+                                 RTGRAPHIC_CTRL_GET_INFO, &hmi->info)))
     {
         return err;
     }
 
     if ((err = rt_device_control(hmi->gdev,
-            FBIOGET_VSCREENINFO, &hmi->var)))
+                                 FBIOGET_VSCREENINFO, &hmi->var)))
     {
         return err;
     }
 
     if (!hmi->info.framebuffer || !hmi->info.width || !hmi->info.height ||
-            !hmi->info.pitch || !hmi->info.bits_per_pixel ||
-            hmi->info.bits_per_pixel % 8)
+        !hmi->info.pitch || !hmi->info.bits_per_pixel ||
+        hmi->info.bits_per_pixel % 8)
     {
         return -RT_EINVAL;
     }
@@ -512,22 +514,22 @@ static rt_err_t hmi_configure(struct hmi_info *hmi)
     hmi->bytes_per_pixel = hmi->info.bits_per_pixel / 8;
 
     if (!hmi->bytes_per_pixel ||
-            hmi->bytes_per_pixel > sizeof(rt_ubase_t) ||
-            hmi->info.width > hmi->info.pitch / hmi->bytes_per_pixel ||
-            !hmi_color_field_valid(&hmi->var.red,
-                    hmi->info.bits_per_pixel) ||
-            !hmi_color_field_valid(&hmi->var.green,
-                    hmi->info.bits_per_pixel) ||
-            !hmi_color_field_valid(&hmi->var.blue,
-                    hmi->info.bits_per_pixel) ||
-            !hmi_color_field_valid(&hmi->var.transp,
-                    hmi->info.bits_per_pixel) ||
-            hmi->info.pitch > (rt_size_t)-1 / hmi->info.height)
+        hmi->bytes_per_pixel > sizeof(rt_ubase_t) ||
+        hmi->info.width > hmi->info.pitch / hmi->bytes_per_pixel ||
+        !hmi_color_field_valid(&hmi->var.red,
+                               hmi->info.bits_per_pixel) ||
+        !hmi_color_field_valid(&hmi->var.green,
+                               hmi->info.bits_per_pixel) ||
+        !hmi_color_field_valid(&hmi->var.blue,
+                               hmi->info.bits_per_pixel) ||
+        !hmi_color_field_valid(&hmi->var.transp,
+                               hmi->info.bits_per_pixel) ||
+        hmi->info.pitch > (rt_size_t)-1 / hmi->info.height)
     {
         return -RT_EINVAL;
     }
 
-    frame_len = (rt_size_t)hmi->info.pitch * hmi->info.height;
+    frame_len  = (rt_size_t)hmi->info.pitch * hmi->info.height;
     page_count = hmi->info.smem_len / frame_len;
 
     if (!page_count)
@@ -540,7 +542,7 @@ static rt_err_t hmi_configure(struct hmi_info *hmi)
         rt_memset(&fix, 0, sizeof(fix));
 
         if (rt_device_control(hmi->gdev, FBIOGET_FSCREENINFO, &fix) ||
-                !fix.ypanstep)
+            !fix.ypanstep)
         {
             page_count = 1;
         }
@@ -566,7 +568,7 @@ static rt_err_t hmi_configure(struct hmi_info *hmi)
         hmi->var.activate = FB_ACTIVATE_NOW;
 
         if ((err = rt_device_control(hmi->gdev,
-                FBIOPUT_VSCREENINFO, &hmi->var)))
+                                     FBIOPUT_VSCREENINFO, &hmi->var)))
         {
             rt_free(framebuffer);
             return err;
@@ -579,12 +581,12 @@ static rt_err_t hmi_configure(struct hmi_info *hmi)
     }
 
     hmi->framebuffer = framebuffer;
-    hmi->frame_len = frame_len;
-    hmi->page_count = page_count;
-    hmi->front_page = front_page;
+    hmi->frame_len   = frame_len;
+    hmi->page_count  = page_count;
+    hmi->front_page  = front_page;
 
-    hmi->line[0] = hmi_make_color(hmi, 0xff, 0xff, 0xff, 0xff);
-    hmi->line[1] = hmi_make_color(hmi, 0x00, 0x00, 0x00, 0xff);
+    hmi->line[0]   = hmi_make_color(hmi, 0xff, 0xff, 0xff, 0xff);
+    hmi->line[1]   = hmi_make_color(hmi, 0x00, 0x00, 0x00, 0xff);
     hmi->colors[0] = hmi_make_color(hmi, 0xff, 0x4b, 0x00, 0xff);
     hmi->colors[1] = hmi_make_color(hmi, 0x7f, 0xdb, 0x3b, 0xff);
     hmi->colors[2] = hmi_make_color(hmi, 0x00, 0xa4, 0xef, 0xff);
@@ -617,11 +619,11 @@ static rt_err_t hmi_configure(struct hmi_info *hmi)
 
 static rt_err_t hmi_present(struct hmi_info *hmi)
 {
-    rt_err_t err;
-    rt_ubase_t cursor_position;
-    rt_uint32_t x, y;
+    rt_err_t                   err;
+    rt_ubase_t                 cursor_position;
+    rt_uint32_t                x, y;
     struct rt_device_rect_info rect;
-    struct fb_var_screeninfo var;
+    struct fb_var_screeninfo   var;
 
     x = rt_min(hmi->dx, (rt_uint32_t)hmi->info.width - 1);
     y = rt_min(hmi->dy, (rt_uint32_t)hmi->info.height - 1);
@@ -630,48 +632,48 @@ static rt_err_t hmi_present(struct hmi_info *hmi)
     hmi_fill_rect(hmi, x, 0, hmi->info.width - x, y, hmi->colors[1]);
     hmi_fill_rect(hmi, 0, y, x, hmi->info.height - y, hmi->colors[2]);
     hmi_fill_rect(hmi, x, y, hmi->info.width - x,
-            hmi->info.height - y, hmi->colors[3]);
+                  hmi->info.height - y, hmi->colors[3]);
     hmi_draw_lines(hmi, x, y);
 
     if (hmi->page_count > 1)
     {
-        rt_size_t back_page = (hmi->front_page + 1) % hmi->page_count;
+        rt_size_t   back_page   = (hmi->front_page + 1) % hmi->page_count;
         rt_uint8_t *framebuffer = hmi->info.framebuffer;
 
         rt_memcpy(framebuffer + back_page * hmi->frame_len,
-                hmi->framebuffer, hmi->frame_len);
+                  hmi->framebuffer, hmi->frame_len);
 
-        var = hmi->var;
-        var.xoffset = 0;
-        var.yoffset = back_page * hmi->info.height;
+        var          = hmi->var;
+        var.xoffset  = 0;
+        var.yoffset  = back_page * hmi->info.height;
         var.activate = FB_ACTIVATE_VBL;
-        err = rt_device_control(hmi->gdev, FBIOPAN_DISPLAY, &var);
+        err          = rt_device_control(hmi->gdev, FBIOPAN_DISPLAY, &var);
 
         if (err)
         {
             return err;
         }
 
-        hmi->var = var;
+        hmi->var        = var;
         hmi->front_page = back_page;
     }
     else
     {
         rt_memcpy(hmi->info.framebuffer, hmi->framebuffer, hmi->frame_len);
 
-        rect.x = 0;
-        rect.y = 0;
-        rect.width = hmi->info.width;
+        rect.x      = 0;
+        rect.y      = 0;
+        rect.width  = hmi->info.width;
         rect.height = hmi->info.height;
 
         if ((err = rt_device_control(hmi->gdev,
-                RTGRAPHIC_CTRL_RECT_UPDATE, &rect)))
+                                     RTGRAPHIC_CTRL_RECT_UPDATE, &rect)))
         {
             return err;
         }
 
         if ((err = rt_device_control(hmi->gdev,
-                RTGRAPHIC_CTRL_WAIT_VSYNC, RT_NULL)))
+                                     RTGRAPHIC_CTRL_WAIT_VSYNC, RT_NULL)))
         {
             return err;
         }
@@ -679,7 +681,7 @@ static rt_err_t hmi_present(struct hmi_info *hmi)
 
     cursor_position = RTGRAPHIC_PIXEL_POSITION(x, y);
     rt_device_control(hmi->gdev, RT_DEVICE_CTRL_CURSOR_SET_POSITION,
-            (void *)cursor_position);
+                      (void *)cursor_position);
 
     return RT_EOK;
 }
@@ -718,22 +720,22 @@ static void hmi_cleanup(struct hmi_info *hmi)
 
 static void hmi_loop(void *param)
 {
-    rt_err_t err = RT_EOK;
-    rt_uint32_t slot;
+    rt_err_t         err = RT_EOK;
+    rt_uint32_t      slot;
     struct hmi_info *hmi = param;
 
     hmi->event_notify.notify = hmi_graphic_notify;
-    hmi->event_notify.dev = (void *)hmi;
+    hmi->event_notify.dev    = (void *)hmi;
 
     if ((err = rt_device_control(hmi->gdev,
-            RT_DEVICE_CTRL_NOTIFY_SET, &hmi->event_notify)))
+                                 RT_DEVICE_CTRL_NOTIFY_SET, &hmi->event_notify)))
     {
         goto _exit;
     }
     hmi->notify_installed = RT_TRUE;
 
     if ((err = rt_device_control(hmi->gdev,
-            RTGRAPHIC_CTRL_POWERON, RT_NULL)))
+                                 RTGRAPHIC_CTRL_POWERON, RT_NULL)))
     {
         goto _exit;
     }
@@ -753,9 +755,9 @@ static void hmi_loop(void *param)
         hmi->mt_y[slot] = hmi->dy;
     }
 
-    hmi->handler.idev = to_input_device(hmi->idev);
+    hmi->handler.idev     = to_input_device(hmi->idev);
     hmi->handler.callback = hmi_input_callback;
-    hmi->handler.priv = hmi;
+    hmi->handler.priv     = hmi;
 
     if ((err = rt_input_add_handler(&hmi->handler)))
     {
@@ -836,7 +838,7 @@ rt_err_t hmi_start(const char *gdev_name, const char *idev_name)
 
     hmi->mt_slot = -1;
     hmi->running = RT_TRUE;
-    hmi->dirty = RT_TRUE;
+    hmi->dirty   = RT_TRUE;
 
     if ((err = rt_sem_init(&hmi->wakeup, "hmi", 0, RT_IPC_FLAG_FIFO)))
     {
@@ -860,7 +862,7 @@ rt_err_t hmi_start(const char *gdev_name, const char *idev_name)
     }
 
     loop = rt_thread_create("HMI", hmi_loop, hmi,
-            DM_THREAD_STACK_SIZE, RT_THREAD_PRIORITY_MAX / 3, 10);
+                            DM_THREAD_STACK_SIZE, RT_THREAD_PRIORITY_MAX / 3, 10);
 
     if (!loop)
     {
@@ -885,9 +887,9 @@ rt_err_t hmi_start(const char *gdev_name, const char *idev_name)
     }
 
     rt_kprintf("HMI: %s + %s (%s input)\n",
-            rt_dm_dev_get_name(hmi->gdev),
-            rt_dm_dev_get_name(hmi->idev),
-            hmi->multitouch ? "multitouch" : "pointer");
+               rt_dm_dev_get_name(hmi->gdev),
+               rt_dm_dev_get_name(hmi->idev),
+               hmi->multitouch ? "multitouch" : "pointer");
 
     return RT_EOK;
 }
@@ -933,7 +935,7 @@ static int _hmi_start(int argc, char **argv)
     return (int)hmi_start(gdev, idev);
 }
 MSH_CMD_EXPORT_ALIAS(_hmi_start, hmi_start,
-        auto select devices e.g. hmi_start or hmi_start fb0 input1);
+                     auto select devices e.g.hmi_start or hmi_start fb0 input1);
 
 static int _hmi_stop(void)
 {
