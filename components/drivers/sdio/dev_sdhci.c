@@ -10,8 +10,8 @@
 
 #include <rtthread.h>
 
-#define RT_SDHCI_SMALL_BOUNCE_SIZE  512
-#define RT_SDHCI_DMA_MIN_ALIGN      rt_max_t(rt_size_t, RT_CPU_CACHE_LINE_SZ, 64)
+#define RT_SDHCI_SMALL_BOUNCE_SIZE 512
+#define RT_SDHCI_DMA_MIN_ALIGN     rt_max_t(rt_size_t, RT_CPU_CACHE_LINE_SZ, 64)
 
 #ifndef ENOMEDIUM
 #define ENOMEDIUM 123
@@ -222,7 +222,7 @@ void rt_sdhci_cleanup_host(struct rt_sdhci_host *host)
     if (host->bounce_buffer)
     {
         rt_free_align(host->bounce_buffer);
-        host->bounce_buffer = RT_NULL;
+        host->bounce_buffer      = RT_NULL;
         host->bounce_buffer_size = 0;
     }
 
@@ -473,7 +473,7 @@ static void sdhci_runtime_pm_bus_off(struct rt_sdhci_host *host)
 
 void rt_sdhci_reset(struct rt_sdhci_host *host, rt_uint8_t mask)
 {
-    rt_tick_t start;
+    rt_tick_t  start;
     rt_ssize_t timeout;
 
     rt_sdhci_writeb(host, mask, RT_SDHCI_SOFTWARE_RESET);
@@ -489,7 +489,7 @@ void rt_sdhci_reset(struct rt_sdhci_host *host, rt_uint8_t mask)
     }
 
     timeout = rt_tick_from_millisecond(150);
-    start = rt_tick_get();
+    start   = rt_tick_get();
 
     while (RT_TRUE)
     {
@@ -662,8 +662,8 @@ static void sdhci_set_transfer_irqs(struct rt_sdhci_host *host)
 static void sdhci_prepare_data(struct rt_sdhci_host *host, struct rt_mmcsd_cmd *cmd)
 {
     struct rt_mmcsd_data *data = cmd->data;
-    rt_size_t data_size = data->blks * data->blksize;
-    rt_bool_t dma_unaligned;
+    rt_size_t             data_size = data->blks * data->blksize;
+    rt_bool_t             dma_unaligned;
 
     RT_ASSERT(!(data->blksize * data->blks > 524288));
     RT_ASSERT(!(data->blksize > host->mmc->max_blk_size));
@@ -712,14 +712,14 @@ static void sdhci_prepare_data(struct rt_sdhci_host *host, struct rt_mmcsd_cmd *
             (dma_unaligned && data_size <= host->bounce_buffer_size))
         {
             host->bounce_orig_buf = data->buf;
-            host->bounce_active = RT_TRUE;
+            host->bounce_active   = RT_TRUE;
 
             if (mmc_get_dma_dir(data) == DMA_TO_DEVICE)
             {
                 rt_memcpy(host->bounce_buffer, data->buf, data_size);
             }
 
-            data->buf = (rt_uint32_t *)host->bounce_buffer;
+            data->buf         = (rt_uint32_t *)host->bounce_buffer;
             data->host_cookie = RT_SDHCI_COOKIE_MAPPED;
         }
         else if (dma_unaligned)
@@ -1069,7 +1069,7 @@ int rt_sdhci_start_signal_voltage_switch(struct rt_mmc_host *mmc,
 {
     int ret;
     rt_uint16_t ctrl;
-    rt_bool_t force_no_vqmmc = RT_FALSE;
+    rt_bool_t             force_no_vqmmc = RT_FALSE;
     struct rt_sdhci_host *host = rt_mmc_priv(mmc);
 
     if (host->version < RT_SDHCI_SPEC_300)
@@ -1118,7 +1118,7 @@ int rt_sdhci_start_signal_voltage_switch(struct rt_mmc_host *mmc,
 
         if (rt_is_err_or_null(mmc->rthost.supply.vqmmc))
         {
-_no_vqmmc_180:
+        _no_vqmmc_180:
             ctrl |= RT_SDHCI_CTRL_VDD_180;
             rt_sdhci_writew(host, ctrl, RT_SDHCI_HOST_CONTROL2);
 
@@ -2163,7 +2163,7 @@ static rt_bool_t sdhci_poll_pending_irq(struct rt_sdhci_host *host)
     }
 
     intmask_p = intmask;
-    mask = intmask & (RT_SDHCI_INT_CMD_MASK | RT_SDHCI_INT_DATA_MASK | RT_SDHCI_INT_BUS_POWER);
+    mask      = intmask & (RT_SDHCI_INT_CMD_MASK | RT_SDHCI_INT_DATA_MASK | RT_SDHCI_INT_BUS_POWER);
     rt_sdhci_writel(host, mask, RT_SDHCI_INT_STATUS);
 
     if (intmask & RT_SDHCI_INT_CMD_MASK)
@@ -2201,8 +2201,8 @@ static void sdhci_schedule_complete(struct rt_sdhci_host *host)
 static void sdhci_poll_work_fn(struct rt_work *work, void *data)
 {
     struct rt_sdhci_host *host = data;
-    rt_base_t flags;
-    rt_bool_t active;
+    rt_base_t             flags;
+    rt_bool_t             active;
 
     flags = rt_spin_lock_irqsave(&host->lock);
 
@@ -2507,9 +2507,9 @@ static rt_bool_t rt_sdhci_start_request_done(struct rt_sdhci_host *host)
 
             if (host->bounce_active)
             {
-                data->buf = host->bounce_orig_buf;
+                data->buf             = host->bounce_orig_buf;
                 host->bounce_orig_buf = RT_NULL;
-                host->bounce_active = RT_FALSE;
+                host->bounce_active   = RT_FALSE;
             }
 
             data->host_cookie = RT_SDHCI_COOKIE_UNMAPPED;
@@ -3339,7 +3339,7 @@ int rt_sdhci_setup_host(struct rt_sdhci_host *host)
         if (host->flags & RT_SDHCI_USE_SDMA)
         {
             host->bounce_buffer = rt_malloc_align(RT_SDHCI_SMALL_BOUNCE_SIZE,
-                                                   RT_SDHCI_DMA_MIN_ALIGN);
+                                                  RT_SDHCI_DMA_MIN_ALIGN);
             if (!host->bounce_buffer)
             {
                 ret = -ENOMEM;
@@ -3499,13 +3499,13 @@ int rt_sdhci_setup_host(struct rt_sdhci_host *host)
         }
 
         if (!sdio_regulator_supports_vqmmc_voltage(mmc->rthost.supply.vqmmc,
-                1700000, 1800000, 1950000))
+                                                   1700000, 1800000, 1950000))
         {
             host->caps1 &= ~(RT_SDHCI_SUPPORT_SDR104 | RT_SDHCI_SUPPORT_SDR50 | RT_SDHCI_SUPPORT_DDR50);
         }
 
         if (!sdio_regulator_supports_vqmmc_voltage(mmc->rthost.supply.vqmmc,
-                2700000, 3300000, 3600000))
+                                                   2700000, 3300000, 3600000))
         {
             host->flags &= ~RT_SDHCI_SIGNALING_330;
         }
@@ -3729,7 +3729,7 @@ _undma:
     if (ret && host->bounce_buffer)
     {
         rt_free_align(host->bounce_buffer);
-        host->bounce_buffer = RT_NULL;
+        host->bounce_buffer      = RT_NULL;
         host->bounce_buffer_size = 0;
     }
     return ret;

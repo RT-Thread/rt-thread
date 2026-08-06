@@ -95,7 +95,7 @@ rt_err_t sdio_regulator_set_ocr(struct rt_mmcsd_host *host,
 }
 
 rt_bool_t sdio_regulator_supports_vqmmc_voltage(struct rt_regulator *regulator,
-        int min_uvolt, int target_uvolt, int max_uvolt)
+                                                int min_uvolt, int target_uvolt, int max_uvolt)
 {
     if (!regulator)
     {
@@ -126,7 +126,7 @@ static int regulator_set_voltage_if_supported(struct rt_regulator *regulator,
     if (rt_regulator_is_supported_voltage(regulator, min_uvolt, max_uvolt))
     {
         return rt_regulator_set_voltage_triplet(regulator, min_uvolt, target_uvolt,
-                max_uvolt);
+                                                max_uvolt);
     }
 
     /*
