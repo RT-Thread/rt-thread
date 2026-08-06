@@ -1,10 +1,18 @@
 Import('rtconfig')
 from building import *
+import os
+import glob
 
 cwd = GetCurrentDir()
 
-# multicore libraries are stored in the nxp-imxrt-sdk package to avoid duplication
-sdk_multicore = cwd + '/../packages/nxp-imxrt-sdk-latest/MIMXRT1180/multicore'
+# Locate the nxp-imxrt-sdk package installed by 'pkgs --update'.
+# The directory is named nxp-imxrt-sdk-<version> under packages/.
+bsp_pkg_dir = os.path.normpath(os.path.join(cwd, '..', 'packages'))
+sdk_candidates = glob.glob(os.path.join(bsp_pkg_dir, 'nxp-imxrt-sdk-*', 'MIMXRT1180', 'multicore'))
+if sdk_candidates:
+    sdk_multicore = sdk_candidates[0]
+else:
+    sdk_multicore = os.path.join(bsp_pkg_dir, 'nxp-imxrt-sdk-latest', 'MIMXRT1180', 'multicore')
 
 # Base multicore sources (always included when BSP_USE_MULTICORE is enabled)
 src = Split("""
@@ -13,7 +21,7 @@ mcmgr/src/mcmgr_internal_core_api_imxrt1180.c
 mcmgr/src/mcmgr_mu_internal.c
 """)
 
-src = [sdk_multicore + '/' + f.strip() for f in src]
+src = [os.path.join(sdk_multicore, f.strip()) for f in src]
 
 # Add RPMsg-Lite sources if enabled
 if GetDepend(['BSP_USE_MULTICORE_RPMSG_LITE']):
@@ -26,21 +34,21 @@ if GetDepend(['BSP_USE_MULTICORE_RPMSG_LITE']):
     rpmsg-lite/lib/rpmsg_lite/porting/environment/rpmsg_env_rtthread.c
     rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt1180/rpmsg_platform.c
     """)
-    src += [sdk_multicore + '/' + f.strip() for f in rpmsg_src]
+    src += [os.path.join(sdk_multicore, f.strip()) for f in rpmsg_src]
 
 # Base include paths
 CPPPATH = [
     cwd,
-    sdk_multicore + '/mcmgr/inc',
-    sdk_multicore + '/mcmgr/inc/platform/imxrt1180'
+    os.path.join(sdk_multicore, 'mcmgr', 'inc'),
+    os.path.join(sdk_multicore, 'mcmgr', 'inc', 'platform', 'imxrt1180'),
 ]
 
 # Add RPMsg-Lite include paths if enabled
 if GetDepend(['BSP_USE_MULTICORE_RPMSG_LITE']):
     CPPPATH += [
-        sdk_multicore + '/rpmsg-lite/lib/include',
-        sdk_multicore + '/rpmsg-lite/lib/include/environment/rtthread',
-        sdk_multicore + '/rpmsg-lite/lib/include/platform/imxrt1180'
+        os.path.join(sdk_multicore, 'rpmsg-lite', 'lib', 'include'),
+        os.path.join(sdk_multicore, 'rpmsg-lite', 'lib', 'include', 'environment', 'rtthread'),
+        os.path.join(sdk_multicore, 'rpmsg-lite', 'lib', 'include', 'platform', 'imxrt1180'),
     ]
 
 # Define preprocessor macros
