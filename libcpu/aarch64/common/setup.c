@@ -346,8 +346,8 @@ void rt_hw_common_setup(void)
         const char *bootargs;
         rt_ubase_t dma_pool_base;
         rt_size_t cma_size = 0, coherent_pool_size = 0;
-        rt_size_t pool_total;
-        struct rt_memblock *memory;
+        rt_size_t            pool_total;
+        struct rt_memblock  *memory;
         struct rt_mmblk_reg *mem_reg;
 
         if (!rt_fdt_bootargs_select("cma=", 0, &bootargs))
@@ -386,8 +386,8 @@ void rt_hw_common_setup(void)
 
         memory = rt_memblock_get_memory();
         {
-            rt_uint32_t mem_count = 0;
-            rt_size_t mem_span_start = 0, mem_span_end = 0;
+            rt_uint32_t mem_count      = 0;
+            rt_size_t   mem_span_start = 0, mem_span_end = 0;
 
             rt_slist_for_each_entry(mem_reg, &memory->reg_list, node)
             {
@@ -418,7 +418,7 @@ void rt_hw_common_setup(void)
             rt_slist_for_each_entry(mem_reg, &memory->reg_list, node)
             {
                 rt_size_t start = mem_reg->memreg.start;
-                rt_size_t end = mem_reg->memreg.end;
+                rt_size_t end   = mem_reg->memreg.end;
 
                 if (start >= (4UL * SIZE_GB))
                 {
@@ -446,7 +446,7 @@ void rt_hw_common_setup(void)
         }
 
         rt_memblock_reserve_memory("dma-pool",
-                dma_pool_base, dma_pool_base + pool_total, MEMBLOCK_NONE);
+                                   dma_pool_base, dma_pool_base + pool_total, MEMBLOCK_NONE);
 
         if (rt_dma_pool_extract(cma_size, coherent_pool_size))
         {

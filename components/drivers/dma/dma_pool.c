@@ -206,8 +206,8 @@ static void *ofw_dma_map_alloc(struct rt_device *dev, rt_size_t size,
 {
     void *cpu_addr;
 
-    flags |= RT_DMA_F_32BITS;
-    cpu_addr = dma_alloc(dev, size, dma_handle, flags);
+    flags    |= RT_DMA_F_32BITS;
+    cpu_addr  = dma_alloc(dev, size, dma_handle, flags);
 
     if (cpu_addr && dma_handle)
     {
@@ -423,7 +423,7 @@ static rt_uint64_t pci_host_cpu_to_bus(struct rt_pci_host_bridge *host_bridge, r
         struct rt_pci_bus_region *region = &host_bridge->dma_regions[i];
 
         if (cpu_addr >= region->cpu_addr &&
-                cpu_addr < region->cpu_addr + region->size)
+            cpu_addr < region->cpu_addr + region->size)
         {
             return region->phy_addr + (cpu_addr - region->cpu_addr);
         }
@@ -454,7 +454,7 @@ static rt_uint64_t pci_host_bus_to_cpu(struct rt_pci_host_bridge *host_bridge, r
 
 static rt_ubase_t pci_addr_cpu2dma(struct rt_device *dev, rt_ubase_t addr)
 {
-    rt_uint64_t pci_dma;
+    rt_uint64_t                pci_dma;
     struct rt_pci_host_bridge *host_bridge = pci_device_host_bridge(dev);
 
     if (!host_bridge)
@@ -469,7 +469,7 @@ static rt_ubase_t pci_addr_cpu2dma(struct rt_device *dev, rt_ubase_t addr)
 
 static rt_ubase_t pci_addr_dma2cpu(struct rt_device *dev, rt_ubase_t addr)
 {
-    rt_uint64_t cpu_addr;
+    rt_uint64_t                cpu_addr;
     struct rt_pci_host_bridge *host_bridge = pci_device_host_bridge(dev);
 
     if (!host_bridge)
@@ -487,8 +487,8 @@ static void *pci_dma_map_alloc(struct rt_device *dev, rt_size_t size,
 {
     void *cpu_addr;
 
-    flags |= RT_DMA_F_32BITS;
-    cpu_addr = dma_alloc(dev, size, dma_handle, flags);
+    flags    |= RT_DMA_F_32BITS;
+    cpu_addr  = dma_alloc(dev, size, dma_handle, flags);
 
     if (cpu_addr && dma_handle)
     {
@@ -543,19 +543,18 @@ static rt_err_t pci_dma_map_sync_in_data(struct rt_device *dev,
     return dma_map_coherent_sync_in_data(dev, out_data, size, dma_handle, flags);
 }
 
-static const struct rt_dma_map_ops pci_dma_map_ops =
-{
-    .alloc = pci_dma_map_alloc,
-    .free = pci_dma_map_free,
+static const struct rt_dma_map_ops pci_dma_map_ops = {
+    .alloc         = pci_dma_map_alloc,
+    .free          = pci_dma_map_free,
     .sync_out_data = pci_dma_map_sync_out_data,
-    .sync_in_data = pci_dma_map_sync_in_data,
+    .sync_in_data  = pci_dma_map_sync_in_data,
 };
 
 static const struct rt_dma_map_ops *pci_device_dma_ops(struct rt_device *dev)
 {
-    struct rt_bus *bus = dev->bus;
+    struct rt_bus             *bus = dev->bus;
     struct rt_pci_host_bridge *host_bridge;
-    
+
     if (!bus || rt_strcmp(bus->name, "pci"))
     {
         return RT_NULL;
@@ -1009,9 +1008,9 @@ rt_err_t rt_dma_sync_in_data(struct rt_device *dev, void *out_data, rt_size_t si
 static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool)
 {
     rt_region_t *region = &pool->region;
-    rt_size_t start = RT_ALIGN_DOWN(region->start, ARCH_PAGE_SIZE);
-    rt_size_t end = RT_ALIGN(region->end, ARCH_PAGE_SIZE);
-    void *va;
+    rt_size_t    start  = RT_ALIGN_DOWN(region->start, ARCH_PAGE_SIZE);
+    rt_size_t    end    = RT_ALIGN(region->end, ARCH_PAGE_SIZE);
+    void        *va;
 
     if (!(pool->flags & RT_DMA_F_LINEAR) || start >= end)
     {
@@ -1019,11 +1018,11 @@ static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool)
     }
 
     struct rt_mm_va_hint hint = {
-        .flags = MMF_MAP_FIXED,
-        .limit_start = rt_kernel_space.start,
+        .flags            = MMF_MAP_FIXED,
+        .limit_start      = rt_kernel_space.start,
         .limit_range_size = rt_kernel_space.size,
-        .map_size = end - start,
-        .prefer = (void *)(start - PV_OFFSET),
+        .map_size         = end - start,
+        .prefer           = (void *)(start - PV_OFFSET),
     };
 
     if (rt_aspace_map_phy(&rt_kernel_space, &hint, MMU_MAP_K_RWCB,
