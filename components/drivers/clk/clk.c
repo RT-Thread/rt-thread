@@ -987,7 +987,7 @@ rt_err_t rt_clk_set_max_rate(struct rt_clk *clk, rt_ubase_t rate)
 static rt_err_t clk_set_rate(struct rt_clk *clk, rt_ubase_t rate)
 {
     rt_err_t err;
-    rt_ubase_t old_rate, prate, current_rate, rounded_rate;
+    rt_ubase_t          old_rate, prate, current_rate, rounded_rate;
     rt_bool_t was_enabled = RT_FALSE;
     rt_bool_t was_disabled = RT_FALSE;
     struct rt_clk *parent = RT_NULL;
