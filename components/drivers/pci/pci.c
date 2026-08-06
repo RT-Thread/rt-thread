@@ -628,7 +628,7 @@ rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
     if (orig_cmd & (PCIM_CMD_PORTEN | PCIM_CMD_MEMEN))
     {
         rt_pci_write_config_u16(pdev, PCIR_COMMAND,
-                orig_cmd & ~(PCIM_CMD_PORTEN | PCIM_CMD_MEMEN));
+                                orig_cmd & ~(PCIM_CMD_PORTEN | PCIM_CMD_MEMEN));
     }
 
     rt_pci_read_config_u8(pdev, PCIR_HDRTYPE, &hdr_type);
@@ -662,8 +662,8 @@ rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
         rt_ubase_t flags;
         rt_ubase_t bar_base;
         rt_bool_t mem64 = RT_FALSE;
-        rt_bool_t bar_is_64 = RT_FALSE;
-        rt_uint32_t bar_lo_mask = 0;
+        rt_bool_t                 bar_is_64   = RT_FALSE;
+        rt_uint32_t               bar_lo_mask = 0;
         struct rt_pci_bus_region *region;
 
         cfg = 0;
@@ -752,11 +752,11 @@ rt_err_t rt_pci_device_alloc_resource(struct rt_pci_host_bridge *host_bridge,
 
                 if (bar_is_64)
                 {
-                #ifdef RT_PCI_SYS_64BIT
+#ifdef RT_PCI_SYS_64BIT
                     rt_pci_write_config_u32(pdev, bar_base + sizeof(rt_uint32_t), rt_upper_32_bits(addr));
-                #else
+#else
                     rt_pci_write_config_u32(pdev, bar_base + sizeof(rt_uint32_t), 0UL);
-                #endif
+#endif
                 }
             }
 

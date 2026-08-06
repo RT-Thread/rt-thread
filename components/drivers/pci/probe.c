@@ -567,8 +567,8 @@ static rt_bool_t pci_needs_bridge_window(struct rt_pci_device *pdev)
 }
 
 static void pci_program_bridge_windows(struct rt_pci_device *bridge,
-        rt_uint64_t mem_start, rt_uint64_t mem_end,
-        rt_uint64_t pref_start, rt_uint64_t pref_end)
+                                       rt_uint64_t mem_start, rt_uint64_t mem_end,
+                                       rt_uint64_t pref_start, rt_uint64_t pref_end)
 {
     rt_uint32_t l;
     rt_uint16_t cmd;
@@ -618,8 +618,8 @@ static void pci_program_bridge_windows(struct rt_pci_device *bridge,
     rt_pci_write_config_u16(bridge, PCIR_COMMAND, cmd);
 }
 
-static void pci_bridge_program_host_windows(struct rt_pci_device *bridge,
-        struct rt_pci_host_bridge *host_bridge)
+static void pci_bridge_program_host_windows(struct rt_pci_device      *bridge,
+                                            struct rt_pci_host_bridge *host_bridge)
 {
     rt_uint64_t mem_start = ~0ULL, mem_end = 0;
     rt_uint64_t pref_start = ~0ULL, pref_end = 0;
@@ -631,11 +631,11 @@ static void pci_bridge_program_host_windows(struct rt_pci_device *bridge,
 
     for (int i = 0; i < host_bridge->bus_regions_nr; ++i)
     {
-        rt_uint64_t start, end;
+        rt_uint64_t               start, end;
         struct rt_pci_bus_region *region = &host_bridge->bus_regions[i];
 
         start = region->phy_addr;
-        end = region->phy_addr + region->size - 1;
+        end   = region->phy_addr + region->size - 1;
 
         if (region->flags == PCI_BUS_REGION_F_PREFETCH)
         {

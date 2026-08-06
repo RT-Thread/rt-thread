@@ -133,7 +133,7 @@ static void msi_affinity_init(struct rt_pci_msi_desc *desc, int msi_index,
     struct rt_pci_device *pdev = desc->pdev;
     struct rt_pic *msi_pic = pdev->msi_pic;
 
-    irq = desc->is_msix ? desc->irq : desc->irq + msi_index;
+    irq  = desc->is_msix ? desc->irq : desc->irq + msi_index;
     pirq = rt_pic_find_pirq(msi_pic, irq);
 
     /* Save affinity */

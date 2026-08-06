@@ -88,7 +88,7 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
         {
             for (int idx = 0; idx < nvec; ++idx)
             {
-                pirq = rt_pic_find_pirq(msi_pic, desc->irq + idx);
+                pirq           = rt_pic_find_pirq(msi_pic, desc->irq + idx);
                 pirq->msi_desc = desc;
 
                 msi_pic->ops->irq_compose_msi_msg(pirq, &desc->msg);
@@ -106,7 +106,7 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
                 err = irq;
 
                 LOG_E("Setup %s[%d] IRQ in %s error = %s", "MSI-X",
-                        desc->msix.index, msi_pic->ops->name, rt_strerror(err));
+                      desc->msix.index, msi_pic->ops->name, rt_strerror(err));
 
                 break;
             }

@@ -248,7 +248,7 @@ int rt_ofw_get_address_array(struct rt_ofw_node *np, int nr, rt_uint64_t *out_re
 
 static rt_bool_t ofw_bus_is_pci(struct rt_ofw_node *bus)
 {
-    rt_ssize_t len;
+    rt_ssize_t          len;
     struct rt_ofw_prop *prop;
 
     if (!bus)
@@ -263,7 +263,7 @@ static rt_bool_t ofw_bus_is_pci(struct rt_ofw_node *bus)
 }
 
 static rt_uint64_t ofw_read_bus_address(const fdt32_t **cell, int addr_cells,
-        struct rt_ofw_node *bus)
+                                        struct rt_ofw_node *bus)
 {
     if (addr_cells == 3 && ofw_bus_is_pci(bus))
     {
@@ -352,7 +352,7 @@ static struct bus_ranges *ofw_bus_ranges(struct rt_ofw_node *np, struct rt_ofw_p
 
         while (groups --> 0)
         {
-            *child_addr++ = ofw_read_bus_address(&cell, child_address_cells, np);
+            *child_addr++  = ofw_read_bus_address(&cell, child_address_cells, np);
             *parent_addr++ = ofw_read_bus_address(&cell, parent_address_cells, np->parent);
             *child_size++ = rt_fdt_next_cell(&cell, child_size_cells);
         }
@@ -371,9 +371,9 @@ static struct bus_ranges *ofw_bus_ranges(struct rt_ofw_node *np, struct rt_ofw_p
 
 static struct bus_ranges *ofw_get_bus_ranges(struct rt_ofw_node *bus, const char *range_type)
 {
-    rt_ssize_t len;
+    rt_ssize_t          len;
     struct rt_ofw_prop *prop;
-    struct bus_ranges *ranges = RT_NULL;
+    struct bus_ranges  *ranges = RT_NULL;
 
     prop = rt_ofw_get_prop(bus, range_type, &len);
 
@@ -406,7 +406,7 @@ static struct bus_ranges *ofw_get_bus_ranges(struct rt_ofw_node *bus, const char
 }
 
 static rt_uint64_t ofw_translate_at_bus(struct rt_ofw_node *bus, const char *range_type,
-        rt_uint64_t address)
+                                        rt_uint64_t address)
 {
     struct bus_ranges *ranges = ofw_get_bus_ranges(bus, range_type);
 
@@ -430,7 +430,7 @@ static rt_uint64_t ofw_translate_at_bus(struct rt_ofw_node *bus, const char *ran
 }
 
 static rt_uint64_t ofw_reverse_at_bus(struct rt_ofw_node *bus, const char *range_type,
-        rt_uint64_t address)
+                                      rt_uint64_t address)
 {
     struct bus_ranges *ranges = ofw_get_bus_ranges(bus, range_type);
 
@@ -442,7 +442,7 @@ static rt_uint64_t ofw_reverse_at_bus(struct rt_ofw_node *bus, const char *range
     for (int i = 0; i < ranges->nr; ++i)
     {
         rt_uint64_t parent_addr = ranges->parent_addr[i];
-        rt_uint64_t child_size = ranges->child_size[i];
+        rt_uint64_t child_size  = ranges->child_size[i];
 
         if (address >= parent_addr && address < parent_addr + child_size)
         {
@@ -488,7 +488,7 @@ rt_uint64_t rt_ofw_reverse_address(struct rt_ofw_node *np, const char *range_typ
 {
     struct rt_ofw_node *bus;
     struct rt_ofw_node *parents[16];
-    int count = 0;
+    int                 count = 0;
 
     if (!range_type)
     {
