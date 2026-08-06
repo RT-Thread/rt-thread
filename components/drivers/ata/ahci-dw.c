@@ -21,12 +21,10 @@ struct dwc_ahci_host
     struct rt_ahci_host parent;
 
     struct rt_clk_array *clk_arr;
-    struct rt_phye *sata_phy;
+    struct rt_phye      *sata_phy;
 };
 
-static const struct rt_ahci_ops dwc_ahci_ops =
-{
-};
+static const struct rt_ahci_ops dwc_ahci_ops = {};
 
 static void dwc_ahci_free(struct dwc_ahci_host *dwc_ahci)
 {
@@ -45,9 +43,9 @@ static void dwc_ahci_free(struct dwc_ahci_host *dwc_ahci)
 
 static rt_err_t dwc_ahci_probe(struct rt_platform_device *pdev)
 {
-    rt_err_t err;
-    struct rt_ahci_host *ahci;
-    struct rt_device *dev = &pdev->parent;
+    rt_err_t              err;
+    struct rt_ahci_host  *ahci;
+    struct rt_device     *dev      = &pdev->parent;
     struct dwc_ahci_host *dwc_ahci = rt_calloc(1, sizeof(*dwc_ahci));
 
     if (!dwc_ahci)
@@ -55,7 +53,7 @@ static rt_err_t dwc_ahci_probe(struct rt_platform_device *pdev)
         return -RT_ENOMEM;
     }
 
-    ahci = &dwc_ahci->parent;
+    ahci             = &dwc_ahci->parent;
     ahci->parent.dev = dev;
 
     ahci->regs = rt_dm_dev_iomap(dev, 0);
@@ -154,19 +152,17 @@ static rt_err_t dwc_ahci_shutdown(struct rt_platform_device *pdev)
     return dwc_ahci_remove(pdev);
 }
 
-static const struct rt_ofw_node_id dwc_ahci_ofw_ids[] =
-{
+static const struct rt_ofw_node_id dwc_ahci_ofw_ids[] = {
     { .compatible = "snps,dwc-ahci" },
     { /* sentinel */ }
 };
 
-static struct rt_platform_driver ahci_dwc_driver =
-{
+static struct rt_platform_driver ahci_dwc_driver = {
     .name = "ahci-dwc",
-    .ids = dwc_ahci_ofw_ids,
+    .ids  = dwc_ahci_ofw_ids,
 
-    .probe = dwc_ahci_probe,
-    .remove = dwc_ahci_remove,
+    .probe    = dwc_ahci_probe,
+    .remove   = dwc_ahci_remove,
     .shutdown = dwc_ahci_shutdown,
 };
 RT_PLATFORM_DRIVER_EXPORT(ahci_dwc_driver);
