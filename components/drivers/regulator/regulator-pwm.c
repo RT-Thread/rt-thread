@@ -29,18 +29,18 @@ struct pwm_voltages
 
 struct pwm_regulator
 {
-    struct rt_regulator_node parent;
+    struct rt_regulator_node  parent;
     struct rt_regulator_param param;
 
-    rt_bool_t enabled;
-    rt_uint8_t enable_active_value;
-    struct rt_device_pwm *pwm_dev;
-    struct rt_pwm_configuration pwm_conf;
-    struct pwm_voltages *duty_cycle_table;
+    rt_bool_t                      enabled;
+    rt_uint8_t                     enable_active_value;
+    struct rt_device_pwm          *pwm_dev;
+    struct rt_pwm_configuration    pwm_conf;
+    struct pwm_voltages           *duty_cycle_table;
     struct pwm_continuous_reg_data continuous;
 
-    int init_uvolt;
-    int selector;
+    int         init_uvolt;
+    int         selector;
     rt_uint32_t n_voltages;
 
     rt_base_t enable_pin;
@@ -53,8 +53,8 @@ static rt_uint8_t pwm_regulator_enable_pin_value(struct pwm_regulator *pr, rt_bo
     return enable ? pr->enable_active_value : !pr->enable_active_value;
 }
 
-static rt_err_t pwm_regulator_get_config(struct pwm_regulator *pr,
-        struct rt_pwm_configuration *pwm_conf)
+static rt_err_t pwm_regulator_get_config(struct pwm_regulator        *pr,
+                                         struct rt_pwm_configuration *pwm_conf)
 {
     rt_memset(pwm_conf, 0, sizeof(*pwm_conf));
     pwm_conf->channel = pr->pwm_conf.channel;
@@ -62,8 +62,8 @@ static rt_err_t pwm_regulator_get_config(struct pwm_regulator *pr,
     return rt_pwm_get(pr->pwm_dev, pwm_conf);
 }
 
-static rt_err_t pwm_regulator_apply_config(struct pwm_regulator *pr,
-        struct rt_pwm_configuration *pwm_conf)
+static rt_err_t pwm_regulator_apply_config(struct pwm_regulator        *pr,
+                                           struct rt_pwm_configuration *pwm_conf)
 {
     rt_err_t err;
 
@@ -90,7 +90,7 @@ static rt_err_t pwm_regulator_apply_config(struct pwm_regulator *pr,
 
 static rt_err_t pwm_regulator_adjust_config(struct pwm_regulator *pr)
 {
-    rt_err_t err;
+    rt_err_t                    err;
     struct rt_pwm_configuration current;
     struct rt_pwm_configuration adjusted = pr->pwm_conf;
 
@@ -111,8 +111,8 @@ static rt_err_t pwm_regulator_adjust_config(struct pwm_regulator *pr)
         }
 
         adjusted.pulse = RT_DIV_ROUND_CLOSEST_ULL(
-                (rt_uint64_t)current.pulse * adjusted.period,
-                current.period);
+            (rt_uint64_t)current.pulse * adjusted.period,
+            current.period);
 
         if (current.complementary != adjusted.complementary)
         {
@@ -125,8 +125,8 @@ static rt_err_t pwm_regulator_adjust_config(struct pwm_regulator *pr)
 
 static rt_err_t pwm_regulator_init_state(struct pwm_regulator *pr)
 {
-    rt_err_t err;
-    rt_uint32_t dutycycle;
+    rt_err_t                    err;
+    rt_uint32_t                 dutycycle;
     struct rt_pwm_configuration pwm_conf;
 
     if ((err = pwm_regulator_get_config(pr, &pwm_conf)))
@@ -135,7 +135,8 @@ static rt_err_t pwm_regulator_init_state(struct pwm_regulator *pr)
     }
 
     dutycycle = pwm_conf.period ? RT_DIV_ROUND_CLOSEST_ULL(
-            (rt_uint64_t)pwm_conf.pulse * 100, pwm_conf.period) : 0;
+                                      (rt_uint64_t)pwm_conf.pulse * 100, pwm_conf.period)
+                                : 0;
 
     for (int i = 0; i < pr->n_voltages; ++i)
     {
@@ -151,7 +152,7 @@ static rt_err_t pwm_regulator_init_state(struct pwm_regulator *pr)
 
 static rt_err_t pwm_regulator_enable(struct rt_regulator_node *reg_np)
 {
-    rt_err_t err;
+    rt_err_t              err;
     struct pwm_regulator *pr = raw_to_pwm_regulator(reg_np);
 
     if (pr->init_uvolt)
@@ -165,7 +166,7 @@ static rt_err_t pwm_regulator_enable(struct rt_regulator_node *reg_np)
 
         if (!pwm_conf.pulse &&
             (err = reg_np->ops->set_voltage(reg_np,
-                    pr->init_uvolt, pr->init_uvolt)))
+                                            pr->init_uvolt, pr->init_uvolt)))
         {
             return err;
         }
@@ -191,7 +192,7 @@ static rt_err_t pwm_regulator_enable(struct rt_regulator_node *reg_np)
 
 static rt_err_t pwm_regulator_disable(struct rt_regulator_node *reg_np)
 {
-    rt_err_t err;
+    rt_err_t              err;
     struct pwm_regulator *pr = raw_to_pwm_regulator(reg_np);
 
     if ((err = rt_pwm_disable(pr->pwm_dev, pr->pwm_conf.channel)))
@@ -226,13 +227,13 @@ static rt_bool_t pwm_regulator_is_enabled(struct rt_regulator_node *reg_np)
 }
 
 static rt_err_t pwm_regulator_table_set_voltage(struct rt_regulator_node *reg_np,
-        int min_uvolt, int max_uvolt)
+                                                int min_uvolt, int max_uvolt)
 {
-    rt_err_t err;
-    int selector = -1;
-    rt_uint32_t duty_cycle;
+    rt_err_t                    err;
+    int                         selector = -1;
+    rt_uint32_t                 duty_cycle;
     struct rt_pwm_configuration pwm_conf = {};
-    struct pwm_regulator *pr = raw_to_pwm_regulator(reg_np);
+    struct pwm_regulator       *pr       = raw_to_pwm_regulator(reg_np);
 
     for (int i = 0; i < pr->n_voltages; ++i)
     {
@@ -283,18 +284,18 @@ static int pwm_regulator_table_get_voltage(struct rt_regulator_node *reg_np)
 }
 
 static rt_err_t pwm_regulator_continuous_set_voltage(struct rt_regulator_node *reg_np,
-        int min_uvolt, int max_uvolt)
+                                                     int min_uvolt, int max_uvolt)
 {
-    rt_err_t err;
-    int target_uvolt;
-    struct pwm_regulator *pr = raw_to_pwm_regulator(reg_np);
-    struct rt_pwm_configuration pwm_conf = pr->pwm_conf;
-    rt_uint32_t min_uvolt_duty = pr->continuous.min_uvolt_dutycycle;
-    rt_uint32_t max_uvolt_duty = pr->continuous.max_uvolt_dutycycle;
-    rt_uint32_t duty_unit = pr->continuous.dutycycle_unit, diff_duty, dutycycle;
-    int fix_min_uvolt = reg_np->param->min_uvolt;
-    int fix_max_uvolt = reg_np->param->max_uvolt;
-    int diff_uvolt = fix_max_uvolt - fix_min_uvolt;
+    rt_err_t                    err;
+    int                         target_uvolt;
+    struct pwm_regulator       *pr             = raw_to_pwm_regulator(reg_np);
+    struct rt_pwm_configuration pwm_conf       = pr->pwm_conf;
+    rt_uint32_t                 min_uvolt_duty = pr->continuous.min_uvolt_dutycycle;
+    rt_uint32_t                 max_uvolt_duty = pr->continuous.max_uvolt_dutycycle;
+    rt_uint32_t                 duty_unit      = pr->continuous.dutycycle_unit, diff_duty, dutycycle;
+    int                         fix_min_uvolt  = reg_np->param->min_uvolt;
+    int                         fix_max_uvolt  = reg_np->param->max_uvolt;
+    int                         diff_uvolt     = fix_max_uvolt - fix_min_uvolt;
 
     target_uvolt = min_uvolt < fix_min_uvolt ? fix_min_uvolt : min_uvolt;
 
@@ -314,7 +315,7 @@ static rt_err_t pwm_regulator_continuous_set_voltage(struct rt_regulator_node *r
     }
 
     dutycycle = RT_DIV_ROUND_CLOSEST_ULL(
-            (rt_uint64_t)(target_uvolt - fix_min_uvolt) * diff_duty, diff_uvolt);
+        (rt_uint64_t)(target_uvolt - fix_min_uvolt) * diff_duty, diff_uvolt);
 
     if (max_uvolt_duty < min_uvolt_duty)
     {
@@ -326,7 +327,7 @@ static rt_err_t pwm_regulator_continuous_set_voltage(struct rt_regulator_node *r
     }
 
     pwm_conf.pulse = RT_DIV_ROUND_CLOSEST_ULL(
-            (rt_uint64_t)dutycycle * pwm_conf.period, duty_unit);
+        (rt_uint64_t)dutycycle * pwm_conf.period, duty_unit);
 
     err = pwm_regulator_apply_config(pr, &pwm_conf);
 
@@ -335,16 +336,16 @@ static rt_err_t pwm_regulator_continuous_set_voltage(struct rt_regulator_node *r
 
 static int pwm_regulator_continuous_get_voltage(struct rt_regulator_node *reg_np)
 {
-    rt_err_t err;
-    struct pwm_regulator *pr = raw_to_pwm_regulator(reg_np);
+    rt_err_t                    err;
+    struct pwm_regulator       *pr = raw_to_pwm_regulator(reg_np);
     struct rt_pwm_configuration pwm_conf;
-    rt_uint32_t min_uvolt_duty = pr->continuous.min_uvolt_dutycycle;
-    rt_uint32_t max_uvolt_duty = pr->continuous.max_uvolt_dutycycle;
-    rt_uint32_t duty_unit = pr->continuous.dutycycle_unit, diff_duty;
-    rt_uint32_t min_duty, max_duty;
-    int min_uvolt = reg_np->param->min_uvolt;
-    int max_uvolt = reg_np->param->max_uvolt;
-    int uvolt, diff_uvolt = max_uvolt - min_uvolt;
+    rt_uint32_t                 min_uvolt_duty = pr->continuous.min_uvolt_dutycycle;
+    rt_uint32_t                 max_uvolt_duty = pr->continuous.max_uvolt_dutycycle;
+    rt_uint32_t                 duty_unit      = pr->continuous.dutycycle_unit, diff_duty;
+    rt_uint32_t                 min_duty, max_duty;
+    int                         min_uvolt = reg_np->param->min_uvolt;
+    int                         max_uvolt = reg_np->param->max_uvolt;
+    int                         uvolt, diff_uvolt = max_uvolt - min_uvolt;
 
     if ((err = pwm_regulator_get_config(pr, &pwm_conf)))
     {
@@ -352,8 +353,9 @@ static int pwm_regulator_continuous_get_voltage(struct rt_regulator_node *reg_np
     }
 
     uvolt = pwm_conf.period ? RT_DIV_ROUND_CLOSEST_ULL(
-            (rt_uint64_t)pwm_conf.pulse * duty_unit,
-            pwm_conf.period) : 0;
+                                  (rt_uint64_t)pwm_conf.pulse * duty_unit,
+                                  pwm_conf.period)
+                            : 0;
 
     min_duty = min_uvolt_duty < max_uvolt_duty ? min_uvolt_duty : max_uvolt_duty;
     max_duty = min_uvolt_duty > max_uvolt_duty ? min_uvolt_duty : max_uvolt_duty;
@@ -365,12 +367,12 @@ static int pwm_regulator_continuous_get_voltage(struct rt_regulator_node *reg_np
 
     if (max_uvolt_duty < min_uvolt_duty)
     {
-        uvolt = min_uvolt_duty - uvolt;
+        uvolt     = min_uvolt_duty - uvolt;
         diff_duty = min_uvolt_duty - max_uvolt_duty;
     }
     else
     {
-        uvolt = uvolt - min_uvolt_duty;
+        uvolt     = uvolt - min_uvolt_duty;
         diff_duty = max_uvolt_duty - min_uvolt_duty;
     }
 
@@ -379,29 +381,27 @@ static int pwm_regulator_continuous_get_voltage(struct rt_regulator_node *reg_np
     return uvolt + min_uvolt;
 }
 
-static const struct rt_regulator_ops pwm_regulator_voltage_table_ops =
-{
-    .enable = pwm_regulator_enable,
-    .disable = pwm_regulator_disable,
-    .is_enabled = pwm_regulator_is_enabled,
+static const struct rt_regulator_ops pwm_regulator_voltage_table_ops = {
+    .enable      = pwm_regulator_enable,
+    .disable     = pwm_regulator_disable,
+    .is_enabled  = pwm_regulator_is_enabled,
     .set_voltage = pwm_regulator_table_set_voltage,
     .get_voltage = pwm_regulator_table_get_voltage,
 };
 
-static const struct rt_regulator_ops pwm_regulator_voltage_continuous_ops =
-{
-    .enable = pwm_regulator_enable,
-    .disable = pwm_regulator_disable,
-    .is_enabled = pwm_regulator_is_enabled,
+static const struct rt_regulator_ops pwm_regulator_voltage_continuous_ops = {
+    .enable      = pwm_regulator_enable,
+    .disable     = pwm_regulator_disable,
+    .is_enabled  = pwm_regulator_is_enabled,
     .set_voltage = pwm_regulator_continuous_set_voltage,
     .get_voltage = pwm_regulator_continuous_get_voltage,
 };
 
-static rt_err_t pwm_regulator_init_table(struct rt_ofw_node *np,
-        struct pwm_regulator *pr)
+static rt_err_t pwm_regulator_init_table(struct rt_ofw_node   *np,
+                                         struct pwm_regulator *pr)
 {
-    rt_err_t err;
-    rt_ssize_t length = 0;
+    rt_err_t             err;
+    rt_ssize_t           length = 0;
     struct pwm_voltages *duty_cycle_table;
 
     rt_ofw_prop_read_raw(np, "voltage-table", &length);
@@ -422,7 +422,7 @@ static rt_err_t pwm_regulator_init_table(struct rt_ofw_node *np,
     }
 
     err = rt_ofw_prop_read_u32_array_index(np, "voltage-table",
-            0, length / sizeof(rt_uint32_t), (rt_uint32_t *)duty_cycle_table);
+                                           0, length / sizeof(rt_uint32_t), (rt_uint32_t *)duty_cycle_table);
 
     if (err < 0)
     {
@@ -442,20 +442,20 @@ static rt_err_t pwm_regulator_init_table(struct rt_ofw_node *np,
     }
 
     pr->duty_cycle_table = duty_cycle_table;
-    pr->selector = -1;
-    pr->n_voltages = length / sizeof(*duty_cycle_table);
-    pr->parent.ops = &pwm_regulator_voltage_table_ops;
+    pr->selector         = -1;
+    pr->n_voltages       = length / sizeof(*duty_cycle_table);
+    pr->parent.ops       = &pwm_regulator_voltage_table_ops;
 
     return RT_EOK;
 }
 
-static rt_err_t pwm_regulator_init_continuous(struct rt_ofw_node *np,
-        struct pwm_regulator *pr)
+static rt_err_t pwm_regulator_init_continuous(struct rt_ofw_node   *np,
+                                              struct pwm_regulator *pr)
 {
     rt_uint32_t dutycycle_unit = 100, dutycycle_range[2] = { 0, 100 };
 
     rt_ofw_prop_read_u32_array_index(np, "pwm-dutycycle-range", 0, 2,
-            dutycycle_range);
+                                     dutycycle_range);
     rt_ofw_prop_read_u32(np, "pwm-dutycycle-unit", &dutycycle_unit);
 
     if (!dutycycle_unit ||
@@ -467,7 +467,7 @@ static rt_err_t pwm_regulator_init_continuous(struct rt_ofw_node *np,
         return -RT_EINVAL;
     }
 
-    pr->continuous.dutycycle_unit = dutycycle_unit;
+    pr->continuous.dutycycle_unit      = dutycycle_unit;
     pr->continuous.min_uvolt_dutycycle = dutycycle_range[0];
     pr->continuous.max_uvolt_dutycycle = dutycycle_range[1];
 
@@ -478,10 +478,10 @@ static rt_err_t pwm_regulator_init_continuous(struct rt_ofw_node *np,
 
 static rt_err_t pwm_regulator_probe(struct rt_platform_device *pdev)
 {
-    rt_err_t err;
-    struct rt_ofw_cell_args pwm_args;
-    struct rt_ofw_node *np = pdev->parent.ofw_node, *pwm_np;
-    struct pwm_regulator *pr = rt_calloc(1, sizeof(*pr));
+    rt_err_t                  err;
+    struct rt_ofw_cell_args   pwm_args;
+    struct rt_ofw_node       *np = pdev->parent.ofw_node, *pwm_np;
+    struct pwm_regulator     *pr = rt_calloc(1, sizeof(*pr));
     struct rt_regulator_node *rgp;
 
     if (!pr)
@@ -524,13 +524,13 @@ static rt_err_t pwm_regulator_probe(struct rt_platform_device *pdev)
     }
 
     pr->pwm_conf.channel = pwm_args.args[0];
-    pr->pwm_conf.period = pwm_args.args[1];
+    pr->pwm_conf.period  = pwm_args.args[1];
     pr->pwm_conf.complementary =
-            pwm_args.args_count >= 3 && (pwm_args.args[2] & RT_BIT(0));
+        pwm_args.args_count >= 3 && (pwm_args.args[2] & RT_BIT(0));
 
     pr->enable_active_value = PIN_HIGH;
-    pr->enable_pin = rt_ofw_get_named_pin(np, "enable", 0,
-            RT_NULL, &pr->enable_active_value);
+    pr->enable_pin          = rt_ofw_get_named_pin(np, "enable", 0,
+                                                   RT_NULL, &pr->enable_active_value);
 
     if (pr->enable_pin < 0 && pr->enable_pin != PIN_NONE)
     {
@@ -546,10 +546,10 @@ static rt_err_t pwm_regulator_probe(struct rt_platform_device *pdev)
         rt_pin_write(pr->enable_pin, pwm_regulator_enable_pin_value(pr, on));
     }
 
-    rgp = &pr->parent;
+    rgp              = &pr->parent;
     rgp->supply_name = pr->param.name;
-    rgp->param = &pr->param;
-    rgp->dev = &pdev->parent;
+    rgp->param       = &pr->param;
+    rgp->dev         = &pdev->parent;
 
     if (rt_ofw_prop_read_bool(np, "voltage-table"))
     {
@@ -603,16 +603,14 @@ _fail:
     return err;
 }
 
-static const struct rt_ofw_node_id pwm_regulator_ofw_ids[] =
-{
+static const struct rt_ofw_node_id pwm_regulator_ofw_ids[] = {
     { .compatible = "pwm-regulator" },
     { /* sentinel */ }
 };
 
-static struct rt_platform_driver pwm_regulator_driver =
-{
+static struct rt_platform_driver pwm_regulator_driver = {
     .name = "pwm-regulator",
-    .ids = pwm_regulator_ofw_ids,
+    .ids  = pwm_regulator_ofw_ids,
 
     .probe = pwm_regulator_probe,
 };
