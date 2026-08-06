@@ -31,9 +31,9 @@ struct rt_phye_configure_opts_mipi_dphy
 };
 
 rt_err_t rt_phye_mipi_dphy_get_default_config(rt_uint64_t pixel_clock,
-        rt_uint32_t bpp, rt_uint32_t lanes,
-        struct rt_phye_configure_opts_mipi_dphy *cfg);
+                                              rt_uint32_t bpp, rt_uint32_t lanes,
+                                              struct rt_phye_configure_opts_mipi_dphy *cfg);
 rt_err_t rt_phye_mipi_dphy_get_default_config_for_hsclk(rt_uint64_t hs_clk_rate,
-        rt_uint32_t lanes, struct rt_phye_configure_opts_mipi_dphy *cfg);
+                                                        rt_uint32_t lanes, struct rt_phye_configure_opts_mipi_dphy *cfg);
 
 #endif /* __PHYE_MIPI_DPHY_H__ */
