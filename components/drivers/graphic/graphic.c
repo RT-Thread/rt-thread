@@ -123,7 +123,7 @@ static rt_err_t plane_fb_pan_display(struct rt_graphic_plane *plane,
     }
 
     offset = rect->y * plane->line_length + rect->x * byte_per_pixel;
-    span = (rect->height - 1) * plane->line_length + row_bytes;
+    span   = (rect->height - 1) * plane->line_length + row_bytes;
 
     if (offset <= plane->framebuffer_len && span <= plane->framebuffer_len - offset)
     {
@@ -214,7 +214,7 @@ static rt_err_t _graphic_control(rt_device_t dev, int cmd, void *args)
 {
     rt_err_t err = RT_EOK;
     rt_bool_t need_schedule = RT_FALSE;
-    rt_bool_t wait_vsync = RT_FALSE;
+    rt_bool_t                 wait_vsync    = RT_FALSE;
     struct rt_graphic_device *gdev = raw_to_graphic(dev);
 
 _retry:
@@ -567,8 +567,8 @@ _retry:
             var->yres = plane->height;
             var->xres_virtual = plane->width;
             var->yres_virtual = plane->height * (plane->framebuffer_len / plane->screen_len);
-            var->xoffset = plane->x;
-            var->yoffset = plane->y;
+            var->xoffset        = plane->x;
+            var->yoffset        = plane->y;
             var->bits_per_pixel = plane->bits_per_pixel;
 
             if (plane == gdev->primary_plane)
