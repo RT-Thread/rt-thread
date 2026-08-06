@@ -55,7 +55,7 @@ static rt_err_t ufs_wait_hce(struct rt_ufs_host *ufs)
 
 static rt_err_t ufs_link_startup(struct rt_ufs_host *ufs)
 {
-    rt_err_t err;
+    rt_err_t    err;
     rt_uint32_t value = 0;
 
     if (ufs->ops->link_startup_notify)
@@ -76,7 +76,7 @@ static rt_err_t ufs_link_startup(struct rt_ufs_host *ufs)
 static rt_err_t ufs_wait_utrd_complete(struct rt_ufs_host *ufs, rt_tick_t timeout)
 {
     rt_tick_t deadline = rt_tick_get() + timeout;
-    rt_bool_t db_seen = RT_FALSE;
+    rt_bool_t db_seen  = RT_FALSE;
 
     while (rt_tick_get() < deadline)
     {
@@ -90,8 +90,8 @@ static rt_err_t ufs_wait_utrd_complete(struct rt_ufs_host *ufs, rt_tick_t timeou
 
         if ((ufs->irq_status | is) & RT_UFS_REG_IS_UTRCS)
         {
-            ufs->irq_status &= ~RT_UFS_REG_IS_UTRCS;
-            HWREG32(ufs->regs + RT_UFS_REG_IS) = RT_UFS_REG_IS_UTRCS;
+            ufs->irq_status                    &= ~RT_UFS_REG_IS_UTRCS;
+            HWREG32(ufs->regs + RT_UFS_REG_IS)  = RT_UFS_REG_IS_UTRCS;
             return RT_EOK;
         }
 
@@ -407,9 +407,9 @@ static rt_err_t ufs_utp_transfer(struct rt_ufs_host *ufs, struct rt_scsi_device 
     if ((err = ufs_wait_utrd_complete(ufs, rt_tick_from_millisecond(RT_UFS_UTP_TIMEOUT_MS))))
     {
         LOG_E("%s: UFS UTP wait timeout: IS=%#08x irq_status=%#08x UTRLDBR=%#08x OCS=%#x",
-                rt_dm_dev_get_name(ufs->parent.dev),
-                HWREG32(regs + RT_UFS_REG_IS), ufs->irq_status,
-                HWREG32(regs + RT_UFS_REG_UTRLDBR), ufs_utrd_ocs(ufs));
+              rt_dm_dev_get_name(ufs->parent.dev),
+              HWREG32(regs + RT_UFS_REG_IS), ufs->irq_status,
+              HWREG32(regs + RT_UFS_REG_UTRLDBR), ufs_utrd_ocs(ufs));
 
         /* Dump UPIU header and PRDT entry for post-mortem */
         LOG_E("%s: UTP UPIU: tx=%u flags=%#02x lun=%u tag=%u seg_len(be16)=%u",
@@ -423,9 +423,9 @@ static rt_err_t ufs_utp_transfer(struct rt_ufs_host *ufs, struct rt_scsi_device 
             struct rt_ufs_sg_entry *prd = ((struct rt_utp_transfer_cmd_desc *)ufs->ucd_base)->prd_table;
 
             LOG_E("%s: UTP PRDT[0]: addr=%#llx size(le32)=%#08x",
-                    rt_dm_dev_get_name(ufs->parent.dev),
-                    (unsigned long long)rt_le64_to_cpu(prd[0].addr),
-                    rt_le32_to_cpu(prd[0].size));
+                  rt_dm_dev_get_name(ufs->parent.dev),
+                  (unsigned long long)rt_le64_to_cpu(prd[0].addr),
+                  rt_le32_to_cpu(prd[0].size));
         }
 
         goto _end;
@@ -518,9 +518,9 @@ _no_resp_buf:
     if (rsp->header.status != 0 && rsp->header.status != 0x02)
     {
         LOG_E("%s: UFS SCSI status=%#02x sense_len=%u",
-                rt_dm_dev_get_name(ufs->parent.dev),
-                rsp->header.status,
-                rt_be16_to_cpu(rsp->sr.sense_data_len));
+              rt_dm_dev_get_name(ufs->parent.dev),
+              rsp->header.status,
+              rt_be16_to_cpu(rsp->sr.sense_data_len));
         err = -RT_ERROR;
         goto _end;
     }
@@ -622,7 +622,7 @@ static void ufs_isr(int irqno, void *param)
 
 rt_err_t rt_ufs_host_register(struct rt_ufs_host *ufs)
 {
-    rt_err_t err;
+    rt_err_t             err;
     char dev_name[RT_NAME_MAX];
     struct rt_scsi_host *scsi;
 
