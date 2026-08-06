@@ -31,13 +31,13 @@ struct adc_joysticks
 {
     struct rt_input_device parent;
 
-    rt_uint32_t num_axis;
+    rt_uint32_t              num_axis;
     struct adc_joystick_axis axis[];
 };
 
 static void adc_joysticks_poll(struct rt_input_device *idev)
 {
-    int value;
+    int                   value;
     struct adc_joysticks *aj = rt_container_of(idev, struct adc_joysticks, parent);
 
     for (int i = 0; i < aj->num_axis; ++i)
@@ -63,13 +63,13 @@ static void adc_joysticks_poll(struct rt_input_device *idev)
 
 static rt_err_t adc_joystick_probe(struct rt_platform_device *pdev)
 {
-    rt_err_t err;
-    rt_uint32_t interval;
-    rt_uint32_t num_axis;
-    struct adc_joysticks *aj;
+    rt_err_t                  err;
+    rt_uint32_t               interval;
+    rt_uint32_t               num_axis;
+    struct adc_joysticks     *aj;
     struct adc_joystick_axis *axis;
-    struct rt_device *dev = &pdev->parent;
-    struct rt_ofw_node *np = dev->ofw_node, *axis_np;
+    struct rt_device         *dev = &pdev->parent;
+    struct rt_ofw_node       *np  = dev->ofw_node, *axis_np;
 
     num_axis = rt_ofw_get_child_count(np);
 
@@ -102,7 +102,7 @@ static rt_err_t adc_joystick_probe(struct rt_platform_device *pdev)
         if (reg >= num_axis)
         {
             LOG_E("%s: reg %u out of range (num_axis %u)",
-                    rt_ofw_node_full_name(axis_np), reg, num_axis);
+                  rt_ofw_node_full_name(axis_np), reg, num_axis);
             rt_ofw_node_put(axis_np);
             err = -RT_EINVAL;
             goto _fail;
@@ -167,7 +167,7 @@ static rt_err_t adc_joystick_probe(struct rt_platform_device *pdev)
         }
 
         rt_input_set_absinfo(&aj->parent, axis->code,
-                axis->range[0], axis->range[1], axis->fuzz, axis->flat);
+                             axis->range[0], axis->range[1], axis->fuzz, axis->flat);
         rt_input_set_capability(&aj->parent, EV_ABS, axis->code);
     }
 
@@ -223,18 +223,16 @@ static rt_err_t adc_joystick_remove(struct rt_platform_device *pdev)
     return RT_EOK;
 }
 
-static const struct rt_ofw_node_id adc_joystick_ofw_ids[] =
-{
+static const struct rt_ofw_node_id adc_joystick_ofw_ids[] = {
     { .compatible = "adc-joystick" },
     { /* sentinel */ }
 };
 
-static struct rt_platform_driver adc_joystick_driver =
-{
+static struct rt_platform_driver adc_joystick_driver = {
     .name = "adc-joystick",
-    .ids = adc_joystick_ofw_ids,
+    .ids  = adc_joystick_ofw_ids,
 
-    .probe = adc_joystick_probe,
+    .probe  = adc_joystick_probe,
     .remove = adc_joystick_remove,
 };
 RT_PLATFORM_DRIVER_EXPORT(adc_joystick_driver);

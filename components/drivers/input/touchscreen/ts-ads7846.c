@@ -21,53 +21,53 @@
  * The ADS7846 has touchscreen and other sensors.
  * Earlier ads784x chips are somewhat compatible.
  */
-#define ADS_START                       (1 << 7)
-#define ADS_A2A1A0_d_y                  (1 << 4)    /* Differential */
-#define ADS_A2A1A0_d_z1                 (3 << 4)    /* Differential */
-#define ADS_A2A1A0_d_z2                 (4 << 4)    /* Differential */
-#define ADS_A2A1A0_d_x                  (5 << 4)    /* Differential */
-#define ADS_A2A1A0_temp0                (0 << 4)    /* Non-differential */
-#define ADS_A2A1A0_vbatt                (2 << 4)    /* Non-differential */
-#define ADS_A2A1A0_vaux                 (6 << 4)    /* Non-differential */
-#define ADS_A2A1A0_temp1                (7 << 4)    /* Non-differential */
-#define ADS_8_BIT                       (1 << 3)
-#define ADS_12_BIT                      (0 << 3)
-#define ADS_SER                         (1 << 2)    /* Non-differential */
-#define ADS_DFR                         (0 << 2)    /* Differential */
-#define ADS_PD10_PDOWN                  (0 << 0)    /* Low power mode + penirq */
-#define ADS_PD10_ADC_ON                 (1 << 0)    /* ADC on */
-#define ADS_PD10_REF_ON                 (2 << 0)    /* vREF on + penirq */
-#define ADS_PD10_ALL_ON                 (3 << 0)    /* ADC + vREF on */
+#define ADS_START        (1 << 7)
+#define ADS_A2A1A0_d_y   (1 << 4)    /* Differential */
+#define ADS_A2A1A0_d_z1  (3 << 4)    /* Differential */
+#define ADS_A2A1A0_d_z2  (4 << 4)    /* Differential */
+#define ADS_A2A1A0_d_x   (5 << 4)    /* Differential */
+#define ADS_A2A1A0_temp0 (0 << 4)    /* Non-differential */
+#define ADS_A2A1A0_vbatt (2 << 4)    /* Non-differential */
+#define ADS_A2A1A0_vaux  (6 << 4)    /* Non-differential */
+#define ADS_A2A1A0_temp1 (7 << 4)    /* Non-differential */
+#define ADS_8_BIT        (1 << 3)
+#define ADS_12_BIT       (0 << 3)
+#define ADS_SER          (1 << 2)    /* Non-differential */
+#define ADS_DFR          (0 << 2)    /* Differential */
+#define ADS_PD10_PDOWN   (0 << 0)    /* Low power mode + penirq */
+#define ADS_PD10_ADC_ON  (1 << 0)    /* ADC on */
+#define ADS_PD10_REF_ON  (2 << 0)    /* vREF on + penirq */
+#define ADS_PD10_ALL_ON  (3 << 0)    /* ADC + vREF on */
 
-#define MAX_12BIT                       ((1<<12)-1)
+#define MAX_12BIT ((1 << 12) - 1)
 
 /* Leave ADC powered up (disables penirq) between differential samples */
-#define READ_12BIT_DFR(x, adc, vref)    (ADS_START | ADS_A2A1A0_d_ ## x | ADS_12_BIT | ADS_DFR | \
-                                            (adc ? ADS_PD10_ADC_ON : 0) | (vref ? ADS_PD10_REF_ON : 0))
+#define READ_12BIT_DFR(x, adc, vref) (ADS_START | ADS_A2A1A0_d_##x | ADS_12_BIT | ADS_DFR | \
+                                      (adc ? ADS_PD10_ADC_ON : 0) | (vref ? ADS_PD10_REF_ON : 0))
 
-#define READ_Y(vref)                    (READ_12BIT_DFR(y,  1, vref))
-#define READ_Z1(vref)                   (READ_12BIT_DFR(z1, 1, vref))
-#define READ_Z2(vref)                   (READ_12BIT_DFR(z2, 1, vref))
-#define READ_X(vref)                    (READ_12BIT_DFR(x,  1, vref))
-#define PWRDOWN                         (READ_12BIT_DFR(y,  0, 0))  /* LAST */
+#define READ_Y(vref)  (READ_12BIT_DFR(y, 1, vref))
+#define READ_Z1(vref) (READ_12BIT_DFR(z1, 1, vref))
+#define READ_Z2(vref) (READ_12BIT_DFR(z2, 1, vref))
+#define READ_X(vref)  (READ_12BIT_DFR(x, 1, vref))
+#define PWRDOWN       (READ_12BIT_DFR(y, 0, 0))  /* LAST */
 
 /*
  * Single-ended samples need to first power up reference voltage;
  * We leave both ADC and VREF powered
  */
-#define READ_12BIT_SER(x)               (ADS_START | ADS_A2A1A0_ ## x | ADS_12_BIT | ADS_SER)
+#define READ_12BIT_SER(x) (ADS_START | ADS_A2A1A0_##x | ADS_12_BIT | ADS_SER)
 
-#define REF_ON                          (READ_12BIT_DFR(x, 1, 1))
-#define REF_OFF                         (READ_12BIT_DFR(y, 0, 0))
+#define REF_ON  (READ_12BIT_DFR(x, 1, 1))
+#define REF_OFF (READ_12BIT_DFR(y, 0, 0))
 
-#define TS_POLL_DELAY                   1   /* ms delay before the first sample */
-#define TS_POLL_PERIOD                  5   /* ms delay between samples */
+#define TS_POLL_DELAY  1   /* ms delay before the first sample */
+#define TS_POLL_PERIOD 5   /* ms delay between samples */
 
 /* This driver doesn't aim at the peak continuous sample rate */
-#define SAMPLE_BITS                     (8 /*cmd*/ + 16 /*sample*/ + 2 /* before, after */)
+#define SAMPLE_BITS (8 /*cmd*/ + 16 /*sample*/ + 2 /* before, after */)
 
-#define NSEC_PER_SEC                    1000000000L
-#define NSEC_PER_USEC                   1000L
+#define NSEC_PER_SEC  1000000000L
+#define NSEC_PER_USEC 1000L
 
 /*
  * Order commands in the most optimal way to reduce Vref switching and
@@ -86,18 +86,17 @@ enum ads7846_cmds
     ADS7846_PWDOWN,
 };
 
-rt_packed(struct ads7846_buf
-{
+rt_packed(struct ads7846_buf {
     rt_uint8_t cmd;
-    rt_be16_t data;
+    rt_be16_t  data;
 });
 
 struct ads7846_ser_req
 {
-    rt_uint8_t ref_on;
-    rt_uint8_t command;
-    rt_uint8_t ref_off;
-    rt_uint16_t scratch;
+    rt_uint8_t            ref_on;
+    rt_uint8_t            command;
+    rt_uint8_t            ref_off;
+    rt_uint16_t           scratch;
     struct rt_spi_message msg[6];
 
     rt_be16_t sample;
@@ -105,9 +104,9 @@ struct ads7846_ser_req
 
 struct ads7845_ser_req
 {
-    rt_uint8_t command[3];
+    rt_uint8_t            command[3];
     struct rt_spi_message msg[1];
-    rt_uint8_t sample[3];
+    rt_uint8_t            sample[3];
 };
 
 struct ads7846_buf_layout
@@ -119,17 +118,17 @@ struct ads7846_buf_layout
 
 struct ads7846_packet
 {
-    rt_uint32_t count;
-    rt_uint32_t count_skip;
-    rt_uint32_t cmds;
-    rt_uint32_t last_cmd_idx;
+    rt_uint32_t               count;
+    rt_uint32_t               count_skip;
+    rt_uint32_t               cmds;
+    rt_uint32_t               last_cmd_idx;
     struct ads7846_buf_layout layout[5];
-    struct ads7846_buf *rx;
-    struct ads7846_buf *tx;
+    struct ads7846_buf       *rx;
+    struct ads7846_buf       *tx;
 
     struct ads7846_buf pwrdown_cmd;
 
-    rt_bool_t ignore;
+    rt_bool_t   ignore;
     rt_uint16_t x, y, z1, z2;
 };
 
@@ -138,8 +137,8 @@ struct ads7846_platform_data
     rt_uint16_t model;              /* 7843, 7845, 7846, 7873. */
     rt_uint16_t vref_delay_usecs;   /* 0 for external vref; etc */
     rt_uint16_t vref_mv;            /* external vref value, milliVolts ads7846: if 0, use internal vref */
-    rt_bool_t keep_vref_on;         /* set to keep vref on for differential measurements as well */
-    rt_bool_t swap_xy;              /* swap x and y axes */
+    rt_bool_t   keep_vref_on;         /* set to keep vref on for differential measurements as well */
+    rt_bool_t   swap_xy;              /* swap x and y axes */
 
     /*
      * Settling time of the analog signals; a function of Vcc and the
@@ -182,7 +181,7 @@ struct ads7846
 {
     struct rt_input_device parent;
 
-    int irq;
+    int        irq;
     rt_ubase_t gpio_pendown;
     rt_uint8_t gpio_pendown_active;
 
@@ -197,16 +196,16 @@ struct ads7846
     rt_bool_t suspended;  /* P: lock */
 
     struct rt_spi_device *spi;
-    struct rt_thread *ts_task;
-    struct rt_regulator *supply;
+    struct rt_thread     *ts_task;
+    struct rt_regulator  *supply;
 
-    struct ads7846_packet packet;
+    struct ads7846_packet        packet;
     struct ads7846_platform_data pdata;
 
     rt_bool_t use_internal;
 
     void *filter_data;
-    int (*filter)(void *data, int data_idx, int *val);
+    int   (*filter)(void *data, int data_idx, int *val);
 };
 
 /*
@@ -217,21 +216,21 @@ struct ads7846_input_touch_prop
 {
     rt_uint32_t max_x;
     rt_uint32_t max_y;
-    rt_bool_t invert_x;
-    rt_bool_t invert_y;
-    rt_bool_t swap_x_y;
+    rt_bool_t   invert_x;
+    rt_bool_t   invert_y;
+    rt_bool_t   swap_x_y;
     rt_uint16_t track_id;
     rt_uint32_t num_slots;
-    void *touch_dev;
+    void       *touch_dev;
 };
 
 static void ads7846_apply_legacy_swap_xy(struct rt_input_device *idev,
-        rt_bool_t vendor_swap_xy)
+                                         rt_bool_t               vendor_swap_xy)
 {
     struct ads7846_input_touch_prop *prop;
-    rt_uint32_t axis_x;
-    rt_uint32_t axis_y;
-    struct rt_input_absinfo tmp;
+    rt_uint32_t                      axis_x;
+    rt_uint32_t                      axis_y;
+    struct rt_input_absinfo          tmp;
 
     if (!vendor_swap_xy || !idev || !idev->touch)
     {
@@ -251,8 +250,8 @@ static void ads7846_apply_legacy_swap_xy(struct rt_input_device *idev,
     rt_memcpy(&idev->absinfo[axis_x], &idev->absinfo[axis_y], sizeof(tmp));
     rt_memcpy(&idev->absinfo[axis_y], &tmp, sizeof(tmp));
 
-    prop->max_x = idev->absinfo[axis_x].maximum;
-    prop->max_y = idev->absinfo[axis_y].maximum;
+    prop->max_x    = idev->absinfo[axis_x].maximum;
+    prop->max_y    = idev->absinfo[axis_y].maximum;
     prop->swap_x_y = RT_TRUE;
 
     if (prop->touch_dev)
@@ -276,7 +275,7 @@ static void ads7846_report_pen_up(struct ads7846 *ts);
 static rt_bool_t ads7846_pendown_active(struct ads7846 *ts)
 {
     return ts->gpio_pendown == PIN_NONE ||
-            rt_pin_read(ts->gpio_pendown) == ts->gpio_pendown_active;
+           rt_pin_read(ts->gpio_pendown) == ts->gpio_pendown_active;
 }
 
 static void ads7846_stop(struct ads7846 *ts)
@@ -377,7 +376,7 @@ static int ads7846_no_filter(void *ads, int data_idx, int *val)
 
 static int ads7846_read12_ser(struct ads7846 *ts, unsigned command)
 {
-    int status;
+    int                    status;
     struct ads7846_ser_req req;
 
     rt_memset(&req, 0, sizeof(req));
@@ -391,13 +390,13 @@ static int ads7846_read12_ser(struct ads7846 *ts, unsigned command)
      */
     if (ts->use_internal)
     {
-        req.ref_on = REF_ON;
-        req.msg[0].send_buf = &req.ref_on;
-        req.msg[0].length = 1;
-        req.msg[0].cs_take = 1;
+        req.ref_on            = REF_ON;
+        req.msg[0].send_buf   = &req.ref_on;
+        req.msg[0].length     = 1;
+        req.msg[0].cs_take    = 1;
         req.msg[0].cs_release = 0;
-        req.msg[1].recv_buf = &req.scratch;
-        req.msg[1].length = 2;
+        req.msg[1].recv_buf   = &req.scratch;
+        req.msg[1].length     = 2;
         rt_spi_message_append(&req.msg[0], &req.msg[1]);
 
         ads7846_stop(ts);
@@ -419,24 +418,24 @@ static int ads7846_read12_ser(struct ads7846 *ts, unsigned command)
     rt_memset(req.msg, 0, sizeof(req.msg));
 
     /* Take sample */
-    req.command = (rt_uint8_t)command;
+    req.command         = (rt_uint8_t)command;
     req.msg[0].send_buf = &req.command;
-    req.msg[0].length = 1;
-    req.msg[0].cs_take = 1;
+    req.msg[0].length   = 1;
+    req.msg[0].cs_take  = 1;
 
     req.msg[1].recv_buf = &req.sample;
-    req.msg[1].length = 2;
+    req.msg[1].length   = 2;
     rt_spi_message_append(&req.msg[0], &req.msg[1]);
 
     /* Converter in low power mode & enable PENIRQ */
-    req.ref_off = PWRDOWN;
+    req.ref_off         = PWRDOWN;
     req.msg[2].send_buf = &req.ref_off;
-    req.msg[2].length = 1;
+    req.msg[2].length   = 1;
     rt_spi_message_append(&req.msg[0], &req.msg[2]);
 
     req.msg[3].recv_buf = &req.scratch;
-    req.msg[3].length = 2;
-    req.msg[3].cs_take = 0;
+    req.msg[3].length   = 2;
+    req.msg[3].cs_take  = 0;
     rt_spi_message_append(&req.msg[0], &req.msg[3]);
 
     ads7846_stop(ts);
@@ -446,8 +445,8 @@ static int ads7846_read12_ser(struct ads7846 *ts, unsigned command)
     if (status == 0)
     {
         /* On-wire is a must-ignore bit, a BE12 value, then padding */
-        status = rt_be16_to_cpu(req.sample);
-        status = status >> 3;
+        status  = rt_be16_to_cpu(req.sample);
+        status  = status >> 3;
         status &= 0x0fff;
     }
 
@@ -456,15 +455,15 @@ static int ads7846_read12_ser(struct ads7846 *ts, unsigned command)
 
 static int ads7845_read12_ser(struct ads7846 *ts, unsigned command)
 {
-    int status;
+    int                    status;
     struct ads7845_ser_req req;
 
     rt_memset(&req, 0, sizeof(req));
 
-    req.command[0] = (rt_uint8_t)command;
+    req.command[0]      = (rt_uint8_t)command;
     req.msg[0].send_buf = req.command;
     req.msg[0].recv_buf = req.sample;
-    req.msg[0].length = 3;
+    req.msg[0].length   = 3;
 
     ads7846_stop(ts);
     status = rt_spi_transfer_message(ts->spi, &req.msg[0]) != RT_NULL;
@@ -473,8 +472,8 @@ static int ads7845_read12_ser(struct ads7846 *ts, unsigned command)
     if (status == 0)
     {
         /* BE12 value, then padding */
-        status = get_unaligned_be16(&req.sample[1]);
-        status = status >> 3;
+        status  = get_unaligned_be16(&req.sample[1]);
+        status  = status >> 3;
         status &= 0x0fff;
     }
 
@@ -511,8 +510,8 @@ static int ads7846_get_value(struct ads7846_buf *buf)
     return (value >> 3) & 0xfff;
 }
 
-static void ads7846_set_cmd_val(struct ads7846 *ts,
-        enum ads7846_cmds cmd_idx, rt_uint16_t val)
+static void ads7846_set_cmd_val(struct ads7846   *ts,
+                                enum ads7846_cmds cmd_idx, rt_uint16_t val)
 {
     struct ads7846_packet *packet = &ts->packet;
 
@@ -568,16 +567,16 @@ static rt_uint8_t ads7846_get_cmd(enum ads7846_cmds cmd_idx, int vref)
 
 static rt_err_t ads7846_setup_spi_msg(struct ads7846 *ts)
 {
-    rt_size_t size = 0, time;
-    int vref = ts->pdata.keep_vref_on;
-    rt_uint32_t count, offset = 0;
-    struct rt_spi_message *m = &ts->msg[0];
+    rt_size_t              size = 0, time;
+    int                    vref = ts->pdata.keep_vref_on;
+    rt_uint32_t            count, offset = 0;
+    struct rt_spi_message *m      = &ts->msg[0];
     struct ads7846_packet *packet = &ts->packet;
 
     /* Time per bit */
     time = NSEC_PER_SEC / ts->spi->config.max_hz;
 
-    count = ts->pdata.settle_delay_usecs * NSEC_PER_USEC / time;
+    count              = ts->pdata.settle_delay_usecs * NSEC_PER_USEC / time;
     packet->count_skip = RT_DIV_ROUND_UP(count, 24);
 
     if (ts->pdata.debounce_max && ts->pdata.debounce_rep)
@@ -604,7 +603,7 @@ static rt_err_t ads7846_setup_spi_msg(struct ads7846 *ts)
 
     for (rt_uint32_t cmd_idx = 0; cmd_idx < packet->cmds; ++cmd_idx)
     {
-        rt_uint32_t max_count;
+        rt_uint32_t                max_count;
         struct ads7846_buf_layout *layout = &packet->layout[cmd_idx];
 
         if (cmd_idx == packet->cmds - 1)
@@ -621,11 +620,11 @@ static rt_err_t ads7846_setup_spi_msg(struct ads7846 *ts)
             max_count = packet->count;
         }
 
-        layout->offset = offset;
-        offset += max_count;
-        layout->count = max_count;
-        layout->skip = packet->count_skip;
-        size += sizeof(*packet->tx) * max_count;
+        layout->offset  = offset;
+        offset         += max_count;
+        layout->count   = max_count;
+        layout->skip    = packet->count_skip;
+        size           += sizeof(*packet->tx) * max_count;
     }
 
     if (!(packet->tx = rt_calloc(1, size)))
@@ -648,12 +647,12 @@ static rt_err_t ads7846_setup_spi_msg(struct ads7846 *ts)
          * keep VREF off during differential/ratiometric conversion modes.
          */
         ts->pdata.model = 7846;
-        vref = 0;
+        vref            = 0;
     }
 
     for (rt_uint32_t cmd_idx = 0; cmd_idx < packet->cmds; ++cmd_idx)
     {
-        rt_uint8_t cmd;
+        rt_uint8_t                 cmd;
         struct ads7846_buf_layout *layout = &packet->layout[cmd_idx];
 
         if (cmd_idx == packet->cmds - 1)
@@ -671,14 +670,14 @@ static rt_err_t ads7846_setup_spi_msg(struct ads7846 *ts)
 
     m->send_buf = packet->tx;
     m->recv_buf = packet->rx;
-    m->length = size;
+    m->length   = size;
 
     return RT_EOK;
 }
 
 static rt_err_t ads7846_filter(struct ads7846 *ts)
 {
-    int action, val;
+    int                    action, val;
     struct ads7846_packet *packet = &ts->packet;
 
     packet->ignore = RT_FALSE;
@@ -731,7 +730,7 @@ static void ads7846_report_pen_up(struct ads7846 *ts)
 
 static void ads7846_read_state(struct ads7846 *ts)
 {
-    rt_uint32_t msg_idx = 0;
+    rt_uint32_t            msg_idx = 0;
     struct rt_spi_message *m;
     struct ads7846_packet *packet = &ts->packet;
 
@@ -758,8 +757,8 @@ static void ads7846_read_state(struct ads7846 *ts)
 
 static void ads7846_report_state(struct ads7846 *ts)
 {
-    rt_uint32_t Rt;
-    rt_uint16_t x, y, z1, z2;
+    rt_uint32_t            Rt;
+    rt_uint16_t            x, y, z1, z2;
     struct ads7846_packet *packet = &ts->packet;
 
     x = packet->x;
@@ -789,13 +788,13 @@ static void ads7846_report_state(struct ads7846 *ts)
     else if (x && z1)
     {
         /* compute touch pressure resistance using equation #2 */
-        Rt = z2;
+        Rt  = z2;
         Rt -= z1;
         Rt *= ts->pdata.x_plate_ohms;
-        Rt = RT_DIV_ROUND_CLOSEST(Rt, 16);
+        Rt  = RT_DIV_ROUND_CLOSEST(Rt, 16);
         Rt *= x;
         Rt /= z1;
-        Rt = RT_DIV_ROUND_CLOSEST(Rt, 256);
+        Rt  = RT_DIV_ROUND_CLOSEST(Rt, 256);
     }
     else
     {
@@ -835,7 +834,7 @@ static void ads7846_report_state(struct ads7846 *ts)
 
 static void ads7846_ts_task(void *param)
 {
-    rt_tick_t timeout;
+    rt_tick_t       timeout;
     struct ads7846 *ts = param;
 
     while (RT_TRUE)
@@ -855,7 +854,7 @@ static void ads7846_ts_task(void *param)
                 ads7846_report_state(ts);
             }
 
-            timeout = rt_tick_from_millisecond(TS_POLL_PERIOD);
+            timeout  = rt_tick_from_millisecond(TS_POLL_PERIOD);
             timeout += rt_tick_get();
 
             while (timeout > rt_tick_get() && !ts->stopped)
@@ -908,17 +907,16 @@ static void ads7846_pm_resume(const struct rt_device *device, rt_uint8_t mode)
     }
 }
 
-static const struct rt_device_pm_ops ads7846_pm_ops =
-{
+static const struct rt_device_pm_ops ads7846_pm_ops = {
     .suspend = ads7846_pm_suspend,
-    .resume = ads7846_pm_resume,
+    .resume  = ads7846_pm_resume,
 };
 #endif /* RT_USING_PM */
 
-static void ads7846_get_platform_data(struct rt_spi_device *spi_dev,
-        struct ads7846_platform_data *pdata)
+static void ads7846_get_platform_data(struct rt_spi_device         *spi_dev,
+                                      struct ads7846_platform_data *pdata)
 {
-    rt_uint32_t value;
+    rt_uint32_t       value;
     struct rt_device *dev = &spi_dev->parent;
 
     pdata->model = (rt_ubase_t)rt_spi_device_id_data(spi_dev);
@@ -931,9 +929,9 @@ static void ads7846_get_platform_data(struct rt_spi_device *spi_dev,
     pdata->swap_xy = rt_dm_dev_prop_read_bool(dev, "ti,swap-xy");
 
     rt_dm_dev_prop_read_u16(dev, "ti,settle-delay-usec",
-            &pdata->settle_delay_usecs);
+                            &pdata->settle_delay_usecs);
     rt_dm_dev_prop_read_u16(dev, "ti,penirq-recheck-delay-usecs",
-            &pdata->penirq_recheck_delay_usecs);
+                            &pdata->penirq_recheck_delay_usecs);
 
     rt_dm_dev_prop_read_u16(dev, "ti,x-plate-ohms", &pdata->x_plate_ohms);
     rt_dm_dev_prop_read_u16(dev, "ti,y-plate-ohms", &pdata->y_plate_ohms);
@@ -950,39 +948,39 @@ static void ads7846_get_platform_data(struct rt_spi_device *spi_dev,
     rt_dm_dev_prop_read_u16(dev, "ti,pressure-min", &pdata->pressure_min);
     if (!rt_dm_dev_prop_read_u32(dev, "touchscreen-min-pressure", &value))
     {
-        pdata->pressure_min = (rt_uint16_t) value;
+        pdata->pressure_min = (rt_uint16_t)value;
     }
     rt_dm_dev_prop_read_u16(dev, "ti,pressure-max", &pdata->pressure_max);
 
     rt_dm_dev_prop_read_u16(dev, "ti,debounce-max", &pdata->debounce_max);
     if (!rt_dm_dev_prop_read_u32(dev, "touchscreen-average-samples", &value))
     {
-        pdata->debounce_max = (rt_uint16_t) value;
+        pdata->debounce_max = (rt_uint16_t)value;
     }
     rt_dm_dev_prop_read_u16(dev, "ti,debounce-tol", &pdata->debounce_tol);
     rt_dm_dev_prop_read_u16(dev, "ti,debounce-rep", &pdata->debounce_rep);
 
     rt_dm_dev_prop_read_u32(dev, "ti,pendown-gpio-debounce",
-            &pdata->gpio_pendown_debounce);
+                            &pdata->gpio_pendown_debounce);
 }
 
 static rt_err_t ads7846_probe(struct rt_spi_device *spi_dev)
 {
-    rt_err_t err = RT_EOK;
+    rt_err_t             err        = RT_EOK;
     struct rt_touch_info touch_info = {};
-    struct rt_device *dev = &spi_dev->parent;
-    struct ads7846 *ts = rt_calloc(1, sizeof(*ts));
+    struct rt_device    *dev        = &spi_dev->parent;
+    struct ads7846      *ts         = rt_calloc(1, sizeof(*ts));
 
     if (!ts)
     {
         return -RT_ENOMEM;
     }
-    ts->spi = spi_dev;
+    ts->spi                    = spi_dev;
     ts->parent.parent.ofw_node = dev->ofw_node;
 
     ads7846_get_platform_data(spi_dev, &ts->pdata);
-    ts->pdata.vref_delay_usecs = ts->pdata.vref_delay_usecs ? : 100;
-    ts->pdata.x_plate_ohms = ts->pdata.x_plate_ohms ? : 400;
+    ts->pdata.vref_delay_usecs = ts->pdata.vref_delay_usecs ?: 100;
+    ts->pdata.x_plate_ohms     = ts->pdata.x_plate_ohms ?: 400;
 
     /* Linux ads784x_hwmon_register: internal ref when 7846 and no ti,vref-mv */
     if (ts->pdata.model == 7846 && ts->pdata.vref_mv == 0)
@@ -997,7 +995,7 @@ static rt_err_t ads7846_probe(struct rt_spi_device *spi_dev)
             ts->pdata.debounce_max = 2;
         }
         ts->filter_data = ts;
-        ts->filter = ads7846_debounce_filter;
+        ts->filter      = ads7846_debounce_filter;
     }
     else
     {
@@ -1005,7 +1003,7 @@ static rt_err_t ads7846_probe(struct rt_spi_device *spi_dev)
     }
 
     ts->gpio_pendown = rt_pin_get_named_pin(dev, "pendown", 0,
-            RT_NULL, &ts->gpio_pendown_active);
+                                            RT_NULL, &ts->gpio_pendown_active);
 
     if (ts->gpio_pendown < 0 && ts->gpio_pendown != PIN_NONE)
     {
@@ -1028,17 +1026,17 @@ static rt_err_t ads7846_probe(struct rt_spi_device *spi_dev)
     }
 
     rt_input_set_absinfo(&ts->parent, ABS_X,
-            ts->pdata.x_min ? : 0, ts->pdata.x_max ? : MAX_12BIT, 0, 0);
+                         ts->pdata.x_min ?: 0, ts->pdata.x_max ?: MAX_12BIT, 0, 0);
     rt_input_set_absinfo(&ts->parent, ABS_Y,
-            ts->pdata.y_min ? : 0, ts->pdata.y_max ? : MAX_12BIT, 0, 0);
+                         ts->pdata.y_min ?: 0, ts->pdata.y_max ?: MAX_12BIT, 0, 0);
 
     if (ts->pdata.model != 7845)
     {
         rt_input_set_absinfo(&ts->parent, ABS_PRESSURE,
-                ts->pdata.pressure_min, ts->pdata.pressure_max, 0, 0);
+                             ts->pdata.pressure_min, ts->pdata.pressure_max, 0, 0);
     }
 
-    touch_info.type = RT_TOUCH_TYPE_RESISTANCE;
+    touch_info.type   = RT_TOUCH_TYPE_RESISTANCE;
     touch_info.vendor = RT_TOUCH_VENDOR_UNKNOWN;
 
     if ((err = rt_input_setup_touch(&ts->parent, 0, &touch_info)))
@@ -1046,7 +1044,7 @@ static rt_err_t ads7846_probe(struct rt_spi_device *spi_dev)
         goto _free_input_config;
     }
 
-    ts->pdata.pressure_max = ts->parent.absinfo[ABS_PRESSURE].maximum ? : ~0;
+    ts->pdata.pressure_max = ts->parent.absinfo[ABS_PRESSURE].maximum ?: ~0;
 
     /*
      * Legacy ti,swap-xy when generic touchscreen-swapped-x-y was not set
@@ -1090,7 +1088,7 @@ static rt_err_t ads7846_probe(struct rt_spi_device *spi_dev)
 #endif
 
     ts->ts_task = rt_thread_create(rt_dm_dev_get_name(dev), &ads7846_ts_task,
-            ts, DM_THREAD_STACK_SIZE, RT_THREAD_PRIORITY_MAX / 2, 10);
+                                   ts, DM_THREAD_STACK_SIZE, RT_THREAD_PRIORITY_MAX / 2, 10);
 
     if (!ts->ts_task)
     {
@@ -1160,8 +1158,7 @@ static rt_err_t ads7846_remove(struct rt_spi_device *spi_dev)
     return RT_EOK;
 }
 
-static const struct rt_spi_device_id ads7846_ids[] =
-{
+static const struct rt_spi_device_id ads7846_ids[] = {
     { .name = "xpt2046", .data = (void *)7846 },
     { .name = "tsc2046", .data = (void *)7846 },
     { .name = "ads7843", .data = (void *)7843 },
@@ -1171,8 +1168,7 @@ static const struct rt_spi_device_id ads7846_ids[] =
     { /* sentinel */ },
 };
 
-static const struct rt_ofw_node_id ads7846_ofw_ids[] =
-{
+static const struct rt_ofw_node_id ads7846_ofw_ids[] = {
     { .compatible = "ti,xpt2046", .data = (void *)7846 },
     { .compatible = "ti,tsc2046", .data = (void *)7846 },
     { .compatible = "ti,ads7843", .data = (void *)7843 },
@@ -1182,12 +1178,11 @@ static const struct rt_ofw_node_id ads7846_ofw_ids[] =
     { /* sentinel */ },
 };
 
-static struct rt_spi_driver ads7846_driver =
-{
-    .ids = ads7846_ids,
+static struct rt_spi_driver ads7846_driver = {
+    .ids     = ads7846_ids,
     .ofw_ids = ads7846_ofw_ids,
 
-    .probe = ads7846_probe,
+    .probe  = ads7846_probe,
     .remove = ads7846_remove,
 };
 RT_SPI_DRIVER_EXPORT(ads7846_driver);
