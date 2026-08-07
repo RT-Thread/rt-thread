@@ -32,9 +32,9 @@ extern rt_ubase_t _start, _end;
 extern void _secondary_cpu_entry(void);
 extern void rt_hw_builtin_fdt();
 extern size_t MMUTable[];
-extern void *system_vectors;
+extern void  *system_vectors;
 
-static void *fdt_ptr = RT_NULL;
+static void     *fdt_ptr  = RT_NULL;
 static rt_size_t fdt_size = 0;
 
 #ifdef RT_USING_SMP
@@ -44,13 +44,11 @@ extern struct cpu_ops_t cpu_spin_table_ops;
 extern int rt_hw_cpu_id(void);
 #endif
 
-rt_uint64_t rt_cpu_mpidr_table[] =
-{
+rt_uint64_t rt_cpu_mpidr_table[] = {
     [RT_CPUS_NR] = 0,
 };
 
-static struct cpu_ops_t *cpu_ops[] =
-{
+static struct cpu_ops_t *cpu_ops[] = {
 #ifdef RT_USING_SMP
     &cpu_psci_ops,
     &cpu_spin_table_ops,
@@ -60,14 +58,14 @@ static struct cpu_ops_t *cpu_ops[] =
 #ifdef ARCH_USING_CPUIDLE
 struct rt_dvfs_idle *cpu_idle[RT_CPUS_NR] = {};
 #endif
-static struct rt_ofw_node *cpu_np[RT_CPUS_NR] = { };
+static struct rt_ofw_node *cpu_np[RT_CPUS_NR] = {};
 
 void rt_hw_fdt_install_early(void *fdt)
 {
 #ifndef RT_USING_BUILTIN_FDT
     if (fdt != RT_NULL && !fdt_check_header(fdt))
     {
-        fdt_ptr = fdt;
+        fdt_ptr  = fdt;
         fdt_size = fdt_totalsize(fdt);
     }
 #else
@@ -89,8 +87,8 @@ static rt_ubase_t cpu_get_cycles(void)
 
 static void cpu_loops_per_tick_init(void)
 {
-    rt_ubase_t offset;
-    volatile rt_ubase_t freq, step, cycles_end1, cycles_end2;
+    rt_ubase_t           offset;
+    volatile rt_ubase_t  freq, step, cycles_end1, cycles_end2;
     volatile rt_uint32_t cycles_count1 = 0, cycles_count2 = 0;
 
     rt_hw_sysreg_read(cntfrq_el0, freq);
@@ -100,15 +98,15 @@ static void cpu_loops_per_tick_init(void)
 
     while (cpu_get_cycles() < cycles_end1)
     {
-        __asm__ volatile ("nop");
-        __asm__ volatile ("add %0, %0, #1":"=r"(cycles_count1));
+        __asm__ volatile("nop");
+        __asm__ volatile("add %0, %0, #1" : "=r"(cycles_count1));
     }
 
     cycles_end2 = cpu_get_cycles() + step;
 
     while (cpu_get_cycles() < cycles_end2)
     {
-        __asm__ volatile ("add %0, %0, #1":"=r"(cycles_count2));
+        __asm__ volatile("add %0, %0, #1" : "=r"(cycles_count2));
     }
 
     if ((rt_int32_t)(cycles_count2 - cycles_count1) > 0)
@@ -146,7 +144,7 @@ rt_weak void rt_hw_idle_wfi(void)
     {
         rt_dvfs_idle_entry(cpuidle);
 
-        __asm__ volatile ("wfi");
+        __asm__ volatile("wfi");
 
         rt_dvfs_idle_exit(cpuidle);
 
@@ -154,7 +152,7 @@ rt_weak void rt_hw_idle_wfi(void)
     }
 #endif /* ARCH_USING_CPUIDLE */
 
-    __asm__ volatile ("wfi");
+    __asm__ volatile("wfi");
 }
 
 static void system_vectors_init(void)
@@ -164,8 +162,8 @@ static void system_vectors_init(void)
 
 rt_inline void cpu_info_init(void)
 {
-    int i = 0;
-    rt_uint64_t mpidr;
+    int                 i = 0;
+    rt_uint64_t         mpidr;
     struct rt_ofw_node *np;
 
     /* get boot cpu info */
@@ -185,7 +183,7 @@ rt_inline void cpu_info_init(void)
             hwid = mpidr;
         }
 
-        cpu_np[i] = np;
+        cpu_np[i]             = np;
         rt_cpu_mpidr_table[i] = hwid;
 
         for (int idx = 0; idx < RT_ARRAY_SIZE(cpu_ops); ++idx)
@@ -218,8 +216,8 @@ rt_inline void cpu_info_init(void)
 
 rt_inline rt_size_t string_to_size(const char *string, const char *who)
 {
-    char unit;
-    rt_size_t size;
+    char        unit;
+    rt_size_t   size;
     const char *cp = string;
 
     size = atoi(cp);
@@ -253,22 +251,22 @@ rt_inline rt_size_t string_to_size(const char *string, const char *who)
 
 void rt_hw_common_setup(void)
 {
-    rt_uint64_t initrd_ranges[3];
-    rt_size_t kernel_start, kernel_end;
-    rt_size_t heap_start, heap_end;
-    rt_size_t init_page_start, init_page_end;
-    rt_size_t fdt_start, fdt_end;
-    rt_region_t init_page_region = { 0 };
-    rt_region_t platform_mem_region = { 0 };
+    rt_uint64_t            initrd_ranges[3];
+    rt_size_t              kernel_start, kernel_end;
+    rt_size_t              heap_start, heap_end;
+    rt_size_t              init_page_start, init_page_end;
+    rt_size_t              fdt_start, fdt_end;
+    rt_region_t            init_page_region    = { 0 };
+    rt_region_t            platform_mem_region = { 0 };
     static struct mem_desc platform_mem_desc;
-    const rt_ubase_t pv_off = PV_OFFSET;
+    const rt_ubase_t       pv_off = PV_OFFSET;
 
     system_vectors_init();
 
 #ifdef RT_USING_SMART
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xffffffff00000000, 0x20000000, MMUTable, pv_off);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0xffffffff00000000, 0x20000000, MMUTable, pv_off);
 #else
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xffffd0000000, 0x20000000, MMUTable, 0);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0xffffd0000000, 0x20000000, MMUTable, 0);
 #endif
 
     kernel_start    = RT_ALIGN_DOWN((rt_size_t)rt_kmem_v2p((void *)&_start) - 64, ARCH_PAGE_SIZE);
@@ -282,9 +280,9 @@ void rt_hw_common_setup(void)
 
     platform_mem_region.start = kernel_start;
 #ifndef RT_USING_BUILTIN_FDT
-    platform_mem_region.end   = fdt_end;
+    platform_mem_region.end = fdt_end;
 #else
-    platform_mem_region.end   = init_page_end;
+    platform_mem_region.end = init_page_end;
     (void)fdt_start;
     (void)fdt_end;
 #endif
@@ -308,14 +306,14 @@ void rt_hw_common_setup(void)
     rt_memmove((void *)(fdt_start - pv_off), fdt_ptr, fdt_size);
     fdt_ptr = (void *)fdt_start - pv_off;
 #else
-    fdt_ptr = &rt_hw_builtin_fdt;
+    fdt_ptr  = &rt_hw_builtin_fdt;
     fdt_size = fdt_totalsize(fdt_ptr);
 #endif /* RT_USING_BUILTIN_FDT */
 
     rt_system_heap_init((void *)(heap_start - pv_off), (void *)(heap_end - pv_off));
 
     init_page_region.start = init_page_start - pv_off;
-    init_page_region.end = init_page_end - pv_off;
+    init_page_region.end   = init_page_end - pv_off;
     rt_page_init(init_page_region);
 
     /* create MMU mapping of kernel memory */
@@ -324,8 +322,8 @@ void rt_hw_common_setup(void)
 
     platform_mem_desc.paddr_start = platform_mem_region.start;
     platform_mem_desc.vaddr_start = platform_mem_region.start - pv_off;
-    platform_mem_desc.vaddr_end = platform_mem_region.end - pv_off - 1;
-    platform_mem_desc.attr = NORMAL_MEM;
+    platform_mem_desc.vaddr_end   = platform_mem_region.end - pv_off - 1;
+    platform_mem_desc.attr        = NORMAL_MEM;
 
     rt_hw_mmu_setup(&rt_kernel_space, &platform_mem_desc, 1);
 
@@ -342,10 +340,11 @@ void rt_hw_common_setup(void)
     rt_fdt_scan_memory();
 
 #ifdef RT_USING_DMA
-    do {
-        const char *bootargs;
-        rt_ubase_t dma_pool_base;
-        rt_size_t cma_size = 0, coherent_pool_size = 0;
+    do
+    {
+        const char          *bootargs;
+        rt_ubase_t           dma_pool_base;
+        rt_size_t            cma_size = 0, coherent_pool_size = 0;
         rt_size_t            pool_total;
         struct rt_memblock  *memory;
         struct rt_mmblk_reg *mem_reg;
@@ -365,10 +364,10 @@ void rt_hw_common_setup(void)
             if (cma_size || coherent_pool_size)
             {
                 LOG_W("DMA pool %s=%u > %s=%u",
-                    "CMA", cma_size, "coherent-pool", coherent_pool_size);
+                      "CMA", cma_size, "coherent-pool", coherent_pool_size);
             }
 
-            cma_size = 8 * SIZE_MB;
+            cma_size           = 8 * SIZE_MB;
             coherent_pool_size = 2 * SIZE_MB;
         }
 
@@ -451,7 +450,7 @@ void rt_hw_common_setup(void)
         if (rt_dma_pool_extract(cma_size, coherent_pool_size))
         {
             LOG_E("Alloc DMA pool %s=%u, %s=%u fail",
-                    "CMA", cma_size, "coherent-pool", coherent_pool_size);
+                  "CMA", cma_size, "coherent-pool", coherent_pool_size);
         }
     } while (0);
 #endif /* RT_USING_DMA */
@@ -517,7 +516,7 @@ static int cpuidle_init(void)
         }
 
         cpuidle_dev.ofw_node = cpu_np[i];
-        cpuidle = rt_dvfs_idle_get(&cpuidle_dev);
+        cpuidle              = rt_dvfs_idle_get(&cpuidle_dev);
 
         if (!rt_is_err(cpuidle))
         {
@@ -533,8 +532,8 @@ INIT_PREV_EXPORT(cpuidle_init);
 #ifdef RT_USING_SMP
 rt_weak void rt_hw_secondary_cpu_up(void)
 {
-    int cpu_id = rt_hw_cpu_id();
-    rt_uint64_t entry = (rt_uint64_t)rt_kmem_v2p(_secondary_cpu_entry);
+    int         cpu_id = rt_hw_cpu_id();
+    rt_uint64_t entry  = (rt_uint64_t)rt_kmem_v2p(_secondary_cpu_entry);
 
     if (!entry)
     {
@@ -545,7 +544,7 @@ rt_weak void rt_hw_secondary_cpu_up(void)
     /* Maybe we are no in the first cpu */
     for (int i = 0; i < RT_ARRAY_SIZE(cpu_np); ++i)
     {
-        int err;
+        int         err;
         const char *enable_method;
 
         if (!cpu_np[i] || i == cpu_id)
