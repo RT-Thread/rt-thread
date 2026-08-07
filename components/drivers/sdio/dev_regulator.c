@@ -10,11 +10,11 @@
 
 #include "dev_sdio_dm.h"
 
-#define DBG_TAG               "SDIO"
+#define DBG_TAG "SDIO"
 #ifdef RT_SDIO_DEBUG
-#define DBG_LVL               DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LVL               DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif /* RT_SDIO_DEBUG */
 #include <rtdbg.h>
 
@@ -44,7 +44,7 @@ static rt_err_t ocrbitnum_to_vdd(int vdd_bit, int *min_uvolt, int *max_uvolt)
 }
 
 rt_err_t sdio_regulator_set_ocr(struct rt_mmcsd_host *host,
-        struct rt_regulator *supply, rt_uint16_t vdd_bit)
+                                struct rt_regulator *supply, rt_uint16_t vdd_bit)
 {
     rt_err_t err = RT_EOK;
 
@@ -111,7 +111,7 @@ rt_bool_t sdio_regulator_supports_vqmmc_voltage(struct rt_regulator *regulator,
 }
 
 static int regulator_set_voltage_if_supported(struct rt_regulator *regulator,
-        int min_uvolt, int target_uvolt, int max_uvolt)
+                                              int min_uvolt, int target_uvolt, int max_uvolt)
 {
     if (!regulator)
     {
@@ -141,11 +141,11 @@ static int regulator_set_voltage_if_supported(struct rt_regulator *regulator,
     return -RT_EINVAL;
 }
 
-rt_err_t sdio_regulator_set_vqmmc(struct rt_mmcsd_host *host,
-        struct rt_mmcsd_io_cfg *ios)
+rt_err_t sdio_regulator_set_vqmmc(struct rt_mmcsd_host   *host,
+                                  struct rt_mmcsd_io_cfg *ios)
 {
     rt_err_t err;
-    int uvolt, min_uvolt, max_uvolt;
+    int      uvolt, min_uvolt, max_uvolt;
 
     if (rt_is_err_or_null(host->supply.vqmmc))
     {
@@ -156,11 +156,11 @@ rt_err_t sdio_regulator_set_vqmmc(struct rt_mmcsd_host *host,
     {
     case MMCSD_SIGNAL_VOLTAGE_120:
         return regulator_set_voltage_if_supported(host->supply.vqmmc,
-                1100000, 1200000, 1300000);
+                                                  1100000, 1200000, 1300000);
 
     case MMCSD_SIGNAL_VOLTAGE_180:
         return regulator_set_voltage_if_supported(host->supply.vqmmc,
-                1700000, 1800000, 1950000);
+                                                  1700000, 1800000, 1950000);
 
     case MMCSD_SIGNAL_VOLTAGE_330:
         err = ocrbitnum_to_vdd(host->io_cfg.vdd, &uvolt, &max_uvolt);
@@ -174,14 +174,14 @@ rt_err_t sdio_regulator_set_vqmmc(struct rt_mmcsd_host *host,
         max_uvolt = rt_min(max_uvolt + 200000, 3600000);
 
         err = regulator_set_voltage_if_supported(host->supply.vqmmc,
-                min_uvolt, uvolt, max_uvolt);
+                                                 min_uvolt, uvolt, max_uvolt);
         if (err >= 0)
         {
             return err;
         }
 
         return regulator_set_voltage_if_supported(host->supply.vqmmc,
-                2700000, uvolt, 3600000);
+                                                  2700000, uvolt, 3600000);
 
     default:
         return -RT_EINVAL;
@@ -197,7 +197,7 @@ rt_err_t sdio_regulator_get_supply(struct rt_device *dev, struct rt_mmcsd_host *
         return -RT_EINVAL;
     }
 
-    host->supply.vmmc = rt_regulator_get(dev, "vmmc");
+    host->supply.vmmc  = rt_regulator_get(dev, "vmmc");
     host->supply.vqmmc = rt_regulator_get(dev, "vqmmc");
 
     if (!rt_is_err(host->supply.vmmc))
