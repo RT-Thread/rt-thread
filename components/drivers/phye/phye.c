@@ -270,8 +270,8 @@ static struct rt_phye *ofw_phye_get_by_index(struct rt_ofw_node *np, int index)
 {
     struct rt_phye *phye = RT_NULL;
 #ifdef RT_USING_OFW
-    rt_err_t err;
-    struct rt_ofw_node *phye_np;
+    rt_err_t                err;
+    struct rt_ofw_node     *phye_np;
     struct rt_ofw_cell_args phye_args;
 
     if (!rt_ofw_parse_phandle_cells(np, "phys", "#phy-cells", index, &phye_args))

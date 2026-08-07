@@ -38,7 +38,7 @@
 extern "C" {
 #endif
 
-#define RT_DEVICE(device)            ((rt_device_t)device)
+#define RT_DEVICE(device) ((rt_device_t)device)
 
 #ifdef RT_USING_DM
 #include "drivers/core/dm.h"
@@ -243,7 +243,6 @@ extern "C" {
 #include "drivers/dev_sdhci_host.h"
 #endif /* RT_USING_DM && RT_USING_SDHCI */
 #endif /* RT_USING_SDIO */
-
 
 #ifdef RT_USING_WDT
 #include "drivers/dev_watchdog.h"

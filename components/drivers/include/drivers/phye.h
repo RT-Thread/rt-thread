@@ -60,8 +60,8 @@ struct rt_phye
     const struct rt_phye_ops *ops;
 
     enum rt_phye_mode  mode;
-    int init_count;
-    int power_count;
+    int                init_count;
+    int                power_count;
     struct rt_spinlock lock;
 };
 
