@@ -98,7 +98,7 @@ impl File {
 
     pub fn seek(&self, offset: i64) -> RTResult<i64> {
         let n = unsafe { libc::lseek(self.fd, offset as libc::off_t, libc::SEEK_SET) };
-        if n < 0 { Err(FileSeekErr) } else { Ok(n) }
+        if n < 0 { Err(FileSeekErr) } else { Ok(n.into()) }
     }
 
     pub fn flush(&self) -> RTResult<()> {

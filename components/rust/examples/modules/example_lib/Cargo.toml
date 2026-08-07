@@ -9,4 +9,4 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-rt-rust = { path = "../../.." }
+rt-rust = { path = "../../../core" }

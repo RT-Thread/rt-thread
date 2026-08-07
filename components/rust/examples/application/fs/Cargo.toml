@@ -12,6 +12,6 @@ default = []
 enable-log = ["em_component_log/enable-log"]
 
 [dependencies]
-rt-rust = { path = "../../../core" }
+rt-rust = { path = "../../../core", features = ["fs"] }
 rt_macros = { path = "../../../rt_macros" }
 em_component_log = { path = "../../component/log"}

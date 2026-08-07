@@ -26,6 +26,7 @@ pub type rt_int32_t = c_int;
 pub type rt_uint8_t  = c_uchar;
 pub type rt_tick_t = rt_uint32_t;
 pub type rt_size_t = rt_ubase_t;
+pub type rt_ssize_t = rt_base_t;
 
 pub type rt_thread_t = *mut c_void;
 pub type rt_sem_t = *mut c_void;
@@ -94,7 +95,7 @@ unsafe extern "C" {
     pub fn rt_mq_create(name: *const c_char, msg_size: rt_size_t, max_msgs: rt_size_t, flag: rt_uint8_t) -> rt_mq_t;
     pub fn rt_mq_send(mq: rt_mq_t, buffer: *const c_void, size: rt_size_t) -> rt_err_t;
     pub fn rt_mq_send_wait(mq: rt_mq_t, buffer: *const c_void, size: rt_size_t, timeout: rt_int32_t) -> rt_err_t;
-    pub fn rt_mq_recv(mq: rt_mq_t, buffer: *mut c_void, size: rt_size_t, timeout: rt_int32_t) -> rt_base_t;
+    pub fn rt_mq_recv(mq: rt_mq_t, buffer: *mut c_void, size: rt_size_t, timeout: rt_int32_t) -> rt_ssize_t;
     pub fn rt_mq_delete(mq: rt_mq_t) -> rt_err_t;
     pub fn rt_mq_detach(mq: rt_mq_t) -> rt_err_t;
 }

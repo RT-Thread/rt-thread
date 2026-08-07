@@ -17,7 +17,6 @@ and device interfaces. Designed for embedded devices running RT-Thread.
 */
 
 #![no_std]
-#![feature(alloc_error_handler)]
 #![feature(linkage)]
 #![allow(dead_code)]
 
@@ -33,6 +32,7 @@ pub mod init;
 pub mod allocator;
 pub mod mutex;
 pub mod out;
+#[cfg(feature = "fs")]
 pub mod fs;
 pub mod panic;
 pub mod param;
@@ -40,6 +40,7 @@ pub mod queue;
 pub mod sem;
 pub mod thread;
 pub mod time;
+#[cfg(feature = "libdl")]
 pub mod libloader;
 
 mod prelude;

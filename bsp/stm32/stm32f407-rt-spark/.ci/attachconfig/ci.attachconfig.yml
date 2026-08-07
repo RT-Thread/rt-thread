@@ -246,6 +246,26 @@ component.cherryusb_cdc:
       - CONFIG_RT_CHERRYUSB_DEVICE_DWC2_ST=y
       - CONFIG_RT_CHERRYUSB_DEVICE_CDC_ACM=y
       - CONFIG_RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM=y
+# ------ rust CI ------
+rust:
+    <<: *scons
+    pre_build: |
+      python3 -m pip install --user toml
+      curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly --profile minimal
+      sudo ln -sf "$HOME/.cargo/bin/cargo" /usr/local/bin/cargo
+      sudo ln -sf "$HOME/.cargo/bin/rustc" /usr/local/bin/rustc
+      sudo ln -sf "$HOME/.cargo/bin/rustup" /usr/local/bin/rustup
+      rustup target add thumbv7em-none-eabihf
+      rustup component add rust-src
+      rustc --version
+      cargo --version
+    kconfig:
+      - CONFIG_RT_USING_RUST=y
+      - CONFIG_RT_RUST_CORE=y
+      - CONFIG_RT_USING_RUST_EXAMPLES=y
+      - CONFIG_RT_RUST_BUILD_APPLICATIONS=y
+      - CONFIG_RT_RUST_BUILD_COMPONENTS=y
+      - CONFIG_RUST_LOG_COMPONENT=y
 
 devices.soft_i2c:
   <<: *scons
