@@ -1436,7 +1436,7 @@ void SysTick_Handler(void)
 
 }
 
-#ifdef BSP_USE_MULTICORE
+#ifdef BSP_USE_MULTICORE_KICK_OFF_DIRECTLY
 static int second_core_boot(void)
 {
 	/*
