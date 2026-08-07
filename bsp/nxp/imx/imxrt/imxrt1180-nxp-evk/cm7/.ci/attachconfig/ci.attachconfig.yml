@@ -30,10 +30,7 @@ Peripheral.netc:
   <<: *scons
   kconfig:
     - CONFIG_BSP_USING_ETH=y
-Peripheral.ethercat:
-  <<: *scons
-  kconfig:
-    - CONFIG_BSP_USING_ETHERCAT=y
+    - CONFIG_BSP_USING_GPIO=y
 Peripheral.multicore:
   <<: *scons
   kconfig:
