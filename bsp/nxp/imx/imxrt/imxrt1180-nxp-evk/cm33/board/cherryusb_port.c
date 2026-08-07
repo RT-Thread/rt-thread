@@ -74,6 +74,8 @@ static usb_controller_index_t rt1180_usb_controller_id(uint8_t busid)
     return (usb_controller_index_t)(RT1180_USB_EHCI0_ID + rt1180_usb_selected_index());
 }
 
+#if defined(RT_CHERRYUSB_HOST) || defined(BSP_CHERRYUSB_DEVICE_CDC_ACM_ECHO) || \
+    defined(RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM) || defined(RT_CHERRYUSB_DEVICE_TEMPLATE_MSC)
 static uintptr_t rt1180_usb_base(uint8_t busid)
 {
     static const uintptr_t usb_base[] = USBHS_STACK_BASE_ADDRS;
@@ -81,6 +83,7 @@ static uintptr_t rt1180_usb_base(uint8_t busid)
     (void)busid;
     return usb_base[rt1180_usb_selected_index()];
 }
+#endif
 
 static IRQn_Type rt1180_usb_irqn(uint8_t busid)
 {
