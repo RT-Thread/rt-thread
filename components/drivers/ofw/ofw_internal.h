@@ -15,14 +15,14 @@
 #include <posix/string.h>
 #include <drivers/ofw.h>
 
-#define OFW_PHANDLE_MIN     1
-#define OFW_PHANDLE_MAX     FDT_MAX_PHANDLE
+#define OFW_PHANDLE_MIN 1
+#define OFW_PHANDLE_MAX FDT_MAX_PHANDLE
 
-#define OFW_NODE_MAX_DEPTH  64
-#define OFW_NODE_MIN_HASH   128
+#define OFW_NODE_MAX_DEPTH 64
+#define OFW_NODE_MIN_HASH  128
 
-#define OFW_ROOT_NODE_ADDR_CELLS_DEFAULT    1
-#define OFW_ROOT_NODE_SIZE_CELLS_DEFAULT    1
+#define OFW_ROOT_NODE_ADDR_CELLS_DEFAULT 1
+#define OFW_ROOT_NODE_SIZE_CELLS_DEFAULT 1
 struct fdt_info
 {
     /* Always "/", because we save "ofw" information in root node. */
@@ -33,23 +33,23 @@ struct fdt_info
 
     /* Only root can use */
     struct fdt_reserve_entry *rsvmap;
-    rt_size_t rsvmap_nr;
+    rt_size_t                 rsvmap_nr;
 };
 
 struct alias_info
 {
     rt_list_t list;
 
-    int id;
+    int         id;
     const char *tag;
-    rt_size_t tag_len;
+    rt_size_t   tag_len;
 
     struct rt_ofw_node *np;
 };
 
 struct bus_ranges
 {
-    rt_size_t nr;
+    rt_size_t           nr;
     struct rt_ofw_node *np;
     const char         *range_type;
 

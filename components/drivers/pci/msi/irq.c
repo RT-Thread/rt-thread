@@ -19,10 +19,10 @@ static RT_BITMAP_DECLARE(msi_irq_map, MAX_HANDLERS) = {};
 
 rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
 {
-    int irq, index = 0, irq_nr = 0;
-    rt_err_t err = RT_EOK;
-    struct rt_pic_irq *pirq;
-    struct rt_pic *msi_pic;
+    int                     irq, index = 0, irq_nr = 0;
+    rt_err_t                err = RT_EOK;
+    struct rt_pic_irq      *pirq;
+    struct rt_pic          *msi_pic;
     struct rt_pci_msi_desc *desc;
 
     if (!pdev)
@@ -34,10 +34,10 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
 
     if (type == PCIY_MSI)
     {
-        int last_irq = -1, irq_idx;
+        int       last_irq = -1, irq_idx;
         rt_size_t irq_nr;
 
-        desc = rt_pci_msi_first_desc(pdev);
+        desc   = rt_pci_msi_first_desc(pdev);
         irq_nr = 1 << desc->msi.cap.multi_msg_use;
 
         rt_hw_spin_lock(&msi_irq_map_lock.lock);
@@ -111,8 +111,8 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
                 break;
             }
 
-            desc->irq = irq;
-            pirq = rt_pic_find_pirq(msi_pic, irq);
+            desc->irq      = irq;
+            pirq           = rt_pic_find_pirq(msi_pic, irq);
             pirq->msi_desc = desc;
 
             msi_pic->ops->irq_compose_msi_msg(pirq, &desc->msg);
@@ -147,8 +147,8 @@ rt_err_t rt_pci_msi_setup_irqs(struct rt_pci_device *pdev, int nvec, int type)
 
 rt_err_t rt_pci_msi_cleanup_irqs(struct rt_pci_device *pdev)
 {
-    int type;
-    struct rt_pic *msi_pic;
+    int                     type;
+    struct rt_pic          *msi_pic;
     struct rt_pci_msi_desc *desc;
 
     if (!pdev)

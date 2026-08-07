@@ -21,8 +21,8 @@
 
 #include "ofw_internal.h"
 
-static volatile rt_atomic_t _bus_ranges_idx = 0;
-static struct bus_ranges *_bus_ranges[RT_USING_OFW_BUS_RANGES_NUMBER] = {};
+static volatile rt_atomic_t _bus_ranges_idx                             = 0;
+static struct bus_ranges   *_bus_ranges[RT_USING_OFW_BUS_RANGES_NUMBER] = {};
 
 static int ofw_bus_addr_cells(struct rt_ofw_node *np)
 {
@@ -101,19 +101,19 @@ int rt_ofw_get_address_count(struct rt_ofw_node *np)
 
 static rt_err_t ofw_get_address(struct rt_ofw_node *np, int index, rt_uint64_t *out_address, rt_uint64_t *out_size)
 {
-    rt_ssize_t len;
-    rt_err_t err = RT_EOK;
-    int addr_cells = rt_ofw_io_addr_cells(np);
-    int size_cells = rt_ofw_io_size_cells(np);
-    int skip_cells = (addr_cells + size_cells) * index;
-    const fdt32_t *cell = rt_ofw_prop_read_raw(np, "reg", &len);
+    rt_ssize_t     len;
+    rt_err_t       err        = RT_EOK;
+    int            addr_cells = rt_ofw_io_addr_cells(np);
+    int            size_cells = rt_ofw_io_size_cells(np);
+    int            skip_cells = (addr_cells + size_cells) * index;
+    const fdt32_t *cell       = rt_ofw_prop_read_raw(np, "reg", &len);
 
     if (cell && skip_cells < (len / sizeof(*cell)))
     {
-        cell += skip_cells;
-        *out_address = rt_fdt_next_cell(&cell, addr_cells);
-        *out_address = rt_ofw_translate_address(np, RT_NULL, *out_address);
-        *out_size = rt_fdt_read_number(cell, size_cells);
+        cell         += skip_cells;
+        *out_address  = rt_fdt_next_cell(&cell, addr_cells);
+        *out_address  = rt_ofw_translate_address(np, RT_NULL, *out_address);
+        *out_size     = rt_fdt_read_number(cell, size_cells);
     }
     else
     {
@@ -154,11 +154,11 @@ rt_err_t rt_ofw_get_address(struct rt_ofw_node *np, int index, rt_uint64_t *out_
 }
 
 static rt_err_t ofw_get_address_by_name(struct rt_ofw_node *np, const char *name,
-        rt_uint64_t *out_address, rt_uint64_t *out_size)
+                                        rt_uint64_t *out_address, rt_uint64_t *out_size)
 {
-    int index = 0;
-    rt_err_t err = -RT_EEMPTY;
-    const char *reg_name;
+    int                 index = 0;
+    rt_err_t            err   = -RT_EEMPTY;
+    const char         *reg_name;
     struct rt_ofw_prop *prop;
 
     rt_ofw_foreach_prop_string(np, "reg-names", prop, reg_name)
@@ -177,7 +177,7 @@ static rt_err_t ofw_get_address_by_name(struct rt_ofw_node *np, const char *name
 }
 
 rt_err_t rt_ofw_get_address_by_name(struct rt_ofw_node *np, const char *name,
-        rt_uint64_t *out_address, rt_uint64_t *out_size)
+                                    rt_uint64_t *out_address, rt_uint64_t *out_size)
 {
     rt_err_t err;
 
@@ -213,11 +213,11 @@ int rt_ofw_get_address_array(struct rt_ofw_node *np, int nr, rt_uint64_t *out_re
 
     if (np && nr > 0 && out_regs)
     {
-        rt_ssize_t len;
-        int max_nr;
-        int addr_cells = rt_ofw_io_addr_cells(np);
-        int size_cells = rt_ofw_io_size_cells(np);
-        const fdt32_t *cell = rt_ofw_prop_read_raw(np, "reg", &len);
+        rt_ssize_t     len;
+        int            max_nr;
+        int            addr_cells = rt_ofw_io_addr_cells(np);
+        int            size_cells = rt_ofw_io_size_cells(np);
+        const fdt32_t *cell       = rt_ofw_prop_read_raw(np, "reg", &len);
 
         max_nr = len / (sizeof(*cell) * (addr_cells + size_cells));
 
@@ -228,7 +228,7 @@ int rt_ofw_get_address_array(struct rt_ofw_node *np, int nr, rt_uint64_t *out_re
 
         count = nr;
 
-        while (nr --> 0)
+        while (nr-- > 0)
         {
             *out_regs = rt_fdt_next_cell(&cell, addr_cells);
             *out_regs = rt_ofw_translate_address(np, RT_NULL, *out_regs);
@@ -279,11 +279,11 @@ static rt_uint64_t ofw_read_bus_address(const fdt32_t **cell, int addr_cells,
 
 static struct bus_ranges *ofw_bus_ranges(struct rt_ofw_node *np, struct rt_ofw_prop *prop)
 {
-    int id;
-    const fdt32_t *cell;
+    int                id;
+    const fdt32_t     *cell;
     struct bus_ranges *ranges = RT_NULL;
-    int child_address_cells, child_size_cells, parent_address_cells, groups;
-    rt_uint64_t *child_addr, *parent_addr, *child_size;
+    int                child_address_cells, child_size_cells, parent_address_cells, groups;
+    rt_uint64_t       *child_addr, *parent_addr, *child_size;
 
     /*
      * Address Translation Example:
@@ -316,20 +316,21 @@ static struct bus_ranges *ofw_bus_ranges(struct rt_ofw_node *np, struct rt_ofw_p
      *      bus-address = parent-bus-address + (reg-address - child-bus-address)
      */
 
-    do {
-        child_address_cells = rt_ofw_bus_addr_cells(np);
-        child_size_cells = rt_ofw_bus_size_cells(np);
+    do
+    {
+        child_address_cells  = rt_ofw_bus_addr_cells(np);
+        child_size_cells     = rt_ofw_bus_size_cells(np);
         parent_address_cells = rt_ofw_io_addr_cells(np);
 
         if (child_address_cells < 0 || child_size_cells < 0 || parent_address_cells < 0)
         {
             LOG_D("%s read address/size cells fail: child[%d, %d] parent[%d]",
-                    np->full_name, child_address_cells, child_size_cells, parent_address_cells);
+                  np->full_name, child_address_cells, child_size_cells, parent_address_cells);
 
             break;
         }
 
-        groups = prop->length / sizeof(*cell);
+        groups  = prop->length / sizeof(*cell);
         groups /= child_address_cells + child_size_cells + parent_address_cells;
 
         ranges = rt_malloc(sizeof(*ranges) + sizeof(rt_uint64_t) * 3 * groups);
@@ -339,25 +340,25 @@ static struct bus_ranges *ofw_bus_ranges(struct rt_ofw_node *np, struct rt_ofw_p
             break;
         }
 
-        ranges->nr = groups;
-        ranges->child_addr = (void *)ranges + sizeof(*ranges);
+        ranges->nr          = groups;
+        ranges->child_addr  = (void *)ranges + sizeof(*ranges);
         ranges->parent_addr = &ranges->child_addr[groups];
-        ranges->child_size = &ranges->parent_addr[groups];
+        ranges->child_size  = &ranges->parent_addr[groups];
 
         cell = prop->value;
 
-        child_addr = ranges->child_addr;
+        child_addr  = ranges->child_addr;
         parent_addr = ranges->parent_addr;
-        child_size = ranges->child_size;
+        child_size  = ranges->child_size;
 
-        while (groups --> 0)
+        while (groups-- > 0)
         {
             *child_addr++  = ofw_read_bus_address(&cell, child_address_cells, np);
             *parent_addr++ = ofw_read_bus_address(&cell, parent_address_cells, np->parent);
-            *child_size++ = rt_fdt_next_cell(&cell, child_size_cells);
+            *child_size++  = rt_fdt_next_cell(&cell, child_size_cells);
         }
 
-        ranges->np = np;
+        ranges->np         = np;
         ranges->range_type = prop->name;
 
         id = (int)rt_atomic_add(&_bus_ranges_idx, 1);
@@ -464,7 +465,7 @@ rt_uint64_t rt_ofw_translate_address(struct rt_ofw_node *np, const char *range_t
 
     for (bus = np ? np->parent : RT_NULL; bus; bus = bus->parent)
     {
-        rt_ssize_t len;
+        rt_ssize_t  len;
         rt_uint64_t translated;
 
         if (!rt_ofw_get_prop(bus, range_type, &len) || !len)
@@ -529,16 +530,16 @@ rt_uint64_t rt_ofw_reverse_address(struct rt_ofw_node *np, const char *range_typ
 #define ofw_address_cpu_cast(np, address) (void *)(address)
 #else
 #define ofw_address_cpu_cast(np, address)                       \
-({                                                              \
-    if (((address) >> 32))                                      \
-    {                                                           \
-        LOG_W("%s find 64 bits address = %x%x",                 \
-                rt_ofw_node_full_name(np),                      \
-                ofw_static_cast(rt_ubase_t, (address) >> 32),   \
-                ofw_static_cast(rt_ubase_t, (address)));        \
-    }                                                           \
-    (void *)ofw_static_cast(rt_ubase_t, (address));             \
-})
+    ({                                                          \
+        if (((address) >> 32))                                  \
+        {                                                       \
+            LOG_W("%s find 64 bits address = %x%x",             \
+                  rt_ofw_node_full_name(np),                    \
+                  ofw_static_cast(rt_ubase_t, (address) >> 32), \
+                  ofw_static_cast(rt_ubase_t, (address)));      \
+        }                                                       \
+        (void *)ofw_static_cast(rt_ubase_t, (address));         \
+    })
 #endif
 
 void *rt_ofw_iomap(struct rt_ofw_node *np, int index)
