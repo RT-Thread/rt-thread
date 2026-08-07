@@ -110,7 +110,7 @@ union rt_sd_status {
         rt_uint32_t : 7;
         rt_uint32_t secured_mode: 1;
         rt_uint32_t data_bus_width: 2;
-    };
+    } fields;
 };
 
 /*
