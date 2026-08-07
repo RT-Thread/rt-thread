@@ -6,7 +6,7 @@ cwd = GetCurrentDir()
 
 # Import usrapp build module and build support
 sys.path.append(os.path.join(cwd, '../../tools'))
-from build_usrapp import build_example_usrapp
+from build_usrapp import UserAppBuildError, build_example_usrapp
 from build_support import clean_rust_build
 
 
@@ -31,7 +31,7 @@ def load_extended_feature_configs():
 
 group = []
 
-if not _has('RT_RUST_BUILD_APPLICATIONS'):
+if not (_has('RT_RUST_BUILD_APPLICATIONS') or _has('RT_RUST_BUILD_ALL_EXAMPLES')) and not GetOption('clean'):
     Return('group')
 
 # Load extended feature configurations
@@ -51,12 +51,16 @@ if GetOption('clean'):
         print('No example_usrapp build artifacts to clean')
 else:
     import rtconfig
-    LIBS, LIBPATH, LINKFLAGS = build_example_usrapp(
-        cwd=cwd,
-        has_func=_has,
-        rtconfig=rtconfig,
-        build_root=os.path.join(Dir('#').abspath, "build", "example_usrapp")
-    )
+    try:
+        LIBS, LIBPATH, LINKFLAGS = build_example_usrapp(
+            cwd=cwd,
+            has_func=_has,
+            rtconfig=rtconfig,
+            build_root=os.path.join(Dir('#').abspath, "build", "example_usrapp")
+        )
+    except UserAppBuildError as e:
+        print(f'Error: {e}')
+        sys.exit(1)
 
 group = DefineGroup(
     'example_usrapp', 

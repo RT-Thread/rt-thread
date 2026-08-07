@@ -20,7 +20,7 @@ pub type APIRawQueue = rt_mq_t;
 pub(crate) fn queue_create(name: &str, len: u64, message_size: u64) -> Option<APIRawQueue> {
     let s = CString::new(name).unwrap();
     let raw;
-    unsafe { raw = rt_mq_create(s.as_ptr(), message_size, len, 0) }
+    unsafe { raw = rt_mq_create(s.as_ptr(), message_size as rt_size_t, len as rt_size_t, 0) }
     if raw == ptr::null_mut() {
         None
     } else {
@@ -35,7 +35,7 @@ pub(crate) fn queue_send_wait(
     msg_size: u64,
     tick: i32,
 ) -> RttCResult {
-    unsafe { rt_mq_send_wait(handle, msg, msg_size, tick).into() }
+    unsafe { rt_mq_send_wait(handle, msg, msg_size as rt_size_t, tick).into() }
 }
 
 #[inline]
@@ -45,7 +45,12 @@ pub(crate) fn queue_receive_wait(
     msg_size: u64,
     tick: i32,
 ) -> RttCResult {
-    unsafe { rt_mq_recv(handle, msg, msg_size, tick).into() }
+    let ret = unsafe { rt_mq_recv(handle, msg, msg_size as rt_size_t, tick) };
+    if ret >= 0 {
+        RttCResult::Ok
+    } else {
+        ret.into()
+    }
 }
 
 #[inline]

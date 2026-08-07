@@ -8,5 +8,5 @@ name = "em_loadlib"
 crate-type = ["staticlib"]
 
 [dependencies]
-rt-rust = { path = "../../../core" }
+rt-rust = { path = "../../../core", features = ["libdl"] }
 rt_macros = { path = "../../../rt_macros" }

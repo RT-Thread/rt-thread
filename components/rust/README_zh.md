@@ -84,6 +84,14 @@ rustup target add thumbv7em-none-eabi
 # 其他目标请根据实际工具链/ABI 添加对应的 Rust target
 ```
 
+对于 C 工具链使用 `-fshort-wchar` 的 ARM 目标，RT-Thread 会使用仅 nightly 支持的 `build-std` 从源码重新构建 Rust `core` 和 `alloc`，使 Rust ARM EABI wchar 大小与 C 工具链保持一致。请为同一个 nightly 工具链安装 `rust-src` 和对应 target，并在 RT-Thread 仓库根目录设置目录级 nightly override，使 SCons 在整个仓库目录树中调用的普通 `cargo` 和 `rustc` 命令使用该工具链：
+
+```bash
+rustup toolchain install nightly --profile minimal --component rust-src
+rustup target add --toolchain nightly <target-name>
+rustup override set nightly
+```
+
 ### 构建
 
 ```bash

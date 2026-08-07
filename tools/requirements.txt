@@ -3,3 +3,4 @@ requests>=2.27.1
 tqdm>=4.67.1
 kconfiglib>=13.7.1
 PyYAML>=6.0
+toml>=0.10.2

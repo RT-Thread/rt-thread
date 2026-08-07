@@ -1,5 +1,7 @@
 import os
+import sys
 from building import *
+from SCons.Subst import quote_spaces
 
 cwd = GetCurrentDir()
 
@@ -7,10 +9,12 @@ sys.path.append(os.path.join(cwd, '../tools'))
 from build_support import (
     detect_rust_target,
     make_rustflags,
+    make_cargo_build_std_args,
     collect_features,
     verify_rust_toolchain,
     ensure_rust_target_installed,
     cargo_build_staticlib,
+    get_staticlib_link_name,
     clean_rust_build,
 )
 def _has(sym: str) -> bool:
@@ -20,10 +24,28 @@ def _has(sym: str) -> bool:
         return bool(GetDepend(sym))
 
 
-# Source files – MSH command glue
-src = ['rust_cmd.c']
+group = []
+if not _has('RT_RUST_CORE') and not GetOption('clean'):
+    Return('group')
+
+
+def get_staticlib_link_name_from_artifact(lib_path):
+    """Derive the link name from the actual staticlib artifact file name."""
+    artifact_name = os.path.basename(os.fspath(lib_path))
+    if artifact_name.startswith("lib") and artifact_name.endswith(".a"):
+        return artifact_name[3:-2]
+    return None
+
+
+# Source files – MSH command glue.
+# rust_cmd.c references rust_init(), which is only provided by the Rust core
+# static library. It must only enter the build when that library is actually
+# produced; otherwise the C link stage fails with 'undefined reference to
+# rust_init' instead of failing/skipping cleanly at the Rust build step.
 LIBS = []
 LIBPATH = []
+LINKFLAGS = ""
+include_rust_cmd = False
 
 if GetOption('clean'):
     # Register Rust artifacts for cleaning
@@ -33,39 +55,65 @@ if GetOption('clean'):
         Clean('.', rust_build_dir)
     else:
         print('No rust build artifacts to clean')
+    # Keep rust_cmd.c in the group during clean so its object is cleaned too.
+    include_rust_cmd = True
 else:
     if verify_rust_toolchain():
         import rtconfig
+        rust_build_dir = clean_rust_build(Dir('#').abspath)
 
         target = detect_rust_target(_has, rtconfig)
         if not target:
             print('Error: Unable to detect Rust target; please check configuration')
+            sys.exit(1)
         else:
             print(f'Detected Rust target: {target}')
 
             # Optional hint if target missing
-            ensure_rust_target_installed(target)
-
-            # Build mode and features
-            debug = bool(_has('RUST_DEBUG_BUILD'))
-            features = collect_features(_has)
-
-            rustflags = make_rustflags(rtconfig, target)
-            rust_lib = cargo_build_staticlib(
-                rust_dir=cwd, target=target, features=features, debug=debug, rustflags=rustflags
-            )
-
-            if rust_lib:
-                LIBS = ['rt_rust']
-                LIBPATH = [os.path.dirname(rust_lib)]
-                print('Rust library linked successfully')
+            if not ensure_rust_target_installed(target):
+                print('Error: Rust target is not installed; Rust library build failed')
+                sys.exit(1)
             else:
-                print('Warning: Failed to build Rust library')
-    else:
-        print('Warning: Rust toolchain not found')
-        print('Please install Rust from https://rustup.rs')
+                # Build mode and features
+                debug = bool(_has('RUST_DEBUG_BUILD'))
+                features = collect_features(_has)
 
-# Define component group for SCons
-group = DefineGroup('rust', src, depend=['RT_USING_RUST'], LIBS=LIBS, LIBPATH=LIBPATH)
+                rustflags = make_rustflags(rtconfig, target)
+                cargo_extra_args = make_cargo_build_std_args(rtconfig, target)
+                rust_lib = cargo_build_staticlib(
+                    rust_dir=cwd, target=target, features=features, debug=debug, rustflags=rustflags, build_root=rust_build_dir, cargo_extra_args=cargo_extra_args
+                )
+
+                if rust_lib:
+                    # Derive the link name from the actual artifact so it always
+                    # matches the file that was built. Only fall back to
+                    # re-parsing Cargo.toml when the artifact name does not
+                    # follow the lib<name>.a convention.
+                    link_lib_name = get_staticlib_link_name_from_artifact(rust_lib)
+                    if not link_lib_name:
+                        link_lib_name = get_staticlib_link_name(cwd)
+                    LIBS = [link_lib_name]
+                    LIBPATH = [os.path.dirname(rust_lib)]
+                    if rtconfig.PLATFORM == 'armclang':
+                        if not (os.path.isfile(rust_lib) and os.path.getsize(rust_lib) > 0):
+                            print(f'Error: ArmClang Rust core link requires a non-empty archive, but got: {rust_lib}')
+                            sys.exit(1)
+                        LINKFLAGS = " " + quote_spaces(os.fspath(rust_lib))
+                        LIBS = []
+                        LIBPATH = []
+                    include_rust_cmd = True
+                    print('Rust library linked successfully')
+                else:
+                    print('Error: Failed to build Rust library')
+                    sys.exit(1)
+    else:
+        print('Error: Rust toolchain not found')
+        print('Please install Rust from https://rustup.rs')
+        sys.exit(1)
+
+# Only define the component group (with rust_cmd.c) when the Rust core static
+# library was actually produced, so its rust_init() reference always resolves.
+if include_rust_cmd:
+    group = DefineGroup('rust', ['rust_cmd.c'], depend=['RT_USING_RUST', 'RT_RUST_CORE'], LIBS=LIBS, LIBPATH=LIBPATH, LINKFLAGS=LINKFLAGS)
 
 Return('group')
