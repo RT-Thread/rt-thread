@@ -20,7 +20,7 @@ struct regulator_gpio_state
 
 struct regulator_gpio_desc
 {
-    rt_base_t pin;
+    rt_base_t   pin;
     rt_uint32_t flags;
 };
 
@@ -30,17 +30,17 @@ struct regulator_gpio
 
     rt_base_t enable_pin;
 
-    rt_size_t pins_nr;
+    rt_size_t                   pins_nr;
     struct regulator_gpio_desc *pins_desc;
 
-    int state;
-    rt_size_t states_nr;
+    int                          state;
+    rt_size_t                    states_nr;
     struct regulator_gpio_state *states;
 
-    const char *input_supply;
-    rt_uint32_t startup_delay;
-    rt_uint32_t off_on_delay;
-    rt_bool_t enabled_at_boot;
+    const char               *input_supply;
+    rt_uint32_t               startup_delay;
+    rt_uint32_t               off_on_delay;
+    rt_bool_t                 enabled_at_boot;
     struct rt_regulator_param param;
 };
 
@@ -48,7 +48,7 @@ struct regulator_gpio
 
 static rt_err_t regulator_gpio_enable(struct rt_regulator_node *reg_np)
 {
-    struct regulator_gpio *rg = raw_to_regulator_gpio(reg_np);
+    struct regulator_gpio     *rg    = raw_to_regulator_gpio(reg_np);
     struct rt_regulator_param *param = &rg->param;
 
     if (rg->enable_pin >= 0)
@@ -62,7 +62,7 @@ static rt_err_t regulator_gpio_enable(struct rt_regulator_node *reg_np)
 
 static rt_err_t regulator_gpio_disable(struct rt_regulator_node *reg_np)
 {
-    struct regulator_gpio *rg = raw_to_regulator_gpio(reg_np);
+    struct regulator_gpio     *rg    = raw_to_regulator_gpio(reg_np);
     struct rt_regulator_param *param = &rg->param;
 
     if (rg->enable_pin >= 0)
@@ -76,7 +76,7 @@ static rt_err_t regulator_gpio_disable(struct rt_regulator_node *reg_np)
 
 static rt_bool_t regulator_gpio_is_enabled(struct rt_regulator_node *reg_np)
 {
-    struct regulator_gpio *rg = raw_to_regulator_gpio(reg_np);
+    struct regulator_gpio     *rg    = raw_to_regulator_gpio(reg_np);
     struct rt_regulator_param *param = &rg->param;
 
     if (rg->enable_pin >= 0)
@@ -91,9 +91,9 @@ static rt_bool_t regulator_gpio_is_enabled(struct rt_regulator_node *reg_np)
 }
 
 static rt_err_t regulator_gpio_set_voltage(struct rt_regulator_node *reg_np,
-        int min_uvolt, int max_uvolt)
+                                           int min_uvolt, int max_uvolt)
 {
-    int target = 0, best_val = RT_REGULATOR_UVOLT_INVALID;
+    int                    target = 0, best_val = RT_REGULATOR_UVOLT_INVALID;
     struct regulator_gpio *rg = raw_to_regulator_gpio(reg_np);
 
     for (int i = 0; i < rg->states_nr; ++i)
@@ -104,7 +104,7 @@ static rt_err_t regulator_gpio_set_voltage(struct rt_regulator_node *reg_np,
             state->value >= min_uvolt &&
             state->value <= max_uvolt)
         {
-            target = state->gpios;
+            target   = state->gpios;
             best_val = state->value;
         }
     }
@@ -116,7 +116,7 @@ static rt_err_t regulator_gpio_set_voltage(struct rt_regulator_node *reg_np,
 
     for (int i = 0; i < rg->pins_nr; ++i)
     {
-        int state = (target >> i) & 1;
+        int                         state = (target >> i) & 1;
         struct regulator_gpio_desc *gpiod = &rg->pins_desc[i];
 
         rt_pin_mode(gpiod->pin, PIN_MODE_OUTPUT);
@@ -143,20 +143,19 @@ static int regulator_gpio_get_voltage(struct rt_regulator_node *reg_np)
     return -RT_EINVAL;
 }
 
-static const struct rt_regulator_ops regulator_gpio_ops =
-{
-    .enable = regulator_gpio_enable,
-    .disable = regulator_gpio_disable,
-    .is_enabled = regulator_gpio_is_enabled,
+static const struct rt_regulator_ops regulator_gpio_ops = {
+    .enable      = regulator_gpio_enable,
+    .disable     = regulator_gpio_disable,
+    .is_enabled  = regulator_gpio_is_enabled,
     .set_voltage = regulator_gpio_set_voltage,
     .get_voltage = regulator_gpio_get_voltage,
 };
 
 static rt_err_t regulator_gpio_probe(struct rt_platform_device *pdev)
 {
-    rt_err_t err;
-    struct rt_device *dev = &pdev->parent;
-    struct regulator_gpio *rg = rt_calloc(1, sizeof(*rg));
+    rt_err_t                  err;
+    struct rt_device         *dev = &pdev->parent;
+    struct regulator_gpio    *rg  = rt_calloc(1, sizeof(*rg));
     struct rt_regulator_node *rgp;
 
     if (!rg)
@@ -166,11 +165,11 @@ static rt_err_t regulator_gpio_probe(struct rt_platform_device *pdev)
 
     regulator_ofw_parse(dev->ofw_node, &rg->param);
 
-    rgp = &rg->parent;
+    rgp              = &rg->parent;
     rgp->supply_name = rg->param.name;
-    rgp->ops = &regulator_gpio_ops;
-    rgp->param = &rg->param;
-    rgp->dev = &pdev->parent;
+    rgp->ops         = &regulator_gpio_ops;
+    rgp->param       = &rg->param;
+    rgp->dev         = &pdev->parent;
 
     rt_dm_dev_prop_read_u32(dev, "startup-delay-us", &rg->startup_delay);
     rt_dm_dev_prop_read_u32(dev, "off-on-delay-us", &rg->off_on_delay);
@@ -199,7 +198,7 @@ static rt_err_t regulator_gpio_probe(struct rt_platform_device *pdev)
 
         for (int i = 0; i < rg->pins_nr; ++i)
         {
-            rt_uint32_t val;
+            rt_uint32_t                 val;
             struct regulator_gpio_desc *gpiod = &rg->pins_desc[i];
 
             gpiod->pin = rt_pin_get_named_pin(dev, RT_NULL, i, RT_NULL, RT_NULL);
@@ -271,16 +270,14 @@ _fail:
     return err;
 }
 
-static const struct rt_ofw_node_id regulator_gpio_ofw_ids[] =
-{
+static const struct rt_ofw_node_id regulator_gpio_ofw_ids[] = {
     { .compatible = "regulator-gpio" },
     { /* sentinel */ }
 };
 
-static struct rt_platform_driver regulator_gpio_driver =
-{
+static struct rt_platform_driver regulator_gpio_driver = {
     .name = "regulator-gpio",
-    .ids = regulator_gpio_ofw_ids,
+    .ids  = regulator_gpio_ofw_ids,
 
     .probe = regulator_gpio_probe,
 };

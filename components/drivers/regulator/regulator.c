@@ -25,12 +25,12 @@ struct rt_regulator
 
 struct rt_regulator_record
 {
-    rt_list_t list;
+    rt_list_t                 list;
     struct rt_regulator_node *reg_np;
 };
 
 static struct rt_mutex _regulator_lock;
-static rt_list_t _regulator_records = RT_LIST_OBJECT_INIT(_regulator_records);
+static rt_list_t       _regulator_records = RT_LIST_OBJECT_INIT(_regulator_records);
 
 static rt_err_t regulator_enable(struct rt_regulator_node *reg_np);
 static rt_err_t regulator_disable(struct rt_regulator_node *reg_np);
@@ -91,8 +91,8 @@ static struct rt_regulator_record *regulator_find_record_by_node(struct rt_regul
 
 rt_err_t rt_regulator_register(struct rt_regulator_node *reg_np)
 {
-    rt_err_t err;
-    struct rt_regulator_record *record;
+    rt_err_t                         err;
+    struct rt_regulator_record      *record;
     const struct rt_regulator_param *param;
 
     if (!reg_np || !reg_np->dev || !reg_np->param || !reg_np->ops)
@@ -162,7 +162,7 @@ rt_err_t rt_regulator_register(struct rt_regulator_node *reg_np)
 
 rt_err_t rt_regulator_unregister(struct rt_regulator_node *reg_np)
 {
-    rt_err_t err = RT_EOK;
+    rt_err_t                    err = RT_EOK;
     struct rt_regulator_record *record;
 
     if (!reg_np)
@@ -214,8 +214,8 @@ _unlock:
     return err;
 }
 
-rt_err_t rt_regulator_notifier_register(struct rt_regulator *reg,
-        struct rt_regulator_notifier *notifier)
+rt_err_t rt_regulator_notifier_register(struct rt_regulator          *reg,
+                                        struct rt_regulator_notifier *notifier)
 {
     struct rt_regulator_node *reg_np;
 
@@ -226,7 +226,7 @@ rt_err_t rt_regulator_notifier_register(struct rt_regulator *reg,
 
     regulator_lock();
 
-    reg_np = reg->reg_np;
+    reg_np              = reg->reg_np;
     notifier->regulator = reg;
 
     rt_list_init(&notifier->list);
@@ -237,8 +237,8 @@ rt_err_t rt_regulator_notifier_register(struct rt_regulator *reg,
     return RT_EOK;
 }
 
-rt_err_t rt_regulator_notifier_unregister(struct rt_regulator *reg,
-        struct rt_regulator_notifier *notifier)
+rt_err_t rt_regulator_notifier_unregister(struct rt_regulator          *reg,
+                                          struct rt_regulator_notifier *notifier)
 {
     if (!reg || !notifier)
     {
@@ -255,11 +255,11 @@ rt_err_t rt_regulator_notifier_unregister(struct rt_regulator *reg,
 }
 
 static rt_err_t regulator_notifier_call_chain(struct rt_regulator_node *reg_np,
-        rt_ubase_t msg, void *data)
+                                              rt_ubase_t msg, void *data)
 {
-    rt_err_t err = RT_EOK;
+    rt_err_t                      err = RT_EOK;
     struct rt_regulator_notifier *notifier;
-    rt_list_t *head = &reg_np->notifier_nodes;
+    rt_list_t                    *head = &reg_np->notifier_nodes;
 
     if (rt_list_isempty(head))
     {
@@ -295,7 +295,7 @@ static rt_uint32_t regulator_get_enable_time(struct rt_regulator_node *reg_np)
 }
 
 static rt_uint32_t regulator_set_voltage_time(struct rt_regulator_node *reg_np,
-        int old_uvolt, int new_uvolt)
+                                              int old_uvolt, int new_uvolt)
 {
     unsigned int ramp_delay = 0;
 
@@ -400,7 +400,7 @@ static rt_err_t regulator_enable(struct rt_regulator_node *reg_np)
 rt_err_t rt_regulator_enable(struct rt_regulator *reg)
 {
     rt_err_t err;
-    int enabled_cnt;
+    int      enabled_cnt;
 
     if (!reg)
     {
@@ -465,7 +465,7 @@ static rt_err_t regulator_disable(struct rt_regulator_node *reg_np)
 rt_err_t rt_regulator_disable(struct rt_regulator *reg)
 {
     rt_err_t err = RT_EOK;
-    int enabled_cnt;
+    int      enabled_cnt;
 
     if (!reg)
     {
@@ -543,7 +543,7 @@ static rt_err_t regulator_set_voltage(struct rt_regulator_node *reg_np, int min_
         if (!err)
         {
             rt_uint32_t delay = regulator_set_voltage_time(reg_np,
-                    args.old_uvolt, reg_np->ops->get_voltage(reg_np));
+                                                           args.old_uvolt, reg_np->ops->get_voltage(reg_np));
 
             if (delay)
             {
@@ -553,7 +553,7 @@ static rt_err_t regulator_set_voltage(struct rt_regulator_node *reg_np, int min_
         else
         {
             regulator_notifier_call_chain(reg_np, RT_REGULATOR_MSG_VOLTAGE_CHANGE_ERR,
-                    (void *)(rt_base_t)args.old_uvolt);
+                                          (void *)(rt_base_t)args.old_uvolt);
         }
     }
 
@@ -636,7 +636,7 @@ rt_err_t rt_regulator_set_voltage(struct rt_regulator *reg, int min_uvolt, int m
 
 int rt_regulator_get_voltage(struct rt_regulator *reg)
 {
-    int uvolt = RT_REGULATOR_UVOLT_INVALID;
+    int                       uvolt = RT_REGULATOR_UVOLT_INVALID;
     struct rt_regulator_node *reg_np;
 
     if (!reg)
@@ -701,7 +701,7 @@ rt_err_t rt_regulator_set_current(struct rt_regulator *reg, int min_uamp, int ma
 
 int rt_regulator_get_current(struct rt_regulator *reg)
 {
-    int uamp = RT_REGULATOR_UAMP_INVALID;
+    int                       uamp = RT_REGULATOR_UAMP_INVALID;
     struct rt_regulator_node *reg_np;
 
     if (!reg)
@@ -729,7 +729,7 @@ int rt_regulator_get_current(struct rt_regulator *reg)
 
 rt_err_t rt_regulator_set_mode(struct rt_regulator *reg, rt_uint32_t mode)
 {
-    rt_err_t err;
+    rt_err_t                  err;
     struct rt_regulator_node *reg_np;
 
     if (!reg)
@@ -757,7 +757,7 @@ rt_err_t rt_regulator_set_mode(struct rt_regulator *reg, rt_uint32_t mode)
 
 rt_int32_t rt_regulator_get_mode(struct rt_regulator *reg)
 {
-    rt_int32_t mode;
+    rt_int32_t                mode;
     struct rt_regulator_node *reg_np;
 
     if (!reg)
@@ -791,9 +791,9 @@ static void regulator_check_parent(struct rt_regulator_node *reg_np)
     }
     else
     {
-    #ifdef RT_USING_OFW
-        rt_phandle parent_phandle = 0;
-        struct rt_ofw_node *np = reg_np->dev->ofw_node;
+#ifdef RT_USING_OFW
+        rt_phandle          parent_phandle = 0;
+        struct rt_ofw_node *np             = reg_np->dev->ofw_node;
 
         while (np)
         {
@@ -810,7 +810,7 @@ static void regulator_check_parent(struct rt_regulator_node *reg_np)
             if (!(reg_np->parent = rt_ofw_data(np)))
             {
                 LOG_W("%s parent ofw node = %s not init",
-                        reg_np->supply_name, rt_ofw_node_full_name(np));
+                      reg_np->supply_name, rt_ofw_node_full_name(np));
 
                 rt_ofw_node_put(np);
                 break;
@@ -819,13 +819,13 @@ static void regulator_check_parent(struct rt_regulator_node *reg_np)
             rt_list_insert_after(&reg_np->parent->children_nodes, &reg_np->list);
             rt_ofw_node_put(np);
         }
-    #endif /* RT_USING_OFW */
+#endif /* RT_USING_OFW */
     }
 }
 
 struct rt_regulator *rt_regulator_get(struct rt_device *dev, const char *id)
 {
-    struct rt_regulator *reg = RT_NULL;
+    struct rt_regulator      *reg    = RT_NULL;
     struct rt_regulator_node *reg_np = RT_NULL;
 
     if (!id)
@@ -837,9 +837,9 @@ struct rt_regulator *rt_regulator_get(struct rt_device *dev, const char *id)
 #ifdef RT_USING_OFW
     if (dev && dev->ofw_node)
     {
-        rt_phandle supply_phandle;
+        rt_phandle          supply_phandle;
         struct rt_ofw_node *np = dev->ofw_node;
-        char supply_name[64];
+        char                supply_name[64];
 
         rt_snprintf(supply_name, sizeof(supply_name), "%s-supply", id);
 
@@ -924,9 +924,9 @@ void rt_regulator_put(struct rt_regulator *reg)
 struct rt_regulator_node **rt_regulator_nodes_snapshot(rt_size_t *count)
 {
     struct rt_regulator_record *record;
-    struct rt_regulator_node **nodes;
-    rt_size_t total = 0;
-    rt_size_t idx = 0;
+    struct rt_regulator_node  **nodes;
+    rt_size_t                   total = 0;
+    rt_size_t                   idx   = 0;
 
     if (!count)
     {
