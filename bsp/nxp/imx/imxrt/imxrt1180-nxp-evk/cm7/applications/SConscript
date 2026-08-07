@@ -1,6 +1,7 @@
 import rtconfig
 from building import *
 import os
+import glob
 
 cwd = GetCurrentDir()
 
@@ -20,6 +21,20 @@ if GetDepend(['BSP_USE_MULTICORE']):
     src += Split("""
     multicore_thread.c
     """)
+    # Locate SDK multicore directory for header inclusion
+    bsp_pkg_dir = os.path.normpath(os.path.join(cwd, '..', 'packages'))
+    sdk_candidates = glob.glob(os.path.join(bsp_pkg_dir, 'nxp-imxrt-sdk-*', 'MIMXRT1180', 'multicore'))
+    if sdk_candidates:
+        sdk_multicore = sdk_candidates[0]
+    else:
+        sdk_multicore = os.path.join(bsp_pkg_dir, 'nxp-imxrt-sdk-latest', 'MIMXRT1180', 'multicore')
+    CPPPATH += [os.path.join(sdk_multicore, 'mcmgr', 'inc')]
+    if GetDepend(['BSP_USE_MULTICORE_RPMSG_LITE']):
+        CPPPATH += [
+            os.path.join(sdk_multicore, 'rpmsg-lite', 'lib', 'include'),
+            os.path.join(sdk_multicore, 'rpmsg-lite', 'lib', 'include', 'environment', 'rtthread'),
+            os.path.join(sdk_multicore, 'rpmsg-lite', 'lib', 'include', 'platform', 'imxrt1180'),
+        ]
 
 if GetDepend(['BSP_USING_ETHERCAT']):
     src += Split("""
