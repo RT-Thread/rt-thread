@@ -224,6 +224,11 @@ rt_err_t rt_phye_set_mode(struct rt_phye *phye, enum rt_phye_mode mode, int subm
             err = phye->ops->set_mode(phye, mode, submode);
         }
 
+        if (!err)
+        {
+            phye->mode = mode;
+        }
+
         rt_spin_unlock(&phye->lock);
     }
     else
@@ -234,12 +239,39 @@ rt_err_t rt_phye_set_mode(struct rt_phye *phye, enum rt_phye_mode mode, int subm
     return err;
 }
 
+rt_err_t rt_phye_configure(struct rt_phye *phye, union rt_phye_configure_opts *opts)
+{
+    rt_err_t err;
+
+    if (!phye || !opts)
+    {
+        return -RT_EINVAL;
+    }
+
+    err = RT_EOK;
+
+    rt_spin_lock(&phye->lock);
+
+    if (phye->ops->configure)
+    {
+        err = phye->ops->configure(phye, opts);
+    }
+    else
+    {
+        err = -RT_ENOSYS;
+    }
+
+    rt_spin_unlock(&phye->lock);
+
+    return err;
+}
+
 static struct rt_phye *ofw_phye_get_by_index(struct rt_ofw_node *np, int index)
 {
     struct rt_phye *phye = RT_NULL;
 #ifdef RT_USING_OFW
-    rt_err_t err;
-    struct rt_ofw_node *phye_np;
+    rt_err_t                err;
+    struct rt_ofw_node     *phye_np;
     struct rt_ofw_cell_args phye_args;
 
     if (!rt_ofw_parse_phandle_cells(np, "phys", "#phy-cells", index, &phye_args))
