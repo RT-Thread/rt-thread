@@ -88,8 +88,8 @@ static int int_pow(int x, int y)
     if (y < 0)
         return -1;
 
-    int result   = 1;
-    int base     = x;
+    int result = 1;
+    int base = x;
     int exponent = y;
 
     /* Fast exponentiation algorithm (binary exponentiation) */
@@ -124,7 +124,7 @@ void n32_tim_ahbx_div_get(TIM_Module *timer, rt_uint32_t *div)
     *div = 1;
 
 #if defined(SOC_SERIES_N32H7xx)
-    rt_uint8_t       tim_div, i;
+    rt_uint8_t tim_div, i;
     const rt_uint8_t div_group[] = { 0x00U, 0x04U, 0x05U, 0x06U, 0x07U };
 
     if ((timer == BTIM1) || (timer == BTIM2) || (timer == BTIM3) || (timer == BTIM4))
@@ -342,9 +342,9 @@ enum
 struct n32_clock_timer
 {
     rt_clock_timer_t time_device;
-    TIM_Module      *timer;
-    IRQn_Type        tim_irqn;
-    char            *name;
+    TIM_Module *timer;
+    IRQn_Type tim_irqn;
+    char *name;
 };
 
 static struct n32_clock_timer n32_clock_timer_obj[] = {
@@ -423,11 +423,11 @@ static struct n32_clock_timer n32_clock_timer_obj[] = {
 
 static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
 {
-    uint32_t                prescaler_value = 0;
-    rt_uint32_t             tim_div;
+    uint32_t prescaler_value = 0;
+    rt_uint32_t tim_div;
     struct n32_clock_timer *tim_device = RT_NULL;
-    RCC_ClocksTypeDef       RCC_Clocks;
-    TIM_TimeBaseInitType    TIM_TimeBaseStructure;
+    RCC_ClocksTypeDef RCC_Clocks;
+    TIM_TimeBaseInitType TIM_TimeBaseStructure;
 
     RT_ASSERT(timer != RT_NULL);
     if (state)
@@ -467,9 +467,8 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
 
         TIM_InitTimBaseStruct(&TIM_TimeBaseStructure);
         TIM_TimeBaseStructure.Period = 10000 - 1;
-        ;
         TIM_TimeBaseStructure.Prescaler = prescaler_value;
-        TIM_TimeBaseStructure.ClkDiv    = TIM_CLK_DIV1;
+        TIM_TimeBaseStructure.ClkDiv = TIM_CLK_DIV1;
 
         if (timer->info->cntmode == CLOCK_TIMER_CNTMODE_UP)
         {
@@ -540,11 +539,11 @@ static void timer_stop(rt_clock_timer_t *timer)
 
 static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
 {
-    struct n32_clock_timer *tim_device      = RT_NULL;
-    rt_err_t                result          = -RT_ERROR;
-    uint32_t                prescaler_value = 0;
-    rt_uint32_t             tim_div;
-    RCC_ClocksTypeDef       RCC_Clocks;
+    struct n32_clock_timer *tim_device = RT_NULL;
+    rt_err_t result = -RT_ERROR;
+    uint32_t prescaler_value = 0;
+    rt_uint32_t tim_div;
+    RCC_ClocksTypeDef RCC_Clocks;
 
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(arg != RT_NULL);
@@ -616,11 +615,11 @@ static rt_uint32_t timer_counter_get(rt_clock_timer_t *timer)
 static const struct rt_clock_timer_info _info = TIM_DEV_INFO_CONFIG;
 
 static const struct rt_clock_timer_ops _ops = {
-    .init      = timer_init,
-    .start     = timer_start,
-    .stop      = timer_stop,
+    .init = timer_init,
+    .start = timer_start,
+    .stop = timer_stop,
     .count_get = timer_counter_get,
-    .control   = timer_ctrl,
+    .control = timer_ctrl,
 };
 
 #ifdef BSP_USING_ATIM1
@@ -877,13 +876,13 @@ void BTIM4_IRQHandler(void)
 
 static int n32_clock_timer_init(void)
 {
-    rt_uint32_t i      = 0;
-    int         result = RT_EOK;
+    rt_uint32_t i = 0;
+    int result = RT_EOK;
 
     for (i = 0; i < sizeof(n32_clock_timer_obj) / sizeof(n32_clock_timer_obj[0]); i++)
     {
         n32_clock_timer_obj[i].time_device.info = &_info;
-        n32_clock_timer_obj[i].time_device.ops  = &_ops;
+        n32_clock_timer_obj[i].time_device.ops = &_ops;
         if (rt_clock_timer_register(&n32_clock_timer_obj[i].time_device,
                                     n32_clock_timer_obj[i].name, RT_NULL) == RT_EOK)
         {

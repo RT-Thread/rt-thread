@@ -19,60 +19,60 @@ void SysTick_Delayms(uint32_t Delayms)
     {
     }
 }
-/**
-*@name  DMA_SetSrcDstAddr.
-*@brief Set peripher address and memory address of DMA
-*param   DMAy (The input parameters must be the following values):
-*          - DMA1
-*          - DMA2
-*          - DMA3
-*param   ChNum (The input parameters must be the following values):
-*          - DMA_CHANNEL_0
-*          - DMA_CHANNEL_1
-*          - DMA_CHANNEL_2
-*          - DMA_CHANNEL_3
-*          - DMA_CHANNEL_4
-*          - DMA_CHANNEL_5
-*          - DMA_CHANNEL_6
-*          - DMA_CHANNEL_7
-*@param SrcAddr   Source address
-*@param DstAddr   Destination address
-*@return status
-*/
-void DMA_SetSrcDstAddr(DMA_Module *const DMAy, DMA_ChNumType ChNum, uint32_t SrcAddr, uint32_t DstAddr)
+ /**
+ *@name  DMA_SetSrcDstAddr.
+ *@brief Set peripher address and memory address of DMA
+ *param   DMAy (The input parameters must be the following values):
+ *          - DMA1
+ *          - DMA2
+ *          - DMA3
+ *param   ChNum (The input parameters must be the following values):
+ *          - DMA_CHANNEL_0
+ *          - DMA_CHANNEL_1
+ *          - DMA_CHANNEL_2
+ *          - DMA_CHANNEL_3
+ *          - DMA_CHANNEL_4
+ *          - DMA_CHANNEL_5
+ *          - DMA_CHANNEL_6
+ *          - DMA_CHANNEL_7
+ *@param SrcAddr   Source address
+ *@param DstAddr   Destination address
+ *@return status
+ */
+void DMA_SetSrcDstAddr(DMA_Module * const DMAy, DMA_ChNumType ChNum, uint32_t SrcAddr, uint32_t DstAddr)
 {
     /* Sets channel n source address register */
     WRITE_REG(DMAy->CH[ChNum].SA, SrcAddr);
     /* Sets channel n destination address register */
     WRITE_REG(DMAy->CH[ChNum].DA, DstAddr);
 }
-/**
-*@name  MDMA_SetSrcDstAddr.
-*@brief Set peripher address and memory address of MDMA
-*param   MDMAy (The input parameters must be the following values):
-*          - MDMA
-*param   ChNum (The input parameters must be the following values):
-*          - MDMA_CHANNEL_0
-*          - MDMA_CHANNEL_1
-*          - MDMA_CHANNEL_2
-*          - MDMA_CHANNEL_3
-*          - MDMA_CHANNEL_4
-*          - MDMA_CHANNEL_5
-*          - MDMA_CHANNEL_6
-*          - MDMA_CHANNEL_7
-*          - MDMA_CHANNEL_8
-*          - MDMA_CHANNEL_9
-*          - MDMA_CHANNEL_10
-*          - MDMA_CHANNEL_11
-*          - MDMA_CHANNEL_12
-*          - MDMA_CHANNEL_13
-*          - MDMA_CHANNEL_14
-*          - MDMA_CHANNEL_15
-*@param SrcAddr   Source address
-*@param DstAddr   Destination address
-*@return status
-*/
-void MDMA_SetSrcDstAddr(MDMA_Module *const MDMAy, MDMA_ChNumType ChNum, uint32_t SrcAddr, uint32_t DstAddr)
+  /**
+ *@name  MDMA_SetSrcDstAddr.
+ *@brief Set peripher address and memory address of MDMA
+ *param   MDMAy (The input parameters must be the following values):
+ *          - MDMA
+ *param   ChNum (The input parameters must be the following values):
+ *          - MDMA_CHANNEL_0
+ *          - MDMA_CHANNEL_1
+ *          - MDMA_CHANNEL_2
+ *          - MDMA_CHANNEL_3
+ *          - MDMA_CHANNEL_4
+ *          - MDMA_CHANNEL_5
+ *          - MDMA_CHANNEL_6
+ *          - MDMA_CHANNEL_7
+ *          - MDMA_CHANNEL_8
+ *          - MDMA_CHANNEL_9
+ *          - MDMA_CHANNEL_10
+ *          - MDMA_CHANNEL_11
+ *          - MDMA_CHANNEL_12
+ *          - MDMA_CHANNEL_13
+ *          - MDMA_CHANNEL_14
+ *          - MDMA_CHANNEL_15
+ *@param SrcAddr   Source address
+ *@param DstAddr   Destination address
+ *@return status
+ */
+void MDMA_SetSrcDstAddr(MDMA_Module * const MDMAy, MDMA_ChNumType ChNum, uint32_t SrcAddr, uint32_t DstAddr)
 {
     /* Sets channel n source address register */
     WRITE_REG(MDMAy->CH[ChNum].SA, SrcAddr);
@@ -95,7 +95,8 @@ bool RCC_Configuration(void)
     RCC_EnableHsi(ENABLE);
     /* Wait till HSI is ready */
     ClockStatus = RCC_WaitHsiStable();
-    if (ClockStatus != SUCCESS) return false;
+    if (ClockStatus != SUCCESS)
+        return false;
     RCC_ConfigSysclkDivider(RCC_SYSCLK_DIV1);
     RCC_ConfigSysbusDivider(RCC_BUSCLK_DIV2);
     /*Configures the Periph clock source as HSI*/
@@ -124,7 +125,8 @@ bool RCC_Configuration(void)
     /* configure sys_clk source is PLL1A */
     RCC_ConfigSysclk(RCC_SYSCLK_SRC_PLL1A);
     /* Check if sys_clk source is PLL1A */
-    while (RCC_GetSysclkSrc() != RCC_SYSCLK_STS_PLL1A);
+    while (RCC_GetSysclkSrc() != RCC_SYSCLK_STS_PLL1A)
+        ;
 
     /*Config the USART1/2 PCLK divider from ahb1*/
     RCC_ConfigUSARTPClk(RCC_USARTPCLK_AHB1_DIV1);
@@ -135,7 +137,7 @@ bool RCC_Configuration(void)
 
     /*Enables the APB1 peripheral clock 3 .*/
     RCC_EnableAPB1PeriphClk3(RCC_APB1_PERIPHEN_M7_USART1, ENABLE);
-    /* NTFx CODE END */
+/* NTFx CODE END */
 
     return true;
 }
@@ -147,8 +149,7 @@ bool RCC_Configuration(void)
  */
 bool NVIC_Configuration(void)
 {
-
-    /* NTFx CODE END */
+/* NTFx CODE END */
 
     return true;
 }
@@ -160,8 +161,7 @@ bool NVIC_Configuration(void)
  */
 bool DMA_Configuration(void)
 {
-
-    /* NTFx CODE END */
+/* NTFx CODE END */
 
     return true;
 }
@@ -173,7 +173,6 @@ bool DMA_Configuration(void)
  */
 bool GPIO_Configuration(void)
 {
-
     GPIO_InitType GPIO_InitStructure;
     GPIO_InitStruct(&GPIO_InitStructure);
     /* Enable the GPIO clock*/
@@ -182,22 +181,22 @@ bool GPIO_Configuration(void)
 
 
     /*Initialize input GPIO */
-    GPIO_InitStructure.GPIO_Mode      = GPIO_MODE_INPUT;
-    GPIO_InitStructure.GPIO_Pull      = GPIO_PULL_UP;
+    GPIO_InitStructure.GPIO_Mode = GPIO_MODE_INPUT;
+    GPIO_InitStructure.GPIO_Pull = GPIO_PULL_UP;
     GPIO_InitStructure.GPIO_Alternate = GPIO_AF5;
-    GPIO_InitStructure.Pin            = GPIO_PIN_10;
+    GPIO_InitStructure.Pin = GPIO_PIN_10;
     GPIO_InitPeripheral(GPIOA, &GPIO_InitStructure);
 
     /*Initialize AF_PP GPIO */
-    GPIO_InitStructure.GPIO_Mode      = GPIO_MODE_AF_PP;
-    GPIO_InitStructure.GPIO_Pull      = GPIO_PULL_UP;
+    GPIO_InitStructure.GPIO_Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStructure.GPIO_Pull = GPIO_PULL_UP;
     GPIO_InitStructure.GPIO_Slew_Rate = GPIO_SLEW_RATE_SLOW;
-    GPIO_InitStructure.GPIO_Current   = GPIO_DC_2mA;
+    GPIO_InitStructure.GPIO_Current = GPIO_DC_2mA;
     GPIO_InitStructure.GPIO_Alternate = GPIO_AF7;
-    GPIO_InitStructure.Pin            = GPIO_PIN_9;
+    GPIO_InitStructure.Pin = GPIO_PIN_9;
     GPIO_InitPeripheral(GPIOA, &GPIO_InitStructure);
 
-    /* NTFx CODE END */
+/* NTFx CODE END */
 
     return true;
 }
@@ -215,20 +214,20 @@ bool USART_Configuration(void)
 
     /*********initialize the USART1************/
     USART_DeInit(USART1);
-    USART_InitStructure.BaudRate            = 115200;
-    USART_InitStructure.WordLength          = USART_WL_8B;
-    USART_InitStructure.StopBits            = USART_STPB_1;
-    USART_InitStructure.Parity              = USART_PE_NO;
+    USART_InitStructure.BaudRate = 115200;
+    USART_InitStructure.WordLength = USART_WL_8B;
+    USART_InitStructure.StopBits = USART_STPB_1;
+    USART_InitStructure.Parity = USART_PE_NO;
     USART_InitStructure.HardwareFlowControl = USART_HFCTRL_NONE;
-    USART_InitStructure.Mode                = USART_MODE_RX | USART_MODE_TX;
-    USART_InitStructure.OverSampling        = USART_16OVER ;
+    USART_InitStructure.Mode = USART_MODE_RX | USART_MODE_TX;
+    USART_InitStructure.OverSampling = USART_16OVER;
     /* Configure USART1 */
     USART_Init(USART1, &USART_InitStructure);
 
 
     /* Enable the USART1 */
     USART_Enable(USART1, ENABLE);
-    /* NTFx CODE END */
+/* NTFx CODE END */
 
     return true;
 }
