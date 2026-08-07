@@ -80,6 +80,8 @@ static rt_err_t ufs_wait_utrd_complete(struct rt_ufs_host *ufs, rt_tick_t timeou
 
     while (rt_tick_get() < deadline)
     {
+        rt_base_t   level;
+        rt_uint32_t irq_status;
         rt_uint32_t is = HWREG32(ufs->regs + RT_UFS_REG_IS);
         rt_uint32_t db = HWREG32(ufs->regs + RT_UFS_REG_UTRLDBR);
 
@@ -88,19 +90,25 @@ static rt_err_t ufs_wait_utrd_complete(struct rt_ufs_host *ufs, rt_tick_t timeou
             db_seen = RT_TRUE;
         }
 
-        if ((ufs->irq_status | is) & RT_UFS_REG_IS_UTRCS)
+        level      = rt_spin_lock_irqsave(&ufs->lock);
+        irq_status = ufs->irq_status;
+
+        if ((irq_status | is) & RT_UFS_REG_IS_UTRCS)
         {
-            ufs->irq_status                    &= ~RT_UFS_REG_IS_UTRCS;
-            HWREG32(ufs->regs + RT_UFS_REG_IS)  = RT_UFS_REG_IS_UTRCS;
+            ufs->irq_status &= ~RT_UFS_REG_IS_UTRCS;
+            rt_spin_unlock_irqrestore(&ufs->lock, level);
+            HWREG32(ufs->regs + RT_UFS_REG_IS) = RT_UFS_REG_IS_UTRCS;
             return RT_EOK;
         }
+
+        rt_spin_unlock_irqrestore(&ufs->lock, level);
 
         if (db_seen && !(db & RT_BIT(RT_UFS_SLOT_ID)))
         {
             return RT_EOK;
         }
 
-        if ((ufs->irq_status | is) & (RT_UFS_REG_IS_UTPES | RT_UFS_REG_IS_DFES | RT_UFS_REG_IS_UE))
+        if ((irq_status | is) & (RT_UFS_REG_IS_UTPES | RT_UFS_REG_IS_DFES | RT_UFS_REG_IS_UE))
         {
             return -RT_ERROR;
         }
@@ -288,7 +296,9 @@ static rt_err_t ufs_utp_transfer(struct rt_ufs_host *ufs, struct rt_scsi_device 
     struct rt_utp_transfer_req_desc *utrd = ufs->utrd;
     void                            *regs = ufs->regs;
     rt_uint8_t                       data_dir;
+    rt_base_t                        level;
     rt_uint32_t                      is;
+    rt_uint32_t                      irq_status;
     rt_err_t                         err          = RT_EOK;
     rt_uint16_t                      prdt_entries = 0;
     rt_uint8_t                       ocs;
@@ -389,7 +399,9 @@ static rt_err_t ufs_utp_transfer(struct rt_ufs_host *ufs, struct rt_scsi_device 
     }
 
     /* Clear interrupt status for transfer complete */
+    level           = rt_spin_lock_irqsave(&ufs->lock);
     ufs->irq_status = 0;
+    rt_spin_unlock_irqrestore(&ufs->lock, level);
     /* Ack any stale pending IRQ bits before kicking */
     HWREG32(regs + RT_UFS_REG_IS) = RT_UINT32_MAX;
     /* Enable UTP completion/error interrupts */
@@ -406,9 +418,13 @@ static rt_err_t ufs_utp_transfer(struct rt_ufs_host *ufs, struct rt_scsi_device 
      */
     if ((err = ufs_wait_utrd_complete(ufs, rt_tick_from_millisecond(RT_UFS_UTP_TIMEOUT_MS))))
     {
-        LOG_E("%s: UFS UTP wait timeout: IS=%#08x irq_status=%#08x UTRLDBR=%#08x OCS=%#x",
+        level      = rt_spin_lock_irqsave(&ufs->lock);
+        irq_status = ufs->irq_status;
+        rt_spin_unlock_irqrestore(&ufs->lock, level);
+
+        LOG_E("%s: UFS UTP wait failed: err=%d IS=%#08x irq_status=%#08x UTRLDBR=%#08x OCS=%#x",
               rt_dm_dev_get_name(ufs->parent.dev),
-              HWREG32(regs + RT_UFS_REG_IS), ufs->irq_status,
+              err, HWREG32(regs + RT_UFS_REG_IS), irq_status,
               HWREG32(regs + RT_UFS_REG_UTRLDBR), ufs_utrd_ocs(ufs));
 
         /* Dump UPIU header and PRDT entry for post-mortem */
@@ -610,8 +626,10 @@ static void ufs_isr(int irqno, void *param)
         return;
     }
 
-    ufs->irq_status                    |= is;
-    HWREG32(ufs->regs + RT_UFS_REG_IS)  = is;
+    rt_spin_lock(&ufs->lock);
+    ufs->irq_status |= is;
+    rt_spin_unlock(&ufs->lock);
+    HWREG32(ufs->regs + RT_UFS_REG_IS) = is;
 
     if (is & (RT_UFS_REG_IS_UTRCS | RT_UFS_REG_IS_UTPES | RT_UFS_REG_IS_DFES | RT_UFS_REG_IS_UE))
     {
