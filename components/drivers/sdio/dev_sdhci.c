@@ -2435,7 +2435,7 @@ static rt_bool_t rt_sdhci_start_request_done(struct rt_sdhci_host *host)
 {
     int                  i;
     rt_base_t            flags;
-    struct rt_mmcsd_req *mrq = RT_NULL;
+    struct rt_mmcsd_req *mrq;
 
     flags = rt_spin_lock_irqsave(&host->lock);
 
