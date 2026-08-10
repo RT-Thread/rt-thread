@@ -13,11 +13,11 @@
 extern void ecat_main(void);
 
 /* EtherCAT thread stack size */
-#define ECAT_THREAD_STACK_SIZE  4096
+#define ECAT_THREAD_STACK_SIZE 4096
 /* EtherCAT thread priority */
-#define ECAT_THREAD_PRIORITY    10
+#define ECAT_THREAD_PRIORITY 10
 /* EtherCAT thread time slice */
-#define ECAT_THREAD_TIMESLICE   20
+#define ECAT_THREAD_TIMESLICE 20
 
 static void ecat_thread_entry(void *parameter)
 {
@@ -28,7 +28,7 @@ static void ecat_thread_entry(void *parameter)
 int ecat_thread_init(void)
 {
     rt_thread_t ecat_thread;
-    
+
     /* Create EtherCAT thread */
     ecat_thread = rt_thread_create("ecat",
                                    ecat_thread_entry,
@@ -36,7 +36,7 @@ int ecat_thread_init(void)
                                    ECAT_THREAD_STACK_SIZE,
                                    ECAT_THREAD_PRIORITY,
                                    ECAT_THREAD_TIMESLICE);
-    
+
     if (ecat_thread != RT_NULL)
     {
         rt_thread_startup(ecat_thread);

@@ -20,8 +20,8 @@
 /*
  * Logging configuration
  */
-#define LOG_TAG     "drv.flash"
-#define LOG_LVL     LOG_LVL_INFO
+#define LOG_TAG "drv.flash"
+#define LOG_LVL LOG_LVL_INFO
 #include <rtdbg.h>
 
 /*
@@ -29,10 +29,10 @@
  * FLASH_BUSY_STATUS_OFFSET = 0  : WIP bit is SR[0]
  * FLASH_QUAD_ENABLE        = 0x40 : write to SR to enable Quad mode
  */
-#define FLASH_QUAD_ENABLE_VAL       0x40U
+#define FLASH_QUAD_ENABLE_VAL 0x40U
 
 /* WIP polling upper limit to prevent infinite loop on Flash failure */
-#define WIP_TIMEOUT_COUNT           2000000UL
+#define WIP_TIMEOUT_COUNT 2000000UL
 
 /*
  * Internal write buffer (must reside in SRAM)
@@ -45,9 +45,9 @@
 static uint8_t SDK_ALIGN(s_write_buf[QSPI_PAGE_SIZE], 4);
 
 /* Internal state */
-static imxrt_flexspi_handle_t  *s_handle  = RT_NULL;
-static struct rt_mutex          s_mutex;
-static int                      s_inited  = 0;
+static imxrt_flexspi_handle_t *s_handle = RT_NULL;
+static struct rt_mutex s_mutex;
+static int s_inited = 0;
 
 /*
  * _range_valid - check whether [offset, offset+size) is within Flash
@@ -109,10 +109,10 @@ static status_t _nor_write_enable(rt_uint32_t base_addr)
     flexspi_transfer_t xfer;
 
     xfer.deviceAddress = base_addr;
-    xfer.port          = FLASH_PORT;
-    xfer.cmdType       = kFLEXSPI_Command;
-    xfer.SeqNumber     = 1;
-    xfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_WRITEENABLE;
+    xfer.port = FLASH_PORT;
+    xfer.cmdType = kFLEXSPI_Command;
+    xfer.SeqNumber = 1;
+    xfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_WRITEENABLE;
 
     return FLEXSPI_TransferBlocking(s_handle->base, &xfer);
 }
@@ -125,19 +125,19 @@ static status_t _nor_write_enable(rt_uint32_t base_addr)
  */
 static status_t _nor_wait_busy(void)
 {
-    rt_uint32_t        read_val = 0;
-    rt_uint32_t        timeout  = 0;
-    status_t           status;
-    rt_bool_t          is_busy;
+    rt_uint32_t read_val = 0;
+    rt_uint32_t timeout = 0;
+    status_t status;
+    rt_bool_t is_busy;
     flexspi_transfer_t xfer;
 
     xfer.deviceAddress = 0;
-    xfer.port          = FLASH_PORT;
-    xfer.cmdType       = kFLEXSPI_Read;
-    xfer.SeqNumber     = 1;
-    xfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_READSTATUSREG;
-    xfer.data          = &read_val;
-    xfer.dataSize      = 1;
+    xfer.port = FLASH_PORT;
+    xfer.cmdType = kFLEXSPI_Read;
+    xfer.SeqNumber = 1;
+    xfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_READSTATUSREG;
+    xfer.data = &read_val;
+    xfer.dataSize = 1;
 
     do
     {
@@ -161,8 +161,7 @@ static status_t _nor_wait_busy(void)
         {
             return kStatus_Timeout;
         }
-    }
-    while (is_busy);
+    } while (is_busy);
 
     return kStatus_Success;
 }
@@ -174,17 +173,17 @@ static status_t _nor_wait_busy(void)
  */
 static status_t _nor_erase_sector(rt_uint32_t addr)
 {
-    rt_base_t          level;
-    status_t           status;
+    rt_base_t level;
+    status_t status;
     flexspi_transfer_t xfer;
 
     level = rt_hw_interrupt_disable();
 
     xfer.deviceAddress = addr;
-    xfer.port          = FLASH_PORT;
-    xfer.cmdType       = kFLEXSPI_Command;
-    xfer.SeqNumber     = 1;
-    xfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_WRITEENABLE;
+    xfer.port = FLASH_PORT;
+    xfer.cmdType = kFLEXSPI_Command;
+    xfer.SeqNumber = 1;
+    xfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_WRITEENABLE;
 
     status = FLEXSPI_TransferBlocking(s_handle->base, &xfer);
     if (status != kStatus_Success)
@@ -220,8 +219,8 @@ static status_t _nor_erase_sector(rt_uint32_t addr)
  */
 static status_t _nor_page_program(rt_uint32_t addr, const rt_uint32_t *src)
 {
-    rt_base_t          level;
-    status_t           status;
+    rt_base_t level;
+    status_t status;
     flexspi_transfer_t xfer;
 
     level = rt_hw_interrupt_disable();
@@ -241,12 +240,12 @@ static status_t _nor_page_program(rt_uint32_t addr, const rt_uint32_t *src)
     }
 
     xfer.deviceAddress = addr;
-    xfer.port          = FLASH_PORT;
-    xfer.cmdType       = kFLEXSPI_Write;
-    xfer.SeqNumber     = 1;
-    xfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM_QUAD;
-    xfer.data          = (rt_uint32_t *)src;
-    xfer.dataSize      = QSPI_PAGE_SIZE;
+    xfer.port = FLASH_PORT;
+    xfer.cmdType = kFLEXSPI_Write;
+    xfer.SeqNumber = 1;
+    xfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM_QUAD;
+    xfer.data = (rt_uint32_t *)src;
+    xfer.dataSize = QSPI_PAGE_SIZE;
 
     status = FLEXSPI_TransferBlocking(s_handle->base, &xfer);
     if (status != kStatus_Success)
@@ -279,9 +278,9 @@ static status_t _nor_page_program(rt_uint32_t addr, const rt_uint32_t *src)
  */
 int rt_qspi_flash_init(void)
 {
-    rt_uint8_t         vendor_id = 0;
-    rt_uint32_t        temp      = 0;
-    status_t           status;
+    rt_uint8_t vendor_id = 0;
+    rt_uint32_t temp = 0;
+    status_t status;
     flexspi_transfer_t xfer;
 
     if (s_inited)
@@ -299,12 +298,12 @@ int rt_qspi_flash_init(void)
 
     /* Read Vendor ID to verify Flash connectivity (SDK: flexspi_nor_get_vendor_id) */
     xfer.deviceAddress = 0;
-    xfer.port          = FLASH_PORT;
-    xfer.cmdType       = kFLEXSPI_Read;
-    xfer.SeqNumber     = 1;
-    xfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_READID;
-    xfer.data          = &temp;
-    xfer.dataSize      = 1;
+    xfer.port = FLASH_PORT;
+    xfer.cmdType = kFLEXSPI_Read;
+    xfer.SeqNumber = 1;
+    xfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_READID;
+    xfer.data = &temp;
+    xfer.dataSize = 1;
 
     status = FLEXSPI_TransferBlocking(s_handle->base, &xfer);
     if (status != kStatus_Success)
@@ -410,7 +409,7 @@ void *rt_qspi_flash_mmap(rt_uint32_t offset, rt_size_t size)
 int rt_qspi_flash_write(rt_uint32_t offset, const rt_uint8_t *buf, rt_size_t size)
 {
     rt_size_t written = 0;
-    status_t  status;
+    status_t status;
 
     if (!s_inited)
     {
@@ -477,7 +476,7 @@ int rt_qspi_flash_erase(rt_uint32_t offset, rt_size_t size)
 {
     rt_uint32_t addr;
     rt_uint32_t addr_end;
-    status_t    status;
+    status_t status;
 
     if (!s_inited)
     {
@@ -496,7 +495,7 @@ int rt_qspi_flash_erase(rt_uint32_t offset, rt_size_t size)
         return -RT_EINVAL;
     }
 
-    addr     = offset;
+    addr = offset;
     addr_end = offset + (rt_uint32_t)size;
 
     rt_mutex_take(&s_mutex, RT_WAITING_FOREVER);

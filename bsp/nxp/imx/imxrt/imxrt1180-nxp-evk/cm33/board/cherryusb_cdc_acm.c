@@ -10,22 +10,22 @@
 #include "usbd_core.h"
 #include "usbd_cdc_acm.h"
 
-#define RT1180_CDC_IN_EP             0x81
-#define RT1180_CDC_OUT_EP            0x02
-#define RT1180_CDC_INT_EP            0x83
-#define RT1180_CDC_INTF_NUM          0x00
-#define RT1180_CDC_MSOS_VENDOR_CODE  0x17
+#define RT1180_CDC_IN_EP            0x81
+#define RT1180_CDC_OUT_EP           0x02
+#define RT1180_CDC_INT_EP           0x83
+#define RT1180_CDC_INTF_NUM         0x00
+#define RT1180_CDC_MSOS_VENDOR_CODE 0x17
 
-#define RT1180_USBD_VID              0xFFFF
-#define RT1180_USBD_PID              0xFFFF
-#define RT1180_USBD_MAX_POWER        100
+#define RT1180_USBD_VID       0xFFFF
+#define RT1180_USBD_PID       0xFFFF
+#define RT1180_USBD_MAX_POWER 100
 
-#define RT1180_USB_CONFIG_SIZE       (9 + CDC_ACM_DESCRIPTOR_LEN)
+#define RT1180_USB_CONFIG_SIZE (9 + CDC_ACM_DESCRIPTOR_LEN)
 
 #ifdef CONFIG_USB_HS
-#define RT1180_CDC_MAX_MPS           512
+#define RT1180_CDC_MAX_MPS 512
 #else
-#define RT1180_CDC_MAX_MPS           64
+#define RT1180_CDC_MAX_MPS 64
 #endif
 
 static const uint8_t rt1180_cdc_device_descriptor[] = {
@@ -70,10 +70,16 @@ static const uint8_t rt1180_cdc_msos_compat_id_descriptor[] = {
 };
 
 static const uint8_t rt1180_cdc_msos_properties_descriptor[] = {
-    0x0a, 0x00, 0x00, 0x00,
-    0x00, 0x01,
-    0x05, 0x00,
-    0x00, 0x00,
+    0x0a,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x01,
+    0x05,
+    0x00,
+    0x00,
+    0x00,
 };
 
 static const uint8_t *rt1180_cdc_msos_properties[] = {

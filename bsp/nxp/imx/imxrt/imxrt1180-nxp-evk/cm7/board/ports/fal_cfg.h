@@ -17,20 +17,20 @@
 extern const struct fal_flash_dev imxrt1180_nor_flash;
 
 /* flash device table */
-#define FAL_FLASH_DEV_TABLE      \
-{                                \
-    &imxrt1180_nor_flash,             \
-}
+#define FAL_FLASH_DEV_TABLE   \
+    {                         \
+        &imxrt1180_nor_flash, \
+    }
 
 /* ====================== Partition Configuration ========================== */
 #ifdef FAL_PART_HAS_TABLE_CFG
 
 /* partition table */
-#define FAL_PART_TABLE                                                               \
-{                                                                                    \
-    {FAL_PART_MAGIC_WROD, "app",        "norflash0",           0, 15*1024*1024, 0}, \
-    {FAL_PART_MAGIC_WROD, "filesystem", "norflash0", 15*1024*1024,  1*1024*1024, 0}, \
-}
+#define FAL_PART_TABLE                                                                            \
+    {                                                                                             \
+        { FAL_PART_MAGIC_WROD, "app", "norflash0", 0, 15 * 1024 * 1024, 0 },                      \
+        { FAL_PART_MAGIC_WROD, "filesystem", "norflash0", 15 * 1024 * 1024, 1 * 1024 * 1024, 0 }, \
+    }
 
 #endif /* FAL_PART_HAS_TABLE_CFG */
 

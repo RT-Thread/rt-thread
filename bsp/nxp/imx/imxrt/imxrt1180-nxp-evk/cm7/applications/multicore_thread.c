@@ -26,12 +26,12 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define MULTICORE_THREAD_STACK_SIZE    2048
-#define MULTICORE_THREAD_PRIORITY      10
-#define MULTICORE_THREAD_TIMESLICE     5
+#define MULTICORE_THREAD_STACK_SIZE 2048
+#define MULTICORE_THREAD_PRIORITY   10
+#define MULTICORE_THREAD_TIMESLICE  5
 #ifdef BSP_USE_MULTICORE_RPMSG_LITE
 #ifndef RPMSG_LITE_LINK_ID
-#define RPMSG_LITE_LINK_ID            (RL_PLATFORM_IMXRT1180_M33_M7_LINK_ID)
+#define RPMSG_LITE_LINK_ID (RL_PLATFORM_IMXRT1180_M33_M7_LINK_ID)
 #endif
 
 #ifndef RPMSG_NS_ANNOUNCE_STRING
@@ -41,21 +41,21 @@
 #endif
 
 #ifndef RPMSG_LOCAL_EPT_ADDR
-#define LOCAL_EPT_ADDR                (30U)
+#define LOCAL_EPT_ADDR (30U)
 #else
-#define LOCAL_EPT_ADDR                RPMSG_LOCAL_EPT_ADDR
+#define LOCAL_EPT_ADDR RPMSG_LOCAL_EPT_ADDR
 #endif
 
-#define APP_RPMSG_READY_EVENT_DATA    (1U)
+#define APP_RPMSG_READY_EVENT_DATA (1U)
 
 typedef struct the_message
 {
     uint32_t DATA;
 } THE_MESSAGE, *THE_MESSAGE_PTR;
 
-static volatile THE_MESSAGE msg = {0};
-static struct rpmsg_lite_instance *volatile my_rpmsg = NULL;
-static struct rpmsg_lite_endpoint *volatile my_ept = NULL;
+static volatile THE_MESSAGE msg = { 0 };
+static struct rpmsg_lite_instance * volatile my_rpmsg = NULL;
+static struct rpmsg_lite_endpoint * volatile my_ept = NULL;
 static volatile rpmsg_queue_handle my_queue = NULL;
 static bool error_occurred = false;
 #endif /* BSP_USE_MULTICORE_RPMSG_LITE */
@@ -66,22 +66,22 @@ static bool error_occurred = false;
 #ifdef BSP_USE_MULTICORE_KICK_OFF
 static rt_err_t multicore_kickoff_init(void)
 {
-		mcmgr_status_t status;
+    mcmgr_status_t status;
 
-		rt_kprintf("[Multicore] Initializing MCMGR ...\r\n");
-		status = MCMGR_Init();
-		if (status != kStatus_MCMGR_Success)
-		{
-				rt_kprintf("[Multicore] MCMGR initialization failed!\r\n");
-				return -RT_ERROR;
-		}
-		rt_kprintf("[Multicore] MCMGR initialized successfully\r\n");
+    rt_kprintf("[Multicore] Initializing MCMGR ...\r\n");
+    status = MCMGR_Init();
+    if (status != kStatus_MCMGR_Success)
+    {
+        rt_kprintf("[Multicore] MCMGR initialization failed!\r\n");
+        return -RT_ERROR;
+    }
+    rt_kprintf("[Multicore] MCMGR initialized successfully\r\n");
 
-		return RT_EOK;
+    return RT_EOK;
 }
 #endif /* BSP_USE_MULTICORE_KICK_OFF */
 #ifdef BSP_USE_MULTICORE_RPMSG_LITE
-static void app_nameservice_isr_cb(uint32_t new_ept, const char *new_ept_name, 
+static void app_nameservice_isr_cb(uint32_t new_ept, const char *new_ept_name,
                                    uint32_t flags, void *user_data)
 {
     /* Nameservice callback - can be extended as needed */
@@ -101,7 +101,7 @@ static rt_err_t rpmsg_lite_init(void)
     } while (status != kStatus_MCMGR_Success);
 
     /* Initialize RPMsg-Lite as remote (CM7 side) */
-    my_rpmsg = rpmsg_lite_remote_init((void *)(char *)(platform_patova(startupData)), 
+    my_rpmsg = rpmsg_lite_remote_init((void *)(char *)(platform_patova(startupData)),
                                       RPMSG_LITE_LINK_ID, RL_NO_FLAGS);
     if (my_rpmsg == NULL)
     {
@@ -111,7 +111,7 @@ static rt_err_t rpmsg_lite_init(void)
     }
 
     /* Signal the CM33 master core we are ready */
-    (void)MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteApplicationEvent, 
+    (void)MCMGR_TriggerEvent(kMCMGR_Core0, kMCMGR_RemoteApplicationEvent,
                              APP_RPMSG_READY_EVENT_DATA);
 
     /* Wait for link up with CM33 master */
@@ -147,7 +147,7 @@ static rt_err_t rpmsg_lite_init(void)
 
     /* Announce service */
 //    SDK_DelayAtLeastUs(1000000U, SDK_DEVICE_MAXIMUM_CPU_CLOCK_FREQUENCY);
-    (void)rpmsg_ns_announce(my_rpmsg, my_ept, RPMSG_LITE_NS_ANNOUNCE_STRING, 
+    (void)rpmsg_ns_announce(my_rpmsg, my_ept, RPMSG_LITE_NS_ANNOUNCE_STRING,
                             (uint32_t)RL_NS_CREATE);
     rt_kprintf("[RPMsg] Nameservice announced\r\n");
 
@@ -163,15 +163,15 @@ static void rpmsg_lite_communication(void)
     while (msg.DATA <= 100U)
     {
         rt_kprintf("[RPMsg] Waiting for ping...\r\n");
-        
-        (void)rpmsg_queue_recv(my_rpmsg, my_queue, (uint32_t *)&remote_addr, 
+
+        (void)rpmsg_queue_recv(my_rpmsg, my_queue, (uint32_t *)&remote_addr,
                                (char *)&msg, sizeof(THE_MESSAGE), NULL, RL_BLOCK);
-        
+
         msg.DATA++;
-        
+
         rt_kprintf("[RPMsg] Received: %u, Sending pong: %u\r\n", msg.DATA - 1, msg.DATA);
-        
-        (void)rpmsg_lite_send(my_rpmsg, my_ept, remote_addr, (char *)&msg, 
+
+        (void)rpmsg_lite_send(my_rpmsg, my_ept, remote_addr, (char *)&msg,
                               sizeof(THE_MESSAGE), RL_BLOCK);
     }
 
@@ -209,11 +209,11 @@ static void rpmsg_lite_cleanup(void)
  ******************************************************************************/
 static void multicore_thread_entry(void *parameter)
 {
-#ifndef BSP_USE_MULTICORE_RPMSG_LITE		
+#ifndef BSP_USE_MULTICORE_RPMSG_LITE
     uint32_t startupData;
-    mcmgr_status_t status;		
+    mcmgr_status_t status;
 #endif
-		
+
     rt_kprintf("\r\n=== Multicore Communication Thread Started ===\r\n");
 
 #ifdef BSP_USE_MULTICORE_KICK_OFF
@@ -248,8 +248,8 @@ cleanup:
     {
         rt_kprintf("[Multicore] Communication completed successfully!\r\n");
     }
-#else 
-		 /* Get the startup data */
+#else
+         /* Get the startup data */
     do
     {
         status = MCMGR_GetStartupData(kMCMGR_Core0, &startupData);

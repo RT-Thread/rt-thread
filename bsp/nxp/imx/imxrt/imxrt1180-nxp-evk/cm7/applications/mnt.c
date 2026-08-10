@@ -31,9 +31,9 @@
 #include <dfs_fs.h>
 #include <fal.h>
 
-#define FS_PARTITION_NAME  "filesystem"
-#define FS_TYPE_NAME       "lfs"
-#define FS_MOUNT_POINT     "/"
+#define FS_PARTITION_NAME "filesystem"
+#define FS_TYPE_NAME      "lfs"
+#define FS_MOUNT_POINT    "/"
 
 static int _qspi_flash_fs_mount(void)
 {

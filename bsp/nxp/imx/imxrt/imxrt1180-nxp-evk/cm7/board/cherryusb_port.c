@@ -22,10 +22,10 @@
 #include "usbh_core.h"
 #endif
 
-#define RT1180_USB_EHCI0_ID       2U
-#define RT1180_USB_EHCI_COUNT     2U
-#define RT1180_USB_INVALID_INDEX  0xffU
-#define RT1180_USB_IRQ_PRIORITY   3U
+#define RT1180_USB_EHCI0_ID      2U
+#define RT1180_USB_EHCI_COUNT    2U
+#define RT1180_USB_INVALID_INDEX 0xffU
+#define RT1180_USB_IRQ_PRIORITY  3U
 
 typedef enum _usb_controller_index
 {
@@ -127,8 +127,8 @@ static void rt1180_usb_nc_init(uint8_t index)
 static void rt1180_usb_phy_enable_vbus_override(USBPHY_Type *phy)
 {
 #if defined(RT_CHERRYUSB_DEVICE) && defined(USBPHY_USB1_VBUS_DETECT_SET_VBUS_OVERRIDE_EN_MASK) && \
-    defined(USBPHY_USB1_VBUS_DETECT_SET_VBUSVALID_OVERRIDE_MASK) && \
-    defined(USBPHY_USB1_VBUS_DETECT_SET_AVALID_OVERRIDE_MASK) && \
+    defined(USBPHY_USB1_VBUS_DETECT_SET_VBUSVALID_OVERRIDE_MASK) &&                               \
+    defined(USBPHY_USB1_VBUS_DETECT_SET_AVALID_OVERRIDE_MASK) &&                                  \
     defined(USBPHY_USB1_VBUS_DETECT_SET_BVALID_OVERRIDE_MASK)
     uint32_t vbus_detect =
         USBPHY_USB1_VBUS_DETECT_SET_VBUS_OVERRIDE_EN_MASK |

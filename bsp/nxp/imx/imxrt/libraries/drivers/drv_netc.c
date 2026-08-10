@@ -20,11 +20,11 @@
 #include <netif/ethernetif.h>
 
 #ifndef NETC_RX_ZERO_COPY
-#define NETC_RX_ZERO_COPY   1
+#define NETC_RX_ZERO_COPY 1
 #endif
 
 #ifndef NETC_USE_SWT
-#define NETC_USE_SWT        0
+#define NETC_USE_SWT 0
 #endif
 
 #if NETC_RX_ZERO_COPY && !LWIP_SUPPORT_CUSTOM_PBUF
@@ -50,28 +50,28 @@
 #define LOG_TAG "drv.netc"
 #include "drv_log.h"
 
-#define NETC_RING_ID          0U
-#define NETC_RXBD_NUM         8U
-#define NETC_TXBD_NUM         8U
-#define NETC_CMDBD_NUM        8U
-#define NETC_RXBUFF_SIZE      1536U
-#define NETC_BUFF_ALIGNMENT   64U
-#define NETC_FRAME_MAX_FRAMELEN        1518U
-#define NETC_RXBUFF_ALIGNED_SIZE       \
+#define NETC_RING_ID            0U
+#define NETC_RXBD_NUM           8U
+#define NETC_TXBD_NUM           8U
+#define NETC_CMDBD_NUM          8U
+#define NETC_RXBUFF_SIZE        1536U
+#define NETC_BUFF_ALIGNMENT     64U
+#define NETC_FRAME_MAX_FRAMELEN 1518U
+#define NETC_RXBUFF_ALIGNED_SIZE \
     (((NETC_RXBUFF_SIZE + NETC_BUFF_ALIGNMENT - 1U) / NETC_BUFF_ALIGNMENT) * NETC_BUFF_ALIGNMENT)
-#define NETC_MAX_BUFFERS_PER_FRAME     \
+#define NETC_MAX_BUFFERS_PER_FRAME \
     ((NETC_FRAME_MAX_FRAMELEN + NETC_RXBUFF_ALIGNED_SIZE - 1U) / NETC_RXBUFF_ALIGNED_SIZE)
-#define NETC_PHY_STATUS_REG   0x01U
-#define NETC_PHY_LINK_UP_MASK 0x0004U
-#define NETC_PHY_POLL_DELAY_TICK      (RT_TICK_PER_SECOND)
-#define NETC_TX_TIMEOUT_TICK          (RT_TICK_PER_SECOND)
+#define NETC_PHY_STATUS_REG      0x01U
+#define NETC_PHY_LINK_UP_MASK    0x0004U
+#define NETC_PHY_POLL_DELAY_TICK (RT_TICK_PER_SECOND)
+#define NETC_TX_TIMEOUT_TICK     (RT_TICK_PER_SECOND)
 
 #if NETC_RXBD_NUM < NETC_MAX_BUFFERS_PER_FRAME
 #error "NETC_RXBD_NUM < NETC_MAX_BUFFERS_PER_FRAME"
 #endif
 
 #ifndef NETC_RXBUFF_NUM
-#define NETC_RXBUFF_NUM       (NETC_RXBD_NUM + 5U)
+#define NETC_RXBUFF_NUM (NETC_RXBD_NUM + 5U)
 #endif
 
 #if NETC_RX_ZERO_COPY && (NETC_RXBUFF_NUM < (NETC_RXBD_NUM + NETC_MAX_BUFFERS_PER_FRAME))
@@ -84,14 +84,14 @@
 #define NETC_RXBUFF_TOTAL_NUM NETC_RXBD_NUM
 #endif
 
-#define NETC_MII_MODE         kNETC_RmiiMode
-#define NETC_LINK_SPEED       kNETC_MiiSpeed100M
-#define NETC_LINK_DUPLEX      kNETC_MiiFullDuplex
+#define NETC_MII_MODE    kNETC_RmiiMode
+#define NETC_LINK_SPEED  kNETC_MiiSpeed100M
+#define NETC_LINK_DUPLEX kNETC_MiiFullDuplex
 
 #if NETC_USE_SWT
-#define NETC_PSI              kNETC_ENETC1PSI0
+#define NETC_PSI kNETC_ENETC1PSI0
 #ifndef NETC_PHY_ADDR
-#define NETC_PHY_ADDR         BOARD_SWT_PORT0_PHY_ADDR
+#define NETC_PHY_ADDR BOARD_SWT_PORT0_PHY_ADDR
 #endif
 #ifndef NETC_SWT_MAX_PORT_NUM
 #define NETC_SWT_MAX_PORT_NUM 4U
@@ -100,20 +100,20 @@
 #define NETC_SWT_USED_PORT_BITMAP 0x5U
 #endif
 #ifndef NETC_SWT_PSEUDO_PORT
-#define NETC_SWT_PSEUDO_PORT  0x4U
+#define NETC_SWT_PSEUDO_PORT 0x4U
 #endif
 #ifndef NETC_SWT_TX_PORT
-#define NETC_SWT_TX_PORT      kNETC_SWITCH0Port0
+#define NETC_SWT_TX_PORT kNETC_SWITCH0Port0
 #endif
 #else
-#define NETC_PSI              kNETC_ENETC0PSI0
+#define NETC_PSI kNETC_ENETC0PSI0
 #ifndef NETC_PHY_ADDR
-#define NETC_PHY_ADDR         BOARD_EP0_PHY_ADDR
+#define NETC_PHY_ADDR BOARD_EP0_PHY_ADDR
 #endif
 #endif
 
-#define NETC_MSGINTR          MSGINTR1
-#define NETC_MSGINTR_IRQ      MSGINTR1_IRQn
+#define NETC_MSGINTR     MSGINTR1
+#define NETC_MSGINTR_IRQ MSGINTR1_IRQn
 
 #define NETC_MSIX_ENTRY_NUM   2U
 #define TX_MSIX_ENTRY_IDX     0U
@@ -123,12 +123,12 @@
 #define RX_INTR_MSG_DATA      2U
 #define SI_COM_INTR_MSG_DATA  3U
 
-#define NETC_DEFAULT_MAC0     0x54U
-#define NETC_DEFAULT_MAC1     0x27U
-#define NETC_DEFAULT_MAC2     0x8DU
-#define NETC_DEFAULT_MAC3     0x11U
-#define NETC_DEFAULT_MAC4     0x80U
-#define NETC_DEFAULT_MAC5     0x00U
+#define NETC_DEFAULT_MAC0 0x54U
+#define NETC_DEFAULT_MAC1 0x27U
+#define NETC_DEFAULT_MAC2 0x8DU
+#define NETC_DEFAULT_MAC3 0x11U
+#define NETC_DEFAULT_MAC4 0x80U
+#define NETC_DEFAULT_MAC5 0x00U
 
 #ifndef RT_NTCP_THREAD_STACK_SIZE
 #define RT_NTCP_THREAD_STACK_SIZE 4096
@@ -598,7 +598,7 @@ static void _netc_msgintr_callback(MSGINTR_Type *base, uint8_t channel, uint32_t
         rt_sem_release(&imxrt_netc_device.tx_isr_sem);
     }
 
-    if ((pendingIntr & (1U << RX_INTR_MSG_DATA))!= 0U)
+    if ((pendingIntr & (1U << RX_INTR_MSG_DATA)) != 0U)
     {
         EP_CleanRxIntrFlags(&imxrt_netc_device.ep_handle, 1);
         (void)eth_device_ready(&imxrt_netc_device.parent);
@@ -685,10 +685,10 @@ static rt_err_t _netc_hw_init(struct rt_imxrt_netc *netc)
     rt_memset(rx_bdr_config, 0, sizeof(rx_bdr_config));
     rt_memset(tx_bdr_config, 0, sizeof(tx_bdr_config));
     rt_memset(&mdio_config, 0, sizeof(mdio_config));
-    
+
     /* MSIX and interrupt configuration. */
     MSGINTR_Init(NETC_MSGINTR, &_netc_msgintr_callback);
-    uint32_t msgAddr                 = MSGINTR_GetIntrSelectAddr(NETC_MSGINTR, 0);
+    uint32_t msgAddr = MSGINTR_GetIntrSelectAddr(NETC_MSGINTR, 0);
     g_netc_msix_entry[0].control = kNETC_MsixIntrMaskBit;
     g_netc_msix_entry[0].msgAddr = msgAddr;
     g_netc_msix_entry[0].msgData = TX_INTR_MSG_DATA;
@@ -738,10 +738,10 @@ static rt_err_t _netc_hw_init(struct rt_imxrt_netc *netc)
     ep_config.cmdBdrConfig.bdBase = g_netc_cmd_bd;
     ep_config.cmdBdrConfig.bdLength = NETC_CMDBD_NUM;
     ep_config.cmdBdrConfig.enCompInt = false;
-    
-    ep_config.port.ethMac.miiMode        = NETC_MII_MODE;
-    ep_config.port.ethMac.miiSpeed       = NETC_LINK_SPEED;
-    ep_config.port.ethMac.miiDuplex      = NETC_LINK_DUPLEX;
+
+    ep_config.port.ethMac.miiMode = NETC_MII_MODE;
+    ep_config.port.ethMac.miiSpeed = NETC_LINK_SPEED;
+    ep_config.port.ethMac.miiDuplex = NETC_LINK_DUPLEX;
     ep_config.port.ethMac.rxMaxFrameSize = NETC_FRAME_MAX_FRAMELEN;
 
     rx_bdr_config[0].extendDescEn = false;
@@ -783,7 +783,7 @@ static rt_err_t _netc_hw_init(struct rt_imxrt_netc *netc)
         LOG_E("EP_Init failed: %d", result);
         return -RT_ERROR;
     }
-    
+
     mdio_config.mdio.type = kNETC_EMdio;
     mdio_config.srcClockHz = CLOCK_GetRootClockFreq(kCLOCK_Root_Netc);
     mdio_config.isNegativeDriven = false;
@@ -806,7 +806,7 @@ static rt_err_t _netc_hw_init(struct rt_imxrt_netc *netc)
         LOG_E("EP_Up failed: %d", result);
         return -RT_ERROR;
     }
-    
+
 #if NETC_USE_SWT
     if (_netc_swt_init(netc) != RT_EOK)
     {
@@ -823,7 +823,7 @@ static rt_err_t _netc_hw_init(struct rt_imxrt_netc *netc)
     }
 
     netc->hw_inited = RT_TRUE;
-    
+
     EP_MsixSetEntryMask(&netc->ep_handle, TX_MSIX_ENTRY_IDX, false);
     EP_MsixSetEntryMask(&netc->ep_handle, RX_MSIX_ENTRY_IDX, false);
 
@@ -836,7 +836,7 @@ static rt_err_t _netc_hw_init(struct rt_imxrt_netc *netc)
           netc->dev_addr[0], netc->dev_addr[1], netc->dev_addr[2],
           netc->dev_addr[3], netc->dev_addr[4], netc->dev_addr[5]);
 #endif
-    
+
     return RT_EOK;
 }
 
@@ -976,7 +976,7 @@ static rt_err_t rt_imxrt_netc_tx(rt_device_t dev, struct pbuf *p)
     while (rt_sem_take(&netc->tx_isr_sem, 0) == RT_EOK)
     {
     }
-    
+
     tx_data = rt_malloc(p->tot_len);
     if (tx_data == RT_NULL)
     {
@@ -999,7 +999,7 @@ static rt_err_t rt_imxrt_netc_tx(rt_device_t dev, struct pbuf *p)
         result = SWT_SendFrame(&netc->swt_handle, &frame, tx_data, &tx_opt);
 #else
         {
-            swt_mgmt_tx_arg_t tx_arg = {.ring = NETC_RING_ID};
+            swt_mgmt_tx_arg_t tx_arg = { .ring = NETC_RING_ID };
 
             result = SWT_SendFrame(&netc->swt_handle,
                                    tx_arg,
@@ -1035,7 +1035,7 @@ static rt_err_t rt_imxrt_netc_tx(rt_device_t dev, struct pbuf *p)
     {
         return _netc_wait_tx_complete(netc);
     }
-        
+
     return RT_EOK;
 }
 

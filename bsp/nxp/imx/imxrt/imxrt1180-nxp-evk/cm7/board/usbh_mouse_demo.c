@@ -22,7 +22,7 @@
 #include "usbh_hid.h"
 #include "usb_hid.h"
 
-#define RT1180_USBH_MOUSE_REPORT_LEN 64U
+#define RT1180_USBH_MOUSE_REPORT_LEN   64U
 #define RT1180_USBH_MOUSE_THREAD_STACK 2048U
 
 struct rt1180_usbh_mouse_state

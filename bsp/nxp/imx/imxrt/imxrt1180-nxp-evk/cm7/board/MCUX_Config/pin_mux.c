@@ -31,13 +31,14 @@ processor_version: 0.15.9
  * Description   : Calls initialization functions.
  * 
  * END ****************************************************************************************************************/
-void BOARD_InitBootPins(void) {
+void BOARD_InitBootPins(void)
+{
     BOARD_InitPins();
 
 #ifdef BSP_USING_ETH
     BOARD_InitPhyAccessPins();
     BOARD_InitEpPins();
-    BOARD_InitSwtPort0Pins();    
+    BOARD_InitSwtPort0Pins();
 #endif
 }
 
@@ -47,10 +48,11 @@ void BOARD_InitBootPins(void) {
  * Description   : Configures pin routing and optionally pin electrical features.
  *
  * END ****************************************************************************************************************/
-void BOARD_InitPins(void) {
-	CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
+void BOARD_InitPins(void)
+{
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
     CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
-		
+
 #ifdef BSP_USING_LPUART12
     IOMUXC_SetPinMux(
         IOMUXC_GPIO_AON_19_LPUART12_TX,         /* GPIO_AON_19 is configured as LPUART12_TX */
@@ -115,7 +117,6 @@ void BOARD_InitPins(void) {
                                                     Pull Up / Down Config. Field: Weak pull up
                                                     Open Drain Field: Enabled */
 #endif
-
 }
 
 
@@ -143,7 +144,8 @@ BOARD_InitPhyAccessPins:
  * Description   : Configures pin routing and optionally pin electrical features.
  *
  * END ****************************************************************************************************************/
-void BOARD_InitPhyAccessPins(void) {
+void BOARD_InitPhyAccessPins(void)
+{
     CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
 
     /* GPIO configuration of ENET4_INT_B on GPIO_AD_12 (pin P17) */
@@ -277,7 +279,8 @@ BOARD_InitEpPins:
  * Description   : Configures pin routing and optionally pin electrical features.
  *
  * END ****************************************************************************************************************/
-void BOARD_InitEpPins(void) {
+void BOARD_InitEpPins(void)
+{
     CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
 
     IOMUXC_SetPinMux(
@@ -328,7 +331,8 @@ BOARD_InitSwtPort0Pins:
  * Description   : Configures pin routing and optionally pin electrical features.
  *
  * END ****************************************************************************************************************/
-void BOARD_InitSwtPort0Pins(void) {
+void BOARD_InitSwtPort0Pins(void)
+{
     CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
 
     IOMUXC_SetPinMux(
@@ -384,7 +388,8 @@ BOARD_InitSwtPort1Pins:
  * Description   : Configures pin routing and optionally pin electrical features.
  *
  * END ****************************************************************************************************************/
-void BOARD_InitSwtPort1Pins(void) {
+void BOARD_InitSwtPort1Pins(void)
+{
     CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
 
     IOMUXC_SetPinMux(
@@ -452,7 +457,8 @@ BOARD_InitSwtPort2Pins:
  * Description   : Configures pin routing and optionally pin electrical features.
  *
  * END ****************************************************************************************************************/
-void BOARD_InitSwtPort2Pins(void) {
+void BOARD_InitSwtPort2Pins(void)
+{
     CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
 
     IOMUXC_SetPinMux(
@@ -520,7 +526,8 @@ BOARD_InitSwtPort3Pins:
  * Description   : Configures pin routing and optionally pin electrical features.
  *
  * END ****************************************************************************************************************/
-void BOARD_InitSwtPort3Pins(void) {
+void BOARD_InitSwtPort3Pins(void)
+{
     CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
 
     IOMUXC_SetPinMux(
