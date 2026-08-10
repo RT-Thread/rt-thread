@@ -3,16 +3,8 @@ Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
-src = []
-group = []
-CPPPATH = []
+CPPPATH = [cwd]
+src = Glob('*.c')
 
-if rtconfig.PLATFORM in ['iccarm']:
-    print("\nThe current project does not support IAR build\n")
-    Return('group')
-elif rtconfig.PLATFORM in ['gcc', 'armclang']:
-    src = Glob('*.c')
-    CPPPATH = [cwd]
-
-group = DefineGroup('ra_gen', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('rafw_gen', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')

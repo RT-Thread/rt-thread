@@ -16,11 +16,11 @@
 #ifdef BSP_USING_SPI
 
 //#define DRV_DEBUG
-#define DBG_TAG              "drv.spi"
+#define DBG_TAG "drv.spi"
 #ifdef DRV_DEBUG
-    #define DBG_LVL               DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-    #define DBG_LVL               DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
@@ -28,32 +28,53 @@
 #define RA_SPI0_EVENT 0x01
 #define RA_SPI1_EVENT 0x02
 #define RA_SPI2_EVENT 0x03
-static struct rt_event complete_event = {0};
+static struct rt_event complete_event = { 0 };
 
 #if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
-#define R_SPI_Write R_SPI_B_Write
-#define R_SPI_Read  R_SPI_B_Read
-#define R_SPI_WriteRead R_SPI_B_WriteRead
-#define R_SPI_Open R_SPI_B_Open
+
+#define R_SPI_Write        R_SPI_B_Write
+#define R_SPI_Read         R_SPI_B_Read
+#define R_SPI_WriteRead    R_SPI_B_WriteRead
+#define R_SPI_Open         R_SPI_B_Open
 #define spi_extended_cfg_t spi_b_extended_cfg_t
+
+#elif defined(SOC_SERIES_R7SA6W1)
+
+#define R_SPI_Write        R_SPI_W_Write
+#define R_SPI_Read         R_SPI_W_Read
+#define R_SPI_WriteRead    R_SPI_W_WriteRead
+#define R_SPI_Open         R_SPI_W_Open
+#define spi_extended_cfg_t spi_w_extended_cfg_t
+
 #endif
 
-static struct ra_spi_handle spi_handle[] =
-{
+static struct ra_spi_handle spi_handle[] = {
 #ifdef BSP_USING_SPI0
-    {.bus_name = "spi0", .spi_ctrl_t = &g_spi0_ctrl, .spi_cfg_t = &g_spi0_cfg,},
+    {
+        .bus_name = "spi0",
+        .spi_ctrl_t = &g_spi0_ctrl,
+        .spi_cfg_t = &g_spi0_cfg,
+    },
 #endif
 
 #ifdef BSP_USING_SPI1
-    {.bus_name = "spi1", .spi_ctrl_t = &g_spi1_ctrl, .spi_cfg_t = &g_spi1_cfg,},
+    {
+        .bus_name = "spi1",
+        .spi_ctrl_t = &g_spi1_ctrl,
+        .spi_cfg_t = &g_spi1_cfg,
+    },
 #endif
 
 #ifdef BSP_USING_SPI2
-    {.bus_name = "spi2", .spi_ctrl_t = &g_spi2_ctrl, .spi_cfg_t = &g_spi2_cfg,},
+    {
+        .bus_name = "spi2",
+        .spi_ctrl_t = &g_spi2_ctrl,
+        .spi_cfg_t = &g_spi2_cfg,
+    },
 #endif
 };
 
-static struct ra_spi spi_config[sizeof(spi_handle) / sizeof(spi_handle[0])] = {0};
+static struct ra_spi spi_config[sizeof(spi_handle) / sizeof(spi_handle[0])] = { 0 };
 
 void spi0_callback(spi_callback_args_t *p_args)
 {
@@ -120,11 +141,17 @@ static spi_bit_width_t ra_width_shift(rt_uint8_t data_width)
 {
     spi_bit_width_t bit_width = SPI_BIT_WIDTH_8_BITS;
     if (data_width == 1)
+    {
         bit_width = SPI_BIT_WIDTH_8_BITS;
+    }
     else if (data_width == 2)
+    {
         bit_width = SPI_BIT_WIDTH_16_BITS;
+    }
     else if (data_width == 4)
+    {
         bit_width = SPI_BIT_WIDTH_32_BITS;
+    }
 
     return bit_width;
 }
@@ -135,7 +162,7 @@ static rt_err_t ra_write_message(struct rt_spi_device *device, const void *send_
     RT_ASSERT(send_buf != NULL);
     RT_ASSERT(len > 0);
     rt_err_t err = RT_EOK;
-    struct ra_spi *spi_dev =  rt_container_of(device->bus, struct ra_spi, bus);
+    struct ra_spi *spi_dev = rt_container_of(device->bus, struct ra_spi, bus);
 
     spi_bit_width_t bit_width = ra_width_shift(spi_dev->rt_spi_cfg_t->data_width);
     /**< send msessage */
@@ -156,7 +183,7 @@ static rt_err_t ra_read_message(struct rt_spi_device *device, void *recv_buf, co
     RT_ASSERT(recv_buf != NULL);
     RT_ASSERT(len > 0);
     rt_err_t err = RT_EOK;
-    struct ra_spi *spi_dev =  rt_container_of(device->bus, struct ra_spi, bus);
+    struct ra_spi *spi_dev = rt_container_of(device->bus, struct ra_spi, bus);
 
     spi_bit_width_t bit_width = ra_width_shift(spi_dev->rt_spi_cfg_t->data_width);
     /**< receive message */
@@ -177,7 +204,7 @@ static rt_err_t ra_write_read_message(struct rt_spi_device *device, struct rt_sp
     RT_ASSERT(message != NULL);
     RT_ASSERT(message->length > 0);
     rt_err_t err = RT_EOK;
-    struct ra_spi *spi_dev =  rt_container_of(device->bus, struct ra_spi, bus);
+    struct ra_spi *spi_dev = rt_container_of(device->bus, struct ra_spi, bus);
 
     spi_bit_width_t bit_width = ra_width_shift(spi_dev->rt_spi_cfg_t->data_width);
     /**< write and receive message */
@@ -204,7 +231,7 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     RT_ASSERT(configuration != NULL);
     rt_err_t err = RT_EOK;
 
-    struct ra_spi *spi_dev =  rt_container_of(device->bus, struct ra_spi, bus);
+    struct ra_spi *spi_dev = rt_container_of(device->bus, struct ra_spi, bus);
 
     /**< data_width : 1 -> 8 bits , 2 -> 16 bits, 4 -> 32 bits, default 32 bits*/
     rt_uint8_t data_width = configuration->data_width / 8;
@@ -212,18 +239,20 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     configuration->data_width = configuration->data_width / 8;
     spi_dev->rt_spi_cfg_t = configuration;
 
-    spi_extended_cfg_t spi_cfg = *(spi_extended_cfg_t *)spi_dev->ra_spi_handle_t->spi_cfg_t->p_extend;
+    spi_extended_cfg_t *spi_cfg = (spi_extended_cfg_t *)spi_dev->ra_spi_handle_t->spi_cfg_t->p_extend;
 
     /**< Configure Select Line */
     rt_pin_write(device->cs_pin, PIN_HIGH);
 
     /**< config bitrate */
 #if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
-    R_SPI_B_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, SPI_B_CLOCK_SOURCE_PCLK, &spi_cfg.spck_div);
+    R_SPI_B_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, SPI_B_CLOCK_SOURCE_PCLK, &spi_cfg->spck_div);
 #elif defined(SOC_SERIES_R9A07G0)
-    R_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, SPI_CLOCK_SOURCE_PCLKM, &spi_cfg.spck_div);
+    R_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, SPI_CLOCK_SOURCE_PCLKM, &spi_cfg->spck_div);
+#elif defined(SOC_SERIES_R7SA6W1)
+    R_SPI_W_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, &spi_cfg->spck_div, spi_dev->ra_spi_handle_t->spi_cfg_t->channel);
 #else
-    R_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, &spi_cfg.spck_div);
+    R_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, &spi_cfg->spck_div);
 #endif
 
     /**< init */
@@ -248,9 +277,13 @@ static rt_ssize_t ra_spixfer(struct rt_spi_device *device, struct rt_spi_message
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
+        {
             rt_pin_write(device->cs_pin, PIN_HIGH);
+        }
         else
+        {
             rt_pin_write(device->cs_pin, PIN_LOW);
+        }
     }
 
     if (message->length > 0)
@@ -268,22 +301,25 @@ static rt_ssize_t ra_spixfer(struct rt_spi_device *device, struct rt_spi_message
         else if (message->send_buf != RT_NULL && message->recv_buf != RT_NULL)
         {
             /**< send and receive message */
-            err =  ra_write_read_message(device, message);
+            err = ra_write_read_message(device, message);
         }
     }
 
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
+        {
             rt_pin_write(device->cs_pin, PIN_LOW);
+        }
         else
+        {
             rt_pin_write(device->cs_pin, PIN_HIGH);
+        }
     }
     return err;
 }
 
-static const struct rt_spi_ops ra_spi_ops =
-{
+static const struct rt_spi_ops ra_spi_ops = {
     .configure = ra_hw_spi_configure,
     .xfer = ra_spixfer,
 };

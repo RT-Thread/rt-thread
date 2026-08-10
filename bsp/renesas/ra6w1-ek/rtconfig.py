@@ -20,8 +20,8 @@ if  CROSS_TOOL == 'gcc':
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
-# BUILD = 'debug' 
-BUILD = 'release' 
+BUILD = 'debug' 
+# BUILD = 'release' 
 
 if PLATFORM == 'gcc':
     # toolchains

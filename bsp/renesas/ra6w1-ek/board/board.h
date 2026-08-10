@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2026, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -31,27 +31,8 @@ extern int __RAM_segment_used_end__;
 
 #define HEAP_END RA_SRAM_END
 
-#ifdef BSP_USING_GPIO_W
-#define R_IOPORT_Open                 R_GPIO_W_Open
-#define R_IOPORT_Close                R_GPIO_W_Close
-#define R_IOPORT_PinsCfg              R_GPIO_W_PinsCfg
-#define R_IOPORT_PinCfg               R_GPIO_W_PinCfg
-#define R_IOPORT_PinRead              R_GPIO_W_PinRead
-#define R_IOPORT_PinWrite             R_GPIO_W_PinWrite
-#define R_IOPORT_PortDirectionSet     R_GPIO_W_PortDirectionSet
-#define R_IOPORT_PortEventInputRead   R_GPIO_W_PortEventInputRead
-#define R_IOPORT_PortEventOutputWrite R_GPIO_W_PortEventOutputWrite
-#define R_IOPORT_PortRead             R_GPIO_W_PortRead
-#define R_IOPORT_PortWrite            R_GPIO_W_PortWrite
-
-#define g_ioport      g_gpio_w
-#define g_ioport_ctrl g_gpio_w_ctrl
-int rt_hw_pin_init(void);
-#endif
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-

@@ -9,7 +9,7 @@
  **********************************************************************************************************************/
 #include "r_adc_w_cfg.h"
 #include "r_adc_w.h"
-#include "../bsp/mcu/ra6w1/config/bsp_device_definitions.h"
+#include "../bsp_w/mcu/ra6w1/config/bsp_device_definitions.h"
 
 /**********************************************************************************************************************
  * Macro definitions

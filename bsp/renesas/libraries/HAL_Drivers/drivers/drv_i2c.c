@@ -17,31 +17,33 @@
 #ifdef BSP_USING_HW_I2C
 
 #define DRV_DEBUG
-#define LOG_TAG             "drv.hwi2c"
+#define LOG_TAG "drv.hwi2c"
 #include <drv_log.h>
 
 #include <hal_data.h>
 
-#ifndef BIT
-#define BIT(idx)        (1ul << (idx))
-#endif
+#define RA_SCI_EVENT_ABORTED     0x01
+#define RA_SCI_EVENT_RX_COMPLETE 0x02
+#define RA_SCI_EVENT_TX_COMPLETE 0x04
+#define RA_SCI_EVENT_ERROR       0x08
+#define RA_SCI_EVENT_ALL         0x0F
 
-#ifndef BITS
-#define BITS(b,e)       ((((uint32_t)-1)<<(b))&(((uint32_t)-1)>>(31-(e))))
-#endif
+#if defined(SOC_SERIES_R7FA2E2)
 
-#define RA_SCI_EVENT_ABORTED        BIT(0)
-#define RA_SCI_EVENT_RX_COMPLETE    BIT(1)
-#define RA_SCI_EVENT_TX_COMPLETE    BIT(2)
-#define RA_SCI_EVENT_ERROR          BIT(3)
-#define RA_SCI_EVENT_ALL            BITS(0,3)
+#define R_IIC_MASTER_Open            R_IIC_B_MASTER_Open
+#define R_IIC_MASTER_Write           R_IIC_B_MASTER_Write
+#define R_IIC_MASTER_Read            R_IIC_B_MASTER_Read
+#define R_IIC_MASTER_SlaveAddressSet R_IIC_B_MASTER_SlaveAddressSet
+#define R_IIC_MASTER_CallbackSet     R_IIC_B_MASTER_CallbackSet
 
-#ifdef SOC_SERIES_R7FA2E2
-#define R_IIC_MASTER_Open       R_IIC_B_MASTER_Open
-#define R_IIC_MASTER_Write      R_IIC_B_MASTER_Write
-#define R_IIC_MASTER_Read       R_IIC_B_MASTER_Read
-#define R_IIC_MASTER_SlaveAddressSet    R_IIC_B_MASTER_SlaveAddressSet
-#define R_IIC_MASTER_CallbackSet        R_IIC_B_MASTER_CallbackSet
+#elif defined(SOC_SERIES_R7SA6W1)
+
+#define R_IIC_MASTER_Open            R_I2C_MASTER_W_Open
+#define R_IIC_MASTER_Write           R_I2C_MASTER_W_Write
+#define R_IIC_MASTER_Read            R_I2C_MASTER_W_Read
+#define R_IIC_MASTER_SlaveAddressSet R_I2C_MASTER_W_SlaveAddressSet
+#define R_IIC_MASTER_CallbackSet     R_I2C_MASTER_W_CallbackSet
+
 #endif
 
 struct ra_i2c_handle
@@ -53,16 +55,27 @@ struct ra_i2c_handle
     struct rt_event event;
 };
 
-static struct ra_i2c_handle ra_i2cs[] =
-{
+static struct ra_i2c_handle ra_i2cs[] = {
 #ifdef BSP_USING_HW_I2C0
-    {.bus_name = "i2c0", .i2c_cfg = &g_i2c_master0_cfg, .i2c_ctrl = &g_i2c_master0_ctrl,},
+    {
+        .bus_name = "i2c0",
+        .i2c_cfg = &g_i2c_master0_cfg,
+        .i2c_ctrl = &g_i2c_master0_ctrl,
+    },
 #endif
 #ifdef BSP_USING_HW_I2C1
-    {.bus_name = "i2c1", .i2c_cfg = &g_i2c_master1_cfg, .i2c_ctrl = &g_i2c_master1_ctrl,},
+    {
+        .bus_name = "i2c1",
+        .i2c_cfg = &g_i2c_master1_cfg,
+        .i2c_ctrl = &g_i2c_master1_ctrl,
+    },
 #endif
 #ifdef BSP_USING_HW_I2C2
-    {.bus_name = "i2c2", .i2c_cfg = &g_i2c_master2_cfg, .i2c_ctrl = &g_i2c_master2_ctrl,},
+    {
+        .bus_name = "i2c2",
+        .i2c_cfg = &g_i2c_master2_cfg,
+        .i2c_ctrl = &g_i2c_master2_ctrl,
+    },
 #endif
 };
 
@@ -177,16 +190,15 @@ static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     return (rt_ssize_t)i;
 }
 
-static const struct rt_i2c_bus_device_ops ra_i2c_ops =
-{
-    .master_xfer        = ra_i2c_mst_xfer,
-    .slave_xfer         = RT_NULL,
-    .i2c_bus_control    = RT_NULL
+static const struct rt_i2c_bus_device_ops ra_i2c_ops = {
+    .master_xfer = ra_i2c_mst_xfer,
+    .slave_xfer = RT_NULL,
+    .i2c_bus_control = RT_NULL
 };
 
 int ra_hw_i2c_init(void)
 {
-    fsp_err_t err     = FSP_SUCCESS;
+    fsp_err_t err = FSP_SUCCESS;
     for (rt_uint32_t i = 0; i < sizeof(ra_i2cs) / sizeof(ra_i2cs[0]); i++)
     {
         ra_i2cs[i].bus.ops = &ra_i2c_ops;

@@ -26,6 +26,7 @@ src += Glob("./fsp/src/bsp_w/mcu/ra6w1/*.c")
 src += Glob("./fsp/src/r_gpio_w/*.c")
 src += Glob("./fsp/src/r_uart_w/*.c")
 src += Glob("./fsp/src/r_ext_irq_w/*.c")
+src += Glob("./fsp/src/r_dmac_w/*.c")
 
 if GetDepend(["BSP_USING_ONCHIP_RTC"]):
     src += Glob("./fsp/src/r_rtc_w/*.c")
@@ -36,7 +37,7 @@ if GetDepend(["BSP_USING_SPI"]):
 if GetDepend(["BSP_USING_ADC"]):
     src += Glob("./fsp/src/r_adc_w/*.c")
 
-if GetDepend(["BSP_USING_TIM"]):
+if GetDepend(["BSP_USING_TIM_W"]):
     src += Glob("./fsp/src/r_tim_w/*.c")
 
 if GetDepend(["BSP_USING_WDT"]):

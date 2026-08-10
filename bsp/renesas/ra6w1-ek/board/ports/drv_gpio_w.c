@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2026, RT-Thread Development Team
+ * Copyright (c) 2006-2025, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,15 +9,10 @@
  * 2026-07-15       rain                RA Wireless GPIO adapter
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
-#include <rthw.h>
-#include <rtdbg.h>
-#include "r_ext_irq_w.h"
-#include "common_data.h"
-#include "board.h"
+#include <drv_gpio_w.h>
 
-#ifdef BSP_USING_GPIO_W
+#ifdef RT_USING_PIN
+#ifdef R_EXT_IRQ_W_H
 
 #define DBG_TAG              "drv.gpio.wireless"
 #ifdef DRV_DEBUG
@@ -153,13 +148,6 @@ static void ra_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     if (!ra_wireless_pin_valid(pin))
     {
         LOG_E("invalid pin: 0x%x", pin);
-        return;
-    }
-
-    err = R_IOPORT_Open(&g_ioport_ctrl, &g_bsp_pin_cfg);
-    if ((err != FSP_SUCCESS) && (err != FSP_ERR_ALREADY_OPEN))
-    {
-        LOG_E("GPIO open failed");
         return;
     }
 
@@ -313,7 +301,6 @@ static rt_err_t ra_pin_attach_irq(struct rt_device *device, rt_base_t pin,
         rt_hw_interrupt_enable(level);
         return RT_EOK;
     }
-
     if (pin_irq_hdr_tab[irqx].pin != -1)
     {
         rt_hw_interrupt_enable(level);
@@ -438,9 +425,20 @@ const static struct rt_pin_ops _ra_pin_ops =
 
 int rt_hw_pin_init(void)
 {
+    fsp_err_t err;
+
     ra_irq_tab_init();
+    ra_w_pin_config_init();
+
+    err = R_IOPORT_Open(&g_ioport_ctrl, &g_bsp_pin_cfg);
+    if ((err != FSP_SUCCESS) && (err != FSP_ERR_ALREADY_OPEN))
+    {
+        LOG_E("GPIO open failed: %d", err);
+        return -RT_ERROR;
+    }
+
     return rt_device_pin_register("pin", &_ra_pin_ops, RT_NULL);
 }
-
-#endif /* BSP_USING_GPIO_W */
+#endif /* R_EXT_IRQ_W_H */
+#endif /* RT_USING_PIN */
 

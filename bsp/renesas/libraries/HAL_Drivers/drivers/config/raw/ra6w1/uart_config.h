@@ -23,8 +23,8 @@ extern "C" {
 #define UART0_CONFIG                 \
     {                                \
         .name = "uart0",             \
-        .p_api_ctrl = &g_uart1_ctrl, \
-        .p_cfg = &g_uart1_cfg,       \
+        .p_api_ctrl = &g_uart0_ctrl, \
+        .p_cfg = &g_uart0_cfg,       \
     }
 #endif /* UART0_CONFIG */
 #endif /* BSP_USING_UART0 */
@@ -34,8 +34,8 @@ extern "C" {
 #define UART1_CONFIG                 \
     {                                \
         .name = "uart1",             \
-        .p_api_ctrl = &g_uart2_ctrl, \
-        .p_cfg = &g_uart2_cfg,       \
+        .p_api_ctrl = &g_uart1_ctrl, \
+        .p_cfg = &g_uart1_cfg,       \
     }
 #endif /* UART1_CONFIG */
 #endif /* BSP_USING_UART1 */
@@ -45,8 +45,8 @@ extern "C" {
 #define UART2_CONFIG                 \
     {                                \
         .name = "uart2",             \
-        .p_api_ctrl = &g_uart3_ctrl, \
-        .p_cfg = &g_uart3_cfg,       \
+        .p_api_ctrl = &g_uart2_ctrl, \
+        .p_cfg = &g_uart2_cfg,       \
     }
 #endif /* UART2_CONFIG */
 #endif /* BSP_USING_UART2 */
