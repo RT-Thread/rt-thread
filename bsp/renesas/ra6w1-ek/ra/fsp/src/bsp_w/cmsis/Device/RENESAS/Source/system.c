@@ -241,6 +241,9 @@ void SystemInit (void)
 
     /* Initialize ELC events that will be used to trigger NVIC interrupts. */
     bsp_irq_cfg();
+
+    /* Call any BSP specific code. No arguments are needed so NULL is sent. */
+    bsp_init(NULL);
 }
 
 /*******************************************************************************************************************//**
@@ -413,7 +416,7 @@ extern int    _kill_r(void * _reent, int _pid, int _signal);
 extern int    _getpid_r(void * _reent);
 extern int    _gettimeofday_r(void * _reent, void * _tp, void * _tzp);
 
- #if 0
+ #if BSP_MCU_GROUP_RA6W1               // TIN-TODO: All these are required due to the printfs inside RA6W1 BSP. Are printfs accepted at BSP level?
 
 struct stat;
 
@@ -472,9 +475,8 @@ int _gettimeofday_r (void * _reent, void * _tp, void * _tzp)
 
     return -1;
 }
-#endif
 
- #if 0
+ #if BSP_MCU_GROUP_RA6W1               // TIN-TODO: All these are required due to the printfs inside RA6W1 BSP. Are printfs accepted at BSP level?
 
 /*******************************************************************************************************************//**
  * Stub to override _open_r(), to silence a link warning when using recent gcc
@@ -547,6 +549,7 @@ int _unlink_r (struct _reent * _reent, const char * _path)
 }
 
  #endif
+#endif
 #endif
 
 #if defined(__GNUC__) || defined(__ICCARM__)

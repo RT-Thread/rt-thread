@@ -10,12 +10,21 @@ menu "Hardware Drivers Config"
         menuconfig BSP_USING_UART
             bool "Enable UART"
             default y
+            select BSP_USING_GPIO_W
             select RT_USING_SERIAL
             if BSP_USING_UART
                 menuconfig BSP_USING_UART0
                     bool "Enable UART0"
                     default y
                     if BSP_USING_UART0
+                        config BSP_UART0_RX_PIN
+                            string "UART0 RX pin"
+                            default "p000"
+
+                        config BSP_UART0_TX_PIN
+                            string "UART0 TX pin"
+                            default "p001"
+
                         config BSP_UART0_RX_USING_DMA
                             bool "Enable UART0 RX DMA"
                             depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
@@ -39,6 +48,328 @@ menu "Hardware Drivers Config"
                             default 0
                     endif
 
+                menuconfig BSP_USING_UART1
+                    bool "Enable UART1"
+                    default n
+                    if BSP_USING_UART1
+                        config BSP_UART1_RX_PIN
+                            string "UART1 RX pin"
+                            default "p004"
+
+                        config BSP_UART1_TX_PIN
+                            string "UART1 TX pin"
+                            default "p005"
+
+                        config BSP_UART1_RX_USING_DMA
+                            bool "Enable UART1 RX DMA"
+                            depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART1_TX_USING_DMA
+                            bool "Enable UART1 TX DMA"
+                            depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART1_RX_BUFSIZE
+                            int "Set UART1 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART1_TX_BUFSIZE
+                            int "Set UART1 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
+
+                menuconfig BSP_USING_UART2
+                    bool "Enable UART2"
+                    default n
+                    if BSP_USING_UART2
+                        config BSP_UART2_RX_PIN
+                            string "UART2 RX pin"
+                            default "p110"
+
+                        config BSP_UART2_TX_PIN
+                            string "UART2 TX pin"
+                            default "p111"
+
+                        config BSP_UART2_RX_USING_DMA
+                            bool "Enable UART2 RX DMA"
+                            depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART2_TX_USING_DMA
+                            bool "Enable UART2 TX DMA"
+                            depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                            default n
+
+                        config BSP_UART2_RX_BUFSIZE
+                            int "Set UART2 RX buffer size"
+                            range 64 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 256
+
+                        config BSP_UART2_TX_BUFSIZE
+                            int "Set UART2 TX buffer size"
+                            range 0 65535
+                            depends on RT_USING_SERIAL_V2
+                            default 0
+                    endif
             endif
+
+        menuconfig BSP_USING_SPI
+            bool "Enable SPI BUS"
+            default n
+            select BSP_USING_GPIO_W
+            select RT_USING_SPI
+            if BSP_USING_SPI
+                config BSP_USING_SPI0
+                    bool "Enable SPI0 BUS"
+                    default n
+                    if BSP_USING_SPI0
+                        config BSP_SPI0_DI_PIN
+                            string "SPI0 DI pin"
+                            default "p101"
+
+                        config BSP_SPI0_DO_PIN
+                            string "SPI0 DO pin"
+                            default "p102"
+
+                        config BSP_SPI0_CLK_PIN
+                            string "SPI0 CLK pin"
+                            default "p100"
+
+                        config BSP_SPI0_CSN0_PIN
+                            string "SPI0 CSN0 pin"
+                            default "p103"
+                    endif
+
+                config BSP_USING_SPI1
+                    bool "Enable SPI1 BUS"
+                    default n
+                    if BSP_USING_SPI1
+                        config BSP_SPI1_DI_PIN
+                            string "SPI1 DI pin"
+                            default "p113"
+
+                        config BSP_SPI1_DO_PIN
+                            string "SPI1 DO pin"
+                            default "p114"
+
+                        config BSP_SPI1_CLK_PIN
+                            string "SPI1 CLK pin"
+                            default "p112"
+
+                        config BSP_SPI1_CSN0_PIN
+                            string "SPI1 CSN0 pin"
+                            default "p115"
+                    endif
+            endif
+
+
+        menuconfig BSP_USING_HW_I2C
+            bool "Enable hardware I2C bus"
+            default n
+            select BSP_USING_GPIO_W
+            select RT_USING_I2C
+            if BSP_USING_HW_I2C
+                config BSP_USING_HW_I2C0
+                    bool "Enable I2C0 bus"
+                    default n
+                    if BSP_USING_HW_I2C0
+                        config BSP_I2C0_SCL_PIN
+                            string "I2C0 SCL pin"
+                            default "p004"
+
+                        config BSP_I2C0_SDA_PIN
+                            string "I2C0 SDA pin"
+                            default "p005"
+                    endif
+
+                config BSP_USING_HW_I2C1
+                    bool "Enable I2C1 bus"
+                    default n
+                    if BSP_USING_HW_I2C1
+                        config BSP_I2C1_SCL_PIN
+                            string "I2C1 SCL pin"
+                            default "p006"
+
+                        config BSP_I2C1_SDA_PIN
+                            string "I2C1 SDA pin"
+                            default "p007"
+                    endif
+            endif
+
+        menuconfig BSP_USING_ADC
+            bool "Enable ADC"
+            select BSP_USING_GPIO_W
+            select RT_USING_ADC
+            default n
+            if BSP_USING_ADC
+                config BSP_USING_ADC_PIN_NUM
+                    int "ADC channel count"
+                    range 1 4
+                    default 4
+            endif
+
+        menuconfig BSP_USING_TIM_W
+            bool "Enable timer driver"
+            select RT_USING_CLOCK_TIME
+            default n
+            if BSP_USING_TIM_W
+                config BSP_USING_TIM0
+                    bool "Enable timer0"
+                    default n
+
+                config BSP_USING_TIM1
+                    bool "Enable timer1"
+                    default n
+
+                config BSP_USING_TIM2
+                    bool "Enable timer2"
+                    default n
+
+                config BSP_USING_TIM3
+                    bool "Enable timer3"
+                    default n
+
+                config BSP_USING_TIM4
+                    bool "Enable timer4"
+                    default n
+
+                config BSP_USING_TIM5
+                    bool "Enable timer5"
+                    default n
+
+                config BSP_USING_TIM6
+                    bool "Enable timer6"
+                    default n
+
+                config BSP_USING_TIM7
+                    bool "Enable timer7"
+                    default n
+            endif
+
+        menuconfig BSP_USING_PWM_W
+            bool "Enable PWM driver"
+            select BSP_USING_GPIO_W
+            select RT_USING_PWM
+            select BSP_USING_TIM_W
+            default n
+            if BSP_USING_PWM_W
+                config BSP_USING_PWM0
+                    bool "Enable PWM0"
+                    select BSP_USING_TIM0
+                    default n
+                    if BSP_USING_PWM0
+                        config BSP_PWM0_PIN
+                            string "PWM0 pin"
+                            default "p004"
+                    endif
+
+                config BSP_USING_PWM1
+                    bool "Enable PWM1"
+                    select BSP_USING_TIM1
+                    default n
+                    if BSP_USING_PWM1
+                        config BSP_PWM1_PIN
+                            string "PWM1 pin"
+                            default "p005"
+                    endif
+
+                config BSP_USING_PWM2
+                    bool "Enable PWM2"
+                    select BSP_USING_TIM2
+                    default n
+                    if BSP_USING_PWM2
+                        config BSP_PWM2_PIN
+                            string "PWM2 pin"
+                            default "p006"
+                    endif
+
+                config BSP_USING_PWM3
+                    bool "Enable PWM3"
+                    select BSP_USING_TIM3
+                    default n
+                    if BSP_USING_PWM3
+                        config BSP_PWM3_PIN
+                            string "PWM3 pin"
+                            default "p007"
+                    endif
+
+                config BSP_USING_PWM4
+                    bool "Enable PWM4"
+                    select BSP_USING_TIM4
+                    default n
+                    if BSP_USING_PWM4
+                        config BSP_PWM4_PIN
+                            string "PWM4 pin"
+                            default "p100"
+                    endif
+
+                config BSP_USING_PWM5
+                    bool "Enable PWM5"
+                    select BSP_USING_TIM5
+                    default n
+                    if BSP_USING_PWM5
+                        config BSP_PWM5_PIN
+                            string "PWM5 pin"
+                            default "p101"
+                    endif
+
+                config BSP_USING_PWM6
+                    bool "Enable PWM6"
+                    select BSP_USING_TIM6
+                    default n
+                    if BSP_USING_PWM6
+                        config BSP_PWM6_PIN
+                            string "PWM6 pin"
+                            default "p102"
+                    endif
+
+                config BSP_USING_PWM7
+                    bool "Enable PWM7"
+                    select BSP_USING_TIM7
+                    default n
+                    if BSP_USING_PWM7
+                        config BSP_PWM7_PIN
+                            string "PWM7 pin"
+                            default "p103"
+                    endif
+            endif
+
+        config BSP_USING_QSPI
+            bool "Enable QSPI driver"
+            select BSP_USING_GPIO_W
+            default n
+
+        config BSP_USING_ONCHIP_RTC
+            bool "Enable On-chip RTC"
+            select RT_USING_RTC
+            default n
+
+        config BSP_USING_WDT
+            bool "Enable Watchdog Timer"
+            select RT_USING_WDT
+            default n
+
+    endmenu
+
+    menu "On-chip Peripheral Port"
+
+        config BSP_USING_OSPI_FLASH
+            bool "Enable OSPI external flash"
+            select RT_USING_FAL
+            select FAL_PART_HAS_TABLE_CFG
+            default n
+
+        config BSP_USING_QSPI_PSRAM
+            bool "Enable QSPI PSRAM"
+            select BSP_USING_QSPI
+            select RT_USING_MEMHEAP
+            default n
+
     endmenu 
 endmenu

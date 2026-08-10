@@ -9,6 +9,18 @@ CPPPATH = [cwd]
 if GetDepend(["BSP_USING_GPIO_W"]):
     src += ["drv_gpio_w.c"]
 
+if GetDepend(["BSP_USING_TIM_W"]):
+    src += ["drv_timer_w.c"]
+
+if GetDepend(["BSP_USING_PWM_W"]):
+    src += ["drv_pwm_w.c"]
+
+if GetDepend(["BSP_USING_QSPI_PSRAM"]):
+    src += ["ra6w1_qspi_psram.c"]
+
+if GetDepend(["BSP_USING_OSPI_FLASH"]):
+    src += ["ra6w1_ospi_flash.c"]
+
 objs = DefineGroup('Port', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)

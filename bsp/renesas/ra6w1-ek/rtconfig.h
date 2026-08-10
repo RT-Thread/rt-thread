@@ -422,9 +422,15 @@
 #define BSP_USING_GPIO_W
 #define BSP_USING_UART
 #define BSP_USING_UART0
+#define BSP_UART0_RX_PIN "p000"
+#define BSP_UART0_TX_PIN "p001"
 #define BSP_UART0_RX_BUFSIZE 256
 #define BSP_UART0_TX_BUFSIZE 0
 /* end of On-chip Peripheral Drivers */
+
+/* On-chip Peripheral Port */
+
+/* end of On-chip Peripheral Port */
 /* end of Hardware Drivers Config */
 
 #endif

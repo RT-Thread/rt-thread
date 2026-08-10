@@ -19,7 +19,7 @@
 #include "r_ospi_w_cfg.h"
 #include "r_spi_flash_api.h"
 
-#include "../../src/bsp/mcu/ra6w1/sdk_defs.h"
+#include "../../src/bsp_w/mcu/ra6w1/sdk_defs.h"
 #if OSPI_W_CFG_DMAC_SUPPORT_ENABLE
  #include "r_transfer_api.h"
 #endif
