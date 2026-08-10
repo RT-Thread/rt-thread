@@ -93,8 +93,12 @@ rt_inline int pmbr_part_valid(gpt_mbr_record *part)
  */
 static int is_pmbr_valid(legacy_mbr *mbr, rt_size_t total_sectors)
 {
-    rt_uint32_t sz   = 0;
-    int         part = 0, ret = 0; /* invalid by default */
+    rt_uint32_t sz        = 0;
+    rt_uint32_t disk_size;
+    int         part      = 0, ret = 0; /* invalid by default */
+
+    disk_size = total_sectors - 1 > RT_UINT32_MAX ?
+            RT_UINT32_MAX : (rt_uint32_t)(total_sectors - 1);
 
     if (!mbr || rt_le16_to_cpu(mbr->signature) != MSDOS_MBR_SIGNATURE)
     {
@@ -148,10 +152,10 @@ _check_hybrid:
     {
         sz = rt_le32_to_cpu(mbr->partition_record[part].size_in_lba);
 
-        if (sz != (rt_uint32_t)total_sectors - 1 && sz != 0xffffffff)
+        if (sz != disk_size && sz != RT_UINT32_MAX)
         {
             LOG_W("GPT: mbr size in lba (%u) different than whole disk (%u)",
-                  sz, rt_min_t(rt_uint32_t, total_sectors - 1, 0xffffffff));
+                  sz, disk_size);
         }
     }
 

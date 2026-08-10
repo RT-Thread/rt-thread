@@ -496,7 +496,7 @@ static uint32_t sdif_prepar_emmc_command_flags(struct rt_mmcsd_req *req)
         case SEND_EXT_CSD: /* MMC_SEND_EXT_CSD 8 */
             flags |= FSDIF_MMC_RSP_SPI_R1 | FSDIF_MMC_RSP_R1 | FSDIF_MMC_CMD_ADTC;
             break;
-        case SWITCH: /* MMC_SWITCH 6 */
+        case MMC_SWITCH: /* MMC_SWITCH 6 */
             flags |= FSDIF_MMC_CMD_AC | FSDIF_MMC_RSP_SPI_R1B | FSDIF_MMC_RSP_R1B;
             break;
         case SEND_STATUS: /* MMC_SEND_STATUS 13 */

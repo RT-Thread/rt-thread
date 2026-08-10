@@ -15,13 +15,19 @@
 #include "blk_dev.h"
 #include "blk_dfs.h"
 
+#ifdef RT_USING_DFS
+#include <dfs_fs.h>
+#endif
+
 static void blk_remove_all(struct rt_blk_disk *disk)
 {
-    struct rt_blk_device *blk, *blk_next;
+    rt_list_t *node, *next;
+    struct rt_blk_device *blk;
 
     /* Remove all partitions */
-    rt_list_for_each_entry_safe(blk, blk_next, &disk->part_nodes, list)
+    rt_list_for_each_safe(node, next, &disk->part_nodes)
     {
+        blk = rt_list_entry(node, struct rt_blk_device, list);
         disk_remove_blk_dev(blk, RT_TRUE);
     }
 }
@@ -427,6 +433,7 @@ rt_ssize_t rt_blk_disk_get_logical_block_size(struct rt_blk_disk *disk)
 static int blk_dfs_mnt_table(void)
 {
     rt_ubase_t level;
+    rt_list_t *node, *part_node;
     struct rt_object *obj;
     struct rt_device *dev;
     struct rt_blk_disk *disk;
@@ -435,8 +442,9 @@ static int blk_dfs_mnt_table(void)
 
     level = rt_hw_interrupt_disable();
 
-    rt_list_for_each_entry(obj, &info->object_list, list)
+    rt_list_for_each(node, &info->object_list)
     {
+        obj = rt_list_entry(node, struct rt_object, list);
         dev = rt_container_of(obj, struct rt_device, parent);
 
         if (dev->type != RT_Device_Class_Block)
@@ -457,8 +465,9 @@ static int blk_dfs_mnt_table(void)
             continue;
         }
 
-        rt_list_for_each_entry(blk_dev, &disk->part_nodes, list)
+        rt_list_for_each(part_node, &disk->part_nodes)
         {
+            blk_dev = rt_list_entry(part_node, struct rt_blk_device, list);
             dfs_mount_device(&blk_dev->parent);
         }
     }
@@ -471,6 +480,17 @@ INIT_ENV_EXPORT(blk_dfs_mnt_table);
 #endif /* RT_USING_DFS_MNTTABLE */
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_MSH)
+static const char *blk_get_mounted_path(struct rt_device *device)
+{
+#ifdef RT_USING_DFS
+    return dfs_filesystem_get_mounted_path(device);
+#else
+    RT_UNUSED(device);
+
+    return RT_NULL;
+#endif
+}
+
 const char *convert_size(struct rt_device_blk_geometry *geome,
         rt_size_t sector_count, rt_size_t *out_cap, rt_size_t *out_minor)
 {
@@ -502,6 +522,7 @@ static int list_blk(int argc, char**argv)
 {
     rt_ubase_t level;
     rt_size_t cap, minor;
+    rt_list_t *node, *part_node;
     const char *size_name;
     struct rt_object *obj;
     struct rt_device *dev;
@@ -514,8 +535,9 @@ static int list_blk(int argc, char**argv)
 
     rt_kprintf("%-*.s MAJ:MIN RM SIZE\tRO TYPE MOUNTPOINT\n", RT_NAME_MAX, "NAME");
 
-    rt_list_for_each_entry(obj, &info->object_list, list)
+    rt_list_for_each(node, &info->object_list)
     {
+        obj = rt_list_entry(node, struct rt_object, list);
         dev = rt_container_of(obj, struct rt_device, parent);
 
         if (dev->type != RT_Device_Class_Block)
@@ -538,7 +560,7 @@ static int list_blk(int argc, char**argv)
         size_name = convert_size(&geome, geome.sector_count, &cap, &minor);
         const char *mnt_path;
 
-        mnt_path = dfs_filesystem_get_mounted_path(&disk->parent);
+        mnt_path = blk_get_mounted_path(&disk->parent);
         rt_kprintf("%-*.s %3u.%-3u  %u %u.%u%s\t%u  disk %s\n",
                 RT_NAME_MAX, to_disk_name(disk),
         #ifdef RT_USING_DM
@@ -550,11 +572,12 @@ static int list_blk(int argc, char**argv)
                 disk->max_partitions != RT_BLK_PARTITION_NONE ? "\b" :
                     (mnt_path ? mnt_path : "\b"));
 
-        rt_list_for_each_entry(blk_dev, &disk->part_nodes, list)
+        rt_list_for_each(part_node, &disk->part_nodes)
         {
+            blk_dev = rt_list_entry(part_node, struct rt_blk_device, list);
             size_name = convert_size(&geome, blk_dev->sector_count, &cap, &minor);
 
-            mnt_path = dfs_filesystem_get_mounted_path(&blk_dev->parent);
+            mnt_path = blk_get_mounted_path(&blk_dev->parent);
             rt_kprintf("%c--%-*.s %3u.%-3u  %u %u.%u%s\t%u  part %s\n",
                     blk_dev->list.next != &disk->part_nodes ? '|' : '`',
                     RT_NAME_MAX - 3, to_blk_name(blk_dev),

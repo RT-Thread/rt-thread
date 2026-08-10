@@ -8,12 +8,15 @@
  * 2023-08-08     GuEe-GUI     first version
  */
 
+#include <rtthread.h>
+
 #include "blk_dfs.h"
 
-#include <dfs_file.h>
 #include <drivers/classes/block.h>
 
 #if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_DFS_V2)
+#include <dfs_file.h>
+
 struct blk_fops_data
 {
     struct rt_device_blk_geometry geometry;
@@ -55,7 +58,8 @@ static int blk_fops_ioctl(struct dfs_file *file, int cmd, void *arg)
 
 static ssize_t blk_fops_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 {
-    void *rbuf;
+    rt_uint8_t *rbuf;
+    rt_uint8_t *read_buf = buf;
     rt_ssize_t res = 0;
     int bytes_per_sector, blk_pos, first_offs, rsize = 0;
     struct rt_device *dev = file->vnode->data;
@@ -82,7 +86,7 @@ static ssize_t blk_fops_read(struct dfs_file *file, void *buf, size_t count, off
             {
                 rsize = count;
             }
-            rt_memcpy(buf, rbuf + first_offs, rsize);
+            rt_memcpy(read_buf, rbuf + first_offs, rsize);
             ++blk_pos;
 
             /*
@@ -99,12 +103,12 @@ static ssize_t blk_fops_read(struct dfs_file *file, void *buf, size_t count, off
 
                 if (count - rsize >= bytes_per_sector)
                 {
-                    rt_memcpy(buf + rsize, rbuf, bytes_per_sector);
+                    rt_memcpy(read_buf + rsize, rbuf, bytes_per_sector);
                     rsize += bytes_per_sector;
                 }
                 else
                 {
-                    rt_memcpy(buf + rsize, rbuf, count - rsize);
+                    rt_memcpy(read_buf + rsize, rbuf, count - rsize);
                     rsize = count;
                 }
             }
@@ -120,7 +124,8 @@ static ssize_t blk_fops_read(struct dfs_file *file, void *buf, size_t count, off
 
 static ssize_t blk_fops_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
 {
-    void *rbuf;
+    rt_uint8_t *rbuf;
+    const rt_uint8_t *write_buf = buf;
     rt_ssize_t res = 0;
     int bytes_per_sector, blk_pos, first_offs, wsize = 0;
     struct rt_device *dev = file->vnode->data;
@@ -150,7 +155,7 @@ static ssize_t blk_fops_write(struct dfs_file *file, const void *buf, size_t cou
 
             if (res == 1)
             {
-                rt_memcpy(rbuf + first_offs, buf, wsize);
+                rt_memcpy(rbuf + first_offs, write_buf, wsize);
                 res = rt_device_write(dev, blk_pos, (const void *)rbuf, 1);
 
                 if (res == 1)
@@ -174,7 +179,8 @@ _goon:
     */
     if ((count - wsize) / bytes_per_sector != 0)
     {
-        res = rt_device_write(dev, blk_pos, buf + wsize, (count - wsize) / bytes_per_sector);
+        res = rt_device_write(dev, blk_pos, write_buf + wsize,
+                (count - wsize) / bytes_per_sector);
 
         if (res != (count - wsize) / bytes_per_sector)
         {
@@ -198,7 +204,7 @@ _goon:
 
             if (res == 1)
             {
-                rt_memcpy(rbuf, buf + wsize, count - wsize);
+                rt_memcpy(rbuf, write_buf + wsize, count - wsize);
                 res = rt_device_write(dev, blk_pos, (const void *)rbuf, 1);
 
                 if (res == 1)

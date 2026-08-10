@@ -344,7 +344,7 @@ static int mmc_switch(struct rt_mmcsd_card *card, rt_uint8_t set,
     struct rt_mmcsd_host *host = card->host;
     struct rt_mmcsd_cmd cmd = { 0 };
 
-    cmd.cmd_code = SWITCH;
+    cmd.cmd_code = MMC_SWITCH;
     cmd.arg = (MMC_SWITCH_MODE_WRITE_BYTE << 24) |
               (index << 16) | (value << 8) | set;
     cmd.flags = RESP_R1B | CMD_AC;

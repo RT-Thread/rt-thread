@@ -744,7 +744,7 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     err = mmcsd_read_sd_status(card, sd_status.status_words);
     if (err)
         goto err1;
-    if ((sd_status.fields.uhs_speed_grade > 0) && (ocr & VDD_165_195))
+    if ((RT_SD_STATUS_FIELD(sd_status, uhs_speed_grade) > 0) && (ocr & VDD_165_195))
     {
         /* Assume the card supports all UHS-I modes because we cannot find any mainstreaming card
          * that can support only part of the following modes.

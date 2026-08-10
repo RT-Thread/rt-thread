@@ -721,9 +721,9 @@ rt_err_t mmcsd_send_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode, rt_er
     int size;
     rt_uint8_t *data_buf;
     const rt_uint8_t *tuning_block_pattern;
-    struct rt_mmcsd_req req = {};
-    struct rt_mmcsd_cmd cmd = {};
-    struct rt_mmcsd_data data = {};
+    struct rt_mmcsd_req req;
+    struct rt_mmcsd_cmd cmd;
+    struct rt_mmcsd_data data;
     struct rt_mmcsd_io_cfg *io_cfg = &host->io_cfg;
 
     if (io_cfg->bus_width == MMCSD_BUS_WIDTH_8)
@@ -801,7 +801,7 @@ out_free:
 
 rt_err_t mmcsd_send_abort_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode)
 {
-    struct rt_mmcsd_cmd cmd = {};
+    struct rt_mmcsd_cmd cmd = {0};
 
     /*
      * eMMC specification specifies that CMD12 can be used to stop a tuning

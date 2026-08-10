@@ -110,8 +110,19 @@ union rt_sd_status {
         rt_uint32_t : 7;
         rt_uint32_t secured_mode: 1;
         rt_uint32_t data_bus_width: 2;
+    /* Arm Compiler 5 does not support anonymous structs in strict C99 mode. */
+#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000)
     } fields;
+#else
+    };
+#endif
 };
+
+#if defined(__ARMCC_VERSION) && (__ARMCC_VERSION < 6000000)
+#define RT_SD_STATUS_FIELD(status, field) ((status).fields.field)
+#else
+#define RT_SD_STATUS_FIELD(status, field) ((status).field)
+#endif
 
 /*
  * SD Speed Class
