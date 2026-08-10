@@ -899,8 +899,9 @@ static int imxrt_putc(struct rt_serial_device *serial, char ch)
 
     LPUART_WriteByte(uart->uart_base, ch);
     while (!(LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag))
-        ;
-
+    {
+        /* wait until transmit data register is empty */
+    }
     return 1;
 }
 
