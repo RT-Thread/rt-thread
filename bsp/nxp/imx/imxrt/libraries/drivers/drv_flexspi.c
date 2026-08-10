@@ -258,7 +258,7 @@ static void flexspi_clock_init(clock_root_t root, uint8_t src, uint8_t div)
     CLOCK_SetRootClockMux(root, src);
 }
 
-FLEXSPI_RAM_CODE static int rt_hw_imxrt_flexspi_init(void)
+static int rt_hw_imxrt_flexspi_init(void)
 {
     flexspi_config_t config;
     FLEXSPI_Type *base;

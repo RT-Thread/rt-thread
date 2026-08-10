@@ -60,7 +60,7 @@
 #if defined(__heap_size__)
   #define heap_size                    __heap_size__
 #else
-  #define heap_size                    0x04000
+  #define heap_size                    0x08000
 #endif
 
 /* Target specific definition, code & data allocation */
@@ -73,10 +73,10 @@
 #define m_qacode_start                 m_itcm_start + m_ram_vector_table_size
 #define m_qadata_start                 m_dtcm_start
 #define m_qacode_size                  0
-#define m_qadata_size                  0
+#define m_qadata_size                  m_dtcm_size
 
 #define m_text_size                    m_itcm_size
-#define m_data_size                    m_dtcm_size
+#define m_data_size                    0x00600000
 #if defined(__multicore__)
 #define m_ncache_size                  0x20000         /* m_ncache_size must be 2^N */
 #define m_ocram1_size_for_cm7          0x40000
@@ -84,12 +84,11 @@
 #define m_ncache_size                  0x40000         /* m_ncache_size must be 2^N */
 #define m_ocram1_size_for_cm7          m_ocram1_size
 #endif
-
 #define m_shmem_size                   m_ocram2_size   /* m_shmem_size must be 2^N */
 
 #define m_text_start                   m_itcm_start
 #define m_interrupts_start             m_text_start
-#define m_data_start                   m_dtcm_start
+#define m_data_start                   m_hyperram_start
 #define m_ncache_start                 m_ocram1_start + m_ocram1_size - m_ncache_size
 #define m_heap_start                   m_ocram1_start + m_ocram1_size - m_ocram1_size_for_cm7
 
@@ -122,14 +121,27 @@ LR_m_text   m_text_start   m_text_size
   {
   }
 
-  ER_m_QuickAccessData    m_qadata_start                     EMPTY         m_qadata_size
+  ER_m_QuickAccessData    m_qadata_start                                   m_qadata_size
   {
+    .ANY (DataQuickAccess)
   }
 
   RW_m_data               m_data_start                                     m_data_size-stack_size
   {
     .ANY (+RW +ZI)
-    .ANY (DataQuickAccess)
+  }
+
+  ; cache line size is 32 bytes
+  RW_m_CacheLineData      +0             ALIGN 32                          (m_data_size-stack_size-ImageLength(RW_m_data))/32*32
+  {
+    * (CacheLineData)
+    * (CacheLineData.init)
+  }
+
+  ; auxiliary to make sure RW_m_CacheLineData end-aligned CACHE LINE SIZE
+  ; DO NOT insert any region between RW_m_CacheLineData and RW_m_CacheLineData_Aux
+  RW_m_CacheLineData_Aux  +0             ALIGN 32            EMPTY         0
+  {
   }
 
   ; ncache data

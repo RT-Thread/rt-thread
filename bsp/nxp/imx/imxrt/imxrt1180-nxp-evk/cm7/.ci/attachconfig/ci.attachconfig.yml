@@ -12,9 +12,28 @@ Peripheral.hyperflash_dma:
     - CONFIG_BSP_USING_FLEXSPI=y
     - CONFIG_BSP_USING_FLEXSPI1=y
     - CONFIG_BSP_USING_OSPI_FLASH=y
+    - CONFIG_BSP_USING_GPIO=y
 Peripheral.hyperflash:
   <<: *scons
   kconfig:
     - CONFIG_BSP_USING_FLEXSPI=y
     - CONFIG_BSP_USING_FLEXSPI1=y
     - CONFIG_BSP_USING_OSPI_FLASH=y
+    - CONFIG_BSP_USING_GPIO=y
+Peripheral.qspi_flash_FS:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_QSPI_FLASH_FS=y
+Peripheral.usb_device:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_USB=y
+Peripheral.netc:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_ETH=y
+    - CONFIG_BSP_USING_GPIO=y
+Peripheral.multicore:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USE_MULTICORE=y

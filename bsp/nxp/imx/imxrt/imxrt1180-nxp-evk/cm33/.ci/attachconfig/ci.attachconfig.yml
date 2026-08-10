@@ -5,7 +5,7 @@ scons.args: &scons
 # ------ component CI ------
 
 # ------ Peripheral CI ------
-Peripheral.flash_fs:
+Peripheral.qspi_flash_FS:
   <<: *scons
   kconfig:
     - CONFIG_BSP_USING_QSPI_FLASH_FS=y
@@ -23,3 +23,11 @@ Peripheral.lpadc1:
     - CONFIG_RT_USING_ADC=y
     - CONFIG_BSP_USING_LPADC=y
     - CONFIG_BSP_USING_LPADC1=y
+Peripheral.usb_device:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_USB=y
+Peripheral.multicore:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USE_MULTICORE=y

@@ -104,7 +104,7 @@ rt_inline int _addr_safe(rt_uint32_t offset, rt_size_t size)
 /*
  * _nor_write_enable - send WREN command (SDK: flexspi_nor_write_enable)
  */
-QSPI_RAM_CODE static status_t _nor_write_enable(rt_uint32_t base_addr)
+static status_t _nor_write_enable(rt_uint32_t base_addr)
 {
     flexspi_transfer_t xfer;
 
@@ -123,7 +123,7 @@ QSPI_RAM_CODE static status_t _nor_write_enable(rt_uint32_t base_addr)
  * W25Q128JWSIQ SR1[0] = WIP (Write In Progress)
  * FLASH_BUSY_STATUS_POL = 1: bit set means busy
  */
-QSPI_RAM_CODE static status_t _nor_wait_busy(void)
+static status_t _nor_wait_busy(void)
 {
     rt_uint32_t        read_val = 0;
     rt_uint32_t        timeout  = 0;
@@ -172,7 +172,7 @@ QSPI_RAM_CODE static status_t _nor_wait_busy(void)
  *
  * @addr: Flash internal offset (not AHB address)
  */
-QSPI_RAM_CODE static status_t _nor_erase_sector(rt_uint32_t addr)
+static status_t _nor_erase_sector(rt_uint32_t addr)
 {
     rt_base_t          level;
     status_t           status;
@@ -218,7 +218,7 @@ QSPI_RAM_CODE static status_t _nor_erase_sector(rt_uint32_t addr)
  * Uses PAGEPROGRAM_QUAD (0x32, 1-1-4 mode) for faster write speed,
  * consistent with the SDK example. src must be a 4-byte aligned SRAM buffer.
  */
-QSPI_RAM_CODE static status_t _nor_page_program(rt_uint32_t addr, const rt_uint32_t *src)
+static status_t _nor_page_program(rt_uint32_t addr, const rt_uint32_t *src)
 {
     rt_base_t          level;
     status_t           status;
@@ -407,7 +407,7 @@ void *rt_qspi_flash_mmap(rt_uint32_t offset, rt_size_t size)
  *
  * Data path: src -> s_write_buf (SRAM) -> Flash
  */
-QSPI_RAM_CODE int rt_qspi_flash_write(rt_uint32_t offset, const rt_uint8_t *buf, rt_size_t size)
+int rt_qspi_flash_write(rt_uint32_t offset, const rt_uint8_t *buf, rt_size_t size)
 {
     rt_size_t written = 0;
     status_t  status;
@@ -473,7 +473,7 @@ QSPI_RAM_CODE int rt_qspi_flash_write(rt_uint32_t offset, const rt_uint8_t *buf,
  * offset and size must be sector-aligned (4KB).
  * Only the filesystem partition is allowed to be erased (_addr_safe guard).
  */
-QSPI_RAM_CODE int rt_qspi_flash_erase(rt_uint32_t offset, rt_size_t size)
+int rt_qspi_flash_erase(rt_uint32_t offset, rt_size_t size)
 {
     rt_uint32_t addr;
     rt_uint32_t addr_end;

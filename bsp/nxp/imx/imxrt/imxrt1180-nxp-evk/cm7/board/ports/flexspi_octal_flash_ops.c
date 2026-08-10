@@ -8,7 +8,7 @@
 #include "flexspi_port.h"
 #include "rtconfig.h"
 
-#ifdef BSP_USING_FLEXSPI1
+#ifdef BSP_USING_OSPI_FLASH
 
 #ifdef BSP_USING_DMA
 #include "fsl_flexspi_edma.h"

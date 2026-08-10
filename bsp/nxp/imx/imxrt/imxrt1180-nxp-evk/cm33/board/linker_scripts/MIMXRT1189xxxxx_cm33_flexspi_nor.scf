@@ -78,7 +78,7 @@
 #if defined(__heap_size__)
   #define heap_size                    __heap_size__
 #else
-  #define heap_size                    0x20000
+  #define heap_size                    0x08000
 #endif
 
 /* Target specific definition, code & data allocation */
@@ -173,8 +173,10 @@ LR_m_text   m_text_start   m_text_size
 
   ER_m_QuickAccessCode    m_qacode_start                                   m_qacode_size
   {
-    fsl_flexspi.o (+RO-CODE)
     .ANY (CodeQuickAccess)
+    fsl_flexspi.o (+RO-CODE)
+    drv_flexspi_nor_flash.o (+RO-CODE)
+    drv_flexspi.o (+RO-CODE)
   }
 
   ER_m_QuickAccessData    m_qadata_start                     EMPTY         m_qadata_size

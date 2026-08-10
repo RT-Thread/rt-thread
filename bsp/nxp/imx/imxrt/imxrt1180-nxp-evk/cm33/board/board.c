@@ -13,8 +13,8 @@
 #include "fsl_common.h"
 #include "board.h"
 #if defined(SDK_NETC_USED) && SDK_NETC_USED
-    #include "fsl_netc_soc.h"
-    #include "fsl_netc_ierb.h"
+#include "fsl_netc_soc.h"
+#include "fsl_netc_ierb.h"
 #endif /* SDK_NETC_USED */
 #include "fsl_iomuxc.h"
 #include "fsl_cache.h"
@@ -22,10 +22,58 @@
 #include "fsl_dcdc.h"
 #include "fsl_trdc.h"
 #include "fsl_rgpio.h"
+
+#ifdef BSP_USING_ETH
+#include "fsl_netc_endpoint.h"
+#include "fsl_netc_switch.h"
+#include "fsl_netc_mdio.h"
+#endif
+
+#ifdef BSP_USE_MULTICORE
+#include "mcmgr.h"
+#endif
+
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
+#define NVIC_PRIORITYGROUP_0 0x00000007U /*!< 0 bits for pre-emption priority
+                                                      4 bits for subpriority */
+#define NVIC_PRIORITYGROUP_1 0x00000006U /*!< 1 bits for pre-emption priority
+                                                      3 bits for subpriority */
+#define NVIC_PRIORITYGROUP_2 0x00000005U /*!< 2 bits for pre-emption priority
+                                                      2 bits for subpriority */
+#define NVIC_PRIORITYGROUP_3 0x00000004U /*!< 3 bits for pre-emption priority
+                                                      1 bits for subpriority */
+#define NVIC_PRIORITYGROUP_4 0x00000003U /*!< 4 bits for pre-emption priority
+                                                      0 bits for subpriority */
+
 #define BOARD_FLEXSPI_DLL_LOCK_RETRY (10)
+
+#ifdef BSP_USE_MULTICORE
+#define ENABLE_CM7_TCM_ECC 0U
+
+/*
+ * This workaround is used for kick-off CM7 when CM7 image vector table is not
+ * at 0x0 and CM7 TCM ECC fuse is set(1).
+ * When CM7 TCM ECC fuse is unset(0), this workaround is useless and no side
+ * effect when applied.
+ */
+#define ENABLE_WORKAROUND_CM7_KICK_OFF 1U
+
+#define CONTAINER_BASE_ADDR   0x38001000UL /* For FlexSPI, base addr(0x38000000) + 0x1000 offset */
+#define CONTAINER_MAX_NUM     2U
+#define CONTAINER_SIZE        0x400U /* in bytes */
+#define CONTAINER_HEADER_SIZE 16U    /* in bytes */
+#define IMAGE_ENTRY_SIZE      0x80U  /* in bytes */
+#define IMAGE_TAG_NUM         0x87U
+#define IMAGE_TYPE_EXECUTABLE 0x03U
+#define CORE_ID_CM7           0x02U
+
+#define CM7_ITCM_START_ADDR              0x0UL      /* from pespective of CM7 */
+#define CM7_ITCM_END_ADDR                0x80000UL  /* from pespective of CM7 */
+#define CM7_ITCM_SIZE                    0x80000UL  /* from pespective of CM7 */
+#define CM7_ITCM_ADDR_MAP_AT_CM33_DOMAIN 0x303C0000 /* from pespective of CM33 */
+#endif
 
 /*******************************************************************************
  * Variables
@@ -37,6 +85,196 @@ AT_QUICKACCESS_SECTION_DATA(volatile uint32_t g_systickCounter);
  * Code
  ******************************************************************************/
 
+#ifdef BSP_USE_MULTICORE
+/*!
+ * @brief Get CM7 Image Address and size information from container header
+ *
+ * Container Header structure are shown as the following
+ *
+ *         31                    23                   15                   7                   0
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *     0x0 |     Tag (0x87)     |                  Length                 |   Version (0x00)   |
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *     0x4 |                                      SRK Flags                                    |
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *     0x8 |  Num of Images     |   Fuse Version     |                 SW Version              |
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *     0xC |         R          |                 Signature Block Offset                       |
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *         |                                                                                   |
+ *     +   |                                  Image Array Entry                                |
+ *         |                                                                                   |
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *         |                                                                                   |
+ *     +   |                                   Signature Block                                 |
+ *         |                                                                                   |
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *
+ * Its' image entry are further layout as the following
+ *
+ *                             +0x4                 +0x8                 +0xC
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *     0x0 |   Image Offset     |    Image Size      |            Load Address                 |
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *    0x10 |                Entry Point              |      Flags         |       Meta         |
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *    0x20 |                                                                                   |
+ *         |                                        HASH                                       |
+ *         |                                                                                   |
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *    0x60 |                                         R                                         |
+ *         +--------------------+--------------------+--------------------+--------------------+
+ *
+ * Its' Flag contains the Image Type and Core
+ *
+ *         31                    23                   15         11        7         3         0
+ *         +--------------------+--------------------+----------+---------+----------+---------+
+ *   Flags |                             R                      |   H/E   |   Core   |   Type  |
+ *         +--------------------+--------------------+--------------------+----------+---------+
+ *
+ * The function iterate through each container header and its image entries until it find
+ * CM7 Exexutable Image. The information of the image is then returned to user
+ *
+ * More information can be found in RM "System Boot" Chapter
+ *
+ * @param pImageSrcAddr CM7 Image Srouce Address from CM33 perspective
+ * @param pImageDestAddr CM7 Image Destination Address from CM33 perspective
+ * @param pImageSize CM7 Image Size
+ * @param pImageBootAddr CM7 Image Load Address from CM7 prespective
+ */
+status_t BOARD_GetCore1ImageAddrSize(uint32_t *pImageSrcAddr,
+                                     uint32_t *pImageDestAddr,
+                                     uint32_t *pImageSize,
+                                     uint32_t *pImageBootAddr)
+{
+    /* parser the container to get the CM7 image location and size */
+
+    uint32_t i, j;
+
+    uint32_t image_src_addr = 0U;
+    uint32_t image_dest_addr = 0U;
+    uint32_t image_size = 0U;
+    uint32_t image_boot_addr = 0U;
+
+    status_t ret = kStatus_Fail;
+
+    uint32_t *pContainer = (uint32_t *)CONTAINER_BASE_ADDR;
+
+    for (i = 0U; i < CONTAINER_MAX_NUM; i++)
+    {
+        uint32_t image_num, image_tag = pContainer[0] >> 24U;
+
+        if (image_tag != IMAGE_TAG_NUM)
+        {
+            break;
+        }
+
+        image_num = pContainer[2] >> 24U;
+        if (image_num >= 2U)
+        {
+            uint32_t *pImage = &pContainer[CONTAINER_HEADER_SIZE / sizeof(uint32_t)];
+            for (j = 0U; j < image_num; j++)
+            {
+                uint32_t image_type = pImage[6] & 0xFU;
+                uint32_t image_core = (pImage[6] >> 4U) & 0xFU;
+
+                if ((image_type == IMAGE_TYPE_EXECUTABLE) && (image_core == CORE_ID_CM7))
+                {
+                    /* pImage[0] is the image offset, which is based on current container header */
+                    image_src_addr = ((uint32_t)pContainer) + pImage[0];
+                    image_size = pImage[1];
+                    image_dest_addr = pImage[2];
+                    image_boot_addr = pImage[4];
+                    ret = kStatus_Success;
+                    break;
+                }
+
+                pImage += IMAGE_ENTRY_SIZE / sizeof(uint32_t);
+            }
+        }
+
+        pContainer += CONTAINER_SIZE / sizeof(uint32_t);
+    }
+
+    if (pImageSrcAddr != NULL)
+    {
+        *pImageSrcAddr = image_src_addr;
+    }
+
+    if (pImageDestAddr != NULL)
+    {
+        *pImageDestAddr = image_dest_addr;
+    }
+
+    if (pImageSize != NULL)
+    {
+        *pImageSize = image_size;
+    }
+
+    if (pImageBootAddr != NULL)
+    {
+        *pImageBootAddr = image_boot_addr;
+    }
+
+    return ret;
+}
+
+/*
+ * image_src_addr image_dest_addr is address from perspective of core0(CM33)
+ * boot_addr is address from perspective of core1(CM7)
+ */
+void BOARD_PrepareCore1(uint32_t image_src_addr, uint32_t image_dest_addr, uint32_t image_size, uint32_t boot_addr)
+{
+    /* The Cortex M7 XIP image runs from NOR Flash  */
+    if ((boot_addr >= CM7_ITCM_END_ADDR) || ((CM7_ITCM_START_ADDR > 0U) && (boot_addr < CM7_ITCM_START_ADDR)))
+    {
+        /* Out of CM7 ITCM address space, CM7 core and its TCM ECC probably not initialized yet, do it here */
+        Prepare_CM7(boot_addr);
+
+#if (defined(ENABLE_WORKAROUND_CM7_KICK_OFF) && (ENABLE_WORKAROUND_CM7_KICK_OFF > 0U))
+        /*
+         * When CM7 TCM ECC fuse is set(1)
+         *   ROM will powerup CM7 domain, CM7 VTOR is settled(always 0) only when powerup,
+         *   so CM33 image has no chance to update CM7 VTOR. Thus those CM7 image with
+         *   vector table is not located at 0x0, boot fails.
+         *   The workaround here, is to copy two header word of image vector(normally SP
+         *   and Reset_Handler) to CM7 initial VTOR addr(0x0), as a fake vector table and stepping-stone,
+         *   then CM7 boot successfully.
+         *
+         * Note:
+         *   1. The fake vector table is one-time used, memory(0x0~0x07) is released when CM7
+         *      starts to execute Reset_Handler.
+         *   2. CM7 Reset_Handler will update CM7 VTOR to real vector addr of the CM7 image.
+         *   3. The workaround doesn't take effect(also no side effect), when CM7 TCM ECC fuse is set(0)
+         */
+        uint32_t *pRamVect = (uint32_t *)CM7_ITCM_ADDR_MAP_AT_CM33_DOMAIN;
+        uint32_t *pBootVect = (uint32_t *)boot_addr;
+        pRamVect[0] = pBootVect[0];
+        pRamVect[1] = pBootVect[1];
+#endif /* (defined(ENABLE_WORKAROUND_CM7_KICK_OFF) && (ENABLE_WORKAROUND_CM7_KICK_OFF > 0U)) */
+    }
+    /* The Cortex M7 image runs from internal ITCM RAM  */
+    else
+    {
+#if ENABLE_CM7_TCM_ECC
+        /* Do noting, CM7 image has been copied by ROM */
+#else
+        Prepare_CM7(boot_addr);
+        /* Copy CM7 image from FLASH to CM7 ITCM */
+        if ((image_size > 0) && (image_size < CM7_ITCM_SIZE))
+        {
+            /* Use memcpy to copy the image */
+            (void)memcpy((void *)CM7_ITCM_ADDR_MAP_AT_CM33_DOMAIN, (void *)image_src_addr, image_size);
+
+            /* Ensure data is written to memory before CM7 starts */
+            __DSB();
+            __ISB();
+        }
+#endif
+    }
+}
+#endif
+
 /* MPU configuration. */
 #if __CORTEX_M == 7
 void BOARD_ConfigMPU(void)
@@ -46,17 +284,17 @@ void BOARD_ConfigMPU(void)
     /* RW_m_ncache_aux is a auxiliary region which is used to get the whole size of noncache section */
     extern uint32_t Image$$RW_m_ncache_aux$$Base[];
     uint32_t nonCacheStart = (uint32_t)Image$$RW_m_ncache$$Base;
-    uint32_t nonCacheSize  = ((uint32_t)Image$$RW_m_ncache_aux$$Base) - nonCacheStart;
+    uint32_t nonCacheSize = ((uint32_t)Image$$RW_m_ncache_aux$$Base) - nonCacheStart;
 #elif defined(__MCUXPRESSO)
     extern uint32_t __base_NCACHE_REGION;
     extern uint32_t __top_NCACHE_REGION;
     uint32_t nonCacheStart = (uint32_t)(&__base_NCACHE_REGION);
-    uint32_t nonCacheSize  = (uint32_t)(&__top_NCACHE_REGION) - nonCacheStart;
+    uint32_t nonCacheSize = (uint32_t)(&__top_NCACHE_REGION) - nonCacheStart;
 #elif defined(__ICCARM__) || defined(__GNUC__)
     extern uint32_t __NCACHE_REGION_START[];
     extern uint32_t __NCACHE_REGION_SIZE[];
     uint32_t nonCacheStart = (uint32_t)__NCACHE_REGION_START;
-    uint32_t nonCacheSize  = (uint32_t)__NCACHE_REGION_SIZE;
+    uint32_t nonCacheSize = (uint32_t)__NCACHE_REGION_SIZE;
 #endif
 #if defined(__USE_SHMEM)
 #if defined(__CC_ARM) || defined(__ARMCC_VERSION)
@@ -64,17 +302,17 @@ void BOARD_ConfigMPU(void)
     /* RPMSG_SH_MEM_aux is a auxiliary region which is used to get the whole size of RPMSG_SH_MEM section */
     extern uint32_t Image$$RPMSG_SH_MEM_aux$$Base[];
     uint32_t rpmsgShmemStart = (uint32_t)Image$$RPMSG_SH_MEM$$Base;
-    uint32_t rpmsgShmemSize  = ((uint32_t)Image$$RPMSG_SH_MEM_aux$$Base) - rpmsgShmemStart;
+    uint32_t rpmsgShmemSize = ((uint32_t)Image$$RPMSG_SH_MEM_aux$$Base) - rpmsgShmemStart;
 #elif defined(__MCUXPRESSO)
     extern uint32_t __base_SHMEM_REGION;
     extern uint32_t __top_SHMEM_REGION;
     uint32_t rpmsgShmemStart = (uint32_t)(&__base_SHMEM_REGION);
-    uint32_t rpmsgShmemSize  = (uint32_t)(&__top_SHMEM_REGION) - rpmsgShmemStart;
+    uint32_t rpmsgShmemSize = (uint32_t)(&__top_SHMEM_REGION) - rpmsgShmemStart;
 #elif defined(__ICCARM__) || defined(__GNUC__)
     extern uint32_t __RPMSG_SH_MEM_START[];
     extern uint32_t __RPMSG_SH_MEM_SIZE[];
     uint32_t rpmsgShmemStart = (uint32_t)__RPMSG_SH_MEM_START;
-    uint32_t rpmsgShmemSize  = (uint32_t)__RPMSG_SH_MEM_SIZE;
+    uint32_t rpmsgShmemSize = (uint32_t)__RPMSG_SH_MEM_SIZE;
 #endif
 #endif
     volatile uint32_t i;
@@ -250,17 +488,17 @@ void BOARD_ConfigMPU(void)
     /* RW_m_ncache_aux is a auxiliary region which is used to get the whole size of noncache section */
     extern uint32_t Image$$RW_m_ncache_aux$$Base[];
     uint32_t nonCacheStart = (uint32_t)Image$$RW_m_ncache$$Base;
-    uint32_t nonCacheSize  = ((uint32_t)Image$$RW_m_ncache_aux$$Base) - nonCacheStart;
+    uint32_t nonCacheSize = ((uint32_t)Image$$RW_m_ncache_aux$$Base) - nonCacheStart;
 #elif defined(__MCUXPRESSO)
     extern uint32_t __base_NCACHE_REGION;
     extern uint32_t __top_NCACHE_REGION;
     uint32_t nonCacheStart = (uint32_t)(&__base_NCACHE_REGION);
-    uint32_t nonCacheSize  = (uint32_t)(&__top_NCACHE_REGION) - nonCacheStart;
+    uint32_t nonCacheSize = (uint32_t)(&__top_NCACHE_REGION) - nonCacheStart;
 #elif defined(__ICCARM__) || defined(__GNUC__)
     extern uint32_t __NCACHE_REGION_START[];
     extern uint32_t __NCACHE_REGION_SIZE[];
     uint32_t nonCacheStart = (uint32_t)__NCACHE_REGION_START;
-    uint32_t nonCacheSize  = (uint32_t)__NCACHE_REGION_SIZE;
+    uint32_t nonCacheSize = (uint32_t)__NCACHE_REGION_SIZE;
 #endif
 #if defined(__USE_SHMEM)
 #if defined(__CC_ARM) || defined(__ARMCC_VERSION)
@@ -268,17 +506,17 @@ void BOARD_ConfigMPU(void)
     /* RPMSG_SH_MEM_aux is a auxiliary region which is used to get the whole size of RPMSG_SH_MEM section */
     extern uint32_t Image$$RPMSG_SH_MEM_aux$$Base[];
     uint32_t rpmsgShmemStart = (uint32_t)Image$$RPMSG_SH_MEM$$Base;
-    uint32_t rpmsgShmemSize  = (uint32_t)Image$$RPMSG_SH_MEM_aux$$Base - rpmsgShmemStart;
+    uint32_t rpmsgShmemSize = (uint32_t)Image$$RPMSG_SH_MEM_aux$$Base - rpmsgShmemStart;
 #elif defined(__MCUXPRESSO)
     extern uint32_t __base_SHMEM_REGION;
     extern uint32_t __top_SHMEM_REGION;
     uint32_t rpmsgShmemStart = (uint32_t)(&__base_SHMEM_REGION);
-    uint32_t rpmsgShmemSize  = (uint32_t)(&__top_SHMEM_REGION) - rpmsgShmemStart;
+    uint32_t rpmsgShmemSize = (uint32_t)(&__top_SHMEM_REGION) - rpmsgShmemStart;
 #elif defined(__ICCARM__) || defined(__GNUC__)
     extern uint32_t __RPMSG_SH_MEM_START[];
     extern uint32_t __RPMSG_SH_MEM_SIZE[];
     uint32_t rpmsgShmemStart = (uint32_t)__RPMSG_SH_MEM_START;
-    uint32_t rpmsgShmemSize  = (uint32_t)__RPMSG_SH_MEM_SIZE;
+    uint32_t rpmsgShmemSize = (uint32_t)__RPMSG_SH_MEM_SIZE;
 #endif
 #endif
     uint32_t i;
@@ -434,14 +672,6 @@ void BOARD_ConfigMPU(void)
     ARM_MPU_SetRegion(9U, ARM_MPU_RBAR(0x20500000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x2053FFFF, 1U));
 #endif
 
-    // Region 11 (OCRAM1): [0x20480000, 0x204FFFFF, 512K]
-    // non-shareable, read/write in privilege and non-privilege, executable. Attr 3
-    // ARM_MPU_SetRegion(11U, ARM_MPU_RBAR(0x20480000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x204FFFFF, 2U));
-
-    // Region 12 (OCRAM2): [0x20500000, 0x2053FFFF, 256K]
-    // non-shareable, read/write in privilege and non-privilege, executable. Attr 3
-    ARM_MPU_SetRegion(12U, ARM_MPU_RBAR(0x20500000, ARM_MPU_SH_NON, 0U, 1U, 0U), ARM_MPU_RLAR(0x2053FFFF, 2U));
-
     /* Enable MPU */
     ARM_MPU_Enable(MPU_CTRL_PRIVDEFENA_Msk | MPU_CTRL_HFNMIENA_Msk);
 
@@ -510,13 +740,13 @@ void BOARD_InitFlash(FLEXSPI_Type *base)
     if (0U != (base->DLLCR[0] & FLEXSPI_DLLCR_DLLEN_MASK))
     {
         lastStatus = base->STS2;
-        retry      = BOARD_FLEXSPI_DLL_LOCK_RETRY;
+        retry = BOARD_FLEXSPI_DLL_LOCK_RETRY;
         /* Wait slave delay line locked and slave reference delay line locked. */
         do
         {
             status = base->STS2;
             if ((status & (FLEXSPI_STS2_AREFLOCK_MASK | FLEXSPI_STS2_ASLVLOCK_MASK)) ==
-                    (FLEXSPI_STS2_AREFLOCK_MASK | FLEXSPI_STS2_ASLVLOCK_MASK))
+                (FLEXSPI_STS2_AREFLOCK_MASK | FLEXSPI_STS2_ASLVLOCK_MASK))
             {
                 /* Locked */
                 retry = 100;
@@ -529,11 +759,10 @@ void BOARD_InitFlash(FLEXSPI_Type *base)
             }
             else
             {
-                retry      = BOARD_FLEXSPI_DLL_LOCK_RETRY;
+                retry = BOARD_FLEXSPI_DLL_LOCK_RETRY;
                 lastStatus = status;
             }
-        }
-        while (retry > 0);
+        } while (retry > 0);
         /* According to ERR011377, need to delay at least 100 NOPs to ensure the DLL is locked. */
         for (; retry > 0U; retry--)
         {
@@ -585,7 +814,7 @@ void BOARD_SetFlexspiClock(FLEXSPI_Type *base, uint8_t src, uint32_t divider)
     }
 
     if (((CCM->CLOCK_ROOT[root].CONTROL & CCM_CLOCK_ROOT_CONTROL_MUX_MASK) != CCM_CLOCK_ROOT_CONTROL_MUX(src)) ||
-            ((CCM->CLOCK_ROOT[root].CONTROL & CCM_CLOCK_ROOT_CONTROL_DIV_MASK) != CCM_CLOCK_ROOT_CONTROL_DIV(divider - 1)))
+        ((CCM->CLOCK_ROOT[root].CONTROL & CCM_CLOCK_ROOT_CONTROL_DIV_MASK) != CCM_CLOCK_ROOT_CONTROL_DIV(divider - 1)))
     {
         /* Always deinit FLEXSPI and init FLEXSPI for the flash to make sure the flash works correctly after the
          FLEXSPI root clock changed as the default FLEXSPI configuration may does not work for the new root clock
@@ -630,23 +859,21 @@ void BOARD_FlexspiClockSafeConfig(void)
 void EdgeLock_SetClock(uint8_t mux, uint8_t div)
 {
     if ((CLOCK_GetRootClockDiv(kCLOCK_Root_Edgelock) != (uint32_t)div) ||
-            (CLOCK_GetRootClockMux(kCLOCK_Root_Edgelock) != (uint32_t)mux))
+        (CLOCK_GetRootClockMux(kCLOCK_Root_Edgelock) != (uint32_t)mux))
     {
         status_t sts;
         uint32_t ele_clk_mhz;
 
-        clock_root_config_t rootCfg =
-        {
-            .div      = div,
-            .mux      = mux,
+        clock_root_config_t rootCfg = {
+            .div = div,
+            .mux = mux,
             .clockOff = false,
         };
 
         do
         {
             sts = ELE_BaseAPI_ClockChangeStart(MU_RT_S3MUA);
-        }
-        while (sts != kStatus_Success);
+        } while (sts != kStatus_Success);
 
         CLOCK_SetRootClock(kCLOCK_Root_Edgelock, &rootCfg);
 
@@ -654,8 +881,7 @@ void EdgeLock_SetClock(uint8_t mux, uint8_t div)
         do
         {
             sts = ELE_BaseAPI_ClockChangeFinish(MU_RT_S3MUA, ele_clk_mhz, 0);
-        }
-        while (sts != kStatus_Success);
+        } while (sts != kStatus_Success);
     }
 }
 
@@ -769,21 +995,19 @@ void BOARD_RequestTRDC(bool bRequestAON, bool bRequestWakeup, bool bReqeustMega)
 
 void APP_CommonTrdcDACSetting(void)
 {
-    trdc_processor_domain_assignment_t procAssign = {.domainId           = 0U,
-                                                     .domainIdSelect     = kTRDC_DidInput,
-                                                     .pidDomainHitConfig = kTRDC_pidDomainHitNone0,
-                                                     .pidMask            = 0U,
-                                                     .secureAttr         = kTRDC_ForceSecure,
-                                                     .pid                = 0U,
-                                                     .lock               = false
-                                                    };
+    trdc_processor_domain_assignment_t procAssign = { .domainId = 0U,
+                                                      .domainIdSelect = kTRDC_DidInput,
+                                                      .pidDomainHitConfig = kTRDC_pidDomainHitNone0,
+                                                      .pidMask = 0U,
+                                                      .secureAttr = kTRDC_ForceSecure,
+                                                      .pid = 0U,
+                                                      .lock = false };
 
-    trdc_non_processor_domain_assignment_t nonProcAssign = {.domainId       = 0U,
-                                                            .privilegeAttr  = kTRDC_ForcePrivilege,
-                                                            .secureAttr     = kTRDC_ForceSecure,
-                                                            .bypassDomainId = true,
-                                                            .lock           = false
-                                                           };
+    trdc_non_processor_domain_assignment_t nonProcAssign = { .domainId = 0U,
+                                                             .privilegeAttr = kTRDC_ForcePrivilege,
+                                                             .secureAttr = kTRDC_ForceSecure,
+                                                             .bypassDomainId = true,
+                                                             .lock = false };
 
     /* 1. Set the MDAC Configuration in TRDC1. */
     /* Configure the access control for CM33(master 1 for TRDC1, MDAC_A1). */
@@ -873,7 +1097,7 @@ static uint32_t TRDC_GetMbcMemNum(TRDC_Type *trdc, uint32_t mbc)
     uint32_t memNumber = 0U;
     if (trdc == TRDC1)
     {
-        uint8_t MemNum[2] = {3, 2};
+        uint8_t MemNum[2] = { 3, 2 };
         switch (mbc)
         {
         case 0: /* TRDC1 MBC_A0 AIPS1/Edgelock/GPIO1      */
@@ -886,7 +1110,7 @@ static uint32_t TRDC_GetMbcMemNum(TRDC_Type *trdc, uint32_t mbc)
     }
     else if (trdc == TRDC2)
     {
-        uint8_t MemNum[2] = {4, 4};
+        uint8_t MemNum[2] = { 4, 4 };
         switch (mbc)
         {
         case 0: /* TRDC2 MBC_A0 AIPS2/GPIO2, GPIO4, GPIO6/GPIO3, GPIO5/DAP (Debug) */
@@ -1019,11 +1243,11 @@ static bool TRDC_GetMrcRegionAddr(TRDC_Type *trdc, uint8_t mrc, uint32_t *pStart
         {
         case 0: /* TRDC1 MRC_A0 CM33 ROM  */
             *pStartAddr = 0x00000000UL;
-            *pStopAddr  = 0x00027FFFUL;
+            *pStopAddr = 0x00027FFFUL;
             break;
         case 1: /* TRDC1 MRC_A1 FlexSPI2  */
             *pStartAddr = 0x04000000UL;
-            *pStopAddr  = 0x07FFFFFFUL;
+            *pStopAddr = 0x07FFFFFFUL;
             break;
         default:
             r = false;
@@ -1036,27 +1260,27 @@ static bool TRDC_GetMrcRegionAddr(TRDC_Type *trdc, uint8_t mrc, uint32_t *pStart
         {
         case 1: /* TRDC2 MRC_W1 FlexSPI1         */
             *pStartAddr = 0x28000000UL;
-            *pStopAddr  = 0x2FFFFFFFUL;
+            *pStopAddr = 0x2FFFFFFFUL;
             break;
         case 2: /* TRDC2 MRC_W2 CM7 I-TCM D-TCM  */
             *pStartAddr = 0x203C0000UL;
-            *pStopAddr  = 0x2043FFFFUL;
+            *pStopAddr = 0x2043FFFFUL;
             break;
         case 3: /* TRDC2 MRC_W3 OCRAM1           */
             *pStartAddr = 0x20480000UL;
-            *pStopAddr  = 0x204FFFFFUL;
+            *pStopAddr = 0x204FFFFFUL;
             break;
         case 4: /* TRDC2 MRC_W4 OCRAM2           */
             *pStartAddr = 0x20500000UL;
-            *pStopAddr  = 0x2053FFFFUL;
+            *pStopAddr = 0x2053FFFFUL;
             break;
         case 5: /* TRDC2 MRC_W5 SEMC             */
             *pStartAddr = 0x80000000UL;
-            *pStopAddr  = 0x8FFFFFFFUL;
+            *pStopAddr = 0x8FFFFFFFUL;
             break;
         case 6: /* TRDC2 MRC_W6 NETC             */
             *pStartAddr = 0x60000000UL;
-            *pStopAddr  = 0x60FFFFFFUL;
+            *pStopAddr = 0x60FFFFFFUL;
             break;
         default:
             r = false;
@@ -1077,18 +1301,18 @@ void APP_CommonTrdcAccessControlSetting(TRDC_Type *trdc)
 
     /* Enable all read/write/execute access for MRC/MBC access control. */
     (void)memset(&memAccessConfig, 0, sizeof(memAccessConfig));
-    memAccessConfig.nonsecureUsrX  = 1U;
-    memAccessConfig.nonsecureUsrW  = 1U;
-    memAccessConfig.nonsecureUsrR  = 1U;
+    memAccessConfig.nonsecureUsrX = 1U;
+    memAccessConfig.nonsecureUsrW = 1U;
+    memAccessConfig.nonsecureUsrR = 1U;
     memAccessConfig.nonsecurePrivX = 1U;
     memAccessConfig.nonsecurePrivW = 1U;
     memAccessConfig.nonsecurePrivR = 1U;
-    memAccessConfig.secureUsrX     = 1U;
-    memAccessConfig.secureUsrW     = 1U;
-    memAccessConfig.secureUsrR     = 1U;
-    memAccessConfig.securePrivX    = 1U;
-    memAccessConfig.securePrivW    = 1U;
-    memAccessConfig.securePrivR    = 1U;
+    memAccessConfig.secureUsrX = 1U;
+    memAccessConfig.secureUsrW = 1U;
+    memAccessConfig.secureUsrR = 1U;
+    memAccessConfig.securePrivX = 1U;
+    memAccessConfig.securePrivW = 1U;
+    memAccessConfig.securePrivR = 1U;
 
     for (uint32_t mrc = 0U; mrc < hwConfig.mrcNumber; mrc++)
     {
@@ -1113,14 +1337,14 @@ void APP_CommonTrdcAccessControlSetting(TRDC_Type *trdc)
     }
 
     memset(&mbcBlockConfig, 0, sizeof(mbcBlockConfig));
-    mbcBlockConfig.nseEnable                 = false;
+    mbcBlockConfig.nseEnable = false;
     mbcBlockConfig.memoryAccessControlSelect = 0;
 
     memset(&mrcRegionConfig, 0, sizeof(mrcRegionConfig));
     mrcRegionConfig.memoryAccessControlSelect = 0U;
-    mrcRegionConfig.valid                     = true;
-    mrcRegionConfig.nseEnable                 = false;
-    mrcRegionConfig.regionIdx                 = 0U;
+    mrcRegionConfig.valid = true;
+    mrcRegionConfig.nseEnable = false;
+    mrcRegionConfig.regionIdx = 0U;
 
     for (uint32_t domain = 0; domain < hwConfig.domainNumber; domain++)
     {
@@ -1140,8 +1364,8 @@ void APP_CommonTrdcAccessControlSetting(TRDC_Type *trdc)
                             TRDC_GetMbcHardwareConfig(trdc, &mbcHwConfig, mbc, mem);
                             for (uint32_t block = 0; block < mbcHwConfig.blockNum; block++)
                             {
-                                mbcBlockConfig.domainIdx      = domain;
-                                mbcBlockConfig.mbcIdx         = mbc;
+                                mbcBlockConfig.domainIdx = domain;
+                                mbcBlockConfig.mbcIdx = mbc;
                                 mbcBlockConfig.slaveMemoryIdx = mem;
                                 mbcBlockConfig.memoryBlockIdx = block;
                                 TRDC_MbcSetMemoryBlockConfig(trdc, &mbcBlockConfig);
@@ -1161,9 +1385,9 @@ void APP_CommonTrdcAccessControlSetting(TRDC_Type *trdc)
                     if (TRDC_GetMrcRegionAddr(trdc, mrc, &start_addr, &end_addr))
                     {
                         mrcRegionConfig.startAddr = start_addr;
-                        mrcRegionConfig.endAddr   = end_addr;
+                        mrcRegionConfig.endAddr = end_addr;
                         mrcRegionConfig.domainIdx = domain;
-                        mrcRegionConfig.mrcIdx    = mrc;
+                        mrcRegionConfig.mrcIdx = mrc;
                         TRDC_MrcSetRegionDescriptorConfig(trdc, &mrcRegionConfig);
                     }
                     else
@@ -1203,62 +1427,83 @@ void SysTick_Handler(void)
 
     /* leave interrupt */
     rt_interrupt_leave();
-
 }
 
-#ifdef BSP_USING_LPUART
-void imxrt_uart_pins_init(void)
+#ifdef BSP_USE_MULTICORE_KICK_OFF_DIRECTLY
+static int second_core_boot(void)
 {
-#ifdef BSP_USING_LPUART1
-    CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
-    IOMUXC_SetPinMux(
-        IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 is configured as LPUART1_TX */
-        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-    IOMUXC_SetPinMux(
-        IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 is configured as LPUART1_RX */
-        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-    IOMUXC_SetPinConfig(
-        IOMUXC_GPIO_AON_08_LPUART1_TX,          /* GPIO_AON_08 PAD functional properties : */
-        0x02U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                    Drive Strength Field: high driver
-                                                    Pull / Keep Select Field: Pull Disable, Highz
-                                                    Pull Up / Down Config. Field: Weak pull down
-                                                    Open Drain Field: Disabled */
-    IOMUXC_SetPinConfig(
-        IOMUXC_GPIO_AON_09_LPUART1_RX,          /* GPIO_AON_09 PAD functional properties : */
-        0x02U);                                 /* Slew Rate Field: Fast Slew Rate
-                                                    Drive Strength Field: high driver
-                                                    Pull / Keep Select Field: Pull Disable, Highz
-                                                    Pull Up / Down Config. Field: Weak pull down
-                                                    Open Drain Field: Disabled */
+    /*
+	 * RT1180 Specific CM7 Kick Off operation
+	 */
+    /* Trigger S401 */
+    while ((MU_RT_S3MUA->TSR & MU_TSR_TE0_MASK) == 0)
+    {
+        ;
+    } /* Wait TR empty */
+    MU_RT_S3MUA->TR[0] = 0x17d20106;
+    while ((MU_RT_S3MUA->RSR & MU_RSR_RF0_MASK) == 0)
+    {
+        ;
+    } /* Wait RR Full */
+    while ((MU_RT_S3MUA->RSR & MU_RSR_RF1_MASK) == 0)
+    {
+        ;
+    } /* Wait RR Full */
 
+    /* Response from ELE must be always read */
+    __attribute__((unused)) volatile uint32_t result1, result2;
+    result1 = MU_RT_S3MUA->RR[0];
+    result2 = MU_RT_S3MUA->RR[1];
+
+    /* Deassert Wait */
+    BLK_CTRL_S_AONMIX->M7_CFG =
+        (BLK_CTRL_S_AONMIX->M7_CFG & (~BLK_CTRL_S_AONMIX_M7_CFG_WAIT_MASK)) |
+        BLK_CTRL_S_AONMIX_M7_CFG_WAIT(0);
+
+    return 0;
+}
+
+/*!
+ * @brief Application-specific implementation of the SystemInitHook() weak function.
+ */
+void SystemInitHook(void)
+{
+    /* Initialize MCMGR - low level multicore management library. Call this
+       function as close to the reset entry as possible to allow CoreUp event
+       triggering. The SystemInitHook() weak function overloading is used in this
+       application. */
+    (void)MCMGR_EarlyInit();
+}
 #endif
 
+#ifdef BSP_USING_ETH
+void PHY_Reset(void)
+{
+    /* Reset PHY8201 for ETH4. Reset 10ms, wait 72ms. */
+    RGPIO_PinWrite(BOARD_INITPHYACCESSPINS_ENET4_RST_B_GPIO, BOARD_INITPHYACCESSPINS_ENET4_RST_B_GPIO_PIN, 0);
+    RGPIO_PinWrite(BOARD_INITPHYACCESSPINS_ENET3_RST_B_GPIO, BOARD_INITPHYACCESSPINS_ENET3_RST_B_GPIO_PIN, 0);
+    RGPIO_PinWrite(BOARD_INITPHYACCESSPINS_ENET2_RST_B_GPIO, BOARD_INITPHYACCESSPINS_ENET2_RST_B_GPIO_PIN, 0);
+    RGPIO_PinWrite(BOARD_INITPHYACCESSPINS_ENET1_RST_B_GPIO, BOARD_INITPHYACCESSPINS_ENET1_RST_B_GPIO_PIN, 0);
+    RGPIO_PinWrite(BOARD_INITPHYACCESSPINS_ENET0_RST_B_GPIO, BOARD_INITPHYACCESSPINS_ENET0_RST_B_GPIO_PIN, 0);
+    SDK_DelayAtLeastUs(10000, CLOCK_GetFreq(kCLOCK_CpuClk));
+    RGPIO_PinWrite(BOARD_INITPHYACCESSPINS_ENET4_RST_B_GPIO, BOARD_INITPHYACCESSPINS_ENET4_RST_B_GPIO_PIN, 1);
+    RGPIO_PinWrite(BOARD_INITPHYACCESSPINS_ENET3_RST_B_GPIO, BOARD_INITPHYACCESSPINS_ENET3_RST_B_GPIO_PIN, 1);
+    RGPIO_PinWrite(BOARD_INITPHYACCESSPINS_ENET2_RST_B_GPIO, BOARD_INITPHYACCESSPINS_ENET2_RST_B_GPIO_PIN, 1);
+    RGPIO_PinWrite(BOARD_INITPHYACCESSPINS_ENET1_RST_B_GPIO, BOARD_INITPHYACCESSPINS_ENET1_RST_B_GPIO_PIN, 1);
+    RGPIO_PinWrite(BOARD_INITPHYACCESSPINS_ENET0_RST_B_GPIO, BOARD_INITPHYACCESSPINS_ENET0_RST_B_GPIO_PIN, 1);
+    SDK_DelayAtLeastUs(150000, CLOCK_GetFreq(kCLOCK_CpuClk));
 }
-#endif /* BSP_USING_LPUART */
-
-#define NVIC_PRIORITYGROUP_0         0x00000007U /*!< 0 bits for pre-emption priority
-                                                      4 bits for subpriority */
-#define NVIC_PRIORITYGROUP_1         0x00000006U /*!< 1 bits for pre-emption priority
-                                                      3 bits for subpriority */
-#define NVIC_PRIORITYGROUP_2         0x00000005U /*!< 2 bits for pre-emption priority
-                                                      2 bits for subpriority */
-#define NVIC_PRIORITYGROUP_3         0x00000004U /*!< 3 bits for pre-emption priority
-                                                      1 bits for subpriority */
-#define NVIC_PRIORITYGROUP_4         0x00000003U /*!< 4 bits for pre-emption priority
-                                                      0 bits for subpriority */
+#endif
 
 void rt_hw_board_init()
 {
-	extern void BOARD_InitPeripherals(void);
+    extern void BOARD_InitPeripherals(void);
     BOARD_CommonSetting();
     BOARD_ConfigMPU();
     BOARD_InitPins();
-
-//    BOARD_InitLeds();
     BOARD_BootClockRUN();
-    BOARD_InitPeripherals();
-	
+//    BOARD_InitPeripherals();
+
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
@@ -1283,6 +1528,5 @@ void rt_hw_board_init()
                HEAP_BEGIN, HEAP_END,
                (uint32_t)HEAP_END - (uint32_t)HEAP_BEGIN);
 #endif
-
 }
 

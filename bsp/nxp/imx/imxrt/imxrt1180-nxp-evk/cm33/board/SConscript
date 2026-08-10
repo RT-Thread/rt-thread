@@ -1,7 +1,8 @@
 Import('rtconfig')
+Import('RTT_ROOT')
 
 from building import *
-import rtconfig
+import os
 
 cwd = GetCurrentDir()
 
@@ -30,19 +31,58 @@ if GetDepend(['BSP_USING_LPADC1']):
 else:
     CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
     
-CPPDEFINES = ['CPU_MIMXRT1189CVM8C_cm33', 'MCUXPRESSO_SDK', 'MCUX_META_BUILD', 'MIMXRT1189_cm33_SERIES', 'XIP_BOOT_HEADER_ENABLE=1', 'XIP_BOOT_HEADER_DCD_ENABLE=1', 'XIP_EXTERNAL_FLASH=1', 'ARM_MATH_CM33']
+CPPDEFINES = ['CPU_MIMXRT1189CVM8C_cm33', 'MCUXPRESSO_SDK', 'MCUX_META_BUILD', 'MIMXRT1189_cm33_SERIES', 'ARM_MATH_CM33']
+LINKFLAGS = ''
 
 if rtconfig.PLATFORM in ['gcc']:
     CPPDEFINES += ['__STARTUP_INITIALIZE_RAMFUNCTION']
 
 if rtconfig.PLATFORM in ['armcc', 'armclang']:
-    # CPPDEFINES += ['SDK_DEBUGCONSOLE']
     CPPDEFINES += ['NDEBUG']
 
 if rtconfig.PLATFORM in ['iccarm']:
     CPPDEFINES += ['NDEBUG']
-    # CPPDEFINES += ['FSL_SDK_DRIVER_QUICK_ACCESS_ENABLE=1']
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+if GetDepend(['BSP_USE_HYPERRAM']):
+    CPPDEFINES += ['USE_HYPERRAM=1']
+
+if GetDepend(['BSP_USE_MULTICORE']):
+    CPPDEFINES += ['__USE_SHMEM', 'MULTICORE_APP=1']
+    if rtconfig.PLATFORM in ['gcc']:
+        LINKFLAGS += ' -Wl,-defsym,__use_shmem__=1'
+        LINKFLAGS += ' -Wl,-defsym,__multicore__=1'
+    if rtconfig.PLATFORM in ['armcc', 'armclang']:
+        LINKFLAGS += ' --predefine="-D__use_shmem__=1"'
+        LINKFLAGS += ' --predefine="-D__multicore__=1"'
+    if rtconfig.PLATFORM in ['iccarm']:
+        LINKFLAGS += ' __use_shmem__=1'
+        LINKFLAGS += ' __multicore__=1'
+        
+if GetDepend(['BSP_USING_ETH']):
+    CPPDEFINES += ['SDK_NETC_USED=1', 'FSL_ETH_ENABLE_CACHE_CONTROL=1']
+
+if GetDepend(['RT_USING_CHERRYUSB']):
+    cherryusb_path = os.path.join(RTT_ROOT, 'components', 'drivers', 'usb', 'cherryusb')
+    src += ['cherryusb_port.c']
+    if GetDepend(['RT_CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM']):
+        src += ['cherryusb_cdc_acm.c']
+    if GetDepend(['BSP_CHERRYUSB_HOST_MOUSE_DEMO']):
+        src += ['usbh_mouse_demo.c']
+    CPPPATH += [
+        cherryusb_path,
+        os.path.join(cherryusb_path, 'common'),
+        os.path.join(cherryusb_path, 'core'),
+        os.path.join(cherryusb_path, 'class', 'hub'),
+        os.path.join(cherryusb_path, 'class', 'cdc'),
+        os.path.join(cherryusb_path, 'class', 'hid'),
+    ]
+
+if GetDepend(['BSP_LINKER_SCRIPT_FLEXSPI_NOR']):
+    CPPDEFINES += ['XIP_BOOT_HEADER_ENABLE=1', 'XIP_EXTERNAL_FLASH=1']
+
+if GetDepend(['BSP_LINKER_SCRIPT_FLEXSPI_NOR_HYPERRAM']):
+    CPPDEFINES += ['XIP_BOOT_HEADER_ENABLE=1', 'XIP_EXTERNAL_FLASH=1']  
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES, LINKFLAGS = LINKFLAGS)
 
 Return('group')

@@ -34,12 +34,12 @@ static int _fal_read(long offset, rt_uint8_t *buf, size_t size)
     return rt_qspi_flash_read((rt_uint32_t)offset, buf, size);
 }
 
-QSPI_RAM_CODE static int _fal_write(long offset, const rt_uint8_t *buf, size_t size)
+static int _fal_write(long offset, const rt_uint8_t *buf, size_t size)
 {
     return rt_qspi_flash_write((rt_uint32_t)offset, buf, size);
 }
 
-QSPI_RAM_CODE static int _fal_erase(long offset, size_t size)
+static int _fal_erase(long offset, size_t size)
 {
     return rt_qspi_flash_erase((rt_uint32_t)offset, size);
 }

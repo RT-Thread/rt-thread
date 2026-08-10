@@ -32,6 +32,36 @@ if os.getenv('RTT_EXEC_PATH'):
 BUILD = 'debug'
 # BUILD = 'release'
 
+# Read linker script selection from rtconfig.h (set by Kconfig BSP_LINKER_SCRIPT_* choice).
+# Supported types: RAM, FLEXSPI_NOR, FLEXSPI_NOR_HYPERRAM
+# Default to RAM when no match is found.
+_LINKER_SCRIPT_TYPE = 'RAM'
+_rtconfig_h = os.path.join(os.path.dirname(__file__), 'rtconfig.h')
+if os.path.exists(_rtconfig_h):
+    with open(_rtconfig_h, 'r') as _f:
+        for _line in _f:
+            _s = _line.strip()
+            if _s.startswith('//'):
+                continue
+            # Check the most specific name first to avoid false matches.
+            if _s.startswith('#define BSP_LINKER_SCRIPT_FLEXSPI_NOR_HYPERRAM'):
+                _LINKER_SCRIPT_TYPE = 'FLEXSPI_NOR_HYPERRAM'
+                break
+            if _s.startswith('#define BSP_LINKER_SCRIPT_FLEXSPI_NOR'):
+                _LINKER_SCRIPT_TYPE = 'FLEXSPI_NOR'
+                break
+            if _s.startswith('#define BSP_LINKER_SCRIPT_RAM'):
+                _LINKER_SCRIPT_TYPE = 'RAM'
+                break
+
+# Base filename (without extension) for the selected linker script.
+_LINKER_SCRIPT_BASE = {
+    'RAM':                  'MIMXRT1189xxxxx_cm33_ram',
+    'FLEXSPI_NOR':          'MIMXRT1189xxxxx_cm33_flexspi_nor',
+    'FLEXSPI_NOR_HYPERRAM': 'MIMXRT1189xxxxx_cm33_flexspi_nor_hyperram',
+}[_LINKER_SCRIPT_TYPE]
+
+
 if PLATFORM == 'gcc':
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
@@ -46,10 +76,13 @@ if PLATFORM == 'gcc':
     STRIP = PREFIX + 'strip'
 
     DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    
+
     CFLAGS = DEVICE + ' -Wall -D__FPU_PRESENT'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__START=entry -D__STARTUP_CLEAR_BSS'
-    LFLAGS = DEVICE + ' -specs=nano.specs -specs=nosys.specs -Wl,--gc-sections,-Map=rtthread.map,--print-memory-usage -T board/linker_scripts/link.lds'
+
+    LINKER_SCRIPT = 'board/linker_scripts/' + _LINKER_SCRIPT_BASE + '.ld'
+
+    LFLAGS = DEVICE + ' -specs=nano.specs -specs=nosys.specs -Wl,--gc-sections,-Map=rtthread.map,--print-memory-usage -T ' + LINKER_SCRIPT
 
     CPATH = ''
     LPATH = ''
@@ -60,17 +93,17 @@ if PLATFORM == 'gcc':
     if BUILD == 'debug':
         CFLAGS += ' -g'
         AFLAGS += ' -g'
-        # CFLAGS += ' -O1'        
+        # CFLAGS += ' -O1'
         CFLAGS += ' -O0'
     else:
         CFLAGS += ' -O2 -Os'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
-    # module setting 
+    # module setting
     CXXFLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
-    CXXFLAGS += CFLAGS    
-    
+    CXXFLAGS += CFLAGS
+
     M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
     M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
     M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
@@ -88,9 +121,12 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu ' + CPU + '.fp.sp'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --libpath "' + EXEC_PATH + '\ARM\ARMCC\lib" --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter "board\linker_scripts\link.scf"'
 
-    LFLAGS += ' --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)' 
+    LINKER_SCRIPT = 'board/linker_scripts/' + _LINKER_SCRIPT_BASE + '.scf'
+
+    LFLAGS = DEVICE + ' --libpath "' + EXEC_PATH + '\ARM\ARMCC\lib" --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter "' + LINKER_SCRIPT + '"'
+
+    LFLAGS += ' --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)'
 
     CFLAGS += ' --diag_suppress=66,1296,186,6314'
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/RV31/INC'
@@ -129,9 +165,13 @@ elif PLATFORM == 'armclang':
     AFLAGS = DEVICE + ' --apcs=interwork '
     AFLAGS += ' -x assembler-with-cpp'
     AFLAGS += ' -Wa,-mimplicit-it=thumb'
+
+    # armlink --scatter accepts the file with extension.
+    LINKER_SCRIPT = 'board/linker_scripts/' + _LINKER_SCRIPT_BASE + '.scf'
+
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers '
     LFLAGS += ' --list rt-thread.map '
-    LFLAGS += r' --strict --scatter "board/linker_scripts/link" '
+    LFLAGS += r' --strict --scatter "' + LINKER_SCRIPT + '" '
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCLANG/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib'
 
@@ -142,7 +182,7 @@ elif PLATFORM == 'armclang':
         AFLAGS += ' -g'
     else:
         CFLAGS += ' -O2'
-        
+
     CXXFLAGS = CFLAGS
     CFLAGS += ' -std=c99'
 
@@ -179,7 +219,9 @@ elif PLATFORM == 'iccarm':
     else:
         CFLAGS += ' -Oh'
 
-    LFLAGS = ' --config "board/linker_scripts/link.icf"'
+    LINKER_SCRIPT = 'board/linker_scripts/' + _LINKER_SCRIPT_BASE + '.icf'
+
+    LFLAGS = ' --config "' + LINKER_SCRIPT + '"'
     LFLAGS += ' --redirect _Printf=_PrintfTiny'
 
     CXXFLAGS = CFLAGS
@@ -187,9 +229,42 @@ elif PLATFORM == 'iccarm':
     EXEC_PATH = EXEC_PATH + '/arm/bin/'
     POST_ACTION = 'ielftool --bin $TARGET rtthread.bin'
 
+# Map from linker script type to the matching Keil target name.
+_LINKER_SCRIPT_TO_KEIL_TARGET = {
+    'RAM':                  'rtthread_ram',
+    'FLEXSPI_NOR':          'rtthread_flexspi_nor',
+    'FLEXSPI_NOR_HYPERRAM': 'rtthread_flexspi_nor_hyperram',
+}
+
+def update_keil_active_target(uvoptx_path='project.uvoptx'):
+    """Set <IsCurrentTarget> in project.uvoptx to match the selected linker script."""
+    import xml.etree.ElementTree as etree
+
+    active = _LINKER_SCRIPT_TO_KEIL_TARGET.get(_LINKER_SCRIPT_TYPE, 'rtthread_ram')
+
+    if not os.path.exists(uvoptx_path):
+        return
+
+    tree = etree.parse(uvoptx_path)
+    root = tree.getroot()
+
+    for tgt in tree.findall('Target'):
+        tname = tgt.find('TargetName')
+        is_current = tgt.find('TargetOption/OPTFL/IsCurrentTarget')
+        if tname is not None and is_current is not None:
+            is_current.text = '1' if tname.text == active else '0'
+
+    out = open(uvoptx_path, 'w')
+    out.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
+    out.write(etree.tostring(root, encoding='utf-8').decode())
+    out.close()
+
+    print('Keil active target set to: ' + active)
+
 def dist_handle(BSP_ROOT, dist_dir):
     import sys
     cwd_path = os.getcwd()
+    # sys.path.append(os.path.join(os.path.dirname(BSP_ROOT), 'tools'))
     sys.path.append(os.path.join(os.path.dirname(os.path.dirname(BSP_ROOT)), 'tools'))
     from sdk_dist import dist_do_building
     dist_do_building(BSP_ROOT, dist_dir)

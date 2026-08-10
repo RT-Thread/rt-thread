@@ -12,6 +12,8 @@
 #ifndef _PIN_MUX_H_
 #define _PIN_MUX_H_
 
+#include <rtthread.h>
+
 /*!
  * @addtogroup pin_mux
  * @{
