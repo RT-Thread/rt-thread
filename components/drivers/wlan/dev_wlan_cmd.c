@@ -145,7 +145,9 @@ static int wifi_status(int argc, char *argv[])
     struct rt_wlan_info info;
 
     if (argc > 2)
+    {
         return -1;
+    }
 
     if (rt_wlan_is_connected() == 1)
     {
@@ -234,7 +236,9 @@ static rt_err_t wifi_scan_result_cache(struct rt_wlan_info *info)
     rt_base_t level;
 
     if ((info == RT_NULL) || (info->ssid.len == 0))
+    {
         return -RT_EINVAL;
+    }
 
     LOG_D("ssid:%s len:%d mac:%02x:%02x:%02x:%02x:%02x:%02x", info->ssid.val, info->ssid.len,
           info->bssid[0], info->bssid[1], info->bssid[2], info->bssid[3], info->bssid[4], info->bssid[5]);
@@ -308,10 +312,14 @@ static rt_err_t wifi_scan_result_cache(struct rt_wlan_info *info)
 
     /* Insert the end */
     if (insert == -1)
+    {
         insert = scan_result.num;
+    }
 
     if (scan_result.num >= RT_WLAN_SCAN_CACHE_NUM)
+    {
         return RT_EOK;
+    }
 
     /* malloc memory */
     ptable = rt_malloc(sizeof(struct rt_wlan_info) * (scan_result.num + 1));
@@ -459,7 +467,9 @@ static int wifi_scan(int argc, char *argv[])
     int i = 0;
 
     if (argc > 3)
+    {
         return -1;
+    }
 
     if (argc == 3)
     {
@@ -469,7 +479,9 @@ static int wifi_scan(int argc, char *argv[])
     }
 
     if (wifi_check_sta_mode() != 0)
+    {
         return 0;
+    }
 
     ret = rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT, user_ap_info_callback, &i);
     if (ret != RT_EOK)
@@ -508,7 +520,9 @@ static int wifi_join(int argc, char *argv[])
 
     rt_memset(&cfg_info, 0, sizeof(cfg_info));
     if (wifi_check_sta_mode() != 0)
+    {
         return 0;
+    }
     if (argc == 2)
     {
 #ifdef RT_WLAN_CFG_ENABLE
@@ -517,7 +531,9 @@ static int wifi_join(int argc, char *argv[])
         {
             ssid = (char *)(&cfg_info.info.ssid.val[0]);
             if (cfg_info.key.len)
+            {
                 key = (char *)(&cfg_info.key.val[0]);
+            }
         }
         else
 #endif
@@ -565,7 +581,9 @@ static int wifi_ap(int argc, char *argv[])
     }
 
     if (wifi_check_ap_mode() != 0)
+    {
         return 0;
+    }
     err = rt_wlan_start_ap(ssid, key);
     if (err != RT_EOK)
     {
@@ -580,9 +598,13 @@ static int wifi_list_sta(int argc, char *argv[])
     int num, i;
 
     if (argc > 2)
+    {
         return -1;
+    }
     if (wifi_check_ap_mode() != 0)
+    {
         return 0;
+    }
     num = rt_wlan_ap_get_sta_num();
     sta_info = rt_malloc(sizeof(struct rt_wlan_info) * num);
     if (sta_info == RT_NULL)
@@ -610,7 +632,9 @@ static int wifi_disconnect(int argc, char *argv[])
     }
 
     if (wifi_check_sta_mode() != 0)
+    {
         return 0;
+    }
 
     rt_wlan_disconnect();
     return 0;
@@ -752,7 +776,9 @@ static int wifi_debug_set_mode(int argc, char *argv[])
     rt_wlan_mode_t mode;
 
     if (argc != 3)
+    {
         return -1;
+    }
 
     if (rt_strcmp("sta", argv[1]) == 0)
     {
@@ -767,7 +793,9 @@ static int wifi_debug_set_mode(int argc, char *argv[])
         mode = RT_WLAN_NONE;
     }
     else
+    {
         return -1;
+    }
 
     rt_wlan_set_mode(argv[2], mode);
     return 0;
@@ -794,9 +822,13 @@ static int wifi_debug_set_autoconnect(int argc, char *argv[])
     if (argc == 2)
     {
         if (rt_strcmp(argv[1], "enable") == 0)
+        {
             rt_wlan_config_autoreconnect(RT_TRUE);
+        }
         else if (rt_strcmp(argv[1], "disable") == 0)
+        {
             rt_wlan_config_autoreconnect(RT_FALSE);
+        }
     }
     else
     {
