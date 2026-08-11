@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-08-13     tyx          the first version
  * 2024-03-24     Evlers       fixed a duplicate issue with the wifi scan command
+ * 2026-08-11     Kai          fixed silent failure of wifi cmd when wlan device mode is not bound
  */
 
 #include <rtthread.h>
@@ -87,6 +88,39 @@ static const struct wifi_cmd_des debug_tab[] = {
     { "auto", wifi_debug_set_autoconnect },
 };
 #endif
+
+/* Check that the STA/AP device is bound to its mode before issuing
+ * commands that would otherwise fail silently at the mgnt layer.
+ * The mode can only be bound from the shell when RT_WLAN_CMD_DEBUG
+ * is enabled ('wifi -d mode ...'); otherwise tell the user to bind
+ * it in code via rt_wlan_set_mode(). */
+static int wifi_check_sta_mode(void)
+{
+    if (rt_wlan_get_mode(RT_WLAN_DEVICE_STA_NAME) != RT_WLAN_STATION)
+    {
+#ifdef RT_WLAN_CMD_DEBUG
+        LOG_E("sta mode not set, run 'wifi -d mode sta wlan0' first!");
+#else
+        LOG_E("sta mode not set, bind it in code: rt_wlan_set_mode(RT_WLAN_DEVICE_STA_NAME, RT_WLAN_STATION)!");
+#endif
+        return -1;
+    }
+    return 0;
+}
+
+static int wifi_check_ap_mode(void)
+{
+    if (rt_wlan_get_mode(RT_WLAN_DEVICE_AP_NAME) != RT_WLAN_AP)
+    {
+#ifdef RT_WLAN_CMD_DEBUG
+        LOG_E("ap mode not set, run 'wifi -d mode ap wlan1' first!");
+#else
+        LOG_E("ap mode not set, bind it in code: rt_wlan_set_mode(RT_WLAN_DEVICE_AP_NAME, RT_WLAN_AP)!");
+#endif
+        return -1;
+    }
+    return 0;
+}
 
 static int wifi_help(int argc, char *argv[])
 {
@@ -434,6 +468,9 @@ static int wifi_scan(int argc, char *argv[])
         info = &filter;
     }
 
+    if (wifi_check_sta_mode() != 0)
+        return 0;
+
     ret = rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT, user_ap_info_callback, &i);
     if (ret != RT_EOK)
     {
@@ -470,6 +507,8 @@ static int wifi_join(int argc, char *argv[])
     struct rt_wlan_cfg_info cfg_info;
 
     rt_memset(&cfg_info, 0, sizeof(cfg_info));
+    if (wifi_check_sta_mode() != 0)
+        return 0;
     if (argc == 2)
     {
 #ifdef RT_WLAN_CFG_ENABLE
@@ -509,6 +548,7 @@ static int wifi_ap(int argc, char *argv[])
 {
     const char *ssid = RT_NULL;
     const char *key = RT_NULL;
+    rt_err_t err;
 
     if (argc == 3)
     {
@@ -524,7 +564,13 @@ static int wifi_ap(int argc, char *argv[])
         return -1;
     }
 
-    rt_wlan_start_ap(ssid, key);
+    if (wifi_check_ap_mode() != 0)
+        return 0;
+    err = rt_wlan_start_ap(ssid, key);
+    if (err != RT_EOK)
+    {
+        LOG_E("start ap failed:%d!", err);
+    }
     return 0;
 }
 
@@ -535,6 +581,8 @@ static int wifi_list_sta(int argc, char *argv[])
 
     if (argc > 2)
         return -1;
+    if (wifi_check_ap_mode() != 0)
+        return 0;
     num = rt_wlan_ap_get_sta_num();
     sta_info = rt_malloc(sizeof(struct rt_wlan_info) * num);
     if (sta_info == RT_NULL)
@@ -561,18 +609,27 @@ static int wifi_disconnect(int argc, char *argv[])
         return -1;
     }
 
+    if (wifi_check_sta_mode() != 0)
+        return 0;
+
     rt_wlan_disconnect();
     return 0;
 }
 
 static int wifi_ap_stop(int argc, char *argv[])
 {
+    rt_err_t err;
+
     if (argc != 2)
     {
         return -1;
     }
 
-    rt_wlan_ap_stop();
+    err = rt_wlan_ap_stop();
+    if (err != RT_EOK)
+    {
+        LOG_E("ap stop failed:%d!", err);
+    }
     return 0;
 }
 
