@@ -157,9 +157,10 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
     struct stat buffer;
     struct dfs_file *d;
     char *fullpath;
+    char *allocated_path = RT_NULL;
     struct dfs_attr attr;
     time_t current_time;
-    char *link_fn = (char *)rt_malloc(DFS_PATH_MAX);
+    char *link_fn = RT_NULL;
     int err;
 
     if (__path == NULL)
@@ -188,12 +189,13 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
                 return -EBADF;
             }
 
-            fullpath = dfs_dentry_full_path(d->dentry);
-            if (!fullpath)
+            allocated_path = dfs_dentry_full_path(d->dentry);
+            if (!allocated_path)
             {
                 rt_set_errno(-ENOMEM);
                 return -1;
             }
+            fullpath = allocated_path;
         }
     }
 
@@ -230,30 +232,35 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
     {
         if (S_ISLNK(buffer.st_mode) && (__flags != AT_SYMLINK_NOFOLLOW))
         {
-            if (link_fn)
+            link_fn = (char *)rt_malloc(DFS_PATH_MAX);
+            if (!link_fn)
             {
-                err = dfs_file_readlink(fullpath, link_fn, DFS_PATH_MAX);
-                if (err < 0)
-                {
-                    rt_free(link_fn);
-                    return -ENOENT;
-                }
-                else
-                {
-                    fullpath = link_fn;
-                    if (dfs_file_stat(fullpath, &buffer) != 0)
-                    {
-                        rt_free(link_fn);
-                        return -ENOENT;
-                    }
-                }
+                rt_set_errno(-ENOMEM);
+                ret = -1;
+                goto exit;
             }
 
+            err = dfs_file_readlink(fullpath, link_fn, DFS_PATH_MAX);
+            if (err < 0)
+            {
+                ret = -ENOENT;
+                goto exit;
+            }
+
+            fullpath = link_fn;
+            if (dfs_file_stat(fullpath, &buffer) != 0)
+            {
+                ret = -ENOENT;
+                goto exit;
+            }
         }
     }
     attr.st_mode = buffer.st_mode;
     ret = dfs_file_setattr(fullpath, &attr);
+
+exit:
     rt_free(link_fn);
+    rt_free(allocated_path);
 
     return ret;
 }
