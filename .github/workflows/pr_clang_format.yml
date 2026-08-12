@@ -3,21 +3,17 @@ name: Code Format with Clang-Format
 on:
   workflow_dispatch:
     inputs:
+      branch:
+        description: "PR 分支名称\nPR branch name"
+        required: true
+        type: string
       exclude_patterns:
         description: "排除文件/目录 (以逗号间隔)\n Files/Directories to exclude(comma-separated)"
         required: false
         default: ''
-      branch:
-        description: "要格式化的分支 | Branch to format"
-        required: true
-        default: ''
-      pr_number:
-        description: "PR编号 | PR Number"
-        required: true
-        default: ''
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ inputs.branch || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -29,12 +25,16 @@ jobs:
     if: |
       github.repository_owner != 'RT-Thread'
     runs-on: ubuntu-latest
+    env:
+      HEAD_OWNER: ${{ github.repository_owner }}
+      SOURCE_REPOSITORY: ${{ github.repository }}
+      TARGET_BRANCH: ${{ inputs.branch }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch }}
+          ref: ${{ inputs.branch }}
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
           lfs: false
@@ -52,7 +52,7 @@ jobs:
           echo "📋 Checking supported features..."
           clang-format --help | grep -i "align\|consecutive" || echo "No align/consecutive options found"
 
-      - name: Get PR info (files and author)
+      - name: Get PR info and changed files
         id: get-pr-info
         run: |
           max_retries=3
@@ -60,31 +60,51 @@ jobs:
           changed_files=""
           api_response=""
 
-          # 获取PR编号（workflow_dispatch时需要手动输入）
-          PR_NUMBER="${{ github.event.inputs.pr_number }}"
+          # fork 查询父仓库中的 PR，独立镜像则查询当前仓库
+          repository=$(curl -sS \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${SOURCE_REPOSITORY}")
+          UPSTREAM_REPOSITORY=$(jq -r '.parent.full_name // .full_name // empty' <<<"$repository")
 
-          if [ -z "$PR_NUMBER" ]; then
-            echo "Error: PR number is required"
+          if [ -z "$UPSTREAM_REPOSITORY" ]; then
+            echo "Error: Failed to determine the pull request repository"
+            echo "API response: $repository"
             exit 1
           fi
 
-          echo "Fetching PR info for #$PR_NUMBER..."
+          echo "Using PR repository: $UPSTREAM_REPOSITORY"
+          echo "upstream_repository=$UPSTREAM_REPOSITORY" >> "$GITHUB_OUTPUT"
 
-          # 获取PR的详细信息（包括作者）
-          pr_response=$(curl -s \
+          # 根据当前仓库所有者和所选分支自动查找上游 PR
+          pull_requests=$(curl -sS -G \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Accept: application/vnd.github.v3+json" \
-            "https://api.github.com/repos/RT-Thread/rt-thread/pulls/$PR_NUMBER")
+            -H "Accept: application/vnd.github+json" \
+            --data-urlencode "state=open" \
+            --data-urlencode "head=${HEAD_OWNER}:${TARGET_BRANCH}" \
+            "https://api.github.com/repos/${UPSTREAM_REPOSITORY}/pulls")
 
-          # 获取PR作者的GitHub用户名
-          PR_AUTHOR=$(jq -r '.user.login' <<<"$pr_response")
-          echo "PR Author: $PR_AUTHOR"
+          if ! jq -e 'type == "array"' <<<"$pull_requests" >/dev/null; then
+            echo "Error: Failed to query the upstream pull request"
+            echo "API response: $pull_requests"
+            exit 1
+          fi
 
-          # 使用GitHub noreply邮箱格式
-          PR_AUTHOR_EMAIL="${PR_AUTHOR}+github[bot]@noreply.github.com"
+          pr_count=$(jq 'length' <<<"$pull_requests")
+          if [ "$pr_count" -ne 1 ]; then
+            echo "Error: Expected exactly one open PR for ${HEAD_OWNER}:${TARGET_BRANCH}, found $pr_count"
+            jq -r '.[] | "PR #\(.number): \(.html_url)"' <<<"$pull_requests"
+            exit 1
+          fi
 
-          echo "pr_author=$PR_AUTHOR" >> $GITHUB_OUTPUT
-          echo "pr_author_email=$PR_AUTHOR_EMAIL" >> $GITHUB_OUTPUT
+          PR_NUMBER=$(jq -r '.[0].number' <<<"$pull_requests")
+          PR_AUTHOR=$(jq -r '.[0].user.login' <<<"$pull_requests")
+          PR_AUTHOR_ID=$(jq -r '.[0].user.id' <<<"$pull_requests")
+          PR_AUTHOR_EMAIL="${PR_AUTHOR_ID}+${PR_AUTHOR}@users.noreply.github.com"
+          echo "Matched upstream PR #$PR_NUMBER"
+          echo "pr_number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "pr_author=$PR_AUTHOR" >> "$GITHUB_OUTPUT"
+          echo "pr_author_email=$PR_AUTHOR_EMAIL" >> "$GITHUB_OUTPUT"
 
           echo "Fetching changed files for PR #$PR_NUMBER..."
 
@@ -93,7 +113,7 @@ jobs:
             api_response=$(curl -s -w "\n%{http_code}" \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/RT-Thread/rt-thread/pulls/$PR_NUMBER/files")
+            "https://api.github.com/repos/${UPSTREAM_REPOSITORY}/pulls/$PR_NUMBER/files")
 
             # 分离HTTP状态码和响应内容
             http_status=$(echo "$api_response" | tail -1)
@@ -268,28 +288,24 @@ jobs:
       - name: Commit and push changes
         if: steps.check-changes.outputs.has_changes == 'true'
         run: |
-          # 使用PR作者作为commit author，避免CLA检查失败
-          # CLA检查只识别PR作者（已签署CLA），而不识别github-actions[bot]
           PR_AUTHOR="${{ steps.get-pr-info.outputs.pr_author }}"
           PR_AUTHOR_EMAIL="${{ steps.get-pr-info.outputs.pr_author_email }}"
 
-          git config --local user.email "$PR_AUTHOR_EMAIL"
           git config --local user.name "$PR_AUTHOR"
-
-          # 使用GIT_AUTHOR环境变量让commit以贡献者名义提交
-          export GIT_AUTHOR_NAME="$PR_AUTHOR"
-          export GIT_AUTHOR_EMAIL="$PR_AUTHOR_EMAIL"
+          git config --local user.email "$PR_AUTHOR_EMAIL"
 
           git add -A
           git commit -m "style: format code with clang-format [skip ci]"
-          git push origin HEAD:${{ github.event.inputs.branch }}
+          git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
 
-          echo "✅ 代码格式化完成并已推送到分支 ${{ github.event.inputs.branch }}"
+          echo "✅ 格式化结果已作为独立提交推送到分支 ${TARGET_BRANCH}"
           
       - name: Summary
         run: |
           echo "=== 格式化总结 ==="
-          echo "分支: ${{ github.event.inputs.branch }}"
+          echo "分支: ${TARGET_BRANCH}"
+          echo "PR 仓库: ${{ steps.get-pr-info.outputs.upstream_repository }}"
+          echo "上游 PR: #${{ steps.get-pr-info.outputs.pr_number }}"
           echo "排除模式: ${{ github.event.inputs.exclude_patterns || '无' }}"
           echo "处理文件数: ${{ steps.find-files.outputs.files_count }}"
           echo "有更改: ${{ steps.check-changes.outputs.has_changes }}"
