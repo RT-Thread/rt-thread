@@ -18,24 +18,24 @@
 
 /* Global variables for normal usage test */
 /* Workflow validation: clang-format should normalize this declaration. */
-static rt_thread_t target_thread=RT_NULL;
-static rt_thread_t          monitor_thread    = RT_NULL;
-static rt_sem_t             sync_sem          = RT_NULL;
-static volatile rt_uint32_t work_counter      = 0;
-static volatile rt_bool_t   suspend_test_done = RT_FALSE;
-static volatile rt_bool_t   suspend_success   = RT_FALSE;
-static volatile rt_bool_t   resume_success    = RT_FALSE;
+static rt_thread_t target_thread = RT_NULL;
+static rt_thread_t monitor_thread = RT_NULL;
+static rt_sem_t sync_sem = RT_NULL;
+static volatile rt_uint32_t work_counter = 0;
+static volatile rt_bool_t suspend_test_done = RT_FALSE;
+static volatile rt_bool_t suspend_success = RT_FALSE;
+static volatile rt_bool_t resume_success = RT_FALSE;
 
 /* Global variables for deadlock test */
-static rt_mutex_t           test_mutex         = RT_NULL;
-static rt_thread_t          holder_thread      = RT_NULL;
-static rt_thread_t          waiter_thread      = RT_NULL;
-static volatile rt_uint32_t shared_counter     = 0;
-static volatile rt_bool_t   holder_got_mutex   = RT_FALSE;
-static volatile rt_bool_t   deadlock_detected  = RT_FALSE;
-static volatile rt_bool_t   test_completed     = RT_FALSE;
-static volatile rt_bool_t   thread_started     = RT_FALSE;
-static volatile rt_bool_t   thread_should_exit = RT_FALSE;
+static rt_mutex_t test_mutex = RT_NULL;
+static rt_thread_t holder_thread = RT_NULL;
+static rt_thread_t waiter_thread = RT_NULL;
+static volatile rt_uint32_t shared_counter = 0;
+static volatile rt_bool_t holder_got_mutex = RT_FALSE;
+static volatile rt_bool_t deadlock_detected = RT_FALSE;
+static volatile rt_bool_t test_completed = RT_FALSE;
+static volatile rt_bool_t thread_started = RT_FALSE;
+static volatile rt_bool_t thread_should_exit = RT_FALSE;
 
 /* Target work thread - the thread to be suspended */
 static void target_work_thread(void *parameter)
@@ -161,7 +161,7 @@ static void mutex_waiter_thread(void *parameter)
 void simple_thread_entry(void *param)
 {
     volatile rt_bool_t *flag = (volatile rt_bool_t *)param;
-    *flag                    = RT_TRUE;
+    *flag = RT_TRUE;
 
     /* Keep the thread running until it's suspended and deleted */
     while (1)
@@ -174,10 +174,10 @@ void simple_thread_entry(void *param)
 static void test_suspend_force_normal_usage(void)
 {
     /* Reset global variables */
-    work_counter      = 0;
+    work_counter = 0;
     suspend_test_done = RT_FALSE;
-    suspend_success   = RT_FALSE;
-    resume_success    = RT_FALSE;
+    suspend_success = RT_FALSE;
+    resume_success = RT_FALSE;
 
     /* Create synchronization semaphore */
     sync_sem = rt_sem_create("sync", 0, RT_IPC_FLAG_FIFO);
@@ -245,7 +245,7 @@ static void test_suspend_force_api_basic(void)
     rt_thread_t api_thread;
 
     /* Reset global variables */
-    thread_started     = RT_FALSE;
+    thread_started = RT_FALSE;
     thread_should_exit = RT_FALSE;
 
     /* Create a simple test thread */
@@ -284,7 +284,7 @@ static void test_suspend_force_api_basic(void)
     }
 
     /* Reset global variables for next test */
-    thread_started     = RT_FALSE;
+    thread_started = RT_FALSE;
     thread_should_exit = RT_FALSE;
 }
 
@@ -340,10 +340,10 @@ static void test_suspend_force_not_started_thread(void)
 static void test_suspend_force_deadlock_risk(void)
 {
     /* Reset global variables */
-    shared_counter    = 0;
-    holder_got_mutex  = RT_FALSE;
+    shared_counter = 0;
+    holder_got_mutex = RT_FALSE;
     deadlock_detected = RT_FALSE;
-    test_completed    = RT_FALSE;
+    test_completed = RT_FALSE;
 
     /* Create mutex */
     test_mutex = rt_mutex_create("test_mutex", RT_IPC_FLAG_PRIO);
@@ -432,15 +432,15 @@ static rt_err_t utest_tc_init(void)
 static rt_err_t utest_tc_cleanup(void)
 {
     /* Reset all global variables to ensure clean state between tests */
-    work_counter       = 0;
-    suspend_test_done  = RT_FALSE;
-    suspend_success    = RT_FALSE;
-    resume_success     = RT_FALSE;
-    shared_counter     = 0;
-    holder_got_mutex   = RT_FALSE;
-    deadlock_detected  = RT_FALSE;
-    test_completed     = RT_FALSE;
-    thread_started     = RT_FALSE;
+    work_counter = 0;
+    suspend_test_done = RT_FALSE;
+    suspend_success = RT_FALSE;
+    resume_success = RT_FALSE;
+    shared_counter = 0;
+    holder_got_mutex = RT_FALSE;
+    deadlock_detected = RT_FALSE;
+    test_completed = RT_FALSE;
+    thread_started = RT_FALSE;
     thread_should_exit = RT_FALSE;
 
     /* Clean up any remaining resources - safety check */
@@ -457,10 +457,10 @@ static rt_err_t utest_tc_cleanup(void)
     }
 
     /* Ensure all thread pointers are NULL */
-    target_thread  = RT_NULL;
+    target_thread = RT_NULL;
     monitor_thread = RT_NULL;
-    holder_thread  = RT_NULL;
-    waiter_thread  = RT_NULL;
+    holder_thread = RT_NULL;
+    waiter_thread = RT_NULL;
 
     /* Give system time to complete cleanup */
     rt_thread_mdelay(50);
