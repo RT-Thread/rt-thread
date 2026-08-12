@@ -338,6 +338,7 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
     if (q->tot_len < p->tot_len)
     {
         LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING, ("pbuf_alloc dhcp_msg too small %d:%d\n", q->tot_len, p->tot_len));
+        pbuf_free(q);
         pbuf_free(p);
         return;
     }
