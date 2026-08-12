@@ -113,7 +113,55 @@ void BOARD_InitPins(void)
     /* PORT2_3 (pin 36) is configured as LPUART2_RXD */
     PORT_SetPinConfig(PORT2, 3U, &port2_3_pin36_config);
 
+		const port_pin_config_t port4_2_pin_config = {/* Internal pull-up resistor is enabled */
+                                                    .pullSelect = kPORT_PullUp,
+                                                    /* Low internal pull resistor value is selected. */
+                                                    .pullValueSelect = kPORT_LowPullResistor,
+                                                    /* Fast slew rate is configured */
+                                                    .slewRate = kPORT_FastSlewRate,
+                                                    /* Passive input filter is disabled */
+                                                    .passiveFilterEnable = kPORT_PassiveFilterDisable,
+                                                    /* Open drain output is disabled */
+                                                    .openDrainEnable = kPORT_OpenDrainDisable,
+                                                    /* Low drive strength is configured */
+                                                    .driveStrength = kPORT_LowDriveStrength,
+                                                    /* Normal drive strength is configured */
+                                                    .driveStrength1 = kPORT_NormalDriveStrength,
+                                                    /* Pin is configured as LPUART2_TXD */
+                                                    .mux = kPORT_MuxAlt3,
+                                                    /* Digital input enabled */
+                                                    .inputBuffer = kPORT_InputBufferEnable,
+                                                    /* Digital input is not inverted */
+                                                    .invertInput = kPORT_InputNormal,
+                                                    /* Pin Control Register fields [15:0] are not locked */
+                                                    .lockRegister = kPORT_UnlockRegister};
+    /* PORT2_2 (pin 35) is configured as LPUART2_TXD */
+    PORT_SetPinConfig(PORT4, 2U, &port4_2_pin_config);
 
+    const port_pin_config_t port4_5_pin_config = {/* Internal pull-up resistor is enabled */
+                                                    .pullSelect = kPORT_PullUp,
+                                                    /* Low internal pull resistor value is selected. */
+                                                    .pullValueSelect = kPORT_LowPullResistor,
+                                                    /* Fast slew rate is configured */
+                                                    .slewRate = kPORT_FastSlewRate,
+                                                    /* Passive input filter is disabled */
+                                                    .passiveFilterEnable = kPORT_PassiveFilterDisable,
+                                                    /* Open drain output is disabled */
+                                                    .openDrainEnable = kPORT_OpenDrainDisable,
+                                                    /* Low drive strength is configured */
+                                                    .driveStrength = kPORT_LowDriveStrength,
+                                                    /* Normal drive strength is configured */
+                                                    .driveStrength1 = kPORT_NormalDriveStrength,
+                                                    /* Pin is configured as LPUART2_RXD */
+                                                    .mux = kPORT_MuxAlt3,
+                                                    /* Digital input enabled */
+                                                    .inputBuffer = kPORT_InputBufferEnable,
+                                                    /* Digital input is not inverted */
+                                                    .invertInput = kPORT_InputNormal,
+                                                    /* Pin Control Register fields [15:0] are not locked */
+                                                    .lockRegister = kPORT_UnlockRegister};
+    /* PORT2_3 (pin 36) is configured as LPUART2_RXD */
+    PORT_SetPinConfig(PORT4, 5U, &port4_5_pin_config);
     const port_pin_config_t LED_RED = {/* Internal pull-up/down resistor is disabled */
                                         .pullSelect = kPORT_PullDisable,
                                        /* Low internal pull resistor value is selected. */

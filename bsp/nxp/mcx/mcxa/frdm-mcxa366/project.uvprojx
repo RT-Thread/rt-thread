@@ -10,13 +10,13 @@
       <TargetName>rtthread-frdm-mcxa366</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6230000::V6.23::ARMCLANG</pCCUsed>
+      <pCCUsed>6240000::V6.24::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>MCXA366VLQ</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.MCXA366_DFP.25.12.00</PackID>
+          <PackID>NXP.MCXA366_DFP.26.03.00</PackID>
           <PackURL>https://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
           <Cpu>IRAM(0x20000000,0x03c000) IRAM2(0x04000000,0x2000) IROM(0x03000000,0x2000) IROM2(0x00000000,0x0fe000) XRAM(0x04002000,0x2000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -52,7 +52,7 @@
           <OutputName>rtthread</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\build\</ListingPath>
@@ -314,7 +314,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>1</Optim>
+            <Optim>2</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -329,18 +329,18 @@
             <uC99>1</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>0</v6Lang>
-            <v6LangP>0</v6LangP>
+            <v6Lang>3</v6Lang>
+            <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>--target=arm-arm-none-eabi</MiscControls>
+              <MiscControls>--target=arm-arm-none-eabi -Wno-implicit-function-declaration -Wno-incompatible-pointer-types</MiscControls>
               <Define>__RTTHREAD__, CPU_MCXA366VLQ, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\libcpu\arm\cortex-m33;packages\nxp-mcx-series-latest\MCXA366\components\codec;packages\nxp-mcx-series-latest\MCXA366\periph2;..\..\..\..\..\components\finsh;board;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\phy;packages\nxp-mcx-cmsis-latest\Core\Include;.;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXA366;..\..\..\..\..\components\libc\compilers\common\extension;packages\nxp-mcx-series-latest\MCXA366\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\include;applications;..\libraries\drivers;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\net\utest;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;board\MCUX_Config\board;..\libraries\drivers\config</IncludePath>
+              <IncludePath>..\..\..\..\..\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\spi;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\libcpu\arm\cortex-m33;packages\nxp-mcx-series-latest\MCXA366\components\codec;packages\nxp-mcx-series-latest\MCXA366\periph2;..\..\..\..\..\components\finsh;board;..\..\..\..\..\components\libc\posix\io\poll;..\..\..\..\..\components\drivers\phy;packages\nxp-mcx-cmsis-latest\Core\Include;.;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\drivers\smp_call;..\..\..\..\..\components\drivers\include;packages\nxp-mcx-series-latest\MCXA366;..\..\..\..\..\components\libc\compilers\common\extension;packages\nxp-mcx-series-latest\MCXA366\drivers;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\compilers\common\include;applications;..\Libraries\drivers;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\net\utest;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\drivers\include;board\MCUX_Config\board;..\Libraries\drivers\config;.\applications;.\packages\RTduino-latest\core;.\applications\arduino_pinout;.\packages\RTduino-latest\core\avr</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -393,6 +393,21 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>rtconfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\rtconfig.h</FilePath>
+            </File>
+            <File>
+              <FileName>pins_arduino.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\applications\arduino_pinout\pins_arduino.c</FilePath>
+            </File>
+            <File>
+              <FileName>arduino_main.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\applications\arduino_main.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -1170,7 +1185,7 @@
             <File>
               <FileName>adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\misc\adc.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\adc\adc.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -2667,6 +2682,86 @@
               <FileName>system_MCXA366.c</FileName>
               <FileType>1</FileType>
               <FilePath>packages\nxp-mcx-series-latest\MCXA366\system_MCXA366.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>RTduino</GroupName>
+          <Files>
+            <File>
+              <FileName>HardwareSerial.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\packages\RTduino-latest\core\HardwareSerial.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>IPAddress.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\packages\RTduino-latest\core\IPAddress.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Print.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\packages\RTduino-latest\core\Print.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>RTduino.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\packages\RTduino-latest\core\RTduino.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Stream.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\packages\RTduino-latest\core\Stream.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>Tone.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\packages\RTduino-latest\core\Tone.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>WMath.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\packages\RTduino-latest\core\WMath.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>WString.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>.\packages\RTduino-latest\core\WString.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>WInterrupts.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\packages\RTduino-latest\core\WInterrupts.c</FilePath>
+            </File>
+            <File>
+              <FileName>wiring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\packages\RTduino-latest\core\wiring.c</FilePath>
+            </File>
+            <File>
+              <FileName>wiring_analog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\packages\RTduino-latest\core\wiring_analog.c</FilePath>
+            </File>
+            <File>
+              <FileName>wiring_digital.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\packages\RTduino-latest\core\wiring_digital.c</FilePath>
+            </File>
+            <File>
+              <FileName>wiring_pulse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\packages\RTduino-latest\core\wiring_pulse.c</FilePath>
+            </File>
+            <File>
+              <FileName>wiring_shift.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\packages\RTduino-latest\core\wiring_shift.c</FilePath>
+            </File>
+            <File>
+              <FileName>avr_stdlib.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\packages\RTduino-latest\core\avr\avr_stdlib.c</FilePath>
             </File>
           </Files>
         </Group>
