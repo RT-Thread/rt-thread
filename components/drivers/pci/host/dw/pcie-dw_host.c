@@ -8,12 +8,29 @@
  * 2023-09-23     GuEe-GUI     first version
  */
 
+/**
+ * @file pcie-dw_host.c
+ * @brief Synopsys DesignWare PCIe Root Complex (RC) mode support
+ *
+ * Implements the RC-mode host initialization:
+ * - MSI interrupt controller (acked via DBI register writes)
+ * - Root complex configuration (BAR setup, bus numbers, command register)
+ * - ATU programming for memory and I/O space
+ * - Own config space access via DBI (device 0 only)
+ * - Child bus config space access via ATU CFG0/CFG1 transactions
+ */
+
 #define DBG_TAG "pcie.dw-host"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include "pcie-dw.h"
 
+/**
+ * @brief Acknowledge an MSI IRQ by clearing the status bit in the DBI register
+ *
+ * @param[in] pirq PIC IRQ descriptor
+ */
 static void dw_pcie_irq_ack(struct rt_pic_irq *pirq)
 {
     int hwirq = pirq->hwirq;
@@ -28,6 +45,11 @@ static void dw_pcie_irq_ack(struct rt_pic_irq *pirq)
     dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_STATUS + res, RT_BIT(bit));
 }
 
+/**
+ * @brief Mask an MSI IRQ (disable at PCIe core MSI controller level)
+ *
+ * @param[in] pirq PIC IRQ descriptor
+ */
 static void dw_pcie_irq_mask(struct rt_pic_irq *pirq)
 {
     rt_ubase_t level;
@@ -50,6 +72,11 @@ static void dw_pcie_irq_mask(struct rt_pic_irq *pirq)
     rt_spin_unlock_irqrestore(&port->lock, level);
 }
 
+/**
+ * @brief Unmask an MSI IRQ
+ *
+ * @param[in] pirq PIC IRQ descriptor
+ */
 static void dw_pcie_irq_unmask(struct rt_pic_irq *pirq)
 {
     rt_ubase_t level;
@@ -72,6 +99,15 @@ static void dw_pcie_irq_unmask(struct rt_pic_irq *pirq)
     rt_spin_unlock_irqrestore(&port->lock, level);
 }
 
+/**
+ * @brief Compose an MSI message for a DW PCIe IRQ
+ *
+ * The MSI message is a posted memory write to the msi_data_phy
+ * address with data equal to the hardware IRQ number.
+ *
+ * @param[in]  pirq PIC IRQ descriptor
+ * @param[out] msg  Composed MSI message
+ */
 static void dw_pcie_compose_msi_msg(struct rt_pic_irq *pirq, struct rt_pci_msi_msg *msg)
 {
     rt_uint64_t msi_target;
@@ -85,6 +121,13 @@ static void dw_pcie_compose_msi_msg(struct rt_pic_irq *pirq, struct rt_pci_msi_m
     msg->data = pirq->hwirq;
 }
 
+/**
+ * @brief Allocate an MSI IRQ from the bitmap
+ *
+ * @param[in] pic      MSI PIC instance
+ * @param[in] msi_desc MSI descriptor
+ * @return IRQ number on success, -RT_EEMPTY if no free IRQs
+ */
 static int dw_pcie_irq_alloc_msi(struct rt_pic *pic, struct rt_pci_msi_desc *msi_desc)
 {
     rt_ubase_t level;
@@ -114,6 +157,12 @@ _out_lock:
     return irq;
 }
 
+/**
+ * @brief Free an MSI IRQ back to the bitmap
+ *
+ * @param[in] pic MSI PIC instance
+ * @param[in] irq IRQ number to free
+ */
 static void dw_pcie_irq_free_msi(struct rt_pic *pic, int irq)
 {
     rt_ubase_t level;
@@ -132,8 +181,8 @@ static void dw_pcie_irq_free_msi(struct rt_pic *pic, int irq)
     rt_spin_unlock_irqrestore(&port->lock, level);
 }
 
-const static struct rt_pic_ops dw_pci_msi_ops =
-{
+/** @brief DW PCIe MSI PIC operations */
+const static struct rt_pic_ops dw_pci_msi_ops = {
     .name = "DWPCI-MSI",
     .irq_ack = dw_pcie_irq_ack,
     .irq_mask = dw_pcie_irq_mask,
@@ -144,7 +193,15 @@ const static struct rt_pic_ops dw_pci_msi_ops =
     .flags = RT_PIC_F_IRQ_ROUTING,
 };
 
-/* MSI int handler */
+/**
+ * @brief Handle all pending MSI interrupts
+ *
+ * Reads the MSI status registers, acknowledges each pending
+ * IRQ, and dispatches to the registered ISR.
+ *
+ * @param[in] port DW PCIe port
+ * @return RT_EOK if any IRQ was handled, -RT_EEMPTY if no pending IRQs
+ */
 rt_err_t dw_handle_msi_irq(struct dw_pcie_port *port)
 {
     rt_err_t err;
@@ -161,7 +218,7 @@ rt_err_t dw_handle_msi_irq(struct dw_pcie_port *port)
     for (i = 0; i < num_ctrls; ++i)
     {
         status = dw_pcie_readl_dbi(pci, PCIE_MSI_INTR0_STATUS +
-                    (i * MSI_REG_CTRL_BLOCK_SIZE));
+                                            (i * MSI_REG_CTRL_BLOCK_SIZE));
 
         if (!status)
         {
@@ -183,6 +240,12 @@ rt_err_t dw_handle_msi_irq(struct dw_pcie_port *port)
     return err;
 }
 
+/**
+ * @brief MSI interrupt ISR callback
+ *
+ * @param[in] irqno Hardware IRQ number
+ * @param[in] param Port pointer
+ */
 static void dw_pcie_msi_isr(int irqno, void *param)
 {
     struct dw_pcie_port *port = param;
@@ -190,6 +253,11 @@ static void dw_pcie_msi_isr(int irqno, void *param)
     dw_handle_msi_irq(port);
 }
 
+/**
+ * @brief Free MSI resources: detach IRQ, free DMA coherent memory
+ *
+ * @param[in] port DW PCIe port
+ */
 void dw_pcie_free_msi(struct dw_pcie_port *port)
 {
     if (port->msi_irq >= 0)
@@ -203,11 +271,19 @@ void dw_pcie_free_msi(struct dw_pcie_port *port)
         struct dw_pcie *pci = to_dw_pcie_from_port(port);
 
         rt_dma_free_coherent(pci->dev, sizeof(rt_uint64_t), port->msi_data,
-                port->msi_data_phy);
+                             port->msi_data_phy);
         port->msi_data = RT_NULL;
     }
 }
 
+/**
+ * @brief Initialize MSI for a DW PCIe port
+ *
+ * Programs the MSI address registers in the DBI space so that
+ * MSI writes from endpoints are captured by the controller.
+ *
+ * @param[in] port DW PCIe port
+ */
 void dw_pcie_msi_init(struct dw_pcie_port *port)
 {
 #ifdef RT_PCI_MSI
@@ -223,6 +299,21 @@ void dw_pcie_msi_init(struct dw_pcie_port *port)
 static const struct rt_pci_ops dw_child_pcie_ops;
 static const struct rt_pci_ops dw_pcie_ops;
 
+/**
+ * @brief Initialize a DW PCIe host controller in RC mode
+ *
+ * Complete initialization sequence:
+ * 1. Parse "config" reg space and I/O space from DT
+ * 2. Allocate host bridge and parse bus-regions
+ * 3. Map DBI base
+ * 4. Set up MSI PIC and allocate MSI data memory
+ * 5. Install MSI ISR
+ * 6. Call platform-specific host_init callback
+ * 7. Probe host bridge (register root bus + scan)
+ *
+ * @param[in] port DW PCIe port
+ * @return RT_EOK on success
+ */
 rt_err_t dw_pcie_host_init(struct dw_pcie_port *port)
 {
     rt_err_t err;
@@ -359,7 +450,7 @@ rt_err_t dw_pcie_host_init(struct dw_pcie_port *port)
         }
 
         port->msi_data = rt_dma_alloc_coherent(pci->dev, sizeof(rt_uint64_t),
-                &port->msi_data_phy);
+                                               &port->msi_data_phy);
 
         if (!port->msi_data)
         {
@@ -417,6 +508,11 @@ _err_free_cfg:
     return err;
 }
 
+/**
+ * @brief Deinitialize host mode (free MSI resources)
+ *
+ * @param[in] port DW PCIe port
+ */
 void dw_pcie_host_deinit(struct dw_pcie_port *port)
 {
     if (!port->ops->msi_host_init)
@@ -425,6 +521,11 @@ void dw_pcie_host_deinit(struct dw_pcie_port *port)
     }
 }
 
+/**
+ * @brief Fully free host mode resources
+ *
+ * @param[in] port DW PCIe port
+ */
 void dw_pcie_host_free(struct dw_pcie_port *port)
 {
     if (!port->ops->msi_host_init)
@@ -441,6 +542,17 @@ void dw_pcie_host_free(struct dw_pcie_port *port)
     }
 }
 
+/**
+ * @brief Map config space for devices behind a DW PCIe root port
+ *
+ * Uses ATU CFG0 (type 0) for devices on the root bus and
+ * CFG1 (type 1) for devices behind a bridge.
+ *
+ * @param[in] bus   PCI bus
+ * @param[in] devfn Device/function number
+ * @param[in] reg   Register offset
+ * @return Virtual address for MMIO access, or RT_NULL if link is down
+ */
 static void *dw_pcie_other_conf_map(struct rt_pci_bus *bus, rt_uint32_t devfn, int reg)
 {
     int type;
@@ -452,8 +564,6 @@ static void *dw_pcie_other_conf_map(struct rt_pci_bus *bus, rt_uint32_t devfn, i
      * Checking whether the link is up here is a last line of defense
      * against platforms that forward errors on the system bus as
      * SError upon PCI configuration transactions issued when the link is down.
-     * This check is racy by definition and does not stop the system from
-     * triggering an SError if the link goes down after this check is performed.
      */
     if (!dw_pcie_link_up(pci))
     {
@@ -461,7 +571,7 @@ static void *dw_pcie_other_conf_map(struct rt_pci_bus *bus, rt_uint32_t devfn, i
     }
 
     busdev = PCIE_ATU_BUS(bus->number) | PCIE_ATU_DEV(RT_PCI_SLOT(devfn)) |
-            PCIE_ATU_FUNC(RT_PCI_FUNC(devfn));
+             PCIE_ATU_FUNC(RT_PCI_FUNC(devfn));
 
     if (rt_pci_is_root_bus(bus->parent))
     {
@@ -477,8 +587,21 @@ static void *dw_pcie_other_conf_map(struct rt_pci_bus *bus, rt_uint32_t devfn, i
     return port->cfg0_base + reg;
 }
 
+/**
+ * @brief Read config space for other (non-root) devices
+ *
+ * After the read, if IOCFG is shared with I/O space,
+ * restores the I/O ATU mapping.
+ *
+ * @param[in]  bus   PCI bus
+ * @param[in]  devfn Device/function number
+ * @param[in]  reg   Register offset
+ * @param[in]  width Access width
+ * @param[out] value Read value
+ * @return RT_EOK on success
+ */
 static rt_err_t dw_pcie_other_read_conf(struct rt_pci_bus *bus,
-            rt_uint32_t devfn, int reg, int width, rt_uint32_t *value)
+                                        rt_uint32_t devfn, int reg, int width, rt_uint32_t *value)
 {
     rt_err_t err;
     struct dw_pcie_port *port = bus->sysdata;
@@ -489,14 +612,24 @@ static rt_err_t dw_pcie_other_read_conf(struct rt_pci_bus *bus,
     if (!err && (pci->iatu_unroll_enabled & DWC_IATU_IOCFG_SHARED))
     {
         dw_pcie_prog_outbound_atu(pci, 0, PCIE_ATU_TYPE_IO,
-                port->io_addr, port->io_bus_addr, port->io_size);
+                                  port->io_addr, port->io_bus_addr, port->io_size);
     }
 
     return err;
 }
 
+/**
+ * @brief Write config space for other (non-root) devices
+ *
+ * @param[in] bus   PCI bus
+ * @param[in] devfn Device/function number
+ * @param[in] reg   Register offset
+ * @param[in] width Access width
+ * @param[in] value Value to write
+ * @return RT_EOK on success
+ */
 static rt_err_t dw_pcie_other_write_conf(struct rt_pci_bus *bus,
-            rt_uint32_t devfn, int reg, int width, rt_uint32_t value)
+                                         rt_uint32_t devfn, int reg, int width, rt_uint32_t value)
 {
     rt_err_t err;
     struct dw_pcie_port *port = bus->sysdata;
@@ -507,19 +640,30 @@ static rt_err_t dw_pcie_other_write_conf(struct rt_pci_bus *bus,
     if (!err && (pci->iatu_unroll_enabled & DWC_IATU_IOCFG_SHARED))
     {
         dw_pcie_prog_outbound_atu(pci, 0, PCIE_ATU_TYPE_IO,
-                port->io_addr, port->io_bus_addr, port->io_size);
+                                  port->io_addr, port->io_bus_addr, port->io_size);
     }
 
     return err;
 }
 
-static const struct rt_pci_ops dw_child_pcie_ops =
-{
+/** @brief PCI ops for child buses (through ATU) */
+static const struct rt_pci_ops dw_child_pcie_ops = {
     .map = dw_pcie_other_conf_map,
     .read = dw_pcie_other_read_conf,
     .write = dw_pcie_other_write_conf,
 };
 
+/**
+ * @brief Map config space for the root bus (own config via DBI)
+ *
+ * The DW controller's own config (device 0) is accessed through
+ * the DBI space directly. Only slot 0 is valid on the root bus.
+ *
+ * @param[in] bus   PCI bus
+ * @param[in] devfn Device/function number
+ * @param[in] reg   Register offset
+ * @return Virtual address for MMIO access, or RT_NULL for invalid slots
+ */
 void *dw_pcie_own_conf_map(struct rt_pci_bus *bus, rt_uint32_t devfn, int reg)
 {
     struct dw_pcie_port *port = bus->sysdata;
@@ -533,13 +677,28 @@ void *dw_pcie_own_conf_map(struct rt_pci_bus *bus, rt_uint32_t devfn, int reg)
     return pci->dbi_base + reg;
 }
 
-static const struct rt_pci_ops dw_pcie_ops =
-{
+/** @brief PCI ops for root bus (own config via DBI) */
+static const struct rt_pci_ops dw_pcie_ops = {
     .map = dw_pcie_own_conf_map,
     .read = rt_pci_bus_read_config_uxx,
     .write = rt_pci_bus_write_config_uxx,
 };
 
+/**
+ * @brief Set up the DW PCIe root complex
+ *
+ * Configures:
+ * - DBI RO writable enable (for updating read-only registers)
+ * - Controller setup (lanes, speed, FTS)
+ * - MSI mask/enable registers
+ * - RC BARs
+ * - Interrupt Pin register
+ * - Bus numbers (primary=0, secondary=1, subordinate=ff)
+ * - Command register (I/O, MEM, Bus Master, SERR)
+ * - ATU regions for memory and I/O space translation
+ *
+ * @param[in] port DW PCIe port
+ */
 void dw_pcie_setup_rc(struct dw_pcie_port *port)
 {
     rt_uint32_t val, num_ctrls;
@@ -562,10 +721,8 @@ void dw_pcie_setup_rc(struct dw_pcie_port *port)
         {
             port->irq_mask[ctrl] = ~0;
 
-            dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK +
-                    (ctrl * MSI_REG_CTRL_BLOCK_SIZE), port->irq_mask[ctrl]);
-            dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_ENABLE +
-                    (ctrl * MSI_REG_CTRL_BLOCK_SIZE), ~0);
+            dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_MASK + (ctrl * MSI_REG_CTRL_BLOCK_SIZE), port->irq_mask[ctrl]);
+            dw_pcie_writel_dbi(pci, PCIE_MSI_INTR0_ENABLE + (ctrl * MSI_REG_CTRL_BLOCK_SIZE), ~0);
         }
     }
 
@@ -617,8 +774,8 @@ void dw_pcie_setup_rc(struct dw_pcie_port *port)
             }
 
             dw_pcie_prog_outbound_atu(pci, atu_idx,
-                    PCIE_ATU_TYPE_MEM, region->cpu_addr,
-                    region->phy_addr, region->size);
+                                      PCIE_ATU_TYPE_MEM, region->cpu_addr,
+                                      region->phy_addr, region->size);
         }
 
         if (port->io_size)
@@ -626,8 +783,8 @@ void dw_pcie_setup_rc(struct dw_pcie_port *port)
             if (pci->num_viewport > ++atu_idx)
             {
                 dw_pcie_prog_outbound_atu(pci, atu_idx,
-                        PCIE_ATU_TYPE_IO, port->io_addr,
-                        port->io_bus_addr, port->io_size);
+                                          PCIE_ATU_TYPE_IO, port->io_addr,
+                                          port->io_bus_addr, port->io_size);
             }
             else
             {

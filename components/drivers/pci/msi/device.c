@@ -8,8 +8,27 @@
  * 2022-10-24     GuEe-GUI     first version
  */
 
+/**
+ * @file device.c
+ * @brief MSI/MSI-X capability initialization and discovery
+ *
+ * Initializes (and disables) MSI and MSI-X capabilities for a newly
+ * probed PCI device. The capabilities are discovered via the PCI
+ * capability linked list and disabled as a safe default state.
+ * Drivers must explicitly enable MSI/MSI-X when needed.
+ */
+
 #include <drivers/pci.h>
 
+/**
+ * @brief Initialize the MSI capability for a device (disable MSI)
+ *
+ * Finds the MSI capability (PCIY_MSI), checks if MSI is currently
+ * enabled (left over from firmware), and disables it. Also records
+ * whether the device supports 64-bit MSI addresses.
+ *
+ * @param[in] pdev PCI device (msi_cap and no_64bit_msi fields updated)
+ */
 void rt_pci_msi_init(struct rt_pci_device *pdev)
 {
     if (pdev && (pdev->msi_cap = rt_pci_find_capability(pdev, PCIY_MSI)))
@@ -30,6 +49,14 @@ void rt_pci_msi_init(struct rt_pci_device *pdev)
     }
 }
 
+/**
+ * @brief Initialize the MSI-X capability for a device (disable MSI-X)
+ *
+ * Finds the MSI-X capability (PCIY_MSIX), checks if MSI-X is currently
+ * enabled (left over from firmware), and disables it.
+ *
+ * @param[in] pdev PCI device (msix_cap field updated)
+ */
 void rt_pci_msix_init(struct rt_pci_device *pdev)
 {
     if (pdev && (pdev->msix_cap = rt_pci_find_capability(pdev, PCIY_MSIX)))
