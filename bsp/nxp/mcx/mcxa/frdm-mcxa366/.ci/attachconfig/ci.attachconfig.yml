@@ -52,18 +52,6 @@ Peripheral.slcd:
 utest.pin:
     <<: *scons
     kconfig:
-      # 原有配置
-      - CONFIG_BSP_USING_ARDUINO=y
-      # RTduino core
-      - CONFIG_RT_USING_RTDUINO=y
-      # UART for Serial (console) - D0/D1
-      - CONFIG_BSP_USING_UART2=y
-      - CONFIG_RTDUINO_SERIAL2_DEVICE_NAME="uart2"
-      # I2C for Wire - D18/D19
-      - CONFIG_BSP_USING_I2C2=y
-      # SPI for SPI - D10-D13
-      - CONFIG_BSP_USING_SPI1=y
-      # PWM support - D3/D5/D6/D9
-      - CONFIG_BSP_USING_PWM=y
-      # ADC support - A0-A5
-      - CONFIG_BSP_USING_ADC=y
+      - CONFIG_RT_USING_UTESTCASES=y
+      - CONFIG_RT_CONSOLEBUF_SIZE=256
+      - CONFIG_RT_UTEST_PIN=y

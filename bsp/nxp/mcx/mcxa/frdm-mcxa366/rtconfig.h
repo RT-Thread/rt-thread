@@ -153,13 +153,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_CLOCK_TIME
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
-#define RT_USING_ADC
-#define RT_USING_RTC
-#define RT_USING_SPI
-#define RT_USING_SPI_ISR
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -186,6 +179,7 @@
 
 /* end of Interprocess Communication (IPC) */
 /* end of POSIX (Portable Operating System Interface) layer */
+#define RT_USING_CPLUSPLUS
 /* end of C/C++ and POSIX layer */
 
 /* Network */
@@ -247,11 +241,7 @@
 /* end of security packages */
 
 /* language packages */
-#define PKG_USING_RTDUINO
-#define RTDUINO_THREAD_SIZE 2048
-#define RTDUINO_THREAD_PRIO 30
-#define RTDUINO_SUPPORT_HIGH_PRECISION_MICROS
-#define PKG_USING_RTDUINO_LATEST_VERSION
+
 /* JSON: JavaScript Object Notation, a lightweight data-interchange format */
 
 /* end of JSON: JavaScript Object Notation, a lightweight data-interchange format */
@@ -354,6 +344,10 @@
 /* NOVOSNS Drivers */
 
 /* end of NOVOSNS Drivers */
+
+/* N32 Drivers */
+
+/* end of N32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -443,9 +437,6 @@
 #define BSP_USING_PIN
 #define BSP_USING_UART
 #define BSP_USING_UART2
-#define BSP_USING_UART3
-#define BSP_USING_CLOCK_TIMER
-#define BSP_USING_CTIMER0
 /* end of On-chip Peripheral Drivers */
 
 /* Onboard Peripheral Drivers */
