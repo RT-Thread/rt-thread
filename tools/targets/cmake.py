@@ -19,6 +19,7 @@
  * 2025-02-22     kaidegit     fix missing some flags added in Sconscript
  * 2025-02-24     kaidegit     remove some code that is unnecessary but takes time, get them from env
  * 2026-01-22     xym-ee       Fix handling of tuple-based CPPDEFINES from SCons in CMake project generation.
+ * 2026-08-12     kaidegit     Escape double quotes in CPPDEFINES values when generating CMake project
 """
 
 import os
@@ -186,6 +187,12 @@ def GenerateCFiles(env, project, project_name):
             cm_file.write( "\t" + path.replace("\\", "/") + "\n")
         cm_file.write(")\n\n")
 
+        # SCons 侧用单引号包裹含双引号的宏值（如 mbedtls 的
+        # MBEDTLS_CONFIG_FILE="xxx.h"）以通过 shlex；CMake 会把双引号当作
+        # 字符串界定符，需转义为 \" 并去掉单引号，编译器才能拿到带引号的值。
+        def _escape_def_value(value):
+            return str(value).replace('"', '\\"').replace("'", "")
+
         cm_file.write("ADD_DEFINITIONS(\n")
         for i in env['CPPDEFINES']:
             # Handle CPPDEFINES from SCons (str / tuple)
@@ -199,13 +206,13 @@ def GenerateCFiles(env, project, project_name):
                         cm_file.write("\t-D" + str(i[0]) + "\n")
                     # e.g. ('FOO', 1)
                     else:
-                        cm_file.write("\t-D{}={}\n".format(i[0], i[1]))
+                        cm_file.write("\t-D{}={}\n".format(i[0], _escape_def_value(i[1])))
                 else:
                     # unexpected form, fallback to name only
                     cm_file.write("\t-D" + str(i[0]) + "\n")
             else:
                 # generic macro (commonly a string), ensure robust string conversion
-                cm_file.write("\t-D" + str(i) + "\n")
+                cm_file.write("\t-D" + _escape_def_value(i) + "\n")
         cm_file.write(")\n\n")
 
         libgroups = []
