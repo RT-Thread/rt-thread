@@ -20,15 +20,15 @@ extern "C" {
 
 struct mdma_config
 {
-    MDMA_ChNumType  mdma_channel;
-    IRQn_Type       dma_irq;
-    uint32_t        dmamux_channel;
-    uint32_t        dmamux_request;
-    uint32_t        hs_interface;
+    MDMA_ChNumType mdma_channel;
+    IRQn_Type dma_irq;
+    uint32_t dmamux_channel;
+    uint32_t dmamux_request;
+    uint32_t hs_interface;
 };
 
-#define XSPI_USING_RX_DMA_FLAG   (1<<0)
-#define XSPI_USING_TX_DMA_FLAG   (1<<1)
+#define XSPI_USING_RX_DMA_FLAG (1 << 0)
+#define XSPI_USING_TX_DMA_FLAG (1 << 1)
 
 typedef enum
 {
@@ -41,30 +41,29 @@ typedef enum
 
 struct n32_xspi
 {
-
-    XSPI_Module                 *xSPIx;
-    char                        *bus_name;
-    XSPI_InitType                InitStructure;
-    XSPI_EnhancedInitType        EnhInitStructure;
-    XSPI_XIPInitType             XIPInitStructure;
+    XSPI_Module *xSPIx;
+    char *bus_name;
+    XSPI_InitType InitStructure;
+    XSPI_EnhancedInitType EnhInitStructure;
+    XSPI_XIPInitType XIPInitStructure;
 
     struct rt_qspi_configuration *qspi_cfg;
-    struct rt_spi_configuration  *cfg;
-    XSPI_Work_Direct_t           Direct;
-    rt_uint8_t                   xspi_dma_flag;
+    struct rt_spi_configuration *cfg;
+    XSPI_Work_Direct_t Direct;
+    rt_uint8_t xspi_dma_flag;
 
     struct
     {
-        rt_bool_t         DMA_Tx_Init;
-        MDMA_ChInitType   TX_DMA_ChInitStr;
-        rt_bool_t         DMA_Rx_Init;
-        MDMA_ChInitType   RX_DMA_ChInitStr;
+        rt_bool_t DMA_Tx_Init;
+        MDMA_ChInitType TX_DMA_ChInitStr;
+        rt_bool_t DMA_Rx_Init;
+        MDMA_ChInitType RX_DMA_ChInitStr;
     } dma;
 
-    rt_uint8_t                   slave_sel;
-    rt_uint8_t                   xip_enabled;
+    rt_uint8_t slave_sel;
+    rt_uint8_t xip_enabled;
 
-    struct rt_completion         cpt;
+    struct rt_completion cpt;
 };
 
 struct n32_xspi_config
@@ -88,7 +87,6 @@ struct n32_xspi_config
     uint32_t Enhance_InstructLen;
     uint32_t Enhance_WaitCycles;
     uint32_t Enhance_DDR;
-
 };
 
 struct xspi_xip_config
@@ -110,9 +108,9 @@ struct xspi_xip_config
 };
 
 /* XSPI control commands */
-#define XSPI_CTRL_ENTER_XIP      0x01
-#define XSPI_CTRL_EXIT_XIP       0x02
-#define XSPI_CTRL_GET_XIP_ADDR   0x03
+#define XSPI_CTRL_ENTER_XIP    0x01
+#define XSPI_CTRL_EXIT_XIP     0x02
+#define XSPI_CTRL_GET_XIP_ADDR 0x03
 
 rt_err_t rt_hw_xspi_device_attach(const char *bus_name, const char *device_name,
                                   rt_uint8_t data_line_width,

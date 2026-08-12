@@ -19,26 +19,26 @@ void SysTick_Delayms(uint32_t Delayms)
     {
     }
 }
- /**
- *@name  DMA_SetSrcDstAddr.
- *@brief Set peripher address and memory address of DMA
- *param   DMAy (The input parameters must be the following values):
- *          - DMA1
- *          - DMA2
- *          - DMA3
- *param   ChNum (The input parameters must be the following values):
- *          - DMA_CHANNEL_0
- *          - DMA_CHANNEL_1
- *          - DMA_CHANNEL_2
- *          - DMA_CHANNEL_3
- *          - DMA_CHANNEL_4
- *          - DMA_CHANNEL_5
- *          - DMA_CHANNEL_6
- *          - DMA_CHANNEL_7
- *@param SrcAddr   Source address
- *@param DstAddr   Destination address
- *@return status
- */
+/**
+*@name  DMA_SetSrcDstAddr.
+*@brief Set peripher address and memory address of DMA
+*param   DMAy (The input parameters must be the following values):
+*          - DMA1
+*          - DMA2
+*          - DMA3
+*param   ChNum (The input parameters must be the following values):
+*          - DMA_CHANNEL_0
+*          - DMA_CHANNEL_1
+*          - DMA_CHANNEL_2
+*          - DMA_CHANNEL_3
+*          - DMA_CHANNEL_4
+*          - DMA_CHANNEL_5
+*          - DMA_CHANNEL_6
+*          - DMA_CHANNEL_7
+*@param SrcAddr   Source address
+*@param DstAddr   Destination address
+*@return status
+*/
 void DMA_SetSrcDstAddr(DMA_Module * const DMAy, DMA_ChNumType ChNum, uint32_t SrcAddr, uint32_t DstAddr)
 {
     /* Sets channel n source address register */
@@ -46,32 +46,32 @@ void DMA_SetSrcDstAddr(DMA_Module * const DMAy, DMA_ChNumType ChNum, uint32_t Sr
     /* Sets channel n destination address register */
     WRITE_REG(DMAy->CH[ChNum].DA, DstAddr);
 }
-  /**
- *@name  MDMA_SetSrcDstAddr.
- *@brief Set peripher address and memory address of MDMA
- *param   MDMAy (The input parameters must be the following values):
- *          - MDMA
- *param   ChNum (The input parameters must be the following values):
- *          - MDMA_CHANNEL_0
- *          - MDMA_CHANNEL_1
- *          - MDMA_CHANNEL_2
- *          - MDMA_CHANNEL_3
- *          - MDMA_CHANNEL_4
- *          - MDMA_CHANNEL_5
- *          - MDMA_CHANNEL_6
- *          - MDMA_CHANNEL_7
- *          - MDMA_CHANNEL_8
- *          - MDMA_CHANNEL_9
- *          - MDMA_CHANNEL_10
- *          - MDMA_CHANNEL_11
- *          - MDMA_CHANNEL_12
- *          - MDMA_CHANNEL_13
- *          - MDMA_CHANNEL_14
- *          - MDMA_CHANNEL_15
- *@param SrcAddr   Source address
- *@param DstAddr   Destination address
- *@return status
- */
+/**
+*@name  MDMA_SetSrcDstAddr.
+*@brief Set peripher address and memory address of MDMA
+*param   MDMAy (The input parameters must be the following values):
+*          - MDMA
+*param   ChNum (The input parameters must be the following values):
+*          - MDMA_CHANNEL_0
+*          - MDMA_CHANNEL_1
+*          - MDMA_CHANNEL_2
+*          - MDMA_CHANNEL_3
+*          - MDMA_CHANNEL_4
+*          - MDMA_CHANNEL_5
+*          - MDMA_CHANNEL_6
+*          - MDMA_CHANNEL_7
+*          - MDMA_CHANNEL_8
+*          - MDMA_CHANNEL_9
+*          - MDMA_CHANNEL_10
+*          - MDMA_CHANNEL_11
+*          - MDMA_CHANNEL_12
+*          - MDMA_CHANNEL_13
+*          - MDMA_CHANNEL_14
+*          - MDMA_CHANNEL_15
+*@param SrcAddr   Source address
+*@param DstAddr   Destination address
+*@return status
+*/
 void MDMA_SetSrcDstAddr(MDMA_Module * const MDMAy, MDMA_ChNumType ChNum, uint32_t SrcAddr, uint32_t DstAddr)
 {
     /* Sets channel n source address register */
@@ -96,7 +96,9 @@ bool RCC_Configuration(void)
     /* Wait till HSI is ready */
     ClockStatus = RCC_WaitHsiStable();
     if (ClockStatus != SUCCESS)
+    {
         return false;
+    }
     RCC_ConfigSysclkDivider(RCC_SYSCLK_DIV1);
     RCC_ConfigSysbusDivider(RCC_BUSCLK_DIV2);
     /*Configures the Periph clock source as HSI*/
@@ -125,8 +127,7 @@ bool RCC_Configuration(void)
     /* configure sys_clk source is PLL1A */
     RCC_ConfigSysclk(RCC_SYSCLK_SRC_PLL1A);
     /* Check if sys_clk source is PLL1A */
-    while (RCC_GetSysclkSrc() != RCC_SYSCLK_STS_PLL1A)
-        ;
+    while (RCC_GetSysclkSrc() != RCC_SYSCLK_STS_PLL1A);
 
     /*Config the USART1/2 PCLK divider from ahb1*/
     RCC_ConfigUSARTPClk(RCC_USARTPCLK_AHB1_DIV1);
@@ -137,7 +138,7 @@ bool RCC_Configuration(void)
 
     /*Enables the APB1 peripheral clock 3 .*/
     RCC_EnableAPB1PeriphClk3(RCC_APB1_PERIPHEN_M7_USART1, ENABLE);
-/* NTFx CODE END */
+    /* NTFx CODE END */
 
     return true;
 }
@@ -149,7 +150,7 @@ bool RCC_Configuration(void)
  */
 bool NVIC_Configuration(void)
 {
-/* NTFx CODE END */
+    /* NTFx CODE END */
 
     return true;
 }
@@ -161,7 +162,7 @@ bool NVIC_Configuration(void)
  */
 bool DMA_Configuration(void)
 {
-/* NTFx CODE END */
+    /* NTFx CODE END */
 
     return true;
 }
@@ -196,7 +197,7 @@ bool GPIO_Configuration(void)
     GPIO_InitStructure.Pin = GPIO_PIN_9;
     GPIO_InitPeripheral(GPIOA, &GPIO_InitStructure);
 
-/* NTFx CODE END */
+    /* NTFx CODE END */
 
     return true;
 }
@@ -227,7 +228,7 @@ bool USART_Configuration(void)
 
     /* Enable the USART1 */
     USART_Enable(USART1, ENABLE);
-/* NTFx CODE END */
+    /* NTFx CODE END */
 
     return true;
 }

@@ -75,18 +75,26 @@
 static int int_pow(int x, int y)
 {
     if (y == 0)
+    {
         return 1;
+    }
 
     if (x == 0)
     {
         if (y > 0)
+        {
             return 0;
+        }
         else
+        {
             return -1;
+        }
     }
 
     if (y < 0)
+    {
         return -1;
+    }
 
     int result = 1;
     int base = x;
@@ -97,17 +105,23 @@ static int int_pow(int x, int y)
     {
         /* Check for overflow */
         if (result > INT_MAX / base)
+        {
             return -1;
+        }
 
         if (exponent % 2 == 1)
+        {
             result *= base;
+        }
 
         exponent /= 2;
 
         if (exponent > 0)
         {
             if (base > INT_MAX / base)
+            {
                 return -1;
+            }
 
             base *= base;
         }

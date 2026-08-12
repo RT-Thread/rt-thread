@@ -241,8 +241,7 @@ static void SDRAM_Initialization_Sequence(SDRAM_DeviceType device)
     (void)(SDRAM->OR);
 
     /* Wait at least 300us for SDRAM stabilization (per SDK) */
-    for (delay = 0; delay < 0xFFFF; delay++)
-        ;
+    for (delay = 0; delay < 0xFFFF; delay++);
 }
 int sdram_test(void);
 /*----------------------------------------------------------------------------
