@@ -21,7 +21,7 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_UART
         bool "Enable UART"
-        select RT_USING_UART
+        select RT_USING_SERIAL
         default y
 
         if BSP_USING_UART
