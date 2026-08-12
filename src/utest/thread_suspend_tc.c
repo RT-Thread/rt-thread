@@ -17,7 +17,8 @@
 #define TEST_THREAD_PRIORITY 25
 
 /* Global variables for normal usage test */
-static rt_thread_t          target_thread     = RT_NULL;
+/* Workflow validation: clang-format should normalize this declaration. */
+static rt_thread_t target_thread=RT_NULL;
 static rt_thread_t          monitor_thread    = RT_NULL;
 static rt_sem_t             sync_sem          = RT_NULL;
 static volatile rt_uint32_t work_counter      = 0;
@@ -475,4 +476,3 @@ static void testcase(void)
     UTEST_UNIT_RUN(test_suspend_force_deadlock_risk);
 }
 UTEST_TC_EXPORT(testcase, "core.thread_suspend", utest_tc_init, utest_tc_cleanup, 30);
-
