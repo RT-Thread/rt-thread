@@ -39,7 +39,7 @@ void SysTick_Delayms(uint32_t Delayms)
 *@param DstAddr   Destination address
 *@return status
 */
-void DMA_SetSrcDstAddr(DMA_Module *const DMAy, DMA_ChNumType ChNum, uint32_t SrcAddr, uint32_t DstAddr)
+void DMA_SetSrcDstAddr(DMA_Module * const DMAy, DMA_ChNumType ChNum, uint32_t SrcAddr, uint32_t DstAddr)
 {
     /* Sets channel n source address register */
     WRITE_REG(DMAy->CH[ChNum].SA, SrcAddr);
@@ -72,7 +72,7 @@ void DMA_SetSrcDstAddr(DMA_Module *const DMAy, DMA_ChNumType ChNum, uint32_t Src
 *@param DstAddr   Destination address
 *@return status
 */
-void MDMA_SetSrcDstAddr(MDMA_Module *const MDMAy, MDMA_ChNumType ChNum, uint32_t SrcAddr, uint32_t DstAddr)
+void MDMA_SetSrcDstAddr(MDMA_Module * const MDMAy, MDMA_ChNumType ChNum, uint32_t SrcAddr, uint32_t DstAddr)
 {
     /* Sets channel n source address register */
     WRITE_REG(MDMAy->CH[ChNum].SA, SrcAddr);
@@ -95,7 +95,10 @@ bool RCC_Configuration(void)
     RCC_EnableHsi(ENABLE);
     /* Wait till HSI is ready */
     ClockStatus = RCC_WaitHsiStable();
-    if (ClockStatus != SUCCESS) return false;
+    if (ClockStatus != SUCCESS)
+    {
+        return false;
+    }
     RCC_ConfigSysclkDivider(RCC_SYSCLK_DIV1);
     RCC_ConfigSysbusDivider(RCC_BUSCLK_DIV2);
     /*Configures the Periph clock source as HSI*/
@@ -147,7 +150,6 @@ bool RCC_Configuration(void)
  */
 bool NVIC_Configuration(void)
 {
-
     /* NTFx CODE END */
 
     return true;
@@ -160,7 +162,6 @@ bool NVIC_Configuration(void)
  */
 bool DMA_Configuration(void)
 {
-
     /* NTFx CODE END */
 
     return true;
@@ -173,7 +174,6 @@ bool DMA_Configuration(void)
  */
 bool GPIO_Configuration(void)
 {
-
     GPIO_InitType GPIO_InitStructure;
     GPIO_InitStruct(&GPIO_InitStructure);
     /* Enable the GPIO clock*/
@@ -182,19 +182,19 @@ bool GPIO_Configuration(void)
 
 
     /*Initialize input GPIO */
-    GPIO_InitStructure.GPIO_Mode      = GPIO_MODE_INPUT;
-    GPIO_InitStructure.GPIO_Pull      = GPIO_PULL_UP;
+    GPIO_InitStructure.GPIO_Mode = GPIO_MODE_INPUT;
+    GPIO_InitStructure.GPIO_Pull = GPIO_PULL_UP;
     GPIO_InitStructure.GPIO_Alternate = GPIO_AF5;
-    GPIO_InitStructure.Pin            = GPIO_PIN_10;
+    GPIO_InitStructure.Pin = GPIO_PIN_10;
     GPIO_InitPeripheral(GPIOA, &GPIO_InitStructure);
 
     /*Initialize AF_PP GPIO */
-    GPIO_InitStructure.GPIO_Mode      = GPIO_MODE_AF_PP;
-    GPIO_InitStructure.GPIO_Pull      = GPIO_PULL_UP;
+    GPIO_InitStructure.GPIO_Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStructure.GPIO_Pull = GPIO_PULL_UP;
     GPIO_InitStructure.GPIO_Slew_Rate = GPIO_SLEW_RATE_SLOW;
-    GPIO_InitStructure.GPIO_Current   = GPIO_DC_2mA;
+    GPIO_InitStructure.GPIO_Current = GPIO_DC_2mA;
     GPIO_InitStructure.GPIO_Alternate = GPIO_AF7;
-    GPIO_InitStructure.Pin            = GPIO_PIN_9;
+    GPIO_InitStructure.Pin = GPIO_PIN_9;
     GPIO_InitPeripheral(GPIOA, &GPIO_InitStructure);
 
     /* NTFx CODE END */
@@ -215,13 +215,13 @@ bool USART_Configuration(void)
 
     /*********initialize the USART1************/
     USART_DeInit(USART1);
-    USART_InitStructure.BaudRate            = 115200;
-    USART_InitStructure.WordLength          = USART_WL_8B;
-    USART_InitStructure.StopBits            = USART_STPB_1;
-    USART_InitStructure.Parity              = USART_PE_NO;
+    USART_InitStructure.BaudRate = 115200;
+    USART_InitStructure.WordLength = USART_WL_8B;
+    USART_InitStructure.StopBits = USART_STPB_1;
+    USART_InitStructure.Parity = USART_PE_NO;
     USART_InitStructure.HardwareFlowControl = USART_HFCTRL_NONE;
-    USART_InitStructure.Mode                = USART_MODE_RX | USART_MODE_TX;
-    USART_InitStructure.OverSampling        = USART_16OVER ;
+    USART_InitStructure.Mode = USART_MODE_RX | USART_MODE_TX;
+    USART_InitStructure.OverSampling = USART_16OVER;
     /* Configure USART1 */
     USART_Init(USART1, &USART_InitStructure);
 

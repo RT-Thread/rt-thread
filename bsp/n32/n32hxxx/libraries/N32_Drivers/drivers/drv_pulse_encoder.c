@@ -88,10 +88,10 @@ enum
 struct n32_pulse_encoder_device
 {
     struct rt_pulse_encoder_device pulse_encoder;
-    TIM_Module                    *timer;
-    IRQn_Type                      tim_irqn;
-    rt_int32_t                     over_under_flowcount;
-    char                          *name;
+    TIM_Module *timer;
+    IRQn_Type tim_irqn;
+    rt_int32_t over_under_flowcount;
+    char *name;
 };
 
 static struct n32_pulse_encoder_device n32_pulse_encoder_obj[] = {
@@ -145,7 +145,7 @@ static struct n32_pulse_encoder_device n32_pulse_encoder_obj[] = {
 static rt_err_t pulse_encoder_init(struct rt_pulse_encoder_device *pulse_encoder)
 {
     struct n32_pulse_encoder_device *n32_device;
-    TIM_TimeBaseInitType             TIM_TimeBaseStructure;
+    TIM_TimeBaseInitType TIM_TimeBaseStructure;
 
     n32_device = (struct n32_pulse_encoder_device *)pulse_encoder;
 
@@ -154,10 +154,10 @@ static rt_err_t pulse_encoder_init(struct rt_pulse_encoder_device *pulse_encoder
 
     /* Configure time base for encoder mode */
     TIM_InitTimBaseStruct(&TIM_TimeBaseStructure);
-    TIM_TimeBaseStructure.Prescaler   = 0;
+    TIM_TimeBaseStructure.Prescaler = 0;
     TIM_TimeBaseStructure.CounterMode = TIM_CNT_MODE_UP;
-    TIM_TimeBaseStructure.Period      = AUTO_RELOAD_VALUE;
-    TIM_TimeBaseStructure.ClkDiv      = TIM_CLK_DIV1;
+    TIM_TimeBaseStructure.Period = AUTO_RELOAD_VALUE;
+    TIM_TimeBaseStructure.ClkDiv = TIM_CLK_DIV1;
     TIM_InitTimeBase(n32_device->timer, &TIM_TimeBaseStructure);
 
     /* Limit update interrupt source to counter overflow/underflow only (URS equivalent) */
@@ -219,11 +219,11 @@ static rt_err_t pulse_encoder_clear_count(struct rt_pulse_encoder_device *pulse_
  */
 static rt_err_t pulse_encoder_control(struct rt_pulse_encoder_device *pulse_encoder, rt_uint32_t cmd, void *args)
 {
-    rt_err_t                         result;
+    rt_err_t result;
     struct n32_pulse_encoder_device *n32_device;
 
     n32_device = (struct n32_pulse_encoder_device *)pulse_encoder;
-    result     = RT_EOK;
+    result = RT_EOK;
 
     switch (cmd)
     {
@@ -437,10 +437,10 @@ void GTIMB3_IRQHandler(void)
 /* ---- Device Registration ---- */
 
 static const struct rt_pulse_encoder_ops _ops = {
-    .init        = pulse_encoder_init,
-    .get_count   = pulse_encoder_get_count,
+    .init = pulse_encoder_init,
+    .get_count = pulse_encoder_get_count,
     .clear_count = pulse_encoder_clear_count,
-    .control     = pulse_encoder_control,
+    .control = pulse_encoder_control,
 };
 
 static int n32_pulse_encoder_init(void)
@@ -452,7 +452,7 @@ static int n32_pulse_encoder_init(void)
     for (i = 0; i < sizeof(n32_pulse_encoder_obj) / sizeof(n32_pulse_encoder_obj[0]); i++)
     {
         n32_pulse_encoder_obj[i].pulse_encoder.type = AB_PHASE_PULSE_ENCODER;
-        n32_pulse_encoder_obj[i].pulse_encoder.ops  = &_ops;
+        n32_pulse_encoder_obj[i].pulse_encoder.ops = &_ops;
 
         if (rt_device_pulse_encoder_register(&n32_pulse_encoder_obj[i].pulse_encoder,
                                              n32_pulse_encoder_obj[i].name, RT_NULL) != RT_EOK)

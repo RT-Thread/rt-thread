@@ -1063,7 +1063,8 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
                 rt_memcpy(dma_aligned_buffer, send_buf, send_length);
                 p_txrx_buffer = dma_aligned_buffer;
             }
-            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, dma_aligned_buffer, send_length);
+			if ((SCB->CCR &(uint32_t)SCB_CCR_DC_Msk) != 0U)
+				rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, dma_aligned_buffer, send_length);
 #else
             if (RT_IS_ALIGN((rt_uint32_t)send_buf, 4) && send_buf != RT_NULL) /* aligned with 4 bytes? */
             {
@@ -1214,7 +1215,8 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             if (recv_buf != RT_NULL)
             {
 #if defined(SOC_SERIES_N32H7xx)
-                rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, p_txrx_buffer, send_length);
+				if ((SCB->CCR &(uint32_t)SCB_CCR_DC_Msk) != 0U)
+					rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, p_txrx_buffer, send_length);
 #endif /* SOC_SERIES_N32H7xx */
                 rt_memcpy(recv_buf, p_txrx_buffer, send_length);
             }

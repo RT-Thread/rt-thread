@@ -152,7 +152,9 @@ static uint8_t _dlc_to_length(uint32_t dlc)
 
     dlc >>= FDCAN_ELEMENT_DLC_OFFSET;
     if (dlc > 15)
+    {
         return 8;
+    }
     return dlc_table[dlc];
 }
 
@@ -179,21 +181,37 @@ static uint32_t _length_to_dlc(uint8_t len)
     uint32_t dlc;
 
     if (len <= 8)
+    {
         dlc = len;
+    }
     else if (len <= 12)
+    {
         dlc = 9;
+    }
     else if (len <= 16)
+    {
         dlc = 10;
+    }
     else if (len <= 20)
+    {
         dlc = 11;
+    }
     else if (len <= 24)
+    {
         dlc = 12;
+    }
     else if (len <= 32)
+    {
         dlc = 13;
+    }
     else if (len <= 48)
+    {
         dlc = 14;
+    }
     else
+    {
         dlc = 15;
+    }
 
     return dlc << FDCAN_ELEMENT_DLC_OFFSET;
 }
@@ -216,7 +234,9 @@ static uint32_t _get_arb_baud_index(uint32_t baud_rate)
     for (uint32_t i = 0; i < len; i++)
     {
         if (_fdcan_arb_timing_table[i].baud_rate == baud_rate)
+        {
             return i;
+        }
     }
     return (uint32_t)-1;
 }
@@ -235,7 +255,9 @@ static uint32_t _get_data_baud_index(uint32_t baud_rate)
     for (uint32_t i = 0; i < len; i++)
     {
         if (_fdcan_data_timing_table[i].baud_rate == baud_rate)
+        {
             return i;
+        }
     }
     return (uint32_t)-1;
 }
@@ -261,19 +283,33 @@ static uint32_t _get_data_baud_index(uint32_t baud_rate)
 static uint8_t _fdcan_get_index(FDCAN_Module *FDCANx)
 {
     if (FDCANx == FDCAN1)
+    {
         return 0;
+    }
     if (FDCANx == FDCAN2)
+    {
         return 1;
+    }
     if (FDCANx == FDCAN3)
+    {
         return 2;
+    }
     if (FDCANx == FDCAN4)
+    {
         return 3;
+    }
     if (FDCANx == FDCAN5)
+    {
         return 4;
+    }
     if (FDCANx == FDCAN6)
+    {
         return 5;
+    }
     if (FDCANx == FDCAN7)
+    {
         return 6;
+    }
     return 7; /* FDCAN8 */
 }
 
@@ -287,19 +323,33 @@ static uint8_t _fdcan_get_index(FDCAN_Module *FDCANx)
 static IRQn_Type _fdcan_get_int0_irqn(FDCAN_Module *FDCANx)
 {
     if (FDCANx == FDCAN1)
+    {
         return FDCAN1_INT0_IRQn;
+    }
     if (FDCANx == FDCAN2)
+    {
         return FDCAN2_INT0_IRQn;
+    }
     if (FDCANx == FDCAN3)
+    {
         return FDCAN3_INT0_IRQn;
+    }
     if (FDCANx == FDCAN4)
+    {
         return FDCAN4_INT0_IRQn;
+    }
     if (FDCANx == FDCAN5)
+    {
         return FDCAN5_INT0_IRQn;
+    }
     if (FDCANx == FDCAN6)
+    {
         return FDCAN6_INT0_IRQn;
+    }
     if (FDCANx == FDCAN7)
+    {
         return FDCAN7_INT0_IRQn;
+    }
     return FDCAN8_INT0_IRQn;
 }
 
@@ -313,19 +363,33 @@ static IRQn_Type _fdcan_get_int0_irqn(FDCAN_Module *FDCANx)
 static IRQn_Type _fdcan_get_int1_irqn(FDCAN_Module *FDCANx)
 {
     if (FDCANx == FDCAN1)
+    {
         return FDCAN1_INT1_IRQn;
+    }
     if (FDCANx == FDCAN2)
+    {
         return FDCAN2_INT1_IRQn;
+    }
     if (FDCANx == FDCAN3)
+    {
         return FDCAN3_INT1_IRQn;
+    }
     if (FDCANx == FDCAN4)
+    {
         return FDCAN4_INT1_IRQn;
+    }
     if (FDCANx == FDCAN5)
+    {
         return FDCAN5_INT1_IRQn;
+    }
     if (FDCANx == FDCAN6)
+    {
         return FDCAN6_INT1_IRQn;
+    }
     if (FDCANx == FDCAN7)
+    {
         return FDCAN7_INT1_IRQn;
+    }
     return FDCAN8_INT1_IRQn;
 }
 
@@ -345,7 +409,7 @@ static IRQn_Type _fdcan_get_int1_irqn(FDCAN_Module *FDCANx)
 static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure *cfg)
 {
     struct n32_fdcan *p_drv;
-    ErrorStatus       status;
+    ErrorStatus status;
 
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
@@ -354,11 +418,11 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     RT_ASSERT(p_drv != RT_NULL);
 
     /* Fill FDCAN init parameters */
-    p_drv->init_struct.FrameFormat        = FDCAN_FRAME_FD_BRS;
-    p_drv->init_struct.Mode               = FDCAN_MODE_NORMAL;
+    p_drv->init_struct.FrameFormat = FDCAN_FRAME_FD_BRS;
+    p_drv->init_struct.Mode = FDCAN_MODE_NORMAL;
     p_drv->init_struct.AutoRetransmission = ENABLE;
-    p_drv->init_struct.TransmitPause      = DISABLE;
-    p_drv->init_struct.ProtocolException  = ENABLE;
+    p_drv->init_struct.TransmitPause = DISABLE;
+    p_drv->init_struct.ProtocolException = ENABLE;
 
     /* Configure operation mode */
     switch (cfg->mode)
@@ -388,10 +452,10 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
         return -RT_ERROR;
     }
 
-    p_drv->init_struct.Prescaler     = _fdcan_arb_timing_table[arb_idx].prescaler;
+    p_drv->init_struct.Prescaler = _fdcan_arb_timing_table[arb_idx].prescaler;
     p_drv->init_struct.SyncJumpWidth = _fdcan_arb_timing_table[arb_idx].sjw;
-    p_drv->init_struct.TimeSeg1      = _fdcan_arb_timing_table[arb_idx].tseg1;
-    p_drv->init_struct.TimeSeg2      = _fdcan_arb_timing_table[arb_idx].tseg2;
+    p_drv->init_struct.TimeSeg1 = _fdcan_arb_timing_table[arb_idx].tseg1;
+    p_drv->init_struct.TimeSeg2 = _fdcan_arb_timing_table[arb_idx].tseg2;
 
 #ifdef RT_CAN_USING_CANFD
     /* Configure CAN FD data segment baud rate */
@@ -404,18 +468,18 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
             return -RT_ERROR;
         }
 
-        p_drv->init_struct.DataPrescaler     = _fdcan_data_timing_table[data_idx].prescaler;
+        p_drv->init_struct.DataPrescaler = _fdcan_data_timing_table[data_idx].prescaler;
         p_drv->init_struct.DataSyncJumpWidth = _fdcan_data_timing_table[data_idx].sjw;
-        p_drv->init_struct.DataTimeSeg1      = _fdcan_data_timing_table[data_idx].tseg1;
-        p_drv->init_struct.DataTimeSeg2      = _fdcan_data_timing_table[data_idx].tseg2;
+        p_drv->init_struct.DataTimeSeg1 = _fdcan_data_timing_table[data_idx].tseg1;
+        p_drv->init_struct.DataTimeSeg2 = _fdcan_data_timing_table[data_idx].tseg2;
     }
     else
     {
         /* When CAN FD is not enabled, data phase parameters match arbitration */
-        p_drv->init_struct.DataPrescaler     = p_drv->init_struct.Prescaler;
+        p_drv->init_struct.DataPrescaler = p_drv->init_struct.Prescaler;
         p_drv->init_struct.DataSyncJumpWidth = p_drv->init_struct.SyncJumpWidth;
-        p_drv->init_struct.DataTimeSeg1      = p_drv->init_struct.TimeSeg1;
-        p_drv->init_struct.DataTimeSeg2      = p_drv->init_struct.TimeSeg2;
+        p_drv->init_struct.DataTimeSeg1 = p_drv->init_struct.TimeSeg1;
+        p_drv->init_struct.DataTimeSeg2 = p_drv->init_struct.TimeSeg2;
     }
 #endif
 
@@ -424,12 +488,12 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     if (instance_idx < 4)
     {
         p_drv->init_struct.MsgRamStrAddr = FDCAN_MSG_RAM_BASE1;
-        p_drv->init_struct.MsgRamOffset  = instance_idx * FDCAN_MSG_RAM_OFFSET_PER_INSTANCE;
+        p_drv->init_struct.MsgRamOffset = instance_idx * FDCAN_MSG_RAM_OFFSET_PER_INSTANCE;
     }
     else
     {
         p_drv->init_struct.MsgRamStrAddr = FDCAN_MSG_RAM_BASE2;
-        p_drv->init_struct.MsgRamOffset  = (instance_idx - 4) * FDCAN_MSG_RAM_OFFSET_PER_INSTANCE;
+        p_drv->init_struct.MsgRamOffset = (instance_idx - 4) * FDCAN_MSG_RAM_OFFSET_PER_INSTANCE;
     }
 
     /* Filter configuration */
@@ -437,25 +501,25 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     p_drv->init_struct.ExtFilterSize = 2;       /* 2 extended ID filters */
 
     /* RX FIFO0 configuration */
-    p_drv->init_struct.RxFifo0Size     = FDCAN_RX_FIFO0_SIZE;
+    p_drv->init_struct.RxFifo0Size = FDCAN_RX_FIFO0_SIZE;
     p_drv->init_struct.RxFifo0DataSize = FDCAN_DATA_BYTES_64;
 
     /* RX FIFO1 configuration (not used) */
-    p_drv->init_struct.RxFifo1Size     = 0;
+    p_drv->init_struct.RxFifo1Size = 0;
     p_drv->init_struct.RxFifo1DataSize = FDCAN_DATA_BYTES_64;
 
     /* RX Buffer configuration (not used) */
-    p_drv->init_struct.RxBufferSize     = 0;
+    p_drv->init_struct.RxBufferSize = 0;
     p_drv->init_struct.RxBufferDataSize = FDCAN_DATA_BYTES_64;
 
     /* TX Event FIFO configuration (not used) */
     p_drv->init_struct.TxEventSize = 0;
 
     /* TX Buffer configuration: dedicated Tx Buffer mode */
-    p_drv->init_struct.TxBufferSize     = FDCAN_TX_BUF_NUM;
+    p_drv->init_struct.TxBufferSize = FDCAN_TX_BUF_NUM;
     p_drv->init_struct.TxBufferDataSize = FDCAN_DATA_BYTES_64;
-    p_drv->init_struct.TxFifoQueueMode  = FDCAN_TX_FIFO_MODE;
-    p_drv->init_struct.TxFifoQueueSize  = 0;  /* not using Tx FIFO, use Dedicated Tx Buffer */
+    p_drv->init_struct.TxFifoQueueMode = FDCAN_TX_FIFO_MODE;
+    p_drv->init_struct.TxFifoQueueSize = 0;  /* not using Tx FIFO, use Dedicated Tx Buffer */
 
     /* Message RAM info pointer */
     p_drv->init_struct.pMsgInfo = &p_drv->msg_ram;
@@ -468,8 +532,8 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
      * on every reconfigure. FDCAN_AbortTxRequest() is asynchronous - poll
      * TXBRP until it actually clears before continuing. */
     {
-        rt_uint32_t       cancel_mask = FDCAN_TX_BUFFER0 | FDCAN_TX_BUFFER1 | FDCAN_TX_BUFFER2;
-        volatile uint32_t timeout     = 1000000;
+        rt_uint32_t cancel_mask = FDCAN_TX_BUFFER0 | FDCAN_TX_BUFFER1 | FDCAN_TX_BUFFER2;
+        volatile uint32_t timeout = 1000000;
         FDCAN_AbortTxRequest(p_drv->fdcan_x, cancel_mask);
         while ((p_drv->fdcan_x->TXBRP & cancel_mask) && --timeout)
         {
@@ -515,15 +579,15 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
     FDCAN_EnableInt(p_drv->fdcan_x, FDCAN_INT_RX_FIFO0_NEW_MESSAGE);
 
     /* Initialize TX Header cache */
-    p_drv->tx_header.ID            = 0x000000;
-    p_drv->tx_header.IdType        = FDCAN_EXTENDED_ID;
-    p_drv->tx_header.TxFrameType   = FDCAN_DATA_FRAME;
-    p_drv->tx_header.DataLength    = FDCAN_DLC_BYTES_8;
-    p_drv->tx_header.ErrorState    = FDCAN_ESI_ACTIVE;
+    p_drv->tx_header.ID = 0x000000;
+    p_drv->tx_header.IdType = FDCAN_EXTENDED_ID;
+    p_drv->tx_header.TxFrameType = FDCAN_DATA_FRAME;
+    p_drv->tx_header.DataLength = FDCAN_DLC_BYTES_8;
+    p_drv->tx_header.ErrorState = FDCAN_ESI_ACTIVE;
     p_drv->tx_header.BitRateSwitch = FDCAN_BRS_OFF;
-    p_drv->tx_header.FDFormat      = FDCAN_CLASSIC_CAN;
-    p_drv->tx_header.TxEventFifo   = FDCAN_NO_TX_EVENTS;
-    p_drv->tx_header.MsgMarker     = 0;
+    p_drv->tx_header.FDFormat = FDCAN_CLASSIC_CAN;
+    p_drv->tx_header.TxEventFifo = FDCAN_NO_TX_EVENTS;
+    p_drv->tx_header.MsgMarker = 0;
 
     /* Start FDCAN */
     FDCAN_Start(p_drv->fdcan_x);
@@ -546,7 +610,7 @@ static rt_err_t _fdcan_configure(struct rt_can_device *can, struct can_configure
  *\*\          Pointer to RT-Thread filter configuration
  *\*\return RT_EOK on success, or negative error code on failure
  */
-static rt_err_t _fdcan_filter_config(struct n32_fdcan            *p_drv,
+static rt_err_t _fdcan_filter_config(struct n32_fdcan *p_drv,
                                      struct rt_can_filter_config *filter_cfg)
 {
     RT_ASSERT(p_drv != RT_NULL);
@@ -557,12 +621,12 @@ static rt_err_t _fdcan_filter_config(struct n32_fdcan            *p_drv,
         /* Set ID type */
         if (filter_cfg->items[i].ide == RT_CAN_EXTID)
         {
-            p_drv->filter_cfg.IdType      = FDCAN_EXTENDED_ID;
+            p_drv->filter_cfg.IdType = FDCAN_EXTENDED_ID;
             p_drv->filter_cfg.FilterIndex = filter_cfg->items[i].hdr_bank;
         }
         else
         {
-            p_drv->filter_cfg.IdType      = FDCAN_STANDARD_ID;
+            p_drv->filter_cfg.IdType = FDCAN_STANDARD_ID;
             p_drv->filter_cfg.FilterIndex = filter_cfg->items[i].hdr_bank;
         }
 
@@ -600,8 +664,8 @@ static rt_err_t _fdcan_filter_config(struct n32_fdcan            *p_drv,
  */
 static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
 {
-    rt_uint32_t                  argval;
-    struct n32_fdcan            *p_drv;
+    rt_uint32_t argval;
+    struct n32_fdcan *p_drv;
     struct rt_can_filter_config *filter_cfg;
 
     RT_ASSERT(can != RT_NULL);
@@ -712,7 +776,7 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
              * (see _fdcan_configure() for the same pattern); the abort is
              * asynchronous, so poll TXBRP until it actually clears. */
             {
-                rt_uint32_t       cm = FDCAN_TX_BUFFER0 | FDCAN_TX_BUFFER1 | FDCAN_TX_BUFFER2;
+                rt_uint32_t cm = FDCAN_TX_BUFFER0 | FDCAN_TX_BUFFER1 | FDCAN_TX_BUFFER2;
                 volatile uint32_t to = 1000000;
                 FDCAN_AbortTxRequest(fdcan, cm);
                 while ((fdcan->TXBRP & cm) && --to)
@@ -725,26 +789,34 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
              * effect (Bosch M_CAN: writes to CCE are ignored while INIT=0).
              * INIT must therefore be requested and confirmed first. */
             fdcan->CCCR |= FDCAN_CCCR_INIT;
-            while ((fdcan->CCCR & FDCAN_CCCR_INIT) == 0)
-                ;
+            while ((fdcan->CCCR & FDCAN_CCCR_INIT) == 0);
             fdcan->CCCR |= FDCAN_CCCR_CCE;
             /* Clear previous mode bits */
             fdcan->CCCR &= ~(FDCAN_CCCR_TEST | FDCAN_CCCR_MON | FDCAN_CCCR_ASM);
             if (argval == RT_CAN_MODE_LOOPBACK)
+            {
                 fdcan->CCCR |= FDCAN_CCCR_TEST | FDCAN_CCCR_MON;
+            }
             else if (argval == RT_CAN_MODE_LISTEN)
+            {
                 fdcan->CCCR |= FDCAN_CCCR_MON;
+            }
             else if (argval == RT_CAN_MODE_LOOPBACKANLISTEN)
+            {
                 fdcan->CCCR |= FDCAN_CCCR_TEST;
+            }
             /* TEST.LBCK must follow CCCR.TEST: it is the bit that actually
              * routes TX back into RX for both internal and external loopback */
             if (argval == RT_CAN_MODE_LOOPBACK || argval == RT_CAN_MODE_LOOPBACKANLISTEN)
+            {
                 fdcan->TEST |= FDCAN_TEST_LBCK;
+            }
             else
+            {
                 fdcan->TEST &= ~FDCAN_TEST_LBCK;
+            }
             fdcan->CCCR &= ~FDCAN_CCCR_INIT;
-            while (fdcan->CCCR & FDCAN_CCCR_INIT)
-                ;
+            while (fdcan->CCCR & FDCAN_CCCR_INIT);
             p_drv->device.config.mode = argval;
             LOG_I("%s: mode changed to %d", p_drv->name, argval);
         }
@@ -777,8 +849,8 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
         rt_uint32_t ecr_val = p_drv->fdcan_x->ECR;
         rt_uint32_t psr_val = p_drv->fdcan_x->PSR;
 
-        p_drv->device.status.rcverrcnt   = (ecr_val >> 8) & 0x000000FF;
-        p_drv->device.status.snderrcnt   = (ecr_val) & 0x000000FF;
+        p_drv->device.status.rcverrcnt = (ecr_val >> 8) & 0x000000FF;
+        p_drv->device.status.snderrcnt = (ecr_val) & 0x000000FF;
         p_drv->device.status.lasterrtype = psr_val & 0x00000007;
 
         rt_memcpy(arg, &p_drv->device.status, sizeof(p_drv->device.status));
@@ -826,9 +898,9 @@ static rt_err_t _fdcan_control(struct rt_can_device *can, int cmd, void *arg)
  */
 static rt_ssize_t _fdcan_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_no)
 {
-    struct n32_fdcan  *p_drv;
+    struct n32_fdcan *p_drv;
     struct rt_can_msg *p_msg;
-    ErrorStatus        status;
+    ErrorStatus status;
 
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
@@ -888,8 +960,8 @@ static rt_ssize_t _fdcan_sendmsg(struct rt_can_device *can, const void *buf, rt_
     /* FDCAN_TX_BUFFER0 is the single-bit mask for buffer 0; shift it to get
      * the mask for an arbitrary buffer index. */
     rt_uint32_t buf_bit = FDCAN_TX_BUFFER0 << box_no;
-    status              = FDCAN_AddMsgToTxBuffer(p_drv->fdcan_x, &p_drv->tx_header,
-                                                 p_msg->data, buf_bit);
+    status = FDCAN_AddMsgToTxBuffer(p_drv->fdcan_x, &p_drv->tx_header,
+                                    p_msg->data, buf_bit);
     if (status != SUCCESS)
     {
         LOG_W("%s: FDCAN_AddMsgToTxBuffer failed, buf=%d", p_drv->name, box_no);
@@ -921,8 +993,8 @@ static rt_ssize_t _fdcan_sendmsg(struct rt_can_device *can, const void *buf, rt_
 static rt_ssize_t _fdcan_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     struct rt_can_msg *p_msg;
-    struct n32_fdcan  *p_drv;
-    ErrorStatus        status;
+    struct n32_fdcan *p_drv;
+    ErrorStatus status;
 
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
@@ -987,7 +1059,7 @@ static rt_ssize_t _fdcan_recvmsg(struct rt_can_device *can, void *buf, rt_uint32
 #ifdef RT_CAN_USING_CANFD
     /* Extract CAN FD flags */
     p_msg->fd_frame = (p_drv->rx_header.FDFormat == FDCAN_FD_CAN) ? 1 : 0;
-    p_msg->brs      = (p_drv->rx_header.BitRateSwitch == FDCAN_BRS_ON) ? 1 : 0;
+    p_msg->brs = (p_drv->rx_header.BitRateSwitch == FDCAN_BRS_ON) ? 1 : 0;
 #endif
 
     return sizeof(struct rt_can_msg);
@@ -1009,10 +1081,10 @@ static rt_ssize_t _fdcan_recvmsg(struct rt_can_device *can, void *buf, rt_uint32
  */
 static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const void *buf)
 {
-    struct n32_fdcan  *p_drv;
+    struct n32_fdcan *p_drv;
     struct rt_can_msg *p_msg;
-    ErrorStatus        status;
-    int32_t            free_buf = -1;
+    ErrorStatus status;
+    int32_t free_buf = -1;
 
     RT_ASSERT(can != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
@@ -1038,20 +1110,20 @@ static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const vo
     p_msg = (struct rt_can_msg *)buf;
 
     /* Set TX Header */
-    p_drv->tx_header.IdType      = (p_msg->ide == RT_CAN_EXTID) ? FDCAN_EXTENDED_ID : FDCAN_STANDARD_ID;
+    p_drv->tx_header.IdType = (p_msg->ide == RT_CAN_EXTID) ? FDCAN_EXTENDED_ID : FDCAN_STANDARD_ID;
     p_drv->tx_header.TxFrameType = (p_msg->rtr == RT_CAN_DTR) ? FDCAN_DATA_FRAME : FDCAN_REMOTE_FRAME;
-    p_drv->tx_header.ID          = p_msg->id;
-    p_drv->tx_header.DataLength  = _length_to_dlc(p_msg->len);
+    p_drv->tx_header.ID = p_msg->id;
+    p_drv->tx_header.DataLength = _length_to_dlc(p_msg->len);
 
 #ifdef RT_CAN_USING_CANFD
-    p_drv->tx_header.FDFormat      = (p_msg->fd_frame == 1) ? FDCAN_FD_CAN : FDCAN_CLASSIC_CAN;
+    p_drv->tx_header.FDFormat = (p_msg->fd_frame == 1) ? FDCAN_FD_CAN : FDCAN_CLASSIC_CAN;
     p_drv->tx_header.BitRateSwitch = (p_msg->brs == 1) ? FDCAN_BRS_ON : FDCAN_BRS_OFF;
 #endif
 
     /* Write message to the free dedicated TX Buffer */
     rt_uint32_t buf_bit = FDCAN_TX_BUFFER0 << free_buf;
-    status              = FDCAN_AddMsgToTxBuffer(p_drv->fdcan_x, &p_drv->tx_header,
-                                                 p_msg->data, buf_bit);
+    status = FDCAN_AddMsgToTxBuffer(p_drv->fdcan_x, &p_drv->tx_header,
+                                    p_msg->data, buf_bit);
     if (status != SUCCESS)
     {
         return -RT_EBUSY;
@@ -1069,10 +1141,10 @@ static rt_ssize_t _fdcan_sendmsg_nonblocking(struct rt_can_device *can, const vo
  *============================================================================*/
 
 static const struct rt_can_ops _fdcan_ops = {
-    .configure           = _fdcan_configure,
-    .control             = _fdcan_control,
-    .sendmsg             = _fdcan_sendmsg,
-    .recvmsg             = _fdcan_recvmsg,
+    .configure = _fdcan_configure,
+    .control = _fdcan_control,
+    .sendmsg = _fdcan_sendmsg,
+    .recvmsg = _fdcan_recvmsg,
     .sendmsg_nonblocking = _fdcan_sendmsg_nonblocking,
 };
 
@@ -1115,8 +1187,8 @@ static void _fdcan_int0_isr(struct n32_fdcan *p_drv)
 static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
 {
     FDCAN_Module *fdcan = p_drv->fdcan_x;
-    rt_uint32_t   ecr_val;
-    rt_uint32_t   psr_val;
+    rt_uint32_t ecr_val;
+    rt_uint32_t psr_val;
 
     /* Check TX Complete flag */
     if (FDCAN_GetFlag(fdcan, FDCAN_FLAG_TX_COMPLETE) == SET)
@@ -1131,7 +1203,7 @@ static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
          * our software pending mask and look for buffers whose TXBRP
          * was just cleared by the hardware (pending → !pending). */
         rt_uint32_t buffer_idx = 0;
-        rt_bool_t   found      = RT_FALSE;
+        rt_bool_t found = RT_FALSE;
 
         for (rt_uint32_t i = 0; i < FDCAN_TX_BUF_NUM; i++)
         {
@@ -1139,8 +1211,8 @@ static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
             if ((p_drv->tx_pending_mask & bit) && !(fdcan->TXBRP & bit))
             {
                 p_drv->tx_pending_mask &= ~bit;
-                buffer_idx              = i;
-                found                   = RT_TRUE;
+                buffer_idx = i;
+                found = RT_TRUE;
                 break;
             }
         }
@@ -1156,15 +1228,17 @@ static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
                 if (p_drv->tx_pending_mask & bit)
                 {
                     p_drv->tx_pending_mask &= ~bit;
-                    buffer_idx              = i;
-                    found                   = RT_TRUE;
+                    buffer_idx = i;
+                    found = RT_TRUE;
                     break;
                 }
             }
         }
 
         if (found)
+        {
             rt_hw_can_isr(&p_drv->device, RT_CAN_EVENT_TX_DONE | (buffer_idx << 8));
+        }
     }
 
     /* IR.EW/EP/PEA are bus protocol *status* change notifications, not
@@ -1211,9 +1285,9 @@ static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
         if (fdcan->CCCR & FDCAN_CCCR_INIT)
         {
             /* Bus-Off state: set CCE, clear INIT to trigger recovery sequence */
-            fdcan->CCCR                  |= FDCAN_CCCR_CCE;
-            fdcan->CCCR                  &= ~FDCAN_CCCR_INIT;
-            p_drv->device.status.errcode  = 0xFF;
+            fdcan->CCCR |= FDCAN_CCCR_CCE;
+            fdcan->CCCR &= ~FDCAN_CCCR_INIT;
+            p_drv->device.status.errcode = 0xFF;
         }
         else
         {
@@ -1221,8 +1295,8 @@ static void _fdcan_int1_isr(struct n32_fdcan *p_drv)
             ecr_val = fdcan->ECR;
             psr_val = fdcan->PSR;
 
-            p_drv->device.status.rcverrcnt   = (ecr_val >> 8) & 0x000000FF;
-            p_drv->device.status.snderrcnt   = (ecr_val) & 0x000000FF;
+            p_drv->device.status.rcverrcnt = (ecr_val >> 8) & 0x000000FF;
+            p_drv->device.status.snderrcnt = (ecr_val) & 0x000000FF;
             p_drv->device.status.lasterrtype = psr_val & 0x00000007;
         }
     }
@@ -1390,15 +1464,15 @@ void FDCAN8_INT1_IRQHandler(void)
 static int rt_hw_fdcan_init(void)
 {
     struct can_configure config;
-    FDCAN_FilterType     default_filter;
+    FDCAN_FilterType default_filter;
 
     /* Default CAN configuration */
-    config.baud_rate    = CAN1MBaud;
-    config.msgboxsz     = RT_CANMSG_BOX_SZ;
+    config.baud_rate = CAN1MBaud;
+    config.msgboxsz = RT_CANMSG_BOX_SZ;
     config.sndboxnumber = FDCAN_TX_BUF_NUM;
-    config.mode         = RT_CAN_MODE_NORMAL;
-    config.privmode     = RT_CAN_MODE_NOPRIV;
-    config.ticks        = 50;
+    config.mode = RT_CAN_MODE_NORMAL;
+    config.privmode = RT_CAN_MODE_NOPRIV;
+    config.ticks = 50;
 #ifdef RT_CAN_USING_HDR
     config.maxhdr = 14;
 #endif
@@ -1408,73 +1482,73 @@ static int rt_hw_fdcan_init(void)
 #endif
 
     /* Default filter: accept all standard frames into RX FIFO0 */
-    default_filter.IdType        = FDCAN_STANDARD_ID;
-    default_filter.FilterIndex   = 0;
-    default_filter.FilterType    = FDCAN_FILTER_MASK;
-    default_filter.FilterConfig  = FDCAN_FILTER_TO_RXFIFO0;
-    default_filter.FilterID1     = 0x000;
-    default_filter.FilterID2     = 0x000;
+    default_filter.IdType = FDCAN_STANDARD_ID;
+    default_filter.FilterIndex = 0;
+    default_filter.FilterType = FDCAN_FILTER_MASK;
+    default_filter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+    default_filter.FilterID1 = 0x000;
+    default_filter.FilterID2 = 0x000;
     default_filter.RxBufferIndex = 0;
 
 #ifdef BSP_USING_FDCAN1
-    _drv_fdcan1.fdcan_x       = FDCAN1;
-    _drv_fdcan1.filter_cfg    = default_filter;
+    _drv_fdcan1.fdcan_x = FDCAN1;
+    _drv_fdcan1.filter_cfg = default_filter;
     _drv_fdcan1.device.config = config;
     rt_hw_can_register(&_drv_fdcan1.device, _drv_fdcan1.name, &_fdcan_ops, &_drv_fdcan1);
     LOG_I("FDCAN1 registered");
 #endif
 
 #ifdef BSP_USING_FDCAN2
-    _drv_fdcan2.fdcan_x       = FDCAN2;
-    _drv_fdcan2.filter_cfg    = default_filter;
+    _drv_fdcan2.fdcan_x = FDCAN2;
+    _drv_fdcan2.filter_cfg = default_filter;
     _drv_fdcan2.device.config = config;
     rt_hw_can_register(&_drv_fdcan2.device, _drv_fdcan2.name, &_fdcan_ops, &_drv_fdcan2);
     LOG_I("FDCAN2 registered");
 #endif
 
 #ifdef BSP_USING_FDCAN3
-    _drv_fdcan3.fdcan_x       = FDCAN3;
-    _drv_fdcan3.filter_cfg    = default_filter;
+    _drv_fdcan3.fdcan_x = FDCAN3;
+    _drv_fdcan3.filter_cfg = default_filter;
     _drv_fdcan3.device.config = config;
     rt_hw_can_register(&_drv_fdcan3.device, _drv_fdcan3.name, &_fdcan_ops, &_drv_fdcan3);
     LOG_I("FDCAN3 registered");
 #endif
 
 #ifdef BSP_USING_FDCAN4
-    _drv_fdcan4.fdcan_x       = FDCAN4;
-    _drv_fdcan4.filter_cfg    = default_filter;
+    _drv_fdcan4.fdcan_x = FDCAN4;
+    _drv_fdcan4.filter_cfg = default_filter;
     _drv_fdcan4.device.config = config;
     rt_hw_can_register(&_drv_fdcan4.device, _drv_fdcan4.name, &_fdcan_ops, &_drv_fdcan4);
     LOG_I("FDCAN4 registered");
 #endif
 
 #ifdef BSP_USING_FDCAN5
-    _drv_fdcan5.fdcan_x       = FDCAN5;
-    _drv_fdcan5.filter_cfg    = default_filter;
+    _drv_fdcan5.fdcan_x = FDCAN5;
+    _drv_fdcan5.filter_cfg = default_filter;
     _drv_fdcan5.device.config = config;
     rt_hw_can_register(&_drv_fdcan5.device, _drv_fdcan5.name, &_fdcan_ops, &_drv_fdcan5);
     LOG_I("FDCAN5 registered");
 #endif
 
 #ifdef BSP_USING_FDCAN6
-    _drv_fdcan6.fdcan_x       = FDCAN6;
-    _drv_fdcan6.filter_cfg    = default_filter;
+    _drv_fdcan6.fdcan_x = FDCAN6;
+    _drv_fdcan6.filter_cfg = default_filter;
     _drv_fdcan6.device.config = config;
     rt_hw_can_register(&_drv_fdcan6.device, _drv_fdcan6.name, &_fdcan_ops, &_drv_fdcan6);
     LOG_I("FDCAN6 registered");
 #endif
 
 #ifdef BSP_USING_FDCAN7
-    _drv_fdcan7.fdcan_x       = FDCAN7;
-    _drv_fdcan7.filter_cfg    = default_filter;
+    _drv_fdcan7.fdcan_x = FDCAN7;
+    _drv_fdcan7.filter_cfg = default_filter;
     _drv_fdcan7.device.config = config;
     rt_hw_can_register(&_drv_fdcan7.device, _drv_fdcan7.name, &_fdcan_ops, &_drv_fdcan7);
     LOG_I("FDCAN7 registered");
 #endif
 
 #ifdef BSP_USING_FDCAN8
-    _drv_fdcan8.fdcan_x       = FDCAN8;
-    _drv_fdcan8.filter_cfg    = default_filter;
+    _drv_fdcan8.fdcan_x = FDCAN8;
+    _drv_fdcan8.filter_cfg = default_filter;
     _drv_fdcan8.device.config = config;
     rt_hw_can_register(&_drv_fdcan8.device, _drv_fdcan8.name, &_fdcan_ops, &_drv_fdcan8);
     LOG_I("FDCAN8 registered");

@@ -317,23 +317,23 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟡 N32
 
-| BSP Name | GPIO | UART | ADC | CAN | DAC | HWTimer | I2C | RTC | SPI | WDT | PWM |ENCODER | LPTIM | NAND | ETH | ON-Chip FLASH |
-|----------|------|------|-----|-----|-----|---------|-----|-----|-----|-----|
-| [n32g43xcl-stb](n32/n32gxx_lxx/n32g43xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g457gel-stb](n32/n32gxx_lxx/n32g457gel-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g45xcl-stb](n32/n32gxx_lxx/n32g45xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g45xml-stb](n32/n32gxx_lxx/n32g45xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g45xrl-stb](n32/n32gxx_lxx/n32g45xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g45xvl-stb](n32/n32gxx_lxx/n32g45xvl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g47rml-stb](n32/n32gxx_lxx/n32g47rml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32l40xcl-stb](n32/n32gxx_lxx/n32l40xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32l436-evb](n32/n32gxx_lxx/n32l436-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32l43xml-stb](n32/n32gxx_lxx/n32l43xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32l43xrl-stb](n32/n32gxx_lxx/n32l43xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32wb45xl-evb](n32/n32gxx_lxx/n32wb45xl-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32h760zil7-stb](n32/n32hxxx/n32h760zil7-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32h497zgl7-evb](n32/n32hxxx/n32h497zgl7-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-| [n32h487zgl7-evb](n32/n32hxxx/n32h487zgl7-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| BSP Name | GPIO | UART | ADC | CAN | DAC | HWTimer | I2C | RTC | SPI | WDT | PWM |ENCODER | LPTIM | NAND | ETH | ON-Chip FLASH | SDRAM | LCDC | QSPI |
+|----------|------|------|-----|-----|-----|---------|-----|-----|-----|-----|-----|---------|-------|------|-----|--------------|-------|------|-----|
+| [n32g43xcl-stb](n32/n32gxx_lxx/n32g43xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g457gel-stb](n32/n32gxx_lxx/n32g457gel-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g45xcl-stb](n32/n32gxx_lxx/n32g45xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g45xml-stb](n32/n32gxx_lxx/n32g45xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g45xrl-stb](n32/n32gxx_lxx/n32g45xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g45xvl-stb](n32/n32gxx_lxx/n32g45xvl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g47rml-stb](n32/n32gxx_lxx/n32g47rml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32l40xcl-stb](n32/n32gxx_lxx/n32l40xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32l436-evb](n32/n32gxx_lxx/n32l436-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32l43xml-stb](n32/n32gxx_lxx/n32l43xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32l43xrl-stb](n32/n32gxx_lxx/n32l43xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32wb45xl-evb](n32/n32gxx_lxx/n32wb45xl-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32h760zil7-stb](n32/n32hxxx/n32h760zil7-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32h497zgl7-evb](n32/n32hxxx/n32h497zgl7-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [n32h487zgl7-evb](n32/n32hxxx/n32h487zgl7-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 
 
 #### 🟡 NRF5x

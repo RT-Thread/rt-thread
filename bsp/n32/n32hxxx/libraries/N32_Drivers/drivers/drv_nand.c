@@ -160,7 +160,7 @@ static rt_err_t rt_nand_init(void)
     {
         uint32_t reset_cmd;
 
-        reset_cmd                     = NAND_BANK_ADDR | NAND_ADDR_CYCLES(0) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_RESET << 3);
+        reset_cmd = NAND_BANK_ADDR | NAND_ADDR_CYCLES(0) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_RESET << 3);
         *((__IO uint16_t *)reset_cmd) = 0x0000;
     }
 #endif
@@ -207,15 +207,15 @@ static rt_err_t nand_check_status(uint32_t bank_addr)
 {
     uint32_t timeout = 0x100000;
     uint32_t cmd, stat_addr;
-    uint8_t  status;
+    uint8_t status;
 
-    cmd       = bank_addr | NAND_ADDR_CYCLES(0) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_STATUS << 3);
+    cmd = bank_addr | NAND_ADDR_CYCLES(0) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_STATUS << 3);
     stat_addr = bank_addr | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_DISABLE | NAND_DATA_AREA | NAND_ECC_LAST_DISABLE;
 
     do
     {
         *((__IO uint8_t *)cmd) = 0x00;
-        status                 = *(__IO uint8_t *)(stat_addr);
+        status = *(__IO uint8_t *)(stat_addr);
 
         if (status & NAND_STATUS_ERROR)
         {
@@ -246,11 +246,11 @@ static rt_err_t nand_check_status(uint32_t bank_addr)
  */
 static rt_err_t _read_id(struct rt_mtd_nand_device *device)
 {
-    uint32_t    cmd_addr, data_addr;
-    uint8_t     id_bytes[5];
+    uint32_t cmd_addr, data_addr;
+    uint8_t id_bytes[5];
     rt_uint32_t id;
 
-    cmd_addr  = NAND_BANK_ADDR | NAND_ADDR_CYCLES(1) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_READ_ID << 3);
+    cmd_addr = NAND_BANK_ADDR | NAND_ADDR_CYCLES(1) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_READ_ID << 3);
     data_addr = NAND_BANK_ADDR | NAND_CLEAR_CS_DISABLE | NAND_CMD_END_DISABLE | NAND_DATA_AREA | NAND_ECC_LAST_DISABLE;
 
     *((__IO uint8_t *)cmd_addr) = 0x00;
@@ -265,7 +265,7 @@ static rt_err_t _read_id(struct rt_mtd_nand_device *device)
           id_bytes[0], id_bytes[1], id_bytes[2], id_bytes[3], id_bytes[4]);
 
     /* Pack bytes 1-4 into 32-bit return value (byte 0 = Maker ID, discarded) */
-    id  = (rt_uint32_t)id_bytes[1] << 24;
+    id = (rt_uint32_t)id_bytes[1] << 24;
     id |= (rt_uint32_t)id_bytes[2] << 16;
     id |= (rt_uint32_t)id_bytes[3] << 8;
     id |= (rt_uint32_t)id_bytes[4];
@@ -275,7 +275,7 @@ static rt_err_t _read_id(struct rt_mtd_nand_device *device)
 
 /* read one page (data + spare) */
 static rt_err_t _read_page(struct rt_mtd_nand_device *device,
-                           rt_off_t                   page,
+                           rt_off_t page,
                            rt_uint8_t *data, rt_uint32_t data_len,
                            rt_uint8_t *spare, rt_uint32_t spare_len)
 {
@@ -313,13 +313,13 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
     if (data && data_len)
     {
         uint32_t *p32;
-        uint32_t  word_cnt;
+        uint32_t word_cnt;
 
         data_addr = NAND_BANK_ADDR | NAND_CLEAR_CS_DISABLE | NAND_CMD_END_DISABLE | NAND_DATA_AREA | NAND_ECC_LAST_DISABLE;
 
         /* 32-bit aligned bulk */
         word_cnt = data_len / 4;
-        p32      = (uint32_t *)data;
+        p32 = (uint32_t *)data;
         for (i = 0; i < word_cnt; i++)
         {
             p32[i] = *((__IO uint32_t *)data_addr);
@@ -344,7 +344,7 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
 
 /* write one page (data + spare) */
 static rt_err_t _write_page(struct rt_mtd_nand_device *device,
-                            rt_off_t                   page,
+                            rt_off_t page,
                             const rt_uint8_t *data, rt_uint32_t data_len,
                             const rt_uint8_t *spare, rt_uint32_t spare_len)
 {
@@ -371,9 +371,9 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
         uint32_t word_cnt, remain_start;
 
         addr_no_end = NAND_BANK_ADDR | NAND_CLEAR_CS_DISABLE | NAND_CMD_END_DISABLE | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
-        addr_end    = NAND_BANK_ADDR | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_ENABLE | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
+        addr_end = NAND_BANK_ADDR | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_ENABLE | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
 
-        word_cnt     = data_len / 4;
+        word_cnt = data_len / 4;
         remain_start = word_cnt * 4;
 
         /*
@@ -413,7 +413,7 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
     }
     else
     {
-        data_addr                    = NAND_BANK_ADDR | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_ENABLE | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
+        data_addr = NAND_BANK_ADDR | NAND_CLEAR_CS_ENABLE | NAND_CMD_END_ENABLE | NAND_DATA_AREA | (NAND_CMD_WRITE_2ND << 11) | NAND_ECC_LAST_DISABLE;
         *((__IO uint8_t *)data_addr) = 0x00;
     }
 
@@ -553,7 +553,7 @@ int rt_hw_nand_init(void)
     }
 
     _nand_dev.page_size = BSP_NAND_PAGE_SIZE;
-    _nand_dev.oob_size  = BSP_NAND_OOB_SIZE;
+    _nand_dev.oob_size = BSP_NAND_OOB_SIZE;
     /*
      * oob_free: bytes in the spare area available for the upper layer.
      *
@@ -566,14 +566,14 @@ int rt_hw_nand_init(void)
      * The remaining oob_free bytes are available for bad block markers,
      * wear-leveling metadata, and filesystem bookkeeping.
      */
-    _nand_dev.oob_free        = OOB_FREE(BSP_NAND_PAGE_SIZE, BSP_NAND_OOB_SIZE);
+    _nand_dev.oob_free = OOB_FREE(BSP_NAND_PAGE_SIZE, BSP_NAND_OOB_SIZE);
     _nand_dev.pages_per_block = BSP_NAND_PAGES_PER_BLOCK;
-    _nand_dev.plane_num       = BSP_NAND_PLANE_NUM;
-    _nand_dev.block_start     = 0;
-    _nand_dev.block_end       = BSP_NAND_BLOCK_COUNT;
-    _nand_dev.block_total     = _nand_dev.block_end - _nand_dev.block_start;
-    _nand_dev.ops             = &_nand_ops;
-    _nand_dev.priv            = RT_NULL;
+    _nand_dev.plane_num = BSP_NAND_PLANE_NUM;
+    _nand_dev.block_start = 0;
+    _nand_dev.block_end = BSP_NAND_BLOCK_COUNT;
+    _nand_dev.block_total = _nand_dev.block_end - _nand_dev.block_start;
+    _nand_dev.ops = &_nand_ops;
+    _nand_dev.priv = RT_NULL;
 
     result = rt_mtd_nand_register_device("nand0", &_nand_dev);
     if (result != RT_EOK)
