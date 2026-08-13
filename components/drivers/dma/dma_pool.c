@@ -1028,7 +1028,8 @@ static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool)
     if (rt_aspace_map_phy(&rt_kernel_space, &hint, MMU_MAP_K_RWCB,
                           start >> MM_PAGE_SHIFT, &va))
     {
-        LOG_E("map %s [%p, %p] failed", region->name, start, end);
+        LOG_E("map %s [0x%lx, 0x%lx] failed", region->name,
+              (unsigned long)start, (unsigned long)end);
         return -RT_ERROR;
     }
 

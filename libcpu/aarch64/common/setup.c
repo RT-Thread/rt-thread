@@ -437,7 +437,8 @@ void rt_hw_common_setup(void)
 
             if (zone_end < platform_mem_region.end + pool_total)
             {
-                LOG_E("No room for sub-4G DMA pool (%u bytes)", pool_total);
+                LOG_E("No room for sub-4G DMA pool (%lu bytes)",
+                      (unsigned long)pool_total);
                 break;
             }
 
