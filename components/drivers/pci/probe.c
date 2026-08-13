@@ -994,24 +994,24 @@ static rt_bool_t pci_remove_bus_device(struct rt_pci_device *pdev, void *data)
 
 rt_err_t rt_pci_host_bridge_remove(struct rt_pci_host_bridge *host_bridge)
 {
-    rt_err_t err = RT_EOK;
+    if (!host_bridge)
+    {
+        return -RT_EINVAL;
+    }
 
-    if (host_bridge && host_bridge->root_bus)
+    if (host_bridge->root_bus)
     {
         rt_pci_enum_device(host_bridge->root_bus, pci_remove_bus_device, RT_NULL);
         host_bridge->root_bus = RT_NULL;
-
-        if (host_bridge->domain != RT_UINT32_MAX)
-        {
-            rt_dm_ida_free(&pci_domain_ida, host_bridge->domain);
-        }
     }
-    else
+
+    if (host_bridge->domain != RT_UINT32_MAX)
     {
-        err = -RT_EINVAL;
+        rt_dm_ida_free(&pci_domain_ida, host_bridge->domain);
+        host_bridge->domain = RT_UINT32_MAX;
     }
 
-    return err;
+    return RT_EOK;
 }
 
 rt_err_t rt_pci_bus_remove(struct rt_pci_bus *bus)

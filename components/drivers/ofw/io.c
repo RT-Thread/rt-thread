@@ -488,7 +488,7 @@ rt_uint64_t rt_ofw_translate_address(struct rt_ofw_node *np, const char *range_t
 rt_uint64_t rt_ofw_reverse_address(struct rt_ofw_node *np, const char *range_type, rt_uint64_t address)
 {
     struct rt_ofw_node *bus;
-    struct rt_ofw_node *parents[16];
+    struct rt_ofw_node *parents[OFW_NODE_MAX_DEPTH];
     int                 count = 0;
 
     if (!range_type)

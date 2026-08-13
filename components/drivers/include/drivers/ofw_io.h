@@ -30,7 +30,7 @@ rt_uint64_t rt_ofw_reverse_address(struct rt_ofw_node *np, const char *range_typ
 
 rt_inline rt_uint64_t rt_ofw_translate_dma2cpu(struct rt_ofw_node *np, rt_uint64_t address)
 {
-    rt_uint64_t bus_addr, cpu_addr;
+    rt_uint64_t cpu_addr;
 
     cpu_addr = rt_ofw_translate_address(np, "dma-ranges", address);
     if (cpu_addr != ~0ULL && cpu_addr != address)
@@ -38,14 +38,10 @@ rt_inline rt_uint64_t rt_ofw_translate_dma2cpu(struct rt_ofw_node *np, rt_uint64
         return cpu_addr;
     }
 
-    bus_addr = rt_ofw_translate_address(np, "dma-ranges", address);
-    if (bus_addr != ~0ULL && bus_addr != address)
+    cpu_addr = rt_ofw_translate_address(np, "ranges", address);
+    if (cpu_addr != ~0ULL && cpu_addr != address)
     {
-        cpu_addr = rt_ofw_translate_address(np, "ranges", bus_addr);
-        if (cpu_addr != ~0ULL && cpu_addr != address)
-        {
-            return cpu_addr;
-        }
+        return cpu_addr;
     }
 
     return address;
