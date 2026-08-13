@@ -35,7 +35,7 @@ static void sdhci_dwcmshc_check_auto_cmd23(struct rt_mmc_host *mmc, struct rt_mm
     /*
      * No matter V4 is enabled or not, ARGUMENT2 register is 32-bit
      * block count register which doesn't support stuff bits of
-     * CMD23 argument on dwcmsch host controller.
+     * CMD23 argument on dwcmshc host controller.
      */
     if (mrq->sbc && (mrq->sbc->arg & SDHCI_DWCMSHC_ARG2_STUFF))
     {
@@ -56,7 +56,8 @@ static void sdhci_dwcmshc_request(struct rt_mmc_host *mmc, struct rt_mmcsd_req *
 
 void sdhci_dwcmshc_set_uhs_signaling(struct rt_sdhci_host *host, unsigned int timing)
 {
-    rt_uint16_t                 ctrl, ctrl_2;
+    rt_uint16_t                 ctrl_2;
+    rt_uint32_t                 ctrl;
     struct rt_sdhci_pltfm_host *pltfm_host = rt_sdhci_priv(host);
     struct sdhci_dwcmshc       *priv       = rt_sdhci_pltfm_priv(pltfm_host);
 
@@ -87,9 +88,9 @@ void sdhci_dwcmshc_set_uhs_signaling(struct rt_sdhci_host *host, unsigned int ti
     else if (timing == MMC_TIMING_MMC_HS400)
     {
         /* Set CARD_IS_EMMC bit to enable Data Strobe for HS400 */
-        ctrl  = rt_sdhci_readw(host, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
+        ctrl  = rt_sdhci_readl(host, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
         ctrl |= DWCMSHC_CARD_IS_EMMC;
-        rt_sdhci_writew(host, ctrl, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
+        rt_sdhci_writel(host, ctrl, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
 
         ctrl_2 |= DWCMSHC_CTRL_HS400;
     }
@@ -241,7 +242,12 @@ rt_err_t sdhci_dwcmshc_probe(struct rt_platform_device           *pdev,
     priv->bus_clk = rt_clk_get_by_name(dev, "bus");
     if (!rt_is_err(priv->bus_clk))
     {
-        rt_clk_prepare_enable(priv->bus_clk);
+        err = rt_clk_prepare_enable(priv->bus_clk);
+        if (err)
+        {
+            LOG_E("failed to enable bus clk %s", rt_strerror(err));
+            goto _err_core_clk;
+        }
     }
 
     err = rt_mmc_of_parse(host->mmc);
@@ -304,14 +310,15 @@ _err_clk:
         drv_data->remove(host, priv);
     }
 
-    if (!rt_is_err(pltfm_host->clk))
-    {
-        rt_clk_disable_unprepare(pltfm_host->clk);
-    }
-
     if (!rt_is_err(priv->bus_clk))
     {
         rt_clk_disable_unprepare(priv->bus_clk);
+    }
+
+_err_core_clk:
+    if (!rt_is_err(pltfm_host->clk))
+    {
+        rt_clk_disable_unprepare(pltfm_host->clk);
     }
 
 _free_pltfm:

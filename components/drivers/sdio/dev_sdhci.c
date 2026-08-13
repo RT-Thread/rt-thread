@@ -2153,6 +2153,15 @@ static rt_bool_t sdhci_poll_pending_irq(struct rt_sdhci_host *host)
         return RT_FALSE;
     }
 
+    if (host->ops->irq)
+    {
+        intmask = host->ops->irq(host, intmask);
+        if (!intmask)
+        {
+            return RT_FALSE;
+        }
+    }
+
     if (!(intmask & (RT_SDHCI_INT_CMD_MASK | RT_SDHCI_INT_DATA_MASK | RT_SDHCI_INT_BUS_POWER)))
     {
         return RT_FALSE;
@@ -2170,6 +2179,12 @@ static rt_bool_t sdhci_poll_pending_irq(struct rt_sdhci_host *host)
     if (intmask & RT_SDHCI_INT_DATA_MASK)
     {
         sdhci_data_irq(host, intmask & RT_SDHCI_INT_DATA_MASK);
+    }
+
+    if (intmask & RT_SDHCI_INT_BUS_POWER)
+    {
+        rt_kprintf("%s: Card is consuming too much power!\n",
+                   mmc_hostname(host->mmc));
     }
 
     return RT_TRUE;
