@@ -135,7 +135,7 @@ static rt_err_t adc_key_probe(struct rt_platform_device *pdev)
                                  &tk->kbtn[i].voltage))
         {
             LOG_E("%s: Key with invalid or missing %s",
-                  rt_ofw_node_full_name(key_np), "voltage");
+                  rt_ofw_node_full_name(key_np), "press-threshold-microvolt");
             rt_ofw_node_put(key_np);
 
             err = -RT_EINVAL;

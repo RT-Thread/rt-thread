@@ -305,12 +305,15 @@ static void ads7846_restart(struct ads7846 *ts)
 rt_inline void ads7846_disable(struct ads7846 *ts)
 {
     ads7846_stop(ts);
-    rt_regulator_disable(ts->supply);
+    if (ts->supply)
+    {
+        rt_regulator_disable(ts->supply);
+    }
 }
 
 rt_inline void ads7846_enable(struct ads7846 *ts)
 {
-    if (rt_regulator_enable(ts->supply))
+    if (ts->supply && rt_regulator_enable(ts->supply))
     {
         LOG_E("%s: Failed to enable supply", rt_dm_dev_get_name(&ts->spi->parent));
     }
@@ -400,7 +403,7 @@ static int ads7846_read12_ser(struct ads7846 *ts, unsigned command)
         rt_spi_message_append(&req.msg[0], &req.msg[1]);
 
         ads7846_stop(ts);
-        status = rt_spi_transfer_message(ts->spi, &req.msg[0]) != RT_NULL;
+        status = rt_spi_transfer_message(ts->spi, &req.msg[0]) ? -RT_EIO : RT_EOK;
         ads7846_restart(ts);
 
         if (status)
@@ -439,7 +442,7 @@ static int ads7846_read12_ser(struct ads7846 *ts, unsigned command)
     rt_spi_message_append(&req.msg[0], &req.msg[3]);
 
     ads7846_stop(ts);
-    status = rt_spi_transfer_message(ts->spi, &req.msg[0]) != RT_NULL;
+    status = rt_spi_transfer_message(ts->spi, &req.msg[0]) ? -RT_EIO : RT_EOK;
     ads7846_restart(ts);
 
     if (status == 0)
@@ -466,7 +469,7 @@ static int ads7845_read12_ser(struct ads7846 *ts, unsigned command)
     req.msg[0].length   = 3;
 
     ads7846_stop(ts);
-    status = rt_spi_transfer_message(ts->spi, &req.msg[0]) != RT_NULL;
+    status = rt_spi_transfer_message(ts->spi, &req.msg[0]) ? -RT_EIO : RT_EOK;
     ads7846_restart(ts);
 
     if (status == 0)
@@ -736,7 +739,7 @@ static void ads7846_read_state(struct ads7846 *ts)
 
     packet->last_cmd_idx = 0;
 
-    while (true)
+    while (RT_TRUE)
     {
         m = &ts->msg[msg_idx];
 
@@ -1065,7 +1068,7 @@ static rt_err_t ads7846_probe(struct rt_spi_device *spi_dev)
         goto _free_msg;
     }
 
-    if ((err = rt_regulator_enable(ts->supply)))
+    if (ts->supply && (err = rt_regulator_enable(ts->supply)))
     {
         goto _free_regulator;
     }
@@ -1113,7 +1116,10 @@ static rt_err_t ads7846_probe(struct rt_spi_device *spi_dev)
     return RT_EOK;
 
 _free_disable_regulator:
-    rt_regulator_disable(ts->supply);
+    if (ts->supply)
+    {
+        rt_regulator_disable(ts->supply);
+    }
 
 _free_regulator:
     rt_regulator_put(ts->supply);

@@ -627,7 +627,7 @@ static rt_err_t goodix_ts_read_input_report(struct goodix_ts *ts, rt_uint8_t *da
                                             int *touch_num_out)
 {
     rt_uint16_t addr        = GOODIX_READ_COOR_ADDR;
-    rt_size_t   header_size = 1 + ts->contact_size + 1;
+    rt_size_t   header_size = 1 + ts->contact_size;
     rt_tick_t   timeout;
     rt_uint8_t  touch_num;
     rt_err_t    err;
