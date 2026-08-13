@@ -6,7 +6,6 @@ cwd = GetCurrentDir()
 src = []
 
 CPPPATH = [cwd + "/arm/CMSIS_6/CMSIS/Core/Include",
-        cwd + "/board/rrq61xxx_evb",
         cwd + "/fsp/inc",
         cwd + "/fsp/inc/api",
         cwd + "/fsp/inc/instances",
