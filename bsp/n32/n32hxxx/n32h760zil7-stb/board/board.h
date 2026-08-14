@@ -28,12 +28,12 @@
 extern "C" {
 #endif
 
-#define N32_FLASH_START_ADRESS     ((uint32_t)0x15000000)
-#define N32_FLASH_SIZE             ((2 *1024 * 1024) - (128 * 1024))
-#define N32_FLASH_END_ADDRESS      ((uint32_t)(N32_FLASH_START_ADRESS + N32_FLASH_SIZE))
+#define N32_FLASH_START_ADRESS ((uint32_t)0x15000000)
+#define N32_FLASH_SIZE         ((2 * 1024 * 1024) - (128 * 1024))
+#define N32_FLASH_END_ADDRESS  ((uint32_t)(N32_FLASH_START_ADRESS + N32_FLASH_SIZE))
 
-#define N32_SRAM_SIZE              (128)
-#define N32_SRAM_END               (0x24000000 + N32_SRAM_SIZE * 1024)
+#define N32_SRAM_SIZE (128)
+#define N32_SRAM_END  (0x24000000 + N32_SRAM_SIZE * 1024)
 
 #if defined(__ARMCC_VERSION)
 extern int Image$$RW_AXI_SRAM$$ZI$$Limit;
@@ -43,7 +43,7 @@ extern int _app_estack;
 #define HEAP_BEGIN (&_app_estack)
 #endif
 
-#define HEAP_END        N32_SRAM_END
+#define HEAP_END N32_SRAM_END
 
 void System_Initialize(void);
 

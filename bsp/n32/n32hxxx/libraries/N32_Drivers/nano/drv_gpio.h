@@ -16,8 +16,8 @@
 extern "C" {
 #endif
 
-#define PIN_LOW                 0x00
-#define PIN_HIGH                0x01
+#define PIN_LOW  0x00
+#define PIN_HIGH 0x01
 
 #define PIN_MODE_OUTPUT         0x00
 #define PIN_MODE_INPUT          0x01
@@ -25,7 +25,7 @@ extern "C" {
 #define PIN_MODE_INPUT_PULLDOWN 0x03
 #define PIN_MODE_OUTPUT_OD      0x04
 
-#define GET_PIN(PORTx,PIN) (rt_uint64_t)((((rt_uint64_t)GPIO_PIN_##PIN) << 32) | (rt_uint64_t)(rt_ubase_t)GPIO##PORTx)
+#define GET_PIN(PORTx, PIN) (rt_uint64_t)((((rt_uint64_t)GPIO_PIN_##PIN) << 32) | (rt_uint64_t)(rt_ubase_t)GPIO##PORTx)
 
 void rt_pin_mode(rt_uint64_t pin, rt_uint8_t mode);
 void rt_pin_write(rt_uint64_t pin, rt_uint8_t value);

@@ -21,7 +21,7 @@ extern "C" {
 #ifndef SPI1_BUS_CONFIG
 #define SPI1_BUS_CONFIG        \
     {                          \
-        .SPIx     = SPI1,      \
+        .SPIx = SPI1,          \
         .bus_name = "spi1",    \
         .irq_type = SPI1_IRQn, \
     }
@@ -31,11 +31,11 @@ extern "C" {
 #ifndef SPI1_TX_DMA_CONFIG
 #define SPI1_TX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI1_TX_DMA_INSTANCE,       \
-        .dma_irq        = SPI1_TX_DMA_IRQ,            \
-        .HsInterface    = SPI1_TX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI1_TX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI1_TX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI1_TX_DMA_INSTANCE,             \
+        .dma_irq = SPI1_TX_DMA_IRQ,                   \
+        .HsInterface = SPI1_TX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI1_TX_DMA_DMA_RCC,               \
+        .dma_channel = SPI1_TX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI1_TX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI1_TX_DMA_DMAMUX_REQUEST, \
     }
@@ -45,11 +45,11 @@ extern "C" {
 #ifndef SPI1_RX_DMA_CONFIG
 #define SPI1_RX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI1_RX_DMA_INSTANCE,       \
-        .dma_irq        = SPI1_RX_DMA_IRQ,            \
-        .HsInterface    = SPI1_RX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI1_RX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI1_RX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI1_RX_DMA_INSTANCE,             \
+        .dma_irq = SPI1_RX_DMA_IRQ,                   \
+        .HsInterface = SPI1_RX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI1_RX_DMA_DMA_RCC,               \
+        .dma_channel = SPI1_RX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI1_RX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI1_RX_DMA_DMAMUX_REQUEST, \
     }
@@ -60,7 +60,7 @@ extern "C" {
 #ifndef SPI2_BUS_CONFIG
 #define SPI2_BUS_CONFIG        \
     {                          \
-        .SPIx     = SPI2,      \
+        .SPIx = SPI2,          \
         .bus_name = "spi2",    \
         .irq_type = SPI2_IRQn, \
     }
@@ -70,11 +70,11 @@ extern "C" {
 #ifndef SPI2_TX_DMA_CONFIG
 #define SPI2_TX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI2_TX_DMA_INSTANCE,       \
-        .dma_irq        = SPI2_TX_DMA_IRQ,            \
-        .HsInterface    = SPI2_TX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI2_TX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI2_TX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI2_TX_DMA_INSTANCE,             \
+        .dma_irq = SPI2_TX_DMA_IRQ,                   \
+        .HsInterface = SPI2_TX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI2_TX_DMA_DMA_RCC,               \
+        .dma_channel = SPI2_TX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI2_TX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI2_TX_DMA_DMAMUX_REQUEST, \
     }
@@ -84,11 +84,11 @@ extern "C" {
 #ifndef SPI2_RX_DMA_CONFIG
 #define SPI2_RX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI2_RX_DMA_INSTANCE,       \
-        .dma_irq        = SPI2_RX_DMA_IRQ,            \
-        .HsInterface    = SPI2_RX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI2_RX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI2_RX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI2_RX_DMA_INSTANCE,             \
+        .dma_irq = SPI2_RX_DMA_IRQ,                   \
+        .HsInterface = SPI2_RX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI2_RX_DMA_DMA_RCC,               \
+        .dma_channel = SPI2_RX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI2_RX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI2_RX_DMA_DMAMUX_REQUEST, \
     }
@@ -99,7 +99,7 @@ extern "C" {
 #ifndef SPI3_BUS_CONFIG
 #define SPI3_BUS_CONFIG        \
     {                          \
-        .SPIx     = SPI3,      \
+        .SPIx = SPI3,          \
         .bus_name = "spi3",    \
         .irq_type = SPI3_IRQn, \
     }
@@ -109,11 +109,11 @@ extern "C" {
 #ifndef SPI3_TX_DMA_CONFIG
 #define SPI3_TX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI3_TX_DMA_INSTANCE,       \
-        .dma_irq        = SPI3_TX_DMA_IRQ,            \
-        .HsInterface    = SPI3_TX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI3_TX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI3_TX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI3_TX_DMA_INSTANCE,             \
+        .dma_irq = SPI3_TX_DMA_IRQ,                   \
+        .HsInterface = SPI3_TX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI3_TX_DMA_DMA_RCC,               \
+        .dma_channel = SPI3_TX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI3_TX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI3_TX_DMA_DMAMUX_REQUEST, \
     }
@@ -123,11 +123,11 @@ extern "C" {
 #ifndef SPI3_RX_DMA_CONFIG
 #define SPI3_RX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI3_RX_DMA_INSTANCE,       \
-        .dma_irq        = SPI3_RX_DMA_IRQ,            \
-        .HsInterface    = SPI3_RX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI3_RX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI3_RX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI3_RX_DMA_INSTANCE,             \
+        .dma_irq = SPI3_RX_DMA_IRQ,                   \
+        .HsInterface = SPI3_RX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI3_RX_DMA_DMA_RCC,               \
+        .dma_channel = SPI3_RX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI3_RX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI3_RX_DMA_DMAMUX_REQUEST, \
     }
@@ -138,7 +138,7 @@ extern "C" {
 #ifndef SPI4_BUS_CONFIG
 #define SPI4_BUS_CONFIG        \
     {                          \
-        .SPIx     = SPI4,      \
+        .SPIx = SPI4,          \
         .bus_name = "spi4",    \
         .irq_type = SPI4_IRQn, \
     }
@@ -148,11 +148,11 @@ extern "C" {
 #ifndef SPI4_TX_DMA_CONFIG
 #define SPI4_TX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI4_TX_DMA_INSTANCE,       \
-        .dma_irq        = SPI4_TX_DMA_IRQ,            \
-        .HsInterface    = SPI4_TX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI4_TX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI4_TX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI4_TX_DMA_INSTANCE,             \
+        .dma_irq = SPI4_TX_DMA_IRQ,                   \
+        .HsInterface = SPI4_TX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI4_TX_DMA_DMA_RCC,               \
+        .dma_channel = SPI4_TX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI4_TX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI4_TX_DMA_DMAMUX_REQUEST, \
     }
@@ -162,11 +162,11 @@ extern "C" {
 #ifndef SPI4_RX_DMA_CONFIG
 #define SPI4_RX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI4_RX_DMA_INSTANCE,       \
-        .dma_irq        = SPI4_RX_DMA_IRQ,            \
-        .HsInterface    = SPI4_RX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI4_RX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI4_RX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI4_RX_DMA_INSTANCE,             \
+        .dma_irq = SPI4_RX_DMA_IRQ,                   \
+        .HsInterface = SPI4_RX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI4_RX_DMA_DMA_RCC,               \
+        .dma_channel = SPI4_RX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI4_RX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI4_RX_DMA_DMAMUX_REQUEST, \
     }
@@ -177,7 +177,7 @@ extern "C" {
 #ifndef SPI5_BUS_CONFIG
 #define SPI5_BUS_CONFIG        \
     {                          \
-        .SPIx     = SPI5,      \
+        .SPIx = SPI5,          \
         .bus_name = "spi5",    \
         .irq_type = SPI5_IRQn, \
     }
@@ -187,11 +187,11 @@ extern "C" {
 #ifndef SPI5_TX_DMA_CONFIG
 #define SPI5_TX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI5_TX_DMA_INSTANCE,       \
-        .dma_irq        = SPI5_TX_DMA_IRQ,            \
-        .HsInterface    = SPI5_TX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI5_TX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI5_TX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI5_TX_DMA_INSTANCE,             \
+        .dma_irq = SPI5_TX_DMA_IRQ,                   \
+        .HsInterface = SPI5_TX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI5_TX_DMA_DMA_RCC,               \
+        .dma_channel = SPI5_TX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI5_TX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI5_TX_DMA_DMAMUX_REQUEST, \
     }
@@ -201,11 +201,11 @@ extern "C" {
 #ifndef SPI5_RX_DMA_CONFIG
 #define SPI5_RX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI5_RX_DMA_INSTANCE,       \
-        .dma_irq        = SPI5_RX_DMA_IRQ,            \
-        .HsInterface    = SPI5_RX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI5_RX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI5_RX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI5_RX_DMA_INSTANCE,             \
+        .dma_irq = SPI5_RX_DMA_IRQ,                   \
+        .HsInterface = SPI5_RX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI5_RX_DMA_DMA_RCC,               \
+        .dma_channel = SPI5_RX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI5_RX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI5_RX_DMA_DMAMUX_REQUEST, \
     }
@@ -216,7 +216,7 @@ extern "C" {
 #ifndef SPI6_BUS_CONFIG
 #define SPI6_BUS_CONFIG        \
     {                          \
-        .SPIx     = SPI6,      \
+        .SPIx = SPI6,          \
         .bus_name = "spi6",    \
         .irq_type = SPI6_IRQn, \
     }
@@ -226,11 +226,11 @@ extern "C" {
 #ifndef SPI6_TX_DMA_CONFIG
 #define SPI6_TX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI6_TX_DMA_INSTANCE,       \
-        .dma_irq        = SPI6_TX_DMA_IRQ,            \
-        .HsInterface    = SPI6_TX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI6_TX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI6_TX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI6_TX_DMA_INSTANCE,             \
+        .dma_irq = SPI6_TX_DMA_IRQ,                   \
+        .HsInterface = SPI6_TX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI6_TX_DMA_DMA_RCC,               \
+        .dma_channel = SPI6_TX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI6_TX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI6_TX_DMA_DMAMUX_REQUEST, \
     }
@@ -240,11 +240,11 @@ extern "C" {
 #ifndef SPI6_RX_DMA_CONFIG
 #define SPI6_RX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI6_RX_DMA_INSTANCE,       \
-        .dma_irq        = SPI6_RX_DMA_IRQ,            \
-        .HsInterface    = SPI6_RX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI6_RX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI6_RX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI6_RX_DMA_INSTANCE,             \
+        .dma_irq = SPI6_RX_DMA_IRQ,                   \
+        .HsInterface = SPI6_RX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI6_RX_DMA_DMA_RCC,               \
+        .dma_channel = SPI6_RX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI6_RX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI6_RX_DMA_DMAMUX_REQUEST, \
     }
@@ -255,7 +255,7 @@ extern "C" {
 #ifndef SPI7_BUS_CONFIG
 #define SPI7_BUS_CONFIG        \
     {                          \
-        .SPIx     = SPI7,      \
+        .SPIx = SPI7,          \
         .bus_name = "spi7",    \
         .irq_type = SPI7_IRQn, \
     }
@@ -265,11 +265,11 @@ extern "C" {
 #ifndef SPI7_TX_DMA_CONFIG
 #define SPI7_TX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI7_TX_DMA_INSTANCE,       \
-        .dma_irq        = SPI7_TX_DMA_IRQ,            \
-        .HsInterface    = SPI7_TX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI7_TX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI7_TX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI7_TX_DMA_INSTANCE,             \
+        .dma_irq = SPI7_TX_DMA_IRQ,                   \
+        .HsInterface = SPI7_TX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI7_TX_DMA_DMA_RCC,               \
+        .dma_channel = SPI7_TX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI7_TX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI7_TX_DMA_DMAMUX_REQUEST, \
     }
@@ -279,11 +279,11 @@ extern "C" {
 #ifndef SPI7_RX_DMA_CONFIG
 #define SPI7_RX_DMA_CONFIG                            \
     {                                                 \
-        .Instance       = SPI7_RX_DMA_INSTANCE,       \
-        .dma_irq        = SPI7_RX_DMA_IRQ,            \
-        .HsInterface    = SPI7_RX_DMA_HANDSHAK,       \
-        .dma_rcc        = SPI7_RX_DMA_DMA_RCC,        \
-        .dma_channel    = SPI7_RX_DMA_DMA_CHANNEL,    \
+        .Instance = SPI7_RX_DMA_INSTANCE,             \
+        .dma_irq = SPI7_RX_DMA_IRQ,                   \
+        .HsInterface = SPI7_RX_DMA_HANDSHAK,          \
+        .dma_rcc = SPI7_RX_DMA_DMA_RCC,               \
+        .dma_channel = SPI7_RX_DMA_DMA_CHANNEL,       \
         .dmamux_channel = SPI7_RX_DMA_DMAMUX_CHANNEL, \
         .dmamux_request = SPI7_RX_DMA_DMAMUX_REQUEST, \
     }
