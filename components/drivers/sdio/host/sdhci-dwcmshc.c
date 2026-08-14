@@ -56,10 +56,10 @@ static void sdhci_dwcmshc_request(struct rt_mmc_host *mmc, struct rt_mmcsd_req *
 
 void sdhci_dwcmshc_set_uhs_signaling(struct rt_sdhci_host *host, unsigned int timing)
 {
-    rt_uint16_t ctrl_2;
-    rt_uint32_t ctrl;
+    rt_uint16_t                 ctrl_2;
+    rt_uint32_t                 ctrl;
     struct rt_sdhci_pltfm_host *pltfm_host = rt_sdhci_priv(host);
-    struct sdhci_dwcmshc *priv = rt_sdhci_pltfm_priv(pltfm_host);
+    struct sdhci_dwcmshc       *priv       = rt_sdhci_pltfm_priv(pltfm_host);
 
     ctrl_2 = rt_sdhci_readw(host, RT_SDHCI_HOST_CONTROL2);
 
@@ -88,7 +88,7 @@ void sdhci_dwcmshc_set_uhs_signaling(struct rt_sdhci_host *host, unsigned int ti
     else if (timing == MMC_TIMING_MMC_HS400)
     {
         /* Set CARD_IS_EMMC bit to enable Data Strobe for HS400 */
-        ctrl = rt_sdhci_readl(host, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
+        ctrl  = rt_sdhci_readl(host, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
         ctrl |= DWCMSHC_CARD_IS_EMMC;
         rt_sdhci_writel(host, ctrl, priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL);
 
@@ -100,13 +100,13 @@ void sdhci_dwcmshc_set_uhs_signaling(struct rt_sdhci_host *host, unsigned int ti
 
 static void sdhci_dwcmshc_hs400_enhanced_strobe(struct rt_mmc_host *mmc, struct rt_mmcsd_io_cfg *ios)
 {
-    int reg;
-    rt_uint32_t vendor;
-    struct rt_sdhci_host *host = rt_mmc_priv(mmc);
+    int                         reg;
+    rt_uint32_t                 vendor;
+    struct rt_sdhci_host       *host       = rt_mmc_priv(mmc);
     struct rt_sdhci_pltfm_host *pltfm_host = rt_sdhci_priv(host);
-    struct sdhci_dwcmshc *priv = rt_sdhci_pltfm_priv(pltfm_host);
+    struct sdhci_dwcmshc       *priv       = rt_sdhci_pltfm_priv(pltfm_host);
 
-    reg = priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL;
+    reg    = priv->vendor_specific_area1 + DWCMSHC_EMMC_CONTROL;
     vendor = rt_sdhci_readl(host, reg);
 
     if (ios->enhanced_strobe)
@@ -123,7 +123,7 @@ static void sdhci_dwcmshc_hs400_enhanced_strobe(struct rt_mmc_host *mmc, struct 
 
 static int sdhci_dwcmshc_execute_tuning(struct rt_mmc_host *mmc, rt_uint32_t opcode)
 {
-    int err;
+    int                   err;
     struct rt_sdhci_host *host = rt_mmc_priv(mmc);
 
     if ((err = rt_sdhci_execute_tuning(mmc, opcode)))
@@ -154,16 +154,16 @@ static void sdhci_dwcmshc_disable_card_clk(struct rt_sdhci_host *host)
 }
 
 static const struct rt_sdhci_ops sdhci_dwcmshc_ops = {
-    .set_clock = rt_sdhci_set_clock,
-    .set_bus_width = rt_sdhci_set_bus_width,
+    .set_clock         = rt_sdhci_set_clock,
+    .set_bus_width     = rt_sdhci_set_bus_width,
     .set_uhs_signaling = sdhci_dwcmshc_set_uhs_signaling,
-    .get_max_clock = sdhci_dwcmshc_get_max_clock,
-    .reset = rt_sdhci_reset,
+    .get_max_clock     = sdhci_dwcmshc_get_max_clock,
+    .reset             = rt_sdhci_reset,
 };
 
 static const struct rt_sdhci_pltfm_data sdhci_dwcmshc_pdata = {
-    .ops = &sdhci_dwcmshc_ops,
-    .quirks = RT_SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+    .ops     = &sdhci_dwcmshc_ops,
+    .quirks  = RT_SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
     .quirks2 = RT_SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
 };
 
@@ -174,10 +174,10 @@ const struct sdhci_dwcmshc_drv_data sdhci_dwcmshc_generic_drv_data = {
 #ifdef RT_USING_PM
 static rt_err_t sdhci_dwcmshc_pm_suspend(const struct rt_device *device, rt_uint8_t mode)
 {
-    rt_uint16_t data;
+    rt_uint16_t           data;
     struct rt_sdhci_host *host = device->user_data;
 
-    data = rt_sdhci_readw(host, RT_SDHCI_CLOCK_CONTROL);
+    data  = rt_sdhci_readw(host, RT_SDHCI_CLOCK_CONTROL);
     data &= ~RT_SDHCI_CLOCK_CARD_EN;
     rt_sdhci_writew(host, data, RT_SDHCI_CLOCK_CONTROL);
 
@@ -186,28 +186,28 @@ static rt_err_t sdhci_dwcmshc_pm_suspend(const struct rt_device *device, rt_uint
 
 static void sdhci_dwcmshc_pm_resume(const struct rt_device *device, rt_uint8_t mode)
 {
-    rt_uint16_t data;
+    rt_uint16_t           data;
     struct rt_sdhci_host *host = device->user_data;
 
-    data = rt_sdhci_readw(host, RT_SDHCI_CLOCK_CONTROL);
+    data  = rt_sdhci_readw(host, RT_SDHCI_CLOCK_CONTROL);
     data |= RT_SDHCI_CLOCK_CARD_EN;
     rt_sdhci_writew(host, data, RT_SDHCI_CLOCK_CONTROL);
 }
 
 static const struct rt_device_pm_ops sdhci_dwcmshc_pm_ops = {
     .suspend = sdhci_dwcmshc_pm_suspend,
-    .resume = sdhci_dwcmshc_pm_resume,
+    .resume  = sdhci_dwcmshc_pm_resume,
 };
 #endif /* RT_USING_PM */
 
-rt_err_t sdhci_dwcmshc_probe(struct rt_platform_device *pdev,
+rt_err_t sdhci_dwcmshc_probe(struct rt_platform_device           *pdev,
                              const struct sdhci_dwcmshc_drv_data *drv_data)
 {
-    rt_err_t err;
-    struct rt_device *dev = &pdev->parent;
+    rt_err_t                    err;
+    struct rt_device           *dev = &pdev->parent;
     struct rt_sdhci_pltfm_host *pltfm_host;
-    struct rt_sdhci_host *host;
-    struct sdhci_dwcmshc *priv;
+    struct rt_sdhci_host       *host;
+    struct sdhci_dwcmshc       *priv;
 
     if (!drv_data || !drv_data->pdata)
     {
@@ -221,8 +221,8 @@ rt_err_t sdhci_dwcmshc_probe(struct rt_platform_device *pdev,
         return rt_ptr_err(host);
     }
 
-    pltfm_host = rt_sdhci_priv(host);
-    priv = rt_sdhci_pltfm_priv(pltfm_host);
+    pltfm_host     = rt_sdhci_priv(host);
+    priv           = rt_sdhci_pltfm_priv(pltfm_host);
     priv->drv_data = drv_data;
 
     pltfm_host->clk = rt_clk_get_by_name(dev, "core");
@@ -260,9 +260,9 @@ rt_err_t sdhci_dwcmshc_probe(struct rt_platform_device *pdev,
 
     priv->vendor_specific_area1 = rt_sdhci_readl(host, DWCMSHC_P_VENDOR_AREA1) & DWCMSHC_AREA1_MASK;
 
-    host->mmc_host_ops.request = sdhci_dwcmshc_request;
+    host->mmc_host_ops.request               = sdhci_dwcmshc_request;
     host->mmc_host_ops.hs400_enhanced_strobe = sdhci_dwcmshc_hs400_enhanced_strobe;
-    host->mmc_host_ops.execute_tuning = sdhci_dwcmshc_execute_tuning;
+    host->mmc_host_ops.execute_tuning        = sdhci_dwcmshc_execute_tuning;
 
     if (drv_data->init)
     {
@@ -329,9 +329,9 @@ _free_pltfm:
 
 rt_err_t sdhci_dwcmshc_remove(struct rt_platform_device *pdev)
 {
-    struct rt_sdhci_host *host = pdev->priv;
+    struct rt_sdhci_host       *host       = pdev->priv;
     struct rt_sdhci_pltfm_host *pltfm_host = rt_sdhci_priv(host);
-    struct sdhci_dwcmshc *priv = rt_sdhci_pltfm_priv(pltfm_host);
+    struct sdhci_dwcmshc       *priv       = rt_sdhci_pltfm_priv(pltfm_host);
 
 #ifdef RT_USING_PM
     rt_pm_device_unregister(&pdev->parent);
