@@ -110,7 +110,7 @@ static rt_err_t dma_map_coherent_sync_in_data(struct rt_device *dev,
 /** @brief DMA map operations for cache-coherent devices */
 static const struct rt_dma_map_ops dma_map_coherent_ops = {
     .sync_out_data = dma_map_coherent_sync_out_data,
-    .sync_in_data  = dma_map_coherent_sync_in_data,
+    .sync_in_data = dma_map_coherent_sync_in_data,
 };
 
 /**
@@ -160,7 +160,7 @@ static rt_err_t dma_map_nocoherent_sync_in_data(struct rt_device *dev,
 /** @brief DMA map operations for non-cache-coherent devices */
 static const struct rt_dma_map_ops dma_map_nocoherent_ops = {
     .sync_out_data = dma_map_nocoherent_sync_out_data,
-    .sync_in_data  = dma_map_nocoherent_sync_in_data,
+    .sync_in_data = dma_map_nocoherent_sync_in_data,
 };
 
 #ifdef RT_USING_OFW
@@ -206,8 +206,8 @@ static void *ofw_dma_map_alloc(struct rt_device *dev, rt_size_t size,
 {
     void *cpu_addr;
 
-    flags    |= RT_DMA_F_32BITS;
-    cpu_addr  = dma_alloc(dev, size, dma_handle, flags);
+    flags |= RT_DMA_F_32BITS;
+    cpu_addr = dma_alloc(dev, size, dma_handle, flags);
 
     if (cpu_addr && dma_handle)
     {
@@ -301,10 +301,10 @@ static rt_err_t ofw_dma_map_sync_in_data(struct rt_device *dev,
 
 /** @brief DMA map operations with device tree address translation */
 static const struct rt_dma_map_ops ofw_dma_map_ops = {
-    .alloc         = ofw_dma_map_alloc,
-    .free          = ofw_dma_map_free,
+    .alloc = ofw_dma_map_alloc,
+    .free = ofw_dma_map_free,
     .sync_out_data = ofw_dma_map_sync_out_data,
-    .sync_in_data  = ofw_dma_map_sync_in_data,
+    .sync_in_data = ofw_dma_map_sync_in_data,
 };
 
 static rt_bool_t ofw_node_has_dma_ranges(struct rt_ofw_node *np)
@@ -341,15 +341,15 @@ static rt_bool_t ofw_node_has_dma_ranges(struct rt_ofw_node *np)
  */
 static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
 {
-    rt_err_t                     err;
-    int                          region_nr = 0;
-    const fdt32_t               *cell;
-    rt_phandle                   phandle;
-    rt_region_t                  region;
-    struct rt_ofw_prop          *prop;
-    struct rt_dma_pool          *dma_pool;
+    rt_err_t err;
+    int region_nr = 0;
+    const fdt32_t *cell;
+    rt_phandle phandle;
+    rt_region_t region;
+    struct rt_ofw_prop *prop;
+    struct rt_dma_pool *dma_pool;
     const struct rt_dma_map_ops *ops = RT_NULL;
-    struct rt_ofw_node          *mem_np, *np = dev->ofw_node;
+    struct rt_ofw_node *mem_np, *np = dev->ofw_node;
 
     rt_ofw_foreach_prop_u32(np, "memory-region", prop, cell, phandle)
     {
@@ -370,8 +370,8 @@ static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
         }
 
         region.start = addr;
-        region.end   = addr + size;
-        region.name  = rt_dm_dev_get_name(dev);
+        region.end = addr + size;
+        region.name = rt_dm_dev_get_name(dev);
 
         rt_ofw_node_put(mem_np);
 
@@ -454,7 +454,7 @@ static rt_uint64_t pci_host_bus_to_cpu(struct rt_pci_host_bridge *host_bridge, r
 
 static rt_ubase_t pci_addr_cpu2dma(struct rt_device *dev, rt_ubase_t addr)
 {
-    rt_uint64_t                pci_dma;
+    rt_uint64_t pci_dma;
     struct rt_pci_host_bridge *host_bridge = pci_device_host_bridge(dev);
 
     if (!host_bridge)
@@ -469,7 +469,7 @@ static rt_ubase_t pci_addr_cpu2dma(struct rt_device *dev, rt_ubase_t addr)
 
 static rt_ubase_t pci_addr_dma2cpu(struct rt_device *dev, rt_ubase_t addr)
 {
-    rt_uint64_t                cpu_addr;
+    rt_uint64_t cpu_addr;
     struct rt_pci_host_bridge *host_bridge = pci_device_host_bridge(dev);
 
     if (!host_bridge)
@@ -487,8 +487,8 @@ static void *pci_dma_map_alloc(struct rt_device *dev, rt_size_t size,
 {
     void *cpu_addr;
 
-    flags    |= RT_DMA_F_32BITS;
-    cpu_addr  = dma_alloc(dev, size, dma_handle, flags);
+    flags |= RT_DMA_F_32BITS;
+    cpu_addr = dma_alloc(dev, size, dma_handle, flags);
 
     if (cpu_addr && dma_handle)
     {
@@ -544,15 +544,15 @@ static rt_err_t pci_dma_map_sync_in_data(struct rt_device *dev,
 }
 
 static const struct rt_dma_map_ops pci_dma_map_ops = {
-    .alloc         = pci_dma_map_alloc,
-    .free          = pci_dma_map_free,
+    .alloc = pci_dma_map_alloc,
+    .free = pci_dma_map_free,
     .sync_out_data = pci_dma_map_sync_out_data,
-    .sync_in_data  = pci_dma_map_sync_in_data,
+    .sync_in_data = pci_dma_map_sync_in_data,
 };
 
 static const struct rt_dma_map_ops *pci_device_dma_ops(struct rt_device *dev)
 {
-    struct rt_bus             *bus = dev->bus;
+    struct rt_bus *bus = dev->bus;
     struct rt_pci_host_bridge *host_bridge;
 
     if (!bus || rt_strcmp(bus->name, "pci"))
@@ -708,7 +708,7 @@ static void dma_pool_free(struct rt_dma_pool *pool, rt_ubase_t offset, rt_size_t
 {
     rt_size_t bit = (offset - pool->start) / ARCH_PAGE_SIZE, end_bit;
 
-    size    = RT_DIV_ROUND_UP(size, ARCH_PAGE_SIZE);
+    size = RT_DIV_ROUND_UP(size, ARCH_PAGE_SIZE);
     end_bit = bit + size;
 
     for (; bit < end_bit; ++bit)
@@ -737,7 +737,7 @@ static void dma_pool_free(struct rt_dma_pool *pool, rt_ubase_t offset, rt_size_t
 static void *dma_alloc(struct rt_device *dev, rt_size_t size,
                        rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
-    void               *dma_buffer = RT_NULL;
+    void *dma_buffer = RT_NULL;
     struct rt_dma_pool *pool;
 
     region_pool_lock();
@@ -867,8 +867,8 @@ static void dma_free(struct rt_device *dev, rt_size_t size,
 void *rt_dma_alloc(struct rt_device *dev, rt_size_t size,
                    rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
-    void                        *dma_buffer   = RT_NULL;
-    rt_ubase_t                   dma_handle_s = 0;
+    void *dma_buffer = RT_NULL;
+    rt_ubase_t dma_handle_s = 0;
     const struct rt_dma_map_ops *ops;
 
     if (!dev || !size)
@@ -948,8 +948,8 @@ void rt_dma_free(struct rt_device *dev, rt_size_t size,
 rt_err_t rt_dma_sync_out_data(struct rt_device *dev, void *data, rt_size_t size,
                               rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
-    rt_err_t                     err;
-    rt_ubase_t                   dma_handle_s = 0;
+    rt_err_t err;
+    rt_ubase_t dma_handle_s = 0;
     const struct rt_dma_map_ops *ops;
 
     if (!data || !size)
@@ -985,7 +985,7 @@ rt_err_t rt_dma_sync_out_data(struct rt_device *dev, void *data, rt_size_t size,
 rt_err_t rt_dma_sync_in_data(struct rt_device *dev, void *out_data, rt_size_t size,
                              rt_ubase_t dma_handle, rt_ubase_t flags)
 {
-    rt_err_t                     err;
+    rt_err_t err;
     const struct rt_dma_map_ops *ops;
 
     if (!out_data || !size)
@@ -1008,9 +1008,9 @@ rt_err_t rt_dma_sync_in_data(struct rt_device *dev, void *out_data, rt_size_t si
 static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool)
 {
     rt_region_t *region = &pool->region;
-    rt_size_t    start  = RT_ALIGN_DOWN(region->start, ARCH_PAGE_SIZE);
-    rt_size_t    end    = RT_ALIGN(region->end, ARCH_PAGE_SIZE);
-    void        *va;
+    rt_size_t start = RT_ALIGN_DOWN(region->start, ARCH_PAGE_SIZE);
+    rt_size_t end = RT_ALIGN(region->end, ARCH_PAGE_SIZE);
+    void *va;
 
     if (!(pool->flags & RT_DMA_F_LINEAR) || start >= end)
     {
@@ -1018,11 +1018,11 @@ static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool)
     }
 
     struct rt_mm_va_hint hint = {
-        .flags            = MMF_MAP_FIXED,
-        .limit_start      = rt_kernel_space.start,
+        .flags = MMF_MAP_FIXED,
+        .limit_start = rt_kernel_space.start,
         .limit_range_size = rt_kernel_space.size,
-        .map_size         = end - start,
-        .prefer           = (void *)(start - PV_OFFSET),
+        .map_size = end - start,
+        .prefer = (void *)(start - PV_OFFSET),
     };
 
     if (rt_aspace_map_phy(&rt_kernel_space, &hint, MMU_MAP_K_RWCB,
@@ -1051,7 +1051,7 @@ static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool)
  */
 static struct rt_dma_pool *dma_pool_install(rt_region_t *region)
 {
-    rt_err_t            err;
+    rt_err_t err;
     struct rt_dma_pool *pool;
 
     if (!(pool = rt_calloc(1, sizeof(*pool))))
@@ -1072,7 +1072,7 @@ static struct rt_dma_pool *dma_pool_install(rt_region_t *region)
     }
 
     pool->start = RT_ALIGN(pool->region.start, ARCH_PAGE_SIZE);
-    pool->bits  = (pool->region.end - pool->start) / ARCH_PAGE_SIZE;
+    pool->bits = (pool->region.end - pool->start) / ARCH_PAGE_SIZE;
 
     if (!pool->bits)
     {
@@ -1161,10 +1161,10 @@ struct rt_dma_pool *rt_dma_pool_install(rt_region_t *region)
  */
 rt_err_t rt_dma_pool_extract(rt_size_t cma_size, rt_size_t coherent_pool_size)
 {
-    struct rt_dma_pool  *pool;
+    struct rt_dma_pool *pool;
     struct rt_mmblk_reg *reg, *reg_high;
-    struct rt_memblock  *memblock = rt_memblock_get_reserved();
-    rt_region_t         *region, *region_high = RT_NULL, cma, coherent_pool;
+    struct rt_memblock *memblock = rt_memblock_get_reserved();
+    rt_region_t *region, *region_high = RT_NULL, cma, coherent_pool;
 
     if (!memblock)
     {
@@ -1196,7 +1196,7 @@ rt_err_t rt_dma_pool_extract(rt_size_t cma_size, rt_size_t coherent_pool_size)
             if ((rt_ssize_t)((4UL * SIZE_GB) - region->start) < cma_size)
             {
                 region_high = region;
-                reg_high    = reg;
+                reg_high = reg;
                 continue;
             }
 
@@ -1207,7 +1207,7 @@ rt_err_t rt_dma_pool_extract(rt_size_t cma_size, rt_size_t coherent_pool_size)
     if (region_high)
     {
         region = region_high;
-        reg    = reg_high;
+        reg = reg_high;
         LOG_W("No available DMA zone in 4G");
 
         goto _found;
@@ -1219,18 +1219,18 @@ _found:
     if (region->end - region->start != cma_size)
     {
         cma.start = region->start;
-        cma.end   = cma.start + cma_size;
+        cma.end = cma.start + cma_size;
     }
     else
     {
         rt_memcpy(&cma, region, sizeof(cma));
     }
 
-    coherent_pool.name  = "coherent-pool";
+    coherent_pool.name = "coherent-pool";
     coherent_pool.start = cma.start;
-    coherent_pool.end   = coherent_pool.start + coherent_pool_size;
+    coherent_pool.end = coherent_pool.start + coherent_pool_size;
 
-    cma.name   = "cma";
+    cma.name = "cma";
     cma.start += coherent_pool_size;
 
     if (!(pool = rt_dma_pool_install(&coherent_pool)))
@@ -1262,8 +1262,8 @@ _found:
  */
 static int list_dma_pool(int argc, char **argv)
 {
-    int                 count = 0;
-    rt_region_t        *region;
+    int count = 0;
+    rt_region_t *region;
     struct rt_dma_pool *pool;
 
     rt_kprintf("%-*.s Region\n", RT_NAME_MAX, "Name");
