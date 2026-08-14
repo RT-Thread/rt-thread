@@ -23,12 +23,13 @@
     interrupt-parent = <&gic>;
 
     chosen {
-        bootargs = "earlycon console=ttyPS0";
+        bootargs = "earlycon console=ttyPS0 cma=8M coherent_pool=2M";
         stdout-path = "serial0:115200n8";
     };
 
     aliases {
         serial0 = &uart0;
+        ethernet0 = &gem0;
     };
 
     memory {
@@ -107,6 +108,13 @@
         clock-frequency = <100000000>;
     };
 
+    clk125: clk125 {
+        compatible = "fixed-clock";
+        clock-output-names = "clk125mhz";
+        #clock-cells = <0>;
+        clock-frequency = <125000000>;
+    };
+
     amba: amba {
         compatible = "simple-bus";
         #address-cells = <2>;
@@ -128,6 +136,25 @@
             reg = <0x0 0xff000000 0x0 0x1000>;
             clocks = <&clk100 &clk100>;
             clock-names = "uart_clk", "pclk";
+        };
+
+        gem0: ethernet@ff0b0000 {
+            compatible = "cdns,zynqmp-gem", "cdns,gem";
+            reg = <0x0 0xff0b0000 0x0 0x1000>;
+            interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
+                         <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
+            interrupt-names = "macirq", "hs_macirq";
+            clocks = <&clk100 &clk100 &clk125 &clk125 &clk100>;
+            clock-names = "pclk", "hclk", "tx_clk", "rx_clk", "tsu_clk";
+            #address-cells = <1>;
+            #size-cells = <0>;
+            phy-mode = "rgmii-id";
+            phy-handle = <&gem0_phy>;
+            local-mac-address = [52 54 00 12 34 56];
+
+            gem0_phy: ethernet-phy@17 {
+                reg = <23>;
+            };
         };
     };
 };
