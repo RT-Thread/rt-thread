@@ -10,7 +10,7 @@
 
 #include "sdhci-dwcmshc-platform.h"
 
-rt_err_t sdhci_dwcmshc_platform_register(struct rt_platform_device           *pdev,
+rt_err_t sdhci_dwcmshc_platform_register(struct rt_platform_device *pdev,
                                          const struct sdhci_dwcmshc_drv_data *drv_data)
 {
     return sdhci_dwcmshc_probe(pdev, drv_data);
@@ -41,16 +41,16 @@ static rt_err_t sdhci_dwcmshc_platform_remove(struct rt_platform_device *pdev)
 static const struct rt_ofw_node_id sdhci_dwcmshc_platform_ofw_ids[] = {
     {
         .compatible = "snps,dwcmshc-sdhci",
-        .data       = &sdhci_dwcmshc_generic_drv_data,
+        .data = &sdhci_dwcmshc_generic_drv_data,
     },
     { /* sentinel */ }
 };
 
 static struct rt_platform_driver sdhci_dwcmshc_platform_driver = {
     .name = "sdhci-dwcmshc",
-    .ids  = sdhci_dwcmshc_platform_ofw_ids,
+    .ids = sdhci_dwcmshc_platform_ofw_ids,
 
-    .probe  = sdhci_dwcmshc_platform_probe,
+    .probe = sdhci_dwcmshc_platform_probe,
     .remove = sdhci_dwcmshc_platform_remove,
 };
 RT_PLATFORM_DRIVER_EXPORT(sdhci_dwcmshc_platform_driver);

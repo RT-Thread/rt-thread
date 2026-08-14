@@ -20,7 +20,7 @@ int sdio_host_set_name(struct rt_mmcsd_host *host, char *out_devname);
 #ifdef RT_USING_REGULATOR
 rt_err_t sdio_regulator_set_ocr(struct rt_mmcsd_host *host,
                                 struct rt_regulator *supply, rt_uint16_t vdd_bit);
-rt_err_t sdio_regulator_set_vqmmc(struct rt_mmcsd_host   *host,
+rt_err_t sdio_regulator_set_vqmmc(struct rt_mmcsd_host *host,
                                   struct rt_mmcsd_io_cfg *ios);
 rt_bool_t sdio_regulator_supports_vqmmc_voltage(struct rt_regulator *regulator,
                                                 int min_uvolt, int target_uvolt, int max_uvolt);

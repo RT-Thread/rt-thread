@@ -38,8 +38,8 @@ struct sdhci_dwcmshc_drv_data
     const struct rt_sdhci_pltfm_data *pdata;
 
     rt_err_t (*init)(struct rt_sdhci_host *host, struct sdhci_dwcmshc *priv);
-    void     (*postinit)(struct rt_sdhci_host *host, struct sdhci_dwcmshc *priv);
-    void     (*remove)(struct rt_sdhci_host *host, struct sdhci_dwcmshc *priv);
+    void (*postinit)(struct rt_sdhci_host *host, struct sdhci_dwcmshc *priv);
+    void (*remove)(struct rt_sdhci_host *host, struct sdhci_dwcmshc *priv);
 
     void *vendor_priv;
 };
@@ -51,13 +51,13 @@ struct sdhci_dwcmshc
     int vendor_specific_area1;
     int vendor_specific_area2;
 
-    void                                *vendor_priv;
+    void *vendor_priv;
     const struct sdhci_dwcmshc_drv_data *drv_data;
 };
 
 extern const struct sdhci_dwcmshc_drv_data sdhci_dwcmshc_generic_drv_data;
 
-rt_err_t sdhci_dwcmshc_probe(struct rt_platform_device           *pdev,
+rt_err_t sdhci_dwcmshc_probe(struct rt_platform_device *pdev,
                              const struct sdhci_dwcmshc_drv_data *drv_data);
 rt_err_t sdhci_dwcmshc_remove(struct rt_platform_device *pdev);
 

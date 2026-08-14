@@ -141,11 +141,11 @@ static int regulator_set_voltage_if_supported(struct rt_regulator *regulator,
     return -RT_EINVAL;
 }
 
-rt_err_t sdio_regulator_set_vqmmc(struct rt_mmcsd_host   *host,
+rt_err_t sdio_regulator_set_vqmmc(struct rt_mmcsd_host *host,
                                   struct rt_mmcsd_io_cfg *ios)
 {
     rt_err_t err;
-    int      uvolt, min_uvolt, max_uvolt;
+    int uvolt, min_uvolt, max_uvolt;
 
     if (rt_is_err_or_null(host->supply.vqmmc))
     {
@@ -197,7 +197,7 @@ rt_err_t sdio_regulator_get_supply(struct rt_device *dev, struct rt_mmcsd_host *
         return -RT_EINVAL;
     }
 
-    host->supply.vmmc  = rt_regulator_get(dev, "vmmc");
+    host->supply.vmmc = rt_regulator_get(dev, "vmmc");
     host->supply.vqmmc = rt_regulator_get(dev, "vqmmc");
 
     if (!rt_is_err(host->supply.vmmc))
