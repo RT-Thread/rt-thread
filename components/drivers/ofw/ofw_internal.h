@@ -33,25 +33,25 @@ struct fdt_info
 
     /* Only root can use */
     struct fdt_reserve_entry *rsvmap;
-    rt_size_t                 rsvmap_nr;
+    rt_size_t rsvmap_nr;
 };
 
 struct alias_info
 {
     rt_list_t list;
 
-    int         id;
+    int id;
     const char *tag;
-    rt_size_t   tag_len;
+    rt_size_t tag_len;
 
     struct rt_ofw_node *np;
 };
 
 struct bus_ranges
 {
-    rt_size_t           nr;
+    rt_size_t nr;
     struct rt_ofw_node *np;
-    const char         *range_type;
+    const char *range_type;
 
     rt_uint64_t *child_addr;
     rt_uint64_t *parent_addr;

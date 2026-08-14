@@ -23,11 +23,11 @@
 
 static rt_err_t pci_ofw_irq_parse(struct rt_pci_device *pdev, struct rt_ofw_cell_args *out_irq)
 {
-    rt_err_t              err = RT_EOK;
-    rt_uint8_t            pin;
-    fdt32_t               map_addr[4];
+    rt_err_t err = RT_EOK;
+    rt_uint8_t pin;
+    fdt32_t map_addr[4];
     struct rt_pci_device *p2pdev;
-    struct rt_ofw_node   *dev_np, *p2pnode = RT_NULL;
+    struct rt_ofw_node *dev_np, *p2pnode = RT_NULL;
 
     /* Parse device tree if dev have a device node */
     dev_np = pdev->parent.ofw_node;
@@ -57,7 +57,7 @@ static rt_err_t pci_ofw_irq_parse(struct rt_pci_device *pdev, struct rt_ofw_cell
     /* Try local interrupt-map in the device node */
     if (rt_ofw_prop_read_raw(dev_np, "interrupt-map", RT_NULL))
     {
-        pin     = rt_pci_irq_intx(pdev, pin);
+        pin = rt_pci_irq_intx(pdev, pin);
         p2pnode = dev_np;
     }
 
@@ -92,15 +92,15 @@ static rt_err_t pci_ofw_irq_parse(struct rt_pci_device *pdev, struct rt_ofw_cell
         }
 
         /* Try get INTx in P2P */
-        pin  = rt_pci_irq_intx(pdev, pin);
+        pin = rt_pci_irq_intx(pdev, pin);
         pdev = p2pdev;
     }
 
     /* For more format detail, please read `components/drivers/ofw/irq.c:ofw_parse_irq_map` */
-    out_irq->data       = map_addr;
+    out_irq->data = map_addr;
     out_irq->args_count = 2;
-    out_irq->args[0]    = 3;
-    out_irq->args[1]    = 1;
+    out_irq->args[0] = 3;
+    out_irq->args[1] = 1;
 
     /* In addr cells */
     map_addr[0] = cpu_to_fdt32((pdev->bus->number << 16) | (pdev->devfn << 8));
@@ -131,8 +131,8 @@ _err:
 int rt_pci_ofw_irq_parse_and_map(struct rt_pci_device *pdev,
                                  rt_uint8_t slot, rt_uint8_t pin)
 {
-    int                     irq = -1;
-    rt_err_t                status;
+    int irq = -1;
+    rt_err_t status;
     struct rt_ofw_cell_args irq_args;
 
     if (!pdev)
@@ -163,21 +163,21 @@ static rt_err_t pci_ofw_parse_ranges(struct rt_ofw_node *dev_np, const char *pro
                                      struct rt_pci_bus_region **out_regions, rt_size_t *out_regions_nr)
 {
     const fdt32_t *cell;
-    rt_ssize_t     total_cells;
-    int            groups, space_code;
-    rt_uint32_t    phy_addr[3];
-    rt_uint64_t    cpu_addr, phy_addr_size;
+    rt_ssize_t total_cells;
+    int groups, space_code;
+    rt_uint32_t phy_addr[3];
+    rt_uint64_t cpu_addr, phy_addr_size;
 
-    *out_regions    = RT_NULL;
+    *out_regions = RT_NULL;
     *out_regions_nr = 0;
-    cell            = rt_ofw_prop_read_raw(dev_np, propname, &total_cells);
+    cell = rt_ofw_prop_read_raw(dev_np, propname, &total_cells);
 
     if (!cell)
     {
         return -RT_EEMPTY;
     }
 
-    groups       = total_cells / sizeof(*cell) / (phy_addr_cells + phy_size_cells + cpu_addr_cells);
+    groups = total_cells / sizeof(*cell) / (phy_addr_cells + phy_size_cells + cpu_addr_cells);
     *out_regions = rt_malloc(groups * sizeof(struct rt_pci_bus_region));
 
     if (!*out_regions)
@@ -214,14 +214,14 @@ static rt_err_t pci_ofw_parse_ranges(struct rt_ofw_node *dev_np, const char *pro
 
         space_code = (phy_addr[0] >> 24) & 0x3;
 
-        cpu_addr       = rt_fdt_read_number(cell, cpu_addr_cells);
-        cell          += cpu_addr_cells;
-        phy_addr_size  = rt_fdt_read_number(cell, phy_size_cells);
-        cell          += phy_size_cells;
+        cpu_addr = rt_fdt_read_number(cell, cpu_addr_cells);
+        cell += cpu_addr_cells;
+        phy_addr_size = rt_fdt_read_number(cell, phy_size_cells);
+        cell += phy_size_cells;
 
         (*out_regions)[i].phy_addr = ((rt_uint64_t)phy_addr[1] << 32) | phy_addr[2];
         (*out_regions)[i].cpu_addr = cpu_addr;
-        (*out_regions)[i].size     = phy_addr_size;
+        (*out_regions)[i].size = phy_addr_size;
 
         (*out_regions)[i].bus_start = (*out_regions)[i].phy_addr;
 
@@ -244,11 +244,11 @@ static rt_err_t pci_ofw_parse_ranges(struct rt_ofw_node *dev_np, const char *pro
     return RT_EOK;
 }
 
-rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node        *dev_np,
+rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
                                  struct rt_pci_host_bridge *host_bridge)
 {
     rt_err_t err;
-    int      phy_addr_cells = -1, phy_size_cells = -1, cpu_addr_cells;
+    int phy_addr_cells = -1, phy_size_cells = -1, cpu_addr_cells;
 
     if (!dev_np || !host_bridge)
     {
@@ -297,10 +297,10 @@ rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node        *dev_np,
     return RT_EOK;
 }
 
-rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node        *dev_np,
+rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node *dev_np,
                                      struct rt_pci_host_bridge *host_bridge)
 {
-    rt_err_t    err;
+    rt_err_t err;
     const char *propname;
 
     if (!dev_np || !host_bridge)
@@ -309,7 +309,7 @@ rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node        *dev_np,
     }
 
     host_bridge->irq_slot = rt_pci_irq_slot;
-    host_bridge->irq_map  = rt_pci_ofw_irq_parse_and_map;
+    host_bridge->irq_map = rt_pci_ofw_irq_parse_and_map;
 
     if (rt_ofw_prop_read_u32_array_index(dev_np, "bus-range", 0, 2, host_bridge->bus_range) < 0)
     {
@@ -470,9 +470,9 @@ rt_err_t rt_pci_ofw_bus_free(struct rt_pci_bus *bus)
 static void ofw_msi_pic_init(struct rt_pci_device *pdev)
 {
 #ifdef RT_PCI_MSI
-    rt_uint32_t                rid;
+    rt_uint32_t rid;
     struct rt_pci_host_bridge *bridge;
-    struct rt_ofw_node        *np, *msi_ic_np = RT_NULL;
+    struct rt_ofw_node *np, *msi_ic_np = RT_NULL;
 
     /*
      * NOTE: Typically, a device's RID is equal to the PCI device's ID.
@@ -537,7 +537,7 @@ _out_put_msi_parent_node:
 
 static rt_int32_t ofw_pci_devfn(struct rt_ofw_node *np)
 {
-    rt_int32_t  res;
+    rt_int32_t res;
     rt_uint32_t reg[5];
 
     res = rt_ofw_prop_read_u32_array_index(np, "reg", 0, RT_ARRAY_SIZE(reg), reg);
