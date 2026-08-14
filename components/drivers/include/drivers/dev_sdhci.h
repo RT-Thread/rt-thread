@@ -419,23 +419,23 @@ struct rt_sdhci_host
 
     void *data_buf;
 
-    int          irq;                                   /* Device IRQ */
-    void        *ioaddr;                                /* Mapped address */
-    char        *bounce_buffer;                         /* For packing SDMA reads/writes */
-    rt_uint64_t  bounce_addr;
+    int irq;                                   /* Device IRQ */
+    void *ioaddr;                                /* Mapped address */
+    char *bounce_buffer;                         /* For packing SDMA reads/writes */
+    rt_uint64_t bounce_addr;
     unsigned int bounce_buffer_size;
-    void        *bounce_orig_buf;
-    rt_bool_t    bounce_active;
+    void *bounce_orig_buf;
+    rt_bool_t bounce_active;
 
     const struct rt_sdhci_ops *ops;                     /* Low level hw interface */
 
     /* Internal data */
-    struct rt_mmc_host    *mmc;                       /* MMC structure */
+    struct rt_mmc_host *mmc;                       /* MMC structure */
     struct rt_mmc_host_ops mmc_host_ops;               /* MMC host ops */
-    rt_uint64_t            dma_mask;                   /* custom DMA mask */
+    rt_uint64_t dma_mask;                   /* custom DMA mask */
 
     rt_spinlock_t lock;
-    int           flags;                                /* Host attributes */
+    int flags;                                /* Host attributes */
 #define RT_SDHCI_USE_SDMA           (1 << 0)            /* Host is SDMA capable */
 #define RT_SDHCI_USE_ADMA           (1 << 1)            /* Host is ADMA capable */
 #define RT_SDHCI_REQ_USE_DMA        (1 << 2)            /* Use DMA for this req. */
@@ -454,13 +454,13 @@ struct rt_sdhci_host
 
     unsigned int max_clk;                               /* Max possible freq (MHz) */
     unsigned int timeout_clk;                           /* Timeout freq (KHz) */
-    rt_uint8_t   max_timeout_count;                     /* Vendor specific max timeout count */
+    rt_uint8_t max_timeout_count;                     /* Vendor specific max timeout count */
     unsigned int clk_mul;                               /* Clock Muliplier value */
 
     unsigned int clock;                                 /* Current clock (MHz) */
-    rt_uint8_t   pwr;                                   /* Current voltage */
-    rt_uint8_t   drv_type;                              /* Current UHS-I driver type */
-    rt_bool_t    reinit_uhs;                            /* Force UHS-related re-initialization */
+    rt_uint8_t pwr;                                   /* Current voltage */
+    rt_uint8_t drv_type;                              /* Current UHS-I driver type */
+    rt_bool_t reinit_uhs;                            /* Force UHS-related re-initialization */
 
     rt_bool_t runtime_suspended;                        /* Host is runtime suspended */
     rt_bool_t bus_on;                                   /* Bus power prevents runtime suspend */
@@ -470,36 +470,36 @@ struct rt_sdhci_host
     rt_bool_t v4_mode;                                  /* Host Version 4 Enable */
     rt_bool_t always_defer_done;                        /* Always defer to complete requests */
 
-    struct rt_mmcsd_req  *mrqs_done[RT_SDHCI_MAX_MRQS]; /* Requests done */
-    struct rt_mmcsd_cmd  *cmd;                          /* Current command */
-    struct rt_mmcsd_cmd  *data_cmd;                     /* Current data command */
-    struct rt_mmcsd_cmd  *deferred_cmd;                 /* Deferred command */
+    struct rt_mmcsd_req *mrqs_done[RT_SDHCI_MAX_MRQS]; /* Requests done */
+    struct rt_mmcsd_cmd *cmd;                          /* Current command */
+    struct rt_mmcsd_cmd *data_cmd;                     /* Current data command */
+    struct rt_mmcsd_cmd *deferred_cmd;                 /* Deferred command */
     struct rt_mmcsd_data *data;                         /* Current data request */
-    unsigned int          data_early : 1;               /* Data finished before cmd */
+    unsigned int data_early : 1;               /* Data finished before cmd */
 
     unsigned int blocks;                                /* remaining PIO blocks */
-    rt_size_t    align_buffer_sz;                          /* Bounce buffer size */
-    rt_uint64_t  align_addr;                             /* Mapped bounce buffer */
+    rt_size_t align_buffer_sz;                          /* Bounce buffer size */
+    rt_uint64_t align_addr;                             /* Mapped bounce buffer */
 
     struct rt_workqueue *complete_wq;                   /* Request completion wq */
-    struct rt_work       complete_work;                 /* Request completion work */
+    struct rt_work complete_work;                 /* Request completion work */
 
     struct rt_workqueue *irq_wq;
-    struct rt_work       irq_work;
-    struct rt_work       poll_work;
+    struct rt_work irq_work;
+    struct rt_work poll_work;
 
     struct rt_timer timer;                              /* Timer for timeouts */
     struct rt_timer data_timer;                         /* Timer for data timeouts */
 
     rt_uint32_t caps;                                   /* CAPABILITY_0 */
     rt_uint32_t caps1;                                  /* CAPABILITY_1 */
-    rt_bool_t   read_caps;                              /* Capability flags have been read */
+    rt_bool_t read_caps;                              /* Capability flags have been read */
 
-    rt_bool_t    sdhci_core_to_disable_vqmmc;           /* sdhci core can disable vqmmc */
+    rt_bool_t sdhci_core_to_disable_vqmmc;           /* sdhci core can disable vqmmc */
     unsigned int ocr_avail_sdio;                        /* OCR bit masks */
     unsigned int ocr_avail_sd;
     unsigned int ocr_avail_mmc;
-    rt_uint32_t  ocr_mask;                              /* available voltages */
+    rt_uint32_t ocr_mask;                              /* available voltages */
 
     unsigned timing;                                    /* Current timing */
 
@@ -507,11 +507,11 @@ struct rt_sdhci_host
 
     rt_uint32_t ier;                                    /* Cached registers */
 
-    rt_bool_t   cqe_on;                                 /* CQE is operating */
+    rt_bool_t cqe_on;                                 /* CQE is operating */
     rt_uint32_t cqe_ier;                                /* CQE interrupt mask */
     rt_uint32_t cqe_err_ier;                            /* CQE error interrupt mask */
 
-    rt_wqueue_t  buf_ready_int;                         /* Waitqueue for Buffer Read Ready interrupt */
+    rt_wqueue_t buf_ready_int;                         /* Waitqueue for Buffer Read Ready interrupt */
     unsigned int tuning_done;                           /* Condition flag set when CMD19 succeeds */
 
     unsigned int tuning_count;                          /* Timer count for re-tuning */
@@ -521,8 +521,8 @@ struct rt_sdhci_host
 #define RT_SDHCI_TUNING_MODE_2 1
 #define RT_SDHCI_TUNING_MODE_3 2
 
-    int         tuning_delay;
-    int         tuning_loop_count;
+    int tuning_delay;
+    int tuning_loop_count;
     rt_uint32_t sdma_boundary;
     rt_uint64_t data_timeout;
 
@@ -531,31 +531,31 @@ struct rt_sdhci_host
 
 struct rt_sdhci_ops
 {
-    rt_uint32_t  (*read_l)(struct rt_sdhci_host *host, int reg);
-    rt_uint16_t  (*read_w)(struct rt_sdhci_host *host, int reg);
-    rt_uint8_t   (*read_b)(struct rt_sdhci_host *host, int reg);
-    void         (*write_l)(struct rt_sdhci_host *host, rt_uint32_t val, int reg);
-    void         (*write_w)(struct rt_sdhci_host *host, rt_uint16_t val, int reg);
-    void         (*write_b)(struct rt_sdhci_host *host, rt_uint8_t val, int reg);
-    void         (*set_clock)(struct rt_sdhci_host *host, unsigned int clock);
-    void         (*set_power)(struct rt_sdhci_host *host, unsigned char mode, unsigned short vdd);
-    rt_uint32_t  (*irq)(struct rt_sdhci_host *host, rt_uint32_t intmask);
-    int          (*set_dma_mask)(struct rt_sdhci_host *host);
-    int          (*enable_dma)(struct rt_sdhci_host *host);
+    rt_uint32_t (*read_l)(struct rt_sdhci_host *host, int reg);
+    rt_uint16_t (*read_w)(struct rt_sdhci_host *host, int reg);
+    rt_uint8_t (*read_b)(struct rt_sdhci_host *host, int reg);
+    void (*write_l)(struct rt_sdhci_host *host, rt_uint32_t val, int reg);
+    void (*write_w)(struct rt_sdhci_host *host, rt_uint16_t val, int reg);
+    void (*write_b)(struct rt_sdhci_host *host, rt_uint8_t val, int reg);
+    void (*set_clock)(struct rt_sdhci_host *host, unsigned int clock);
+    void (*set_power)(struct rt_sdhci_host *host, unsigned char mode, unsigned short vdd);
+    rt_uint32_t (*irq)(struct rt_sdhci_host *host, rt_uint32_t intmask);
+    int (*set_dma_mask)(struct rt_sdhci_host *host);
+    int (*enable_dma)(struct rt_sdhci_host *host);
     unsigned int (*get_max_clock)(struct rt_sdhci_host *host);
     unsigned int (*get_min_clock)(struct rt_sdhci_host *host);
     unsigned int (*get_timeout_clock)(struct rt_sdhci_host *host);
     unsigned int (*get_max_timeout_count)(struct rt_sdhci_host *host);
-    void         (*set_timeout)(struct rt_sdhci_host *host, struct rt_mmcsd_cmd *cmd);
-    void         (*set_bus_width)(struct rt_sdhci_host *host, int width);
+    void (*set_timeout)(struct rt_sdhci_host *host, struct rt_mmcsd_cmd *cmd);
+    void (*set_bus_width)(struct rt_sdhci_host *host, int width);
     unsigned int (*get_ro)(struct rt_sdhci_host *host);
-    void         (*reset)(struct rt_sdhci_host *host, rt_uint8_t mask);
-    int          (*platform_execute_tuning)(struct rt_sdhci_host *host, rt_uint32_t opcode);
-    void         (*set_uhs_signaling)(struct rt_sdhci_host *host, unsigned int uhs);
-    void         (*hw_reset)(struct rt_sdhci_host *host);
-    void         (*card_event)(struct rt_sdhci_host *host);
-    void         (*voltage_switch)(struct rt_sdhci_host *host);
-    void         (*request_done)(struct rt_sdhci_host *host, struct rt_mmcsd_req *mrq);
+    void (*reset)(struct rt_sdhci_host *host, rt_uint8_t mask);
+    int (*platform_execute_tuning)(struct rt_sdhci_host *host, rt_uint32_t opcode);
+    void (*set_uhs_signaling)(struct rt_sdhci_host *host, unsigned int uhs);
+    void (*hw_reset)(struct rt_sdhci_host *host);
+    void (*card_event)(struct rt_sdhci_host *host);
+    void (*voltage_switch)(struct rt_sdhci_host *host);
+    void (*request_done)(struct rt_sdhci_host *host, struct rt_mmcsd_req *mrq);
 };
 
 rt_inline void rt_sdhci_writel(struct rt_sdhci_host *host, rt_uint32_t val, int reg)
