@@ -31,6 +31,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+#include <mmu.h>
 #include <mm_aspace.h>
 #include <mm_memblock.h>
 #include <dt-bindings/size.h>
@@ -39,6 +40,7 @@ static RT_DEFINE_SPINLOCK(dma_pools_lock);
 static rt_list_t dma_pool_nodes = RT_LIST_OBJECT_INIT(dma_pool_nodes);
 
 static struct rt_dma_pool *dma_pool_install(rt_region_t *region);
+static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool);
 
 static void *dma_alloc(struct rt_device *dev, rt_size_t size,
                        rt_ubase_t *dma_handle, rt_ubase_t flags);
@@ -202,7 +204,10 @@ rt_inline rt_ubase_t ofw_addr_dma2cpu(struct rt_device *dev, rt_ubase_t addr)
 static void *ofw_dma_map_alloc(struct rt_device *dev, rt_size_t size,
                                rt_ubase_t *dma_handle, rt_ubase_t flags)
 {
-    void *cpu_addr = dma_alloc(dev, size, dma_handle, flags);
+    void *cpu_addr;
+
+    flags |= RT_DMA_F_32BITS;
+    cpu_addr = dma_alloc(dev, size, dma_handle, flags);
 
     if (cpu_addr && dma_handle)
     {
@@ -302,17 +307,37 @@ static const struct rt_dma_map_ops ofw_dma_map_ops = {
     .sync_in_data = ofw_dma_map_sync_in_data,
 };
 
+static rt_bool_t ofw_node_has_dma_ranges(struct rt_ofw_node *np)
+{
+    struct rt_ofw_node *bus;
+
+    for (bus = np ? np->parent : RT_NULL; bus; bus = bus->parent)
+    {
+        rt_ssize_t len;
+
+        if (rt_ofw_get_prop(bus, "dma-ranges", &len) && len)
+        {
+            return RT_TRUE;
+        }
+    }
+
+    return RT_FALSE;
+}
+
 /**
- * @brief Determine DMA operations for a device tree device with memory-region
+ * @brief Determine DMA operations for a device tree device
  *
  * Parses the "memory-region" property to install DMA pools from
  * reserved-memory nodes. Sets RT_DMA_F_NOMAP if "no-map" is set,
  * and RT_DMA_F_NOCACHE if the device is not DMA-coherent.
  *
+ * Also installs ofw_dma_map_ops when the parent bus chain provides
+ * "dma-ranges", so CPU physical addresses are translated for DMA.
+ *
  * @param[in] dev  Device to configure DMA operations for
  *
- * @return Pointer to DMA map ops (ofw_dma_map_ops) if regions were found,
- *         RT_NULL otherwise
+ * @return Pointer to DMA map ops (ofw_dma_map_ops) when translation
+ *         or memory-region pools apply, RT_NULL otherwise
  */
 static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
 {
@@ -332,12 +357,7 @@ static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
 
         if (!(mem_np = rt_ofw_find_node_by_phandle(phandle)))
         {
-            if (region_nr == 0)
-            {
-                return RT_NULL;
-            }
-
-            break;
+            continue;
         }
 
         if ((err = rt_ofw_get_address(mem_np, 0, &addr, &size)))
@@ -374,7 +394,7 @@ static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
         ++region_nr;
     }
 
-    if (region_nr)
+    if (region_nr || ofw_node_has_dma_ranges(np))
     {
         ops = &ofw_dma_map_ops;
     }
@@ -383,13 +403,196 @@ static const struct rt_dma_map_ops *ofw_device_dma_ops(struct rt_device *dev)
 }
 #endif /* RT_USING_OFW */
 
+#ifdef RT_USING_PCI
+static struct rt_pci_host_bridge *pci_device_host_bridge(struct rt_device *dev)
+{
+    struct rt_pci_device *pdev = rt_container_of(dev, struct rt_pci_device, parent);
+
+    return rt_pci_find_host_bridge(pdev->bus);
+}
+
+static rt_uint64_t pci_host_cpu_to_bus(struct rt_pci_host_bridge *host_bridge, rt_uint64_t cpu_addr)
+{
+    if (!host_bridge || !host_bridge->dma_regions)
+    {
+        return ~0ULL;
+    }
+
+    for (int i = 0; i < host_bridge->dma_regions_nr; ++i)
+    {
+        struct rt_pci_bus_region *region = &host_bridge->dma_regions[i];
+
+        if (cpu_addr >= region->cpu_addr &&
+            cpu_addr < region->cpu_addr + region->size)
+        {
+            return region->phy_addr + (cpu_addr - region->cpu_addr);
+        }
+    }
+
+    return ~0ULL;
+}
+
+static rt_uint64_t pci_host_bus_to_cpu(struct rt_pci_host_bridge *host_bridge, rt_uint64_t pci_addr)
+{
+    if (!host_bridge || !host_bridge->dma_regions)
+    {
+        return ~0ULL;
+    }
+
+    for (int i = 0; i < host_bridge->dma_regions_nr; ++i)
+    {
+        struct rt_pci_bus_region *region = &host_bridge->dma_regions[i];
+
+        if (pci_addr >= region->phy_addr && pci_addr < region->phy_addr + region->size)
+        {
+            return region->cpu_addr + (pci_addr - region->phy_addr);
+        }
+    }
+
+    return ~0ULL;
+}
+
+static rt_ubase_t pci_addr_cpu2dma(struct rt_device *dev, rt_ubase_t addr)
+{
+    rt_uint64_t pci_dma;
+    struct rt_pci_host_bridge *host_bridge = pci_device_host_bridge(dev);
+
+    if (!host_bridge)
+    {
+        return addr;
+    }
+
+    pci_dma = pci_host_cpu_to_bus(host_bridge, addr);
+
+    return pci_dma == ~0ULL ? addr : (rt_ubase_t)pci_dma;
+}
+
+static rt_ubase_t pci_addr_dma2cpu(struct rt_device *dev, rt_ubase_t addr)
+{
+    rt_uint64_t cpu_addr;
+    struct rt_pci_host_bridge *host_bridge = pci_device_host_bridge(dev);
+
+    if (!host_bridge)
+    {
+        return addr;
+    }
+
+    cpu_addr = pci_host_bus_to_cpu(host_bridge, addr);
+
+    return cpu_addr == ~0ULL ? addr : (rt_ubase_t)cpu_addr;
+}
+
+static void *pci_dma_map_alloc(struct rt_device *dev, rt_size_t size,
+                               rt_ubase_t *dma_handle, rt_ubase_t flags)
+{
+    void *cpu_addr;
+
+    flags |= RT_DMA_F_32BITS;
+    cpu_addr = dma_alloc(dev, size, dma_handle, flags);
+
+    if (cpu_addr && dma_handle)
+    {
+        *dma_handle = pci_addr_cpu2dma(dev, *dma_handle);
+    }
+
+    return cpu_addr;
+}
+
+static void pci_dma_map_free(struct rt_device *dev, rt_size_t size,
+                             void *cpu_addr, rt_ubase_t dma_handle, rt_ubase_t flags)
+{
+    dma_handle = pci_addr_dma2cpu(dev, dma_handle);
+
+    dma_free(dev, size, cpu_addr, dma_handle, flags);
+}
+
+static rt_err_t pci_dma_map_sync_out_data(struct rt_device *dev,
+                                          void *data, rt_size_t size,
+                                          rt_ubase_t *dma_handle, rt_ubase_t flags)
+{
+    rt_err_t err;
+
+    if (flags & RT_DMA_F_NOCACHE)
+    {
+        err = dma_map_nocoherent_sync_out_data(dev, data, size, dma_handle, flags);
+    }
+    else
+    {
+        err = dma_map_coherent_sync_out_data(dev, data, size, dma_handle, flags);
+    }
+
+    if (!err && dma_handle)
+    {
+        *dma_handle = pci_addr_cpu2dma(dev, *dma_handle);
+    }
+
+    return err;
+}
+
+static rt_err_t pci_dma_map_sync_in_data(struct rt_device *dev,
+                                         void *out_data, rt_size_t size,
+                                         rt_ubase_t dma_handle, rt_ubase_t flags)
+{
+    dma_handle = pci_addr_dma2cpu(dev, dma_handle);
+
+    if (flags & RT_DMA_F_NOCACHE)
+    {
+        return dma_map_nocoherent_sync_in_data(dev, out_data, size, dma_handle, flags);
+    }
+
+    return dma_map_coherent_sync_in_data(dev, out_data, size, dma_handle, flags);
+}
+
+static const struct rt_dma_map_ops pci_dma_map_ops = {
+    .alloc = pci_dma_map_alloc,
+    .free = pci_dma_map_free,
+    .sync_out_data = pci_dma_map_sync_out_data,
+    .sync_in_data = pci_dma_map_sync_in_data,
+};
+
+static const struct rt_dma_map_ops *pci_device_dma_ops(struct rt_device *dev)
+{
+    struct rt_bus *bus = dev->bus;
+    struct rt_pci_host_bridge *host_bridge;
+
+    if (!bus || rt_strcmp(bus->name, "pci"))
+    {
+        return RT_NULL;
+    }
+
+    host_bridge = pci_device_host_bridge(dev);
+
+    if (!host_bridge || !host_bridge->dma_regions_nr)
+    {
+        return RT_NULL;
+    }
+
+    return &pci_dma_map_ops;
+}
+#endif /* RT_USING_PCI */
+
+#ifdef RT_USING_OFW
+const struct rt_dma_map_ops *rt_dma_ofw_device_map_ops(struct rt_device *dev)
+{
+    if (!dev || !dev->ofw_node)
+    {
+        return RT_NULL;
+    }
+
+    return ofw_device_dma_ops(dev);
+}
+#endif /* RT_USING_OFW */
+
 /**
  * @brief Select DMA operations for a device
  *
  * Priority:
  * 1. Device-specific dma_ops (if already set)
- * 2. Device tree memory-region ops (if device has ofw_node)
+ * 2. Device tree ops (memory-region pools and/or dma-ranges translation)
  * 3. Coherent or non-coherent fallback based on device property
+ *
+ * PCI devices with OFW bind dma_ops early in rt_pci_ofw_device_init();
+ * other PCI devices fall back to pci_device_dma_ops() here.
  *
  * The result is cached in dev->dma_ops for subsequent calls.
  *
@@ -409,6 +612,15 @@ static const struct rt_dma_map_ops *device_dma_ops(struct rt_device *dev)
 #ifdef RT_USING_OFW
     if (dev->ofw_node && (ops = ofw_device_dma_ops(dev)))
     {
+        dev->dma_ops = ops;
+        return ops;
+    }
+#endif
+
+#ifdef RT_USING_PCI
+    if ((ops = pci_device_dma_ops(dev)))
+    {
+        dev->dma_ops = ops;
         return ops;
     }
 #endif
@@ -443,6 +655,15 @@ static rt_ubase_t dma_pool_alloc(struct rt_dma_pool *pool, rt_size_t size)
     rt_size_t bit, next_bit, end_bit, max_bits;
 
     size = RT_DIV_ROUND_UP(size, ARCH_PAGE_SIZE);
+
+    if (!size || size > pool->bits)
+    {
+        LOG_W("%s: request %u page(s) exceeds pool capacity %u page(s)",
+              pool->region.name ? pool->region.name : "<anon>",
+              (unsigned)size, (unsigned)pool->bits);
+        return RT_NULL;
+    }
+
     max_bits = pool->bits - size;
 
     rt_bitmap_for_each_clear_bit(pool->map, bit, max_bits)
@@ -549,9 +770,18 @@ static void *dma_alloc(struct rt_device *dev, rt_size_t size,
 
         if (*dma_handle && !(flags & RT_DMA_F_NOMAP))
         {
-            if (flags & RT_DMA_F_NOCACHE)
+            if (pool->flags & RT_DMA_F_NOCACHE)
             {
                 dma_buffer = rt_ioremap_nocache((void *)*dma_handle, size);
+            }
+            else if (flags & RT_DMA_F_NOCACHE)
+            {
+                /* Honor caller NOCACHE before LINEAR pool shortcut. */
+                dma_buffer = rt_ioremap_nocache((void *)*dma_handle, size);
+            }
+            else if (pool->flags & RT_DMA_F_LINEAR)
+            {
+                dma_buffer = (void *)(*dma_handle - PV_OFFSET);
             }
             else if (flags & RT_DMA_F_WT)
             {
@@ -607,7 +837,10 @@ static void dma_free(struct rt_device *dev, rt_size_t size,
         if (dma_handle >= pool->region.start &&
             dma_handle <= pool->region.end)
         {
-            rt_iounmap(cpu_addr);
+            if (pool->flags & RT_DMA_F_NOCACHE || !(pool->flags & RT_DMA_F_LINEAR))
+            {
+                rt_iounmap(cpu_addr);
+            }
 
             dma_pool_free(pool, dma_handle, size);
 
@@ -767,11 +1000,48 @@ rt_err_t rt_dma_sync_in_data(struct rt_device *dev, void *out_data, rt_size_t si
 }
 
 /**
+ * @brief Map a linear DMA pool into the kernel address space
+ *
+ * Reserved pool memory is excluded from rt_memblock_setup_memory_environment().
+ * Install a cached linear mapping so RT_DMA_F_LINEAR pools are CPU-accessible.
+ */
+static rt_err_t dma_pool_map_linear(struct rt_dma_pool *pool)
+{
+    rt_region_t *region = &pool->region;
+    rt_size_t start = RT_ALIGN_DOWN(region->start, ARCH_PAGE_SIZE);
+    rt_size_t end = RT_ALIGN(region->end, ARCH_PAGE_SIZE);
+    void *va;
+
+    if (!(pool->flags & RT_DMA_F_LINEAR) || start >= end)
+    {
+        return RT_EOK;
+    }
+
+    struct rt_mm_va_hint hint = {
+        .flags = MMF_MAP_FIXED,
+        .limit_start = rt_kernel_space.start,
+        .limit_range_size = rt_kernel_space.size,
+        .map_size = end - start,
+        .prefer = (void *)(start - PV_OFFSET),
+    };
+
+    if (rt_aspace_map_phy(&rt_kernel_space, &hint, MMU_MAP_K_RWCB,
+                          start >> MM_PAGE_SHIFT, &va))
+    {
+        LOG_E("map %s [0x%lx, 0x%lx] failed", region->name,
+              (unsigned long)start, (unsigned long)end);
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
+/**
  * @brief Install a DMA memory pool from a region descriptor
  *
  * Creates a new DMA pool covering the given memory region. Allocates
  * a bitmap for page tracking. Pools under 4GB are marked RT_DMA_F_32BITS.
- * Pools are automatically marked RT_DMA_F_LINEAR.
+ * Pools are automatically marked RT_DMA_F_LINEAR and mapped into kernel VA.
  *
  * Must be called with the DMA pools lock NOT held.
  *
@@ -823,6 +1093,11 @@ static struct rt_dma_pool *dma_pool_install(rt_region_t *region)
     region_pool_lock();
     rt_list_insert_before(&dma_pool_nodes, &pool->list);
     region_pool_unlock();
+
+    if (dma_pool_map_linear(pool))
+    {
+        LOG_W("linear map failed for pool %s", region->name);
+    }
 
     return pool;
 
