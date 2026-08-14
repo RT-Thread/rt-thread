@@ -15,7 +15,7 @@
 #include "drv_config.h"
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.adc"
+#define LOG_TAG "drv.adc"
 #include <drv_log.h>
 
 
@@ -35,8 +35,7 @@ typedef struct
     ADC_InitType Init;
 } ADC_InitInfo_t;
 
-static ADC_InitInfo_t adc_config[] =
-{
+static ADC_InitInfo_t adc_config[] = {
 #ifdef BSP_USING_ADC1
     ADC1_CONFIG,
 #endif
@@ -65,34 +64,34 @@ static rt_err_t n32_adc_get_channel(rt_int8_t rt_channel, uint32_t *n32_channel)
 {
     switch (rt_channel)
     {
-    case  0:
+    case 0:
         *n32_channel = ADC_CH_0;
         break;
-    case  1:
+    case 1:
         *n32_channel = ADC_CH_1;
         break;
-    case  2:
+    case 2:
         *n32_channel = ADC_CH_2;
         break;
-    case  3:
+    case 3:
         *n32_channel = ADC_CH_3;
         break;
-    case  4:
+    case 4:
         *n32_channel = ADC_CH_4;
         break;
-    case  5:
+    case 5:
         *n32_channel = ADC_CH_5;
         break;
-    case  6:
+    case 6:
         *n32_channel = ADC_CH_6;
         break;
-    case  7:
+    case 7:
         *n32_channel = ADC_CH_7;
         break;
-    case  8:
+    case 8:
         *n32_channel = ADC_CH_8;
         break;
-    case  9:
+    case 9:
         *n32_channel = ADC_CH_9;
         break;
     case 10:
@@ -262,7 +261,7 @@ static rt_err_t n32_adc_enabled(struct rt_adc_device *device, rt_int8_t channel,
 
 static rt_err_t n32_adc_get_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
-    uint16_t Convert_Value;
+    uint16_t Convert_Value = 0;
     ADC_InitInfo_t *n32_adc_info;
 
     RT_ASSERT(device != RT_NULL);
@@ -284,7 +283,9 @@ static rt_err_t n32_adc_get_value(struct rt_adc_device *device, rt_int8_t channe
     Convert_Value = ADC_GetDat(n32_adc_info->ADCx);
 
     if (channel == RT_ADC_INTERN_CH_VBAT)
+    {
         Convert_Value *= 4U;
+    }
 #endif
 
     *value = Convert_Value;
@@ -323,14 +324,13 @@ static rt_uint8_t n32_adc_get_resolution(struct rt_adc_device *device)
 }
 
 
-static rt_int16_t n32_adc_get_vref (struct rt_adc_device *device)
+static rt_int16_t n32_adc_get_vref(struct rt_adc_device *device)
 {
     return 3300;
 }
 
 
-static const struct rt_adc_ops n32_adc_ops =
-{
+static const struct rt_adc_ops n32_adc_ops = {
     .enabled = n32_adc_enabled,
     .convert = n32_adc_get_value,
     .get_resolution = n32_adc_get_resolution,
@@ -342,7 +342,7 @@ static int n32_adc_init(void)
 {
     int result = RT_EOK;
     /* save adc name */
-    char name_buf[5] = {'a', 'd', 'c', '0', 0};
+    char name_buf[5] = { 'a', 'd', 'c', '0', 0 };
     int i = 0;
 
     for (i = 0; i < sizeof(adc_config) / sizeof(adc_config[0]); i++)

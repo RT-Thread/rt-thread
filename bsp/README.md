@@ -332,8 +332,8 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [n32l43xrl-stb](n32/n32gxx_lxx/n32l43xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
 | [n32wb45xl-evb](n32/n32gxx_lxx/n32wb45xl-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
 | [n32h760zil7-stb](n32/n32hxxx/n32h760zil7-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32h497zgl7-evb](n32/n32hxxx/n32h497zgl7-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-| [n32h487zgl7-evb](n32/n32hxxx/n32h487zgl7-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [n32h497zgl7-evb](n32/n32hxxx/n32h497zgl7-evb) | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | ✅ | - | - | - |
+| [n32h487zgl7-evb](n32/n32hxxx/n32h487zgl7-evb) | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | ✅ | - | - | - |
 
 
 #### 🟡 NRF5x
