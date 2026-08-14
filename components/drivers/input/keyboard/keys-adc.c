@@ -24,19 +24,19 @@ struct adc_keys_button
 struct adc_keys
 {
     struct rt_input_device parent;
-    struct rt_adc_device  *adc_dev;
+    struct rt_adc_device *adc_dev;
 
-    int                    channel;
-    rt_uint32_t            num_keys;
-    rt_uint32_t            last_key;
-    rt_uint32_t            keyup_voltage;
+    int channel;
+    rt_uint32_t num_keys;
+    rt_uint32_t last_key;
+    rt_uint32_t keyup_voltage;
     struct adc_keys_button kbtn[];
 };
 
 static void adc_keys_poll(struct rt_input_device *idev)
 {
-    int              value, keycode = 0;
-    rt_uint32_t      diff, closest  = 0xffffffff;
+    int value, keycode = 0;
+    rt_uint32_t diff, closest = 0xffffffff;
     struct adc_keys *tk = rt_container_of(idev, struct adc_keys, parent);
 
     value = rt_adc_read(tk->adc_dev, tk->channel);
@@ -64,7 +64,7 @@ static void adc_keys_poll(struct rt_input_device *idev)
 
     if (value >= 0)
     {
-        rt_uint32_t sample     = (rt_uint32_t)value;
+        rt_uint32_t sample = (rt_uint32_t)value;
         rt_uint32_t keyup_diff = tk->keyup_voltage > sample ? tk->keyup_voltage - sample : sample - tk->keyup_voltage;
 
         if (keyup_diff < closest)
@@ -93,13 +93,13 @@ static void adc_keys_poll(struct rt_input_device *idev)
 
 static rt_err_t adc_key_probe(struct rt_platform_device *pdev)
 {
-    int                 i = 0;
-    rt_err_t            err;
-    rt_uint32_t         interval;
-    rt_uint32_t         num_keys;
-    struct adc_keys    *tk;
-    struct rt_device   *dev = &pdev->parent;
-    struct rt_ofw_node *np  = dev->ofw_node, *key_np;
+    int i = 0;
+    rt_err_t err;
+    rt_uint32_t interval;
+    rt_uint32_t num_keys;
+    struct adc_keys *tk;
+    struct rt_device *dev = &pdev->parent;
+    struct rt_ofw_node *np = dev->ofw_node, *key_np;
 
     num_keys = rt_ofw_get_child_count(np);
 
@@ -219,9 +219,9 @@ static const struct rt_ofw_node_id adc_key_ofw_ids[] = {
 
 static struct rt_platform_driver adc_key_driver = {
     .name = "adc-keys",
-    .ids  = adc_key_ofw_ids,
+    .ids = adc_key_ofw_ids,
 
-    .probe  = adc_key_probe,
+    .probe = adc_key_probe,
     .remove = adc_key_remove,
 };
 RT_PLATFORM_DRIVER_EXPORT(adc_key_driver);

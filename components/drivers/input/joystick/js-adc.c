@@ -31,13 +31,13 @@ struct adc_joysticks
 {
     struct rt_input_device parent;
 
-    rt_uint32_t              num_axis;
+    rt_uint32_t num_axis;
     struct adc_joystick_axis axis[];
 };
 
 static void adc_joysticks_poll(struct rt_input_device *idev)
 {
-    int                   value;
+    int value;
     struct adc_joysticks *aj = rt_container_of(idev, struct adc_joysticks, parent);
 
     for (int i = 0; i < aj->num_axis; ++i)
@@ -63,13 +63,13 @@ static void adc_joysticks_poll(struct rt_input_device *idev)
 
 static rt_err_t adc_joystick_probe(struct rt_platform_device *pdev)
 {
-    rt_err_t                  err;
-    rt_uint32_t               interval;
-    rt_uint32_t               num_axis;
-    struct adc_joysticks     *aj;
+    rt_err_t err;
+    rt_uint32_t interval;
+    rt_uint32_t num_axis;
+    struct adc_joysticks *aj;
     struct adc_joystick_axis *axis;
-    struct rt_device         *dev = &pdev->parent;
-    struct rt_ofw_node       *np  = dev->ofw_node, *axis_np;
+    struct rt_device *dev = &pdev->parent;
+    struct rt_ofw_node *np = dev->ofw_node, *axis_np;
 
     num_axis = rt_ofw_get_child_count(np);
 
@@ -230,9 +230,9 @@ static const struct rt_ofw_node_id adc_joystick_ofw_ids[] = {
 
 static struct rt_platform_driver adc_joystick_driver = {
     .name = "adc-joystick",
-    .ids  = adc_joystick_ofw_ids,
+    .ids = adc_joystick_ofw_ids,
 
-    .probe  = adc_joystick_probe,
+    .probe = adc_joystick_probe,
     .remove = adc_joystick_remove,
 };
 RT_PLATFORM_DRIVER_EXPORT(adc_joystick_driver);

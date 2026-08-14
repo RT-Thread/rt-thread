@@ -61,10 +61,10 @@ struct goodix_ts
     struct rt_input_device parent;
 
     struct rt_i2c_client *client;
-    struct rt_regulator  *supply;
+    struct rt_regulator *supply;
 
-    rt_base_t  irq_pin;
-    rt_base_t  rst_pin;
+    rt_base_t irq_pin;
+    rt_base_t rst_pin;
     rt_uint8_t irq_mode;
     rt_uint8_t reset_assert_level;
     rt_uint8_t address_select_level;
@@ -72,15 +72,15 @@ struct goodix_ts
     rt_uint8_t int_sync_level;
 
     const struct goodix_chip_info *chip;
-    rt_uint8_t                     max_touch_num;
-    rt_uint8_t                     contact_size;
-    rt_bool_t                      use_irq;
-    rt_bool_t                      force_polling;
-    rt_bool_t                      irq_sem_inited;
-    rt_bool_t                      active_slots[GOODIX_MAX_CONTACTS];
+    rt_uint8_t max_touch_num;
+    rt_uint8_t contact_size;
+    rt_bool_t use_irq;
+    rt_bool_t force_polling;
+    rt_bool_t irq_sem_inited;
+    rt_bool_t active_slots[GOODIX_MAX_CONTACTS];
 
-    struct rt_thread    *worker;
-    struct rt_semaphore  irq_sem;
+    struct rt_thread *worker;
+    struct rt_semaphore irq_sem;
     volatile rt_uint32_t irq_count;
     volatile rt_uint32_t handle_count;
 
@@ -89,17 +89,17 @@ struct goodix_ts
 
 static const struct goodix_chip_info gt9x_chip = {
     .config_addr = GOODIX_GT9X_REG_CONFIG_DATA,
-    .config_len  = GOODIX_CONFIG_GT9X_LENGTH,
+    .config_len = GOODIX_CONFIG_GT9X_LENGTH,
 };
 
 static const struct goodix_chip_info gt911_chip = {
     .config_addr = GOODIX_GT9X_REG_CONFIG_DATA,
-    .config_len  = GOODIX_CONFIG_911_LENGTH,
+    .config_len = GOODIX_CONFIG_911_LENGTH,
 };
 
 static const struct goodix_chip_info gt1x_chip = {
     .config_addr = GOODIX_GT1X_REG_CONFIG_DATA,
-    .config_len  = GOODIX_CONFIG_GT9X_LENGTH,
+    .config_len = GOODIX_CONFIG_GT9X_LENGTH,
 };
 
 /* Radxa Display 8HD: CJ080258 GT911, 800x1280. */
@@ -156,19 +156,19 @@ static rt_ssize_t goodix_get_named_pin(struct rt_device *dev, const char *name,
 static rt_err_t goodix_i2c_read(struct rt_i2c_client *client, rt_uint16_t reg,
                                 rt_uint8_t *buf, rt_size_t len)
 {
-    rt_uint8_t        addr[2] = { reg >> 8, reg & 0xff };
+    rt_uint8_t addr[2] = { reg >> 8, reg & 0xff };
     struct rt_i2c_msg msgs[2];
-    rt_ssize_t        res;
+    rt_ssize_t res;
 
-    msgs[0].addr  = client->client_addr;
+    msgs[0].addr = client->client_addr;
     msgs[0].flags = RT_I2C_WR;
-    msgs[0].buf   = addr;
-    msgs[0].len   = 2;
+    msgs[0].buf = addr;
+    msgs[0].len = 2;
 
-    msgs[1].addr  = client->client_addr;
+    msgs[1].addr = client->client_addr;
     msgs[1].flags = RT_I2C_RD;
-    msgs[1].buf   = buf;
-    msgs[1].len   = len;
+    msgs[1].buf = buf;
+    msgs[1].len = len;
 
     res = rt_i2c_transfer(client->bus, msgs, 2);
 
@@ -183,10 +183,10 @@ static rt_err_t goodix_i2c_read(struct rt_i2c_client *client, rt_uint16_t reg,
 static rt_err_t goodix_i2c_write(struct rt_i2c_client *client, rt_uint16_t reg,
                                  const rt_uint8_t *buf, rt_size_t len)
 {
-    rt_uint8_t        stack_buf[32];
-    rt_uint8_t       *tx;
+    rt_uint8_t stack_buf[32];
+    rt_uint8_t *tx;
     struct rt_i2c_msg msg;
-    rt_ssize_t        res;
+    rt_ssize_t res;
 
     if (len + 2 > sizeof(stack_buf))
     {
@@ -206,10 +206,10 @@ static rt_err_t goodix_i2c_write(struct rt_i2c_client *client, rt_uint16_t reg,
     tx[1] = reg & 0xff;
     rt_memcpy(&tx[2], buf, len);
 
-    msg.addr  = client->client_addr;
+    msg.addr = client->client_addr;
     msg.flags = RT_I2C_WR;
-    msg.buf   = tx;
-    msg.len   = len + 2;
+    msg.buf = tx;
+    msg.len = len + 2;
 
     res = rt_i2c_transfer(client->bus, &msg, 1);
 
@@ -235,9 +235,9 @@ static rt_err_t goodix_i2c_write_u8(struct rt_i2c_client *client, rt_uint16_t re
 static rt_err_t goodix_i2c_read_confirm(struct rt_i2c_client *client,
                                         rt_uint16_t reg, rt_uint8_t *buf, rt_size_t len)
 {
-    rt_uint8_t  stack_buf[32];
+    rt_uint8_t stack_buf[32];
     rt_uint8_t *confirm = stack_buf;
-    rt_err_t    err;
+    rt_err_t err;
 
     if (len > sizeof(stack_buf))
     {
@@ -318,8 +318,8 @@ static rt_err_t goodix_reset(struct goodix_ts *ts)
 static void goodix_i2c_failure_diagnose(struct goodix_ts *ts, rt_err_t id_err)
 {
     rt_uint16_t address = ts->client->client_addr;
-    rt_uint8_t  value;
-    rt_err_t    cfg_err, alt_err = -RT_ENOSYS;
+    rt_uint8_t value;
+    rt_err_t cfg_err, alt_err = -RT_ENOSYS;
 
     cfg_err = goodix_i2c_read(ts->client, GOODIX_GT9X_REG_CONFIG_DATA,
                               &value, 1);
@@ -327,7 +327,7 @@ static void goodix_i2c_failure_diagnose(struct goodix_ts *ts, rt_err_t id_err)
     if (address != 0x5d)
     {
         ts->client->client_addr = 0x5d;
-        alt_err                 = goodix_i2c_read(ts->client, GOODIX_REG_ID, &value, 1);
+        alt_err = goodix_i2c_read(ts->client, GOODIX_REG_ID, &value, 1);
         ts->client->client_addr = address;
     }
 
@@ -346,8 +346,8 @@ static void goodix_i2c_failure_diagnose(struct goodix_ts *ts, rt_err_t id_err)
 static rt_err_t goodix_i2c_test(struct rt_i2c_client *client)
 {
     rt_uint8_t test;
-    rt_err_t   err   = -RT_EIO;
-    int        retry = 0;
+    rt_err_t err = -RT_EIO;
+    int retry = 0;
 
     while (retry++ < GOODIX_I2C_TEST_RETRIES)
     {
@@ -367,7 +367,7 @@ static rt_err_t goodix_i2c_test(struct rt_i2c_client *client)
 static rt_bool_t goodix_product_id_valid(const rt_uint8_t *id)
 {
     rt_size_t length = 0;
-    int       i;
+    int i;
 
     for (i = 0; i < GOODIX_ID_MAX_LEN && id[i]; i++)
     {
@@ -388,8 +388,8 @@ static rt_err_t goodix_try_alternate_address(struct goodix_ts *ts)
 {
     rt_uint16_t address = ts->client->client_addr;
     rt_uint16_t alternate;
-    rt_uint8_t  id[GOODIX_ID_MAX_LEN + 1] = { 0 };
-    rt_err_t    err;
+    rt_uint8_t id[GOODIX_ID_MAX_LEN + 1] = { 0 };
+    rt_err_t err;
 
     if (address == 0x14)
     {
@@ -447,7 +447,7 @@ static rt_err_t goodix_try_alternate_address(struct goodix_ts *ts)
 static rt_err_t goodix_read_version(struct goodix_ts *ts)
 {
     rt_uint8_t buf[6];
-    rt_err_t   err;
+    rt_err_t err;
 
     err = goodix_i2c_read(ts->client, GOODIX_REG_ID, buf, sizeof(buf));
 
@@ -467,15 +467,15 @@ static rt_err_t goodix_read_version(struct goodix_ts *ts)
 static rt_bool_t goodix_config_is_valid(const rt_uint8_t *config, rt_size_t len)
 {
     rt_uint32_t x_max, y_max;
-    rt_uint8_t  contacts;
+    rt_uint8_t contacts;
 
     if (len <= TRIGGER_LOC)
     {
         return RT_FALSE;
     }
 
-    x_max    = goodix_get_le16(&config[RESOLUTION_LOC]);
-    y_max    = goodix_get_le16(&config[RESOLUTION_LOC + 2]);
+    x_max = goodix_get_le16(&config[RESOLUTION_LOC]);
+    y_max = goodix_get_le16(&config[RESOLUTION_LOC + 2]);
     contacts = config[MAX_CONTACTS_LOC] & 0x0f;
 
     return x_max && x_max <= GOODIX_MAX_WIDTH &&
@@ -485,13 +485,13 @@ static rt_bool_t goodix_config_is_valid(const rt_uint8_t *config, rt_size_t len)
 
 static rt_err_t goodix_load_gt9112_config(struct goodix_ts *ts)
 {
-    rt_uint8_t  config[sizeof(goodix_gt9112_config)];
-    rt_uint8_t  verify[GOODIX_CONFIG_HEADER_LENGTH] = {};
-    rt_uint8_t  checksum                            = 0;
+    rt_uint8_t config[sizeof(goodix_gt9112_config)];
+    rt_uint8_t verify[GOODIX_CONFIG_HEADER_LENGTH] = {};
+    rt_uint8_t checksum = 0;
     rt_uint32_t tp_size;
-    rt_size_t   i;
-    rt_err_t    err = -RT_EIO;
-    int         retry;
+    rt_size_t i;
+    rt_err_t err = -RT_EIO;
+    int retry;
 
     if (rt_dm_dev_prop_read_u32(&ts->client->parent, "tp-size", &tp_size) ||
         tp_size != GOODIX_TP_SIZE_GT9112 ||
@@ -554,9 +554,9 @@ static rt_err_t goodix_load_gt9112_config(struct goodix_ts *ts)
 
 static rt_err_t goodix_read_config(struct goodix_ts *ts)
 {
-    rt_uint8_t  config[GOODIX_CONFIG_HEADER_LENGTH];
+    rt_uint8_t config[GOODIX_CONFIG_HEADER_LENGTH];
     rt_uint32_t x_max, y_max;
-    rt_err_t    err;
+    rt_err_t err;
 
     err = goodix_i2c_read(ts->client, ts->chip->config_addr,
                           config, sizeof(config));
@@ -589,7 +589,7 @@ static rt_err_t goodix_read_config(struct goodix_ts *ts)
     }
 
     ts->max_touch_num = config[MAX_CONTACTS_LOC] & 0x0f;
-    ts->irq_mode      = goodix_irq_modes[config[TRIGGER_LOC] & 0x03];
+    ts->irq_mode = goodix_irq_modes[config[TRIGGER_LOC] & 0x03];
 
     if (!ts->max_touch_num)
     {
@@ -626,11 +626,11 @@ static void goodix_parse_panel_size(struct goodix_ts *ts, struct rt_device *dev)
 static rt_err_t goodix_ts_read_input_report(struct goodix_ts *ts, rt_uint8_t *data,
                                             int *touch_num_out)
 {
-    rt_uint16_t addr        = GOODIX_READ_COOR_ADDR;
-    rt_size_t   header_size = 1 + ts->contact_size;
-    rt_tick_t   timeout;
-    rt_uint8_t  touch_num;
-    rt_err_t    err;
+    rt_uint16_t addr = GOODIX_READ_COOR_ADDR;
+    rt_size_t header_size = 1 + ts->contact_size;
+    rt_tick_t timeout;
+    rt_uint8_t touch_num;
+    rt_err_t err;
 
     timeout = rt_tick_get() + rt_tick_from_millisecond(GOODIX_BUFFER_STATUS_TIMEOUT);
 
@@ -682,10 +682,10 @@ static rt_err_t goodix_ts_read_input_report(struct goodix_ts *ts, rt_uint8_t *da
 }
 
 static void goodix_release_unused_slots(struct goodix_ts *ts,
-                                        const rt_bool_t  *seen_slots)
+                                        const rt_bool_t *seen_slots)
 {
     struct rt_input_device *idev = &ts->parent;
-    int                     i;
+    int i;
 
     for (i = 0; i < GOODIX_MAX_CONTACTS; ++i)
     {
@@ -701,10 +701,10 @@ static void goodix_release_unused_slots(struct goodix_ts *ts,
 static void goodix_report_touch(struct goodix_ts *ts, rt_uint8_t *coor_data)
 {
     struct rt_input_device *idev = &ts->parent;
-    rt_uint32_t             id   = coor_data[0] & 0x0f;
-    rt_uint32_t             x    = goodix_get_le16(&coor_data[1]);
-    rt_uint32_t             y    = goodix_get_le16(&coor_data[3]);
-    rt_uint32_t             w    = goodix_get_le16(&coor_data[5]);
+    rt_uint32_t id = coor_data[0] & 0x0f;
+    rt_uint32_t x = goodix_get_le16(&coor_data[1]);
+    rt_uint32_t y = goodix_get_le16(&coor_data[3]);
+    rt_uint32_t w = goodix_get_le16(&coor_data[5]);
 
     if (id >= GOODIX_MAX_CONTACTS)
     {
@@ -721,13 +721,13 @@ static void goodix_report_touch(struct goodix_ts *ts, rt_uint8_t *coor_data)
 
 static rt_err_t goodix_process_events(struct goodix_ts *ts)
 {
-    rt_uint8_t  point_data[2 + GOODIX_MAX_CONTACTS * GOODIX_CONTACT_SIZE];
-    rt_bool_t   seen_slots[GOODIX_MAX_CONTACTS] = { RT_FALSE };
+    rt_uint8_t point_data[2 + GOODIX_MAX_CONTACTS * GOODIX_CONTACT_SIZE];
+    rt_bool_t seen_slots[GOODIX_MAX_CONTACTS] = { RT_FALSE };
     rt_uint8_t *coor_data;
     rt_uint32_t id;
-    int         touch_num = 0;
-    int         i;
-    rt_err_t    err;
+    int touch_num = 0;
+    int i;
+    rt_err_t err;
 
     err = goodix_ts_read_input_report(ts, point_data, &touch_num);
 
@@ -739,7 +739,7 @@ static rt_err_t goodix_process_events(struct goodix_ts *ts)
     for (i = 0; i < touch_num; ++i)
     {
         coor_data = &point_data[1 + ts->contact_size * i];
-        id        = coor_data[0] & 0x0f;
+        id = coor_data[0] & 0x0f;
 
         if (id < GOODIX_MAX_CONTACTS)
         {
@@ -862,20 +862,20 @@ static rt_err_t goodix_request_irq(struct goodix_ts *ts)
 
 static rt_err_t goodix_probe(struct rt_i2c_client *client)
 {
-    rt_err_t             err;
-    struct rt_device    *dev        = &client->parent;
+    rt_err_t err;
+    struct rt_device *dev = &client->parent;
     struct rt_touch_info touch_info = {};
-    struct goodix_ts    *ts         = rt_calloc(1, sizeof(*ts));
+    struct goodix_ts *ts = rt_calloc(1, sizeof(*ts));
 
     if (!ts)
     {
         return -RT_ENOMEM;
     }
 
-    ts->client       = client;
+    ts->client = client;
     ts->contact_size = GOODIX_CONTACT_SIZE;
-    ts->irq_mode     = PIN_IRQ_MODE_FALLING;
-    ts->chip         = rt_i2c_client_id_data(client);
+    ts->irq_mode = PIN_IRQ_MODE_FALLING;
+    ts->chip = rt_i2c_client_id_data(client);
 
     if (!ts->chip)
     {
@@ -883,7 +883,7 @@ static rt_err_t goodix_probe(struct rt_i2c_client *client)
     }
 
     ts->parent.parent.ofw_node = dev->ofw_node;
-    dev->user_data             = ts;
+    dev->user_data = ts;
 
     ts->irq_pin = goodix_get_named_pin(dev, "irq", "touch", RT_NULL);
     ts->rst_pin = goodix_get_named_pin(dev, "reset", RT_NULL, RT_NULL);
@@ -904,7 +904,7 @@ static rt_err_t goodix_probe(struct rt_i2c_client *client)
 
     if (rt_is_err(ts->supply))
     {
-        err        = rt_ptr_err(ts->supply);
+        err = rt_ptr_err(ts->supply);
         ts->supply = RT_NULL;
         goto _free;
     }
@@ -978,7 +978,7 @@ static rt_err_t goodix_probe(struct rt_i2c_client *client)
         goto _disable_supply;
     }
 
-    err  = rt_input_set_capability(&ts->parent, EV_ABS, ABS_MT_SLOT);
+    err = rt_input_set_capability(&ts->parent, EV_ABS, ABS_MT_SLOT);
     err |= rt_input_set_capability(&ts->parent, EV_ABS, ABS_MT_TRACKING_ID);
     err |= rt_input_set_capability(&ts->parent, EV_ABS, ABS_MT_POSITION_X);
     err |= rt_input_set_capability(&ts->parent, EV_ABS, ABS_MT_POSITION_Y);
@@ -997,8 +997,8 @@ static rt_err_t goodix_probe(struct rt_i2c_client *client)
 
     goodix_parse_panel_size(ts, dev);
 
-    touch_info.type      = RT_TOUCH_TYPE_CAPACITANCE;
-    touch_info.vendor    = RT_TOUCH_VENDOR_GT;
+    touch_info.type = RT_TOUCH_TYPE_CAPACITANCE;
+    touch_info.vendor = RT_TOUCH_VENDOR_GT;
     touch_info.point_num = GOODIX_MAX_CONTACTS;
 
     if ((err = rt_input_setup_touch(&ts->parent, GOODIX_MAX_CONTACTS, &touch_info)))
@@ -1063,7 +1063,7 @@ static rt_err_t goodix_probe(struct rt_i2c_client *client)
             rt_pin_detach_irq(ts->irq_pin);
             rt_sem_detach(&ts->irq_sem);
             ts->irq_sem_inited = RT_FALSE;
-            ts->use_irq        = RT_FALSE;
+            ts->use_irq = RT_FALSE;
 
             if ((err = goodix_setup_polling(ts)))
             {
@@ -1191,10 +1191,10 @@ static const struct rt_ofw_node_id goodix_ts_ofw_ids[] = {
 };
 
 static struct rt_i2c_driver goodix_ts_driver = {
-    .ids     = goodix_ts_ids,
+    .ids = goodix_ts_ids,
     .ofw_ids = goodix_ts_ofw_ids,
 
-    .probe  = goodix_probe,
+    .probe = goodix_probe,
     .remove = goodix_remove,
 };
 RT_I2C_DRIVER_EXPORT(goodix_ts_driver);
