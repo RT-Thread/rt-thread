@@ -10,6 +10,9 @@ CPPPATH = [cwd + '/../../include']
 
 src = []
 
+if GetDepend(['RT_INPUT_KEYBOARD_ADC']):
+    src += ['keys-adc.c']
+
 if GetDepend(['RT_INPUT_KEYBOARD_GPIO']):
     src += ['keys-gpio.c']
 
