@@ -115,21 +115,21 @@ _err:
     if (err == -RT_EEMPTY)
     {
         LOG_W("PCI-Device<%s> no interrupt-map found, INTx interrupts not available",
-                rt_dm_dev_get_name(&pdev->parent));
+              rt_dm_dev_get_name(&pdev->parent));
         LOG_W("PCI-Device<%s> possibly some PCI slots don't have level triggered interrupts capability",
-                rt_dm_dev_get_name(&pdev->parent));
+              rt_dm_dev_get_name(&pdev->parent));
     }
     else if (err && err != -RT_ENOSYS)
     {
         LOG_E("PCI-Device<%s> irq parse failed with err = %s",
-                rt_dm_dev_get_name(&pdev->parent), rt_strerror(err));
+              rt_dm_dev_get_name(&pdev->parent), rt_strerror(err));
     }
 
     return err;
 }
 
 int rt_pci_ofw_irq_parse_and_map(struct rt_pci_device *pdev,
-        rt_uint8_t slot, rt_uint8_t pin)
+                                 rt_uint8_t slot, rt_uint8_t pin)
 {
     int irq = -1;
     rt_err_t status;
@@ -159,8 +159,8 @@ _end:
 }
 
 static rt_err_t pci_ofw_parse_ranges(struct rt_ofw_node *dev_np, const char *propname,
-        int phy_addr_cells, int phy_size_cells, int cpu_addr_cells,
-        struct rt_pci_bus_region **out_regions, rt_size_t *out_regions_nr)
+                                     int phy_addr_cells, int phy_size_cells, int cpu_addr_cells,
+                                     struct rt_pci_bus_region **out_regions, rt_size_t *out_regions_nr)
 {
     const fdt32_t *cell;
     rt_ssize_t total_cells;
@@ -227,8 +227,7 @@ static rt_err_t pci_ofw_parse_ranges(struct rt_ofw_node *dev_np, const char *pro
 
         if (space_code & 2)
         {
-            (*out_regions)[i].flags = phy_addr[0] & (1U << 30) ?
-                    PCI_BUS_REGION_F_PREFETCH : PCI_BUS_REGION_F_MEM;
+            (*out_regions)[i].flags = phy_addr[0] & (1U << 30) ? PCI_BUS_REGION_F_PREFETCH : PCI_BUS_REGION_F_MEM;
         }
         else if (space_code & 1)
         {
@@ -246,7 +245,7 @@ static rt_err_t pci_ofw_parse_ranges(struct rt_ofw_node *dev_np, const char *pro
 }
 
 rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
-        struct rt_pci_host_bridge *host_bridge)
+                                 struct rt_pci_host_bridge *host_bridge)
 {
     rt_err_t err;
     int phy_addr_cells = -1, phy_size_cells = -1, cpu_addr_cells;
@@ -266,8 +265,8 @@ rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
     }
 
     if (pci_ofw_parse_ranges(dev_np, "ranges",
-        phy_addr_cells, phy_size_cells, cpu_addr_cells,
-        &host_bridge->bus_regions, &host_bridge->bus_regions_nr))
+                             phy_addr_cells, phy_size_cells, cpu_addr_cells,
+                             &host_bridge->bus_regions, &host_bridge->bus_regions_nr))
     {
         return -RT_EINVAL;
     }
@@ -281,8 +280,8 @@ rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
     }
 
     err = pci_ofw_parse_ranges(dev_np, "dma-ranges",
-            phy_addr_cells, phy_size_cells, cpu_addr_cells,
-            &host_bridge->dma_regions, &host_bridge->dma_regions_nr);
+                               phy_addr_cells, phy_size_cells, cpu_addr_cells,
+                               &host_bridge->dma_regions, &host_bridge->dma_regions_nr);
 
     if (err && err != -RT_EEMPTY)
     {
@@ -290,7 +289,7 @@ rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
         host_bridge->bus_regions_nr = 0;
 
         LOG_E("%s: Read dma-ranges error = %s", rt_ofw_node_full_name(dev_np),
-                rt_strerror(err));
+              rt_strerror(err));
 
         return err;
     }
@@ -299,7 +298,7 @@ rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
 }
 
 rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node *dev_np,
-        struct rt_pci_host_bridge *host_bridge)
+                                     struct rt_pci_host_bridge *host_bridge)
 {
     rt_err_t err;
     const char *propname;
@@ -317,11 +316,19 @@ rt_err_t rt_pci_ofw_host_bridge_init(struct rt_ofw_node *dev_np,
         host_bridge->bus_range[0] = 0x00;
         host_bridge->bus_range[1] = 0xff;
         LOG_I("%s: No \"%s\" found, using [%#02x, %#02x]", rt_ofw_node_full_name(dev_np), "bus-range",
-                host_bridge->bus_range[0], host_bridge->bus_range[1]);
+              host_bridge->bus_range[0], host_bridge->bus_range[1]);
     }
 
     propname = rt_ofw_get_prop_fuzzy_name(dev_np, ",pci-domain$");
-    rt_ofw_prop_read_u32(dev_np, propname, &host_bridge->domain);
+
+    if (propname)
+    {
+        rt_ofw_prop_read_u32(dev_np, propname, &host_bridge->domain);
+    }
+    else
+    {
+        host_bridge->domain = RT_UINT32_MAX;
+    }
 
     err = rt_pci_ofw_parse_ranges(dev_np, host_bridge);
 
@@ -505,21 +512,21 @@ static void ofw_msi_pic_init(struct rt_pci_device *pdev)
     if (!pdev->msi_pic->ops->irq_compose_msi_msg)
     {
         LOG_E("%s: MSI pic MUST implemented %s",
-                rt_ofw_node_full_name(msi_ic_np), "irq_compose_msi_msg");
+              rt_ofw_node_full_name(msi_ic_np), "irq_compose_msi_msg");
         RT_ASSERT(0);
     }
 
     if (!pdev->msi_pic->ops->irq_alloc_msi)
     {
         LOG_E("%s: MSI pic MUST implemented %s",
-                rt_ofw_node_full_name(msi_ic_np), "irq_alloc_msi");
+              rt_ofw_node_full_name(msi_ic_np), "irq_alloc_msi");
         RT_ASSERT(0);
     }
 
     if (!pdev->msi_pic->ops->irq_free_msi)
     {
         LOG_E("%s: MSI pic MUST implemented %s",
-                rt_ofw_node_full_name(msi_ic_np), "irq_free_msi");
+              rt_ofw_node_full_name(msi_ic_np), "irq_free_msi");
         RT_ASSERT(0);
     }
 
