@@ -92,6 +92,9 @@ enum
 /* Constants */
 #define WAIT_TIMEOUT            200 /* ms */
 #define DEFAULT_SCL_RATE        (100 * 1000) /* Hz */
+#define DATA_UPDATE_POINT       0x3
+#define START_SETUP_MAX         0x3
+#define STOP_SETUP_MAX          0x3
 
 /* I2C specification values for various modes */
 struct i2c_spec_values
@@ -183,6 +186,10 @@ struct rk3x_i2c
     struct rt_clk_notifier clk_notifier;
 
     struct i2c_timings timings;
+    rt_uint32_t timing_clkdiv;
+    rt_uint32_t timing_tuning;
+    rt_uint32_t timing_scl_oe_db;
+    rt_bool_t timing_valid;
 
     struct rt_spinlock lock;
     struct rt_completion done;
@@ -203,6 +210,9 @@ struct rk3x_i2c
 
 static rt_uint32_t rk3x_i2c_fill_transmit_buf(struct rk3x_i2c *i2c, rt_bool_t sendend);
 static void rk3x_i2c_prepare_read(struct rk3x_i2c *i2c);
+static rt_err_t rk3x_i2c_apply_timings(struct rk3x_i2c *i2c);
+static rt_err_t rk3x_i2c_v1_calc_timings(rt_ubase_t clk_rate,
+        struct i2c_timings *t, struct rk3x_i2c_calced_timings *t_calc);
 
 rt_inline void i2c_writel(struct rk3x_i2c *i2c, rt_uint32_t value, int offset)
 {
@@ -313,11 +323,19 @@ static rt_bool_t rk3x_i2c_use_autostop(struct rk3x_i2c *i2c)
 }
 
 /* Generate a START condition and kick off the transfer (RK Linux FIFO path) */
-static void rk3x_i2c_start(struct rk3x_i2c *i2c)
+static rt_err_t rk3x_i2c_start(struct rk3x_i2c *i2c)
 {
-    rt_uint32_t val = i2c_readl(i2c, REG_CON) & REG_CON_TUNING_MASK;
+    rt_err_t err;
+    rt_uint32_t val;
     rt_bool_t auto_stop = rk3x_i2c_auto_stop(i2c);
     rt_uint32_t length = 0;
+
+    if ((err = rk3x_i2c_apply_timings(i2c)))
+    {
+        return err;
+    }
+
+    val = i2c_readl(i2c, REG_CON) & REG_CON_TUNING_MASK;
 
     if (i2c->mode == REG_CON_MOD_TX)
     {
@@ -354,6 +372,17 @@ static void rk3x_i2c_start(struct rk3x_i2c *i2c)
     {
         rk3x_i2c_prepare_read(i2c);
     }
+
+    val = i2c_readl(i2c, REG_CLKDIV);
+    if (val != i2c->timing_clkdiv)
+    {
+        LOG_E("I2C timing lost on START: div=0x%08x expected=0x%08x con=0x%08x",
+                val, i2c->timing_clkdiv, i2c_readl(i2c, REG_CON));
+
+        return -RT_EIO;
+    }
+
+    return RT_EOK;
 }
 
 /* Generate a STOP condition, which triggers a REG_INT_STOP interrupt */
@@ -609,37 +638,143 @@ static void rk3x_i2c_handle_stop(struct rk3x_i2c *i2c, rt_uint32_t ipd)
     rt_completion_done(&i2c->done);
 }
 
-static void rk3x_i2c_adapt_div(struct rk3x_i2c *i2c, rt_ubase_t clk_rate)
+static rt_err_t rk3x_i2c_apply_timings(struct rk3x_i2c *i2c)
+{
+    rt_uint32_t val, clkdiv;
+
+    if (!i2c->timing_valid)
+    {
+        return -RT_EINVAL;
+    }
+
+    if (i2c->soc_data->calc_timings == rk3x_i2c_v1_calc_timings &&
+            (!(i2c->timing_clkdiv & 0xffff) ||
+            !(i2c->timing_clkdiv >> 16)))
+    {
+        LOG_E("Refusing invalid V1 CLKDIV 0x%08x", i2c->timing_clkdiv);
+
+        return -RT_EINVAL;
+    }
+
+    val = i2c_readl(i2c, REG_CON);
+    val &= ~REG_CON_TUNING_MASK;
+    val |= i2c->timing_tuning;
+    i2c_writel(i2c, val, REG_CON);
+    i2c_writel(i2c, i2c->timing_clkdiv, REG_CLKDIV);
+    i2c_writel(i2c, i2c->timing_scl_oe_db, REG_SCL_OE_DB);
+
+    val = i2c_readl(i2c, REG_CON);
+    clkdiv = i2c_readl(i2c, REG_CLKDIV);
+
+    if ((val & REG_CON_TUNING_MASK) != i2c->timing_tuning ||
+            clkdiv != i2c->timing_clkdiv)
+    {
+        LOG_E("I2C timing restore failed: con=0x%08x div=0x%08x expected=0x%08x",
+                val, clkdiv, i2c->timing_clkdiv);
+
+        return -RT_EIO;
+    }
+
+    return RT_EOK;
+}
+
+static void rk3x_i2c_v1_safe_timings(rt_ubase_t clk_rate,
+        struct i2c_timings *timings,
+        struct rk3x_i2c_calced_timings *calc)
+{
+    rt_uint64_t denominator;
+    rt_ubase_t total_div, div_low, div_high;
+    rt_ubase_t bus_freq = timings->bus_freq_hz;
+
+    if (bus_freq < 1000)
+    {
+        bus_freq = DEFAULT_SCL_RATE;
+    }
+    else if (bus_freq > I2C_MAX_FAST_MODE_PLUS_FREQ)
+    {
+        bus_freq = I2C_MAX_FAST_MODE_PLUS_FREQ;
+    }
+
+    denominator = (rt_uint64_t)bus_freq * 8;
+    total_div = (clk_rate + denominator - 1) / denominator;
+    total_div = rt_max(total_div, (rt_ubase_t)4);
+
+    div_low = RT_DIV_ROUND_UP(total_div, 2);
+    div_high = total_div - div_low;
+    div_low = rt_max(div_low, (rt_ubase_t)2);
+    div_high = rt_max(div_high, (rt_ubase_t)2);
+
+    calc->div_low = rt_min(div_low - 1, (rt_ubase_t)0xffff);
+    calc->div_high = rt_min(div_high - 1, (rt_ubase_t)0xffff);
+
+    /*
+     * Keep SDA setup conservative and maximize START/STOP setup time.
+     * This path is only used if the full timing calculation is invalid.
+     */
+    calc->tuning = REG_CON_STA_CFG(START_SETUP_MAX - 1) |
+            REG_CON_STO_CFG(STOP_SETUP_MAX - 1);
+}
+
+static rt_err_t rk3x_i2c_adapt_div(struct rk3x_i2c *i2c, rt_ubase_t clk_rate)
 {
     rt_err_t err;
     rt_ubase_t level;
-    rt_uint32_t val, cnt;
+    rt_uint32_t clkdiv;
     rt_ubase_t period, time_hold = (WAIT_TIMEOUT / 2) * 1000000;
-    struct rk3x_i2c_calced_timings calc;
+    struct rk3x_i2c_calced_timings calc = { 0 };
     struct i2c_timings *timings = &i2c->timings;
+
+    if (!clk_rate)
+    {
+        return -RT_EINVAL;
+    }
 
     if ((err = i2c->soc_data->calc_timings(clk_rate, timings, &calc)))
     {
         LOG_W("Could not reach SCL freq %u", timings->bus_freq_hz);
     }
 
-    rt_clk_enable(i2c->pclk);
+    if (i2c->soc_data->calc_timings == rk3x_i2c_v1_calc_timings &&
+            (!calc.div_low || !calc.div_high))
+    {
+        LOG_W("Invalid V1 timing clk=%lu bus=%u div=%lu/%lu, using safe timing",
+                (unsigned long)clk_rate, timings->bus_freq_hz,
+                (unsigned long)calc.div_low, (unsigned long)calc.div_high);
+        rk3x_i2c_v1_safe_timings(clk_rate, timings, &calc);
+    }
+
+    if ((err = rt_clk_enable(i2c->pclk)))
+    {
+        LOG_E("Can't enable i2c pclk for timing setup: %s", rt_strerror(err));
+
+        return err;
+    }
+
+    period = RT_DIV_ROUND_UP(1000000000, clk_rate);
+    clkdiv = (calc.div_high << 16) | (calc.div_low & 0xffff);
 
     level = rt_spin_lock_irqsave(&i2c->lock);
 
-    val = i2c_readl(i2c, REG_CON);
-    val &= ~REG_CON_TUNING_MASK;
-    val |= calc.tuning;
-    i2c_writel(i2c, val, REG_CON);
-    i2c_writel(i2c, (calc.div_high << 16) | (calc.div_low & 0xffff), REG_CLKDIV);
-
-    period = RT_DIV_ROUND_UP(1000000000, clk_rate);
-    cnt = RT_DIV_ROUND_UP(time_hold, period);
-    i2c_writel(i2c, cnt, REG_SCL_OE_DB);
+    i2c->timing_tuning = calc.tuning;
+    i2c->timing_clkdiv = clkdiv;
+    i2c->timing_scl_oe_db = RT_DIV_ROUND_UP(time_hold, period);
+    i2c->timing_valid = RT_TRUE;
+    err = rk3x_i2c_apply_timings(i2c);
 
     rt_spin_unlock_irqrestore(&i2c->lock, level);
 
     rt_clk_disable(i2c->pclk);
+
+    if (err)
+    {
+        level = rt_spin_lock_irqsave(&i2c->lock);
+        i2c->timing_valid = RT_FALSE;
+        rt_spin_unlock_irqrestore(&i2c->lock, level);
+
+        return err;
+    }
+
+    return RT_EOK;
 }
 
 static rt_err_t rk3x_i2c_clk_notifier(struct rt_clk_notifier *notifier,
@@ -664,7 +799,7 @@ static rt_err_t rk3x_i2c_clk_notifier(struct rt_clk_notifier *notifier,
         /* scale up */
         if (new_rate > old_rate)
         {
-            rk3x_i2c_adapt_div(i2c, new_rate);
+            return rk3x_i2c_adapt_div(i2c, new_rate);
         }
         break;
 
@@ -672,7 +807,7 @@ static rt_err_t rk3x_i2c_clk_notifier(struct rt_clk_notifier *notifier,
         /* scale down */
         if (new_rate < old_rate)
         {
-            rk3x_i2c_adapt_div(i2c, new_rate);
+            return rk3x_i2c_adapt_div(i2c, new_rate);
         }
         break;
 
@@ -680,7 +815,7 @@ static rt_err_t rk3x_i2c_clk_notifier(struct rt_clk_notifier *notifier,
         /* scale up */
         if (new_rate > old_rate)
         {
-            rk3x_i2c_adapt_div(i2c, old_rate);
+            return rk3x_i2c_adapt_div(i2c, old_rate);
         }
         break;
 
@@ -946,8 +1081,8 @@ static rt_err_t rk3x_i2c_v1_calc_timings(rt_ubase_t clk_rate,
      * Final divh and divl must be greater than 0, otherwise the
      * hardware would not output the i2c clk.
      */
-    min_high_div = (min_high_div < 1) ? 2 : min_high_div;
-    min_low_div = (min_low_div < 1) ? 2 : min_low_div;
+    min_high_div = (min_high_div <= 1) ? 2 : min_high_div;
+    min_low_div = (min_low_div <= 1) ? 2 : min_low_div;
 
     /* These are the min dividers needed for min hold times. */
     min_div_for_hold = (min_low_div + min_high_div);
@@ -985,7 +1120,7 @@ static rt_err_t rk3x_i2c_v1_calc_timings(rt_ubase_t clk_rate,
      * calculate sda data hold count by the rules, data_upd_st:3
      * is a appropriate value to reduce calculated times.
      */
-    for (sda_update_cfg = 3; sda_update_cfg > 0; --sda_update_cfg)
+    for (sda_update_cfg = DATA_UPDATE_POINT; sda_update_cfg > 0; --sda_update_cfg)
     {
         max_hold_data_ns =  RT_DIV_ROUND_UP((sda_update_cfg
                 * (t_calc->div_low) + 1) * 1000000, clk_rate_khz);
@@ -998,16 +1133,19 @@ static rt_err_t rk3x_i2c_v1_calc_timings(rt_ubase_t clk_rate,
             break;
         }
     }
+    sda_update_cfg = (sda_update_cfg ? sda_update_cfg : 1) & DATA_UPDATE_POINT;
 
     /* calculate setup start config */
     min_setup_start_ns = t->scl_rise_ns + spec->min_setup_start_ns;
     stp_sta_cfg = RT_DIV_ROUND_UP(clk_rate_khz * min_setup_start_ns - 1000000,
             8 * 1000000 * (t_calc->div_high));
+    stp_sta_cfg = stp_sta_cfg > START_SETUP_MAX ? START_SETUP_MAX : stp_sta_cfg;
 
     /* calculate setup stop config */
     min_setup_stop_ns = t->scl_rise_ns + spec->min_setup_stop_ns;
     stp_sto_cfg = RT_DIV_ROUND_UP(clk_rate_khz * min_setup_stop_ns - 1000000,
             8 * 1000000 * (t_calc->div_high));
+    stp_sto_cfg = stp_sto_cfg > STOP_SETUP_MAX ? STOP_SETUP_MAX : stp_sto_cfg;
 
     t_calc->tuning = REG_CON_SDA_CFG(--sda_update_cfg) |
             REG_CON_STA_CFG(--stp_sta_cfg) | REG_CON_STO_CFG(--stp_sto_cfg);
@@ -1115,17 +1253,17 @@ static rt_ssize_t rk3x_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     rt_ssize_t res = 0;
     rt_uint32_t val;
     rt_ubase_t level;
+    rt_ubase_t clk_rate;
+    rt_ubase_t pclk_rate;
     rt_err_t err;
     rt_err_t timeout_err;
+    struct rt_clk *clk_parent;
     struct rk3x_i2c *i2c = raw_to_rk3x_i2c(bus);
-
-    level = rt_spin_lock_irqsave(&i2c->lock);
 
     err = rt_clk_enable(i2c->clk);
     if (err)
     {
         LOG_E("Can't enable i2c clk: %s", rt_strerror(err));
-        rt_spin_unlock_irqrestore(&i2c->lock, level);
 
         return err;
     }
@@ -1137,11 +1275,45 @@ static rt_ssize_t rk3x_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         {
             LOG_E("Can't enable i2c pclk: %s", rt_strerror(err));
             rt_clk_disable(i2c->clk);
-            rt_spin_unlock_irqrestore(&i2c->lock, level);
 
             return err;
         }
     }
+
+    clk_parent = rt_clk_get_parent(i2c->clk);
+    if (!rt_clk_cell_is_enabled(i2c->clk->cell) ||
+            (clk_parent && !rt_clk_cell_is_enabled(clk_parent->cell)))
+    {
+        LOG_E("%s functional clock gate disabled: %s=%d parent %s=%d",
+                rt_dm_dev_get_name(&i2c->parent.parent),
+                i2c->clk->cell->name,
+                rt_clk_cell_is_enabled(i2c->clk->cell),
+                clk_parent ? clk_parent->cell->name : "<none>",
+                clk_parent ? rt_clk_cell_is_enabled(clk_parent->cell) : 1);
+        err = -RT_EIO;
+
+        goto _disable_clocks;
+    }
+
+    clk_rate = rt_clk_get_rate(i2c->clk);
+    pclk_rate = rt_clk_get_rate(i2c->pclk);
+
+    if (!i2c->timing_valid ||
+            (i2c->soc_data->calc_timings == rk3x_i2c_v1_calc_timings &&
+            (!(i2c->timing_clkdiv & 0xffff) ||
+            !(i2c->timing_clkdiv >> 16))))
+    {
+        if ((err = rk3x_i2c_adapt_div(i2c, clk_rate)))
+        {
+            LOG_E("%s failed to refresh timing: %s",
+                    rt_dm_dev_get_name(&i2c->parent.parent),
+                    rt_strerror(err));
+
+            goto _disable_clocks;
+        }
+    }
+
+    level = rt_spin_lock_irqsave(&i2c->lock);
 
     rk3x_i2c_hw_idle(i2c);
 
@@ -1166,17 +1338,31 @@ static rt_ssize_t rk3x_i2c_master_xfer(struct rt_i2c_bus_device *bus,
 
         rt_completion_init(&i2c->done);
 
+        if ((err = rk3x_i2c_start(i2c)))
+        {
+            rk3x_i2c_hw_idle(i2c);
+            res = err;
+
+            break;
+        }
+
         rt_spin_unlock_irqrestore(&i2c->lock, level);
-
-        rk3x_i2c_start(i2c);
-
         timeout_err = rt_completion_wait(&i2c->done, rt_tick_from_millisecond(WAIT_TIMEOUT));
 
         level = rt_spin_lock_irqsave(&i2c->lock);
 
         if (timeout_err)
         {
-            LOG_E("timeout, ipd: 0x%02x, state: %d", i2c_readl(i2c, REG_IPD), i2c->state);
+            LOG_E("%s timeout addr=0x%02x state=%d clk=%lu pclk=%lu "
+                    "con=0x%08x div=0x%08x expected=0x%08x "
+                    "ien=0x%03x ipd=0x%03x fcnt=%u",
+                    rt_dm_dev_get_name(&i2c->parent.parent), i2c->msg->addr,
+                    i2c->state, (unsigned long)clk_rate,
+                    (unsigned long)pclk_rate,
+                    i2c_readl(i2c, REG_CON), i2c_readl(i2c, REG_CLKDIV),
+                    i2c->timing_clkdiv,
+                    i2c_readl(i2c, REG_IEN), i2c_readl(i2c, REG_IPD),
+                    i2c_readl(i2c, REG_FCNT));
 
             /* Force a STOP condition without interrupt */
             i2c_writel(i2c, 0, REG_IEN);
@@ -1201,15 +1387,16 @@ static rt_ssize_t rk3x_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     rk3x_i2c_disable_irq(i2c);
     rk3x_i2c_disable(i2c);
 
+    rt_spin_unlock_irqrestore(&i2c->lock, level);
+
+_disable_clocks:
     if (!rt_is_err_or_null(i2c->pclk) && i2c->pclk != i2c->clk)
     {
         rt_clk_disable(i2c->pclk);
     }
     rt_clk_disable(i2c->clk);
 
-    rt_spin_unlock_irqrestore(&i2c->lock, level);
-
-    return res < 0 ? res : num;
+    return err ? err : (res < 0 ? res : num);
 }
 
 const static struct rt_i2c_bus_device_ops rk3x_i2c_ops =
@@ -1337,6 +1524,7 @@ static rt_err_t rk3x_i2c_probe(struct rt_platform_device *pdev)
 
     i2c->soc_data = pdev->id->data;
     i2c_timings_ofw_parse(dev->ofw_node, &i2c->timings, RT_TRUE);
+    rt_spin_lock_init(&i2c->lock);
 
     i2c->regs = rt_dm_dev_iomap(dev, 0);
 
@@ -1439,12 +1627,16 @@ static rt_err_t rk3x_i2c_probe(struct rt_platform_device *pdev)
         goto _fail;
     }
 
-    rk3x_i2c_adapt_div(i2c, rt_clk_get_rate(i2c->clk));
+    err = rk3x_i2c_adapt_div(i2c, rt_clk_get_rate(i2c->clk));
     rt_clk_disable(i2c->clk);
+
+    if (err)
+    {
+        goto _fail;
+    }
 
     i2c->autostop_supported = rk3x_i2c_use_autostop(i2c);
 
-    rt_spin_lock_init(&i2c->lock);
     rt_completion_init(&i2c->done);
 
     if (id >= 0)

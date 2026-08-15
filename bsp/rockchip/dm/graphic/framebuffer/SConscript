@@ -1,0 +1,35 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd]
+
+if GetDepend(['RT_GRAPHIC_FB_VOP2']):
+    src += ['fb-vop2.c', 'fb-vop2-vp.c']
+
+if GetDepend(['RT_GRAPHIC_FB_VOP1']):
+    src += ['fb-vop1.c']
+
+if GetDepend(['RT_GRAPHIC_FB_VOPL']):
+    src += ['fb-vopl.c']
+
+if GetDepend(['RT_GRAPHIC_DISPLAY_ROCKCHIP']):
+    src += ['display-timing.c', 'display-route.c', 'display-rockchip.c']
+
+if GetDepend(['RT_GRAPHIC_CONNECTOR_DSI']):
+    src += ['dsi-rockchip.c']
+
+if GetDepend(['RT_GRAPHIC_CONNECTOR_DSI2']):
+    src += ['dsi2-rockchip.c']
+
+if GetDepend(['RT_GRAPHIC_CONNECTOR_HDMI']):
+    src += ['hdmi-rockchip.c']
+
+if GetDepend(['RT_GRAPHIC_PANEL_SIMPLE']):
+    src += ['panel-simple.c']
+
+if src:
+    group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

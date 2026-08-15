@@ -587,6 +587,18 @@ static rt_err_t rockchip_iodomain_probe(struct rt_platform_device *pdev)
 
         if (!reg)
         {
+            char prop_name[64];
+            rt_phandle phandle;
+
+            rt_snprintf(prop_name, sizeof(prop_name), "%s-supply", supply_name);
+            if (!rt_ofw_prop_read_u32(np, prop_name, &phandle))
+            {
+                /* The referenced provider is registered later (for example,
+                 * an I2C PMIC). Keep this device unbound so it can be retried. */
+                err = -RT_EBUSY;
+                goto _fail;
+            }
+
             continue;
         }
 
@@ -695,4 +707,5 @@ static int rockchip_iodomain_register(void)
 
     return 0;
 }
-INIT_PREV_EXPORT(rockchip_iodomain_register);
+/* PMIC-backed regulators are registered at INIT_DEVICE (level 3). */
+INIT_EXPORT(rockchip_iodomain_register, "3.9");
