@@ -1,0 +1,13 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_DVFS_RASPBERRY_CPUFREQ']):
+    src += ['dvfs-raspberrypi-cpufreq.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_DVFS'], CPPPATH = CPPPATH)
+
+Return('group')

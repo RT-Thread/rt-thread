@@ -1,0 +1,5 @@
+config RT_GRAPHIC_BACKLIGHT_RPI
+    bool "Raspberry Pi display firmware driven backlight"
+    depends on RT_GRAPHIC_BACKLIGHT
+    depends on RT_FIRMWARE_RASPBERRYPI
+    default n

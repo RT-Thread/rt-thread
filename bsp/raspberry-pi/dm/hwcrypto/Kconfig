@@ -1,0 +1,14 @@
+config RT_HWCRYPTO_RNG_BCM2835
+    bool "Broadcom BCM2835/BCM63xx Random Number Generator support"
+    depends on RT_USING_DM
+    depends on RT_USING_HWCRYPTO
+    depends on RT_HWCRYPTO_USING_RNG
+    depends on RT_USING_RESET
+    default n
+
+config RT_HWCRYPTO_RNG_IPROC_RNG200
+    bool "Broadcom iProc/STB RNG200 support"
+    depends on RT_USING_DM
+    depends on RT_USING_HWCRYPTO
+    depends on RT_HWCRYPTO_USING_RNG
+    default n

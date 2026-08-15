@@ -12,6 +12,12 @@ config RT_DMA_PL330
     depends on RT_USING_RESET
     default n
 
+config RT_DMA_DW_AXI_DMAC
+    bool "Synopsys DesignWare AXI DMA"
+    depends on RT_USING_DMA
+    depends on RT_USING_CLK
+    default n
+
 if RT_USING_DMA
     osource "$(SOC_DM_DMA_DIR)/Kconfig"
 endif

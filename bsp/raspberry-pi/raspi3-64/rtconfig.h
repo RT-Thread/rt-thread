@@ -7,17 +7,6 @@
 
 /* rt_vsnprintf options */
 
-#define RT_KLIBC_USING_VSNPRINTF_LONGLONG
-#define RT_KLIBC_USING_VSNPRINTF_STANDARD
-#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
-#define RT_KLIBC_USING_VSNPRINTF_EXPONENTIAL_SPECIFIERS
-#define RT_KLIBC_USING_VSNPRINTF_WRITEBACK_SPECIFIER
-#define RT_KLIBC_USING_VSNPRINTF_CHECK_NUL_IN_FORMAT_SPECIFIER
-#define RT_KLIBC_USING_VSNPRINTF_INTEGER_BUFFER_SIZE 32
-#define RT_KLIBC_USING_VSNPRINTF_DECIMAL_BUFFER_SIZE 32
-#define RT_KLIBC_USING_VSNPRINTF_FLOAT_PRECISION 6
-#define RT_KLIBC_USING_VSNPRINTF_MAX_INTEGRAL_DIGITS_FOR_DECIMAL 9
-#define RT_KLIBC_USING_VSNPRINTF_LOG10_TAYLOR_TERMS 4
 /* end of rt_vsnprintf options */
 
 /* rt_vsscanf options */
@@ -72,8 +61,9 @@
 
 /* end of rt_strnlen options */
 /* end of klibc options */
-#define RT_NAME_MAX 12
-#define RT_CPUS_NR 1
+#define RT_NAME_MAX 24
+#define RT_USING_SMP
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -84,9 +74,12 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 8192
+#define SYSTEM_THREAD_STACK_SIZE 8192
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 4096
+#define RT_TIMER_THREAD_STACK_SIZE 8192
+#define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -117,11 +110,13 @@
 /* end of Memory Management */
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
+#define RT_USING_INTERRUPT_INFO
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 512
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_USING_CONSOLE_OUTPUT_CTL
 #define RT_VER_NUM 0x50300
+#define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
 
@@ -131,6 +126,7 @@
 #define ARCH_RAM_OFFSET 0
 #define ARCH_SECONDARY_CPU_STACK_SIZE 4096
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+#define ARCH_USING_GENERIC_CPUID
 #define ARCH_HEAP_SIZE 0x4000000
 #define ARCH_INIT_PAGE_SIZE 0x200000
 /* end of AArch64 Architecture Configuration */
@@ -142,20 +138,21 @@
 #define ARCH_ARM_MMU
 #define ARCH_ARMV8
 #define ARCH_USING_ASID
+#define ARCH_USING_HW_THREAD_SELF
 #define ARCH_USING_IRQ_CTX_LIST
 
 /* RT-Thread Components */
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-#define RT_MAIN_THREAD_STACK_SIZE 4096
+#define RT_MAIN_THREAD_STACK_SIZE 8192
 #define RT_MAIN_THREAD_PRIORITY 10
 #define RT_USING_MSH
 #define RT_USING_FINSH
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_THREAD_STACK_SIZE 8192
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
@@ -171,9 +168,7 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 2
-#define DFS_FILESYSTEM_TYPES_MAX 2
+#define RT_USING_DFS_V2
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -195,25 +190,79 @@
 
 /* Device Drivers */
 
+#define RT_USING_DM
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
+#define RT_USING_SYSTEM_WORKQUEUE
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 8192
+#define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_BYPASS
+#define RT_SERIAL_PL011
+#define RT_SERIAL_8250
+#define RT_SERIAL_8250_BCM2835AUX
 #define RT_USING_CLOCK_TIME
+#define RT_CLOCK_TIME_ARM_ARCH
+#define RT_CLOCK_TIME_BCM2835
 #define RT_USING_I2C
 #define RT_I2C_DEBUG
-#define RT_USING_I2C_BITOPS
+#define RT_I2C_BCM2835
+#define RT_USING_NULL
+#define RT_USING_ZERO
+#define RT_USING_RANDOM
+#define RT_USING_PWM
+#define RT_PWM_BCM2835
+#define RT_USING_MTD_NOR
+#define RT_USING_MTD_NOR_SPI
+#define RT_USING_RTC
+#define RT_USING_ALARM
+#define RT_ALARM_STACK_SIZE 8192
+#define RT_ALARM_TIMESLICE 5
+#define RT_ALARM_PRIORITY 10
+#define RT_RTC_DS1307
 #define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 2048
+#define RT_SDIO_STACK_SIZE 8192
 #define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 4096
+#define RT_MMCSD_STACK_SIZE 8192
 #define RT_MMCSD_THREAD_PRIORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
-#define RT_SDIO_DEBUG
+#define RT_USING_SDHCI
+#define RT_SDIO_SDHCI_IPROC
 #define RT_USING_SPI
 #define RT_USING_SPI_ISR
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_SPI_MAX_HZ 50000000
+#define RT_SPI_BCM2835
 #define RT_USING_WDT
+#define RT_WDT_BCM2835
+#define RT_USING_AUDIO
+#define RT_AUDIO_REPLAY_MP_BLOCK_SIZE 4096
+#define RT_AUDIO_REPLAY_MP_BLOCK_COUNT 2
+#define RT_AUDIO_RECORD_PIPE_SIZE 2048
+#define RT_AUDIO_BCM2835_I2S
+#define RT_USING_LCD
+#define RT_USING_GRAPHIC
+#define RT_GRAPHIC_FB
+#define RT_GRAPHIC_FB_BCM2708
+#define RT_GRAPHIC_LOGO
+#define RT_GRAPHIC_LOGO_RASPI_CLUT224
+#define RT_GRAPHIC_LOGO_RASPI_CLUT224_PATH "../dm/graphic/logo/logo-raspi-clut224.ppm"
+#define RT_USING_HWCRYPTO
+#define RT_HWCRYPTO_DEFAULT_NAME "hwcryto"
+#define RT_HWCRYPTO_IV_MAX_SIZE 16
+#define RT_HWCRYPTO_KEYBIT_MAX_SIZE 256
+#define RT_HWCRYPTO_USING_RNG
+#define RT_HWCRYPTO_RNG_BCM2835
+#define RT_USING_LED
+#define RT_LED_GPIO
+#define RT_USING_MBOX
+#define RT_MBOX_BCM2835
+#define RT_USING_PHYE
+#define RT_PHYE_GENERIC_USB
 #define RT_USING_BLK
 
 /* Partition Types */
@@ -221,7 +270,53 @@
 #define RT_BLK_PARTITION_DFS
 #define RT_BLK_PARTITION_EFI
 /* end of Partition Types */
+#define RT_USING_FIRMWARE
+#define RT_FIRMWARE_RASPBERRYPI
+#define RT_USING_REGULATOR
+#define RT_REGULATOR_FIXED
+#define RT_REGULATOR_GPIO
+#define RT_USING_RESET
+
+/* Power Management (PM) Domains device drivers */
+
+#define RT_PMDOMAIN_BCM2835
+#define RT_PMDOMAIN_RASPBERRYPI
+/* end of Power Management (PM) Domains device drivers */
+#define RT_USING_THERMAL
+
+/* Thermal Sensors Drivers */
+
+#define RT_THERMAL_BCM2835
+
+/* Thermal Cool Drivers */
+
+#define RT_USING_NVMEM
+#define RT_NVMEM_RASPBERRYPI_OTP
+#define RT_USING_DMA
+#define RT_DMA_BCM2835
+#define RT_USING_MFD
+#define RT_MFD_SYSCON
+#define RT_MFD_BCM2835_PM
+#define RT_USING_OFW
+#define RT_FDT_EARLYCON_MSG_SIZE 128
+#define RT_USING_OFW_BUS_RANGES_NUMBER 8
+#define RT_USING_PIC
+#define MAX_HANDLERS 256
+#define RT_PIC_BCM2835_INTC
+#define RT_PIC_BCM2836_L1_INTC
 #define RT_USING_PIN
+#define RT_PIN_BCM_VIRT
+#define RT_PIN_RASPBERRYPI_EXP
+#define RT_USING_PINCTRL
+#define RT_PINCTRL_BCM2835
+#define RT_USING_CLK
+#define RT_CLK_BCM2835
+#define RT_CLK_RASPBERRYPI
+
+/* SoC (System on Chip) Drivers */
+
+#define RT_SOC_BROADCOM_RASPBERRYPI_VOLTAGE_MONITOR
+/* end of SoC (System on Chip) Drivers */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -239,6 +334,14 @@
 
 /* POSIX (Portable Operating System Interface) layer */
 
+#define RT_USING_POSIX_FS
+#define RT_USING_POSIX_DEVIO
+#define RT_USING_POSIX_STDIO
+#define RT_USING_POSIX_POLL
+#define RT_USING_POSIX_TERMIOS
+#define RT_USING_POSIX_DELAY
+#define RT_USING_POSIX_CLOCK
+#define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 
@@ -251,6 +354,68 @@
 
 /* Network */
 
+#define RT_USING_SAL
+#define SAL_INTERNET_CHECK
+#define SOCKET_TABLE_STEP_LEN 4
+
+/* Docking with protocol stacks */
+
+#define SAL_USING_LWIP
+/* end of Docking with protocol stacks */
+#define SAL_USING_POSIX
+#define RT_USING_NETDEV
+#define NETDEV_USING_IFCONFIG
+#define NETDEV_USING_PING
+#define NETDEV_USING_NETSTAT
+#define NETDEV_USING_AUTO_DEFAULT
+#define NETDEV_IPV4 1
+#define NETDEV_IPV6 0
+#define RT_USING_LWIP
+#define RT_USING_LWIP212
+#define RT_USING_LWIP_VER_NUM 0x20102
+#define RT_LWIP_MEM_ALIGNMENT 8
+#define RT_LWIP_IGMP
+#define RT_LWIP_ICMP
+#define RT_LWIP_DNS
+#define RT_LWIP_DHCP
+#define IP_SOF_BROADCAST 1
+#define IP_SOF_BROADCAST_RECV 1
+
+/* Static IPv4 Address */
+
+#define RT_LWIP_IPADDR "192.168.1.30"
+#define RT_LWIP_GWADDR "192.168.1.1"
+#define RT_LWIP_MSKADDR "255.255.255.0"
+/* end of Static IPv4 Address */
+#define RT_LWIP_UDP
+#define RT_LWIP_TCP
+#define RT_LWIP_RAW
+#define RT_MEMP_NUM_NETCONN 8
+#define RT_LWIP_PBUF_NUM 16
+#define RT_LWIP_RAW_PCB_NUM 4
+#define RT_LWIP_UDP_PCB_NUM 4
+#define RT_LWIP_TCP_PCB_NUM 4
+#define RT_LWIP_TCP_SEG_NUM 40
+#define RT_LWIP_TCP_SND_BUF 8196
+#define RT_LWIP_TCP_WND 8196
+#define RT_LWIP_TCPTHREAD_PRIORITY 10
+#define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
+#define RT_LWIP_TCPTHREAD_STACKSIZE 16384
+#define LWIP_NO_RX_THREAD
+#define LWIP_NO_TX_THREAD
+#define RT_LWIP_ETHTHREAD_PRIORITY 12
+#define RT_LWIP_ETHTHREAD_STACKSIZE 8192
+#define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
+#define LWIP_NETIF_STATUS_CALLBACK 1
+#define LWIP_NETIF_LINK_CALLBACK 1
+#define RT_LWIP_NETIF_NAMESIZE 6
+#define SO_REUSE 1
+#define LWIP_SO_RCVTIMEO 1
+#define LWIP_SO_SNDTIMEO 1
+#define LWIP_SO_RCVBUF 1
+#define LWIP_SO_LINGER 0
+#define LWIP_NETIF_LOOPBACK 0
+#define RT_LWIP_USING_PING
 /* end of Network */
 
 /* Memory protection */
@@ -259,6 +424,7 @@
 
 /* Utilities */
 
+#define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
 #define RT_USING_ADT_BITMAP
@@ -270,6 +436,8 @@
 
 #define RT_PAGE_AFFINITY_BLOCK_SIZE 0x1000
 #define RT_PAGE_MAX_ORDER 11
+#define RT_USING_MEMBLOCK
+#define RT_INIT_MEMORY_REGIONS 128
 
 /* Debugging */
 
@@ -406,14 +574,6 @@
 /* GD32 Drivers */
 
 /* end of GD32 Drivers */
-
-/* HPMicro SDK */
-
-/* end of HPMicro SDK */
-
-/* FT32 HAL & SDK Drivers */
-
-/* end of FT32 HAL & SDK Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */
@@ -493,35 +653,6 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
-#define BCM2836_SOC
 #define SOC_BCM283x
-
-/* Hardware Drivers Config */
-
-/* BCM Peripheral Drivers */
-
-#define BSP_USING_UART
-#define RT_USING_UART1
-#define BSP_USING_PIN
-#define BSP_USING_CORETIMER
-#define BSP_USING_SYSTIMER
-#define RT_USING_SYSTIMER1
-#define RT_USING_SYSTIMER3
-#define BSP_USING_I2C
-#define BSP_USING_I2C1
-#define BSP_USING_SPI
-#define BSP_USING_SPI0_BUS
-#define BSP_USING_SPI0_DEVICE0
-#define BSP_USING_WDT
-#define BSP_USING_SDIO
-#define BSP_USING_SDIO0
-/* end of BCM Peripheral Drivers */
-
-/* Board Peripheral Drivers */
-
-#define BSP_USING_HDMI
-#define BSP_USING_HDMI_DISPLAY
-/* end of Board Peripheral Drivers */
-/* end of Hardware Drivers Config */
 
 #endif

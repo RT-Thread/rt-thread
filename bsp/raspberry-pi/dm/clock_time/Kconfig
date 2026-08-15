@@ -1,0 +1,3 @@
+config RT_CLOCK_TIME_BCM2835
+    bool "BCM2835 Timer"
+    default y

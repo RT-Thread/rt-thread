@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/sdio']
+
+if GetDepend(['RT_SDIO_SDHCI_BRCMSTB']):
+    src += ['sdhci-brcmstb.c']
+
+if GetDepend(['RT_SDIO_SDHCI_IPROC']):
+    src += ['sdhci-iproc.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
