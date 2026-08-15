@@ -7,3 +7,20 @@ config RT_PHYE_ROCKCHIP_SNPS_PCIE3
     bool "Snps PCIe3 PHY Driver"
     depends on RT_MFD_SYSCON
     default n
+
+config RT_PHYE_ROCKCHIP_INNO_USB2
+    bool "Rockchip Inno USB2 PHY Driver"
+    depends on RT_MFD_SYSCON
+    default n
+
+config RT_PHYE_ROCKCHIP_MIPI_DCPHY
+    bool "Rockchip Samsung MIPI DCPHY (rk3576/rk3588 DSI)"
+    depends on RT_USING_PHYE
+    depends on RT_USING_CLK
+    default n
+
+config RT_PHYE_ROCKCHIP_INNO_DSIDPHY
+    bool "Rockchip Innosilicon MIPI DSI DPHY (rk3568)"
+    depends on RT_USING_PHYE
+    depends on RT_USING_CLK
+    default n

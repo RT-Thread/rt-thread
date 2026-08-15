@@ -348,11 +348,11 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟡 Rockchip
 
-| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT | HWTimer | PWM | RTC | SDIO | CAN | PCI |
-|----------|------|------|-----|-----|-----|-----|---------|-----|-----|------|-----|------|
-| [rk2108](rockchip/rk2108) | - | ✅ | - | - | - | - | - | - | - | - | - | - |
-| [rk3300](rockchip/rk3300) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - |
-| [rk3500](rockchip/rk3500) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT | HWTimer | PWM | RTC | SDIO | CAN | PCI | DMA | Ethernet | Audio | Display | Crypto |
+|----------|------|------|-----|-----|-----|-----|---------|-----|-----|------|-----|-----|-----|----------|-------|---------|--------|
+| [rk2108](rockchip/rk2108) | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [rk3300](rockchip/rk3300) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [rk3500](rockchip/rk3500) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟡 APM32
 
