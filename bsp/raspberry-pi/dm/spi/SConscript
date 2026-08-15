@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend('RT_SPI_BCM2835'):
+    src += ['spi-bcm2835.c']
+
+if GetDepend('RT_SPI_BCM2835AUX'):
+    src += ['spi-bcm2835aux.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

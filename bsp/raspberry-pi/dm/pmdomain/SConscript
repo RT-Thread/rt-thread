@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_PMDOMAIN_BCM2835']):
+    src += ['pm-domain-bcm2835.c']
+
+if GetDepend(['RT_PMDOMAIN_RASPBERRYPI']):
+    src += ['pm-domain-raspberrypi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,0 +1,19 @@
+config RT_CLK_BCM2711_DVP
+    bool "Broadcom BCM2711 DVP support"
+    depends on RT_USING_OFW
+    default n
+
+config RT_CLK_BCM2835
+    bool "Broadcom BCM2835 clock support"
+    depends on RT_USING_OFW
+    default n
+
+config RT_CLK_RASPBERRYPI
+    bool "Raspberry Pi firmware based clock support"
+    depends on RT_USING_OFW
+    default n
+
+config RT_CLK_RP1
+    bool "RP1 clock support"
+    depends on RT_USING_OFW
+    default n

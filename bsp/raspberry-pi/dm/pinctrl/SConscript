@@ -1,0 +1,19 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_PINCTRL_BCM2712']):
+    src += ['pinctrl-bcm2712.c']
+
+if GetDepend(['RT_PINCTRL_BCM2835']):
+    src += ['pinctrl-bcm2835.c']
+
+if GetDepend(['RT_PINCTRL_RP1']):
+    src += ['pinctrl-rp1.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

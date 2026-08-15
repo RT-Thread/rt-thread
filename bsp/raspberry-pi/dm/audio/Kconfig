@@ -1,0 +1,4 @@
+config RT_AUDIO_BCM2835_I2S
+    bool "Broadcom BCM2835 I2S"
+    depends on RT_USING_DMA
+    default n

@@ -1,0 +1,22 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_CLK_BCM2711_DVP']):
+    src += ['clk-bcm2711-dvp.c']
+
+if GetDepend(['RT_CLK_BCM2835']):
+    src += ['clk-bcm2835-aux.c', 'clk-bcm2835.c', 'clk-dsi.c']
+
+if GetDepend(['RT_CLK_RASPBERRYPI']):
+    src += ['clk-raspberrypi.c']
+
+if GetDepend(['RT_CLK_RP1']):
+    src += ['clk-rp1.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

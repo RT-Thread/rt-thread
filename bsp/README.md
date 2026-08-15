@@ -271,14 +271,14 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟡 Raspberry Pi
 
-| BSP Name | GPIO | UART | I2C | SPI | RTC | SD Card | SDIO | MailBox | WDT | SMP | HDMI | Timer | Bluetooth | Ethernet | MIPI DSI | ILI9486 SPI LCD | XPT2046 TOUCH |
-|----------|------|------|-----|-----|-----|---------|------|---------|-----|-----|------|-------|-----------|----------|----------|-----------------|----------------|
-| [raspi-dm2.0](raspberry-pi/raspi-dm2.0) | - | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | - | - | - | - |
-| [raspi2](raspberry-pi/raspi2) | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-| [raspi3-32](raspberry-pi/raspi3-32) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - |
-| [raspi3-64](raspberry-pi/raspi3-64) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | - | - | - | - |
-| [raspi4-32](raspberry-pi/raspi4-32) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [raspi4-64](raspberry-pi/raspi4-64) | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | - |
+| BSP Name | GPIO | UART | I2C | SPI | RTC | SD Card | SDIO | MailBox | WDT | SMP | HDMI | Timer | Bluetooth | Ethernet | PCIe | DMA | ADC | PWM | MIPI DSI | ILI9486 SPI LCD | XPT2046 TOUCH |
+|----------|------|------|-----|-----|-----|---------|------|---------|-----|-----|------|-------|-----------|----------|------|-----|-----|-----|----------|-----------------|----------------|
+| [raspi2](raspberry-pi/raspi2) | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [raspi3-32](raspberry-pi/raspi3-32) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [raspi3-64](raspberry-pi/raspi3-64) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | ✅ | - | ✅ | - | - | - |
+| [raspi4-32](raspberry-pi/raspi4-32) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | ✅ |
+| [raspi4-64](raspberry-pi/raspi4-64) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ |
+| [raspi5](raspberry-pi/raspi5) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ |
 
 #### 🟡 AT32
 
