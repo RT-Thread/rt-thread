@@ -496,7 +496,7 @@ int driver_sdmmc_init(void)
 {
     int ret = -1;
     int i = 0;
-    rt_device_t device[SDMMC_CARD_NR];
+    int initialized = 0;
     int32_t used_card_no = 0x01;
     char name[12];
 
@@ -510,11 +510,27 @@ int driver_sdmmc_init(void)
 
     for (i = 0; i < SDMMC_CARD_NR; ++i)
     {
+        if ((used_card_no & (1U << i)) == 0)
+        {
+            continue;
+        }
+
         rt_sprintf(name, "sdmmc%d", i);
         dev_sdmmc[i].host_id = i;
-        ret = init_sdmmc_device(device[i], (void *)&dev_sdmmc[i], name);
+        ret = init_sdmmc_device(RT_NULL, (void *)&dev_sdmmc[i], name);
+        if (ret != RT_EOK)
+        {
+            return ret;
+        }
+        initialized++;
     }
-    return ret;
+
+    if (initialized == 0)
+    {
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
 }
 
 void sd_mmc1_init(void)

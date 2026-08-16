@@ -195,11 +195,6 @@
 #define RT_PAGECACHE_GC_STOP_LEVEL 70
 /* end of page cache config */
 /* end of DFS: device virtual file system */
-#define RT_USING_FAL
-#define FAL_USING_DEBUG
-#define FAL_PART_HAS_TABLE_CFG
-#define FAL_DEV_NAME_MAX 24
-#define FAL_DEV_BLK_MAX 6
 
 /* Device Drivers */
 
@@ -631,6 +626,14 @@
 
 /* SDMMC Devices */
 
+#define DRIVERS_SDMMC
+#define USE_SD
+#define USE_SDIO
+#define DETECT_CARD
+#define SDC_DMA_USED
+#define SDIO_IRQ_SUPPORT
+#define SDC_DMA_BUF_SIZE 64
+#define DRIVERS_SDC_CDPIN_PRESENT_VAL 0
 /* end of SDMMC Devices */
 
 /* SPI Devices */
