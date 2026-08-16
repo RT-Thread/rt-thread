@@ -128,7 +128,6 @@ void rt_hw_board_init(void)
     /* init hal hardware */
     hal_clock_init();
     hal_gpio_init();
-    hal_uart_init(0);
     hal_dma_init();
 
     /* init rtthread hardware */
@@ -137,7 +136,7 @@ void rt_hw_board_init(void)
 
 #ifdef RT_USING_CONSOLE
     /* set console device */
-    rt_console_set_device("uart");
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif /* RT_USING_CONSOLE */
 
 #ifdef RT_USING_COMPONENTS_INIT
