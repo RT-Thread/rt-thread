@@ -40,6 +40,13 @@
 #define EXAMPLE_FLEXSPI_CLOCK           kCLOCK_Flexspi1
 #define FLASH_PORT                      kFLEXSPI_PortA1
 
+/* DMA related. */
+#define FLEXSPI_DMA                   (DMA4)
+#define FLEXSPI_TX_DMA_REQUEST_SOURCE kDma4RequestMuxFlexSPI1Tx
+#define FLEXSPI_RX_DMA_REQUEST_SOURCE kDma4RequestMuxFlexSPI1Rx
+#define FLEXSPI_TX_DMA_CHANNEL        0U
+#define FLEXSPI_RX_DMA_CHANNEL        2U
+
 #define NOR_CMD_LUT_SEQ_IDX_READ_NORMAL        7
 #define NOR_CMD_LUT_SEQ_IDX_READ_FAST          13
 #define NOR_CMD_LUT_SEQ_IDX_READ_FAST_QUAD     0
