@@ -2202,6 +2202,7 @@ int dfs_file_rename(const char *old_file, const char *new_file)
  * @return int Operation result:
  *         - 0 on success
  *         -EBADF if invalid file descriptor
+ *         -EISDIR if the file is a directory (directories cannot be truncated)
  *         -ENOSYS if truncate operation not supported
  *         -EINVAL if invalid parameters or not mounted
  *
@@ -2214,6 +2215,11 @@ int dfs_file_ftruncate(struct dfs_file *file, off_t length)
 
     if (file)
     {
+        if (file->vnode->type == FT_DIRECTORY)
+        {
+            return -EISDIR;
+        }
+
         if (file->fops->truncate)
         {
             if (dfs_is_mounted(file->vnode->mnt) == 0)

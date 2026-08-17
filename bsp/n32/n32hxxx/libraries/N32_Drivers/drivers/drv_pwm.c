@@ -82,9 +82,9 @@ enum
 struct n32_pwm
 {
     struct rt_device_pwm pwm_device;
-    TIM_Module          *timer;
-    rt_uint8_t           channel;     /* bitmask: bit0=CH1, bit1=CH2, bit2=CH3, bit3=CH4 */
-    char                *name;
+    TIM_Module *timer;
+    rt_uint8_t channel;     /* bitmask: bit0=CH1, bit1=CH2, bit2=CH3, bit3=CH4 */
+    char *name;
 };
 
 static struct n32_pwm n32_pwm_obj[] = {
@@ -147,7 +147,7 @@ static struct n32_pwm n32_pwm_obj[] = {
 
 static rt_uint64_t tim_clock_get(TIM_Module *timer)
 {
-    rt_uint32_t       tim_div;
+    rt_uint32_t tim_div;
     RCC_ClocksTypeDef RCC_Clocks;
 
     n32_tim_ahbx_div_get(timer, &tim_div);
@@ -202,7 +202,7 @@ static rt_err_t drv_pwm_get(struct n32_pwm *pwm, struct rt_pwm_configuration *co
     tim_clock /= 1000000UL;
 
     period = TIM_GetAutoReload(pwm->timer) + 1;
-    psc    = TIM_GetPrescaler(pwm->timer) + 1;
+    psc = TIM_GetPrescaler(pwm->timer) + 1;
 
     /* period (ns) = (ARR+1) * (PSC+1) * 1000 / tim_clock_MHz */
     configuration->period = period * psc * 1000UL / tim_clock;
@@ -238,13 +238,13 @@ static rt_err_t drv_pwm_set(struct n32_pwm *pwm, struct rt_pwm_configuration *co
     rt_uint32_t tim_ch = 0x04 * (configuration->channel - 1);
 
     tim_clock = tim_clock_get(pwm->timer);
-    temp      = tim_clock;
+    temp = tim_clock;
     /* Convert to MHz */
     tim_clock /= 1000000UL;
 
     /* Calculate period and prescaler from requested period (ns) */
     period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL;
-    psc    = period / MAX_PERIOD + 1;
+    psc = period / MAX_PERIOD + 1;
     period = period / psc;
 
     /* Set prescaler */
@@ -297,11 +297,11 @@ static rt_err_t drv_pwm_set_period(struct n32_pwm *pwm, struct rt_pwm_configurat
     rt_uint32_t period;
     rt_uint64_t tim_clock, psc;
 
-    tim_clock  = tim_clock_get(pwm->timer);
+    tim_clock = tim_clock_get(pwm->timer);
     tim_clock /= 1000000UL;
 
     period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL;
-    psc    = period / MAX_PERIOD + 1;
+    psc = period / MAX_PERIOD + 1;
     period = period / psc;
 
     TIM_ConfigPrescaler(pwm->timer, (uint32_t)(psc - 1), TIM_PSC_RELOAD_MODE_UPDATE);
@@ -320,11 +320,11 @@ static rt_err_t drv_pwm_set_pulse(struct n32_pwm *pwm, struct rt_pwm_configurati
     rt_uint32_t period, pulse;
     rt_uint64_t tim_clock;
 
-    tim_clock  = tim_clock_get(pwm->timer);
+    tim_clock = tim_clock_get(pwm->timer);
     tim_clock /= 1000000UL;
 
     period = (TIM_GetAutoReload(pwm->timer) + 1) * (TIM_GetPrescaler(pwm->timer) + 1) * 1000UL / tim_clock;
-    pulse  = (rt_uint64_t)configuration->pulse * (TIM_GetAutoReload(pwm->timer) + 1) / period;
+    pulse = (rt_uint64_t)configuration->pulse * (TIM_GetAutoReload(pwm->timer) + 1) / period;
 
     if (pulse < MIN_PULSE)
     {
@@ -359,7 +359,7 @@ static rt_err_t drv_pwm_set_pulse(struct n32_pwm *pwm, struct rt_pwm_configurati
 static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
 {
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
-    struct n32_pwm              *pwm           = (struct n32_pwm *)device->parent.user_data;
+    struct n32_pwm *pwm = (struct n32_pwm *)device->parent.user_data;
 
     switch (cmd)
     {
@@ -388,13 +388,13 @@ static void drv_pwm_channel_init(TIM_Module *timer, rt_uint32_t channel_idx, rt_
     OCInitType TIM_OCInitStructure;
 
     TIM_InitOcStruct(&TIM_OCInitStructure);
-    TIM_OCInitStructure.OCMode       = oc_mode;
-    TIM_OCInitStructure.OutputState  = TIM_OUTPUT_STATE_ENABLE;
+    TIM_OCInitStructure.OCMode = oc_mode;
+    TIM_OCInitStructure.OutputState = TIM_OUTPUT_STATE_ENABLE;
     TIM_OCInitStructure.OutputNState = TIM_OUTPUT_NSTATE_DISABLE;
-    TIM_OCInitStructure.Pulse        = 0;
-    TIM_OCInitStructure.OCPolarity   = TIM_OC_POLARITY_HIGH;
-    TIM_OCInitStructure.OCNPolarity  = TIM_OCN_POLARITY_HIGH;
-    TIM_OCInitStructure.OCIdleState  = TIM_OC_IDLE_STATE_RESET;
+    TIM_OCInitStructure.Pulse = 0;
+    TIM_OCInitStructure.OCPolarity = TIM_OC_POLARITY_HIGH;
+    TIM_OCInitStructure.OCNPolarity = TIM_OCN_POLARITY_HIGH;
+    TIM_OCInitStructure.OCIdleState = TIM_OC_IDLE_STATE_RESET;
     TIM_OCInitStructure.OCNIdleState = TIM_OCN_IDLE_STATE_RESET;
 
     switch (channel_idx)
@@ -425,9 +425,9 @@ static void drv_pwm_channel_init(TIM_Module *timer, rt_uint32_t channel_idx, rt_
  */
 static rt_err_t n32_hw_pwm_init(struct n32_pwm *device)
 {
-    rt_err_t             result = RT_EOK;
+    rt_err_t result = RT_EOK;
     TIM_TimeBaseInitType TIM_TimeBaseStructure;
-    rt_uint32_t          i;
+    rt_uint32_t i;
 
     RT_ASSERT(device != RT_NULL);
 
@@ -436,11 +436,11 @@ static rt_err_t n32_hw_pwm_init(struct n32_pwm *device)
 
     /* Configure time base: default 1kHz, PWM mode */
     TIM_InitTimBaseStruct(&TIM_TimeBaseStructure);
-    TIM_TimeBaseStructure.Period      = 1000 - 1;
-    TIM_TimeBaseStructure.Prescaler   = 0;
-    TIM_TimeBaseStructure.ClkDiv      = TIM_CLK_DIV1;
+    TIM_TimeBaseStructure.Period = 1000 - 1;
+    TIM_TimeBaseStructure.Prescaler = 0;
+    TIM_TimeBaseStructure.ClkDiv = TIM_CLK_DIV1;
     TIM_TimeBaseStructure.CounterMode = TIM_CNT_MODE_UP;
-    TIM_TimeBaseStructure.RepetCnt    = 0;
+    TIM_TimeBaseStructure.RepetCnt = 0;
     TIM_InitTimeBase(device->timer, &TIM_TimeBaseStructure);
 
     /* Configure PWM output channels */
@@ -646,7 +646,7 @@ static void n32_pwm_get_channel(void)
 
 static int n32_pwm_init(void)
 {
-    int i      = 0;
+    int i = 0;
     int result = RT_EOK;
 
     n32_pwm_get_channel();

@@ -2,16 +2,19 @@ import os
 from building import *
 
 group = []
+cwd = GetCurrentDir()
 
 if GetDepend('ARCH_ARM_CORTEX_A') or GetDepend('ARCH_ARMV8') or GetDepend('ARCH_RISCV64'):
-    cwd  = GetCurrentDir()
     src = Glob('*.c') + Glob('*_gcc.S')
+    SrcRemove(src, ['ioremap-nommu.c'])
     if not GetDepend('RT_USING_MEMBLOCK'):
         SrcRemove(src, ['mm_memblock.c'])
 
     CPPPATH = [cwd]
 
     group = DefineGroup('Memm', src, depend = ['ARCH_MM_MMU'], CPPPATH = CPPPATH)
+elif GetDepend('RT_USING_OFW'):
+    group = DefineGroup('Memm', ['ioremap-nommu.c'], depend = ['RT_USING_OFW'], CPPPATH = [cwd])
 
 group = group + SConscript(os.path.join('utest', 'SConscript'))
 

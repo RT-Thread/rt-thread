@@ -10,6 +10,7 @@ else:
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 try:
     from building import *
+    import dtc
 except:
     print('Cannot found RT-Thread root directory, please check RTT_ROOT')
     print(RTT_ROOT)
@@ -34,6 +35,8 @@ if rtconfig.PLATFORM in ['iccarm']:
 Export('RTT_ROOT')
 Export('rtconfig')
 
+BSP_ROOT = os.path.abspath('./')
+env.Prepend(CPPPATH=[os.path.join(BSP_ROOT, 'board')])
 SDK_ROOT = os.path.abspath('./..')
 if os.path.exists(SDK_ROOT + '/libraries'):
     libraries_path_prefix = SDK_ROOT + '/libraries'
@@ -47,6 +50,28 @@ rtconfig.BSP_LIBRARY_TYPE = None
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
+
+if GetDepend('RT_USING_BUILTIN_FDT'):
+    if os.getenv('DTC_PATH'):
+        os.environ['PATH'] = os.path.dirname(os.getenv('DTC_PATH')) + \
+                os.pathsep + os.environ['PATH']
+
+    dtb_name = GetDepend('RT_BUILTIN_FDT_PATH').strip('"')
+    dts_name = os.path.splitext(dtb_name)[0] + '.dts'
+    dts_path = os.path.join(BSP_ROOT, dts_name)
+    dtc.dts_to_dtb(RTT_ROOT, [dts_name],
+            include_paths=[os.path.dirname(dts_path)])
+
+    if rtconfig.PLATFORM == 'gcc':
+        dtb_path = os.path.join(BSP_ROOT, dtb_name)
+        fdt_source = os.path.join(libraries_path_prefix, 'HAL_Drivers',
+                'drivers', 'dm', 'builtin_fdt_gcc.S')
+        fdt_object = env.Object(
+                target=os.path.join(BSP_ROOT, 'build', 'dts',
+                        'builtin_fdt_gcc.o'),
+                source=fdt_source)
+        env.Depends(fdt_object, dtb_path)
+        objs += fdt_object
 
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'),

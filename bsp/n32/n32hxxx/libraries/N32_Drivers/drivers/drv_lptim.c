@@ -44,9 +44,9 @@ enum
 struct n32_hw_lptimer
 {
     rt_clock_timer_t time_device;
-    LPTIM_Module    *timer;
-    IRQn_Type        tim_irqn;
-    char            *name;
+    LPTIM_Module *timer;
+    IRQn_Type tim_irqn;
+    char *name;
 };
 
 static struct n32_hw_lptimer n32_hw_lptimer_obj[] = {
@@ -143,17 +143,29 @@ static void n32_lptim_enable_clock(LPTIM_Module *timer)
 static uint32_t n32_lptim_get_exti_line(LPTIM_Module *timer)
 {
     if (timer == LPTIM1)
+    {
         return EXTI_LINE66;
+    }
     else if (timer == LPTIM2)
+    {
         return EXTI_LINE67;
+    }
     else if (timer == LPTIM3)
+    {
         return EXTI_LINE68;
+    }
     else if (timer == LPTIM4)
+    {
         return EXTI_LINE69;
+    }
     else if (timer == LPTIM5)
+    {
         return EXTI_LINE86;
+    }
     else
+    {
         return 0;
+    }
 }
 
 /**
@@ -163,13 +175,15 @@ static void n32_lptim_exti_config(LPTIM_Module *timer)
 {
     uint32_t exti_line = n32_lptim_get_exti_line(timer);
     if (exti_line == 0)
+    {
         return;
+    }
 
     EXTI_InitType EXTI_InitStructure;
     EXTI_InitStruct(&EXTI_InitStructure);
-    EXTI_InitStructure.EXTI_Line    = exti_line;
+    EXTI_InitStructure.EXTI_Line = exti_line;
     EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-    EXTI_InitStructure.EXTI_Mode    = EXTI_Mode_Interrupt;
+    EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
     EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising;
     EXTI_InitPeripheral(&EXTI_InitStructure);
 }
@@ -199,7 +213,7 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
     if (state)
     {
         struct n32_hw_lptimer *tim_device = rt_container_of(timer, struct n32_hw_lptimer, time_device);
-        LPTIM_Module          *lptim      = tim_device->timer;
+        LPTIM_Module *lptim = tim_device->timer;
 
         if (tim_device == RT_NULL)
         {
@@ -216,8 +230,7 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
         RCC_EnableLsi(ENABLE);
 
         /* Wait for LSI ready */
-        while (RCC_GetFlagStatus(RCC_FLAG_LSIRD) == RESET)
-            ;
+        while (RCC_GetFlagStatus(RCC_FLAG_LSIRD) == RESET);
 
         /* Select LSI as LPTIM clock source */
         n32_lptim_clock_source_config(lptim);
@@ -229,7 +242,7 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
         LPTIM_InitType lptim_init;
         LPTIM_StructInit(&lptim_init);
         lptim_init.ClockSource = LPTIM_CLK_SOURCE_INTERNAL;
-        lptim_init.Prescaler   = LPTIM_PRESCALER_DIV32;
+        lptim_init.Prescaler = LPTIM_PRESCALER_DIV32;
 
         if (LPTIM_Init(lptim, &lptim_init) != SUCCESS)
         {
@@ -262,7 +275,7 @@ static rt_err_t timer_start(rt_clock_timer_t *timer, rt_uint32_t t, rt_clock_tim
     }
 
     struct n32_hw_lptimer *tim_device = rt_container_of(timer, struct n32_hw_lptimer, time_device);
-    LPTIM_Module          *lptim      = tim_device->timer;
+    LPTIM_Module *lptim = tim_device->timer;
 
     if (tim_device == RT_NULL)
     {
@@ -310,7 +323,7 @@ static void timer_stop(rt_clock_timer_t *timer)
     }
 
     struct n32_hw_lptimer *tim_device = rt_container_of(timer, struct n32_hw_lptimer, time_device);
-    LPTIM_Module          *lptim      = tim_device->timer;
+    LPTIM_Module *lptim = tim_device->timer;
 
     if (tim_device == RT_NULL)
     {
@@ -355,7 +368,7 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
     }
 
     struct n32_hw_lptimer *tim_device = rt_container_of(timer, struct n32_hw_lptimer, time_device);
-    LPTIM_Module          *lptim      = tim_device->timer;
+    LPTIM_Module *lptim = tim_device->timer;
 
     if (tim_device == RT_NULL)
     {
@@ -474,11 +487,11 @@ void LPTIM5_WKUP_IRQHandler(void)
 #endif
 
 static const struct rt_clock_timer_ops _ops = {
-    .init      = timer_init,
-    .start     = timer_start,
-    .stop      = timer_stop,
+    .init = timer_init,
+    .start = timer_start,
+    .stop = timer_stop,
     .count_get = timer_counter_get,
-    .control   = timer_ctrl,
+    .control = timer_ctrl,
 };
 
 /**
@@ -486,13 +499,13 @@ static const struct rt_clock_timer_ops _ops = {
  */
 static int n32_hw_lptim_init(void)
 {
-    int i      = 0;
+    int i = 0;
     int result = RT_EOK;
 
     for (i = 0; i < sizeof(n32_hw_lptimer_obj) / sizeof(n32_hw_lptimer_obj[0]); i++)
     {
         n32_hw_lptimer_obj[i].time_device.info = &_info;
-        n32_hw_lptimer_obj[i].time_device.ops  = &_ops;
+        n32_hw_lptimer_obj[i].time_device.ops = &_ops;
         if (rt_clock_timer_register(&n32_hw_lptimer_obj[i].time_device,
                                     n32_hw_lptimer_obj[i].name, &n32_hw_lptimer_obj[i].timer) == RT_EOK)
         {

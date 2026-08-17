@@ -41,6 +41,7 @@ rt_err_t rt_bus_for_each_drv(rt_bus_t bus, void *data, int (*fn)(rt_driver_t drv
 
 rt_err_t rt_bus_add_driver(rt_bus_t bus, rt_driver_t drv);
 rt_err_t rt_bus_add_device(rt_bus_t bus, rt_device_t dev);
+rt_err_t rt_bus_probe_device(rt_device_t dev);
 rt_err_t rt_bus_remove_driver(rt_driver_t drv);
 rt_err_t rt_bus_remove_device(rt_device_t dev);
 

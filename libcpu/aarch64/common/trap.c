@@ -172,69 +172,6 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
 #ifndef RT_USING_PIC
 static void _rt_hw_trap_irq(rt_interrupt_context_t irq_context)
 {
-#ifdef SOC_BCM283x
-    extern rt_uint8_t core_timer_flag;
-    void *param;
-    uint32_t irq;
-    rt_isr_handler_t isr_func;
-    extern struct rt_irq_desc isr_table[];
-    uint32_t value = 0;
-    value = IRQ_PEND_BASIC & 0x3ff;
-
-    if(core_timer_flag != 0)
-    {
-        uint32_t cpu_id = rt_hw_cpu_id();
-        uint32_t int_source = CORE_IRQSOURCE(cpu_id);
-        if (int_source & 0x0f)
-        {
-            if (int_source & 0x08)
-            {
-                isr_func = isr_table[IRQ_ARM_TIMER].handler;
-#ifdef RT_USING_INTERRUPT_INFO
-                isr_table[IRQ_ARM_TIMER].counter++;
-#endif
-                if (isr_func)
-                {
-                    param = isr_table[IRQ_ARM_TIMER].param;
-                    isr_func(IRQ_ARM_TIMER, param);
-                }
-            }
-        }
-    }
-
-    /* local interrupt*/
-    if (value)
-    {
-        if (value & (1 << 8))
-        {
-            value = IRQ_PEND1;
-            irq = __rt_ffs(value) - 1;
-        }
-        else if (value & (1 << 9))
-        {
-            value = IRQ_PEND2;
-            irq = __rt_ffs(value) + 31;
-        }
-        else
-        {
-            value &= 0x0f;
-            irq = __rt_ffs(value) + 63;
-        }
-
-        /* get interrupt service routine */
-        isr_func = isr_table[irq].handler;
-#ifdef RT_USING_INTERRUPT_INFO
-        isr_table[irq].counter++;
-#endif
-        if (isr_func)
-        {
-            /* Interrupt for myself. */
-            param = isr_table[irq].param;
-            /* turn to interrupt service routine */
-            isr_func(irq, param);
-        }
-    }
-#else
     void *param;
     int ir, ir_self;
     rt_isr_handler_t isr_func;
@@ -269,7 +206,6 @@ static void _rt_hw_trap_irq(rt_interrupt_context_t irq_context)
 
     /* end of interrupt */
     rt_hw_interrupt_ack(ir);
-#endif
 }
 #else
 static void _rt_hw_trap_irq(struct rt_interrupt_context *this_ctx)

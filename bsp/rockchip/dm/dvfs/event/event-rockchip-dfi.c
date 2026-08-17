@@ -335,7 +335,7 @@ static rt_err_t rockchip_dfi_probe(struct rt_platform_device *pdev)
 
     pdev->priv = dfi;
 
-    LOG_I("%s: dram_type=%u ch_msk=0x%x", rt_dm_dev_get_name(dev),
+    LOG_D("%s: dram_type=%u ch_msk=0x%x", rt_dm_dev_get_name(dev),
           dfi->dram_type, dfi->ch_msk);
 
     return RT_EOK;

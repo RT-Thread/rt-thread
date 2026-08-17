@@ -271,14 +271,14 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟡 Raspberry Pi
 
-| BSP Name | GPIO | UART | I2C | SPI | RTC | SD Card | SDIO | MailBox | WDT | SMP | HDMI | Timer | Bluetooth | Ethernet | MIPI DSI | ILI9486 SPI LCD | XPT2046 TOUCH |
-|----------|------|------|-----|-----|-----|---------|------|---------|-----|-----|------|-------|-----------|----------|----------|-----------------|----------------|
-| [raspi-dm2.0](raspberry-pi/raspi-dm2.0) | - | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | - | - | - | - |
-| [raspi2](raspberry-pi/raspi2) | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-| [raspi3-32](raspberry-pi/raspi3-32) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - |
-| [raspi3-64](raspberry-pi/raspi3-64) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | ✅ | - | - | - | - | - |
-| [raspi4-32](raspberry-pi/raspi4-32) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [raspi4-64](raspberry-pi/raspi4-64) | ✅ | ✅ | - | ✅ | - | - | ✅ | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | - |
+| BSP Name | GPIO | UART | I2C | SPI | RTC | SD Card | SDIO | MailBox | WDT | SMP | HDMI | Timer | Bluetooth | Ethernet | PCIe | DMA | ADC | PWM | MIPI DSI | ILI9486 SPI LCD | XPT2046 TOUCH |
+|----------|------|------|-----|-----|-----|---------|------|---------|-----|-----|------|-------|-----------|----------|------|-----|-----|-----|----------|-----------------|----------------|
+| [raspi2](raspberry-pi/raspi2) | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [raspi3-32](raspberry-pi/raspi3-32) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [raspi3-64](raspberry-pi/raspi3-64) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | ✅ | - | ✅ | - | - | - |
+| [raspi4-32](raspberry-pi/raspi4-32) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | ✅ |
+| [raspi4-64](raspberry-pi/raspi4-64) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ |
+| [raspi5](raspberry-pi/raspi5) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ |
 
 #### 🟡 AT32
 
@@ -317,23 +317,23 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟡 N32
 
-| BSP Name | GPIO | UART | ADC | CAN | DAC | HWTimer | I2C | RTC | SPI | WDT | PWM |ENCODER | LPTIM | NAND | ETH | ON-Chip FLASH |
-|----------|------|------|-----|-----|-----|---------|-----|-----|-----|-----|
-| [n32g43xcl-stb](n32/n32gxx_lxx/n32g43xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g457gel-stb](n32/n32gxx_lxx/n32g457gel-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g45xcl-stb](n32/n32gxx_lxx/n32g45xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g45xml-stb](n32/n32gxx_lxx/n32g45xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g45xrl-stb](n32/n32gxx_lxx/n32g45xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g45xvl-stb](n32/n32gxx_lxx/n32g45xvl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32g47rml-stb](n32/n32gxx_lxx/n32g47rml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32l40xcl-stb](n32/n32gxx_lxx/n32l40xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32l436-evb](n32/n32gxx_lxx/n32l436-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32l43xml-stb](n32/n32gxx_lxx/n32l43xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32l43xrl-stb](n32/n32gxx_lxx/n32l43xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32wb45xl-evb](n32/n32gxx_lxx/n32wb45xl-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - |
-| [n32h760zil7-stb](n32/n32hxxx/n32h760zil7-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| [n32h497zgl7-evb](n32/n32hxxx/n32h497zgl7-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
-| [n32h487zgl7-evb](n32/n32hxxx/n32h487zgl7-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| BSP Name | GPIO | UART | ADC | CAN | DAC | HWTimer | I2C | RTC | SPI | WDT | PWM |ENCODER | LPTIM | NAND | ETH | ON-Chip FLASH | SDRAM | LCDC | QSPI |
+|----------|------|------|-----|-----|-----|---------|-----|-----|-----|-----|-----|---------|-------|------|-----|--------------|-------|------|-----|
+| [n32g43xcl-stb](n32/n32gxx_lxx/n32g43xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g457gel-stb](n32/n32gxx_lxx/n32g457gel-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g45xcl-stb](n32/n32gxx_lxx/n32g45xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g45xml-stb](n32/n32gxx_lxx/n32g45xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g45xrl-stb](n32/n32gxx_lxx/n32g45xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g45xvl-stb](n32/n32gxx_lxx/n32g45xvl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32g47rml-stb](n32/n32gxx_lxx/n32g47rml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32l40xcl-stb](n32/n32gxx_lxx/n32l40xcl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32l436-evb](n32/n32gxx_lxx/n32l436-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32l43xml-stb](n32/n32gxx_lxx/n32l43xml-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32l43xrl-stb](n32/n32gxx_lxx/n32l43xrl-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32wb45xl-evb](n32/n32gxx_lxx/n32wb45xl-evb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | - | - |
+| [n32h760zil7-stb](n32/n32hxxx/n32h760zil7-stb) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [n32h497zgl7-evb](n32/n32hxxx/n32h497zgl7-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [n32h487zgl7-evb](n32/n32hxxx/n32h487zgl7-evb) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 
 
 #### 🟡 NRF5x
@@ -348,11 +348,11 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 
 #### 🟡 Rockchip
 
-| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT | HWTimer | PWM | RTC | SDIO | CAN | PCI |
-|----------|------|------|-----|-----|-----|-----|---------|-----|-----|------|-----|------|
-| [rk2108](rockchip/rk2108) | - | ✅ | - | - | - | - | - | - | - | - | - | - |
-| [rk3300](rockchip/rk3300) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - |
-| [rk3500](rockchip/rk3500) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| BSP Name | GPIO | UART | ADC | I2C | SPI | WDT | HWTimer | PWM | RTC | SDIO | CAN | PCI | DMA | Ethernet | Audio | Display | Crypto |
+|----------|------|------|-----|-----|-----|-----|---------|-----|-----|------|-----|-----|-----|----------|-------|---------|--------|
+| [rk2108](rockchip/rk2108) | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [rk3300](rockchip/rk3300) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [rk3500](rockchip/rk3500) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟡 APM32
 

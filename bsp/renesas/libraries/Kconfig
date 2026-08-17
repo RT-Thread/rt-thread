@@ -3,6 +3,10 @@ config SOC_FAMILY_RENESAS_RA
     bool
     default n
 
+config SOC_FAMILY_RENESAS_RA_WIRELESS
+    bool
+    default n
+
 config SOC_FAMILY_RENESAS_RZ
     bool
     default n
@@ -89,6 +93,12 @@ config SOC_SERIES_R7FA6E2
     bool
     select ARCH_ARM_CORTEX_M33
     select SOC_FAMILY_RENESAS_RA
+    default n
+
+config SOC_SERIES_R7SA6W1
+    bool
+    select ARCH_ARM_CORTEX_M33
+    select SOC_FAMILY_RENESAS_RA_WIRELESS
     default n
 
 config SOC_SERIES_R7FA2A1

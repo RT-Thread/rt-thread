@@ -2,6 +2,176 @@ menu "Hardware Drivers Config"
 
 menu "Onboard Peripheral Drivers"
 
+    menuconfig BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+        if BSP_USING_SDRAM
+            choice BSP_SDRAM_BANK_SEL
+                prompt "Select SDRAM Bank"
+                default BSP_SDRAM_BANK1
+
+                config BSP_SDRAM_BANK1
+                    bool "Select SDRAM Bank1"
+
+                config BSP_SDRAM_BANK2
+                    bool "Select SDRAM Bank2"
+            endchoice
+
+            choice BSP_SDRAM_DATA_WIDTH_SEL
+                prompt "Select SDRAM Data Width"
+                default BSP_SDRAM_DATA_WIDTH_32
+
+                config BSP_SDRAM_DATA_WIDTH_8
+                    bool "SDRAM Data Width 8-bits"
+
+                config BSP_SDRAM_DATA_WIDTH_16
+                    bool "SDRAM Data Width 16-bits"
+
+                config BSP_SDRAM_DATA_WIDTH_32
+                    bool "SDRAM Data Width 32-bits"
+            endchoice
+
+            choice BSP_SDRAM_COLUMN_BITS_SEL
+                prompt "Select SDRAM Column Bits"
+                default BSP_SDRAM_COLUMN_BIT_9
+
+                config BSP_SDRAM_COLUMN_BIT_8
+                    bool "SDRAM SDRAM Column Bits 8-bits"
+
+                config BSP_SDRAM_COLUMN_BIT_9
+                    bool "SDRAM SDRAM Column Bits 9-bits"
+
+                config BSP_SDRAM_COLUMN_BIT_10
+                    bool "SDRAM SDRAM Column Bits 10-bits"
+
+                config BSP_SDRAM_COLUMN_BIT_11
+                    bool "SDRAM SDRAM Column Bits 11-bits"
+            endchoice
+
+            choice BSP_SDRAM_ROW_BITS_SEL
+                prompt "Select SDRAM Row Bits"
+                default BSP_SDRAM_ROW_BIT_12
+
+                config BSP_SDRAM_ROW_BIT_11
+                    bool "SDRAM SDRAM Row Bits 11-bits"
+
+                config BSP_SDRAM_ROW_BIT_12
+                    bool "SDRAM SDRAM Row Bits 12-bits"
+
+                config BSP_SDRAM_ROW_BIT_13
+                    bool "SDRAM SDRAM Row Bits 13-bits"
+            endchoice
+
+            choice BSP_SDRAM_CAS_LATENCY_SEL
+                prompt "Select SDRAM CAS Latency"
+                default BSP_SDRAM_CAS_LATENCY_3
+
+                config BSP_SDRAM_CAS_LATENCY_1
+                    bool "SDRAM SDRAM CAS Latency 1"
+
+                config BSP_SDRAM_CAS_LATENCY_2
+                    bool "SDRAM SDRAM CAS Latency 2"
+
+                config BSP_SDRAM_CAS_LATENCY_3
+                    bool "SDRAM SDRAM CAS Latency 3"
+            endchoice
+
+            config BSP_SDRAM_SIZE
+                int "SDRAM Size (MBytes)"
+                range 8 256
+                default 32
+        endif
+
+    menuconfig BSP_USING_LCD
+        bool "Enable LCD"
+        default n
+        select BSP_USING_SDRAM
+        if BSP_USING_LCD
+            config BSP_BITS_PER_PIXEL
+                int "LCD Bits Per Pixel"
+                default 16
+
+            choice BSP_LCD_PIXEL_FORMAT_SEL
+                prompt "Select LCD PIXEL FORMAT"
+                default BSP_LCD_PIXEL_FORMAT_RGB565
+
+                config BSP_LCD_PIXEL_FORMAT_RGB565
+                    bool "SDRAM LCD Pixel Format RGB565"
+
+                config BSP_LCD_PIXEL_FORMAT_ARGB8888
+                    bool "SDRAM LCD Pixel Format ARGB8888"
+
+                config BSP_LCD_PIXEL_FORMAT_RGB888
+                    bool "SDRAM LCD Pixel Format RGB888"
+            endchoice
+
+            config BSP_LCD_WIDTH_PIXEL
+                int "LCD Width Pixel"
+                default 800
+
+            config BSP_LCD_HEIGHT_PIXEL
+                int "LCD Height Pixel"
+                default 480
+
+            config BSP_LCD_HSYNC_WIDTH_PIXEL
+                int "LCD Hsync Width Pixel"
+                default 34
+
+            config BSP_LCD_VSYNC_HEIGHT_PIXEL
+                int "LCD Vsync Height Pixel"
+                default 10
+
+            config BSP_LCD_HBP_PIXEL
+                int "LCD HBP Pixel"
+                default 46
+
+            config BSP_LCD_VBP_PIXEL
+                int "LCD VBP Pixel"
+                default 23
+
+            config BSP_LCD_HFP_PIXEL
+                int "LCD HFP Pixel"
+                default 210
+
+            config BSP_LCD_VFP_PIXEL
+                int "LCD VFP Pixel"
+                default 22
+
+            choice BSP_LCD_BACKLIGHT_SEL
+                prompt "Select LCD BACKLIGHT Control Type"
+                default BSP_LCD_BACKLIGHT_USING_GPIO
+
+                config BSP_LCD_BACKLIGHT_USING_GPIO
+                    bool "LCD BACKLIGHT Using GPIO Control"
+
+                config BSP_LCD_BACKLIGHT_USING_PWM
+                    bool "LCD BACKLIGHT Using PWM Control"
+                    select RT_USING_PWM
+                    select BSP_USING_PWM
+            endchoice
+
+            if BSP_LCD_BACKLIGHT_USING_GPIO
+                config BSP_LCD_BACKLIGHT_PIN
+                    int "Backlight GPIO Port"
+                    default 115
+
+                config BSP_LCD_DISPLAY_PIN
+                    int "Display GPIO Pin"
+                    default 26
+            endif
+
+            if BSP_LCD_BACKLIGHT_USING_PWM
+                config BSP_LCD_PWM_DEV_NAME
+                    string "PWM Device Name"
+                    default "pwm1"
+
+                config BSP_LCD_PWM_DEV_CHANNEL
+                    int "PWM Channel"
+                    default 1
+            endif
+        endif
+
+
     menuconfig BSP_USING_ETH
         bool "Enable Ethernet"
         default n
@@ -218,6 +388,17 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
+
+    menuconfig BSP_USING_QSPI
+        bool "Enable QSPI Quad SPI BUS"
+        default n
+        select RT_USING_QSPI
+        select RT_USING_SPI
+        if BSP_USING_QSPI
+            config BSP_USING_QSPI2
+                bool "Enable QSPI2 BUS"
+                default n
+        endif
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"

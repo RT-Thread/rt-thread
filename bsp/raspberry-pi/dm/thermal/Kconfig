@@ -1,0 +1,9 @@
+config RT_THERMAL_BCM2835
+    bool "BCM2835"
+    default n
+
+config RT_THERMAL_BCM2711
+    bool "BCM2711"
+    depends on RT_MFD_SYSCON
+    depends on RT_USING_RESET
+    default n

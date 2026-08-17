@@ -44,13 +44,11 @@ extern struct cpu_ops_t cpu_spin_table_ops;
 extern int rt_hw_cpu_id(void);
 #endif
 
-rt_uint64_t rt_cpu_mpidr_table[] =
-{
+rt_uint64_t rt_cpu_mpidr_table[] = {
     [RT_CPUS_NR] = 0,
 };
 
-static struct cpu_ops_t *cpu_ops[] =
-{
+static struct cpu_ops_t *cpu_ops[] = {
 #ifdef RT_USING_SMP
     &cpu_psci_ops,
     &cpu_spin_table_ops,
@@ -60,7 +58,7 @@ static struct cpu_ops_t *cpu_ops[] =
 #ifdef ARCH_USING_CPUIDLE
 struct rt_dvfs_idle *cpu_idle[RT_CPUS_NR] = {};
 #endif
-static struct rt_ofw_node *cpu_np[RT_CPUS_NR] = { };
+static struct rt_ofw_node *cpu_np[RT_CPUS_NR] = {};
 
 void rt_hw_fdt_install_early(void *fdt)
 {
@@ -100,15 +98,15 @@ static void cpu_loops_per_tick_init(void)
 
     while (cpu_get_cycles() < cycles_end1)
     {
-        __asm__ volatile ("nop");
-        __asm__ volatile ("add %0, %0, #1":"=r"(cycles_count1));
+        __asm__ volatile("nop");
+        __asm__ volatile("add %0, %0, #1" : "=r"(cycles_count1));
     }
 
     cycles_end2 = cpu_get_cycles() + step;
 
     while (cpu_get_cycles() < cycles_end2)
     {
-        __asm__ volatile ("add %0, %0, #1":"=r"(cycles_count2));
+        __asm__ volatile("add %0, %0, #1" : "=r"(cycles_count2));
     }
 
     if ((rt_int32_t)(cycles_count2 - cycles_count1) > 0)
@@ -146,7 +144,7 @@ rt_weak void rt_hw_idle_wfi(void)
     {
         rt_dvfs_idle_entry(cpuidle);
 
-        __asm__ volatile ("wfi");
+        __asm__ volatile("wfi");
 
         rt_dvfs_idle_exit(cpuidle);
 
@@ -154,7 +152,7 @@ rt_weak void rt_hw_idle_wfi(void)
     }
 #endif /* ARCH_USING_CPUIDLE */
 
-    __asm__ volatile ("wfi");
+    __asm__ volatile("wfi");
 }
 
 static void system_vectors_init(void)
@@ -266,9 +264,9 @@ void rt_hw_common_setup(void)
     system_vectors_init();
 
 #ifdef RT_USING_SMART
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xffffffff00000000, 0x20000000, MMUTable, pv_off);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0xffffffff00000000, 0x20000000, MMUTable, pv_off);
 #else
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xffffd0000000, 0x20000000, MMUTable, 0);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0xffffd0000000, 0x20000000, MMUTable, 0);
 #endif
 
     kernel_start    = RT_ALIGN_DOWN((rt_size_t)rt_kmem_v2p((void *)&_start) - 64, ARCH_PAGE_SIZE);
@@ -282,9 +280,9 @@ void rt_hw_common_setup(void)
 
     platform_mem_region.start = kernel_start;
 #ifndef RT_USING_BUILTIN_FDT
-    platform_mem_region.end   = fdt_end;
+    platform_mem_region.end = fdt_end;
 #else
-    platform_mem_region.end   = init_page_end;
+    platform_mem_region.end = init_page_end;
     (void)fdt_start;
     (void)fdt_end;
 #endif
@@ -342,10 +340,14 @@ void rt_hw_common_setup(void)
     rt_fdt_scan_memory();
 
 #ifdef RT_USING_DMA
-    do {
+    do
+    {
         const char *bootargs;
         rt_ubase_t dma_pool_base;
         rt_size_t cma_size = 0, coherent_pool_size = 0;
+        rt_size_t pool_total;
+        struct rt_memblock *memory;
+        struct rt_mmblk_reg *mem_reg;
 
         if (!rt_fdt_bootargs_select("cma=", 0, &bootargs))
         {
@@ -362,21 +364,94 @@ void rt_hw_common_setup(void)
             if (cma_size || coherent_pool_size)
             {
                 LOG_W("DMA pool %s=%u > %s=%u",
-                    "CMA", cma_size, "coherent-pool", coherent_pool_size);
+                      "CMA", cma_size, "coherent-pool", coherent_pool_size);
             }
 
             cma_size = 8 * SIZE_MB;
             coherent_pool_size = 2 * SIZE_MB;
         }
 
+        pool_total = cma_size + coherent_pool_size;
+
+        /*
+         * Default: place the pool after early boot reservations (kernel/heap/fdt),
+         * below 4G for RT_DMA_F_32BITS (PCIe).
+         *
+         * On a single contiguous RAM bank, keep the pool at the bank tail so
+         * memblock installs one contiguous free range (avoids an MMU hole).
+         * The platform must expose RAM through dma_pool_base + pool_total.
+         */
         dma_pool_base = platform_mem_region.end;
+
+        memory = rt_memblock_get_memory();
+        {
+            rt_uint32_t mem_count = 0;
+            rt_size_t mem_span_start = 0, mem_span_end = 0;
+
+            rt_slist_for_each_entry(mem_reg, &memory->reg_list, node)
+            {
+                mem_count++;
+                if (mem_count == 1)
+                {
+                    mem_span_start = mem_reg->memreg.start;
+                }
+                if (mem_reg->memreg.end > mem_span_end)
+                {
+                    mem_span_end = mem_reg->memreg.end;
+                }
+            }
+
+            if (mem_count == 1 &&
+                dma_pool_base + pool_total <= mem_span_end &&
+                dma_pool_base >= mem_span_start &&
+                dma_pool_base + pool_total < mem_span_end)
+            {
+                dma_pool_base = RT_ALIGN_DOWN(mem_span_end - pool_total, ARCH_PAGE_SIZE);
+            }
+        }
+
+        if (dma_pool_base + pool_total > (4UL * SIZE_GB))
+        {
+            rt_size_t zone_end = 0;
+
+            rt_slist_for_each_entry(mem_reg, &memory->reg_list, node)
+            {
+                rt_size_t start = mem_reg->memreg.start;
+                rt_size_t end = mem_reg->memreg.end;
+
+                if (start >= (4UL * SIZE_GB))
+                {
+                    continue;
+                }
+
+                if (end > (4UL * SIZE_GB))
+                {
+                    end = (4UL * SIZE_GB);
+                }
+
+                if (end > zone_end)
+                {
+                    zone_end = end;
+                }
+            }
+
+            if (zone_end < platform_mem_region.end + pool_total)
+            {
+                LOG_E("No room for sub-4G DMA pool (%lu bytes)",
+                      (unsigned long)pool_total);
+                break;
+            }
+
+            dma_pool_base = RT_ALIGN_DOWN(zone_end - pool_total, ARCH_PAGE_SIZE);
+        }
+
         rt_memblock_reserve_memory("dma-pool",
-                dma_pool_base, dma_pool_base + cma_size + coherent_pool_size, MEMBLOCK_NONE);
+                                   dma_pool_base, dma_pool_base + pool_total, MEMBLOCK_NONE);
 
         if (rt_dma_pool_extract(cma_size, coherent_pool_size))
         {
             LOG_E("Alloc DMA pool %s=%u, %s=%u fail",
-                    "CMA", cma_size, "coherent-pool", coherent_pool_size);
+                  "CMA", cma_size, "coherent-pool", coherent_pool_size);
         }
     } while (0);
 #endif /* RT_USING_DMA */

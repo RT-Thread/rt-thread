@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_I2C_BCM2835']):
+    src += ['i2c-bcm2835.c']
+
+if GetDepend(['RT_I2C_BRCMSTB']):
+    src += ['i2c-brcmstb.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

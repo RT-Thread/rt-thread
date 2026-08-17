@@ -22,6 +22,20 @@ struct rt_data_item
     rt_size_t data_size;
 };
 
+static rt_uint16_t _data_queue_len_nolock(struct rt_data_queue *queue)
+{
+    if (queue->is_empty)
+    {
+        return 0;
+    }
+    if (queue->put_index > queue->get_index)
+    {
+        return queue->put_index - queue->get_index;
+    }
+
+    return queue->size + queue->put_index - queue->get_index;
+}
+
 /**
  * @brief    This function will initialize the data queue. Calling this function will
  *           initialize the data queue control block and set the notification callback function.
@@ -283,7 +297,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
         queue->is_empty = 1;
     }
 
-    if (rt_data_queue_len(queue) <= queue->lwm)
+    if (_data_queue_len_nolock(queue) <= queue->lwm)
     {
         /* there is at least one thread in suspended list */
         if (rt_susp_list_dequeue(&queue->suspended_push_list,
@@ -432,30 +446,15 @@ RTM_EXPORT(rt_data_queue_deinit);
 rt_uint16_t rt_data_queue_len(struct rt_data_queue *queue)
 {
     rt_base_t level;
-    rt_int16_t len;
+    rt_uint16_t len;
 
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
 
-    if (queue->is_empty)
-    {
-        return 0;
-    }
-
     level = rt_spin_lock_irqsave(&(queue->spinlock));
-
-    if (queue->put_index > queue->get_index)
-    {
-        len = queue->put_index - queue->get_index;
-    }
-    else
-    {
-        len = queue->size + queue->put_index - queue->get_index;
-    }
-
+    len = _data_queue_len_nolock(queue);
     rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
     return len;
 }
 RTM_EXPORT(rt_data_queue_len);
-

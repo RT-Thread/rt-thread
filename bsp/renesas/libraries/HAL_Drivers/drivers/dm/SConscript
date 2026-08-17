@@ -1,0 +1,23 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+
+from building import *
+import os
+
+cwd = GetCurrentDir()
+parent = os.path.dirname(cwd)
+src = ['drv_external_irq.c']
+
+if GetDepend(['BSP_USING_GPIO']):
+    src += ['drv_gpio.c']
+path = [
+    cwd,
+    parent,
+    os.path.join(parent, 'config'),
+    os.path.join(RTT_ROOT, 'components', 'drivers', 'pin'),
+]
+
+group = DefineGroup('Renesas DM Drivers', src,
+        depend = ['RT_USING_DM'], CPPPATH = path)
+
+Return('group')

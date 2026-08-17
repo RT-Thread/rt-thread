@@ -1,0 +1,7 @@
+config RT_PHY_MDIO_BCM_UNIMAC
+    bool "Broadcom UniMAC MDIO bus controller (BCM2711 GENET)"
+    default n
+
+config RT_PHY_BCM54213
+    bool "Broadcom BCM54213PE Ethernet PHY (Pi4/Pi5 RJ45)"
+    default n

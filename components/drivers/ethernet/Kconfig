@@ -1,0 +1,13 @@
+menuconfig RT_USING_ETHERNET
+    bool "Using Ethernet device drivers"
+    depends on RT_USING_DM
+    depends on RT_USING_SAL
+    depends on RT_USING_NETDEV
+    depends on RT_USING_LWIP
+    default n
+
+if RT_USING_ETHERNET
+    rsource "cadence/Kconfig"
+    rsource "synopsys/Kconfig"
+    osource "$(SOC_DM_ETHERNET_DIR)/Kconfig"
+endif

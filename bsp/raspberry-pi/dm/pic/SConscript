@@ -1,0 +1,22 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_PIC_BCM2712_MIP']):
+    src += ['pic-bcm2712-mip.c']
+
+if GetDepend(['RT_PIC_BCM2835_INTC']):
+    src += ['pic-bcm2835.c']
+
+if GetDepend(['RT_PIC_BCM2836_L1_INTC']):
+    src += ['pic-bcm2836.c']
+
+if GetDepend(['RT_PIC_BRCMSTB_L2_IRQ']):
+    src += ['pic-brcmstb-l2.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -7,6 +7,15 @@ CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/pci', cwd
 
 src = []
 
+if GetDepend(['RT_PCIE_ROCKCHIP']):
+    src += ['pcie-rockchip-host.c']
+
+if GetDepend(['RT_PCIE_ROCKCHIP_EP']):
+    src += ['pcie-rockchip-ep.c']
+
+if GetDepend(['RT_PCIE_ROCKCHIP']) or GetDepend(['RT_PCIE_ROCKCHIP_EP']):
+    src += ['pcie-rockchip.c']
+
 if GetDepend(['RT_PCI_DW_ROCKCHIP']):
     src += ['pcie-dw-rockchip.c']
 

@@ -447,7 +447,7 @@ int dfs_elm_open(struct dfs_file *file)
         }
 
         file->vnode->data = dir;
-        rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
+        dfs_vnode_lock_init(file->vnode, file->dentry);
         return RT_EOK;
     }
     else
@@ -488,7 +488,7 @@ int dfs_elm_open(struct dfs_file *file)
             file->vnode->size = f_size(fd);
             file->vnode->type = FT_REGULAR;
             file->vnode->data = fd;
-            rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
+            dfs_vnode_lock_init(file->vnode, file->dentry);
 
             if (file->flags & O_APPEND)
             {
@@ -622,6 +622,11 @@ int dfs_elm_flush(struct dfs_file *file)
 {
     FIL *fd;
     FRESULT result;
+
+    if (file->vnode->type == FT_DIRECTORY)
+    {
+        return -EISDIR;
+    }
 
     fd = (FIL *)(file->vnode->data);
     RT_ASSERT(fd != RT_NULL);

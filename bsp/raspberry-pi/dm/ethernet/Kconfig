@@ -1,0 +1,3 @@
+config RT_ETHERNET_BCMGENET
+    bool "BCMGENET V5 Ethernet MAC"
+    default n

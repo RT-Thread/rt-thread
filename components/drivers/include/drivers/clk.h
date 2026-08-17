@@ -84,6 +84,7 @@ struct rt_clk_node
 #define RT_CLK_F_SET_RATE_UNGATE    RT_BIT(4)   /**< Clock needs to run to set rate */
 #define RT_CLK_F_IS_CRITICAL        RT_BIT(5)   /**< Do not gate, ever */
 #define RT_CLK_F_GET_RATE_NOCACHE   RT_BIT(6)   /**< Do not get rate by cache */
+#define RT_CLK_F_SET_RATE_NO_REPARENT RT_BIT(7) /**< Keep the selected parent across rate changes */
 
 /**
  * @brief  Clock cell - represents a single hardware clock element.

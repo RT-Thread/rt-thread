@@ -55,6 +55,11 @@ SECTIONS
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
 
+        /* section information for Open Firmware registration data */
+        . = ALIGN(4);
+        KEEP(*(SORT(.rt_ofw_data.*)))
+        . = ALIGN(4);
+
         . = ALIGN(4);
 
         PROVIDE(__ctors_start__ = .);

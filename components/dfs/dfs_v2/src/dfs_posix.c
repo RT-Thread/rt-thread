@@ -605,6 +605,11 @@ int fsync(int fildes)
     }
 
     ret = dfs_file_fsync(file);
+    if (ret < 0)
+    {
+        rt_set_errno(ret);
+        return -1;
+    }
 
     return ret;
 }

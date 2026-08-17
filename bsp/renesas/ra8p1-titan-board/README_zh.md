@@ -248,6 +248,16 @@ void hal_entry(void)
 
 ![image-20250819173700386](m85/figures/image-20250819173700386.png)
 
+### 启用设备模型（DM）
+
+当前 DM GPIO 和外部中断适配用于 `m85` 工程，`m33` 工程仍使用传统 BSP 驱动。`m85` 通过 `RT_USING_DM` 在两套驱动之间进行选择，不能同时构建同一个 GPIO 控制器的 DM 驱动和传统驱动。
+
+1. 进入 `m85` 目录并执行 `scons --menuconfig`。
+2. 进入 `Device Drivers`，选中 `Enable device driver model with device tree`。
+3. 保存配置后执行 `scons -jN` 构建 GCC 工程。
+
+BSP 会随 `RT_USING_DM` 自动选择 OFW、内置 FDT、PIC、NVIC 和 PIN 框架，并使用 `m85/board/dts/ra8p1-titan-m85.dts`。构建过程会生成并嵌入 DTB。
+
 ## 联系人信息
 
 在使用过程中若您有任何的想法和建议，建议您通过以下方式来联系到我们  [RT-Thread 社区论坛](https://club.rt-thread.org/)

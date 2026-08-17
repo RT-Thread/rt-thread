@@ -1,0 +1,48 @@
+menuconfig RT_AUDIO_ROCKCHIP
+    bool "Enable Rockchip Audio"
+    depends on RT_USING_OFW
+    depends on RT_USING_AUDIO
+    default n
+    help
+      Rockchip I2S/TDM audio for boards such as ROCK 3A (rk3568):
+        - Analog output via RK809/RK817 PMIC codec (I2S1)
+        - HDMI audio via I2S0 (requires dw-hdmi display stack)
+
+if RT_AUDIO_ROCKCHIP
+
+config RT_AUDIO_ROCKCHIP_I2S_TDM
+    bool "Rockchip I2S/TDM controller (CPU DAI)"
+    default y
+    help
+      I2S/TDM block driver (e.g. i2s0_8ch, i2s1_8ch).
+      Uses PL330 DMA when RT_USING_DMA is enabled, otherwise PIO.
+
+menuconfig RT_AUDIO_ROCKCHIP_CODEC
+    bool "Rockchip codec support"
+    depends on RT_AUDIO_ROCKCHIP_I2S_TDM
+    default y
+    help
+      Codec drivers for analog audio (headphone / line-out).
+      Not used for the HDMI audio card.
+
+if RT_AUDIO_ROCKCHIP_CODEC
+
+config RT_AUDIO_ROCKCHIP_CODEC_RK817
+    bool "RK817/RK809 codec (I2C PMIC)"
+    depends on RT_USING_I2C
+    select RT_MFD_RK8XX_I2C
+    default y
+    help
+      RK809/RK817 built-in codec on ROCK 3A, routed over I2S1.
+
+endif
+
+config RT_AUDIO_ROCKCHIP_CARD
+    bool "Rockchip simple-audio-card (machine driver)"
+    depends on RT_AUDIO_ROCKCHIP_I2S_TDM
+    default y
+    help
+      Parses simple-audio-card nodes (e.g. rk809-sound, hdmi_sound)
+      and registers rt_audio_device instances.
+
+endif

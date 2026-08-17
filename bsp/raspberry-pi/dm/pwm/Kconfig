@@ -1,0 +1,20 @@
+config RT_PWM_BCM2835
+    bool "BCM2835 PWM support"
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_DM
+    depends on RT_USING_PWM
+    default n
+
+config RT_PWM_BRCMSTB
+    bool "Broadcom STB PWM support"
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_DM
+    depends on RT_USING_PWM
+    default n
+
+config RT_PWM_RP1
+    bool "RP1 PWM support"
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_DM
+    depends on RT_USING_PWM
+    default n

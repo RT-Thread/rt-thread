@@ -9,9 +9,15 @@
 /**/ra/
 /**/ra_cfg/
 /**/ra_gen/
+/**/rafw_cfg/
+/**/rafw_gen/
 /libraries/bsp-template/
 /**/RTE/
 
 # RA8P1 Titan generated and migrated sources
 /ra8p1-titan-board/*/board/bsp_linker_info.h
 /ra8p1-titan-board/m85/board/ports/
+
+# RA6W1 generated and migrated sources
+/ra6w1-ek/board/bsp_linker_info.h
+/ra6w1-ek/board/ports/

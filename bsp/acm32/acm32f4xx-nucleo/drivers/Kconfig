@@ -183,7 +183,7 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_LPUART
         bool "Enable LPUART"
-        select RT_USING_UART
+        select RT_USING_SERIAL
         default n
 
     menu "Hardware I2C"

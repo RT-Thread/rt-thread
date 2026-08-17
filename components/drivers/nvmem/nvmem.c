@@ -417,11 +417,24 @@ static struct rt_nvmem_cell *ofw_nvmem_get_cell(struct rt_ofw_node *np,
     cell->offset = fdt32_to_cpu(*addr++);
     cell->bytes = fdt32_to_cpu(*addr);
 
-    addr = rt_ofw_prop_read_raw(cell_np, "reg", &length);
-    if (addr && length == 2 * sizeof(rt_uint32_t))
+    addr = rt_ofw_prop_read_raw(cell_np, "bits", &length);
+    if (addr)
     {
+        if (length != 2 * sizeof(rt_uint32_t))
+        {
+            LOG_E("%s Invalid bits", rt_ofw_node_full_name(cell_np));
+            goto _fail;
+        }
+
         cell->bit_offset = fdt32_to_cpu(*addr++);
         cell->nbits = fdt32_to_cpu(*addr);
+
+        if (cell->bit_offset >= RT_BITS_PER_BYTE || !cell->nbits ||
+                cell->nbits > cell->bytes * RT_BITS_PER_BYTE - cell->bit_offset)
+        {
+            LOG_E("%s Bits out of range", rt_ofw_node_full_name(cell_np));
+            goto _fail;
+        }
     }
 
     /* user ref is '1' */

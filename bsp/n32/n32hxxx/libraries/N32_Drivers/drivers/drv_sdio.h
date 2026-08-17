@@ -149,30 +149,30 @@ struct n32_sdio
     volatile rt_uint32_t fifo;
 };
 
-typedef rt_err_t    (*dma_txconfig)(rt_uint32_t *src, rt_uint32_t *dst, int size);
-typedef rt_err_t    (*dma_rxconfig)(rt_uint32_t *src, rt_uint32_t *dst, int size);
+typedef rt_err_t (*dma_txconfig)(rt_uint32_t *src, rt_uint32_t *dst, int size);
+typedef rt_err_t (*dma_rxconfig)(rt_uint32_t *src, rt_uint32_t *dst, int size);
 typedef rt_uint32_t (*sdio_clk_get)(struct n32_sdio *hw_sdio);
 
 struct n32_sdio_des
 {
     struct n32_sdio *hw_sdio;
-    dma_txconfig     txconfig;
-    dma_rxconfig     rxconfig;
-    sdio_clk_get     clk_get;
+    dma_txconfig txconfig;
+    dma_rxconfig rxconfig;
+    sdio_clk_get clk_get;
 };
 
 struct n32_sdio_config
 {
     SDCARD_INSTANCE_TYPE *sdio_x;
-    struct dma_config     dma_rx, dma_tx;
+    struct dma_config dma_rx, dma_tx;
 };
 
 /* n32 sdio dirver class */
 struct n32_sdio_class
 {
-    struct n32_sdio_des          *des;
+    struct n32_sdio_des *des;
     const struct n32_sdio_config *cfg;
-    struct rt_mmcsd_host          host;
+    struct rt_mmcsd_host host;
     struct
     {
         DMA_InitType handle_rx;
@@ -189,16 +189,16 @@ extern void n32_mmcsd_change(void);
     {                                       \
         .sdio_x = SDIO,                     \
         .dma_rx = {                         \
-            .DMAy    = SDIO_RX_DMA,         \
-            .DMAChx  = SDIO_TX_DMA_CHType,  \
+            .DMAy = SDIO_RX_DMA,            \
+            .DMAChx = SDIO_TX_DMA_CHType,   \
             .dma_irq = SDIO_TX_DMA_IRQ,     \
             .dma_rcc = SDIO_TX_DMA_RCC,     \
             .request = SDIO_TX_DMA_REQUEST, \
             .channel = SDIO_TX_DMA_CHANNEL  \
         },                                  \
         .dma_tx = {                         \
-            .DMAy    = SDIO_TX_DMA,         \
-            .DMAChx  = SDIO_RX_DMA_CHType,  \
+            .DMAy = SDIO_TX_DMA,            \
+            .DMAChx = SDIO_RX_DMA_CHType,   \
             .dma_irq = SDIO_RX_DMA_IRQ,     \
             .dma_rcc = SDIO_RX_DMA_RCC,     \
             .request = SDIO_RX_DMA_REQUEST, \

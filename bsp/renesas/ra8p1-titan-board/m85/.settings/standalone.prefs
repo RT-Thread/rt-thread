@@ -25,6 +25,8 @@ com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_dm
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_dmac\#\#\#\#6.2.0/libraries=
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_gpt\#\#\#\#6.2.0/all=2496371585,ra/fsp/inc/api/r_timer_api.h|1024386857,ra/fsp/inc/instances/r_gpt.h|897288737,ra/fsp/src/r_gpt/r_gpt.c
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_gpt\#\#\#\#6.2.0/libraries=
+com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_icu\#\#\#\#6.2.0/all=3851692545,ra/fsp/inc/api/r_external_irq_api.h|677149658,ra/fsp/inc/instances/r_icu.h|3443785969,ra/fsp/src/r_icu/r_icu.c
+com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_icu\#\#\#\#6.2.0/libraries=
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_iic_master\#\#\#\#6.2.0/all=1589066529,ra/fsp/inc/api/r_elc_api.h|429738396,ra/fsp/inc/api/r_transfer_api.h|979139595,ra/fsp/inc/api/r_i2c_master_api.h|2048414029,ra/fsp/inc/instances/r_iic_master.h|4191706256,ra/fsp/src/r_iic_master/r_iic_master.c
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_iic_master\#\#\#\#6.2.0/libraries=
 com.renesas.cdt.ddsc.packs.componentfiles/Renesas\#\#HAL\ Drivers\#\#all\#\#r_ioport\#\#\#\#6.2.0/all=1692739955,ra/fsp/inc/api/r_ioport_api.h|2533231413,ra/fsp/inc/instances/r_ioport.h|2765953787,ra/fsp/src/r_ioport/r_ioport.c

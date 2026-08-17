@@ -460,6 +460,11 @@ int fsync(int fildes)
     }
 
     ret = dfs_file_flush(d);
+    if (ret < 0)
+    {
+        rt_set_errno(ret);
+        return -1;
+    }
 
     return ret;
 }

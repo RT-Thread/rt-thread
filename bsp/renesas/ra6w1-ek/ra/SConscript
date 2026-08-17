@@ -1,0 +1,55 @@
+Import("RTT_ROOT")
+Import("rtconfig")
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+CPPPATH = [cwd + "/arm/CMSIS_6/CMSIS/Core/Include",
+        cwd + "/fsp/inc",
+        cwd + "/fsp/inc/api",
+        cwd + "/fsp/inc/instances",
+        cwd + "/fsp/src/bsp/cmsis/Device/RENESAS/Include",
+        cwd + "/fsp/src/bsp/mcu/all",
+        cwd + "/fsp/src/bsp_w/cmsis/Device/RENESAS/Include",
+        cwd + "/fsp/src/bsp_w/mcu/all",
+        cwd + "/fsp/src/bsp_w/mcu/ra6w1",
+        cwd + "/fsp/src/bsp_w/mcu/ra6w1/config"]
+
+src += Glob("./board/rrq61xxx_evb/*.c")
+src += Glob("./fsp/src/bsp_w/cmsis/Device/RENESAS/Source/*.c")
+src += Glob("./fsp/src/bsp_w/mcu/all/*.c")
+src += Glob("./fsp/src/bsp_w/mcu/all/*.S")
+src += Glob("./fsp/src/bsp_w/mcu/ra6w1/*.c")
+
+src += Glob("./fsp/src/r_gpio_w/*.c")
+src += Glob("./fsp/src/r_uart_w/*.c")
+src += Glob("./fsp/src/r_ext_irq_w/*.c")
+src += Glob("./fsp/src/r_dmac_w/*.c")
+
+if GetDepend(["BSP_USING_ONCHIP_RTC"]):
+    src += Glob("./fsp/src/r_rtc_w/*.c")
+
+if GetDepend(["BSP_USING_SPI"]):
+    src += Glob("./fsp/src/r_spi_w/*.c")
+
+if GetDepend(["BSP_USING_ADC"]):
+    src += Glob("./fsp/src/r_adc_w/*.c")
+
+if GetDepend(["BSP_USING_TIM_W"]):
+    src += Glob("./fsp/src/r_tim_w/*.c")
+
+if GetDepend(["BSP_USING_WDT"]):
+    src += Glob("./fsp/src/r_wdog_w/*.c")
+
+if GetDepend(["BSP_USING_QSPI"]):
+    src += Glob("./fsp/src/r_qspi_w/*.c")
+
+if GetDepend(["BSP_USING_HW_I2C"]):
+    src += Glob("./fsp/src/r_i2c_master_w/*.c")
+
+if GetDepend(["BSP_USING_OSPI_FLASH"]):
+    src += Glob("./fsp/src/r_ospi_w/*.c")
+
+group = DefineGroup("ra", src, depend = [""], CPPPATH = CPPPATH)
+Return("group")

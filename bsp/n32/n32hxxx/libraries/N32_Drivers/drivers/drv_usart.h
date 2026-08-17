@@ -47,7 +47,7 @@ struct n32_uart
 {
     struct n32_uart_config *config;
     rt_uint32_t DR_mask;
-    rt_uint32_t             tx_block_timeout;
+    rt_uint32_t tx_block_timeout;
 
 #ifdef RT_SERIAL_USING_DMA
 #if defined(SOC_SERIES_N32H7xx)
@@ -85,7 +85,7 @@ struct n32_uart
         DMA_InitType TX_DMA_ChInitStr;
         struct
         {
-            rt_size_t   total_length;
+            rt_size_t total_length;
             rt_uint8_t *buf;
         } tx_dma;
 

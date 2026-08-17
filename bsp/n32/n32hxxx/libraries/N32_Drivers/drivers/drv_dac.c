@@ -24,15 +24,15 @@
 
 typedef struct
 {
-    DACX        DACx;
+    DACX DACx;
     DAC_Module *DAC_Module;
-    uint32_t    periph_clk;
-    void        (*EnablePeriphClk)(uint32_t periph, FunctionalState cmd);
-    uint32_t    DAC_clk_pres;
+    uint32_t periph_clk;
+    void (*EnablePeriphClk)(uint32_t periph, FunctionalState cmd);
+    uint32_t DAC_clk_pres;
 
     GPIO_Module *GPIOx;
-    uint16_t     GPIO_Pin;
-    uint32_t     GPIO_RCC;
+    uint16_t GPIO_Pin;
+    uint32_t GPIO_RCC;
 
     DAC_InitType Init;
 } DAC_InitInfo_t;
@@ -52,7 +52,7 @@ static struct n32_dac n32_dac_obj[sizeof(dac_config) / sizeof(dac_config[0])];
 
 struct n32_dac
 {
-    DAC_InitInfo_t       DAC_Info;
+    DAC_InitInfo_t DAC_Info;
     struct rt_dac_device n32_dac_device;
 };
 
@@ -92,7 +92,7 @@ static rt_uint8_t n32_dac_get_resolution(struct rt_dac_device *device)
 
 static rt_err_t n32_set_dac_value(struct rt_dac_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
-    rt_uint16_t     set_value;
+    rt_uint16_t set_value;
     DAC_InitInfo_t *n32_dac_info;
 
     RT_ASSERT(device != RT_NULL);
@@ -116,17 +116,17 @@ static rt_err_t n32_set_dac_value(struct rt_dac_device *device, rt_uint32_t chan
 }
 
 static const struct rt_dac_ops n32_dac_ops = {
-    .disabled       = n32_dac_disabled,
-    .enabled        = n32_dac_enabled,
-    .convert        = n32_set_dac_value,
+    .disabled = n32_dac_disabled,
+    .enabled = n32_dac_enabled,
+    .convert = n32_set_dac_value,
     .get_resolution = n32_dac_get_resolution,
 };
 
 static int n32_dac_init(void)
 {
-    int  result      = RT_EOK;
+    int result = RT_EOK;
     char name_buf[5] = { 'd', 'a', 'c', '0', 0 };
-    int  i           = 0;
+    int i = 0;
 
     for (i = 0; i < sizeof(dac_config) / sizeof(dac_config[0]); i++)
     {
@@ -135,9 +135,13 @@ static int n32_dac_init(void)
         /* Set device name */
         name_buf[3] = '0';
         if (n32_dac_obj[i].DAC_Info.DACx == DAC1)
+        {
             name_buf[3] = '1';
+        }
         else if (n32_dac_obj[i].DAC_Info.DACx == DAC2)
+        {
             name_buf[3] = '2';
+        }
 
         /* Enable DAC peripheral clock */
         n32_dac_obj[i].DAC_Info.EnablePeriphClk(n32_dac_obj[i].DAC_Info.periph_clk, ENABLE);

@@ -465,19 +465,51 @@ static rt_err_t rockchip_gpio_probe(struct rt_platform_device *pdev)
     rt_err_t err;
     int id, version;
     const char *name;
-    struct rockchip_pin_bank *pin_bank;
+    struct rockchip_pin_bank *pin_bank = RT_NULL;
     struct rt_ofw_node *np = pdev->parent.ofw_node;
-    struct rt_ofw_node *npp = rt_ofw_get_parent(np);
-    struct rockchip_pinctrl_device *pinctrl_dev = rt_ofw_data(npp);
-    struct rockchip_pin_ctrl *pinctrl = pinctrl_dev->pinctrl;
+    struct rt_ofw_node *npp;
+    struct rockchip_pinctrl_device *pinctrl_dev;
+    struct rockchip_pin_ctrl *pinctrl;
+
+    if (!np || !(npp = rt_ofw_get_parent(np)))
+    {
+        return -RT_EINVAL;
+    }
+
+    pinctrl_dev = rt_ofw_data(npp);
+
+    if (!pinctrl_dev)
+    {
+        err = rt_platform_ofw_request(npp);
+        pinctrl_dev = rt_ofw_data(npp);
+
+        if (err || !pinctrl_dev)
+        {
+            rt_ofw_node_put(npp);
+
+            return err ? err : -RT_EIO;
+        }
+    }
+
+    pinctrl = pinctrl_dev->pinctrl;
 
     rt_ofw_node_put(npp);
+
+    if (!pinctrl || !pinctrl->pin_banks || !pinctrl->banks_nr)
+    {
+        return -RT_EIO;
+    }
 
     if ((id = pdev->dev_id) < 0)
     {
         static int gpio_uid = 0;
 
         id = gpio_uid++;
+    }
+
+    if (id >= pinctrl->banks_nr)
+    {
+        return -RT_EINVAL;
     }
 
     pin_bank = &pinctrl->pin_banks[id];
@@ -558,13 +590,13 @@ _out_res:
         rt_iounmap(pin_bank->reg_base);
     }
 
-    if (rt_is_err_or_null(pin_bank->clk))
+    if (!rt_is_err_or_null(pin_bank->clk))
     {
         rt_clk_disable_unprepare(pin_bank->clk);
         rt_clk_put(pin_bank->clk);
     }
 
-    if (rt_is_err_or_null(pin_bank->db_clk))
+    if (!rt_is_err_or_null(pin_bank->db_clk))
     {
         rt_clk_disable_unprepare(pin_bank->db_clk);
         rt_clk_put(pin_bank->db_clk);
