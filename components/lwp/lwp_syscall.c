@@ -5720,6 +5720,17 @@ static int copy_msghdr_from_user(struct msghdr *kmsg,
     {
         return -EFAULT;
     }
+    if (kmsg->msg_control == RT_NULL)
+    {
+        if (kmsg->msg_controllen != 0)
+        {
+            return -EFAULT;
+        }
+    }
+    if (kmsg->msg_name == RT_NULL)
+    {
+        kmsg->msg_namelen = 0;
+    }
 
     iovs_size = sizeof(*kmsg->msg_iov) * kmsg->msg_iovlen;
     if (!lwp_user_accessable(kmsg->msg_iov, iovs_size))
@@ -5798,10 +5809,21 @@ static int copy_msghdr_from_user(struct msghdr *kmsg,
     }
 
     *out_msg_control = kmsg->msg_control;
-    kmsg->msg_control = buffer_cursor;
-    buffer_cursor += kmsg->msg_controllen;
+    if (kmsg->msg_control != RT_NULL)
+    {
+        kmsg->msg_control = buffer_cursor;
+        buffer_cursor += kmsg->msg_controllen;
+    }
     *out_msg_name = kmsg->msg_name;
-    kmsg->msg_name = kmsg->msg_namelen != 0 ? buffer_cursor : RT_NULL;
+    if (kmsg->msg_name != RT_NULL && kmsg->msg_namelen != 0)
+    {
+        kmsg->msg_name = buffer_cursor;
+    }
+    else
+    {
+        kmsg->msg_name = RT_NULL;
+        kmsg->msg_namelen = 0;
+    }
 
     return 0;
 }
