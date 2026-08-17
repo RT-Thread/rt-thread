@@ -179,6 +179,19 @@ menu "Hardware Drivers Config"
                     bool "Enable I2C0 bus"
                     default n
                     if BSP_USING_HW_I2C0
+                        choice BSP_USING_HW_I2C0_SPEED
+                            prompt "I2C0 Baud Rate Settings"
+                            default BSP_I2C0_RATE_FAST
+                            config BSP_I2C0_RATE_STANDARD
+                                bool "I2C_MASTER_RATE_STANDARD (100 kHz)"
+                            config BSP_I2C0_RATE_FAST
+                                bool "I2C_MASTER_RATE_FAST (400 kHz)"
+                            config BSP_I2C0_RATE_FASTPLUS
+                                bool "I2C_MASTER_RATE_FASTPLUS (1 MHz)"
+                            config BSP_I2C0_RATE_HIGHSPEED
+                                bool "I2C_MASTER_RATE_HIGHSPEED (3.4 MHz)"
+                        endchoice
+
                         config BSP_I2C0_SCL_PIN
                             string "I2C0 SCL pin"
                             default "p004"
@@ -192,6 +205,20 @@ menu "Hardware Drivers Config"
                     bool "Enable I2C1 bus"
                     default n
                     if BSP_USING_HW_I2C1
+
+                        choice BSP_USING_HW_I2C1_SPEED
+                            prompt "I2C1 Baud Rate Settings"
+                            default BSP_I2C1_RATE_FAST
+                            config BSP_I2C1_RATE_STANDARD
+                                bool "I2C_MASTER_RATE_STANDARD (100 kHz)"
+                            config BSP_I2C1_RATE_FAST
+                                bool "I2C_MASTER_RATE_FAST (400 kHz)"
+                            config BSP_I2C1_RATE_FASTPLUS
+                                bool "I2C_MASTER_RATE_FASTPLUS (1 MHz)"
+                            config BSP_I2C1_RATE_HIGHSPEED
+                                bool "I2C_MASTER_RATE_HIGHSPEED (3.4 MHz)"
+                        endchoice
+
                         config BSP_I2C1_SCL_PIN
                             string "I2C1 SCL pin"
                             default "p006"

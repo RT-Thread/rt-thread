@@ -32,14 +32,14 @@
 
 #elif defined(SOC_SERIES_R7SA6W1)
 
-#define R_ADC_Open      R_ADC_W_Open
-#define R_ADC_ScanCfg   R_ADC_W_ScanCfg
-#define R_ADC_ScanStart R_ADC_W_ScanStart
-#define R_ADC_Read32    R_ADC_W_Read32
-#define R_ADC_Read      R_ADC_W_Read
-#define R_ADC_ScanStop  R_ADC_W_ScanStop
-#define R_ADC_Close     R_ADC_W_Close
-
+#define R_ADC_Open           R_ADC_W_Open
+#define R_ADC_ScanCfg        R_ADC_W_ScanCfg
+#define R_ADC_ScanStart      R_ADC_W_ScanStart
+#define R_ADC_Read32         R_ADC_W_Read32
+#define R_ADC_Read           R_ADC_W_Read
+#define R_ADC_ScanStop       R_ADC_W_ScanStop
+#define R_ADC_Close          R_ADC_W_Close
+#define RA_ADC_FULL_SCALE_MV 1400
 #endif
 
 struct ra_adc_map ra_adc[] = {
@@ -113,18 +113,41 @@ static rt_err_t ra_get_adc_value(struct rt_adc_device *device, rt_int8_t channel
         LOG_E("get adc value failed.\n");
         return -RT_ERROR;
     }
+#if defined(SOC_SERIES_R7SA6W1)
+    /* R_ADC_W returns the 12-bit result left-aligned in a 16-bit FIFO field. */
+    *value >>= 4U;
+#endif
     return RT_EOK;
 }
 
 static rt_uint8_t ra_adc_get_resolution(struct rt_adc_device *device)
 {
-    LOG_W("ra_adc_get_resolution is not supported.");
-    return 0;
+    struct ra_adc_map *adc;
+
+    RT_ASSERT(device != RT_NULL);
+    adc = (struct ra_adc_map *)device->parent.user_data;
+
+    switch (adc->g_cfg->resolution)
+    {
+    case ADC_RESOLUTION_12_BIT:
+        return 12;
+    case ADC_RESOLUTION_10_BIT:
+        return 10;
+    case ADC_RESOLUTION_7_BIT:
+        return 7;
+    case ADC_RESOLUTION_4_BIT:
+        return 4;
+    default:
+        return 0;
+    }
 }
 static rt_int16_t ra_adc_get_vref(struct rt_adc_device *device)
 {
-    LOG_W("ra_adc_get_vref is not supported.");
+#if defined(SOC_SERIES_R7SA6W1)
+    return RA_ADC_FULL_SCALE_MV;
+#else
     return 0;
+#endif
 }
 
 static const struct rt_adc_ops ra_adc_ops = {
