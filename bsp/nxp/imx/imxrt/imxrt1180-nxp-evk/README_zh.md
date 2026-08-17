@@ -36,14 +36,14 @@ CM33对CM7的kick off将在后续版本中支持。
 | Rpmsg-lite             |     支持     |          |
 | GPIO                   |     支持     |          |
 | UART                   |     支持     |          |
-| SPI                    |   暂不支持   |          |
+| SPI                    |     支持     |          |
 | I2C                    |     支持     |          |
 | ADC                    |     支持     |          |
 | Timer                  |     支持     |          |
-| SDIO                   |   暂不支持   |          |
-| RTC                    |   暂不支持   |          |
+| SDIO                   |     支持     |          |
+| RTC                    |     支持     |          |
 | PWM                    |   暂不支持   |          |
-| CAN                    |   暂不支持   |          |
+| CAN                    |     支持     |          |
 
 
 ## 使用说明

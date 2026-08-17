@@ -34,14 +34,14 @@ This BSP currently provides peripheral support:
 | Rpmsg-lite             | Supported         |           |
 | GPIO                   | supported         |           |
 | UART                   | Supported         |           |
-| SPI                    | Not yet supported |           |
+| SPI                    | supported         |           |
 | I2C                    | supported         |           |
 | ADC                    | supported         |           |
 | Timer                  | supported         |           |
-| SDIO                   | Not yet supported |           |
-| RTC                    | Not yet supported |           |
+| SDIO                   | supported         |           |
+| RTC                    | supported         |           |
 | PWM                    | Not yet supported |           |
-| CAN                    | Not yet supported |           |
+| CAN                    | supported         |           |
 
 ## Usage Instructions
 
