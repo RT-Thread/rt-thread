@@ -359,16 +359,18 @@ static void uart_isr(struct imxrt_uart *uart)
 {
     RT_ASSERT(uart != RT_NULL);
 
-    if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxDataRegFullFlag)
+    /* Check and clear overrun first: when overrun is set, the RX data register
+     * content is unreliable on LPUART. Clear before reading to avoid consuming
+     * a corrupted byte. */
+    if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxOverrunFlag)
+    {
+        LPUART_ClearStatusFlags(uart->uart_base, kLPUART_RxOverrunFlag);
+    }
+    else if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxDataRegFullFlag)
     {
         uint8_t ch = LPUART_ReadByte(uart->uart_base);
         rt_hw_serial_control_isr(&uart->serial, RT_HW_SERIAL_CTRL_PUTC, &ch);
         rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_RX_IND);
-    }
-
-    if (LPUART_GetStatusFlags(uart->uart_base) & kLPUART_RxOverrunFlag)
-    {
-        LPUART_ClearStatusFlags(uart->uart_base, kLPUART_RxOverrunFlag);
     }
 
     if ((LPUART_GetStatusFlags(uart->uart_base) & kLPUART_TxDataRegEmptyFlag) &&
@@ -667,6 +669,11 @@ static rt_err_t imxrt_control(struct rt_serial_device *serial, int cmd, void *ar
     switch (cmd)
     {
     case RT_DEVICE_CTRL_CLR_INT:
+        /* Disable both the LPUART interrupt sources and the NVIC line so that
+         * no RX/TX interrupts fire after the device is closed. */
+        LPUART_DisableInterrupts(uart->uart_base,
+                                 kLPUART_RxDataRegFullInterruptEnable |
+                                 kLPUART_TxDataRegEmptyInterruptEnable);
         DisableIRQ(uart->irqn);
         break;
 

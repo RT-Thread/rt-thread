@@ -8,6 +8,7 @@
  * 2017-10-10     Tanek        the first version
  * 2019-5-10      misonyo      add DMA TX and RX function
  * 2026-4-29      Ran          add RT1180 support
+ * 2026-8-12      Ran          add RT1180 DMA (edma_base, DMA3/DMA4 mux)
  */
 #include <rtthread.h>
 #ifdef BSP_USING_LPUART
@@ -74,6 +75,7 @@ struct dma_rx_config
     dma_request_source_t request;
     rt_uint8_t channel;
     rt_uint32_t last_index;
+    EDMA_Type *edma_base;
 };
 
 struct dma_tx_config
@@ -82,6 +84,7 @@ struct dma_tx_config
     lpuart_edma_handle_t uart_edma;
     dma_request_source_t request;
     rt_uint8_t channel;
+    EDMA_Type *edma_base;
 };
 
 #endif
@@ -248,137 +251,276 @@ static struct imxrt_uart uarts[] = {
 
 static void uart_get_dma_config(void)
 {
+#ifdef SOC_IMXRT1180_SERIES
+    /* RT1180: LPUART1-8, 11-12 are served by DMA3; LPUART9-10 are served by DMA4.
+     * Request source constants follow the kDma3RequestMux / kDma4RequestMux naming. */
 #ifdef BSP_LPUART1_RX_USING_DMA
-    static struct dma_rx_config uart1_dma_rx = { .request = kDmaRequestMuxLPUART1Rx, .channel = BSP_LPUART1_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart1_dma_rx = { .request = kDma3RequestMuxLPUART1Rx, .channel = BSP_LPUART1_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART1_INDEX].dma_rx = &uart1_dma_rx;
     uarts[LPUART1_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART1_TX_USING_DMA
-    static struct dma_tx_config uart1_dma_tx = { .request = kDmaRequestMuxLPUART1Tx, .channel = BSP_LPUART1_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart1_dma_tx = { .request = kDma3RequestMuxLPUART1Tx, .channel = BSP_LPUART1_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART1_INDEX].dma_tx = &uart1_dma_tx;
     uarts[LPUART1_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART2_RX_USING_DMA
-    static struct dma_rx_config uart2_dma_rx = { .request = kDmaRequestMuxLPUART2Rx, .channel = BSP_LPUART2_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart2_dma_rx = { .request = kDma3RequestMuxLPUART2Rx, .channel = BSP_LPUART2_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART2_INDEX].dma_rx = &uart2_dma_rx;
     uarts[LPUART2_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART2_TX_USING_DMA
-    static struct dma_tx_config uart2_dma_tx = { .request = kDmaRequestMuxLPUART2Tx, .channel = BSP_LPUART2_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart2_dma_tx = { .request = kDma3RequestMuxLPUART2Tx, .channel = BSP_LPUART2_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART2_INDEX].dma_tx = &uart2_dma_tx;
     uarts[LPUART2_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART3_RX_USING_DMA
-    static struct dma_rx_config uart3_dma_rx = { .request = kDmaRequestMuxLPUART3Rx, .channel = BSP_LPUART3_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart3_dma_rx = { .request = kDma3RequestMuxLPUART3Rx, .channel = BSP_LPUART3_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART3_INDEX].dma_rx = &uart3_dma_rx;
     uarts[LPUART3_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART3_TX_USING_DMA
-    static struct dma_tx_config uart3_dma_tx = { .request = kDmaRequestMuxLPUART3Tx, .channel = BSP_LPUART3_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart3_dma_tx = { .request = kDma3RequestMuxLPUART3Tx, .channel = BSP_LPUART3_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART3_INDEX].dma_tx = &uart3_dma_tx;
     uarts[LPUART3_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART4_RX_USING_DMA
-    static struct dma_rx_config uart4_dma_rx = { .request = kDmaRequestMuxLPUART4Rx, .channel = BSP_LPUART4_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart4_dma_rx = { .request = kDma3RequestMuxLPUART4Rx, .channel = BSP_LPUART4_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART4_INDEX].dma_rx = &uart4_dma_rx;
     uarts[LPUART4_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART4_TX_USING_DMA
-    static struct dma_tx_config uart4_dma_tx = { .request = kDmaRequestMuxLPUART4Tx, .channel = BSP_LPUART4_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart4_dma_tx = { .request = kDma3RequestMuxLPUART4Tx, .channel = BSP_LPUART4_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART4_INDEX].dma_tx = &uart4_dma_tx;
     uarts[LPUART4_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART5_RX_USING_DMA
-    static struct dma_rx_config uart5_dma_rx = { .request = kDmaRequestMuxLPUART5Rx, .channel = BSP_LPUART5_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart5_dma_rx = { .request = kDma3RequestMuxLPUART5Rx, .channel = BSP_LPUART5_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART5_INDEX].dma_rx = &uart5_dma_rx;
     uarts[LPUART5_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART5_TX_USING_DMA
-    static struct dma_tx_config uart5_dma_tx = { .request = kDmaRequestMuxLPUART5Tx, .channel = BSP_LPUART5_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart5_dma_tx = { .request = kDma3RequestMuxLPUART5Tx, .channel = BSP_LPUART5_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART5_INDEX].dma_tx = &uart5_dma_tx;
     uarts[LPUART5_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART6_RX_USING_DMA
-    static struct dma_rx_config uart6_dma_rx = { .request = kDmaRequestMuxLPUART6Rx, .channel = BSP_LPUART6_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart6_dma_rx = { .request = kDma3RequestMuxLPUART6Rx, .channel = BSP_LPUART6_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART6_INDEX].dma_rx = &uart6_dma_rx;
     uarts[LPUART6_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART6_TX_USING_DMA
-    static struct dma_tx_config uart6_dma_tx = { .request = kDmaRequestMuxLPUART6Tx, .channel = BSP_LPUART6_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart6_dma_tx = { .request = kDma3RequestMuxLPUART6Tx, .channel = BSP_LPUART6_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART6_INDEX].dma_tx = &uart6_dma_tx;
     uarts[LPUART6_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART7_RX_USING_DMA
-    static struct dma_rx_config uart7_dma_rx = { .request = kDmaRequestMuxLPUART7Rx, .channel = BSP_LPUART7_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart7_dma_rx = { .request = kDma3RequestMuxLPUART7Rx, .channel = BSP_LPUART7_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART7_INDEX].dma_rx = &uart7_dma_rx;
     uarts[LPUART7_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART7_TX_USING_DMA
-    static struct dma_tx_config uart7_dma_tx = { .request = kDmaRequestMuxLPUART7Tx, .channel = BSP_LPUART7_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart7_dma_tx = { .request = kDma3RequestMuxLPUART7Tx, .channel = BSP_LPUART7_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART7_INDEX].dma_tx = &uart7_dma_tx;
     uarts[LPUART7_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART8_RX_USING_DMA
-    static struct dma_rx_config uart8_dma_rx = { .request = kDmaRequestMuxLPUART8Rx, .channel = BSP_LPUART8_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart8_dma_rx = { .request = kDma3RequestMuxLPUART8Rx, .channel = BSP_LPUART8_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART8_INDEX].dma_rx = &uart8_dma_rx;
     uarts[LPUART8_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART8_TX_USING_DMA
-    static struct dma_tx_config uart8_dma_tx = { .request = kDmaRequestMuxLPUART8Tx, .channel = BSP_LPUART8_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart8_dma_tx = { .request = kDma3RequestMuxLPUART8Tx, .channel = BSP_LPUART8_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART8_INDEX].dma_tx = &uart8_dma_tx;
     uarts[LPUART8_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART9_RX_USING_DMA
-    static struct dma_rx_config uart9_dma_rx = { .request = kDmaRequestMuxLPUART9Rx, .channel = BSP_LPUART9_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart9_dma_rx = { .request = kDma4RequestMuxLPUART9Rx, .channel = BSP_LPUART9_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA4 };
     uarts[LPUART9_INDEX].dma_rx = &uart9_dma_rx;
     uarts[LPUART9_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART9_TX_USING_DMA
-    static struct dma_tx_config uart9_dma_tx = { .request = kDmaRequestMuxLPUART9Tx, .channel = BSP_LPUART9_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart9_dma_tx = { .request = kDma4RequestMuxLPUART9Tx, .channel = BSP_LPUART9_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA4 };
     uarts[LPUART9_INDEX].dma_tx = &uart9_dma_tx;
     uarts[LPUART9_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART10_RX_USING_DMA
-    static struct dma_rx_config uart10_dma_rx = { .request = kDmaRequestMuxLPUART10Rx, .channel = BSP_LPUART10_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart10_dma_rx = { .request = kDma4RequestMuxLPUART10Rx, .channel = BSP_LPUART10_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA4 };
     uarts[LPUART10_INDEX].dma_rx = &uart10_dma_rx;
     uarts[LPUART10_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART10_TX_USING_DMA
-    static struct dma_tx_config uart10_dma_tx = { .request = kDmaRequestMuxLPUART10Tx, .channel = BSP_LPUART10_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart10_dma_tx = { .request = kDma4RequestMuxLPUART10Tx, .channel = BSP_LPUART10_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA4 };
     uarts[LPUART10_INDEX].dma_tx = &uart10_dma_tx;
     uarts[LPUART10_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART11_RX_USING_DMA
-    static struct dma_rx_config uart11_dma_rx = { .request = kDmaRequestMuxLPUART11Rx, .channel = BSP_LPUART11_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart11_dma_rx = { .request = kDma3RequestMuxLPUART11Rx, .channel = BSP_LPUART11_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART11_INDEX].dma_rx = &uart11_dma_rx;
     uarts[LPUART11_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART11_TX_USING_DMA
-    static struct dma_tx_config uart11_dma_tx = { .request = kDmaRequestMuxLPUART11Tx, .channel = BSP_LPUART11_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart11_dma_tx = { .request = kDma3RequestMuxLPUART11Tx, .channel = BSP_LPUART11_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART11_INDEX].dma_tx = &uart11_dma_tx;
     uarts[LPUART11_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
 
 #ifdef BSP_LPUART12_RX_USING_DMA
-    static struct dma_rx_config uart12_dma_rx = { .request = kDmaRequestMuxLPUART12Rx, .channel = BSP_LPUART12_RX_DMA_CHANNEL, .last_index = 0 };
+    static struct dma_rx_config uart12_dma_rx = { .request = kDma3RequestMuxLPUART12Rx, .channel = BSP_LPUART12_RX_DMA_CHANNEL, .last_index = 0, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART12_INDEX].dma_rx = &uart12_dma_rx;
     uarts[LPUART12_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
 #endif
 #ifdef BSP_LPUART12_TX_USING_DMA
-    static struct dma_tx_config uart12_dma_tx = { .request = kDmaRequestMuxLPUART12Tx, .channel = BSP_LPUART12_TX_DMA_CHANNEL };
+    static struct dma_tx_config uart12_dma_tx = { .request = kDma3RequestMuxLPUART12Tx, .channel = BSP_LPUART12_TX_DMA_CHANNEL, .edma_base = (EDMA_Type *)DMA3 };
     uarts[LPUART12_INDEX].dma_tx = &uart12_dma_tx;
     uarts[LPUART12_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
 #endif
+
+#else /* non-RT1180: single DMA0 with DMAMUX */
+
+#ifdef BSP_LPUART1_RX_USING_DMA
+    static struct dma_rx_config uart1_dma_rx = { .request = kDmaRequestMuxLPUART1Rx, .channel = BSP_LPUART1_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART1_INDEX].dma_rx = &uart1_dma_rx;
+    uarts[LPUART1_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART1_TX_USING_DMA
+    static struct dma_tx_config uart1_dma_tx = { .request = kDmaRequestMuxLPUART1Tx, .channel = BSP_LPUART1_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART1_INDEX].dma_tx = &uart1_dma_tx;
+    uarts[LPUART1_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART2_RX_USING_DMA
+    static struct dma_rx_config uart2_dma_rx = { .request = kDmaRequestMuxLPUART2Rx, .channel = BSP_LPUART2_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART2_INDEX].dma_rx = &uart2_dma_rx;
+    uarts[LPUART2_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART2_TX_USING_DMA
+    static struct dma_tx_config uart2_dma_tx = { .request = kDmaRequestMuxLPUART2Tx, .channel = BSP_LPUART2_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART2_INDEX].dma_tx = &uart2_dma_tx;
+    uarts[LPUART2_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART3_RX_USING_DMA
+    static struct dma_rx_config uart3_dma_rx = { .request = kDmaRequestMuxLPUART3Rx, .channel = BSP_LPUART3_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART3_INDEX].dma_rx = &uart3_dma_rx;
+    uarts[LPUART3_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART3_TX_USING_DMA
+    static struct dma_tx_config uart3_dma_tx = { .request = kDmaRequestMuxLPUART3Tx, .channel = BSP_LPUART3_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART3_INDEX].dma_tx = &uart3_dma_tx;
+    uarts[LPUART3_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART4_RX_USING_DMA
+    static struct dma_rx_config uart4_dma_rx = { .request = kDmaRequestMuxLPUART4Rx, .channel = BSP_LPUART4_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART4_INDEX].dma_rx = &uart4_dma_rx;
+    uarts[LPUART4_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART4_TX_USING_DMA
+    static struct dma_tx_config uart4_dma_tx = { .request = kDmaRequestMuxLPUART4Tx, .channel = BSP_LPUART4_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART4_INDEX].dma_tx = &uart4_dma_tx;
+    uarts[LPUART4_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART5_RX_USING_DMA
+    static struct dma_rx_config uart5_dma_rx = { .request = kDmaRequestMuxLPUART5Rx, .channel = BSP_LPUART5_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART5_INDEX].dma_rx = &uart5_dma_rx;
+    uarts[LPUART5_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART5_TX_USING_DMA
+    static struct dma_tx_config uart5_dma_tx = { .request = kDmaRequestMuxLPUART5Tx, .channel = BSP_LPUART5_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART5_INDEX].dma_tx = &uart5_dma_tx;
+    uarts[LPUART5_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART6_RX_USING_DMA
+    static struct dma_rx_config uart6_dma_rx = { .request = kDmaRequestMuxLPUART6Rx, .channel = BSP_LPUART6_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART6_INDEX].dma_rx = &uart6_dma_rx;
+    uarts[LPUART6_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART6_TX_USING_DMA
+    static struct dma_tx_config uart6_dma_tx = { .request = kDmaRequestMuxLPUART6Tx, .channel = BSP_LPUART6_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART6_INDEX].dma_tx = &uart6_dma_tx;
+    uarts[LPUART6_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART7_RX_USING_DMA
+    static struct dma_rx_config uart7_dma_rx = { .request = kDmaRequestMuxLPUART7Rx, .channel = BSP_LPUART7_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART7_INDEX].dma_rx = &uart7_dma_rx;
+    uarts[LPUART7_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART7_TX_USING_DMA
+    static struct dma_tx_config uart7_dma_tx = { .request = kDmaRequestMuxLPUART7Tx, .channel = BSP_LPUART7_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART7_INDEX].dma_tx = &uart7_dma_tx;
+    uarts[LPUART7_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART8_RX_USING_DMA
+    static struct dma_rx_config uart8_dma_rx = { .request = kDmaRequestMuxLPUART8Rx, .channel = BSP_LPUART8_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART8_INDEX].dma_rx = &uart8_dma_rx;
+    uarts[LPUART8_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART8_TX_USING_DMA
+    static struct dma_tx_config uart8_dma_tx = { .request = kDmaRequestMuxLPUART8Tx, .channel = BSP_LPUART8_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART8_INDEX].dma_tx = &uart8_dma_tx;
+    uarts[LPUART8_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART9_RX_USING_DMA
+    static struct dma_rx_config uart9_dma_rx = { .request = kDmaRequestMuxLPUART9Rx, .channel = BSP_LPUART9_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART9_INDEX].dma_rx = &uart9_dma_rx;
+    uarts[LPUART9_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART9_TX_USING_DMA
+    static struct dma_tx_config uart9_dma_tx = { .request = kDmaRequestMuxLPUART9Tx, .channel = BSP_LPUART9_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART9_INDEX].dma_tx = &uart9_dma_tx;
+    uarts[LPUART9_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART10_RX_USING_DMA
+    static struct dma_rx_config uart10_dma_rx = { .request = kDmaRequestMuxLPUART10Rx, .channel = BSP_LPUART10_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART10_INDEX].dma_rx = &uart10_dma_rx;
+    uarts[LPUART10_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART10_TX_USING_DMA
+    static struct dma_tx_config uart10_dma_tx = { .request = kDmaRequestMuxLPUART10Tx, .channel = BSP_LPUART10_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART10_INDEX].dma_tx = &uart10_dma_tx;
+    uarts[LPUART10_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART11_RX_USING_DMA
+    static struct dma_rx_config uart11_dma_rx = { .request = kDmaRequestMuxLPUART11Rx, .channel = BSP_LPUART11_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART11_INDEX].dma_rx = &uart11_dma_rx;
+    uarts[LPUART11_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART11_TX_USING_DMA
+    static struct dma_tx_config uart11_dma_tx = { .request = kDmaRequestMuxLPUART11Tx, .channel = BSP_LPUART11_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART11_INDEX].dma_tx = &uart11_dma_tx;
+    uarts[LPUART11_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#ifdef BSP_LPUART12_RX_USING_DMA
+    static struct dma_rx_config uart12_dma_rx = { .request = kDmaRequestMuxLPUART12Rx, .channel = BSP_LPUART12_RX_DMA_CHANNEL, .last_index = 0, .edma_base = DMA0 };
+    uarts[LPUART12_INDEX].dma_rx = &uart12_dma_rx;
+    uarts[LPUART12_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+#endif
+#ifdef BSP_LPUART12_TX_USING_DMA
+    static struct dma_tx_config uart12_dma_tx = { .request = kDmaRequestMuxLPUART12Tx, .channel = BSP_LPUART12_TX_DMA_CHANNEL, .edma_base = DMA0 };
+    uarts[LPUART12_INDEX].dma_tx = &uart12_dma_tx;
+    uarts[LPUART12_INDEX].dma_flag |= RT_DEVICE_FLAG_DMA_TX;
+#endif
+
+#endif /* SOC_IMXRT1180_SERIES */
 }
 static void uart_isr(struct imxrt_uart *uart);
 
@@ -568,7 +710,10 @@ static void uart_isr(struct imxrt_uart *uart)
         LPUART_ClearStatusFlags(uart->uart_base, kLPUART_IdleLineFlag);
         level = rt_hw_interrupt_disable();
 
-        total_index = uart->serial.config.bufsz - EDMA_GetRemainingMajorLoopCount(DMA0, uart->dma_rx->channel);
+        /* Use the TCD CITER field for RT1180 EDMA4 compatibility. */
+        total_index = EDMA_TCD_CITER(&uart->dma_rx->edma.tcdBase[uart->dma_rx->edma.channel],
+                                     EDMA_TCD_TYPE(uart->dma_rx->edma.base)) & 0x7FFFU;
+        total_index = uart->serial.config.bufsz - total_index;
         if (total_index > uart->dma_rx->last_index)
         {
             recv_len = total_index - uart->dma_rx->last_index;
@@ -605,10 +750,10 @@ void edma_rx_callback(struct _edma_handle *handle, void *userData, bool transfer
     {
         level = rt_hw_interrupt_disable();
 
-        if ((EDMA_GetChannelStatusFlags(DMA0, uart->dma_rx->channel) & kEDMA_DoneFlag) != 0U)
+        if ((EDMA_GetChannelStatusFlags(uart->dma_rx->edma_base, uart->dma_rx->channel) & kEDMA_DoneFlag) != 0U)
         {
             /* clear full interrupt */
-            EDMA_ClearChannelStatusFlags(DMA0, uart->dma_rx->channel, kEDMA_DoneFlag);
+            EDMA_ClearChannelStatusFlags(uart->dma_rx->edma_base, uart->dma_rx->channel, kEDMA_DoneFlag);
 
             recv_len = uart->serial.config.bufsz - uart->dma_rx->last_index;
             uart->dma_rx->last_index = 0;
@@ -616,9 +761,10 @@ void edma_rx_callback(struct _edma_handle *handle, void *userData, bool transfer
         else
         {
             /* clear half interrupt */
-            EDMA_ClearChannelStatusFlags(DMA0, uart->dma_rx->channel, kEDMA_InterruptFlag);
+            EDMA_ClearChannelStatusFlags(uart->dma_rx->edma_base, uart->dma_rx->channel, kEDMA_InterruptFlag);
 
-            total_index = uart->serial.config.bufsz - EDMA_GetRemainingMajorLoopCount(DMA0, uart->dma_rx->channel);
+            total_index = EDMA_TCD_CITER(&handle->tcdBase[handle->channel], EDMA_TCD_TYPE(handle->base)) & 0x7FFFU;
+            total_index = uart->serial.config.bufsz - total_index;
             if (total_index > uart->dma_rx->last_index)
             {
                 recv_len = total_index - uart->dma_rx->last_index;
@@ -649,22 +795,31 @@ void edma_tx_callback(LPUART_Type *base, lpuart_edma_handle_t *handle, status_t 
         rt_hw_serial_isr(&uart->serial, RT_SERIAL_EVENT_TX_DMADONE);
     }
 }
+#ifdef SOC_IMXRT1180_SERIES
+static void imxrt_edma_mux_setup(EDMA_Type *base, rt_uint8_t channel, dma_request_source_t request)
+{
+    EDMA_SetChannelMux(base, channel, request);
+}
+#else
+static void imxrt_edma_mux_setup(EDMA_Type *base, rt_uint8_t channel, dma_request_source_t request)
+{
+    (void)base;
+    DMAMUX_SetSource(DMAMUX, channel, (uint8_t)(uint32_t)request);
+    DMAMUX_EnableChannel(DMAMUX, channel);
+}
+#endif
+
 static void imxrt_dma_rx_config(struct imxrt_uart *uart)
 {
     RT_ASSERT(uart != RT_NULL);
 
     edma_transfer_config_t xferConfig;
     struct rt_serial_rx_fifo *rx_fifo;
+    EDMA_Type *base = uart->dma_rx->edma_base;
 
-#ifndef SOC_IMXRT1180_SERIES
-    DMAMUX_SetSource(DMAMUX, uart->dma_rx->channel, uart->dma_rx->request);
-    DMAMUX_EnableChannel(DMAMUX, uart->dma_rx->channel);
-#else
-      /* RT1180 uses EDMA4, configure DMA request source differently */
-    EDMA_SetChannelMux(DMA0, uart->dma_rx->channel, uart->dma_rx->request);
-#endif
+    imxrt_edma_mux_setup(base, uart->dma_rx->channel, uart->dma_rx->request);
 
-    EDMA_CreateHandle(&uart->dma_rx->edma, DMA0, uart->dma_rx->channel);
+    EDMA_CreateHandle(&uart->dma_rx->edma, base, uart->dma_rx->channel);
     EDMA_SetCallback(&uart->dma_rx->edma, edma_rx_callback, uart);
 
     rx_fifo = (struct rt_serial_rx_fifo *)uart->serial.serial_rx;
@@ -679,10 +834,11 @@ static void imxrt_dma_rx_config(struct imxrt_uart *uart)
                          kEDMA_PeripheralToMemory);
 
     EDMA_SubmitTransfer(&uart->dma_rx->edma, &xferConfig);
-    EDMA_EnableChannelInterrupts(DMA0, uart->dma_rx->channel, kEDMA_MajorInterruptEnable | kEDMA_HalfInterruptEnable);
-    EDMA_EnableAutoStopRequest(DMA0, uart->dma_rx->channel, false);
-      /* complement to adjust final destination address */
-    uart->dma_rx->edma.base->TCD[uart->dma_rx->channel].DLAST_SGA = -(uart->serial.config.bufsz);
+    EDMA_EnableChannelInterrupts(base, uart->dma_rx->channel, kEDMA_MajorInterruptEnable | kEDMA_HalfInterruptEnable);
+    EDMA_EnableAutoStopRequest(base, uart->dma_rx->channel, false);
+    /* Complement to adjust final destination address for circular DMA. */
+    EDMA_TCD_DLAST_SGA(&uart->dma_rx->edma.tcdBase[uart->dma_rx->edma.channel],
+                        EDMA_TCD_TYPE(uart->dma_rx->edma.base)) = -(int32_t)(uart->serial.config.bufsz);
     EDMA_StartTransfer(&uart->dma_rx->edma);
     LPUART_EnableRxDMA(uart->uart_base, true);
 
@@ -697,15 +853,11 @@ static void imxrt_dma_tx_config(struct imxrt_uart *uart)
 {
     RT_ASSERT(uart != RT_NULL);
 
-#ifndef SOC_IMXRT1180_SERIES
-    DMAMUX_SetSource(DMAMUX, uart->dma_tx->channel, uart->dma_tx->request);
-    DMAMUX_EnableChannel(DMAMUX, uart->dma_tx->channel);
-#else
-      /* RT1180 uses EDMA4, configure DMA request source differently */
-    EDMA_SetChannelMux(DMA0, uart->dma_tx->channel, uart->dma_tx->request);
-#endif
+    EDMA_Type *base = uart->dma_tx->edma_base;
 
-    EDMA_CreateHandle(&uart->dma_tx->edma, DMA0, uart->dma_tx->channel);
+    imxrt_edma_mux_setup(base, uart->dma_tx->channel, uart->dma_tx->request);
+
+    EDMA_CreateHandle(&uart->dma_tx->edma, base, uart->dma_tx->channel);
 
     LPUART_TransferCreateHandleEDMA(uart->uart_base,
                                     &uart->dma_tx->uart_edma,
@@ -923,11 +1075,11 @@ static int imxrt_getc(struct rt_serial_device *serial)
 }
 
 #if defined(RT_SERIAL_USING_DMA) && defined(BSP_USING_DMA)
-rt_size_t dma_tx_xfer(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+rt_ssize_t dma_tx_xfer(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
     struct imxrt_uart *uart;
     lpuart_transfer_t xfer;
-    rt_size_t xfer_size = 0;
+    rt_ssize_t xfer_size = 0;
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct imxrt_uart, serial);
