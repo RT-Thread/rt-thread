@@ -1500,22 +1500,19 @@ void rt_hw_board_init()
     extern void BOARD_InitPeripherals(void);
     BOARD_CommonSetting();
     BOARD_ConfigMPU();
-    BOARD_InitPins();
+    BOARD_InitBootPins();
     BOARD_BootClockRUN();
 //    BOARD_InitPeripherals();
 
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
-    /*init uart device*/
-    rt_hw_uart_init();
+#ifdef RT_USING_HEAP
+    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
-#endif
-
-#ifdef RT_USING_HEAP
-    rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
 #ifdef RT_USING_CONSOLE

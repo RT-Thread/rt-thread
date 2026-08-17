@@ -21,6 +21,14 @@ config SOC_MIMXRT1189CVM8C_CM33
 
 menu "On-chip Peripheral Drivers"
 
+    config BSP_USING_DWT
+        bool "Enable DWT (cycle counter, us delay)"
+        default n
+        help
+            Enable the ARM DWT cycle counter for high-resolution timing and
+            busy-wait microsecond delays. Provides dwt_init(), dwt_get_cycles(),
+            dwt_cycles_to_us(), and dwt_delay_us().
+
     config BSP_USING_DMA
         bool "Enable DMA"
         default n
@@ -431,6 +439,228 @@ menu "On-chip Peripheral Drivers"
                 default 23
         endif
 
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+        default n
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 (LPSPI1)"
+                default n
+
+            config BSP_SPI1_USING_DMA
+                bool "Enable SPI1 DMA"
+                depends on BSP_USING_SPI1
+                select BSP_USING_DMA
+                default n
+
+            config BSP_SPI1_RX_DMA_CHANNEL
+                depends on BSP_SPI1_USING_DMA
+                int "Set SPI1 RX DMA channel (0-31)"
+                default 0
+
+            config BSP_SPI1_TX_DMA_CHANNEL
+                depends on BSP_SPI1_USING_DMA
+                int "Set SPI1 TX DMA channel (0-31)"
+                default 1
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 (LPSPI2)"
+                default n
+
+            config BSP_SPI2_USING_DMA
+                bool "Enable SPI2 DMA"
+                depends on BSP_USING_SPI2
+                select BSP_USING_DMA
+                default n
+
+            config BSP_SPI2_RX_DMA_CHANNEL
+                depends on BSP_SPI2_USING_DMA
+                int "Set SPI2 RX DMA channel (0-31)"
+                default 2
+
+            config BSP_SPI2_TX_DMA_CHANNEL
+                depends on BSP_SPI2_USING_DMA
+                int "Set SPI2 TX DMA channel (0-31)"
+                default 3
+
+            config BSP_USING_SPI3
+                bool "Enable SPI3 (LPSPI3)"
+                default n
+
+            config BSP_SPI3_USING_DMA
+                bool "Enable SPI3 DMA"
+                depends on BSP_USING_SPI3
+                select BSP_USING_DMA
+                default n
+
+            config BSP_SPI3_RX_DMA_CHANNEL
+                depends on BSP_SPI3_USING_DMA
+                int "Set SPI3 RX DMA channel (0-31)"
+                default 4
+
+            config BSP_SPI3_TX_DMA_CHANNEL
+                depends on BSP_SPI3_USING_DMA
+                int "Set SPI3 TX DMA channel (0-31)"
+                default 5
+
+            config BSP_USING_SPI4
+                bool "Enable SPI4 (LPSPI4)"
+                default n
+
+            config BSP_SPI4_USING_DMA
+                bool "Enable SPI4 DMA"
+                depends on BSP_USING_SPI4
+                select BSP_USING_DMA
+                default n
+
+            config BSP_SPI4_RX_DMA_CHANNEL
+                depends on BSP_SPI4_USING_DMA
+                int "Set SPI4 RX DMA channel (0-31)"
+                default 6
+
+            config BSP_SPI4_TX_DMA_CHANNEL
+                depends on BSP_SPI4_USING_DMA
+                int "Set SPI4 TX DMA channel (0-31)"
+                default 7
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+        default n
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1 (LPI2C1)"
+                default n
+
+            if BSP_USING_I2C1
+                choice
+                    prompt "Select I2C1 baudrate"
+                    default HW_I2C1_BADURATE_100kHZ
+
+                    config HW_I2C1_BADURATE_100kHZ
+                        bool "Baudrate 100kHz"
+
+                    config HW_I2C1_BADURATE_400kHZ
+                        bool "Baudrate 400kHz"
+                endchoice
+
+                config BSP_I2C1_USING_DMA
+                    bool "Enable I2C1 DMA"
+                    select BSP_USING_DMA
+                    default n
+
+                config BSP_I2C1_RX_DMA_CHANNEL
+                    depends on BSP_I2C1_USING_DMA
+                    int "Set I2C1 RX DMA channel (0-31)"
+                    default 8
+
+                config BSP_I2C1_TX_DMA_CHANNEL
+                    depends on BSP_I2C1_USING_DMA
+                    int "Set I2C1 TX DMA channel (0-31)"
+                    default 9
+            endif
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2 (LPI2C2)"
+                default n
+
+            if BSP_USING_I2C2
+                choice
+                    prompt "Select I2C2 baudrate"
+                    default HW_I2C2_BADURATE_100kHZ
+
+                    config HW_I2C2_BADURATE_100kHZ
+                        bool "Baudrate 100kHz"
+
+                    config HW_I2C2_BADURATE_400kHZ
+                        bool "Baudrate 400kHz"
+                endchoice
+
+                config BSP_I2C2_USING_DMA
+                    bool "Enable I2C2 DMA"
+                    select BSP_USING_DMA
+                    default n
+
+                config BSP_I2C2_RX_DMA_CHANNEL
+                    depends on BSP_I2C2_USING_DMA
+                    int "Set I2C2 RX DMA channel (0-31)"
+                    default 10
+
+                config BSP_I2C2_TX_DMA_CHANNEL
+                    depends on BSP_I2C2_USING_DMA
+                    int "Set I2C2 TX DMA channel (0-31)"
+                    default 11
+            endif
+
+            config BSP_USING_I2C3
+                bool "Enable I2C3 (LPI2C3)"
+                default n
+
+            if BSP_USING_I2C3
+                choice
+                    prompt "Select I2C3 baudrate"
+                    default HW_I2C3_BADURATE_100kHZ
+
+                    config HW_I2C3_BADURATE_100kHZ
+                        bool "Baudrate 100kHz"
+
+                    config HW_I2C3_BADURATE_400kHZ
+                        bool "Baudrate 400kHz"
+                endchoice
+
+                config BSP_I2C3_USING_DMA
+                    bool "Enable I2C3 DMA"
+                    select BSP_USING_DMA
+                    default n
+
+                config BSP_I2C3_RX_DMA_CHANNEL
+                    depends on BSP_I2C3_USING_DMA
+                    int "Set I2C3 RX DMA channel (0-31)"
+                    default 12
+
+                config BSP_I2C3_TX_DMA_CHANNEL
+                    depends on BSP_I2C3_USING_DMA
+                    int "Set I2C3 TX DMA channel (0-31)"
+                    default 13
+            endif
+
+            config BSP_USING_I2C6
+                bool "Enable I2C6 (LPI2C6)"
+                default n
+
+            if BSP_USING_I2C6
+                choice
+                    prompt "Select I2C6 baudrate"
+                    default HW_I2C6_BADURATE_100kHZ
+
+                    config HW_I2C6_BADURATE_100kHZ
+                        bool "Baudrate 100kHz"
+
+                    config HW_I2C6_BADURATE_400kHZ
+                        bool "Baudrate 400kHz"
+                endchoice
+
+                config BSP_I2C6_USING_DMA
+                    bool "Enable I2C6 DMA"
+                    select BSP_USING_DMA
+                    default n
+
+                config BSP_I2C6_RX_DMA_CHANNEL
+                    depends on BSP_I2C6_USING_DMA
+                    int "Set I2C6 RX DMA channel (0-31)"
+                    default 14
+
+                config BSP_I2C6_TX_DMA_CHANNEL
+                    depends on BSP_I2C6_USING_DMA
+                    int "Set I2C6 TX DMA channel (0-31)"
+                    default 15
+            endif
+        endif
+
     menuconfig BSP_USING_CAN
         bool "Enable CAN"
         select RT_USING_CAN
@@ -438,7 +668,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_CAN
             config BSP_USING_CAN3
                 bool "Enable FLEXCAN3"
-                default n
+                default y
         endif
 
     menuconfig BSP_USING_FLEXSPI
@@ -561,6 +791,12 @@ endmenu
                 select PKG_USING_LITTLEFS
                 default n
         endif
+
+    config BSP_USING_QSPI_FLASH
+        bool "Enable QSPI Flash"
+            select BSP_USING_FLEXSPI
+            select BSP_USING_FLEXSPI1
+        default n
 
 endmenu
 
