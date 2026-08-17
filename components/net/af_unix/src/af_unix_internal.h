@@ -119,6 +119,7 @@ void af_unix_socket_put(struct af_unix_socket *sock);
 int af_unix_handle_alloc_locked(struct af_unix_socket *sock);
 void af_unix_handle_remove_locked(struct af_unix_socket *sock);
 void af_unix_socket_close_locked(struct af_unix_socket *sock);
+void af_unix_wakeup_writable_locked(struct af_unix_socket *sock);
 int af_unix_connect_peers_locked(struct af_unix_socket *first,
                                  struct af_unix_socket *second);
 void af_unix_set_peer_locked(struct af_unix_socket *sock,

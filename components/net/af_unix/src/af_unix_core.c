@@ -294,6 +294,23 @@ void af_unix_socket_close_locked(struct af_unix_socket *sock)
     af_unix_disconnect_locked(sock);
 }
 
+void af_unix_wakeup_writable_locked(struct af_unix_socket *sock)
+{
+    int handle;
+    struct af_unix_socket *other;
+
+    rt_wqueue_wakeup_all(&sock->wait_queue, (void *)(rt_ubase_t)POLLOUT);
+    for (handle = 0; handle < SAL_SOCKETS_NUM; handle++)
+    {
+        other = af_unix_handles[handle];
+        if (other != RT_NULL && other->peer == sock)
+        {
+            rt_wqueue_wakeup_all(&other->wait_queue,
+                                 (void *)(rt_ubase_t)POLLOUT);
+        }
+    }
+}
+
 static int af_unix_socket_create(int domain, int type, int protocol)
 {
     int handle;
@@ -1015,6 +1032,8 @@ static int af_unix_poll(struct dfs_file *file, struct rt_pollreq *request)
         return POLLNVAL;
     }
 
+    /* Register only on this socket. The peer queue can be freed after
+     * peer close, while poll teardown still owns the wait-queue node. */
     rt_poll_add(&sock->wait_queue, request);
     af_unix_lock();
     if (sock->closed)
@@ -1038,7 +1057,6 @@ static int af_unix_poll(struct dfs_file *file, struct rt_pollreq *request)
         {
             if (sock->peer != RT_NULL)
             {
-                rt_poll_add(&sock->peer->wait_queue, request);
                 if (!sock->peer->closed &&
                     sock->peer->message_count < AF_UNIX_DGRAM_QUEUE_LEN)
                 {
@@ -1061,7 +1079,6 @@ static int af_unix_poll(struct dfs_file *file, struct rt_pollreq *request)
         }
         if (sock->peer != RT_NULL)
         {
-            rt_poll_add(&sock->peer->wait_queue, request);
             if (!sock->write_shutdown && !sock->peer->closed &&
                 !sock->peer->read_shutdown &&
                 sock->peer->stream_length < AF_UNIX_STREAM_BUFFER_SIZE)

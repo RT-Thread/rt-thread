@@ -692,12 +692,13 @@ __exit:
 
 static void af_unix_test_rights_socket(void)
 {
-    char buffer = 0;
     char payload = 0;
     int carrier[2] = { -1, -1 };
+    int error;
     int message_flags = 0;
     int passed[2] = { -1, -1 };
     int received_fds[2] = { -1, -1 };
+    int result;
     size_t fd_count = 0;
 
     uassert_int_equal(socketpair(AF_UNIX, SOCK_STREAM, 0, carrier), 0);
@@ -707,17 +708,22 @@ static void af_unix_test_rights_socket(void)
         goto __exit;
     }
 
-    uassert_int_equal(af_unix_send_rights(carrier[0], &passed[1], 1, 's'), 1);
-    closesocket(passed[1]);
-    passed[1] = -1;
-    uassert_int_equal(af_unix_receive_rights(
-                          carrier[1], 0, CMSG_SPACE(sizeof(int)),
-                          received_fds, &fd_count, &message_flags, &payload),
-                      1);
-    uassert_int_equal(fd_count, 1);
+    result = af_unix_send_rights(carrier[0], &passed[1], 1, 's');
+    error = rt_get_errno();
+    uassert_int_equal(result, -1);
+    uassert_int_equal(error, EOPNOTSUPP);
+
+    result = af_unix_receive_rights(carrier[1], MSG_DONTWAIT,
+                                    CMSG_SPACE(sizeof(int)), received_fds,
+                                    &fd_count, &message_flags, &payload);
+    error = rt_get_errno();
+    uassert_int_equal(result, -1);
+    uassert_true(error == EAGAIN || error == EWOULDBLOCK);
+    uassert_int_equal(fd_count, 0);
+
     uassert_int_equal(send(passed[0], "q", 1, 0), 1);
-    uassert_int_equal(recv(received_fds[0], &buffer, 1, 0), 1);
-    uassert_int_equal(buffer, 'q');
+    uassert_int_equal(recv(passed[1], &payload, 1, 0), 1);
+    uassert_int_equal(payload, 'q');
 
 __exit:
     if (received_fds[0] >= 0)

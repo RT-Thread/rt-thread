@@ -226,8 +226,7 @@ int af_unix_dgram_receive(struct af_unix_socket *sock, void *data,
                     rt_list_insert_before(rights, &message->rights->node);
                     message->rights = RT_NULL;
                 }
-                rt_wqueue_wakeup_all(&sock->wait_queue,
-                                     (void *)(rt_ubase_t)POLLOUT);
+                af_unix_wakeup_writable_locked(sock);
                 rt_free(message);
             }
             af_unix_unlock();

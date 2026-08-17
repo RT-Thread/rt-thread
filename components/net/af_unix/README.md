@@ -33,7 +33,8 @@ connected datagram endpoints continue to reference their established peers.
 `SOL_SOCKET`/`SCM_RIGHTS` control messages. The queued reference remains valid
 after the sender closes its descriptor. On receive, each reference is installed
 as a new descriptor in the receiving process and retains the same open file
-description, including its shared file position.
+description, including its shared file position. Passing an AF_UNIX socket
+descriptor is not supported and returns `EOPNOTSUPP`.
 
 For datagram sockets, the control message is atomic with its datagram. For
 stream sockets, it is associated with the first byte written by `sendmsg()` and

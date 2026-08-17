@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <string.h>
 
+#include <dfs_net.h>
+
 #include "af_unix_internal.h"
 
 static struct rt_mutex af_unix_deferred_lock;
@@ -25,12 +27,34 @@ static size_t af_unix_cmsg_next(size_t offset, size_t length,
     return next;
 }
 
+static int af_unix_file_is_unix_socket(const struct dfs_file *file)
+{
+    int sal_handle;
+    struct sal_socket *sal_sock;
+
+    if (file == RT_NULL || file->vnode == RT_NULL ||
+        file->vnode->type != FT_SOCKET)
+    {
+        return 0;
+    }
+    if (file->vnode->fops != dfs_net_get_fops() &&
+        file->fops != dfs_net_get_fops())
+    {
+        return 0;
+    }
+
+    sal_handle = (int)(size_t)file->vnode->data;
+    sal_sock = sal_get_socket(sal_handle);
+    return (sal_sock != RT_NULL && sal_sock->domain == AF_UNIX);
+}
+
 int af_unix_rights_create(const struct msghdr *message,
                           struct af_unix_rights **out_rights)
 {
     int fds[AF_UNIX_RIGHTS_MAX];
     int result;
     size_t count = 0;
+    size_t file_index;
     size_t offset = 0;
     const char *control;
     struct af_unix_rights *rights;
@@ -110,6 +134,17 @@ int af_unix_rights_create(const struct msghdr *message,
     {
         rt_free(rights);
         return af_unix_error(-result);
+    }
+
+    /* Passing AF_UNIX sockets can form an unreclaimable reference
+     * cycle between the in-flight right and the destination queue. */
+    for (file_index = 0; file_index < count; file_index++)
+    {
+        if (af_unix_file_is_unix_socket(rights->files[file_index]))
+        {
+            af_unix_rights_release(rights);
+            return af_unix_error(EOPNOTSUPP);
+        }
     }
 
     *out_rights = rights;

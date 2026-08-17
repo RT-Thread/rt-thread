@@ -406,8 +406,7 @@ int af_unix_stream_receive(struct af_unix_socket *sock, void *data,
             if ((flags & MSG_PEEK) == 0)
             {
                 af_unix_stream_collect_rights_locked(sock, rights);
-                rt_wqueue_wakeup_all(&sock->wait_queue,
-                                     (void *)(rt_ubase_t)POLLOUT);
+                af_unix_wakeup_writable_locked(sock);
             }
             if (!wait_all || received == size)
             {

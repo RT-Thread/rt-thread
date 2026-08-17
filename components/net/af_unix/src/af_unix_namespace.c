@@ -279,6 +279,8 @@ void af_unix_namespace_detach_locked(struct af_unix_socket *sock)
     if (entry != RT_NULL && entry->sock == sock)
     {
         entry->sock = RT_NULL;
+        rt_list_remove(&entry->node);
+        rt_free(entry);
     }
     sock->namespace_entry = RT_NULL;
 }
