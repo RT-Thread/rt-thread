@@ -304,7 +304,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
             {
                 for (i = 0; i < 32; i++)
                 {
-                    if (!(filter_mask & (1 << i)))
+                    if (!(filter_mask & (1U << i)))
                     {
                         index = i;
                         break;
@@ -313,7 +313,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
             }
             else    /* use user specified hdr_bank */
             {
-                if (filter_mask & (1 << item->hdr_bank))
+                if (filter_mask & (1U << item->hdr_bank))
                 {
                     res = -RT_ERROR;
                     LOG_E("%s hdr%d filter already set!\n", can->name, item->hdr_bank);
@@ -328,7 +328,7 @@ static rt_err_t can_control(struct rt_can_device *can_dev, int cmd, void *arg)
             /* RX MB index from 1 to 32,hdr index 0~31 map RX MB index 1~32. */
             FLEXCAN_SetRxIndividualMask(can->base, index + 1, mask);
             FLEXCAN_SetRxMbConfig(can->base, index + 1, &mbConfig, true);
-            filter_mask |= 1 << index;
+            filter_mask |= 1U << index;
 
             item++;
             count--;
