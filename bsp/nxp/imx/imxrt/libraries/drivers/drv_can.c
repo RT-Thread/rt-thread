@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2019-06-27     misonyo     the first version.
  * 2022-09-01     xjy198903   add support for imxrt1170
+ * 2026-08-13     nxp-ran     add support for imxrt1180 (SOC_IMXRT1180_SERIES)
  */
 
 #include <rtthread.h>
@@ -29,7 +30,7 @@
 static flexcan_frame_t frame[RX_MB_COUNT];    /* one frame buffer per RX MB */
 static rt_uint32_t filter_mask = 0;
 
-#ifdef SOC_IMXRT1170_SERIES
+#if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
 #define USE_IMPROVED_TIMING_CONFIG (1U)
 #endif
 
@@ -83,7 +84,7 @@ struct imxrt_can flexcans[] =
 uint32_t GetCanSrcFreq(CAN_Type *can_base)
 {
     uint32_t freq;
-#ifdef SOC_IMXRT1170_SERIES
+#if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
     uint32_t base = (uint32_t) can_base;
     switch (base)
         {
@@ -106,7 +107,7 @@ uint32_t GetCanSrcFreq(CAN_Type *can_base)
     return freq;
 }
 
-#ifdef SOC_IMXRT1170_SERIES
+#if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
 static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint64_t result, void *userData)
 #else
 static void flexcan_callback(CAN_Type *base, flexcan_handle_t *handle, status_t status, uint32_t result, void *userData)
@@ -179,13 +180,13 @@ static rt_err_t can_cfg(struct rt_can_device *can_dev, struct can_configure *cfg
         break;
     }
 
-#ifdef SOC_IMXRT1170_SERIES
+#if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
     flexcan_timing_config_t timing_config;
     rt_memset(&timing_config, 0, sizeof(flexcan_timing_config_t));
 
-    if(FLEXCAN_CalculateImprovedTimingValues(can->base, config.baudRate, GetCanSrcFreq(can->base), &timing_config))
+    if (FLEXCAN_CalculateImprovedTimingValues(can->base, config.baudRate, GetCanSrcFreq(can->base), &timing_config))
     {
-        /* Update the improved timing configuration*/
+        /* Update the improved timing configuration */
         rt_memcpy(&(config.timingConfig), &timing_config, sizeof(flexcan_timing_config_t));
     }
     else
