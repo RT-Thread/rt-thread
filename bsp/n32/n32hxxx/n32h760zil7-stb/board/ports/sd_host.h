@@ -84,10 +84,10 @@ typedef struct
 /* card bus width */
 typedef enum
 {
-    SDMMC_BusWdith1Bit = 0U, /* card bus 1 width */
-    SDMMC_BusWdith4Bit = 1U, /* card bus 4 width */
-    SDMMC_BusWdith8Bit = 2U, /* card bus 8 width */
-} sd_buswidth_t;
+    SDMMC_BusWidth1Bit = 0U, /* card bus 1 width */
+    SDMMC_BusWidth4Bit = 1U, /* card bus 4 width */
+    SDMMC_BusWidth8Bit = 2U, /* card bus 8 width */
+} sd_bus_width_t;
 
 /* dma mode */
 typedef enum
@@ -109,8 +109,8 @@ typedef enum
 /* SD card communication method and speed */
 typedef struct
 {
-    uint32_t busClock_Hz;   /* SD bus clock frequency united in Hz */
-    sd_buswidth_t busWidth; /* set DATA bus width */
+    uint32_t busClock_Hz;     /* SD bus clock frequency united in Hz */
+    sd_bus_width_t busWidth; /* set DATA bus width */
     SD_ModeConfig mode;         /* work mode */
     sd_dma_t dma;           /* dma mode */
     sd_operation_voltage_t operationVoltageflag; /* card current operation voltage */
@@ -126,7 +126,7 @@ typedef struct
     SDMMC_CMD command;
     sd_card_info sd_card_information;
     sd_card_workmode card_workmode;
-    SDHOST_TMODE_struct TMODE_truct;
+    SDHOST_TMODE_struct tMode;
 } sd_card_t;
 
 #ifdef __cplusplus
