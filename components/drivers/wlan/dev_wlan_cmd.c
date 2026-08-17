@@ -487,7 +487,7 @@ static int wifi_scan(int argc, char *argv[])
     if (ret != RT_EOK)
     {
         LOG_E("Scan register user callback error:%d!\n", ret);
-        return 0;
+        return -RT_ERROR;
     }
 
     if (info)
@@ -509,7 +509,7 @@ static int wifi_scan(int argc, char *argv[])
     {
         scan_filter = RT_NULL;
     }
-    return 0;
+    return ret;
 }
 
 static int wifi_join(int argc, char *argv[])
@@ -588,6 +588,7 @@ static int wifi_ap(int argc, char *argv[])
     if (err != RT_EOK)
     {
         LOG_E("start ap failed:%d!", err);
+        return -RT_ERROR;
     }
     return 0;
 }
@@ -653,6 +654,7 @@ static int wifi_ap_stop(int argc, char *argv[])
     if (err != RT_EOK)
     {
         LOG_E("ap stop failed:%d!", err);
+        return -RT_ERROR;
     }
     return 0;
 }
