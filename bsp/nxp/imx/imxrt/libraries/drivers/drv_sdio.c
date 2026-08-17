@@ -14,9 +14,15 @@
 
 #include <board.h>
 #include <fsl_usdhc.h>
+#if !defined(SOC_IMXRT1180_SERIES)
+/* RT1180 uses RGPIO (fsl_rgpio.h); GPIO pin control is done in board sdio_port.c */
 #include <fsl_gpio.h>
+#endif
 #include <fsl_iomuxc.h>
-
+#if defined(SOC_IMXRT1180_SERIES)
+/* RT1180 uses XCACHE-based cache maintenance API (CM33 variant). */
+#include <fsl_cache.h>
+#endif
 #include <finsh.h>
 
 #define RT_USING_SDIO1
@@ -82,7 +88,7 @@ struct imxrt_mmcsd
 
     //USDHC_Type *base;
     usdhc_host_t usdhc_host;
-#ifndef SOC_IMXRT1170_SERIES
+#if !defined(SOC_IMXRT1170_SERIES) && !defined(SOC_IMXRT1180_SERIES)
     clock_div_t usdhc_div;
 #endif
     clock_ip_name_t ip_clock;
@@ -137,7 +143,7 @@ static void _mmcsd_host_init(struct imxrt_mmcsd *mmcsd)
 static void _mmcsd_clk_init(struct imxrt_mmcsd *mmcsd)
 {
     CLOCK_EnableClock(mmcsd->ip_clock);
-#if !defined(SOC_IMXRT1170_SERIES) && !defined(SOC_MIMXRT1062DVL6A)
+#if !defined(SOC_IMXRT1170_SERIES) && !defined(SOC_MIMXRT1062DVL6A) && !defined(SOC_IMXRT1180_SERIES)
     CLOCK_SetDiv(mmcsd->usdhc_div, 5U);
 #endif
 }
@@ -243,8 +249,8 @@ static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
         MMCSD_DGB(" blksize:%d, blks:%d ", fsl_data.blockSize, fsl_data.blockCount);
 
         if (((rt_uint32_t)data->buf & (CACHE_LINESIZE - 1)) ||         // align cache(32byte)
-                ((rt_uint32_t)data->buf >  0x00000000 && (rt_uint32_t)data->buf < 0x00080000) /*||  // ITCM
-            ((rt_uint32_t)data->buf >= 0x20000000 && (rt_uint32_t)data->buf < 0x20080000)*/)    // DTCM
+                ((rt_uint32_t)data->buf >  0x00000000 && (rt_uint32_t)data->buf < 0x00080000) ||   // ITCM
+            ((rt_uint32_t)data->buf >= 0x20000000 && (rt_uint32_t)data->buf < 0x20080000))     // DTCM/System TCM - not DMA-accessible
         {
 
             buf = rt_malloc_align(fsl_data.blockSize * fsl_data.blockCount, CACHE_LINESIZE);
@@ -290,6 +296,15 @@ static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
         fsl_content.data = NULL;
     }
 
+#if defined(SOC_IMXRT1180_SERIES)
+    /* RT1180: clean D-cache before TX so DMA sees updated data in OCRAM. */
+    if (data && fsl_data.txData)
+    {
+        DCACHE_CleanByRange((uint32_t)fsl_data.txData,
+                            (uint32_t)(fsl_data.blockSize * fsl_data.blockCount));
+    }
+#endif
+
     error = USDHC_TransferBlocking(mmcsd->usdhc_host.base, &dmaConfig, &fsl_content);
     if (error != kStatus_Success)
     {
@@ -297,6 +312,15 @@ static void _mmc_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
         MMCSD_DGB(" ***USDHC_TransferBlocking error: %d*** --> \n", error);
         cmd->err = -RT_ERROR;
     }
+
+#if defined(SOC_IMXRT1180_SERIES)
+    /* RT1180: invalidate D-cache after RX so CPU sees data written by USDHC DMA. */
+    if (data && fsl_data.rxData)
+    {
+        DCACHE_InvalidateByRange((uint32_t)fsl_data.rxData,
+                                 (uint32_t)(fsl_data.blockSize * fsl_data.blockCount));
+    }
+#endif
 
     if (buf)
     {
@@ -347,7 +371,7 @@ static void _mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *i
 
     if (usdhc_clk > IMXRT_MAX_FREQ)
         usdhc_clk = IMXRT_MAX_FREQ;
-#ifdef SOC_IMXRT1170_SERIES
+#if defined(SOC_IMXRT1170_SERIES)
     clock_root_config_t rootCfg = {0};
    /* SYS PLL2 528MHz. */
    const clock_sys_pll2_config_t sysPll2Config = {
@@ -360,6 +384,9 @@ static void _mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *i
    rootCfg.mux = 4;
    rootCfg.div = 2;
    CLOCK_SetRootClock(kCLOCK_Root_Usdhc1, &rootCfg);
+    src_clk = CLOCK_GetRootClockFreq(kCLOCK_Root_Usdhc1);
+#elif defined(SOC_IMXRT1180_SERIES)
+    /* RT1180: USDHC1 clock root configured once in sdio_port.c board init. */
     src_clk = CLOCK_GetRootClockFreq(kCLOCK_Root_Usdhc1);
 #elif defined(SOC_MIMXRT1062DVL6A)
     CLOCK_InitSysPll(&sysPllConfig_BOARD_BootClockRUN);
@@ -411,9 +438,6 @@ rt_int32_t _imxrt_mci_init(void)
     struct rt_mmcsd_host *host;
     struct imxrt_mmcsd *mmcsd;
 
-#if (defined(FSL_FEATURE_USDHC_HAS_HS400_MODE) && (FSL_FEATURE_USDHC_HAS_HS400_MODE))
-    uint32_t hs400Capability = 0U;
-#endif
 
     host = mmcsd_alloc_host();
     if (!host)
@@ -430,6 +454,9 @@ rt_int32_t _imxrt_mci_init(void)
 
     rt_memset(mmcsd, 0, sizeof(struct imxrt_mmcsd));
     mmcsd->usdhc_host.base = USDHC1;
+#if defined(SOC_IMXRT1180_SERIES)
+    mmcsd->ip_clock = kCLOCK_Usdhc1;
+#endif
 //#ifndef SOC_IMXRT1170_SERIES
 //    mmcsd->usdhc_div = kCLOCK_Usdhc1Div;
 //#endif
@@ -443,9 +470,9 @@ rt_int32_t _imxrt_mci_init(void)
                   MMCSD_SUP_HIGHSPEED | MMCSD_SUP_SDIO_IRQ;
 
 #if defined(FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn) && (FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn)
-    hs400Capability = (uint32_t)FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn(mmcsd->usdhc_host.base);
+    uint32_t hs400Capability = (uint32_t)FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn(mmcsd->usdhc_host.base);
 #endif
-#if (defined(FSL_FEATURE_USDHC_HAS_HS400_MODE) && (FSL_FEATURE_USDHC_HAS_HS400_MODE))
+#if defined(FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn) && (FSL_FEATURE_USDHC_INSTANCE_SUPPORT_HS400_MODEn) && defined(MMCSD_SUP_HIGHSPEED_HS400)
     if (hs400Capability != 0U)
     {
         host->flags |= (uint32_t)MMCSD_SUP_HIGHSPEED_HS400;
