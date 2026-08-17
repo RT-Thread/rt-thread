@@ -673,7 +673,7 @@ static rt_err_t imxrt_control(struct rt_serial_device *serial, int cmd, void *ar
          * no RX/TX interrupts fire after the device is closed. */
         LPUART_DisableInterrupts(uart->uart_base,
                                  kLPUART_RxDataRegFullInterruptEnable |
-                                 kLPUART_TxDataRegEmptyInterruptEnable);
+                                     kLPUART_TxDataRegEmptyInterruptEnable);
         DisableIRQ(uart->irqn);
         break;
 

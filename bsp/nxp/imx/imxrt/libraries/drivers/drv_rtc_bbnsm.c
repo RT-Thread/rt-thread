@@ -58,31 +58,31 @@
 #include "fsl_device_registers.h"
 
 /* Magic value stored in BBNSM GPR[3] to detect valid warm-reset state. */
-#define BBNSM_GPR_MAGIC     (0xBBCC0002u)
+#define BBNSM_GPR_MAGIC (0xBBCC0002u)
 
 /* BBNSM GPR array indices used by this driver. */
-#define GPR_IDX_EPOCH       (0u)    /* Unix epoch seconds at last sync */
-#define GPR_IDX_SNAP_LO     (1u)    /* lower 32 bits of RTC ticks at sync */
-#define GPR_IDX_SNAP_HI     (2u)    /* upper bits  of RTC ticks at sync  */
-#define GPR_IDX_MAGIC       (3u)    /* magic sentinel */
+#define GPR_IDX_EPOCH   (0u)    /* Unix epoch seconds at last sync */
+#define GPR_IDX_SNAP_LO (1u)    /* lower 32 bits of RTC ticks at sync */
+#define GPR_IDX_SNAP_HI (2u)    /* upper bits  of RTC ticks at sync  */
+#define GPR_IDX_MAGIC   (3u)    /* magic sentinel */
 
 /* 32768 Hz crystal clock rate of the BBNSM RTC counter. */
-#define BBNSM_RTC_FREQ      (32768u)
+#define BBNSM_RTC_FREQ (32768u)
 
 /*
  * In-RAM copies of the sync point (loaded at init, updated on SET_TIME).
  * These avoid GPR reads on every GET_TIME call.
  */
-static time_t    s_epoch_base   = 0;
-static uint32_t  s_snap_lo      = 0;
-static uint32_t  s_snap_hi      = 0;
+static time_t s_epoch_base = 0;
+static uint32_t s_snap_lo = 0;
+static uint32_t s_snap_hi = 0;
 
 /*
  * Fallback: rt_tick at init (used only when BBNSM RTC ticks are stuck at 0,
  * i.e. no 32K crystal populated).
  */
-static rt_tick_t s_tick_base    = 0;
-static rt_bool_t s_use_rtc_hw   = RT_FALSE;
+static rt_tick_t s_tick_base = 0;
+static rt_bool_t s_use_rtc_hw = RT_FALSE;
 
 /*******************************************************************************
  * Internal helpers
@@ -98,7 +98,7 @@ static uint64_t bbnsm_read_ticks(void)
     do
     {
         ms1 = BBNSM->BBNSM_RTC_MS & BBNSM_BBNSM_RTC_MS_RTC_MASK;
-        ls  = BBNSM->BBNSM_RTC_LS;
+        ls = BBNSM->BBNSM_RTC_LS;
         ms2 = BBNSM->BBNSM_RTC_MS & BBNSM_BBNSM_RTC_MS_RTC_MASK;
     } while (ms1 != ms2);
 
@@ -129,11 +129,11 @@ static void bbnsm_rtc_enable(void)
  */
 static void bbnsm_gpr_save(time_t epoch, uint32_t snap_lo, uint32_t snap_hi)
 {
-    BBNSM->GPR[GPR_IDX_MAGIC]   = 0u;         /* invalidate while writing */
-    BBNSM->GPR[GPR_IDX_EPOCH]   = (uint32_t)epoch;
+    BBNSM->GPR[GPR_IDX_MAGIC] = 0u;         /* invalidate while writing */
+    BBNSM->GPR[GPR_IDX_EPOCH] = (uint32_t)epoch;
     BBNSM->GPR[GPR_IDX_SNAP_LO] = snap_lo;
     BBNSM->GPR[GPR_IDX_SNAP_HI] = snap_hi;
-    BBNSM->GPR[GPR_IDX_MAGIC]   = BBNSM_GPR_MAGIC;
+    BBNSM->GPR[GPR_IDX_MAGIC] = BBNSM_GPR_MAGIC;
 }
 
 /*
@@ -141,12 +141,12 @@ static void bbnsm_gpr_save(time_t epoch, uint32_t snap_lo, uint32_t snap_hi)
  * Returns RT_TRUE if a valid saved state was found, RT_FALSE on cold boot.
  */
 static rt_bool_t bbnsm_gpr_restore(time_t *out_epoch,
-                                    uint32_t *out_snap_lo,
-                                    uint32_t *out_snap_hi)
+                                   uint32_t *out_snap_lo,
+                                   uint32_t *out_snap_hi)
 {
     if (BBNSM->GPR[GPR_IDX_MAGIC] == BBNSM_GPR_MAGIC)
     {
-        *out_epoch   = (time_t)BBNSM->GPR[GPR_IDX_EPOCH];
+        *out_epoch = (time_t)BBNSM->GPR[GPR_IDX_EPOCH];
         *out_snap_lo = BBNSM->GPR[GPR_IDX_SNAP_LO];
         *out_snap_hi = BBNSM->GPR[GPR_IDX_SNAP_HI];
         return RT_TRUE;
@@ -179,16 +179,16 @@ static rt_err_t imxrt1180_rtc_init(rt_device_t dev)
     }
 
     /* Try to restore sync point from GPR (warm reset). */
-    time_t    epoch   = 0;
-    uint32_t  snap_lo = 0;
-    uint32_t  snap_hi = 0;
+    time_t epoch = 0;
+    uint32_t snap_lo = 0;
+    uint32_t snap_hi = 0;
 
     if (bbnsm_gpr_restore(&epoch, &snap_lo, &snap_hi))
     {
         s_epoch_base = epoch;
-        s_snap_lo    = snap_lo;
-        s_snap_hi    = snap_hi;
-        s_tick_base  = rt_tick_get();
+        s_snap_lo = snap_lo;
+        s_snap_hi = snap_hi;
+        s_tick_base = rt_tick_get();
         LOG_I("warm reset: RTC epoch=%u snap_hi=%u snap_lo=%u",
               (unsigned)epoch, (unsigned)snap_hi, (unsigned)snap_lo);
     }
@@ -196,9 +196,9 @@ static rt_err_t imxrt1180_rtc_init(rt_device_t dev)
     {
         /* Cold boot: start from epoch 0; wait for a SET_TIME call. */
         s_epoch_base = 0;
-        s_snap_lo    = (uint32_t)(t0 & 0xFFFFFFFFu);
-        s_snap_hi    = (uint32_t)(t0 >> 32u);
-        s_tick_base  = rt_tick_get();
+        s_snap_lo = (uint32_t)(t0 & 0xFFFFFFFFu);
+        s_snap_hi = (uint32_t)(t0 >> 32u);
+        s_tick_base = rt_tick_get();
         LOG_I("cold boot: BBNSM GPR no valid epoch, RTC at epoch 0");
     }
 
@@ -207,7 +207,8 @@ static rt_err_t imxrt1180_rtc_init(rt_device_t dev)
 
 static rt_err_t imxrt1180_rtc_open(rt_device_t dev, rt_uint16_t oflag)
 {
-    (void)dev; (void)oflag;
+    (void)dev;
+    (void)oflag;
     return RT_EOK;
 }
 
@@ -218,16 +219,22 @@ static rt_err_t imxrt1180_rtc_close(rt_device_t dev)
 }
 
 static rt_ssize_t imxrt1180_rtc_read(rt_device_t dev, rt_off_t pos,
-                                      void *buf, rt_size_t size)
+                                     void *buf, rt_size_t size)
 {
-    (void)dev; (void)pos; (void)buf; (void)size;
+    (void)dev;
+    (void)pos;
+    (void)buf;
+    (void)size;
     return -RT_EINVAL;
 }
 
 static rt_ssize_t imxrt1180_rtc_write(rt_device_t dev, rt_off_t pos,
-                                       const void *buf, rt_size_t size)
+                                      const void *buf, rt_size_t size)
 {
-    (void)dev; (void)pos; (void)buf; (void)size;
+    (void)dev;
+    (void)pos;
+    (void)buf;
+    (void)size;
     return -RT_EINVAL;
 }
 
@@ -244,11 +251,10 @@ static rt_err_t imxrt1180_rtc_control(rt_device_t dev, int cmd, void *args)
         if (s_use_rtc_hw)
         {
             /* Hardware path: compute elapsed seconds from RTC tick delta. */
-            uint64_t now_ticks  = bbnsm_read_ticks();
+            uint64_t now_ticks = bbnsm_read_ticks();
             uint64_t snap_ticks = ((uint64_t)s_snap_hi << 32u) |
                                   (uint64_t)s_snap_lo;
-            uint64_t delta_ticks = (now_ticks >= snap_ticks) ?
-                                   (now_ticks - snap_ticks) : 0u;
+            uint64_t delta_ticks = (now_ticks >= snap_ticks) ? (now_ticks - snap_ticks) : 0u;
             current = s_epoch_base + (time_t)(delta_ticks / BBNSM_RTC_FREQ);
         }
         else
@@ -265,15 +271,15 @@ static rt_err_t imxrt1180_rtc_control(rt_device_t dev, int cmd, void *args)
 
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
-        time_t   new_epoch  = *(time_t *)args;
-        uint64_t now_ticks  = bbnsm_read_ticks();
-        uint32_t snap_lo    = (uint32_t)(now_ticks & 0xFFFFFFFFu);
-        uint32_t snap_hi    = (uint32_t)(now_ticks >> 32u);
+        time_t new_epoch = *(time_t *)args;
+        uint64_t now_ticks = bbnsm_read_ticks();
+        uint32_t snap_lo = (uint32_t)(now_ticks & 0xFFFFFFFFu);
+        uint32_t snap_hi = (uint32_t)(now_ticks >> 32u);
 
         s_epoch_base = new_epoch;
-        s_snap_lo    = snap_lo;
-        s_snap_hi    = snap_hi;
-        s_tick_base  = rt_tick_get();
+        s_snap_lo = snap_lo;
+        s_snap_hi = snap_hi;
+        s_tick_base = rt_tick_get();
 
         bbnsm_gpr_save(new_epoch, snap_lo, snap_hi);
 
@@ -299,14 +305,13 @@ static rt_err_t imxrt1180_rtc_control(rt_device_t dev, int cmd, void *args)
  * Device registration
  ******************************************************************************/
 
-static struct rt_device s_rtc_device =
-{
-    .type    = RT_Device_Class_RTC,
-    .init    = imxrt1180_rtc_init,
-    .open    = imxrt1180_rtc_open,
-    .close   = imxrt1180_rtc_close,
-    .read    = imxrt1180_rtc_read,
-    .write   = imxrt1180_rtc_write,
+static struct rt_device s_rtc_device = {
+    .type = RT_Device_Class_RTC,
+    .init = imxrt1180_rtc_init,
+    .open = imxrt1180_rtc_open,
+    .close = imxrt1180_rtc_close,
+    .read = imxrt1180_rtc_read,
+    .write = imxrt1180_rtc_write,
     .control = imxrt1180_rtc_control,
 };
 

@@ -13,32 +13,32 @@
 #define FLEXSPI_PORT_H__
 
 /* parameters for flexpsi peripheral */
-#define FLEXSPI1_CONTROL_BASE FLEXSPI1
-#define FLEXSPI2_CONTROL_BASE FLEXSPI2
-#define FLEXSPI_ROOT_CLK (12000000U) /* serial root clk: 12MHz*/
-#define FLASH_SIZE (16 * 1024) /* device size 16*1024(KB) = 16MB */
-#define ARD_SEQ_NUMBER 1       /* Sequence number for AHB read command */
-#define ARD_SEQ_INDEX 0        /* Sequence ID for AHB read command */
-#define AWR_SEQ_NUMBER 0       /* Sequence number for AHB write command */
-#define AWR_SEQ_INDEX 0        /* Sequence ID for AHB write command */
-#define ARD_SEQ_CMD 0xBB       /* cmd for read */
-#define AWR_SEQ_CMD 0xAA       /* cmd for write */
-#define FLEXSPI_RX_SAMPLE_CLOCK kFLEXSPI_ReadSampleClkLoopbackFromDqsPad
-#define FLASH_PORT kFLEXSPI_PortA1
-#define CLOCK_SRC kCLOCK_FLEXSPI1_ClockRoot_MuxOscRc24M
-#define CLOCK_DIV 2U
-#define CUSTOM_LUT_LENGTH 60U
+#define FLEXSPI1_CONTROL_BASE     FLEXSPI1
+#define FLEXSPI2_CONTROL_BASE     FLEXSPI2
+#define FLEXSPI_ROOT_CLK          (12000000U) /* serial root clk: 12MHz*/
+#define FLASH_SIZE                (16 * 1024) /* device size 16*1024(KB) = 16MB */
+#define ARD_SEQ_NUMBER            1       /* Sequence number for AHB read command */
+#define ARD_SEQ_INDEX             0        /* Sequence ID for AHB read command */
+#define AWR_SEQ_NUMBER            0       /* Sequence number for AHB write command */
+#define AWR_SEQ_INDEX             0        /* Sequence ID for AHB write command */
+#define ARD_SEQ_CMD               0xBB       /* cmd for read */
+#define AWR_SEQ_CMD               0xAA       /* cmd for write */
+#define FLEXSPI_RX_SAMPLE_CLOCK   kFLEXSPI_ReadSampleClkLoopbackFromDqsPad
+#define FLASH_PORT                kFLEXSPI_PortA1
+#define CLOCK_SRC                 kCLOCK_FLEXSPI1_ClockRoot_MuxOscRc24M
+#define CLOCK_DIV                 2U
+#define CUSTOM_LUT_LENGTH         60U
 #define FLEXSPI1_AHB_DATA_ADDRESS (0x28000000U)
 #define FLEXSPI2_AHB_DATA_ADDRESS (0x60000000U)
 
-#define COMBINATION_MODE   0U
-#define FREE_RUNNING_MODE  0U
+#define COMBINATION_MODE  0U
+#define FREE_RUNNING_MODE 0U
 
-#define EXAMPLE_FLEXSPI_AMBA_BASE       FlexSPI1_AMBA_BASE
-#define FLASH_PAGE_SIZE                 256
-#define SECTOR_SIZE                     0x1000 /* 4K */
-#define EXAMPLE_FLEXSPI_CLOCK           kCLOCK_Flexspi1
-#define FLASH_PORT                      kFLEXSPI_PortA1
+#define EXAMPLE_FLEXSPI_AMBA_BASE FlexSPI1_AMBA_BASE
+#define FLASH_PAGE_SIZE           256
+#define SECTOR_SIZE               0x1000 /* 4K */
+#define EXAMPLE_FLEXSPI_CLOCK     kCLOCK_Flexspi1
+#define FLASH_PORT                kFLEXSPI_PortA1
 
 /* DMA related. */
 #define FLEXSPI_DMA                   (DMA4)

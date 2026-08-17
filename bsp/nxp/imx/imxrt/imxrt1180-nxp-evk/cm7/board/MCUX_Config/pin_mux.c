@@ -34,7 +34,6 @@ processor_version: 0.15.9
 void BOARD_InitBootPins(void)
 {
     BOARD_InitPins();
-
 }
 
 /* FUNCTION ************************************************************************************************************
@@ -204,19 +203,19 @@ void BOARD_InitSDIO1Pins(void)
 
     /* SD_PWREN_B: GPIO_AD_14 -> RGPIO4_IO14, output low = card power on */
     pinCfg.pinDirection = kRGPIO_DigitalOutput;
-    pinCfg.outputLogic  = 0U;
+    pinCfg.outputLogic = 0U;
     RGPIO_PinInit(RGPIO4, 14U, &pinCfg);
     IOMUXC_SetPinMux(IOMUXC_GPIO_AD_14_GPIO4_IO14, 0U);
 
     /* SD1_CD_B: GPIO_AD_15 -> RGPIO4_IO15, input (card detect) */
     pinCfg.pinDirection = kRGPIO_DigitalInput;
-    pinCfg.outputLogic  = 0U;
+    pinCfg.outputLogic = 0U;
     RGPIO_PinInit(RGPIO4, 15U, &pinCfg);
     IOMUXC_SetPinMux(IOMUXC_GPIO_AD_15_GPIO4_IO15, 0U);
 
     /* VSELECT: GPIO_AD_34 -> GPIO5_IO02, output (voltage select) */
     pinCfg.pinDirection = kRGPIO_DigitalOutput;
-    pinCfg.outputLogic  = 0U;
+    pinCfg.outputLogic = 0U;
     RGPIO_PinInit(RGPIO5, 2U, &pinCfg);
     IOMUXC_SetPinMux(IOMUXC_GPIO_AD_34_GPIO5_IO02, 0U);
 

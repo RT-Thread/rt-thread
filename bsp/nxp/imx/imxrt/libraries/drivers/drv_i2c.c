@@ -16,10 +16,10 @@
 
 #ifdef BSP_USING_I2C
 
-#define LOG_TAG              "drv.i2c"
+#define LOG_TAG "drv.i2c"
 #include <drv_log.h>
 
-#if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3) && !defined(BSP_USING_I2C4) && !defined(BSP_USING_I2C5)&& !defined(BSP_USING_I2C6)
+#if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3) && !defined(BSP_USING_I2C4) && !defined(BSP_USING_I2C5) && !defined(BSP_USING_I2C6)
 #error "Please define at least one BSP_USING_I2Cx"
 #endif
 
@@ -73,30 +73,30 @@ struct imxrt_i2c_bus
 #endif
 };
 
-#if defined (BSP_USING_I2C1)
-#define I2C1BUS_NAME  "i2c1"
+#if defined(BSP_USING_I2C1)
+#define I2C1BUS_NAME "i2c1"
 #endif /*BSP_USING_I2C1*/
 
-#if defined (BSP_USING_I2C2)
-#define I2C2BUS_NAME  "i2c2"
+#if defined(BSP_USING_I2C2)
+#define I2C2BUS_NAME "i2c2"
 #endif /*BSP_USING_I2C2*/
 
-#if !defined (MIMXRT1015_SERIES)      /* imxrt1015 only have two i2c bus*/
+#if !defined(MIMXRT1015_SERIES)      /* imxrt1015 only have two i2c bus*/
 
-#if defined (BSP_USING_I2C3)
-#define I2C3BUS_NAME  "i2c3"
+#if defined(BSP_USING_I2C3)
+#define I2C3BUS_NAME "i2c3"
 #endif /*BSP_USING_I2C3*/
 
-#if defined (BSP_USING_I2C4)
-#define I2C4BUS_NAME  "i2c4"
+#if defined(BSP_USING_I2C4)
+#define I2C4BUS_NAME "i2c4"
 #endif /*BSP_USING_I2C4*/
 
-#if defined (BSP_USING_I2C5)
+#if defined(BSP_USING_I2C5)
 #define I2C5BUS_NAME "i2c5"
 #endif /*BSP_USING_I2C5*/
 
-#if defined (BSP_USING_I2C6)
-#define I2C6BUS_NAME  "i2c6"
+#if defined(BSP_USING_I2C6)
+#define I2C6BUS_NAME "i2c6"
 #endif /*BSP_USING_I2C6*/
 
 #endif /* MIMXRT1015_SERIES */
@@ -110,12 +110,11 @@ struct imxrt_i2c_bus
 #define LPI2C_CLOCK_SOURCE_DIVIDER (0U)
 
 /* Get frequency of lpi2c clock */
-#define LPI2C_CLOCK_FREQUENCY ((CLOCK_GetFreq(kCLOCK_Usb1PllClk) / 8) / (LPI2C_CLOCK_SOURCE_DIVIDER + 1U))
+#define LPI2C_CLOCK_FREQUENCY      ((CLOCK_GetFreq(kCLOCK_Usb1PllClk) / 8) / (LPI2C_CLOCK_SOURCE_DIVIDER + 1U))
 
 #endif
 #ifdef BSP_USING_I2C1
-static struct imxrt_i2c_bus lpi2c1 =
-{
+static struct imxrt_i2c_bus lpi2c1 = {
     .I2C = LPI2C1,
     .device_name = I2C1BUS_NAME,
 #ifdef SOC_IMXRT1180_SERIES
@@ -126,8 +125,7 @@ static struct imxrt_i2c_bus lpi2c1 =
 #endif /* RT_USING_HW_I2C1 */
 
 #ifdef BSP_USING_I2C2
-static struct imxrt_i2c_bus lpi2c2 =
-{
+static struct imxrt_i2c_bus lpi2c2 = {
     .I2C = LPI2C2,
     .device_name = I2C2BUS_NAME,
 #ifdef SOC_IMXRT1180_SERIES
@@ -137,11 +135,10 @@ static struct imxrt_i2c_bus lpi2c2 =
 };
 #endif /* RT_USING_HW_I2C2 */
 
-#if !defined (MIMXRT1015_SERIES)        /* imxrt1015 only have two i2c bus*/
+#if !defined(MIMXRT1015_SERIES)        /* imxrt1015 only have two i2c bus*/
 
 #ifdef BSP_USING_I2C3
-static struct imxrt_i2c_bus lpi2c3 =
-{
+static struct imxrt_i2c_bus lpi2c3 = {
     .I2C = LPI2C3,
     .device_name = I2C3BUS_NAME,
 #ifdef SOC_IMXRT1180_SERIES
@@ -152,8 +149,7 @@ static struct imxrt_i2c_bus lpi2c3 =
 #endif /* RT_USING_HW_I2C3 */
 
 #ifdef BSP_USING_I2C4
-static struct imxrt_i2c_bus lpi2c4 =
-{
+static struct imxrt_i2c_bus lpi2c4 = {
     .I2C = LPI2C4,
     .device_name = I2C4BUS_NAME,
 #ifdef SOC_IMXRT1180_SERIES
@@ -164,8 +160,7 @@ static struct imxrt_i2c_bus lpi2c4 =
 #endif /* RT_USING_HW_I2C4 */
 
 #ifdef BSP_USING_I2C5
-static struct imxrt_i2c_bus lpi2c5 =
-{
+static struct imxrt_i2c_bus lpi2c5 = {
     .I2C = LPI2C5,
     .device_name = I2C5BUS_NAME,
 #ifdef SOC_IMXRT1180_SERIES
@@ -176,8 +171,7 @@ static struct imxrt_i2c_bus lpi2c5 =
 #endif /* RT_USING_HW_I2C5 */
 
 #ifdef BSP_USING_I2C6
-static struct imxrt_i2c_bus lpi2c6 =
-{
+static struct imxrt_i2c_bus lpi2c6 = {
     .I2C = LPI2C6,
     .device_name = I2C6BUS_NAME,
 #ifdef SOC_IMXRT1180_SERIES
@@ -196,50 +190,46 @@ static struct imxrt_i2c_bus lpi2c6 =
 #ifdef SOC_IMXRT1180_SERIES
 
 #ifdef BSP_I2C1_USING_DMA
-static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct i2c_dma_config i2c1_dma, 32) =
-{
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct i2c_dma_config i2c1_dma, 32) = {
     .rx_request = kDma3RequestMuxLPI2C1Rx,
     .rx_channel = BSP_I2C1_RX_DMA_CHANNEL,
     .tx_request = kDma3RequestMuxLPI2C1Tx,
     .tx_channel = BSP_I2C1_TX_DMA_CHANNEL,
-    .edma_base  = (EDMA_Type *)DMA3,
-    .rx_offset  = 1U, /* DMA3: one spurious 0x00 beat before real data */
+    .edma_base = (EDMA_Type *)DMA3,
+    .rx_offset = 1U, /* DMA3: one spurious 0x00 beat before real data */
 };
 #endif
 
 #ifdef BSP_I2C2_USING_DMA
-static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct i2c_dma_config i2c2_dma, 32) =
-{
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct i2c_dma_config i2c2_dma, 32) = {
     .rx_request = kDma3RequestMuxLPI2C2Rx,
     .rx_channel = BSP_I2C2_RX_DMA_CHANNEL,
     .tx_request = kDma3RequestMuxLPI2C2Tx,
     .tx_channel = BSP_I2C2_TX_DMA_CHANNEL,
-    .edma_base  = (EDMA_Type *)DMA3,
-    .rx_offset  = 1U, /* DMA3: one spurious 0x00 beat before real data */
+    .edma_base = (EDMA_Type *)DMA3,
+    .rx_offset = 1U, /* DMA3: one spurious 0x00 beat before real data */
 };
 #endif
 
 #ifdef BSP_I2C3_USING_DMA
-static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct i2c_dma_config i2c3_dma, 32) =
-{
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct i2c_dma_config i2c3_dma, 32) = {
     .rx_request = kDma4RequestMuxLPI2C3Rx,
     .rx_channel = BSP_I2C3_RX_DMA_CHANNEL,
     .tx_request = kDma4RequestMuxLPI2C3Tx,
     .tx_channel = BSP_I2C3_TX_DMA_CHANNEL,
-    .edma_base  = (EDMA_Type *)DMA4,
-    .rx_offset  = 0U, /* DMA4: no spurious beat, real data at bounce[0] */
+    .edma_base = (EDMA_Type *)DMA4,
+    .rx_offset = 0U, /* DMA4: no spurious beat, real data at bounce[0] */
 };
 #endif
 
 #ifdef BSP_I2C6_USING_DMA
-static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct i2c_dma_config i2c6_dma, 32) =
-{
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct i2c_dma_config i2c6_dma, 32) = {
     .rx_request = kDma4RequestMuxLPI2C6Rx,
     .rx_channel = BSP_I2C6_RX_DMA_CHANNEL,
     .tx_request = kDma4RequestMuxLPI2C6Tx,
     .tx_channel = BSP_I2C6_TX_DMA_CHANNEL,
-    .edma_base  = (EDMA_Type *)DMA4,
-    .rx_offset  = 0U, /* DMA4: no spurious beat, real data at bounce[0] */
+    .edma_base = (EDMA_Type *)DMA4,
+    .rx_offset = 0U, /* DMA4: no spurious beat, real data at bounce[0] */
 };
 #endif
 
@@ -289,7 +279,7 @@ static rt_uint8_t i2c_dma_bounce[I2C_DMA_BOUNCE_SIZE];     /* RX bounce buffer *
 static rt_uint8_t i2c_dma_tx_bounce[I2C_DMA_BOUNCE_SIZE];  /* TX bounce buffer */
 
 static void lpi2c_edma_callback(LPI2C_Type *base, lpi2c_master_edma_handle_t *handle,
-                                 status_t completionStatus, void *userData)
+                                status_t completionStatus, void *userData)
 {
     struct imxrt_i2c_bus *i2c = (struct imxrt_i2c_bus *)userData;
     rt_sem_release(i2c->xfer_sem);
@@ -306,31 +296,30 @@ static void lpi2c_dma_config(struct imxrt_i2c_bus *bus)
     EDMA_CreateHandle(&bus->dma->tx_edma, edma_base, bus->dma->tx_channel);
 
     LPI2C_MasterCreateEDMAHandle(bus->I2C,
-                                  &bus->dma->i2c_edma,
-                                  &bus->dma->rx_edma,
-                                  &bus->dma->tx_edma,
-                                  lpi2c_edma_callback,
-                                  bus);
+                                 &bus->dma->i2c_edma,
+                                 &bus->dma->rx_edma,
+                                 &bus->dma->tx_edma,
+                                 lpi2c_edma_callback,
+                                 bus);
 
     LOG_D("%s dma config done", bus->device_name);
 }
 
 #endif /* SOC_IMXRT1180_SERIES */
 
-#if (defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3) || defined(BSP_USING_I2C4) ||defined(BSP_USING_I2C5) || defined(BSP_USING_I2C6))
+#if (defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3) || defined(BSP_USING_I2C4) || defined(BSP_USING_I2C5) || defined(BSP_USING_I2C6))
 
 static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
-                                    struct rt_i2c_msg msgs[],
-                                    rt_uint32_t num);
+                                     struct rt_i2c_msg msgs[],
+                                     rt_uint32_t num);
 static rt_ssize_t imxrt_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
-                                    struct rt_i2c_msg msgs[],
-                                    rt_uint32_t num);
+                                     struct rt_i2c_msg msgs[],
+                                     rt_uint32_t num);
 static rt_err_t imxrt_i2c_bus_control(struct rt_i2c_bus_device *bus,
                                       int cmd,
                                       void *args);
 
-static const struct rt_i2c_bus_device_ops imxrt_i2c_ops =
-{
+static const struct rt_i2c_bus_device_ops imxrt_i2c_ops = {
     .master_xfer = imxrt_i2c_mst_xfer,
     .slave_xfer = imxrt_i2c_slv_xfer,
     .i2c_bus_control = imxrt_i2c_bus_control,
@@ -343,7 +332,7 @@ static rt_err_t imxrt_lpi2c_configure(struct imxrt_i2c_bus *bus, lpi2c_master_co
 
     bus->parent.ops = &imxrt_i2c_ops;
 #ifdef SOC_IMXRT1170_SERIES
-    clock_root_config_t rootCfg = {0};
+    clock_root_config_t rootCfg = { 0 };
     rootCfg.mux = LPI2C_CLOCK_SOURCE_SELECT;
     rootCfg.div = LPI2C_CLOCK_SOURCE_DIVIDER + 1;
     CLOCK_SetRootClock(bus->clock_root, &rootCfg);
@@ -444,14 +433,14 @@ static status_t LPI2C_MasterWaitForTxFifoAllEmpty(LPI2C_Type *base)
 
 #ifdef SOC_IMXRT1180_SERIES
 static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
-                                    struct rt_i2c_msg msgs[],
-                                    rt_uint32_t num)
+                                     struct rt_i2c_msg msgs[],
+                                     rt_uint32_t num)
 {
     struct imxrt_i2c_bus *imxrt_i2c;
     rt_size_t i;
     status_t status;
     RT_ASSERT(bus != RT_NULL);
-    imxrt_i2c = (struct imxrt_i2c_bus *) bus;
+    imxrt_i2c = (struct imxrt_i2c_bus *)bus;
 
     imxrt_i2c->msg = msgs;
     imxrt_i2c->msg_ptr = 0;
@@ -477,9 +466,9 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             rt_memset(&xfer, 0, sizeof(xfer));
 
             xfer.slaveAddress = msgs[i].addr;
-            xfer.data         = msgs[i].buf;
-            xfer.dataSize     = msgs[i].len;
-            xfer.direction    = (msgs[i].flags & RT_I2C_RD) ? kLPI2C_Read : kLPI2C_Write;
+            xfer.data = msgs[i].buf;
+            xfer.dataSize = msgs[i].len;
+            xfer.direction = (msgs[i].flags & RT_I2C_RD) ? kLPI2C_Read : kLPI2C_Write;
 
             if (msgs[i].flags & RT_I2C_NO_START)
             {
@@ -537,8 +526,8 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                 /* DMA3 (LPI2C1/2): one spurious 0x00 beat precedes real data,
                  * so request orig_len + 1 beats to capture all N real bytes.
                  * DMA4 (LPI2C3/6): no spurious beat, request orig_len beats. */
-                rt_size_t orig_len   = xfer.dataSize;
-                rt_uint8_t rx_off    = imxrt_i2c->dma->rx_offset;
+                rt_size_t orig_len = xfer.dataSize;
+                rt_uint8_t rx_off = imxrt_i2c->dma->rx_offset;
                 rt_size_t bounce_len = orig_len + (rt_size_t)rx_off;
                 if (bounce_len > I2C_DMA_BOUNCE_SIZE)
                 {
@@ -552,14 +541,14 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
                     continue;
                 }
                 rt_memset(i2c_dma_bounce, 0, bounce_len);
-                xfer.data     = i2c_dma_bounce;
+                xfer.data = i2c_dma_bounce;
                 xfer.dataSize = bounce_len;
                 (void)orig_len; /* used after DMA completes below */
             }
 
             status = LPI2C_MasterTransferEDMA(imxrt_i2c->I2C,
-                                               &imxrt_i2c->dma->i2c_edma,
-                                               &xfer);
+                                              &imxrt_i2c->dma->i2c_edma,
+                                              &xfer);
             if (status != kStatus_Success)
             {
                 i = 0;
@@ -623,9 +612,9 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             rt_memset(&xfer, 0, sizeof(xfer));
 
             xfer.slaveAddress = msgs[i].addr;
-            xfer.data         = msgs[i].buf;
-            xfer.dataSize     = msgs[i].len;
-            xfer.direction    = (msgs[i].flags & RT_I2C_RD) ? kLPI2C_Read : kLPI2C_Write;
+            xfer.data = msgs[i].buf;
+            xfer.dataSize = msgs[i].len;
+            xfer.direction = (msgs[i].flags & RT_I2C_RD) ? kLPI2C_Read : kLPI2C_Write;
 
             if (msgs[i].flags & RT_I2C_NO_START)
             {
@@ -662,13 +651,13 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 }
 #else
 static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
-                                    struct rt_i2c_msg msgs[],
-                                    rt_uint32_t num)
+                                     struct rt_i2c_msg msgs[],
+                                     rt_uint32_t num)
 {
     struct imxrt_i2c_bus *imxrt_i2c;
     rt_size_t i;
     RT_ASSERT(bus != RT_NULL);
-    imxrt_i2c = (struct imxrt_i2c_bus *) bus;
+    imxrt_i2c = (struct imxrt_i2c_bus *)bus;
 
     imxrt_i2c->msg = msgs;
     imxrt_i2c->msg_ptr = 0;
@@ -737,7 +726,7 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             // while((LPI2C_MasterGetStatusFlags(imxrt_i2c->I2C) & kLPI2C_MasterBusBusyFlag))
             // {
             // }
-            if(LPI2C_MasterWaitForTxFifoAllEmpty(imxrt_i2c->I2C) != kStatus_Success)
+            if (LPI2C_MasterWaitForTxFifoAllEmpty(imxrt_i2c->I2C) != kStatus_Success)
             {
                 i = 0;
                 break;
@@ -766,7 +755,6 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         {
             i = 0;
         }
-
     }
 
     imxrt_i2c->msg = RT_NULL;
@@ -779,8 +767,8 @@ static rt_ssize_t imxrt_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
 #endif
 
 static rt_ssize_t imxrt_i2c_slv_xfer(struct rt_i2c_bus_device *bus,
-                                    struct rt_i2c_msg msgs[],
-                                    rt_uint32_t num)
+                                     struct rt_i2c_msg msgs[],
+                                     rt_uint32_t num)
 {
     return 0;
 }
@@ -795,15 +783,15 @@ static rt_err_t imxrt_i2c_bus_control(struct rt_i2c_bus_device *bus,
 
 int rt_hw_i2c_init(void)
 {
-    lpi2c_master_config_t masterConfig = {0};
+    lpi2c_master_config_t masterConfig = { 0 };
 
 #ifdef SOC_IMXRT1180_SERIES
     i2c_get_dma_config();
 #endif
 
-#if   defined(BSP_USING_I2C1)
+#if defined(BSP_USING_I2C1)
     LPI2C_MasterGetDefaultConfig(&masterConfig);
-#if   defined(HW_I2C1_BADURATE_400kHZ)
+#if defined(HW_I2C1_BADURATE_400kHZ)
     masterConfig.baudRate_Hz = 400000U;
 #elif defined(HW_I2C1_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
@@ -824,9 +812,9 @@ int rt_hw_i2c_init(void)
 #endif
 #endif  /* BSP_USING_I2C1 */
 
-#if   defined(BSP_USING_I2C2)
+#if defined(BSP_USING_I2C2)
     LPI2C_MasterGetDefaultConfig(&masterConfig);
-#if   defined(HW_I2C2_BADURATE_400kHZ)
+#if defined(HW_I2C2_BADURATE_400kHZ)
     masterConfig.baudRate_Hz = 400000U;
 #elif defined(HW_I2C2_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
@@ -849,9 +837,9 @@ int rt_hw_i2c_init(void)
 
 #if !defined(MIMXRT1015_SERIES) /* imxrt1015 only have two i2c bus*/
 
-#if   defined(BSP_USING_I2C3)
+#if defined(BSP_USING_I2C3)
     LPI2C_MasterGetDefaultConfig(&masterConfig);
-#if   defined(HW_I2C3_BADURATE_400kHZ)
+#if defined(HW_I2C3_BADURATE_400kHZ)
     masterConfig.baudRate_Hz = 400000U;
 #elif defined(HW_I2C3_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
@@ -872,9 +860,9 @@ int rt_hw_i2c_init(void)
 #endif
 #endif  /* BSP_USING_I2C3 */
 
-#if   defined(BSP_USING_I2C4)
+#if defined(BSP_USING_I2C4)
     LPI2C_MasterGetDefaultConfig(&masterConfig);
-#if   defined(HW_I2C4_BADURATE_400kHZ)
+#if defined(HW_I2C4_BADURATE_400kHZ)
     masterConfig.baudRate_Hz = 400000U;
 #elif defined(HW_I2C4_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
@@ -891,9 +879,9 @@ int rt_hw_i2c_init(void)
 #endif
 #endif /* BSP_USING_I2C4 */
 
-#if   defined(BSP_USING_I2C5)
+#if defined(BSP_USING_I2C5)
     LPI2C_MasterGetDefaultConfig(&masterConfig);
-#if   defined(HW_I2C5_BADURATE_400kHZ)
+#if defined(HW_I2C5_BADURATE_400kHZ)
     masterConfig.baudRate_Hz = 400000U;
 #elif defined(HW_I2C5_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;
@@ -910,9 +898,9 @@ int rt_hw_i2c_init(void)
 #endif
 #endif /* BSP_USING_I2C5 */
 
-#if   defined(BSP_USING_I2C6)
+#if defined(BSP_USING_I2C6)
     LPI2C_MasterGetDefaultConfig(&masterConfig);
-#if   defined(HW_I2C6_BADURATE_400kHZ)
+#if defined(HW_I2C6_BADURATE_400kHZ)
     masterConfig.baudRate_Hz = 400000U;
 #elif defined(HW_I2C6_BADURATE_100kHZ)
     masterConfig.baudRate_Hz = 100000U;

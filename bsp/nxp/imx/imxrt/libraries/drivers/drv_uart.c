@@ -712,7 +712,8 @@ static void uart_isr(struct imxrt_uart *uart)
 
         /* Use the TCD CITER field for RT1180 EDMA4 compatibility. */
         total_index = EDMA_TCD_CITER(&uart->dma_rx->edma.tcdBase[uart->dma_rx->edma.channel],
-                                     EDMA_TCD_TYPE(uart->dma_rx->edma.base)) & 0x7FFFU;
+                                     EDMA_TCD_TYPE(uart->dma_rx->edma.base)) &
+                      0x7FFFU;
         total_index = uart->serial.config.bufsz - total_index;
         if (total_index > uart->dma_rx->last_index)
         {
@@ -838,7 +839,7 @@ static void imxrt_dma_rx_config(struct imxrt_uart *uart)
     EDMA_EnableAutoStopRequest(base, uart->dma_rx->channel, false);
     /* Complement to adjust final destination address for circular DMA. */
     EDMA_TCD_DLAST_SGA(&uart->dma_rx->edma.tcdBase[uart->dma_rx->edma.channel],
-                        EDMA_TCD_TYPE(uart->dma_rx->edma.base)) = -(int32_t)(uart->serial.config.bufsz);
+                       EDMA_TCD_TYPE(uart->dma_rx->edma.base)) = -(int32_t)(uart->serial.config.bufsz);
     EDMA_StartTransfer(&uart->dma_rx->edma);
     LPUART_EnableRxDMA(uart->uart_base, true);
 

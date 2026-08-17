@@ -19,16 +19,16 @@
 extern uint32_t SystemCoreClock;
 
 /* CoreDebug and DWT register base addresses (Cortex-M, ARMv7-M / ARMv8-M) */
-#define DWT_CTRL    (*(volatile rt_uint32_t *)0xE0001000UL)  /* DWT Control */
-#define DWT_CYCCNT  (*(volatile rt_uint32_t *)0xE0001004UL)  /* Cycle Count */
+#define DWT_CTRL        (*(volatile rt_uint32_t *)0xE0001000UL)  /* DWT Control */
+#define DWT_CYCCNT      (*(volatile rt_uint32_t *)0xE0001004UL)  /* Cycle Count */
 #define CoreDebug_DEMCR (*(volatile rt_uint32_t *)0xE000EDFCUL) /* DEMCR */
 
 /* DEMCR: enable DWT and ITM trace */
-#define CoreDebug_DEMCR_TRCENA_Msk  (1UL << 24)
+#define CoreDebug_DEMCR_TRCENA_Msk (1UL << 24)
 /* DWT_CTRL: enable cycle counter */
-#define DWT_CTRL_CYCCNTENA_Msk      (1UL << 0)
+#define DWT_CTRL_CYCCNTENA_Msk (1UL << 0)
 /* DWT_CTRL: NOCYCCNT - set if the cycle counter is not implemented */
-#define DWT_CTRL_NOCYCCNT_Msk       (1UL << 25)
+#define DWT_CTRL_NOCYCCNT_Msk (1UL << 25)
 
 /**
  * Initialize the DWT cycle counter.
@@ -46,7 +46,7 @@ rt_err_t dwt_init(void)
 
     /* Reset then enable the cycle counter */
     DWT_CYCCNT = 0U;
-    DWT_CTRL  |= DWT_CTRL_CYCCNTENA_Msk;
+    DWT_CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 
     return RT_EOK;
 }

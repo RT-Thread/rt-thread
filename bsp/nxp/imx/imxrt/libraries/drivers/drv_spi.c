@@ -21,11 +21,11 @@
 #include "fsl_dmamux.h"
 #endif
 
-#define LOG_TAG             "drv.spi"
+#define LOG_TAG "drv.spi"
 #include <drv_log.h>
 
 #if defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL
-    #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
+#error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
 
 enum
@@ -82,8 +82,7 @@ struct imxrt_spi
 #endif
 };
 
-static struct imxrt_spi lpspis[] =
-{
+static struct imxrt_spi lpspis[] = {
 #ifdef BSP_USING_SPI1
     {
         .bus_name = "spi1",
@@ -144,14 +143,13 @@ static struct imxrt_spi lpspis[] =
  * AT_NONCACHEABLE_SECTION_ALIGN_INIT places zero-or-nonzero-inited globals in the
  * NonCacheable linker section (defined in the RT1180 linker script). */
 #ifdef BSP_SPI1_USING_DMA
-static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi1_dma, 4) =
-{
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi1_dma, 4) = {
 #ifdef SOC_IMXRT1180_SERIES
     .rx_request = kDma3RequestMuxLPSPI1Rx,
     .rx_channel = BSP_SPI1_RX_DMA_CHANNEL,
     .tx_request = kDma3RequestMuxLPSPI1Tx,
     .tx_channel = BSP_SPI1_TX_DMA_CHANNEL,
-    .edma_base  = (EDMA_Type *)DMA3,
+    .edma_base = (EDMA_Type *)DMA3,
 #else
     .rx_request = kDmaRequestMuxLPSPI1Rx,
     .rx_channel = BSP_SPI1_RX_DMA_CHANNEL,
@@ -162,14 +160,13 @@ static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi1_dma, 4) =
 #endif
 
 #ifdef BSP_SPI2_USING_DMA
-static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi2_dma, 4) =
-{
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi2_dma, 4) = {
 #ifdef SOC_IMXRT1180_SERIES
     .rx_request = kDma3RequestMuxLPSPI2Rx,
     .rx_channel = BSP_SPI2_RX_DMA_CHANNEL,
     .tx_request = kDma3RequestMuxLPSPI2Tx,
     .tx_channel = BSP_SPI2_TX_DMA_CHANNEL,
-    .edma_base  = (EDMA_Type *)DMA3,
+    .edma_base = (EDMA_Type *)DMA3,
 #else
     .rx_request = kDmaRequestMuxLPSPI2Rx,
     .rx_channel = BSP_SPI2_RX_DMA_CHANNEL,
@@ -180,14 +177,13 @@ static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi2_dma, 4) =
 #endif
 
 #ifdef BSP_SPI3_USING_DMA
-static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi3_dma, 4) =
-{
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi3_dma, 4) = {
 #ifdef SOC_IMXRT1180_SERIES
     .rx_request = kDma4RequestMuxLPSPI3Rx,
     .rx_channel = BSP_SPI3_RX_DMA_CHANNEL,
     .tx_request = kDma4RequestMuxLPSPI3Tx,
     .tx_channel = BSP_SPI3_TX_DMA_CHANNEL,
-    .edma_base  = (EDMA_Type *)DMA4,
+    .edma_base = (EDMA_Type *)DMA4,
 #else
     .rx_request = kDmaRequestMuxLPSPI3Rx,
     .rx_channel = BSP_SPI3_RX_DMA_CHANNEL,
@@ -198,14 +194,13 @@ static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi3_dma, 4) =
 #endif
 
 #ifdef BSP_SPI4_USING_DMA
-static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi4_dma, 4) =
-{
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi4_dma, 4) = {
 #ifdef SOC_IMXRT1180_SERIES
     .rx_request = kDma4RequestMuxLPSPI4Rx,
     .rx_channel = BSP_SPI4_RX_DMA_CHANNEL,
     .tx_request = kDma4RequestMuxLPSPI4Tx,
     .tx_channel = BSP_SPI4_TX_DMA_CHANNEL,
-    .edma_base  = (EDMA_Type *)DMA4,
+    .edma_base = (EDMA_Type *)DMA4,
 #else
     .rx_request = kDmaRequestMuxLPSPI4Rx,
     .rx_channel = BSP_SPI4_RX_DMA_CHANNEL,
@@ -283,7 +278,7 @@ static uint32_t imxrt_get_lpspi_freq(struct imxrt_spi *spi)
        10b: derive clock from PLL2      528M
        11b: derive clock from PLL2 PFD2 396M
     */
-    switch(CLOCK_GetMux(kCLOCK_LpspiMux))
+    switch (CLOCK_GetMux(kCLOCK_LpspiMux))
     {
     case 0:
         freq = CLOCK_GetFreq(kCLOCK_Usb1PllPfd1Clk);
@@ -313,10 +308,10 @@ static void lpspi_normal_config(struct imxrt_spi *spi)
     RT_ASSERT(spi != RT_NULL);
 
     LPSPI_MasterTransferCreateHandle(spi->base,
-                                    &spi->spi_normal,
-                                    normal_xfer_callback,
-                                    spi);
-    LOG_D(LOG_TAG" %s normal config done\n", spi->bus_name);
+                                     &spi->spi_normal,
+                                     normal_xfer_callback,
+                                     spi);
+    LOG_D(LOG_TAG " %s normal config done\n", spi->bus_name);
 }
 
 static void lpspi_dma_config(struct imxrt_spi *spi)
@@ -343,11 +338,11 @@ static void lpspi_dma_config(struct imxrt_spi *spi)
 #endif
 
     LPSPI_MasterTransferCreateHandleEDMA(spi->base,
-                                        &spi->dma->spi_edma,
-                                        edma_xfer_callback,
-                                        spi,
-                                        &spi->dma->rx_edma,
-                                        &spi->dma->tx_edma);
+                                         &spi->dma->spi_edma,
+                                         edma_xfer_callback,
+                                         spi,
+                                         &spi->dma->rx_edma,
+                                         &spi->dma->tx_edma);
 
     LOG_D("%s dma config done\n", spi->bus_name);
 #endif
@@ -364,21 +359,21 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
     spi = (struct imxrt_spi *)(device->bus->parent.user_data);
     RT_ASSERT(spi != RT_NULL);
 
-    if(cfg->data_width != 8 && cfg->data_width != 16 && cfg->data_width != 32)
+    if (cfg->data_width != 8 && cfg->data_width != 16 && cfg->data_width != 32)
     {
         return -RT_EINVAL;
     }
 
     LPSPI_MasterGetDefaultConfig(&masterConfig);
 
-    if(cfg->max_hz > 40*1000*1000)
+    if (cfg->max_hz > 40 * 1000 * 1000)
     {
-        cfg->max_hz = 40*1000*1000;
+        cfg->max_hz = 40 * 1000 * 1000;
     }
-    masterConfig.baudRate     = cfg->max_hz;
+    masterConfig.baudRate = cfg->max_hz;
     masterConfig.bitsPerFrame = cfg->data_width;
 
-    if(cfg->mode & RT_SPI_MSB)
+    if (cfg->mode & RT_SPI_MSB)
     {
         masterConfig.direction = kLPSPI_MsbFirst;
     }
@@ -387,7 +382,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
         masterConfig.direction = kLPSPI_LsbFirst;
     }
 
-    if(cfg->mode & RT_SPI_CPHA)
+    if (cfg->mode & RT_SPI_CPHA)
     {
         masterConfig.cpha = kLPSPI_ClockPhaseSecondEdge;
     }
@@ -396,7 +391,7 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
         masterConfig.cpha = kLPSPI_ClockPhaseFirstEdge;
     }
 
-    if(cfg->mode & RT_SPI_CPOL)
+    if (cfg->mode & RT_SPI_CPOL)
     {
         masterConfig.cpol = kLPSPI_ClockPolarityActiveLow;
     }
@@ -419,9 +414,9 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
     }
 #endif
 #else
-    masterConfig.pinCfg                        = kLPSPI_SdiInSdoOut;
-    masterConfig.pcsToSckDelayInNanoSec        = 1000000000 / masterConfig.baudRate;
-    masterConfig.lastSckToPcsDelayInNanoSec    = 1000000000 / masterConfig.baudRate;
+    masterConfig.pinCfg = kLPSPI_SdiInSdoOut;
+    masterConfig.pcsToSckDelayInNanoSec = 1000000000 / masterConfig.baudRate;
+    masterConfig.lastSckToPcsDelayInNanoSec = 1000000000 / masterConfig.baudRate;
     masterConfig.betweenTransferDelayInNanoSec = 1000000000 / masterConfig.baudRate;
 
     LPSPI_MasterInit(spi->base, &masterConfig, imxrt_get_lpspi_freq(spi));
@@ -442,16 +437,16 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     struct imxrt_spi *spi = (struct imxrt_spi *)(device->bus->parent.user_data);
     struct imxrt_sw_spi_cs *cs = device->parent.user_data;
 
-    if(message->cs_take)
+    if (message->cs_take)
     {
         rt_pin_write(cs->pin, PIN_LOW);
     }
 
     transfer.dataSize = message->length;
-    transfer.rxData   = (uint8_t *)(message->recv_buf);
-    transfer.txData   = (uint8_t *)(message->send_buf);
+    transfer.rxData = (uint8_t *)(message->recv_buf);
+    transfer.txData = (uint8_t *)(message->send_buf);
 
-    if(RT_FALSE == spi->dma_flag)
+    if (RT_FALSE == spi->dma_flag)
     {
         /* Non-DMA path: byte-swap and PCS-continuous are safe for interrupt/polling mode. */
         transfer.configFlags = kLPSPI_MasterPcs0 | kLPSPI_MasterByteSwap | kLPSPI_MasterPcsContinuous;
@@ -474,24 +469,23 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
     }
     rt_sem_take(spi->xfer_sem, RT_WAITING_FOREVER);
 
-    if(message->cs_release)
+    if (message->cs_release)
     {
         rt_pin_write(cs->pin, PIN_HIGH);
     }
 
     if (status != kStatus_Success)
     {
-        LOG_E("%s transfer error : %d", spi->bus_name,status);
+        LOG_E("%s transfer error : %d", spi->bus_name, status);
         message->length = 0;
     }
 
     return message->length;
 }
 
-static struct rt_spi_ops imxrt_spi_ops =
-{
+static struct rt_spi_ops imxrt_spi_ops = {
     .configure = spi_configure,
-    .xfer      = spixfer
+    .xfer = spixfer
 };
 
 int rt_hw_spi_bus_init(void)
@@ -513,7 +507,7 @@ int rt_hw_spi_bus_init(void)
          * For other platforms the handle is set up here as before. */
 #if !defined(SOC_IMXRT1180_SERIES) && !defined(SOC_IMXRT1170_SERIES)
 #ifndef BSP_USING_BLOCKING_SPI
-        if(RT_TRUE == lpspis[i].dma_flag)
+        if (RT_TRUE == lpspis[i].dma_flag)
         {
             lpspi_dma_config(&lpspis[i]);
         }
