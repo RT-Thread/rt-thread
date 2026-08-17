@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-03-27     Liuguang     the first version.
+ * 2026-08-11     Ran          add RT1180 CM33 support with DMA
  */
 
 #include <rtthread.h>
@@ -16,7 +17,9 @@
 #include "fsl_iomuxc.h"
 #include "fsl_lpspi.h"
 #include "fsl_lpspi_edma.h"
+#ifndef SOC_IMXRT1180_SERIES
 #include "fsl_dmamux.h"
+#endif
 
 #define LOG_TAG             "drv.spi"
 #include <drv_log.h>
@@ -57,6 +60,10 @@ struct dma_config
     edma_handle_t tx_edma;
     dma_request_source_t tx_request;
     rt_uint8_t tx_channel;
+
+#ifdef SOC_IMXRT1180_SERIES
+    EDMA_Type *edma_base;
+#endif
 };
 
 struct imxrt_spi
@@ -68,7 +75,11 @@ struct imxrt_spi
     lpspi_master_handle_t spi_normal;
     struct dma_config *dma;
     rt_uint8_t dma_flag;
+#if defined(SOC_IMXRT1170_SERIES)
     rt_uint16_t masterclock;
+#elif defined(SOC_IMXRT1180_SERIES)
+    clock_root_t clock_root;
+#endif
 };
 
 static struct imxrt_spi lpspis[] =
@@ -79,7 +90,11 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI1,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+#if defined(SOC_IMXRT1170_SERIES)
         .masterclock = 171,
+#elif defined(SOC_IMXRT1180_SERIES)
+        .clock_root = kCLOCK_Root_Lpspi0102,
+#endif
     },
 #endif
 #ifdef BSP_USING_SPI2
@@ -88,7 +103,11 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI2,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+#if defined(SOC_IMXRT1170_SERIES)
         .masterclock = 172,
+#elif defined(SOC_IMXRT1180_SERIES)
+        .clock_root = kCLOCK_Root_Lpspi0102,
+#endif
     },
 #endif
 #ifdef BSP_USING_SPI3
@@ -97,7 +116,11 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI3,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+#if defined(SOC_IMXRT1170_SERIES)
         .masterclock = 173,
+#elif defined(SOC_IMXRT1180_SERIES)
+        .clock_root = kCLOCK_Root_Lpspi0304,
+#endif
     },
 #endif
 #ifdef BSP_USING_SPI4
@@ -106,61 +129,107 @@ static struct imxrt_spi lpspis[] =
         .base = LPSPI4,
         .dma = RT_NULL,
         .dma_flag = RT_FALSE,
+#if defined(SOC_IMXRT1170_SERIES)
         .masterclock = 174,
+#elif defined(SOC_IMXRT1180_SERIES)
+        .clock_root = kCLOCK_Root_Lpspi0304,
+#endif
     },
 #endif
 };
 
-static void spi_get_dma_config(void)
-{
+/* DMA config structs must be in non-cacheable memory because lpspi_master_edma_handle_t
+ * embeds lpspiSoftwareTCD[] which the DMA engine reads directly. If the struct is in
+ * cached SRAM the DMA sees stale cache lines and corrupts the transfer.
+ * AT_NONCACHEABLE_SECTION_ALIGN_INIT places zero-or-nonzero-inited globals in the
+ * NonCacheable linker section (defined in the RT1180 linker script). */
 #ifdef BSP_SPI1_USING_DMA
-    static struct dma_config spi1_dma =
-    {
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi1_dma, 4) =
+{
+#ifdef SOC_IMXRT1180_SERIES
+    .rx_request = kDma3RequestMuxLPSPI1Rx,
+    .rx_channel = BSP_SPI1_RX_DMA_CHANNEL,
+    .tx_request = kDma3RequestMuxLPSPI1Tx,
+    .tx_channel = BSP_SPI1_TX_DMA_CHANNEL,
+    .edma_base  = (EDMA_Type *)DMA3,
+#else
     .rx_request = kDmaRequestMuxLPSPI1Rx,
     .rx_channel = BSP_SPI1_RX_DMA_CHANNEL,
     .tx_request = kDmaRequestMuxLPSPI1Tx,
     .tx_channel = BSP_SPI1_TX_DMA_CHANNEL,
-    };
-
-    lpspis[SPI1_INDEX].dma = &spi1_dma;
-    lpspis[SPI1_INDEX].dma_flag = RT_TRUE;
+#endif
+};
 #endif
 
 #ifdef BSP_SPI2_USING_DMA
-    static struct dma_config spi2_dma =
-    {
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi2_dma, 4) =
+{
+#ifdef SOC_IMXRT1180_SERIES
+    .rx_request = kDma3RequestMuxLPSPI2Rx,
+    .rx_channel = BSP_SPI2_RX_DMA_CHANNEL,
+    .tx_request = kDma3RequestMuxLPSPI2Tx,
+    .tx_channel = BSP_SPI2_TX_DMA_CHANNEL,
+    .edma_base  = (EDMA_Type *)DMA3,
+#else
     .rx_request = kDmaRequestMuxLPSPI2Rx,
     .rx_channel = BSP_SPI2_RX_DMA_CHANNEL,
     .tx_request = kDmaRequestMuxLPSPI2Tx,
     .tx_channel = BSP_SPI2_TX_DMA_CHANNEL,
-    };
-
-    lpspis[SPI2_INDEX].dma = &spi2_dma;
-    lpspis[SPI2_INDEX].dma_flag = RT_TRUE;
+#endif
+};
 #endif
 
 #ifdef BSP_SPI3_USING_DMA
-    static struct dma_config spi3_dma =
-    {
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi3_dma, 4) =
+{
+#ifdef SOC_IMXRT1180_SERIES
+    .rx_request = kDma4RequestMuxLPSPI3Rx,
+    .rx_channel = BSP_SPI3_RX_DMA_CHANNEL,
+    .tx_request = kDma4RequestMuxLPSPI3Tx,
+    .tx_channel = BSP_SPI3_TX_DMA_CHANNEL,
+    .edma_base  = (EDMA_Type *)DMA4,
+#else
     .rx_request = kDmaRequestMuxLPSPI3Rx,
     .rx_channel = BSP_SPI3_RX_DMA_CHANNEL,
     .tx_request = kDmaRequestMuxLPSPI3Tx,
     .tx_channel = BSP_SPI3_TX_DMA_CHANNEL,
-    };
-
-    lpspis[SPI3_INDEX].dma = &spi3_dma;
-    lpspis[SPI3_INDEX].dma_flag = RT_TRUE;
+#endif
+};
 #endif
 
 #ifdef BSP_SPI4_USING_DMA
-    static struct dma_config spi4_dma =
-    {
+static AT_NONCACHEABLE_SECTION_ALIGN_INIT(struct dma_config spi4_dma, 4) =
+{
+#ifdef SOC_IMXRT1180_SERIES
+    .rx_request = kDma4RequestMuxLPSPI4Rx,
+    .rx_channel = BSP_SPI4_RX_DMA_CHANNEL,
+    .tx_request = kDma4RequestMuxLPSPI4Tx,
+    .tx_channel = BSP_SPI4_TX_DMA_CHANNEL,
+    .edma_base  = (EDMA_Type *)DMA4,
+#else
     .rx_request = kDmaRequestMuxLPSPI4Rx,
     .rx_channel = BSP_SPI4_RX_DMA_CHANNEL,
     .tx_request = kDmaRequestMuxLPSPI4Tx,
     .tx_channel = BSP_SPI4_TX_DMA_CHANNEL,
-    };
+#endif
+};
+#endif
 
+static void spi_get_dma_config(void)
+{
+#ifdef BSP_SPI1_USING_DMA
+    lpspis[SPI1_INDEX].dma = &spi1_dma;
+    lpspis[SPI1_INDEX].dma_flag = RT_TRUE;
+#endif
+#ifdef BSP_SPI2_USING_DMA
+    lpspis[SPI2_INDEX].dma = &spi2_dma;
+    lpspis[SPI2_INDEX].dma_flag = RT_TRUE;
+#endif
+#ifdef BSP_SPI3_USING_DMA
+    lpspis[SPI3_INDEX].dma = &spi3_dma;
+    lpspis[SPI3_INDEX].dma_flag = RT_TRUE;
+#endif
+#ifdef BSP_SPI4_USING_DMA
     lpspis[SPI4_INDEX].dma = &spi4_dma;
     lpspis[SPI4_INDEX].dma_flag = RT_TRUE;
 #endif
@@ -199,10 +268,15 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
     return ret;
 }
 
-static uint32_t imxrt_get_lpspi_freq(void)
+static uint32_t imxrt_get_lpspi_freq(struct imxrt_spi *spi)
 {
     uint32_t freq = 0;
 
+#if defined(SOC_IMXRT1180_SERIES)
+    freq = CLOCK_GetRootClockFreq(spi->clock_root);
+#elif defined(SOC_IMXRT1170_SERIES)
+    freq = CLOCK_GetFreqFromObs(spi->masterclock, 2);
+#else
     /* CLOCK_GetMux(kCLOCK_LpspiMux):
        00b: derive clock from PLL3 PFD1 720M
        01b: derive clock from PLL3 PFD0 720M
@@ -229,6 +303,7 @@ static uint32_t imxrt_get_lpspi_freq(void)
     }
 
     freq /= (CLOCK_GetDiv(kCLOCK_LpspiDiv) + 1U);
+#endif
 
     return freq;
 }
@@ -249,6 +324,15 @@ static void lpspi_dma_config(struct imxrt_spi *spi)
 #ifdef BSP_USING_DMA
     RT_ASSERT(spi != RT_NULL);
 
+#ifdef SOC_IMXRT1180_SERIES
+    EDMA_Type *edma_base = spi->dma->edma_base;
+
+    EDMA_SetChannelMux(edma_base, spi->dma->rx_channel, spi->dma->rx_request);
+    EDMA_CreateHandle(&spi->dma->rx_edma, edma_base, spi->dma->rx_channel);
+
+    EDMA_SetChannelMux(edma_base, spi->dma->tx_channel, spi->dma->tx_request);
+    EDMA_CreateHandle(&spi->dma->tx_edma, edma_base, spi->dma->tx_channel);
+#else
     DMAMUX_SetSource(DMAMUX, spi->dma->rx_channel, spi->dma->rx_request);
     DMAMUX_EnableChannel(DMAMUX, spi->dma->rx_channel);
     EDMA_CreateHandle(&spi->dma->rx_edma, DMA0, spi->dma->rx_channel);
@@ -256,6 +340,7 @@ static void lpspi_dma_config(struct imxrt_spi *spi)
     DMAMUX_SetSource(DMAMUX, spi->dma->tx_channel, spi->dma->tx_request);
     DMAMUX_EnableChannel(DMAMUX, spi->dma->tx_channel);
     EDMA_CreateHandle(&spi->dma->tx_edma, DMA0, spi->dma->tx_channel);
+#endif
 
     LPSPI_MasterTransferCreateHandleEDMA(spi->base,
                                         &spi->dma->spi_edma,
@@ -321,25 +406,32 @@ static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_config
     }
     masterConfig.whichPcs = kLPSPI_Pcs0;
 
-#if defined(SOC_IMXRT1170_SERIES)
-       freq = CLOCK_GetFreqFromObs(spi->masterclock, 2);
-       LPSPI_MasterInit(spi->base, &masterConfig, freq);
+#if defined(SOC_IMXRT1180_SERIES) || defined(SOC_IMXRT1170_SERIES)
+    LPSPI_MasterInit(spi->base, &masterConfig, imxrt_get_lpspi_freq(spi));
+#ifndef BSP_USING_BLOCKING_SPI
+    if (RT_TRUE == spi->dma_flag)
+    {
+        lpspi_dma_config(spi);
+    }
+    else
+    {
+        lpspi_normal_config(spi);
+    }
+#endif
 #else
     masterConfig.pinCfg                        = kLPSPI_SdiInSdoOut;
     masterConfig.pcsToSckDelayInNanoSec        = 1000000000 / masterConfig.baudRate;
     masterConfig.lastSckToPcsDelayInNanoSec    = 1000000000 / masterConfig.baudRate;
     masterConfig.betweenTransferDelayInNanoSec = 1000000000 / masterConfig.baudRate;
 
-    LPSPI_MasterInit(spi->base, &masterConfig, imxrt_get_lpspi_freq());
+    LPSPI_MasterInit(spi->base, &masterConfig, imxrt_get_lpspi_freq(spi));
     spi->base->CFGR1 |= LPSPI_CFGR1_PCSCFG_MASK;
-
 #endif
-
 
     return RT_EOK;
 }
 
-static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     lpspi_transfer_t transfer;
     status_t status;
@@ -358,10 +450,11 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     transfer.dataSize = message->length;
     transfer.rxData   = (uint8_t *)(message->recv_buf);
     transfer.txData   = (uint8_t *)(message->send_buf);
-    transfer.configFlags =
-            kLPSPI_MasterPcs0 | kLPSPI_MasterByteSwap | kLPSPI_MasterPcsContinuous;
+
     if(RT_FALSE == spi->dma_flag)
     {
+        /* Non-DMA path: byte-swap and PCS-continuous are safe for interrupt/polling mode. */
+        transfer.configFlags = kLPSPI_MasterPcs0 | kLPSPI_MasterByteSwap | kLPSPI_MasterPcsContinuous;
 #ifdef BSP_USING_BLOCKING_SPI
         status = LPSPI_MasterTransferBlocking(spi->base, &transfer);
         rt_sem_release(spi->xfer_sem);
@@ -372,7 +465,11 @@ static rt_uint32_t spixfer(struct rt_spi_device *device, struct rt_spi_message *
     else
     {
 #ifdef BSP_USING_DMA
-        status = LPSPI_MasterTransferEDMA(spi->base,&spi->dma->spi_edma,&transfer);
+        /* DMA path: do NOT use kLPSPI_MasterByteSwap - the EDMA driver packs 8-bit
+         * frames into 32-bit FIFO words; byte-swap reverses order within each word
+         * and corrupts data after the first word boundary. Use plain Pcs0 only. */
+        transfer.configFlags = kLPSPI_MasterPcs0;
+        status = LPSPI_MasterTransferEDMA(spi->base, &spi->dma->spi_edma, &transfer);
 #endif
     }
     rt_sem_take(spi->xfer_sem, RT_WAITING_FOREVER);
@@ -409,6 +506,12 @@ int rt_hw_spi_bus_init(void)
         lpspis[i].spi_bus.parent.user_data = &lpspis[i];
 
         ret = rt_spi_bus_register(&lpspis[i].spi_bus, lpspis[i].bus_name, &imxrt_spi_ops);
+        /* For RT1180/RT1170: handle setup is deferred to spi_configure() after
+         * LPSPI_MasterInit() enables the peripheral clock gate. Calling it here
+         * (before any spi_configure) would access an un-clocked peripheral and
+         * cause a HardFault.
+         * For other platforms the handle is set up here as before. */
+#if !defined(SOC_IMXRT1180_SERIES) && !defined(SOC_IMXRT1170_SERIES)
 #ifndef BSP_USING_BLOCKING_SPI
         if(RT_TRUE == lpspis[i].dma_flag)
         {
@@ -419,6 +522,7 @@ int rt_hw_spi_bus_init(void)
             lpspi_normal_config(&lpspis[i]);
         }
 #endif
+#endif
         char sem_name[RT_NAME_MAX];
         rt_sprintf(sem_name, "%s_s", lpspis[i].bus_name);
         lpspis[i].xfer_sem = rt_sem_create(sem_name, 0, RT_IPC_FLAG_PRIO);
@@ -426,6 +530,6 @@ int rt_hw_spi_bus_init(void)
 
     return ret;
 }
-INIT_BOARD_EXPORT(rt_hw_spi_bus_init);
+INIT_DEVICE_EXPORT(rt_hw_spi_bus_init);
 
 #endif /* BSP_USING_SPI */
