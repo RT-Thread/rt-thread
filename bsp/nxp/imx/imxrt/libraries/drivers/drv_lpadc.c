@@ -58,7 +58,9 @@ static rt_err_t imxrt_lp_adc_enabled(struct rt_adc_device *device, rt_int8_t cha
     /* channel check*/
 
     if (channel < 4)
+    {
         return -RT_EINVAL;
+    }
 
     base = (ADC_Type *)(device->parent.user_data);
     if (RT_TRUE == enabled)
