@@ -422,6 +422,31 @@ RA6W1_TIM_INSTANCE_DEFINE(7, TIM_W_TIM8, VECTOR_NUMBER_TIMW7_IRQ)
 #endif /* BSP_USING_TIM_W */
 
 #ifdef BSP_USING_HW_I2C0
+
+#if defined(BSP_I2C0_RATE_STANDARD)
+/* 100 kHz: tLOW=4.77 us, tHIGH=5.22 us */
+#define I2C0_MASTER_RATE       I2C_MASTER_RATE_STANDARD
+#define I2C0_MASTER_SCL_LCNT   187
+#define I2C0_MASTER_SCL_HCNT   205
+
+#elif defined(BSP_I2C0_RATE_FAST)
+/* 400 kHz: tLOW=1.38 us, tHIGH=1.14 us */
+#define I2C0_MASTER_RATE       I2C_MASTER_RATE_FAST
+#define I2C0_MASTER_SCL_LCNT   51
+#define I2C0_MASTER_SCL_HCNT   41
+
+#elif defined(BSP_I2C0_RATE_FASTPLUS)
+/* 1 MHz: tLOW=580 ns, tHIGH=448 ns */
+#define I2C0_MASTER_RATE       I2C_MASTER_RATE_FASTPLUS
+#define I2C0_MASTER_SCL_LCNT   19
+#define I2C0_MASTER_SCL_HCNT   13
+
+#elif defined(BSP_I2C0_RATE_HIGHSPEED)
+#error "40 MHz I2C source cannot generate 3.4 MHz with the minimum HCNT/LCNT"
+#else
+#error "Select one BSP_I2C0_RATE_xxx option"
+#endif
+
 i2c_master_w_instance_ctrl_t g_i2c_master0_ctrl;
 
 const i2c_master_w_extended_cfg_t g_i2c_master0_extend =
@@ -437,15 +462,15 @@ const i2c_master_w_extended_cfg_t g_i2c_master0_extend =
     .gen_irq = FSP_INVALID_VECTOR,
 #endif
     .gen_ipl = 12,
-    /* Actual calculated bitrate: 399600. Actual calculated duty cycle: 50%. Frequency of the selected clock source: 80000000. */
-    .clock_settings.scl_lcnt = 100,
-    .clock_settings.scl_hcnt = 93,
+
+    .clock_settings.scl_lcnt = I2C0_MASTER_SCL_LCNT,
+    .clock_settings.scl_hcnt = I2C0_MASTER_SCL_HCNT,
 };
 
 const i2c_master_cfg_t g_i2c_master0_cfg =
 {
     .channel = 1 - I2C_MASTER_W_CHANNEL_OFFSET,
-    .rate = I2C_MASTER_RATE_FAST,
+    .rate = I2C0_MASTER_RATE,
     .slave = 0x1D,
     .addr_mode = I2C_MASTER_ADDR_MODE_7BIT,
     .p_transfer_tx = NULL,
@@ -485,6 +510,31 @@ const i2c_master_instance_t g_i2c_master0 =
 #endif
 
 #ifdef BSP_USING_HW_I2C1
+
+#if defined(BSP_I2C1_RATE_STANDARD)
+/* 100 kHz: tLOW=4.77 us, tHIGH=5.22 us */
+#define I2C1_MASTER_RATE       I2C_MASTER_RATE_STANDARD
+#define I2C1_MASTER_SCL_LCNT   187
+#define I2C1_MASTER_SCL_HCNT   205
+
+#elif defined(BSP_I2C1_RATE_FAST)
+/* 400 kHz: tLOW=1.38 us, tHIGH=1.14 us */
+#define I2C1_MASTER_RATE       I2C_MASTER_RATE_FAST
+#define I2C1_MASTER_SCL_LCNT   51
+#define I2C1_MASTER_SCL_HCNT   41
+
+#elif defined(BSP_I2C1_RATE_FASTPLUS)
+/* 1 MHz: tLOW=580 ns, tHIGH=448 ns */
+#define I2C1_MASTER_RATE       I2C_MASTER_RATE_FASTPLUS
+#define I2C1_MASTER_SCL_LCNT   19
+#define I2C1_MASTER_SCL_HCNT   13
+
+#elif defined(BSP_I2C1_RATE_HIGHSPEED)
+#error "40 MHz I2C source cannot generate 3.4 MHz with the minimum HCNT/LCNT"
+#else
+#error "Select one BSP_I2C1_RATE_xxx option"
+#endif
+
 i2c_master_w_instance_ctrl_t g_i2c_master1_ctrl;
 
 const i2c_master_w_extended_cfg_t g_i2c_master1_extend =
@@ -500,15 +550,15 @@ const i2c_master_w_extended_cfg_t g_i2c_master1_extend =
     .gen_irq = FSP_INVALID_VECTOR,
 #endif
     .gen_ipl = 12,
-    /* Actual calculated bitrate: 399600. Actual calculated duty cycle: 50%. Frequency of the selected clock source: 80000000. */
-    .clock_settings.scl_lcnt = 100,
-    .clock_settings.scl_hcnt = 93,
+
+    .clock_settings.scl_lcnt = I2C1_MASTER_SCL_LCNT,
+    .clock_settings.scl_hcnt = I2C1_MASTER_SCL_HCNT,
 };
 
 const i2c_master_cfg_t g_i2c_master1_cfg =
 {
     .channel = 2 - I2C_MASTER_W_CHANNEL_OFFSET,
-    .rate = I2C_MASTER_RATE_FAST,
+    .rate = I2C1_MASTER_RATE,
     .slave = 0x1D,
     .addr_mode = I2C_MASTER_ADDR_MODE_7BIT,
     .p_transfer_tx = NULL,
