@@ -103,9 +103,9 @@ static int wifi_check_sta_mode(void)
 #else
         LOG_E("sta mode not set, bind it in code: rt_wlan_set_mode(RT_WLAN_DEVICE_STA_NAME, RT_WLAN_STATION)!");
 #endif
-        return -1;
+        return -RT_ERROR;
     }
-    return 0;
+    return RT_EOK;
 }
 
 static int wifi_check_ap_mode(void)
@@ -117,9 +117,9 @@ static int wifi_check_ap_mode(void)
 #else
         LOG_E("ap mode not set, bind it in code: rt_wlan_set_mode(RT_WLAN_DEVICE_AP_NAME, RT_WLAN_AP)!");
 #endif
-        return -1;
+        return -RT_ERROR;
     }
-    return 0;
+    return RT_EOK;
 }
 
 static int wifi_help(int argc, char *argv[])
@@ -478,7 +478,7 @@ static int wifi_scan(int argc, char *argv[])
         info = &filter;
     }
 
-    if (wifi_check_sta_mode() != 0)
+    if (wifi_check_sta_mode() != RT_EOK)
     {
         return 0;
     }
@@ -519,7 +519,7 @@ static int wifi_join(int argc, char *argv[])
     struct rt_wlan_cfg_info cfg_info;
 
     rt_memset(&cfg_info, 0, sizeof(cfg_info));
-    if (wifi_check_sta_mode() != 0)
+    if (wifi_check_sta_mode() != RT_EOK)
     {
         return 0;
     }
@@ -580,7 +580,7 @@ static int wifi_ap(int argc, char *argv[])
         return -1;
     }
 
-    if (wifi_check_ap_mode() != 0)
+    if (wifi_check_ap_mode() != RT_EOK)
     {
         return 0;
     }
@@ -601,7 +601,7 @@ static int wifi_list_sta(int argc, char *argv[])
     {
         return -1;
     }
-    if (wifi_check_ap_mode() != 0)
+    if (wifi_check_ap_mode() != RT_EOK)
     {
         return 0;
     }
@@ -631,7 +631,7 @@ static int wifi_disconnect(int argc, char *argv[])
         return -1;
     }
 
-    if (wifi_check_sta_mode() != 0)
+    if (wifi_check_sta_mode() != RT_EOK)
     {
         return 0;
     }
