@@ -23,6 +23,37 @@ Peripheral.lpadc1:
     - CONFIG_RT_USING_ADC=y
     - CONFIG_BSP_USING_LPADC=y
     - CONFIG_BSP_USING_LPADC1=y
+Peripheral.lpuart_device:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_LPUART=y
+    - CONFIG_BSP_USING_DMA=y
+Peripheral.i2c_device:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_I2C=y
+    - CONFIG_BSP_USING_DMA=y
+Peripheral.spi_device:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_SPI=y
+    - CONFIG_BSP_USING_DMA=y
+Peripheral.can_device:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_CAN=y
+Peripheral.rtc_device:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_RTC=y
+Peripheral.dwt_device:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_DWT=y
+Peripheral.sdio_device:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_SDCARD_FATFS=y
 Peripheral.usb_device:
   <<: *scons
   kconfig:
