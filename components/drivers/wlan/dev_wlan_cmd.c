@@ -480,7 +480,7 @@ static int wifi_scan(int argc, char *argv[])
 
     if (wifi_check_sta_mode() != RT_EOK)
     {
-        return 0;
+        return -RT_ERROR;
     }
 
     ret = rt_wlan_register_event_handler(RT_WLAN_EVT_SCAN_REPORT, user_ap_info_callback, &i);
@@ -521,7 +521,7 @@ static int wifi_join(int argc, char *argv[])
     rt_memset(&cfg_info, 0, sizeof(cfg_info));
     if (wifi_check_sta_mode() != RT_EOK)
     {
-        return 0;
+        return -RT_ERROR;
     }
     if (argc == 2)
     {
@@ -582,7 +582,7 @@ static int wifi_ap(int argc, char *argv[])
 
     if (wifi_check_ap_mode() != RT_EOK)
     {
-        return 0;
+        return -RT_ERROR;
     }
     err = rt_wlan_start_ap(ssid, key);
     if (err != RT_EOK)
@@ -603,7 +603,7 @@ static int wifi_list_sta(int argc, char *argv[])
     }
     if (wifi_check_ap_mode() != RT_EOK)
     {
-        return 0;
+        return -RT_ERROR;
     }
     num = rt_wlan_ap_get_sta_num();
     sta_info = rt_malloc(sizeof(struct rt_wlan_info) * num);
@@ -633,7 +633,7 @@ static int wifi_disconnect(int argc, char *argv[])
 
     if (wifi_check_sta_mode() != RT_EOK)
     {
-        return 0;
+        return -RT_ERROR;
     }
 
     rt_wlan_disconnect();
