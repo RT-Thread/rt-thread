@@ -75,7 +75,11 @@ struct dma_rx_config
     dma_request_source_t request;
     rt_uint8_t channel;
     rt_uint32_t last_index;
+#ifdef SOC_IMXRT1180_SERIES
     EDMA_Type *edma_base;
+#else
+    DMA_Type *edma_base;
+#endif
 };
 
 struct dma_tx_config
@@ -84,7 +88,11 @@ struct dma_tx_config
     lpuart_edma_handle_t uart_edma;
     dma_request_source_t request;
     rt_uint8_t channel;
+#ifdef SOC_IMXRT1180_SERIES
     EDMA_Type *edma_base;
+#else
+    DMA_Type *edma_base;
+#endif
 };
 
 #endif
@@ -710,10 +718,15 @@ static void uart_isr(struct imxrt_uart *uart)
         LPUART_ClearStatusFlags(uart->uart_base, kLPUART_IdleLineFlag);
         level = rt_hw_interrupt_disable();
 
-        /* Use the TCD CITER field for RT1180 EDMA4 compatibility. */
+#ifdef SOC_IMXRT1180_SERIES
+        /* EDMA4 (RT1180): read CITER from tcdBase TCD. */
         total_index = EDMA_TCD_CITER(&uart->dma_rx->edma.tcdBase[uart->dma_rx->edma.channel],
                                      EDMA_TCD_TYPE(uart->dma_rx->edma.base)) &
                       0x7FFFU;
+#else
+        /* Classic EDMA: read CITER directly from TCD hardware register. */
+        total_index = (rt_size_t)(uart->dma_rx->edma.base->TCD[uart->dma_rx->channel].CITER_ELINKNO & 0x7FFFU);
+#endif
         total_index = uart->serial.config.bufsz - total_index;
         if (total_index > uart->dma_rx->last_index)
         {
@@ -764,7 +777,11 @@ void edma_rx_callback(struct _edma_handle *handle, void *userData, bool transfer
             /* clear half interrupt */
             EDMA_ClearChannelStatusFlags(uart->dma_rx->edma_base, uart->dma_rx->channel, kEDMA_InterruptFlag);
 
+#ifdef SOC_IMXRT1180_SERIES
             total_index = EDMA_TCD_CITER(&handle->tcdBase[handle->channel], EDMA_TCD_TYPE(handle->base)) & 0x7FFFU;
+#else
+            total_index = (rt_size_t)(handle->base->TCD[handle->channel].CITER_ELINKNO & 0x7FFFU);
+#endif
             total_index = uart->serial.config.bufsz - total_index;
             if (total_index > uart->dma_rx->last_index)
             {
@@ -802,7 +819,7 @@ static void imxrt_edma_mux_setup(EDMA_Type *base, rt_uint8_t channel, dma_reques
     EDMA_SetChannelMux(base, channel, request);
 }
 #else
-static void imxrt_edma_mux_setup(EDMA_Type *base, rt_uint8_t channel, dma_request_source_t request)
+static void imxrt_edma_mux_setup(DMA_Type *base, rt_uint8_t channel, dma_request_source_t request)
 {
     (void)base;
     DMAMUX_SetSource(DMAMUX, channel, (uint8_t)(uint32_t)request);
@@ -816,11 +833,10 @@ static void imxrt_dma_rx_config(struct imxrt_uart *uart)
 
     edma_transfer_config_t xferConfig;
     struct rt_serial_rx_fifo *rx_fifo;
-    EDMA_Type *base = uart->dma_rx->edma_base;
 
-    imxrt_edma_mux_setup(base, uart->dma_rx->channel, uart->dma_rx->request);
+    imxrt_edma_mux_setup(uart->dma_rx->edma_base, uart->dma_rx->channel, uart->dma_rx->request);
 
-    EDMA_CreateHandle(&uart->dma_rx->edma, base, uart->dma_rx->channel);
+    EDMA_CreateHandle(&uart->dma_rx->edma, uart->dma_rx->edma_base, uart->dma_rx->channel);
     EDMA_SetCallback(&uart->dma_rx->edma, edma_rx_callback, uart);
 
     rx_fifo = (struct rt_serial_rx_fifo *)uart->serial.serial_rx;
@@ -835,11 +851,16 @@ static void imxrt_dma_rx_config(struct imxrt_uart *uart)
                          kEDMA_PeripheralToMemory);
 
     EDMA_SubmitTransfer(&uart->dma_rx->edma, &xferConfig);
-    EDMA_EnableChannelInterrupts(base, uart->dma_rx->channel, kEDMA_MajorInterruptEnable | kEDMA_HalfInterruptEnable);
-    EDMA_EnableAutoStopRequest(base, uart->dma_rx->channel, false);
-    /* Complement to adjust final destination address for circular DMA. */
+    EDMA_EnableChannelInterrupts(uart->dma_rx->edma_base, uart->dma_rx->channel, kEDMA_MajorInterruptEnable | kEDMA_HalfInterruptEnable);
+    EDMA_EnableAutoStopRequest(uart->dma_rx->edma_base, uart->dma_rx->channel, false);
+#ifdef SOC_IMXRT1180_SERIES
+    /* EDMA4 (RT1180): set DLAST_SGA for circular DMA wrap-around. */
     EDMA_TCD_DLAST_SGA(&uart->dma_rx->edma.tcdBase[uart->dma_rx->edma.channel],
                        EDMA_TCD_TYPE(uart->dma_rx->edma.base)) = -(int32_t)(uart->serial.config.bufsz);
+#else
+    /* Classic EDMA (RT1052/RT1064 etc.): write DLAST_SGA directly via TCD register. */
+    uart->dma_rx->edma.base->TCD[uart->dma_rx->channel].DLAST_SGA = -(int32_t)(uart->serial.config.bufsz);
+#endif
     EDMA_StartTransfer(&uart->dma_rx->edma);
     LPUART_EnableRxDMA(uart->uart_base, true);
 
@@ -854,11 +875,9 @@ static void imxrt_dma_tx_config(struct imxrt_uart *uart)
 {
     RT_ASSERT(uart != RT_NULL);
 
-    EDMA_Type *base = uart->dma_tx->edma_base;
+    imxrt_edma_mux_setup(uart->dma_tx->edma_base, uart->dma_tx->channel, uart->dma_tx->request);
 
-    imxrt_edma_mux_setup(base, uart->dma_tx->channel, uart->dma_tx->request);
-
-    EDMA_CreateHandle(&uart->dma_tx->edma, base, uart->dma_tx->channel);
+    EDMA_CreateHandle(&uart->dma_tx->edma, uart->dma_tx->edma_base, uart->dma_tx->channel);
 
     LPUART_TransferCreateHandleEDMA(uart->uart_base,
                                     &uart->dma_tx->uart_edma,

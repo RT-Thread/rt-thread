@@ -42,6 +42,7 @@ enum
 #ifdef BSP_USING_SPI4
     SPI4_INDEX,
 #endif
+    SPI_INDEX_MAX
 };
 
 struct imxrt_sw_spi_cs
