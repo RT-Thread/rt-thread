@@ -40,5 +40,8 @@ if RT_USING_DFS
                     This device will be formatted and mounted during testing
 
         endif
+
+    rsource "v2/af_unix/Kconfig"
+
     endmenu
 endif

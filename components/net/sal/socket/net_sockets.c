@@ -725,7 +725,11 @@ int closesocket(int s)
         return -1;
     }
 
+#ifdef RT_USING_DFS_V2
+    if (dfs_file_close(d) == 0)
+#else
     if (sal_closesocket(socket) == 0)
+#endif
     {
         error = 0;
     }
@@ -771,7 +775,18 @@ RTM_EXPORT(closesocket);
 int socketpair(int domain, int type, int protocol, int *fds)
 {
     rt_err_t ret = 0;
+    int nonblocking = 0;
     int sock_fds[2];
+
+    if ((type & SOCK_CLOEXEC) != 0)
+    {
+        type &= ~SOCK_CLOEXEC;
+    }
+    if ((type & SOCK_NONBLOCK) != 0)
+    {
+        nonblocking = 1;
+        type &= ~SOCK_NONBLOCK;
+    }
 
     fds[0] = socket(domain, type, protocol);
     if (fds[0] < 0)
@@ -798,6 +813,11 @@ int socketpair(int domain, int type, int protocol, int *fds)
     {
         closesocket(fds[0]);
         closesocket(fds[1]);
+    }
+    else if (nonblocking)
+    {
+        (void)fcntl(fds[0], F_SETFL, O_NONBLOCK);
+        (void)fcntl(fds[1], F_SETFL, O_NONBLOCK);
     }
 
     return ret;

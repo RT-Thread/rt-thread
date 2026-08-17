@@ -535,6 +535,10 @@ static int dfs_tmpfs_getdents(struct dfs_file *file,
             {
                 d->d_type = DT_DIR;
             }
+            if (n_file->type == TMPFS_TYPE_SOCKET)
+            {
+                d->d_type = DT_SOCK;
+            }
             d->d_namlen = RT_NAME_MAX;
             d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
             rt_strncpy(d->d_name, n_file->name, TMPFS_NAME_MAX);
@@ -664,6 +668,11 @@ static struct dfs_vnode *_dfs_tmpfs_lookup(struct dfs_dentry *dentry)
                 vnode->mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
                 vnode->type = FT_DIRECTORY;
             }
+            else if (d_file->type == TMPFS_TYPE_SOCKET)
+            {
+                vnode->mode = S_IFSOCK | (S_IRWXU | S_IRWXG | S_IRWXO);
+                vnode->type = FT_SOCKET;
+            }
             else
             {
                 vnode->mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
@@ -749,6 +758,13 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
             d_file->type = TMPFS_TYPE_DIR;
             vnode->mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
             vnode->type = FT_DIRECTORY;
+        }
+        else if (type == FT_SOCKET ||
+                 (type == FT_REGULAR && S_ISSOCK(mode)))
+        {
+            d_file->type = TMPFS_TYPE_SOCKET;
+            vnode->mode = S_IFSOCK | (mode & (S_IRWXU | S_IRWXG | S_IRWXO));
+            vnode->type = FT_SOCKET;
         }
         else
         {
