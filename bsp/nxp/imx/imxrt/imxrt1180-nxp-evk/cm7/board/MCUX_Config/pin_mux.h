@@ -37,7 +37,27 @@ void BOARD_InitBootPins(void);
  * @brief Configures pin routing and optionally pin electrical features.
  *
  */
-void BOARD_InitPins(void);                    /* Function assigned for the Cortex-M33 */
+void BOARD_InitPins(void);                    /* Function assigned for the Cortex-M7 */
+
+#ifdef BSP_USING_LPUART12
+void BOARD_InitLPUART12Pins(void);
+#endif
+
+#ifdef BSP_USING_I2C2
+void BOARD_InitLPI2C2Pins(void);
+#endif
+
+#ifdef BSP_USING_I2C3
+void BOARD_InitLPI2C3Pins(void);
+#endif
+
+#ifdef BSP_USING_SPI3
+void BOARD_InitLPSPI3Pins(void);
+#endif
+
+#ifdef BSP_USING_SDIO
+void BOARD_InitSDIO1Pins(void);
+#endif
 
 #ifdef BSP_USING_ETH
 /* GPIO_AD_25 (coord M15), ENET0_RST_B */

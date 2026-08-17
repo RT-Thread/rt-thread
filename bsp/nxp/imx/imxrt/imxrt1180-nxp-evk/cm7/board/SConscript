@@ -21,6 +21,9 @@ else:
     MCUX_Config/pin_mux.c
     """)
 
+if GetDepend(['BSP_USING_QSPI_FLASH']):
+    src += ['ports/drv_flexspi_nor_flash.c']
+
 if GetDepend(['BSP_USING_QSPI_FLASH_FS']):
     src += ['ports/drv_flexspi_nor_flash.c', 'ports/fal_flash_port.c']
 

@@ -35,25 +35,20 @@ void BOARD_InitBootPins(void)
 {
     BOARD_InitPins();
 
-#ifdef BSP_USING_ETH
-    BOARD_InitPhyAccessPins();
-    BOARD_InitEpPins();
-    BOARD_InitSwtPort0Pins();
-#endif
 }
 
 /* FUNCTION ************************************************************************************************************
  *
- * Function Name : BOARD_InitPins, assigned for the Cortex-M7 core.
- * Description   : Configures pin routing and optionally pin electrical features.
+ * Function Name : BOARD_InitLPUART12Pins, assigned for the Cortex-M7 core.
+ * Description   : Configures pin routing for LPUART12 (GPIO_AON_19/20).
  *
  * END ****************************************************************************************************************/
-void BOARD_InitPins(void)
-{
-    CLOCK_EnableClock(kCLOCK_Iomuxc1);          /* Turn on LPCG: LPCG is ON. */
-    CLOCK_EnableClock(kCLOCK_Iomuxc2);          /* Turn on LPCG: LPCG is ON. */
-
 #ifdef BSP_USING_LPUART12
+void BOARD_InitLPUART12Pins(void)
+{
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);
+
     IOMUXC_SetPinMux(
         IOMUXC_GPIO_AON_19_LPUART12_TX,         /* GPIO_AON_19 is configured as LPUART12_TX */
         0U);                                    /* Software Input On Field: Input Path is determined by functionality */
@@ -74,51 +69,182 @@ void BOARD_InitPins(void)
                                                     Pull / Keep Select Field: Pull Disable, Highz
                                                     Pull Up / Down Config. Field: Weak pull down
                                                     Open Drain Field: Disabled */
-#endif
-
-#ifdef BSP_USING_I2C2
-    IOMUXC_SetPinMux(
-        IOMUXC_GPIO_AON_16_LPI2C2_SCL,          /* GPIO_AON_16 is configured as LPI2C2_SCL */
-        1U);                                    /* Software Input On Field: Force input path of pad GPIO_AON_16 */
-    IOMUXC_SetPinMux(
-        IOMUXC_GPIO_AON_15_LPI2C2_SDA,          /* GPIO_AON_15 is configured as LPI2C2_SDA */
-        1U);                                    /* Software Input On Field: Force input path of pad GPIO_AON_15 */
-    IOMUXC_SetPinConfig(
-        IOMUXC_GPIO_AON_16_LPI2C2_SCL,          /* GPIO_AON_16 PAD functional properties : */
-        0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
-                                                    Pull Enable Field: Pull Enable
-                                                    Pull Up / Down Config. Field: Weak pull up
-                                                    Open Drain Field: Enabled */
-    IOMUXC_SetPinConfig(
-        IOMUXC_GPIO_AON_15_LPI2C2_SDA,          /* GPIO_AON_15 PAD functional properties : */
-        0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
-                                                    Pull Enable Field: Pull Enable
-                                                    Pull Up / Down Config. Field: Weak pull up
-                                                    Open Drain Field: Enabled */
-#endif
-
-#ifdef BSP_USING_I2C3
-    IOMUXC_SetPinMux(
-        IOMUXC_GPIO_AON_16_LPI2C2_SCL,          /* GPIO_AON_16 is configured as LPI2C2_SCL */
-        1U);                                    /* Software Input On Field: Force input path of pad GPIO_AON_16 */
-    IOMUXC_SetPinMux(
-        IOMUXC_GPIO_AON_15_LPI2C2_SDA,          /* GPIO_AON_15 is configured as LPI2C2_SDA */
-        1U);                                    /* Software Input On Field: Force input path of pad GPIO_AON_15 */
-    IOMUXC_SetPinConfig(
-        IOMUXC_GPIO_AON_16_LPI2C2_SCL,          /* GPIO_AON_16 PAD functional properties : */
-        0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
-                                                    Pull Enable Field: Pull Enable
-                                                    Pull Up / Down Config. Field: Weak pull up
-                                                    Open Drain Field: Enabled */
-    IOMUXC_SetPinConfig(
-        IOMUXC_GPIO_AON_15_LPI2C2_SDA,          /* GPIO_AON_15 PAD functional properties : */
-        0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
-                                                    Pull Enable Field: Pull Enable
-                                                    Pull Up / Down Config. Field: Weak pull up
-                                                    Open Drain Field: Enabled */
-#endif
 }
+#endif /* BSP_USING_LPUART12 */
 
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitLPI2C2Pins, assigned for the Cortex-M7 core.
+ * Description   : Configures pin routing for LPI2C2 (GPIO_AON_15/16).
+ *
+ * END ****************************************************************************************************************/
+#ifdef BSP_USING_I2C2
+void BOARD_InitLPI2C2Pins(void)
+{
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);
+
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_16_LPI2C2_SCL,          /* GPIO_AON_16 is configured as LPI2C2_SCL */
+        1U);                                    /* Software Input On Field: Force input path of pad GPIO_AON_16 */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_15_LPI2C2_SDA,          /* GPIO_AON_15 is configured as LPI2C2_SDA */
+        1U);                                    /* Software Input On Field: Force input path of pad GPIO_AON_15 */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_16_LPI2C2_SCL,          /* GPIO_AON_16 PAD functional properties : */
+        0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
+                                                    Pull Enable Field: Pull Enable
+                                                    Pull Up / Down Config. Field: Weak pull up
+                                                    Open Drain Field: Enabled */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AON_15_LPI2C2_SDA,          /* GPIO_AON_15 PAD functional properties : */
+        0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
+                                                    Pull Enable Field: Pull Enable
+                                                    Pull Up / Down Config. Field: Weak pull up
+                                                    Open Drain Field: Enabled */
+}
+#endif /* BSP_USING_I2C2 */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitLPI2C3Pins, assigned for the Cortex-M7 core.
+ * Description   : Configures pin routing for LPI2C3 (GPIO_AD_18/19).
+ *                 SCL -> GPIO_AD_18 (LPI2C3_SCL)
+ *                 SDA -> GPIO_AD_19 (LPI2C3_SDA)
+ *
+ * END ****************************************************************************************************************/
+#ifdef BSP_USING_I2C3
+void BOARD_InitLPI2C3Pins(void)
+{
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);
+
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_18_LPI2C3_SCL,           /* GPIO_AD_18 is configured as LPI2C3_SCL */
+        1U);                                    /* Software Input On Field: Force input path of pad GPIO_AD_18 */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_19_LPI2C3_SDA,           /* GPIO_AD_19 is configured as LPI2C3_SDA */
+        1U);                                    /* Software Input On Field: Force input path of pad GPIO_AD_19 */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_18_LPI2C3_SCL,           /* GPIO_AD_18 PAD functional properties : */
+        0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
+                                                    Pull Enable Field: Pull Enable
+                                                    Pull Up / Down Config. Field: Weak pull up
+                                                    Open Drain Field: Enabled */
+    IOMUXC_SetPinConfig(
+        IOMUXC_GPIO_AD_19_LPI2C3_SDA,           /* GPIO_AD_19 PAD functional properties : */
+        0x1DU);                                 /* Slew Rate Field: Slow Slew Rate
+                                                    Pull Enable Field: Pull Enable
+                                                    Pull Up / Down Config. Field: Weak pull up
+                                                    Open Drain Field: Enabled */
+}
+#endif /* BSP_USING_I2C3 */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitLPSPI3Pins, assigned for the Cortex-M7 core.
+ * Description   : Configures pin routing for LPSPI3 (GPIO_SD_B1_00..03).
+ *                 SCK  -> GPIO_SD_B1_01 (LPSPI3_SCK)
+ *                 SOUT -> GPIO_SD_B1_02 (LPSPI3_SDO)
+ *                 SIN  -> GPIO_SD_B1_03 (LPSPI3_SDI)
+ *                 PCS0 -> GPIO_SD_B1_00 (LPSPI3_PCS0, hardware CS, optional)
+ *
+ * END ****************************************************************************************************************/
+#ifdef BSP_USING_SPI3
+void BOARD_InitLPSPI3Pins(void)
+{
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);
+
+    /* LPSPI3_SCK: GPIO_SD_B1_01, high driver */
+    IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_01_LPSPI3_SCK, 0U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_01_LPSPI3_SCK, 0x08U);
+    /* LPSPI3_SDO (SOUT/MOSI): GPIO_SD_B1_02, high driver + pull-up */
+    IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_02_LPSPI3_SDO, 0U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_02_LPSPI3_SDO, 0x04U);
+    /* LPSPI3_SDI (SIN/MISO): GPIO_SD_B1_03, high driver + pull-up */
+    IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_03_LPSPI3_SDI, 0U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_03_LPSPI3_SDI, 0x04U);
+    /* LPSPI3_PCS0 (hardware CS): GPIO_SD_B1_00, high driver */
+    IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_00_LPSPI3_PCS0, 0U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_00_LPSPI3_PCS0, 0x08U);
+}
+#endif /* BSP_USING_SPI3 */
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitCAN3Pins, assigned for the Cortex-M7 core.
+ * Description   : Configures pin routing for CAN3.
+ *                 TX -> GPIO_AON_18 (CAN3_TX)
+ *                 RX -> GPIO_AON_03 (CAN3_RX)
+ *
+ * END ****************************************************************************************************************/
+#ifdef BSP_USING_CAN3
+void BOARD_InitCAN3Pins(void)
+{
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);
+
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_18_CAN3_TX,             /* GPIO_AON_18 is configured as CAN3_TX */
+        1U);                                    /* Software Input On Field: Force input path */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AON_03_CAN3_RX,             /* GPIO_AON_03 is configured as CAN3_RX */
+        1U);                                    /* Software Input On Field: Force input path */
+}
+#endif /* BSP_USING_CAN3 */
+
+#ifdef BSP_USING_SDIO
+void BOARD_InitSDIO1Pins(void)
+{
+    rgpio_pin_config_t pinCfg;
+
+    CLOCK_EnableClock(kCLOCK_Iomuxc1);
+    CLOCK_EnableClock(kCLOCK_Iomuxc2);
+
+    /* SD_PWREN_B: GPIO_AD_14 -> RGPIO4_IO14, output low = card power on */
+    pinCfg.pinDirection = kRGPIO_DigitalOutput;
+    pinCfg.outputLogic  = 0U;
+    RGPIO_PinInit(RGPIO4, 14U, &pinCfg);
+    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_14_GPIO4_IO14, 0U);
+
+    /* SD1_CD_B: GPIO_AD_15 -> RGPIO4_IO15, input (card detect) */
+    pinCfg.pinDirection = kRGPIO_DigitalInput;
+    pinCfg.outputLogic  = 0U;
+    RGPIO_PinInit(RGPIO4, 15U, &pinCfg);
+    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_15_GPIO4_IO15, 0U);
+
+    /* VSELECT: GPIO_AD_34 -> GPIO5_IO02, output (voltage select) */
+    pinCfg.pinDirection = kRGPIO_DigitalOutput;
+    pinCfg.outputLogic  = 0U;
+    RGPIO_PinInit(RGPIO5, 2U, &pinCfg);
+    IOMUXC_SetPinMux(IOMUXC_GPIO_AD_34_GPIO5_IO02, 0U);
+
+    /* CMD: high driver, pull-up */
+    IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_00_USDHC1_CMD, 1U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_00_USDHC1_CMD, 0x04U);
+
+    /* CLK: high driver, no pull */
+    IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_01_USDHC1_CLK, 1U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_01_USDHC1_CLK, 0x0CU);
+
+    /* DATA0 */
+    IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_02_USDHC1_DATA0, 1U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_02_USDHC1_DATA0, 0x04U);
+
+    /* DATA1 */
+    IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_03_USDHC1_DATA1, 1U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_03_USDHC1_DATA1, 0x04U);
+
+    /* DATA2 */
+    IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_04_USDHC1_DATA2, 1U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_04_USDHC1_DATA2, 0x04U);
+
+    /* DATA3 */
+    IOMUXC_SetPinMux(IOMUXC_GPIO_SD_B1_05_USDHC1_DATA3, 1U);
+    IOMUXC_SetPinConfig(IOMUXC_GPIO_SD_B1_05_USDHC1_DATA3, 0x04U);
+}
+#endif /* BSP_USING_SDIO */
 
 #ifdef BSP_USING_ETH
 /*
@@ -568,6 +694,39 @@ void BOARD_InitSwtPort3Pins(void)
         0U);                                    /* Software Input On Field: Input Path is determined by functionality */
 }
 #endif
+
+/* FUNCTION ************************************************************************************************************
+ *
+ * Function Name : BOARD_InitPins, assigned for the Cortex-M7 core.
+ * Description   : Calls peripheral-specific pin initialization functions.
+ *
+ * END ****************************************************************************************************************/
+void BOARD_InitPins(void)
+{
+#ifdef BSP_USING_LPUART12
+    BOARD_InitLPUART12Pins();
+#endif
+#ifdef BSP_USING_I2C2
+    BOARD_InitLPI2C2Pins();
+#endif
+#ifdef BSP_USING_I2C3
+    BOARD_InitLPI2C3Pins();
+#endif
+#ifdef BSP_USING_SPI3
+    BOARD_InitLPSPI3Pins();
+#endif
+#ifdef BSP_USING_SDIO
+    BOARD_InitSDIO1Pins();
+#endif
+#ifdef BSP_USING_CAN3
+    BOARD_InitCAN3Pins();
+#endif
+#ifdef BSP_USING_ETH
+    BOARD_InitPhyAccessPins();
+    BOARD_InitEpPins();
+    BOARD_InitSwtPort0Pins();
+#endif
+}
 
 /***********************************************************************************************************************
  * EOF

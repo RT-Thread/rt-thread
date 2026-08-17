@@ -18,7 +18,7 @@
 #error "Please enable only one of BSP_USING_QSPI_FLASH_FS or BSP_USING_OSPI_FLASH"
 #endif
 
-#if defined(BSP_USING_QSPI_FLASH_FS)
+#if defined(BSP_USING_QSPI_FLASH_FS) || defined(BSP_USING_QSPI_FLASH)
 /* parameters for flexpsi peripheral */
 #define FLEXSPI1_CONTROL_BASE     FLEXSPI1
 #define FLEXSPI2_CONTROL_BASE     FLEXSPI2
