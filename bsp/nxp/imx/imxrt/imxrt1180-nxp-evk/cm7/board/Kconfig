@@ -812,7 +812,7 @@ endmenu
 
 choice
     prompt "Linker Script Selection"
-    default BSP_LINKER_SCRIPT_RAM
+    default BSP_LINKER_SCRIPT_FLEXSPI_NOR
     help
         Select the linker script that matches your target memory configuration.
 

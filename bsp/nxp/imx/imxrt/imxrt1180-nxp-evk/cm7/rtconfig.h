@@ -440,7 +440,7 @@
 
 /* Board extended module Drivers */
 
-#define BSP_LINKER_SCRIPT_RAM
+#define BSP_LINKER_SCRIPT_FLEXSPI_NOR
 /* end of Hardware Drivers Config */
 
 #endif
