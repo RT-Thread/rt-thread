@@ -45,8 +45,9 @@
 
 （2）PLIC中断控制器支持
 
-`libcpu/risc-v/virt64/plic.[c|h]`提供了符合《RISC-V Platform-Level Interrupt Controller Specification version 1.0.0 》标准的PLIC中断控制器驱动代码，可作为移植参考。
+PLIC 驱动请参考 `libcpu/risc-v/common/pic/pic-sifive-plic.c`。
 
 （3）串口uart支持
 
-目前串口驱动在各bsp目录下，可参考`bsp/qemu-virt64-riscv/driver/drv_uart.[c|h]`
+目前串口驱动在各 BSP 目录下，可参考
+`bsp/allwinner/libraries/drivers/drv_uart.c`。
