@@ -288,6 +288,10 @@ config ARCH_RISCV64
     select ARCH_CPU_64BIT
     bool
 
+if ARCH_RISCV
+    orsource "./risc-v/Kconfig"
+endif
+
 if ARCH_RISCV64
     config ARCH_USING_NEW_CTX_SWITCH
         bool

@@ -19,10 +19,27 @@
 #define __ASSEMBLY__
 #endif /* __ASSEMBLY__ */
 
+#ifdef RT_USING_RISCV_NEW_COMMON
+#include "asm.h"
+#include "csr.h"
+
+#define LOAD                REG_L
+#define STORE               REG_S
+#define REGBYTES            SZREG
+#define CTX_REG_NR          CTX_ALL_REG_NR
+#define FRAME_OFF_SSTATUS   FRAME_OFF_XSTATUS
+#define SSTATUS_SPP         SR_PP
+#define SSTATUS_SIE         SR_IE
+#define SSTATUS_SPIE        SR_PIE
+#define sstatus             CSR_STATUS
+#define sscratch            CSR_SCRATCH
+#define sepc                CSR_EPC
+#else
 #include "cpuport.h"
 #include "encoding.h"
 #include "stackframe.h"
 #include "asm-generic.h"
+#endif
 
 .section      .text.lwp
 
@@ -267,13 +284,13 @@ copy_context_loop:
     LOAD t0, 0(t1)
     STORE t0, 0(t2)
     addi s0, s0, -1
-    addi t1, t1, 8
-    addi t2, t2, 8
+    addi t1, t1, REGBYTES
+    addi t2, t2, REGBYTES
     bnez s0, copy_context_loop
 #endif /* ARCH_USING_NEW_CTX_SWITCH */
 
     /* fetch SYSCALL ID */
-    LOAD a7, 17 * REGBYTES(sp)
+    LOAD a7, FRAME_OFF_A7(sp)
     addi a7, a7, -0xfe
     beqz a7, arch_signal_quit
 
@@ -307,7 +324,7 @@ dont_ret_to_user:
     call  lwp_user_setting_restore
 
     /* after restore the reg `tp`, need modify context */
-    STORE tp, 4 * REGBYTES(sp)
+    STORE tp, FRAME_OFF_TP(sp)
 #endif
 
     //restore context

@@ -11,15 +11,56 @@
 #ifndef __RVV_CONTEXT_1_0_H__
 #define __RVV_CONTEXT_1_0_H__
 
+#ifdef __ASSEMBLY__
+#include "vector_encoding.h"
+
+/* common64 uses the older REGBYTES/STORE/LOAD assembler ABI. */
+#ifndef SZREG
+#define SZREG       REGBYTES
+#endif
+#ifndef REG_S
+#define REG_S       STORE
+#endif
+#ifndef REG_L
+#define REG_L       LOAD
+#endif
+
+/* The unified common supplies these through csr.h. */
+#ifndef CSR_VSTART
+#define CSR_VSTART  0x008
+#endif
+#ifndef CSR_VCSR
+#define CSR_VCSR    0x00f
+#endif
+#ifndef CSR_VL
+#define CSR_VL      0xc20
+#endif
+#ifndef CSR_VTYPE
+#define CSR_VTYPE   0xc21
+#endif
+#ifndef CSR_VLENB
+#define CSR_VLENB   0xc22
+#endif
+#endif
+
 #if defined(ARCH_VECTOR_VLEN_128)
-    #define CTX_VECTOR_REGS 64
+    #define CTX_VECTOR_VLEN 128
 #elif defined(ARCH_VECTOR_VLEN_256)
-    #define CTX_VECTOR_REGS 128
+    #define CTX_VECTOR_VLEN 256
+#elif defined(ARCH_VECTOR_VLEN_512)
+    #define CTX_VECTOR_VLEN 512
+#elif defined(ARCH_VECTOR_VLEN_1024)
+    #define CTX_VECTOR_VLEN 1024
+#elif defined(ARCH_VECTOR_VLEN_2048)
+    #define CTX_VECTOR_VLEN 2048
+#elif defined(ARCH_VECTOR_VLEN_4096)
+    #define CTX_VECTOR_VLEN 4096
 #else
-#error "No supported VLEN"
+#error "No RISC-V vector length configured"
 #endif /* VLEN */
 
-#define CTX_VECTOR_REG_NR  (CTX_VECTOR_REGS + 4)
+/* Number of XLEN-sized stack slots occupied by vector CSRs and registers. */
+#define CTX_VECTOR_REG_NR  ((CTX_VECTOR_VLEN * 32 / __riscv_xlen) + 4)
 
 #ifdef __ASSEMBLY__
 
@@ -29,16 +70,16 @@
  * ==================================
  */
 
-#define VEC_FRAME_VSTART    (0 * REGBYTES)
-#define VEC_FRAME_VTYPE     (1 * REGBYTES)
-#define VEC_FRAME_VL        (2 * REGBYTES)
-#define VEC_FRAME_VCSR      (3 * REGBYTES)
-#define VEC_FRAME_V0        (4 * REGBYTES)
+#define VEC_FRAME_VSTART    (0 * SZREG)
+#define VEC_FRAME_VTYPE     (1 * SZREG)
+#define VEC_FRAME_VL        (2 * SZREG)
+#define VEC_FRAME_VCSR      (3 * SZREG)
+#define VEC_FRAME_V0        (4 * SZREG)
 
 .macro GET_VEC_FRAME_LEN, xreg
-    csrr    \xreg, vlenb
+    csrr    \xreg, CSR_VLENB
     slli    \xreg, \xreg, 5
-    addi    \xreg, \xreg, 4 * REGBYTES
+    addi    \xreg, \xreg, 4 * SZREG
 .endm
 
 /**
@@ -50,28 +91,30 @@
 .macro SAVE_VECTOR, dst
     mv      t1, \dst
 
-    csrr    t0, vstart
-    STORE   t0, VEC_FRAME_VSTART(t1)
-    csrr    t0, vtype
-    STORE   t0, VEC_FRAME_VTYPE(t1)
-    csrr    t0, vl
-    STORE   t0, VEC_FRAME_VL(t1)
-    csrr    t0, vcsr
-    STORE   t0, VEC_FRAME_VCSR(t1)
+    csrr    t0, CSR_VSTART
+    REG_S   t0, VEC_FRAME_VSTART(t1)
+    csrr    t0, CSR_VTYPE
+    REG_S   t0, VEC_FRAME_VTYPE(t1)
+    csrr    t0, CSR_VL
+    REG_S   t0, VEC_FRAME_VL(t1)
+    csrr    t0, CSR_VCSR
+    REG_S   t0, VEC_FRAME_VCSR(t1)
 
     addi    t1, t1, VEC_FRAME_V0
 
-    // config vector setting,
-    // t2 is updated to length of a vector group in bytes
-    VEC_CONFIG_SETVLI(t2, x0, VEC_IMM_SEW_8, VEC_IMM_LMUL_8)
+    /*
+     * config vector setting,
+     * t2 is updated to length of a vector group in bytes
+     */
+    VEC_INSN_VSETVLI_T2_X0_E8_M8
 
-    vse8.v  v0, (t1)
+    VEC_INSN_VSE8_V0_T1
     add     t1, t1, t2
-    vse8.v  v8, (t1)
+    VEC_INSN_VSE8_V8_T1
     add     t1, t1, t2
-    vse8.v  v16, (t1)
+    VEC_INSN_VSE8_V16_T1
     add     t1, t1, t2
-    vse8.v  v24, (t1)
+    VEC_INSN_VSE8_V24_T1
 .endm
 
 /**
@@ -81,32 +124,32 @@
  *
  */
 .macro RESTORE_VECTOR, dst
-    // restore vector registers first since it will modify vector states
+    /* Restore vector registers first since it will modify vector states */
     mv      t0, \dst
     addi    t1, t0, VEC_FRAME_V0
 
-    VEC_CONFIG_SETVLI(t2, x0, VEC_IMM_SEW_8, VEC_IMM_LMUL_8)
+    VEC_INSN_VSETVLI_T2_X0_E8_M8
 
-    vle8.v  v0, (t1)
+    VEC_INSN_VLE8_V0_T1
     add     t1, t1, t2
-    vle8.v  v8, (t1)
+    VEC_INSN_VLE8_V8_T1
     add     t1, t1, t2
-    vle8.v  v16, (t1)
+    VEC_INSN_VLE8_V16_T1
     add     t1, t1, t2
-    vle8.v  v24, (t1)
+    VEC_INSN_VLE8_V24_T1
 
     mv      t1, t0
 
-    LOAD    t0, VEC_FRAME_VSTART(t1)
-    csrw    vstart, t0
-    LOAD    t0, VEC_FRAME_VCSR(t1)
-    csrw    vcsr, t0
+    REG_L   t0, VEC_FRAME_VSTART(t1)
+    csrw    CSR_VSTART, t0
+    REG_L   t0, VEC_FRAME_VCSR(t1)
+    csrw    CSR_VCSR, t0
 
-    LOAD    t0, VEC_FRAME_VTYPE(t1)
-    LOAD    t3, VEC_FRAME_VL(t1)
-    VEC_CONFIG_SET_VL_VTYPE(t3, t0)
+    REG_L   t0, VEC_FRAME_VTYPE(t1)
+    REG_L   t3, VEC_FRAME_VL(t1)
+    VEC_INSN_VSETVL_X0_T3_T0
 .endm
 
-#endif
+#endif /* __ASSEMBLY__ */
 
 #endif /* __RVV_CONTEXT_H__ */
