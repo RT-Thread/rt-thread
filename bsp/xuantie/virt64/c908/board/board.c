@@ -30,12 +30,12 @@
 #include "page.h"
 #include "lwp_arch.h"
 
-rt_region_t init_page_region = {(rt_size_t)RT_HW_PAGE_START, (rt_size_t)RT_HW_PAGE_END};
+rt_region_t init_page_region = { (rt_size_t)RT_HW_PAGE_START, (rt_size_t)RT_HW_PAGE_END };
 
 extern size_t MMUTable[];
 
 struct mem_desc platform_mem_desc[] = {
-    {KERNEL_VADDR_START, (rt_size_t)RT_HW_PAGE_END - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
+    { KERNEL_VADDR_START, (rt_size_t)RT_HW_PAGE_END - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM },
 };
 
 #define NUM_MEM_DESC (sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]))
@@ -107,7 +107,6 @@ void rt_hw_cpu_reset(void)
 {
     sbi_shutdown();
 
-    while (1)
-        ;
+    while (1);
 }
 MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reset machine);

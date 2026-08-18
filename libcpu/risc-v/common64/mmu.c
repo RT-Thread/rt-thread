@@ -126,7 +126,9 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
     /* For user address spaces, all harts share the same L2/L3 page tables.
      * Only build the page table tree for hart 0, then sync L1 to other harts. */
     if (aspace != &rt_kernel_space)
+    {
         nr_cpus = 1;
+    }
 #endif
 
     /* Create a separate page table for each hart to facilitate access to the .percpu section. */
@@ -147,7 +149,7 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
                 rt_memset(mmu_l2, 0, PAGE_SIZE);
                 rt_hw_cpu_dcache_clean(mmu_l2, PAGE_SIZE);
                 *mmu_l1 = COMBINEPTE((rt_ubase_t)VPN_TO_PPN(mmu_l2, PV_OFFSET),
-                                    PAGE_DEFAULT_ATTR_NEXT);
+                                     PAGE_DEFAULT_ATTR_NEXT);
                 rt_hw_cpu_dcache_clean(mmu_l1, sizeof(*mmu_l1));
             }
             else
@@ -172,7 +174,7 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
                 rt_hw_cpu_dcache_clean(mmu_l3, PAGE_SIZE);
                 *(mmu_l2 + l2_off) =
                     COMBINEPTE((rt_ubase_t)VPN_TO_PPN(mmu_l3, PV_OFFSET),
-                            PAGE_DEFAULT_ATTR_NEXT);
+                               PAGE_DEFAULT_ATTR_NEXT);
                 rt_hw_cpu_dcache_clean(mmu_l2, sizeof(*mmu_l2));
                 /* declares a reference to parent page table */
                 rt_page_ref_inc((void *)mmu_l2, 0);
@@ -198,7 +200,8 @@ static int _map_one_page(struct rt_aspace *aspace, void *va, void *pa,
         for (int h = 1; h < RT_CPUS_NR; h++)
         {
             rt_ubase_t *mmu_l1_h = (rt_ubase_t *)((rt_ubase_t)aspace->page_table +
-                                    (rt_ubase_t)(h * ARCH_PAGE_SIZE)) + l1_off;
+                                                  (rt_ubase_t)(h * ARCH_PAGE_SIZE)) +
+                                   l1_off;
             *mmu_l1_h = *mmu_l1_0;
             rt_hw_cpu_dcache_clean(mmu_l1_h, sizeof(*mmu_l1_h));
         }
@@ -543,7 +546,8 @@ static size_t _unmap_area(struct rt_aspace *aspace, void *v_addr)
         for (int h = 1; h < RT_CPUS_NR; h++)
         {
             rt_ubase_t *mmu_l1_h = (rt_ubase_t *)((rt_ubase_t)aspace->page_table +
-                                    (rt_ubase_t)(h * ARCH_PAGE_SIZE)) + lvl_off[0];
+                                                  (rt_ubase_t)(h * ARCH_PAGE_SIZE)) +
+                                   lvl_off[0];
             *mmu_l1_h = *mmu_l1_0;
             rt_hw_cpu_dcache_clean(mmu_l1_h, sizeof(*mmu_l1_h));
         }
@@ -590,7 +594,10 @@ void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size)
         MM_PGTBL_UNLOCK(aspace);
 
         /* when unmapped == 0, region not exist in pgtbl */
-        if (!unmapped || unmapped > size) break;
+        if (!unmapped || unmapped > size)
+        {
+            break;
+        }
 
         size -= unmapped;
         v_addr += unmapped;
@@ -731,7 +738,7 @@ static rt_ubase_t *_query(struct rt_aspace *aspace, void *vaddr, int *level)
             }
 
             mmu_l3 = (rt_ubase_t *)PPN_TO_VPN(GET_PADDR(*(mmu_l2 + l2_off)),
-                                             PV_OFFSET);
+                                              PV_OFFSET);
 
             if (PTE_USED(*(mmu_l3 + l3_off)))
             {
@@ -795,8 +802,7 @@ static int _cache(rt_ubase_t *pte)
     return RT_EOK;
 }
 
-static int (*control_handler[MMU_CNTL_DUMMY_END])(rt_ubase_t *pte)=
-{
+static int (*control_handler[MMU_CNTL_DUMMY_END])(rt_ubase_t *pte) = {
     [MMU_CNTL_CACHE] = _cache,
     [MMU_CNTL_NONCACHE] = _noncache,
 };
@@ -872,17 +878,17 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
         size_t attr;
         switch (mdesc->attr)
         {
-            case NORMAL_MEM:
-                attr = MMU_MAP_K_RWCB;
-                break;
-            case NORMAL_NOCACHE_MEM:
-                attr = MMU_MAP_K_RW;
-                break;
-            case DEVICE_MEM:
-                attr = MMU_MAP_K_DEVICE;
-                break;
-            default:
-                attr = MMU_MAP_K_DEVICE;
+        case NORMAL_MEM:
+            attr = MMU_MAP_K_RWCB;
+            break;
+        case NORMAL_NOCACHE_MEM:
+            attr = MMU_MAP_K_RW;
+            break;
+        case DEVICE_MEM:
+            attr = MMU_MAP_K_DEVICE;
+            break;
+        default:
+            attr = MMU_MAP_K_DEVICE;
         }
 
         struct rt_mm_va_hint hint = {
@@ -890,10 +896,13 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
             .limit_start = aspace->start,
             .limit_range_size = aspace->size,
             .map_size = mdesc->vaddr_end - mdesc->vaddr_start + 1,
-            .prefer = (void *)mdesc->vaddr_start};
+            .prefer = (void *)mdesc->vaddr_start
+        };
 
         if (mdesc->paddr_start == (rt_uintptr_t)ARCH_MAP_FAILED)
+        {
             mdesc->paddr_start = mdesc->vaddr_start + PV_OFFSET;
+        }
 
         rt_aspace_map_phy_static(aspace, &mdesc->varea, &hint, attr,
                                  mdesc->paddr_start >> MM_PAGE_SHIFT, &err);
@@ -949,7 +958,7 @@ void rt_hw_mem_setup_early(void *pgtbl, rt_uint64_t hartid)
          * identical mapping,
          * PC are still at lower region before relocating to high memory
          */
-        rt_ubase_t pg_idx ;
+        rt_ubase_t pg_idx;
         /* Round down symb_pc to L1_PAGE_SIZE boundary to ensure proper page alignment.
          * This is necessary because MMU operations work with page-aligned addresses, and
          * make sure all the text region is mapped.*/
@@ -1024,7 +1033,9 @@ void *rt_hw_mmu_pgtbl_create(void)
      * 2^order >= RT_CPUS_NR. */
     int order = 0;
     while ((1 << order) < RT_CPUS_NR)
+    {
         order++;
+    }
     mmu_table = (rt_ubase_t *)rt_pages_alloc_ext(order, PAGE_ANY_AVAILABLE);
     if (!mmu_table)
     {
@@ -1035,9 +1046,9 @@ void *rt_hw_mmu_pgtbl_create(void)
     for (int h = 0; h < RT_CPUS_NR; h++)
     {
         rt_ubase_t *src = (rt_ubase_t *)((rt_ubase_t)rt_kernel_space.page_table +
-                           (rt_ubase_t)(h * ARCH_PAGE_SIZE));
+                                         (rt_ubase_t)(h * ARCH_PAGE_SIZE));
         rt_ubase_t *dst = (rt_ubase_t *)((rt_ubase_t)mmu_table +
-                           (rt_ubase_t)(h * ARCH_PAGE_SIZE));
+                                         (rt_ubase_t)(h * ARCH_PAGE_SIZE));
         rt_memcpy(dst, src, ARCH_PAGE_SIZE);
     }
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table,
@@ -1067,7 +1078,9 @@ void rt_hw_mmu_pgtbl_delete(void *pgtbl)
 #if defined(RT_USING_SMP)
     int order = 0;
     while ((1 << order) < RT_CPUS_NR)
+    {
         order++;
+    }
     rt_pages_free(pgtbl, order);
 #else
     rt_pages_free(pgtbl, 0);

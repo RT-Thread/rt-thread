@@ -22,20 +22,20 @@
 #define UART_THR 0
 
 /* INTERRUPT ENABLE REGISTER */
-#define UART_IER 1
+#define UART_IER           1
 #define UART_IER_RX_ENABLE (1 << 0)
 #define UART_IER_TX_ENABLE (1 << 1)
 
 /* FIFO CONTROL REGISTER */
-#define UART_FCR 2
+#define UART_FCR             2
 #define UART_FCR_FIFO_ENABLE (1 << 0)
-#define UART_FCR_FIFO_CLEAR (3 << 1)
+#define UART_FCR_FIFO_CLEAR  (3 << 1)
 
 /* INTERRUPT STATUS REGISTER */
 #define UART_ISR 2
 
 /* LINE CONTROL REGISTER */
-#define UART_LCR 3
+#define UART_LCR            3
 #define UART_LCR_EIGHT_BITS (3 << 0)
 // special mode to set baud rate
 #define UART_LCR_BAUD_LATCH (1 << 7)
@@ -52,8 +52,8 @@
 
 extern void *uart0_base;
 
-#define write8_uart0(idx, value) __raw_writeb(((rt_uint8_t)value), (void*)((size_t)uart0_base + (idx)))
-#define read8_uart0(idx) __raw_readb((void*)((size_t)uart0_base + (idx)))
+#define write8_uart0(idx, value) __raw_writeb(((rt_uint8_t)value), (void *)((size_t)uart0_base + (idx)))
+#define read8_uart0(idx)         __raw_readb((void *)((size_t)uart0_base + (idx)))
 
 void rt_hw_uart_start_rx_thread();
 int rt_hw_uart_init(void);

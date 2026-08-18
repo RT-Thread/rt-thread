@@ -21,12 +21,11 @@
 
 #include <board.h>
 
-static virtio_device_init_handler virtio_device_init_handlers[] =
-{
+static virtio_device_init_handler virtio_device_init_handlers[] = {
 #ifdef BSP_USING_VIRTIO_BLK
-    [VIRTIO_DEVICE_ID_BLOCK]    = rt_virtio_blk_init,
+    [VIRTIO_DEVICE_ID_BLOCK] = rt_virtio_blk_init,
 #endif
-    [VIRTIO_DEVICE_TYPE_SIZE]   = RT_NULL
+    [VIRTIO_DEVICE_TYPE_SIZE] = RT_NULL
 };
 
 int rt_virtio_devices_init(void)

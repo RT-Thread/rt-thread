@@ -26,7 +26,7 @@ struct device_uart
     rt_uint32_t irqno;
 };
 
-void *uart0_base = (void*)0x10000000;
+void *uart0_base = (void *)0x10000000;
 struct rt_serial_device serial0;
 struct device_uart uart0;
 
@@ -57,7 +57,7 @@ static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_c
 
 static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
-    struct device_uart *uart = (struct device_uart*)serial->parent.user_data;
+    struct device_uart *uart = (struct device_uart *)serial->parent.user_data;
 
     switch (cmd)
     {
@@ -84,11 +84,10 @@ static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *ar
 static int _uart_putc(struct rt_serial_device *serial, char c)
 {
     struct device_uart *uart;
-    uart = (struct device_uart*)serial->parent.user_data;
+    uart = (struct device_uart *)serial->parent.user_data;
 
     // wait for Transmit Holding Empty to be set in LSR.
-    while((read8_uart0(UART_LSR) & UART_LSR_TX_IDLE) == 0)
-        ;
+    while ((read8_uart0(UART_LSR) & UART_LSR_TX_IDLE) == 0);
     write8_uart0(UART_THR, c);
 
     return (1);
@@ -100,7 +99,7 @@ static int _uart_getc(struct rt_serial_device *serial)
     volatile rt_uint32_t lsr;
     int ch = -1;
 
-    uart = (struct device_uart*)serial->parent.user_data;
+    uart = (struct device_uart *)serial->parent.user_data;
     lsr = read8_uart0(UART_LSR);
 
     if (lsr & UART_LSR_RX_READY)
@@ -116,7 +115,8 @@ const struct rt_uart_ops _uart_ops = {
     _uart_putc,
     _uart_getc,
     // TODO: add DMA support
-    RT_NULL};
+    RT_NULL
+};
 
 static void rt_hw_uart_isr(int irqno, void *param)
 {
