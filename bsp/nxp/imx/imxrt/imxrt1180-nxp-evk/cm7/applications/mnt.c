@@ -107,7 +107,9 @@ INIT_COMPONENT_EXPORT(fal_init);
 static int _sdcard_fs_mount(void)
 {
     while (rt_device_find("sd0") == RT_NULL)
+    {
         rt_thread_mdelay(1);
+    }
     int ret = dfs_mount("sd0", "/", "elm", 0, 0);
     if (ret != 0)
     {

@@ -130,6 +130,7 @@ const struct pin_mask mask_tab[5] =
 
     };
 
+/* clang-format off */
 const rt_int32_t reg_offset[] = {
 #if defined(SOC_IMXRT1015_SERIES)
     38,
@@ -817,6 +818,7 @@ const rt_int32_t reg_offset[] = {
 #endif
 
 };
+/* clang-format on */
 
 static const IRQn_Type irq_tab[] = {
 #if defined(SOC_IMXRT1180_SERIES)

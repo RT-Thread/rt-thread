@@ -19,10 +19,6 @@
 #define LOG_TAG "drv.i2c"
 #include <drv_log.h>
 
-#if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3) && !defined(BSP_USING_I2C4) && !defined(BSP_USING_I2C5) && !defined(BSP_USING_I2C6)
-#error "Please define at least one BSP_USING_I2Cx"
-#endif
-
 #include <rtdevice.h>
 #include "fsl_lpi2c.h"
 #ifdef SOC_IMXRT1180_SERIES
@@ -253,6 +249,8 @@ static void i2c_get_dma_config(void)
 #endif
 }
 
+#if (defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3) || defined(BSP_USING_I2C4) || defined(BSP_USING_I2C5) || defined(BSP_USING_I2C6))
+
 /* RT1180 EDMA4 RX bounce buffer.
  *
  * Observed behavior on RT1180 LPI2C + EDMA4:
@@ -305,6 +303,7 @@ static void lpi2c_dma_config(struct imxrt_i2c_bus *bus)
     LOG_D("%s dma config done", bus->device_name);
 }
 
+#endif /* BSP_USING_I2Cx - bounce buffers and lpi2c_dma_config */
 #endif /* SOC_IMXRT1180_SERIES */
 
 #if (defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3) || defined(BSP_USING_I2C4) || defined(BSP_USING_I2C5) || defined(BSP_USING_I2C6))
@@ -783,7 +782,9 @@ static rt_err_t imxrt_i2c_bus_control(struct rt_i2c_bus_device *bus,
 
 int rt_hw_i2c_init(void)
 {
+#if (defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3) || defined(BSP_USING_I2C4) || defined(BSP_USING_I2C5) || defined(BSP_USING_I2C6))
     lpi2c_master_config_t masterConfig = { 0 };
+#endif
 
 #ifdef SOC_IMXRT1180_SERIES
     i2c_get_dma_config();
