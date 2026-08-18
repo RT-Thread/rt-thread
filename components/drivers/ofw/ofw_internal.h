@@ -66,9 +66,6 @@ extern struct rt_ofw_node *ofw_node_reserved_memory;
 
 extern struct rt_fdt_earlycon fdt_earlycon;
 
-#define ofw_static_cast(to_type, value) \
-    (to_type)(((value) >> ((sizeof(value) - sizeof(to_type)) * 8)))
-
 rt_err_t ofw_alias_scan(void);
 int ofw_alias_node_id(struct rt_ofw_node *np);
 rt_err_t ofw_phandle_hash_reset(rt_phandle min, rt_phandle max);
