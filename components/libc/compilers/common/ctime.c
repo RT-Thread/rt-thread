@@ -390,11 +390,13 @@ int stime(const time_t *t)
 }
 RTM_EXPORT(stime);
 
+/* Normalize the time fields and convert the result to a UTC timestamp. */
 time_t timegm(struct tm * const t)
 {
     time_t day;
     time_t i;
     time_t years;
+    int days_in_month;
 
     if(t == RT_NULL)
     {
@@ -402,33 +404,69 @@ time_t timegm(struct tm * const t)
         return (time_t)-1;
     }
 
-    if (t->tm_sec > 60)         /* seconds after the minute - [0, 60] including leap second */
+    if (t->tm_sec < 0 || t->tm_sec > 60) /* seconds after the minute - [0, 60] including leap second */
     {
         t->tm_min += t->tm_sec / 60;
         t->tm_sec %= 60;
+        if (t->tm_sec < 0)
+        {
+            t->tm_sec += 60;
+            --t->tm_min;
+        }
     }
-    if (t->tm_min >= 60)        /* minutes after the hour - [0, 59] */
+    if (t->tm_min < 0 || t->tm_min >= 60) /* minutes after the hour - [0, 59] */
     {
         t->tm_hour += t->tm_min / 60;
         t->tm_min %= 60;
+        if (t->tm_min < 0)
+        {
+            t->tm_min += 60;
+            --t->tm_hour;
+        }
     }
-    if (t->tm_hour >= 24)       /* hours since midnight - [0, 23] */
+    if (t->tm_hour < 0 || t->tm_hour >= 24) /* hours since midnight - [0, 23] */
     {
         t->tm_mday += t->tm_hour / 24;
         t->tm_hour %= 24;
+        if (t->tm_hour < 0)
+        {
+            t->tm_hour += 24;
+            --t->tm_mday;
+        }
     }
-    if (t->tm_mon >= 12)        /* months since January - [0, 11] */
+    if (t->tm_mon < 0 || t->tm_mon >= 12) /* months since January - [0, 11] */
     {
         t->tm_year += t->tm_mon / 12;
         t->tm_mon %= 12;
-    }
-    while (t->tm_mday > __spm[1 + t->tm_mon])
-    {
-        if (t->tm_mon == 1 && __isleap(t->tm_year + 1900))
+        if (t->tm_mon < 0)
         {
-            --t->tm_mday;
+            t->tm_mon += 12;
+            --t->tm_year;
         }
-        t->tm_mday -= __spm[t->tm_mon];
+    }
+    while (t->tm_mday <= 0)
+    {
+        if (t->tm_mon == 0)
+        {
+            t->tm_mon = 11;
+            --t->tm_year;
+        }
+        else
+        {
+            --t->tm_mon;
+        }
+        t->tm_mday += __spm[t->tm_mon + 1] - __spm[t->tm_mon] +
+                      (__isleap(t->tm_year + 1900) && t->tm_mon == 1);
+    }
+    while (1)
+    {
+        days_in_month = __spm[t->tm_mon + 1] - __spm[t->tm_mon] +
+                        (__isleap(t->tm_year + 1900) && t->tm_mon == 1);
+        if (t->tm_mday <= days_in_month)
+        {
+            break;
+        }
+        t->tm_mday -= days_in_month;
         ++t->tm_mon;
         if (t->tm_mon > 11)
         {
