@@ -41,29 +41,23 @@ static void stm32_dma_enable_dmamux_clock(void)
 /**
  * @brief Enable the clock of one DMA/BDMA controller and wait for the write to complete.
  * @param dma_rcc RCC enable bit of the DMA/BDMA controller.
- * @param is_bdma RT_TRUE for BDMA clock enable, RT_FALSE for regular DMA.
+ * @param type Type of the DMA/BDMA controller.
  */
-static void stm32_dma_enable_clock(rt_uint32_t dma_rcc, rt_bool_t is_bdma)
+static void stm32_dma_enable_clock(rt_uint32_t dma_rcc,
+                                   stm32_dma_type type)
 {
     rt_uint32_t tmpreg = 0x00U;
 
 #if defined(BSP_USING_BDMA) && (defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32H7RS))
-    if (is_bdma)
+    if (type == STM32_DMA_TYPE_BDMA)
     {
-        if (dma_rcc == 0)
-        {
-            LOG_E("bdma enable clock failed, dma_rcc is 0");
-            __HAL_RCC_BDMA_CLK_ENABLE();
-            return;
-        }
         SET_BIT(RCC->AHB4ENR, dma_rcc);
         tmpreg = READ_BIT(RCC->AHB4ENR, dma_rcc);
         UNUSED(tmpreg);
         return;
     }
-#endif /* BSP_USING_BDMA && (SOC_SERIES_STM32H7 || SOC_SERIES_STM32H7RS) */
 
-#if defined(STM32_DMA_USES_RCC_AHBENR)
+#elif defined(STM32_DMA_USES_RCC_AHBENR)
     SET_BIT(RCC->AHBENR, dma_rcc);
     tmpreg = READ_BIT(RCC->AHBENR, dma_rcc);
 #elif defined(STM32_DMA_USES_RCC_MP_AHB2ENSETR)
@@ -283,7 +277,6 @@ static void stm32_dma_apply_config_common(DMA_HandleTypeDef *dma_handle,
  * @param dma_handle DMA handle owned by one peripheral driver.
  * @param common Common configuration fields shared by DMA and BDMA.
  * @param dma_config Optional DMA-specific configuration (NULL for BDMA).
- * @param is_bdma RT_TRUE for BDMA, RT_FALSE for regular DMA.
  * @param log_tag Log tag for debug output ("drv.dma" or "drv.bdma").
  * @retval RT_EOK Initialization succeeded.
  * @retval -RT_ERROR HAL initialization failed.
@@ -291,13 +284,11 @@ static void stm32_dma_apply_config_common(DMA_HandleTypeDef *dma_handle,
 static rt_err_t stm32_dma_init_common(DMA_HandleTypeDef *dma_handle,
                                       const struct stm32_dma_config_common *common,
                                       const struct stm32_dma_config *dma_config,
-                                      rt_bool_t is_bdma,
                                       const char *log_tag)
 {
     RT_ASSERT(dma_handle != RT_NULL);
     RT_ASSERT(common != RT_NULL);
-
-    stm32_dma_enable_clock(common->dma_rcc, is_bdma);
+    stm32_dma_enable_clock(common->dma_rcc, common->type);
     stm32_dma_apply_config_common(dma_handle, common, dma_config);
 
     LOG_D("%s init, dma=%p, irq=%d", log_tag, dma_handle->Instance, common->dma_irq);
@@ -324,7 +315,6 @@ static rt_err_t stm32_dma_init_common(DMA_HandleTypeDef *dma_handle,
  * @param dma_slot Address of the parent handle DMA slot, such as &huart->hdmarx.
  * @param common Common configuration fields shared by DMA and BDMA.
  * @param dma_config Optional DMA-specific configuration (NULL for BDMA).
- * @param is_bdma RT_TRUE for BDMA, RT_FALSE for regular DMA.
  * @param log_tag Log tag for debug output ("drv.dma" or "drv.bdma").
  * @retval RT_EOK Initialization succeeded.
  * @retval -RT_ERROR HAL initialization failed.
@@ -334,12 +324,11 @@ static rt_err_t stm32_dma_setup_common(DMA_HandleTypeDef *dma_handle,
                                        DMA_HandleTypeDef **dma_slot,
                                        const struct stm32_dma_config_common *common,
                                        const struct stm32_dma_config *dma_config,
-                                       rt_bool_t is_bdma,
                                        const char *log_tag)
 {
     rt_err_t result;
 
-    result = stm32_dma_init_common(dma_handle, common, dma_config, is_bdma, log_tag);
+    result = stm32_dma_init_common(dma_handle, common, dma_config, log_tag);
     if (result != RT_EOK)
     {
         return result;
@@ -407,7 +396,7 @@ rt_err_t stm32_dma_init(DMA_HandleTypeDef *dma_handle,
                         const struct stm32_dma_config *dma_config)
 {
     RT_ASSERT(dma_config != RT_NULL);
-    return stm32_dma_init_common(dma_handle, &dma_config->common, dma_config, RT_FALSE, "drv.dma");
+    return stm32_dma_init_common(dma_handle, &dma_config->common, dma_config, "drv.dma");
 }
 
 /**
@@ -425,7 +414,7 @@ rt_err_t stm32_dma_setup(DMA_HandleTypeDef *dma_handle,
                          const struct stm32_dma_config *dma_config)
 {
     RT_ASSERT(dma_config != RT_NULL);
-    return stm32_dma_setup_common(dma_handle, parent_handle, dma_slot, &dma_config->common, dma_config, RT_FALSE, "drv.dma");
+    return stm32_dma_setup_common(dma_handle, parent_handle, dma_slot, &dma_config->common, dma_config, "drv.dma");
 }
 
 /**
@@ -457,7 +446,7 @@ rt_err_t stm32_bdma_init(DMA_HandleTypeDef *bdma_handle,
                          const struct stm32_bdma_config *bdma_config)
 {
     RT_ASSERT(bdma_config != RT_NULL);
-    return stm32_dma_init_common(bdma_handle, &bdma_config->common, RT_NULL, RT_TRUE, LOG_TAG);
+    return stm32_dma_init_common(bdma_handle, &bdma_config->common, RT_NULL, LOG_TAG);
 }
 
 /**
@@ -475,7 +464,7 @@ rt_err_t stm32_bdma_setup(DMA_HandleTypeDef *bdma_handle,
                           const struct stm32_bdma_config *bdma_config)
 {
     RT_ASSERT(bdma_config != RT_NULL);
-    return stm32_dma_setup_common(bdma_handle, parent_handle, dma_slot, &bdma_config->common, RT_NULL, RT_TRUE, LOG_TAG);
+    return stm32_dma_setup_common(bdma_handle, parent_handle, dma_slot, &bdma_config->common, RT_NULL, LOG_TAG);
 }
 
 /**

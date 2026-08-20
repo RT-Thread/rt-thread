@@ -110,6 +110,17 @@ extern "C" {
 #endif /* STM32_GPDMA_DEFAULT_TRANSFER_EVENT_MODE */
 #endif /* defined(STM32_DMA_USES_GPDMA) */
 
+
+/**
+ * @brief DMA type classification for STM32 series supported by this BSP.
+ */
+enum stm32_dma_type
+{
+    STM32_DMA_TYPE_DMA = 0,
+    STM32_DMA_TYPE_BDMA,
+};
+
+
 /**
  * @brief Common DMA configuration fields shared by DMA and BDMA.
  *
@@ -120,6 +131,7 @@ extern "C" {
 struct stm32_dma_config_common
 {
     void *Instance;                     /**< DMA/BDMA controller instance pointer (typed by child). */
+    enum stm32_dma_type type;           /**< Type of the DMA controller. */
     rt_uint32_t dma_rcc;                /**< RCC enable bit for the DMA/BDMA controller. */
     IRQn_Type dma_irq;                  /**< DMA/BDMA global IRQ number. */
     rt_uint32_t priority;               /**< DMA/BDMA transfer priority. */
@@ -210,6 +222,7 @@ struct stm32_dma_config
     {                                                                                                                                                                                                                   \
         .common = {                                                                                                                                                                                                     \
             .Instance = (_instance),                                                                                                                                                                                    \
+            .type = STM32_DMA_TYPE_DMA,                                                                                                                                                                                 \
             .dma_rcc = (_dma_rcc),                                                                                                                                                                                      \
             .dma_irq = (_dma_irq),                                                                                                                                                                                      \
             .priority = (_priority),                                                                                                                                                                                    \
@@ -233,6 +246,7 @@ struct stm32_dma_config
     {                                                                                                                                                                                                                                                                                \
         .common = {                                                                                                                                                                                                                                                                  \
             .Instance = (_instance),                                                                                                                                                                                                                                                 \
+            .type = STM32_DMA_TYPE_DMA,                                                                                                                                                                                                                                              \
             .dma_rcc = (_dma_rcc),                                                                                                                                                                                                                                                   \
             .dma_irq = (_dma_irq),                                                                                                                                                                                                                                                   \
             .priority = (_priority),                                                                                                                                                                                                                                                 \
@@ -273,20 +287,29 @@ struct stm32_dma_config
 /**
  * @brief GPDMA descriptor initializer with explicit source and destination attributes.
  */
-#define STM32_GPDMA_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _request, _priority, _preempt_priority, _sub_priority, _direction, _src_inc, _dest_inc, _src_data_width, _dest_data_width, _mode)                                                                                                                                                                                                                                                       \
-    {                                                                                                                                                                                                                                                                                                                                                                                                                                                     \
-        .common = {                                                                                                                                                                                                                                                                                                                                                                                                                                       \
-            .Instance = (_instance),                                                                                                                                                                                                                                                                                                                                                                                                                      \
-            .dma_rcc = (_dma_rcc),                                                                                                                                                                                                                                                                                                                                                                                                                        \
-            .dma_irq = (_dma_irq),                                                                                                                                                                                                                                                                                                                                                                                                                        \
-            .priority = (_priority),                                                                                                                                                                                                                                                                                                                                                                                                                      \
-            .preempt_priority = (_preempt_priority),                                                                                                                                                                                                                                                                                                                                                                                                      \
-            .sub_priority = (_sub_priority),                                                                                                                                                                                                                                                                                                                                                                                                              \
-            .request = (_request),                                                                                                                                                                                                                                                                                                                                                                                                                        \
-            .direction = (_direction),                                                                                                                                                                                                                                                                                                                                                                                                                    \
-            .mode = (_mode),                                                                                                                                                                                                                                                                                                                                                                                                                              \
-        },                                                                                                                                                                                                                                                                                                                                                                                                                                                \
-        .blk_hw_request = STM32_GPDMA_DEFAULT_BLOCK_HW_REQUEST, .src_inc = (_src_inc), .dest_inc = (_dest_inc), .src_data_width = (_src_data_width), .dest_data_width = (_dest_data_width), .src_burst_length = STM32_GPDMA_DEFAULT_SRC_BURST_LENGTH, .dest_burst_length = STM32_GPDMA_DEFAULT_DEST_BURST_LENGTH, .transfer_allocated_port = STM32_GPDMA_DEFAULT_TRANSFER_ALLOCATED_PORT, .transfer_event_mode = STM32_GPDMA_DEFAULT_TRANSFER_EVENT_MODE, \
+#define STM32_GPDMA_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _request, _priority, _preempt_priority, _sub_priority, _direction, _src_inc, _dest_inc, _src_data_width, _dest_data_width, _mode) \
+    {                                                                                                                                                                                               \
+        .common = {                                                                                                                                                                                 \
+            .Instance = (_instance),                                                                                                                                                                \
+            .type = STM32_DMA_TYPE_DMA,                                                                                                                                                             \
+            .dma_rcc = (_dma_rcc),                                                                                                                                                                  \
+            .dma_irq = (_dma_irq),                                                                                                                                                                  \
+            .priority = (_priority),                                                                                                                                                                \
+            .preempt_priority = (_preempt_priority),                                                                                                                                                \
+            .sub_priority = (_sub_priority),                                                                                                                                                        \
+            .request = (_request),                                                                                                                                                                  \
+            .direction = (_direction),                                                                                                                                                              \
+            .mode = (_mode),                                                                                                                                                                        \
+        },                                                                                                                                                                                          \
+        .blk_hw_request = STM32_GPDMA_DEFAULT_BLOCK_HW_REQUEST,                                                                                                                                     \
+        .src_inc = (_src_inc),                                                                                                                                                                      \
+        .dest_inc = (_dest_inc),                                                                                                                                                                    \
+        .src_data_width = (_src_data_width),                                                                                                                                                        \
+        .dest_data_width = (_dest_data_width),                                                                                                                                                      \
+        .src_burst_length = STM32_GPDMA_DEFAULT_SRC_BURST_LENGTH,                                                                                                                                   \
+        .dest_burst_length = STM32_GPDMA_DEFAULT_DEST_BURST_LENGTH,                                                                                                                                 \
+        .transfer_allocated_port = STM32_GPDMA_DEFAULT_TRANSFER_ALLOCATED_PORT,                                                                                                                     \
+        .transfer_event_mode = STM32_GPDMA_DEFAULT_TRANSFER_EVENT_MODE,                                                                                                                             \
     }
 
 #define STM32_GPDMA_RX_BYTE_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _request, _priority, _preempt_priority, _sub_priority) \
@@ -399,10 +422,7 @@ rt_err_t stm32_bdma_deinit(DMA_HandleTypeDef *bdma_handle,
                            const struct stm32_bdma_config *bdma_config,
                            rt_bool_t abort_first);
 
-#endif /* BSP_USING_BDMA && (SOC_SERIES_STM32H7 || SOC_SERIES_STM32H7RS) */
 
-#if defined(BSP_USING_BDMA) && (defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32H7RS))
-/**
  * @brief BDMA-specific macro guards for consistency with DMA.
  */
 #ifndef STM32_BDMA_USES_REQUEST
@@ -430,37 +450,38 @@ rt_err_t stm32_bdma_deinit(DMA_HandleTypeDef *bdma_handle,
  * @brief BDMA descriptor initializer with explicit direction and data layout.
  */
 #define STM32_BDMA_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _request, _priority, _preempt_priority, _sub_priority, _direction, _periph_inc, _mem_inc, _periph_data_alignment, _mem_data_alignment, _mode) \
-    {                                                                                                                                                                                                          \
-        .common = {                                                                                                                                                                                            \
-            .Instance = (_instance),                                                                                                                                                                           \
-            .dma_rcc = (_dma_rcc),                                                                                                                                                                             \
-            .dma_irq = (_dma_irq),                                                                                                                                                                             \
-            .priority = (_priority),                                                                                                                                                                           \
-            .preempt_priority = (_preempt_priority),                                                                                                                                                           \
-            .sub_priority = (_sub_priority),                                                                                                                                                                   \
-            .request = (_request),                                                                                                                                                                             \
-            .direction = (_direction),                                                                                                                                                                         \
-            .periph_inc = (_periph_inc),                                                                                                                                                                       \
-            .mem_inc = (_mem_inc),                                                                                                                                                                             \
-            .periph_data_alignment = (_periph_data_alignment),                                                                                                                                                 \
-            .mem_data_alignment = (_mem_data_alignment),                                                                                                                                                       \
-            .mode = (_mode),                                                                                                                                                                                   \
-        }                                                                                                                                                                                                      \
-    }
+     {                                                                                                                                                                                                          \
+         .common = {                                                                                                                                                                                            \
+             .Instance = (_instance),                                                                                                                                                                           \
+             .type = STM32_DMA_TYPE_BDMA,                                                                                                                                                                       \
+             .dma_rcc = (_dma_rcc),                                                                                                                                                                             \
+             .dma_irq = (_dma_irq),                                                                                                                                                                             \
+             .priority = (_priority),                                                                                                                                                                           \
+             .preempt_priority = (_preempt_priority),                                                                                                                                                           \
+             .sub_priority = (_sub_priority),                                                                                                                                                                   \
+             .request = (_request),                                                                                                                                                                             \
+             .direction = (_direction),                                                                                                                                                                         \
+             .periph_inc = (_periph_inc),                                                                                                                                                                       \
+             .mem_inc = (_mem_inc),                                                                                                                                                                             \
+             .periph_data_alignment = (_periph_data_alignment),                                                                                                                                                 \
+             .mem_data_alignment = (_mem_data_alignment),                                                                                                                                                       \
+             .mode = (_mode),                                                                                                                                                                                   \
+         }                                                                                                                                                                                                      \
+     }
 
 /**
  * @brief BDMA byte/word transfer descriptor helpers for board-level config.
  */
 #define STM32_BDMA_RX_BYTE_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _request, _priority, _preempt_priority, _sub_priority) \
-    STM32_BDMA_CONFIG_INIT_EX((_instance), (_dma_rcc), (_dma_irq), (_request), (_priority), (_preempt_priority), (_sub_priority), DMA_PERIPH_TO_MEMORY, DMA_PINC_DISABLE, DMA_MINC_ENABLE, DMA_PDATAALIGN_BYTE, DMA_MDATAALIGN_BYTE, DMA_NORMAL)
+     STM32_BDMA_CONFIG_INIT_EX((_instance), (_dma_rcc), (_dma_irq), (_request), (_priority), (_preempt_priority), (_sub_priority), DMA_PERIPH_TO_MEMORY, DMA_PINC_DISABLE, DMA_MINC_ENABLE, DMA_PDATAALIGN_BYTE, DMA_MDATAALIGN_BYTE, DMA_NORMAL)
 
 #define STM32_BDMA_TX_BYTE_CONFIG_INIT_EX(_instance, _dma_rcc, _dma_irq, _request, _priority, _preempt_priority, _sub_priority) \
-    STM32_BDMA_CONFIG_INIT_EX((_instance), (_dma_rcc), (_dma_irq), (_request), (_priority), (_preempt_priority), (_sub_priority), DMA_MEMORY_TO_PERIPH, DMA_PINC_DISABLE, DMA_MINC_ENABLE, DMA_PDATAALIGN_BYTE, DMA_MDATAALIGN_BYTE, DMA_NORMAL)
+     STM32_BDMA_CONFIG_INIT_EX((_instance), (_dma_rcc), (_dma_irq), (_request), (_priority), (_preempt_priority), (_sub_priority), DMA_MEMORY_TO_PERIPH, DMA_PINC_DISABLE, DMA_MINC_ENABLE, DMA_PDATAALIGN_BYTE, DMA_MDATAALIGN_BYTE, DMA_NORMAL)
 
 #endif /* BSP_USING_BDMA && (SOC_SERIES_STM32H7 || SOC_SERIES_STM32H7RS) */
 
 #ifdef __cplusplus
-}
+ }
 #endif
 
 #endif /* __DRV_DMA_H_ */
