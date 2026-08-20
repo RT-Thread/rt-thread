@@ -29,7 +29,7 @@ extern "C" {
 
 /* NTFx CODE START Extern*/
 extern void SysTick_Delayms(uint32_t Delayms);
-extern void DMA_SetPerMemAddr(DMA_ChannelType *DMAChx, uint32_t periphAddr, uint32_t memAddr, uint32_t bufSize);
+extern void DMA_SetPerMemAddr(DMA_ChannelType* DMAChx, uint32_t periphAddr,uint32_t memAddr,uint32_t bufSize );
 extern bool RCC_Configuration(void);
 extern bool NVIC_Configuration(void);
 extern bool DMA_Configuration(void);

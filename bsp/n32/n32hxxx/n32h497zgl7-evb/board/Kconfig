@@ -60,6 +60,329 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable on-chip FLASH"
+        default n
+
+    menuconfig BSP_USING_ONCHIP_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+        if BSP_USING_ONCHIP_RTC
+            choice BSP_RTC_LS_SEL
+                prompt "Select clock source"
+                default BSP_RTC_USING_LSE
+
+                config BSP_RTC_USING_LSE
+                    bool "RTC USING LSE"
+
+                config BSP_RTC_USING_LSI
+                    bool "RTC USING LSI"
+            endchoice
+        endif
+
+    menuconfig BSP_USING_FDCAN
+        bool "Enable FDCAN (CAN FD)"
+        default n
+        select RT_USING_CAN
+        select RT_CAN_USING_CANFD
+        select RT_CAN_USING_HDR
+        if BSP_USING_FDCAN
+            config BSP_FDCAN_MSG_RAM_WORDS
+                int "Shared Message RAM size (32-bit words)"
+                range 1 4480
+                default 768
+                help
+                    One continuous Message RAM array shared by FDCAN1/2/3.
+                    Enabled instances are packed in instance order using
+                    each instance's configured resource requirement.
+
+            config BSP_USING_FDCAN1
+                bool "Enable FDCAN1"
+                default n
+                if BSP_USING_FDCAN1
+                    menu "FDCAN1 resource configuration"
+                        config BSP_FDCAN1_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN1_USING_TDC
+                            config BSP_FDCAN1_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN1_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN1_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN1_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN1_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN1_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN1_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN1_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN1_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN1_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN1_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN1_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN1_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN1_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN1_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+
+            config BSP_USING_FDCAN2
+                bool "Enable FDCAN2"
+                default n
+                if BSP_USING_FDCAN2
+                    menu "FDCAN2 resource configuration"
+                        config BSP_FDCAN2_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN2_USING_TDC
+                            config BSP_FDCAN2_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN2_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN2_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN2_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN2_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN2_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN2_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN2_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN2_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN2_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN2_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN2_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN2_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN2_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN2_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+
+            config BSP_USING_FDCAN3
+                bool "Enable FDCAN3"
+                default n
+                if BSP_USING_FDCAN3
+                    menu "FDCAN3 resource configuration"
+                        config BSP_FDCAN3_USING_TDC
+                            bool "Enable transmitter delay compensation"
+                            default n
+
+                        if BSP_FDCAN3_USING_TDC
+                            config BSP_FDCAN3_TDC_OFFSET
+                                int "TDC offset"
+                                range 0 127
+                                default 0
+
+                            config BSP_FDCAN3_TDC_FILTER
+                                int "TDC filter window"
+                                range 0 127
+                                default 0
+                        endif
+
+                        config BSP_FDCAN3_STD_FILTER_SIZE
+                            int "Standard ID filter elements"
+                            range 0 128
+                            default 2
+
+                        config BSP_FDCAN3_EXT_FILTER_SIZE
+                            int "Extended ID filter elements"
+                            range 0 64
+                            default 2
+
+                        config BSP_FDCAN3_RX_FIFO0_SIZE
+                            int "RX FIFO0 elements"
+                            range 1 64
+                            default 8
+
+                        config BSP_FDCAN3_RX_FIFO0_DATA_BYTES
+                            int "RX FIFO0 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN3_RX_FIFO1_SIZE
+                            int "RX FIFO1 elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN3_RX_FIFO1_DATA_BYTES
+                            int "RX FIFO1 data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN3_RX_BUFFER_SIZE
+                            int "Dedicated RX buffer elements"
+                            range 0 64
+                            default 0
+
+                        config BSP_FDCAN3_RX_BUFFER_DATA_BYTES
+                            int "Dedicated RX buffer data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN3_TX_EVENT_FIFO_SIZE
+                            int "TX event FIFO elements"
+                            range 0 32
+                            default 0
+
+                        config BSP_FDCAN3_TX_BUFFER_SIZE
+                            int "Dedicated TX buffer elements"
+                            range 1 32
+                            default 3
+
+                        config BSP_FDCAN3_TX_BUFFER_DATA_BYTES
+                            int "TX buffer/FIFO data bytes per element"
+                            range 8 64
+                            default 64
+                            help
+                                Valid values: 8, 12, 16, 20, 24, 32, 48 or 64.
+
+                        config BSP_FDCAN3_TX_QUEUE_MODE
+                            bool "Use TX Queue mode (otherwise FIFO mode)"
+                            default n
+
+                        config BSP_FDCAN3_TX_FIFO_QUEUE_SIZE
+                            int "TX FIFO/Queue elements"
+                            range 0 31
+                            default 0
+                    endmenu
+                endif
+        endif
+
     source "$BSP_DIR/../libraries/N32_Drivers/drivers/Kconfig"
 
 endmenu

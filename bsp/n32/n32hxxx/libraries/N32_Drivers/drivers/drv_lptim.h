@@ -17,9 +17,9 @@
 typedef enum
 {
     DRV_HW_LPTIMER_CTRL_GET_TICK_MAX = 0x20, /* get the maximum tick value */
-    DRV_HW_LPTIMER_CTRL_GET_FREQ     = 0X21, /* get the timer frequency */
-    DRV_HW_LPTIMER_CTRL_START        = 0X22, /* set the timeout value */
-    DRV_HW_LPTIMER_CTRL_GET_COUNT    = 0X23, /* get the current count value */
+    DRV_HW_LPTIMER_CTRL_GET_FREQ = 0X21, /* get the timer frequency */
+    DRV_HW_LPTIMER_CTRL_START = 0X22, /* set the timeout value */
+    DRV_HW_LPTIMER_CTRL_GET_COUNT = 0X23, /* get the current count value */
 } drv_hw_lptimer_ctrl_t;
 
 #endif /* __DRV_LPTIM_H__ */

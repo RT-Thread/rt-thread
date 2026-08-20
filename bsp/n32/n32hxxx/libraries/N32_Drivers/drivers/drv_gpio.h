@@ -18,10 +18,10 @@
 extern "C" {
 #endif
 
-#define __N32_PORT(port)  GPIO##port##_BASE
+#define __N32_PORT(port) GPIO##port##_BASE
 
 
-#define GET_PIN(PORTx,PIN) (rt_base_t)((16 * ( ((rt_base_t)__N32_PORT(PORTx) - (rt_base_t)GPIOA_BASE)/(0x0400UL) )) + PIN)
+#define GET_PIN(PORTx, PIN) (rt_base_t)((16 * (((rt_base_t)__N32_PORT(PORTx) - (rt_base_t)GPIOA_BASE) / (0x0400UL))) + PIN)
 
 
 struct pin_irq_map

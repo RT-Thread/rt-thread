@@ -19,26 +19,26 @@
     defined(BSP_USING_HARD_I2C6) || defined(BSP_USING_HARD_I2C7) || defined(BSP_USING_HARD_I2C8) || defined(BSP_USING_HARD_I2C9) || defined(BSP_USING_HARD_I2C10)
 
 
-#define I2C_CTRL2_NBYTES_POS         (16U)
-#define MAX_NBYTE_SIZE               (255U)
+#define I2C_CTRL2_NBYTES_POS (16U)
+#define MAX_NBYTE_SIZE       (255U)
 
-#define I2C_NO_STARTSTOP             (0x00000000U)
-#define I2C_START_READ               (I2C_CTRL2_START | I2C_CTRL2_RWN)
-#define I2C_START_WRITE              (I2C_CTRL2_START)
+#define I2C_NO_STARTSTOP (0x00000000U)
+#define I2C_START_READ   (I2C_CTRL2_START | I2C_CTRL2_RWN)
+#define I2C_START_WRITE  (I2C_CTRL2_START)
 
-#define I2C_RELOAD_MODE              (CTRL2_REFILL_ENABLE)
-#define I2C_AUTOEND_MODE             (CTRL2_AUTO_STOP)
-#define I2C_SOFTEND_MODE             (0x00000000U)
+#define I2C_RELOAD_MODE  (CTRL2_REFILL_ENABLE)
+#define I2C_AUTOEND_MODE (CTRL2_AUTO_STOP)
+#define I2C_SOFTEND_MODE (0x00000000U)
 
-#define I2C_FIRST_FRAME              ((uint32_t)I2C_SOFTEND_MODE)
-#define I2C_FIRST_AND_NEXT_FRAME     ((uint32_t)(I2C_RELOAD_MODE | I2C_SOFTEND_MODE))
-#define I2C_NEXT_FRAME               ((uint32_t)(I2C_RELOAD_MODE | I2C_SOFTEND_MODE))
-#define I2C_FIRST_AND_LAST_FRAME     ((uint32_t)I2C_AUTOEND_MODE)
-#define I2C_LAST_FRAME               ((uint32_t)I2C_AUTOEND_MODE)
-#define I2C_LAST_FRAME_NO_STOP       ((uint32_t)I2C_SOFTEND_MODE)
+#define I2C_FIRST_FRAME          ((uint32_t)I2C_SOFTEND_MODE)
+#define I2C_FIRST_AND_NEXT_FRAME ((uint32_t)(I2C_RELOAD_MODE | I2C_SOFTEND_MODE))
+#define I2C_NEXT_FRAME           ((uint32_t)(I2C_RELOAD_MODE | I2C_SOFTEND_MODE))
+#define I2C_FIRST_AND_LAST_FRAME ((uint32_t)I2C_AUTOEND_MODE)
+#define I2C_LAST_FRAME           ((uint32_t)I2C_AUTOEND_MODE)
+#define I2C_LAST_FRAME_NO_STOP   ((uint32_t)I2C_SOFTEND_MODE)
 
 /* Slave address | Transfer direction | START generation | STOP generation | Number of bytes | NBYTES reload mode | Automatic end mode */
-#define I2C_CTRL2_CLEAR              (I2C_CTRL2_SADR | I2C_CTRL2_RWN | I2C_CTRL2_START | I2C_CTRL2_STOP | I2C_CTRL2_BYTECNT | I2C_CTRL2_REFILL | I2C_CTRL2_AUTOSTOP)
+#define I2C_CTRL2_CLEAR (I2C_CTRL2_SADR | I2C_CTRL2_RWN | I2C_CTRL2_START | I2C_CTRL2_STOP | I2C_CTRL2_BYTECNT | I2C_CTRL2_REFILL | I2C_CTRL2_AUTOSTOP)
 
 //#define DRV_DEBUG
 #define LOG_TAG "drv.i2c.hw"
@@ -82,8 +82,7 @@ enum
 #endif /* BSP_USING_HARD_I2C10 */
 };
 
-static struct n32_i2c_config i2c_config[] =
-{
+static struct n32_i2c_config i2c_config[] = {
 #ifdef BSP_USING_HARD_I2C1
     I2C1_BUS_CONFIG,
 #endif /* BSP_USING_HARD_I2C1 */
@@ -116,7 +115,7 @@ static struct n32_i2c_config i2c_config[] =
 #endif /* BSP_USING_HARD_I2C10 */
 };
 
-static struct n32_i2c i2c_objs[sizeof(i2c_config) / sizeof(i2c_config[0])] = {0};
+static struct n32_i2c i2c_objs[sizeof(i2c_config) / sizeof(i2c_config[0])] = { 0 };
 
 static rt_ssize_t n32_iic_transfer_by_dma(struct n32_i2c_config *config, uint8_t *pData, uint16_t Size, rt_bool_t is_rx)
 {
@@ -186,12 +185,12 @@ static rt_err_t n32_i2c_dma_init(struct n32_i2c_config *config, rt_bool_t is_rx)
 
     /* DMA channel struct configuration */
     DMA_ChannelStructInit(&DMA_ChInitStr);
-    DMA_ChInitStr.SrcTfrWidth        = DMA_CH_TRANSFER_WIDTH_8;
-    DMA_ChInitStr.DstTfrWidth        = DMA_CH_TRANSFER_WIDTH_8;
-    DMA_ChInitStr.DstBurstLen        = DMA_CH_BURST_LENGTH_1;
-    DMA_ChInitStr.SrcBurstLen        = DMA_CH_BURST_LENGTH_1;
-    DMA_ChInitStr.ChannelPriority    = DMA_CH_PRIORITY_7;
-    DMA_ChInitStr.TfrType            = DMA_CH_TRANSFER_TYPE_SINGLE_BLOCK;
+    DMA_ChInitStr.SrcTfrWidth = DMA_CH_TRANSFER_WIDTH_8;
+    DMA_ChInitStr.DstTfrWidth = DMA_CH_TRANSFER_WIDTH_8;
+    DMA_ChInitStr.DstBurstLen = DMA_CH_BURST_LENGTH_1;
+    DMA_ChInitStr.SrcBurstLen = DMA_CH_BURST_LENGTH_1;
+    DMA_ChInitStr.ChannelPriority = DMA_CH_PRIORITY_7;
+    DMA_ChInitStr.TfrType = DMA_CH_TRANSFER_TYPE_SINGLE_BLOCK;
 
     /* Read by DMA */
     if (is_rx)
@@ -202,13 +201,13 @@ static rt_err_t n32_i2c_dma_init(struct n32_i2c_config *config, rt_bool_t is_rx)
         RCC_EnableAHB1PeriphClk3(dma_config->dma_rcc, ENABLE);
 
         /* DMA channel struct configuration */
-        DMA_ChInitStr.SrcAddr            = (uint32_t)&config->Instance->RDR;
-        DMA_ChInitStr.DstAddr            = (uint32_t)RT_NULL;
-        DMA_ChInitStr.DstAddrCountMode   = DMA_CH_ADDRESS_COUNT_MODE_INCREMENT;
-        DMA_ChInitStr.SrcAddrCountMode   = DMA_CH_ADDRESS_COUNT_MODE_NO_CHANGE;
-        DMA_ChInitStr.TfrTypeFlowCtrl    = DMA_CH_TRANSFER_FLOW_P2M_DMA;
-        DMA_ChInitStr.SrcHandshaking     = DMA_CH_SRC_HANDSHAKING_HARDWARE;
-        DMA_ChInitStr.SrcHsInterface     = dma_config->HsInterface;
+        DMA_ChInitStr.SrcAddr = (uint32_t)&config->Instance->RDR;
+        DMA_ChInitStr.DstAddr = (uint32_t)RT_NULL;
+        DMA_ChInitStr.DstAddrCountMode = DMA_CH_ADDRESS_COUNT_MODE_INCREMENT;
+        DMA_ChInitStr.SrcAddrCountMode = DMA_CH_ADDRESS_COUNT_MODE_NO_CHANGE;
+        DMA_ChInitStr.TfrTypeFlowCtrl = DMA_CH_TRANSFER_FLOW_P2M_DMA;
+        DMA_ChInitStr.SrcHandshaking = DMA_CH_SRC_HANDSHAKING_HARDWARE;
+        DMA_ChInitStr.SrcHsInterface = dma_config->HsInterface;
     }
     /* Write by DMA */
     else
@@ -219,13 +218,13 @@ static rt_err_t n32_i2c_dma_init(struct n32_i2c_config *config, rt_bool_t is_rx)
         RCC_EnableAHB1PeriphClk3(dma_config->dma_rcc, ENABLE);
 
         /* DMA channel struct configuration */
-        DMA_ChInitStr.SrcAddr            = (uint32_t) RT_NULL;
-        DMA_ChInitStr.DstAddr            = (uint32_t)&config->Instance->WDR;
-        DMA_ChInitStr.DstAddrCountMode   = DMA_CH_ADDRESS_COUNT_MODE_NO_CHANGE;
-        DMA_ChInitStr.SrcAddrCountMode   = DMA_CH_ADDRESS_COUNT_MODE_INCREMENT;
-        DMA_ChInitStr.TfrTypeFlowCtrl    = DMA_CH_TRANSFER_FLOW_M2P_DMA;
-        DMA_ChInitStr.DstHandshaking     = DMA_CH_DST_HANDSHAKING_HARDWARE;
-        DMA_ChInitStr.DstHsInterface     = dma_config->HsInterface;
+        DMA_ChInitStr.SrcAddr = (uint32_t)RT_NULL;
+        DMA_ChInitStr.DstAddr = (uint32_t)&config->Instance->WDR;
+        DMA_ChInitStr.DstAddrCountMode = DMA_CH_ADDRESS_COUNT_MODE_NO_CHANGE;
+        DMA_ChInitStr.SrcAddrCountMode = DMA_CH_ADDRESS_COUNT_MODE_INCREMENT;
+        DMA_ChInitStr.TfrTypeFlowCtrl = DMA_CH_TRANSFER_FLOW_M2P_DMA;
+        DMA_ChInitStr.DstHandshaking = DMA_CH_DST_HANDSHAKING_HARDWARE;
+        DMA_ChInitStr.DstHsInterface = dma_config->HsInterface;
     }
 
     /* DMA controller must be enabled before initializing the channel */
@@ -236,11 +235,10 @@ static rt_err_t n32_i2c_dma_init(struct n32_i2c_config *config, rt_bool_t is_rx)
     {
         return -RT_ERROR;
     }
-#endif
-
     /* enable dma irq */
     NVIC_SetPriority(dma_config->dma_irq, NVIC_EncodePriority(NVIC_GetPriorityGrouping(), 0, 0));
     NVIC_EnableIRQ(dma_config->dma_irq);
+#endif
 
     return RT_EOK;
 }
@@ -248,7 +246,7 @@ static rt_err_t n32_i2c_dma_init(struct n32_i2c_config *config, rt_bool_t is_rx)
 static rt_err_t n32_i2c_init(struct n32_i2c *i2c_drv)
 {
     rt_err_t ret;
-    uint32_t BusTim_Reg;
+    uint32_t BusTim_Reg = 0;
     I2C_InitType I2C_InitStructure;
     RT_ASSERT(i2c_drv != RT_NULL);
 
@@ -284,14 +282,14 @@ static rt_err_t n32_i2c_init(struct n32_i2c *i2c_drv)
     I2C_DeInit(cfg->Instance);
 
     I2C_InitStruct(&I2C_InitStructure);
-    I2C_InitStructure.Timing           = ((BusTim_Reg != 0) ? BusTim_Reg : cfg->timing);
-    I2C_InitStructure.OwnAddress1      = 0x0;
-    I2C_InitStructure.AddressingMode   = I2C_ADDRESSINGMODE_7BIT;
-    I2C_InitStructure.DualAddressMode  = I2C_DUALADDRESS_DISABLE;
-    I2C_InitStructure.OwnAddress2      = 0x0;
+    I2C_InitStructure.Timing = ((BusTim_Reg != 0) ? BusTim_Reg : cfg->timing);
+    I2C_InitStructure.OwnAddress1 = 0x0;
+    I2C_InitStructure.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+    I2C_InitStructure.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+    I2C_InitStructure.OwnAddress2 = 0x0;
     I2C_InitStructure.OwnAddress2Masks = I2C_ADDRESS2MASK_NONE;
-    I2C_InitStructure.GeneralCallMode  = I2C_GENERALCALL_DISABLE;
-    I2C_InitStructure.NoStretchMode    = I2C_NOSTRCH_DISABLE;
+    I2C_InitStructure.GeneralCallMode = I2C_GENERALCALL_DISABLE;
+    I2C_InitStructure.NoStretchMode = I2C_NOSTRCH_DISABLE;
     I2C_Init(cfg->Instance, &I2C_InitStructure);
 
     I2C_Enable(cfg->Instance, ENABLE);
@@ -569,7 +567,7 @@ static rt_ssize_t n32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                                       struct rt_i2c_msg msgs[],
                                       rt_uint32_t num)
 {
-#define DMA_TRANS_MIN_LEN 2 /* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
+#define DMA_TRANS_MIN_LEN    2 /* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
 #define TRANS_TIMEOUT_PERSEC 8 /* per ms will trans nums bytes */
 
     rt_int32_t i, ret;
@@ -621,8 +619,8 @@ static rt_ssize_t n32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         if (msg->flags & RT_I2C_RD)
         {
             LOG_D("xfer  rec  msgs[%d] i2c mode = %s", i, mode == I2C_FIRST_AND_NEXT_FRAME ? "I2C_FIRST_AND_NEXT_FRAME" : mode == I2C_LAST_FRAME_NO_STOP ? "I2C_FIRST_FRAME/I2C_LAST_FRAME_NO_STOP"
-                  : mode == I2C_LAST_FRAME           ? "I2C_LAST_FRAME"
-                  : "nuknown mode");
+                                                                                                                      : mode == I2C_LAST_FRAME           ? "I2C_LAST_FRAME"
+                                                                                                                                                         : "nuknown mode");
             if ((i2c_obj->i2c_dma_flag & I2C_USING_RX_DMA_FLAG) && (msg->len >= DMA_TRANS_MIN_LEN))
             {
                 ret = n32_i2c_master_seq_receive_dma(i2c_obj, (msg->addr << 1), msg->buf, msg->len, mode);
@@ -640,14 +638,13 @@ static rt_ssize_t n32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
             {
                 LOG_D("receive time out");
                 goto out;
-
             }
         }
         else
         {
             LOG_D("xfer trans msgs[%d] hal mode = %s", i, mode == I2C_FIRST_AND_NEXT_FRAME ? "I2C_FIRST_AND_NEXT_FRAME" : mode == I2C_LAST_FRAME_NO_STOP ? "I2C_FIRST_FRAME/I2C_LAST_FRAME_NO_STOP"
-                  : mode == I2C_LAST_FRAME           ? "I2C_LAST_FRAME"
-                  : "nuknown mode");
+                                                                                                                      : mode == I2C_LAST_FRAME           ? "I2C_LAST_FRAME"
+                                                                                                                                                         : "nuknown mode");
             if ((i2c_obj->i2c_dma_flag & I2C_USING_TX_DMA_FLAG) && (msg->len >= DMA_TRANS_MIN_LEN))
             {
                 ret = n32_i2c_master_seq_send_dma(i2c_obj, (msg->addr << 1), msg->buf, msg->len, mode);
@@ -675,23 +672,27 @@ static rt_ssize_t n32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     timeout = msg->len / TRANS_TIMEOUT_PERSEC + 2;
 
     if (msg->flags & RT_I2C_NO_STOP)
+    {
         mode = I2C_LAST_FRAME_NO_STOP;
+    }
     else
+    {
         mode = I2C_LAST_FRAME;
+    }
 
     LOG_D("xfer  last msgs[%d] addr=0x%2x buf= 0x%x len= 0x%x flags = 0x%x", i, msg->addr, msg->buf, msg->len, msg->flags);
     if (msg->flags & RT_I2C_RD)
     {
         LOG_D("xfer  rec  msgs[%d] hal mode=%s", i, mode == I2C_FIRST_AND_NEXT_FRAME ? "I2C_FIRST_AND_NEXT_FRAME" : mode == I2C_LAST_FRAME_NO_STOP ? "I2C_FIRST_FRAME/I2C_LAST_FRAME_NO_STOP"
-              : mode == I2C_LAST_FRAME           ? "I2C_LAST_FRAME"
-              : "nuknown mode");
+                                                                                                                : mode == I2C_LAST_FRAME           ? "I2C_LAST_FRAME"
+                                                                                                                                                   : "nuknown mode");
         if ((i2c_obj->i2c_dma_flag & I2C_USING_RX_DMA_FLAG) && (msg->len >= DMA_TRANS_MIN_LEN))
         {
             ret = n32_i2c_master_seq_receive_dma(i2c_obj, (msg->addr << 1), msg->buf, msg->len, mode);
         }
         else
         {
-            uint32_t itflags   = READ_REG(i2c_obj->config->Instance->STSINT);
+            uint32_t itflags = READ_REG(i2c_obj->config->Instance->STSINT);
             ret = n32_i2c_master_seq_receive_it(i2c_obj, (msg->addr << 1), msg->buf, msg->len, mode);
         }
         if (ret != RT_EOK)
@@ -708,8 +709,8 @@ static rt_ssize_t n32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     else
     {
         LOG_D("xfer trans msgs[%d] hal mode = %s", i, mode == I2C_FIRST_AND_NEXT_FRAME ? "I2C_FIRST_AND_NEXT_FRAME" : mode == I2C_LAST_FRAME       ? "I2C_LAST_FRAME"
-              : mode == I2C_LAST_FRAME_NO_STOP ? "I2C_FIRST_FRAME/I2C_LAST_FRAME_NO_STOP"
-              : "nuknown mode");
+                                                                                                                  : mode == I2C_LAST_FRAME_NO_STOP ? "I2C_FIRST_FRAME/I2C_LAST_FRAME_NO_STOP"
+                                                                                                                                                   : "nuknown mode");
         if ((i2c_obj->i2c_dma_flag & I2C_USING_TX_DMA_FLAG) && (msg->len >= DMA_TRANS_MIN_LEN))
         {
             ret = n32_i2c_master_seq_send_dma(i2c_obj, (msg->addr << 1), msg->buf, msg->len, mode);
@@ -727,7 +728,6 @@ static rt_ssize_t n32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         {
             LOG_D("transmit time out");
             goto out;
-
         }
     }
     LOG_D("xfer  end  %d mags\r\n", num);
@@ -738,8 +738,7 @@ out:
 }
 
 
-static const struct rt_i2c_bus_device_ops n32_i2c_ops =
-{
+static const struct rt_i2c_bus_device_ops n32_i2c_ops = {
     .master_xfer = n32_i2c_master_xfer,
     RT_NULL,
     RT_NULL
@@ -914,7 +913,7 @@ static void i2c_it_error_handler(struct n32_i2c *drv_i2c, uint32_t itflags)
     }
 
     if (((((itflags & I2C_STSINT_NAKF) == I2C_STSINT_NAKF) ? SET : RESET) != RESET) ||
-            ((((itflags & I2C_STSINT_BSER) == I2C_STSINT_BSER) ? SET : RESET) != RESET))
+        ((((itflags & I2C_STSINT_BSER) == I2C_STSINT_BSER) ? SET : RESET) != RESET))
     {
         /* Send stop signal to prevent bus lock-up */
         LOG_D("I2C NACK Error or BUS Error now stoped");
@@ -1009,7 +1008,7 @@ static void i2c_master_ev_isr_handler_it(struct n32_i2c *drv_i2c)
     uint16_t devaddress;
     uint32_t setmask;
     /* Get current IT Flags and IT sources value */
-    volatile uint32_t itflags   = READ_REG(drv_i2c->config->Instance->STSINT);
+    volatile uint32_t itflags = READ_REG(drv_i2c->config->Instance->STSINT);
     volatile uint32_t itsources = READ_REG(drv_i2c->config->Instance->CTRL1);
 
     /* It takes more than 100 microseconds to clear the TC flag after starting, so wait for the TC flag to clear */
@@ -1026,7 +1025,7 @@ static void i2c_master_ev_isr_handler_it(struct n32_i2c *drv_i2c)
     }
 
     if (((((itflags & I2C_STSINT_NAKF) == I2C_STSINT_NAKF) ? SET : RESET) != RESET) &&
-            ((((itsources & I2C_CTRL1_NAKIE) == I2C_CTRL1_NAKIE) ? SET : RESET) != RESET))
+        ((((itsources & I2C_CTRL1_NAKIE) == I2C_CTRL1_NAKIE) ? SET : RESET) != RESET))
     {
         /* Clear Not Acknowledge received flag */
         drv_i2c->config->Instance->INTCLR = I2C_INTCLR_NAKCLR;
@@ -1122,7 +1121,7 @@ static void i2c_master_ev_isr_handler_it(struct n32_i2c *drv_i2c)
     }
 
     if (((((itflags & I2C_STSINT_STOPF) == I2C_STSINT_STOPF) ? SET : RESET) != RESET) &&
-            ((((itsources & I2C_CTRL1_STOPIE) == I2C_CTRL1_STOPIE) ? SET : RESET) != RESET))
+        ((((itsources & I2C_CTRL1_STOPIE) == I2C_CTRL1_STOPIE) ? SET : RESET) != RESET))
     {
         i2c_it_master_complete(drv_i2c, itflags);
     }
@@ -1134,11 +1133,11 @@ static void i2c_master_ev_isr_handler_dma(struct n32_i2c *drv_i2c)
     uint32_t setmask;
     uint32_t xfermode;
     /* Get current IT Flags and IT sources value */
-    volatile uint32_t itflags   = READ_REG(drv_i2c->config->Instance->STSINT);
+    volatile uint32_t itflags = READ_REG(drv_i2c->config->Instance->STSINT);
     volatile uint32_t itsources = READ_REG(drv_i2c->config->Instance->CTRL1);
 
     if (((((itflags & I2C_STSINT_NAKF) == I2C_STSINT_NAKF) ? SET : RESET) != RESET) &&
-            ((((itsources & I2C_CTRL1_NAKIE) == I2C_CTRL1_NAKIE) ? SET : RESET) != RESET))
+        ((((itsources & I2C_CTRL1_NAKIE) == I2C_CTRL1_NAKIE) ? SET : RESET) != RESET))
     {
         /* Clear Not Acknowledge received flag */
         drv_i2c->config->Instance->INTCLR = I2C_INTCLR_NAKCLR;
@@ -1233,12 +1232,12 @@ static void i2c_master_ev_isr_handler_dma(struct n32_i2c *drv_i2c)
 static void i2c_master_er_isr_handler(struct n32_i2c *drv_i2c)
 {
     uint32_t tmperror = 0;
-    volatile uint32_t itflags   = READ_REG(drv_i2c->config->Instance->STSINT);
+    volatile uint32_t itflags = READ_REG(drv_i2c->config->Instance->STSINT);
     volatile uint32_t itsources = READ_REG(drv_i2c->config->Instance->CTRL1);
 
     /* I2C Bus error interrupt occurred */
     if (((((itflags & I2C_STSINT_BSER) == I2C_STSINT_BSER) ? SET : RESET) != RESET) &&
-            ((((itsources & I2C_CTRL1_ERRIE) == I2C_CTRL1_ERRIE) ? SET : RESET) != RESET))
+        ((((itsources & I2C_CTRL1_ERRIE) == I2C_CTRL1_ERRIE) ? SET : RESET) != RESET))
     {
         tmperror |= I2C_STSINT_BSER;
 
@@ -1247,7 +1246,7 @@ static void i2c_master_er_isr_handler(struct n32_i2c *drv_i2c)
 
     /* I2C Over-Run/Under-Run interrupt occurred */
     if (((((itflags & I2C_STSINT_OVF) == I2C_STSINT_OVF) ? SET : RESET) != RESET) &&
-            ((((itsources & I2C_CTRL1_ERRIE) == I2C_CTRL1_ERRIE) ? SET : RESET) != RESET))
+        ((((itsources & I2C_CTRL1_ERRIE) == I2C_CTRL1_ERRIE) ? SET : RESET) != RESET))
     {
         tmperror |= I2C_STSINT_OVF;
 
@@ -1256,7 +1255,7 @@ static void i2c_master_er_isr_handler(struct n32_i2c *drv_i2c)
 
     /* I2C Arbitration Loss error interrupt occurred */
     if (((((itflags & I2C_STSINT_ABLO) == I2C_STSINT_ABLO) ? SET : RESET) != RESET) &&
-            ((((itsources & I2C_CTRL1_ERRIE) == I2C_CTRL1_ERRIE) ? SET : RESET) != RESET))
+        ((((itsources & I2C_CTRL1_ERRIE) == I2C_CTRL1_ERRIE) ? SET : RESET) != RESET))
     {
         tmperror |= I2C_STSINT_ABLO;
 
@@ -1265,7 +1264,7 @@ static void i2c_master_er_isr_handler(struct n32_i2c *drv_i2c)
 
     /* I2C PEC error interrupt occurred */
     if (((((itflags & I2C_STSINT_CRCERR) == I2C_STSINT_CRCERR) ? SET : RESET) != RESET) &&
-            ((((itsources & I2C_CTRL1_ERRIE) == I2C_CTRL1_ERRIE) ? SET : RESET) != RESET))
+        ((((itsources & I2C_CTRL1_ERRIE) == I2C_CTRL1_ERRIE) ? SET : RESET) != RESET))
     {
         tmperror |= I2C_STSINT_CRCERR;
 
@@ -1274,7 +1273,7 @@ static void i2c_master_er_isr_handler(struct n32_i2c *drv_i2c)
 
     /* I2C PEC error interrupt occurred */
     if (((((itflags & I2C_STSINT_TMOUT) == I2C_STSINT_TMOUT) ? SET : RESET) != RESET) &&
-            ((((itsources & I2C_CTRL1_ERRIE) == I2C_CTRL1_ERRIE) ? SET : RESET) != RESET))
+        ((((itsources & I2C_CTRL1_ERRIE) == I2C_CTRL1_ERRIE) ? SET : RESET) != RESET))
     {
         tmperror |= I2C_STSINT_TMOUT;
 

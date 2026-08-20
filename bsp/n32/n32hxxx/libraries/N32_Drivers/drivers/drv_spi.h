@@ -44,8 +44,8 @@ struct n32_spi_device
 };
 
 
-#define SPI_USING_RX_DMA_FLAG   (1<<0)
-#define SPI_USING_TX_DMA_FLAG   (1<<1)
+#define SPI_USING_RX_DMA_FLAG (1 << 0)
+#define SPI_USING_TX_DMA_FLAG (1 << 1)
 
 typedef enum
 {

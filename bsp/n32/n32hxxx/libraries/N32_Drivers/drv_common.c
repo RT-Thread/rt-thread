@@ -12,15 +12,15 @@
 #include <board.h>
 
 #ifdef RT_USING_PIN
-    #include <drv_gpio.h>
+#include <drv_gpio.h>
 #endif
 
 #ifdef RT_USING_SERIAL
-    #ifdef RT_USING_SERIAL_V2
-        #include <drv_usart_v2.h>
-    #else
-        #include <drv_usart.h>
-    #endif /* RT_USING_SERIAL */
+#ifdef RT_USING_SERIAL_V2
+#include <drv_usart_v2.h>
+#else
+#include <drv_usart.h>
+#endif /* RT_USING_SERIAL */
 #endif /* RT_USING_SERIAL_V2 */
 
 #define DBG_TAG "drv_common"
@@ -63,7 +63,9 @@ void rt_hw_systick_init(void)
 
     _systick_ms = 1000u / RT_TICK_PER_SECOND;
     if (_systick_ms == 0)
+    {
         _systick_ms = 1;
+    }
 }
 
 void System_Tick_Increase(void)
@@ -74,7 +76,9 @@ void System_Tick_Increase(void)
 uint32_t System_Tick_Get(void)
 {
     if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+    {
         System_Tick_Increase();
+    }
 
     return uwTick;
 }
@@ -89,7 +93,9 @@ void SysTick_Handler(void)
     rt_interrupt_enter();
 
     if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+    {
         System_Tick_Increase();
+    }
 
     rt_tick_increase();
 
