@@ -7,7 +7,7 @@ config BSP_USING_VIRTIO
 
 config BSP_USING_VIRTIO_BLK
     bool "Using VirtIO BLK"
-    select RT_USING_VIRTIO
+    select RT_USING_LEGACY_VIRTIO
     select RT_USING_VIRTIO_BLK
     default y
     depends on BSP_USING_VIRTIO

@@ -91,6 +91,7 @@
 #define RT_TIMER_THREAD_PRIO       4
 #define RT_TIMER_THREAD_STACK_SIZE 16384
 #define RT_USING_CPU_USAGE_TRACER
+#define RT_CPU_USAGE_CALC_INTERVAL_MS 200
 
 /* kservice options */
 
@@ -220,9 +221,6 @@
 #define RT_USING_RANDOM
 #define RT_USING_RTC
 #define RT_USING_SOFT_RTC
-#define RT_USING_VIRTIO
-#define RT_USING_VIRTIO10
-#define RT_USING_VIRTIO_BLK
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -308,6 +306,9 @@
 /* Using USB legacy version */
 
 /* end of Using USB legacy version */
+#define RT_USING_LEGACY_VIRTIO
+#define RT_USING_VIRTIO10
+#define RT_USING_VIRTIO_BLK
 /* end of RT-Thread Components */
 
 /* RT-Thread Utestcases */
