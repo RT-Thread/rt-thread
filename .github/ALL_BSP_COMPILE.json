@@ -541,7 +541,8 @@
       "RTT_BSP": "xuantie-smart",
       "RTT_TOOL_CHAIN": "sourcery-Xuantie-900-gcc-linux-musl",
       "SUB_RTT_BSP": [
-        "xuantie/virt64/c906"
+        "xuantie/virt64/c906",
+        "xuantie/virt64/c908"
       ]
     },
     {
