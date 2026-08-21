@@ -466,6 +466,9 @@ rt_mutex_t rt_mutex_create(const char *name, rt_uint8_t flag);
 rt_err_t rt_mutex_delete(rt_mutex_t mutex);
 #endif /* RT_USING_HEAP */
 void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread);
+#if defined(__RT_KERNEL_SOURCE__) || defined(__RT_IPC_SOURCE__)
+rt_bool_t rt_mutex_cleanup_waiter(rt_thread_t thread, rt_bool_t remove_from_list);
+#endif /* defined(__RT_KERNEL_SOURCE__) || defined(__RT_IPC_SOURCE__) */
 rt_uint8_t rt_mutex_setprioceiling(rt_mutex_t mutex, rt_uint8_t priority);
 rt_uint8_t rt_mutex_getprioceiling(rt_mutex_t mutex);
 

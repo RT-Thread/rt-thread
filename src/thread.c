@@ -147,6 +147,7 @@ static void _thread_timeout(void *parameter)
 {
     struct rt_thread *thread;
     rt_sched_lock_level_t slvl;
+    rt_bool_t mutex_timeout = RT_FALSE;
 
     thread = (struct rt_thread *)parameter;
 
@@ -168,8 +169,16 @@ static void _thread_timeout(void *parameter)
     /* set error number */
     thread->error = -RT_ETIMEOUT;
 
-    /* remove from suspend list */
-    rt_list_remove(&RT_THREAD_LIST_NODE(thread));
+    /* Mutex timeout also removes the waiter from the mutex wait list. */
+#ifdef RT_USING_MUTEX
+    mutex_timeout = rt_mutex_cleanup_waiter(thread, RT_TRUE);
+#endif /* RT_USING_MUTEX */
+
+    if (!mutex_timeout)
+    {
+        /* remove from suspend list */
+        rt_list_remove(&RT_THREAD_LIST_NODE(thread));
+    }
     /* insert to schedule ready list */
     rt_sched_insert_thread(thread);
     /* do schedule and release the scheduler lock */
