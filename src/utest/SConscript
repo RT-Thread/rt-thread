@@ -60,6 +60,7 @@ if GetDepend(['RT_UTEST_MEMPOOL']):
 
 # Stressful testcase for scheduler (MP/UP)
 if GetDepend(['RT_UTEST_SCHEDULER']):
+    src += ['sched_timeout_race_tc.c']
     src += ['sched_timed_sem_tc.c']
     src += ['sched_timed_mtx_tc.c']
     src += ['sched_mtx_tc.c']

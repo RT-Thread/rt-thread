@@ -140,7 +140,10 @@ struct rt_thread *rt_susp_list_dequeue(rt_list_t *susp_list, rt_err_t thread_err
     }
     rt_sched_unlock(slvl);
 
-    LOG_D("resume thread:%s\n", thread->parent.name);
+    if (thread)
+    {
+        LOG_D("resume thread:%s\n", thread->parent.name);
+    }
 
     return thread;
 }
@@ -713,10 +716,9 @@ rt_err_t rt_sem_release(rt_sem_t sem)
           sem->parent.parent.name,
           sem->value);
 
-    if (!rt_list_isempty(&sem->parent.suspend_thread))
+    if (!rt_list_isempty(&sem->parent.suspend_thread) &&
+        rt_susp_list_dequeue(&(sem->parent.suspend_thread), RT_EOK) != RT_NULL)
     {
-        /* resume the suspended thread */
-        rt_susp_list_dequeue(&(sem->parent.suspend_thread), RT_EOK);
         need_schedule = RT_TRUE;
     }
     else
@@ -2053,16 +2055,20 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
             /* condition is satisfied, resume thread */
             if (status == RT_EOK)
             {
-                /* clear event */
-                if (thread->event_info & RT_EVENT_FLAG_CLEAR)
-                    need_clear_set |= thread->event_set;
+                status = rt_sched_thread_ready(thread);
+                if (status == RT_EOK)
+                {
+                    /* clear event */
+                    if (thread->event_info & RT_EVENT_FLAG_CLEAR)
+                    {
+                        need_clear_set |= thread->event_set;
+                    }
 
-                /* resume thread, and thread list breaks out */
-                rt_sched_thread_ready(thread);
-                thread->error = RT_EOK;
+                    thread->error = RT_EOK;
 
-                /* need do a scheduling */
-                need_schedule = RT_TRUE;
+                    /* need do a scheduling */
+                    need_schedule = RT_TRUE;
+                }
             }
         }
         if (need_clear_set)

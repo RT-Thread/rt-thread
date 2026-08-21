@@ -81,8 +81,11 @@ rt_err_t rt_sched_thread_timer_stop(struct rt_thread *thread)
     {
         error = rt_timer_stop(&thread->thread_timer);
 
-        /* mask out timer flag no matter stop success or not */
-        RT_SCHED_CTX(thread).sched_flag_ttmr_set = 0;
+        /* A failed stop means the timeout callback owns the thread timer. */
+        if (error == RT_EOK)
+        {
+            RT_SCHED_CTX(thread).sched_flag_ttmr_set = 0;
+        }
     }
     else
     {
