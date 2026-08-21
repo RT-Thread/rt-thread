@@ -9,6 +9,8 @@
  */
 
 #include <rtthread.h>
+#define DBG_TAG "mnt"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 #define LOG_TAG "mnt"
 
