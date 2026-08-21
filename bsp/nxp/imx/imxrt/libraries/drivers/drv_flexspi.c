@@ -49,25 +49,25 @@ static void flexspi_callback(FLEXSPI_Type *base, flexspi_edma_handle_t *handle, 
 #endif
 
 #define FLEXSPI_DEBUG
-#define LOG_TAG             "drv.flexspi"
+#define LOG_TAG "drv.flexspi"
 #include <drv_log.h>
 
 #if defined(SOC_IMXRT1170_SERIES)
 static flexspi_device_config_t deviceconfig = {
-    .flexspiRootClk       = 12000000,
-    .flashSize            = FLASH_SIZE,
-    .CSIntervalUnit       = kFLEXSPI_CsIntervalUnit1SckCycle,
-    .CSInterval           = 2,
-    .CSHoldTime           = 3,
-    .CSSetupTime          = 3,
-    .dataValidTime        = 0,
-    .columnspace          = 0,
-    .enableWordAddress    = 0,
-    .AWRSeqIndex          = AWR_SEQ_INDEX,
-    .AWRSeqNumber         = AWR_SEQ_NUMBER,
-    .ARDSeqIndex          = ARD_SEQ_INDEX,
-    .ARDSeqNumber         = ARD_SEQ_NUMBER,
-    .AHBWriteWaitUnit     = kFLEXSPI_AhbWriteWaitUnit2AhbCycle,
+    .flexspiRootClk = 12000000,
+    .flashSize = FLASH_SIZE,
+    .CSIntervalUnit = kFLEXSPI_CsIntervalUnit1SckCycle,
+    .CSInterval = 2,
+    .CSHoldTime = 3,
+    .CSSetupTime = 3,
+    .dataValidTime = 0,
+    .columnspace = 0,
+    .enableWordAddress = 0,
+    .AWRSeqIndex = AWR_SEQ_INDEX,
+    .AWRSeqNumber = AWR_SEQ_NUMBER,
+    .ARDSeqIndex = ARD_SEQ_INDEX,
+    .ARDSeqNumber = ARD_SEQ_NUMBER,
+    .AHBWriteWaitUnit = kFLEXSPI_AhbWriteWaitUnit2AhbCycle,
     .AHBWriteWaitInterval = 0,
 };
 const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
@@ -78,157 +78,157 @@ const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
 #elif defined(SOC_IMXRT1180_SERIES)
 static flexspi_device_config_t deviceconfig = {
 #ifndef BSP_USING_OSPI_FLASH
-    .flexspiRootClk       = 12000000,
+    .flexspiRootClk = 12000000,
 #else
-	.flexspiRootClk       = 200000000,
+    .flexspiRootClk = 200000000,
 #endif
-    .flashSize            = FLASH_SIZE,
-    .CSIntervalUnit       = kFLEXSPI_CsIntervalUnit1SckCycle,
-    .CSInterval           = 2,
-    .CSHoldTime           = 3,
-    .CSSetupTime          = 3,
-    .dataValidTime        = 0,
-    .columnspace          = 0,
-    .enableWordAddress    = 0,
-    .AWRSeqIndex          = AWR_SEQ_INDEX,
-    .AWRSeqNumber         = AWR_SEQ_NUMBER,
-    .ARDSeqIndex          = ARD_SEQ_INDEX,
-    .ARDSeqNumber         = ARD_SEQ_NUMBER,
-    .AHBWriteWaitUnit     = kFLEXSPI_AhbWriteWaitUnit2AhbCycle,
+    .flashSize = FLASH_SIZE,
+    .CSIntervalUnit = kFLEXSPI_CsIntervalUnit1SckCycle,
+    .CSInterval = 2,
+    .CSHoldTime = 3,
+    .CSSetupTime = 3,
+    .dataValidTime = 0,
+    .columnspace = 0,
+    .enableWordAddress = 0,
+    .AWRSeqIndex = AWR_SEQ_INDEX,
+    .AWRSeqNumber = AWR_SEQ_NUMBER,
+    .ARDSeqIndex = ARD_SEQ_INDEX,
+    .ARDSeqNumber = ARD_SEQ_NUMBER,
+    .AHBWriteWaitUnit = kFLEXSPI_AhbWriteWaitUnit2AhbCycle,
     .AHBWriteWaitInterval = 0,
 };
 
 const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
-#ifndef BSP_USING_OSPI_FLASH	
+#ifndef BSP_USING_OSPI_FLASH
     /* Normal read mode - SDR */
     [4 * NOR_CMD_LUT_SEQ_IDX_READ_NORMAL] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0x03,
-                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_1PAD, 0x18),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x03,
+                        kFLEXSPI_Command_RADDR_SDR, kFLEXSPI_1PAD, 0x18),
     [4 * NOR_CMD_LUT_SEQ_IDX_READ_NORMAL + 1] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_SDR,  kFLEXSPI_1PAD, 0x04,
-                        kFLEXSPI_Command_STOP,       kFLEXSPI_1PAD, 0),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_SDR, kFLEXSPI_1PAD, 0x04,
+                        kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0),
 
     /* Fast read mode - SDR */
     [4 * NOR_CMD_LUT_SEQ_IDX_READ_FAST] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0x0B,
-                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_1PAD, 0x18),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x0B,
+                        kFLEXSPI_Command_RADDR_SDR, kFLEXSPI_1PAD, 0x18),
     [4 * NOR_CMD_LUT_SEQ_IDX_READ_FAST + 1] =
         FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DUMMY_SDR, kFLEXSPI_1PAD, 0x08,
-                        kFLEXSPI_Command_READ_SDR,   kFLEXSPI_1PAD, 0x04),
+                        kFLEXSPI_Command_READ_SDR, kFLEXSPI_1PAD, 0x04),
 
     /* Fast read quad mode - SDR */
     [4 * NOR_CMD_LUT_SEQ_IDX_READ_FAST_QUAD] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0xEB,
-                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_4PAD, 0x18),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0xEB,
+                        kFLEXSPI_Command_RADDR_SDR, kFLEXSPI_4PAD, 0x18),
     [4 * NOR_CMD_LUT_SEQ_IDX_READ_FAST_QUAD + 1] =
         FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DUMMY_SDR, kFLEXSPI_4PAD, 0x06,
-                        kFLEXSPI_Command_READ_SDR,   kFLEXSPI_4PAD, 0x04),
+                        kFLEXSPI_Command_READ_SDR, kFLEXSPI_4PAD, 0x04),
 
     /* Write Enable */
     [4 * NOR_CMD_LUT_SEQ_IDX_WRITEENABLE] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,  kFLEXSPI_1PAD, 0x06,
-                        kFLEXSPI_Command_STOP,  kFLEXSPI_1PAD, 0),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x06,
+                        kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0),
 
     /* Erase Sector */
     [4 * NOR_CMD_LUT_SEQ_IDX_ERASESECTOR] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0x20,
-                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_1PAD, 0x18),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x20,
+                        kFLEXSPI_Command_RADDR_SDR, kFLEXSPI_1PAD, 0x18),
 
     /* Page Program - single mode */
     [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM_SINGLE] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0x02,
-                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_1PAD, 0x18),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x02,
+                        kFLEXSPI_Command_RADDR_SDR, kFLEXSPI_1PAD, 0x18),
     [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM_SINGLE + 1] =
         FLEXSPI_LUT_SEQ(kFLEXSPI_Command_WRITE_SDR, kFLEXSPI_1PAD, 0x04,
-                        kFLEXSPI_Command_STOP,       kFLEXSPI_1PAD, 0),
+                        kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0),
 
     /* Page Program - quad mode */
     [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM_QUAD] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,       kFLEXSPI_1PAD, 0x32,
-                        kFLEXSPI_Command_RADDR_SDR,  kFLEXSPI_1PAD, 0x18),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x32,
+                        kFLEXSPI_Command_RADDR_SDR, kFLEXSPI_1PAD, 0x18),
     [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM_QUAD + 1] =
         FLEXSPI_LUT_SEQ(kFLEXSPI_Command_WRITE_SDR, kFLEXSPI_4PAD, 0x04,
-                        kFLEXSPI_Command_STOP,       kFLEXSPI_1PAD, 0),
+                        kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0),
 
     /* Read ID */
     [4 * NOR_CMD_LUT_SEQ_IDX_READID] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,      kFLEXSPI_1PAD, 0x9F,
-                        kFLEXSPI_Command_READ_SDR,  kFLEXSPI_1PAD, 0x04),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x9F,
+                        kFLEXSPI_Command_READ_SDR, kFLEXSPI_1PAD, 0x04),
 
     /* Write Status Register */
     [4 * NOR_CMD_LUT_SEQ_IDX_WRITESTATUSREG] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,        kFLEXSPI_1PAD, 0x01,
-                        kFLEXSPI_Command_WRITE_SDR,   kFLEXSPI_1PAD, 0x04),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x01,
+                        kFLEXSPI_Command_WRITE_SDR, kFLEXSPI_1PAD, 0x04),
 
     /* Read status register */
     [4 * NOR_CMD_LUT_SEQ_IDX_READSTATUSREG] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,      kFLEXSPI_1PAD, 0x05,
-                        kFLEXSPI_Command_READ_SDR,  kFLEXSPI_1PAD, 0x04),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0x05,
+                        kFLEXSPI_Command_READ_SDR, kFLEXSPI_1PAD, 0x04),
 
     /* Erase whole chip */
     [4 * NOR_CMD_LUT_SEQ_IDX_ERASECHIP] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR,  kFLEXSPI_1PAD, 0xC7,
-                        kFLEXSPI_Command_STOP,  kFLEXSPI_1PAD, 0),
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_SDR, kFLEXSPI_1PAD, 0xC7,
+                        kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0),
 #else
-	/*  OPI DDR read */
+    /*  OPI DDR read */
     [4 * NOR_CMD_LUT_SEQ_IDX_READ + 0] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0xCC, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0xCC,
                         kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0xCC),
-    [4 * NOR_CMD_LUT_SEQ_IDX_READ + 1] = 
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_RADDR_DDR, kFLEXSPI_8PAD, 0x20, 
+    [4 * NOR_CMD_LUT_SEQ_IDX_READ + 1] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_RADDR_DDR, kFLEXSPI_8PAD, 0x20,
                         kFLEXSPI_Command_DUMMY_DDR, kFLEXSPI_8PAD, 0x20),
     [4 * NOR_CMD_LUT_SEQ_IDX_READ + 2] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_DDR, kFLEXSPI_8PAD, 0x04, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_READ_DDR, kFLEXSPI_8PAD, 0x04,
                         kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0x0),
 
     /* Read ID */
     [4 * NOR_CMD_LUT_SEQ_IDX_READID_OPI] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x9F, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x9F,
                         kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x9F),
     [4 * NOR_CMD_LUT_SEQ_IDX_READID_OPI + 1] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DUMMY_DDR, kFLEXSPI_8PAD, 0x10, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DUMMY_DDR, kFLEXSPI_8PAD, 0x10,
                         kFLEXSPI_Command_READ_DDR, kFLEXSPI_8PAD, 0x04),
 
     /*  Write Enable */
     [4 * NOR_CMD_LUT_SEQ_IDX_WRITEENABLE_OPI] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x06, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x06,
                         kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x06),
 
     /*  Erase Sector */
     [4 * NOR_CMD_LUT_SEQ_IDX_ERASESECTOR] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x21, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x21,
                         kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x21),
     [4 * NOR_CMD_LUT_SEQ_IDX_ERASESECTOR + 1] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_RADDR_DDR, kFLEXSPI_8PAD, 0x20, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_RADDR_DDR, kFLEXSPI_8PAD, 0x20,
                         kFLEXSPI_Command_STOP, kFLEXSPI_8PAD, 0),
 
     /*  Erase Chip */
     [4 * NOR_CMD_LUT_SEQ_IDX_CHIPERASE] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0xC4, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0xC4,
                         kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0xC4),
     [4 * NOR_CMD_LUT_SEQ_IDX_CHIPERASE + 1] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_RADDR_DDR, kFLEXSPI_8PAD, 0x20, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_RADDR_DDR, kFLEXSPI_8PAD, 0x20,
                         kFLEXSPI_Command_STOP, kFLEXSPI_8PAD, 0),
 
     /*  Program */
     [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x8E, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x8E,
                         kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x8E),
-    [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM + 1] = 
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_RADDR_DDR, kFLEXSPI_8PAD, 0x20, 
+    [4 * NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM + 1] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_RADDR_DDR, kFLEXSPI_8PAD, 0x20,
                         kFLEXSPI_Command_WRITE_DDR, kFLEXSPI_8PAD, 0x04),
 
     /*  Dummy write, do nothing when AHB write command is triggered. */
     [4 * NOR_CMD_LUT_SEQ_IDX_WRITE] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0x0, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0x0,
                         kFLEXSPI_Command_STOP, kFLEXSPI_1PAD, 0x0),
 
     /*  Read status register using Octal DDR read */
     [4 * NOR_CMD_LUT_SEQ_IDX_READSTATUS_OPI] =
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x05, 
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x05,
                         kFLEXSPI_Command_DDR, kFLEXSPI_8PAD, 0x05),
-    [4 * NOR_CMD_LUT_SEQ_IDX_READSTATUS_OPI + 1] = 
-        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DUMMY_DDR, kFLEXSPI_8PAD, 0x10, 
+    [4 * NOR_CMD_LUT_SEQ_IDX_READSTATUS_OPI + 1] =
+        FLEXSPI_LUT_SEQ(kFLEXSPI_Command_DUMMY_DDR, kFLEXSPI_8PAD, 0x10,
                         kFLEXSPI_Command_READ_DDR, kFLEXSPI_8PAD, 0x04),
 #endif
 };
@@ -239,10 +239,9 @@ const uint32_t customLUT[CUSTOM_LUT_LENGTH] = {
 /* --------------------------------------------------------------------------
  * Internal handle
  * -------------------------------------------------------------------------- */
-static imxrt_flexspi_handle_t s_flexspi_handle =
-{
-    .base     = FLEXSPI1_CONTROL_BASE,
-    .port     = FLASH_PORT,
+static imxrt_flexspi_handle_t s_flexspi_handle = {
+    .base = FLEXSPI1_CONTROL_BASE,
+    .port = FLASH_PORT,
     .ahb_base = FLEXSPI1_AHB_DATA_ADDRESS
 };
 
@@ -265,22 +264,22 @@ static int rt_hw_imxrt_flexspi_init(void)
 
 #ifdef BSP_USING_FLEXSPI1
     base = FLEXSPI1_CONTROL_BASE;
-    s_flexspi_handle.base     = FLEXSPI1_CONTROL_BASE;
-    s_flexspi_handle.port     = FLASH_PORT;
+    s_flexspi_handle.base = FLEXSPI1_CONTROL_BASE;
+    s_flexspi_handle.port = FLASH_PORT;
     s_flexspi_handle.ahb_base = FLEXSPI1_AHB_DATA_ADDRESS;
     //Set root clk 80MHz for QSPI, 200MHz for OSPI
     flexspi_clock_init(kCLOCK_Root_Flexspi1, CLOCK_SRC, CLOCK_DIV);
 #else
     base = FLEXSPI2_CONTROL_BASE;
-    s_flexspi_handle.base     = FLEXSPI2_CONTROL_BASE;
-    s_flexspi_handle.port     = FLASH_PORT;
+    s_flexspi_handle.base = FLEXSPI2_CONTROL_BASE;
+    s_flexspi_handle.port = FLASH_PORT;
     s_flexspi_handle.ahb_base = FLEXSPI2_AHB_DATA_ADDRESS;
     flexspi_clock_init(kCLOCK_Root_Flexspi2, CLOCK_SRC, CLOCK_DIV);
 #endif
 
 #ifdef BSP_USING_DMA
     edma_config_t userConfig;
-	edma_handle_t dmaTxHandle;
+    edma_handle_t dmaTxHandle;
     edma_handle_t dmaRxHandle;
 
     /* EDMA init */
@@ -311,13 +310,13 @@ static int rt_hw_imxrt_flexspi_init(void)
     config.ahbConfig.enableAHBBufferable = true;
     config.ahbConfig.enableReadAddressOpt = true;
     config.ahbConfig.enableAHBCachable = true;
-    config.ahbConfig.enableClearAHBBufferOpt    = true;
+    config.ahbConfig.enableClearAHBBufferOpt = true;
     config.rxSampleClock = FLEXSPI_RX_SAMPLE_CLOCK;
-    if(COMBINATION_MODE)
+    if (COMBINATION_MODE)
     {
         config.enableCombination = true;
     }
-    if(FREE_RUNNING_MODE)
+    if (FREE_RUNNING_MODE)
     {
         config.enableSckFreeRunning = true;
     }
@@ -347,7 +346,7 @@ INIT_DEVICE_EXPORT(rt_hw_imxrt_flexspi_init);
 #ifndef BSP_USING_OSPI_FLASH
 
 #define FLEXSPI_DATALEN 4U
-static rt_uint32_t send_buf[FLEXSPI_DATALEN] = {0x11223344, 0x55667788, 0x12345678, 0x9900aabb};
+static rt_uint32_t send_buf[FLEXSPI_DATALEN] = { 0x11223344, 0x55667788, 0x12345678, 0x9900aabb };
 static uint32_t recv_buf[FLEXSPI_DATALEN];
 
 /* read write 32bit test */
@@ -379,7 +378,7 @@ static void flexspi_test(void)
 
 #else
 
-#define EXAMPLE_SECTOR                  20
+#define EXAMPLE_SECTOR 20
 /*******************************************************************************
  * Variables
  ******************************************************************************/
@@ -410,12 +409,12 @@ static void flexspi_test(void)
     status = flexspi_nor_enable_octal_mode(FLEXSPI1_CONTROL_BASE);
     if (status != kStatus_Success)
     {
-    #ifdef BSP_USING_DMA
+#ifdef BSP_USING_DMA
         LOG_E("Enable octal mode failure ! -- DMA mode\r\n");
-    #else
+#else
         LOG_E("Enable octal mode failure !\r\n");
-    #endif
-        return ;
+#endif
+        return;
     }
 #ifdef BSP_USING_DMA
     LOG_W("Enabled octal mode. -- DMA mode\r\n");
@@ -428,12 +427,12 @@ static void flexspi_test(void)
     status = flexspi_nor_get_vendor_id(FLEXSPI1_CONTROL_BASE, &vendorID);
     if (status != kStatus_Success)
     {
-    #ifdef BSP_USING_DMA
+#ifdef BSP_USING_DMA
         LOG_E("Get vendor id failure ! -- DMA mode\r\n");
-    #else
+#else
         LOG_E("Get vendor id failure !\r\n");
-    #endif
-        return ;
+#endif
+        return;
     }
 #ifdef BSP_USING_DMA
     LOG_W("Vendor ID: 0x%x -- DMA mode\r\n", vendorID);
@@ -448,12 +447,12 @@ static void flexspi_test(void)
     status = flexspi_nor_flash_erase_sector(FLEXSPI1_CONTROL_BASE, EXAMPLE_SECTOR * SECTOR_SIZE);
     if (status != kStatus_Success)
     {
-    #ifdef BSP_USING_DMA
+#ifdef BSP_USING_DMA
         LOG_E("Erase sector failure ! -- DMA mode\r\n");
-    #else
+#else
         LOG_E("Erase sector failure !\r\n");
-    #endif
-        return ;
+#endif
+        return;
     }
 
 #if defined(CACHE_MAINTAIN) && CACHE_MAINTAIN
@@ -466,20 +465,20 @@ static void flexspi_test(void)
 
     if (memcmp(s_nor_program_buffer, s_nor_read_buffer, sizeof(s_nor_program_buffer)))
     {
-    #ifdef BSP_USING_DMA
+#ifdef BSP_USING_DMA
         LOG_E("Erase data -  read out data value incorrect ! -- DMA mode\r\n ");
-    #else
+#else
         LOG_E("Erase data -  read out data value incorrect !\r\n ");
-    #endif
-        return ;
+#endif
+        return;
     }
     else
     {
-    #ifdef BSP_USING_DMA
+#ifdef BSP_USING_DMA
         LOG_W("Erase data - successfully. -- DMA mode\r\n");
-    #else
+#else
         LOG_W("Erase data - successfully. \r\n");
-    #endif
+#endif
     }
 
     for (i = 0; i < 0xFFU; i++)
@@ -491,12 +490,12 @@ static void flexspi_test(void)
         flexspi_nor_flash_page_program(FLEXSPI1_CONTROL_BASE, EXAMPLE_SECTOR * SECTOR_SIZE, (void *)s_nor_program_buffer);
     if (status != kStatus_Success)
     {
-    #ifdef BSP_USING_DMA
+#ifdef BSP_USING_DMA
         LOG_E("Page program failure ! -- DMA mode\r\n");
-    #else
+#else
         LOG_E("Page program failure !\r\n");
-    #endif
-        return ;
+#endif
+        return;
     }
 
 #if defined(CACHE_MAINTAIN) && CACHE_MAINTAIN
@@ -508,22 +507,21 @@ static void flexspi_test(void)
 
     if (memcmp(s_nor_read_buffer, s_nor_program_buffer, sizeof(s_nor_program_buffer)) != 0)
     {
-    #ifdef BSP_USING_DMA
+#ifdef BSP_USING_DMA
         LOG_E("Program data -  read out data value incorrect ! -- DMA mode\r\n ");
-    #else
+#else
         LOG_E("Program data -  read out data value incorrect !\r\n ");
-    #endif
-        return ;
+#endif
+        return;
     }
     else
     {
-    #ifdef BSP_USING_DMA
+#ifdef BSP_USING_DMA
         LOG_W("Program data - successfully. -- DMA mode\r\n");
-    #else
+#else
         LOG_W("Program data - successfully. \r\n");
-    #endif
+#endif
     }
-
 }
 #endif
 MSH_CMD_EXPORT(flexspi_test, flexspi test)

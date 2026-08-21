@@ -127,9 +127,9 @@ status_t flexspi_nor_write_enable(FLEXSPI_Type *base, uint32_t baseAddr, bool en
 
     /* Write enable */
     flashXfer.deviceAddress = baseAddr;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Command;
-    flashXfer.SeqNumber     = 1;
+    flashXfer.port = FLASH_PORT;
+    flashXfer.cmdType = kFLEXSPI_Command;
+    flashXfer.SeqNumber = 1;
     if (enableOctal)
     {
         flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_WRITEENABLE_OPI;
@@ -148,14 +148,14 @@ status_t flexspi_nor_wait_bus_busy(FLEXSPI_Type *base, bool enableOctal)
 {
     /* Wait status ready. */
     bool isBusy;
-    uint32_t readValue=0;
+    uint32_t readValue = 0;
     status_t status;
     flexspi_transfer_t flashXfer;
 
     flashXfer.deviceAddress = 0;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Read;
-    flashXfer.SeqNumber     = 1;
+    flashXfer.port = FLASH_PORT;
+    flashXfer.cmdType = kFLEXSPI_Read;
+    flashXfer.SeqNumber = 1;
     if (enableOctal)
     {
         flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_READSTATUS_OPI;
@@ -165,7 +165,7 @@ status_t flexspi_nor_wait_bus_busy(FLEXSPI_Type *base, bool enableOctal)
         flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_READSTATUS;
     }
 
-    flashXfer.data     = &readValue;
+    flashXfer.data = &readValue;
     flashXfer.dataSize = 1;
 
     do
@@ -239,12 +239,12 @@ status_t flexspi_nor_enable_octal_mode(FLEXSPI_Type *base)
 
     /* Enable quad mode. */
     flashXfer.deviceAddress = 0;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Write;
-    flashXfer.SeqNumber     = 1;
-    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_ENTEROPI;
-    flashXfer.data          = &writeValue;
-    flashXfer.dataSize      = 1;
+    flashXfer.port = FLASH_PORT;
+    flashXfer.cmdType = kFLEXSPI_Write;
+    flashXfer.SeqNumber = 1;
+    flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_ENTEROPI;
+    flashXfer.data = &writeValue;
+    flashXfer.dataSize = 1;
 
     status = FLEXSPI_TransferBlocking(base, &flashXfer);
     if (status != kStatus_Success)
@@ -252,7 +252,7 @@ status_t flexspi_nor_enable_octal_mode(FLEXSPI_Type *base)
         return status;
     }
 
-    status             = flexspi_nor_wait_bus_busy(base, true);
+    status = flexspi_nor_wait_bus_busy(base, true);
 
     /* Do software reset. */
     FLEXSPI_SoftwareReset(base);
@@ -284,11 +284,11 @@ status_t flexspi_nor_flash_erase_sector(FLEXSPI_Type *base, uint32_t address)
     }
 
     flashXfer.deviceAddress = address;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Command;
-    flashXfer.SeqNumber     = 1;
-    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_ERASESECTOR;
-    status                  = FLEXSPI_TransferBlocking(base, &flashXfer);
+    flashXfer.port = FLASH_PORT;
+    flashXfer.cmdType = kFLEXSPI_Command;
+    flashXfer.SeqNumber = 1;
+    flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_ERASESECTOR;
+    status = FLEXSPI_TransferBlocking(base, &flashXfer);
 
     if (status != kStatus_Success)
     {
@@ -331,17 +331,17 @@ status_t flexspi_nor_flash_page_program(FLEXSPI_Type *base, uint32_t dstAddr, co
 
     /* Prepare page program command */
     flashXfer.deviceAddress = dstAddr;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Write;
-    flashXfer.SeqNumber     = 1;
-    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM;
-    flashXfer.data          = (uint32_t *)src;
-    flashXfer.dataSize      = FLASH_PAGE_SIZE;
+    flashXfer.port = FLASH_PORT;
+    flashXfer.cmdType = kFLEXSPI_Write;
+    flashXfer.SeqNumber = 1;
+    flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM;
+    flashXfer.data = (uint32_t *)src;
+    flashXfer.dataSize = FLASH_PAGE_SIZE;
 #ifdef BSP_USING_DMA
     g_completionFlag = false;
-    status                  = FLEXSPI_TransferEDMA(base, &flexspiHandle, &flashXfer);
+    status = FLEXSPI_TransferEDMA(base, &flexspiHandle, &flashXfer);
 #else
-    status                  = FLEXSPI_TransferBlocking(base, &flashXfer);
+    status = FLEXSPI_TransferBlocking(base, &flashXfer);
 #endif
     if (status != kStatus_Success)
     {
@@ -373,14 +373,14 @@ status_t flexspi_nor_read_data(FLEXSPI_Type *base, uint32_t startAddress, uint32
 
     /* Read page. */
     flashXfer.deviceAddress = readAddress;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Read;
-    flashXfer.SeqNumber     = 1;
-    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_READ;
-    flashXfer.data          = buffer;
-    flashXfer.dataSize      = length;
+    flashXfer.port = FLASH_PORT;
+    flashXfer.cmdType = kFLEXSPI_Read;
+    flashXfer.SeqNumber = 1;
+    flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_READ;
+    flashXfer.data = buffer;
+    flashXfer.dataSize = length;
 #ifdef BSP_USING_DMA
-    g_completionFlag        = false;
+    g_completionFlag = false;
 
     status = FLEXSPI_TransferEDMA(base, &flexspiHandle, &flashXfer);
 
@@ -406,14 +406,14 @@ status_t flexspi_nor_get_vendor_id(FLEXSPI_Type *base, uint8_t *vendorId)
 {
     /* Read manufacturer ID based on JEP106V spec, max continuation code table is 9, max manufacturer ID starts from
      * 9 + 1. */
-    uint8_t id[10] = {0x00U};
+    uint8_t id[10] = { 0x00U };
     flexspi_transfer_t flashXfer;
     flashXfer.deviceAddress = 0;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Read;
-    flashXfer.SeqNumber     = 1;
+    flashXfer.port = FLASH_PORT;
+    flashXfer.cmdType = kFLEXSPI_Read;
+    flashXfer.SeqNumber = 1;
     flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_READID_OPI;
-    flashXfer.data     = (uint32_t *)id;
+    flashXfer.data = (uint32_t *)id;
     flashXfer.dataSize = 10U;
 
     status_t status = FLEXSPI_TransferBlocking(base, &flashXfer);
@@ -444,10 +444,10 @@ status_t flexspi_nor_erase_chip(FLEXSPI_Type *base)
     }
 
     flashXfer.deviceAddress = 0;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Command;
-    flashXfer.SeqNumber     = 1;
-    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_CHIPERASE;
+    flashXfer.port = FLASH_PORT;
+    flashXfer.cmdType = kFLEXSPI_Command;
+    flashXfer.SeqNumber = 1;
+    flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_CHIPERASE;
 
     status = FLEXSPI_TransferBlocking(base, &flashXfer);
 
@@ -486,18 +486,18 @@ status_t flexspi_nor_flash_program(FLEXSPI_Type *base, uint32_t dstAddr, const u
 
     /* Prepare page program command */
     flashXfer.deviceAddress = dstAddr;
-    flashXfer.port          = FLASH_PORT;
-    flashXfer.cmdType       = kFLEXSPI_Write;
-    flashXfer.SeqNumber     = 1;
-    flashXfer.seqIndex      = NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM;
-    flashXfer.data          = (uint32_t *)src;
-    flashXfer.dataSize      = length;
+    flashXfer.port = FLASH_PORT;
+    flashXfer.cmdType = kFLEXSPI_Write;
+    flashXfer.SeqNumber = 1;
+    flashXfer.seqIndex = NOR_CMD_LUT_SEQ_IDX_PAGEPROGRAM;
+    flashXfer.data = (uint32_t *)src;
+    flashXfer.dataSize = length;
 #ifdef BSP_USING_DMA
-    g_completionFlag        = false;
+    g_completionFlag = false;
 
-    status                  = FLEXSPI_TransferEDMA(base, &flexspiHandle, &flashXfer);
+    status = FLEXSPI_TransferEDMA(base, &flexspiHandle, &flashXfer);
 #else
-    status                  = FLEXSPI_TransferBlocking(base, &flashXfer);
+    status = FLEXSPI_TransferBlocking(base, &flashXfer);
 #endif
     if (status != kStatus_Success)
     {

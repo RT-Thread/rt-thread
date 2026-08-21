@@ -17,8 +17,8 @@
 /*
  * Logging configuration
  */
-#define LOG_TAG     "fal.flash"
-#define LOG_LVL     LOG_LVL_INFO
+#define LOG_TAG "fal.flash"
+#define LOG_LVL LOG_LVL_INFO
 #include <rtdbg.h>
 
 /* FAL ops bridge */
@@ -44,13 +44,12 @@ static int _fal_erase(long offset, size_t size)
     return rt_qspi_flash_erase((rt_uint32_t)offset, size);
 }
 
-const struct fal_flash_dev imxrt1180_nor_flash =
-{
-    .name       = "norflash0",
-    .addr       = QSPI_FLASH_BASE,
-    .len        = QSPI_FLASH_SIZE,
-    .blk_size   = QSPI_SECTOR_SIZE,
-    .ops        = { _fal_init, _fal_read, _fal_write, _fal_erase },
+const struct fal_flash_dev imxrt1180_nor_flash = {
+    .name = "norflash0",
+    .addr = QSPI_FLASH_BASE,
+    .len = QSPI_FLASH_SIZE,
+    .blk_size = QSPI_SECTOR_SIZE,
+    .ops = { _fal_init, _fal_read, _fal_write, _fal_erase },
     .write_gran = QSPI_PAGE_SIZE,
 };
 

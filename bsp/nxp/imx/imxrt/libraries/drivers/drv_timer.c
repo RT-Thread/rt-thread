@@ -13,7 +13,7 @@
 
 #ifdef BSP_USING_CLOCK_TIMER
 
-#define LOG_TAG             "drv.clock_timer"
+#define LOG_TAG "drv.clock_timer"
 #include <drv_log.h>
 
 #include <rtdevice.h>
@@ -40,13 +40,13 @@
 /* The effective GPT input clock after root/prescaler configuration.
  * 1170: 24 MHz root / 3 = 8 MHz; 1180: 240 MHz root / 3 = 80 MHz. */
 #if defined(SOC_IMXRT1180_SERIES)
-#define IMXRT_GPT_MAXFREQ   (80000000U)
+#define IMXRT_GPT_MAXFREQ (80000000U)
 #elif defined(SOC_IMXRT1170_SERIES)
-#define IMXRT_GPT_MAXFREQ   (8000000U)
+#define IMXRT_GPT_MAXFREQ (8000000U)
 #else
-#define IMXRT_GPT_MAXFREQ   (25000000U)
+#define IMXRT_GPT_MAXFREQ (25000000U)
 #endif
-#define IMXRT_GPT_MINFREQ   (1U)
+#define IMXRT_GPT_MINFREQ (1U)
 
 static void NVIC_Configuration(void)
 {
@@ -135,22 +135,22 @@ static void imxrt_clock_timer_init(rt_clock_timer_t *timer, rt_uint32_t state)
 
     if (state == 1)
     {
-    #if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
-    #ifdef BSP_USING_CLOCK_TIMER1
+#if defined(SOC_IMXRT1170_SERIES) || defined(SOC_IMXRT1180_SERIES)
+#ifdef BSP_USING_CLOCK_TIMER1
         /*Clock setting for GPT*/
         CLOCK_SetRootClockMux(kCLOCK_Root_Gpt1, EXAMPLE_GPT_CLOCK_SOURCE_SELECT);
         CLOCK_SetRootClockDiv(kCLOCK_Root_Gpt1, EXAMPLE_GPT_CLOCK_DIVIDER_SELECT);
-    #endif
-    #ifdef BSP_USING_CLOCK_TIMER2
+#endif
+#ifdef BSP_USING_CLOCK_TIMER2
         /*Clock setting for GPT*/
         CLOCK_SetRootClockMux(kCLOCK_Root_Gpt2, EXAMPLE_GPT_CLOCK_SOURCE_SELECT);
         CLOCK_SetRootClockDiv(kCLOCK_Root_Gpt2, EXAMPLE_GPT_CLOCK_DIVIDER_SELECT);
-    #endif
-    #else
+#endif
+#else
         /*Clock setting for GPT*/
         CLOCK_SetMux(kCLOCK_PerclkMux, EXAMPLE_GPT_CLOCK_SOURCE_SELECT);
         CLOCK_SetDiv(kCLOCK_PerclkDiv, EXAMPLE_GPT_CLOCK_DIVIDER_SELECT);
-    #endif
+#endif
 
         /* Initialize GPT module by default config */
         GPT_GetDefaultConfig(&gptConfig);
@@ -198,8 +198,7 @@ static void imxrt_clock_timer_stop(rt_clock_timer_t *timer)
     GPT_StopTimer(clock_timer_dev);
 }
 
-static const struct rt_clock_timer_ops imxrt_clock_timer_ops =
-{
+static const struct rt_clock_timer_ops imxrt_clock_timer_ops = {
     .init = imxrt_clock_timer_init,
     .start = imxrt_clock_timer_start,
     .stop = imxrt_clock_timer_stop,
@@ -207,8 +206,7 @@ static const struct rt_clock_timer_ops imxrt_clock_timer_ops =
     .control = imxrt_clock_timer_control,
 };
 
-static const struct rt_clock_timer_info imxrt_clock_timer_info =
-{
+static const struct rt_clock_timer_info imxrt_clock_timer_info = {
     IMXRT_GPT_MAXFREQ,  /* the maximum count frequency can be set */
     IMXRT_GPT_MINFREQ,  /* the minimum count frequency can be set */
     0xFFFFFFFF,
@@ -229,7 +227,7 @@ int rt_hw_clock_timer_init(void)
 
 #ifdef BSP_USING_CLOCK_TIMER1
     GPT_timer1.info = &imxrt_clock_timer_info;
-    GPT_timer1.ops  = &imxrt_clock_timer_ops;
+    GPT_timer1.ops = &imxrt_clock_timer_ops;
     ret = rt_clock_timer_register(&GPT_timer1, "gpt1", GPT1);
 
     if (ret != RT_EOK)

@@ -20,20 +20,20 @@ extern "C" {
 
 /* Put critical transfer code into ITCM (Code TCM) */
 #if defined(__CC_ARM) || defined(__ARMCC_VERSION)
-#define FLEXSPI_RAM_CODE  __attribute__((section("CodeQuickAccess"), noinline))
+#define FLEXSPI_RAM_CODE __attribute__((section("CodeQuickAccess"), noinline))
 #elif defined(__GNUC__)
-#define FLEXSPI_RAM_CODE  __attribute__((section("CodeQuickAccess"), noinline))
+#define FLEXSPI_RAM_CODE __attribute__((section("CodeQuickAccess"), noinline))
 #elif defined(__ICCARM__)
-#define FLEXSPI_RAM_CODE  __ramfunc
+#define FLEXSPI_RAM_CODE __ramfunc
 #else
 #define FLEXSPI_RAM_CODE
 #endif
 
 typedef struct
 {
-    FLEXSPI_Type   *base;
-    flexspi_port_t  port;
-    uint32_t        ahb_base;
+    FLEXSPI_Type *base;
+    flexspi_port_t port;
+    uint32_t ahb_base;
 } imxrt_flexspi_handle_t;
 
 /* Get initialized FlexSPI handle (FlexSPI1 or FlexSPI2 decided by BSP config) */

@@ -9,6 +9,9 @@
  */
 
 #include <rtthread.h>
+#define DBG_TAG "mnt"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
 
 /* ====================================================================
  * QSPI NOR Flash LittleFS (controlled by BSP_USING_QSPI_FLASH_FS)
@@ -98,3 +101,30 @@ INIT_APP_EXPORT(_qspi_flash_fs_mount);
 INIT_COMPONENT_EXPORT(fal_init);
 
 #endif /* BSP_USING_QSPI_FLASH_FS */
+
+#ifdef BSP_USING_SDCARD_FATFS
+#include <dfs_fs.h>
+
+static int _sdcard_fs_mount(void)
+{
+    rt_tick_t start = rt_tick_get();
+    while (rt_device_find("sd0") == RT_NULL)
+    {
+        if ((rt_tick_get() - start) > (5 * RT_TICK_PER_SECOND))
+        {
+            LOG_E("wait for 'sd0' timeout");
+            return -RT_ETIMEOUT;
+        }
+        rt_thread_mdelay(10);
+    }
+    int ret = dfs_mount("sd0", "/", "elm", 0, 0);
+    if (ret != 0)
+    {
+        LOG_E("sd0 mount to '/' failed! (ret=%d)", ret);
+        return ret;
+    }
+    LOG_I("sd0 mounted at '/'");
+    return RT_EOK;
+}
+INIT_ENV_EXPORT(_sdcard_fs_mount);
+#endif /* BSP_USING_SDCARD_FATFS */

@@ -14,7 +14,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#define GET_PIN(PORTx, PIN)      (32 * (PORTx - 1) + (PIN & 31))    /* PORTx:1,2,3,4,5 */
+#define GET_PIN(PORTx, PIN) (32 * (PORTx - 1) + (PIN & 31))    /* PORTx:1,2,3,4,5 */
 
 int rt_hw_pin_init(void);
 

@@ -23,7 +23,7 @@
 #endif
 #include "fsl_iomuxc.h"
 
-#define LOG_TAG             "drv.gpio"
+#define LOG_TAG "drv.gpio"
 #include <drv_log.h>
 
 #ifdef SOC_IMXRT1180_SERIES
@@ -36,7 +36,7 @@
 #error "Please don't define 'FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL'!"
 #endif
 
-#define __IMXRT_HDR_DEFAULT                      {-1, 0, RT_NULL, RT_NULL}
+#define __IMXRT_HDR_DEFAULT { -1, 0, RT_NULL, RT_NULL }
 
 #if defined(SOC_IMXRT1170_SERIES)
 #define PIN_INVALID_CHECK(PORT_INDEX, PIN_NUM) (PORT_INDEX > 7) || ((mask_tab[PORT_INDEX].valid_mask & (1 << PIN_NUM)) == 0)
@@ -47,28 +47,28 @@
 #endif
 
 #if defined(SOC_IMXRT1015_SERIES)
-#define MUX_BASE         0x401f8024
-#define CONFIG_BASE      0x401f8198
+#define MUX_BASE    0x401f8024
+#define CONFIG_BASE 0x401f8198
 #elif defined(SOC_IMXRT1020_SERIES)
-#define MUX_BASE         0x401f8014
-#define CONFIG_BASE      0x401f8188
+#define MUX_BASE    0x401f8014
+#define CONFIG_BASE 0x401f8188
 #elif defined(SOC_IMXRT1170_SERIES)
-#define MUX_BASE         0x400E8010
-#define CONFIG_BASE      0x400E8254
+#define MUX_BASE    0x400E8010
+#define CONFIG_BASE 0x400E8254
 #elif defined(SOC_IMXRT1180_SERIES)
 #define MUX_BASE    (IOMUXC_BASE + 0x10u)
 #define CONFIG_BASE (IOMUXC_BASE + 0x258u)
 #else /* 1050 & 1060 & 1064 series*/
-#define MUX_BASE         0x401f8014
-#define CONFIG_BASE      0x401f8204
+#define MUX_BASE    0x401f8014
+#define CONFIG_BASE 0x401f8204
 #endif
 
-#define GPIO5_MUX_BASE       0x400A8000
-#define GPIO5_CONFIG_BASE    0x400A8018
-#define GPIO6_MUX_BASE       0x40C08000
-#define GPIO6_CONFIG_BASE    0x40C08040
-#define GPIO13_MUX_BASE      0x40C94000
-#define GPIO13_CONFIG_BASE   0x40C94040
+#define GPIO5_MUX_BASE     0x400A8000
+#define GPIO5_CONFIG_BASE  0x400A8018
+#define GPIO6_MUX_BASE     0x40C08000
+#define GPIO6_CONFIG_BASE  0x40C08040
+#define GPIO13_MUX_BASE    0x40C94000
+#define GPIO13_CONFIG_BASE 0x40C94040
 
 #if defined(SOC_IMXRT1180_SERIES)
 #define AON_MUX_BASE    (IOMUXC_AON_BASE)
@@ -80,9 +80,9 @@ struct pin_mask
 #if defined(SOC_IMXRT1180_SERIES)
     RGPIO_Type *gpio;
 #else
-    GPIO_Type    *gpio;
+    GPIO_Type *gpio;
 #endif
-    rt_int32_t    valid_mask;
+    rt_int32_t valid_mask;
 };
 
 #if defined(SOC_IMXRT1170_SERIES)
@@ -130,22 +130,363 @@ const struct pin_mask mask_tab[5] =
 
     };
 
-const rt_int32_t reg_offset[] =
-{
+/* clang-format off */
+const rt_int32_t reg_offset[] = {
 #if defined(SOC_IMXRT1015_SERIES)
-    38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 64, 65, 66, 67, 68, 69,
-    -1, -1, -1, -1,  0,  1,  2,  3,  4,  5, -1, -1, -1, -1, -1, -1, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, -1, -1, -1, -1,
-    28, 29, 30, 31, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    -1,
+    -1,
+    -1,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    -1,
+    -1,
+    -1,
+    -1,
+    28,
+    29,
+    30,
+    31,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
 #elif defined(SOC_IMXRT1020_SERIES)
-    42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73,
-    0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, -1, -1, -1, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    -1,
+    -1,
+    -1,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
 #elif defined(SOC_IMXRT1170_SERIES)
-    0, 1,   2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-    32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-    64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
-    96, 97, 98, 99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,
-    128,129, 130,131,132,133,134,135,136,137,138,139,140,141,142,143,144, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  -1, -1, -1, -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142,
+    143,
+    144,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
+    -1,
 #elif defined(SOC_IMXRT1180_SERIES)
     /* GPIO1 (AON domain) */
     0,
@@ -346,13 +687,138 @@ const rt_int32_t reg_offset[] =
     -1,
     -1,
 #else /* 1050 & 1060 & 1064 series*/
-    42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73,
-    74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,100,101,102,103,104,105,
-    112,113,114,115,116,117,118,119,120,121,122,123,106,107,108,109,110,111, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, -1, -1, -1, -1,
-    0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+    42,
+    43,
+    44,
+    45,
+    46,
+    47,
+    48,
+    49,
+    50,
+    51,
+    52,
+    53,
+    54,
+    55,
+    56,
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79,
+    80,
+    81,
+    82,
+    83,
+    84,
+    85,
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38,
+    39,
+    40,
+    41,
+    -1,
+    -1,
+    -1,
+    -1,
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
 #endif
 
 };
+/* clang-format on */
 
 static const IRQn_Type irq_tab[] = {
 #if defined(SOC_IMXRT1180_SERIES)
@@ -857,7 +1323,7 @@ static void imxrt_isr(rt_int16_t index_offset, rt_int8_t pin_start, GPIO_Type *b
     pin_end = pin_start + 15;
     isr_status = GPIO_PortGetInterruptFlags(base) & base->IMR;
 
-    for (i = pin_start; i <= pin_end ; i++)
+    for (i = pin_start; i <= pin_end; i++)
     {
         if (isr_status & (1 << i))
         {
@@ -1077,7 +1543,7 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 
     if (PIN_INVALID_CHECK(port, pin_num))
     {
-        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
+        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin, port + 1, pin_num);
         return;
     }
 
@@ -1223,7 +1689,7 @@ static rt_ssize_t imxrt_pin_read(rt_device_t dev, rt_base_t pin)
 
     if (PIN_INVALID_CHECK(port, pin_num))
     {
-        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
+        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin, port + 1, pin_num);
         return -RT_EINVAL;
     }
 
@@ -1243,7 +1709,7 @@ static void imxrt_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 
     if (PIN_INVALID_CHECK(port, pin_num))
     {
-        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
+        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin, port + 1, pin_num);
         return;
     }
 
@@ -1265,7 +1731,7 @@ static rt_err_t imxrt_pin_attach_irq(struct rt_device *device, rt_base_t pin,
 
     if (PIN_INVALID_CHECK(port, pin_num))
     {
-        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
+        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin, port + 1, pin_num);
         return -RT_ENOSYS;
     }
 
@@ -1279,8 +1745,8 @@ static rt_err_t imxrt_pin_attach_irq(struct rt_device *device, rt_base_t pin,
         return RT_EOK;
     }
 
-    hdr_tab[pin].pin  = pin;
-    hdr_tab[pin].hdr  = hdr;
+    hdr_tab[pin].pin = pin;
+    hdr_tab[pin].hdr = hdr;
     hdr_tab[pin].mode = mode;
     hdr_tab[pin].args = args;
     rt_hw_interrupt_enable(level);
@@ -1298,7 +1764,7 @@ static rt_err_t imxrt_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 
     if (PIN_INVALID_CHECK(port, pin_num))
     {
-        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
+        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin, port + 1, pin_num);
         return -RT_ENOSYS;
     }
 
@@ -1326,7 +1792,7 @@ static rt_err_t imxrt_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt
 
     if (PIN_INVALID_CHECK(port, pin_num))
     {
-        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
+        LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin, port + 1, pin_num);
         return -RT_ENOSYS;
     }
 
@@ -1477,8 +1943,7 @@ static rt_base_t imxrt_pin_get(const char *name)
     return pin;
 }
 
-const static struct rt_pin_ops imxrt_pin_ops =
-{
+const static struct rt_pin_ops imxrt_pin_ops = {
     imxrt_pin_mode,
     imxrt_pin_write,
     imxrt_pin_read,

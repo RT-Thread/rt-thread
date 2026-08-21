@@ -152,8 +152,9 @@
 #define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
-#define RT_USING_SERIAL_V1
-#define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SERIAL_V2
+#define RT_SERIAL_BUF_STRATEGY_OVERWRITE
+#define RT_SERIAL_USING_DMA
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -423,8 +424,14 @@
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_DMA
+#define BSP_USING_GPIO
 #define BSP_USING_LPUART
 #define BSP_USING_LPUART12
+#define BSP_LPUART12_RX_USING_DMA
+#define BSP_LPUART12_RX_DMA_CHANNEL 22
+#define BSP_LPUART12_TX_USING_DMA
+#define BSP_LPUART12_TX_DMA_CHANNEL 23
 /* end of On-chip Peripheral Drivers */
 
 /* Onboard Peripheral Drivers */
@@ -433,7 +440,7 @@
 
 /* Board extended module Drivers */
 
-#define BSP_LINKER_SCRIPT_RAM
+#define BSP_LINKER_SCRIPT_FLEXSPI_NOR
 /* end of Hardware Drivers Config */
 
 #endif
