@@ -21,7 +21,11 @@
 #include <hal_reset.h>
 #include <hal_gpio.h>
 
+#ifdef BSP_UART_DEFAULT_BAUDRATE
+#define UART_DEFAULT_BAUDRATE BSP_UART_DEFAULT_BAUDRATE
+#else
 #define UART_DEFAULT_BAUDRATE 500000
+#endif
 
 #ifdef UART0_TX_USING_GPIOB8
 #define UART0_TX GPIOB(8)
