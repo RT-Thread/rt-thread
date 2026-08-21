@@ -12,7 +12,6 @@
 #define DBG_TAG "mnt"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
-#define LOG_TAG "mnt"
 
 /* ====================================================================
  * QSPI NOR Flash LittleFS (controlled by BSP_USING_QSPI_FLASH_FS)
@@ -108,9 +107,15 @@ INIT_COMPONENT_EXPORT(fal_init);
 
 static int _sdcard_fs_mount(void)
 {
+    rt_tick_t start = rt_tick_get();
     while (rt_device_find("sd0") == RT_NULL)
     {
-        rt_thread_mdelay(1);
+        if ((rt_tick_get() - start) > (5 * RT_TICK_PER_SECOND))
+        {
+            LOG_E("wait for 'sd0' timeout");
+            return -RT_ETIMEOUT;
+        }
+        rt_thread_mdelay(10);
     }
     int ret = dfs_mount("sd0", "/", "elm", 0, 0);
     if (ret != 0)
