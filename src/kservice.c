@@ -166,6 +166,46 @@ RTM_EXPORT(rt_show_version);
 
 #ifdef RT_USING_CONSOLE
 #ifdef RT_USING_DEVICE
+static rt_err_t _console_get_open_flags(rt_device_t device, rt_uint16_t *oflag)
+{
+    rt_err_t result;
+    rt_uint16_t console_oflag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_STREAM;
+    rt_uint16_t access_mode;
+
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(oflag != RT_NULL);
+
+    result = rt_device_control(device, RT_DEVICE_CTRL_CONSOLE_OFLAG, &console_oflag);
+    if (result != RT_EOK)
+    {
+        if (device->flag & (RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_DMA_TX))
+        {
+            console_oflag = (device->flag & RT_DEVICE_FLAG_RDWR) |
+                            (device->flag & (RT_DEVICE_FLAG_INT_TX | RT_DEVICE_FLAG_DMA_TX)) |
+                            RT_DEVICE_FLAG_STREAM;
+        }
+        else
+        {
+            LOG_W("refusing to set device %.*s as console: missing console-safe output support",
+                  RT_NAME_MAX, device->parent.name);
+            return -RT_EINVAL;
+        }
+    }
+
+    access_mode = console_oflag & RT_DEVICE_OFLAG_RDWR;
+    if (access_mode != RT_DEVICE_OFLAG_WRONLY &&
+        access_mode != RT_DEVICE_OFLAG_RDWR)
+    {
+        LOG_W("refusing to set device %.*s as console: invalid open flags 0x%04x",
+              RT_NAME_MAX, device->parent.name, console_oflag);
+        return -RT_EINVAL;
+    }
+
+    *oflag = console_oflag;
+
+    return RT_EOK;
+}
+
 /**
  * @brief  This function returns the device using in console.
  *
@@ -189,19 +229,42 @@ RTM_EXPORT(rt_console_get_device);
 rt_device_t rt_console_set_device(const char *name)
 {
     rt_device_t old_device = _console_device;
-    rt_device_t new_device = rt_device_find(name);
+    rt_device_t new_device;
+    rt_uint16_t oflag;
 
-    if (new_device != RT_NULL && new_device != old_device)
+    if (name == RT_NULL)
     {
-        if (old_device != RT_NULL)
-        {
-            /* close old console device */
-            rt_device_close(old_device);
-        }
+        return RT_NULL;
+    }
 
-        /* set new console device */
-        rt_device_open(new_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
-        _console_device = new_device;
+    new_device = rt_device_find(name);
+
+    if (new_device == RT_NULL)
+    {
+        return RT_NULL;
+    }
+
+    if (new_device == old_device)
+    {
+        return old_device;
+    }
+
+    if (_console_get_open_flags(new_device, &oflag) != RT_EOK)
+    {
+        return RT_NULL;
+    }
+
+    if (rt_device_open(new_device, oflag) != RT_EOK)
+    {
+        return RT_NULL;
+    }
+
+    _console_device = new_device;
+
+    if (old_device != RT_NULL)
+    {
+        /* close old console device */
+        rt_device_close(old_device);
     }
 
     return old_device;
