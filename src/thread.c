@@ -162,6 +162,9 @@ static void _thread_timeout(void *parameter)
      */
     RT_ASSERT(rt_sched_thread_is_suspended(thread));
 
+    /* The timeout callback now owns this thread timer. */
+    RT_SCHED_CTX(thread).sched_flag_ttmr_set = 0;
+
     /* set error number */
     thread->error = -RT_ETIMEOUT;
 
