@@ -7,7 +7,7 @@
 #include "drv_config.h"
 #include "hal_data.h"
 
-#if defined(BSP_USING_PWM) && \
+#if defined(BSP_USING_PWM_W) && \
     (defined(BSP_USING_PWM0) || defined(BSP_USING_PWM1) || \
      defined(BSP_USING_PWM2) || defined(BSP_USING_PWM3) || \
      defined(BSP_USING_PWM4) || defined(BSP_USING_PWM5) || \
@@ -217,4 +217,4 @@ static int rt_hw_pwm_w_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_pwm_w_init);
 
-#endif /* BSP_USING_PWM */
+#endif /* BSP_USING_PWM_W */
