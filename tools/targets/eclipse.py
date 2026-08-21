@@ -24,6 +24,9 @@ from utils import *
 from utils import _make_path_relative
 from utils import xml_indent
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
+
 MODULE_VER_NUM = 6
 
 source_pattern = ['*.c', '*.cpp', '*.cxx', '*.cc', '*.s', '*.S', '*.asm','*.cmd']
@@ -179,7 +182,9 @@ def HandleToolOption(tools, env, project, reset):
     is_cpp_prj = IsCppProject()
     BSP_ROOT = os.path.abspath(env['BSP_ROOT'])
 
-    CPPDEFINES = project['CPPDEFINES']
+    # fold tuple/list macros into NAME / NAME=value strings up front so the
+    # downstream str ops (.replace('=', ' '), set diff) can never hit a tuple
+    CPPDEFINES = target_utils.normalize_defines(project['CPPDEFINES'])
     paths = [ConverToRttEclipsePathFormat(RelativeProjectPath(env, os.path.normpath(i)).replace('\\', '/')) for i in project['CPPPATH']]
 
     compile_include_paths_options = []
@@ -282,7 +287,8 @@ def HandleToolOption(tools, env, project, reset):
                 else:
                     project_defs += [item.get('value')]
             if len(project_defs) > 0:
-                cproject_defs = set(CPPDEFINES) - set(project_defs)
+                existing = set(project_defs)
+                cproject_defs = [d for d in CPPDEFINES if d not in existing]
             else:
                 cproject_defs = CPPDEFINES
 
@@ -295,10 +301,10 @@ def HandleToolOption(tools, env, project, reset):
     if linker_scriptfile_option is not None :
         option = linker_scriptfile_option
         linker_script = 'link.lds'
-        items = env['LINKFLAGS'].split(' ')
-        if '-T' in items:
-            linker_script = items[items.index('-T') + 1]
-            linker_script = ConverToRttEclipsePathFormat(linker_script)
+        # robust parse: handles -Tfoo, -T foo, -T "dir with space/x", -Wl,-T,x
+        scripts = target_utils.normalize_link_script_flags(env['LINKFLAGS'])
+        if scripts:
+            linker_script = ConverToRttEclipsePathFormat(scripts[0])
 
         listOptionValue = option.find('listOptionValue')
         if listOptionValue != None:
@@ -309,14 +315,16 @@ def HandleToolOption(tools, env, project, reset):
     # scriptfile in stm32cubeIDE
     if linker_script_option is not None :
         option = linker_script_option
-        items = env['LINKFLAGS'].split(' ')
-        if '-T' in items:
-            linker_script = ConverToRttEclipsePathFormat(items[items.index('-T') + 1]).strip('"')
+        scripts = target_utils.normalize_link_script_flags(env['LINKFLAGS'])
+        if scripts:
+            linker_script = ConverToRttEclipsePathFormat(scripts[0]).strip('"')
             option.set('value', linker_script)
     # update nostartfiles config
     if linker_nostart_option is not None :
         option = linker_nostart_option
-        if env['LINKFLAGS'].find('-nostartfiles') != -1:
+        # match the flag as a whole token, not a substring of another flag
+        link_tokens = target_utils.normalize_flags(env['LINKFLAGS'])
+        if '-nostartfiles' in link_tokens:
             option.set('value', 'true')
         else:
             option.set('value', 'false')

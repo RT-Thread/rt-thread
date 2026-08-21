@@ -34,6 +34,9 @@ from xml.etree.ElementTree import SubElement
 from utils import _make_path_relative
 from utils import xml_indent
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
+
 fs_encoding = sys.getfilesystemencoding()
 
 iar_workspace = r'''<?xml version="1.0" encoding="iso-8859-1"?>
@@ -56,24 +59,26 @@ def IARAddGroup(parent, name, files, project_path):
     for f in files:
         fn = f.rfile()
         name = fn.name
-        path = os.path.dirname(fn.abspath)
-        basename = os.path.basename(path)
-        path = _make_path_relative(project_path, path)
-        path = os.path.join(path, name)
+        dir_path = os.path.dirname(fn.abspath)
+        # stable relative path using IAR's '\\' convention (was mixed '/' + '\\'
+        # from _make_path_relative + os.path.join); ElementTree escapes the text
+        path = target_utils.normalize_group_file_path(project_path, dir_path, name, sep='\\')
 
         file = SubElement(group, 'file')
         file_name = SubElement(file, 'name')
 
         if os.path.isabs(path):
-            file_name.text = path # path.decode(fs_encoding)
+            file_name.text = path
         else:
-            file_name.text = '$PROJ_DIR$\\' + path # ('$PROJ_DIR$\\' + path).decode(fs_encoding)
+            file_name.text = '$PROJ_DIR$\\' + path
 
 def IARWorkspace(target):
     # make an workspace
     workspace = target.replace('.ewp', '.eww')
     out = open(workspace, 'w')
-    xml = iar_workspace % target
+    # the target path is interpolated into raw XML text under the $WS_DIR$\
+    # convention: normalize to '\\' separators and escape &, <, >, quotes
+    xml = iar_workspace % target_utils.xml_path_attr(target, sep='\\')
     out.write(xml)
     out.close()
 
@@ -152,22 +157,26 @@ def IARProject(env, target, script):
                     state.text = '$PROJ_DIR$\\' + path
 
         if name.text == 'CCDefines':
-            for define in CPPDEFINES:
+            # fold tuple/list macros to FOO=1; a raw tuple in state.text would
+            # crash ElementTree serialization
+            for define in target_utils.normalize_defines(CPPDEFINES):
                 state = SubElement(option, 'state')
                 state.text = define
 
-            for define in LOCAL_CPPDEFINES:
+            for define in target_utils.normalize_defines(LOCAL_CPPDEFINES):
                 state = SubElement(option, 'state')
                 state.text = define
 
         if name.text == 'IlinkAdditionalLibs':
             for path in Libs:
                 state = SubElement(option, 'state')
+                # normalize separators; the old .decode(fs_encoding) crashed on
+                # Python 3 (str has no decode). ElementTree escapes the text.
+                path = target_utils.normalize_path(path, force_posix=False)
                 if os.path.isabs(path) or path.startswith('$'):
-                    path = path.decode(fs_encoding)
+                    state.text = path
                 else:
-                    path = ('$PROJ_DIR$\\' + path).decode(fs_encoding)
-                state.text = path
+                    state.text = '$PROJ_DIR$\\' + path
 
     xml_indent(root)
     out.write(etree.tostring(root, encoding='utf-8').decode())
