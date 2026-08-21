@@ -16,6 +16,16 @@ if RT_USING_DFS
         bool "Using working directory"
         default y
 
+    config RT_USING_DFS_LARGE_FILE
+        bool "Enable large file support with 64-bit file offsets"
+        default n
+        select RT_KLIBC_USING_VSNPRINTF_LONGLONG if !RT_KLIBC_USING_LIBC_VSNPRINTF
+        help
+            Enable 64-bit signed off_t for DFS/POSIX file offsets and
+            file sizes. This is required to access FAT32 files larger
+            than 2GB on 32-bit platforms. Enabling this option changes
+            the ABI of file offset related APIs and structures.
+
 if RT_USING_DFS_V1
     config RT_USING_DFS_MNTTABLE
         bool "Using mount table for file system"
