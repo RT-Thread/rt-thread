@@ -16,7 +16,7 @@
 #include "drv_dma.h"
 
 // #define DRV_DEBUG
-#define LOG_TAG             "drv.dma"
+#define LOG_TAG "drv.dma"
 #include <drv_log.h>
 /*
  * DMA-capable BSPs are expected to enable HAL_DMA_MODULE_ENABLED in the
@@ -39,14 +39,25 @@ static void stm32_dma_enable_dmamux_clock(void)
 #endif /* defined(STM32_DMA_USES_REQUEST) */
 
 /**
- * @brief Enable the clock of one DMA controller and wait for the write to complete.
- * @param dma_rcc RCC enable bit of the DMA controller.
+ * @brief Enable the clock of one DMA/BDMA controller and wait for the write to complete.
+ * @param dma_rcc RCC enable bit of the DMA/BDMA controller.
+ * @param type Type of the DMA/BDMA controller.
  */
-static void stm32_dma_enable_clock(rt_uint32_t dma_rcc)
+static void stm32_dma_enable_clock(rt_uint32_t dma_rcc,
+                                   stm32_dma_type type)
 {
     rt_uint32_t tmpreg = 0x00U;
 
-#if defined(STM32_DMA_USES_RCC_AHBENR)
+#if defined(BSP_USING_BDMA) && (defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32H7RS))
+    if (type == STM32_DMA_TYPE_BDMA)
+    {
+        SET_BIT(RCC->AHB4ENR, dma_rcc);
+        tmpreg = READ_BIT(RCC->AHB4ENR, dma_rcc);
+        UNUSED(tmpreg);
+        return;
+    }
+
+#elif defined(STM32_DMA_USES_RCC_AHBENR)
     SET_BIT(RCC->AHBENR, dma_rcc);
     tmpreg = READ_BIT(RCC->AHBENR, dma_rcc);
 #elif defined(STM32_DMA_USES_RCC_MP_AHB2ENSETR)
@@ -69,12 +80,9 @@ static void stm32_dma_enable_clock(rt_uint32_t dma_rcc)
  * DMA client does not disable a line still used by another active client.
  * All other DMA IRQs keep the direct enable/disable behavior.
  */
-#if (defined(SOC_SERIES_STM32F1) && defined(DMA2_Channel4_5_IRQn)) \
- || (defined(SOC_SERIES_STM32L0) && defined(DMA1_Channel4_5_6_7_IRQn)) \
- || (defined(SOC_SERIES_STM32G0) && defined(DMA1_Channel2_3_IRQn)) \
- || (defined(SOC_SERIES_STM32F0) && (defined(DMA1_Channel2_3_IRQn) || defined(DMA1_Channel4_5_IRQn) || defined(DMA1_Channel4_5_6_7_IRQn)))
+#if (defined(SOC_SERIES_STM32F1) && defined(DMA2_Channel4_5_IRQn)) || (defined(SOC_SERIES_STM32L0) && defined(DMA1_Channel4_5_6_7_IRQn)) || (defined(SOC_SERIES_STM32G0) && defined(DMA1_Channel2_3_IRQn)) || (defined(SOC_SERIES_STM32F0) && (defined(DMA1_Channel2_3_IRQn) || defined(DMA1_Channel4_5_IRQn) || defined(DMA1_Channel4_5_6_7_IRQn)))
 #define STM32_DMA_HAS_SHARED_IRQ_REFCNT
-#define STM32_DMA_IRQ_SLOT_COUNT    ((rt_uint32_t)(sizeof(NVIC->ISER) / sizeof(NVIC->ISER[0]) * 32U))
+#define STM32_DMA_IRQ_SLOT_COUNT ((rt_uint32_t)(sizeof(NVIC->ISER) / sizeof(NVIC->ISER[0]) * 32U))
 
 /**
  * @brief Reference count for each shared DMA IRQ line.
@@ -122,24 +130,24 @@ static rt_bool_t stm32_dma_irq_needs_refcount(IRQn_Type dma_irq)
 #endif /* defined(SOC_SERIES_STM32G0) && defined(DMA1_Channel2_3_IRQn) */
 
 #if defined(SOC_SERIES_STM32F0)
-# if defined(DMA1_Channel2_3_IRQn)
+#if defined(DMA1_Channel2_3_IRQn)
     if (dma_irq == DMA1_Channel2_3_IRQn)
     {
         return RT_TRUE;
     }
-# endif /* defined(DMA1_Channel2_3_IRQn) */
-# if defined(DMA1_Channel4_5_IRQn)
+#endif /* defined(DMA1_Channel2_3_IRQn) */
+#if defined(DMA1_Channel4_5_IRQn)
     if (dma_irq == DMA1_Channel4_5_IRQn)
     {
         return RT_TRUE;
     }
-# endif /* defined(DMA1_Channel4_5_IRQn) */
-# if defined(DMA1_Channel4_5_6_7_IRQn)
+#endif /* defined(DMA1_Channel4_5_IRQn) */
+#if defined(DMA1_Channel4_5_6_7_IRQn)
     if (dma_irq == DMA1_Channel4_5_6_7_IRQn)
     {
         return RT_TRUE;
     }
-# endif /* defined(DMA1_Channel4_5_6_7_IRQn) */
+#endif /* defined(DMA1_Channel4_5_6_7_IRQn) */
 #endif /* defined(SOC_SERIES_STM32F0) */
 
     return RT_FALSE;
@@ -206,49 +214,175 @@ static void stm32_dma_irq_put(IRQn_Type dma_irq)
 }
 
 /**
- * @brief Copy one static DMA descriptor into one HAL DMA handle.
+ * @brief Apply common configuration fields from the base structure to a HAL DMA handle.
  * @param dma_handle DMA handle to update.
- * @param dma_config Static DMA endpoint description.
+ * @param common Common configuration fields shared by DMA and BDMA.
  */
-static void stm32_dma_apply_config(DMA_HandleTypeDef *dma_handle,
-                                   const struct stm32_dma_config *dma_config)
+static void stm32_dma_apply_common_config(DMA_HandleTypeDef *dma_handle,
+                                          const struct stm32_dma_config_common *common)
 {
-    dma_handle->Instance = dma_config->Instance;
+    dma_handle->Instance = common->Instance;
+#if defined(STM32_DMA_USES_REQUEST) || defined(STM32_BDMA_USES_REQUEST)
+    dma_handle->Init.Request = common->request;
+#endif
+    dma_handle->Init.Direction = common->direction;
+    dma_handle->Init.PeriphInc = common->periph_inc;
+    dma_handle->Init.MemInc = common->mem_inc;
+    dma_handle->Init.PeriphDataAlignment = common->periph_data_alignment;
+    dma_handle->Init.MemDataAlignment = common->mem_data_alignment;
+    dma_handle->Init.Mode = common->mode;
+    dma_handle->Init.Priority = common->priority;
+}
+
+/**
+ * @brief Apply common configuration fields and optional DMA-specific fields.
+ * @param dma_handle DMA handle to update.
+ * @param common Common configuration fields shared by DMA and BDMA.
+ * @param dma_config Optional DMA-specific configuration (NULL for BDMA).
+ */
+static void stm32_dma_apply_config_common(DMA_HandleTypeDef *dma_handle,
+                                          const struct stm32_dma_config_common *common,
+                                          const struct stm32_dma_config *dma_config)
+{
+    stm32_dma_apply_common_config(dma_handle, common);
+
+    if (dma_config != RT_NULL)
+    {
 #if defined(STM32_DMA_USES_GPDMA)
-    dma_handle->Init.Request = dma_config->request;
-    dma_handle->Init.BlkHWRequest = dma_config->blk_hw_request;
-    dma_handle->Init.Direction = dma_config->direction;
-    dma_handle->Init.SrcInc = dma_config->src_inc;
-    dma_handle->Init.DestInc = dma_config->dest_inc;
-    dma_handle->Init.SrcDataWidth = dma_config->src_data_width;
-    dma_handle->Init.DestDataWidth = dma_config->dest_data_width;
-    dma_handle->Init.Priority = dma_config->priority;
-    dma_handle->Init.SrcBurstLength = dma_config->src_burst_length;
-    dma_handle->Init.DestBurstLength = dma_config->dest_burst_length;
-    dma_handle->Init.TransferAllocatedPort = dma_config->transfer_allocated_port;
-    dma_handle->Init.TransferEventMode = dma_config->transfer_event_mode;
-    dma_handle->Init.Mode = dma_config->mode;
+        dma_handle->Init.BlkHWRequest = dma_config->blk_hw_request;
+        dma_handle->Init.SrcInc = dma_config->src_inc;
+        dma_handle->Init.DestInc = dma_config->dest_inc;
+        dma_handle->Init.SrcDataWidth = dma_config->src_data_width;
+        dma_handle->Init.DestDataWidth = dma_config->dest_data_width;
+        dma_handle->Init.SrcBurstLength = dma_config->src_burst_length;
+        dma_handle->Init.DestBurstLength = dma_config->dest_burst_length;
+        dma_handle->Init.TransferAllocatedPort = dma_config->transfer_allocated_port;
+        dma_handle->Init.TransferEventMode = dma_config->transfer_event_mode;
 #else
 #if defined(STM32_DMA_USES_CHANNEL)
-    dma_handle->Init.Channel = dma_config->channel;
+        dma_handle->Init.Channel = dma_config->channel;
 #endif /* defined(STM32_DMA_USES_CHANNEL) */
-#if defined(STM32_DMA_USES_REQUEST)
-    dma_handle->Init.Request = dma_config->request;
-#endif /* defined(STM32_DMA_USES_REQUEST) */
-    dma_handle->Init.Direction = dma_config->direction;
-    dma_handle->Init.PeriphInc = dma_config->periph_inc;
-    dma_handle->Init.MemInc = dma_config->mem_inc;
-    dma_handle->Init.PeriphDataAlignment = dma_config->periph_data_alignment;
-    dma_handle->Init.MemDataAlignment = dma_config->mem_data_alignment;
-    dma_handle->Init.Mode = dma_config->mode;
-    dma_handle->Init.Priority = dma_config->priority;
 #if defined(STM32_DMA_SUPPORTS_FIFO)
-    dma_handle->Init.FIFOMode = dma_config->fifo_mode;
-    dma_handle->Init.FIFOThreshold = dma_config->fifo_threshold;
-    dma_handle->Init.MemBurst = dma_config->mem_burst;
-    dma_handle->Init.PeriphBurst = dma_config->periph_burst;
+        dma_handle->Init.FIFOMode = dma_config->fifo_mode;
+        dma_handle->Init.FIFOThreshold = dma_config->fifo_threshold;
+        dma_handle->Init.MemBurst = dma_config->mem_burst;
+        dma_handle->Init.PeriphBurst = dma_config->periph_burst;
 #endif /* defined(STM32_DMA_SUPPORTS_FIFO) */
 #endif /* defined(STM32_DMA_USES_GPDMA) */
+    }
+}
+
+/**
+ * @brief Enable one DMA/BDMA controller, apply configuration and initialize HAL state.
+ * @param dma_handle DMA handle owned by one peripheral driver.
+ * @param common Common configuration fields shared by DMA and BDMA.
+ * @param dma_config Optional DMA-specific configuration (NULL for BDMA).
+ * @param log_tag Log tag for debug output ("drv.dma" or "drv.bdma").
+ * @retval RT_EOK Initialization succeeded.
+ * @retval -RT_ERROR HAL initialization failed.
+ */
+static rt_err_t stm32_dma_init_common(DMA_HandleTypeDef *dma_handle,
+                                      const struct stm32_dma_config_common *common,
+                                      const struct stm32_dma_config *dma_config,
+                                      const char *log_tag)
+{
+    RT_ASSERT(dma_handle != RT_NULL);
+    RT_ASSERT(common != RT_NULL);
+    stm32_dma_enable_clock(common->dma_rcc, common->type);
+    stm32_dma_apply_config_common(dma_handle, common, dma_config);
+
+    LOG_D("%s init, dma=%p, irq=%d", log_tag, dma_handle->Instance, common->dma_irq);
+
+    if (HAL_DMA_DeInit(dma_handle) != HAL_OK)
+    {
+        LOG_E("%s deinit failed, dma=%p, irq=%d", log_tag, dma_handle->Instance, common->dma_irq);
+        return -RT_ERROR;
+    }
+
+    if (HAL_DMA_Init(dma_handle) != HAL_OK)
+    {
+        LOG_E("%s init failed, dma=%p, irq=%d", log_tag, dma_handle->Instance, common->dma_irq);
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Initialize one DMA/BDMA handle, attach it and enable the IRQ.
+ * @param dma_handle DMA handle owned by one peripheral driver.
+ * @param parent_handle Parent HAL handle, such as UART_HandleTypeDef or SPI_HandleTypeDef.
+ * @param dma_slot Address of the parent handle DMA slot, such as &huart->hdmarx.
+ * @param common Common configuration fields shared by DMA and BDMA.
+ * @param dma_config Optional DMA-specific configuration (NULL for BDMA).
+ * @param log_tag Log tag for debug output ("drv.dma" or "drv.bdma").
+ * @retval RT_EOK Initialization succeeded.
+ * @retval -RT_ERROR HAL initialization failed.
+ */
+static rt_err_t stm32_dma_setup_common(DMA_HandleTypeDef *dma_handle,
+                                       void *parent_handle,
+                                       DMA_HandleTypeDef **dma_slot,
+                                       const struct stm32_dma_config_common *common,
+                                       const struct stm32_dma_config *dma_config,
+                                       const char *log_tag)
+{
+    rt_err_t result;
+
+    result = stm32_dma_init_common(dma_handle, common, dma_config, log_tag);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    if ((parent_handle != RT_NULL) && (dma_slot != RT_NULL))
+    {
+        *dma_slot = dma_handle;
+        dma_handle->Parent = parent_handle;
+    }
+
+    stm32_dma_irq_get(common->dma_irq, common->preempt_priority, common->sub_priority);
+
+    LOG_D("%s setup, dma=%p, irq=%d", log_tag, dma_handle->Instance, common->dma_irq);
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Disable one DMA/BDMA IRQ, optionally abort the current transfer and de-initialize HAL state.
+ * @param dma_handle DMA handle owned by one peripheral driver.
+ * @param common Common configuration fields shared by DMA and BDMA.
+ * @param abort_first RT_TRUE aborts the ongoing transfer before HAL_DMA_DeInit().
+ * @param log_tag Log tag for debug output ("drv.dma" or "drv.bdma").
+ * @retval RT_EOK De-initialization succeeded.
+ * @retval -RT_ERROR HAL de-initialization failed.
+ */
+static rt_err_t stm32_dma_deinit_common(DMA_HandleTypeDef *dma_handle,
+                                        const struct stm32_dma_config_common *common,
+                                        rt_bool_t abort_first,
+                                        const char *log_tag)
+{
+    RT_ASSERT(dma_handle != RT_NULL);
+    RT_ASSERT(common != RT_NULL);
+
+    stm32_dma_irq_put(common->dma_irq);
+
+    LOG_D("%s deinit, dma=%p, irq=%d", log_tag, dma_handle->Instance, common->dma_irq);
+
+    if (abort_first)
+    {
+        if (HAL_DMA_Abort(dma_handle) != HAL_OK)
+        {
+            LOG_W("%s abort failed, continue deinit, dma=%p, irq=%d", log_tag, dma_handle->Instance, common->dma_irq);
+        }
+    }
+
+    if (HAL_DMA_DeInit(dma_handle) != HAL_OK)
+    {
+        LOG_E("%s deinit failed, dma=%p, irq=%d", log_tag, dma_handle->Instance, common->dma_irq);
+        return -RT_ERROR;
+    }
+
+    return RT_EOK;
 }
 
 /**
@@ -261,27 +395,8 @@ static void stm32_dma_apply_config(DMA_HandleTypeDef *dma_handle,
 rt_err_t stm32_dma_init(DMA_HandleTypeDef *dma_handle,
                         const struct stm32_dma_config *dma_config)
 {
-    RT_ASSERT(dma_handle != RT_NULL);
     RT_ASSERT(dma_config != RT_NULL);
-
-    stm32_dma_enable_clock(dma_config->dma_rcc);
-    stm32_dma_apply_config(dma_handle, dma_config);
-
-    LOG_D("dma init, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
-
-    if (HAL_DMA_DeInit(dma_handle) != HAL_OK)
-    {
-        LOG_E("dma deinit failed, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
-        return -RT_ERROR;
-    }
-
-    if (HAL_DMA_Init(dma_handle) != HAL_OK)
-    {
-        LOG_E("dma init failed, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
-        return -RT_ERROR;
-    }
-
-    return RT_EOK;
+    return stm32_dma_init_common(dma_handle, &dma_config->common, dma_config, "drv.dma");
 }
 
 /**
@@ -298,25 +413,8 @@ rt_err_t stm32_dma_setup(DMA_HandleTypeDef *dma_handle,
                          DMA_HandleTypeDef **dma_slot,
                          const struct stm32_dma_config *dma_config)
 {
-    rt_err_t result;
-
-    result = stm32_dma_init(dma_handle, dma_config);
-    if (result != RT_EOK)
-    {
-        return result;
-    }
-
-    if ((parent_handle != RT_NULL) && (dma_slot != RT_NULL))
-    {
-        *dma_slot = dma_handle;
-        dma_handle->Parent = parent_handle;
-    }
-
-    stm32_dma_irq_get(dma_config->dma_irq, dma_config->preempt_priority, dma_config->sub_priority);
-
-    LOG_D("dma setup, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
-
-    return RT_EOK;
+    RT_ASSERT(dma_config != RT_NULL);
+    return stm32_dma_setup_common(dma_handle, parent_handle, dma_slot, &dma_config->common, dma_config, "drv.dma");
 }
 
 /**
@@ -331,27 +429,59 @@ rt_err_t stm32_dma_deinit(DMA_HandleTypeDef *dma_handle,
                           const struct stm32_dma_config *dma_config,
                           rt_bool_t abort_first)
 {
-    RT_ASSERT(dma_handle != RT_NULL);
     RT_ASSERT(dma_config != RT_NULL);
-
-    stm32_dma_irq_put(dma_config->dma_irq);
-
-    LOG_D("dma deinit, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
-
-    if (abort_first)
-    {
-        if (HAL_DMA_Abort(dma_handle) != HAL_OK)
-        {
-            LOG_W("dma abort failed, continue deinit, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
-        }
-    }
-
-    if (HAL_DMA_DeInit(dma_handle) != HAL_OK)
-    {
-        LOG_E("dma deinit failed, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
-        return -RT_ERROR;
-    }
-
-    return RT_EOK;
+    return stm32_dma_deinit_common(dma_handle, &dma_config->common, abort_first, "drv.dma");
 }
+
+#if defined(BSP_USING_BDMA) && (defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32H7RS))
+
+/**
+ * @brief Initialize one BDMA handle and apply the static descriptor.
+ * @param bdma_handle BDMA handle owned by one peripheral driver.
+ * @param bdma_config Board-level BDMA endpoint description.
+ * @retval RT_EOK Initialization succeeded.
+ * @retval -RT_ERROR HAL initialization failed.
+ */
+rt_err_t stm32_bdma_init(DMA_HandleTypeDef *bdma_handle,
+                         const struct stm32_bdma_config *bdma_config)
+{
+    RT_ASSERT(bdma_config != RT_NULL);
+    return stm32_dma_init_common(bdma_handle, &bdma_config->common, RT_NULL, LOG_TAG);
+}
+
+/**
+ * @brief Initialize one BDMA handle, attach it to the parent HAL handle and enable the IRQ.
+ * @param bdma_handle BDMA handle owned by one peripheral driver.
+ * @param parent_handle Parent HAL handle, such as SPI_HandleTypeDef.
+ * @param dma_slot Address of the parent handle DMA slot.
+ * @param bdma_config Board-level BDMA endpoint description.
+ * @retval RT_EOK Initialization succeeded.
+ * @retval -RT_ERROR HAL initialization failed.
+ */
+rt_err_t stm32_bdma_setup(DMA_HandleTypeDef *bdma_handle,
+                          void *parent_handle,
+                          DMA_HandleTypeDef **dma_slot,
+                          const struct stm32_bdma_config *bdma_config)
+{
+    RT_ASSERT(bdma_config != RT_NULL);
+    return stm32_dma_setup_common(bdma_handle, parent_handle, dma_slot, &bdma_config->common, RT_NULL, LOG_TAG);
+}
+
+/**
+ * @brief Disable one BDMA IRQ, optionally abort the current transfer and de-initialize HAL state.
+ * @param bdma_handle BDMA handle owned by one peripheral driver.
+ * @param bdma_config Board-level BDMA endpoint description.
+ * @param abort_first RT_TRUE aborts the ongoing transfer before de-initialization.
+ * @retval RT_EOK De-initialization succeeded.
+ * @retval -RT_ERROR HAL de-initialization failed.
+ */
+rt_err_t stm32_bdma_deinit(DMA_HandleTypeDef *bdma_handle,
+                           const struct stm32_bdma_config *bdma_config,
+                           rt_bool_t abort_first)
+{
+    RT_ASSERT(bdma_config != RT_NULL);
+    return stm32_dma_deinit_common(bdma_handle, &bdma_config->common, abort_first, LOG_TAG);
+}
+
+#endif /* BSP_USING_BDMA && (SOC_SERIES_STM32H7 || SOC_SERIES_STM32H7RS) */
 #endif /* HAL_DMA_MODULE_ENABLED */
