@@ -26,6 +26,8 @@
 #define RT_MMCSD_MAX_PARTITION 16
 #endif
 
+#define MMCSD_SECTOR_SIZE 512U
+
 struct mmcsd_blk_device
 {
     struct rt_blk_disk parent;
@@ -189,7 +191,7 @@ static rt_err_t rt_mmcsd_req_blk(struct rt_mmcsd_card *card,
     }
     cmd.flags = RESP_SPI_R1 | RESP_R1 | CMD_ADTC;
 
-    data.blksize = SECTOR_SIZE;
+    data.blksize = MMCSD_SECTOR_SIZE;
     data.blks  = blks;
 
     if (blks > 1)
@@ -260,7 +262,7 @@ static rt_int32_t mmcsd_set_blksize(struct rt_mmcsd_card *card)
 
     mmcsd_host_lock(card->host);
     cmd.cmd_code = SET_BLOCKLEN;
-    cmd.arg = 512;
+    cmd.arg = MMCSD_SECTOR_SIZE;
     cmd.flags = RESP_SPI_R1 | RESP_R1 | CMD_AC;
     err = mmcsd_send_cmd(card->host, &cmd, 5);
     mmcsd_host_unlock(card->host);
@@ -287,7 +289,8 @@ static rt_ssize_t mmcsd_blk_read(struct rt_blk_disk *disk, rt_off_t sector,
 
     while (remain_size)
     {
-        req_size = rt_min_t(rt_size_t, remain_size, blk_dev->max_req_size);
+        req_size = remain_size < blk_dev->max_req_size ?
+                remain_size : blk_dev->max_req_size;
 
         err = rt_mmcsd_req_blk(blk_dev->card, sector + offset, rd_ptr, req_size, 0);
 
@@ -297,7 +300,7 @@ static rt_ssize_t mmcsd_blk_read(struct rt_blk_disk *disk, rt_off_t sector,
         }
 
         offset += req_size;
-        rd_ptr = (void *)((rt_uint8_t *)rd_ptr + (req_size << 9));
+        rd_ptr = (void *)((rt_uint8_t *)rd_ptr + req_size * MMCSD_SECTOR_SIZE);
         remain_size -= req_size;
     }
 
@@ -316,7 +319,8 @@ static rt_ssize_t mmcsd_blk_write(struct rt_blk_disk *disk, rt_off_t sector,
 
     while (remain_size)
     {
-        req_size = rt_min_t(rt_size_t, remain_size, blk_dev->max_req_size);
+        req_size = remain_size < blk_dev->max_req_size ?
+                remain_size : blk_dev->max_req_size;
 
         err = rt_mmcsd_req_blk(blk_dev->card, sector + offset, wr_ptr, req_size, 1);
 
@@ -326,7 +330,7 @@ static rt_ssize_t mmcsd_blk_write(struct rt_blk_disk *disk, rt_off_t sector,
         }
 
         offset += req_size;
-        wr_ptr = (void *)((rt_uint8_t *)wr_ptr + (req_size << 9));
+        wr_ptr = (void *)((rt_uint8_t *)wr_ptr + req_size * MMCSD_SECTOR_SIZE);
         remain_size -= req_size;
     }
 
@@ -353,6 +357,8 @@ static const struct rt_blk_disk_ops mmcsd_blk_ops =
 rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 {
     rt_err_t err;
+    rt_size_t max_dma_size;
+    rt_size_t max_blk_size;
     struct rt_mmcsd_host *host = card->host;
     struct mmcsd_blk_device *blk_dev = rt_calloc(1, sizeof(*blk_dev));
 
@@ -371,12 +377,13 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     blk_dev->parent.max_partitions = RT_MMCSD_MAX_PARTITION;
 
     blk_dev->card = card;
-    blk_dev->max_req_size = rt_min_t(rt_size_t,
-            host->max_dma_segs * host->max_seg_size,
-            host->max_blk_count * host->max_blk_size) >> 9;
-    blk_dev->geometry.bytes_per_sector = 1 << 9;
+    max_dma_size = host->max_dma_segs * host->max_seg_size;
+    max_blk_size = host->max_blk_count * host->max_blk_size;
+    blk_dev->max_req_size = (max_dma_size < max_blk_size ?
+            max_dma_size : max_blk_size) / MMCSD_SECTOR_SIZE;
+    blk_dev->geometry.bytes_per_sector = MMCSD_SECTOR_SIZE;
     blk_dev->geometry.block_size = card->card_blksize;
-    blk_dev->geometry.sector_count = card->card_capacity * (1024 / 512);
+    blk_dev->geometry.sector_count = card->card_capacity * (1024 / MMCSD_SECTOR_SIZE);
 
     /* Set blk size before partitions probe, Why? */
     if ((err = mmcsd_set_blksize(card)))
@@ -400,7 +407,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
 
 _fail:
     card->blk_dev = RT_NULL;
-    free(blk_dev);
+    rt_free(blk_dev);
 
     return err;
 }
