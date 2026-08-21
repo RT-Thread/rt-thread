@@ -1,0 +1,41 @@
+import rtconfig
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+# The set of source files associated with this SConscript file.
+
+src = Split('''
+TAE32G58xx_Device/Src/system_tae32g58xx.c
+TAE32G58xx_Driver/Src/tae32g58xx_ll_rcu.c
+TAE32G58xx_Driver/Src/tae32g58xx_ll_cortex.c
+TAE32G58xx_Driver/Src/tae32g58xx_ll_sysctrl.c
+TAE32G58xx_Driver/Src/tae32g58xx_ll_dma.c
+TAE32G58xx_Driver/Src/tae32g58xx_ll_eflash.c
+TAE32G58xx_Driver/Src/tae32g58xx_ll.c
+TAE32G58xx_Driver/Src/tae32g58xx_ll_gpio.c 
+''')
+
+if GetDepend(['RT_USING_GPIO']):
+    src += ['TAE32G58xx_Driver/Src/tae32g58xx_ll_gpio.c']
+
+if GetDepend(['RT_USING_SERIAL']):
+    src += ['TAE32G58xx_Driver/Src/tae32g58xx_ll_uart.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['TAE32G58xx_Driver/Src/tae32g58xx_ll_can.c']
+
+if GetDepend(['RT_USING_WDT']):
+    src += ['TAE32G58xx_Driver/Src/tae32g58xx_ll_iwdg.c']
+
+path = [
+    cwd + '/CMSIS/Include',
+    cwd + '/TAE32G58xx_Device/Inc',
+    cwd + '/TAE32G58xx_Driver/Inc',]
+
+CPPDEFINES = ['USE_STDPERIPH_DRIVER']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
