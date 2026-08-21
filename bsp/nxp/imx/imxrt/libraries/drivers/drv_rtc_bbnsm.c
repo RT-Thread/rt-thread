@@ -25,10 +25,11 @@
  *
  * Time-keeping strategy (sync-point / offset method):
  *   A sync point is stored in BBNSM GPR registers:
- *     GPR[0] = epoch_base  : Unix seconds at the last SET_TIME call.
- *     GPR[1] = snap_lo     : lower 32 bits of BBNSM RTC ticks at sync.
- *     GPR[2] = snap_hi     : upper bits  of BBNSM RTC ticks at sync.
- *     GPR[3] = magic       : 0xBBCC0002 -- marks valid GPR contents.
+ *     GPR[0] = epoch_lo    : lower 32 bits of Unix seconds at last SET_TIME.
+ *     GPR[1] = epoch_hi    : upper 32 bits of Unix seconds at last SET_TIME.
+ *     GPR[2] = snap_lo     : lower 32 bits of BBNSM RTC ticks at sync.
+ *     GPR[3] = snap_hi     : upper bits  of BBNSM RTC ticks at sync.
+ *     GPR[4] = magic       : 0xBBCC0002 -- marks valid GPR contents.
  *
  *   GET_TIME computes:
  *     current = epoch_base + (bbnsm_ticks_now - snap_ticks) / 32768
@@ -57,14 +58,15 @@
 #include "drv_rtc_bbnsm.h"
 #include "fsl_device_registers.h"
 
-/* Magic value stored in BBNSM GPR[3] to detect valid warm-reset state. */
+/* Magic value stored in BBNSM GPR[GPR_IDX_MAGIC] to detect valid warm-reset state. */
 #define BBNSM_GPR_MAGIC (0xBBCC0002u)
 
 /* BBNSM GPR array indices used by this driver. */
-#define GPR_IDX_EPOCH   (0u)    /* Unix epoch seconds at last sync */
-#define GPR_IDX_SNAP_LO (1u)    /* lower 32 bits of RTC ticks at sync */
-#define GPR_IDX_SNAP_HI (2u)    /* upper bits  of RTC ticks at sync  */
-#define GPR_IDX_MAGIC   (3u)    /* magic sentinel */
+#define GPR_IDX_EPOCH_LO (0u)   /* lower 32 bits of Unix epoch seconds at sync */
+#define GPR_IDX_EPOCH_HI (1u)   /* upper 32 bits of Unix epoch seconds at sync */
+#define GPR_IDX_SNAP_LO  (2u)   /* lower 32 bits of RTC ticks at sync */
+#define GPR_IDX_SNAP_HI  (3u)   /* upper bits  of RTC ticks at sync  */
+#define GPR_IDX_MAGIC    (4u)   /* magic sentinel */
 
 /* 32768 Hz crystal clock rate of the BBNSM RTC counter. */
 #define BBNSM_RTC_FREQ (32768u)
@@ -130,7 +132,8 @@ static void bbnsm_rtc_enable(void)
 static void bbnsm_gpr_save(time_t epoch, uint32_t snap_lo, uint32_t snap_hi)
 {
     BBNSM->GPR[GPR_IDX_MAGIC] = 0u;         /* invalidate while writing */
-    BBNSM->GPR[GPR_IDX_EPOCH] = (uint32_t)epoch;
+    BBNSM->GPR[GPR_IDX_EPOCH_LO] = (uint32_t)((uint64_t)epoch & 0xFFFFFFFFu);
+    BBNSM->GPR[GPR_IDX_EPOCH_HI] = (uint32_t)(((uint64_t)epoch >> 32u) & 0xFFFFFFFFu);
     BBNSM->GPR[GPR_IDX_SNAP_LO] = snap_lo;
     BBNSM->GPR[GPR_IDX_SNAP_HI] = snap_hi;
     BBNSM->GPR[GPR_IDX_MAGIC] = BBNSM_GPR_MAGIC;
@@ -146,7 +149,9 @@ static rt_bool_t bbnsm_gpr_restore(time_t *out_epoch,
 {
     if (BBNSM->GPR[GPR_IDX_MAGIC] == BBNSM_GPR_MAGIC)
     {
-        *out_epoch = (time_t)BBNSM->GPR[GPR_IDX_EPOCH];
+        uint64_t epoch = ((uint64_t)BBNSM->GPR[GPR_IDX_EPOCH_HI] << 32u) |
+                         (uint64_t)BBNSM->GPR[GPR_IDX_EPOCH_LO];
+        *out_epoch = (time_t)epoch;
         *out_snap_lo = BBNSM->GPR[GPR_IDX_SNAP_LO];
         *out_snap_hi = BBNSM->GPR[GPR_IDX_SNAP_HI];
         return RT_TRUE;
