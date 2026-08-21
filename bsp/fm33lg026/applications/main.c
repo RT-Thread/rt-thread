@@ -12,13 +12,13 @@
 #include <rtthread.h>
 #include "board.h"
 
-#define LED1    GET_PIN(C, 1)
+#define LED1 GET_PIN(C, 1)
 
 int main(void)
 
 {
-        rt_pin_mode(LED1, PIN_MODE_OUTPUT);
-        rt_pin_write(LED1, PIN_HIGH);
+    rt_pin_mode(LED1, PIN_MODE_OUTPUT);
+    rt_pin_write(LED1, PIN_HIGH);
 
     while (1)
     {
@@ -27,5 +27,4 @@ int main(void)
         rt_pin_write(LED1, PIN_LOW);
         rt_thread_mdelay(500);
     }
-
 }
