@@ -316,6 +316,12 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
     /* [IN] Size of working buffer */
     rt_memset(&opt, 0, sizeof(opt));
     opt.fmt = FM_ANY|FM_SFD;
+#ifdef RT_DFS_ELM_NFATS
+    opt.n_fat = RT_DFS_ELM_NFATS;
+#endif
+#ifdef RT_DFS_ELM_CLUSTER_SIZE
+    opt.au_size = RT_DFS_ELM_CLUSTER_SIZE;
+#endif
     result = f_mkfs(logic_nbr, &opt, work, FF_MAX_SS);
     rt_free(work); work = RT_NULL;
 

@@ -137,6 +137,23 @@ endif
             help
                 If you use some spi nor flash for fatfs, please set this the erase sector size, for example 4096.
 
+        config RT_DFS_ELM_NFATS
+            int "Number of FATs (File Allocation Tables) on the volume"
+            range 1 2
+            default 1
+            help
+                Number of copies of the FAT table. Setting 1 saves space while 2
+                provides redundancy for fault tolerance. Used by f_mkfs().
+
+        config RT_DFS_ELM_CLUSTER_SIZE
+            int "Cluster size in bytes (0 = auto)"
+            default 0
+            help
+                Cluster size (allocation unit size) used by f_mkfs().
+                Set to 0 to let f_mkfs auto-select based on volume size.
+                Common values: 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536.
+                Must be a power of 2 and >= sector size.
+
         config RT_DFS_ELM_USE_ERASE
             bool "Enable sector erase feature"
             default n
