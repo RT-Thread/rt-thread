@@ -24,7 +24,9 @@ static int single_show(struct dfs_seq_file *seq, void *data)
     rt_tick_t ticks = rt_tick_get();
     rt_uint64_t uptime_ms;
     rt_uint64_t idle_ticks = 0;
+#ifdef RT_USING_SMP
     int index;
+#endif
 
     uptime_ms = ((rt_uint64_t)ticks * 1000U) / RT_TICK_PER_SECOND;
 #ifdef RT_USING_SMP
