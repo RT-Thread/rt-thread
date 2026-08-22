@@ -922,6 +922,55 @@ rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t prio
     }
 }
 
+/*
+ * Detach a mutex waiter from mutex-specific state.
+ *
+ * The scheduler lock must be held. After this function returns true,
+ * the waiter no longer needs to access the mutex object.
+ */
+rt_bool_t rt_mutex_cleanup_waiter(rt_thread_t thread, rt_bool_t remove_from_list)
+{
+    rt_mutex_t mutex;
+    rt_uint8_t priority;
+    rt_bool_t need_update = RT_FALSE;
+
+    RT_SCHED_DEBUG_IS_LOCKED;
+
+    if ((thread->pending_object == RT_NULL) ||
+        (rt_object_get_type(thread->pending_object) != RT_Object_Class_Mutex))
+    {
+        return RT_FALSE;
+    }
+
+    mutex = (rt_mutex_t)thread->pending_object;
+
+    if (mutex->owner &&
+        (rt_sched_thread_get_curr_prio(mutex->owner) ==
+         rt_sched_thread_get_curr_prio(thread)))
+    {
+        need_update = RT_TRUE;
+    }
+
+    if (remove_from_list)
+    {
+        rt_list_remove(&RT_THREAD_LIST_NODE(thread));
+    }
+    _mutex_update_priority(mutex);
+
+    if (need_update && mutex->owner)
+    {
+        priority = _thread_get_mutex_priority(mutex->owner);
+        if (priority != rt_sched_thread_get_curr_prio(mutex->owner))
+        {
+            _thread_update_priority(mutex->owner, priority, RT_UNINTERRUPTIBLE);
+        }
+    }
+
+    thread->pending_object = RT_NULL;
+
+    return RT_TRUE;
+}
+
 static rt_bool_t _check_and_update_prio(rt_thread_t thread, rt_mutex_t mutex)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
@@ -951,8 +1000,39 @@ static void _mutex_before_delete_detach(rt_mutex_t mutex)
     rt_bool_t need_schedule = RT_FALSE;
 
     rt_spin_lock(&(mutex->spinlock));
-    /* wakeup all suspended threads */
-    rt_susp_list_resume_all(&(mutex->parent.suspend_thread), RT_ERROR);
+
+    /*
+     * Wake waiters and clear their mutex references under one scheduler lock.
+     * If timeout owns a waiter's timer, only clean the mutex state here; the
+     * timeout callback still owns making the thread ready.
+     */
+    for (;;)
+    {
+        rt_thread_t thread;
+        rt_bool_t cleaned;
+
+        rt_sched_lock(&slvl);
+        if (rt_list_isempty(&mutex->parent.suspend_thread))
+        {
+            rt_sched_unlock(slvl);
+            break;
+        }
+
+        thread = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
+        if (rt_sched_thread_ready(thread) == RT_EOK)
+        {
+            cleaned = rt_mutex_cleanup_waiter(thread, RT_FALSE);
+            RT_ASSERT(cleaned);
+            thread->error = RT_ERROR;
+            rt_sched_unlock(slvl);
+        }
+        else
+        {
+            cleaned = rt_mutex_cleanup_waiter(thread, RT_TRUE);
+            RT_ASSERT(cleaned);
+            rt_sched_unlock(slvl);
+        }
+    }
 
     rt_sched_lock(&slvl);
 
@@ -1452,6 +1532,14 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                 /* do schedule */
                 rt_schedule();
 
+                /* Return the deletion error after the mutex was removed. */
+                if ((thread->pending_object == RT_NULL) &&
+                    ((thread->error == RT_ERROR) ||
+                     (thread->error == -RT_ETIMEOUT)))
+                {
+                    return thread->error == RT_ERROR ? -RT_ERROR : thread->error;
+                }
+
                 rt_spin_lock(&(mutex->spinlock));
 
                 if (mutex->owner == thread)
@@ -1657,32 +1745,27 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
         /* whether change the thread priority */
         need_schedule = _check_and_update_prio(owner, mutex);
 
-        /* wakeup suspended thread */
-        if (!rt_list_isempty(&mutex->parent.suspend_thread))
+        /* wakeup the first waiter that still owns its timer */
+        for (;;)
         {
             struct rt_thread *next_thread;
-            do
+            rt_bool_t cleaned;
+
+            if (rt_list_isempty(&mutex->parent.suspend_thread))
             {
-                /* get the first suspended thread */
-                next_thread = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
+                /* no waiting thread is woke up, clear owner */
+                mutex->owner = RT_NULL;
+                mutex->priority = 0xff;
+                rt_sched_unlock(slvl);
+                break;
+            }
 
-                RT_ASSERT(rt_sched_thread_is_suspended(next_thread));
+            /* get the first suspended thread */
+            next_thread = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
+            RT_ASSERT(rt_sched_thread_is_suspended(next_thread));
 
-                /* remove the thread from the suspended list of mutex */
-                rt_list_remove(&RT_THREAD_LIST_NODE(next_thread));
-
-                /* resume thread to ready queue */
-                if (rt_sched_thread_ready(next_thread) != RT_EOK)
-                {
-                    /**
-                     * a timeout timer had triggered while we try. So we skip
-                     * this thread and try again.
-                     */
-                    next_thread = RT_NULL;
-                }
-            } while (!next_thread && !rt_list_isempty(&mutex->parent.suspend_thread));
-
-            if (next_thread)
+            /* resume thread to ready queue */
+            if (rt_sched_thread_ready(next_thread) == RT_EOK)
             {
                 LOG_D("mutex_release: resume thread: %s",
                     next_thread->parent.name);
@@ -1709,23 +1792,17 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
                 }
 
                 need_schedule = RT_TRUE;
-            }
-            else
-            {
-                /* no waiting thread is woke up, clear owner */
-                mutex->owner = RT_NULL;
-                mutex->priority = 0xff;
+                rt_sched_unlock(slvl);
+                break;
             }
 
-            rt_sched_unlock(slvl);
-        }
-        else
-        {
-            rt_sched_unlock(slvl);
-
-            /* clear owner */
-            mutex->owner    = RT_NULL;
-            mutex->priority = 0xff;
+            /**
+             * A timeout callback owns this waiter. Remove only the mutex
+             * state and leave READY/error ownership to the callback, then
+             * retry the list head while the mutex remains locked.
+             */
+            cleaned = rt_mutex_cleanup_waiter(next_thread, RT_TRUE);
+            RT_ASSERT(cleaned);
         }
     }
 
