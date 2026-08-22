@@ -66,7 +66,7 @@ static int loadavg_count_pid(pid_t pid, void *arg)
 static int single_show(struct dfs_seq_file *seq, void *data)
 {
 #ifdef RT_USING_SMART
-    struct loadavg_count count = {0, 0};
+    struct loadavg_count count = { 0, 0 };
 
     lwp_pid_for_each(loadavg_count_pid, &count);
     dfs_seq_printf(seq, "0.00 0.00 0.00 %d/%d 0\n", count.runnable, count.total);

@@ -23,7 +23,7 @@ static rt_uint64_t cpu_midr(void)
 #if defined(__aarch64__) || defined(__AARCH64EL__)
     rt_uint64_t value;
 
-    __asm__ volatile ("mrs %0, midr_el1" : "=r" (value));
+    __asm__ volatile("mrs %0, midr_el1" : "=r"(value));
     return value;
 #else
     return 0;
@@ -84,10 +84,10 @@ static int seq_show(struct dfs_seq_file *seq, void *data)
 }
 
 static const struct dfs_seq_ops seq_ops = {
-    .start  = seq_start,
-    .stop   = seq_stop,
-    .next   = seq_next,
-    .show   = seq_show,
+    .start = seq_start,
+    .stop = seq_stop,
+    .next = seq_next,
+    .show = seq_show,
 };
 
 rt_weak const struct dfs_seq_ops *cpuinfo_get_seq_ops(void)
@@ -106,10 +106,10 @@ static int proc_close(struct dfs_file *file)
 }
 
 static const struct dfs_file_ops file_ops = {
-    .open   = proc_open,
-    .read   = dfs_seq_read,
-    .lseek  = dfs_seq_lseek,
-    .close  = proc_close,
+    .open = proc_open,
+    .read = dfs_seq_read,
+    .lseek = dfs_seq_lseek,
+    .close = proc_close,
 };
 
 int proc_cpuinfo_init(void)

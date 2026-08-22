@@ -21,7 +21,7 @@
 void run_copy()
 {
     int ret = 0;
-    ret     = msh_exec("cd /tmp", 7);
+    ret = msh_exec("cd /tmp", 7);
     if (ret != 0)
     {
         LOG_E("errno=%d, ret=%d\n", errno, ret);
@@ -57,7 +57,6 @@ void run_copy()
 }
 
 
-
 static void run_long_name(void)
 {
     static const char source[] =
@@ -65,8 +64,8 @@ static void run_long_name(void)
     static const char destination[] =
         "/tmp/iceoryx2_node_abcdefghijklmnopqrstuvwxyz_0987654321_renamed";
     static const char payload[] = "tmpfs-long-name";
-    char buffer[sizeof(payload)] = {0};
-    struct stat st = {0};
+    char buffer[sizeof(payload)] = { 0 };
+    struct stat st = { 0 };
     int fd;
 
     fd = open(source, O_CREAT | O_RDWR | O_TRUNC, 0);
@@ -111,7 +110,7 @@ static void run_too_long_name_reject(void)
 static void run_mode_change(void)
 {
     static const char path[] = "/tmp/tmpfs-mode-change";
-    struct stat st = {0};
+    struct stat st = { 0 };
     int fd;
 
     unlink(path);

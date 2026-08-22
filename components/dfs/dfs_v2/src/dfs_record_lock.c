@@ -37,8 +37,7 @@ static int _record_lock_waiters;
 
 static off_t _off_max(void)
 {
-    return sizeof(off_t) == sizeof(rt_int64_t) ? (off_t)INT64_MAX :
-                                                (off_t)INT32_MAX;
+    return sizeof(off_t) == sizeof(rt_int64_t) ? (off_t)INT64_MAX : (off_t)INT32_MAX;
 }
 
 static off_t _off_min(void)
@@ -318,8 +317,7 @@ static void _merge_owner_locks(struct dfs_record_lock *target)
             rt_free(lock);
             merged = RT_TRUE;
         }
-    }
-    while (merged);
+    } while (merged);
 }
 
 static void _wake_waiter(void)
@@ -489,8 +487,7 @@ int dfs_record_lock_fcntl(struct dfs_file *file, int cmd, struct flock *flock)
         flock->l_type = conflict->type;
         flock->l_whence = SEEK_SET;
         flock->l_start = conflict->range.start;
-        flock->l_len = conflict->range.to_eof ? 0 :
-            conflict->range.end - conflict->range.start + 1;
+        flock->l_len = conflict->range.to_eof ? 0 : conflict->range.end - conflict->range.start + 1;
         flock->l_pid = conflict->pid;
     }
     dfs_file_unlock();

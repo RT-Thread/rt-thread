@@ -25,8 +25,8 @@
 
 #include "dfs_tmpfs.h"
 
-#define DBG_TAG              "tmpfs"
-#define DBG_LVL              DBG_INFO
+#define DBG_TAG "tmpfs"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 #ifdef RT_USING_PAGECACHE
 #include "dfs_pcache.h"
@@ -36,8 +36,7 @@
 static ssize_t dfs_tmp_page_read(struct dfs_file *file, struct dfs_page *page);
 static ssize_t dfs_tmp_page_write(struct dfs_page *page);
 
-static struct dfs_aspace_ops dfs_tmp_aspace_ops =
-{
+static struct dfs_aspace_ops dfs_tmp_aspace_ops = {
     .read = dfs_tmp_page_read,
     .write = dfs_tmp_page_write,
 };
@@ -120,7 +119,9 @@ static int _get_subdir(const char *path, char *name, rt_size_t name_size)
     }
 
     while (*subpath == '/' && *subpath)
-        subpath ++;
+    {
+        subpath++;
+    }
     while (*subpath != '/' && *subpath)
     {
         if (name_len + 1 >= name_size)
@@ -129,9 +130,9 @@ static int _get_subdir(const char *path, char *name, rt_size_t name_size)
             return -ENAMETOOLONG;
         }
         *name = *subpath;
-        name ++;
-        subpath ++;
-        name_len ++;
+        name++;
+        subpath++;
+        name_len++;
     }
     *name = '\0';
 
@@ -223,9 +224,9 @@ int dfs_tmpfs_statfs(struct dfs_mnt *mnt, struct statfs *buf)
     RT_ASSERT(superblock != NULL);
     RT_ASSERT(buf != NULL);
 
-    buf->f_bsize  = 512;
+    buf->f_bsize = 512;
     buf->f_blocks = (superblock->df_size + 511) / 512;
-    buf->f_bfree  = 1;
+    buf->f_bfree = 1;
     buf->f_bavail = buf->f_bfree;
 
     return RT_EOK;
@@ -269,9 +270,9 @@ int dfs_tmpfs_ioctl(struct dfs_file *file, int cmd, void *args)
     return -EIO;
 }
 
-struct tmpfs_file *dfs_tmpfs_lookup(struct tmpfs_sb  *superblock,
-                                      const char       *path,
-                                      rt_size_t        *size)
+struct tmpfs_file *dfs_tmpfs_lookup(struct tmpfs_sb *superblock,
+                                    const char *path,
+                                    rt_size_t *size)
 {
     const char *subpath, *curpath, *filename = RT_NULL;
     char subdir_name[TMPFS_NAME_MAX];
@@ -287,8 +288,10 @@ struct tmpfs_file *dfs_tmpfs_lookup(struct tmpfs_sb  *superblock,
 
     subpath = path;
     while (*subpath == '/' && *subpath)
-        subpath ++;
-    if (! *subpath) /* is root directory */
+    {
+        subpath++;
+    }
+    if (!*subpath) /* is root directory */
     {
         *size = 0;
         return &(superblock->root);
@@ -299,12 +302,18 @@ struct tmpfs_file *dfs_tmpfs_lookup(struct tmpfs_sb  *superblock,
 
 find_subpath:
     while (*subpath != '/' && *subpath)
-        subpath ++;
+    {
+        subpath++;
+    }
 
-    if (! *subpath) /* is last directory */
+    if (!*subpath) /* is last directory */
+    {
         filename = curpath;
+    }
     else
-        subpath ++; /* skip '/' */
+    {
+        subpath++; /* skip '/' */
+    }
 
     ret = _get_subdir(curpath, subdir_name, sizeof(subdir_name));
     if (ret != RT_EOK)
@@ -352,12 +361,18 @@ static ssize_t dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, of
     rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
     ssize_t size = (ssize_t)file->vnode->size;
     if ((ssize_t)count < size - *pos)
+    {
         length = count;
+    }
     else
+    {
         length = size - *pos;
+    }
 
     if (length > 0)
+    {
         memcpy(buf, &(d_file->data[*pos]), length);
+    }
 
     /* update file current position */
     *pos += length;
@@ -396,7 +411,9 @@ static ssize_t _dfs_tmpfs_write(struct tmpfs_file *d_file, const void *buf, size
     }
 
     if (count > 0)
+    {
         memcpy(d_file->data + *pos, buf, count);
+    }
 
     /* update file current position */
     *pos += count;
@@ -454,12 +471,16 @@ static int dfs_tmpfs_close(struct dfs_file *file)
     RT_ASSERT(file->vnode->ref_count > 0);
 
     if (file->vnode->ref_count != 1)
+    {
         return 0;
+    }
 
     d_file = (struct tmpfs_file *)file->vnode->data;
 
     if (d_file == NULL)
+    {
         return -ENOENT;
+    }
 
     if (d_file->fre_memory == RT_TRUE)
     {
@@ -509,7 +530,7 @@ static int dfs_tmpfs_open(struct dfs_file *file)
     }
 
     RT_ASSERT(file->vnode->ref_count > 0);
-    if(file->vnode->ref_count == 1)
+    if (file->vnode->ref_count == 1)
     {
         dfs_vnode_lock_init(file->vnode, file->dentry);
     }
@@ -527,7 +548,9 @@ static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
     d_file = dfs_tmpfs_lookup(superblock, dentry->pathname, &size);
 
     if (d_file == NULL)
+    {
         return -ENOENT;
+    }
 
     st->st_dev = (dev_t)(size_t)(dentry->mnt->dev_id);
     st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
@@ -576,8 +599,8 @@ static int dfs_tmpfs_setattr(struct dfs_dentry *dentry, struct dfs_attr *attr)
 }
 
 static int dfs_tmpfs_getdents(struct dfs_file *file,
-                       struct dirent *dirp,
-                       uint32_t    count)
+                              struct dirent *dirp,
+                              uint32_t count)
 {
     rt_size_t index, end;
     struct dirent *d;
@@ -588,7 +611,7 @@ static int dfs_tmpfs_getdents(struct dfs_file *file,
 
     rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
 
-    superblock  = d_file->sb;
+    superblock = d_file->sb;
     RT_ASSERT(superblock != RT_NULL);
     RT_UNUSED(superblock);
 
@@ -652,7 +675,9 @@ static int dfs_tmpfs_unlink(struct dfs_dentry *dentry)
 
     d_file = dfs_tmpfs_lookup(superblock, dentry->pathname, &size);
     if (d_file == NULL)
+    {
         return -ENOENT;
+    }
 
     rt_spin_lock(&superblock->lock);
     d_file->nlink = 0;
@@ -997,8 +1022,7 @@ static int dfs_tmpfs_truncate(struct dfs_file *file, off_t offset)
     return 0;
 }
 
-static const struct dfs_file_ops _tmp_fops =
-{
+static const struct dfs_file_ops _tmp_fops = {
     .open = dfs_tmpfs_open,
     .close = dfs_tmpfs_close,
     .ioctl = dfs_tmpfs_ioctl,
@@ -1009,8 +1033,7 @@ static const struct dfs_file_ops _tmp_fops =
     .truncate = dfs_tmpfs_truncate,
 };
 
-static const struct dfs_filesystem_ops _tmpfs_ops =
-{
+static const struct dfs_filesystem_ops _tmpfs_ops = {
     .name = "tmp",
     .flags = DFS_FS_FLAG_DEFAULT,
     .default_fops = &_tmp_fops,
@@ -1028,8 +1051,7 @@ static const struct dfs_filesystem_ops _tmpfs_ops =
     .free_vnode = dfs_tmpfs_free_vnode
 };
 
-static struct dfs_filesystem_type _tmpfs =
-{
+static struct dfs_filesystem_type _tmpfs = {
     .fs_ops = &_tmpfs_ops,
 };
 

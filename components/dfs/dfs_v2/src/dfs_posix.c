@@ -119,7 +119,7 @@ int openat(int dirfd, const char *path, int flag, ...)
         return -1;
     }
 
-    fullpath = (char*)path;
+    fullpath = (char *)path;
 
     if (path[0] != '/')
     {
@@ -176,7 +176,7 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
         }
         else
         {
-            fullpath = (char*)__path;
+            fullpath = (char *)__path;
         }
     }
     else
@@ -689,7 +689,7 @@ RTM_EXPORT(fcntl);
 int fchmod(int fildes, mode_t mode)
 {
     int ret;
-    struct dfs_attr attr = {0};
+    struct dfs_attr attr = { 0 };
     struct dfs_file *file;
 
     file = fd_get(fildes);
@@ -928,7 +928,9 @@ int rmdir(const char *pathname)
         {
             dirent = readdir(dir);
             if (dirent == RT_NULL)
+            {
                 break;
+            }
             if (rt_strcmp(".", dirent->d_name) != 0 &&
                 rt_strcmp("..", dirent->d_name) != 0)
             {
@@ -1000,7 +1002,7 @@ DIR *opendir(const char *name)
     if (result >= 0)
     {
         /* open successfully */
-        t = (DIR *) rt_malloc(sizeof(DIR));
+        t = (DIR *)rt_malloc(sizeof(DIR));
         if (t == NULL)
         {
             dfs_file_close(file);
@@ -1145,10 +1147,12 @@ void seekdir(DIR *d, long offset)
         {
             /* seek to the offset position of directory */
             if (dfs_file_lseek(fd_get(d->fd), 0, SEEK_SET) >= 0)
+            {
                 d->num = d->cur = 0;
+            }
         }
 
-        while(file->fpos < offset)
+        while (file->fpos < offset)
         {
             if (!readdir(d))
             {
@@ -1171,7 +1175,9 @@ void rewinddir(DIR *d)
     {
         /* seek to the beginning of directory */
         if (dfs_file_lseek(fd_get(d->fd), 0, SEEK_SET) >= 0)
+        {
             d->num = d->cur = 0;
+        }
     }
 }
 RTM_EXPORT(rewinddir);
@@ -1371,7 +1377,7 @@ void setcwd(char *buf)
     rt_kprintf(NO_WORKING_DIR);
 #endif
 
-    return ;
+    return;
 }
 RTM_EXPORT(setcwd);
 

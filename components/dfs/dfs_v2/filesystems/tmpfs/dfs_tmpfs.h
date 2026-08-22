@@ -14,8 +14,8 @@
 #include <rtthread.h>
 #include <dfs_vfs.h>
 
-#define TMPFS_NAME_MAX  DIRENT_NAME_MAX
-#define TMPFS_MAGIC     0x0B0B0B0B
+#define TMPFS_NAME_MAX DIRENT_NAME_MAX
+#define TMPFS_MAGIC    0x0B0B0B0B
 
 #define TMPFS_TYPE_FILE   0x00
 #define TMPFS_TYPE_DIR    0x01
@@ -25,24 +25,24 @@ struct tmpfs_sb;
 
 struct tmpfs_file
 {
-    rt_uint32_t      type;     /* file type */
+    rt_uint32_t type;     /* file type */
     char name[TMPFS_NAME_MAX]; /* file name */
     struct dfs_vfs_node node;  /* file node in the tmpfs */
     struct tmpfs_sb *sb;       /* superblock ptr */
-    rt_uint8_t      *data;     /* file date ptr */
-    rt_size_t        size;     /* file size */
-    rt_uint32_t      nlink;    /* hard link count */
-    mode_t           mode;     /* file type and permission bits */
-    rt_bool_t       fre_memory;/* Whether to release memory upon close */
+    rt_uint8_t *data;     /* file date ptr */
+    rt_size_t size;     /* file size */
+    rt_uint32_t nlink;    /* hard link count */
+    mode_t mode;     /* file type and permission bits */
+    rt_bool_t fre_memory;/* Whether to release memory upon close */
 };
 
 
 struct tmpfs_sb
 {
-    rt_uint32_t       magic;       /* TMPFS_MAGIC */
+    rt_uint32_t magic;       /* TMPFS_MAGIC */
     struct tmpfs_file root;        /* root dir */
-    rt_size_t         df_size;     /* df size */
-    rt_list_t         sibling;     /* sb sibling list */
+    rt_size_t df_size;     /* df size */
+    rt_list_t sibling;     /* sb sibling list */
     struct rt_spinlock lock;       /* tmpfs lock */
 };
 

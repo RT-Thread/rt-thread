@@ -158,8 +158,7 @@ static void *proc_maps_start(struct dfs_seq_file *seq, off_t *index)
 {
     struct proc_map_context *context = (struct proc_map_context *)seq->data;
 
-    return context && *index < (off_t)context->count ?
-        &context->entries[*index] : RT_NULL;
+    return context && *index < (off_t)context->count ? &context->entries[*index] : RT_NULL;
 }
 
 static void *proc_maps_next(struct dfs_seq_file *seq, void *data, off_t *index)
@@ -168,8 +167,7 @@ static void *proc_maps_next(struct dfs_seq_file *seq, void *data, off_t *index)
 
     RT_UNUSED(data);
     *index += 1;
-    return context && *index < (off_t)context->count ?
-        &context->entries[*index] : RT_NULL;
+    return context && *index < (off_t)context->count ? &context->entries[*index] : RT_NULL;
 }
 
 static void proc_maps_stop(struct dfs_seq_file *seq, void *data)
@@ -212,8 +210,7 @@ static int proc_maps_show(struct dfs_seq_file *seq, void *data)
         dfs_seq_puts(seq, "Shared_Dirty: 0 kB\n");
         dfs_seq_puts(seq, "Private_Clean: 0 kB\n");
         dfs_seq_printf(seq, "Private_Dirty: %lu kB\n", (unsigned long)private_dirty);
-        dfs_seq_printf(seq, "Anonymous: %lu kB\n", entry->name[0] == '[' ?
-                       (unsigned long)resident_kb : 0UL);
+        dfs_seq_printf(seq, "Anonymous: %lu kB\n", entry->name[0] == '[' ? (unsigned long)resident_kb : 0UL);
         dfs_seq_puts(seq, "Swap: 0 kB\n\n");
     }
 
@@ -304,7 +301,7 @@ static int stat_single_show(struct dfs_seq_file *seq, void *data)
     int lwp_oncpu = RT_CPUS_NR;
     int lwp_oncpu_ok = 0;
     struct rt_lwp *lwp = RT_NULL;
-    char** argv = RT_NULL;
+    char **argv = RT_NULL;
     char *filename = RT_NULL;
     char *dot = RT_NULL;
 
@@ -313,7 +310,7 @@ static int stat_single_show(struct dfs_seq_file *seq, void *data)
 
     if (lwp)
     {
-        dfs_seq_printf(seq,"%d ",dentry->pid);
+        dfs_seq_printf(seq, "%d ", dentry->pid);
         if (argv)
         {
             if (argv[0])
@@ -335,22 +332,22 @@ static int stat_single_show(struct dfs_seq_file *seq, void *data)
                     *dot = '\0';
                 }
 
-                dfs_seq_printf(seq,"(%s) ", filename);
+                dfs_seq_printf(seq, "(%s) ", filename);
             }
             else
             {
-                dfs_seq_printf(seq,"(%s) ", "");
+                dfs_seq_printf(seq, "(%s) ", "");
             }
             lwp_free_command_line_args(argv);
         }
         else
         {
-            dfs_seq_printf(seq,"(%s) ", "");
+            dfs_seq_printf(seq, "(%s) ", "");
         }
 
         if (lwp->terminated)
         {
-            dfs_seq_printf(seq,"%c ",'Z');
+            dfs_seq_printf(seq, "%c ", 'Z');
         }
         else
         {
@@ -361,11 +358,11 @@ static int stat_single_show(struct dfs_seq_file *seq, void *data)
                 user_time_lwp = user_time_lwp + thread->user_time;
                 system_time_lwp = system_time_lwp + thread->system_time;
 
-                #if RT_CPUS_NR > 1
-                    #define ONCPU(thread) RT_SCHED_CTX(thread).oncpu
-                #else
-                    #define ONCPU(thread) 0
-                #endif
+#if RT_CPUS_NR > 1
+#define ONCPU(thread) RT_SCHED_CTX(thread).oncpu
+#else
+#define ONCPU(thread) 0
+#endif
                 if (lwp_oncpu_ok == 0)
                 {
                     lwp_oncpu = ONCPU(thread);
@@ -381,25 +378,28 @@ static int stat_single_show(struct dfs_seq_file *seq, void *data)
 
             if (mask == 1)
             {
-                dfs_seq_printf(seq,"%c ",'R');
+                dfs_seq_printf(seq, "%c ", 'R');
             }
             else
             {
-                dfs_seq_printf(seq,"%c ",'S');
+                dfs_seq_printf(seq, "%c ", 'S');
             }
         }
         if (lwp->parent != NULL)
-            dfs_seq_printf(seq,"%d ",lwp->parent->pid);
+        {
+            dfs_seq_printf(seq, "%d ", lwp->parent->pid);
+        }
         else
-            dfs_seq_printf(seq,"0 ");
+        {
+            dfs_seq_printf(seq, "0 ");
+        }
 
         dfs_seq_printf(seq, "1 1 0 -1 4194560 48245 133976064 732 425574 ");
-        dfs_seq_printf(seq,"%llu ",user_time_lwp);//utime
-        dfs_seq_printf(seq,"%llu ",system_time_lwp);//stime
+        dfs_seq_printf(seq, "%llu ", user_time_lwp);//utime
+        dfs_seq_printf(seq, "%llu ", system_time_lwp);//stime
         dfs_seq_printf(seq, "1204291 518742 20 0 1 0 50 ");
 #ifdef ARCH_MM_MMU
-        dfs_seq_printf(seq, "%lu ", lwp->aspace ?
-                       (unsigned long)rt_aspace_count_vsz(lwp->aspace) : 0UL);//VSZ
+        dfs_seq_printf(seq, "%lu ", lwp->aspace ? (unsigned long)rt_aspace_count_vsz(lwp->aspace) : 0UL);//VSZ
 #else
         dfs_seq_puts(seq, "0 ");
 #endif
@@ -407,7 +407,7 @@ static int stat_single_show(struct dfs_seq_file *seq, void *data)
         dfs_seq_printf(seq, "1 1 0 0 0 0 671173123 4096 1260 0 0 0 17 ");
         dfs_seq_printf(seq, "%d ", lwp_oncpu);//CPU
         dfs_seq_printf(seq, "0 0 0 0 0 0 0 0 0 0 0 0 0");
-        dfs_seq_printf(seq,"\n");
+        dfs_seq_printf(seq, "\n");
         lwp_from_pid_release_lock(lwp);
     }
 
@@ -418,7 +418,7 @@ static int cmdline_single_show(struct dfs_seq_file *seq, void *data)
 {
     struct proc_dentry *dentry = (struct proc_dentry *)seq->file->vnode->data;
     struct rt_lwp *lwp;
-    char** argv;
+    char **argv;
 
     lwp = lwp_from_pid_and_lock(dentry->pid);
     argv = lwp ? lwp_get_command_line_args(lwp) : RT_NULL;
@@ -552,13 +552,21 @@ struct proc_dentry *proc_pid_fd_lookup(struct proc_dentry *parent, const char *n
                     {
                         //todo add vnode->data
                         if (file->vnode->type == FT_SOCKET)
+                        {
                             dentry->data = (void *)rt_strdup("socket");
+                        }
                         else if (file->vnode->type == FT_USER)
+                        {
                             dentry->data = (void *)rt_strdup("user");
+                        }
                         else if (file->vnode->type == FT_DEVICE)
+                        {
                             dentry->data = (void *)rt_strdup("device");
+                        }
                         else
+                        {
                             dentry->data = (void *)rt_strdup("unknown");
+                        }
                     }
 
                     dentry->pid = parent->pid;
@@ -676,23 +684,23 @@ static const struct proc_ops proc_pid_cwd_ops = {
 };
 
 static struct pid_dentry pid_dentry_base[] = {
-    {"cmdline", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, cmdline_single_show, 0},
-    {"status", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, proc_pid_status_show, 0},
-    {"statm", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, proc_pid_statm_show, 0},
-    {"cwd", S_IFLNK | S_IRUSR | S_IXUSR, 0, &proc_pid_cwd_ops, 0, 0},
-    {"exe", S_IFLNK | S_IRUSR | S_IXUSR, 0, &proc_pid_exe_ops, 0, 0},
-    {"fd", S_IFDIR | S_IRUSR | S_IXUSR, &proc_pid_fd_fops, &proc_pid_fd_ops, 0, 0, 0},
-    {"mounts", S_IFLNK | S_IRUSR | S_IXUSR, 0, 0, 0, 0, "/proc/mounts"},
-    {"stat", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, stat_single_show, 0},
+    { "cmdline", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, cmdline_single_show, 0 },
+    { "status", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, proc_pid_status_show, 0 },
+    { "statm", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, proc_pid_statm_show, 0 },
+    { "cwd", S_IFLNK | S_IRUSR | S_IXUSR, 0, &proc_pid_cwd_ops, 0, 0 },
+    { "exe", S_IFLNK | S_IRUSR | S_IXUSR, 0, &proc_pid_exe_ops, 0, 0 },
+    { "fd", S_IFDIR | S_IRUSR | S_IXUSR, &proc_pid_fd_fops, &proc_pid_fd_ops, 0, 0, 0 },
+    { "mounts", S_IFLNK | S_IRUSR | S_IXUSR, 0, 0, 0, 0, "/proc/mounts" },
+    { "stat", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, 0, 0, 0, stat_single_show, 0 },
 #ifdef ARCH_MM_MMU
-    {"maps", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, &proc_maps_fops, 0, 0, 0, 0},
-    {"smaps", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, &proc_maps_fops, 0, 0, 0, 0},
+    { "maps", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, &proc_maps_fops, 0, 0, 0, 0 },
+    { "smaps", S_IFREG | S_IRUSR | S_IRGRP | S_IROTH, &proc_maps_fops, 0, 0, 0, 0 },
 #endif
 };
 
 int proc_pid(int pid)
 {
-    char pid_str[64] = {0};
+    char pid_str[64] = { 0 };
     struct proc_dentry *dentry;
 
     rt_snprintf(pid_str, 64, "%d", pid);
