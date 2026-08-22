@@ -713,6 +713,30 @@ static rt_thread_t _prepare_context_switch_locked(int cpu_id,
 }
 
 #ifdef RT_USING_SIGNALS
+/* Check whether a signal may wake the thread in its suspend state. */
+static rt_bool_t _sched_signal_wakeup_allowed(struct rt_thread *thread)
+{
+    rt_uint8_t stat;
+    rt_sigset_t pending;
+
+    stat = RT_SCHED_CTX(thread).stat;
+    pending = thread->sig_pending & thread->sig_mask;
+
+    if (stat & RT_THREAD_STAT_SIGNAL_WAIT)
+    {
+        return RT_TRUE;
+    }
+
+    if (!(stat & RT_SIGNAL_COMMON_WAKEUP_MASK))
+    {
+        return RT_TRUE;
+    }
+
+    return !(stat & RT_SIGNAL_KILL_WAKEUP_MASK) &&
+           (pending & (RT_SIG_MASK(SIGKILL) |
+                       RT_SIG_MASK(SIGSTOP)));
+}
+
 /**
  * @brief Preprocess pending signals for a suspended thread
  *
@@ -727,7 +751,9 @@ static void _sched_thread_preprocess_signal(struct rt_thread *current_thread)
     if (rt_sched_thread_is_suspended(current_thread))
     {
         /* if current_thread signal is in pending */
-        if ((RT_SCHED_CTX(current_thread).stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
+        if (((RT_SCHED_CTX(current_thread).stat & RT_THREAD_STAT_SIGNAL_MASK) &
+             RT_THREAD_STAT_SIGNAL_PENDING) &&
+            _sched_signal_wakeup_allowed(current_thread))
         {
 #ifdef RT_USING_SMART
             rt_thread_wakeup(current_thread);
