@@ -17,16 +17,62 @@
 #include <errno.h>
 
 #include <dfs_dentry.h>
-#include <mm_page.h>
 
+#ifdef RT_USING_SMART
+#include "lwp_pid.h"
+#ifdef RT_USING_MUSLLIBC
+#include "lwp.h"
+#endif
+#endif
 
-extern void rt_memory_info(rt_size_t *total,
-                            rt_size_t *used,
-                            rt_size_t *max_used);
+#ifdef RT_USING_SMART
+struct loadavg_count
+{
+    int total;
+    int runnable;
+};
+
+static int loadavg_count_pid(pid_t pid, void *arg)
+{
+    struct loadavg_count *count = (struct loadavg_count *)arg;
+    struct rt_lwp *lwp = lwp_from_pid_locked(pid);
+
+    if (!lwp)
+    {
+        return 0;
+    }
+    count->total++;
+#ifdef RT_USING_MUSLLIBC
+    {
+        rt_list_t *node;
+
+        node = lwp->t_grp.next;
+        while (node != &lwp->t_grp)
+        {
+            rt_thread_t thread = rt_list_entry(node, struct rt_thread, sibling);
+            if (RT_SCHED_CTX(thread).stat == RT_THREAD_RUNNING)
+            {
+                count->runnable++;
+                break;
+            }
+            node = node->next;
+        }
+    }
+#endif
+    return 0;
+}
+#endif
 
 static int single_show(struct dfs_seq_file *seq, void *data)
 {
-    dfs_seq_printf(seq, "0.13 0.16 0.17 1/1035 380436\n");
+#ifdef RT_USING_SMART
+    struct loadavg_count count = {0, 0};
+
+    lwp_pid_for_each(loadavg_count_pid, &count);
+    dfs_seq_printf(seq, "0.00 0.00 0.00 %d/%d 0\n", count.runnable, count.total);
+#else
+    dfs_seq_puts(seq, "0.00 0.00 0.00 0/0 0\n");
+#endif
 
     return 0;
 }

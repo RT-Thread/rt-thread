@@ -18,6 +18,49 @@
 
 #include <dfs_dentry.h>
 
+#ifdef RT_USING_SMART
+#include "lwp_pid.h"
+#ifdef RT_USING_MUSLLIBC
+#include "lwp.h"
+#endif
+#endif
+
+#ifdef RT_USING_SMART
+struct stat_process_count
+{
+    int total;
+    int running;
+};
+
+static int stat_process_count(pid_t pid, void *arg)
+{
+    struct stat_process_count *count = (struct stat_process_count *)arg;
+    struct rt_lwp *lwp = lwp_from_pid_locked(pid);
+
+    if (!lwp)
+    {
+        return 0;
+    }
+    count->total++;
+#ifdef RT_USING_MUSLLIBC
+    {
+        rt_list_t *node = lwp->t_grp.next;
+
+        while (node != &lwp->t_grp)
+        {
+            rt_thread_t thread = rt_list_entry(node, struct rt_thread, sibling);
+            if (RT_SCHED_CTX(thread).stat == RT_THREAD_RUNNING)
+            {
+                count->running++;
+                break;
+            }
+            node = node->next;
+        }
+    }
+#endif
+    return 0;
+}
+#endif
 
 static void *seq_start(struct dfs_seq_file *seq, off_t *index)
 {
@@ -71,6 +114,16 @@ static int seq_show(struct dfs_seq_file *seq, void *data)
         dfs_seq_printf(seq, "0 0 0\n");//steal,guest,guest_nice
 
     }
+
+#ifdef RT_USING_SMART
+    {
+        struct stat_process_count process_count = {0, 0};
+        lwp_pid_for_each(stat_process_count, &process_count);
+        dfs_seq_printf(seq, "processes %d\n", process_count.total);
+        dfs_seq_printf(seq, "procs_running %d\n", process_count.running);
+        dfs_seq_puts(seq, "procs_blocked 0\n");
+    }
+#endif
 
     return 0;
 }

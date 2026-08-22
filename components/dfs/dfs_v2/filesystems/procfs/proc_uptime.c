@@ -21,9 +21,24 @@
 
 static int single_show(struct dfs_seq_file *seq, void *data)
 {
-    dfs_seq_printf(seq, "%lu.%02lu %lu.%02lu\n",
-                   (unsigned long)rt_tick_get_millisecond() / 1000, (unsigned long)(rt_tick_get_millisecond() % 1000) / 100,
-                   (unsigned long)rt_tick_get_millisecond() / 1000, (unsigned long)(rt_tick_get_millisecond() % 1000) / 100);
+    rt_tick_t ticks = rt_tick_get();
+    rt_uint64_t uptime_ms;
+    rt_uint64_t idle_ticks = 0;
+    int index;
+
+    uptime_ms = ((rt_uint64_t)ticks * 1000U) / RT_TICK_PER_SECOND;
+#ifdef RT_USING_SMP
+    for (index = 0; index < RT_CPUS_NR; index++)
+    {
+        idle_ticks += rt_cpu_index(index)->cpu_stat.idle;
+    }
+#else
+    idle_ticks = rt_cpu_index(0)->cpu_stat.idle;
+#endif
+    dfs_seq_printf(seq, "%llu.%02llu %llu.%02llu\n",
+                   uptime_ms / 1000U, (uptime_ms % 1000U) / 10U,
+                   ((rt_uint64_t)idle_ticks * 1000U) / RT_TICK_PER_SECOND / 1000U,
+                   (((rt_uint64_t)idle_ticks * 1000U) / RT_TICK_PER_SECOND % 1000U) / 10U);
 
     return 0;
 }
