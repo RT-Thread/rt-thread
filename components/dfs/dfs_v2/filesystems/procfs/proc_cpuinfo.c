@@ -18,17 +18,15 @@
 
 #include <dfs_dentry.h>
 
+#if defined(__aarch64__) || defined(__AARCH64EL__)
 static rt_uint64_t cpu_midr(void)
 {
-#if defined(__aarch64__) || defined(__AARCH64EL__)
     rt_uint64_t value;
 
     __asm__ volatile("mrs %0, midr_el1" : "=r"(value));
     return value;
-#else
-    return 0;
-#endif
 }
+#endif
 
 static void *seq_start(struct dfs_seq_file *seq, off_t *index)
 {
