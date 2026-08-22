@@ -36,6 +36,7 @@ int dfs_vnode_init(struct dfs_vnode *vnode, int type, const struct dfs_file_ops 
 
         vnode->type = type;
         rt_atomic_store(&(vnode->ref_count), 1);
+        vnode->nlink = 1;
         vnode->mnt = RT_NULL;
         vnode->fops = fops;
     }
@@ -58,6 +59,7 @@ struct dfs_vnode *dfs_vnode_create(void)
     }
 
     rt_atomic_store(&(vnode->ref_count), 1);
+    vnode->nlink = 1;
 
     LOG_I("create a vnode: %p", vnode);
 
