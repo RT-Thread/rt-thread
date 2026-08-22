@@ -1,5 +1,17 @@
 menu "C/C++ and POSIX layer"
 
+config RT_USING_LIBC
+    bool "Enable libc"
+    default y if RT_USING_SMART
+    default n
+
+config RT_USING_MUSLLIBC
+    bool "Enable musl libc"
+    depends on RT_USING_SMART
+    depends on RT_USING_LIBC
+    default y if RT_USING_SMART
+    default n
+
 config RT_USING_EXTERNAL_LIBC
     bool
     help
