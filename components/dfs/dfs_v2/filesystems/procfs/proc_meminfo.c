@@ -34,24 +34,27 @@ static int single_show(struct dfs_seq_file *seq, void *data)
     total_sum = total_sum + total;
     total_freed = total_freed + total - used;
 
-    dfs_seq_printf(seq, "%-16s%8d KB\n", "MemMaxUsed:", max_used / 1024);
-    dfs_seq_printf(seq, "%-16s%8d KB\n", "MemAvailable:", (total - used) / 1024);
-    dfs_seq_printf(seq, "%-16s%8d KB\n", "Cached:", 0);
-    dfs_seq_printf(seq, "%-16s%8d KB\n", "SReclaimable:", 0);
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "MemMaxUsed:", (unsigned long)(max_used / 1024));
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "MemAvailable:", (unsigned long)((total - used) / 1024));
 
     rt_page_get_info(&total, &freed);
     total_sum = total_sum + total * RT_MM_PAGE_SIZE;
     total_freed = total_freed + freed * RT_MM_PAGE_SIZE;
 
-    dfs_seq_printf(seq, "%-16s%8d KB\n", "MemTotal:", total_sum / 1024);
-    dfs_seq_printf(seq, "%-16s%8d KB\n", "MemFree:", total_freed / 1024);
-    dfs_seq_printf(seq, "%-16s%8d KB\n", "LowPageTotal:", total * RT_MM_PAGE_SIZE / 1024);
-    dfs_seq_printf(seq, "%-16s%8d KB\n", "lowPageFree:", freed * RT_MM_PAGE_SIZE/ 1024);
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "MemTotal:", (unsigned long)(total_sum / 1024));
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "MemFree:", (unsigned long)(total_freed / 1024));
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "Buffers:", 0UL);
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "Cached:", 0UL);
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "SwapCached:", 0UL);
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "SwapTotal:", 0UL);
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "SwapFree:", 0UL);
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "LowPageTotal:", (unsigned long)(total * RT_MM_PAGE_SIZE / 1024));
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "LowPageFree:", (unsigned long)(freed * RT_MM_PAGE_SIZE / 1024));
 
     rt_page_high_get_info(&total, &freed);
 
-    dfs_seq_printf(seq, "%-16s%8d KB\n", "HighPageTotal:", total * RT_MM_PAGE_SIZE / 1024);
-    dfs_seq_printf(seq, "%-16s%8d KB\n", "HighPageFree:", freed * RT_MM_PAGE_SIZE / 1024);
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "HighPageTotal:", (unsigned long)(total * RT_MM_PAGE_SIZE / 1024));
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "HighPageFree:", (unsigned long)(freed * RT_MM_PAGE_SIZE / 1024));
 
     return 0;
 }
