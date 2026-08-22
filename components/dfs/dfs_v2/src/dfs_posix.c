@@ -291,25 +291,14 @@ RTM_EXPORT(creat);
 int close(int fd)
 {
     int result;
-    struct dfs_file *file;
 
-    file = fd_get(fd);
-    if (file == NULL)
-    {
-        rt_set_errno(-EBADF);
-
-        return -1;
-    }
-
-    result = dfs_file_close(file);
+    result = dfs_fdtable_drop_fd(dfs_fdtable_get(), fd);
     if (result < 0)
     {
         rt_set_errno(result);
 
         return -1;
     }
-
-    fd_release(fd);
 
     return 0;
 }
@@ -335,17 +324,22 @@ ssize_t read(int fd, void *buf, size_t len)
     ssize_t result;
     struct dfs_file *file;
 
-    if (buf == NULL)
-    {
-        rt_set_errno(-EBADF);
-        return -1;
-    }
-
     file = fd_get(fd);
     if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
+        return -1;
+    }
+
+    if (len == 0)
+    {
+        return 0;
+    }
+
+    if (buf == NULL)
+    {
+        rt_set_errno(-EBADF);
         return -1;
     }
 
@@ -380,17 +374,22 @@ ssize_t write(int fd, const void *buf, size_t len)
     ssize_t result;
     struct dfs_file *file;
 
-    if (buf == NULL)
-    {
-        rt_set_errno(-EBADF);
-        return -1;
-    }
-
     file = fd_get(fd);
     if (file == NULL)
     {
         rt_set_errno(-EBADF);
 
+        return -1;
+    }
+
+    if (len == 0)
+    {
+        return 0;
+    }
+
+    if (buf == NULL)
+    {
+        rt_set_errno(-EBADF);
         return -1;
     }
 
@@ -581,6 +580,10 @@ int fstat(int fildes, struct stat *buf)
     if (dfs_is_mounted(file->dentry->mnt) == 0)
     {
         ret = file->dentry->mnt->fs_ops->stat(file->dentry, buf);
+        if (ret == RT_EOK && buf->st_nlink == 0 && file->vnode != RT_NULL)
+        {
+            buf->st_nlink = file->vnode->nlink;
+        }
     }
 
     return ret;
@@ -655,10 +658,17 @@ int fcntl(int fildes, int cmd, ...)
         arg = va_arg(ap, void *);
         va_end(ap);
 
-        ret = dfs_file_ioctl(file, cmd, arg);
-        if (ret < 0)
+        if (cmd == F_GETLK || cmd == F_SETLK || cmd == F_SETLKW)
         {
             ret = dfs_file_fcntl(fildes, cmd, (unsigned long)arg);
+        }
+        else
+        {
+            ret = dfs_file_ioctl(file, cmd, arg);
+            if (ret < 0)
+            {
+                ret = dfs_file_fcntl(fildes, cmd, (unsigned long)arg);
+            }
         }
     }
     else
@@ -675,6 +685,32 @@ int fcntl(int fildes, int cmd, ...)
     return ret;
 }
 RTM_EXPORT(fcntl);
+
+int fchmod(int fildes, mode_t mode)
+{
+    int ret;
+    struct dfs_attr attr = {0};
+    struct dfs_file *file;
+
+    file = fd_get(fildes);
+    if (file == RT_NULL)
+    {
+        rt_set_errno(-EBADF);
+        return -1;
+    }
+
+    attr.st_mode = mode;
+    attr.ia_valid = ATTR_MODE_SET;
+    ret = dfs_file_fsetattr(file, &attr);
+    if (ret < 0)
+    {
+        rt_set_errno(ret);
+        return -1;
+    }
+
+    return 0;
+}
+RTM_EXPORT(fchmod);
 
 /**
  * this function is a POSIX compliant version, which shall perform a variety of

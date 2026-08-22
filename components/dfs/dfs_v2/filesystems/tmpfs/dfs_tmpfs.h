@@ -14,7 +14,7 @@
 #include <rtthread.h>
 #include <dfs_vfs.h>
 
-#define TMPFS_NAME_MAX  32
+#define TMPFS_NAME_MAX  DIRENT_NAME_MAX
 #define TMPFS_MAGIC     0x0B0B0B0B
 
 #define TMPFS_TYPE_FILE   0x00
@@ -31,6 +31,8 @@ struct tmpfs_file
     struct tmpfs_sb *sb;       /* superblock ptr */
     rt_uint8_t      *data;     /* file date ptr */
     rt_size_t        size;     /* file size */
+    rt_uint32_t      nlink;    /* hard link count */
+    mode_t           mode;     /* file type and permission bits */
     rt_bool_t       fre_memory;/* Whether to release memory upon close */
 };
 
