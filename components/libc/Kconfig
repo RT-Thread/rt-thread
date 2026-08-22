@@ -1,5 +1,18 @@
 menu "C/C++ and POSIX layer"
 
+# Smart targets use the libc supplied by their musl toolchain.  Keep these
+# compiler-facing symbols hidden from menuconfig while retaining the choice in
+# .config and generated rtconfig.h for every source that includes RT-Thread
+# headers outside the SCons libc group.
+config RT_USING_LIBC
+    bool
+    default n
+
+config RT_USING_MUSLLIBC
+    bool
+    depends on RT_USING_LIBC
+    default n
+
 config RT_USING_EXTERNAL_LIBC
     bool
     help

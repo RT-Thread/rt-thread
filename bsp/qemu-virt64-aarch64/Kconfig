@@ -14,6 +14,8 @@ osource "$PKGS_DIR/Kconfig"
 config SOC_VIRT64_AARCH64
     bool
     select ARCH_ARMV8
+    select RT_USING_LIBC
+    select RT_USING_MUSLLIBC
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     select ARCH_CPU_64BIT

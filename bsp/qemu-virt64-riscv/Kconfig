@@ -13,6 +13,8 @@ rsource "driver/Kconfig"
 config BOARD_QEMU_VIRT_RV64
     bool
     select ARCH_RISCV64
+    select RT_USING_LIBC
+    select RT_USING_MUSLLIBC
     select ARCH_USING_RISCV_COMMON64
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
