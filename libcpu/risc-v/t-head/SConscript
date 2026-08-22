@@ -1,0 +1,16 @@
+# RT-Thread building script for component
+
+from building import *
+
+group = []
+
+if not GetDepend('ARCH_MM_MMU') and not GetDepend('RT_USING_DM'):
+    Return('group')
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
+CPPPATH = [cwd]
+
+group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

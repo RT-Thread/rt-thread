@@ -7,7 +7,7 @@ CPPPATH = [cwd]
 if not GetDepend('ARCH_USING_ASID'):
     SrcRemove(src, ['asid.c'])
 
-src.append('../common/atomic_riscv.c')
+src.append('../legacy_common/atomic_riscv.c')
 
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
 

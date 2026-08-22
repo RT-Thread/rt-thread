@@ -12,7 +12,9 @@
 #define __TEST_CACHE_RV64_H
 
 #ifdef ARCH_RISCV64
+#ifndef RT_USING_RISCV_NEW_COMMON
 #include "riscv_mmu.h"
+#endif
 #include <utest.h>
 #include <cache.h>
 #include <page.h>
