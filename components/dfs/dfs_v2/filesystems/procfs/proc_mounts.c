@@ -19,13 +19,62 @@
 #include <dfs_dentry.h>
 #include <dfs_mnt.h>
 
+static void mnt_escape(const char *source, char *target, rt_size_t target_size)
+{
+    rt_size_t offset = 0;
+    const char *cursor = source ? source : "";
+
+    if (target_size == 0)
+    {
+        return;
+    }
+
+    while (*cursor != '\0' && offset + 4 < target_size)
+    {
+        if (*cursor == ' ')
+        {
+            target[offset++] = '\\';
+            target[offset++] = '0';
+            target[offset++] = '4';
+            target[offset++] = '0';
+        }
+        else if (*cursor == '\t')
+        {
+            target[offset++] = '\\';
+            target[offset++] = '0';
+            target[offset++] = '1';
+            target[offset++] = '1';
+        }
+        else if (*cursor == '\n')
+        {
+            target[offset++] = '\\';
+            target[offset++] = '0';
+            target[offset++] = '1';
+            target[offset++] = '2';
+        }
+        else if (*cursor == '\\')
+        {
+            target[offset++] = '\\';
+            target[offset++] = '1';
+            target[offset++] = '3';
+            target[offset++] = '4';
+        }
+        else
+        {
+            target[offset++] = *cursor;
+        }
+        cursor++;
+    }
+
+    target[offset] = '\0';
+}
 
 const char *mnt_flag(int flag)
 {
-    /*if (flag & MNT_READONLY)
+    if (flag & MNT_RDONLY)
     {
         return "ro";
-    }*/
+    }
 
     return "rw";
 }
@@ -33,19 +82,23 @@ const char *mnt_flag(int flag)
 static struct dfs_mnt* mnt_show(struct dfs_mnt *mnt, void *parameter)
 {
     struct dfs_seq_file *seq = (struct dfs_seq_file *)parameter;
+    char source[DFS_PATH_MAX];
+    char target[DFS_PATH_MAX];
+    const char *source_name;
+    const char *filesystem_name;
 
-    if (mnt)
+    if (mnt && mnt->fs_ops && mnt->fullpath)
     {
-        if (mnt->dev_id)
+        filesystem_name = mnt->fs_ops->name ? mnt->fs_ops->name : "unknown";
+        source_name = filesystem_name;
+        if (mnt->dev_id && mnt->dev_id->parent.name[0] != '\0')
         {
-            dfs_seq_printf(seq, "%s %s %s %s 0 0\n", mnt->dev_id->parent.name, mnt->fullpath,
-                            mnt->fs_ops->name, mnt_flag(mnt->flags));
+            source_name = mnt->dev_id->parent.name;
         }
-        else
-        {
-            dfs_seq_printf(seq, "%s %s %s %s 0 0\n", mnt->fs_ops->name, mnt->fullpath,
-                            mnt->fs_ops->name, mnt_flag(mnt->flags));
-        }
+        mnt_escape(source_name, source, sizeof(source));
+        mnt_escape(mnt->fullpath, target, sizeof(target));
+        dfs_seq_printf(seq, "%s %s %s %s 0 0\n", source, target,
+                       filesystem_name, mnt_flag(mnt->flags));
     }
 
     return RT_NULL;
