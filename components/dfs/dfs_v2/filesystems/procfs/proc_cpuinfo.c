@@ -49,20 +49,24 @@ static void *seq_next(struct dfs_seq_file *seq, void *data, off_t *index)
 
 static int seq_show(struct dfs_seq_file *seq, void *data)
 {
+#if defined(__aarch64__) || defined(__AARCH64EL__)
     rt_uint64_t midr;
     rt_uint32_t implementer;
     rt_uint32_t variant;
     rt_uint32_t architecture;
     rt_uint32_t part;
     rt_uint32_t revision;
+#endif
 
     RT_UNUSED(data);
+#if defined(__aarch64__) || defined(__AARCH64EL__)
     midr = cpu_midr();
     implementer = (rt_uint32_t)((midr >> 24) & 0xffU);
     variant = (rt_uint32_t)((midr >> 20) & 0x0fU);
     architecture = (rt_uint32_t)((midr >> 16) & 0x0fU);
     part = (rt_uint32_t)((midr >> 4) & 0x0fffU);
     revision = (rt_uint32_t)(midr & 0x0fU);
+#endif
 
     dfs_seq_printf(seq, "processor\t: %lu\n", (unsigned long)seq->index);
 #if defined(__aarch64__) || defined(__AARCH64EL__)
