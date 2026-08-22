@@ -115,6 +115,15 @@ def is_env_enabled(name, default=False):
 
     return value.lower() not in ('', '0', 'false', 'no', 'off')
 
+def is_smart_config(bsp):
+    """Return whether the BSP configuration builds RT-Smart."""
+    config_file = os.path.join(rtt_root, 'bsp', bsp, '.config')
+    if not os.path.isfile(config_file):
+        return False
+
+    with open(config_file, 'r', encoding='utf-8') as config:
+        return re.search(r'^CONFIG_RT_USING_SMART=y$', config.read(), re.MULTILINE) is not None
+
 def get_ci_scons_args(scons_args=''):
     args = scons_args.strip()
     if os.getenv('RTT_TOOL_CHAIN') == 'armclang' and '--exec-path' not in args:
@@ -175,6 +184,37 @@ def run_dist_build_check(bsp, scons_args=''):
 
 
 def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_build_command=None,build_check_result = None,bsp_build_env=None):
+    """Build a BSP with a toolchain matching its configuration."""
+    build_env = {}
+    if is_smart_config(bsp):
+        smart_exec_path = os.getenv('RTT_SMART_EXEC_PATH')
+        smart_cc_prefix = os.getenv('RTT_SMART_CC_PREFIX')
+        if smart_exec_path:
+            build_env['RTT_EXEC_PATH'] = smart_exec_path
+        if smart_cc_prefix:
+            build_env['RTT_CC_PREFIX'] = smart_cc_prefix
+    if bsp_build_env is not None:
+        build_env.update(bsp_build_env)
+
+    old_build_env = {key: os.environ.get(key) for key in build_env}
+    if build_env:
+        print("Setting environment variables:")
+        for key, value in build_env.items():
+            print(f"{key}={value}")
+            os.environ[key] = value
+
+    try:
+        return _build_bsp(bsp, scons_args, name, pre_build_commands,
+                          post_build_command, build_check_result)
+    finally:
+        for key, value in old_build_env.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
+
+def _build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_build_command=None,build_check_result = None):
     """
     build bsp.
 
@@ -204,13 +244,6 @@ def build_bsp(bsp, scons_args='',name='default', pre_build_commands=None, post_b
         return False
 
     scons_args = get_ci_scons_args(scons_args)
-
-    # 设置环境变量
-    if bsp_build_env is not None:
-        print("Setting environment variables:")
-        for key, value in bsp_build_env.items():
-            print(f"{key}={value}")
-            os.environ[key] = value  # 设置环境变量
     os.chdir(rtt_root)
     os.makedirs(f'{rtt_root}/output/bsp/{bsp}', exist_ok=True)
     if os.path.exists(f"{rtt_root}/bsp/{bsp}/Kconfig"):
