@@ -7,7 +7,7 @@ group = []
 
 musllibc_version = GetMuslVersion(rtconfig)
 
-if musllibc_version:
+if musllibc_version and GetDepend('RT_USING_MUSLLIBC'):
     print('Musl version: ' + musllibc_version)
 
     cwd = GetCurrentDir()
@@ -15,13 +15,8 @@ if musllibc_version:
 
     CPPPATH = [cwd]
     CPPDEFINES = []
-    if not GetDepend('RT_USING_MUSLLIBC'):
-        CPPDEFINES.append('RT_USING_MUSLLIBC')
-    if not GetDepend('RT_USING_LIBC'):
-        CPPDEFINES.append('RT_USING_LIBC')
     LIBS = ['c', 'gcc']
     LINKFLAGS = ' --specs=kernel.specs'
-    AddDepend(['RT_USING_MUSLLIBC', 'RT_USING_LIBC'])
 
     group = group + DefineGroup('Libc', src, depend = [''], CPPPATH = CPPPATH, LINKFLAGS = LINKFLAGS, CPPDEFINES = CPPDEFINES, LIBS = LIBS)
 
