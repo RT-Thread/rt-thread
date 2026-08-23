@@ -29,35 +29,43 @@ static void mnt_escape(const char *source, char *target, rt_size_t target_size)
         return;
     }
 
-    while (*cursor != '\0' && offset + 4 < target_size)
+    while (*cursor != '\0')
     {
+        const char *escape = RT_NULL;
+        rt_size_t need = 1;
+
         if (*cursor == ' ')
         {
-            target[offset++] = '\\';
-            target[offset++] = '0';
-            target[offset++] = '4';
-            target[offset++] = '0';
+            escape = "\\040";
+            need = 4;
         }
         else if (*cursor == '\t')
         {
-            target[offset++] = '\\';
-            target[offset++] = '0';
-            target[offset++] = '1';
-            target[offset++] = '1';
+            escape = "\\011";
+            need = 4;
         }
         else if (*cursor == '\n')
         {
-            target[offset++] = '\\';
-            target[offset++] = '0';
-            target[offset++] = '1';
-            target[offset++] = '2';
+            escape = "\\012";
+            need = 4;
         }
         else if (*cursor == '\\')
         {
-            target[offset++] = '\\';
-            target[offset++] = '1';
-            target[offset++] = '3';
-            target[offset++] = '4';
+            escape = "\\134";
+            need = 4;
+        }
+
+        if (offset + need >= target_size)
+        {
+            break;
+        }
+
+        if (escape)
+        {
+            target[offset++] = escape[0];
+            target[offset++] = escape[1];
+            target[offset++] = escape[2];
+            target[offset++] = escape[3];
         }
         else
         {
