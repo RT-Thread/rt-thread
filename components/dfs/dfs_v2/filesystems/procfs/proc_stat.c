@@ -118,7 +118,7 @@ static int seq_show(struct dfs_seq_file *seq, void *data)
     {
         struct stat_process_count process_count = { 0, 0 };
         lwp_pid_for_each(stat_process_count, &process_count);
-        dfs_seq_printf(seq, "processes %d\n", process_count.total);
+        dfs_seq_printf(seq, "processes %lu\n", lwp_pid_get_create_count());
         dfs_seq_printf(seq, "procs_running %d\n", process_count.running);
         dfs_seq_puts(seq, "procs_blocked 0\n");
     }

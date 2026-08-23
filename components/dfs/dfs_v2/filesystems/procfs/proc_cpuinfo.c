@@ -76,7 +76,11 @@ static int seq_show(struct dfs_seq_file *seq, void *data)
     dfs_seq_printf(seq, "CPU revision\t: %lu\n", (unsigned long)revision);
 #elif defined(__riscv)
     dfs_seq_puts(seq, "model name\t: RISC-V Generic\n");
+#if defined(__riscv_xlen) && (__riscv_xlen == 32)
+    dfs_seq_puts(seq, "isa\t\t: rv32\n");
+#else
     dfs_seq_puts(seq, "isa\t\t: rv64\n");
+#endif
 #else
     dfs_seq_puts(seq, "model name\t: RT-Thread Generic CPU\n");
 #endif

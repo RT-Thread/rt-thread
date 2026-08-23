@@ -35,12 +35,12 @@ static int single_show(struct dfs_seq_file *seq, void *data)
     total_freed = total_freed + total - used;
 
     dfs_seq_printf(seq, "%-16s%8lu kB\n", "MemMaxUsed:", (unsigned long)(max_used / 1024));
-    dfs_seq_printf(seq, "%-16s%8lu kB\n", "MemAvailable:", (unsigned long)((total - used) / 1024));
 
     rt_page_get_info(&total, &freed);
     total_sum = total_sum + total * RT_MM_PAGE_SIZE;
     total_freed = total_freed + freed * RT_MM_PAGE_SIZE;
 
+    dfs_seq_printf(seq, "%-16s%8lu kB\n", "MemAvailable:", (unsigned long)(total_freed / 1024));
     dfs_seq_printf(seq, "%-16s%8lu kB\n", "MemTotal:", (unsigned long)(total_sum / 1024));
     dfs_seq_printf(seq, "%-16s%8lu kB\n", "MemFree:", (unsigned long)(total_freed / 1024));
     dfs_seq_printf(seq, "%-16s%8lu kB\n", "Buffers:", 0UL);
