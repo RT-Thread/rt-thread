@@ -13,10 +13,10 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <msh.h>
 #include "utest.h"
 #include "utest_assert.h"
-#include "common.h"
 
 void run_copy()
 {
@@ -96,6 +96,7 @@ static void run_too_long_name_reject(void)
 
     fd = open(path, O_CREAT | O_RDWR, 0);
     uassert_int_equal(fd, -1);
+    uassert_int_equal(errno, -ENAMETOOLONG);
 
     fd = open("/tmp/tmpfs-after-long-name", O_CREAT | O_RDWR | O_TRUNC, 0);
     uassert_true(fd >= 0);
@@ -118,12 +119,24 @@ static void run_mode_change(void)
     uassert_true(fd >= 0);
     uassert_int_equal(fstat(fd, &st), 0);
     uassert_int_equal(st.st_mode & 0777, 0700);
-    uassert_int_equal(fchmod(fd, 0400), 0);
+    uassert_int_equal(fchmod(fd, 0400 | S_ISVTX), 0);
     uassert_int_equal(fstat(fd, &st), 0);
     uassert_int_equal(st.st_mode & 0777, 0400);
+    uassert_true((st.st_mode & S_ISVTX) != 0);
+    uassert_int_equal(fchmod(fd, 0400), 0);
+    uassert_int_equal(fstat(fd, &st), 0);
+    uassert_int_equal(st.st_mode & S_ISVTX, 0);
+
+    uassert_int_equal(unlink(path), 0);
+    uassert_int_equal(fchmod(fd, 0600), 0);
+    uassert_int_equal(fstat(fd, &st), 0);
+    uassert_int_equal(st.st_mode & 0777, 0600);
     uassert_int_equal(close(fd), 0);
 
     errno = 0;
+    fd = open(path, O_CREAT | O_EXCL | O_RDWR, 0400);
+    uassert_true(fd >= 0);
+    uassert_int_equal(close(fd), 0);
     uassert_int_equal(open(path, O_WRONLY, 0), -1);
     uassert_int_equal(errno, -EACCES);
     uassert_int_equal(unlink(path), 0);

@@ -538,15 +538,32 @@ static int dfs_tmpfs_open(struct dfs_file *file)
     return 0;
 }
 
-static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
+static struct tmpfs_file *_tmpfs_file_from_dentry(struct dfs_dentry *dentry)
 {
     rt_size_t size;
-    struct tmpfs_file *d_file;
     struct tmpfs_sb *superblock;
+    struct tmpfs_file *d_file;
+
+    if (dentry == RT_NULL || dentry->mnt == RT_NULL)
+    {
+        return RT_NULL;
+    }
+
+    if (dentry->vnode != RT_NULL && dentry->vnode->data != RT_NULL)
+    {
+        return (struct tmpfs_file *)dentry->vnode->data;
+    }
 
     superblock = (struct tmpfs_sb *)dentry->mnt->data;
     d_file = dfs_tmpfs_lookup(superblock, dentry->pathname, &size);
+    return d_file;
+}
 
+static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
+{
+    struct tmpfs_file *d_file;
+
+    d_file = _tmpfs_file_from_dentry(dentry);
     if (d_file == NULL)
     {
         return -ENOENT;
@@ -566,7 +583,6 @@ static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
 
 static int dfs_tmpfs_setattr(struct dfs_dentry *dentry, struct dfs_attr *attr)
 {
-    rt_size_t size;
     struct tmpfs_file *d_file;
     struct tmpfs_sb *superblock;
 
@@ -575,16 +591,17 @@ static int dfs_tmpfs_setattr(struct dfs_dentry *dentry, struct dfs_attr *attr)
         return -EINVAL;
     }
 
-    superblock = (struct tmpfs_sb *)dentry->mnt->data;
-    d_file = dfs_tmpfs_lookup(superblock, dentry->pathname, &size);
+    d_file = _tmpfs_file_from_dentry(dentry);
     if (d_file == RT_NULL)
     {
         return -ENOENT;
     }
 
+    superblock = (struct tmpfs_sb *)dentry->mnt->data;
     if (attr->ia_valid & ATTR_MODE_SET)
     {
-        mode_t permissions = attr->st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+        mode_t permissions = attr->st_mode &
+            (S_IRWXU | S_IRWXG | S_IRWXO | S_ISUID | S_ISGID | S_ISVTX);
 
         rt_spin_lock(&superblock->lock);
         d_file->mode = (d_file->mode & S_IFMT) | permissions;
@@ -902,7 +919,8 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
         if (type == FT_DIRECTORY)
         {
             d_file->type = TMPFS_TYPE_DIR;
-            d_file->mode = S_IFDIR | (mode & (S_IRWXU | S_IRWXG | S_IRWXO));
+            d_file->mode = S_IFDIR | (mode & (S_IRWXU | S_IRWXG | S_IRWXO |
+                                              S_ISUID | S_ISGID | S_ISVTX));
             vnode->mode = d_file->mode;
             vnode->type = FT_DIRECTORY;
         }
@@ -910,14 +928,16 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
                  (type == FT_REGULAR && S_ISSOCK(mode)))
         {
             d_file->type = TMPFS_TYPE_SOCKET;
-            d_file->mode = S_IFSOCK | (mode & (S_IRWXU | S_IRWXG | S_IRWXO));
+            d_file->mode = S_IFSOCK | (mode & (S_IRWXU | S_IRWXG | S_IRWXO |
+                                               S_ISUID | S_ISGID | S_ISVTX));
             vnode->mode = d_file->mode;
             vnode->type = FT_SOCKET;
         }
         else
         {
             d_file->type = TMPFS_TYPE_FILE;
-            d_file->mode = S_IFREG | (mode & (S_IRWXU | S_IRWXG | S_IRWXO));
+            d_file->mode = S_IFREG | (mode & (S_IRWXU | S_IRWXG | S_IRWXO |
+                                              S_ISUID | S_ISGID | S_ISVTX));
             vnode->mode = d_file->mode;
             vnode->type = FT_REGULAR;
 #ifdef RT_USING_PAGECACHE
