@@ -57,6 +57,7 @@ struct rt_fd_list
     struct rt_epoll_waiter *waiters; /**< Wait nodes registered by poll */
     int exclusive;              /**< Indicates if the event is exclusive */
     rt_bool_t is_rdl_node;      /**< Indicates if the node is in the ready list */
+    rt_bool_t waiter_oom;       /**< Waiter allocation failed; report POLLERR */
     int fd;                     /**< File descriptor */
     struct rt_fd_list *next;    /**< Pointer to the next file descriptor list */
     rt_slist_t rdl_node;        /**< Ready list node */
@@ -306,6 +307,29 @@ static void epoll_wqueue_add_callback(rt_wqueue_t *wq, rt_pollreq_t *req)
     waiter = (struct rt_epoll_waiter *)rt_calloc(1, sizeof(*waiter));
     if (waiter == RT_NULL)
     {
+        rt_base_t level;
+
+        /*
+         * Do not leave the fd unwatched: mark it ready with POLLERR so
+         * epoll_wait() wakes instead of sleeping on an incomplete set.
+         */
+        if (ep)
+        {
+            level = rt_spin_lock_irqsave(&ep->spinlock);
+            if (fdlist->is_rdl_node == RT_FALSE)
+            {
+                rt_slist_append(&ep->rdl_head, &fdlist->rdl_node);
+                fdlist->exclusive = 0;
+                fdlist->is_rdl_node = RT_TRUE;
+                ep->eventpoll_num++;
+            }
+            fdlist->waiter_oom = RT_TRUE;
+            fdlist->revents |= POLLERR;
+            fdlist->epev.events |= POLLERR;
+            ep->status = RT_EPOLL_STAT_TRIG;
+            rt_wqueue_wakeup(&ep->epoll_read, (void *)POLLIN);
+            rt_spin_unlock_irqrestore(&ep->spinlock, level);
+        }
         return;
     }
     waiter->fdlist = fdlist;
@@ -413,6 +437,7 @@ static int epoll_epf_init(int fd)
                     ep->fdlist->waiters = RT_NULL;
                     ep->fdlist->exclusive = 0;
                     ep->fdlist->is_rdl_node = RT_FALSE;
+                    ep->fdlist->waiter_oom = RT_FALSE;
                     dfs_vnode_init(df->vnode, FT_REGULAR, &epoll_fops);
                     df->vnode->data = ep;
                     rt_slist_init(&ep->fdlist->rdl_node);
@@ -525,6 +550,7 @@ static int epoll_ctl_add(struct dfs_file *df, int fd, struct epoll_event *event)
             fdlist->waiters = RT_NULL;
             fdlist->exclusive = 0;
             fdlist->is_rdl_node = RT_FALSE;
+            fdlist->waiter_oom = RT_FALSE;
             fdlist->req._proc = epoll_wqueue_add_callback;
             fdlist->revents = event->events;
             rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
@@ -821,6 +847,11 @@ static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req)
 
             mask &= fl->revents | EPOLLOUT | POLLERR;
         }
+    }
+
+    if (fl->waiter_oom)
+    {
+        mask |= POLLERR;
     }
 
     return mask;
