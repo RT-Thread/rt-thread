@@ -102,37 +102,83 @@ static int cmd_disp_debug(int argc, char **argv)
 
             /*enhance */
             if ( ! strcmp(argv[i], "-e")) {
-                if (argc > i+2) {
+                if (argc > i+1) {
                     i+=1;
 
                     switch(argv[i][0]) {
                     case 'm'://mode
+                        if (argc <= i + 2) {
+                            DE_WRN("-e %s para error!\n", argv[i]);
+                            err++;
+                            break;
+                        }
                         disp_enhance_mode_store(atoi(argv[i + 1]), atoi(argv[i + 2]));
+                        i += 2;
                         break;
                     case 's'://saturation
+                        if (argc <= i + 2) {
+                            DE_WRN("-e %s para error!\n", argv[i]);
+                            err++;
+                            break;
+                        }
                         disp_enhance_saturation_store(atoi(argv[i + 1]), atoi(argv[i + 2]));
+                        i += 2;
                         break;
                     case 'b'://bright
+                        if (argc <= i + 2) {
+                            DE_WRN("-e %s para error!\n", argv[i]);
+                            err++;
+                            break;
+                        }
                         disp_enhance_bright_store(atoi(argv[i + 1]), atoi(argv[i + 2]));
+                        i += 2;
                         break;
                     case 'c'://contrast
+                        if (argc <= i + 2) {
+                            DE_WRN("-e %s para error!\n", argv[i]);
+                            err++;
+                            break;
+                        }
                         disp_enhance_contrast_store(atoi(argv[i + 1]), atoi(argv[i + 2]));
+                        i += 2;
                         break;
                     case 'g'://gamma color_temperature
+                        if (argc <= i + 2) {
+                            DE_WRN("-e %s para error!\n", argv[i]);
+                            err++;
+                            break;
+                        }
                         printf("gamma %s %s %d %d\n",argv[i + 1],argv[i + 2],atoi(argv[i + 1]), atoi(argv[i + 2]));
                         disp_color_temperature_store(atoi(argv[i + 1]), atoi(argv[i + 2]));
+                        i += 2;
                         break;
                     case 'n'://denoise
+                        if (argc <= i + 2) {
+                            DE_WRN("-e %s para error!\n", argv[i]);
+                            err++;
+                            break;
+                        }
                         disp_enhance_denoise_store(atoi(argv[i + 1]), atoi(argv[i + 2]));
+                        i += 2;
                         break;
                     case 'd'://detail
+                        if (argc <= i + 2) {
+                            DE_WRN("-e %s para error!\n", argv[i]);
+                            err++;
+                            break;
+                        }
                         disp_enhance_detail_store(atoi(argv[i + 1]), atoi(argv[i + 2]));
+                        i += 2;
                         break;
                     case 'p'://print
-
+                        if (argc <= i + 1) {
+                            DE_WRN("-e %s para error!\n", argv[i]);
+                            err++;
+                            break;
+                        }
                         if (atoi(argv[i + 1]) < 0 || atoi(argv[i + 1]) > 1) {
-                            i-=1;
                             DE_WRN("para error!\n");
+                            err++;
                             break;
                         }
                         DISP_PRINT("screen %d:\n", atoi(argv[i + 1]));
@@ -150,13 +196,13 @@ static int cmd_disp_debug(int argc, char **argv)
                         DISP_PRINT("denoise %s\n", tmp);
                         disp_enhance_detail_show(atoi(argv[i + 1]), tmp);
                         DISP_PRINT("detail %s\n", tmp);
-                        i-=1;
+                        i += 1;
                         break;
                     default:
                         DE_WRN("para error!\n");
+                        err++;
                         break;
                     }
-                    i+=2;
                 } else {
                     DE_WRN("para error!\n");
                     err++;
@@ -181,7 +227,7 @@ static int cmd_disp_debug(int argc, char **argv)
             ++i;
         }
     }
-    return 0;
+    return err ? -1 : 0;
 }
 
 MSH_CMD_EXPORT_ALIAS(cmd_disp_debug, __cmd_disp, disp cmd);

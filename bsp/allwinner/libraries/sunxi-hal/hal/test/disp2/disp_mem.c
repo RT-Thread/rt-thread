@@ -31,7 +31,9 @@ struct test_mem_cfg
     char filename[32];
 };
 
-static struct info_mm g_disp_mm[10];
+#define DISP_MEM_COUNT 10
+
+static struct info_mm g_disp_mm[DISP_MEM_COUNT];
 static int g_disp_mem_id = -1;
 
 #define DISP_TEST_BYTE_ALIGN(x) (((x + (4*1024-1)) >> 12) << 12)
@@ -72,6 +74,9 @@ static void disp_free(void *virt_addr, void *phys_addr, u32 num_bytes)
 
 static int disp_mem_release(int sel)
 {
+    if (sel < 0 || sel >= DISP_MEM_COUNT)
+        return -1;
+
     if (g_disp_mm[sel].info_base == NULL)
         return -1;
 
@@ -89,7 +94,7 @@ static int disp_mem_request(int sel, u32 size)
 
     uintptr_t phy_addr;
 
-    if ((sel >= 10) ||
+    if ((sel < 0) || (sel >= DISP_MEM_COUNT) ||
         (g_disp_mm[sel].info_base != NULL)) {
         printf("invalid param\n");
         return -1;
@@ -115,7 +120,7 @@ static int disp_mem_request(int sel, u32 size)
 
 u32 disp_mem_getadr(u32 memid)
 {
-    if (memid < 10)
+    if (memid < DISP_MEM_COUNT)
         return g_disp_mm[memid].mem_start;
     return 0;
 }
@@ -129,6 +134,12 @@ int disp_mem(u32 mem_id, u32 width, u32 height, u32 clear_flag, char *filename)
     void *mem = NULL;
     unsigned long count = width*height;
     char *tmp;
+
+    if (mem_id >= DISP_MEM_COUNT) {
+        printf("invalid mem_id\n");
+        return -1;
+    }
+
     if(clear_flag) {
         /* release memory && clear layer */
         disp_mem_release(mem_id);
@@ -229,9 +240,13 @@ int parse_cmdline_and_alloc(int argc, char **argv)
         if ( ! strcmp(argv[i], "-file")) {
             if (argc > i+1) {
                 i++;
-                p->filename[0] = '\0';
-                sprintf(p->filename,"%s",argv[i]);
-                printf("filename=%s\n", argv[i]);
+                if (rt_strlen(argv[i]) >= sizeof(p->filename)) {
+                    printf("filename is too long!!\n");
+                    err++;
+                } else {
+                    rt_strncpy(p->filename, argv[i], sizeof(p->filename));
+                    printf("filename=%s\n", argv[i]);
+                }
             }   else {
                 printf("no file described!!\n");
                 err ++;
@@ -259,6 +274,11 @@ int parse_cmdline_and_alloc(int argc, char **argv)
         }
 
         i++;
+    }
+
+    if (p->mem_id < 0 || p->mem_id >= DISP_MEM_COUNT) {
+        printf("mem_id para error!\n");
+        err++;
     }
 
     if(err > 0) {

@@ -93,7 +93,7 @@ MSH_CMD_EXPORT_ALIAS(rt_hw_exit, quit, exit rt-thread);
 int rt_hw_board_init(void)
 {
     /* init system memory */
-    RT_UNUSED(rt_hw_sram_init());
+    rt_hw_sram_init();
 
     uart_console_init();
 
