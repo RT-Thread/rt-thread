@@ -44,6 +44,10 @@
 #include <unistd.h>
 #include <poll.h>
 #include <sys/ioctl.h>
+#ifdef RT_USING_LWP
+#include <lwp.h>
+#include <lwp_user_mm.h>
+#endif
 
 #ifdef RT_USING_POSIX_TERMIOS
 #include <termios.h>
@@ -137,6 +141,112 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
         fd->flags |= flags;
         break;
     }
+
+#ifdef RT_USING_LWP
+    if (lwp_self() != RT_NULL)
+    {
+        union serial_user_ioctl_arg
+        {
+            struct serial_configure config;
+            struct winsize winsize;
+#ifdef RT_USING_POSIX_TERMIOS
+            struct termios termios;
+            struct termio termio;
+#endif
+            rt_uint16_t oflag;
+            rt_size_t unread_bytes;
+        } karg;
+        size_t arg_size = 0;
+        void *kptr = args;
+        rt_bool_t copy_in = RT_FALSE;
+        rt_bool_t copy_out = RT_FALSE;
+
+        switch ((rt_ubase_t)cmd)
+        {
+        case RT_DEVICE_CTRL_CONFIG:
+            arg_size = sizeof(karg.config);
+            kptr = &karg.config;
+            copy_in = RT_TRUE;
+            break;
+        case RT_DEVICE_CTRL_NOTIFY_SET:
+            return -RT_EPERM;
+        case RT_DEVICE_CTRL_CONSOLE_OFLAG:
+            arg_size = sizeof(karg.oflag);
+            kptr = &karg.oflag;
+            copy_out = RT_TRUE;
+            break;
+        case FIONREAD:
+            arg_size = sizeof(karg.unread_bytes);
+            kptr = &karg.unread_bytes;
+            copy_out = RT_TRUE;
+            break;
+#ifdef RT_USING_POSIX_TERMIOS
+        case TCGETA:
+            arg_size = sizeof(karg.termio);
+            kptr = &karg.termio;
+            copy_out = RT_TRUE;
+            break;
+        case TCGETS:
+            arg_size = sizeof(karg.termios);
+            kptr = &karg.termios;
+            copy_out = RT_TRUE;
+            break;
+        case TCSETA:
+        case TCSETAW:
+        case TCSETAF:
+            arg_size = sizeof(karg.termio);
+            kptr = &karg.termio;
+            copy_in = RT_TRUE;
+            break;
+        case TCSETS:
+        case TCSETSW:
+        case TCSETSF:
+            arg_size = sizeof(karg.termios);
+            kptr = &karg.termios;
+            copy_in = RT_TRUE;
+            break;
+#endif
+        case TIOCSWINSZ:
+            arg_size = sizeof(karg.winsize);
+            kptr = &karg.winsize;
+            copy_in = RT_TRUE;
+            break;
+        case TIOCGWINSZ:
+            arg_size = sizeof(karg.winsize);
+            kptr = &karg.winsize;
+            copy_out = RT_TRUE;
+            break;
+        default:
+            break;
+        }
+
+        if (arg_size)
+        {
+            int ret;
+
+            if (args == RT_NULL || !lwp_user_accessable(args, arg_size))
+            {
+                return -RT_EFAULT;
+            }
+            if (copy_in && lwp_get_from_user(kptr, args, arg_size) != arg_size)
+            {
+                return -RT_EFAULT;
+            }
+
+            ret = rt_device_control(device, cmd, kptr);
+            if (ret != RT_EOK)
+            {
+                return ret;
+            }
+
+            if (copy_out && lwp_put_to_user(args, kptr, arg_size) != arg_size)
+            {
+                return -RT_EFAULT;
+            }
+            return ret;
+        }
+    }
+#endif
 
     return rt_device_control(device, cmd, args);
 }
@@ -1090,13 +1200,22 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                     /*can not change buffer size*/
                     return -RT_EBUSY;
                 }
-                /* set serial configure */
-                serial->config = *pconfig;
+                if (pconfig->baud_rate == 0)
+                {
+                    return -RT_EINVAL;
+                }
+
                 if (serial->parent.ref_count)
                 {
                     /* serial device has been opened, to configure it */
-                    serial->ops->configure(serial, (struct serial_configure *) args);
+                    ret = serial->ops->configure(serial, pconfig);
+                    if (ret != RT_EOK)
+                    {
+                        return ret;
+                    }
                 }
+                /* set serial configure */
+                serial->config = *pconfig;
             }
             break;
         case RT_DEVICE_CTRL_NOTIFY_SET:
