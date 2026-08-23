@@ -75,7 +75,9 @@ static void disp_free(void *virt_addr, void *phys_addr, u32 num_bytes)
 static int disp_mem_release(int sel)
 {
     if (sel < 0 || sel >= DISP_MEM_COUNT)
+    {
         return -1;
+    }
 
     if (g_disp_mm[sel].info_base == NULL)
         return -1;
@@ -95,7 +97,8 @@ static int disp_mem_request(int sel, u32 size)
     uintptr_t phy_addr;
 
     if ((sel < 0) || (sel >= DISP_MEM_COUNT) ||
-        (g_disp_mm[sel].info_base != NULL)) {
+        (g_disp_mm[sel].info_base != NULL))
+    {
         printf("invalid param\n");
         return -1;
     }
@@ -121,7 +124,9 @@ static int disp_mem_request(int sel, u32 size)
 u32 disp_mem_getadr(u32 memid)
 {
     if (memid < DISP_MEM_COUNT)
+    {
         return g_disp_mm[memid].mem_start;
+    }
     return 0;
 }
 
@@ -135,7 +140,8 @@ int disp_mem(u32 mem_id, u32 width, u32 height, u32 clear_flag, char *filename)
     unsigned long count = width*height;
     char *tmp;
 
-    if (mem_id >= DISP_MEM_COUNT) {
+    if (mem_id >= DISP_MEM_COUNT)
+    {
         printf("invalid mem_id\n");
         return -1;
     }
@@ -240,10 +246,13 @@ int parse_cmdline_and_alloc(int argc, char **argv)
         if ( ! strcmp(argv[i], "-file")) {
             if (argc > i+1) {
                 i++;
-                if (rt_strlen(argv[i]) >= sizeof(p->filename)) {
+                if (rt_strlen(argv[i]) >= sizeof(p->filename))
+                {
                     printf("filename is too long!!\n");
                     err++;
-                } else {
+                }
+                else
+                {
                     rt_strncpy(p->filename, argv[i], sizeof(p->filename));
                     printf("filename=%s\n", argv[i]);
                 }
@@ -276,7 +285,8 @@ int parse_cmdline_and_alloc(int argc, char **argv)
         i++;
     }
 
-    if (p->mem_id < 0 || p->mem_id >= DISP_MEM_COUNT) {
+    if (p->mem_id < 0 || p->mem_id >= DISP_MEM_COUNT)
+    {
         printf("mem_id para error!\n");
         err++;
     }
