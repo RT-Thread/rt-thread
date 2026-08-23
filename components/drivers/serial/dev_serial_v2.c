@@ -162,7 +162,7 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
             struct termios termios;
 #endif
             rt_uint16_t oflag;
-            rt_size_t unread_bytes;
+            int unread_bytes;
             rt_ssize_t unread_count;
             rt_int32_t timeout;
         } karg;
@@ -170,6 +170,8 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
         void *kptr = args;
         rt_bool_t copy_in = RT_FALSE;
         rt_bool_t copy_out = RT_FALSE;
+
+        rt_memset(&karg, 0, sizeof(karg));
 
         switch ((rt_ubase_t)cmd)
         {
@@ -1746,6 +1748,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 #ifdef RT_USING_POSIX_STDIO
 #ifdef RT_USING_POSIX_TERMIOS
     case TCGETA:
+    case TCGETS:
     {
         struct termios *tio = (struct termios *)args;
         if (tio == RT_NULL)
@@ -1788,6 +1791,9 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
     case TCSETAW:
     case TCSETAF:
     case TCSETA:
+    case TCSETSW:
+    case TCSETSF:
+    case TCSETS:
     {
         int baudrate;
         struct serial_configure config;
@@ -1837,9 +1843,13 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         else
             config.flowcontrol = RT_SERIAL_FLOWCONTROL_NONE;
 
+        ret = serial->ops->configure(serial, &config);
+        if (ret != RT_EOK)
+        {
+            break;
+        }
         /* set serial configure */
         serial->config = config;
-        serial->ops->configure(serial, &config);
     }
     break;
     case TCFLSH:
@@ -1954,9 +1964,9 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             rt_ssize_t unread_bytes = 0;
             ret = _serial_get_unread_bytes_count(serial, &unread_bytes);
             if (ret == RT_EOK)
-                *(rt_size_t *)args = (rt_size_t)unread_bytes;
+                *(int *)args = (int)unread_bytes;
             else
-                *(rt_size_t *)args = 0;
+                *(int *)args = 0;
         }
         break;
 #endif /* RT_USING_POSIX_STDIO */

@@ -154,12 +154,14 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
             struct termio termio;
 #endif
             rt_uint16_t oflag;
-            rt_size_t unread_bytes;
+            int unread_bytes;
         } karg;
         size_t arg_size = 0;
         void *kptr = args;
         rt_bool_t copy_in = RT_FALSE;
         rt_bool_t copy_out = RT_FALSE;
+
+        rt_memset(&karg, 0, sizeof(karg));
 
         switch ((rt_ubase_t)cmd)
         {
@@ -1236,7 +1238,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         case TCGETA:
         case TCGETS:
             {
-                struct termios *tio, tmp;
+                struct termios *tio, tmp = {0};
 
                 if (cmd == TCGETS)
                 {
@@ -1337,7 +1339,12 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 }
                 else config.parity = PARITY_NONE;
 
-                serial->ops->configure(serial, &config);
+                ret = serial->ops->configure(serial, &config);
+                if (ret != RT_EOK)
+                {
+                    return ret;
+                }
+                serial->config = config;
             }
             break;
 #ifndef RT_USING_TTY
@@ -1446,14 +1453,14 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
         case FIONREAD:
             {
-                rt_size_t recved = 0;
+                rt_ssize_t recved = 0;
                 rt_base_t level;
 
                 level = rt_spin_lock_irqsave(&(serial->spinlock));
                 recved = _serial_fifo_calc_recved_len(serial);
                 rt_spin_unlock_irqrestore(&(serial->spinlock), level);
 
-                *(rt_size_t *)args = recved;
+                *(int *)args = (int)recved;
             }
             break;
 #endif /* RT_USING_POSIX_STDIO */
