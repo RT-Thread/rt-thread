@@ -1238,7 +1238,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         case TCGETA:
         case TCGETS:
             {
-                struct termios *tio, tmp = {0};
+                struct termios *tio, tmp = { 0 };
 
                 if (cmd == TCGETS)
                 {
