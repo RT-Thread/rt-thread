@@ -8,6 +8,7 @@ group = []
 src = []
 # DMA-capable BSPs are expected to enable HAL_DMA_MODULE_ENABLED in the
 # STM32 HAL configuration, so keep the common DMA helper in the build.
+
 src += ['drv_dma.c']
 path = [cwd]
 

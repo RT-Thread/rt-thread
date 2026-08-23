@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2025 RT-Thread Development Team
+ * Copyright (c) 2006-2026, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -139,8 +139,25 @@
 #if defined(BSP_SPI_TX_USING_INT) || defined(BSP_SPI_RX_USING_INT)
 #define BSP_SPI_USING_INT
 #endif
+/* Aggregate BDMA transfer configuration from per-instance Kconfig macros.
+ * Only SPI6 lives in the D3 domain and can be served by BDMA on STM32H7. */
+#if defined(BSP_SPI6_TX_USING_BDMA)
+#define BSP_SPI_TX_USING_BDMA
+#endif
 
-/* Aggregate IRQ requirements from DMA and interrupt transfer modes. */
+#if defined(BSP_SPI6_RX_USING_BDMA)
+#define BSP_SPI_RX_USING_BDMA
+#endif
+
+#if defined(BSP_SPI6_TX_USING_BDMA) || defined(BSP_SPI6_RX_USING_BDMA)
+#define BSP_SPI6_USING_BDMA
+#endif
+
+#if defined(BSP_SPI_TX_USING_BDMA) || defined(BSP_SPI_RX_USING_BDMA)
+#define BSP_SPI_USING_BDMA
+#endif
+
+/* Aggregate IRQ requirements from DMA, BDMA and interrupt transfer modes. */
 #if defined(BSP_SPI1_USING_DMA) || defined(BSP_SPI1_USING_INT)
 #define BSP_SPI1_USING_IRQ
 #endif
@@ -161,11 +178,11 @@
 #define BSP_SPI5_USING_IRQ
 #endif
 
-#if defined(BSP_SPI6_USING_DMA) || defined(BSP_SPI6_USING_INT)
+#if defined(BSP_SPI6_USING_DMA) || defined(BSP_SPI6_USING_INT) || defined(BSP_SPI6_USING_BDMA)
 #define BSP_SPI6_USING_IRQ
 #endif
 
-#if defined(BSP_SPI_USING_DMA) || defined(BSP_SPI_USING_INT)
+#if defined(BSP_SPI_USING_DMA) || defined(BSP_SPI_USING_INT) || defined(BSP_SPI_USING_BDMA)
 #define BSP_SPI_USING_IRQ
 #endif
 
@@ -209,6 +226,12 @@ struct stm32_spi_config
 #ifdef BSP_SPI_TX_USING_DMA
     const struct stm32_dma_config *dma_tx; /**< TX DMA configuration. */
 #endif /* BSP_SPI_TX_USING_DMA */
+#ifdef BSP_SPI_RX_USING_BDMA
+    const struct stm32_bdma_config *bdma_rx; /**< RX BDMA configuration. */
+#endif /* BSP_SPI_RX_USING_BDMA */
+#ifdef BSP_SPI_TX_USING_BDMA
+    const struct stm32_bdma_config *bdma_tx; /**< TX BDMA configuration. */
+#endif /* BSP_SPI_TX_USING_BDMA */
 };
 
 /**
@@ -245,6 +268,18 @@ struct stm32_spi
 #endif /* BSP_SPI_TX_USING_DMA */
     } dma;                             /**< DMA handles associated with this SPI bus. */
 #endif /* BSP_SPI_USING_DMA */
+#ifdef BSP_SPI_USING_BDMA
+    struct
+    {
+#ifdef BSP_SPI_RX_USING_BDMA
+        DMA_HandleTypeDef handle_rx;   /**< STM32 HAL RX BDMA handle. */
+#endif /* BSP_SPI_RX_USING_BDMA */
+#ifdef BSP_SPI_TX_USING_BDMA
+        DMA_HandleTypeDef handle_tx;   /**< STM32 HAL TX BDMA handle. */
+#endif /* BSP_SPI_TX_USING_BDMA */
+    } bdma;                            /**< BDMA handles associated with this SPI bus. */
+#endif /* BSP_SPI_USING_BDMA */
 };
 
 #endif /*__DRV_SPI_H__ */
+

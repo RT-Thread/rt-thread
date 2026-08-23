@@ -16,13 +16,26 @@
 #include "drv_dma.h"
 
 // #define DRV_DEBUG
-#define LOG_TAG             "drv.dma"
+#define LOG_TAG "drv.dma"
 #include <drv_log.h>
 /*
  * DMA-capable BSPs are expected to enable HAL_DMA_MODULE_ENABLED in the
  * STM32 HAL configuration, so keep the common DMA helper in the build.
  */
 #ifdef HAL_DMA_MODULE_ENABLED
+
+/**
+ * @brief Get the controller type name for logging.
+ *
+ * GPDMA-only series resolve to a constant string at compile time; other
+ * series distinguish BDMA and DMA by the descriptor type at runtime.
+ */
+#if defined(STM32_DMA_USES_GPDMA)
+#define STM32_DMA_TYPE_NAME(dma_config)              "gpdma"
+#else
+#define STM32_DMA_TYPE_NAME(dma_config)              \
+    (((dma_config)->common.type == STM32_DMA_TYPE_BDMA) ? "bdma" : "dma")
+#endif /* defined(STM32_DMA_USES_GPDMA) */
 
 #if defined(STM32_DMA_USES_REQUEST)
 /**
@@ -39,13 +52,26 @@ static void stm32_dma_enable_dmamux_clock(void)
 #endif /* defined(STM32_DMA_USES_REQUEST) */
 
 /**
- * @brief Enable the clock of one DMA controller and wait for the write to complete.
- * @param dma_rcc RCC enable bit of the DMA controller.
+ * @brief Enable the clock of one DMA/BDMA controller and wait for the write to complete.
+ * @param dma_rcc RCC enable bit of the DMA/BDMA controller.
+ * @param type Type of the DMA/BDMA controller.
  */
-static void stm32_dma_enable_clock(rt_uint32_t dma_rcc)
+static void stm32_dma_enable_clock(rt_uint32_t dma_rcc,
+                                   stm32_dma_type type)
 {
     rt_uint32_t tmpreg = 0x00U;
-
+/*while using BDMA,careful for the return,because you cant visit the FIFO member*/
+/*if you did so there would be some illegal access.*/
+/*And,please note the domian you can visit*/
+#if defined(BSP_USING_BDMA) && (defined(SOC_SERIES_STM32H7))
+    if (type == STM32_DMA_TYPE_BDMA)
+    {
+        SET_BIT(RCC->AHB4ENR, dma_rcc);
+        tmpreg = READ_BIT(RCC->AHB4ENR, dma_rcc);
+        UNUSED(tmpreg);
+        return;
+    }
+#endif /* defined(BSP_USING_BDMA) && (defined(SOC_SERIES_STM32H7)) */
 #if defined(STM32_DMA_USES_RCC_AHBENR)
     SET_BIT(RCC->AHBENR, dma_rcc);
     tmpreg = READ_BIT(RCC->AHBENR, dma_rcc);
@@ -69,12 +95,9 @@ static void stm32_dma_enable_clock(rt_uint32_t dma_rcc)
  * DMA client does not disable a line still used by another active client.
  * All other DMA IRQs keep the direct enable/disable behavior.
  */
-#if (defined(SOC_SERIES_STM32F1) && defined(DMA2_Channel4_5_IRQn)) \
- || (defined(SOC_SERIES_STM32L0) && defined(DMA1_Channel4_5_6_7_IRQn)) \
- || (defined(SOC_SERIES_STM32G0) && defined(DMA1_Channel2_3_IRQn)) \
- || (defined(SOC_SERIES_STM32F0) && (defined(DMA1_Channel2_3_IRQn) || defined(DMA1_Channel4_5_IRQn) || defined(DMA1_Channel4_5_6_7_IRQn)))
+#if (defined(SOC_SERIES_STM32F1) && defined(DMA2_Channel4_5_IRQn)) || (defined(SOC_SERIES_STM32L0) && defined(DMA1_Channel4_5_6_7_IRQn)) || (defined(SOC_SERIES_STM32G0) && defined(DMA1_Channel2_3_IRQn)) || (defined(SOC_SERIES_STM32F0) && (defined(DMA1_Channel2_3_IRQn) || defined(DMA1_Channel4_5_IRQn) || defined(DMA1_Channel4_5_6_7_IRQn)))
 #define STM32_DMA_HAS_SHARED_IRQ_REFCNT
-#define STM32_DMA_IRQ_SLOT_COUNT    ((rt_uint32_t)(sizeof(NVIC->ISER) / sizeof(NVIC->ISER[0]) * 32U))
+#define STM32_DMA_IRQ_SLOT_COUNT ((rt_uint32_t)(sizeof(NVIC->ISER) / sizeof(NVIC->ISER[0]) * 32U))
 
 /**
  * @brief Reference count for each shared DMA IRQ line.
@@ -122,24 +145,24 @@ static rt_bool_t stm32_dma_irq_needs_refcount(IRQn_Type dma_irq)
 #endif /* defined(SOC_SERIES_STM32G0) && defined(DMA1_Channel2_3_IRQn) */
 
 #if defined(SOC_SERIES_STM32F0)
-# if defined(DMA1_Channel2_3_IRQn)
+#if defined(DMA1_Channel2_3_IRQn)
     if (dma_irq == DMA1_Channel2_3_IRQn)
     {
         return RT_TRUE;
     }
-# endif /* defined(DMA1_Channel2_3_IRQn) */
-# if defined(DMA1_Channel4_5_IRQn)
+#endif /* defined(DMA1_Channel2_3_IRQn) */
+#if defined(DMA1_Channel4_5_IRQn)
     if (dma_irq == DMA1_Channel4_5_IRQn)
     {
         return RT_TRUE;
     }
-# endif /* defined(DMA1_Channel4_5_IRQn) */
-# if defined(DMA1_Channel4_5_6_7_IRQn)
+#endif /* defined(DMA1_Channel4_5_IRQn) */
+#if defined(DMA1_Channel4_5_6_7_IRQn)
     if (dma_irq == DMA1_Channel4_5_6_7_IRQn)
     {
         return RT_TRUE;
     }
-# endif /* defined(DMA1_Channel4_5_6_7_IRQn) */
+#endif /* defined(DMA1_Channel4_5_6_7_IRQn) */
 #endif /* defined(SOC_SERIES_STM32F0) */
 
     return RT_FALSE;
@@ -206,42 +229,56 @@ static void stm32_dma_irq_put(IRQn_Type dma_irq)
 }
 
 /**
- * @brief Copy one static DMA descriptor into one HAL DMA handle.
+ * @brief Apply common configuration fields from the base structure to a HAL DMA handle.
  * @param dma_handle DMA handle to update.
- * @param dma_config Static DMA endpoint description.
+ * @param common Common configuration fields shared by DMA and BDMA.
+ */
+static void stm32_dma_apply_common_config(DMA_HandleTypeDef *dma_handle,
+                                          const struct stm32_dma_config_common *common)
+{
+    dma_handle->Instance = common->Instance;
+#if defined(STM32_DMA_USES_REQUEST) || defined(STM32_BDMA_USES_REQUEST)
+    dma_handle->Init.Request = common->request;
+#endif
+    dma_handle->Init.Direction = common->direction;
+    dma_handle->Init.PeriphInc = common->periph_inc;
+    dma_handle->Init.MemInc = common->mem_inc;
+    dma_handle->Init.PeriphDataAlignment = common->periph_data_alignment;
+    dma_handle->Init.MemDataAlignment = common->mem_data_alignment;
+    dma_handle->Init.Mode = common->mode;
+    dma_handle->Init.Priority = common->priority;
+}
+
+/**
+ * @brief Apply common configuration fields and DMA-specific fields when applicable.
+ *
+ * BDMA endpoints only carry the common fields, so the DMA-specific fields are
+ * skipped based on the controller type stored in the common structure.
  */
 static void stm32_dma_apply_config(DMA_HandleTypeDef *dma_handle,
                                    const struct stm32_dma_config *dma_config)
 {
-    dma_handle->Instance = dma_config->Instance;
+    stm32_dma_apply_common_config(dma_handle, &dma_config->common);
+
+    if (dma_config->common.type == STM32_DMA_TYPE_BDMA)
+    {
+        return;
+    }
+
 #if defined(STM32_DMA_USES_GPDMA)
-    dma_handle->Init.Request = dma_config->request;
     dma_handle->Init.BlkHWRequest = dma_config->blk_hw_request;
-    dma_handle->Init.Direction = dma_config->direction;
     dma_handle->Init.SrcInc = dma_config->src_inc;
     dma_handle->Init.DestInc = dma_config->dest_inc;
     dma_handle->Init.SrcDataWidth = dma_config->src_data_width;
     dma_handle->Init.DestDataWidth = dma_config->dest_data_width;
-    dma_handle->Init.Priority = dma_config->priority;
     dma_handle->Init.SrcBurstLength = dma_config->src_burst_length;
     dma_handle->Init.DestBurstLength = dma_config->dest_burst_length;
     dma_handle->Init.TransferAllocatedPort = dma_config->transfer_allocated_port;
     dma_handle->Init.TransferEventMode = dma_config->transfer_event_mode;
-    dma_handle->Init.Mode = dma_config->mode;
 #else
 #if defined(STM32_DMA_USES_CHANNEL)
     dma_handle->Init.Channel = dma_config->channel;
 #endif /* defined(STM32_DMA_USES_CHANNEL) */
-#if defined(STM32_DMA_USES_REQUEST)
-    dma_handle->Init.Request = dma_config->request;
-#endif /* defined(STM32_DMA_USES_REQUEST) */
-    dma_handle->Init.Direction = dma_config->direction;
-    dma_handle->Init.PeriphInc = dma_config->periph_inc;
-    dma_handle->Init.MemInc = dma_config->mem_inc;
-    dma_handle->Init.PeriphDataAlignment = dma_config->periph_data_alignment;
-    dma_handle->Init.MemDataAlignment = dma_config->mem_data_alignment;
-    dma_handle->Init.Mode = dma_config->mode;
-    dma_handle->Init.Priority = dma_config->priority;
 #if defined(STM32_DMA_SUPPORTS_FIFO)
     dma_handle->Init.FIFOMode = dma_config->fifo_mode;
     dma_handle->Init.FIFOThreshold = dma_config->fifo_threshold;
@@ -263,21 +300,26 @@ rt_err_t stm32_dma_init(DMA_HandleTypeDef *dma_handle,
 {
     RT_ASSERT(dma_handle != RT_NULL);
     RT_ASSERT(dma_config != RT_NULL);
-
-    stm32_dma_enable_clock(dma_config->dma_rcc);
+    stm32_dma_enable_clock(dma_config->common.dma_rcc, dma_config->common.type);
     stm32_dma_apply_config(dma_handle, dma_config);
 
-    LOG_D("dma init, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
+    LOG_D("%s init, dma=%p, irq=%d",
+          STM32_DMA_TYPE_NAME(dma_config),
+          dma_handle->Instance, dma_config->common.dma_irq);
 
     if (HAL_DMA_DeInit(dma_handle) != HAL_OK)
     {
-        LOG_E("dma deinit failed, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
+        LOG_E("%s deinit failed, dma=%p, irq=%d",
+              STM32_DMA_TYPE_NAME(dma_config),
+              dma_handle->Instance, dma_config->common.dma_irq);
         return -RT_ERROR;
     }
 
     if (HAL_DMA_Init(dma_handle) != HAL_OK)
     {
-        LOG_E("dma init failed, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
+        LOG_E("%s init failed, dma=%p, irq=%d",
+              STM32_DMA_TYPE_NAME(dma_config),
+              dma_handle->Instance, dma_config->common.dma_irq);
         return -RT_ERROR;
     }
 
@@ -312,9 +354,11 @@ rt_err_t stm32_dma_setup(DMA_HandleTypeDef *dma_handle,
         dma_handle->Parent = parent_handle;
     }
 
-    stm32_dma_irq_get(dma_config->dma_irq, dma_config->preempt_priority, dma_config->sub_priority);
+    stm32_dma_irq_get(dma_config->common.dma_irq, dma_config->common.preempt_priority, dma_config->common.sub_priority);
 
-    LOG_D("dma setup, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
+    LOG_D("%s setup, dma=%p, irq=%d",
+          STM32_DMA_TYPE_NAME(dma_config),
+          dma_handle->Instance, dma_config->common.dma_irq);
 
     return RT_EOK;
 }
@@ -334,24 +378,31 @@ rt_err_t stm32_dma_deinit(DMA_HandleTypeDef *dma_handle,
     RT_ASSERT(dma_handle != RT_NULL);
     RT_ASSERT(dma_config != RT_NULL);
 
-    stm32_dma_irq_put(dma_config->dma_irq);
+    stm32_dma_irq_put(dma_config->common.dma_irq);
 
-    LOG_D("dma deinit, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
+    LOG_D("%s deinit, dma=%p, irq=%d",
+          STM32_DMA_TYPE_NAME(dma_config),
+          dma_handle->Instance, dma_config->common.dma_irq);
 
     if (abort_first)
     {
         if (HAL_DMA_Abort(dma_handle) != HAL_OK)
         {
-            LOG_W("dma abort failed, continue deinit, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
+            LOG_W("%s abort failed, continue deinit, dma=%p, irq=%d",
+                  STM32_DMA_TYPE_NAME(dma_config),
+                  dma_handle->Instance, dma_config->common.dma_irq);
         }
     }
 
     if (HAL_DMA_DeInit(dma_handle) != HAL_OK)
     {
-        LOG_E("dma deinit failed, dma=%p, irq=%d", dma_handle->Instance, dma_config->dma_irq);
+        LOG_E("%s deinit failed, dma=%p, irq=%d",
+              STM32_DMA_TYPE_NAME(dma_config),
+              dma_handle->Instance, dma_config->common.dma_irq);
         return -RT_ERROR;
     }
 
     return RT_EOK;
 }
+
 #endif /* HAL_DMA_MODULE_ENABLED */
