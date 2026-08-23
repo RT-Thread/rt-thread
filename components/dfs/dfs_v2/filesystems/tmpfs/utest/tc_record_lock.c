@@ -26,7 +26,7 @@ rt_err_t sys_dup2(int oldfd, int newfd);
 #include "utest.h"
 #include "utest_assert.h"
 
-#define LOCK_PATH "/tmp/record-lock-utest"
+#define LOCK_PATH    "/tmp/record-lock-utest"
 #define LOCK_PAYLOAD "0123456789abcdef"
 
 struct lock_waiter_arg
