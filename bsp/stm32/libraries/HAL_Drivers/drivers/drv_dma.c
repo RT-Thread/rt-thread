@@ -31,9 +31,9 @@
  * series distinguish BDMA and DMA by the descriptor type at runtime.
  */
 #if defined(STM32_DMA_USES_GPDMA)
-#define STM32_DMA_TYPE_NAME(dma_config)              "gpdma"
+#define STM32_DMA_TYPE_NAME(dma_config) "gpdma"
 #else
-#define STM32_DMA_TYPE_NAME(dma_config)              \
+#define STM32_DMA_TYPE_NAME(dma_config) \
     (((dma_config)->common.type == STM32_DMA_TYPE_BDMA) ? "bdma" : "dma")
 #endif /* defined(STM32_DMA_USES_GPDMA) */
 
