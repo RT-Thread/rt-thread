@@ -601,7 +601,7 @@ static int dfs_tmpfs_setattr(struct dfs_dentry *dentry, struct dfs_attr *attr)
     if (attr->ia_valid & ATTR_MODE_SET)
     {
         mode_t permissions = attr->st_mode &
-            (S_IRWXU | S_IRWXG | S_IRWXO | S_ISUID | S_ISGID | S_ISVTX);
+                             (S_IRWXU | S_IRWXG | S_IRWXO | S_ISUID | S_ISGID | S_ISVTX);
 
         rt_spin_lock(&superblock->lock);
         d_file->mode = (d_file->mode & S_IFMT) | permissions;

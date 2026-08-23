@@ -31,11 +31,11 @@ struct loadavg_count
 };
 
 /* Fixed-point load averages, 11 bits of fraction like Linux FSHIFT. */
-#define PROC_LOAD_FSHIFT 11
+#define PROC_LOAD_FSHIFT  11
 #define PROC_LOAD_FIXED_1 (1UL << PROC_LOAD_FSHIFT)
-#define PROC_LOAD_EXP_1  1884UL /* 1 / exp(5s / 60s)  * 2048 */
-#define PROC_LOAD_EXP_5  2014UL /* 1 / exp(5s / 300s) * 2048 */
-#define PROC_LOAD_EXP_15 2037UL /* 1 / exp(5s / 900s) * 2048 */
+#define PROC_LOAD_EXP_1   1884UL /* 1 / exp(5s / 60s)  * 2048 */
+#define PROC_LOAD_EXP_5   2014UL /* 1 / exp(5s / 300s) * 2048 */
+#define PROC_LOAD_EXP_15  2037UL /* 1 / exp(5s / 900s) * 2048 */
 
 static unsigned long load_1 = 0;
 static unsigned long load_5 = 0;
