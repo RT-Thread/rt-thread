@@ -43,13 +43,16 @@ static struct dfs_aspace_ops dfs_tmp_aspace_ops =
 };
 #endif
 
-static int _path_separate(const char *path, char *parent_path, char *file_name)
+static int _path_separate(const char *path, char *parent_path, rt_size_t parent_size,
+                          char *file_name, rt_size_t file_size)
 {
     const char *path_p, *path_q;
+    rt_size_t parent_len, file_len;
 
     RT_ASSERT(path[0] == '/');
 
     file_name[0] = '\0';
+    parent_path[0] = '\0';
     path_p = path_q = &path[1];
 __next_dir:
     while (*path_q != '/' && *path_q != '\0')
@@ -66,10 +69,18 @@ __next_dir:
         }
         else /* Last level dir */
         {
-            rt_memcpy(parent_path, path, path_p - path - 1);
-            parent_path[path_p - path - 1] = '\0';
-            rt_memcpy(file_name, path_p, path_q - path_p);
-            file_name[path_q - path_p] = '\0';
+            parent_len = path_p - path - 1;
+            file_len = path_q - path_p;
+
+            if ((parent_len + 1 > parent_size) || (file_len + 1 > file_size))
+            {
+                return -ENAMETOOLONG;
+            }
+
+            rt_memcpy(parent_path, path, parent_len);
+            parent_path[parent_len] = '\0';
+            rt_memcpy(file_name, path_p, file_len);
+            file_name[file_len] = '\0';
         }
     }
     if (parent_path[0] == 0)
@@ -83,17 +94,31 @@ __next_dir:
     return 0;
 }
 
-static int _get_subdir(const char *path, char *name)
+static int _get_subdir(const char *path, char *name, rt_size_t name_size)
 {
     const char *subpath = path;
+    rt_size_t len = 0;
+
+    if (name_size == 0)
+    {
+        return -EINVAL;
+    }
+
     while (*subpath == '/' && *subpath)
         subpath ++;
     while (*subpath != '/' && *subpath)
     {
+        if (len + 1 >= name_size)
+        {
+            name[0] = '\0';
+            return -ENAMETOOLONG;
+        }
         *name = *subpath;
         name ++;
         subpath ++;
+        len ++;
     }
+    *name = '\0';
     return 0;
 }
 
@@ -256,7 +281,10 @@ find_subpath:
         subpath ++; /* skip '/' */
 
     memset(subdir_name, 0, TMPFS_NAME_MAX);
-    _get_subdir(curpath, subdir_name);
+    if (_get_subdir(curpath, subdir_name, sizeof(subdir_name)) != 0)
+    {
+        return RT_NULL;
+    }
 
     rt_spin_lock(&superblock->lock);
 
@@ -612,7 +640,12 @@ static int dfs_tmpfs_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *ne
     }
 
     /* find parent file */
-    _path_separate(new_dentry->pathname, parent_path, file_name);
+    if (_path_separate(new_dentry->pathname, parent_path, DFS_PATH_MAX,
+                       file_name, sizeof(file_name)) != RT_EOK)
+    {
+        rt_free(parent_path);
+        return -ENAMETOOLONG;
+    }
     if (file_name[0] == '\0') /* it's root dir */
     {
         rt_free(parent_path);
@@ -626,7 +659,8 @@ static int dfs_tmpfs_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *ne
     dfs_vfs_remove_node(&d_file->node);
     rt_spin_unlock(&superblock->lock);
 
-    strncpy(d_file->name, file_name, TMPFS_NAME_MAX);
+    rt_strncpy(d_file->name, file_name, TMPFS_NAME_MAX);
+    d_file->name[TMPFS_NAME_MAX - 1] = '\0';
 
     rt_spin_lock(&superblock->lock);
     dfs_vfs_append_node(&p_file->node, &d_file->node);
@@ -707,7 +741,13 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
     if (vnode)
     {
         /* find parent file */
-        _path_separate(dentry->pathname, parent_path, file_name);
+        if (_path_separate(dentry->pathname, parent_path, DFS_PATH_MAX,
+                           file_name, sizeof(file_name)) != RT_EOK)
+        {
+            rt_free(parent_path);
+            dfs_vnode_destroy(vnode);
+            return NULL;
+        }
         if (file_name[0] == '\0') /* it's root dir */
         {
             rt_free(parent_path);
@@ -735,7 +775,8 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
 
         superblock->df_size += sizeof(struct tmpfs_file);
 
-        strncpy(d_file->name, file_name, TMPFS_NAME_MAX);
+        rt_strncpy(d_file->name, file_name, TMPFS_NAME_MAX);
+        d_file->name[TMPFS_NAME_MAX - 1] = '\0';
 
         dfs_vfs_init_node(&d_file->node);
         d_file->data = NULL;
