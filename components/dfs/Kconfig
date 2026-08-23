@@ -145,14 +145,81 @@ endif
                 Number of copies of the FAT table. Setting 1 saves space while 2
                 provides redundancy for fault tolerance. Used by f_mkfs().
 
-        config RT_DFS_ELM_CLUSTER_SIZE
-            int "Cluster size in bytes (0 = auto)"
-            default 0
+        choice
+            prompt "Cluster size in bytes (allocation unit size) used by f_mkfs()"
+            default RT_DFS_ELM_CLUSTER_SIZE_0
             help
-                Cluster size (allocation unit size) used by f_mkfs().
-                Set to 0 to let f_mkfs auto-select based on volume size.
-                Common values: 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536.
-                Must be a power of 2 and >= sector size.
+                Cluster size (allocation unit size) passed to f_mkfs().
+                Must be a power of 2 and >= sector size (RT_DFS_ELM_MAX_SECTOR_SIZE).
+                Select "Auto" to let f_mkfs auto-select based on volume size.
+                A value smaller than the sector size (e.g. 512 on a 4096-byte
+                sector device) is invalid and will be silently overridden by
+                f_mkfs with its auto-selection, so pick a value >= sector size.
+
+            config RT_DFS_ELM_CLUSTER_SIZE_0
+                bool "Auto (0 = let f_mkfs decide)"
+            config RT_DFS_ELM_CLUSTER_SIZE_512
+                bool "512 bytes"
+            config RT_DFS_ELM_CLUSTER_SIZE_1024
+                bool "1024 bytes"
+            config RT_DFS_ELM_CLUSTER_SIZE_2048
+                bool "2048 bytes"
+            config RT_DFS_ELM_CLUSTER_SIZE_4096
+                bool "4096 bytes"
+            config RT_DFS_ELM_CLUSTER_SIZE_8192
+                bool "8192 bytes"
+            config RT_DFS_ELM_CLUSTER_SIZE_16384
+                bool "16384 bytes"
+            config RT_DFS_ELM_CLUSTER_SIZE_32768
+                bool "32768 bytes"
+            config RT_DFS_ELM_CLUSTER_SIZE_65536
+                bool "65536 bytes"
+            config RT_DFS_ELM_CLUSTER_SIZE_131072
+                bool "131072 bytes (128K) - exFAT recommended"
+                depends on RT_DFS_ELM_USE_EXFAT
+            config RT_DFS_ELM_CLUSTER_SIZE_262144
+                bool "262144 bytes (256K) - exFAT recommended"
+                depends on RT_DFS_ELM_USE_EXFAT
+            config RT_DFS_ELM_CLUSTER_SIZE_524288
+                bool "524288 bytes (512K) - exFAT recommended"
+                depends on RT_DFS_ELM_USE_EXFAT
+            config RT_DFS_ELM_CLUSTER_SIZE_1048576
+                bool "1048576 bytes (1M) - exFAT recommended"
+                depends on RT_DFS_ELM_USE_EXFAT
+            config RT_DFS_ELM_CLUSTER_SIZE_2097152
+                bool "2097152 bytes (2M) - exFAT recommended"
+                depends on RT_DFS_ELM_USE_EXFAT
+            config RT_DFS_ELM_CLUSTER_SIZE_4194304
+                bool "4194304 bytes (4M) - exFAT recommended"
+                depends on RT_DFS_ELM_USE_EXFAT
+            config RT_DFS_ELM_CLUSTER_SIZE_8388608
+                bool "8388608 bytes (8M) - exFAT recommended"
+                depends on RT_DFS_ELM_USE_EXFAT
+            config RT_DFS_ELM_CLUSTER_SIZE_16777216
+                bool "16777216 bytes (16M, FatFs max) - exFAT recommended"
+                depends on RT_DFS_ELM_USE_EXFAT
+        endchoice
+
+        config RT_DFS_ELM_CLUSTER_SIZE
+            int
+            range 0 16777216
+            default 0          if RT_DFS_ELM_CLUSTER_SIZE_0
+            default 512        if RT_DFS_ELM_CLUSTER_SIZE_512
+            default 1024       if RT_DFS_ELM_CLUSTER_SIZE_1024
+            default 2048       if RT_DFS_ELM_CLUSTER_SIZE_2048
+            default 4096       if RT_DFS_ELM_CLUSTER_SIZE_4096
+            default 8192       if RT_DFS_ELM_CLUSTER_SIZE_8192
+            default 16384      if RT_DFS_ELM_CLUSTER_SIZE_16384
+            default 32768      if RT_DFS_ELM_CLUSTER_SIZE_32768
+            default 65536      if RT_DFS_ELM_CLUSTER_SIZE_65536
+            default 131072     if RT_DFS_ELM_CLUSTER_SIZE_131072
+            default 262144     if RT_DFS_ELM_CLUSTER_SIZE_262144
+            default 524288     if RT_DFS_ELM_CLUSTER_SIZE_524288
+            default 1048576    if RT_DFS_ELM_CLUSTER_SIZE_1048576
+            default 2097152    if RT_DFS_ELM_CLUSTER_SIZE_2097152
+            default 4194304    if RT_DFS_ELM_CLUSTER_SIZE_4194304
+            default 8388608    if RT_DFS_ELM_CLUSTER_SIZE_8388608
+            default 16777216   if RT_DFS_ELM_CLUSTER_SIZE_16777216
 
         config RT_DFS_ELM_USE_ERASE
             bool "Enable sector erase feature"
