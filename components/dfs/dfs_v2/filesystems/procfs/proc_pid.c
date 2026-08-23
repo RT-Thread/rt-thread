@@ -46,17 +46,76 @@ struct pid_dentry
 
 static char stat_transform(int __stat)
 {
-    switch (__stat)
+    int stat = __stat & RT_THREAD_STAT_MASK;
+
+    if (stat == RT_THREAD_RUNNING)
     {
-    case RT_THREAD_RUNNING:
         return 'R';
+    }
+    if (stat == RT_THREAD_READY)
+    {
+        return 'R';
+    }
+    if (stat == RT_THREAD_CLOSE)
+    {
+        return 'Z';
+    }
+    if (stat & RT_THREAD_SUSPEND_MASK)
+    {
+        return 'S';
+    }
+    return 'T';
+}
+
+static const char *proc_state_desc(char state)
+{
+    switch (state)
+    {
+    case 'R':
+        return "running";
+    case 'S':
+        return "sleeping";
+    case 'Z':
+        return "zombie";
+    case 'T':
+        return "stopped";
     default:
-        return 'T';
+        return "unknown";
     }
 }
 
+static char proc_lwp_state(struct rt_lwp *lwp)
+{
+    rt_list_t *node;
+    char state = 'S';
+
+    if (!lwp || lwp->terminated)
+    {
+        return 'Z';
+    }
+
+    node = lwp->t_grp.next;
+    while (node != &lwp->t_grp)
+    {
+        rt_thread_t thread = rt_list_entry(node, struct rt_thread, sibling);
+        char thread_state = stat_transform(RT_SCHED_CTX(thread).stat);
+
+        if (thread_state == 'R')
+        {
+            return 'R';
+        }
+        if (thread_state == 'T')
+        {
+            state = 'T';
+        }
+        node = node->next;
+    }
+
+    return state;
+}
+
 #ifdef ARCH_MM_MMU
-#define PROC_MAP_MAX 256
+#define PROC_MAP_GROW 32
 
 struct proc_map_entry
 {
@@ -75,6 +134,8 @@ struct proc_map_context
     struct rt_lwp *lwp;
     struct proc_map_entry *entries;
     rt_size_t count;
+    rt_size_t capacity;
+    rt_bool_t count_resident;
     rt_bool_t smaps;
 };
 
@@ -104,16 +165,67 @@ static void proc_map_name(rt_varea_t varea, struct proc_map_entry *entry)
     entry->name[sizeof(entry->name) - 1] = '\0';
 }
 
+static int proc_map_grow(struct proc_map_context *context)
+{
+    struct proc_map_entry *entries;
+    rt_size_t capacity;
+
+    if (context->count < context->capacity)
+    {
+        return 0;
+    }
+
+    capacity = context->capacity ? context->capacity * 2 : PROC_MAP_GROW;
+    entries = rt_realloc(context->entries, capacity * sizeof(*entries));
+    if (!entries)
+    {
+        return -RT_ENOMEM;
+    }
+
+    rt_memset(entries + context->capacity, 0,
+              (capacity - context->capacity) * sizeof(*entries));
+    context->entries = entries;
+    context->capacity = capacity;
+    return 0;
+}
+
+static rt_size_t proc_map_count_resident(rt_varea_t varea)
+{
+    uintptr_t address;
+    uintptr_t end;
+    rt_size_t resident_pages = 0;
+
+    if (!varea || varea->size == 0)
+    {
+        return 0;
+    }
+
+    address = (uintptr_t)varea->start;
+    end = address + varea->size;
+    while (address < end)
+    {
+        if (rt_hw_mmu_v2p(varea->aspace, (void *)address) != ARCH_MAP_FAILED)
+        {
+            resident_pages++;
+        }
+        address += ARCH_PAGE_SIZE;
+    }
+
+    return resident_pages;
+}
+
 static int proc_map_collect(rt_varea_t varea, void *arg)
 {
     struct proc_map_context *context = (struct proc_map_context *)arg;
     struct proc_map_entry *entry;
-    uintptr_t address;
-    uintptr_t end;
 
-    if (context->count >= PROC_MAP_MAX || !varea || varea->size == 0)
+    if (!varea || varea->size == 0)
     {
         return 0;
+    }
+    if (proc_map_grow(context) != 0)
+    {
+        return -RT_ENOMEM;
     }
 
     entry = &context->entries[context->count++];
@@ -124,18 +236,34 @@ static int proc_map_collect(rt_varea_t varea, void *arg)
     proc_map_permissions(varea, entry);
     proc_map_name(varea, entry);
 
-    address = entry->start;
-    end = entry->end;
-    while (address < end)
+    if (context->count_resident)
     {
-        if (rt_hw_mmu_v2p(varea->aspace, (void *)address) != ARCH_MAP_FAILED)
-        {
-            entry->resident_pages++;
-        }
-        address += ARCH_PAGE_SIZE;
+        entry->resident_pages = proc_map_count_resident(varea);
     }
 
     return 0;
+}
+
+static rt_size_t proc_lwp_resident_pages(struct rt_lwp *lwp)
+{
+    rt_varea_t varea;
+    rt_size_t resident_pages = 0;
+
+    if (!lwp || !lwp->aspace)
+    {
+        return 0;
+    }
+
+    RD_LOCK(lwp->aspace);
+    varea = ASPACE_VAREA_FIRST(lwp->aspace);
+    while (varea)
+    {
+        resident_pages += proc_map_count_resident(varea);
+        varea = ASPACE_VAREA_NEXT(varea);
+    }
+    RD_UNLOCK(lwp->aspace);
+
+    return resident_pages;
 }
 
 static void proc_map_context_free(struct proc_map_context *context)
@@ -244,7 +372,9 @@ static int proc_maps_open(struct dfs_file *file)
         return -RT_ENOENT;
     }
     context->smaps = !rt_strcmp(dentry->name, "smaps");
-    context->entries = rt_calloc(PROC_MAP_MAX, sizeof(*context->entries));
+    context->count_resident = context->smaps;
+    context->capacity = PROC_MAP_GROW;
+    context->entries = rt_calloc(context->capacity, sizeof(*context->entries));
     if (!context->entries)
     {
         proc_map_context_free(context);
@@ -255,7 +385,12 @@ static int proc_maps_open(struct dfs_file *file)
     varea = ASPACE_VAREA_FIRST(context->lwp->aspace);
     while (varea)
     {
-        proc_map_collect(varea, context);
+        if (proc_map_collect(varea, context) != 0)
+        {
+            RD_UNLOCK(context->lwp->aspace);
+            proc_map_context_free(context);
+            return -RT_ENOMEM;
+        }
         varea = ASPACE_VAREA_NEXT(varea);
     }
     RD_UNLOCK(context->lwp->aspace);
@@ -447,6 +582,7 @@ static int proc_pid_status_show(struct dfs_seq_file *seq, void *data)
     struct proc_dentry *dentry = (struct proc_dentry *)seq->file->vnode->data;
     struct rt_lwp *lwp = lwp_from_pid_and_lock(dentry->pid);
     rt_size_t vm_size = 0;
+    rt_size_t vm_rss = 0;
     rt_size_t thread_count = 0;
     rt_list_t *node;
     char state;
@@ -461,6 +597,7 @@ static int proc_pid_status_show(struct dfs_seq_file *seq, void *data)
     if (lwp->aspace)
     {
         vm_size = rt_aspace_count_vsz(lwp->aspace);
+        vm_rss = proc_lwp_resident_pages(lwp) * ARCH_PAGE_SIZE;
     }
 #endif
     node = lwp->t_grp.next;
@@ -469,15 +606,15 @@ static int proc_pid_status_show(struct dfs_seq_file *seq, void *data)
         thread_count++;
         node = node->next;
     }
-    state = lwp->terminated ? 'Z' : 'S';
+    state = proc_lwp_state(lwp);
     dfs_seq_printf(seq, "Name:\t%s\n", lwp->cmd);
-    dfs_seq_printf(seq, "State:\t%c (sleeping)\n", state);
+    dfs_seq_printf(seq, "State:\t%c (%s)\n", state, proc_state_desc(state));
     dfs_seq_printf(seq, "Pid:\t%d\n", lwp->pid);
     dfs_seq_printf(seq, "PPid:\t%d\n", lwp->parent ? lwp->parent->pid : 0);
     dfs_seq_puts(seq, "Uid:\t0\t0\t0\t0\nGid:\t0\t0\t0\t0\n");
     dfs_seq_printf(seq, "Threads:\t%lu\n", (unsigned long)thread_count);
     dfs_seq_printf(seq, "VmSize:\t%lu kB\n", (unsigned long)(vm_size / 1024));
-    dfs_seq_printf(seq, "VmRSS:\t%lu kB\n", (unsigned long)(vm_size / 1024));
+    dfs_seq_printf(seq, "VmRSS:\t%lu kB\n", (unsigned long)(vm_rss / 1024));
     dfs_seq_puts(seq, "VmData:\t0 kB\nVmStk:\t0 kB\nVmExe:\t0 kB\nVmLib:\t0 kB\n");
     lwp_from_pid_release_lock(lwp);
     return 0;
@@ -488,6 +625,7 @@ static int proc_pid_statm_show(struct dfs_seq_file *seq, void *data)
     struct proc_dentry *dentry = (struct proc_dentry *)seq->file->vnode->data;
     struct rt_lwp *lwp = lwp_from_pid_and_lock(dentry->pid);
     rt_size_t size_pages = 0;
+    rt_size_t resident_pages = 0;
     rt_size_t text_pages = 0;
     rt_size_t data_pages = 0;
 
@@ -501,14 +639,13 @@ static int proc_pid_statm_show(struct dfs_seq_file *seq, void *data)
     if (lwp->aspace)
     {
         size_pages = (rt_aspace_count_vsz(lwp->aspace) + ARCH_PAGE_SIZE - 1) / ARCH_PAGE_SIZE;
+        resident_pages = proc_lwp_resident_pages(lwp);
     }
-#endif
-#ifdef ARCH_MM_MMU
     text_pages = (lwp->text_size + ARCH_PAGE_SIZE - 1) / ARCH_PAGE_SIZE;
     data_pages = (lwp->data_size + ARCH_PAGE_SIZE - 1) / ARCH_PAGE_SIZE;
 #endif
     dfs_seq_printf(seq, "%lu %lu 0 %lu 0 %lu 0\n",
-                   (unsigned long)size_pages, (unsigned long)size_pages,
+                   (unsigned long)size_pages, (unsigned long)resident_pages,
                    (unsigned long)text_pages, (unsigned long)data_pages);
     lwp_from_pid_release_lock(lwp);
     return 0;
