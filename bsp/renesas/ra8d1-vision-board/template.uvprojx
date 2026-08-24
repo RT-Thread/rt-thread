@@ -10,13 +10,13 @@
       <TargetName>Target 1</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
+      <pCCUsed>6240000::V6.24::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
           <Device>R7FA8D1BH</Device>
           <Vendor>Renesas</Vendor>
-          <PackID>Renesas.RA8_DFP.0.0.2</PackID>
+          <PackID>Renesas.RA_DFP.6.5.1</PackID>
           <PackURL>https://www2.renesas.eu/Keil_MDK_Packs/</PackURL>
           <Cpu>IRAM(0x22000000,0xE0000) IRAM2(0x0,0x10000) IROM(0x02000000,0x001F8000) XRAM(0x20000000,0x10000) CPUTYPE("Cortex-M85") FPU3(DFPU) DSP TZ MVE(FP) PACBTI CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
