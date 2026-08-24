@@ -183,5 +183,3 @@ static int cmd_disp_debug(int argc, const char **argv)
     }
     return 0;
 }
-
-FINSH_FUNCTION_EXPORT_ALIAS(cmd_disp_debug, __cmd_disp, disp cmd);

@@ -264,5 +264,3 @@ int parse_cmdline_and_alloc(int argc, char **argv)
     }
 }
 
-FINSH_FUNCTION_EXPORT_ALIAS(parse_cmdline_and_alloc, disp_mem, disp mem);
-
