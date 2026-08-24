@@ -668,7 +668,17 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
 #endif
 
     /**< Configure Select Line */
-    rt_pin_write(device->cs_pin, PIN_HIGH);
+    if (!(configuration->mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
+    {
+        if (configuration->mode & RT_SPI_CS_HIGH)
+        {
+            rt_pin_write(device->cs_pin, PIN_LOW);
+        }
+        else
+        {
+            rt_pin_write(device->cs_pin, PIN_HIGH);
+        }
+    }
 
     /**< config bitrate */
 #ifdef R_SCI_B_SPI_H
