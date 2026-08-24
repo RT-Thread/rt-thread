@@ -36,6 +36,7 @@ static struct rt_event complete_event = { 0 };
 #define R_SPI_Read         R_SPI_B_Read
 #define R_SPI_WriteRead    R_SPI_B_WriteRead
 #define R_SPI_Open         R_SPI_B_Open
+#define R_SPI_Close        R_SPI_B_Close
 #define spi_extended_cfg_t spi_b_extended_cfg_t
 
 #elif defined(SOC_SERIES_R7SA6W1)
@@ -44,6 +45,7 @@ static struct rt_event complete_event = { 0 };
 #define R_SPI_Read         R_SPI_W_Read
 #define R_SPI_WriteRead    R_SPI_W_WriteRead
 #define R_SPI_Open         R_SPI_W_Open
+#define R_SPI_Close        R_SPI_W_Close
 #define spi_extended_cfg_t spi_w_extended_cfg_t
 
 #endif
@@ -75,6 +77,8 @@ static struct ra_spi_handle spi_handle[] = {
 };
 
 static struct ra_spi spi_config[sizeof(spi_handle) / sizeof(spi_handle[0])] = { 0 };
+static spi_cfg_t fsp_config[sizeof(spi_handle) / sizeof(spi_handle[0])] = { 0 };
+static spi_extended_cfg_t fsp_extended_config[sizeof(spi_handle) / sizeof(spi_handle[0])] = { 0 };
 
 void spi0_callback(spi_callback_args_t *p_args)
 {
@@ -232,6 +236,9 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     rt_err_t err = RT_EOK;
 
     struct ra_spi *spi_dev = rt_container_of(device->bus, struct ra_spi, bus);
+    rt_size_t index = spi_dev - spi_config;
+    spi_cfg_t *fsp_cfg = &fsp_config[index];
+    spi_extended_cfg_t *spi_cfg = &fsp_extended_config[index];
 
     /**< data_width : 1 -> 8 bits , 2 -> 16 bits, 4 -> 32 bits, default 32 bits*/
     rt_uint8_t data_width = configuration->data_width / 8;
@@ -239,10 +246,22 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     configuration->data_width = configuration->data_width / 8;
     spi_dev->rt_spi_cfg_t = configuration;
 
-    spi_extended_cfg_t *spi_cfg = (spi_extended_cfg_t *)spi_dev->ra_spi_handle_t->spi_cfg_t->p_extend;
+    *fsp_cfg = *spi_dev->ra_spi_handle_t->spi_cfg_t;
+    *spi_cfg = *(const spi_extended_cfg_t *)spi_dev->ra_spi_handle_t->spi_cfg_t->p_extend;
+    fsp_cfg->p_extend = spi_cfg;
 
     /**< Configure Select Line */
-    rt_pin_write(device->cs_pin, PIN_HIGH);
+    if (!(configuration->mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
+    {
+        if (configuration->mode & RT_SPI_CS_HIGH)
+        {
+            rt_pin_write(device->cs_pin, PIN_LOW);
+        }
+        else
+        {
+            rt_pin_write(device->cs_pin, PIN_HIGH);
+        }
+    }
 
     /**< config bitrate */
 #if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R7KA8P1)
@@ -256,7 +275,12 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
 #endif
 
     /**< init */
-    err = R_SPI_Open((spi_ctrl_t *)spi_dev->ra_spi_handle_t->spi_ctrl_t, (spi_cfg_t const * const)spi_dev->ra_spi_handle_t->spi_cfg_t);
+    err = R_SPI_Open((spi_ctrl_t *)spi_dev->ra_spi_handle_t->spi_ctrl_t, fsp_cfg);
+    if (err == FSP_ERR_ALREADY_OPEN)
+    {
+        R_SPI_Close((spi_ctrl_t *)spi_dev->ra_spi_handle_t->spi_ctrl_t);
+        err = R_SPI_Open((spi_ctrl_t *)spi_dev->ra_spi_handle_t->spi_ctrl_t, fsp_cfg);
+    }
     /* handle error */
     if (RT_EOK != err)
     {
