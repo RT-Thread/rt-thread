@@ -231,11 +231,15 @@ def MDK45Project(env, tree, target, script):
     CFLAGS = ''
     ProjectFiles = []
 
-    # add group
-    groups = tree.find('Targets/Target/Groups')
+    import copy
+
+    # add groups to the first target; they will be copied to all other targets afterward
+    first_target = tree.find('Targets/Target')
+    groups = first_target.find('Groups')
     if groups is None:
-        groups = SubElement(tree.find('Targets/Target'), 'Groups')
+        groups = SubElement(first_target, 'Groups')
     groups.clear() # clean old groups
+
     for group in script:
         group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path, group)
 
@@ -284,23 +288,39 @@ def MDK45Project(env, tree, target, script):
                     else:
                         group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], full_path, project_path)
 
-    # write include path, definitions and link flags
-    IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
-    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in set(CPPPATH)])
+    # write include path, definitions and link flags for all targets in the template
+    include_path_text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in set(CPPPATH)])
+    define_text = ', '.join(set(CPPDEFINES))
 
-    Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
-    Define.text = ', '.join(set(CPPDEFINES))
+    for target_node in tree.findall('Targets/Target'):
+        # copy groups from the first target to all other targets so they share the same source file list
+        if target_node is not first_target:
+            existing_groups = target_node.find('Groups')
+            if existing_groups is not None:
+                target_node.remove(existing_groups)
+            target_node.append(copy.deepcopy(groups))
 
-    if 'c99' in CXXFLAGS or 'c99' in CCFLAGS or 'c99' in CFLAGS:
-        uC99 = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uC99')
-        uC99.text = '1'
+        inc = target_node.find('TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
+        if inc is not None:
+            inc.text = include_path_text
 
-    if 'gnu' in CXXFLAGS or 'gnu' in CCFLAGS or 'gnu' in CFLAGS:
-        uGnu = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uGnu')
-        uGnu.text = '1'
+        dfn = target_node.find('TargetOption/TargetArmAds/Cads/VariousControls/Define')
+        if dfn is not None:
+            dfn.text = define_text
 
-    Misc = tree.find('Targets/Target/TargetOption/TargetArmAds/LDads/Misc')
-    Misc.text = LINKFLAGS
+        if 'c99' in CXXFLAGS or 'c99' in CCFLAGS or 'c99' in CFLAGS:
+            uC99 = target_node.find('TargetOption/TargetArmAds/Cads/uC99')
+            if uC99 is not None:
+                uC99.text = '1'
+
+        if 'gnu' in CXXFLAGS or 'gnu' in CCFLAGS or 'gnu' in CFLAGS:
+            uGnu = target_node.find('TargetOption/TargetArmAds/Cads/uGnu')
+            if uGnu is not None:
+                uGnu.text = '1'
+
+        misc = target_node.find('TargetOption/TargetArmAds/LDads/Misc')
+        if misc is not None:
+            misc.text = LINKFLAGS
 
     xml_indent(root)
     out.write(etree.tostring(root, encoding='utf-8').decode())
@@ -362,12 +382,22 @@ def MDK5Project(env, target, script):
     # copy uvopt file
     if os.path.exists('template.uvoptx'):
         import shutil
-        shutil.copy2('template.uvoptx', '{}.uvoptx'.format(os.path.splitext(target)[0]))
-        # build with UV4.exe
+        project_uvoptx = '{}.uvoptx'.format(os.path.splitext(target)[0])
+        shutil.copy2('template.uvoptx', project_uvoptx)
 
+        # Set the active target from the BSP via an optional board-specific hook.
+        try:
+            import rtconfig
+            if hasattr(rtconfig, 'update_keil_active_target'):
+                rtconfig.update_keil_active_target(project_uvoptx)
+        except Exception as e:
+            print('Warning: could not set Keil active target: %s' % e)
+
+        # build with UV4.exe
         if shutil.which('UV4.exe') is not None:
             target_name = template_tree.find('Targets/Target/TargetName')
             print('target_name:', target_name.text)
+
             log_file_path = 'keil.log'
             if os.path.exists(log_file_path):
                 os.remove(log_file_path)

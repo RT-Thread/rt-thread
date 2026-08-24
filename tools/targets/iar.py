@@ -40,13 +40,14 @@ iar_workspace = r'''<?xml version="1.0" encoding="iso-8859-1"?>
 
 <workspace>
   <project>
-    <path>$WS_DIR$\%s</path>
-  </project>
+    <path>$WS_DIR$\%(project)s</path>
+  </project>%(active_config)s
   <batchBuild/>
 </workspace>
 
 
 '''
+
 
 def IARAddGroup(parent, name, files, project_path):
     group = SubElement(parent, 'group')
@@ -69,11 +70,47 @@ def IARAddGroup(parent, name, files, project_path):
         else:
             file_name.text = '$PROJ_DIR$\\' + path # ('$PROJ_DIR$\\' + path).decode(fs_encoding)
 
-def IARWorkspace(target):
-    # make an workspace
+def _update_iar_wsdt(wsdt_path, project_name, active_config):
+    """Update <CurrentConfigs><Project> in the IAR session file to set the active configuration."""
+    config_str = '%s/%s' % (project_name, active_config)
+
+    if not os.path.exists(wsdt_path):
+        # create a minimal wsdt if it does not exist yet
+        os.makedirs(os.path.dirname(wsdt_path), exist_ok=True)
+        content = '<?xml version="1.0"?>\n<Workspace>\n    <ConfigDictionary>\n        <CurrentConfigs>\n            <Project>%s</Project>\n        </CurrentConfigs>\n    </ConfigDictionary>\n</Workspace>\n' % config_str
+        with open(wsdt_path, 'w') as f:
+            f.write(content)
+        return
+
+    try:
+        tree = etree.parse(wsdt_path)
+        root = tree.getroot()
+        proj_elem = root.find('ConfigDictionary/CurrentConfigs/Project')
+        if proj_elem is not None:
+            proj_elem.text = config_str
+        else:
+            # create the elements if missing
+            cfg_dict = root.find('ConfigDictionary')
+            if cfg_dict is None:
+                cfg_dict = SubElement(root, 'ConfigDictionary')
+            cur_cfgs = cfg_dict.find('CurrentConfigs')
+            if cur_cfgs is None:
+                cur_cfgs = SubElement(cfg_dict, 'CurrentConfigs')
+            proj_elem = SubElement(cur_cfgs, 'Project')
+            proj_elem.text = config_str
+        tree.write(wsdt_path, encoding='unicode', xml_declaration=True)
+    except Exception as e:
+        print('Warning: could not update %s: %s' % (wsdt_path, e))
+
+def IARWorkspace(target, active_config=None):
+    # make an workspace, optionally setting the active configuration
     workspace = target.replace('.ewp', '.eww')
+    project_name = os.path.splitext(os.path.basename(target))[0]
+    active_elem = ''
+    if active_config:
+        active_elem = '\n  <activeConfig>\n    <name>%s/%s</name>\n  </activeConfig>' % (project_name, active_config)
     out = open(workspace, 'w')
-    xml = iar_workspace % target
+    xml = iar_workspace % {'project': target, 'active_config': active_elem}
     out.write(xml)
     out.close()
 
@@ -87,6 +124,7 @@ def IARProject(env, target, script):
 
     CPPPATH = []
     CPPDEFINES = env.get('CPPDEFINES', [])
+
     LOCAL_CPPDEFINES = []
     LINKFLAGS = ''
     CFLAGS = ''
@@ -160,6 +198,13 @@ def IARProject(env, target, script):
                 state = SubElement(option, 'state')
                 state.text = define
 
+        if name.text == 'IlinkConfigDefines':
+            # write bare symbol=value tokens from LINKFLAGS as IAR linker defines
+            import re
+            for token in re.findall(r'\S+', LINKFLAGS):
+                state = SubElement(option, 'state')
+                state.text = token
+
         if name.text == 'IlinkAdditionalLibs':
             for path in Libs:
                 state = SubElement(option, 'state')
@@ -173,7 +218,39 @@ def IARProject(env, target, script):
     out.write(etree.tostring(root, encoding='utf-8').decode())
     out.close()
 
-    IARWorkspace(target)
+    # Determine the active configuration from the BSP via an optional board-specific hook.
+    active_config = None
+    try:
+        import rtconfig
+        if hasattr(rtconfig, 'iar_get_active_config'):
+            active_config = rtconfig.iar_get_active_config()
+    except Exception as e:
+        print('Warning: could not get IAR active config: %s' % e)
+
+    IARWorkspace(target, active_config)
+
+    # update settings/project.wsdt to set the active configuration
+    if active_config:
+        wsdt_path = os.path.join('settings', os.path.splitext(os.path.basename(target))[0] + '.wsdt')
+
+        project_name = os.path.splitext(os.path.basename(target))[0]
+        _update_iar_wsdt(wsdt_path, project_name, active_config)
+
+    # copy template.ewd (debugger settings) and template.ewt (build settings) to project files
+    import shutil
+    ewd_template = target.replace('.ewp', '.ewd').replace('project', 'template')
+    ewd_target   = target.replace('.ewp', '.ewd')
+    if not os.path.exists(ewd_template):
+        ewd_template = 'template.ewd'
+    if os.path.exists(ewd_template):
+        shutil.copy2(ewd_template, ewd_target)
+
+    ewt_template = target.replace('.ewp', '.ewt').replace('project', 'template')
+    ewt_target   = target.replace('.ewp', '.ewt')
+    if not os.path.exists(ewt_template):
+        ewt_template = 'template.ewt'
+    if os.path.exists(ewt_template):
+        shutil.copy2(ewt_template, ewt_target)
 
 def IARPath():
     import rtconfig
