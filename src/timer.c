@@ -27,8 +27,8 @@
 #include <rtthread.h>
 #include <rthw.h>
 
-#define DBG_TAG           "kernel.timer"
-#define DBG_LVL           DBG_INFO
+#define DBG_TAG "kernel.timer"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #ifndef RT_USING_TIMER_ALL_SOFT
@@ -40,11 +40,11 @@ static struct rt_spinlock _htimer_lock;
 #ifdef RT_USING_TIMER_SOFT
 
 #ifndef RT_TIMER_THREAD_STACK_SIZE
-#define RT_TIMER_THREAD_STACK_SIZE     512
+#define RT_TIMER_THREAD_STACK_SIZE 512
 #endif /* RT_TIMER_THREAD_STACK_SIZE */
 
 #ifndef RT_TIMER_THREAD_PRIO
-#define RT_TIMER_THREAD_PRIO           0
+#define RT_TIMER_THREAD_PRIO 0
 #endif /* RT_TIMER_THREAD_PRIO */
 
 /* soft timer list */
@@ -52,8 +52,7 @@ static rt_list_t _soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 static struct rt_spinlock _stimer_lock;
 static struct rt_thread _timer_thread;
 static struct rt_semaphore _soft_timer_sem;
-rt_align(RT_SP_ALIGH_SIZE)
-static rt_uint8_t _timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
+rt_align(RT_SP_ALIGH_SIZE) static rt_uint8_t _timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 #endif /* RT_USING_TIMER_SOFT */
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
@@ -93,7 +92,7 @@ void rt_timer_exit_sethook(void (*hook)(struct rt_timer *timer))
 /**@}*/
 #endif /* RT_USING_HOOK */
 
-rt_inline struct rt_spinlock* _timerlock_idx(struct rt_timer *timer)
+rt_inline struct rt_spinlock *_timerlock_idx(struct rt_timer *timer)
 {
 #ifdef RT_USING_TIMER_ALL_SOFT
     return &_stimer_lock;
@@ -130,27 +129,27 @@ rt_inline struct rt_spinlock* _timerlock_idx(struct rt_timer *timer)
  */
 static void _timer_init(rt_timer_t timer,
                         void (*timeout)(void *parameter),
-                        void      *parameter,
-                        rt_tick_t  time,
+                        void *parameter,
+                        rt_tick_t time,
                         rt_uint8_t flag)
 {
     int i;
 
 #ifdef RT_USING_TIMER_ALL_SOFT
-    flag               |= RT_TIMER_FLAG_SOFT_TIMER;
+    flag |= RT_TIMER_FLAG_SOFT_TIMER;
 #endif
 
     /* set flag */
-    timer->parent.flag  = flag;
+    timer->parent.flag = flag;
 
     /* set deactivated */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 
     timer->timeout_func = timeout;
-    timer->parameter    = parameter;
+    timer->parameter = parameter;
 
     timer->timeout_tick = 0;
-    timer->init_tick    = time;
+    timer->init_tick = time;
 
     /* initialize timer list */
     for (i = 0; i < RT_TIMER_SKIP_LIST_LEVEL; i++)
@@ -213,7 +212,9 @@ static int _timer_count_height(struct rt_timer *timer)
     for (i = 0; i < RT_TIMER_SKIP_LIST_LEVEL; i++)
     {
         if (!rt_list_isempty(&timer->row[i]))
+        {
             cnt++;
+        }
     }
     return cnt;
 }
@@ -264,12 +265,12 @@ void rt_timer_dump(rt_list_t timer_heads[])
  * @param flag is the flag of timer
  *
  */
-void rt_timer_init(rt_timer_t  timer,
+void rt_timer_init(rt_timer_t timer,
                    const char *name,
                    void (*timeout)(void *parameter),
-                   void       *parameter,
-                   rt_tick_t   time,
-                   rt_uint8_t  flag)
+                   void *parameter,
+                   rt_tick_t time,
+                   rt_uint8_t flag)
 {
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
@@ -344,9 +345,9 @@ RTM_EXPORT(rt_timer_detach);
  */
 rt_timer_t rt_timer_create(const char *name,
                            void (*timeout)(void *parameter),
-                           void       *parameter,
-                           rt_tick_t   time,
-                           rt_uint8_t  flag)
+                           void *parameter,
+                           rt_tick_t time,
+                           rt_uint8_t flag)
 {
     struct rt_timer *timer;
 
@@ -422,11 +423,11 @@ static rt_err_t _timer_start(rt_list_t *timer_list, rt_timer_t timer)
 
     timer->timeout_tick = rt_tick_get() + timer->init_tick;
 
-    row_head[0]  = &timer_list[0];
+    row_head[0] = &timer_list[0];
     for (row_lvl = 0; row_lvl < RT_TIMER_SKIP_LIST_LEVEL; row_lvl++)
     {
         for (; row_head[row_lvl] != timer_list[row_lvl].prev;
-             row_head[row_lvl]  = row_head[row_lvl]->next)
+             row_head[row_lvl] = row_head[row_lvl]->next)
         {
             struct rt_timer *t;
             rt_list_t *p = row_head[row_lvl]->next;
@@ -449,7 +450,9 @@ static rt_err_t _timer_start(rt_list_t *timer_list, rt_timer_t timer)
             }
         }
         if (row_lvl != RT_TIMER_SKIP_LIST_LEVEL - 1)
+        {
             row_head[row_lvl + 1] = row_head[row_lvl] + 1;
+        }
     }
 
     /* Interestingly, this super simple timer insert counter works very very
@@ -464,10 +467,14 @@ static rt_err_t _timer_start(rt_list_t *timer_list, rt_timer_t timer)
     for (row_lvl = 2; row_lvl <= RT_TIMER_SKIP_LIST_LEVEL; row_lvl++)
     {
         if (!(tst_nr & RT_TIMER_SKIP_LIST_MASK))
+        {
             rt_list_insert_after(row_head[RT_TIMER_SKIP_LIST_LEVEL - row_lvl],
                                  &(timer->row[RT_TIMER_SKIP_LIST_LEVEL - row_lvl]));
+        }
         else
+        {
             break;
+        }
         /* Shift over the bits we have tested. Works well with 1 bit and 2
          * bits. */
         tst_nr >>= (RT_TIMER_SKIP_LIST_MASK + 1) >> 1;
@@ -547,7 +554,10 @@ static void _timer_check(rt_list_t *timer_list, struct rt_spinlock *lock)
                 _timer_start(timer_list, t);
             }
         }
-        else break;
+        else
+        {
+            break;
+        }
     }
     rt_spin_unlock_irqrestore(lock, level);
 }
@@ -699,7 +709,7 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
         break;
 
     case RT_TIMER_CTRL_GET_STATE:
-        if(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
+        if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
         {
             /*timer is start and run*/
             *(rt_uint32_t *)arg = RT_TIMER_FLAG_ACTIVATED;
@@ -712,14 +722,14 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
         break;
 
     case RT_TIMER_CTRL_GET_REMAIN_TIME:
-        *(rt_tick_t *)arg =  timer->timeout_tick;
+        *(rt_tick_t *)arg = timer->timeout_tick;
         break;
     case RT_TIMER_CTRL_GET_FUNC:
         *(void **)arg = (void *)timer->timeout_func;
         break;
 
     case RT_TIMER_CTRL_SET_FUNC:
-        timer->timeout_func = (void (*)(void*))arg;
+        timer->timeout_func = (void (*)(void *))arg;
         break;
 
     case RT_TIMER_CTRL_GET_PARM:
@@ -852,7 +862,7 @@ void rt_system_timer_thread_init(void)
     }
     rt_spin_lock_init(&_stimer_lock);
     rt_sem_init(&_soft_timer_sem, "stimer", 0, RT_IPC_FLAG_PRIO);
-    rt_sem_control(&_soft_timer_sem, RT_IPC_CMD_SET_VLIMIT, (void*)1);
+    rt_sem_control(&_soft_timer_sem, RT_IPC_CMD_SET_VLIMIT, (void *)1);
     /* start software timer thread */
     rt_thread_init(&_timer_thread,
                    "timer",

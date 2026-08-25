@@ -35,22 +35,21 @@
 #endif /* RT_USING_HOOK */
 
 #ifndef IDLE_THREAD_STACK_SIZE
-#if defined (RT_USING_IDLE_HOOK) || defined(RT_USING_HEAP)
-#define IDLE_THREAD_STACK_SIZE  256
+#if defined(RT_USING_IDLE_HOOK) || defined(RT_USING_HEAP)
+#define IDLE_THREAD_STACK_SIZE 256
 #else
-#define IDLE_THREAD_STACK_SIZE  128
+#define IDLE_THREAD_STACK_SIZE 128
 #endif /* (RT_USING_IDLE_HOOK) || defined(RT_USING_HEAP) */
 #endif /* IDLE_THREAD_STACK_SIZE */
 
-#define _CPUS_NR                RT_CPUS_NR
+#define _CPUS_NR RT_CPUS_NR
 
 static struct rt_thread idle_thread[_CPUS_NR];
-rt_align(RT_SP_ALIGH_SIZE)
-static rt_uint8_t idle_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
+rt_align(RT_SP_ALIGH_SIZE) static rt_uint8_t idle_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
 
 #ifdef RT_USING_IDLE_HOOK
 #ifndef RT_IDLE_HOOK_LIST_SIZE
-#define RT_IDLE_HOOK_LIST_SIZE  4
+#define RT_IDLE_HOOK_LIST_SIZE 4
 #endif /* RT_IDLE_HOOK_LIST_SIZE */
 
 static void (*idle_hook_list[RT_IDLE_HOOK_LIST_SIZE])(void);
@@ -147,7 +146,7 @@ static void idle_thread_entry(void *parameter)
 #endif /* RT_USING_IDLE_HOOK */
 
 #if !defined(RT_USING_SMP) && !defined(RT_USING_SMART)
-    rt_defunct_execute();
+        rt_defunct_execute();
 #endif
 
 #ifdef RT_USING_PM
@@ -180,18 +179,18 @@ void rt_thread_idle_init(void)
 #endif /* RT_NAME_MAX > 0 */
         rt_thread_init(&idle_thread[i],
 #if RT_NAME_MAX > 0
-                idle_thread_name,
+                       idle_thread_name,
 #else
-                "tidle",
+                       "tidle",
 #endif /* RT_NAME_MAX > 0 */
-                idle_thread_entry,
-                RT_NULL,
-                &idle_thread_stack[i][0],
-                sizeof(idle_thread_stack[i]),
-                RT_THREAD_PRIORITY_MAX - 1,
-                32);
+                       idle_thread_entry,
+                       RT_NULL,
+                       &idle_thread_stack[i][0],
+                       sizeof(idle_thread_stack[i]),
+                       RT_THREAD_PRIORITY_MAX - 1,
+                       32);
 #ifdef RT_USING_SMP
-        rt_thread_control(&idle_thread[i], RT_THREAD_CTRL_BIND_CPU, (void*)i);
+        rt_thread_control(&idle_thread[i], RT_THREAD_CTRL_BIND_CPU, (void *)i);
 #endif /* RT_USING_SMP */
 
         /* update */
@@ -243,7 +242,9 @@ rt_bool_t rt_thread_is_idle_thread(rt_thread_t thread)
         for (i = 0; i < _CPUS_NR; i++)
         {
             if (thread == &idle_thread[i])
+            {
                 return RT_TRUE;
+            }
         }
     }
 
