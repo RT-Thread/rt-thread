@@ -9,6 +9,7 @@
  * 2021-05-03     lizhirui     porting to C906
  * 2023-10-12     Shell        Add permission control API
  * 2026-02-25     Steven       Porting to Standard Svpbmt
+ * 2026-08-25     chenguohao   Add SV48/SV57 support
  */
 
 #ifndef __RISCV_MMU_H__
@@ -56,17 +57,22 @@
 #define VPN1_BIT          9
 #define VPN2_SHIFT        (VPN1_SHIFT + VPN1_BIT)
 #define VPN2_BIT          9
+#define VPN3_SHIFT        (VPN2_SHIFT + VPN2_BIT)
+#define VPN3_BIT          9
+#define VPN4_SHIFT        (VPN3_SHIFT + VPN3_BIT)
+#define VPN4_BIT          9
 
 #define PPN0_SHIFT (PAGE_OFFSET_SHIFT + PAGE_OFFSET_BIT)
 #define PPN0_BIT   9
 #define PPN1_SHIFT (PPN0_SHIFT + PPN0_BIT)
 #define PPN1_BIT   9
 #define PPN2_SHIFT (PPN1_SHIFT + PPN1_BIT)
-#define PPN2_BIT   26
-
-#define L1_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT + VPN1_BIT)
-#define L2_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT)
-#define L3_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT)
+#define PPN2_BIT   9
+#define PPN3_SHIFT (PPN2_SHIFT + PPN2_BIT)
+#define PPN3_BIT   9
+#define PPN4_SHIFT (PPN3_SHIFT + PPN3_BIT)
+#define PPN4_BIT   8
+#define PPN_BITS   (PPN0_BIT + PPN1_BIT + PPN2_BIT + PPN3_BIT + PPN4_BIT)
 
 #define ARCH_ADDRESS_WIDTH_BITS 64
 
@@ -109,8 +115,45 @@
 #define SATP_MODE_SV57   10
 #define SATP_MODE_SV64   11
 
-#define ARCH_VADDR_WIDTH 39
+/* default to Sv39 */
+#ifndef SATP_MODE
 #define SATP_MODE        SATP_MODE_SV39
+#endif
+
+#if (SATP_MODE == SATP_MODE_SV57)
+#define ARCH_VADDR_WIDTH     57
+#define ARCH_PAGE_TBL_LEVELS 5
+#elif (SATP_MODE == SATP_MODE_SV48)
+#define ARCH_VADDR_WIDTH     48
+#define ARCH_PAGE_TBL_LEVELS 4
+#elif (SATP_MODE == SATP_MODE_SV39)
+#define ARCH_VADDR_WIDTH     39
+#define ARCH_PAGE_TBL_LEVELS 3
+#endif
+
+/*
+ * Leaf page size at each level (L1 = top-level PGD).
+ * A leaf PTE at level Ln maps a contiguous region of L{n}_PAGE_SIZE.
+ */
+#if (ARCH_PAGE_TBL_LEVELS == 5)
+#define L1_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT + VPN1_BIT + VPN2_BIT + VPN3_BIT + VPN4_BIT)
+#define L2_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT + VPN1_BIT + VPN2_BIT + VPN3_BIT)
+#define L3_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT + VPN1_BIT + VPN2_BIT)
+#define L4_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT + VPN1_BIT)
+#define L5_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT)
+#elif (ARCH_PAGE_TBL_LEVELS == 4)
+#define L1_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT + VPN1_BIT + VPN2_BIT + VPN3_BIT)
+#define L2_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT + VPN1_BIT + VPN2_BIT)
+#define L3_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT + VPN1_BIT)
+#define L4_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT)
+#elif (ARCH_PAGE_TBL_LEVELS == 3)
+#define L1_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT + VPN1_BIT)
+#define L2_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT + VPN0_BIT)
+#define L3_PAGE_SIZE __SIZE(PAGE_OFFSET_BIT)
+#endif
+
+#define EARLY_MAP_PAGE_SIZE_1G __SIZE(PAGE_OFFSET_BIT + VPN0_BIT + VPN1_BIT)
+#define EARLY_MAP_PAGE_SIZE_2M __SIZE(PAGE_OFFSET_BIT + VPN0_BIT)
 
 #if !CONFIG_XUANTIE_SVPBMT
 /*
@@ -156,6 +199,10 @@
 #define ARCH_PAGE_MASK   (ARCH_PAGE_SIZE - 1)
 #define ARCH_PAGE_SHIFT  PAGE_OFFSET_BIT
 #define ARCH_INDEX_WIDTH 9
+#define ARCH_INDEX_SIZE  (1 << ARCH_INDEX_WIDTH)
+
+/* Top-level page table shift (PGD index extraction shift) */
+#define ARCH_TOP_LEVEL_SHIFT (ARCH_PAGE_SHIFT + (ARCH_PAGE_TBL_LEVELS - 1) * ARCH_INDEX_WIDTH)
 
 #define ARCH_MAP_FAILED ((void *)0x8000000000000000)
 
