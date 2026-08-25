@@ -10,9 +10,31 @@
 #include "hal_data.h"
 #include "bsp_sflash_map_ra6w1.h"
 
+static rt_bool_t s_ospi_flash_opened;
+
+static int ra6w1_ospi_flash_open(void)
+{
+    fsp_err_t err;
+
+    if (s_ospi_flash_opened)
+    {
+        return RT_EOK;
+    }
+
+    err = R_OSPI_W_Open((spi_flash_ctrl_t *)&g_ospi_flash_ctrl,
+                        &g_ospi_flash_cfg);
+    if (err != FSP_SUCCESS)
+    {
+        return -RT_ERROR;
+    }
+
+    s_ospi_flash_opened = RT_TRUE;
+    return RT_EOK;
+}
+
 static int ra6w1_ospi_flash_init(void)
 {
-    return RT_EOK;
+    return ra6w1_ospi_flash_open();
 }
 
 static int ra6w1_ospi_flash_read(long offset, rt_uint8_t *buf, rt_size_t size)
@@ -29,7 +51,10 @@ static int ra6w1_ospi_flash_write(long offset, const rt_uint8_t *buf, rt_size_t 
     uint32_t write_len;
     fsp_err_t err;
 
-    R_OSPI_W_Open((spi_flash_ctrl_t *)&g_ospi_flash_ctrl, &g_ospi_flash_cfg);
+    if (ra6w1_ospi_flash_open() != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
 
     while (remaining > 0)
     {
@@ -99,7 +124,10 @@ static int ra6w1_ospi_flash_erase(long offset, rt_size_t size)
     uint32_t erase_len;
     fsp_err_t err;
 
-    R_OSPI_W_Open((spi_flash_ctrl_t *)&g_ospi_flash_ctrl, &g_ospi_flash_cfg);
+    if (ra6w1_ospi_flash_open() != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
 
     while (remaining > 0)
     {
