@@ -171,7 +171,7 @@ int entry(void)
 
 #ifndef RT_USING_HEAP
 /* if there is not enable heap, we should use static thread and stack. */
-rt_align(RT_ALIGN_SIZE)
+rt_align(RT_SP_ALIGH_SIZE)
 static rt_uint8_t main_thread_stack[RT_MAIN_THREAD_STACK_SIZE];
 struct rt_thread main_thread;
 #endif /* RT_USING_HEAP */

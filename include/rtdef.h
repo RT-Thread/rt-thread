@@ -235,6 +235,13 @@ typedef int (*init_fn_t)(void);
 #define RT_KERNEL_REALLOC(ptr, size)    rt_realloc(ptr, size)
 #endif /* RT_KERNEL_REALLOC */
 
+/*
+ * special requirements for SP alignment.
+ */
+#ifndef RT_SP_ALIGH_SIZE
+#define RT_SP_ALIGH_SIZE                RT_ALIGN_SIZE
+#endif
+
 /**
  * @ingroup group_basic_definition
  *

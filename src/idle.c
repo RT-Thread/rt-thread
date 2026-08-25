@@ -45,7 +45,7 @@
 #define _CPUS_NR                RT_CPUS_NR
 
 static struct rt_thread idle_thread[_CPUS_NR];
-rt_align(RT_ALIGN_SIZE)
+rt_align(RT_SP_ALIGH_SIZE)
 static rt_uint8_t idle_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
 
 #ifdef RT_USING_IDLE_HOOK

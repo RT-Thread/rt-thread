@@ -52,7 +52,7 @@ static rt_list_t _soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 static struct rt_spinlock _stimer_lock;
 static struct rt_thread _timer_thread;
 static struct rt_semaphore _soft_timer_sem;
-rt_align(RT_ALIGN_SIZE)
+rt_align(RT_SP_ALIGH_SIZE)
 static rt_uint8_t _timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 #endif /* RT_USING_TIMER_SOFT */
 
