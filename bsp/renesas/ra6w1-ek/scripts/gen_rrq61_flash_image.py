@@ -92,6 +92,8 @@ def get_image_header(header):
     data = bytearray()
     if header.is_corrupt:
         raise ValueError('image_header_corrupt is not supported')
+    if len(header.version) > 64:
+        raise ValueError('image header version is longer than 64 bytes')
     data.extend(b'DA16')
     data.extend(to_bytes(header.timestamp, 4))
     data.extend(header.version)
@@ -116,6 +118,19 @@ def get_image_header(header):
     data.extend(b'\xFF' * num_bytes_uninitialized)
     return data
 
+
+def get_image_header_for_data(in_file_data, header_fw_version):
+    """Build the Renesas image header for a raw application binary."""
+    ih_values = ImageHeaderValues(
+        is_corrupt=False,
+        security=False,
+        version=header_fw_version.encode(),
+        timestamp=0x5939110D,
+        image_size=len(in_file_data),
+        image_crc=binascii.crc32(in_file_data) & 0xFFFFFFFF,
+    )
+    return get_image_header(ih_values)
+
 def get_firmware_version_e2s(fw_version_file):
     """
     Reads the firmware version from fw_version.h.
@@ -131,6 +146,25 @@ def get_firmware_version_e2s(fw_version_file):
         print("fw_version.h file not found, using default version.")
 
     return "1.0.0"  # Default version
+
+
+def get_header_fw_version(ra6w_grp, out_file_name):
+    """Return the firmware version stored in an image header."""
+    fw_version = get_fw_version()
+    if not fw_version:
+        # This condition will be true when we are building project
+        # using e2studio and project is prepared outside the repo.
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        fw_version_file = os.path.abspath(os.path.join(script_dir, "../ra/fsp/src/rm_wifi/fw_version.h"))
+        if not os.path.isfile(fw_version_file):
+            fw_version_file = os.path.abspath(os.path.join(script_dir, "../ra/fsp/inc/fw_version.h"))
+        fw_version = get_firmware_version_e2s(fw_version_file)
+    elif 'rm_wifi_test_app' in out_file_name or 'vndm_wlan' in out_file_name:
+        fw_version = fw_version + "-e2studio"
+    else:
+        fw_version = fw_version + "-cmake"
+
+    return ra6w_grp + '-' + fw_version
 
 def gen_flash_image(in_file, out_file, ra6w_grp):
     """Generate output flash image."""
@@ -156,38 +190,9 @@ def gen_flash_image(in_file, out_file, ra6w_grp):
     # non_secure_cfg.xml.AT25SL641-8MB, hence:
     headers_data.extend(headers_data)
 
-    # Set f/w version info
-    fw_version = get_fw_version()
-    if not fw_version:
-        # This condition will be true when we are building project
-        # using e2studio and project is prepared outside the repo
-        # In this case fetch the value from fw_version.h which is generated
-        # when packs are created.
-        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get script directory
-        fw_version_file = os.path.abspath(os.path.join(script_dir, "../ra/fsp/src/rm_wifi/fw_version.h"))
-        if not os.path.isfile(fw_version_file):
-            # Try another location
-            fw_version_file = os.path.abspath(os.path.join(script_dir, "../ra/fsp/inc/fw_version.h"))
-        fw_version = get_firmware_version_e2s(fw_version_file)
-
-    else:
-        # Check if out_file_name contains 'rm_wifi_test_app.img'
-        if 'rm_wifi_test_app' in out_file_name or 'vndm_wlan' in out_file_name:
-            fw_version = fw_version+"-e2studio"
-        else:
-        # If not, append "-cmake"
-            fw_version = fw_version+"-cmake"
-    header_fw_version = ra6w_grp + '-' + fw_version
-    # From non_secure_cfg.xml.AT25SL641-8MB (image header):
-    ih_values = ImageHeaderValues(
-        is_corrupt=False,
-        security=False,
-        version=header_fw_version.encode(),
-        timestamp=0x5939110D,
-        image_size=len(in_file_data),
-        image_crc=binascii.crc32(in_file_data),
-    )
-    img_header=get_image_header(ih_values)
+    header_fw_version = get_header_fw_version(ra6w_grp, out_file_name)
+    fw_version = header_fw_version[len(ra6w_grp) + 1:]
+    img_header = get_image_header_for_data(in_file_data, header_fw_version)
     headers_data.extend(img_header)
     out_file.write(headers_data)
     out_file.write(in_file_data)
@@ -261,27 +266,29 @@ def gen_flash_image(in_file, out_file, ra6w_grp):
                         gen_ota_flash_images(in_file_data, fw_version, prefix_file_name, ra6w_grp)
                         
             except FileNotFoundError:
-                print("configuration.xml file not found, skipping OTA image generation.")
+                print("configuration.xml file not found, skipping optional OTA test image generation.")
 
 def gen_ota_flash_image(in_file_data, header_fw_version, ota_file_name):
     """Generate ota flash image."""
     # From non_secure_cfg.xml.AT25SL641-8MB (image header):
-    ih_values = ImageHeaderValues(
-        is_corrupt=False,
-        security=False,
-        version=header_fw_version.encode(),
-        timestamp=0x5939110D,
-        image_size=len(in_file_data),
-        image_crc=binascii.crc32(in_file_data),
-    )
-
-    img_header=get_image_header(ih_values)
+    img_header = get_image_header_for_data(in_file_data, header_fw_version)
     headers_data = bytearray()
     headers_data.extend(img_header)
     ota_out_file=open('./'+ota_file_name+'.img', 'wb')
     ota_out_file.write(headers_data)
     ota_out_file.write(in_file_data)
     ota_out_file.close()
+
+
+def gen_ota_image(in_file, out_file, ra6w_grp):
+    """Generate a single OTA image: image header followed by raw firmware."""
+    in_file_data = in_file.read()
+    in_file.close()
+
+    header_fw_version = get_header_fw_version(ra6w_grp, out_file.name)
+    out_file.write(get_image_header_for_data(in_file_data, header_fw_version))
+    out_file.write(in_file_data)
+    out_file.close()
 
 def gen_ota_flash_images(in_file_data, fw_version, prefix_file_name, ra6w_grp):
     # Same version ex) RA6W1-0000000000-00000
@@ -316,6 +323,8 @@ def gen_ota_flash_images(in_file_data, fw_version, prefix_file_name, ra6w_grp):
 def _main():
     parser = argparse.ArgumentParser(
         description='Generate flash image for EK-RRQ61000 board.')
+    parser.add_argument('--ota', '--ota-image', dest='ota_image', action='store_true',
+                        help='generate a single OTA image (DA16 image header + raw firmware)')
     parser.add_argument('in_file', metavar='IN', type=argparse.FileType('rb'),
                         help='input file (.bin produced by objcopy)')
     parser.add_argument('out_file', metavar='OUT',
@@ -327,7 +336,10 @@ def _main():
                         nargs="?",
                         default="RA6W1-RRQ61001")
     args = parser.parse_args()
-    gen_flash_image(args.in_file, args.out_file, args.ra6w_grp)
+    if args.ota_image:
+        gen_ota_image(args.in_file, args.out_file, args.ra6w_grp)
+    else:
+        gen_flash_image(args.in_file, args.out_file, args.ra6w_grp)
 
 
 if __name__ == '__main__':
