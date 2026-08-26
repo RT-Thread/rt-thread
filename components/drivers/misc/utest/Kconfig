@@ -1,0 +1,39 @@
+menu "PWM Test"
+
+config RT_UTEST_PWM
+    bool "PWM Frequency and Duty-cycle Matrix Test"
+    default n
+    select RT_USING_PWM
+    help
+        Run configurable PWM groups. Channels in one group run concurrently,
+        while groups run in order. Each channel can keep a fixed output, sweep
+        once and hold its last point, or repeat its sweep for the group duration.
+
+if RT_UTEST_PWM
+
+config RT_PWM_TC_CONFIG_FILE
+    string "PWM test configuration header"
+    default "pwm_tc_config.h"
+    help
+        The header defines PWM_TC_GROUPS and PWM_TC_GROUP_COUNT. Keep the
+        default for the built-in example, or provide a board-specific header
+        from a compiler include path. Channel enable switches, device names,
+        channel numbers, output modes, and waveform points are kept in that
+        header because Kconfig cannot represent dynamic group/channel arrays.
+
+config RT_PWM_TC_MAX_CHANNELS
+    int "Maximum concurrent channels in one PWM test group"
+    range 1 64
+    default 8
+    help
+        This limits enabled channels, not the total number of configured and
+        disabled channel entries in a group.
+
+config RT_PWM_TC_TIMEOUT
+    int "PWM test timeout in seconds"
+    range 1 3600
+    default 30
+
+endif
+
+endmenu
