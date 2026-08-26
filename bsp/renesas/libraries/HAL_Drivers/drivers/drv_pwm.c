@@ -65,26 +65,73 @@ static struct ra_pwm ra6m4_pwm_obj[BSP_PWMS_NUM] =
 #endif
 };
 
-#ifdef SOC_SERIES_R9A07G0
-    #define FSP_PRIV_CLOCK  FSP_PRIV_CLOCK_PCLKGPTL
-#else
-    #define FSP_PRIV_CLOCK  FSP_PRIV_CLOCK_PCLKD
-#endif
+#define RA_PWM_GTCCRC_INDEX                 2U
+#define RA_PWM_GTCCRE_INDEX                 3U
+#define RA_PWM_DUTY_MODE_REGISTER           0U
+#define RA_PWM_DUTY_MODE_0_PERCENT          2U
+#define RA_PWM_DUTY_MODE_100_PERCENT        3U
 
 /* Convert the raw PWM period counts into ns */
-static rt_uint32_t _convert_counts_ns(uint32_t source_div, uint32_t raw)
+static rt_uint32_t _convert_counts_ns(uint32_t clock_frequency, uint32_t raw)
 {
-    uint32_t pclkd_freq_hz = R_FSP_SystemClockHzGet(FSP_PRIV_CLOCK) >> source_div;
-    uint32_t ns = (uint32_t)(((uint64_t)raw * 1000000000ULL) / pclkd_freq_hz);
+    uint32_t ns = (uint32_t)(((uint64_t)raw * 1000000000ULL) / clock_frequency);
     return ns;
 }
 
 /* Convert ns into raw PWM period counts */
-static rt_uint32_t _convert_ns_counts(uint32_t source_div, uint32_t raw)
+static rt_uint32_t _convert_ns_counts(uint32_t clock_frequency, uint32_t raw)
 {
-    uint32_t pclkd_freq_hz = R_FSP_SystemClockHzGet(FSP_PRIV_CLOCK) >> source_div;
-    uint32_t counts = (uint32_t)(((uint64_t)raw * (uint64_t)pclkd_freq_hz) / 1000000000ULL);
+    uint32_t counts = (uint32_t)(((uint64_t)raw * (uint64_t)clock_frequency) / 1000000000ULL);
     return counts;
+}
+
+static rt_err_t drv_pwm_pin_pulse_counts_get(struct ra_pwm *device,
+                                              uint32_t period_counts,
+                                              gpt_io_pin_t pin,
+                                              uint32_t *pulse_counts)
+{
+    uint32_t duty_mode;
+    uint32_t gtior;
+    uint32_t compare_index;
+    rt_bool_t first_level_low;
+
+    if (pin == GPT_IO_PIN_GTIOCA)
+    {
+        duty_mode = device->g_ctrl->p_reg->GTUDDTYC_b.OADTY;
+        gtior = device->g_ctrl->p_reg->GTIOR_b.GTIOA;
+        compare_index = RA_PWM_GTCCRC_INDEX;
+    }
+    else
+    {
+        duty_mode = device->g_ctrl->p_reg->GTUDDTYC_b.OBDTY;
+        gtior = device->g_ctrl->p_reg->GTIOR_b.GTIOB;
+        compare_index = RA_PWM_GTCCRE_INDEX;
+    }
+
+    if (duty_mode == RA_PWM_DUTY_MODE_REGISTER)
+    {
+        *pulse_counts = device->g_ctrl->p_reg->GTCCR[compare_index] + 1U;
+        return RT_EOK;
+    }
+    if (duty_mode != RA_PWM_DUTY_MODE_0_PERCENT &&
+        duty_mode != RA_PWM_DUTY_MODE_100_PERCENT)
+    {
+        return -RT_ERROR;
+    }
+
+    /* FSP represents 0% and 100% with a forced output level. */
+    first_level_low = (gtior & 0xCU) == 0x4U;
+    if ((first_level_low && duty_mode == RA_PWM_DUTY_MODE_0_PERCENT) ||
+        (!first_level_low && duty_mode == RA_PWM_DUTY_MODE_100_PERCENT))
+    {
+        *pulse_counts = period_counts;
+    }
+    else
+    {
+        *pulse_counts = 0U;
+    }
+
+    return RT_EOK;
 }
 
 
@@ -112,13 +159,34 @@ static rt_err_t drv_pwm_get(struct ra_pwm *device,
                             struct rt_pwm_configuration *configuration)
 {
     timer_info_t info;
-    if (R_GPT_InfoGet(device->g_ctrl, &info) != FSP_SUCCESS)
+    uint32_t period_counts;
+    uint32_t pulse_counts_a;
+    uint32_t pulse_counts_b;
+
+    if (device->g_cfg->mode != TIMER_MODE_PWM)
+    {
+        return -RT_ENOSYS;
+    }
+    if (R_GPT_InfoGet(device->g_ctrl, &info) != FSP_SUCCESS ||
+        info.clock_frequency == 0U)
+    {
         return -RT_ERROR;
+    }
+
+    period_counts = device->g_ctrl->p_reg->GTPBR + 1U;
+    if (drv_pwm_pin_pulse_counts_get(device, period_counts,
+                                     GPT_IO_PIN_GTIOCA, &pulse_counts_a) != RT_EOK ||
+        drv_pwm_pin_pulse_counts_get(device, period_counts,
+                                     GPT_IO_PIN_GTIOCB, &pulse_counts_b) != RT_EOK ||
+        pulse_counts_a != pulse_counts_b)
+    {
+        return -RT_ERROR;
+    }
 
     configuration->pulse =
-        _convert_counts_ns(device->g_cfg->source_div, device->g_cfg->duty_cycle_counts);
+        _convert_counts_ns(info.clock_frequency, pulse_counts_a);
     configuration->period =
-        _convert_counts_ns(device->g_cfg->source_div, info.period_counts);
+        _convert_counts_ns(info.clock_frequency, period_counts);
     configuration->channel = device->g_cfg->channel;
 
     return RT_EOK;
@@ -128,18 +196,21 @@ static rt_err_t drv_pwm_get(struct ra_pwm *device,
 static rt_err_t drv_pwm_set(struct ra_pwm *device,
                             struct rt_pwm_configuration *conf)
 {
+    timer_info_t info;
     uint32_t counts;
     fsp_err_t fsp_erra;
     fsp_err_t fsp_errb;
-    rt_err_t rt_err;
     uint32_t pulse;
     uint32_t period;
-    struct rt_pwm_configuration orig_conf;
 
-    rt_err = drv_pwm_get(device, &orig_conf);
-    if (rt_err != RT_EOK)
+    if (device->g_cfg->mode != TIMER_MODE_PWM)
     {
-        return rt_err;
+        return -RT_ENOSYS;
+    }
+    if (R_GPT_InfoGet(device->g_ctrl, &info) != FSP_SUCCESS ||
+        info.clock_frequency == 0U)
+    {
+        return -RT_ERROR;
     }
 
     /* Pulse cannot last longer than period. */
@@ -147,9 +218,10 @@ static rt_err_t drv_pwm_set(struct ra_pwm *device,
     pulse = (period >= conf->pulse) ? conf->pulse : period;
 
     /* Not to set period again if it's not changed. */
-    if (period != orig_conf.period)
+    if (period != _convert_counts_ns(info.clock_frequency,
+                                     device->g_ctrl->p_reg->GTPBR + 1U))
     {
-        counts = _convert_ns_counts(device->g_cfg->source_div, period);
+        counts = _convert_ns_counts(info.clock_frequency, period);
         fsp_erra = R_GPT_PeriodSet(device->g_ctrl, counts);
         if (fsp_erra != FSP_SUCCESS)
         {
@@ -158,7 +230,7 @@ static rt_err_t drv_pwm_set(struct ra_pwm *device,
     }
 
     /* Two pins of a channel will not be separated. */
-    counts = _convert_ns_counts(device->g_cfg->source_div, pulse);
+    counts = _convert_ns_counts(info.clock_frequency, pulse);
     fsp_erra = R_GPT_DutyCycleSet(device->g_ctrl, counts, GPT_IO_PIN_GTIOCA);
     fsp_errb = R_GPT_DutyCycleSet(device->g_ctrl, counts, GPT_IO_PIN_GTIOCB);
     if (fsp_erra != FSP_SUCCESS || fsp_errb != FSP_SUCCESS)
