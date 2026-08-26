@@ -559,7 +559,7 @@ struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des, rt_uint8_t cach
     ra_sdhi_enable_sdio_irq(host, 1);
 
     /* ready to change */
-#if defined (SOC_SERIES_R7KA8P1)
+#if defined(SOC_SERIES_R7KA8P1) || defined(SOC_SERIES_R7FA8M85)
     mmcsd_change(host);
 #endif
 
