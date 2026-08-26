@@ -1340,6 +1340,11 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
     if (netdev == RT_NULL)
     {
         netdev = netdev_default;
+        if (netdev == RT_NULL)
+        {
+            rt_kprintf("ping: not found default netif, please specify netdev name.\n");
+            return -RT_ERROR;
+        }
         rt_kprintf("ping: not found specified netif, using default netdev %s.\n", netdev->name);
     }
 
@@ -1410,6 +1415,12 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
         /* if the response time is more than NETDEV_PING_DELAY, no need to delay */
         delay_tick = ((rt_tick_get() - start_tick) > NETDEV_PING_DELAY) || (index == times) ? 0 : NETDEV_PING_DELAY;
         rt_thread_delay(delay_tick);
+    }
+
+    if (times == 0)
+    {
+        rt_kprintf("ping: send times is zero, no ping statistics.\n");
+        return -RT_ERROR;
     }
 
     /* print ping statistics */
