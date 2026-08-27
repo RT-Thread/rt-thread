@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2026-08-26     Codex        add SDIO block read and write utest
+ * 2026-08-26     CYFS         add SDIO block read and write utest
  */
 
 /**
