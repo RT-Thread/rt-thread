@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2026-08-25     RT-Thread    add the default PWM matrix test configuration
+ * 2026-08-25     CYFS         add the default PWM matrix test configuration
  */
 
 #ifndef __PWM_TC_CONFIG_H__
