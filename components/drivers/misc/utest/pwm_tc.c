@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2026-08-25     RT-Thread    add configurable PWM matrix utest
+ * 2026-08-25     CYFS         add configurable PWM matrix utest
  */
 
 /**
@@ -36,6 +36,7 @@
 
 #define PWM_TC_NSEC_PER_SEC      1000000000ULL
 #define PWM_TC_DUTY_SCALE        10000U
+#define PWM_TC_MAX_MILLISECOND   0x7FFFFFFFU
 #define PWM_TC_ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
 
 #define PWM_TC_POINT(frequency, duty) \
@@ -104,18 +105,47 @@ struct pwm_tc_runtime
 
 static struct pwm_tc_runtime pwm_tc_runtime[RT_PWM_TC_MAX_CHANNELS];
 static rt_size_t pwm_tc_active_count;
+static rt_tick_t pwm_tc_test_start_tick;
+static rt_tick_t pwm_tc_test_timeout_tick;
+static rt_bool_t pwm_tc_test_timeout_enabled;
 
 static rt_tick_t pwm_tc_millisecond_to_tick(rt_uint32_t millisecond)
 {
     rt_tick_t tick;
 
-    tick = rt_tick_from_millisecond(millisecond);
+    if (millisecond > PWM_TC_MAX_MILLISECOND)
+    {
+        return 0;
+    }
+
+    tick = rt_tick_from_millisecond((rt_int32_t)millisecond);
     if (tick == 0)
     {
         tick = 1;
     }
 
     return tick;
+}
+
+static rt_bool_t pwm_tc_test_get_timeout_remaining(rt_tick_t *remaining)
+{
+    rt_tick_t elapsed;
+
+    if (!pwm_tc_test_timeout_enabled)
+    {
+        *remaining = RT_TICK_MAX;
+        return RT_TRUE;
+    }
+
+    elapsed = rt_tick_get_delta(pwm_tc_test_start_tick);
+    if (elapsed >= pwm_tc_test_timeout_tick)
+    {
+        *remaining = 0;
+        return RT_FALSE;
+    }
+
+    *remaining = pwm_tc_test_timeout_tick - elapsed;
+    return RT_TRUE;
 }
 
 static rt_uint32_t pwm_tc_channel_number(int channel)
@@ -385,6 +415,7 @@ static rt_err_t pwm_tc_run_group(const struct pwm_tc_group *group)
     rt_tick_t duration_tick;
     rt_tick_t elapsed_tick;
     rt_tick_t interval_tick;
+    rt_tick_t timeout_remaining;
     rt_tick_t since_update_tick;
     rt_tick_t sleep_tick;
     rt_tick_t start_tick;
@@ -400,8 +431,20 @@ static rt_err_t pwm_tc_run_group(const struct pwm_tc_group *group)
 
     start_tick = rt_tick_get();
     duration_tick = pwm_tc_millisecond_to_tick(group->duration_ms);
+    if (duration_tick == 0)
+    {
+        result = -RT_EINVAL;
+        goto __exit;
+    }
+
     while ((elapsed_tick = rt_tick_get_delta(start_tick)) < duration_tick)
     {
+        if (!pwm_tc_test_get_timeout_remaining(&timeout_remaining))
+        {
+            result = -RT_ETIMEOUT;
+            goto __exit;
+        }
+
         sleep_tick = duration_tick - elapsed_tick;
         for (index = 0; index < pwm_tc_active_count; index++)
         {
@@ -412,6 +455,11 @@ static rt_err_t pwm_tc_run_group(const struct pwm_tc_group *group)
 
             interval_tick = pwm_tc_millisecond_to_tick(
                 pwm_tc_runtime[index].config->step_interval_ms);
+            if (interval_tick == 0)
+            {
+                result = -RT_EINVAL;
+                goto __exit;
+            }
             since_update_tick = rt_tick_get_delta(
                 pwm_tc_runtime[index].last_update_tick);
             if (since_update_tick >= interval_tick)
@@ -430,6 +478,16 @@ static rt_err_t pwm_tc_run_group(const struct pwm_tc_group *group)
             {
                 sleep_tick = interval_tick - since_update_tick;
             }
+        }
+
+        if (!pwm_tc_test_get_timeout_remaining(&timeout_remaining))
+        {
+            result = -RT_ETIMEOUT;
+            goto __exit;
+        }
+        if (timeout_remaining < sleep_tick)
+        {
+            sleep_tick = timeout_remaining;
         }
 
         if (sleep_tick == 0)
@@ -463,6 +521,7 @@ static rt_err_t pwm_tc_validate_channel(const struct pwm_tc_channel *channel)
         channel->channel == INT_MIN ||
         channel->mode < PWM_TC_MODE_FIXED ||
         channel->mode > PWM_TC_MODE_SWEEP_LOOP ||
+        channel->step_interval_ms > PWM_TC_MAX_MILLISECOND ||
         channel->readback_tolerance > PWM_TC_DUTY_SCALE)
     {
         return -RT_EINVAL;
@@ -512,7 +571,8 @@ static rt_err_t pwm_tc_validate_group(const struct pwm_tc_group *group)
 
     if (group->name == RT_NULL || group->name[0] == '\0' ||
         group->channels == RT_NULL || group->channel_count == 0 ||
-        group->duration_ms == 0)
+        group->duration_ms == 0 ||
+        group->duration_ms > PWM_TC_MAX_MILLISECOND)
     {
         return -RT_EINVAL;
     }
@@ -589,8 +649,22 @@ static rt_err_t utest_tc_init(void)
 {
     rt_err_t result;
     rt_size_t index;
+    rt_uint64_t timeout_millisecond;
 
-    pwm_tc_active_count = 0;
+    result = pwm_tc_stop_active_channels();
+    if (result != RT_EOK)
+    {
+        LOG_E("PWM cleanup before test failed: result=%d", result);
+        return result;
+    }
+    if (pwm_tc_active_count != 0)
+    {
+        LOG_E("PWM cleanup left %u active channel(s)",
+              (unsigned int)pwm_tc_active_count);
+        return -RT_ERROR;
+    }
+
+    pwm_tc_test_timeout_enabled = RT_FALSE;
     if (PWM_TC_GROUP_COUNT == 0)
     {
         return -RT_EINVAL;
@@ -607,12 +681,35 @@ static rt_err_t utest_tc_init(void)
         }
     }
 
+    timeout_millisecond = (rt_uint64_t)RT_PWM_TC_TIMEOUT * 1000ULL;
+    if (timeout_millisecond == 0 ||
+        timeout_millisecond > PWM_TC_MAX_MILLISECOND)
+    {
+        return -RT_EINVAL;
+    }
+    pwm_tc_test_timeout_tick = pwm_tc_millisecond_to_tick(
+        (rt_uint32_t)timeout_millisecond);
+    if (pwm_tc_test_timeout_tick == 0)
+    {
+        return -RT_EINVAL;
+    }
+    pwm_tc_test_start_tick = rt_tick_get();
+    pwm_tc_test_timeout_enabled = RT_TRUE;
+
     return RT_EOK;
 }
 
 static rt_err_t utest_tc_cleanup(void)
 {
-    return pwm_tc_stop_active_channels();
+    rt_err_t result;
+
+    result = pwm_tc_stop_active_channels();
+    if (pwm_tc_active_count == 0)
+    {
+        pwm_tc_test_timeout_enabled = RT_FALSE;
+    }
+
+    return result;
 }
 
 static void testcase(void)
