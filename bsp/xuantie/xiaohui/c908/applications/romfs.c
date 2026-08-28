@@ -20,7 +20,7 @@
 #include <dfs_romfs.h>
 
 static const struct romfs_dirent _romfs_root[] = {
-    {ROMFS_DIRENT_DIR, "bin", RT_NULL, 0}
+    { ROMFS_DIRENT_DIR, "bin", RT_NULL, 0 }
 };
 
 const struct romfs_dirent romfs_root = {

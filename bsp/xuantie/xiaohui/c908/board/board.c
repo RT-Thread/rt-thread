@@ -205,8 +205,7 @@ static void _raw_putc(char c)
     {
         return;
     }
-    while ((raw_uart[5] & 0x20) == 0)
-        ;
+    while ((raw_uart[5] & 0x20) == 0);
     raw_uart[0] = (rt_uint32_t)(rt_uint8_t)c;
 }
 

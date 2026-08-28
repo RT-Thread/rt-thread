@@ -60,12 +60,12 @@ struct mem_desc
 #define GET_LVL_INDEX(addr, level) \
     (((rt_ubase_t)(addr) >> (ARCH_PAGE_SHIFT + (ARCH_PAGE_TBL_LEVELS - (level)) * ARCH_INDEX_WIDTH)) & VPN_MASK)
 
-#define GET_PPN(pte)                                                           \
+#define GET_PPN(pte) \
     (__PARTBIT(pte, PTE_PPN_SHIFT, PHYSICAL_ADDRESS_WIDTH_BITS - PAGE_OFFSET_BIT))
 #define GET_PADDR(pte)            (GET_PPN(pte) << PAGE_OFFSET_BIT)
 #define VPN_TO_PPN(vaddr, pv_off) (((rt_uintptr_t)(vaddr)) + (pv_off))
 #define PPN_TO_VPN(paddr, pv_off) (((rt_uintptr_t)(paddr)) - (pv_off))
-#define COMBINEPTE(paddr, attr)                                                \
+#define COMBINEPTE(paddr, attr) \
     ((((paddr) >> PAGE_OFFSET_BIT) << PTE_PPN_SHIFT) | (attr))
 
 #define MMU_MAP_ERROR_VANOTALIGN -1
@@ -73,9 +73,9 @@ struct mem_desc
 #define MMU_MAP_ERROR_NOPAGE     -3
 #define MMU_MAP_ERROR_CONFLICT   -4
 
-#define VPN_MASK    0x1ffUL
-#define PTE_BITS    10
-#define VPN_BITS    9
+#define VPN_MASK 0x1ffUL
+#define PTE_BITS 10
+#define VPN_BITS 9
 
 #if defined(RT_USING_SMP) && defined(ARCH_MM_MMU)
 extern unsigned int __percpu_end, __percpu_start;

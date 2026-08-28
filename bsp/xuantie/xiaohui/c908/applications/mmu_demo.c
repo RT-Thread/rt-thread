@@ -51,30 +51,30 @@ static int _pass;
 static int _fail;
 static int _skip;
 
-#define CHECK(expr, ...)                    \
-    do                                      \
-    {                                       \
-        if (expr)                           \
-        {                                   \
-            _pass++;                        \
-            rt_kprintf("  [ OK ] ");        \
-        }                                   \
-        else                                \
-        {                                   \
-            _fail++;                        \
-            rt_kprintf("  [FAIL] ");        \
-        }                                   \
-        rt_kprintf(__VA_ARGS__);            \
-        rt_kprintf("\n");                   \
+#define CHECK(expr, ...)             \
+    do                               \
+    {                                \
+        if (expr)                    \
+        {                            \
+            _pass++;                 \
+            rt_kprintf("  [ OK ] "); \
+        }                            \
+        else                         \
+        {                            \
+            _fail++;                 \
+            rt_kprintf("  [FAIL] "); \
+        }                            \
+        rt_kprintf(__VA_ARGS__);     \
+        rt_kprintf("\n");            \
     } while (0)
 
-#define SKIP(...)                           \
-    do                                      \
-    {                                       \
-        _skip++;                            \
-        rt_kprintf("  [SKIP] ");            \
-        rt_kprintf(__VA_ARGS__);            \
-        rt_kprintf("\n");                   \
+#define SKIP(...)                \
+    do                           \
+    {                            \
+        _skip++;                 \
+        rt_kprintf("  [SKIP] "); \
+        rt_kprintf(__VA_ARGS__); \
+        rt_kprintf("\n");        \
     } while (0)
 
 /*
@@ -194,9 +194,9 @@ static void _tc_kernel_linear_map(void)
         const char *name;
         void *vaddr;
     } samples[] = {
-        {".text", (void *)(rt_ubase_t)_tc_kernel_linear_map},
-        {".bss ", (void *)&_pass},
-        {"stack", (void *)&on_stack},
+        { ".text", (void *)(rt_ubase_t)_tc_kernel_linear_map },
+        { ".bss ", (void *)&_pass },
+        { "stack", (void *)&on_stack },
     };
 
     for (rt_size_t i = 0; i < sizeof(samples) / sizeof(samples[0]); i++)
@@ -231,7 +231,7 @@ static void _tc_page_table_walk(void)
     int level;
     rt_size_t pgsize;
     void *samples[2];
-    const char *names[2] = {".text", "stack"};
+    const char *names[2] = { ".text", "stack" };
     volatile int on_stack = 0;
 
     rt_kprintf("[3] hardware page table walk\n");
@@ -339,7 +339,7 @@ static void _tc_ioremap_device(void)
 /* [6] rootfs carries the user applications (romfs -> elmfat root) */
 static void _tc_rootfs(void)
 {
-    static const char *paths[] = {"/rom/bin/hello", "/bin/hello"};
+    static const char *paths[] = { "/rom/bin/hello", "/bin/hello" };
     char magic[4];
     int fd;
 
@@ -369,7 +369,7 @@ static void _tc_rootfs(void)
 static void _tc_user_process(void)
 {
     const char *path = "/bin/hello";
-    char *argv[] = {RT_NULL, RT_NULL};
+    char *argv[] = { RT_NULL, RT_NULL };
     struct rt_lwp *lwp;
     void *entry = RT_NULL;
     void *entry_pa = ARCH_MAP_FAILED;
@@ -466,6 +466,6 @@ static int mmu_demo(int argc, char **argv)
     mmu_example();
     return _fail == 0 ? 0 : -RT_ERROR;
 }
-MSH_CMD_EXPORT(mmu_demo, MMU and RT-Smart runtime checks);
+MSH_CMD_EXPORT(mmu_demo, MMU and RT - Smart runtime checks);
 
 #endif /* RT_USING_SMART && ARCH_MM_MMU */

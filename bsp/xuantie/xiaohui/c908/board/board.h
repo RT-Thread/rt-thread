@@ -25,7 +25,7 @@
 
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 // Common Board Features Define
@@ -388,9 +388,9 @@ extern unsigned int _end;
 
 /* satp translation modes supported by hardware, probed by the M-mode
  * boot shim */
- extern unsigned long g_mmu_modes_supported;
+extern unsigned long g_mmu_modes_supported;
 
- void rt_hw_board_init(void);
+void rt_hw_board_init(void);
 
 
 /****************************************************************************/
@@ -399,73 +399,73 @@ extern unsigned int _end;
  * re-implement if need.
  * @return
  */
- void board_init(void);
+void board_init(void);
 
 /**
  * @brief  init the board gpio pin for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
- void board_gpio_pin_init(void);
+void board_gpio_pin_init(void);
 
 /**
  * @brief  init the board uart for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
- void board_uart_init(void);
+void board_uart_init(void);
 
 /**
  * @brief  init the board pwm for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
- void board_pwm_init(void);
+void board_pwm_init(void);
 
 /**
  * @brief  init the board adc for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
- void board_adc_init(void);
+void board_adc_init(void);
 
 /**
  * @brief  init the board button for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
- void board_button_init(void);
+void board_button_init(void);
 
 /**
  * @brief  init the board led for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
- void board_led_init(void);
+void board_led_init(void);
 
 /**
  * @brief  init the board wifi for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
- void board_wifi_init(void);
+void board_wifi_init(void);
 
 /**
  * @brief  init the board bt for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
- void board_bt_init(void);
+void board_bt_init(void);
 
 /**
  * @brief  init the board audio for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
- void board_audio_init(void);
+void board_audio_init(void);
 
 #ifdef __cplusplus
- }
+}
 #endif
 
 #endif /* __BOARD_H__ */

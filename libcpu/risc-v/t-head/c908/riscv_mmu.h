@@ -35,11 +35,11 @@
 #define PTE_PBMT_MASK (3UL << 61)
 #else
 /* XuanTie Extension (Bit 59-63) */
-#define PTE_SEC   (1UL << 59) /* Security */
-#define PTE_SHARE (1UL << 60) /* Shareable */
-#define PTE_BUF   (1UL << 61) /* Bufferable */
-#define PTE_CACHE (1UL << 62) /* Cacheable */
-#define PTE_SO    (1UL << 63) /* Strong Order */
+#define PTE_SEC       (1UL << 59) /* Security */
+#define PTE_SHARE     (1UL << 60) /* Shareable */
+#define PTE_BUF       (1UL << 61) /* Bufferable */
+#define PTE_CACHE     (1UL << 62) /* Cacheable */
+#define PTE_SO        (1UL << 63) /* Strong Order */
 /* Compatible with Standard Svpbmt */
 #define PTE_PBMT_PMA  (PTE_CACHE | PTE_BUF | PTE_SHARE)
 #define PTE_PBMT_NC   (PTE_BUF | PTE_SHARE)
@@ -94,13 +94,13 @@
 #define PAGE_DEFAULT_ATTR_LEAF \
     (PAGE_ATTR_RWX | PAGE_ATTR_USER | PTE_V | PTE_G | PTE_PBMT_PMA | PTE_A | PTE_D)
 #else
-#define PAGE_DEFAULT_ATTR_LEAF                                               \
-    (PAGE_ATTR_RWX | PAGE_ATTR_USER | PTE_V | PTE_G | PTE_SHARE | PTE_BUF |  \
-    PTE_CACHE | PTE_A | PTE_D)
+#define PAGE_DEFAULT_ATTR_LEAF                                              \
+    (PAGE_ATTR_RWX | PAGE_ATTR_USER | PTE_V | PTE_G | PTE_SHARE | PTE_BUF | \
+     PTE_CACHE | PTE_A | PTE_D)
 #endif
 
 #define PAGE_DEFAULT_ATTR_NEXT (PAGE_ATTR_NEXT_LEVEL | PTE_V | PTE_G)
-#define PAGE_IS_LEAF(pte) __MASKVALUE(pte, PAGE_ATTR_RWX)
+#define PAGE_IS_LEAF(pte)      __MASKVALUE(pte, PAGE_ATTR_RWX)
 
 #define PTE_USED(pte)  __MASKVALUE(pte, PTE_V)
 #define PTE_WRAP(attr) (attr | PTE_A | PTE_D)
@@ -117,7 +117,7 @@
 
 /* default to Sv39 */
 #ifndef SATP_MODE
-#define SATP_MODE        SATP_MODE_SV39
+#define SATP_MODE SATP_MODE_SV39
 #endif
 
 #if (SATP_MODE == SATP_MODE_SV57)
@@ -163,16 +163,16 @@
 #define MMU_MAP_K_DEVICE (PTE_PBMT_IO | PTE_A | PTE_D | PTE_G | PTE_W | PTE_R | PTE_V)
 
 /* RW: Non-Cacheable (NC Mode) */
-#define MMU_MAP_K_RW     (PTE_PBMT_NC | PTE_A | PTE_D | PTE_G | PAGE_ATTR_RWX | PTE_V)
+#define MMU_MAP_K_RW (PTE_PBMT_NC | PTE_A | PTE_D | PTE_G | PAGE_ATTR_RWX | PTE_V)
 
 /* RWCB: Cacheable (PMA Mode) - Normal RAM */
-#define MMU_MAP_K_RWCB   (PTE_PBMT_PMA | PTE_A | PTE_D | PTE_G | PAGE_ATTR_RWX | PTE_V)
+#define MMU_MAP_K_RWCB (PTE_PBMT_PMA | PTE_A | PTE_D | PTE_G | PAGE_ATTR_RWX | PTE_V)
 
 /*
  * User Mappings
  */
 /* User RW: Non-Cacheable */
-#define MMU_MAP_U_RW   (PTE_PBMT_NC | PTE_U | PTE_A | PTE_D | PAGE_ATTR_RWX | PTE_V)
+#define MMU_MAP_U_RW (PTE_PBMT_NC | PTE_U | PTE_A | PTE_D | PAGE_ATTR_RWX | PTE_V)
 
 /* User RWCB: Cacheable */
 #define MMU_MAP_U_RWCB (PTE_PBMT_PMA | PTE_U | PTE_A | PTE_D | PAGE_ATTR_RWX | PTE_V)
@@ -233,15 +233,15 @@ rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, rt_base_t prot)
     switch (prot)
     {
         /* remove write permission for user */
-        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
-            attr &= ~PTE_W;
-            break;
+    case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+        attr &= ~PTE_W;
+        break;
         /* remove write permission for kernel */
-        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_KERNEL:
-            attr &= ~PTE_W;
-            break;
-        default:
-            RT_ASSERT(0);
+    case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_KERNEL:
+        attr &= ~PTE_W;
+        break;
+    default:
+        RT_ASSERT(0);
     }
     return attr;
 }
@@ -258,11 +258,11 @@ rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, rt_base_t prot)
     switch (prot)
     {
         /* add write permission for user */
-        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
-            attr |= (PTE_R | PTE_W | PTE_U);
-            break;
-        default:
-            RT_ASSERT(0);
+    case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+        attr |= (PTE_R | PTE_W | PTE_U);
+        break;
+    default:
+        RT_ASSERT(0);
     }
     return attr;
 }
@@ -280,17 +280,17 @@ rt_inline rt_bool_t rt_hw_mmu_attr_test_perm(size_t attr, rt_base_t prot)
     switch (prot & ~RT_HW_MMU_PROT_USER)
     {
         /* test write permission for user */
-        case RT_HW_MMU_PROT_WRITE:
-            rc = ((attr & PTE_W) && (attr & PTE_R));
-            break;
-        case RT_HW_MMU_PROT_READ:
-            rc = !!(attr & PTE_R);
-            break;
-        case RT_HW_MMU_PROT_EXECUTE:
-            rc = !!(attr & PTE_X);
-            break;
-        default:
-            RT_ASSERT(0);
+    case RT_HW_MMU_PROT_WRITE:
+        rc = ((attr & PTE_W) && (attr & PTE_R));
+        break;
+    case RT_HW_MMU_PROT_READ:
+        rc = !!(attr & PTE_R);
+        break;
+    case RT_HW_MMU_PROT_EXECUTE:
+        rc = !!(attr & PTE_X);
+        break;
+    default:
+        RT_ASSERT(0);
     }
 
     if (rc && (prot & RT_HW_MMU_PROT_USER))

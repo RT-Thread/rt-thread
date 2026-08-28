@@ -8,11 +8,11 @@
  * 2025-04-21     Wangshun     first version
  */
 
- #include <rtthread.h>
+#include <rtthread.h>
 
- int main(void)
- {
-     rt_kprintf("Hello RT-Thread!\r\n");
-     return 0;
- }
+int main(void)
+{
+    rt_kprintf("Hello RT-Thread!\r\n");
+    return 0;
+}
 
