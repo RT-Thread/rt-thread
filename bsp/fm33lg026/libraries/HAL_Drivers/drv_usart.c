@@ -171,7 +171,7 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
     case RT_DEVICE_CTRL_CLOSE:
         if (FL_UART_DeInit(uart->config->InitTypeDef) != FL_PASS)
         {
-            RT_ASSERT(0)
+            RT_ASSERT(0);
         }
         break;
 
