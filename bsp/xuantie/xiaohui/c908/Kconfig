@@ -11,7 +11,15 @@ PKGS_DIR := packages
     select ARCH_RISCV64
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select ARCH_MM_MMU
+    select RT_USING_CACHE
+    select ARCH_USING_BSP_SBI
+    select ARCH_REMAP_KERNEL if RT_USING_SMART
     default y
+
+ config __STACKSIZE__
+    int "stack size for interrupt"
+    default 65536
 
 menu "CPU Architecture Features"
 

@@ -23,10 +23,9 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <soc.h>
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 // Common Board Features Define
@@ -364,79 +363,109 @@ extern "C" {
 /* other board specific defines */
 //#define CUSTOM_BOARD_xxx
 
+/* ---- xiaohui C908 RT-Thread Smart ---- */
+
+#include <rtconfig.h>
+#include "mem_layout.h"
+
+extern unsigned int __bss_start;
+extern unsigned int __bss_end;
+extern unsigned int __sram_end;
+extern unsigned int _end;
+
+/* heap starts after the whole kernel image */
+#define RT_HW_HEAP_BEGIN ((void *)&_end)
+#define RT_HW_HEAP_END   ((void *)(((rt_size_t)RT_HW_HEAP_BEGIN) + MEM_HEAP_SIZE))
+
+#define RT_HW_PAGE_START ((void *)((rt_size_t)RT_HW_HEAP_END + sizeof(rt_size_t)))
+#define RT_HW_PAGE_END   ((void *)&__sram_end)
+
+/* xiaohui peripherals */
+#define XIAOHUI_UART0_PHY_ADDR 0x1900D000UL
+#define XIAOHUI_UART0_IRQ      20
+#define XIAOHUI_CLINT_PHY_ADDR 0x0C000000UL
+#define XIAOHUI_STIMECMP_OFF   0xD000UL
+
+/* satp translation modes supported by hardware, probed by the M-mode
+ * boot shim */
+ extern unsigned long g_mmu_modes_supported;
+
+ void rt_hw_board_init(void);
+
+
 /****************************************************************************/
 /**
  * @brief  init the board for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
-void board_init(void);
+ void board_init(void);
 
 /**
  * @brief  init the board gpio pin for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
-void board_gpio_pin_init(void);
+ void board_gpio_pin_init(void);
 
 /**
  * @brief  init the board uart for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
-void board_uart_init(void);
+ void board_uart_init(void);
 
 /**
  * @brief  init the board pwm for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
-void board_pwm_init(void);
+ void board_pwm_init(void);
 
 /**
  * @brief  init the board adc for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
-void board_adc_init(void);
+ void board_adc_init(void);
 
 /**
  * @brief  init the board button for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
-void board_button_init(void);
+ void board_button_init(void);
 
 /**
  * @brief  init the board led for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
-void board_led_init(void);
+ void board_led_init(void);
 
 /**
  * @brief  init the board wifi for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
-void board_wifi_init(void);
+ void board_wifi_init(void);
 
 /**
  * @brief  init the board bt for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
-void board_bt_init(void);
+ void board_bt_init(void);
 
 /**
  * @brief  init the board audio for default: pin mux, etc.
  * re-implement if need.
  * @return
  */
-void board_audio_init(void);
+ void board_audio_init(void);
 
 #ifdef __cplusplus
-}
+ }
 #endif
 
 #endif /* __BOARD_H__ */

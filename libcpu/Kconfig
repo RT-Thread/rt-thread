@@ -314,6 +314,13 @@ config ARCH_USING_ASID
     help
         Using ASID support from architecture
 
+config ARCH_USING_BSP_SBI
+    bool
+    depends on ARCH_RISCV
+    help
+        BSP provides SBI service without SBI firmware,
+        ./libcpu/risc-v/common64/sbi.c is excluded from the build.
+
 config ARCH_IA32
     bool
 
