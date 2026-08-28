@@ -337,9 +337,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>RT_USING_ARMLIBC, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, USE_HAL_DRIVER, RT_USING_LIBC, FM33LG0XX, __RTTHREAD__</Define>
+              <Define>USE_HAL_DRIVER, RT_USING_LIBC, __RTTHREAD__, __STDC_LIMIT_MACROS, FM33LG0XX, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\libcpu\arm\cortex-m0;..\..\components\libc\posix\io\poll;libraries\FM33LG0xx_FL_Driver\CMSIS\Include;..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;..\..\components\libc\compilers\common\include;..\..\components\drivers\smp_call;..\..\components\libc\posix\io\epoll;..\..\components\libc\posix\ipc;..\..\libcpu\arm\common;..\..\components\finsh;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\drivers\include;libraries\HAL_Drivers;..\..\include;libraries\HAL_Drivers\config;..\..\components\net\utest;..\..\components\drivers\include;libraries\FM33LG0xx_FL_Driver\Inc;applications;..\..\components\drivers\include;..\..\components\drivers\include;.;..\..\components\drivers\include;board</IncludePath>
+              <IncludePath>..\..\libcpu\arm\common;libraries\HAL_Drivers;applications;..\..\include;..\..\components\libc\posix\ipc;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\net\utest;libraries\HAL_Drivers\config;..\..\libcpu\arm\cortex-m0;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;packages\fm33lg0xx_fl_library\libraries\CMSIS\Device\FM\FM33xx\Include;..\..\components\libc\compilers\common\extension;..\..\components\libc\posix\io\poll;..\..\components\drivers\include;..\..\components\libc\compilers\common\include;board;packages\fm33lg0xx_fl_library\libraries\FM33LG0xx_FL_Driver\Inc;..\..\components\drivers\include;.;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\eventfd;..\..\components\finsh;..\..\components\drivers\smp_call</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1269,11 +1269,6 @@
               <FilePath>board\board.c</FilePath>
             </File>
             <File>
-              <FileName>startup_fm33lg0xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>libraries\FM\FM33xx\Source\Templates\ARM\startup_fm33lg0xx.s</FilePath>
-            </File>
-            <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\HAL_Drivers\drv_common.c</FilePath>
@@ -1287,6 +1282,11 @@
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>libraries\HAL_Drivers\drv_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_fm33lg0xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>packages\fm33lg0xx_fl_library\libraries\CMSIS\Device\FM\FM33xx\Source\Templates\ARM\startup_fm33lg0xx.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -1316,52 +1316,52 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>FM33LG0xx_FL_Driver</GroupName>
+          <GroupName>FM33LG0xx_FL_Library</GroupName>
           <Files>
             <File>
               <FileName>system_fm33lg0xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\FM33LG0xx_FL_Driver\CMSIS\system_fm33lg0xx.c</FilePath>
+              <FilePath>packages\fm33lg0xx_fl_library\libraries\CMSIS\Device\FM\FM33xx\Source\system_fm33lg0xx.c</FilePath>
             </File>
             <File>
               <FileName>fm33lg0xx_fl_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_dma.c</FilePath>
+              <FilePath>packages\fm33lg0xx_fl_library\libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_dma.c</FilePath>
             </File>
             <File>
               <FileName>fm33lg0xx_fl_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_crc.c</FilePath>
+              <FilePath>packages\fm33lg0xx_fl_library\libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_crc.c</FilePath>
             </File>
             <File>
               <FileName>fm33lg0xx_fl_cmu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_cmu.c</FilePath>
+              <FilePath>packages\fm33lg0xx_fl_library\libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_cmu.c</FilePath>
             </File>
             <File>
               <FileName>fm33lg0xx_fl_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_gpio.c</FilePath>
+              <FilePath>packages\fm33lg0xx_fl_library\libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_gpio.c</FilePath>
             </File>
             <File>
               <FileName>fm33lg0xx_fl_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_exti.c</FilePath>
+              <FilePath>packages\fm33lg0xx_fl_library\libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_exti.c</FilePath>
             </File>
             <File>
               <FileName>fm33lg0xx_fl_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_uart.c</FilePath>
+              <FilePath>packages\fm33lg0xx_fl_library\libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_uart.c</FilePath>
             </File>
             <File>
               <FileName>fm33lg0xx_fl_lpuart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_lpuart.c</FilePath>
+              <FilePath>packages\fm33lg0xx_fl_library\libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_lpuart.c</FilePath>
             </File>
             <File>
               <FileName>fm33lg0xx_fl_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_i2c.c</FilePath>
+              <FilePath>packages\fm33lg0xx_fl_library\libraries\FM33LG0xx_FL_Driver\Src\fm33lg0xx_fl_i2c.c</FilePath>
             </File>
           </Files>
         </Group>

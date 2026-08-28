@@ -147,6 +147,9 @@
 #define RT_USING_PIN
 /* end of Device Drivers */
 
+/* FM33LG0xx FL Library package */
+#define PKG_USING_FM33LG0XX_FL_LIBRARY
+
 /* C/C++ and POSIX layer */
 
 /* ISO-ANSI C layer */

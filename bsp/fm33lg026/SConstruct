@@ -36,10 +36,8 @@ Export('rtconfig')
 
 SDK_ROOT = os.path.abspath('./')
 
-if os.path.exists(SDK_ROOT + '/libraries'):
-    libraries_path_prefix = SDK_ROOT + '/libraries'
-else:
-    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
+# vendor library is introduced via software package (downloaded to packages/fm33lg0xx_fl_library by pkgs --update)
+libraries_path_prefix = SDK_ROOT + '/packages/fm33lg0xx_fl_library'
 
 SDK_LIB = libraries_path_prefix
 Export('SDK_LIB')
@@ -47,14 +45,14 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-fm33_library = 'FM33LG0xx_FL_Driver'
+fm33_library = 'fm33lg0xx_fl_library'
 rtconfig.BSP_LIBRARY_TYPE = fm33_library
 
-# include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, fm33_library, 'SConscript'), variant_dir=os.path.join('build', 'libraries', fm33_library), duplicate=0))
+# include libraries (package root SConscript)
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'SConscript'), variant_dir=os.path.join('build', 'packages', fm33_library), duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'), variant_dir='build/libraries/HAL_Drivers', duplicate=0))
+objs.extend(SConscript(os.path.join(SDK_ROOT, 'libraries', 'HAL_Drivers', 'SConscript'), variant_dir='build/libraries/HAL_Drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)
