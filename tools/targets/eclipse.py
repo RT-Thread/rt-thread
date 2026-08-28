@@ -183,6 +183,7 @@ def HandleToolOption(tools, env, project, reset):
     paths = [ConverToRttEclipsePathFormat(RelativeProjectPath(env, os.path.normpath(i)).replace('\\', '/')) for i in project['CPPPATH']]
 
     compile_include_paths_options = []
+    assembler_include_paths_options = []
     compile_include_files_options = []
     compile_defs_options = []
     linker_scriptfile_option = None
@@ -200,7 +201,9 @@ def HandleToolOption(tools, env, project, reset):
             # find all compile options
             for option in options:
                 option_id = option.get('id')
-                if ('compiler.include.paths' in  option_id) or ('compiler.option.includepaths' in  option_id) or ('compiler.tasking.include' in  option_id):
+                if ('assembler.include.paths' in option_id) or ('assembler.option.includepaths' in option_id):
+                    assembler_include_paths_options += [option]
+                elif ('compiler.include.paths' in  option_id) or ('compiler.option.includepaths' in  option_id) or ('compiler.tasking.include' in  option_id):
                     compile_include_paths_options += [option]
                 elif option.get('id').find('compiler.include.files') != -1 or option.get('id').find('compiler.option.includefiles') != -1 :
                     compile_include_files_options += [option]
@@ -229,7 +232,7 @@ def HandleToolOption(tools, env, project, reset):
                     linker_newlib_nano_option = option
 
     # change the inclue path
-    for option in compile_include_paths_options:
+    for option in compile_include_paths_options + assembler_include_paths_options:
         # find all of paths in this project
         include_paths = option.findall('listOptionValue')
         for item in include_paths:
