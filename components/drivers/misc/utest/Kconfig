@@ -33,6 +33,8 @@ config RT_PWM_TC_TIMEOUT
     int "PWM test timeout in seconds"
     range 1 3600
     default 30
+    help
+        Abort the PWM matrix when the total test runtime reaches this limit.
 
 endif
 
