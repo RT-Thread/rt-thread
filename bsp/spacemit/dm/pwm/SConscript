@@ -1,0 +1,14 @@
+from building import *
+
+group = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+src = []
+
+if GetDepend(['RT_PWM_PXA']):
+    src += ['pwm-pxa.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

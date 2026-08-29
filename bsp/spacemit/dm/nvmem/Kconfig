@@ -1,0 +1,6 @@
+config RT_NVMEM_SPACEMIT_EFUSE
+    bool "Spacemit SoCs efuse support"
+    depends on RT_USING_NVMEM
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    default n

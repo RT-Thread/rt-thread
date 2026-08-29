@@ -1,0 +1,12 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include', cwd + '/../../../../components/drivers/regulator']
+
+if GetDepend(['RT_REGULATOR_SPACEMIT_PMIC']):
+    src += ['regulator-spacemit-pmic.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

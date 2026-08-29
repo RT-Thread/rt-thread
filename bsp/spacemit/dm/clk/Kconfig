@@ -1,0 +1,9 @@
+menuconfig RT_CLK_SPACEMIT
+    bool "Spacemit clock controller common"
+    depends on RT_USING_OFW
+    default y
+
+config RT_CLK_SPACEMIT_K1X
+    bool "Spacemit k1x clock controller support"
+    depends on RT_CLK_SPACEMIT
+    default n

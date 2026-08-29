@@ -1,0 +1,5 @@
+config RT_GRAPHIC_LOGO_BIANBU_CLUT224
+    bool "Standard 224-color Bianbu logo"
+
+config RT_GRAPHIC_LOGO_SPACEMIT_CLUT224
+    bool "Standard 224-color Spacemit logo"
