@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2026-04-13     wdfk-prog    Add STM32 DMA common helpers
+ * 2026-08-28     moment-NEW   Dispatch DMA/BDMA/GPDMA by descriptor type
  */
 
 /**
@@ -27,15 +28,12 @@
 /**
  * @brief Get the controller type name for logging.
  *
- * GPDMA-only series resolve to a constant string at compile time; other
- * series distinguish BDMA and DMA by the descriptor type at runtime.
+ * The name follows the descriptor type so DMA, BDMA and GPDMA share one
+ * helper path while still producing a distinct log tag.
  */
-#if defined(STM32_DMA_USES_GPDMA)
-#define STM32_DMA_TYPE_NAME(dma_config)              "gpdma"
-#else
-#define STM32_DMA_TYPE_NAME(dma_config)              \
-    (((dma_config)->common.type == STM32_DMA_TYPE_BDMA) ? "bdma" : "dma")
-#endif /* defined(STM32_DMA_USES_GPDMA) */
+#define STM32_DMA_TYPE_NAME(dma_config)                                              \
+    (((dma_config)->common.type == STM32_DMA_TYPE_GPDMA) ? "gpdma" :                 \
+     ((dma_config)->common.type == STM32_DMA_TYPE_BDMA)  ? "bdma"  : "dma")
 
 #if defined(STM32_DMA_USES_REQUEST)
 /**
@@ -60,10 +58,12 @@ static void stm32_dma_enable_clock(rt_uint32_t dma_rcc,
                                    stm32_dma_type type)
 {
     rt_uint32_t tmpreg = 0x00U;
-/*while using BDMA,careful for the return,because you cant visit the FIFO member*/
-/*if you did so there would be some illegal access.*/
-/*And,please note the domian you can visit*/
-#if defined(BSP_USING_BDMA) && (defined(SOC_SERIES_STM32H7))
+
+    /*
+     * STM32H7 BDMA lives on AHB4. Enable that clock and return so the
+     * DMA1/DMA2 AHB1 path below is not used for a BDMA endpoint.
+     */
+#if defined(BSP_USING_BDMA) && defined(SOC_SERIES_STM32H7)
     if (type == STM32_DMA_TYPE_BDMA)
     {
         SET_BIT(RCC->AHB4ENR, dma_rcc);
@@ -71,7 +71,7 @@ static void stm32_dma_enable_clock(rt_uint32_t dma_rcc,
         UNUSED(tmpreg);
         return;
     }
-#endif /* defined(BSP_USING_BDMA) && (defined(SOC_SERIES_STM32H7)) */
+#endif /* defined(BSP_USING_BDMA) && defined(SOC_SERIES_STM32H7) */
 #if defined(STM32_DMA_USES_RCC_AHBENR)
     SET_BIT(RCC->AHBENR, dma_rcc);
     tmpreg = READ_BIT(RCC->AHBENR, dma_rcc);
@@ -229,63 +229,73 @@ static void stm32_dma_irq_put(IRQn_Type dma_irq)
 }
 
 /**
- * @brief Apply common configuration fields from the base structure to a HAL DMA handle.
+ * @brief Apply fields shared by classic DMA, BDMA and GPDMA to a HAL handle.
  * @param dma_handle DMA handle to update.
- * @param common Common configuration fields shared by DMA and BDMA.
+ * @param common Common configuration fields shared by all controller types.
  */
 static void stm32_dma_apply_common_config(DMA_HandleTypeDef *dma_handle,
                                           const struct stm32_dma_config_common *common)
 {
     dma_handle->Instance = common->Instance;
-#if defined(STM32_DMA_USES_REQUEST) || defined(STM32_BDMA_USES_REQUEST)
+#if defined(STM32_DMA_USES_REQUEST)
     dma_handle->Init.Request = common->request;
-#endif
+#endif /* defined(STM32_DMA_USES_REQUEST) */
     dma_handle->Init.Direction = common->direction;
-    dma_handle->Init.PeriphInc = common->periph_inc;
-    dma_handle->Init.MemInc = common->mem_inc;
-    dma_handle->Init.PeriphDataAlignment = common->periph_data_alignment;
-    dma_handle->Init.MemDataAlignment = common->mem_data_alignment;
     dma_handle->Init.Mode = common->mode;
     dma_handle->Init.Priority = common->priority;
 }
 
 /**
- * @brief Apply common configuration fields and DMA-specific fields when applicable.
+ * @brief Apply one static descriptor to a HAL DMA handle.
  *
- * BDMA endpoints only carry the common fields, so the DMA-specific fields are
- * skipped based on the controller type stored in the common structure.
+ * Software dispatch uses @ref stm32_dma_config_common.type. HAL member names
+ * that exist only on classic DMA or only on GPDMA are still guarded by
+ * @ref STM32_DMA_USES_GPDMA so unused cases compile as empty on that series.
  */
 static void stm32_dma_apply_config(DMA_HandleTypeDef *dma_handle,
                                    const struct stm32_dma_config *dma_config)
 {
     stm32_dma_apply_common_config(dma_handle, &dma_config->common);
 
-    if (dma_config->common.type == STM32_DMA_TYPE_BDMA)
+    switch (dma_config->common.type)
     {
-        return;
-    }
-
-#if defined(STM32_DMA_USES_GPDMA)
-    dma_handle->Init.BlkHWRequest = dma_config->blk_hw_request;
-    dma_handle->Init.SrcInc = dma_config->src_inc;
-    dma_handle->Init.DestInc = dma_config->dest_inc;
-    dma_handle->Init.SrcDataWidth = dma_config->src_data_width;
-    dma_handle->Init.DestDataWidth = dma_config->dest_data_width;
-    dma_handle->Init.SrcBurstLength = dma_config->src_burst_length;
-    dma_handle->Init.DestBurstLength = dma_config->dest_burst_length;
-    dma_handle->Init.TransferAllocatedPort = dma_config->transfer_allocated_port;
-    dma_handle->Init.TransferEventMode = dma_config->transfer_event_mode;
-#else
+    case STM32_DMA_TYPE_DMA:
+    case STM32_DMA_TYPE_BDMA:
+#if !defined(STM32_DMA_USES_GPDMA)
+        dma_handle->Init.PeriphInc = dma_config->config.classic.periph_inc;
+        dma_handle->Init.MemInc = dma_config->config.classic.mem_inc;
+        dma_handle->Init.PeriphDataAlignment = dma_config->config.classic.periph_data_alignment;
+        dma_handle->Init.MemDataAlignment = dma_config->config.classic.mem_data_alignment;
+        if (dma_config->common.type == STM32_DMA_TYPE_DMA)
+        {
 #if defined(STM32_DMA_USES_CHANNEL)
-    dma_handle->Init.Channel = dma_config->channel;
+            dma_handle->Init.Channel = dma_config->config.classic.channel;
 #endif /* defined(STM32_DMA_USES_CHANNEL) */
 #if defined(STM32_DMA_SUPPORTS_FIFO)
-    dma_handle->Init.FIFOMode = dma_config->fifo_mode;
-    dma_handle->Init.FIFOThreshold = dma_config->fifo_threshold;
-    dma_handle->Init.MemBurst = dma_config->mem_burst;
-    dma_handle->Init.PeriphBurst = dma_config->periph_burst;
+            dma_handle->Init.FIFOMode = dma_config->config.classic.fifo_mode;
+            dma_handle->Init.FIFOThreshold = dma_config->config.classic.fifo_threshold;
+            dma_handle->Init.MemBurst = dma_config->config.classic.mem_burst;
+            dma_handle->Init.PeriphBurst = dma_config->config.classic.periph_burst;
 #endif /* defined(STM32_DMA_SUPPORTS_FIFO) */
+        }
+#endif /* !defined(STM32_DMA_USES_GPDMA) */
+        break;
+    case STM32_DMA_TYPE_GPDMA:
+#if defined(STM32_DMA_USES_GPDMA)
+        dma_handle->Init.BlkHWRequest = dma_config->config.gpdma.blk_hw_request;
+        dma_handle->Init.SrcInc = dma_config->config.gpdma.src_inc;
+        dma_handle->Init.DestInc = dma_config->config.gpdma.dest_inc;
+        dma_handle->Init.SrcDataWidth = dma_config->config.gpdma.src_data_width;
+        dma_handle->Init.DestDataWidth = dma_config->config.gpdma.dest_data_width;
+        dma_handle->Init.SrcBurstLength = dma_config->config.gpdma.src_burst_length;
+        dma_handle->Init.DestBurstLength = dma_config->config.gpdma.dest_burst_length;
+        dma_handle->Init.TransferAllocatedPort = dma_config->config.gpdma.transfer_allocated_port;
+        dma_handle->Init.TransferEventMode = dma_config->config.gpdma.transfer_event_mode;
 #endif /* defined(STM32_DMA_USES_GPDMA) */
+        break;
+    default:
+        break;
+    }
 }
 
 /**

@@ -363,7 +363,7 @@ extern "C" {
         SPI6_TX_BDMA_INSTANCE,         \
         SPI6_TX_BDMA_RCC,              \
         SPI6_TX_BDMA_IRQ,              \
-        BDMA_REQUEST_SPI6_TX,          \
+        SPI6_TX_BDMA_REQUEST,          \
         SPI6_TX_BDMA_PRIORITY,         \
         SPI6_TX_BDMA_PREEMPT_PRIORITY, \
         SPI6_TX_BDMA_SUB_PRIORITY)
@@ -389,7 +389,7 @@ extern "C" {
         SPI6_RX_BDMA_INSTANCE,         \
         SPI6_RX_BDMA_RCC,              \
         SPI6_RX_BDMA_IRQ,              \
-        BDMA_REQUEST_SPI6_RX,          \
+        SPI6_RX_BDMA_REQUEST,          \
         SPI6_RX_BDMA_PRIORITY,         \
         SPI6_RX_BDMA_PREEMPT_PRIORITY, \
         SPI6_RX_BDMA_SUB_PRIORITY)

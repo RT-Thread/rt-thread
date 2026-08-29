@@ -169,3 +169,22 @@ config BSP_USING_UDID
     bool "Enable UDID (Unique Device Identifier)"
     select RT_USING_HWCRYPTO
     default n
+
+if SOC_SERIES_STM32H7
+    config BSP_USING_BDMA
+        bool
+
+    config BSP_SPI6_TX_USING_BDMA
+        bool "Enable SPI6 TX BDMA"
+        depends on BSP_USING_SPI6
+        depends on !BSP_SPI6_TX_USING_DMA
+        select BSP_USING_BDMA
+        default n
+
+    config BSP_SPI6_RX_USING_BDMA
+        bool "Enable SPI6 RX BDMA"
+        depends on BSP_USING_SPI6
+        depends on !BSP_SPI6_RX_USING_DMA
+        select BSP_USING_BDMA
+        default n
+endif
