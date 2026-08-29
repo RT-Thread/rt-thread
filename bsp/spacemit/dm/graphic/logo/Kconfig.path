@@ -1,0 +1,10 @@
+if RT_GRAPHIC_LOGO_BIANBU_CLUT224
+    config RT_GRAPHIC_LOGO_BIANBU_CLUT224_PATH
+        string
+        default "../dm/graphic/logo/logo-bianbu-clut224.ppm"
+endif
+if RT_GRAPHIC_LOGO_SPACEMIT_CLUT224
+    config RT_GRAPHIC_LOGO_SPACEMIT_CLUT224_PATH
+        string
+        default "../dm/graphic/logo/logo-spacemit-clut224.ppm"
+endif

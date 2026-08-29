@@ -1,0 +1,12 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_CLOCK_TIME_SPACEMIT_K1X']):
+    src += ['clock_time-k1x.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
