@@ -1,0 +1,14 @@
+config RT_ETHERNET_K1X_EMAC
+    bool "Spacemit K1X Ethernet MAC"
+    depends on RT_USING_OFW
+    depends on RT_USING_DMA
+    depends on RT_USING_PIN
+    depends on RT_USING_PHY_V2
+    select RT_PHY_V2_REALTEK
+    default n
+
+config RT_ETHERNET_K1X_EMAC_PTP
+    bool "PTP clock support"
+    depends on RT_ETHERNET_K1X_EMAC
+    depends on RT_USING_PTP
+    default y

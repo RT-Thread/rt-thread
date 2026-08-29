@@ -1,0 +1,242 @@
+/*
+ * Copyright (c) 2006-2025, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#ifndef __DT_BINDINGS_CLOCK_K1X_H__
+#define __DT_BINDINGS_CLOCK_K1X_H__
+
+#define CLK_PLL2            0
+#define CLK_PLL3            1
+#define CLK_PLL1_D2         2
+#define CLK_PLL1_D3         3
+#define CLK_PLL1_D4         4
+#define CLK_PLL1_D5         5
+#define CLK_PLL1_D6         6
+#define CLK_PLL1_D7         7
+#define CLK_PLL1_D8         8
+#define CLK_PLL1_D11        9
+#define CLK_PLL1_D13        10
+#define CLK_PLL1_D23        11
+#define CLK_PLL1_D64        12
+#define CLK_PLL1_D10_AUD    13
+#define CLK_PLL1_D100_AUD   14
+#define CLK_PLL2_D1         15
+#define CLK_PLL2_D2         16
+#define CLK_PLL2_D3         17
+#define CLK_PLL2_D4         18
+#define CLK_PLL2_D5         19
+#define CLK_PLL2_D6         20
+#define CLK_PLL2_D7         21
+#define CLK_PLL2_D8         22
+#define CLK_PLL3_D1         23
+#define CLK_PLL3_D2         24
+#define CLK_PLL3_D3         25
+#define CLK_PLL3_D4         26
+#define CLK_PLL3_D5         27
+#define CLK_PLL3_D6         28
+#define CLK_PLL3_D7         29
+#define CLK_PLL3_D8         30
+#define CLK_PLL1_307P2      31
+#define CLK_PLL1_76P8       32
+#define CLK_PLL1_61P44      33
+#define CLK_PLL1_153P6      34
+#define CLK_PLL1_102P4      35
+#define CLK_PLL1_51P2       36
+#define CLK_PLL1_51P2_AP    37
+#define CLK_PLL1_57P6       38
+#define CLK_PLL1_25P6       39
+#define CLK_PLL1_12P8       40
+#define CLK_PLL1_12P8_WDT   41
+#define CLK_PLL1_6P4        42
+#define CLK_PLL1_3P2        43
+#define CLK_PLL1_1P6        44
+#define CLK_PLL1_0P8        45
+#define CLK_PLL1_351        46
+#define CLK_PLL1_409P6      47
+#define CLK_PLL1_204P8      48
+#define CLK_PLL1_491        49
+#define CLK_PLL1_245P76     50
+#define CLK_PLL1_614        51
+#define CLK_PLL1_47P26      52
+#define CLK_PLL1_31P5       53
+#define CLK_PLL1_819        54
+#define CLK_PLL1_1228       55
+#define CLK_SLOW_UART1      56
+#define CLK_SLOW_UART2      57
+#define CLK_UART1           58
+#define CLK_UART2           59
+#define CLK_UART3           60
+#define CLK_UART4           61
+#define CLK_UART5           62
+#define CLK_UART6           63
+#define CLK_UART7           64
+#define CLK_UART8           65
+#define CLK_UART9           66
+#define CLK_GPIO            67
+#define CLK_PWM0            68
+#define CLK_PWM1            69
+#define CLK_PWM2            70
+#define CLK_PWM3            71
+#define CLK_PWM4            72
+#define CLK_PWM5            73
+#define CLK_PWM6            74
+#define CLK_PWM7            75
+#define CLK_PWM8            76
+#define CLK_PWM9            77
+#define CLK_PWM10           78
+#define CLK_PWM11           79
+#define CLK_PWM12           80
+#define CLK_PWM13           81
+#define CLK_PWM14           82
+#define CLK_PWM15           83
+#define CLK_PWM16           84
+#define CLK_PWM17           85
+#define CLK_PWM18           86
+#define CLK_PWM19           87
+#define CLK_SSP3            88
+#define CLK_RTC             89
+#define CLK_TWSI0           90
+#define CLK_TWSI1           91
+#define CLK_TWSI2           92
+#define CLK_TWSI4           93
+#define CLK_TWSI5           94
+#define CLK_TWSI6           95
+#define CLK_TWSI7           96
+#define CLK_TWSI8           97
+#define CLK_TIMERS1         98
+#define CLK_TIMERS2         99
+#define CLK_AIB             100
+#define CLK_ONEWIRE         101
+#define CLK_SSPA0           102
+#define CLK_SSPA1           103
+#define CLK_DRO             104
+#define CLK_IR              105
+#define CLK_TSEN            106
+#define CLK_IPC_AP2AUD      107
+#define CLK_CAN0            108
+#define CLK_CAN0_BUS        109
+#define CLK_WDT             110
+#define CLK_RIPC            111
+#define CLK_JPG             112
+#define CLK_JPF_4KAFBC      113
+#define CLK_JPF_2KAFBC      114
+#define CLK_CCIC2PHY        115
+#define CLK_CCIC3PHY        116
+#define CLK_CSI             117
+#define CLK_CAMM0           118
+#define CLK_CAMM1           119
+#define CLK_CAMM2           120
+#define CLK_ISP_CPP         121
+#define CLK_ISP_BUS         122
+#define CLK_ISP             123
+#define CLK_DPU_MCLK        124
+#define CLK_DPU_ESC         125
+#define CLK_DPU_BIT         126
+#define CLK_DPU_PXCLK       127
+#define CLK_DPU_HCLK        128
+#define CLK_DPU_SPI         129
+#define CLK_DPU_SPI_HBUS    130
+#define CLK_DPU_SPIBUS      131
+#define CLK_SPU_SPI_ACLK    132
+#define CLK_V2D             133
+#define CLK_CCIC_4X         134
+#define CLK_CCIC1PHY        135
+#define CLK_SDH_AXI         136
+#define CLK_SDH0            137
+#define CLK_SDH1            138
+#define CLK_SDH2            139
+#define CLK_USB_P1          140
+#define CLK_USB_AXI         141
+#define CLK_USB30           142
+#define CLK_QSPI            143
+#define CLK_QSPI_BUS        144
+#define CLK_DMA             145
+#define CLK_AES             146
+#define CLK_VPU             147
+#define CLK_GPU             148
+#define CLK_EMMC            149
+#define CLK_EMMC_X          150
+#define CLK_AUDIO           151
+#define CLK_HDMI            152
+#define CLK_CCI550          153
+#define CLK_PMUA_ACLK       154
+#define CLK_CPU_C0_HI       155
+#define CLK_CPU_C0_CORE     156
+#define CLK_CPU_C0_ACE      157
+#define CLK_CPU_C0_TCM      158
+#define CLK_CPU_C1_HI       159
+#define CLK_CPU_C1_CORE     160
+#define CLK_CPU_C1_ACE      161
+#define CLK_PCIE0           162
+#define CLK_PCIE1           163
+#define CLK_PCIE2           164
+#define CLK_EMAC0_BUS       165
+#define CLK_EMAC0_PTP       166
+#define CLK_EMAC1_BUS       167
+#define CLK_EMAC1_PTP       168
+
+#define CLK_SEC_UART1       169
+#define CLK_SEC_SSP2        170
+#define CLK_SEC_TWSI3       171
+#define CLK_SEC_RTC         172
+#define CLK_SEC_TIMERS0     173
+#define CLK_SEC_KPC         174
+#define CLK_SEC_GPIO        175
+
+#define CLK_APB             176
+
+#define CLK_PLL3_80         177
+#define CLK_PLL3_40         178
+#define CLK_PLL3_20         179
+
+#define CLK_SLOW_UART       180
+
+#define CLK_I2S_SYSCLK      181
+#define CLK_I2S_BCLK        182
+#define CLK_RCPU_HDMIAUDIO  183
+#define CLK_RCPU_CAN        184
+#define CLK_RCPU_CAN_BUS    185
+
+#define CLK_RCPU_I2C0       186
+#define CLK_RCPU_SSP0       187
+#define CLK_RCPU_IR         188
+#define CLK_RCPU_UART0      189
+#define CLK_RCPU_UART1      190
+
+#define CLK_DPLL1           191
+#define CLK_DPLL2           192
+
+#define CLK_DFC_LVL0        193
+#define CLK_DFC_LVL1        194
+#define CLK_DFC_LVL2        195
+#define CLK_DFC_LVL3        196
+#define CLK_DFC_LVL4        197
+#define CLK_DFC_LVL5        198
+#define CLK_DFC_LVL6        199
+#define CLK_DFC_LVL7        200
+#define CLK_DDR             201
+
+#define CLK_RCPU2_PWM0      202
+#define CLK_RCPU2_PWM1      203
+#define CLK_RCPU2_PWM2      204
+#define CLK_RCPU2_PWM3      205
+#define CLK_RCPU2_PWM4      206
+#define CLK_RCPU2_PWM5      207
+#define CLK_RCPU2_PWM6      208
+#define CLK_RCPU2_PWM7      209
+#define CLK_RCPU2_PWM8      210
+#define CLK_RCPU2_PWM9      211
+
+#define CLK_AUDIO_APB       212
+#define CLK_AUDIO_AXI       213
+
+#define CLK_PM_MN_SRC       214
+#define CLK_PM_MN           215
+#define CLK_PM_MN2_SRC      216
+#define CLK_PM_MN2          217
+
+#define CLK_MAX_NO          218
+
+#endif /* __DT_BINDINGS_CLOCK_K1X_H__ */

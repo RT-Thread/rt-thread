@@ -260,13 +260,14 @@ jobs:
           echo "RTT_EXEC_PATH=/opt/Xuantie-900-gcc-linux-6.6.0-musl64-x86_64-V3.0.2/bin" >> $GITHUB_ENV
           echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
 
-      - name: Install k230 MUSL ToolChains
-        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'riscv64-unknown-linux-musl-' && matrix.legs.RTT_BSP == 'K230' && success() }}
+      - name: Install RISC-V64 MUSL ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'riscv64-unknown-linux-musl-' && success() }}
         run: |
           wget -q https://download.rt-thread.org/rt-smart/riscv64/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2
           sudo tar xjf riscv64-linux-musleabi_for_x86_64-pc-linux-gnu_251248.tar.bz2 -C /opt
           /opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin/riscv64-unknown-linux-musl-gcc --version
           echo "RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
+          echo "RTT_CC_PREFIX=riscv64-unknown-linux-musl-" >> $GITHUB_ENV
 
       - name: Install riscv32-unknown-elf Toolchains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'RISC-V-GCC-RV32' && success() }}
