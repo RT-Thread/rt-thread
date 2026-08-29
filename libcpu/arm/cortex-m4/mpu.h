@@ -22,17 +22,17 @@
  * These are identical to Cortex-M7 because both cores implement the
  * ARMv7-M MPU with the same AP/XN bit layout in the RASR register. */
 /* Privileged No Access, Unprivileged No Access */
-#define P_NA_U_NA ((0x0 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk | MPU_RASR_XN_Msk)
+#define P_NA_U_NA (((0x0 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk) | MPU_RASR_XN_Msk)
 /* Privileged Read Write, Unprivileged No Access */
-#define P_RW_U_NA ((0x1 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk | MPU_RASR_XN_Msk)
+#define P_RW_U_NA (((0x1 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk) | MPU_RASR_XN_Msk)
 /* Privileged Read Write, Unprivileged Read Only */
-#define P_RW_U_RO ((0x2 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk | MPU_RASR_XN_Msk)
+#define P_RW_U_RO (((0x2 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk) | MPU_RASR_XN_Msk)
 /* Privileged Read Write, Unprivileged Read Write */
-#define P_RW_U_RW ((0x3 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk | MPU_RASR_XN_Msk)
+#define P_RW_U_RW (((0x3 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk) | MPU_RASR_XN_Msk)
 /* Privileged Read Only, Unprivileged No Access */
-#define P_RO_U_NA ((0x5 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk | MPU_RASR_XN_Msk)
+#define P_RO_U_NA (((0x5 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk) | MPU_RASR_XN_Msk)
 /* Privileged Read Only, Unprivileged Read Only */
-#define P_RO_U_RO ((0x6 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk | MPU_RASR_XN_Msk)
+#define P_RO_U_RO (((0x6 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk) | MPU_RASR_XN_Msk)
 
 /* MPU attributes for configuring code region permission */
 /* Privileged Read Write Execute, Unprivileged Read Write Execute */
