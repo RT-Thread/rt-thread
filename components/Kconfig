@@ -36,6 +36,7 @@ rsource "drivers/Kconfig"
 rsource "libc/Kconfig"
 rsource "net/Kconfig"
 rsource "mprotect/Kconfig"
+rsource "asan/Kconfig"
 rsource "utilities/Kconfig"
 endif
 
