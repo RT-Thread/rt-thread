@@ -1,0 +1,9 @@
+config SOC_FAMILY_TAE32
+    bool
+
+config SOC_SERIES_TAE32G58xx
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_TAE32
+
+
