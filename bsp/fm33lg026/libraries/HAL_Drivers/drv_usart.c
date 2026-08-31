@@ -164,8 +164,7 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
 
 #ifdef RT_SERIAL_USING_DMA
     case RT_DEVICE_CTRL_CONFIG:
-        stm32_dma_config(serial, ctrl_arg);
-        break;
+            return -RT_ENOSYS;
 #endif
 
     case RT_DEVICE_CTRL_CLOSE:

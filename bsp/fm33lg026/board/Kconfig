@@ -21,11 +21,11 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_UART
             config BSP_USING_UART0
                 bool "Enable UART0"
-                default n
+                default y
 
             config BSP_USING_UART1
                 bool "Enable UART1"
-                default y
+                default n
 
             config BSP_USING_UART4
                 bool "Enable UART4"
@@ -33,12 +33,7 @@ menu "On-chip Peripheral Drivers"
 
             config BSP_USING_UART5
                 bool "Enable UART5"
-                default y
-
+                default n
         endif
         endmenu
 endmenu
-
-
-
-

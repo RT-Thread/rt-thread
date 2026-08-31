@@ -57,8 +57,9 @@ extern "C" {
 #define UART5_CONFIG                                                \
     {                                                               \
         .name = "uart5",                                            \
-        .Instance = UART5,                                         \
-        .irq_type = UART5_IRQn,                                    \
+         .InitTypeDef = UART5,                                       \
+         .irq_type = UART5_IRQn,                                     \
+         .clockSrc = 0,                                              \
     }
 #endif /* UART5_CONFIG */
 #endif /* BSP_USING_UART5 */
