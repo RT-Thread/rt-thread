@@ -379,7 +379,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
 
     # AddressSanitizer (kernel-address): instrument memory accesses. The
-    # runtime is provided by components/asan and does not need libasan.
+    # runtime is provided by components/utilities/asan and does not need libasan.
     if rtconfig.PLATFORM in ['gcc'] and 'RT_USING_ASAN' in BuildOptions:
         env.Append(CFLAGS=' -fsanitize=kernel-address -fno-omit-frame-pointer')
         env.Append(LINKFLAGS=' -fsanitize=kernel-address')
