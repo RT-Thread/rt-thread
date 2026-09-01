@@ -236,20 +236,27 @@ def IARProject(env, target, script):
         project_name = os.path.splitext(os.path.basename(target))[0]
         _update_iar_wsdt(wsdt_path, project_name, active_config)
 
-    # copy template.ewd (debugger settings) and template.ewt (build settings) to project files
+        # The IAR IDE keeps the workspace/session state in memory and writes it
+        # back on close, which can overwrite the active configuration we just
+        # generated. Remind the user to close the workspace before regenerating.
+        print('IAR active configuration set to: %s' % active_config)
+        print('Note: if the IAR workspace (.eww) is currently open, close it '
+              'before regenerating the project, otherwise the active target '
+              'will not be updated.')
+
+    # copy template.ewd (debugger settings) and template.ewt (build settings) to project files.
+    # The template sources are always template.ewd / template.ewt in the project directory;
+    # do not derive them from the output project name, otherwise a custom --project-name
+    # would make source and destination identical and trigger shutil.SameFileError.
     import shutil
-    ewd_template = target.replace('.ewp', '.ewd').replace('project', 'template')
+    ewd_template = os.path.join(project_path, 'template.ewd')
     ewd_target   = target.replace('.ewp', '.ewd')
-    if not os.path.exists(ewd_template):
-        ewd_template = 'template.ewd'
-    if os.path.exists(ewd_template):
+    if os.path.exists(ewd_template) and os.path.abspath(ewd_template) != os.path.abspath(ewd_target):
         shutil.copy2(ewd_template, ewd_target)
 
-    ewt_template = target.replace('.ewp', '.ewt').replace('project', 'template')
+    ewt_template = os.path.join(project_path, 'template.ewt')
     ewt_target   = target.replace('.ewp', '.ewt')
-    if not os.path.exists(ewt_template):
-        ewt_template = 'template.ewt'
-    if os.path.exists(ewt_template):
+    if os.path.exists(ewt_template) and os.path.abspath(ewt_template) != os.path.abspath(ewt_target):
         shutil.copy2(ewt_template, ewt_target)
 
 def IARPath():
