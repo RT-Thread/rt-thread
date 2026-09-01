@@ -34,7 +34,7 @@ int dfs_skt_read(struct dfs_file *file, void *buf, rt_size_t count)
     return count;
 }
 
-int dfs_skt_lseek(struct dfs_file *file, rt_off_t offset)
+off_t dfs_skt_lseek(struct dfs_file *file, off_t offset)
 {
     return -RT_EIO;
 }
