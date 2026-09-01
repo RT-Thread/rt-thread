@@ -386,24 +386,33 @@ def MDK5Project(env, target, script):
         shutil.copy2('template.uvoptx', project_uvoptx)
 
         # Set the active target from the BSP via an optional board-specific hook.
+        # The hook returns the active target name so we build the matching target.
+        active_target_name = None
         try:
             import rtconfig
             if hasattr(rtconfig, 'update_keil_active_target'):
-                rtconfig.update_keil_active_target(project_uvoptx)
+                active_target_name = rtconfig.update_keil_active_target(project_uvoptx)
         except Exception as e:
             print('Warning: could not set Keil active target: %s' % e)
 
         # build with UV4.exe
         if shutil.which('UV4.exe') is not None:
-            target_name = template_tree.find('Targets/Target/TargetName')
-            print('target_name:', target_name.text)
+            # Prefer the active target reported by the BSP hook; fall back to the
+            # template's first target only when no hook is available.
+            if not active_target_name:
+                target_name = template_tree.find('Targets/Target/TargetName')
+                active_target_name = target_name.text
+            print('target_name:', active_target_name)
+
+            # Use the actual generated project file name (honors --project-name).
+            uvprojx_name = os.path.basename(target)
 
             log_file_path = 'keil.log'
             if os.path.exists(log_file_path):
                 os.remove(log_file_path)
             log_thread = threading.Thread(target=monitor_log_file, args=(log_file_path,))
             log_thread.start()
-            cmd = 'UV4.exe -b project.uvprojx -q -j0 -t '+ target_name.text +' -o '+log_file_path
+            cmd = 'UV4.exe -b '+ uvprojx_name +' -q -j0 -t '+ active_target_name +' -o '+log_file_path
             print('Start to build keil project')
             print(cmd)
             os.system(cmd)

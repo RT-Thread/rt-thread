@@ -247,10 +247,11 @@ def update_keil_active_target(uvoptx_path='project.uvoptx'):
     active = _get_active_project_target()
 
     if not os.path.exists(uvoptx_path):
-        return
+        return active
 
     tree = etree.parse(uvoptx_path)
     root = tree.getroot()
+
 
     for tgt in tree.findall('Target'):
         tname = tgt.find('TargetName')
@@ -265,7 +266,12 @@ def update_keil_active_target(uvoptx_path='project.uvoptx'):
 
     print('Keil active target set to: ' + active)
 
+    # Return the active target name so the caller (tools/targets/keil.py) can
+    # build the matching target with UV4.exe instead of the template's first one.
+    return active
+
 def iar_get_active_config():
+
     """Return the IAR configuration name matching the selected linker script.
 
     This hook is called by tools/targets/iar.py when generating the IAR
