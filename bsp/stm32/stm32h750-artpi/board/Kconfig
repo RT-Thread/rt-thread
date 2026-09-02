@@ -1,8 +1,8 @@
 menu "Hardware Drivers Config"
     config SOC_STM32H750_ARTPI
-        bool 
+        bool
         default y
-        
+
 menu "Board extended module"
 
     menuconfig ART_PI_USING_MEDIA_IO
@@ -61,6 +61,7 @@ menu "Board extended module"
             config INDUSTRY_IO_USING_ETH
                 select BSP_USING_ETH
                 select PHY_USING_LAN8720A
+                select BSP_USING_ETH_H750
                 bool "Enable Ethernet"
                 default y
         endif
