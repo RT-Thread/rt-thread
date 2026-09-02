@@ -10,68 +10,43 @@ if RT_USING_CAN
         bool "Enable CAN hardware filter support"
         default n
         help
-            If your CAN controller supports hardware filtering, and you want to
-            use the framework to configure these filters, enable this option.
+            Enable framework-managed hardware filter metadata and callbacks.
 
     config RT_CAN_USING_CANFD
         bool "Enable CAN-FD support"
         default n
         help
-            Enable this to support CAN with Flexible Data-Rate. This will
-            increase the size of the rt_can_msg structure.
+            Enable CAN with Flexible Data-Rate support.
+
+    config RT_CAN_USING_STATUS_POLLING
+        bool "Enable periodic CAN status polling"
+        default y
+        help
+            Periodically query RT_CAN_CMD_GET_STATUS and dispatch the status
+            indication callback. TX progress does not depend on polling.
 
     config RT_CANMSG_BOX_SZ
         int "Software RX message box size (in messages)"
         default 16
         help
-            This sets the capacity of the software buffer (FIFO) for incoming
-            CAN messages. It defines how many messages can be buffered by the
-            driver before the application must read them.
+            Number of CAN frames buffered by the generic RX FIFO.
 
     config RT_CANSND_BOX_NUM
-        int "Number of mailboxes for blocking send"
+        int "Number of CAN TX mailboxes"
         default 1
         help
-            This sets the number of concurrent blocking send operations that
-            can be in flight. It is typically matched to the number of
-            hardware transmission mailboxes on the CAN controller.
+            Number of hardware TX mailboxes visible to blocking Generic CAN TX.
 
     config RT_CANSND_MSG_TIMEOUT
         int "Timeout for blocking send (in OS ticks)"
         default 100
+        range 1 2147483647
         help
-            This sets the default time a thread will wait for a hardware
-            mailbox to become available when sending in blocking mode.
-
-    config RT_CAN_NB_TX_FIFO_SIZE
-        int "Non-blocking send buffer size (in bytes)"
-        default 256
-        help
-            This defines the size of the software ring buffer used for
-            non-blocking and ISR-based transmissions. When the hardware
-            mailboxes are full, outgoing messages are temporarily stored
-            in this buffer.
-
-            To calculate a suitable size, use:
-            (number of messages to buffer) * sizeof(struct rt_can_msg).
-            For standard CAN, sizeof(struct rt_can_msg) is typically 16 bytes.
-            The default of 256 bytes can buffer 16 standard CAN messages.
-            If using CAN-FD, you will need to increase this size significantly.
-
-    config RT_CAN_MALLOC_NB_TX_BUFFER
-        bool "Dynamically allocate the non-blocking send buffer"
-        depends on RT_USING_HEAP
-        default n
-        help
-            If this option is enabled (y), the non-blocking send buffer will
-            be allocated from the system heap at runtime when the CAN device
-            is opened (using rt_malloc). This saves static RAM but requires
-            a heap to be available.
-
-            If this option is disabled (n), the buffer will be allocated
-            as a static array within the rt_can_device structure. This
-            consumes static RAM but guarantees the memory is always available
-            and avoids heap fragmentation.
+            One hard deadline covering mailbox wait, hardware submit and the
+            terminal completion wait for one blocking frame. Configure this value
+            above the target system's worst-case mailbox contention, CAN bus
+            arbitration/transmission and terminal ISR scheduling latency. The
+            framework does not auto-extend the timeout or recover a late terminal.
 
 endif
 
