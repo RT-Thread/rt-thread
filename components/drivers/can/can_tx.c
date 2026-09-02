@@ -615,8 +615,7 @@ void rt_can_tx_isr_core(struct rt_can_device *can, int event)
         slot = &tx->slots[mailbox];
         if (slot->state == RT_CAN_TX_SLOT_ACTIVE)
         {
-            slot->state = terminal == RT_CAN_EVENT_TX_DONE ?
-                          RT_CAN_TX_SLOT_DONE : RT_CAN_TX_SLOT_FAILED;
+            slot->state = terminal == RT_CAN_EVENT_TX_DONE ? RT_CAN_TX_SLOT_DONE : RT_CAN_TX_SLOT_FAILED;
             rt_completion_done(&slot->completion);
             accounted = RT_TRUE;
         }
