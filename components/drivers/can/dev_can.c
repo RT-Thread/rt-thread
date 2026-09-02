@@ -182,7 +182,7 @@ static rt_err_t rt_can_open(struct rt_device *dev, rt_uint16_t oflag)
 #ifdef RT_CAN_USING_HDR
          || can->hdr != RT_NULL
 #endif /* RT_CAN_USING_HDR */
-        ))
+         ))
     {
         result = -RT_EBUSY;
         goto out_unlock;
@@ -586,7 +586,7 @@ static rt_err_t _can_reconfigure(struct rt_can_device *can, int cmd, void *args,
 #ifdef RT_CAN_USING_HDR
             || (can->hdr != RT_NULL && config->maxhdr != can->config.maxhdr)
 #endif /* RT_CAN_USING_HDR */
-           )
+        )
         {
             result = -RT_EBUSY;
             goto out_unlock;
@@ -802,8 +802,7 @@ static rt_err_t rt_can_control(struct rt_device *dev, int cmd, void *args)
 #endif /* RT_CAN_USING_BUS_HOOK */
 
     default:
-        result = can->ops != RT_NULL && can->ops->control != RT_NULL ?
-                 can->ops->control(can, cmd, args) : -RT_ENOSYS;
+        result = can->ops != RT_NULL && can->ops->control != RT_NULL ? can->ops->control(can, cmd, args) : -RT_ENOSYS;
         break;
     }
 
@@ -844,8 +843,7 @@ static void cantimeout(void *arg)
 #endif
 
 #ifdef RT_USING_DEVICE_OPS
-static const struct rt_device_ops can_device_ops =
-{
+static const struct rt_device_ops can_device_ops = {
     rt_can_init,
     rt_can_open,
     rt_can_close,
@@ -964,8 +962,7 @@ void rt_hw_can_isr(struct rt_can_device *can, int event)
  */
 int cmd_canstat(int argc, void **argv)
 {
-    static const char *ErrCode[] =
-    {
+    static const char *ErrCode[] = {
         "No Error!",
         "Warning !",
         "Passive !",

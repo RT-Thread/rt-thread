@@ -387,7 +387,7 @@ void rt_can_rx_isr_core(struct rt_can_device *can, int event, rt_bool_t overflow
 {
     struct rt_can_rx_fifo *rx_fifo;
     struct rt_can_msg_list *message = RT_NULL;
-    struct rt_can_msg received = {0};
+    struct rt_can_msg received = { 0 };
     rt_size_t rx_length = 0;
     rt_uint32_t fifo;
     rt_ssize_t result;
@@ -492,10 +492,10 @@ void rt_can_rx_isr_core(struct rt_can_device *can, int event, rt_bool_t overflow
     }
     else
 #endif /* RT_CAN_USING_HDR */
-    if (can->parent.rx_indicate != RT_NULL && rx_length != 0)
-    {
-        can->parent.rx_indicate(&can->parent, rx_length);
-    }
+        if (can->parent.rx_indicate != RT_NULL && rx_length != 0)
+        {
+            can->parent.rx_indicate(&can->parent, rx_length);
+        }
 
     level = rt_spin_lock_irqsave(&can->rx_lock);
 
