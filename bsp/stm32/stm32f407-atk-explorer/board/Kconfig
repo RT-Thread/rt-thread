@@ -108,10 +108,6 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_SOFT_I2C1
         default n
 
-    config BSP_ETH_LEGACY_MODULE_ENABLED
-    bool
-    default n
-
     config BSP_USING_ETH
         bool "Enable Ethernet"
         default n
@@ -119,8 +115,6 @@ menu "Onboard Peripheral Drivers"
         select RT_LWIP_USING_HW_CHECKSUM
         select RT_USING_POSIX_FS
         select RT_USING_POSIX_SOCKET
-        select BSP_ETH_LEGACY_MODULE_ENABLED
-
     config PHY_USING_LAN8720A
         bool
         depends on BSP_USING_ETH
