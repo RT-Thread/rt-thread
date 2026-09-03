@@ -361,7 +361,7 @@ error:
     return ret;
 }
 
-#ifdef RT_BACKTRACE_FUNCTION_NAME
+#if defined(RT_BACKTRACE_FUNCTION_NAME) && !defined(RT_USING_KSYMS)
 static char *unwind_get_function_name(void *address)
 {
     uint32_t flag_word = *(uint32_t *)((char*)address - 4);
@@ -400,7 +400,7 @@ int unwind_frame(struct stackframe *frame, const struct unwind_idx **origin_idx,
         return -URC_FAILURE;
     }
 
-#ifdef RT_BACKTRACE_FUNCTION_NAME
+#if defined(RT_BACKTRACE_FUNCTION_NAME) && !defined(RT_USING_KSYMS)
     {
         char *fun_name;
         fun_name = unwind_get_function_name((void *)prel31_to_addr(&idx->addr_offset));
@@ -488,6 +488,27 @@ void unwind_backtrace(struct pt_regs *regs, const struct unwind_idx exidx_start[
 
     arm_get_current_stackframe(regs, &frame);
 
+#ifdef RT_USING_KSYMS
+    {
+        rt_ubase_t buffer[RT_BACKTRACE_LEVEL_MAX_NR];
+        long count = 0;
+
+        if (count < RT_BACKTRACE_LEVEL_MAX_NR)
+            buffer[count++] = frame.pc;
+
+        while (count < RT_BACKTRACE_LEVEL_MAX_NR)
+        {
+            int urc = unwind_frame(&frame, &origin_idx,
+                                   exidx_start, exidx_end);
+            if (urc < 0)
+                break;
+            buffer[count++] = frame.pc;
+            LOG_D("from: pc = %08x, frame = %08x", frame.pc, frame.sp - 4);
+        }
+
+        rt_backtrace_formatted_print(buffer, count);
+    }
+#else
 #ifndef RT_BACKTRACE_FUNCTION_NAME
     rt_kprintf("please use: addr2line -e rtthread.elf -a -f %08x\n", frame.pc);
 #endif
@@ -507,6 +528,7 @@ void unwind_backtrace(struct pt_regs *regs, const struct unwind_idx exidx_start[
         LOG_D("from: pc = %08x, frame = %08x", frame.pc, frame.sp - 4);
     }
     rt_kprintf("\n");
+#endif
 }
 
 extern const struct unwind_idx __exidx_start[];
