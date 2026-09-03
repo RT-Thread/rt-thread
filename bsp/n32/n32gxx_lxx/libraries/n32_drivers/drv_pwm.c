@@ -7,19 +7,29 @@
  * Change Logs:
  * Date           Author       						Notes
  * 2026-03-09     Car12(1085582540@qq.com)       	first version
+ * 2026-04-28     Car12(1085582540@qq.com)       	1.tim1,tim5 pwm output bug;
+ * 													2.N32L406 N32G457 add all time Kconfig config
+ * 													
  */
-#include <rtconfig.h>
+#include <rtthread.h>
 #ifdef BSP_USING_PWM
+
 #define DBG_TAG "PWM"
+#define DBG_LEVEL LOG_LVL_WARNING
 #include <rtdbg.h>
-#define PWM_LOG_E(...) LOG_E(__VA_ARGS__)
-#define PWM_LOG_D(...) LOG_I(__VA_ARGS__)
 #include <board.h>
-#include <rtconfig.h>
 #include <drivers\dev_pwm.h>
 #define MAX_PERIOD 0xffff
 #define MIN_PERIOD 1
 #define MIN_PULSE 1
+/*chanel ID*/
+enum N32_PWM_CH
+{
+	N32_PWM_CH_1 = 1,
+	N32_PWM_CH_2,
+	N32_PWM_CH_3,
+	N32_PWM_CH_4
+};
 struct n32_pwm_channel
 {
     GPIO_Module *gpio_grp; /* gpio*/ 
@@ -263,8 +273,160 @@ static struct n32_pwm n32_pwm_obj[] =
             .ch[3].info = "TIM3 PWMCH3 PC9",
 #endif /*BSP_USING_TIM3_PWM_CH3  */
 #endif /*defined(TIM3_REMAP_3)*/
-        },/*BSP_USING_TIM3_PWM */
-#endif /**N32G45X CONFIG END*/
+		},
+#endif /*BSP_USING_TIM3_PWM */
+#ifdef BSP_USING_TIM4_PWM
+		{
+			.tim = TIM4,
+			.name = "pwm4",
+#ifdef TIM4_PB6_PB7_PB8_PB9
+			.gpio_af = 0,
+#endif
+#ifdef TIM4_PD12_PD13_PD14_PD15
+			.gpio_af = GPIO_RMP_TIM4,
+#endif
+
+#ifdef TIM4_PB6_PB7_PB8_PB9
+#ifdef BSP_USING_TIM4_PWM_CH0
+			.ch[0].gpio_grp = GPIOB,
+			.ch[0].pin = GPIO_PIN_6,
+			.ch[0].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[0].info = "TIM4 PWMCH0 PB6",
+#endif /*TIM2_PWM_CFG_CH1  */
+#ifdef BSP_USING_TIM4_PWM_CH1
+			.ch[1].gpio_grp = GPIOB,
+			.ch[1].pin = GPIO_PIN_7,
+			.ch[1].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[1].info = "TIM4 PWMCH1 PB7",
+#endif /*BSP_USING_TIM4_PWM_CH1  */
+#ifdef BSP_USING_TIM4_PWM_CH2
+			.ch[2].gpio_grp = GPIOB,
+			.ch[2].pin = GPIO_PIN_8,
+			.ch[2].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[2].info = "TIM4 PWMCH2 PB8",
+#endif /*BSP_USING_TIM4_PWM_CH2  */
+#ifdef BSP_USING_TIM4_PWM_CH3
+			.ch[3].gpio_grp = GPIOB,
+			.ch[3].pin = GPIO_PIN_9,
+			.ch[3].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[3].info = "TIM4 PWMCH3 PB9",
+#endif /*BSP_USING_TIM4_PWM_CH3  */
+#endif /*TIM4_PB6_PB7_PB8_PB9*/
+
+#ifdef TIM4_PD12_PD13_PD14_PD15
+#ifdef BSP_USING_TIM4_PWM_CH0
+			.ch[0].gpio_grp = GPIOD,
+			.ch[0].pin = GPIO_PIN_12,
+			.ch[0].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[0].info = "TIM4 PWMCH0 PD12",
+#endif /*TIM2_PWM_CFG_CH1  */
+#ifdef BSP_USING_TIM4_PWM_CH1
+			.ch[1].gpio_grp = GPIOD,
+			.ch[1].pin = GPIO_PIN_13,
+			.ch[1].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[1].info = "TIM4 PWMCH1 PD13",
+#endif /*BSP_USING_TIM4_PWM_CH1  */
+#ifdef BSP_USING_TIM4_PWM_CH2
+			.ch[2].gpio_grp = GPIOD,
+			.ch[2].pin = GPIO_PIN_14,
+			.ch[2].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[2].info = "TIM4 PWMCH2 PD14",
+#endif /*BSP_USING_TIM4_PWM_CH2  */
+#ifdef BSP_USING_TIM4_PWM_CH3
+			.ch[3].gpio_grp = GPIOD,
+			.ch[3].pin = GPIO_PIN_15,
+			.ch[3].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[3].info = "TIM4 PWMCH3 PD15",
+#endif /*BSP_USING_TIM4_PWM_CH3  */
+#endif /*TIM4_PD12_PD13_PD14_PD15*/
+		},
+#endif /*BSP_USING_TIM4_PWM */
+#ifdef BSP_USING_TIM5_PWM
+		{
+			.tim = TIM5,
+			.name = "pwm5",
+			.gpio_af = 0,
+#ifdef BSP_USING_TIM5_PWM_CH0
+			.ch[0].gpio_grp = GPIOA,
+			.ch[0].pin = GPIO_PIN_0,
+			.ch[0].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[0].info = "TIM5 PWMCH0 PA0",
+#endif /*TIM2_PWM_CFG_CH1  */
+#ifdef BSP_USING_TIM5_PWM_CH1
+			.ch[1].gpio_grp = GPIOA,
+			.ch[1].pin = GPIO_PIN_1,
+			.ch[1].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[1].info = "TIM5 PWMCH1 PA1",
+#endif /*BSP_USING_TIM5_PWM_CH1  */
+#ifdef BSP_USING_TIM5_PWM_CH2
+			.ch[2].gpio_grp = GPIOA,
+			.ch[2].pin = GPIO_PIN_2,
+			.ch[2].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[2].info = "TIM5 PWMCH2 PA2",
+#endif /*BSP_USING_TIM5_PWM_CH2  */
+#ifdef BSP_USING_TIM5_PWM_CH3
+			.ch[3].gpio_grp = GPIOA,
+			.ch[3].pin = GPIO_PIN_3,
+			.ch[3].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[3].info = "TIM5 PWMCH3 PA3",
+#endif /*BSP_USING_TIM5_PWM_CH3  */
+		},
+#endif /*BSP_USING_TIM5_PWM */
+#ifdef BSP_USING_TIM8_PWM
+		{
+			.tim = TIM8,
+			.name = "pwm8",
+#ifdef TIM8_PC6_PC7_PC8_PC9
+			.gpio_af = 0,
+#endif
+#ifdef TIM8_PD14_PD15_PC8_PC9
+			.gpio_af = GPIO_RMP3_TIM8,
+#endif
+
+#ifdef TIM8_PC6_PC7_PC8_PC9
+#ifdef BSP_USING_TIM8_PWM_CH0
+			.ch[0].gpio_grp = GPIOC,
+			.ch[0].pin = GPIO_PIN_6,
+			.ch[0].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[0].info = "TIM8 PWMCH0 PC6",
+#endif /*TIM2_PWM_CFG_CH1  */
+#ifdef BSP_USING_TIM8_PWM_CH1
+			.ch[1].gpio_grp = GPIOC,
+			.ch[1].pin = GPIO_PIN_7,
+			.ch[1].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[1].info = "TIM8 PWMCH1 PC7",
+#endif /*BSP_USING_TIM8_PWM_CH1  */
+#endif /*TIM8_PC6_PC7_PC8_PC9*/
+
+#ifdef TIM8_PD14_PD15_PC8_PC9
+#ifdef BSP_USING_TIM8_PWM_CH0
+			.ch[0].gpio_grp = GPIOD,
+			.ch[0].pin = GPIO_PIN_14,
+			.ch[0].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[0].info = "TIM8 PWMCH0 PD14",
+#endif /*TIM2_PWM_CFG_CH1  */
+#ifdef BSP_USING_TIM8_PWM_CH1
+			.ch[1].gpio_grp = GPIOD,
+			.ch[1].pin = GPIO_PIN_15,
+			.ch[1].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[1].info = "TIM8 PWMCH1 PD15",
+#endif /*BSP_USING_TIM8_PWM_CH1  */
+#endif /*TIM8_PD14_PD15_PC8_PC9*/
+
+#ifdef BSP_USING_TIM8_PWM_CH2
+			.ch[2].gpio_grp = GPIOC,
+			.ch[2].pin = GPIO_PIN_8,
+			.ch[2].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[2].info = "TIM8 PWMCH2 PC8",
+#endif /*BSP_USING_TIM8_PWM_CH2  */
+#ifdef BSP_USING_TIM8_PWM_CH3
+			.ch[3].gpio_grp = GPIOC,
+			.ch[3].pin = GPIO_PIN_9,
+			.ch[3].pwm_mode = TIM_OCMODE_PWM1,
+			.ch[3].info = "TIM8 PWMCH3 PC9",
+#endif /*BSP_USING_TIM8_PWM_CH3  */
+		},
+#endif /*BSP_USING_TIM8_PWM */
 #else /* defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X) START*/
 #ifdef BSP_USING_TIM1_PWM 
         {
@@ -300,11 +462,10 @@ static struct n32_pwm n32_pwm_obj[] =
 #endif /* TIM1_PWM_CFG_CH4 */
         },
 #endif /*BSP_USING_TIM1_PWM*/
-#ifdef BSP_USING_TIM2_PWM 
-#define N32L406_CFG_TIM2
-        {
-            .tim = TIM2,
-            .name = "pwm2",
+#ifdef BSP_USING_TIM2_PWM
+		{
+			.tim = TIM2,
+			.name = "pwm2",
 #ifdef BSP_USING_TIM2_PWM_CH1
 #ifdef TIM2_PWM_CH1_PA0
             .ch[0].gpio_grp = GPIOA,
@@ -333,7 +494,7 @@ static struct n32_pwm n32_pwm_obj[] =
 #endif /* TIM2_PWM_CH2_PB3 */
             .ch[1].gpio_af = GPIO_AF2_TIM2,
             .ch[1].pwm_mode = TIM_OCMODE_PWM1,
-#endif /* TIM2_PWM_CFG_CH2 */
+#endif /* BSP_USING_TIM2_PWM_CH2 */
 #ifdef BSP_USING_TIM2_PWM_CH3
 #ifdef TIM2_PWM_CH3_PA2
             .ch[2].gpio_grp = GPIOA,
@@ -358,10 +519,9 @@ static struct n32_pwm n32_pwm_obj[] =
         },
 #endif /*BSP_USING_TIM2_PWM*/
 #ifdef BSP_USING_TIM3_PWM /*BSP_USING_TIM3_PWM*/
-#define N32L406_CFG_TIM3
-        {
-            .tim = TIM3,
-            .name = "pwm3",
+		{
+			.tim = TIM3,
+			.name = "pwm3",
 #ifdef BSP_USING_TIM3_PWM_CH1
 #ifdef TIM3_PWM_CH1_PA6
             .ch[0].gpio_grp = GPIOA,
@@ -431,9 +591,145 @@ static struct n32_pwm n32_pwm_obj[] =
             .ch[3].gpio_af = GPIO_AF2_TIM3,
             .ch[3].pwm_mode = TIM_OCMODE_PWM1,
 #endif /* TIM3_PWM_CFG_CH4 */
-        },/**N32L406_CFG_TIM3*/
-#endif /**N32L4XX*/
-#endif
+		}, /**N32L406_CFG_TIM3*/
+#endif /*BSP_USING_TIM3_PWM*/
+#ifdef BSP_USING_TIM4_PWM /*BSP_USING_TIM3_PWM*/
+		{
+			.tim = TIM4,
+			.name = "pwm4",
+#ifdef BSP_USING_TIM4_PWM_CH1_PB6
+			.ch[0].gpio_grp = GPIOB,
+			.ch[0].pin = GPIO_PIN_6,
+			.ch[0].info = "TIM4 PWMCH1 PB6",
+			.ch[0].gpio_af = GPIO_AF2_TIM4,
+			.ch[0].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM4_PWM_CH1_PB6 */
+#ifdef BSP_USING_TIM4_PWM_CH2_PB7
+			.ch[1].gpio_grp = GPIOB,
+			.ch[1].pin = GPIO_PIN_7,
+			.ch[1].info = "TIM4 PWMCH1 PB7",
+			.ch[1].gpio_af = GPIO_AF2_TIM4,
+			.ch[1].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM4_PWM_CH2_PB7 */
+#ifdef BSP_USING_TIM4_PWM_CH3_PB8
+			.ch[2].gpio_grp = GPIOB,
+			.ch[2].pin = GPIO_PIN_8,
+			.ch[2].info = "TIM4 PWMCH1 PB8",
+			.ch[2].gpio_af = GPIO_AF2_TIM4,
+			.ch[2].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM4_PWM_CH3_PB8 */
+#ifdef BSP_USING_TIM4_PWM_CH4_PB9
+			.ch[3].gpio_grp = GPIOB,
+			.ch[3].pin = GPIO_PIN_9,
+			.ch[3].info = "TIM4 PWMCH1 PB9",
+			.ch[3].gpio_af = GPIO_AF2_TIM4,
+			.ch[3].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM4_PWM_CH4_PB9 */
+		},
+#endif /* BSP_USING_TIM4_PWM */
+#ifdef BSP_USING_TIM5_PWM /*BSP_USING_TIM3_PWM*/
+		{
+			.tim = TIM5,
+			.name = "pwm5",
+#ifdef BSP_USING_TIM5_PWM_CH1_PA0
+			.ch[0].gpio_grp = GPIOA,
+			.ch[0].pin = GPIO_PIN_0,
+			.ch[0].info = "TIM5 PWMCH1 PA0",
+			.ch[0].gpio_af = GPIO_AF1_TIM5,
+			.ch[0].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM5_PWM_CH1_PA0 */
+#ifdef BSP_USING_TIM5_PWM_CH2_PA1
+			.ch[1].gpio_grp = GPIOA,
+			.ch[1].pin = GPIO_PIN_1,
+			.ch[1].info = "TIM5 PWMCH1 PA1",
+			.ch[1].gpio_af = GPIO_AF7_TIM5,
+			.ch[1].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM5_PWM_CH2_PA1 */
+#ifdef BSP_USING_TIM5_PWM_CH3_PA2
+			.ch[2].gpio_grp = GPIOA,
+			.ch[2].pin = GPIO_PIN_2,
+			.ch[2].info = "TIM5 PWMCH1 PA2",
+			.ch[2].gpio_af = GPIO_AF6_TIM5,
+			.ch[2].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM5_PWM_CH3_PA2 */
+#ifdef BSP_USING_TIM5_PWM_CH4_PA3
+			.ch[3].gpio_grp = GPIOA,
+			.ch[3].pin = GPIO_PIN_3,
+			.ch[3].info = "TIM5 PWMCH1 PA3",
+			.ch[3].gpio_af = GPIO_AF7_TIM5,
+			.ch[3].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM5_PWM_CH4_PA3 */
+		},
+#endif /* BSP_USING_TIM5_PWM */
+#ifdef BSP_USING_TIM8_PWM /*BSP_USING_TIM3_PWM*/
+		{
+			.tim = TIM8,
+			.name = "pwm8",
+#ifdef BSP_USING_TIM8_PWM_CH1_PC6
+			.ch[0].gpio_grp = GPIOC,
+			.ch[0].pin = GPIO_PIN_6,
+			.ch[0].info = "TIM8 PWMCH1 PC6",
+			.ch[0].gpio_af = GPIO_AF6_TIM8,
+			.ch[0].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM8_PWM_CH1_PC0 */
+#ifdef BSP_USING_TIM8_PWM_CH2_PC7
+			.ch[1].gpio_grp = GPIOC,
+			.ch[1].pin = GPIO_PIN_7,
+			.ch[1].info = "TIM8 PWMCH1 PC7",
+			.ch[1].gpio_af = GPIO_AF6_TIM8,
+			.ch[1].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM8_PWM_CH2_PC7 */
+#ifdef BSP_USING_TIM8_PWM_CH3_PC8
+			.ch[2].gpio_grp = GPIOC,
+			.ch[2].pin = GPIO_PIN_8,
+			.ch[2].info = "TIM8 PWMCH1 PC8",
+			.ch[2].gpio_af = GPIO_AF6_TIM8,
+			.ch[2].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM8_PWM_CH3_PC2 */
+#ifdef BSP_USING_TIM8_PWM_CH4_PC9
+			.ch[3].gpio_grp = GPIOC,
+			.ch[3].pin = GPIO_PIN_9,
+			.ch[3].info = "TIM8 PWMCH1 PC9",
+			.ch[3].gpio_af = GPIO_AF6_TIM8,
+			.ch[3].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM8_PWM_CH4_PC3 */
+		},
+#endif /* BSP_USING_TIM8_PWM */
+#ifdef BSP_USING_TIM9_PWM /*BSP_USING_TIM8_PWM*/
+		{
+			.tim = TIM9,
+			.name = "pwm9",
+#ifdef BSP_USING_TIM9_PWM_CH1_PB12
+			.ch[0].gpio_grp = GPIOB,
+			.ch[0].pin = GPIO_PIN_12,
+			.ch[0].info = "TIM9 PWMCH1 PB12",
+			.ch[0].gpio_af = GPIO_AF1_TIM9,
+			.ch[0].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM9_PWM_CH1_PB12 */
+#ifdef BSP_USING_TIM9_PWM_CH2_PB13
+			.ch[1].gpio_grp = GPIOB,
+			.ch[1].pin = GPIO_PIN_13,
+			.ch[1].info = "TIM9 PWMCH1 PB13",
+			.ch[1].gpio_af = GPIO_AF1_TIM9,
+			.ch[1].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM9_PWM_CH2_PB13 */
+#ifdef BSP_USING_TIM9_PWM_CH3_PB14
+			.ch[2].gpio_grp = GPIOB,
+			.ch[2].pin = GPIO_PIN_14,
+			.ch[2].info = "TIM9 PWMCH1 PB14",
+			.ch[2].gpio_af = GPIO_AF1_TIM9,
+			.ch[2].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM9_PWM_CH3_PB14 */
+#ifdef BSP_USING_TIM9_PWM_CH4_PB15
+			.ch[3].gpio_grp = GPIOB,
+			.ch[3].pin = GPIO_PIN_15,
+			.ch[3].info = "TIM9 PWMCH1 PB15",
+			.ch[3].gpio_af = GPIO_AF1_TIM9,
+			.ch[3].pwm_mode = TIM_OCMODE_PWM1,
+#endif /* BSP_USING_TIM9_PWM_CH4_PB15 */
+		},
+#endif /* BSP_USING_TIM9_PWM */
+#endif /**defined(SOC_N32L43X) || defined(SOC_N32L40X) || defined(SOC_N32G43X) START**/
 };
 /**
  * @brief enable gpio rcc
@@ -480,6 +776,7 @@ static void n32_gpio_rcc_enable(GPIO_Module *gpio_grp)
 #endif
 #endif
 }
+#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
 /**
  * @brief 
  * @param  gpio_grp         
@@ -496,16 +793,17 @@ static void n32_gpio_rcc_enable(GPIO_Module *gpio_grp)
  */
 static  void gpio_remap_JTAGOFF_SWDON(GPIO_Module *gpio_grp, uint16_t pin)
 {
-#if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
-    if ((GPIOA == gpio_grp && GPIO_PIN_15==pin) ||
-        (GPIOB == gpio_grp && GPIO_PIN_3==pin) ||
-        (GPIOB == gpio_grp && GPIO_PIN_4==pin))
-    {
-        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
-        GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_SW_ENABLE, ENABLE);
-    }
-#endif
+
+	if ((GPIOA == gpio_grp && GPIO_PIN_15 == pin) ||
+		(GPIOB == gpio_grp && GPIO_PIN_3 == pin) ||
+		(GPIOB == gpio_grp && GPIO_PIN_4 == pin))
+	{
+		RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+
+		GPIO_ConfigPinRemap(GPIO_RMP_SW_JTAG_SW_ENABLE, ENABLE);
+	}
 }
+#endif
 /**
  * @brief  enable time rcc
  */
@@ -600,29 +898,35 @@ static rt_uint32_t tim_clock_get(TIM_Module *htim)
  */
 static rt_err_t drv_pwm_enable(struct n32_pwm *pwm, const rt_uint32_t channel, rt_bool_t enable)
 {
-    TIM_Module *time = pwm->tim;
-    uint16_t tim_ch;
-    switch (channel)
-    {
-    case 0:
-        tim_ch = TIM_CH_1;
-        break;
-    case 1:
-        tim_ch = TIM_CH_2;
-        break;
-    case 2:
-        tim_ch = TIM_CH_3;
-        break;
-    case 3:
-        tim_ch = TIM_CH_4;
-         break;
-    default:
-        return -RT_EINVAL;
-        break;
-    }
-    TIM_EnableCapCmpCh(time, tim_ch, enable ? TIM_CAP_CMP_ENABLE : TIM_CAP_CMP_DISABLE);
-    PWM_LOG_D("%s %d ch enable ch = %x ", __FUNCTION__, __LINE__, channel);
-    return RT_EOK;
+	TIM_Module *time = pwm->tim;
+	uint16_t tim_ch;
+	rt_err_t err = RT_EOK;
+	switch (channel)
+	{
+	case N32_PWM_CH_1:
+		tim_ch = TIM_CH_1;
+		break;
+	case N32_PWM_CH_2:
+		tim_ch = TIM_CH_2;
+		break;
+	case N32_PWM_CH_3:
+		tim_ch = TIM_CH_3;
+		break;
+	case N32_PWM_CH_4:
+		tim_ch = TIM_CH_4;
+		break;
+	default:
+		err = -RT_EINVAL;
+		LOG_W("pwm chanel error");
+		break;
+	}
+	if (err == RT_EOK)
+	{
+		TIM_EnableCapCmpCh(time, tim_ch, enable ? TIM_CAP_CMP_ENABLE : TIM_CAP_CMP_DISABLE);
+		TIM_GenerateEvent(time, TIM_EVT_SRC_UPDATE);
+		LOG_D("%s %d ch enable ch = %x ", __FUNCTION__, __LINE__, channel);
+	}
+	return err;
 }
 /**
  * @brief enable pwm complementary channel
@@ -634,29 +938,35 @@ static rt_err_t drv_pwm_enable(struct n32_pwm *pwm, const rt_uint32_t channel, r
  */
 static rt_err_t drv_pwmn_enable(struct n32_pwm *pwm, const rt_uint16_t channel, rt_bool_t enable)
 {
-    /* Converts the channel number to the channel number of Hal library */
-    uint16_t tim_ch;
-    switch (channel)
-    {
-    case 0:
-        tim_ch = TIM_CH_1;
-        break;
-    case 1:
-        tim_ch = TIM_CH_2;
-        break;
-    case 2:
-        tim_ch = TIM_CH_3;
-        break;
-    case 3:
-        tim_ch = TIM_CH_4;
-        break;
-    default:
-        return -RT_EINVAL;
-        break;
-    }
-    /*enable out*/ 
-    TIM_EnableCapCmpChN(pwm->tim, tim_ch, enable ? TIM_CAP_CMP_N_ENABLE : TIM_CAP_CMP_N_DISABLE);
-    return RT_EOK;
+	/* Converts the channel number to the channel number of Hal library */
+	uint16_t tim_ch;
+	rt_err_t err = RT_EOK;
+	switch (channel)
+	{
+	case N32_PWM_CH_1:
+		tim_ch = TIM_CH_1;
+		break;
+	case N32_PWM_CH_2:
+		tim_ch = TIM_CH_2;
+		break;
+	case N32_PWM_CH_3:
+		tim_ch = TIM_CH_3;
+		break;
+	case N32_PWM_CH_4:
+		tim_ch = TIM_CH_4;
+		break;
+	default:
+		err = -RT_EINVAL;
+		LOG_W("pwm chanel error");
+		break;
+	}
+	if (err == RT_EOK)
+	{
+		/*enable out*/
+		TIM_EnableCapCmpChN(pwm->tim, tim_ch, enable ? TIM_CAP_CMP_N_ENABLE : TIM_CAP_CMP_N_DISABLE);
+		TIM_GenerateEvent(pwm->tim, TIM_EVT_SRC_UPDATE);
+	}
+	return err;
 }
 /**
  * @brief get period and duty
@@ -668,39 +978,44 @@ static rt_err_t drv_pwmn_enable(struct n32_pwm *pwm, const rt_uint16_t channel, 
  */
 static rt_err_t drv_pwm_get(struct n32_pwm *pwm, struct rt_pwm_configuration *configuration)
 {
-    TIM_Module *htim = pwm->tim;
-    TIM_Module *tim = pwm->tim;
-    /*get TIM CLK*/ 
-    rt_uint32_t tim_clock = tim_clock_get(tim);
-    /* convet ns Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns UNIT MHz*/
-    tim_clock /= 1000000UL;
-    /*period time*/ 
-    uint32_t period = TIM_GetAutoReload(tim) + 1;
-    uint32_t psc = tim->PSC + 1;
-    configuration->period = period * psc * 1000UL / tim_clock;
-    /*nS*/
-    uint32_t cmp = 0;
-    switch (configuration->channel)
-    {
-    case 0:
-        cmp = TIM_GetCap1(htim);
-        break;
-    case 1:
-        cmp = TIM_GetCap2(htim);
-        break;
-    case 2:
-        cmp = TIM_GetCap3(htim);
-        break;
-    case 3:
-        cmp = TIM_GetCap4(htim);
-        break;
-    default:
-        return -RT_EINVAL;
-        break;
-    }
-    configuration->pulse = (cmp + 1) * (psc) * 1000UL / tim_clock;
-    PWM_LOG_D("period = %d pulse= %d ", __FUNCTION__, __LINE__, configuration->period, configuration->pulse);
-    return RT_EOK;
+	TIM_Module *htim = pwm->tim;
+	TIM_Module *tim = pwm->tim;
+	rt_err_t err = RT_EOK;
+	/*get TIM CLK*/
+	rt_uint32_t tim_clock = tim_clock_get(tim);
+	/* convet ns Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns UNIT MHz*/
+	tim_clock /= 1000000UL;
+	/*period time*/
+	uint32_t period = TIM_GetAutoReload(tim) + 1;
+	uint32_t psc = tim->PSC + 1;
+	configuration->period = period * psc * 1000UL / tim_clock;
+	/*nS*/
+	uint32_t cmp = 0;
+	switch (configuration->channel)
+	{
+	case N32_PWM_CH_1:
+		cmp = TIM_GetCap1(htim);
+		break;
+	case N32_PWM_CH_2:
+		cmp = TIM_GetCap2(htim);
+		break;
+	case N32_PWM_CH_3:
+		cmp = TIM_GetCap3(htim);
+		break;
+	case N32_PWM_CH_4:
+		cmp = TIM_GetCap4(htim);
+		break;
+	default:
+		err = -RT_EINVAL;
+		LOG_W("pwm chanel error");
+		break;
+	}
+	if (err == RT_EOK)
+	{
+		configuration->pulse = (cmp + 1) * (psc) * 1000UL / tim_clock;
+		LOG_D("period = %d pulse= %d ", __FUNCTION__, __LINE__, configuration->period, configuration->pulse);
+	}
+	return err;
 }
 /**
  * @brief set peroid
@@ -728,7 +1043,7 @@ static rt_err_t drv_pwm_set_period(struct n32_pwm *pwm, struct rt_pwm_configurat
     }
     /*2.set period*/ 
     TIM_SetAutoReload(pwm->tim, period - 1);
-    PWM_LOG_D("%s %d psc=%d  period %d ", __FUNCTION__, __LINE__, psc, period);
+	LOG_D("%s %d psc=%d  period %d ", __FUNCTION__, __LINE__, psc, period);
     return RT_EOK;
 }
 /**
@@ -742,6 +1057,7 @@ static rt_err_t drv_pwm_set_pulse(struct n32_pwm *pwm, struct rt_pwm_configurati
 {
     rt_uint32_t period, pulse;
     rt_uint32_t tim_clock;
+	rt_err_t err = RT_EOK;
     /* Converts the channel number to the channel number of Hal library */
     TIM_Module *tim = pwm->tim;
 
@@ -761,39 +1077,44 @@ static rt_err_t drv_pwm_set_pulse(struct n32_pwm *pwm, struct rt_pwm_configurati
     {
         pulse = MIN_PULSE;
     }
-    PWM_LOG_D("pulse = %d", pulse);
+	LOG_D("pulse = %d", pulse);
     /*set cmp value*/ 
     switch (configuration->channel)
-    {
-    case 0:
-        TIM_SetCmp1(tim, pulse);
-        break;
-    case 1:
-        TIM_SetCmp2(tim, pulse);
-        break;
-    case 2:
-        TIM_SetCmp3(tim, pulse);
-        break;
-    case 3:
-        TIM_SetCmp4(tim, pulse);
-        break;
-    default:
-       return -RT_EINVAL;
-        break;
-    }
-    TIM_SetCnt(tim, 0);
-    TIM_GenerateEvent(tim, TIM_EVT_SRC_UPDATE);
+	{
+	case N32_PWM_CH_1:
+		TIM_SetCmp1(tim, pulse);
+		break;
+	case N32_PWM_CH_2:
+		TIM_SetCmp2(tim, pulse);
+		break;
+	case N32_PWM_CH_3:
+		TIM_SetCmp3(tim, pulse);
+		break;
+	case N32_PWM_CH_4:
+		TIM_SetCmp4(tim, pulse);
+		break;
+	default:
+		err = -RT_EINVAL;
+		LOG_W("pwm chanel error");
+		break;
+	}
+	if (err == RT_EOK)
+	{
+		TIM_SetCnt(tim, 0);
+		TIM_GenerateEvent(tim, TIM_EVT_SRC_UPDATE);
+	}
     return RT_EOK;
 }
 static rt_err_t drv_pwm_set(struct n32_pwm *pwm, struct rt_pwm_configuration *configuration)
 {
     rt_uint32_t period, pulse;
     rt_uint32_t tim_clock, psc;
+	rt_err_t err = RT_EOK;
     /* Converts the channel number to the channel number of Hal library */
     TIM_Module *tim = pwm->tim;
     tim_clock = tim_clock_get(tim);
     tim_clock /= 1000000;
-    PWM_LOG_D("TIME CLK = %dMHz,PWM fre = %dHz", tim_clock, 1000 * 1000 * 1000 / configuration->period);
+	LOG_D("TIME CLK = %dMHz,PWM fre = %dHz", tim_clock, 1000 * 1000 * 1000 / configuration->period);
     period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL;
     /*get psc*/ 
     psc = period / MAX_PERIOD + 1;
@@ -817,27 +1138,31 @@ static rt_err_t drv_pwm_set(struct n32_pwm *pwm, struct rt_pwm_configuration *co
     {
         pulse = period;
     }
-    PWM_LOG_D("TIME ch %d = pulse %d psc=%d period=%d", configuration->channel, pulse, psc, period);
+	LOG_D("TIME ch %d = pulse %d psc=%d period=%d", configuration->channel, pulse, psc, period);
     switch (configuration->channel)
     {
-    case 0:
-        TIM_SetCmp1(tim, pulse);
-        break;
-    case 1:
-        TIM_SetCmp2(tim, pulse);
-        break;
-    case 2:
-        TIM_SetCmp3(tim, pulse);
-        break;
-    case 3:
-        TIM_SetCmp4(tim, pulse);
-        break;
-    default:
-        return -RT_EINVAL;
-        break;
-    }
-    TIM_SetCnt(tim, 0);
-    TIM_GenerateEvent(tim, TIM_EVT_SRC_UPDATE);
+	case N32_PWM_CH_1:
+		TIM_SetCmp1(tim, pulse);
+		break;
+	case N32_PWM_CH_2:
+		TIM_SetCmp2(tim, pulse);
+		break;
+	case N32_PWM_CH_3:
+		TIM_SetCmp3(tim, pulse);
+		break;
+	case N32_PWM_CH_4:
+		TIM_SetCmp4(tim, pulse);
+		break;
+	default:
+		err = -RT_EINVAL;
+		LOG_W("pwm chanel error");
+		break;
+	}
+	if (err == RT_EOK)
+	{
+		TIM_SetCnt(tim, 0);
+		TIM_GenerateEvent(tim, TIM_EVT_SRC_UPDATE);
+	}
     return RT_EOK;
 }
 /**
@@ -892,7 +1217,7 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
 static void drv_pwm_time_gpio_config(struct n32_pwm_channel *chanel)
 
 {
-    PWM_LOG_D("%s %d config %s is ok", __FUNCTION__, __LINE__, chanel->info);
+	LOG_D("%s %d config %s is ok", __FUNCTION__, __LINE__, chanel->info);
     GPIO_InitType GPIO_InitStructure;
 
 #if defined(SOC_N32G45X) || defined(SOC_N32WB452) || defined(SOC_N32G4FR)
@@ -920,28 +1245,31 @@ static void drv_pwm_oc_init(const rt_uint16_t chanel, const rt_uint16_t mode, TI
     /*pwn chanel cofnig*/
     TIM_OCInitStructure.OcMode = mode; /*pwm mode*/ 
     TIM_OCInitStructure.OutputState = TIM_OUTPUT_STATE_ENABLE;
-    TIM_OCInitStructure.Pulse = 500;
+	TIM_OCInitStructure.Pulse = 0;
     TIM_OCInitStructure.OcPolarity = TIM_OC_POLARITY_HIGH;
-    switch (chanel)
-    {
-    case 0:
-        TIM_InitOc1(tim, &TIM_OCInitStructure);
-        TIM_ConfigOc1Preload(tim, TIM_OC_PRE_LOAD_ENABLE);
-        break;
-    case 1:
-        TIM_InitOc2(tim, &TIM_OCInitStructure);
-        TIM_ConfigOc2Preload(tim, TIM_OC_PRE_LOAD_ENABLE);
-        break;
-    case 2:
-        TIM_InitOc3(tim, &TIM_OCInitStructure);
-        TIM_ConfigOc3Preload(tim, TIM_OC_PRE_LOAD_ENABLE);
-        break;
-    case 3:
-        TIM_InitOc4(tim, &TIM_OCInitStructure);
-        TIM_ConfigOc4Preload(tim, TIM_OC_PRE_LOAD_ENABLE);
-        break;
-    default:
-       
+	TIM_OCInitStructure.OcNPolarity = TIM_OC_POLARITY_LOW;
+	TIM_OCInitStructure.OcIdleState = TIM_OC_POLARITY_HIGH;
+	TIM_OCInitStructure.OcNIdleState = TIM_OC_POLARITY_LOW;
+	switch (chanel)
+	{
+	case N32_PWM_CH_1:
+		TIM_InitOc1(tim, &TIM_OCInitStructure);
+		TIM_ConfigOc1Preload(tim, TIM_OC_PRE_LOAD_ENABLE);
+		break;
+	case N32_PWM_CH_2:
+		TIM_InitOc2(tim, &TIM_OCInitStructure);
+		TIM_ConfigOc2Preload(tim, TIM_OC_PRE_LOAD_ENABLE);
+		break;
+	case N32_PWM_CH_3:
+		TIM_InitOc3(tim, &TIM_OCInitStructure);
+		TIM_ConfigOc3Preload(tim, TIM_OC_PRE_LOAD_ENABLE);
+		break;
+	case N32_PWM_CH_4:
+		TIM_InitOc4(tim, &TIM_OCInitStructure);
+		TIM_ConfigOc4Preload(tim, TIM_OC_PRE_LOAD_ENABLE);
+		break;
+	default:
+		LOG_W("pwm chanel error");
         break;
     }
 }
@@ -967,27 +1295,29 @@ static rt_err_t drv_n32_hw_pwm_init(struct n32_pwm *device)
         GPIO_ConfigPinRemap(device->gpio_af, ENABLE);
     }
 #endif
-    /*chanel cofig*/
-    for (int i = 0; i < 4; i++)
-    {
-        if (device->ch[i].gpio_grp)
-        {
-            /**gpio rcc */
-            n32_gpio_rcc_enable(device->ch[i].gpio_grp);
-            drv_pwm_time_gpio_config(device->ch + i);
-            drv_pwm_oc_init(i, device->ch[i].pwm_mode, device->tim);
-            drv_pwm_enable(device, i, RT_FALSE);
-        }
-    }
-    /*enable timer*/ 
-    TIM_ConfigArPreload(device->tim, ENABLE);
-    TIM_Enable(device->tim, ENABLE);
-    /*enable tim1 and tim8 pwm  output*/ 
-    if (device->tim == TIM1 || device->tim == TIM8)
-    {
-        TIM_EnableCtrlPwmOutputs(device->tim, ENABLE);
-    }
-    return result;
+	RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO, ENABLE);
+	/*chanel cofig*/
+	for (int i = 0; i < 4; i++)
+	{
+		if (device->ch[i].gpio_grp)
+		{
+			/**gpio rcc */
+			n32_gpio_rcc_enable(device->ch[i].gpio_grp);
+			drv_pwm_time_gpio_config(device->ch + i);
+			drv_pwm_oc_init(i + N32_PWM_CH_1, device->ch[i].pwm_mode, device->tim);
+			drv_pwm_enable(device, i + N32_PWM_CH_1, RT_FALSE);
+		}
+	}
+	/*enable timer*/
+	TIM_ConfigArPreload(device->tim, ENABLE);
+	TIM_Enable(device->tim, ENABLE);
+	/*enable tim1 and tim8 pwm  output*/
+	if (device->tim == TIM1 || device->tim == TIM8)
+	{
+		TIM_EnableCtrlPwmOutputs(device->tim, ENABLE);
+		TIM_EnableCapCmpPreloadControl(device->tim, DISABLE); /*202604228 tim1,tim8 bug postition*/
+	}
+	return result;
 }
 
 static struct rt_pwm_ops drv_ops =
@@ -1004,7 +1334,7 @@ static int drv_n32_pwm_register(void)
         /* pwm init */
         if (drv_n32_hw_pwm_init(&n32_pwm_obj[i]) != RT_EOK)
         {
-            PWM_LOG_E("%s init failed", n32_pwm_obj[i].name);
+			LOG_E("%s init failed", n32_pwm_obj[i].name);
             result = -RT_ERROR;
             goto __exit;
         }
@@ -1013,11 +1343,11 @@ static int drv_n32_pwm_register(void)
             /* register pwm device */
             if (rt_device_pwm_register(&n32_pwm_obj[i].pwm_device, n32_pwm_obj[i].name, &drv_ops, n32_pwm_obj + i) == RT_EOK)
             {
-                 PWM_LOG_D("%s register success", n32_pwm_obj[i].name);
+				LOG_D("%s register success", n32_pwm_obj[i].name);
             }
             else
             {
-                PWM_LOG_E("%s register failed", n32_pwm_obj[i].name);
+				LOG_E("%s register failed", n32_pwm_obj[i].name);
                 result = -RT_ERROR;
             }
         }
