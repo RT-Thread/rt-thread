@@ -58,6 +58,9 @@ if GetDepend(['RT_UTEST_MTSAFE_KPRINT']):
 if GetDepend(['RT_UTEST_MEMPOOL']):
     src += ['mempool_tc.c']
 
+if GetDepend(['RT_UTEST_ASAN']):
+    src += ['asan_tc.c']
+
 # Stressful testcase for scheduler (MP/UP)
 if GetDepend(['RT_UTEST_SCHEDULER']):
     src += ['sched_timeout_race_tc.c']
