@@ -13,6 +13,8 @@
 
 #ifdef RT_USING_ASAN
 
+#include "asan.h"
+
 #define DBG_TAG "asan"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
@@ -34,25 +36,17 @@ static rt_uintptr_t asan_heap_base;                          /* first checked ad
 static rt_uintptr_t asan_heap_limit;                         /* base + coverage */
 static rt_uint8_t asan_shadow[RT_ASAN_SHADOW_SIZE];         /* 8 bytes -> 1 byte */
 
+/* total number of violations reported, exposed for utest/CI verification */
+static volatile rt_uint32_t asan_report_count;
+
+rt_uint32_t rt_asan_report_count_get(void)
+{
+    return asan_report_count;
+}
+
 #define ASAN_SHADOW_SCALE 8
 #define ASAN_POISON       0xF8   /* whole granule poisoned */
 #define ASAN_MIN(a, b)    ((a) < (b) ? (a) : (b))
-
-/*
- * Poisoning a freed block enables use-after-free detection. This is only safe
- * for allocators whose internal metadata is written by non-instrumented code:
- * small mem assigns its header fields directly, but memheap/slab write their
- * internal structures (memheap item headers, slab zone structs) through
- * instrumented rt_memset/rt_memcpy and place them inside freed blocks, so
- * poisoning the whole block would report those allocator-internal writes as
- * false positives. For those allocators only the tail redzone (overflow) is
- * kept.
- */
-#if defined(RT_USING_SMALL_MEM_AS_HEAP)
-#define ASAN_POISON_FREED_BLOCK 1
-#else
-#define ASAN_POISON_FREED_BLOCK 0
-#endif
 
 /* ---- allocation tracking table ---- */
 #ifndef RT_ASAN_TRACK_MAX
@@ -199,6 +193,8 @@ static void asan_locate_block(rt_uintptr_t addr)
 static void asan_report(rt_uintptr_t addr, rt_size_t size, rt_bool_t is_write, rt_uintptr_t pc)
 {
     rt_thread_t self = rt_thread_self();
+
+    asan_report_count++;
 
     rt_kprintf("\n");
     rt_kprintf("=================================================================\n");
@@ -435,7 +431,7 @@ static void asan_free_hook(void **ptr)
         return;   /* unknown block, skip */
     }
 
-#if ASAN_POISON_FREED_BLOCK
+#if RT_ASAN_HAS_UAF_DETECTION
     {
         rt_size_t aligned = RT_ALIGN(asan_tracks[idx].size, ASAN_SHADOW_SCALE);
         asan_poison_range(p, aligned);   /* poison whole block -> use-after-free */
@@ -480,7 +476,7 @@ static void asan_realloc_exit_hook(void **ptr, rt_size_t size)
         idx = asan_track_find(asan_realloc_old_ptr);
         if (idx != RT_ASAN_TRACK_MAX)
         {
-#if ASAN_POISON_FREED_BLOCK
+#if RT_ASAN_HAS_UAF_DETECTION
             rt_size_t old_aligned = RT_ALIGN(asan_tracks[idx].size, ASAN_SHADOW_SCALE);
 
             asan_poison_range(asan_realloc_old_ptr, old_aligned);
