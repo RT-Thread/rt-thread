@@ -133,6 +133,118 @@
 
 static volatile int receive_sig = 0;
 static struct rt_semaphore _received_signal;
+static struct rt_semaphore _signal_wait_done;
+static struct rt_semaphore _sem_signal_wait;
+static struct rt_semaphore _sem_signal_ready;
+static struct rt_semaphore _sem_signal_done;
+static struct rt_semaphore _signal_wait_repeat_ready;
+static volatile rt_err_t _sem_signal_result;
+static volatile rt_int32_t _sem_signal_timeout;
+static volatile rt_err_t _signal_wait_result;
+static volatile int _signal_wait_repeat_count;
+static volatile rt_bool_t _signal_handler_delay;
+
+/* Record the native signal received by the worker thread. */
+static void signal_sem_handler(int signo)
+{
+    receive_sig = signo;
+
+    if (_signal_handler_delay)
+    {
+        rt_thread_delay(1);
+    }
+}
+
+/* Count signals handled after a signal-wait operation returns. */
+static void signal_wait_repeat_handler(int signo)
+{
+    RT_UNUSED(signo);
+    _signal_wait_repeat_count++;
+}
+
+/* Wait on a semaphore with the requested signal interruption mode. */
+static void signal_sem_wait_thread(void *parameter)
+{
+    int suspend_flag;
+
+    suspend_flag = (int)(rt_ubase_t)parameter;
+    rt_signal_install(SIGUSR1, signal_sem_handler);
+    rt_signal_install(SIGKILL, signal_sem_handler);
+    rt_signal_install(SIGSTOP, signal_sem_handler);
+    rt_signal_unmask(SIGUSR1);
+    rt_signal_unmask(SIGKILL);
+    rt_signal_unmask(SIGSTOP);
+    rt_sem_release(&_sem_signal_ready);
+
+    if (suspend_flag == RT_INTERRUPTIBLE)
+    {
+        _sem_signal_result = rt_sem_take_interruptible(&_sem_signal_wait,
+                                                       _sem_signal_timeout);
+    }
+    else if (suspend_flag == RT_KILLABLE)
+    {
+        _sem_signal_result = rt_sem_take_killable(&_sem_signal_wait,
+                                                  _sem_signal_timeout);
+    }
+    else
+    {
+        _sem_signal_result = rt_sem_take(&_sem_signal_wait,
+                                         _sem_signal_timeout);
+    }
+
+    rt_sem_release(&_sem_signal_done);
+}
+
+/* Wait until the worker thread is suspended on the semaphore. */
+static rt_bool_t signal_sem_wait_until_suspended(rt_thread_t thread)
+{
+    rt_sched_lock_level_t slvl;
+    rt_bool_t suspended;
+    int count;
+
+    for (count = 0; count < RT_TICK_PER_SECOND; count++)
+    {
+        rt_sched_lock(&slvl);
+        suspended = ((RT_SCHED_CTX(thread).stat & RT_THREAD_SUSPEND_MASK) ==
+                     RT_THREAD_SUSPEND_MASK);
+        rt_sched_unlock(slvl);
+
+        if (suspended)
+        {
+            return RT_TRUE;
+        }
+
+        rt_thread_mdelay(1);
+    }
+
+    return RT_FALSE;
+}
+
+/* Wait until a thread is suspended while waiting for a signal. */
+static rt_bool_t signal_wait_until_signal_wait(rt_thread_t thread)
+{
+    rt_sched_lock_level_t slvl;
+    rt_bool_t waiting;
+    int count;
+
+    for (count = 0; count < RT_TICK_PER_SECOND; count++)
+    {
+        rt_sched_lock(&slvl);
+        waiting = ((RT_SCHED_CTX(thread).stat & RT_THREAD_SUSPEND_MASK) ==
+                   RT_THREAD_SUSPEND_MASK) &&
+                  ((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_SIGNAL_WAIT) != 0);
+        rt_sched_unlock(slvl);
+
+        if (waiting)
+        {
+            return RT_TRUE;
+        }
+
+        rt_thread_mdelay(1);
+    }
+
+    return RT_FALSE;
+}
 
 void sig_handle_default(int signo)
 {
@@ -227,18 +339,24 @@ static void rt_signal_kill_test(void)
 
 void rt_signal_wait_thread(void *parm)
 {
-    sigset_t selectset;
-    siginfo_t recive_si;
+    rt_sigset_t selectset;
+    rt_siginfo_t recive_si;
+    rt_int32_t timeout;
+
+    timeout = (rt_int32_t)(rt_ubase_t)parm;
 
     rt_signal_install(SIGUSR1, sig_handle_default);
+    rt_signal_install(SIGUSR2, sig_handle_default);
     rt_signal_unmask(SIGUSR1);
+    rt_signal_unmask(SIGUSR2);
 
-    (void)sigemptyset(&selectset);
-    (void)sigaddset(&selectset, SIGUSR1);
+    selectset = RT_SIG_MASK(SIGUSR1);
 
-    /* case 5:rt_signal_wait, two thread, thread1: install and unmask, then wait 1s; thread2: kill, should received. */
-    if (rt_signal_wait((void *)&selectset, &recive_si, RT_TICK_PER_SECOND) != RT_EOK)
+    /* Wait for the configured signal timeout or until SIGUSR1 is received. */
+    _signal_wait_result = rt_signal_wait(&selectset, &recive_si, timeout);
+    if (_signal_wait_result != RT_EOK)
     {
+        rt_sem_release(&_signal_wait_done);
         return;
     }
 
@@ -246,6 +364,20 @@ void rt_signal_wait_thread(void *parm)
 
     LOG_I("received signal %d", receive_sig);
     rt_sem_release(&_received_signal);
+    rt_sem_release(&_signal_wait_done);
+}
+
+/* Wait for a masked signal without requiring a signal handler. */
+static void rt_signal_wait_masked_thread(void *parameter)
+{
+    rt_sigset_t selectset;
+
+    RT_UNUSED(parameter);
+    selectset = RT_SIG_MASK(SIGUSR1);
+    _signal_wait_result = rt_signal_wait(&selectset,
+                                         RT_NULL,
+                                         RT_WAITING_FOREVER);
+    rt_sem_release(&_signal_wait_done);
 }
 
 static void rt_signal_wait_test(void)
@@ -253,17 +385,28 @@ static void rt_signal_wait_test(void)
     rt_thread_t t1;
 
     receive_sig = -1;
-    t1 = rt_thread_create("sig_t1", rt_signal_wait_thread, 0, 4096, 14, 10);
+    t1 = rt_thread_create("sig_t1", rt_signal_wait_thread,
+                          (void *)(rt_ubase_t)RT_WAITING_FOREVER,
+                          4096, 14, 10);
     if (t1)
     {
         rt_thread_startup(t1);
     }
 
-    rt_thread_mdelay(1);
-    /* case 5:rt_signal_wait, two thread, thread1: install and unmask, then wait 1s; thread2: kill, should received. */
+    uassert_true(t1 != RT_NULL);
+    if (t1 == RT_NULL)
+    {
+        return;
+    }
+    uassert_true(signal_wait_until_signal_wait(t1));
+    /* Verify that SIGUSR1 wakes a thread waiting for the signal. */
     uassert_int_equal(rt_thread_kill(t1, SIGUSR1), RT_EOK);
     rt_sem_take(&_received_signal, RT_WAITING_FOREVER);
+    uassert_int_equal(rt_sem_take(&_signal_wait_done,
+                                  RT_TICK_PER_SECOND),
+                      RT_EOK);
     uassert_int_equal(receive_sig, SIGUSR1);
+    uassert_int_equal(_signal_wait_result, RT_EOK);
 
     return;
 }
@@ -273,14 +416,31 @@ static void rt_signal_wait_test2(void)
     rt_thread_t t1;
 
     receive_sig = -1;
-    t1 = rt_thread_create("sig_t1", rt_signal_wait_thread, 0, 4096, 14, 10);
+    t1 = rt_thread_create("sig_t1", rt_signal_wait_thread,
+                          (void *)(rt_ubase_t)RT_TICK_PER_SECOND,
+                          4096, 14, 10);
     if (t1)
     {
         rt_thread_startup(t1);
     }
 
-    /* case 6:rt_signal_wait, two thread, thread1: install and unmask, then wait 1s; thread2: sleep 2s then kill, should can't received. */
-    rt_thread_mdelay(2000);
+    /* Verify that a non-matching signal does not cancel the timed wait. */
+    uassert_true(t1 != RT_NULL);
+    if (t1 == RT_NULL)
+    {
+        return;
+    }
+    uassert_true(signal_wait_until_signal_wait(t1));
+    uassert_int_equal(rt_thread_kill(t1, SIGUSR2), RT_EOK);
+    uassert_int_equal(rt_sem_take(&_signal_wait_done,
+                                  RT_TICK_PER_SECOND / 10),
+                      -RT_ETIMEOUT);
+    uassert_int_equal(rt_sem_take(&_signal_wait_done,
+                                  2 * RT_TICK_PER_SECOND),
+                      RT_EOK);
+    uassert_int_equal(_signal_wait_result, -RT_ETIMEOUT);
+    /* The non-matching unmasked signal is delivered after the wait returns. */
+    uassert_int_equal(receive_sig, SIGUSR2);
     uassert_int_equal(rt_thread_kill(t1, SIGUSR1), RT_EOK);
     uassert_int_not_equal(
         rt_sem_take(&_received_signal, 1),
@@ -290,18 +450,298 @@ static void rt_signal_wait_test2(void)
     return;
 }
 
+/* Verify that signal_wait accepts a masked signal and a NULL siginfo pointer. */
+static void rt_signal_wait_masked_test(void)
+{
+    rt_thread_t thread;
+
+    _signal_wait_result = -RT_ERROR;
+    thread = rt_thread_create("sigmask",
+                              rt_signal_wait_masked_thread,
+                              RT_NULL,
+                              2048,
+                              UTEST_THR_PRIORITY - 1,
+                              10);
+    uassert_true(thread != RT_NULL);
+    if (thread == RT_NULL)
+    {
+        return;
+    }
+
+    rt_thread_startup(thread);
+    uassert_true(signal_wait_until_signal_wait(thread));
+    uassert_int_equal(rt_thread_kill(thread, SIGUSR1), RT_EOK);
+    uassert_int_equal(rt_sem_take(&_signal_wait_done,
+                                  2 * RT_TICK_PER_SECOND),
+                      RT_EOK);
+    uassert_int_equal(_signal_wait_result, RT_EOK);
+}
+
+/* Wait for one signal and verify deferred signal delivery after returning. */
+static void signal_wait_repeat_thread(void *parameter)
+{
+    rt_sigset_t selectset;
+    rt_siginfo_t receive_info;
+    rt_uint8_t priority;
+
+    RT_UNUSED(parameter);
+    rt_signal_install(SIGUSR1, signal_wait_repeat_handler);
+    rt_signal_install(SIGUSR2, signal_wait_repeat_handler);
+    rt_signal_unmask(SIGUSR1);
+    rt_signal_unmask(SIGUSR2);
+    selectset = RT_SIG_MASK(SIGUSR1);
+
+    if (rt_signal_wait(&selectset, &receive_info, RT_WAITING_FOREVER) ==
+        RT_EOK)
+    {
+        priority = UTEST_THR_PRIORITY + 1;
+        rt_thread_control(rt_thread_self(),
+                          RT_THREAD_CTRL_CHANGE_PRIORITY,
+                          &priority);
+        rt_sem_release(&_signal_wait_repeat_ready);
+    }
+}
+
+/* Verify deferred non-matching signals are delivered after signal_wait returns. */
+static void rt_signal_wait_repeat_test(void)
+{
+    rt_thread_t thread;
+
+    _signal_wait_repeat_count = 0;
+    uassert_int_equal(rt_sem_init(&_signal_wait_repeat_ready,
+                                  "sigrep_r",
+                                  0,
+                                  RT_IPC_FLAG_PRIO),
+                      RT_EOK);
+
+    thread = rt_thread_create("sigrep",
+                              signal_wait_repeat_thread,
+                              RT_NULL,
+                              2048,
+                              UTEST_THR_PRIORITY - 1,
+                              10);
+    uassert_true(thread != RT_NULL);
+    if (thread == RT_NULL)
+    {
+        goto __cleanup;
+    }
+
+    rt_thread_startup(thread);
+    uassert_true(signal_wait_until_signal_wait(thread));
+    uassert_int_equal(rt_thread_kill(thread, SIGUSR2), RT_EOK);
+    uassert_int_equal(rt_sem_take(&_signal_wait_repeat_ready,
+                                  RT_TICK_PER_SECOND / 10),
+                      -RT_ETIMEOUT);
+    uassert_int_equal(_signal_wait_repeat_count, 0);
+    uassert_int_equal(rt_thread_kill(thread, SIGUSR1), RT_EOK);
+    uassert_int_equal(rt_sem_take(&_signal_wait_repeat_ready,
+                                  2 * RT_TICK_PER_SECOND),
+                      RT_EOK);
+    uassert_int_equal(_signal_wait_repeat_count, 1);
+
+__cleanup:
+    rt_sem_detach(&_signal_wait_repeat_ready);
+}
+
+/* Verify native signal wakeup behavior for each semaphore wait mode. */
+static void signal_sem_case(int suspend_flag,
+                            int signo,
+                            rt_err_t expected_result,
+                            rt_bool_t expect_early_wakeup,
+                            rt_bool_t release_semaphore,
+                            rt_int32_t timeout)
+{
+    rt_thread_t thread = RT_NULL;
+    rt_err_t early_result;
+    rt_err_t done_result;
+    rt_bool_t thread_done = RT_FALSE;
+
+    receive_sig = -1;
+    _sem_signal_result = -RT_ERROR;
+    _sem_signal_timeout = timeout;
+    uassert_int_equal(rt_sem_init(&_sem_signal_wait,
+                                  "sigsem",
+                                  0,
+                                  RT_IPC_FLAG_PRIO),
+                      RT_EOK);
+    uassert_int_equal(rt_sem_init(&_sem_signal_ready,
+                                  "sigready",
+                                  0,
+                                  RT_IPC_FLAG_PRIO),
+                      RT_EOK);
+    uassert_int_equal(rt_sem_init(&_sem_signal_done,
+                                  "sigd",
+                                  0,
+                                  RT_IPC_FLAG_PRIO),
+                      RT_EOK);
+
+    thread = rt_thread_create("sigsem_t",
+                              signal_sem_wait_thread,
+                              (void *)(rt_ubase_t)suspend_flag,
+                              2048,
+                              UTEST_THR_PRIORITY - 1,
+                              10);
+    uassert_true(thread != RT_NULL);
+    if (thread == RT_NULL)
+    {
+        goto __cleanup;
+    }
+
+    if (rt_thread_startup(thread) != RT_EOK)
+    {
+        uassert_true(RT_FALSE);
+        goto __cleanup;
+    }
+
+    if (rt_sem_take(&_sem_signal_ready,
+                    2 * RT_TICK_PER_SECOND) != RT_EOK)
+    {
+        uassert_true(RT_FALSE);
+        goto __cleanup;
+    }
+
+    if (!signal_sem_wait_until_suspended(thread))
+    {
+        uassert_true(RT_FALSE);
+        goto __cleanup;
+    }
+
+    uassert_int_equal(rt_thread_kill(thread, signo), RT_EOK);
+
+    early_result = rt_sem_take(
+        &_sem_signal_done,
+        expect_early_wakeup ? 2 * RT_TICK_PER_SECOND : RT_TICK_PER_SECOND / 20 + 1);
+    uassert_int_equal(early_result,
+                      expect_early_wakeup ? RT_EOK : -RT_ETIMEOUT);
+    if (early_result == RT_EOK)
+    {
+        thread_done = RT_TRUE;
+    }
+    else
+    {
+        if (release_semaphore)
+        {
+            rt_sem_release(&_sem_signal_wait);
+        }
+        done_result = rt_sem_take(&_sem_signal_done,
+                                  2 * RT_TICK_PER_SECOND);
+        uassert_int_equal(done_result, RT_EOK);
+        if (done_result == RT_EOK)
+        {
+            thread_done = RT_TRUE;
+        }
+    }
+
+    LOG_I("signal sem mode=%d, result=%d, signal=%d, early=%d",
+          suspend_flag,
+          _sem_signal_result,
+          receive_sig,
+          early_result);
+    uassert_int_equal(receive_sig, signo);
+    uassert_int_equal(_sem_signal_result, expected_result);
+
+__cleanup:
+    if (thread != RT_NULL && !thread_done)
+    {
+        if (release_semaphore)
+        {
+            rt_sem_release(&_sem_signal_wait);
+        }
+        if (rt_sem_take(&_sem_signal_done,
+                        2 * RT_TICK_PER_SECOND) == RT_EOK)
+        {
+            thread_done = RT_TRUE;
+        }
+    }
+
+    /* Detach the semaphores only after the worker stops using them. */
+    if (thread_done)
+    {
+        rt_sem_detach(&_sem_signal_wait);
+        rt_sem_detach(&_sem_signal_ready);
+        rt_sem_detach(&_sem_signal_done);
+    }
+}
+
+/* Verify signal wakeup behavior for uninterruptible waits. */
+static void rt_signal_uninterruptible_sem_test(void)
+{
+    signal_sem_case(RT_UNINTERRUPTIBLE,
+                    SIGUSR1,
+                    RT_EOK,
+                    RT_FALSE,
+                    RT_TRUE,
+                    RT_WAITING_FOREVER);
+    signal_sem_case(RT_UNINTERRUPTIBLE,
+                    SIGUSR1,
+                    -RT_ETIMEOUT,
+                    RT_FALSE,
+                    RT_FALSE,
+                    10);
+}
+
+/* Verify that a normal signal interrupts an interruptible wait. */
+static void rt_signal_interruptible_sem_test(void)
+{
+    signal_sem_case(RT_INTERRUPTIBLE,
+                    SIGUSR1,
+                    -RT_EINTR,
+                    RT_TRUE,
+                    RT_FALSE,
+                    RT_WAITING_FOREVER);
+}
+
+/* Verify that a handler cannot overwrite the interrupted wait result. */
+static void rt_signal_interruptible_handler_error_test(void)
+{
+    _signal_handler_delay = RT_TRUE;
+    signal_sem_case(RT_INTERRUPTIBLE,
+                    SIGUSR1,
+                    -RT_EINTR,
+                    RT_TRUE,
+                    RT_FALSE,
+                    RT_WAITING_FOREVER);
+    _signal_handler_delay = RT_FALSE;
+}
+
+/* Verify that killable waits defer normal signals and accept SIGKILL. */
+static void rt_signal_killable_sem_test(void)
+{
+    signal_sem_case(RT_KILLABLE,
+                    SIGUSR1,
+                    RT_EOK,
+                    RT_FALSE,
+                    RT_TRUE,
+                    RT_WAITING_FOREVER);
+    signal_sem_case(RT_KILLABLE,
+                    SIGKILL,
+                    -RT_EINTR,
+                    RT_TRUE,
+                    RT_FALSE,
+                    RT_WAITING_FOREVER);
+    signal_sem_case(RT_KILLABLE,
+                    SIGSTOP,
+                    -RT_EINTR,
+                    RT_TRUE,
+                    RT_FALSE,
+                    RT_WAITING_FOREVER);
+}
+
 static rt_err_t utest_tc_init(void)
 {
     rt_sem_init(&_received_signal, "utest", 0, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&_signal_wait_done, "sigwait_d", 0, RT_IPC_FLAG_PRIO);
     return RT_EOK;
 }
 
 static rt_err_t utest_tc_cleanup(void)
 {
     rt_sem_detach(&_received_signal);
+    rt_sem_detach(&_signal_wait_done);
     return RT_EOK;
 }
 
+/* Run native signal tests. */
 static void testcase(void)
 {
 #ifdef RT_USING_HEAP
@@ -310,7 +750,13 @@ static void testcase(void)
     UTEST_UNIT_RUN(rt_signal_unmask_test);
     UTEST_UNIT_RUN(rt_signal_kill_test);
     UTEST_UNIT_RUN(rt_signal_wait_test);
+    UTEST_UNIT_RUN(rt_signal_wait_masked_test);
     UTEST_UNIT_RUN(rt_signal_wait_test2);
+    UTEST_UNIT_RUN(rt_signal_wait_repeat_test);
+    UTEST_UNIT_RUN(rt_signal_uninterruptible_sem_test);
+    UTEST_UNIT_RUN(rt_signal_interruptible_sem_test);
+    UTEST_UNIT_RUN(rt_signal_interruptible_handler_error_test);
+    UTEST_UNIT_RUN(rt_signal_killable_sem_test);
 #endif /* RT_USING_HEAP */
 }
 UTEST_TC_EXPORT(testcase, "core.signal", utest_tc_init, utest_tc_cleanup, 1000);
