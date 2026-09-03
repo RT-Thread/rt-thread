@@ -73,7 +73,18 @@ struct rt_blk_disk_ops
 };
 
 #ifndef __DFS_H__
+#ifdef RT_USING_DFS
 #include <dfs_fs.h>
+#else
+/* Keep the legacy name available when the block layer is used without DFS. */
+struct dfs_partition
+{
+    rt_uint8_t type;
+    rt_off_t offset;
+    rt_size_t size;
+    rt_sem_t lock;
+};
+#endif /* RT_USING_DFS */
 
 /**
  * @brief Logical blk device, if you don't used DFS it will be defined by default.
