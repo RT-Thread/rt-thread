@@ -1572,21 +1572,40 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
 
         case SIOCGIFCONF:
         {
-            struct ifconf *ifconf_tmp;
-            ifconf_tmp = (struct ifconf *)arg;
-            int count_size = 0;
+            const int sal_ifreq_size = (int)sizeof(struct sal_ifreq);
+            struct ifconf *ifconf_tmp = (struct ifconf *)arg;
+            char *ifc_buf = ifconf_tmp->ifc_ifcu.ifcu_buf;
+            int buffer_size = ifconf_tmp->ifc_len;
+            int copied_size = 0;
+
+            if (buffer_size < 0)
+            {
+                LOG_E("ifconfig: network interface device list buffer size error.\n");
+                return -1;
+            }
 
             for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
             {
                 struct sal_ifreq sal_ifreq_temp;
-                count_size++;
+                if (ifc_buf == RT_NULL)
+                {
+                    copied_size += sal_ifreq_size;
+                    continue;
+                }
+
+                if (buffer_size - copied_size < sal_ifreq_size)
+                {
+                    break;
+                }
+
+                rt_memset(&sal_ifreq_temp, 0, sizeof(struct sal_ifreq));
                 netdev = rt_list_entry(node, struct netdev, list);
                 rt_strcpy(sal_ifreq_temp.ifr_ifrn.ifrn_name, netdev->name);
-                rt_memcpy(ifconf_tmp->ifc_ifcu.ifcu_buf, &sal_ifreq_temp, sizeof(struct sal_ifreq));
-                ifconf_tmp->ifc_ifcu.ifcu_buf += sizeof(struct sal_ifreq);
+                rt_memcpy(ifc_buf, &sal_ifreq_temp, sizeof(struct sal_ifreq));
+                copied_size += sal_ifreq_size;
+                ifc_buf += sizeof(struct sal_ifreq);
             }
-            ifconf_tmp->ifc_len = sizeof(struct sal_ifreq) * count_size;
-            ifconf_tmp->ifc_ifcu.ifcu_buf = ifconf_tmp->ifc_ifcu.ifcu_buf - sizeof(struct sal_ifreq) * count_size;
+            ifconf_tmp->ifc_len = copied_size;
             return 0;
         }
         case SIOCGIFINDEX:

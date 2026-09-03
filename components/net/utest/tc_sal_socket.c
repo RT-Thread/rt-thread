@@ -61,6 +61,16 @@
 static char test_send_data[] = "Hello, RT-Thread SAL!";
 static char test_recv_buffer[TEST_BUFFER_SIZE];
 
+struct sal_test_ifconf
+{
+    int ifc_len;
+    union
+    {
+        char *ifcu_buf;
+        struct sal_ifreq *ifcu_req;
+    } ifc_ifcu;
+};
+
 /* Local IP for tests (fallback to loopback) */
 static char local_ip[16] = "127.0.0.1";
 
@@ -162,6 +172,82 @@ static void close_test_socket(int sock)
         sal_closesocket(sock);
         LOG_I("Closed socket %d", sock);
     }
+}
+
+static void TC_sal_socket_siocgifconf(void)
+{
+    struct sal_test_ifconf ifconf;
+    struct sal_ifreq *ifreq;
+    unsigned char buffer[sizeof(struct sal_ifreq)];
+    char *original_buffer;
+    size_t index;
+    size_t name_length;
+    int sock;
+    int ret;
+
+    sock = create_test_socket(AF_INET, SOCK_DGRAM, 0);
+    uassert_true(sock >= 0);
+    if (sock < 0)
+    {
+        return;
+    }
+
+    /* A zero-sized destination must not be written. */
+    memset(buffer, 0xA5, sizeof(buffer));
+    ifconf.ifc_len = 0;
+    ifconf.ifc_ifcu.ifcu_buf = (char *)buffer;
+    ret = sal_ioctlsocket(sock, SIOCGIFCONF, &ifconf);
+    uassert_int_equal(ret, 0);
+    uassert_int_equal(ifconf.ifc_len, 0);
+    for (index = 0; index < sizeof(buffer); index++)
+    {
+        uassert_int_equal(buffer[index], 0xA5);
+    }
+
+    /* A NULL destination queries the required buffer size. */
+    ifconf.ifc_len = sizeof(buffer);
+    ifconf.ifc_ifcu.ifcu_buf = RT_NULL;
+    ret = sal_ioctlsocket(sock, SIOCGIFCONF, &ifconf);
+    uassert_int_equal(ret, 0);
+    uassert_true(ifconf.ifc_len >= sizeof(struct sal_ifreq));
+    uassert_int_equal(ifconf.ifc_len % sizeof(struct sal_ifreq), 0);
+
+    /* A negative buffer length must be rejected without writing. */
+    memset(buffer, 0xA5, sizeof(buffer));
+    ifconf.ifc_len = -1;
+    ifconf.ifc_ifcu.ifcu_buf = (char *)buffer;
+    ret = sal_ioctlsocket(sock, SIOCGIFCONF, &ifconf);
+    uassert_int_equal(ret, -1);
+    for (index = 0; index < sizeof(buffer); index++)
+    {
+        uassert_int_equal(buffer[index], 0xA5);
+    }
+
+    /* Returned bytes outside the interface name must be initialized. */
+    memset(buffer, 0xA5, sizeof(buffer));
+    original_buffer = (char *)buffer;
+    ifconf.ifc_len = sizeof(buffer);
+    ifconf.ifc_ifcu.ifcu_buf = original_buffer;
+    ret = sal_ioctlsocket(sock, SIOCGIFCONF, &ifconf);
+    uassert_int_equal(ret, 0);
+    uassert_int_equal(ifconf.ifc_len, sizeof(struct sal_ifreq));
+    uassert_true(ifconf.ifc_ifcu.ifcu_buf == original_buffer);
+
+    ifreq = (struct sal_ifreq *)buffer;
+    for (name_length = 0; name_length < IFNAMSIZ; name_length++)
+    {
+        if (ifreq->ifr_ifrn.ifrn_name[name_length] == '\0')
+        {
+            break;
+        }
+    }
+    uassert_true(name_length > 0 && name_length < IFNAMSIZ);
+    for (index = name_length + 1; index < sizeof(*ifreq); index++)
+    {
+        uassert_int_equal(buffer[index], 0);
+    }
+
+    close_test_socket(sock);
 }
 
 /* Server thread function */
@@ -1021,6 +1107,7 @@ static void utest_do_tc(void)
     UTEST_UNIT_RUN(TC_sal_socket_send_recv);
     UTEST_UNIT_RUN(TC_sal_socket_udp_communication);
     UTEST_UNIT_RUN(TC_sal_socket_getpeername_getsockname);
+    UTEST_UNIT_RUN(TC_sal_socket_siocgifconf);
     UTEST_UNIT_RUN(TC_sal_socket_close);
 
     LOG_I("===========================================");
