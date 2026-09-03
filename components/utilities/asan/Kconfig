@@ -1,0 +1,56 @@
+menuconfig RT_USING_ASAN
+    bool "Enable AddressSanitizer (heap overflow & use-after-free check)"
+    default n
+    depends on RT_USING_HOOK && RT_HOOK_USING_FUNC_PTR && !RT_USING_USERHEAP
+    help
+        Enable runtime AddressSanitizer (kernel-address) support. It
+        instruments memory accesses to detect heap buffer overflow and
+        use-after-free at runtime.
+
+        It requires the toolchain to support '-fsanitize=kernel-address'
+        (GCC 8+, verified on ARM and RISC-V).
+
+        The shadow memory is a static array of RT_ASAN_SHADOW_SIZE bytes
+        and covers the first RT_ASAN_SHADOW_SIZE * 8 bytes of the heap.
+        Accesses beyond that range are not checked.
+
+        Heap algorithm support:
+          - small mem (RT_USING_SMALL_MEM_AS_HEAP): full support, detects
+            both heap-buffer-overflow and use-after-free.
+          - slab (RT_USING_SLAB_AS_HEAP) and memheap
+            (RT_USING_MEMHEAP_AS_HEAP): detects heap-buffer-overflow only.
+            Their allocators reuse freed blocks for internal metadata written
+            through instrumented rt_memset/rt_memcpy, so poisoning a whole
+            freed block would raise false positives; use-after-free is
+            therefore disabled for these two.
+          - userheap (RT_USING_USERHEAP): not supported (mutually exclusive).
+
+    if RT_USING_ASAN
+        config RT_ASAN_SHADOW_SIZE
+            int "ASan shadow memory size (bytes)"
+            default 65536
+            help
+                Size of the static shadow memory array. Each byte maps 8
+                bytes of the heap, so the checked heap range is
+                RT_ASAN_SHADOW_SIZE * 8 bytes.
+
+        config RT_ASAN_TRACK_MAX
+            int "Max number of tracked active allocations"
+            default 512
+            help
+                Size of the allocation tracking table. Each entry records
+                one live block (ptr, size, owner thread). Reduce this on
+                memory-constrained MCUs (e.g. 128 or 64). When the table
+                is full, further allocations are not tracked (and thus not
+                diagnosed) but are still unpoisoned for correctness.
+
+        config RT_ASAN_BACKTRACE
+            bool "Print full backtrace on report"
+            default y
+            help
+                When a violation is reported, also dump the full call stack
+                of the faulting thread via rt_backtrace(). This requires the
+                target architecture to implement a backtrace backend (unwind
+                table or frame pointer chain). Architectures without one
+                print nothing extra.
+    endif

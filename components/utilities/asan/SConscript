@@ -1,0 +1,13 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd]
+
+# The ASan runtime itself must not be instrumented, otherwise it would
+# recurse infinitely. '-fno-sanitize=kernel-address' is appended after the
+# global '-fsanitize=kernel-address' and therefore overrides it.
+group = DefineGroup('asan', src, depend=['RT_USING_ASAN'], CPPPATH=CPPPATH,
+                    LOCAL_CFLAGS=' -fno-sanitize=kernel-address')
+
+Return('group')
