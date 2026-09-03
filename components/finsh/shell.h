@@ -52,6 +52,8 @@ int finsh_set_prompt(const char *prompt);
     #define FINSH_THREAD_NAME   "tshell"
 #endif
 
+#define FINSH_SEM_NAME   "shrx"
+
 enum input_stat
 {
     WAIT_NORMAL,
