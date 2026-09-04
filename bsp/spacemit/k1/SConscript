@@ -1,0 +1,43 @@
+# for module compiling
+import os
+from building import *
+
+objs = []
+
+# ------------------- libcpu -------------------
+RTT_ROOT = os.path.normpath(os.path.join(GetCurrentDir(), '..', '..', '..'))
+
+common64_path = os.path.join(RTT_ROOT, 'libcpu/risc-v/common64')
+libcpu_src = [
+    os.path.join(common64_path, 'sbi.c'),
+    os.path.join(common64_path, 'trap.c'),
+    os.path.join(common64_path, 'cpuport.c'),
+    os.path.join(common64_path, 'context_gcc.S'),
+    os.path.join(common64_path, 'interrupt_gcc.S'),
+    os.path.join(common64_path, 'startup_gcc.S'),
+]
+
+k1_libcpu_path = os.path.join(RTT_ROOT, 'libcpu/risc-v/spacemit/x60')
+libcpu_src += Glob(os.path.join(k1_libcpu_path, '*.c'))
+
+libcpu_cpppath = [
+    common64_path,
+    k1_libcpu_path,
+    os.path.join(RTT_ROOT, 'libcpu/risc-v/vector/rvv-1.0'),
+]
+
+group = DefineGroup('libcpu', libcpu_src, depend=[''], CPPPATH=libcpu_cpppath)
+objs += group
+
+
+# ------------------- bsp -------------------
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+
+Return('objs')
