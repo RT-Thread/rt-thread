@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-01-30     lizhirui     first version
  * 2023-10-12     Shell        Add permission control API
+ * 2026-08-25     chenguohao   Add SV48/SV57 support
  */
 
 #ifndef __MMU_H__
@@ -37,18 +38,58 @@ struct mem_desc
 
 #define GET_PF_ID(addr)     ((addr) >> PAGE_OFFSET_BIT)
 #define GET_PF_OFFSET(addr) __MASKVALUE(addr, PAGE_OFFSET_MASK)
-#define GET_L1(addr)        __PARTBIT(addr, VPN2_SHIFT, VPN2_BIT)
-#define GET_L2(addr)        __PARTBIT(addr, VPN1_SHIFT, VPN1_BIT)
-#define GET_L3(addr)        __PARTBIT(addr, VPN0_SHIFT, VPN0_BIT)
-#define GET_PPN(pte)                                                           \
+
+#ifndef ARCH_PAGE_TBL_LEVELS
+#if (SATP_MODE == SATP_MODE_SV57)
+#define ARCH_PAGE_TBL_LEVELS 5
+#elif (SATP_MODE == SATP_MODE_SV48)
+#define ARCH_PAGE_TBL_LEVELS 4
+#else
+#define ARCH_PAGE_TBL_LEVELS 3
+#endif
+#endif /* ARCH_PAGE_TBL_LEVELS */
+
+/* Top-level page table shift (PGD index extraction shift) */
+#ifndef ARCH_TOP_LEVEL_SHIFT
+#define ARCH_TOP_LEVEL_SHIFT \
+    (ARCH_PAGE_SHIFT + (ARCH_PAGE_TBL_LEVELS - 1) * ARCH_INDEX_WIDTH)
+#endif
+
+/* Early mapping uses the fixed 1G/2M leaf size, whatever the paging mode is */
+#ifndef EARLY_MAP_PAGE_SIZE_1G
+#define EARLY_MAP_PAGE_SIZE_1G __SIZE(ARCH_PAGE_SHIFT + 2 * ARCH_INDEX_WIDTH)
+#endif
+#ifndef EARLY_MAP_PAGE_SIZE_2M
+#define EARLY_MAP_PAGE_SIZE_2M __SIZE(ARCH_PAGE_SHIFT + ARCH_INDEX_WIDTH)
+#endif
+
+#if (ARCH_PAGE_TBL_LEVELS == 5)
+#define GET_L1(addr) __PARTBIT(addr, VPN4_SHIFT, VPN4_BIT)
+#define GET_L2(addr) __PARTBIT(addr, VPN3_SHIFT, VPN3_BIT)
+#define GET_L3(addr) __PARTBIT(addr, VPN2_SHIFT, VPN2_BIT)
+#define GET_L4(addr) __PARTBIT(addr, VPN1_SHIFT, VPN1_BIT)
+#define GET_L5(addr) __PARTBIT(addr, VPN0_SHIFT, VPN0_BIT)
+#elif (ARCH_PAGE_TBL_LEVELS == 4)
+#define GET_L1(addr) __PARTBIT(addr, VPN3_SHIFT, VPN3_BIT)
+#define GET_L2(addr) __PARTBIT(addr, VPN2_SHIFT, VPN2_BIT)
+#define GET_L3(addr) __PARTBIT(addr, VPN1_SHIFT, VPN1_BIT)
+#define GET_L4(addr) __PARTBIT(addr, VPN0_SHIFT, VPN0_BIT)
+#elif (ARCH_PAGE_TBL_LEVELS == 3)
+#define GET_L1(addr) __PARTBIT(addr, VPN2_SHIFT, VPN2_BIT)
+#define GET_L2(addr) __PARTBIT(addr, VPN1_SHIFT, VPN1_BIT)
+#define GET_L3(addr) __PARTBIT(addr, VPN0_SHIFT, VPN0_BIT)
+#endif
+
+/* Runtime level index extraction: get the page table index at given level (1-based) */
+#define GET_LVL_INDEX(addr, level) \
+    (((rt_ubase_t)(addr) >> (ARCH_PAGE_SHIFT + (ARCH_PAGE_TBL_LEVELS - (level)) * ARCH_INDEX_WIDTH)) & VPN_MASK)
+
+#define GET_PPN(pte) \
     (__PARTBIT(pte, PTE_PPN_SHIFT, PHYSICAL_ADDRESS_WIDTH_BITS - PAGE_OFFSET_BIT))
 #define GET_PADDR(pte)            (GET_PPN(pte) << PAGE_OFFSET_BIT)
 #define VPN_TO_PPN(vaddr, pv_off) (((rt_uintptr_t)(vaddr)) + (pv_off))
 #define PPN_TO_VPN(paddr, pv_off) (((rt_uintptr_t)(paddr)) - (pv_off))
-#define COMBINEVADDR(l1_off, l2_off, l3_off)                                   \
-    (((l1_off) << VPN2_SHIFT) | ((l2_off) << VPN1_SHIFT) |                     \
-     ((l3_off) << VPN0_SHIFT))
-#define COMBINEPTE(paddr, attr)                                                \
+#define COMBINEPTE(paddr, attr) \
     ((((paddr) >> PAGE_OFFSET_BIT) << PTE_PPN_SHIFT) | (attr))
 
 #define MMU_MAP_ERROR_VANOTALIGN -1
@@ -56,9 +97,9 @@ struct mem_desc
 #define MMU_MAP_ERROR_NOPAGE     -3
 #define MMU_MAP_ERROR_CONFLICT   -4
 
-#define VPN_MASK    0x1ffUL
-#define PTE_BITS    10
-#define VPN_BITS    9
+#define VPN_MASK 0x1ffUL
+#define PTE_BITS 10
+#define VPN_BITS 9
 
 #if defined(RT_USING_SMP) && defined(ARCH_MM_MMU)
 extern unsigned int __percpu_end, __percpu_start;
