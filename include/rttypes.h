@@ -88,7 +88,11 @@ typedef rt_ubase_t                       rt_uintptr_t;   /**< Type for unsigned 
 #endif /* defined(RT_USING_LIBC) && !defined(RT_USING_NANO) */
 
 typedef rt_base_t                       rt_err_t;       /**< Type for error number */
+#if defined(ARCH_CPU_64BIT)
+typedef rt_uint64_t                     rt_tick_t;      /**< Type for tick count */
+#else
 typedef rt_uint32_t                     rt_tick_t;      /**< Type for tick count */
+#endif
 typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
