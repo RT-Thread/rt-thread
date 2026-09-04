@@ -533,6 +533,23 @@ size_t rt_strnlen(const char *s, size_t maxlen)
 #endif /* RT_KLIBC_USING_USER_STRNLEN */
 RTM_EXPORT(rt_strnlen);
 
+int rt_atoi(const char* s)
+{
+    int n = 0, sign = 1;
+
+    if (*s == '-')
+    {
+        sign = -1;
+        s++;
+    }
+    else if (*s == '+')
+        s++;
+
+    while (*s >= '0' && *s <= '9') n = n * 10 + (*s++ - '0');
+
+    return sign * n;
+}
+
 #ifdef RT_USING_HEAP
 /**
  * @brief  This function will duplicate a string.
