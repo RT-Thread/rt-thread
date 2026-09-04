@@ -45,4 +45,12 @@ void rt_hw_interrupt_mask(int vector);
 void rt_hw_interrupt_umask(int vector);
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler, void *param, const char *name);
 
+#ifdef RT_USING_SMP
+rt_bool_t rt_hw_interrupt_is_disabled(void);
+void rt_hw_ipi_handler(void);
+void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler);
+void rt_hw_ipi_init(void);
+void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
+#endif /* RT_USING_SMP */
+
 #endif
