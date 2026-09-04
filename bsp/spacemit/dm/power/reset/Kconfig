@@ -1,0 +1,2 @@
+config RT_POWER_RESET_REBOOT_SPACEMIT
+    bool "Spacemit reboot"

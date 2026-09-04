@@ -1,0 +1,17 @@
+config RT_HWCRYPTO_SPACEMIT
+    bool "Spacemit Crypto Engine"
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    depends on RT_USING_HWCRYPTO
+    depends on RT_HWCRYPTO_USING_AES
+    depends on RT_HWCRYPTO_USING_AES_ECB
+    depends on RT_HWCRYPTO_USING_AES_CBC
+    default y
+
+config RT_HWCRYPTO_RNG_SPACEMIT
+    bool "Spacemit RNG Engine"
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    depends on RT_USING_HWCRYPTO
+    depends on RT_HWCRYPTO_USING_RNG
+    default y

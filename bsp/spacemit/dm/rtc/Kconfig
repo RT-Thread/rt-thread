@@ -1,0 +1,4 @@
+config RT_RTC_SPACEMIT_PMIC
+    bool "Spacemit PMIC RTC"
+    depends on RT_MFD_SPACEMIT_PMIC
+    default y

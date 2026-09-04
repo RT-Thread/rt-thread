@@ -1,0 +1,33 @@
+config RT_SOC_SPACEMIT_K1X_RPROC
+    bool "Spacemit K1X remote processor"
+    depends on RT_USING_OFW
+    depends on RT_USING_DMA
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    depends on RT_USING_MBOX
+    depends on RT_USING_VIRTIO
+    depends on RT_USING_RPMSG
+    depends on RT_VIRTIO_RPMSG
+    default n
+    help
+      Load and control the K1X RCPU firmware and provide its VirtIO RPMsg
+      transport. The remote processor is started on demand by a client.
+
+config RT_SOC_CHIP_MEDIA_JPU
+    bool "Chip media JPU Driver"
+    default n
+
+config RT_SOC_SPACEMIT_V2D
+    bool "Spacemit V2D Engine Driver"
+    depends on RT_USING_OFW && RT_USING_DMA && RT_USING_CLK && RT_USING_RESET
+    default n
+
+config RT_SOC_SPACEMIT_K1X_TCM
+    bool "Spacemit k1x generic TCM alloc management Driver"
+    depends on RT_USING_MEMHEAP
+    default n
+
+config RT_SOC_SPACEMIT_SOCINFO
+    bool "Spacemit SoC information Driver"
+    depends on RT_USING_NVMEM
+    default n
