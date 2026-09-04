@@ -14,6 +14,9 @@
 #define DBG_TAG "rtdm.reset"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
+#ifdef assert
+#undef assert
+#endif
 
 #include <drivers/ofw.h>
 #include <drivers/misc.h>
