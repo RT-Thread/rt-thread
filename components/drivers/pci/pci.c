@@ -534,12 +534,18 @@ rt_err_t rt_pci_region_setup(struct rt_pci_host_bridge *host_bridge)
          * according to PCI 2.1 and moreover. Use a reasonable starting value of
          * 0x1000 instead if the bus start address is below 0x1000.
          */
-        region->bus_start = rt_max_t(rt_size_t, 0x1000, region->phy_addr);
+        region->bus_start = rt_max_t(rt_uint64_t, 0x1000, region->phy_addr);
 
         LOG_I("Bus %s region(%d):",
               region->flags == PCI_BUS_REGION_F_MEM ? "Memory" : (region->flags == PCI_BUS_REGION_F_PREFETCH ? "Prefetchable Mem" : (region->flags == PCI_BUS_REGION_F_IO ? "I/O" : "Unknown")), i);
-        LOG_I("  cpu:      [%p, %p]", region->cpu_addr, (region->cpu_addr + region->size - 1));
-        LOG_I("  physical: [%p, %p]", region->phy_addr, (region->phy_addr + region->size - 1));
+        LOG_I("  cpu:      [0x%08x%08x, 0x%08x%08x]",
+                rt_upper_32_bits(region->cpu_addr), rt_lower_32_bits(region->cpu_addr),
+                rt_upper_32_bits(region->cpu_addr + region->size - 1),
+                rt_lower_32_bits(region->cpu_addr + region->size - 1));
+        LOG_I("  physical: [0x%08x%08x, 0x%08x%08x]",
+                rt_upper_32_bits(region->phy_addr), rt_lower_32_bits(region->phy_addr),
+                rt_upper_32_bits(region->phy_addr + region->size - 1),
+                rt_lower_32_bits(region->phy_addr + region->size - 1));
     }
 
     return err;

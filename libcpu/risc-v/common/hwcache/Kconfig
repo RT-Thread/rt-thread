@@ -1,0 +1,3 @@
+config RT_CACHE_SIFIVE_CCACHE
+    bool "Sifive Composable Cache controller"
+    depends on RT_USING_HWCACHE

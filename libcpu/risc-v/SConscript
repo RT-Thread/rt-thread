@@ -1,27 +1,67 @@
-# RT-Thread building script for bridge
+# RT-Thread building script for RISC-V
 
 import os
 from building import *
 
 Import('rtconfig')
 
-common64_arch = ['virt64', 'c906', 'c908','ur-cp100']
-cwd   = GetCurrentDir()
+cwd = GetCurrentDir()
 group = []
-list  = os.listdir(cwd)
+cpu = getattr(rtconfig, 'CPU', '')
+vendor = getattr(rtconfig, 'VENDOR', '')
 
-# add common code files
-if rtconfig.CPU in common64_arch :
-    group += SConscript(os.path.join('common64', 'SConscript'))
-else :
+if GetDepend('RT_USING_RISCV_NEW_COMMON'):
+    bsp_path = Dir('#').abspath
+
+    if not os.path.exists(os.path.join(bsp_path, 'link.lds')):
+        Env['LINKFLAGS'] = Env['LINKFLAGS'].replace(
+            'link.lds', os.path.join(cwd, 'link.lds'))
+        Preprocessing('link.lds.S', '.lds',
+                      CPPPATH=[bsp_path, os.path.join(cwd, 'common', 'include')])
+
+    # The new common owns the complete C runtime entry.
+    Env['LINKFLAGS'] += ' -nostartfiles'
+
     group += SConscript(os.path.join('common', 'SConscript'))
 
-group += SConscript(os.path.join('vector', 'SConscript'))
+    # New vendor ports are architecture-wide overrides, not per-CPU copies.
+    if vendor:
+        vendor_path = os.path.join(cwd, vendor)
+        vendor_script = os.path.join(vendor, 'SConscript')
 
-# cpu porting code files
-if 'VENDOR' in vars(rtconfig) and rtconfig.VENDOR != '':
-    group = group + SConscript(os.path.join(rtconfig.VENDOR, rtconfig.CPU, 'SConscript'))
-elif rtconfig.CPU in list:
-    group = group + SConscript(os.path.join(rtconfig.CPU, 'SConscript'))
+        if os.path.isfile(os.path.join(cwd, vendor_script)):
+            group += SConscript(vendor_script)
+
+            if os.path.exists(os.path.join(vendor_path, 'mmu_vendor.h')):
+                Env.AppendUnique(ASFLAGS=['-D__HAS_MMU_VENDOR__'])
+                Env.AppendUnique(CFLAGS=['-D__HAS_MMU_VENDOR__'])
+                Env.AppendUnique(CXXFLAGS=['-D__HAS_MMU_VENDOR__'])
+
+            if os.path.exists(os.path.join(vendor_path, 'opcode_vendor.h')):
+                Env.AppendUnique(ASFLAGS=['-D__HAS_OPCODE_VENDOR__'])
+                Env.AppendUnique(CFLAGS=['-D__HAS_OPCODE_VENDOR__'])
+                Env.AppendUnique(CXXFLAGS=['-D__HAS_OPCODE_VENDOR__'])
+else:
+    common64_cpus = ['c906', 'c908', 'ur-cp100']
+
+    if cpu in common64_cpus:
+        group += SConscript(os.path.join('common64', 'SConscript'))
+    else:
+        group += SConscript(os.path.join('legacy_common', 'SConscript'))
+
+    group += SConscript(os.path.join('vector', 'SConscript'))
+
+    if vendor:
+        if vendor == 't-head':
+            port_script = os.path.join('legacy-t-head', cpu, 'SConscript')
+        else:
+            port_script = os.path.join(vendor, cpu, 'SConscript')
+
+        if os.path.isfile(os.path.join(cwd, port_script)):
+            group += SConscript(port_script)
+    elif cpu:
+        port_script = os.path.join(cpu, 'SConscript')
+        if os.path.isfile(os.path.join(cwd, port_script)):
+            group += SConscript(port_script)
 
 Return('group')
