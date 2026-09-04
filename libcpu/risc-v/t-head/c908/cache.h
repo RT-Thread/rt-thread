@@ -90,22 +90,6 @@ ALWAYS_INLINE void rt_hw_cpu_icache_invalidate_all_local(void)
  * ========================================
  */
 
-#ifdef RT_USING_SMP
-#error "TODO: cache maintainence have not ported to RISC-V SMP yet"
-
-void rt_hw_cpu_dcache_clean(void *addr, int size);
-void rt_hw_cpu_dcache_invalidate(void *addr, int size);
-void rt_hw_cpu_dcache_clean_invalidate(void *addr, int size);
-
-void rt_hw_cpu_dcache_clean_all(void);
-void rt_hw_cpu_dcache_invalidate_all(void);
-void rt_hw_cpu_dcache_clean_invalidate_all(void);
-
-void rt_hw_cpu_icache_invalidate(void *addr, int size);
-void rt_hw_cpu_icache_invalidate_all(void);
-
-#else /* !RT_USING_SMP */
-
 #define rt_hw_cpu_dcache_clean rt_hw_cpu_dcache_clean_local
 #define rt_hw_cpu_dcache_invalidate rt_hw_cpu_dcache_invalidate_local
 #define rt_hw_cpu_dcache_clean_and_invalidate rt_hw_cpu_dcache_clean_invalidate_local
@@ -116,8 +100,6 @@ void rt_hw_cpu_icache_invalidate_all(void);
 
 #define rt_hw_cpu_icache_invalidate rt_hw_cpu_icache_invalidate_local
 #define rt_hw_cpu_icache_invalidate_all rt_hw_cpu_icache_invalidate_all_local
-
-#endif /* RT_USING_SMP */
 
 /**
  * @brief Synchronize cache to Point of Unification
