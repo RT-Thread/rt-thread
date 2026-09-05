@@ -613,12 +613,14 @@ static rt_int32_t sdio_read_cis(struct rt_sdio_function *func)
                        "type %u", tpl_link, curr->data[0]);
             }
 
+            rt_free(curr);
             break;
         case CISTPL_VERS_1:
             if (tpl_link < 2)
             {
                 LOG_D("CISTPL_VERS_1 too short");
             }
+            rt_free(curr);
             break;
         default:
             /* this tuple is unknown to the core */
