@@ -93,8 +93,11 @@ rt_inline int pmbr_part_valid(gpt_mbr_record *part)
  */
 static int is_pmbr_valid(legacy_mbr *mbr, rt_size_t total_sectors)
 {
-    rt_uint32_t sz   = 0;
-    int         part = 0, ret = 0; /* invalid by default */
+    rt_uint32_t sz = 0;
+    rt_uint32_t disk_size;
+    int part = 0, ret = 0; /* invalid by default */
+
+    disk_size = total_sectors - 1 > RT_UINT32_MAX ? RT_UINT32_MAX : (rt_uint32_t)(total_sectors - 1);
 
     if (!mbr || rt_le16_to_cpu(mbr->signature) != MSDOS_MBR_SIGNATURE)
     {
@@ -148,10 +151,10 @@ _check_hybrid:
     {
         sz = rt_le32_to_cpu(mbr->partition_record[part].size_in_lba);
 
-        if (sz != (rt_uint32_t)total_sectors - 1 && sz != 0xffffffff)
+        if (sz != disk_size && sz != RT_UINT32_MAX)
         {
             LOG_W("GPT: mbr size in lba (%u) different than whole disk (%u)",
-                  sz, rt_min_t(rt_uint32_t, total_sectors - 1, 0xffffffff));
+                  sz, disk_size);
         }
     }
 
@@ -172,9 +175,9 @@ static rt_size_t read_lba(struct rt_blk_disk *disk,
                           rt_uint64_t lba, rt_uint8_t *buffer, rt_size_t count)
 {
     rt_uint32_t lbs;
-    rt_ssize_t  cap_ss, lbs_ss;
-    rt_size_t   totalreadcount = 0;
-    rt_uint8_t *secbuf         = RT_NULL;
+    rt_ssize_t cap_ss, lbs_ss;
+    rt_size_t totalreadcount = 0;
+    rt_uint8_t *secbuf = RT_NULL;
     rt_uint64_t capacity, disk_bytes, n512;
 
     if (!buffer || count == 0)
@@ -189,7 +192,7 @@ static rt_size_t read_lba(struct rt_blk_disk *disk,
         return 0;
     }
 
-    lbs      = (rt_uint32_t)lbs_ss;
+    lbs = (rt_uint32_t)lbs_ss;
     capacity = (rt_uint64_t)cap_ss;
 
     if (lbs < 512 || (lbs % 512) != 0)
@@ -203,7 +206,7 @@ static rt_size_t read_lba(struct rt_blk_disk *disk,
     }
 
     disk_bytes = capacity * (rt_uint64_t)lbs;
-    n512       = lba * ((rt_uint64_t)lbs / 512);
+    n512 = lba * ((rt_uint64_t)lbs / 512);
 
     secbuf = rt_malloc(lbs);
     if (!secbuf)
@@ -213,8 +216,8 @@ static rt_size_t read_lba(struct rt_blk_disk *disk,
 
     while (count > 0)
     {
-        int         copied = 512;
-        rt_ssize_t  rd;
+        int copied = 512;
+        rt_ssize_t rd;
         rt_uint32_t off;
         rt_uint64_t log_sec, byte_off = n512 * 512;
 
@@ -234,7 +237,7 @@ static rt_size_t read_lba(struct rt_blk_disk *disk,
         }
 
         log_sec = byte_off / lbs;
-        off     = (rt_uint32_t)(byte_off % lbs);
+        off = (rt_uint32_t)(byte_off % lbs);
 
         if (off + (rt_uint32_t)copied <= lbs)
         {
@@ -264,9 +267,9 @@ static rt_size_t read_lba(struct rt_blk_disk *disk,
             rt_memcpy(buffer + first, secbuf, copied - first);
         }
 
-        buffer         += copied;
+        buffer += copied;
         totalreadcount += copied;
-        count          -= copied;
+        count -= copied;
         ++n512;
     }
 
@@ -282,10 +285,10 @@ static rt_size_t read_lba(struct rt_blk_disk *disk,
  * @return ptes on success, null on error.
  */
 static gpt_entry *alloc_read_gpt_entries(struct rt_blk_disk *disk,
-                                         gpt_header         *gpt)
+                                         gpt_header *gpt)
 {
-    rt_size_t   count;
-    gpt_entry  *pte;
+    rt_size_t count;
+    gpt_entry *pte;
     rt_uint64_t entry_lba;
 
     if (!gpt)
@@ -333,7 +336,7 @@ static gpt_header *alloc_read_gpt_header(struct rt_blk_disk *disk, rt_uint64_t l
 {
     gpt_header *gpt;
     rt_uint32_t ssz;
-    rt_ssize_t  lbs_ss = rt_blk_disk_get_logical_block_size(disk);
+    rt_ssize_t lbs_ss = rt_blk_disk_get_logical_block_size(disk);
 
     if (lbs_ss <= 0)
     {
@@ -375,7 +378,7 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
 {
     rt_uint32_t crc, origcrc;
     rt_uint64_t lastlba, pt_size;
-    rt_ssize_t  logical_block_size;
+    rt_ssize_t logical_block_size;
 
     if (!ptes)
     {
@@ -427,9 +430,9 @@ static rt_bool_t is_gpt_valid(struct rt_blk_disk *disk,
     }
 
     /* Check the GUID Partition Table CRC */
-    origcrc              = rt_le32_to_cpu((*gpt)->header_crc32);
+    origcrc = rt_le32_to_cpu((*gpt)->header_crc32);
     (*gpt)->header_crc32 = 0;
-    crc                  = efi_crc32((const rt_uint8_t *)(*gpt), rt_le32_to_cpu((*gpt)->header_size));
+    crc = efi_crc32((const rt_uint8_t *)(*gpt), rt_le32_to_cpu((*gpt)->header_size));
 
     if (crc != origcrc)
     {
@@ -695,13 +698,13 @@ static void compare_gpts(struct rt_blk_disk *disk,
 static rt_bool_t find_valid_gpt(struct rt_blk_disk *disk,
                                 gpt_header **gpt, gpt_entry **ptes)
 {
-    int         good_pgpt = 0, good_agpt = 0, good_pmbr = 0;
+    int good_pgpt = 0, good_agpt = 0, good_pmbr = 0;
     gpt_header *pgpt = RT_NULL, *agpt = RT_NULL;
-    gpt_entry  *pptes = RT_NULL, *aptes = RT_NULL;
+    gpt_entry *pptes = RT_NULL, *aptes = RT_NULL;
     legacy_mbr *legacymbr;
-    rt_ssize_t  cap_ss = rt_blk_disk_get_capacity(disk);
-    rt_size_t   total_sectors;
-    rt_size_t   lastlba;
+    rt_ssize_t cap_ss = rt_blk_disk_get_capacity(disk);
+    rt_size_t total_sectors;
+    rt_size_t lastlba;
 
     if (!ptes)
     {
@@ -766,7 +769,7 @@ static rt_bool_t find_valid_gpt(struct rt_blk_disk *disk,
     /* The good cases */
     if (good_pgpt)
     {
-        *gpt  = pgpt;
+        *gpt = pgpt;
         *ptes = pptes;
         rt_free(agpt);
         rt_free(aptes);
@@ -780,7 +783,7 @@ static rt_bool_t find_valid_gpt(struct rt_blk_disk *disk,
     }
     else if (good_agpt)
     {
-        *gpt  = agpt;
+        *gpt = agpt;
         *ptes = aptes;
         rt_free(pgpt);
         rt_free(pptes);
@@ -796,7 +799,7 @@ _fail:
     rt_free(pptes);
     rt_free(aptes);
 
-    *gpt  = RT_NULL;
+    *gpt = RT_NULL;
     *ptes = RT_NULL;
 
     return RT_FALSE;
@@ -805,8 +808,8 @@ _fail:
 rt_err_t efi_partition(struct rt_blk_disk *disk)
 {
     rt_uint32_t entries_nr;
-    gpt_header *gpt  = RT_NULL;
-    gpt_entry  *ptes = RT_NULL;
+    gpt_header *gpt = RT_NULL;
+    gpt_entry *ptes = RT_NULL;
 
     if (!find_valid_gpt(disk, &gpt, &ptes) || !gpt || !ptes)
     {
@@ -821,8 +824,8 @@ rt_err_t efi_partition(struct rt_blk_disk *disk)
     for (int i = 0; i < entries_nr && i < disk->max_partitions; ++i)
     {
         rt_uint64_t start = rt_le64_to_cpu(ptes[i].starting_lba);
-        rt_uint64_t size  = rt_le64_to_cpu(ptes[i].ending_lba) -
-                            rt_le64_to_cpu(ptes[i].starting_lba) + 1ULL;
+        rt_uint64_t size = rt_le64_to_cpu(ptes[i].ending_lba) -
+                           rt_le64_to_cpu(ptes[i].starting_lba) + 1ULL;
 
         if (!is_pte_valid(&ptes[i], last_lba(disk)))
         {
