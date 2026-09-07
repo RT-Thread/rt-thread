@@ -7,18 +7,24 @@ The development of embedded software is inseparable from the development board. 
 We need to type commands as following in the terminal:
 
 ```shell
-sudo apt install gcc
-sudo apt install python3
-sudo apt install python3-pip
-sudo apt install gcc-arm-none-eabi
-sudo apt install gdb-arm-none-eabi
-sudo apt install binutils-arm-none-eabi
-sudo apt install scons
-sudo apt install libncurses5-dev
-sudo apt install qemu
-sudo apt install qemu-system-arm
-sudo apt install git
+sudo apt install git gcc scons python3 python3-kconfiglib \
+    gcc-arm-none-eabi binutils-arm-none-eabi libstdc++-arm-none-eabi-newlib \
+    gdb-multiarch qemu-system-arm libncurses-dev
 ```
+
+> Note for users of older tutorials or older distributions: several package
+> names used to be different, and some no longer exist at all. If a package is
+> reported as not found, check the table below:
+>
+> | Old package name | Current package name | Reason |
+> | ---------------- | -------------------- | ------ |
+> | `gdb-arm-none-eabi` | `gdb-multiarch` | Dropped since Debian 11 / Ubuntu 22.04 |
+> | `qemu` | `qemu-system-arm` | The `qemu` meta-package has been split up; install only the ARM system emulator |
+> | `libncurses5-dev` | `libncurses-dev` | The `ncurses5` transitional package has been removed |
+>
+> `libstdc++-arm-none-eabi-newlib` is required at link time. Without it the
+> build fails with `cannot find -lsupc++`, which does not make the missing
+> package obvious.
 
 ## 2 Get RT-Thread source code
 
@@ -74,6 +80,11 @@ Type following the command under  `bsp/qemu-vexpress-a9` folder:
 ```
 scons --menuconfig
 ```
+
+`scons --menuconfig` requires `kconfiglib`. It is installed as
+`python3-kconfiglib` by the command in chapter 1. Installing it with
+`pip install kconfiglib` instead fails on recent Debian/Ubuntu releases,
+because PEP 668 marks the system Python environment as externally managed.
 
 The Env tool will be installed and initialized after using the `scons --menuconfig` command. Then it will enter the configuration interface, and you could configure the BSP:
 
