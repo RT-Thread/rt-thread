@@ -12,52 +12,85 @@
 #include <drivers/dev_mmcsd_core.h>
 #include <drivers/dev_sd.h>
 
-#define DBG_TAG               "SDIO"
+#define DBG_TAG "SDIO"
 #ifdef RT_SDIO_DEBUG
-#define DBG_LVL               DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LVL               DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif /* RT_SDIO_DEBUG */
 #include <rtdbg.h>
 
-static const rt_uint32_t tran_unit[] =
-{
+static const rt_uint32_t tran_unit[] = {
     10000, 100000, 1000000, 10000000,
-    0,     0,      0,       0
+    0, 0, 0, 0
 };
 
-static const rt_uint8_t tran_value[] =
-{
-    0,  10, 12, 13, 15, 20, 25, 30,
-    35, 40, 45, 50, 55, 60, 70, 80,
+static const rt_uint8_t tran_value[] = {
+    0,
+    10,
+    12,
+    13,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    70,
+    80,
 };
 
-static const rt_uint32_t tacc_uint[] =
-{
-    1, 10, 100, 1000, 10000, 100000, 1000000, 10000000,
+static const rt_uint32_t tacc_uint[] = {
+    1,
+    10,
+    100,
+    1000,
+    10000,
+    100000,
+    1000000,
+    10000000,
 };
 
-static const rt_uint8_t tacc_value[] =
-{
-    0,  10, 12, 13, 15, 20, 25, 30,
-    35, 40, 45, 50, 55, 60, 70, 80,
+static const rt_uint8_t tacc_value[] = {
+    0,
+    10,
+    12,
+    13,
+    15,
+    20,
+    25,
+    30,
+    35,
+    40,
+    45,
+    50,
+    55,
+    60,
+    70,
+    80,
 };
 
 rt_inline rt_uint32_t GET_BITS(rt_uint32_t *resp,
-                               rt_uint32_t  start,
-                               rt_uint32_t  size)
+                               rt_uint32_t start,
+                               rt_uint32_t size)
 {
-        const rt_int32_t __size = size;
-        const rt_uint32_t __mask = (__size < 32 ? 1U << __size : 0) - 1;
-        const rt_int32_t __off = 3 - ((start) / 32);
-        const rt_int32_t __shft = (start) & 31;
-        rt_uint32_t __res;
+    const rt_int32_t __size = size;
+    const rt_uint32_t __mask = (__size < 32 ? 1U << __size : 0) - 1;
+    const rt_int32_t __off = 3 - ((start) / 32);
+    const rt_int32_t __shft = (start) & 31;
+    rt_uint32_t __res;
 
-        __res = resp[__off] >> __shft;
-        if (__size + __shft > 32)
-            __res |= resp[__off-1] << ((32 - __shft) % 32);
+    __res = resp[__off] >> __shft;
+    if (__size + __shft > 32)
+    {
+        __res |= resp[__off - 1] << ((32 - __shft) % 32);
+    }
 
-        return __res & __mask;
+    return __res & __mask;
 }
 
 static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
@@ -91,8 +124,8 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
         card->card_capacity *= card->card_blksize;
         card->card_capacity >>= 10; /* unit:KB */
         card->tacc_clks = csd->nsac * 100;
-        card->tacc_ns = (tacc_uint[csd->taac&0x07] * tacc_value[(csd->taac&0x78)>>3] + 9) / 10;
-        card->max_data_rate = tran_unit[csd->tran_speed&0x07] * tran_value[(csd->tran_speed&0x78)>>3];
+        card->tacc_ns = (tacc_uint[csd->taac & 0x07] * tacc_value[(csd->taac & 0x78) >> 3] + 9) / 10;
+        card->max_data_rate = tran_unit[csd->tran_speed & 0x07] * tran_value[(csd->tran_speed & 0x78) >> 3];
 
         break;
     case 1:
@@ -123,7 +156,7 @@ static rt_int32_t mmcsd_parse_csd(struct rt_mmcsd_card *card)
         card->card_sec_cnt = card->card_capacity * 2;
         card->tacc_clks = 0;
         card->tacc_ns = 0;
-        card->max_data_rate = tran_unit[csd->tran_speed&0x07] * tran_value[(csd->tran_speed&0x78)>>3];
+        card->max_data_rate = tran_unit[csd->tran_speed & 0x07] * tran_value[(csd->tran_speed & 0x78) >> 3];
 
         break;
     default:
@@ -158,7 +191,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
     struct rt_mmcsd_data data;
     rt_uint8_t *buf;
 
-    buf = (rt_uint8_t*)rt_malloc(64);
+    buf = (rt_uint8_t *)rt_malloc(64);
     if (!buf)
     {
         LOG_E("alloc memory failed!");
@@ -167,9 +200,13 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
     }
 
     if (card->card_type != CARD_TYPE_SD)
+    {
         goto err;
+    }
     if (card->scr.sd_version < SCR_SPEC_VER_1)
+    {
         goto err;
+    }
 
     rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
 
@@ -199,7 +236,9 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
     }
 
     if (buf[13] & 0x02)
+    {
         card->hs_max_data_rate = 50000000;
+    }
 
     rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
 
@@ -252,7 +291,7 @@ static rt_int32_t mmcsd_switch(struct rt_mmcsd_card *card)
         goto err;
     }
 
-    switch(switch_func_timing)
+    switch (switch_func_timing)
     {
     case SD_SWITCH_FUNC_TIMING_SDR104:
         card->flags |= CARD_FLAG_SDR104;
@@ -307,9 +346,13 @@ err:
 
 err1:
     if (cmd.err)
+    {
         err = cmd.err;
+    }
     if (data.err)
+    {
         err = data.err;
+    }
 
     return err;
 }
@@ -318,7 +361,7 @@ static rt_err_t mmcsd_app_cmd(struct rt_mmcsd_host *host,
                               struct rt_mmcsd_card *card)
 {
     rt_err_t err;
-    struct rt_mmcsd_cmd cmd = {0};
+    struct rt_mmcsd_cmd cmd = { 0 };
 
     cmd.cmd_code = APP_CMD;
 
@@ -335,11 +378,15 @@ static rt_err_t mmcsd_app_cmd(struct rt_mmcsd_host *host,
 
     err = mmcsd_send_cmd(host, &cmd, 0);
     if (err)
+    {
         return err;
+    }
 
     /* Check that card supported application commands */
     if (!controller_is_spi(host) && !(cmd.resp[0] & R1_APP_CMD))
+    {
         return -RT_ERROR;
+    }
 
     return RT_EOK;
 }
@@ -347,8 +394,8 @@ static rt_err_t mmcsd_app_cmd(struct rt_mmcsd_host *host,
 
 rt_err_t mmcsd_send_app_cmd(struct rt_mmcsd_host *host,
                             struct rt_mmcsd_card *card,
-                            struct rt_mmcsd_cmd  *cmd,
-                            int                   retry)
+                            struct rt_mmcsd_cmd *cmd,
+                            int retry)
 {
     struct rt_mmcsd_req req;
     int i;
@@ -371,7 +418,9 @@ rt_err_t mmcsd_send_app_cmd(struct rt_mmcsd_host *host,
             if (controller_is_spi(host))
             {
                 if (cmd->resp[0] & R1_SPI_ILLEGAL_COMMAND)
+                {
                     break;
+                }
             }
             continue;
         }
@@ -387,13 +436,17 @@ rt_err_t mmcsd_send_app_cmd(struct rt_mmcsd_host *host,
 
         err = cmd->err;
         if (!cmd->err)
+        {
             break;
+        }
 
         /* no point in retrying illegal APP commands */
         if (controller_is_spi(host))
         {
             if (cmd->resp[0] & R1_SPI_ILLEGAL_COMMAND)
+            {
                 break;
+            }
         }
     }
 
@@ -424,14 +477,16 @@ rt_err_t mmcsd_app_set_bus_width(struct rt_mmcsd_card *card, rt_int32_t width)
 
     err = mmcsd_send_app_cmd(card->host, card, &cmd, 3);
     if (err)
+    {
         return err;
+    }
 
     return RT_EOK;
 }
 
 rt_err_t mmcsd_send_app_op_cond(struct rt_mmcsd_host *host,
-                                rt_uint32_t           ocr,
-                                rt_uint32_t          *rocr)
+                                rt_uint32_t ocr,
+                                rt_uint32_t *rocr)
 {
     struct rt_mmcsd_cmd cmd;
     rt_uint32_t i;
@@ -441,31 +496,43 @@ rt_err_t mmcsd_send_app_op_cond(struct rt_mmcsd_host *host,
 
     cmd.cmd_code = SD_APP_OP_COND;
     if (controller_is_spi(host))
+    {
         cmd.arg = ocr & (1 << 30); /* SPI only defines one bit */
+    }
     else
+    {
         cmd.arg = ocr;
+    }
     cmd.flags = RESP_SPI_R1 | RESP_R3 | CMD_BCR;
 
     for (i = 1000; i; i--)
     {
         err = mmcsd_send_app_cmd(host, RT_NULL, &cmd, 3);
         if (err)
+        {
             break;
+        }
 
         /* if we're just probing, do a single pass */
         if (ocr == 0)
+        {
             break;
+        }
 
         /* otherwise wait until reset completes */
         if (controller_is_spi(host))
         {
             if (!(cmd.resp[0] & R1_SPI_IDLE))
+            {
                 break;
+            }
         }
         else
         {
             if (cmd.resp[0] & CARD_BUSY)
+            {
                 break;
+            }
         }
 
         err = -RT_ETIMEOUT;
@@ -474,7 +541,9 @@ rt_err_t mmcsd_send_app_op_cond(struct rt_mmcsd_host *host,
     }
 
     if (rocr && !controller_is_spi(host))
+    {
         *rocr = cmd.resp[0];
+    }
 
     return err;
 }
@@ -496,15 +565,23 @@ rt_err_t mmcsd_send_if_cond(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 
     err = mmcsd_send_cmd(host, &cmd, 0);
     if (err)
+    {
         return err;
+    }
 
     if (controller_is_spi(host))
+    {
         pattern = cmd.resp[1] & 0xFF;
+    }
     else
+    {
         pattern = cmd.resp[0] & 0xFF;
+    }
 
     if (pattern != 0xAA)
+    {
         return -RT_ERROR;
+    }
 
     return RT_EOK;
 }
@@ -522,18 +599,19 @@ rt_err_t mmcsd_get_card_addr(struct rt_mmcsd_host *host, rt_uint32_t *rca)
 
     err = mmcsd_send_cmd(host, &cmd, 3);
     if (err)
+    {
         return err;
+    }
 
     *rca = cmd.resp[0] >> 16;
 
     return RT_EOK;
 }
 
-#define be32_to_cpu(x) ((rt_uint32_t)(              \
-    (((rt_uint32_t)(x) & (rt_uint32_t)0x000000ffUL) << 24) |        \
-    (((rt_uint32_t)(x) & (rt_uint32_t)0x0000ff00UL) <<  8) |        \
-    (((rt_uint32_t)(x) & (rt_uint32_t)0x00ff0000UL) >>  8) |        \
-    (((rt_uint32_t)(x) & (rt_uint32_t)0xff000000UL) >> 24)))
+#define be32_to_cpu(x) ((rt_uint32_t)((((rt_uint32_t)(x) & (rt_uint32_t)0x000000ffUL) << 24) | \
+                                      (((rt_uint32_t)(x) & (rt_uint32_t)0x0000ff00UL) << 8) |  \
+                                      (((rt_uint32_t)(x) & (rt_uint32_t)0x00ff0000UL) >> 8) |  \
+                                      (((rt_uint32_t)(x) & (rt_uint32_t)0xff000000UL) >> 24)))
 
 rt_int32_t mmcsd_get_scr(struct rt_mmcsd_card *card, rt_uint32_t *scr)
 {
@@ -544,7 +622,9 @@ rt_int32_t mmcsd_get_scr(struct rt_mmcsd_card *card, rt_uint32_t *scr)
 
     err = mmcsd_app_cmd(card->host, card);
     if (err)
+    {
         return err;
+    }
 
     rt_memset(&req, 0, sizeof(struct rt_mmcsd_req));
     rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
@@ -567,9 +647,13 @@ rt_int32_t mmcsd_get_scr(struct rt_mmcsd_card *card, rt_uint32_t *scr)
     mmcsd_send_request(card->host, &req);
 
     if (cmd.err)
+    {
         return cmd.err;
+    }
     if (data.err)
+    {
         return data.err;
+    }
 
     scr[0] = be32_to_cpu(scr[0]);
     scr[1] = be32_to_cpu(scr[1]);
@@ -586,7 +670,9 @@ static rt_err_t mmcsd_read_sd_status(struct rt_mmcsd_card *card, rt_uint32_t *sd
 
     err = mmcsd_app_cmd(card->host, card);
     if (err)
+    {
         return err;
+    }
 
     rt_memset(&req, 0, sizeof(struct rt_mmcsd_req));
     rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
@@ -609,18 +695,22 @@ static rt_err_t mmcsd_read_sd_status(struct rt_mmcsd_card *card, rt_uint32_t *sd
     mmcsd_send_request(card->host, &req);
 
     if (cmd.err)
+    {
         return cmd.err;
+    }
     if (data.err)
+    {
         return data.err;
+    }
 
     /* Convert endian */
-    for (uint32_t i=0; i < 8; i++)
+    for (uint32_t i = 0; i < 8; i++)
     {
         uint32_t tmp = sd_status[i];
         sd_status[i] = sd_status[15 - i];
         sd_status[15 - i] = tmp;
     }
-    for (uint32_t i=0; i < 16; i++)
+    for (uint32_t i = 0; i < 16; i++)
     {
         sd_status[i] = be32_to_cpu(sd_status[i]);
     }
@@ -630,7 +720,7 @@ static rt_err_t mmcsd_read_sd_status(struct rt_mmcsd_card *card, rt_uint32_t *sd
 }
 
 static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
-                                     rt_uint32_t           ocr)
+                                     rt_uint32_t ocr)
 {
     struct rt_mmcsd_card *card;
     rt_int32_t err;
@@ -647,7 +737,9 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
      */
     err = mmcsd_send_if_cond(host, ocr);
     if (!err)
+    {
         ocr |= 1 << 30;
+    }
 
     /* Switch to UHS voltage if both Host and the Card support this feature */
     if (((host->valid_ocr & VDD_165_195) != 0) && (host->ops->signal_voltage_switch != RT_NULL))
@@ -656,7 +748,9 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     }
     err = mmcsd_send_app_op_cond(host, ocr, &ocr);
     if (err)
+    {
         goto err2;
+    }
 
     /* Select voltage */
     if (ocr & OCR_S18R)
@@ -664,15 +758,23 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
         ocr = VDD_165_195;
         err = mmcsd_set_uhs_voltage(host, ocr);
         if (err)
+        {
             goto err2;
+        }
     }
 
     if (controller_is_spi(host))
+    {
         err = mmcsd_get_cid(host, resp);
+    }
     else
+    {
         err = mmcsd_all_get_cid(host, resp);
+    }
     if (err)
+    {
         goto err2;
+    }
 
     card = rt_malloc(sizeof(struct rt_mmcsd_card));
     if (!card)
@@ -694,29 +796,39 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     {
         err = mmcsd_get_card_addr(host, &card->rca);
         if (err)
+        {
             goto err1;
+        }
 
         mmcsd_set_bus_mode(host, MMCSD_BUSMODE_PUSHPULL);
     }
 
     err = mmcsd_get_csd(card, card->resp_csd);
     if (err)
+    {
         goto err1;
+    }
 
     err = mmcsd_parse_csd(card);
     if (err)
+    {
         goto err1;
+    }
 
     if (!controller_is_spi(host))
     {
         err = mmcsd_select_card(card);
         if (err)
+        {
             goto err1;
+        }
     }
 
     err = mmcsd_get_scr(card, card->resp_scr);
     if (err)
+    {
         goto err1;
+    }
 
     mmcsd_parse_scr(card);
 
@@ -724,7 +836,9 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     {
         err = mmcsd_spi_use_crc(host, 1);
         if (err)
+        {
             goto err1;
+        }
     }
 
     mmcsd_set_timing(host, MMCSD_TIMING_LEGACY);
@@ -734,7 +848,9 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     {
         err = mmcsd_app_set_bus_width(card, MMCSD_BUS_WIDTH_4);
         if (err)
+        {
             goto err1;
+        }
 
         mmcsd_set_bus_width(host, MMCSD_BUS_WIDTH_4);
     }
@@ -743,8 +859,10 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     union rt_sd_status sd_status;
     err = mmcsd_read_sd_status(card, sd_status.status_words);
     if (err)
+    {
         goto err1;
-    if ((sd_status.uhs_speed_grade > 0) && (ocr & VDD_165_195))
+    }
+    if ((RT_SD_STATUS_FIELD(sd_status, uhs_speed_grade) > 0) && (ocr & VDD_165_195))
     {
         /* Assume the card supports all UHS-I modes because we cannot find any mainstreaming card
          * that can support only part of the following modes.
@@ -757,7 +875,9 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
      */
     err = mmcsd_switch(card);
     if (err)
+    {
         goto err1;
+    }
 
     /* set bus speed */
     max_data_rate = 0U;
@@ -788,7 +908,7 @@ err2:
 rt_int32_t init_sd(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 {
     rt_int32_t err = -RT_EINVAL;
-    rt_uint32_t  current_ocr;
+    rt_uint32_t current_ocr;
     /*
      * We need to get OCR a different way for SPI.
      */
@@ -798,7 +918,9 @@ rt_int32_t init_sd(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 
         err = mmcsd_spi_read_ocr(host, 0, &ocr);
         if (err)
+        {
             goto _err;
+        }
     }
 
     current_ocr = mmcsd_select_voltage(host, ocr);
@@ -817,13 +939,17 @@ rt_int32_t init_sd(struct rt_mmcsd_host *host, rt_uint32_t ocr)
      */
     err = mmcsd_sd_init_card(host, current_ocr);
     if (err)
+    {
         goto _err;
+    }
 
     mmcsd_host_unlock(host);
 
     err = rt_mmcsd_blk_probe(host->card);
     if (err)
+    {
         goto remove_card;
+    }
     mmcsd_host_lock(host);
 
     return 0;
