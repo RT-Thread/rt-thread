@@ -58,8 +58,13 @@ if GetDepend(['RT_UTEST_MTSAFE_KPRINT']):
 if GetDepend(['RT_UTEST_MEMPOOL']):
     src += ['mempool_tc.c']
 
+if GetDepend(['RT_UTEST_MEM_ALIGN']):
+    src += [os.path.join(cwd, '../../examples/test/mem_align_test.c')]
+
 if GetDepend(['RT_UTEST_ASAN']):
     src += ['asan_tc.c']
+    if GetDepend(['RT_USING_CPLUSPLUS']):
+        src += [os.path.join(cwd, '../../examples/test/asan_cpp_test.cpp')]
 
 # Stressful testcase for scheduler (MP/UP)
 if GetDepend(['RT_UTEST_SCHEDULER']):

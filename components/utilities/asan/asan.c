@@ -27,8 +27,8 @@
  * shadow byte (8 bytes of application memory -> 1 shadow byte) and report
  * when the access touches a poisoned granule.
  *
- * The system heap is poisoned/unpoisoned via the existing rt_malloc/rt_free
- * hooks, which gives heap buffer overflow and use-after-free detection.
+ * The system heap calls this runtime while holding its allocator lock. Each
+ * allocation reserves a header and redzones independently of the tracking table.
  */
 
 /* ---- shadow memory ---- */
@@ -36,12 +36,40 @@ static rt_uintptr_t asan_heap_base;                          /* first checked ad
 static rt_uintptr_t asan_heap_limit;                         /* base + coverage */
 static rt_uint8_t asan_shadow[RT_ASAN_SHADOW_SIZE];         /* 8 bytes -> 1 byte */
 
+/* Use hardware locks: scheduler-aware spinlocks can access heap-allocated
+ * thread objects and recursively enter the sanitizer. Never print or call
+ * instrumented memory helpers while this lock is held.
+ */
+#ifdef RT_USING_SMP
+static RT_DEFINE_HW_SPINLOCK(asan_spinlock);
+#endif
+
+static rt_base_t asan_lock(void)
+{
+    rt_base_t level = rt_hw_local_irq_disable();
+#ifdef RT_USING_SMP
+    rt_hw_spin_lock(&asan_spinlock);
+#endif
+    return level;
+}
+
+static void asan_unlock(rt_base_t level)
+{
+#ifdef RT_USING_SMP
+    rt_hw_spin_unlock(&asan_spinlock);
+#endif
+    rt_hw_local_irq_enable(level);
+}
+
 /* total number of violations reported, exposed for utest/CI verification */
 static volatile rt_uint32_t asan_report_count;
 
 rt_uint32_t rt_asan_report_count_get(void)
 {
-    return asan_report_count;
+    rt_base_t level = asan_lock();
+    rt_uint32_t count = asan_report_count;
+    asan_unlock(level);
+    return count;
 }
 
 #define ASAN_SHADOW_SCALE 8
@@ -56,7 +84,7 @@ rt_uint32_t rt_asan_report_count_get(void)
 struct asan_track
 {
     rt_uintptr_t ptr;
-    rt_uint32_t size;
+    rt_size_t size;
     rt_uint8_t used;
     char owner[RT_NAME_MAX];
 };
@@ -75,114 +103,90 @@ rt_inline rt_bool_t asan_addr_in_range(rt_uintptr_t addr)
 /* check whether [addr, addr+size) touches any poisoned byte */
 static rt_bool_t asan_range_is_poisoned(rt_uintptr_t addr, rt_size_t size)
 {
-    rt_uintptr_t a = addr;
-    rt_uintptr_t end = addr + size;
+    rt_uintptr_t off;
+    rt_size_t n;
+    rt_uint8_t shadow;
+    rt_bool_t poisoned = RT_FALSE;
+    rt_base_t level;
 
-    if (size == 0)
+    if (!size || addr >= asan_heap_limit)
     {
         return RT_FALSE;
     }
-
-    while (a < end)
+    if (addr < asan_heap_base)
     {
-        rt_uintptr_t off;
-        rt_uint8_t s;
-        rt_size_t n;
-
-        if (!asan_addr_in_range(a))
+        n = asan_heap_base - addr;
+        if (size <= n)
         {
-            return RT_FALSE;   /* outside shadow coverage: not checked */
+            return RT_FALSE;
         }
-
-        off = a - asan_heap_base;
-        s = asan_shadow[off >> 3];
-
-        if (s == 0)
-        {
-            /* whole granule addressable */
-            n = ASAN_SHADOW_SCALE - (off & (ASAN_SHADOW_SCALE - 1));
-        }
-        else if (s >= ASAN_SHADOW_SCALE)
-        {
-            return RT_TRUE;    /* whole granule poisoned */
-        }
-        else
-        {
-            /* partial granule: first s bytes addressable */
-            if ((off & (ASAN_SHADOW_SCALE - 1)) >= s)
-            {
-                return RT_TRUE;
-            }
-            n = s - (off & (ASAN_SHADOW_SCALE - 1));
-        }
-
-        if (n >= end - a)
-        {
-            return RT_FALSE;   /* remaining bytes are addressable */
-        }
-        a += n;
+        addr = asan_heap_base;
+        size -= n;
     }
-
-    return RT_FALSE;
+    size = ASAN_MIN(size, asan_heap_limit - addr);
+    level = asan_lock();
+    while (size)
+    {
+        off = addr - asan_heap_base;
+        n = ASAN_MIN(ASAN_SHADOW_SCALE - (off & (ASAN_SHADOW_SCALE - 1)), size);
+        shadow = asan_shadow[off >> 3];
+        if (shadow && (shadow >= ASAN_SHADOW_SCALE ||
+                       (off & (ASAN_SHADOW_SCALE - 1)) + n > shadow))
+        {
+            poisoned = RT_TRUE;
+            break;
+        }
+        addr += n;
+        size -= n;
+    }
+    asan_unlock(level);
+    return poisoned;
 }
 
 static void asan_locate_block(rt_uintptr_t addr)
 {
-    rt_uint32_t i;
-    rt_uint32_t best = RT_ASAN_TRACK_MAX;
+    struct asan_track block = { 0 };
+    const char *kind = "overflow candidate";
     rt_uintptr_t best_end = 0;
+    rt_bool_t freed = RT_FALSE;
+    rt_uint32_t i;
+    rt_base_t level = asan_lock();
 
-    /* 1. exact match: addr is inside an active block */
+    if (asan_last_freed.used && addr >= asan_last_freed.ptr &&
+        addr - asan_last_freed.ptr < asan_last_freed.size)
+    {
+        block = asan_last_freed;
+        kind = "USE-AFTER-FREE";
+        freed = RT_TRUE;
+    }
     for (i = 0; i < RT_ASAN_TRACK_MAX; i++)
     {
-        if (asan_tracks[i].used &&
-            addr >= asan_tracks[i].ptr &&
-            addr < asan_tracks[i].ptr + asan_tracks[i].size)
-        {
-            rt_kprintf("== block  : 0x%08x size %d owner %.*s (inside block, offset +%d)\n",
-                       asan_tracks[i].ptr, asan_tracks[i].size,
-                       RT_NAME_MAX, asan_tracks[i].owner,
-                       addr - asan_tracks[i].ptr);
-            return;
-        }
-    }
-
-    /* 2. use-after-free: addr is inside the most recently freed block */
-    if (asan_last_freed.used &&
-        addr >= asan_last_freed.ptr &&
-        addr < asan_last_freed.ptr + asan_last_freed.size)
-    {
-        rt_kprintf("== block  : 0x%08x size %d owner %.*s (USE-AFTER-FREE, offset +%d)\n",
-                   asan_last_freed.ptr, asan_last_freed.size,
-                   RT_NAME_MAX, asan_last_freed.owner,
-                   addr - asan_last_freed.ptr);
-        return;
-    }
-
-    /* 3. overflow candidate: the active block whose tail is closest below addr */
-    for (i = 0; i < RT_ASAN_TRACK_MAX; i++)
-    {
-        rt_uintptr_t blk_end;
-
         if (!asan_tracks[i].used)
         {
             continue;
         }
-
-        blk_end = asan_tracks[i].ptr + asan_tracks[i].size;
-        if (blk_end <= addr && blk_end >= best_end)
+        if (addr >= asan_tracks[i].ptr && addr - asan_tracks[i].ptr < asan_tracks[i].size)
         {
-            best = i;
-            best_end = blk_end;
+            block = asan_tracks[i];
+            kind = "inside block";
+            break;
+        }
+        if (!freed)
+        {
+            rt_uintptr_t end = asan_tracks[i].ptr + asan_tracks[i].size;
+            if (end <= addr && end >= best_end)
+            {
+                best_end = end;
+                block = asan_tracks[i];
+            }
         }
     }
-
-    if (best != RT_ASAN_TRACK_MAX)
+    asan_unlock(level);
+    if (block.used)
     {
-        rt_kprintf("== block  : 0x%08x size %d owner %.*s (overflow by %d bytes)\n",
-                   asan_tracks[best].ptr, asan_tracks[best].size,
-                   RT_NAME_MAX, asan_tracks[best].owner,
-                   addr - best_end);
+        rt_kprintf("== block  : %p size %lu owner %.*s (%s, offset +%lu)\n",
+                   (void *)block.ptr, (unsigned long)block.size,
+                   RT_NAME_MAX, block.owner, kind, (unsigned long)(addr - block.ptr));
     }
     else
     {
@@ -194,14 +198,16 @@ static void asan_report(rt_uintptr_t addr, rt_size_t size, rt_bool_t is_write, r
 {
     rt_thread_t self = rt_thread_self();
 
+    rt_base_t level = asan_lock();
     asan_report_count++;
+    asan_unlock(level);
 
     rt_kprintf("\n");
     rt_kprintf("=================================================================\n");
     rt_kprintf("== ADDRESS SANITIZER: %s\n",
-               is_write ? "heap-buffer-overflow on WRITE" : "heap-buffer-overflow on READ");
-    rt_kprintf("== address: 0x%08x  size: %d\n", addr, size);
-    rt_kprintf("== pc     : 0x%08x\n", pc);
+               is_write ? "invalid heap access on WRITE" : "invalid heap access on READ");
+    rt_kprintf("== address: %p  size: %lu\n", (void *)addr, (unsigned long)size);
+    rt_kprintf("== pc     : %p\n", (void *)pc);
     if (self)
     {
         rt_kprintf("== thread : %.*s\n", RT_NAME_MAX, self->parent.name);
@@ -281,15 +287,15 @@ static void asan_unpoison_range(rt_uintptr_t addr, rt_size_t size)
         off = a - asan_heap_base;
         sh = &asan_shadow[off >> 3];
         k = off & (ASAN_SHADOW_SCALE - 1);
-        n = ASAN_MIN(ASAN_SHADOW_SCALE - k, end - a);
+        n = ASAN_MIN((rt_size_t)(ASAN_SHADOW_SCALE - k), end - a);
 
-        if (n == ASAN_SHADOW_SCALE)
+        if (k + n == ASAN_SHADOW_SCALE)
         {
             *sh = 0;                    /* whole granule addressable */
         }
         else
         {
-            *sh = (rt_uint8_t)n;        /* first n bytes addressable */
+            *sh = (rt_uint8_t)(k + n);   /* addressable prefix through this range */
         }
 
         a += n;
@@ -321,7 +327,7 @@ static void asan_poison_range(rt_uintptr_t addr, rt_size_t size)
         off = a - asan_heap_base;
         sh = &asan_shadow[off >> 3];
         k = off & (ASAN_SHADOW_SCALE - 1);
-        n = ASAN_MIN(ASAN_SHADOW_SCALE - k, end - a);
+        n = ASAN_MIN((rt_size_t)(ASAN_SHADOW_SCALE - k), end - a);
 
         if (n == ASAN_SHADOW_SCALE)
         {
@@ -337,7 +343,7 @@ static void asan_poison_range(rt_uintptr_t addr, rt_size_t size)
 }
 
 /* ---- allocation tracking ---- */
-static void asan_track_add(rt_uintptr_t ptr, rt_size_t size)
+static void asan_track_add(rt_uintptr_t ptr, rt_size_t size, rt_thread_t self)
 {
     rt_uint32_t i;
 
@@ -359,13 +365,17 @@ static void asan_track_add(rt_uintptr_t ptr, rt_size_t size)
             asan_tracks[i].ptr = ptr;
             asan_tracks[i].size = size;
             asan_tracks[i].used = 1;
-            if (rt_thread_self())
             {
-                rt_strncpy(asan_tracks[i].owner, rt_thread_self()->parent.name, RT_NAME_MAX - 1);
-            }
-            else
-            {
-                rt_memset(asan_tracks[i].owner, 0, RT_NAME_MAX);
+                rt_size_t n = 0;
+                if (self)
+                {
+                    while (n < RT_NAME_MAX - 1 && self->parent.name[n])
+                    {
+                        asan_tracks[i].owner[n] = self->parent.name[n];
+                        n++;
+                    }
+                }
+                asan_tracks[i].owner[n] = '\0';
             }
             return;
         }
@@ -387,140 +397,176 @@ static rt_uint32_t asan_track_find(rt_uintptr_t ptr)
     return RT_ASAN_TRACK_MAX;   /* not found */
 }
 
-static void asan_malloc_hook(void **ptr, rt_size_t size)
+/* The user pointer is aligned independently of the underlying heap's alignment.
+ * Keep allocation metadata in-band so tracking-table exhaustion is harmless.
+ */
+#define ASAN_ALIGNMENT ((RT_ALIGN_SIZE > ASAN_SHADOW_SCALE) ? RT_ALIGN_SIZE : ASAN_SHADOW_SCALE)
+#define ASAN_REDZONE   ASAN_SHADOW_SCALE
+#ifdef RT_USING_SLAB_AS_HEAP
+#define ASAN_ALLOC_ALIGNMENT RT_MM_PAGE_SIZE
+#else
+#define ASAN_ALLOC_ALIGNMENT ASAN_ALIGNMENT
+#endif
+struct asan_header
 {
+    void *raw;
+    rt_size_t size;
+    rt_size_t capacity;
+};
+
+void *rt_asan_malloc(rt_size_t size, void *(*alloc)(rt_size_t))
+{
+    return rt_asan_malloc_align(size, ASAN_ALIGNMENT, alloc);
+}
+
+void *rt_asan_malloc_align(rt_size_t size, rt_size_t align, void *(*alloc)(rt_size_t))
+{
+    rt_size_t overhead;
+    struct asan_header *header;
     rt_uintptr_t p;
-    rt_size_t aligned;
+    void *raw;
+    rt_size_t capacity;
+    rt_base_t level;
+    rt_thread_t self;
 
-    if (!*ptr)
+    if (!size || !align || (align & (align - 1)))
     {
-        return;
+        return RT_NULL;
     }
+    if (align < ASAN_ALIGNMENT)
+    {
+        align = ASAN_ALIGNMENT;
+    }
+    /* A power-of-two alignment is at most half the address space, so this
+     * addition cannot wrap. Reserve room for both allocator rounding steps.
+     */
+    overhead = sizeof(struct asan_header) + align - 1 + ASAN_REDZONE;
+    if (size > (rt_size_t)-1 - overhead - (ASAN_ALIGNMENT - 1) - (ASAN_ALLOC_ALIGNMENT - 1))
+    {
+        return RT_NULL;
+    }
+    capacity = RT_ALIGN(size, ASAN_ALIGNMENT);
+    raw = alloc(capacity + overhead);
+    if (!raw)
+    {
+        return RT_NULL;
+    }
+    p = RT_ALIGN((rt_uintptr_t)raw + sizeof(*header), align);
+    header = (struct asan_header *)p - 1;
+    header->raw = raw;
+    header->size = size;
+    header->capacity = capacity;
+    self = rt_thread_self();
 
-    p = (rt_uintptr_t)*ptr;
-    aligned = RT_ALIGN(size, ASAN_SHADOW_SCALE);
-
-    /* address reuse: this block was freed before, clear the stale record */
+    level = asan_lock();
+    asan_unpoison_range((rt_uintptr_t)raw, p + capacity + ASAN_REDZONE - (rt_uintptr_t)raw);
+    asan_poison_range(p - ASAN_REDZONE, ASAN_REDZONE);
+    asan_unpoison_range(p, size);
+    asan_poison_range(p + size, capacity + ASAN_REDZONE - size);
     if (asan_last_freed.used && asan_last_freed.ptr == p)
     {
         asan_last_freed.used = 0;
     }
-
-    asan_track_add(p, size);
-    asan_unpoison_range(p, size);
-    if (aligned > size)
-    {
-        asan_poison_range(p + size, aligned - size);
-    }
+    asan_track_add(p, size, self);
+    asan_unlock(level);
+    return (void *)p;
 }
 
-static void asan_free_hook(void **ptr)
+void rt_asan_free(void *ptr, void (*release)(void *))
 {
-    rt_uintptr_t p;
+    struct asan_header *header;
+    rt_uintptr_t p = (rt_uintptr_t)ptr;
+    rt_size_t capacity;
+    void *raw;
     rt_uint32_t idx;
+    rt_base_t level;
 
-    if (!*ptr)
+    if (!ptr)
     {
         return;
     }
-
-    p = (rt_uintptr_t)*ptr;
+    header = (struct asan_header *)ptr - 1;
+    raw = header->raw;
+    capacity = header->capacity;
+    level = asan_lock();
     idx = asan_track_find(p);
-    if (idx == RT_ASAN_TRACK_MAX)
+    if (idx != RT_ASAN_TRACK_MAX)
     {
-        return;   /* unknown block, skip */
+        asan_last_freed = asan_tracks[idx];
+        asan_tracks[idx].used = 0;
     }
-
+    else
+    {
+        asan_last_freed.ptr = p;
+        asan_last_freed.size = header->size;
+        asan_last_freed.used = 1;
+        asan_last_freed.owner[0] = '\0';
+    }
+    /* Allocators may reuse any part of the raw block for their metadata. */
+    asan_unpoison_range((rt_uintptr_t)raw, p + capacity + ASAN_REDZONE - (rt_uintptr_t)raw);
+    asan_unlock(level);
+    release(raw);
 #if RT_ASAN_HAS_UAF_DETECTION
-    {
-        rt_size_t aligned = RT_ALIGN(asan_tracks[idx].size, ASAN_SHADOW_SCALE);
-        asan_poison_range(p, aligned);   /* poison whole block -> use-after-free */
-    }
+    /* The heap lock still prevents reuse while the shadow is updated. */
+    level = asan_lock();
+    asan_poison_range(p, capacity + ASAN_REDZONE);
+    asan_unlock(level);
 #endif
-
-    /* remember it for use-after-free diagnosis */
-    asan_last_freed = asan_tracks[idx];
-    asan_last_freed.used = 1;
-
-    asan_tracks[idx].used = 0;
 }
 
-/* rt_realloc frees/moves the old block and allocates a new one without going
- * through rt_free/rt_malloc, so its hooks must be handled separately. */
-static rt_uintptr_t asan_realloc_old_ptr;
-
-static void asan_realloc_entry_hook(void **ptr, rt_size_t size)
+void *rt_asan_realloc(void *ptr, rt_size_t size,
+                      void *(*alloc)(rt_size_t), void (*release)(void *))
 {
-    RT_UNUSED(size);
-    asan_realloc_old_ptr = (rt_uintptr_t)*ptr;
-}
+    struct asan_header *header;
+    void *result;
+    rt_base_t level;
+    rt_thread_t self;
 
-static void asan_realloc_exit_hook(void **ptr, rt_size_t size)
-{
-    rt_uintptr_t p;
-    rt_size_t aligned;
-    rt_uint32_t idx;
-
-    if (!*ptr)
+    if (!ptr)
     {
-        return;
+        return rt_asan_malloc(size, alloc);
     }
-
-    p = (rt_uintptr_t)*ptr;
-    aligned = RT_ALIGN(size, ASAN_SHADOW_SCALE);
-
-    /* when realloc moves the block, poison the old block so that a stale
-     * pointer to it is still detected as use-after-free */
-    if (asan_realloc_old_ptr && asan_realloc_old_ptr != p)
+    if (!size)
     {
-        idx = asan_track_find(asan_realloc_old_ptr);
-        if (idx != RT_ASAN_TRACK_MAX)
-        {
-#if RT_ASAN_HAS_UAF_DETECTION
-            rt_size_t old_aligned = RT_ALIGN(asan_tracks[idx].size, ASAN_SHADOW_SCALE);
-
-            asan_poison_range(asan_realloc_old_ptr, old_aligned);
-#endif
-            asan_tracks[idx].used = 0;
-        }
+        rt_asan_free(ptr, release);
+        return RT_NULL;
     }
-
-    /* address may have been reused internally by the allocator, drop any
-     * stale use-after-free record for it */
-    if (asan_last_freed.used && asan_last_freed.ptr == p)
+    header = (struct asan_header *)ptr - 1;
+    if (size <= header->capacity)
     {
-        asan_last_freed.used = 0;
+        self = rt_thread_self();
+        level = asan_lock();
+        header->size = size;
+        asan_unpoison_range((rt_uintptr_t)ptr, size);
+        asan_poison_range((rt_uintptr_t)ptr + size, header->capacity + ASAN_REDZONE - size);
+        asan_track_add((rt_uintptr_t)ptr, size, self);
+        asan_unlock(level);
+        return ptr;
     }
-
-    /* track and unpoison the new block, poison its tail redzone */
-    asan_track_add(p, size);
-    asan_unpoison_range(p, size);
-    if (aligned > size)
+    result = rt_asan_malloc(size, alloc);
+    if (result)
     {
-        asan_poison_range(p + size, aligned - size);
+        /* Copy only user bytes, never allocator padding or a redzone. */
+        rt_memcpy(result, ptr, header->size);
+        rt_asan_free(ptr, release);
     }
+    return result;
 }
 
 /*
  * Override the weak rt_system_heap_init to capture the heap range and
- * install the allocator hooks before the generic heap init runs.
+ * initialize the shadow before the generic heap init runs.
  */
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
     rt_uintptr_t begin = (rt_uintptr_t)begin_addr;
     rt_uintptr_t end = (rt_uintptr_t)end_addr;
 
-    /*
-     * The shadow maps one byte per ASAN_SHADOW_SCALE (8) bytes. Heap blocks
-     * are RT_ALIGN_SIZE (8) aligned, so align the shadow base to the same
-     * granularity to keep every block boundary on a shadow byte boundary.
-     * Otherwise (e.g. __bss_end is only 4-aligned) the partial-granule
-     * state cannot represent an addressable region and false positives occur
-     * right at block start.
-     */
+    /* User pointers are explicitly aligned to shadow granules. */
+    RT_ASSERT(end > begin && end - begin >= ASAN_SHADOW_SCALE);
     asan_heap_base = RT_ALIGN(begin, ASAN_SHADOW_SCALE);
-    asan_heap_limit = ASAN_MIN(end, asan_heap_base +
-                                        (rt_uintptr_t)sizeof(asan_shadow) * ASAN_SHADOW_SCALE);
+    asan_heap_limit = asan_heap_base + ASAN_MIN(end - asan_heap_base,
+                                                (rt_uintptr_t)sizeof(asan_shadow) * ASAN_SHADOW_SCALE);
 
     /*
      * Start with everything addressable: the heap allocators store their own
@@ -530,12 +576,6 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
      * block tail on allocation and the whole block on free instead.
      */
     rt_memset(asan_shadow, 0, sizeof(asan_shadow));
-
-    /* install allocator hooks */
-    rt_malloc_sethook(asan_malloc_hook);
-    rt_free_sethook(asan_free_hook);
-    rt_realloc_set_entry_hook(asan_realloc_entry_hook);
-    rt_realloc_set_exit_hook(asan_realloc_exit_hook);
 
     /* run the original heap init */
     rt_system_heap_init_generic(begin_addr, end_addr);
@@ -548,37 +588,40 @@ static int asan_info(int argc, char **argv)
 {
     rt_uint32_t i;
     rt_uint32_t active = 0;
+    struct asan_track block;
+    rt_base_t level;
 
+    RT_UNUSED(argc);
+    RT_UNUSED(argv);
     rt_kprintf("\n-- AddressSanitizer status --\n");
-    rt_kprintf("shadow   : %p, %d bytes\n", asan_shadow, sizeof(asan_shadow));
-    rt_kprintf("coverage : 0x%08x - 0x%08x (%d bytes)\n",
-               asan_heap_base, asan_heap_limit,
-               asan_heap_limit - asan_heap_base);
-
-    if (asan_last_freed.used)
+    rt_kprintf("shadow   : %p, %lu bytes\n", asan_shadow, (unsigned long)sizeof(asan_shadow));
+    rt_kprintf("coverage : %p - %p\n", (void *)asan_heap_base, (void *)asan_heap_limit);
+    level = asan_lock();
+    block = asan_last_freed;
+    asan_unlock(level);
+    if (block.used)
     {
-        rt_kprintf("last free: 0x%08x size %d owner %.*s\n",
-                   asan_last_freed.ptr, asan_last_freed.size,
-                   RT_NAME_MAX, asan_last_freed.owner);
+        rt_kprintf("last free: %p size %lu owner %.*s\n", (void *)block.ptr,
+                   (unsigned long)block.size, RT_NAME_MAX, block.owner);
     }
     else
     {
         rt_kprintf("last free: (none)\n");
     }
-
-    rt_kprintf("\n-- active allocations --\n");
+    rt_kprintf("\n-- active allocations (snapshot per entry) --\n");
     for (i = 0; i < RT_ASAN_TRACK_MAX; i++)
     {
-        if (asan_tracks[i].used)
+        level = asan_lock();
+        block = asan_tracks[i];
+        asan_unlock(level);
+        if (block.used)
         {
             active++;
-            rt_kprintf("  0x%08x  %6d  %.*s\n",
-                       asan_tracks[i].ptr, asan_tracks[i].size,
-                       RT_NAME_MAX, asan_tracks[i].owner);
+            rt_kprintf("  %p  %6lu  %.*s\n", (void *)block.ptr,
+                       (unsigned long)block.size, RT_NAME_MAX, block.owner);
         }
     }
-    rt_kprintf("total: %d active blocks\n", active);
-
+    rt_kprintf("total: %u active blocks\n", active);
     return 0;
 }
 MSH_CMD_EXPORT(asan_info, dump AddressSanitizer status);

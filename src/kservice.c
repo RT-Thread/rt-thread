@@ -32,6 +32,9 @@
  */
 
 #include <rtthread.h>
+#ifdef RT_USING_ASAN
+#include <asan.h>
+#endif
 
 /* include rt_hw_backtrace macro defined in cpuport.h */
 #define RT_HW_INCLUDE_CPUPORT
@@ -1109,6 +1112,18 @@ rt_inline void _slab_info(rt_size_t *total,
 #define _MEM_INFO(...)
 #endif
 
+#ifdef RT_USING_ASAN
+static void *_asan_heap_alloc(rt_size_t size)
+{
+    return _MEM_MALLOC(size);
+}
+
+static void _asan_heap_free(void *ptr)
+{
+    _MEM_FREE(ptr);
+}
+#endif
+
 /**
  * @brief This function will do the generic system heap initialization.
  *
@@ -1157,7 +1172,11 @@ rt_weak void *rt_malloc(rt_size_t size)
     /* Enter critical zone */
     level = _heap_lock();
     /* allocate memory block from system heap */
+#ifdef RT_USING_ASAN
+    ptr = rt_asan_malloc(size, _asan_heap_alloc);
+#else
     ptr = _MEM_MALLOC(size);
+#endif
     /* Exit critical zone */
     _heap_unlock(level);
     /* call 'rt_malloc' hook */
@@ -1185,7 +1204,11 @@ rt_weak void *rt_realloc(void *ptr, rt_size_t newsize)
     /* Enter critical zone */
     level = _heap_lock();
     /* Change the size of previously allocated memory block */
+#ifdef RT_USING_ASAN
+    nptr = rt_asan_realloc(ptr, newsize, _asan_heap_alloc, _asan_heap_free);
+#else
     nptr = _MEM_REALLOC(ptr, newsize);
+#endif
     /* Exit critical zone */
     _heap_unlock(level);
     /* Exit hook */
@@ -1210,6 +1233,11 @@ RTM_EXPORT(rt_realloc);
 rt_weak void *rt_calloc(rt_size_t count, rt_size_t size)
 {
     void *p;
+
+    if (size && count > (rt_size_t)-1 / size)
+    {
+        return RT_NULL;
+    }
 
     /* allocate 'count' objects of size 'size' */
     p = rt_malloc(count * size);
@@ -1238,7 +1266,11 @@ rt_weak void rt_free(void *ptr)
     if (ptr == RT_NULL) return;
     /* Enter critical zone */
     level = _heap_lock();
+#ifdef RT_USING_ASAN
+    rt_asan_free(ptr, _asan_heap_free);
+#else
     _MEM_FREE(ptr);
+#endif
     /* Exit critical zone */
     _heap_unlock(level);
 }
@@ -1302,47 +1334,73 @@ void rt_page_free(void *addr, rt_size_t npages)
  *
  * @param  size is the allocated memory block size.
  *
- * @param  align is the alignment size.
+ * @param  align is a nonzero power-of-two alignment size.
+ *
+ * @note Zero-sized requests, invalid alignments and size overflows return RT_NULL.
  *
  * @return The memory block address was returned successfully, otherwise it was
  *         returned empty RT_NULL.
  */
 rt_weak void *rt_malloc_align(rt_size_t size, rt_size_t align)
 {
-    void *ptr = RT_NULL;
-    void *align_ptr = RT_NULL;
-    int uintptr_size = 0;
-    rt_size_t align_size = 0;
+    void *ptr;
+#ifdef RT_USING_ASAN
+    rt_base_t level;
+#else
+    void *align_ptr;
+    const rt_size_t uintptr_mask = sizeof(void *) - 1;
+    rt_size_t align_size;
+#endif
 
-    /* sizeof pointer */
-    uintptr_size = sizeof(void*);
-    uintptr_size -= 1;
+    if (!size || !align || (align & (align - 1)))
+    {
+        return RT_NULL;
+    }
+    if (align < sizeof(void *))
+    {
+        align = sizeof(void *);
+    }
 
-    /* align the alignment size to uintptr size byte */
-    align = ((align + uintptr_size) & ~uintptr_size);
-
-    /* get total aligned size */
-    align_size = ((size + uintptr_size) & ~uintptr_size) + align;
-    /* allocate memory block from heap */
+#ifdef RT_USING_ASAN
+    /* Keep the requested size rather than tracking an oversized backing block. */
+    level = _heap_lock();
+    ptr = rt_asan_malloc_align(size, align, _asan_heap_alloc);
+    _heap_unlock(level);
+    RT_OBJECT_HOOK_CALL(rt_malloc_hook, (&ptr, size));
+#else
+    if (size > (rt_size_t)-1 - uintptr_mask)
+    {
+        return RT_NULL;
+    }
+    align_size = RT_ALIGN(size, sizeof(void *));
+    if (align_size > (rt_size_t)-1 - align)
+    {
+        return RT_NULL;
+    }
+    align_size += align;
+#ifdef RT_USING_SLAB_AS_HEAP
+    if (align_size > (rt_size_t)-1 - (RT_MM_PAGE_SIZE - 1))
+#else
+    if (align_size > (rt_size_t)-1 - (RT_ALIGN_SIZE - 1))
+#endif
+    {
+        return RT_NULL;
+    }
     ptr = rt_malloc(align_size);
     if (ptr != RT_NULL)
     {
-        /* the allocated memory block is aligned */
         if (((rt_uintptr_t)ptr & (align - 1)) == 0)
         {
             align_ptr = (void *)((rt_uintptr_t)ptr + align);
         }
         else
         {
-            align_ptr = (void *)(((rt_uintptr_t)ptr + (align - 1)) & ~(align - 1));
+            align_ptr = (void *)RT_ALIGN((rt_uintptr_t)ptr, align);
         }
-
-        /* set the pointer before alignment pointer to the real pointer */
-        *((rt_uintptr_t *)((rt_uintptr_t)align_ptr - sizeof(void *))) = (rt_uintptr_t)ptr;
-
+        *((rt_uintptr_t *)align_ptr - 1) = (rt_uintptr_t)ptr;
         ptr = align_ptr;
     }
-
+#endif
     return ptr;
 }
 RTM_EXPORT(rt_malloc_align);
@@ -1355,12 +1413,20 @@ RTM_EXPORT(rt_malloc_align);
  */
 rt_weak void rt_free_align(void *ptr)
 {
-    void *real_ptr = RT_NULL;
+#ifndef RT_USING_ASAN
+    void *real_ptr;
+#endif
 
-    /* NULL check */
     if (ptr == RT_NULL) return;
-    real_ptr = (void *) * (rt_uintptr_t *)((rt_uintptr_t)ptr - sizeof(void *));
+#ifdef RT_USING_ASAN
+    /* The ASan header is read by the non-instrumented runtime under the heap
+     * lock. The old pointer-before-buffer layout is not used in this mode.
+     */
+    rt_free(ptr);
+#else
+    real_ptr = (void *)*((rt_uintptr_t *)ptr - 1);
     rt_free(real_ptr);
+#endif
 }
 RTM_EXPORT(rt_free_align);
 #endif /* RT_USING_HEAP */

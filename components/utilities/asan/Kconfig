@@ -1,7 +1,8 @@
 menuconfig RT_USING_ASAN
     bool "Enable AddressSanitizer (heap overflow & use-after-free check)"
     default n
-    depends on RT_USING_HOOK && RT_HOOK_USING_FUNC_PTR && !RT_USING_USERHEAP
+    depends on RT_USING_HEAP && !RT_USING_USERHEAP
+    depends on RT_USING_SMALL_MEM_AS_HEAP || RT_USING_MEMHEAP_AS_HEAP || RT_USING_SLAB_AS_HEAP
     help
         Enable runtime AddressSanitizer (kernel-address) support. It
         instruments memory accesses to detect heap buffer overflow and
@@ -13,6 +14,13 @@ menuconfig RT_USING_ASAN
         The shadow memory is a static array of RT_ASAN_SHADOW_SIZE bytes
         and covers the first RT_ASAN_SHADOW_SIZE * 8 bytes of the heap.
         Accesses beyond that range are not checked.
+
+        Each allocation reserves a size header, alignment padding and at least
+        8 bytes of right redzone. Realloc grows within its reserved capacity or
+        allocates and copies the requested user bytes; shrinking keeps capacity.
+        Aligned allocations also use the requested size for their redzones.
+        Only the system heap APIs are wrapped; direct allocator/page APIs and
+        accesses in prebuilt, uninstrumented libraries are not checked.
 
         Heap algorithm support:
           - small mem (RT_USING_SMALL_MEM_AS_HEAP): full support, detects
@@ -41,8 +49,8 @@ menuconfig RT_USING_ASAN
                 Size of the allocation tracking table. Each entry records
                 one live block (ptr, size, owner thread). Reduce this on
                 memory-constrained MCUs (e.g. 128 or 64). When the table
-                is full, further allocations are not tracked (and thus not
-                diagnosed) but are still unpoisoned for correctness.
+                is full, further allocations still get redzones and free/realloc
+                handling, but reports may lack allocation/owner details.
 
         config RT_ASAN_BACKTRACE
             bool "Print full backtrace on report"

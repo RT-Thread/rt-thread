@@ -29,6 +29,15 @@
 extern "C" {
 #endif
 
+/* Internal system-heap integration. The caller must hold the heap lock.
+ * Callbacks operate on the underlying allocator, never rt_malloc/rt_free.
+ */
+void *rt_asan_malloc(rt_size_t size, void *(*alloc)(rt_size_t));
+void *rt_asan_malloc_align(rt_size_t size, rt_size_t align, void *(*alloc)(rt_size_t));
+void rt_asan_free(void *ptr, void (*release)(void *));
+void *rt_asan_realloc(void *ptr, rt_size_t size,
+                      void *(*alloc)(rt_size_t), void (*release)(void *));
+
 /**
  * @brief Get the total number of AddressSanitizer violations reported.
  *

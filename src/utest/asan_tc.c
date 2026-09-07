@@ -20,7 +20,7 @@
  *
  * Test Scenarios:
  * - **Scenario 1 (Heap Overflow Write / test_asan_overflow_write):**
- *   1. Allocate a 10-byte block (redzone occupies [10, 16))
+ *   1. Allocate a 10-byte block (redzone includes [10, 16))
  *   2. Write at offset 12 which falls into the poisoned redzone
  *   3. Assert the ASan report counter increased
  * - **Scenario 2 (Heap Overflow Read / test_asan_overflow_read):**
@@ -32,7 +32,7 @@
  *   2. Write to in-bounds offsets 0 and 9
  *   3. Assert the ASan report counter did not change
  * - **Scenario 4 (Realloc Overflow / test_asan_realloc_overflow):**
- *   1. Allocate 10 bytes and realloc to 20 bytes (redzone occupies [20, 24))
+ *   1. Allocate 10 bytes and realloc to 20 bytes (redzone includes [20, 24))
  *   2. Write at offset 22 inside the new poisoned redzone
  *   3. Assert the ASan report counter increased
  * - **Scenario 5 (Use-After-Free Read / test_asan_uaf_read):**
@@ -76,7 +76,7 @@ static void test_asan_overflow_write(void)
 {
     rt_uint32_t before;
     rt_uint32_t after;
-    char *p;
+    volatile char *p;
 
     p = (char *)rt_malloc(10);
     uassert_not_null(p);
@@ -89,7 +89,7 @@ static void test_asan_overflow_write(void)
     p[12] = 0x41;   /* heap-buffer-overflow write (redzone [10, 16)) */
     after = rt_asan_report_count_get();
 
-    rt_free(p);
+    rt_free((void *)p);
 
     uassert_true(after > before);
 }
@@ -99,7 +99,7 @@ static void test_asan_overflow_read(void)
     rt_uint32_t before;
     rt_uint32_t after;
     volatile char v;
-    char *p;
+    volatile char *p;
 
     p = (char *)rt_malloc(10);
     uassert_not_null(p);
@@ -113,7 +113,7 @@ static void test_asan_overflow_read(void)
     after = rt_asan_report_count_get();
 
     (void)v;
-    rt_free(p);
+    rt_free((void *)p);
 
     uassert_true(after > before);
 }
@@ -122,7 +122,7 @@ static void test_asan_no_false_positive(void)
 {
     rt_uint32_t before;
     rt_uint32_t after;
-    char *p;
+    volatile char *p;
 
     p = (char *)rt_malloc(10);
     uassert_not_null(p);
@@ -136,7 +136,7 @@ static void test_asan_no_false_positive(void)
     p[9] = 0x02;   /* last in-bounds byte */
     after = rt_asan_report_count_get();
 
-    rt_free(p);
+    rt_free((void *)p);
 
     uassert_int_equal(after, before);
 }
@@ -145,8 +145,8 @@ static void test_asan_realloc_overflow(void)
 {
     rt_uint32_t before;
     rt_uint32_t after;
-    char *p;
-    char *q;
+    volatile char *p;
+    volatile char *q;
 
     p = (char *)rt_malloc(10);
     uassert_not_null(p);
@@ -155,11 +155,11 @@ static void test_asan_realloc_overflow(void)
         return;
     }
 
-    q = (char *)rt_realloc(p, 20);
+    q = (char *)rt_realloc((void *)p, 20);
     uassert_not_null(q);
     if (!q)
     {
-        rt_free(p);
+        rt_free((void *)p);
         return;
     }
 
@@ -167,7 +167,7 @@ static void test_asan_realloc_overflow(void)
     q[22] = 0x41;   /* heap-buffer-overflow write (redzone [20, 24)) */
     after = rt_asan_report_count_get();
 
-    rt_free(q);
+    rt_free((void *)q);
 
     uassert_true(after > before);
 }
@@ -178,7 +178,7 @@ static void test_asan_uaf_read(void)
     rt_uint32_t before;
     rt_uint32_t after;
     volatile char v;
-    char *p;
+    volatile char *p;
 
     p = (char *)rt_malloc(10);
     uassert_not_null(p);
@@ -187,7 +187,7 @@ static void test_asan_uaf_read(void)
         return;
     }
 
-    rt_free(p);
+    rt_free((void *)p);
 
     before = rt_asan_report_count_get();
     v = p[0];   /* use-after-free read */
@@ -202,7 +202,7 @@ static void test_asan_uaf_write(void)
 {
     rt_uint32_t before;
     rt_uint32_t after;
-    char *p;
+    volatile char *p;
 
     p = (char *)rt_malloc(10);
     uassert_not_null(p);
@@ -211,7 +211,7 @@ static void test_asan_uaf_write(void)
         return;
     }
 
-    rt_free(p);
+    rt_free((void *)p);
 
     before = rt_asan_report_count_get();
     p[0] = 0x41;   /* use-after-free write */
@@ -221,16 +221,295 @@ static void test_asan_uaf_write(void)
 }
 #endif /* RT_ASAN_HAS_UAF_DETECTION */
 
+/* Aligned requests must have a redzone too; exercise every partial granule. */
+static void test_asan_boundaries(void)
+{
+    rt_size_t size;
+    for (size = 1; size <= 32; size++)
+    {
+        volatile char *p = (char *)rt_malloc(size);
+        rt_uint32_t before;
+        volatile char value;
+        uassert_not_null(p);
+        if (!p)
+        {
+            return;
+        }
+        uassert_true(((rt_uintptr_t)p & (RT_ALIGN_SIZE - 1)) == 0);
+        before = rt_asan_report_count_get();
+        p[0] = 1;
+        p[size - 1] = 2;
+        uassert_int_equal(rt_asan_report_count_get(), before);
+        value = p[size];
+        RT_UNUSED(value);
+        uassert_true(rt_asan_report_count_get() > before);
+        before = rt_asan_report_count_get();
+        p[size] = 3;
+        uassert_true(rt_asan_report_count_get() > before);
+        rt_free((void *)p);
+    }
+}
+
+static void test_asan_aligned_boundaries(void)
+{
+    static const rt_size_t sizes[] = { 1, 8, 13, 16, 31, 32 };
+    static const rt_size_t aligns[] = { sizeof(void *), 16, 64, 256 };
+    rt_size_t i;
+    rt_size_t j;
+
+    for (i = 0; i < sizeof(sizes) / sizeof(sizes[0]); i++)
+    {
+        for (j = 0; j < sizeof(aligns) / sizeof(aligns[0]); j++)
+        {
+            rt_uint32_t before = rt_asan_report_count_get();
+            volatile char *p = (char *)rt_malloc_align(sizes[i], aligns[j]);
+            volatile char value;
+            uassert_not_null(p);
+            if (!p)
+            {
+                return;
+            }
+            uassert_true(((rt_uintptr_t)p & (aligns[j] - 1)) == 0);
+            p[0] = 1;
+            p[sizes[i] - 1] = 2;
+            uassert_int_equal(rt_asan_report_count_get(), before);
+            value = p[sizes[i]];
+            uassert_int_equal(rt_asan_report_count_get(), before + 1);
+            p[sizes[i]] = 3;
+            uassert_int_equal(rt_asan_report_count_get(), before + 2);
+            /* Read the left redzone without corrupting the allocation header. */
+            value = p[-1];
+            RT_UNUSED(value);
+            uassert_int_equal(rt_asan_report_count_get(), before + 3);
+            before = rt_asan_report_count_get();
+            rt_free_align((void *)p);
+            uassert_int_equal(rt_asan_report_count_get(), before);
+        }
+    }
+}
+
+#if RT_ASAN_HAS_UAF_DETECTION
+static void test_asan_aligned_uaf(void)
+{
+    volatile char *p = (char *)rt_malloc_align(13, 64);
+    volatile char value;
+    rt_uint32_t before;
+
+    uassert_not_null(p);
+    if (!p)
+    {
+        return;
+    }
+    rt_free_align((void *)p);
+    before = rt_asan_report_count_get();
+    value = p[0];
+    RT_UNUSED(value);
+    uassert_int_equal(rt_asan_report_count_get(), before + 1);
+    p[12] = 1;
+    uassert_int_equal(rt_asan_report_count_get(), before + 2);
+}
+#endif
+
+static void test_asan_realloc_lifecycle(void)
+{
+    volatile char *p = (char *)rt_realloc(RT_NULL, 13);
+    volatile char *q;
+    rt_uint32_t before = rt_asan_report_count_get();
+    rt_size_t i;
+
+    uassert_not_null(p);
+    if (!p)
+    {
+        return;
+    }
+    for (i = 0; i < 13; i++)
+    {
+        p[i] = (char)i;
+    }
+    q = (char *)rt_realloc((void *)p, 64);
+    uassert_not_null(q);
+    if (!q)
+    {
+        rt_free((void *)p);
+        return;
+    }
+    for (i = 0; i < 13; i++)
+    {
+        uassert_int_equal(q[i], (char)i);
+    }
+    uassert_int_equal(rt_asan_report_count_get(), before);
+    p = (char *)rt_realloc((void *)q, 16);
+    uassert_true(p == q);
+    before = rt_asan_report_count_get();
+    p[16] = 1;
+    uassert_true(rt_asan_report_count_get() > before);
+    before = rt_asan_report_count_get();
+    p = (char *)rt_realloc((void *)q, 32);
+    uassert_true(p == q);
+    p[31] = 7;
+    uassert_null(rt_realloc((void *)p, (rt_size_t)-1));
+    uassert_int_equal(p[31], 7);
+    uassert_int_equal(rt_asan_report_count_get(), before);
+    uassert_null(rt_realloc((void *)p, 0));
+#if RT_ASAN_HAS_UAF_DETECTION
+    before = rt_asan_report_count_get();
+    {
+        volatile char value = p[0];
+        RT_UNUSED(value);
+    }
+    uassert_true(rt_asan_report_count_get() > before);
+#endif
+    uassert_null(rt_malloc((rt_size_t)-1));
+    uassert_null(rt_malloc((rt_size_t)-16));
+    uassert_null(rt_malloc((rt_size_t)-64));
+    uassert_null(rt_calloc((rt_size_t)-1 / 2 + 1, 2));
+    uassert_null(rt_realloc(RT_NULL, 0));
+    rt_free(RT_NULL);
+}
+
+/* Run with RT_ASAN_TRACK_MAX=1 as well: correctness must not need a free slot. */
+static void test_asan_calloc_reuse(void)
+{
+    rt_size_t i;
+    rt_uint32_t before = rt_asan_report_count_get();
+    for (i = 0; i < 64; i++)
+    {
+        char *p = (char *)rt_calloc(3, 5);
+        uassert_not_null(p);
+        if (!p)
+        {
+            return;
+        }
+        uassert_int_equal(p[0], 0);
+        uassert_int_equal(p[14], 0);
+        rt_free(p);
+    }
+    uassert_int_equal(rt_asan_report_count_get(), before);
+}
+
+#ifdef RT_USING_SEMAPHORE
+static struct rt_semaphore asan_done;
+static rt_uint32_t asan_worker_errors[2];
+
+static void asan_worker(void *parameter)
+{
+    rt_size_t id = (rt_size_t)parameter;
+    rt_size_t i;
+    for (i = 0; i < 200; i++)
+    {
+        rt_size_t size = i % 63 + 1;
+        char *p = (char *)rt_malloc(size);
+        char *q;
+        if (!p)
+        {
+            asan_worker_errors[id]++;
+            break;
+        }
+        rt_memset(p, (int)(id + 1), size);
+        /* Let the creator start both workers even if it has lower priority. */
+        rt_thread_mdelay(1);
+        q = (char *)rt_realloc(p, 96);
+        if (!q)
+        {
+            rt_free(p);
+            asan_worker_errors[id]++;
+            break;
+        }
+        if (q[0] != (char)(id + 1) || q[size - 1] != (char)(id + 1))
+        {
+            asan_worker_errors[id]++;
+        }
+        rt_thread_yield();
+        p = (char *)rt_realloc(q, 1);
+        if (p != q || p[0] != (char)(id + 1))
+        {
+            asan_worker_errors[id]++;
+        }
+        rt_free(p);
+        p = (char *)rt_malloc_align(size, 64);
+        if (!p)
+        {
+            asan_worker_errors[id]++;
+            break;
+        }
+        rt_thread_yield();
+        p[0] = (char)(id + 1);
+        p[size - 1] = (char)(id + 1);
+        rt_free_align(p);
+    }
+    rt_sem_release(&asan_done);
+}
+
+static void test_asan_concurrent_realloc(void)
+{
+    rt_thread_t threads[2];
+    rt_size_t i;
+    rt_size_t started = 0;
+    rt_uint32_t before = rt_asan_report_count_get();
+
+    rt_sem_init(&asan_done, "asan_done", 0, RT_IPC_FLAG_PRIO);
+    for (i = 0; i < 2; i++)
+    {
+        asan_worker_errors[i] = 0;
+        threads[i] = rt_thread_create("asan_work", asan_worker, (void *)i, 2048,
+                                      RT_THREAD_PRIORITY_MAX / 2, 1);
+        uassert_not_null(threads[i]);
+        if (threads[i])
+        {
+#ifdef RT_USING_SMP
+            rt_thread_control(threads[i], RT_THREAD_CTRL_BIND_CPU, (void *)(i % RT_CPUS_NR));
+#endif
+            rt_thread_startup(threads[i]);
+            started++;
+        }
+    }
+    for (i = 0; i < started; i++)
+    {
+        rt_sem_take(&asan_done, RT_WAITING_FOREVER);
+    }
+    rt_sem_detach(&asan_done);
+    uassert_int_equal(asan_worker_errors[0], 0);
+    uassert_int_equal(asan_worker_errors[1], 0);
+    uassert_int_equal(rt_asan_report_count_get(), before);
+}
+#endif
+
+#ifdef RT_USING_CPLUSPLUS
+extern void test_asan_cpp(void);
+#endif
+
+/* utest_unit_run resets its counters; retain failures from every unit. */
+#define ASAN_UNIT_RUN(unit)                         \
+    do                                              \
+    {                                               \
+        UTEST_UNIT_RUN(unit);                       \
+        failures += utest_handle_get()->failed_num; \
+    } while (0)
+
 static void testcase(void)
 {
-    UTEST_UNIT_RUN(test_asan_overflow_write);
-    UTEST_UNIT_RUN(test_asan_overflow_read);
-    UTEST_UNIT_RUN(test_asan_no_false_positive);
-    UTEST_UNIT_RUN(test_asan_realloc_overflow);
-#if RT_ASAN_HAS_UAF_DETECTION
-    UTEST_UNIT_RUN(test_asan_uaf_read);
-    UTEST_UNIT_RUN(test_asan_uaf_write);
+    rt_size_t failures = 0;
+    ASAN_UNIT_RUN(test_asan_overflow_write);
+    ASAN_UNIT_RUN(test_asan_overflow_read);
+    ASAN_UNIT_RUN(test_asan_no_false_positive);
+    ASAN_UNIT_RUN(test_asan_realloc_overflow);
+    ASAN_UNIT_RUN(test_asan_boundaries);
+    ASAN_UNIT_RUN(test_asan_aligned_boundaries);
+    ASAN_UNIT_RUN(test_asan_realloc_lifecycle);
+    ASAN_UNIT_RUN(test_asan_calloc_reuse);
+#ifdef RT_USING_SEMAPHORE
+    ASAN_UNIT_RUN(test_asan_concurrent_realloc);
 #endif
+#ifdef RT_USING_CPLUSPLUS
+    ASAN_UNIT_RUN(test_asan_cpp);
+#endif
+#if RT_ASAN_HAS_UAF_DETECTION
+    ASAN_UNIT_RUN(test_asan_aligned_uaf);
+    ASAN_UNIT_RUN(test_asan_uaf_read);
+    ASAN_UNIT_RUN(test_asan_uaf_write);
+#endif
+    uassert_int_equal(failures, 0);
 }
+#undef ASAN_UNIT_RUN
 
 UTEST_TC_EXPORT(testcase, "components.asan_tc", utest_tc_init, utest_tc_cleanup, 1000);
