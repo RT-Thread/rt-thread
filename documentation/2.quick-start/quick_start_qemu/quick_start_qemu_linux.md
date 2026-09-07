@@ -152,6 +152,8 @@ The main files and directories of `qemu-vexpress-a9` BSP are described as follow
 | drivers          | The underlying driver provided by RT-Thread |
 | qemu.bat         | Script files running on Windows platform    |
 | qemu.sh          | Script files running on Linux platform      |
+| qemu-nographic.bat | Script files running on Windows platform, without a graphical window |
+| qemu-nographic.sh | Script files running on Linux platform, without a graphical window |
 | qemu-dbg.bat     | Debugging script files on Windows platform  |
 | qemu-dbg.sh      | Debugging script files on Linux platform    |
 | README.md        | Description document of BSP                 |
@@ -170,6 +172,16 @@ Switch to the QEMU BSP directory and enter the `scons` command to compile the pr
 After compiling, type `./qemu.sh` to start the virtual machine and BSP project. `qemu.sh` is a Linux batch file. This file is located in the BSP folder, mainly including the execution instructions of QEMU. The first run of the project will create a blank `sd.bin` file under the BSP folder, which is a virtual SD card with a size of 64M. The Env command interface displays the initialization information and version number information printed during the start-up of RT-Thread system, and the QEMU virtual machine is also running. As shown in the following picture:
 
 ![run the project](figures/ubuntu-qume-sh.png)
+
+`qemu.sh` opens a graphical window for the emulated CLCD display, so it
+needs a desktop session. Over SSH, or on a machine without a display, it
+fails with an error such as `gtk initialization failed`. Use
+`./qemu-nographic.sh` instead, which runs the same BSP with the console
+on the terminal:
+
+```shell
+./qemu-nographic.sh
+```
 
 ### 5.3 Run the Finsh Console
 
