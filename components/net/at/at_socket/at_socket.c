@@ -1409,6 +1409,7 @@ static int _gethostbyname_by_device(const char *name, ip_addr_t *addr)
     struct at_device *device = RT_NULL;
     char ipstr[16] = { 0 };
     size_t idx = 0;
+    size_t name_len = 0;
 
     device = at_device_get_first_initialized();
     if (device == RT_NULL)
@@ -1421,9 +1422,10 @@ static int _gethostbyname_by_device(const char *name, ip_addr_t *addr)
         return -1;
     }
 
-    for (idx = 0; idx < strlen(name) && !isalpha(name[idx]); idx++);
+    name_len = strlen(name);
+    for (idx = 0; idx < name_len && !isalpha((unsigned char)name[idx]); idx++);
 
-    if (idx < strlen(name))
+    if (idx < name_len)
     {
         if (at_dlock == RT_NULL)
         {
@@ -1444,7 +1446,13 @@ static int _gethostbyname_by_device(const char *name, ip_addr_t *addr)
     }
     else
     {
-        strncpy(ipstr, name, strlen(name));
+        if (name_len >= sizeof(ipstr))
+        {
+            return -1;
+        }
+
+        rt_memcpy(ipstr, name, name_len);
+        ipstr[name_len] = '\0';
     }
 
 #if NETDEV_IPV4 && NETDEV_IPV6
