@@ -15,11 +15,11 @@
 #include <drivers/dev_sdio.h>
 #include <string.h>
 
-#define DBG_TAG               "SDIO"
+#define DBG_TAG "SDIO"
 #ifdef RT_SDIO_DEBUG
-#define DBG_LVL               DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LVL               DBG_INFO
+#define DBG_LVL DBG_INFO
 #endif /* RT_SDIO_DEBUG */
 #include <rtdbg.h>
 
@@ -28,16 +28,16 @@
 #endif
 #ifndef RT_MMCSD_THREAD_PRIORITY
 #if (RT_THREAD_PRIORITY_MAX == 32)
-#define RT_MMCSD_THREAD_PRIORITY  0x16
+#define RT_MMCSD_THREAD_PRIORITY 0x16
 #else
-#define RT_MMCSD_THREAD_PRIORITY  0x40
+#define RT_MMCSD_THREAD_PRIORITY 0x40
 #endif
 #endif
 
 //static struct rt_semaphore mmcsd_sem;
 static struct rt_thread mmcsd_detect_thread;
 static rt_uint8_t mmcsd_stack[RT_MMCSD_STACK_SIZE];
-static struct rt_mailbox  mmcsd_detect_mb;
+static struct rt_mailbox mmcsd_detect_mb;
 static rt_uint32_t mmcsd_detect_mb_pool[4];
 static struct rt_mailbox mmcsd_hotpluge_mb;
 static rt_uint32_t mmcsd_hotpluge_mb_pool[4];
@@ -80,15 +80,12 @@ void mmcsd_send_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *req)
 
         rt_sem_take(&host->sem_ack, RT_WAITING_FOREVER);
 
-    }
-    while (req->cmd->err && (req->cmd->retries > 0));
-
-
+    } while (req->cmd->err && (req->cmd->retries > 0));
 }
 
 rt_int32_t mmcsd_send_cmd(struct rt_mmcsd_host *host,
-                          struct rt_mmcsd_cmd  *cmd,
-                          int                   retries)
+                          struct rt_mmcsd_cmd *cmd,
+                          int retries)
 {
     struct rt_mmcsd_req req;
 
@@ -135,8 +132,8 @@ rt_int32_t mmcsd_go_idle(struct rt_mmcsd_host *host)
 }
 
 rt_int32_t mmcsd_spi_read_ocr(struct rt_mmcsd_host *host,
-                              rt_int32_t            high_capacity,
-                              rt_uint32_t          *ocr)
+                              rt_int32_t high_capacity,
+                              rt_uint32_t *ocr)
 {
     struct rt_mmcsd_cmd cmd;
     rt_int32_t err;
@@ -167,7 +164,9 @@ rt_int32_t mmcsd_all_get_cid(struct rt_mmcsd_host *host, rt_uint32_t *cid)
 
     err = mmcsd_send_cmd(host, &cmd, 3);
     if (err)
+    {
         return err;
+    }
 
     rt_memcpy(cid, cmd.resp, sizeof(rt_uint32_t) * 4);
 
@@ -185,7 +184,9 @@ rt_int32_t mmcsd_get_cid(struct rt_mmcsd_host *host, rt_uint32_t *cid)
     if (!controller_is_spi(host))
     {
         if (!host->card)
+        {
             return -RT_ERROR;
+        }
         rt_memset(&cmd, 0, sizeof(struct rt_mmcsd_cmd));
 
         cmd.cmd_code = SEND_CID;
@@ -193,7 +194,9 @@ rt_int32_t mmcsd_get_cid(struct rt_mmcsd_host *host, rt_uint32_t *cid)
         cmd.flags = RESP_R2 | CMD_AC;
         err = mmcsd_send_cmd(host, &cmd, 3);
         if (err)
+        {
             return err;
+        }
 
         rt_memcpy(cid, cmd.resp, sizeof(rt_uint32_t) * 4);
 
@@ -246,7 +249,9 @@ rt_int32_t mmcsd_get_cid(struct rt_mmcsd_host *host, rt_uint32_t *cid)
     }
 
     for (i = 0; i < 4; i++)
+    {
         cid[i] = buf[i];
+    }
     rt_free(buf);
 
     return 0;
@@ -269,7 +274,9 @@ rt_int32_t mmcsd_get_csd(struct rt_mmcsd_card *card, rt_uint32_t *csd)
         cmd.flags = RESP_R2 | CMD_AC;
         err = mmcsd_send_cmd(card->host, &cmd, 3);
         if (err)
+        {
             return err;
+        }
 
         rt_memcpy(csd, cmd.resp, sizeof(rt_uint32_t) * 4);
 
@@ -323,7 +330,9 @@ rt_int32_t mmcsd_get_csd(struct rt_mmcsd_card *card, rt_uint32_t *csd)
     }
 
     for (i = 0; i < 4; i++)
+    {
         csd[i] = buf[i];
+    }
     rt_free(buf);
 
     return 0;
@@ -352,7 +361,9 @@ static rt_int32_t _mmcsd_select_card(struct rt_mmcsd_host *host,
 
     err = mmcsd_send_cmd(host, &cmd, 3);
     if (err)
+    {
         return err;
+    }
 
     return 0;
 }
@@ -380,7 +391,9 @@ rt_int32_t mmcsd_spi_use_crc(struct rt_mmcsd_host *host, rt_int32_t use_crc)
 
     err = mmcsd_send_cmd(host, &cmd, 0);
     if (!err)
+    {
         host->spi_use_crc = use_crc;
+    }
 
     return err;
 }
@@ -446,7 +459,7 @@ void mmcsd_set_timing(struct rt_mmcsd_host *host, rt_uint32_t timing)
     mmcsd_set_iocfg(host);
 }
 
-void mmcsd_set_data_timeout(struct rt_mmcsd_data       *data,
+void mmcsd_set_data_timeout(struct rt_mmcsd_data *data,
                             const struct rt_mmcsd_card *card)
 {
     rt_uint32_t mult;
@@ -469,7 +482,9 @@ void mmcsd_set_data_timeout(struct rt_mmcsd_data       *data,
      * the r2w factor for writes.
      */
     if (data->flags & DATA_DIR_WRITE)
+    {
         mult <<= card->csd.r2w_factor;
+    }
 
     data->timeout_ns = card->tacc_ns * mult;
     data->timeout_clks = card->tacc_clks * mult;
@@ -486,13 +501,17 @@ void mmcsd_set_data_timeout(struct rt_mmcsd_data       *data,
                       (card->host->io_cfg.clock / 1000);
 
         if (data->flags & DATA_DIR_WRITE)
+        {
             /*
              * The limit is really 250 ms, but that is
              * insufficient for some crappy cards.
              */
             limit_us = 300000;
+        }
         else
+        {
             limit_us = 100000;
+        }
 
         /*
          * SDHC cards always use these fixed values.
@@ -509,12 +528,16 @@ void mmcsd_set_data_timeout(struct rt_mmcsd_data       *data,
         if (data->flags & DATA_DIR_WRITE)
         {
             if (data->timeout_ns < 1000000000)
+            {
                 data->timeout_ns = 1000000000;  /* 1s */
+            }
         }
         else
         {
             if (data->timeout_ns < 100000000)
-                data->timeout_ns =  100000000;  /* 100ms */
+            {
+                data->timeout_ns = 100000000;  /* 100ms */
+            }
         }
     }
 }
@@ -683,36 +706,202 @@ power_cycle:
     return err;
 }
 
-static const rt_uint8_t tuning_blk_pattern_4bit[] =
-{
-    0xff, 0x0f, 0xff, 0x00, 0xff, 0xcc, 0xc3, 0xcc,
-    0xc3, 0x3c, 0xcc, 0xff, 0xfe, 0xff, 0xfe, 0xef,
-    0xff, 0xdf, 0xff, 0xdd, 0xff, 0xfb, 0xff, 0xfb,
-    0xbf, 0xff, 0x7f, 0xff, 0x77, 0xf7, 0xbd, 0xef,
-    0xff, 0xf0, 0xff, 0xf0, 0x0f, 0xfc, 0xcc, 0x3c,
-    0xcc, 0x33, 0xcc, 0xcf, 0xff, 0xef, 0xff, 0xee,
-    0xff, 0xfd, 0xff, 0xfd, 0xdf, 0xff, 0xbf, 0xff,
-    0xbb, 0xff, 0xf7, 0xff, 0xf7, 0x7f, 0x7b, 0xde,
+static const rt_uint8_t tuning_blk_pattern_4bit[] = {
+    0xff,
+    0x0f,
+    0xff,
+    0x00,
+    0xff,
+    0xcc,
+    0xc3,
+    0xcc,
+    0xc3,
+    0x3c,
+    0xcc,
+    0xff,
+    0xfe,
+    0xff,
+    0xfe,
+    0xef,
+    0xff,
+    0xdf,
+    0xff,
+    0xdd,
+    0xff,
+    0xfb,
+    0xff,
+    0xfb,
+    0xbf,
+    0xff,
+    0x7f,
+    0xff,
+    0x77,
+    0xf7,
+    0xbd,
+    0xef,
+    0xff,
+    0xf0,
+    0xff,
+    0xf0,
+    0x0f,
+    0xfc,
+    0xcc,
+    0x3c,
+    0xcc,
+    0x33,
+    0xcc,
+    0xcf,
+    0xff,
+    0xef,
+    0xff,
+    0xee,
+    0xff,
+    0xfd,
+    0xff,
+    0xfd,
+    0xdf,
+    0xff,
+    0xbf,
+    0xff,
+    0xbb,
+    0xff,
+    0xf7,
+    0xff,
+    0xf7,
+    0x7f,
+    0x7b,
+    0xde,
 };
 
-static const rt_uint8_t tuning_blk_pattern_8bit[] =
-{
-    0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0x00, 0x00,
-    0xff, 0xff, 0xcc, 0xcc, 0xcc, 0x33, 0xcc, 0xcc,
-    0xcc, 0x33, 0x33, 0xcc, 0xcc, 0xcc, 0xff, 0xff,
-    0xff, 0xee, 0xff, 0xff, 0xff, 0xee, 0xee, 0xff,
-    0xff, 0xff, 0xdd, 0xff, 0xff, 0xff, 0xdd, 0xdd,
-    0xff, 0xff, 0xff, 0xbb, 0xff, 0xff, 0xff, 0xbb,
-    0xbb, 0xff, 0xff, 0xff, 0x77, 0xff, 0xff, 0xff,
-    0x77, 0x77, 0xff, 0x77, 0xbb, 0xdd, 0xee, 0xff,
-    0xff, 0xff, 0xff, 0x00, 0xff, 0xff, 0xff, 0x00,
-    0x00, 0xff, 0xff, 0xcc, 0xcc, 0xcc, 0x33, 0xcc,
-    0xcc, 0xcc, 0x33, 0x33, 0xcc, 0xcc, 0xcc, 0xff,
-    0xff, 0xff, 0xee, 0xff, 0xff, 0xff, 0xee, 0xee,
-    0xff, 0xff, 0xff, 0xdd, 0xff, 0xff, 0xff, 0xdd,
-    0xdd, 0xff, 0xff, 0xff, 0xbb, 0xff, 0xff, 0xff,
-    0xbb, 0xbb, 0xff, 0xff, 0xff, 0x77, 0xff, 0xff,
-    0xff, 0x77, 0x77, 0xff, 0x77, 0xbb, 0xdd, 0xee,
+static const rt_uint8_t tuning_blk_pattern_8bit[] = {
+    0xff,
+    0xff,
+    0x00,
+    0xff,
+    0xff,
+    0xff,
+    0x00,
+    0x00,
+    0xff,
+    0xff,
+    0xcc,
+    0xcc,
+    0xcc,
+    0x33,
+    0xcc,
+    0xcc,
+    0xcc,
+    0x33,
+    0x33,
+    0xcc,
+    0xcc,
+    0xcc,
+    0xff,
+    0xff,
+    0xff,
+    0xee,
+    0xff,
+    0xff,
+    0xff,
+    0xee,
+    0xee,
+    0xff,
+    0xff,
+    0xff,
+    0xdd,
+    0xff,
+    0xff,
+    0xff,
+    0xdd,
+    0xdd,
+    0xff,
+    0xff,
+    0xff,
+    0xbb,
+    0xff,
+    0xff,
+    0xff,
+    0xbb,
+    0xbb,
+    0xff,
+    0xff,
+    0xff,
+    0x77,
+    0xff,
+    0xff,
+    0xff,
+    0x77,
+    0x77,
+    0xff,
+    0x77,
+    0xbb,
+    0xdd,
+    0xee,
+    0xff,
+    0xff,
+    0xff,
+    0xff,
+    0x00,
+    0xff,
+    0xff,
+    0xff,
+    0x00,
+    0x00,
+    0xff,
+    0xff,
+    0xcc,
+    0xcc,
+    0xcc,
+    0x33,
+    0xcc,
+    0xcc,
+    0xcc,
+    0x33,
+    0x33,
+    0xcc,
+    0xcc,
+    0xcc,
+    0xff,
+    0xff,
+    0xff,
+    0xee,
+    0xff,
+    0xff,
+    0xff,
+    0xee,
+    0xee,
+    0xff,
+    0xff,
+    0xff,
+    0xdd,
+    0xff,
+    0xff,
+    0xff,
+    0xdd,
+    0xdd,
+    0xff,
+    0xff,
+    0xff,
+    0xbb,
+    0xff,
+    0xff,
+    0xff,
+    0xbb,
+    0xbb,
+    0xff,
+    0xff,
+    0xff,
+    0x77,
+    0xff,
+    0xff,
+    0xff,
+    0x77,
+    0x77,
+    0xff,
+    0x77,
+    0xbb,
+    0xdd,
+    0xee,
 };
 
 rt_err_t mmcsd_send_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode, rt_err_t *cmd_error)
@@ -721,9 +910,9 @@ rt_err_t mmcsd_send_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode, rt_er
     int size;
     rt_uint8_t *data_buf;
     const rt_uint8_t *tuning_block_pattern;
-    struct rt_mmcsd_req req = {};
-    struct rt_mmcsd_cmd cmd = {};
-    struct rt_mmcsd_data data = {};
+    struct rt_mmcsd_req req;
+    struct rt_mmcsd_cmd cmd;
+    struct rt_mmcsd_data data;
     struct rt_mmcsd_io_cfg *io_cfg = &host->io_cfg;
 
     if (io_cfg->bus_width == MMCSD_BUS_WIDTH_8)
@@ -801,7 +990,7 @@ out_free:
 
 rt_err_t mmcsd_send_abort_tuning(struct rt_mmcsd_host *host, rt_uint32_t opcode)
 {
-    struct rt_mmcsd_cmd cmd = {};
+    struct rt_mmcsd_cmd cmd = { 0 };
 
     /*
      * eMMC specification specifies that CMD12 can be used to stop a tuning
@@ -913,8 +1102,8 @@ void mmcsd_change(struct rt_mmcsd_host *host)
 void mmcsd_detect(void *param)
 {
     struct rt_mmcsd_host *host;
-    rt_uint32_t  ocr;
-    rt_int32_t  err;
+    rt_uint32_t ocr;
+    rt_int32_t err;
 
     while (1)
     {
@@ -932,7 +1121,9 @@ void mmcsd_detect(void *param)
                 if (!err)
                 {
                     if (init_sdio(host, ocr))
+                    {
                         mmcsd_power_off(host);
+                    }
                     mmcsd_host_unlock(host);
                     continue;
                 }
@@ -944,7 +1135,9 @@ void mmcsd_detect(void *param)
                 if (!err)
                 {
                     if (init_sd(host, ocr))
+                    {
                         mmcsd_power_off(host);
+                    }
                     mmcsd_host_unlock(host);
                     rt_mb_send(&mmcsd_hotpluge_mb, (rt_ubase_t)host);
                     continue;
@@ -957,7 +1150,9 @@ void mmcsd_detect(void *param)
                 if (!err)
                 {
                     if (init_mmc(host, ocr))
+                    {
                         mmcsd_power_off(host);
+                    }
                     mmcsd_host_unlock(host);
                     rt_mb_send(&mmcsd_hotpluge_mb, (rt_ubase_t)host);
                     continue;
@@ -1029,14 +1224,21 @@ rt_int32_t mmcsd_excute_tuning(struct rt_mmcsd_card *card)
     rt_int32_t opcode;
 
     if (!host->ops->execute_tuning)
+    {
         return RT_EOK;
+    }
 
     if (card->card_type == CARD_TYPE_MMC)
+    {
         opcode = SEND_TUNING_BLOCK_HS200;
+    }
     else
+    {
         opcode = SEND_TUNING_BLOCK;
+    }
 
-    return host->ops->execute_tuning(host, opcode);;
+    return host->ops->execute_tuning(host, opcode);
+    ;
 }
 
 int rt_mmcsd_core_init(void)
