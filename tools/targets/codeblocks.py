@@ -35,6 +35,9 @@ from utils import xml_indent
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import building
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
+
 import xml.etree.ElementTree as etree
 
 fs_encoding = sys.getfilesystemencoding()
@@ -48,21 +51,24 @@ def CB_AddHeadFiles(program, elem, project_path):
     # print utils.source_list
 
     for f in utils.source_list:
-        path = _make_path_relative(project_path, f)
+        # stable, single-separator path; ElementTree escapes & < > " on write.
+        # (was path.decode(fs_encoding) -- str has no .decode on Python 3)
+        path = target_utils.normalize_group_file_path(project_path, f)
         Unit = SubElement(elem, 'Unit')
-        Unit.set('filename', path.decode(fs_encoding))
+        Unit.set('filename', path)
 
 def CB_AddCFiles(ProjectFiles, parent, gname, files, project_path):
     for f in files:
         fn = f.rfile()
         name = fn.name
-        path = os.path.dirname(fn.abspath)
+        dir_path = os.path.dirname(fn.abspath)
 
-        path = _make_path_relative(project_path, path)
-        path = os.path.join(path, name)
+        # normalized relative path (was _make_path_relative + os.path.join,
+        # which mixed '/' and '\\'; and path.decode crashed on Python 3)
+        path = target_utils.normalize_group_file_path(project_path, dir_path, name)
 
         Unit = SubElement(parent, 'Unit')
-        Unit.set('filename', path.decode(fs_encoding))
+        Unit.set('filename', path)
         Option = SubElement(Unit, 'Option')
         Option.set('compilerVar', "CC")
 
@@ -95,12 +101,9 @@ def CBProject(target, script, program):
     # write head include path
     if 'CPPPATH' in building.Env:
         cpp_path = building.Env['CPPPATH']
-        paths  = set()
-        for path in cpp_path:
-            inc = _make_path_relative(project_path, os.path.normpath(path))
-            paths.add(inc) #.replace('\\', '/')
-
-        paths = [i for i in paths]
+        # order-preserving de-dup, then sort (set() reordered non-deterministically)
+        paths = target_utils.normalize_paths(
+            [_make_path_relative(project_path, os.path.normpath(path)) for path in cpp_path])
         paths.sort()
         # write include path, definitions
         for elem in tree.iter(tag='Compiler'):
@@ -109,10 +112,13 @@ def CBProject(target, script, program):
             Add = SubElement(elem, 'Add')
             Add.set('directory', path)
 
-        for macro in building.Env.get('CPPDEFINES', []):
+        # one <Add option="-D<macro>"/> per define. The old `for d in macro`
+        # iterated the *characters* of a string macro (leaving only -D<last char>)
+        # and dropped the name of a ('STM32','1') tuple; normalize_defines folds
+        # tuples to STM32=1 and yields one complete macro per entry.
+        for macro in target_utils.normalize_defines(building.Env.get('CPPDEFINES', [])):
             Add = SubElement(elem, 'Add')
-            for d in macro:
-                Add.set('option', "-D"+d)
+            Add.set('option', "-D" + macro)
 
         # write link flags
     '''
@@ -139,5 +145,7 @@ def CBProject(target, script, program):
             elem.set('AdditionalLibraryDirectories', lib_paths)
     '''
     xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8'))
+    # encoding='unicode' yields str for the text-mode file; encoding='utf-8'
+    # returns bytes and raised TypeError on write under Python 3
+    out.write(etree.tostring(root, encoding='unicode'))
     out.close()

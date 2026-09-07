@@ -31,6 +31,9 @@ from xml.etree.ElementTree import SubElement
 from utils import _make_path_relative
 from utils import xml_indent
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
+
 def SDKAddGroup(ProjectFiles, parent, name, files, project_path):
     # don't add an empty group
     if len(files) == 0:
@@ -41,11 +44,11 @@ def SDKAddGroup(ProjectFiles, parent, name, files, project_path):
     for f in files:
         fn = f.rfile()
         name = fn.name
-        path = os.path.dirname(fn.abspath)
+        dir_path = os.path.dirname(fn.abspath)
 
-        basename = os.path.basename(path)
-        path = _make_path_relative(project_path, path)
-        elm_attr_name = os.path.join(path, name)
+        # stable, single-separator relative path (was _make_path_relative +
+        # os.path.join, which mixed '/' and '\\'); ElementTree escapes on write
+        elm_attr_name = target_utils.normalize_group_file_path(project_path, dir_path, name)
 
         file = SubElement(group, 'File', attrib={'Name': elm_attr_name})
 
@@ -112,11 +115,14 @@ def _CDKProject(tree, target, script):
     IncludePath = tree.find('BuildConfigs/BuildConfig/Asm/IncludePath')
     IncludePath.text = text
 
+    # fold tuple macros to FOO=1, order-preserving de-dup.
+    # '; '.join(set(...)) raised TypeError on a ('FOO','1') tuple and reordered.
+    defines = target_utils.normalize_defines(CPPDEFINES)
     Define = tree.find('BuildConfigs/BuildConfig/Compiler/Define')
-    Define.text = '; '.join(set(CPPDEFINES))
-    
+    Define.text = '; '.join(defines)
+
     Define = tree.find('BuildConfigs/BuildConfig/Asm/Define')
-    Define.text = '; '.join(set(CPPDEFINES))
+    Define.text = '; '.join(defines)
 
     CC_Misc = tree.find('BuildConfigs/BuildConfig/Compiler/OtherFlags')
     CC_Misc.text = CCFLAGS

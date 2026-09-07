@@ -29,6 +29,9 @@ import rtconfig
 from utils import _make_path_relative
 from collections import defaultdict, Counter
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
+
 
 def GenerateCFiles(env, project, project_name):
     """
@@ -63,15 +66,13 @@ def GenerateCFiles(env, project, project_name):
     OBJCOPY = tool_path_conv["CMAKE_OBJCOPY"]["path"]
     FROMELF = tool_path_conv["CMAKE_FROMELF"]["path"]
 
-    CFLAGS = "".join(env['CFLAGS'])
-    CFLAGS = CFLAGS.replace('\\', "/").replace('\"', "\\\"")   
+    CFLAGS = target_utils.escape_quoted_flags("".join(env['CFLAGS']))
     if 'CXXFLAGS' in dir(rtconfig):
-        cflag_str=''.join(env['CXXFLAGS'])
-        CXXFLAGS = cflag_str.replace('\\', "/").replace('\"', "\\\"")
+        CXXFLAGS = target_utils.escape_quoted_flags(''.join(env['CXXFLAGS']))
     else:
         CXXFLAGS = CFLAGS
-    AFLAGS = env['ASFLAGS'].replace('\\', "/").replace('\"', "\\\"")
-    LFLAGS = env['LINKFLAGS'].replace('\\', "/").replace('\"', "\\\"")
+    AFLAGS = target_utils.escape_quoted_flags(env['ASFLAGS'])
+    LFLAGS = target_utils.escape_quoted_flags(env['LINKFLAGS'])
     
     POST_ACTION = rtconfig.POST_ACTION
     # replace the tool name with the cmake variable
@@ -179,34 +180,19 @@ def GenerateCFiles(env, project, project_name):
         
         cm_file.write('\n')
 
+        # include paths: relative, de-duplicated, and quoted so spaces / ';'
+        # cannot break the CMake list
+        inc_paths = target_utils.normalize_paths(
+            [_make_path_relative(os.getcwd(), i) for i in env['CPPPATH']])
         cm_file.write("INCLUDE_DIRECTORIES(\n")
-        for i in env['CPPPATH']:
-            # use relative path
-            path = _make_path_relative(os.getcwd(), i)
-            cm_file.write( "\t" + path.replace("\\", "/") + "\n")
-        cm_file.write(")\n\n")
+        cm_file.write(target_utils.cmake_list(inc_paths))
+        cm_file.write("\n)\n\n")
 
+        # defines: fold SCons str/tuple/list into NAME / NAME=value, stable order
+        defines = ["-D" + d for d in target_utils.normalize_defines(env['CPPDEFINES'])]
         cm_file.write("ADD_DEFINITIONS(\n")
-        for i in env['CPPDEFINES']:
-            # Handle CPPDEFINES from SCons (str / tuple)
-            if isinstance(i, tuple):
-                # e.g. ('STM32F407xx',)
-                if len(i) == 1:
-                    cm_file.write("\t-D" + str(i[0]) + "\n")
-                # e.g. ('FOO', None)
-                elif len(i) == 2:
-                    if i[1] is None:
-                        cm_file.write("\t-D" + str(i[0]) + "\n")
-                    # e.g. ('FOO', 1)
-                    else:
-                        cm_file.write("\t-D{}={}\n".format(i[0], i[1]))
-                else:
-                    # unexpected form, fallback to name only
-                    cm_file.write("\t-D" + str(i[0]) + "\n")
-            else:
-                # generic macro (commonly a string), ensure robust string conversion
-                cm_file.write("\t-D" + str(i) + "\n")
-        cm_file.write(")\n\n")
+        cm_file.write(target_utils.cmake_list(defines))
+        cm_file.write("\n)\n\n")
 
         libgroups = []
         interfacelibgroups = []
@@ -236,12 +222,13 @@ def GenerateCFiles(env, project, project_name):
 
         cm_file.write("# Library source files\n")
         for group in project:
+            src_paths = target_utils.normalize_paths(
+                [os.path.normpath(f.rfile().abspath) for f in group['src']],
+            )
+            src_paths = [_make_path_relative(os.getcwd(), p) for p in src_paths]
             cm_file.write("SET(RT_{:s}_SOURCES\n".format(group['name'].upper()))
-            for f in group['src']:
-                # use relative path
-                path = _make_path_relative(os.getcwd(), os.path.normpath(f.rfile().abspath))
-                cm_file.write( "\t" + path.replace("\\", "/") + "\n" )
-            cm_file.write(")\n\n")
+            cm_file.write(target_utils.cmake_list(src_paths))
+            cm_file.write("\n)\n\n")
 
         cm_file.write("# Library search paths\n")
         for group in libgroups + interfacelibgroups:
@@ -251,10 +238,10 @@ def GenerateCFiles(env, project, project_name):
             if len(group['LIBPATH']) == 0:
                 continue
 
+            lib_dirs = target_utils.normalize_paths(group['LIBPATH'])
             cm_file.write("SET(RT_{:s}_LINK_DIRS\n".format(group['name'].upper()))
-            for f in group['LIBPATH']:
-                cm_file.write("\t"+ f.replace("\\", "/") + "\n" )
-            cm_file.write(")\n\n")
+            cm_file.write(target_utils.cmake_list(lib_dirs))
+            cm_file.write("\n)\n\n")
 
         cm_file.write("# Library local macro definitions\n")
         for group in libgroups:
@@ -264,10 +251,10 @@ def GenerateCFiles(env, project, project_name):
             if len(group['LOCAL_CPPDEFINES']) == 0:
                 continue
 
+            local_defines = target_utils.normalize_defines(group['LOCAL_CPPDEFINES'])
             cm_file.write("SET(RT_{:s}_DEFINES\n".format(group['name'].upper()))
-            for f in group['LOCAL_CPPDEFINES']:
-                cm_file.write("\t"+ f.replace("\\", "/") + "\n" )
-            cm_file.write(")\n\n")
+            cm_file.write(target_utils.cmake_list(local_defines))
+            cm_file.write("\n)\n\n")
 
         cm_file.write("# Library dependencies\n")
         for group in libgroups + interfacelibgroups:
@@ -277,10 +264,10 @@ def GenerateCFiles(env, project, project_name):
             if len(group['LIBS']) == 0:
                 continue
 
+            libs = [target_utils.normalize_path(f) for f in group['LIBS']]
             cm_file.write("SET(RT_{:s}_LIBS\n".format(group['name'].upper()))
-            for f in group['LIBS']:
-                cm_file.write("\t"+ "{}\n".format(f.replace("\\", "/")))
-            cm_file.write(")\n\n")
+            cm_file.write(target_utils.cmake_list(libs))
+            cm_file.write("\n)\n\n")
 
         cm_file.write("# Libraries\n")
         for group in libgroups:

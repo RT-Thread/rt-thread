@@ -1,7 +1,11 @@
 import os
 import re
+import sys
 import utils
 from utils import _make_path_relative
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
 
 def GenerateCFiles(env,project):
     """
@@ -16,22 +20,27 @@ def GenerateCFiles(env,project):
         cm_file.write("idf_component_register(\n")
 
         cm_file.write("\tSRCS\n")
+        src_paths = []
         for group in project:
             for f in group['src']:
                 path = _make_path_relative(main_component_dir, os.path.normpath(f.rfile().abspath))
-                cm_file.write( "\t" + path.replace("\\", "/") + "\n" ) 
+                src_paths.append(path.replace("\\", "/"))
                 src = open(f.rfile().abspath, 'r')
                 for line in src.readlines():
                     if re.match(r'INIT_(BOARD|PREV|DEVICE|COMPONENT|ENV|APP)_EXPORT\(.+\)', line):
                         init_export.append(re.search(r'\(.+\)', line).group(0)[1:-1])
                 src.close()
+        # double-quote each item so a path with a space is one CMake argument,
+        # and cmake_quote escapes an embedded ';' / '"' / '\\'; also de-duplicated
+        for p in target_utils.ordered_unique(src_paths):
+            cm_file.write('\t"' + target_utils.cmake_quote(p) + '"\n')
 
         cm_file.write("\n")
 
         cm_file.write("\tINCLUDE_DIRS\n")
-        for i in info['CPPPATH']:
-            path = _make_path_relative(main_component_dir, i)
-            cm_file.write( "\t" + path.replace("\\", "/") + "\n")
+        inc_paths = [_make_path_relative(main_component_dir, i).replace("\\", "/") for i in info['CPPPATH']]
+        for p in target_utils.ordered_unique(inc_paths):
+            cm_file.write('\t"' + target_utils.cmake_quote(p) + '"\n')
         cm_file.write(")\n\n")
 
         n = len(init_export)

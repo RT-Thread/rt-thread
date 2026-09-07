@@ -9,6 +9,9 @@ from utils import _make_path_relative
 from utils import xml_indent
 from utils import ProjectInfo
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
+
 def SDKAddGroup(parent, name, files, project_path):
     # don't add an empty group
     if len(files) == 0:
@@ -43,7 +46,7 @@ def SESProject(env) :
     script = env['project']
 
     root = tree.getroot()
-    out = file(target, 'w')
+    out = open(target, 'w', encoding='utf-8')
     out.write('<!DOCTYPE CrossStudio_Project_File>\n')
 
     CPPPATH = []
@@ -73,9 +76,11 @@ def SESProject(env) :
                 LINKFLAGS += group['LINKFLAGS']
 
     # write include path, definitions and link flags
-    path = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in project['CPPPATH']])
-    path = path.replace('\\', '/')
-    defines = ';'.join(set(project['CPPDEFINES']))
+    inc_paths = target_utils.normalize_paths(
+        [_make_path_relative(project_path, os.path.normpath(i)) for i in project['CPPPATH']])
+    path = target_utils.semicolon_list(inc_paths)
+    # normalize (NAME / NAME=value) and keep a stable order instead of set()
+    defines = target_utils.semicolon_list(target_utils.normalize_defines(project['CPPDEFINES']))
 
     node = tree.findall('project/configuration')
     for item in node:
@@ -86,7 +91,8 @@ def SESProject(env) :
             item.set('c_user_include_directories', path)
 
     xml_indent(root)
-    out.write(etree.tostring(root, encoding='utf-8'))
+    # encoding='unicode' yields str for the text-mode file (utf-8 bytes would fail)
+    out.write(etree.tostring(root, encoding='unicode'))
     out.close()
 
     return

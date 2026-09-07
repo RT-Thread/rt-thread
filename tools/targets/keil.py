@@ -32,6 +32,9 @@ from xml.etree.ElementTree import SubElement
 from utils import _make_path_relative
 from utils import xml_indent
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
+
 fs_encoding = sys.getfilesystemencoding()
 
 def _get_filetype(fn):
@@ -64,11 +67,12 @@ def MDK4AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
     group_name.text = name
 
     name = os.path.basename(filename)
-    path = os.path.dirname (filename)
+    dir_path = os.path.dirname(filename)
 
-    basename = os.path.basename(path)
-    path = _make_path_relative(project_path, path)
-    path = os.path.join(path, name)
+    basename = os.path.basename(dir_path)
+    # stable, single-separator relative path (was _make_path_relative + os.path.join,
+    # which mixed '/' and '\\' in the serialized FilePath depending on the OS)
+    path = target_utils.normalize_group_file_path(project_path, dir_path, name)
     files = SubElement(group, 'Files')
     file = SubElement(files, 'File')
     file_name = SubElement(file, 'FileName')
@@ -88,28 +92,22 @@ def MDK4AddGroupForFN(ProjectFiles, parent, name, filename, project_path):
     if ProjectFiles.count(obj_name):
         name = basename + '_' + name
     ProjectFiles.append(obj_name)
-    try: # python 2
-        file_name.text = name.decode(fs_encoding)
-    except: # python 3
-        file_name.text = name
+    # ElementTree escapes text on write; a name/path with & < > " is now safe
+    file_name.text = name
     file_type = SubElement(file, 'FileType')
     file_type.text = '%d' % _get_filetype(name)
     file_path = SubElement(file, 'FilePath')
-    try: # python 2
-        file_path.text = path.decode(fs_encoding)
-    except: # python 3
-        file_path.text = path
-
+    file_path.text = path
 
     return group
 
 def MDK4AddLibToGroup(ProjectFiles, group, name, filename, project_path):
     name = os.path.basename(filename)
-    path = os.path.dirname (filename)
+    dir_path = os.path.dirname(filename)
 
-    basename = os.path.basename(path)
-    path = _make_path_relative(project_path, path)
-    path = os.path.join(path, name)
+    basename = os.path.basename(dir_path)
+    # normalized relative path (fixes mixed '/' + '\\' separators in FilePath)
+    path = target_utils.normalize_group_file_path(project_path, dir_path, name)
     files = SubElement(group, 'Files')
     file = SubElement(files, 'File')
     file_name = SubElement(file, 'FileName')
@@ -129,18 +127,11 @@ def MDK4AddLibToGroup(ProjectFiles, group, name, filename, project_path):
     if ProjectFiles.count(obj_name):
         name = basename + '_' + name
     ProjectFiles.append(obj_name)
-    try:
-        file_name.text = name.decode(fs_encoding)
-    except:
-        file_name.text = name
+    file_name.text = name
     file_type = SubElement(file, 'FileType')
     file_type.text = '%d' % _get_filetype(name)
     file_path = SubElement(file, 'FilePath')
-
-    try:
-        file_path.text = path.decode(fs_encoding)
-    except:
-        file_path.text = path
+    file_path.text = path
 
     return group
 
@@ -156,11 +147,11 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path, group_scons):
     for f in files:
         fn = f.rfile()
         name = fn.name
-        path = os.path.dirname(fn.abspath)
+        dir_path = os.path.dirname(fn.abspath)
 
-        basename = os.path.basename(path)
-        path = _make_path_relative(project_path, path)
-        path = os.path.join(path, name)
+        basename = os.path.basename(dir_path)
+        # normalized relative path (fixes mixed '/' + '\\' separators in FilePath)
+        path = target_utils.normalize_group_file_path(project_path, dir_path, name)
 
         files = SubElement(group, 'Files')
         file = SubElement(files, 'File')
@@ -179,11 +170,11 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path, group_scons):
         if ProjectFiles.count(obj_name):
             name = basename + '_' + name
         ProjectFiles.append(obj_name)
-        file_name.text = name # name.decode(fs_encoding)
+        file_name.text = name # ElementTree escapes & < > " on write
         file_type = SubElement(file, 'FileType')
         file_type.text = '%d' % _get_filetype(name)
         file_path = SubElement(file, 'FilePath')
-        file_path.text = path # path.decode(fs_encoding)
+        file_path.text = path
 
         # for local LOCAL_CFLAGS/LOCAL_CXXFLAGS/LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES
         MiscControls_text = ' '
@@ -202,14 +193,17 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path, group_scons):
             MiscControls.text = MiscControls_text
             Define          = SubElement(VariousControls, 'Define')
             if 'LOCAL_CPPDEFINES' in group_scons:
-                Define.text     = ', '.join(set(group_scons['LOCAL_CPPDEFINES']))
+                # tuple macros fold to FOO=1, stable order (was set(): reordered)
+                Define.text     = ', '.join(target_utils.normalize_defines(group_scons['LOCAL_CPPDEFINES']))
             else:
                 Define.text     = ' '
             Undefine        = SubElement(VariousControls, 'Undefine')
             Undefine.text   = ' '
             IncludePath     = SubElement(VariousControls, 'IncludePath')
             if 'LOCAL_CPPPATH' in group_scons:
-                IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in group_scons['LOCAL_CPPPATH']])
+                local_incs = target_utils.ordered_unique(
+                    [_make_path_relative(project_path, os.path.normpath(i)) for i in group_scons['LOCAL_CPPPATH']])
+                IncludePath.text = target_utils.xml_list_value(local_incs)
             else:
                 IncludePath.text = ' '
 
@@ -285,11 +279,15 @@ def MDK45Project(env, tree, target, script):
                         group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], full_path, project_path)
 
     # write include path, definitions and link flags
+    # (ordered de-dup keeps stable output; set() reordered it every run)
     IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
-    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in set(CPPPATH)])
+    inc_paths = target_utils.ordered_unique(
+        [_make_path_relative(project_path, os.path.normpath(i)) for i in CPPPATH])
+    IncludePath.text = target_utils.xml_list_value(inc_paths)
 
     Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
-    Define.text = ', '.join(set(CPPDEFINES))
+    # tuple macros fold to FOO=1 -- ', '.join(set(...)) crashed on tuples
+    Define.text = ', '.join(target_utils.normalize_defines(CPPDEFINES))
 
     if 'c99' in CXXFLAGS or 'c99' in CCFLAGS or 'c99' in CFLAGS:
         uC99 = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uC99')
@@ -427,10 +425,10 @@ def MDK2Project(env, target, script):
         for node in group['src']:
             fn = node.rfile()
             name = fn.name
-            path = os.path.dirname(fn.abspath)
-            basename = os.path.basename(path)
-            path = _make_path_relative(project_path, path)
-            path = os.path.join(path, name)
+            dir_path = os.path.dirname(fn.abspath)
+            basename = os.path.basename(dir_path)
+            # normalized relative path (was _make_path_relative + os.path.join)
+            path = target_utils.normalize_group_file_path(project_path, dir_path, name)
             if ProjectFiles.count(name):
                 name = basename + '_' + name
             ProjectFiles.append(name)
@@ -443,17 +441,13 @@ def MDK2Project(env, target, script):
     lines.insert(line_index, '\r\n')
     line_index += 1
 
-    # remove repeat path
-    paths = set()
-    for path in CPPPATH:
-        inc = _make_path_relative(project_path, os.path.normpath(path))
-        paths.add(inc) #.replace('\\', '/')
+    # remove repeat path (ordered de-dup; string.join was Python-2 only)
+    paths = target_utils.ordered_unique(
+        [_make_path_relative(project_path, os.path.normpath(path)) for path in CPPPATH])
+    CPPPATH = target_utils.xml_list_value(paths)
 
-    paths = [i for i in paths]
-    CPPPATH = string.join(paths, ';')
-
-    definitions = [i for i in set(CPPDEFINES)]
-    CPPDEFINES = string.join(definitions, ', ')
+    # fold tuple macros to FOO=1; ', '.join replaces the py2 string.join(set(...))
+    CPPDEFINES = ', '.join(target_utils.normalize_defines(CPPDEFINES))
 
     while line_index < len(lines):
         if lines[line_index].startswith(' ADSCINCD '):

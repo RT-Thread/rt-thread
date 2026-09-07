@@ -4,11 +4,15 @@ Author: https://github.com/klivelinux
 """
 
 import os
+import sys
 import utils
 from string import Template
 import rtconfig
 
 from utils import _make_path_relative
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
 
 
 class XmakeProject:
@@ -34,34 +38,29 @@ class XmakeProject:
 
     def set_target_config(self):
         info = utils.ProjectInfo(self.env)
-        # 1. config src path
+        # 1. config src path -- relative, de-duplicated, Lua-quoted list
+        src_files = []
         for group in self.project:
             for f in group['src']:
-                # use relative path
                 path = _make_path_relative(os.getcwd(), os.path.normpath(f.rfile().abspath))
-                self.src_path += "\t\"{0}\",\n".format(path.replace("\\", "/"))
-        self.src_path = self.src_path[:-2]
+                src_files.append(path.replace("\\", "/"))
+        self.src_path = target_utils.lua_list(target_utils.ordered_unique(src_files))
         # 2. config dir path
-        for i in info['CPPPATH']:
-            # use relative path
-            path = _make_path_relative(os.getcwd(), i)
-            self.inc_path += "\t\"{0}\",\n".format(path.replace("\\", "/"))
-        self.inc_path = self.inc_path[:-2]
+        inc_dirs = [_make_path_relative(os.getcwd(), i).replace("\\", "/") for i in info['CPPPATH']]
+        self.inc_path = target_utils.lua_list(target_utils.ordered_unique(inc_dirs))
         # 3. config cflags
-        self.cflags = rtconfig.CFLAGS.replace('\\', "/").replace('\"', "\\\"")
+        self.cflags = target_utils.escape_quoted_flags(rtconfig.CFLAGS)
         # 4. config cxxflags
         if 'CXXFLAGS' in dir(rtconfig):
-            self.cxxflags = rtconfig.CXXFLAGS.replace('\\', "/").replace('\"', "\\\"")
+            self.cxxflags = target_utils.escape_quoted_flags(rtconfig.CXXFLAGS)
         else:
             self.cxxflags = self.cflags
         # 5. config asflags
-        self.asflags = rtconfig.AFLAGS.replace('\\', "/").replace('\"', "\\\"")
+        self.asflags = target_utils.escape_quoted_flags(rtconfig.AFLAGS)
         # 6. config lflags
-        self.ldflags = rtconfig.LFLAGS.replace('\\', "/").replace('\"', "\\\"")
-        # 7. config define
-        for i in info['CPPDEFINES']:
-            self.define += "\t\"{0}\",\n".format(i)
-        self.define = self.define[:-2]
+        self.ldflags = target_utils.escape_quoted_flags(rtconfig.LFLAGS)
+        # 7. config define -- tuple macros fold to FOO=1 (never FOO, 1)
+        self.define = target_utils.lua_list(target_utils.normalize_defines(info['CPPDEFINES']))
 
     def generate_xmake_file(self):
         if os.getenv('RTT_ROOT'):

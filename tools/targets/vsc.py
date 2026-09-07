@@ -29,12 +29,16 @@ Utils for VSCode
 """
 
 import os
+import sys
 import json
 import utils
 import rtconfig
 from SCons.Script import GetLaunchDir
 
 from utils import _make_path_relative
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import target_utils
 def find_first_node_with_two_children(tree):
     for key, subtree in tree.items():
         if len(subtree) >= 2:
@@ -95,17 +99,11 @@ def extract_source_dirs(compile_commands):
             # command or arguments
             command = entry.get('command') or entry.get('arguments')
 
-            if isinstance(command, str):
-                parts = command.split()
-            else:
-                parts = command
-            # 读取-I或者/I
-            for i, part in enumerate(parts):
-                if part.startswith('-I'):
-                    include_dir = part[2:] if len(part) > 2 else parts[i + 1]
-                    source_dirs.add(os.path.abspath(include_dir))
-                elif part.startswith('/I'):
-                    include_dir = part[2:] if len(part) > 2 else parts[i + 1]
+            # split the command safely (keeps quoted "-I dir with space")
+            parts = target_utils.split_command(command)
+            # read -I / /I include directories
+            for include_dir in target_utils.extract_include_args(parts):
+                if include_dir:
                     source_dirs.add(os.path.abspath(include_dir))
 
     return sorted(source_dirs)
@@ -202,6 +200,13 @@ def command_json_to_workspace(root_path,command_json_path):
     print("Filtered Directory Tree:")
     #print_tree(filtered_tree)
 
+    # An empty compile_commands.json (or a tree without a common node) leaves
+    # nothing to exclude; emit an empty exclude config instead of crashing.
+    if not filtered_tree:
+        print("No source directories found, generating empty exclude config.")
+        generate_code_workspace_file(set(), command_json_abs_path, root_path)
+        return
+
     # 打印filtered_tree的root节点的相对路径
     root_key = list(filtered_tree.keys())[0]
     print(f"Root node relative path: {root_key}")
@@ -227,9 +232,16 @@ def command_json_to_workspace(root_path,command_json_path):
     generate_code_workspace_file(exclude_fold,command_json_abs_path,root_path)
 
 def delete_repeatelist(data):
-    temp_dict = set([str(item) for item in data])
-    data = [eval(i) for i in temp_dict]
-    return data
+    # order-preserving de-duplication (do not use eval / set on repr strings)
+    result = []
+    seen = set()
+    for item in data:
+        key = json.dumps(item, sort_keys=True)
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(item)
+    return result
 
 def GenerateCFiles(env):
     """
