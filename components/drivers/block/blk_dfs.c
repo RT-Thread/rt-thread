@@ -180,7 +180,7 @@ _goon:
     if ((count - wsize) / bytes_per_sector != 0)
     {
         res = rt_device_write(dev, blk_pos, write_buf + wsize,
-                (count - wsize) / bytes_per_sector);
+                              (count - wsize) / bytes_per_sector);
 
         if (res != (count - wsize) / bytes_per_sector)
         {
@@ -235,8 +235,7 @@ static int blk_fops_poll(struct dfs_file *file, struct rt_pollreq *req)
     return mask;
 }
 
-const static struct dfs_file_ops blk_fops =
-{
+const static struct dfs_file_ops blk_fops = {
     .open = blk_fops_open,
     .close = blk_fops_close,
     .ioctl = blk_fops_ioctl,

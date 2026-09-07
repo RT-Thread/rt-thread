@@ -40,9 +40,9 @@ struct rt_blk_disk
     struct rt_dm_ida *ida;
 #endif
 
-    rt_uint32_t read_only:1;
-    rt_uint32_t parallel_io:1;
-    rt_uint32_t removable:1;
+    rt_uint32_t read_only   : 1;
+    rt_uint32_t parallel_io : 1;
+    rt_uint32_t removable   : 1;
 #define RT_BLK_DISK_MAGIC 0xbdaabdaa
     rt_uint32_t __magic;
 
@@ -62,9 +62,9 @@ struct rt_blk_disk
 struct rt_blk_disk_ops
 {
     rt_ssize_t (*read)(struct rt_blk_disk *disk, rt_off_t sector, void *buffer,
-            rt_size_t sector_count);
+                       rt_size_t sector_count);
     rt_ssize_t (*write)(struct rt_blk_disk *disk, rt_off_t sector, const void *buffer,
-            rt_size_t sector_count);
+                        rt_size_t sector_count);
     rt_err_t (*getgeome)(struct rt_blk_disk *disk, struct rt_device_blk_geometry *geometry);
     rt_err_t (*sync)(struct rt_blk_disk *disk);
     rt_err_t (*erase)(struct rt_blk_disk *disk);
