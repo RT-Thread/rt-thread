@@ -11,6 +11,7 @@
 #include <board.h>
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <drivers/adc.h>
 #include "drv_adc.h"
 
 #if defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2)

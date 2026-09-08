@@ -17,6 +17,43 @@
 #define DBG_LVL DBG_INFO
 #define DBG_ENABLE
 #include <rtdbg.h>
+#include <drivers/dev_can.h>
+
+/* 5.3.0: SJW/BS1/BS2 time-quantum macros were removed from dev_can.h */
+#ifndef CAN_SJW_1tq
+#define CAN_SJW_1tq   0x00
+#define CAN_SJW_2tq   0x01
+#define CAN_SJW_3tq   0x02
+#define CAN_SJW_4tq   0x03
+#endif
+#ifndef CAN_BS1_1tq
+#define CAN_BS1_1tq   0x00
+#define CAN_BS1_2tq   0x01
+#define CAN_BS1_3tq   0x02
+#define CAN_BS1_4tq   0x03
+#define CAN_BS1_5tq   0x04
+#define CAN_BS1_6tq   0x05
+#define CAN_BS1_7tq   0x06
+#define CAN_BS1_8tq   0x07
+#define CAN_BS1_9tq   0x08
+#define CAN_BS1_10tq  0x09
+#define CAN_BS1_11tq  0x0A
+#define CAN_BS1_12tq  0x0B
+#define CAN_BS1_13tq  0x0C
+#define CAN_BS1_14tq  0x0D
+#define CAN_BS1_15tq  0x0E
+#define CAN_BS1_16tq  0x0F
+#endif
+#ifndef CAN_BS2_1tq
+#define CAN_BS2_1tq   0x00
+#define CAN_BS2_2tq   0x01
+#define CAN_BS2_3tq   0x02
+#define CAN_BS2_4tq   0x03
+#define CAN_BS2_5tq   0x04
+#define CAN_BS2_6tq   0x05
+#define CAN_BS2_7tq   0x06
+#define CAN_BS2_8tq   0x07
+#endif
 
 //兼容老版的can宏定义
 #ifndef RT_CAN_MODE_LISTEN

@@ -13,6 +13,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <drivers/dev_spi.h>
 #include <rthw.h>
 
 #include "ch32v30x_rcc.h"

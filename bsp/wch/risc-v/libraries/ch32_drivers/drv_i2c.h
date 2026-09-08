@@ -13,6 +13,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <drivers/dev_i2c.h>
 
 struct i2c_bus_device
 {

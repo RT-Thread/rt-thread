@@ -11,6 +11,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <drivers/dev_rtc.h>
 #include <sys/time.h>
 #include "board.h"
 
