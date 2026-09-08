@@ -197,6 +197,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [frdm-mcxa153](nxp/mcx/mcxa/frdm-mcxa153) | ✅ | ✅ | ✅ | - | - | - | ✅ | ✅ | ✅ | - | - | ✅ | - | - | - | - | - | - | ✅ | - | - | - | ✅ |
 | [frdm-mcxa156](nxp/mcx/mcxa/frdm-mcxa156) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | ✅ | - | - | - | ✅ | - | - | - | ✅ |
 | [frdm-mcxa346](nxp/mcx/mcxa/frdm-mcxa346) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ |
+| [frdm-mcxc162](nxp/mcx/mcxc/frdm-mcxc162) | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ |
 | [frdm-mcxc444](nxp/mcx/mcxc/frdm-mcxc444) | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ |
 | [frdm-mcxe247](nxp/mcx/mcxe/frdm-mcxe247) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ |
 | [frdm-mcxn236](nxp/mcx/mcxn/frdm-mcxn236) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | - | - | ✅ | ✅ | - | - | - | - | - | ✅ | - | - | - | ✅ |

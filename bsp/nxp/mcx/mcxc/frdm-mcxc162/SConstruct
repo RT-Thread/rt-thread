@@ -1,0 +1,67 @@
+import os
+import sys
+import rtconfig
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.normpath(os.getcwd() + '/../../../../..')
+
+sys.path.append(os.path.join(RTT_ROOT, 'tools'))
+try:
+    from building import *
+except ImportError:
+    print('Cannot find the RT-Thread root directory:')
+    print(RTT_ROOT)
+    exit(-1)
+
+
+def bsp_pkg_check():
+    package_files = [
+        os.path.join(rtconfig.NXP_MCX_CMSIS_ROOT, 'Core', 'Include', 'core_cm23.h'),
+        os.path.join(rtconfig.NXP_MCX_SERIES_ROOT, 'MCXC162', 'gcc', 'MCXC162_flash.ld'),
+    ]
+    if not all(os.path.isfile(path) for path in package_files):
+        print('Required NXP packages are missing. Run pkgs --update first.')
+        exit(1)
+
+
+RegisterPreBuildingAction(bsp_pkg_check)
+
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+env = Environment(
+    tools=['mingw'],
+    AS=rtconfig.AS,
+    ASFLAGS=rtconfig.AFLAGS,
+    CC=rtconfig.CC,
+    CFLAGS=rtconfig.CFLAGS,
+    CXX=rtconfig.CXX,
+    CXXFLAGS=rtconfig.CXXFLAGS,
+    AR=rtconfig.AR,
+    ARFLAGS='-rc',
+    LINK=rtconfig.LINK,
+    LINKFLAGS=rtconfig.LFLAGS,
+    CXXCOM='$CXX -o $TARGET -c $CXXFLAGS $_CCCOMCOM $SOURCES',
+)
+
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+if rtconfig.PLATFORM == 'iccarm':
+    env.Replace(CCCOM=['$CC $CFLAGS $CPPFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES'])
+    env.Replace(ARFLAGS=[])
+    env.Replace(LINKCOM=env['LINKCOM'] + ' --map rtthread.map')
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+SDK_ROOT = os.path.abspath('.')
+libraries_path = SDK_ROOT + '/libraries' if os.path.exists(SDK_ROOT + '/libraries') else os.path.dirname(SDK_ROOT) + '/libraries'
+SDK_LIB = libraries_path
+Export('SDK_LIB')
+
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
+if rtconfig.PLATFORM == 'iccarm':
+    env.Replace(ASCOM='$AS $ASFLAGS $_CPPDEFFLAGS $_CPPINCFLAGS -o $TARGET $SOURCES')
+objs.extend(SConscript(os.path.join(libraries_path, 'drivers', 'SConscript'),
+                       variant_dir='build/libraries/drivers', duplicate=0))
+DoBuilding(TARGET, objs)

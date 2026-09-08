@@ -1,0 +1,23 @@
+peripheral.communication:
+  scons_arg: &scons
+    - '--strict'
+  kconfig:
+    - CONFIG_BSP_USING_UART1=y
+    - CONFIG_BSP_USING_UART2=y
+    - CONFIG_BSP_USING_I2C=y
+    - CONFIG_BSP_USING_I2C0=y
+    - CONFIG_BSP_USING_SPI=y
+    - CONFIG_BSP_USING_SPI0=y
+
+peripheral.timing_control:
+  scons_arg: *scons
+  kconfig:
+    - CONFIG_RT_USING_EVENT=y
+    - CONFIG_RT_USING_ALARM=y
+    - CONFIG_BSP_USING_RTC=y
+    - CONFIG_BSP_USING_WDT=y
+    - CONFIG_BSP_USING_CLOCK_TIMER=y
+    - CONFIG_BSP_USING_CTIMER0=y
+    - CONFIG_BSP_USING_CTIMER1=y
+    - CONFIG_BSP_USING_PWM=y
+    - CONFIG_BSP_USING_PWM0=y
