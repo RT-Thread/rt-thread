@@ -1,0 +1,16 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+if GetDepend('RT_SPI_K1X_QSPI'):
+    src += ['spi-k1x-qspi.c']
+
+if GetDepend('RT_SPI_K1X'):
+    src += ['spi-k1x.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

@@ -1,0 +1,5 @@
+config RT_SDIO_SDHCI_SPACEMIT_K1X
+    bool "Spacemit k1x MSHC SDHCI"
+    depends on RT_USING_OFW
+    select RT_USING_SDHCI
+    default n
