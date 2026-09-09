@@ -1,7 +1,6 @@
 import os
 import sys
 import subprocess
-import toml
 from building import *
 
 cwd = GetCurrentDir()
@@ -77,7 +76,9 @@ def build_rust_module(module_dir, build_root):
     cargo_toml_path = os.path.join(module_dir, 'Cargo.toml')
     if not os.path.exists(cargo_toml_path):
         return [], [], ""
-    
+
+    import toml
+
     with open(cargo_toml_path, 'r') as f:
         cargo_config = toml.load(f)
     
