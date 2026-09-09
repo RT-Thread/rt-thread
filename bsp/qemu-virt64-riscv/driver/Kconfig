@@ -1,33 +1,9 @@
-menu "RISC-V QEMU virt64 configs"
+config RT_GRAPHIC_ROMFB_WIDTH
+    int "ROM FB width"
+    depends on RT_GRAPHIC_FB
+    default 800
 
-config BSP_USING_VIRTIO_BLK
-    bool "Using VirtIO BLK"
-    select RT_USING_LEGACY_VIRTIO
-    select RT_USING_VIRTIO_BLK
-    default y
-
-config BSP_USING_VIRTIO_NET
-    bool "Using VirtIO NET"
-    select RT_USING_LEGACY_VIRTIO
-    select RT_USING_VIRTIO_NET
-    default y
-
-config BSP_USING_VIRTIO_CONSOLE
-    bool "Using VirtIO Console"
-    select RT_USING_LEGACY_VIRTIO
-    select RT_USING_VIRTIO_CONSOLE
-    default y
-
-config BSP_USING_VIRTIO_GPU
-    bool "Using VirtIO GPU"
-    select RT_USING_LEGACY_VIRTIO
-    select RT_USING_VIRTIO_GPU
-    default y
-
-config BSP_USING_VIRTIO_INPUT
-    bool "Using VirtIO Input"
-    select RT_USING_LEGACY_VIRTIO
-    select RT_USING_VIRTIO_INPUT
-    default y
-
-endmenu
+config RT_GRAPHIC_ROMFB_HEIGHT
+    int "ROM FB height"
+    depends on RT_GRAPHIC_FB
+    default 600
