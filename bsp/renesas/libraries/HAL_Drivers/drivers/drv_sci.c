@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2023-09-24     Vandoul      first version
  * 2023-09-27     Vandoul      add sci uart
+ * 2026-09-09     CYFS         fix SCI SPI configuration and transfer errors
  */
 
 #include "drv_sci.h"
@@ -531,6 +532,14 @@ const struct rt_i2c_bus_device_ops sci_ops_i2c =
  * @{
  */
 #ifdef BSP_USING_SCIn_SPI
+static spi_cfg_t sci_spi_config[RA_SCI_INDEX_MAX];
+#ifdef R_SCI_B_SPI_H
+static sci_b_spi_extended_cfg_t sci_spi_extended_config[RA_SCI_INDEX_MAX];
+#else
+static sci_spi_extended_cfg_t sci_spi_extended_config[RA_SCI_INDEX_MAX];
+#endif
+static rt_bool_t sci_spi_opened[RA_SCI_INDEX_MAX];
+
 void sci_spi_irq_callback(spi_callback_args_t *p_args)
 {
     rt_interrupt_enter();
@@ -566,14 +575,31 @@ void sci_spi_irq_callback(spi_callback_args_t *p_args)
 static spi_bit_width_t ra_width_shift(rt_uint8_t data_width)
 {
     spi_bit_width_t bit_width = SPI_BIT_WIDTH_8_BITS;
-    if (data_width == 1)
+    if (data_width == 8)
         bit_width = SPI_BIT_WIDTH_8_BITS;
-    else if (data_width == 2)
+    else if (data_width == 16)
         bit_width = SPI_BIT_WIDTH_16_BITS;
-    else if (data_width == 4)
+    else if (data_width == 32)
         bit_width = SPI_BIT_WIDTH_32_BITS;
 
     return bit_width;
+}
+
+static rt_err_t ra_spi_wait_complete(struct ra_sci_object *obj)
+{
+    rt_err_t err = ra_wait_complete(obj);
+
+    if (err != RT_EOK)
+    {
+        LOG_E("%s transfer failed. %d", obj->param->bus_name, err);
+        /* Stop access to the caller's buffers before returning an error. */
+        R_SCI_SPI_Close((spi_ctrl_t *)obj->param->sci_ctrl);
+        sci_spi_opened[obj - sci_obj] = RT_FALSE;
+        obj->sbus.owner = RT_NULL;
+        rt_event_control(&obj->event, RT_IPC_CMD_RESET, RT_NULL);
+    }
+
+    return err;
 }
 
 static rt_err_t ra_write_message(struct rt_spi_device *device, const void *send_buf, const rt_size_t len)
@@ -594,7 +620,11 @@ static rt_err_t ra_write_message(struct rt_spi_device *device, const void *send_
         return -RT_ERROR;
     }
     /* Wait for SPI_EVENT_TRANSFER_COMPLETE callback event. */
-    ra_wait_complete(obj);
+    err = ra_spi_wait_complete(obj);
+    if (err != RT_EOK)
+    {
+        return err;
+    }
     return len;
 }
 
@@ -616,7 +646,11 @@ static rt_err_t ra_read_message(struct rt_spi_device *device, void *recv_buf, co
         return -RT_ERROR;
     }
     /* Wait for SPI_EVENT_TRANSFER_COMPLETE callback event. */
-    ra_wait_complete(obj);
+    err = ra_spi_wait_complete(obj);
+    if (err != RT_EOK)
+    {
+        return err;
+    }
     return len;
 }
 
@@ -639,11 +673,14 @@ static rt_err_t ra_write_read_message(struct rt_spi_device *device, struct rt_sp
     }
 
     /* Wait for SPI_EVENT_TRANSFER_COMPLETE callback event. */
-    ra_wait_complete(obj);
+    err = ra_spi_wait_complete(obj);
+    if (err != RT_EOK)
+    {
+        return err;
+    }
     return message->length;
 }
 
-/**< init spi TODO : MSB does not support modification */
 static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
                                     struct rt_spi_configuration *configuration)
 {
@@ -654,59 +691,71 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     struct ra_sci_object *obj =  rt_container_of(device->bus, struct ra_sci_object, sbus);
     const struct ra_sci_param *param = obj->param;
     const spi_cfg_t *cfg = (const spi_cfg_t *)param->sci_cfg;
+    rt_size_t index = obj - sci_obj;
+    spi_cfg_t *fsp_cfg = &sci_spi_config[index];
 
-    /**< data_width : 1 -> 8 bits , 2 -> 16 bits, 4 -> 32 bits, default 32 bits*/
-    rt_uint8_t data_width = configuration->data_width / 8;
-    RT_ASSERT(data_width == 1 || data_width == 2 || data_width == 4);
-    configuration->data_width = configuration->data_width / 8;
-    obj->spi_cfg = configuration;
+    if ((configuration->data_width != 8 && configuration->data_width != 16 && configuration->data_width != 32) ||
+        configuration->max_hz == 0)
+    {
+        return -RT_EINVAL;
+    }
 
 #ifdef R_SCI_B_SPI_H
-    sci_b_spi_extended_cfg_t spi_cfg = *(sci_b_spi_extended_cfg_t *)cfg->p_extend;
+    sci_b_spi_extended_cfg_t spi_cfg = *(const sci_b_spi_extended_cfg_t *)cfg->p_extend;
 #else
-    sci_spi_extended_cfg_t *spi_cfg = (sci_spi_extended_cfg_t *)cfg->p_extend;
+    sci_spi_extended_cfg_t spi_cfg = *(const sci_spi_extended_cfg_t *)cfg->p_extend;
 #endif
-
-    /**< Configure Select Line */
-    if (!(configuration->mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
-    {
-        if (configuration->mode & RT_SPI_CS_HIGH)
-        {
-            rt_pin_write(device->cs_pin, PIN_LOW);
-        }
-        else
-        {
-            rt_pin_write(device->cs_pin, PIN_HIGH);
-        }
-    }
 
     /**< config bitrate */
 #ifdef R_SCI_B_SPI_H
-    R_SCI_B_SPI_CalculateBitrate(obj->spi_cfg->max_hz, SCI_B_SPI_SOURCE_CLOCK_PCLK, &spi_cfg.clk_div);
+    err = R_SCI_B_SPI_CalculateBitrate(configuration->max_hz, SCI_B_SPI_SOURCE_CLOCK_PCLK, &spi_cfg.clk_div);
 #elif defined(SOC_SERIES_R9A07G0)
-    R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, SCI_SPI_CLOCK_SOURCE_PCLKM, false);
+    err = R_SCI_SPI_CalculateBitrate(configuration->max_hz, spi_cfg.clock_source, &spi_cfg.clk_div);
 #else
-    R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, &spi_cfg->clk_div, false);
+    err = R_SCI_SPI_CalculateBitrate(configuration->max_hz, &spi_cfg.clk_div, false);
 #endif
-
-    /**< init */
-    err = R_SCI_SPI_Open((spi_ctrl_t *)param->sci_ctrl, cfg);
-    /* handle error */
-    if (err == FSP_ERR_IN_USE)
+    if (err != FSP_SUCCESS)
     {
-        R_SCI_SPI_Close((spi_ctrl_t *)param->sci_ctrl);
-        err = R_SCI_SPI_Open((spi_ctrl_t *)param->sci_ctrl, cfg);
+        LOG_E("%s bitrate configuration failed. %d", param->bus_name, err);
+        return -RT_EINVAL;
     }
+
+    /* Close explicitly: FSP may compile out the already-open check. */
+    if (sci_spi_opened[index])
+    {
+        err = R_SCI_SPI_Close((spi_ctrl_t *)param->sci_ctrl);
+        if (err != FSP_SUCCESS)
+        {
+            LOG_E("%s close failed. %d", param->bus_name, err);
+            return -RT_ERROR;
+        }
+        sci_spi_opened[index] = RT_FALSE;
+    }
+
+    *fsp_cfg = *cfg;
+    sci_spi_extended_config[index] = spi_cfg;
+    fsp_cfg->p_extend = &sci_spi_extended_config[index];
+    fsp_cfg->operating_mode = (configuration->mode & RT_SPI_SLAVE) ? SPI_MODE_SLAVE : SPI_MODE_MASTER;
+    fsp_cfg->clk_phase = (configuration->mode & RT_SPI_CPHA) ? SPI_CLK_PHASE_EDGE_EVEN : SPI_CLK_PHASE_EDGE_ODD;
+    fsp_cfg->clk_polarity = (configuration->mode & RT_SPI_CPOL) ? SPI_CLK_POLARITY_HIGH : SPI_CLK_POLARITY_LOW;
+    fsp_cfg->bit_order = (configuration->mode & RT_SPI_MSB) ? SPI_BIT_ORDER_MSB_FIRST : SPI_BIT_ORDER_LSB_FIRST;
+    fsp_cfg->p_callback = sci_spi_irq_callback;
+    fsp_cfg->p_context = obj;
+
+    if (!(configuration->mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
+    {
+        rt_pin_write(device->cs_pin, (configuration->mode & RT_SPI_CS_HIGH) ? PIN_LOW : PIN_HIGH);
+    }
+
+    rt_event_control(&obj->event, RT_IPC_CMD_RESET, RT_NULL);
+    err = R_SCI_SPI_Open((spi_ctrl_t *)param->sci_ctrl, fsp_cfg);
     if (RT_EOK != err)
     {
         LOG_E("%s init failed. %d", param->bus_name, err);
         return -RT_ERROR;
     }
-    err = R_SCI_SPI_CallbackSet((spi_ctrl_t *)param->sci_ctrl, sci_spi_irq_callback, obj, NULL);
-    if (FSP_SUCCESS != err)
-    {
-        LOG_E("R_SCI_I2C_CallbackSet API failed,%d", err);
-    }
+    sci_spi_opened[index] = RT_TRUE;
+    obj->spi_cfg = configuration;
     return RT_EOK;
 }
 
