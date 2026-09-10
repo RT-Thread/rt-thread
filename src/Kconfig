@@ -465,7 +465,7 @@ endif
 
 config RT_VER_NUM
     hex
-    default 0x50300
+    default 0x50301
     help
         RT-Thread version number
 
