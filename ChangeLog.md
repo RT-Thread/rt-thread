@@ -1,3 +1,266 @@
+# RT-Thread v5.3.0 Change Log
+
+Change Log Since v5.2.2 Release.
+
+## Kernel
+
+* Fix timeout wakeup ownership races in IPC and LWP wait paths. [(#11631)](https://github.com/RT-Thread/rt-thread/pull/11631)
+* Fix delayed wakeups when a thread is suspended repeatedly. [(#10970)](https://github.com/RT-Thread/rt-thread/pull/10970)
+* Prevent suspension of idle threads. [(#11314)](https://github.com/RT-Thread/rt-thread/pull/11314)
+* Release mutexes held by a thread when it is deleted by another thread. [(#11620)](https://github.com/RT-Thread/rt-thread/pull/11620)
+* Calculate recent thread CPU usage from incremental statistics over sampling windows. [(#11256)](https://github.com/RT-Thread/rt-thread/pull/11256)
+* Add 8-bit and 16-bit atomic operation support. [(#11244)](https://github.com/RT-Thread/rt-thread/pull/11244)
+* Remove object name length assertions and safely truncate long names. [(#10943)](https://github.com/RT-Thread/rt-thread/pull/10943)
+* Reject invalid frees in memheap and handle NULL names in `rt_smem_setname`. [(#11721)](https://github.com/RT-Thread/rt-thread/pull/11721) [(#11598)](https://github.com/RT-Thread/rt-thread/pull/11598)
+* Check interrupt-disabled contexts when validating scheduler availability and validate the main thread priority at build time. [(#11315)](https://github.com/RT-Thread/rt-thread/pull/11315) [(#11129)](https://github.com/RT-Thread/rt-thread/pull/11129)
+* Add a console output enable switch and export interrupt hook pointers. [(#11168)](https://github.com/RT-Thread/rt-thread/pull/11168) [(#11316)](https://github.com/RT-Thread/rt-thread/pull/11316)
+* Align klibc function signatures with standard libc and fix `%hh` formatting for values from `0x80` to `0xff`. [(#10890)](https://github.com/RT-Thread/rt-thread/pull/10890) [(#11210)](https://github.com/RT-Thread/rt-thread/pull/11210)
+
+## Components
+
+* **Drivers**
+
+  * **Clock Time:**
+    * Introduce `clock_time` with separate clock sources and clock events, high-resolution timers, boot-time helpers, and peripheral timer adapters. [(#11111)](https://github.com/RT-Thread/rt-thread/pull/11111)
+    * Replace the legacy `ktime`, `cputime`, and `hwtimer` implementations with `clock_boottime`, `clock_hrtimer`, and `clock_timer`; migrate architecture, BSP, and POSIX time integration. [(#11111)](https://github.com/RT-Thread/rt-thread/pull/11111)
+    * Use runtime timer frequencies for RISC-V ticks and delays, and fix high-resolution timer counter wrap handling. [(#11111)](https://github.com/RT-Thread/rt-thread/pull/11111)
+  * **Serial:**
+    * Fix serial V2 zero-sized buffer handling and RX indication setup. [(#11397)](https://github.com/RT-Thread/rt-thread/pull/11397) [(#11539)](https://github.com/RT-Thread/rt-thread/pull/11539)
+    * Add serial V2 RX DMA event mode control. [(#11487)](https://github.com/RT-Thread/rt-thread/pull/11487)
+    * Preserve stream mode when reopening serial devices and apply CRLF translation only in stream mode. [(#11348)](https://github.com/RT-Thread/rt-thread/pull/11348) [(#11162)](https://github.com/RT-Thread/rt-thread/pull/11162)
+  * **ADC/DAC:**
+    * Add ADC V2 with session management, sequence reads, voltage conversion, and FinSH commands. [(#11440)](https://github.com/RT-Thread/rt-thread/pull/11440)
+    * Add ADC V2 DMA streams with latest-frame and FIFO buffering, timer and comparator triggers, and STM32 internal channel support. ADC V2 and the legacy ADC driver are mutually exclusive configuration choices. [(#11440)](https://github.com/RT-Thread/rt-thread/pull/11440)
+    * Fix the DAC disable callback check and correct ADC/DAC API documentation. [(#11562)](https://github.com/RT-Thread/rt-thread/pull/11562) [(#11640)](https://github.com/RT-Thread/rt-thread/pull/11640) [(#11639)](https://github.com/RT-Thread/rt-thread/pull/11639)
+  * **CAN:**
+    * Fix transmission races and duplicate receive overflow accounting. [(#10896)](https://github.com/RT-Thread/rt-thread/pull/10896) [(#11184)](https://github.com/RT-Thread/rt-thread/pull/11184)
+  * **SPI/I2C:**
+    * Use spinlocks for interrupt-safe SPI operations. [(#10873)](https://github.com/RT-Thread/rt-thread/pull/10873)
+    * Unify software SPI and I2C drivers across BSPs and make SPI bit operations independently configurable. [(#11625)](https://github.com/RT-Thread/rt-thread/pull/11625) [(#11404)](https://github.com/RT-Thread/rt-thread/pull/11404) [(#11102)](https://github.com/RT-Thread/rt-thread/pull/11102)
+    * Change default software I2C bus names from `i2cN` to `swi2cN`; update affected device lookups or explicitly retain legacy bus names. [(#11398)](https://github.com/RT-Thread/rt-thread/pull/11398)
+    * Add I2C bus configuration and maximum bus frequency control. [(#11241)](https://github.com/RT-Thread/rt-thread/pull/11241)
+    * Add SFUD support for the W25Q128JWPIM flash device. [(#11008)](https://github.com/RT-Thread/rt-thread/pull/11008)
+  * **RTC:**
+    * Fix software RTC nanosecond and microsecond results. [(#10874)](https://github.com/RT-Thread/rt-thread/pull/10874)
+  * **SDIO/Block:**
+    * Fix the eMMC high-speed DDR switching sequence and poll card status after CMD6. [(#11037)](https://github.com/RT-Thread/rt-thread/pull/11037) [(#11139)](https://github.com/RT-Thread/rt-thread/pull/11139)
+    * Fix unaligned block writes and strengthen MBR and EFI partition validation. [(#11103)](https://github.com/RT-Thread/rt-thread/pull/11103) [(#11384)](https://github.com/RT-Thread/rt-thread/pull/11384) [(#11266)](https://github.com/RT-Thread/rt-thread/pull/11266)
+    * Fix Arm Compiler 5 compatibility and DFS-disabled builds in MMC/SD and block drivers; rename the generic `SWITCH` command macro to `MMC_SWITCH`. [(#11690)](https://github.com/RT-Thread/rt-thread/pull/11690)
+  * **WLAN:**
+    * Add security mode definitions for WPA3, enterprise authentication, WAPI, OWE, and DPP. [(#11695)](https://github.com/RT-Thread/rt-thread/pull/11695)
+    * Fix Wi-Fi command handling when no device is bound to the requested mode. [(#11696)](https://github.com/RT-Thread/rt-thread/pull/11696)
+  * **USB:**
+    * Update CherryUSB to v1.6.1 and improve BSP glue code and build integration. [(#11362)](https://github.com/RT-Thread/rt-thread/pull/11362) [(#11432)](https://github.com/RT-Thread/rt-thread/pull/11432)
+    * Fix DWC2 host size checks and make CDC VCOM strings configurable. [(#11160)](https://github.com/RT-Thread/rt-thread/pull/11160) [(#11541)](https://github.com/RT-Thread/rt-thread/pull/11541)
+  * **IPC:**
+    * Fix recursive data queue locking on SMP. [(#11643)](https://github.com/RT-Thread/rt-thread/pull/11643)
+    * Make `rt_ringbuffer_peek` leave data in the buffer and validate pipe ioctl arguments. [(#11214)](https://github.com/RT-Thread/rt-thread/pull/11214) [(#11373)](https://github.com/RT-Thread/rt-thread/pull/11373)
+* **LWP**
+
+  * Reorganize the shared vDSO framework and add ARM support. [(#11340)](https://github.com/RT-Thread/rt-thread/pull/11340)
+  * Synchronize vDSO clock data with kernel ticks, fix clock sampling offsets, validate vDSO images, and map the user-visible data page read-only. [(#11340)](https://github.com/RT-Thread/rt-thread/pull/11340)
+  * Validate user memory copy ranges and scheduling priorities, copy `select` timeouts into kernel space, and fix PID leaks on failed execution. [(#11291)](https://github.com/RT-Thread/rt-thread/pull/11291) [(#11297)](https://github.com/RT-Thread/rt-thread/pull/11297) [(#11599)](https://github.com/RT-Thread/rt-thread/pull/11599) [(#11356)](https://github.com/RT-Thread/rt-thread/pull/11356)
+  * Bound pseudo-terminal path formatting and terminate link names correctly. [(commit b210bd84eb)](https://github.com/RT-Thread/rt-thread/commit/b210bd84eb)
+* **Memory Management**
+
+  * Support dynamic page management region sizes and stop page installation when physical address mapping fails. [(#10989)](https://github.com/RT-Thread/rt-thread/pull/10989)
+  * Support the memory mapping requirements of Cortex-M device model builds and exclude no-MMU `ioremap` implementations from MMU builds. [(#11669)](https://github.com/RT-Thread/rt-thread/pull/11669)
+* **Libc**
+
+  * Fix scheduling in pthread condition variable waits. [(#11533)](https://github.com/RT-Thread/rt-thread/pull/11533)
+  * Make `mq_send` block when the queue is full as required by POSIX. [(#11197)](https://github.com/RT-Thread/rt-thread/pull/11197)
+  * Fix date normalization and month overflow in `mktime` and `timegm`. [(#11140)](https://github.com/RT-Thread/rt-thread/pull/11140) [(#11720)](https://github.com/RT-Thread/rt-thread/pull/11720)
+  * Fix `dlopen` lookup of already loaded modules and reset loader state between shared object loads. [(#11269)](https://github.com/RT-Thread/rt-thread/pull/11269) [(#11247)](https://github.com/RT-Thread/rt-thread/pull/11247)
+  * Set a default AIO worker stack size and correct DFS/POSIX interface declarations. [(#10988)](https://github.com/RT-Thread/rt-thread/pull/10988) [(#11125)](https://github.com/RT-Thread/rt-thread/pull/11125)
+* **DFS**
+
+  * Add 9PFS support for sharing files with virtual machines such as QEMU. [(#10990)](https://github.com/RT-Thread/rt-thread/pull/10990)
+  * Update Elm FatFs to R0.16 in DFS V1 and DFS V2. [(#10894)](https://github.com/RT-Thread/rt-thread/pull/10894)
+  * Add DFS V2 socket nodes and descriptor reference support for AF_UNIX. [(#11681)](https://github.com/RT-Thread/rt-thread/pull/11681)
+  * Fix vnode reference underflow, double release, dentry locking, and concurrent `lseek` results. [(#11119)](https://github.com/RT-Thread/rt-thread/pull/11119) [(#11085)](https://github.com/RT-Thread/rt-thread/pull/11085) [(#11088)](https://github.com/RT-Thread/rt-thread/pull/11088)
+  * Fix resource leaks during filesystem mount, close, directory release, `statfs`, and `utimensat`; correct FatFs formatting arguments and device validation. [(#11611)](https://github.com/RT-Thread/rt-thread/pull/11611) [(#11610)](https://github.com/RT-Thread/rt-thread/pull/11610) [(#10868)](https://github.com/RT-Thread/rt-thread/pull/10868) [(#11534)](https://github.com/RT-Thread/rt-thread/pull/11534) [(#11700)](https://github.com/RT-Thread/rt-thread/pull/11700) [(#11638)](https://github.com/RT-Thread/rt-thread/pull/11638) [(#11614)](https://github.com/RT-Thread/rt-thread/pull/11614) [(#11507)](https://github.com/RT-Thread/rt-thread/pull/11507)
+  * Reject directory flushes in FatFs and directory truncation in DFS V2, and correct `fsync` error returns. [(#11612)](https://github.com/RT-Thread/rt-thread/pull/11612)
+  * Validate RAMFS/TMPFS path components, update TMPFS vnode sizes after writes, and fix directory entry type reporting. [(#11304)](https://github.com/RT-Thread/rt-thread/pull/11304) [(#11083)](https://github.com/RT-Thread/rt-thread/pull/11083) [(#11623)](https://github.com/RT-Thread/rt-thread/pull/11623)
+  * Validate ROMFS ioctl arguments and initialize 9PFS protocol lookup state. [(#11353)](https://github.com/RT-Thread/rt-thread/pull/11353) [(#11345)](https://github.com/RT-Thread/rt-thread/pull/11345)
+* **Net**
+
+  * Add optional AF_UNIX stream and datagram sockets, including pathname binding, `socketpair`, poll, timeouts, and descriptor passing through `SCM_RIGHTS`; integrate with SAL, DFS V2, and LWP. [(#11681)](https://github.com/RT-Thread/rt-thread/pull/11681)
+  * Add SAL local protocol providers that do not require a network device. [(#11681)](https://github.com/RT-Thread/rt-thread/pull/11681)
+  * Bound AT formatted output lengths and fix AT socket server connection and accept error handling. [(#11306)](https://github.com/RT-Thread/rt-thread/pull/11306) [(#10967)](https://github.com/RT-Thread/rt-thread/pull/10967)
+  * Fix lwIP PPP builds and interface name handling, ping timeouts, and IPv4 address resolution for ping. [(#11403)](https://github.com/RT-Thread/rt-thread/pull/11403) [(#11410)](https://github.com/RT-Thread/rt-thread/pull/11410) [(#11174)](https://github.com/RT-Thread/rt-thread/pull/11174) [(#11528)](https://github.com/RT-Thread/rt-thread/pull/11528)
+  * Bound DHCP server address copies and formatting, and fix pbuf leaks for oversized requests. [(commit 49f985e0f6)](https://github.com/RT-Thread/rt-thread/commit/49f985e0f6) [(#11698)](https://github.com/RT-Thread/rt-thread/pull/11698)
+  * Require TLS certificate verification when a CA certificate is configured. [(#11523)](https://github.com/RT-Thread/rt-thread/pull/11523)
+* **Rust**
+
+  * Add a Rust component with ARM, AArch64, and RISC-V target detection and SCons/Cargo integration. [(#10910)](https://github.com/RT-Thread/rt-thread/pull/10910)
+  * Provide Rust wrappers for threads, mutexes, semaphores, message queues, memory, time, and files, with application, component, and dynamic module examples. [(#10910)](https://github.com/RT-Thread/rt-thread/pull/10910)
+  * Add procedural macros for initialization and command registration; improve target, feature, linker flag, and build failure handling. [(#10910)](https://github.com/RT-Thread/rt-thread/pull/10910) [(#11584)](https://github.com/RT-Thread/rt-thread/pull/11584)
+  * Allow Rust module example cleanup without the Python `toml` package by importing it only when building modules. [(#11791)](https://github.com/RT-Thread/rt-thread/pull/11791)
+* **Finsh**
+
+  * Add the `console` command and fix thread stack usage display. [(#11026)](https://github.com/RT-Thread/rt-thread/pull/11026) [(#10897)](https://github.com/RT-Thread/rt-thread/pull/10897)
+  * Fix prompt format string handling, command line overflow state, token bounds checks, and backtrace thread address validation. [(#11307)](https://github.com/RT-Thread/rt-thread/pull/11307) [(#11344)](https://github.com/RT-Thread/rt-thread/pull/11344) [(#11564)](https://github.com/RT-Thread/rt-thread/pull/11564) [(#11343)](https://github.com/RT-Thread/rt-thread/pull/11343)
+  * Fix `tail -n` argument handling, root path handling, and default shell thread priority configuration. [(#10977)](https://github.com/RT-Thread/rt-thread/pull/10977) [(#11216)](https://github.com/RT-Thread/rt-thread/pull/11216) [(#11141)](https://github.com/RT-Thread/rt-thread/pull/11141)
+* **FAL**
+
+  * Add configurable device name length and block count, and adapt character devices to DFS V2. [(#11153)](https://github.com/RT-Thread/rt-thread/pull/11153) [(#11112)](https://github.com/RT-Thread/rt-thread/pull/11112)
+* **Ulog and Utilities**
+
+  * Fix asynchronous ulog wakeups and missed notifications. [(#11183)](https://github.com/RT-Thread/rt-thread/pull/11183)
+  * Add a one-time warning for insufficient log line buffers and configurable FinSH/MSH command support. [(#10948)](https://github.com/RT-Thread/rt-thread/pull/10948) [(#10875)](https://github.com/RT-Thread/rt-thread/pull/10875)
+  * Add YMODEM multi-file reception and improve send loops and session cleanup. [(#11370)](https://github.com/RT-Thread/rt-thread/pull/11370) [(#11162)](https://github.com/RT-Thread/rt-thread/pull/11162)
+  * Fix RT-Link frame offset bounds and 64-bit build compatibility. [(#11580)](https://github.com/RT-Thread/rt-thread/pull/11580) [(#11018)](https://github.com/RT-Thread/rt-thread/pull/11018)
+  * Remove the obsolete vbus component. [(#10863)](https://github.com/RT-Thread/rt-thread/pull/10863)
+
+## DM
+
+* **Core and Device Tree:**
+  * Extend device model APIs, device probing, property access, and OFW support; enable OFW on Cortex-M targets. [(#11028)](https://github.com/RT-Thread/rt-thread/pull/11028) [(#11676)](https://github.com/RT-Thread/rt-thread/pull/11676) [(#11004)](https://github.com/RT-Thread/rt-thread/pull/11004) [(#11669)](https://github.com/RT-Thread/rt-thread/pull/11669)
+  * Set default clocks and pinctrl states during platform device probing and prevent duplicate device creation. [(#11029)](https://github.com/RT-Thread/rt-thread/pull/11029) [(#11052)](https://github.com/RT-Thread/rt-thread/pull/11052) [(#11090)](https://github.com/RT-Thread/rt-thread/pull/11090)
+  * Fix device tree address translation and PCI resource enumeration. [(#11677)](https://github.com/RT-Thread/rt-thread/pull/11677)
+* **Clock and Power:**
+  * Rework the clock framework and extend regulator, power domain, reset, and power supply support. [(#11029)](https://github.com/RT-Thread/rt-thread/pull/11029) [(#11673)](https://github.com/RT-Thread/rt-thread/pull/11673) [(#11674)](https://github.com/RT-Thread/rt-thread/pull/11674) [(#11320)](https://github.com/RT-Thread/rt-thread/pull/11320) [(#11318)](https://github.com/RT-Thread/rt-thread/pull/11318) [(#11061)](https://github.com/RT-Thread/rt-thread/pull/11061)
+  * Add Dynamic Voltage and Frequency Scaling (DVFS), including CPU and device frequency management. [(#11488)](https://github.com/RT-Thread/rt-thread/pull/11488)
+  * Add ARM SCMI firmware integration, common machine power interfaces, and power control shell helpers. [(#11069)](https://github.com/RT-Thread/rt-thread/pull/11069) [(#11053)](https://github.com/RT-Thread/rt-thread/pull/11053) [(#11301)](https://github.com/RT-Thread/rt-thread/pull/11301)
+  * Improve thermal cooling support. [(#11649)](https://github.com/RT-Thread/rt-thread/pull/11649)
+* **DMA, Interrupts, and PCI:**
+  * Extend DMA controller support and DMA address handling; fix controller initialization and transfer configuration. [(#10987)](https://github.com/RT-Thread/rt-thread/pull/10987) [(#11678)](https://github.com/RT-Thread/rt-thread/pull/11678)
+  * Fix PCI MSI setup, interrupt lookup bounds, and GICv3 ITS cleanup. [(#11561)](https://github.com/RT-Thread/rt-thread/pull/11561) [(#11573)](https://github.com/RT-Thread/rt-thread/pull/11573) [(#11637)](https://github.com/RT-Thread/rt-thread/pull/11637)
+  * Route NVIC interrupts through trap handlers and Cortex-M resets through the power framework. [(#11669)](https://github.com/RT-Thread/rt-thread/pull/11669)
+  * Add hardware spinlock and hardware cache controller support. [(#11030)](https://github.com/RT-Thread/rt-thread/pull/11030) [(#11049)](https://github.com/RT-Thread/rt-thread/pull/11049)
+* **Storage:**
+  * Add UFS and DesignWare AHCI support, common MTD drivers, NVMEM support, and SFUD integration. [(#11302)](https://github.com/RT-Thread/rt-thread/pull/11302) [(#11642)](https://github.com/RT-Thread/rt-thread/pull/11642) [(#11002)](https://github.com/RT-Thread/rt-thread/pull/11002) [(#11032)](https://github.com/RT-Thread/rt-thread/pull/11032) [(#11008)](https://github.com/RT-Thread/rt-thread/pull/11008)
+  * Extend SDHCI/SDIO device model support and add parallel I/O configuration for SCSI hosts. [(#11078)](https://github.com/RT-Thread/rt-thread/pull/11078) [(#11684)](https://github.com/RT-Thread/rt-thread/pull/11684) [(#11063)](https://github.com/RT-Thread/rt-thread/pull/11063)
+  * Use DMA addresses for NVMe device access. [(#11650)](https://github.com/RT-Thread/rt-thread/pull/11650)
+* **VirtIO and Virtualization:**
+  * Add VirtIO 1.2 support, packed queues, MMIO/PCI transports, and DMA synchronization. [(#11232)](https://github.com/RT-Thread/rt-thread/pull/11232)
+  * Update VirtIO network, block, console, input, and GPU drivers; add 9P, crypto, RNG, SCMI, and SCSI drivers. [(#11232)](https://github.com/RT-Thread/rt-thread/pull/11232)
+  * Add QEMU firmware configuration, inter-VM shared memory, and the QEMU EDU PCI device. [(#11232)](https://github.com/RT-Thread/rt-thread/pull/11232) [(#11645)](https://github.com/RT-Thread/rt-thread/pull/11645) [(#10995)](https://github.com/RT-Thread/rt-thread/pull/10995)
+* **Networking:**
+  * Add the Ethernet device model with MACB and DWMAC drivers, improve PHY V2 support, and add RTL8211F support. [(#11641)](https://github.com/RT-Thread/rt-thread/pull/11641)
+  * Add IEEE 1588 Precision Time Protocol (PTP) clock support. [(#11481)](https://github.com/RT-Thread/rt-thread/pull/11481)
+* **Graphics, Audio, and Input:**
+  * Extend framebuffer and display support, add the ILI9486 SPI LCD driver, and support Intel HDA audio. [(#11047)](https://github.com/RT-Thread/rt-thread/pull/11047) [(#11651)](https://github.com/RT-Thread/rt-thread/pull/11651) [(#11536)](https://github.com/RT-Thread/rt-thread/pull/11536) [(#11232)](https://github.com/RT-Thread/rt-thread/pull/11232)
+  * Add input framework drivers for ADC joysticks, keyboards, and touchscreens. [(#11679)](https://github.com/RT-Thread/rt-thread/pull/11679)
+  * Extend physical interface support with generic USB PHY handling and MIPI D-PHY timing helpers. [(#10997)](https://github.com/RT-Thread/rt-thread/pull/10997) [(#11675)](https://github.com/RT-Thread/rt-thread/pull/11675)
+* **Other Subsystems:**
+  * Add Remote Processor Messaging (RPMSG) and Trusted Execution Environment (TEE) support. [(#11303)](https://github.com/RT-Thread/rt-thread/pull/11303) [(#11480)](https://github.com/RT-Thread/rt-thread/pull/11480)
+  * Extend device model integration for serial, I2C, CAN, GPIO/pinctrl, RTC, LED, ADC, and PWM drivers. [(#11055)](https://github.com/RT-Thread/rt-thread/pull/11055) [(#10994)](https://github.com/RT-Thread/rt-thread/pull/10994) [(#10992)](https://github.com/RT-Thread/rt-thread/pull/10992) [(#11027)](https://github.com/RT-Thread/rt-thread/pull/11027) [(#11033)](https://github.com/RT-Thread/rt-thread/pull/11033) [(#11007)](https://github.com/RT-Thread/rt-thread/pull/11007) [(#11003)](https://github.com/RT-Thread/rt-thread/pull/11003)
+
+## Libcpu
+
+* **AArch64:**
+  * Correct TLB invalidation for kernel and user address spaces and preserve registers across calls. [(#11500)](https://github.com/RT-Thread/rt-thread/pull/11500) [(#11098)](https://github.com/RT-Thread/rt-thread/pull/11098)
+  * Improve AArch64 device model and DVFS idle support. [(#11072)](https://github.com/RT-Thread/rt-thread/pull/11072) [(#11488)](https://github.com/RT-Thread/rt-thread/pull/11488)
+* **Cortex-A:**
+  * Fix early MMU mapping alignment and FPU stack initialization. [(#11126)](https://github.com/RT-Thread/rt-thread/pull/11126) [(#10919)](https://github.com/RT-Thread/rt-thread/pull/10919)
+* **Cortex-M:**
+  * Add Cortex-M4 interrupt context helpers and allow Cortex-M33 interrupt enable/disable APIs to be overridden. [(#11316)](https://github.com/RT-Thread/rt-thread/pull/11316) [(#11401)](https://github.com/RT-Thread/rt-thread/pull/11401)
+  * Fix Cortex-M33 assembly architecture selection, Cortex-M4 IAR builds, and Cortex-M7 alignment. [(#10879)](https://github.com/RT-Thread/rt-thread/pull/10879) [(#11422)](https://github.com/RT-Thread/rt-thread/pull/11422) [(#11250)](https://github.com/RT-Thread/rt-thread/pull/11250)
+  * Correct MPU region validation on Cortex-M33 and Cortex-M7. [(#11311)](https://github.com/RT-Thread/rt-thread/pull/11311)
+* **Cortex-R52:**
+  * Prevent duplicate FSP interrupt dispatch on Renesas RZ/N2L and correct FIQ interrupt ID handling and acknowledgement. [(#11765)](https://github.com/RT-Thread/rt-thread/pull/11765)
+* **RISC-V:**
+  * Add SMP support for QEMU virt64 and XuanTie C/R series processors. [(#11015)](https://github.com/RT-Thread/rt-thread/pull/11015) [(#11267)](https://github.com/RT-Thread/rt-thread/pull/11267)
+  * Add XuanTie C908X processor support. [(#11219)](https://github.com/RT-Thread/rt-thread/pull/11219)
+  * Add C908 Svpbmt support and correct C906/C908 cacheability and page table attributes. [(#11227)](https://github.com/RT-Thread/rt-thread/pull/11227) [(#11229)](https://github.com/RT-Thread/rt-thread/pull/11229) [(#11592)](https://github.com/RT-Thread/rt-thread/pull/11592)
+  * Fix PLIC interrupt processing order. [(#11305)](https://github.com/RT-Thread/rt-thread/pull/11305)
+  * Allow MCU interrupt counts and the common shutdown implementation to be overridden. [(#11038)](https://github.com/RT-Thread/rt-thread/pull/11038) [(#11100)](https://github.com/RT-Thread/rt-thread/pull/11100)
+* **Other Architectures:**
+  * Validate interrupt vectors on ARM7/ARM9 platforms and IA32 PIC controllers, and remove the obsolete `realview-a8-vmm` port. [(#11310)](https://github.com/RT-Thread/rt-thread/pull/11310) [(#11312)](https://github.com/RT-Thread/rt-thread/pull/11312) [(#10863)](https://github.com/RT-Thread/rt-thread/pull/10863)
+
+## Tools
+
+* Improve VS Code compilation database handling. [(#11138)](https://github.com/RT-Thread/rt-thread/pull/11138)
+* Fix CMake generation and SCons macro value handling; improve deterministic project output. [(#11149)](https://github.com/RT-Thread/rt-thread/pull/11149) [(#11127)](https://github.com/RT-Thread/rt-thread/pull/11127) [(#11107)](https://github.com/RT-Thread/rt-thread/pull/11107)
+* Fix Eclipse project naming and Xmake target generation. [(#11179)](https://github.com/RT-Thread/rt-thread/pull/11179) [(#10971)](https://github.com/RT-Thread/rt-thread/pull/10971)
+* Preserve SCons include path precedence when generating Keil projects and remove duplicate paths without reordering them. [(#11741)](https://github.com/RT-Thread/rt-thread/pull/11741)
+* Adapt Zig build scripts to Zig 0.14 and later, and report Unicode dash mistakes in command options. [(#11409)](https://github.com/RT-Thread/rt-thread/pull/11409) [(#11386)](https://github.com/RT-Thread/rt-thread/pull/11386)
+* Support Env shared package paths and improve BSP distribution builds and build output placement. [(#11603)](https://github.com/RT-Thread/rt-thread/pull/11603) [(#11419)](https://github.com/RT-Thread/rt-thread/pull/11419) [(#11630)](https://github.com/RT-Thread/rt-thread/pull/11630) [(#11514)](https://github.com/RT-Thread/rt-thread/pull/11514)
+
+## Action
+
+* Trigger BSP builds on matrix updates, reduce duplicate attach-configuration builds, and improve build failure detection. [(#11474)](https://github.com/RT-Thread/rt-thread/pull/11474) [(#11439)](https://github.com/RT-Thread/rt-thread/pull/11439)
+* Add ArmClang BSP build coverage and verify distributed BSP packages. [(#11577)](https://github.com/RT-Thread/rt-thread/pull/11577) [(#11419)](https://github.com/RT-Thread/rt-thread/pull/11419)
+* Add SMP automatic tests and expand the kernel CI test matrix. [(#10953)](https://github.com/RT-Thread/rt-thread/pull/10953) [(#11335)](https://github.com/RT-Thread/rt-thread/pull/11335)
+* Detect assertions in QEMU test output and consolidate utest CI configuration under `.github`. [(#11520)](https://github.com/RT-Thread/rt-thread/pull/11520) [(#11467)](https://github.com/RT-Thread/rt-thread/pull/11467)
+* Add MemBrowse integration for memory usage reports and refine target filtering and skipped-target reporting. [(#11478)](https://github.com/RT-Thread/rt-thread/pull/11478) [(#11518)](https://github.com/RT-Thread/rt-thread/pull/11518) [(#11578)](https://github.com/RT-Thread/rt-thread/pull/11578)
+* Use clang-format for format checks and exclude generated BSP configuration headers. [(#11582)](https://github.com/RT-Thread/rt-thread/pull/11582) [(#11613)](https://github.com/RT-Thread/rt-thread/pull/11613)
+* Improve PR format checking and fix expression injection in the PR format workflow. [(#11628)](https://github.com/RT-Thread/rt-thread/pull/11628) [(commit f78bef1207)](https://github.com/RT-Thread/rt-thread/commit/f78bef1207)
+* Add issue automation and fix assignment for external contributors. [(#11661)](https://github.com/RT-Thread/rt-thread/pull/11661) [(#11666)](https://github.com/RT-Thread/rt-thread/pull/11666)
+
+## Documents
+
+* Add Doxygen API documentation for the DMA subsystem. [(#11477)](https://github.com/RT-Thread/rt-thread/pull/11477)
+* Add clock time and device model subsystem documentation and update the device driver index. [(#11111)](https://github.com/RT-Thread/rt-thread/pull/11111) [(#11411)](https://github.com/RT-Thread/rt-thread/pull/11411)
+* Add Rust setup, application, component, macro, and dynamic module documentation in English and Chinese. [(#10910)](https://github.com/RT-Thread/rt-thread/pull/10910) [(#11056)](https://github.com/RT-Thread/rt-thread/pull/11056)
+* Document AArch64 SMP startup and update BSP driver support summaries, STM32 BSP templates, and porting guides. [(#11057)](https://github.com/RT-Thread/rt-thread/pull/11057) [(#10925)](https://github.com/RT-Thread/rt-thread/pull/10925) [(#11540)](https://github.com/RT-Thread/rt-thread/pull/11540) [(#11189)](https://github.com/RT-Thread/rt-thread/pull/11189)
+* Update contribution guides and fix Chinese text display in Doxygen documentation. [(#11602)](https://github.com/RT-Thread/rt-thread/pull/11602) [(#11498)](https://github.com/RT-Thread/rt-thread/pull/11498)
+
+## Utest
+
+* Reorganize utest configuration and move MM, LWP, and TMPFS test cases alongside their corresponding subsystems. [(#11467)](https://github.com/RT-Thread/rt-thread/pull/11467)
+* Add pin loopback and SPI tests. [(#11445)](https://github.com/RT-Thread/rt-thread/pull/11445) [(#11549)](https://github.com/RT-Thread/rt-thread/pull/11549)
+* Add AF_UNIX tests for socket nodes, local IPC, polling, namespace cleanup, and descriptor passing. [(#11681)](https://github.com/RT-Thread/rt-thread/pull/11681)
+* Expand object stress and error-path tests and stabilize SMP affinity, preemption, and atomic operation tests. [(#10961)](https://github.com/RT-Thread/rt-thread/pull/10961) [(#11496)](https://github.com/RT-Thread/rt-thread/pull/11496) [(#10956)](https://github.com/RT-Thread/rt-thread/pull/10956) [(#11012)](https://github.com/RT-Thread/rt-thread/pull/11012) [(#11016)](https://github.com/RT-Thread/rt-thread/pull/11016)
+* Fix repeated test execution leaks, hook list reinitialization, and initialization failure summaries. [(#10905)](https://github.com/RT-Thread/rt-thread/pull/10905) [(#10907)](https://github.com/RT-Thread/rt-thread/pull/10907) [(#11521)](https://github.com/RT-Thread/rt-thread/pull/11521) [(#11508)](https://github.com/RT-Thread/rt-thread/pull/11508)
+* Enforce a minimum console buffer size of 256 bytes when utest is enabled. [(#11746)](https://github.com/RT-Thread/rt-thread/pull/11746)
+* Add standardized test documentation describing configuration, prerequisites, expected behavior, and cleanup. [(#10985)](https://github.com/RT-Thread/rt-thread/pull/10985) [(#11051)](https://github.com/RT-Thread/rt-thread/pull/11051) [(#10924)](https://github.com/RT-Thread/rt-thread/pull/10924) [(#11274)](https://github.com/RT-Thread/rt-thread/pull/11274) [(#10975)](https://github.com/RT-Thread/rt-thread/pull/10975)
+
+## BSP
+
+* **STM32:**
+  * Add STM32F407 MICU, STM32H723 LXB Disco, and STM32H723 DM-MC02 BSPs. [(#10912)](https://github.com/RT-Thread/rt-thread/pull/10912) [(#10842)](https://github.com/RT-Thread/rt-thread/pull/10842) [(#11450)](https://github.com/RT-Thread/rt-thread/pull/11450)
+  * Add ADC V2 support, shared DMA helpers, hardware I2C polling/interrupt/DMA paths, and SPI interrupt transfer support. [(#11440)](https://github.com/RT-Thread/rt-thread/pull/11440) [(#11346)](https://github.com/RT-Thread/rt-thread/pull/11346) [(#11255)](https://github.com/RT-Thread/rt-thread/pull/11255) [(#11368)](https://github.com/RT-Thread/rt-thread/pull/11368)
+  * Improve CAN filtering, FIFO draining, and STM32H7 CAN-FD data rates. [(#11117)](https://github.com/RT-Thread/rt-thread/pull/11117) [(#11165)](https://github.com/RT-Thread/rt-thread/pull/11165) [(#11257)](https://github.com/RT-Thread/rt-thread/pull/11257)
+  * Fix I2C/SPI asynchronous completion, DMA receive and timeout handling, RTC subsecond conversion, and SDMMC timeout and clock divider handling. [(#11470)](https://github.com/RT-Thread/rt-thread/pull/11470) [(#11473)](https://github.com/RT-Thread/rt-thread/pull/11473) [(#11258)](https://github.com/RT-Thread/rt-thread/pull/11258) [(#11167)](https://github.com/RT-Thread/rt-thread/pull/11167) [(#11251)](https://github.com/RT-Thread/rt-thread/pull/11251)
+  * Add GPIO/EXTI device model drivers and extend USB, sensor, storage, and RTduino configurations. [(#11669)](https://github.com/RT-Thread/rt-thread/pull/11669) [(#11463)](https://github.com/RT-Thread/rt-thread/pull/11463) [(#11097)](https://github.com/RT-Thread/rt-thread/pull/11097) [(#11081)](https://github.com/RT-Thread/rt-thread/pull/11081) [(#11405)](https://github.com/RT-Thread/rt-thread/pull/11405)
+* **GD32:**
+  * Add GD32405RG and GD32VW553H-EVAL BSPs. [(#11221)](https://github.com/RT-Thread/rt-thread/pull/11221) [(#11050)](https://github.com/RT-Thread/rt-thread/pull/11050)
+  * Add GD32VW553 UART, Wi-Fi, hardware I2C, SPI, ADC, PWM, timer, and watchdog support. [(#11147)](https://github.com/RT-Thread/rt-thread/pull/11147) [(#11175)](https://github.com/RT-Thread/rt-thread/pull/11175) [(#11151)](https://github.com/RT-Thread/rt-thread/pull/11151) [(#11192)](https://github.com/RT-Thread/rt-thread/pull/11192) [(#11235)](https://github.com/RT-Thread/rt-thread/pull/11235) [(#11155)](https://github.com/RT-Thread/rt-thread/pull/11155) [(#11157)](https://github.com/RT-Thread/rt-thread/pull/11157) [(#11181)](https://github.com/RT-Thread/rt-thread/pull/11181)
+  * Extend GD32F5/H7 serial and GPIO support and fix PWM channel validation. [(#10840)](https://github.com/RT-Thread/rt-thread/pull/10840) [(#10981)](https://github.com/RT-Thread/rt-thread/pull/10981) [(#11547)](https://github.com/RT-Thread/rt-thread/pull/11547)
+  * Fix duplicate compilation of lwIP `mem.c` on GD32VW55x and add PWM CI configurations. [(#11632)](https://github.com/RT-Thread/rt-thread/pull/11632) [(#11547)](https://github.com/RT-Thread/rt-thread/pull/11547)
+* **NXP:**
+  * Add FRDM-MCXA366, FRDM-i.MX91, and i.MX RT1180 EVK Cortex-M33/M7 BSPs. [(#11243)](https://github.com/RT-Thread/rt-thread/pull/11243) [(#10570)](https://github.com/RT-Thread/rt-thread/pull/10570) [(#11393)](https://github.com/RT-Thread/rt-thread/pull/11393)
+  * Add RT1180 multicore startup, RPMsg-Lite, HyperRAM/HyperFlash, QSPI filesystems, CherryUSB, NETC, and EtherCAT integration. [(#11672)](https://github.com/RT-Thread/rt-thread/pull/11672)
+  * Add RT1180 I2C DMA, CAN, SPI DMA, DWT, RTC, and SDIO drivers. [(#11715)](https://github.com/RT-Thread/rt-thread/pull/11715)
+  * Extend MCXA346/MCXA366 CAN, SLCD, USB, and RTduino support. [(#11082)](https://github.com/RT-Thread/rt-thread/pull/11082) [(#11243)](https://github.com/RT-Thread/rt-thread/pull/11243) [(#11608)](https://github.com/RT-Thread/rt-thread/pull/11608) [(#11381)](https://github.com/RT-Thread/rt-thread/pull/11381) [(#11067)](https://github.com/RT-Thread/rt-thread/pull/11067) [(#11594)](https://github.com/RT-Thread/rt-thread/pull/11594)
+* **Renesas:**
+  * Add EK-RA6W1 and RA8P1 Titan BSPs. [(#11670)](https://github.com/RT-Thread/rt-thread/pull/11670) [(#11000)](https://github.com/RT-Thread/rt-thread/pull/11000)
+  * Add RA8P1 Titan Cortex-M85/M33 projects and GPIO/external interrupt device model drivers. [(#11621)](https://github.com/RT-Thread/rt-thread/pull/11621) [(#11669)](https://github.com/RT-Thread/rt-thread/pull/11669)
+  * Extend RA6W1 peripheral support and improve Renesas MDK project setup. [(#11691)](https://github.com/RT-Thread/rt-thread/pull/11691) [(#11583)](https://github.com/RT-Thread/rt-thread/pull/11583)
+  * Fix LCD framebuffer bounds and GPIO pin name validation. [(#11572)](https://github.com/RT-Thread/rt-thread/pull/11572) [(#11568)](https://github.com/RT-Thread/rt-thread/pull/11568)
+  * Fix RA8D1 Vision Board Keil flash download settings and update its compiler and device pack configuration. [(#11742)](https://github.com/RT-Thread/rt-thread/pull/11742)
+  * Keep SPI runtime configuration in writable storage, reopen devices to apply changes, and honor disabled or active-high chip selects in SPI and SCI SPI. [(#11745)](https://github.com/RT-Thread/rt-thread/pull/11745)
+  * Fix SCI SPI bitrate calculation, configuration lifetime, data width units, and mode handling; stop transfers and clear state after timeouts or errors. [(#11792)](https://github.com/RT-Thread/rt-thread/pull/11792)
+  * Trigger SDHI card detection after host initialization on R7FA8M85. [(#11757)](https://github.com/RT-Thread/rt-thread/pull/11757)
+  * Support configurable CAN FD arbitration and data rates, correct DLC conversion and FD/BRS flags, and fix interrupt control and receive handling. [(#11751)](https://github.com/RT-Thread/rt-thread/pull/11751)
+  * Read PWM period and pulse width from GPT registers using the runtime timer frequency, including 0% and 100% duty cycles. [(#11753)](https://github.com/RT-Thread/rt-thread/pull/11753)
+* **XuanTie:**
+  * Add XuanTie XiaoHui C908X platform support. [(#11219)](https://github.com/RT-Thread/rt-thread/pull/11219)
+  * Add SMP support for XuanTie C/R series processors. [(#11267)](https://github.com/RT-Thread/rt-thread/pull/11267)
+* **Rockchip:**
+  * Migrate BSPs to the device model, add RK3528 support, and extend RK3300/RK3500 platform configurations. [(#11121)](https://github.com/RT-Thread/rt-thread/pull/11121) [(#11300)](https://github.com/RT-Thread/rt-thread/pull/11300) [(#11713)](https://github.com/RT-Thread/rt-thread/pull/11713)
+  * Add DVFS and expand audio, display, Ethernet, PCIe, PHY, storage, crypto, and multimedia support. [(#11488)](https://github.com/RT-Thread/rt-thread/pull/11488) [(#11713)](https://github.com/RT-Thread/rt-thread/pull/11713)
+* **Raspberry Pi:**
+  * Add Raspberry Pi 5 with BCM2712/RP1 device model support and update shared Raspberry Pi drivers. [(#11712)](https://github.com/RT-Thread/rt-thread/pull/11712)
+  * Separate RP2040/RP2350 BSP layouts and fix Pico SDK sub-build invocation. [(#11435)](https://github.com/RT-Thread/rt-thread/pull/11435) [(#11635)](https://github.com/RT-Thread/rt-thread/pull/11635)
+* **Other Added or Updated BSPs:**
+  * **HC32:** Add HC32F4A2 and HC32F467 evaluation boards. [(#11618)](https://github.com/RT-Thread/rt-thread/pull/11618)
+  * **HPMicro:** Fix Ethernet receive buffer clearing. [(#11581)](https://github.com/RT-Thread/rt-thread/pull/11581)
+  * **N32:** Add N32H760, N32H497, and N32H487 boards; extend H47x/H49x/H7xx, LCDC, SDRAM, PWM, and USB support. [(#11159)](https://github.com/RT-Thread/rt-thread/pull/11159) [(#11627)](https://github.com/RT-Thread/rt-thread/pull/11627) [(#11711)](https://github.com/RT-Thread/rt-thread/pull/11711) [(#11682)](https://github.com/RT-Thread/rt-thread/pull/11682) [(#11236)](https://github.com/RT-Thread/rt-thread/pull/11236) [(#11616)](https://github.com/RT-Thread/rt-thread/pull/11616)
+  * **Novosense:** Add NS800RT7P65 NSSinePad with GPIO, serial, ADC, SPI, QSPI, I2C, CAN, RTC, timers, EPWM, and watchdog drivers. [(#11382)](https://github.com/RT-Thread/rt-thread/pull/11382) [(#11465)](https://github.com/RT-Thread/rt-thread/pull/11465) [(#11423)](https://github.com/RT-Thread/rt-thread/pull/11423) [(#11437)](https://github.com/RT-Thread/rt-thread/pull/11437) [(#11427)](https://github.com/RT-Thread/rt-thread/pull/11427) [(#11449)](https://github.com/RT-Thread/rt-thread/pull/11449) [(#11537)](https://github.com/RT-Thread/rt-thread/pull/11537) [(#11395)](https://github.com/RT-Thread/rt-thread/pull/11395) [(#11506)](https://github.com/RT-Thread/rt-thread/pull/11506) [(#11451)](https://github.com/RT-Thread/rt-thread/pull/11451)
+  * **FT32:** Add FT32F407XE Starter. [(#11130)](https://github.com/RT-Thread/rt-thread/pull/11130)
+  * **RDK:** Add the S100 BSP. [(#11406)](https://github.com/RT-Thread/rt-thread/pull/11406)
+  * **K230:** Add SPI, I2C DMA, and GNNE support. [(#10917)](https://github.com/RT-Thread/rt-thread/pull/10917) [(#10973)](https://github.com/RT-Thread/rt-thread/pull/10973) [(#11092)](https://github.com/RT-Thread/rt-thread/pull/11092)
+  * **QEMU and ZynqMP:** Expand AArch64 device model support, enable RISC-V SMP, and add MACB integration for ZynqMP A53 under QEMU. [(#11232)](https://github.com/RT-Thread/rt-thread/pull/11232) [(#11239)](https://github.com/RT-Thread/rt-thread/pull/11239) [(#11015)](https://github.com/RT-Thread/rt-thread/pull/11015) [(#11709)](https://github.com/RT-Thread/rt-thread/pull/11709)
+  * **x86:** Add i686 GCC 15.2.0 and picolibc options. [(#11388)](https://github.com/RT-Thread/rt-thread/pull/11388) [(#11394)](https://github.com/RT-Thread/rt-thread/pull/11394)
+  * **Other Drivers:** Fix CVITEK clock and I2C handling, Phytium QSPI initialization, and Nuvoton/Loongson CAN receive length validation. [(#11333)](https://github.com/RT-Thread/rt-thread/pull/11333) [(#11324)](https://github.com/RT-Thread/rt-thread/pull/11324) [(#11570)](https://github.com/RT-Thread/rt-thread/pull/11570) [(#11725)](https://github.com/RT-Thread/rt-thread/pull/11725) [(#11706)](https://github.com/RT-Thread/rt-thread/pull/11706)
+* **BSP Organization and Packaging:**
+  * Move the STM32L1 vendor driver library into packages. [(#11390)](https://github.com/RT-Thread/rt-thread/pull/11390)
+  * Reorganize MM32, N32, and ESP32-C3 layouts, normalize `libraries` directory names, and support shared Env package paths. [(#11408)](https://github.com/RT-Thread/rt-thread/pull/11408) [(#11159)](https://github.com/RT-Thread/rt-thread/pull/11159) [(#11416)](https://github.com/RT-Thread/rt-thread/pull/11416) [(#11654)](https://github.com/RT-Thread/rt-thread/pull/11654) [(#11603)](https://github.com/RT-Thread/rt-thread/pull/11603)
+  * Simplify MCXA366, i.MX RT1180, and NS800 default BSP configurations and extend peripheral coverage through CI attach configurations. [(#11703)](https://github.com/RT-Thread/rt-thread/pull/11703) [(#11629)](https://github.com/RT-Thread/rt-thread/pull/11629) [(#11537)](https://github.com/RT-Thread/rt-thread/pull/11537)
+
 # RT-Thread v5.2.2 Released
 
 Change Log Since v5.2.1 Release.
