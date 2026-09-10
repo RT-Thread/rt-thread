@@ -1,0 +1,3 @@
+config load CubeMX_Config.ioc
+project generate
+exit
