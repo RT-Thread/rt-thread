@@ -3791,10 +3791,12 @@ static void sdhci_reinit(struct rt_sdhci_host *host)
 int rt_sdhci_init_host(struct rt_sdhci_host *host)
 {
     int ret, len;
-    char dev_name[32];
+    char dev_name[RT_NAME_MAX];
     struct rt_mmc_host *mmc = host->mmc;
 
     len = sdio_host_set_name(&mmc->rthost, dev_name);
+    dev_name[sizeof(dev_name) - 1] = '\0';
+    len = rt_strlen(dev_name);
 
     if ((mmc->caps2 & MMC_CAP2_CQE) && (host->quirks & RT_SDHCI_QUIRK_BROKEN_CQE))
     {
@@ -3809,10 +3811,10 @@ int rt_sdhci_init_host(struct rt_sdhci_host *host)
 
     rt_work_init(&host->complete_work, sdhci_complete_work, host);
 
-    rt_sprintf(&dev_name[len], "-timer");
+    rt_snprintf(&dev_name[len], sizeof(dev_name) - len, "-timer");
     rt_timer_init(&host->timer, dev_name,
                   sdhci_timeout_timer, host, 0, RT_TIMER_FLAG_SOFT_TIMER);
-    rt_sprintf(&dev_name[len], "-data-timer");
+    rt_snprintf(&dev_name[len], sizeof(dev_name) - len, "-data-timer");
     rt_timer_init(&host->data_timer, dev_name,
                   sdhci_timeout_data_timer, host, 0, RT_TIMER_FLAG_SOFT_TIMER);
 
@@ -3820,7 +3822,7 @@ int rt_sdhci_init_host(struct rt_sdhci_host *host)
 
     sdhci_init(host, 0);
 
-    rt_sprintf(&dev_name[len], "-irq");
+    rt_snprintf(&dev_name[len], sizeof(dev_name) - len, "-irq");
     host->irq_wq = rt_workqueue_create(dev_name, RT_SYSTEM_WORKQUEUE_STACKSIZE, 1);
     rt_work_init(&host->irq_work, sdhci_thread_irq, host);
     rt_work_init(&host->poll_work, sdhci_poll_work_fn, host);
