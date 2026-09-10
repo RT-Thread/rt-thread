@@ -555,7 +555,7 @@ void *rt_asan_realloc(void *ptr, rt_size_t size,
 
 /*
  * Override the weak rt_system_heap_init to capture the heap range and
- * initialize the shadow before the generic heap init runs.
+ * initialize the shadow before the component heap init runs.
  */
 void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
@@ -577,8 +577,8 @@ void rt_system_heap_init(void *begin_addr, void *end_addr)
      */
     rt_memset(asan_shadow, 0, sizeof(asan_shadow));
 
-    /* run the original heap init */
-    rt_system_heap_init_generic(begin_addr, end_addr);
+    /* Initialize the allocator owned by the ASan adapter. */
+    rt_asan_heap_init(begin_addr, end_addr);
 }
 
 #ifdef RT_USING_FINSH

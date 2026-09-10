@@ -478,6 +478,107 @@ static void test_asan_concurrent_realloc(void)
 extern void test_asan_cpp(void);
 #endif
 
+extern rt_base_t rt_heap_lock(void);
+extern void rt_heap_unlock(rt_base_t level);
+
+/* Statistics and page APIs must use the heap owned by the overriding adapter. */
+static void test_asan_heap_adapter(void)
+{
+    rt_size_t total = 0, used = 0, maximum = 0;
+    rt_uint32_t before = rt_asan_report_count_get();
+    void *p = rt_malloc(64);
+    rt_base_t level = rt_heap_lock();
+
+    rt_heap_unlock(level);
+
+    uassert_not_null(p);
+    rt_memory_info(&total, &used, &maximum);
+    uassert_true(total > 0);
+    uassert_true(used >= 64);
+    uassert_true(maximum >= used);
+    uassert_true(total >= used);
+    rt_free(p);
+
+#if defined(RT_USING_SLAB_AS_HEAP)
+    p = rt_page_alloc(1);
+    uassert_not_null(p);
+    if (p)
+    {
+        uassert_true(((rt_uintptr_t)p & (RT_MM_PAGE_SIZE - 1)) == 0);
+        rt_memset(p, 0x5a, RT_MM_PAGE_SIZE);
+        rt_page_free(p, 1);
+    }
+#endif
+    uassert_int_equal(rt_asan_report_count_get(), before);
+}
+
+#ifdef RT_HOOK_USING_FUNC_PTR
+static rt_thread_t probe_thread;
+static unsigned probe_malloc, probe_entry, probe_exit, probe_free;
+static void *probe_old, *probe_new;
+static void probe_alloc_hook(void **ptr, rt_size_t size)
+{
+    if (rt_thread_self() == probe_thread && *ptr && size == 37)
+        probe_malloc++;
+}
+static void probe_entry_hook(void **ptr, rt_size_t size)
+{
+    if (rt_thread_self() == probe_thread && size == 73)
+    {
+        probe_old = *ptr;
+        probe_entry++;
+    }
+}
+static void probe_exit_hook(void **ptr, rt_size_t size)
+{
+    if (rt_thread_self() == probe_thread && size == 73)
+    {
+        probe_new = *ptr;
+        probe_exit++;
+    }
+}
+static void probe_free_hook(void **ptr)
+{
+    if (rt_thread_self() == probe_thread && *ptr == probe_new)
+        probe_free++;
+}
+static void test_asan_hook_probe(void)
+{
+    void *p, *q;
+    /* The public API has no getters. Leave application hooks untouched.
+     * Run this unit without concurrent hook registration, just like other
+     * tests which temporarily change global callbacks.
+     */
+    if (rt_asan_test_hooks_in_use())
+    {
+        rt_kprintf("[asan] hook test skipped: application hooks are installed\n");
+        return;
+    }
+    probe_thread = rt_thread_self();
+    probe_malloc = probe_entry = probe_exit = probe_free = 0;
+    rt_malloc_sethook(probe_alloc_hook);
+    rt_realloc_set_entry_hook(probe_entry_hook);
+    rt_realloc_set_exit_hook(probe_exit_hook);
+    rt_free_sethook(probe_free_hook);
+    p = rt_malloc(37);
+    q = rt_realloc(p, 73);
+    rt_free(q ? q : p);
+    rt_malloc_sethook(RT_NULL);
+    rt_realloc_set_entry_hook(RT_NULL);
+    rt_realloc_set_exit_hook(RT_NULL);
+    rt_free_sethook(RT_NULL);
+    uassert_false(rt_asan_test_hooks_in_use());
+    uassert_not_null(p);
+    uassert_not_null(q);
+    uassert_true(probe_old == p);
+    uassert_true(probe_new == q);
+    uassert_int_equal(probe_malloc, 1);
+    uassert_int_equal(probe_entry, 1);
+    uassert_int_equal(probe_exit, 1);
+    uassert_int_equal(probe_free, 1);
+}
+#endif
+
 /* utest_unit_run resets its counters; retain failures from every unit. */
 #define ASAN_UNIT_RUN(unit)                         \
     do                                              \
@@ -489,6 +590,10 @@ extern void test_asan_cpp(void);
 static void testcase(void)
 {
     rt_size_t failures = 0;
+#ifdef RT_HOOK_USING_FUNC_PTR
+    ASAN_UNIT_RUN(test_asan_hook_probe);
+#endif
+    ASAN_UNIT_RUN(test_asan_heap_adapter);
     ASAN_UNIT_RUN(test_asan_overflow_write);
     ASAN_UNIT_RUN(test_asan_overflow_read);
     ASAN_UNIT_RUN(test_asan_no_false_positive);

@@ -3,6 +3,7 @@ menuconfig RT_USING_ASAN
     default n
     depends on RT_USING_HEAP && !RT_USING_USERHEAP
     depends on RT_USING_SMALL_MEM_AS_HEAP || RT_USING_MEMHEAP_AS_HEAP || RT_USING_SLAB_AS_HEAP
+    depends on !RT_USING_SMP || RT_USING_MUTEX || RT_USING_HEAP_ISR
     help
         Enable runtime AddressSanitizer (kernel-address) support. It
         instruments memory accesses to detect heap buffer overflow and
@@ -21,6 +22,13 @@ menuconfig RT_USING_ASAN
         Aligned allocations also use the requested size for their redzones.
         Only the system heap APIs are wrapped; direct allocator/page APIs and
         accesses in prebuilt, uninstrumented libraries are not checked.
+
+        The component overrides the weak system heap interfaces and owns
+        the underlying allocator, heap lock and allocation hooks. Do not
+        combine it with another implementation overriding the same APIs.
+
+        SMP requires a mutex or the interrupt-safe heap spinlock to
+        serialize allocator access across CPUs.
 
         Heap algorithm support:
           - small mem (RT_USING_SMALL_MEM_AS_HEAP): full support, detects

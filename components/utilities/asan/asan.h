@@ -29,6 +29,15 @@
 extern "C" {
 #endif
 
+#if defined(RT_UTEST_ASAN) && defined(RT_HOOK_USING_FUNC_PTR)
+/* Test-only query: never replace hooks already installed by the application.
+ * Hook registration must remain quiescent while the hook unit test runs.
+ */
+rt_bool_t rt_asan_test_hooks_in_use(void);
+#endif
+
+void rt_asan_heap_init(void *begin_addr, void *end_addr);
+
 /* Internal system-heap integration. The caller must hold the heap lock.
  * Callbacks operate on the underlying allocator, never rt_malloc/rt_free.
  */
