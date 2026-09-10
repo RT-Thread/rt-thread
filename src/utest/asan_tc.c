@@ -519,7 +519,9 @@ static void *probe_old, *probe_new;
 static void probe_alloc_hook(void **ptr, rt_size_t size)
 {
     if (rt_thread_self() == probe_thread && *ptr && size == 37)
+    {
         probe_malloc++;
+    }
 }
 static void probe_entry_hook(void **ptr, rt_size_t size)
 {
@@ -540,7 +542,9 @@ static void probe_exit_hook(void **ptr, rt_size_t size)
 static void probe_free_hook(void **ptr)
 {
     if (rt_thread_self() == probe_thread && *ptr == probe_new)
+    {
         probe_free++;
+    }
 }
 static void test_asan_hook_probe(void)
 {
