@@ -180,6 +180,10 @@ static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
     }
 #endif
 
+#if defined (SOC_SERIES_STM32N6)
+    tim_clock = HAL_RCCEx_GetTIMGFreq();
+#endif
+
     return tim_clock;
 }
 
@@ -376,7 +380,8 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     tim->Init.CounterMode = TIM_COUNTERMODE_UP;
     tim->Init.Period = 1;
     tim->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
+    tim->Init.RepetitionCounter = 0;
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32N6)
     tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
     if (HAL_TIM_Base_Init(tim) != HAL_OK)

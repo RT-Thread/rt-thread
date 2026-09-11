@@ -93,7 +93,7 @@ static const struct pin_irq_map pin_irq_map[] =
         {GPIO_PIN_14, EXTI4_15_IRQn},
         {GPIO_PIN_15, EXTI4_15_IRQn},
 #elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32U5) \
-                || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS)
+                || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS) || defined(SOC_SERIES_STM32N6)
         {GPIO_PIN_0, EXTI0_IRQn},
         {GPIO_PIN_1, EXTI1_IRQn},
         {GPIO_PIN_2, EXTI2_IRQn},
@@ -535,7 +535,7 @@ rt_inline void pin_irq_hdr(int irqno)
     }
 }
 
-#if defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5)
+#if defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32N6)
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
     pin_irq_hdr(bit2bitno(GPIO_Pin));
@@ -586,7 +586,7 @@ void EXTI4_15_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H7RS)
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H7RS) || defined(SOC_SERIES_STM32N6)
 void EXTI0_IRQHandler(void)
 {
     rt_interrupt_enter();

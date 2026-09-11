@@ -88,7 +88,11 @@ void stm32_tim_pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_
     RT_ASSERT(pclk1_doubler != RT_NULL);
     RT_ASSERT(pclk1_doubler != RT_NULL);
 
+#if defined(SOC_SERIES_STM32N6)
+    HAL_RCC_GetClockConfig(&RCC_ClkInitStruct);
+#else
     HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &flatency);
+#endif
 
     *pclk1_doubler = 1;
     *pclk2_doubler = 1;
@@ -448,6 +452,9 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
             prescaler_value = (uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler / 10000) - 1;
         }
 #endif
+#if defined (SOC_SERIES_STM32N6)
+        prescaler_value = HAL_RCCEx_GetTIMGFreq() / 1000 /1000;
+#endif
         tim->Init.Period            = 10000 - 1;
         tim->Init.Prescaler         = prescaler_value;
         tim->Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
@@ -460,7 +467,7 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
             tim->Init.CounterMode   = TIM_COUNTERMODE_DOWN;
         }
         tim->Init.RepetitionCounter = 0;
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32N6)
         tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
         if (HAL_TIM_Base_Init(tim) != HAL_OK)
@@ -1060,7 +1067,11 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
         }
         else
         {
-            val = HAL_RCC_GetPCLK1Freq() * pclk1_doubler / freq;
+#if defined(SOC_SERIES_STM32N6)
+					val = HAL_RCCEx_GetTIMGFreq() / freq;			
+#else
+					val = HAL_RCC_GetPCLK1Freq() * pclk1_doubler / freq;
+#endif	
         }
         __HAL_TIM_SET_PRESCALER(tim, val - 1);
 
