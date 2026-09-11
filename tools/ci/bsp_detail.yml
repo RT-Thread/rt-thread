@@ -1001,7 +1001,7 @@ msp432e401y-LaunchPad:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32g43xcl-stb:
+n32/n32gxx_lxx/n32g43xcl-stb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1009,7 +1009,7 @@ n32/n32g43xcl-stb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32g457qel-stb:
+n32/n32gxx_lxx/n32g457qel-stb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1017,7 +1017,7 @@ n32/n32g457qel-stb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32g45xcl-stb:
+n32/n32gxx_lxx/n32g45xcl-stb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1025,7 +1025,7 @@ n32/n32g45xcl-stb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32g45xml-stb:
+n32/n32gxx_lxx/n32g45xml-stb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1033,7 +1033,7 @@ n32/n32g45xml-stb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32g45xrl-stb:
+n32/n32gxx_lxx/n32g45xrl-stb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1041,7 +1041,7 @@ n32/n32g45xrl-stb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32g45xvl-stb:
+n32/n32gxx_lxx/n32g45xvl-stb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1049,7 +1049,7 @@ n32/n32g45xvl-stb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32g4frml-stb:
+n32/n32gxx_lxx/n32g4frml-stb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1057,7 +1057,7 @@ n32/n32g4frml-stb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32l40xcl-stb:
+n32/n32gxx_lxx/n32l40xcl-stb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1065,7 +1065,7 @@ n32/n32l40xcl-stb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32l436-evb:
+n32/n32gxx_lxx/n32l436-evb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1073,7 +1073,7 @@ n32/n32l436-evb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32l43xml-stb:
+n32/n32gxx_lxx/n32l43xml-stb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1081,7 +1081,7 @@ n32/n32l43xml-stb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32l43xrl-stb:
+n32/n32gxx_lxx/n32l43xrl-stb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
@@ -1089,11 +1089,33 @@ n32/n32l43xrl-stb:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
-n32/n32wb45xl-evb:
+n32/n32gxx_lxx/n32wb45xl-evb:
   .config: true
   README.md: true
   gcc: arm-none-eabi-gcc
   iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32hxxx/n32h487zgl7-evb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32hxxx/n32h497zgl7-evb:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
+n32/n32hxxx/n32h760zil7-stb:
+  .config: true
+  gcc: arm-none-eabi-gcc
   mdk5: true
   menuconfig: true
   rtconfig.h: true

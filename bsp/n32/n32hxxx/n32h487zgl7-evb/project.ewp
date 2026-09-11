@@ -364,7 +364,6 @@
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\smp_call</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\board\Cube_Config\USER\inc</state>
@@ -384,6 +383,7 @@
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\packages\n32h47x_48x_std_driver-latest\n32h47x_48x_std_periph_driver\inc</state>
           <state>$PROJ_DIR$\packages\n32h47x_48x_cmsis_driver-latest\device</state>
+          <state>$PROJ_DIR$\applications\test_file</state>
           <state>$PROJ_DIR$\..\..\..\..\components\net\utest</state>
         </option>
         <option>
@@ -1455,7 +1455,6 @@
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\drivers\phy</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\smp_call</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\board\Cube_Config\USER\inc</state>
@@ -1475,6 +1474,7 @@
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\packages\n32h47x_48x_std_driver-latest\n32h47x_48x_std_periph_driver\inc</state>
           <state>$PROJ_DIR$\packages\n32h47x_48x_cmsis_driver-latest\device</state>
+          <state>$PROJ_DIR$\applications\test_file</state>
           <state>$PROJ_DIR$\..\..\..\..\components\net\utest</state>
         </option>
         <option>
@@ -2308,10 +2308,10 @@
       <name>$PROJ_DIR$\..\..\..\..\src\kservice.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\src\memheap.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\src\mempool.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\src\memheap.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\src\object.c</name>
@@ -2430,6 +2430,9 @@
     <file>
       <name>$PROJ_DIR$\packages\n32h47x_48x_cmsis_driver-latest\device\startup\startup_n32h47x_48x_EWARM.s</name>
     </file>
+  </group>
+  <group>
+    <name>test_file</name>
   </group>
   <group>
     <name>utc_UTest</name>

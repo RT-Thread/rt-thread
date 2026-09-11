@@ -34,7 +34,102 @@ static FEMC_InitType NAND_InitStructure = { 0 };
 #define NAND_BANK_ADDR ((uint32_t)0xB0000000)
 #endif
 
+#endif /* SOC_SERIES_N32H7xx */
+
+/* Standard NAND flash commands (platform independent) */
+#define NAND_CMD_READ_1ST  ((uint8_t)0x00)
+#define NAND_CMD_READ_2ND  ((uint8_t)0x30)
+#define NAND_CMD_WRITE_1ST ((uint8_t)0x80)
+#define NAND_CMD_WRITE_2ND ((uint8_t)0x10)
+#define NAND_CMD_ERASE_1ST ((uint8_t)0x60)
+#define NAND_CMD_ERASE_2ND ((uint8_t)0xD0)
+#define NAND_CMD_READ_ID   ((uint8_t)0x90)
+#define NAND_CMD_STATUS    ((uint8_t)0x70)
+#define NAND_CMD_RESET     ((uint8_t)0xFF)
+
+/* NAND status bits */
+#define NAND_STATUS_READY ((uint32_t)0x40)
+#define NAND_STATUS_ERROR ((uint32_t)0x01)
+
+#if defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+/*
+ * N32H47x/48x and N32H49x FEMC NAND support.
+ *
+ * The FEMC NAND controller of these two series uses the classic
+ * HADDR[17:16] area-select model.
+ * Bank2 base = 0x70000000
+ * Bank3 base = 0x80000000
+ *
+ * HADDR[17:16]:
+ *      00 -> data area
+ *      01 -> command area
+ *      1x -> address area.
+ * A16 drives CLE, A17 drives ALE.
+ */
+
+/* NAND bank base address derived from Kconfig */
+#ifdef BSP_USING_NAND_BANK2
+#define NAND_BANK_ADDR ((uint32_t)0x70000000U)
+#define NAND_BANK      FEMC_NAND_BANK2
 #endif
+
+#ifdef BSP_USING_NAND_BANK3
+#define NAND_BANK_ADDR ((uint32_t)0x80000000U)
+#define NAND_BANK      FEMC_NAND_BANK3
+#endif
+
+#ifndef NAND_BANK_ADDR
+#error "No FEMC NAND bank selected. Enable BSP_USING_NAND_BANK2 or BSP_USING_NAND_BANK3 in Kconfig."
+#endif
+
+/* FEMC NAND address areas */
+#define NAND_CMD_AREA  ((uint32_t)0x00010000U)   /* bit16 = CLE */
+#define NAND_ADDR_AREA ((uint32_t)0x00020000U)   /* bit17 = ALE */
+#define NAND_DATA_AREA ((uint32_t)0x00000000U)
+
+/*
+ * Wait for NAND operation completion
+ *
+ * NWAIT hardware wait (FEMC_NAND_NWAIT_ENABLE) blocks the CPU inside the
+ * data/status access itself, so the 0x70 status read below returns the final
+ * status. A software poll with timeout is kept as a safety net in case the
+ * NWAIT line is not connected or a device stalls.
+ *
+ * Returns -RT_EIO if the error bit is set, -RT_ETIMEOUT on timeout.
+ */
+static rt_err_t nand_wait_status(void)
+{
+    uint32_t timeout = 0x100000;
+    uint32_t bank = NAND_BANK_ADDR;
+    uint8_t status;
+
+    do
+    {
+        *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_STATUS;   /* 0x70 */
+        status = *(__IO uint8_t *)(bank | NAND_DATA_AREA);
+
+        if (status & NAND_STATUS_ERROR)
+        {
+            return -RT_EIO;
+        }
+        if (status & NAND_STATUS_READY)
+        {
+            return RT_EOK;
+        }
+        timeout--;
+        rt_thread_delay(rt_tick_from_millisecond(1));
+    } while (timeout);
+
+    return -RT_ETIMEOUT;
+}
+
+/* Send NAND RESET (0xFF) and wait until the device is ready. */
+static rt_err_t nand_reset(void)
+{
+    *(__IO uint8_t *)(NAND_BANK_ADDR | NAND_CMD_AREA) = NAND_CMD_RESET;
+    return nand_wait_status();
+}
+#endif /* SOC_SERIES_N32H47x_48x || SOC_SERIES_N32H49x */
 
 static struct rt_mtd_nand_device _nand_dev;
 
@@ -49,8 +144,10 @@ static struct rt_mtd_nand_device _nand_dev;
  *   [10:3]   Start command
  *   [2:0]    Byte lane strobes (AXI standard)
  */
+#if defined(SOC_SERIES_N32H7xx)
 #define NAND_CMD_AREA  ((uint32_t)0x00000000)   /* bit19 = 0 */
 #define NAND_DATA_AREA ((uint32_t)0x00080000)   /* bit19 = 1 */
+#endif /* SOC_SERIES_N32H7xx */
 
 /*
  * Address cycle count auto-derived from Kconfig NAND chip parameters.
@@ -79,6 +176,7 @@ static struct rt_mtd_nand_device _nand_dev;
 #define NAND_RW_ADDR_CYCLES    (2 + NAND_ROW_ADDR_CYCLES)
 #define NAND_ERASE_ADDR_CYCLES NAND_ROW_ADDR_CYCLES
 
+#if defined(SOC_SERIES_N32H7xx)
 /* Encode cycle count into AXI address bits [23:21] */
 #define NAND_ADDR_CYCLES(n) ((uint32_t)(n) << 21)
 
@@ -89,21 +187,7 @@ static struct rt_mtd_nand_device _nand_dev;
 
 #define NAND_ECC_LAST_ENABLE  ((uint32_t)0x00000400)
 #define NAND_ECC_LAST_DISABLE ((uint32_t)0x00000000)
-
-/* Standard NAND flash commands */
-#define NAND_CMD_READ_1ST  ((uint8_t)0x00)
-#define NAND_CMD_READ_2ND  ((uint8_t)0x30)
-#define NAND_CMD_WRITE_1ST ((uint8_t)0x80)
-#define NAND_CMD_WRITE_2ND ((uint8_t)0x10)
-#define NAND_CMD_ERASE_1ST ((uint8_t)0x60)
-#define NAND_CMD_ERASE_2ND ((uint8_t)0xD0)
-#define NAND_CMD_READ_ID   ((uint8_t)0x90)
-#define NAND_CMD_STATUS    ((uint8_t)0x70)
-#define NAND_CMD_RESET     ((uint8_t)0xFF)
-
-/* NAND status bits */
-#define NAND_STATUS_READY ((uint32_t)0x40)
-#define NAND_STATUS_ERROR ((uint32_t)0x01)
+#endif /* SOC_SERIES_N32H7xx */
 
 /*
  * FEMC uses Hamming code with 1-bit correction / 2-bit detection.
@@ -163,11 +247,50 @@ static rt_err_t rt_nand_init(void)
         reset_cmd = NAND_BANK_ADDR | NAND_ADDR_CYCLES(0) | NAND_CMD_END_DISABLE | NAND_CMD_AREA | (NAND_CMD_RESET << 3);
         *((__IO uint16_t *)reset_cmd) = 0x0000;
     }
-#endif
-
     return RT_EOK;
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+    /* FEMC NAND init */
+    FEMC_NandInitType nandInit = { 0 };
+    FEMC_NandTimingInitType timing = { 0 };
+
+    /* Make sure the FEMC clock is enabled. GPIO is configured by the board
+     * layer (not here), but the FEMC peripheral clock must be on. */
+    RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_FEMC, ENABLE);
+
+    FEMC_InitNandStruct(&nandInit);
+
+    /* Bank select from Kconfig */
+    nandInit.Bank = NAND_BANK;
+
+#ifdef BSP_USING_NAND_BUS_WIDTH_8B
+    nandInit.MemDataWidth = FEMC_NAND_BUS_WIDTH_8B;
+#endif /* BSP_USING_NAND_BUS_WIDTH_8B */
+
+#ifdef BSP_USING_NAND_BUS_WIDTH_16B
+    nandInit.MemDataWidth = FEMC_NAND_BUS_WIDTH_16B;
+#endif /* BSP_USING_NAND_BUS_WIDTH_16B */
+
+    /* Wait feature (NWAIT) enabled; ECC disabled for now (matches demo) */
+    nandInit.WaitFeatureEnable = FEMC_NAND_NWAIT_ENABLE;
+    nandInit.EccEnable = FEMC_NAND_ECC_DISABLE;
+    nandInit.EccPageSize = FEMC_NAND_ECC_PAGE_2048BYTES;
+
+    /* Timing (incl. TCLR/TAR) from board/ports/femc_timing.c */
+    FEMC_Nand_Timing_Config(&nandInit, &timing);
+
+    FEMC_InitNand(&nandInit);
+    FEMC_EnableNand(nandInit.Bank, ENABLE);
+
+    /* Reset NAND chip */
+    return nand_reset();
+#else
+    /* Unsupported platform: the SOC series macro is always selected by the
+     * BSP Kconfig, so this branch should never be compiled. */
+    return -RT_ERROR;
+#endif
 }
 
+#if defined(SOC_SERIES_N32H7xx)
 /*
  * Wait for NAND operation to complete via FEMC busy flag.
  *
@@ -231,6 +354,7 @@ static rt_err_t nand_check_status(uint32_t bank_addr)
 
     return -RT_ETIMEOUT;
 }
+#endif /* SOC_SERIES_N32H7xx */
 
 /*
  * ===========================================================================
@@ -244,6 +368,7 @@ static rt_err_t nand_check_status(uint32_t bank_addr)
  * Pack bytes 1-4 (Device + 3rd + 4th + 5th), discard byte 0 (Maker ID).
  * This matches the stm32mp1 convention in the RT-Thread codebase.
  */
+#if defined(SOC_SERIES_N32H7xx)
 static rt_err_t _read_id(struct rt_mtd_nand_device *device)
 {
     uint32_t cmd_addr, data_addr;
@@ -272,8 +397,37 @@ static rt_err_t _read_id(struct rt_mtd_nand_device *device)
 
     return (rt_err_t)id;
 }
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+static rt_err_t _read_id(struct rt_mtd_nand_device *device)
+{
+    uint32_t bank = NAND_BANK_ADDR;
+    uint8_t id_bytes[5];
+    rt_uint32_t id;
+
+    /* READ_ID (0x90) + 1 address byte, then read 5 ID bytes */
+    *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_READ_ID;
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = 0x00;
+
+    for (uint8_t i = 0; i < 5; i++)
+    {
+        id_bytes[i] = *(__IO uint8_t *)(bank | NAND_DATA_AREA);
+    }
+
+    LOG_D("NAND ID: %02X %02X %02X %02X %02X",
+          id_bytes[0], id_bytes[1], id_bytes[2], id_bytes[3], id_bytes[4]);
+
+    /* Pack bytes 1-4 into 32-bit return value (byte 0 = Maker ID, discarded) */
+    id = (rt_uint32_t)id_bytes[1] << 24;
+    id |= (rt_uint32_t)id_bytes[2] << 16;
+    id |= (rt_uint32_t)id_bytes[3] << 8;
+    id |= (rt_uint32_t)id_bytes[4];
+
+    return (rt_err_t)id;
+}
+#endif
 
 /* read one page (data + spare) */
+#if defined(SOC_SERIES_N32H7xx)
 static rt_err_t _read_page(struct rt_mtd_nand_device *device,
                            rt_off_t page,
                            rt_uint8_t *data, rt_uint32_t data_len,
@@ -341,8 +495,69 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
     }
     return ret;
 }
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+static rt_err_t _read_page(struct rt_mtd_nand_device *device,
+                           rt_off_t page,
+                           rt_uint8_t *data, rt_uint32_t data_len,
+                           rt_uint8_t *spare, rt_uint32_t spare_len)
+{
+    uint32_t bank = NAND_BANK_ADDR;
+    uint32_t row_addr = (uint32_t)page;
+    uint32_t i;
+    rt_err_t ret;
+
+    /* Command phase: READ_1ST + column(2x 0) + row(NAND_ROW_ADDR_CYCLES) + READ_2ND */
+    *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_READ_1ST;
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = 0x00;
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = 0x00;
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)(row_addr & 0xFF);
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 8) & 0xFF);
+#if NAND_ROW_ADDR_CYCLES == 3
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 16) & 0xFF);
+#endif
+    *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_READ_2ND;
+
+    /*
+     * Read main data area one byte at a time.
+     *
+     * NOTE: do NOT send a READ STATUS (0x70) between the 0x30 command and
+     * the data reads below. 0x70 switches the NAND into status-output mode,
+     * so the data area would return the status register (e.g. 0xE0) instead
+     * of the page contents. This mirrors demo's FEMC_Nand_ReadPage_Byte():
+     * data is read directly after 0x30 and relies on the NWAIT feature
+     * (FEMC_NAND_NWAIT_ENABLE) to stall the CPU until the page is ready.
+     *
+     * The data area can be accessed with 8/16/32-bit AHB accesses regardless
+     * of the NAND bus width (FEMC splits wide accesses automatically, see
+     * FEMC manual "supported memories and operations"). The byte loop is
+     * used here for simplicity and maximum compatibility.
+     */
+    if (data && data_len)
+    {
+        for (i = 0; i < data_len; i++)
+        {
+            data[i] = *(__IO uint8_t *)(bank | NAND_DATA_AREA);
+        }
+    }
+
+    /* spare area read not implemented yet */
+
+    /*
+     * Check status after the data has been read, mirroring demo's
+     * FEMC_Nand_ReadPage_Byte -> FEMC_Nand_GetStatus(). A READ STATUS (0x70)
+     * after the data phase is safe and checks for any pending read error.
+     */
+    ret = nand_wait_status();
+    if (ret != RT_EOK)
+    {
+        LOG_E("read page %d status error %d", (int)page, ret);
+    }
+    return ret;
+}
+#endif
 
 /* write one page (data + spare) */
+#if defined(SOC_SERIES_N32H7xx)
 static rt_err_t _write_page(struct rt_mtd_nand_device *device,
                             rt_off_t page,
                             const rt_uint8_t *data, rt_uint32_t data_len,
@@ -436,6 +651,101 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
     }
     return ret;
 }
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+static rt_err_t _write_page(struct rt_mtd_nand_device *device,
+                            rt_off_t page,
+                            const rt_uint8_t *data, rt_uint32_t data_len,
+                            const rt_uint8_t *spare, rt_uint32_t spare_len)
+{
+    uint32_t bank = NAND_BANK_ADDR;
+    uint32_t row_addr = (uint32_t)page;
+    uint32_t i;
+    rt_err_t ret;
+
+    /* Command phase: WRITE_1ST + column(2x 0) + row(NAND_ROW_ADDR_CYCLES) */
+    *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_WRITE_1ST;
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = 0x00;
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = 0x00;
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)(row_addr & 0xFF);
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 8) & 0xFF);
+#if NAND_ROW_ADDR_CYCLES == 3
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 16) & 0xFF);
+#endif
+
+    /*
+     * Data phase: write main data to the data area.
+     *
+     * @note FEMC manual "supported memories and operations": 16-bit NAND
+     * does NOT support 8-bit AHB writes (only 16/32-bit). So for 16-bit bus
+     * use 16-bit accesses, otherwise the byte loop is safe.
+     */
+    if (data && data_len)
+    {
+#ifdef BSP_USING_NAND_BUS_WIDTH_16B
+        /*
+         * 16-bit NAND: 8-bit AHB writes are NOT supported (see FEMC manual
+         * "supported memories and operations"), so data must be written as
+         * 16-bit accesses. If the source buffer is not 16-bit aligned, copy
+         * it into an aligned temporary buffer first.
+         */
+        if (((uint32_t)data & 0x1U) == 0U)
+        {
+            uint16_t *p16 = (uint16_t *)data;
+            uint32_t word_cnt = data_len / 2;
+
+            for (i = 0; i < word_cnt; i++)
+            {
+                *(__IO uint16_t *)(bank | NAND_DATA_AREA) = p16[i];
+            }
+        }
+        else
+        {
+            uint16_t *tmp;
+            uint32_t word_cnt = data_len / 2;
+
+            tmp = rt_malloc(data_len);
+            if (!tmp)
+            {
+                return -RT_ENOMEM;
+            }
+            rt_memcpy(tmp, data, data_len);
+
+            for (i = 0; i < word_cnt; i++)
+            {
+                *(__IO uint16_t *)(bank | NAND_DATA_AREA) = tmp[i];
+            }
+            rt_free(tmp);
+        }
+        /* odd trailing byte */
+        if (data_len & 1)
+        {
+            *(__IO uint8_t *)(bank | NAND_DATA_AREA) = data[data_len - 1];
+        }
+#else
+        for (i = 0; i < data_len; i++)
+        {
+            *(__IO uint8_t *)(bank | NAND_DATA_AREA) = data[i];
+        }
+#endif
+    }
+    else
+    {
+        *(__IO uint8_t *)(bank | NAND_DATA_AREA) = 0x00;
+    }
+
+    /* spare area write not implemented yet */
+
+    *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_WRITE_2ND;
+
+    /* Wait for program completion, then check status */
+    ret = nand_wait_status();
+    if (ret != RT_EOK)
+    {
+        LOG_E("write page %d status error %d", (int)page, ret);
+    }
+    return ret;
+}
+#endif
 
 /* move page (for garbage collection) */
 static rt_err_t _move_page(struct rt_mtd_nand_device *device,
@@ -465,6 +775,7 @@ static rt_err_t _move_page(struct rt_mtd_nand_device *device,
 }
 
 /* erase one block */
+#if defined(SOC_SERIES_N32H7xx)
 static rt_err_t _erase_block(struct rt_mtd_nand_device *device, rt_uint32_t block)
 {
     uint32_t cmd_addr;
@@ -508,6 +819,31 @@ static rt_err_t _erase_block(struct rt_mtd_nand_device *device, rt_uint32_t bloc
     }
     return ret;
 }
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+static rt_err_t _erase_block(struct rt_mtd_nand_device *device, rt_uint32_t block)
+{
+    uint32_t bank = NAND_BANK_ADDR;
+    uint32_t row_addr = block * device->pages_per_block;
+    rt_err_t ret;
+
+    /* Convert block number to row address (no column address for erase) */
+    *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_ERASE_1ST;
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)(row_addr & 0xFF);
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 8) & 0xFF);
+#if NAND_ROW_ADDR_CYCLES == 3
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 16) & 0xFF);
+#endif
+    *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_ERASE_2ND;
+
+    /* Wait for erase completion, then check status */
+    ret = nand_wait_status();
+    if (ret != RT_EOK)
+    {
+        LOG_E("erase block %d status error %d", (int)block, ret);
+    }
+    return ret;
+}
+#endif
 
 /*
  * Check if a block is bad.

@@ -492,7 +492,10 @@ extern "C" {
 #define SPI3_RX_DMA_IRQ            DMA2_Channel7_IRQn
 #define SPI3_RX_DMA_HANDSHAK       DMA_CH_HARDWARE_HANDSHAKING_IF_7
 #define SPI3_RX_DMA_DMA_RCC        RCC_AHB1_PERIPHEN_M7_DMA2
-#define SPI3_RX_DMA_DMA_CHANNEL    DMA_CHANNEL_5
+/* DMAMUX1 output 15 feeds DMA2 channel 7 (output N -> DMA(N/8+1) ch(N%8)),
+ * so the channel must match the IRQ/handshake below; DMA_CHANNEL_5 was a
+ * copy-paste defect that armed ch5 while the request lands on ch7. */
+#define SPI3_RX_DMA_DMA_CHANNEL    DMA_CHANNEL_7
 #define SPI3_RX_DMA_DMAMUX_CHANNEL DMAMUX_CHANNEL_15
 #define SPI3_RX_DMA_DMAMUX_REQUEST DMAMUX1_REQUEST_SPI3_RX
 #endif
