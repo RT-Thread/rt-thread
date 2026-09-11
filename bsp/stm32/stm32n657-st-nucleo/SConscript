@@ -1,0 +1,19 @@
+# for module compiling
+import os
+Import('env')
+from building import *
+
+cwd = GetCurrentDir()
+objs = []
+list = os.listdir(cwd)
+
+# STM32N657xx
+# You can select chips from the list above
+env.Append(CPPDEFINES = ['STM32N657xx', 'USE_HAL_DRIVER'])
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+Return('objs')

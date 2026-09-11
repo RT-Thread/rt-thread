@@ -27,7 +27,7 @@ int rt_hw_usart_init(void);
     || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS)
 #define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_FLAG
 #elif defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) \
-    || defined(SOC_SERIES_STM32MP1)
+    || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32N6)
 #define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_IT
 #endif
 
