@@ -33,8 +33,8 @@
  */
 static const char *stm32_dma_type_name(const struct stm32_dma_config *dma_config)
 {
-    return (dma_config->common.type == STM32_DMA_TYPE_GPDMA) ? "gpdma" :
-           (dma_config->common.type == STM32_DMA_TYPE_BDMA)  ? "bdma"  : "dma";
+    return (dma_config->common.type == STM32_DMA_TYPE_GPDMA) ? "gpdma" : (dma_config->common.type == STM32_DMA_TYPE_BDMA) ? "bdma"
+                                                                                                                          : "dma";
 }
 
 #if defined(STM32_DMA_USES_REQUEST)
