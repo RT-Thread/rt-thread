@@ -33,6 +33,7 @@ extern "C" {
 #define RT_EINVAL                       EINVAL          /**< Invalid argument */
 #define RT_ENOENT                       ENOENT          /**< No entry */
 #define RT_ENOSPC                       ENOSPC          /**< No space left */
+#define RT_EWAITPEND                    EINPROGRESS     /**< Wait operation pending */
 #define RT_EPERM                        EPERM           /**< Operation not permitted */
 #define RT_EFAULT                       EFAULT          /**< Bad address */
 #define RT_ENOBUFS                      ENOBUFS         /**< No buffer space is available */
@@ -59,6 +60,7 @@ extern "C" {
 #define RT_ENOBUFS                      16              /**< No buffer space is available */
 #define RT_ESCHEDISR                    17              /**< scheduler failure in isr context */
 #define RT_ESCHEDLOCKED                 18              /**< scheduler failure in critical region */
+#define RT_EWAITPEND                    19              /**< Wait operation pending */
 #endif /* defined(RT_USING_LIBC) && !defined(RT_USING_NANO) */
 
 rt_err_t rt_get_errno(void);
