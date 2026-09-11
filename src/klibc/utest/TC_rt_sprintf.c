@@ -897,10 +897,12 @@ SPRINTF_TEST_CASE(integer_types)
     SPRINTF_CHECK("2147483647",              buffer, "%li", 2147483647L);
 #ifdef RT_KLIBC_USING_VSNPRINTF_LONGLONG
     SPRINTF_CHECK("30",                      buffer, "%lli", 30LL);
-#ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
     SPRINTF_CHECK("-9223372036854775807",    buffer, "%lli", -9223372036854775807LL);
     SPRINTF_CHECK("9223372036854775807",     buffer, "%lli", 9223372036854775807LL);
-#endif /* RT_KLIBC_USING_VSNPRINTF_STANDARD */
+    SPRINTF_CHECK("-2147483648",             buffer, "%lld", (long long)(rt_int64_t)-2147483648LL);
+    SPRINTF_CHECK("4294967295",              buffer, "%lld", (long long)(rt_int64_t)RT_UINT32_MAX);
+    SPRINTF_CHECK("-9223372036854775808",    buffer, "%lld", (long long)(-9223372036854775807LL - 1LL));
+    SPRINTF_CHECK("9223372036854775807",     buffer, "%lld", 9223372036854775807LL);
 #endif /* RT_KLIBC_USING_VSNPRINTF_LONGLONG */
     SPRINTF_CHECK("100000",                  buffer, "%lu", 100000L);
     SPRINTF_CHECK("4294967295",              buffer, "%lu", 0xFFFFFFFFL);
