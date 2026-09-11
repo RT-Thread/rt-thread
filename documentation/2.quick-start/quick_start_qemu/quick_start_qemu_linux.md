@@ -56,22 +56,21 @@ cd rt-thread/bsp/qemu-vexpress-a9/
 
 ### 3.2 Configure the environment of Env tool
 
-#### 3.2.1 Remap python command
+#### 3.2.1 Provide the python command
 
-We need to remap `python` command as python3 by default.
-
-Using `whereis` command to identify your python3's version:
-
-![python3-version](figures/python3-version.png)
-
-For instance, as you can see, in my computer, the python3's version is python 3.9. You need to identify python3's version in your computer. Then, we remap the `python` command as python3 by default:
+Some tools invoke `python` rather than `python3`. On distributions that
+ship only `python3`, install the package that provides the `python`
+command:
 
 ```shell
-sudo rm -rf /usr/bin/python3
-sudo rm -rf /usr/bin/python
-sudo ln -s /usr/bin/python3.9 /usr/bin/python3
-sudo ln -s /usr/bin/python3.9 /usr/bin/python
+sudo apt install python-is-python3
 ```
+
+> **Do not** remove `/usr/bin/python3` and re-create it by hand. On
+> Debian and Ubuntu, `apt` and a large part of the system tooling are
+> written in Python and resolve the interpreter through that path;
+> deleting it leaves the machine unable to install packages, including
+> the packages needed to put it back.
 
 ### 3.3 Install Env and Configure BSP
 
