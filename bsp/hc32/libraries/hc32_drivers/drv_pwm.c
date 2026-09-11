@@ -657,7 +657,9 @@ static rt_err_t _tmra_pwm_control(struct rt_device_pwm *device, int cmd, void *a
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
 
     if (!configuration->channel)
+    {
         return -RT_EINVAL;
+    }
 
     configuration->channel = (configuration->channel - 1) % TMRA_CHANNEL_NUM_MAX;
 
@@ -1065,7 +1067,9 @@ static rt_err_t _tmr4_pwm_control(struct rt_device_pwm *device, int cmd, void *a
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
 
     if (!configuration->channel)
+    {
         return -RT_EPERM;
+    }
 
     configuration->channel = (configuration->channel - 1) % TMR4_CHANNEL_NUM_MAX;
 
@@ -1532,7 +1536,9 @@ static rt_err_t _tmr6_pwm_control(struct rt_device_pwm *device, int cmd, void *a
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
 
     if (!configuration->channel)
+    {
         return -RT_EINVAL;
+    }
 
     configuration->channel = (configuration->channel - 1) % TMR6_CHANNEL_NUM_MAX;
 
