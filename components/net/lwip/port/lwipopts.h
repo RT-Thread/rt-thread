@@ -464,9 +464,18 @@
 #define LWIP_DHCP                   0
 #endif
 
-/* 1 if you want to do an ARP check on the offered address
-   (recommended). */
-#define DHCP_DOES_ARP_CHECK         (LWIP_DHCP)
+/* 2.2.0 replaces DHCP_DOES_ARP_CHECK with ACD (RFC 5227 address conflict
+ * detection). The legacy macro is silently unused in 2.2.x, so map the
+ * intent onto the new option by version. This also makes the behavior
+ * explicit against upstream default drift: the 2.2.1 release default for
+ * LWIP_DHCP_DOES_ACD_CHECK is (LWIP_DHCP) (opt.h), i.e. same intent as
+ * RT's 2.1.2 DHCP_DOES_ARP_CHECK. Requires acd.c in the build
+ * (see lwip-2.2.1/SConscript). */
+#if RT_USING_LWIP_VER_NUM >= 0x20200
+#define LWIP_DHCP_DOES_ACD_CHECK   (LWIP_DHCP)
+#else
+#define DHCP_DOES_ARP_CHECK        (LWIP_DHCP)
+#endif
 
 /* ---------- AUTOIP options ------- */
 #define LWIP_AUTOIP                 0
@@ -595,10 +604,17 @@
 #endif
 
 /* MEMP_NUM_SYS_TIMEOUT: the number of simultaneously active timeouts. */
+#if RT_USING_LWIP_VER_NUM >= 0x20200
+/* lwIP 2.2.x changed the pool formula (LWIP_ACD, LWIP_IPV6_DHCP6,
+ * PPP_NUM_TIMEOUTS_PER_PCB). Do not derive it here; fall back to the
+ * upstream opt.h default (MEMP_NUM_SYS_TIMEOUT == LWIP_NUM_SYS_TIMEOUT_INTERNAL,
+ * opt.h:527 in 2.2.1) which always matches its own code. */
+#else
 #if RT_USING_LWIP_VER_NUM == 0x20102
 #define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_NUM_TIMEOUTS + (LWIP_IPV6 * (1 + LWIP_IPV6_REASS + LWIP_IPV6_MLD)))
 #else
 #define MEMP_NUM_SYS_TIMEOUT       (LWIP_TCP + IP_REASSEMBLY + LWIP_ARP + (2*LWIP_DHCP) + LWIP_AUTOIP + LWIP_IGMP + LWIP_DNS + PPP_SUPPORT + (LWIP_IPV6 ? (1 + (2*LWIP_IPV6)) : 0))
+#endif
 #endif
 
 /*

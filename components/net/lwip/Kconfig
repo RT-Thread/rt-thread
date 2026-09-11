@@ -28,6 +28,9 @@ if RT_USING_LWIP
         config RT_USING_LWIP212
             bool "lwIP v2.1.2"
 
+        config RT_USING_LWIP221
+            bool "lwIP v2.2.1"
+
         # online version
         if !RT_USING_LWIP_LOCAL_VERSION
             config RT_USING_LWIP_LATEST
@@ -39,6 +42,7 @@ if RT_USING_LWIP
     config RT_USING_LWIP_VER_NUM
         hex
         default 0x99999    if RT_USING_LWIP_LATEST
+        default 0x20201    if RT_USING_LWIP221
         default 0x20102    if RT_USING_LWIP212
         default 0x20003    if RT_USING_LWIP203
         default 0x10401    if RT_USING_LWIP141
@@ -48,7 +52,7 @@ if RT_USING_LWIP
             bool "IPV6 protocol"
             default n
             select NETDEV_USING_IPV6
-            select NETDEV_IPV6_SCOPES if RT_USING_LWIP212
+            select NETDEV_IPV6_SCOPES if RT_USING_LWIP212 || RT_USING_LWIP221
     endif
 
     config RT_LWIP_MEM_ALIGNMENT
