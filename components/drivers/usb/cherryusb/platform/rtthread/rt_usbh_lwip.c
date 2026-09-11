@@ -20,8 +20,8 @@
 
 #include "lwip/opt.h"
 
-#ifndef RT_USING_LWIP212
-#error must enable RT_USING_LWIP212
+#if !defined(RT_USING_LWIP212) && !defined(RT_USING_LWIP221)
+#error must enable RT_USING_LWIP212 (or RT_USING_LWIP221 for lwIP 2.2.1)
 #endif
 
 #ifndef LWIP_NO_RX_THREAD
