@@ -31,7 +31,7 @@ char *rt_strncpy(char *dest, const char *src, size_t n);
 int rt_strncmp(const char *cs, const char *ct, size_t count);
 int rt_strcmp(const char *cs, const char *ct);
 size_t rt_strlen(const char *src);
-
+int rt_atoi(const char* s);
 #ifdef __cplusplus
 }
 #endif
