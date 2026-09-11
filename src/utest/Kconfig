@@ -84,6 +84,16 @@ menu "Kernel Core"
         default n
         depends on RT_USING_MEMPOOL
 
+    config RT_UTEST_MEM_ALIGN
+        bool "Aligned Memory Allocation Test"
+        default n
+        depends on RT_USING_HEAP
+
+    config RT_UTEST_ASAN
+        bool "AddressSanitizer Test"
+        default n
+        depends on RT_USING_ASAN
+
     rsource "perf/Kconfig"
     rsource "../klibc/utest/Kconfig"
 

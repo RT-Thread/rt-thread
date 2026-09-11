@@ -944,7 +944,7 @@ static void (*rt_free_hook)(void **ptr);
  *
  * @param hook the hook function.
  */
-void rt_malloc_sethook(void (*hook)(void **ptr, rt_size_t size))
+rt_weak void rt_malloc_sethook(void (*hook)(void **ptr, rt_size_t size))
 {
     rt_malloc_hook = hook;
 }
@@ -955,7 +955,7 @@ void rt_malloc_sethook(void (*hook)(void **ptr, rt_size_t size))
  *
  * @param hook the hook function.
  */
-void rt_realloc_set_entry_hook(void (*hook)(void **ptr, rt_size_t size))
+rt_weak void rt_realloc_set_entry_hook(void (*hook)(void **ptr, rt_size_t size))
 {
     rt_realloc_entry_hook = hook;
 }
@@ -966,7 +966,7 @@ void rt_realloc_set_entry_hook(void (*hook)(void **ptr, rt_size_t size))
  *
  * @param hook the hook function.
  */
-void rt_realloc_set_exit_hook(void (*hook)(void **ptr, rt_size_t size))
+rt_weak void rt_realloc_set_exit_hook(void (*hook)(void **ptr, rt_size_t size))
 {
     rt_realloc_exit_hook = hook;
 }
@@ -977,7 +977,7 @@ void rt_realloc_set_exit_hook(void (*hook)(void **ptr, rt_size_t size))
  *
  * @param hook the hook function
  */
-void rt_free_sethook(void (*hook)(void **ptr))
+rt_weak void rt_free_sethook(void (*hook)(void **ptr))
 {
     rt_free_hook = hook;
 }
@@ -1035,8 +1035,8 @@ rt_inline void _heap_unlock(rt_base_t level)
 #define rt_heap_lock() _heap_lock()
 #define rt_heap_unlock() _heap_unlock()
 #else
-rt_base_t rt_heap_lock(void) __attribute__((alias("_heap_lock")));
-void rt_heap_unlock(rt_base_t level) __attribute__((alias("_heap_unlock")));
+rt_weak rt_base_t rt_heap_lock(void) __attribute__((alias("_heap_lock")));
+rt_weak void rt_heap_unlock(rt_base_t level) __attribute__((alias("_heap_unlock")));
 #endif /* _MSC_VER */
 #endif
 
@@ -1211,6 +1211,11 @@ rt_weak void *rt_calloc(rt_size_t count, rt_size_t size)
 {
     void *p;
 
+    if (size && count > (rt_size_t)-1 / size)
+    {
+        return RT_NULL;
+    }
+
     /* allocate 'count' objects of size 'size' */
     p = rt_malloc(count * size);
     /* zero the memory */
@@ -1269,7 +1274,7 @@ rt_weak void rt_memory_info(rt_size_t *total,
 RTM_EXPORT(rt_memory_info);
 
 #if defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP)
-void *rt_page_alloc(rt_size_t npages)
+rt_weak void *rt_page_alloc(rt_size_t npages)
 {
     rt_base_t level;
     void *ptr;
@@ -1283,7 +1288,7 @@ void *rt_page_alloc(rt_size_t npages)
     return ptr;
 }
 
-void rt_page_free(void *addr, rt_size_t npages)
+rt_weak void rt_page_free(void *addr, rt_size_t npages)
 {
     rt_base_t level;
 
@@ -1302,47 +1307,61 @@ void rt_page_free(void *addr, rt_size_t npages)
  *
  * @param  size is the allocated memory block size.
  *
- * @param  align is the alignment size.
+ * @param  align is a nonzero power-of-two alignment size.
+ *
+ * @note Zero-sized requests, invalid alignments and size overflows return RT_NULL.
  *
  * @return The memory block address was returned successfully, otherwise it was
  *         returned empty RT_NULL.
  */
 rt_weak void *rt_malloc_align(rt_size_t size, rt_size_t align)
 {
-    void *ptr = RT_NULL;
-    void *align_ptr = RT_NULL;
-    int uintptr_size = 0;
-    rt_size_t align_size = 0;
+    void *ptr;
+    void *align_ptr;
+    const rt_size_t uintptr_mask = sizeof(void *) - 1;
+    rt_size_t align_size;
 
-    /* sizeof pointer */
-    uintptr_size = sizeof(void*);
-    uintptr_size -= 1;
+    if (!size || !align || (align & (align - 1)))
+    {
+        return RT_NULL;
+    }
+    if (align < sizeof(void *))
+    {
+        align = sizeof(void *);
+    }
 
-    /* align the alignment size to uintptr size byte */
-    align = ((align + uintptr_size) & ~uintptr_size);
-
-    /* get total aligned size */
-    align_size = ((size + uintptr_size) & ~uintptr_size) + align;
-    /* allocate memory block from heap */
+    if (size > (rt_size_t)-1 - uintptr_mask)
+    {
+        return RT_NULL;
+    }
+    align_size = RT_ALIGN(size, sizeof(void *));
+    if (align_size > (rt_size_t)-1 - align)
+    {
+        return RT_NULL;
+    }
+    align_size += align;
+#ifdef RT_USING_SLAB_AS_HEAP
+    if (align_size > (rt_size_t)-1 - (RT_MM_PAGE_SIZE - 1))
+#else
+    if (align_size > (rt_size_t)-1 - (RT_ALIGN_SIZE - 1))
+#endif
+    {
+        return RT_NULL;
+    }
     ptr = rt_malloc(align_size);
     if (ptr != RT_NULL)
     {
-        /* the allocated memory block is aligned */
         if (((rt_uintptr_t)ptr & (align - 1)) == 0)
         {
             align_ptr = (void *)((rt_uintptr_t)ptr + align);
         }
         else
         {
-            align_ptr = (void *)(((rt_uintptr_t)ptr + (align - 1)) & ~(align - 1));
+            align_ptr = (void *)RT_ALIGN((rt_uintptr_t)ptr, align);
         }
-
-        /* set the pointer before alignment pointer to the real pointer */
-        *((rt_uintptr_t *)((rt_uintptr_t)align_ptr - sizeof(void *))) = (rt_uintptr_t)ptr;
-
+        *((rt_uintptr_t *)align_ptr - 1) = (rt_uintptr_t)ptr;
         ptr = align_ptr;
     }
-
     return ptr;
 }
 RTM_EXPORT(rt_malloc_align);
@@ -1355,11 +1374,10 @@ RTM_EXPORT(rt_malloc_align);
  */
 rt_weak void rt_free_align(void *ptr)
 {
-    void *real_ptr = RT_NULL;
+    void *real_ptr;
 
-    /* NULL check */
     if (ptr == RT_NULL) return;
-    real_ptr = (void *) * (rt_uintptr_t *)((rt_uintptr_t)ptr - sizeof(void *));
+    real_ptr = (void *)*((rt_uintptr_t *)ptr - 1);
     rt_free(real_ptr);
 }
 RTM_EXPORT(rt_free_align);

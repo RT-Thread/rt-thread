@@ -244,5 +244,6 @@ config RT_USING_RESOURCE_ID
 
 rsource "libadt/Kconfig"
 rsource "rt-link/Kconfig"
+rsource "asan/Kconfig"
 
 endmenu

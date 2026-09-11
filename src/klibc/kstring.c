@@ -10,6 +10,18 @@
 
 #include <rtthread.h>
 
+/*
+ * AddressSanitizer: rt_memcpy/rt_memset/rt_memmove copy word-at-a-time and may
+ * legally read/write a few bytes past the requested byte count (word-aligned
+ * bulk loops). When instrumented these accesses fall into poisoned redzones and
+ * raise false positives, so disable instrumentation for them.
+ */
+#ifdef RT_USING_ASAN
+#define RT_KLIB_NO_ASAN __attribute__((no_sanitize_address))
+#else
+#define RT_KLIB_NO_ASAN
+#endif
+
 #if defined(RT_KLIBC_USING_LIBC_MEMSET) || \
     defined(RT_KLIBC_USING_LIBC_MEMCPY) || \
     defined(RT_KLIBC_USING_LIBC_MEMMOVE) || \
@@ -36,6 +48,7 @@
  * @return The address of source memory.
  */
 #ifndef RT_KLIBC_USING_USER_MEMSET
+RT_KLIB_NO_ASAN
 void *rt_memset(void *s, int c, size_t count)
 {
 #if defined(RT_KLIBC_USING_LIBC_MEMSET)
@@ -121,6 +134,7 @@ RTM_EXPORT(rt_memset);
  * @return The address of destination memory
  */
 #ifndef RT_KLIBC_USING_USER_MEMCPY
+RT_KLIB_NO_ASAN
 void *rt_memcpy(void *dst, const void *src, size_t count)
 {
 #if defined(RT_KLIBC_USING_LIBC_MEMCPY)
@@ -211,6 +225,7 @@ RTM_EXPORT(rt_memcpy);
  * @return The address of destination memory.
  */
 #ifndef RT_KLIBC_USING_USER_MEMMOVE
+RT_KLIB_NO_ASAN
 void *rt_memmove(void *dest, const void *src, size_t n)
 {
 #ifdef RT_KLIBC_USING_LIBC_MEMMOVE
