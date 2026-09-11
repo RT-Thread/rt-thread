@@ -75,6 +75,11 @@ menu "Kernel Core"
         bool "MT-Safe Kprint Test"
         default n
 
+    config RT_UTEST_KSYMS
+        bool "Kernel Symbol Table Test"
+        default n
+        depends on RT_USING_KSYMS
+
     config RT_UTEST_SCHEDULER
         bool "Scheduler Test"
         default n

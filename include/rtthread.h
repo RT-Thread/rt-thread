@@ -800,6 +800,18 @@ rt_err_t rt_backtrace_formatted_print(rt_ubase_t *buffer, long buflen);
 rt_err_t rt_backtrace_to_buffer(rt_thread_t thread, struct rt_hw_backtrace_frame *frame,
                                 long skip, rt_ubase_t *buffer, long buflen);
 
+#ifdef RT_USING_KSYMS
+struct rt_ksym_info
+{
+    const char *name;
+    rt_uintptr_t start;
+    rt_size_t size;
+    rt_size_t offset;
+};
+
+rt_err_t rt_ksym_lookup(rt_uintptr_t addr, struct rt_ksym_info *info);
+#endif /* RT_USING_KSYMS */
+
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
 rt_device_t rt_console_get_device(void);
