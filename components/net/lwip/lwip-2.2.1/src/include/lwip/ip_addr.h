@@ -461,6 +461,8 @@ extern const ip_addr_t ip6_addr_any;
 #define IP_ANY_TYPE    IP_ADDR_ANY
 #endif
 
+struct netif *lwip_ip4_route_src(const ip4_addr_t *dest, const ip4_addr_t *src);
+
 #ifdef __cplusplus
 }
 #endif

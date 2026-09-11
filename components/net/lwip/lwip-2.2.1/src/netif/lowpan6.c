@@ -50,7 +50,7 @@
 
 #include "netif/lowpan6.h"
 
-#if LWIP_IPV6
+#if LWIP_IPV6 && LWIP_6LOWPAN
 
 #include "lwip/ip.h"
 #include "lwip/pbuf.h"

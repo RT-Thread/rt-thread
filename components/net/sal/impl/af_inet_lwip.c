@@ -39,6 +39,16 @@
 #endif
 #endif
 
+/* lwIP 2.2.0 merged netconn::socket into the callback_arg union
+ * (see include/lwip/api.h); older lwIP keeps a plain int socket member.
+ * Route all accesses through this accessor so the file compiles against
+ * every supported lwIP version. */
+#if RT_USING_LWIP_VER_NUM >= 0x20200
+#define SAL_NETCONN_SOCKET(conn)    ((conn)->callback_arg.socket)
+#else
+#define SAL_NETCONN_SOCKET(conn)    ((conn)->socket)
+#endif
+
 #ifdef SAL_USING_LWIP
 
 #ifdef SAL_USING_POSIX
@@ -83,6 +93,10 @@ static RT_DEFINE_SPINLOCK(_spinlock);
 
 extern struct lwip_sock *lwip_tryget_socket(int s);
 
+/* lwIP 2.2.0 merged netconn::socket into the callback_arg union; the
+ * SAL_NETCONN_SOCKET accessor above hides that difference per lwIP version.
+ * The decrement trick below keeps its original meaning: negative values
+ * count pending RCVPLUS events before accept(). */
 static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len)
 {
     int s;
@@ -95,7 +109,7 @@ static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len
     /* Get socket */
     if (conn)
     {
-        s = conn->socket;
+        s = SAL_NETCONN_SOCKET(conn);
         if (s < 0)
         {
             /* Data comes in right away after an accept, even though
@@ -104,16 +118,16 @@ static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len
              * will use the data later. Note that only receive events
              * can happen before the new socket is set up. */
             SYS_ARCH_PROTECT(lev);
-            if (conn->socket < 0)
+            if (SAL_NETCONN_SOCKET(conn) < 0)
             {
                 if (evt == NETCONN_EVT_RCVPLUS)
                 {
-                    conn->socket--;
+                    SAL_NETCONN_SOCKET(conn)--;
                 }
                 SYS_ARCH_UNPROTECT(lev);
                 return;
             }
-            s = conn->socket;
+            s = SAL_NETCONN_SOCKET(conn);
             SYS_ARCH_UNPROTECT(lev);
         }
 
