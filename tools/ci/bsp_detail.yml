@@ -2390,6 +2390,14 @@ stm32/stm32mp157a-st-ev1:
   mdk5: true
   menuconfig: true
   rtconfig.h: true
+stm32/stm32n657-st-nucleo:
+  .config: true
+  README.md: true
+  gcc: arm-none-eabi-gcc
+  iar: true
+  mdk5: true
+  menuconfig: true
+  rtconfig.h: true
 stm32/stm32u575-st-nucleo:
   .config: true
   README.md: true

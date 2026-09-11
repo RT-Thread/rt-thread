@@ -157,6 +157,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [stm32l552-st-nucleo](stm32/stm32l552-st-nucleo) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32mp157a-st-discovery](stm32/stm32mp157a-st-discovery) | ✅ | ✅ | ✅ | - | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | - | - | - | - | - | - | - | - | ✅ | - | - | - |
 | [stm32mp157a-st-ev1](stm32/stm32mp157a-st-ev1) | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - | ✅ | - | ✅ | - | - | - | ✅ | - | ✅ | ✅ | - | - | - |
+| [stm32n657-st-nucleo](stm32/stm32n657-st-nucleo) | ✅ | ✅ | - | - | - | - | - | ✅ | - | ✅ | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32u575-st-nucleo](stm32/stm32u575-st-nucleo) | ✅ | ✅ | ✅ | - | - | - | - | - | ✅ | ✅ | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32u585-iot02a](stm32/stm32u585-iot02a) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - | - |
 | [stm32wb55-st-nucleo](stm32/stm32wb55-st-nucleo) | ✅ | ✅ | ✅ | - | - | - | - | ✅ | ✅ | - | ✅ | ✅ | - | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - |

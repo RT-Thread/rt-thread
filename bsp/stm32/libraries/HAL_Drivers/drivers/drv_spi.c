@@ -248,6 +248,37 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 #endif /* SOC_SERIES_STM32H7) */
 #endif /* APBPERIPH_BASE */
 
+#if defined(SOC_SERIES_STM32N6)
+    if (spi_drv->config->Instance == SPI1)
+    {
+        spi_clock = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI1);
+    }
+    else if (spi_drv->config->Instance == SPI2)
+    {
+        spi_clock = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI2);
+    }
+    else if (spi_drv->config->Instance == SPI3)
+    {
+        spi_clock = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI3);
+    }
+    else if (spi_drv->config->Instance == SPI4)
+    {
+        spi_clock = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI4);
+    }
+    else if (spi_drv->config->Instance == SPI5)
+    {
+        spi_clock = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI5);
+    }
+    else if (spi_drv->config->Instance == SPI6)
+    {
+        spi_clock = HAL_RCCEx_GetPeriphCLKFreq(RCC_PERIPHCLK_SPI6);
+    }
+    else
+    {
+        spi_clock = HSI_VALUE;
+    }
+#endif /* SOC_SERIES_STM32N6) */
+
     if (cfg->max_hz >= spi_clock / 2)
     {
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
@@ -312,7 +343,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     spi_handle->State = HAL_SPI_STATE_RESET;
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32WB)
     spi_handle->Init.NSSPMode          = SPI_NSS_PULSE_DISABLE;
-#elif defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1)
+#elif defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32N6)
     spi_handle->Init.NSS                        = SPI_NSS_SOFT;
     spi_handle->Init.NSSPMode                   = SPI_NSS_PULSE_DISABLE;
     spi_handle->Init.NSSPolarity                = SPI_NSS_POLARITY_LOW;
@@ -322,9 +353,13 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
     spi_handle->Init.MasterSSIdleness           = SPI_MASTER_SS_IDLENESS_00CYCLE;
     spi_handle->Init.MasterInterDataIdleness    = SPI_MASTER_INTERDATA_IDLENESS_00CYCLE;
     spi_handle->Init.MasterReceiverAutoSusp     = SPI_MASTER_RX_AUTOSUSP_DISABLE;
-    spi_handle->Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_ENABLE;
+    spi_handle->Init.MasterKeepIOState          = SPI_MASTER_KEEP_IO_STATE_ENABLE;
     spi_handle->Init.IOSwap                     = SPI_IO_SWAP_DISABLE;
     spi_handle->Init.FifoThreshold              = SPI_FIFO_THRESHOLD_01DATA;
+#if defined(SOC_SERIES_STM32N6)
+    spi_handle->Init.ReadyMasterManagement      = SPI_RDY_MASTER_MANAGEMENT_INTERNALLY;
+    spi_handle->Init.ReadyPolarity              = SPI_RDY_POLARITY_HIGH;
+#endif /* SOC_SERIES_STM32N6 */
 #endif
 
     if (HAL_SPI_Init(spi_handle) != HAL_OK)
