@@ -13,8 +13,14 @@
 
 #ifdef BSP_USING_SDRAM
 #include <sdram_port.h>
+
+#if defined(SOC_SERIES_N32H7xx)
 #include <n32h7xx_rcc.h>
 #include <n32h7xx_sdram.h>
+#elif defined(SOC_SERIES_N32H49x)
+#include <n32h49x_rcc.h>
+#include <n32h49x_sdram.h>
+#endif
 
 #define DRV_DEBUG
 #define LOG_TAG "drv.sdram"
@@ -115,6 +121,7 @@ static SDRAM_DeviceType sdram_device;
  * SDRAM Load Mode Register type (from N32 SDK bsp_sdram.h)
  * Represents the value sent to the SDRAM chip via LOADMODE command.
  *---------------------------------------------------------------------------*/
+#if defined(SOC_SERIES_N32H7xx)
 typedef union
 {
     uint32_t cmd;
@@ -128,6 +135,7 @@ typedef union
         uint32_t Reserved   : 22;
     } Bits;
 } SDRAM_LoadModeRegisterType;
+#endif
 
 /* Mode register field values (from N32 SDK bsp_sdram.h) */
 #define LOADMODE_BURSTLEN_1            0
@@ -147,9 +155,16 @@ typedef union
  *---------------------------------------------------------------------------*/
 rt_weak void rt_hw_sdram_clock_init(void)
 {
+#if defined(SOC_SERIES_N32H7xx)
     /* Configure SDRAM delay chain (board-specific, default 0.2ns step) */
     RCC_ConfigSDRAMDelay(RCC_SDRAM_DELAY_0_2NS);
     RCC_EnableSDRAMDelayChain(ENABLE);
+#elif defined(SOC_SERIES_N32H49x)
+    /* Configure SDRAM clock */
+    RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_SDRAM, ENABLE);
+    /* Configure SDRAM delay chain (board-specific, default 0.5) */
+    SDRAM_ConfigSampleDelay(SDRAM_DELAY_0_5_PERIOD);
+#endif
 }
 
 /*----------------------------------------------------------------------------

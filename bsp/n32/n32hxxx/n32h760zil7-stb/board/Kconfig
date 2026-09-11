@@ -286,6 +286,174 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
 
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+
+            config BSP_UART4_RX_USING_DMA
+                bool "Enable UART4 RX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART4_TX_USING_DMA
+                bool "Enable UART4 TX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
+
+            config BSP_UART5_RX_USING_DMA
+                bool "Enable UART5 RX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART5_TX_USING_DMA
+                bool "Enable UART5 TX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
+
+            config BSP_UART6_RX_USING_DMA
+                bool "Enable UART6 RX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART6_TX_USING_DMA
+                bool "Enable UART6 TX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART7
+                bool "Enable UART7"
+                default n
+
+            config BSP_UART7_RX_USING_DMA
+                bool "Enable UART7 RX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART7_TX_USING_DMA
+                bool "Enable UART7 TX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART8
+                bool "Enable UART8"
+                default n
+
+            config BSP_UART8_RX_USING_DMA
+                bool "Enable UART8 RX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART8_TX_USING_DMA
+                bool "Enable UART8 TX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART9
+                bool "Enable UART9"
+                default n
+
+            config BSP_UART9_RX_USING_DMA
+                bool "Enable UART9 RX DMA"
+                depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART9_TX_USING_DMA
+                bool "Enable UART9 TX DMA"
+                depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART10
+                bool "Enable UART10"
+                default n
+
+            config BSP_UART10_RX_USING_DMA
+                bool "Enable UART10 RX DMA"
+                depends on BSP_USING_UART10 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART10_TX_USING_DMA
+                bool "Enable UART10 TX DMA"
+                depends on BSP_USING_UART10 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART11
+                bool "Enable UART11"
+                default n
+
+            config BSP_UART11_RX_USING_DMA
+                bool "Enable UART11 RX DMA"
+                depends on BSP_USING_UART11 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART11_TX_USING_DMA
+                bool "Enable UART11 TX DMA"
+                depends on BSP_USING_UART11 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART12
+                bool "Enable UART12"
+                default n
+
+            config BSP_UART12_RX_USING_DMA
+                bool "Enable UART12 RX DMA"
+                depends on BSP_USING_UART12 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART12_TX_USING_DMA
+                bool "Enable UART12 TX DMA"
+                depends on BSP_USING_UART12 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART13
+                bool "Enable UART13"
+                default n
+
+            config BSP_UART13_RX_USING_DMA
+                bool "Enable UART13 RX DMA"
+                depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART13_TX_USING_DMA
+                bool "Enable UART13 TX DMA"
+                depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART14
+                bool "Enable UART14"
+                default n
+
+            config BSP_UART14_RX_USING_DMA
+                bool "Enable UART14 RX DMA"
+                depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART14_TX_USING_DMA
+                bool "Enable UART14 TX DMA"
+                depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART15
+                bool "Enable UART15"
+                default n
+
+            config BSP_UART15_RX_USING_DMA
+                bool "Enable UART15 RX DMA"
+                depends on BSP_USING_UART15 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART15_TX_USING_DMA
+                bool "Enable UART15 TX DMA"
+                depends on BSP_USING_UART15 && RT_SERIAL_USING_DMA
+                default n
+
         endif
 
     menuconfig BSP_USING_SPI
@@ -306,6 +474,96 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI1 RX DMA"
                 depends on BSP_USING_SPI1
                 select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2 BUS"
+                default n
+
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n
+
+            config BSP_SPI3_TX_USING_DMA
+                bool "Enable SPI3 TX DMA"
+                depends on BSP_USING_SPI3
+                default n
+
+            config BSP_SPI3_RX_USING_DMA
+                bool "Enable SPI3 RX DMA"
+                depends on BSP_USING_SPI3
+                select BSP_SPI3_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI4
+                bool "Enable SPI4 BUS"
+                default n
+
+            config BSP_SPI4_TX_USING_DMA
+                bool "Enable SPI4 TX DMA"
+                depends on BSP_USING_SPI4
+                default n
+
+            config BSP_SPI4_RX_USING_DMA
+                bool "Enable SPI4 RX DMA"
+                depends on BSP_USING_SPI4
+                select BSP_SPI4_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI5
+                bool "Enable SPI5 BUS"
+                default n
+
+            config BSP_SPI5_TX_USING_DMA
+                bool "Enable SPI5 TX DMA"
+                depends on BSP_USING_SPI5
+                default n
+
+            config BSP_SPI5_RX_USING_DMA
+                bool "Enable SPI5 RX DMA"
+                depends on BSP_USING_SPI5
+                select BSP_SPI5_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI6
+                bool "Enable SPI6 BUS"
+                default n
+
+            config BSP_SPI6_TX_USING_DMA
+                bool "Enable SPI6 TX DMA"
+                depends on BSP_USING_SPI6
+                default n
+
+            config BSP_SPI6_RX_USING_DMA
+                bool "Enable SPI6 RX DMA"
+                depends on BSP_USING_SPI6
+                select BSP_SPI6_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI7
+                bool "Enable SPI7 BUS"
+                default n
+
+            config BSP_SPI7_TX_USING_DMA
+                bool "Enable SPI7 TX DMA"
+                depends on BSP_USING_SPI7
+                default n
+
+            config BSP_SPI7_RX_USING_DMA
+                bool "Enable SPI7 RX DMA"
+                depends on BSP_USING_SPI7
+                select BSP_SPI7_TX_USING_DMA
                 default n
         endif
 

@@ -40,7 +40,9 @@ struct n32_i2c_config
 {
     const char *name;
     I2C_Module *Instance;
+#if defined(SOC_SERIES_N32H7xx)
     rt_uint32_t timing;
+#endif
     rt_uint32_t timeout;
     IRQn_Type evirq_type;
     IRQn_Type erirq_type;
@@ -51,9 +53,16 @@ struct n32_i2c_config
 
     uint32_t periph;
     void (*EnablePeriphClk)(uint32_t periph, FunctionalState cmd);
+#if defined(SOC_SERIES_N32H7xx)
     void (*I2CKerClkSource)(uint32_t CLK_source);
+#endif
 
     struct dma_config *dma_rx, *dma_tx;
+
+#if defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    DMA_InitType dma_rx_init_str;
+    DMA_InitType dma_tx_init_str;
+#endif
 };
 
 struct hard_i2c_transfer

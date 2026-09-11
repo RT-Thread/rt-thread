@@ -190,18 +190,21 @@ jobs:
          #- {RTT_BSP_NAME: "mm32f327x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32f327x"}  #编译问题
           - {RTT_BSP_NAME: "mm32l07x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l07x"}
           - {RTT_BSP_NAME: "mm32l3xx", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "mm32l3xx"}
-          - {RTT_BSP_NAME: "n32_n32g43xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g43xcl-stb"}
-          - {RTT_BSP_NAME: "n32_n32g457qel-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g457qel-stb"}
-          - {RTT_BSP_NAME: "n32_n32g45xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xcl-stb"}
-          - {RTT_BSP_NAME: "n32_n32g45xml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xml-stb"}
-          - {RTT_BSP_NAME: "n32_n32g45xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xrl-stb"}
-          - {RTT_BSP_NAME: "n32_n32g45xvl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g45xvl-stb"}
-          - {RTT_BSP_NAME: "n32_n32g4frml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32g4frml-stb"}
-          - {RTT_BSP_NAME: "n32_n32l40xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l40xcl-stb"}
-          - {RTT_BSP_NAME: "n32_n32l436-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l436-evb"}
-          - {RTT_BSP_NAME: "n32_n32l43xml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l43xml-stb"}
-          - {RTT_BSP_NAME: "n32_n32l43xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32l43xrl-stb"}
-          - {RTT_BSP_NAME: "n32_n32wb45xl-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32wb45xl-evb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g43xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g43xcl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g457qel-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g457qel-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g45xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g45xcl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g45xml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g45xml-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g45xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g45xrl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g45xvl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g45xvl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32g4frml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32g4frml-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32l40xcl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32l40xcl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32l436-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32l436-evb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32l43xml-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32l43xml-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32l43xrl-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32l43xrl-stb"}
+          - {RTT_BSP_NAME: "n32_n32gxx_lxx_n32wb45xl-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32gxx_lxx/n32wb45xl-evb"}
+          - {RTT_BSP_NAME: "n32_n32hxxx_n32h487zgl7-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32hxxx/n32h487zgl7-evb"}
+          - {RTT_BSP_NAME: "n32_n32hxxx_n32h497zgl7-evb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32hxxx/n32h497zgl7-evb"}
+          - {RTT_BSP_NAME: "n32_n32hxxx_n32h760zil7-stb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32/n32hxxx/n32h760zil7-stb"}
           - {RTT_BSP_NAME: "n32g452xx_n32g452xx-mini-system", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "n32g452xx/n32g452xx-mini-system"}
          #- {RTT_BSP_NAME: "nios_ii", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nios_ii"} #编译问题
           - {RTT_BSP_NAME: "nrf5x_nrf51822", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "nrf5x/nrf51822"}
