@@ -587,6 +587,11 @@ typedef struct rt_timer *rt_timer_t;
 typedef unsigned long rt_sigset_t;
 typedef siginfo_t rt_siginfo_t;
 typedef void (*rt_sighandler_t)(int signo);
+#ifdef RT_USING_MUSLLIBC
+#define RT_SIG_MASK(signo) ((rt_sigset_t)1 << ((signo) - 1))
+#else
+#define RT_SIG_MASK(signo) ((rt_sigset_t)1 << (signo))
+#endif
 #endif /* RT_USING_SIGNALS */
 /**@}*/
 
