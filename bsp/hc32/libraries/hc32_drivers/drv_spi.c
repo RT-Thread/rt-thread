@@ -555,9 +555,13 @@ static rt_ssize_t hc32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
+        {
             rt_pin_write(device->cs_pin, PIN_HIGH);
+        }
         else
+        {
             rt_pin_write(device->cs_pin, PIN_LOW);
+        }
     }
 
     LOG_D("%s transfer prepare and start", spi_drv->config->bus_name);
@@ -671,9 +675,13 @@ static rt_ssize_t hc32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
     if (message->cs_release && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
         if (device->config.mode & RT_SPI_CS_HIGH)
+        {
             rt_pin_write(device->cs_pin, PIN_LOW);
+        }
         else
+        {
             rt_pin_write(device->cs_pin, PIN_HIGH);
+        }
     }
 
     return message->length;

@@ -205,7 +205,9 @@ void mOledWriteCharHnWm(struct rt_i2c_bus_device *i2c_dev,
                         uint8_t page, uint8_t col, uint8_t *ArrChar)
 {
     if (ArrChar == NULL)
+    {
         return;
+    }
     rt_kprintf("x=%3d, y=%d\n", col, page);
     for (uint8_t page_idx = 0; page_idx < SYM_H_BYTE; page_idx++)
     {
