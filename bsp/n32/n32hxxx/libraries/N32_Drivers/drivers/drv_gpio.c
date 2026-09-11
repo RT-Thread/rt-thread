@@ -24,40 +24,17 @@
 
 static uint32_t pin_irq_enable_mask = 0;
 
-#if defined(GPIOK)
+
 #if defined(SOC_SERIES_N32H7xx)
+
+#define __N32_PORT_MAX 11u
+
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+
 #define __N32_PORT_MAX 8u
+
 #endif
-#elif defined(GPIOJ)
-#define __N32_PORT_MAX 16u
-#elif defined(GPIOI)
-#define __N32_PORT_MAX 16u
-#elif defined(GPIOH)
-#if defined(SOC_SERIES_N32H7xx)
-#define __N32_PORT_MAX 16u
-#elif defined(SOC_SERIES_N32H49x)
-#define __N32_PORT_MAX 6u
-#elif defined(SOC_SERIES_N32H47x_48x)
-#define __N32_PORT_MAX 7u
-#endif
-#elif defined(GPIOG)
-#define __N32_PORT_MAX 16u
-#elif defined(GPIOF)
-#define __N32_PORT_MAX 16u
-#elif defined(GPIOE)
-#define __N32_PORT_MAX 16u
-#elif defined(GPIOD)
-#define __N32_PORT_MAX 16u
-#elif defined(GPIOC)
-#define __N32_PORT_MAX 16u
-#elif defined(GPIOB)
-#define __N32_PORT_MAX 16u
-#elif defined(GPIOA)
-#define __N32_PORT_MAX 16u
-#else
-#define __N32_PORT_MAX 0u
-#error Unsupported N32 GPIO peripheral.
-#endif
+
 
 #define PIN_STPORT_MAX __N32_PORT_MAX
 
@@ -390,12 +367,12 @@ static rt_err_t n32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
             break;
         case PIN_IRQ_MODE_FALLING:
             GPIO_InitStructure.GPIO_Mode = GPIO_MODE_INPUT;
-            GPIO_InitStructure.GPIO_Pull = GPIO_PULL_DOWN;
+            GPIO_InitStructure.GPIO_Pull = GPIO_PULL_UP;
             EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
             break;
         case PIN_IRQ_MODE_RISING_FALLING:
             GPIO_InitStructure.GPIO_Mode = GPIO_MODE_INPUT;
-            GPIO_InitStructure.GPIO_Pull = GPIO_NO_PULL;
+            GPIO_InitStructure.GPIO_Pull = GPIO_PULL_UP;
             EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Rising_Falling;
             break;
         }
@@ -476,24 +453,48 @@ rt_inline void pin_irq_hdr(int irqno)
 
 void N32_GPIO_EXTI_Callback(uint16_t line_num)
 {
-#if defined(SOC_SERIES_N32H7xx)
+#if defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+
+    if (EXTI_GetITStatus(line_num) != RESET)
+    {
+        /* Clear EXTI line pending bit */
+        EXTI_ClrITPendBit(line_num);
+
+        uint8_t index = 0;
+        uint32_t mask = line_num;
+
+        if (mask & 0xFF00)
+        {
+            index += 8;
+            mask >>= 8;
+        }
+        if (mask & 0xF0)
+        {
+            index += 4;
+            mask >>= 4;
+        }
+        if (mask & 0xC)
+        {
+            index += 2;
+            mask >>= 2;
+        }
+        if (mask & 0x2)
+        {
+            index += 1;
+        }
+
+        if ((index < 16) && (pin_irq_hdr_tab[index].pin != -1))
+        {
+            pin_irq_hdr(index);
+        }
+    }
+#elif defined(SOC_SERIES_N32H7xx)
     if (pin_irq_hdr_tab[line_num].pin != -1 && EXTI_GetITStatus(line_num) != RESET)
     {
         /* Clear EXTI line pending bit */
         EXTI_ClrITPendBit(line_num);
 
         pin_irq_hdr(line_num);
-    }
-#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
-    {
-        rt_int32_t idx = bit2bitno(line_num);
-        if (idx >= 0 && idx < (rt_int32_t)ITEM_NUM(pin_irq_hdr_tab) && pin_irq_hdr_tab[idx].pin != -1 && EXTI_GetITStatus(line_num) != RESET)
-        {
-            /* Clear EXTI line pending bit */
-            EXTI_ClrITPendBit(line_num);
-
-            pin_irq_hdr(idx);
-        }
     }
 #endif
 }

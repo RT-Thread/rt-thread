@@ -2,6 +2,129 @@ menu "Hardware Drivers Config"
 
 menu "Onboard Peripheral Drivers"
 
+    menuconfig BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+        if BSP_USING_ETH
+            choice BSP_ETH_INTERFACE_SEL
+                prompt "Select Media Interface"
+                default ETH_INTERFACE_USING_RMII
+
+                config ETH_INTERFACE_USING_MII
+                    bool "MII"
+
+                config ETH_INTERFACE_USING_RMII
+                    bool "RMII"
+            endchoice
+
+            choice BSP_ETH_PHY_SEL
+                prompt "Select PHY Chip"
+                default PHY_USING_DM9162EP
+
+                config PHY_USING_DM9162EP
+                    bool "DM9162EP (10M/100M, MII/RMII)"
+
+                config PHY_USING_LAN8720A
+                    bool "LAN8720A (10M/100M, MII/RMII)"
+            endchoice
+
+            config BSP_ETH_USING_HW_CHECKSUM
+                bool "Enable Hardware Checksum"
+                select RT_LWIP_USING_HW_CHECKSUM
+                default n
+
+            config PHY_USING_INTERRUPT_MODE
+                bool "Enable PHY Link Change Interrupt Mode"
+                default n
+                if PHY_USING_INTERRUPT_MODE
+                    config PHY_INT_PIN
+                        int "PHY Interrupt Pin Number"
+                        range 0 255
+                        default 0
+                endif
+        endif
+
+    menuconfig BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+        if BSP_USING_SDRAM
+            choice BSP_SDRAM_BANK_SEL
+                prompt "Select SDRAM Bank"
+                default BSP_SDRAM_BANK1
+
+                config BSP_SDRAM_BANK1
+                    bool "Select SDRAM Bank1"
+
+                config BSP_SDRAM_BANK2
+                    bool "Select SDRAM Bank2"
+            endchoice
+
+            choice BSP_SDRAM_DATA_WIDTH_SEL
+                prompt "Select SDRAM Data Width"
+                default BSP_SDRAM_DATA_WIDTH_32
+
+                config BSP_SDRAM_DATA_WIDTH_8
+                    bool "SDRAM Data Width 8-bits"
+
+                config BSP_SDRAM_DATA_WIDTH_16
+                    bool "SDRAM Data Width 16-bits"
+
+                config BSP_SDRAM_DATA_WIDTH_32
+                    bool "SDRAM Data Width 32-bits"
+            endchoice
+
+            choice BSP_SDRAM_COLUMN_BITS_SEL
+                prompt "Select SDRAM Column Bits"
+                default BSP_SDRAM_COLUMN_BIT_9
+
+                config BSP_SDRAM_COLUMN_BIT_8
+                    bool "SDRAM SDRAM Column Bits 8-bits"
+
+                config BSP_SDRAM_COLUMN_BIT_9
+                    bool "SDRAM SDRAM Column Bits 9-bits"
+
+                config BSP_SDRAM_COLUMN_BIT_10
+                    bool "SDRAM SDRAM Column Bits 10-bits"
+
+                config BSP_SDRAM_COLUMN_BIT_11
+                    bool "SDRAM SDRAM Column Bits 11-bits"
+            endchoice
+
+            choice BSP_SDRAM_ROW_BITS_SEL
+                prompt "Select SDRAM Row Bits"
+                default BSP_SDRAM_ROW_BIT_12
+
+                config BSP_SDRAM_ROW_BIT_11
+                    bool "SDRAM SDRAM Row Bits 11-bits"
+
+                config BSP_SDRAM_ROW_BIT_12
+                    bool "SDRAM SDRAM Row Bits 12-bits"
+
+                config BSP_SDRAM_ROW_BIT_13
+                    bool "SDRAM SDRAM Row Bits 13-bits"
+            endchoice
+
+            choice BSP_SDRAM_CAS_LATENCY_SEL
+                prompt "Select SDRAM CAS Latency"
+                default BSP_SDRAM_CAS_LATENCY_3
+
+                config BSP_SDRAM_CAS_LATENCY_1
+                    bool "SDRAM SDRAM CAS Latency 1"
+
+                config BSP_SDRAM_CAS_LATENCY_2
+                    bool "SDRAM SDRAM CAS Latency 2"
+
+                config BSP_SDRAM_CAS_LATENCY_3
+                    bool "SDRAM SDRAM CAS Latency 3"
+            endchoice
+
+            config BSP_SDRAM_SIZE
+                int "SDRAM Size (MBytes)"
+                range 8 256
+                default 32
+        endif
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -58,11 +181,229 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
 
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+
+            config BSP_UART4_RX_USING_DMA
+                bool "Enable UART4 RX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART4_TX_USING_DMA
+                bool "Enable UART4 TX DMA"
+                depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
+
+            config BSP_UART5_RX_USING_DMA
+                bool "Enable UART5 RX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART5_TX_USING_DMA
+                bool "Enable UART5 TX DMA"
+                depends on BSP_USING_UART5 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
+
+            config BSP_UART6_RX_USING_DMA
+                bool "Enable UART6 RX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART6_TX_USING_DMA
+                bool "Enable UART6 TX DMA"
+                depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART7
+                bool "Enable UART7"
+                default n
+
+            config BSP_UART7_RX_USING_DMA
+                bool "Enable UART7 RX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART7_TX_USING_DMA
+                bool "Enable UART7 TX DMA"
+                depends on BSP_USING_UART7 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART8
+                bool "Enable UART8"
+                default n
+
+            config BSP_UART8_RX_USING_DMA
+                bool "Enable UART8 RX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART8_TX_USING_DMA
+                bool "Enable UART8 TX DMA"
+                depends on BSP_USING_UART8 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART9
+                bool "Enable UART9"
+                default n
+
+            config BSP_UART9_RX_USING_DMA
+                bool "Enable UART9 RX DMA"
+                depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART9_TX_USING_DMA
+                bool "Enable UART9 TX DMA"
+                depends on BSP_USING_UART9 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_USING_UART10
+                bool "Enable UART10"
+                default n
+
+            config BSP_UART10_RX_USING_DMA
+                bool "Enable UART10 RX DMA"
+                depends on BSP_USING_UART10 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART10_TX_USING_DMA
+                bool "Enable UART10 TX DMA"
+                depends on BSP_USING_UART10 && RT_SERIAL_USING_DMA
+                default n
+
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+
+                config BSP_SPI1_RX_USING_DMA
+                    bool "Enable SPI1 RX DMA"
+                    depends on BSP_USING_SPI1
+                    select BSP_SPI1_TX_USING_DMA
+                    default n
+
+                config BSP_USING_SPI2
+                    bool "Enable SPI2 BUS"
+                    default n
+
+                config BSP_SPI2_TX_USING_DMA
+                    bool "Enable SPI2 TX DMA"
+                    depends on BSP_USING_SPI2
+                    default n
+
+                config BSP_SPI2_RX_USING_DMA
+                    bool "Enable SPI2 RX DMA"
+                    depends on BSP_USING_SPI2
+                    select BSP_SPI2_TX_USING_DMA
+                    default n
+
+                config BSP_USING_SPI3
+                    bool "Enable SPI3 BUS"
+                    default n
+
+                config BSP_SPI3_TX_USING_DMA
+                    bool "Enable SPI3 TX DMA"
+                    depends on BSP_USING_SPI3
+                    default n
+
+                config BSP_SPI3_RX_USING_DMA
+                    bool "Enable SPI3 RX DMA"
+                    depends on BSP_USING_SPI3
+                    select BSP_SPI3_TX_USING_DMA
+                    default n
+
         endif
 
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable on-chip FLASH"
         default n
+
+    menuconfig BSP_USING_QSPI
+        bool "Enable QSPI (XSPI) BUS"
+        default n
+        select RT_USING_QSPI
+        select RT_USING_SPI
+
+    menuconfig BSP_USING_HARD_I2C
+        bool "Enable Hard I2C BUS"
+        default n
+        select RT_USING_I2C
+        if BSP_USING_HARD_I2C
+            config BSP_USING_HARD_I2C1
+                bool "Enable I2C1 BUS"
+                default n
+
+            config BSP_I2C1_RX_USING_DMA
+                bool "Enable I2C1 RX DMA"
+                depends on BSP_USING_HARD_I2C1
+                default n
+
+            config BSP_I2C1_TX_USING_DMA
+                bool "Enable i2c1 TX DMA"
+                depends on BSP_USING_HARD_I2C1
+                default n
+
+            config BSP_USING_HARD_I2C2
+                bool "Enable I2C2 BUS"
+                default n
+
+            config BSP_I2C2_RX_USING_DMA
+                bool "Enable I2C2 RX DMA"
+                depends on BSP_USING_HARD_I2C2
+                default n
+
+            config BSP_I2C2_TX_USING_DMA
+                bool "Enable i2c2 TX DMA"
+                depends on BSP_USING_HARD_I2C2
+                default n
+
+            config BSP_USING_HARD_I2C3
+                bool "Enable I2C3 BUS"
+                default n
+
+            config BSP_I2C3_RX_USING_DMA
+                bool "Enable I2C3 RX DMA"
+                depends on BSP_USING_HARD_I2C3
+                default n
+
+            config BSP_I2C3_TX_USING_DMA
+                bool "Enable i2c3 TX DMA"
+                depends on BSP_USING_HARD_I2C3
+                default n
+
+            config BSP_USING_HARD_I2C4
+                bool "Enable I2C4 BUS"
+                default n
+
+            config BSP_I2C4_RX_USING_DMA
+                bool "Enable I2C4 RX DMA"
+                depends on BSP_USING_HARD_I2C4
+                default n
+
+            config BSP_I2C4_TX_USING_DMA
+                bool "Enable i2c4 TX DMA"
+                depends on BSP_USING_HARD_I2C4
+                default n
+        endif
 
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
@@ -80,6 +421,29 @@ menu "On-chip Peripheral Drivers"
                     bool "RTC USING LSI"
             endchoice
         endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+
+            config BSP_USING_ADC3
+                bool "Enable ADC3"
+                default n
+        endif
+
+    config BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
 
     menuconfig BSP_USING_FDCAN
         bool "Enable FDCAN (CAN FD)"
@@ -382,6 +746,82 @@ menu "On-chip Peripheral Drivers"
                     endmenu
                 endif
         endif
+
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        default n
+        select RT_USING_DAC
+        if BSP_USING_DAC
+            config BSP_USING_DAC1
+                bool "Enable DAC1"
+                default n
+
+            config BSP_USING_DAC2
+                bool "Enable DAC2"
+                default n
+        endif
+
+    menuconfig BSP_USING_NAND
+        bool "Enable Nand"
+        default n
+        select RT_USING_MTD_NAND
+        if BSP_USING_NAND
+            choice BSP_NAND_BANK_SEL
+                prompt "Select Bank"
+                default BSP_USING_NAND_BANK3
+
+                config BSP_USING_NAND_BANK2
+                    bool "USING FEMC NAND BANK2"
+
+                config BSP_USING_NAND_BANK3
+                    bool "USING FEMC NAND BANK3"
+            endchoice
+
+            choice BSP_NAND_BUS_WIDTH_SEL
+                prompt "Select Nand Bus Width"
+                default BSP_USING_NAND_BUS_WIDTH_8B
+
+                config BSP_USING_NAND_BUS_WIDTH_8B
+                    bool "USING FEMC NAND BUS WIDTH 8BIT"
+
+                config BSP_USING_NAND_BUS_WIDTH_16B
+                    bool "USING FEMC NAND BUS WIDTH 16BIT"
+            endchoice
+
+            config BSP_NAND_PAGE_SIZE
+                int "Page Size (bytes)"
+                default 2048
+                help
+                    NAND flash page size in bytes, typically 2048 or 4096.
+
+            config BSP_NAND_OOB_SIZE
+                int "OOB (Spare Area) Size (bytes)"
+                default 64
+                help
+                    NAND flash spare area size per page, typically 64 or 128.
+
+            config BSP_NAND_PAGES_PER_BLOCK
+                int "Pages Per Block"
+                default 64
+                help
+                    Number of pages per erase block, typically 64 or 128.
+
+            config BSP_NAND_BLOCK_COUNT
+                int "Total Block Count"
+                default 1024
+                help
+                    Total number of blocks in the NAND flash chip.
+
+            config BSP_NAND_PLANE_NUM
+                int "Plane Number"
+                default 1
+                help
+                    Number of planes in the NAND flash chip, typically 1 or 2.
+        endif
+
+        config BSP_USING_SDIO
+            bool "Enable SDIO"
+            default n
 
     source "$BSP_DIR/../libraries/N32_Drivers/drivers/Kconfig"
 

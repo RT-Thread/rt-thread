@@ -14,6 +14,14 @@
 
 #ifdef RT_USING_WDT
 
+#if defined(SOC_SERIES_N32H47x_48x)
+#include "n32h47x_48x_iwdg.h"
+#elif defined(SOC_SERIES_N32H49x)
+#include "n32h49x_iwdg.h"
+#elif defined(SOC_SERIES_N32H7xx)
+#include "n32h7xx_iwdg.h"
+#endif
+
 //#define DRV_DEBUG
 #define LOG_TAG "drv.wdt"
 #include <drv_log.h>
@@ -58,7 +66,9 @@ static rt_uint32_t wdt_get_prescaler_factor(rt_uint16_t prescaler)
 
 static rt_err_t wdt_init(rt_watchdog_t *wdt)
 {
+#if defined(SOC_SERIES_N32H7xx)
     n32_wdt.IWDGX_ClkCmd(n32_wdt.IWDG_Clk, ENABLE);
+#endif
 
     return RT_EOK;
 }
@@ -73,7 +83,11 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
     {
     /* feed the watchdog */
     case RT_DEVICE_CTRL_WDT_KEEPALIVE:
+#if defined(SOC_SERIES_N32H7xx)
         IWDG_ReloadKey(n32_wdt.IWDGx);
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+        IWDG_ReloadKey();
+#endif
         break;
 
     /* set watchdog timeout */
@@ -86,6 +100,11 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
         }
 
         reload_value = (*(rt_uint32_t *)arg);
+        if (reload_value == 0U)
+        {
+            LOG_W("wdg timeout must be greater than 0 s\n");
+            return -RT_EINVAL;
+        }
         prescaler_factor = wdt_get_prescaler_factor(n32_wdt.Prescaler);
 
         if (LSI_VALUE)
@@ -104,6 +123,7 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
                 reload_value = (reload_value * (LSI_VALUE / prescaler_factor)) - 1U;
 
                 /* Enable write access to IWDG_PR and IWDG_RLR registers */
+#if defined(SOC_SERIES_N32H7xx)
                 IWDG_WriteConfig(n32_wdt.IWDGx, IWDG_WRITE_ENABLE);
                 /* Set IWDG PREDIV */
                 IWDG_SetPrescalerDiv(n32_wdt.IWDGx, n32_wdt.Prescaler);
@@ -114,6 +134,18 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
 
                 /* Disable write access to IWDG_PR and IWDG_RLR registers */
                 IWDG_WriteConfig(n32_wdt.IWDGx, IWDG_WRITE_DISABLE);
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+                IWDG_WriteConfig(IWDG_WRITE_ENABLE);
+                /* Set IWDG PREDIV */
+                IWDG_SetPrescalerDiv(n32_wdt.Prescaler);
+                /* Set Counter Reload Value */
+                IWDG_CntReload((uint16_t)reload_value);
+                /* Reload IWDG counter */
+                IWDG_ReloadKey();
+
+                /* Disable write access to IWDG_PR and IWDG_RLR registers */
+                IWDG_WriteConfig(IWDG_WRITE_DISABLE);
+#endif
             }
         }
         else
@@ -135,7 +167,11 @@ static rt_err_t wdt_control(rt_watchdog_t *wdt, int cmd, void *arg)
             LOG_W("IWDG is already started\n");
             return RT_EOK;
         }
+#if defined(SOC_SERIES_N32H7xx)
         IWDG_Enable(n32_wdt.IWDGx);
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+        IWDG_Enable();
+#endif
         n32_wdt.is_start = 1;
         break;
 
