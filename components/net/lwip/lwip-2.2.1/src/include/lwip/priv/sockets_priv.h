@@ -63,6 +63,11 @@ union lwip_sock_lastdata {
   struct pbuf *pbuf;
 };
 
+#include <rtthread.h>
+#ifdef SAL_USING_POSIX
+#include <ipc/waitqueue.h>
+#endif
+
 /** Contains all internal pointers and states used for a socket */
 struct lwip_sock {
   /** sockets currently are built on netconns, each socket has one netconn */
@@ -88,6 +93,10 @@ struct lwip_sock {
   u8_t fd_free_pending;
 #define LWIP_SOCK_FD_FREE_TCP  1
 #define LWIP_SOCK_FD_FREE_FREE 2
+#endif
+
+#ifdef SAL_USING_POSIX
+  rt_wqueue_t wait_head;
 #endif
 };
 
