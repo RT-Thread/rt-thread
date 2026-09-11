@@ -126,18 +126,21 @@ arm-none-eabi-gcc:
   - mm32l07x
   - mm32l3xx
   - msp432e401y-LaunchPad
-  - n32/n32g43xcl-stb
-  - n32/n32g457qel-stb
-  - n32/n32g45xcl-stb
-  - n32/n32g45xml-stb
-  - n32/n32g45xrl-stb
-  - n32/n32g45xvl-stb
-  - n32/n32g4frml-stb
-  - n32/n32l40xcl-stb
-  - n32/n32l436-evb
-  - n32/n32l43xml-stb
-  - n32/n32l43xrl-stb
-  - n32/n32wb45xl-evb
+  - n32/n32gxx_lxx/n32g43xcl-stb
+  - n32/n32gxx_lxx/n32g457qel-stb
+  - n32/n32gxx_lxx/n32g45xcl-stb
+  - n32/n32gxx_lxx/n32g45xml-stb
+  - n32/n32gxx_lxx/n32g45xrl-stb
+  - n32/n32gxx_lxx/n32g45xvl-stb
+  - n32/n32gxx_lxx/n32g4frml-stb
+  - n32/n32gxx_lxx/n32l40xcl-stb
+  - n32/n32gxx_lxx/n32l436-evb
+  - n32/n32gxx_lxx/n32l43xml-stb
+  - n32/n32gxx_lxx/n32l43xrl-stb
+  - n32/n32gxx_lxx/n32wb45xl-evb
+  - n32/n32hxxx/n32h487zgl7-evb
+  - n32/n32hxxx/n32h497zgl7-evb
+  - n32/n32hxxx/n32h760zil7-stb
   - n32g452xx/n32g452xx-mini-system
   - nrf5x/nrf51822
   - nrf5x/nrf52832
@@ -322,7 +325,7 @@ arm-none-eabi-gcc:
   - yichip/yc3121-pos
   - yichip/yc3122-pos
   - zynqmp-r5-axu4ev
-  count: 298
+  count: 301
   download_url: https://github.com/RT-Thread/toolchains-ci/releases/download/v1.3/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
 avr32-gcc:
   bsp:

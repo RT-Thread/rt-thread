@@ -77,7 +77,12 @@ bool RCC_Configuration(void)
     ClockStatus = RCC_WaitHsiStable();
     if (ClockStatus != SUCCESS) return false;
      
-    RCC_ConfigPll(RCC_PLL_SRC_HSI,RCC_PLL_PRE_2,RCC_PLL_MUL_60,RCC_PLLOUT_DIV_1);
+    RCC_ConfigHse(RCC_HSE_ENABLE);
+    /* Wait till HSE is ready */
+    ClockStatus = RCC_WaitHseStable();
+    if (ClockStatus != SUCCESS) return false;
+     
+    RCC_ConfigPll(RCC_PLL_SRC_HSE_DIV2,RCC_PLL_PRE_2,RCC_PLL_MUL_60,RCC_PLLOUT_DIV_1);
     /* Enable PLL */
     RCC_EnablePll(ENABLE);
     /* Wait till PLL is ready */
