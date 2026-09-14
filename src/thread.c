@@ -82,19 +82,37 @@ static void _thread_detach_from_mutex(rt_thread_t thread)
     rt_list_t *node;
     rt_list_t *tmp_list;
     struct rt_mutex *mutex;
+    rt_sched_lock_level_t slvl;
     rt_base_t level;
 
     level = rt_spin_lock_irqsave(&thread->spinlock);
 
-    /* check if thread is waiting on a mutex */
+    rt_sched_lock(&slvl);
+
+    /*
+     * Validate the pending object while the scheduler lock protects mutex
+     * deletion and handoff token consumption.
+     */
     if ((thread->pending_object) &&
         (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex))
     {
-        /* remove it from its waiting list */
-        struct rt_mutex *mutex = (struct rt_mutex*)thread->pending_object;
-        rt_mutex_drop_thread(mutex, thread);
-        thread->pending_object = RT_NULL;
+        /*
+         * A handed-off owner keeps pending_object until _rt_mutex_take()
+         * completes. Do not treat that token as a suspended waiter.
+         */
+        mutex = (struct rt_mutex *)thread->pending_object;
+        if (mutex->owner == thread)
+        {
+            thread->pending_object = RT_NULL;
+        }
+        else
+        {
+            /* Remove a thread that is still waiting on the mutex. */
+            rt_mutex_drop_thread_locked(mutex, thread);
+        }
     }
+
+    rt_sched_unlock(slvl);
 
     /* free taken mutex after detaching from waiting, so we don't lost mutex just got */
     rt_list_for_each_safe(node, tmp_list, &(thread->taken_object_list))
@@ -147,6 +165,7 @@ static void _thread_timeout(void *parameter)
 {
     struct rt_thread *thread;
     rt_sched_lock_level_t slvl;
+    rt_bool_t mutex_timeout = RT_FALSE;
 
     thread = (struct rt_thread *)parameter;
 
@@ -168,8 +187,16 @@ static void _thread_timeout(void *parameter)
     /* set error number */
     thread->error = -RT_ETIMEOUT;
 
-    /* remove from suspend list */
-    rt_list_remove(&RT_THREAD_LIST_NODE(thread));
+    /* Mutex timeout also removes the waiter from the mutex wait list. */
+#ifdef RT_USING_MUTEX
+    mutex_timeout = rt_mutex_timeout_waiter(thread);
+#endif /* RT_USING_MUTEX */
+
+    if (!mutex_timeout)
+    {
+        /* remove from suspend list */
+        rt_list_remove(&RT_THREAD_LIST_NODE(thread));
+    }
     /* insert to schedule ready list */
     rt_sched_insert_thread(thread);
     /* do schedule and release the scheduler lock */
