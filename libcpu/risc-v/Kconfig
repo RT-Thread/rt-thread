@@ -1,0 +1,91 @@
+menu "RISC-V Architecture Configuration"
+
+config RT_USING_RISCV_NEW_COMMON
+    bool
+    select RT_USING_CPU_FFS
+    select RT_USING_HW_ATOMIC if RT_USING_SMP
+    select RT_PAGE_MPR_SIZE_DYNAMIC if ARCH_MM_MMU
+    help
+      Select the unified RISC-V architecture implementation. BSPs that do
+      not select this option continue to use the legacy implementation while
+      the architecture migration is in progress.
+
+if RT_USING_RISCV_NEW_COMMON
+
+config ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+    bool
+    default n
+
+config ARCH_RISCV_DISABLE_FENCE_I
+    bool
+    default n
+
+config ARCH_RISCV_DISABLE_SFENCE_VMA_ASID
+    bool
+    default n
+
+config ARCH_RISCV_M_MODE
+    bool
+    depends on !ARCH_MM_MMU
+    default n
+
+config ARCH_RISCV_32E
+    bool
+    depends on ARCH_RISCV32
+    depends on !ARCH_MM_MMU
+    depends on !RT_USING_DM
+
+config ARCH_RISCV_USING_IRQ_STACK
+    bool "Use a dedicated interrupt stack"
+    depends on !RT_USING_SMART
+    default y if ARCH_RISCV_M_MODE || !RT_USING_DM
+    help
+      Keep the saved exception frame on the interrupted thread stack, then
+      run C-level trap and interrupt handlers on a per-CPU interrupt stack.
+      This is recommended for MCU ports.
+
+config ARCH_RISCV_IRQ_STACK_SIZE
+    int "Interrupt stack size per CPU"
+    depends on ARCH_RISCV_USING_IRQ_STACK
+    range 256 65536
+    default 1024
+
+if !RT_USING_DM
+
+choice
+    prompt "Non-DM interrupt controller"
+    default ARCH_RISCV_NON_DM_IRQ_PLIC
+
+config ARCH_RISCV_NON_DM_IRQ_PLIC
+    bool "RISC-V INTC with SiFive PLIC"
+    select RT_USING_ADT
+    select RT_USING_ADT_BITMAP
+
+config ARCH_RISCV_NON_DM_IRQ_CLIC
+    bool "RISC-V CLIC"
+    select RT_USING_ADT
+    select RT_USING_ADT_BITMAP
+
+endchoice
+
+config ARCH_RISCV_INTC_ANDES
+    bool "Use Andes/Nuclei local interrupt CSRs"
+    depends on ARCH_RISCV_NON_DM_IRQ_PLIC
+
+config ARCH_RISCV_MAX_IRQS
+    int "Maximum number of interrupt handlers"
+    range 16 4096
+    default 128
+
+endif
+
+config RT_USING_USERSPACE_32BIT_LIMIT
+    bool "Enable userspace 32bit limit"
+    depends on ARCH_RISCV64
+    default n
+
+rsource "common/Kconfig"
+
+endif
+
+endmenu

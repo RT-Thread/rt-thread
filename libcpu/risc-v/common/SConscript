@@ -1,15 +1,86 @@
-# RT-Thread building script for component
+# RT-Thread building script for the unified RISC-V CPU port
 
+import os
 from building import *
 
-cwd     = GetCurrentDir()
-src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
-CPPPATH = [cwd]
-ASFLAGS = ' -I ' + cwd
+Import('rtconfig')
 
-if not GetDepend('RT_USING_HW_ATOMIC'):
-    SrcRemove(src, 'atomic_riscv.c')
+cwd = GetCurrentDir()
+bsp_path = Dir('#').abspath
+CPPPATH = [cwd + '/include', cwd]
+bsp_startup_obj = []
+src = [
+    'backtrace.c',
+    'cpu.c',
+    'cpuport.c',
+    'isa_ext.c',
+    'riscv_timer.c',
+    'stack.c',
+    'trap.c',
+]
 
-group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+if GetDepend('RT_USING_CACHE'):
+    src += ['cache.c']
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [
+        'context_gcc.S',
+        'cpu_gcc.S',
+        'stack_gcc.S',
+        'startup.c',
+        'vector_gcc.S',
+    ]
+
+    bsp_startup = os.path.join(bsp_path, 'startup_gcc.S')
+    if os.path.isfile(bsp_startup):
+        bsp_startup_obj = Env.Object('startup_gcc.o', '#startup_gcc.S')
+    else:
+        src += ['startup_gcc.S']
+
+    if GetDepend('RT_USING_BUILTIN_FDT'):
+        src += ['builtin_fdt_gcc.S']
+
+if GetDepend('ARCH_MM_MMU'):
+    src += ['mmu.c']
+
+if GetDepend('RT_USING_HW_ATOMIC'):
+    src += ['atomic_riscv.c']
+
+if GetDepend('RT_USING_LWP'):
+    src += ['syscall.c']
+
+if not GetDepend('ARCH_RISCV_M_MODE'):
+    src += ['sbi.c']
+
+    if not GetDepend('RT_USING_DM'):
+        src += ['console.c']
+
+if GetDepend('RT_USING_DM'):
+    src += ['setup.c']
+
+    if GetDepend('RT_USING_SMP'):
+        src += ['cpu_spinwait.c']
+
+        if not GetDepend('ARCH_RISCV_M_MODE'):
+            src += ['cpu_sbi.c']
+
+if not GetDepend('RT_USING_DM'):
+    src += ['interrupt.c']
+
+if GetDepend('ARCH_RISCV_USING_IRQ_STACK'):
+    src += ['irq_stack.c']
+
+group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
+group += bsp_startup_obj
+
+# build for sub-directory
+list = os.listdir(cwd)
+objs = []
+
+for d in list:
+    path = os.path.join(cwd, d)
+    if os.path.isfile(os.path.join(path, 'SConscript')):
+        objs = objs + SConscript(os.path.join(d, 'SConscript'))
+group = group + objs
 
 Return('group')
