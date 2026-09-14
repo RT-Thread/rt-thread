@@ -1,10 +1,18 @@
 menu "Hardware Drivers Config"
 
+    config BSP_PERIPH_PIN_CFG_READY
+        bool "Optional peripheral AF pins are configured on this board"
+        default n
+        help
+            The peripheral clock and IO must be configured in
+            board/Cube_Config/USER/src/n32h47x_48x_cfg.c.
+
 menu "Onboard Peripheral Drivers"
 
     menuconfig BSP_USING_ETH
         bool "Enable Ethernet"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select RT_USING_LWIP
         if BSP_USING_ETH
             choice BSP_ETH_INTERFACE_SEL
@@ -231,6 +239,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_QSPI
         bool "Enable QSPI (XSPI) BUS"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select RT_USING_QSPI
         select RT_USING_SPI
 
@@ -683,6 +692,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_NAND
         bool "Enable Nand"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select RT_USING_MTD_NAND
         if BSP_USING_NAND
             choice BSP_NAND_BANK_SEL

@@ -1,10 +1,18 @@
 menu "Hardware Drivers Config"
 
+    config BSP_PERIPH_PIN_CFG_READY
+        bool "Optional peripheral AF pins are configured on this board"
+        default n
+        help
+            The peripheral clock and IO must be configured in
+            board/Cube_Config/USER/src/n32h7xx_cfg.c.
+
 menu "Onboard Peripheral Drivers"
 
     menuconfig BSP_USING_SDRAM
         bool "Enable SDRAM"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         if BSP_USING_SDRAM
             choice BSP_SDRAM_BANK_SEL
                 prompt "Select SDRAM Bank"
@@ -85,6 +93,7 @@ menu "Onboard Peripheral Drivers"
     menuconfig BSP_USING_LCD
         bool "Enable LCD"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select BSP_USING_SDRAM
         if BSP_USING_LCD
             config BSP_BITS_PER_PIXEL
@@ -175,6 +184,7 @@ menu "Onboard Peripheral Drivers"
     menuconfig BSP_USING_ETH
         bool "Enable Ethernet"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select RT_USING_LWIP
         if BSP_USING_ETH
             choice BSP_ETH_SEL
@@ -650,6 +660,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_QSPI
         bool "Enable QSPI Quad SPI BUS"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select RT_USING_QSPI
         select RT_USING_SPI
         if BSP_USING_QSPI
@@ -1933,6 +1944,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_NAND
         bool "Enable Nand"
         default n
+        depends on BSP_PERIPH_PIN_CFG_READY
         select RT_USING_MTD_NAND
         if BSP_USING_NAND
             choice BSP_NAND_BANK_SEL

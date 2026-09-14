@@ -626,6 +626,24 @@ static rt_err_t n32_i2c_master_seq_receive_it(struct n32_i2c *i2c, uint16_t DevA
 
     if (i2c->transfer.state == I2C_READY)
     {
+        /* A master receive fits in a single BYTENUM window: the counter is
+         * loaded once below and this path never reloads it, so the BSF
+         * completion ends the transfer after that many bytes. A longer message
+         * would be silently truncated yet still reported as success; refuse it
+         * instead. BYTENUM is 8 bits (the SDK's own setter takes a uint8_t), so
+         * the count cannot be widened either. Only the DMA path reloads the
+         * window as it drains.
+         *
+         * n32_i2c_master_xfer screens the same condition before dispatching, so
+         * the caller gets an errno; this check keeps the invariant stated where
+         * the window is actually programmed.
+         */
+        if (Size > MAX_NBYTE_SIZE)
+        {
+            LOG_E("I2C IT receive of %u bytes exceeds the %u-byte BYTENUM window, enable RX DMA for longer reads", (unsigned int)Size, (unsigned int)MAX_NBYTE_SIZE);
+            return -RT_EINVAL;
+        }
+
         /* Set transfer parameters */
         i2c->transfer.state = I2C_BUSY_RX;
         i2c->transfer.pBuffPtr = pData;
@@ -633,16 +651,8 @@ static rt_err_t n32_i2c_master_seq_receive_it(struct n32_i2c *i2c, uint16_t DevA
         i2c->transfer.XferOptions = XferOptions;
         i2c->i2c_isr_callback = i2c_master_ev_isr_handler_it;
 
-        /* If Size > MAX_NBYTE_SIZE, use reload mode */
-        if (Size > MAX_NBYTE_SIZE)
-        {
-            i2c->transfer.XferSize = MAX_NBYTE_SIZE;
-        }
-        else
-        {
-            i2c->transfer.XferSize = i2c->transfer.XferCount;
-        }
-
+        /* One window covers the whole transfer - see the size check above */
+        i2c->transfer.XferSize = i2c->transfer.XferCount;
 
 #if defined(SOC_SERIES_N32H49x)
         I2C_EnableByteNum(i2c->config->Instance, ENABLE);
@@ -769,15 +779,14 @@ static rt_err_t n32_i2c_master_seq_send_it(struct n32_i2c *i2c, uint16_t DevAddr
         i2c->transfer.XferOptions = XferOptions;
         i2c->i2c_isr_callback = i2c_master_ev_isr_handler_it;
 
-        /* If Size > MAX_NBYTE_SIZE, use reload mode */
-        if (Size > MAX_NBYTE_SIZE)
-        {
-            i2c->transfer.XferSize = MAX_NBYTE_SIZE;
-        }
-        else
-        {
-            i2c->transfer.XferSize = i2c->transfer.XferCount;
-        }
+        /* No 255-byte window here: BYTENUM counts received bytes only, and this
+         * ISR feeds DAT one byte per TXDATE interrupt, so XferSize is nothing
+         * more than the remaining byte count. Capping it at MAX_NBYTE_SIZE made
+         * the TXDATE branch stop feeding after the 255th byte of a longer
+         * message - the tail was never sent while TXDATE stayed asserted and
+         * stormed this handler until the caller timed out.
+         */
+        i2c->transfer.XferSize = i2c->transfer.XferCount;
 
         /* Wait for the previous STOP to complete. Toggling PE here would not
          * reset the state machine while BUSY is set, and could hold the lines.
@@ -904,7 +913,14 @@ static rt_err_t n32_i2c_master_seq_receive_dma(struct n32_i2c *i2c, uint16_t Dev
                 rt_err_t start_ret = n32_i2c_master_start_addr(i2c, (uint8_t)DevAddress, I2C_DIRECTION_RECV);
                 if (start_ret != RT_EOK)
                 {
-                    i2c->transfer.state = I2C_READY;
+                    /* The DMA request and the BUF/ERR interrupts are armed by
+                     * now and the DMA channel still targets the caller's
+                     * buffer, so resetting only the state would let a late
+                     * byte write through a stack frame that is about to
+                     * unwind. The timeout paths of n32_i2c_master_start_addr
+                     * raise no error interrupt that could tear this down, so
+                     * do it here. */
+                    I2C_ABORT_ON_TIMEOUT(i2c);
                     return start_ret;
                 }
             }
@@ -1010,7 +1026,14 @@ static rt_err_t n32_i2c_master_seq_send_dma(struct n32_i2c *i2c, uint16_t DevAdd
                 rt_err_t start_ret = n32_i2c_master_start_addr(i2c, (uint8_t)DevAddress, I2C_DIRECTION_SEND);
                 if (start_ret != RT_EOK)
                 {
-                    i2c->transfer.state = I2C_READY;
+                    /* The DMA request and the BUF/ERR interrupts are armed by
+                     * now and the DMA channel still targets the caller's
+                     * buffer, so resetting only the state would let a late
+                     * byte write through a stack frame that is about to
+                     * unwind. The timeout paths of n32_i2c_master_start_addr
+                     * raise no error interrupt that could tear this down, so
+                     * do it here. */
+                    I2C_ABORT_ON_TIMEOUT(i2c);
                     return start_ret;
                 }
             }
@@ -1074,6 +1097,51 @@ static rt_ssize_t n32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
 
     i2c_obj = rt_container_of(bus, struct n32_i2c, i2c_bus);
     completion = &i2c_obj->completion;
+
+#if defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+    /* This series cannot chain frames, so neither flag can be honoured. The
+     * mode constants the translate step below derives from them are all
+     * 0x00000000U on this series (see the definitions at the top of this file),
+     * so XferOptions is always zero here and changes nothing in the CTRL2
+     * write. Every message instead re-runs the START + 7-bit address sequence
+     * in its own per-message setup, and completion always ends in a STOP
+     * (STOPGEN in i2c_it_completion_done, or the BYTENUM auto-stop on the DMA
+     * receive). A caller asking for RT_I2C_NO_START or RT_I2C_NO_STOP would
+     * therefore silently get a fresh START and a STOP instead of a repeated
+     * start -- a different bus transaction than the one requested, which some
+     * slaves reject. Refuse it rather than change it behind the caller's back;
+     * a repeated-start sequence needs the frame chaining this controller
+     * lacks.
+     */
+    for (i = 0; i < num; i++)
+    {
+        if (msgs[i].flags & (RT_I2C_NO_START | RT_I2C_NO_STOP))
+        {
+            LOG_E("I2C: RT_I2C_NO_START/RT_I2C_NO_STOP are not supported on this series (no frame chaining), msg[%d] flags=0x%x", i, msgs[i].flags);
+            return -RT_ENOSYS;
+        }
+
+        /* A receive that the interrupt path has to serve fits in one BYTENUM
+         * window, and that path never reloads the counter. Screen it here as
+         * well as in the receive setup below, because a rejection raised from
+         * inside the transfer is reported as a message count rather than an
+         * errno (see "out:"), so the caller would only see a silent short
+         * read. The test mirrors this function's own DMA dispatch: the
+         * interrupt path is taken when RX DMA is off or the message is too
+         * short for it.
+         */
+        if ((msgs[i].flags & RT_I2C_RD) && (msgs[i].len > MAX_NBYTE_SIZE))
+        {
+            rt_bool_t rx_dma_ready = (i2c_obj->i2c_dma_flag & I2C_USING_RX_DMA_FLAG) ? RT_TRUE : RT_FALSE;
+
+            if ((rx_dma_ready != RT_TRUE) || (msgs[i].len < DMA_TRANS_MIN_LEN))
+            {
+                LOG_E("I2C IT receive of %u bytes exceeds the %u-byte BYTENUM window, enable RX DMA for longer reads", (unsigned int)msgs[i].len, (unsigned int)MAX_NBYTE_SIZE);
+                return -RT_EINVAL;
+            }
+        }
+    }
+#endif
 
     LOG_D("xfer start %d mags", num);
     for (i = 0; i < (num - 1); i++)
@@ -1890,11 +1958,22 @@ static void i2c_master_ev_isr_handler_it(struct n32_i2c *drv_i2c)
         }
     }
 
-    /* Byte Sequence Finished - independent check, handles completion when XferCount == 0 */
+    /* Byte Sequence Finished - only reachable with XferCount == 0, so completing
+     * unconditionally is correct: the RX setup refuses sizes beyond the single
+     * BYTENUM window it programs, and a master transmit is not windowed at all -
+     * its last byte is fed to DAT exactly when XferCount reaches zero. A nonzero
+     * XferCount here means the two setups above drifted out of sync, which is
+     * worth a trace rather than silently truncating the message.
+     */
     if ((itflags & I2C_STS1_BSF) && (itsources & I2C_CTRL2_BUFINTEN))
     {
         /* Clear BSF flag */
         I2C_ClrIntPendingBit(drv_i2c->config->Instance, I2C_INT_BSF);
+
+        if (drv_i2c->transfer.XferCount != 0U)
+        {
+            LOG_W("I2C BSF with %u bytes still queued", (unsigned int)drv_i2c->transfer.XferCount);
+        }
 
         /* Transfer complete - BYTENUM expired (RX) or all bytes sent (TX) */
         i2c_it_completion_done(drv_i2c);
