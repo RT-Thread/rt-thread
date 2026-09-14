@@ -31,23 +31,23 @@ extern "C" {
 
 #ifdef BSP_QSPI_USING_DMA
 #ifndef QSPI_DMA_CONFIG
-#define QSPI_DMA_CONFIG                                        \
-    {                                                          \
-        .Instance = QSPI_DMA_INSTANCE,                         \
-        .Init.Channel  = QSPI_DMA_CHANNEL,                     \
-        .Init.Direction = DMA_PERIPH_TO_MEMORY,                \
-        .Init.PeriphInc = DMA_PINC_DISABLE,                    \
-        .Init.MemInc = DMA_MINC_ENABLE,                        \
-        .Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE,       \
-        .Init.MemDataAlignment = DMA_MDATAALIGN_BYTE,          \
-        .Init.Mode = DMA_NORMAL,                               \
-        .Init.Priority = DMA_PRIORITY_LOW                      \
+#define QSPI_DMA_CONFIG                                  \
+    {                                                    \
+        .Instance = QSPI_DMA_INSTANCE,                   \
+        .Init.Channel = QSPI_DMA_CHANNEL,                \
+        .Init.Direction = DMA_PERIPH_TO_MEMORY,          \
+        .Init.PeriphInc = DMA_PINC_DISABLE,              \
+        .Init.MemInc = DMA_MINC_ENABLE,                  \
+        .Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE, \
+        .Init.MemDataAlignment = DMA_MDATAALIGN_BYTE,    \
+        .Init.Mode = DMA_NORMAL,                         \
+        .Init.Priority = DMA_PRIORITY_LOW                \
     }
 #endif /* QSPI_DMA_CONFIG */
 #endif /* BSP_QSPI_USING_DMA */
 
-#define QSPI_IRQn                   QUADSPI_IRQn
-#define QSPI_IRQHandler             QUADSPI_IRQHandler
+#define QSPI_IRQn       QUADSPI_IRQn
+#define QSPI_IRQHandler QUADSPI_IRQHandler
 
 #ifdef __cplusplus
 }

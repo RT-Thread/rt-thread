@@ -18,22 +18,22 @@ extern "C" {
 #endif
 
 #ifndef TIM_DEV_INFO_CONFIG
-#define TIM_DEV_INFO_CONFIG                     \
-    {                                           \
-        .maxfreq = 1000000,                     \
-        .minfreq = 3000,                        \
-        .maxcnt  = 0xFFFF,                      \
-        .cntmode = CLOCK_TIMER_CNTMODE_UP,          \
+#define TIM_DEV_INFO_CONFIG                \
+    {                                      \
+        .maxfreq = 1000000,                \
+        .minfreq = 3000,                   \
+        .maxcnt = 0xFFFF,                  \
+        .cntmode = CLOCK_TIMER_CNTMODE_UP, \
     }
 #endif /* TIM_DEV_INFO_CONFIG */
 
 #ifdef BSP_USING_TIM2
 #ifndef TIM2_CONFIG
-#define TIM2_CONFIG                                        \
-    {                                                       \
-       .tim_handle.Instance     = TIM2,                    \
-       .tim_irqn                = TIM2_IRQn,  \
-       .name                    = "timer2",                \
+#define TIM2_CONFIG                  \
+    {                                \
+        .tim_handle.Instance = TIM2, \
+        .tim_irqn = TIM2_IRQn,       \
+        .name = "timer2",            \
     }
 #endif /* TIM2_CONFIG */
 #endif /* BSP_USING_TIM2 */

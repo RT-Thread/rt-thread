@@ -18,44 +18,44 @@ extern "C" {
 #endif
 
 #ifndef LPTIM_DEV_INFO_CONFIG
-#define LPTIM_DEV_INFO_CONFIG                   \
-    {                                           \
-        .maxfreq = 1000000,                     \
-        .minfreq = 3000,                        \
-        .maxcnt  = 0xFFFF,                      \
-        .cntmode = CLOCK_TIMER_CNTMODE_UP,          \
+#define LPTIM_DEV_INFO_CONFIG              \
+    {                                      \
+        .maxfreq = 1000000,                \
+        .minfreq = 3000,                   \
+        .maxcnt = 0xFFFF,                  \
+        .cntmode = CLOCK_TIMER_CNTMODE_UP, \
     }
 #endif /* TIM_DEV_INFO_CONFIG */
 
 #ifdef BSP_USING_LPTIM1
 #ifndef LPTIM1_CONFIG
-#define LPTIM1_CONFIG                                       \
-    {                                                       \
-       .tim_handle.Instance     = LPTIM1,                   \
-       .tim_irqn                = LPTIM1_IRQn,              \
-       .name                    = "lptim1",                 \
+#define LPTIM1_CONFIG                  \
+    {                                  \
+        .tim_handle.Instance = LPTIM1, \
+        .tim_irqn = LPTIM1_IRQn,       \
+        .name = "lptim1",              \
     }
 #endif /* LPTIM1_CONFIG */
 #endif /* BSP_USING_LPTIM1 */
 
 #ifdef BSP_USING_LPTIM2
 #ifndef LPTIM2_CONFIG
-#define LPTIM2_CONFIG                                       \
-    {                                                       \
-       .tim_handle.Instance     = LPTIM2,                   \
-       .tim_irqn                = LPTIM2_IRQn,              \
-       .name                    = "lptim2",                 \
+#define LPTIM2_CONFIG                  \
+    {                                  \
+        .tim_handle.Instance = LPTIM2, \
+        .tim_irqn = LPTIM2_IRQn,       \
+        .name = "lptim2",              \
     }
 #endif /* LPTIM1_CONFIG */
 #endif /* BSP_USING_LPTIM1 */
 
 #ifdef BSP_USING_LPTIM3
 #ifndef LPTIM3_CONFIG
-#define LPTIM3_CONFIG                                       \
-    {                                                       \
-       .tim_handle.Instance     = LPTIM3,                   \
-       .tim_irqn                = LPTIM3_IRQn,              \
-       .name                    = "lptim3",                 \
+#define LPTIM3_CONFIG                  \
+    {                                  \
+        .tim_handle.Instance = LPTIM3, \
+        .tim_irqn = LPTIM3_IRQn,       \
+        .name = "lptim3",              \
     }
 #endif /* LPTIM3_CONFIG */
 #endif /* BSP_USING_LPTIM3 */
