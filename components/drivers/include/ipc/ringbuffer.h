@@ -41,10 +41,10 @@ struct rt_ringbuffer
      * read_idx-^ ^-write_idx
      */
 
-    rt_uint32_t read_mirror : 1;
-    rt_uint32_t read_index : 31;
-    rt_uint32_t write_mirror : 1;
-    rt_uint32_t write_index : 31;
+    volatile rt_uint32_t read_mirror : 1;
+    volatile rt_uint32_t read_index : 31;
+    volatile rt_uint32_t write_mirror : 1;
+    volatile rt_uint32_t write_index : 31;
     /* as we use msb of index as mirror bit, the size should be signed and
      * could only be positive. */
     rt_int32_t buffer_size;
