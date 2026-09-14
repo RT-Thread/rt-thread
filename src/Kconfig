@@ -441,6 +441,7 @@ config RT_USING_CONSOLE
 if RT_USING_CONSOLE
     config RT_CONSOLEBUF_SIZE
         int "the buffer size for console log printf"
+        range 256 2147483647 if RT_USING_UTEST
         default 256 if RT_USING_UTEST
         default 128
 
@@ -464,7 +465,7 @@ endif
 
 config RT_VER_NUM
     hex
-    default 0x50300
+    default 0x50301
     help
         RT-Thread version number
 

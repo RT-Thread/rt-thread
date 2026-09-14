@@ -236,6 +236,7 @@ int dfs_init(void)
     /* create device filesystem lock */
     rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_FIFO);
     rt_mutex_init(&fdlock, "fdlock", RT_IPC_FLAG_FIFO);
+    dfs_record_lock_init();
 
     /* Initialize dentry system */
     dfs_dentry_init();
@@ -740,6 +741,7 @@ _EXIT:
 int dfs_fdtable_drop_fd(struct dfs_fdtable *fdt, int fd)
 {
     int err = 0;
+    struct dfs_file *file;
 
     if (fdt == NULL)
     {
@@ -751,7 +753,15 @@ int dfs_fdtable_drop_fd(struct dfs_fdtable *fdt, int fd)
         return -RT_ENOSYS;
     }
 
-    err = dfs_file_close(fdt->fds[fd]);
+    file = fdt_get_file(fdt, fd);
+    if (file == RT_NULL)
+    {
+        dfs_file_unlock();
+        return -EBADF;
+    }
+
+    dfs_record_lock_release(file, fdt);
+    err = dfs_file_close(file);
     if (!err)
     {
         fdt_fd_release(fdt, fd);
@@ -901,6 +911,7 @@ int dfs_dup_from(int oldfd, struct dfs_fdtable *fdtab)
         file->data = fdtab->fds[oldfd]->data;
     }
 
+    dfs_record_lock_release(fdtab->fds[oldfd], fdtab);
     dfs_file_close(fdtab->fds[oldfd]);
 
 exit:
@@ -990,6 +1001,7 @@ rt_err_t sys_dup2(int oldfd, int newfd)
 
     if (fdt->fds[newfd])
     {
+        dfs_record_lock_release(fdt->fds[newfd], fdt);
         ret = dfs_file_close(fdt->fds[newfd]);
         if (ret < 0)
         {

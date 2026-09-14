@@ -23,9 +23,12 @@
 #ifdef RT_USING_DM
 #include <drivers/core/power.h>
 #endif
+#ifdef RT_USING_HW_STACK_GUARD
+#include <mprotect.h>
+#endif
 
-#define DBG_TAG           "cortex.m4"
-#define DBG_LVL           DBG_INFO
+#define DBG_TAG "cortex.m4"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 rt_weak int rt_hw_cpu_id(void)
@@ -33,13 +36,10 @@ rt_weak int rt_hw_cpu_id(void)
     return 0;
 }
 
-#if               /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP ))    \
-                  /* Clang */ || (defined ( __clang__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) \
-                  /* IAR */   || (defined ( __ICCARM__ ) && defined ( __ARMVFP__ ))        \
-                  /* GNU */   || (defined ( __GNUC__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) )
-#define USE_FPU   1
+#if /* ARMCC */ ((defined(__CC_ARM) && defined(__TARGET_FPU_VFP)) /* Clang */ || (defined(__clang__) && defined(__VFP_FP__) && !defined(__SOFTFP__)) /* IAR */ || (defined(__ICCARM__) && defined(__ARMVFP__)) /* GNU */ || (defined(__GNUC__) && defined(__VFP_FP__) && !defined(__SOFTFP__)))
+#define USE_FPU 1
 #else
-#define USE_FPU   0
+#define USE_FPU 0
 #endif
 
 /* exception and interrupt handler table */
@@ -151,34 +151,34 @@ struct stack_frame_fpu
     struct exception_stack_frame_fpu exception_stack_frame;
 };
 
-rt_uint8_t *rt_hw_stack_init(void       *tentry,
-                             void       *parameter,
+rt_uint8_t *rt_hw_stack_init(void *tentry,
+                             void *parameter,
                              rt_uint8_t *stack_addr,
-                             void       *texit)
+                             void *texit)
 {
     struct stack_frame *stack_frame;
-    rt_uint8_t         *stk;
-    unsigned long       i;
+    rt_uint8_t *stk;
+    unsigned long i;
 
-    stk  = stack_addr + sizeof(rt_uint32_t);
-    stk  = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stk, 8);
+    stk = stack_addr + sizeof(rt_uint32_t);
+    stk = (rt_uint8_t *)RT_ALIGN_DOWN((rt_uint32_t)stk, 8);
     stk -= sizeof(struct stack_frame);
 
     stack_frame = (struct stack_frame *)stk;
 
     /* init all register */
-    for (i = 0; i < sizeof(struct stack_frame) / sizeof(rt_uint32_t); i ++)
+    for (i = 0; i < sizeof(struct stack_frame) / sizeof(rt_uint32_t); i++)
     {
         ((rt_uint32_t *)stack_frame)[i] = 0xdeadbeef;
     }
 
-    stack_frame->exception_stack_frame.r0  = (unsigned long)parameter; /* r0 : argument */
-    stack_frame->exception_stack_frame.r1  = 0;                        /* r1 */
-    stack_frame->exception_stack_frame.r2  = 0;                        /* r2 */
-    stack_frame->exception_stack_frame.r3  = 0;                        /* r3 */
+    stack_frame->exception_stack_frame.r0 = (unsigned long)parameter; /* r0 : argument */
+    stack_frame->exception_stack_frame.r1 = 0;                        /* r1 */
+    stack_frame->exception_stack_frame.r2 = 0;                        /* r2 */
+    stack_frame->exception_stack_frame.r3 = 0;                        /* r3 */
     stack_frame->exception_stack_frame.r12 = 0;                        /* r12 */
-    stack_frame->exception_stack_frame.lr  = (unsigned long)texit;     /* lr */
-    stack_frame->exception_stack_frame.pc  = (unsigned long)tentry;    /* entry point, pc */
+    stack_frame->exception_stack_frame.lr = (unsigned long)texit;     /* lr */
+    stack_frame->exception_stack_frame.pc = (unsigned long)tentry;    /* entry point, pc */
     stack_frame->exception_stack_frame.psr = 0x01000000L;              /* PSR */
 
 #if USE_FPU
@@ -188,6 +188,28 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     /* return task's current stack address */
     return stk;
 }
+
+#ifdef RT_USING_HW_STACK_GUARD
+void rt_hw_stack_guard_init(rt_thread_t thread)
+{
+    rt_mem_region_t stack_top_region, stack_bottom_region;
+    rt_ubase_t stack_bottom = (rt_ubase_t)thread->stack_addr;
+    rt_ubase_t stack_top = (rt_ubase_t)((rt_uint8_t *)thread->stack_addr + thread->stack_size);
+    rt_ubase_t stack_bottom_region_start = RT_ALIGN(stack_bottom, MPU_MIN_REGION_SIZE);
+    rt_ubase_t stack_top_region_start = RT_ALIGN_DOWN(stack_top - MPU_MIN_REGION_SIZE, MPU_MIN_REGION_SIZE);
+    stack_top_region.start = (void *)stack_top_region_start;
+    stack_top_region.size = MPU_MIN_REGION_SIZE;
+    stack_top_region.attr = RT_MEM_REGION_P_NA_U_NA;
+    stack_bottom_region.start = (void *)stack_bottom_region_start;
+    stack_bottom_region.size = MPU_MIN_REGION_SIZE;
+    stack_bottom_region.attr = RT_MEM_REGION_P_NA_U_NA;
+    rt_mprotect_add_region(thread, &stack_top_region);
+    rt_mprotect_add_region(thread, &stack_bottom_region);
+    thread->stack_buf = thread->stack_addr;
+    thread->stack_addr = (void *)(stack_bottom_region_start + MPU_MIN_REGION_SIZE);
+    thread->stack_size = (rt_uint32_t)(stack_top_region_start - stack_bottom_region_start - MPU_MIN_REGION_SIZE);
+}
+#endif /* RT_USING_HW_STACK_GUARD */
 
 /**
  * This function set the hook, which is invoked on fault exception handling.
@@ -206,9 +228,9 @@ void rt_hw_exception_install(rt_err_t (*exception_handle)(void *context))
 #define SCB_AIRCR       (*(volatile unsigned long *)0xE000ED0C)  /* Reset control Address Register */
 #define SCB_RESET_VALUE 0x05FA0004                               /* Reset value, write to SCB_AIRCR can reset cpu */
 
-#define SCB_CFSR_MFSR   (*(volatile const unsigned char*)0xE000ED28)  /* Memory-management Fault Status Register */
-#define SCB_CFSR_BFSR   (*(volatile const unsigned char*)0xE000ED29)  /* Bus Fault Status Register */
-#define SCB_CFSR_UFSR   (*(volatile const unsigned short*)0xE000ED2A) /* Usage Fault Status Register */
+#define SCB_CFSR_MFSR (*(volatile const unsigned char *)0xE000ED28)  /* Memory-management Fault Status Register */
+#define SCB_CFSR_BFSR (*(volatile const unsigned char *)0xE000ED29)  /* Bus Fault Status Register */
+#define SCB_CFSR_UFSR (*(volatile const unsigned short *)0xE000ED2A) /* Usage Fault Status Register */
 
 #ifdef RT_USING_FINSH
 static void usage_fault_track(void)
@@ -216,37 +238,37 @@ static void usage_fault_track(void)
     rt_kprintf("usage fault:\n");
     rt_kprintf("SCB_CFSR_UFSR:0x%02X ", SCB_CFSR_UFSR);
 
-    if(SCB_CFSR_UFSR & (1<<0))
+    if (SCB_CFSR_UFSR & (1 << 0))
     {
         /* [0]:UNDEFINSTR */
         rt_kprintf("UNDEFINSTR ");
     }
 
-    if(SCB_CFSR_UFSR & (1<<1))
+    if (SCB_CFSR_UFSR & (1 << 1))
     {
         /* [1]:INVSTATE */
         rt_kprintf("INVSTATE ");
     }
 
-    if(SCB_CFSR_UFSR & (1<<2))
+    if (SCB_CFSR_UFSR & (1 << 2))
     {
         /* [2]:INVPC */
         rt_kprintf("INVPC ");
     }
 
-    if(SCB_CFSR_UFSR & (1<<3))
+    if (SCB_CFSR_UFSR & (1 << 3))
     {
         /* [3]:NOCP */
         rt_kprintf("NOCP ");
     }
 
-    if(SCB_CFSR_UFSR & (1<<8))
+    if (SCB_CFSR_UFSR & (1 << 8))
     {
         /* [8]:UNALIGNED */
         rt_kprintf("UNALIGNED ");
     }
 
-    if(SCB_CFSR_UFSR & (1<<9))
+    if (SCB_CFSR_UFSR & (1 << 9))
     {
         /* [9]:DIVBYZERO */
         rt_kprintf("DIVBYZERO ");
@@ -260,37 +282,37 @@ static void bus_fault_track(void)
     rt_kprintf("bus fault:\n");
     rt_kprintf("SCB_CFSR_BFSR:0x%02X ", SCB_CFSR_BFSR);
 
-    if(SCB_CFSR_BFSR & (1<<0))
+    if (SCB_CFSR_BFSR & (1 << 0))
     {
         /* [0]:IBUSERR */
         rt_kprintf("IBUSERR ");
     }
 
-    if(SCB_CFSR_BFSR & (1<<1))
+    if (SCB_CFSR_BFSR & (1 << 1))
     {
         /* [1]:PRECISERR */
         rt_kprintf("PRECISERR ");
     }
 
-    if(SCB_CFSR_BFSR & (1<<2))
+    if (SCB_CFSR_BFSR & (1 << 2))
     {
         /* [2]:IMPRECISERR */
         rt_kprintf("IMPRECISERR ");
     }
 
-    if(SCB_CFSR_BFSR & (1<<3))
+    if (SCB_CFSR_BFSR & (1 << 3))
     {
         /* [3]:UNSTKERR */
         rt_kprintf("UNSTKERR ");
     }
 
-    if(SCB_CFSR_BFSR & (1<<4))
+    if (SCB_CFSR_BFSR & (1 << 4))
     {
         /* [4]:STKERR */
         rt_kprintf("STKERR ");
     }
 
-    if(SCB_CFSR_BFSR & (1<<7))
+    if (SCB_CFSR_BFSR & (1 << 7))
     {
         rt_kprintf("SCB->BFAR:%08X\n", SCB_BFAR);
     }
@@ -305,31 +327,31 @@ static void mem_manage_fault_track(void)
     rt_kprintf("mem manage fault:\n");
     rt_kprintf("SCB_CFSR_MFSR:0x%02X ", SCB_CFSR_MFSR);
 
-    if(SCB_CFSR_MFSR & (1<<0))
+    if (SCB_CFSR_MFSR & (1 << 0))
     {
         /* [0]:IACCVIOL */
         rt_kprintf("IACCVIOL ");
     }
 
-    if(SCB_CFSR_MFSR & (1<<1))
+    if (SCB_CFSR_MFSR & (1 << 1))
     {
         /* [1]:DACCVIOL */
         rt_kprintf("DACCVIOL ");
     }
 
-    if(SCB_CFSR_MFSR & (1<<3))
+    if (SCB_CFSR_MFSR & (1 << 3))
     {
         /* [3]:MUNSTKERR */
         rt_kprintf("MUNSTKERR ");
     }
 
-    if(SCB_CFSR_MFSR & (1<<4))
+    if (SCB_CFSR_MFSR & (1 << 4))
     {
         /* [4]:MSTKERR */
         rt_kprintf("MSTKERR ");
     }
 
-    if(SCB_CFSR_MFSR & (1<<7))
+    if (SCB_CFSR_MFSR & (1 << 7))
     {
         /* [7]:MMARVALID */
         rt_kprintf("SCB->MMAR:%08X\n", SCB_MMAR);
@@ -342,33 +364,33 @@ static void mem_manage_fault_track(void)
 
 static void hard_fault_track(void)
 {
-    if(SCB_HFSR & (1UL<<1))
+    if (SCB_HFSR & (1UL << 1))
     {
         /* [1]:VECTBL, Indicates hard fault is caused by failed vector fetch. */
         rt_kprintf("failed vector fetch\n");
     }
 
-    if(SCB_HFSR & (1UL<<30))
+    if (SCB_HFSR & (1UL << 30))
     {
         /* [30]:FORCED, Indicates hard fault is taken because of bus fault,
                         memory management fault, or usage fault. */
-        if(SCB_CFSR_BFSR)
+        if (SCB_CFSR_BFSR)
         {
             bus_fault_track();
         }
 
-        if(SCB_CFSR_MFSR)
+        if (SCB_CFSR_MFSR)
         {
             mem_manage_fault_track();
         }
 
-        if(SCB_CFSR_UFSR)
+        if (SCB_CFSR_UFSR)
         {
             usage_fault_track();
         }
     }
 
-    if(SCB_HFSR & (1UL<<31))
+    if (SCB_HFSR & (1UL << 31))
     {
         /* [31]:DEBUGEVT, Indicates hard fault is triggered by debug event. */
         rt_kprintf("debug event\n");
@@ -395,7 +417,10 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
         rt_err_t result;
 
         result = rt_exception_hook(exception_stack);
-        if (result == RT_EOK) return;
+        if (result == RT_EOK)
+        {
+            return;
+        }
     }
 
     rt_kprintf("psr: 0x%08x\n", context->exception_stack_frame.psr);
@@ -429,7 +454,7 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
         rt_kprintf("hard fault on handler\r\n\r\n");
     }
 
-    if ( (exception_info->exc_return & 0x10) == 0)
+    if ((exception_info->exc_return & 0x10) == 0)
     {
         rt_kprintf("FPU active!\r\n");
     }
@@ -476,19 +501,19 @@ rt_inline rt_uint32_t rt_hw_get_ipsr(void)
 {
 #if defined(__CC_ARM)
     register uint32_t __regIPSR __asm("ipsr");
-    return(__regIPSR);
+    return (__regIPSR);
 #elif defined(__clang__)
     uint32_t result;
-    __asm volatile ("MRS %0, ipsr" : "=r" (result) );
-    return(result);
+    __asm volatile("MRS %0, ipsr" : "=r"(result));
+    return (result);
 #elif defined(__IAR_SYSTEMS_ICC__)
     uint32_t result;
-    __asm volatile ("MRS %0, ipsr" : "=r" (result));
+    __asm volatile("MRS %0, ipsr" : "=r"(result));
     return result;
-#elif defined ( __GNUC__ )
+#elif defined(__GNUC__)
     uint32_t result;
-    __asm volatile ("MRS %0, ipsr" : "=r" (result) );
-    return(result);
+    __asm volatile("MRS %0, ipsr" : "=r"(result));
+    return (result);
 #endif
 }
 
@@ -502,7 +527,7 @@ rt_inline rt_uint32_t rt_hw_get_ipsr(void)
 void rt_interrupt_enter(void)
 {
     extern void (*rt_interrupt_enter_hook)(void);
-    RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
+    RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook, ());
     LOG_D("irq has come...");
 }
 
@@ -517,7 +542,7 @@ void rt_interrupt_leave(void)
 {
     extern void (*rt_interrupt_leave_hook)(void);
     LOG_D("irq is going to leave");
-    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
+    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook, ());
 }
 
 /**
@@ -545,15 +570,15 @@ rt_inline rt_uint32_t rt_hw_get_primask_value(void)
     return (__regPRIMASK);
 #elif defined(__clang__)
     uint32_t result;
-    __asm volatile ("MRS %0, primask" : "=r" (result));
+    __asm volatile("MRS %0, primask" : "=r"(result));
     return result;
 #elif defined(__IAR_SYSTEMS_ICC__)
     uint32_t result;
-    __asm volatile ("MRS %0, primask" : "=r" (result));
+    __asm volatile("MRS %0, primask" : "=r"(result));
     return result;
 #elif defined(__GNUC__)
     uint32_t result;
-    __asm volatile ("MRS %0, primask" : "=r" (result));
+    __asm volatile("MRS %0, primask" : "=r"(result));
     return result;
 #endif
 }
@@ -584,6 +609,7 @@ rt_bool_t rt_hw_interrupt_is_disabled(void)
  * shall return 0.
  */
 #if defined(__CC_ARM)
+// clang-format off
 __asm int __rt_ffs(int value)
 {
     CMP     r0, #0x00
@@ -596,6 +622,7 @@ __asm int __rt_ffs(int value)
 exit
     BX      lr
 }
+// clang-format on
 #elif defined(__clang__)
 int __rt_ffs(int value)
 {
@@ -610,14 +637,16 @@ int __rt_ffs(int value)
         "1:                           \n"
 
         : "=r"(value)
-        : "r"(value)
-    );
+        : "r"(value));
     return value;
 }
 #elif defined(__IAR_SYSTEMS_ICC__)
 int __rt_ffs(int value)
 {
-    if (value == 0) return value;
+    if (value == 0)
+    {
+        return value;
+    }
 
     asm("RBIT %0, %1" : "=r"(value) : "r"(value));
     asm("CLZ  %0, %1" : "=r"(value) : "r"(value));
