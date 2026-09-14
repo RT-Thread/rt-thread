@@ -104,9 +104,10 @@ N32_SPI_DUMMY_ALIGN32 static rt_uint8_t spi_fd_rxonly_dummy[8192];
 
 
 #if defined(SOC_SERIES_N32H7xx)
-/* Build an LLI chain for a 'size'-byte transfer: the memory side advances
- * 4095B per node while the peripheral (DAT) address stays fixed. Only the
- * last node has IntEn=1, so the whole chain raises a single TC interrupt. */
+/* Build an LLI chain for a 'size'-element transfer: the memory side advances
+ * SPI_DMA_BLOCK_MAX elements per node while the peripheral (DAT) address
+ * stays fixed. Only the last node has IntEn=1, so the whole chain raises a
+ * single TC interrupt. */
 static rt_uint16_t n32_spi_lli_build(DMA_LinkListItemType *lli, const DMA_ChInitType *ch,
                                      rt_uint32_t periph_addr, rt_uint32_t mem_addr,
                                      rt_bool_t mem_is_src, rt_uint16_t size)
@@ -121,8 +122,17 @@ static rt_uint16_t n32_spi_lli_build(DMA_LinkListItemType *lli, const DMA_ChInit
         rt_uint16_t blk = (rest > SPI_DMA_BLOCK_MAX) ? SPI_DMA_BLOCK_MAX : rest;
         rt_bool_t has_next = (i + 1U < n) ? RT_TRUE : RT_FALSE;
 
-        node->SrcAddr = mem_is_src ? (mem_addr + (rt_uint32_t)i * SPI_DMA_BLOCK_MAX) : periph_addr;
-        node->DstAddr = mem_is_src ? periph_addr : (mem_addr + (rt_uint32_t)i * SPI_DMA_BLOCK_MAX);
+        /* BlkTfrSize counts data items, so the memory side advances one block
+         * worth of ELEMENTS per node: the byte stride is SPI_DMA_BLOCK_MAX
+         * items times the memory-side transfer width. That width field is the
+         * DMA transfer width code (0 = 8-bit, 1 = 16-bit, 2 = 32-bit), i.e.
+         * 1 << width bytes -- the very value programmed into the node below,
+         * so stride and width cannot disagree. Advancing by SPI_DMA_BLOCK_MAX
+         * BYTES instead overlaps the nodes by half a word at 16-bit width. */
+        rt_uint32_t mem_stride = (rt_uint32_t)SPI_DMA_BLOCK_MAX *
+                                 (1UL << (mem_is_src ? ch->SrcTfrWidth : ch->DstTfrWidth));
+        node->SrcAddr = mem_is_src ? (mem_addr + (rt_uint32_t)i * mem_stride) : periph_addr;
+        node->DstAddr = mem_is_src ? periph_addr : (mem_addr + (rt_uint32_t)i * mem_stride);
         node->pNext = has_next ? &lli[i + 1U] : RT_NULL;
         node->IntEn = has_next ? 0U : 1U;
         node->DstTfrWidth = ch->DstTfrWidth;
@@ -596,7 +606,10 @@ static rt_err_t SPI_DMA_Transmit(struct n32_spi *spi_drv, uint8_t *pData, uint16
     {
 #if defined(SOC_SERIES_N32H7xx)
         /* SPI TX DMA send (single block or seamless LLI chain) */
-        n32_spi_dma_arm(spi_drv, RT_FALSE, RT_TRUE, pData, Size);
+        if (n32_spi_dma_arm(spi_drv, RT_FALSE, RT_TRUE, pData, Size) != RT_EOK)
+        {
+            return -RT_ERROR;
+        }
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
         /* SPI TX DMA Send Data for H49X */
         DMA_EnableChannel(spi_drv->config->dma_tx->DMAChx, DISABLE);
@@ -697,7 +710,10 @@ static rt_err_t SPI_DMA_Receive(struct n32_spi *spi_drv, uint8_t *pData, uint16_
     {
 #if defined(SOC_SERIES_N32H7xx)
         /* SPI RX DMA receive (single block or seamless LLI chain) */
-        n32_spi_dma_arm(spi_drv, RT_TRUE, RT_TRUE, pData, Size);
+        if (n32_spi_dma_arm(spi_drv, RT_TRUE, RT_TRUE, pData, Size) != RT_EOK)
+        {
+            return -RT_ERROR;
+        }
 #elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
         /* SPI RX DMA Receive Data for H49X */
         DMA_EnableChannel(spi_drv->config->dma_rx->DMAChx, DISABLE);
@@ -1840,14 +1856,19 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
          * grid (see the warm re-arm note). Slaves never chunk below
          * SPI_DMA_CHAIN_MAX and ignore the flag anyway. */
         spi_drv->fd_chunk_cont = (fd_msg && (already_send_length != 0U)) ? RT_TRUE : RT_FALSE;
-        /* avoid null pointer problems */
+        /* avoid null pointer problems.
+         * already_send_length counts elements while the buffers are byte
+         * addressed, so this chunk's offset must be scaled by the data width
+         * (16-bit data = 2 bytes per element). Without it every chunk after
+         * the first starts one byte early per element -- half the real offset
+         * -- and the DMA walks the wrong half of the buffer. */
         if (message->send_buf)
         {
-            send_buf = (rt_uint8_t *)message->send_buf + already_send_length;
+            send_buf = (rt_uint8_t *)message->send_buf + (already_send_length * (spi_drv->cfg->data_width / 8u));
         }
         if (message->recv_buf)
         {
-            recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
+            recv_buf = (rt_uint8_t *)message->recv_buf + (already_send_length * (spi_drv->cfg->data_width / 8u));
         }
 
         rt_uint32_t *dma_aligned_buffer = RT_NULL; /* TX staging buffer (copy path only) */
@@ -1917,6 +1938,11 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
                 rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, p_tx_buffer, send_bytes);
             }
 #else
+            /* send_length counts elements: the staging buffer must be sized and
+             * filled in bytes (x2 for 16-bit data). Sized in elements the
+             * halfword DMA reads twice as far as the allocation and the copy
+             * only carries half of the payload. */
+            rt_uint32_t send_bytes = send_length * (spi_drv->cfg->data_width / 8u);
             if (RT_IS_ALIGN((rt_uint32_t)send_buf, 4) && send_buf != RT_NULL) /* aligned with 4 bytes? */
             {
                 p_tx_buffer = (rt_uint32_t *)send_buf; /* send_buf aligns with 4 bytes, no more operations */
@@ -1924,14 +1950,14 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             else
             {
                 /* send_buf doesn't align with 4 bytes, so creat a cache buffer with 4 bytes aligned */
-                dma_aligned_buffer = (rt_uint32_t *)rt_malloc(send_length); /* aligned with RT_ALIGN_SIZE (8 bytes by default) */
+                dma_aligned_buffer = (rt_uint32_t *)rt_malloc(send_bytes); /* aligned with RT_ALIGN_SIZE (8 bytes by default) */
                 if (dma_aligned_buffer == RT_NULL)
                 {
                     LOG_E("SPI DMA TX buffer malloc failed!");
                     state = -RT_ENOMEM;
                     goto spi_staging_free;
                 }
-                rt_memcpy(dma_aligned_buffer, send_buf, send_length);
+                rt_memcpy(dma_aligned_buffer, send_buf, send_bytes);
                 p_tx_buffer = dma_aligned_buffer;
             }
 #endif
