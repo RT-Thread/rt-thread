@@ -11,6 +11,19 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <board.h>
+
+/* The driver owns the peripheral registers, so it pulls in the peripheral
+ * header itself instead of relying on board.h to have declared it. Only the
+ * H49x board happens to include it today.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#include <n32h7xx_i2c.h>
+#elif defined(SOC_SERIES_N32H49x)
+#include <n32h49x_i2c.h>
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include <n32h47x_48x_i2c.h>
+#endif
+
 #include "drv_hard_i2c.h"
 #include "drv_config.h"
 #include <string.h>
@@ -187,11 +200,106 @@ static rt_err_t n32_i2c_master_start_addr(struct n32_i2c *i2c, uint8_t DevAddres
 }
 #endif /* defined(SOC_SERIES_N32H49x) */
 
-#if defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+#if defined(SOC_SERIES_N32H7xx)
+/* Wait for the bus to fall idle before asserting a new STOP or START.
+ *
+ * Asserting either while a previous STOP is still on the wire wedges the state
+ * machine: BUSY stays set, the address never goes out and the transfer stalls.
+ */
+static rt_err_t n32_i2c_wait_bus_idle(I2C_Module *Instance)
+{
+    rt_uint32_t timeout = 1000000U;
+
+    while ((I2C_GetFlag(Instance, I2C_FLAG_BUSY) != RESET) && (--timeout > 0U))
+    {
+    }
+
+    return (timeout != 0U) ? RT_EOK : -RT_ETIMEOUT;
+}
+
+/* Clear residue left by an aborted transfer before the next one starts.
+ *
+ * A STOPGEN that was latched with no frame to terminate stays pending and would
+ * tear down the transfer we are about to set up. Stale status flags would
+ * likewise fire the moment the new transfer re-enables the error interrupt.
+ *
+ * I2C_ClrFlag() is a plain "INTCLR |= flag" write, so only flags that actually
+ * have a matching INTCLR bit may be passed. TFC (0x40) and BUSY (0x8000) have
+ * none - passing them lands in reserved bits and clears nothing.
+ */
+static void n32_i2c_prepare_start(I2C_Module *Instance)
+{
+    I2C_GenerateStop(Instance, DISABLE);
+
+    I2C_ClrFlag(Instance, I2C_FLAG_NAKF | I2C_FLAG_BSER | I2C_FLAG_ABLO |
+                              I2C_FLAG_OVF | I2C_FLAG_TMOUT | I2C_FLAG_ALRT |
+                              I2C_FLAG_STOPF | I2C_FLAG_ADR | I2C_FLAG_CRCERR);
+}
+
+/* Tear down a transfer that the waiting thread has given up on.
+ *
+ * Must disarm the ISR before returning: master_xfer's callers pass stack
+ * buffers, so a late read writing through transfer.pBuffPtr would corrupt a
+ * stack frame that no longer exists once the caller unwinds. The DMA channel
+ * targets that same buffer, so it is disabled here as well - dropping the
+ * request enable alone leaves the channel armed.
+ */
+static void n32_i2c_abort_transfer(struct n32_i2c *i2c_obj)
+{
+    I2C_Module *Instance = i2c_obj->config->Instance;
+    I2C_StateTypeDef was_state = i2c_obj->transfer.state;
+
+    /* Disable interrupts and DMA first - stop the ISR touching pBuffPtr */
+    Instance->CTRL1 &= ~(I2C_CTRL1_TFCIE | I2C_CTRL1_WDRIE | I2C_CTRL1_RDRIE |
+                         I2C_CTRL1_STOPIE | I2C_CTRL1_NAKIE | I2C_CTRL1_ERRIE);
+
+    if ((was_state == I2C_BUSY_TX) &&
+        ((i2c_obj->i2c_dma_flag & I2C_USING_TX_DMA_FLAG) == I2C_USING_TX_DMA_FLAG))
+    {
+        Instance->CTRL1 &= ~I2C_CTRL1_DMAWREN;
+
+        DMA_ChannelCmd(i2c_obj->config->dma_tx->Instance,
+                       i2c_obj->config->dma_tx->dma_channel, DISABLE);
+        DMA_ChannelEventCmd(i2c_obj->config->dma_tx->Instance,
+                            i2c_obj->config->dma_tx->dma_channel,
+                            DMA_CH_EVENT_BLOCK_TRANSFER_COMPLETE, DISABLE);
+        DMA_ClearChannelEventStatus(i2c_obj->config->dma_tx->Instance,
+                                    i2c_obj->config->dma_tx->dma_channel,
+                                    DMA_CH_EVENT_BLOCK_TRANSFER_COMPLETE);
+    }
+    else if ((was_state == I2C_BUSY_RX) &&
+             ((i2c_obj->i2c_dma_flag & I2C_USING_RX_DMA_FLAG) == I2C_USING_RX_DMA_FLAG))
+    {
+        Instance->CTRL1 &= ~I2C_CTRL1_DMARDEN;
+
+        DMA_ChannelCmd(i2c_obj->config->dma_rx->Instance,
+                       i2c_obj->config->dma_rx->dma_channel, DISABLE);
+        DMA_ChannelEventCmd(i2c_obj->config->dma_rx->Instance,
+                            i2c_obj->config->dma_rx->dma_channel,
+                            DMA_CH_EVENT_BLOCK_TRANSFER_COMPLETE, DISABLE);
+        DMA_ClearChannelEventStatus(i2c_obj->config->dma_rx->Instance,
+                                    i2c_obj->config->dma_rx->dma_channel,
+                                    DMA_CH_EVENT_BLOCK_TRANSFER_COMPLETE);
+    }
+
+    i2c_obj->i2c_isr_callback = RT_NULL;
+    i2c_obj->transfer.pBuffPtr = RT_NULL;
+    i2c_obj->transfer.XferCount = 0;
+    i2c_obj->transfer.XferSize = 0;
+    i2c_obj->transfer.state = I2C_READY;
+
+    /* Release the bus only if we still own it, then clear residue */
+    if (I2C_GetFlag(Instance, I2C_FLAG_BUSY) != RESET)
+    {
+        I2C_GenerateStop(Instance, ENABLE);
+        (void)n32_i2c_wait_bus_idle(Instance);
+    }
+
+    n32_i2c_prepare_start(Instance);
+}
+#endif /* defined(SOC_SERIES_N32H7xx) */
+
 #define I2C_ABORT_ON_TIMEOUT(obj) n32_i2c_abort_transfer(obj)
-#else
-#define I2C_ABORT_ON_TIMEOUT(obj) ((obj)->transfer.state = I2C_READY)
-#endif
 
 enum
 {
@@ -487,8 +595,6 @@ static rt_err_t n32_i2c_init(struct n32_i2c *i2c_drv)
 #if defined(SOC_SERIES_N32H7xx)
     I2C_InitType I2C_InitStructure;
     uint32_t BusTim_Reg;
-    /* Call I2C_Configuration() from an external file */
-    I2C_Configuration();
     /* Disable IIC */
     I2C_Enable(cfg->Instance, DISABLE);
     /* Get IIC BUSTM Register value */
