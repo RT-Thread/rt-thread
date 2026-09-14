@@ -48,7 +48,7 @@ struct n32_spi_device
 #define SPI_USING_RX_DMA_FLAG (1 << 0)
 #define SPI_USING_TX_DMA_FLAG (1 << 1)
 
-/* Max bytes of a single DMA block (12-bit BlkTfrSize) */
+/* Max elements (data items) of a single DMA block (12-bit BlkTfrSize) */
 #define SPI_DMA_BLOCK_MAX (4095U)
 /* Number of LLI chain nodes per DMA leg (sizes lli_tx/lli_rx) */
 #define SPI_DMA_CHAIN_NODES (16U)

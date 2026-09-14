@@ -662,6 +662,20 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
     uint32_t i;
     rt_err_t ret;
 
+#ifdef BSP_USING_NAND_BUS_WIDTH_16B
+    /* 16-bit NAND has no 8-bit store (see the data phase below), so an odd
+     * data_len has no halfword-only encoding: its trailing byte could only
+     * leave as an 8-bit write, and padding would program a byte the caller
+     * never asked for. Refuse it before the command phase, so the chip is
+     * never left in the middle of a program sequence.
+     */
+    if (data_len & 1U)
+    {
+        LOG_E("page %d: 16-bit NAND needs an even data length, got %u", (int)page, (unsigned int)data_len);
+        return -RT_EINVAL;
+    }
+#endif
+
     /* Command phase: WRITE_1ST + column(2x 0) + row(NAND_ROW_ADDR_CYCLES) */
     *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_WRITE_1ST;
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = 0x00;
@@ -686,7 +700,8 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
          * 16-bit NAND: 8-bit AHB writes are NOT supported (see FEMC manual
          * "supported memories and operations"), so data must be written as
          * 16-bit accesses. If the source buffer is not 16-bit aligned, copy
-         * it into an aligned temporary buffer first.
+         * it into an aligned temporary buffer first. An odd data_len was
+         * refused at the top of this function.
          */
         if (((uint32_t)data & 0x1U) == 0U)
         {
@@ -716,11 +731,6 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
             }
             rt_free(tmp);
         }
-        /* odd trailing byte */
-        if (data_len & 1)
-        {
-            *(__IO uint8_t *)(bank | NAND_DATA_AREA) = data[data_len - 1];
-        }
 #else
         for (i = 0; i < data_len; i++)
         {
@@ -730,7 +740,14 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
     }
     else
     {
+        /* No payload: one store still has to be issued so the data phase clocks
+         * out. 16-bit NAND rejects 8-bit AHB writes (see the note above), so the
+         * dummy element must be halfword-sized on that bus. */
+#ifdef BSP_USING_NAND_BUS_WIDTH_16B
+        *(__IO uint16_t *)(bank | NAND_DATA_AREA) = 0x0000;
+#else
         *(__IO uint8_t *)(bank | NAND_DATA_AREA) = 0x00;
+#endif
     }
 
     /* spare area write not implemented yet */
