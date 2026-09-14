@@ -71,7 +71,7 @@ menu "Onboard Peripheral Drivers"
 
             choice BSP_SDRAM_DATA_WIDTH_SEL
                 prompt "Select SDRAM Data Width"
-                default BSP_SDRAM_DATA_WIDTH_32
+                default BSP_SDRAM_DATA_WIDTH_16
 
                 config BSP_SDRAM_DATA_WIDTH_8
                     bool "SDRAM Data Width 8-bits"
@@ -85,7 +85,7 @@ menu "Onboard Peripheral Drivers"
 
             choice BSP_SDRAM_COLUMN_BITS_SEL
                 prompt "Select SDRAM Column Bits"
-                default BSP_SDRAM_COLUMN_BIT_9
+                default BSP_SDRAM_COLUMN_BIT_8
 
                 config BSP_SDRAM_COLUMN_BIT_8
                     bool "SDRAM SDRAM Column Bits 8-bits"
@@ -131,7 +131,7 @@ menu "Onboard Peripheral Drivers"
             config BSP_SDRAM_SIZE
                 int "SDRAM Size (MBytes)"
                 range 8 256
-                default 32
+                default 8
         endif
 
 endmenu
