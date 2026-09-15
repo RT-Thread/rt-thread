@@ -337,7 +337,11 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
 static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
 {
     rt_base_t level;
+    rt_bool_t notify_rx = RT_FALSE;
     struct vcom *data;
+#ifdef RT_USING_SERIAL_V2
+    struct rt_serial_rx_fifo *rx_fifo;
+#endif
 
     RT_ASSERT(func != RT_NULL);
 
@@ -351,11 +355,31 @@ static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
         /* receive data from USB VCOM */
         level = rt_hw_interrupt_disable();
 
+#ifdef RT_USING_SERIAL_V2
+        if (data->serial.config.rx_bufsz == 0)
+        {
+            rt_ringbuffer_put(&data->rx_ringbuffer, data->ep_out->buffer, size);
+        }
+        else
+        {
+            rx_fifo = (struct rt_serial_rx_fifo *)data->serial.serial_rx;
+            if (rx_fifo != RT_NULL)
+            {
+                rt_ringbuffer_put(&rx_fifo->rb, data->ep_out->buffer, size);
+                notify_rx = RT_TRUE;
+            }
+        }
+#else
         rt_ringbuffer_put(&data->rx_ringbuffer, data->ep_out->buffer, size);
+        notify_rx = RT_TRUE;
+#endif
         rt_hw_interrupt_enable(level);
 
         /* notify receive data */
-        rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_RX_IND);
+        if (notify_rx)
+        {
+            rt_hw_serial_isr(&data->serial, RT_SERIAL_EVENT_RX_IND);
+        }
     }
 
     data->ep_out->request.buffer = data->ep_out->buffer;
@@ -513,10 +537,6 @@ static rt_err_t _function_enable(ufunction_t func)
     data = (struct vcom*)func->user_data;
     data->ep_out->buffer = rt_malloc(CDC_RX_BUFSIZE);
     RT_ASSERT(data->ep_out->buffer != RT_NULL);
-
-#ifdef RT_USING_SERIAL_V2
-    data->serial.serial_rx = &data->rx_ringbuffer;
-#endif
 
     data->ep_out->request.buffer = data->ep_out->buffer;
     data->ep_out->request.size = EP_MAXPACKET(data->ep_out);
@@ -719,6 +739,9 @@ static int _vcom_getc(struct rt_serial_device *serial)
     rt_base_t level;
     struct ufunction *func;
     struct vcom *data;
+#ifdef RT_USING_SERIAL_V2
+    struct rt_serial_rx_fifo *rx_fifo;
+#endif
 
     func = (struct ufunction*)serial->parent.user_data;
     data = (struct vcom*)func->user_data;
@@ -727,10 +750,28 @@ static int _vcom_getc(struct rt_serial_device *serial)
 
     level = rt_hw_interrupt_disable();
 
-    if(rt_ringbuffer_getchar(&data->rx_ringbuffer, &ch) != 0)
+#ifdef RT_USING_SERIAL_V2
+    if (serial->config.rx_bufsz == 0)
+    {
+        if (rt_ringbuffer_getchar(&data->rx_ringbuffer, &ch) != 0)
+        {
+            result = ch;
+        }
+    }
+    else
+    {
+        rx_fifo = (struct rt_serial_rx_fifo *)serial->serial_rx;
+        if (rx_fifo != RT_NULL && rt_ringbuffer_getchar(&rx_fifo->rb, &ch) != 0)
+        {
+            result = ch;
+        }
+    }
+#else
+    if (rt_ringbuffer_getchar(&data->rx_ringbuffer, &ch) != 0)
     {
         result = ch;
     }
+#endif
 
     rt_hw_interrupt_enable(level);
 
