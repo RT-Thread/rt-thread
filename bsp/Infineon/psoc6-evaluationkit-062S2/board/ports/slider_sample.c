@@ -128,7 +128,7 @@ void Slider_Init(void)
         return;
     }
 
-#ifdef BSP_USING_PWM0_PORT0
+#ifdef BSP_USING_PWM0_CH0_PORT0
     /* Initiate PWM*/
     pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
 
