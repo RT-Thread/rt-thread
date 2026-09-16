@@ -687,6 +687,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SDIO"
         default n
         select RT_USING_SDIO
+        select RT_USING_DFS
         if BSP_USING_SDIO
             config BSP_USING_SDIO1
                 bool "Enable SDIO1"
@@ -842,7 +843,7 @@ menu "On-chip Peripheral Drivers"
                 bool
                 default n
             config BSP_USING_USBFS
-                bool "Use USBFS Core "
+                bool "Use USBFS Core"
                 default n
             if BSP_USING_USBFS
                 choice BSP_USBFS_MODE_SEL
@@ -876,7 +877,7 @@ menu "On-chip Peripheral Drivers"
                 endif
             endif
             config BSP_USING_USBHS
-                bool "Use USBHS Core "
+                bool "Use USBHS Core"
                 default n
             if BSP_USING_USBHS
                 choice BSP_USBHS_MODE_SEL

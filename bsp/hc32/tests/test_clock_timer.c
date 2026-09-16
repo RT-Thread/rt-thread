@@ -151,8 +151,7 @@ static int clock_timer_sample(int argc, char *argv[])
     }
 
     /* 确保oneshot模式cb函数执行一次后才关闭定时器 */
-    while (cb_run == RT_FALSE)
-        ;
+    while (cb_run == RT_FALSE);
     cb_run = RT_FALSE;
 
     /* close */

@@ -268,7 +268,9 @@ static rt_uint32_t _get_can_baud_index(rt_uint32_t baud)
     for (index = 0; index < len; index++)
     {
         if (_g_baudrate_tab[index].baud_rate == baud)
+        {
             return index;
+        }
     }
 
     return 0; /* default baud is CAN1MBaud */
@@ -1023,7 +1025,9 @@ static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t
     /* get data */
     ll_ret = CAN_GetRxFrame(p_can_dev->instance, &ll_rx_frame);
     if (ll_ret != LL_OK)
+    {
         return -RT_ERROR;
+    }
 
     /* get id */
     if (0 == ll_rx_frame.IDE)
