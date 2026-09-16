@@ -874,6 +874,14 @@ def DoBuilding(target, objects):
     PreBuilding()
     objects = one_list(objects)
 
+    if GetDepend('RT_USING_KSYMS'):
+        if GetOption('target'):
+            raise RuntimeError('RT_USING_KSYMS is supported by native SCons builds only')
+        if rtconfig.PLATFORM != 'gcc':
+            raise RuntimeError('RT_USING_KSYMS requires the GCC/ELF toolchain')
+        if not getattr(rtconfig, 'OBJDUMP', None):
+            raise RuntimeError('RT_USING_KSYMS requires rtconfig.OBJDUMP')
+
     program = None
     # check whether special buildlib option
     lib_name = GetOption('buildlib')
@@ -917,6 +925,11 @@ def DoBuilding(target, objects):
         objects_in_group = sorted(objects_in_group)
         objects = sorted(objects)
         objects.append(objects_in_group)
+
+        if GetDepend('RT_USING_KSYMS') and rtconfig.PLATFORM == 'gcc':
+            from ksym import BuildWithKSym
+            program = BuildWithKSym(Env, target, objects, EndBuilding)
+            return
 
         program = Env.Program(target, objects)
 
