@@ -86,6 +86,7 @@ jobs:
         if: ${{ github.event.inputs.bsp_tool_chain == 'llvm-arm' && success() }}
         shell: bash
         run: |
+          sudo apt-get install -y libtinfo5
           source tools/ci/toolchain.sh clang
           echo "RTT_EXEC_PATH=/opt/clang/bin" >> $GITHUB_ENV
           echo "RTT_CC=llvm-arm" >> $GITHUB_ENV
