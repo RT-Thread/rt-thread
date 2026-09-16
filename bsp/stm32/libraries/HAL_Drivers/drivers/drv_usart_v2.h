@@ -20,34 +20,27 @@
 
 int rt_hw_usart_init(void);
 
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
-    || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L5) \
-    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32F3)  \
-    || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS)
-#define UART_SET_TDR(__HANDLE__, __DATA__)  ((__HANDLE__)->Instance->TDR = (__DATA__))
-#define UART_GET_RDR(__HANDLE__, MASK)            ((__HANDLE__)->Instance->RDR & MASK)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS) || defined(SOC_SERIES_STM32N6)
+#define UART_SET_TDR(__HANDLE__, __DATA__) ((__HANDLE__)->Instance->TDR = (__DATA__))
+#define UART_GET_RDR(__HANDLE__, MASK)     ((__HANDLE__)->Instance->RDR & MASK)
 
 #else
-#define UART_SET_TDR(__HANDLE__, __DATA__)  ((__HANDLE__)->Instance->DR = (__DATA__))
-#define UART_GET_RDR(__HANDLE__, MASK)            ((__HANDLE__)->Instance->DR & MASK)
+#define UART_SET_TDR(__HANDLE__, __DATA__) ((__HANDLE__)->Instance->DR = (__DATA__))
+#define UART_GET_RDR(__HANDLE__, MASK)     ((__HANDLE__)->Instance->DR & MASK)
 #endif
 
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32WL) \
-    || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) \
-    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)|| defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32U5) \
-    || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS)
-#define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_FLAG
-#elif defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) \
-    || defined(SOC_SERIES_STM32MP1)
-#define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_IT
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS) || defined(SOC_SERIES_STM32N6)
+#define UART_INSTANCE_CLEAR_FUNCTION __HAL_UART_CLEAR_FLAG
+#elif defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1)
+#define UART_INSTANCE_CLEAR_FUNCTION __HAL_UART_CLEAR_IT
 #endif
 
-#define UART_RX_DMA_IT_IDLE_FLAG        0x00
-#define UART_RX_DMA_IT_HT_FLAG          0x01
-#define UART_RX_DMA_IT_TC_FLAG          0x02
+#define UART_RX_DMA_IT_IDLE_FLAG 0x00
+#define UART_RX_DMA_IT_HT_FLAG   0x01
+#define UART_RX_DMA_IT_TC_FLAG   0x02
 
-#define UART_CTRL_SET_ERROR_CALLBACK    0x100
+#define UART_CTRL_SET_ERROR_CALLBACK 0x100
 
 /* stm32 config class */
 struct stm32_uart_config

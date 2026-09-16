@@ -21,21 +21,17 @@
 
 int rt_hw_usart_init(void);
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32WL) \
-    || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) \
-    || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB)|| defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32U5) \
-    || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS)
-#define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_FLAG
-#elif defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) \
-    || defined(SOC_SERIES_STM32MP1)
-#define UART_INSTANCE_CLEAR_FUNCTION    __HAL_UART_CLEAR_IT
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS)
+#define UART_INSTANCE_CLEAR_FUNCTION __HAL_UART_CLEAR_FLAG
+#elif defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32N6)
+#define UART_INSTANCE_CLEAR_FUNCTION __HAL_UART_CLEAR_IT
 #endif
 
-#define UART_RX_DMA_IT_IDLE_FLAG        0x00
-#define UART_RX_DMA_IT_HT_FLAG          0x01
-#define UART_RX_DMA_IT_TC_FLAG          0x02
+#define UART_RX_DMA_IT_IDLE_FLAG 0x00
+#define UART_RX_DMA_IT_HT_FLAG   0x01
+#define UART_RX_DMA_IT_TC_FLAG   0x02
 
-#define UART_CTRL_SET_BLOCK_TIMEOUT     0x20
+#define UART_CTRL_SET_BLOCK_TIMEOUT 0x20
 
 /* stm32 config class */
 struct stm32_uart_config
