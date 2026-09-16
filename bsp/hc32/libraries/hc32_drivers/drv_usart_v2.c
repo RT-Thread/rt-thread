@@ -438,8 +438,7 @@ static int hc32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(RT_NULL != uart->config->Instance);
 
     /* Polling mode. */
-    while (USART_GetStatus(uart->config->Instance, USART_FLAG_TX_CPLT) != SET)
-        ;
+    while (USART_GetStatus(uart->config->Instance, USART_FLAG_TX_CPLT) != SET);
     USART_WriteData(uart->config->Instance, c);
 
     return 1;

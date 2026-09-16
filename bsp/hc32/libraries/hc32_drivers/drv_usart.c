@@ -401,8 +401,7 @@ static int hc32_putc(struct rt_serial_device *serial, char c)
     else
     {
         /* Polling mode. */
-        while (USART_GetStatus(uart->config->Instance, USART_FLAG_TX_EMPTY) != SET)
-            ;
+        while (USART_GetStatus(uart->config->Instance, USART_FLAG_TX_EMPTY) != SET);
     }
     USART_WriteData(uart->config->Instance, c);
 
