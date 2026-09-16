@@ -18,12 +18,12 @@
 #include <drivers/dev_pwm.h>
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.pwm"
+#define LOG_TAG "drv.pwm"
 #include <drv_log.h>
 
 #define MAX_PERIOD 65535
 #define MIN_PERIOD 1
-#define MIN_PULSE 1
+#define MIN_PULSE  1
 
 enum
 {
@@ -83,13 +83,12 @@ enum
 struct stm32_pwm
 {
     struct rt_device_pwm pwm_device;
-    TIM_HandleTypeDef    tim_handle;
+    TIM_HandleTypeDef tim_handle;
     rt_uint8_t channel;
     char *name;
 };
 
-static struct stm32_pwm stm32_pwm_obj[] =
-{
+static struct stm32_pwm stm32_pwm_obj[] = {
 #ifdef BSP_USING_PWM1
     PWM1_CONFIG,
 #endif
@@ -180,12 +179,15 @@ static rt_uint64_t tim_clock_get(TIM_HandleTypeDef *htim)
     }
 #endif
 
+#if defined(SOC_SERIES_STM32N6)
+    tim_clock = HAL_RCCEx_GetTIMGFreq();
+#endif
+
     return tim_clock;
 }
 
 static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg);
-static struct rt_pwm_ops drv_ops =
-{
+static struct rt_pwm_ops drv_ops = {
     drv_pwm_control
 };
 
@@ -254,7 +256,7 @@ static rt_err_t drv_pwm_set(TIM_HandleTypeDef *htim, struct rt_pwm_configuration
     tim_clock = tim_clock_get(htim);
     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
     tim_clock /= 1000000UL;
-    period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL ;
+    period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL;
     psc = period / MAX_PERIOD + 1;
     period = period / psc;
     __HAL_TIM_SET_PRESCALER(htim, psc - 1);
@@ -294,7 +296,7 @@ static rt_err_t drv_pwm_set_period(TIM_HandleTypeDef *htim, struct rt_pwm_config
     tim_clock = tim_clock_get(htim);
     /* Convert nanosecond to frequency and duty cycle. 1s = 1 * 1000 * 1000 * 1000 ns */
     tim_clock /= 1000000UL;
-    period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL ;
+    period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL;
     psc = period / MAX_PERIOD + 1;
     period = period / psc;
     __HAL_TIM_SET_PRESCALER(htim, psc - 1);
@@ -363,9 +365,9 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
 {
     rt_err_t result = RT_EOK;
     TIM_HandleTypeDef *tim = RT_NULL;
-    TIM_OC_InitTypeDef oc_config = {0};
-    TIM_MasterConfigTypeDef master_config = {0};
-    TIM_ClockConfigTypeDef clock_config = {0};
+    TIM_OC_InitTypeDef oc_config = { 0 };
+    TIM_MasterConfigTypeDef master_config = { 0 };
+    TIM_ClockConfigTypeDef clock_config = { 0 };
 
     RT_ASSERT(device != RT_NULL);
 
@@ -376,7 +378,8 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     tim->Init.CounterMode = TIM_COUNTERMODE_UP;
     tim->Init.Period = 1;
     tim->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4)
+    tim->Init.RepetitionCounter = 0;
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32N6)
     tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
     if (HAL_TIM_Base_Init(tim) != HAL_OK)
@@ -403,7 +406,7 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
         goto __exit;
     }
 
-    if(IS_TIM_MASTER_INSTANCE(tim->Instance))
+    if (IS_TIM_MASTER_INSTANCE(tim->Instance))
     {
         master_config.MasterOutputTrigger = TIM_TRGO_RESET;
         master_config.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
@@ -420,7 +423,7 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     oc_config.OCPolarity = TIM_OCPOLARITY_HIGH;
     oc_config.OCFastMode = TIM_OCFAST_DISABLE;
     oc_config.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-    oc_config.OCIdleState  = TIM_OCIDLESTATE_RESET;
+    oc_config.OCIdleState = TIM_OCIDLESTATE_RESET;
 
     /* config pwm channel */
     if (device->channel & 0x01)
@@ -464,7 +467,7 @@ static rt_err_t stm32_hw_pwm_init(struct stm32_pwm *device)
     }
 
     /* pwm pin configuration */
-    void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+    void HAL_TIM_MspPostInit(TIM_HandleTypeDef * htim);
     HAL_TIM_MspPostInit(tim);
 
     /* enable update request source */
