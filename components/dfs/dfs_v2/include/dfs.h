@@ -69,7 +69,7 @@
 #endif
 
 #ifndef DFS_PATH_MAX
-#define DFS_PATH_MAX            4096
+#define DFS_PATH_MAX            DIRENT_NAME_MAX
 #endif
 
 #ifndef SECTOR_SIZE
