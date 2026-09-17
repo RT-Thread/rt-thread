@@ -107,7 +107,15 @@ static char *print_number(char *buf,
                 num = (rt_uint16_t)-num;
             }
             break;
+#ifdef RT_KLIBC_USING_VSNPRINTF_LONGLONG
         case 'L':
+            if (num > (~0ULL >> 1))
+            {
+                sign = '-';
+                num = 0ULL - num;
+            }
+            break;
+#endif /* RT_KLIBC_USING_VSNPRINTF_LONGLONG */
         case 'l':
             if ((long)num < 0)
             {
@@ -552,7 +560,14 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
 
         if (qualifier == 'L')
         {
-            num = va_arg(args, unsigned long long);
+            if (flags & SIGN)
+            {
+                num = (unsigned long long)va_arg(args, long long);
+            }
+            else
+            {
+                num = va_arg(args, unsigned long long);
+            }
         }
         else if (qualifier == 'l')
         {
