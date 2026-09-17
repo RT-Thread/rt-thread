@@ -134,6 +134,12 @@
 static volatile int receive_sig = 0;
 static struct rt_semaphore _received_signal;
 
+#ifdef RT_USING_MUSLLIBC
+#define UTEST_SIGNAL_MIN 1
+#else
+#define UTEST_SIGNAL_MIN 0
+#endif
+
 void sig_handle_default(int signo)
 {
     receive_sig = signo;
@@ -145,7 +151,7 @@ static void rt_signal_install_test(void)
     rt_sighandler_t result;
 
     /* case 1:rt_signal_install, install all available signal. */
-    for (signo = 0; signo < RT_SIG_MAX; signo++)
+    for (signo = UTEST_SIGNAL_MIN; signo < RT_SIG_MAX; signo++)
     {
         result = rt_signal_install(signo, sig_handle_default);
         uassert_true(result != SIG_ERR);
@@ -163,7 +169,7 @@ static void rt_signal_unmask_test(void)
     rt_sighandler_t result;
 
     /* case 3:rt_signal_mask/unmask, one thread self, install and unmask, then kill, should received. */
-    for (signo = 0; signo < RT_SIG_MAX; signo++)
+    for (signo = UTEST_SIGNAL_MIN; signo < RT_SIG_MAX; signo++)
     {
         receive_sig = -1;
         result = rt_signal_install(signo, sig_handle_default);
@@ -183,7 +189,7 @@ static void rt_signal_mask_test(void)
     rt_sighandler_t result;
 
     /* case 4:rt_signal_mask/unmask, one thread self, install and unmask and mask, then kill, should can't received. */
-    for (signo = 0; signo < RT_SIG_MAX; signo++)
+    for (signo = UTEST_SIGNAL_MIN; signo < RT_SIG_MAX; signo++)
     {
         receive_sig = -1;
         result = rt_signal_install(signo, sig_handle_default);
@@ -206,7 +212,7 @@ static void rt_signal_kill_test(void)
     rt_sighandler_t result;
 
     /* case 7:rt_signal_kill, kill legal thread, return 0; */
-    for (signo = 0; signo < RT_SIG_MAX; signo++)
+    for (signo = UTEST_SIGNAL_MIN; signo < RT_SIG_MAX; signo++)
     {
         receive_sig = -1;
         result = rt_signal_install(signo, sig_handle_default);
