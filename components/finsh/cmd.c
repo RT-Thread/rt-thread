@@ -331,7 +331,8 @@ long list_thread(void)
                                rt_strerror(thread->error),
                                thread);
 #ifdef RT_USING_CPU_USAGE_TRACER
-                    rt_kprintf(" %3d%%%8d%10d", rt_thread_get_usage(thread), thread->ctx_count, thread->ctx_last_time);
+                    uint16_t usage = rt_thread_get_usage(thread);
+                    rt_kprintf(" %2hu.%2hu%%%8d%10d", usage / 100, usage % 100, thread->ctx_count, thread->ctx_last_time);
 #endif
                     rt_kprintf("  \n");
 #else
@@ -347,7 +348,8 @@ long list_thread(void)
                                thread);
 #endif
 #ifdef RT_USING_CPU_USAGE_TRACER
-                    rt_kprintf(" %3d%%%8d%10d", rt_thread_get_usage(thread), thread->ctx_count, thread->ctx_last_time);
+                    uint16_t usage = rt_thread_get_usage(thread);
+                    rt_kprintf(" %2hu.%2hu%%%8d%10d", usage / 100, usage % 100, thread->ctx_count, thread->ctx_last_time);
 #else
                     rt_kprintf("\n");
 #endif
