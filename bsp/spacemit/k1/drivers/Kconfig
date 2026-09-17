@@ -1,0 +1,18 @@
+menu "Drivers Configuration"
+   
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_UART
+        default y
+
+        if BSP_USING_UART
+            # config BSP_UART_USING_DMA
+            #     bool "Enable UART with DMA"
+            #     default n
+        
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y              
+        endif
+
+endmenu

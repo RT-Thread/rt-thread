@@ -1,0 +1,36 @@
+mainmenu "RT-Thread SpacemiT K1 Configuration"
+
+BSP_DIR := .
+RTT_DIR := ../../..
+PKGS_DIR := packages
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+#rsource "board/Kconfig"
+rsource "drivers/Kconfig"
+ 
+config SOC_SPACEMIT_K1
+    bool
+    select ARCH_RISCV64
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+choice BOARD_NAME
+    prompt "Select Your Board"
+    default BOARD_MUSE_PI_PRO
+    
+    config BOARD_MUSE_PI_PRO
+        bool "SpacemiT MUSE Pi Pro"
+        select SOC_SPACEMIT_K1
+        default y
+endchoice
+
+config ENABLE_FPU
+    bool "Enable FPU"
+    select ARCH_RISCV_FPU
+    default y
+
+config __STACKSIZE__
+    int "stack size for interrupt"
+    default 16384
