@@ -35,11 +35,11 @@ rt_err_t blk_put_partition(struct rt_blk_disk *disk, const char *type,
     {
         rt_uint32_t ssz = rt_blk_disk_get_logical_block_size(disk);
 
-        rt_kprintf("found part[%u], begin: %lu, size: ", partno, start * ssz);
+        rt_kprintf("found part[%d], begin: %lu, size: ", partno, (unsigned long)(start * ssz));
 
         if ((count >> 11) == 0)
         {
-            rt_kprintf("%u%cB\n", count >> 1, 'K'); /* KB */
+            rt_kprintf("%lu%cB\n", (unsigned long)(count >> 1), 'K'); /* KB */
         }
         else
         {
@@ -47,11 +47,11 @@ rt_err_t blk_put_partition(struct rt_blk_disk *disk, const char *type,
 
             if ((size_mb >> 10) == 0)
             {
-                rt_kprintf("%u.%u%cB\n", size_mb, (count >> 1) & 0x3ff, 'M');
+                rt_kprintf("%lu.%lu%cB\n", (unsigned long)size_mb, (unsigned long)((count >> 1) & 0x3ffU), 'M');
             }
             else
             {
-                rt_kprintf("%u.%u%cB\n", size_mb >> 10, size_mb & 0x3ff, 'G');
+                rt_kprintf("%lu.%lu%cB\n", (unsigned long)(size_mb >> 10), (unsigned long)(size_mb & 0x3ffU), 'G');
             }
         }
     }
@@ -89,8 +89,7 @@ rt_err_t blk_put_partition(struct rt_blk_disk *disk, const char *type,
     return RT_EOK;
 
 _fail:
-    LOG_E("%s: Put partition.%s[%u] start = %lu count = %lu error = %s",
-            to_disk_name(disk), type, partno, start, count, rt_strerror(err));
+    LOG_E("%s: Put partition.%s[%d] start = %lu count = %lu error = %s", to_disk_name(disk), type, partno, (unsigned long)start, (unsigned long)count, rt_strerror(err));
 
     if (blk)
     {
