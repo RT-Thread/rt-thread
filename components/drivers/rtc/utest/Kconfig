@@ -1,0 +1,40 @@
+menu "RTC Test"
+    depends on RT_USING_RTC
+
+config RT_UTEST_RTC
+    bool "RTC Time Test"
+    default n
+    help
+        Validate RTC timestamp set/get and time advancement. The test changes
+        the RTC time and restores it after completion.
+
+config RT_UTEST_RTC_ALARM
+    bool "RTC Alarm Test"
+    depends on RT_USING_ALARM
+    depends on RT_USING_HEAP
+    default n
+    help
+        Validate one-shot alarm delivery using the current RTC time. The test
+        reapplies the current time to start the RTC counter and changes the
+        alarm, so no application may use them while the test runs.
+
+if RT_UTEST_RTC_ALARM
+
+    config RT_RTC_TC_ALARM_DELAY_SEC
+        int "Alarm Delay in Seconds"
+        range 3 120
+        default 15
+        help
+            Delay between reading the current RTC time and the one-shot alarm.
+
+    config RT_RTC_TC_ALARM_TIMEOUT_SEC
+        int "Alarm Timeout in Seconds"
+        range 4 180
+        default 25
+        help
+            Maximum time to wait for the alarm callback. Keep this greater
+            than the configured alarm delay.
+
+endif
+
+endmenu

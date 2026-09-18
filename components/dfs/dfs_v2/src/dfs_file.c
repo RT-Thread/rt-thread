@@ -558,7 +558,7 @@ _ERR_RET:
  * @return 0 on successful, -1 on failure:
  *         -ENOENT if file doesn't exist and O_CREAT not set
  *         -EEXIST if file exists and O_EXCL|O_CREAT set
- *         -EPERM if permission denied
+ *         -EACCES if permission denied
  *         -ENOTDIR if path is not a directory when O_DIRECTORY set
  *         -EISDIR if path is directory when opening as regular file
  */
@@ -763,7 +763,7 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                     {
                         DLOG(msg, "dfs_file", mnt->fs_ops->name, DLOG_MSG, "no permission or fops->open");
                         dfs_file_unref(file);
-                        ret = -EPERM;
+                        ret = -EACCES;
                     }
                 }
                 else
@@ -1401,6 +1401,10 @@ int dfs_file_stat(const char *path, struct stat *buf)
                     if (dfs_is_mounted(mnt) == 0)
                     {
                         ret = mnt->fs_ops->stat(dentry, buf);
+                        if (ret == RT_EOK && buf->st_nlink == 0 && dentry->vnode != RT_NULL)
+                        {
+                            buf->st_nlink = dentry->vnode->nlink;
+                        }
                     }
                 }
 
@@ -1470,6 +1474,10 @@ int dfs_file_lstat(const char *path, struct stat *buf)
                     if (dfs_is_mounted(mnt) == 0)
                     {
                         ret = mnt->fs_ops->stat(dentry, buf);
+                        if (ret == RT_EOK && buf->st_nlink == 0 && dentry->vnode != RT_NULL)
+                        {
+                            buf->st_nlink = dentry->vnode->nlink;
+                        }
                     }
                 }
 
@@ -1596,6 +1604,29 @@ int dfs_file_setattr(const char *path, struct dfs_attr *attr)
     return ret;
 }
 
+int dfs_file_fsetattr(struct dfs_file *file, struct dfs_attr *attr)
+{
+    struct dfs_mnt *mnt;
+
+    if (file == RT_NULL || file->dentry == RT_NULL || attr == RT_NULL)
+    {
+        return -EBADF;
+    }
+
+    mnt = file->dentry->mnt;
+    if (mnt == RT_NULL || mnt->fs_ops == RT_NULL ||
+        mnt->fs_ops->setattr == RT_NULL)
+    {
+        return -ENOSYS;
+    }
+    if (dfs_is_mounted(mnt) != 0)
+    {
+        return -EINVAL;
+    }
+
+    return mnt->fs_ops->setattr(file->dentry, attr);
+}
+
 /**
  * @brief Perform device-specific control operations
  *
@@ -1654,7 +1685,7 @@ int dfs_file_ioctl(struct dfs_file *file, int cmd, void *args)
  * - F_SETFD: Set file descriptor flags
  * - F_GETFL: Get file status flags
  * - F_SETFL: Set file status flags
- * - F_GETLK/F_SETLK/F_SETLKW: File locking operations (unimplemented)
+ * - F_GETLK/F_SETLK/F_SETLKW: POSIX advisory record locking
  * - F_DUPFD_CLOEXEC: Duplicate file descriptor with close-on-exec flag (if supported)
  *
  * @param[in] fd File descriptor to operate on
@@ -1670,7 +1701,6 @@ int dfs_file_ioctl(struct dfs_file *file, int cmd, void *args)
  *         -EPERM for unsupported commands
  *
  * @note Not all commands may be supported by all filesystems
- * @note File locking operations (F_GETLK/F_SETLK/F_SETLKW) are currently unimplemented
  */
 int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
 {
@@ -1724,9 +1754,11 @@ int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
             break;
         }
         case F_GETLK:
+            ret = dfs_record_lock_fcntl(file, cmd, (struct flock *)arg);
             break;
         case F_SETLK:
         case F_SETLKW:
+            ret = dfs_record_lock_fcntl(file, cmd, (struct flock *)arg);
             break;
 #ifdef RT_USING_MUSLLIBC
         case F_DUPFD_CLOEXEC:

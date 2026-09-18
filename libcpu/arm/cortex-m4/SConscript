@@ -21,6 +21,19 @@ if rtconfig.PLATFORM in ['gcc', 'llvm-arm']:
 if rtconfig.PLATFORM in ['iccarm']:
     src += Glob('*_iar.S')
 
+using_mpu = (
+    GetDepend('RT_USING_MEM_PROTECTION') or
+    GetDepend('RT_USING_HW_STACK_GUARD')
+)
+
+if using_mpu:
+    if rtconfig.PLATFORM not in ['gcc', 'llvm-arm']:
+        raise RuntimeError(
+            'Cortex-M4 memory protection currently supports GCC only'
+        )
+else:
+    SrcRemove(src, 'mpu.c')
+
 group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

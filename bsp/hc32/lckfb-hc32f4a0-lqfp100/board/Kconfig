@@ -142,7 +142,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART1 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART1_RX_USING_DMA
-                        default 64                        
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART2
@@ -175,7 +175,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART2 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART2_RX_USING_DMA
-                        default 64                        
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART3
@@ -259,7 +259,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART6 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART6_RX_USING_DMA
-                        default 64                        
+                        default 64
                 endif
 
             menuconfig BSP_USING_UART7
@@ -292,7 +292,7 @@ menu "On-chip Peripheral Drivers"
                         int "Set UART2 RX DMA ping-pong buffer size"
                         range 32 65535
                         depends on RT_USING_SERIAL_V2 && BSP_UART7_RX_USING_DMA
-                        default 64                        
+                        default 64
                 endif
 
 
@@ -660,6 +660,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SDIO"
         default n
         select RT_USING_SDIO
+        select RT_USING_DFS
         if BSP_USING_SDIO
             config BSP_USING_SDIO1
                 bool "Enable SDIO1"

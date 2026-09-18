@@ -58,7 +58,9 @@ void rt_hw_systick_init(void)
 
     _systick_ms = 1000u / RT_TICK_PER_SECOND;
     if (_systick_ms == 0)
+    {
         _systick_ms = 1;
+    }
 }
 
 /**
@@ -71,7 +73,9 @@ void SysTick_Handler(void)
     rt_interrupt_enter();
 
     if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+    {
         HAL_IncTick();
+    }
 
     rt_tick_increase();
 
@@ -82,7 +86,9 @@ void SysTick_Handler(void)
 uint32_t HAL_GetTick(void)
 {
     if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+    {
         HAL_IncTick();
+    }
 
     return uwTick;
 }
@@ -118,9 +124,9 @@ void HAL_Delay(__IO uint32_t Delay)
 /* re-implement tick interface for STM32 HAL */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
-    #ifndef SOC_SERIES_STM32MP1
-        rt_hw_systick_init();
-    #endif
+#ifndef SOC_SERIES_STM32MP1
+    rt_hw_systick_init();
+#endif
 
     /* Return function status */
     return HAL_OK;
@@ -176,6 +182,8 @@ void rt_hw_us_delay(rt_uint32_t us)
         }
     }
 }
+
+void MPU_Config(void);
 
 /**
  * This function will initial STM32 board.

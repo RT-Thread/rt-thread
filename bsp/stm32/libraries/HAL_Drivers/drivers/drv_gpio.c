@@ -17,9 +17,9 @@
 
 #ifdef BSP_USING_GPIO
 
-#define PIN_NUM(port, no) (((((port)&0xFu) << 4) | ((no)&0xFu)))
-#define PIN_PORT(pin) ((uint8_t)(((pin) >> 4) & 0xFu))
-#define PIN_NO(pin) ((uint8_t)((pin)&0xFu))
+#define PIN_NUM(port, no) (((((port) & 0xFu) << 4) | ((no) & 0xFu)))
+#define PIN_PORT(pin)     ((uint8_t)(((pin) >> 4) & 0xFu))
+#define PIN_NO(pin)       ((uint8_t)((pin) & 0xFu))
 
 #if defined(SOC_SERIES_STM32MP1)
 #if defined(GPIOZ)
@@ -73,98 +73,95 @@
 
 #define PIN_STPORT_MAX __STM32_PORT_MAX
 
-static const struct pin_irq_map pin_irq_map[] =
-{
+static const struct pin_irq_map pin_irq_map[] = {
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0)
-        {GPIO_PIN_0, EXTI0_1_IRQn},
-        {GPIO_PIN_1, EXTI0_1_IRQn},
-        {GPIO_PIN_2, EXTI2_3_IRQn},
-        {GPIO_PIN_3, EXTI2_3_IRQn},
-        {GPIO_PIN_4, EXTI4_15_IRQn},
-        {GPIO_PIN_5, EXTI4_15_IRQn},
-        {GPIO_PIN_6, EXTI4_15_IRQn},
-        {GPIO_PIN_7, EXTI4_15_IRQn},
-        {GPIO_PIN_8, EXTI4_15_IRQn},
-        {GPIO_PIN_9, EXTI4_15_IRQn},
-        {GPIO_PIN_10, EXTI4_15_IRQn},
-        {GPIO_PIN_11, EXTI4_15_IRQn},
-        {GPIO_PIN_12, EXTI4_15_IRQn},
-        {GPIO_PIN_13, EXTI4_15_IRQn},
-        {GPIO_PIN_14, EXTI4_15_IRQn},
-        {GPIO_PIN_15, EXTI4_15_IRQn},
-#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32U5) \
-                || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS)
-        {GPIO_PIN_0, EXTI0_IRQn},
-        {GPIO_PIN_1, EXTI1_IRQn},
-        {GPIO_PIN_2, EXTI2_IRQn},
-        {GPIO_PIN_3, EXTI3_IRQn},
-        {GPIO_PIN_4, EXTI4_IRQn},
-        {GPIO_PIN_5, EXTI5_IRQn},
-        {GPIO_PIN_6, EXTI6_IRQn},
-        {GPIO_PIN_7, EXTI7_IRQn},
-        {GPIO_PIN_8, EXTI8_IRQn},
-        {GPIO_PIN_9, EXTI9_IRQn},
-        {GPIO_PIN_10, EXTI10_IRQn},
-        {GPIO_PIN_11, EXTI11_IRQn},
-        {GPIO_PIN_12, EXTI12_IRQn},
-        {GPIO_PIN_13, EXTI13_IRQn},
-        {GPIO_PIN_14, EXTI14_IRQn},
-        {GPIO_PIN_15, EXTI15_IRQn},
+    { GPIO_PIN_0, EXTI0_1_IRQn },
+    { GPIO_PIN_1, EXTI0_1_IRQn },
+    { GPIO_PIN_2, EXTI2_3_IRQn },
+    { GPIO_PIN_3, EXTI2_3_IRQn },
+    { GPIO_PIN_4, EXTI4_15_IRQn },
+    { GPIO_PIN_5, EXTI4_15_IRQn },
+    { GPIO_PIN_6, EXTI4_15_IRQn },
+    { GPIO_PIN_7, EXTI4_15_IRQn },
+    { GPIO_PIN_8, EXTI4_15_IRQn },
+    { GPIO_PIN_9, EXTI4_15_IRQn },
+    { GPIO_PIN_10, EXTI4_15_IRQn },
+    { GPIO_PIN_11, EXTI4_15_IRQn },
+    { GPIO_PIN_12, EXTI4_15_IRQn },
+    { GPIO_PIN_13, EXTI4_15_IRQn },
+    { GPIO_PIN_14, EXTI4_15_IRQn },
+    { GPIO_PIN_15, EXTI4_15_IRQn },
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32L5) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H5) || defined(SOC_SERIES_STM32H7RS) || defined(SOC_SERIES_STM32N6)
+    { GPIO_PIN_0, EXTI0_IRQn },
+    { GPIO_PIN_1, EXTI1_IRQn },
+    { GPIO_PIN_2, EXTI2_IRQn },
+    { GPIO_PIN_3, EXTI3_IRQn },
+    { GPIO_PIN_4, EXTI4_IRQn },
+    { GPIO_PIN_5, EXTI5_IRQn },
+    { GPIO_PIN_6, EXTI6_IRQn },
+    { GPIO_PIN_7, EXTI7_IRQn },
+    { GPIO_PIN_8, EXTI8_IRQn },
+    { GPIO_PIN_9, EXTI9_IRQn },
+    { GPIO_PIN_10, EXTI10_IRQn },
+    { GPIO_PIN_11, EXTI11_IRQn },
+    { GPIO_PIN_12, EXTI12_IRQn },
+    { GPIO_PIN_13, EXTI13_IRQn },
+    { GPIO_PIN_14, EXTI14_IRQn },
+    { GPIO_PIN_15, EXTI15_IRQn },
 #elif defined(SOC_SERIES_STM32F3)
-        {GPIO_PIN_0, EXTI0_IRQn},
-        {GPIO_PIN_1, EXTI1_IRQn},
-        {GPIO_PIN_2, EXTI2_TSC_IRQn},
-        {GPIO_PIN_3, EXTI3_IRQn},
-        {GPIO_PIN_4, EXTI4_IRQn},
-        {GPIO_PIN_5, EXTI9_5_IRQn},
-        {GPIO_PIN_6, EXTI9_5_IRQn},
-        {GPIO_PIN_7, EXTI9_5_IRQn},
-        {GPIO_PIN_8, EXTI9_5_IRQn},
-        {GPIO_PIN_9, EXTI9_5_IRQn},
-        {GPIO_PIN_10, EXTI15_10_IRQn},
-        {GPIO_PIN_11, EXTI15_10_IRQn},
-        {GPIO_PIN_12, EXTI15_10_IRQn},
-        {GPIO_PIN_13, EXTI15_10_IRQn},
-        {GPIO_PIN_14, EXTI15_10_IRQn},
-        {GPIO_PIN_15, EXTI15_10_IRQn},
+    { GPIO_PIN_0, EXTI0_IRQn },
+    { GPIO_PIN_1, EXTI1_IRQn },
+    { GPIO_PIN_2, EXTI2_TSC_IRQn },
+    { GPIO_PIN_3, EXTI3_IRQn },
+    { GPIO_PIN_4, EXTI4_IRQn },
+    { GPIO_PIN_5, EXTI9_5_IRQn },
+    { GPIO_PIN_6, EXTI9_5_IRQn },
+    { GPIO_PIN_7, EXTI9_5_IRQn },
+    { GPIO_PIN_8, EXTI9_5_IRQn },
+    { GPIO_PIN_9, EXTI9_5_IRQn },
+    { GPIO_PIN_10, EXTI15_10_IRQn },
+    { GPIO_PIN_11, EXTI15_10_IRQn },
+    { GPIO_PIN_12, EXTI15_10_IRQn },
+    { GPIO_PIN_13, EXTI15_10_IRQn },
+    { GPIO_PIN_14, EXTI15_10_IRQn },
+    { GPIO_PIN_15, EXTI15_10_IRQn },
 #else
-        {GPIO_PIN_0, EXTI0_IRQn},
-        {GPIO_PIN_1, EXTI1_IRQn},
-        {GPIO_PIN_2, EXTI2_IRQn},
-        {GPIO_PIN_3, EXTI3_IRQn},
-        {GPIO_PIN_4, EXTI4_IRQn},
-        {GPIO_PIN_5, EXTI9_5_IRQn},
-        {GPIO_PIN_6, EXTI9_5_IRQn},
-        {GPIO_PIN_7, EXTI9_5_IRQn},
-        {GPIO_PIN_8, EXTI9_5_IRQn},
-        {GPIO_PIN_9, EXTI9_5_IRQn},
-        {GPIO_PIN_10, EXTI15_10_IRQn},
-        {GPIO_PIN_11, EXTI15_10_IRQn},
-        {GPIO_PIN_12, EXTI15_10_IRQn},
-        {GPIO_PIN_13, EXTI15_10_IRQn},
-        {GPIO_PIN_14, EXTI15_10_IRQn},
-        {GPIO_PIN_15, EXTI15_10_IRQn},
+    { GPIO_PIN_0, EXTI0_IRQn },
+    { GPIO_PIN_1, EXTI1_IRQn },
+    { GPIO_PIN_2, EXTI2_IRQn },
+    { GPIO_PIN_3, EXTI3_IRQn },
+    { GPIO_PIN_4, EXTI4_IRQn },
+    { GPIO_PIN_5, EXTI9_5_IRQn },
+    { GPIO_PIN_6, EXTI9_5_IRQn },
+    { GPIO_PIN_7, EXTI9_5_IRQn },
+    { GPIO_PIN_8, EXTI9_5_IRQn },
+    { GPIO_PIN_9, EXTI9_5_IRQn },
+    { GPIO_PIN_10, EXTI15_10_IRQn },
+    { GPIO_PIN_11, EXTI15_10_IRQn },
+    { GPIO_PIN_12, EXTI15_10_IRQn },
+    { GPIO_PIN_13, EXTI15_10_IRQn },
+    { GPIO_PIN_14, EXTI15_10_IRQn },
+    { GPIO_PIN_15, EXTI15_10_IRQn },
 #endif
 };
 
-static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
-{
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
-        {-1, 0, RT_NULL, RT_NULL},
+static struct rt_pin_irq_hdr pin_irq_hdr_tab[] = {
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
+    { -1, 0, RT_NULL, RT_NULL },
 };
 static uint32_t pin_irq_enable_mask = 0;
 
@@ -402,7 +399,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
     if (enabled == PIN_IRQ_ENABLE)
     {
-        GPIO_InitTypeDef GPIO_InitStruct = {0};
+        GPIO_InitTypeDef GPIO_InitStruct = { 0 };
 
         irqindex = bit2bitno(PIN_STPIN(pin));
         if (irqindex < 0 || irqindex >= (rt_int32_t)ITEM_NUM(pin_irq_map))
@@ -515,8 +512,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
     return RT_EOK;
 }
-static const struct rt_pin_ops _stm32_pin_ops =
-{
+static const struct rt_pin_ops _stm32_pin_ops = {
     stm32_pin_mode,
     stm32_pin_write,
     stm32_pin_read,
@@ -535,7 +531,7 @@ rt_inline void pin_irq_hdr(int irqno)
     }
 }
 
-#if defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5)
+#if defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32N6)
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
     pin_irq_hdr(bit2bitno(GPIO_Pin));
@@ -586,7 +582,7 @@ void EXTI4_15_IRQHandler(void)
     rt_interrupt_leave();
 }
 
-#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H7RS)
+#elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H7RS) || defined(SOC_SERIES_STM32N6)
 void EXTI0_IRQHandler(void)
 {
     rt_interrupt_enter();

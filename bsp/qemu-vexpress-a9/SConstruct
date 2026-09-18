@@ -2,6 +2,16 @@ import os
 import sys
 import rtconfig
 
+TRACE_CONFIG = ''
+try:
+    with open('rtconfig.h') as f:
+        for line in f:
+            if line.strip() == '#define RT_BACKTRACE_FUNCTION_NAME':
+                TRACE_CONFIG = '-mpoke-function-name'
+                break
+except OSError:
+    pass
+
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
@@ -20,6 +30,11 @@ env = Environment(tools = ['mingw'],
     AR   = rtconfig.AR, ARFLAGS = '-rc',
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+if TRACE_CONFIG:
+    env.AppendUnique(CCFLAGS=[TRACE_CONFIG])
+    env['ASPPCOM'] += ' ' + TRACE_CONFIG
+
 env['ASCOM'] = env['ASPPCOM']
 
 Export('RTT_ROOT')

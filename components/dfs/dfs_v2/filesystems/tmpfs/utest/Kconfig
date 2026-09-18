@@ -3,4 +3,12 @@ menu "Tmpfs Testcase"
 config RT_UTEST_TMPFS_CP
     bool "tmpfs cp test"
     default n
+
+config RT_UTEST_DFS_RECORD_LOCK
+    bool "DFS POSIX record lock test"
+    default n
+    depends on RT_USING_POSIX_FS && RT_USING_DFS_TMPFS
+    help
+        Enable POSIX advisory record-lock tests on tmpfs.
+
 endmenu

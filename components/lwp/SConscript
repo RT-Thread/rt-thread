@@ -45,10 +45,11 @@ if platform in platform_file.keys(): # support platforms
         CPPPATH += [cwd + '/arch/' + arch + '/' + cpu]
 
 # Terminal I/O Subsystem
+# terminal/*.c resolve their own headers via quoted-include directory lookup;
+# keep the internal path out of the global CPPPATH
 termios_path = ['./terminal/', './terminal/freebsd/']
 for item in termios_path:
     src += Glob(item + '*.c')
-CPPPATH += ['./terminal/']
 
 # Remove optional sources
 if not GetDepend(['LWP_USING_RUNTIME']):

@@ -1,3 +1,4 @@
+import os
 from building import *
 
 cwd = GetCurrentDir()
@@ -41,5 +42,10 @@ if GetDepend(['RT_RTC_RX8010']):
     src += ['rtc-rx8010.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_RTC'], CPPPATH = CPPPATH)
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')

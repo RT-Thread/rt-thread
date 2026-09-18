@@ -156,18 +156,17 @@ rt_inline void plic_toggle(struct plic_handler *handler, int hwirq, int enable)
 void plic_init(void)
 {
     int nr_irqs;
-    int nr_context;
     int i;
     unsigned long hwirq;
-    int cpu = 0;
+    struct plic_handler *handler;
+    uint32_t threshold = 0;
+    extern int boot_hartid;
 
     if (plic_regs)
     {
         LOG_E("plic already initialized!");
         return;
     }
-
-    nr_context = C908_NR_CONTEXT;
 
     plic_regs = (void *)C908_PLIC_PHY_ADDR;
     if (!plic_regs)
@@ -178,41 +177,30 @@ void plic_init(void)
 
     nr_irqs = C908_PLIC_NR_EXT_IRQS;
 
-    for (i = 0; i < nr_context; i ++)
-    {
-        struct plic_handler *handler;
-        uint32_t threshold = 0;
+    /*
+     * PLIC context layout: hart N owns context 2N (M-mode) and 2N + 1
+     * (S-mode). The kernel only ever takes S-mode external interrupts, and
+     * only on the hart the firmware entered - which is not necessarily hart 0,
+     * as OpenSBI picks the boot hart dynamically. Binding the handler to a
+     * hard-coded context therefore leaves external interrupts masked whenever
+     * the boot hart is not 0, so derive the context from boot_hartid.
+     */
+    i = boot_hartid * C908_NR_CONTEXT + 1;
 
-        cpu = 0;
-
-        /* skip contexts other than supervisor external interrupt */
-        if (i == 0)
-        {
-            continue;
-        }
-
-        // we always use CPU0 M-mode target register.
-        handler = &plic_handlers[cpu];
-        if (handler->present)
-        {
-            threshold  = 0xffffffff;
-            goto done;
-        }
-
-        handler->present = RT_TRUE;
-        handler->hart_base = (void *)((rt_size_t)plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART);
-        handler->enable_base = (void *)((rt_size_t)plic_regs + ENABLE_BASE + i * ENABLE_PER_HART);
+    handler = &plic_handlers[0];
+    handler->present = RT_TRUE;
+    handler->hart_base = (void *)((rt_size_t)plic_regs + CONTEXT_BASE + i * CONTEXT_PER_HART);
+    handler->enable_base = (void *)((rt_size_t)plic_regs + ENABLE_BASE + i * ENABLE_PER_HART);
 #ifdef RT_USING_SMART
-        handler->hart_base = (void *)rt_ioremap(handler->hart_base, 0x1000);
-        handler->enable_base = (void *)rt_ioremap(handler->enable_base, 0x1000);
+    handler->hart_base = (void *)rt_ioremap(handler->hart_base, 0x1000);
+    handler->enable_base = (void *)rt_ioremap(handler->enable_base, 0x1000);
 #endif
-done:
-        /* priority must be > threshold to trigger an interrupt */
-        writel(threshold, (void *)((rt_size_t)handler->hart_base + CONTEXT_THRESHOLD));
-        for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
-        {
-            plic_toggle(handler, hwirq, 0);
-        }
+
+    /* priority must be > threshold to trigger an interrupt */
+    writel(threshold, (void *)((rt_size_t)handler->hart_base + CONTEXT_THRESHOLD));
+    for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
+    {
+        plic_toggle(handler, hwirq, 0);
     }
 
     /* Enable supervisor external interrupts. */

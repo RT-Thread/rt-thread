@@ -183,15 +183,8 @@ bool GPIO_Configuration(void)
      
      
     /*********Initialize USART1 GPIO function *********/
-    /********PA10->USART1.RX********/
     /********PA9->USART1.TX********/
-    /*Initialize input GPIO */
-    GPIO_InitStructure.GPIO_Mode      = GPIO_MODE_INPUT;
-    GPIO_InitStructure.GPIO_Pull      = GPIO_PULL_UP;
-    GPIO_InitStructure.GPIO_Alternate = GPIO_AF5;
-    GPIO_InitStructure.Pin            = GPIO_PIN_10;
-    GPIO_InitPeripheral(GPIOA,&GPIO_InitStructure);
-     
+    /********PA10->USART1.RX********/
     /*Initialize AF_PP GPIO */
     GPIO_InitStructure.GPIO_Mode      = GPIO_MODE_AF_PP;
     GPIO_InitStructure.GPIO_Pull      = GPIO_PULL_UP;
@@ -199,6 +192,13 @@ bool GPIO_Configuration(void)
     GPIO_InitStructure.GPIO_Current   = GPIO_DC_2mA;
     GPIO_InitStructure.GPIO_Alternate = GPIO_AF7;
     GPIO_InitStructure.Pin            = GPIO_PIN_9;
+    GPIO_InitPeripheral(GPIOA,&GPIO_InitStructure);
+     
+    /*Initialize input GPIO */
+    GPIO_InitStructure.GPIO_Mode      = GPIO_MODE_INPUT;
+    GPIO_InitStructure.GPIO_Pull      = GPIO_PULL_UP;
+    GPIO_InitStructure.GPIO_Alternate = GPIO_AF5;
+    GPIO_InitStructure.Pin            = GPIO_PIN_10;
     GPIO_InitPeripheral(GPIOA,&GPIO_InitStructure);
      
 /* NTFx CODE END */

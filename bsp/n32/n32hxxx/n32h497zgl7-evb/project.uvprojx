@@ -337,9 +337,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>N32H49x, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, __STDC_LIMIT_MACROS, CORE_CM4, __RTTHREAD__, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER</Define>
+              <Define>USE_STDPERIPH_DRIVER, N32H49X, __STDC_LIMIT_MACROS, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_LIBC, CORE_CM4, RT_USING_ARMLIBC, N32H49x, __RTTHREAD__</Define>
               <Undefine></Undefine>
-              <IncludePath>..\libraries\N32_Drivers\drivers\config;..\..\..\..\libcpu\arm\cortex-m4;packages\CMSIS-Core-latest\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\finsh;board\Cube_Config\USER\inc;..\..\..\..\components\libc\posix\ipc;..\libraries\N32_Drivers;..\..\..\..\libcpu\arm\common;..\..\..\..\components\net\utest;..\libraries\N32_Drivers\drivers;board\ports;packages\n32h49x_std_driver-latest\n32h49x_std_periph_driver\inc;..\..\..\..\components\drivers\include;.;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\drivers\include;board;packages\n32h49x_cmsis_driver-latest\device;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\include;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;applications</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;board\ports;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\poll;board\Cube_Config\USER\inc;board;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\smp_call;..\..\..\..\components\libc\compilers\common\include;packages\n32h49x_std_driver-latest\n32h49x_std_periph_driver\inc;applications;.;..\..\..\..\components\libc\compilers\common\extension;packages\CMSIS-Core-latest\Include;..\libraries\N32_Drivers\drivers;..\..\..\..\components\net\utest;..\libraries\N32_Drivers;..\..\..\..\components\libc\posix\io\eventfd;packages\n32h49x_cmsis_driver-latest\device;..\..\..\..\components\drivers\include;..\libraries\N32_Drivers\drivers\config;..\..\..\..\include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1604,9 +1604,9 @@
               </FileOption>
             </File>
             <File>
-              <FileName>memheap.c</FileName>
+              <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\memheap.c</FilePath>
+              <FilePath>..\..\..\..\src\mem.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>

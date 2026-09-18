@@ -12,6 +12,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <rtatomic.h>
 
 #include "cpuport.h"
 #include "stack.h"
@@ -25,6 +26,8 @@
 #ifdef RT_USING_SMP
 #include "tick.h"
 #include "interrupt.h"
+
+volatile unsigned long rt_riscv_online_mask;
 #endif /* RT_USING_SMP */
 
 #ifdef ARCH_RISCV_FPU
@@ -92,6 +95,40 @@ int rt_hw_cpu_id(void)
     }
 #endif /* RT_USING_SMP */
 }
+
+/**
+ * @brief Return the one-based position of the least significant set bit.
+ *
+ * Declared in rtthread.h and required by components such as smp_call and the
+ * RT_FIELD_PREP/RT_FIELD_GET helpers; only aarch64 used to provide it.
+ */
+unsigned long __rt_ffsl(unsigned long value)
+{
+#ifdef __GNUC__
+    return __builtin_ffsl(value);
+#else
+    unsigned long bit;
+
+    if (!value)
+    {
+        return 0;
+    }
+
+    for (bit = 1; (value & 1UL) == 0; bit++)
+    {
+        value >>= 1;
+    }
+
+    return bit;
+#endif /* __GNUC__ */
+}
+
+#ifdef RT_USING_SMP
+void rt_hw_cpu_mark_online(void)
+{
+    rt_hw_atomic_or((volatile rt_atomic_t *)&rt_riscv_online_mask, ((rt_atomic_t)1U << rt_hw_cpu_id()));
+}
+#endif /* RT_USING_SMP */
 
 /**
  * This function will initialize thread stack, we assuming
