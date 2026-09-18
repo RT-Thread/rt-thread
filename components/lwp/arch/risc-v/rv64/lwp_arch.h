@@ -69,7 +69,7 @@ rt_inline void icache_invalid_all(void)
 }
 
 struct rt_hw_stack_frame;
-void *arch_signal_ucontext_restore(rt_base_t user_sp);
+void *arch_signal_ucontext_restore(rt_base_t user_sp, rt_base_t kernel_sp);
 void *arch_signal_ucontext_save(int signo, siginfo_t *psiginfo,
                                 struct rt_hw_stack_frame *exp_frame, rt_base_t user_sp,
                                 lwp_sigset_t *save_sig_mask);
