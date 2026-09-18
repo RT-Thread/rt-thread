@@ -58,7 +58,7 @@ def detect_rust_target(has, rtconfig):
             return "thumbv8m.base-none-eabi"
         if has("ARCH_ARM_CORTEX_M33"):
             # v8m.main
-            return "thumbv8m.main-none-eabi"
+            return "thumbv8m.main-none-eabihf" if hard_float else "thumbv8m.main-none-eabi"
         if has("ARCH_ARM_CORTEX_A"):
             return "armv7a-none-eabi"
 
