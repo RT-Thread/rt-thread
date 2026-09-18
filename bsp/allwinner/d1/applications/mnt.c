@@ -6,16 +6,14 @@
 
 int mnt_init(void)
 {
-
-    rt_thread_mdelay(200);
-
-    if (dfs_mount("boot", "/", "elm", 0, 0) != 0)
+    if (dfs_mount(RT_NULL, "/", "rom", 0, &romfs_root) != 0)
     {
-        rt_kprintf("Dir /boot mount failed!\n");
+        rt_kprintf("Mount ROMFS on \"/\" failed!\n");
+        return -RT_ERROR;
     }
 
-    rt_kprintf("file system initialization done!\n");
-    return 0;
+    rt_kprintf("Mount ROMFS on \"/\" success.\n");
+    return RT_EOK;
 }
 INIT_ENV_EXPORT(mnt_init);
 #endif

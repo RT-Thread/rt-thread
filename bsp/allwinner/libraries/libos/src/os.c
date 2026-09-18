@@ -388,7 +388,11 @@ int32_t esCFG_GetKeyValue(char *SecName, char *KeyName, int32_t Value[], int32_t
             return 0;
         } else if (!rt_strcmp("used_card_no", KeyName))
         {
+#if defined(BOARD_allwinnerd1)
+            *Value = 0x01;
+#else
             *Value = 0x03;
+#endif
             return 0;
         }
     }
