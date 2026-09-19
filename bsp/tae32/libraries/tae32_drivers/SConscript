@@ -1,0 +1,43 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+""")
+
+# add pin drivers.
+if GetDepend('RT_USING_PIN'):
+    src += ['drv_gpio.c']
+
+# add usart drivers.
+if GetDepend(['RT_USING_SERIAL']):
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['drv_uart_v2.c']
+    else:
+        src += ['drv_uart.c']
+
+# add wdt drivers.
+if GetDepend(['RT_USING_WDT']):
+        src += ['drv_wdt.c']
+
+# add can drivers.
+if GetDepend(['RT_USING_CAN']):
+        src += ['drv_can.c']        
+
+# add flash drivers.
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_TAE32G58xx']):
+    src += [os.path.join('drv_flash', 'drv_flash_g58xx.c')]
+
+path = [cwd]
+
+path += [os.path.join(cwd, 'config')]
+
+if GetDepend('BSP_USING_ON_CHIP_FLASH'):
+    path += [os.path.join(cwd, 'drv_flash')]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')
