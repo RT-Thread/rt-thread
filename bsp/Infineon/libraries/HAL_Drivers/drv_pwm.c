@@ -75,7 +75,7 @@ static struct ifx_pwm ifx_pwm_obj[] =
     PWM0_CH7_PORT12_CONFIG,
 #endif
 
-#ifdef BSP_USING_PWM0_CH7_PORT13
+#ifdef BSP_USING_PWM0_CH3_PORT13
     PWM0_CH3_PORT13_CONFIG,
 #endif
 };
