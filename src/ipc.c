@@ -46,6 +46,7 @@
  * 2022-10-16     Bernard      add prioceiling feature in mutex
  * 2023-04-16     Xin-zheqi    redesigen queue recv and send function return real message size
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2025-11-23     Rbb666       fix thread error code to avoid spurious error display in list_thread
  */
 
 #include <rtthread.h>
@@ -87,6 +88,28 @@ rt_inline rt_err_t _ipc_object_init(struct rt_ipc_object *ipc)
     return RT_EOK;
 }
 
+/**
+ * @brief    This function normalizes the thread error code after IPC wait operation.
+ *
+ * @note     This function translates the internal RT_EWAITPEND sentinel value back to RT_EINTR
+ *           for the caller. If the error code is still RT_EWAITPEND after scheduling, it means
+ *           the thread was woken by a signal rather than by successfully acquiring the resource
+ *           or timing out.
+ *
+ * @param    thread is a pointer to the thread object whose error code needs to be checked.
+ *
+ * @return   Return the thread's error code. When the return value is RT_EOK, the IPC operation succeeded.
+ *           When the return value is RT_EINTR, the operation was interrupted (interrupted system call).
+ *           When the return value is RT_ETIMEOUT, the operation timed out.
+ */
+static rt_err_t _ipc_wait_result(rt_thread_t thread)
+{
+    if (thread->error == -RT_EWAITPEND)
+    {
+        thread->error = -RT_EINTR;
+    }
+    return thread->error;
+}
 
 /**
  * @brief   Dequeue a thread from suspended list and set it to ready. The 2 are
@@ -600,8 +623,8 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
             /* get current thread */
             thread = rt_thread_self();
 
-            /* reset thread error number */
-            thread->error = RT_EINTR;
+            /* mark wait pending errno */
+            thread->error = -RT_EWAITPEND;
 
             LOG_D("sem take: suspend thread - %s", thread->parent.name);
 
@@ -633,9 +656,11 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
             /* do schedule */
             rt_schedule();
 
-            if (thread->error != RT_EOK)
+            /* normalize wait result after reschedule */
+            ret = _ipc_wait_result(thread);
+            if (ret != RT_EOK)
             {
-                return thread->error > 0 ? -thread->error : thread->error;
+                return ret > 0 ? -ret : ret;
             }
         }
     }
@@ -1405,6 +1430,9 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                 LOG_D("mutex_take: suspend thread: %s",
                       thread->parent.name);
 
+                /* mark wait pending errno */
+                thread->error = -RT_EWAITPEND;
+
                 /* suspend current thread */
                 ret = rt_thread_suspend_to_list(thread, &(mutex->parent.suspend_thread),
                                                 mutex->parent.parent.flag, suspend_flag);
@@ -1454,13 +1482,16 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
                 rt_spin_lock(&(mutex->spinlock));
 
+                /* normalize wait result after reschedule */
+                ret = _ipc_wait_result(thread);
+
                 if (mutex->owner == thread)
                 {
                     /**
                      * get mutex successfully
-                     * Note: assert to avoid an unexpected resume
+                     * Note: clear any temporary error from interruptible wait
                      */
-                    RT_ASSERT(thread->error == RT_EOK);
+                    thread->error = RT_EOK;
                 }
                 else
                 {
@@ -1468,9 +1499,6 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
                     rt_bool_t need_update = RT_FALSE;
                     RT_ASSERT(mutex->owner != thread);
-
-                    /* get value first before calling to other APIs */
-                    ret = thread->error;
 
                     /* unexpected resume */
                     if (ret == RT_EOK)
@@ -1694,6 +1722,9 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
 
                 /* cleanup pending object */
                 next_thread->pending_object = RT_NULL;
+
+                /* clear any temporary error from interruptible wait */
+                next_thread->error = RT_EOK;
 
                 /* update mutex priority */
                 if (!rt_list_isempty(&(mutex->parent.suspend_thread)))
@@ -2147,8 +2178,6 @@ static rt_err_t _rt_event_recv(rt_event_t   event,
     status = -RT_ERROR;
     /* get current thread */
     thread = rt_thread_self();
-    /* reset thread error */
-    thread->error = -RT_EINTR;
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(event->parent.parent)));
 
@@ -2202,6 +2231,9 @@ static rt_err_t _rt_event_recv(rt_event_t   event,
         thread->event_set  = set;
         thread->event_info = option;
 
+        /* mark wait pending errno */
+        thread->error = -RT_EWAITPEND;
+
         /* put thread to suspended thread list */
         ret = rt_thread_suspend_to_list(thread, &(event->parent.suspend_thread),
                                         event->parent.parent.flag, suspend_flag);
@@ -2227,10 +2259,12 @@ static rt_err_t _rt_event_recv(rt_event_t   event,
         /* do a schedule */
         rt_schedule();
 
-        if (thread->error != RT_EOK)
+        /* normalize wait result after reschedule */
+        ret = _ipc_wait_result(thread);
+        if (ret != RT_EOK)
         {
             /* return error */
-            return thread->error;
+            return ret;
         }
 
         /* received an event, disable interrupt to protect */
@@ -2626,9 +2660,6 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
     /* mailbox is full */
     while (mb->entry == mb->size)
     {
-        /* reset error number in thread */
-        thread->error = -RT_EINTR;
-
         /* no waiting, return timeout */
         if (timeout == 0)
         {
@@ -2636,6 +2667,9 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
 
             return -RT_EFULL;
         }
+
+        /* mark wait pending errno */
+        thread->error = -RT_EWAITPEND;
 
         /* suspend current thread */
         ret = rt_thread_suspend_to_list(thread, &(mb->suspend_sender_thread),
@@ -2668,11 +2702,12 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
         /* re-schedule */
         rt_schedule();
 
-        /* resume from suspend state */
-        if (thread->error != RT_EOK)
+        /* normalize wait result after reschedule */
+        ret = _ipc_wait_result(thread);
+        if (ret != RT_EOK)
         {
             /* return error */
-            return thread->error;
+            return ret;
         }
 
         level = rt_spin_lock_irqsave(&(mb->spinlock));
@@ -2906,9 +2941,6 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
     /* mailbox is empty */
     while (mb->entry == 0)
     {
-        /* reset error number in thread */
-        thread->error = -RT_EINTR;
-
         /* no waiting, return timeout */
         if (timeout == 0)
         {
@@ -2918,6 +2950,9 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
 
             return -RT_ETIMEOUT;
         }
+
+        /* mark wait pending errno */
+        thread->error = -RT_EWAITPEND;
 
         /* suspend current thread */
         ret = rt_thread_suspend_to_list(thread, &(mb->parent.suspend_thread),
@@ -2950,11 +2985,12 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
         /* re-schedule */
         rt_schedule();
 
-        /* resume from suspend state */
-        if (thread->error != RT_EOK)
+        /* normalize wait result after reschedule */
+        ret = _ipc_wait_result(thread);
+        if (ret != RT_EOK)
         {
             /* return error */
-            return thread->error;
+            return ret;
         }
         level = rt_spin_lock_irqsave(&(mb->spinlock));
 
@@ -3454,9 +3490,6 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
     /* message queue is full */
     while ((msg = (struct rt_mq_message *)mq->msg_queue_free) == RT_NULL)
     {
-        /* reset error number in thread */
-        thread->error = -RT_EINTR;
-
         /* no waiting, return timeout */
         if (timeout == 0)
         {
@@ -3464,6 +3497,9 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
 
             return -RT_EFULL;
         }
+
+        /* mark wait pending errno */
+        thread->error = -RT_EWAITPEND;
 
         /* suspend current thread */
         ret = rt_thread_suspend_to_list(thread, &(mq->suspend_sender_thread),
@@ -3496,11 +3532,12 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         /* re-schedule */
         rt_schedule();
 
-        /* resume from suspend state */
-        if (thread->error != RT_EOK)
+        /* normalize wait result after reschedule */
+        ret = _ipc_wait_result(thread);
+        if (ret != RT_EOK)
         {
             /* return error */
-            return thread->error;
+            return ret;
         }
         level = rt_spin_lock_irqsave(&(mq->spinlock));
 
@@ -3831,9 +3868,6 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
     /* message queue is empty */
     while (mq->entry == 0)
     {
-        /* reset error number in thread */
-        thread->error = -RT_EINTR;
-
         /* no waiting, return timeout */
         if (timeout == 0)
         {
@@ -3844,6 +3878,9 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
 
             return -RT_ETIMEOUT;
         }
+
+        /* mark wait pending errno */
+        thread->error = -RT_EWAITPEND;
 
         /* suspend current thread */
         ret = rt_thread_suspend_to_list(thread, &(mq->parent.suspend_thread),
@@ -3876,11 +3913,12 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
         /* re-schedule */
         rt_schedule();
 
-        /* recv message */
-        if (thread->error != RT_EOK)
+        /* normalize wait result after reschedule */
+        ret = _ipc_wait_result(thread);
+        if (ret != RT_EOK)
         {
             /* return error */
-            return thread->error;
+            return ret;
         }
 
         level = rt_spin_lock_irqsave(&(mq->spinlock));
