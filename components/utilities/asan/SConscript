@@ -1,0 +1,23 @@
+from building import *
+Import('rtconfig')
+
+cwd = GetCurrentDir()
+src = Glob('*.c')
+CPPPATH = [cwd]
+CFLAGS = ''
+LINKFLAGS = ''
+
+# DefineGroup adds CFLAGS/CXXFLAGS/LINKFLAGS to the shared build environment.
+# The runtime is provided here and does not need libasan.
+if rtconfig.PLATFORM == 'gcc':
+    CFLAGS = ' -fsanitize=kernel-address -fno-omit-frame-pointer'
+    LINKFLAGS = ' -fsanitize=kernel-address'
+
+# The ASan runtime itself must not be instrumented, otherwise it would
+# recurse infinitely. '-fno-sanitize=kernel-address' is appended after the
+# global '-fsanitize=kernel-address' and therefore overrides it.
+group = DefineGroup('asan', src, depend=['RT_USING_ASAN'], CPPPATH=CPPPATH,
+                    CFLAGS=CFLAGS, CXXFLAGS=CFLAGS, LINKFLAGS=LINKFLAGS,
+                    LOCAL_CFLAGS=' -fno-sanitize=kernel-address')
+
+Return('group')
