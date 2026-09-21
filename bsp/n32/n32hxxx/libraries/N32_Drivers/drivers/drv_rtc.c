@@ -13,6 +13,17 @@
 #include <rtdevice.h>
 #include <drv_common.h>
 
+/* The driver owns the peripheral registers, so it pulls in the peripheral
+ * header itself instead of relying on board.h to have declared it.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#include <n32h7xx_rtc.h>
+#elif defined(SOC_SERIES_N32H49x)
+#include <n32h49x_rtc.h>
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include <n32h47x_48x_rtc.h>
+#endif
+
 #ifdef BSP_USING_ONCHIP_RTC
 
 #ifndef RTC_BKP_REG1

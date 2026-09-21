@@ -14,6 +14,21 @@
 #include "board.h"
 
 /*
+ * FEMC_NandInitType / FEMC_NandTimingInitType come from the SoC SDK; pull in
+ * the peripheral header itself instead of relying on board.h to have declared
+ * it.  It does happen to declare them today - the board's n32h47x_48x_cfg.h
+ * reaches the vendor's n32h47x_48x_conf.h, which includes this header - but
+ * that is a vendor file's include list, not a contract.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#include "n32h7xx_femc.h"
+#elif defined(SOC_SERIES_N32H49x)
+#include "n32h49x_femc.h"
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include "n32h47x_48x_femc.h"
+#endif
+
+/*
  * Configure FEMC NAND timing parameters (N32H47x/48x).
  *
  * This fills the timing-related fields of the NAND init structures:

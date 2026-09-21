@@ -33,6 +33,19 @@
 
 #define MAX_NBYTE_SIZE (255U)
 
+/* Default SCL rate, in the units struct n32_i2c_config.timing documents: a raw
+ * I2C_TIMINGR value on H7xx, a bus speed in Hz on H47x_48x / H49x.  Both match
+ * what the in-tree config headers already program, so a board that leaves
+ * .timing unset comes up at the same speed as one that sets it.  The fallback
+ * also keeps the vendor I2C_Init() off a division by zero on the Hz series,
+ * where ClkSpeed is a divisor.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#define DEFAULT_I2C_TIMING_VALUE (0x50012526U)
+#else
+#define DEFAULT_I2C_TIMING_VALUE (100000U)
+#endif
+
 #if defined(SOC_SERIES_N32H7xx)
 
 #define I2C_CTRL2_NBYTES_POS (16U)
@@ -580,6 +593,16 @@ static rt_err_t n32_i2c_dma_init(struct n32_i2c_config *config, rt_bool_t is_rx)
     return RT_EOK;
 }
 
+static void n32_i2c_apply_default_config(struct n32_i2c_config *cfg)
+{
+    RT_ASSERT(cfg != RT_NULL);
+
+    if (cfg->timing == 0U)
+    {
+        cfg->timing = DEFAULT_I2C_TIMING_VALUE;
+    }
+}
+
 static rt_err_t n32_i2c_init(struct n32_i2c *i2c_drv)
 {
     rt_err_t ret;
@@ -588,6 +611,8 @@ static rt_err_t n32_i2c_init(struct n32_i2c *i2c_drv)
     RT_ASSERT(i2c_drv != RT_NULL);
 
     struct n32_i2c_config *cfg = i2c_drv->config;
+
+    n32_i2c_apply_default_config(cfg);
 
     /* Enable I2C Clock */
     cfg->EnablePeriphClk(cfg->periph, ENABLE);
@@ -634,6 +659,35 @@ static rt_err_t n32_i2c_init(struct n32_i2c *i2c_drv)
     I2C_Init(cfg->Instance, &I2C_InitStructure);
 
     I2C_Enable(cfg->Instance, ENABLE);
+
+#elif defined(SOC_SERIES_N32H49x) || defined(SOC_SERIES_N32H47x_48x)
+
+    /* These series have no TIMINGR-style register: I2C_Init() derives CLKCTRL
+     * and TMRISE from Pclk1 and the requested SCL rate, and sets SPEN itself.
+     * It clears SPEN before touching those two registers, so no explicit
+     * disable is needed first.  AckEnable stays off, as on H7xx -- the transfer
+     * paths turn it on with I2C_ConfigAck() when they need it.
+     */
+    I2C_InitType I2C_InitStructure;
+
+    /* The vendor's RCC_EnableAPB1PeriphReset() sets the reset bit and clears it
+     * again in the same call, so I2C_DeInit() is a reset pulse, not a latch.
+     */
+    I2C_DeInit(cfg->Instance);
+
+    I2C_InitStruct(&I2C_InitStructure);
+
+    /* I2C_InitStruct() defaults ClkSpeed to 5000, so it must be overwritten
+     * with the configured rate.  Per the field's contract this is in Hz here.
+     */
+    I2C_InitStructure.ClkSpeed = cfg->timing;
+    I2C_InitStructure.BusMode = I2C_BUSMODE_I2C;
+    I2C_InitStructure.FmDutyCycle = I2C_FMDUTYCYCLE_2;
+    I2C_InitStructure.OwnAddr1 = 0x0;
+    I2C_InitStructure.AckEnable = I2C_ACKDIS;
+    I2C_InitStructure.AddrMode = I2C_ADDR_MODE_7BIT;
+
+    I2C_Init(cfg->Instance, &I2C_InitStructure);
 
 #endif
 

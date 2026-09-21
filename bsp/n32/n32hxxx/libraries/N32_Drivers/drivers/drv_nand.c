@@ -10,6 +10,17 @@
 
 #include <rtconfig.h>
 
+/* The driver owns the peripheral registers, so it pulls in the peripheral
+ * header itself instead of relying on board.h to have declared it.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#include <n32h7xx_femc.h>
+#elif defined(SOC_SERIES_N32H49x)
+#include <n32h49x_femc.h>
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include <n32h47x_48x_femc.h>
+#endif
+
 #ifdef BSP_USING_NAND
 
 #include "femc_timing.h"
@@ -512,8 +523,11 @@ static rt_err_t _read_page(struct rt_mtd_nand_device *device,
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = 0x00;
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)(row_addr & 0xFF);
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 8) & 0xFF);
-#if NAND_ROW_ADDR_CYCLES == 3
+#if NAND_ROW_ADDR_CYCLES >= 3
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 16) & 0xFF);
+#endif
+#if NAND_ROW_ADDR_CYCLES >= 4
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 24) & 0xFF);
 #endif
     *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_READ_2ND;
 
@@ -682,8 +696,11 @@ static rt_err_t _write_page(struct rt_mtd_nand_device *device,
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = 0x00;
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)(row_addr & 0xFF);
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 8) & 0xFF);
-#if NAND_ROW_ADDR_CYCLES == 3
+#if NAND_ROW_ADDR_CYCLES >= 3
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 16) & 0xFF);
+#endif
+#if NAND_ROW_ADDR_CYCLES >= 4
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 24) & 0xFF);
 #endif
 
     /*
@@ -847,8 +864,11 @@ static rt_err_t _erase_block(struct rt_mtd_nand_device *device, rt_uint32_t bloc
     *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_ERASE_1ST;
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)(row_addr & 0xFF);
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 8) & 0xFF);
-#if NAND_ROW_ADDR_CYCLES == 3
+#if NAND_ROW_ADDR_CYCLES >= 3
     *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 16) & 0xFF);
+#endif
+#if NAND_ROW_ADDR_CYCLES >= 4
+    *(__IO uint8_t *)(bank | NAND_ADDR_AREA) = (uint8_t)((row_addr >> 24) & 0xFF);
 #endif
     *(__IO uint8_t *)(bank | NAND_CMD_AREA) = NAND_CMD_ERASE_2ND;
 

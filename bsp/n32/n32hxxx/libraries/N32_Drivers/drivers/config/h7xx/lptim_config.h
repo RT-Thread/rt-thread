@@ -17,11 +17,16 @@
 extern "C" {
 #endif
 
+/* LSI through a fixed DIV32, both set in drv_lptim.c's timer_init(), so the
+ * tick rate is LSI_VALUE / 32 = 32000 / 32 = 1000 Hz and cannot be
+ * programmed -- hence a single-point range.  clock_timer.c scales timeouts by
+ * timer->freq, which it takes from here, so a wrong value scales every one.
+ */
 #ifndef LPTIM_DEV_INFO_CONFIG
 #define LPTIM_DEV_INFO_CONFIG              \
     {                                      \
-        .maxfreq = 1000000,                \
-        .minfreq = 3000,                   \
+        .maxfreq = 1000,                   \
+        .minfreq = 1000,                   \
         .maxcnt = 0xFFFF,                  \
         .cntmode = CLOCK_TIMER_CNTMODE_UP, \
     }
