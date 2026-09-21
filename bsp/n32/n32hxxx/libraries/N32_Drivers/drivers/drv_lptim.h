@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author          Notes
  * 2026-06-23     ox-horse        first version
+ * 2026-08-19     ox-horse        Add N32H47X_48X and N32H49X
  */
 
 #ifndef __DRV_LPTIM_H__

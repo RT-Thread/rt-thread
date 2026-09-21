@@ -8,11 +8,30 @@ nano:
   kconfig:
     - CONFIG_RT_USING_NANO=y
 
-# ------ lcd ------
-lcd:
+########## Onboard peripheral drivers ##########
+# BSP_PERIPH_PIN_CFG_READY gates all of the entries below; without it the
+# kconfig front-end silently drops the symbols and the entry builds nothing.
+
+# ------ sdram ------
+peripheral.sdram:
   <<: *scons
   kconfig:
-    - CONFIG_RT_USING_GRAPHIC=y
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_SDRAM=y
+    - CONFIG_BSP_SDRAM_BANK1=y
+    - CONFIG_BSP_SDRAM_DATA_WIDTH_32=y
+    - CONFIG_BSP_SDRAM_COLUMN_BIT_9=y
+    - CONFIG_BSP_SDRAM_ROW_BIT_12=y
+    - CONFIG_BSP_SDRAM_CAS_LATENCY_3=y
+    - CONFIG_BSP_SDRAM_SIZE=32
+
+# ------ lcd ------
+# BSP_USING_LCD selects BSP_USING_SDRAM by itself.
+peripheral.lcd:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_RT_USING_LCD=y
     - CONFIG_BSP_USING_LCD=y
     - CONFIG_BSP_LCD_PIXEL_FORMAT_RGB565=y
     - CONFIG_BSP_BITS_PER_PIXEL=16
@@ -25,21 +44,158 @@ lcd:
     - CONFIG_BSP_LCD_HFP_PIXEL=210
     - CONFIG_BSP_LCD_VFP_PIXEL=22
 
-# ------ sdram ------
-sdram:
-  <<: *scons
-  kconfig:
-    - CONFIG_BSP_USING_SDRAM=y
-    - CONFIG_BSP_SDRAM_BANK1=y
-    - CONFIG_BSP_SDRAM_DATA_WIDTH_32=y
-    - CONFIG_BSP_SDRAM_COLUMN_BIT_9=y
-    - CONFIG_BSP_SDRAM_ROW_BIT_12=y
-    - CONFIG_BSP_SDRAM_CAS_LATENCY_3=y
-    - CONFIG_BSP_SDRAM_SIZE=32
-
 # ------ qspi ------
-qspi:
+peripheral.qspi:
   <<: *scons
   kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
     - CONFIG_BSP_USING_QSPI=y
     - CONFIG_BSP_USING_QSPI2=y
+
+# ------ eth ------
+peripheral.eth:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_ETH=y
+    - CONFIG_BSP_USING_ETH1=y
+    - CONFIG_ETH_INTERFACE_USING_RMII=y
+    - CONFIG_PHY_USING_DM9119INP=y
+
+# ------ nand ------
+peripheral.nand:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_NAND=y
+    - CONFIG_BSP_USING_NAND_BANK2=y
+    - CONFIG_BSP_USING_NAND_BUS_WIDTH_8B=y
+    - CONFIG_BSP_NAND_PAGE_SIZE=2048
+
+########## On-chip peripheral drivers ##########
+
+# ------ uart ------
+# UART1 is the console and is already on in the default .config; UART2-4 add
+# the DMA paths. RT_SERIAL_USING_DMA has no select and must be written out.
+devices.uart:
+  <<: *scons
+  kconfig:
+    - CONFIG_RT_SERIAL_USING_DMA=y
+    - CONFIG_BSP_USING_UART2=y
+    - CONFIG_BSP_UART2_RX_USING_DMA=y
+    - CONFIG_BSP_UART2_TX_USING_DMA=y
+    - CONFIG_BSP_USING_UART3=y
+    - CONFIG_BSP_UART3_RX_USING_DMA=y
+    - CONFIG_BSP_UART3_TX_USING_DMA=y
+    - CONFIG_BSP_USING_UART4=y
+    - CONFIG_BSP_UART4_RX_USING_DMA=y
+    - CONFIG_BSP_UART4_TX_USING_DMA=y
+
+# ------ spi ------
+devices.spi:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_SPI=y
+    - CONFIG_BSP_USING_SPI1=y
+    - CONFIG_BSP_SPI1_TX_USING_DMA=y
+    - CONFIG_BSP_SPI1_RX_USING_DMA=y
+    - CONFIG_BSP_USING_SPI2=y
+    - CONFIG_BSP_SPI2_TX_USING_DMA=y
+    - CONFIG_BSP_SPI2_RX_USING_DMA=y
+
+# ------ i2c ------
+devices.i2c:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_HARD_I2C=y
+    - CONFIG_BSP_USING_HARD_I2C1=y
+    - CONFIG_BSP_I2C1_RX_USING_DMA=y
+    - CONFIG_BSP_I2C1_TX_USING_DMA=y
+    - CONFIG_BSP_USING_SOFT_I2C=y
+    - CONFIG_BSP_USING_SOFT_I2C1=y
+    - CONFIG_RT_SOFT_I2C1_SCL_PIN=22
+    - CONFIG_RT_SOFT_I2C1_SDA_PIN=23
+
+# ------ adc ------
+devices.adc:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_ADC=y
+    - CONFIG_BSP_USING_ADC1=y
+    - CONFIG_BSP_USING_ADC2=y
+    - CONFIG_BSP_USING_ADC3=y
+
+# ------ dac ------
+devices.dac:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_DAC=y
+    - CONFIG_BSP_USING_DAC1=y
+    - CONFIG_BSP_USING_DAC2=y
+
+# ------ rtc / wdt / on-chip flash ------
+# None of the three has a select, so all of them are written explicitly.
+devices.rtc_wdt_flash:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_ONCHIP_RTC=y
+    - CONFIG_BSP_RTC_USING_LSE=y
+    - CONFIG_BSP_USING_WDT=y
+    - CONFIG_BSP_USING_ON_CHIP_FLASH=y
+
+# ------ sdio ------
+# drv_sdmmc.c errors out unless exactly one of SDIO1/SDIO2 is selected.
+# BSP_USING_SDIO selects RT_USING_SDIO and RT_USING_BLK on this board.
+devices.sdio:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_SDIO=y
+    - CONFIG_BSP_USING_SDIO1=y
+
+# ------ sdio (SDMA) ------
+# Kept separate from devices.sdio rather than added to it: BSP_USING_SDIO_SDMA
+# selects between the SDMA and the PIO transfer loop in drv_sdmmc.c, so one
+# build can only ever cover one of them. devices.sdio keeps the PIO path.
+devices.sdio_sdma:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_SDIO=y
+    - CONFIG_BSP_USING_SDIO1=y
+    - CONFIG_BSP_USING_SDIO_SDMA=y
+
+# ------ fdcan ------
+devices.fdcan:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_FDCAN=y
+    - CONFIG_BSP_USING_FDCAN1=y
+    - CONFIG_BSP_USING_FDCAN2=y
+
+# ------ clock timer / lptim ------
+devices.timer:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_CLOCK_TIMER=y
+    - CONFIG_BSP_USING_ATIM1=y
+    - CONFIG_BSP_USING_LPTIM=y
+    - CONFIG_BSP_USING_LPTIM1=y
+
+# ------ pwm ------
+# Kept out of devices.timer: drv_pulse_encoder.c warns that a timer instance
+# must not serve clock-timer and pulse-encoder at the same time.
+devices.pwm:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_PWM=y
+    - CONFIG_BSP_USING_PWM1=y
+    - CONFIG_BSP_USING_PWM1_CH1=y
+    - CONFIG_BSP_USING_PWM1_CH2=y
+    - CONFIG_BSP_USING_PWM1_CH3=y
+    - CONFIG_BSP_USING_PWM1_CH4=y
+
+# ------ pulse encoder ------
+devices.pulse_encoder:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_PULSE_ENCODER=y
+    - CONFIG_BSP_USING_PULSE_ENCODER1=y
