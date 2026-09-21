@@ -14,16 +14,16 @@
 #ifdef BSP_USING_SLIDER
 #include "cycfg_capsense.h"
 
-#define CAPSENSE_INTR_PRIORITY      (7u)
-#define EZI2C_INTR_PRIORITY         (6u)
+#define CAPSENSE_INTR_PRIORITY (7u)
+#define EZI2C_INTR_PRIORITY    (6u)
 
 /* Allowed duty cycle for maximum brightness */
-#define LED_MAX_BRIGHTNESS      (100u)
+#define LED_MAX_BRIGHTNESS (100u)
 
 /* Allowed duty cycle for minimum brightness*/
-#define LED_MIN_BRIGHTNESS      (0u)
+#define LED_MIN_BRIGHTNESS (0u)
 
-#define GET_DUTY_CYCLE(x)       (1 * 1000 * 1000 - x * 10 * 1000)
+#define GET_DUTY_CYCLE(x) (1 * 1000 * 1000 - x * 10 * 1000)
 
 typedef enum
 {
@@ -40,11 +40,11 @@ typedef struct
 static rt_sem_t trans_done_semphr = RT_NULL;
 
 #ifndef RT_USING_PWM
-    #error You need enable PWM to use this sample
+#error You need enable PWM to use this sample
 #else
-    #define PWM_DEV_NAME "pwm0"
-    #define PWM_DEV_CHANNEL 3
-    static struct rt_device_pwm *pwm_dev;
+#define PWM_DEV_NAME    "pwm0"
+#define PWM_DEV_CHANNEL 3
+static struct rt_device_pwm *pwm_dev;
 #endif
 
 static void capsense_isr(void)
@@ -68,8 +68,7 @@ static uint32_t initialize_capsense(void)
     uint32_t status = CYRET_SUCCESS;
 
     /* CapSense interrupt configuration parameters */
-    static const cy_stc_sysint_t capSense_intr_config =
-    {
+    static const cy_stc_sysint_t capSense_intr_config = {
         .intrSrc = csd_interrupt_IRQn,
         .intrPriority = CAPSENSE_INTR_PRIORITY,
     };
@@ -127,7 +126,7 @@ void Slider_Init(void)
         return;
     }
 
-#ifdef BSP_USING_PWM0_PORT13
+#ifdef BSP_USING_PWM0_CH3_PORT13
     /* Initiate PWM*/
     pwm_dev = (struct rt_device_pwm *)rt_device_find(PWM_DEV_NAME);
 
@@ -162,20 +161,19 @@ static void process_touch(void)
     bool led_update_req = false;
 
     static uint16_t slider_pos_prev;
-    static led_data_t led_data = {LED_ON, LED_MAX_BRIGHTNESS};
+    static led_data_t led_data = { LED_ON, LED_MAX_BRIGHTNESS };
 
     /* Get slider status */
     slider_touch_info = Cy_CapSense_GetTouchInfo(
-                            CY_CAPSENSE_LINEARSLIDER0_WDGT_ID, &cy_capsense_context);
+        CY_CAPSENSE_LINEARSLIDER0_WDGT_ID, &cy_capsense_context);
     slider_touch_status = slider_touch_info->numPosition;
     slider_pos = slider_touch_info->ptrPosition->x;
 
     /* Detect the new touch on slider */
     if ((RT_NULL != slider_touch_status) &&
-            (slider_pos != slider_pos_prev))
+        (slider_pos != slider_pos_prev))
     {
-        led_data.brightness = (slider_pos * 100)
-                              / cy_capsense_context.ptrWdConfig[CY_CAPSENSE_LINEARSLIDER0_WDGT_ID].xResolution;
+        led_data.brightness = (slider_pos * 100) / cy_capsense_context.ptrWdConfig[CY_CAPSENSE_LINEARSLIDER0_WDGT_ID].xResolution;
 
         led_update_req = true;
     }
