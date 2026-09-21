@@ -14,7 +14,9 @@ CPPPATH = [cwd + "/arm/CMSIS_6/CMSIS/Core/Include",
         cwd + "/fsp/src/bsp_w/cmsis/Device/RENESAS/Include",
         cwd + "/fsp/src/bsp_w/mcu/all",
         cwd + "/fsp/src/bsp_w/mcu/ra6w1",
-        cwd + "/fsp/src/bsp_w/mcu/ra6w1/config"]
+        cwd + "/fsp/src/bsp_w/mcu/ra6w1/config",
+        cwd + "/fsp/src/bsp_w/mcu/ra6w1/config/include",
+]
 
 src += Glob("./board/rrq61xxx_evb/*.c")
 src += Glob("./fsp/src/bsp_w/cmsis/Device/RENESAS/Source/*.c")

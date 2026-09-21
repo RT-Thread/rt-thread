@@ -6,6 +6,7 @@
 #include "bsp_api.h"
 #include "hal_data.h"
 #include "r_gpio_w.h"
+#include "ra6w1_pin_ext.h"
 
 ioport_pin_cfg_t g_bsp_pin_cfg_data[] =
 {
@@ -258,6 +259,7 @@ ioport_pin_cfg_t g_bsp_pin_cfg_data[] =
                    GPIO_W_CFG_PORT_DIRECTION_INPUT | GPIO_W_CFG_SLW_FAST,
     },
 #endif
+RA6W1_PIN_CFG_EXTRA
     {
         .pin = BSP_IO_PORT_01_PIN_16,
         .pin_cfg = GPIO_W_CFG_PERIPHERAL_PIN | GPIO_W_CFG_PORT_DIRECTION_INPUT |
@@ -355,6 +357,7 @@ static const char * const g_bsp_pin_cfg_name[] =
     "qspi.io2",
     "qspi.io3",
 #endif
+RA6W1_PIN_NAME_EXTRA
     "swd.swclk",
     "swd.swdio",
 };
@@ -640,7 +643,7 @@ void ra_w_pin_config_init(void)
 #ifdef BSP_USING_QSPI
     index += 6;
 #endif
-
+    index += RA6W1_PIN_COUNT_EXTRA;
     /* SWD pins are fixed and are always the last two entries. */
     index += 2;
     if (index != RA_W_PIN_CFG_COUNT)
