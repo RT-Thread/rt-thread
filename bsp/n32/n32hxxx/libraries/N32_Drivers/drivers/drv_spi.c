@@ -12,6 +12,17 @@
 #include <rtdevice.h>
 #include "board.h"
 
+/* The driver owns the peripheral registers, so it pulls in the peripheral
+ * header itself instead of relying on board.h to have declared it.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#include <n32h7xx_spi.h>
+#elif defined(SOC_SERIES_N32H49x)
+#include <n32h49x_spi.h>
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include <n32h47x_48x_spi.h>
+#endif
+
 #ifdef BSP_USING_SPI
 
 #if defined(BSP_USING_SPI1) || defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) || defined(BSP_USING_SPI4) || defined(BSP_USING_SPI5) || defined(BSP_USING_SPI6) || defined(BSP_USING_SPI7)
@@ -2390,7 +2401,7 @@ static int rt_hw_spi_bus_init(void)
             DMA_ChannelStructInit(&spi_bus_obj[i].dma.RX_DMA_ChInitStr);
             spi_bus_obj[i].dma.RX_DMA_ChInitStr.IntEn = 0x1U;
             spi_bus_obj[i].dma.RX_DMA_ChInitStr.SrcAddr = (uint32_t)&spi_bus_obj[i].config->SPIx->DAT;
-            spi_bus_obj[i].dma.RX_DMA_ChInitStr.DstAddr = NULL;
+            spi_bus_obj[i].dma.RX_DMA_ChInitStr.DstAddr = 0U;
             spi_bus_obj[i].dma.RX_DMA_ChInitStr.SrcTfrWidth = DMA_CH_TRANSFER_WIDTH_8;
             spi_bus_obj[i].dma.RX_DMA_ChInitStr.DstTfrWidth = DMA_CH_TRANSFER_WIDTH_8;
             spi_bus_obj[i].dma.RX_DMA_ChInitStr.DstAddrCountMode = DMA_CH_ADDRESS_COUNT_MODE_INCREMENT;
@@ -2474,7 +2485,7 @@ static int rt_hw_spi_bus_init(void)
             DMA_ChannelStructInit(&spi_bus_obj[i].dma.TX_DMA_ChInitStr);
             spi_bus_obj[i].dma.TX_DMA_ChInitStr.IntEn = 0x1U;
             spi_bus_obj[i].dma.TX_DMA_ChInitStr.DstAddr = (uint32_t)&spi_bus_obj[i].config->SPIx->DAT;
-            spi_bus_obj[i].dma.TX_DMA_ChInitStr.SrcAddr = NULL;
+            spi_bus_obj[i].dma.TX_DMA_ChInitStr.SrcAddr = 0U;
             spi_bus_obj[i].dma.TX_DMA_ChInitStr.SrcTfrWidth = DMA_CH_TRANSFER_WIDTH_8;
             spi_bus_obj[i].dma.TX_DMA_ChInitStr.DstTfrWidth = DMA_CH_TRANSFER_WIDTH_8;
             spi_bus_obj[i].dma.TX_DMA_ChInitStr.DstAddrCountMode = DMA_CH_ADDRESS_COUNT_MODE_NO_CHANGE;
