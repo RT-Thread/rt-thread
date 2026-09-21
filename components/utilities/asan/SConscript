@@ -20,4 +20,7 @@ group = DefineGroup('asan', src, depend=['RT_USING_ASAN'], CPPPATH=CPPPATH,
                     CFLAGS=CFLAGS, CXXFLAGS=CFLAGS, LINKFLAGS=LINKFLAGS,
                     LOCAL_CFLAGS=' -fno-sanitize=kernel-address')
 
+# Do not extend in place: DefineGroup retains the runtime source list.
+group = group + SConscript('utest/SConscript')
+
 Return('group')

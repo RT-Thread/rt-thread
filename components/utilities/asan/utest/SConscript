@@ -1,0 +1,13 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = ['asan_tc.c']
+if GetDepend('RT_USING_CPLUSPLUS'):
+    src += ['asan_cpp_test.cpp']
+
+# Tests need global instrumentation; do not inherit the runtime's LOCAL_CFLAGS.
+group = DefineGroup('asan_utest', src,
+                    depend=['RT_USING_UTESTCASES', 'RT_UTEST_ASAN', 'RT_USING_ASAN'],
+                    CPPPATH=[cwd])
+
+Return('group')
