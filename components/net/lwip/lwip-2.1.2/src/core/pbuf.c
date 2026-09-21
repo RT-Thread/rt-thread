@@ -271,7 +271,10 @@ pbuf_alloc(pbuf_layer layer, u16_t length, pbuf_type type)
       break;
     }
     case PBUF_RAM: {
-      u16_t payload_len = (u16_t)(LWIP_MEM_ALIGN_SIZE(offset) + LWIP_MEM_ALIGN_SIZE(length));
+      mem_size_t payload_len = (mem_size_t)(LWIP_MEM_ALIGN_SIZE(offset) + LWIP_MEM_ALIGN_SIZE(length));
+#if PBUF_PAYLOAD_MARGIN_LEN > 0
+      payload_len += LWIP_MEM_ALIGN_SIZE(PBUF_PAYLOAD_MARGIN_LEN);
+#endif
       mem_size_t alloc_len = (mem_size_t)(LWIP_MEM_ALIGN_SIZE(SIZEOF_STRUCT_PBUF) + payload_len);
 
       /* bug #50040: Check for integer overflow when calculating alloc_len */
