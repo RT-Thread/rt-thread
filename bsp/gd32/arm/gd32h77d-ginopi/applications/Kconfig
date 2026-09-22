@@ -38,4 +38,55 @@ menu "Applications"
         help
             Register rtc_alarm to configure and inspect a one-shot alarm.
 
+    config BSP_USING_GD32VW553_MQTT_DEMO
+        bool "Enable GD32VW553 MQTT demo"
+        depends on BSP_USING_GD32VW553_AT
+        select PKG_USING_KAWAII_MQTT
+        select KAWAII_MQTT_NETSOCKET_USE_SAL
+        default n
+        help
+            Enable a GD32VW553 MQTT demo based on the RT-Thread
+            kawaii-mqtt package. The MQTT network path is
+            kawaii-mqtt, SAL socket, at_device, and GD32VW553 AT.
+
+    if BSP_USING_GD32VW553_MQTT_DEMO
+
+        config BSP_GD32VW553_MQTT_HOST
+            string "MQTT broker address"
+            default "broker.emqx.io"
+            help
+                Use a numeric IPv4 address when the module firmware
+                does not support AT+CIPDOMAIN.
+
+        config BSP_GD32VW553_MQTT_PORT
+            int "MQTT broker port"
+            range 1 65535
+            default 1883
+
+        config BSP_GD32VW553_MQTT_SUB_TOPIC
+            string "MQTT subscribe topic"
+            default "rtt/gd32vw553/sub"
+
+        config BSP_GD32VW553_MQTT_PUB_TOPIC
+            string "MQTT publish topic"
+            default "rtt/gd32vw553/pub"
+
+        config BSP_GD32VW553_MQTT_MESSAGE
+            string "MQTT publish message"
+            default "hello from GD32VW553"
+
+        config BSP_GD32VW553_MQTT_CLIENT_ID
+            string "MQTT client id"
+            default "gd32vw553"
+
+        config BSP_GD32VW553_MQTT_USERNAME
+            string "MQTT username"
+            default ""
+
+        config BSP_GD32VW553_MQTT_PASSWORD
+            string "MQTT password"
+            default ""
+
+    endif
+
 endmenu

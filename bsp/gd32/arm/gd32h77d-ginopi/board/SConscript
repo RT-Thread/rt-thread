@@ -20,4 +20,6 @@ path =  [cwd]
 CPPDEFINES = ['GD32H77DXW']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
+group = group + SConscript(os.path.join('ports', 'SConscript'))
+
 Return('group')
