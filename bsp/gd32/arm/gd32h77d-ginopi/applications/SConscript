@@ -21,6 +21,9 @@ if GetDepend('BSP_USING_OV7670_PREVIEW'):
 if GetDepend(['BSP_USING_GD32VW553_MQTT_DEMO', 'PKG_USING_KAWAII_MQTT']):
     src += ['gd32vw553_mqtt_demo.c']
 
+if GetDepend(['BSP_USING_LVGL_BOARD_DEMO', 'PKG_USING_LVGL']):
+    src += ['board_demo.c', 'board_demo_backend.c']
+
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = [cwd])
 
 Return('group')

@@ -96,4 +96,36 @@ menu "Applications"
 
     endif
 
+    config BSP_USING_LVGL_BOARD_DEMO
+        bool "Enable LVGL board demonstration"
+        depends on PKG_LVGL_USING_LATEST
+        select BSP_USING_LCD_MIPI
+        select BSP_USING_TOUCH_GT911
+        select BSP_USING_OV7670
+        select BSP_USING_OV7670_PREVIEW
+        select BSP_USING_FS
+        select BSP_USING_FLASH_FATFS
+        select BSP_USING_USB
+        select BSP_USB_USING_HOST
+        select RT_USBH_MSTORAGE
+        select BSP_USING_CAN
+        select BSP_USING_CAN1
+        select BSP_USING_PWM
+        select BSP_USING_PWM2
+        select BSP_USING_PWM30
+        select BSP_USING_SPI
+        select BSP_USING_SPI3
+        select BSP_USING_I2C
+        select BSP_USING_HARD_I2C
+        select BSP_USING_HARD_I2C1
+        select BSP_USING_GD32VW553_AT
+        select BSP_USING_GD32VW553_MQTT_DEMO
+        default n
+        help
+            Enable the LVGL board console for storage, CAN, MQTT, dual PWM,
+            OV7670 camera preview, SPI3 loopback, and I2C address scanning.
+
+    config PKG_LVGL_THREAD_STACK_SIZE
+        range 8192 2147483647 if BSP_USING_LVGL_BOARD_DEMO
+
 endmenu
