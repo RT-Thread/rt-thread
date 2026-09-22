@@ -369,6 +369,9 @@ rt_ssize_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
 /**
  * @brief I2C Control
  *
+ * @note This function takes the bus mutex and must be called from thread context.
+ *       Configuration changes are serialized with transfers on the same bus.
+ *
  * @param bus the I2C bus device
  * @param cmd the I2C control command
  * @param args the I2C control arguments
