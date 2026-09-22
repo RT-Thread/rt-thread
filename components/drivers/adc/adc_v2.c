@@ -21,7 +21,7 @@
 #include <rtthread.h>
 
 #define DBG_TAG "adc.v2"
-#define DBG_LVL DBG_WARNING
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <drivers/adc_v2.h>
