@@ -67,6 +67,19 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
+if GetDepend('PKG_LVGL_USING_LATEST'):
+    def is_lvgl_frogfs_source(item):
+        path = os.path.normcase(os.path.normpath(str(item)))
+        frogfs_path = os.path.normcase(os.path.normpath(
+            os.path.join('packages', 'LVGL-latest', 'src', 'libs', 'frogfs')))
+        return frogfs_path in path
+
+    # FrogFS is disabled, but the upstream RT-Thread SConscript still lists its sources.
+    objs = [obj for obj in objs if not is_lvgl_frogfs_source(obj)]
+    for group in Projects:
+        group['src'] = [src for src in group['src']
+                        if not is_lvgl_frogfs_source(src)]
+
 if GetDepend('PKG_USING_GT911'):
     for group in Projects:
         if group['name'] == 'gt911':

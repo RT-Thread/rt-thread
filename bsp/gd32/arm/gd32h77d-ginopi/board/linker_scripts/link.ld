@@ -147,6 +147,15 @@ SECTIONS
         PROVIDE(_sp = _estack);
     } > AXISRAM
 
+    /* Select the CPU-only pool before the generic .bss.* rule below.
+     * TLSF initializes this memory itself; it is not a DMA buffer. */
+    .lvgl_heap (NOLOAD) :
+    {
+        . = ALIGN(8);
+        KEEP(*(.bss.lvgl_heap))
+        . = ALIGN(8);
+    } > DTCMRAM
+
     .bss (NOLOAD) :
     {
         . = ALIGN(4);
@@ -227,6 +236,7 @@ ASSERT(SIZEOF(.vectors) > 0, "missing interrupt vector table")
 ASSERT(ADDR(.vectors) == ORIGIN(CNVM), "vector table must start at CNVM base")
 ASSERT(SIZEOF(.reset) > 0, "missing Reset_Handler")
 ASSERT(SIZEOF(.enet_dma) <= LENGTH(SRAM1), "ENET DMA data exceeds SRAM1")
+ASSERT(SIZEOF(.lvgl_heap) + SIZEOF(.dtcmram) <= LENGTH(DTCMRAM), "LVGL pool exceeds DTCM")
 
 /* input sections */
 GROUP(libgcc.a libc.a libm.a libnosys.a)

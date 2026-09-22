@@ -6,11 +6,16 @@ LR_IROM1 0x08010000 0x001F0000  {    ; load region size_region
   ER_IROM1 0x08010000 0x001F0000  {  ; load address = execution address
    *.o (RESET, +First)
    *(InRoot$$Sections)
-   .ANY (+RO)
+   ; Prefer CNVM for code and constants, matching the GCC image layout.
+   .ANY2 (+RO)
    .ANY (+XO)
   }
   RW_ENET 0x30004000 UNINIT 0x00004000  {
    *(.enet_dma)
+  }
+  ; CPU-only LVGL allocations must not fall back to external SDRAM.
+  RW_LVGL_DTCM 0x20000000 UNINIT 0x00040000  {
+   *(.bss.lvgl_heap)
   }
   RW_IRAM1 0x24000000 0x000C0000  {  ; RW data
    .ANY (+RW +ZI)
@@ -22,6 +27,6 @@ LR_IROM1 0x08010000 0x001F0000  {    ; load region size_region
 
 LR_IROM2 0x08200000 0x00780000  {
   ER_IROM2 0x08200000 0x00780000  {  ; load address = execution address
-   .ANY (+RO)
+   .ANY1 (+RO)
   }
 }
