@@ -181,7 +181,7 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
         return ret;
     }
 
-    /* Validate the full descriptor before indexing the interface array. */
+    /* Check the count returned with the full configuration descriptor. */
     if (device->cfg_desc->bNumInterfaces > USB_MAX_INTERFACE)
     {
         LOG_E("Too many USB interfaces: %d", device->cfg_desc->bNumInterfaces);
