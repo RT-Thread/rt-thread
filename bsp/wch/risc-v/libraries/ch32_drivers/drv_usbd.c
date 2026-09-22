@@ -17,35 +17,51 @@
 #include "drv_log.h"
 
 #define UEP_MPS_64          64
-#define UEP_MPS_512         512
 
 #define _get_ep_idx(address)    ((address) & USB_EPNO_MASK)
 #define _get_ep_dir(address)    ((address) & USB_DIR_MASK)
 #define _is_dir_in(address)     (_get_ep_dir(address) == USB_DIR_IN)
 #define _is_dir_out(address)    (_get_ep_dir(address) == USB_DIR_OUT)
 
-#define _get_dma(ep_idx)          (*(volatile uint32_t *)((uint32_t)(USBFSD->UEP0_DMA) + 4 * ep_idx))
-#define _set_dma(ep_idx, addr)    (*(volatile uint32_t *)((uint32_t)(USBFSD->UEP0_DMA) + 4 * ep_idx) = addr)
-#define _set_tx_len(ep_idx, len)  (*(volatile uint16_t *)((uint32_t)(USBFSD->UEP0_TX_LEN) + 4 * ep_idx) = len)
-#define _get_tx_len(ep_idx)       (*(volatile uint16_t *)((uint32_t)(USBFSD->UEP0_TX_LEN) + 4 * ep_idx))
-#define _set_tx_ctrl(ep_idx, val) (*(volatile uint8_t *)((uint32_t)(USBFSD->UEP0_TX_CTRL) + 4 * ep_idx) = val)
-#define _get_tx_ctrl(ep_idx)      (*(volatile uint8_t *)((uint32_t)(USBFSD->UEP0_TX_CTRL) + 4 * ep_idx))
-#define _set_rx_ctrl(ep_idx, val) (*(volatile uint8_t *)((uint32_t)(USBFSD->UEP0_RX_CTRL) + 4 * ep_idx) = val)
-#define _get_rx_ctrl(ep_idx)      (*(volatile uint8_t *)((uint32_t)(USBFSD->UEP0_RX_CTRL) + 4 * ep_idx))
+#define _get_dma(ep_idx)          (*(volatile uint32_t *)((uint32_t)&USBFSD->UEP0_DMA + 4 * (ep_idx)))
+#define _set_dma(ep_idx, addr)    (*(volatile uint32_t *)((uint32_t)&USBFSD->UEP0_DMA + 4 * (ep_idx)) = (addr))
+#define _set_tx_len(ep_idx, len)  (*(volatile uint16_t *)((uint32_t)&USBFSD->UEP0_TX_LEN + 4 * (ep_idx)) = (len))
+#define _get_tx_len(ep_idx)       (*(volatile uint16_t *)((uint32_t)&USBFSD->UEP0_TX_LEN + 4 * (ep_idx)))
+#define _set_tx_ctrl(ep_idx, val) (*(volatile uint8_t *)((uint32_t)&USBFSD->UEP0_TX_CTRL + 4 * (ep_idx)) = (val))
+#define _get_tx_ctrl(ep_idx)      (*(volatile uint8_t *)((uint32_t)&USBFSD->UEP0_TX_CTRL + 4 * (ep_idx)))
+#define _set_rx_ctrl(ep_idx, val) (*(volatile uint8_t *)((uint32_t)&USBFSD->UEP0_RX_CTRL + 4 * (ep_idx)) = (val))
+#define _get_rx_ctrl(ep_idx)      (*(volatile uint8_t *)((uint32_t)&USBFSD->UEP0_RX_CTRL + 4 * (ep_idx)))
+
+/* The DMA register keeps the low 16 bits. SRAM for that offset starts at 0x20000000. */
+static uint8_t *usb_dma_ram(uint32_t dma)
+{
+    if (dma < 0x20000000)
+        dma += 0x20000000;
+    return (uint8_t *)dma;
+}
 
 static struct udcd udcd;
+
+/* SETUP and EP0 IN must sit in SRAM. USB DMA cannot read Flash. */
+static rt_uint8_t ep0_buf[64] __attribute__((aligned(4)));
+static rt_uint8_t epn_buf[8][64] __attribute__((aligned(4)));
+static rt_uint8_t usb_addr_pending;
+static rt_uint8_t usb_addr_next;
+
+#ifndef GET_INT_SP
+#define GET_INT_SP()   asm volatile("csrrw sp,mscratch,sp")
+#define FREE_INT_SP()  asm volatile("csrrw sp,mscratch,sp")
+#endif
 
 USBOTG_FS_TypeDef *USBFSD = USBOTG_FS;
 
 static struct ep_id endpoint_pool[] =
 {
     {0x0,  USB_EP_ATTR_CONTROL,   USB_DIR_INOUT, 64,  ID_ASSIGNED  },
-    {0x1,  USB_EP_ATTR_BULK,      USB_DIR_IN,    512, ID_UNASSIGNED},
-    {0x1,  USB_EP_ATTR_BULK,      USB_DIR_OUT,   512, ID_UNASSIGNED},
-    {0x2,  USB_EP_ATTR_INT,       USB_DIR_IN,    512, ID_UNASSIGNED},
-    {0x2,  USB_EP_ATTR_INT,       USB_DIR_OUT,   512, ID_UNASSIGNED},
-    {0x3,  USB_EP_ATTR_ISOC,      USB_DIR_IN,    512, ID_UNASSIGNED},
-    {0x3,  USB_EP_ATTR_ISOC,      USB_DIR_OUT,   512, ID_UNASSIGNED},
+    /* IN and OUT of the same index share one DMA address, so they use different endpoints. */
+    {0x1,  USB_EP_ATTR_BULK,      USB_DIR_IN,     64, ID_UNASSIGNED},
+    {0x3,  USB_EP_ATTR_BULK,      USB_DIR_OUT,    64, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_INT,       USB_DIR_IN,     64, ID_UNASSIGNED},
     {0xFF, USB_EP_ATTR_TYPE_MASK, USB_DIR_MASK,  0,   ID_ASSIGNED  },
 };
 
@@ -99,13 +115,13 @@ uint8_t _uep_rx_en(uint8_t ep_idx)
 {
     switch(ep_idx)
     {
-        case 1: return USBFS_UEP1_TX_EN;
-        case 4: return USBFS_UEP4_TX_EN;
-        case 2: return USBFS_UEP2_TX_EN;
-        case 3: return USBFS_UEP3_TX_EN;
-        case 5: return USBFS_UEP5_TX_EN;
-        case 6: return USBFS_UEP6_TX_EN;
-        case 7: return USBFS_UEP7_TX_EN;
+        case 1: return USBFS_UEP1_RX_EN;
+        case 4: return USBFS_UEP4_RX_EN;
+        case 2: return USBFS_UEP2_RX_EN;
+        case 3: return USBFS_UEP3_RX_EN;
+        case 5: return USBFS_UEP5_RX_EN;
+        case 6: return USBFS_UEP6_RX_EN;
+        case 7: return USBFS_UEP7_RX_EN;
         default: return 0;
     }
 }
@@ -114,7 +130,9 @@ rt_err_t usbd_set_address(rt_uint8_t address)
 {
     if(address > 0x7f)
         return -RT_ERROR;
-    USBFSD->DEV_ADDR = (USBFSD->DEV_ADDR & USBFS_UDA_GP_BIT) | address;
+    /* Status IN is still at address 0. Apply the new address after that IN. */
+    usb_addr_next = address;
+    usb_addr_pending = 1;
     return RT_EOK;
 }
 
@@ -196,15 +214,23 @@ rt_size_t usbd_ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
     if (_is_dir_in(address))
         return 0;
 
-    if (size > (ep_idx ? UEP_MPS_512 : UEP_MPS_64))
-        size = (ep_idx ? UEP_MPS_512 : UEP_MPS_64);
+    /* SRAM buffers and the FS packet size are both 64 bytes. */
+    if (size > UEP_MPS_64)
+        size = UEP_MPS_64;
 
+    if (ep_idx == 0 && buffer == RT_NULL)
+        buffer = ep0_buf;
     _set_dma(ep_idx, (uint32_t)buffer);
 
     if (ep_idx == 0)
-        if(size == 0) _set_rx_ctrl(0, USBFS_UEP_R_RES_ACK | USBFS_UEP_R_TOG);
-        else _set_rx_ctrl(ep_idx, USBFS_UEP_R_RES_ACK);
-    else _set_rx_ctrl(0, (_get_rx_ctrl(ep_idx) & ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK | USBFS_UEP_R_TOG);
+    {
+        if (size == 0)
+            _set_rx_ctrl(0, USBFS_UEP_R_RES_ACK | USBFS_UEP_R_TOG);
+        else
+            _set_rx_ctrl(0, (_get_rx_ctrl(0) & ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK);
+    }
+    else
+        _set_rx_ctrl(ep_idx, (_get_rx_ctrl(ep_idx) & ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_ACK);
 
     return size;
 }
@@ -213,16 +239,16 @@ rt_size_t usbd_ep_read(rt_uint8_t address, void *buffer)
 {
     uint8_t ep_idx = _get_ep_idx(address);
 
-    if (_is_dir_out(address))
-        return -2;
-    if ((uint32_t)buffer & 0x03)
-        return -3;
+    if (_is_dir_in(address))
+        return 0;
 
-    uint32_t dmabuf = _get_dma(ep_idx);
-    rt_size_t size = USBFSD->RX_LEN;
+    uint8_t *src = usb_dma_ram(_get_dma(ep_idx));
+    rt_size_t size = USBFSD->RX_LEN & 0xFF;
 
-    if (size > 0 && (uint32_t)buffer != dmabuf)
-        rt_memcpy(buffer, (void *)dmabuf, size);
+    if (size > 64)
+        size = 64;
+    if (size > 0 && buffer != RT_NULL && (uint8_t *)buffer != src)
+        rt_memcpy(buffer, src, size);
 
     return size;
 }
@@ -231,27 +257,28 @@ rt_size_t usbd_ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     uint8_t ep_idx = _get_ep_idx(address);
 
-    if (_is_dir_in(address))
-        return -2;
-    if ((uint32_t)buffer & 0x03)
-        return -3;
+    if (_is_dir_out(address))
+        return 0;
 
-    uint32_t dmabuf = _get_dma(ep_idx);
-
-    if (size > (ep_idx ? UEP_MPS_512 : UEP_MPS_64))
-        size = (ep_idx ? UEP_MPS_512 : UEP_MPS_64);
+    if (size > UEP_MPS_64)
+        size = UEP_MPS_64;
 
     _set_tx_len(ep_idx, size);
     if(ep_idx == 0)
     {
-        if(size != 0)
-            _set_dma(0, (uint32_t)buffer);
-        _set_tx_ctrl(0, USBFS_UEP_T_TOG | USBFS_UEP_T_RES_ACK);
+        if(size != 0 && buffer != RT_NULL && buffer != ep0_buf)
+            rt_memcpy(ep0_buf, buffer, size);
+        _set_dma(0, (uint32_t)ep0_buf);
+        _set_tx_ctrl(0, (_get_tx_ctrl(0) & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK);
     }
     else
     {
-        if(size != 0)
-            rt_memcpy((void *)dmabuf, buffer, size);
+        if (size > 64)
+            size = 64;
+        if (size != 0 && buffer != RT_NULL)
+            rt_memcpy(epn_buf[ep_idx], buffer, size);
+        _set_dma(ep_idx, (uint32_t)epn_buf[ep_idx]);
+        _set_tx_len(ep_idx, size);
         _set_tx_ctrl(ep_idx, (_get_tx_ctrl(ep_idx) & ~USBFS_UEP_T_RES_MASK) | USBFS_UEP_T_RES_ACK);
     }
 
@@ -262,7 +289,7 @@ rt_err_t usbd_ep0_send_status(void)
 {
     _set_tx_len(0, 0);
     _set_tx_ctrl(0, USBFS_UEP_T_RES_ACK | USBFS_UEP_T_TOG);
-    _set_dma(0, 0);
+    _set_dma(0, (uint32_t)ep0_buf);
     return RT_EOK;
 }
 
@@ -296,15 +323,18 @@ rt_err_t dcd_init(rt_device_t dev)
 {
     USBFSD->BASE_CTRL = 0x00;
 
-    USBFSD->UEP4_1_MOD = USBFS_UEP4_RX_EN | USBFS_UEP4_TX_EN | USBFS_UEP1_RX_EN | USBFS_UEP1_TX_EN;
-    USBFSD->UEP2_3_MOD = USBFS_UEP2_RX_EN | USBFS_UEP2_TX_EN | USBFS_UEP3_RX_EN | USBFS_UEP3_TX_EN;
-    USBFSD->UEP5_6_MOD = USBFS_UEP5_RX_EN | USBFS_UEP5_TX_EN | USBFS_UEP6_RX_EN | USBFS_UEP6_TX_EN;
-    USBFSD->UEP7_MOD = USBFS_UEP7_RX_EN | USBFS_UEP7_TX_EN;
+    /* If both TX and RX are enabled, this chip sends IN data from buffer+64. */
+    USBFSD->UEP4_1_MOD = 0;
+    USBFSD->UEP2_3_MOD = 0;
+    USBFSD->UEP5_6_MOD = 0;
+    USBFSD->UEP7_MOD = 0;
 
     USBFSD->INT_FG = 0xFF;
     USBFSD->INT_EN = USBFS_UIE_SUSPEND | USBFS_UIE_BUS_RST | USBFS_UIE_TRANSFER;
     USBFSD->DEV_ADDR = 0x00;
 
+    _set_dma(0, (uint32_t)ep0_buf);
+    USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_RES_ACK;
     USBFSD->BASE_CTRL = USBFS_UC_DEV_PU_EN | USBFS_UC_INT_BUSY | USBFS_UC_DMA_EN;
     USBFSD->UDEV_CTRL = USBFS_UD_PD_DIS | USBFS_UD_PORT_EN;
 
@@ -316,6 +346,7 @@ rt_err_t dcd_init(rt_device_t dev)
 void USBD_IRQHandler(void) __attribute__((interrupt()));
 void USBD_IRQHandler()
 {
+    GET_INT_SP();
     rt_interrupt_enter();
     uint8_t int_fg = USBFSD->INT_FG;
 
@@ -324,14 +355,25 @@ void USBD_IRQHandler()
         uint8_t tog;
         switch (USBFSD->INT_ST & USBFS_UIS_TOKEN_MASK) {
             case USBFS_UIS_TOKEN_SETUP:
-                _set_rx_ctrl(ep_idx, USBFS_UEP_R_RES_NAK);
+            {
+                struct urequest setup;
+                rt_memcpy(&setup, ep0_buf, sizeof(setup));
+                USBFSD->UEP0_TX_CTRL = USBFS_UEP_T_TOG | USBFS_UEP_T_RES_NAK;
+                USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_TOG | USBFS_UEP_R_RES_NAK;
+                rt_usbd_ep0_setup_handler(&udcd, &setup);
                 break;
+            }
 
             case USBFS_UIS_TOKEN_IN:
                 if (ep_idx == 0x00)
                 {
                     tog = _get_tx_ctrl(ep_idx) & USBFS_UEP_T_TOG;
                     _set_tx_ctrl(ep_idx, (_get_tx_ctrl(ep_idx) & 0b11111000) | ~tog | USBFS_UEP_T_RES_NAK);
+                    if (usb_addr_pending)
+                    {
+                        USBFSD->DEV_ADDR = (USBFSD->DEV_ADDR & USBFS_UDA_GP_BIT) | usb_addr_next;
+                        usb_addr_pending = 0;
+                    }
                     if (_get_dma(ep_idx) != 0)
                     {
                         rt_usbd_ep0_in_handler(&udcd);
@@ -355,6 +397,7 @@ void USBD_IRQHandler()
                     {
                         _set_rx_ctrl(ep_idx, (_get_rx_ctrl(ep_idx) & ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_NAK);
                     }
+                    rt_usbd_ep0_out_handler(&udcd, USBFSD->RX_LEN & 0xFF);
                 }
                 else
                 {
@@ -371,6 +414,8 @@ void USBD_IRQHandler()
 
         USBFSD->INT_FG = USBFS_UIF_TRANSFER;
     } else if (int_fg & USBFS_UIF_BUS_RST) {
+        usb_addr_pending = 0;
+        USBFSD->DEV_ADDR = 0;
         USBFSD->UEP0_TX_LEN = 0;
         USBFSD->UEP0_TX_CTRL = USBFS_UEP_T_RES_NAK;
         USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_RES_NAK;
@@ -381,6 +426,7 @@ void USBD_IRQHandler()
             _set_rx_ctrl(i, USBFS_UEP_R_RES_NAK | USBFS_UEP_R_AUTO_TOG);
         }
 
+        _set_dma(0, (uint32_t)ep0_buf);
         _set_rx_ctrl(0, USBFS_UEP_R_RES_ACK);
         rt_usbd_reset_handler(&udcd);
 
@@ -392,13 +438,14 @@ void USBD_IRQHandler()
     }
 
     rt_interrupt_leave();
+    FREE_INT_SP();
 }
 
 int rt_hw_usbd_init()
 {
     rt_err_t res = -RT_ERROR;
 
-    rt_memset((void *)&udcd, 0, sizeof(struct uhcd));
+    rt_memset((void *)&udcd, 0, sizeof(udcd));
     udcd.parent.type = RT_Device_Class_USBDevice;
     udcd.parent.user_data = (void *)USBFS_BASE;
     udcd.parent.init = dcd_init;
