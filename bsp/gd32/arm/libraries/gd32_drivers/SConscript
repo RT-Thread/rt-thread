@@ -60,6 +60,10 @@ if GetDepend('RT_USING_PWM'):
 if GetDepend('RT_USING_CAN'):
     src += ['drv_can.c']
 
+# add ethernet drivers.
+if GetDepend(['SOC_SERIES_GD32H77x_H78X', 'BSP_USING_ETH']):
+    src += ['drv_enet.c']
+
 # add sdram drivers.
 if GetDepend('BSP_USING_SDRAM'):
     src += ['drv_sdram.c']
