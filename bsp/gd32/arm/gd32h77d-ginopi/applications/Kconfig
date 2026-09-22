@@ -31,4 +31,11 @@ menu "Applications"
         help
             Register pwm_dual_test to control the two PWM outputs.
 
+    config BSP_USING_RTC_ALARM_EXAMPLE
+        bool "Enable RTC alarm example command"
+        depends on BSP_USING_ALARM && RT_USING_FINSH
+        default n
+        help
+            Register rtc_alarm to configure and inspect a one-shot alarm.
+
 endmenu
