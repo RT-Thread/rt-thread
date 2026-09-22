@@ -17,6 +17,13 @@ menu "Applications"
             Use memheap objects as the system heap with automatic binding
             so allocations can use the external SDRAM heap.
 
+    config BSP_USING_FILESYSTEM_TEST
+        bool "Enable filesystem read/write benchmark commands"
+        depends on RT_USING_DFS && RT_USING_HEAP && RT_USING_FINSH
+        default n
+        help
+            Register readspeed and writespeed commands.
+
     config BSP_USING_PWM_DUAL_TEST
         bool "Enable PWM2/PWM30 test command"
         depends on BSP_USING_PWM2 && BSP_USING_PWM30 && RT_USING_FINSH
