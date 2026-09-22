@@ -67,6 +67,13 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
+if GetDepend('PKG_USING_GT911'):
+    for group in Projects:
+        if group['name'] == 'gt911':
+            local_defines = group.get('LOCAL_CPPDEFINES', [])
+            if 'memcpy=rt_memcpy' not in local_defines:
+                group['LOCAL_CPPDEFINES'] = local_defines + ['memcpy=rt_memcpy']
+
 # include libraries
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'gd32_drivers', 'SConscript'),variant_dir='build/libraries/gd32_drivers', duplicate=0))
 
