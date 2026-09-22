@@ -23,7 +23,7 @@
 #define EXT_SDRAM_BEGIN    (0xC0000000U) /* the begining address of external SDRAM */
 #define EXT_SDRAM_END      (EXT_SDRAM_BEGIN + (32U * 1024 * 1024)) /* the end address of external SDRAM */
 #define EXT_SDRAM_LCD_RESERVED_SIZE    (3U * 1024U * 1024U)
-#define EXT_SDRAM_OV7670_PREVIEW_BEGIN (EXT_SDRAM_BEGIN + (2U * 1024U * 1024U))
+#define EXT_SDRAM_LCD_SCANOUT_SIZE     (2U * 1024U * 1024U)
 
 #ifdef BSP_USING_LCD_MIPI
 #define SDRAM_HEAP_BEGIN    (EXT_SDRAM_BEGIN + EXT_SDRAM_LCD_RESERVED_SIZE)
@@ -31,6 +31,10 @@
 #define SDRAM_HEAP_BEGIN    EXT_SDRAM_BEGIN
 #endif
 #define SDRAM_HEAP_SIZE     (EXT_SDRAM_END - SDRAM_HEAP_BEGIN)
+
+#ifdef BSP_USING_SDRAM
+rt_bool_t rt_hw_sdram_is_ready(void);
+#endif
 
 #define BSP_USB_HOST_VBUS_PORT_RCC    RCU_GPIOF
 #define BSP_USB_HOST_VBUS_PORT        GPIOF

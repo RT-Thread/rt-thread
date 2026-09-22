@@ -7,4 +7,14 @@ menu "Applications"
         help
             Send one heartbeat per second on vcom from the LED loop.
 
+    config BSP_USING_SDRAM_HEAP_TEST
+        bool "Enable SDRAM heap test command"
+        depends on BSP_USING_SDRAM && RT_USING_HEAP && RT_USING_FINSH
+        depends on RT_USING_MEMHEAP_AS_HEAP && RT_USING_MEMHEAP_AUTO_BINDING
+        default n
+        help
+            Register sdram_heap_test to verify an allocated SDRAM buffer.
+            Use memheap objects as the system heap with automatic binding
+            so allocations can use the external SDRAM heap.
+
 endmenu
