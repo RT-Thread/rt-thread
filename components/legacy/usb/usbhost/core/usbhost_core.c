@@ -181,6 +181,13 @@ rt_err_t rt_usbh_attatch_instance(uinst_t device)
         return ret;
     }
 
+    /* Validate the full descriptor before indexing the interface array. */
+    if (device->cfg_desc->bNumInterfaces > USB_MAX_INTERFACE)
+    {
+        LOG_E("Too many USB interfaces: %d", device->cfg_desc->bNumInterfaces);
+        return -RT_EINVAL;
+    }
+
     /* set configuration */
     ret = rt_usbh_set_configure(device, 1);
     if(ret != RT_EOK)
@@ -273,7 +280,8 @@ rt_err_t rt_usbh_detach_instance(uinst_t device)
 
     /* free configration descriptor */
     if (device->cfg_desc) {
-        for (i = 0; i < device->cfg_desc->bNumInterfaces; i++)
+        /* Attach may have failed with an invalid descriptor count. */
+        for (i = 0; i < USB_MAX_INTERFACE; i++)
         {
             if (device->intf[i] == RT_NULL) continue;
             if (device->intf[i]->drv == RT_NULL) continue;
