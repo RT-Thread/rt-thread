@@ -3,6 +3,7 @@ Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
+CPPDEFINES = []
 
 # add the general drivers.
 src = Split("""
@@ -27,6 +28,10 @@ if GetDepend(['RT_USING_I2C']):
 # add spi drivers.
 if GetDepend('RT_USING_SPI'):
     src += ['drv_spi.c']
+
+# add ospi drivers.
+if GetDepend('RT_USING_QSPI') and GetDepend('BSP_USING_OSPI0'):
+    src += ['drv_ospi.c']
 
 # add spi flash drivers.
 if GetDepend('RT_USING_SFUD'):
@@ -94,6 +99,6 @@ path = [cwd]
 path += [cwd + "/config"]
 path += [cwd + "/usb"]
 
-group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')
