@@ -15,6 +15,9 @@ if GetDepend('BSP_USING_PWM_DUAL_TEST'):
 if GetDepend('BSP_USING_RTC_ALARM_EXAMPLE'):
     src += ['rtc_alarm_example.c']
 
+if GetDepend('BSP_USING_OV7670_PREVIEW'):
+    src += ['ov7670_preview.c']
+
 if GetDepend(['BSP_USING_GD32VW553_MQTT_DEMO', 'PKG_USING_KAWAII_MQTT']):
     src += ['gd32vw553_mqtt_demo.c']
 

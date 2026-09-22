@@ -38,6 +38,13 @@ menu "Applications"
         help
             Register rtc_alarm to configure and inspect a one-shot alarm.
 
+    config BSP_USING_OV7670_PREVIEW
+        bool "Enable OV7670 LVGL preview"
+        depends on PKG_LVGL_USING_LATEST && BSP_USING_LCD_MIPI && BSP_USING_OV7670
+        default n
+        help
+            Add the camera preview UI and its optional MSH control command.
+
     config BSP_USING_GD32VW553_MQTT_DEMO
         bool "Enable GD32VW553 MQTT demo"
         depends on BSP_USING_GD32VW553_AT

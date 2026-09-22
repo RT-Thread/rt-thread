@@ -18,6 +18,9 @@ if GetDepend(['BSP_USING_LCD_MIPI']):
 if GetDepend(['BSP_USING_TOUCH_GT911']):
     src += ['drv_gt911.c']
 
+if GetDepend(['BSP_USING_OV7670']):
+    src += ['drv_ov7670.c']
+
 if GetDepend(['BSP_USING_FLASH_FATFS']):
     src += ['drv_qspi_flash.c']
 
