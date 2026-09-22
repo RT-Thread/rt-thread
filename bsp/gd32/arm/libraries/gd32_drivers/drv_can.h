@@ -8,7 +8,6 @@
  * Change Logs:
  * Date           Author               Notes
  * 2025-18-03     Dmitriy Chernov      first implementation
- * 2025-09-24     CYFS                 add support for GD32F5xx
  */
 
 #ifndef __DRV_CAN_H__
