@@ -161,7 +161,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
     }
 
     static const char mq_path[] = "/dev/mqueue/";
-    char mq_name[RT_NAME_MAX + sizeof(mq_path)] = {0};
+    char mq_name[RT_NAME_MAX + sizeof(mq_path)] = { 0 };
     rt_snprintf(mq_name, sizeof(mq_name), "%s%s", mq_path, name);
     mq_fd = open(mq_name, oflag);
 
@@ -473,7 +473,7 @@ int mq_unlink(const char *name)
         return -1;
     }
     static const char mq_path[] = "/dev/mqueue/";
-    char mq_name[RT_NAME_MAX + sizeof(mq_path)] = {0};
+    char mq_name[RT_NAME_MAX + sizeof(mq_path)] = { 0 };
     rt_snprintf(mq_name, sizeof(mq_name), "%s%s", mq_path, name);
     return unlink(mq_name);
 }
