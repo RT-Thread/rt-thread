@@ -1,3 +1,10 @@
 menu "Applications"
 
+    config BSP_USING_USB_CDC_EXAMPLE
+        bool "Enable USB CDC heartbeat in main"
+        depends on BSP_USB_USING_DEVICE && RT_USB_DEVICE_CDC
+        default n
+        help
+            Send one heartbeat per second on vcom from the LED loop.
+
 endmenu

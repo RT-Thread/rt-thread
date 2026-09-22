@@ -68,8 +68,31 @@ if GetDepend(['SOC_SERIES_GD32H77x_H78X', 'BSP_USING_ETH']):
 if GetDepend('BSP_USING_SDRAM'):
     src += ['drv_sdram.c']
 
+# add USBHS device and/or host drivers.
+if GetDepend('BSP_USING_USB'):
+    src += [
+        'usb/drv_usb_core.c',
+        'usb/gd32h7_usb_hw.c',
+    ]
+
+    if GetDepend('BSP_USB_USING_DEVICE'):
+        src += [
+            'usb/drv_otghs_dev.c',
+            'usb/drv_usb_dev.c',
+            'usb/drv_usbd_int.c',
+        ]
+    if GetDepend('BSP_USB_USING_HOST'):
+        src += [
+            'usb/drv_otghs_host.c',
+            'usb/drv_usb_host.c',
+            'usb/drv_usbh_int.c',
+            'usb/drv_usbh_pipe.c',
+            'usb/drv_usbh_trans.c',
+        ]
+
 path = [cwd]
 path += [cwd + "/config"]
+path += [cwd + "/usb"]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
 
