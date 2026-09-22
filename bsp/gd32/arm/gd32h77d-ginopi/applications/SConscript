@@ -6,6 +6,9 @@ src = ['main.c']
 if GetDepend('BSP_USING_SDRAM_HEAP_TEST'):
     src += ['sdram_heap_test.c']
 
+if GetDepend('BSP_USING_PWM_DUAL_TEST'):
+    src += ['pwm_dual_test.c']
+
 group = DefineGroup('Applications', src, depend = [''], CPPPATH = [cwd])
 
 Return('group')
