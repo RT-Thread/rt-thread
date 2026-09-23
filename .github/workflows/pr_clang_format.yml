@@ -295,7 +295,7 @@ jobs:
           git config --local user.email "$PR_AUTHOR_EMAIL"
 
           git add -A
-          git commit -m "style: format code with clang-format [skip ci]"
+          git commit -m "style: format code with clang-format"
           git push origin "HEAD:refs/heads/${TARGET_BRANCH}"
 
           echo "✅ 格式化结果已作为独立提交推送到分支 ${TARGET_BRANCH}"
