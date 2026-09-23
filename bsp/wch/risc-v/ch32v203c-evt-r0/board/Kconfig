@@ -60,22 +60,8 @@ menu "On-chip Peripheral Drivers"
                default n
 
            config ADC_CHANNEL_17
-               bool "Enable ADC CHANNEL 17 (inside Verf)"
+               bool "Enable ADC CHANNEL 17 (inside Vref)"
                default n
-        endif
-
-    menuconfig BSP_USING_DAC
-        bool "Enable DAC"
-        select RT_USING_DAC
-        default n
-
-        if BSP_USING_DAC
-            config BSP_USING_DAC_CHANNEL1
-                bool "Enable DAC CHANNEL1"
-                default n
-            config BSP_USING_DAC_CHANNEL2
-                bool "Enable DAC CHANNEL2"
-                default n
         endif
 
     menuconfig BSP_USING_SOFT_I2C
@@ -123,16 +109,6 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SPI2"
                 default n
 
-            config BSP_USING_SPI3
-                bool "Enable SPI3"
-                default n
-
-            if  BSP_USING_SPI3
-                config BSP_USING_SPI_FLASH
-                bool "Enable SPI Flash"
-                default n
-            endif
-
             menuconfig BSP_USING_SOFT_SPI1
                 bool "Enable software SPI1 Bus (swspi1)"
                 default n
@@ -148,23 +124,6 @@ menu "On-chip Peripheral Drivers"
                     config RT_SOFT_SPI1_MOSI_PIN
                         int "swspi1 MOSI pin number"
                         default 24
-                endif
-
-            menuconfig BSP_USING_SOFT_SPI2
-                bool "Enable software SPI2 Bus (swspi2)"
-                default n
-                select RT_USING_SOFT_SPI
-                select RT_USING_SOFT_SPI2
-                if BSP_USING_SOFT_SPI2
-                    config RT_SOFT_SPI2_SCK_PIN
-                        int "swspi2 SCK pin number"
-                        default 64
-                    config RT_SOFT_SPI2_MISO_PIN
-                        int "swspi2 MISO pin number"
-                        default 66
-                    config RT_SOFT_SPI2_MOSI_PIN
-                        int "swspi2 MOSI pin number"
-                        default 65
                 endif
 
         endif
@@ -192,30 +151,6 @@ menu "On-chip Peripheral Drivers"
     config RT_SOFT_SPI1_BUS_NAME_DEFAULT
         string
         default "swspi1" if RT_USING_SOFT_SPI1
-
-    config RT_SOFT_SPI2_HAS_PIN_DEFAULT
-        bool
-        default y if RT_USING_SOFT_SPI2
-
-    config RT_SOFT_SPI2_SCK_PIN_DEFAULT
-        int
-        default 64 if RT_USING_SOFT_SPI2
-
-    config RT_SOFT_SPI2_MISO_PIN_DEFAULT
-        int
-        default 66 if RT_USING_SOFT_SPI2
-
-    config RT_SOFT_SPI2_MOSI_PIN_DEFAULT
-        int
-        default 65 if RT_USING_SOFT_SPI2
-
-    config RT_SOFT_SPI2_HAS_BUS_NAME_DEFAULT
-        bool
-        default y if RT_USING_SOFT_SPI2
-
-    config RT_SOFT_SPI2_BUS_NAME_DEFAULT
-        string
-        default "swspi2" if RT_USING_SOFT_SPI2
 
     config BSP_USING_RTC
         bool "Enable RTC"
@@ -255,9 +190,6 @@ menu "On-chip Peripheral Drivers"
             if BSP_USING_CAN
                 config BSP_USING_CAN1
                     bool "Using CAN1"
-                    default n
-                config BSP_USING_CAN2
-                    bool "Using CAN2"
                     default n
             endif
 
@@ -416,182 +348,6 @@ menu "On-chip Peripheral Drivers"
 
                         config BSP_USING_TIM4_PWM_CH4
                             bool "Using TIM4 channel 4"
-                    endif
-
-                endif
-
-            config BSP_USING_TIM5
-                    bool "Using TIM5"
-                    default n
-
-                if BSP_USING_TIM5
-                    choice BSP_TIM5_SEL
-                        prompt "Using TIM5 as clock_timer or PWM mode"
-                        default BSP_USING_TIM5_CLOCK_TIMER
-
-                        config BSP_USING_TIM5_CLOCK_TIMER
-                            bool "Using TIM5 as clock_timer mode"
-                            select BSP_USING_CLOCK_TIMER
-
-                        config BSP_USING_TIM5_PWM
-                            bool "Using TIM5 as PWM mode"
-                            select BSP_USING_PWM
-                    endchoice
-
-                    if BSP_USING_TIM5_PWM
-                        config BSP_USING_TIM5_PWM_CH1
-                            bool "Using TIM5 channel 1"
-                            default n
-
-                        config BSP_USING_TIM5_PWM_CH2
-                            bool "Using TIM5 channel 2"
-                            default n
-
-                        config BSP_USING_TIM5_PWM_CH3
-                            bool "Using TIM5 channel 3"
-
-                        config BSP_USING_TIM5_PWM_CH4
-                            bool "Using TIM5 channel 4"
-                    endif
-
-                endif
-
-            config BSP_USING_TIM6
-                    bool "Using TIM6"
-                    default n
-
-                if BSP_USING_TIM6
-                    choice TIM5_CLK_TMR_PWM_MO_SEL
-                        prompt "Using TIM6 as clock_timer (PWM mode not supported)"
-                        default BSP_USING_TIM6_CLOCK_TIMER
-
-                        config BSP_USING_TIM6_CLOCK_TIMER
-                            bool "Using TIM6 as clock_timer mode"
-                            select BSP_USING_CLOCK_TIMER
-                    endchoice
-
-                endif
-
-            config BSP_USING_TIM7
-                    bool "Using TIM7"
-                    default n
-
-                if BSP_USING_TIM7
-                    choice TIM7_CLK_TMR_PWM_MO_SEL
-                        prompt "Using TIM7 as clock_timer (PWM mode not supported)"
-                        default BSP_USING_TIM7_CLOCK_TIMER
-
-                        config BSP_USING_TIM7_CLOCK_TIMER
-                            bool "Using TIM7 as clock_timer mode"
-                            select BSP_USING_CLOCK_TIMER
-                    endchoice
-
-                endif
-
-            config BSP_USING_TIM8
-                    bool "Using TIM8"
-                    default n
-
-                if BSP_USING_TIM8
-                    choice BSP_TIM8_SEL
-                        prompt "Using TIM8 as clock_timer or PWM mode"
-                        default BSP_USING_TIM8_CLOCK_TIMER
-
-                        config BSP_USING_TIM8_CLOCK_TIMER
-                            bool "Using TIM8 as clock_timer mode"
-                            select BSP_USING_CLOCK_TIMER
-
-                        config BSP_USING_TIM8_PWM
-                            bool "Using TIM8 as PWM mode"
-                            select BSP_USING_PWM
-                    endchoice
-
-                    if BSP_USING_TIM8_PWM
-                        config BSP_USING_TIM8_PWM_CH1
-                            bool "Using TIM8 channel 1"
-                            default n
-
-                        config BSP_USING_TIM8_PWM_CH2
-                            bool "Using TIM8 channel 2"
-                            default n
-
-                        config BSP_USING_TIM8_PWM_CH3
-                            bool "Using TIM8 channel 3"
-
-                        config BSP_USING_TIM8_PWM_CH4
-                            bool "Using TIM8 channel 4"
-                    endif
-
-                endif
-
-            config BSP_USING_TIM9
-                    bool "Using TIM9"
-                    default n
-
-                if BSP_USING_TIM9
-                    choice BSP_TIM9_SEL
-                        prompt "Using TIM9 as clock_timer or PWM mode"
-                        default BSP_USING_TIM9_CLOCK_TIMER
-
-                        config BSP_USING_TIM9_CLOCK_TIMER
-                            bool "Using TIM9 as clock_timer mode"
-                            select BSP_USING_CLOCK_TIMER
-
-                        config BSP_USING_TIM9_PWM
-                            bool "Using TIM9 as PWM mode"
-                            select BSP_USING_PWM
-                    endchoice
-
-                    if BSP_USING_TIM9_PWM
-                        config BSP_USING_TIM9_PWM_CH1
-                            bool "Using TIM9 channel 1"
-                            default n
-
-                        config BSP_USING_TIM9_PWM_CH2
-                            bool "Using TIM9 channel 2"
-                            default n
-
-                        config BSP_USING_TIM9_PWM_CH3
-                            bool "Using TIM9 channel 3"
-
-                        config BSP_USING_TIM9_PWM_CH4
-                            bool "Using TIM9 channel 4"
-                    endif
-
-                endif
-
-            config BSP_USING_TIM10
-                    bool "Using TIM10"
-                    default n
-
-                if BSP_USING_TIM10
-                    choice BSP_TIM10_SEL
-                        prompt "Using TIM10 as clock_timer or PWM mode"
-                        default BSP_USING_TIM10_CLOCK_TIMER
-
-                        config BSP_USING_TIM10_CLOCK_TIMER
-                            bool "Using TIM10 as clock_timer mode"
-                            select BSP_USING_CLOCK_TIMER
-
-                        config BSP_USING_TIM10_PWM
-                            bool "Using TIM10 as PWM mode"
-                            select BSP_USING_PWM
-                    endchoice
-
-                    if BSP_USING_TIM10_PWM
-                        config BSP_USING_TIM10_PWM_CH1
-                            bool "Using TIM10 channel 1"
-                            default n
-
-                        config BSP_USING_TIM10_PWM_CH2
-                            bool "Using TIM10 channel 2"
-                            default n
-
-                        config BSP_USING_TIM10_PWM_CH3
-                            bool "Using TIM10 channel 3"
-
-                        config BSP_USING_TIM10_PWM_CH4
-                            bool "Using TIM10 channel 4"
                     endif
 
                 endif

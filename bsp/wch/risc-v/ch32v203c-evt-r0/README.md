@@ -38,7 +38,7 @@ CH32V203C8T6-EVT-R0 是 WCH 沁恒的 RISC-V 评估板。芯片是 QingKe **V4B�
 
 1. 安装 [WCH RISC-V GCC](https://github.com/NanjingQinheng/sdk-toolchain-RISC-V-GCC-WCH) 与 [Env](https://github.com/RT-Thread/env-windows/releases)
 2. 进入本目录，设置 `RTT_EXEC_PATH` 为工具链 `bin`
-3. `pkgs --update` 拉取 `CH32V20x_SDK`（或按 `package.json` clone `kaidegit/CH32V20x-SDK-for-RTT` 到 `packages/`）
+3. clone [CH32V20x-SDK-for-RTT](https://github.com/kaidegit/CH32V20x-SDK-for-RTT) 到 `packages/CH32V20x-SDK-for-RTT`
 4. `scons -j4`，生成 **rtthread.bin**
 
 ## 3 硬件连接与下载
