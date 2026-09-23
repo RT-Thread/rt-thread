@@ -600,7 +600,11 @@ u32_t sio_read(sio_fd_t fd, u8_t *buf, u32_t size)
     return len;
 }
 
+#if RT_USING_LWIP_VER_NUM >= 0x20200
+u32_t sio_write(sio_fd_t fd, const u8_t *buf, u32_t size)
+#else
 u32_t sio_write(sio_fd_t fd, u8_t *buf, u32_t size)
+#endif
 {
     RT_ASSERT(fd != RT_NULL);
     return rt_device_write((rt_device_t)fd, 0, buf, size);
