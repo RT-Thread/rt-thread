@@ -174,6 +174,14 @@ menu "On-chip Peripheral Drivers"
         select LSI_VALUE
         default n
 
+    config BSP_UTEST_IWDT
+        bool "Enable IWDT utest"
+        depends on BSP_USING_IWDT
+        select RT_USING_UTEST
+        default n
+        help
+            The utest framework requires a console buffer of at least 256 bytes.
+
     config BSP_USING_USBD
         bool "Enable USB Device"
         select RT_USING_USB_DEVICE
