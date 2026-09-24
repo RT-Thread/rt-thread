@@ -266,6 +266,7 @@ jobs:
           - {RTT_BSP_NAME: "wch_arm_ch32f203r-evt", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch32f203r-evt"}
          #- {RTT_BSP_NAME: "wch_arm_ch579m", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "wch/arm/ch579m"}  #编译错误
          #- {RTT_BSP_NAME: "wch_risc-v_ch32v103r-evt", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v103r-evt"} #编译出错
+          - {RTT_BSP_NAME: "wch_risc-v_ch32v203c-evt-r0", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v203c-evt-r0"}
           - {RTT_BSP_NAME: "wch_risc-v_ch32v208w-r0", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v208w-r0"}
           - {RTT_BSP_NAME: "wch_risc-v_ch32v307v-r1", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch32v307v-r1"}
          #- {RTT_BSP_NAME: "wch_risc-v_ch569w-evt", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "wch/risc-v/ch569w-evt"}  #编译出错

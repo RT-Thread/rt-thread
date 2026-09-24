@@ -2568,6 +2568,12 @@ wch/risc-v/ch32v103r-evt:
   gcc: riscv-none-embed-gcc
   menuconfig: true
   rtconfig.h: true
+wch/risc-v/ch32v203c-evt-r0:
+  .config: true
+  README.md: true
+  gcc: riscv-none-embed-gcc
+  menuconfig: true
+  rtconfig.h: true
 wch/risc-v/ch32v208w-r0:
   .config: true
   gcc: riscv-none-embed-gcc

@@ -802,6 +802,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [ch32f203r-evt](wch/arm/ch32f203r-evt) | ✅ | ✅ | - | - | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | - | - |
 | [ch579m](wch/arm/ch579m) | ✅ | ✅ | - | - | - | ✅ | - | - | - | - | - | - | - | - | ✅ |
 | [ch32v103r-evt](wch/risc-v/ch32v103r-evt) | ✅ | ✅ | - | - | - | - | - | - | - | - | - | - | - | - | - |
+| [ch32v203c-evt-r0](wch/risc-v/ch32v203c-evt-r0) | ✅ | ✅ | ✅ | - | - | - | - | - | - | - | ✅ | ✅ | ✅ | ✅ | - |
 | [ch32v208w-r0](wch/risc-v/ch32v208w-r0) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | - |
 | [ch32v307v-r1](wch/risc-v/ch32v307v-r1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [ch569w-evt](wch/risc-v/ch569w-evt) | ✅ | ✅ | - | - | - | - | - | ✅ | - | ✅ | - | - | - | - | - |
