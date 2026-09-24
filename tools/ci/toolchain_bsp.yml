@@ -372,11 +372,12 @@ riscv-none-embed-gcc:
   - k210
   - rv32m1_vega/ri5cy
   - wch/risc-v/ch32v103r-evt
+  - wch/risc-v/ch32v203c-evt-r0
   - wch/risc-v/ch32v208w-r0
   - wch/risc-v/ch32v307v-r1
   - wch/risc-v/ch569w-evt
   - wch/risc-v/yd-ch32v307vct6
-  count: 11
+  count: 12
   download_url: https://github.com/RT-Thread/toolchains-ci/releases/download/v1.5/xpack-riscv-none-embed-gcc-8.3.0-2.3-linux-x64.tar.gz
 riscv-nuclei-elf-gcc:
   bsp:
