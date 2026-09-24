@@ -1,0 +1,3 @@
+config RT_THERMAL_K1X
+    bool "Spacemit K1X"
+    default n

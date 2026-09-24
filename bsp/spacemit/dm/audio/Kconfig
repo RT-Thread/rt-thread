@@ -1,0 +1,29 @@
+config RT_AUDIO_SPACEMIT
+    bool "Spacemit K1 audio"
+    depends on RT_USING_AUDIO
+    depends on RT_USING_OFW
+    depends on RT_USING_DMA
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    depends on RT_USING_PIN
+    depends on RT_USING_I2C
+    depends on RT_USING_RPMSG
+    depends on RT_VIRTIO_RPMSG
+    depends on RT_SOC_SPACEMIT_K1X_RPROC
+    select RT_AUDIO_SPACEMIT_CODEC_ES8326
+    default n
+    help
+      Enable the K1 I2S and HDMI audio paths. Both cards operate at 48 kHz,
+      stereo, 16-bit PCM. The HDMI card supports playback.
+
+config RT_AUDIO_SPACEMIT_CODEC
+    bool "Spacemit codec support"
+    depends on RT_AUDIO_SPACEMIT
+    default y
+
+config RT_AUDIO_SPACEMIT_CODEC_ES8326
+    bool "ES8326 codec"
+    depends on RT_AUDIO_SPACEMIT_CODEC
+    default y
+    help
+      ES8326 codec supports playback and capture

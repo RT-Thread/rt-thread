@@ -1,0 +1,15 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend(['RT_AUDIO_SPACEMIT']):
+    src += ['spacemit-snd-card.c', 'spacemit-snd-i2s.c', 'spacemit-snd-pcm-dma.c', 'spacemit-snd-sspa.c']
+
+if GetDepend(['RT_AUDIO_SPACEMIT_CODEC_ES8326']):
+    src += ['codec/es8326.c']
+
+group = DefineGroup('DeviceDrivers', src, depend=[],
+        CPPPATH=[cwd, cwd + '/../include'])
+
+Return('group')

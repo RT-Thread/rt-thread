@@ -1,0 +1,13 @@
+from building import *
+
+group = []
+src = []
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+
+if GetDepend(['RT_INPUT_MISC_PWRKEY_SPACEMIT_PMIC']):
+    src += ['pwrkey-spacemit-pmic.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
