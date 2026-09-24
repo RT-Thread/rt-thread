@@ -838,6 +838,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | BSP Name | GPIO | UART | ADC | I2C | SPI | Soft I2C | HWTimer | PWM | WiFi |
 |----------|------|------|-----|-----|-----|----------|---------|-----|------|
 | [ESP32_C3](ESP32_C3) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [ESP32_C6](ESP/ESP32_C6) | ✅ | ✅ | ✅ | - | - | - | - | - | - |
 
 #### 🟡 Bluetrum
 

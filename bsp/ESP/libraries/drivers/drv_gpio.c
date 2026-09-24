@@ -37,14 +37,19 @@ static void mcu_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     io_conf.pull_down_en = 0;
     io_conf.pull_up_en = 0;
     gpio_config(&io_conf);
-    switch  (mode)
+    switch (mode)
     {
         case PIN_MODE_INPUT:
             gpio_set_direction(pin, GPIO_MODE_INPUT);
+            break;
         case PIN_MODE_OUTPUT:
             gpio_set_direction(pin, GPIO_MODE_OUTPUT);
+            break;
         case PIN_MODE_OUTPUT_OD:
             gpio_set_direction(pin, GPIO_MODE_INPUT_OUTPUT_OD);
+            break;
+        default:
+            break;
     }
     /*TODO:set gpio out put mode */
 }

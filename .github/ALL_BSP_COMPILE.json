@@ -496,6 +496,13 @@
       ]
     },
     {
+      "RTT_BSP": "ESP32C6",
+      "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
+      "SUB_RTT_BSP": [
+        "ESP/ESP32_C6"
+      ]
+    },
+    {
       "RTT_BSP": "i386-unknown",
       "RTT_TOOL_CHAIN": "sourcery-i386-unknown-elf",
       "SUB_RTT_BSP": [

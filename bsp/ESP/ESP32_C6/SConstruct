@@ -1,0 +1,69 @@
+import os
+import sys
+from esptool.bin_image import ELFFile
+from esptool.targets import CHIP_DEFS
+
+def elf2image(target, source, env):
+    e = ELFFile("rtthread.elf")
+
+    print("Creating esp32c6 image...")
+
+    image = CHIP_DEFS["esp32c6"].BOOTLOADER_IMAGE()
+    image.entrypoint = e.entrypoint
+    image.flash_mode = 2  # dio
+
+    image.segments = e.sections
+    image.flash_size_freq = image.ROM_LOADER.parse_flash_size_arg("8MB")
+    image.flash_size_freq += image.ROM_LOADER.parse_flash_freq_arg("80m")
+
+    image.elf_sha256 = e.sha256()
+    image.elf_sha256_offset = 0xb0
+
+    before = len(image.segments)
+    image.merge_adjacent_segments()
+    if len(image.segments) != before:
+        delta = before - len(image.segments)
+        print("Merged %d ELF section%s" % (delta, "s" if delta > 1 else ""))
+
+    image.verify()
+    image.save("rtthread.bin")
+    print("Successfully created esp32c6 image.")
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.join(os.getcwd(), '..', '..', '..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+import rtconfig
+from building import *
+
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+SDK_ROOT = os.path.abspath('./')
+
+if os.path.exists(SDK_ROOT + '/libraries'):
+    libraries_path_prefix = SDK_ROOT + '/libraries'
+else:
+    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
+
+SDK_LIB = libraries_path_prefix
+Export('SDK_LIB')
+DefaultEnvironment(tools=[])
+env = Environment(tools = ['mingw'],
+    AS   = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC   = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    CXX  = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
+    AR   = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env['ASCOM'] = env['ASPPCOM']
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+objs = PrepareBuilding(env, RTT_ROOT, remove_components = ['libc'])
+
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))
+DoBuilding(TARGET, objs)
+
+env.AddPostAction(TARGET, elf2image)

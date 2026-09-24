@@ -14,7 +14,6 @@
 #include "driver/uart.h"
 #include "hal/uart_hal.h"
 #include "sdkconfig.h"
-
 #ifdef RT_USING_SERIAL_V1
 
 #ifdef CONFIG_UART_ISR_IN_IRAM
@@ -115,7 +114,11 @@ int rt_hw_uart_init(void)
         .parity    = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+#ifdef SOC_ESP32_C6
+        .source_clk = UART_SCLK_DEFAULT,
+#else
         .source_clk = UART_SCLK_APB,
+#endif
     };
     int intr_alloc_flags = 0;
 
