@@ -1,0 +1,50 @@
+menu "SDIO Test"
+
+config RT_UTEST_SDIO
+    bool "SDIO Block Read and Write Test"
+    default n
+    depends on RT_USING_SDIO
+    help
+        Verify SDIO block-device read and write paths with a real SD card.
+        The test writes directly to the configured sectors and does not use
+        DFS or format the card.
+
+if RT_UTEST_SDIO
+
+config RT_SDIO_UTEST_DEVICE_NAME
+    string "SDIO block device name"
+    default "sd0"
+    help
+        Block device used by the test, for example sd0 or sd0p0.
+
+config RT_SDIO_UTEST_START_SECTOR
+    hex "SDIO test start sector"
+    default 0x0
+    help
+        First sector used by the test. Existing data in the selected sectors
+        will be overwritten.
+
+config RT_SDIO_UTEST_SECTOR_COUNT
+    int "SDIO test sector count"
+    range 1 128
+    default 8
+    help
+        Number of contiguous sectors used by each transfer.
+
+config RT_SDIO_UTEST_LOOP_COUNT
+    int "SDIO test loop count"
+    range 1 100
+    default 3
+    help
+        Number of write/read verification loops at each test location.
+
+config RT_SDIO_UTEST_DEVICE_WAIT_MS
+    int "SDIO device wait time"
+    range 0 60000
+    default 3000
+    help
+        Time to wait for the SDIO block device to appear before failing.
+
+endif
+
+endmenu
