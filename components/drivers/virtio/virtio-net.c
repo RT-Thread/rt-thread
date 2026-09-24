@@ -124,6 +124,19 @@ static struct pbuf *virtio_net_rx(rt_device_t dev)
 
         if (!p)
         {
+            level = rt_spin_lock_irqsave(&vnet->rx_lock);
+
+            if (!rt_virtqueue_poll(vq, packet - vnet->rx_packet))
+            {
+                rt_list_remove(&vq->user_list);
+            }
+
+            rt_virtqueue_add_inbuf(vq, packet, sizeof(*packet));
+
+            rt_virtqueue_kick(vq);
+
+            rt_spin_unlock_irqrestore(&vnet->rx_lock, level);
+
             return RT_NULL;
         }
 
