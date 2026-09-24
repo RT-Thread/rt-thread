@@ -35,6 +35,7 @@ void rt_sched_thread_init_ctx(struct rt_thread *thread, rt_uint32_t tick, rt_uin
 {
     /* setup thread status */
     RT_SCHED_CTX(thread).stat = RT_THREAD_INIT;
+    RT_SCHED_CTX(thread).sched_flag_defunct = 0;
 
 #ifdef RT_USING_SMP
     /* not bind on any cpu */
