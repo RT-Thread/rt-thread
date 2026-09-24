@@ -1,6 +1,11 @@
 config RT_UTEST_SYS_PERF
     bool "Performance Test"
     default n
+    select RT_USING_CLOCK_TIME
+    help
+        Enable kernel performance tests using a clock timer device.
+        Enable a hardware timer driver in the BSP and set
+        RT_UTEST_CLOCK_TIMER_DEV_NAME to its registered device name.
 
 config RT_UTEST_SYS_PERF_TC_COUNT
     int "PerfTest: Number of cycles"
