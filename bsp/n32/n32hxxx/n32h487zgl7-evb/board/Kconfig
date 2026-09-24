@@ -752,6 +752,467 @@ menu "On-chip Peripheral Drivers"
     bool "Enable SDIO"
     default n
 
+
+    menuconfig BSP_USING_CLOCK_TIMER
+        bool "Enable clock timer"
+        default n
+        select RT_USING_CLOCK_TIME
+        if BSP_USING_CLOCK_TIMER
+
+            config BSP_USING_ATIM1
+                bool "Enable ATIM1 as timer1"
+                default n
+
+            config BSP_USING_ATIM2
+                bool "Enable ATIM2 as timer2"
+                default n
+
+            config BSP_USING_ATIM3
+                bool "Enable ATIM3 as timer3"
+                default n
+
+            config BSP_USING_GTIM1
+                bool "Enable GTIM1 as timer5"
+                default n
+
+            config BSP_USING_GTIM2
+                bool "Enable GTIM2 as timer6"
+                default n
+
+            config BSP_USING_GTIM3
+                bool "Enable GTIM3 as timer7"
+                default n
+
+            config BSP_USING_GTIM4
+                bool "Enable GTIM4 as timer8"
+                default n
+
+            config BSP_USING_GTIM5
+                bool "Enable GTIM5 as timer9"
+                default n
+
+            config BSP_USING_GTIM6
+                bool "Enable GTIM6 as timer10"
+                default n
+
+            config BSP_USING_GTIM7
+                bool "Enable GTIM7 as timer11"
+                default n
+
+            config BSP_USING_GTIM8
+                bool "Enable GTIM8 as timer12"
+                default n
+
+            config BSP_USING_GTIM9
+                bool "Enable GTIM9 as timer13"
+                default n
+
+            config BSP_USING_GTIM10
+                bool "Enable GTIM10 as timer14"
+                default n
+
+            config BSP_USING_BTIM1
+                bool "Enable BTIM1 as timer15"
+                default n
+
+            config BSP_USING_BTIM2
+                bool "Enable BTIM2 as timer16"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+
+            menuconfig BSP_USING_PWM1
+                bool "Enable ATIM1 as pwm1"
+                depends on !BSP_USING_ATIM1
+                default n
+                if BSP_USING_PWM1
+
+                    config BSP_USING_PWM1_CH1
+                        bool "Enable pwm1 channel1"
+                        default n
+
+                    config BSP_USING_PWM1_CH2
+                        bool "Enable pwm1 channel2"
+                        default n
+
+                    config BSP_USING_PWM1_CH3
+                        bool "Enable pwm1 channel3"
+                        default n
+
+                    config BSP_USING_PWM1_CH4
+                        bool "Enable pwm1 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM2
+                bool "Enable ATIM2 as pwm2"
+                depends on !BSP_USING_ATIM2
+                default n
+                if BSP_USING_PWM2
+
+                    config BSP_USING_PWM2_CH1
+                        bool "Enable pwm2 channel1"
+                        default n
+
+                    config BSP_USING_PWM2_CH2
+                        bool "Enable pwm2 channel2"
+                        default n
+
+                    config BSP_USING_PWM2_CH3
+                        bool "Enable pwm2 channel3"
+                        default n
+
+                    config BSP_USING_PWM2_CH4
+                        bool "Enable pwm2 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM3
+                bool "Enable ATIM3 as pwm3"
+                depends on !BSP_USING_ATIM3
+                default n
+                if BSP_USING_PWM3
+
+                    config BSP_USING_PWM3_CH1
+                        bool "Enable pwm3 channel1"
+                        default n
+
+                    config BSP_USING_PWM3_CH2
+                        bool "Enable pwm3 channel2"
+                        default n
+
+                    config BSP_USING_PWM3_CH3
+                        bool "Enable pwm3 channel3"
+                        default n
+
+                    config BSP_USING_PWM3_CH4
+                        bool "Enable pwm3 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM5
+                bool "Enable GTIM1 as pwm5"
+                depends on !BSP_USING_GTIM1
+                default n
+                if BSP_USING_PWM5
+
+                    config BSP_USING_PWM5_CH1
+                        bool "Enable pwm5 channel1"
+                        default n
+
+                    config BSP_USING_PWM5_CH2
+                        bool "Enable pwm5 channel2"
+                        default n
+
+                    config BSP_USING_PWM5_CH3
+                        bool "Enable pwm5 channel3"
+                        default n
+
+                    config BSP_USING_PWM5_CH4
+                        bool "Enable pwm5 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM6
+                bool "Enable GTIM2 as pwm6"
+                depends on !BSP_USING_GTIM2
+                default n
+                if BSP_USING_PWM6
+
+                    config BSP_USING_PWM6_CH1
+                        bool "Enable pwm6 channel1"
+                        default n
+
+                    config BSP_USING_PWM6_CH2
+                        bool "Enable pwm6 channel2"
+                        default n
+
+                    config BSP_USING_PWM6_CH3
+                        bool "Enable pwm6 channel3"
+                        default n
+
+                    config BSP_USING_PWM6_CH4
+                        bool "Enable pwm6 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM7
+                bool "Enable GTIM3 as pwm7"
+                depends on !BSP_USING_GTIM3
+                default n
+                if BSP_USING_PWM7
+
+                    config BSP_USING_PWM7_CH1
+                        bool "Enable pwm7 channel1"
+                        default n
+
+                    config BSP_USING_PWM7_CH2
+                        bool "Enable pwm7 channel2"
+                        default n
+
+                    config BSP_USING_PWM7_CH3
+                        bool "Enable pwm7 channel3"
+                        default n
+
+                    config BSP_USING_PWM7_CH4
+                        bool "Enable pwm7 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM8
+                bool "Enable GTIM4 as pwm8"
+                depends on !BSP_USING_GTIM4
+                default n
+                if BSP_USING_PWM8
+
+                    config BSP_USING_PWM8_CH1
+                        bool "Enable pwm8 channel1"
+                        default n
+
+                    config BSP_USING_PWM8_CH2
+                        bool "Enable pwm8 channel2"
+                        default n
+
+                    config BSP_USING_PWM8_CH3
+                        bool "Enable pwm8 channel3"
+                        default n
+
+                    config BSP_USING_PWM8_CH4
+                        bool "Enable pwm8 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM9
+                bool "Enable GTIM5 as pwm9"
+                depends on !BSP_USING_GTIM5
+                default n
+                if BSP_USING_PWM9
+
+                    config BSP_USING_PWM9_CH1
+                        bool "Enable pwm9 channel1"
+                        default n
+
+                    config BSP_USING_PWM9_CH2
+                        bool "Enable pwm9 channel2"
+                        default n
+
+                    config BSP_USING_PWM9_CH3
+                        bool "Enable pwm9 channel3"
+                        default n
+
+                    config BSP_USING_PWM9_CH4
+                        bool "Enable pwm9 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM10
+                bool "Enable GTIM6 as pwm10"
+                depends on !BSP_USING_GTIM6
+                default n
+                if BSP_USING_PWM10
+
+                    config BSP_USING_PWM10_CH1
+                        bool "Enable pwm10 channel1"
+                        default n
+
+                    config BSP_USING_PWM10_CH2
+                        bool "Enable pwm10 channel2"
+                        default n
+
+                    config BSP_USING_PWM10_CH3
+                        bool "Enable pwm10 channel3"
+                        default n
+
+                    config BSP_USING_PWM10_CH4
+                        bool "Enable pwm10 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM11
+                bool "Enable GTIM7 as pwm11"
+                depends on !BSP_USING_GTIM7
+                default n
+                if BSP_USING_PWM11
+
+                    config BSP_USING_PWM11_CH1
+                        bool "Enable pwm11 channel1"
+                        default n
+
+                    config BSP_USING_PWM11_CH2
+                        bool "Enable pwm11 channel2"
+                        default n
+
+                    config BSP_USING_PWM11_CH3
+                        bool "Enable pwm11 channel3"
+                        default n
+
+                    config BSP_USING_PWM11_CH4
+                        bool "Enable pwm11 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM12
+                bool "Enable GTIM8 as pwm12"
+                depends on !BSP_USING_GTIM8
+                default n
+                if BSP_USING_PWM12
+
+                    config BSP_USING_PWM12_CH1
+                        bool "Enable pwm12 channel1"
+                        default n
+
+                    config BSP_USING_PWM12_CH2
+                        bool "Enable pwm12 channel2"
+                        default n
+
+                    config BSP_USING_PWM12_CH3
+                        bool "Enable pwm12 channel3"
+                        default n
+
+                    config BSP_USING_PWM12_CH4
+                        bool "Enable pwm12 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM13
+                bool "Enable GTIM9 as pwm13"
+                depends on !BSP_USING_GTIM9
+                default n
+                if BSP_USING_PWM13
+
+                    config BSP_USING_PWM13_CH1
+                        bool "Enable pwm13 channel1"
+                        default n
+
+                    config BSP_USING_PWM13_CH2
+                        bool "Enable pwm13 channel2"
+                        default n
+
+                    config BSP_USING_PWM13_CH3
+                        bool "Enable pwm13 channel3"
+                        default n
+
+                    config BSP_USING_PWM13_CH4
+                        bool "Enable pwm13 channel4"
+                        default n
+                endif
+
+            menuconfig BSP_USING_PWM14
+                bool "Enable GTIM10 as pwm14"
+                depends on !BSP_USING_GTIM10
+                default n
+                if BSP_USING_PWM14
+
+                    config BSP_USING_PWM14_CH1
+                        bool "Enable pwm14 channel1"
+                        default n
+
+                    config BSP_USING_PWM14_CH2
+                        bool "Enable pwm14 channel2"
+                        default n
+
+                    config BSP_USING_PWM14_CH3
+                        bool "Enable pwm14 channel3"
+                        default n
+
+                    config BSP_USING_PWM14_CH4
+                        bool "Enable pwm14 channel4"
+                        default n
+                endif
+        endif
+
+    menuconfig BSP_USING_PULSE_ENCODER
+        bool "Enable Pulse Encoder"
+        default n
+        select RT_USING_PULSE_ENCODER
+        if BSP_USING_PULSE_ENCODER
+
+            config BSP_USING_PULSE_ENCODER1
+                bool "Enable ATIM1 as pulse1"
+                depends on !BSP_USING_ATIM1 && !BSP_USING_PWM1
+                default n
+
+            config BSP_USING_PULSE_ENCODER2
+                bool "Enable ATIM2 as pulse2"
+                depends on !BSP_USING_ATIM2 && !BSP_USING_PWM2
+                default n
+
+            config BSP_USING_PULSE_ENCODER3
+                bool "Enable ATIM3 as pulse3"
+                depends on !BSP_USING_ATIM3 && !BSP_USING_PWM3
+                default n
+
+            config BSP_USING_PULSE_ENCODER5
+                bool "Enable GTIM1 as pulse5"
+                depends on !BSP_USING_GTIM1 && !BSP_USING_PWM5
+                default n
+
+            config BSP_USING_PULSE_ENCODER6
+                bool "Enable GTIM2 as pulse6"
+                depends on !BSP_USING_GTIM2 && !BSP_USING_PWM6
+                default n
+
+            config BSP_USING_PULSE_ENCODER7
+                bool "Enable GTIM3 as pulse7"
+                depends on !BSP_USING_GTIM3 && !BSP_USING_PWM7
+                default n
+
+            config BSP_USING_PULSE_ENCODER8
+                bool "Enable GTIM4 as pulse8"
+                depends on !BSP_USING_GTIM4 && !BSP_USING_PWM8
+                default n
+
+            config BSP_USING_PULSE_ENCODER9
+                bool "Enable GTIM5 as pulse9"
+                depends on !BSP_USING_GTIM5 && !BSP_USING_PWM9
+                default n
+
+            config BSP_USING_PULSE_ENCODER10
+                bool "Enable GTIM6 as pulse10"
+                depends on !BSP_USING_GTIM6 && !BSP_USING_PWM10
+                default n
+
+            config BSP_USING_PULSE_ENCODER11
+                bool "Enable GTIM7 as pulse11"
+                depends on !BSP_USING_GTIM7 && !BSP_USING_PWM11
+                default n
+
+            config BSP_USING_PULSE_ENCODER12
+                bool "Enable GTIM8 as pulse12"
+                depends on !BSP_USING_GTIM8 && !BSP_USING_PWM12
+                default n
+
+            config BSP_USING_PULSE_ENCODER13
+                bool "Enable GTIM9 as pulse13"
+                depends on !BSP_USING_GTIM9 && !BSP_USING_PWM13
+                default n
+
+            config BSP_USING_PULSE_ENCODER14
+                bool "Enable GTIM10 as pulse14"
+                depends on !BSP_USING_GTIM10 && !BSP_USING_PWM14
+                default n
+        endif
+
+    menuconfig BSP_USING_LPTIM
+        bool "Enable lptimer"
+        default n
+        select RT_USING_CLOCK_TIME
+        if BSP_USING_LPTIM
+
+            config BSP_USING_LPTIM1
+                bool "Enable LPTIM1"
+                default n
+
+            config BSP_USING_LPTIM2
+                bool "Enable LPTIM2"
+                default n
+        endif
+
     source "$BSP_DIR/../libraries/N32_Drivers/drivers/Kconfig"
 
 endmenu

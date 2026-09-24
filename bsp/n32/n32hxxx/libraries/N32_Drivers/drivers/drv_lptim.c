@@ -6,13 +6,27 @@
  * Change Logs:
  * Date           Author          Notes
  * 2026-06-23     ox-horse        first version
+ * 2026-08-19     ox-horse        Add N32H47X_48X and N32H49X
  */
 
 #include <board.h>
 #include <drv_lptim.h>
 #include <rtdevice.h>
 #include "drv_config.h"
-#include "n32h7xx_exti.h"
+
+/* The driver owns the peripheral registers, so it pulls in the peripheral
+ * headers itself instead of relying on board.h to have declared them.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#include <n32h7xx_exti.h>
+#include <n32h7xx_lptim.h>
+#elif defined(SOC_SERIES_N32H49x)
+#include <n32h49x_exti.h>
+#include <n32h49x_lptim.h>
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include <n32h47x_48x_exti.h>
+#include <n32h47x_48x_lptim.h>
+#endif
 
 /*#define DRV_DEBUG*/
 #define LOG_TAG "drv.lptim"
@@ -30,6 +44,7 @@ enum
 #ifdef BSP_USING_LPTIM2
     LPTIM2_INDEX,
 #endif
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_LPTIM3
     LPTIM3_INDEX,
 #endif
@@ -39,6 +54,7 @@ enum
 #ifdef BSP_USING_LPTIM5
     LPTIM5_INDEX,
 #endif
+#endif /* SOC_SERIES_N32H7xx */
 };
 
 struct n32_hw_lptimer
@@ -56,6 +72,7 @@ static struct n32_hw_lptimer n32_hw_lptimer_obj[] = {
 #ifdef BSP_USING_LPTIM2
     LPTIM2_CONFIG,
 #endif
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_LPTIM3
     LPTIM3_CONFIG,
 #endif
@@ -65,14 +82,11 @@ static struct n32_hw_lptimer n32_hw_lptimer_obj[] = {
 #ifdef BSP_USING_LPTIM5
     LPTIM5_CONFIG,
 #endif
+#endif /* SOC_SERIES_N32H7xx */
 };
 
 /**
  * Configure LPTIM clock source to LSI.
- * Each LPTIM has a 4-bit clock selection field in RCC_RDSEL1 at different bit positions.
- * LPTIM1: bits [31:28], LPTIM2: bits [27:24], LPTIM3: bits [23:20],
- * LPTIM4: bits [19:16], LPTIM5: bits [15:12].
- * LSI value = 0x1 shifted to the field position.
  */
 static void n32_lptim_clock_source_config(LPTIM_Module *timer)
 {
@@ -84,6 +98,7 @@ static void n32_lptim_clock_source_config(LPTIM_Module *timer)
     {
         RCC_ConfigLPTIM2Clk(RCC_LPTIMCLK_SRC_LSI);
     }
+#if defined(SOC_SERIES_N32H7xx)
     else if (timer == LPTIM3)
     {
         RCC_ConfigLPTIM3Clk(RCC_LPTIMCLK_SRC_LSI);
@@ -96,13 +111,15 @@ static void n32_lptim_clock_source_config(LPTIM_Module *timer)
     {
         RCC_ConfigLPTIM5Clk(RCC_LPTIMCLK_SRC_LSI);
     }
+#endif /* SOC_SERIES_N32H7xx */
 }
 
 /**
- * Enable RD (Retention Domain) peripheral clock for the given LPTIM.
+ * Enable the peripheral clock for the given LPTIM.
  */
 static void n32_lptim_enable_clock(LPTIM_Module *timer)
 {
+#if defined(SOC_SERIES_N32H7xx)
     if (timer == LPTIM1)
     {
         RCC_EnableRDPeriphClk1(RCC_RD_PERIPHEN_M7_LPTIM1 | RCC_RD_PERIPHEN_M4_LPTIM1 |
@@ -133,15 +150,24 @@ static void n32_lptim_enable_clock(LPTIM_Module *timer)
                                    RCC_RD_PERIPHEN_M7_LPTIM5LP | RCC_RD_PERIPHEN_M4_LPTIM5LP,
                                ENABLE);
     }
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+    if (timer == LPTIM1)
+    {
+        RCC_EnableLPTIMPeriphClk(RCC_LPTIM1_PERIPH_EN, ENABLE);
+    }
+    else if (timer == LPTIM2)
+    {
+        RCC_EnableLPTIMPeriphClk(RCC_LPTIM2_PERIPH_EN, ENABLE);
+    }
+#endif /* SOC series */
 }
 
 /**
- * Get EXTI line for the given LPTIM.
- * LPTIM1 -> EXTI 66, LPTIM2 -> EXTI 67, LPTIM3 -> EXTI 68,
- * LPTIM4 -> EXTI 69, LPTIM5 -> EXTI 86
+ * Get the SoC-specific EXTI line for the given LPTIM.
  */
 static uint32_t n32_lptim_get_exti_line(LPTIM_Module *timer)
 {
+#if defined(SOC_SERIES_N32H7xx)
     if (timer == LPTIM1)
     {
         return EXTI_LINE66;
@@ -162,10 +188,39 @@ static uint32_t n32_lptim_get_exti_line(LPTIM_Module *timer)
     {
         return EXTI_LINE86;
     }
-    else
+#elif defined(SOC_SERIES_N32H47x_48x)
+    if (timer == LPTIM1)
     {
-        return 0;
+        return EXTI_LINE25;
     }
+    else if (timer == LPTIM2)
+    {
+        return EXTI_LINE26;
+    }
+#elif defined(SOC_SERIES_N32H49x)
+    /*
+     * Line 21 is the LPTIM1 wakeup event and line 22 the LPTIM2 one, per the
+     * N32H49x user manual's EXTI line mapping: that series has nine internal
+     * lines, 16..24.  The two vendor sources that disagree are stale copies of
+     * the H47x_48x tables - checkable, not assumed: n32h49x_exti.h's
+     * EXTI_LINE16..24 block is textually identical to n32h47x_48x_exti.h's,
+     * and only the H47x_48x one continues past line 24.  That header is
+     * correct for its own series, which has sixteen internal lines, 16..31,
+     * with the LPTIM wakes at 25/26 - what the branch above uses - but it is
+     * wrong here.  Switching to 25/26 would not compile on this series
+     * anyway: n32h49x_exti.h stops at EXTI_LINE24, so they do not exist.
+     */
+    if (timer == LPTIM1)
+    {
+        return EXTI_LINE21;
+    }
+    else if (timer == LPTIM2)
+    {
+        return EXTI_LINE22;
+    }
+#endif /* SOC series */
+
+    return 0;
 }
 
 /**
@@ -226,17 +281,41 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
             return;
         }
 
+        /* On the H47x_48x / H49x the LPTIM clock-source select, clock gate and
+         * reset all live in RCC->BDCTRL, which the vendor protects behind the
+         * backup-domain unlock ("BDCTRL is protected, you need to enable the
+         * PWR clock first, then configure PWR_CTRL.DBKP to 1 to change it" --
+         * note on RCC_EnableLPTIMPeriphClk in n32h47x_48x_rcc.c).  Without it
+         * every one of those writes is discarded: LPTIM_Init() still reports
+         * SUCCESS and the counter simply never runs.  drv_rtc.c unlocks the
+         * same two series the same way.
+         */
+#if defined(SOC_SERIES_N32H47x_48x)
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_PWR | RCC_APB1_PERIPH_BKP, ENABLE);
+        PWR_BackupAccessEnable(ENABLE);
+#elif defined(SOC_SERIES_N32H49x)
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_PWR | RCC_APB1_PERIPHEN_BKP, ENABLE);
+        PWR_BackupAccessEnable(ENABLE);
+#endif /* SOC_SERIES_N32H47x_48x || SOC_SERIES_N32H49x */
+
         /* Enable LSI clock for LPTIM */
         RCC_EnableLsi(ENABLE);
 
         /* Wait for LSI ready */
+#if defined(SOC_SERIES_N32H7xx)
         while (RCC_GetFlagStatus(RCC_FLAG_LSIRD) == RESET);
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+        while (RCC_GetFlagStatus(RCC_FLAG_LSIRDF) == RESET);
+#endif
 
         /* Select LSI as LPTIM clock source */
         n32_lptim_clock_source_config(lptim);
 
         /* Enable LPTIM peripheral clock */
         n32_lptim_enable_clock(lptim);
+
+        /* Ensure the peripheral is disabled before updating its configuration. */
+        LPTIM_DeInit(lptim);
 
         /* Configure LPTIM */
         LPTIM_InitType lptim_init;
@@ -253,8 +332,10 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
         /* Set registers update mode to immediate (same as STM32 LPTIM_UPDATE_IMMEDIATE) */
         LPTIM_SetUpdateMode(lptim, LPTIM_UPDATE_MODE_IMMEDIATE);
 
-        /* Enable EXTI clock and configure EXTI line for LPTIM wakeup interrupt */
+        /* Configure EXTI wakeup routing where required */
+#if defined(SOC_SERIES_N32H7xx)
         RCC_EnableAPB5PeriphClk2(RCC_APB5_PERIPHEN_EXTI, ENABLE);
+#endif /* SOC_SERIES_N32H7xx */
         n32_lptim_exti_config(lptim);
 
         /* Configure NVIC */
@@ -263,6 +344,18 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
         NVIC_EnableIRQ(tim_device->tim_irqn);
 
         LOG_D("%s init success", tim_device->name);
+    }
+    else
+    {
+        struct n32_hw_lptimer *tim_device = rt_container_of(timer, struct n32_hw_lptimer, time_device);
+
+        if ((tim_device != RT_NULL) && (tim_device->timer != RT_NULL))
+        {
+            NVIC_DisableIRQ(tim_device->tim_irqn);
+            NVIC_ClearPendingIRQ(tim_device->tim_irqn);
+            n32_lptim_clear_exti_flag(tim_device->timer);
+            LPTIM_DeInit(tim_device->timer);
+        }
     }
 }
 
@@ -348,9 +441,13 @@ static void timer_stop(rt_clock_timer_t *timer)
 
 static rt_uint32_t timer_get_freq(LPTIM_Module *lptim)
 {
-    /* Default configuration: LSI (32768 Hz) / DIV32 = 1024 Hz */
+    /* The clock source is LSI and timer_init() programs a fixed DIV32, so the
+     * counter ticks at LSI_VALUE / 32.  LSI_VALUE is 32000 Hz on all three
+     * series (see n32h47x_48x.h, n32h49x.h and n32h7xx.h), which gives
+     * 1000 Hz -- the 1024 Hz of a 32768 Hz oscillator does not apply here.
+     */
     (void)lptim;
-    return 1024;
+    return 1000;
 }
 
 static rt_uint32_t timer_counter_get(rt_clock_timer_t *timer)
@@ -444,6 +541,7 @@ void LPTIM2_WKUP_IRQHandler(void)
 }
 #endif
 
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_LPTIM3
 void LPTIM3_WKUP_IRQHandler(void)
 {
@@ -485,6 +583,7 @@ void LPTIM5_WKUP_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+#endif /* SOC_SERIES_N32H7xx */
 
 static const struct rt_clock_timer_ops _ops = {
     .init = timer_init,

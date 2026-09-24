@@ -13,6 +13,18 @@
 
 #include "board.h"
 
+/*
+ * FEMC_TimingInitType comes from the SoC SDK; pull in the peripheral header
+ * itself instead of relying on board.h to have declared it.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#include "n32h7xx_femc.h"
+#elif defined(SOC_SERIES_N32H49x)
+#include "n32h49x_femc.h"
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include "n32h47x_48x_femc.h"
+#endif
+
 void FEMC_Nnad_Timing_Config(FEMC_TimingInitType *TimingCfg);
 
 #ifdef __cplusplus

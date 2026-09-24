@@ -6,10 +6,23 @@
  * Change Logs:
  * Date           Author       Notes
  * 2026-06-23     ox-horse     first version
+ * 2026-08-19     ox-horse     Add N32H47X_48X
+ * 2026-08-19     ox-horse     Add N32H49X
  */
 
 #include <board.h>
 #include <rtthread.h>
+
+/* The driver owns the peripheral registers, so it pulls in the peripheral
+ * header itself instead of relying on board.h to have declared it.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#include <n32h7xx_tim.h>
+#elif defined(SOC_SERIES_N32H49x)
+#include <n32h49x_tim.h>
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include <n32h47x_48x_tim.h>
+#endif
 
 #ifdef BSP_USING_PWM
 #include "drv_config.h"
@@ -24,14 +37,11 @@
 #define MIN_PERIOD 1
 #define MIN_PULSE  1
 
-/* All ATIM and GTIM timers on N32H7xx support 4 PWM output channels (CH1-CH4).
- * BTIM1-4 are basic timers without PWM capability.
- *
- * PWM device naming:
- *   ATIM1-4  -> pwm1-4   (advanced, with complementary output)
- *   GTIMA1-7 -> pwm5-11  (general purpose, A bus)
- *   GTIMB1-3 -> pwm12-14 (general purpose, B bus, with complementary output)
- */
+#if defined(SOC_SERIES_N32H49x)
+#define N32_PWM_CMP_VALUE(value) ((uint32_t)(value))
+#else
+#define N32_PWM_CMP_VALUE(value) ((uint16_t)(value))
+#endif /* SOC_SERIES_N32H49x */
 
 enum
 {
@@ -44,9 +54,11 @@ enum
 #ifdef BSP_USING_PWM3
     PWM3_INDEX,
 #endif
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_PWM4
     PWM4_INDEX,
 #endif
+#endif /* SOC_SERIES_N32H7xx */
 #ifdef BSP_USING_PWM5
     PWM5_INDEX,
 #endif
@@ -100,9 +112,11 @@ static struct n32_pwm n32_pwm_obj[] = {
     PWM3_CONFIG,
 #endif
 
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_PWM4
     PWM4_CONFIG,
 #endif
+#endif /* SOC_SERIES_N32H7xx */
 
 #ifdef BSP_USING_PWM5
     PWM5_CONFIG,
@@ -147,6 +161,7 @@ static struct n32_pwm n32_pwm_obj[] = {
 
 static rt_uint64_t tim_clock_get(TIM_Module *timer)
 {
+#if defined(SOC_SERIES_N32H7xx)
     rt_uint32_t tim_div;
     RCC_ClocksTypeDef RCC_Clocks;
 
@@ -165,6 +180,21 @@ static rt_uint64_t tim_clock_get(TIM_Module *timer)
     {
         return (rt_uint64_t)RCC_Clocks.AHB5ClkFreq / tim_div;
     }
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+    return n32_tim_clock_freq_get(timer);
+#endif /* SOC_SERIES_N32H7xx */
+}
+
+static rt_uint32_t pwm_max_period_get(TIM_Module *timer)
+{
+#if defined(SOC_SERIES_N32H49x)
+    if (IS_GTIM1_4_DEVICE(timer))
+    {
+        return 0xFFFFFFFFU;
+    }
+#endif /* SOC_SERIES_N32H49x */
+
+    return MAX_PERIOD;
 }
 
 static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg);
@@ -193,7 +223,7 @@ static rt_err_t drv_pwm_enable(struct n32_pwm *pwm, struct rt_pwm_configuration 
 static rt_err_t drv_pwm_get(struct n32_pwm *pwm, struct rt_pwm_configuration *configuration)
 {
     rt_uint64_t tim_clock;
-    rt_uint32_t period;
+    rt_uint64_t period;
     rt_uint32_t psc;
     rt_uint32_t cmp = 0;
 
@@ -201,11 +231,11 @@ static rt_err_t drv_pwm_get(struct n32_pwm *pwm, struct rt_pwm_configuration *co
     /* Convert to MHz for nanosecond calculation */
     tim_clock /= 1000000UL;
 
-    period = TIM_GetAutoReload(pwm->timer) + 1;
+    period = (rt_uint64_t)TIM_GetAutoReload(pwm->timer) + 1U;
     psc = TIM_GetPrescaler(pwm->timer) + 1;
 
     /* period (ns) = (ARR+1) * (PSC+1) * 1000 / tim_clock_MHz */
-    configuration->period = period * psc * 1000UL / tim_clock;
+    configuration->period = period * psc * 1000ULL / tim_clock;
 
     switch (configuration->channel)
     {
@@ -225,26 +255,23 @@ static rt_err_t drv_pwm_get(struct n32_pwm *pwm, struct rt_pwm_configuration *co
         return -RT_EINVAL;
     }
 
-    configuration->pulse = (cmp + 1) * psc * 1000UL / tim_clock;
+    configuration->pulse = ((rt_uint64_t)cmp + 1U) * psc * 1000ULL / tim_clock;
 
     return RT_EOK;
 }
-uint32_t temp;
+
 static rt_err_t drv_pwm_set(struct n32_pwm *pwm, struct rt_pwm_configuration *configuration)
 {
     rt_uint32_t period, pulse;
     rt_uint64_t tim_clock, psc;
-    /* Converts the channel number to the channel number of standard library */
-    rt_uint32_t tim_ch = 0x04 * (configuration->channel - 1);
 
     tim_clock = tim_clock_get(pwm->timer);
-    temp = tim_clock;
     /* Convert to MHz */
     tim_clock /= 1000000UL;
 
     /* Calculate period and prescaler from requested period (ns) */
     period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL;
-    psc = period / MAX_PERIOD + 1;
+    psc = period / pwm_max_period_get(pwm->timer) + 1;
     period = period / psc;
 
     /* Set prescaler */
@@ -271,16 +298,16 @@ static rt_err_t drv_pwm_set(struct n32_pwm *pwm, struct rt_pwm_configuration *co
     switch (configuration->channel)
     {
     case 1:
-        TIM_SetCmp1(pwm->timer, (uint16_t)pulse);
+        TIM_SetCmp1(pwm->timer, N32_PWM_CMP_VALUE(pulse));
         break;
     case 2:
-        TIM_SetCmp2(pwm->timer, (uint16_t)pulse);
+        TIM_SetCmp2(pwm->timer, N32_PWM_CMP_VALUE(pulse));
         break;
     case 3:
-        TIM_SetCmp3(pwm->timer, (uint16_t)pulse);
+        TIM_SetCmp3(pwm->timer, N32_PWM_CMP_VALUE(pulse));
         break;
     case 4:
-        TIM_SetCmp4(pwm->timer, (uint16_t)pulse);
+        TIM_SetCmp4(pwm->timer, N32_PWM_CMP_VALUE(pulse));
         break;
     default:
         return -RT_EINVAL;
@@ -301,7 +328,7 @@ static rt_err_t drv_pwm_set_period(struct n32_pwm *pwm, struct rt_pwm_configurat
     tim_clock /= 1000000UL;
 
     period = (rt_uint64_t)configuration->period * tim_clock / 1000ULL;
-    psc = period / MAX_PERIOD + 1;
+    psc = period / pwm_max_period_get(pwm->timer) + 1;
     period = period / psc;
 
     TIM_ConfigPrescaler(pwm->timer, (uint32_t)(psc - 1), TIM_PSC_RELOAD_MODE_UPDATE);
@@ -317,37 +344,37 @@ static rt_err_t drv_pwm_set_period(struct n32_pwm *pwm, struct rt_pwm_configurat
 
 static rt_err_t drv_pwm_set_pulse(struct n32_pwm *pwm, struct rt_pwm_configuration *configuration)
 {
-    rt_uint32_t period, pulse;
+    rt_uint64_t period, pulse;
     rt_uint64_t tim_clock;
 
     tim_clock = tim_clock_get(pwm->timer);
     tim_clock /= 1000000UL;
 
-    period = (TIM_GetAutoReload(pwm->timer) + 1) * (TIM_GetPrescaler(pwm->timer) + 1) * 1000UL / tim_clock;
-    pulse = (rt_uint64_t)configuration->pulse * (TIM_GetAutoReload(pwm->timer) + 1) / period;
+    period = ((rt_uint64_t)TIM_GetAutoReload(pwm->timer) + 1U) * (TIM_GetPrescaler(pwm->timer) + 1U) * 1000ULL / tim_clock;
+    pulse = (rt_uint64_t)configuration->pulse * ((rt_uint64_t)TIM_GetAutoReload(pwm->timer) + 1U) / period;
 
     if (pulse < MIN_PULSE)
     {
         pulse = MIN_PULSE;
     }
-    else if (pulse > (rt_uint32_t)(TIM_GetAutoReload(pwm->timer) + 1))
+    else if (pulse > ((rt_uint64_t)TIM_GetAutoReload(pwm->timer) + 1U))
     {
-        pulse = TIM_GetAutoReload(pwm->timer) + 1;
+        pulse = (rt_uint64_t)TIM_GetAutoReload(pwm->timer) + 1U;
     }
 
     switch (configuration->channel)
     {
     case 1:
-        TIM_SetCmp1(pwm->timer, (uint16_t)(pulse - 1));
+        TIM_SetCmp1(pwm->timer, N32_PWM_CMP_VALUE(pulse - 1U));
         break;
     case 2:
-        TIM_SetCmp2(pwm->timer, (uint16_t)(pulse - 1));
+        TIM_SetCmp2(pwm->timer, N32_PWM_CMP_VALUE(pulse - 1U));
         break;
     case 3:
-        TIM_SetCmp3(pwm->timer, (uint16_t)(pulse - 1));
+        TIM_SetCmp3(pwm->timer, N32_PWM_CMP_VALUE(pulse - 1U));
         break;
     case 4:
-        TIM_SetCmp4(pwm->timer, (uint16_t)(pulse - 1));
+        TIM_SetCmp4(pwm->timer, N32_PWM_CMP_VALUE(pulse - 1U));
         break;
     default:
         return -RT_EINVAL;
@@ -431,7 +458,11 @@ static rt_err_t n32_hw_pwm_init(struct n32_pwm *device)
 
     RT_ASSERT(device != RT_NULL);
 
+#if defined(SOC_SERIES_N32H7xx)
     /* Enable timer clock (M7 + M4 dual-core clock enable) */
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+    /* Enable timer clock */
+#endif
     n32_tim_enable_clock(device->timer);
 
     /* Configure time base: default 1kHz, PWM mode */
@@ -455,8 +486,13 @@ static rt_err_t n32_hw_pwm_init(struct n32_pwm *device)
     /* Enable auto-reload preload */
     TIM_ConfigArPreload(device->timer, ENABLE);
 
+#if defined(SOC_SERIES_N32H7xx)
     /* Enable main output for advanced timers (ATIM1-4, GTIMB1-3) */
     if ((IS_ATIM1_4_DEVICE(device->timer)) || ((IS_GTIMB1_3_DEVICE(device->timer))))
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+    /* Enable main output for advanced timers (ATIM1-3, GTIM8-10) */
+    if ((IS_ATIM1_3_DEVICE(device->timer)) || (IS_GTIM8_10_DEVICE(device->timer)))
+#endif /* SOC_SERIES_N32H7xx */
     {
         TIM_EnableCtrlPwmOutputs(device->timer, ENABLE);
     }
@@ -510,6 +546,7 @@ static void n32_pwm_get_channel(void)
 #ifdef BSP_USING_PWM3_CH4
     n32_pwm_obj[PWM3_INDEX].channel |= 1 << 3;
 #endif
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_PWM4_CH1
     n32_pwm_obj[PWM4_INDEX].channel |= 1 << 0;
 #endif
@@ -522,6 +559,7 @@ static void n32_pwm_get_channel(void)
 #ifdef BSP_USING_PWM4_CH4
     n32_pwm_obj[PWM4_INDEX].channel |= 1 << 3;
 #endif
+#endif /* SOC_SERIES_N32H7xx */
 #ifdef BSP_USING_PWM5_CH1
     n32_pwm_obj[PWM5_INDEX].channel |= 1 << 0;
 #endif
