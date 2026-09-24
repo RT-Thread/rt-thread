@@ -79,7 +79,6 @@ static char *print_number(char *buf,
 #else
     char tmp[32] = { 0 };
 #endif /* RT_KLIBC_USING_VSNPRINTF_LONGLONG */
-    int precision_bak = precision;
     const char *digits = RT_NULL;
     static const char small_digits[] = "0123456789abcdef";
     static const char large_digits[] = "0123456789ABCDEF";
@@ -160,10 +159,15 @@ static char *print_number(char *buf,
         }
     }
 
-    i = 0;
     if (num == 0)
     {
-        tmp[i++] = '0';
+        // check precision:
+        // e.g. ("%5.0d", 0) should print "     ", not "    0"
+        // e.g. ("%5.1d", 0) should print "    0", not "     "
+        if (precision != 0)
+        {
+            tmp[i++] = '0';
+        }
     }
     else
     {
@@ -271,7 +275,7 @@ static char *print_number(char *buf,
     }
 
     /* put number in the temporary buffer */
-    while (i-- > 0 && (precision_bak != 0))
+    while (i-- > 0)
     {
         if (buf < end)
         {
@@ -418,8 +422,12 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 ++fmt;
                 /* it's the next argument */
                 precision = va_arg(args, int);
+                if (precision < 0)
+                {
+                    precision = -1;
+                }
             }
-            if (precision < 0)
+            else
             {
                 precision = 0;
             }
@@ -493,12 +501,7 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 s = "(null)";
             }
 
-            for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
-
-            if (precision > 0 && len > precision)
-            {
-                len = precision;
-            }
+            for (len = 0; (precision < 0 || len < precision) && (s[len] != '\0'); len++);
 
             if (!(flags & LEFT))
             {
