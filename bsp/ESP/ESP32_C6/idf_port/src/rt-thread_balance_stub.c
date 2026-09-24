@@ -2,11 +2,11 @@
 #include "rtconfig.h"
 double ceil(double i)
 {
-    i=i;
+    i = i;
     return i;
 }
 
-double floor (double i)
+double floor(double i)
 {
     i = i;
     return i;

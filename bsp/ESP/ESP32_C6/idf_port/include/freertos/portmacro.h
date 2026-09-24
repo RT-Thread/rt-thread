@@ -72,13 +72,13 @@ extern "C" {
  * - The port types must come first as they are used further down in this file
  * ------------------------------------------------------------------------------------------------------------------ */
 
-#define portCHAR char
-#define portFLOAT float
-#define portDOUBLE double
-#define portLONG long
-#define portSHORT short
+#define portCHAR       char
+#define portFLOAT      float
+#define portDOUBLE     double
+#define portLONG       long
+#define portSHORT      short
 #define portSTACK_TYPE rt_ubase_t
-#define portBASE_TYPE rt_base_t
+#define portBASE_TYPE  rt_base_t
 
 typedef portSTACK_TYPE StackType_t;
 typedef rt_base_t BaseType_t;
@@ -98,9 +98,9 @@ struct rt_semaphore_wrapper
  * - Required by FreeRTOS
  * ------------------------------------------------------------------------------------------------------------------ */
 
-#define portTICK_PERIOD_MS              ((TickType_t) (1000 / configTICK_RATE_HZ))
-#define portBYTE_ALIGNMENT              RT_ALIGN_SIZE
-#define portNOP() __asm volatile        (" nop ")
+#define portTICK_PERIOD_MS ((TickType_t)(1000 / configTICK_RATE_HZ))
+#define portBYTE_ALIGNMENT RT_ALIGN_SIZE
+#define portNOP()          __asm volatile(" nop ")
 
 
 /* ---------------------------------------------- Forward Declarations -------------------------------------------------
@@ -156,21 +156,22 @@ BaseType_t xPortInterruptedFromISRContext(void);
  * @note Not a true spinlock as single core RISC-V does not have atomic compare and set instruction
  * @note Keep portMUX_INITIALIZER_UNLOCKED in sync with this struct
  */
-typedef struct {
+typedef struct
+{
     uint32_t owner;
     uint32_t count;
 } portMUX_TYPE;
 /**< Spinlock initializer */
-#define portMUX_INITIALIZER_UNLOCKED {                      \
-            .owner = portMUX_FREE_VAL,                      \
-            .count = 0,                                     \
-        }
-#define portMUX_FREE_VAL                    SPINLOCK_FREE           /**< Spinlock is free. [refactor-todo] check if this is still required */
-#define portMUX_NO_TIMEOUT                  SPINLOCK_WAIT_FOREVER   /**< When passed for 'timeout_cycles', spin forever if necessary. [refactor-todo] check if this is still required */
-#define portMUX_TRY_LOCK                    SPINLOCK_NO_WAIT        /**< Try to acquire the spinlock a single time only. [refactor-todo] check if this is still required */
-#define portMUX_INITIALIZE(mux)    ({ \
+#define portMUX_INITIALIZER_UNLOCKED { \
+    .owner = portMUX_FREE_VAL,         \
+    .count = 0,                        \
+}
+#define portMUX_FREE_VAL        SPINLOCK_FREE           /**< Spinlock is free. [refactor-todo] check if this is still required */
+#define portMUX_NO_TIMEOUT      SPINLOCK_WAIT_FOREVER   /**< When passed for 'timeout_cycles', spin forever if necessary. [refactor-todo] check if this is still required */
+#define portMUX_TRY_LOCK        SPINLOCK_NO_WAIT        /**< Try to acquire the spinlock a single time only. [refactor-todo] check if this is still required */
+#define portMUX_INITIALIZE(mux) ({   \
     (mux)->owner = portMUX_FREE_VAL; \
-    (mux)->count = 0; \
+    (mux)->count = 0;                \
 })
 
 // ------------------ Critical Sections --------------------
@@ -198,7 +199,7 @@ void vPortExitCritical(void);
  *
  * @note [refactor-todo] The rest of ESP-IDF should call taskYield() instead
  */
-#define vPortYield(void)    rt_thread_yield()
+#define vPortYield(void) rt_thread_yield()
 
 /**
  * @brief Checks if the current core can yield
@@ -242,9 +243,8 @@ void vPortSetStackWatchpoint(void *pxStackStart);
  */
 FORCE_INLINE_ATTR BaseType_t xPortGetCoreID(void)
 {
-    return (BaseType_t) esp_cpu_get_core_id();
+    return (BaseType_t)esp_cpu_get_core_id();
 }
-
 
 
 /* ------------------------------------------- FreeRTOS Porting Interface ----------------------------------------------
@@ -255,63 +255,78 @@ FORCE_INLINE_ATTR BaseType_t xPortGetCoreID(void)
 
 // --------------------- Interrupts ------------------------
 
-#define portDISABLE_INTERRUPTS()            vPortEnterCritical()
-#define portENABLE_INTERRUPTS()             vPortExitCritical()
-#define portSET_INTERRUPT_MASK_FROM_ISR()                       rt_hw_interrupt_disable()
-#define portCLEAR_INTERRUPT_MASK_FROM_ISR(uxSavedStatusValue)   rt_hw_interrupt_enable(uxSavedStatusValue)
+#define portDISABLE_INTERRUPTS()                              vPortEnterCritical()
+#define portENABLE_INTERRUPTS()                               vPortExitCritical()
+#define portSET_INTERRUPT_MASK_FROM_ISR()                     rt_hw_interrupt_disable()
+#define portCLEAR_INTERRUPT_MASK_FROM_ISR(uxSavedStatusValue) rt_hw_interrupt_enable(uxSavedStatusValue)
 
 // ------------------ Critical Sections --------------------
 
-#define portENTER_CRITICAL(mux)                 {(void)mux;  vPortEnterCritical();}
-#define portEXIT_CRITICAL(mux)                  {(void)mux;  vPortExitCritical();}
-#define portTRY_ENTER_CRITICAL(mux, timeout)    ({  \
-    (void)mux; (void)timeout;                       \
-    vPortEnterCritical();                           \
-    BaseType_t ret = pdPASS;                        \
-    ret;                                            \
+#define portENTER_CRITICAL(mux) \
+    {                           \
+        (void)mux;              \
+        vPortEnterCritical();   \
+    }
+#define portEXIT_CRITICAL(mux) \
+    {                          \
+        (void)mux;             \
+        vPortExitCritical();   \
+    }
+#define portTRY_ENTER_CRITICAL(mux, timeout) ({ \
+    (void)mux;                                  \
+    (void)timeout;                              \
+    vPortEnterCritical();                       \
+    BaseType_t ret = pdPASS;                    \
+    ret;                                        \
 })
 //In single-core RISC-V, we can use the same critical section API
-#define portENTER_CRITICAL_ISR(mux)                 portENTER_CRITICAL(mux)
-#define portEXIT_CRITICAL_ISR(mux)                  portEXIT_CRITICAL(mux)
-#define portTRY_ENTER_CRITICAL_ISR(mux, timeout)    portTRY_ENTER_CRITICAL(mux, timeout)
+#define portENTER_CRITICAL_ISR(mux)              portENTER_CRITICAL(mux)
+#define portEXIT_CRITICAL_ISR(mux)               portEXIT_CRITICAL(mux)
+#define portTRY_ENTER_CRITICAL_ISR(mux, timeout) portTRY_ENTER_CRITICAL(mux, timeout)
 
 /* [refactor-todo] on RISC-V, both ISR and non-ISR cases result in the same call. We can redefine this macro */
-#define portENTER_CRITICAL_SAFE(mux)    ({  \
-    if (xPortInIsrContext()) {              \
-        portENTER_CRITICAL_ISR(mux);        \
-    } else {                                \
-        portENTER_CRITICAL(mux);            \
-    }                                       \
+#define portENTER_CRITICAL_SAFE(mux) ({ \
+    if (xPortInIsrContext())            \
+    {                                   \
+        portENTER_CRITICAL_ISR(mux);    \
+    }                                   \
+    else                                \
+    {                                   \
+        portENTER_CRITICAL(mux);        \
+    }                                   \
 })
-#define portEXIT_CRITICAL_SAFE(mux)     ({  \
-    if (xPortInIsrContext()) {              \
-        portEXIT_CRITICAL_ISR(mux);         \
-    } else {                                \
-        portEXIT_CRITICAL(mux);             \
-    }                                       \
+#define portEXIT_CRITICAL_SAFE(mux) ({ \
+    if (xPortInIsrContext())           \
+    {                                  \
+        portEXIT_CRITICAL_ISR(mux);    \
+    }                                  \
+    else                               \
+    {                                  \
+        portEXIT_CRITICAL(mux);        \
+    }                                  \
 })
-#define portTRY_ENTER_CRITICAL_SAFE(mux, timeout)   portENTER_CRITICAL_SAFE(mux, timeout)
+#define portTRY_ENTER_CRITICAL_SAFE(mux, timeout) portENTER_CRITICAL_SAFE(mux, timeout)
 
 // ---------------------- Yielding -------------------------
 
-#define portYIELD() rt_thread_yield()
-#define portYIELD_FROM_ISR_NO_ARG() rt_thread_yield()
+#define portYIELD()                                      rt_thread_yield()
+#define portYIELD_FROM_ISR_NO_ARG()                      rt_thread_yield()
 #define portYIELD_FROM_ISR_ARG(xHigherPriorityTaskWoken) ({ \
-    if (xHigherPriorityTaskWoken == pdTRUE) { \
-        rt_thread_yield(); \
-    } \
+    if (xHigherPriorityTaskWoken == pdTRUE)                 \
+    {                                                       \
+        rt_thread_yield();                                  \
+    }                                                       \
 })
 /**
  * @note    The macro below could be used when passing a single argument, or without any argument,
  *          it was developed to support both usages of portYIELD inside of an ISR. Any other usage form
  *          might result in undesired behavior
  */
-#if defined(__cplusplus) && (__cplusplus >  201703L)
-#define portYIELD_FROM_ISR(...) CHOOSE_MACRO_VA_ARG(portYIELD_FROM_ISR_ARG, portYIELD_FROM_ISR_NO_ARG __VA_OPT__(,) __VA_ARGS__)(__VA_ARGS__)
+#if defined(__cplusplus) && (__cplusplus > 201703L)
+#define portYIELD_FROM_ISR(...) CHOOSE_MACRO_VA_ARG(portYIELD_FROM_ISR_ARG, portYIELD_FROM_ISR_NO_ARG __VA_OPT__(, ) __VA_ARGS__)(__VA_ARGS__)
 #else
 #define portYIELD_FROM_ISR(...) CHOOSE_MACRO_VA_ARG(portYIELD_FROM_ISR_ARG, portYIELD_FROM_ISR_NO_ARG, ##__VA_ARGS__)(__VA_ARGS__)
 #endif
-
 
 
 /* --------------------------------------------- Inline Implementations ------------------------------------------------
@@ -330,12 +345,12 @@ FORCE_INLINE_ATTR bool xPortCanYield(void)
     return (level == 0);
 }
 
-#define FREERTOS_PRIORITY_TO_RTTHREAD(priority)    ( configMAX_PRIORITIES - 1 - ( priority ) )
-#define RTTHREAD_PRIORITY_TO_FREERTOS(priority)    ( RT_THREAD_PRIORITY_MAX - 1 - ( priority ) )
+#define FREERTOS_PRIORITY_TO_RTTHREAD(priority) (configMAX_PRIORITIES - 1 - (priority))
+#define RTTHREAD_PRIORITY_TO_FREERTOS(priority) (RT_THREAD_PRIORITY_MAX - 1 - (priority))
 /* Use this macro to calculate the buffer size when allocating a queue statically
  * To ensure the buffer can fit the desired number of messages
  */
-#define QUEUE_BUFFER_SIZE( uxQueueLength, uxItemSize )  ( ( RT_ALIGN( uxItemSize, RT_ALIGN_SIZE ) + sizeof( void * ) ) * uxQueueLength )
+#define QUEUE_BUFFER_SIZE(uxQueueLength, uxItemSize) ((RT_ALIGN(uxItemSize, RT_ALIGN_SIZE) + sizeof(void *)) * uxQueueLength)
 
 BaseType_t rt_err_to_freertos(rt_err_t rt_err);
 

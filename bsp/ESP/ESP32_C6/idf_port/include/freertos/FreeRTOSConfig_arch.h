@@ -18,14 +18,14 @@
 // ------------------ Scheduler Related --------------------
 
 // #define configUSE_PORT_OPTIMISED_TASK_SELECTION             0
-#define configMAX_API_CALL_INTERRUPT_PRIORITY               0
+#define configMAX_API_CALL_INTERRUPT_PRIORITY 0
 
 /* ------------------------------------------------ ESP-IDF Additions --------------------------------------------------
  *
  * ------------------------------------------------------------------------------------------------------------------ */
 
 #ifndef configISR_STACK_SIZE
-#define configISR_STACK_SIZE                                (CONFIG_FREERTOS_ISR_STACKSIZE)
+#define configISR_STACK_SIZE (CONFIG_FREERTOS_ISR_STACKSIZE)
 #endif
 
 #endif // FREERTOS_CONFIG_RISCV_H

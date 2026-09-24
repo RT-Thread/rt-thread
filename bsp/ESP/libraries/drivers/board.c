@@ -36,8 +36,8 @@ void rt_hw_systick_init(void)
     periph_module_enable(PERIPH_SYSTIMER_MODULE);
     systimer_hal_init(&systimer_hal);
     systimer_hal_tick_rate_ops_t ops = {
-            .ticks_to_us = systimer_ticks_to_us,
-            .us_to_ticks = systimer_us_to_ticks,
+        .ticks_to_us = systimer_ticks_to_us,
+        .us_to_ticks = systimer_us_to_ticks,
     };
     systimer_hal_set_tick_rate_ops(&systimer_hal, &ops);
     systimer_ll_set_counter_value(systimer_hal.dev, SYSTIMER_LL_COUNTER_OS_TICK, 0);
@@ -128,7 +128,7 @@ void rt_hw_us_delay(rt_uint32_t us)
     ESP_ERROR_CHECK(gptimer_start(gptimer_hw_us));
     ESP_ERROR_CHECK(gptimer_set_raw_count(gptimer_hw_us, 0));
     /* Retrieve the timestamp at anytime*/
-    while(count < (uint64_t)us)
+    while (count < (uint64_t)us)
     {
         ESP_ERROR_CHECK(gptimer_get_raw_count(gptimer_hw_us, &count));
     }

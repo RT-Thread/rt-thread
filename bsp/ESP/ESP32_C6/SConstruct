@@ -61,6 +61,33 @@ env['ASCOM'] = env['ASPPCOM']
 Export('RTT_ROOT')
 Export('rtconfig')
 
+def _use_c6_idf_when_official_has_none():
+    """CI pkgs --update fetches RT-Thread-packages/esp-idf, which only sets
+    CPPDEFINES for ESP32-C3. Swap in the C6 scons branch before the package
+    SConscript runs. A tree that already has the C6 target is left as-is.
+    """
+    import shutil
+    import subprocess
+    dest = os.path.join(libraries_path_prefix, 'ESP-IDF-latest')
+    sc = os.path.join(dest, 'SConscript')
+    if not os.path.isfile(sc):
+        return
+    with open(sc, 'r', encoding='utf-8', errors='replace') as f:
+        text = f.read()
+    if 'esp32c6' in text:
+        return
+    tmp = dest + '.c6'
+    if os.path.isdir(tmp):
+        shutil.rmtree(tmp)
+    subprocess.check_call([
+        'git', 'clone', '--depth', '1', '--branch', 'bsp/esp32c6-scons',
+        'https://github.com/cms19859230182-lang/esp-idf.git', tmp,
+    ])
+    shutil.rmtree(dest)
+    os.rename(tmp, dest)
+
+_use_c6_idf_when_official_has_none()
+
 objs = PrepareBuilding(env, RTT_ROOT, remove_components = ['libc'])
 
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))

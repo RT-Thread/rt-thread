@@ -86,7 +86,7 @@ uint32_t xPortGetTickRateHz(void)
     return (uint32_t)configTICK_RATE_HZ;
 }
 
-#define STACK_WATCH_AREA_SIZE 32
+#define STACK_WATCH_AREA_SIZE    32
 #define STACK_WATCH_POINT_NUMBER (SOC_CPU_WATCHPOINTS_NUM - 1)
 
 void vPortSetStackWatchpoint(void *pxStackStart)
@@ -95,7 +95,6 @@ void vPortSetStackWatchpoint(void *pxStackStart)
     addr = (addr + (STACK_WATCH_AREA_SIZE - 1)) & (~(STACK_WATCH_AREA_SIZE - 1));
     esp_cpu_set_watchpoint(STACK_WATCH_POINT_NUMBER, (char *)addr, STACK_WATCH_AREA_SIZE, ESP_CPU_WATCHPOINT_STORE);
 }
-
 
 
 /* ---------------------------------------------- Misc Implementations -------------------------------------------------
