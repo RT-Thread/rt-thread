@@ -55,6 +55,9 @@ if GetDepend(['RT_UTEST_HOOKLIST']):
 if GetDepend(['RT_UTEST_MTSAFE_KPRINT']):
     src += ['mtsafe_kprint_tc.c']
 
+if GetDepend(['RT_UTEST_KSYMS']):
+    src += ['ksym_tc.c']
+
 if GetDepend(['RT_UTEST_MEMPOOL']):
     src += ['mempool_tc.c']
 
@@ -74,4 +77,3 @@ for item in list:
         group = group + SConscript(os.path.join(item, 'SConscript'))
 
 Return('group')
-
