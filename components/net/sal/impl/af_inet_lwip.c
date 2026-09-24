@@ -39,6 +39,16 @@
 #endif
 #endif
 
+/* lwIP 2.2.0 merged netconn::socket into the callback_arg union
+ * (see include/lwip/api.h); older lwIP keeps a plain int socket member.
+ * Route all accesses through this accessor so the file compiles against
+ * every supported lwIP version. */
+#if RT_USING_LWIP_VER_NUM >= 0x20200
+#define SAL_NETCONN_SOCKET(conn) ((conn)->callback_arg.socket)
+#else
+#define SAL_NETCONN_SOCKET(conn) ((conn)->socket)
+#endif
+
 #ifdef SAL_USING_LWIP
 
 #ifdef SAL_USING_POSIX
@@ -51,7 +61,8 @@
  *
  * NOTE: please make sure the definitions same in lwip::net_socket.c
  */
-struct lwip_sock {
+struct lwip_sock
+{
     /** sockets currently are built on netconns, each socket has one netconn */
     struct netconn *conn;
     /** data that was left from the previous read */
@@ -68,9 +79,9 @@ struct lwip_sock {
     u16_t errevent;
    /** last error that occurred on this socket */
 #if LWIP_VERSION < 0x2000000
-   int err;
+    int err;
 #else
-   u8_t err;
+    u8_t err;
 #endif
     /** counter of how many threads are waiting for this socket using select */
     SELWAIT_T select_waiting;
@@ -83,6 +94,10 @@ static RT_DEFINE_SPINLOCK(_spinlock);
 
 extern struct lwip_sock *lwip_tryget_socket(int s);
 
+/* lwIP 2.2.0 merged netconn::socket into the callback_arg union; the
+ * SAL_NETCONN_SOCKET accessor above hides that difference per lwIP version.
+ * The decrement trick below keeps its original meaning: negative values
+ * count pending RCVPLUS events before accept(). */
 static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len)
 {
     int s;
@@ -95,7 +110,7 @@ static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len
     /* Get socket */
     if (conn)
     {
-        s = conn->socket;
+        s = SAL_NETCONN_SOCKET(conn);
         if (s < 0)
         {
             /* Data comes in right away after an accept, even though
@@ -104,16 +119,17 @@ static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len
              * will use the data later. Note that only receive events
              * can happen before the new socket is set up. */
             SYS_ARCH_PROTECT(lev);
-            if (conn->socket < 0)
+            if (SAL_NETCONN_SOCKET(conn) < 0)
             {
                 if (evt == NETCONN_EVT_RCVPLUS)
                 {
-                    conn->socket--;
+                    SAL_NETCONN_SOCKET(conn)
+                    --;
                 }
                 SYS_ARCH_UNPROTECT(lev);
                 return;
             }
-            s = conn->socket;
+            s = SAL_NETCONN_SOCKET(conn);
             SYS_ARCH_UNPROTECT(lev);
         }
 
@@ -153,21 +169,25 @@ static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len
     }
 
 #if LWIP_VERSION >= 0x20100ff
-    if ((void*)(sock->lastdata.pbuf) || (sock->rcvevent > 0))
+    if ((void *)(sock->lastdata.pbuf) || (sock->rcvevent > 0))
 #else
-    if ((void*)(sock->lastdata) || (sock->rcvevent > 0))
+    if ((void *)(sock->lastdata) || (sock->rcvevent > 0))
 #endif
         event |= POLLIN;
     if (sock->sendevent)
+    {
         event |= POLLOUT;
+    }
     if (sock->errevent)
+    {
         event |= POLLERR;
+    }
 
     SYS_ARCH_UNPROTECT(lev);
 
     if (event)
     {
-        rt_wqueue_wakeup(&sock->wait_head, (void*)(size_t)event);
+        rt_wqueue_wakeup(&sock->wait_head, (void *)(size_t)event);
     }
 }
 #endif /* SAL_USING_POSIX */
@@ -252,7 +272,7 @@ static int inet_poll(struct dfs_file *file, struct rt_pollreq *req)
     struct sal_socket *sal_sock;
 
     sal_sock = sal_get_socket((int)(size_t)file->vnode->data);
-    if(!sal_sock)
+    if (!sal_sock)
     {
         return -1;
     }
@@ -267,9 +287,9 @@ static int inet_poll(struct dfs_file *file, struct rt_pollreq *req)
         level = rt_spin_lock_irqsave(&_spinlock);
 
 #if LWIP_VERSION >= 0x20100ff
-        if ((void*)(sock->lastdata.pbuf) || sock->rcvevent)
+        if ((void *)(sock->lastdata.pbuf) || sock->rcvevent)
 #else
-        if ((void*)(sock->lastdata) || sock->rcvevent)
+        if ((void *)(sock->lastdata) || sock->rcvevent)
 #endif
         {
             mask |= POLLIN;
@@ -291,51 +311,48 @@ static int inet_poll(struct dfs_file *file, struct rt_pollreq *req)
 }
 #endif
 
-static const struct sal_socket_ops lwip_socket_ops =
-{
-    .socket      = inet_socket,
+static const struct sal_socket_ops lwip_socket_ops = {
+    .socket = inet_socket,
     .closesocket = lwip_close,
-    .bind        = lwip_bind,
-    .listen      = lwip_listen,
-    .connect     = lwip_connect,
-    .accept      = inet_accept,
-    .sendto      = (int (*)(int, const void *, size_t, int, const struct sockaddr *, socklen_t))lwip_sendto,
+    .bind = lwip_bind,
+    .listen = lwip_listen,
+    .connect = lwip_connect,
+    .accept = inet_accept,
+    .sendto = (int (*)(int, const void *, size_t, int, const struct sockaddr *, socklen_t))lwip_sendto,
 #if LWIP_VERSION >= 0x20102ff
-    .sendmsg     = (int (*)(int, const struct msghdr *, int))lwip_sendmsg,
-    .recvmsg     = (int (*)(int, struct msghdr *, int))lwip_recvmsg,
+    .sendmsg = (int (*)(int, const struct msghdr *, int))lwip_sendmsg,
+    .recvmsg = (int (*)(int, struct msghdr *, int))lwip_recvmsg,
 #endif
-    .recvfrom    = (int (*)(int, void *, size_t, int, struct sockaddr *, socklen_t *))lwip_recvfrom,
-    .getsockopt  = lwip_getsockopt,
+    .recvfrom = (int (*)(int, void *, size_t, int, struct sockaddr *, socklen_t *))lwip_recvfrom,
+    .getsockopt = lwip_getsockopt,
     //TODO fix on 1.4.1
-    .setsockopt  = lwip_setsockopt,
-    .shutdown    = lwip_shutdown,
+    .setsockopt = lwip_setsockopt,
+    .shutdown = lwip_shutdown,
     .getpeername = lwip_getpeername,
     .getsockname = inet_getsockname,
     .ioctlsocket = inet_ioctlsocket,
-    .socketpair  = RT_NULL,
+    .socketpair = RT_NULL,
 #ifdef SAL_USING_POSIX
-    .poll        = inet_poll,
+    .poll = inet_poll,
 #endif
 };
 
-static const struct sal_netdb_ops lwip_netdb_ops =
-{
-    .gethostbyname   = lwip_gethostbyname,
+static const struct sal_netdb_ops lwip_netdb_ops = {
+    .gethostbyname = lwip_gethostbyname,
     .gethostbyname_r = lwip_gethostbyname_r,
-    .getaddrinfo     = lwip_getaddrinfo,
-    .freeaddrinfo    = lwip_freeaddrinfo,
+    .getaddrinfo = lwip_getaddrinfo,
+    .freeaddrinfo = lwip_freeaddrinfo,
 };
 
-static const struct sal_proto_family lwip_inet_family =
-{
-    .family     = AF_INET,
+static const struct sal_proto_family lwip_inet_family = {
+    .family = AF_INET,
 #if LWIP_VERSION > 0x2000000
     .sec_family = AF_INET6,
 #else
     .sec_family = AF_INET,
 #endif
-    .skt_ops    = &lwip_socket_ops,
-    .netdb_ops  = &lwip_netdb_ops,
+    .skt_ops = &lwip_socket_ops,
+    .netdb_ops = &lwip_netdb_ops,
 };
 
 /* Set lwIP network interface device protocol family information */
@@ -343,7 +360,7 @@ int sal_lwip_netdev_set_pf_info(struct netdev *netdev)
 {
     RT_ASSERT(netdev);
 
-    netdev->sal_user_data = (void *) &lwip_inet_family;
+    netdev->sal_user_data = (void *)&lwip_inet_family;
     return 0;
 }
 
