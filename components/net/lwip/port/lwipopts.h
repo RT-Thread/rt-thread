@@ -282,14 +282,21 @@
 //#define MEM_LIBC_MALLOC             1
 //#define MEM_USE_POOLS               1
 //#define MEMP_USE_CUSTOM_POOLS       1
-//#define MEM_SIZE                    (1024*64)
+
+#ifdef RT_LWIP_MEM_SIZE
+#define MEM_SIZE                    RT_LWIP_MEM_SIZE
+#endif
 
 #define MEMP_MEM_MALLOC             0
 
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
    should be set high. */
+#ifdef RT_LWIP_PBUF_STRUCT_NUM
+#define MEMP_NUM_PBUF               RT_LWIP_PBUF_STRUCT_NUM
+#else
 #define MEMP_NUM_PBUF               32 //16
+#endif
 
 /* the number of struct netconns */
 #ifdef RT_MEMP_NUM_NETCONN
@@ -323,7 +330,9 @@
  * setting in the lwip opts.h
  */
 /* MEMP_NUM_NETBUF: the number of struct netbufs. */
-// #define MEMP_NUM_NETBUF             2
+#ifdef RT_LWIP_MEMP_NUM_NETBUF
+#define MEMP_NUM_NETBUF             RT_LWIP_MEMP_NUM_NETBUF
+#endif
 /* MEMP_NUM_NETCONN: the number of struct netconns. */
 // #define MEMP_NUM_NETCONN            4
 
@@ -331,9 +340,27 @@
    for sequential API communication and incoming packets. Used in
    src/api/tcpip.c. */
 // #define MEMP_NUM_TCPIP_MSG_API      16
-// #define MEMP_NUM_TCPIP_MSG_INPKT    16
+#ifdef RT_LWIP_TCPIP_MSG_INPKT_NUM
+#define MEMP_NUM_TCPIP_MSG_INPKT    RT_LWIP_TCPIP_MSG_INPKT_NUM
+#endif
 
 /* ---------- Pbuf options ---------- */
+
+/* Optional driver-reserved space before and after a PBUF_RAM payload. */
+#ifdef RT_LWIP_PBUF_LINK_ENCAPSULATION_HLEN
+#define PBUF_LINK_ENCAPSULATION_HLEN RT_LWIP_PBUF_LINK_ENCAPSULATION_HLEN
+#endif
+
+#ifdef RT_LWIP_PBUF_PAYLOAD_MARGIN_LEN
+#define PBUF_PAYLOAD_MARGIN_LEN      RT_LWIP_PBUF_PAYLOAD_MARGIN_LEN
+#else
+#define PBUF_PAYLOAD_MARGIN_LEN      0
+#endif
+
+#ifdef RT_LWIP_NETIF_TX_SINGLE_PBUF
+#define LWIP_NETIF_TX_SINGLE_PBUF    1
+#endif
+
 /* PBUF_POOL_SIZE: the number of buffers in the pbuf pool. */
 #ifdef RT_LWIP_PBUF_NUM
 #define PBUF_POOL_SIZE               RT_LWIP_PBUF_NUM
@@ -415,7 +442,11 @@
 #define TCPIP_THREAD_STACKSIZE      4096
 #endif
 #define TCPIP_THREAD_NAME           "tcpip"
+#ifdef RT_LWIP_TCP_RECVMBOX_SIZE
+#define DEFAULT_TCP_RECVMBOX_SIZE   RT_LWIP_TCP_RECVMBOX_SIZE
+#else
 #define DEFAULT_TCP_RECVMBOX_SIZE   10
+#endif
 
 /* ---------- ARP options ---------- */
 #define LWIP_ARP                    1
@@ -481,7 +512,11 @@
 
 #define LWIP_UDPLITE                0
 #define UDP_TTL                     255
+#ifdef RT_LWIP_UDP_RECVMBOX_SIZE
+#define DEFAULT_UDP_RECVMBOX_SIZE   RT_LWIP_UDP_RECVMBOX_SIZE
+#else
 #define DEFAULT_UDP_RECVMBOX_SIZE   1
+#endif
 
 /* ---------- RAW options ---------- */
 #ifdef RT_LWIP_RAW
