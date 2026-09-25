@@ -65,6 +65,7 @@ def _use_c6_idf_when_official_has_none():
     """CI pkgs --update fetches RT-Thread-packages/esp-idf, which only sets
     CPPDEFINES for ESP32-C3. Swap in the C6 scons branch before the package
     SConscript runs. A tree that already has the C6 target is left as-is.
+    The fork branch supplies the C6 prototypes that --strict requires.
     """
     import shutil
     import subprocess
