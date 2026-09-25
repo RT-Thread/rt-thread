@@ -685,7 +685,7 @@ int nfs_write(struct dfs_file *file, const void *buf, size_t count)
     return total;
 }
 
-int nfs_lseek(struct dfs_file *file, off_t offset)
+off_t nfs_lseek(struct dfs_file *file, off_t offset)
 {
     nfs_file *fd;
     nfs_filesystem *nfs;

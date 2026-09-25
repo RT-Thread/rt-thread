@@ -62,7 +62,11 @@ struct stat
     uint16_t  st_uid;
     uint16_t  st_gid;
     struct rt_device *st_rdev;
+#ifdef RT_USING_DFS_LARGE_FILE
+    off_t     st_size;
+#else
     uint32_t  st_size;
+#endif
     time_t    st_atime;
     long      st_spare1;
     time_t    st_mtime;
@@ -70,7 +74,11 @@ struct stat
     time_t    st_ctime;
     long      st_spare3;
     uint32_t  st_blksize;
+#ifdef RT_USING_DFS_LARGE_FILE
+    uint64_t  st_blocks;
+#else
     uint32_t  st_blocks;
+#endif
     long      st_spare4[2];
 };
 
