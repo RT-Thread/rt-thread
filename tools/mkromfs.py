@@ -7,6 +7,56 @@ import struct
 from collections import namedtuple
 import io
 
+
+def _make_c_identifier(name):
+    encoded = os.fsencode(name)
+    chars = []
+    for byte in encoded:
+        is_digit = ord('0') <= byte <= ord('9')
+        is_upper = ord('A') <= byte <= ord('Z')
+        is_lower = ord('a') <= byte <= ord('z')
+        if is_digit or is_upper or is_lower or byte == ord('_'):
+            chars.append(chr(byte))
+        else:
+            chars.append('_%02x' % byte)
+
+    if not chars:
+        chars.append('empty')
+    if chars[0].isdigit():
+        chars.insert(0, '_')
+    return '_' + ''.join(chars)
+
+
+def _unique_c_identifier(name, used):
+    base = _make_c_identifier(name)
+    candidate = base
+    index = 1
+    while candidate in used:
+        candidate = '%s_%d' % (base, index)
+        index += 1
+    used.add(candidate)
+    return candidate
+
+
+def _c_string_literal(value):
+    escaped = []
+    for byte in os.fsencode(value):
+        if byte == ord('\\'):
+            escaped.append('\\\\')
+        elif byte == ord('"'):
+            escaped.append('\\\"')
+        elif byte == ord('\n'):
+            escaped.append('\\n')
+        elif byte == ord('\r'):
+            escaped.append('\\r')
+        elif byte == ord('\t'):
+            escaped.append('\\t')
+        elif 0x20 <= byte <= 0x7e:
+            escaped.append(chr(byte))
+        else:
+            escaped.append('\\%03o' % byte)
+    return '"' + ''.join(escaped) + '"'
+
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('rootdir', type=str, help='the path to rootfs')
@@ -16,9 +66,11 @@ parser.add_argument('--binary', action='store_true', help='output binary file')
 parser.add_argument('--addr', default='0', help='set the base address of the binary file, default to 0.')
 
 class File(object):
-    def __init__(self, name):
+    def __init__(self, name, path=None):
         self._name = name
-        self._data = open(name, 'rb').read()
+        self._path = path if path is not None else name
+        self._data = open(self._path, 'rb').read()
+        self._c_name = None
 
     @property
     def name(self):
@@ -26,7 +78,12 @@ class File(object):
 
     @property
     def c_name(self):
-        return '_' + self._name.replace('.', '_')
+        if self._c_name is not None:
+            return self._c_name
+        return _make_c_identifier(self._name)
+
+    def set_c_name(self, c_name):
+        self._c_name = c_name
 
     @property
     def bin_name(self):
@@ -62,9 +119,11 @@ class Folder(object):
     bin_fmt = struct.Struct('IIII')
     bin_item = namedtuple('dirent', 'type, name, data, size')
 
-    def __init__(self, name):
+    def __init__(self, name, path=None):
         self._name = name
+        self._path = path
         self._children = []
+        self._c_name = None
 
     @property
     def name(self):
@@ -72,8 +131,12 @@ class Folder(object):
 
     @property
     def c_name(self):
-        # add _ to avoid conflict with C key words.
-        return '_' + self._name
+        if self._c_name is not None:
+            return self._c_name
+        return _make_c_identifier(self._name)
+
+    def set_c_name(self, c_name):
+        self._c_name = c_name
 
     @property
     def bin_name(self):
@@ -83,20 +146,15 @@ class Folder(object):
         return bn
 
     def walk(self):
-        # os.listdir will return unicode list if the argument is unicode.
-        # TODO: take care of the unicode names
-        for ent in os.listdir(u'.'):
-            if os.path.isdir(ent):
-                cwd = os.getcwd()
-                d = Folder(ent)
-                # depth-first
-                os.chdir(os.path.join(cwd, ent))
+        root = self._path if self._path is not None else u'.'
+        for ent in os.listdir(root):
+            path = os.path.join(root, ent)
+            if os.path.isdir(path):
+                d = Folder(ent, path)
                 d.walk()
-                # restore the cwd
-                os.chdir(cwd)
                 self._children.append(d)
             else:
-                self._children.append(File(ent))
+                self._children.append(File(ent, path))
 
     def sort(self):
         def _sort(x, y):
@@ -114,6 +172,18 @@ class Folder(object):
             if isinstance(c, Folder):
                 c.sort()
 
+    def assign_c_names(self):
+        if self._c_name is None:
+            self._c_name = _make_c_identifier(self._name)
+
+        used = set()
+        for c in self._children:
+            c.set_c_name(_unique_c_identifier(c.name, used))
+
+        for c in self._children:
+            if isinstance(c, Folder):
+                c.assign_c_names()
+
     def dump(self, indent=0):
         print('%s%s' % (' ' * indent, self._name))
         for c in self._children:
@@ -130,8 +200,8 @@ class Folder(object):
 
         dhead = 'static const struct romfs_dirent %s[] = {\n' % (prefix + self.c_name)
         dtail = '\n};'
-        body_fmt = '    {{{type}, "{name}", (rt_uint8_t *){data}, sizeof({data})/sizeof({data}[0])}}'
-        body_fmt0= '    {{{type}, "{name}", RT_NULL, 0}}'
+        body_fmt = '    {{{type}, {name}, (rt_uint8_t *){data}, sizeof({data})/sizeof({data}[0])}}'
+        body_fmt0= '    {{{type}, {name}, RT_NULL, 0}}'
         # prefix of children
         cpf = prefix+self.c_name
         body_li = []
@@ -145,10 +215,11 @@ class Folder(object):
             else:
                 assert False, 'Unkown instance:%s' % str(c)
             if entry_size == 0:
-                body_li.append(body_fmt0.format(type=tp, name = c.name))
+                body_li.append(body_fmt0.format(type=tp,
+                                                name=_c_string_literal(c.name)))
             else:
                 body_li.append(body_fmt.format(type=tp,
-                                            name=c.name,
+                                            name=_c_string_literal(c.name),
                                             data=cpf+c.c_name))
             payload_li.append(c.c_data(prefix=cpf))
 
@@ -246,11 +317,10 @@ def get_bin_data(tree, base_addr):
 if __name__ == '__main__':
     args = parser.parse_args()
 
-    os.chdir(args.rootdir)
-
-    tree = Folder('romfs_root')
+    tree = Folder('romfs_root', args.rootdir)
     tree.walk()
     tree.sort()
+    tree.assign_c_names()
 
     if args.dump:
         tree.dump()
@@ -261,7 +331,9 @@ if __name__ == '__main__':
         data = get_c_data(tree).encode()
 
     output = args.output
-    if not output:
-        output = sys.stdout
-
-    output.write(data)
+    if output:
+        output.write(data)
+    elif args.binary:
+        sys.stdout.buffer.write(data)
+    else:
+        sys.stdout.write(data.decode())
