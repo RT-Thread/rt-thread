@@ -7,5 +7,3 @@
 # 忽略所有 CH32F 系列标准外设驱动目录
 /arm/libraries/CH32F*_StdPeriph_Driver/
 /risc-v/libraries/CH32V10x_StdPeriph_Driver/
-# CH32V003 官方外设库，保持厂商原样
-/risc-v/ch32v003f4p6-evt/libraries/
