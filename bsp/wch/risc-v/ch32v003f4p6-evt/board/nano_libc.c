@@ -12,18 +12,17 @@
  * integer and float converters below.
  */
 
-#define _U  01
-#define _L  02
-#define _N  04
-#define _S  010
-#define _P  020
-#define _C  040
-#define _X  0100
-#define _B  0200
+#define _U 01
+#define _L 02
+#define _N 04
+#define _S 010
+#define _P 020
+#define _C 040
+#define _X 0100
+#define _B 0200
 
 /* Index 0 is EOF. Character c is stored at index c + 1. */
-static const char ctype_table[257] =
-{
+static const char ctype_table[257] = {
     0,
     _C, _C, _C, _C, _C, _C, _C, _C,
     _C, _C | _S, _C | _S, _C | _S, _C | _S, _C | _S, _C, _C,
@@ -64,11 +63,17 @@ void free(void *ptr)
 static int digit(char ch)
 {
     if (ch >= '0' && ch <= '9')
+    {
         return ch - '0';
+    }
     if (ch >= 'a' && ch <= 'z')
+    {
         return ch - 'a' + 10;
+    }
     if (ch >= 'A' && ch <= 'Z')
+    {
         return ch - 'A' + 10;
+    }
     return -1;
 }
 
@@ -82,12 +87,16 @@ unsigned long strtoul(const char *nptr, char **endptr, int base)
     if (s == 0)
     {
         if (endptr)
+        {
             *endptr = (char *)nptr;
+        }
         return 0;
     }
 
     while (*s == ' ' || *s == '\t' || *s == '\n' || *s == '\r')
+    {
         s++;
+    }
 
     if ((base == 0 || base == 16) && s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
     {
@@ -98,7 +107,9 @@ unsigned long strtoul(const char *nptr, char **endptr, int base)
     {
         base = (*s == '0') ? 8 : 10;
         if (*s == '0')
+        {
             s++;
+        }
     }
 
     while ((d = digit(*s)) >= 0 && d < base)
@@ -109,7 +120,9 @@ unsigned long strtoul(const char *nptr, char **endptr, int base)
     }
 
     if (endptr)
+    {
         *endptr = (char *)(any ? s : nptr);
+    }
     return value;
 }
 
@@ -121,20 +134,28 @@ long long strtoll(const char *nptr, char **endptr, int base)
     if (s == 0)
     {
         if (endptr)
+        {
             *endptr = (char *)nptr;
+        }
         return 0;
     }
     while (*s == ' ' || *s == '\t' || *s == '\n' || *s == '\r')
+    {
         s++;
+    }
     if (*s == '-')
     {
         neg = 1;
         s++;
     }
     else if (*s == '+')
+    {
         s++;
+    }
     if (neg)
+    {
         return -(long long)strtoul(s, endptr, base);
+    }
     return (long long)strtoul(s, endptr, base);
 }
 
@@ -146,20 +167,26 @@ unsigned long long strtoull(const char *nptr, char **endptr, int base)
 double strtod(const char *nptr, char **endptr)
 {
     if (endptr)
+    {
         *endptr = (char *)nptr;
+    }
     return 0;
 }
 
 float strtof(const char *nptr, char **endptr)
 {
     if (endptr)
+    {
         *endptr = (char *)nptr;
+    }
     return 0;
 }
 
 long double strtold(const char *nptr, char **endptr)
 {
     if (endptr)
+    {
         *endptr = (char *)nptr;
+    }
     return 0;
 }

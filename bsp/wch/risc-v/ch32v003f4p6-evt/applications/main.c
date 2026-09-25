@@ -14,5 +14,7 @@ int main(void)
 {
     rt_kprintf("MCU: CH32V003F4P6\n");
     while (1)
+    {
         rt_thread_mdelay(1000);
+    }
 }

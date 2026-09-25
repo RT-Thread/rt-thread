@@ -59,7 +59,9 @@ static void _push(rt_uint8_t ch)
 
     next = (_rx_put + 1) % RX_SIZE;
     if (next == _rx_get)
+    {
         return;
+    }
     _rx[_rx_put] = ch;
     _rx_put = next;
     _need_wake = 1;
@@ -68,10 +70,14 @@ static void _push(rt_uint8_t ch)
 static void _wake(void)
 {
     if (!_need_wake)
+    {
         return;
+    }
     _need_wake = 0;
     if (_uart.rx_indicate)
+    {
         _uart.rx_indicate(&_uart, 1);
+    }
 }
 
 static rt_err_t _open(rt_device_t dev, rt_uint16_t oflag)
@@ -125,8 +131,7 @@ static rt_ssize_t _write(rt_device_t dev, rt_off_t pos, const void *buffer, rt_s
     RT_UNUSED(pos);
     for (i = 0; i < size; i++)
     {
-        while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET)
-            ;
+        while (USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
         USART_SendData(USART1, src[i]);
     }
     return (rt_ssize_t)size;
@@ -148,7 +153,9 @@ int rt_hw_usart_init(void)
 void rt_hw_usart_rx_poll(void)
 {
     if (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == RESET)
+    {
         return;
+    }
     _rx_count++;
     _push((rt_uint8_t)USART_ReceiveData(USART1));
 }
