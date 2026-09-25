@@ -83,6 +83,13 @@ def _use_c6_idf_when_official_has_none():
         'git', 'clone', '--depth', '1', '--branch', 'bsp/esp32c6-scons',
         'https://github.com/cms19859230182-lang/esp-idf.git', tmp,
     ])
+    subprocess.check_call([
+        'git', '-C', tmp, 'submodule', 'update', '--init', '--depth', '1',
+        'components/mbedtls/mbedtls', 'components/heap/tlsf',
+    ])
+    git_meta = os.path.join(tmp, '.git')
+    if os.path.isdir(git_meta):
+        shutil.rmtree(git_meta)
     shutil.rmtree(dest)
     os.rename(tmp, dest)
 
