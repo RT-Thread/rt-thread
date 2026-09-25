@@ -134,7 +134,9 @@ static void udpclient_test(int argc, char** argv)
             is_running = 0;
             return;
         }
-        else if (rt_strcmp(argv[1], "-h") == 0 && rt_strcmp(argv[3], "-p") == 0)
+        else if ((argc == 5 || argc == 7) &&
+                 rt_strcmp(argv[1], "-h") == 0 &&
+                 rt_strcmp(argv[3], "-p") == 0)
         {
             if (started)
             {
@@ -143,9 +145,14 @@ static void udpclient_test(int argc, char** argv)
                 return;
             }
 
-            if (argc == 7 && rt_strcmp(argv[6], "--cnt") == 0)
+            if (argc == 7)
             {
-                count = atoi(argv[7]);
+                if (rt_strcmp(argv[5], "--cnt") != 0)
+                {
+                    goto __usage;
+                }
+
+                count = atoi(argv[6]);
             }
 
             if (rt_strlen(argv[2]) > sizeof(url))
