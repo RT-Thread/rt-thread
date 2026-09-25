@@ -317,6 +317,15 @@ def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, env, project_name, project_path=No
         RTT_ROOT
     )
 
+    if not used_paths:
+        print("Warning: No source paths found from compile_commands.json")
+        print("Skip source cleanup to avoid removing required files")
+        if project_path is None:
+            zip_dist(dist_dir, project_name)
+            print("Distribution package created: {}.zip".format(dist_dir))
+        print('=> Distribution strip skipped')
+        return
+
     # Clean up RT-Thread directory except tools and build files
     rt_thread_dir = os.path.join(dist_dir, 'rt-thread')
     source_extensions = ('.c', '.cpp', '.cxx', '.cc', '.s', '.S')
