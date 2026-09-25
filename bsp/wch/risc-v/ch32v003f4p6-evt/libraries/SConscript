@@ -1,0 +1,18 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+ch32v00x/Core/core_riscv.c
+ch32v00x/User/system_ch32v00x.c
+ch32v00x/Peripheral/src/ch32v00x_gpio.c
+ch32v00x/Peripheral/src/ch32v00x_rcc.c
+ch32v00x/Peripheral/src/ch32v00x_usart.c
+ch32v00x/Peripheral/src/ch32v00x_misc.c
+''')
+path = [
+    cwd + '/ch32v00x/Core',
+    cwd + '/ch32v00x/Peripheral/inc',
+    cwd + '/ch32v00x/User',
+]
+group = DefineGroup('ch32v00x', src, depend=[''], CPPPATH=path)
+Return('group')
