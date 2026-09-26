@@ -64,6 +64,7 @@ static struct esp_adc esp_adc_obj[sizeof(adc_config) / sizeof(adc_config[0])];
 static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
 #ifdef SOC_ESP32_C6
+    static int adc_on;
     int gpio;
 
     if (channel < 0 || channel > 6)
@@ -73,11 +74,18 @@ static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt
     gpio = channel;
     if (!enabled)
     {
+        if (adc_on > 0)
+        {
+            adc_on--;
+            sar_periph_ctrl_adc_oneshot_power_release();
+            periph_module_disable(PERIPH_SARADC_MODULE);
+        }
         return RT_EOK;
     }
 
     periph_module_enable(PERIPH_SARADC_MODULE);
     sar_periph_ctrl_adc_oneshot_power_acquire();
+    adc_on++;
 
     PCR.saradc_conf.saradc_clk_en = 1;
     PCR.saradc_conf.saradc_rst_en = 0;
@@ -163,7 +171,8 @@ static rt_err_t _adc_get_value(struct rt_adc_device *device, rt_int8_t channel, 
 
 #ifdef SOC_ESP32_C6
     int i;
-    uint32_t raw_pin;
+    int done = 0;
+    uint32_t raw_pin = 0;
 
     APB_SARADC.saradc_onetime_sample.saradc_saradc_onetime_channel = channel;
     APB_SARADC.saradc_int_clr.saradc_apb_saradc1_done_int_clr = 1;
@@ -177,13 +186,21 @@ static rt_err_t _adc_get_value(struct rt_adc_device *device, rt_int8_t channel, 
     {
         if (APB_SARADC.saradc_int_raw.saradc_apb_saradc1_done_int_raw)
         {
+            done = 1;
             break;
         }
         esp_rom_delay_us(2);
     }
-    raw_pin = APB_SARADC.saradc_sar1data_status.saradc_apb_saradc1_data & 0xfff;
+    if (done)
+    {
+        raw_pin = APB_SARADC.saradc_sar1data_status.saradc_apb_saradc1_data & 0xfff;
+    }
     APB_SARADC.saradc_onetime_sample.saradc_saradc1_onetime_sample = 0;
     APB_SARADC.saradc_onetime_sample.saradc_saradc_onetime_start = 0;
+    if (!done)
+    {
+        return -RT_ETIMEOUT;
+    }
     *value = raw_pin;
     return RT_EOK;
 #else

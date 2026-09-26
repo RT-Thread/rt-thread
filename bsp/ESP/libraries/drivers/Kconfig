@@ -29,16 +29,20 @@ menu "Hardware Drivers Config"
 
 choice BSP_BOARD_SEL
     prompt "Select BSP board "
+    default BSP_BOARD_ESP32C6_DEVKITC1 if SOC_ESP32_C6
     default BSP_BOARD_LUATOS_ESP32C3
 
     config BSP_BOARD_LUATOS_ESP32C3
         bool "LUATOS ESP32C3 board"
+        depends on SOC_ESP32_C3
 
     config BSP_BOARD_HX_EXP32C3
         bool "HONGXU ESP32C3 board"
+        depends on SOC_ESP32_C3
 
     config BSP_BOARD_ESP32C6_DEVKITC1
         bool "ESP32-C6-DevKitC-1"
+        depends on SOC_ESP32_C6
 endchoice
 
 menu "Onboard Peripheral Drivers"
@@ -153,11 +157,13 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         depends on SOC_ESP32_C3 || SOC_ESP32_C6
+        default y if SOC_ESP32_C6
         default n
         select RT_USING_ADC
         if BSP_USING_ADC
             config BSP_USING_ADC1
                 bool "Enable ADC1"
+                default y if SOC_ESP32_C6
                 default n
         endif
 

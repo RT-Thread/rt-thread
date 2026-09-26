@@ -29,7 +29,7 @@ ESP32-C6-DevKitC-1 是乐鑫推出的一款基于 RISC-V 内核的开发板，�
 
 1. 下载 [riscv32-esp-elf GCC 11.2.0](https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-win64.zip)（Windows）。Linux 用同版本的 `linux-amd64` 包。
 2. 下载 Env 工具 [最新版本](https://github.com/RT-Thread/env-windows/releases)
-3. 将 [esp-idf 的 `bsp/esp32c6-scons` 分支](https://github.com/cms19859230182-lang/esp-idf/tree/bsp/esp32c6-scons) clone 到 `packages/ESP-IDF-latest`。官方 `RT-Thread-packages/esp-idf` 里还没有这些 C6 源码，`pkgs --update` 下到的包编不过。
+3. 将 [esp-idf 提交 `4fa003074a73774369d38123749fe64b7b4acbd3`](https://github.com/cms19859230182-lang/esp-idf/commit/4fa003074a73774369d38123749fe64b7b4acbd3)（`bsp/esp32c6-scons`）放到 `packages/ESP-IDF-latest`。官方 `RT-Thread-packages/esp-idf` 里还没有这些 C6 源码，`pkgs --update` 下到的包编不过。SConstruct 发现包里没有 C6 时，拉取的也是这一次提交，不跟分支尖走。
 4. 在当前 BSP 目录下执行 `scons --exec-path=工具链的bin目录`
 5. 编译完成之后会生成 **rtthread.bin** 文件。默认打开 GPIO、UART0 和 ADC。
 

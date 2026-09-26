@@ -1,15 +1,41 @@
 #include <math.h>
 #include "rtconfig.h"
-double ceil(double i)
+
+static int _real_out_of_range(double x)
 {
-    i = i;
-    return i;
+    return x != x || x >= 9223372036854775808.0 || x <= -9223372036854775808.0;
 }
 
-double floor(double i)
+double ceil(double x)
 {
-    i = i;
-    return i;
+    long long n;
+
+    if (_real_out_of_range(x))
+    {
+        return x;
+    }
+    n = (long long)x;
+    if (x > 0 && (double)n != x)
+    {
+        n++;
+    }
+    return (double)n;
+}
+
+double floor(double x)
+{
+    long long n;
+
+    if (_real_out_of_range(x))
+    {
+        return x;
+    }
+    n = (long long)x;
+    if (x < 0 && (double)n != x)
+    {
+        n--;
+    }
+    return (double)n;
 }
 
 

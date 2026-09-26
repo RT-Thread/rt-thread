@@ -706,10 +706,10 @@
 #define CONFIG_SOC_GPIO_SUPPORT_FORCE_HOLD              (1)
 #define CONFIG_SOC_GPIO_SUPPORT_HOLD_SINGLE_IO_IN_DSLP  (1)
 #define CONFIG_SOC_RTCIO_PIN_COUNT                      8
-#define CONFIG_SOC_RTCIO_INPUT_OUTPUT_SUPPORTED         1  /* This macro indicates that the target has separate RTC IOMUX hardware feature,
-#define CONFIG_SOC_RTCIO_HOLD_SUPPORTED 1
-#define CONFIG_SOC_RTCIO_WAKE_SUPPORTED 1
-#define CONFIG_SOC_DEDIC_GPIO_OUT_CHANNELS_NUM (8) /*!< 8 outward channels on each CPU core */
+#define CONFIG_SOC_RTCIO_INPUT_OUTPUT_SUPPORTED         1
+#define CONFIG_SOC_RTCIO_HOLD_SUPPORTED                 1
+#define CONFIG_SOC_RTCIO_WAKE_SUPPORTED                 1
+#define CONFIG_SOC_DEDIC_GPIO_OUT_CHANNELS_NUM          (8) /*!< 8 outward channels on each CPU core */
 #define CONFIG_SOC_DEDIC_GPIO_IN_CHANNELS_NUM           (8) /*!< 8 inward channels on each CPU core */
 #define CONFIG_SOC_DEDIC_PERIPH_ALWAYS_ENABLE           (1) /*!< The dedicated GPIO (a.k.a. fast GPIO) is featured by some customized CPU instructions, which is always enabled */
 #define CONFIG_SOC_I2C_NUM                              (1U)

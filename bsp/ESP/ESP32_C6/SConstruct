@@ -61,15 +61,19 @@ env['ASCOM'] = env['ASPPCOM']
 Export('RTT_ROOT')
 Export('rtconfig')
 
+C6_IDF_COMMIT = '4fa003074a73774369d38123749fe64b7b4acbd3'
+
 def _use_c6_idf_when_official_has_none():
     """CI pkgs --update fetches RT-Thread-packages/esp-idf, which only sets
-    CPPDEFINES for ESP32-C3. Swap in the C6 scons branch before the package
+    CPPDEFINES for ESP32-C3. Swap in one reviewed C6 commit before the package
     SConscript runs. A tree that already has the C6 target is left as-is.
-    The fork branch supplies the C6 prototypes that --strict requires.
+    The package may sit under this BSP's packages/ or under libraries/.
+    The replacement is fetched by commit, not by the moving branch tip.
     """
     import shutil
     import subprocess
-    dest = os.path.join(libraries_path_prefix, 'ESP-IDF-latest')
+    from env_package import find_package_path
+    dest = os.path.abspath(find_package_path(SDK_ROOT, 'ESP-IDF-latest'))
     sc = os.path.join(dest, 'SConscript')
     if not os.path.isfile(sc):
         return
@@ -80,10 +84,21 @@ def _use_c6_idf_when_official_has_none():
     tmp = dest + '.c6'
     if os.path.isdir(tmp):
         shutil.rmtree(tmp)
+    subprocess.check_call(['git', 'init', tmp])
     subprocess.check_call([
-        'git', 'clone', '--depth', '1', '--branch', 'bsp/esp32c6-scons',
-        'https://github.com/cms19859230182-lang/esp-idf.git', tmp,
+        'git', '-C', tmp, 'remote', 'add', 'origin',
+        'https://github.com/cms19859230182-lang/esp-idf.git',
     ])
+    subprocess.check_call([
+        'git', '-C', tmp, 'fetch', '--depth', '1', 'origin', C6_IDF_COMMIT,
+    ])
+    subprocess.check_call(['git', '-C', tmp, 'checkout', '--detach', 'FETCH_HEAD'])
+    head = subprocess.check_output(
+        ['git', '-C', tmp, 'rev-parse', 'HEAD']).decode().strip()
+    if head != C6_IDF_COMMIT:
+        shutil.rmtree(tmp)
+        raise RuntimeError('fetched esp-idf is %s, this BSP expects %s'
+                           % (head, C6_IDF_COMMIT))
     subprocess.check_call([
         'git', '-C', tmp, 'submodule', 'update', '--init', '--depth', '1',
         'components/mbedtls/mbedtls', 'components/heap/tlsf',

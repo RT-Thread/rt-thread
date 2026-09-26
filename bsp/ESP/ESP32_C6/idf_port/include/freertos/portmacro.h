@@ -305,7 +305,7 @@ FORCE_INLINE_ATTR BaseType_t xPortGetCoreID(void)
         portEXIT_CRITICAL(mux);        \
     }                                  \
 })
-#define portTRY_ENTER_CRITICAL_SAFE(mux, timeout) portENTER_CRITICAL_SAFE(mux, timeout)
+#define portTRY_ENTER_CRITICAL_SAFE(mux, timeout) portTRY_ENTER_CRITICAL(mux, timeout)
 
 // ---------------------- Yielding -------------------------
 
