@@ -31,6 +31,7 @@ menu "RT-Thread Utestcases"
             rsource "../../../components/lwp/utest/Kconfig"
             rsource "../../../components/mm/utest/Kconfig"
             rsource "../../../components/net/utest/Kconfig"
+            rsource "../asan/utest/Kconfig"
             rsource "../../../components/utilities/utest/utest/Kconfig"
 
         endmenu

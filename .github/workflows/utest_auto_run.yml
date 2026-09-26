@@ -152,6 +152,8 @@ jobs:
             config_file: "components/dfs.cfg"
           - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
             config_file: "components/libc.cfg"
+          - platform: { UTEST: "A9",            RTT_BSP: "bsp/qemu-vexpress-a9",      QEMU_ARCH: "arm",     QEMU_MACHINE: "vexpress-a9", SD_FILE: "sd.bin", KERNEL: "standard", "SMP_RUN":"" }
+            config_file: "components/asan.cfg"
 
     env:
       TEST_QEMU_ARCH: ${{ matrix.platform.QEMU_ARCH }}
