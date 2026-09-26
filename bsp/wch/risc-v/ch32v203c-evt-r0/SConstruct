@@ -53,27 +53,31 @@ def _allow_ch32v20x_d6_in_sdk_package():
     D8W tree or an already patched file is left untouched.
     """
     import re
-    sc = os.path.join(SDK_ROOT, 'packages', 'CH32V20x-SDK-for-RTT', 'SConscript')
-    if not os.path.isfile(sc):
-        return
-    with open(sc, 'r', encoding='utf-8') as f:
-        text = f.read()
-    if 'Exit()' not in text or 'SOC_RISCV_SERIES_CH32V20x_D6' not in text:
-        return
-    if not re.search(r'^import os\b', text, re.M):
-        text = 'import os\n' + text
-    patched, n = re.subn(
-        r"if GetDepend\(\['SOC_RISCV_SERIES_CH32V20x_D6'\]\):.*?\n    Exit\(\)\n",
-        "if GetDepend(['SOC_RISCV_SERIES_CH32V20x_D6']):\n"
-        "    CPPDEFINES.append(\"CH32V20x_D6\")\n",
-        text,
-        count=1,
-        flags=re.S,
-    )
-    if n == 0 or patched == text:
-        return
-    with open(sc, 'w', encoding='utf-8', newline='\n') as f:
-        f.write(patched)
+    candidates = [
+        os.path.join(SDK_ROOT, 'packages', 'CH32V20x-SDK-for-RTT', 'SConscript'),
+        os.path.join(libraries_path_prefix, 'ch32v20x_sdk-latest', 'SConscript'),
+    ]
+    for sc in candidates:
+        if not os.path.isfile(sc):
+            continue
+        with open(sc, 'r', encoding='utf-8') as f:
+            text = f.read()
+        if 'Exit()' not in text or 'SOC_RISCV_SERIES_CH32V20x_D6' not in text:
+            continue
+        if not re.search(r'^import os\b', text, re.M):
+            text = 'import os\n' + text
+        patched, n = re.subn(
+            r"if GetDepend\(\['SOC_RISCV_SERIES_CH32V20x_D6'\]\):.*?\n    Exit\(\)\n",
+            "if GetDepend(['SOC_RISCV_SERIES_CH32V20x_D6']):\n"
+            "    CPPDEFINES.append(\"CH32V20x_D6\")\n",
+            text,
+            count=1,
+            flags=re.S,
+        )
+        if n == 0 or patched == text:
+            continue
+        with open(sc, 'w', encoding='utf-8', newline='\n') as f:
+            f.write(patched)
 
 _allow_ch32v20x_d6_in_sdk_package()
 
