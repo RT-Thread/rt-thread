@@ -371,7 +371,9 @@ static inline output_gadget_t buffer_gadget(char* buffer, size_t buffer_size)
 static inline printf_size_t strnlen_s_(const char* str, printf_size_t maxsize)
 {
   const char* s;
-  for (s = str; *s && maxsize--; ++s);
+  // check the bound before dereferencing,
+  // so that at most maxsize characters are read.
+  for (s = str; maxsize && *s; ++s, --maxsize);
   return (printf_size_t)(s - str);
 }
 
@@ -1053,7 +1055,14 @@ static inline void format_string_loop(output_gadget_t* output, const char* forma
       }
       else if (*format == '*') {
         const int precision_ = va_arg(args, int);
-        precision = precision_ > 0 ? (printf_size_t) precision_ : 0U;
+        if (precision_ < 0)
+        {
+            flags &= ~FLAGS_PRECISION;
+        }
+        else
+        {
+            precision = (printf_size_t)precision_;
+        }
         ADVANCE_IN_FORMAT_STRING(format);
       }
     }
