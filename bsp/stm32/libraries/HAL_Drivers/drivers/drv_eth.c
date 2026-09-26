@@ -25,9 +25,9 @@
  */
 
 /* debug option */
-/* #define ETH_RX_DUMP */
-/* #define ETH_TX_DUMP */
-/* #define DRV_DEBUG */
+// #define ETH_RX_DUMP
+// #define ETH_TX_DUMP
+// #define DRV_DEBUG
 #define LOG_TAG             "drv.emac"
 #include <drv_log.h>
 
@@ -960,6 +960,17 @@ static rt_err_t eth_allocate_dma_memory(void)
     return RT_EOK;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops eth_ops = {
+    rt_stm32_eth_init,
+    rt_stm32_eth_open,
+    rt_stm32_eth_close,
+    rt_stm32_eth_read,
+    rt_stm32_eth_write,
+    rt_stm32_eth_control,
+};
+#endif
+
 /* Register the EMAC device */
 static int rt_hw_stm32_eth_init(void)
 {
@@ -1003,12 +1014,16 @@ static int rt_hw_stm32_eth_init(void)
     stm32_eth_device.dev_addr[4] = *(rt_uint8_t *)(UID_BASE + 2);
     stm32_eth_device.dev_addr[5] = *(rt_uint8_t *)(UID_BASE + 0);
 
+#ifdef RT_USING_DEVICE_OPS
+    stm32_eth_device.parent.parent.ops = &eth_ops;
+#else
     stm32_eth_device.parent.parent.init = rt_stm32_eth_init;
     stm32_eth_device.parent.parent.open = rt_stm32_eth_open;
     stm32_eth_device.parent.parent.close = rt_stm32_eth_close;
     stm32_eth_device.parent.parent.read = rt_stm32_eth_read;
     stm32_eth_device.parent.parent.write = rt_stm32_eth_write;
     stm32_eth_device.parent.parent.control = rt_stm32_eth_control;
+#endif
     stm32_eth_device.parent.parent.user_data = RT_NULL;
     stm32_eth_device.parent.eth_rx = rt_stm32_eth_rx;
     stm32_eth_device.parent.eth_tx = rt_stm32_eth_tx;
