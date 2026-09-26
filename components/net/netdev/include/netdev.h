@@ -159,6 +159,7 @@ struct netdev *netdev_get_by_family(int family);
 int netdev_family_get(struct netdev *netdev);
 #endif /* RT_USING_SAL */
 #if defined(SAL_USING_AF_NETLINK)
+struct msg_buf;
 int netdev_getnetdev(struct msg_buf *msg, int (*cb)(struct msg_buf *m_buf, struct netdev *nd, int nd_num, int index, int ipvx));
 #endif
 
