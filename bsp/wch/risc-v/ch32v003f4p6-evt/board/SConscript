@@ -1,0 +1,12 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+board.c
+drv_usart.c
+nano_libc.c
+startup_ch32v00x.S
+''')
+path = [cwd]
+group = DefineGroup('Drivers', src, depend=[''], CPPPATH=path)
+Return('group')
