@@ -1,0 +1,11 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Split('''
+    cambus.c
+    sensor.c
+    sensors/ov7670.c
+''')
+
+group = DefineGroup('CameraPort', src, depend = [''], CPPPATH = [cwd, cwd + '/sensors'])
+Return('group')

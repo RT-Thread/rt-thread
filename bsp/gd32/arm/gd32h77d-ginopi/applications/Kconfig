@@ -1,0 +1,131 @@
+menu "Applications"
+
+    config BSP_USING_USB_CDC_EXAMPLE
+        bool "Enable USB CDC heartbeat in main"
+        depends on BSP_USB_USING_DEVICE && RT_USB_DEVICE_CDC
+        default n
+        help
+            Send one heartbeat per second on vcom from the LED loop.
+
+    config BSP_USING_SDRAM_HEAP_TEST
+        bool "Enable SDRAM heap test command"
+        depends on BSP_USING_SDRAM && RT_USING_HEAP && RT_USING_FINSH
+        depends on RT_USING_MEMHEAP_AS_HEAP && RT_USING_MEMHEAP_AUTO_BINDING
+        default n
+        help
+            Register sdram_heap_test to verify an allocated SDRAM buffer.
+            Use memheap objects as the system heap with automatic binding
+            so allocations can use the external SDRAM heap.
+
+    config BSP_USING_FILESYSTEM_TEST
+        bool "Enable filesystem read/write benchmark commands"
+        depends on RT_USING_DFS && RT_USING_HEAP && RT_USING_FINSH
+        default n
+        help
+            Register readspeed and writespeed commands.
+
+    config BSP_USING_PWM_DUAL_TEST
+        bool "Enable PWM2/PWM30 test command"
+        depends on BSP_USING_PWM2 && BSP_USING_PWM30 && RT_USING_FINSH
+        default n
+        help
+            Register pwm_dual_test to control the two PWM outputs.
+
+    config BSP_USING_RTC_ALARM_EXAMPLE
+        bool "Enable RTC alarm example command"
+        depends on BSP_USING_ALARM && RT_USING_FINSH
+        default n
+        help
+            Register rtc_alarm to configure and inspect a one-shot alarm.
+
+    config BSP_USING_OV7670_PREVIEW
+        bool "Enable OV7670 LVGL preview"
+        depends on PKG_LVGL_USING_LATEST && BSP_USING_LCD_MIPI && BSP_USING_OV7670
+        default n
+        help
+            Add the camera preview UI and its optional MSH control command.
+
+    config BSP_USING_GD32VW553_MQTT_DEMO
+        bool "Enable GD32VW553 MQTT demo"
+        depends on BSP_USING_GD32VW553_AT
+        select PKG_USING_KAWAII_MQTT
+        select KAWAII_MQTT_NETSOCKET_USE_SAL
+        default n
+        help
+            Enable a GD32VW553 MQTT demo based on the RT-Thread
+            kawaii-mqtt package. The MQTT network path is
+            kawaii-mqtt, SAL socket, at_device, and GD32VW553 AT.
+
+    if BSP_USING_GD32VW553_MQTT_DEMO
+
+        config BSP_GD32VW553_MQTT_HOST
+            string "MQTT broker address"
+            default "broker.emqx.io"
+            help
+                Use a numeric IPv4 address when the module firmware
+                does not support AT+CIPDOMAIN.
+
+        config BSP_GD32VW553_MQTT_PORT
+            int "MQTT broker port"
+            range 1 65535
+            default 1883
+
+        config BSP_GD32VW553_MQTT_SUB_TOPIC
+            string "MQTT subscribe topic"
+            default "rtt/gd32vw553/sub"
+
+        config BSP_GD32VW553_MQTT_PUB_TOPIC
+            string "MQTT publish topic"
+            default "rtt/gd32vw553/pub"
+
+        config BSP_GD32VW553_MQTT_MESSAGE
+            string "MQTT publish message"
+            default "hello from GD32VW553"
+
+        config BSP_GD32VW553_MQTT_CLIENT_ID
+            string "MQTT client id"
+            default "gd32vw553"
+
+        config BSP_GD32VW553_MQTT_USERNAME
+            string "MQTT username"
+            default ""
+
+        config BSP_GD32VW553_MQTT_PASSWORD
+            string "MQTT password"
+            default ""
+
+    endif
+
+    config BSP_USING_LVGL_BOARD_DEMO
+        bool "Enable LVGL board demonstration"
+        depends on PKG_LVGL_USING_LATEST
+        select BSP_USING_LCD_MIPI
+        select BSP_USING_TOUCH_GT911
+        select BSP_USING_OV7670
+        select BSP_USING_OV7670_PREVIEW
+        select BSP_USING_FS
+        select BSP_USING_FLASH_FATFS
+        select BSP_USING_USB
+        select BSP_USB_USING_HOST
+        select RT_USBH_MSTORAGE
+        select BSP_USING_CAN
+        select BSP_USING_CAN1
+        select BSP_USING_PWM
+        select BSP_USING_PWM2
+        select BSP_USING_PWM30
+        select BSP_USING_SPI
+        select BSP_USING_SPI3
+        select BSP_USING_I2C
+        select BSP_USING_HARD_I2C
+        select BSP_USING_HARD_I2C1
+        select BSP_USING_GD32VW553_AT
+        select BSP_USING_GD32VW553_MQTT_DEMO
+        default n
+        help
+            Enable the LVGL board console for storage, CAN, MQTT, dual PWM,
+            OV7670 camera preview, SPI3 loopback, and I2C address scanning.
+
+    config PKG_LVGL_THREAD_STACK_SIZE
+        range 8192 2147483647 if BSP_USING_LVGL_BOARD_DEMO
+
+endmenu
