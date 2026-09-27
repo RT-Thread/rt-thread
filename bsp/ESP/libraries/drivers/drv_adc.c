@@ -61,6 +61,10 @@ static struct esp_adc_config adc_config[] =
 
 static struct esp_adc esp_adc_obj[sizeof(adc_config) / sizeof(adc_config[0])];
 
+#ifdef SOC_ESP32_C6
+static struct rt_mutex adc_lock;
+#endif
+
 static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
 #ifdef SOC_ESP32_C6
@@ -71,6 +75,10 @@ static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt
     {
         return -RT_EINVAL;
     }
+    if (rt_mutex_take(&adc_lock, RT_WAITING_FOREVER) != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
     gpio = channel;
     if (!enabled)
     {
@@ -80,6 +88,7 @@ static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt
             sar_periph_ctrl_adc_oneshot_power_release();
             periph_module_disable(PERIPH_SARADC_MODULE);
         }
+        rt_mutex_release(&adc_lock);
         return RT_EOK;
     }
 
@@ -114,6 +123,7 @@ static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt
 
     APB_SARADC.saradc_onetime_sample.saradc_saradc_onetime_atten = 3;
     APB_SARADC.saradc_onetime_sample.saradc_saradc_onetime_channel = channel;
+    rt_mutex_release(&adc_lock);
     return RT_EOK;
 #else
     struct esp_adc *_adc = rt_container_of(device, struct esp_adc, adc_device);
@@ -173,7 +183,12 @@ static rt_err_t _adc_get_value(struct rt_adc_device *device, rt_int8_t channel, 
     int i;
     int done = 0;
     uint32_t raw_pin = 0;
+    rt_err_t result;
 
+    if (rt_mutex_take(&adc_lock, RT_WAITING_FOREVER) != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
     APB_SARADC.saradc_onetime_sample.saradc_saradc_onetime_channel = channel;
     APB_SARADC.saradc_int_clr.saradc_apb_saradc1_done_int_clr = 1;
     APB_SARADC.saradc_onetime_sample.saradc_saradc1_onetime_sample = 0;
@@ -199,10 +214,15 @@ static rt_err_t _adc_get_value(struct rt_adc_device *device, rt_int8_t channel, 
     APB_SARADC.saradc_onetime_sample.saradc_saradc_onetime_start = 0;
     if (!done)
     {
-        return -RT_ETIMEOUT;
+        result = -RT_ETIMEOUT;
     }
-    *value = raw_pin;
-    return RT_EOK;
+    else
+    {
+        *value = raw_pin;
+        result = RT_EOK;
+    }
+    rt_mutex_release(&adc_lock);
+    return result;
 #else
     rt_uint32_t adc_raw = 0;
     struct esp_adc *_adc = rt_container_of(device, struct esp_adc, adc_device);
@@ -232,6 +252,13 @@ static const struct rt_adc_ops esp_adc_ops =
 int rt_hw_adc_init(void)
 {
     int result = RT_EOK;
+
+#ifdef SOC_ESP32_C6
+    if (rt_mutex_init(&adc_lock, "adc", RT_IPC_FLAG_PRIO) != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
+#endif
 
     for (rt_size_t i = 0; i < sizeof(esp_adc_obj) / sizeof(struct esp_adc); i++)
     {

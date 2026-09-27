@@ -51,41 +51,25 @@ void rt_hw_systick_init(void)
 }
 
 #ifdef SOC_ESP32_C6
-#include "esp_cpu.h"
 #include "riscv/csr.h"
-#include "riscv/interrupt.h"
 
-extern void esprv_intc_int_enable(uint32_t unmask);
-extern void esprv_intc_int_set_priority(int intr_num, int pri);
-
-static void c6_move_intr(int from, int to, volatile uint32_t *map)
+static void c6_reserve_broken_intr(void)
 {
-    intr_handler_t handler = intr_handler_get(from);
-    void *arg = intr_handler_get_arg(from);
-
-    if (handler == 0)
-    {
-        return;
-    }
-    esp_cpu_intr_set_handler(to, (esp_cpu_intr_handler_t)handler, arg);
-    esprv_intc_int_set_priority(to, 3);
-    esprv_intc_int_enable(1u << to);
-    *map = (uint32_t)to;
-}
-
-static void c6_bind_interrupts(void)
-{
-    RV_WRITE_CSR(mideleg, 0);
-    /* Lines 3 and 4 stay disabled on this chip. Source 57 is systimer
-     * target0; source 43 is UART0. */
-    c6_move_intr(3, 16, (volatile uint32_t *)0x600100e4);
-    c6_move_intr(4, 9, (volatile uint32_t *)0x600100ac);
-    systimer_ll_clear_alarm_int(systimer_hal.dev, SYSTIMER_LL_ALARM_OS_TICK_CORE0);
+    /* CPU lines 3 and 4 do not latch an enable on this chip. Reserve them
+     * before esp_intr_alloc so the chosen line, its non-IRAM mask and the
+     * matrix route are written together. Copying the handler afterwards
+     * leaves non_iram_int_mask on the old line. */
+    ESP_ERROR_CHECK(esp_intr_reserve(3, 0));
+    ESP_ERROR_CHECK(esp_intr_reserve(4, 0));
 }
 #endif
 
 void rt_hw_board_init(void)
 {
+#ifdef SOC_ESP32_C6
+    RV_WRITE_CSR(mideleg, 0);
+    c6_reserve_broken_intr();
+#endif
     rt_hw_systick_init();
     /* Board underlying hardware initialization */
 #ifdef RT_USING_COMPONENTS_INIT
@@ -93,9 +77,6 @@ void rt_hw_board_init(void)
 #endif
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
-#endif
-#ifdef SOC_ESP32_C6
-    c6_bind_interrupts();
 #endif
 }
 
