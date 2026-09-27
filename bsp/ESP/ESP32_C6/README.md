@@ -24,7 +24,7 @@ ESP32-C6-DevKitC-1 是乐鑫推出的一款基于 RISC-V 内核的开发板，�
 | ADC          |     支持     | ADC1 通道 1（GPIO1）。接地 2167，接 3V3 为 4095，没有校准 |
 | GDBStub      |     支持     | 打开 `BSP_ENABLE_GDBSTUB` 后，出错会停进 stub。默认关闭 |
 | I2C          |    待支持    |          |
-| SPI          |    待支持    |          |
+| SPI          |    待支持    | GPIO7 接到 GPIO2，发出 `0xA5`，收回 `0xA5000000`，对不上一字节 |
 | PWM          |    待支持    |          |
 | Wi-Fi        |    待支持    |          |
 | BLE          |    待支持    |          |
