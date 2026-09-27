@@ -14,6 +14,35 @@ CH32V203C8T6-EVT-R0 是 WCH 推出的一款基于 RISC-V 内核的开发板，�
 
 更多信息请访问 [CH32V203](https://www.wch.cn/products/CH32V203.html) 以及 [openwch/ch32v20x](https://github.com/openwch/ch32v20x)
 
+## 外设支持
+
+本 BSP 目前对外设的支持情况如下：
+
+| **片上外设** | **支持情况** | **备注** |
+| :----------- | :----------: | :------- |
+| GPIO         |     支持     | PA8 设成输出后，写高读回 high，写低读回 low。外接灯能亮 |
+| UART         |     支持     | USART1，TX PA9，RX PA10。115200，能进 msh |
+| ADC          |     支持     | ADC1。通道 17 稳定在 `0x5CA` 附近；通道 16 稳定后约 `0x6BB`。PA0 接 3V3 为 `0xFFF`，接 GND 为 `0x4` 或 `0x5` |
+| PWM          |     支持     | TIM1 通道 1，PA8，1 kHz，占空比 50% |
+| RTC          |     支持     | 使用 LSE。设好时间后再读，秒数往前走 |
+| IWDT         |     支持     | 默认关闭。打开 utest 后，停喂大约 5 秒会复位 |
+| USB Device   |     支持     | 板载 Type-C。虚拟串口 VID `0FFE`，PID `0001`，能进 msh |
+| SPI          |    待支持    |          |
+| I2C          |    待支持    |          |
+| CAN          |    待支持    |          |
+
+默认镜像只打开 GPIO 和 UART1。ADC、PWM、RTC、看门狗和 USB 要在 menuconfig 里打开。
+
+### IO 在板级支持包中的映射情况
+
+| IO   | 板级包中的定义 |
+| ---- | -------------- |
+| PA9  | USART1_TX      |
+| PA10 | USART1_RX      |
+| PA13 | SWDIO          |
+| PA14 | SWCLK          |
+| PA8  | GPIO / TIM1 PWM |
+
 ## 2 编译说明
 
 板级包支持 RISC-V GCC 开发环境，以下是具体版本信息：

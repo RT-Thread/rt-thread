@@ -26,7 +26,9 @@
 
 ![hongxu](images/hx_shang.png)
 
+- ESP32-C3-DevKitM-1
 
+这块板用本 BSP 能进 msh。板上 RGB 灯在 GPIO8，菜单里的灯脚仍是 LUATOS 的 IO12，这颗灯没有对上。Wi-Fi 和 BLE 不在这次记录里。
 
 该LUATOS_ESP32C3开发板常用 **板载资源** 如下：
 
