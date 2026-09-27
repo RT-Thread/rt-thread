@@ -13,6 +13,31 @@ ESP32-C6-DevKitC-1 是乐鑫推出的一款基于 RISC-V 内核的开发板，�
 
 更多信息请访问 [ESP32-C6-DevKitC-1](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32c6/esp32-c6-devkitc-1/user_guide.html)
 
+## 外设支持
+
+本 BSP 目前对外设的支持情况如下：
+
+| **片上外设** | **支持情况** | **备注** |
+| :----------- | :----------: | :------- |
+| GPIO         |     支持     | GPIO1 作输入。接 3V3 为 high，接 GND 为 low |
+| UART         |     支持     | UART0，TX GPIO16，RX GPIO17。115200，能进 msh |
+| ADC          |     支持     | ADC1 通道 1（GPIO1）。接地 2167，接 3V3 为 4095，没有校准 |
+| GDBStub      |     支持     | 打开 `BSP_ENABLE_GDBSTUB` 后，出错会停进 stub。默认关闭 |
+| I2C          |    待支持    |          |
+| SPI          |    待支持    |          |
+| PWM          |    待支持    |          |
+| Wi-Fi        |    待支持    |          |
+| BLE          |    待支持    |          |
+| 802.15.4     |    待支持    |          |
+
+### IO 在板级支持包中的映射情况
+
+| IO     | 板级包中的定义        |
+| ------ | --------------------- |
+| GPIO16 | UART0_TX              |
+| GPIO17 | UART0_RX              |
+| GPIO1  | 已测输入，兼 ADC1 通道 1 |
+
 ## 2 编译说明
 
 板级包支持 RISC-V GCC 开发环境，以下是具体版本信息：
