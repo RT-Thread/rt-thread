@@ -13,6 +13,27 @@ CH32V003F4P6-EVT 是 WCH 推出的一款基于 RISC-V 内核的开发板，最�
 
 更多信息请访问 [CH32V003](https://www.wch.cn/products/CH32V003.html) 以及 [openwch/ch32v003](https://github.com/openwch/ch32v003)
 
+## 外设支持
+
+本 BSP 目前对外设的支持情况如下：
+
+| **片上外设** | **支持情况** | **备注** |
+| :----------- | :----------: | :------- |
+| UART         |     支持     | USART1，TX PD5，RX PD6。115200，能进 msh，`help` 有回显 |
+| GPIO         |    待支持    |          |
+| ADC          |    待支持    |          |
+| SPI          |    待支持    |          |
+| I2C          |    待支持    |          |
+| TIM          |    待支持    |          |
+
+### IO 在板级支持包中的映射情况
+
+| IO  | 板级包中的定义 |
+| --- | -------------- |
+| PD5 | USART1_TX      |
+| PD6 | USART1_RX      |
+| PD1 | SWDIO          |
+
 ## 2 编译说明
 
 板级包支持 RISC-V GCC 开发环境，以下是具体版本信息：
@@ -30,7 +51,7 @@ CH32V003F4P6-EVT 是 WCH 推出的一款基于 RISC-V 内核的开发板，最�
 1. [下载 WCH 编译工具链](https://github.com/NanjingQinheng/sdk-toolchain-RISC-V-GCC-WCH)
 2. 下载 Env 工具 [最新版本](https://github.com/RT-Thread/env-windows/releases)
 3. 在当前 BSP 目录下执行 `scons --exec-path=工具链的bin目录`
-4. 编译完成之后会生成 **rtthread.bin** 文件。默认只打开 GPIO 和 UART1。
+4. 编译完成之后会生成 **rtthread.bin** 文件。默认只打开 UART1。
 
 ### 3.2 硬件连接
 
