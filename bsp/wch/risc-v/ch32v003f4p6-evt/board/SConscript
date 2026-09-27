@@ -5,6 +5,7 @@ src = Split('''
 board.c
 drv_usart.c
 nano_libc.c
+software_irq.c
 startup_ch32v00x.S
 ''')
 path = [cwd]
