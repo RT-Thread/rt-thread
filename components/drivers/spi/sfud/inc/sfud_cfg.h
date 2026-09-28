@@ -64,6 +64,13 @@
 #endif
 
 /**
+ * SFUD will support OSPI mode.
+ */
+#ifdef RT_SFUD_USING_OSPI
+#define SFUD_USING_OSPI
+#endif
+
+/**
  * Using probe flash JEDEC ID then query defined supported flash chip information table. @see SFUD_FLASH_CHIP_TABLE
  */
 #ifdef RT_SFUD_USING_FLASH_INFO_TABLE

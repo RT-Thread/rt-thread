@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2016-09-28     armink       first version.
  * 2025-10-30     wdfk-prog    enable interrupt-safe operations using spinlocks
+ * 2026-09-03     CliffLL      add OSPI operations
  */
 
 #include <stdint.h>
@@ -41,6 +42,15 @@
     .qspi_dl_width = 4,                          \
 }
 #endif /* SFUD_USING_QSPI */
+
+#ifdef SFUD_USING_OSPI
+#define RT_SFUD_DEFAULT_OSPI_CFG                 \
+{                                                \
+    RT_SFUD_DEFAULT_SPI_CFG,                     \
+    .medium_size = 0x2000000,                     \
+    .dtr_mode = 0,                               \
+}
+#endif /* SFUD_USING_OSPI */
 
 static rt_err_t rt_sfud_control(rt_device_t dev, int cmd, void *args) {
     RT_ASSERT(dev);
@@ -138,14 +148,34 @@ static sfud_err spi_write_read(const sfud_spi *spi, const uint8_t *write_buf, si
 #ifdef SFUD_USING_QSPI
     struct rt_qspi_device *qspi_dev = RT_NULL;
 #endif
+#ifdef SFUD_USING_OSPI
+    struct rt_ospi_device *ospi_dev = RT_NULL;
+#endif
     if (write_size) {
         RT_ASSERT(write_buf);
     }
     if (read_size) {
         RT_ASSERT(read_buf);
     }
+#ifdef SFUD_USING_OSPI
+    if (rtt_dev->rt_spi_device->bus->mode & RT_SPI_BUS_MODE_OSPI) {
+        ospi_dev = (struct rt_ospi_device *) (rtt_dev->rt_spi_device);
+    }
+    if ((ospi_dev != RT_NULL) && (ospi_dev->ospi_mode == RT_OSPI_MODE_OFF)) {
+        if (write_size && read_size) {
+            if (rt_ospi_send_then_recv(ospi_dev, write_buf, write_size, read_buf, read_size) <= 0) {
+                result = SFUD_ERR_TIMEOUT;
+            }
+        } else if (write_size) {
+            if (rt_ospi_send(ospi_dev, write_buf, write_size) <= 0) {
+                result = SFUD_ERR_TIMEOUT;
+            }
+        }
+    }
+    else
+#endif
 #ifdef SFUD_USING_QSPI
-    if(rtt_dev->rt_spi_device->bus->mode & RT_SPI_BUS_MODE_QSPI) {
+    if (rtt_dev->rt_spi_device->bus->mode & RT_SPI_BUS_MODE_QSPI) {
         qspi_dev = (struct rt_qspi_device *) (rtt_dev->rt_spi_device);
         if (write_size && read_size) {
             if (rt_qspi_send_then_recv(qspi_dev, write_buf, write_size, read_buf, read_size) <= 0) {
@@ -226,6 +256,89 @@ static sfud_err qspi_read(const struct __sfud_spi *spi, uint32_t addr, sfud_qspi
 }
 #endif
 
+#ifdef SFUD_USING_OSPI
+/**
+ * OSPI write data or read data
+ */
+static sfud_err ospi_write_read(const struct __sfud_spi *spi, uint32_t addr, sfud_ospi_cmd_format *ospi_cmd_format, const uint8_t *send_buf, size_t send_size, uint8_t *read_buf, size_t read_size) {
+    struct rt_ospi_message message;
+    sfud_err result = SFUD_SUCCESS;
+    rt_memset(&message, 0, sizeof(message));
+
+    sfud_flash *sfud_dev = (sfud_flash *) (spi->user_data);
+    struct spi_flash_device *rtt_dev = (struct spi_flash_device *) (sfud_dev->user_data);
+    struct rt_ospi_device *ospi_dev = (struct rt_ospi_device *) (rtt_dev->rt_spi_device);
+
+    RT_ASSERT(spi);
+    RT_ASSERT(sfud_dev);
+    RT_ASSERT(rtt_dev);
+    RT_ASSERT(ospi_dev);
+
+    /* set message struct */
+    message.instruction.content = ospi_cmd_format->instruction;
+    message.instruction.size = ospi_cmd_format->instruction_size;
+    message.instruction.ospi_lines = ospi_cmd_format->instruction_lines;
+    message.instruction.dtrmode = (ospi_dev->ospi_mode == RT_OSPI_MODE_DTR) ? 1 : 0;
+
+    message.address.content = addr;
+    message.address.size = ospi_cmd_format->address_size;
+    message.address.ospi_lines = ospi_cmd_format->address_lines;
+    message.address.dtrmode = (ospi_dev->ospi_mode == RT_OSPI_MODE_DTR) ? 1 : 0;
+
+    message.alternate_bytes.content = 0;
+    message.alternate_bytes.size = 0;
+    message.alternate_bytes.ospi_lines = 0;
+    message.alternate_bytes.dtrmode = 0;
+
+    message.dummy_cycles = ospi_cmd_format->dummy_cycles;
+
+    message.parent.send_buf = (send_size > 0) ? send_buf : RT_NULL;
+    message.parent.recv_buf = (read_size > 0) ? read_buf : RT_NULL;
+    message.parent.length = (send_size > 0) ? send_size : read_size;
+    message.parent.cs_release = 1;
+    message.parent.cs_take = 1;
+    message.ospi_data_lines = ospi_cmd_format->data_lines;
+    message.ospi_data_dtrmode = (ospi_dev->ospi_mode == RT_OSPI_MODE_DTR) ? 1 : 0;
+    message.dqs_mode = ((read_size > 0) && (ospi_dev->ospi_mode == RT_OSPI_MODE_DTR)) ? 1 : 0;
+    /* set next */
+    /* Ensure correct OSPI message chaining by setting next pointer to NULL, preventing unintended data transmission issues.*/
+    message.parent.next = RT_NULL;
+    rt_ssize_t ret = rt_ospi_transfer_message(ospi_dev, &message);
+    if ((send_size && (ret!= message.parent.length)) || (read_size && (ret!= message.parent.length)) || (ret < 0)) {
+        result = SFUD_ERR_TIMEOUT;
+    }
+
+    return result;
+}
+
+/**
+ * get OSPI mode
+ */
+static sfud_ospi_mode_t get_ospi_mode(const struct __sfud_spi *spi) {
+    const sfud_flash *sfud_dev = (const sfud_flash *)spi->user_data;
+    struct spi_flash_device *rtt_dev = (struct spi_flash_device *) (sfud_dev->user_data);
+    
+    RT_ASSERT(spi);
+    RT_ASSERT(sfud_dev);
+    RT_ASSERT(rtt_dev);
+
+    if (!(rtt_dev->rt_spi_device->bus->mode & RT_SPI_BUS_MODE_OSPI)) {
+        return SFUD_OSPI_MODE_OFF;
+    }
+
+    struct rt_ospi_device *ospi_dev = (struct rt_ospi_device *) (rtt_dev->rt_spi_device);
+    switch (ospi_dev->ospi_mode) {
+    case RT_OSPI_MODE_STR:
+        return SFUD_OSPI_MODE_STR;
+    case RT_OSPI_MODE_DTR:
+        return SFUD_OSPI_MODE_DTR;
+    default:
+        return SFUD_OSPI_MODE_OFF;
+    }
+
+}
+#endif
+
 static void spi_lock(const sfud_spi *spi) {
     sfud_flash *sfud_dev = (sfud_flash *) (spi->user_data);
     struct spi_flash_device *rtt_dev = (struct spi_flash_device *) (sfud_dev->user_data);
@@ -293,6 +406,10 @@ sfud_err sfud_spi_port_init(sfud_flash *flash) {
 #ifdef SFUD_USING_QSPI
     flash->spi.qspi_read = qspi_read;
 #endif
+#ifdef SFUD_USING_OSPI
+    flash->spi.ospi_write_read = ospi_write_read;
+    flash->spi.get_ospi_mode = get_ospi_mode;
+#endif
     flash->spi.lock = spi_lock;
     flash->spi.unlock = spi_unlock;
     flash->spi.user_data = flash;
@@ -320,24 +437,29 @@ const static struct rt_device_ops flash_device_ops =
 #endif
 
 /**
- * Probe SPI flash by SFUD (Serial Flash Universal Driver) driver library and though SPI device by specified configuration.
+ * Probe an SPI/QSPI/OSPI flash by SFUD (Serial Flash Universal Driver) driver library and through SPI device by specified configuration.
  *
  * @param spi_flash_dev_name the name which will create SPI flash device
  * @param spi_dev_name using SPI device name
  * @param spi_cfg SPI device configuration
  * @param qspi_cfg QSPI device configuration
+ * @param ospi_cfg OSPI device configuration
  *
  * @return probed SPI flash device, probe failed will return RT_NULL
  */
-rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, const char *spi_dev_name,
-        struct rt_spi_configuration *spi_cfg, struct rt_qspi_configuration *qspi_cfg)
+static rt_spi_flash_device_t rt_sfud_flash_probe_internal(const char *spi_flash_dev_name, const char *spi_dev_name,
+        struct rt_spi_configuration *spi_cfg, struct rt_qspi_configuration *qspi_cfg, struct rt_ospi_configuration *ospi_cfg)
 {
     rt_spi_flash_device_t rtt_dev = RT_NULL;
     sfud_flash *sfud_dev = RT_NULL;
     char *spi_flash_dev_name_bak = RT_NULL, *spi_dev_name_bak = RT_NULL;
+    void *old_spi_user_data = RT_NULL;
     extern sfud_err sfud_device_init(sfud_flash *flash);
 #ifdef SFUD_USING_QSPI
     struct rt_qspi_device *qspi_dev = RT_NULL;
+#endif
+#ifdef SFUD_USING_OSPI
+    struct rt_ospi_device *ospi_dev = RT_NULL;
 #endif
 
     RT_ASSERT(spi_flash_dev_name);
@@ -374,6 +496,21 @@ rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, con
             }
             sfud_dev->spi.name = spi_dev_name_bak;
 
+#ifdef SFUD_USING_OSPI
+            /* set the ospi line number and configure the OSPI bus */
+            if (rtt_dev->rt_spi_device->bus->mode &RT_SPI_BUS_MODE_OSPI) {
+                ospi_dev = (struct rt_ospi_device *)rtt_dev->rt_spi_device;
+                if (ospi_cfg == RT_NULL) {
+                    LOG_E("ERROR: OSPI configuration is NULL.");
+                    goto error;
+                }
+                if (rt_ospi_configure(ospi_dev, ospi_cfg) != RT_EOK) {
+                    LOG_E("ERROR: Configure OSPI device %s failed.", spi_dev_name);
+                    goto error;
+                }
+            }
+            else
+#endif
 #ifdef SFUD_USING_QSPI
             /* set the qspi line number and configure the QSPI bus */
             if(rtt_dev->rt_spi_device->bus->mode &RT_SPI_BUS_MODE_QSPI) {
@@ -389,6 +526,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, con
         {
             sfud_dev->name = spi_flash_dev_name_bak;
             /* accessed each other */
+            old_spi_user_data = rtt_dev->rt_spi_device->user_data;
             rtt_dev->user_data = sfud_dev;
             rtt_dev->rt_spi_device->user_data = rtt_dev;
             rtt_dev->flash_device.user_data = rtt_dev;
@@ -402,6 +540,22 @@ rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, con
             rtt_dev->geometry.sector_count = sfud_dev->chip.capacity / sfud_dev->chip.erase_gran;
             rtt_dev->geometry.bytes_per_sector = sfud_dev->chip.erase_gran;
             rtt_dev->geometry.block_size = sfud_dev->chip.erase_gran;
+#ifdef SFUD_USING_OSPI
+            /* reconfigure the OSPI bus for medium size */
+            if(rtt_dev->rt_spi_device->bus->mode &RT_SPI_BUS_MODE_OSPI) {
+                ospi_cfg->medium_size = sfud_dev->chip.capacity;
+                if (rt_ospi_configure(ospi_dev, ospi_cfg) != RT_EOK) {
+                    LOG_E("ERROR: Reconfigure OSPI device %s failed.", spi_dev_name);
+                    goto error;
+                }
+                if (ospi_dev->enter_ospi_str_mode != RT_NULL) {
+                    if (ospi_dev->enter_ospi_str_mode(ospi_dev) != RT_EOK) {
+                        LOG_E("ERROR: Enter OSPI STR mode failed.");
+                        goto error;
+                    }
+                }
+            }
+#endif /* SFUD_USING_OSPI */
 #ifdef SFUD_USING_QSPI
             /* reconfigure the QSPI bus for medium size */
             if(rtt_dev->rt_spi_device->bus->mode &RT_SPI_BUS_MODE_QSPI) {
@@ -441,6 +595,9 @@ rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, con
 error:
 
     if (rtt_dev) {
+        if (rtt_dev->rt_spi_device && rtt_dev->rt_spi_device->user_data == rtt_dev) {
+            rtt_dev->rt_spi_device->user_data = old_spi_user_data;
+        }
         rt_mutex_detach(&(rtt_dev->lock));
     }
     /* may be one of objects memory was malloc success, so need free all */
@@ -453,7 +610,41 @@ error:
 }
 
 /**
- * Probe SPI flash by SFUD(Serial Flash Universal Driver) driver library and though SPI device.
+ * Probe SPI/QSPI flash by SFUD (Serial Flash Universal Driver) driver library and through SPI device by specified configuration.
+ *
+ * @param spi_flash_dev_name the name which will create SPI flash device
+ * @param spi_dev_name using SPI device name
+ * @param spi_cfg SPI device configuration
+ * @param qspi_cfg QSPI device configuration
+ *
+ * @return probed SPI flash device, probe failed will return RT_NULL
+ */
+rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, const char *spi_dev_name,
+        struct rt_spi_configuration *spi_cfg, struct rt_qspi_configuration *qspi_cfg)
+{
+    return rt_sfud_flash_probe_internal(spi_flash_dev_name, spi_dev_name, spi_cfg, qspi_cfg, RT_NULL);
+}
+
+#ifdef SFUD_USING_OSPI
+/**
+ * Probe SPI/OSPI flash by SFUD (Serial Flash Universal Driver) driver library and through SPI device by specified configuration.
+ *
+ * @param spi_flash_dev_name the name which will create SPI flash device
+ * @param spi_dev_name using SPI device name
+ * @param spi_cfg SPI device configuration
+ * @param ospi_cfg OSPI device configuration
+ *
+ * @return probed SPI flash device, probe failed will return RT_NULL
+ */
+rt_spi_flash_device_t rt_sfud_flash_probe_ospi_ex(const char *spi_flash_dev_name, const char *spi_dev_name,
+        struct rt_spi_configuration *spi_cfg, struct rt_ospi_configuration *ospi_cfg)
+{
+    return rt_sfud_flash_probe_internal(spi_flash_dev_name, spi_dev_name, spi_cfg, RT_NULL, ospi_cfg);
+}
+#endif
+
+/**
+ * Probe SPI flash by SFUD(Serial Flash Universal Driver) driver library and through SPI device.
  *
  * @param spi_flash_dev_name the name which will create SPI flash device
  * @param spi_dev_name using SPI device name
@@ -463,12 +654,21 @@ error:
 rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const char *spi_dev_name)
 {
     struct rt_spi_configuration cfg = RT_SFUD_DEFAULT_SPI_CFG;
-#ifndef SFUD_USING_QSPI
-    return rt_sfud_flash_probe_ex(spi_flash_dev_name, spi_dev_name, &cfg, RT_NULL);
-#else
+#if defined(SFUD_USING_OSPI) && defined(SFUD_USING_QSPI)
+    struct rt_ospi_configuration ospi_cfg = RT_SFUD_DEFAULT_OSPI_CFG;
+    struct rt_qspi_configuration qspi_cfg = RT_SFUD_DEFAULT_QSPI_CFG;
+
+    return rt_sfud_flash_probe_internal(spi_flash_dev_name, spi_dev_name, &cfg, &qspi_cfg, &ospi_cfg);
+#elif defined(SFUD_USING_OSPI) && !defined(SFUD_USING_QSPI)
+    struct rt_ospi_configuration ospi_cfg = RT_SFUD_DEFAULT_OSPI_CFG;
+
+    return rt_sfud_flash_probe_ospi_ex(spi_flash_dev_name, spi_dev_name, &cfg, &ospi_cfg);
+#elif !defined(SFUD_USING_OSPI) && defined(SFUD_USING_QSPI)
     struct rt_qspi_configuration qspi_cfg = RT_SFUD_DEFAULT_QSPI_CFG;
 
     return rt_sfud_flash_probe_ex(spi_flash_dev_name, spi_dev_name, &cfg, &qspi_cfg);
+#else
+    return rt_sfud_flash_probe_ex(spi_flash_dev_name, spi_dev_name, &cfg, RT_NULL);
 #endif
 }
 

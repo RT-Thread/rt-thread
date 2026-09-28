@@ -17,6 +17,9 @@ if GetDepend('RT_USING_SOFT_SPI'):
 if GetDepend('RT_USING_QSPI'):
     src += ['dev_qspi_core.c']
 
+if GetDepend('RT_USING_OSPI'):
+    src += ['dev_ospi_core.c']
+
 src_device = []
 
 if GetDepend('RT_USING_SPI_WIFI'):

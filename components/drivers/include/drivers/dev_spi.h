@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2025 RT-Thread Development Team
+ * Copyright (c) 2006-2026 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,6 +9,7 @@
  * 2020-06-13     armink       fix the 3 wires issue
  * 2022-09-01     liYony       fix api rt_spi_sendrecv16 about MSB and LSB bug
  * 2025-10-30     wdfk-prog    enable interrupt-safe operations using spinlocks
+ * 2026-08-14     CliffLL      add OSPI device's config
  */
 
 #ifndef __DEV_SPI_H__
@@ -129,6 +130,7 @@ extern "C"{
 
 #define RT_SPI_BUS_MODE_SPI         (1<<0)
 #define RT_SPI_BUS_MODE_QSPI        (1<<1)
+#define RT_SPI_BUS_MODE_OSPI        (1<<2)
 
 #define RT_SPI_CS_CNT_MAX           16
 
@@ -292,6 +294,83 @@ struct rt_qspi_device
     void (*enter_qspi_mode)(struct rt_qspi_device *device);
 
     void (*exit_qspi_mode)(struct rt_qspi_device *device);
+};
+
+/**
+ * @brief OSPI message structure
+ */
+struct rt_ospi_message
+{
+    struct rt_spi_message parent;
+
+    /* instruction stage */
+    struct
+    {
+        rt_uint16_t content;
+        rt_uint8_t size;
+        rt_uint8_t ospi_lines;
+        rt_uint8_t dtrmode;
+    } instruction;
+
+    /* address and alternate_bytes stage */
+    struct
+    {
+        rt_uint32_t content;
+        rt_uint8_t size;
+        rt_uint8_t ospi_lines;
+        rt_uint8_t dtrmode;
+    } address, alternate_bytes;
+
+    /* dummy_cycles stage */
+    rt_uint32_t dummy_cycles;
+
+    rt_uint8_t ospi_data_dtrmode;
+    /* dqs required in OPI-DTR mode */
+    rt_uint8_t dqs_mode;
+
+    /* number of lines in ospi data stage, the other configuration items are in parent */
+    rt_uint8_t ospi_data_lines;
+};
+
+/**
+ * @brief OSPI configuration structure
+ */
+struct rt_ospi_configuration
+{
+    struct rt_spi_configuration parent;
+    /* The size of medium */
+    rt_uint32_t medium_size;
+    /* double data transfer rate mode */
+    rt_uint8_t dtr_mode;
+};
+
+/**
+ * @brief OSPI mode
+ */
+typedef enum
+{
+    RT_OSPI_MODE_OFF = 0,
+    RT_OSPI_MODE_STR = 1,
+    RT_OSPI_MODE_DTR = 2,
+} rt_ospi_mode_t;
+
+/**
+ * @brief OSPI operators
+ */
+struct rt_ospi_device
+{
+    struct rt_spi_device parent;
+
+    struct rt_ospi_configuration config;
+
+    /* OSPI mode */
+    rt_ospi_mode_t ospi_mode;
+
+    rt_err_t (*enter_ospi_str_mode)(struct rt_ospi_device *device);
+
+    rt_err_t (*enter_ospi_dtr_mode)(struct rt_ospi_device *device);
+
+    rt_err_t (*exit_ospi_mode)(struct rt_ospi_device *device);
 };
 
 #define SPI_DEVICE(dev) ((struct rt_spi_device *)(dev))
@@ -662,6 +741,61 @@ rt_ssize_t rt_qspi_send_then_recv(struct rt_qspi_device *device, const void *sen
  * @return the status of transmit.
  */
 rt_ssize_t rt_qspi_send(struct rt_qspi_device *device, const void *send_buf, rt_size_t length);
+
+/**
+ * @brief This function can set configuration on OSPI device.
+ *
+ * @param device the OSPI device attached to OSPI bus.
+ * @param cfg the configuration pointer.
+ *
+ * @return the actual length of transmitted.
+ */
+rt_err_t rt_ospi_configure(struct rt_ospi_device *device, struct rt_ospi_configuration *cfg);
+
+/**
+ * @brief This function can register a SPI bus for OSPI mode.
+ *
+ * @param bus the SPI bus for OSPI mode.
+ * @param name The name of the spi bus.
+ * @param ops the SPI bus instance to be registered.
+ *
+ * @return the actual length of transmitted.
+ */
+rt_err_t rt_ospi_bus_register(struct rt_spi_bus *bus, const char *name, const struct rt_spi_ops *ops);
+
+/**
+ * @brief This function transmits data to OSPI device.
+ *
+ * @param device the OSPI device attached to OSPI bus.
+ * @param message the message pointer.
+ *
+ * @return the actual length of transmitted.
+ */
+rt_ssize_t rt_ospi_transfer_message(struct rt_ospi_device *device, struct rt_ospi_message *message);
+
+/**
+ * @brief This function can send data then receive data from OSPI device
+ *
+ * @param device the OSPI device attached to OSPI bus.
+ * @param send_buf the buffer to be transmitted to OSPI device.
+ * @param send_length the number of data to be transmitted.
+ * @param recv_buf the buffer to be recivied from OSPI device.
+ * @param recv_length the data to be recivied.
+ *
+ * @return the status of transmit.
+ */
+rt_ssize_t rt_ospi_send_then_recv(struct rt_ospi_device *device, const void *send_buf, rt_size_t send_length, void *recv_buf, rt_size_t recv_length);
+
+/**
+ * @brief This function can send data to OSPI device
+ *
+ * @param device the OSPI device attached to OSPI bus.
+ * @param send_buf the buffer to be transmitted to OSPI device.
+ * @param length the number of data to be transmitted.
+ *
+ * @return the status of transmit.
+ */
+rt_ssize_t rt_ospi_send(struct rt_ospi_device *device, const void *send_buf, rt_size_t length);
 
 #ifdef __cplusplus
 }

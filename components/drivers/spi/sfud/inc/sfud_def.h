@@ -106,6 +106,10 @@ if (!(EXPR))                                                                   \
 #define SFUD_CMD_PAGE_PROGRAM                          0x02
 #endif
 
+#ifndef SFUD_CMD_PAGE_PROGRAM_4B
+#define SFUD_CMD_PAGE_PROGRAM_4B                       0x12
+#endif
+
 #ifndef SFUD_CMD_AAI_WORD_PROGRAM
 #define SFUD_CMD_AAI_WORD_PROGRAM                      0xAD
 #endif
@@ -114,8 +118,20 @@ if (!(EXPR))                                                                   \
 #define SFUD_CMD_ERASE_CHIP                            0xC7
 #endif
 
+#ifndef SFUD_CMD_ERASE_SECTOR_4B
+#define SFUD_CMD_ERASE_SECTOR_4B                       0x21
+#endif
+
 #ifndef SFUD_CMD_READ_DATA
 #define SFUD_CMD_READ_DATA                             0x03
+#endif
+
+#ifndef SFUD_CMD_READ_DATA_OSPI_STR
+#define SFUD_CMD_READ_DATA_OSPI_STR                    0xEC
+#endif
+
+#ifndef SFUD_CMD_READ_DATA_OSPI_DTR
+#define SFUD_CMD_READ_DATA_OSPI_DTR                    0xEE
 #endif
 
 #ifndef SFUD_CMD_DUAL_OUTPUT_READ_DATA
@@ -175,6 +191,11 @@ if (!(EXPR))                                                                   \
 #define SFUD_DUMMY_DATA                                0xFF
 #endif
 
+/* default dummy cycles in OPI mode*/
+#ifndef SFUD_OSPI_6_DUMMY_CYCLES
+#define SFUD_OSPI_6_DUMMY_CYCLES                       6
+#endif
+
 /* maximum number of erase type support on JESD216 (V1.0) */
 #define SFUD_SFDP_ERASE_TYPE_MAX_NUM                      4
 
@@ -213,6 +234,33 @@ typedef struct {
     uint8_t data_lines;
 } sfud_qspi_read_cmd_format;
 #endif /* SFUD_USING_QSPI */
+
+#ifdef SFUD_USING_OSPI
+/**
+ * OSPI flash read cmd format
+ */
+typedef struct {
+    uint16_t instruction;
+    uint8_t instruction_lines;
+    uint8_t instruction_size;
+    uint8_t address_size;
+    uint8_t address_lines;
+    uint8_t alternate_bytes_lines;
+    uint8_t dummy_cycles;
+    uint8_t dtr_mode;
+    uint8_t data_lines;
+    uint8_t dqs_mode;
+} sfud_ospi_cmd_format;
+
+/**
+ * OSPI flash mode
+ */
+typedef enum {
+    SFUD_OSPI_MODE_OFF = 0,
+    SFUD_OSPI_MODE_STR = 1,
+    SFUD_OSPI_MODE_DTR = 2,
+} sfud_ospi_mode_t;
+#endif /* SFUD_USING_OSPI */
 
 /* SPI bus write read data function type */
 typedef sfud_err (*spi_write_read_func)(const uint8_t *write_buf, size_t write_size, uint8_t *read_buf, size_t read_size);
@@ -255,6 +303,13 @@ typedef struct __sfud_spi {
     sfud_err (*qspi_read)(const struct __sfud_spi *spi, uint32_t addr, sfud_qspi_read_cmd_format *qspi_read_cmd_format,
                           uint8_t *read_buf, size_t read_size);
 #endif
+#ifdef SFUD_USING_OSPI
+    /* OSPI write or read function */
+    sfud_err (*ospi_write_read)(const struct __sfud_spi *spi, uint32_t addr, sfud_ospi_cmd_format *ospi_cmd_format,
+                          const uint8_t *send_buf, size_t send_size, uint8_t *read_buf, size_t read_size);
+    /* get OSPI mode function */
+    sfud_ospi_mode_t (*get_ospi_mode)(const struct __sfud_spi *spi);
+#endif
     /* lock SPI bus */
     void (*lock)(const struct __sfud_spi *spi);
     /* unlock SPI bus */
@@ -281,6 +336,10 @@ typedef struct {
 
 #ifdef SFUD_USING_QSPI
     sfud_qspi_read_cmd_format read_cmd_format;   /**< fast read cmd format */
+#endif
+
+#ifdef SFUD_USING_OSPI
+    sfud_ospi_cmd_format ospi_cmd_format;        /**< ospi cmd format */
 #endif
 
 #ifdef SFUD_USING_SFDP
