@@ -82,7 +82,7 @@ void rt_hw_systick_init(void)
 
         __asm__ __volatile__("rsr %0, intenable" : "=r"(ie));
         ie &= XCHAL_INTLEVEL1_MASK;
-        __asm__ __volatile__("wsr %0, intenable; rsync" :: "r"(ie) : "memory");
+        __asm__ __volatile__("wsr %0, intenable; rsync" ::"r"(ie) : "memory");
     }
 #endif
 }

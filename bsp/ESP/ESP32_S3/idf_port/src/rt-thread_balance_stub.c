@@ -70,8 +70,8 @@ void select(void)
 #include <stddef.h>
 
 void *bootloader_sha256_start(void);
-void  bootloader_sha256_data(void *handle, const void *data, size_t len);
-void  bootloader_sha256_finish(void *handle, uint8_t *digest);
+void bootloader_sha256_data(void *handle, const void *data, size_t len);
+void bootloader_sha256_finish(void *handle, uint8_t *digest);
 
 void *bootloader_sha256_start(void)
 {

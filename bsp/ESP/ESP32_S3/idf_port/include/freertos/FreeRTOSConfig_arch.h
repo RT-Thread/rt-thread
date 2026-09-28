@@ -27,16 +27,16 @@
  *      - XT_USE_SWPRI         We don't define this (unused)
  * ------------------------------------------------------------------------------------------------------------------ */
 
-#define configXT_SIMULATOR                                  0
-#define configXT_BOARD                                      1   /* Board mode */
+#define configXT_SIMULATOR 0
+#define configXT_BOARD     1   /* Board mode */
 #if CONFIG_FREERTOS_CORETIMER_0
-#define configXT_TIMER_INDEX                                0
+#define configXT_TIMER_INDEX 0
 #elif CONFIG_FREERTOS_CORETIMER_1
-#define configXT_TIMER_INDEX                                1
+#define configXT_TIMER_INDEX 1
 #endif
-#define configXT_INTEXC_HOOKS                               0
+#define configXT_INTEXC_HOOKS 0
 
-#define configBENCHMARK                                     0
+#define configBENCHMARK 0
 
 /* ------------------------------------------------- FreeRTOS Config ---------------------------------------------------
  * - All Vanilla FreeRTOS configuration goes into this section
@@ -45,11 +45,11 @@
 // ------------------ Scheduler Related --------------------
 
 #ifdef CONFIG_FREERTOS_OPTIMIZED_SCHEDULER
-#define configUSE_PORT_OPTIMISED_TASK_SELECTION             1
+#define configUSE_PORT_OPTIMISED_TASK_SELECTION 1
 #else
-#define configUSE_PORT_OPTIMISED_TASK_SELECTION             0
+#define configUSE_PORT_OPTIMISED_TASK_SELECTION 0
 #endif
-#define configMAX_API_CALL_INTERRUPT_PRIORITY               XCHAL_EXCM_LEVEL
+#define configMAX_API_CALL_INTERRUPT_PRIORITY XCHAL_EXCM_LEVEL
 
 /* ------------------------------------------------ ESP-IDF Additions --------------------------------------------------
  *
@@ -60,9 +60,9 @@
  * Size needs to be aligned to the stack increment, since the location of
  * the stack for the 2nd CPU will be calculated using configISR_STACK_SIZE.
  */
-#define configSTACK_ALIGNMENT                               16
+#define configSTACK_ALIGNMENT 16
 #ifndef configISR_STACK_SIZE
-#define configISR_STACK_SIZE                                ((CONFIG_FREERTOS_ISR_STACKSIZE + configSTACK_ALIGNMENT - 1) & (~(configSTACK_ALIGNMENT - 1)))
+#define configISR_STACK_SIZE ((CONFIG_FREERTOS_ISR_STACKSIZE + configSTACK_ALIGNMENT - 1) & (~(configSTACK_ALIGNMENT - 1)))
 #endif
 
 #endif // FREERTOS_CONFIG_XTENSA_H

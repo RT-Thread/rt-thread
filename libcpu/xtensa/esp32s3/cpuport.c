@@ -58,8 +58,8 @@
 /* ---- globals referenced by context_gcc.S (same names/semantics as the
  * ---- RISC-V common port, which this replaces for Xtensa) ---- */
 #ifndef RT_USING_SMP
-volatile rt_ubase_t  rt_interrupt_from_thread = 0;
-volatile rt_ubase_t  rt_interrupt_to_thread   = 0;
+volatile rt_ubase_t rt_interrupt_from_thread = 0;
+volatile rt_ubase_t rt_interrupt_to_thread = 0;
 volatile rt_uint32_t rt_thread_switch_interrupt_flag = 0;
 #endif
 
@@ -90,7 +90,7 @@ static void cp_disable_all(void)
 {
     const rt_uint32_t none = 0;
 
-    __asm__ volatile("wsr %0, cpenable; rsync" :: "r"(none) : "memory");
+    __asm__ volatile("wsr %0, cpenable; rsync" ::"r"(none) : "memory");
 }
 
 /* ---- interrupt dispatch (called from _rt_lowint1 with a C environment) ---- */
@@ -102,7 +102,7 @@ void rt_xt_irq_process(void)
     do
     {
         __asm__ __volatile__("rsr %0, intenable" : "=r"(enabled));
-        __asm__ __volatile__("rsr %0, interrupt"  : "=r"(active));
+        __asm__ __volatile__("rsr %0, interrupt" : "=r"(active));
         pending = enabled & active & XCHAL_INTLEVEL1_MASK;
         if (!pending)
         {
@@ -110,7 +110,7 @@ void rt_xt_irq_process(void)
         }
 
         int n = 31 - __builtin_clz(pending);     /* MSB first, like IDF */
-        __asm__ __volatile__("wsr %0, intclear; rsync" :: "r"(1u << n));
+        __asm__ __volatile__("wsr %0, intclear; rsync" ::"r"(1u << n));
 
         /* Same table ESP-IDF's own dispatcher walks, so every driver that did
          * allocate a level-1 handler here (the tick, gptimer, esp_timer) runs. */
@@ -153,7 +153,7 @@ void rt_xt_exception_handler(XtExcFrame *frame)
  * whatever the heap allocator parked there gets overwritten. The checks below
  * make that a build error instead.
  */
-#define RT_S3_STACK_MIN  (XT_STK_FRMSZ + 16 + 256)
+#define RT_S3_STACK_MIN (XT_STK_FRMSZ + 16 + 256)
 
 #ifdef RT_USING_IDLE_OBJECT
 _Static_assert(IDLE_THREAD_STACK_SIZE >= RT_S3_STACK_MIN,
@@ -196,9 +196,9 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
     /* The kernel passes stack_addr + stack_size - sizeof(rt_ubase_t) as the
      * top (src/thread.c); put the 4 back so the frame is placed flush below the
      * end of the array rather than up to 16 bytes lower on some alignments. */
-    rt_ubase_t top   = (rt_ubase_t)stack_addr + sizeof(rt_ubase_t);
+    rt_ubase_t top = (rt_ubase_t)stack_addr + sizeof(rt_ubase_t);
     rt_ubase_t frame = (top - XT_STK_FRMSZ) & ~15U;
-    XtExcFrame *f    = (XtExcFrame *)frame;
+    XtExcFrame *f = (XtExcFrame *)frame;
 
     (void)texit;   /* threads never return; see _thread_exit in src/thread.c */
 
@@ -212,12 +212,12 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
      * so nothing here may be left uninitialized. */
     rt_memset((void *)frame, 0, XT_STK_FRMSZ);
 
-    f->pc    = (rt_ubase_t)tentry;
-    f->a0    = 0;                        /* terminate a backtrace */
-    f->a1    = frame + XT_STK_FRMSZ;     /* the thread's own sp, above the frame */
-    f->exit  = (rt_ubase_t)_rt_user_exit;/* the resume path's tail jumps here */
-    f->a6    = (rt_ubase_t)parameter;
-    f->ps    = PS_UM | PS_EXCM | PS_WOE | PS_CALLINC(1);
+    f->pc = (rt_ubase_t)tentry;
+    f->a0 = 0;                        /* terminate a backtrace */
+    f->a1 = frame + XT_STK_FRMSZ;     /* the thread's own sp, above the frame */
+    f->exit = (rt_ubase_t)_rt_user_exit;/* the resume path's tail jumps here */
+    f->a6 = (rt_ubase_t)parameter;
+    f->ps = PS_UM | PS_EXCM | PS_WOE | PS_CALLINC(1);
 
     /* First word of the non-coprocessor extra save area (threadptr); this BSP
      * sets up no TLS. */

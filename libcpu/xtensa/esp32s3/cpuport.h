@@ -51,6 +51,6 @@
 
 /* What rt_hw_context_switch() writes into a yielding thread's frame at
  * XT_SOL_EXIT, to mark it as the solicited kind. */
-#define RT_S3_SOL_YIELDED         0
+#define RT_S3_SOL_YIELDED 0
 
 #endif /* __CPU_PORT_H__ */

@@ -26,7 +26,7 @@
 #endif
 
 #if CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL
-static const char* TAG = "cpu_start";
+static const char *TAG = "cpu_start";
 #endif
 
 /* Architecture-agnostic parts of the FreeRTOS ESP-IDF port layer can go here.
@@ -36,7 +36,7 @@ static const char* TAG = "cpu_start";
  */
 
 // Duplicate of inaccessible xSchedulerRunning; needed at startup to avoid counting nesting
-volatile unsigned port_xSchedulerRunning[portNUM_PROCESSORS] = {0};
+volatile unsigned port_xSchedulerRunning[portNUM_PROCESSORS] = { 0 };
 
 // For now, running FreeRTOS on one core and a bare metal on the other (or other OSes)
 // is not supported. For now CONFIG_FREERTOS_UNICORE and CONFIG_ESP_SYSTEM_SINGLE_CORE_MODE
@@ -44,11 +44,11 @@ volatile unsigned port_xSchedulerRunning[portNUM_PROCESSORS] = {0};
 //
 // And since this should be true, we can just check for CONFIG_FREERTOS_UNICORE.
 #if CONFIG_FREERTOS_UNICORE != CONFIG_ESP_SYSTEM_SINGLE_CORE_MODE
-    #error "FreeRTOS and system configuration mismatch regarding the use of multiple cores."
+#error "FreeRTOS and system configuration mismatch regarding the use of multiple cores."
 #endif
 
 #if !defined CONFIG_IDF_RTOS_RTTHREAD
-static void main_task(void* args);
+static void main_task(void *args);
 #endif
 
 #ifdef CONFIG_ESP_SYSTEM_GDBSTUB_RUNTIME
@@ -90,12 +90,13 @@ static bool other_cpu_startup_idle_hook_cb(void)
 #endif
 
 #if !defined CONFIG_IDF_RTOS_RTTHREAD
-static void main_task(void* args)
+static void main_task(void *args)
 {
 #if !CONFIG_FREERTOS_UNICORE
     // Wait for FreeRTOS initialization to finish on other core, before replacing its startup stack
     esp_register_freertos_idle_hook_for_cpu(other_cpu_startup_idle_hook_cb, !xPortGetCoreID());
-    while (!s_other_cpu_startup_done) {
+    while (!s_other_cpu_startup_done)
+    {
         ;
     }
     esp_deregister_freertos_idle_hook_for_cpu(other_cpu_startup_idle_hook_cb, !xPortGetCoreID());
@@ -106,9 +107,11 @@ static void main_task(void* args)
 
     // Now we have startup stack RAM available for heap, enable any DMA pool memory
 #if CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL
-    if (esp_psram_is_initialized()) {
+    if (esp_psram_is_initialized())
+    {
         esp_err_t r = esp_psram_extram_reserve_dma_pool(CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL);
-        if (r != ESP_OK) {
+        if (r != ESP_OK)
+        {
             ESP_EARLY_LOGE(TAG, "Could not reserve internal/DMA pool (error 0x%x)", r);
             abort();
         }
