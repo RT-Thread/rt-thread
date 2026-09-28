@@ -32,9 +32,14 @@
 
 import os
 from building import *
+from env_package import find_package_path
 
 cwd = GetCurrentDir()
-PKG = os.path.normpath(os.path.join(cwd, '..', 'packages', 'ESP-IDF-latest'))
+bsp_root = os.path.normpath(os.path.join(cwd, '..'))
+# pkgs --update-force may place this under bsp/ESP/libraries rather than
+# this BSP's packages directory.
+PKG = find_package_path(bsp_root, 'ESP-IDF-latest',
+                        marker='components/xtensa/esp32s3/include')
 
 _rel_src = Split("""
 components/esp_app_format/esp_app_desc.c

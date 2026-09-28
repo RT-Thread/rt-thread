@@ -1,10 +1,15 @@
 import os
 from building import *
+from env_package import find_package_path
 
 Import('rtconfig')
 
-cwd     = GetCurrentDir()
-PKG_IDF = os.path.normpath(os.path.join(cwd, '..', 'packages', 'ESP-IDF-latest'))
+cwd      = GetCurrentDir()
+bsp_root = os.path.normpath(os.path.join(cwd, '..'))
+# pkgs --update-force may place this under bsp/ESP/libraries rather than
+# this BSP's packages directory.
+PKG_IDF  = find_package_path(bsp_root, 'ESP-IDF-latest',
+                             marker='components/xtensa/esp32s3/include')
 
 src = Split("""
     src/rt-thread_balance_stub.c
