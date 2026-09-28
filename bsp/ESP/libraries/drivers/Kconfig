@@ -2,27 +2,47 @@
 config SOC_ESPRESSIF
     bool 
 
-config SOC_ESP32_C3
-    bool
-    select SOC_ESPRESSIF
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    select PKG_USING_ESP_IDF
-    select PKG_USING_FREERTOS_WRAPPER
-    select PKG_FREERTOS_USING_CONFIG_H
-    default y
+choice
+    prompt "Espressif SoC"
+    default SOC_ESP32_C3
+
+    config SOC_ESP32_C3
+        bool "ESP32-C3"
+        select SOC_ESPRESSIF
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        select PKG_USING_ESP_IDF
+        select PKG_USING_FREERTOS_WRAPPER
+        select PKG_FREERTOS_USING_CONFIG_H
+
+    config SOC_ESP32_S3
+        bool "ESP32-S3"
+        select SOC_ESPRESSIF
+        select RT_USING_COMPONENTS_INIT
+        select RT_USING_USER_MAIN
+        select PKG_USING_ESP_IDF
+        select PKG_USING_FREERTOS_WRAPPER
+        select PKG_FREERTOS_USING_CONFIG_H
+endchoice
 
 menu "Hardware Drivers Config"
 
 choice BSP_BOARD_SEL
     prompt "Select BSP board "
+    default BSP_BOARD_ESP32S3_DEVKITM1 if SOC_ESP32_S3
     default BSP_BOARD_LUATOS_ESP32C3
 
     config BSP_BOARD_LUATOS_ESP32C3
         bool "LUATOS ESP32C3 board"
+        depends on SOC_ESP32_C3
 
     config BSP_BOARD_HX_EXP32C3
         bool "HONGXU ESP32C3 board"    
+        depends on SOC_ESP32_C3
+
+    config BSP_BOARD_ESP32S3_DEVKITM1
+        bool "ESP32-S3-DevKitM-1 board"
+        depends on SOC_ESP32_S3
 endchoice
 
 menu "Onboard Peripheral Drivers"
@@ -30,7 +50,7 @@ menu "Onboard Peripheral Drivers"
         int "LED GPIO PIN SET"
         default 12 if BSP_BOARD_LUATOS_ESP32C3
         default 8 if BSP_BOARD_HX_EXP32C3
-        depends on BSP_USING_GPIO
+        depends on BSP_USING_GPIO && !BSP_BOARD_ESP32S3_DEVKITM1
 
     config RT_BSP_UART_PORT
         int "UART PORT SET"
@@ -40,11 +60,13 @@ menu "Onboard Peripheral Drivers"
     config RT_BSP_UART_TX_PIN
         int "UART TX PIN SET"
         default 21 if BSP_BOARD_LUATOS_ESP32C3
+        default 43 if BSP_BOARD_ESP32S3_DEVKITM1
         depends on BSP_USING_UART
 
     config RT_BSP_UART_RX_PIN
         int "UART RX PIN SET"
         default 20 if BSP_BOARD_LUATOS_ESP32C3
+        default 44 if BSP_BOARD_ESP32S3_DEVKITM1
         depends on BSP_USING_UART
 
     config RT_BSP_SPI_CS_PIN
