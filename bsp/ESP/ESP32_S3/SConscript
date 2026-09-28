@@ -1,0 +1,19 @@
+# for module compiling
+import os
+Import('RTT_ROOT')
+
+cwd = str(Dir('#'))
+objs = []
+
+# BSP-owned groups, in dependency-free order.
+for d in ('main', 'idf_port', 'idf_components'):
+    objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+# The FreeRTOS->RT-Thread shim package is target independent and can be walked
+# directly. packages/SConscript (the pkgs-generated aggregator) is NOT used:
+# the ESP-IDF package's own SConscript only defines source lists for C3/C6 and
+# would abort on this target; the esp-idf file set lives in
+# idf_components/SConscript instead.
+objs = objs + SConscript(os.path.join(cwd, 'packages', 'FreeRTOS-Wrapper-latest', 'SConscript'))
+
+Return('objs')

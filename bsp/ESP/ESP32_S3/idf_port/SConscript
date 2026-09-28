@@ -1,0 +1,32 @@
+import os
+from building import *
+
+Import('rtconfig')
+
+cwd     = GetCurrentDir()
+PKG_IDF = os.path.normpath(os.path.join(cwd, '..', 'packages', 'ESP-IDF-latest'))
+
+src = Split("""
+    src/rt-thread_balance_stub.c
+    src/port.c
+    src/port_common.c
+""")
+
+# The Xtensa vector/context building blocks stay in libcpu/xtensa; here we
+# only add the include dirs the ESP-IDF Xtensa port headers expect:
+#   portable/xtensa            -> xt_asm_utils.h
+#   portable/xtensa/include/freertos -> xtensa_rtos.h / xtensa_context.h shim
+#   components/xtensa/include  -> <xtensa/...> generic headers
+#   components/xtensa/esp32s3/include -> <xtensa/config/...> per-SoC config
+CPPPATH = [
+    cwd + '/include',
+    cwd + '/include/freertos',
+    PKG_IDF + '/components/freertos/FreeRTOS-Kernel/portable/xtensa',
+    PKG_IDF + '/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos',
+    PKG_IDF + '/components/xtensa/include',
+    PKG_IDF + '/components/xtensa/esp32s3/include',
+]
+
+group = DefineGroup('idf_port', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

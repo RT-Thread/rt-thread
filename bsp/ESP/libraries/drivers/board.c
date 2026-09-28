@@ -20,14 +20,25 @@
 #include "esp_attr.h"
 #include "esp_timer.h"
 #include "driver/gptimer.h"
+#ifdef SOC_ESP32_S3
+#include <xtensa/config/core-isa.h>       /* XCHAL_INTLEVEL1_MASK */
+#endif
 
 static systimer_hal_context_t systimer_hal;
 IRAM_ATTR void rt_SysTickIsrHandler(void *arg)
 {
     systimer_ll_clear_alarm_int(systimer_hal.dev, SYSTIMER_LL_ALARM_OS_TICK_CORE0);
+#ifdef SOC_ESP32_S3
+    /* rt_interrupt_enter()/rt_interrupt_leave() are already around the whole
+     * level-1 dispatch, in rt_xt_irq_process() (libcpu/xtensa/esp32s3/cpuport.c).
+     * Counting them here too would make rt_interrupt_get_nest() report two
+     * interrupts for one. */
+    rt_tick_increase();
+#else
     rt_interrupt_enter();
     rt_tick_increase();
     rt_interrupt_leave();
+#endif
 }
 
 void rt_hw_systick_init(void)
@@ -45,9 +56,35 @@ void rt_hw_systick_init(void)
     systimer_hal_connect_alarm_counter(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0, SYSTIMER_LL_COUNTER_OS_TICK);
     systimer_hal_set_alarm_period(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0, 1000000UL / RT_TICK_PER_SECOND);
     systimer_hal_select_alarm_mode(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0, SYSTIMER_ALARM_MODE_PERIOD);
+#ifdef SOC_ESP32_S3
+    /* SYSTIMER unit1 (the OS tick counter) has per-CPU "stall" enables that come
+     * out of reset set for both CPUs. This image runs core 0 only, so core 1 is
+     * never running and its stall line keeps unit1 frozen: the alarm compares
+     * against a counter stuck at 0 and no tick interrupt is ever raised.
+     * Free-running the counter is what light sleep would otherwise stop, and
+     * this BSP does not use light sleep. */
+    systimer_hal_counter_can_stall_by_cpu(&systimer_hal, SYSTIMER_LL_COUNTER_OS_TICK, 0, false);
+    systimer_hal_counter_can_stall_by_cpu(&systimer_hal, SYSTIMER_LL_COUNTER_OS_TICK, 1, false);
+#else
     systimer_hal_counter_can_stall_by_cpu(&systimer_hal, 1, 0, true);
+#endif
     systimer_hal_enable_alarm_int(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0);
     systimer_hal_enable_counter(&systimer_hal, SYSTIMER_LL_COUNTER_OS_TICK);
+#ifdef SOC_ESP32_S3
+    /* This BSP services level-1 interrupts only: the tick and UART0 both
+     * allocate one, and its level 2-5 vectors are fatal by design. ESP-IDF's
+     * startup leaves sources enabled that nothing here asked for -- on this
+     * board two of them sit at level 4, one being ETS_LCD_CAM_INTR_SOURCE --
+     * and an enabled source that is never serviced would reach a fatal vector.
+     * Mask everything above level 1 so that cannot happen. */
+    {
+        uint32_t ie;
+
+        __asm__ __volatile__("rsr %0, intenable" : "=r"(ie));
+        ie &= XCHAL_INTLEVEL1_MASK;
+        __asm__ __volatile__("wsr %0, intenable; rsync" ::"r"(ie) : "memory");
+    }
+#endif
 }
 
 void rt_hw_board_init(void)
