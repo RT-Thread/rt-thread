@@ -149,10 +149,16 @@
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
-#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
+#define RT_USING_SPI
+#define RT_USING_SPI_ISR
+#define RT_USING_OSPI
+#define RT_USING_SFUD
+#define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_USING_OSPI
+#define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -306,6 +312,10 @@
 
 /* end of Kendryte SDK */
 
+/* MM32 HAL & SDK Drivers */
+
+/* end of MM32 HAL & SDK Drivers */
+
 /* WCH HAL & SDK Drivers */
 
 /* end of WCH HAL & SDK Drivers */
@@ -337,6 +347,14 @@
 /* FT32 HAL & SDK Drivers */
 
 /* end of FT32 HAL & SDK Drivers */
+
+/* NOVOSNS Drivers */
+
+/* end of NOVOSNS Drivers */
+
+/* N32 Drivers */
+
+/* end of N32 Drivers */
 /* end of HAL & SDK Drivers */
 
 /* sensors drivers */

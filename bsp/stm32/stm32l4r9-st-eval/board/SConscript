@@ -18,6 +18,9 @@ if GetDepend(['BSP_USING_TOUCH']):
     src += Glob('ports/drv_touch.c')
     src += Glob('ports/drv_touch_ft.c')
 
+if GetDepend(['BSP_USING_OSPI_FLASH']):
+    src += Glob('ports/drv_ospi_flash.c')
+
 path =  [cwd]
 path += [cwd + '/CubeMX_Config/Inc']
 path += [cwd + '/ports/include']
