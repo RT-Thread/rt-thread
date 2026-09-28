@@ -387,7 +387,8 @@ riscv-nuclei-elf-gcc:
 riscv32-esp-elf-gcc:
   bsp:
   - ESP32_C3
-  count: 1
+  - ESP32_C6
+  count: 2
   download_url: https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
 riscv32-unknown-elf-gcc:
   bsp:

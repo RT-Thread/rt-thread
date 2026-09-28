@@ -36,8 +36,8 @@ void rt_hw_systick_init(void)
     periph_module_enable(PERIPH_SYSTIMER_MODULE);
     systimer_hal_init(&systimer_hal);
     systimer_hal_tick_rate_ops_t ops = {
-            .ticks_to_us = systimer_ticks_to_us,
-            .us_to_ticks = systimer_us_to_ticks,
+        .ticks_to_us = systimer_ticks_to_us,
+        .us_to_ticks = systimer_us_to_ticks,
     };
     systimer_hal_set_tick_rate_ops(&systimer_hal, &ops);
     systimer_ll_set_counter_value(systimer_hal.dev, SYSTIMER_LL_COUNTER_OS_TICK, 0);
@@ -50,8 +50,26 @@ void rt_hw_systick_init(void)
     systimer_hal_enable_counter(&systimer_hal, SYSTIMER_LL_COUNTER_OS_TICK);
 }
 
+#ifdef SOC_ESP32_C6
+#include "riscv/csr.h"
+
+static void c6_reserve_broken_intr(void)
+{
+    /* CPU lines 3 and 4 do not latch an enable on this chip. Reserve them
+     * before esp_intr_alloc so the chosen line, its non-IRAM mask and the
+     * matrix route are written together. Copying the handler afterwards
+     * leaves non_iram_int_mask on the old line. */
+    ESP_ERROR_CHECK(esp_intr_reserve(3, 0));
+    ESP_ERROR_CHECK(esp_intr_reserve(4, 0));
+}
+#endif
+
 void rt_hw_board_init(void)
 {
+#ifdef SOC_ESP32_C6
+    RV_WRITE_CSR(mideleg, 0);
+    c6_reserve_broken_intr();
+#endif
     rt_hw_systick_init();
     /* Board underlying hardware initialization */
 #ifdef RT_USING_COMPONENTS_INIT
@@ -62,6 +80,14 @@ void rt_hw_board_init(void)
 #endif
 }
 
+#ifdef SOC_ESP32_C6
+#include "esp_rom_sys.h"
+
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    esp_rom_delay_us(us);
+}
+#else
 static gptimer_handle_t gptimer_hw_us = NULL;
 
 static int delay_us_init(void)
@@ -83,9 +109,10 @@ void rt_hw_us_delay(rt_uint32_t us)
     ESP_ERROR_CHECK(gptimer_start(gptimer_hw_us));
     ESP_ERROR_CHECK(gptimer_set_raw_count(gptimer_hw_us, 0));
     /* Retrieve the timestamp at anytime*/
-    while(count < (uint64_t)us)
+    while (count < (uint64_t)us)
     {
         ESP_ERROR_CHECK(gptimer_get_raw_count(gptimer_hw_us, &count));
     }
     ESP_ERROR_CHECK(gptimer_stop(gptimer_hw_us));
 }
+#endif

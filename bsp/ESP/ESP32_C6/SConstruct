@@ -1,0 +1,119 @@
+import os
+import sys
+from esptool.bin_image import ELFFile
+from esptool.targets import CHIP_DEFS
+
+def elf2image(target, source, env):
+    e = ELFFile("rtthread.elf")
+
+    print("Creating esp32c6 image...")
+
+    image = CHIP_DEFS["esp32c6"].BOOTLOADER_IMAGE()
+    image.entrypoint = e.entrypoint
+    image.flash_mode = 2  # dio
+
+    image.segments = e.sections
+    image.flash_size_freq = image.ROM_LOADER.parse_flash_size_arg("8MB")
+    image.flash_size_freq += image.ROM_LOADER.parse_flash_freq_arg("80m")
+
+    image.elf_sha256 = e.sha256()
+    image.elf_sha256_offset = 0xb0
+
+    before = len(image.segments)
+    image.merge_adjacent_segments()
+    if len(image.segments) != before:
+        delta = before - len(image.segments)
+        print("Merged %d ELF section%s" % (delta, "s" if delta > 1 else ""))
+
+    image.verify()
+    image.save("rtthread.bin")
+    print("Successfully created esp32c6 image.")
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.join(os.getcwd(), '..', '..', '..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+import rtconfig
+from building import *
+
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+SDK_ROOT = os.path.abspath('./')
+
+if os.path.exists(SDK_ROOT + '/libraries'):
+    libraries_path_prefix = SDK_ROOT + '/libraries'
+else:
+    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
+
+SDK_LIB = libraries_path_prefix
+Export('SDK_LIB')
+DefaultEnvironment(tools=[])
+env = Environment(tools = ['mingw'],
+    AS   = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC   = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    CXX  = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
+    AR   = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env['ASCOM'] = env['ASPPCOM']
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+C6_IDF_COMMIT = '4fa003074a73774369d38123749fe64b7b4acbd3'
+
+def _use_c6_idf_when_official_has_none():
+    """CI pkgs --update fetches RT-Thread-packages/esp-idf, which only sets
+    CPPDEFINES for ESP32-C3. Swap in one reviewed C6 commit before the package
+    SConscript runs. A tree that already has the C6 target is left as-is.
+    The package may sit under this BSP's packages/ or under libraries/.
+    The replacement is fetched by commit, not by the moving branch tip.
+    """
+    import shutil
+    import subprocess
+    from env_package import find_package_path
+    dest = os.path.abspath(find_package_path(SDK_ROOT, 'ESP-IDF-latest'))
+    sc = os.path.join(dest, 'SConscript')
+    if not os.path.isfile(sc):
+        return
+    with open(sc, 'r', encoding='utf-8', errors='replace') as f:
+        text = f.read()
+    if 'esp32c6' in text:
+        return
+    tmp = dest + '.c6'
+    if os.path.isdir(tmp):
+        shutil.rmtree(tmp)
+    subprocess.check_call(['git', 'init', tmp])
+    subprocess.check_call([
+        'git', '-C', tmp, 'remote', 'add', 'origin',
+        'https://github.com/cms19859230182-lang/esp-idf.git',
+    ])
+    subprocess.check_call([
+        'git', '-C', tmp, 'fetch', '--depth', '1', 'origin', C6_IDF_COMMIT,
+    ])
+    subprocess.check_call(['git', '-C', tmp, 'checkout', '--detach', 'FETCH_HEAD'])
+    head = subprocess.check_output(
+        ['git', '-C', tmp, 'rev-parse', 'HEAD']).decode().strip()
+    if head != C6_IDF_COMMIT:
+        shutil.rmtree(tmp)
+        raise RuntimeError('fetched esp-idf is %s, this BSP expects %s'
+                           % (head, C6_IDF_COMMIT))
+    subprocess.check_call([
+        'git', '-C', tmp, 'submodule', 'update', '--init', '--depth', '1',
+        'components/mbedtls/mbedtls', 'components/heap/tlsf',
+    ])
+    git_meta = os.path.join(tmp, '.git')
+    if os.path.isdir(git_meta):
+        shutil.rmtree(git_meta)
+    shutil.rmtree(dest)
+    os.rename(tmp, dest)
+
+_use_c6_idf_when_official_has_none()
+
+objs = PrepareBuilding(env, RTT_ROOT, remove_components = ['libc'])
+
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))
+DoBuilding(TARGET, objs)
+
+env.AddPostAction(TARGET, elf2image)
