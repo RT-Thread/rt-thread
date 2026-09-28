@@ -9,10 +9,9 @@
 #include "board.h"
 
 
-#if defined(BSP_USING_QSPI2)
+#if defined(BSP_USING_QSPI2) || defined(BSP_USING_QSPI)
 
 #include "drv_qspi.h"
-#include "n32h7xx_xspi_v2.h"
 #include "drv_config.h"
 #include <string.h>
 
@@ -22,11 +21,14 @@
 #define XSPI_TIMEOUT_TICKS (1000U)
 #define DMA_TRANS_MIN_LEN  (10U)
 
+#if defined(SOC_SERIES_N32H7xx)
 #define XSPI_XIP_BASE_ADDR 0x90000000
+#endif
 
 static struct rt_spi_bus _xspi_bus;
 static struct n32_xspi _n32_xspi;
 
+#if !defined(SOC_SERIES_N32H47x_48x)
 
 static rt_err_t xspi_wait_flag(XSPI_Module *xspi, uint32_t flag, uint32_t timeout)
 {
@@ -43,23 +45,12 @@ static rt_err_t xspi_wait_flag(XSPI_Module *xspi, uint32_t flag, uint32_t timeou
     return RT_EOK;
 }
 
-static void XSPI_Wait_Tx_Compelete(void)
-{
-    while (XSPI_GetFlagStatus(xSPI2, XSPI_TXFE_FLAG) != SET)
-    {
-    }
-
-    while (XSPI_GetFlagStatus(xSPI2, XSPI_BUSY_FLAG) != RESET)
-    {
-    }
-}
-
-
-static rt_err_t xspi_wait_flag_clear(XSPI_Module *xspi, uint32_t flag, uint32_t timeout)
+static rt_err_t xspi_wait_busy(XSPI_Module *xspi, uint32_t timeout)
 {
     uint32_t tickstart = rt_tick_get();
 
-    while (XSPI_GetFlagStatus(xspi, flag) != RESET)
+    /* wait until the transfer completes (BUSY flag cleared) */
+    while (XSPI_GetFlagStatus(xspi, XSPI_BUSY_FLAG) == SET)
     {
         if (((rt_tick_get() - tickstart) >= timeout) && (timeout != 0xFFFFFFFFU))
         {
@@ -70,9 +61,22 @@ static rt_err_t xspi_wait_flag_clear(XSPI_Module *xspi, uint32_t flag, uint32_t 
     return RT_EOK;
 }
 
-static rt_err_t xspi_wait_busy(XSPI_Module *xspi, uint32_t timeout)
+/* TX FIFO drained + transfer finished. Both waits carry the caller's timeout:
+ * an unresponsive bus (TXFE that never sets after a failed arm, or a slave
+ * that stretches the clock and never releases BUSY) must not spin here
+ * forever, because that would silently defeat the timeout its caller was
+ * given. */
+static rt_err_t xspi_wait_tx_complete(XSPI_Module *xspi, uint32_t timeout)
 {
-    return xspi_wait_flag_clear(xspi, XSPI_BUSY_FLAG, timeout);
+    rt_err_t result;
+
+    result = xspi_wait_flag(xspi, XSPI_TXFE_FLAG, timeout);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    return xspi_wait_busy(xspi, timeout);
 }
 
 /* ---- multi-line helpers ---- */
@@ -115,6 +119,7 @@ static uint32_t xspi_get_frame_format(uint8_t lines)
         return XSPI_STANDARD_MODE;
     }
 }
+
 static void xspi_config_enhanced_for_msg(struct n32_xspi *xspi_config,
                                          struct rt_qspi_message *qspi_msg,
                                          uint32_t transfer_mode, rt_uint8_t ddr_enabled)
@@ -216,12 +221,15 @@ static rt_err_t xspi_qspi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_mes
     XSPI_SendData(xspi, qspi_msg->instruction.content);
     XSPI_SendData(xspi, qspi_msg->address.content);
 
-    while (i < len)
+    for (i = 0; i < len; i++)
     {
-        if (XSPI_GetFlagStatus(xspi, XSPI_TXFNF_FLAG) == SET)
+        if (xspi_wait_flag(xspi, XSPI_TXFNF_FLAG, timeout) != RT_EOK)
         {
-            XSPI_SendData(xspi, buf[i++]);
+            XSPI_Enable(xspi, DISABLE);
+            return -RT_ETIMEOUT;
         }
+
+        XSPI_SendData(xspi, buf[i]);
     }
 
     ret = xspi_wait_busy(xspi, timeout);
@@ -271,8 +279,13 @@ static rt_err_t xspi_qspi_receive(struct n32_xspi *xspi_drv, struct rt_qspi_mess
     }
 
 
-    while (XSPI_GetFlagStatus(xspi, XSPI_BUSY_FLAG) != RESET)
+    /* Bound the post-transfer wait like the receive loop above: a slave that
+     * stretches the clock and never releases BUSY must not spin here forever,
+     * defeating the timeout the caller was given. */
+    if (xspi_wait_busy(xspi, timeout) != RT_EOK)
     {
+        ret = -RT_ETIMEOUT;
+        goto exit;
     }
 
     XSPI_ClearRxFIFO(xspi);
@@ -306,7 +319,10 @@ static rt_err_t xspi_spi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_mess
 
     XSPI_SetNumberOfDataFrame(xspi, qspi_msg->parent.length);
 
-    XSPI_Wait_Tx_Compelete();
+    if (xspi_wait_tx_complete(xspi, timeout) != RT_EOK)
+    {
+        return -RT_ETIMEOUT;
+    }
 
     XSPI_Enable(xspi, ENABLE);
 
@@ -325,17 +341,24 @@ static rt_err_t xspi_spi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_mess
 
     if (qspi_msg->parent.length <= 16)
     {
-        while (i < qspi_msg->parent.length)
+        for (i = 0; i < qspi_msg->parent.length; i++)
         {
-            if (XSPI_GetFlagStatus(xspi, XSPI_TXFNF_FLAG) != RESET)
-            {
-                uint8_t tx = send_buf ? send_buf[i++] : 0xFF;
+            uint8_t tx = send_buf ? send_buf[i] : 0xFF;
 
-                XSPI_SendData(xspi, tx);
+            if (xspi_wait_flag(xspi, XSPI_TXFNF_FLAG, timeout) != RT_EOK)
+            {
+                XSPI_Enable(xspi, DISABLE);
+                return -RT_ETIMEOUT;
             }
+
+            XSPI_SendData(xspi, tx);
         }
 
-        XSPI_Wait_Tx_Compelete();
+        if (xspi_wait_tx_complete(xspi, timeout) != RT_EOK)
+        {
+            XSPI_Enable(xspi, DISABLE);
+            return -RT_ETIMEOUT;
+        }
 
         if (recv_buf)
         {
@@ -360,6 +383,7 @@ static rt_err_t xspi_spi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_mess
 
             if (xspi_wait_flag(xspi, XSPI_TXFNF_FLAG, timeout) != RT_EOK)
             {
+                XSPI_Enable(xspi, DISABLE);
                 return -RT_ETIMEOUT;
             }
 
@@ -369,6 +393,7 @@ static rt_err_t xspi_spi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_mess
             {
                 if (xspi_wait_flag(xspi, XSPI_RXFNE_FLAG, timeout) != RT_EOK)
                 {
+                    XSPI_Enable(xspi, DISABLE);
                     return -RT_ETIMEOUT;
                 }
 
@@ -409,7 +434,11 @@ static rt_err_t xspi_spi_send(struct n32_xspi *xspi_drv, struct rt_qspi_message 
 
     XSPI_Enable(xspi, ENABLE);
 
-    XSPI_Wait_Tx_Compelete();
+    if (xspi_wait_tx_complete(xspi, timeout) != RT_EOK)
+    {
+        XSPI_Enable(xspi, DISABLE);
+        return -RT_ETIMEOUT;
+    }
 
     XSPI_ClearRxFIFO(xspi);
 
@@ -433,15 +462,22 @@ static rt_err_t xspi_spi_send(struct n32_xspi *xspi_drv, struct rt_qspi_message 
     XSPI_SendData(xspi, qspi_msg->address.content & 0xff);
 
 
-    while (number < qspi_msg->parent.length)
+    for (number = 0; number < qspi_msg->parent.length; number++)
     {
-        if (XSPI_GetFlagStatus(xspi, XSPI_TXFNF_FLAG) != RESET)
+        if (xspi_wait_flag(xspi, XSPI_TXFNF_FLAG, timeout) != RT_EOK)
         {
-            XSPI_SendData(xspi, buf[number++]);
+            XSPI_Enable(xspi, DISABLE);
+            return -RT_ETIMEOUT;
         }
+
+        XSPI_SendData(xspi, buf[number]);
     }
 
-    XSPI_Wait_Tx_Compelete();
+    if (xspi_wait_tx_complete(xspi, timeout) != RT_EOK)
+    {
+        XSPI_Enable(xspi, DISABLE);
+        return -RT_ETIMEOUT;
+    }
 
     XSPI_Enable(xspi, DISABLE);
 
@@ -493,9 +529,14 @@ static rt_err_t xspi_spi_receive(struct n32_xspi *xspi_drv, struct rt_qspi_messa
         XSPI_SetTXStartFIFOThreshold(xspi, (qspi_msg->parent.length - 1));
     }
 
-    while (i < qspi_msg->parent.length + 4)                      /*Tx Fifo not full*/
+    while (i < qspi_msg->parent.length + 4)                         /*Tx Fifo not full*/
     {
-        while ((xspi->STS & XSPI_TXFNF_FLAG) != XSPI_TXFNF_FLAG); /*wait tx FIFO not full flag set*/
+        /* Wait for TX FIFO not full, bounded: the write below assumes room. */
+        if (xspi_wait_flag(xspi, XSPI_TXFNF_FLAG, timeout) != RT_EOK)
+        {
+            XSPI_Enable(xspi, DISABLE);
+            return -RT_ETIMEOUT;
+        }
 
         if (i < 4)
         {
@@ -506,7 +547,7 @@ static rt_err_t xspi_spi_receive(struct n32_xspi *xspi_drv, struct rt_qspi_messa
             xspi->DAT0 = 0xFF;
         }
 
-        if ((xspi->STS & XSPI_RXFNE_FLAG))   /*Rx Fifo not empty set*/
+        if ((xspi->STS & XSPI_RXFNE_FLAG))    /*Rx Fifo not empty set*/
         {
             if (j < 4)
             {
@@ -523,13 +564,24 @@ static rt_err_t xspi_spi_receive(struct n32_xspi *xspi_drv, struct rt_qspi_messa
         i++;
     }
 
+    /* Drain the RX FIFO until the transfer finishes. The reads must stay on
+     * every iteration -- the waits in this file stop as soon as a flag
+     * clears, which here would strand the last bytes in the FIFO -- so only
+     * the exit condition is bounded. */
+    uint32_t tickstart = rt_tick_get();
+
     do
     {
-        if ((xspi->STS & XSPI_RXFNE_FLAG))   /*Rx Fifo not empty set*/
+        if ((xspi->STS & XSPI_RXFNE_FLAG))    /*Rx Fifo not empty set*/
         {
             *(buf++) = xspi->DAT0;     /*read data register*/
         }
 
+        if (((rt_tick_get() - tickstart) >= timeout) && (timeout != 0xFFFFFFFFU))
+        {
+            XSPI_Enable(xspi, DISABLE);
+            return -RT_ETIMEOUT;
+        }
     } while ((xspi->STS & XSPI_BUSY_FLAG) == SET);
 
     XSPI_Enable(xspi, DISABLE);
@@ -547,7 +599,6 @@ static rt_err_t xspi_configure(struct rt_spi_device *device, struct rt_spi_confi
     xspi_drv->qspi_cfg = &qspi_dev->config;
     xspi_drv->cfg = configuration;
 
-#if defined(SOC_SERIES_N32H7xx)
     /* set scpol/scph value */
     switch (xspi_drv->qspi_cfg->parent.mode & 0x03)
     {
@@ -618,11 +669,477 @@ static rt_err_t xspi_configure(struct rt_spi_device *device, struct rt_spi_confi
         xspi_drv->InitStructure.DataFrameSize = XSPI_FRAME_SIZE_32_BIT;
     }
 
+    return RT_EOK;
+}
 
-#endif
+#else /* SOC_SERIES_N32H47x_48x: DesignWare-style XSPI, single global instance */
+
+static rt_err_t xspi_wait_flag(uint32_t flag, uint32_t timeout)
+{
+    uint32_t tickstart = rt_tick_get();
+
+    while (XSPI_GetFlagStatus(flag) == RESET)
+    {
+        if (((rt_tick_get() - tickstart) >= timeout) && (timeout != 0xFFFFFFFFU))
+        {
+            return -RT_ETIMEOUT;
+        }
+    }
 
     return RT_EOK;
 }
+
+static rt_err_t xspi_wait_busy(uint32_t timeout)
+{
+    uint32_t tickstart = rt_tick_get();
+
+    while (XSPI_GetFlagStatus(XSPI_STS_BUSY) == SET)
+    {
+        if (((rt_tick_get() - tickstart) >= timeout) && (timeout != 0xFFFFFFFFU))
+        {
+            return -RT_ETIMEOUT;
+        }
+    }
+
+    return RT_EOK;
+}
+
+/* TX FIFO drained + transfer finished. Both waits carry the caller's timeout:
+ * an unresponsive bus (TXFE that never sets after a failed arm, or a slave
+ * that stretches the clock and never releases BUSY) must not spin here
+ * forever, because that would silently defeat the timeout its caller was
+ * given. */
+static rt_err_t xspi_wait_tx_complete(uint32_t timeout)
+{
+    rt_err_t result;
+
+    result = xspi_wait_flag(XSPI_STS_TXFE, timeout);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
+    return xspi_wait_busy(timeout);
+}
+
+/* data line width -> SPIFRF frame format */
+static uint32_t xspi_get_spifrf(uint8_t lines)
+{
+    switch (lines)
+    {
+    case 2:
+        return XSPI_CTRL0_SPIFRF_DUAL_FORMAT;
+    case 4:
+        return XSPI_CTRL0_SPIFRF_QUAD_FORMAT;
+    case 8:
+        return XSPI_CTRL0_SPIFRF_OCTAL_FORMAT;
+    default:
+        return XSPI_CTRL0_SPIFRF_STANDARD_FORMAT;
+    }
+}
+
+/* instruction/address line width -> enhanced TRANSTYPE */
+static uint32_t xspi_get_transtype(uint8_t instr_lines, uint8_t addr_lines)
+{
+    if (instr_lines == 1 && addr_lines == 1)
+    {
+        return XSPI_ENH_CTRL0_TRANSTYPE_STANDARD;
+    }
+    if (instr_lines == 1 && addr_lines > 1)
+    {
+        return XSPI_ENH_CTRL0_TRANSTYPE_ADDRESS_BY_FRF;
+    }
+    return XSPI_ENH_CTRL0_TRANSTYPE_ALL_BY_FRF;
+}
+
+/* address bit length -> enhanced ADDRLEN */
+static uint32_t xspi_get_addrlen(uint8_t size)
+{
+    switch (size)
+    {
+    case 8:
+        return XSPI_ENH_CTRL0_ADDRLEN_8_BIT;
+    case 16:
+        return XSPI_ENH_CTRL0_ADDRLEN_16_BIT;
+    case 24:
+        return XSPI_ENH_CTRL0_ADDRLEN_24_BIT;
+    case 32:
+        return XSPI_ENH_CTRL0_ADDRLEN_32_BIT;
+    default:
+        return 0;
+    }
+}
+
+/* ---- standard SPI (base mode) ---- */
+
+static rt_err_t xspi_spi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
+{
+    uint16_t i = 0, rindex = 0;
+    uint8_t *send_buf = (uint8_t *)qspi_msg->parent.send_buf;
+    uint8_t *recv_buf = (uint8_t *)qspi_msg->parent.recv_buf;
+    uint32_t len = qspi_msg->parent.length;
+
+    xspi_drv->InitStructure.FRF = XSPI_CTRL0_FRF_MOTOROLA;
+    xspi_drv->InitStructure.SPIFRF = XSPI_CTRL0_SPIFRF_STANDARD_FORMAT;
+    xspi_drv->InitStructure.TMOD = (send_buf && !recv_buf) ? XSPI_CTRL0_TMOD_TX_ONLY
+                                                           : XSPI_CTRL0_TMOD_TX_AND_RX;
+    xspi_drv->InitStructure.NDF = len - 1;
+
+    XSPI_Cmd(DISABLE);
+    XSPI_Init(&xspi_drv->InitStructure);
+    if (recv_buf)
+    {
+        XSPI_ClrFifo();
+    }
+    XSPI_Cmd(ENABLE);
+
+    /* The sends below stay non-blocking on purpose: a blocking wait would stop
+     * draining the RX FIFO, which the comment inside warns would overflow on
+     * large full-duplex transfers. Only the loop's exit is bounded. */
+    uint32_t tickstart = rt_tick_get();
+
+    while (i < len)
+    {
+        if (XSPI_GetFlagStatus(XSPI_STS_TXFNF) == SET)
+        {
+            XSPI_SendData(send_buf ? send_buf[i] : 0xFF);
+            i++;
+        }
+
+        /* drain RX FIFO in lockstep to avoid overflow on large full-duplex transfers */
+        if (recv_buf && (XSPI_GetFlagStatus(XSPI_STS_RXFNE) == SET))
+        {
+            if (rindex < len)
+            {
+                recv_buf[rindex++] = (uint8_t)XSPI_ReceiveData();
+            }
+            else
+            {
+                (void)XSPI_ReceiveData();
+            }
+        }
+
+        if (((rt_tick_get() - tickstart) >= timeout) && (timeout != 0xFFFFFFFFU))
+        {
+            XSPI_Cmd(DISABLE);
+            return -RT_ETIMEOUT;
+        }
+    }
+
+    if (xspi_wait_tx_complete(timeout) != RT_EOK)
+    {
+        XSPI_Cmd(DISABLE);
+        return -RT_ETIMEOUT;
+    }
+
+    if (recv_buf)
+    {
+        while ((rindex < len) && (XSPI_GetFlagStatus(XSPI_STS_RXFNE) == SET))
+        {
+            recv_buf[rindex++] = (uint8_t)XSPI_ReceiveData();
+        }
+    }
+
+    XSPI_Cmd(DISABLE);
+    return RT_EOK;
+}
+
+static rt_err_t xspi_spi_send(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
+{
+    uint16_t i = 0;
+    uint8_t *buf = (uint8_t *)qspi_msg->parent.send_buf;
+    uint32_t len = qspi_msg->parent.length;
+    uint8_t s_data[4] = { 0 };
+
+    if (qspi_msg->instruction.content == 0)
+    {
+        return RT_ERROR;
+    }
+
+    /* base mode full-duplex: clock out instruction(1) + address(3) + data(len),
+     * discard whatever is received. */
+    xspi_drv->InitStructure.FRF = XSPI_CTRL0_FRF_MOTOROLA;
+    xspi_drv->InitStructure.SPIFRF = XSPI_CTRL0_SPIFRF_STANDARD_FORMAT;
+    xspi_drv->InitStructure.TMOD = XSPI_CTRL0_TMOD_TX_AND_RX;
+    xspi_drv->InitStructure.NDF = (len + 4) - 1;
+
+    XSPI_Cmd(DISABLE);
+    XSPI_Init(&xspi_drv->InitStructure);
+    XSPI_ClrFifo();
+    XSPI_Cmd(ENABLE);
+
+    s_data[0] = qspi_msg->instruction.content;
+    s_data[1] = (qspi_msg->address.content & 0xff0000) >> 16;
+    s_data[2] = (qspi_msg->address.content & 0xff00) >> 8;
+    s_data[3] = qspi_msg->address.content & 0xff;
+
+    /* Non-blocking sends + lockstep RX discard; only the exit is bounded (a
+     * blocking wait would stall the discard and let the RX FIFO overflow). */
+    uint32_t tickstart = rt_tick_get();
+
+    while (i < len + 4)
+    {
+        if (XSPI_GetFlagStatus(XSPI_STS_TXFNF) == SET)
+        {
+            XSPI_SendData((i < 4) ? s_data[i] : buf[i - 4]);
+            i++;
+        }
+
+        if (XSPI_GetFlagStatus(XSPI_STS_RXFNE) == SET)
+        {
+            (void)XSPI_ReceiveData();   /* discard received bytes */
+        }
+
+        if (((rt_tick_get() - tickstart) >= timeout) && (timeout != 0xFFFFFFFFU))
+        {
+            XSPI_Cmd(DISABLE);
+            return -RT_ETIMEOUT;
+        }
+    }
+
+    /* drain the remaining received bytes */
+    while (XSPI_GetFlagStatus(XSPI_STS_RXFNE) == SET)
+    {
+        (void)XSPI_ReceiveData();
+    }
+
+    if (xspi_wait_tx_complete(timeout) != RT_EOK)
+    {
+        XSPI_Cmd(DISABLE);
+        return -RT_ETIMEOUT;
+    }
+    XSPI_Cmd(DISABLE);
+    return RT_EOK;
+}
+
+static rt_err_t xspi_spi_receive(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
+{
+    uint16_t i = 0, j = 0;
+    uint8_t *buf = (uint8_t *)qspi_msg->parent.recv_buf;
+    uint32_t len = qspi_msg->parent.length;
+    uint8_t s_data[4] = { 0 };
+
+    if (qspi_msg->instruction.content == 0)
+    {
+        return RT_ERROR;
+    }
+
+    /* base mode full-duplex: clock out instruction(1) + address(3) + dummy(len),
+     * discard the 4 bytes received during the command/address phase. */
+    xspi_drv->InitStructure.FRF = XSPI_CTRL0_FRF_MOTOROLA;
+    xspi_drv->InitStructure.SPIFRF = XSPI_CTRL0_SPIFRF_STANDARD_FORMAT;
+    xspi_drv->InitStructure.TMOD = XSPI_CTRL0_TMOD_TX_AND_RX;
+    xspi_drv->InitStructure.NDF = (len + 4) - 1;
+
+    XSPI_Cmd(DISABLE);
+    XSPI_Init(&xspi_drv->InitStructure);
+    XSPI_ClrFifo();
+    XSPI_Cmd(ENABLE);
+
+    s_data[0] = qspi_msg->instruction.content;
+    s_data[1] = (qspi_msg->address.content & 0xff0000) >> 16;
+    s_data[2] = (qspi_msg->address.content & 0xff00) >> 8;
+    s_data[3] = qspi_msg->address.content & 0xff;
+
+    /* Non-blocking sends + lockstep RX collect; only the exits are bounded. */
+    uint32_t tickstart = rt_tick_get();
+
+    while (i < len + 4)
+    {
+        if (XSPI_GetFlagStatus(XSPI_STS_TXFNF) == SET)
+        {
+            XSPI_SendData((i < 4) ? s_data[i] : 0xFF);
+            i++;
+        }
+
+        if (XSPI_GetFlagStatus(XSPI_STS_RXFNE) == SET)
+        {
+            uint8_t r = (uint8_t)XSPI_ReceiveData();
+            if (j >= 4)
+            {
+                buf[j - 4] = r;      /* drop the 4 command/address echo bytes */
+            }
+            j++;
+        }
+
+        if (((rt_tick_get() - tickstart) >= timeout) && (timeout != 0xFFFFFFFFU))
+        {
+            XSPI_Cmd(DISABLE);
+            return -RT_ETIMEOUT;
+        }
+    }
+
+    /* drain the remaining received bytes (len + 4 in total) */
+    while (j < len + 4)
+    {
+        if (XSPI_GetFlagStatus(XSPI_STS_RXFNE) == SET)
+        {
+            uint8_t r = (uint8_t)XSPI_ReceiveData();
+            if (j >= 4)
+            {
+                buf[j - 4] = r;
+            }
+            j++;
+        }
+
+        if (((rt_tick_get() - tickstart) >= timeout) && (timeout != 0xFFFFFFFFU))
+        {
+            XSPI_Cmd(DISABLE);
+            return -RT_ETIMEOUT;
+        }
+    }
+
+    XSPI_Cmd(DISABLE);
+    return RT_EOK;
+}
+
+/* ---- enhanced (dual/quad/octal) mode ---- */
+
+static void xspi_config_enhanced(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t tmod)
+{
+    XSPI_InitType *init = &xspi_drv->InitStructure;
+
+    init->FRF = XSPI_CTRL0_FRF_MOTOROLA;
+    init->SPIFRF = xspi_get_spifrf(qspi_msg->qspi_data_lines);
+    init->TMOD = tmod;
+    init->NDF = qspi_msg->parent.length - 1;
+
+    init->ENHANCED_TRANSTYPE = xspi_get_transtype(qspi_msg->instruction.qspi_lines, qspi_msg->address.qspi_lines);
+    init->ENHANCED_INST_L = (qspi_msg->instruction.qspi_lines == 1)
+                                ? XSPI_ENH_CTRL0_INST_L_8_LINE
+                                : XSPI_ENH_CTRL0_INST_L_0_LINE;
+    init->ENHANCED_ADDR_L = xspi_get_addrlen(qspi_msg->address.size);
+    init->ENHANCED_WAITCYCLES = ((uint32_t)qspi_msg->dummy_cycles & 0x1FU) << 11U;
+    init->ENHANCED_CLKSTREN = 0;
+
+    if (tmod != XSPI_CTRL0_TMOD_TX_AND_RX)
+    {
+        /* RX/TX-only enhanced mode: enable clock stretch and set RX sample delay = BAUD/2
+         * (mirrors official XSPI_QUAD demo) */
+        init->ENHANCED_CLKSTREN = XSPI_ENH_CTRL0_CLKSTREN;
+        init->SDCN = init->CLKDIV >> 1;   /* RX_DELAY = BAUD/2, BAUD = CLKDIV << 1 */
+    }
+}
+
+static rt_err_t xspi_qspi_transmit(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
+{
+    uint8_t *buf = (uint8_t *)qspi_msg->parent.send_buf;
+    uint32_t len = qspi_msg->parent.length, i = 0;
+
+    xspi_config_enhanced(xspi_drv, qspi_msg, XSPI_CTRL0_TMOD_TX_ONLY);
+
+    XSPI_Cmd(DISABLE);
+    XSPI_Init(&xspi_drv->InitStructure);
+    XSPI_Cmd(ENABLE);
+
+    XSPI_SendData(qspi_msg->instruction.content);
+    XSPI_SendData(qspi_msg->address.content);
+
+    for (i = 0; i < len; i++)
+    {
+        if (xspi_wait_flag(XSPI_STS_TXFNF, timeout) != RT_EOK)
+        {
+            XSPI_Cmd(DISABLE);
+            return -RT_ETIMEOUT;
+        }
+
+        XSPI_SendData(buf[i]);
+    }
+
+    if (xspi_wait_tx_complete(timeout) != RT_EOK)
+    {
+        XSPI_Cmd(DISABLE);
+        return -RT_ETIMEOUT;
+    }
+    XSPI_Cmd(DISABLE);
+    return RT_EOK;
+}
+
+static rt_err_t xspi_qspi_receive(struct n32_xspi *xspi_drv, struct rt_qspi_message *qspi_msg, uint32_t timeout)
+{
+    uint8_t *buf = (uint8_t *)qspi_msg->parent.recv_buf;
+    uint32_t len = qspi_msg->parent.length, i = 0;
+
+    xspi_config_enhanced(xspi_drv, qspi_msg, XSPI_CTRL0_TMOD_RX_ONLY);
+
+    XSPI_Cmd(DISABLE);
+    XSPI_Init(&xspi_drv->InitStructure);
+    XSPI_ClrFifo();
+    XSPI_Cmd(ENABLE);
+
+    XSPI_SendData(qspi_msg->instruction.content);
+    XSPI_SendData(qspi_msg->address.content);
+
+    for (i = 0; i < len; i++)
+    {
+        if (xspi_wait_flag(XSPI_STS_RXFNE, timeout) != RT_EOK)
+        {
+            XSPI_Cmd(DISABLE);
+            return -RT_ETIMEOUT;
+        }
+        buf[i] = (uint8_t)XSPI_ReceiveData();
+    }
+
+    if (xspi_wait_tx_complete(timeout) != RT_EOK)
+    {
+        XSPI_Cmd(DISABLE);
+        return -RT_ETIMEOUT;
+    }
+    XSPI_Cmd(DISABLE);
+    return RT_EOK;
+}
+
+static rt_err_t xspi_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration)
+{
+    struct n32_xspi *xspi_drv = device->bus->parent.user_data;
+    struct rt_qspi_device *qspi_dev = (struct rt_qspi_device *)device;
+
+    xspi_drv->qspi_cfg = &qspi_dev->config;
+    xspi_drv->cfg = configuration;
+
+    /* set scpol/scph value */
+    switch (xspi_drv->qspi_cfg->parent.mode & 0x03)
+    {
+    case RT_SPI_MODE_0:
+        xspi_drv->InitStructure.SCPH = XSPI_CTRL0_SCPH_FIRST_EDGE;
+        xspi_drv->InitStructure.SCPOL = XSPI_CTRL0_SCPOL_LOW;
+        break;
+    case RT_SPI_MODE_1:
+        xspi_drv->InitStructure.SCPH = XSPI_CTRL0_SCPH_SECOND_EDGE;
+        xspi_drv->InitStructure.SCPOL = XSPI_CTRL0_SCPOL_LOW;
+        break;
+    case RT_SPI_MODE_2:
+        xspi_drv->InitStructure.SCPH = XSPI_CTRL0_SCPH_FIRST_EDGE;
+        xspi_drv->InitStructure.SCPOL = XSPI_CTRL0_SCPOL_HIGH;
+        break;
+    case RT_SPI_MODE_3:
+    default:
+        xspi_drv->InitStructure.SCPH = XSPI_CTRL0_SCPH_SECOND_EDGE;
+        xspi_drv->InitStructure.SCPOL = XSPI_CTRL0_SCPOL_HIGH;
+        break;
+    }
+
+    /* data line width -> SPIFRF */
+    xspi_drv->InitStructure.SPIFRF = xspi_get_spifrf(xspi_drv->qspi_cfg->qspi_dl_width);
+
+    /* data frame size -> DFS */
+    if (xspi_drv->qspi_cfg->parent.data_width == 16)
+    {
+        xspi_drv->InitStructure.DFS = XSPI_CTRL0_DFS_16_BIT;
+    }
+    else if (xspi_drv->qspi_cfg->parent.data_width == 32)
+    {
+        xspi_drv->InitStructure.DFS = XSPI_CTRL0_DFS_32_BIT;
+    }
+    else
+    {
+        xspi_drv->InitStructure.DFS = XSPI_CTRL0_DFS_8_BIT;
+    }
+
+    return RT_EOK;
+}
+
+#endif /* !SOC_SERIES_N32H47x_48x */
 
 static rt_ssize_t xspixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
@@ -680,6 +1197,7 @@ static const struct rt_spi_ops n32_xspi_ops = {
 };
 
 
+#if defined(SOC_SERIES_N32H7xx)
 /* XSPI XIP */
 static rt_err_t xspi_control(rt_device_t dev, int cmd, void *args)
 {
@@ -786,6 +1304,8 @@ static rt_err_t xspi_control(rt_device_t dev, int cmd, void *args)
         return -RT_EINVAL;
     }
 }
+#endif /* SOC_SERIES_N32H7xx */
+
 
 /* ---- bus register + device attach ---- */
 static int n32_xspi_register_bus(struct n32_xspi *xspi_drv, const char *name)
@@ -811,6 +1331,19 @@ rt_err_t rt_hw_xspi_device_attach(const char *bus_name, const char *device_name,
 
     if (cfg != RT_NULL)
     {
+#if defined(SOC_SERIES_N32H47x_48x)
+        _n32_xspi.InitStructure.MST = cfg->role;
+        _n32_xspi.InitStructure.SSTE = cfg->nss_toggle;
+        _n32_xspi.InitStructure.DFS = cfg->data_frame_size;
+        _n32_xspi.InitStructure.SCPH = cfg->scph;
+        _n32_xspi.InitStructure.SCPOL = cfg->scpol;
+        _n32_xspi.InitStructure.TMOD = cfg->transfer_mode;
+        _n32_xspi.InitStructure.CLKDIV = cfg->baudr << 1;   /* BAUD = baudr << 1, see official XSPI_QUAD demo */
+        _n32_xspi.InitStructure.SPIFRF = cfg->frame_format;
+        _n32_xspi.InitStructure.SEN = cfg->slave_sel;
+        _n32_xspi.InitStructure.SES = cfg->rxd_sampling_edge;
+        _n32_xspi.InitStructure.SDCN = cfg->rxd_sample_delay;
+#else
         _n32_xspi.InitStructure.Role = cfg->role;
         _n32_xspi.InitStructure.NssToggle = cfg->nss_toggle;
 
@@ -834,6 +1367,7 @@ rt_err_t rt_hw_xspi_device_attach(const char *bus_name, const char *device_name,
             _n32_xspi.EnhInitStructure.WaitCycles = cfg->Enhance_WaitCycles;
             _n32_xspi.EnhInitStructure.DDREable = cfg->Enhance_DDR;
         }
+#endif
     }
 
     qspi_device = (struct rt_qspi_device *)rt_malloc(sizeof(struct rt_qspi_device));
@@ -856,7 +1390,9 @@ rt_err_t rt_hw_xspi_device_attach(const char *bus_name, const char *device_name,
         return result;
     }
 
+#if defined(SOC_SERIES_N32H7xx)
     qspi_device->parent.parent.control = xspi_control;
+#endif
 
     return result;
 }
@@ -866,20 +1402,31 @@ rt_err_t rt_hw_xspi_device_attach(const char *bus_name, const char *device_name,
 
 static int rt_hw_xspi_bus_init(void)
 {
-#if defined(SOC_SERIES_N32H7xx)
+#if defined(SOC_SERIES_N32H47x_48x)
+    /* enable XSPI clock and release reset (single global XSPI instance) */
+    RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_XSPI, ENABLE);
+    RCC_EnableAHBPeriphReset(RCC_AHB_PERIPHRST_XSPI);
+
+    _n32_xspi.bus_name = "qspi";
+#elif defined(SOC_SERIES_N32H49x)
+    /* enable XSPI clock and release reset */
+    RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_XSPI, ENABLE);
+    RCC_EnableAHBPeriphReset(RCC_AHB_PERIPHRST_XSPI);
+
+    _n32_xspi.xSPIx = XSPI;
+    _n32_xspi.bus_name = "qspi";
+#else
     RCC_EnableAHB5PeriphClk2(RCC_AHB5_PERIPHEN_PWR, ENABLE);
 
     RCC_EnableAXIPeriphReset4(RCC_AXI_PERIPHRST_XSPI2);
     RCC_EnableAXIPeriphClk4(RCC_AXI_PERIPHEN_M7_XSPI2, ENABLE);
 
-#endif
-
     _n32_xspi.xSPIx = xSPI2;
     _n32_xspi.bus_name = "qspi2";
-
+#endif
 
     rt_completion_init(&_n32_xspi.cpt);
-    return n32_xspi_register_bus(&_n32_xspi, "qspi2");
+    return n32_xspi_register_bus(&_n32_xspi, _n32_xspi.bus_name);
 }
 
 INIT_BOARD_EXPORT(rt_hw_xspi_bus_init);

@@ -27,6 +27,12 @@ extern "C" {
 #define UART2_RX_DMA_INSTANCE   DMA1_Stream0
 #define UART2_RX_DMA_REQUEST    DMA_REQUEST_USART2_RX
 #define UART2_RX_DMA_IRQ        DMA1_Stream0_IRQn
+#elif defined(BSP_UART4_RX_USING_DMA) && !defined(UART4_RX_DMA_INSTANCE)
+#define UART4_DMA_RX_IRQHandler DMA1_Stream0_IRQHandler
+#define UART4_RX_DMA_RCC        RCC_AHB1ENR_DMA1EN
+#define UART4_RX_DMA_INSTANCE   DMA1_Stream0
+#define UART4_RX_DMA_REQUEST    DMA_REQUEST_UART4_RX
+#define UART4_RX_DMA_IRQ        DMA1_Stream0_IRQn
 #endif
 
 /* DMA1 stream1 */
@@ -61,7 +67,6 @@ extern "C" {
 #define SPI2_TX_DMA_INSTANCE   DMA1_Stream4
 #define SPI2_TX_DMA_IRQ        DMA1_Stream4_IRQn
 #endif
-
 
 /* DMA1 stream5 */
 #if defined(BSP_SPI3_TX_USING_DMA) && !defined(SPI3_TX_DMA_INSTANCE)
@@ -150,7 +155,7 @@ extern "C" {
 #define QSPI_DMA_IRQ DMA2_Stream7_IRQn
 #endif
 
-/*BDMA */
+/* BDMA */
 #if defined(BSP_SPI6_TX_USING_BDMA) && !defined(SPI6_TX_BDMA_INSTANCE)
 #define SPI6_BDMA_TX_IRQHandler BDMA_Channel0_IRQHandler
 #define SPI6_TX_BDMA_INSTANCE   BDMA_Channel0
@@ -167,10 +172,8 @@ extern "C" {
 #define SPI6_RX_BDMA_IRQ        BDMA_Channel1_IRQn
 #endif
 
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __DMA_CONFIG_H__ */
-

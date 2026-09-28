@@ -15,9 +15,15 @@
 #include <rthw.h>
 #include <rtdevice.h>
 #include <board.h>
+#if defined(SOC_SERIES_N32H47x_48x)
+#include "n32h47x_48x_eth.h"
+#elif defined(SOC_SERIES_N32H49x)
+#include "n32h49x_eth.h"
+#elif defined(SOC_SERIES_N32H7xx)
 #include "n32h7xx_eth.h"
 #include "n32h7xx_rcc.h"
 #include "n32h7xx_pwr.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,6 +31,14 @@ extern "C" {
 
 /* ======================= ETH Instance Selection ======================= */
 
+#if defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+/* n32h47x_48x / n32h49x have a single ETH instance; ETH pointer & ETH_IRQn come from the device header. */
+#define ETH_RCC_ENABLE_AHB_PERIPHEN_CLK RCC_EnableAHBPeriphClk
+#define ETH_RCC_AHB_PERIPHEN            RCC_AHB_PERIPHEN_ETH
+#define ETH_GLOBAL_IRQ                  ETH_IRQn
+#define ETH_GLOBAL_IRQHANDLER           ETH_IRQHandler
+
+#elif defined(SOC_SERIES_N32H7xx)
 #if defined(BSP_USING_ETH1)
 #define ETH                             ETH1
 #define ETH_RCC_ENABLE_AHB_PERIPHEN_CLK RCC_EnableAHB2PeriphClk2
@@ -49,6 +63,8 @@ extern "C" {
 
 #endif /* BSP_USING_ETH1 / BSP_USING_ETH2 */
 
+#endif /* SOC_SERIES_N32H47x_48x / SOC_SERIES_N32H7xx */
+
 /* ======================= Media Interface Selection ======================= */
 
 #if defined(ETH_INTERFACE_USING_GMII)
@@ -58,7 +74,21 @@ extern "C" {
 #elif defined(ETH_INTERFACE_USING_RMII)
 #define ETH_MEDIA_INTERFACE ETH_RMII_MODE
 #else
-#define ETH_MEDIA_INTERFACE ETH_GMII_MODE
+#error "No ETH media interface selected (define ETH_INTERFACE_USING_GMII/MII/RMII)"
+#endif
+
+/* ======================= MACCFG Speed/Duplex Bit Mask ======================= */
+#if defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+#define ETH_MACCFG_SPEED_DUPLEX_MASK (ETH_SPEED_100M | ETH_FULL_DUPLEX_MODE)
+#else
+#define ETH_MACCFG_SPEED_DUPLEX_MASK (ETH_MACCFG_PS | ETH_MACCFG_FES | ETH_MACCFG_DM)
+#endif
+
+/* ======================= ETH_Init Param Helper ======================= */
+#if defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+#define ETH_STRUCT_INIT(p) ETH_StructInit(p)
+#else
+#define ETH_STRUCT_INIT(p) ETH_StructInit(ETH, p)
 #endif
 
 /* ======================= Standard IEEE 802.3 PHY Registers ======================= */
@@ -141,6 +171,29 @@ extern "C" {
 #define PHY_INT_MASK           ((1 << 15) | (1 << 14) | (1 << 13) | (1 << 11) | (1 << 10))
 #endif /* PHY_USING_YT8522H */
 
+/* ======================= DM9162EP PHY Specific Registers ======================= */
+
+#ifdef PHY_USING_DM9162EP
+/* DM9162EP is a Fast Ethernet PHY supporting MII/RMII, up to 100M */
+#define PHY_DM9162EP_ID1 0x0181U
+#define PHY_DM9162EP_ID2 0xB8A0U
+
+/* DM9162EP PHY Specific Status Register (0x11)
+ * bit15 = 100M Full-Duplex, bit14 = 100M Half-Duplex,
+ * bit13 = 10M Full-Duplex, bit12 = 10M Half-Duplex */
+#define PHY_SDSR                   0x11U
+#define PHY_Status_SPEED_100M(sr)  (((sr) & ((1 << 15) | (1 << 14))) != 0)
+#define PHY_Status_SPEED_10M(sr)   (!PHY_Status_SPEED_100M(sr))
+#define PHY_Status_FULL_DUPLEX(sr) (((sr) & ((1 << 15) | (1 << 13))) != 0)
+
+/* DM9162EP PHY Specific Interrupt Registers
+ * 0x15 Interrupt Source Flag / Interrupt Mask */
+#define PHY_INTERRUPT_FLAG_REG 0x15U
+#define PHY_INTERRUPT_MASK_REG 0x15U
+#define PHY_INT_MASK           0U
+
+#endif /* PHY_USING_DM9162EP */
+
 /* ======================= RTL8211EG PHY Specific Registers ======================= */
 
 #ifdef PHY_USING_RTL8211EG
@@ -166,6 +219,28 @@ extern "C" {
 #define PHY_INT_MASK           ((1 << 15) | (1 << 11) | (1 << 10))
 #endif /* PHY_USING_RTL8211EG */
 
+/* ======================= LAN8720A PHY Specific Registers ======================= */
+
+#ifdef PHY_USING_LAN8720A
+/* LAN8720A is a Fast Ethernet PHY supporting MII/RMII, up to 100M */
+#define PHY_LAN8720A_ID1 0x0007U
+#define PHY_LAN8720A_ID2 0xC0F1U
+
+/* LAN8720A PHY Specific Status Register (0x1F)
+ * bit4 = Full-Duplex, bit3 = 100M, bit2 = 10M */
+#define PHY_SDSR                   0x1FU
+#define PHY_Status_SPEED_100M(sr)  (((sr) & (1 << 3)) != 0)
+#define PHY_Status_SPEED_10M(sr)   (((sr) & (1 << 2)) != 0)
+#define PHY_Status_FULL_DUPLEX(sr) (((sr) & (1 << 4)) != 0)
+
+/* LAN8720A PHY Specific Interrupt Registers
+ * 0x1D Interrupt Source Flag, 0x1E Interrupt Mask */
+#define PHY_INTERRUPT_FLAG_REG 0x1DU
+#define PHY_INTERRUPT_MASK_REG 0x1EU
+#define PHY_INT_MASK           (1 << 4)
+
+#endif /* PHY_USING_LAN8720A */
+
 /* ======================= Buffer & Descriptor Configuration ======================= */
 
 #ifndef ETH_TX_DESC_NUMBER
@@ -175,7 +250,12 @@ extern "C" {
 #define ETH_RX_DESC_NUMBER ((uint32_t)4U)
 #endif
 
-/* ETH_MAX_PACKET_SIZE is defined in n32h7xx_eth.h (1528U) */
+/* ETH_MAX_PACKET_SIZE is defined in n32h7xx_eth.h (1528U); n32h47x_48x has no such macro. */
+#if defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+#ifndef ETH_MAX_PACKET_SIZE
+#define ETH_MAX_PACKET_SIZE (1528U)
+#endif
+#endif
 #define ETH_TX_BUF_SIZE (ETH_TX_DESC_NUMBER * ETH_MAX_PACKET_SIZE)
 #define ETH_RX_BUF_SIZE (ETH_RX_DESC_NUMBER * ETH_MAX_PACKET_SIZE)
 

@@ -239,7 +239,7 @@ extern "C" {
 #define UART10_RX_DMA_RCC        RCC_AHB_PERIPHEN_DMA2
 #define UART10_RX_DMA_REQUEST    DMA_REMAP_UART10_RX
 #define UART10_RX_DMA_CHANNEL    2U
-#elif defined(BSP_USING_SDIO) && !defined(UART10_RX_DMA)
+#elif defined(BSP_USING_SDIO)
 #define SDIO_RX_DMA               DMA2
 #define SDIO_TX_DMA               DMA2
 #define SDIO_RX_TX_DMA_IRQHandler DMA2_Channel2_IRQHandler

@@ -11,8 +11,10 @@ HC32 系列 BSP 目前支持情况如下表所示：
 | **F4 系列** |  |
 | [ev_hc32f448_lqfp80](ev_hc32f448_lqfp80)          | 小华 官方 EV_F448_LQ80 开发板     |
 | [ev_hc32f460_lqfp100_v2](ev_hc32f460_lqfp100_v2)  | 小华 官方 EV_F460_LQ100_V2 开发板 |
+| [ev_hc32f467_lqfp144](ev_hc32f467_lqfp176)        | 小华 官方 EV_F467_LQ144 开发板    |
 | [ev_hc32f472_lqfp100](ev_hc32f472_lqfp100)        | 小华 官方 EV_F472_LQ100 开发板    |
 | [ev_hc32f4a0_lqfp176](ev_hc32f4a0_lqfp176)        | 小华 官方 EV_F4A0_LQ176 开发板    |
+| [ev_hc32f4a2_lqfp176](ev_hc32f4a2_lqfp176)        | 小华 官方 EV_F4A0_LQ176 开发板    |
 | [lckfb-hc32f4a0-lqfp100](lckfb-hc32f4a0-lqfp100)  | 立创开发板 天空星-HC32F4A0PITB    |
 | [ev_hc32f4a8_lqfp176](ev_hc32f4a8_lqfp176)        | 小华 官方 EV_F4A8_LQ176 开发板    |
 | **M1 系列** |  |

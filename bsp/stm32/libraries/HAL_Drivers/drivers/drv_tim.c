@@ -16,9 +16,10 @@
 
 #include <rtdevice.h>
 #include "drv_config.h"
+#include <drivers/clock_time.h>
 
 //#define DRV_DEBUG
-#define LOG_TAG             "drv.tim"
+#define LOG_TAG "drv.tim"
 #include <drv_log.h>
 
 #if defined(BSP_USING_TIM1) && !defined(TIM1)
@@ -82,13 +83,19 @@
 /* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
 void stm32_tim_pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler)
 {
+#if !defined(SOC_SERIES_STM32N6)
     rt_uint32_t flatency = 0;
-    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+#endif
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
     RT_ASSERT(pclk1_doubler != RT_NULL);
     RT_ASSERT(pclk1_doubler != RT_NULL);
 
+#if defined(SOC_SERIES_STM32N6)
+    HAL_RCC_GetClockConfig(&RCC_ClkInitStruct);
+#else
     HAL_RCC_GetClockConfig(&RCC_ClkInitStruct, &flatency);
+#endif
 
     *pclk1_doubler = 1;
     *pclk2_doubler = 1;
@@ -105,12 +112,12 @@ void stm32_tim_pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_
 #else
     if (RCC_ClkInitStruct.APB1CLKDivider != RCC_HCLK_DIV1)
     {
-         *pclk1_doubler = 2;
+        *pclk1_doubler = 2;
     }
 #if !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0))
     if (RCC_ClkInitStruct.APB2CLKDivider != RCC_HCLK_DIV1)
     {
-         *pclk2_doubler = 2;
+        *pclk2_doubler = 2;
     }
 #endif /* !(defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0)) */
 #endif /* defined(SOC_SERIES_STM32MP1) */
@@ -154,121 +161,122 @@ static rt_err_t stm32_tim_clock_get(TIM_HandleTypeDef *tim, rt_uint32_t *timer_c
 }
 #endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
 
-void stm32_tim_enable_clock(TIM_HandleTypeDef* htim_base)
+void stm32_tim_enable_clock(TIM_HandleTypeDef *htim_base)
 {
     RT_ASSERT(htim_base != RT_NULL);
 
-    if(RT_FALSE);
+    if (RT_FALSE)
+        ;
 #ifdef TIM1
-    else if(htim_base->Instance==TIM1)
+    else if (htim_base->Instance == TIM1)
     {
         __HAL_RCC_TIM1_CLK_ENABLE();
     }
 #endif /* TIM1 */
 #ifdef TIM2
-    else if(htim_base->Instance==TIM2)
+    else if (htim_base->Instance == TIM2)
     {
         __HAL_RCC_TIM2_CLK_ENABLE();
     }
 #endif /* TIM2 */
 #ifdef TIM3
-    else if(htim_base->Instance==TIM3)
+    else if (htim_base->Instance == TIM3)
     {
         __HAL_RCC_TIM3_CLK_ENABLE();
     }
 #endif /* TIM3 */
 #ifdef TIM4
-    else if(htim_base->Instance==TIM4)
+    else if (htim_base->Instance == TIM4)
     {
         __HAL_RCC_TIM4_CLK_ENABLE();
     }
 #endif /* TIM4 */
 #ifdef TIM5
-    else if(htim_base->Instance==TIM5)
+    else if (htim_base->Instance == TIM5)
     {
         __HAL_RCC_TIM5_CLK_ENABLE();
     }
 #endif /* TIM5 */
 #ifdef TIM6
-    else if(htim_base->Instance==TIM6)
+    else if (htim_base->Instance == TIM6)
     {
         __HAL_RCC_TIM6_CLK_ENABLE();
     }
 #endif /* TIM6 */
 #ifdef TIM7
-    else if(htim_base->Instance==TIM7)
+    else if (htim_base->Instance == TIM7)
     {
         __HAL_RCC_TIM7_CLK_ENABLE();
     }
 #endif /* TIM7 */
 #ifdef TIM8
-    else if(htim_base->Instance==TIM8)
+    else if (htim_base->Instance == TIM8)
     {
         __HAL_RCC_TIM8_CLK_ENABLE();
     }
 #endif /* TIM8 */
 #ifdef TIM9
-    else if(htim_base->Instance==TIM9)
+    else if (htim_base->Instance == TIM9)
     {
         __HAL_RCC_TIM9_CLK_ENABLE();
     }
 #endif /* TIM9 */
 #ifdef TIM10
-    else if(htim_base->Instance==TIM10)
+    else if (htim_base->Instance == TIM10)
     {
         __HAL_RCC_TIM10_CLK_ENABLE();
     }
 #endif /* TIM10 */
 #ifdef TIM11
-    else if(htim_base->Instance==TIM11)
+    else if (htim_base->Instance == TIM11)
     {
         __HAL_RCC_TIM11_CLK_ENABLE();
     }
 #endif /* TIM11 */
 #ifdef TIM12
-    else if(htim_base->Instance==TIM12)
+    else if (htim_base->Instance == TIM12)
     {
         __HAL_RCC_TIM12_CLK_ENABLE();
     }
 #endif /* TIM12 */
 #ifdef TIM13
-    else if(htim_base->Instance==TIM13)
+    else if (htim_base->Instance == TIM13)
     {
         __HAL_RCC_TIM13_CLK_ENABLE();
     }
 #endif /* TIM13 */
 #ifdef TIM14
-    else if(htim_base->Instance==TIM14)
+    else if (htim_base->Instance == TIM14)
     {
         __HAL_RCC_TIM14_CLK_ENABLE();
     }
 #endif /* TIM14 */
 #ifdef TIM15
-    else if(htim_base->Instance==TIM15)
+    else if (htim_base->Instance == TIM15)
     {
         __HAL_RCC_TIM15_CLK_ENABLE();
     }
 #endif /* TIM15 */
 #ifdef TIM16
-    else if(htim_base->Instance==TIM16)
+    else if (htim_base->Instance == TIM16)
     {
         __HAL_RCC_TIM16_CLK_ENABLE();
     }
 #endif /* TIM16 */
 #ifdef TIM17
-    else if(htim_base->Instance==TIM17)
+    else if (htim_base->Instance == TIM17)
     {
         __HAL_RCC_TIM17_CLK_ENABLE();
     }
 #endif /* TIM17 */
 #ifdef TIM18
-    else if(htim_base->Instance==TIM18)
+    else if (htim_base->Instance == TIM18)
     {
         __HAL_RCC_TIM18_CLK_ENABLE();
     }
 #endif /* TIM18 */
 #ifdef TIM19
-    else if(htim_base->Instance==TIM19)
+    else if (htim_base->Instance == TIM19)
     {
         __HAL_RCC_TIM19_CLK_ENABLE();
     }
@@ -339,7 +347,7 @@ enum
 struct stm32_clock_timer
 {
     rt_clock_timer_t time_device;
-    TIM_HandleTypeDef    tim_handle;
+    TIM_HandleTypeDef tim_handle;
     IRQn_Type tim_irqn;
     char *name;
 #if defined(RT_USING_CLOCK_TIMER_TRIGGER)
@@ -348,8 +356,7 @@ struct stm32_clock_timer
 #endif /* defined(RT_USING_CLOCK_TIMER_TRIGGER) */
 };
 
-static struct stm32_clock_timer stm32_clock_timer_obj[] =
-{
+static struct stm32_clock_timer stm32_clock_timer_obj[] = {
 #ifdef BSP_USING_TIM1
     TIM1_CONFIG,
 #endif
@@ -448,19 +455,22 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
             prescaler_value = (uint32_t)(HAL_RCC_GetPCLK1Freq() * pclk1_doubler / 10000) - 1;
         }
 #endif
-        tim->Init.Period            = 10000 - 1;
-        tim->Init.Prescaler         = prescaler_value;
-        tim->Init.ClockDivision     = TIM_CLOCKDIVISION_DIV1;
+#if defined(SOC_SERIES_STM32N6)
+        prescaler_value = HAL_RCCEx_GetTIMGFreq() / 1000 / 1000;
+#endif
+        tim->Init.Period = 10000 - 1;
+        tim->Init.Prescaler = prescaler_value;
+        tim->Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
         if (timer->info->cntmode == CLOCK_TIMER_CNTMODE_UP)
         {
-            tim->Init.CounterMode   = TIM_COUNTERMODE_UP;
+            tim->Init.CounterMode = TIM_COUNTERMODE_UP;
         }
         else
         {
-            tim->Init.CounterMode   = TIM_COUNTERMODE_DOWN;
+            tim->Init.CounterMode = TIM_COUNTERMODE_DOWN;
         }
         tim->Init.RepetitionCounter = 0;
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32N6)
         tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
         if (HAL_TIM_Base_Init(tim) != HAL_OK)
@@ -666,7 +676,7 @@ static rt_err_t timer_trigger_update_config(struct stm32_clock_timer *timer_devi
 {
 #if defined(TIM_TRGO_UPDATE)
     TIM_HandleTypeDef *tim;
-    TIM_MasterConfigTypeDef master = {0};
+    TIM_MasterConfigTypeDef master = { 0 };
 
     tim = &timer_device->tim_handle;
     HAL_TIM_Base_Stop(tim);
@@ -713,13 +723,13 @@ static rt_err_t timer_trigger_update_config(struct stm32_clock_timer *timer_devi
  * @return Operation status.
  */
 static rt_err_t timer_trigger_compare_config(struct stm32_clock_timer *timer_device,
-                                            const struct rt_clock_timer_trigger_cfg *cfg,
-                                            rt_uint32_t prescaler, rt_uint32_t period)
+                                             const struct rt_clock_timer_trigger_cfg *cfg,
+                                             rt_uint32_t prescaler, rt_uint32_t period)
 {
 #if defined(TIM_OCMODE_TIMING)
     const struct stm32_tim_compare_channel *slot;
     TIM_HandleTypeDef *tim;
-    TIM_OC_InitTypeDef oc = {0};
+    TIM_OC_InitTypeDef oc = { 0 };
     rt_uint32_t pulse;
 
     slot = timer_trigger_compare_channel_get(cfg->channel);
@@ -946,7 +956,7 @@ static rt_err_t timer_trigger_release(rt_clock_timer_t *timer)
     }
 
 #if defined(TIM_TRGO_RESET)
-    TIM_MasterConfigTypeDef master = {0};
+    TIM_MasterConfigTypeDef master = { 0 };
     master.MasterOutputTrigger = TIM_TRGO_RESET;
 #if defined(TIM_MASTERSLAVEMODE_DISABLE)
     master.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
@@ -984,7 +994,7 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
     case CLOCK_TIMER_CTRL_FREQ_SET:
     {
         rt_uint32_t freq;
-        rt_uint16_t val=0;
+        rt_uint16_t val = 0;
 
         if (arg == RT_NULL)
         {
@@ -1000,55 +1010,55 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         if (0
 #ifdef TIM1
-        || tim->Instance == TIM1
+            || tim->Instance == TIM1
 #endif /* TIM1 */
 #ifdef TIM8
-        || tim->Instance == TIM8
+            || tim->Instance == TIM8
 #endif /* TIM8 */
 #ifdef TIM9
-        || tim->Instance == TIM9
+            || tim->Instance == TIM9
 #endif /* TIM9 */
 #ifdef TIM10
-        || tim->Instance == TIM10
+            || tim->Instance == TIM10
 #endif /* TIM10 */
 #ifdef TIM11
-        || tim->Instance == TIM11
+            || tim->Instance == TIM11
 #endif /* TIM11 */
         )
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G4)
         if (0
 #ifdef TIM15
-        || tim->Instance == TIM15
+            || tim->Instance == TIM15
 #endif /* TIM15 */
 #ifdef TIM16
-        || tim->Instance == TIM16
+            || tim->Instance == TIM16
 #endif /* TIM16 */
 #ifdef TIM17
-        || tim->Instance == TIM17
+            || tim->Instance == TIM17
 #endif /* TIM17 */
         )
 #elif defined(SOC_SERIES_STM32WB)
         if (0
 #ifdef TIM16
-        || tim->Instance == TIM16
+            || tim->Instance == TIM16
 #endif /* TIM16 */
 #ifdef TIM17
-        || tim->Instance == TIM17
+            || tim->Instance == TIM17
 #endif /* TIM17 */
         )
 #elif defined(SOC_SERIES_STM32MP1)
-        if(0
+        if (0
 #ifdef TIM14
-        || tim->Instance == TIM14
+            || tim->Instance == TIM14
 #endif /* TIM14 */
 #ifdef TIM16
-        || tim->Instance == TIM16
+            || tim->Instance == TIM16
 #endif /* TIM16 */
 #ifdef TIM17
-        || tim->Instance == TIM17
+            || tim->Instance == TIM17
 #endif /* TIM17 */
         )
-#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
+#elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32N6)
         if (0)
 #else
 #error "This driver has not supported this series yet!"
@@ -1060,7 +1070,11 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
         }
         else
         {
+#if defined(SOC_SERIES_STM32N6)
+            val = HAL_RCCEx_GetTIMGFreq() / freq;
+#else
             val = HAL_RCC_GetPCLK1Freq() * pclk1_doubler / freq;
+#endif
         }
         __HAL_TIM_SET_PRESCALER(tim, val - 1);
 
@@ -1120,8 +1134,7 @@ static rt_uint32_t timer_counter_get(rt_clock_timer_t *timer)
 
 static const struct rt_clock_timer_info _info = TIM_DEV_INFO_CONFIG;
 
-static const struct rt_clock_timer_ops _ops =
-{
+static const struct rt_clock_timer_ops _ops = {
     .init = timer_init,
     .start = timer_start,
     .stop = timer_stop,
@@ -1239,9 +1252,9 @@ void TIM8_UP_TIM13_IRQHandler(void)
 #endif
 #ifdef BSP_USING_TIM14
 #if defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-    void TIM8_TRG_COM_TIM14_IRQHandler(void)
+void TIM8_TRG_COM_TIM14_IRQHandler(void)
 #elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32MP1)
-    void TIM14_IRQHandler(void)
+void TIM14_IRQHandler(void)
 #endif
 {
     /* enter interrupt */
@@ -1262,10 +1275,10 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 }
 #endif
 #ifdef BSP_USING_TIM16
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB)|| defined(SOC_SERIES_STM32G4)
-    void TIM1_UP_TIM16_IRQHandler(void)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32G4)
+void TIM1_UP_TIM16_IRQHandler(void)
 #elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32MP1)
-    void TIM16_IRQHandler(void)
+void TIM16_IRQHandler(void)
 #endif
 {
     /* enter interrupt */
@@ -1277,9 +1290,9 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 #endif
 #ifdef BSP_USING_TIM17
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32G4)
-    void TIM1_TRG_COM_TIM17_IRQHandler(void)
+void TIM1_TRG_COM_TIM17_IRQHandler(void)
 #elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32MP1)
-    void TIM17_IRQHandler(void)
+void TIM17_IRQHandler(void)
 #endif
 {
     /* enter interrupt */
@@ -1380,9 +1393,9 @@ static int stm32_clock_timer_init(void)
     for (i = 0; i < sizeof(stm32_clock_timer_obj) / sizeof(stm32_clock_timer_obj[0]); i++)
     {
         stm32_clock_timer_obj[i].time_device.info = &_info;
-        stm32_clock_timer_obj[i].time_device.ops  = &_ops;
+        stm32_clock_timer_obj[i].time_device.ops = &_ops;
         if (rt_clock_timer_register(&stm32_clock_timer_obj[i].time_device,
-            stm32_clock_timer_obj[i].name, &stm32_clock_timer_obj[i].tim_handle) == RT_EOK)
+                                    stm32_clock_timer_obj[i].name, &stm32_clock_timer_obj[i].tim_handle) == RT_EOK)
         {
             LOG_D("%s register success", stm32_clock_timer_obj[i].name);
         }

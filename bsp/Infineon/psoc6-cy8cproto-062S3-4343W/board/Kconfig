@@ -61,8 +61,8 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable PWM0 channel3"
                     default n
                     if BSP_USING_PWM0_CH3
-                        config BSP_USING_PWM0_PORT13
-                        bool "Enable PWM0-PORT13 output pwm"
+                        config BSP_USING_PWM0_CH3_PORT13
+                        bool "Enable PWM0-CH3-PORT13 output pwm"
                         default n
                     endif
                 menuconfig BSP_USING_PWM0_CH7
@@ -270,7 +270,7 @@ menu "Board extended module Drivers"
             select BSP_USING_PWM
             select BSP_USING_PWM0
             select BSP_USING_PWM0_CH3
-            select BSP_USING_PWM0_PORT13
+            select BSP_USING_PWM0_CH3_PORT13
             default n
     endif
 

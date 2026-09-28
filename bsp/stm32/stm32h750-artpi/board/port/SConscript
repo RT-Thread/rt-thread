@@ -30,9 +30,6 @@ if GetDepend(['BSP_USING_WIFI']):
     src += Glob('wifi_config.c')
     src += Glob('drv_wlan.c')
 
-if GetDepend(['BSP_USING_ETH_H750']):
-    src += Glob('drv_eth.c')
-
 if GetDepend(['PKG_USING_EASYFLASH']):
     src += Glob('ef_fal_port.c')
 

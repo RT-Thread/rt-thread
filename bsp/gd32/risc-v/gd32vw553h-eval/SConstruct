@@ -17,6 +17,9 @@ except:
     exit(-1)
 
 def bsp_pkg_check():
+    if GetOption('clean'):
+        return
+
     need_update = not packages_available(os.path.abspath('.'), ['gd32-riscv-series-latest'])
 
     if need_update:

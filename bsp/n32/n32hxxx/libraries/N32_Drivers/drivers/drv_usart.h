@@ -73,7 +73,25 @@ struct n32_uart
         {
             rt_uint16_t block_num;
             rt_uint16_t remain_len;
-            rt_size_t block_has_recv_cnt;
+            /* LLI ring accounting (maintained in the TC ISR; BTS is never read
+             * here: the hardware wraps BTS the instant a block completes, so
+             * reading BTS at TC and diffing it against the last value would
+             * underflow and permanently corrupt the FIFO put index):
+             *   lli_blk_cnt    number of completed LLI blocks (also used as
+             *                  the block index, modulo block_num)
+             *   lli_byte_base  actual bytes accumulated for completed blocks.
+             *                  NOTE: the last LLI item may be shorter than
+             *                  4095B (remain_len; 4B when bufsz = 16384), so
+             *                  the TC ISR must add each block's real size.
+             *                  Otherwise the counter drifts +4095-remain_len
+             *                  bytes per ring turn (e.g. +4091B per turn for
+             *                  a 16384B buffer), eventually corrupting the
+             *                  FIFO read pointer.
+             *   lli_last_cum   cumulative bytes at the last IDLE report (the
+             *                  difference between two reports = frame len) */
+            rt_uint32_t lli_blk_cnt;
+            rt_uint32_t lli_byte_base;
+            rt_uint32_t lli_last_cum;
             DMA_LinkListItemType *Read_LinkList;
 
         } rx_dma;

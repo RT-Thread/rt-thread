@@ -11,6 +11,40 @@
   * @brief Universal Serial Bus Full Speed Device
   */
 
+/* N32H4x family detection (N32H47x_48x + N32H49x). */
+#if defined(N32H473) || defined(N32H474) || defined(N32H475) || \
+    defined(N32H481) || defined(N32H482) || defined(N32H480) || \
+    defined(N32H487) || defined(N32H488) || defined(N32H49X)
+#define N32H4X_FSDEV 1
+#endif
+
+#if defined(N32H4X_FSDEV)
+/* N32H4x re-arranged the Synopsys USBFS registers:
+ *  - USB_EPn is a 32-bit register (no reserved words), EPn at 0x00 + n*4
+ *  - CTRL@0x40 (named CNTR here to keep usb_dc_fsdev.c unchanged)
+ *  - STS @0x44 (named ISTR here), BUFTAB@0x48 (named BTABLE), FN@0x4C, ADDR@0x50
+ *  - No BCDR register: the DP pull-up moved to CTRL.PU (bit13)
+ * The buffer descriptor table layout (n*16 per endpoint) matches the ST macro
+ * addressing with PMA_ACCESS=2, so PCD_* btable macros are reused as-is.
+ */
+typedef struct
+{
+  __IO uint32_t EP0R;                 /*!< USB_EP0,                                    Address offset: 0x00 */
+  __IO uint32_t EP1R;                 /*!< USB_EP1,                                    Address offset: 0x04 */
+  __IO uint32_t EP2R;                 /*!< USB_EP2,                                    Address offset: 0x08 */
+  __IO uint32_t EP3R;                 /*!< USB_EP3,                                    Address offset: 0x0C */
+  __IO uint32_t EP4R;                 /*!< USB_EP4,                                    Address offset: 0x10 */
+  __IO uint32_t EP5R;                 /*!< USB_EP5,                                    Address offset: 0x14 */
+  __IO uint32_t EP6R;                 /*!< USB_EP6,                                    Address offset: 0x18 */
+  __IO uint32_t EP7R;                 /*!< USB_EP7,                                    Address offset: 0x1C */
+  __IO uint32_t RESERVED0[8];         /*!< Reserved                                    Address offset: 0x20 .. 0x3C */
+  __IO uint32_t CNTR;                 /*!< USB_CTRL,                                   Address offset: 0x40 */
+  __IO uint32_t ISTR;                 /*!< USB_STS,                                    Address offset: 0x44 */
+  __IO uint32_t BTABLE;               /*!< USB_BUFTAB,                                 Address offset: 0x48 */
+  __IO uint32_t FN;                   /*!< USB_FN,                                     Address offset: 0x4C */
+  __IO uint32_t DADDR;                /*!< USB_ADDR,                                   Address offset: 0x50 */
+} USB_TypeDef;
+#else
 typedef struct
 {
   __IO uint16_t EP0R;                 /*!< USB Endpoint 0 register,                   Address offset: 0x00 */
@@ -44,6 +78,7 @@ typedef struct
   __IO uint16_t BCDR;                 /*!< Battery Charging detector register,        Address offset: 0x58 */
   __IO uint16_t RESERVEDE;            /*!< Reserved */
 } USB_TypeDef;
+#endif
 
 /******************************************************************************/
 /*                                                                            */
@@ -52,6 +87,7 @@ typedef struct
 /******************************************************************************/
 
 /*!< Endpoint-specific registers */
+#if !defined(N32H4X_FSDEV)
 #define  USB_EP0R                            USB_BASE                      /*!< Endpoint 0 register address */
 #define  USB_EP1R                            (USB_BASE + 0x00000004)       /*!< Endpoint 1 register address */
 #define  USB_EP2R                            (USB_BASE + 0x00000008)       /*!< Endpoint 2 register address */
@@ -1133,9 +1169,316 @@ typedef struct
 
 #define USB_COUNT7_RX_1_BLSIZE_1                0x80000000U                    /*!< BLock SIZE (high) */
 
-/**
-  * @}
-  */
+#endif /* !(N32H4X_FSDEV) */
+
+#if defined(N32H4X_FSDEV)
+/* ===========================================================================
+ * N32H4x (N32H47x_48x / N32H49x) USBFS register bit re-mapping.
+ *
+ * Nations kept the Synopsys USBFS core but re-arranged every non-reserved
+ * bit field.  This block re-defines the common macros used by
+ * usb_dc_fsdev.c with the N32H4x layout.
+ *
+ * USB_EPn register bits:
+ *   STS_TX[15:14] | DATTOG_TX[13] | CTRS_TX[12] | STS_RX[11:10] | DATTOG_RX[9]
+ *   CTRS_RX[8] | EP_TYPE[7:6] | EP_KIND[5] | SETUP[4] | EPADDR[3:0]
+ * ===========================================================================
+ */
+#undef USB_EP_CTR_RX_Pos
+#undef USB_EP_CTR_RX_Msk
+#undef USB_EP_CTR_RX
+#define USB_EP_CTR_RX_Pos                       (8U)   /* CTRS_RX */
+#define USB_EP_CTR_RX_Msk                       (0x1UL << USB_EP_CTR_RX_Pos)
+#define USB_EP_CTR_RX                           USB_EP_CTR_RX_Msk
+#undef USB_EP_DTOG_RX_Pos
+#undef USB_EP_DTOG_RX_Msk
+#undef USB_EP_DTOG_RX
+#define USB_EP_DTOG_RX_Pos                      (9U)   /* DATTOG_RX */
+#define USB_EP_DTOG_RX_Msk                      (0x1UL << USB_EP_DTOG_RX_Pos)
+#define USB_EP_DTOG_RX                          USB_EP_DTOG_RX_Msk
+#undef USB_EPRX_STAT_Pos
+#undef USB_EPRX_STAT_Msk
+#undef USB_EPRX_STAT
+#define USB_EPRX_STAT_Pos                       (10U)  /* STS_RX[1:0] */
+#define USB_EPRX_STAT_Msk                       (0x3UL << USB_EPRX_STAT_Pos)
+#define USB_EPRX_STAT                           USB_EPRX_STAT_Msk
+#undef USB_EP_SETUP_Pos
+#undef USB_EP_SETUP_Msk
+#undef USB_EP_SETUP
+#define USB_EP_SETUP_Pos                        (4U)   /* SETUP */
+#define USB_EP_SETUP_Msk                        (0x1UL << USB_EP_SETUP_Pos)
+#define USB_EP_SETUP                            USB_EP_SETUP_Msk
+#undef USB_EP_T_FIELD_Pos
+#undef USB_EP_T_FIELD_Msk
+#undef USB_EP_T_FIELD
+#define USB_EP_T_FIELD_Pos                      (6U)   /* EP_TYPE[1:0] */
+#define USB_EP_T_FIELD_Msk                      (0x3UL << USB_EP_T_FIELD_Pos)
+#define USB_EP_T_FIELD                          USB_EP_T_FIELD_Msk
+#undef USB_EP_KIND_Pos
+#undef USB_EP_KIND_Msk
+#undef USB_EP_KIND
+#define USB_EP_KIND_Pos                         (5U)   /* EP_KIND */
+#define USB_EP_KIND_Msk                         (0x1UL << USB_EP_KIND_Pos)
+#define USB_EP_KIND                             USB_EP_KIND_Msk
+#undef USB_EP_CTR_TX_Pos
+#undef USB_EP_CTR_TX_Msk
+#undef USB_EP_CTR_TX
+#define USB_EP_CTR_TX_Pos                       (12U)  /* CTRS_TX */
+#define USB_EP_CTR_TX_Msk                       (0x1UL << USB_EP_CTR_TX_Pos)
+#define USB_EP_CTR_TX                           USB_EP_CTR_TX_Msk
+#undef USB_EP_DTOG_TX_Pos
+#undef USB_EP_DTOG_TX_Msk
+#undef USB_EP_DTOG_TX
+#define USB_EP_DTOG_TX_Pos                      (13U)  /* DATTOG_TX */
+#define USB_EP_DTOG_TX_Msk                      (0x1UL << USB_EP_DTOG_TX_Pos)
+#define USB_EP_DTOG_TX                          USB_EP_DTOG_TX_Msk
+#undef USB_EPTX_STAT_Pos
+#undef USB_EPTX_STAT_Msk
+#undef USB_EPTX_STAT
+#define USB_EPTX_STAT_Pos                       (14U)  /* STS_TX[1:0] */
+#define USB_EPTX_STAT_Msk                       (0x3UL << USB_EPTX_STAT_Pos)
+#define USB_EPTX_STAT                           USB_EPTX_STAT_Msk
+/* EPADDR[3:0] stays at bit 0 */
+
+/* EndPoint REGister MASK (no toggle/status fields) */
+#undef USB_EPREG_MASK
+#define USB_EPREG_MASK    (USB_EP_CTR_RX|USB_EP_SETUP|USB_EP_T_FIELD|USB_EP_KIND|USB_EP_CTR_TX|USB_EPADDR_FIELD)
+
+#undef USB_EP_TYPE_MASK_Pos
+#undef USB_EP_TYPE_MASK_Msk
+#undef USB_EP_TYPE_MASK
+#define USB_EP_TYPE_MASK_Pos                    (6U)
+#define USB_EP_TYPE_MASK_Msk                    (0x3UL << USB_EP_TYPE_MASK_Pos)
+#define USB_EP_TYPE_MASK                        USB_EP_TYPE_MASK_Msk
+#undef USB_EP_BULK
+#undef USB_EP_CONTROL
+#undef USB_EP_ISOCHRONOUS
+#undef USB_EP_INTERRUPT
+#define USB_EP_BULK                             (0UL << USB_EP_T_FIELD_Pos)  /* 00 */
+#define USB_EP_CONTROL                          (1UL << USB_EP_T_FIELD_Pos)  /* 01 */
+#define USB_EP_ISOCHRONOUS                      (2UL << USB_EP_T_FIELD_Pos)  /* 10 */
+#define USB_EP_INTERRUPT                        (3UL << USB_EP_T_FIELD_Pos)  /* 11 */
+#undef USB_EP_T_MASK
+#define USB_EP_T_MASK                           (~USB_EP_T_FIELD & USB_EPREG_MASK)
+#undef USB_EPKIND_MASK
+#define USB_EPKIND_MASK                         (~USB_EP_KIND & USB_EPREG_MASK)
+
+/* STS_TX[1:0] bit15:14: 00 DIS / 01 STALL / 10 NAK / 11 VALID */
+#undef USB_EP_TX_DIS
+#undef USB_EP_TX_STALL
+#undef USB_EP_TX_NAK
+#undef USB_EP_TX_VALID
+#undef USB_EPTX_DTOG1
+#undef USB_EPTX_DTOG2
+#undef USB_EPTX_DTOGMASK
+#define USB_EP_TX_DIS                            (0UL << USB_EPTX_STAT_Pos)
+#define USB_EP_TX_STALL                          (1UL << USB_EPTX_STAT_Pos)
+#define USB_EP_TX_NAK                            (2UL << USB_EPTX_STAT_Pos)
+#define USB_EP_TX_VALID                          (3UL << USB_EPTX_STAT_Pos)
+#define USB_EPTX_DTOG1                           (1UL << USB_EPTX_STAT_Pos)
+#define USB_EPTX_DTOG2                           (2UL << USB_EPTX_STAT_Pos)
+#define USB_EPTX_DTOGMASK                        (USB_EPTX_STAT|USB_EPREG_MASK)
+
+/* STS_RX[1:0] bit11:10: 00 DIS / 01 STALL / 10 NAK / 11 VALID */
+#undef USB_EP_RX_DIS
+#undef USB_EP_RX_STALL
+#undef USB_EP_RX_NAK
+#undef USB_EP_RX_VALID
+#undef USB_EPRX_DTOG1
+#undef USB_EPRX_DTOG2
+#undef USB_EPRX_DTOGMASK
+#define USB_EP_RX_DIS                            (0UL << USB_EPRX_STAT_Pos)
+#define USB_EP_RX_STALL                          (1UL << USB_EPRX_STAT_Pos)
+#define USB_EP_RX_NAK                            (2UL << USB_EPRX_STAT_Pos)
+#define USB_EP_RX_VALID                          (3UL << USB_EPRX_STAT_Pos)
+#define USB_EPRX_DTOG1                           (1UL << USB_EPRX_STAT_Pos)
+#define USB_EPRX_DTOG2                           (2UL << USB_EPRX_STAT_Pos)
+#define USB_EPRX_DTOGMASK                        (USB_EPRX_STAT|USB_EPREG_MASK)
+
+/* USB_CTRL register bits:  PU[13] RESUM[12] FSUSPD[11] LP_MODE[10] PD[9] FRST[8]
+ *   PMAOM[7] CTRSM[6] ERRORM[5] WKUPM[4] SUSPDM[3] RSTM[2] SOFM[1] ESOFM[0]
+ * Default value 0x0300 -> PD and FRST are set after reset.
+ */
+#undef USB_CNTR_FRES_Pos
+#undef USB_CNTR_FRES_Msk
+#undef USB_CNTR_FRES
+#define USB_CNTR_FRES_Pos                       (8U)   /* FRST */
+#define USB_CNTR_FRES_Msk                       (0x1UL << USB_CNTR_FRES_Pos)
+#define USB_CNTR_FRES                           USB_CNTR_FRES_Msk
+#undef USB_CNTR_PDWN_Pos
+#undef USB_CNTR_PDWN_Msk
+#undef USB_CNTR_PDWN
+#define USB_CNTR_PDWN_Pos                       (9U)   /* PD */
+#define USB_CNTR_PDWN_Msk                       (0x1UL << USB_CNTR_PDWN_Pos)
+#define USB_CNTR_PDWN                           USB_CNTR_PDWN_Msk
+#undef USB_CNTR_LP_MODE_Pos
+#undef USB_CNTR_LP_MODE_Msk
+#undef USB_CNTR_LP_MODE
+#define USB_CNTR_LP_MODE_Pos                    (10U)  /* LP_MODE */
+#define USB_CNTR_LP_MODE_Msk                    (0x1UL << USB_CNTR_LP_MODE_Pos)
+#define USB_CNTR_LP_MODE                        USB_CNTR_LP_MODE_Msk
+#undef USB_CNTR_FSUSP_Pos
+#undef USB_CNTR_FSUSP_Msk
+#undef USB_CNTR_FSUSP
+#define USB_CNTR_FSUSP_Pos                      (11U)  /* FSUSPD */
+#define USB_CNTR_FSUSP_Msk                      (0x1UL << USB_CNTR_FSUSP_Pos)
+#define USB_CNTR_FSUSP                          USB_CNTR_FSUSP_Msk
+#undef USB_CNTR_RESUME_Pos
+#undef USB_CNTR_RESUME_Msk
+#undef USB_CNTR_RESUME
+#define USB_CNTR_RESUME_Pos                     (12U)  /* RESUM */
+#define USB_CNTR_RESUME_Msk                     (0x1UL << USB_CNTR_RESUME_Pos)
+#define USB_CNTR_RESUME                         USB_CNTR_RESUME_Msk
+#define USB_CNTR_PU_Pos                         (13U)  /* PU (DP pull-up, replaces ST BCDR.DPPU) */
+#define USB_CNTR_PU_Msk                         (0x1UL << USB_CNTR_PU_Pos)
+#define USB_CNTR_PU                             USB_CNTR_PU_Msk
+#undef USB_CNTR_ESOFM_Pos
+#undef USB_CNTR_ESOFM_Msk
+#undef USB_CNTR_ESOFM
+#define USB_CNTR_ESOFM_Pos                      (0U)   /* ESOFM */
+#define USB_CNTR_ESOFM_Msk                      (0x1UL << USB_CNTR_ESOFM_Pos)
+#define USB_CNTR_ESOFM                          USB_CNTR_ESOFM_Msk
+#undef USB_CNTR_SOFM_Pos
+#undef USB_CNTR_SOFM_Msk
+#undef USB_CNTR_SOFM
+#define USB_CNTR_SOFM_Pos                       (1U)   /* SOFM */
+#define USB_CNTR_SOFM_Msk                       (0x1UL << USB_CNTR_SOFM_Pos)
+#define USB_CNTR_SOFM                           USB_CNTR_SOFM_Msk
+#undef USB_CNTR_RESETM_Pos
+#undef USB_CNTR_RESETM_Msk
+#undef USB_CNTR_RESETM
+#define USB_CNTR_RESETM_Pos                     (2U)   /* RSTM */
+#define USB_CNTR_RESETM_Msk                     (0x1UL << USB_CNTR_RESETM_Pos)
+#define USB_CNTR_RESETM                         USB_CNTR_RESETM_Msk
+#undef USB_CNTR_SUSPM_Pos
+#undef USB_CNTR_SUSPM_Msk
+#undef USB_CNTR_SUSPM
+#define USB_CNTR_SUSPM_Pos                      (3U)   /* SUSPDM */
+#define USB_CNTR_SUSPM_Msk                      (0x1UL << USB_CNTR_SUSPM_Pos)
+#define USB_CNTR_SUSPM                          USB_CNTR_SUSPM_Msk
+#undef USB_CNTR_WKUPM_Pos
+#undef USB_CNTR_WKUPM_Msk
+#undef USB_CNTR_WKUPM
+#define USB_CNTR_WKUPM_Pos                      (4U)   /* WKUPM */
+#define USB_CNTR_WKUPM_Msk                      (0x1UL << USB_CNTR_WKUPM_Pos)
+#define USB_CNTR_WKUPM                          USB_CNTR_WKUPM_Msk
+#undef USB_CNTR_ERRM_Pos
+#undef USB_CNTR_ERRM_Msk
+#undef USB_CNTR_ERRM
+#define USB_CNTR_ERRM_Pos                       (5U)   /* ERRORM */
+#define USB_CNTR_ERRM_Msk                       (0x1UL << USB_CNTR_ERRM_Pos)
+#define USB_CNTR_ERRM                           USB_CNTR_ERRM_Msk
+#undef USB_CNTR_PMAOVRM_Pos
+#undef USB_CNTR_PMAOVRM_Msk
+#undef USB_CNTR_PMAOVRM
+#define USB_CNTR_PMAOVRM_Pos                    (7U)   /* PMAOM */
+#define USB_CNTR_PMAOVRM_Msk                    (0x1UL << USB_CNTR_PMAOVRM_Pos)
+#define USB_CNTR_PMAOVRM                        USB_CNTR_PMAOVRM_Msk
+#undef USB_CNTR_CTRM_Pos
+#undef USB_CNTR_CTRM_Msk
+#undef USB_CNTR_CTRM
+#define USB_CNTR_CTRM_Pos                       (6U)   /* CTRSM */
+#define USB_CNTR_CTRM_Msk                       (0x1UL << USB_CNTR_CTRM_Pos)
+#define USB_CNTR_CTRM                           USB_CNTR_CTRM_Msk
+
+/* USB_STS register bits:  DIR[12] EP_ID[11:8] PMAO[7] CTRS[6] ERROR[5] WKUP[4]
+ *   SUSPD[3] RST[2] SOF[1] ESOF[0]
+ */
+#undef USB_ISTR_EP_ID_Pos
+#undef USB_ISTR_EP_ID_Msk
+#undef USB_ISTR_EP_ID
+#define USB_ISTR_EP_ID_Pos                      (8U)
+#define USB_ISTR_EP_ID_Msk                      (0xFUL << USB_ISTR_EP_ID_Pos)
+#define USB_ISTR_EP_ID                          USB_ISTR_EP_ID_Msk
+#undef USB_ISTR_DIR_Pos
+#undef USB_ISTR_DIR_Msk
+#undef USB_ISTR_DIR
+#define USB_ISTR_DIR_Pos                        (12U)
+#define USB_ISTR_DIR_Msk                        (0x1UL << USB_ISTR_DIR_Pos)
+#define USB_ISTR_DIR                            USB_ISTR_DIR_Msk
+#undef USB_ISTR_ESOF_Pos
+#undef USB_ISTR_ESOF_Msk
+#undef USB_ISTR_ESOF
+#define USB_ISTR_ESOF_Pos                       (0U)
+#define USB_ISTR_ESOF_Msk                       (0x1UL << USB_ISTR_ESOF_Pos)
+#define USB_ISTR_ESOF                           USB_ISTR_ESOF_Msk
+#undef USB_ISTR_SOF_Pos
+#undef USB_ISTR_SOF_Msk
+#undef USB_ISTR_SOF
+#define USB_ISTR_SOF_Pos                        (1U)
+#define USB_ISTR_SOF_Msk                        (0x1UL << USB_ISTR_SOF_Pos)
+#define USB_ISTR_SOF                            USB_ISTR_SOF_Msk
+#undef USB_ISTR_RESET_Pos
+#undef USB_ISTR_RESET_Msk
+#undef USB_ISTR_RESET
+#define USB_ISTR_RESET_Pos                      (2U)
+#define USB_ISTR_RESET_Msk                      (0x1UL << USB_ISTR_RESET_Pos)
+#define USB_ISTR_RESET                          USB_ISTR_RESET_Msk
+#undef USB_ISTR_SUSP_Pos
+#undef USB_ISTR_SUSP_Msk
+#undef USB_ISTR_SUSP
+#define USB_ISTR_SUSP_Pos                       (3U)
+#define USB_ISTR_SUSP_Msk                       (0x1UL << USB_ISTR_SUSP_Pos)
+#define USB_ISTR_SUSP                           USB_ISTR_SUSP_Msk
+#undef USB_ISTR_WKUP_Pos
+#undef USB_ISTR_WKUP_Msk
+#undef USB_ISTR_WKUP
+#define USB_ISTR_WKUP_Pos                       (4U)
+#define USB_ISTR_WKUP_Msk                       (0x1UL << USB_ISTR_WKUP_Pos)
+#define USB_ISTR_WKUP                           USB_ISTR_WKUP_Msk
+#undef USB_ISTR_ERR_Pos
+#undef USB_ISTR_ERR_Msk
+#undef USB_ISTR_ERR
+#define USB_ISTR_ERR_Pos                        (5U)
+#define USB_ISTR_ERR_Msk                        (0x1UL << USB_ISTR_ERR_Pos)
+#define USB_ISTR_ERR                            USB_ISTR_ERR_Msk
+#undef USB_ISTR_PMAOVR_Pos
+#undef USB_ISTR_PMAOVR_Msk
+#undef USB_ISTR_PMAOVR
+#define USB_ISTR_PMAOVR_Pos                     (7U)
+#define USB_ISTR_PMAOVR_Msk                     (0x1UL << USB_ISTR_PMAOVR_Pos)
+#define USB_ISTR_PMAOVR                         USB_ISTR_PMAOVR_Msk
+#undef USB_ISTR_CTR_Pos
+#undef USB_ISTR_CTR_Msk
+#undef USB_ISTR_CTR
+#define USB_ISTR_CTR_Pos                        (6U)
+#define USB_ISTR_CTR_Msk                        (0x1UL << USB_ISTR_CTR_Pos)
+#define USB_ISTR_CTR                            USB_ISTR_CTR_Msk
+
+/* The ST bank above is skipped under N32, so re-provide the macros whose bit
+ * positions are identical on N32 (so the later PCD_* macros still resolve):
+
+ * USB_EPADDR[3:0] -- same as ST (endpoint address). */
+#undef USB_EPADDR_FIELD_Pos
+#undef USB_EPADDR_FIELD_Msk
+#undef USB_EPADDR_FIELD
+#define USB_EPADDR_FIELD_Pos                    (0U)
+#define USB_EPADDR_FIELD_Msk                    (0xFUL << USB_EPADDR_FIELD_Pos)
+#define USB_EPADDR_FIELD                        USB_EPADDR_FIELD_Msk
+
+/* USB_ADDR (device address): EFUC[7] ADDR[6:0], same as ST USB_DADDR. */
+#undef USB_DADDR_ADD_Pos
+#undef USB_DADDR_ADD_Msk
+#undef USB_DADDR_ADD
+#define USB_DADDR_ADD_Pos                       (0U)
+#define USB_DADDR_ADD_Msk                       (0x7FUL << USB_DADDR_ADD_Pos)
+#define USB_DADDR_ADD                           USB_DADDR_ADD_Msk
+#undef USB_DADDR_EF_Pos
+#undef USB_DADDR_EF_Msk
+#undef USB_DADDR_EF
+#define USB_DADDR_EF_Pos                        (7U)   /* EFUC */
+#define USB_DADDR_EF_Msk                        (0x1UL << USB_DADDR_EF_Pos)
+#define USB_DADDR_EF                            USB_DADDR_EF_Msk
+
+/* USB_BUFTAB: BUFTAB[15:3] (8-byte aligned), same as ST USB_BTABLE. */
+#undef USB_BTABLE_BTABLE_Pos
+#undef USB_BTABLE_BTABLE_Msk
+#undef USB_BTABLE_BTABLE
+#define USB_BTABLE_BTABLE_Pos                   (3U)
+#define USB_BTABLE_BTABLE_Msk                   (0x1FFFUL << USB_BTABLE_BTABLE_Pos)
+#define USB_BTABLE_BTABLE                       USB_BTABLE_BTABLE_Msk
+
+#endif /* N32H4X_FSDEV */
 
 #define BTABLE_ADDRESS                         0x000U
 
@@ -1146,11 +1489,22 @@ typedef struct
 #define USB_CNTRX_NBLK_MSK                    (0x1FU << 10)
 #define USB_CNTRX_BLSIZE                      (0x1U << 15)
 
+#if defined(N32H4X_FSDEV)
+/* N32H4x: USB_EPn are 32-bit registers at 0x00 + n*4 (no reserved words),
+ * so each endpoint is a single 32-bit step. */
+
+/* SetENDPOINT */
+#define PCD_SET_ENDPOINT(USBx, bEpNum, wRegValue)  (*(__IO uint32_t *)(&(USBx)->EP0R + ((bEpNum) * 1U)) = (uint32_t)(wRegValue))
+
+/* GetENDPOINT */
+#define PCD_GET_ENDPOINT(USBx, bEpNum)             (*(__IO uint32_t *)(&(USBx)->EP0R + ((bEpNum) * 1U)))
+#else
 /* SetENDPOINT */
 #define PCD_SET_ENDPOINT(USBx, bEpNum, wRegValue)  (*(__IO uint16_t *)(&(USBx)->EP0R + ((bEpNum) * 2U)) = (uint16_t)(wRegValue))
 
 /* GetENDPOINT */
 #define PCD_GET_ENDPOINT(USBx, bEpNum)             (*(__IO uint16_t *)(&(USBx)->EP0R + ((bEpNum) * 2U)))
+#endif
 
 /**
   * @brief  sets the type in the endpoint register(bits EP_TYPE[1:0])
@@ -1353,6 +1707,26 @@ typedef struct
   * @param  bEpNum Endpoint Number.
   * @retval None
   */
+#if defined(N32H4X_FSDEV)
+/* N32H4x: CTRS_RX is bit8, CTRS_TX is bit12 (rc_w0, write-0 to clear). */
+#define PCD_CLEAR_RX_EP_CTR(USBx, bEpNum) \
+  do { \
+    uint16_t _wRegVal; \
+    \
+    _wRegVal = PCD_GET_ENDPOINT((USBx), (bEpNum)) & (0xFEFFU & USB_EPREG_MASK); \
+    \
+    PCD_SET_ENDPOINT((USBx), (bEpNum), (_wRegVal | USB_EP_CTR_TX)); \
+  } while(0) /* PCD_CLEAR_RX_EP_CTR */
+
+#define PCD_CLEAR_TX_EP_CTR(USBx, bEpNum) \
+  do { \
+    uint16_t _wRegVal; \
+    \
+    _wRegVal = PCD_GET_ENDPOINT((USBx), (bEpNum)) & (0xEFFFU & USB_EPREG_MASK); \
+    \
+    PCD_SET_ENDPOINT((USBx), (bEpNum), (_wRegVal | USB_EP_CTR_RX)); \
+  } while(0) /* PCD_CLEAR_TX_EP_CTR */
+#else
 #define PCD_CLEAR_RX_EP_CTR(USBx, bEpNum) \
   do { \
     uint16_t _wRegVal; \
@@ -1370,6 +1744,7 @@ typedef struct
     \
     PCD_SET_ENDPOINT((USBx), (bEpNum), (_wRegVal | USB_EP_CTR_RX)); \
   } while(0) /* PCD_CLEAR_TX_EP_CTR */
+#endif
 
 /**
   * @brief  Toggles DTOG_RX / DTOG_TX bit in the endpoint register.

@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author           Notes
  * 2026-01-24     ox-horse         first version
+ * 2026-08-28     FUNMSAN          add N32H47_48x and N32H49x support
  */
 
 #ifndef __DRV_CONFIG_H_
@@ -34,11 +35,19 @@ extern "C" {
 #elif defined(SOC_SERIES_N32H49x)
 #include "h49x/dma_config.h"
 #include "h49x/uart_config.h"
+#include "h49x/adc_config.h"
+#include "h49x/dac_config.h"
 #include "h49x/can_config.h"
+#include "h49x/spi_config.h"
+#include "h49x/i2c_hard_config.h"
 #elif defined(SOC_SERIES_N32H47x_48x)
 #include "h47x_48x/dma_config.h"
 #include "h47x_48x/uart_config.h"
+#include "h47x_48x/adc_config.h"
+#include "h47x_48x/dac_config.h"
 #include "h47x_48x/can_config.h"
+#include "h47x_48x/spi_config.h"
+#include "h47x_48x/i2c_hard_config.h"
 #endif /* defined(SOC_SERIES_N32H7xx) */
 
 #ifdef __cplusplus

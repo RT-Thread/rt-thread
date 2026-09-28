@@ -37,6 +37,9 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
     if GetDepend(['RT_CHERRYUSB_DEVICE_FSDEV_ST']):
         src += Glob('port/fsdev/usb_dc_fsdev.c')
         src += Glob('port/fsdev/usb_glue_st.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_FSDEV_NATION']):
+        src += Glob('port/fsdev/usb_dc_fsdev.c')
+        src += Glob('port/fsdev/usb_glue_nation.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_FSDEV_CUSTOM']):
         src += Glob('port/fsdev/usb_dc_fsdev.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_ST']):

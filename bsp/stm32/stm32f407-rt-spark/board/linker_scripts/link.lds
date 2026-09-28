@@ -80,15 +80,15 @@ SECTIONS
     .ARM.exidx :
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-
-        /* This is used by the startup in order to initialize the .data secion */
-        _sidata = .;
     } > CODE
     __exidx_end = .;
 
+    /* Used by the startup to initialize .data. */
+    _sidata = LOADADDR(.data);
+
     /* .data section which is used for initialized data */
 
-    .data : AT (_sidata)
+    .data :
     {
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
@@ -106,7 +106,7 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
-    } >RAM1
+    } >RAM1 AT> CODE
 
     .stack (NOLOAD):
     {

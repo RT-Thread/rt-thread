@@ -221,6 +221,7 @@
         "stm32/stm32h7r7-artpi2",
         "stm32/stm32mp157a-st-discovery",
         "stm32/stm32mp157a-st-ev1",
+        "stm32/stm32n657-st-nucleo",
         "stm32/stm32u575-st-nucleo",
         "stm32/stm32u585-iot02a",
         "stm32/stm32wb55-st-nucleo"
@@ -426,6 +427,7 @@
       "RTT_TOOL_CHAIN": "sourcery-riscv-none-embed",
       "SUB_RTT_BSP": [
         "k210",
+        "wch/risc-v/ch32v203c-evt-r0",
         "wch/risc-v/ch32v208w-r0",
         "wch/risc-v/ch32v307v-r1",
         "wch/risc-v/yd-ch32v307vct6",
@@ -530,7 +532,6 @@
         "xuantie/smartl/e907",
         "xuantie/xiaohui/c906",
         "xuantie/xiaohui/c907",
-        "xuantie/xiaohui/c908",
         "xuantie/xiaohui/c908x",
         "xuantie/xiaohui/c920",
         "xuantie/xiaohui/r908",
@@ -543,7 +544,8 @@
       "RTT_TOOL_CHAIN": "sourcery-Xuantie-900-gcc-linux-musl",
       "SUB_RTT_BSP": [
         "xuantie/virt64/c906",
-        "xuantie/virt64/c908"
+        "xuantie/virt64/c908",
+        "xuantie/xiaohui/c908"
       ]
     },
     {

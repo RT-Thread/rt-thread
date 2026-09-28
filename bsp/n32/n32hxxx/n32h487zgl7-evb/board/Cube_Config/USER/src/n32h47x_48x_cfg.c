@@ -134,7 +134,12 @@ bool RCC_Configuration(void)
     ClockStatus = RCC_WaitHsiStable();
     if (ClockStatus != SUCCESS) return false;
      
-    RCC_ConfigPll(RCC_PLL_SRC_HSI,RCC_PLL_PRE_2,RCC_PLL_MUL_60,RCC_PLLOUT_DIV_1);
+    RCC_ConfigHse(RCC_HSE_ENABLE);
+    /* Wait till HSE is ready */
+    ClockStatus = RCC_WaitHseStable();
+    if (ClockStatus != SUCCESS) return false;
+     
+    RCC_ConfigPll(RCC_PLL_SRC_HSE,RCC_PLL_PRE_2,RCC_PLL_MUL_60,RCC_PLLOUT_DIV_1);
     /* Enable PLL */
     RCC_EnablePll(ENABLE);
     /* Wait till PLL is ready */
@@ -177,7 +182,7 @@ bool GPIO_Configuration(void)
     GPIO_InitStruct(&GPIO_InitStructure);
      
     /* Enable the GPIO clock*/
-    RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOA | RCC_AHB_PERIPHEN_GPIOH, ENABLE);
+    RCC_EnableAHB1PeriphClk(RCC_AHB_PERIPHEN_GPIOA | RCC_AHB_PERIPHEN_GPIOH | RCC_AHB_PERIPHEN_GPIOC, ENABLE);
     RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_AFIO,ENABLE);
     
      

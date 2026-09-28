@@ -24,8 +24,6 @@
 #endif
 
 #if defined(SOC_SERIES_GD32E50x) || defined(SOC_SERIES_GD32F10x) || defined(SOC_SERIES_GD32F20x) || defined(SOC_SERIES_GD32F30x)
-    #define gpio_output_options_set   gpio_init
-    #define GPIO_OTYPE                GPIO_MODE_OUT_PP
     #define GPIO_OSPEED               GPIO_OSPEED_50MHZ
 #elif defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
     #define GPIO_OTYPE                GPIO_OTYPE_PP
@@ -485,14 +483,18 @@ void gd32_uart_gpio_init(struct gd32_uart *uart)
     /* configure USART Tx as alternate function push-pull */
 #if !defined(SOC_SERIES_GD32E50x) && !defined(SOC_SERIES_GD32F10x) && !defined(SOC_SERIES_GD32F20x) && !defined(SOC_SERIES_GD32F30x)
     gpio_mode_set(tx_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, tx_pin);
-#endif
     gpio_output_options_set(tx_port, GPIO_OTYPE, GPIO_OSPEED, tx_pin);
+#else
+    gpio_init(tx_port, GPIO_MODE_AF_PP, GPIO_OSPEED, tx_pin);
+#endif
 
-    /* configure USART Rx as alternate function push-pull */
+    /* configure USART Rx as input with pull-up */
 #if !defined(SOC_SERIES_GD32E50x) && !defined(SOC_SERIES_GD32F10x) && !defined(SOC_SERIES_GD32F20x) && !defined(SOC_SERIES_GD32F30x)
     gpio_mode_set(rx_port, GPIO_MODE_AF, GPIO_PUPD_PULLUP, rx_pin);
-#endif
     gpio_output_options_set(rx_port, GPIO_OTYPE, GPIO_OSPEED, rx_pin);
+#else
+    gpio_init(rx_port, GPIO_MODE_IPU, GPIO_OSPEED, rx_pin);
+#endif
 
     NVIC_SetPriority(uart->irqn, 0);
     NVIC_EnableIRQ(uart->irqn);

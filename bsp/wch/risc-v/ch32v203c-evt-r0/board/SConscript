@@ -1,0 +1,19 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+software_irq.c
+startup_ch32v20x_D6.S
+''')
+
+path =  [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+Return('group')

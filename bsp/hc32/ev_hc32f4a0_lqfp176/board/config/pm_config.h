@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2023-05-12     CDT          first version
  * 2024-06-13     CDT          disable pm tickless timer
+ * 2026-06-24     CDT          delete PM_TICKLESS_TIMER_ENABLE_MASK for unsupport pm tickless timer
  */
 
 #ifndef __PM_CONFIG_H__
@@ -20,10 +21,6 @@ extern "C" {
 
 #ifdef BSP_USING_PM
 extern void rt_hw_board_pm_sysclk_cfg(uint8_t run_mode);
-
-#ifndef PM_TICKLESS_TIMER_ENABLE_MASK
-#define PM_TICKLESS_TIMER_ENABLE_MASK (0UL)
-#endif
 
 /**
  * @brief  run mode config @ref pm_run_mode_config structure
