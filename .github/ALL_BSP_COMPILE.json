@@ -496,6 +496,13 @@
       ]
     },
     {
+      "RTT_BSP": "ESP32S3",
+      "RTT_TOOL_CHAIN": "sourcery-xtensa-esp32s3",
+      "SUB_RTT_BSP": [
+        "ESP/ESP32_S3"
+      ]
+    },
+    {
       "RTT_BSP": "i386-unknown",
       "RTT_TOOL_CHAIN": "sourcery-i386-unknown-elf",
       "SUB_RTT_BSP": [

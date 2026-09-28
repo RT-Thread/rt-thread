@@ -431,3 +431,8 @@ unicore32-linux-gcc:
   bsp:
   - sep6200
   count: 1
+xtensa-esp32s3-elf-gcc:
+  bsp:
+  - ESP32_S3
+  count: 1
+  download_url: https://github.com/espressif/crosstool-NG/releases/download/esp-12.2.0_20230208/xtensa-esp32s3-elf-12.2.0_20230208-x86_64-linux-gnu.tar.xz
