@@ -4,6 +4,9 @@
  */
 #include "rtconfig.h"
 #pragma once
+#ifdef SOC_ESP32_C6
+#include "sdkconfig_c6.h"
+#else
 #define CONFIG_SOC_ADC_SUPPORTED 1
 #define CONFIG_SOC_DEDICATED_GPIO_SUPPORTED 1
 #define CONFIG_SOC_GDMA_SUPPORTED 1
@@ -797,4 +800,5 @@
 #define CONFIG_TIMER_TASK_STACK_SIZE CONFIG_ESP_TIMER_TASK_STACK_SIZE
 #if defined(BSP_USING_WIFI) || defined(BSP_USING_BLE)
 #define CONFIG_UDP_RECVMBOX_SIZE CONFIG_LWIP_UDP_RECVMBOX_SIZE
+#endif
 #endif

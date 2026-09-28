@@ -21,6 +21,12 @@ ESP32_C3:
   gcc: riscv32-esp-elf-gcc
   menuconfig: true
   rtconfig.h: true
+ESP32_C6:
+  .config: true
+  README.md: true
+  gcc: riscv32-esp-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
 Infineon/psoc6-cy8ckit-062-BLE:
   .config: true
   README.md: true

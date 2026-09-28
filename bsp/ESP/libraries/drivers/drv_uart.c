@@ -14,11 +14,10 @@
 #include "driver/uart.h"
 #include "hal/uart_hal.h"
 #include "sdkconfig.h"
-
 #ifdef RT_USING_SERIAL_V1
 
 #ifdef CONFIG_UART_ISR_IN_IRAM
-#define UART_ISR_ATTR     IRAM_ATTR
+#define UART_ISR_ATTR IRAM_ATTR
 #else
 #define UART_ISR_ATTR
 #endif
@@ -93,8 +92,7 @@ static int mcu_uart_getc(struct rt_serial_device *serial)
     }
 }
 
-static const struct rt_uart_ops _uart_ops =
-{
+static const struct rt_uart_ops _uart_ops = {
     mcu_uart_configure,
     mcu_uart_control,
     mcu_uart_putc,
@@ -112,10 +110,14 @@ int rt_hw_uart_init(void)
     uart_config_t uart_config = {
         .baud_rate = BAUD_RATE_115200,
         .data_bits = UART_DATA_8_BITS,
-        .parity    = UART_PARITY_DISABLE,
+        .parity = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+#ifdef SOC_ESP32_C6
+        .source_clk = UART_SCLK_DEFAULT,
+#else
         .source_clk = UART_SCLK_APB,
+#endif
     };
     int intr_alloc_flags = 0;
 
