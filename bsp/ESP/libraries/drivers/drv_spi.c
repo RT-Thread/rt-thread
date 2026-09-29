@@ -35,16 +35,16 @@
 
 typedef enum
 {
-    SPI_CMD_HD_WRBUF   = 0x01,   /*!< Half-duplex write of the WRBUF */
-    SPI_CMD_HD_RDBUF   = 0x02,   /*!< Half-duplex read of the RDBUF */
-    SPI_CMD_HD_WRDMA   = 0x03,   /*!< Half-duplex write through DMA */
-    SPI_CMD_HD_RDDMA   = 0x04,   /*!< Half-duplex read through DMA */
+    SPI_CMD_HD_WRBUF = 0x01,   /*!< Half-duplex write of the WRBUF */
+    SPI_CMD_HD_RDBUF = 0x02,   /*!< Half-duplex read of the RDBUF */
+    SPI_CMD_HD_WRDMA = 0x03,   /*!< Half-duplex write through DMA */
+    SPI_CMD_HD_RDDMA = 0x04,   /*!< Half-duplex read through DMA */
     SPI_CMD_HD_SEG_END = 0x05,   /*!< End of a half-duplex segment */
-    SPI_CMD_HD_EN_QPI  = 0x06,   /*!< Enter QPI mode */
-    SPI_CMD_HD_WR_END  = 0x07,   /*!< End of a half-duplex write */
-    SPI_CMD_HD_INT0    = 0x08,   /*!< Internal operation 0 */
-    SPI_CMD_HD_INT1    = 0x09,   /*!< Internal operation 1 */
-    SPI_CMD_HD_INT2    = 0x0A,   /*!< Internal operation 2 */
+    SPI_CMD_HD_EN_QPI = 0x06,   /*!< Enter QPI mode */
+    SPI_CMD_HD_WR_END = 0x07,   /*!< End of a half-duplex write */
+    SPI_CMD_HD_INT0 = 0x08,   /*!< Internal operation 0 */
+    SPI_CMD_HD_INT1 = 0x09,   /*!< Internal operation 1 */
+    SPI_CMD_HD_INT2 = 0x0A,   /*!< Internal operation 2 */
 } spi_command_t;
 #endif /* SOC_ESP32_C6 */
 
@@ -104,19 +104,14 @@ static struct rt_spi_ops esp32_spi_ops =
     .xfer = spixfer,
 };
 
-/**
-* @brief SPI Initialization
-* @param esp32_spi: SPI BUS
-* @retval None
-*/
-static void esp32_spi_init(struct esp32_spi *esp32_spi)
-{
-    spi_configure(NULL,NULL);
-}
-
 static rt_err_t spi_configure(struct rt_spi_device* device,
                           struct rt_spi_configuration* configuration)
 {
+    if (configuration == NULL)
+    {
+        return -RT_EINVAL;
+    }
+
     static spi_bus_config_t buscfg =
     {
         .miso_io_num=SPI2_IOMUX_PIN_NUM_MISO,              /*MISO*/
