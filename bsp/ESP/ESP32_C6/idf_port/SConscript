@@ -16,4 +16,122 @@ CPPPATH = Split(
 
 group = DefineGroup('idf_port', src, depend = [''], CPPPATH = CPPPATH)
 
+# bsp/ESP/libraries/drivers/drv_spi.c calls the ESP-IDF master mode SPI driver:
+# spi_bus_initialize() lives in components/driver/spi_common.c and
+# spi_bus_add_device()/spi_device_acquire_bus()/spi_device_polling_transmit()/
+# spi_device_release_bus() in components/driver/spi_master.c. The package's own
+# driver group drops both for C6 (packages/ESP-IDF-latest/SConscript:999 keeps
+# only gpio.c, rtc_io.c, uart.c and spi_bus_lock.c out of components/driver), so
+# they are compiled here -- and only with BSP_USING_SPI selected, so a default
+# build adds nothing.
+if GetDepend(['BSP_USING_SPI']):
+    from env_package import find_package_path
+
+    bsp_root = os.path.normpath(os.path.join(GetCurrentDir(), '..'))
+    idf = find_package_path(bsp_root, 'ESP-IDF-latest',
+                            relative_to=bsp_root, pathsep='/')
+    wrapper = find_package_path(bsp_root, 'FreeRTOS-Wrapper-latest',
+                               relative_to=bsp_root, pathsep='/')
+
+    # scons resolves these against the BSP root (the variant dir 'build' mirrors
+    # them), so '..' steps out of this idf_port directory; the include
+    # directories below are absolute to stay independent of that.
+    spi_src = [
+        '../%s/components/driver/spi_common.c' % idf,
+        '../%s/components/driver/spi_master.c' % idf,
+        # spi_common.c and spi_master.c are written against the HAL layer, and
+        # this package's C6 hal group drops spi_hal.c; without it the ten
+        # spi_hal_* calls those two files make have no definition.
+        '../%s/components/hal/spi_hal.c' % idf,
+        # spi_common.c reaches GDMA through its own SOC_GDMA_SUPPORTED section
+        # (soc/esp32c6/include/soc/soc_caps.h defines it as 1), and that code is
+        # compiled into the object no matter what the third argument of
+        # spi_bus_initialize() is. The package drops every path containing
+        # 'gdma' from its C6 source list, so the driver and its hal wrapper are
+        # compiled here instead. That gdma.c is written against the C3
+        # generation of hal/gdma_ll.h; SConstruct rewrites its gdma_ll_* call
+        # sites to the prototypes in this package's C6 header before anything is
+        # compiled.
+        '../%s/components/esp_hw_support/gdma.c' % idf,
+        '../%s/components/hal/gdma_hal.c' % idf,
+        # gdma.c reads gdma_periph_signals (gdma.c:541 and on) to map a
+        # GDMA_TRIG_PERIPH_* onto the signal slots of a channel; the one object
+        # file defining it is this SoC table, which the package drops for the
+        # same 'gdma' reason as the two files above.
+        '../%s/components/soc/esp32c6/gdma_periph.c' % idf,
+        # this gcc has no __atomic_compare_exchange_1 (see the file); the byte
+        # sized compare-exchange of spi_common.c's atomic_bool needs one.
+        'src/rt_atomic_cas_stub.c',
+    ]
+
+    # headers the two files include. freertos/queue.h and freertos/task.h come
+    # from the RT-Thread FreeRTOS wrapper, like everywhere else in this BSP: the
+    # kernel copy inside the package wants an IDF sdkconfig this BSP does not
+    # carry.
+    spi_path = [os.path.join(bsp_root, idf, 'components', p) for p in (
+        'driver/include',
+        'esp_common/include',
+        'esp_hw_support/include',
+        'esp_hw_support/port/esp32c6/include',
+        'esp_rom/include',
+        'esp_system/include',
+        'esp_system/port/include',
+        'esp_system/port/include/private',
+        'esp_timer/include',
+        'hal/include',
+        'hal/esp32c6/include',
+        'hal/platform_port/include',
+        'heap/include',
+        'log/include',
+        'newlib/platform_include',
+        'riscv/include',
+        'soc/include',
+        'soc/esp32c6/include',
+    )] + [os.path.join(bsp_root, wrapper, 'FreeRTOS/include')]
+
+    # hal/esp32c6/include/hal/spi_ll.h names SPI_CLK_SRC_XTAL/SPI_CLK_SRC_RC_FAST
+    # (enumerators of soc/clk_tree_defs.h) and spi_command_t with its
+    # SPI_CMD_HD_* values, and this package snapshot defines neither of the
+    # latter anywhere -- only spi_ll.h uses them, hal/include/hal/spi_types.h has
+    # no spi_command_t. drv_spi.c carries the declarations for its own
+    # translation unit; these flags give the package's own sources the same
+    # thing. The real home of both is the package's hal/include/hal/spi_types.h.
+    # One string, because building.py appends LOCAL_CFLAGS to a CFLAGS string.
+    spi_flags = (
+        '-include soc/clk_tree_defs.h'
+        ' -Dspi_command_t=int'
+        ' -DSPI_CMD_HD_WRBUF=0x01'
+        ' -DSPI_CMD_HD_RDBUF=0x02'
+        ' -DSPI_CMD_HD_WRDMA=0x03'
+        ' -DSPI_CMD_HD_RDDMA=0x04'
+        ' -DSPI_CMD_HD_SEG_END=0x05'
+        ' -DSPI_CMD_HD_EN_QPI=0x06'
+        ' -DSPI_CMD_HD_WR_END=0x07'
+        ' -DSPI_CMD_HD_INT0=0x08'
+        ' -DSPI_CMD_HD_INT1=0x09'
+        ' -DSPI_CMD_HD_INT2=0x0A'
+    )
+
+    group += DefineGroup('idf_port_spi', spi_src, depend = ['BSP_USING_SPI'],
+                         LOCAL_CPPPATH = spi_path, LOCAL_CFLAGS = spi_flags)
+
+    # spi_hal.c is only init/deinit/cal_clock. spi_hal_setup_device,
+    # spi_hal_setup_trans, spi_hal_prepare_data, spi_hal_user_start and
+    # spi_hal_fetch_result -- everything spi_master.c drives a transfer with --
+    # are in spi_hal_iram.c, the second file of that pair, which this package's
+    # C6 drop_hal list removes as well.
+    #
+    # It is a group of its own because it is the only source that may see
+    # include/spi_ll_master_start_compat.h: that header defines a macro named
+    # spi_ll_master_user_start, and giving it to spi_common.c, spi_master.c or
+    # gdma.c would only shadow the C6 header's own helpers in files that never
+    # ask for that name.
+    iram_path = [os.path.join(bsp_root, 'idf_port', 'include')] + spi_path
+    group += DefineGroup('idf_port_spi_iram',
+                         ['../%s/components/hal/spi_hal_iram.c' % idf],
+                         depend = ['BSP_USING_SPI'],
+                         LOCAL_CPPPATH = iram_path,
+                         LOCAL_CFLAGS = spi_flags +
+                                        ' -include spi_ll_master_start_compat.h')
+
 Return('group')
