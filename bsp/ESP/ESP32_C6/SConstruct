@@ -111,6 +111,158 @@ def _use_c6_idf_when_official_has_none():
 
 _use_c6_idf_when_official_has_none()
 
+def _match_idf_spi_lock_stub_to_spi_config():
+    """components/esp_hw_support/port/esp32c6/spi_lock_stub.c defines
+    spicommon_bus_using_iomux() and spi_bus_lock_get_by_id() as
+    always-true/always-0, and the package's C6 block compiles it because its
+    directory scan takes every .c under that port directory that is not in
+    skip_name. It is there because the package does not build
+    components/driver/spi_common.c for C6, and components/spi_flash/
+    esp_flash_spi_init.c needs those two names: with SPI off this BSP has the
+    same hole, so the stub stays.
+
+    idf_port/SConscript compiles spi_common.c itself once BSP_USING_SPI is
+    selected, and spi_common.c:726 and :743 define the same two names -- the
+    real ones, the second of which hands the master driver a bus lock instead of
+    the stub's 0. Two strong definitions of both names in one image is a link
+    error, so the scan has to skip the stub in that configuration only. The
+    switch is written into the package's own SConscript because that scan lives
+    nowhere else; packages/ is not in the repository, so this is redone on every
+    build and on every re-fetch of the package, and it is written as bytes to
+    keep the file's own line endings.
+    """
+    import re
+    from env_package import find_package_path
+
+    with open(os.path.join(SDK_ROOT, 'rtconfig.h'), 'r',
+              encoding='utf-8', errors='replace') as f:
+        spi_selected = re.search(r'^[ \t]*#[ \t]*define[ \t]+BSP_USING_SPI[ \t]*$',
+                                 f.read(), re.M) is not None
+
+    sc = os.path.join(os.path.abspath(
+        find_package_path(SDK_ROOT, 'ESP-IDF-latest')), 'SConscript')
+    if not os.path.isfile(sc):
+        return
+    with open(sc, 'rb') as f:
+        text = f.read()
+    entry = b"\n        'spi_lock_stub',"
+    have = entry in text
+    if have == spi_selected:
+        return
+    if spi_selected:
+        marker = b'skip_name = ('
+        if marker not in text:
+            raise RuntimeError('%s has no %s to skip spi_lock_stub.c in'
+                               % (sc, marker.decode()))
+        text = text.replace(marker, marker + entry, 1)
+    else:
+        text = text.replace(entry, b'', 1)
+    with open(sc, 'wb') as f:
+        f.write(text)
+
+_match_idf_spi_lock_stub_to_spi_config()
+
+def _adapt_idf_gdma_to_c6_ll():
+    """idf_port/SConscript compiles the package's components/esp_hw_support/
+    gdma.c when BSP_USING_SPI is on, because spi_common.c's
+    SOC_GDMA_SUPPORTED section calls gdma_new_channel() and friends. That gdma.c
+    is written against the C3 generation of hal/gdma_ll.h and this package's
+    components/hal/esp32c6/include/hal/gdma_ll.h is a different one:
+
+      - gdma_ll_enable_m2m_mode() (gdma.c:259) does not exist on C6. C6 folds
+        the same thing into the two connect helpers: gdma_ll_rx_connect_to_periph
+        (gdma_ll.h:297) writes in_conf0.mem_trans_en = (periph ==
+        GDMA_TRIG_PERIPH_M2M) itself, and gdma_ll_rx_disconnect_from_periph
+        (gdma_ll.h:306) clears it. So the call goes away rather than being
+        renamed to something C6 does not do.
+      - gdma_ll_tx/rx_connect_to_periph take four arguments on C6 (gdma_ll.h:520
+        and :297) -- dev, channel, periph, periph_id -- while gdma.c:264/:269
+        pass three. gdma_trigger_t (esp_hw_support/include/esp_private/
+        gdma.h:130) keeps .periph and .instance_id apart, and .instance_id is
+        what the C3 header wrote into the same select field, so the fix is to
+        hand C6 the periph it also asks for and keep that value as periph_id.
+      - gdma.c:289/:291 disconnect by feeding GDMA_INVALID_PERIPH_TRIG back into
+        connect. C6 has no such sentinel path: it has
+        gdma_ll_tx_disconnect_from_periph (gdma_ll.h:529) and
+        gdma_ll_rx_disconnect_from_periph, which write GDMA_LL_INVALID_PERIPH_ID
+        and clear mem_trans_en.
+      - the RX connect is left inside its `periph != GDMA_TRIG_PERIPH_M2M`
+        guard, which on C6 also skips the only writer of mem_trans_en; it is
+        unguarded here and the TX guard is left alone. Rewritten below, after
+        these four.
+
+    The rewrite is here, in a tracked file, and it is a whole call expression
+    swapped for a whole call expression, so a second run finds nothing left to
+    match and cannot stack a second copy. packages/ is not in the repository.
+    """
+    import re
+    from env_package import find_package_path
+
+    gdma = os.path.join(os.path.abspath(
+        find_package_path(SDK_ROOT, 'ESP-IDF-latest')),
+        'components', 'esp_hw_support', 'gdma.c')
+    if not os.path.isfile(gdma):
+        return
+    with open(gdma, 'rb') as f:
+        text = f.read()
+
+    fixed = text
+    # C6 has no m2m setter: its rx connect sets mem_trans_en, its rx disconnect
+    # clears it. Drop the call, keep the comment above it, which still says what
+    # the connect below now does.
+    fixed = re.sub(rb'^[ \t]*gdma_ll_enable_m2m_mode\([^\r\n]*\r?\n', b'',
+                   fixed, flags=re.M)
+    for old, new in [
+            (b'gdma_ll_tx_connect_to_periph(group->hal.dev, pair->pair_id, '
+             b'trig_periph.instance_id)',
+             b'gdma_ll_tx_connect_to_periph(group->hal.dev, pair->pair_id, '
+             b'trig_periph.periph, trig_periph.instance_id)'),
+            (b'gdma_ll_rx_connect_to_periph(group->hal.dev, pair->pair_id, '
+             b'trig_periph.instance_id)',
+             b'gdma_ll_rx_connect_to_periph(group->hal.dev, pair->pair_id, '
+             b'trig_periph.periph, trig_periph.instance_id)'),
+            (b'gdma_ll_tx_connect_to_periph(group->hal.dev, pair->pair_id, '
+             b'GDMA_INVALID_PERIPH_TRIG)',
+             b'gdma_ll_tx_disconnect_from_periph(group->hal.dev, pair->pair_id)'),
+            (b'gdma_ll_rx_connect_to_periph(group->hal.dev, pair->pair_id, '
+             b'GDMA_INVALID_PERIPH_TRIG)',
+             b'gdma_ll_rx_disconnect_from_periph(group->hal.dev, pair->pair_id)'),
+    ]:
+        fixed = fixed.replace(old, new)
+
+    # The RX connect stays inside the same `periph != M2M` guard gdma.c uses for
+    # TX, and on C6 that guard is exactly what decides mem_trans_en: the only
+    # writer of that bit is gdma_ll_rx_connect_to_periph (gdma_ll.h:297-301), and
+    # it writes mem_trans_en = (periph == GDMA_TRIG_PERIPH_M2M) while doing the
+    # selection. Guarded, a memory-to-memory channel never reaches the call that
+    # would set its own mode bit, so mem_trans_en stays 0 forever. C3's
+    # gdma_ll_enable_m2m_mode -- the call removed above -- wrote that one RX bit
+    # and nothing else, so the guard replaces a call that used to be made
+    # unconditionally. TX keeps its guard: gdma_ll_tx_connect_to_periph
+    # (gdma_ll.h:520-523) throws `periph` away and writes only peri_out_sel, so
+    # for a TX channel skipping the call loses nothing.
+    rx_guarded = (
+        b'        if (trig_periph.periph != GDMA_TRIG_PERIPH_M2M) {\n'
+        b'            gdma_ll_rx_connect_to_periph(group->hal.dev, pair->pair_id,'
+        b' trig_periph.periph, trig_periph.instance_id);\n'
+        b'        }\n')
+    rx_unguarded = (
+        b'        gdma_ll_rx_connect_to_periph(group->hal.dev, pair->pair_id,'
+        b' trig_periph.periph, trig_periph.instance_id);\n')
+    for old, new in ((rx_guarded, rx_unguarded),
+                     (rx_guarded.replace(b'\n', b'\r\n'),
+                      rx_unguarded.replace(b'\n', b'\r\n'))):
+        if old in fixed:
+            fixed = fixed.replace(old, new, 1)
+            break
+
+    if fixed != text:
+        with open(gdma, 'wb') as f:
+            f.write(fixed)
+
+_adapt_idf_gdma_to_c6_ll()
+
+
 objs = PrepareBuilding(env, RTT_ROOT, remove_components = ['libc'])
 
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))
