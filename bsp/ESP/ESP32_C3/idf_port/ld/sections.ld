@@ -239,7 +239,7 @@ SECTIONS
     *(.gnu.linkonce.s2.*)
     *(.jcr)
 
-    *(EXCLUDE_FILE(*bt?* *libbtdm_app.a *libnimble.a) .data EXCLUDE_FILE(*bt?* *libbtdm_app.a *libnimble.a) .data.*)
+    *(EXCLUDE_FILE(*bt[/\\]* *libbtdm_app.a *libnimble.a) .data EXCLUDE_FILE(*bt[/\\]* *libbtdm_app.a *libnimble.a) .data.*)
     *(.dram1 .dram1.*)
     _coredump_dram_start = ABSOLUTE(.);
     *(.dram2.coredump .dram2.coredump.*)
@@ -252,7 +252,7 @@ SECTIONS
     . = ALIGN(4);
     _btdm_data_end = ABSOLUTE(.);
     _bt_data_start = ABSOLUTE(.);
-    *bt?*(.data .data.*)
+    *bt[/\\]*(.data .data.*)
     . = ALIGN(4);
     _bt_data_end = ABSOLUTE(.);
     *esp_hw_support?esp_memory_utils.*(.rodata .rodata.* .sdata2 .sdata2.* .srodata .srodata.*)
@@ -351,7 +351,7 @@ SECTIONS
     *(.ext_ram.bss .ext_ram.bss.*)
     *(COMMON)
     _bt_bss_start = ABSOLUTE(.);
-    *bt?*(.bss .bss.* COMMON)
+    *bt[/\\]*(.bss .bss.* COMMON)
     . = ALIGN(4);
     _bt_bss_end = ABSOLUTE(.);
     _btdm_bss_start = ABSOLUTE(.);
