@@ -19,11 +19,11 @@
  * so no other translation unit sees the name. packages/ is not in the
  * repository, which is why the fix lives here.
  */
-#define spi_ll_master_user_start(hw)    \
-    do                                  \
-    {                                   \
-        spi_ll_apply_config(hw);        \
-        spi_ll_user_start(hw);          \
+#define spi_ll_master_user_start(hw) \
+    do                               \
+    {                                \
+        spi_ll_apply_config(hw);     \
+        spi_ll_user_start(hw);       \
     } while (0)
 
 #endif /* RT_ESP_IDF_PORT_SPI_LL_MASTER_START_COMPAT_H */
