@@ -14,7 +14,7 @@
  *
  * Test Objectives:
  * - Validates the core kernel small memory management module functionality
- * - Verify core APIs: rt_smem_init, rt_smem_alloc, rt_smem_free, rt_smem_realloc, rt_smem_detach
+ * - Verify core APIs: rt_smem_init, rt_smem_alloc, rt_smem_free, rt_smem_realloc, rt_smem_detach, rt_calloc
  *
  * Test Scenarios:
  * - **Scenario 1 (Functional Test / mem_functional_test):**
@@ -37,6 +37,9 @@
  * 3. Memory exhaustion handling: random freeing of other blocks when realloc fails
  * 4. Reallocation to zero size (free operation) verification
  * 5. Memory content integrity verification before and after reallocation
+ * - **Scenario 4 (Calloc Overflow Test / calloc_overflow_test):**
+ * 1. Reject an object count and size whose product wraps to a small allocation
+ * 2. Verify a normal allocation is zero-initialized
  *
  * Verification Metrics:
  * - **Pass (Scenario 1):** All allocation operations return non-NULL pointers
@@ -53,6 +56,7 @@
  * - **Pass (Scenario 3):** Realloc operations preserve existing data when size increases or decreases
  * - **Pass (Scenario 3):** Magic number patterns maintained correctly after reallocation
  * - **Pass (Scenario 3):** Realloc to zero size properly frees memory blocks
+ * - **Pass (Scenario 4):** Overflow returns NULL and normal allocation is zero-initialized
  *
  * Dependencies:
  * - No specific hardware requirements, runs on any RT-Thread supported platform
@@ -60,6 +64,7 @@
  * - `RT_USING_UTEST` must be enabled (`RT-Thread Utestcases`).
  * - `Memory Test` must be enabled (`RT-Thread Utestcases` -> `Kernel Core` -> 'Memory Test').
  * - RT-Thread kernel with small memory management enabled
+ * - Calloc overflow test requires RT_USING_HEAP without RT_USING_USERHEAP
  * - rt_malloc and rt_free functions available for test buffer allocation
  * - RT_ALIGN_SIZE macro defined for memory alignment
  * - Random number generator (rand function) available for stress tests
@@ -637,6 +642,35 @@ static void mem_realloc_test(void)
     rt_free(buf);
 }
 
+#if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)
+static void calloc_overflow_test(void)
+{
+    rt_size_t count = RT_SIZE_MAX / 2 + 2;
+    rt_uint8_t *ptr;
+    rt_size_t i;
+
+    ptr = rt_calloc(count, 2);
+    uassert_null(ptr);
+    if (ptr != RT_NULL)
+    {
+        rt_free(ptr);
+    }
+
+    ptr = rt_calloc(4, 8);
+    uassert_not_null(ptr);
+    if (ptr == RT_NULL)
+    {
+        return;
+    }
+
+    for (i = 0; i < 32; i++)
+    {
+        uassert_int_equal(ptr[i], 0);
+    }
+    rt_free(ptr);
+}
+#endif /* defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP) */
+
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
@@ -652,5 +686,8 @@ static void testcase(void)
     UTEST_UNIT_RUN(mem_functional_test);
     UTEST_UNIT_RUN(mem_alloc_test);
     UTEST_UNIT_RUN(mem_realloc_test);
+#if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)
+    UTEST_UNIT_RUN(calloc_overflow_test);
+#endif /* defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP) */
 }
 UTEST_TC_EXPORT(testcase, "core.mem", utest_tc_init, utest_tc_cleanup, 20);
