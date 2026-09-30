@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<azone>
+    <rzone name="R7FA6M4AF3CFP.rzone"/>
+    <partition>
+        <peripheral name="PORT0.CM33" group="PORT">
+            <slot name="P005.CM33" secure="true"/>
+            <slot name="P007.CM33" secure="true"/>
+            <slot name="P014.CM33" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT1.CM33" group="PORT">
+            <slot name="P109.CM33" secure="true"/>
+            <slot name="P110.CM33" secure="true"/>
+            <slot name="P114.CM33" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT2.CM33" group="PORT">
+            <slot name="P201.CM33" secure="true"/>
+            <slot name="P210.CM33" secure="true"/>
+            <slot name="P211.CM33" secure="true"/>
+            <slot name="P212.CM33" secure="true"/>
+            <slot name="P213.CM33" secure="true"/>
+            <slot name="P214.CM33" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT4.CM33" group="PORT">
+            <slot name="P402.CM33" secure="true"/>
+            <slot name="P403.CM33" secure="true"/>
+            <slot name="P404.CM33" secure="true"/>
+            <slot name="P405.CM33" secure="true"/>
+            <slot name="P406.CM33" secure="true"/>
+        </peripheral>
+        <peripheral name="PORT5.CM33" group="PORT">
+            <slot name="P500.CM33" secure="true"/>
+            <slot name="P501.CM33" secure="true"/>
+            <slot name="P502.CM33" secure="true"/>
+            <slot name="P503.CM33" secure="true"/>
+            <slot name="P504.CM33" secure="true"/>
+            <slot name="P505.CM33" secure="true"/>
+        </peripheral>
+        <peripheral name="SCI9.CM33" group="SCI" security="s"/>
+        <peripheral name="ICU.CM33">
+            <slot name="IRQ0.CM33" secure="true"/>
+            <slot name="IRQ1.CM33" secure="true"/>
+            <slot name="IRQ2.CM33" secure="true"/>
+            <slot name="IRQ3.CM33" secure="true"/>
+        </peripheral>
+    </partition>
+</azone>
