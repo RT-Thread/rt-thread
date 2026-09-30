@@ -258,7 +258,40 @@ struct signal_ucontext
     struct rt_hw_stack_frame frame;
 };
 
-void *arch_signal_ucontext_restore(rt_base_t user_sp)
+void arch_syscall_restart(void *sp, void *ksp);
+
+void arch_signal_check_erestart(void *eframe, void *ksp)
+{
+    struct rt_hw_stack_frame *exp_frame = eframe;
+    long rc = exp_frame->a0;
+    long sys_id = exp_frame->a7;
+
+    (void)sys_id;
+
+    if (rc == -ERESTART)
+    {
+        LOG_D("%s(rc=%ld,sys_id=%ld,pid=%d)", __func__, rc, sys_id, lwp_self()->pid);
+        LOG_D("%s: restart rc = %ld", lwp_get_syscall_name(sys_id), rc);
+
+        /* t0 stores the copy of user's first syscall argument */
+        exp_frame->a0 = exp_frame->t0;
+        /* adjust for epc auto-increment in syscall_handler */
+        exp_frame->epc -= 4;
+        /* copy exception frame from user stack to kernel stack */
+        lwp_memcpy(ksp - sizeof(*exp_frame),  exp_frame, sizeof(*exp_frame));
+
+        arch_syscall_restart(exp_frame, ksp);
+    }
+
+    return;
+}
+
+static void arch_signal_post_action(struct signal_ucontext *new_sp, rt_base_t kernel_sp)
+{
+    arch_signal_check_erestart(&new_sp->frame, (void *)kernel_sp);
+}
+
+void *arch_signal_ucontext_restore(rt_base_t user_sp, rt_base_t kernel_sp)
 {
     struct signal_ucontext *new_sp;
     new_sp = (void *)user_sp;
@@ -266,6 +299,7 @@ void *arch_signal_ucontext_restore(rt_base_t user_sp)
     if (lwp_user_accessable(new_sp, sizeof(*new_sp)))
     {
         lwp_thread_signal_mask(rt_thread_self(), LWP_SIG_MASK_CMD_SET_MASK, &new_sp->save_sigmask, RT_NULL);
+        arch_signal_post_action(new_sp, kernel_sp);
     }
     else
     {
@@ -320,8 +354,12 @@ void *arch_signal_ucontext_save(int signo, siginfo_t *psiginfo,
 
 void arch_syscall_set_errno(void *eframe, int expected, int code)
 {
-    /* NO support */
-    return ;
+    struct rt_hw_stack_frame *exp_frame = eframe;
+
+    if (exp_frame->a0 == -expected)
+    {
+        exp_frame->a0 = -code;
+    }
 }
 
 /**
