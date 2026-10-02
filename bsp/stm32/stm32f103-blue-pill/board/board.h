@@ -17,6 +17,7 @@
 extern "C" {
 #endif
 
+#if defined(SOC_STM32F103C8)
 #define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
 #define STM32_FLASH_SIZE             (128 * 1024)
 #define STM32_FLASH_END_ADDRESS      ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
@@ -24,6 +25,15 @@ extern "C" {
 /* Internal SRAM memory size[Kbytes] <8-64>, Default: 64*/
 #define STM32_SRAM_SIZE      20
 #define STM32_SRAM_END       (0x20000000 + STM32_SRAM_SIZE * 1024)
+#else
+#define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
+#define STM32_FLASH_SIZE             (32 * 1024)
+#define STM32_FLASH_END_ADDRESS      ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
+
+/* Internal SRAM memory size[Kbytes] <8-64>, Default: 64*/
+#define STM32_SRAM_SIZE      10
+#define STM32_SRAM_END       (0x20000000 + STM32_SRAM_SIZE * 1024)
+#endif
 
 #if defined(__ARMCC_VERSION)
 extern int Image$$RW_IRAM1$$ZI$$Limit;

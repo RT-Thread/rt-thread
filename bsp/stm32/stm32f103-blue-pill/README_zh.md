@@ -26,7 +26,7 @@ STM32F103C8T6最小系统，采用SWD调试接口，可以用3个接口就能完
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32F103C8T6，主频 72MHz，64KB FLASH(实际可烧录128KB) ，20KB RAM
+- MCU：STM32F103C8T6，主频 72MHz，64KB FLASH(实际可烧录128KB) ，20KB RAM（同时支持 STM32F103C6T6，32KB FLASH，10KB RAM）
 - 外部 RAM：无
 - 外部 FLASH：无
 - 常用外设
@@ -112,6 +112,35 @@ msh >
 本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
 
 
+
+#### 使用 STM32F103C6 芯片变体
+
+本 BSP 同时支持搭载 **STM32F103C6**（32KB Flash，10KB RAM）的开发板。
+
+配置 STM32F103C6 步骤：
+1. 打开终端，执行 `scons --menuconfig`；
+2. 在 **Select SOC** 中选择 `STM32F103C6`（会自动配置小内存算法堆及轻量化 libc vsscanf）；
+3. 受限于 32KB Flash 和 10KB RAM，需做如下裁剪优化配置：
+   - **RT-Thread Kernel → Memory Management**：
+     - 将 **System Heap Memory Management** 设置为 `Small Memory Algorithm` (`RT_USING_SMALL_MEM_AS_HEAP`)
+     - 取消勾选 `Using memheap Memory Algorithm` (`RT_USING_MEMHEAP`)
+   - **RT-Thread Kernel**：
+     - 取消勾选 `Enable debugging features` (`RT_USING_DEBUG`)
+   - **RT-Thread Kernel → Inter-Thread communication**：
+     - 取消勾选 `Enable event flag` (`RT_USING_EVENT`)
+     - 取消勾选 `Enable mailbox` (`RT_USING_MAILBOX`)
+     - 取消勾选 `Enable message queue` (`RT_USING_MESSAGEQUEUE`)
+   - **RT-Thread Components → Device Drivers**：
+     - 取消勾选 `Enable serial DMA mode` (`RT_SERIAL_USING_DMA`)
+   - **RT-Thread Components → MSH: command shell**：
+     - 取消勾选 `Keeping description in symbol table` (`FINSH_USING_DESCRIPTION`)
+     - 取消勾选 `command option completion enable` (`FINSH_USING_OPTION_COMPLETION`)
+     - 将 `The shell thread stack size` 修改为 `2048` (`FINSH_THREAD_STACK_SIZE`)
+4. 保存并退出 menuconfig；
+5. 执行编译：
+   ```bash
+   scons -c && scons
+   ```
 
 ## 注意事项
 
