@@ -14,7 +14,10 @@ list = os.listdir(cwd)
 # STM32F103xB || STM32F103xE || STM32F103xG
 # STM32F105xC || STM32F107xC)
 # You can select chips from the list above
-env.Append(CPPDEFINES = ['STM32F103xB'])
+if GetDepend('SOC_STM32F103C6'):
+    env.Append(CPPDEFINES = ['STM32F103x6'])
+else:
+    env.Append(CPPDEFINES = ['STM32F103xB'])
 
 for d in list:
     path = os.path.join(cwd, d)
