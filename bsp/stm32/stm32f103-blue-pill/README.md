@@ -76,7 +76,7 @@ KEY FEATURES
 
 ## 2 Onboard Resources
 
-- MCU：STM32F103C8T6 @72MHz, 64KB FLASH (can be extended to 128KB) , 20KB RAM
+- MCU：STM32F103C8T6 @72MHz, 64KB FLASH (can be extended to 128KB) , 20KB RAM (STM32F103C6T6 with 32KB FLASH, 10KB RAM is also supported)
 
 - Peripherals
   
@@ -307,6 +307,35 @@ Re-plug the USB cable and you will find a new serial (virtual com, 115200, 8-N-1
 According to ST official datasheet, STM32F103C8 has 64KB of Flash. However, STM32F103C8 and STM32F103CB use the same type of silicon die, which means STM32F103C8 also has 128KB ROM in theory, but ST locked the high 64KB. Basically, to force the debugger to download program can unlock the high 64KB. There is a good news that **Keil5 / IAR / RT-Studio will help you to unlock the Blue Pill Board high 64KB block** if you use this Blue Pill Board BSP as a template to create your project. You just need to press the "Flash Download" button as usual. What you only need to remember is that Blue Pill board has 128KB of Flash rather than 64KB.
 
 
+
+### 4.3 How to use STM32F103C6 variant
+
+This BSP also supports Blue Pill boards equipped with the **STM32F103C6** (32KB Flash, 10KB RAM).
+
+To configure for STM32F103C6:
+1. Run `scons --menuconfig`
+2. Under **Select SOC**, select `STM32F103C6` (this automatically selects the Small Memory Algorithm heap and lightweight libc vsscanf).
+3. Due to the 32KB Flash and 10KB RAM limits, optimize the following in `menuconfig`:
+   - **RT-Thread Kernel → Memory Management**:
+     - Set **System Heap Memory Management** to `Small Memory Algorithm` (`RT_USING_SMALL_MEM_AS_HEAP`)
+     - Uncheck `Using memheap Memory Algorithm` (`RT_USING_MEMHEAP`)
+   - **RT-Thread Kernel**:
+     - Uncheck `Enable debugging features` (`RT_USING_DEBUG`)
+   - **RT-Thread Kernel → Inter-Thread communication**:
+     - Uncheck `Enable event flag` (`RT_USING_EVENT`)
+     - Uncheck `Enable mailbox` (`RT_USING_MAILBOX`)
+     - Uncheck `Enable message queue` (`RT_USING_MESSAGEQUEUE`)
+   - **RT-Thread Components → Device Drivers**:
+     - Uncheck `Enable serial DMA mode` (`RT_SERIAL_USING_DMA`)
+   - **RT-Thread Components → MSH: command shell**:
+     - Uncheck `Keeping description in symbol table` (`FINSH_USING_DESCRIPTION`)
+     - Uncheck `command option completion enable` (`FINSH_USING_OPTION_COMPLETION`)
+     - Set `The shell thread stack size` to `2048` (`FINSH_THREAD_STACK_SIZE`)
+4. Save and exit menuconfig.
+5. Clean and build the firmware:
+   ```bash
+   scons -c && scons
+   ```
 
 ## 5 Read more
 
