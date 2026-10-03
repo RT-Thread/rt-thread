@@ -53,6 +53,7 @@ struct rt_sched_thread_ctx
     rt_uint8_t                  stat;                   /**< thread status */
     rt_uint8_t                  sched_flag_locked:1;    /**< calling thread have the scheduler locked */
     rt_uint8_t                  sched_flag_ttmr_set:1;  /**< thread timer is start */
+    rt_uint8_t                  sched_flag_defunct:1;   /**< thread has been enqueued to defunct */
 
 #ifdef ARCH_USING_HW_THREAD_SELF
     rt_uint8_t                  critical_switch_flag:1; /**< critical switch pending */
