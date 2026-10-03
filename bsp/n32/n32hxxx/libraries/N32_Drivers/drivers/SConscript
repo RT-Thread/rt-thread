@@ -17,11 +17,11 @@ if GetDepend(['RT_USING_SERIAL']):
     else:
         src += ['drv_usart.c']
 
-if GetDepend(['BSP_USING_CLOCK_TIMER']):
+if GetDepend(['BSP_USING_CLOCK_TIMER']) or GetDepend(['BSP_USING_PWM']) or GetDepend(['BSP_USING_PULSE_ENCODER']):
     src += ['drv_tim.c']
 
 if GetDepend(['BSP_USING_PWM']):
-    src += ['drv_pwm.c', 'drv_tim.c']
+    src += ['drv_pwm.c']
 
 if GetDepend(['RT_USING_SPI']):
     src += ['drv_spi.c']
@@ -85,7 +85,7 @@ if GetDepend(['BSP_USING_SDIO']):
         src += ['drv_sdio.c']
 
 if GetDepend(['BSP_USING_PULSE_ENCODER']):
-    src += ['drv_pulse_encoder.c', 'drv_tim.c']
+    src += ['drv_pulse_encoder.c']
 
 
 path += [os.path.join(cwd, 'config')]

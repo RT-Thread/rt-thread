@@ -6,15 +6,30 @@
  * Change Logs:
  * Date           Author           Notes
  * 2026-02-26     ox-horse         first version
+ * 2026-08-19     ox-horse         Add N32H47X_48X
+ * 2026-08-19     ox-horse         Add N32H49X
  */
 
 #include <rtdevice.h>
 #include "drv_config.h"
+#include "drv_tim.h"
+
+/* The driver owns the peripheral registers, so it pulls in the peripheral
+ * header itself instead of relying on board.h to have declared it.
+ */
+#if defined(SOC_SERIES_N32H7xx)
+#include <n32h7xx_tim.h>
+#elif defined(SOC_SERIES_N32H49x)
+#include <n32h49x_tim.h>
+#elif defined(SOC_SERIES_N32H47x_48x)
+#include <n32h47x_48x_tim.h>
+#endif
 
 //#define DRV_DEBUG
 #define LOG_TAG "drv.tim"
 #include <drv_log.h>
 
+#if defined(SOC_SERIES_N32H7xx)
 #if defined(BSP_USING_ATIM1) && !defined(ATIM1)
 #error "A-timer1 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM1"
 #endif
@@ -69,6 +84,55 @@
 #if defined(BSP_USING_BTIM4) && !defined(BTIM4)
 #error "B-timer4 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM4"
 #endif
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+#if defined(BSP_USING_ATIM1) && !defined(ATIM1)
+#error "A-timer1 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM1"
+#endif
+#if defined(BSP_USING_ATIM2) && !defined(ATIM2)
+#error "A-timer2 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM2"
+#endif
+#if defined(BSP_USING_ATIM3) && !defined(ATIM3)
+#error "A-timer3 doesn't exist in this N32 series, but you enabled the BSP_USING_ATIM3"
+#endif
+#if defined(BSP_USING_GTIM1) && !defined(GTIM1)
+#error "G-timer1 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIM1"
+#endif
+#if defined(BSP_USING_GTIM2) && !defined(GTIM2)
+#error "G-timer2 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIM2"
+#endif
+#if defined(BSP_USING_GTIM3) && !defined(GTIM3)
+#error "G-timer3 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIM3"
+#endif
+#if defined(BSP_USING_GTIM4) && !defined(GTIM4)
+#error "G-timer4 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIM4"
+#endif
+#if defined(BSP_USING_GTIM5) && !defined(GTIM5)
+#error "G-timer5 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIM5"
+#endif
+#if defined(BSP_USING_GTIM6) && !defined(GTIM6)
+#error "G-timer6 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIM6"
+#endif
+#if defined(BSP_USING_GTIM7) && !defined(GTIM7)
+#error "G-timer7 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIM7"
+#endif
+#if defined(BSP_USING_GTIM8) && !defined(GTIM8)
+#error "G-timer8 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIM8"
+#endif
+#if defined(BSP_USING_GTIM9) && !defined(GTIM9)
+#error "G-timer9 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIM9"
+#endif
+#if defined(BSP_USING_GTIM10) && !defined(GTIM10)
+#error "G-timer10 doesn't exist in this N32 series, but you enabled the BSP_USING_GTIM10"
+#endif
+#if defined(BSP_USING_BTIM1) && !defined(BTIM1)
+#error "B-timer1 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM1"
+#endif
+#if defined(BSP_USING_BTIM2) && !defined(BTIM2)
+#error "B-timer2 doesn't exist in this N32 series, but you enabled the BSP_USING_BTIM2"
+#endif
+#endif
+
+#if defined(SOC_SERIES_N32H7xx)
 
 #define INT_MAX (0x7FFFFFFF)
 
@@ -130,6 +194,8 @@ static int int_pow(int x, int y)
     return result;
 }
 
+#endif /* SOC_SERIES_N32H7xx */
+
 void n32_tim_ahbx_div_get(TIM_Module *timer, rt_uint32_t *div)
 {
     RT_ASSERT(timer != RT_NULL);
@@ -173,10 +239,127 @@ void n32_tim_ahbx_div_get(TIM_Module *timer, rt_uint32_t *div)
 #endif /* defined(SOC_SERIES_N32H7xx) */
 }
 
+#if defined(SOC_SERIES_N32H47x_48x)
+rt_uint32_t n32_tim_clock_freq_get(TIM_Module *timer)
+{
+    RCC_ClocksType rcc_clocks;
+
+    RT_ASSERT(timer != RT_NULL);
+    RCC_GetClocksFreqValue(&rcc_clocks);
+
+    if (RT_FALSE)
+        ;
+#ifdef ATIM1
+    else if (timer == ATIM1)
+    {
+        return (RCC->CFG2 & RCC_CFG2_ATIMCLKSEL) ? rcc_clocks.HclkFreq : rcc_clocks.SysclkFreq;
+    }
+#endif /* ATIM1 */
+#ifdef ATIM2
+    else if (timer == ATIM2)
+    {
+        return (RCC->CFG2 & RCC_CFG2_ATIMCLKSEL) ? rcc_clocks.HclkFreq : rcc_clocks.SysclkFreq;
+    }
+#endif /* ATIM2 */
+#ifdef ATIM3
+    else if (timer == ATIM3)
+    {
+        return (RCC->CFG2 & RCC_CFG2_ATIMCLKSEL) ? rcc_clocks.HclkFreq : rcc_clocks.SysclkFreq;
+    }
+#endif /* ATIM3 */
+#ifdef GTIM8
+    else if (timer == GTIM8)
+    {
+        return (RCC->CFG2 & RCC_CFG2_GTIMCLKSEL) ? rcc_clocks.SysclkFreq : ((rcc_clocks.Pclk2Freq == rcc_clocks.HclkFreq) ? rcc_clocks.Pclk2Freq : (rcc_clocks.Pclk2Freq * 2U));
+    }
+#endif /* GTIM8 */
+#ifdef GTIM9
+    else if (timer == GTIM9)
+    {
+        return (RCC->CFG2 & RCC_CFG2_GTIMCLKSEL) ? rcc_clocks.SysclkFreq : ((rcc_clocks.Pclk2Freq == rcc_clocks.HclkFreq) ? rcc_clocks.Pclk2Freq : (rcc_clocks.Pclk2Freq * 2U));
+    }
+#endif /* GTIM9 */
+#ifdef GTIM10
+    else if (timer == GTIM10)
+    {
+        return (RCC->CFG2 & RCC_CFG2_GTIMCLKSEL) ? rcc_clocks.SysclkFreq : ((rcc_clocks.Pclk2Freq == rcc_clocks.HclkFreq) ? rcc_clocks.Pclk2Freq : (rcc_clocks.Pclk2Freq * 2U));
+    }
+#endif /* GTIM10 */
+    else
+    {
+        /* GTIM1-7 and BTIM use PCLK1, doubled when APB1 is prescaled. */
+        return (rcc_clocks.Pclk1Freq == rcc_clocks.HclkFreq) ? rcc_clocks.Pclk1Freq : (rcc_clocks.Pclk1Freq * 2U);
+    }
+
+    return 0U;
+}
+#endif /* SOC_SERIES_N32H47x_48x */
+
+#if defined(SOC_SERIES_N32H49x)
+rt_uint32_t n32_tim_clock_freq_get(TIM_Module *timer)
+{
+    RCC_ClocksType rcc_clocks;
+
+    RT_ASSERT(timer != RT_NULL);
+    RCC_GetClocksFreqValue(&rcc_clocks);
+
+    if (RT_FALSE)
+        ;
+#ifdef ATIM1
+    else if (timer == ATIM1)
+    {
+        /* N32H49x: ATIMCLKSEL semantics are opposite to N32H47x_48x.
+         * 49x: 0 -> HCLK, 1 -> SYSCLK (n32h49x_rcc.h RCC_ATIM_CLKSRC_HCLK = 0). */
+        return (RCC->CFG2 & RCC_CFG2_ATIMCLKSEL) ? rcc_clocks.SysclkFreq : rcc_clocks.HclkFreq;
+    }
+#endif /* ATIM1 */
+#ifdef ATIM2
+    else if (timer == ATIM2)
+    {
+        /* N32H49x: ATIMCLKSEL semantics are opposite to N32H47x_48x. */
+        return (RCC->CFG2 & RCC_CFG2_ATIMCLKSEL) ? rcc_clocks.SysclkFreq : rcc_clocks.HclkFreq;
+    }
+#endif /* ATIM2 */
+#ifdef ATIM3
+    else if (timer == ATIM3)
+    {
+        /* N32H49x: ATIMCLKSEL semantics are opposite to N32H47x_48x. */
+        return (RCC->CFG2 & RCC_CFG2_ATIMCLKSEL) ? rcc_clocks.SysclkFreq : rcc_clocks.HclkFreq;
+    }
+#endif /* ATIM3 */
+#ifdef GTIM8
+    else if (timer == GTIM8)
+    {
+        return (RCC->CFG2 & RCC_CFG2_GTIMCLKSEL) ? rcc_clocks.SysclkFreq : ((rcc_clocks.Pclk2Freq == rcc_clocks.HclkFreq) ? rcc_clocks.Pclk2Freq : (rcc_clocks.Pclk2Freq * 2U));
+    }
+#endif /* GTIM8 */
+#ifdef GTIM9
+    else if (timer == GTIM9)
+    {
+        return (RCC->CFG2 & RCC_CFG2_GTIMCLKSEL) ? rcc_clocks.SysclkFreq : ((rcc_clocks.Pclk2Freq == rcc_clocks.HclkFreq) ? rcc_clocks.Pclk2Freq : (rcc_clocks.Pclk2Freq * 2U));
+    }
+#endif /* GTIM9 */
+#ifdef GTIM10
+    else if (timer == GTIM10)
+    {
+        return (RCC->CFG2 & RCC_CFG2_GTIMCLKSEL) ? rcc_clocks.SysclkFreq : ((rcc_clocks.Pclk2Freq == rcc_clocks.HclkFreq) ? rcc_clocks.Pclk2Freq : (rcc_clocks.Pclk2Freq * 2U));
+    }
+#endif /* GTIM10 */
+    else
+    {
+        /* GTIM1-7 and BTIM use PCLK1, doubled when APB1 is prescaled. */
+        return (rcc_clocks.Pclk1Freq == rcc_clocks.HclkFreq) ? rcc_clocks.Pclk1Freq : (rcc_clocks.Pclk1Freq * 2U);
+    }
+
+    return 0U;
+}
+#endif /* SOC_SERIES_N32H49x */
+
 void n32_tim_enable_clock(TIM_Module *timer)
 {
     RT_ASSERT(timer != RT_NULL);
 
+#if defined(SOC_SERIES_N32H7xx)
     if (RT_FALSE)
         ;
 #ifdef ATIM1
@@ -289,8 +472,203 @@ void n32_tim_enable_clock(TIM_Module *timer)
 #endif /* BTIM4 */
     else
     {
-        RT_ASSERT(RT_TRUE);
+        RT_ASSERT(RT_FALSE);
     }
+#elif defined(SOC_SERIES_N32H47x_48x)
+    if (RT_FALSE)
+        ;
+#ifdef ATIM1
+    else if (timer == ATIM1)
+    {
+        RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_ATIM1, ENABLE);
+    }
+#endif /* ATIM1 */
+#ifdef ATIM2
+    else if (timer == ATIM2)
+    {
+        RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_ATIM2, ENABLE);
+    }
+#endif /* ATIM2 */
+#ifdef ATIM3
+    else if (timer == ATIM3)
+    {
+        RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_ATIM3, ENABLE);
+    }
+#endif /* ATIM3 */
+#ifdef GTIM1
+    else if (timer == GTIM1)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_GTIM1, ENABLE);
+    }
+#endif /* GTIM1 */
+#ifdef GTIM2
+    else if (timer == GTIM2)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_GTIM2, ENABLE);
+    }
+#endif /* GTIM2 */
+#ifdef GTIM3
+    else if (timer == GTIM3)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_GTIM3, ENABLE);
+    }
+#endif /* GTIM3 */
+#ifdef GTIM4
+    else if (timer == GTIM4)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_GTIM4, ENABLE);
+    }
+#endif /* GTIM4 */
+#ifdef GTIM5
+    else if (timer == GTIM5)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_GTIM5, ENABLE);
+    }
+#endif /* GTIM5 */
+#ifdef GTIM6
+    else if (timer == GTIM6)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_GTIM6, ENABLE);
+    }
+#endif /* GTIM6 */
+#ifdef GTIM7
+    else if (timer == GTIM7)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_GTIM7, ENABLE);
+    }
+#endif /* GTIM7 */
+#ifdef GTIM8
+    else if (timer == GTIM8)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GTIM8, ENABLE);
+    }
+#endif /* GTIM8 */
+#ifdef GTIM9
+    else if (timer == GTIM9)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GTIM9, ENABLE);
+    }
+#endif /* GTIM9 */
+#ifdef GTIM10
+    else if (timer == GTIM10)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPH_GTIM10, ENABLE);
+    }
+#endif /* GTIM10 */
+#ifdef BTIM1
+    else if (timer == BTIM1)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_BTIM1, ENABLE);
+    }
+#endif /* BTIM1 */
+#ifdef BTIM2
+    else if (timer == BTIM2)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPH_BTIM2, ENABLE);
+    }
+#endif /* BTIM2 */
+    else
+    {
+        RT_ASSERT(RT_FALSE);
+    }
+#elif defined(SOC_SERIES_N32H49x)
+    if (RT_FALSE)
+        ;
+#ifdef ATIM1
+    else if (timer == ATIM1)
+    {
+        RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_ATIM1, ENABLE);
+    }
+#endif /* ATIM1 */
+#ifdef ATIM2
+    else if (timer == ATIM2)
+    {
+        RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_ATIM2, ENABLE);
+    }
+#endif /* ATIM2 */
+#ifdef ATIM3
+    else if (timer == ATIM3)
+    {
+        RCC_EnableAHBPeriphClk(RCC_AHB_PERIPHEN_ATIM3, ENABLE);
+    }
+#endif /* ATIM3 */
+#ifdef GTIM1
+    else if (timer == GTIM1)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_GTIM1, ENABLE);
+    }
+#endif /* GTIM1 */
+#ifdef GTIM2
+    else if (timer == GTIM2)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_GTIM2, ENABLE);
+    }
+#endif /* GTIM2 */
+#ifdef GTIM3
+    else if (timer == GTIM3)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_GTIM3, ENABLE);
+    }
+#endif /* GTIM3 */
+#ifdef GTIM4
+    else if (timer == GTIM4)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_GTIM4, ENABLE);
+    }
+#endif /* GTIM4 */
+#ifdef GTIM5
+    else if (timer == GTIM5)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_GTIM5, ENABLE);
+    }
+#endif /* GTIM5 */
+#ifdef GTIM6
+    else if (timer == GTIM6)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_GTIM6, ENABLE);
+    }
+#endif /* GTIM6 */
+#ifdef GTIM7
+    else if (timer == GTIM7)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_GTIM7, ENABLE);
+    }
+#endif /* GTIM7 */
+#ifdef GTIM8
+    else if (timer == GTIM8)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_GTIM8, ENABLE);
+    }
+#endif /* GTIM8 */
+#ifdef GTIM9
+    else if (timer == GTIM9)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_GTIM9, ENABLE);
+    }
+#endif /* GTIM9 */
+#ifdef GTIM10
+    else if (timer == GTIM10)
+    {
+        RCC_EnableAPB2PeriphClk(RCC_APB2_PERIPHEN_GTIM10, ENABLE);
+    }
+#endif /* GTIM10 */
+#ifdef BTIM1
+    else if (timer == BTIM1)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_BTIM1, ENABLE);
+    }
+#endif /* BTIM1 */
+#ifdef BTIM2
+    else if (timer == BTIM2)
+    {
+        RCC_EnableAPB1PeriphClk(RCC_APB1_PERIPHEN_BTIM2, ENABLE);
+    }
+#endif /* BTIM2 */
+    else
+    {
+        RT_ASSERT(RT_FALSE);
+    }
+#endif /* SOC_SERIES_N32H7xx */
 }
 
 #ifdef BSP_USING_CLOCK_TIMER
@@ -306,9 +684,12 @@ enum
 #ifdef BSP_USING_ATIM3
     TIM3_INDEX,
 #endif
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_ATIM4
     TIM4_INDEX,
 #endif
+#endif /* SOC_SERIES_N32H7xx */
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_GTIMA1
     TIM5_INDEX,
 #endif
@@ -339,18 +720,52 @@ enum
 #ifdef BSP_USING_GTIMB3
     TIM14_INDEX,
 #endif
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+#ifdef BSP_USING_GTIM1
+    TIM5_INDEX,
+#endif
+#ifdef BSP_USING_GTIM2
+    TIM6_INDEX,
+#endif
+#ifdef BSP_USING_GTIM3
+    TIM7_INDEX,
+#endif
+#ifdef BSP_USING_GTIM4
+    TIM8_INDEX,
+#endif
+#ifdef BSP_USING_GTIM5
+    TIM9_INDEX,
+#endif
+#ifdef BSP_USING_GTIM6
+    TIM10_INDEX,
+#endif
+#ifdef BSP_USING_GTIM7
+    TIM11_INDEX,
+#endif
+#ifdef BSP_USING_GTIM8
+    TIM12_INDEX,
+#endif
+#ifdef BSP_USING_GTIM9
+    TIM13_INDEX,
+#endif
+#ifdef BSP_USING_GTIM10
+    TIM14_INDEX,
+#endif
+#endif /* SOC_SERIES_N32H7xx */
 #ifdef BSP_USING_BTIM1
     TIM15_INDEX,
 #endif
 #ifdef BSP_USING_BTIM2
     TIM16_INDEX,
 #endif
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_BTIM3
     TIM17_INDEX,
 #endif
 #ifdef BSP_USING_BTIM4
     TIM18_INDEX,
 #endif
+#endif /* SOC_SERIES_N32H7xx */
 };
 
 struct n32_clock_timer
@@ -374,10 +789,13 @@ static struct n32_clock_timer n32_clock_timer_obj[] = {
     ATIM3_CONFIG,
 #endif
 
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_ATIM4
     ATIM4_CONFIG,
 #endif
+#endif /* SOC_SERIES_N32H7xx */
 
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_GTIMA1
     GTIMA1_CONFIG,
 #endif
@@ -417,6 +835,47 @@ static struct n32_clock_timer n32_clock_timer_obj[] = {
 #ifdef BSP_USING_GTIMB3
     GTIMB3_CONFIG,
 #endif
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+#ifdef BSP_USING_GTIM1
+    GTIM1_CONFIG,
+#endif
+
+#ifdef BSP_USING_GTIM2
+    GTIM2_CONFIG,
+#endif
+
+#ifdef BSP_USING_GTIM3
+    GTIM3_CONFIG,
+#endif
+
+#ifdef BSP_USING_GTIM4
+    GTIM4_CONFIG,
+#endif
+
+#ifdef BSP_USING_GTIM5
+    GTIM5_CONFIG,
+#endif
+
+#ifdef BSP_USING_GTIM6
+    GTIM6_CONFIG,
+#endif
+
+#ifdef BSP_USING_GTIM7
+    GTIM7_CONFIG,
+#endif
+
+#ifdef BSP_USING_GTIM8
+    GTIM8_CONFIG,
+#endif
+
+#ifdef BSP_USING_GTIM9
+    GTIM9_CONFIG,
+#endif
+
+#ifdef BSP_USING_GTIM10
+    GTIM10_CONFIG,
+#endif
+#endif /* SOC_SERIES_N32H7xx */
 
 #ifdef BSP_USING_BTIM1
     BTIM1_CONFIG,
@@ -426,6 +885,7 @@ static struct n32_clock_timer n32_clock_timer_obj[] = {
     BTIM2_CONFIG,
 #endif
 
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_BTIM3
     BTIM3_CONFIG,
 #endif
@@ -433,14 +893,19 @@ static struct n32_clock_timer n32_clock_timer_obj[] = {
 #ifdef BSP_USING_BTIM4
     BTIM4_CONFIG,
 #endif
+#endif /* SOC_SERIES_N32H7xx */
 };
 
 static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
 {
     uint32_t prescaler_value = 0;
+#if defined(SOC_SERIES_N32H7xx)
     rt_uint32_t tim_div;
+#endif
     struct n32_clock_timer *tim_device = RT_NULL;
+#if defined(SOC_SERIES_N32H7xx)
     RCC_ClocksTypeDef RCC_Clocks;
+#endif
     TIM_TimeBaseInitType TIM_TimeBaseStructure;
 
     RT_ASSERT(timer != RT_NULL);
@@ -475,6 +940,9 @@ static void timer_init(struct rt_clock_timer_device *timer, rt_uint32_t state)
             prescaler_value = ((RCC_Clocks.AHB1ClkFreq / tim_div) / 10000U) - 1U;
         }
 #endif
+#if defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+        prescaler_value = (n32_tim_clock_freq_get(tim_device->timer) / 10000U) - 1U;
+#endif /* SOC_SERIES_N32H47x_48x || SOC_SERIES_N32H49x */
 
         /* Enable tim clock */
         n32_tim_enable_clock(tim_device->timer);
@@ -556,8 +1024,10 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
     struct n32_clock_timer *tim_device = RT_NULL;
     rt_err_t result = -RT_ERROR;
     uint32_t prescaler_value = 0;
+#if defined(SOC_SERIES_N32H7xx)
     rt_uint32_t tim_div;
     RCC_ClocksTypeDef RCC_Clocks;
+#endif
 
     RT_ASSERT(timer != RT_NULL);
     RT_ASSERT(arg != RT_NULL);
@@ -574,6 +1044,12 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
         freq = *((rt_uint32_t *)arg);
 
 #if defined(SOC_SERIES_N32H7xx)
+        if (freq == 0U)
+        {
+            result = -RT_EINVAL;
+            break;
+        }
+
         n32_tim_ahbx_div_get(tim_device->timer, &tim_div);
 
         RCC_GetClocksFreqValue(&RCC_Clocks);
@@ -599,9 +1075,46 @@ static rt_err_t timer_ctrl(rt_clock_timer_t *timer, rt_uint32_t cmd, void *arg)
             prescaler_value = ((RCC_Clocks.AHB1ClkFreq / tim_div) / freq) - 1U;
         }
 
+        /* PSC is 16 bits wide; a larger value is silently truncated by
+         * TIM_ConfigPrescaler() and the timer would then run at the wrong
+         * frequency, so reject it here instead.
+         */
+        if (prescaler_value > 0xFFFFU)
+        {
+            result = -RT_EINVAL;
+            break;
+        }
+
         /* Update frequency value */
         TIM_ConfigPrescaler(tim_device->timer, prescaler_value, TIM_PSC_RELOAD_MODE_UPDATE);
 #endif
+#if defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+        if (freq == 0U)
+        {
+            result = -RT_EINVAL;
+            break;
+        }
+
+        prescaler_value = (n32_tim_clock_freq_get(tim_device->timer) / freq) - 1U;
+
+        /* PSC is 16 bits wide; a larger value is silently truncated by
+         * TIM_ConfigPrescaler() and the timer would then run at the wrong
+         * frequency, so reject it here instead.
+         */
+        if (prescaler_value > 0xFFFFU)
+        {
+            result = -RT_EINVAL;
+            break;
+        }
+
+        /* Update frequency value.  The mode has to be IMMEDIATE: PSC is
+         * buffered, and TIM_PSC_RELOAD_MODE_UPDATE is the mask 0, i.e. "send
+         * no update event", so it leaves the counter on the old prescaler
+         * until the next natural overflow.  IMMEDIATE sets EVTGEN.UDGN, which
+         * is what actually latches the new value.
+         */
+        TIM_ConfigPrescaler(tim_device->timer, prescaler_value, TIM_PSC_RELOAD_MODE_IMMEDIATE);
+#endif /* SOC_SERIES_N32H47x_48x || SOC_SERIES_N32H49x */
         result = RT_EOK;
     }
     break;
@@ -627,6 +1140,9 @@ static rt_uint32_t timer_counter_get(rt_clock_timer_t *timer)
 }
 
 static const struct rt_clock_timer_info _info = TIM_DEV_INFO_CONFIG;
+#if defined(SOC_SERIES_N32H49x)
+static const struct rt_clock_timer_info _info_32bit = TIM_32BIT_DEV_INFO_CONFIG;
+#endif /* SOC_SERIES_N32H49x */
 
 static const struct rt_clock_timer_ops _ops = {
     .init = timer_init,
@@ -678,6 +1194,7 @@ void ATIM3_UP_IRQHandler(void)
 }
 #endif /* BSP_USING_ATIM3 */
 
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_ATIM4
 void ATIM4_UP_IRQHandler(void)
 {
@@ -691,7 +1208,9 @@ void ATIM4_UP_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif /* BSP_USING_ATIM4 */
+#endif /* SOC_SERIES_N32H7xx */
 
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_GTIMA1
 void GTIMA1_IRQHandler(void)
 {
@@ -831,6 +1350,107 @@ void GTIMB3_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif /* BSP_USING_GTIMB3 */
+#elif defined(SOC_SERIES_N32H47x_48x) || defined(SOC_SERIES_N32H49x)
+#ifdef BSP_USING_GTIM1
+void GTIM1_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    TIM_ClrIntPendingBit(n32_clock_timer_obj[TIM5_INDEX].timer, TIM_INT_UPDATE);
+    rt_clock_timer_isr(&n32_clock_timer_obj[TIM5_INDEX].time_device);
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_GTIM1 */
+
+#ifdef BSP_USING_GTIM2
+void GTIM2_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    TIM_ClrIntPendingBit(n32_clock_timer_obj[TIM6_INDEX].timer, TIM_INT_UPDATE);
+    rt_clock_timer_isr(&n32_clock_timer_obj[TIM6_INDEX].time_device);
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_GTIM2 */
+
+#ifdef BSP_USING_GTIM3
+void GTIM3_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    TIM_ClrIntPendingBit(n32_clock_timer_obj[TIM7_INDEX].timer, TIM_INT_UPDATE);
+    rt_clock_timer_isr(&n32_clock_timer_obj[TIM7_INDEX].time_device);
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_GTIM3 */
+
+#ifdef BSP_USING_GTIM4
+void GTIM4_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    TIM_ClrIntPendingBit(n32_clock_timer_obj[TIM8_INDEX].timer, TIM_INT_UPDATE);
+    rt_clock_timer_isr(&n32_clock_timer_obj[TIM8_INDEX].time_device);
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_GTIM4 */
+
+#ifdef BSP_USING_GTIM5
+void GTIM5_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    TIM_ClrIntPendingBit(n32_clock_timer_obj[TIM9_INDEX].timer, TIM_INT_UPDATE);
+    rt_clock_timer_isr(&n32_clock_timer_obj[TIM9_INDEX].time_device);
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_GTIM5 */
+
+#ifdef BSP_USING_GTIM6
+void GTIM6_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    TIM_ClrIntPendingBit(n32_clock_timer_obj[TIM10_INDEX].timer, TIM_INT_UPDATE);
+    rt_clock_timer_isr(&n32_clock_timer_obj[TIM10_INDEX].time_device);
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_GTIM6 */
+
+#ifdef BSP_USING_GTIM7
+void GTIM7_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    TIM_ClrIntPendingBit(n32_clock_timer_obj[TIM11_INDEX].timer, TIM_INT_UPDATE);
+    rt_clock_timer_isr(&n32_clock_timer_obj[TIM11_INDEX].time_device);
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_GTIM7 */
+
+#ifdef BSP_USING_GTIM8
+void GTIM8_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    TIM_ClrIntPendingBit(n32_clock_timer_obj[TIM12_INDEX].timer, TIM_INT_UPDATE);
+    rt_clock_timer_isr(&n32_clock_timer_obj[TIM12_INDEX].time_device);
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_GTIM8 */
+
+#ifdef BSP_USING_GTIM9
+void GTIM9_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    TIM_ClrIntPendingBit(n32_clock_timer_obj[TIM13_INDEX].timer, TIM_INT_UPDATE);
+    rt_clock_timer_isr(&n32_clock_timer_obj[TIM13_INDEX].time_device);
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_GTIM9 */
+
+#ifdef BSP_USING_GTIM10
+void GTIM10_IRQHandler(void)
+{
+    rt_interrupt_enter();
+    TIM_ClrIntPendingBit(n32_clock_timer_obj[TIM14_INDEX].timer, TIM_INT_UPDATE);
+    rt_clock_timer_isr(&n32_clock_timer_obj[TIM14_INDEX].time_device);
+    rt_interrupt_leave();
+}
+#endif /* BSP_USING_GTIM10 */
+#endif /* SOC_SERIES_N32H7xx */
 
 #ifdef BSP_USING_BTIM1
 void BTIM1_IRQHandler(void)
@@ -860,6 +1480,7 @@ void BTIM2_IRQHandler(void)
 }
 #endif /* BSP_USING_BTIM2 */
 
+#if defined(SOC_SERIES_N32H7xx)
 #ifdef BSP_USING_BTIM3
 void BTIM3_IRQHandler(void)
 {
@@ -887,6 +1508,7 @@ void BTIM4_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif /* BSP_USING_BTIM4 */
+#endif /* SOC_SERIES_N32H7xx */
 
 static int n32_clock_timer_init(void)
 {
@@ -895,7 +1517,16 @@ static int n32_clock_timer_init(void)
 
     for (i = 0; i < sizeof(n32_clock_timer_obj) / sizeof(n32_clock_timer_obj[0]); i++)
     {
-        n32_clock_timer_obj[i].time_device.info = &_info;
+#if defined(SOC_SERIES_N32H49x)
+        if (IS_GTIM1_4_DEVICE(n32_clock_timer_obj[i].timer))
+        {
+            n32_clock_timer_obj[i].time_device.info = &_info_32bit;
+        }
+        else
+#endif /* SOC_SERIES_N32H49x */
+        {
+            n32_clock_timer_obj[i].time_device.info = &_info;
+        }
         n32_clock_timer_obj[i].time_device.ops = &_ops;
         if (rt_clock_timer_register(&n32_clock_timer_obj[i].time_device,
                                     n32_clock_timer_obj[i].name, RT_NULL) == RT_EOK)
@@ -914,4 +1545,3 @@ static int n32_clock_timer_init(void)
 INIT_BOARD_EXPORT(n32_clock_timer_init);
 
 #endif /* BSP_USING_CLOCK_TIMER */
-

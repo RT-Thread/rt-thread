@@ -7,4 +7,169 @@ nano:
   <<: *scons
   kconfig:
     - CONFIG_RT_USING_NANO=y
-  
+
+########## Onboard peripheral drivers ##########
+# BSP_PERIPH_PIN_CFG_READY gates all of the entries below; without it the
+# kconfig front-end silently drops the symbols and the entry builds nothing.
+
+# ------ eth ------
+peripheral.eth:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_ETH=y
+    - CONFIG_ETH_INTERFACE_USING_RMII=y
+    - CONFIG_PHY_USING_DM9162EP=y
+
+# ------ sdram ------
+peripheral.sdram:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_SDRAM=y
+    - CONFIG_BSP_SDRAM_BANK1=y
+    - CONFIG_BSP_SDRAM_DATA_WIDTH_16=y
+    - CONFIG_BSP_SDRAM_COLUMN_BIT_8=y
+    - CONFIG_BSP_SDRAM_ROW_BIT_12=y
+    - CONFIG_BSP_SDRAM_CAS_LATENCY_3=y
+    - CONFIG_BSP_SDRAM_SIZE=8
+
+# ------ qspi ------
+peripheral.qspi:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_QSPI=y
+
+# ------ nand ------
+# drv_nand.c refuses to build unless exactly one FEMC bank is selected.
+peripheral.nand:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_PERIPH_PIN_CFG_READY=y
+    - CONFIG_BSP_USING_NAND=y
+    - CONFIG_BSP_USING_NAND_BANK3=y
+    - CONFIG_BSP_USING_NAND_BUS_WIDTH_8B=y
+    - CONFIG_BSP_NAND_PAGE_SIZE=2048
+
+########## On-chip peripheral drivers ##########
+
+# ------ uart ------
+# UART1 is the console and is already on in the default .config; UART2-4 add
+# the DMA paths.
+devices.uart:
+  <<: *scons
+  kconfig:
+    - CONFIG_RT_SERIAL_USING_DMA=y
+    - CONFIG_BSP_USING_UART2=y
+    - CONFIG_BSP_UART2_RX_USING_DMA=y
+    - CONFIG_BSP_UART2_TX_USING_DMA=y
+    - CONFIG_BSP_USING_UART3=y
+    - CONFIG_BSP_UART3_RX_USING_DMA=y
+    - CONFIG_BSP_UART3_TX_USING_DMA=y
+    - CONFIG_BSP_USING_UART4=y
+    - CONFIG_BSP_UART4_RX_USING_DMA=y
+    - CONFIG_BSP_UART4_TX_USING_DMA=y
+
+# ------ spi ------
+devices.spi:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_SPI=y
+    - CONFIG_BSP_USING_SPI1=y
+    - CONFIG_BSP_SPI1_TX_USING_DMA=y
+    - CONFIG_BSP_SPI1_RX_USING_DMA=y
+    - CONFIG_BSP_USING_SPI2=y
+    - CONFIG_BSP_SPI2_TX_USING_DMA=y
+    - CONFIG_BSP_SPI2_RX_USING_DMA=y
+
+# ------ hard i2c ------
+devices.hard_i2c:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_HARD_I2C=y
+    - CONFIG_BSP_USING_HARD_I2C1=y
+    - CONFIG_BSP_I2C1_RX_USING_DMA=y
+    - CONFIG_BSP_I2C1_TX_USING_DMA=y
+    - CONFIG_BSP_USING_HARD_I2C2=y
+    - CONFIG_BSP_I2C2_RX_USING_DMA=y
+    - CONFIG_BSP_I2C2_TX_USING_DMA=y
+    - CONFIG_BSP_USING_HARD_I2C3=y
+    - CONFIG_BSP_I2C3_RX_USING_DMA=y
+    - CONFIG_BSP_I2C3_TX_USING_DMA=y
+    - CONFIG_BSP_USING_HARD_I2C4=y
+    - CONFIG_BSP_I2C4_RX_USING_DMA=y
+    - CONFIG_BSP_I2C4_TX_USING_DMA=y
+
+# ------ adc ------
+devices.adc:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_ADC=y
+    - CONFIG_BSP_USING_ADC1=y
+    - CONFIG_BSP_USING_ADC2=y
+    - CONFIG_BSP_USING_ADC3=y
+
+# ------ dac ------
+devices.dac:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_DAC=y
+    - CONFIG_BSP_USING_DAC1=y
+    - CONFIG_BSP_USING_DAC2=y
+
+# ------ rtc / wdt / on-chip flash ------
+# None of the three has a select, so all of them are written explicitly.
+devices.rtc_wdt_flash:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_ONCHIP_RTC=y
+    - CONFIG_BSP_RTC_USING_LSE=y
+    - CONFIG_BSP_USING_WDT=y
+    - CONFIG_BSP_USING_ON_CHIP_FLASH=y
+
+# ------ sdio ------
+# BSP_USING_SDIO is a plain bool here: it does not select RT_USING_SDIO, and
+# drv_sdio.h needs struct rt_mmcsd_host, so the symbol is written out too.
+devices.sdio:
+  <<: *scons
+  kconfig:
+    - CONFIG_RT_USING_SDIO=y
+    - CONFIG_BSP_USING_SDIO=y
+
+# ------ fdcan ------
+devices.fdcan:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_FDCAN=y
+    - CONFIG_BSP_USING_FDCAN1=y
+    - CONFIG_BSP_USING_FDCAN2=y
+    - CONFIG_BSP_USING_FDCAN3=y
+
+# ------ clock timer / lptim ------
+# Clock timer on GTIM1 ("timer5") plus the LPTIM2 low-power path.
+devices.timer:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_CLOCK_TIMER=y
+    - CONFIG_BSP_USING_GTIM1=y
+    - CONFIG_BSP_USING_LPTIM=y
+    - CONFIG_BSP_USING_LPTIM2=y
+
+# ------ pwm ------
+# PWM1 is ATIM1. It is not the GTIM1 that devices.timer uses, so the
+# kconfig depends-on graph keeps both.
+devices.pwm:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_PWM=y
+    - CONFIG_BSP_USING_PWM1=y
+    - CONFIG_BSP_USING_PWM1_CH1=y
+
+# ------ pulse encoder ------
+# PULSE_ENCODER13 is GTIM9.
+devices.pulse_encoder:
+  <<: *scons
+  kconfig:
+    - CONFIG_BSP_USING_PULSE_ENCODER=y
+    - CONFIG_BSP_USING_PULSE_ENCODER13=y

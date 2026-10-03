@@ -8,7 +8,7 @@ cwd = GetCurrentDir()
 objs = []
 list = os.listdir(cwd)
 
-env.Append(CPPDEFINES = ['N32H488'])
+env.Append(CPPDEFINES = ['N32H488', 'HSE_VALUE=8000000'])
 
 for d in list:
     path = os.path.join(cwd, d)
