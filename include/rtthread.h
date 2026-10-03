@@ -170,7 +170,7 @@ void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void*
 #endif /* RT_USING_SMART */
 rt_err_t rt_thread_get_name(rt_thread_t thread, char *name, rt_uint8_t name_size);
 #ifdef RT_USING_CPU_USAGE_TRACER
-rt_uint8_t rt_thread_get_usage(rt_thread_t thread);
+rt_uint16_t rt_thread_get_usage(rt_thread_t thread);
 #endif /* RT_USING_CPU_USAGE_TRACER */
 #ifdef RT_USING_SIGNALS
 void rt_thread_alloc_sig(rt_thread_t tid);

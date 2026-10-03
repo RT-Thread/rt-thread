@@ -674,8 +674,12 @@ static void _cpu_usage_refresh_threads(rt_uint64_t total_delta)
 
         if (total_delta > 0U)
         {
-            rt_uint64_t usage = (thread_delta * 100U) / total_delta;
-            t->cpu_usage = (rt_uint8_t)(usage > 100U ? 100U : usage);
+            rt_uint64_t usage = (thread_delta * 1000U) / total_delta;
+            t->cpu_usage = (rt_uint16_t)(usage > 1000U ? 1000U : usage);
+            if (t->cpu_usage == 0 && usage > 0)
+            {
+                t->cpu_usage = 1U;
+            }
         }
         else
         {
@@ -731,9 +735,9 @@ static void _cpu_usage_update(void)
  * @note Sampling interval can be tuned with RT_CPU_USAGE_CALC_INTERVAL_MS.
  * @note If thread is NULL, an assertion will be triggered in debug builds.
  */
-rt_uint8_t rt_thread_get_usage(rt_thread_t thread)
+rt_uint16_t rt_thread_get_usage(rt_thread_t thread)
 {
-    rt_uint8_t usage;
+    rt_uint16_t usage;
 
     RT_ASSERT(thread != RT_NULL);
 
