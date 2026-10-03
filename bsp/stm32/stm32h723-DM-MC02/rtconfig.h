@@ -150,6 +150,8 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_SPI
+#define RT_USING_SPI_ISR
 #define RT_USING_PIN
 /* end of Device Drivers */
 
@@ -434,6 +436,7 @@
 #define BSP_USING_UART
 #define BSP_STM32_UART_V1_TX_TIMEOUT 6000
 #define BSP_USING_UART1
+#define BSP_USING_SPI
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
@@ -441,4 +444,3 @@
 /* end of Hardware Drivers Config */
 
 #endif
-
