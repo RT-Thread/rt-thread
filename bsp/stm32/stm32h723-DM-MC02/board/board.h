@@ -16,6 +16,10 @@
 #include "drv_common.h"
 #include "drv_gpio.h"
 
+/* NOTE: BDMA transfer mode aggregation macros (BSP_SPI*_USING_BDMA etc.)
+ * are provided by HAL_Drivers/drivers/drv_spi.h since commit 44978e3,
+ * do not redefine them here. */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
