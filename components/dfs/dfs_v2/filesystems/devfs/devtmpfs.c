@@ -54,13 +54,22 @@ struct devtmpfs_sb
 
 static struct dfs_file_ops _default_fops = { 0 };
 
-static int _path_separate(const char *path, char *parent_path, char *file_name)
+static int _path_separate(const char *path, char *parent_path, rt_size_t parent_size,
+                          char *file_name, rt_size_t file_size)
 {
     const char *path_p, *path_q;
+    rt_size_t parent_len, file_len;
 
     RT_ASSERT(path[0] == '/');
 
+    if (parent_path == RT_NULL || file_name == RT_NULL ||
+        parent_size < 2 || file_size == 0)
+    {
+        return -EINVAL;
+    }
+
     file_name[0] = '\0';
+    parent_path[0] = '\0';
     path_p = path_q = &path[1];
 __next_dir:
     while (*path_q != '/' && *path_q != '\0')
@@ -77,10 +86,17 @@ __next_dir:
         }
         else /* Last level dir */
         {
-            rt_memcpy(parent_path, path, path_p - path - 1);
-            parent_path[path_p - path - 1] = '\0';
-            rt_memcpy(file_name, path_p, path_q - path_p);
-            file_name[path_q - path_p] = '\0';
+            parent_len = path_p - path - 1;
+            file_len = path_q - path_p;
+            if (parent_len >= parent_size || file_len >= file_size)
+            {
+                return -ENAMETOOLONG;
+            }
+
+            rt_memcpy(parent_path, path, parent_len);
+            parent_path[parent_len] = '\0';
+            rt_memcpy(file_name, path_p, file_len);
+            file_name[file_len] = '\0';
         }
     }
     if (parent_path[0] == 0)
@@ -94,17 +110,31 @@ __next_dir:
     return 0;
 }
 
-static int _get_subdir(const char *path, char *name)
+static int _get_subdir(const char *path, char *name, rt_size_t name_size)
 {
     const char *subpath = path;
+    rt_size_t name_len = 0;
+
+    if (path == RT_NULL || name == RT_NULL || name_size == 0)
+    {
+        return -EINVAL;
+    }
+
     while (*subpath == '/' && *subpath)
         subpath ++;
     while (*subpath != '/' && *subpath)
     {
+        if (name_len + 1 >= name_size)
+        {
+            name[0] = '\0';
+            return -ENAMETOOLONG;
+        }
         *name = *subpath;
         name ++;
         subpath ++;
+        name_len++;
     }
+    *name = '\0';
     return 0;
 }
 
@@ -213,7 +243,10 @@ find_subpath:
         subpath ++; /* skip '/' */
 
     memset(subdir_name, 0, DIRENT_NAME_MAX);
-    _get_subdir(curpath, subdir_name);
+    if (_get_subdir(curpath, subdir_name, sizeof(subdir_name)) != 0)
+    {
+        return NULL;
+    }
 
     rt_spin_lock(&superblock->lock);
 
@@ -490,6 +523,7 @@ static struct dfs_vnode *devtmpfs_create_vnode(struct dfs_dentry *dentry, int ty
     struct devtmpfs_sb *superblock;
     struct devtmpfs_file *d_file, *p_file;
     char parent_path[DFS_PATH_MAX], file_name[DIRENT_NAME_MAX];
+    int ret;
 
     if (dentry == NULL || dentry->mnt == NULL || dentry->mnt->data == NULL)
     {
@@ -503,7 +537,13 @@ static struct dfs_vnode *devtmpfs_create_vnode(struct dfs_dentry *dentry, int ty
     if (vnode)
     {
         /* find parent file */
-        _path_separate(dentry->pathname, parent_path, file_name);
+        ret = _path_separate(dentry->pathname, parent_path, sizeof(parent_path),
+                             file_name, sizeof(file_name));
+        if (ret != RT_EOK)
+        {
+            dfs_vnode_destroy(vnode);
+            return NULL;
+        }
         if (file_name[0] == '\0') /* it's root dir */
         {
             dfs_vnode_destroy(vnode);
