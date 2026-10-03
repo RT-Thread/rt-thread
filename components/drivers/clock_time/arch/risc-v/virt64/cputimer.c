@@ -54,7 +54,6 @@ void rt_clock_time_source_init(void)
         rt_uint8_t caps = RT_CLOCK_TIME_CAP_SOURCE;
 
         _riscv_clock_dev.ops = &_riscv_clock_ops;
-        _riscv_clock_dev.res_scale = RT_CLOCK_TIME_RESMUL;
         _riscv_clock_dev.caps = caps;
         rt_clock_time_device_register(&_riscv_clock_dev, "clock_time_rdtime", caps);
         rt_clock_time_set_default_source(&_riscv_clock_dev);
