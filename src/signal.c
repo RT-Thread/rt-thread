@@ -30,11 +30,6 @@
 #define DBG_LVL     DBG_WARNING
 #include <rtdbg.h>
 
-#ifdef RT_USING_MUSLLIBC
-    #define sig_mask(sig_no)    (1u << (sig_no - 1))
-#else
-    #define sig_mask(sig_no)    (1u << sig_no)
-#endif
 #define sig_valid(sig_no)   (sig_no >= 0 && sig_no < RT_SIG_MAX)
 
 static struct rt_spinlock _thread_signal_lock = RT_SPINLOCK_INIT;
@@ -82,52 +77,84 @@ static void _signal_entry(void *parameter)
 #endif /* RT_USING_SMP */
 }
 
-/*
- * To deliver a signal to thread, there are cases:
- * 1. When thread is suspended, function resumes thread and
- * set signal stat;
- * 2. When thread is ready:
- *   - If function delivers a signal to self thread, just handle
- *    it.
- *   - If function delivers a signal to another ready thread, OS
- *    should build a slice context to handle it.
- */
+/* Deliver pending signals according to the target thread's wait state. */
 static void _signal_deliver(rt_thread_t tid)
 {
     rt_base_t level;
+    rt_sched_lock_level_t slvl;
+    rt_uint8_t stat;
+    rt_sigset_t pending;
+    rt_bool_t need_wakeup = RT_FALSE;
 
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
+    rt_sched_lock(&slvl);
+    stat = RT_SCHED_CTX(tid).stat;
 
-    /* thread is not interested in pended signals */
-    if (!(tid->sig_pending & tid->sig_mask))
+    /*
+     * A signal_wait thread must also be woken for signals that are masked
+     * from normal asynchronous delivery.
+     */
+    if (!(tid->sig_pending & tid->sig_mask) &&
+        !(stat & RT_THREAD_STAT_SIGNAL_WAIT))
     {
+        rt_sched_unlock(slvl);
         rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
         return;
     }
 
-    if ((RT_SCHED_CTX(tid).stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
-    {
-        /* resume thread to handle signal */
-#ifdef RT_USING_SMART
-        rt_thread_wakeup(tid);
-#else
-        rt_thread_resume(tid);
-#endif
-        /* add signal state */
-        RT_SCHED_CTX(tid).stat |= (RT_THREAD_STAT_SIGNAL | RT_THREAD_STAT_SIGNAL_PENDING);
+    pending = tid->sig_pending & tid->sig_mask;
 
+    if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
+    {
+        if ((stat & RT_THREAD_STAT_SIGNAL_WAIT) ||
+            !(stat & RT_SIGNAL_COMMON_WAKEUP_MASK) ||
+            ((pending & (RT_SIG_MASK(SIGKILL) | RT_SIG_MASK(SIGSTOP))) &&
+             !(stat & RT_SIGNAL_KILL_WAKEUP_MASK)))
+        {
+            if (!(stat & RT_THREAD_STAT_SIGNAL_WAIT))
+            {
+                tid->error = RT_EINTR;
+            }
+
+            need_wakeup = RT_TRUE;
+        }
+
+        if (!(stat & RT_THREAD_STAT_SIGNAL_WAIT))
+        {
+            /* Mark signals for the generic handler before resuming the target. */
+            RT_SCHED_CTX(tid).stat |= RT_THREAD_STAT_SIGNAL |
+                                      RT_THREAD_STAT_SIGNAL_PENDING;
+        }
+        rt_sched_unlock(slvl);
         rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 
-        /* re-schedule */
-        rt_schedule();
+        if (need_wakeup)
+        {
+            /* Wake the thread only after releasing the signal lock. */
+#ifdef RT_USING_SMART
+            rt_thread_wakeup(tid);
+#else
+            rt_thread_resume(tid);
+#endif
+
+            /* Re-schedule after the wakeup attempt. */
+            rt_schedule();
+        }
     }
     else
     {
-        if (tid == rt_thread_self())
+        if (RT_SCHED_CTX(tid).stat & RT_THREAD_STAT_SIGNAL_WAIT)
+        {
+            /* Keep pending signals for rt_signal_wait() to consume. */
+            rt_sched_unlock(slvl);
+            rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
+        }
+        else if (tid == rt_thread_self())
         {
             /* add signal state */
             RT_SCHED_CTX(tid).stat |= RT_THREAD_STAT_SIGNAL;
 
+            rt_sched_unlock(slvl);
             rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 
             /* do signal action in self thread context */
@@ -162,6 +189,7 @@ static void _signal_deliver(rt_thread_t tid)
                                        (void *)((char *)tid->sig_ret - 32), RT_NULL);
 #endif /* RT_USING_SMP */
 
+            rt_sched_unlock(slvl);
             rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
             LOG_D("signal stack pointer @ 0x%08x", tid->sp);
 
@@ -170,6 +198,7 @@ static void _signal_deliver(rt_thread_t tid)
         }
         else
         {
+            rt_sched_unlock(slvl);
             rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
         }
     }
@@ -279,7 +308,7 @@ void rt_signal_mask(int signo)
 
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
 
-    tid->sig_mask &= ~sig_mask(signo);
+    tid->sig_mask &= ~RT_SIG_MASK(signo);
 
     rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 }
@@ -302,7 +331,7 @@ void rt_signal_unmask(int signo)
 
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
 
-    tid->sig_mask |= sig_mask(signo);
+    tid->sig_mask |= RT_SIG_MASK(signo);
 
     /* let thread handle pended signals */
     if (tid->sig_mask & tid->sig_pending)
@@ -336,120 +365,166 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
     rt_base_t level;
     rt_thread_t tid = rt_thread_self();
     struct siginfo_node *si_node = RT_NULL, *si_prev = RT_NULL;
+    rt_tick_t deadline = 0;
+    rt_bool_t timed_wait;
+    rt_sigset_t deliver_pending = 0;
 
     /* current context checking */
     RT_DEBUG_IN_THREAD_CONTEXT;
 
     /* parameters check */
-    if (set == NULL || *set == 0 || si == NULL )
+    if (set == NULL || *set == 0)
     {
-        ret = -RT_EINVAL;
-        goto __done_return;
+        return -RT_EINVAL;
     }
 
     /* clear siginfo to avoid unknown value */
-    memset(si, 0x0, sizeof(rt_siginfo_t));
+    if (si)
+    {
+        memset(si, 0x0, sizeof(rt_siginfo_t));
+    }
+
+    timed_wait = timeout != RT_WAITING_FOREVER;
+    if (timed_wait && timeout > 0)
+    {
+        deadline = rt_tick_get() + (rt_tick_t)timeout;
+    }
 
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
 
-    /* already pending */
-    if (tid->sig_pending & *set) goto __done;
-
-    if (timeout == 0)
+    for (;;)
     {
-        ret = -RT_ETIMEOUT;
-        goto __done_int;
-    }
+        rt_bool_t matched = RT_FALSE;
 
-    /* suspend self thread */
-    rt_thread_suspend_with_flag(tid, RT_UNINTERRUPTIBLE);
-    /* set thread stat as waiting for signal */
-    RT_SCHED_CTX(tid).stat |= RT_THREAD_STAT_SIGNAL_WAIT;
-
-    /* start timeout timer */
-    if (timeout != RT_WAITING_FOREVER)
-    {
-        rt_tick_t timeout_tick = timeout;
-        /* reset the timeout of thread timer and start it */
-        rt_timer_control(&(tid->thread_timer),
-                         RT_TIMER_CTRL_SET_TIME,
-                         &timeout_tick);
-        rt_timer_start(&(tid->thread_timer));
-    }
-    rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
-
-    /* do thread scheduling */
-    rt_schedule();
-
-    level = rt_spin_lock_irqsave(&_thread_signal_lock);
-
-    /* remove signal waiting flag */
-    RT_SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL_WAIT;
-
-    /* check errno of thread */
-    if (tid->error == -RT_ETIMEOUT)
-    {
-        tid->error = RT_EOK;
-        rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
-
-        /* timer timeout */
-        ret = -RT_ETIMEOUT;
-        goto __done_return;
-    }
-
-__done:
-    /* to get the first matched pending signals */
-    si_node = (struct siginfo_node *)tid->si_list;
-    while (si_node)
-    {
-        int signo;
-
-        signo = si_node->si.si_signo;
-        if (sig_mask(signo) & *set)
+        /* Return immediately when a requested signal is already pending. */
+        if (!(tid->sig_pending & *set))
         {
-            *si  = si_node->si;
+            rt_tick_t timeout_tick = 0;
 
-            LOG_D("sigwait: %d sig raised!", signo);
-            if (si_prev) si_prev->list.next = si_node->list.next;
-            else
+            if (timeout == 0 ||
+                (timed_wait &&
+                 (rt_int32_t)(deadline - rt_tick_get()) <= 0))
             {
-                struct siginfo_node *node_next;
+                ret = -RT_ETIMEOUT;
+                break;
+            }
 
-                if (si_node->list.next)
+            /* Suspend until a requested signal or the timeout arrives. */
+            ret = rt_thread_suspend_with_flag(tid, RT_UNINTERRUPTIBLE);
+            if (ret != RT_EOK)
+            {
+                break;
+            }
+
+            RT_SCHED_CTX(tid).stat |= RT_THREAD_STAT_SIGNAL_WAIT;
+
+            if (timed_wait)
+            {
+                timeout_tick = deadline - rt_tick_get();
+                if ((rt_int32_t)timeout_tick <= 0)
                 {
-                    node_next = (void *)rt_slist_entry(si_node->list.next, struct siginfo_node, list);
-                    tid->si_list = node_next;
+                    /* Use one tick so the timer path can resume the waiter. */
+                    timeout_tick = 1;
+                }
+
+                /* Restart the timer with the remaining wait interval. */
+                rt_timer_control(&(tid->thread_timer),
+                                 RT_TIMER_CTRL_SET_TIME,
+                                 &timeout_tick);
+                rt_timer_start(&(tid->thread_timer));
+            }
+            rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
+
+            /* do thread scheduling */
+            rt_schedule();
+
+            level = rt_spin_lock_irqsave(&_thread_signal_lock);
+
+            /* remove signal waiting flag */
+            RT_SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL_WAIT;
+
+            /* Check whether the wait ended because of the timer. */
+            if (tid->error == -RT_ETIMEOUT)
+            {
+                tid->error = RT_EOK;
+                ret = -RT_ETIMEOUT;
+                break;
+            }
+        }
+
+        /* Find and consume the first requested pending signal. */
+        si_prev = RT_NULL;
+        si_node = (struct siginfo_node *)tid->si_list;
+        while (si_node)
+        {
+            int signo;
+
+            signo = si_node->si.si_signo;
+            if (RT_SIG_MASK(signo) & *set)
+            {
+                if (si)
+                {
+                    *si = si_node->si;
+                }
+                LOG_D("sigwait: %d sig raised!", signo);
+
+                if (si_prev)
+                {
+                    si_prev->list.next = si_node->list.next;
                 }
                 else
                 {
-                    tid->si_list = RT_NULL;
+                    if (si_node->list.next)
+                    {
+                        tid->si_list = (void *)rt_slist_entry(si_node->list.next,
+                                                              struct siginfo_node,
+                                                              list);
+                    }
+                    else
+                    {
+                        tid->si_list = RT_NULL;
+                    }
                 }
+
+                /* clear pending */
+                tid->sig_pending &= ~RT_SIG_MASK(signo);
+                rt_mp_free(si_node);
+                matched = RT_TRUE;
+                break;
             }
 
-            /* clear pending */
-            tid->sig_pending &= ~sig_mask(signo);
-            rt_mp_free(si_node);
+            si_prev = si_node;
+            if (si_node->list.next)
+            {
+                si_node = (void *)rt_slist_entry(si_node->list.next,
+                                                 struct siginfo_node,
+                                                 list);
+            }
+            else
+            {
+                si_node = RT_NULL;
+            }
+        }
+
+        if (matched)
+        {
             break;
         }
+    }
 
-        si_prev = si_node;
-        if (si_node->list.next)
-        {
-            si_node = (void *)rt_slist_entry(si_node->list.next, struct siginfo_node, list);
-        }
-        else
-        {
-            si_node = RT_NULL;
-        }
-     }
-
-__done_int:
+    deliver_pending = tid->sig_pending & tid->sig_mask & ~(*set);
     rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 
-__done_return:
+    if (deliver_pending)
+    {
+        /* Resume normal delivery for signals outside the wait set. */
+        _signal_deliver(tid);
+    }
+
     return ret;
 }
 
+/* Handle pending signals and update interrupted wait results. */
 void rt_thread_handle_sig(rt_bool_t clean_state)
 {
     rt_base_t level;
@@ -465,7 +540,8 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
         {
             while (tid->sig_pending & tid->sig_mask)
             {
-                int signo, error;
+                int signo;
+                rt_err_t error_before_handler;
                 rt_sighandler_t handler;
 
                 si_node = (struct siginfo_node *)tid->si_list;
@@ -479,18 +555,22 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
 
                 signo   = si_node->si.si_signo;
                 handler = tid->sig_vectors[signo];
-                tid->sig_pending &= ~sig_mask(signo);
+                error_before_handler = tid->error;
+                tid->sig_pending &= ~RT_SIG_MASK(signo);
                 rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 
                 LOG_D("handle signal: %d, handler 0x%08x", signo, handler);
                 if (handler) handler(signo);
 
                 level = rt_spin_lock_irqsave(&_thread_signal_lock);
-                error = -RT_EINTR;
 
                 rt_mp_free(si_node); /* release this siginfo node */
-                /* set errno in thread tcb */
-                tid->error = error;
+                /* Do not overwrite a successful or timed-out wait. */
+                if (error_before_handler == RT_EINTR ||
+                    error_before_handler == -RT_EINTR)
+                {
+                    tid->error = -RT_EINTR;
+                }
             }
 
             /* whether clean signal status */
@@ -605,7 +685,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     si.si_value.sival_ptr = RT_NULL;
 
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
-    if (tid->sig_pending & sig_mask(sig))
+    if (tid->sig_pending & RT_SIG_MASK(sig))
     {
         /* whether already emits this signal? */
         struct rt_slist_node *node;
@@ -652,7 +732,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
         }
 
         /* a new signal */
-        tid->sig_pending |= sig_mask(sig);
+        tid->sig_pending |= RT_SIG_MASK(sig);
 
         rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
     }
