@@ -100,7 +100,15 @@ rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
                         int                       cmd,
                         void                      *args)
 {
-    rt_err_t ret;
+    rt_err_t ret = RT_EOK;
+    rt_err_t err;
+
+    /* Serialize configuration changes with transfers on this bus. */
+    err = rt_mutex_take(&bus->lock, RT_WAITING_FOREVER);
+    if (err != RT_EOK)
+    {
+        return err;
+    }
 
     switch (cmd)
     {
@@ -108,7 +116,8 @@ rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
         {
             if (args == RT_NULL)
             {
-                return -RT_ERROR;
+                ret = -RT_ERROR;
+                break;
             }
 
             rt_uint32_t max_hz = *(rt_uint32_t *)args;
@@ -118,7 +127,7 @@ rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
             }
             else
             {
-                return -RT_ERROR;
+                ret = -RT_ERROR;
             }
             break;
         }
@@ -127,17 +136,21 @@ rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
             if(bus->ops->i2c_bus_control)
             {
                 ret = bus->ops->i2c_bus_control(bus, cmd, args);
-                return ret;
             }
             else
             {
                 LOG_E("I2C bus operation not supported");
-                return -RT_EINVAL;
+                ret = -RT_EINVAL;
             }
             break;
         }
     }
-    return RT_EOK;
+    err = rt_mutex_release(&bus->lock);
+    if (err != RT_EOK)
+    {
+        return err;
+    }
+    return ret;
 }
 
 rt_ssize_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
