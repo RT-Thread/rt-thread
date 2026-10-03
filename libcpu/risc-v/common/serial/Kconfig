@@ -1,0 +1,5 @@
+config RT_SERIAL_EARLY_SBI
+    bool "Early SBI"
+    depends on RT_USING_SERIAL
+    depends on !ARCH_RISCV_M_MODE
+    default y
