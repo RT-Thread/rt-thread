@@ -77,11 +77,13 @@
 #include "lwip/netif.h"
 #include "lwip/ip_addr.h"
 #include "lwip/icmp.h"
-#include "lwip/tcp_impl.h"
+/* lwIP 2.1 adaptation: tcp_impl.h was renamed/moved to prot/tcp.h (SiFli local modification) */
+#include "lwip/prot/tcp.h"
 #include "lwip/udp.h"
 #include "lwip/mem.h"
 #include "lwip/sys.h"
-#include "lwip/timers.h"
+/* lwIP 2.1 adaptation: timers.h was renamed/moved to timeouts.h (SiFli local modification) */
+#include "lwip/timeouts.h"
 #include "netif/etharp.h"
 
 #include <limits.h>
@@ -371,8 +373,15 @@ ip_nat_shallnat(const struct ip_hdr *iphdr)
   ip_nat_conf_t *nat_config = ip_nat_cfg;
 
   for (nat_config = ip_nat_cfg; nat_config != NULL; nat_config = nat_config->next) {
+      /*
+       * SiFli local modification
+       * Original RT-Thread implementation (NAT if either source or dest
+       * matches the rule).
+       * Changed to && locally: NAT is applied only when both the source and
+       * dest networks match the rule.
+       */
       if (ip_addr_netcmp(&(iphdr->dest), &(nat_config->entry.dest_net),
-                       &(nat_config->entry.dest_netmask)) ||
+                       &(nat_config->entry.dest_netmask)) &&
       ip_addr_netcmp(&(iphdr->src), &(nat_config->entry.source_net),
                      &(nat_config->entry.source_netmask))) {
         break;
@@ -679,18 +688,37 @@ ip_nat_out(struct pbuf *p)
             ("ip_nat_out: short icmp echo packet (%" U16_F " bytes) discarded\n", p->tot_len));
         } else {
           if (ICMPH_TYPE(icmphdr) == ICMP_ECHO) {
+            /*
+             * SiFli local modification
+             * Original RT-Thread implementation (drops new ICMP requests when
+             * the table is full).
+             * Changed locally: when no free slot is found, evict the oldest entry
+             * (smallest ttl) using LRU and reuse its slot, so new echo requests
+             * are not dropped when the ICMP table is full.
+             */
+            int oldest = -1;
+            s32_t oldest_ttl = LWIP_NAT_TTL_INFINITE;
+
             for (i = 0; i < LWIP_NAT_DEFAULT_STATE_TABLES_ICMP; i++) {
               if (!ip_nat_icmp_table[i].common.ttl) {
                 nat_entry.icmp = &ip_nat_icmp_table[i];
-                ip_nat_cmn_init(nat_config, iphdr, nat_entry.cmn);
-                nat_entry.icmp->id = icmphdr->id;
-                nat_entry.icmp->seqno = icmphdr->seqno;
-                ip_nat_dbg_dump_icmp_nat_entry(" ip_nat_out: created new NAT entry ", nat_entry.icmp);
                 break;
               }
+              if (ip_nat_icmp_table[i].common.ttl < oldest_ttl) {
+                oldest = i;
+                oldest_ttl = ip_nat_icmp_table[i].common.ttl;
+              }
             }
-            if (NULL == nat_entry.icmp)
-            {
+            if (nat_entry.icmp == NULL && oldest >= 0) {
+              nat_entry.icmp = &ip_nat_icmp_table[oldest];
+              IPNAT_ENTRY_RESET(&nat_entry.icmp->common);
+            }
+            if (nat_entry.icmp != NULL) {
+              ip_nat_cmn_init(nat_config, iphdr, nat_entry.cmn);
+              nat_entry.icmp->id = icmphdr->id;
+              nat_entry.icmp->seqno = icmphdr->seqno;
+              ip_nat_dbg_dump_icmp_nat_entry(" ip_nat_out: created new NAT entry ", nat_entry.icmp);
+            } else {
               LWIP_DEBUGF(LWIP_NAT_DEBUG, ("ip_nat_out: no more NAT entries for ICMP available\n"));
             }
           }
@@ -817,7 +845,8 @@ ip_nat_udp_lookup_outgoing(ip_nat_conf_t *nat_config, const struct ip_hdr *iphdr
     if (allocate) {
       if (last_free != -1) {
         nat_entry.udp = &ip_nat_udp_table[last_free];
-        nat_entry.udp->nport = htons((u16_t) (LWIP_NAT_DEFAULT_UDP_SOURCE_PORT + i));
+        /* SiFli local modification */
+        nat_entry.udp->nport = htons((u16_t) (LWIP_NAT_DEFAULT_UDP_SOURCE_PORT + last_free));
         nat_entry.udp->sport = udphdr->src;
         nat_entry.udp->dport = udphdr->dest;
         ip_nat_cmn_init(nat_config, iphdr, nat_entry.cmn);
@@ -902,7 +931,8 @@ ip_nat_tcp_lookup_outgoing(ip_nat_conf_t *nat_config, const struct ip_hdr *iphdr
     if (allocate) {
       if (last_free != -1) {
         nat_entry.tcp = &ip_nat_tcp_table[last_free];
-        nat_entry.tcp->nport = htons((u16_t) (LWIP_NAT_DEFAULT_TCP_SOURCE_PORT + i));
+        /* SiFli local modification */
+        nat_entry.tcp->nport = htons((u16_t) (LWIP_NAT_DEFAULT_TCP_SOURCE_PORT + last_free));
         nat_entry.tcp->sport = tcphdr->src;
         nat_entry.tcp->dport = tcphdr->dest;
         ip_nat_cmn_init(nat_config, iphdr, nat_entry.cmn);
