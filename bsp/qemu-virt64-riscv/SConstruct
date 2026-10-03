@@ -27,6 +27,9 @@ rtconfig.ARCH='risc-v'
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
 
+if not GetDepend('RT_USING_CPLUSPLUS'):
+    env['LINKFLAGS'] = env['LINKFLAGS'].replace(' -lsupc++', '')
+
 stack_size = 4096
 
 if GetDepend('RT_USING_SMART'):
