@@ -1,0 +1,14 @@
+config RT_GRAPHIC_FB_SPACEMIT
+    bool "Spacemit K1 Saturn framebuffer"
+    depends on RT_USING_GRAPHIC
+    depends on RT_USING_OFW
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    default n
+    help
+        RT-Thread framebuffer and HDMI output drivers for the Spacemit K1
+        Saturn DPU. The display clock, reset, HDMI PHY and DPU scanout are
+        initialized by RT-Thread without relying on a bootloader handoff.
+
+        Supported primary-plane formats are ARGB8888, ABGR8888, RGB565 and
+        BGR565. HDMI currently uses the board's known-good 1920x1080p60 mode.
