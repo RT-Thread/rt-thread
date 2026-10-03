@@ -64,17 +64,24 @@ void VIRT_UART0_RxCpltCallback(VIRT_UART_HandleTypeDef *huart)
     device = (struct rthw_openamp *)rt_device_find("openamp");
     RT_ASSERT(device != RT_NULL);
 
+    if (rt_sem_take(&device->sema, RT_WAITING_FOREVER) != RT_EOK)
+    {
+        return;
+    }
+
     buf    = device->serial.rbuf;
     count  = device->serial.rbuf_count;
     size   = device->serial.rbuf_size;
     offset = device->serial.rbuf_start + count;
 
-    rt_sem_take(&device->sema, RT_WAITING_FOREVER);
-
-    rx_size = (huart->RxXferSize < MAX_BUFFER_SIZE) ? huart->RxXferSize : MAX_BUFFER_SIZE - 1;
-
     if (count < size)
     {
+        rx_size = huart->RxXferSize;
+        if (rx_size > size - count)
+        {
+            rx_size = size - count;
+        }
+
         if (offset >= size)
         {
             offset -= size;
@@ -82,8 +89,12 @@ void VIRT_UART0_RxCpltCallback(VIRT_UART_HandleTypeDef *huart)
 
         for (i = 0; i < rx_size; i++)
         {
-           buf[offset++] = huart->pRxBuffPtr[i];
-           count++;
+            buf[offset++] = huart->pRxBuffPtr[i];
+            if (offset >= size)
+            {
+                offset = 0;
+            }
+            count++;
         }
     }
 
@@ -117,6 +128,7 @@ static rt_err_t _init(struct rt_device *dev)
 
 static rt_ssize_t _read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
+    rt_err_t result;
     rt_size_t count, rbsize, offset;
     rt_uint8_t *buf     = RT_NULL;
     rt_uint8_t *pBuffer = RT_NULL;
@@ -126,16 +138,21 @@ static rt_ssize_t _read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_si
     device = (struct rthw_openamp *)dev;
     RT_ASSERT(device != RT_NULL);
 
+    result = rt_sem_take(&device->sema, RT_WAITING_FOREVER);
+    if (result != RT_EOK)
+    {
+        return result;
+    }
+
     pBuffer = (unsigned char*)buffer;
     count   = device->serial.rbuf_count;
     buf     = device->serial.rbuf;
 
     if (count == 0)
     {
+        rt_sem_release(&device->sema);
         return -RT_ERROR;
     }
-
-    rt_sem_take(&device->sema, RT_WAITING_FOREVER);
 
     if (count >= size)
     {
@@ -148,7 +165,7 @@ static rt_ssize_t _read(struct rt_device *dev, rt_off_t pos, void *buffer, rt_si
     for (i = 0; i < count; i++)
     {
         *pBuffer++ = buf[offset++];
-        if (offset > rbsize)
+        if (offset >= rbsize)
         {
            offset = 0;
         }
