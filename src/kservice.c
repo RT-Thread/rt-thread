@@ -444,6 +444,23 @@ rt_weak rt_err_t rt_backtrace(void)
     return rt_backtrace_frame(thread, &frame);
 }
 
+#ifdef RT_USING_KSYMS
+static void _rt_backtrace_print_pc(rt_ubase_t pc)
+{
+    struct rt_ksym_info info;
+
+    rt_kprintf(" 0x%lx", (unsigned long)pc);
+    if (rt_ksym_lookup(pc, &info) == RT_EOK)
+    {
+        rt_kprintf(" <%s+0x%lx", info.name,
+                   (unsigned long)info.offset);
+        if (info.size != 0)
+            rt_kprintf("/0x%lx", (unsigned long)info.size);
+        rt_kprintf(">");
+    }
+}
+#endif /* RT_USING_KSYMS */
+
 /**
  * @brief Print backtrace from frame to system console device
  *
@@ -455,11 +472,17 @@ rt_weak rt_err_t rt_backtrace_frame(rt_thread_t thread, struct rt_hw_backtrace_f
 {
     long nesting = 0;
 
+#ifndef RT_USING_KSYMS
     rt_kprintf("please use: addr2line -e rtthread.elf -a -f\n");
+#endif
 
     while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
     {
+#ifdef RT_USING_KSYMS
+        _rt_backtrace_print_pc((rt_ubase_t)frame->pc);
+#else
         rt_kprintf(" 0x%lx", (rt_ubase_t)frame->pc);
+#endif
         if (rt_hw_backtrace_frame_unwind(thread, frame))
         {
             break;
@@ -479,11 +502,17 @@ rt_weak rt_err_t rt_backtrace_frame(rt_thread_t thread, struct rt_hw_backtrace_f
  */
 rt_weak rt_err_t rt_backtrace_formatted_print(rt_ubase_t *buffer, long buflen)
 {
+#ifndef RT_USING_KSYMS
     rt_kprintf("please use: addr2line -e rtthread.elf -a -f\n");
+#endif
 
     for (rt_size_t i = 0; i < buflen && buffer[i] != 0; i++)
     {
+#ifdef RT_USING_KSYMS
+        _rt_backtrace_print_pc((rt_ubase_t)buffer[i]);
+#else
         rt_kprintf(" 0x%lx", (rt_ubase_t)buffer[i]);
+#endif
     }
 
     rt_kprintf("\n");
