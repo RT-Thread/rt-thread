@@ -8,6 +8,7 @@ MEMORY
 {
     ROM (rx) : ORIGIN = 0x08000000, LENGTH = 1024k /* 1024KB flash */
     RAM (rw) : ORIGIN = 0x24000000, LENGTH =  320k /* 320K sram */
+    SRAM4 (rw) : ORIGIN = 0x38000000, LENGTH = 16k /* 16KB AHB SRAM D3, BDMA accessible */
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x400;
@@ -63,15 +64,15 @@ SECTIONS
     .ARM.exidx :
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
+
+        /* This is used by the startup in order to initialize the .data secion */
+        _sidata = .;
     } > ROM
     __exidx_end = .;
 
-    /* Used by the startup to initialize .data. */
-    _sidata = LOADADDR(.data);
-
     /* .data section which is used for initialized data */
 
-    .data :
+    .data : AT (_sidata)
     {
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
@@ -89,9 +90,9 @@ SECTIONS
         . = ALIGN(4);
         /* This is used by the startup in order to initialize the .data secion */
         _edata = . ;
-    } >RAM AT> ROM
+    } >RAM
 
-    .stack (NOLOAD) :
+    .stack :
     {
         . = ALIGN(4);
         _sstack = .;
@@ -120,6 +121,15 @@ SECTIONS
     __bss_end = .;
 
     _end = .;
+
+    /* Reserved for the WS2812 BDMA buffer in D3 domain SRAM4 (BDMA can only
+     * access SRAM4); the buffer itself is provided by a standalone package. */
+    .ws2812_bdma (NOLOAD) :
+    {
+        . = ALIGN(32);
+        *(.ws2812_bdma)
+        *(.ws2812_bdma.*)
+    } > SRAM4
 
     /* Stabs debugging sections.  */
     .stab          0 : { *(.stab) }
