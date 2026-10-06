@@ -1425,12 +1425,12 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
 
     /* print ping statistics */
     loss = (uint32_t)((1 - ((float)received) / index) * 100);
-    avg_time = (uint32_t)(avg_time / received);
 
     rt_kprintf("\n--- %s ping statistics ---\n", inet_ntoa(ping_resp.ip_addr));
     rt_kprintf("%d packets transmitted, %d received, %d%% packet loss\n", index, received, loss);
     if (received > 0)
     {
+        avg_time = (uint32_t)(avg_time / received);
         rt_kprintf("minimum = %dms, maximum = %dms, average = %dms\n", min_time, max_time, avg_time);
     }
 
