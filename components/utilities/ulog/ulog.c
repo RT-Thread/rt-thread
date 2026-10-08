@@ -402,12 +402,6 @@ rt_weak rt_size_t ulog_tail_formater(char *log_buf, rt_size_t log_len, rt_bool_t
         log_len -= sizeof((char)'\0');
     }
 
-    /* package newline sign */
-    if (newline)
-    {
-        log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
-    }
-
 #ifdef ULOG_USING_COLOR
     /* add CSI end sign  */
     if (color_output_info[level])
@@ -415,6 +409,12 @@ rt_weak rt_size_t ulog_tail_formater(char *log_buf, rt_size_t log_len, rt_bool_t
         log_len += ulog_strcpy(log_len, log_buf + log_len, CSI_END);
     }
 #endif /* ULOG_USING_COLOR */
+
+    /* package newline sign */
+    if (newline)
+    {
+        log_len += ulog_strcpy(log_len, log_buf + log_len, ULOG_NEWLINE_SIGN);
+    }
 
     /* add string end sign */
     log_buf[log_len] = '\0';
