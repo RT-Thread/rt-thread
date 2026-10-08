@@ -693,6 +693,7 @@ static rt_err_t _vendor_request(udevice_t device, ureq_t setup)
     usb_os_func_comp_id_desc_t func_comp_id_desc;
     uintf_t intf;
     ufunction_t func;
+    rt_size_t size;
     switch(setup->bRequest)
     {
         case 'A':
@@ -726,7 +727,9 @@ static rt_err_t _vendor_request(udevice_t device, ureq_t setup)
                         pusb_comp_id_desc += sizeof(struct usb_os_function_comp_id_descriptor)-sizeof(rt_list_t);
                     }
                 }
-                rt_usbd_ep0_write(device, (void*)usb_comp_id_desc, setup->wLength);
+                size = (setup->wLength > usb_comp_id_desc_size) ?
+                       usb_comp_id_desc_size : setup->wLength;
+                rt_usbd_ep0_write(device, (void*)usb_comp_id_desc, size);
             break;
             case 0x05:
                 intf = rt_usbd_find_interface(device, setup->wValue & 0xFF, &func);
