@@ -347,6 +347,8 @@ RT_STATIC_ASSERT(lp_width_same, sizeof(void *) == sizeof(long));
 rt_inline void siginfo_k2u(lwp_siginfo_t ksigi, siginfo_t *usigi)
 {
     int signo = ksigi->ksiginfo.signo;
+
+    memset(usigi, 0, sizeof(siginfo_t));
     usigi->si_code = ksigi->ksiginfo.code;
     usigi->si_signo = signo;
     usigi->si_pid = ksigi->ksiginfo.from_pid;
@@ -358,6 +360,10 @@ rt_inline void siginfo_k2u(lwp_siginfo_t ksigi, siginfo_t *usigi)
             usigi->si_status = ksigi->ext->sigchld.status;
             usigi->si_utime = ksigi->ext->sigchld.stime;
             usigi->si_stime = ksigi->ext->sigchld.utime;
+        }
+        else
+        {
+            usigi->si_value = ksigi->ext->sigval;
         }
     }
 
