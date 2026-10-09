@@ -25,7 +25,7 @@
 
 #if defined(SOC_SERIES_GD32E50x) || defined(SOC_SERIES_GD32F10x) || defined(SOC_SERIES_GD32F20x) || defined(SOC_SERIES_GD32F30x)
     #define GPIO_OSPEED               GPIO_OSPEED_50MHZ
-#elif defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#elif (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     #define GPIO_OTYPE                GPIO_OTYPE_PP
     #define GPIO_OSPEED               GPIO_OSPEED_60MHZ
 #elif defined(SOC_SERIES_GD32F4xx) || defined(SOC_SERIES_GD32F5xx) || defined(SOC_SERIES_GD32E23x)
@@ -52,7 +52,7 @@ struct rt_serial_device serial0;
 gd32_uart_dma uart0_rxdma = {
     DMA0,
     DMA_CH0,
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     DMA_REQUEST_USART0_RX,
 #endif
     DMA_INTF_FTFIF,
@@ -62,7 +62,7 @@ gd32_uart_dma uart0_rxdma = {
 gd32_uart_dma uart0_txdma = {
     DMA1,
     DMA_CH0,
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     DMA_REQUEST_USART0_TX,
 #endif
     DMA_INTF_FTFIF,
@@ -116,7 +116,7 @@ struct rt_serial_device serial1;
 gd32_uart_dma uart1_rxdma = {
     DMA0,
     DMA_CH1,
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     DMA_REQUEST_USART1_RX,
 #endif
     DMA_INTF_FTFIF,
@@ -156,7 +156,7 @@ struct rt_serial_device serial2;
 gd32_uart_dma uart2_rxdma = {
     DMA0,
     DMA_CH2,
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     DMA_REQUEST_USART2_RX,
 #endif
     DMA_INTF_FTFIF,
@@ -166,7 +166,7 @@ gd32_uart_dma uart2_rxdma = {
 gd32_uart_dma uart2_txdma = {
     DMA1,
     DMA_CH2,
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     DMA_REQUEST_USART2_TX,
 #endif
     DMA_INTF_FTFIF,
@@ -220,7 +220,7 @@ struct rt_serial_device serial3;
 gd32_uart_dma uart3_rxdma = {
     DMA0,
     DMA_CH3,
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     DMA_REQUEST_UART3_RX,
 #endif
     DMA_INTF_FTFIF,
@@ -260,7 +260,7 @@ struct rt_serial_device serial4;
 gd32_uart_dma uart4_rxdma = {
     DMA0,
     DMA_CH4,
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     DMA_REQUEST_UART4_RX,
 #endif
     DMA_INTF_FTFIF,
@@ -299,7 +299,7 @@ struct rt_serial_device serial5;
 gd32_uart_dma uart5_rxdma = {
     DMA0,
     DMA_CH5,
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     DMA_REQUEST_USART5_RX,
 #endif
     DMA_INTF_FTFIF,
@@ -339,7 +339,7 @@ struct rt_serial_device serial6;
 gd32_uart_dma uart6_rxdma = {
     DMA0,
     DMA_CH6,
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     DMA_REQUEST_UART6_RX,
 #endif
     DMA_INTF_FTFIF,
@@ -379,7 +379,7 @@ struct rt_serial_device serial7;
 gd32_uart_dma uart7_rxdma = {
     DMA0,
     DMA_CH7,
-#if defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H75E)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
     DMA_REQUEST_UART7_RX,
 #endif
     DMA_INTF_FTFIF,
