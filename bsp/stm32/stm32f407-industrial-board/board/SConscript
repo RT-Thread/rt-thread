@@ -1,0 +1,25 @@
+import os
+from building import *
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32f4xx_hal_msp.c
+''')
+path =  [cwd]
+path += [os.path.join(cwd, 'CubeMX_Config', 'Inc')]
+
+CPPDEFINES = ['STM32F407xx']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+# if os.path.isfile(os.path.join(cwd, "ports", 'SConscript')):
+#     group = group + SConscript(os.path.join("ports", 'SConscript'))
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')
