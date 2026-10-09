@@ -41,13 +41,13 @@
 #include <rtthread.h>
 #include <stddef.h>
 
-#define DBG_TAG           "kernel.thread"
-#define DBG_LVL           DBG_INFO
+#define DBG_TAG "kernel.thread"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_thread_suspend_hook)(rt_thread_t thread);
-static void (*rt_thread_resume_hook) (rt_thread_t thread);
+static void (*rt_thread_resume_hook)(rt_thread_t thread);
 
 /**
  * @brief   This function sets a hook function when the system suspend a thread.
@@ -91,7 +91,7 @@ static void _thread_detach_from_mutex(rt_thread_t thread)
         (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex))
     {
         /* remove it from its waiting list */
-        struct rt_mutex *mutex = (struct rt_mutex*)thread->pending_object;
+        struct rt_mutex *mutex = (struct rt_mutex *)thread->pending_object;
         rt_mutex_drop_thread(mutex, thread);
         thread->pending_object = RT_NULL;
     }
@@ -111,7 +111,9 @@ static void _thread_detach_from_mutex(rt_thread_t thread)
 
 #else
 
-static void _thread_detach_from_mutex(rt_thread_t thread) {}
+static void _thread_detach_from_mutex(rt_thread_t thread)
+{
+}
 #endif
 
 static void _thread_exit(void)
@@ -177,13 +179,13 @@ static void _thread_timeout(void *parameter)
 }
 
 static rt_err_t _thread_init(struct rt_thread *thread,
-                             const char       *name,
+                             const char *name,
                              void (*entry)(void *parameter),
-                             void             *parameter,
-                             void             *stack_start,
-                             rt_uint32_t       stack_size,
-                             rt_uint8_t        priority,
-                             rt_uint32_t       tick)
+                             void *parameter,
+                             void *stack_start,
+                             rt_uint32_t stack_size,
+                             rt_uint8_t priority,
+                             rt_uint32_t tick)
 {
     RT_UNUSED(name);
 
@@ -197,7 +199,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->wakeup_handle.func = RT_NULL;
 #endif
 
-    thread->entry = (void *)entry;
+    thread->entry     = (void *)entry;
     thread->parameter = parameter;
 
     /* stack init */
@@ -225,7 +227,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #endif
 
 #ifdef RT_USING_EVENT
-    thread->event_set = 0;
+    thread->event_set  = 0;
     thread->event_info = 0;
 #endif /* RT_USING_EVENT */
 
@@ -254,18 +256,18 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->sig_mask    = 0x00;
     thread->sig_pending = 0x00;
 
-#ifndef RT_USING_SMP
-    thread->sig_ret     = RT_NULL;
-#endif /* RT_USING_SMP */
+    #ifndef RT_USING_SMP
+    thread->sig_ret = RT_NULL;
+    #endif /* RT_USING_SMP */
     thread->sig_vectors = RT_NULL;
     thread->si_list     = RT_NULL;
 #endif /* RT_USING_SIGNALS */
 
 #ifdef RT_USING_SMART
     thread->tid_ref_count = 0;
-    thread->lwp = RT_NULL;
+    thread->lwp           = RT_NULL;
     thread->susp_recycler = RT_NULL;
-    thread->robust_list = RT_NULL;
+    thread->robust_list   = RT_NULL;
     rt_list_init(&(thread->sibling));
 
     /* lwp thread-signal init */
@@ -276,15 +278,15 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     rt_memset(&thread->user_ctx, 0, sizeof thread->user_ctx);
 
     /* initialize user_time and system_time */
-    thread->user_time = 0;
+    thread->user_time   = 0;
     thread->system_time = 0;
 #endif
 
 #ifdef RT_USING_CPU_USAGE_TRACER
-    thread->user_time = 0;
-    thread->system_time = 0;
+    thread->user_time       = 0;
+    thread->system_time     = 0;
     thread->total_time_prev = 0;
-    thread->cpu_usage = 0;
+    thread->cpu_usage       = 0;
 #endif /* RT_USING_CPU_USAGE_TRACER */
 
 #ifdef RT_USING_PTHREADS
@@ -347,13 +349,13 @@ static rt_err_t _thread_init(struct rt_thread *thread,
  *          If the return value is any other values, it means this operation failed.
  */
 rt_err_t rt_thread_init(struct rt_thread *thread,
-                        const char       *name,
+                        const char *name,
                         void (*entry)(void *parameter),
-                        void             *parameter,
-                        void             *stack_start,
-                        rt_uint32_t       stack_size,
-                        rt_uint8_t        priority,
-                        rt_uint32_t       tick)
+                        void *parameter,
+                        void *stack_start,
+                        rt_uint32_t stack_size,
+                        rt_uint8_t priority,
+                        rt_uint32_t tick)
 {
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
@@ -388,10 +390,10 @@ rt_thread_t rt_thread_self(void)
 #ifndef RT_USING_SMP
     return rt_cpu_self()->current_thread;
 
-#elif defined (ARCH_USING_HW_THREAD_SELF)
+#elif defined(ARCH_USING_HW_THREAD_SELF)
     return rt_hw_thread_self();
 
-#else /* !ARCH_USING_HW_THREAD_SELF */
+#else  /* !ARCH_USING_HW_THREAD_SELF */
     rt_thread_t self;
     rt_base_t lock;
 
@@ -559,9 +561,9 @@ static rt_err_t _thread_detach(rt_thread_t thread)
  */
 rt_thread_t rt_thread_create(const char *name,
                              void (*entry)(void *parameter),
-                             void       *parameter,
+                             void *parameter,
                              rt_uint32_t stack_size,
-                             rt_uint8_t  priority,
+                             rt_uint8_t priority,
                              rt_uint32_t tick)
 {
     /* parameter check */
@@ -573,7 +575,9 @@ rt_thread_t rt_thread_create(const char *name,
     thread = (struct rt_thread *)rt_object_allocate(RT_Object_Class_Thread,
                                                     name);
     if (thread == RT_NULL)
+    {
         return RT_NULL;
+    }
 
     stack_start = (void *)RT_KERNEL_MALLOC(stack_size);
     if (stack_start == RT_NULL)
@@ -693,7 +697,9 @@ static rt_err_t _thread_sleep(rt_tick_t tick)
 
         /* clear error number of this thread to RT_EOK */
         if (thread->error == -RT_ETIMEOUT)
+        {
             thread->error = RT_EOK;
+        }
     }
     else
     {
@@ -752,8 +758,8 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     {
         rt_tick_t left_tick;
 
-        *tick += inc_tick;
-        left_tick = *tick - cur_tick;
+        *tick     += inc_tick;
+        left_tick  = *tick - cur_tick;
 
         /* suspend thread */
         rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
@@ -832,56 +838,56 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 
     switch (cmd)
     {
-        case RT_THREAD_CTRL_CHANGE_PRIORITY:
+    case RT_THREAD_CTRL_CHANGE_PRIORITY:
+    {
+        rt_err_t error;
+        rt_sched_lock_level_t slvl;
+        rt_sched_lock(&slvl);
+        error = rt_sched_thread_change_priority(thread, *(rt_uint8_t *)arg);
+        rt_sched_unlock(slvl);
+        return error;
+    }
+
+    case RT_THREAD_CTRL_RESET_PRIORITY:
+    {
+        rt_err_t error;
+        rt_sched_lock_level_t slvl;
+        rt_sched_lock(&slvl);
+        error = rt_sched_thread_reset_priority(thread, *(rt_uint8_t *)arg);
+        rt_sched_unlock(slvl);
+        return error;
+    }
+
+    case RT_THREAD_CTRL_STARTUP:
+    {
+        return rt_thread_startup(thread);
+    }
+
+    case RT_THREAD_CTRL_CLOSE:
+    {
+        rt_err_t rt_err = -RT_EINVAL;
+
+        if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
         {
-            rt_err_t error;
-            rt_sched_lock_level_t slvl;
-            rt_sched_lock(&slvl);
-            error = rt_sched_thread_change_priority(thread, *(rt_uint8_t *)arg);
-            rt_sched_unlock(slvl);
-            return error;
+            rt_err = rt_thread_detach(thread);
         }
-
-        case RT_THREAD_CTRL_RESET_PRIORITY:
+#ifdef RT_USING_HEAP
+        else
         {
-            rt_err_t error;
-            rt_sched_lock_level_t slvl;
-            rt_sched_lock(&slvl);
-            error = rt_sched_thread_reset_priority(thread, *(rt_uint8_t *)arg);
-            rt_sched_unlock(slvl);
-            return error;
+            rt_err = rt_thread_delete(thread);
         }
+#endif /* RT_USING_HEAP */
+        rt_schedule();
+        return rt_err;
+    }
 
-        case RT_THREAD_CTRL_STARTUP:
-        {
-            return rt_thread_startup(thread);
-        }
+    case RT_THREAD_CTRL_BIND_CPU:
+    {
+        rt_uint8_t cpu;
 
-        case RT_THREAD_CTRL_CLOSE:
-        {
-            rt_err_t rt_err = -RT_EINVAL;
-
-            if (rt_object_is_systemobject((rt_object_t)thread) == RT_TRUE)
-            {
-                rt_err = rt_thread_detach(thread);
-            }
-    #ifdef RT_USING_HEAP
-            else
-            {
-                rt_err = rt_thread_delete(thread);
-            }
-    #endif /* RT_USING_HEAP */
-            rt_schedule();
-            return rt_err;
-        }
-
-        case RT_THREAD_CTRL_BIND_CPU:
-        {
-            rt_uint8_t cpu;
-
-            cpu = (rt_uint8_t)(rt_size_t)arg;
-            return rt_sched_thread_bind_cpu(thread, cpu);
-        }
+        cpu = (rt_uint8_t)(rt_size_t)arg;
+        return rt_sched_thread_bind_cpu(thread, cpu);
+    }
 
     default:
         break;
@@ -892,7 +898,7 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 RTM_EXPORT(rt_thread_control);
 
 #ifdef RT_USING_SMART
-#include <lwp_signal.h>
+    #include <lwp_signal.h>
 #endif
 
 /* Convert suspend_flag to corresponding thread suspend state value */
@@ -915,7 +921,7 @@ static void _thread_set_suspend_state(struct rt_thread *thread, int suspend_flag
     rt_uint8_t stat;
 
     RT_ASSERT(thread != RT_NULL);
-    stat = _thread_get_suspend_state(suspend_flag);
+    stat                      = _thread_get_suspend_state(suspend_flag);
     RT_SCHED_CTX(thread).stat = stat | (RT_SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
 }
 
@@ -1166,7 +1172,7 @@ rt_err_t rt_thread_wakeup(rt_thread_t thread)
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
     rt_sched_lock(&slvl);
-    func = thread->wakeup_handle.func;
+    func                       = thread->wakeup_handle.func;
     thread->wakeup_handle.func = RT_NULL;
     rt_sched_unlock(slvl);
 
@@ -1182,7 +1188,7 @@ rt_err_t rt_thread_wakeup(rt_thread_t thread)
 }
 RTM_EXPORT(rt_thread_wakeup);
 
-void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void* user_data)
+void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void *user_data)
 {
     rt_sched_lock_level_t slvl;
 
@@ -1190,7 +1196,7 @@ void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void*
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
     rt_sched_lock(&slvl);
-    thread->wakeup_handle.func = func;
+    thread->wakeup_handle.func      = func;
     thread->wakeup_handle.user_data = user_data;
     rt_sched_unlock(slvl);
 }
