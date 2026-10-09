@@ -10,15 +10,15 @@
 
 #include <rtthread.h>
 
-#if defined(RT_KLIBC_USING_LIBC_MEMSET) || \
-    defined(RT_KLIBC_USING_LIBC_MEMCPY) || \
+#if defined(RT_KLIBC_USING_LIBC_MEMSET) ||  \
+    defined(RT_KLIBC_USING_LIBC_MEMCPY) ||  \
     defined(RT_KLIBC_USING_LIBC_MEMMOVE) || \
-    defined(RT_KLIBC_USING_LIBC_MEMCMP) || \
-    defined(RT_KLIBC_USING_LIBC_STRSTR) || \
+    defined(RT_KLIBC_USING_LIBC_MEMCMP) ||  \
+    defined(RT_KLIBC_USING_LIBC_STRSTR) ||  \
     defined(RT_KLIBC_USING_LIBC_STRNCPY) || \
-    defined(RT_KLIBC_USING_LIBC_STRCPY) || \
+    defined(RT_KLIBC_USING_LIBC_STRCPY) ||  \
     defined(RT_KLIBC_USING_LIBC_STRNCMP) || \
-    defined(RT_KLIBC_USING_LIBC_STRCMP) || \
+    defined(RT_KLIBC_USING_LIBC_STRCMP) ||  \
     defined(RT_KLIBC_USING_LIBC_STRLEN)
 #include <string.h>
 #endif
@@ -49,9 +49,9 @@ void *rt_memset(void *s, int c, size_t count)
     return s;
 #else
 
-#define LBLOCKSIZE      (sizeof(rt_ubase_t))
-#define UNALIGNED(X)    ((long)X & (LBLOCKSIZE - 1))
-#define TOO_SMALL(LEN)  ((LEN) < LBLOCKSIZE)
+#define LBLOCKSIZE     (sizeof(rt_ubase_t))
+#define UNALIGNED(X)   ((long)X & (LBLOCKSIZE - 1))
+#define TOO_SMALL(LEN) ((LEN) < LBLOCKSIZE)
 
     unsigned int i = 0;
     char *m = (char *)s;
@@ -72,7 +72,7 @@ void *rt_memset(void *s, int c, size_t count)
          */
         for (i = 0; i < LBLOCKSIZE; i++)
         {
-            *(((unsigned char *)&buffer)+i) = d;
+            *(((unsigned char *)&buffer) + i) = d;
         }
 
         while (count >= LBLOCKSIZE * 4)
@@ -132,11 +132,11 @@ void *rt_memcpy(void *dst, const void *src, size_t count)
     if (tmp <= s || tmp > (s + count))
     {
         while (count--)
-            *tmp ++ = *s ++;
+            *tmp++ = *s++;
     }
     else
     {
-        for (len = count; len > 0; len --)
+        for (len = count; len > 0; len--)
             tmp[len - 1] = s[len - 1];
     }
 
@@ -144,9 +144,9 @@ void *rt_memcpy(void *dst, const void *src, size_t count)
 #else
 
 #define UNALIGNED(X, Y) \
-    (((long)X & (sizeof (long) - 1)) | ((long)Y & (sizeof (long) - 1)))
-#define BIGBLOCKSIZE    (sizeof (long) << 2)
-#define LITTLEBLOCKSIZE (sizeof (long))
+    (((long)X & (sizeof(long) - 1)) | ((long)Y & (sizeof(long) - 1)))
+#define BIGBLOCKSIZE    (sizeof(long) << 2)
+#define LITTLEBLOCKSIZE (sizeof(long))
 #define TOO_SMALL(LEN)  ((LEN) < BIGBLOCKSIZE)
 
     char *dst_ptr = (char *)dst;
@@ -298,13 +298,13 @@ char *rt_strstr(const char *s1, const char *s2)
     l1 = rt_strlen(s1);
     while (l1 >= l2)
     {
-        l1 --;
+        l1--;
         if (!rt_memcmp(s1, s2, l2))
         {
             return (char *)s1;
         }
 
-        s1 ++;
+        s1++;
     }
 
     return RT_NULL;
@@ -338,8 +338,7 @@ int rt_strcasecmp(const char *a, const char *b)
             ca += 'a' - 'A';
         if (cb >= 'A' && cb <= 'Z')
             cb += 'a' - 'A';
-    }
-    while (ca == cb && ca != '\0');
+    } while (ca == cb && ca != '\0');
 
     return ca - cb;
 }
@@ -440,16 +439,19 @@ int rt_strncmp(const char *cs, const char *ct, size_t count)
 #ifdef RT_KLIBC_USING_LIBC_STRNCMP
     return strncmp(cs, ct, count);
 #else
-    signed char res = 0;
+    int res = 0;
 
     while (count)
     {
-        if ((res = *cs - *ct++) != 0 || !*cs++)
+        res = (unsigned char)*cs - (unsigned char)*ct;
+        if (res != 0 || *cs == '\0')
         {
             break;
         }
 
-        count --;
+        cs++;
+        ct++;
+        count--;
     }
 
     return res;
@@ -482,7 +484,7 @@ int rt_strcmp(const char *cs, const char *ct)
         ct++;
     }
 
-    return (*cs - *ct);
+    return (unsigned char)*cs - (unsigned char)*ct;
 #endif /* RT_KLIBC_USING_LIBC_STRCMP */
 }
 #endif /* RT_KLIBC_USING_USER_STRCMP */
@@ -503,7 +505,8 @@ size_t rt_strlen(const char *s)
     return strlen(s);
 #else
     const char *sc = RT_NULL;
-    for (sc = s; *sc != '\0'; ++sc);
+    for (sc = s; *sc != '\0'; ++sc)
+        ;
     return sc - s;
 #endif /* RT_KLIBC_USING_LIBC_STRLEN */
 }
@@ -527,7 +530,8 @@ RTM_EXPORT(rt_strlen);
 size_t rt_strnlen(const char *s, size_t maxlen)
 {
     const char *sc;
-    for (sc = s; *sc != '\0' && (size_t)(sc - s) < maxlen; ++sc);
+    for (sc = s; *sc != '\0' && (size_t)(sc - s) < maxlen; ++sc)
+        ;
     return sc - s;
 }
 #endif /* RT_KLIBC_USING_USER_STRNLEN */
