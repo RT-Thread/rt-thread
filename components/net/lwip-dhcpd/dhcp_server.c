@@ -49,62 +49,64 @@
 #include <lwip/init.h>
 
 #if (LWIP_VERSION) >= 0x02000000U
-    #include <lwip/prot/dhcp.h>
+#include <lwip/prot/dhcp.h>
 #endif
 
 /* DHCP server option */
 
 /* allocated client ip range */
 #ifndef DHCPD_CLIENT_IP_MIN
-    #define DHCPD_CLIENT_IP_MIN     2
+#define DHCPD_CLIENT_IP_MIN 2
 #endif
 #ifndef DHCPD_CLIENT_IP_MAX
-    #define DHCPD_CLIENT_IP_MAX     254
+#define DHCPD_CLIENT_IP_MAX 254
 #endif
 
 /* the DHCP server address */
 #ifndef DHCPD_SERVER_IP
-    #define DHCPD_SERVER_IP "192.168.169.1"
+#define DHCPD_SERVER_IP "192.168.169.1"
 #endif
 
 //#define DHCP_DEBUG_PRINTF
 
-#ifdef  DHCP_DEBUG_PRINTF
-    #define DEBUG_PRINTF        rt_kprintf("[DHCP] "); rt_kprintf
+#ifdef DHCP_DEBUG_PRINTF
+#define DEBUG_PRINTF       \
+    rt_kprintf("[DHCP] "); \
+    rt_kprintf
 #else
-    #define DEBUG_PRINTF(...)
+#define DEBUG_PRINTF(...)
 #endif /* DHCP_DEBUG_PRINTF */
 
 /* we need some routines in the DHCP of lwIP */
-#undef  LWIP_DHCP
-#define LWIP_DHCP   1
+#undef LWIP_DHCP
+#define LWIP_DHCP 1
 #include <lwip/dhcp.h>
 
 #ifndef DHCP_CLIENT_PORT
-#define DHCP_CLIENT_PORT  68
+#define DHCP_CLIENT_PORT 68
 #endif
 
 #ifndef DHCP_SERVER_PORT
-#define DHCP_SERVER_PORT  67
+#define DHCP_SERVER_PORT 67
 #endif
 
 #ifndef ETHADDR32_COPY
-#define ETHADDR32_COPY(dst, src)  SMEMCPY(dst, src, ETH_HWADDR_LEN)
+#define ETHADDR32_COPY(dst, src) SMEMCPY(dst, src, ETH_HWADDR_LEN)
 #endif
 
 #ifndef ETHADDR16_COPY
-#define ETHADDR16_COPY(dst, src)  SMEMCPY(dst, src, ETH_HWADDR_LEN)
+#define ETHADDR16_COPY(dst, src) SMEMCPY(dst, src, ETH_HWADDR_LEN)
 #endif
 
 /* buffer size for receive DHCP packet */
-#define BUFSZ               1024
+#define BUFSZ 1024
 
 #ifndef MAC_ADDR_LEN
-    #define MAC_ADDR_LEN     6
+#define MAC_ADDR_LEN 6
 #endif
 
 #ifndef MAC_TABLE_LEN
-    #define MAC_TABLE_LEN     4
+#define MAC_TABLE_LEN 4
 #endif
 
 struct mac_addr_t
@@ -128,20 +130,22 @@ static rt_err_t _low_level_dhcp_send(struct netif *netif,
     struct udp_hdr *udphdr;
 
     p = pbuf_alloc(PBUF_LINK,
-                   SIZEOF_ETH_HDR + sizeof(struct ip_hdr)
-                   + sizeof(struct udp_hdr) + size,
+                   SIZEOF_ETH_HDR + sizeof(struct ip_hdr) + sizeof(struct udp_hdr) + size,
                    PBUF_RAM);
-    if (p == RT_NULL) return -RT_ENOMEM;
+    if (p == RT_NULL)
+    {
+        return -RT_ENOMEM;
+    }
 
     ethhdr = (struct eth_hdr *)p->payload;
-    iphdr  = (struct ip_hdr *)((char *)ethhdr + SIZEOF_ETH_HDR);
+    iphdr = (struct ip_hdr *)((char *)ethhdr + SIZEOF_ETH_HDR);
     udphdr = (struct udp_hdr *)((char *)iphdr + sizeof(struct ip_hdr));
 
     ETHADDR32_COPY(&ethhdr->dest, (struct eth_addr *)&ethbroadcast);
     ETHADDR16_COPY(&ethhdr->src, netif->hwaddr);
     ethhdr->type = PP_HTONS(ETHTYPE_IP);
 
-    iphdr->src.addr  = 0x00000000; /* src: 0.0.0.0 */
+    iphdr->src.addr = 0x00000000; /* src: 0.0.0.0 */
     iphdr->dest.addr = 0xFFFFFFFF; /* src: 255.255.255.255 */
 
     IPH_VHL_SET(iphdr, 4, IP_HLEN / 4);
@@ -207,16 +211,20 @@ static uint8_t get_ip(struct mac_addr_t *p_mac_addr)
 
     /* add new ip */
     mac_table[offset].mac_addr = *p_mac_addr;
-    mac_table[offset].ip_addr_3  = next_client_ip;
-    ip_addr_3 = mac_table[offset].ip_addr_3 ;
+    mac_table[offset].ip_addr_3 = next_client_ip;
+    ip_addr_3 = mac_table[offset].ip_addr_3;
 
     offset++;
     if (offset >= MAC_TABLE_LEN)
+    {
         offset = 0;
+    }
 
     next_client_ip++;
     if (next_client_ip > DHCPD_CLIENT_IP_MAX)
+    {
         next_client_ip = DHCPD_CLIENT_IP_MIN;
+    }
 
     DEBUG_PRINTF("create new ip: %d\n", (int)ip_addr_3);
     DEBUG_PRINTF("next_client_ip %d\n", next_client_ip);
@@ -239,7 +247,7 @@ static void dhcpd_thread_entry(void *parameter)
     uint8_t DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1, DHCPD_SERVER_IPADDR2, DHCPD_SERVER_IPADDR3;
 
     /* get ethernet interface. */
-    netif = (struct netif *) parameter;
+    netif = (struct netif *)parameter;
     RT_ASSERT(netif != RT_NULL);
 
     /* our DHCP server information */
@@ -254,8 +262,8 @@ static void dhcpd_thread_entry(void *parameter)
 
         DHCPD_SERVER_IPADDR0 = (ntohl(addr.addr) >> 24) & 0xFF;
         DHCPD_SERVER_IPADDR1 = (ntohl(addr.addr) >> 16) & 0xFF;
-        DHCPD_SERVER_IPADDR2 = (ntohl(addr.addr) >>  8) & 0xFF;
-        DHCPD_SERVER_IPADDR3 = (ntohl(addr.addr) >>  0) & 0xFF;
+        DHCPD_SERVER_IPADDR2 = (ntohl(addr.addr) >> 8) & 0xFF;
+        DHCPD_SERVER_IPADDR3 = (ntohl(addr.addr) >> 0) & 0xFF;
     }
     DEBUG_PRINTF("DHCP server IP: %d.%d.%d.%d  client IP: %d.%d.%d.%d-%d\n",
                  DHCPD_SERVER_IPADDR0, DHCPD_SERVER_IPADDR1,
@@ -337,7 +345,7 @@ static void dhcpd_thread_entry(void *parameter)
 
             uint8_t message_type = 0;
             uint8_t finished = 0;
-            uint32_t request_ip  = 0;
+            uint32_t request_ip = 0;
 
             uint8_t client_ip_3;
 
@@ -369,8 +377,7 @@ static void dhcpd_thread_entry(void *parameter)
                     {
                         break;
                     }
-                    request_ip = *(dhcp_opt + 2) << 24 | *(dhcp_opt + 3) << 16
-                                 | *(dhcp_opt + 4) << 8 | *(dhcp_opt + 5);
+                    request_ip = *(dhcp_opt + 2) << 24 | *(dhcp_opt + 3) << 16 | *(dhcp_opt + 4) << 8 | *(dhcp_opt + 5);
                     break;
 
                 case DHCP_OPTION_END:
@@ -398,8 +405,7 @@ static void dhcpd_thread_entry(void *parameter)
             /* check. */
             if (request_ip)
             {
-                uint32_t client_ip = DHCPD_SERVER_IPADDR0 << 24 | DHCPD_SERVER_IPADDR1 << 16
-                                     | DHCPD_SERVER_IPADDR2 << 8 | client_ip_3;
+                uint32_t client_ip = DHCPD_SERVER_IPADDR0 << 24 | DHCPD_SERVER_IPADDR1 << 16 | DHCPD_SERVER_IPADDR2 << 8 | client_ip_3;
 
                 DEBUG_PRINTF("message_type: %d, request_ip: %08X, client_ip: %08X.\n", message_type, request_ip, client_ip);
 
@@ -505,8 +511,8 @@ static void dhcpd_thread_entry(void *parameter)
 
                     *dhcp_opt++ = (ntohl(dns_addr.addr) >> 24) & 0xFF;
                     *dhcp_opt++ = (ntohl(dns_addr.addr) >> 16) & 0xFF;
-                    *dhcp_opt++ = (ntohl(dns_addr.addr) >>  8) & 0xFF;
-                    *dhcp_opt++ = (ntohl(dns_addr.addr) >>  0) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >> 8) & 0xFF;
+                    *dhcp_opt++ = (ntohl(dns_addr.addr) >> 0) & 0xFF;
                 }
 #endif
 
@@ -560,7 +566,9 @@ void dhcpd_start(const char *netif_name)
     while (netif != RT_NULL)
     {
         if (strncmp(netif_name, netif->name, sizeof(netif->name)) == 0)
+        {
             break;
+        }
 
         netif = netif->next;
         if (netif == RT_NULL)
