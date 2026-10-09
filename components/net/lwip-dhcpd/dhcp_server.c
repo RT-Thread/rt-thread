@@ -331,6 +331,7 @@ static void dhcpd_thread_entry(void *parameter)
         /* handler. */
         {
             uint8_t *dhcp_opt;
+            uint8_t *dhcp_opt_end;
             uint8_t option;
             uint8_t length;
 
@@ -343,14 +344,31 @@ static void dhcpd_thread_entry(void *parameter)
             client_ip_3 = get_ip(&mac_addr);
 
             dhcp_opt = (uint8_t *)msg + DHCP_OPTIONS_OFS;
+            dhcp_opt_end = (uint8_t *)msg + bytes_read;
             while (finished == 0)
             {
+                /* need at least option + length */
+                if (dhcp_opt + 2 > dhcp_opt_end)
+                {
+                    break;
+                }
+
                 option = *dhcp_opt;
                 length = *(dhcp_opt + 1);
+
+                /* option data must stay within the received packet */
+                if (option != DHCP_OPTION_END && dhcp_opt + 2 + length > dhcp_opt_end)
+                {
+                    break;
+                }
 
                 switch (option)
                 {
                 case DHCP_OPTION_REQUESTED_IP:
+                    if (length < 4)
+                    {
+                        break;
+                    }
                     request_ip = *(dhcp_opt + 2) << 24 | *(dhcp_opt + 3) << 16
                                  | *(dhcp_opt + 4) << 8 | *(dhcp_opt + 5);
                     break;
@@ -360,6 +378,10 @@ static void dhcpd_thread_entry(void *parameter)
                     break;
 
                 case DHCP_OPTION_MESSAGE_TYPE:
+                    if (length < 1)
+                    {
+                        break;
+                    }
                     message_type = *(dhcp_opt + 2);
                     break;
 
