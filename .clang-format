@@ -10,7 +10,7 @@ AccessModifierOffset: -1
 AlignAfterOpenBracket: Align
 AlignArrayOfStructures: None
 AlignConsecutiveAssignments:
-  Enabled: false
+  Enabled: true
   AcrossEmptyLines: false
   AcrossComments: false
   AlignCompound: true
@@ -22,10 +22,11 @@ AlignConsecutiveBitFields:
   AlignCompound: true
   PadOperators: true
 AlignConsecutiveDeclarations:
-  Enabled: false
+  Enabled: true
   AcrossEmptyLines: false
   AcrossComments: false
   AlignCompound: false
+  AlignFunctionPointers: true
   PadOperators: false
 AlignConsecutiveMacros:
   Enabled: true
@@ -41,17 +42,17 @@ AlignConsecutiveShortCaseStatements:
 AlignEscapedNewlines: Left
 AlignOperands: Align
 AlignTrailingComments:
-  Kind: Leave
-  OverEmptyLines: 1
+  Kind: Always
+  OverEmptyLines: 0
 AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Inline
+AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: false
-AllowShortLambdasOnASingleLine: All
-AllowShortLoopsOnASingleLine: true
+AllowShortLambdasOnASingleLine: None
+AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterDefinitionReturnType: None
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
@@ -67,7 +68,7 @@ BraceWrapping:
   AfterClass: true
   AfterControlStatement: Always
   AfterEnum: true
-  AfterExternBlock: false
+  AfterExternBlock: true
   AfterFunction: true
   AfterNamespace: true
   AfterObjCDeclaration: true
@@ -75,8 +76,8 @@ BraceWrapping:
   AfterUnion: true
   BeforeCatch: true
   BeforeElse: true
-  BeforeLambdaBody: false
-  BeforeWhile: false
+  BeforeLambdaBody: true
+  BeforeWhile: true
   IndentBraces: false
   SplitEmptyFunction: true
   SplitEmptyRecord: true
@@ -130,7 +131,7 @@ IndentCaseBlocks: false
 IndentCaseLabels: false
 IndentExternBlock: NoIndent
 IndentGotoLabels: true
-IndentPPDirectives: None
+IndentPPDirectives: BeforeHash
 IndentRequiresClause: true
 IndentWidth: 4
 IndentWrappedFunctionNames: false
@@ -152,7 +153,7 @@ LambdaBodyIndentation: Signature
 LineEnding: DeriveLF
 MacroBlockBegin: ""
 MacroBlockEnd: ""
-MaxEmptyLinesToKeep: 2
+MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
 ObjCBinPackProtocolList: Auto
 ObjCBlockIndentWidth: 2
