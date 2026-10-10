@@ -90,7 +90,8 @@ jobs:
           - {RTT_BSP_NAME: "dm365", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "dm365"}
           - {RTT_BSP_NAME: "efm32", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "efm32"}
           - {RTT_BSP_NAME: "ESP32_C3", RTT_TOOL_CHAIN: "sourcery-riscv32-esp32", RTT_BSP: "ESP32_C3"}
-          - {RTT_BSP_NAME: "ESP32_C6", RTT_TOOL_CHAIN: "sourcery-riscv32-esp32", RTT_BSP: "ESP32_C6"} 
+          - {RTT_BSP_NAME: "ESP32_S3", RTT_TOOL_CHAIN: "sourcery-xtensa-esp32s3", RTT_BSP: "ESP/ESP32_S3"}
+          - {RTT_BSP_NAME: "ESP32_C6", RTT_TOOL_CHAIN: "sourcery-riscv32-esp32", RTT_BSP: "ESP32_C6"}
           - {RTT_BSP_NAME: "essemi_es32f0654", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f0654"}
           - {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}
           - {RTT_BSP_NAME: "essemi_es32f369x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f369x"}
@@ -365,6 +366,15 @@ jobs:
           /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
           pip3 install esptool
           echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
+
+      - name: Install xtensa-esp32s3-elf ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-xtensa-esp32s3' && success() }}
+        run: |
+          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-12.2.0_20230208/xtensa-esp32s3-elf-12.2.0_20230208-x86_64-linux-gnu.tar.xz
+          sudo tar xf xtensa-esp32s3-elf-12.2.0_20230208-x86_64-linux-gnu.tar.xz -C /opt
+          /opt/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc --version
+          pip3 install esptool
+          echo "RTT_EXEC_PATH=/opt/xtensa-esp32s3-elf/bin" >> $GITHUB_ENV
           
       - name: Bsp Scons Compile
         if: ${{ success() }}
