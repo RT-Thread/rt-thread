@@ -83,6 +83,7 @@ static char *print_number(char *buf,
     static const char large_digits[] = "0123456789ABCDEF";
     int i = 0;
     int size = 0;
+    int is_zero = 0;
 
     size = s;
 
@@ -151,6 +152,7 @@ static char *print_number(char *buf,
     }
 
     i = 0;
+    is_zero = (num == 0);
     if (num == 0)
     {
         tmp[i++] = '0';
@@ -253,7 +255,7 @@ static char *print_number(char *buf,
     }
 
     /* put number in the temporary buffer */
-    while (i-- > 0 && (precision_bak != 0))
+    while (i-- > 0 && !((precision_bak == 0) && is_zero))
     {
         if (buf < end)
         {
@@ -382,8 +384,12 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 ++fmt;
                 /* it's the next argument */
                 precision = va_arg(args, int);
+                if (precision < 0)
+                {
+                    precision = -1;
+                }
             }
-            if (precision < 0)
+            else
             {
                 precision = 0;
             }
@@ -451,12 +457,7 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 s = "(null)";
             }
 
-            for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
-
-            if (precision > 0 && len > precision)
-            {
-                len = precision;
-            }
+            for (len = 0; (precision < 0 || len < precision) && (s[len] != '\0'); len++);
 
             if (!(flags & LEFT))
             {
