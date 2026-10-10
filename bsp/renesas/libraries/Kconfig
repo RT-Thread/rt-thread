@@ -1,14 +1,19 @@
 
+# The FSP startup runtime (SystemInit()/startup) already walks .init_array,
+# so RT-Thread must skip that range to keep constructors running exactly once.
 config SOC_FAMILY_RENESAS_RA
     bool
+    select RT_USING_CPP_CRT_INIT if RT_USING_CPLUSPLUS
     default n
 
 config SOC_FAMILY_RENESAS_RA_WIRELESS
     bool
+    select RT_USING_CPP_CRT_INIT if RT_USING_CPLUSPLUS
     default n
 
 config SOC_FAMILY_RENESAS_RZ
     bool
+    select RT_USING_CPP_CRT_INIT if RT_USING_CPLUSPLUS
     default n
 
 config SOC_SERIES_R7FA6M3

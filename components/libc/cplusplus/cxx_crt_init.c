@@ -40,8 +40,8 @@ rt_weak void *__dso_handle = 0;
  * @note    If there is no SHT$$INIT_ARRAY section, calling $Super$$__cpp_initialize__aeabi_() will cause an error
  *          in ARMCC compiler. Therefore, this function manually iterates through the base addresses of the
  *          SHT$$INIT_ARRAY section to call the constructor functions of each object. In GCC compiler, this function
- *          uses the __ctors_start__ and __ctors_end__ global variables to determine the range of constructor function
- *          pointers and calls each constructor function of every object in that range.
+ *          always walks the ctors range; RT_USING_CPP_CRT_INIT only indicates that the startup runtime already
+ *          walked the init_array range.
  *
  * @return  Returns 0 if the initialization of the C++ runtime environment is successful. Otherwise, it returns
  *          an error code indicating the failure of the operation.
@@ -67,12 +67,43 @@ rt_weak int cplusplus_system_init(void)
     }
 #elif defined(__GNUC__)
     typedef void(*pfunc)();
-    extern pfunc __ctors_start__[];
-    extern pfunc __ctors_end__[];
+    /* Linker scripts may provide the ctors range, the init_array range, or both. */
+    extern pfunc __ctors_start__[] __attribute__((weak));
+    extern pfunc __ctors_end__[] __attribute__((weak));
+    pfunc *ctors_start = __ctors_start__;
+    pfunc *ctors_end = __ctors_end__;
+#ifndef RT_USING_CPP_CRT_INIT
+    extern pfunc __init_array_start[] __attribute__((weak));
+    extern pfunc __init_array_end[] __attribute__((weak));
+    pfunc *init_start = __init_array_start;
+    pfunc *init_end = __init_array_end;
+#endif
     pfunc *p;
 
-    for (p = __ctors_start__; p < __ctors_end__; p++)
-        (*p)();
+    if (ctors_start && ctors_end)
+    {
+        for (p = ctors_start; (uintptr_t)p < (uintptr_t)ctors_end; p++)
+        {
+            (*p)();
+        }
+    }
+
+#ifndef RT_USING_CPP_CRT_INIT
+    if (init_start && init_end)
+    {
+        for (p = init_start; (uintptr_t)p < (uintptr_t)init_end; p++)
+        {
+            /* Skip entries already called through the ctors range. */
+            if (ctors_start && ctors_end &&
+                (uintptr_t)p >= (uintptr_t)ctors_start &&
+                (uintptr_t)p < (uintptr_t)ctors_end)
+            {
+                continue;
+            }
+            (*p)();
+        }
+    }
+#endif
 #endif
 
     return 0;

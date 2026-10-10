@@ -67,6 +67,7 @@ jobs:
     - name: Build Tools
       run: |
         source ~/.env/env.sh
+        export RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin
         scons --pyconfig-silent -C $TEST_BSP_ROOT 2>menuconfig.log
         cat menuconfig.log
         if grep -q "warning:" menuconfig.log; then
@@ -79,6 +80,8 @@ jobs:
     - name: Project generate Tools
       if: ${{ success() }}
       run: |
+        source ~/.env/env.sh
+        export RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin
         echo "Test to generate eclipse project"
         scons --target=eclipse -s -C $TEST_BSP_ROOT
         echo "Test to generate cmake project"
@@ -89,6 +92,8 @@ jobs:
     - name: Project dist Tools
       if: ${{ success() }}
       run: |
+        source ~/.env/env.sh
+        export RTT_EXEC_PATH=/opt/gcc-arm-none-eabi-10-2020-q4-major/bin
         echo "Test to dist project"
         scons --dist -C $TEST_BSP_ROOT
         scons --dist-ide -C $TEST_BSP_ROOT
