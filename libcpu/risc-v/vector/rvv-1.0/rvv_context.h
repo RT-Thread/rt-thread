@@ -97,14 +97,16 @@
 
     mv      t1, t0
 
-    LOAD    t0, VEC_FRAME_VSTART(t1)
-    csrw    vstart, t0
     LOAD    t0, VEC_FRAME_VCSR(t1)
     csrw    vcsr, t0
 
     LOAD    t0, VEC_FRAME_VTYPE(t1)
     LOAD    t3, VEC_FRAME_VL(t1)
     VEC_CONFIG_SET_VL_VTYPE(t3, t0)
+
+    /* vsetvl resets vstart, so restore the restart index last. */
+    LOAD    t0, VEC_FRAME_VSTART(t1)
+    csrw    vstart, t0
 .endm
 
 #endif
