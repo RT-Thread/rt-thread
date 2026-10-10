@@ -4,6 +4,19 @@ menuconfig RT_USING_CPLUSPLUS
 
 if RT_USING_CPLUSPLUS
 
+    config RT_USING_CPP_CRT_INIT
+        bool "Startup runtime already runs .init_array constructors"
+        default y if SOC_SIMULATOR
+        default n
+        help
+            Enable this for GCC ports whose startup runtime already walks the
+            .init_array section, so that RT-Thread skips it and does not run
+            the constructors twice. RT-Thread still walks the ctors range.
+            This option is usually set by the BSP; do not change it manually.
+            Leave this disabled when the startup code relies on the empty
+            __libc_init_array provided by RT-Thread's newlib port, which
+            defers constructors to RT-Thread.
+
     config RT_USING_CPLUSPLUS11
         bool "Enable C++11 standard multi-threading feature support"
         default n
