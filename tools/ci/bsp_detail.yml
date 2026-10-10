@@ -21,6 +21,12 @@ ESP32_C3:
   gcc: riscv32-esp-elf-gcc
   menuconfig: true
   rtconfig.h: true
+ESP32_S3:
+  .config: true
+  README.md: true
+  gcc: xtensa-esp32s3-elf-gcc
+  menuconfig: true
+  rtconfig.h: true
 ESP32_C6:
   .config: true
   README.md: true

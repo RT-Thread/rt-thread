@@ -1,0 +1,14 @@
+# RT-Thread building script for ESP32-S3 (Xtensa LX7) CPU port
+
+from building import *
+import os
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*_gcc.S')
+
+CPPPATH = [cwd]
+ASFLAGS = ' -I ' + cwd
+
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+
+Return('group')

@@ -124,6 +124,10 @@ int rt_hw_uart_init(void)
 #if CONFIG_UART_ISR_IN_IRAM
     intr_alloc_flags = ESP_INTR_FLAG_IRAM;
 #endif
+#ifdef SOC_ESP32_S3
+    /* This BSP services level-1 interrupts only: its level 2-5 vectors are fatal. */
+    intr_alloc_flags |= ESP_INTR_FLAG_LEVEL1;
+#endif
 
     ESP_ERROR_CHECK(uart_param_config(RT_BSP_UART_PORT, &uart_config));
     ESP_ERROR_CHECK(uart_set_pin(RT_BSP_UART_PORT, RT_BSP_UART_TX_PIN, RT_BSP_UART_RX_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));

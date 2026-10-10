@@ -35,6 +35,7 @@ on:
           - "sourcery-riscv64-unknown-elf"
           - "gcc"
           - "sourcery-riscv32-esp32"
+          - "sourcery-xtensa-esp32s3"
           - "i686-x86-newlib"
           - "i686-x86-picolib"
       bsp_config:
@@ -123,6 +124,13 @@ jobs:
         run: |
           source tools/ci/toolchain.sh riscv32-esp-elf-gcc
           echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf-gcc/bin" >> $GITHUB_ENV
+          pip3 install esptool
+
+      - name: Install xtensa-esp32s3-elf ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-xtensa-esp32s3' && success() }}
+        run: |
+          source tools/ci/toolchain.sh xtensa-esp32s3-elf-gcc
+          echo "RTT_EXEC_PATH=/opt/xtensa-esp32s3-elf-gcc/bin" >> $GITHUB_ENV
           pip3 install esptool
 
       - name: Install GCC Tools
