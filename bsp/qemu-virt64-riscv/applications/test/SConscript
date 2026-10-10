@@ -4,6 +4,9 @@ cwd     = GetCurrentDir()
 src = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
 
+if GetDepend('ENABLE_VECTOR') and (GetDepend('RT_USING_UTEST') or GetDepend('FINSH_USING_MSH')):
+    src += ['rvv_vstart_probe_gcc.S']
+
 group = DefineGroup('Testcase', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)
