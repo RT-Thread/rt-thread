@@ -108,6 +108,15 @@ extern "C" {
 #define RT_UINT64_MAX                   0xFFFFFFFFFFFFFFFFULL /**< Maximum number of UINT64 */
 #endif /* RT_USING_LIBC */
 
+/* maximum value of rt_size_t */
+#if defined(RT_USING_LIBC) && !defined(RT_USING_NANO)
+#define RT_SIZE_MAX SIZE_MAX
+#elif defined(ARCH_CPU_64BIT)
+#define RT_SIZE_MAX RT_UINT64_MAX
+#else
+#define RT_SIZE_MAX RT_UINT32_MAX
+#endif
+
 #define RT_TICK_MAX                     RT_UINT32_MAX   /**< Maximum number of tick */
 
 /* maximum value of ipc type */
