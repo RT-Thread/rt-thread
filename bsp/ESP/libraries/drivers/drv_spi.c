@@ -17,6 +17,37 @@
 #include "rttypes.h"
 #include "sdkconfig.h"
 
+#ifdef SOC_ESP32_C6
+/*
+ * Two things hal/esp32c6/include/hal/spi_ll.h needs are not reachable through
+ * the headers this driver includes, so they come in before hal/spi_hal.h:
+ *   - SPI_CLK_SRC_RC_FAST / SPI_CLK_SRC_XTAL, used by its clock-selection
+ *     helpers; they are enumerators of soc/clk_tree_defs.h, and the common
+ *     hal/include/hal/spi_types.h does not carry them;
+ *   - spi_command_t, the type of the command argument at spi_ll.h:1130 and
+ *     spi_ll.h:1177, which this ESP-IDF package does not define at all. The
+ *     values below are the base commands spi_ll.h:79-91 already lists
+ *     (as spi_ll_base_command_t), so the two agree.
+ * packages/ is not touched; C3 has both names where it needs them, hence the
+ * SoC guard.
+ */
+#include "soc/clk_tree_defs.h"
+
+typedef enum
+{
+    SPI_CMD_HD_WRBUF = 0x01,   /*!< Half-duplex write of the WRBUF */
+    SPI_CMD_HD_RDBUF = 0x02,   /*!< Half-duplex read of the RDBUF */
+    SPI_CMD_HD_WRDMA = 0x03,   /*!< Half-duplex write through DMA */
+    SPI_CMD_HD_RDDMA = 0x04,   /*!< Half-duplex read through DMA */
+    SPI_CMD_HD_SEG_END = 0x05,   /*!< End of a half-duplex segment */
+    SPI_CMD_HD_EN_QPI = 0x06,   /*!< Enter QPI mode */
+    SPI_CMD_HD_WR_END = 0x07,   /*!< End of a half-duplex write */
+    SPI_CMD_HD_INT0 = 0x08,   /*!< Internal operation 0 */
+    SPI_CMD_HD_INT1 = 0x09,   /*!< Internal operation 1 */
+    SPI_CMD_HD_INT2 = 0x0A,   /*!< Internal operation 2 */
+} spi_command_t;
+#endif /* SOC_ESP32_C6 */
+
 #include "hal/spi_hal.h" /*bsp/ESP32_C3/packages/ESP-IDF-latest/components/hal/include/hal/spi_types.h*/
 #include "driver/gpio.h" /*bsp/ESP32_C3/packages/ESP-IDF-latest/components/driver/include/driver/gpio.h*/
 #include "driver/spi_master.h"
@@ -33,6 +64,25 @@ static struct rt_spi_bus spi_bus2;
 
 static spi_device_handle_t spi;
 static spi_bus_config_t buscfg;
+
+/*
+ * Width of one data unit of the transaction, in bits. spi_transaction_t counts
+ * length/rxlength in bits, so spixfer() needs this to size the transfer and to
+ * know how wide the received units it copies out are.
+ * Only 8-bit words are supported; spi_configure() rejects anything else.
+ */
+static rt_uint32_t spi_bits_per_word = 8;
+
+/*
+ * Receive staging array. driver/spi_master.h says of spi_transaction_t.rx_buffer
+ * "Written by 4 bytes-unit if DMA is used", so the received bytes are taken into
+ * an aligned array of our own and only message->length of them are handed to the
+ * caller -- whose buffer may be any size and alignment. Sized for
+ * buscfg.max_transfer_sz. Where those bytes come from is chip specific and told
+ * where the chip decides it: see spi_configure().
+ */
+#define RT_ESP_SPI_MAX_RX_BYTES 4092
+static rt_uint32_t spi_rx_units[(RT_ESP_SPI_MAX_RX_BYTES + 3) / 4] __attribute__((aligned(4)));
 
 static struct esp32_spi spi_bus_obj[] = {
 #ifdef BSP_USING_SPI2
@@ -54,19 +104,14 @@ static struct rt_spi_ops esp32_spi_ops =
     .xfer = spixfer,
 };
 
-/**
-* @brief SPI Initialization
-* @param esp32_spi: SPI BUS
-* @retval None
-*/
-static void esp32_spi_init(struct esp32_spi *esp32_spi)
-{
-    spi_configure(NULL,NULL);
-}
-
 static rt_err_t spi_configure(struct rt_spi_device* device,
                           struct rt_spi_configuration* configuration)
 {
+    if (configuration == NULL)
+    {
+        return -RT_EINVAL;
+    }
+
     static spi_bus_config_t buscfg =
     {
         .miso_io_num=SPI2_IOMUX_PIN_NUM_MISO,              /*MISO*/
@@ -77,14 +122,34 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
         .max_transfer_sz=4092                    /*最大传送数据长度*/
     };
 
-    esp_err_t err = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
+    esp_err_t err;
+
+#ifdef SOC_ESP32_C6
+    /* SPI_DMA_DISABLED: this transfer does not go through GDMA, even though GDMA
+       is in the image -- BSP_USING_SPI makes idf_port/SConscript compile the
+       package's components/esp_hw_support/gdma.c, because spi_common.c's
+       SOC_GDMA_SUPPORTED section calls it. The received bytes are instead read
+       out by spi_ll_read_buffer() (hal/esp32c6/include/hal/spi_ll.h:425), which
+       memcpys the low byte of each 32-bit data_buf word to the start of the
+       buffer -- its length is (len + 7) / 8, which is 1 for an 8-bit word -- and
+       that is what fills the staging array above. */
+    err = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_DISABLED);
+#else
+    err = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
+#endif /* SOC_ESP32_C6 */
     ESP_ERROR_CHECK(err);
 
     static spi_device_interface_config_t devcfg;
     if(configuration->data_width == 8)
     {
-        size_t length;                  /*/< Total data length, in bits*/
-        size_t rxlength;                /*/< Total data length received, should be not greater than ``length`` in full-duplex mode (0 defaults this to the value of ``length``)*/
+        /* One RT-Thread byte is 8 bits of transaction: this branch only sets
+         * spi_bits_per_word, which is what length and rxlength are counted in. */
+        spi_bits_per_word = 8;
+    }
+    else
+    {
+        LOG_E("data width %u is not supported\n", (rt_uint32_t)configuration->data_width);
+        return -RT_ENOSYS;
     }
 
     LOG_W("configuration->max_hz = %d \n",configuration->max_hz);
@@ -133,14 +198,19 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
     {
         case RT_SPI_MODE_0: /*!< CPOL = 0, CPHA = 0 */
             devcfg.mode = 0;
+            break;
         case RT_SPI_MODE_1: /*!< CPOL = 0, CPHA = 1 */
             devcfg.mode = 1;
+            break;
         case RT_SPI_MODE_2: /*!< CPOL = 1, CPHA = 0 */
             devcfg.mode = 2;
+            break;
         case RT_SPI_MODE_3: /*!< CPOL = 1, CPHA = 1 */
             devcfg.mode = 3;
+            break;
         default:
             devcfg.mode = 0;
+            break;
     }
 
     /* todo: support changing cs_pin,queue_size or specifing spi_device_interface_config_t and
@@ -148,7 +218,7 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
     * callback function and dma.
     */
 
-    devcfg.spics_io_num = RT_BSP_SPI_CS_PIN;
+    devcfg.spics_io_num = SPI2_IOMUX_PIN_NUM_CS;
     devcfg.queue_size = 7;
 
     err = spi_bus_add_device(SPI2_HOST, &devcfg, &spi);
@@ -171,12 +241,27 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
     RT_ASSERT(device != NULL);
     RT_ASSERT(message != NULL);
 
+    /* Zeroed per transfer: this transaction is reused, and cmd/addr/flags/user
+       left over from the previous one would be sent out again. */
     static spi_transaction_t trans;
+    rt_memset(&trans, 0, sizeof(trans));
 
+    trans.length = (message->length) * spi_bits_per_word;
     trans.tx_buffer = message->send_buf;
-    trans.rx_buffer = message->recv_buf;
-    trans.length = (message->length)*8;
-    trans.rxlength = (message->length)*8;
+
+    if (message->recv_buf != RT_NULL)
+    {
+        if (message->length > sizeof(spi_rx_units))
+        {
+            LOG_E("rx length %u is larger than %u\n",
+                  (rt_uint32_t)message->length, (rt_uint32_t)RT_ESP_SPI_MAX_RX_BYTES);
+            return -RT_EINVAL;
+        }
+        /* The driver writes the received units into this 4-byte aligned array,
+           not into the caller's buffer. */
+        trans.rx_buffer = spi_rx_units;
+        trans.rxlength = trans.length;
+    }
 
     spi_device_acquire_bus(spi, portMAX_DELAY);
     esp_err_t err = spi_device_polling_transmit(spi, &trans);
@@ -184,7 +269,15 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
     spi_device_release_bus(spi);
 
     ESP_ERROR_CHECK(err);
-    return RT_EOK;
+
+    if (message->recv_buf != RT_NULL)
+    {
+        /* Verbatim: the aligned array holds the received bytes in the order they
+           came off the bus, and only the count the caller asked for is copied. */
+        rt_memcpy(message->recv_buf, spi_rx_units, message->length);
+    }
+
+    return message->length;
 };
 
 /**
