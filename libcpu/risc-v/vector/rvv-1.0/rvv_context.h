@@ -12,16 +12,19 @@
 #define __RVV_CONTEXT_1_0_H__
 
 #if defined(ARCH_VECTOR_VLEN_128)
-    #define CTX_VECTOR_REGS 64
+#define CTX_VECTOR_REGS 64
 #elif defined(ARCH_VECTOR_VLEN_256)
-    #define CTX_VECTOR_REGS 128
+#define CTX_VECTOR_REGS 128
 #else
 #error "No supported VLEN"
 #endif /* VLEN */
 
-#define CTX_VECTOR_REG_NR  (CTX_VECTOR_REGS + 4)
+#define CTX_VECTOR_REG_NR (CTX_VECTOR_REGS + 4)
 
 #ifdef __ASSEMBLY__
+
+/* The following macros contain assembler, not C. */
+/* clang-format off */
 
 /**
  * ==================================
@@ -109,6 +112,7 @@
     csrw    vstart, t0
 .endm
 
+/* clang-format on */
 #endif
 
 #endif /* __RVV_CONTEXT_H__ */

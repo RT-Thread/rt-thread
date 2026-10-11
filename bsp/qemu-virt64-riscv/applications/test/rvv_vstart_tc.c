@@ -11,7 +11,7 @@
 #include <rtthread.h>
 
 /* Run rvv_vstart_test in msh, or testcases.libcpu.rvv_vstart with UTest. */
-#if defined(ENABLE_VECTOR) && (defined(RT_USING_UTEST) || defined(FINSH_USING_MSH))
+#if defined(ENABLE_VECTOR) && defined(RT_USING_HEAP) && (defined(RT_USING_UTEST) || defined(FINSH_USING_MSH))
 #include "rvv_context.h"
 
 /* RV64 vector frames contain four control words followed by v0 through v31. */
@@ -24,10 +24,6 @@ struct vector_test_frame
     rt_ubase_t image[CTX_VECTOR_REG_NR];
     rt_ubase_t after[2];
 };
-
-static struct vector_test_frame expected;
-static struct vector_test_frame observed;
-static struct vector_test_frame saved;
 
 void rvv_vstart_probe(const rt_ubase_t *input, rt_ubase_t *output, rt_ubase_t *backup);
 
@@ -48,8 +44,12 @@ static int rvv_vstart_test(void)
 {
     rt_ubase_t vlenb;
     rt_ubase_t starts[3];
-    rt_uint8_t *payload = (rt_uint8_t *)&expected.image[VECTOR_CONTROL_WORDS];
-    rt_size_t payload_size = sizeof(expected.image) - VECTOR_CONTROL_WORDS * sizeof(rt_ubase_t);
+    struct vector_test_frame *frames;
+    struct vector_test_frame *expected;
+    struct vector_test_frame *observed;
+    struct vector_test_frame *saved;
+    rt_uint8_t *payload;
+    rt_size_t payload_size = sizeof(expected->image) - VECTOR_CONTROL_WORDS * sizeof(rt_ubase_t);
     rt_size_t i;
     rt_size_t j;
 
@@ -60,7 +60,17 @@ static int rvv_vstart_test(void)
         return -RT_ERROR;
     }
 
-    frame_init(&expected);
+    /* Each invocation owns its frames, including the caller-state backup. */
+    frames = rt_malloc(3 * sizeof(*frames));
+    if (frames == RT_NULL)
+    {
+        return -RT_ENOMEM;
+    }
+    expected = &frames[0];
+    observed = &frames[1];
+    saved = &frames[2];
+    payload = (rt_uint8_t *)&expected->image[VECTOR_CONTROL_WORDS];
+    frame_init(expected);
     for (i = 0; i < payload_size; i++)
     {
         payload[i] = (rt_uint8_t)(i * 37 + i / vlenb + 0x5a);
@@ -74,26 +84,28 @@ static int rvv_vstart_test(void)
     {
         for (j = 0; j < 3; j++)
         {
-            expected.image[0] = starts[i];
-            expected.image[1] = 0;       /* e8, m1, tail/mask undisturbed */
-            expected.image[2] = vlenb;
-            expected.image[3] = j * 3;  /* Exercise vxrm and vxsat through vcsr. */
-            frame_init(&observed);
-            frame_init(&saved);
+            expected->image[0] = starts[i];
+            expected->image[1] = 0;       /* e8, m1, tail/mask undisturbed */
+            expected->image[2] = vlenb;
+            expected->image[3] = j * 3;  /* Exercise vxrm and vxsat through vcsr. */
+            frame_init(observed);
+            frame_init(saved);
 
-            rvv_vstart_probe(expected.image, observed.image, saved.image);
+            rvv_vstart_probe(expected->image, observed->image, saved->image);
 
-            if (!frame_guards_valid(&expected) || !frame_guards_valid(&observed) ||
-                !frame_guards_valid(&saved) ||
-                rt_memcmp(expected.image, observed.image, sizeof(expected.image)) != 0)
+            if (!frame_guards_valid(expected) || !frame_guards_valid(observed) ||
+                !frame_guards_valid(saved) ||
+                rt_memcmp(expected->image, observed->image, sizeof(expected->image)) != 0)
             {
                 rt_kprintf("RVV restore failed: vstart expected=%lu observed=%lu\n",
-                           starts[i], observed.image[0]);
+                           starts[i], observed->image[0]);
+                rt_free(frames);
                 return -RT_ERROR;
             }
         }
     }
 
+    rt_free(frames);
     rt_kprintf("RVV restore passed: vlenb=%lu, 9 control/register checks\n", vlenb);
     return RT_EOK;
 }

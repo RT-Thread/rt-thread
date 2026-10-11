@@ -29,7 +29,7 @@
     .type rvv_vstart_probe, @function
 rvv_vstart_probe:
     /* Keep interrupts masked until the caller's complete state is restored. */
-    csrrc   a3, sstatus, 2
+    csrrci  a3, sstatus, 2
     li      t0, SSTATUS_VS
     csrs    sstatus, t0
     SAVE_VECTOR a2
