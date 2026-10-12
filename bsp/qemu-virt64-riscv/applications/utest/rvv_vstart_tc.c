@@ -10,8 +10,8 @@
 
 #include <rtthread.h>
 
-/* Run rvv_vstart_test in msh, or testcases.libcpu.rvv_vstart with UTest. */
-#if defined(ENABLE_VECTOR) && defined(RT_USING_HEAP) && (defined(RT_USING_UTEST) || defined(FINSH_USING_MSH))
+/* Run with: utest_run testcases.libcpu.rvv_vstart */
+#if defined(ENABLE_VECTOR) && defined(RT_USING_HEAP) && defined(RT_USING_UTEST)
 #include "rvv_context.h"
 
 /* RV64 vector frames contain four control words followed by v0 through v31. */
@@ -110,11 +110,6 @@ static int rvv_vstart_test(void)
     return RT_EOK;
 }
 
-#ifdef FINSH_USING_MSH
-MSH_CMD_EXPORT(rvv_vstart_test, Test RVV restart index and complete frame restoration);
-#endif
-
-#ifdef RT_USING_UTEST
 #include <utest.h>
 
 static void testcase(void)
@@ -123,5 +118,4 @@ static void testcase(void)
 }
 
 UTEST_TC_EXPORT(testcase, "testcases.libcpu.rvv_vstart", RT_NULL, RT_NULL, 10);
-#endif
 #endif

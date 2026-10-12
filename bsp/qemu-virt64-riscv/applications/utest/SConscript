@@ -1,0 +1,10 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = ['rvv_vstart_tc.c', 'rvv_vstart_probe_gcc.S']
+
+group = DefineGroup('RVV utestcases', src,
+                    depend = ['RT_USING_UTEST', 'ENABLE_VECTOR', 'RT_USING_HEAP'],
+                    CPPPATH = [cwd])
+
+Return('group')
