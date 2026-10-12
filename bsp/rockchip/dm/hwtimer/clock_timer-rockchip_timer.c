@@ -359,14 +359,9 @@ static const struct rk_timer_data rk3399_timer_data =
 
 #ifdef RT_USING_CLOCK_TIME
 
-uint64_t rt_clock_hrtimer_getfrq(void)
+rt_uint64_t rt_clock_hrtimer_getfrq(void)
 {
     return OSC_HZ;
-}
-
-uint64_t rt_clock_hrtimer_getres(void)
-{
-    return ((1000UL * 1000 * 1000) * RT_CLOCK_TIME_RESMUL) / OSC_HZ;
 }
 
 /**
@@ -377,7 +372,7 @@ uint64_t rt_clock_hrtimer_getres(void)
  * @param cnt the count of timer dealy
  * @return rt_err_t 0 forever
  */
-rt_err_t rt_clock_hrtimer_settimeout(unsigned long cnt)
+rt_err_t rt_clock_hrtimer_settimeout(rt_uint64_t cnt)
 {
     struct hrt_timer *timer = &_timer0;
     struct rk_timer *time = timer->timer;

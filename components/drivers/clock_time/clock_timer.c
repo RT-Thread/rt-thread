@@ -506,7 +506,6 @@ rt_err_t rt_clock_timer_register(rt_clock_timer_t *timer, const char *name, void
 
         _clock_timer_owner = timer;
         _clock_timer_clock_dev.ops = &_clock_timer_clock_ops;
-        _clock_timer_clock_dev.res_scale = RT_CLOCK_TIME_RESMUL;
         _clock_timer_clock_dev.caps = caps;
 
         rt_snprintf(ct_name, sizeof(ct_name), "clock_time_%s", name);
