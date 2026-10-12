@@ -1371,8 +1371,7 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
     min_time = 0xFFFFFFFF;
     for (index = 0; index < times; index++)
     {
-        int delay_tick = 0;
-        rt_tick_t start_tick = 0;
+        rt_tick_t start_tick = 0, cost_tick = 0, delay_tick = 0;
 
         rt_memset(&ping_resp, 0x00, sizeof(struct netdev_ping_resp));
         start_tick = rt_tick_get();
@@ -1413,8 +1412,19 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
         }
 
         /* if the response time is more than NETDEV_PING_DELAY, no need to delay */
-        delay_tick = ((rt_tick_get() - start_tick) > NETDEV_PING_DELAY) || (index == times) ? 0 : NETDEV_PING_DELAY;
-        rt_thread_delay(delay_tick);
+        cost_tick = rt_tick_get() - start_tick;
+        if (index != times - 1)
+        {
+            if (cost_tick < NETDEV_PING_DELAY)
+            {
+                delay_tick = NETDEV_PING_DELAY - cost_tick;
+            }
+        }
+
+        if (delay_tick > 0)
+        {
+            rt_thread_delay(delay_tick);
+        }
     }
 
     if (times == 0)
