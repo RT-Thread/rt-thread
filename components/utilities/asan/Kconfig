@@ -20,14 +20,15 @@ menuconfig RT_USING_ASAN
         8 bytes of right redzone. Realloc grows within its reserved capacity or
         allocates and copies the requested user bytes; shrinking keeps capacity.
         Aligned allocations also use the requested size for their redzones.
-        Only the system heap APIs are wrapped; direct allocator/page APIs and
-        accesses in prebuilt, uninstrumented libraries are not checked.
+        Only the system heap APIs are wrapped. Direct allocator/page APIs and
+        accesses in prebuilt libraries outside the optional libc wrappers
+        are not checked.
 
-        Bulk memory helpers rt_memcpy/rt_memset/rt_memmove are excluded from
-        instrumentation and do not check source or destination ranges yet.
-        Overflows and use-after-free through these helpers can go undetected,
-        even when the caller is instrumented. ASan-aware replacements and
-        range checks are deferred to a later phase.
+        Built-in rt_memcpy/rt_memset/rt_memmove implementations explicitly
+        check the requested source and destination ranges, including when
+        configured to call libc. User-defined replacements must provide
+        their own checks. Enable the libc wrappers to check additional
+        standard memory, string and formatting entry points.
 
         The component overrides the weak system heap interfaces and owns
         the underlying allocator, heap lock and allocation hooks. Do not
@@ -47,6 +48,38 @@ menuconfig RT_USING_ASAN
           - userheap (RT_USING_USERHEAP): not supported (mutually exclusive).
 
     if RT_USING_ASAN
+        config RT_ASAN_USING_LIBC
+            bool "Check common libc memory, string and formatting calls"
+            default n
+            help
+                Requires GCC and GNU ld --wrap. Wrap memcpy, memmove, memset,
+                strlen, strnlen, strcpy, strncpy, strcat, strncat, sprintf,
+                vsprintf, snprintf and vsnprintf. Disable the corresponding
+                compiler builtins in both C and C++ compilation.
+
+                String sources and non-positional printf arguments (%s and
+                %n, with standard integer/floating-point argument types) are
+                checked before calling libc. Keep libc's formatting behavior
+                and execute %n only once. A known poisoned heap boundary
+                limits output; attempted overflows are reported, even when
+                the supplied snprintf limit exceeds the allocation.
+
+                Invalid memory/string inputs skip the operation after a
+                report. Invalid formatting inputs return -1; heap output
+                overflows are truncated and reported. The program continues.
+
+                Positional arguments, wide strings and unknown format
+                extensions (including formats disabled in Newlib's headers)
+                retain libc behavior but their argument pointers
+                are not fully checked. Format-string and known destination
+                bounds are still checked. Preflight checks cannot detect
+                accesses caused by concurrent or %n-induced source mutation.
+
+                --wrap cannot replace calls resolved inside the same object,
+                private/reentrant/fortified libc entry points, explicit
+                __builtin calls or dynamic modules linked separately. It
+                does not add stack/global coverage or extend heap coverage.
+
         config RT_ASAN_SHADOW_SIZE
             int "ASan shadow memory size (bytes)"
             default 65536

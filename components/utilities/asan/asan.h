@@ -37,6 +37,21 @@ rt_bool_t rt_asan_test_hooks_in_use(void);
 
 void rt_asan_heap_init(void *begin_addr, void *end_addr);
 
+/* Check library accesses against the covered system-heap shadow. Return
+ * RT_FALSE after reporting poison; RT_TRUE means no covered poison was found,
+ * not that memory outside the coverage is valid. These checks do not abort.
+ */
+rt_bool_t rt_asan_check_read(const void *addr, rt_size_t size);
+rt_bool_t rt_asan_check_write(void *addr, rt_size_t size);
+
+#ifdef RT_ASAN_USING_LIBC
+/* Return RT_TRUE only when the covered shadow contains a poisoned boundary
+ * at/after addr. *size is the readable/writable prefix before that boundary.
+ * RT_FALSE means the boundary is unknown, including coverage ending first.
+ */
+rt_bool_t rt_asan_accessible_size(const void *addr, rt_size_t *size);
+#endif
+
 /* Internal system-heap integration. The caller must hold the heap lock.
  * Callbacks operate on the underlying allocator, never rt_malloc/rt_free.
  */

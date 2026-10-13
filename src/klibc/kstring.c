@@ -11,12 +11,12 @@
 #include <rtthread.h>
 
 /*
- * AddressSanitizer: bulk memory helpers are not instrumented in this version.
- * ASan-aware replacements with explicit source/destination range checks are
- * deferred to a later phase. Calls to these helpers can therefore miss heap
- * buffer overflows and use-after-free accesses, even from instrumented code.
+ * AddressSanitizer: check the requested ranges once, rather than instrumenting
+ * each access in the bulk memory helpers. Reports follow the runtime's
+ * no-abort policy; the operation still executes after reporting a violation.
  */
 #ifdef RT_USING_ASAN
+#include "asan.h"
 #define RT_KLIB_NO_ASAN __attribute__((no_sanitize_address))
 #else
 #define RT_KLIB_NO_ASAN
@@ -51,6 +51,9 @@
 RT_KLIB_NO_ASAN
 void *rt_memset(void *s, int c, size_t count)
 {
+#if defined(RT_USING_ASAN) && (!defined(RT_ASAN_USING_LIBC) || !defined(RT_KLIBC_USING_LIBC_MEMSET))
+    rt_asan_check_write(s, count);
+#endif
 #if defined(RT_KLIBC_USING_LIBC_MEMSET)
     return memset(s, c, count);
 #elif defined(RT_KLIBC_USING_TINY_MEMSET)
@@ -137,6 +140,10 @@ RTM_EXPORT(rt_memset);
 RT_KLIB_NO_ASAN
 void *rt_memcpy(void *dst, const void *src, size_t count)
 {
+#if defined(RT_USING_ASAN) && (!defined(RT_ASAN_USING_LIBC) || !defined(RT_KLIBC_USING_LIBC_MEMCPY))
+    rt_asan_check_read(src, count);
+    rt_asan_check_write(dst, count);
+#endif
 #if defined(RT_KLIBC_USING_LIBC_MEMCPY)
     return memcpy(dst, src, count);
 #elif defined(RT_KLIBC_USING_TINY_MEMCPY)
@@ -228,6 +235,10 @@ RTM_EXPORT(rt_memcpy);
 RT_KLIB_NO_ASAN
 void *rt_memmove(void *dest, const void *src, size_t n)
 {
+#if defined(RT_USING_ASAN) && (!defined(RT_ASAN_USING_LIBC) || !defined(RT_KLIBC_USING_LIBC_MEMMOVE))
+    rt_asan_check_read(src, n);
+    rt_asan_check_write(dest, n);
+#endif
 #ifdef RT_KLIBC_USING_LIBC_MEMMOVE
     return memmove(dest, src, n);
 #else
@@ -542,7 +553,7 @@ RTM_EXPORT(rt_strlen);
 size_t rt_strnlen(const char *s, size_t maxlen)
 {
     const char *sc;
-    for (sc = s; *sc != '\0' && (size_t)(sc - s) < maxlen; ++sc);
+    for (sc = s; (size_t)(sc - s) < maxlen && *sc != '\0'; ++sc);
     return sc - s;
 }
 #endif /* RT_KLIBC_USING_USER_STRNLEN */

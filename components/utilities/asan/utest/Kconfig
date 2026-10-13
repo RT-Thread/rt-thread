@@ -5,4 +5,14 @@ config RT_UTEST_ASAN
     default n
     depends on RT_USING_ASAN
 
+config RT_UTEST_ASAN_LIBC
+    bool "ASan string and formatting boundary tests"
+    default n
+    depends on RT_UTEST_ASAN
+    help
+        Verify library accesses to the instrumented system heap. Known
+        coverage gaps are printed as observations, rather than required
+        behavior. Valid operations must not report violations. This suite
+        can expose existing library bugs and is enabled separately.
+
 endmenu

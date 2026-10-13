@@ -17,6 +17,27 @@ import kconfiglib
 
 
 class AsanConfigTest(unittest.TestCase):
+    def test_libc_wrappers_require_the_runtime(self):
+        bsp = Path(__file__).resolve().parents[2] / 'bsp/qemu-vexpress-a9'
+        previous = Path.cwd()
+        try:
+            os.chdir(bsp)
+            config = kconfiglib.Kconfig('Kconfig', warn=False)
+            for symbol in config.unique_defined_syms:
+                if symbol.type in (kconfiglib.BOOL, kconfiglib.TRISTATE):
+                    symbol.set_value(0)
+            for name in ('RT_USING_SMALL_MEM', 'RT_USING_SMALL_MEM_AS_HEAP'):
+                config.syms[name].set_value(2)
+            wrappers = config.syms['RT_ASAN_USING_LIBC']
+            wrappers.set_value(2)
+            self.assertEqual(wrappers.tri_value, 0)
+            config.syms['RT_USING_ASAN'].set_value(2)
+            self.assertEqual(wrappers.tri_value, 2)
+            config.syms['RT_USING_ASAN'].set_value(0)
+            self.assertEqual(wrappers.tri_value, 0)
+        finally:
+            os.chdir(previous)
+
     def test_heap_lock_combinations(self):
         bsp = Path(__file__).resolve().parents[2] / 'bsp/qemu-vexpress-a9'
         previous = Path.cwd()

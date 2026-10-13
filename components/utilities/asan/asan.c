@@ -94,6 +94,22 @@ static struct asan_track asan_tracks[RT_ASAN_TRACK_MAX];
 /* most recently freed block, for use-after-free diagnosis */
 static struct asan_track asan_last_freed;
 
+/* A compiler can lower struct assignments to libc memcpy. Once libc is
+ * wrapped, copying a snapshot to a heap-allocated thread stack would re-enter
+ * the shadow lock. Volatile byte copies prevent that lowering under the lock.
+ */
+static void asan_track_copy(struct asan_track *dst, const struct asan_track *src)
+{
+    volatile rt_uint8_t *out = (volatile rt_uint8_t *)dst;
+    const volatile rt_uint8_t *in = (const volatile rt_uint8_t *)src;
+    rt_size_t i;
+
+    for (i = 0; i < sizeof(*dst); i++)
+    {
+        out[i] = in[i];
+    }
+}
+
 /* ---- helpers ---- */
 rt_inline rt_bool_t asan_addr_in_range(rt_uintptr_t addr)
 {
@@ -155,7 +171,7 @@ static void asan_locate_block(rt_uintptr_t addr)
     if (asan_last_freed.used && addr >= asan_last_freed.ptr &&
         addr - asan_last_freed.ptr < asan_last_freed.size)
     {
-        block = asan_last_freed;
+        asan_track_copy(&block, &asan_last_freed);
         kind = "USE-AFTER-FREE";
         freed = RT_TRUE;
     }
@@ -167,7 +183,7 @@ static void asan_locate_block(rt_uintptr_t addr)
         }
         if (addr >= asan_tracks[i].ptr && addr - asan_tracks[i].ptr < asan_tracks[i].size)
         {
-            block = asan_tracks[i];
+            asan_track_copy(&block, &asan_tracks[i]);
             kind = "inside block";
             break;
         }
@@ -177,7 +193,7 @@ static void asan_locate_block(rt_uintptr_t addr)
             if (end <= addr && end >= best_end)
             {
                 best_end = end;
-                block = asan_tracks[i];
+                asan_track_copy(&block, &asan_tracks[i]);
             }
         }
     }
@@ -217,6 +233,72 @@ static void asan_report(rt_uintptr_t addr, rt_size_t size, rt_bool_t is_write, r
     rt_backtrace();
 #endif
     rt_kprintf("=================================================================\n");
+}
+
+/* ---- explicit library access checks ---- */
+#ifdef RT_ASAN_USING_LIBC
+rt_bool_t rt_asan_accessible_size(const void *addr, rt_size_t *size)
+{
+    rt_uintptr_t current = (rt_uintptr_t)addr;
+    rt_uintptr_t off;
+    rt_size_t count = 0;
+    rt_uint8_t shadow;
+    rt_size_t offset;
+    rt_base_t level;
+
+    if (!asan_addr_in_range(current))
+    {
+        return RT_FALSE;
+    }
+    level = asan_lock();
+    while (current < asan_heap_limit)
+    {
+        off = current - asan_heap_base;
+        offset = off & (ASAN_SHADOW_SCALE - 1);
+        shadow = asan_shadow[off >> 3];
+        if (shadow)
+        {
+            if (shadow < ASAN_SHADOW_SCALE && offset < shadow)
+            {
+                if (shadow - offset >= asan_heap_limit - current)
+                {
+                    break;
+                }
+                count += shadow - offset;
+            }
+            *size = count;
+            asan_unlock(level);
+            return RT_TRUE;
+        }
+        offset = ASAN_MIN(ASAN_SHADOW_SCALE - offset, asan_heap_limit - current);
+        count += offset;
+        current += offset;
+    }
+    asan_unlock(level);
+    return RT_FALSE;
+}
+#endif
+
+rt_bool_t rt_asan_check_read(const void *addr, rt_size_t size)
+{
+    if (asan_range_is_poisoned((rt_uintptr_t)addr, size))
+    {
+        asan_report((rt_uintptr_t)addr, size, RT_FALSE,
+                    (rt_uintptr_t)__builtin_return_address(0));
+        return RT_FALSE;
+    }
+    return RT_TRUE;
+}
+
+rt_bool_t rt_asan_check_write(void *addr, rt_size_t size)
+{
+    if (asan_range_is_poisoned((rt_uintptr_t)addr, size))
+    {
+        asan_report((rt_uintptr_t)addr, size, RT_TRUE,
+                    (rt_uintptr_t)__builtin_return_address(0));
+        return RT_FALSE;
+    }
+    return RT_TRUE;
 }
 
 /* ---- instrumented access checks ---- */
@@ -367,15 +449,17 @@ static void asan_track_add(rt_uintptr_t ptr, rt_size_t size, rt_thread_t self)
             asan_tracks[i].used = 1;
             {
                 rt_size_t n = 0;
+                volatile char *owner = asan_tracks[i].owner;
                 if (self)
                 {
-                    while (n < RT_NAME_MAX - 1 && self->parent.name[n])
+                    const volatile char *name = self->parent.name;
+                    while (n < RT_NAME_MAX - 1 && name[n])
                     {
-                        asan_tracks[i].owner[n] = self->parent.name[n];
+                        owner[n] = name[n];
                         n++;
                     }
                 }
-                asan_tracks[i].owner[n] = '\0';
+                owner[n] = '\0';
             }
             return;
         }
@@ -492,7 +576,7 @@ void rt_asan_free(void *ptr, void (*release)(void *))
     idx = asan_track_find(p);
     if (idx != RT_ASAN_TRACK_MAX)
     {
-        asan_last_freed = asan_tracks[idx];
+        asan_track_copy(&asan_last_freed, &asan_tracks[idx]);
         asan_tracks[idx].used = 0;
     }
     else
@@ -597,7 +681,7 @@ static int asan_info(int argc, char **argv)
     rt_kprintf("shadow   : %p, %lu bytes\n", asan_shadow, (unsigned long)sizeof(asan_shadow));
     rt_kprintf("coverage : %p - %p\n", (void *)asan_heap_base, (void *)asan_heap_limit);
     level = asan_lock();
-    block = asan_last_freed;
+    asan_track_copy(&block, &asan_last_freed);
     asan_unlock(level);
     if (block.used)
     {
@@ -612,7 +696,7 @@ static int asan_info(int argc, char **argv)
     for (i = 0; i < RT_ASAN_TRACK_MAX; i++)
     {
         level = asan_lock();
-        block = asan_tracks[i];
+        asan_track_copy(&block, &asan_tracks[i]);
         asan_unlock(level);
         if (block.used)
         {

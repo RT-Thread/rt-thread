@@ -2,6 +2,8 @@ from building import *
 
 cwd = GetCurrentDir()
 src = ['asan_tc.c']
+if GetDepend('RT_UTEST_ASAN_LIBC'):
+    src += ['asan_libc_tc.c']
 if GetDepend('RT_USING_CPLUSPLUS'):
     src += ['asan_cpp_test.cpp']
 
