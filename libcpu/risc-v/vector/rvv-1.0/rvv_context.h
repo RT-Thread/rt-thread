@@ -12,16 +12,19 @@
 #define __RVV_CONTEXT_1_0_H__
 
 #if defined(ARCH_VECTOR_VLEN_128)
-    #define CTX_VECTOR_REGS 64
+#define CTX_VECTOR_REGS 64
 #elif defined(ARCH_VECTOR_VLEN_256)
-    #define CTX_VECTOR_REGS 128
+#define CTX_VECTOR_REGS 128
 #else
 #error "No supported VLEN"
 #endif /* VLEN */
 
-#define CTX_VECTOR_REG_NR  (CTX_VECTOR_REGS + 4)
+#define CTX_VECTOR_REG_NR (CTX_VECTOR_REGS + 4)
 
 #ifdef __ASSEMBLY__
+
+/* The following macros contain assembler, not C. */
+/* clang-format off */
 
 /**
  * ==================================
@@ -97,16 +100,19 @@
 
     mv      t1, t0
 
-    LOAD    t0, VEC_FRAME_VSTART(t1)
-    csrw    vstart, t0
     LOAD    t0, VEC_FRAME_VCSR(t1)
     csrw    vcsr, t0
 
     LOAD    t0, VEC_FRAME_VTYPE(t1)
     LOAD    t3, VEC_FRAME_VL(t1)
     VEC_CONFIG_SET_VL_VTYPE(t3, t0)
+
+    /* vsetvl resets vstart, so restore the restart index last. */
+    LOAD    t0, VEC_FRAME_VSTART(t1)
+    csrw    vstart, t0
 .endm
 
+/* clang-format on */
 #endif
 
 #endif /* __RVV_CONTEXT_H__ */

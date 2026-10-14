@@ -27,6 +27,9 @@ rtconfig.ARCH='risc-v'
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
 
+if GetDepend('ENABLE_VECTOR'):
+    env['ASFLAGS'] = str(env['ASFLAGS']).replace('-march=rv64imafdc ', '-march=rv64imafdcv ')
+
 stack_size = 4096
 
 if GetDepend('RT_USING_SMART'):

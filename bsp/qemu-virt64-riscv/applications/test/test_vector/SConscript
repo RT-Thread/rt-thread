@@ -3,7 +3,12 @@ from building import *
 cwd     = GetCurrentDir()
 src = Glob('*.c') + Glob('*.cpp')
 CPPPATH = [cwd]
+LOCAL_CCFLAGS = ''
 
-group = DefineGroup('Vector', src, depend = [''], CPPPATH = CPPPATH)
+if GetDepend(['RT_USING_UTEST', 'ENABLE_VECTOR']):
+    src += ['vector_context_gcc.S']
+    LOCAL_CCFLAGS = ' -march=rv64gcv'
+
+group = DefineGroup('Vector', src, depend = [''], CPPPATH = CPPPATH, LOCAL_CCFLAGS = LOCAL_CCFLAGS)
 
 Return('group')
