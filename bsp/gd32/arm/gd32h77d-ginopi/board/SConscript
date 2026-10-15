@@ -1,0 +1,37 @@
+import os
+import rtconfig
+from building import *
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+if GetDepend(['BSP_USING_SDRAM']):
+    src += ['drv_sdram_port.c']
+
+if GetDepend(['BSP_USING_LCD_MIPI']):
+    src += ['drv_lcd.c']
+
+if GetDepend(['BSP_USING_TOUCH_GT911']):
+    src += ['drv_gt911.c']
+
+if GetDepend(['BSP_USING_OV7670']):
+    src += ['drv_ov7670.c']
+
+if GetDepend(['BSP_USING_FLASH_FATFS']):
+    src += ['drv_qspi_flash.c']
+
+if GetDepend(['BSP_USING_FS']):
+    src += ['drv_filesystem.c']
+
+path =  [cwd]
+
+CPPDEFINES = ['GD32H77DXW']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+group = group + SConscript(os.path.join('ports', 'SConscript'))
+
+Return('group')

@@ -47,7 +47,7 @@ static gd32_wdt_device_t g_wdt_dev;
 
 static rt_err_t gd32_wdt_init(rt_watchdog_t *wdt)
 {
-#if defined(SOC_SERIES_GD32H7xx)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
     /* Enable and wait for oscillator stabilization */
     rcu_osci_on(WDT_OSCI_TYPE);
     if (ERROR == rcu_osci_stab_wait(WDT_OSCI_TYPE))

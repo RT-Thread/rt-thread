@@ -8,6 +8,7 @@
  * 2021-12-20     BruceOu      first implementation
  */
 #include "drv_spi.h"
+#include "spi_config.h"
 
 #ifdef RT_USING_SPI
 
@@ -36,140 +37,23 @@ static struct rt_spi_bus spi_bus5;
 #endif
 
 static const struct gd32_spi spi_bus_obj[] = {
-
 #ifdef BSP_USING_SPI0
-    {
-        SPI0,
-        "spi0",
-        RCU_SPI0,
-        RCU_GPIOA,
-        RCU_GPIOA,
-        RCU_GPIOA,
-        &spi_bus0,
-        GPIOA,
-        GPIOA,
-        GPIOA,
-#if defined (SOC_SERIES_GD32F4xx) || defined (SOC_SERIES_GD32H7xx) || (defined SOC_SERIES_GD32F5xx)
-        GPIO_AF_5,
-#endif
-#if defined (SOC_SERIES_GD32E23x)
-        GPIO_AF_0,
-#endif
-        GPIO_PIN_5,
-        GPIO_PIN_6,
-        GPIO_PIN_7,
-    },
+    SPI0_BUS_CONFIG,
 #endif /* BSP_USING_SPI0 */
-
 #ifdef BSP_USING_SPI1
-    {
-        SPI1,
-        "spi1",
-        RCU_SPI1,
-        RCU_GPIOB,
-        RCU_GPIOB,
-        RCU_GPIOB,
-        &spi_bus1,
-        GPIOB,
-        GPIOB,
-        GPIOB,
-#if defined (SOC_SERIES_GD32F4xx) || defined (SOC_SERIES_GD32H7xx) || (defined SOC_SERIES_GD32F5xx)
-        GPIO_AF_5,
-#endif
-#if defined SOC_SERIES_GD32E23x
-        GPIO_AF_0,
-#endif
-
-        GPIO_PIN_13,
-        GPIO_PIN_14,
-        GPIO_PIN_15,
-    },
+    SPI1_BUS_CONFIG,
 #endif /* BSP_USING_SPI1 */
-
 #ifdef BSP_USING_SPI2
-    {
-        SPI2,
-        "spi2",
-        RCU_SPI2,
-        RCU_GPIOB,
-        RCU_GPIOB,
-        RCU_GPIOB,
-        &spi_bus2,
-        GPIOB,
-        GPIOB,
-        GPIOB,
-#if defined (SOC_SERIES_GD32F4xx) || defined (SOC_SERIES_GD32H7xx) || (defined SOC_SERIES_GD32F5xx)
-        GPIO_AF_6,
-#endif
-        GPIO_PIN_3,
-        GPIO_PIN_4,
-        GPIO_PIN_5,
-    },
+    SPI2_BUS_CONFIG,
 #endif /* BSP_USING_SPI2 */
-
 #ifdef BSP_USING_SPI3
-    {
-        SPI3,
-        "spi3",
-        RCU_SPI3,
-        RCU_GPIOE,
-        RCU_GPIOE,
-        RCU_GPIOE,
-        &spi_bus3,
-        GPIOE,
-        GPIOE,
-        GPIOE,
-#if defined (SOC_SERIES_GD32F4xx) || defined (SOC_SERIES_GD32H7xx) || (defined SOC_SERIES_GD32F5xx)
-        GPIO_AF_5,
-#endif
-        GPIO_PIN_2,
-        GPIO_PIN_5,
-        GPIO_PIN_6,
-    },
+    SPI3_BUS_CONFIG,
 #endif /* BSP_USING_SPI3 */
-
 #ifdef BSP_USING_SPI4
-    {
-        SPI4,
-        "spi4",
-        RCU_SPI4,
-        RCU_GPIOF,
-        RCU_GPIOF,
-        RCU_GPIOF,
-        &spi_bus4,
-        GPIOF,
-        GPIOF,
-        GPIOF,
-#if defined (SOC_SERIES_GD32F4xx) || defined (SOC_SERIES_GD32H7xx) || (defined SOC_SERIES_GD32F5xx)
-        GPIO_AF_5,
-#endif
-        GPIO_PIN_7,
-        GPIO_PIN_8,
-        GPIO_PIN_9,
-
-    },
+    SPI4_BUS_CONFIG,
 #endif /* BSP_USING_SPI4 */
-
 #ifdef BSP_USING_SPI5
-    {
-        SPI5,
-        "spi5",
-        RCU_SPI5,
-        RCU_GPIOG,
-        RCU_GPIOG,
-
-        RCU_GPIOG,
-        &spi_bus5,
-        GPIOG,
-        GPIOG,
-        GPIOG,
-#if defined (SOC_SERIES_GD32F4xx) || defined (SOC_SERIES_GD32H7xx) || (defined SOC_SERIES_GD32F5xx)
-        GPIO_AF_5,
-#endif
-        GPIO_PIN_13,
-        GPIO_PIN_12,
-        GPIO_PIN_14,
-    }
+    SPI5_BUS_CONFIG,
 #endif /* BSP_USING_SPI5 */
 };
 
@@ -190,42 +74,68 @@ static struct rt_spi_ops gd32_spi_ops =
 */
 static void gd32_spi_init(struct gd32_spi *gd32_spi)
 {
-    /* enable SPI clock */
-    rcu_periph_clock_enable(gd32_spi->spi_clk);
-    rcu_periph_clock_enable(gd32_spi->sck_gpio_clk);
-    rcu_periph_clock_enable(gd32_spi->miso_gpio_clk);
-    rcu_periph_clock_enable(gd32_spi->mosi_gpio_clk);
-
-#if defined (SOC_SERIES_GD32F4xx) || defined (SOC_SERIES_GD32H7xx) || (defined SOC_SERIES_GD32F5xx) || (defined SOC_SERIES_GD32E23x)
-    /*GPIO pin configuration*/
-    gpio_af_set(gd32_spi->sck_spi_port, gd32_spi->alt_func_num, gd32_spi->sck_pin);
-    gpio_af_set(gd32_spi->miso_spi_port, gd32_spi->alt_func_num, gd32_spi->miso_pin);
-    gpio_af_set(gd32_spi->mosi_spi_port, gd32_spi->alt_func_num, gd32_spi->mosi_pin);
-    gpio_mode_set(gd32_spi->sck_spi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, gd32_spi->sck_pin);
-    gpio_mode_set(gd32_spi->miso_spi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, gd32_spi->miso_pin);
-    gpio_mode_set(gd32_spi->mosi_spi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, gd32_spi->mosi_pin);
-    #if defined (SOC_SERIES_GD32H7xx)
-    gpio_output_options_set(gd32_spi->sck_spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_100_220MHZ, gd32_spi->sck_pin);
-    gpio_output_options_set(gd32_spi->miso_spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_100_220MHZ, gd32_spi->miso_pin);
-    gpio_output_options_set(gd32_spi->mosi_spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_100_220MHZ, gd32_spi->mosi_pin);
-    #elif defined (SOC_SERIES_GD32E23x)
-    gpio_output_options_set(gd32_spi->sck_spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, gd32_spi->sck_pin);
-    gpio_output_options_set(gd32_spi->miso_spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, gd32_spi->miso_pin);
-    gpio_output_options_set(gd32_spi->mosi_spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, gd32_spi->mosi_pin);
-    #else
-    gpio_output_options_set(gd32_spi->sck_spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_MAX, gd32_spi->sck_pin);
-    gpio_output_options_set(gd32_spi->miso_spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_MAX, gd32_spi->miso_pin);
-    gpio_output_options_set(gd32_spi->mosi_spi_port, GPIO_OTYPE_PP, GPIO_OSPEED_MAX, gd32_spi->mosi_pin);
-    #endif
-#else
-    /* Init SPI SCK MOSI */
-    gpio_init(gd32_spi->sck_spi_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, gd32_spi->sck_pin);
-    gpio_init(gd32_spi->mosi_spi_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, gd32_spi->mosi_pin);
-
-    /* Init SPI MISO */
-    gpio_init(gd32_spi->miso_spi_port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, gd32_spi->miso_pin);
+    rt_uint32_t sck_port, miso_port, mosi_port;
+    rt_uint32_t sck_pin, miso_pin, mosi_pin;
+    rcu_periph_enum sck_periph, miso_periph, mosi_periph;
+#if defined (SOC_SERIES_GD32F4xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32E23x)
+    rt_uint32_t sck_af, miso_af, mosi_af;
 #endif
 
+    if (get_pin_config(gd32_spi->sck_pin_name, &sck_port, &sck_pin, &sck_periph) != RT_EOK)
+    {
+        return;
+    }
+    if (get_pin_config(gd32_spi->miso_pin_name, &miso_port, &miso_pin, &miso_periph) != RT_EOK)
+    {
+        return;
+    }
+    if (get_pin_config(gd32_spi->mosi_pin_name, &mosi_port, &mosi_pin, &mosi_periph) != RT_EOK)
+    {
+        return;
+    }
+
+    /* enable SPI clock */
+    rcu_periph_clock_enable(gd32_spi->spi_clk);
+    rcu_periph_clock_enable(sck_periph);
+    rcu_periph_clock_enable(miso_periph);
+    rcu_periph_clock_enable(mosi_periph);
+
+#if defined (SOC_SERIES_GD32F4xx) || (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined (SOC_SERIES_GD32F5xx) || defined (SOC_SERIES_GD32E23x)
+    if (pin_alternate_config(gd32_spi->sck_alternate, &sck_af) != RT_EOK ||
+        pin_alternate_config(gd32_spi->miso_alternate, &miso_af) != RT_EOK ||
+        pin_alternate_config(gd32_spi->mosi_alternate, &mosi_af) != RT_EOK)
+    {
+        return;
+    }
+
+    /* GPIO pin configuration */
+    gpio_af_set(sck_port, sck_af, sck_pin);
+    gpio_af_set(miso_port, miso_af, miso_pin);
+    gpio_af_set(mosi_port, mosi_af, mosi_pin);
+    gpio_mode_set(sck_port, GPIO_MODE_AF, GPIO_PUPD_NONE, sck_pin);
+    gpio_mode_set(miso_port, GPIO_MODE_AF, GPIO_PUPD_NONE, miso_pin);
+    gpio_mode_set(mosi_port, GPIO_MODE_AF, GPIO_PUPD_NONE, mosi_pin);
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+    gpio_output_options_set(sck_port, GPIO_OTYPE_PP, GPIO_OSPEED_100_220MHZ, sck_pin);
+    gpio_output_options_set(miso_port, GPIO_OTYPE_PP, GPIO_OSPEED_100_220MHZ, miso_pin);
+    gpio_output_options_set(mosi_port, GPIO_OTYPE_PP, GPIO_OSPEED_100_220MHZ, mosi_pin);
+#elif defined (SOC_SERIES_GD32E23x)
+    gpio_output_options_set(sck_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, sck_pin);
+    gpio_output_options_set(miso_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, miso_pin);
+    gpio_output_options_set(mosi_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, mosi_pin);
+#else
+    gpio_output_options_set(sck_port, GPIO_OTYPE_PP, GPIO_OSPEED_MAX, sck_pin);
+    gpio_output_options_set(miso_port, GPIO_OTYPE_PP, GPIO_OSPEED_MAX, miso_pin);
+    gpio_output_options_set(mosi_port, GPIO_OTYPE_PP, GPIO_OSPEED_MAX, mosi_pin);
+#endif
+#else
+    /* Init SPI SCK MOSI */
+    gpio_init(sck_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, sck_pin);
+    gpio_init(mosi_port, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, mosi_pin);
+
+    /* Init SPI MISO */
+    gpio_init(miso_port, GPIO_MODE_IN_FLOATING, GPIO_OSPEED_50MHZ, miso_pin);
+#endif
 }
 
 static rt_err_t spi_configure(struct rt_spi_device* device,
@@ -242,7 +152,7 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
     /* Init SPI */
     gd32_spi_init(spi_device);
 
-#if defined SOC_SERIES_GD32H7xx
+#if (defined SOC_SERIES_GD32H7xx || defined SOC_SERIES_GD32H77x_H78X)
     /* data_width */
     if(configuration->data_width >=4 && configuration->data_width <= 32)
     {
@@ -360,6 +270,11 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
     spi_init_struct.nss = SPI_NSS_SOFT;
 
     spi_crc_off(spi_periph);
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+    /* enable byte access and NSS output in master mode */
+    spi_byte_access_enable(spi_periph);
+    spi_nss_output_enable(spi_periph);
+#endif
 
     /* init SPI */
     spi_init(spi_periph, &spi_init_struct);
@@ -418,20 +333,21 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
 
                 /* Todo: replace register read/write by gd32f4 lib */
                 /* Wait until the transmit buffer is empty */
-                #if defined (SOC_SERIES_GD32H7xx)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+                spi_master_transfer_start(spi_periph, SPI_TRANS_START);
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TP));
-                #else
+#else
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
-                #endif
+#endif
                 /* Send the byte */
                 spi_i2s_data_transmit(spi_periph, data);
 
                 /* Wait until a data is received */
-                #if defined (SOC_SERIES_GD32H7xx)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RP));
-                #else
+#else
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
-                #endif
+#endif
                 /* Get the received data */
                 data = spi_i2s_data_receive(spi_periph);
 
@@ -458,20 +374,21 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
                 }
 
                 /* Wait until the transmit buffer is empty */
-                #if defined (SOC_SERIES_GD32H7xx)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
+                spi_master_transfer_start(spi_periph, SPI_TRANS_START);
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TP));
-                #else
+#else
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_TBE));
-                #endif
+#endif
                 /* Send the byte */
                 spi_i2s_data_transmit(spi_periph, data);
 
                 /* Wait until a data is received */
-                #if defined (SOC_SERIES_GD32H7xx)
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X))
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RP));
-                #else
+#else
                 while(RESET == spi_i2s_flag_get(spi_periph, SPI_FLAG_RBNE));
-                #endif
+#endif
                 /* Get the received data */
                 data = spi_i2s_data_receive(spi_periph);
 
@@ -481,13 +398,14 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
                 }
             }
         }
-        #if defined SOC_SERIES_GD32H7xx
+#if (defined SOC_SERIES_GD32H7xx || defined SOC_SERIES_GD32H77x_H78X)
         else if(config->data_width <= 32)
         {
             const rt_uint32_t * send_ptr = message->send_buf;
             rt_uint32_t * recv_ptr = message->recv_buf;
             rt_uint32_t size = message->length;
 
+            spi_master_transfer_start(spi_periph, SPI_TRANS_START);
             while(size--)
             {
                 rt_uint32_t data = 0xFF;
@@ -513,7 +431,7 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
                 }
             }
         }
-        #endif
+#endif
     }
 
     /* release CS */

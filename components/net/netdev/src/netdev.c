@@ -1389,15 +1389,18 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
         }
         else
         {
+            const char *resp_addr = ip_addr_isany(&(ping_resp.ip_addr)) ?
+                                    target_name : inet_ntoa(ping_resp.ip_addr);
+
             if (ping_resp.ttl == 0)
             {
                 rt_kprintf("%d bytes from %s icmp_seq=%d time=%d ms\n",
-                            ping_resp.data_len, inet_ntoa(ping_resp.ip_addr), index + 1, ping_resp.ticks);
+                            ping_resp.data_len, resp_addr, index + 1, ping_resp.ticks);
             }
             else
             {
                 rt_kprintf("%d bytes from %s icmp_seq=%d ttl=%d time=%d ms\n",
-                            ping_resp.data_len, inet_ntoa(ping_resp.ip_addr), index + 1, ping_resp.ttl, ping_resp.ticks);
+                            ping_resp.data_len, resp_addr, index + 1, ping_resp.ttl, ping_resp.ticks);
             }
             received += 1;
             if (ping_resp.ticks > max_time)
@@ -1436,7 +1439,8 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
     /* print ping statistics */
     loss = (uint32_t)((1 - ((float)received) / index) * 100);
 
-    rt_kprintf("\n--- %s ping statistics ---\n", inet_ntoa(ping_resp.ip_addr));
+    rt_kprintf("\n--- %s ping statistics ---\n",
+               ip_addr_isany(&(ping_resp.ip_addr)) ? target_name : inet_ntoa(ping_resp.ip_addr));
     rt_kprintf("%d packets transmitted, %d received, %d%% packet loss\n", index, received, loss);
     if (received > 0)
     {
