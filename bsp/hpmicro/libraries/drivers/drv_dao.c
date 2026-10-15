@@ -109,16 +109,13 @@ static rt_err_t hpm_dao_set_samplerate(uint32_t samplerate)
     transfer.sample_rate = samplerate;
     bool is_enabled = i2s_is_enabled(DAO_I2S);
     if (is_enabled) {
-        dma_abort_channel(dma_resource.base, dma_resource.channel);
+        LOG_E("dao_i2s mot support to configure samplerate when dao_i2s is active\n");
+        return -RT_ERROR;
     }
     if (status_success != i2s_config_tx(DAO_I2S, mclk_hz, &transfer))
     {
         LOG_E("dao_i2s configure transfer failed\n");
         return -RT_ERROR;
-    }
-    if (is_enabled)
-    {
-        i2s_enable(DAO_I2S);
     }
 
     return RT_EOK;
@@ -149,6 +146,7 @@ static rt_err_t hpm_dao_configure(struct rt_audio_device* audio, struct rt_audio
                     result = -RT_ERROR;
                     break;
             }
+            break;
         }
 
         default:
@@ -170,7 +168,10 @@ static rt_err_t hpm_dao_init(struct rt_audio_device* audio)
     board_init_dao_clock();
 
     i2s_get_default_config(DAO_I2S, &i2s_config);
-    i2s_init(DAO_I2S, &i2s_config);
+    if (status_success != i2s_init(DAO_I2S, &i2s_config)) {
+        LOG_E("dao_i2s init failed\n");
+        return -RT_ERROR;
+    }
     i2s_enable_tx_dma_request(DAO_I2S);
 
     mclk_hz = clock_get_frequency(clock_i2s1);
@@ -217,7 +218,11 @@ static rt_err_t hpm_dao_start(struct rt_audio_device* audio, int stream)
     }
 
     /* fill 2 dummy data, it is suitable for 1/2 channel of audio */
-    i2s_reset_tx(DAO_I2S);
+    if (status_success != i2s_reset_tx(DAO_I2S)) {
+        LOG_E("dao_i2s reset tx failed\n");
+        return -RT_ERROR;
+    }
+    i2s_enable_tx_line(DAO_I2S, DAO_I2S_DATA_LINE);
     if (i2s_fill_tx_dummy_data(DAO_I2S, DAO_I2S_DATA_LINE, 2) != status_success) {
         return -RT_ERROR;
     }
@@ -236,7 +241,7 @@ static rt_err_t hpm_dao_stop(struct rt_audio_device* audio, int stream)
     dao_stop(HPM_DAO);
     i2s_stop(DAO_I2S);
 
-    dma_abort_channel(dma_resource.base, dma_resource.channel);
+    dma_mgr_abort_chn_transfer(&dma_resource);
     dma_mgr_release_resource(&dma_resource);
 
     return RT_EOK;
@@ -257,6 +262,7 @@ static rt_ssize_t hpm_dao_transmit(struct rt_audio_device* audio, const void* wr
     ch_config.size_in_byte = size;
     ch_config.dst_mode = DMA_HANDSHAKE_MODE_HANDSHAKE;
     ch_config.src_burst_size = DMA_NUM_TRANSFER_PER_BURST_1T;
+    ch_config.interrupt_mask = DMA_INTERRUPT_MASK_ABORT;
 
     if (l1c_dc_is_enabled()) {
         /* cache writeback for sent buff */

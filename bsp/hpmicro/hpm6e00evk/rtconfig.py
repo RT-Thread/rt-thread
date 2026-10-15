@@ -3,7 +3,6 @@
 
 import os
 import sys
-import rtconfig
 
 
 if os.getenv('RTT_ROOT'):
@@ -11,30 +10,7 @@ if os.getenv('RTT_ROOT'):
 else:
     RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
 
-sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
-try:
-    from building import *
-except:
-    print('Cannot found RT-Thread root directory, please check RTT_ROOT')
-    print(RTT_ROOT)
-    exit(-1)
-
-def bsp_pkg_check():
-    import subprocess
-    
-    need_update = True
-    for p in os.listdir("packages"):
-        if p.startswith("hpm_sdk-"):
-            need_update = False
-            break
-    if need_update:
-        print("\n===============================================================================")
-        print("Dependency packages missing, please running 'pkgs --update'...")
-        print("If no packages are fetched, run 'pkgs --upgrade' first, then 'pkgs --update'...")
-        print("===============================================================================")
-        exit(1)
-
-RegisterPreBuildingAction(bsp_pkg_check)
+sys.path.insert(0, os.path.join(RTT_ROOT, 'tools'))
 
 
 # toolchains options
@@ -83,9 +59,13 @@ if  CROSS_TOOL == 'gcc':
     else:
         EXEC_PATH   = r'/opt/riscv-gnu-gcc/bin'
 else:
-    print("CROSS_TOOL = {} not yet supported" % CROSS_TOOL)
+    print("CROSS_TOOL = {} not yet supported, only gcc is supported".format(CROSS_TOOL))
+    exit(-1)
 
-BUILD = 'flash_debug'
+if os.getenv('RTT_BUILD_TYPE'):
+    BUILD = os.getenv('RTT_BUILD_TYPE')
+else:
+    BUILD = 'flash_debug'
 
 if PLATFORM == 'gcc':
     PREFIX = 'riscv32-unknown-elf-'
@@ -105,7 +85,7 @@ if PLATFORM == 'gcc':
     DEVICE = ARCH_ABI  + ' -DUSE_NONVECTOR_MODE=1 ' + ' -ffunction-sections -fdata-sections -fno-common '
     CFLAGS = DEVICE
     AFLAGS = CFLAGS
-    LFLAGS  = ARCH_ABI + '  --specs=nano.specs --specs=nosys.specs  -u _printf_float -u _scanf_float -nostartfiles -Wl,--gc-sections '
+    LFLAGS  = ARCH_ABI + '  --specs=nano.specs --specs=nosys.specs -nostartfiles -Wl,--gc-sections '
 
     CPATH = ''
     LPATH = ''
@@ -113,8 +93,8 @@ if PLATFORM == 'gcc':
     if BUILD == 'ram_debug':
         CFLAGS += ' -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
-        CFLAGS += ' -O0'
-        LFLAGS += ' -O0'
+        CFLAGS += ' -Og'
+        LFLAGS += ' -Og'
         LINKER_FILE = 'board/linker_scripts/gcc/ram_rtt.ld'
     elif BUILD == 'ram_release':
         CFLAGS += ' -O2'
@@ -123,8 +103,8 @@ if PLATFORM == 'gcc':
     elif BUILD == 'flash_debug':
         CFLAGS += ' -gdwarf-2'
         AFLAGS += ' -gdwarf-2'
-        CFLAGS += ' -O0'
-        LFLAGS += ' -O0'
+        CFLAGS += ' -Og'
+        LFLAGS += ' -Og'
         CFLAGS += ' -DFLASH_XIP=1'
         LINKER_FILE = 'board/linker_scripts/gcc/flash_rtt.ld'
     elif BUILD == 'flash_release':

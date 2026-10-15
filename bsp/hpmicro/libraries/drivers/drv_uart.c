@@ -38,160 +38,161 @@ static rt_err_t hpm_uart_control(struct rt_serial_device *serial, int cmd, void 
 static int hpm_uart_putc(struct rt_serial_device *serial, char ch);
 static int hpm_uart_getc(struct rt_serial_device *serial);
 
-
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 #if defined(BSP_USING_UART0)
 struct rt_serial_device serial0;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART0,uart0_isr)
 void uart0_isr(void)
 {
     hpm_uart_isr(&serial0);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART0,uart0_isr)
 #endif
 
 
 #if defined(BSP_USING_UART1)
 struct rt_serial_device serial1;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART1,uart1_isr)
 void uart1_isr(void)
 {
     hpm_uart_isr(&serial1);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART1,uart1_isr)
 #endif
 
 
 #if defined(BSP_USING_UART2)
 struct rt_serial_device serial2;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART2,uart2_isr)
 void uart2_isr(void)
 {
     hpm_uart_isr(&serial2);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART2,uart2_isr)
 #endif
 
 
 #if defined(BSP_USING_UART3)
 struct rt_serial_device serial3;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART3,uart3_isr)
 void uart3_isr(void)
 {
     hpm_uart_isr(&serial3);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART3,uart3_isr)
 #endif
 
 
 #if defined(BSP_USING_UART4)
 struct rt_serial_device serial4;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART4,uart4_isr)
 void uart4_isr(void)
 {
     hpm_uart_isr(&serial4);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART4,uart4_isr)
 #endif
 
 
 #if defined(BSP_USING_UART5)
 struct rt_serial_device serial5;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART5,uart5_isr)
 void uart5_isr(void)
 {
     hpm_uart_isr(&serial5);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART5,uart5_isr)
 #endif
 
 
 #if defined(BSP_USING_UART6)
 struct rt_serial_device serial6;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART6,uart6_isr)
 void uart6_isr(void)
 {
     hpm_uart_isr(&serial6);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART6,uart6_isr)
 #endif
 
 
 #if defined(BSP_USING_UART7)
 struct rt_serial_device serial7;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART7,uart7_isr)
 void uart7_isr(void)
 {
     hpm_uart_isr(&serial7);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART7,uart7_isr)
 #endif
 
 
 #if defined(BSP_USING_UART8)
 struct rt_serial_device serial8;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART8,uart8_isr)
 void uart8_isr(void)
 {
     hpm_uart_isr(&serial8);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART8,uart8_isr)
 #endif
 
 
 #if defined(BSP_USING_UART9)
 struct rt_serial_device serial9;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART9,uart9_isr)
 void uart9_isr(void)
 {
     hpm_uart_isr(&serial9);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART9,uart9_isr)
 #endif
 
 
 #if defined(BSP_USING_UART10)
 struct rt_serial_device serial10;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART10,uart10_isr)
 void uart10_isr(void)
 {
     hpm_uart_isr(&serial10);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART10,uart10_isr)
 #endif
 
 #if defined(BSP_USING_UART11)
 struct rt_serial_device serial11;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART11,uart11_isr)
 void uart11_isr(void)
 {
     hpm_uart_isr(&serial11);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART11,uart11_isr)
 #endif
 
 #if defined(BSP_USING_UART12)
 struct rt_serial_device serial12;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART12,uart12_isr)
 void uart12_isr(void)
 {
     hpm_uart_isr(&serial12);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART12,uart12_isr)
 #endif
 
 #if defined(BSP_USING_UART13)
 struct rt_serial_device serial13;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART13,uart13_isr)
 void uart13_isr(void)
 {
     hpm_uart_isr(&serial13);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART13,uart13_isr)
 #endif
 
 #if defined(BSP_USING_UART14)
 struct rt_serial_device serial14;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART14,uart14_isr)
 void uart14_isr(void)
 {
     hpm_uart_isr(&serial14);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART14,uart14_isr)
 #endif
 
 #if defined(BSP_USING_UART15)
 struct rt_serial_device serial15;
-SDK_DECLARE_EXT_ISR_M(IRQn_UART15,uart15_isr)
 void uart15_isr(void)
 {
     hpm_uart_isr(&serial15);
 }
+SDK_DECLARE_EXT_ISR_M(IRQn_UART15,uart15_isr)
 #endif
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 
 static const struct hpm_uart uarts[] = {
 #if defined(BSP_USING_UART0)
@@ -441,7 +442,11 @@ static const struct hpm_uart uarts[] = {
  *
  * @param serial Serial device
  */
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
 static void hpm_uart_isr(struct rt_serial_device *serial)
+#else
+static void hpm_uart_isr(int vector, struct rt_serial_device *serial)
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
 {
     struct hpm_uart *uart;
 
@@ -461,6 +466,7 @@ static rt_err_t hpm_uart_configure(struct rt_serial_device *serial, struct seria
     RT_ASSERT(cfg != RT_NULL);
 
     uart_config_t uart_config;
+    hpm_stat_t stat;
     struct hpm_uart *uart  = (struct hpm_uart *)serial->parent.user_data;
 
     init_uart_pins(uart->uart_base);
@@ -472,10 +478,13 @@ static rt_err_t hpm_uart_configure(struct rt_serial_device *serial, struct seria
     uart_config.parity = cfg->parity;
 
     uart_config.word_length = cfg->data_bits - DATA_BITS_5;
+    stat = uart_init(uart->uart_base, &uart_config);
+    if (stat != status_success)
+    {
+        return -RT_ERROR;
+    }
 
-    uart_init(uart->uart_base, &uart_config);
-
-    hpm_uart_control(serial, RT_DEVICE_CTRL_SET_INT, NULL);
+    return hpm_uart_control(serial, RT_DEVICE_CTRL_SET_INT, NULL);
 }
 
 
@@ -558,6 +567,10 @@ int rt_hw_uart_init(void)
                             uarts[i].device_name,
                             RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                             (void*)&uarts[i]);
+#ifdef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+        /* Register UART device to irq table */
+        rt_hw_interrupt_install(uarts[i].irq_num, (rt_isr_handler_t)hpm_uart_isr, uarts[i].serial, uarts[i].device_name);
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */
     }
 
     return err;

@@ -194,6 +194,20 @@
     ]
   },
   {
+    "target_name": "hpmicro-hpm5100evk",
+    "toolchain": "riscv32-unknown-elf-multilib",
+    "bsp_path": "bsp/hpmicro/hpm5100evk",
+    "elf": "bsp/hpmicro/hpm5100evk/rtthread.elf",
+    "ld": "bsp/hpmicro/hpm5100evk/board/linker_scripts/gcc/flash_rtt.ld",
+    "map_file": "",
+    "linker_vars": "",
+    "watch_paths": [
+      "bsp/hpmicro/hpm5100evk",
+      "bsp/hpmicro/libraries",
+      "bsp/hpmicro/tools"
+    ]
+  },
+  {
     "target_name": "xuantie-e901plus",
     "toolchain": "xuantie-elf-newlib",
     "bsp_path": "bsp/xuantie/smartl/e901plus",

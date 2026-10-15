@@ -19,14 +19,6 @@ _start:
     la tp, __thread_pointer
     .option pop
 
-#ifdef __riscv_flen
-    /* Enable FPU */
-    li t0, CSR_MSTATUS_FS_MASK
-    csrrs t0, mstatus, t0
-
-    /* Initialize FCSR */
-    fscsr zero
-#endif
     /* Initialize stack pointer */
     la t0, _stack
     mv sp, t0
@@ -45,12 +37,20 @@ _start:
     /* Initialize FCSR */
     fscsr zero
 #endif
-    /* Disable Vector mode */
-    csrci CSR_MMISC_CTL, 2
-    /* Initialize trap_entry base */
+
+#ifdef HPM_USING_VECTOR_PREEMPTED_MODE
+    /* Initial machine trap-vector Base */
+    la t0, __vector_table
+    csrw mtvec, t0
+    /* Enable vectored external PLIC interrupt */
+    csrsi CSR_MMISC_CTL, 2
+#else
+    /* Initial machine trap-vector Base */
     la t0, SW_handler
     csrw mtvec, t0
-
+    /* Disable vectored external PLIC interrupt */
+    csrci CSR_MMISC_CTL, 2
+#endif
 
     /* System reset handler */
     call reset_handler
@@ -62,7 +62,7 @@ _start:
 nmi_handler:
 1:    j 1b
 
-    .global default_irq_handler
+#ifndef HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
     .weak default_irq_handler
     .align 2
 default_irq_handler:
@@ -75,3 +75,13 @@ default_irq_handler:
     .endm
 
 #include "vectors.S"
+#else
+    .section .vector_table, "a"
+    .global __vector_table
+    .align 9
+
+__vector_table:
+    .rept RT_HW_ISR_NUM
+    .long handle_trap
+    .endr
+#endif /* HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK */

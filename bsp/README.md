@@ -763,6 +763,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 | [hpm6800evk](hpmicro/hpm6800evk) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ |
 | [hpm6e00evk](hpmicro/hpm6e00evk) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [hpm6p00evk](hpmicro/hpm6p00evk) | ✅ | ✅ | ✅ | ✅ | ✅ | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [hpm5100evk](hpmicro/hpm5100evk) | ✅ | ✅ | ✅ | ✅ | - | - | - | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟢 K230 (RT-Smart)
 

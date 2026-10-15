@@ -33,6 +33,7 @@ Below is a comprehensive list of HPMicro BSPs currently supported:
 | hpm6800evk | HPM6800EVK | HPM6800 | Development board for HPM6800 series |
 | hpm6e00evk | HPM6E00EVK | HPM6E00 | Development board for HPM6E00 series |
 | hpm6p00evk | HPM6P00EVK | HPM6P00 | Development board for HPM6P00 series |
+| hpm5100evk | HPM5100EVK | HPM5100 | Development board for HPM5100 series |
 
 ## Quick Start Guide
 
@@ -120,7 +121,7 @@ Additional peripherals may be supported depending on the specific board:
   - HPM6E00EVK
   - HPM6P00EVK
   - HPM5E00EVK
-- **CAN**: Available on HPM6750 series Development Boards, HPM5300EVK, HPM6800EVK, HPM6E00EVK, HPM6P00EVK and HPM5E00EVK
+- **CAN**: Available on HPM6750 series Development Boards, HPM5300EVK, HPM6800EVK, HPM6E00EVK, HPM6P00EVK, HPM5E00EVK and HPM5100EVK
 - **SDIO**: Available on HPM6300EVK, HPM6750EVKMINI, HPM6750EVK, HPM6750EVK2 and HPM6800EVK
 - **Display/Audio**: Available on HPM6750EVK, HPM6800EVK, HPM6E00EVK，HPM6P00EVK
 
@@ -153,6 +154,7 @@ Please refer to the individual BSP directories for detailed documentation:
 - `hpm6800evk/README.md`
 - `hpm6e00evk/README.md`
 - `hpm6p00evk/README.md`
+- `hpm5100evk/README.md`
 
 ## Troubleshooting
 
