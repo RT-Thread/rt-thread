@@ -1107,7 +1107,7 @@ static int hpm_uart_putc(struct rt_serial_device *serial, char ch)
     struct hpm_uart *uart  = (struct hpm_uart *)serial->parent.user_data;
     uart_send_byte(uart->uart_base, ch);
     uart_flush(uart->uart_base);
-    return ch;
+    return 1;
 }
 
 static int hpm_uart_getc(struct rt_serial_device *serial)
