@@ -1,0 +1,36 @@
+# Exclude the files that are kept in sync with the upstream HPMicro sources
+# (the all-in-one tree / hpm_sdk) from the changed-file checks, as already done
+# for clang-format in .clang-format-ignore.
+#
+# tools/ci/cpp_check.py runs cppcheck with a minimal configuration (only
+# '-I include -I thread/components/finsh'), so it cannot resolve the hpm_sdk
+# macros used in these files (e.g. ATTR_PLACE_AT) and it reports the linker
+# script symbol arithmetic in c_startup() as 'subtractPointers'; both are
+# false positives for code that is not ours to restructure.
+
+dir_path:
+- hpm5100evk/board
+- hpm5100evk/startup
+- hpm5300evk/board
+- hpm5300evk/startup
+- hpm5301evklite/board
+- hpm5301evklite/startup
+- hpm5e00evk/board
+- hpm5e00evk/startup
+- hpm6200evk/board
+- hpm6200evk/startup
+- hpm6300evk/board
+- hpm6300evk/startup
+- hpm6750evk/board
+- hpm6750evk/startup
+- hpm6750evk2/board
+- hpm6750evk2/startup
+- hpm6750evkmini/board
+- hpm6750evkmini/startup
+- hpm6800evk/board
+- hpm6800evk/startup
+- hpm6e00evk/board
+- hpm6e00evk/startup
+- hpm6p00evk/board
+- hpm6p00evk/startup
+- libraries

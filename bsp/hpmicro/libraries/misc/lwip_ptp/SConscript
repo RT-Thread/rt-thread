@@ -1,0 +1,7 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+group = DefineGroup('lwip_ptp', [], depend=['BSP_USING_ETH'], CPPPATH=[cwd])
+
+Return('group')

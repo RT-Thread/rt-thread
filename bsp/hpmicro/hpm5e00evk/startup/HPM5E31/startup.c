@@ -54,6 +54,8 @@ __attribute__((weak)) void c_startup(void)
     extern uint8_t __noncacheable_bss_start__[], __noncacheable_bss_end__[];
     extern uint8_t __ramfunc_start__[], __ramfunc_end__[];
     extern uint8_t __noncacheable_init_start__[], __noncacheable_init_end__[];
+    extern uint8_t __fast_ram_bss_start__[], __fast_ram_bss_end__[];
+    extern uint8_t __fast_ram_init_start__[], __fast_ram_init_end__[], __fast_ram_init_load_addr__[];
 
     /* tbss section */
     size = __tbss_end__ - __tbss_start__;
@@ -95,6 +97,18 @@ __attribute__((weak)) void c_startup(void)
     size = __noncacheable_init_end__ - __noncacheable_init_start__;
     for (i = 0; i < size; i++) {
         *(__noncacheable_init_start__ + i) = *(__noncacheable_init_load_addr__ + i);
+    }
+
+    /* fast_ram bss section */
+    size = __fast_ram_bss_end__ - __fast_ram_bss_start__;
+    for (i = 0; i < size; i++) {
+        *(__fast_ram_bss_start__ + i) = 0;
+    }
+
+    /* fast_ram init section LMA: etext + data length + ramfunc length + tdata length */
+    size = __fast_ram_init_end__ - __fast_ram_init_start__;
+    for (i = 0; i < size; i++) {
+        *(__fast_ram_init_start__ + i) = *(__fast_ram_init_load_addr__ + i);
     }
 #endif
 }

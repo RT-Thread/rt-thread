@@ -212,7 +212,16 @@ SECTIONS
         KEEP(*(.fast_ram.init.*))
         __fast_ram_init_end__ = .;
         . = ALIGN(8);
-    } > DLM
+    } > AXI_SRAM
+
+    .fast_ram.bss (NOLOAD) : {
+        . = ALIGN(8);
+        __fast_ram_bss_start__ = .;
+        *(.fast_ram.bss)
+        *(.fast_ram.bss.*)
+        __fast_ram_bss_end__ = .;
+        . = ALIGN(8);
+    } > AXI_SRAM
 
     /* Note: .tbss and .tdata should be adjacent */
     __tdata_load_addr__ = __fast_ram_init_load_addr__ + SIZEOF(.fast_ram.init);
