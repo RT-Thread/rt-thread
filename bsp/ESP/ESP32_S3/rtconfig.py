@@ -46,7 +46,11 @@ if PLATFORM == 'gcc':
     # and ROM into. --specs=nosys.specs drops libgloss syscalls; the IDF
     # newlib port in the ESP-IDF package provides the real ones.
     DEVICE  = ' -nostartfiles -mlongcalls --specs=nosys.specs -fasynchronous-unwind-tables '
-    CFLAGS = DEVICE + '-include ../../components/libc/compilers/common/include/sys/ioctl.h -gdwarf-4 -ggdb -Og '
+    # Some ESP-IDF sources pull <sys/ioctl.h> in before the libc headers are on
+    # the include path; use the RT-Thread one by absolute path (a relative
+    # path would be resolved against each group's variant_dir under build/).
+    ioctl_h = os.path.join(RTT_ROOT, 'components', 'libc', 'compilers', 'common', 'include', 'sys', 'ioctl.h')
+    CFLAGS = DEVICE + '-include ' + ioctl_h + ' -gdwarf-4 -ggdb -Og '
     AFLAGS =  ' -c' + DEVICE + ' -x assembler-with-cpp'
     idf_path = find_package_path(BSP_ROOT, 'ESP-IDF-latest', relative_to=BSP_ROOT, pathsep='/')
     # memory.ld + sections.ld under idf_port/ld are generated from ESP-IDF

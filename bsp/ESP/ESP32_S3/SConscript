@@ -1,7 +1,6 @@
 # for module compiling
 import os
 Import('RTT_ROOT')
-from env_package import find_package_path
 
 cwd = str(Dir('#'))
 objs = []
@@ -10,20 +9,17 @@ objs = []
 for d in ('main', 'idf_port', 'idf_components'):
     objs = objs + SConscript(os.path.join(d, 'SConscript'))
 
-# The FreeRTOS->RT-Thread shim is target independent and is walked directly.
-# packages/SConscript (the pkgs-generated aggregator) is NOT used: the ESP-IDF
-# package's own SConscript only defines source lists for C3/C6 and would abort
-# on this target; the esp-idf file set lives in idf_components/SConscript.
-# pkgs --update-force names the shim FreeRTOS_Wrapper-latest. A manual clone
-# of the same repo may be FreeRTOS-Wrapper-latest.
-wrapper = None
-for name in ('FreeRTOS_Wrapper-latest', 'FreeRTOS-Wrapper-latest'):
-    path = find_package_path(cwd, name, marker='SConscript')
-    if os.path.isfile(os.path.join(path, 'SConscript')):
-        wrapper = path
-        break
-if wrapper is None:
-    wrapper = os.path.join(cwd, 'packages', 'FreeRTOS_Wrapper-latest')
-objs = objs + SConscript(os.path.join(wrapper, 'SConscript'))
+# Walk every package under packages/ instead of the pkgs generated
+# packages/SConscript. The ESP-IDF package is skipped: its own SConscript only
+# defines source lists for C3/C6 and aborts on this target, the esp32s3 file
+# set is picked by idf_components/SConscript.
+pkgs_dir = os.path.join(cwd, 'packages')
+if os.path.isdir(pkgs_dir):
+    for name in sorted(os.listdir(pkgs_dir)):
+        path = os.path.join(pkgs_dir, name)
+        if name.lower().startswith('esp-idf'):
+            continue
+        if os.path.isfile(os.path.join(path, 'SConscript')):
+            objs = objs + SConscript(os.path.join(path, 'SConscript'))
 
 Return('objs')
