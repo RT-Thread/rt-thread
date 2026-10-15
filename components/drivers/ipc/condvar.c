@@ -35,7 +35,7 @@ void rt_condvar_init(rt_condvar_t cv, char *name)
 }
 
 static int _waitq_inqueue(rt_wqueue_t *queue, struct rt_wqueue_node *node,
-                          rt_tick_t timeout, int suspend_flag)
+                          rt_int32_t timeout, int suspend_flag)
 {
     rt_thread_t tcb = node->polling_thread;
     rt_timer_t timer = &(tcb->thread_timer);
@@ -71,7 +71,7 @@ static int _waitq_inqueue(rt_wqueue_t *queue, struct rt_wqueue_node *node,
     }
 
 int rt_condvar_timedwait(rt_condvar_t cv, rt_mutex_t mtx, int suspend_flag,
-                         rt_tick_t timeout)
+                         rt_int32_t timeout)
 {
     rt_err_t acq_mtx_succ, rc;
     rt_atomic_t waiting_mtx;
