@@ -271,7 +271,10 @@ pbuf_alloc(pbuf_layer layer, u16_t length, pbuf_type type)
       break;
     }
     case PBUF_RAM: {
-      u16_t payload_len = (u16_t)(LWIP_MEM_ALIGN_SIZE(offset) + LWIP_MEM_ALIGN_SIZE(length));
+      mem_size_t payload_len = (mem_size_t)(LWIP_MEM_ALIGN_SIZE(offset) + LWIP_MEM_ALIGN_SIZE(length));
+#if PBUF_PAYLOAD_MARGIN_LEN > 0
+      payload_len += LWIP_MEM_ALIGN_SIZE(PBUF_PAYLOAD_MARGIN_LEN);
+#endif
       mem_size_t alloc_len = (mem_size_t)(LWIP_MEM_ALIGN_SIZE(SIZEOF_STRUCT_PBUF) + payload_len);
 
       /* bug #50040: Check for integer overflow when calculating alloc_len */
@@ -440,9 +443,31 @@ pbuf_realloc(struct pbuf *p, u16_t new_len)
       && ((q->flags & PBUF_FLAG_IS_CUSTOM) == 0)
 #endif /* LWIP_SUPPORT_CUSTOM_PBUF */
      ) {
-    /* reallocate and adjust the length of the pbuf that will be split */
-    q = (struct pbuf *)mem_trim(q, (mem_size_t)(((u8_t *)q->payload - (u8_t *)q) + rem_len));
-    LWIP_ASSERT("mem_trim returned q == NULL", q != NULL);
+    size_t trim_len = (size_t)((u8_t *)q->payload - (u8_t *)q);
+#if PBUF_PAYLOAD_MARGIN_LEN > 0
+    size_t margin_len = LWIP_MEM_ALIGN_SIZE((size_t)PBUF_PAYLOAD_MARGIN_LEN);
+#endif
+    /* Keep the original allocation if the aligned trim size would wrap. */
+    int trim_size_ok = (size_t)rem_len <= (size_t)-1 - trim_len;
+#if PBUF_PAYLOAD_MARGIN_LEN > 0
+    trim_size_ok = trim_size_ok &&
+                   margin_len <= (size_t)-1 - trim_len - rem_len;
+#endif
+    if (trim_size_ok) {
+      trim_len += rem_len;
+#if PBUF_PAYLOAD_MARGIN_LEN > 0
+      trim_len += margin_len;
+#endif
+      if (trim_len <= (size_t)((mem_size_t)-1) - (MEM_ALIGNMENT - 1U)) {
+        struct pbuf *trimmed;
+        /* reallocate and adjust the length of the pbuf that will be split */
+        trimmed = (struct pbuf *)mem_trim(q, (mem_size_t)trim_len);
+        LWIP_ASSERT("mem_trim returned q == NULL", trimmed != NULL);
+        if (trimmed != NULL) {
+          q = trimmed;
+        }
+      }
+    }
   }
   /* adjust length fields for new last pbuf */
   q->len = rem_len;
