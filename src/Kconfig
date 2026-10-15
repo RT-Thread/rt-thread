@@ -210,12 +210,21 @@ if RT_USING_CPU_USAGE_TRACER
             A longer interval is smoother but has higher display latency.
 endif
 
-menu "kservice options"
-    config RT_USING_TINY_FFS
-        bool "Enable kservice to use tiny finding first bit set method"
-        default n
-endmenu
+choice
+    prompt "Choose finding first bit set method"
+    default RT_USING_BUILTIN_FFS
 
+config RT_USING_TINY_FFS
+    bool "Tiny: 37 bytes"
+    help
+        Select this if you want tiny method.
+
+config RT_USING_BUILTIN_FFS
+    bool "Builtin: 0 bytes"
+    help
+        Select this if you want builtin method.
+
+endchoice
 menuconfig RT_USING_DEBUG
     bool "Enable debugging features"
     default y
