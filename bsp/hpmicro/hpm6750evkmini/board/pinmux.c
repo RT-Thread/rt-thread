@@ -126,19 +126,19 @@ void init_trgmux_pins(uint32_t pin)
     HPM_IOC->PAD[pin].FUNC_CTL = IOC_PAD_FUNC_CTL_ALT_SELECT_SET(16);
 }
 
-void init_i2c_pins_as_gpio(I2C_Type *ptr)
+hpm_stat_t init_i2c_pins_as_gpio(I2C_Type *ptr)
 {
     if (ptr == HPM_I2C0) {
         /* I2C0 */
         HPM_IOC->PAD[IOC_PAD_PB11].FUNC_CTL = IOC_PB11_FUNC_CTL_GPIO_B_11;
         HPM_IOC->PAD[IOC_PAD_PB10].FUNC_CTL = IOC_PB10_FUNC_CTL_GPIO_B_10;
     } else {
-        while (1) {
-        }
+        return status_invalid_argument;
     }
+    return status_success;
 }
 
-void init_i2c_pins(I2C_Type *ptr)
+hpm_stat_t init_i2c_pins(I2C_Type *ptr)
 {
     if (ptr == HPM_I2C0) {
         HPM_IOC->PAD[IOC_PAD_PB11].FUNC_CTL = IOC_PB11_FUNC_CTL_I2C0_SCL
@@ -155,9 +155,9 @@ void init_i2c_pins(I2C_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PB14].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
         HPM_IOC->PAD[IOC_PAD_PB13].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
     } else {
-        while (1) {
-        }
+        return status_invalid_argument;
     }
+    return status_success;
 }
 void init_femc_pins(void)
 {

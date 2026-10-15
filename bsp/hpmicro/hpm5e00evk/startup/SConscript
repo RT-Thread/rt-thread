@@ -8,6 +8,5 @@ cwd = GetCurrentDir()
 objs = []
 
 objs = objs + SConscript(os.path.join(rtconfig.CHIP_NAME, 'SConscript'))
-ASFLAGS = ' -I' + cwd
 
 Return('objs')

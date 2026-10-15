@@ -29,7 +29,7 @@ __vector_table:
     IRQ_HANDLER 16 /* CAN6 IRQ handler */
     IRQ_HANDLER 17 /* CAN7 IRQ handler */
     IRQ_HANDLER 18 /* PTPC IRQ handler */
-    IRQ_HANDLER 19 /* Reserved */
+    IRQ_HANDLER 19 /* Reserved */                                                                                                      
     IRQ_HANDLER 20 /* Reserved */
     IRQ_HANDLER 21 /* Reserved */
     IRQ_HANDLER 22 /* Reserved */

@@ -12,7 +12,14 @@
 
 #include "drv_timer.h"
 #include "board.h"
+#ifdef BSP_USING_GPTMRV2
+#include "hpm_gptmrv2_drv.h"
+#ifndef GPTMRV2_DEFAULT_FREQ
+#define GPTMRV2_DEFAULT_FREQ         (100000UL) /* 100KHz */
+#endif
+#else
 #include "hpm_gptmr_drv.h"
+#endif
 
 #include "hpm_clock_drv.h"
 
@@ -46,7 +53,11 @@ static const struct rt_clock_timer_ops hpm_clock_timer_ops = {
 static const struct rt_clock_timer_info hpm_clock_timer_info = {
         .maxfreq = 100000000UL,
         .minfreq = 93750UL,
+#ifdef BSP_USING_GPTMRV2
+        .maxcnt = 0xFFFFFFUL,
+#else
         .maxcnt = 0xFFFFFFFFUL,
+#endif
         .cntmode = CLOCK_TIMER_CNTMODE_UP
 };
 
@@ -278,6 +289,10 @@ static void hpm_clock_timer_init(rt_clock_timer_t *timer, rt_uint32_t state)
         clock_add_to_group(hpm_gptmr->clock_name, BOARD_RUNNING_CORE & 0x1);
         hpm_gptmr->timer.freq = clock_get_frequency(hpm_gptmr->clock_name);
         gptmr_channel_get_default_config(base, &config);
+#ifdef BSP_USING_GPTMRV2
+        hpm_gptmr->timer.freq = GPTMRV2_DEFAULT_FREQ;
+        config.prescaler = clock_get_frequency(hpm_gptmr->clock_name) / hpm_gptmr->timer.freq;
+#endif
         gptmr_channel_config(base, hpm_gptmr->channel, &config, false);
     }
 }
@@ -291,6 +306,9 @@ static rt_err_t hpm_clock_timer_start(rt_clock_timer_t *timer, rt_uint32_t cnt, 
     gptmr_channel_get_default_config(base, &config);
     config.cmp[0] = 0;
     config.reload = cnt;
+#ifdef BSP_USING_GPTMRV2
+    config.prescaler = clock_get_frequency(hpm_gptmr->clock_name) / timer->freq;
+#endif
 
     timer->mode = mode;
 
@@ -334,17 +352,35 @@ static rt_err_t hpm_clock_timer_control(rt_clock_timer_t *timer, rt_uint32_t cmd
     switch (cmd)
     {
     case CLOCK_TIMER_CTRL_FREQ_SET:
+#ifdef BSP_USING_GPTMRV2
+        if ((args == RT_NULL) || (*(rt_uint32_t *)args == 0U))
+        {
+            return -RT_EINVAL;
+        }
+        hpm_gptmr->timer.freq = *(rt_uint32_t*)args;
+#else
         err = -RT_ERROR;
+#endif
         break;
     case CLOCK_TIMER_CTRL_INFO_GET:
+        if (args == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
         *(rt_clock_timer_t*)args = hpm_gptmr->timer;
         break;
     case CLOCK_TIMER_CTRL_MODE_SET:
+        if (args == RT_NULL)
+        {
+            return -RT_EINVAL;
+        }
         hpm_gptmr->timer.mode = *(rt_uint32_t*)args;
         break;
     case CLOCK_TIMER_CTRL_STOP:
         gptmr_stop_counter(base, hpm_gptmr->channel);
         break;
+    default:
+        return -RT_EINVAL;
     }
 
     return err;

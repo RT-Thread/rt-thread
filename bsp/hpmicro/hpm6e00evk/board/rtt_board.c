@@ -41,13 +41,19 @@ void os_tick_config(void)
 void rtt_board_init(void)
 {
     board_init_clock();
+
+    /* initialize memory system
+     * NOTE: this must happen before board_init_console(), because the SDK console_init()
+     * calls setvbuf(), which allocates through the C library malloc() -> rt_malloc() and
+     * therefore requires the RT-Thread heap to be ready. Otherwise RT_ASSERT() fires in
+     * rt_smem_alloc() whenever RT_USING_DEBUG is enabled.
+     */
+    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
+
     board_init_console();
     board_init_pmp();
 
     dma_mgr_init();
-
-    /* initialize memory system */
-    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 
     /* Configure the OS Tick */
     os_tick_config();
@@ -132,7 +138,7 @@ void rt_hw_cpu_dcache_ops(int ops, void *addr, int size)
 }
 #endif
 
-uint32_t rtt_board_init_adc16_clock(void *ptr, bool clk_src_ahb)  /* motor system should be use clk_adc_src_ahb0 */
+uint32_t rtt_board_init_adc16_clock(ADC16_Type *ptr, bool clk_src_ahb)  /* motor system should be use clk_adc_src_ahb0 */
 {
     uint32_t freq = 0;
 
@@ -148,7 +154,7 @@ uint32_t rtt_board_init_adc16_clock(void *ptr, bool clk_src_ahb)  /* motor syste
         }
         clock_add_to_group(clock_adc0, 0);
         freq = clock_get_frequency(clock_adc0);
-    } else if (ptr == (void *)HPM_ADC1) {
+    } else if (ptr == HPM_ADC1) {
         if (clk_src_ahb) {
             /* Configure the ADC clock from AHB (@200MHz by default)*/
             clock_set_adc_source(clock_adc1, clk_adc_src_ahb0);
@@ -159,7 +165,7 @@ uint32_t rtt_board_init_adc16_clock(void *ptr, bool clk_src_ahb)  /* motor syste
         }
         clock_add_to_group(clock_adc1, 0);
         freq = clock_get_frequency(clock_adc1);
-    } else if (ptr == (void *)HPM_ADC2) {
+    } else if (ptr == HPM_ADC2) {
         if (clk_src_ahb) {
             /* Configure the ADC clock from AHB (@200MHz by default)*/
             clock_set_adc_source(clock_adc2, clk_adc_src_ahb0);
@@ -170,7 +176,7 @@ uint32_t rtt_board_init_adc16_clock(void *ptr, bool clk_src_ahb)  /* motor syste
         }
         clock_add_to_group(clock_adc2, 0);
         freq = clock_get_frequency(clock_adc2);
-    } else if (ptr == (void *)HPM_ADC3) {
+    } else if (ptr == HPM_ADC3) {
         if (clk_src_ahb) {
             /* Configure the ADC clock from AHB (@200MHz by default)*/
             clock_set_adc_source(clock_adc3, clk_adc_src_ahb0);

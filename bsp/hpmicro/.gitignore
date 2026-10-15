@@ -1,0 +1,2 @@
+# HPMicro SDK is fetched as an RT-Thread package into the shared libraries dir
+/libraries/hpm_sdk-*/

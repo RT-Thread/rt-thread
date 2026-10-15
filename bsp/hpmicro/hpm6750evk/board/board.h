@@ -633,6 +633,8 @@ uint32_t board_init_cam_clock(CAM_Type *ptr);
 uint32_t board_init_spi_clock(SPI_Type *ptr);
 
 uint32_t board_init_adc_clock(void *ptr, bool clk_src_bus);
+uint32_t board_init_adc12_clock(ADC12_Type *ptr, bool clk_src_ahb);
+uint32_t board_init_adc16_clock(ADC16_Type *ptr, bool clk_src_ahb);
 
 void board_init_acmp_clock(ACMP_Type *ptr);
 

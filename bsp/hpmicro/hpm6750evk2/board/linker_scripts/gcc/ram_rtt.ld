@@ -214,6 +214,15 @@ SECTIONS
         . = ALIGN(8);
     } > DLM
 
+    .fast_ram.bss (NOLOAD) : {
+        . = ALIGN(8);
+        __fast_ram_bss_start__ = .;
+        *(.fast_ram.bss)
+        *(.fast_ram.bss.*)
+        __fast_ram_bss_end__ = .;
+        . = ALIGN(8);
+    } > DLM
+
     /* Note: .tbss and .tdata should be adjacent */
     __tdata_load_addr__ = __fast_ram_init_load_addr__ + SIZEOF(.fast_ram.init);
     .tdata : AT(__tdata_load_addr__) {
