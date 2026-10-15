@@ -467,6 +467,7 @@ static void rt_wlan_event_dispatch(struct rt_wlan_device *device, rt_wlan_dev_ev
     {
         RT_WLAN_LOG_D("event: DISCONNECT");
         _sta_mgnt.state &= ~RT_WLAN_STATE_CONNECT;
+        _sta_mgnt.state &= ~RT_WLAN_STATE_CONNECTING;
         _sta_mgnt.state &= ~RT_WLAN_STATE_READY;
         user_event = RT_WLAN_EVT_STA_DISCONNECTED;
         user_buff.data = &_sta_mgnt.info;
@@ -1073,6 +1074,7 @@ rt_err_t rt_wlan_disconnect(void)
 
     /* run disconnect */
     MGNT_LOCK();
+    TIME_STOP();
     /* create event wait complete */
     complete = rt_wlan_complete_create("disc");
     if (complete == RT_NULL)
@@ -1101,6 +1103,7 @@ rt_err_t rt_wlan_disconnect(void)
         MGNT_UNLOCK();
         return -RT_ERROR;
     }
+    TIME_STOP();
     RT_WLAN_LOG_I("disconnect success!");
     MGNT_UNLOCK();
     return err;
@@ -1228,10 +1231,27 @@ int rt_wlan_get_rssi(void)
     return rssi;
 }
 
+static rt_bool_t rt_wlan_ap_config_matches(const struct rt_wlan_info *info,
+                                           const char *password, int password_len)
+{
+    return (_ap_mgnt.info.ssid.len == info->ssid.len) &&
+           (_ap_mgnt.info.security == info->security) &&
+           (_ap_mgnt.info.channel == info->channel) &&
+           (_ap_mgnt.info.hidden == info->hidden) &&
+           (_ap_mgnt.key.len == password_len) &&
+           (rt_memcmp(&_ap_mgnt.info.ssid.val[0], &info->ssid.val[0],
+                      info->ssid.len) == 0) &&
+           ((password_len == 0) ||
+            (rt_memcmp(&_ap_mgnt.key.val[0], password, password_len) == 0));
+}
+
 rt_err_t rt_wlan_start_ap(const char *ssid, const char *password)
 {
     rt_err_t err = RT_EOK;
     int ssid_len = 0;
+    int password_len = 0;
+    rt_bool_t ap_active;
+    rt_bool_t same_config;
     struct rt_wlan_info info;
     struct rt_wlan_complete_des *complete;
     rt_uint32_t set = 0, recved = 0;
@@ -1247,11 +1267,18 @@ rt_err_t rt_wlan_start_ap(const char *ssid, const char *password)
     if (password)
     {
         info.security = SECURITY_WPA2_AES_PSK;
+        password_len = rt_strlen(password);
     }
     ssid_len = rt_strlen(ssid);
     if (ssid_len > RT_WLAN_SSID_MAX_LENGTH)
     {
         RT_WLAN_LOG_E("ssid is to long! len:%d", ssid_len);
+        return -RT_EINVAL;
+    }
+    if (password_len > RT_WLAN_PASSWORD_MAX_LENGTH)
+    {
+        RT_WLAN_LOG_E("key is to long! len:%d", password_len);
+        return -RT_EINVAL;
     }
 
     /* copy info */
@@ -1259,6 +1286,28 @@ rt_err_t rt_wlan_start_ap(const char *ssid, const char *password)
     info.ssid.len = ssid_len;
     info.channel = 6;
     info.band = RT_802_11_BAND_2_4GHZ;
+
+    /* A repeated request needs no new AP_START event. A changed request must
+     * stop the active AP first; otherwise drivers correctly reject it busy. */
+    MGNT_LOCK();
+    ap_active = rt_wlan_ap_is_active();
+    same_config = ap_active &&
+                  rt_wlan_ap_config_matches(&info, password, password_len);
+    MGNT_UNLOCK();
+    if (same_config)
+    {
+        RT_WLAN_LOG_I("ap already started with requested configuration");
+        return RT_EOK;
+    }
+    if (ap_active)
+    {
+        err = rt_wlan_ap_stop();
+        if (err != RT_EOK)
+        {
+            RT_WLAN_LOG_E("failed to stop active ap: %d", err);
+            return err;
+        }
+    }
 
     /* Initializing events that need to wait */
     MGNT_LOCK();
@@ -1322,13 +1371,7 @@ rt_err_t rt_wlan_start_ap_adv(struct rt_wlan_info *info, const char *password)
     MGNT_LOCK();
     if (rt_wlan_ap_is_active())
     {
-        if ((_ap_mgnt.info.ssid.len == info->ssid.len) &&
-                (_ap_mgnt.info.security == info->security) &&
-                (_ap_mgnt.info.channel == info->channel) &&
-                (_ap_mgnt.info.hidden == info->hidden) &&
-                (_ap_mgnt.key.len == password_len) &&
-                (rt_memcmp(&_ap_mgnt.info.ssid.val[0], &info->ssid.val[0], info->ssid.len) == 0) &&
-                (rt_memcmp(&_ap_mgnt.key.val[0], password, password_len)))
+        if (rt_wlan_ap_config_matches(info, password, password_len))
         {
             RT_WLAN_LOG_D("wifi Already Start");
             MGNT_UNLOCK();
@@ -1343,7 +1386,11 @@ rt_err_t rt_wlan_start_ap_adv(struct rt_wlan_info *info, const char *password)
         return err;
     }
     rt_memcpy(&_ap_mgnt.info, info, sizeof(struct rt_wlan_info));
-    rt_memcpy(&_ap_mgnt.key.val, password, password_len);
+    rt_memset(&_ap_mgnt.key, 0, sizeof(_ap_mgnt.key));
+    if (password_len > 0)
+    {
+        rt_memcpy(&_ap_mgnt.key.val, password, password_len);
+    }
     _ap_mgnt.key.len = password_len;
 
     MGNT_UNLOCK();
