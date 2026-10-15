@@ -84,6 +84,20 @@ static rt_uint32_t spi_bits_per_word = 8;
 #define RT_ESP_SPI_MAX_RX_BYTES 4092
 static rt_uint32_t spi_rx_units[(RT_ESP_SPI_MAX_RX_BYTES + 3) / 4] __attribute__((aligned(4)));
 
+/*
+ * Largest number of bytes one spi_transaction_t may carry. With DMA enabled
+ * this is buscfg.max_transfer_sz; with SPI_DMA_DISABLED (C6) spi_common.c sets
+ * bus_attr->max_transfer_sz to SOC_SPI_MAXIMUM_BUFFER_SIZE (64 on C6) and
+ * spi_master.c rejects a longer transaction with ESP_ERR_INVALID_ARG, so
+ * spixfer() splits longer messages into chunks and keeps CS asserted between
+ * them.
+ */
+#ifdef SOC_ESP32_C6
+#define RT_ESP_SPI_MAX_CHUNK_BYTES SOC_SPI_MAXIMUM_BUFFER_SIZE
+#else
+#define RT_ESP_SPI_MAX_CHUNK_BYTES RT_ESP_SPI_MAX_RX_BYTES
+#endif
+
 static struct esp32_spi spi_bus_obj[] = {
 #ifdef BSP_USING_SPI2
     {
@@ -112,6 +126,19 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
         return -RT_EINVAL;
     }
 
+    /* Validate the word width before touching the hardware. An unsupported
+     * width must not leave an initialized SPI bus behind: a caller that asks
+     * for 16 bits and then retries with 8 would otherwise hit
+     * spi_bus_initialize()'s "bus already initialized" abort. */
+    if (configuration->data_width != 8)
+    {
+        LOG_E("data width %u is not supported\n", (rt_uint32_t)configuration->data_width);
+        return -RT_ENOSYS;
+    }
+    /* One RT-Thread byte is 8 bits of transaction: this is what length and
+     * rxlength are counted in. */
+    spi_bits_per_word = 8;
+
     static spi_bus_config_t buscfg =
     {
         .miso_io_num=SPI2_IOMUX_PIN_NUM_MISO,              /*MISO*/
@@ -126,13 +153,13 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
 
 #ifdef SOC_ESP32_C6
     /* SPI_DMA_DISABLED: this transfer does not go through GDMA, even though GDMA
-       is in the image -- BSP_USING_SPI makes idf_port/SConscript compile the
-       package's components/esp_hw_support/gdma.c, because spi_common.c's
-       SOC_GDMA_SUPPORTED section calls it. The received bytes are instead read
-       out by spi_ll_read_buffer() (hal/esp32c6/include/hal/spi_ll.h:425), which
-       memcpys the low byte of each 32-bit data_buf word to the start of the
-       buffer -- its length is (len + 7) / 8, which is 1 for an 8-bit word -- and
-       that is what fills the staging array above. */
+       is in the image -- BSP_USING_SPI makes idf_port/SConscript compile this
+       BSP's own src/gdma.c, because spi_common.c's SOC_GDMA_SUPPORTED section
+       calls it. The received bytes are instead read out by spi_ll_read_buffer()
+       (hal/esp32c6/include/hal/spi_ll.h:425), which memcpys the low byte of each
+       32-bit data_buf word to the start of the buffer -- its length is
+       (len + 7) / 8, which is 1 for an 8-bit word -- and that is what fills the
+       staging array above. */
     err = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_DISABLED);
 #else
     err = spi_bus_initialize(SPI2_HOST, &buscfg, SPI_DMA_CH_AUTO);
@@ -140,17 +167,6 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
     ESP_ERROR_CHECK(err);
 
     static spi_device_interface_config_t devcfg;
-    if(configuration->data_width == 8)
-    {
-        /* One RT-Thread byte is 8 bits of transaction: this branch only sets
-         * spi_bits_per_word, which is what length and rxlength are counted in. */
-        spi_bits_per_word = 8;
-    }
-    else
-    {
-        LOG_E("data width %u is not supported\n", (rt_uint32_t)configuration->data_width);
-        return -RT_ENOSYS;
-    }
 
     LOG_W("configuration->max_hz = %d \n",configuration->max_hz);
     if(configuration->max_hz >= SPI_MASTER_FREQ_80M)
@@ -241,43 +257,76 @@ static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* m
     RT_ASSERT(device != NULL);
     RT_ASSERT(message != NULL);
 
-    /* Zeroed per transfer: this transaction is reused, and cmd/addr/flags/user
-       left over from the previous one would be sent out again. */
-    static spi_transaction_t trans;
-    rt_memset(&trans, 0, sizeof(trans));
-
-    trans.length = (message->length) * spi_bits_per_word;
-    trans.tx_buffer = message->send_buf;
-
-    if (message->recv_buf != RT_NULL)
+    if (message->recv_buf != RT_NULL && message->length > sizeof(spi_rx_units))
     {
-        if (message->length > sizeof(spi_rx_units))
-        {
-            LOG_E("rx length %u is larger than %u\n",
-                  (rt_uint32_t)message->length, (rt_uint32_t)RT_ESP_SPI_MAX_RX_BYTES);
-            return -RT_EINVAL;
-        }
-        /* The driver writes the received units into this 4-byte aligned array,
-           not into the caller's buffer. */
-        trans.rx_buffer = spi_rx_units;
-        trans.rxlength = trans.length;
+        LOG_E("rx length %u is larger than %u\n",
+              (rt_uint32_t)message->length, (rt_uint32_t)RT_ESP_SPI_MAX_RX_BYTES);
+        return -RT_EINVAL;
     }
 
+    rt_size_t total = message->length;
+    rt_size_t done = 0;
+    static spi_transaction_t trans;
+
     spi_device_acquire_bus(spi, portMAX_DELAY);
-    esp_err_t err = spi_device_polling_transmit(spi, &trans);
+
+    while (done < total)
+    {
+        rt_size_t chunk = total - done;
+        if (chunk > RT_ESP_SPI_MAX_CHUNK_BYTES)
+        {
+            chunk = RT_ESP_SPI_MAX_CHUNK_BYTES;
+        }
+
+        /* Zeroed per chunk: this transaction is reused, and cmd/addr/flags/user
+           left over from the previous one would be sent out again. */
+        rt_memset(&trans, 0, sizeof(trans));
+
+        trans.length = chunk * spi_bits_per_word;
+        if (message->send_buf != RT_NULL)
+        {
+            trans.tx_buffer = (const rt_uint8_t *)message->send_buf + done;
+        }
+
+        if (message->recv_buf != RT_NULL)
+        {
+            /* The driver writes the received units into this 4-byte aligned
+               array, not into the caller's buffer. */
+            trans.rx_buffer = spi_rx_units;
+            trans.rxlength = trans.length;
+        }
+
+        /* Hold CS across chunk boundaries; the last chunk lets the driver
+           release it. The bus is acquired above, which is what allows the
+           KEEP_ACTIVE flag in a polling transaction. */
+        if (done + chunk < total)
+        {
+            trans.flags |= SPI_TRANS_CS_KEEP_ACTIVE;
+        }
+
+        esp_err_t err = spi_device_polling_transmit(spi, &trans);
+        if (err != ESP_OK)
+        {
+            LOG_E("spi transfer failed at offset %u: %d\n",
+                  (rt_uint32_t)done, err);
+            spi_device_release_bus(spi);
+            return -RT_EIO;
+        }
+
+        if (message->recv_buf != RT_NULL)
+        {
+            /* Verbatim: the aligned array holds the received bytes in the order
+               they came off the bus, and only the count the caller asked for is
+               copied. */
+            rt_memcpy((rt_uint8_t *)message->recv_buf + done, spi_rx_units, chunk);
+        }
+
+        done += chunk;
+    }
 
     spi_device_release_bus(spi);
 
-    ESP_ERROR_CHECK(err);
-
-    if (message->recv_buf != RT_NULL)
-    {
-        /* Verbatim: the aligned array holds the received bytes in the order they
-           came off the bus, and only the count the caller asked for is copied. */
-        rt_memcpy(message->recv_buf, spi_rx_units, message->length);
-    }
-
-    return message->length;
+    return total;
 };
 
 /**

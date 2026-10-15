@@ -48,11 +48,11 @@ if GetDepend(['BSP_USING_SPI']):
         # compiled into the object no matter what the third argument of
         # spi_bus_initialize() is. The package drops every path containing
         # 'gdma' from its C6 source list, so the driver and its hal wrapper are
-        # compiled here instead. That gdma.c is written against the C3
-        # generation of hal/gdma_ll.h; SConstruct rewrites its gdma_ll_* call
-        # sites to the prototypes in this package's C6 header before anything is
-        # compiled.
-        '../%s/components/esp_hw_support/gdma.c' % idf,
+        # compiled here instead. The package's gdma.c is written against the C3
+        # generation of hal/gdma_ll.h and that tree is shared with the C3 BSP,
+        # so this BSP carries its own C6-correct copy (src/gdma.c) instead of
+        # rewriting the package file at build time.
+        'src/gdma.c',
         '../%s/components/hal/gdma_hal.c' % idf,
         # gdma.c reads gdma_periph_signals (gdma.c:541 and on) to map a
         # GDMA_TRIG_PERIPH_* onto the signal slots of a channel; the one object
