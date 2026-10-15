@@ -18,6 +18,8 @@
 
 #ifdef RT_USING_LWIP
 #include <netif/ethernetif.h>
+#include <netif/etharp.h>
+#include <lwip/ip.h>
 #include <lwip/netifapi.h>
 #ifdef LWIP_USING_DHCPD
 #include <dhcp_server.h>
@@ -357,6 +359,37 @@ static rt_err_t rt_wlan_lwip_protocol_recv(struct rt_wlan_device *wlan, void *bu
 #endif
 }
 
+rt_err_t rt_wlan_lwip_direct_input(struct rt_wlan_device *wlan, struct pbuf *p)
+{
+    struct lwip_prot_des *lwip_prot;
+    struct netif *netif;
+    err_t result;
+
+    /* The caller must already be in the lwIP core context. */
+    if (wlan == RT_NULL || p == RT_NULL || wlan->prot == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    lwip_prot = (struct lwip_prot_des *)wlan->prot;
+    netif = lwip_prot->eth.netif;
+    if (netif == RT_NULL)
+    {
+        return -RT_ERROR;
+    }
+
+#if LWIP_ETHERNET
+    if (netif->flags & (NETIF_FLAG_ETHARP | NETIF_FLAG_ETHERNET))
+    {
+        result = ethernet_input(p, netif);
+    }
+    else
+#endif
+        result = ip_input(p, netif);
+
+    return result == ERR_OK ? RT_EOK : -RT_ERROR;
+}
+
 static rt_err_t rt_wlan_lwip_protocol_send(rt_device_t device, struct pbuf *p)
 {
     struct rt_wlan_device *wlan = ((struct eth_device *)device)->parent.user_data;
@@ -370,20 +403,20 @@ static rt_err_t rt_wlan_lwip_protocol_send(rt_device_t device, struct pbuf *p)
 
 #ifdef RT_WLAN_PROT_LWIP_PBUF_FORCE
     {
-        rt_wlan_prot_transfer_dev(wlan, p, p->tot_len);
-        return RT_EOK;
+        return rt_wlan_prot_transfer_dev(wlan, p, p->tot_len);
     }
 #else
     {
         rt_uint8_t *frame;
+        rt_err_t result;
 
         /* sending data directly */
         if (p->len == p->tot_len)
         {
             frame = (rt_uint8_t *)p->payload;
-            rt_wlan_prot_transfer_dev(wlan, frame, p->tot_len);
+            result = rt_wlan_prot_transfer_dev(wlan, frame, p->tot_len);
             LOG_D("F:%s L:%d run len:%d", __FUNCTION__, __LINE__, p->tot_len);
-            return RT_EOK;
+            return result;
         }
         frame = rt_malloc(p->tot_len);
         if (frame == RT_NULL)
@@ -394,10 +427,10 @@ static rt_err_t rt_wlan_lwip_protocol_send(rt_device_t device, struct pbuf *p)
         /*copy pbuf -> data dat*/
         pbuf_copy_partial(p, frame, p->tot_len, 0);
         /* send data */
-        rt_wlan_prot_transfer_dev(wlan, frame, p->tot_len);
+        result = rt_wlan_prot_transfer_dev(wlan, frame, p->tot_len);
         LOG_D("F:%s L:%d run len:%d", __FUNCTION__, __LINE__, p->tot_len);
         rt_free(frame);
-        return RT_EOK;
+        return result;
     }
 #endif
 }
