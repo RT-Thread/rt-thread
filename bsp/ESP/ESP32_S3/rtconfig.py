@@ -2,7 +2,30 @@ import os
 import sys
 
 BSP_ROOT = os.path.dirname(os.path.abspath(__file__))
-RTT_ROOT = os.getenv('RTT_ROOT') or os.path.normpath(os.path.join(BSP_ROOT, '..', '..', '..'))
+
+def _resolve_rtt_root(bsp_root):
+    # Prefer the environment (CI in-tree builds set RTT_ROOT). Dist CI
+    # deliberately unsets it so the project must find its own kernel copy.
+    env_root = os.getenv('RTT_ROOT')
+    if env_root:
+        return os.path.abspath(env_root)
+    # Dist layout: scons --dist places the kernel next to the project.
+    sibling = os.path.join(bsp_root, 'rt-thread')
+    if os.path.isfile(os.path.join(sibling, 'include', 'rtdef.h')):
+        return sibling
+    # In-tree: walk up until the RT-Thread root is found (do not hardcode
+    # three levels — that points at bsp/ESP once the tree is under dist/).
+    cur = bsp_root
+    for _ in range(8):
+        if os.path.isfile(os.path.join(cur, 'include', 'rtdef.h')):
+            return cur
+        parent = os.path.dirname(cur)
+        if parent == cur:
+            break
+        cur = parent
+    return os.path.normpath(os.path.join(bsp_root, '..', '..', '..'))
+
+RTT_ROOT = _resolve_rtt_root(BSP_ROOT)
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 from env_package import find_package_path
 
