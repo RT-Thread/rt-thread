@@ -216,17 +216,30 @@ static int mmu_map_percpu_early(rt_ubase_t *tbl, rt_ubase_t *tbl_shadow,
 
     for (int level = 0; level < satp_level_4k; ++level)
     {
-        rt_memcpy(tbl_shadow, tbl, ARCH_PAGE_SIZE);
+        off = (va >> level_shift) & VPN_MASK;
 
-        if (!(page = get_free_page()))
+        if (!(tbl[off] & PTE_V) || (tbl[off] & PTE_ATTR_RWX))
         {
-            return MMU_MAP_ERROR_NOPAGE;
+            return MMU_MAP_ERROR_CONFLICT;
         }
 
-        rt_memset((void *)page, 0, ARCH_PAGE_SIZE);
+        /* Copy a shared branch before changing its leaf mapping. */
+        if (tbl_shadow[off] == tbl[off])
+        {
+            if (!(page = get_free_page()))
+            {
+                return MMU_MAP_ERROR_NOPAGE;
+            }
 
-        off = (va >> level_shift) & VPN_MASK;
-        tbl_shadow[off] = ((page >> ARCH_PAGE_SHIFT) << PTE_BITS) | PTE_V;
+            rt_memcpy((void *)page,
+                      (void *)((tbl[off] >> PTE_BITS) << ARCH_PAGE_SHIFT),
+                      ARCH_PAGE_SIZE);
+            tbl_shadow[off] = ((page >> ARCH_PAGE_SHIFT) << PTE_BITS) | PTE_V;
+        }
+        else if (!(tbl_shadow[off] & PTE_V) || (tbl_shadow[off] & PTE_ATTR_RWX))
+        {
+            return MMU_MAP_ERROR_CONFLICT;
+        }
 
         /* Step into the next level page table */
         tbl = (rt_ubase_t *)((tbl[off] >> PTE_BITS) << ARCH_PAGE_SHIFT);
@@ -400,17 +413,25 @@ static int _map_percpu_area(rt_ubase_t *table, void *va, void *pa, int cpu_id)
 
     for (int level = 0; level < satp_level_4k; ++level)
     {
-        if (!(page = (rt_ubase_t)rt_pages_alloc(0)))
-        {
-            return MMU_MAP_ERROR_NOPAGE;
-        }
-
-        rt_memset((void *)page, 0, ARCH_PAGE_SIZE);
-
         off = ((rt_ubase_t)va >> level_shift) & VPN_MASK;
-        table[off] = (((page + rt_kmem_pvoff()) >> ARCH_PAGE_SHIFT) << PTE_BITS) | PTE_V;
 
-        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, table + off, sizeof(void *));
+        if (!(table[off] & PTE_V))
+        {
+            if (!(page = (rt_ubase_t)rt_pages_alloc(0)))
+            {
+                return MMU_MAP_ERROR_NOPAGE;
+            }
+
+            rt_memset((void *)page, 0, ARCH_PAGE_SIZE);
+
+            table[off] = (((page + rt_kmem_pvoff()) >> ARCH_PAGE_SHIFT) << PTE_BITS) | PTE_V;
+
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, table + off, sizeof(void *));
+        }
+        else if (table[off] & PTE_ATTR_RWX)
+        {
+            return MMU_MAP_ERROR_CONFLICT;
+        }
 
         percpu_level[cpu_id][level].page = table;
         percpu_level[cpu_id][level].offset = off;
@@ -1306,6 +1327,14 @@ _map_vaddress:
 #ifdef MMU_PERCPU
     for (int cpu_id = 0; cpu_id < RT_CPUS_NR; ++cpu_id)
     {
+        rt_ubase_t *tbl_shadow = early_pgtbl +
+            cpu_id * (ARCH_PAGE_SIZE / sizeof(*early_pgtbl));
+
+        if (cpu_id)
+        {
+            rt_memcpy(tbl_shadow, early_pgtbl, ARCH_PAGE_SIZE);
+        }
+
         paddr_start = (rt_ubase_t)&__percpu_start;
         vaddr_start = paddr_start - rt_kmem_pvoff();
         size = (rt_size_t)(&__percpu_end - &__percpu_start);
@@ -1316,7 +1345,8 @@ _map_vaddress:
         while (paddr_start < paddr_end)
         {
             /* Map physical address per-CPU partition */
-            mmu_map_percpu_early(early_pgtbl, (void *)early_pgtbl + cpu_id * ARCH_PAGE_SIZE, vaddr_start, paddr_start);
+            RT_ASSERT(mmu_map_percpu_early(early_pgtbl, tbl_shadow,
+                                            vaddr_start, paddr_start) == 0);
 
             paddr_start += ARCH_PAGE_SIZE;
             vaddr_start += ARCH_PAGE_SIZE;
