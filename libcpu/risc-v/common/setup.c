@@ -136,7 +136,17 @@ void rt_hw_fdt_install_early(void *fdt)
         uint32_t hartid;
 #ifdef ARCH_MM_MMU
         int size;
-        const char *name = fdt_getprop(fdt, cpu, "mmu-type", RT_NULL);
+        const char *name;
+#endif
+
+        /* Skip status=disabled (and other non-okay) CPU nodes. */
+        if (!rt_fdt_device_is_available(fdt, cpu))
+        {
+            continue;
+        }
+
+#ifdef ARCH_MM_MMU
+        name = fdt_getprop(fdt, cpu, "mmu-type", RT_NULL);
 #endif
 
         if (fdt_getprop_u32(fdt, cpu, "reg", &hartid, RT_NULL))
