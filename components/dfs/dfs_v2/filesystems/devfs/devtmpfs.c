@@ -60,13 +60,14 @@ static int _path_separate(const char *path, char *parent_path, rt_size_t parent_
     const char *path_p, *path_q;
     rt_size_t parent_len, file_len;
 
-    RT_ASSERT(path[0] == '/');
-
-    if (parent_path == RT_NULL || file_name == RT_NULL ||
+    /* validate the arguments before the path is dereferenced below */
+    if (path == RT_NULL || parent_path == RT_NULL || file_name == RT_NULL ||
         parent_size < 2 || file_size == 0)
     {
         return -EINVAL;
     }
+
+    RT_ASSERT(path[0] == '/');
 
     file_name[0] = '\0';
     parent_path[0] = '\0';
