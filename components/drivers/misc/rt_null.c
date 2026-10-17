@@ -4,6 +4,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-12-03     quanzhao     the first version
+ * 2026-10-17     seteiro      raise init to BOARD so null can be default console (#11472)
  */
 
 #include <time.h>
@@ -70,5 +71,7 @@ int null_device_init(void)
 
     return 0;
 }
-INIT_DEVICE_EXPORT(null_device_init);
+/* Register at BOARD level so rt_console_set_device("null") in board init can find it.
+ * null is a pure software sink; no hardware dependency. See #11472. */
+INIT_BOARD_EXPORT(null_device_init);
 
