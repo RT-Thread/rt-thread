@@ -25,9 +25,9 @@
  */
 
 /* debug option */
-// #define ETH_RX_DUMP
-// #define ETH_TX_DUMP
-// #define DRV_DEBUG
+/* #define ETH_RX_DUMP */
+/* #define ETH_TX_DUMP */
+/* #define DRV_DEBUG */
 #define LOG_TAG             "drv.emac"
 #include <drv_log.h>
 
