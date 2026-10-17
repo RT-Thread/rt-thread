@@ -261,9 +261,9 @@ menuconfig BSP_USING_FS
     bool "Enable File System"
     select RT_USING_DFS
     select BSP_USING_SDMMC
-    select RT_USING_FAL
-    select FAL_DEBUG_CONFIG
-    select FAL_PART_HAS_TABLE_CFG
+    select RT_USING_FAL if !BOARD_allwinnerd1
+    select FAL_DEBUG_CONFIG if !BOARD_allwinnerd1
+    select FAL_PART_HAS_TABLE_CFG if !BOARD_allwinnerd1
     default y
 
 menuconfig BSP_USING_LCD
