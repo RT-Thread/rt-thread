@@ -187,9 +187,12 @@
 /**
  * hw serial control commands
  */
-#define RT_HW_SERIAL_CTRL_GETC                    0x01    /* Tx irq get char */
-#define RT_HW_SERIAL_CTRL_PUTC                    0x02    /* Rx irq put char */
-#define RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF        0x03    /* Get DMA ping-pong buffer */
+typedef enum rt_hw_serial_ctrl_cmd
+{
+    RT_HW_SERIAL_CTRL_GETC = RT_DEVICE_CTRL_BASE(Char) + 1,             /* Tx irq get char */
+    RT_HW_SERIAL_CTRL_PUTC,                                             /* Rx irq put char */
+    RT_HW_SERIAL_CTRL_GET_DMA_PING_BUF,                                 /* Get DMA ping-pong buffer */
+} rt_hw_serial_ctrl_cmd_t;
 
 /**
  * hw isr event
