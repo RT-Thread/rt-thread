@@ -1,0 +1,37 @@
+menu "Watchdog Test"
+    depends on RT_USING_WDT
+
+config RT_UTEST_WDT
+    bool "Watchdog Smoke Test"
+    default n
+    help
+        Validate watchdog device find/open and timeout set/get. Optional
+        start/keepalive/stop is off by default to avoid board reset when the
+        hardware cannot stop the WDT.
+
+if RT_UTEST_WDT
+
+    config RT_UTEST_WDT_DEVICE_NAME
+        string "Watchdog Device Name"
+        default "wdt"
+        help
+            Device name registered by the BSP, usually "wdt".
+
+    config RT_UTEST_WDT_TIMEOUT_SEC
+        int "Timeout Used by Smoke Test (Seconds)"
+        range 1 60
+        default 5
+        help
+            Timeout value written by SET_TIMEOUT and checked by GET_TIMEOUT.
+
+    config RT_UTEST_WDT_START
+        bool "Also Start/Keepalive/Stop Watchdog"
+        default n
+        help
+            When enabled, the test starts the WDT with the configured timeout,
+            feeds it once, then stops it. Keep this off unless the BSP WDT can
+            be stopped safely; otherwise the board may reset if STOP fails.
+
+endif
+
+endmenu
