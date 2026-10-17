@@ -1,0 +1,47 @@
+menu "YuzukiNeko SBC Configuration"
+
+choice
+    prompt "YuzukiNeko boot privilege mode"
+    default SBC_YUZUKINEKO_MMODE
+    help
+      M-mode boots the RT-Thread image directly. S-mode expects an OpenSBI
+      firmware to enter the image with the standard RISC-V boot arguments.
+
+config SBC_YUZUKINEKO_MMODE
+    bool "M-mode (direct boot)"
+    select ARCH_RISCV_M_MODE
+
+config SBC_YUZUKINEKO_SMODE
+    bool "S-mode with Sv32 MMU (OpenSBI)"
+    select ARCH_MM_MMU
+    select RT_USING_CACHE
+
+config SBC_YUZUKINEKO_SMODE_BARE
+    bool "S-mode Bare, no MMU (OpenSBI)"
+    select RT_USING_CACHE
+    help
+      Run in supervisor mode with physical addresses and caches enabled.
+      OpenSBI is still required. Use the fixed reserved DMA pool.
+
+endchoice
+
+choice
+    prompt "YuzukiNeko display"
+    default SBC_YUZUKINEKO_ST77916
+
+config SBC_YUZUKINEKO_ST77916
+    bool "ST77916 360x360 QSPI LCD"
+    select RT_USING_QSPI
+    select RT_QSPI_SUNXI
+    select RT_GRAPHIC_FB_ST77916
+    help
+      Enable the F101 SPI1 display connector configuration for a 360x360
+      ST77916 QSPI panel.
+
+endchoice
+
+config RT_BUILTIN_FDT_PATH
+    string
+    default "../dm/dts/sun252i-f101-yuzukineko.dtb"
+
+endmenu

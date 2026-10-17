@@ -1,0 +1,10 @@
+config RT_CLK_SUN252I_F101
+    bool "Allwinner Sun252i F101 clock/reset controller"
+    depends on RT_USING_CLK
+    depends on RT_USING_OFW
+    select RT_USING_RESET
+    select RT_RESET_SUN252I_F101
+    default n
+    help
+      Provide the F101 CCU clock gates and reset controller used by the
+      UART, TWI, SPI, and SMHC peripheral blocks.

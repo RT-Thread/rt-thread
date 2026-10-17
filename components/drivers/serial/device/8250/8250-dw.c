@@ -56,6 +56,7 @@ struct dw8250
     struct rt_spinlock spinlock;
 
     struct rt_clk *pclk;
+    struct rt_reset_control *rstc;
 
     rt_bool_t uart_16550_compatible;
     struct dw8250_platform_data *platform_data;
@@ -173,6 +174,11 @@ static void dw8250_free_resource(struct dw8250 *dw8250)
         rt_clk_put(dw8250->pclk);
     }
 
+    if (!rt_is_err_or_null(dw8250->rstc))
+    {
+        rt_reset_control_put(dw8250->rstc);
+    }
+
     rt_free(dw8250);
 }
 
@@ -248,12 +254,27 @@ static rt_err_t dw8250_probe(struct rt_platform_device *pdev)
         goto _free_res;
     }
 
+    dw8250->rstc = rt_reset_control_get_by_index(dev, 0);
+
+    if (rt_is_err(dw8250->rstc))
+    {
+        err = rt_ptr_err(dw8250->rstc);
+        goto _free_res;
+    }
+
+    if (dw8250->rstc && (err = rt_reset_control_deassert(dw8250->rstc)))
+    {
+        goto _free_res;
+    }
+
     if (!rt_dm_dev_prop_read_u32(dev, "reg-io-width", &val) && val == 4)
     {
         serial->iotype = PORT_MMIO32;
         serial->serial_in = &dw8250_serial_in32;
         serial->serial_out = &dw8250_serial_out32;
     }
+
+    rt_dm_dev_prop_read_u32(dev, "reg-shift", &serial->regshift);
 
     dw8250->uart_16550_compatible = rt_dm_dev_prop_read_bool(dev, "snps,uart-16550-compatible");
     dw8250->platform_data = (struct dw8250_platform_data *)pdev->id->data;

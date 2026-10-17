@@ -1,0 +1,201 @@
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <rtconfig.h>
+#include "sun252i-f101.dtsi"
+
+/ {
+    model = "YuzukiNeko sun252i F101 board";
+    compatible = "allwinner,sun252i-f101-yuzukineko", "allwinner,sun252i-f101";
+
+    reg_vcc_3v3: regulator-3v3 {
+        compatible = "regulator-fixed";
+        regulator-name = "vcc-3v3";
+        regulator-min-microvolt = <3300000>;
+        regulator-max-microvolt = <3300000>;
+        regulator-always-on;
+    };
+
+    cpu_opp_table: cpu-opp-table {
+        compatible = "operating-points-v2";
+        opp-shared;
+
+        opp-480000000 {
+            opp-hz = /bits/ 64 <480000000>;
+            opp-suspend;
+        };
+
+        /* The boot firmware starts at 696 MHz; this is the highest CPU OPP. */
+        opp-1008000000 {
+            opp-hz = /bits/ 64 <1008000000>;
+        };
+    };
+
+    chosen {
+    #ifdef ARCH_RISCV_M_MODE
+        bootargs = "earlycon=uart8250,mmio32,0x02500400 console=ttyS1,115200n8";
+    #elif defined(ARCH_MM_MMU)
+        bootargs = "earlycon=sbi console=ttyS1,115200n8 cma=4M coherent_pool=512K";
+    #else
+        bootargs = "earlycon=sbi console=ttyS1,115200n8";
+    #endif
+        stdout-path = "serial1:115200n8";
+    };
+
+    memory@40000000 {
+        device_type = "memory";
+        reg = <0x0 0x40000000 0x0 0x01000000>;
+    };
+
+    reserved-memory {
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges;
+
+        #ifndef ARCH_RISCV_M_MODE
+        opensbi@40000000 {
+            reg = <0x0 0x40000000 0x0 0x000c0000>;
+            no-map;
+        };
+        #endif
+
+        #ifndef ARCH_MM_MMU
+        dma_pool: dma-pool@40c00000 {
+            compatible = "rt-thread,dma-pool", "shared-dma-pool";
+            reg = <0x0 0x40c00000 0x0 0x00400000>;
+        };
+        #endif
+    };
+};
+
+&cpu0 {
+    operating-points-v2 = <&cpu_opp_table>;
+};
+
+/* USB Type-C debug UART on the board's SBU pins. */
+&uart1 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&uart1_pb_pins>;
+    status = "okay";
+};
+
+/* The 40-pin header exposes this I2C controller on PB2/PB3. */
+&i2c2_ctrl {
+    pinctrl-names = "default";
+    pinctrl-0 = <&i2c2_pb_pins>;
+    status = "okay";
+};
+
+/* The on-board microSD socket is a removable 3.3 V SD card slot. */
+&sdc0 {
+    vmmc-supply = <&reg_vcc_3v3>;
+    vqmmc-supply = <&reg_vcc_3v3>;
+    status = "okay";
+};
+
+&riscv_wdt {
+    status = "okay";
+};
+
+&thermal {
+    status = "okay";
+};
+
+&rtc {
+    status = "okay";
+};
+
+&gpadc {
+    status = "okay";
+};
+
+&timer {
+    status = "okay";
+};
+
+&hstimer {
+    status = "okay";
+};
+
+/* The integrated codec drives the on-board speaker through PI7. */
+&dma {
+    status = "okay";
+};
+
+&codec {
+    spk-enable-gpios = <&pio 8 7 PIN_ACTIVE_HIGH>;
+    allwinner,spk-enable-delay-ms = <10>;
+    status = "okay";
+};
+
+&ve {
+    status = "okay";
+};
+
+&g2d {
+    status = "okay";
+};
+
+/* The board boots from this 16 MiB SPI NOR device. */
+&spi0_ctrl {
+    pinctrl-names = "default";
+    pinctrl-0 = <&spi0_pc_pins>;
+    status = "okay";
+
+    flash@0 {
+        compatible = "jedec,spi-nor";
+        reg = <0>;
+        spi-max-frequency = <100000000>;
+        spi-rx-bus-width = <1>;
+        spi-tx-bus-width = <1>;
+
+        partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            bootloader@0 {
+                label = "bootloader";
+                reg = <0x000000 0x010000>;
+                read-only;
+            };
+
+            dtb@10000 {
+                label = "dtb";
+                reg = <0x010000 0x040000>;
+                read-only;
+            };
+
+            opensbi@50000 {
+                label = "opensbi";
+                reg = <0x050000 0x080000>;
+                read-only;
+            };
+
+            kernel@d0000 {
+                label = "kernel";
+                reg = <0x0d0000 0x600000>;
+                read-only;
+            };
+
+            rootfs@6d0000 {
+                label = "rootfs";
+                reg = <0x6d0000 0x830000>;
+                read-only;
+            };
+
+            overlay@f00000 {
+                label = "overlay";
+                reg = <0xf00000 0x100000>;
+            };
+        };
+    };
+};
+
+/* The Type-C connector is wired to the OTG controller in device mode. */
+&usb0 {
+    status = "okay";
+};

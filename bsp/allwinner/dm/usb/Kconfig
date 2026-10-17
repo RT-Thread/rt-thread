@@ -1,0 +1,11 @@
+config RT_USB_SUNXI_MUSB
+    bool "Allwinner Sunxi MUSB device glue"
+    depends on RT_USING_CHERRYUSB
+    depends on RT_CHERRYUSB_DEVICE
+    depends on RT_CHERRYUSB_DEVICE_MUSB_SUNXI
+    depends on RT_USING_DM
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    select RT_USING_MFD
+    select RT_MFD_SYSCON
+    default y
