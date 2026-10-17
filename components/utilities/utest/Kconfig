@@ -22,6 +22,7 @@ menu "RT-Thread Utestcases"
                 rsource "../../../components/drivers/serial/utest/Kconfig"
                 rsource "../../../components/drivers/smp_call/utest/Kconfig"
                 rsource "../../../components/drivers/spi/utest/Kconfig"
+                rsource "../../../components/drivers/watchdog/utest/Kconfig"
             endmenu
 
             rsource "../../../components/dfs/utest/Kconfig"
