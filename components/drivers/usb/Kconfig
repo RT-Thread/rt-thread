@@ -1,1 +1,5 @@
 rsource "cherryusb/Kconfig"
+
+if RT_USING_CHERRYUSB
+    osource "$(SOC_DM_USB_DIR)/Kconfig"
+endif

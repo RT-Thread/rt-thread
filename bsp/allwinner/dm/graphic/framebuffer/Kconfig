@@ -1,0 +1,17 @@
+config RT_GRAPHIC_FB_SUNXI_DE
+    bool "Allwinner Sunxi DE0/TCON0 framebuffer"
+    depends on RT_USING_GRAPHIC
+    depends on RT_USING_OFW
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_HEAP
+    default n
+    help
+      Enable the Allwinner DE0 and TCON0 framebuffer. The F101 backend can
+      drive a parallel RGB, single-link LVDS, or MIPI-DSI video
+      output selected by allwinner,output in the device tree.
+      The enabled device tree node must supply display-timings, a default
+      pinctrl state, and allwinner,tcon-dclk-div. A MIPI-DSI panel must use
+      rgb888 video mode and describe dsi,lanes. Panel power and backlight
+      remain board concerns.

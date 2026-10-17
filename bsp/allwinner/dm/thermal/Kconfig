@@ -1,0 +1,7 @@
+config RT_THERMAL_SUNXI
+    bool "Allwinner Sunxi thermal sensor"
+    depends on RT_USING_CLK
+    depends on RT_USING_NVMEM
+    depends on RT_USING_RESET
+    depends on RT_USING_THERMAL
+    default n

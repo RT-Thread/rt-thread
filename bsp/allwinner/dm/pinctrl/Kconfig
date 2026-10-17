@@ -1,0 +1,5 @@
+config RT_PINCTRL_SUN252I_F101
+    bool "Allwinner Sun252i F101 pin controller"
+    depends on RT_USING_PINCTRL
+    depends on RT_USING_OFW
+    default n

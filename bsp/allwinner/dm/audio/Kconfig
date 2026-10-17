@@ -1,0 +1,50 @@
+config RT_AUDIO_SUNXI_CODEC
+    bool "Allwinner Sunxi integrated audio codec"
+    depends on RT_USING_AUDIO
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_HEAP
+    depends on RT_USING_PIN
+    depends on RT_USING_RESET
+    select RT_USING_DMA
+    select RT_DMA_SUNXI
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+    help
+      Enable playback through the F101 integrated DAC. The driver uses the
+      standard RT-Thread audio and DMA interfaces and supports 48 kHz-family
+      PCM sample rates with 16-, 24-, or 32-bit mono and stereo streams.
+
+config RT_AUDIO_SUNXI_I2S0
+    bool "Allwinner Sunxi I2S0 output"
+    depends on RT_USING_AUDIO
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_HEAP
+    depends on RT_USING_PIN
+    depends on RT_USING_RESET
+    select RT_USING_DMA
+    select RT_DMA_SUNXI
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+    help
+      Enable the F101 I2S0 controller as a standard RT-Thread audio output.
+      The controller is configured as an I2S clock master and supports the
+      48 kHz-family PCM rates up to 192 kHz with 16-, 24-, or 32-bit samples.
+
+config RT_AUDIO_SUNXI_OWA
+    bool "Allwinner Sunxi OWA output"
+    depends on RT_USING_AUDIO
+    depends on RT_USING_CLK
+    depends on RT_USING_DM
+    depends on RT_USING_HEAP
+    depends on RT_USING_PIN
+    depends on RT_USING_RESET
+    select RT_USING_DMA
+    select RT_DMA_SUNXI
+    select RT_USING_SYSTEM_WORKQUEUE
+    default n
+    help
+      Enable the F101 OWA (S/PDIF) controller as a standard RT-Thread audio
+      output. It emits IEC 60958 PCM through the OWA TX pin and supports the
+      48 kHz-family PCM rates up to 192 kHz.

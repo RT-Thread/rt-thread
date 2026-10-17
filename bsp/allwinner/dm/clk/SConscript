@@ -1,0 +1,13 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_CLK_SUN252I_F101']):
+    src += ['clk-sunxi.c', 'clk-sun252i-f101.c', 'clk-sun252i-f101-cpupll.c',
+            'clk-sun252i-f101-rtc.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

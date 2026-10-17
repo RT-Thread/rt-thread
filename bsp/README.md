@@ -826,6 +826,7 @@ This document is based on the RT-Thread mainline repository and categorizes the 
 |----------|------|------|-----|-----|-----|-----|-----|-----|-------|-------|
 | [d1](allwinner/d1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | [d1s](allwinner/d1s) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| [f101](allwinner/f101) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 #### 🟡 K210 (SMP)
 

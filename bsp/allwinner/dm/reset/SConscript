@@ -1,0 +1,11 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend(['RT_RESET_SUN252I_F101']):
+    src += ['reset-sunxi.c', 'reset-sun252i-f101.c']
+
+group = DefineGroup('DeviceDrivers', src, depend=[''], CPPPATH=[cwd + '/../include'])
+
+Return('group')

@@ -53,6 +53,12 @@ rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configu
     }
 
     /* copy configuration items */
+    /*
+     * QSPI transfers share the SPI bus ownership path.  Keep its base SPI
+     * configuration in sync, because the first transfer may configure the
+     * controller through device->parent.config.
+     */
+    device->parent.config = cfg->parent;
     device->config.parent.mode = cfg->parent.mode;
     device->config.parent.max_hz = cfg->parent.max_hz;
     device->config.parent.data_width = cfg->parent.data_width;

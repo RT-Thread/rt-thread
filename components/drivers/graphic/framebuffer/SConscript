@@ -14,6 +14,9 @@ src     = []
 if GetDepend(['RT_GRAPHIC_FB_ILI9486']):
     src += ['fb-ili9486.c']
 
+if GetDepend(['RT_GRAPHIC_FB_ST77916']):
+    src += ['fb-st77916.c']
+
 if GetDepend(['RT_GRAPHIC_FB_SIMPLE']):
     src += ['fb-simple.c']
 

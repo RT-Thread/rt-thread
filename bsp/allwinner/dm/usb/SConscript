@@ -1,0 +1,10 @@
+from building import *
+
+src = []
+
+if GetDepend('RT_USB_SUNXI_MUSB'):
+    src += ['usb-sunxi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''])
+
+Return('group')
