@@ -371,6 +371,15 @@ int dfs_file_close(struct dfs_file *fd)
 /**
  * this function will perform an io control on a file descriptor.
  *
+ * F_GETFL(=3) collides numerically with RT_DEVICE_CTRL_CONFIG, and
+ * F_SETFL(=4) collides with RT_DEVICE_CTRL_CLOSE. Disambiguate by the
+ * POSIX-vs-RT-Thread convention on `args`:
+ *   - F_GETFL (POSIX) ignores args -> caller passes NULL/0. CONFIG needs a
+ *     struct pointer, so args != NULL means RT_DEVICE_CTRL_CONFIG.
+ *   - F_SETFL (POSIX) carries the new flags, so args != NULL means F_SETFL.
+ *     CLOSE needs no args, so args == NULL means RT_DEVICE_CTRL_CLOSE.
+ * The fall-through path (FT_SOCKET / FT_USER / ...) is unchanged.
+ *
  * @param fd the file descriptor.
  * @param cmd the command to send to file descriptor.
  * @param args the argument to send to file descriptor.
@@ -391,8 +400,25 @@ int dfs_file_ioctl(struct dfs_file *fd, int cmd, void *args)
         switch (cmd)
         {
         case F_GETFL:
-            return fd->flags; /* return flags */
+            if (args != RT_NULL && fd->vnode->fops != RT_NULL && fd->vnode->fops->ioctl != RT_NULL)
+            {
+                /* args != NULL: treat cmd=3 as RT_DEVICE_CTRL_CONFIG and forward
+                 * to the driver with the supplied config struct. */
+                return fd->vnode->fops->ioctl(fd, cmd, args);
+            }
+            else
+            {
+                /* args == NULL: POSIX F_GETFL, return current fd flags. */
+                return fd->flags; /* return flags */
+            }
         case F_SETFL:
+            if (args == RT_NULL && fd->vnode->fops != RT_NULL && fd->vnode->fops->ioctl != RT_NULL)
+            {
+                /* args == NULL: treat cmd=4 as RT_DEVICE_CTRL_CLOSE and forward
+                 * to the driver. */
+                return fd->vnode->fops->ioctl(fd, cmd, args);
+            }
+            else
             {
                 int flags = (int)(rt_base_t)args;
                 int mask  = O_NONBLOCK | O_APPEND;

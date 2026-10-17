@@ -1722,7 +1722,16 @@ int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
             file->mode = arg;
             break;
         case F_GETFL:
-            ret = file->flags;
+            if (arg != RT_NULL && file->fops != RT_NULL && file->fops->ioctl != RT_NULL)
+            {
+                /* cmd=3 with args != NULL: treat as RT_DEVICE_CTRL_CONFIG and forward to the driver with the config struct. */
+                ret = file->fops->ioctl(file, cmd, (void *)(rt_base_t)arg);
+            }
+            else
+            {
+                /* args == NULL: POSIX F_GETFL, return current fd flags. */
+                ret = file->flags;
+            }
             break;
         case F_SETFL:
         {
@@ -1739,6 +1748,12 @@ int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
 #endif
                         O_APPEND | O_NONBLOCK;
 
+            if (arg == RT_NULL && file->fops != RT_NULL && file->fops->ioctl != RT_NULL)
+            {
+                /* cmd=4 with args == NULL: treat as RT_DEVICE_CTRL_CLOSE and forward to the driver. */
+                ret = file->fops->ioctl(file, cmd, (void *)(rt_base_t)arg);
+                break;
+            }
             flags &= mask;
             if (file->vnode->type == FT_SOCKET && file->fops != RT_NULL &&
                 file->fops->ioctl != RT_NULL)

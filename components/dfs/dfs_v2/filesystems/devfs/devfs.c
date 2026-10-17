@@ -228,6 +228,44 @@ static int dfs_devfs_ioctl(struct dfs_file *file, int cmd, void *args)
         if ((file->dentry->pathname[0] == '/') && (file->dentry->pathname[1] == '\0'))
             return -RT_ENOSYS;
 
+        /* Disambiguate F_GETFL(=3)/F_SETFL(=4) vs RT_DEVICE_CTRL_CONFIG(=3)/
+         * RT_DEVICE_CTRL_CLOSE(=4) by args nullness. POSIX ignores args on
+         * F_GETFL (caller passes NULL/0) and carries the new flags on
+         * F_SETFL (args != NULL); the RTT cmds take a non-NULL struct
+         * pointer on CONFIG and no args on CLOSE. */
+        if (cmd == F_GETFL)
+        {
+            if (args != RT_NULL)
+            {
+                /* args != NULL: treat cmd=3 as RT_DEVICE_CTRL_CONFIG and
+                 * fall through to the driver/device. */
+            }
+            else
+            {
+                /* args == NULL: POSIX F_GETFL, return current fd flags. */
+                return file->flags;
+            }
+        }
+        else if (cmd == F_SETFL)
+        {
+            if (args == RT_NULL)
+            {
+                /* args == NULL: treat cmd=4 as RT_DEVICE_CTRL_CLOSE and
+                 * fall through to the driver/device. */
+            }
+            else
+            {
+                /* args != NULL: POSIX F_SETFL, update fd flags in place. */
+                int flags = (int)(rt_base_t)args;
+                int mask  = O_NONBLOCK | O_APPEND;
+
+                flags &= mask;
+                file->flags &= ~mask;
+                file->flags |= flags;
+                return RT_EOK;
+            }
+        }
+
 #ifdef RT_USING_POSIX_DEVIO
         if (device->fops && device->fops->ioctl)
         {
