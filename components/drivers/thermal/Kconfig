@@ -1,6 +1,7 @@
 menuconfig RT_USING_THERMAL
     bool "Using Thermal Management device drivers"
     depends on RT_USING_DM
+    select RT_USING_SYSTEM_WORKQUEUE
     default n
 
 if RT_USING_THERMAL

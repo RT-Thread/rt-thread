@@ -1,0 +1,15 @@
+# SoC-level Device Model drivers shared by Allwinner BSPs.
+
+import os
+from building import *
+
+cwd = GetCurrentDir()
+objs = []
+
+for directory in os.listdir(cwd):
+    sconscript = os.path.join(directory, 'SConscript')
+
+    if os.path.isfile(os.path.join(cwd, sconscript)):
+        objs += SConscript(sconscript)
+
+Return('objs')

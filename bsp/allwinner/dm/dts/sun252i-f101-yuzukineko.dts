@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+
+#include "sun252i-f101-yuzukineko-common.dtsi"
+
+#ifdef SBC_YUZUKINEKO_ST77916
+#include "sun252i-f101-yuzukineko-st77916.dtsi"
+#endif

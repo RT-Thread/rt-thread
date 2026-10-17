@@ -9,6 +9,19 @@ config RT_GRAPHIC_FB_ILI9486
     depends on RT_USING_SPI
     default n
 
+config RT_GRAPHIC_FB_ST77916
+    bool "ST77916 QSPI framebuffer support"
+    depends on RT_GRAPHIC_FB
+    depends on RT_USING_OFW
+    depends on RT_USING_QSPI
+    depends on RT_USING_PIN
+    depends on RT_USING_HEAP
+    select RT_USING_SEMAPHORE
+    default n
+    help
+      Enable the ST77916 framebuffer driver. The panel uses a single-line
+      command phase and a four-line QSPI RGB666 pixel phase.
+
 config RT_GRAPHIC_FB_SIMPLE
     bool "Simple framebuffer support"
     depends on RT_GRAPHIC_FB

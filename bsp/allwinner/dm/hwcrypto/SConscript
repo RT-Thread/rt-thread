@@ -1,0 +1,10 @@
+from building import *
+
+src = []
+
+if GetDepend(['RT_HWCRYPTO_SUNXI_CE']):
+    src += ['hwcrypto-sunxi-ce.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''])
+
+Return('group')

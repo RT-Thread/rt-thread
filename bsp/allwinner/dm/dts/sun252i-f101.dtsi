@@ -1,0 +1,751 @@
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <dt-bindings/clock/sun252i-f101-ccu.h>
+#include <dt-bindings/clock/sun252i-f101-cpupll.h>
+#include <dt-bindings/clock/sun252i-f101-rtc.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+#include <dt-bindings/pin/pin.h>
+#include <dt-bindings/reset/sun252i-f101-ccu.h>
+
+/ {
+    #address-cells = <2>;
+    #size-cells = <2>;
+    compatible = "allwinner,sun252i-f101";
+    interrupt-parent = <&plic>;
+
+    aliases {
+        serial0 = &uart0;
+        serial1 = &uart1;
+        serial2 = &uart2;
+        serial3 = &uart3;
+        serial4 = &uart4;
+        serial5 = &uart5;
+        i2c0 = &i2c0_ctrl;
+        i2c1 = &i2c1_ctrl;
+        i2c2 = &i2c2_ctrl;
+        spi0 = &spi0_ctrl;
+        spi1 = &spi1_ctrl;
+        mmc0 = &sdc0;
+        mmc1 = &sdc2;
+    };
+
+    osc24M: oscillator-24M {
+        compatible = "fixed-clock";
+        #clock-cells = <0>;
+        clock-frequency = <24000000>;
+        clock-output-names = "osc24M";
+    };
+
+    rc16m: oscillator-16M {
+        compatible = "fixed-clock";
+        #clock-cells = <0>;
+        clock-frequency = <16000000>;
+        clock-output-names = "rc-16m";
+    };
+
+    /* The reset registers live in the CCU window, shared with clocks. */
+    ccu_reset: reset-controller {
+        compatible = "allwinner,sun252i-f101-ccu-reset";
+        allwinner,ccu = <&ccu>;
+        #reset-cells = <1>;
+    };
+
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        timebase-frequency = <24000000>;
+
+        cpu0: cpu@0 {
+            compatible = "thead,c907", "riscv";
+            device_type = "cpu";
+            reg = <0>;
+            mmu-type = "riscv,sv32";
+            clocks = <&cpupll_ccu CLK_RISCV>;
+            riscv,isa = "rv32imafdc";
+            riscv,isa-base = "rv32i";
+            riscv,cbom-block-size = <64>;
+            riscv,cboz-block-size = <64>;
+            riscv,isa-extensions = "i", "m", "a", "f", "d", "c", "v",
+                                   "zicbom", "zicbop", "zicboz", "zicond", "zihintntl",
+                                   "zihintpause", "zawrs", "zfa", "zfbfmin", "zfh", "zba",
+                                   "zbb", "zbc", "zbs", "sscofpmf", "zvfbfmin", "zvfbfwma",
+                                   "svinval", "svnapot", "svpbmt", "xtheadc", "xtheadvdot";
+            d-cache-block-size = <64>;
+            i-cache-block-size = <64>;
+
+            cpu0_intc: interrupt-controller {
+                compatible = "riscv,cpu-intc";
+                interrupt-controller;
+                #interrupt-cells = <1>;
+            };
+        };
+    };
+
+    soc: soc {
+        compatible = "simple-bus";
+        #address-cells = <2>;
+        #size-cells = <2>;
+        ranges;
+        interrupt-parent = <&plic>;
+
+        plic: interrupt-controller@10000000 {
+            compatible = "thead,c900-plic";
+            reg = <0x0 0x10000000 0x0 0x4000000>;
+            interrupts-extended = <&cpu0_intc 11>, <&cpu0_intc 9>;
+            interrupt-controller;
+            #address-cells = <0>;
+            #interrupt-cells = <2>;
+            riscv,max-priority = <7>;
+            riscv,ndev = <200>;
+        };
+
+        clint: timer@14000000 {
+            compatible = "thead,c900-clint";
+            reg = <0x0 0x14000000 0x0 0x10000>;
+            interrupts-extended = <&cpu0_intc 7>, <&cpu0_intc 3>;
+            clint,has-no-64bit-mmio;
+        };
+
+        timer: timer@2050000 {
+            compatible = "allwinner,sun252i-f101-timer";
+            reg = <0x0 0x02050000 0x0 0x100>;
+            interrupts = <59 IRQ_TYPE_LEVEL_HIGH>,
+                         <60 IRQ_TYPE_LEVEL_HIGH>;
+            clock-frequency = <24000000>;
+            status = "disabled";
+        };
+
+        hstimer: hstimer@3008000 {
+            compatible = "allwinner,sun252i-f101-hstimer";
+            reg = <0x0 0x03008000 0x0 0x100>;
+            interrupts = <55 IRQ_TYPE_LEVEL_HIGH>,
+                         <56 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_HSTIMER>;
+            clock-names = "bus";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_HSTIMER>;
+            reset-names = "bus";
+            status = "disabled";
+        };
+
+        g2d: g2d@5410000 {
+            compatible = "allwinner,sun252i-f101-g2d200", "allwinner,sunxi-g2d200";
+            reg = <0x0 0x05410000 0x0 0x40000>;
+            interrupts = <111 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&ccu SUN252I_F101_CLK_G2D>,
+                     <&ccu SUN252I_F101_CLK_BUS_G2D>,
+                     <&ccu SUN252I_F101_CLK_BUS_G2D_M>;
+            clock-names = "mod", "bus", "mbus";
+            clock-frequency = <300000000>;
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_G2D>;
+            reset-names = "bus";
+            status = "disabled";
+        };
+
+        codec: audio-codec@2030000 {
+            compatible = "allwinner,sun252i-f101-codec";
+            reg = <0x0 0x02030000 0x0 0x400>;
+            dmas = <&dma 7>;
+            dma-names = "tx";
+            clocks = <&ccu SUN252I_F101_CLK_AUDIO_CODEC_DAC>,
+                     <&ccu SUN252I_F101_CLK_BUS_AUDIO_CODEC>;
+            clock-names = "dac", "bus";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_AUDIO>;
+            reset-names = "bus";
+            status = "disabled";
+        };
+
+        i2s0: i2s@2032000 {
+            compatible = "allwinner,sun252i-f101-i2s";
+            reg = <0x0 0x02032000 0x0 0x1000>;
+            dmas = <&dma 3>;
+            dma-names = "tx";
+            clocks = <&ccu SUN252I_F101_CLK_I2S0>,
+                     <&ccu SUN252I_F101_CLK_BUS_I2S0>;
+            clock-names = "mod", "bus";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_I2S0>;
+            reset-names = "bus";
+            pinctrl-names = "default";
+            pinctrl-0 = <&i2s0_pe_pins>;
+            status = "disabled";
+        };
+
+        owa: owa@2036000 {
+            compatible = "allwinner,sun252i-f101-owa";
+            reg = <0x0 0x02036000 0x0 0x1000>;
+            dmas = <&dma 2>;
+            dma-names = "tx";
+            clocks = <&ccu SUN252I_F101_CLK_OWA_TX>,
+                     <&ccu SUN252I_F101_CLK_BUS_OWA>;
+            clock-names = "tx", "bus";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_OWA>;
+            reset-names = "bus";
+            pinctrl-names = "default";
+            pinctrl-0 = <&owa_pe6_pin>;
+            status = "disabled";
+        };
+
+        irrx: irrx@2087000 {
+            compatible = "allwinner,sun252i-f101-irrx";
+            reg = <0x0 0x02087000 0x0 0x100>;
+            interrupts = <38 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&ccu SUN252I_F101_CLK_IRRX>,
+                     <&ccu SUN252I_F101_CLK_BUS_IRRX>;
+            clock-names = "mod", "bus";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_IRRX>;
+            reset-names = "bus";
+            pinctrl-names = "default";
+            pinctrl-0 = <&irrx_pd7_pin>;
+            status = "disabled";
+        };
+
+        rtc_ccu: rtc-ccu@3090000 {
+            compatible = "allwinner,sun252i-f101-rtc-ccu";
+            reg = <0x0 0x03090000 0x0 0x330>;
+            clocks = <&osc24M>, <&rc16m>;
+            clock-names = "dcxo24M", "rc-16m";
+            #clock-cells = <1>;
+            #address-cells = <2>;
+            #size-cells = <2>;
+            ranges = <0x0 0x0 0x0 0x03090000 0x0 0x330>;
+
+            rtc: rtc@0 {
+                compatible = "allwinner,sun252i-f101-rtc";
+                reg = <0x0 0x0 0x0 0x100>;
+                interrupts = <144 IRQ_TYPE_LEVEL_HIGH>;
+                status = "disabled";
+            };
+        };
+
+        cpupll_ccu: cpupll@2001000 {
+            compatible = "allwinner,sun252i-f101-cpupll";
+            reg = <0x0 0x02001000 0x0 0x1000>;
+            #clock-cells = <1>;
+        };
+
+        ddrpll_ccu: ddrpll@2001000 {
+            compatible = "allwinner,sun252i-f101-ddrpll";
+            reg = <0x0 0x02001000 0x0 0x1000>;
+            #clock-cells = <1>;
+        };
+
+        lpsram: memory-controller@2052000 {
+            compatible = "allwinner,sun252i-f101-lpsram";
+            reg = <0x0 0x02052000 0x0 0x400>,
+                  <0x0 0x03102000 0x0 0x100>,
+                  <0x0 0x03103000 0x0 0x400>;
+            reg-names = "ctl", "master", "phy";
+            status = "disabled";
+        };
+
+        ccu: clock-controller@2001000 {
+            compatible = "allwinner,sun252i-f101-ccu";
+            reg = <0x0 0x02001000 0x0 0x1000>;
+            clocks = <&osc24M>, <&rtc_ccu CLK_RTC_32K>,
+                     <&rtc_ccu CLK_RTC_IOSC>;
+            clock-names = "hosc", "losc", "iosc";
+            #clock-cells = <1>;
+            #reset-cells = <1>;
+            allwinner,apb0-rate = <100000000>;
+            allwinner,apb1-rate = <100000000>;
+            allwinner,apb-uart-rate = <24000000>;
+            allwinner,spi-rate = <100000000>;
+            allwinner,smhc-rate = <100000000>;
+        };
+
+		ve: video-codec@1c0e000 {
+            compatible = "allwinner,sun252i-f101-video-engine";
+            reg = <0x0 0x01c0e000 0x0 0x2000>;
+            interrupts = <66 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_VE>,
+                     <&ccu SUN252I_F101_CLK_VE>,
+                     <&ccu SUN252I_F101_CLK_BUS_VE_M>;
+            clock-names = "ahb", "mod", "ram";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_VE>;
+			allwinner,sram = <&ve_sram_section 1>;
+			status = "disabled";
+		};
+
+		crypto: crypto@3040800 {
+			compatible = "allwinner,sun252i-f101-ce";
+			reg = <0x0 0x03040800 0x0 0x400>;
+			interrupts = <52 IRQ_TYPE_LEVEL_HIGH>;
+			clocks = <&ccu SUN252I_F101_CLK_CE>,
+				 <&ccu SUN252I_F101_CLK_BUS_CE>;
+			clock-names = "mod", "bus";
+			resets = <&ccu_reset SUN252I_F101_RST_BUS_CE>;
+			reset-names = "bus";
+			status = "okay";
+		};
+
+        sid: efuse@3006000 {
+            compatible = "allwinner,sun252i-f101-sid";
+            reg = <0x0 0x03006000 0x0 0x1000>;
+            #address-cells = <1>;
+            #size-cells = <1>;
+            status = "okay";
+
+            ths_calibration: thermal-sensor-calibration@14 {
+                reg = <0x14 0x4>;
+            };
+        };
+
+        gpadc: adc@2009000 {
+            compatible = "allwinner,sun252i-f101-gpadc";
+            reg = <0x0 0x02009000 0x0 0x100>;
+            interrupts = <57 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_GPADC>;
+            clock-names = "bus";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_GPADC>;
+            reset-names = "bus";
+            allwinner,channel-count = <12>;
+            allwinner,sample-rate = <1000000>;
+            status = "disabled";
+        };
+
+        tpadc: touchscreen@2009c00 {
+            compatible = "allwinner,sun252i-f101-tpadc";
+            reg = <0x0 0x02009c00 0x0 0x100>;
+            interrupts = <62 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&ccu SUN252I_F101_CLK_TPADC>,
+                     <&ccu SUN252I_F101_CLK_BUS_TPADC>;
+            clock-names = "mod", "bus";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_TPADC>;
+            reset-names = "bus";
+            pinctrl-names = "default";
+            pinctrl-0 = <&tpadc_pa_pins>;
+            touchscreen-size-x = <4096>;
+            touchscreen-size-y = <4096>;
+            status = "disabled";
+        };
+
+        thermal: thermal-sensor@2009400 {
+            compatible = "allwinner,sun252i-f101-thermal";
+            reg = <0x0 0x02009400 0x0 0x100>,
+                  <0x0 0x02009000 0x0 0x100>;
+            reg-names = "ths", "gpadc";
+            clocks = <&ccu SUN252I_F101_CLK_BUS_THS>,
+                     <&ccu SUN252I_F101_CLK_BUS_GPADC>;
+            clock-names = "ths", "gpadc";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_THS>,
+                     <&ccu_reset SUN252I_F101_RST_BUS_GPADC>;
+            reset-names = "ths", "gpadc";
+            nvmem-cells = <&ths_calibration>;
+            nvmem-cell-names = "calibration";
+            #thermal-sensor-cells = <0>;
+            status = "disabled";
+        };
+
+        syscon: syscon@3000000 {
+            compatible = "allwinner,sun252i-f101-system-control", "syscon";
+            reg = <0x0 0x03000000 0x0 0x1000>;
+            #address-cells = <1>;
+            #size-cells = <1>;
+            ranges = <0x0 0x0 0x0 0x40000000>;
+
+            ve_sram: sram@20000 {
+                compatible = "mmio-sram";
+                reg = <0x20000 0xb000>;
+                #address-cells = <1>;
+                #size-cells = <1>;
+                ranges = <0 0x20000 0xb000>;
+
+                ve_sram_section: sram-section@0 {
+                    compatible = "allwinner,sun252i-f101-sram-ve";
+                    reg = <0x0 0xb000>;
+                };
+            };
+        };
+
+        pwm0: pwm@2000c00 {
+            compatible = "allwinner,sunxi-pwm-v201",
+                         "allwinner,sun252i-f101-pwm";
+            reg = <0x0 0x02000c00 0x0 0x400>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_PWM>;
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_PWM>;
+            #pwm-cells = <3>;
+            status = "disabled";
+        };
+
+        pio: pinctrl@2000000 {
+            compatible = "allwinner,sun252i-f101-pinctrl";
+            reg = <0x0 0x02000000 0x0 0x500>;
+            interrupts-extended = <&plic 67 IRQ_TYPE_LEVEL_HIGH>,
+                                  <&plic 69 IRQ_TYPE_LEVEL_HIGH>,
+                                  <&plic 71 IRQ_TYPE_LEVEL_HIGH>,
+                                  <&plic 73 IRQ_TYPE_LEVEL_HIGH>,
+                                  <&plic 75 IRQ_TYPE_LEVEL_HIGH>,
+                                  <&plic 77 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&ccu SUN252I_F101_CLK_APB0>;
+            #pinctrl-cells = <0>;
+            gpio-controller;
+            #gpio-cells = <3>;
+            interrupt-controller;
+            #interrupt-cells = <3>;
+
+            uart0_pe_pins: uart0-pe-pins {
+                pins = "PE0", "PE1";
+                function = "uart0";
+            };
+
+            pwm0_pe2_pins: pwm0-pe2-pins {
+                pins = "PE2";
+                function = "pwm0_0";
+            };
+
+            pwm0_pe3_pins: pwm0-pe3-pins {
+                pins = "PE3";
+                function = "pwm0_1";
+            };
+
+            pwm0_pe4_pins: pwm0-pe4-pins {
+                pins = "PE4";
+                function = "pwm0_2";
+            };
+
+            pwm0_pe5_pins: pwm0-pe5-pins {
+                pins = "PE5";
+                function = "pwm0_3";
+            };
+
+            uart1_pb_pins: uart1-pb-pins {
+                pins = "PB0", "PB1";
+                function = "uart1";
+            };
+
+            tpadc_pa_pins: tpadc-pa-pins {
+                pins = "PA0", "PA1", "PA2", "PA3";
+                function = "tpadc";
+            };
+
+            irrx_pd7_pin: irrx-pd7-pin {
+                pins = "PD7";
+                function = "irrx";
+            };
+
+            i2s0_pe_pins: i2s0-pe-pins {
+                pins = "PE0", "PE1", "PE2", "PE3", "PE4";
+                function = "i2s0";
+            };
+
+            owa_pe6_pin: owa-pe6-pin {
+                pins = "PE6";
+                function = "owa";
+            };
+
+            i2c2_pb_pins: i2c2-pb-pins {
+                pins = "PB2", "PB3";
+                function = "twi2";
+            };
+
+            spi0_pc_pins: spi0-pc-pins {
+                pins = "PC0", "PC1", "PC2", "PC3", "PC4", "PC5";
+                function = "spi0";
+            };
+
+            spi1_pd_pins: spi1-pd-pins {
+                pins = "PD0", "PD1", "PD2", "PD3";
+                function = "spi1";
+            };
+
+            sdc0_pf_pins: sdc0-pf-pins {
+                pins = "PF0", "PF1", "PF2", "PF3", "PF4", "PF5";
+                function = "sdc0";
+                drive-strength = <40>;
+                bias-pull-up;
+            };
+
+            sdc2_pc_pins: sdc2-pins {
+                pins = "PC0", "PC1", "PC2", "PC3", "PC4", "PC5";
+                function = "sdc2";
+                drive-strength = <40>;
+                bias-pull-up;
+            };
+
+            lcd0_pd_data_pins: lcd0-pd-data-pins {
+                pins = "PD0", "PD1", "PD2", "PD3", "PD4",
+                       "PD5", "PD6", "PD7", "PD8", "PD9",
+                       "PD12", "PD13", "PD14", "PD15", "PD16",
+                       "PD17", "PD18", "PD19", "PD20", "PD21";
+                function = "lcd0";
+            };
+
+            lcd0_pe_sync_pins: lcd0-pe-sync-pins {
+                pins = "PE6", "PE7";
+                function = "lcd0";
+            };
+
+            lvds0_pd_pins: lvds0-pd-pins {
+                pins = "PD12", "PD13", "PD14", "PD15", "PD16",
+                       "PD17", "PD18", "PD19", "PD20", "PD21";
+                function = "lvds0";
+            };
+
+            dsi0_pd_pins: dsi0-pd-pins {
+                pins = "PD12", "PD13", "PD14", "PD15", "PD16",
+                       "PD17", "PD18", "PD19", "PD20", "PD21";
+                function = "dsi0";
+            };
+        };
+
+        uart0: serial@2500000 {
+            compatible = "snps,dw-apb-uart";
+            reg = <0x0 0x02500000 0x0 0x400>;
+            interrupts = <2 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_UART0>,
+                     <&ccu SUN252I_F101_CLK_BUS_UART0>;
+            clock-names = "baudclk", "apb_pclk";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_UART0>;
+            reg-shift = <2>;
+            reg-io-width = <4>;
+            status = "disabled";
+        };
+
+        uart1: serial@2500400 {
+            compatible = "snps,dw-apb-uart";
+            reg = <0x0 0x02500400 0x0 0x400>;
+            interrupts = <3 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_UART1>,
+                     <&ccu SUN252I_F101_CLK_BUS_UART1>;
+            clock-names = "baudclk", "apb_pclk";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_UART1>;
+            reg-shift = <2>;
+            reg-io-width = <4>;
+            status = "disabled";
+        };
+
+        uart2: serial@2500800 {
+            compatible = "snps,dw-apb-uart";
+            reg = <0x0 0x02500800 0x0 0x400>;
+            interrupts = <4 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_UART2>,
+                     <&ccu SUN252I_F101_CLK_BUS_UART2>;
+            clock-names = "baudclk", "apb_pclk";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_UART2>;
+            reg-shift = <2>;
+            reg-io-width = <4>;
+            status = "disabled";
+        };
+
+        uart3: serial@2500c00 {
+            compatible = "snps,dw-apb-uart";
+            reg = <0x0 0x02500c00 0x0 0x400>;
+            interrupts = <5 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_UART3>,
+                     <&ccu SUN252I_F101_CLK_BUS_UART3>;
+            clock-names = "baudclk", "apb_pclk";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_UART3>;
+            reg-shift = <2>;
+            reg-io-width = <4>;
+            status = "disabled";
+        };
+
+        uart4: serial@2501000 {
+            compatible = "snps,dw-apb-uart";
+            reg = <0x0 0x02501000 0x0 0x400>;
+            interrupts = <6 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_UART4>,
+                     <&ccu SUN252I_F101_CLK_BUS_UART4>;
+            clock-names = "baudclk", "apb_pclk";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_UART4>;
+            reg-shift = <2>;
+            reg-io-width = <4>;
+            status = "disabled";
+        };
+
+        uart5: serial@2501400 {
+            compatible = "snps,dw-apb-uart";
+            reg = <0x0 0x02501400 0x0 0x400>;
+            interrupts = <7 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_UART5>,
+                     <&ccu SUN252I_F101_CLK_BUS_UART5>;
+            clock-names = "baudclk", "apb_pclk";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_UART5>;
+            reg-shift = <2>;
+            reg-io-width = <4>;
+            status = "disabled";
+        };
+
+        i2c0_ctrl: i2c@2502000 {
+            compatible = "allwinner,sun252i-f101-i2c",
+                         "allwinner,sun20i-d1-i2c",
+                         "allwinner,sun8i-v536-i2c",
+                         "allwinner,sun6i-a31-i2c";
+            reg = <0x0 0x02502000 0x0 0x400>;
+            interrupts = <9 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_TWI0>;
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_TWI0>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "disabled";
+        };
+
+        i2c1_ctrl: i2c@2502400 {
+            compatible = "allwinner,sun252i-f101-i2c",
+                         "allwinner,sun20i-d1-i2c",
+                         "allwinner,sun8i-v536-i2c",
+                         "allwinner,sun6i-a31-i2c";
+            reg = <0x0 0x02502400 0x0 0x400>;
+            interrupts = <10 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_TWI1>;
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_TWI1>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "disabled";
+        };
+
+        i2c2_ctrl: i2c@2502800 {
+            compatible = "allwinner,sun252i-f101-i2c",
+                         "allwinner,sun20i-d1-i2c",
+                         "allwinner,sun8i-v536-i2c",
+                         "allwinner,sun6i-a31-i2c";
+            reg = <0x0 0x02502800 0x0 0x400>;
+            interrupts = <11 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_TWI2>;
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_TWI2>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            status = "disabled";
+        };
+
+        dma: dma-controller@3002000 {
+            compatible = "allwinner,sun252i-f101-dma",
+                         "allwinner,sun20i-d1-dma";
+            reg = <0x0 0x03002000 0x0 0x1000>;
+            interrupts = <50 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_DMA>,
+                     <&ccu SUN252I_F101_CLK_BUS_DMA_M>;
+            clock-names = "bus", "mbus";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_DMA>;
+            dma-channels = <16>;
+            dma-requests = <48>;
+            #dma-cells = <1>;
+            status = "disabled";
+        };
+
+        sdc0: mmc@4020000 {
+            compatible = "allwinner,sun252i-f101-mmc";
+            reg = <0x0 0x04020000 0x0 0x1000>;
+            interrupts = <40 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_SMHC0>,
+                     <&ccu SUN252I_F101_CLK_SMHC0>;
+            clock-names = "ahb", "mmc";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_SMHC0>;
+            reset-names = "ahb";
+            pinctrl-names = "default";
+            pinctrl-0 = <&sdc0_pf_pins>;
+            bus-width = <4>;
+            max-frequency = <50000000>;
+            cap-sd-highspeed;
+            no-1-8-v;
+            no-mmc;
+            no-sdio;
+            status = "disabled";
+        };
+
+        sdc2: mmc@4022000 {
+            compatible = "allwinner,sun252i-f101-emmc";
+            reg = <0x0 0x04022000 0x0 0x1000>;
+            interrupts = <42 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_SMHC2>,
+                     <&ccu SUN252I_F101_CLK_SMHC2>;
+            clock-names = "ahb", "mmc";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_SMHC2>;
+            reset-names = "ahb";
+            pinctrl-names = "default";
+            pinctrl-0 = <&sdc2_pc_pins>;
+            bus-width = <4>;
+            max-frequency = <50000000>;
+            cap-mmc-highspeed;
+            no-1-8-v;
+            no-sd;
+            no-sdio;
+            non-removable;
+            status = "disabled";
+        };
+
+        spi0_ctrl: spi@4025000 {
+            compatible = "allwinner,sun252i-f101-spi", "allwinner,sun50i-r329-spi";
+            reg = <0x0 0x04025000 0x0 0x1000>;
+            interrupts = <15 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_SPI0>,
+                     <&ccu SUN252I_F101_CLK_SPI0>;
+            clock-names = "ahb", "mod";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_SPI0>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            clock-frequency = <100000000>;
+            status = "disabled";
+        };
+
+        spi1_ctrl: spi@4026000 {
+            compatible = "allwinner,sun252i-f101-spi", "allwinner,sun50i-r329-spi";
+            reg = <0x0 0x04026000 0x0 0x1000>;
+            interrupts = <16 4>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_SPI1>,
+                     <&ccu SUN252I_F101_CLK_SPI1>;
+            clock-names = "ahb", "mod";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_SPI1>;
+            #address-cells = <1>;
+            #size-cells = <0>;
+            clock-frequency = <100000000>;
+            status = "disabled";
+        };
+
+        riscv_wdt: watchdog@6011000 {
+            compatible = "allwinner,sun252i-f101-wdt",
+                         "allwinner,sun20i-d1-wdt";
+            reg = <0x0 0x06011000 0x0 0x20>;
+            interrupts = <131 IRQ_TYPE_LEVEL_HIGH>;
+            clocks = <&osc24M>, <&rtc_ccu CLK_RTC_32K>;
+            clock-names = "hosc", "losc";
+            status = "disabled";
+        };
+
+        usb0: usb@4100000 {
+            compatible = "allwinner,sun252i-f101-musb";
+            reg = <0x0 0x04100000 0x0 0x1000>;
+            interrupts = <29 4>;
+            allwinner,syscon = <&syscon>;
+            clocks = <&ccu SUN252I_F101_CLK_BUS_USB>,
+                     <&ccu SUN252I_F101_CLK_BUS_USBOTG0>;
+            clock-names = "bus", "mod";
+            resets = <&ccu_reset SUN252I_F101_RST_USB_PHY0>,
+                     <&ccu_reset SUN252I_F101_RST_USB_OTG0>;
+            reset-names = "phy", "controller";
+            dr_mode = "peripheral";
+            status = "disabled";
+        };
+
+        display0: display@5000000 {
+            compatible = "allwinner,sun252i-f101-de0";
+            reg = <0x0 0x05000000 0x0 0x200000>,
+                  <0x0 0x05461000 0x0 0x1000>,
+                  <0x0 0x05460000 0x0 0x1000>,
+                  <0x0 0x05450000 0x0 0x2000>;
+            reg-names = "de", "tcon", "display-top", "dsi";
+            clocks = <&ccu SUN252I_F101_CLK_DE>,
+                     <&ccu SUN252I_F101_CLK_BUS_DE>,
+                     <&ccu SUN252I_F101_CLK_BUS_DPSS_TOP>,
+                     <&ccu SUN252I_F101_CLK_TCONLCD>,
+                     <&ccu SUN252I_F101_CLK_BUS_TCONLCD>,
+                     <&ccu SUN252I_F101_CLK_DSI>,
+                     <&ccu SUN252I_F101_CLK_BUS_DSI>,
+                     <&ccu SUN252I_F101_CLK_COMBOPHY0>,
+                     <&ccu SUN252I_F101_CLK_BUS_COMBOPHY0>;
+            clock-names = "de", "de-bus", "dpss-top", "tcon", "tcon-bus",
+                          "dsi", "dsi-bus", "combophy", "combophy-bus";
+            resets = <&ccu_reset SUN252I_F101_RST_BUS_DE>,
+                     <&ccu_reset SUN252I_F101_RST_BUS_DPSS>,
+                     <&ccu_reset SUN252I_F101_RST_BUS_TCONLCD>,
+                     <&ccu_reset SUN252I_F101_RST_BUS_DSI>,
+                     <&ccu_reset SUN252I_F101_RST_BUS_LVDS0>;
+            reset-names = "de", "dpss-top", "tcon", "dsi", "lvds";
+            /* rgb is the default; boards may select lvds or dsi. */
+            status = "disabled";
+        };
+    };
+};

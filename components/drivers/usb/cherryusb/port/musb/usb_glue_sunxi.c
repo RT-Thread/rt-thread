@@ -7,6 +7,8 @@
 #include "stdint.h"
 #include "usb_musb_reg.h"
 
+#include <rtthread.h>
+
 #ifndef CONFIG_USB_MUSB_SUNXI
 #error must define CONFIG_USB_MUSB_SUNXI when use sunxi chips
 #endif
@@ -60,5 +62,5 @@ uint32_t usb_get_musb_ram_size(void)
 
 void usbd_musb_delay_ms(uint8_t ms)
 {
-    /* implement later */
+    rt_thread_mdelay(ms);
 }

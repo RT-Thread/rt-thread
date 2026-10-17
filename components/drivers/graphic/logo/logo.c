@@ -186,7 +186,7 @@ rt_err_t rt_graphic_logo_render(struct rt_graphic_device *gdev)
             rt_ubase_t color = color_reordering(logo[0], red_off,
                                                 logo[1], green_off,
                                                 logo[2], blue_off,
-                                                fb_color_max, startup_logo_color_max) |
+                                                startup_logo_color_max, fb_color_max) |
                                                 none_alpha;
 
             rt_memcpy(fb, &color, bytes_per_pixel);

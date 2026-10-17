@@ -1,0 +1,13 @@
+from building import *
+Import('RTT_ROOT')
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend(['RT_PINCTRL_SUN252I_F101']):
+    src += ['pinctrl-sunxi.c', 'pinctrl-sun252i-f101.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''],
+        CPPPATH = [cwd + '/../include', RTT_ROOT + '/components/drivers/pin'])
+
+Return('group')

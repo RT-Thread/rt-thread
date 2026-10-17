@@ -1,0 +1,15 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend(['RT_SOC_SUNXI_G2D']):
+    src += Glob('g2d/*.c')
+
+if GetDepend(['RT_SOC_SUNXI_JPEG_DEC']) or GetDepend(['RT_SOC_SUNXI_JPEG_ENC']) or GetDepend(['RT_SOC_SUNXI_PNG_DEC']):
+    src += ['jpegd-sunxi.c']
+
+group = DefineGroup('DeviceDrivers', src, depend=[''],
+                    CPPPATH=[cwd + '/../include', cwd + '/g2d'])
+
+Return('group')
