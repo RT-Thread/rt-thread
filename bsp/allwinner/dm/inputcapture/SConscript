@@ -1,0 +1,12 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_INPUT_CAPTURE_SUNXI_IRRX']):
+    src += ['inputcapture-sunxi-irrx.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

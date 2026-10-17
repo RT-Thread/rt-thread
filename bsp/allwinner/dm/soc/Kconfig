@@ -1,0 +1,42 @@
+config RT_SOC_SUNXI_G2D
+    bool "Allwinner G2D-200 graphics accelerator"
+    depends on RT_USING_OFW
+    depends on RT_USING_DMA
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    default y
+    help
+      Enable the G2D-200 command-queue transport used by the Allwinner
+      sun252i F101. The driver owns the hardware resources and provides
+      DMA buffer management plus synchronous RCQ submission.
+
+config RT_SOC_SUNXI_JPEG_DEC
+    bool "Allwinner VE JPEG/MJPEG decoder"
+    depends on RT_USING_OFW
+    depends on RT_USING_DMA
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    help
+      Enable the baseline JPEG and MJPEG decoder in the Allwinner Video
+      Engine. The jpegd device accepts DMA buffers and produces NV12 frames.
+
+config RT_SOC_SUNXI_JPEG_ENC
+    bool "Allwinner VE JPEG/MJPEG encoder"
+    depends on RT_USING_OFW
+    depends on RT_USING_DMA
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    help
+      Enable the baseline JPEG encoder in the Allwinner Video Engine. The
+      jpege device accepts contiguous NV12 frames and produces JPEG streams.
+
+config RT_SOC_SUNXI_PNG_DEC
+    bool "Allwinner VE PNG decoder"
+    depends on RT_USING_OFW
+    depends on RT_USING_DMA
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    help
+      Enable the PNG decoder in the Allwinner Video Engine. The pngd device
+      accepts complete, non-interlaced 8-bit RGB or RGBA PNG streams and
+      produces RGBA8888 frames.
