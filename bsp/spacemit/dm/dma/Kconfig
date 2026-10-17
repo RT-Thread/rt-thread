@@ -1,0 +1,8 @@
+config RT_DMA_MMP_PDMA
+    bool "Spacemit K1X MMP PDMA"
+    default n
+
+config RT_DMA_MMP_PDMA_SUPPORT_64BIT
+    bool "Support 64bit"
+    depends on RT_DMA_MMP_PDMA
+    default n
