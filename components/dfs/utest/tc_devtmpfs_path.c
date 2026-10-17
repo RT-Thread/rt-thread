@@ -26,16 +26,16 @@
  * instead of overrunning the caller's stack frame. A component of
  * DIRENT_NAME_MAX - 1 bytes (plus the terminator) still fits.
  */
-#define TC_NAME_MAX         DIRENT_NAME_MAX
+#define TC_NAME_MAX DIRENT_NAME_MAX
 
 /* devtmpfs is mounted on /dev by the device filesystem, see devtmpfs_init() */
-#define TC_MNT_PATH         "/dev"
+#define TC_MNT_PATH "/dev"
 
 /* Path buffer: mount point + '/' + component + '\0'.
  * Sized for the longest component the boundary sweep below uses (300 bytes),
  * which is deliberately well past DIRENT_NAME_MAX. */
-#define TC_MAX_TEST_LEN     300
-#define TC_PATH_BUF_SIZE    (sizeof(TC_MNT_PATH) + 1 + TC_MAX_TEST_LEN + 1)
+#define TC_MAX_TEST_LEN  300
+#define TC_PATH_BUF_SIZE (sizeof(TC_MNT_PATH) + 1 + TC_MAX_TEST_LEN + 1)
 
 static char tc_path[TC_PATH_BUF_SIZE];
 
@@ -47,9 +47,9 @@ static char tc_path[TC_PATH_BUF_SIZE];
  * known pattern around the call and checking it afterwards is the observable
  * "does not modify neighbouring stack data" assertion requested in review.
  */
-#define TC_GUARD_SIZE       32
-#define TC_GUARD_PATTERN    0xA5
-#define TC_GUARD_MAGIC      0x5A5A1234UL
+#define TC_GUARD_SIZE    32
+#define TC_GUARD_PATTERN 0xA5
+#define TC_GUARD_MAGIC   0x5A5A1234UL
 
 static volatile rt_ubase_t tc_guard_magic;
 
