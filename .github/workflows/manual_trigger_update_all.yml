@@ -34,6 +34,7 @@ on:
           - "sourcery-riscv64-unknown-elf"
           - "gcc"
           - "sourcery-riscv32-esp32"
+          - "sourcery-xtensa-esp32s3"
 
 permissions:
   contents: read # to fetch code (actions/checkout)
@@ -122,6 +123,15 @@ jobs:
           /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
           pip3 install esptool
           echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
+
+      - name: Install xtensa-esp32s3-elf ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-xtensa-esp32s3' && success() }}
+        run: |
+          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-12.2.0_20230208/xtensa-esp32s3-elf-12.2.0_20230208-x86_64-linux-gnu.tar.xz
+          sudo tar xf xtensa-esp32s3-elf-12.2.0_20230208-x86_64-linux-gnu.tar.xz -C /opt
+          /opt/xtensa-esp32s3-elf/bin/xtensa-esp32s3-elf-gcc --version
+          pip3 install esptool
+          echo "RTT_EXEC_PATH=/opt/xtensa-esp32s3-elf/bin" >> $GITHUB_ENV
 
       - name: Install GCC Tools
         if: ${{ github.event.inputs.bsp_tool_chain == 'gcc' && success() }}

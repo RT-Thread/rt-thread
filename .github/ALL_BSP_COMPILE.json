@@ -496,6 +496,13 @@
       ]
     },
     {
+      "RTT_BSP": "ESP32S3",
+      "RTT_TOOL_CHAIN": "sourcery-xtensa-esp32s3",
+      "SUB_RTT_BSP": [
+        "ESP/ESP32_S3"
+      ]
+    },
+    {
       "RTT_BSP": "ESP32C6",
       "RTT_TOOL_CHAIN": "sourcery-riscv32-esp32",
       "SUB_RTT_BSP": [

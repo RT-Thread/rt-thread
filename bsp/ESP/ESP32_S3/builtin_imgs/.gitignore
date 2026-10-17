@@ -1,0 +1,4 @@
+*
+!.gitignore
+!bootloader.bin
+!partition-table.bin

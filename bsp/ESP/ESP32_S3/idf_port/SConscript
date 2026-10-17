@@ -1,0 +1,39 @@
+import os
+from building import *
+from env_package import find_package_path
+
+Import('rtconfig')
+
+cwd      = GetCurrentDir()
+bsp_root = os.path.normpath(os.path.join(cwd, '..'))
+# pkgs --update-force may place this under bsp/ESP/libraries rather than
+# this BSP's packages directory.
+PKG_IDF  = find_package_path(bsp_root, 'ESP-IDF-latest',
+                             marker='components/xtensa/esp32s3/include')
+
+src = Split("""
+    src/rt-thread_balance_stub.c
+    src/port.c
+    src/port_common.c
+""")
+
+# The Xtensa vector/context building blocks stay in libcpu/xtensa; here we
+# only add the include dirs the ESP-IDF Xtensa port headers expect:
+#   portable/xtensa            -> xt_asm_utils.h
+#   portable/xtensa/include/freertos -> xtensa_rtos.h / xtensa_context.h shim
+#   components/xtensa/include  -> <xtensa/...> generic headers
+#   components/xtensa/esp32s3/include -> <xtensa/config/...> per-SoC config
+CPPPATH = [
+    cwd + '/include',
+    cwd + '/include/freertos',
+    PKG_IDF + '/components/driver/include',
+    PKG_IDF + '/components/esp_common/include',
+    PKG_IDF + '/components/freertos/FreeRTOS-Kernel/portable/xtensa',
+    PKG_IDF + '/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos',
+    PKG_IDF + '/components/xtensa/include',
+    PKG_IDF + '/components/xtensa/esp32s3/include',
+]
+
+group = DefineGroup('idf_port', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

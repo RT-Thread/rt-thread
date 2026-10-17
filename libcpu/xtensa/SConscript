@@ -1,0 +1,15 @@
+# RT-Thread building script for bridge
+
+import os
+from building import *
+
+Import('rtconfig')
+
+cwd = GetCurrentDir()
+group = []
+
+# rtconfig.CPU selects the SoC port below this directory (esp32s3 for now).
+if rtconfig.CPU in os.listdir(cwd):
+    group += SConscript(os.path.join(rtconfig.CPU, 'SConscript'))
+
+Return('group')

@@ -4,7 +4,9 @@
  */
 #include "rtconfig.h"
 #pragma once
-#ifdef SOC_ESP32_C6
+#ifdef SOC_ESP32_S3
+#include "sdkconfig_s3.h"
+#elif defined(SOC_ESP32_C6)
 #include "sdkconfig_c6.h"
 #else
 #define CONFIG_SOC_ADC_SUPPORTED 1
