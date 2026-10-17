@@ -28,6 +28,17 @@ if GetDepend('RT_USING_SMP') == False:
 else:
     SrcRemove(src, ['cpu_up.c', 'scheduler_up.c'])
 
+# AddressSanitizer: heap allocators keep their metadata (headers, free lists)
+# inside the heap region, so instrumenting them would report their own header
+# accesses as false positives. Move them to a separate non-instrumented group.
+asan_alloc_src = []
+if GetDepend('RT_USING_ASAN'):
+    for alloc_name in ['mem.c', 'memheap.c', 'slab.c']:
+        matched = [x for x in src if os.path.basename(x.rstr()) == alloc_name]
+        if matched:
+            asan_alloc_src += matched
+            SrcRemove(src, [alloc_name])
+
 LOCAL_CFLAGS = ''
 LINKFLAGS = ''
 
@@ -58,6 +69,13 @@ else:
     group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc,
                         LINKFLAGS=LINKFLAGS, LOCAL_CFLAGS=LOCAL_CFLAGS,
                         CPPDEFINES=['__RTTHREAD__'], LOCAL_CPPDEFINES=['__RT_KERNEL_SOURCE__'])
+
+# AddressSanitizer: build heap allocators without instrumentation.
+if GetDepend('RT_USING_ASAN') and asan_alloc_src:
+    group = group + DefineGroup('KernelAlloc', asan_alloc_src, depend=['RT_USING_ASAN'],
+                                CPPPATH=inc, CPPDEFINES=['__RTTHREAD__'],
+                                LOCAL_CPPDEFINES=['__RT_KERNEL_SOURCE__'],
+                                LOCAL_CFLAGS=' -fno-sanitize=kernel-address')
 
 list = os.listdir(cwd)
 for item in list:
