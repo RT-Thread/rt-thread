@@ -46,16 +46,24 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds '
 
     CPATH = ''
     LPATH = ''
 
+    opt_level = ' -O2'
+    if os.path.exists('rtconfig.h'):
+        with open('rtconfig.h', 'r') as f:
+            content = f.read()
+            if 'SOC_STM32F103C6' in content:
+                opt_level = ' -Os'
+                LFLAGS += ' -Wl,--defsym=_ROM_SIZE=32k,--defsym=_RAM_SIZE=10k --specs=nano.specs'
+
     if BUILD == 'debug':
-        CFLAGS += ' -O2 -gdwarf-2 -g'
+        CFLAGS += opt_level + ' -gdwarf-2 -g'
         AFLAGS += ' -gdwarf-2'
     else:
-        CFLAGS += ' -O2'
+        CFLAGS += opt_level
 
     CXXFLAGS = CFLAGS 
 
