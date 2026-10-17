@@ -248,7 +248,8 @@ rt_err_t rt_pci_ofw_parse_ranges(struct rt_ofw_node *dev_np,
                                  struct rt_pci_host_bridge *host_bridge)
 {
     rt_err_t err;
-    int phy_addr_cells = -1, phy_size_cells = -1, cpu_addr_cells;
+    rt_int32_t phy_addr_cells = -1, phy_size_cells = -1;
+    int cpu_addr_cells;
 
     if (!dev_np || !host_bridge)
     {

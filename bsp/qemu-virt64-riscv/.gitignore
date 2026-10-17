@@ -1,3 +1,5 @@
-mnt.c
-romfs_data.c
+*.dtb
+*.dts
+*.qcow2
 opensbi
+romfs_data.c

@@ -25,7 +25,12 @@ if os.path.isdir(arch_dir):
     arch_list = os.listdir(arch_dir)
     if rtconfig.ARCH in arch_list:
         cpu_dir = os.path.join(arch_dir, rtconfig.ARCH, rtconfig.CPU)
-        if os.path.exists(cpu_dir):
+        if rtconfig.ARCH == 'risc-v':
+            if GetDepend('RT_USING_RISCV_NEW_COMMON'):
+                src += Glob("arch/risc-v/*.c")
+            elif os.path.exists(cpu_dir):
+                src += Glob("arch/%s/%s/*.c" % (rtconfig.ARCH, rtconfig.CPU))
+        elif os.path.exists(cpu_dir):
             src += Glob("arch/%s/%s/*.c" % (rtconfig.ARCH, rtconfig.CPU))
         else:
             src += Glob("arch/%s/*.c" % rtconfig.ARCH)
