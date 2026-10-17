@@ -28,13 +28,24 @@
 #include "esp_adc/adc_cali_scheme.h"
 #endif
 
+/* ESP-IDF v6.1 renamed the maximum attenuation for the ESP32-C3 from
+ * 11 dB to 12 dB (ADC_ATTEN_DB_11 -> ADC_ATTEN_DB_12).  Both are enum
+ * constants, so the preprocessor cannot tell them apart with #ifdef; use the
+ * IDF version macro to keep 5.1 builds working. */
+#include "esp_idf_version.h"
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
+#define ADC_DEV_ATTEN ADC_ATTEN_DB_12
+#else
+#define ADC_DEV_ATTEN ADC_ATTEN_DB_11
+#endif
+
 #ifdef BSP_USING_ADC
-#define DBG_TAG              "drv.adc"
-#define DBG_LVL               DBG_INFO
+#define DBG_TAG "drv.adc"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#define EXAMPLE_READ_LEN   256
-#define GET_UNIT(x)        ((x>>3) & 0x1)
+#define EXAMPLE_READ_LEN 256
+#define GET_UNIT(x)      ((x >> 3) & 0x1)
 
 /* esp i2c dirver class */
 struct esp_adc
@@ -49,8 +60,7 @@ struct esp_adc
 #endif
 };
 
-static struct esp_adc_config adc_config[] =
-{
+static struct esp_adc_config adc_config[] = {
 #ifdef BSP_USING_ADC1
     {
         .adc_id = ADC_UNIT_1,
@@ -128,7 +138,7 @@ static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt
 #else
     struct esp_adc *_adc = rt_container_of(device, struct esp_adc, adc_device);
 
-    if(enabled)
+    if (enabled)
     {
         //-------------ADC Init---------------//
         adc_oneshot_unit_init_cfg_t init_config = {
@@ -138,14 +148,14 @@ static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt
         //-------------ADC Config---------------//
         adc_oneshot_chan_cfg_t config = {
             .bitwidth = ADC_BITWIDTH_DEFAULT,
-            .atten = ADC_ATTEN_DB_11,
+            .atten = ADC_DEV_ATTEN,
         };
         ESP_ERROR_CHECK(adc_oneshot_config_channel(_adc->handle, channel, &config));
 
 #if ADC_CALI_SCHEME_CURVE_FITTING_SUPPORTED
         adc_cali_curve_fitting_config_t cali_config = {
             .unit_id = _adc->adc_id,
-            .atten = ADC_ATTEN_DB_11,
+            .atten = ADC_DEV_ATTEN,
             .bitwidth = ADC_BITWIDTH_DEFAULT,
         };
         if (adc_cali_create_scheme_curve_fitting(&cali_config, &_adc->cali_handle) == ESP_OK)
@@ -241,8 +251,7 @@ static rt_err_t _adc_get_value(struct rt_adc_device *device, rt_int8_t channel, 
 #endif
 }
 
-static const struct rt_adc_ops esp_adc_ops =
-{
+static const struct rt_adc_ops esp_adc_ops = {
     .enabled = _adc_enabled,
     .convert = _adc_get_value,
     .get_resolution = RT_NULL,

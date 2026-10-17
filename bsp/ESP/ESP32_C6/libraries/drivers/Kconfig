@@ -1,0 +1,220 @@
+
+config SOC_ESPRESSIF
+    bool 
+
+choice
+    prompt "Espressif SoC"
+    default SOC_ESP32_C3
+
+config SOC_ESP32_C3
+    bool "ESP32-C3"
+    select SOC_ESPRESSIF
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select PKG_USING_ESP_IDF
+    select PKG_USING_FREERTOS_WRAPPER
+    select PKG_FREERTOS_USING_CONFIG_H
+
+config SOC_ESP32_C6
+    bool "ESP32-C6"
+    select SOC_ESPRESSIF
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select PKG_USING_ESP_IDF
+    select PKG_USING_FREERTOS_WRAPPER
+    select PKG_FREERTOS_USING_CONFIG_H
+endchoice
+
+menu "Hardware Drivers Config"
+
+choice BSP_BOARD_SEL
+    prompt "Select BSP board "
+    default BSP_BOARD_ESP32C6_DEVKITC1 if SOC_ESP32_C6
+    default BSP_BOARD_LUATOS_ESP32C3
+
+    config BSP_BOARD_LUATOS_ESP32C3
+        bool "LUATOS ESP32C3 board"
+        depends on SOC_ESP32_C3
+
+    config BSP_BOARD_HX_EXP32C3
+        bool "HONGXU ESP32C3 board"
+        depends on SOC_ESP32_C3
+
+    config BSP_BOARD_ESP32C6_DEVKITC1
+        bool "ESP32-C6-DevKitC-1"
+        depends on SOC_ESP32_C6
+endchoice
+
+menu "Onboard Peripheral Drivers"
+    config RT_BSP_LED_PIN
+        int "LED GPIO PIN SET"
+        default 12 if BSP_BOARD_LUATOS_ESP32C3
+        default 8 if BSP_BOARD_HX_EXP32C3
+        depends on BSP_USING_GPIO && !BSP_BOARD_ESP32C6_DEVKITC1
+
+    config RT_BSP_UART_PORT
+        int "UART PORT SET"
+        default 0
+        depends on BSP_USING_UART
+
+    config RT_BSP_UART_TX_PIN
+        int "UART TX PIN SET"
+        default 21 if BSP_BOARD_LUATOS_ESP32C3
+        default 16 if BSP_BOARD_ESP32C6_DEVKITC1
+        depends on BSP_USING_UART
+
+    config RT_BSP_UART_RX_PIN
+        int "UART RX PIN SET"
+        default 20 if BSP_BOARD_LUATOS_ESP32C3
+        default 17 if BSP_BOARD_ESP32C6_DEVKITC1
+        depends on BSP_USING_UART
+
+    config RT_BSP_SPI_CS_PIN
+        int "SPI GPIO PIN SET"
+        default 10 if BSP_BOARD_LUATOS_ESP32C3
+        depends on BSP_USING_SPI2
+
+endmenu
+
+
+menu "On-chip Peripheral Drivers"
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+    
+    config BSP_USING_UART
+		bool "Enable UART"
+        select RT_USING_SERIAL
+        select RT_USING_SERIAL_V1
+        default y
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        depends on SOC_ESP32_C3
+        default n
+        select RT_USING_I2C
+        if BSP_USING_I2C
+            menuconfig BSP_USING_HW_I2C
+                bool "Enable HardWare I2C"
+                default n
+            menuconfig BSP_USING_SOFT_I2C
+                bool "Enable software I2C (swi2c)"
+                default n
+                select RT_USING_I2C
+                select RT_USING_SOFT_I2C
+                if BSP_USING_SOFT_I2C
+                menuconfig BSP_USING_SOFT_I2C0
+                    bool "Enable software I2C0 Bus (swi2c0)"
+                    default n
+                    select RT_USING_SOFT_I2C0
+                    if BSP_USING_SOFT_I2C0
+                        config RT_SOFT_I2C0_SCL_PIN
+                            int "swi2c0 SCL pin number"
+                            default 19
+                        config RT_SOFT_I2C0_SDA_PIN
+                            int "swi2c0 SDA pin number"
+                            default 18
+                    endif
+            endif
+
+
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        depends on SOC_ESP32_C3 || SOC_ESP32_C6
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+        endif 
+    
+    config BSP_USING_WIFI
+        bool "Enable WIFI"
+        depends on SOC_ESP32_C3
+        select RT_USING_WIFI
+        default n
+    
+    config BSP_USING_BLE
+        bool "Enable BLE"
+        depends on SOC_ESP32_C3
+        default n
+
+    menuconfig BSP_USING_CLOCK_TIMER
+        bool "Enable CLOCK_TIMER"
+        depends on SOC_ESP32_C3
+        select RT_USING_CLOCK_TIME
+        default n
+        if BSP_USING_CLOCK_TIMER
+            config BSP_USING_TIMER0
+                bool "Enable CLOCK_TIMER0"
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        depends on SOC_ESP32_C3 || SOC_ESP32_C6
+        default y if SOC_ESP32_C6
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default y if SOC_ESP32_C6
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        depends on SOC_ESP32_C3
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            menuconfig BSP_USING_PWM0
+                bool "Enable PWM0"
+                default n
+                if BSP_USING_PWM0
+                    config BSP_LEDC_CH0_GPIO
+                        int "LEDC CH0 GPIO PIN SET"
+                        default 12
+                    config BSP_LEDC_CH1_GPIO
+                        int "LEDC CH1 GPIO PIN SET"
+                        default 6
+                    config BSP_LEDC_CH2_GPIO
+                        int "LEDC CH2 GPIO PIN SET"
+                        default 2
+                    config BSP_LEDC_CH3_GPIO
+                        int "LEDC CH3 GPIO PIN SET"
+                        default 10
+                    config BSP_LEDC_CH4_GPIO
+                        int "LEDC CH4 GPIO PIN SET"
+                        default 8
+                    config BSP_LEDC_CH5_GPIO
+                        int "LEDC CH5 GPIO PIN SET"
+                        default 18
+                endif
+        endif
+
+endmenu
+
+config BSP_ENABLE_GDBSTUB
+    bool "Enable ESP_GDBSTUB compontent"
+    depends on SOC_ESPRESSIF
+    default n
+
+    config RT_SOFT_I2C0_HAS_PIN_DEFAULT
+        bool
+        default y if RT_USING_SOFT_I2C0
+
+    config RT_SOFT_I2C0_SCL_PIN_DEFAULT
+        int
+        default 19 if RT_USING_SOFT_I2C0
+
+    config RT_SOFT_I2C0_SDA_PIN_DEFAULT
+        int
+        default 18 if RT_USING_SOFT_I2C0
+
+endmenu
