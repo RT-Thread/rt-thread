@@ -20,8 +20,10 @@
 #ifdef RT_USING_FINSH
 #include <msh.h>
 #endif
+#ifdef ARCH_MM_MMU
 #include <ioremap.h>
 #include <mm_memblock.h>
+#endif
 
 #ifdef RT_USING_OFW
 #define bootargs_select rt_ofw_bootargs_select
@@ -38,6 +40,7 @@ static int rootfs_mnt_init(void)
     const char *fstype = bootargs_select("rootfstype=", 0);
     const char *rw = bootargs_select("rw", 0);
 
+#ifdef ARCH_MM_MMU
     if (!dev || !fstype)
     {
         const char *name = "initrd";
@@ -64,6 +67,7 @@ static int rootfs_mnt_init(void)
             }
         }
     }
+#endif /* ARCH_MM_MMU */
 
     if (fstype != cromfs_type && dev)
     {
