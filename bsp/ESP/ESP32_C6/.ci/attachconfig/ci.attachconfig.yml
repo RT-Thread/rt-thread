@@ -12,3 +12,9 @@ devices.uart:
       - CONFIG_RT_USING_SERIAL=y
       - CONFIG_RT_USING_SERIAL_V1=y
       - CONFIG_BSP_USING_UART=y
+devices.spi:
+    <<: *scons
+    kconfig:
+      - CONFIG_RT_USING_SPI=y
+      - CONFIG_BSP_USING_SPI=y
+      - CONFIG_BSP_USING_SPI2=y

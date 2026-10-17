@@ -13,13 +13,15 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
+/* esp_timer_init() is called under BSP_USING_BLE; ESP-IDF v6.1's header
+ * chain no longer declares it implicitly. */
+#include "esp_timer.h"
 
 #ifdef BSP_USING_BLE
 void app_main()
 {
-    while(1)
+    while (1)
     {
-
     }
 }
 #endif /* BSP_USING_BLE */
