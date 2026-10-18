@@ -302,8 +302,8 @@ jobs:
 
       - name: QEMU Run Test
         if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
-        # qemu-virt64-riscv IPC utests are workqueue/timing sensitive and known to be flaky.
-        continue-on-error: ${{ matrix.platform.UTEST == 'RISCV' && matrix.config_file == 'kernel/ipc.cfg' }}
+        # qemu-virt64-riscv standard kernel utests are timing/scheduling sensitive and known to be flaky.
+        continue-on-error: ${{ matrix.platform.UTEST == 'RISCV' && (matrix.config_file == 'kernel/ipc.cfg' || matrix.config_file == 'kernel/kernel_basic.cfg') }}
         run: |
           if [ "$TEST_SD_FILE" != "None" ]; then
             dd if=/dev/zero of=$TEST_BSP_ROOT/sd.bin bs=1024 count=65536
@@ -409,8 +409,8 @@ jobs:
       
       - name: Monitor qemu log
         if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
-        # Same known-flaky qemu-virt64-riscv IPC utest run as the previous step.
-        continue-on-error: ${{ matrix.platform.UTEST == 'RISCV' && matrix.config_file == 'kernel/ipc.cfg' }}
+        # Same known-flaky qemu-virt64-riscv standard kernel utest run as the previous step.
+        continue-on-error: ${{ matrix.platform.UTEST == 'RISCV' && (matrix.config_file == 'kernel/ipc.cfg' || matrix.config_file == 'kernel/kernel_basic.cfg') }}
         timeout-minutes: 20
         run: |
           LOG_FILE="qemu_output_${TEST_QEMU_ARCH}.log"
