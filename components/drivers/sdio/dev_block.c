@@ -111,7 +111,7 @@ static int card_busy_detect(struct rt_mmcsd_card *card, unsigned int timeout_ms,
 rt_int32_t mmcsd_num_wr_blocks(struct rt_mmcsd_card *card)
 {
     rt_int32_t err;
-    rt_uint32_t blocks;
+    rt_uint32_t blocks = 0;
 
     struct rt_mmcsd_req req;
     struct rt_mmcsd_cmd cmd;
