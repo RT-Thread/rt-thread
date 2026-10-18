@@ -438,11 +438,10 @@ static rt_err_t k230_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     return kd_pin_irq_enable(pin, enabled);
 }
 
-static const struct rt_pin_ops k230_pin_ops =
-{
-    .pin_mode       = k230_pin_mode,
-    .pin_write      = k230_pin_write,
-    .pin_read       = k230_pin_read,
+static const struct rt_pin_ops k230_pin_ops = {
+    .pin_mode = k230_pin_mode,
+    .pin_write = k230_pin_write,
+    .pin_read = k230_pin_read,
     .pin_attach_irq = k230_pin_attach_irq,
     .pin_detach_irq = k230_pin_detach_irq,
     .pin_irq_enable = k230_pin_irq_enable,
