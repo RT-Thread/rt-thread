@@ -318,8 +318,8 @@ static void rtc_alarm_set(struct k230_rtc_dev *dev, void *args)
     time_t t;
     struct tm p_tm;
     volatile rtc_t *rtc = (rtc_t *)dev->base;
-    rtc_alarm_time_t alarm_time;
-    rtc_alarm_date_t alarm_date;
+    rtc_alarm_time_t alarm_time = { 0 };
+    rtc_alarm_date_t alarm_date = { 0 };
     rtc_date_t date = rtc->date;
     int year, year_l, year_h, val;
 
