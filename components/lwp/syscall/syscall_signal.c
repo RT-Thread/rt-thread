@@ -250,7 +250,9 @@ sysret_t sys_sigpending(sigset_t *sigset, size_t sigsize)
         lwp_thread_signal_pending(rt_thread_self(), &lwpset);
 
         if (!lwp_put_to_user(sigset, &lwpset, sigsize))
+        {
             RT_ASSERT(0);   /* should never happened */
+        }
     }
 
     return ret;
@@ -321,7 +323,9 @@ sysret_t sys_sigtimedwait(const sigset_t *sigset, siginfo_t *info, const struct 
     if (timeout)
     {
         if (!lwp_user_accessable((void *)timeout, sizeof(*timeout)))
+        {
             return -EFAULT;
+        }
         else
         {
             ret = lwp_get_from_user(&ktimeout, (void *)timeout, sizeof(*timeout));
@@ -339,7 +343,9 @@ sysret_t sys_sigtimedwait(const sigset_t *sigset, siginfo_t *info, const struct 
     if (sig > 0 && info)
     {
         if (!lwp_user_accessable((void *)info, sizeof(*info)))
+        {
             return -EFAULT;
+        }
         else
         {
             ret = lwp_put_to_user(info, &kinfo, sizeof(*info));

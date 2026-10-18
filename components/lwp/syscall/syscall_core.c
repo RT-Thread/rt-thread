@@ -47,7 +47,7 @@ void kmem_put(void *kptr)
 #endif /* ARCH_MM_MMU */
 
 #ifdef RT_USING_SAL
-    /* The same socket option is defined differently in the user interfaces and the
+/* The same socket option is defined differently in the user interfaces and the
     * implementation. The options should be converted in the kernel. */
 void convert_sockopt(int *level, int *optname)
 {
@@ -121,7 +121,7 @@ void convert_sockopt(int *level, int *optname)
             *optname = IMPL_SO_SELECT_ERR_QUEUE;
             break;
 
-                /*
+            /*
                 * SO_DONTLINGER (*level = ((int)(~SO_LINGER))),
                 * SO_USELOOPBACK (*level = 0x0040) and
                 * SO_CONTIMEO (*level = 0x1009) are not supported for now.

@@ -36,7 +36,9 @@ sysret_t sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     int ret = 0;
     LOG_D("sys_nanosleep\n");
     if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
+    {
         return -EFAULT;
+    }
 
 #ifdef ARCH_MM_MMU
     struct timespec rqtp_k;
@@ -48,13 +50,17 @@ sysret_t sys_nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     {
         lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
         if (ret != 0)
+        {
             return -EINTR;
+        }
     }
 #else
     if (rmtp)
     {
         if (!lwp_user_accessable((void *)rmtp, sizeof *rmtp))
+        {
             return -EFAULT;
+        }
         ret = nanosleep(rqtp, rmtp);
     }
 #endif
@@ -251,7 +257,9 @@ sysret_t sys_clock_gettime(clockid_t clk, struct timespec *ts)
 
     ret = clock_gettime(clk, kts);
     if (ret != -1)
+    {
         lwp_put_to_user(ts, kts, size);
+    }
 
     if (ret < 0)
     {
@@ -310,7 +318,9 @@ sysret_t sys_clock_nanosleep(clockid_t clk, int flags, const struct timespec *rq
     int ret = 0;
     LOG_D("sys_nanosleep\n");
     if (!lwp_user_accessable((void *)rqtp, sizeof *rqtp))
+    {
         return -EFAULT;
+    }
 
 #ifdef ARCH_MM_MMU
     struct timespec rqtp_k;
@@ -322,13 +332,17 @@ sysret_t sys_clock_nanosleep(clockid_t clk, int flags, const struct timespec *rq
     {
         lwp_put_to_user(rmtp, (void *)&rmtp_k, sizeof rmtp_k);
         if (ret != 0)
+        {
             return -EINTR;
+        }
     }
 #else
     if (rmtp)
     {
         if (!lwp_user_accessable((void *)rmtp, sizeof *rmtp))
+        {
             return -EFAULT;
+        }
         ret = clock_nanosleep(clk, flags, rqtp, rmtp);
     }
 #endif
@@ -373,7 +387,9 @@ sysret_t sys_clock_getres(clockid_t clk, struct timespec *ts)
     ret = clock_getres(clk, &kts);
 
     if (ret != -1)
+    {
         lwp_put_to_user(ts, &kts, size);
+    }
 #else
     if (!lwp_user_accessable((void *)ts, sizeof(struct timespec)))
     {
@@ -567,9 +583,13 @@ sysret_t sys_getrandom(void *buf, size_t buflen, unsigned int flags)
     rt_device_t rd_dev = RT_NULL;
 
     if (flags & GRND_RANDOM)
+    {
         rd_dev = rt_device_find("random");
+    }
     else
+    {
         rd_dev = rt_device_find("urandom");
+    }
 
     if (rd_dev == RT_NULL)
     {
@@ -599,7 +619,9 @@ sysret_t sys_getrandom(void *buf, size_t buflen, unsigned int flags)
     {
         ret = rt_device_read(rd_dev, count, (char *)kmem + count, buflen - count);
         if (ret <= 0)
+        {
             break;
+        }
         count += ret;
     }
     rt_device_close(rd_dev);
@@ -615,7 +637,9 @@ sysret_t sys_getrandom(void *buf, size_t buflen, unsigned int flags)
     {
         ret = rt_device_read(rd_dev, count, (char *)kmem + count, buflen - count);
         if (ret <= 0)
+        {
             break;
+        }
         count += ret;
     }
     rt_device_close(rd_dev);
@@ -727,7 +751,9 @@ sysret_t sys_sched_setaffinity(pid_t pid, size_t size, void *set)
         return -EINVAL;
     }
     if (!lwp_user_accessable((void *)set, size))
+    {
         return -EFAULT;
+    }
 
     kset = kmem_get(size);
     if (kset == RT_NULL)
@@ -831,9 +857,13 @@ sysret_t sys_sched_getaffinity(const pid_t pid, size_t size, void *set)
 #endif
 
         if (lwp_put_to_user(set, mask, size) != size)
+        {
             rc = -EFAULT;
+        }
         else
+        {
             rc = size;
+        }
     }
 
     lwp_pid_lock_release();
@@ -1208,6 +1238,8 @@ sysret_t sys_fsync(int fd)
 {
     int res = fsync(fd);
     if (res < 0)
+    {
         res = rt_get_errno();
+    }
     return res;
 }
