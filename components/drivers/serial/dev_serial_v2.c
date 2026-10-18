@@ -1875,7 +1875,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
     case TIOCGWINSZ:
     {
         struct winsize *winsize = (struct winsize *)args;
-        char response[32] = {0};
+        char response[32] = { 0 };
         const char query[] = "\033[18t";
         rt_tick_t start_tick;
         rt_size_t i = 0;
