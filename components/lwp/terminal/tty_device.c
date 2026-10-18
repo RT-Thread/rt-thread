@@ -351,8 +351,7 @@ static void tty_init_termios(lwp_tty_t tp)
     tp->t_winsize.ws_row = 24;
     tp->t_winsize.ws_col = 80;
 
-    memcpy(&t->c_cc, tty_ctrl_charset,
-           sizeof(tty_ctrl_charset) / sizeof(tty_ctrl_charset[0]));
+    memcpy(&t->c_cc, tty_ctrl_charset, sizeof(tty_ctrl_charset));
 
 #ifdef USING_BSD_INIT_LOCK_DEVICE
     tp->t_termios_init_out = *t;

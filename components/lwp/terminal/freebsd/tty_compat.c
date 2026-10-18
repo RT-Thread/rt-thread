@@ -547,7 +547,8 @@ int lwp_tty_ioctl_adapter(lwp_tty_t tp, int cmd, int oflags, void *args, rt_thre
             error = (IOCTL(FIONREAD, args, fflags, td));
             break;
 
-        case TIOCLINUX: {
+        case TIOCLINUX:
+        {
             /*
              * Linux uses TIOCLINUX to obtain console keyboard modifier
              * state.  RT-Thread serial consoles do not expose that state,
