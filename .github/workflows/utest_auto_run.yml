@@ -291,6 +291,12 @@ jobs:
 
           echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
           cat $UTEST_CONFIG_ROOT/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
+
+          # Keep standard qemu tests free of PM/tickless side effects.
+          if [[ "${{ matrix.platform.KERNEL }}" == "standard" && ( "$TEST_BSP_ROOT" == "bsp/qemu-virt64-riscv" || "$TEST_BSP_ROOT" == "bsp/qemu-virt64-aarch64" ) ]]; then
+            echo "# CONFIG_RT_USING_PM is not set" >> $TEST_BSP_ROOT/.config
+          fi
+
           scons --pyconfig-silent -C $TEST_BSP_ROOT
           scons -j$(nproc) --strict -C $TEST_BSP_ROOT
 
