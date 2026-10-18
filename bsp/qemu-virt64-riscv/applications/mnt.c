@@ -6,16 +6,16 @@
 
 #include <rtthread.h>
 
-#define DBG_TAG     "FileSystem"
-#define DBG_LVL     DBG_INFO
+#define DBG_TAG "FileSystem"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #ifdef RT_USING_DFS
 #include <dfs_fs.h>
 
 #ifndef RT_USING_DM
-#define ROOTFS_MOUNT_RETRIES       100
-#define ROOTFS_MOUNT_RETRY_DELAY   10
+#define ROOTFS_MOUNT_RETRIES     100
+#define ROOTFS_MOUNT_RETRY_DELAY 10
 
 static int mnt_rootfs(void)
 {
