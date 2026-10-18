@@ -143,8 +143,36 @@ static rt_err_t common_early_setup(struct rt_fdt_earlycon *con, const char *opti
 RT_FDT_EARLYCON_EXPORT(bcm2835aux, "uart8250", "brcm,bcm2835-aux-uart", common_early_setup);
 RT_FDT_EARLYCON_EXPORT(tegra20, "uart8250", "nvidia,tegra20-uart", common_early_setup);
 RT_FDT_EARLYCON_EXPORT(dw8250, "uart8250", "snps,dw-apb-uart", common_early_setup);
-RT_FDT_EARLYCON_EXPORT(ns16550a, "uart8250", "ns16550a", common_early_setup);
-RT_FDT_EARLYCON_EXPORT(ns16550, "uart8250", "ns16550", common_early_setup);
+
+static rt_err_t ns16550_early_setup(struct rt_fdt_earlycon *con, const char *options)
+{
+    rt_uint32_t width = 1;
+    struct serial8250 *serial = &early_serial8250;
+
+    common_init(serial, con);
+    serial->regshift = 0;
+    fdt_getprop_u32(con->fdt, con->nodeoffset, "reg-shift", &serial->regshift, RT_NULL);
+    fdt_getprop_u32(con->fdt, con->nodeoffset, "reg-io-width", &width, RT_NULL);
+
+    switch (width)
+    {
+    case 1:
+        serial->iotype = PORT_MMIO;
+        break;
+    case 2:
+        serial->iotype = PORT_MMIO16;
+        break;
+    case 4:
+        serial->iotype = PORT_MMIO32;
+        break;
+    default:
+        return -RT_EINVAL;
+    }
+
+    return serial8250_early_fdt_setup(serial, con, options);
+}
+RT_FDT_EARLYCON_EXPORT(ns16550a, "uart8250", "ns16550a", ns16550_early_setup);
+RT_FDT_EARLYCON_EXPORT(ns16550, "uart8250", "ns16550", ns16550_early_setup);
 
 #ifdef RT_USING_8250_OMAP
 static rt_err_t omap8250_early_setup(struct rt_fdt_earlycon *con, const char *options)
