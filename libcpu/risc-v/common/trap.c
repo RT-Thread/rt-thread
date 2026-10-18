@@ -33,6 +33,8 @@
 extern long list_thread(void);
 #endif
 
+void rt_hw_show_register(struct rt_hw_stack_frame *regs);
+
 #ifdef RT_USING_LWP
 #include <mm_aspace.h>
 #include <lwp.h>
