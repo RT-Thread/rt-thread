@@ -284,8 +284,10 @@ jobs:
           if [[ "${{ matrix.platform.KERNEL }}"  == "rtsmart" ]]; then
             cat $UTEST_CONFIG_ROOT/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
           else
-            # Standard kernel tests must not inherit a SMART default from the BSP.
+            # Standard kernel tests must not inherit SMART-only components from the BSP.
             echo "# CONFIG_RT_USING_SMART is not set" >> $TEST_BSP_ROOT/.config
+            echo "# CONFIG_RT_USING_AF_UNIX is not set" >> $TEST_BSP_ROOT/.config
+            echo "# CONFIG_PKG_USING_LWEXT4 is not set" >> $TEST_BSP_ROOT/.config
           fi
 
           echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
