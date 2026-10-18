@@ -49,7 +49,7 @@
         (((domain) == AF_INET || (domain) == AF_INET6) &&                                              \
          (((type) == SOCK_STREAM && ((protocol) == 0 || (protocol) == IPPROTO_TCP)) ||                 \
           ((type) == SOCK_DGRAM && ((protocol) == 0 || (protocol) == IPPROTO_UDP)) ||                  \
-          ((type) == SOCK_RAW && VALID_PROTOCOL(protocol)))) ||                                          \
+          ((type) == SOCK_RAW && VALID_PROTOCOL(protocol)))) ||                                        \
         ((domain) == AF_UNIX && ((type) == SOCK_STREAM || (type) == SOCK_DGRAM) && (protocol) == 0) || \
         ((domain) == AF_NETLINK && (type) == SOCK_RAW && (protocol) == 0))
 
