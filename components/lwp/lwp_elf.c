@@ -619,9 +619,18 @@ static int elf_zero_bss(struct rt_lwp *lwp, int fd, const Elf_Phdr *phdr, rt_uba
 static size_t elf_prot_from_pflags(uint32_t p_flags)
 {
     size_t prot = PROT_NONE;
-    if (p_flags & PF_R) prot |= PROT_READ;
-    if (p_flags & PF_W) prot |= PROT_WRITE;
-    if (p_flags & PF_X) prot |= PROT_EXEC;
+    if (p_flags & PF_R)
+    {
+        prot |= PROT_READ;
+    }
+    if (p_flags & PF_W)
+    {
+        prot |= PROT_WRITE;
+    }
+    if (p_flags & PF_X)
+    {
+        prot |= PROT_EXEC;
+    }
     return prot;
 }
 
