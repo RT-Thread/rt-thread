@@ -255,9 +255,10 @@ static void sigqueue_enqueue(lwp_sigqueue_t sigqueue, lwp_siginfo_t siginfo)
     rt_bool_t inserted = RT_FALSE;
     rt_list_for_each_entry(idx, &sigqueue->siginfo_list, node)
     {
-        if (idx->ksiginfo.signo >= siginfo->ksiginfo.signo)
+        /* Keep ascending signal order and FIFO order for equal signals. */
+        if (idx->ksiginfo.signo > siginfo->ksiginfo.signo)
         {
-            rt_list_insert_after(&idx->node, &siginfo->node);
+            rt_list_insert_before(&idx->node, &siginfo->node);
             inserted = RT_TRUE;
             break;
         }
