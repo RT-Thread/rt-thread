@@ -387,7 +387,9 @@ sysret_t sys_getsockopt(int socket, int level, int optname, void *optval, sockle
     void *koptval = RT_NULL;
 
     if (!lwp_user_accessable((void *)optlen, sizeof(uint32_t)))
+    {
         return -EFAULT;
+    }
 
     if (lwp_get_from_user(&koptlen, optlen, sizeof(uint32_t)) != sizeof(uint32_t))
     {
@@ -395,7 +397,9 @@ sysret_t sys_getsockopt(int socket, int level, int optname, void *optval, sockle
     }
 
     if (!lwp_user_accessable((void *)optval, koptlen))
+    {
         return -EFAULT;
+    }
 
     koptval = kmem_get(koptlen);
     if (koptval == RT_NULL)
@@ -452,7 +456,9 @@ sysret_t sys_setsockopt(int socket, int level, int optname, const void *optval, 
     void *koptval = RT_NULL;
 
     if (!lwp_user_accessable((void *)optval, optlen))
+    {
         return -EFAULT;
+    }
 
     koptval = kmem_get(optlen);
     if (koptval == RT_NULL)
@@ -1104,7 +1110,9 @@ sysret_t sys_recv(int socket, void *mem, size_t len, int flags)
     void *kmem = RT_NULL;
 
     if (!lwp_user_accessable((void *)mem, len))
+    {
         return -EFAULT;
+    }
 
     kmem = kmem_get(len);
     if (kmem == RT_NULL)
@@ -1375,7 +1383,9 @@ sysret_t sys_send(int socket, const void *dataptr, size_t size, int flags)
     void *kdataptr = RT_NULL;
 
     if (!lwp_user_accessable((void *)dataptr, size))
+    {
         return -EFAULT;
+    }
 
     kdataptr = kmem_get(size);
     if (kdataptr == RT_NULL)

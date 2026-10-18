@@ -204,7 +204,9 @@ rt_mutex_t sys_mutex_create(const char *name, rt_uint8_t flag)
 
     mutex = rt_mutex_create(kname, flag);
     if (mutex == RT_NULL)
+    {
         return RT_NULL;
+    }
 
     if (lwp_user_object_add(lwp_self(), (rt_object_t)mutex) != 0)
     {
@@ -1005,7 +1007,9 @@ sysret_t sys_mq_recv(rt_mq_t mq,
 
     ret = rt_mq_recv(mq, kbuffer, size, timeout);
     if (ret > 0)
+    {
         lwp_put_to_user((void *)buffer, (void *)kbuffer, ret);
+    }
 
     kmem_put(kbuffer);
 
@@ -1241,7 +1245,9 @@ sysret_t sys_timer_create(clockid_t clockid, struct sigevent * restrict sevp, ti
     {
         /* clear extra bytes if any */
         if (sizeof(struct ksigevent) < sizeof(struct sigevent))
+        {
             memset(&sevp_k, 0, sizeof(sevp_k));
+        }
 
         /* musl passes `struct ksigevent` to kernel, we shoule only get size of that bytes */
         if (!lwp_get_from_user(&sevp_k, (void *)sevp, sizeof(struct ksigevent)))
@@ -1257,7 +1263,9 @@ sysret_t sys_timer_create(clockid_t clockid, struct sigevent * restrict sevp, ti
         utimer = (rt_ubase_t)timerid_k;
         if (!lwp_put_to_user(sevp, (void *)&sevp_k, sizeof(struct ksigevent)) ||
             !lwp_put_to_user(timerid, (void *)&utimer, sizeof(utimer)))
+        {
             ret = -EINVAL;
+        }
     }
 #else
     ret = _SYS_WRAP(timer_create(clockid, sevp, timerid));
