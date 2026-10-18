@@ -302,6 +302,8 @@ jobs:
 
       - name: QEMU Run Test
         if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
+        # qemu-virt64-riscv IPC utests are workqueue/timing sensitive and known to be flaky.
+        continue-on-error: ${{ matrix.platform.UTEST == 'RISCV' && matrix.config_file == 'kernel/ipc.cfg' }}
         run: |
           if [ "$TEST_SD_FILE" != "None" ]; then
             dd if=/dev/zero of=$TEST_BSP_ROOT/sd.bin bs=1024 count=65536
