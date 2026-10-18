@@ -230,8 +230,8 @@ static void rtc_irq(int vector, void *param)
 static void rtc_date_time_set(struct k230_rtc_dev *dev, int year, int month, int day, \
                               int hour, int minute, int second, int week)
 {
-    rtc_date_t date;
-    rtc_time_t time;
+    rtc_date_t date = { 0 };
+    rtc_time_t time = { 0 };
     rtc_count_t count;
     volatile rtc_t *rtc = (rtc_t *)dev->base;
 
