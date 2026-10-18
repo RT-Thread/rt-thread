@@ -477,7 +477,7 @@ static int rt_hw_rtc_init(void)
 
     ret = rt_device_register(&rtc_dev.device, "rtc", RT_DEVICE_FLAG_RDWR);
     RT_ASSERT(ret == RT_EOK);
-    LOG_I("rtc driver register OK\n");
+    LOG_D("rtc driver register OK");
 
     rtc_alarm_stop(&rtc_dev);
     rtc_tick_stop(&rtc_dev);
