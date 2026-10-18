@@ -15,6 +15,7 @@
 
 #include <fcntl.h>
 #include <errno.h>
+#include <string.h>
 
 #include <dfs_dentry.h>
 
