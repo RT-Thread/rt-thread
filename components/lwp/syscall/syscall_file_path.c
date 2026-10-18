@@ -50,9 +50,13 @@ long sys_getcwd(char *buf, size_t size)
         if (lwp_put_to_user(buf, tmp, size) > 0)
         {
             if (buf != RT_NULL)
+            {
                 ret = strlen(buf);
+            }
             else
+            {
                 ret = -EFAULT;
+            }
         }
     }
 

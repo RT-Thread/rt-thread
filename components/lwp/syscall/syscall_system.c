@@ -322,7 +322,9 @@ sysret_t sys_timerfd_settime(int fd, int flags, const struct itimerspec *new, st
     struct itimerspec *kold = RT_NULL;
 
     if (new == RT_NULL)
+    {
         return -EINVAL;
+    }
 
     if (!lwp_user_accessable((void *)new, sizeof(struct itimerspec)))
     {
@@ -392,7 +394,9 @@ sysret_t sys_timerfd_gettime(int fd, struct itimerspec *cur)
     struct itimerspec *kcur;
 
     if (cur == RT_NULL)
+    {
         return -EINVAL;
+    }
 
     if (!lwp_user_accessable((void *)cur, sizeof(struct itimerspec)))
     {
@@ -445,7 +449,9 @@ sysret_t sys_signalfd(int fd, const sigset_t *mask, int flags)
 
 #ifdef RT_USING_MUSLLIBC
     if (mask == RT_NULL)
+    {
         return -EINVAL;
+    }
 
     if (!lwp_user_accessable((void *)mask, sizeof(struct itimerspec)))
     {
@@ -523,7 +529,9 @@ sysret_t sys_setitimer(int which, const struct itimerspec * restrict new, struct
 
     rc = lwp_signal_setitimer(lwp, which, &new_value_k, &old_value_k);
     if (old && lwp_put_to_user(old, (void *)&old_value_k, sizeof old_value_k) != sizeof old_value_k)
+    {
         return -EFAULT;
+    }
 
     return rc;
 }
@@ -555,7 +563,9 @@ sysret_t sys_setitimer(int which, const struct itimerspec * restrict new, struct
 sysret_t sys_set_robust_list(struct robust_list_head *head, size_t len)
 {
     if (len != sizeof(*head))
+    {
         return -EINVAL;
+    }
 
     rt_thread_self()->robust_list = head;
     return 0;
@@ -625,9 +635,13 @@ sysret_t sys_get_robust_list(int tid, struct robust_list_head **head_ptr, size_t
     len = sizeof(*(head));
 
     if (!lwp_put_to_user(len_ptr, &len, sizeof(size_t)))
+    {
         return -EFAULT;
+    }
     if (!lwp_put_to_user(head_ptr, &head, sizeof(struct robust_list_head *)))
+    {
         return -EFAULT;
+    }
 
     return 0;
 }

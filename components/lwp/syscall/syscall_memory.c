@@ -82,7 +82,9 @@ void *sys_mmap2(void *addr, size_t length, int prot,
     if ((rt_base_t)addr & ARCH_PAGE_MASK)
     {
         if (flags & MAP_FIXED)
+        {
             rc = -EINVAL;
+        }
         else
         {
             offset = (char *)addr - (char *)RT_ALIGN_DOWN((rt_base_t)addr, ARCH_PAGE_SIZE);
@@ -434,7 +436,9 @@ sysret_t sys_shm_free(void *mem)
 rt_weak sysret_t sys_cacheflush(void *addr, int size, int cache)
 {
     if (!lwp_user_accessable(addr, size))
+    {
         return -EFAULT;
+    }
 
     if (((size_t)addr < (size_t)addr + size) &&
         ((size_t)addr >= USER_VADDR_START) &&

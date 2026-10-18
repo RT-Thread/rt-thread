@@ -120,7 +120,9 @@ sysret_t sys_channel_send(int fd, rt_channel_msg_t data)
 
     kdata = kmem_get(sizeof(*data));
     if (kdata == RT_NULL)
+    {
         return -ENOMEM;
+    }
 
     if (lwp_get_from_user(kdata, data, sizeof(*kdata)) != sizeof(*kdata))
     {
@@ -174,7 +176,9 @@ sysret_t sys_channel_send_recv_timeout(int fd, rt_channel_msg_t data, rt_channel
 
     kdata = kmem_get(sizeof(*data));
     if (kdata == RT_NULL)
+    {
         return -ENOMEM;
+    }
 
     if (lwp_get_from_user(kdata, data, sizeof(*kdata)) != sizeof(*kdata))
     {
@@ -184,7 +188,9 @@ sysret_t sys_channel_send_recv_timeout(int fd, rt_channel_msg_t data, rt_channel
 
     kdata_ret = kmem_get(sizeof(*data_ret));
     if (kdata_ret == RT_NULL)
+    {
         return -ENOMEM;
+    }
 
     ret = lwp_channel_send_recv_timeout(FDT_TYPE_LWP, fd, kdata, kdata_ret, time);
 
@@ -230,7 +236,9 @@ sysret_t sys_channel_reply(int fd, rt_channel_msg_t data)
 
     kdata = kmem_get(sizeof(*data));
     if (kdata == RT_NULL)
+    {
         return -ENOMEM;
+    }
 
     if (lwp_get_from_user(kdata, data, sizeof(*kdata)) != sizeof(*data))
     {
@@ -278,7 +286,9 @@ sysret_t sys_channel_recv_timeout(int fd, rt_channel_msg_t data, rt_int32_t time
 
     kdata = kmem_get(sizeof(*data));
     if (kdata == RT_NULL)
+    {
         return -ENOMEM;
+    }
 
     ret = lwp_channel_recv_timeout(FDT_TYPE_LWP, fd, kdata, time);
 
@@ -385,7 +395,9 @@ sysret_t sys_log(const char *log, int size)
     rt_device_t console = RT_NULL;
 
     if (!lwp_user_accessable((void *)log, size))
+    {
         return -EFAULT;
+    }
 
     klog = kmem_get(size);
     if (klog == RT_NULL)

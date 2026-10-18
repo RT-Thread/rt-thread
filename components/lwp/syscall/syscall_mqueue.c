@@ -46,11 +46,15 @@ mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr
 
     len = lwp_user_strlen(name);
     if (!len)
+    {
         return (mqd_t)-EINVAL;
+    }
 
     kname = (char *)kmem_get(len + 1);
     if (!kname)
+    {
         return (mqd_t)-ENOMEM;
+    }
 
     if (attr == NULL)
     {
@@ -62,7 +66,9 @@ mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr
     else
     {
         if (!lwp_get_from_user(&attr_k, (void *)attr, sizeof(struct mq_attr)))
+        {
             return -EINVAL;
+        }
     }
 
     lwp_get_from_user(kname, (void *)name, len + 1);
@@ -77,9 +83,13 @@ mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr
     mqdes = mq_open(name, flags, mode, attr);
 #endif
     if (mqdes == -1)
+    {
         return (mqd_t)ret;
+    }
     else
+    {
         return mqdes;
+    }
 }
 
 /**
@@ -109,10 +119,14 @@ sysret_t sys_mq_unlink(const char *name)
 
     len = lwp_user_strlen(name);
     if (!len)
+    {
         return -EINVAL;
+    }
     kname = (char *)kmem_get(len + 1);
     if (!kname)
+    {
         return -ENOMEM;
+    }
 
     lwp_get_from_user(kname, (void *)name, len + 1);
     ret = mq_unlink(kname);
@@ -163,7 +177,9 @@ sysret_t sys_mq_timedsend(mqd_t mqd, const char *msg, size_t len, unsigned prio,
 
     kmsg = (char *)kmem_get(len + 1);
     if (!kmsg)
+    {
         return -ENOMEM;
+    }
 
     lwp_get_from_user(&at_k, (void *)at, sizeof(struct timespec));
     lwp_get_from_user(kmsg, (void *)msg, len + 1);
@@ -218,7 +234,9 @@ sysret_t sys_mq_timedreceive(mqd_t mqd, char * restrict msg, size_t len, unsigne
 
     kmsg = (char * restrict)kmem_get(len + 1);
     if (!kmsg)
+    {
         return -ENOMEM;
+    }
 
     lwp_get_from_user(kmsg, (void *)msg, len + 1);
     if (at == RT_NULL)
@@ -228,12 +246,16 @@ sysret_t sys_mq_timedreceive(mqd_t mqd, char * restrict msg, size_t len, unsigne
     else
     {
         if (!lwp_get_from_user(&at_k, (void *)at, sizeof(struct timespec)))
+        {
             return -EINVAL;
+        }
         ret = mq_timedreceive(mqd, kmsg, len, prio, &at_k);
     }
 
     if (ret > 0)
+    {
         lwp_put_to_user(msg, kmsg, len + 1);
+    }
 
     if (ret < 0)
     {
@@ -317,23 +339,33 @@ sysret_t sys_mq_getsetattr(mqd_t mqd, const struct mq_attr * restrict new, struc
     if (new != RT_NULL)
     {
         if (!lwp_user_accessable((void *)new, size))
+        {
             return -EFAULT;
+        }
         knew = kmem_get(size);
         if (!knew)
+        {
             return -ENOMEM;
+        }
         lwp_get_from_user(knew, (void *)new, size);
     }
 
     if (!lwp_user_accessable((void *)old, size))
+    {
         return -EFAULT;
+    }
     kold = kmem_get(size);
     if (!kold)
+    {
         return -ENOMEM;
+    }
 
     lwp_get_from_user(kold, (void *)old, size);
     ret = mq_setattr(mqd, knew, kold);
     if (ret != -1)
+    {
         lwp_put_to_user(old, kold, size);
+    }
 
     if (ret < 0)
     {
@@ -342,7 +374,9 @@ sysret_t sys_mq_getsetattr(mqd_t mqd, const struct mq_attr * restrict new, struc
 
     kmem_put(kold);
     if (new != RT_NULL)
+    {
         kmem_put(knew);
+    }
 
     return ret;
 #else

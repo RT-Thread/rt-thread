@@ -302,15 +302,21 @@ sysret_t sys_mount(char *source, char *target, char *filesystemtype,
 
     len_source = source ? lwp_user_strlen(source) : 0;
     if (len_source < 0)
+    {
         return -EINVAL;
+    }
 
     len_target = target ? lwp_user_strlen(target) : 0;
     if (len_target <= 0)
+    {
         return -EINVAL;
+    }
 
     len_fs = filesystemtype ? lwp_user_strlen(filesystemtype) : 0;
     if (len_fs < 0)
+    {
         return -EINVAL;
+    }
 
     kbuffer = (char *)rt_malloc(len_source + 1 + len_target + 1 + len_fs + 1);
     if (!kbuffer)
@@ -631,7 +637,9 @@ sysret_t sys_epoll_ctl(int fd, int op, int fd2, struct epoll_event *ev)
     if (ev)
     {
         if (!lwp_user_accessable((void *)ev, sizeof(struct epoll_event)))
+        {
             return -EFAULT;
+        }
 
         kev = kmem_get(sizeof(struct epoll_event));
         if (kev == RT_NULL)
@@ -690,7 +698,9 @@ sysret_t sys_epoll_pwait(int fd,
     sigset_t *ksigs = RT_NULL;
 
     if (!lwp_user_accessable((void *)ev, cnt * sizeof(struct epoll_event)))
+    {
         return -EFAULT;
+    }
 
     kev = kmem_get(cnt * sizeof(struct epoll_event));
     if (kev == RT_NULL)
@@ -729,7 +739,9 @@ sysret_t sys_epoll_pwait(int fd,
     }
 
     if (sigs != RT_NULL)
+    {
         kmem_put(ksigs);
+    }
 
     kmem_put(kev);
 
