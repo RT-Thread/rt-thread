@@ -89,10 +89,12 @@ int mnt_init(void)
 
     return 0;
 }
+#ifndef RT_USING_UTESTCASES
 #ifdef RT_USING_DM
 /* The driver model mounts rootfs at the environment initialization level. */
 INIT_FS_EXPORT(mnt_init);
 #else
 INIT_ENV_EXPORT(mnt_init);
 #endif
+#endif /* RT_USING_UTESTCASES */
 #endif
