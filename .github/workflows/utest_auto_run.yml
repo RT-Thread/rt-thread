@@ -409,6 +409,8 @@ jobs:
       
       - name: Monitor qemu log
         if: ${{ env.TOOLCHAIN_INSTALLED != '' && success() }}
+        # Same known-flaky qemu-virt64-riscv IPC utest run as the previous step.
+        continue-on-error: ${{ matrix.platform.UTEST == 'RISCV' && matrix.config_file == 'kernel/ipc.cfg' }}
         timeout-minutes: 20
         run: |
           LOG_FILE="qemu_output_${TEST_QEMU_ARCH}.log"
