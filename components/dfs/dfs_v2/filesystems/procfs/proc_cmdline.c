@@ -15,7 +15,6 @@
 
 #include <fcntl.h>
 #include <errno.h>
-#include <string.h>
 
 #include <dfs_dentry.h>
 
@@ -25,11 +24,11 @@ int proc_cmdline_save(const char *cmdline)
 {
     if (__proc_cmdline)
     {
-        free(__proc_cmdline);
+        rt_free(__proc_cmdline);
         __proc_cmdline = NULL;
     }
 
-    __proc_cmdline = strdup(cmdline);
+    __proc_cmdline = rt_strdup(cmdline);
 
     return 0;
 }
