@@ -1,0 +1,6 @@
+config RT_ADC_SPACEMIT_PMIC
+    bool "Spacemit PMIC ADC driver"
+    depends on RT_USING_DM
+    depends on RT_USING_ADC
+    depends on RT_MFD_SPACEMIT_PMIC
+    default n

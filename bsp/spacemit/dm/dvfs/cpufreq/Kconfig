@@ -1,0 +1,11 @@
+config RT_DVFS_SPACEMIT_CPUFREQ
+    bool "Spacemit K1/M1 CPUfreq driver"
+    depends on RT_USING_DVFS
+    depends on RT_USING_OFW
+    depends on SOC_SPACEMIT_K1
+    depends on RT_CLK_SPACEMIT_K1X
+    depends on RT_REGULATOR_SPACEMIT_PMIC
+    default y
+    help
+      Enable CPU DVFS for the Spacemit K1/M1 shared CPU voltage domain.
+      Both CPU clusters and their TCM/ACE clocks are switched together.
