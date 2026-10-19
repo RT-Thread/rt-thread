@@ -1068,7 +1068,7 @@ static rt_err_t fdt_unflatten_single(struct rt_ofw_node *np, int node_off)
             node_off = fdt_first_subnode(_fdt, node_off);
 
             if (node_off >= 0)
-            {	
+            {
                 parent = np;
 
                 np_stack[depth++] = np;
