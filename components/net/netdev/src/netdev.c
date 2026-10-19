@@ -1400,7 +1400,11 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
                             ping_resp.data_len, inet_ntoa(ping_resp.ip_addr), index + 1, ping_resp.ttl, ping_resp.ticks);
             }
             received += 1;
-            if (ping_resp.ticks > max_time)
+            if (received == 1)
+            {
+                max_time = min_time = ping_resp.ticks;
+            }
+            else if (ping_resp.ticks > max_time)
             {
                 max_time = ping_resp.ticks;
             }
