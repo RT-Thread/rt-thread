@@ -101,21 +101,23 @@ void rt_hw_atomic_flag_clear(volatile rt_atomic_t *ptr)
 
 rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *old, rt_atomic_t desired)
 {
-    rt_atomic_t tmp = *old, result = 0;
+    rt_base_t expected = *old, status, result;
 
+    /* Preserve the expected value when a failed store-conditional retries. */
     __asm__ volatile (
             " fence iorw, ow\n"
             "1: lr." REG_WIDTH ".aq  %[result], (%[ptr])\n"
-            "   bne      %[result], %[tmp], 2f\n"
-            "   sc." REG_WIDTH ".rl  %[tmp], %[desired], (%[ptr])\n"
-            "   bnez     %[tmp], 1b\n"
+            "   bne      %[result], %[expected], 2f\n"
+            "   sc." REG_WIDTH ".rl  %[status], %[desired], (%[ptr])\n"
+            "   bnez     %[status], 1b\n"
             "   li  %[result], 1\n"
             "   j 3f\n"
             " 2:" REG_S "  %[result], (%[old])\n"
             "   li  %[result], 0\n"
             " 3:\n"
-            : [result]"+r" (result), [tmp]"+r" (tmp), [ptr]"+r" (ptr)
-            : [desired]"r" (desired), [old]"r"(old)
+            : [result]"=&r" (result), [status]"=&r" (status)
+            : [ptr]"r" (ptr), [expected]"r" (expected),
+              [desired]"r" (desired), [old]"r"(old)
             : "memory");
 
     return result;

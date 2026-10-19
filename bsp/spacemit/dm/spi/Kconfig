@@ -1,0 +1,18 @@
+config RT_SPI_K1X_QSPI
+    bool "K1X QuadSPI"
+    depends on RT_USING_DM
+    depends on RT_USING_SPI
+    depends on RT_USING_QSPI
+    depends on RT_USING_DMA
+    depends on RT_USING_PIN
+    depends on RT_USING_PINCTRL
+    default n
+
+config RT_SPI_K1X
+    bool "K1X SPI"
+    depends on RT_USING_DM
+    depends on RT_USING_SPI
+    depends on RT_USING_DMA
+    depends on RT_USING_PIN
+    depends on RT_USING_PINCTRL
+    default n

@@ -1,0 +1,9 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = ['v2d_drv.c', 'v2d_hw.c']
+CPPPATH = [cwd, cwd + '/../../include']
+
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_SOC_SPACEMIT_V2D'], CPPPATH = CPPPATH)
+
+Return('group')
