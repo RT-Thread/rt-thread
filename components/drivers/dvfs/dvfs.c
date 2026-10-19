@@ -55,7 +55,13 @@ static rt_err_t dvfs_ofw_parse_opp(struct rt_dvfs_scaling *dvfs)
             uvolt[0] = 0;
         }
 
-        if (!(opp = rt_dvfs_scaling_add_opp(dvfs, (rt_ubase_t)hz, (rt_ubase_t)uvolt[0])))
+        opp = rt_dvfs_scaling_find_opp(dvfs, (rt_ubase_t)hz);
+        if (!opp)
+        {
+            opp = rt_dvfs_scaling_add_opp(dvfs, (rt_ubase_t)hz, (rt_ubase_t)uvolt[0]);
+        }
+
+        if (!opp)
         {
             continue;
         }
