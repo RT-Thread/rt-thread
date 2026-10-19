@@ -907,8 +907,7 @@ static int fdt_check_depth_limit(void *fdt)
 
         while (1) 
         {
-            
-	        int sibling = fdt_next_subnode(fdt, node);
+            int sibling = fdt_next_subnode(fdt, node);
             
             if (sibling >= 0) 
             {
@@ -931,12 +930,12 @@ rt_err_t rt_fdt_unflatten(void)
 
     if (_fdt)
     {
-    	int max_depth = fdt_check_depth_limit(_fdt);
+        int max_depth = fdt_check_depth_limit(_fdt);
         
     	if (max_depth < 0 || max_depth >= OFW_NODE_MAX_DEPTH)
         {
             LOG_E("DTB node depth exceeds limit %d, refuse to unflatten",
-	        	OFW_NODE_MAX_DEPTH - 1);
+                OFW_NODE_MAX_DEPTH - 1);
 	   
             while(1);
         }
