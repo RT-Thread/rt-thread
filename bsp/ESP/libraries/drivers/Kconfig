@@ -15,6 +15,15 @@ config SOC_ESP32_C3
     select PKG_USING_FREERTOS_WRAPPER
     select PKG_FREERTOS_USING_CONFIG_H
 
+config SOC_ESP32_S3
+    bool "ESP32-S3"
+    select SOC_ESPRESSIF
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select PKG_USING_ESP_IDF
+    select PKG_USING_FREERTOS_WRAPPER
+    select PKG_FREERTOS_USING_CONFIG_H
+
 config SOC_ESP32_C6
     bool "ESP32-C6"
     select SOC_ESPRESSIF
@@ -29,6 +38,7 @@ menu "Hardware Drivers Config"
 
 choice BSP_BOARD_SEL
     prompt "Select BSP board "
+    default BSP_BOARD_ESP32S3_DEVKITM1 if SOC_ESP32_S3
     default BSP_BOARD_ESP32C6_DEVKITC1 if SOC_ESP32_C6
     default BSP_BOARD_LUATOS_ESP32C3
 
@@ -40,6 +50,9 @@ choice BSP_BOARD_SEL
         bool "HONGXU ESP32C3 board"
         depends on SOC_ESP32_C3
 
+    config BSP_BOARD_ESP32S3_DEVKITM1
+        bool "ESP32-S3-DevKitM-1 board"
+        depends on SOC_ESP32_S3
     config BSP_BOARD_ESP32C6_DEVKITC1
         bool "ESP32-C6-DevKitC-1"
         depends on SOC_ESP32_C6
@@ -50,7 +63,7 @@ menu "Onboard Peripheral Drivers"
         int "LED GPIO PIN SET"
         default 12 if BSP_BOARD_LUATOS_ESP32C3
         default 8 if BSP_BOARD_HX_EXP32C3
-        depends on BSP_USING_GPIO && !BSP_BOARD_ESP32C6_DEVKITC1
+        depends on BSP_USING_GPIO && !BSP_BOARD_ESP32C6_DEVKITC1 && !BSP_BOARD_ESP32S3_DEVKITM1
 
     config RT_BSP_UART_PORT
         int "UART PORT SET"
@@ -60,12 +73,14 @@ menu "Onboard Peripheral Drivers"
     config RT_BSP_UART_TX_PIN
         int "UART TX PIN SET"
         default 21 if BSP_BOARD_LUATOS_ESP32C3
+        default 43 if BSP_BOARD_ESP32S3_DEVKITM1
         default 16 if BSP_BOARD_ESP32C6_DEVKITC1
         depends on BSP_USING_UART
 
     config RT_BSP_UART_RX_PIN
         int "UART RX PIN SET"
         default 20 if BSP_BOARD_LUATOS_ESP32C3
+        default 44 if BSP_BOARD_ESP32S3_DEVKITM1
         default 17 if BSP_BOARD_ESP32C6_DEVKITC1
         depends on BSP_USING_UART
 

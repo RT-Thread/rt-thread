@@ -1,0 +1,25 @@
+# for module compiling
+import os
+Import('RTT_ROOT')
+
+cwd = str(Dir('#'))
+objs = []
+
+# BSP-owned groups, in dependency-free order.
+for d in ('main', 'idf_port', 'idf_components'):
+    objs = objs + SConscript(os.path.join(d, 'SConscript'))
+
+# Walk every package under packages/ instead of the pkgs generated
+# packages/SConscript. The ESP-IDF package is skipped: its own SConscript only
+# defines source lists for C3/C6 and aborts on this target, the esp32s3 file
+# set is picked by idf_components/SConscript.
+pkgs_dir = os.path.join(cwd, 'packages')
+if os.path.isdir(pkgs_dir):
+    for name in sorted(os.listdir(pkgs_dir)):
+        path = os.path.join(pkgs_dir, name)
+        if name.lower().startswith('esp-idf'):
+            continue
+        if os.path.isfile(os.path.join(path, 'SConscript')):
+            objs = objs + SConscript(os.path.join(path, 'SConscript'))
+
+Return('objs')
