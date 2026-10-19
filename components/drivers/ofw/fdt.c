@@ -897,29 +897,30 @@ static int fdt_check_depth_limit(void *fdt)
         int child = fdt_first_subnode(fdt, node);
      
      	if (child >= 0) 
-	{
+        {
             path[depth] = node;
             node = child;
             depth++;
+            
             continue;
         }
 
         while (1) 
-	{
+        {
             
-	    int sibling = fdt_next_subnode(fdt, node);
+	        int sibling = fdt_next_subnode(fdt, node);
             
-	    if (sibling >= 0) {
+            if (sibling >= 0) 
+            {
                 node = sibling;
                 break;
             }
             
-	    if (depth == 0)
+            if (depth == 0)
                 return max_depth;
             
-	    depth--;
-            
-	    node = path[depth];
+            depth--;
+            node = path[depth];
         }
     }
 }
@@ -930,17 +931,17 @@ rt_err_t rt_fdt_unflatten(void)
 
     if (_fdt)
     {
-	int max_depth = fdt_check_depth_limit(_fdt);
+    	int max_depth = fdt_check_depth_limit(_fdt);
         
-	if (max_depth < 0 || max_depth >= OFW_NODE_MAX_DEPTH)
+    	if (max_depth < 0 || max_depth >= OFW_NODE_MAX_DEPTH)
         {
             LOG_E("DTB node depth exceeds limit %d, refuse to unflatten",
-		OFW_NODE_MAX_DEPTH - 1);
+	        	OFW_NODE_MAX_DEPTH - 1);
 	   
-	    while(1);
+            while(1);
         }
 
-	_phandle_min = OFW_PHANDLE_MAX;
+        _phandle_min = OFW_PHANDLE_MAX;
         _phandle_max = OFW_PHANDLE_MIN;
 
         ofw_node_root = rt_fdt_unflatten_single(_fdt);
@@ -1069,7 +1070,7 @@ static rt_err_t fdt_unflatten_single(struct rt_ofw_node *np, int node_off)
 
             if (node_off >= 0)
             {	
-		parent = np;
+                parent = np;
 
                 np_stack[depth++] = np;
 
