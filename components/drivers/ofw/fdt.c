@@ -930,6 +930,7 @@ rt_err_t rt_fdt_unflatten(void)
 
     if (_fdt)
     {
+#ifdef RT_USING_DEBUG
         int max_depth = fdt_check_depth_limit(_fdt);
         
     	if (max_depth < 0 || max_depth >= OFW_NODE_MAX_DEPTH)
@@ -939,6 +940,7 @@ rt_err_t rt_fdt_unflatten(void)
 	   
             while(1);
         }
+#endif
 
         _phandle_min = OFW_PHANDLE_MAX;
         _phandle_max = OFW_PHANDLE_MIN;
