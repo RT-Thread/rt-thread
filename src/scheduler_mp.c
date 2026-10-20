@@ -282,6 +282,8 @@ static void _sched_insert_thread_locked(struct rt_thread *thread)
     int cpu_id;
     int bind_cpu;
     rt_uint32_t cpu_mask;
+    rt_uint8_t stat_before;
+    rt_bool_t insert_at_head;
 
     if ((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
     {
@@ -299,7 +301,20 @@ static void _sched_insert_thread_locked(struct rt_thread *thread)
     }
 
     /* READY thread, insert to ready queue */
-    RT_SCHED_CTX(thread).stat = RT_THREAD_READY | (RT_SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
+    stat_before = RT_SCHED_CTX(thread).stat;
+    RT_SCHED_CTX(thread).stat = RT_THREAD_READY | (stat_before & ~RT_THREAD_STAT_MASK);
+
+    /* A thread that was preempted while it still had time slices left keeps the
+     * head of the ready list, so that it is scheduled first next time.
+     *
+     * Every other case -- time slice consumed (@c RT_THREAD_STAT_YIELD set),
+     * resumed from an IPC pending list, or freshly started -- is appended to the
+     * tail. Inserting those at the head would reverse the order in which
+     * same-priority threads became ready, which breaks the FIFO fairness of the
+     * ready list (see RT-Thread issue #8459).
+     */
+    insert_at_head = (((stat_before & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING) &&
+                      ((stat_before & RT_THREAD_STAT_YIELD_MASK) == 0));
 
     cpu_id   = rt_hw_cpu_id();
     bind_cpu = RT_SCHED_CTX(thread).bind_cpu;
@@ -312,17 +327,15 @@ static void _sched_insert_thread_locked(struct rt_thread *thread)
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
         rt_thread_ready_priority_group |= RT_SCHED_PRIV(thread).number_mask;
 
-        /* there is no time slices left(YIELD), inserting thread before ready list*/
-        if((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_YIELD_MASK) != 0)
-        {
-            rt_list_insert_before(&(rt_thread_priority_table[RT_SCHED_PRIV(thread).current_priority]),
-                                  &RT_THREAD_LIST_NODE(thread));
-        }
-        /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
-        else
+        if (insert_at_head)
         {
             rt_list_insert_after(&(rt_thread_priority_table[RT_SCHED_PRIV(thread).current_priority]),
                                  &RT_THREAD_LIST_NODE(thread));
+        }
+        else
+        {
+            rt_list_insert_before(&(rt_thread_priority_table[RT_SCHED_PRIV(thread).current_priority]),
+                                  &RT_THREAD_LIST_NODE(thread));
         }
 
         cpu_mask = RT_CPU_MASK ^ (1 << cpu_id);
@@ -337,17 +350,15 @@ static void _sched_insert_thread_locked(struct rt_thread *thread)
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
         pcpu->priority_group |= RT_SCHED_PRIV(thread).number_mask;
 
-        /* there is no time slices left(YIELD), inserting thread before ready list*/
-        if((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_YIELD_MASK) != 0)
-        {
-            rt_list_insert_before(&(rt_cpu_index(bind_cpu)->priority_table[RT_SCHED_PRIV(thread).current_priority]),
-                                  &RT_THREAD_LIST_NODE(thread));
-        }
-        /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
-        else
+        if (insert_at_head)
         {
             rt_list_insert_after(&(rt_cpu_index(bind_cpu)->priority_table[RT_SCHED_PRIV(thread).current_priority]),
                                  &RT_THREAD_LIST_NODE(thread));
+        }
+        else
+        {
+            rt_list_insert_before(&(rt_cpu_index(bind_cpu)->priority_table[RT_SCHED_PRIV(thread).current_priority]),
+                                  &RT_THREAD_LIST_NODE(thread));
         }
 
         if (cpu_id != bind_cpu)
