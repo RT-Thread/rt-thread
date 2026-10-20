@@ -10,7 +10,7 @@ display, and audio.
 
 This BSP uses the RT-Thread standard edition and device model, with board
 hardware described by a Device Tree. U-Boot/OpenSBI boots RT-Thread in S-mode.
-The default configuration enables the MMU and four-core SMP, with support for
+The default configuration enables the MMU and eight-core SMP, with support for
 storage, networking, multimedia, and power management.
 
 The validation platform is the **Banana Pi BPI-F3 SBC**. SBI provides early
@@ -21,11 +21,11 @@ only to this board's vendor firmware environment.
 
 | Feature | Status | Notes |
 | --- | --- | --- |
-| MMU / SMP | Supported | Four CPU cores enabled by default |
+| MMU / SMP | Supported | Eight CPU cores enabled by default |
 | UART / early console | Supported | UART0 and SBI early output |
 | Clock / reset / power domain | Supported | Clock, reset, and power domain control |
 | GPIO / pinctrl / I2C / PWM | Supported | Pin configuration and basic peripherals |
-| SPI / QSPI | Ported, validation in progress | SPI NOR ID read issue under investigation |
+| SPI / QSPI | Supported | SPI NOR |
 | SD / eMMC | Supported | SDHCI and eMMC HS400 |
 | RTC / ADC / power key | Supported | SpacemiT PMIC child devices |
 | PCIe / NVMe | Supported | PCIe host and NVMe block devices |
