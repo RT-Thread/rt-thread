@@ -8,7 +8,7 @@ SpacemiT K1（进迭时空 K1）是一款 64 位 RISC-V SoC，集成 8 个 X60 C
 支持浮点和向量扩展，并提供 SD/eMMC、PCIe、以太网、显示及音频等外设接口。
 
 本 BSP 基于 RT-Thread 标准版和设备模型，通过 Device Tree 描述板级硬件，
-由 U-Boot/OpenSBI 引导，在 S-mode 下运行。默认启用 MMU 和 4 核 SMP，
+由 U-Boot/OpenSBI 引导，在 S-mode 下运行。默认启用 MMU 和 8 核 SMP，
 支持存储、网络、多媒体及电源管理等功能。
 
 验证平台为 **Banana Pi BPI-F3 SBC**。早期控制台使用 SBI，正常控制台为
@@ -18,11 +18,11 @@ UART0，串口参数为 115200 8N1。下文启动命令仅适用于该板原厂�
 
 | 功能 | 状态 | 说明 |
 | --- | --- | --- |
-| MMU / SMP | 支持 | 默认启用 4 个 CPU 核心 |
+| MMU / SMP | 支持 | 默认启用 8 个 CPU 核心 |
 | UART / early console | 支持 | UART0、SBI 早期输出 |
 | Clock / reset / power domain | 支持 | 时钟、复位及电源域控制 |
 | GPIO / pinctrl / I2C / PWM | 支持 | 引脚配置及基础外设 |
-| SPI / QSPI | 已移植，验证中 | SPI NOR 读 ID 问题排查中 |
+| SPI / QSPI | 支持 | SPI NOR |
 | SD / eMMC | 支持 | SDHCI、eMMC HS400 |
 | RTC / ADC / 电源键 | 支持 | SpacemiT PMIC 子设备 |
 | PCIe / NVMe | 支持 | PCIe host、NVMe 块设备 |
