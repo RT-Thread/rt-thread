@@ -874,6 +874,7 @@ static void system_node_init_flag(struct rt_ofw_node *np)
     }
 }
 
+#ifdef RT_USING_DEBUG
 static int fdt_check_depth_limit(void *fdt)
 { 
     int root_off = fdt_path_offset(fdt, "/");
@@ -923,6 +924,7 @@ static int fdt_check_depth_limit(void *fdt)
         }
     }
 }
+#endif
 
 rt_err_t rt_fdt_unflatten(void)
 {
