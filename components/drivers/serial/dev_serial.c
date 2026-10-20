@@ -1538,6 +1538,11 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
     switch (event & 0xff)
     {
         case RT_SERIAL_EVENT_RX_IND:
+        /* A hardware idle-line timeout means "no more bytes are coming for now".
+         * Treat it exactly like a receive indication so that a driver using the
+         * timeout to delimit a frame can hand the buffered bytes to the upper
+         * layer instead of the event being silently dropped. */
+        case RT_SERIAL_EVENT_RX_TIMEOUT:
         {
             int ch = -1;
             rt_base_t level;
