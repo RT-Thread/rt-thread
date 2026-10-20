@@ -70,22 +70,18 @@ void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock)
 
 void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
 {
-    unsigned long tmp, new_val, mask;
+    unsigned long tmp;
     unsigned short ticket;
 
+    /*
+     * The two 16-bit counters occupy the low word, also on RV64.
+     * Use an AMO so ticket allocation cannot livelock with an unlock
+     * retrying LR/SC on the same reservation. Word width wraps next at 16 bits.
+     */
     __asm__ volatile (
-            "1:\n\t"
-            "   lr." REG_WIDTH ".aq %0, (%3)\n\t"
-            "   srli    %1, %0, 16\n\t"
-            "   addi    %1, %1, 1\n\t"
-            "   slli    %1, %1, 16\n\t"
-            "   li      %2, 0xffff\n\t"
-            "   and     %2, %0, %2\n\t"
-            "   or      %1, %1, %2\n\t"
-            "   sc." REG_WIDTH ".rl %1, %1, (%3)\n\t"
-            "   bnez    %1, 1b"
-            : "=&r" (tmp), "=&r" (new_val), "=&r" (mask)
-            : "r" (&lock->slock)
+            "amoadd.w.aqrl %0, %2, (%1)"
+            : "=&r" (tmp)
+            : "r" (&lock->slock), "r" (1UL << 16)
             : "memory");
 
     ticket = (tmp >> 16) & 0xffff;
@@ -94,26 +90,20 @@ void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
     {
         __asm__ volatile (OPC_PAUSE_I);
     }
+
+    /* Order critical-section accesses after observing the owner's release. */
+    rt_hw_barrier();
 }
 
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 {
-    unsigned long tmp, new_val, mask;
-
-    __asm__ volatile (
-            "1:\n\t"
-            "   lr." REG_WIDTH ".aq %0, (%3)\n\t"
-            "   addi    %1, %0, 1\n\t"
-            "   li      %2, 0xffff\n\t"
-            "   and     %1, %1, %2\n\t"
-            "   slli    %2, %2, 16\n\t"
-            "   and     %0, %0, %2\n\t"
-            "   or      %1, %0, %1\n\t"
-            "   sc." REG_WIDTH ".rl %1, %1, (%3)\n\t"
-            "   bnez    %1, 1b"
-            : "=&r" (tmp), "=&r" (new_val), "=&r" (mask)
-            : "r" (&lock->slock)
-            : "memory");
+    /*
+     * Only the holder writes owner. Publish critical-section accesses before
+     * advancing it; a halfword store preserves concurrently allocated tickets.
+     */
+    rt_hw_barrier();
+    HWREG16(&lock->tickets.owner) =
+            (unsigned short)(HWREG16(&lock->tickets.owner) + 1);
 
     rt_hw_barrier();
 }
