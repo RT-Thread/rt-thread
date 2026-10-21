@@ -301,6 +301,48 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
 }
 
 /**
+ * @brief Compute the size of the common block of a symbol table, and
+ *        optionally the offset of one specific SHN_COMMON symbol inside it.
+ *
+ * SHN_COMMON symbols are tentative definitions of uninitialized global
+ * variables. The loader must allocate storage for them just like a static
+ * linker does: every common symbol is aligned to its st_value alignment
+ * requirement and occupies st_size bytes, packed one after another.
+ *
+ * @param symtab pointer to the symbol table
+ * @param nsym   number of symbols in the table
+ * @param target symbol whose offset is wanted, or RT_NULL to get the total
+ *               size of the common block
+ * @return offset of target in the common block, or the total size of the
+ *         block when target is RT_NULL
+ */
+static rt_ubase_t dlmodule_common_block(Elf_Sym *symtab, rt_ubase_t nsym,
+                                        Elf_Sym *target)
+{
+    rt_ubase_t i, offset = 0;
+
+    for (i = 0; i < nsym; i++)
+    {
+        if (symtab[i].st_shndx != SHN_COMMON)
+        {
+            continue;
+        }
+
+        /* st_value of a SHN_COMMON symbol holds its alignment requirement */
+        offset = RT_ALIGN(offset, symtab[i].st_value > 1 ? symtab[i].st_value : 1);
+
+        if (target == &symtab[i])
+        {
+            return offset;
+        }
+
+        offset += symtab[i].st_size;
+    }
+
+    return offset;
+}
+
+/**
  * @brief Load a relocatable file into memory.
  *
  * @param module A pointer to a rt_dlmodule object for holding the module's information.
@@ -319,7 +361,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
  */
 rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module_ptr)
 {
-    rt_ubase_t index, rodata_addr = 0, bss_addr = 0, data_addr = 0;
+    rt_ubase_t index, rodata_addr = 0, bss_addr = 0, data_addr = 0, common_addr = 0;
     rt_ubase_t module_addr = 0, module_size = 0;
     rt_uint8_t *ptr, *strtab, *shstrab;
 
@@ -347,6 +389,23 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
         {
             module_size += shdr[index].sh_size;
         }
+    }
+
+    /* account for common symbols (uninitialized global variables) */
+    for (index = 0; index < elf_module->e_shnum; index++)
+    {
+        Elf_Sym *symtab;
+        rt_ubase_t nsym;
+
+        if (shdr[index].sh_type != SHT_SYMTAB)
+        {
+            continue;
+        }
+
+        symtab = (Elf_Sym *)((rt_uint8_t *)elf_module + shdr[index].sh_offset);
+        nsym = (rt_ubase_t)(shdr[index].sh_size / sizeof(Elf_Sym));
+        module_size += RT_ALIGN(dlmodule_common_block(symtab, nsym, RT_NULL),
+                                sizeof(rt_ubase_t));
     }
 
     /* no text, data and bss on image */
@@ -410,8 +469,13 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             rt_memset(ptr, 0, shdr[index].sh_size);
             bss_addr = (rt_ubase_t)ptr;
             LOG_D("load bss 0x%x, size %d", ptr, shdr[index].sh_size);
+            ptr += shdr[index].sh_size;
         }
     }
+
+    /* the common block (uninitialized global variables) starts right after
+     * the loaded sections; it was zeroed together with the module space */
+    common_addr = (rt_ubase_t)ptr;
 
     /* set module entry */
     module->entry_addr = (rt_dlmodule_entry_func_t)((rt_uint8_t *)module->mem_space + elf_module->e_entry - module_addr);
@@ -459,29 +523,48 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             {
                 Elf_Addr addr = 0;
 
-                if ((ELF_ST_TYPE(sym->st_info) == STT_SECTION) ||
-                    (ELF_ST_TYPE(sym->st_info) == STT_OBJECT))
+                if (sym->st_shndx == SHN_COMMON)
                 {
+                    /* relocate common symbol (uninitialized global variable):
+                     * SHN_COMMON is not a real section index, so it must be
+                     * handled before the section-name checks below */
+                    LOG_D("common symbol");
+                    addr = (Elf_Addr)(common_addr + dlmodule_common_block(
+                                                        symtab,
+                                                        (rt_ubase_t)(shdr[shdr[index].sh_link].sh_size / sizeof(Elf_Sym)),
+                                                        sym));
+                    dlmodule_relocate(module, rel, addr);
+                }
+                else if ((ELF_ST_TYPE(sym->st_info) == STT_SECTION) ||
+                         (ELF_ST_TYPE(sym->st_info) == STT_OBJECT))
+                {
+                    Elf_Addr sec_sh_addr = shdr[sym->st_shndx].sh_addr;
                     if (rt_strncmp((const char *)(shstrab +
-                                                  shdr[sym->st_shndx].sh_name), ELF_RODATA, 8) == 0)
+                                                  shdr[sym->st_shndx].sh_name),
+                                   ELF_RODATA, 8) == 0)
                     {
                         /* relocate rodata section */
                         LOG_D("rodata");
-                        addr = (Elf_Addr)(rodata_addr + sym->st_value);
+                        addr = (Elf_Addr)(rodata_addr - sec_sh_addr + sym->st_value);
                     }
-                    else if (rt_strncmp((const char *)
-                                        (shstrab + shdr[sym->st_shndx].sh_name), ELF_BSS, 5) == 0)
+                    else if (rt_strncmp((const char *)(shstrab + shdr[sym->st_shndx].sh_name), ELF_BSS, 5) == 0)
                     {
                         /* relocate bss section */
                         LOG_D("bss");
-                        addr = (Elf_Addr)bss_addr + sym->st_value;
+                        addr = (Elf_Addr)(bss_addr - sec_sh_addr + sym->st_value);
+                    }
+                    else if (rt_strncmp((const char *)(shstrab + shdr[sym->st_shndx].sh_name), ".common", 7) == 0)
+                    {
+                        /* relocate common section (uninitialized globals) */
+                        LOG_D("common");
+                        addr = (Elf_Addr)(bss_addr - sec_sh_addr + sym->st_value);
                     }
                     else if (rt_strncmp((const char *)(shstrab + shdr[sym->st_shndx].sh_name),
                                         ELF_DATA, 6) == 0)
                     {
                         /* relocate data section */
                         LOG_D("data");
-                        addr = (Elf_Addr)data_addr + sym->st_value;
+                        addr = (Elf_Addr)(data_addr - sec_sh_addr + sym->st_value);
                     }
 
                     if (addr != 0) dlmodule_relocate(module, rel, addr);
@@ -530,6 +613,60 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             }
 
             rel ++;
+        }
+    }
+
+    /* construct the module symbol table from .symtab so that lookups such as
+     * dlsym() can resolve the module's global functions */
+    shstrab = (rt_uint8_t *)module_ptr + shdr[elf_module->e_shstrndx].sh_offset;
+    for (index = 0; index < elf_module->e_shnum; index++)
+    {
+        if ((shdr[index].sh_type == SHT_SYMTAB) &&
+            (rt_strcmp((const char *)(shstrab + shdr[index].sh_name), ELF_SYMTAB) == 0))
+        {
+            break;
+        }
+    }
+
+    if (index != elf_module->e_shnum)
+    {
+        Elf_Sym *symtab;
+        rt_ubase_t i, count = 0;
+
+        symtab = (Elf_Sym *)((rt_uint8_t *)module_ptr + shdr[index].sh_offset);
+        strtab = (rt_uint8_t *)module_ptr + shdr[shdr[index].sh_link].sh_offset;
+
+        for (i = 0; i < shdr[index].sh_size / sizeof(Elf_Sym); i++)
+        {
+            if ((ELF_ST_BIND(symtab[i].st_info) == STB_GLOBAL) &&
+                (ELF_ST_TYPE(symtab[i].st_info) == STT_FUNC))
+            {
+                count++;
+            }
+        }
+
+        module->symtab = (struct rt_module_symtab *)rt_malloc(count * sizeof(struct rt_module_symtab));
+        module->nsym = count;
+        for (i = 0, count = 0; i < shdr[index].sh_size / sizeof(Elf_Sym); i++)
+        {
+            rt_size_t length;
+
+            if ((ELF_ST_BIND(symtab[i].st_info) != STB_GLOBAL) ||
+                (ELF_ST_TYPE(symtab[i].st_info) != STT_FUNC))
+            {
+                continue;
+            }
+
+            length = rt_strlen((const char *)(strtab + symtab[i].st_name)) + 1;
+
+            module->symtab[count].addr =
+                (void *)((rt_uint8_t *)module->mem_space - module_addr + symtab[i].st_value);
+            module->symtab[count].name = rt_malloc(length);
+            rt_memset((void *)module->symtab[count].name, 0, length);
+            rt_memcpy((void *)module->symtab[count].name,
+                      strtab + symtab[i].st_name,
+                      length);
+            count++;
         }
     }
 
