@@ -29,33 +29,33 @@ static struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 
 /** Macro to access the Generic Interrupt Controller Interface (GICC)
 */
-#define GIC_CPU_CTRL(hw_base)               __REG32((hw_base) + 0x00U)  /* GICC_CTLR  */
-#define GIC_CPU_PRIMASK(hw_base)            __REG32((hw_base) + 0x04U)  /* GICC_PMR   */
-#define GIC_CPU_BINPOINT(hw_base)           __REG32((hw_base) + 0x08U)  /* GICC_BPR   */
-#define GIC_CPU_INTACK(hw_base)             __REG32((hw_base) + 0x0cU)  /* GICC_IAR   */
-#define GIC_CPU_EOI(hw_base)                __REG32((hw_base) + 0x10U)  /* GICC_EOIR  */
-#define GIC_CPU_RUNNINGPRI(hw_base)         __REG32((hw_base) + 0x14U)  /* GICC_RPR   */
-#define GIC_CPU_HIGHPRI(hw_base)            __REG32((hw_base) + 0x18U)  /* GICC_HPPIR */
-#define GIC_CPU_IIDR(hw_base)               __REG32((hw_base) + 0xFCU)  /* GICC_IIDR  */
+#define GIC_CPU_CTRL(hw_base)       __REG32((hw_base) + 0x00U)  /* GICC_CTLR  */
+#define GIC_CPU_PRIMASK(hw_base)    __REG32((hw_base) + 0x04U)  /* GICC_PMR   */
+#define GIC_CPU_BINPOINT(hw_base)   __REG32((hw_base) + 0x08U)  /* GICC_BPR   */
+#define GIC_CPU_INTACK(hw_base)     __REG32((hw_base) + 0x0cU)  /* GICC_IAR   */
+#define GIC_CPU_EOI(hw_base)        __REG32((hw_base) + 0x10U)  /* GICC_EOIR  */
+#define GIC_CPU_RUNNINGPRI(hw_base) __REG32((hw_base) + 0x14U)  /* GICC_RPR   */
+#define GIC_CPU_HIGHPRI(hw_base)    __REG32((hw_base) + 0x18U)  /* GICC_HPPIR */
+#define GIC_CPU_IIDR(hw_base)       __REG32((hw_base) + 0xFCU)  /* GICC_IIDR  */
 
 /** Macro to access the Generic Interrupt Controller Distributor (GICD)
 */
-#define GIC_DIST_CTRL(hw_base)              __REG32((hw_base) + 0x000U)                     /* GICD_CTLR        */
-#define GIC_DIST_TYPE(hw_base)              __REG32((hw_base) + 0x004U)                     /* GICD_TYPER       */
-#define GIC_DIST_IGROUP(hw_base, n)         __REG32((hw_base) + 0x080U + ((n)/32U) * 4U)    /* GICD_IGROUPRn    */
-#define GIC_DIST_ENABLE_SET(hw_base, n)     __REG32((hw_base) + 0x100U + ((n)/32U) * 4U)    /* GICD_ISENABLERn  */
-#define GIC_DIST_ENABLE_CLEAR(hw_base, n)   __REG32((hw_base) + 0x180U + ((n)/32U) * 4U)    /* GICD_ICENABLERn  */
-#define GIC_DIST_PENDING_SET(hw_base, n)    __REG32((hw_base) + 0x200U + ((n)/32U) * 4U)    /* GICD_ISPENDRn    */
-#define GIC_DIST_PENDING_CLEAR(hw_base, n)  __REG32((hw_base) + 0x280U + ((n)/32U) * 4U)    /* GICD_ICPENDRn    */
-#define GIC_DIST_ACTIVE_SET(hw_base, n)     __REG32((hw_base) + 0x300U + ((n)/32U) * 4U)    /* GICD_ISACTIVERn  */
-#define GIC_DIST_ACTIVE_CLEAR(hw_base, n)   __REG32((hw_base) + 0x380U + ((n)/32U) * 4U)    /* GICD_ICACTIVERn  */
-#define GIC_DIST_PRI(hw_base, n)            __REG32((hw_base) + 0x400U +  ((n)/4U) * 4U)    /* GICD_IPRIORITYRn */
-#define GIC_DIST_TARGET(hw_base, n)         __REG32((hw_base) + 0x800U +  ((n)/4U) * 4U)    /* GICD_ITARGETSRn  */
-#define GIC_DIST_CONFIG(hw_base, n)         __REG32((hw_base) + 0xc00U + ((n)/16U) * 4U)    /* GICD_ICFGRn      */
-#define GIC_DIST_SOFTINT(hw_base)           __REG32((hw_base) + 0xf00U)                     /* GICD_SGIR        */
-#define GIC_DIST_CPENDSGI(hw_base, n)       __REG32((hw_base) + 0xf10U + ((n)/4U) * 4U)     /* GICD_CPENDSGIRn  */
-#define GIC_DIST_SPENDSGI(hw_base, n)       __REG32((hw_base) + 0xf20U + ((n)/4U) * 4U)     /* GICD_SPENDSGIRn  */
-#define GIC_DIST_ICPIDR2(hw_base)           __REG32((hw_base) + 0xfe8U)                     /* ICPIDR2          */
+#define GIC_DIST_CTRL(hw_base)             __REG32((hw_base) + 0x000U)                     /* GICD_CTLR        */
+#define GIC_DIST_TYPE(hw_base)             __REG32((hw_base) + 0x004U)                     /* GICD_TYPER       */
+#define GIC_DIST_IGROUP(hw_base, n)        __REG32((hw_base) + 0x080U + ((n) / 32U) * 4U)    /* GICD_IGROUPRn    */
+#define GIC_DIST_ENABLE_SET(hw_base, n)    __REG32((hw_base) + 0x100U + ((n) / 32U) * 4U)    /* GICD_ISENABLERn  */
+#define GIC_DIST_ENABLE_CLEAR(hw_base, n)  __REG32((hw_base) + 0x180U + ((n) / 32U) * 4U)    /* GICD_ICENABLERn  */
+#define GIC_DIST_PENDING_SET(hw_base, n)   __REG32((hw_base) + 0x200U + ((n) / 32U) * 4U)    /* GICD_ISPENDRn    */
+#define GIC_DIST_PENDING_CLEAR(hw_base, n) __REG32((hw_base) + 0x280U + ((n) / 32U) * 4U)    /* GICD_ICPENDRn    */
+#define GIC_DIST_ACTIVE_SET(hw_base, n)    __REG32((hw_base) + 0x300U + ((n) / 32U) * 4U)    /* GICD_ISACTIVERn  */
+#define GIC_DIST_ACTIVE_CLEAR(hw_base, n)  __REG32((hw_base) + 0x380U + ((n) / 32U) * 4U)    /* GICD_ICACTIVERn  */
+#define GIC_DIST_PRI(hw_base, n)           __REG32((hw_base) + 0x400U + ((n) / 4U) * 4U)    /* GICD_IPRIORITYRn */
+#define GIC_DIST_TARGET(hw_base, n)        __REG32((hw_base) + 0x800U + ((n) / 4U) * 4U)    /* GICD_ITARGETSRn  */
+#define GIC_DIST_CONFIG(hw_base, n)        __REG32((hw_base) + 0xc00U + ((n) / 16U) * 4U)    /* GICD_ICFGRn      */
+#define GIC_DIST_SOFTINT(hw_base)          __REG32((hw_base) + 0xf00U)                     /* GICD_SGIR        */
+#define GIC_DIST_CPENDSGI(hw_base, n)      __REG32((hw_base) + 0xf10U + ((n) / 4U) * 4U)     /* GICD_CPENDSGIRn  */
+#define GIC_DIST_SPENDSGI(hw_base, n)      __REG32((hw_base) + 0xf20U + ((n) / 4U) * 4U)     /* GICD_SPENDSGIRn  */
+#define GIC_DIST_ICPIDR2(hw_base)          __REG32((hw_base) + 0xfe8U)                     /* ICPIDR2          */
 
 static unsigned int _gic_max_irq;
 
@@ -240,7 +240,7 @@ void arm_gic_clear_pending_irq(rt_uint32_t index, int irq)
     }
     else
     {
-        mask =  1U << ((irq % 4U) * 8U);
+        mask = 1U << ((irq % 4U) * 8U);
         GIC_DIST_CPENDSGI(_gic_table[index].dist_hw_base, irq) = mask;
     }
 }
@@ -337,8 +337,8 @@ void arm_gic_set_cpu(rt_uint32_t index, int irq, unsigned int cpumask)
 
     old_tgt = GIC_DIST_TARGET(_gic_table[index].dist_hw_base, irq);
 
-    old_tgt &= ~(0x0FFUL << ((irq % 4U)*8U));
-    old_tgt |= cpumask << ((irq % 4U)*8U);
+    old_tgt &= ~(0x0FFUL << ((irq % 4U) * 8U));
+    old_tgt |= cpumask << ((irq % 4U) * 8U);
 
     GIC_DIST_TARGET(_gic_table[index].dist_hw_base, irq) = old_tgt;
 }
@@ -590,7 +590,7 @@ void arm_gic_set_group(rt_uint32_t index, int irq, rt_uint32_t group)
     igroupr = GIC_DIST_IGROUP(_gic_table[index].dist_hw_base, irq);
     shift = (irq % 32U);
     igroupr &= (~(1U << shift));
-    igroupr |= ( (group & 0x1U) << shift);
+    igroupr |= ((group & 0x1U) << shift);
 
     GIC_DIST_IGROUP(_gic_table[index].dist_hw_base, irq) = igroupr;
 }
@@ -651,9 +651,13 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
      * platform maximum.
      */
     if (_gic_max_irq > 1020U)
+    {
         _gic_max_irq = 1020U;
+    }
     if (_gic_max_irq > ARM_GIC_NR_IRQS) /* the platform maximum interrupts */
+    {
         _gic_max_irq = ARM_GIC_NR_IRQS;
+    }
 
     cpumask |= cpumask << 8U;
     cpumask |= cpumask << 16U;
@@ -663,19 +667,27 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
 
     /* Set all global interrupts to be level triggered, active low. */
     for (i = 32U; i < _gic_max_irq; i += 16U)
+    {
         GIC_DIST_CONFIG(dist_base, i) = 0x0U;
+    }
 
     /* Set all global interrupts to this CPU only. */
     for (i = 32U; i < _gic_max_irq; i += 4U)
+    {
         GIC_DIST_TARGET(dist_base, i) = cpumask;
+    }
 
     /* Set priority on all interrupts. */
     for (i = 0U; i < _gic_max_irq; i += 4U)
+    {
         GIC_DIST_PRI(dist_base, i) = 0xa0a0a0a0U;
+    }
 
     /* Disable all interrupts. */
     for (i = 0U; i < _gic_max_irq; i += 32U)
+    {
         GIC_DIST_ENABLE_CLEAR(dist_base, i) = 0xffffffffU;
+    }
 
 #if 0
     /* All interrupts defaults to IGROUP1(IRQ). */
@@ -683,7 +695,9 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
         GIC_DIST_IGROUP(dist_base, i) = 0xffffffff;
 #endif
     for (i = 0U; i < _gic_max_irq; i += 32U)
+    {
         GIC_DIST_IGROUP(dist_base, i) = 0U;
+    }
 
     /* Enable group0 and group1 interrupt forwarding. */
     GIC_DIST_CTRL(dist_base) = 0x01U;
