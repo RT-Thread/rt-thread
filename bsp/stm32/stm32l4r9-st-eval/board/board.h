@@ -19,31 +19,31 @@
 extern "C" {
 #endif
 
-#define STM32_FLASH_START_ADRESS       ((uint32_t)0x08000000)
-#define STM32_FLASH_SIZE               (2048 * 1024)
-#define STM32_FLASH_END_ADDRESS        ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
+#define STM32_FLASH_START_ADRESS ((uint32_t)0x08000000)
+#define STM32_FLASH_SIZE         (2048 * 1024)
+#define STM32_FLASH_END_ADDRESS  ((uint32_t)(STM32_FLASH_START_ADRESS + STM32_FLASH_SIZE))
 
-#define STM32_SRAM3_SIZE               (384)
-#define STM32_SRAM3_START              (0x20040000)
-#define STM32_SRAM3_END                (STM32_SRAM3_START + STM32_SRAM3_SIZE * 1024)
+#define STM32_SRAM3_SIZE  (384)
+#define STM32_SRAM3_START (0x20040000)
+#define STM32_SRAM3_END   (STM32_SRAM3_START + STM32_SRAM3_SIZE * 1024)
 
-#define STM32_SRAM1_SIZE               (192)  
-#define STM32_SRAM1_START              (0x20000000U)
-#define STM32_SRAM1_END                (STM32_SRAM1_START + STM32_SRAM1_SIZE * 1024U)
+#define STM32_SRAM1_SIZE  (192)
+#define STM32_SRAM1_START (0x20000000U)
+#define STM32_SRAM1_END   (STM32_SRAM1_START + STM32_SRAM1_SIZE * 1024U)
 
 #if defined(__ARMCC_VERSION)
 extern int Image$$RW_IRAM1$$ZI$$Limit;
-#define HEAP_BEGIN                     ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
-#define HEAP_END                       ((void *)STM32_SRAM1_END) 
+#define HEAP_BEGIN ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
+#define HEAP_END   ((void *)STM32_SRAM1_END)
 #elif __ICCARM__
-#pragma section="HEAP"
-#pragma section="CSTACK"
-#define HEAP_BEGIN                     (__segment_begin("HEAP"))
-#define HEAP_END                       (__segment_begin("CSTACK"))
+#pragma section = "HEAP"
+#pragma section = "CSTACK"
+#define HEAP_BEGIN (__segment_begin("HEAP"))
+#define HEAP_END   (__segment_begin("CSTACK"))
 #else
 extern int __bss_end;
-#define HEAP_BEGIN                     ((void *)&__bss_end)
-#define HEAP_END                       STM32_SRAM3_END
+#define HEAP_BEGIN ((void *)&__bss_end)
+#define HEAP_END   STM32_SRAM3_END
 #endif
 
 void SystemClock_Config(void);

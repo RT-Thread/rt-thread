@@ -42,7 +42,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe(const char *spi_flash_dev_name, const 
  * @return probed SPI flash device, probe failed will return RT_NULL
  */
 rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, const char *spi_dev_name,
-        struct rt_spi_configuration *spi_cfg, struct rt_qspi_configuration *qspi_cfg);
+                                             struct rt_spi_configuration *spi_cfg, struct rt_qspi_configuration *qspi_cfg);
 
 #ifdef SFUD_USING_OSPI
 /**
@@ -56,7 +56,7 @@ rt_spi_flash_device_t rt_sfud_flash_probe_ex(const char *spi_flash_dev_name, con
  * @return probed SPI flash device, probe failed will return RT_NULL
  */
 rt_spi_flash_device_t rt_sfud_flash_probe_ospi_ex(const char *spi_flash_dev_name, const char *spi_dev_name,
-        struct rt_spi_configuration *spi_cfg, struct rt_ospi_configuration *ospi_cfg);
+                                                  struct rt_spi_configuration *spi_cfg, struct rt_ospi_configuration *ospi_cfg);
 #endif
 
 /**
