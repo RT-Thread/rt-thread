@@ -144,10 +144,15 @@ static rt_err_t test_cleanup(void)
     return ret == 0 ? RT_EOK : -RT_ERROR;
 }
 
+static void test_truncate(void)
+{
+    test_zero_length();
+    test_nonzero_length();
+    test_allocation_failure();
+}
+
 static void testcase(void)
 {
-    UTEST_UNIT_RUN(test_zero_length);
-    UTEST_UNIT_RUN(test_nonzero_length);
-    UTEST_UNIT_RUN(test_allocation_failure);
+    UTEST_UNIT_RUN(test_truncate);
 }
 UTEST_TC_EXPORT(testcase, "components.dfs.tmpfs_truncate", test_init, test_cleanup, 30);
