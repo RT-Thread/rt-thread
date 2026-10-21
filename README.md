@@ -98,6 +98,10 @@ The main IDE/compilers supported by RT-Thread are:
 - MDK KEIL
 - IAR
 - GCC
+- RT-Thread Studio IDE
+- MDK KEIL
+- IAR
+- GCC
 
 ## RT-Thread Studio IDE
 
