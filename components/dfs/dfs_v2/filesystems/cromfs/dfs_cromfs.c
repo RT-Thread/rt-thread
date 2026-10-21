@@ -30,10 +30,13 @@
 #define CROMFS_PATITION_HEAD_SIZE 256
 #define CROMFS_DIRENT_CACHE_SIZE  8
 
-#define CROMFS_MAGIC   "CROMFSMG"
+#define CROMFS_MAGIC "CROMFSMG"
 
 #define CROMFS_CT_ASSERT(name, x) \
-    struct assert_##name {char ary[2 * (x) - 1];}
+    struct assert_##name          \
+    {                             \
+        char ary[2 * (x) - 1];    \
+    }
 
 #define CROMFS_POS_ROOT  (0x0UL)
 #define CROMFS_POS_ERROR (0x1UL)
@@ -56,8 +59,8 @@ typedef struct
 
 enum
 {
-    CROMFS_DIRENT_ATTR_FILE    = 0x0UL,
-    CROMFS_DIRENT_ATTR_DIR     = 0x1UL,
+    CROMFS_DIRENT_ATTR_FILE = 0x0UL,
+    CROMFS_DIRENT_ATTR_DIR = 0x1UL,
     CROMFS_DIRENT_ATTR_SYMLINK = 0x2UL,
 };
 
@@ -68,7 +71,7 @@ typedef struct
     uint32_t file_size;         /* file data size */
     uint32_t file_origin_size;  /* file size before compress */
     uint32_t parition_pos;      /* offset of data */
-    uint8_t  name[0];           /* name data */
+    uint8_t name[0];           /* name data */
 } cromfs_dirent;
 
 #define CROMFS_ALIGN_SIZE_BIT  4
@@ -120,27 +123,27 @@ typedef struct
 
 /**********************************/
 
-#define avl_key_t       uint32_t
-#define AVL_EMPTY       (struct cromfs_avl_struct *)0
-#define avl_maxheight   32
-#define heightof(tree)  ((tree) == AVL_EMPTY ? 0 : (tree)->avl_height)
+#define avl_key_t      uint32_t
+#define AVL_EMPTY      (struct cromfs_avl_struct *)0
+#define avl_maxheight  32
+#define heightof(tree) ((tree) == AVL_EMPTY ? 0 : (tree)->avl_height)
 
 struct cromfs_avl_struct
 {
     struct cromfs_avl_struct *avl_left;
     struct cromfs_avl_struct *avl_right;
-    int    avl_height;
+    int avl_height;
     avl_key_t avl_key;
     file_info *fi;
 };
 
 static void cromfs_avl_remove(struct cromfs_avl_struct *node_to_delete, struct cromfs_avl_struct **ptree);
 static void cromfs_avl_insert(struct cromfs_avl_struct *new_node, struct cromfs_avl_struct **ptree);
-static struct cromfs_avl_struct* cromfs_avl_find(avl_key_t key, struct cromfs_avl_struct *ptree);
+static struct cromfs_avl_struct *cromfs_avl_find(avl_key_t key, struct cromfs_avl_struct *ptree);
 
 static void cromfs_avl_rebalance(struct cromfs_avl_struct ***nodeplaces_ptr, int count)
 {
-    for (;count > 0; count--)
+    for (; count > 0; count--)
     {
         struct cromfs_avl_struct **nodeplace = *--nodeplaces_ptr;
         struct cromfs_avl_struct *node = *nodeplace;
@@ -150,8 +153,8 @@ static void cromfs_avl_rebalance(struct cromfs_avl_struct ***nodeplaces_ptr, int
         int heightright = heightof(noderight);
         if (heightright + 1 < heightleft)
         {
-            struct cromfs_avl_struct * nodeleftleft = nodeleft->avl_left;
-            struct cromfs_avl_struct * nodeleftright = nodeleft->avl_right;
+            struct cromfs_avl_struct *nodeleftleft = nodeleft->avl_left;
+            struct cromfs_avl_struct *nodeleftright = nodeleft->avl_right;
             int heightleftright = heightof(nodeleftright);
             if (heightof(nodeleftleft) >= heightleftright)
             {
@@ -194,8 +197,9 @@ static void cromfs_avl_rebalance(struct cromfs_avl_struct ***nodeplaces_ptr, int
                 *nodeplace = noderightleft;
             }
         }
-        else {
-            int height = (heightleft<heightright ? heightright : heightleft) + 1;
+        else
+        {
+            int height = (heightleft < heightright ? heightright : heightleft) + 1;
             if (height == node->avl_height)
             {
                 break;
@@ -244,9 +248,9 @@ static void cromfs_avl_remove(struct cromfs_avl_struct *node_to_delete, struct c
     }
     else
     {
-        struct cromfs_avl_struct *** stack_ptr_to_delete = stack_ptr;
-        struct cromfs_avl_struct ** nodeplace = &node_to_delete->avl_left;
-        struct cromfs_avl_struct * node;
+        struct cromfs_avl_struct ***stack_ptr_to_delete = stack_ptr;
+        struct cromfs_avl_struct **nodeplace = &node_to_delete->avl_left;
+        struct cromfs_avl_struct *node;
         for (;;)
         {
             node = *nodeplace;
@@ -265,7 +269,7 @@ static void cromfs_avl_remove(struct cromfs_avl_struct *node_to_delete, struct c
         *nodeplace_to_delete = node;
         *stack_ptr_to_delete = &node->avl_left;
     }
-    cromfs_avl_rebalance(stack_ptr,stack_count);
+    cromfs_avl_rebalance(stack_ptr, stack_count);
 }
 
 static void cromfs_avl_insert(struct cromfs_avl_struct *new_node, struct cromfs_avl_struct **ptree)
@@ -277,7 +281,7 @@ static void cromfs_avl_insert(struct cromfs_avl_struct *new_node, struct cromfs_
     struct cromfs_avl_struct ***stack_ptr = &stack[0]; /* = &stack[stackcount] */
     for (;;)
     {
-        struct cromfs_avl_struct * node = *nodeplace;
+        struct cromfs_avl_struct *node = *nodeplace;
         if (node == AVL_EMPTY)
         {
             break;
@@ -297,10 +301,10 @@ static void cromfs_avl_insert(struct cromfs_avl_struct *new_node, struct cromfs_
     new_node->avl_right = AVL_EMPTY;
     new_node->avl_height = 1;
     *nodeplace = new_node;
-    cromfs_avl_rebalance(stack_ptr,stack_count);
+    cromfs_avl_rebalance(stack_ptr, stack_count);
 }
 
-static struct cromfs_avl_struct* cromfs_avl_find(avl_key_t key, struct cromfs_avl_struct* ptree)
+static struct cromfs_avl_struct *cromfs_avl_find(avl_key_t key, struct cromfs_avl_struct *ptree)
 {
     for (;;)
     {
@@ -412,7 +416,7 @@ static uint32_t cromfs_blk_read_bytes(cromfs_info *ci, uint32_t pos, void *buf, 
         start_blk++;
         if (sector_nr)
         {
-            ret_len = rt_device_read(ci->device, start_blk, (char*)buf + off_s, sector_nr);
+            ret_len = rt_device_read(ci->device, start_blk, (char *)buf + off_s, sector_nr);
             if (ret_len != sector_nr)
             {
                 goto end;
@@ -426,7 +430,7 @@ static uint32_t cromfs_blk_read_bytes(cromfs_info *ci, uint32_t pos, void *buf, 
         {
             goto end;
         }
-        memcpy((char*)buf + off_s, block_buff, size);
+        memcpy((char *)buf + off_s, block_buff, size);
     }
     ret = size_bak;
 end:
@@ -509,8 +513,7 @@ static void cromfs_dirent_cache_destroy(cromfs_info *ci)
 #ifdef RT_USING_PAGECACHE
 static ssize_t dfs_cromfs_page_read(struct dfs_file *file, struct dfs_page *page);
 
-static struct dfs_aspace_ops dfs_cromfs_aspace_ops =
-{
+static struct dfs_aspace_ops dfs_cromfs_aspace_ops = {
     .read = dfs_cromfs_page_read
 };
 #endif
@@ -564,7 +567,7 @@ static int dfs_cromfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const voi
 
     len = cromfs_read_bytes(ci, 0, &ci->part_info, sizeof ci->part_info);
     if (len != sizeof ci->part_info ||
-            memcmp(ci->part_info.magic, CROMFS_MAGIC, sizeof ci->part_info.magic) != 0)
+        memcmp(ci->part_info.magic, CROMFS_MAGIC, sizeof ci->part_info.magic) != 0)
     {
         free(ci);
         return -RT_ERROR;
@@ -588,7 +591,7 @@ static int dfs_cromfs_unmount(struct dfs_mnt *mnt)
 
     ci = (cromfs_info *)mnt->data;
 
-    result =  rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
         return -RT_ERROR;
@@ -624,7 +627,7 @@ static int dfs_cromfs_unmount(struct dfs_mnt *mnt)
     return RT_EOK;
 }
 
-static uint32_t cromfs_lookup(cromfs_info *ci, const char *path, int* file_type, uint32_t *size, uint32_t *osize)
+static uint32_t cromfs_lookup(cromfs_info *ci, const char *path, int *file_type, uint32_t *size, uint32_t *osize)
 {
     uint32_t cur_size = 0, cur_pos = 0, cur_osize = 0;
     const char *subpath = NULL, *subpath_end = NULL;
@@ -727,12 +730,12 @@ static uint32_t cromfs_lookup(cromfs_info *ci, const char *path, int* file_type,
     return cur_pos;
 }
 
-static uint32_t __dfs_cromfs_lookup(cromfs_info *ci, const char *path, int* file_type, uint32_t *size, uint32_t *osize)
+static uint32_t __dfs_cromfs_lookup(cromfs_info *ci, const char *path, int *file_type, uint32_t *size, uint32_t *osize)
 {
     rt_err_t result = RT_EOK;
     uint32_t ret = 0;
 
-    result =  rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
         return CROMFS_POS_ERROR;
@@ -808,7 +811,7 @@ static ssize_t dfs_cromfs_read(struct dfs_file *file, void *buf, size_t count, o
         {
             int fill_ret = 0;
 
-            result =  rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
+            result = rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
             if (result != RT_EOK)
             {
                 return 0;
@@ -826,7 +829,7 @@ static ssize_t dfs_cromfs_read(struct dfs_file *file, void *buf, size_t count, o
         {
             void *di_mem = NULL;
 
-            result =  rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
+            result = rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
             if (result != RT_EOK)
             {
                 return 0;
@@ -834,7 +837,7 @@ static ssize_t dfs_cromfs_read(struct dfs_file *file, void *buf, size_t count, o
             di_mem = cromfs_dirent_cache_get(ci, fi->partition_pos, fi->size);
             if (di_mem)
             {
-                memcpy(buf, (char*)di_mem + *pos, length);
+                memcpy(buf, (char *)di_mem + *pos, length);
             }
             rt_mutex_release(&ci->lock);
             if (!di_mem)
@@ -851,7 +854,7 @@ static ssize_t dfs_cromfs_read(struct dfs_file *file, void *buf, size_t count, o
 
 static file_info *get_file_info(cromfs_info *ci, uint32_t partition_pos, int inc_ref)
 {
-    struct cromfs_avl_struct* node = cromfs_avl_find(partition_pos, ci->cromfs_avl_root);
+    struct cromfs_avl_struct *node = cromfs_avl_find(partition_pos, ci->cromfs_avl_root);
 
     if (node)
     {
@@ -921,7 +924,7 @@ err:
 
 static void deref_file_info(cromfs_info *ci, uint32_t partition_pos)
 {
-    struct cromfs_avl_struct* node = cromfs_avl_find(partition_pos, ci->cromfs_avl_root);
+    struct cromfs_avl_struct *node = cromfs_avl_find(partition_pos, ci->cromfs_avl_root);
     file_info *fi = NULL;
 
     if (node)
@@ -956,7 +959,7 @@ static int dfs_cromfs_close(struct dfs_file *file)
     fi = (file_info *)file->vnode->data;
     ci = (cromfs_info *)file->dentry->mnt->data;
 
-    result =  rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
         return -RT_ERROR;
@@ -985,8 +988,7 @@ static int dfs_cromfs_open(struct dfs_file *file)
     RT_ASSERT(file->vnode->ref_count > 0);
     if (file->vnode->ref_count > 1)
     {
-        if (file->vnode->type == FT_DIRECTORY
-                && !(file->flags & O_DIRECTORY))
+        if (file->vnode->type == FT_DIRECTORY && !(file->flags & O_DIRECTORY))
         {
             return -ENOENT;
         }
@@ -1028,7 +1030,7 @@ static int dfs_cromfs_open(struct dfs_file *file)
         file->vnode->type = FT_REGULAR;
     }
 
-    result =  rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
         ret = -EINTR;
@@ -1087,7 +1089,7 @@ static int dfs_cromfs_stat(struct dfs_dentry *dentry, struct stat *st)
         st->st_mode |= S_IFDIR;
         st->st_size = size;
     }
-    else if(file_type == CROMFS_DIRENT_ATTR_SYMLINK)
+    else if (file_type == CROMFS_DIRENT_ATTR_SYMLINK)
     {
         st->st_mode &= ~S_IFREG;
         st->st_mode |= S_IFLNK;
@@ -1134,7 +1136,7 @@ static int dfs_cromfs_getdents(struct dfs_file *file, struct dirent *dirp, uint3
         return -ENOMEM;
     }
 
-    result =  rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
+    result = rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
     if (result != RT_EOK)
     {
         free(dirent);
@@ -1223,7 +1225,7 @@ static int dfs_cromfs_getdents(struct dfs_file *file, struct dirent *dirp, uint3
     return index * sizeof(struct dirent);
 }
 
-static struct dfs_vnode *dfs_cromfs_lookup (struct dfs_dentry *dentry)
+static struct dfs_vnode *dfs_cromfs_lookup(struct dfs_dentry *dentry)
 {
     struct dfs_vnode *vnode = RT_NULL;
     cromfs_info *ci = NULL;
@@ -1374,33 +1376,30 @@ static int dfs_cromfs_readlink(struct dfs_dentry *dentry, char *buf, int len)
     return -EBADF;
 }
 
-static const struct dfs_file_ops _crom_fops =
-{
-    .open           = dfs_cromfs_open,
-    .close          = dfs_cromfs_close,
-    .lseek          = generic_dfs_lseek,
-    .read           = dfs_cromfs_read,
-    .getdents       = dfs_cromfs_getdents,
+static const struct dfs_file_ops _crom_fops = {
+    .open = dfs_cromfs_open,
+    .close = dfs_cromfs_close,
+    .lseek = generic_dfs_lseek,
+    .read = dfs_cromfs_read,
+    .getdents = dfs_cromfs_getdents,
 };
 
-static const struct dfs_filesystem_ops _cromfs_ops =
-{
-    .name           = "crom",
-    .flags          = 0,
-    .default_fops   = &_crom_fops,
-    .mount          = dfs_cromfs_mount,
-    .umount         = dfs_cromfs_unmount,
+static const struct dfs_filesystem_ops _cromfs_ops = {
+    .name = "crom",
+    .flags = 0,
+    .default_fops = &_crom_fops,
+    .mount = dfs_cromfs_mount,
+    .umount = dfs_cromfs_unmount,
 
-    .readlink       = dfs_cromfs_readlink,
+    .readlink = dfs_cromfs_readlink,
 
-    .stat           = dfs_cromfs_stat,
-    .lookup         = dfs_cromfs_lookup,
-    .free_vnode     = dfs_cromfs_free_vnode
+    .stat = dfs_cromfs_stat,
+    .lookup = dfs_cromfs_lookup,
+    .free_vnode = dfs_cromfs_free_vnode
 };
 
-static struct dfs_filesystem_type _cromfs =
-{
-    .fs_ops           = &_cromfs_ops,
+static struct dfs_filesystem_type _cromfs = {
+    .fs_ops = &_cromfs_ops,
 };
 
 int dfs_cromfs_init(void)
