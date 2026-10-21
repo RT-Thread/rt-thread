@@ -741,15 +741,6 @@ endmenu
 
 menu "Board extended module Drivers"
 
-    config AT_DEVICE_USING_GD32VW553
-        bool
-        default n
-
-    config AT_DEVICE_GD32VW553_SOCKET
-        bool
-        select AT_USING_SOCKET
-        default n
-
     menuconfig BSP_USING_GD32VW553_AT
         bool "Enable GD32VW553 AT Wi-Fi module"
         select BSP_USING_GPIO
@@ -758,29 +749,15 @@ menu "Board extended module Drivers"
         select PKG_USING_AT_DEVICE
         select AT_DEVICE_USING_GD32VW553
         select AT_DEVICE_GD32VW553_SOCKET
+        select AT_DEVICE_GD32VW553_SAMPLE
         default n
         help
-            Enable the onboard GD32VW553 Wi-Fi module through the RT-Thread
-            at_device and AT socket framework. The default AT UART is UART4
+            Enable the onboard GD32VW553 Wi-Fi module using the at_device
+            package registration sample and AT socket framework. Select the
+            latest at_device package and configure Wi-Fi credentials and
+            baud rate in its GD32VW553 sample menu. The default UART is UART4
             TX PB12 AF14 and RX PB13 AF14. The reset pin is PC5 and is
             active low.
-
-        if BSP_USING_GD32VW553_AT
-
-            config BSP_GD32VW553_AT_BAUDRATE
-                int "GD32VW553 AT UART baud rate"
-                range 9600 2000000
-                default 115200
-
-            config BSP_GD32VW553_WIFI_SSID
-                string "Wi-Fi SSID"
-                default "rtthread"
-
-            config BSP_GD32VW553_WIFI_PASSWORD
-                string "Wi-Fi password"
-                default "12345678"
-
-        endif
 
 endmenu
 
