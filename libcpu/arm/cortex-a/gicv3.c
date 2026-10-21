@@ -660,8 +660,8 @@ void arm_gic_dump_type(rt_uint32_t index)
     unsigned int gic_type;
 
     gic_type = GIC_DIST_TYPE(_gic_table[index].dist_hw_base);
-    rt_kprintf("GICv%d on %p, max IRQs: %d, %s security extension(%08x)\n",
-               (GIC_DIST_ICPIDR2(_gic_table[index].dist_hw_base) >> 4U) & 0xfUL,
+    rt_kprintf("GICv%u on 0x%08x, max IRQs: %u, %s security extension(%08x)\n",
+               (unsigned int)((GIC_DIST_ICPIDR2(_gic_table[index].dist_hw_base) >> 4U) & 0xfUL),
                _gic_table[index].dist_hw_base,
                _gic_max_irq,
                gic_type & (1U << 10U) ? "has" : "no",
@@ -673,7 +673,7 @@ void arm_gic_dump(rt_uint32_t index)
     unsigned int i, k;
 
     k = arm_gic_get_high_pending_irq(0);
-    rt_kprintf("--- high pending priority: %d(%08x)\n", k, k);
+    rt_kprintf("--- high pending priority: %u(%08x)\n", k, k);
     rt_kprintf("--- hw mask ---\n");
     for (i = 0U; i < _gic_max_irq / 32U; i++)
     {
