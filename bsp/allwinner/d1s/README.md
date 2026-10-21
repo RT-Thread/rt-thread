@@ -24,9 +24,11 @@ D1S_QEMU_DIR=/path/to/d1s-qemu ./qemu-d1s.sh
 
 当前状态：默认配置下能打印 RT-Thread Smart 启动信息，完成 SD/MMC（SMHC0/SMHC1，
 `run.sh` 自动挂空白镜像）初始化并进入 `msh />`；空白镜像没有文件系统，根文件系统挂载失败属正常现象。
+更完整的步骤与常见失败见 [target-qemu/](./target-qemu/)（`run-qemu.sh` + README）。
 
 Without a board, `rtthread.bin` from this BSP can be started on the `d1s`
 machine of d1s-qemu with `D1S_QEMU_DIR=/path/to/d1s-qemu ./qemu-d1s.sh`.
 The RT-Thread Smart banner is printed, SD/MMC (SMHC0/SMHC1, blank images
 attached by run.sh) is probed and the boot reaches `msh />`. Mounting the root
 file system fails on the blank images, which is expected.
+See [target-qemu/](./target-qemu/) for the fuller guide (`run-qemu.sh` + README).
