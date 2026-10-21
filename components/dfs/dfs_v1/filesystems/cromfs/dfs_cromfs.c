@@ -1103,10 +1103,35 @@ static int dfs_cromfs_getdents(struct dfs_file *file, struct dirent *dirp, uint3
     for (index = 0; index < count && file->pos < file->vnode->size; index++)
     {
         uint32_t name_size = 0;
+        uint32_t entry_name_size = 0;
 
         d = dirp + index;
+
+        /* the entry header itself has to be inside the directory blob we loaded */
+        if (file->pos + sizeof(cromfs_dirent) > fi->size)
+        {
+            result = -EINVAL;
+            break;
+        }
+
         sub_dirent = &dirent[file->pos >> CROMFS_ALIGN_SIZE_BIT];
         name = sub_dirent->dirent.name;
+        entry_name_size = sub_dirent->dirent.name_size;
+
+        /* name_size comes straight from the image, so it has to be validated
+         * before it is used as a length:
+         *  - d_name holds DIRENT_NAME_MAX bytes, the terminating NUL included;
+         *  - the name must stay inside the directory blob that was just loaded.
+         * Without these checks a crafted image overflows d_name, and since ls()
+         * and readdir() keep the dirent on the stack, it overflows the stack of
+         * the thread listing the directory.
+         */
+        if (entry_name_size >= DIRENT_NAME_MAX ||
+            file->pos + sizeof(cromfs_dirent) + entry_name_size > fi->size)
+        {
+            result = -EINVAL;
+            break;
+        }
 
         /* fill dirent */
         if (sub_dirent->dirent.attr == CROMFS_DIRENT_ATTR_DIR)
@@ -1118,17 +1143,22 @@ static int dfs_cromfs_getdents(struct dfs_file *file, struct dirent *dirp, uint3
             d->d_type = DT_REG;
         }
 
-        d->d_namlen = sub_dirent->dirent.name_size;
+        d->d_namlen = entry_name_size;
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
-        memcpy(d->d_name, (char *)name, sub_dirent->dirent.name_size);
-        d->d_name[sub_dirent->dirent.name_size] = '\0';
+        memcpy(d->d_name, (char *)name, entry_name_size);
+        d->d_name[entry_name_size] = '\0';
 
-        name_size = (sub_dirent->dirent.name_size + CROMFS_ALIGN_SIZE_MASK) & ~CROMFS_ALIGN_SIZE_MASK;
+        name_size = (entry_name_size + CROMFS_ALIGN_SIZE_MASK) & ~CROMFS_ALIGN_SIZE_MASK;
         /* move to next position */
         file->pos += (name_size + sizeof *sub_dirent);
     }
 
     free(dirent);
+
+    if (result != RT_EOK)
+    {
+        return result;
+    }
 
     return index * sizeof(struct dirent);
 }
