@@ -13,6 +13,16 @@
 #include <rtdevice.h>
 #include "driver/uart.h"
 #include "hal/uart_hal.h"
+/* hal/uart_periph.h on IDF v6.1, soc/uart_periph.h on the rtt-dev package */
+#if defined(__has_include)
+#if __has_include("hal/uart_periph.h")
+#include "hal/uart_periph.h"
+#else
+#include "soc/uart_periph.h"
+#endif
+#else
+#include "soc/uart_periph.h"
+#endif
 #include "sdkconfig.h"
 #ifdef RT_USING_SERIAL_V1
 

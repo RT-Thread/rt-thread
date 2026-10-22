@@ -389,7 +389,7 @@ riscv32-esp-elf-gcc:
   - ESP32_C3
   - ESP32_C6
   count: 2
-  download_url: https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+  download_url: https://github.com/espressif/crosstool-NG/releases/download/esp-15.2.0_20251204/riscv32-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz
 riscv32-unknown-elf-gcc:
   bsp:
   - core-v-mcu/core-v-cv32e40p

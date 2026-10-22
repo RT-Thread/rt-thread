@@ -22,8 +22,8 @@ USER dev
 WORKDIR /home/dev
 
 # 3. Install esp-idf toolchains
-RUN wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz && \
-    sudo tar -xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+RUN wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-15.2.0_20251204/riscv32-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz && \
+    sudo tar -xf riscv32-esp-elf-15.2.0_20251204-x86_64-linux-gnu.tar.xz -C /opt
 
 # 4. Clone RT-Thread and switch master
 RUN git clone https://github.com/RT-Thread/rt-thread.git && \
