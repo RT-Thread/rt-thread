@@ -147,6 +147,8 @@ SECTIONS
     _iram_start = ABSOLUTE(.);
     /* Vectors go to start of IRAM */
     ASSERT(ABSOLUTE(.) % 0x100 == 0, "vector address must be 256 byte aligned");
+    _vector_table_start = ABSOLUTE(.);
+    KEEP(*(.exception_vectors_table.text));
     KEEP(*(.exception_vectors.text));
     . = ALIGN(4);
 
@@ -386,8 +388,17 @@ SECTIONS
     soc_reserved_memory_region_end = ABSOLUTE(.);
     /* System init functions registered via ESP_SYSTEM_INIT_FN */
     _esp_system_init_fn_array_start = ABSOLUTE(.);
+    _esp_sys_init_fn_start = ABSOLUTE(.);
     KEEP (*(SORT_BY_INIT_PRIORITY(.esp_system_init_fn.*)))
+    KEEP (*(SORT_BY_INIT_PRIORITY(.esp_sys_init_fn.*)))
     _esp_system_init_fn_array_end = ABSOLUTE(.);
+    _esp_sys_init_fn_end = ABSOLUTE(.);
+
+    . = ALIGN(4);
+    _esp_libc_clock_array_start = ABSOLUTE(.);
+    KEEP (*(.esp_libc_clock_desc))
+    _esp_libc_clock_array_end = ABSOLUTE(.);
+    /* section information for initial. */
     . = ALIGN(4);
     __rt_init_start = .;
     KEEP(*(SORT(.rti_fn*)));

@@ -16,7 +16,7 @@ if os.getenv('RTT_CC'):
 
 if CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'~/.espressif/tools/riscv32-esp-elf/esp-2022r1-11.2.0/riscv32-esp-elf/bin'
+    EXEC_PATH   = r'~/.espressif/tools/riscv32-esp-elf/esp-15.2.0_20251204/riscv32-esp-elf/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
@@ -40,8 +40,11 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
     STRIP = PREFIX + 'strip'
 
-    DEVICE = ' -nostartfiles -march=rv32imac --specs=nosys.specs -fasynchronous-unwind-tables '
-    CFLAGS = DEVICE + '-include ../../components/libc/compilers/common/include/sys/ioctl.h -gdwarf-4 -ggdb -Og '
+    # GCC 15 no longer enables the Zicsr/Zifencei extensions through the base
+    # `-march=rv32imac`, so spell them out.
+    DEVICE = ' -nostartfiles -march=rv32imac_zicsr_zifencei --specs=nosys.specs -fasynchronous-unwind-tables '
+    CFLAGS = DEVICE + '-Wno-error=incompatible-pointer-types -Wno-error=int-conversion '
+    CFLAGS += '-include ../../components/libc/compilers/common/include/sys/ioctl.h -gdwarf-4 -ggdb -Og '
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
     idf_path = find_package_path(BSP_ROOT, 'ESP-IDF-latest', relative_to=BSP_ROOT, pathsep='/')
     rom = idf_path + '/components/esp_rom/esp32c6/ld/'
@@ -52,9 +55,9 @@ if PLATFORM == 'gcc':
         'esp32c6.rom.libgcc.ld',
         'esp32c6.rom.newlib.ld',
         'esp32c6.rom.version.ld',
-        'esp32c6.rom.heap.ld',
+        # ESP-IDF v6.1 folded the heap and watchdog ROM symbols into
+        # esp32c6.rom.ld, so these two scripts no longer ship.
         'esp32c6.rom.spiflash.ld',
-        'esp32c6.rom.wdt.ld',
     ]
     link_scripts = [' -T idf_port/ld/memory.ld -T idf_port/ld/sections.ld']
     link_scripts += [' -T ' + rom + name for name in rom_scripts]

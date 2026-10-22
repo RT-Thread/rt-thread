@@ -44,7 +44,6 @@
 #include "hal/systimer_hal.h"
 #include "hal/systimer_ll.h"
 #include "riscv/rvruntime-frames.h"
-#include "riscv/riscv_interrupts.h"
 #include "riscv/interrupt.h"
 #include "esp_private/crosscore_int.h"
 #include "esp_attr.h"

@@ -921,3 +921,20 @@
 #define CONFIG_SOC_BLE_USE_WIFI_PWR_CLK_WORKAROUND      (1)
 #define CONFIG_SOC_PHY_COMBO_MODULE                     (1) /*!< Support Wi-Fi, BLE and 15.4*/
 #define CONFIG_SOC_CAPS_NO_RESET_BY_ANA_BOD             (1)
+
+/* --------------------------------------------------------------------------
+ * ESP-IDF v6.1 additions the scons build needs.  The C3 side of the hand
+ * written sdkconfig.h carries these; the C6 includes this header instead, so
+ * repeat the SoC independent ones here.
+ * -------------------------------------------------------------------------- */
+/* new in v6.1 (components/bootloader/Kconfig.projbuild), default 80 */
+#define CONFIG_BOOTLOADER_CPU_CLK_FREQ_MHZ 80
+/* new in v6.1: eFuse block revision range checked by the 2nd stage bootloader */
+#define CONFIG_ESP_EFUSE_BLOCK_REV_MIN_FULL 0
+#define CONFIG_ESP_EFUSE_BLOCK_REV_MAX_FULL 199
+/* new in v6.1 (components/esp_hw_support/Kconfig), default 0 */
+#define CONFIG_ESP_SLEEP_WAIT_FLASH_READY_EXTRA_DELAY 0
+/* new in v6.1: the PMS memory protection mode symbol */
+#define CONFIG_ESP_SYSTEM_MEMPROT_PMS 1
+#define CONFIG_ESP_SYSTEM_MEMPROT CONFIG_ESP_SYSTEM_MEMPROT_FEATURE
+#define CONFIG_ESPTOOLPY_FLASHMODE_VAL 3

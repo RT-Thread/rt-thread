@@ -21,10 +21,19 @@
 #include "esp_timer.h"
 #include "driver/gptimer.h"
 
+/* CI pulls RT-Thread-packages/esp-idf rtt-dev, where OS-tick IDs live only as SYSTIMER_LL_*.
+ * IDF v6.1 / package PR #18 reintroduces the non-LL names in esp_private/systimer.h. */
+#ifndef SYSTIMER_COUNTER_OS_TICK
+#define SYSTIMER_COUNTER_OS_TICK SYSTIMER_LL_COUNTER_OS_TICK
+#endif
+#ifndef SYSTIMER_ALARM_OS_TICK_CORE0
+#define SYSTIMER_ALARM_OS_TICK_CORE0 SYSTIMER_LL_ALARM_OS_TICK_CORE0
+#endif
+
 static systimer_hal_context_t systimer_hal;
 IRAM_ATTR void rt_SysTickIsrHandler(void *arg)
 {
-    systimer_ll_clear_alarm_int(systimer_hal.dev, SYSTIMER_LL_ALARM_OS_TICK_CORE0);
+    systimer_ll_clear_alarm_int(systimer_hal.dev, SYSTIMER_ALARM_OS_TICK_CORE0);
     rt_interrupt_enter();
     rt_tick_increase();
     rt_interrupt_leave();
@@ -40,14 +49,14 @@ void rt_hw_systick_init(void)
         .us_to_ticks = systimer_us_to_ticks,
     };
     systimer_hal_set_tick_rate_ops(&systimer_hal, &ops);
-    systimer_ll_set_counter_value(systimer_hal.dev, SYSTIMER_LL_COUNTER_OS_TICK, 0);
-    systimer_ll_apply_counter_value(systimer_hal.dev, SYSTIMER_LL_COUNTER_OS_TICK);
-    systimer_hal_connect_alarm_counter(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0, SYSTIMER_LL_COUNTER_OS_TICK);
-    systimer_hal_set_alarm_period(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0, 1000000UL / RT_TICK_PER_SECOND);
-    systimer_hal_select_alarm_mode(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0, SYSTIMER_ALARM_MODE_PERIOD);
+    systimer_ll_set_counter_value(systimer_hal.dev, SYSTIMER_COUNTER_OS_TICK, 0);
+    systimer_ll_apply_counter_value(systimer_hal.dev, SYSTIMER_COUNTER_OS_TICK);
+    systimer_hal_connect_alarm_counter(&systimer_hal, SYSTIMER_ALARM_OS_TICK_CORE0, SYSTIMER_COUNTER_OS_TICK);
+    systimer_hal_set_alarm_period(&systimer_hal, SYSTIMER_ALARM_OS_TICK_CORE0, 1000000UL / RT_TICK_PER_SECOND);
+    systimer_hal_select_alarm_mode(&systimer_hal, SYSTIMER_ALARM_OS_TICK_CORE0, SYSTIMER_ALARM_MODE_PERIOD);
     systimer_hal_counter_can_stall_by_cpu(&systimer_hal, 1, 0, true);
-    systimer_hal_enable_alarm_int(&systimer_hal, SYSTIMER_LL_ALARM_OS_TICK_CORE0);
-    systimer_hal_enable_counter(&systimer_hal, SYSTIMER_LL_COUNTER_OS_TICK);
+    systimer_hal_enable_alarm_int(&systimer_hal, SYSTIMER_ALARM_OS_TICK_CORE0);
+    systimer_hal_enable_counter(&systimer_hal, SYSTIMER_COUNTER_OS_TICK);
 }
 
 #ifdef SOC_ESP32_C6
