@@ -22,6 +22,7 @@
 #include "esp_rom_sys.h"
 #include "esp_private/periph_ctrl.h"
 #include "esp_private/sar_periph_ctrl.h"
+#include "hal/adc_ll.h"
 #else
 #include "esp_adc/adc_oneshot.h"
 #include "esp_adc/adc_cali.h"
@@ -96,13 +97,22 @@ static rt_err_t _adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt
         {
             adc_on--;
             sar_periph_ctrl_adc_oneshot_power_release();
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
+            adc_ll_enable_bus_clock(false);
+#else
             periph_module_disable(PERIPH_SARADC_MODULE);
+#endif
         }
         rt_mutex_release(&adc_lock);
         return RT_EOK;
     }
 
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
+    adc_ll_enable_bus_clock(true);
+    adc_ll_reset_register();
+#else
     periph_module_enable(PERIPH_SARADC_MODULE);
+#endif
     sar_periph_ctrl_adc_oneshot_power_acquire();
     adc_on++;
 
