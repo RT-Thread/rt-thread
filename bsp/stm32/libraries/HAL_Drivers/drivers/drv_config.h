@@ -7,6 +7,7 @@
  * Date           Author            Notes
  * 2018-10-30     SummerGift        first version
  * 2020-10-14     PeakRacing        Porting for stm32wbxx
+ * 2026-08-18     CliffLL           add l4/ospi_config.h
  */
 
 #ifndef __DRV_CONFIG_H__
@@ -88,6 +89,7 @@ extern "C" {
 #include "l4/uart_config.h"
 #include "l4/spi_config.h"
 #include "l4/qspi_config.h"
+#include "l4/ospi_config.h"
 #include "l4/adc_config.h"
 #include "l4/adc_config_v2.h"
 #include "l4/dac_config.h"
