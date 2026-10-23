@@ -21,7 +21,7 @@
 
 #if defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2) || defined(BSP_USING_ADC3) || defined(BSP_USING_ADC4)
 
-#define DRV_DEBUG
+// #define DRV_DEBUG
 #define LOG_TAG "drv.adc"
 #include <drv_log.h>
 
