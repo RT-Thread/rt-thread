@@ -202,6 +202,7 @@ typedef struct
 #define STT_HIPROC              15
 
 #define STN_UNDEF               0              /* undefined */
+#define SHN_COMMON              0xfff2         /* common symbols (uninitialized globals) */
 
 #define ELF_ST_BIND(info)       ((info) >> 4)
 #define ELF_ST_TYPE(info)       ((info) & 0xf)
