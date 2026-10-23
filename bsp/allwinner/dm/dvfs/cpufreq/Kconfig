@@ -1,0 +1,18 @@
+config RT_DVFS_SUN252I_F101_CPUFREQ
+    bool "Allwinner Sun252i F101 CPUfreq driver"
+    depends on RT_USING_DVFS
+    default y
+    help
+      Register the C907 CPU as a frequency-only DVFS device. The CPU PLL
+      supports linear frequency modulation; YuzukiNeko OPPs are supplied by
+      its device tree and do not require a controllable CPU regulator.
+
+config RT_DVFS_SUN50I_H616_CPUFREQ
+    bool "Allwinner H616 CPUfreq driver"
+    depends on RT_USING_DVFS
+    depends on RT_CLK_SUN50I_H616
+    default n
+    help
+      Register the shared Cortex-A53 CPUX clock as a DVFS device. Frequency
+      and voltage OPPs are read from the U-Boot device tree; CPU voltage is
+      controlled through the cpu-supply regulator when it is available.

@@ -1,0 +1,100 @@
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
+ * OSPTEK AM319M262928ZS, a 262x928 AMOLED panel with a CO6300 controller.
+ *
+ * The module is a one-lane MIPI-DSI video panel. The complete wiring is:
+ *
+ *   F101 pin       Panel signal             Note
+ *   ------------   ----------------------   -----------------------------
+ *   GND            GND/shield               Common ground for panel/touch
+ *   PD12           DSI-D0P                  MIPI DSI lane 0 positive
+ *   PD13           DSI-D0N                  MIPI DSI lane 0 negative
+ *   PD16           DSI-CKP                  MIPI DSI clock positive
+ *   PD17           DSI-CKN                  MIPI DSI clock negative
+ *   PB2            TP-SCL                   TWI2 SCL, 400 kHz
+ *   PB3            TP-SDA                   TWI2 SDA, CST3530 address 0x58
+ *
+ * PD14/PD15, PD18/PD19, and PD20/PD21 are DSI lanes D1, D2, and D3
+ * respectively; they remain unconnected because this panel uses one lane.
+ * Route D0 and CK as short, impedance-controlled differential pairs. Do not
+ * use loose jumper wires for the MIPI DSI signals.
+ *
+ * Use the OSPTEK adapter circuit: 3.3 V supply, its pull-ups and reset RC.
+ * AMOLED has no backlight. Wire PD7 to TP-INT, PD8 to TP-RESET.
+ * PD9 drives VCI_EN, PD6 drives LCD-RESET; PD22 is reserved for TE.
+ * The ESP32-P4 example toggles VCI_EN low for 60 ms, high for 50 ms.
+ * Reset stays asserted through power-up, then is released for 120 ms before
+ * DCS commands (CO6300 reset timing, including a reset from sleep-out).
+ * TE is not consumed by the video-mode output driver.
+ * The timing and CO6300 init sequence are adapted from the OSPTEK reference
+ * project: https://github.com/osptek/amoled-3.19-262x928-mipi-co6300
+ */
+&display0 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&dsi0_pd_pins>;
+    allwinner,output = "dsi";
+    allwinner,tcon-dclk-div = <19>;
+    dsi,lanes = <1>;
+    dsi,format = "rgb888";
+    enable-gpios = <&pio 3 9 PIN_ACTIVE_HIGH>;
+    reset-gpios = <&pio 3 6 PIN_ACTIVE_LOW>;
+    panel-power-off-delay-ms = <60>;
+    prepare-delay-ms = <50>;
+    reset-delay-ms = <10>;
+    init-delay-ms = <120>;
+
+    /* DSI data type, post-command delay in ms, payload size, payload. */
+    panel-init-sequence = [
+        15 00 02 fe 20
+        15 00 02 f4 5a
+        15 00 02 f5 59
+        15 00 02 fe 80
+        15 00 02 03 00
+        15 00 02 fe 00
+        15 00 02 35 00
+        15 00 02 3a 77
+        39 00 05 2a 00 00 01 05
+        39 00 05 2b 00 00 03 9f
+        15 00 02 53 20
+        15 00 02 51 ff
+        15 00 02 63 ff
+        05 3c 01 11
+        05 00 01 29
+    ];
+
+    status = "okay";
+
+    panel-timing {
+        clock-frequency = <16000000>;
+        hactive = <262>;
+        hfront-porch = <32>;
+        hback-porch = <32>;
+        hsync-len = <4>;
+        vactive = <928>;
+        vfront-porch = <8>;
+        vback-porch = <8>;
+        vsync-len = <4>;
+    };
+};
+
+/*
+ * CST3530 reset and interrupt match the adapter schematic.
+ */
+&i2c2_ctrl {
+    clock-frequency = <400000>;
+
+    touchscreen@58 {
+        compatible = "cst,cst3530";
+        reg = <0x58>;
+        interrupt-gpios = <&pio 3 7 PIN_ACTIVE_LOW>;
+        reset-gpios = <&pio 3 8 PIN_ACTIVE_LOW>;
+        touchscreen-size-x = <262>;
+        touchscreen-size-y = <928>;
+        status = "okay";
+    };
+};

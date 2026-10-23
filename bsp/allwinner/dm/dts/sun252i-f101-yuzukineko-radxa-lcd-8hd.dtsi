@@ -1,0 +1,248 @@
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
+ * Radxa LCD 8HD with the Raspberry Pi 4B 15-pin to 40-pin accessory,
+ * including its populated flex and auxiliary header. NOT the passive
+ * ROCK 5B 39-pin cable. Use only one display adapter at a time.
+ *
+ * 15-pin host connector, Raspberry Pi 4B J4 numbering:
+ * 1/4/7/10/13 GND; 2 PD15 D1N; 3 PD14 D1P;
+ * 5 PD17 CKN; 6 PD16 CKP; 8 PD13 D0N; 9 PD12 D0P;
+ * 11 PB2 SCL; 12 PB3 SDA; 14/15 VCC-3V3.
+ *
+ * Auxiliary accessory signals (identify by label, not assumed order):
+ * VCC-5V -> H2-20 VBUS; GND -> H2-19;
+ * BL-PWM and LCD-RESET -> H1-1 VCC-3V3, as in the Pi reference;
+ * TP-RST -> PD8; TP-INT -> PD7; seventh signal unused.
+ * No additional backlight converter, 1.8 V regulator or level shifter.
+ * Power from the board USB only; verify the total supply budget.
+ *
+ * Commands and timing: Radxa panel-radxa-dsi-dkms 1.0.0 Pi driver.
+ * The current Sunxi driver does not consume dsi,flags or the exit sequence.
+ * Clock programming and DSI video-mode compatibility still need validation.
+ */
+&display0 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&dsi0_pd_pins>;
+    allwinner,output = "dsi";
+    /* Divider 4 needs a 283.428 MHz parent for exactly 70.857 MHz. */
+    allwinner,tcon-dclk-div = <4>;
+    dsi,lanes = <2>;
+    dsi,format = "rgb888";
+    /* VIDEO | VIDEO_HSE | CLOCK_NON_CONTINUOUS; init commands use LP. */
+    dsi,flags = <0x405>;
+
+    /* DSI data type, post-command delay in ms, payload size, payload. */
+    panel-init-sequence = [
+        15 00 02 e0 00
+        15 00 02 e1 93
+        15 00 02 e2 65
+        15 00 02 e3 f8
+        15 00 02 80 03
+        15 00 02 e0 01
+        15 00 02 00 00
+        15 00 02 01 72
+        15 00 02 03 00
+        15 00 02 04 65
+        15 00 02 0c 74
+        15 00 02 17 00
+        15 00 02 18 b7
+        15 00 02 19 00
+        15 00 02 1a 00
+        15 00 02 1b b7
+        15 00 02 1c 00
+        15 00 02 24 fe
+        15 00 02 37 19
+        15 00 02 38 05
+        15 00 02 39 00
+        15 00 02 3a 01
+        15 00 02 3b 01
+        15 00 02 3c 70
+        15 00 02 3d ff
+        15 00 02 3e ff
+        15 00 02 3f ff
+        15 00 02 40 06
+        15 00 02 41 a0
+        15 00 02 43 1e
+        15 00 02 44 0f
+        15 00 02 45 28
+        15 00 02 4b 04
+        15 00 02 55 02
+        15 00 02 56 01
+        15 00 02 57 a9
+        15 00 02 58 0a
+        15 00 02 59 0a
+        15 00 02 5a 37
+        15 00 02 5b 19
+        15 00 02 5d 78
+        15 00 02 5e 63
+        15 00 02 5f 54
+        15 00 02 60 48
+        15 00 02 61 45
+        15 00 02 62 38
+        15 00 02 63 3d
+        15 00 02 64 28
+        15 00 02 65 43
+        15 00 02 66 41
+        15 00 02 67 43
+        15 00 02 68 62
+        15 00 02 69 50
+        15 00 02 6a 57
+        15 00 02 6b 49
+        15 00 02 6c 44
+        15 00 02 6d 37
+        15 00 02 6e 23
+        15 00 02 6f 10
+        15 00 02 70 78
+        15 00 02 71 63
+        15 00 02 72 54
+        15 00 02 73 49
+        15 00 02 74 45
+        15 00 02 75 38
+        15 00 02 76 3d
+        15 00 02 77 28
+        15 00 02 78 43
+        15 00 02 79 41
+        15 00 02 7a 43
+        15 00 02 7b 62
+        15 00 02 7c 50
+        15 00 02 7d 57
+        15 00 02 7e 49
+        15 00 02 7f 44
+        15 00 02 80 37
+        15 00 02 81 23
+        15 00 02 82 10
+        15 00 02 e0 02
+        15 00 02 00 47
+        15 00 02 01 47
+        15 00 02 02 45
+        15 00 02 03 45
+        15 00 02 04 4b
+        15 00 02 05 4b
+        15 00 02 06 49
+        15 00 02 07 49
+        15 00 02 08 41
+        15 00 02 09 1f
+        15 00 02 0a 1f
+        15 00 02 0b 1f
+        15 00 02 0c 1f
+        15 00 02 0d 1f
+        15 00 02 0e 1f
+        15 00 02 0f 5f
+        15 00 02 10 5f
+        15 00 02 11 57
+        15 00 02 12 77
+        15 00 02 13 35
+        15 00 02 14 1f
+        15 00 02 15 1f
+        15 00 02 16 46
+        15 00 02 17 46
+        15 00 02 18 44
+        15 00 02 19 44
+        15 00 02 1a 4a
+        15 00 02 1b 4a
+        15 00 02 1c 48
+        15 00 02 1d 48
+        15 00 02 1e 40
+        15 00 02 1f 1f
+        15 00 02 20 1f
+        15 00 02 21 1f
+        15 00 02 22 1f
+        15 00 02 23 1f
+        15 00 02 24 1f
+        15 00 02 25 5f
+        15 00 02 26 5f
+        15 00 02 27 57
+        15 00 02 28 77
+        15 00 02 29 35
+        15 00 02 2a 1f
+        15 00 02 2b 1f
+        15 00 02 58 40
+        15 00 02 59 00
+        15 00 02 5a 00
+        15 00 02 5b 10
+        15 00 02 5c 06
+        15 00 02 5d 40
+        15 00 02 5e 01
+        15 00 02 5f 02
+        15 00 02 60 30
+        15 00 02 61 01
+        15 00 02 62 02
+        15 00 02 63 03
+        15 00 02 64 6b
+        15 00 02 65 05
+        15 00 02 66 0c
+        15 00 02 67 73
+        15 00 02 68 09
+        15 00 02 69 03
+        15 00 02 6a 56
+        15 00 02 6b 08
+        15 00 02 6c 00
+        15 00 02 6d 04
+        15 00 02 6e 04
+        15 00 02 6f 88
+        15 00 02 70 00
+        15 00 02 71 00
+        15 00 02 72 06
+        15 00 02 73 7b
+        15 00 02 74 00
+        15 00 02 75 f8
+        15 00 02 76 00
+        15 00 02 77 d5
+        15 00 02 78 2e
+        15 00 02 79 12
+        15 00 02 7a 03
+        15 00 02 7b 00
+        15 00 02 7c 00
+        15 00 02 7d 03
+        15 00 02 7e 7b
+        15 00 02 e0 04
+        15 00 02 00 0e
+        15 00 02 02 b3
+        15 00 02 09 60
+        15 00 02 0e 2a
+        15 00 02 36 59
+        15 00 02 e0 00
+        15 00 02 80 01
+        15 00 02 e0 00
+        05 78 01 11
+        05 00 01 29
+    ];
+    panel-exit-sequence = [
+        05 00 01 28
+        05 64 01 10
+    ];
+
+    status = "okay";
+
+    panel-timing {
+        clock-frequency = <70857000>;
+        hactive = <800>;
+        hfront-porch = <40>;
+        hback-porch = <20>;
+        hsync-len = <20>;
+        vactive = <1280>;
+        vfront-porch = <30>;
+        vback-porch = <28>;
+        vsync-len = <4>;
+    };
+};
+
+&i2c2_ctrl {
+    clock-frequency = <400000>;
+
+    touchscreen@14 {
+        compatible = "goodix,gt911";
+        reg = <0x14>;
+        tp-supply = <&reg_vcc_3v3>;
+        irq-gpios = <&pio 3 7 PIN_ACTIVE_HIGH>;
+        reset-gpios = <&pio 3 8 PIN_ACTIVE_HIGH>;
+        max-x = <800>;
+        max-y = <1280>;
+        status = "okay";
+    };
+};

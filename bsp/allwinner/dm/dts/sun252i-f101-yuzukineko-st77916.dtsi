@@ -1,0 +1,248 @@
+/*
+ * Copyright (c) 2006-2026, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/*
+ * External 360x360 ST77916 panel on SPI1. The complete signal wiring is:
+ *
+ *   F101 pin       Panel signal            SPI1/QSPI function
+ *   ------------   ---------------------   -----------------
+ *   GND            GND                     Common ground
+ *   PD0            CS                      SPI1-CS0
+ *   PD1            SCL/CLK                 SPI1-CLK
+ *   PD2            SDA/SDI/D0              SPI1-MOSI/QSPI-D0
+ *   PD3            SDO/D1                  SPI1-MISO/QSPI-D1
+ *   PD5            D2/WP                   SPI1-QSPI-D2
+ *   PD4            D3/HOLD                 SPI1-QSPI-D3
+ *   PD6            RESET                   Active-low GPIO output
+ *   PD7            TE                      Active-high GPIO input
+ *
+ * PD4 and PD5 are intentionally ordered D3 then D2 in the F101 pinmux; do
+ * not interchange the two panel wires. Commands use D0 and pixel data uses
+ * all four QSPI data lines, so the panel needs no separate D/C line. Supply
+ * VCC and the panel backlight according to the display module/adapter
+ * specification; this binding does not drive a backlight GPIO or PWM. All
+ * connected GPIO signal levels must be compatible with the panel's 3.3 V IO.
+ * PD0 through PD7 are dedicated to this panel while this overlay is enabled.
+ */
+&pio {
+    spi1_pd_qspi_pins: spi1-pd-qspi-pins {
+        pins = "PD0", "PD1", "PD2", "PD3", "PD4", "PD5";
+        function = "spi1";
+    };
+};
+
+&spi1_ctrl {
+    allwinner,qspi-mode;
+    pinctrl-names = "default";
+    pinctrl-0 = <&spi1_pd_qspi_pins>;
+    status = "okay";
+
+    display@0 {
+        compatible = "sitronix,st77916";
+        reg = <0>;
+        /* Temporary signal-integrity baseline for the ST77916 bring-up. */
+        spi-max-frequency = <10000000>;
+        /* Match the panel's proven ESP QSPI transaction: opcode 0x32. */
+        spi-tx-bus-width = <4>;
+        spi-rx-bus-width = <4>;
+        reset-gpios = <&pio 3 6 PIN_ACTIVE_LOW>;
+        te-gpios = <&pio 3 7 PIN_ACTIVE_HIGH>;
+        rt-thread,defer-display-on;
+        width = <360>;
+        height = <360>;
+        format = "r5g6b5";
+
+        /* command, post-command delay in ms, payload size, payload */
+        panel-init-sequence = [
+            36 00 01 00
+            3a 00 01 55
+            f0 00 01 28
+            f2 00 01 28
+            73 00 01 f0
+            7c 00 01 d1
+            83 00 01 e0
+            84 00 01 61
+            f2 00 01 82
+            f0 00 01 00
+            f0 00 01 01
+            f1 00 01 01
+            b0 00 01 56
+            b1 00 01 4d
+            b2 00 01 24
+            b4 00 01 87
+            b5 00 01 44
+            b6 00 01 8b
+            b7 00 01 40
+            b8 00 01 86
+            ba 00 01 00
+            bb 00 01 08
+            bc 00 01 08
+            bd 00 01 00
+            c0 00 01 80
+            c1 00 01 10
+            c2 00 01 37
+            c3 00 01 80
+            c4 00 01 10
+            c5 00 01 37
+            c6 00 01 a9
+            c7 00 01 41
+            c8 00 01 01
+            c9 00 01 a9
+            ca 00 01 41
+            cb 00 01 01
+            d0 00 01 91
+            d1 00 01 68
+            d2 00 01 68
+            f5 00 02 00 a5
+            dd 00 01 4f
+            de 00 01 4f
+            f1 00 01 10
+            f0 00 01 00
+            f0 00 01 02
+            e0 00 0e f0 0a 10 09 09 36 35 33 4a 29 15 15 2e 34
+            e1 00 0e f0 0a 0f 08 08 05 34 33 4a 39 15 15 2d 33
+            f0 00 01 10
+            f3 00 01 10
+            e0 00 01 07
+            e1 00 01 00
+            e2 00 01 00
+            e3 00 01 00
+            e4 00 01 e0
+            e5 00 01 06
+            e6 00 01 21
+            e7 00 01 01
+            e8 00 01 05
+            e9 00 01 02
+            ea 00 01 da
+            eb 00 01 00
+            ec 00 01 00
+            ed 00 01 0f
+            ee 00 01 00
+            ef 00 01 00
+            f8 00 01 00
+            f9 00 01 00
+            fa 00 01 00
+            fb 00 01 00
+            fc 00 01 00
+            fd 00 01 00
+            fe 00 01 00
+            ff 00 01 00
+            60 00 01 40
+            61 00 01 04
+            62 00 01 00
+            63 00 01 42
+            64 00 01 d9
+            65 00 01 00
+            66 00 01 00
+            67 00 01 00
+            68 00 01 00
+            69 00 01 00
+            6a 00 01 00
+            6b 00 01 00
+            70 00 01 40
+            71 00 01 03
+            72 00 01 00
+            73 00 01 42
+            74 00 01 d8
+            75 00 01 00
+            76 00 01 00
+            77 00 01 00
+            78 00 01 00
+            79 00 01 00
+            7a 00 01 00
+            7b 00 01 00
+            80 00 01 48
+            81 00 01 00
+            82 00 01 06
+            83 00 01 02
+            84 00 01 d6
+            85 00 01 04
+            86 00 01 00
+            87 00 01 00
+            88 00 01 48
+            89 00 01 00
+            8a 00 01 08
+            8b 00 01 02
+            8c 00 01 d8
+            8d 00 01 04
+            8e 00 01 00
+            8f 00 01 00
+            90 00 01 48
+            91 00 01 00
+            92 00 01 0a
+            93 00 01 02
+            94 00 01 da
+            95 00 01 04
+            96 00 01 00
+            97 00 01 00
+            98 00 01 48
+            99 00 01 00
+            9a 00 01 0c
+            9b 00 01 02
+            9c 00 01 dc
+            9d 00 01 04
+            9e 00 01 00
+            9f 00 01 00
+            a0 00 01 48
+            a1 00 01 00
+            a2 00 01 05
+            a3 00 01 02
+            a4 00 01 d5
+            a5 00 01 04
+            a6 00 01 00
+            a7 00 01 00
+            a8 00 01 48
+            a9 00 01 00
+            aa 00 01 07
+            ab 00 01 02
+            ac 00 01 d7
+            ad 00 01 04
+            ae 00 01 00
+            af 00 01 00
+            b0 00 01 48
+            b1 00 01 00
+            b2 00 01 09
+            b3 00 01 02
+            b4 00 01 d9
+            b5 00 01 04
+            b6 00 01 00
+            b7 00 01 00
+            b8 00 01 48
+            b9 00 01 00
+            ba 00 01 0b
+            bb 00 01 02
+            bc 00 01 db
+            bd 00 01 04
+            be 00 01 00
+            bf 00 01 00
+            c0 00 01 10
+            c1 00 01 47
+            c2 00 01 56
+            c3 00 01 65
+            c4 00 01 74
+            c5 00 01 88
+            c6 00 01 99
+            c7 00 01 01
+            c8 00 01 bb
+            c9 00 01 aa
+            d0 00 01 10
+            d1 00 01 47
+            d2 00 01 56
+            d3 00 01 65
+            d4 00 01 74
+            d5 00 01 88
+            d6 00 01 99
+            d7 00 01 01
+            d8 00 01 bb
+            d9 00 01 aa
+            f3 00 01 01
+            f0 00 01 00
+            21 00 00
+            11 78 00
+        ];
+        status = "okay";
+    };
+};
