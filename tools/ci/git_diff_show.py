@@ -17,6 +17,16 @@ from typing import List, Dict
 
 import json
 from typing import List
+
+try:
+    from git_utils import get_blob_size
+    from git_utils import get_merge_base as git_get_merge_base
+    from git_utils import get_name_status_lines
+except ImportError:
+    from tools.ci.git_utils import get_blob_size
+    from tools.ci.git_utils import get_merge_base as git_get_merge_base
+    from tools.ci.git_utils import get_name_status_lines
+
 class FileDiff:
     def __init__(self, path: str, status: str, size_change: int = 0, old_size: int = 0, new_size: int = 0):
         self.path = path
@@ -49,14 +59,13 @@ class GitDiffAnalyzer:
             sys.exit(1)
             
         # 获取差异文件列表
-        diff_cmd = f"git diff --name-status {merge_base} HEAD"
-        print(diff_cmd)
+        print("git diff --name-status {} HEAD".format(merge_base))
         try:
-            output = subprocess.check_output(diff_cmd.split(), stderr=subprocess.STDOUT)
-            output = output.decode(self.encoding).strip()
+            lines = get_name_status_lines(merge_base, "HEAD", self.encoding)
+            output = "\n".join(lines)
             print(output)
-        except subprocess.CalledProcessError as e:
-            print(f"Error executing git diff: {e.output.decode(self.encoding)}")
+        except RuntimeError as e:
+            print("Error executing git diff: {}".format(e))
             sys.exit(1)
             
         if not output:
@@ -110,24 +119,15 @@ class GitDiffAnalyzer:
     def get_merge_base(self) -> str:
         """获取当前分支和目标分支的最近共同祖先"""
         try:
-            cmd = f"git merge-base {self.target_branch} HEAD"
-            print(cmd)
-            output = subprocess.check_output(cmd.split(), stderr=subprocess.STDOUT)
-            return output.decode(self.encoding).strip()
-        except subprocess.CalledProcessError as e:
-            print(f"Error executing git merge-base: {e.output.decode(self.encoding)}")
+            print("git merge-base {} HEAD".format(self.target_branch))
+            return git_get_merge_base(self.target_branch, "HEAD", self.encoding)
+        except RuntimeError as e:
+            print("Error executing git merge-base: {}".format(e))
             return None
 
     def get_file_size(self, path: str, ref: str) -> int:
-        """获取指定分支上文件的大小"""
-        try:
-            # 使用 git cat-file 来获取文件内容，然后计算其大小
-            cmd = f"git cat-file blob {ref}:{path}"
-            output = subprocess.check_output(cmd.split(), stderr=subprocess.STDOUT)
-            return len(output)
-        except subprocess.CalledProcessError:
-            # 如果文件不存在或无法获取，返回0
-            return 0
+        """Get the size of a file at the specified git ref."""
+        return get_blob_size(ref, path, self.encoding)
 
 def format_size(size: int) -> str:
     """将字节大小转换为人类可读的格式"""
