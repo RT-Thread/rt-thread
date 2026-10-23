@@ -34,23 +34,15 @@ def monitor_workflows(github_token, repo, workflow_names, start_time):
             
             if not runs:
                 print(f"No runs found for {workflow_name} after {start_time}")
-                # 尝试查找任何正在运行的工作流
-                all_runs = get_all_runs(github_token, repo, workflow_id, 10)
-                if all_runs:
-                    latest_run = all_runs[0]
-                    print(f"Using latest run instead: {latest_run['id']} created at {latest_run['created_at']}")
-                    result = monitor_single_run(github_token, repo, latest_run["id"], workflow_name)
-                    monitoring_results.append(result)
-                else:
-                    monitoring_results.append({
-                        "name": workflow_name,
-                        "status": "not_found",
-                        "conclusion": "not_found",
-                        "error": f"No runs found after {start_time}"
-                    })
+                monitoring_results.append({
+                    "name": workflow_name,
+                    "status": "not_found",
+                    "conclusion": "not_found",
+                    "error": f"No dispatched runs found after {start_time}"
+                })
             else:
                 # 监控找到的运行
-                run_to_monitor = runs[0]  # 取最新的一个
+                run_to_monitor = min(runs, key=lambda run: run["created_at"])
                 print(f"Monitoring run: {run_to_monitor['id']}")
                 result = monitor_single_run(github_token, repo, run_to_monitor["id"], workflow_name)
                 monitoring_results.append(result)
@@ -74,9 +66,13 @@ def get_all_runs(github_token, repo, workflow_id, per_page=10):
     }
     
     url = f"https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/runs"
-    params = {"per_page": per_page}
+    params = {
+        "per_page": per_page,
+        "event": "workflow_dispatch",
+        "branch": "master",
+    }
     
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=params, timeout=30)
     if response.status_code == 200:
         return response.json()["workflow_runs"]
     return []
@@ -101,15 +97,15 @@ def monitor_single_run(github_token, repo, run_id, workflow_name):
         "Accept": "application/vnd.github.v3+json"
     }
     
-    max_wait_time = 1800  # 30分钟
+    max_wait_time = 7200  # Allow two hours for queued BSP builds.
     check_interval = 30
-    start_time = time.time()
+    start_time = time.monotonic()
     
     print(f"Monitoring {workflow_name} (run {run_id})")
     
-    while time.time() - start_time < max_wait_time:
+    while time.monotonic() - start_time < max_wait_time:
         url = f"https://api.github.com/repos/{repo}/actions/runs/{run_id}"
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=30)
         
         if response.status_code != 200:
             print(f"Error getting run status: {response.status_code}")
@@ -147,7 +143,7 @@ def monitor_single_run(github_token, repo, run_id, workflow_name):
         "status": "timed_out",
         "conclusion": "timed_out",
         "html_url": f"https://github.com/{repo}/actions/runs/{run_id}",
-        "error": "Monitoring timed out after 30 minutes"
+        "error": "Monitoring timed out after 120 minutes"
     }
 
 def get_failure_logs(github_token, repo, run_id):
@@ -159,11 +155,13 @@ def get_failure_logs(github_token, repo, run_id):
     
     try:
         jobs_url = f"https://api.github.com/repos/{repo}/actions/runs/{run_id}/jobs"
-        jobs_response = requests.get(jobs_url, headers=headers)
-        
         failure_details = []
-        
-        if jobs_response.status_code == 200:
+        page = 1
+        while True:
+            jobs_response = requests.get(
+                jobs_url, headers=headers,
+                params={"per_page": 100, "page": page}, timeout=30)
+            jobs_response.raise_for_status()
             jobs_data = jobs_response.json()["jobs"]
             for job in jobs_data:
                 if job["conclusion"] == "failure":
@@ -180,6 +178,9 @@ def get_failure_logs(github_token, repo, run_id):
                             })
                     
                     failure_details.append(job_info)
+            if len(jobs_data) < 100:
+                break
+            page += 1
         
         return failure_details
     except Exception as e:
@@ -194,7 +195,7 @@ def get_workflow_id(github_token, repo, workflow_name):
     }
     
     url = f"https://api.github.com/repos/{repo}/actions/workflows"
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, params={"per_page": 100}, timeout=30)
     
     if response.status_code == 200:
         workflows = response.json()["workflows"]
@@ -215,7 +216,7 @@ def main():
     workflows = json.loads(workflows_json)
     results = monitor_workflows(github_token, repo, workflows, start_time)
     
-    with open("monitoring_results.json", "w") as f:
+    with open("monitoring_results.json", "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2)
     
     print(f"\n=== Monitoring Summary ===")
@@ -223,5 +224,7 @@ def main():
         status_icon = "✅" if result.get("conclusion") == "success" else "❌" if result.get("conclusion") == "failure" else "⚠️"
         print(f"{status_icon} {result['name']}: {result.get('conclusion', 'unknown')}")
 
+    return 0 if results and all(r.get("conclusion") == "success" for r in results) else 1
+
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
