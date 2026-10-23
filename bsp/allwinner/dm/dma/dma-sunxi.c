@@ -85,6 +85,26 @@ struct sunxi_dma
     rt_uint32_t requests_nr;
     int irq;
     rt_bool_t irq_installed;
+    rt_bool_t reset_deasserted;
+    rt_bool_t bus_clk_enabled;
+    rt_bool_t mbus_clk_enabled;
+};
+
+struct sunxi_dma_soc_data
+{
+    rt_uint32_t requests_max;
+    rt_bool_t enable_mbus;
+};
+
+static const struct sunxi_dma_soc_data sunxi_dma_data =
+{
+    .requests_max = SUNXI_DMA_MAX_REQUESTS,
+};
+
+static const struct sunxi_dma_soc_data sunxi_dma_h616_data =
+{
+    .requests_max = 49,
+    .enable_mbus = RT_TRUE,
 };
 
 #define to_sunxi_dma(raw) rt_container_of(raw, struct sunxi_dma, parent)
@@ -304,6 +324,13 @@ static rt_err_t sunxi_dma_build_llis(struct sunxi_dma_channel *channel,
             destination = channel->parent.transfer.dst_addr;
         }
 
+        /* The LLI format stores byte addresses in 32 bits. */
+        if (source > RT_UINT32_MAX || destination > RT_UINT32_MAX ||
+                item_length - 1 > RT_UINT32_MAX - source ||
+                item_length - 1 > RT_UINT32_MAX - destination)
+        {
+            return -RT_EINVAL;
+        }
         lli->config = config;
         lli->src = source;
         lli->dst = destination;
@@ -567,19 +594,28 @@ static void sunxi_dma_release(struct sunxi_dma *dma)
         rt_hw_interrupt_mask(dma->irq);
         rt_pic_detach_irq(dma->irq, dma);
     }
-    if (!rt_is_err_or_null(dma->mbus_clk))
+    if (dma->mbus_clk_enabled)
     {
         rt_clk_disable_unprepare(dma->mbus_clk);
+    }
+    if (!rt_is_err_or_null(dma->mbus_clk))
+    {
         rt_clk_put(dma->mbus_clk);
+    }
+    if (dma->bus_clk_enabled)
+    {
+        rt_clk_disable_unprepare(dma->bus_clk);
     }
     if (!rt_is_err_or_null(dma->bus_clk))
     {
-        rt_clk_disable_unprepare(dma->bus_clk);
         rt_clk_put(dma->bus_clk);
+    }
+    if (dma->reset_deasserted)
+    {
+        rt_reset_control_assert(dma->reset);
     }
     if (!rt_is_err_or_null(dma->reset))
     {
-        rt_reset_control_assert(dma->reset);
         rt_reset_control_put(dma->reset);
     }
     if (dma->base)
@@ -594,16 +630,22 @@ static rt_err_t sunxi_dma_probe(struct rt_platform_device *pdev)
 {
     rt_err_t err;
     struct rt_device *dev = &pdev->parent;
-    struct sunxi_dma *dma = rt_calloc(1, sizeof(*dma));
+    const struct sunxi_dma_soc_data *soc_data = pdev->id->data;
+    struct sunxi_dma *dma;
     rt_size_t index;
 
+    if (!soc_data)
+    {
+        return -RT_EINVAL;
+    }
+    dma = rt_calloc(1, sizeof(*dma));
     if (!dma)
     {
         return -RT_ENOMEM;
     }
     dma->irq = -1;
     dma->channels_nr = SUNXI_DMA_MAX_CHANNELS;
-    dma->requests_nr = SUNXI_DMA_MAX_REQUESTS;
+    dma->requests_nr = soc_data->requests_max;
 
     dma->base = rt_dm_dev_iomap(dev, 0);
     if (!dma->base)
@@ -621,10 +663,11 @@ static rt_err_t sunxi_dma_probe(struct rt_platform_device *pdev)
                 rt_ptr_err(dma->reset));
         goto _fail;
     }
-    if (rt_dm_dev_prop_read_u32(dev, "dma-channels", &dma->channels_nr) ||
-            !dma->channels_nr || dma->channels_nr > SUNXI_DMA_MAX_CHANNELS ||
-            rt_dm_dev_prop_read_u32(dev, "dma-requests", &dma->requests_nr) ||
-            !dma->requests_nr || dma->requests_nr > SUNXI_DMA_MAX_REQUESTS)
+    rt_dm_dev_prop_read_u32(dev, "dma-channels", &dma->channels_nr);
+    rt_dm_dev_prop_read_u32(dev, "dma-requests", &dma->requests_nr);
+    if (!dma->channels_nr || dma->channels_nr > SUNXI_DMA_MAX_CHANNELS ||
+            !dma->requests_nr || dma->requests_nr >
+            soc_data->requests_max)
     {
         err = -RT_EINVAL;
         goto _fail;
@@ -634,13 +677,27 @@ static rt_err_t sunxi_dma_probe(struct rt_platform_device *pdev)
         err = dma->irq;
         goto _fail;
     }
-    if ((err = rt_reset_control_deassert(dma->reset)) ||
-            (err = rt_clk_prepare_enable(dma->bus_clk)) ||
-            (err = rt_clk_prepare_enable(dma->mbus_clk)))
+    if ((err = rt_reset_control_deassert(dma->reset)))
     {
         goto _fail;
     }
+    dma->reset_deasserted = RT_TRUE;
+    if ((err = rt_clk_prepare_enable(dma->bus_clk)))
+    {
+        goto _fail;
+    }
+    dma->bus_clk_enabled = RT_TRUE;
+    if ((err = rt_clk_prepare_enable(dma->mbus_clk)))
+    {
+        goto _fail;
+    }
+    dma->mbus_clk_enabled = RT_TRUE;
 
+    if (soc_data->enable_mbus)
+    {
+        /* H616 manual: keep the MCLK interface active during initialization. */
+        HWREG32(dma->base + 0x28) |= RT_BIT(2);
+    }
     dma->channels = rt_calloc(dma->channels_nr, sizeof(*dma->channels));
     if (!dma->channels)
     {
@@ -689,8 +746,9 @@ static rt_err_t sunxi_dma_remove(struct rt_platform_device *pdev)
 
 static const struct rt_ofw_node_id sunxi_dma_ofw_ids[] =
 {
-    { .compatible = "allwinner,sun252i-f101-dma" },
-    { .compatible = "allwinner,sun20i-d1-dma" },
+    { .compatible = "allwinner,sun252i-f101-dma", .data = &sunxi_dma_data },
+    { .compatible = "allwinner,sun20i-d1-dma", .data = &sunxi_dma_data },
+    { .compatible = "allwinner,sun50i-h616-dma", .data = &sunxi_dma_h616_data },
     { /* sentinel */ }
 };
 

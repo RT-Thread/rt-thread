@@ -52,6 +52,18 @@ struct sunxi_irrx
     rt_bool_t bus_clk_enabled;
     rt_bool_t irq_attached;
     rt_bool_t opened;
+    rt_bool_t h616;
+};
+
+struct sunxi_irrx_soc_data
+{
+    rt_bool_t h616;
+};
+
+static const struct sunxi_irrx_soc_data sunxi_irrx_data = { 0 };
+static const struct sunxi_irrx_soc_data sunxi_irrx_h616_data =
+{
+    .h616 = RT_TRUE,
 };
 
 #define raw_to_sunxi_irrx(raw) \
@@ -85,7 +97,8 @@ static void sunxi_irrx_report(struct sunxi_irrx *irrx)
         return;
     }
 
-    irrx->pulsewidth_us = sunxi_irrx_cycles_to_us(irrx->pulse_cycles);
+    irrx->pulsewidth_us = irrx->h616 ? irrx->pulse_cycles * 16U :
+            sunxi_irrx_cycles_to_us(irrx->pulse_cycles);
     rt_hw_inputcapture_isr(&irrx->parent, irrx->pulse_level);
     irrx->pulse_cycles = 0;
     irrx->pulse_pending = RT_FALSE;
@@ -97,6 +110,10 @@ static void sunxi_irrx_store_sample(struct sunxi_irrx *irrx,
     rt_bool_t level = (sample & RT_BIT(7)) != 0;
     rt_uint32_t cycles = sample & RT_GENMASK(6, 0);
 
+    if (irrx->h616)
+    {
+        ++cycles;
+    }
     if (!cycles)
     {
         return;
@@ -125,6 +142,21 @@ static void sunxi_irrx_isr(int irq, void *param)
 
     status = HWREG32(irrx->regs + SUNXI_IRRX_RXSTA);
     count = SUNXI_IRRX_FIFO_COUNT(status);
+    if (irrx->h616 && count > 64)
+    {
+        count = 64;
+    }
+    if (irrx->h616 && (status & SUNXI_IRRX_IRQ_OVERRUN))
+    {
+        for (i = 0; i < count; ++i)
+        {
+            (void)HWREG32(irrx->regs + SUNXI_IRRX_RXFIFO);
+        }
+        irrx->pulse_cycles = 0;
+        irrx->pulse_pending = RT_FALSE;
+        HWREG32(irrx->regs + SUNXI_IRRX_RXSTA) = status & 0xff;
+        return;
+    }
     for (i = 0; i < count; ++i)
     {
         sunxi_irrx_store_sample(irrx,
@@ -155,6 +187,17 @@ static rt_err_t sunxi_irrx_open(struct rt_inputcapture_device *inputcapture)
         return RT_EOK;
     }
 
+    if (irrx->h616)
+    {
+        if ((err = rt_clk_set_rate(irrx->mod_clk, 8000000)))
+        {
+            return err;
+        }
+        if (rt_clk_get_rate(irrx->mod_clk) != 8000000)
+        {
+            return -RT_EINVAL;
+        }
+    }
     if ((err = rt_reset_control_deassert(irrx->reset)))
     {
         return err;
@@ -175,14 +218,16 @@ static rt_err_t sunxi_irrx_open(struct rt_inputcapture_device *inputcapture)
     HWREG32(irrx->regs + SUNXI_IRRX_CTRL) = 0;
     HWREG32(irrx->regs + SUNXI_IRRX_RXINT) = 0;
     HWREG32(irrx->regs + SUNXI_IRRX_RXSTA) = RT_UINT32_MAX;
-    HWREG32(irrx->regs + SUNXI_IRRX_CONFIG) = 2U | (32U << 2) |
-            (11U << 8) | (32U << 16);
+    HWREG32(irrx->regs + SUNXI_IRRX_CONFIG) = irrx->h616 ?
+            (1U << 2) | (124U << 8) :
+            2U | (32U << 2) | (11U << 8) | (32U << 16);
     HWREG32(irrx->regs + SUNXI_IRRX_RXCTRL) = SUNXI_IRRX_POLARITY_INVERT;
     HWREG32(irrx->regs + SUNXI_IRRX_RXINT) = SUNXI_IRRX_IRQ_OVERRUN |
             SUNXI_IRRX_IRQ_PACKET_END | SUNXI_IRRX_IRQ_AVAILABLE |
             SUNXI_IRRX_FIFO_LEVEL(20);
     HWREG32(irrx->regs + SUNXI_IRRX_CTRL) = SUNXI_IRRX_GEN |
-            SUNXI_IRRX_RXEN | SUNXI_IRRX_ENABLE | SUNXI_IRRX_MODE_BOTH;
+            SUNXI_IRRX_RXEN | SUNXI_IRRX_ENABLE |
+            (irrx->h616 ? 0 : SUNXI_IRRX_MODE_BOTH);
     irrx->opened = RT_TRUE;
     rt_pic_irq_unmask(irrx->irq);
 
@@ -269,8 +314,14 @@ static rt_err_t sunxi_irrx_probe(struct rt_platform_device *pdev)
     rt_err_t err;
     const char *name;
     struct rt_device *dev = &pdev->parent;
-    struct sunxi_irrx *irrx = rt_calloc(1, sizeof(*irrx));
+    const struct sunxi_irrx_soc_data *soc_data = pdev->id->data;
+    struct sunxi_irrx *irrx;
 
+    if (!soc_data)
+    {
+        return -RT_EINVAL;
+    }
+    irrx = rt_calloc(1, sizeof(*irrx));
     if (!irrx)
     {
         return -RT_ENOMEM;
@@ -283,9 +334,11 @@ static rt_err_t sunxi_irrx_probe(struct rt_platform_device *pdev)
         goto _fail;
     }
 
-    irrx->mod_clk = rt_clk_get_by_name(dev, "mod");
-    irrx->bus_clk = rt_clk_get_by_name(dev, "bus");
-    irrx->reset = rt_reset_control_get_by_name(dev, "bus");
+    irrx->h616 = soc_data->h616;
+    irrx->mod_clk = rt_clk_get_by_name(dev, irrx->h616 ? "ir" : "mod");
+    irrx->bus_clk = rt_clk_get_by_name(dev, irrx->h616 ? "apb" : "bus");
+    irrx->reset = irrx->h616 ? rt_reset_control_get_by_index(dev, 0) :
+            rt_reset_control_get_by_name(dev, "bus");
     if (rt_is_err_or_null(irrx->mod_clk) ||
             rt_is_err_or_null(irrx->bus_clk) ||
             rt_is_err_or_null(irrx->reset))
@@ -310,6 +363,7 @@ static rt_err_t sunxi_irrx_probe(struct rt_platform_device *pdev)
     irrx->irq_attached = RT_TRUE;
     rt_pic_irq_mask(irrx->irq);
 
+    rt_dm_dev_set_name_auto(dev, "irrx");
     name = rt_dm_dev_get_name(dev);
     irrx->parent.ops = &sunxi_irrx_ops;
     if ((err = rt_device_inputcapture_register(&irrx->parent, name, irrx)))
@@ -328,7 +382,8 @@ _fail:
 
 static const struct rt_ofw_node_id sunxi_irrx_ofw_ids[] =
 {
-    { .compatible = "allwinner,sun252i-f101-irrx" },
+    { .compatible = "allwinner,sun252i-f101-irrx", .data = &sunxi_irrx_data },
+    { .compatible = "allwinner,sun50i-h616-ir", .data = &sunxi_irrx_h616_data },
     { /* sentinel */ }
 };
 

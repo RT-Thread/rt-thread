@@ -24,7 +24,7 @@
 #define PWM_PERIOD_CYCLES_SHIFT    16
 #define PWM_CGR_BYPASS_SHIFT       16
 
-#define SUNXI_PWM_CHANNELS         4
+#define SUNXI_PWM_CHANNELS_MAX     6
 #define SUNXI_PWM_CLK_24M          24000000ULL
 #define SUNXI_PWM_CLK_100M         100000000ULL
 #define SUNXI_PWM_NSEC_PER_SEC     1000000000ULL
@@ -42,6 +42,7 @@ struct sunxi_pwm
     struct rt_clk *clk;
     struct rt_reset_control *reset;
     struct rt_spinlock lock;
+    rt_uint32_t channels;
 };
 
 #define to_sunxi_pwm(raw) rt_container_of(raw, struct sunxi_pwm, parent)
@@ -77,7 +78,7 @@ static rt_err_t sunxi_pwm_enable(struct sunxi_pwm *pwm, int channel,
 {
     rt_uint32_t value;
 
-    if (channel < 0 || channel >= SUNXI_PWM_CHANNELS)
+    if (channel < 0 || (rt_uint32_t)channel >= pwm->channels)
     {
         return -RT_EINVAL;
     }
@@ -120,7 +121,7 @@ static rt_err_t sunxi_pwm_config(struct sunxi_pwm *pwm,
     rt_uint32_t prescale;
     int channel = config->channel;
 
-    if (channel < 0 || channel >= SUNXI_PWM_CHANNELS || !config->period ||
+    if (channel < 0 || (rt_uint32_t)channel >= pwm->channels || !config->period ||
             config->pulse > config->period)
     {
         return -RT_EINVAL;
@@ -190,7 +191,7 @@ static rt_err_t sunxi_pwm_get(struct sunxi_pwm *pwm,
     rt_uint32_t divider_index;
     int channel = config->channel;
 
-    if (channel < 0 || channel >= SUNXI_PWM_CHANNELS)
+    if (channel < 0 || (rt_uint32_t)channel >= pwm->channels)
     {
         return -RT_EINVAL;
     }
@@ -286,6 +287,7 @@ static void sunxi_pwm_release(struct sunxi_pwm *pwm)
 static rt_err_t sunxi_pwm_probe(struct rt_platform_device *pdev)
 {
     rt_err_t err;
+    rt_uint32_t channels = 4;
     const char *name;
     struct rt_device *dev = &pdev->parent;
     struct sunxi_pwm *pwm = rt_calloc(1, sizeof(*pwm));
@@ -301,6 +303,14 @@ static rt_err_t sunxi_pwm_probe(struct rt_platform_device *pdev)
         err = -RT_EIO;
         goto _fail;
     }
+
+    rt_ofw_prop_read_u32(dev->ofw_node, "pwm-number", &channels);
+    if (!channels || channels > SUNXI_PWM_CHANNELS_MAX)
+    {
+        err = -RT_EINVAL;
+        goto _fail;
+    }
+    pwm->channels = channels;
 
     pwm->clk = rt_clk_get_by_index(dev, 0);
     if (rt_is_err(pwm->clk))
@@ -348,7 +358,7 @@ static rt_err_t sunxi_pwm_remove(struct rt_platform_device *pdev)
     struct sunxi_pwm *pwm = dev->user_data;
     int channel;
 
-    for (channel = 0; channel < SUNXI_PWM_CHANNELS; ++channel)
+    for (channel = 0; (rt_uint32_t)channel < pwm->channels; ++channel)
     {
         sunxi_pwm_enable(pwm, channel, RT_FALSE);
     }
@@ -363,6 +373,7 @@ static rt_err_t sunxi_pwm_remove(struct rt_platform_device *pdev)
 static const struct rt_ofw_node_id sunxi_pwm_ofw_ids[] =
 {
     { .compatible = "allwinner,sun252i-f101-pwm" },
+    { .compatible = "allwinner,sun50i-h616-pwm" },
     { /* sentinel */ }
 };
 

@@ -5,6 +5,9 @@ src = []
 if GetDepend(['RT_HWCRYPTO_SUNXI_CE']):
     src += ['hwcrypto-sunxi-ce.c']
 
+if GetDepend(['RT_HWCRYPTO_SUN50I_H616_CE']):
+    src += ['hwcrypto-sun50i-h616-ce.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''])
 
 Return('group')

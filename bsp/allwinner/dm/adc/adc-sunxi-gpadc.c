@@ -298,6 +298,8 @@ static rt_err_t sunxi_gpadc_remove(struct rt_platform_device *pdev)
 static const struct rt_ofw_node_id sunxi_gpadc_ofw_ids[] =
 {
     { .compatible = "allwinner,sun252i-f101-gpadc" },
+    { .compatible = "allwinner,sun50i-h616-gpadc" },
+    { .compatible = "allwinner,sun20i-d1-gpadc" },
     { /* sentinel */ }
 };
 

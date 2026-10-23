@@ -4,6 +4,10 @@ cwd = GetCurrentDir()
 src = []
 CPPPATH = [cwd + '/../include']
 
+if GetDepend(['RT_CLK_SUN50I_H616']):
+    src += ['clk-sun50i-h616.c', 'clk-sun50i-h616-de33.c',
+            'clk-sunxi-tcon-top.c']
+
 if GetDepend(['RT_CLK_SUN252I_F101']):
     src += ['clk-sunxi.c', 'clk-sun252i-f101.c', 'clk-sun252i-f101-cpupll.c',
             'clk-sun252i-f101-rtc.c']

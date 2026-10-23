@@ -40,8 +40,13 @@ struct sunxi_pinctrl_data
     rt_uint8_t banks_nr;
     rt_uint8_t irq_banks;
     rt_uint8_t irq_mux;
+    rt_uint8_t bank_base;
+    const rt_uint8_t *irq_bank_map;
+    rt_bool_t irq_read_needs_mux;
 };
 
 extern const struct sunxi_pinctrl_data sun252i_f101_pinctrl_data;
+extern const struct sunxi_pinctrl_data sun50i_h616_pinctrl_data;
+extern const struct sunxi_pinctrl_data sun50i_h616_r_pinctrl_data;
 
 #endif /* __SUNXI_PINCTRL_H__ */

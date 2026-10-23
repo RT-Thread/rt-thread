@@ -45,6 +45,18 @@ struct sunxi_i2c
     struct rt_reset_control *reset;
     void *base;
     rt_uint32_t input_rate;
+    rt_uint32_t clear_irq;
+};
+
+struct sunxi_i2c_soc_data
+{
+    rt_uint32_t clear_irq;
+};
+
+static const struct sunxi_i2c_soc_data sunxi_i2c_data = { 0 };
+static const struct sunxi_i2c_soc_data sunxi_i2c_h616_data =
+{
+    .clear_irq = SUNXI_TWI_CTL_INTFLG,
 };
 
 #define to_sunxi_i2c(raw) rt_container_of(raw, struct sunxi_i2c, parent)
@@ -91,7 +103,7 @@ static void sunxi_i2c_continue(struct sunxi_i2c *i2c, rt_bool_t ack)
     {
         control &= ~SUNXI_TWI_CTL_ACK;
     }
-    sunxi_i2c_write(i2c, SUNXI_TWI_CTL, control);
+    sunxi_i2c_write(i2c, SUNXI_TWI_CTL, control | i2c->clear_irq);
 }
 
 static rt_err_t sunxi_i2c_start(struct sunxi_i2c *i2c)
@@ -101,7 +113,7 @@ static rt_err_t sunxi_i2c_start(struct sunxi_i2c *i2c)
 
     control |= SUNXI_TWI_CTL_BUSEN | SUNXI_TWI_CTL_STA;
     control &= ~SUNXI_TWI_CTL_INTFLG;
-    sunxi_i2c_write(i2c, SUNXI_TWI_CTL, control);
+    sunxi_i2c_write(i2c, SUNXI_TWI_CTL, control | i2c->clear_irq);
 
     if ((err = sunxi_i2c_wait(i2c)))
     {
@@ -120,7 +132,7 @@ static void sunxi_i2c_stop(struct sunxi_i2c *i2c)
 
     control |= SUNXI_TWI_CTL_BUSEN | SUNXI_TWI_CTL_STP;
     control &= ~(SUNXI_TWI_CTL_STA | SUNXI_TWI_CTL_ACK | SUNXI_TWI_CTL_INTFLG);
-    sunxi_i2c_write(i2c, SUNXI_TWI_CTL, control);
+    sunxi_i2c_write(i2c, SUNXI_TWI_CTL, control | i2c->clear_irq);
 
     for (timeout = SUNXI_TWI_TIMEOUT_US; timeout > 0; --timeout)
     {
@@ -340,8 +352,14 @@ static rt_err_t sunxi_i2c_probe(struct rt_platform_device *pdev)
     rt_err_t err;
     const char *name;
     struct rt_device *dev = &pdev->parent;
-    struct sunxi_i2c *i2c = rt_calloc(1, sizeof(*i2c));
+    const struct sunxi_i2c_soc_data *soc_data = pdev->id->data;
+    struct sunxi_i2c *i2c;
 
+    if (!soc_data)
+    {
+        return -RT_EINVAL;
+    }
+    i2c = rt_calloc(1, sizeof(*i2c));
     if (!i2c)
     {
         return -RT_ENOMEM;
@@ -354,6 +372,7 @@ static rt_err_t sunxi_i2c_probe(struct rt_platform_device *pdev)
         goto _fail;
     }
 
+    i2c->clear_irq = soc_data->clear_irq;
     i2c->clk = rt_clk_get_by_index(dev, 0);
     if (rt_is_err(i2c->clk))
     {
@@ -425,7 +444,8 @@ static rt_err_t sunxi_i2c_remove(struct rt_platform_device *pdev)
 
 static const struct rt_ofw_node_id sunxi_i2c_ofw_ids[] =
 {
-    { .compatible = "allwinner,sun252i-f101-i2c" },
+    { .compatible = "allwinner,sun252i-f101-i2c", .data = &sunxi_i2c_data },
+    { .compatible = "allwinner,sun50i-h616-i2c", .data = &sunxi_i2c_h616_data },
     { /* sentinel */ }
 };
 

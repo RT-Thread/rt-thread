@@ -8,8 +8,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#include <drivers/syscon.h>
-
 #define DBG_TAG "jpegd.sunxi"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
@@ -57,6 +55,8 @@
 #define SUNXI_VE_MPEG_CTRL_IRQ_MASK           (RT_BIT(5) | RT_BIT(4) | RT_BIT(3))
 #define SUNXI_VE_MPEG_CTRL_F101_420           (RT_BIT(8) | RT_BIT(7) | \
                                                 RT_BIT(6) | RT_BIT(5) | \
+                                                RT_BIT(4) | RT_BIT(3))
+#define SUNXI_VE_MPEG_CTRL_H6                 (RT_BIT(27) | RT_BIT(5) | \
                                                 RT_BIT(4) | RT_BIT(3))
 #define SUNXI_VE_MPEG_STATUS_MASK             (RT_BIT(3) | RT_BIT(2) | \
                                                 RT_BIT(1) | RT_BIT(0))
@@ -213,6 +213,27 @@ enum sunxi_jpegd_engine
     SUNXI_JPEGD_ENGINE_PNG_DECODE,
 };
 
+enum sunxi_jpegd_layout
+{
+    SUNXI_JPEGD_LAYOUT_F101,
+    SUNXI_JPEGD_LAYOUT_H6,
+};
+
+struct sunxi_jpegd_soc_data
+{
+    enum sunxi_jpegd_layout layout;
+};
+
+static const struct sunxi_jpegd_soc_data sunxi_jpegd_f101_data =
+{
+    .layout = SUNXI_JPEGD_LAYOUT_F101,
+};
+
+static const struct sunxi_jpegd_soc_data sunxi_jpegd_h616_data =
+{
+    .layout = SUNXI_JPEGD_LAYOUT_H6,
+};
+
 struct sunxi_jpege_header
 {
     rt_uint8_t data[SUNXI_JPEGE_HEADER_SIZE];
@@ -243,6 +264,7 @@ struct sunxi_jpegd
     rt_bool_t png_registered;
     rt_bool_t irq_installed;
     rt_bool_t running;
+    enum sunxi_jpegd_layout layout;
     enum sunxi_jpegd_engine engine;
 };
 
@@ -258,12 +280,13 @@ static rt_err_t sunxi_jpegd_claim_sram(struct sunxi_jpegd *jpegd)
             "allwinner,sram", 0);
     if (!section_np)
     {
-        return -RT_EINVAL;
+        return jpegd->layout == SUNXI_JPEGD_LAYOUT_H6 ? RT_EOK : -RT_EINVAL;
     }
 
     if (!rt_ofw_node_is_compatible(section_np,
             "allwinner,sun252i-f101-sram-ve"))
     {
+        err = jpegd->layout == SUNXI_JPEGD_LAYOUT_H6 ? RT_EOK : -RT_EINVAL;
         goto _out_section;
     }
 
@@ -855,6 +878,24 @@ static rt_err_t sunxi_jpegd_sampling(const struct sunxi_jpegd_header *header,
     }
 
     return RT_EOK;
+}
+
+static rt_uint32_t sunxi_jpegd_mpeg_mode(const struct sunxi_jpegd *jpegd)
+{
+    return jpegd->layout == SUNXI_JPEGD_LAYOUT_H6 ? 0 : SUNXI_VE_MODE_DEC_MPEG;
+}
+
+static rt_uint32_t sunxi_jpegd_vld_address(const struct sunxi_jpegd *jpegd,
+        rt_ubase_t address)
+{
+    rt_uint32_t value = address;
+
+    if (jpegd->layout == SUNXI_JPEGD_LAYOUT_H6)
+    {
+        value = (value & 0x0ffffff0) | (value >> 28 & 0x0f);
+    }
+    return value | SUNXI_VE_MPEG_VLD_FIRST | SUNXI_VE_MPEG_VLD_LAST |
+            SUNXI_VE_MPEG_VLD_VALID;
 }
 
 static rt_err_t sunxi_jpegd_configure_output(struct sunxi_jpegd *jpegd,
@@ -1625,7 +1666,7 @@ static rt_err_t sunxi_jpegd_decode(struct sunxi_jpegd *jpegd,
         return err;
     }
 
-    sunxi_jpegd_writel(jpegd, SUNXI_VE_MODE, SUNXI_VE_MODE_DEC_MPEG);
+    sunxi_jpegd_writel(jpegd, SUNXI_VE_MODE, sunxi_jpegd_mpeg_mode(jpegd));
     if ((err = sunxi_jpegd_configure_output(jpegd, &header, sampling, output,
             &stride, &luma_size, &output_size)) != RT_EOK)
     {
@@ -1650,12 +1691,7 @@ static rt_err_t sunxi_jpegd_decode(struct sunxi_jpegd *jpegd,
             header.entropy_offset * 8);
     sunxi_jpegd_writel(jpegd, SUNXI_VE_MPEG_VLD_LENGTH,
             (input->buffer.size - header.entropy_offset) * 8);
-    /*
-     * Unlike older VE generations, F101 takes the unmodified physical
-     * address here.  The input buffer is a 1 KiB-aligned VLD ring.
-     */
-    address = input->buffer.phys_addr | SUNXI_VE_MPEG_VLD_FIRST |
-            SUNXI_VE_MPEG_VLD_LAST | SUNXI_VE_MPEG_VLD_VALID;
+    address = sunxi_jpegd_vld_address(jpegd, input->buffer.phys_addr);
     sunxi_jpegd_writel(jpegd, SUNXI_VE_MPEG_VLD_ADDR, address);
     sunxi_jpegd_writel(jpegd, SUNXI_VE_MPEG_VLD_END,
             input->buffer.phys_addr + input->buffer.size - 1);
@@ -1668,9 +1704,11 @@ static rt_err_t sunxi_jpegd_decode(struct sunxi_jpegd *jpegd,
 
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, input->buffer.virt_addr,
             request->input_size);
-    rt_hw_cpu_dcache_clean_and_invalidate(output->buffer.virt_addr, output_size);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, output->buffer.virt_addr, output_size);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, output->buffer.virt_addr, output_size);
 
-    ctrl = SUNXI_VE_MPEG_CTRL_F101_420;
+    ctrl = jpegd->layout == SUNXI_JPEGD_LAYOUT_H6 ?
+            SUNXI_VE_MPEG_CTRL_H6 : SUNXI_VE_MPEG_CTRL_F101_420;
     jpegd->engine = SUNXI_JPEGD_ENGINE_DECODE;
     jpegd->running = RT_TRUE;
     jpegd->error = RT_EOK;
@@ -2018,7 +2056,7 @@ static const struct rt_device_ops sunxi_jpegd_ops =
     .control = sunxi_jpegd_control,
 };
 
-static const struct rt_device_ops sunxi_jpege_ops =
+static const struct rt_device_ops sunxi_jpege_ops __attribute__((unused)) =
 {
     .control = sunxi_jpege_control,
 };
@@ -2148,14 +2186,21 @@ static void sunxi_jpegd_release(struct sunxi_jpegd *jpegd)
 static rt_err_t sunxi_jpegd_probe(struct rt_platform_device *pdev)
 {
     struct rt_device *dev = &pdev->parent;
+    const struct sunxi_jpegd_soc_data *soc_data = pdev->id->data;
     struct sunxi_jpegd *jpegd;
     const char *decoder_name;
+#ifdef RT_SOC_SUNXI_JPEG_ENC
     const char *encoder_name;
+#endif
 #ifdef RT_SOC_SUNXI_PNG_DEC
     const char *png_name;
 #endif
     rt_err_t err;
 
+    if (!soc_data)
+    {
+        return -RT_EINVAL;
+    }
     jpegd = rt_calloc(1, sizeof(*jpegd));
     if (!jpegd)
     {
@@ -2164,6 +2209,7 @@ static rt_err_t sunxi_jpegd_probe(struct rt_platform_device *pdev)
 
     jpegd->dev = dev;
     jpegd->irq = -1;
+    jpegd->layout = soc_data->layout;
     rt_list_init(&jpegd->buffers);
     jpegd->base = rt_dm_dev_iomap(dev, 0);
     if (!jpegd->base)
@@ -2301,7 +2347,8 @@ static rt_err_t sunxi_jpegd_remove(struct rt_platform_device *pdev)
 
 static const struct rt_ofw_node_id sunxi_jpegd_ofw_ids[] =
 {
-    { .compatible = "allwinner,sun252i-f101-video-engine" },
+    { .compatible = "allwinner,sun252i-f101-video-engine", .data = &sunxi_jpegd_f101_data },
+    { .compatible = "allwinner,sun50i-h616-video-engine", .data = &sunxi_jpegd_h616_data },
     { /* sentinel */ }
 };
 

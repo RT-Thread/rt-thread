@@ -41,9 +41,112 @@ struct sunxi_rtc
     struct rt_rtc_wkalarm alarm;
     rt_bool_t registered;
     rt_bool_t irq_attached;
+    rt_bool_t day_zero;
+#ifdef RT_CLK_SUN50I_H616
+    struct rt_clk_node clocks;
+    struct rt_clk_cell clock_cells[3];
+    struct rt_clk_cell *cells[3];
+    struct rt_spinlock clock_lock;
+    rt_bool_t clocks_registered;
+#endif
+};
+
+struct sunxi_rtc_soc_data
+{
+    rt_bool_t day_zero;
+};
+
+static const struct sunxi_rtc_soc_data sunxi_rtc_data = { 0 };
+static const struct sunxi_rtc_soc_data sunxi_rtc_h616_data =
+{
+    .day_zero = RT_TRUE,
 };
 
 #define to_sunxi_rtc(raw) rt_container_of(raw, struct sunxi_rtc, parent)
+
+#ifdef RT_CLK_SUN50I_H616
+static rt_ubase_t h616_rtc_clock_rate(struct rt_clk_cell *cell,
+        rt_ubase_t parent_rate)
+{
+    struct sunxi_rtc *rtc = cell->clk_np->priv;
+    rt_uint32_t cal = HWREG32(rtc->base + 0x0c);
+    rt_ubase_t iosc = (cal & RT_BIT(1)) ? cal >> 7 : 16000000;
+
+    if (cell == &rtc->clock_cells[2])
+    {
+        return iosc;
+    }
+    if (cell == &rtc->clock_cells[1] &&
+            (HWREG32(rtc->base + 0x60) & RT_GENMASK(2, 1)))
+    {
+        /* Fanout is switched to IOSC32K by enable, not a guessed PLL rate. */
+        return 0;
+    }
+    return (cal & RT_BIT(0)) ? 32768 :
+            iosc / 32 / ((HWREG32(rtc->base + 0x08) & 31) + 1);
+}
+
+static rt_err_t h616_rtc_clock_enable(struct rt_clk_cell *cell)
+{
+    struct sunxi_rtc *rtc = cell->clk_np->priv;
+    rt_base_t level = rt_spin_lock_irqsave(&rtc->clock_lock);
+
+    HWREG32(rtc->base + 0x160) |= RT_BIT(0);
+    if (cell == &rtc->clock_cells[1])
+    {
+        rt_uint32_t value = HWREG32(rtc->base + 0x60);
+        HWREG32(rtc->base + 0x60) = (value & ~RT_GENMASK(2, 1)) | RT_BIT(0);
+    }
+    rt_spin_unlock_irqrestore(&rtc->clock_lock, level);
+    return RT_EOK;
+}
+
+static void h616_rtc_clock_disable(struct rt_clk_cell *cell)
+{
+    struct sunxi_rtc *rtc = cell->clk_np->priv;
+    rt_base_t level = rt_spin_lock_irqsave(&rtc->clock_lock);
+
+    /* IOSC also supplies the RTC and must stay running. */
+    if (cell == &rtc->clock_cells[1])
+    {
+        HWREG32(rtc->base + 0x60) &= ~RT_BIT(0);
+    }
+    rt_spin_unlock_irqrestore(&rtc->clock_lock, level);
+}
+
+static const struct rt_clk_ops h616_rtc_clock_ops =
+{
+    .recalc_rate = h616_rtc_clock_rate,
+    .enable = h616_rtc_clock_enable,
+    .disable = h616_rtc_clock_disable,
+};
+
+static rt_err_t h616_rtc_register_clocks(struct sunxi_rtc *rtc,
+        struct rt_device *dev)
+{
+    static const char * const names[] =
+    {
+        "h616-osc32k", "h616-osc32k-out", "h616-iosc",
+    };
+    unsigned int index;
+
+    rt_spin_lock_init(&rtc->clock_lock);
+    rtc->clocks.dev = dev;
+    rtc->clocks.priv = rtc;
+    rtc->clocks.cells = rtc->cells;
+    rtc->clocks.cells_nr = RT_ARRAY_SIZE(rtc->cells);
+    /* No dependency on main/R CCU: both CCUs depend on this provider. */
+    rtc->clocks.parents_clk = rt_err_ptr(-RT_ENOSYS);
+    for (index = 0; index < RT_ARRAY_SIZE(rtc->cells); ++index)
+    {
+        rtc->clock_cells[index].name = names[index];
+        rtc->clock_cells[index].ops = &h616_rtc_clock_ops;
+        rtc->clock_cells[index].flags = RT_CLK_F_GET_RATE_NOCACHE;
+        rtc->cells[index] = &rtc->clock_cells[index];
+    }
+    return rt_clk_register(&rtc->clocks);
+}
+#endif
 
 static rt_uint32_t sunxi_rtc_read(struct sunxi_rtc *rtc, rt_size_t offset)
 {
@@ -169,6 +272,15 @@ static rt_err_t sunxi_rtc_read_tm(struct sunxi_rtc *rtc, struct tm *tm,
         }
     }
 
+    if (retry == 3)
+    {
+        return -RT_EIO;
+    }
+    /* Keep the internal helpers one-based, matching the F101 interface. */
+    if (rtc->day_zero)
+    {
+        ymd = (ymd & 0xffff) + 1;
+    }
     err = sunxi_rtc_day_to_tm(ymd, tm);
     if (err)
     {
@@ -229,7 +341,7 @@ static rt_err_t sunxi_rtc_write_tm(struct sunxi_rtc *rtc, const struct tm *tm)
     {
         return err;
     }
-    sunxi_rtc_write(rtc, SUNXI_RTC_YMD, day);
+    sunxi_rtc_write(rtc, SUNXI_RTC_YMD, day - rtc->day_zero);
 
     return sunxi_rtc_wait_ready(rtc, SUNXI_RTC_HMS_ACC | SUNXI_RTC_YMD_ACC);
 }
@@ -321,7 +433,7 @@ static rt_err_t sunxi_rtc_set_alarm(struct sunxi_rtc *rtc,
     sunxi_rtc_write(rtc, SUNXI_RTC_ALRM_EN, 0);
     sunxi_rtc_write(rtc, SUNXI_RTC_ALRM_IRQ_EN, 0);
     sunxi_rtc_write(rtc, SUNXI_RTC_ALRM_IRQ_STA, SUNXI_RTC_ALRM_IRQ_COUNTER);
-    sunxi_rtc_write(rtc, SUNXI_RTC_ALRM_DAY, target_day);
+    sunxi_rtc_write(rtc, SUNXI_RTC_ALRM_DAY, target_day - rtc->day_zero);
     sunxi_rtc_write(rtc, SUNXI_RTC_ALRM_HMS, hms);
     sunxi_rtc_write(rtc, SUNXI_RTC_ALRM_IRQ_EN, SUNXI_RTC_ALRM_IRQ_COUNTER);
     sunxi_rtc_write(rtc, SUNXI_RTC_ALRM_EN, SUNXI_RTC_ALRM_EN_COUNTER);
@@ -411,13 +523,20 @@ static rt_err_t sunxi_rtc_probe(struct rt_platform_device *pdev)
 {
     rt_err_t err;
     struct rt_device *dev = &pdev->parent;
-    struct sunxi_rtc *rtc = rt_calloc(1, sizeof(*rtc));
+    const struct sunxi_rtc_soc_data *soc_data = pdev->id->data;
+    struct sunxi_rtc *rtc;
 
+    if (!soc_data)
+    {
+        return -RT_EINVAL;
+    }
+    rtc = rt_calloc(1, sizeof(*rtc));
     if (!rtc)
     {
         return -RT_ENOMEM;
     }
 
+    rtc->day_zero = soc_data->day_zero;
     rtc->base = rt_dm_dev_iomap(dev, 0);
     rtc->irq = rt_dm_dev_get_irq(dev, 0);
     if (!rtc->base || rtc->irq < 0)
@@ -448,8 +567,28 @@ static rt_err_t sunxi_rtc_probe(struct rt_platform_device *pdev)
     rtc->irq_attached = RT_TRUE;
     rt_pic_irq_unmask(rtc->irq);
 
+#ifdef RT_CLK_SUN50I_H616
+    if (rtc->day_zero)
+    {
+        if ((err = h616_rtc_register_clocks(rtc, dev)))
+        {
+            goto _fail;
+        }
+        rtc->clocks_registered = RT_TRUE;
+    }
+#endif
+
     dev->user_data = rtc;
-    rt_dm_dev_bind_fwdata(dev, RT_NULL, rtc);
+#ifdef RT_CLK_SUN50I_H616
+    /*
+     * The H616 RTC is also the LOSC/IOSC clock provider.  Keep its clock
+     * node as the FDT data so the main and R CCUs can resolve those clocks.
+     */
+    if (!rtc->clocks_registered)
+#endif
+    {
+        rt_dm_dev_bind_fwdata(dev, RT_NULL, rtc);
+    }
     return RT_EOK;
 
 _fail:
@@ -462,6 +601,19 @@ static rt_err_t sunxi_rtc_remove(struct rt_platform_device *pdev)
     struct rt_device *dev = &pdev->parent;
     struct sunxi_rtc *rtc = dev->user_data;
 
+#ifdef RT_CLK_SUN50I_H616
+    /* This oscillator is the root of the live bus-clock tree. */
+    if (rtc->clocks_registered)
+    {
+        return -RT_EBUSY;
+    }
+#endif
+    if (rt_device_unregister(&rtc->parent))
+    {
+        return -RT_EBUSY;
+    }
+    rtc->registered = RT_FALSE;
+
     rt_dm_dev_unbind_fwdata(dev, RT_NULL);
     sunxi_rtc_release(rtc);
     return RT_EOK;
@@ -469,7 +621,8 @@ static rt_err_t sunxi_rtc_remove(struct rt_platform_device *pdev)
 
 static const struct rt_ofw_node_id sunxi_rtc_ofw_ids[] =
 {
-    { .compatible = "allwinner,sun252i-f101-rtc" },
+    { .compatible = "allwinner,sun252i-f101-rtc", .data = &sunxi_rtc_data },
+    { .compatible = "allwinner,sun50i-h616-rtc", .data = &sunxi_rtc_h616_data },
     { /* sentinel */ }
 };
 
@@ -480,4 +633,13 @@ static struct rt_platform_driver sunxi_rtc_driver =
     .probe = sunxi_rtc_probe,
     .remove = sunxi_rtc_remove,
 };
+#ifdef RT_CLK_SUN50I_H616
+static int sunxi_rtc_driver_register(void)
+{
+    return rt_platform_driver_register(&sunxi_rtc_driver);
+}
+/* H616 CCUs need this node's oscillator outputs during platform discovery. */
+INIT_SUBSYS_EXPORT(sunxi_rtc_driver_register);
+#else
 RT_PLATFORM_DRIVER_EXPORT(sunxi_rtc_driver);
+#endif

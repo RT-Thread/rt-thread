@@ -1,3 +1,23 @@
+config RT_CLK_SUN50I_H616
+    bool "Allwinner H616 main and R clock/reset controllers"
+    depends on RT_USING_CLK && RT_USING_OFW
+    select RT_USING_RESET
+    select RT_USING_RTC
+    select RT_USING_ALARM
+    select RT_RTC_SUNXI
+    default n
+    help
+      Read firmware-programmed peripheral PLL and bus dividers, and provide
+      peripheral bus gates, CPU DVFS, MMC and display clocks and resets on
+      the original CCU nodes. Display dividers use firmware-configured PLL
+      rates.
+      Requires the H616 RTC driver for the oscillator clock outputs.
+      Starts disabled display PLLs at 600 MHz (DE) or 594 MHz (video),
+      with a bounded lock wait. Running PLL frequencies are preserved.
+      Display rates unavailable from the running PLLs are rejected rather
+      than changing shared PLL settings. Also provides DE33 bus enumeration,
+      internal clocks/resets and the H6/H616 TCON TOP clock and routing block.
+
 config RT_CLK_SUN252I_F101
     bool "Allwinner Sun252i F101 clock/reset controller"
     depends on RT_USING_CLK

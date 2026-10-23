@@ -524,6 +524,7 @@ static rt_err_t sunxi_spi_remove(struct rt_platform_device *pdev)
 static const struct rt_ofw_node_id sunxi_spi_ofw_ids[] =
 {
     { .compatible = "allwinner,sun252i-f101-spi" },
+    { .compatible = "allwinner,sun50i-h616-spi" },
     { /* sentinel */ }
 };
 

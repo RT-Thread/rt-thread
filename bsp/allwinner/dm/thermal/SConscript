@@ -7,6 +7,9 @@ CPPPATH = [cwd + '/../include']
 if GetDepend(['RT_THERMAL_SUNXI']):
     src += ['thermal-sunxi.c']
 
+if GetDepend(['RT_THERMAL_SUN50I_H616']):
+    src += ['thermal-sun50i-h616.c']
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

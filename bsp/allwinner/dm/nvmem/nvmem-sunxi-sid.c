@@ -25,7 +25,31 @@ struct sunxi_sid
     struct rt_nvmem_device parent;
 
     void *base;
+    rt_uint32_t value_offset;
     struct rt_spinlock lock;
+};
+
+struct sunxi_sid_soc_data
+{
+    rt_uint32_t value_offset;
+    rt_uint32_t size;
+    rt_uint8_t word_size;
+    rt_uint8_t stride;
+};
+
+static const struct sunxi_sid_soc_data sunxi_sid_data =
+{
+    .size = 64,
+    .word_size = sizeof(rt_uint32_t),
+    .stride = sizeof(rt_uint32_t),
+};
+
+static const struct sunxi_sid_soc_data sunxi_sid_h616_data =
+{
+    .value_offset = 0x200,
+    .size = 0x100,
+    .word_size = 1,
+    .stride = 1,
 };
 
 #define to_sunxi_sid(raw) rt_container_of(raw, struct sunxi_sid, parent)
@@ -35,6 +59,12 @@ static rt_err_t sunxi_sid_read_word(struct sunxi_sid *sid, rt_uint32_t offset,
 {
     rt_ubase_t level;
     int retry;
+
+    if (sid->value_offset)
+    {
+        *value = HWREG32(sid->base + sid->value_offset + offset);
+        return RT_EOK;
+    }
 
     level = rt_spin_lock_irqsave(&sid->lock);
     HWREG32(sid->base + SUNXI_SID_PR_ADDR) = offset / sizeof(*value);
@@ -108,8 +138,14 @@ static rt_err_t sunxi_sid_probe(struct rt_platform_device *pdev)
 {
     rt_err_t err;
     struct rt_device *dev = &pdev->parent;
-    struct sunxi_sid *sid = rt_calloc(1, sizeof(*sid));
+    const struct sunxi_sid_soc_data *soc_data = pdev->id->data;
+    struct sunxi_sid *sid;
 
+    if (!soc_data)
+    {
+        return -RT_EINVAL;
+    }
+    sid = rt_calloc(1, sizeof(*sid));
     if (!sid)
     {
         return -RT_ENOMEM;
@@ -125,9 +161,10 @@ static rt_err_t sunxi_sid_probe(struct rt_platform_device *pdev)
     rt_spin_lock_init(&sid->lock);
     sid->parent.parent.ofw_node = dev->ofw_node;
     sid->parent.reg_read = sunxi_sid_read;
-    sid->parent.size = 64;
-    sid->parent.stride = sizeof(rt_uint32_t);
-    sid->parent.word_size = sizeof(rt_uint32_t);
+    sid->value_offset = soc_data->value_offset;
+    sid->parent.size = soc_data->size;
+    sid->parent.stride = soc_data->stride;
+    sid->parent.word_size = soc_data->word_size;
     sid->parent.read_only = RT_TRUE;
 
     if ((err = rt_nvmem_device_register(&sid->parent)))
@@ -163,7 +200,9 @@ static rt_err_t sunxi_sid_remove(struct rt_platform_device *pdev)
 
 static const struct rt_ofw_node_id sunxi_sid_ofw_ids[] =
 {
-    { .compatible = "allwinner,sun252i-f101-sid" },
+    { .compatible = "allwinner,sun252i-f101-sid", .data = &sunxi_sid_data },
+    { .compatible = "allwinner,sun50i-h616-sid", .data = &sunxi_sid_h616_data },
+    { .compatible = "allwinner,sun50i-a64-sid", .data = &sunxi_sid_h616_data },
     { /* sentinel */ }
 };
 

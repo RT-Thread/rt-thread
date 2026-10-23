@@ -7,7 +7,16 @@ CPPPATH = [cwd + '/../include']
 if GetDepend(['RT_AUDIO_SUNXI_CODEC']):
     src += ['audio-sunxi-codec.c']
 
-if GetDepend('RT_AUDIO_SUNXI_I2S0') or GetDepend('RT_AUDIO_SUNXI_OWA'):
+if GetDepend(['RT_AUDIO_SUN50I_H616_CODEC']):
+    src += ['audio-sun50i-h616-codec.c']
+
+if GetDepend(['RT_AUDIO_SUN50I_H616_AHUB']):
+    src += ['audio-sun50i-h616-ahub.c']
+
+if (GetDepend('RT_AUDIO_SUNXI_I2S0') or
+        GetDepend('RT_AUDIO_SUNXI_OWA') or
+        GetDepend('RT_AUDIO_SUN50I_H616_CODEC') or
+        GetDepend('RT_AUDIO_SUN50I_H616_AHUB')):
     src += ['audio-sunxi.c']
 
 if GetDepend(['RT_AUDIO_SUNXI_I2S0']):
