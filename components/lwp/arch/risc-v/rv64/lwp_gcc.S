@@ -109,6 +109,8 @@ arch_ret_to_user_impl:
     // TODO: we don't support kernel gdb server in risc-v yet
     // so we don't check debug state here and handle debugging bussiness
 
+    /* Signal handling takes sleeping locks and must remain schedulable. */
+    OPEN_INTERRUPT
     call lwp_check_exit_request
     beqz a0, 1f
     mv a0, x0
@@ -121,6 +123,7 @@ arch_ret_to_user_impl:
     call lwp_thread_signal_catch
 
 ret_to_user_exit:
+    CLOSE_INTERRUPT
     RESTORE_ALL
     // `RESTORE_ALL` also reset sp to user sp, and setup sscratch
     sret
@@ -130,8 +133,10 @@ ret_to_user_exit:
  * And handle pending signals;
  */
 arch_signal_quit:
+    OPEN_INTERRUPT
     LOAD a0, FRAME_OFF_SP(sp)
     call arch_signal_ucontext_restore
+    CLOSE_INTERRUPT
 
     /* reset kernel sp to the stack */
     addi sp, sp, CTX_REG_NR * REGBYTES
@@ -167,6 +172,7 @@ arch_thread_signal_enter:
     LOAD t0, FRAME_OFF_SP(a2)
     mv a3, t0
     call arch_signal_ucontext_save
+    CLOSE_INTERRUPT
 
     /** restore kernel sp */
     addi sp, s3, CTX_REG_NR * REGBYTES
