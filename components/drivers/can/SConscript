@@ -1,12 +1,17 @@
 from building import *
 
-cwd     = GetCurrentDir()
-src     = Glob('*.c')
+cwd = GetCurrentDir()
 CPPPATH = [cwd + '/../include']
 
-if not GetDepend('RT_USING_DM'):
-    SrcRemove(src, ['can_dm.c'])
+src = [
+    'dev_can.c',
+    'can_tx.c',
+    'can_rx.c',
+]
 
-group   = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_CAN'], CPPPATH = CPPPATH)
+if GetDepend('RT_USING_DM'):
+    src.append('can_dm.c')
+
+group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_CAN'], CPPPATH = CPPPATH)
 
 Return('group')

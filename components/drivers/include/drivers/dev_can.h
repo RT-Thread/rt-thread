@@ -11,21 +11,62 @@
  * 2025-09-20     wdfk_prog         Added non-blocking send mechanism APIs and data structures.
  */
 
+/*
+ * Generic CAN public/BSP contract
+ * -------------------------------
+ *
+ * The framework intentionally separates policy/synchronization from hardware:
+ *
+ *   application / RT-Thread device API
+ *                 |
+ *            Generic CAN
+ *       +---------+---------+
+ *       |                   |
+ *   can_tx.c             can_rx.c
+ *       |                   |
+ *   rt_can_ops --------------------> BSP / controller
+ *
+ * TX design:
+ * - Blocking TX selects a framework-visible hardware mailbox through sendmsg().
+ *   A busy selected mailbox returns -RT_EBUSY; Generic waits for a TX state change
+ *   and retries within one user-configured hard timeout. The configured timeout
+ *   must exceed the target system's worst-case mailbox/bus/terminal-ISR latency;
+ *   Generic does not auto-extend, abort, or recover a terminal that arrives later.
+ *   A successful in-contract submit must generate exactly one TX_DONE or TX_FAIL
+ *   terminal for that mailbox.
+ * - Non-blocking TX calls sendmsg_nonblocking() once. The BSP chooses a free
+ *   hardware mailbox immediately or returns -RT_EBUSY. Generic never queues or
+ *   retries a non-blocking frame in software.
+ * - A hardware mailbox is not reusable until the previous terminal has been
+ *   published through rt_hw_can_isr(). This prevents an old terminal from being
+ *   mis-associated with a newer blocking owner.
+ *
+ * RX design:
+ * - BSP RX IRQs call rt_hw_can_isr(); Generic drains hardware through recvmsg()
+ *   into a software FIFO. rx_active_isr pins the RX/HDR runtime while recvmsg()
+ *   and callbacks execute outside rx_lock.
+ *
+ * Management design:
+ * - Applications stop TX producers before configure/filter/start/stop. Generic
+ *   then closes TX admission, verifies TX idle, pauses RX, applies the BSP
+ *   operation, and reopens data paths. Hardware filter programming is not retained
+ *   or replayed by Generic CAN across controller reconfiguration. If a BSP control
+ *   operation resets filters, the application must issue RT_CAN_CMD_SET_FILTER
+ *   again before relying on filtered reception.
+ *
+ * Lock/lifetime boundary:
+ * - can->lock: sleeping thread-side management serialization.
+ * - tx_lock: TX runtime publication, slots, pending and admission.
+ * - rx_lock: RX FIFO/HDR publication and rx_active_isr lifetime pins.
+ * - can_rx/can_tx are typed dynamic-runtime pointers; the locks live in the
+ *   statically registered rt_can_device so detach/free remains race-safe.
+ */
+
 #ifndef __DEV_CAN_H_
 #define __DEV_CAN_H_
 
 #include <rtthread.h>
 #include <rtdevice.h>
-
-#ifndef RT_CANMSG_BOX_SZ
-#define RT_CANMSG_BOX_SZ    16
-#endif
-#ifndef RT_CANSND_BOX_NUM
-#define RT_CANSND_BOX_NUM   1
-#endif
-#ifndef RT_CANSND_MSG_TIMEOUT
-#define RT_CANSND_MSG_TIMEOUT 100
-#endif
 
 enum CAN_DLC
 {
@@ -49,27 +90,27 @@ enum CAN_DLC
 
 enum CANBAUD
 {
-    CAN1MBaud   = 1000UL * 1000,/* 1 MBit/sec   */
+    CAN1MBaud = 1000UL * 1000,/* 1 MBit/sec   */
     CAN800kBaud = 1000UL * 800, /* 800 kBit/sec */
     CAN500kBaud = 1000UL * 500, /* 500 kBit/sec */
     CAN250kBaud = 1000UL * 250, /* 250 kBit/sec */
     CAN125kBaud = 1000UL * 125, /* 125 kBit/sec */
     CAN100kBaud = 1000UL * 100, /* 100 kBit/sec */
-    CAN50kBaud  = 1000UL * 50,  /* 50 kBit/sec  */
-    CAN20kBaud  = 1000UL * 20,  /* 20 kBit/sec  */
-    CAN10kBaud  = 1000UL * 10   /* 10 kBit/sec  */
+    CAN50kBaud = 1000UL * 50,  /* 50 kBit/sec  */
+    CAN20kBaud = 1000UL * 20,  /* 20 kBit/sec  */
+    CAN10kBaud = 1000UL * 10   /* 10 kBit/sec  */
 };
 
-#define RT_CAN_MODE_NORMAL              0
-#define RT_CAN_MODE_LISTEN              1
-#define RT_CAN_MODE_LOOPBACK            2
-#define RT_CAN_MODE_LOOPBACKANLISTEN    3
+#define RT_CAN_MODE_NORMAL           0
+#define RT_CAN_MODE_LISTEN           1
+#define RT_CAN_MODE_LOOPBACK         2
+#define RT_CAN_MODE_LOOPBACKANLISTEN 3
 
-#define RT_CAN_MODE_PRIV                0x01
-#define RT_CAN_MODE_NOPRIV              0x00
+#define RT_CAN_MODE_PRIV   0x01
+#define RT_CAN_MODE_NOPRIV 0x00
 
-#define RT_CAN_MODE_MASK                0x00
-#define RT_CAN_MODE_LIST                0x01
+#define RT_CAN_MODE_MASK 0x00
+#define RT_CAN_MODE_LIST 0x01
 
 /**
  * @defgroup    group_drivers_can CAN Driver
@@ -270,20 +311,20 @@ enum CANBAUD
  * @addtogroup group_drivers_can
  * @{
  */
-#define CAN_RX_FIFO0                (0x00000000U)  /*!< CAN receive FIFO 0 */
-#define CAN_RX_FIFO1                (0x00000001U)  /*!< CAN receive FIFO 1 */
+#define CAN_RX_FIFO0 (0x00000000U)  /*!< CAN receive FIFO 0 */
+#define CAN_RX_FIFO1 (0x00000001U)  /*!< CAN receive FIFO 1 */
 
 /**
  * @brief CAN filter item structure
  */
 struct rt_can_filter_item
 {
-    rt_uint32_t id  : 29;   /**< The CAN ID to be filtered. */
-    rt_uint32_t ide : 1;    /**< Identifier type. 0 for Standard ID, 1 for Extended ID. */
-    rt_uint32_t rtr : 1;    /**< Frame type. 0 for Data Frame, 1 for Remote Frame. */
+    rt_uint32_t id   : 29;   /**< The CAN ID to be filtered. */
+    rt_uint32_t ide  : 1;    /**< Identifier type. 0 for Standard ID, 1 for Extended ID. */
+    rt_uint32_t rtr  : 1;    /**< Frame type. 0 for Data Frame, 1 for Remote Frame. */
     rt_uint32_t mode : 1;   /**< Filter mode. 0 for Mask Mode, 1 for List Mode. */
     rt_uint32_t mask;       /**< The filter mask. In Mask Mode, a '1' bit means the corresponding ID bit must match. */
-    rt_int32_t  hdr_bank;   /**< The specific hardware filter bank index to use. A value of -1 allows the driver to auto-assign. */
+    rt_int32_t hdr_bank;   /**< The specific hardware filter bank index to use. A value of -1 allows the driver to auto-assign. */
     rt_uint32_t rxfifo;     /**< The target RX FIFO for matched messages (CAN_RX_FIFO0 or CAN_RX_FIFO1). */
 #ifdef RT_CAN_USING_HDR
     /**
@@ -294,7 +335,7 @@ struct rt_can_filter_item
      * @param[in] size  The size of the received data in bytes.
      * @return The operation status.
      */
-    rt_err_t (*ind)(rt_device_t dev, void *args , rt_int32_t hdr, rt_size_t size);
+    rt_err_t (*ind)(rt_device_t dev, void *args, rt_int32_t hdr, rt_size_t size);
     void *args;             /**< User arguments for the indication callback. */
 #endif /*RT_CAN_USING_HDR*/
 };
@@ -312,20 +353,22 @@ struct rt_can_filter_item
  * @param[in] ind  Optional callback function (can be RT_NULL).
  * @param[in] args Optional arguments for the callback (can be RT_NULL).
  */
-#define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask,ind,args) \
-      {(id), (ide), (rtr), (mode),(mask), -1, CAN_RX_FIFO0,(ind), (args)}
-#define RT_CAN_FILTER_STD_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,0,0xFFFFFFFF,ind,args)
-#define RT_CAN_FILTER_EXT_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,0,0xFFFFFFFF,ind,args)
-#define RT_CAN_STD_RMT_FILTER_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,1,0,0xFFFFFFFF,ind,args)
-#define RT_CAN_EXT_RMT_FILTER_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,1,0,0xFFFFFFFF,ind,args)
-#define RT_CAN_STD_RMT_DATA_FILTER_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,1,0xFFFFFFFF,ind,args)
-#define RT_CAN_EXT_RMT_DATA_FILTER_INIT(id,ind,args) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,1,0xFFFFFFFF,ind,args)
+#define RT_CAN_FILTER_ITEM_INIT(id, ide, rtr, mode, mask, ind, args)        \
+    {                                                                       \
+        (id), (ide), (rtr), (mode), (mask), -1, CAN_RX_FIFO0, (ind), (args) \
+    }
+#define RT_CAN_FILTER_STD_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 0, 0, 0xFFFFFFFF, ind, args)
+#define RT_CAN_FILTER_EXT_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 0, 0, 0xFFFFFFFF, ind, args)
+#define RT_CAN_STD_RMT_FILTER_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 1, 0, 0xFFFFFFFF, ind, args)
+#define RT_CAN_EXT_RMT_FILTER_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 1, 0, 0xFFFFFFFF, ind, args)
+#define RT_CAN_STD_RMT_DATA_FILTER_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 0, 1, 0xFFFFFFFF, ind, args)
+#define RT_CAN_EXT_RMT_DATA_FILTER_INIT(id, ind, args) \
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 0, 1, 0xFFFFFFFF, ind, args)
 #else
 /**
  * @def RT_CAN_FILTER_ITEM_INIT
@@ -337,26 +380,36 @@ struct rt_can_filter_item
  * @param[in] mode Filter mode (0 for Mask, 1 for List).
  * @param[in] mask The mask to be applied.
  */
-#define RT_CAN_FILTER_ITEM_INIT(id,ide,rtr,mode,mask) \
-      {(id), (ide), (rtr), (mode), (mask), -1, CAN_RX_FIFO0 }
+#define RT_CAN_FILTER_ITEM_INIT(id, ide, rtr, mode, mask)    \
+    {                                                        \
+        (id), (ide), (rtr), (mode), (mask), -1, CAN_RX_FIFO0 \
+    }
 #define RT_CAN_FILTER_STD_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,0,0xFFFFFFFF)
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 0, 0, 0xFFFFFFFF)
 #define RT_CAN_FILTER_EXT_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,0,0xFFFFFFFF)
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 0, 0, 0xFFFFFFFF)
 #define RT_CAN_STD_RMT_FILTER_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,1,0,0xFFFFFFFF)
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 1, 0, 0xFFFFFFFF)
 #define RT_CAN_EXT_RMT_FILTER_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,1,0,0xFFFFFFFF)
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 1, 0, 0xFFFFFFFF)
 #define RT_CAN_STD_RMT_DATA_FILTER_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,0,0,1,0xFFFFFFFF)
+    RT_CAN_FILTER_ITEM_INIT(id, 0, 0, 1, 0xFFFFFFFF)
 #define RT_CAN_EXT_RMT_DATA_FILTER_INIT(id) \
-     RT_CAN_FILTER_ITEM_INIT(id,1,0,1,0xFFFFFFFF)
+    RT_CAN_FILTER_ITEM_INIT(id, 1, 0, 1, 0xFFFFFFFF)
 #endif
 
 
 /**
  * @brief CAN hardware filter configuration structure.
- * This structure is passed to the driver via `rt_device_control` with the `RT_CAN_CMD_SET_FILTER` command.
+ *
+ * This structure is passed to the BSP through `RT_CAN_CMD_SET_FILTER`. A
+ * `hdr_bank` value of -1 preserves the legacy contract in which the BSP chooses
+ * the hardware filter bank. A NULL command argument is also passed through to the
+ * BSP so drivers may restore their default filter configuration; Generic HDR
+ * routing metadata is unchanged for that NULL request. Generic CAN does not save
+ * or replay hardware filter configuration after controller reinitialization.
+ * Applications should finish controller-mutating baud/mode/bit-timing
+ * configuration first, then configure filters before relying on filtered reception.
  */
 struct rt_can_filter_config
 {
@@ -397,9 +450,9 @@ struct can_configure
     rt_uint32_t baud_rate;      /**< The baud rate for the arbitration phase (e.g., CAN500kBaud). */
     rt_uint32_t msgboxsz;       /**< The size of the software receive buffer (in number of messages). */
     rt_uint32_t sndboxnumber;   /**< The number of hardware mailboxes used for blocking send operations. */
-    rt_uint32_t mode      : 8;  /**< The CAN operation mode (e.g., RT_CAN_MODE_NORMAL, RT_CAN_MODE_LOOPBACK). */
-    rt_uint32_t privmode  : 8;  /**< Private mode flag. If set, the `priv` field of `rt_can_msg` specifies the hardware mailbox. */
-    rt_uint32_t reserved  : 16; /**< Reserved for future use. */
+    rt_uint32_t mode     : 8;  /**< The CAN operation mode (e.g., RT_CAN_MODE_NORMAL, RT_CAN_MODE_LOOPBACK). */
+    rt_uint32_t privmode : 8;  /**< Private mode flag. If set, the `priv` field of `rt_can_msg` specifies the hardware mailbox. */
+    rt_uint32_t reserved : 16; /**< Reserved for future use. */
     rt_uint32_t ticks;          /**< The period in OS ticks for the status-checking timer. */
 #ifdef RT_CAN_USING_HDR
     rt_uint32_t maxhdr;         /**< The maximum number of hardware filters supported by the controller. */
@@ -407,9 +460,9 @@ struct can_configure
 
 #ifdef RT_CAN_USING_CANFD
     rt_uint32_t baud_rate_fd;       /**< The baud rate for the CAN-FD data phase. */
-    rt_uint32_t use_bit_timing: 8;  /**< A flag to indicate that `can_timing` and `canfd_timing` should be used instead of `baud_rate`. */
-    rt_uint32_t enable_canfd : 8;   /**< A flag to enable CAN-FD functionality. */
-    rt_uint32_t reserved1 : 16;     /**< Reserved for future use. */
+    rt_uint32_t use_bit_timing : 8;  /**< A flag to indicate that `can_timing` and `canfd_timing` should be used instead of `baud_rate`. */
+    rt_uint32_t enable_canfd   : 8;   /**< A flag to enable CAN-FD functionality. */
+    rt_uint32_t reserved1      : 16;     /**< Reserved for future use. */
 
     /* The below fields take effect only if use_bit_timing is non-zero */
     struct rt_can_bit_timing can_timing;    /**< Custom bit-timing for the arbitration phase. */
@@ -417,28 +470,57 @@ struct can_configure
 #endif
 };
 
-#define CANDEFAULTCONFIG \
-{\
-        CAN1MBaud,\
-        RT_CANMSG_BOX_SZ,\
-        RT_CANSND_BOX_NUM,\
-        RT_CAN_MODE_NORMAL,\
-};
+#define CANDEFAULTCONFIG    \
+    {                       \
+        CAN1MBaud,          \
+        RT_CANMSG_BOX_SZ,   \
+        RT_CANSND_BOX_NUM,  \
+        RT_CAN_MODE_NORMAL, \
+    };
 
 struct rt_can_ops;
-#define RT_CAN_CMD_SET_FILTER       0x13
-#define RT_CAN_CMD_SET_BAUD         0x14
-#define RT_CAN_CMD_SET_MODE         0x15
-#define RT_CAN_CMD_SET_PRIV         0x16
-#define RT_CAN_CMD_GET_STATUS       0x17
-#define RT_CAN_CMD_SET_STATUS_IND   0x18
-#define RT_CAN_CMD_SET_BUS_HOOK     0x19
-#define RT_CAN_CMD_SET_CANFD        0x1A
-#define RT_CAN_CMD_SET_BAUD_FD      0x1B
-#define RT_CAN_CMD_SET_BITTIMING    0x1C
-#define RT_CAN_CMD_START            0x1D
 
-#define RT_DEVICE_CAN_INT_ERR       0x1000
+/**
+ * @brief Program CAN hardware filters through the BSP.
+ *
+ * A filter item with hdr_bank == -1 delegates hardware-bank allocation to the
+ * BSP, preserving the legacy RT-Thread contract. A NULL argument is passed
+ * directly to the BSP for its driver-defined default filter configuration and
+ * does not update Generic HDR routing metadata. Generic CAN does not retain or
+ * replay hardware programming. If baud/mode/bit-timing or another BSP control
+ * operation reinitializes the controller and clears its filters, issue this
+ * command again before depending on filtered reception.
+ */
+#define RT_CAN_CMD_SET_FILTER     0x13
+#define RT_CAN_CMD_SET_BAUD       0x14
+#define RT_CAN_CMD_SET_MODE       0x15
+#define RT_CAN_CMD_SET_PRIV       0x16
+#define RT_CAN_CMD_GET_STATUS     0x17
+#define RT_CAN_CMD_SET_STATUS_IND 0x18
+#define RT_CAN_CMD_SET_BUS_HOOK   0x19
+#define RT_CAN_CMD_SET_CANFD      0x1A
+#define RT_CAN_CMD_SET_BAUD_FD    0x1B
+#define RT_CAN_CMD_SET_BITTIMING  0x1C
+#define RT_CAN_CMD_START          0x1D
+
+/**
+ * @brief Abort one hardware TX mailbox.
+ *
+ * The argument carries the mailbox index through rt_ubase_t. Successful request
+ * acceptance does not retire Generic ownership; the BSP must publish TX_FAIL for
+ * the mailbox when hardware abort completion becomes visible.
+ */
+#define RT_CAN_CMD_ABORT_TX 0x1F
+
+/**
+ * @brief Abort every framework-visible hardware TX mailbox.
+ *
+ * Command value 0x20 is intentionally left unused after the former TX-flush
+ * command was removed, so an old caller cannot silently become ABORT_ALL.
+ */
+#define RT_CAN_CMD_ABORT_ALL 0x21
+
+#define RT_DEVICE_CAN_INT_ERR 0x1000
 
 enum RT_CAN_STATUS_MODE
 {
@@ -447,6 +529,7 @@ enum RT_CAN_STATUS_MODE
     ERRPASSIVE = 2,
     BUSOFF = 4,
 };
+
 enum RT_CAN_BUS_ERR
 {
     RT_CAN_BUS_NO_ERR = 0,
@@ -476,7 +559,7 @@ struct rt_can_status
     rt_uint32_t biterrcnt;      /**< Bit error (recessive/dominant) count. */
     rt_uint32_t crcerrcnt;      /**< CRC error count. */
     rt_uint32_t rcvchange;      /**< A flag indicating that the RX buffer status has changed. */
-    rt_uint32_t sndchange;      /**< A bitmask indicating which TX mailboxes have changed status. */
+    rt_uint32_t sndchange;      /**< Blocking TX mailbox ownership bit mask. */
     rt_uint32_t lasterrtype;    /**< The type of the last error that occurred. */
 };
 
@@ -523,20 +606,20 @@ typedef void (*rt_can_bus_hook)(struct rt_can_device *can);
  */
 struct rt_can_msg
 {
-    rt_uint32_t id  : 29;           /**< CAN ID (Standard or Extended). */
-    rt_uint32_t ide : 1;            /**< Identifier type: 0=Standard ID, 1=Extended ID. */
-    rt_uint32_t rtr : 1;            /**< Frame type: 0=Data Frame, 1=Remote Frame. */
-    rt_uint32_t rsv : 1;            /**< Reserved bit. */
-    rt_uint32_t len : 8;            /**< Data Length Code (DLC) from 0 to 8. */
-    rt_uint32_t priv : 8;           /**< Private data, used to specify the hardware mailbox in private mode. */
+    rt_uint32_t id       : 29;           /**< CAN ID (Standard or Extended). */
+    rt_uint32_t ide      : 1;            /**< Identifier type: 0=Standard ID, 1=Extended ID. */
+    rt_uint32_t rtr      : 1;            /**< Frame type: 0=Data Frame, 1=Remote Frame. */
+    rt_uint32_t rsv      : 1;            /**< Reserved bit. */
+    rt_uint32_t len      : 8;            /**< Data Length Code (DLC) from 0 to 8. */
+    rt_uint32_t priv     : 8;           /**< Private data, used to specify the hardware mailbox in private mode. */
     rt_int32_t hdr_index : 8;       /**< For received messages, the index of the hardware filter that matched the message. */
 #ifdef RT_CAN_USING_CANFD
     rt_uint32_t fd_frame : 1;       /**< CAN-FD frame indicator. */
-    rt_uint32_t brs : 1;            /**< Bit-rate switching indicator for CAN-FD. */
-    rt_uint32_t rxfifo : 2;         /**< The RX FIFO where the message was received. */
+    rt_uint32_t brs      : 1;            /**< Bit-rate switching indicator for CAN-FD. */
+    rt_uint32_t rxfifo   : 2;         /**< The RX FIFO where the message was received. */
     rt_uint32_t reserved : 3;
 #else
-    rt_uint32_t rxfifo : 2;         /**< The RX FIFO where the message was received. */
+    rt_uint32_t rxfifo   : 2;         /**< The RX FIFO where the message was received. */
     rt_uint32_t reserved : 5;
 #endif
     rt_uint32_t nonblocking : 1;    /**< Send mode: 0=Blocking (default), 1=Non-blocking. */
@@ -548,41 +631,42 @@ struct rt_can_msg
 };
 typedef struct rt_can_msg *rt_can_msg_t;
 
-#ifndef RT_CAN_NB_TX_FIFO_SIZE
-#define RT_CAN_NB_TX_FIFO_SIZE   (RT_CANMSG_BOX_SZ * sizeof(struct rt_can_msg))
-#endif
+struct rt_can_ops;
+struct rt_can_rx_fifo;
+struct rt_can_tx;
 
 /**
- * @brief The core CAN device structure.
+ * @brief Generic CAN device state shared with low-level BSP drivers.
+ *
+ * can_rx and can_tx are typed pointers to dynamically allocated Generic runtimes;
+ * using typed pointers keeps the ownership explicit without embedding per-open
+ * buffers in every statically registered CAN device.
  */
 struct rt_can_device
 {
     struct rt_device parent;            /**< Inherits from the base RT-Thread device structure. */
-
     const struct rt_can_ops *ops;       /**< A pointer to the low-level driver operations. */
     struct can_configure config;        /**< The current configuration of the CAN device. */
     struct rt_can_status status;        /**< The current status and error statistics of the CAN device. */
-
-    rt_uint32_t timerinitflag;          /**< A flag to indicate if the status timer has been initialized. */
-    struct rt_timer timer;              /**< A timer for periodically checking the CAN bus status. */
-
+#if defined(RT_CAN_USING_STATUS_POLLING) || defined(RT_CAN_USING_BUS_HOOK)
+    struct rt_timer timer;              /**< Periodic maintenance timer for status polling and/or bus hook. */
+#endif /* RT_CAN_USING_STATUS_POLLING || RT_CAN_USING_BUS_HOOK */
+#ifdef RT_CAN_USING_STATUS_POLLING
     struct rt_can_status_ind_type status_indicate; /**< The user-registered status indication callback. */
+#endif /* RT_CAN_USING_STATUS_POLLING */
 #ifdef RT_CAN_USING_HDR
     struct rt_can_hdr *hdr;             /**< A pointer to an array of hardware filter list entries. */
-#endif
+#endif /* RT_CAN_USING_HDR */
 #ifdef RT_CAN_USING_BUS_HOOK
     rt_can_bus_hook bus_hook;           /**< The user-registered periodic bus hook function. */
 #endif /*RT_CAN_USING_BUS_HOOK*/
     struct rt_mutex lock;               /**< A mutex for thread-safe access to the device. */
-    void *can_rx;                       /**< A pointer to the software receive FIFO structure (`rt_can_rx_fifo`). */
-    void *can_tx;                       /**< A pointer to the software transmit FIFO structure (`rt_can_tx_fifo`). */
+    struct rt_can_rx_fifo *can_rx;      /**< Dynamically allocated software RX runtime. */
+    struct rt_can_tx *can_tx;           /**< Dynamically allocated TX mailbox runtime. */
 
-    struct rt_ringbuffer nb_tx_rb;      /**< The ring buffer for non-blocking transmissions. */
-#ifdef RT_CAN_MALLOC_NB_TX_BUFFER
-    rt_uint8_t *nb_tx_rb_pool;          /**< A pointer to the dynamically allocated pool for the non-blocking TX ring buffer. */
-#else
-    rt_uint8_t nb_tx_rb_pool[RT_CAN_NB_TX_FIFO_SIZE]; /**< The statically allocated pool for the non-blocking TX ring buffer. */
-#endif /* RT_CAN_MALLOC_NB_TX_BUFFER  */
+    struct rt_spinlock tx_lock;         /**< TX runtime publication, pending count and blocking slot ownership. */
+    struct rt_spinlock rx_lock;         /**< RX FIFO/filter publication plus rx_active_isr lifetime pins. */
+    rt_uint32_t rx_active_isr;          /**< RX ISR/callback lifetime pins, protected by rx_lock. */
 };
 typedef struct rt_can_device *rt_can_t;
 
@@ -601,9 +685,8 @@ struct rt_can_msg_list
 {
     struct rt_list_node list;       /**< List node to link into a free/used list. */
 #ifdef RT_CAN_USING_HDR
-    struct rt_list_node hdrlist;    /**< List node to link into a specific hardware filter's list. */
-    struct rt_can_hdr *owner;       /**< Pointer to the hardware filter that owns this message. */
-#endif
+    struct rt_list_node hdrlist;   /**< List node to link into a specific hardware filter's list. */
+#endif /* RT_CAN_USING_HDR */
     struct rt_can_msg data;         /**< The actual CAN message data. */
 };
 
@@ -617,39 +700,14 @@ struct rt_can_rx_fifo
     rt_uint32_t freenumbers;        /**< The number of free nodes in the buffer pool. */
     struct rt_list_node freelist;   /**< The list of free message nodes. */
     struct rt_list_node uselist;    /**< The list of used message nodes (containing received messages). */
+    struct rt_completion idle_completion; /**< Wakes the single management waiter when RX pins drain. */
 };
 
-#define RT_CAN_SND_RESULT_OK        0
-#define RT_CAN_SND_RESULT_ERR       1
-#define RT_CAN_SND_RESULT_WAIT      2
-
-#define RT_CAN_EVENT_RX_IND         0x01    /* Rx indication */
-#define RT_CAN_EVENT_TX_DONE        0x02    /* Tx complete   */
-#define RT_CAN_EVENT_TX_FAIL        0x03    /* Tx fail   */
-#define RT_CAN_EVENT_RX_TIMEOUT     0x05    /* Rx timeout    */
-#define RT_CAN_EVENT_RXOF_IND       0x06    /* Rx overflow */
-
-/**
- * @internal
- * @brief List node for a blocking send operation, corresponding to one hardware mailbox.
- */
-struct rt_can_sndbxinx_list
-{
-    struct rt_list_node list;       /**< List node to link into the free list. */
-    struct rt_completion completion;/**< A completion object to block the sending thread. */
-    rt_uint32_t result;             /**< The result of the transmission (OK, ERR, WAIT). */
-};
-
-/**
- * @internal
- * @brief Software transmit FIFO structure for blocking sends.
- */
-struct rt_can_tx_fifo
-{
-    struct rt_can_sndbxinx_list *buffer; /**< A pointer to the buffer of sendbox nodes. */
-    struct rt_semaphore sem;             /**< A counting semaphore representing available hardware mailboxes. */
-    struct rt_list_node freelist;        /**< The list of free sendbox nodes. */
-};
+#define RT_CAN_EVENT_RX_IND     0x01    /* Rx indication */
+#define RT_CAN_EVENT_TX_DONE    0x02    /* Tx complete   */
+#define RT_CAN_EVENT_TX_FAIL    0x03    /* Tx fail   */
+#define RT_CAN_EVENT_RX_TIMEOUT 0x05    /* Rx timeout    */
+#define RT_CAN_EVENT_RXOF_IND   0x06    /* Rx overflow */
 
 /**
  * @brief The CAN device driver operations structure.
@@ -675,11 +733,18 @@ struct rt_can_ops
      */
     rt_err_t (*control)(struct rt_can_device *can, int cmd, void *arg);
     /**
-     * @brief Low-level blocking function to send a CAN message.
+     * @brief Perform one immediate CAN submit to a selected hardware mailbox.
+     *
+     * Generic CAN owns blocking policy and completion waiting. This BSP callback
+     * must only attempt the selected mailbox and return without sleeping or waiting
+     * for bus transmission completion.
+     *
      * @param[in] can   A pointer to the CAN device structure.
      * @param[in] buf   A pointer to the `rt_can_msg` to be sent.
      * @param[in] boxno The hardware mailbox number to use for transmission.
-     * @return The number of bytes sent on success, or a negative error code on failure.
+     * @return `RT_EOK` on hardware acceptance, `-RT_EBUSY` when the selected mailbox is temporarily busy,
+     *         or another negative error code on failure. Generic CAN retries only explicit `-RT_EBUSY` results;
+     *         other errors remain observable to the caller.
      */
     rt_ssize_t (*sendmsg)(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
     /**
@@ -718,10 +783,10 @@ struct rt_can_ops
  *
  * @return `RT_EOK` on successful registration, or a negative error code on failure.
  */
-rt_err_t rt_hw_can_register(struct rt_can_device    *can,
-                            const char              *name,
+rt_err_t rt_hw_can_register(struct rt_can_device *can,
+                            const char *name,
                             const struct rt_can_ops *ops,
-                            void                    *data);
+                            void *data);
 
 /**
  * @brief The framework-level ISR handler for CAN devices.
@@ -735,7 +800,31 @@ rt_err_t rt_hw_can_register(struct rt_can_device    *can,
  */
 void rt_hw_can_isr(struct rt_can_device *can, int event);
 
-/*! @}*/
+/**
+ * @brief Wait for all hardware-owned TX to retire.
+ *
+ * The caller must stop all TX producers before calling this management helper and
+ * serialize it against final device close. drain waits hardware ownership, not
+ * concurrent TX API-call lifetime. A close that has already dropped ref_count to
+ * zero is rejected defensively, but racing close after this check remains caller misuse.
+ *
+ * @param can CAN device to drain.
+ * @param timeout Maximum wait in OS ticks, or RT_WAITING_FOREVER.
+ * @return RT_EOK when idle, -RT_EBUSY after final close starts, -RT_ETIMEOUT on
+ *         deadline expiry, or an IPC error.
+ */
+rt_err_t rt_can_tx_drain(struct rt_can_device *can, rt_tick_t timeout);
 
-#endif /*__DEV_CAN_H*/
+/**
+ * @brief Request abort of one hardware TX mailbox.
+ *
+ * A successful control request does not retire Generic ownership; the BSP must
+ * later publish TX_FAIL when abort completion becomes visible.
+ *
+ * @param can CAN device whose mailbox is aborted.
+ * @param mailbox Generic-visible mailbox index.
+ * @return BSP control result, -RT_EINVAL for an invalid mailbox, or -RT_ENOSYS.
+ */
+rt_err_t rt_can_tx_abort(struct rt_can_device *can, rt_uint32_t mailbox);
 
+#endif /* __DEV_CAN_H_ */
