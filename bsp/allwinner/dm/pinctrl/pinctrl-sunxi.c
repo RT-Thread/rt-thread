@@ -92,13 +92,17 @@ static rt_err_t sunxi_pinctrl_pin_from_name(const struct sunxi_pinctrl *pinctrl,
     rt_uint32_t number = 0;
     rt_uint32_t bank;
 
-    if (!name || name[0] != 'P' || name[1] < 'A' ||
-        name[1] >= 'A' + pinctrl->data->banks_nr || !name[2])
+    if (!name || name[0] != 'P' || name[1] < 'A' + pinctrl->data->bank_base ||
+        name[1] >= 'A' + pinctrl->data->bank_base + pinctrl->data->banks_nr || !name[2])
     {
         return -RT_EINVAL;
     }
 
-    bank = name[1] - 'A';
+    bank = name[1] - 'A' - pinctrl->data->bank_base;
+    if (!pinctrl->data->bank_pins[bank])
+    {
+        return -RT_EINVAL;
+    }
 
     for (name += 2; *name; ++name)
     {
@@ -275,6 +279,26 @@ static rt_ssize_t sunxi_pinctrl_pin_read(struct rt_device *device, rt_base_t pin
     bank = pin / SUNXI_PINS_PER_BANK;
     number = pin % SUNXI_PINS_PER_BANK;
 
+    if (pinctrl->data->irq_read_needs_mux)
+    {
+        rt_base_t level = rt_spin_lock_irqsave(&pinctrl->lock);
+        void *reg = pinctrl->base + bank * layout->bank_stride +
+                layout->mux_reg + number / 8 * 4;
+        rt_uint32_t shift = number % 8 * 4;
+        rt_uint32_t mux = HWREG32(reg);
+        rt_ssize_t value;
+
+        if (((mux >> shift) & 0xf) == pinctrl->data->irq_mux)
+        {
+            HWREG32(reg) = mux & ~(0xfU << shift);
+        }
+        value = !!(HWREG32(pinctrl->base + bank * layout->bank_stride +
+                layout->data_reg) & RT_BIT(number));
+        HWREG32(reg) = mux;
+        rt_spin_unlock_irqrestore(&pinctrl->lock, level);
+        return value;
+    }
+
     return !!(HWREG32(pinctrl->base + bank * layout->bank_stride +
             layout->data_reg) & RT_BIT(number));
 }
@@ -335,6 +359,22 @@ static rt_err_t sunxi_pinctrl_irq_mode_to_hw(rt_uint8_t mode,
     return RT_EOK;
 }
 
+static rt_bool_t sunxi_pinctrl_irq_bank_valid(struct sunxi_pinctrl *pinctrl,
+        rt_uint32_t bank)
+{
+    rt_size_t index;
+
+    for (index = 0; index < pinctrl->data->irq_banks; ++index)
+    {
+        if (bank == (pinctrl->data->irq_bank_map ?
+                pinctrl->data->irq_bank_map[index] : index))
+        {
+            return RT_TRUE;
+        }
+    }
+    return RT_FALSE;
+}
+
 static rt_err_t sunxi_pinctrl_pin_irq_mode(struct rt_device *device,
         rt_base_t pin, rt_uint8_t mode)
 {
@@ -352,7 +392,8 @@ static rt_err_t sunxi_pinctrl_pin_irq_mode(struct rt_device *device,
     {
         return -RT_ENOSYS;
     }
-    if ((bank = pin / SUNXI_PINS_PER_BANK) >= pinctrl->data->irq_banks ||
+    bank = pin / SUNXI_PINS_PER_BANK;
+    if (!sunxi_pinctrl_irq_bank_valid(pinctrl, bank) ||
             sunxi_pinctrl_irq_mode_to_hw(mode, &hw_mode))
     {
         return -RT_EINVAL;
@@ -394,7 +435,7 @@ static rt_err_t sunxi_pinctrl_pin_irq_enable(struct rt_device *device,
 
     bank = pin / SUNXI_PINS_PER_BANK;
     number = pin % SUNXI_PINS_PER_BANK;
-    if (bank >= pinctrl->data->irq_banks)
+    if (!sunxi_pinctrl_irq_bank_valid(pinctrl, bank))
     {
         return -RT_EINVAL;
     }
@@ -560,7 +601,8 @@ static rt_err_t sunxi_pinctrl_irq_init(struct sunxi_pinctrl *pinctrl,
         struct sunxi_pinctrl_irq_bank *irq_bank = &pinctrl->irq_banks[index];
 
         irq_bank->pinctrl = pinctrl;
-        irq_bank->bank = index;
+        irq_bank->bank = pinctrl->data->irq_bank_map ?
+                pinctrl->data->irq_bank_map[index] : index;
         irq_bank->irq = rt_dm_dev_get_irq(dev, index);
         if (irq_bank->irq < 0)
         {
@@ -688,7 +730,7 @@ static rt_err_t sunxi_pinctrl_probe(struct rt_platform_device *pdev)
         !data->layout->drive_bits || !data->layout->pull_bits ||
         data->layout->mux_bits > 16 || data->layout->drive_bits > 16 ||
         data->layout->pull_bits > 16 ||
-        data->irq_banks > data->banks_nr ||
+        data->irq_banks > data->banks_nr || data->irq_banks > SUNXI_MAX_EINT_BANKS ||
         (data->irq_banks && data->irq_mux >
                 sunxi_pinctrl_field_mask(data->layout->mux_bits)) ||
         data->layout->disabled_mux > sunxi_pinctrl_field_mask(data->layout->mux_bits) ||
@@ -699,8 +741,15 @@ static rt_err_t sunxi_pinctrl_probe(struct rt_platform_device *pdev)
 
     for (index = 0; index < data->banks_nr; ++index)
     {
-        if (!data->bank_pins[index] ||
-            data->bank_pins[index] > SUNXI_PINS_PER_BANK)
+        if (data->bank_pins[index] > SUNXI_PINS_PER_BANK)
+        {
+            return -RT_EINVAL;
+        }
+    }
+
+    for (index = 0; data->irq_bank_map && index < data->irq_banks; ++index)
+    {
+        if (data->irq_bank_map[index] >= data->banks_nr)
         {
             return -RT_EINVAL;
         }
@@ -753,7 +802,10 @@ static rt_err_t sunxi_pinctrl_probe(struct rt_platform_device *pdev)
         goto _fail;
     }
 
-    sunxi_pinctrl_primary = pinctrl;
+    if (!data->bank_base)
+    {
+        sunxi_pinctrl_primary = pinctrl;
+    }
     rt_ofw_data(dev->ofw_node) = &pinctrl->parent;
 
     return RT_EOK;
@@ -771,7 +823,13 @@ _fail:
 
 static const struct rt_ofw_node_id sunxi_pinctrl_ofw_ids[] =
 {
+#ifdef RT_PINCTRL_SUN252I_F101
     { .compatible = "allwinner,sun252i-f101-pinctrl", .data = &sun252i_f101_pinctrl_data },
+#endif
+#ifdef RT_PINCTRL_SUN50I_H616
+    { .compatible = "allwinner,sun50i-h616-pinctrl", .data = &sun50i_h616_pinctrl_data },
+    { .compatible = "allwinner,sun50i-h616-r-pinctrl", .data = &sun50i_h616_r_pinctrl_data },
+#endif
     { /* sentinel */ }
 };
 

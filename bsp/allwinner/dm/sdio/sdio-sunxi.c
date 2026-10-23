@@ -6,14 +6,13 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-
-#include <cache.h>
-#include <mm_aspace.h>
-#include <drivers/dma.h>
+#include <rthw.h>
 
 #define DBG_TAG "sdio.sunxi"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
+
+#include <mm_aspace.h>
 
 #include "dev_sdio_dm.h"
 
@@ -34,9 +33,11 @@
 #define SUNXI_MMC_STAS                  0x3c
 #define SUNXI_MMC_FTRGL                 0x40
 #define SUNXI_MMC_FUNS                  0x44
+#define SUNXI_MMC_DBGC                  0x50
 #define SUNXI_MMC_NTSR                  0x5c
 #define SUNXI_MMC_HWRST                 0x78
 #define SUNXI_MMC_DRV_DL                0x140
+#define SUNXI_MMC_SAMP_DL               0x144
 #define SUNXI_MMC_FIFO                  0x200
 #define SUNXI_MMC_DMAC                  0x80
 #define SUNXI_MMC_DLBA                  0x84
@@ -110,6 +111,8 @@
         SUNXI_MMC_IDMAC_DESC_INVALID | SUNXI_MMC_IDMAC_CARD_ERROR | \
         SUNXI_MMC_IDMAC_ABNORMAL)
 
+#define SUNXI_MMC_CEATA_ON              (0xceaaU << 16)
+
 #define SUNXI_MMC_IDMA_DESC_DIC         RT_BIT(1)
 #define SUNXI_MMC_IDMA_DESC_LAST        RT_BIT(2)
 #define SUNXI_MMC_IDMA_DESC_FIRST       RT_BIT(3)
@@ -147,6 +150,17 @@ struct sunxi_mmc_idma_desc
     rt_uint32_t next_desc;
 };
 
+struct sunxi_mmc_soc_data
+{
+    rt_bool_t h616;
+};
+
+static const struct sunxi_mmc_soc_data sunxi_mmc_data = { 0 };
+static const struct sunxi_mmc_soc_data sunxi_mmc_h616_data =
+{
+    .h616 = RT_TRUE,
+};
+
 struct sunxi_mmc
 {
     struct rt_mmcsd_host *host;
@@ -174,6 +188,11 @@ struct sunxi_mmc
     rt_bool_t card_reported;
     rt_bool_t sd_hs_rejected;
     rt_bool_t no_sdio;
+    rt_bool_t h616;
+#ifdef RT_USING_REGULATOR
+    struct rt_regulator *supplies[2];
+    rt_bool_t supply_enabled[2];
+#endif
 };
 
 static rt_uint32_t sunxi_mmc_read(struct sunxi_mmc *mmc, rt_uint32_t offset)
@@ -255,6 +274,13 @@ static void sunxi_mmc_set_timing(struct sunxi_mmc *mmc,
     }
     sunxi_mmc_write(mmc, SUNXI_MMC_GCTRL, gctrl);
 
+    if (mmc->h616)
+    {
+        /* H616 uses software sampling delay, with a zero tap for SDR. */
+        sunxi_mmc_write(mmc, SUNXI_MMC_SAMP_DL, RT_BIT(7));
+        return;
+    }
+
     drv_dl = sunxi_mmc_read(mmc, SUNXI_MMC_DRV_DL);
     /*
      * SMHC0 uses timing mode 1.  The F101 SDK enables 2x clocking in NTSR
@@ -272,8 +298,11 @@ static void sunxi_mmc_set_clock_phase(struct sunxi_mmc *mmc)
     rt_uint32_t ntsr;
 
     ntsr = sunxi_mmc_read(mmc, SUNXI_MMC_NTSR);
-    ntsr &= ~(SUNXI_MMC_NTSR_CMD_SAMPLE_MASK |
-            SUNXI_MMC_NTSR_DATA_SAMPLE_MASK);
+    if (!mmc->h616)
+    {
+        ntsr &= ~(SUNXI_MMC_NTSR_CMD_SAMPLE_MASK |
+                SUNXI_MMC_NTSR_DATA_SAMPLE_MASK);
+    }
     ntsr |= SUNXI_MMC_NTSR_2X_TIMING;
     sunxi_mmc_write(mmc, SUNXI_MMC_NTSR, ntsr);
 }
@@ -309,8 +338,9 @@ static void sunxi_mmc_set_iocfg(struct rt_mmcsd_host *host,
 
     if (effective_cfg.clock)
     {
-        /* The controller consumes a module clock twice the card clock. */
-        if (rt_clk_set_rate(mmc->mmc_clk, effective_cfg.clock * 2))
+        /* The H616 clock provider already includes the fixed /2 stage. */
+        if (rt_clk_set_rate(mmc->mmc_clk,
+                effective_cfg.clock * (mmc->h616 ? 1 : 2)))
         {
             LOG_E("cannot set %u Hz card clock", effective_cfg.clock);
             rate_err = -RT_ERROR;
@@ -320,6 +350,11 @@ static void sunxi_mmc_set_iocfg(struct rt_mmcsd_host *host,
     if (!rate_err)
     {
         sunxi_mmc_set_timing(mmc, &effective_cfg);
+        if (mmc->h616)
+        {
+            sunxi_mmc_write(mmc, SUNXI_MMC_CLKCR,
+                    sunxi_mmc_read(mmc, SUNXI_MMC_CLKCR) & ~0xffU);
+        }
     }
 
     err = rt_clk_prepare_enable(mmc->mmc_clk);
@@ -443,7 +478,7 @@ static void sunxi_mmc_build_idma_desc(struct sunxi_mmc *mmc,
         offset += length;
     }
 
-    rt_hw_cpu_dcache_clean_and_invalidate(mmc->idma_desc,
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmc->idma_desc,
             count * sizeof(*mmc->idma_desc));
     rt_hw_dsb();
 }
@@ -469,12 +504,12 @@ static rt_err_t sunxi_mmc_start_idma(struct sunxi_mmc *mmc,
     }
 
     /*
-     * Clean dirty lines before a read so they cannot overwrite DMA data,
-     * and invalidate again after the transfer before the CPU reads it.
+     * Flush dirty lines before a read so they cannot overwrite DMA data;
+     * invalidate again after the transfer before the CPU reads it.
      */
     if (data->flags & DATA_DIR_READ)
     {
-        rt_hw_cpu_dcache_clean_and_invalidate(data->buf, total);
+        rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, data->buf, total);
     }
     else
     {
@@ -519,6 +554,12 @@ static rt_err_t sunxi_mmc_wait_memory_access(struct sunxi_mmc *mmc)
 {
     rt_tick_t timeout = rt_tick_get() +
             rt_tick_from_millisecond(SUNXI_MMC_TIMEOUT_MS);
+
+    /* GCTRL[30:13] are reserved on H616; IDMA RX and DATA_OVER are sufficient. */
+    if (mmc->h616)
+    {
+        return RT_EOK;
+    }
 
     while (!(sunxi_mmc_read(mmc, SUNXI_MMC_GCTRL) &
             SUNXI_MMC_MEMORY_ACCESS_DONE))
@@ -586,15 +627,6 @@ static void sunxi_mmc_isr(int vector, void *param)
     {
         rt_completion_done(&mmc->completion);
     }
-}
-
-static rt_err_t sunxi_mmc_reset_fifo(struct sunxi_mmc *mmc)
-{
-    sunxi_mmc_write(mmc, SUNXI_MMC_GCTRL,
-            sunxi_mmc_read(mmc, SUNXI_MMC_GCTRL) | SUNXI_MMC_FIFO_RESET);
-
-    return sunxi_mmc_wait_clear(mmc, SUNXI_MMC_GCTRL,
-            SUNXI_MMC_FIFO_RESET, SUNXI_MMC_TIMEOUT_MS);
 }
 
 static rt_err_t sunxi_mmc_wait_busy(struct sunxi_mmc *mmc, rt_uint32_t timeout_ms)
@@ -798,7 +830,6 @@ _retry_cmd:
         }
     }
 
-_complete:
     sunxi_mmc_write(mmc, SUNXI_MMC_RINTR, status);
     if (!err)
     {
@@ -813,6 +844,7 @@ _complete:
         {
             cmd->resp[0] = sunxi_mmc_read(mmc, SUNXI_MMC_RESP0);
         }
+
         if (resp_type(cmd) == RESP_R1B)
         {
             err = sunxi_mmc_wait_busy(mmc, cmd->busy_timeout ?
@@ -969,26 +1001,42 @@ static const struct rt_mmcsd_host_ops sunxi_mmc_ops =
 
 static rt_err_t sunxi_mmc_hw_init(struct sunxi_mmc *mmc)
 {
+    rt_uint32_t gctrl;
+
     sunxi_mmc_write(mmc, SUNXI_MMC_GCTRL,
             sunxi_mmc_read(mmc, SUNXI_MMC_GCTRL) | SUNXI_MMC_HW_RESET);
     if (sunxi_mmc_wait_clear(mmc, SUNXI_MMC_GCTRL, SUNXI_MMC_HW_RESET, 250))
     {
         return -RT_ETIMEOUT;
     }
-    sunxi_mmc_write(mmc, SUNXI_MMC_GCTRL,
-            (sunxi_mmc_read(mmc, SUNXI_MMC_GCTRL) |
-            SUNXI_MMC_INT_ENABLE | SUNXI_MMC_ACCESS_DONE_DIRECT) &
-            ~SUNXI_MMC_ACCESS_BY_AHB);
+    gctrl = sunxi_mmc_read(mmc, SUNXI_MMC_GCTRL);
+    gctrl |= SUNXI_MMC_INT_ENABLE;
+    if (mmc->h616)
+    {
+        /* Match the H616/Linux host setup; direct-access completion is off. */
+        gctrl &= ~SUNXI_MMC_ACCESS_DONE_DIRECT;
+    }
+    else
+    {
+        gctrl |= SUNXI_MMC_ACCESS_DONE_DIRECT;
+        gctrl &= ~SUNXI_MMC_ACCESS_BY_AHB;
+    }
+    sunxi_mmc_write(mmc, SUNXI_MMC_GCTRL, gctrl);
     sunxi_mmc_write(mmc, SUNXI_MMC_FTRGL, SUNXI_MMC_PIO_FTRGL);
     sunxi_mmc_write(mmc, SUNXI_MMC_TMOUT, 0xffffffff);
     sunxi_mmc_write(mmc, SUNXI_MMC_IMASK, 0);
     sunxi_mmc_write(mmc, SUNXI_MMC_RINTR, 0xffffffff);
+    sunxi_mmc_write(mmc, SUNXI_MMC_DBGC, 0xdeb);
+    sunxi_mmc_write(mmc, SUNXI_MMC_FUNS, SUNXI_MMC_CEATA_ON);
 
     return RT_EOK;
 }
 
 static void sunxi_mmc_free(struct sunxi_mmc *mmc)
 {
+#ifdef RT_USING_REGULATOR
+    unsigned int index;
+#endif
     if (mmc->irq_installed)
     {
         rt_hw_interrupt_mask(mmc->irq);
@@ -1032,6 +1080,19 @@ static void sunxi_mmc_free(struct sunxi_mmc *mmc)
     {
         rt_iounmap(mmc->base);
     }
+#ifdef RT_USING_REGULATOR
+    for (index = 0; index < RT_ARRAY_SIZE(mmc->supplies); ++index)
+    {
+        if (!rt_is_err_or_null(mmc->supplies[index]))
+        {
+            if (mmc->supply_enabled[index])
+            {
+                rt_regulator_disable(mmc->supplies[index]);
+            }
+            rt_regulator_put(mmc->supplies[index]);
+        }
+    }
+#endif
     rt_free(mmc);
 }
 
@@ -1040,15 +1101,56 @@ static rt_err_t sunxi_mmc_probe(struct rt_platform_device *pdev)
     rt_err_t err;
     rt_uint8_t unused_mode;
     struct rt_device *dev = &pdev->parent;
-    struct sunxi_mmc *mmc = rt_calloc(1, sizeof(*mmc));
+    const struct sunxi_mmc_soc_data *soc_data = pdev->id->data;
+    struct sunxi_mmc *mmc;
 
+    if (!soc_data)
+    {
+        return -RT_EINVAL;
+    }
+    if (soc_data->h616 && rt_dm_dev_prop_read_bool(dev, "mmc-pwrseq"))
+    {
+        LOG_D("skip MMC host with unsupported mmc-pwrseq");
+        return RT_EOK;
+    }
+
+    mmc = rt_calloc(1, sizeof(*mmc));
     if (!mmc)
     {
         return -RT_ENOMEM;
     }
     mmc->dev = dev;
+    mmc->h616 = soc_data->h616;
     mmc->cd_pin = -1;
     mmc->irq = -1;
+#ifdef RT_USING_REGULATOR
+    if (mmc->h616)
+    {
+        static const char * const names[] = { "vmmc", "vqmmc" };
+        static const char * const props[] = { "vmmc-supply", "vqmmc-supply" };
+        unsigned int index;
+
+        for (index = 0; index < RT_ARRAY_SIZE(names); ++index)
+        {
+            if (!rt_dm_dev_prop_read_bool(dev, props[index]))
+            {
+                continue;
+            }
+            mmc->supplies[index] = rt_regulator_get(dev, names[index]);
+            if (rt_is_err_or_null(mmc->supplies[index]))
+            {
+                err = rt_is_err(mmc->supplies[index]) ?
+                        rt_ptr_err(mmc->supplies[index]) : -RT_EIO;
+                goto _fail;
+            }
+            if ((err = rt_regulator_enable(mmc->supplies[index])))
+            {
+                goto _fail;
+            }
+            mmc->supply_enabled[index] = RT_TRUE;
+        }
+    }
+#endif
     mmc->base = rt_dm_dev_iomap(dev, 0);
     if (!mmc->base)
     {
@@ -1120,9 +1222,28 @@ static rt_err_t sunxi_mmc_probe(struct rt_platform_device *pdev)
         LOG_W("MMC interrupt unavailable; using PIO");
     }
     mmc->no_sdio = rt_dm_dev_prop_read_bool(dev, "no-sdio");
+    /*
+     * The H616's removable MMC0 slot is SD-only.  Its firmware DT describes
+     * card detection with cd-gpios but, unlike the F101 DT, omits no-sdio.
+     * Do not issue CMD5 to that slot: SMHC0 completes the ignored command
+     * with a zero R4 instead of a response timeout, which corrupts probing
+     * of the following ACMD41 sequence.
+     */
+    if (mmc->h616 && !mmc->no_sdio &&
+            rt_dm_dev_prop_read_bool(dev, "cd-gpios"))
+    {
+        mmc->no_sdio = RT_TRUE;
+    }
     if ((err = sdio_ofw_parse(dev->ofw_node, mmc->host)))
     {
         goto _fail;
+    }
+    if (mmc->h616)
+    {
+        /* Voltage switching, tuning and the SDIO IRQ path are not implemented. */
+        mmc->host->flags &= MMCSD_MUTBLKWRITE | MMCSD_BUSWIDTH_4 |
+                MMCSD_BUSWIDTH_8 | MMCSD_SUP_NONREMOVABLE | MMCSD_SUP_HIGHSPEED;
+        mmc->host->freq_max = rt_min_t(rt_uint32_t, mmc->host->freq_max, 50000000);
     }
     sdio_host_set_name(mmc->host, RT_NULL);
 
@@ -1178,8 +1299,10 @@ static rt_err_t sunxi_mmc_remove(struct rt_platform_device *pdev)
 
 static const struct rt_ofw_node_id sunxi_mmc_ofw_ids[] =
 {
-    { .compatible = "allwinner,sun252i-f101-mmc" },
-    { .compatible = "allwinner,sun252i-f101-emmc" },
+    { .compatible = "allwinner,sun252i-f101-mmc", .data = &sunxi_mmc_data },
+    { .compatible = "allwinner,sun252i-f101-emmc", .data = &sunxi_mmc_data },
+    { .compatible = "allwinner,sun50i-h616-mmc", .data = &sunxi_mmc_h616_data },
+    { .compatible = "allwinner,sun50i-h616-emmc", .data = &sunxi_mmc_h616_data },
     { /* sentinel */ }
 };
 

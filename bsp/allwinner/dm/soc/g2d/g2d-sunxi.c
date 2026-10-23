@@ -7,12 +7,12 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <ioremap.h>
 
 #define DBG_TAG "g2d.sunxi"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+#include <ioremap.h>
 #include <sunxi-g2d.h>
 #include "g2d_sunxi_hw.h"
 
@@ -836,6 +836,8 @@ static const struct rt_ofw_node_id sunxi_g2d_ofw_ids[] =
 {
     { .compatible = "allwinner,sun252i-f101-g2d200" },
     { .compatible = "allwinner,sunxi-g2d200" },
+    { .compatible = "allwinner,sun50i-h616-g2d" },
+    { .compatible = "allwinner,sunxi-g2d" },
     { /* sentinel */ }
 };
 

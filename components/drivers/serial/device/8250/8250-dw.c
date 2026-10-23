@@ -222,8 +222,15 @@ static rt_err_t dw8250_probe(struct rt_platform_device *pdev)
         goto _free_res;
     }
 
-    serial->clk = rt_clk_get_by_name(dev, "baudclk");
-    dw8250->pclk = rt_clk_get_by_name(dev, "apb_pclk");
+    if (rt_dm_dev_prop_read_bool(dev, "clock-names"))
+    {
+        serial->clk = rt_clk_get_by_name(dev, "baudclk");
+        dw8250->pclk = rt_clk_get_by_name(dev, "apb_pclk");
+    }
+    else
+    {
+        serial->clk = rt_clk_get_by_index(dev, 0);
+    }
 
     if (rt_is_err_or_null(serial->clk))
     {

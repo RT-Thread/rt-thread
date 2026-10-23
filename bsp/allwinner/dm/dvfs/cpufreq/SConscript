@@ -8,6 +8,9 @@ src = []
 if GetDepend(['RT_DVFS_SUN252I_F101_CPUFREQ']):
     src += ['dvfs-sun252i-f101-cpufreq.c']
 
+if GetDepend(['RT_DVFS_SUN50I_H616_CPUFREQ']):
+    src += ['dvfs-sun50i-h616-cpufreq.c']
+
 group = DefineGroup('DeviceDrivers', src, depend=[''], CPPPATH=[cwd + '/../../include'])
 
 Return('group')

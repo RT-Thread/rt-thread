@@ -15,6 +15,7 @@
 
 #ifndef G2D_SUNXI_REGS_H_
 #define G2D_SUNXI_REGS_H_
+
 #include <drivers/misc.h>
 
 /* ---- control registers (CPU) ------------------------------------------ */

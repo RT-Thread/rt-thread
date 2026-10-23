@@ -32,7 +32,14 @@ struct sunxi_wdt
     rt_watchdog_t parent;
     void *base;
     rt_uint32_t timeout;
+    rt_uint32_t key;
     const rt_uint8_t *timeout_codes;
+};
+
+struct sunxi_wdt_soc_data
+{
+    const rt_uint8_t *timeout_codes;
+    rt_uint32_t key;
 };
 
 #define to_sunxi_wdt(raw) rt_container_of(raw, struct sunxi_wdt, parent)
@@ -44,6 +51,23 @@ static const rt_uint8_t sunxi_wdt_timeout_codes_v2[] =
     [1] = 0x5, [2] = 0x6, [3] = 0x7, [4] = 0x8,
     [5] = 0x9, [6] = 0xa, [8] = 0xb, [10] = 0xc,
     [12] = 0xd, [14] = 0xe, [16] = 0xf,
+};
+
+static const struct sunxi_wdt_soc_data sunxi_wdt_data =
+{
+    .timeout_codes = sunxi_wdt_timeout_codes,
+};
+
+static const struct sunxi_wdt_soc_data sunxi_wdt_f101_data =
+{
+    .timeout_codes = sunxi_wdt_timeout_codes_v2,
+    .key = SUNXI_WDT_KEY,
+};
+
+static const struct sunxi_wdt_soc_data sunxi_wdt_d1_data =
+{
+    .timeout_codes = sunxi_wdt_timeout_codes,
+    .key = SUNXI_WDT_KEY,
 };
 
 static rt_uint32_t sunxi_wdt_select_timeout(struct sunxi_wdt *wdt,
@@ -81,7 +105,7 @@ static rt_err_t sunxi_wdt_set_timeout(struct sunxi_wdt *wdt,
     value = HWREG32(wdt->base + SUNXI_WDT_MODE);
     value &= ~SUNXI_WDT_TIMEOUT_MASK;
     value |= wdt->timeout_codes[timeout] << SUNXI_WDT_TIMEOUT_SHIFT;
-    HWREG32(wdt->base + SUNXI_WDT_MODE) = value | SUNXI_WDT_KEY;
+    HWREG32(wdt->base + SUNXI_WDT_MODE) = value | wdt->key;
 
     wdt->timeout = timeout;
     sunxi_wdt_ping(wdt);
@@ -102,18 +126,18 @@ static rt_err_t sunxi_wdt_start(struct sunxi_wdt *wdt)
     value = HWREG32(wdt->base + SUNXI_WDT_CFG);
     value &= ~SUNXI_WDT_RESET_MASK;
     value |= SUNXI_WDT_RESET_SYSTEM;
-    HWREG32(wdt->base + SUNXI_WDT_CFG) = value | SUNXI_WDT_KEY;
+    HWREG32(wdt->base + SUNXI_WDT_CFG) = value | wdt->key;
 
     value = HWREG32(wdt->base + SUNXI_WDT_MODE);
     HWREG32(wdt->base + SUNXI_WDT_MODE) = value | SUNXI_WDT_MODE_ENABLE |
-            SUNXI_WDT_KEY;
+            wdt->key;
 
     return RT_EOK;
 }
 
 static void sunxi_wdt_stop(struct sunxi_wdt *wdt)
 {
-    HWREG32(wdt->base + SUNXI_WDT_MODE) = SUNXI_WDT_KEY;
+    HWREG32(wdt->base + SUNXI_WDT_MODE) = wdt->key;
 }
 
 static void sunxi_wdt_machine_reset(void)
@@ -127,9 +151,9 @@ static void sunxi_wdt_machine_reset(void)
 
     sunxi_wdt_stop(wdt);
     HWREG32(wdt->base + SUNXI_WDT_IRQ_EN) = 0;
-    HWREG32(wdt->base + SUNXI_WDT_CFG) = SUNXI_WDT_KEY |
+    HWREG32(wdt->base + SUNXI_WDT_CFG) = wdt->key |
             SUNXI_WDT_RESET_SYSTEM;
-    HWREG32(wdt->base + SUNXI_WDT_MODE) = SUNXI_WDT_KEY |
+    HWREG32(wdt->base + SUNXI_WDT_MODE) = wdt->key |
             SUNXI_WDT_MODE_ENABLE;
 
     for (;;)
@@ -188,8 +212,14 @@ static rt_err_t sunxi_wdt_probe(struct rt_platform_device *pdev)
     rt_err_t err;
     const char *name;
     struct rt_device *dev = &pdev->parent;
-    struct sunxi_wdt *wdt = rt_calloc(1, sizeof(*wdt));
+    const struct sunxi_wdt_soc_data *soc_data = pdev->id->data;
+    struct sunxi_wdt *wdt;
 
+    if (!soc_data)
+    {
+        return -RT_EINVAL;
+    }
+    wdt = rt_calloc(1, sizeof(*wdt));
     if (!wdt)
     {
         return -RT_ENOMEM;
@@ -202,15 +232,8 @@ static rt_err_t sunxi_wdt_probe(struct rt_platform_device *pdev)
         goto _fail;
     }
 
-    if (rt_ofw_node_is_compatible(dev->ofw_node,
-            "allwinner,sun252i-f101-wdt"))
-    {
-        wdt->timeout_codes = sunxi_wdt_timeout_codes_v2;
-    }
-    else
-    {
-        wdt->timeout_codes = sunxi_wdt_timeout_codes;
-    }
+    wdt->timeout_codes = soc_data->timeout_codes;
+    wdt->key = soc_data->key;
     wdt->timeout = 16;
     sunxi_wdt_stop(wdt);
     wdt->parent.ops = &sunxi_wdt_ops;
@@ -243,6 +266,12 @@ _fail:
 static rt_err_t sunxi_wdt_remove(struct rt_platform_device *pdev)
 {
     struct sunxi_wdt *wdt = pdev->parent.user_data;
+    rt_err_t err = rt_device_unregister(&wdt->parent.parent);
+
+    if (err)
+    {
+        return err;
+    }
 
     if (machine_wdt == wdt)
     {
@@ -250,7 +279,6 @@ static rt_err_t sunxi_wdt_remove(struct rt_platform_device *pdev)
         rt_dm_machine_reset = RT_NULL;
     }
     sunxi_wdt_stop(wdt);
-    rt_device_unregister(&wdt->parent.parent);
     rt_iounmap(wdt->base);
     rt_free(wdt);
 
@@ -259,8 +287,9 @@ static rt_err_t sunxi_wdt_remove(struct rt_platform_device *pdev)
 
 static const struct rt_ofw_node_id sunxi_wdt_ofw_ids[] =
 {
-    { .compatible = "allwinner,sun252i-f101-wdt" },
-    { .compatible = "allwinner,sun20i-d1-wdt" },
+    { .compatible = "allwinner,sun252i-f101-wdt", .data = &sunxi_wdt_f101_data },
+    { .compatible = "allwinner,sun20i-d1-wdt", .data = &sunxi_wdt_d1_data },
+    { .compatible = "allwinner,sun50i-h616-wdt", .data = &sunxi_wdt_data },
     { /* sentinel */ }
 };
 
