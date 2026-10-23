@@ -25,9 +25,76 @@
 #elif defined SOC_SERIES_GD32F4xx
 #include "gd32f4xx_sdio.h"
 #include "gd32f4xx_dma.h"
+#elif defined SOC_SERIES_GD32H77x_H78X
+#include "gd32h77x_78x_sdio.h"
+#define GD32_SDIO_USING_H77X
 #endif
 
+#ifdef GD32_SDIO_USING_H77X
+#ifdef BSP_SDIO_USING_SDIO1
+#define SDIO_PERIPH                SDIO1
+#define SDIO_PERI_CLOCK            RCU_SDIO1
+#define SDIO_CLOCK_INDEX           IDX_SDIO1
+#define SDIO_CLOCK_SOURCE          RCU_SDIO1SRC_PLL0Q
+#define SDIO_IRQn                  SDIO1_IRQn
+#define SDIO_IRQHandler            SDIO1_IRQHandler
+#else
+#define SDIO_PERIPH                SDIO0
+#define SDIO_PERI_CLOCK            RCU_SDIO0
+#define SDIO_CLOCK_INDEX           IDX_SDIO0
+#define SDIO_CLOCK_SOURCE          RCU_SDIO0SRC_PLL0Q
+#define SDIO_IRQn                  SDIO0_IRQn
+#define SDIO_IRQHandler            SDIO0_IRQHandler
+#endif
+
+#define SDIO_CLOCK_FREQUENCY       CK_PLL0Q
+
+#define SDIO_CLOCKBYPASS_DISABLE   ((uint32_t)0U)
+#define SDIO_TRANSMODE_BLOCK       SDIO_TRANSMODE_BLOCKCOUNT
+/* H77x DATSTA is bit 12; the generic H7 header has CMDSTA and DATSTA reversed. */
+#define SDIO_FLAG_RXRUN            BIT(12)
+#define SDIO_FLAG_TXRUN            BIT(12)
+#define SDIO_FLAG_STBITE           ((uint32_t)0U)
+#define SDIO_INT_STBITE            ((uint32_t)0U)
+
+#define SDIO_STATUS_REG            SDIO_STAT(SDIO_PERIPH)
+#define SDIO_CLOCK_CONTROL_REG     SDIO_CLKCTL(SDIO_PERIPH)
+#define SDIO_CLOCK_DIVISION_GET()  ((SDIO_CLOCK_CONTROL_REG & SDIO_CLKCTL_DIV) * 2U)
+#define SDIO_FIFO_DATA_AVAILABLE() ((RESET == sdio_flag_get(SDIO_FLAG_RFE)) && \
+                                    (SET == sdio_flag_get(SDIO_FLAG_DATSTA)))
+
+#define sdio_deinit()                                                      sdio_deinit(SDIO_PERIPH)
+#define sdio_clock_config(edge, bypass, powersave, division)               sdio_clock_config(SDIO_PERIPH, edge, powersave, division)
+#define sdio_hardware_clock_enable()                                       sdio_hardware_clock_enable(SDIO_PERIPH)
+#define sdio_hardware_clock_disable()                                      sdio_hardware_clock_disable(SDIO_PERIPH)
+#define sdio_bus_mode_set(mode)                                            sdio_bus_mode_set(SDIO_PERIPH, mode)
+#define sdio_power_state_set(state)                                        sdio_power_state_set(SDIO_PERIPH, state)
+#define sdio_power_state_get()                                             sdio_power_state_get(SDIO_PERIPH)
+#define sdio_command_response_config(index, argument, response)            sdio_command_response_config(SDIO_PERIPH, index, argument, response)
+#define sdio_wait_type_set(type)                                           sdio_wait_type_set(SDIO_PERIPH, type)
+#define sdio_csm_enable()                                                  sdio_csm_enable(SDIO_PERIPH)
+#define sdio_response_get(response)                                        sdio_response_get(SDIO_PERIPH, response)
+#define sdio_command_index_get()                                           sdio_command_index_get(SDIO_PERIPH)
+#define sdio_data_config(timeout, length, blocksize)                       sdio_data_config(SDIO_PERIPH, timeout, length, blocksize)
+#define sdio_data_transfer_config(direction, mode)                         sdio_data_transfer_config(SDIO_PERIPH, mode, direction)
+#define sdio_dsm_enable()                                                  sdio_dsm_enable(SDIO_PERIPH)
+#define sdio_dsm_disable()                                                 sdio_dsm_disable(SDIO_PERIPH)
+#define sdio_transfer_start_enable()                                       sdio_trans_start_enable(SDIO_PERIPH)
+#define sdio_transfer_start_disable()                                      sdio_trans_start_disable(SDIO_PERIPH)
+#define sdio_data_read()                                                   sdio_data_read(SDIO_PERIPH)
+#define sdio_data_write(data)                                              sdio_data_write(SDIO_PERIPH, data)
+#define sdio_flag_get(flag)                                                sdio_flag_get(SDIO_PERIPH, flag)
+#define sdio_flag_clear(flag)                                              sdio_flag_clear(SDIO_PERIPH, flag)
+#define sdio_interrupt_enable(flag)                                        sdio_interrupt_enable(SDIO_PERIPH, flag)
+#define sdio_interrupt_disable(flag)                                       sdio_interrupt_disable(SDIO_PERIPH, flag)
+#define sdio_interrupt_flag_get(flag)                                      sdio_interrupt_flag_get(SDIO_PERIPH, flag)
+#define sdio_interrupt_flag_clear(flag)                                    sdio_interrupt_flag_clear(SDIO_PERIPH, flag)
+#define sdio_clock_enable()                                                do { } while (0)
+#define sdio_dma_enable()                                                  do { } while (0)
+#define sdio_dma_disable()                                                 do { } while (0)
+#else
 #define SDIO_PERI_CLOCK            RCU_SDIO
+
 #define SDIO_GPIO_CLK              RCU_GPIOC
 #define SDIO_GPIO_CMD              RCU_GPIOD
 #define SDIO_GPIO_D0               RCU_GPIOC
@@ -53,6 +120,15 @@
 #define SDIO_DMA_CHANNEL           DMA_CH3
 #define SDIO_DMA_IRQ               DMA1_Channel3_IRQn
 #define SDIO_DMA_IRQ_HANDLER       DMA1_Channel3_IRQHandler
+
+#define SDIO_STATUS_REG            SDIO_STAT
+#define SDIO_CLOCK_CONTROL_REG     SDIO_CLKCTL
+#define SDIO_CLOCK_DIVISION_GET()  ((SDIO_CLOCK_CONTROL_REG & SDIO_CLKCTL_DIV) + \
+                                    (((SDIO_CLOCK_CONTROL_REG & SDIO_CLKCTL_DIV8) >> 31) * 256U) + 2U)
+#define SDIO_FIFO_DATA_AVAILABLE() (RESET != sdio_flag_get(SDIO_FLAG_RXDTVAL))
+#define sdio_transfer_start_enable() do { } while (0)
+#define sdio_transfer_start_disable() do { } while (0)
+#endif
 
 
 /* SD memory card bus commands index */
