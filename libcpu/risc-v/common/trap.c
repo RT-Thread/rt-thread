@@ -71,6 +71,7 @@ static void _check_fault(struct rt_hw_stack_frame *regs, uint32_t pc_adj, char *
         lwp_core_dump(regs, pc_adj);
     #endif
         sys_exit_group(-1);
+        /* Only reached when there is no LWP to terminate */
         csr_write(CSR_STATUS, saved_stat);
     }
 }

@@ -1096,6 +1096,24 @@ rt_inline int _pgtbl_order(void)
     return order;
 }
 
+#ifdef RT_USING_SMART
+/*
+ * Early identity mappings may overlap the user address range. Clear those
+ * entries so they are not inherited by a user address space.
+ */
+static void _clear_user_pgtbl_entries(rt_ubase_t *table)
+{
+    int i;
+    int start_idx = USER_VADDR_START >> VPN2_SHIFT;
+    int end_idx = (USER_VADDR_TOP - 1) >> VPN2_SHIFT;
+
+    for (i = start_idx; i <= end_idx; i++)
+    {
+        table[i] = 0;
+    }
+}
+#endif /* RT_USING_SMART */
+
 /**
  * @brief Creates and initializes a new MMU page table.
  *
@@ -1129,6 +1147,9 @@ void *rt_hw_mmu_pgtbl_create(void)
         rt_ubase_t *dst = (rt_ubase_t *)((rt_ubase_t)mmu_table +
                                          (rt_ubase_t)(h * ARCH_PAGE_SIZE));
         rt_memcpy(dst, src, ARCH_PAGE_SIZE);
+#ifdef RT_USING_SMART
+        _clear_user_pgtbl_entries(dst);
+#endif
     }
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table,
                          (rt_ubase_t)(1 << order) * ARCH_PAGE_SIZE);
@@ -1141,15 +1162,7 @@ void *rt_hw_mmu_pgtbl_create(void)
     rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
 
 #ifdef RT_USING_SMART
-    {
-        int i;
-        int start_idx = USER_VADDR_START >> VPN2_SHIFT;
-        int end_idx = USER_VADDR_TOP >> VPN2_SHIFT;
-        for (i = start_idx; i <= end_idx; i++)
-        {
-            mmu_table[i] = 0;
-        }
-    }
+    _clear_user_pgtbl_entries(mmu_table);
 #endif
 
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
