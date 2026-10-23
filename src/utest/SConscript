@@ -65,6 +65,7 @@ if GetDepend(['RT_UTEST_SCHEDULER']):
     src += ['sched_timed_mtx_tc.c']
     src += ['sched_mtx_tc.c']
     src += ['sched_sem_tc.c', 'sched_thread_tc.c']
+    src += ['sched_ready_order_tc.c']
 
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
 
