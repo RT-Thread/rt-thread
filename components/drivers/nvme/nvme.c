@@ -1072,13 +1072,7 @@ static rt_err_t nvme_scan_device(struct rt_nvme_controller *nvme,
     /* NVME Namespace is start with "1" */
     for (rt_uint32_t nsid = 1; nsid <= number_of_ns; ++nsid)
     {
-        struct rt_nvme_device *ndev = rt_calloc(1, sizeof(*ndev));
-
-        if (!ndev)
-        {
-            err = -RT_ENOMEM;
-            goto _free_res;
-        }
+        struct rt_nvme_device *ndev;
 
         rt_memset(id, 0, sizeof(*id));
         if ((err = nvme_identify(nvme, nsid, 0, id)))
@@ -1089,6 +1083,13 @@ static rt_err_t nvme_scan_device(struct rt_nvme_controller *nvme,
         if (!id->nsze)
         {
             continue;
+        }
+
+        ndev = rt_calloc(1, sizeof(*ndev));
+        if (!ndev)
+        {
+            err = -RT_ENOMEM;
+            goto _free_res;
         }
 
         ndev->ctrl = nvme;
@@ -1108,6 +1109,7 @@ static rt_err_t nvme_scan_device(struct rt_nvme_controller *nvme,
 
         if ((err = rt_hw_blk_disk_register(&ndev->parent)))
         {
+            rt_free(ndev);
             goto _free_res;
         }
 
