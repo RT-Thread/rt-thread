@@ -564,7 +564,13 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
      * Thus, the following is purely of historic interest.
      */
 #ifdef RT_USING_RTC
-    if (tv != RT_NULL && (long)tv->tv_usec >= 0 && (long)tv->tv_sec >= 0)
+    /*
+     * Check the fields by their own type. Casting tv_sec to long narrows it on
+     * ILP32 targets where time_t is 64 bit (time64/long32): every timestamp
+     * above INT32_MAX turned negative and was rejected with EINVAL, even though
+     * it is a perfectly valid value for time_t.
+     */
+    if (tv != RT_NULL && tv->tv_usec >= 0 && tv->tv_sec >= 0)
     {
         if (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMEVAL, (void *)tv) == RT_EOK)
         {
