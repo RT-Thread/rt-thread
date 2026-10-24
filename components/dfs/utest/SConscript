@@ -15,6 +15,10 @@ if GetDepend('RT_UTEST_TC_USING_DFS_API'):
     if GetDepend('RT_UTEST_TC_USING_POSIX_API'):
         src += ['tc_posix_api.c']
 
+# Add devtmpfs path component boundary test if enabled (requires DFS v2)
+if GetDepend('RT_UTEST_TC_USING_DEVTMPFS_PATH'):
+    src += ['tc_devtmpfs_path.c']
+
 # Define the test group with proper dependencies
 objs = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES', 'RT_USING_DFS'], CPPPATH = CPPPATH)
 objs = objs + SConscript(os.path.join('v2', 'af_unix', 'SConscript'))
