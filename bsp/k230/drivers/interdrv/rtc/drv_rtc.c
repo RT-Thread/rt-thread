@@ -230,8 +230,8 @@ static void rtc_irq(int vector, void *param)
 static void rtc_date_time_set(struct k230_rtc_dev *dev, int year, int month, int day, \
                               int hour, int minute, int second, int week)
 {
-    rtc_date_t date;
-    rtc_time_t time;
+    rtc_date_t date = { 0 };
+    rtc_time_t time = { 0 };
     rtc_count_t count;
     volatile rtc_t *rtc = (rtc_t *)dev->base;
 
@@ -318,8 +318,8 @@ static void rtc_alarm_set(struct k230_rtc_dev *dev, void *args)
     time_t t;
     struct tm p_tm;
     volatile rtc_t *rtc = (rtc_t *)dev->base;
-    rtc_alarm_time_t alarm_time;
-    rtc_alarm_date_t alarm_date;
+    rtc_alarm_time_t alarm_time = { 0 };
+    rtc_alarm_date_t alarm_date = { 0 };
     rtc_date_t date = rtc->date;
     int year, year_l, year_h, val;
 
@@ -477,7 +477,7 @@ static int rt_hw_rtc_init(void)
 
     ret = rt_device_register(&rtc_dev.device, "rtc", RT_DEVICE_FLAG_RDWR);
     RT_ASSERT(ret == RT_EOK);
-    LOG_I("rtc driver register OK\n");
+    LOG_D("rtc driver register OK");
 
     rtc_alarm_stop(&rtc_dev);
     rtc_tick_stop(&rtc_dev);
