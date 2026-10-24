@@ -19,28 +19,39 @@ def fix_freertos_include_order(env):
     cpp = list(env.get('CPPPATH', []))
     shim = None
     wrapper = []
-    wrapper_keys = set()
+    front = []
+    front_keys = set()
 
     for path in cpp:
         norm = _norm(path)
         if norm.endswith('/components/rtthread/scons/include'):
             if shim is None:
                 shim = path
-        elif '/freertos_wrapper-' in norm or '/freertos-wrapper-' in norm:
-            if norm not in wrapper_keys:
-                wrapper_keys.add(norm)
+            continue
+
+        if '/freertos_wrapper-' in norm or '/freertos-wrapper-' in norm:
+            if norm not in front_keys:
+                front_keys.add(norm)
                 wrapper.append(path)
+                front.append(path)
+        elif norm.endswith('/idf_port/include') or \
+                norm.endswith('/idf_port/include/freertos'):
+            # The BSP's FreeRTOSConfig.h must win over the ESP-IDF copy that
+            # Wi-Fi/BLE configurations add to the include path.
+            if norm not in front_keys:
+                front_keys.add(norm)
+                front.append(path)
 
     if shim is None or not wrapper:
         return
 
-    # Drop the Wrapper entries first so that they can be inserted right after
-    # the shim, whatever order the package SConscripts ran in.
-    rest = [p for p in cpp if _norm(p) not in wrapper_keys]
+    # Drop the Wrapper and BSP port config entries first so that they can be
+    # inserted right after the shim, whatever order the SConscripts ran in.
+    rest = [p for p in cpp if _norm(p) not in front_keys]
 
     shim_key = _norm(shim)
     for index, path in enumerate(rest):
         if _norm(path) == shim_key:
-            rest[index + 1:index + 1] = wrapper
+            rest[index + 1:index + 1] = front
             env.Replace(CPPPATH=rest)
             return
