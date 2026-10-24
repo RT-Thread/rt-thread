@@ -50,7 +50,11 @@ struct dfs_vnode
     const struct dfs_file_ops *fops;
     uint32_t flags;              /* self flags, is dir etc.. */
 
+#ifdef RT_USING_DFS_LARGE_FILE
+    off_t    size;               /* Size in bytes */
+#else
     size_t   size;               /* Size in bytes */
+#endif
     void *data;                  /* Specific file system data */
 };
 
