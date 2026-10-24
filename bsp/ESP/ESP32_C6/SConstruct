@@ -164,6 +164,10 @@ _match_idf_spi_lock_stub_to_spi_config()
 
 objs = PrepareBuilding(env, RTT_ROOT, remove_components = ['libc'])
 
+sys.path = sys.path + [os.path.join(os.path.dirname(SDK_ROOT), 'tools')]
+from freertos_include import fix_freertos_include_order
+fix_freertos_include_order(env)
+
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))
 DoBuilding(TARGET, objs)
 
