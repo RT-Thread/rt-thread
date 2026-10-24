@@ -547,9 +547,20 @@ int lwp_tty_ioctl_adapter(lwp_tty_t tp, int cmd, int oflags, void *args, rt_thre
             error = (IOCTL(FIONREAD, args, fflags, td));
             break;
 
-#ifdef USING_BSD_IOCTL_EXT
-            /* TIOCLINUX */
+        case TIOCLINUX:
+        {
+            /*
+             * Linux uses TIOCLINUX to obtain console keyboard modifier
+             * state.  RT-Thread serial consoles do not expose that state,
+             * but applications such as mc only need this ioctl to be
+             * harmless when it is unavailable.
+             */
+            unsigned char modifiers = 0;
+            error = _copy_to_user(args, &modifiers, sizeof(modifiers));
+            break;
+        }
 
+#ifdef USING_BSD_IOCTL_EXT
         case TIOCCONS:
             args->cmd = TIOCCONS;
             error = (sys_ioctl(td, (struct ioctl_args *)args));
