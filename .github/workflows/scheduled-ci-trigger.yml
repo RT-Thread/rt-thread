@@ -20,7 +20,7 @@ jobs:
     name: Trigger and Monitor CIs
     if: github.repository_owner == 'RT-Thread'
     runs-on: ubuntu-latest
-    timeout-minutes: 270
+    timeout-minutes: 300
     permissions:
       contents: read
       actions: write
@@ -32,8 +32,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      timeout-minutes: 5
 
     - name: Install Python dependencies
+      timeout-minutes: 5
       run: |
         python -m pip install --upgrade pip
         pip install requests
@@ -46,6 +48,7 @@ jobs:
 
     - name: Trigger CI workflows directly
       id: trigger-ci
+      timeout-minutes: 5
       run: |
         python tools/ci/scheduled-ci-trigger/trigger_workflows_direct.py
       env:
@@ -54,6 +57,7 @@ jobs:
 
     - name: Wait for workflows to appear
       id: wait-for-workflows
+      timeout-minutes: 10
       if: ${{ !cancelled() && steps.start-time.outcome == 'success' }}
       run: |
         echo "Waiting for workflows to appear in API..."
@@ -64,6 +68,8 @@ jobs:
 
     - name: Monitor CI workflows
       id: monitor-ci
+      # Leave time for reporting even if monitoring is interrupted.
+      timeout-minutes: 245
       if: ${{ !cancelled() && steps.start-time.outcome == 'success' }}
       run: |
         python tools/ci/scheduled-ci-trigger/monitor_workflows.py "${{ steps.start-time.outputs.start_time }}"
@@ -73,7 +79,8 @@ jobs:
 
     - name: Collect monitoring results
       id: collect-results
-      if: ${{ !cancelled() && steps.start-time.outcome == 'success' }}
+      timeout-minutes: 1
+      if: ${{ always() && steps.start-time.outcome == 'success' }}
       run: |
         echo "Checking for monitoring results..."
         if [ -f "monitoring_results.json" ]; then
@@ -93,7 +100,8 @@ jobs:
         fi
 
     - name: Generate detailed report
-      if: ${{ !cancelled() && steps.collect-results.outputs.has_results == 'true' && steps.collect-results.outputs.failed_workflows != '0' }}
+      timeout-minutes: 1
+      if: ${{ always() && steps.collect-results.outputs.has_results == 'true' && steps.collect-results.outputs.failed_workflows != '0' }}
       id: generate-report
       run: |
         echo "Generating detailed report..."
@@ -101,7 +109,8 @@ jobs:
         echo "Report generation completed"
 
     - name: Upload report artifact
-      if: ${{ !cancelled() && steps.collect-results.outputs.has_results == 'true' && steps.collect-results.outputs.failed_workflows != '0' }}
+      timeout-minutes: 5
+      if: ${{ always() && steps.collect-results.outputs.has_results == 'true' && steps.collect-results.outputs.failed_workflows != '0' }}
       uses: actions/upload-artifact@v4
       with:
         name: ci-failure-report

@@ -96,24 +96,29 @@ def generate_report():
             report += f"**错误信息 | Error**: {wf['error']}\n"
 
         if not details:
-            report += "└─ 无失败作业详情 | No details of failed jobs\n\n"
+            report += "└─ 无异常作业详情 | No details of affected jobs\n\n"
             continue
 
-        failed_jobs = [j for j in details if j.get("steps")]
-        for i, job in enumerate(failed_jobs):
+        for i, job in enumerate(details):
             job_name = job["name"]
-            steps = job["steps"]
-            job_prefix = "└─" if i == len(failed_jobs) - 1 else "├─"
-            report += f"{job_prefix} **失败作业 | Failed Job**: {job_name}\n"
+            steps = job.get("steps", [])
+            job_status = job.get("conclusion", "failure") or job.get("status") or "unknown"
+            job_prefix = "└─" if i == len(details) - 1 else "├─"
+            report += f"{job_prefix} **异常作业 | Affected Job**: {job_name} (`{job_status}`)\n"
+            if not steps:
+                report += "   └─ 无异常步骤详情 | No details of affected steps\n"
 
             for j, step in enumerate(steps):
                 step_name = step["name"]
                 step_num = step["number"]
-                error_type = classify_error(step_name, job_name)
+                step_conclusion = step.get("conclusion", "failure")
+                step_status = step_conclusion or step.get("status") or "unknown"
                 step_prefix = "   └─" if j == len(steps) - 1 else "   ├─"
-                report += f"{step_prefix} **失败步骤 | Failed Step**: {step_name} (Step {step_num})\n"
-                indent = "      " if j == len(steps) - 1 else "   │   "
-                report += f"{indent}**错误类型 | Error Type**: `{error_type}`\n"
+                report += f"{step_prefix} **异常步骤 | Affected Step**: {step_name} (Step {step_num}, `{step_status}`)\n"
+                if step_conclusion == "failure":
+                    error_type = classify_error(step_name, job_name)
+                    indent = "      " if j == len(steps) - 1 else "   │   "
+                    report += f"{indent}**错误类型 | Error Type**: `{error_type}`\n"
         report += "\n"
 
     # === Team Collaboration & Support ===

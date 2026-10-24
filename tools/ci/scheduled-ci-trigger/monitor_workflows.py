@@ -6,6 +6,12 @@ import time
 import sys
 from datetime import datetime, timezone
 
+def save_monitoring_results(results):
+    # Keep the last complete snapshot if the process stops during a write.
+    with open("monitoring_results.json.tmp", "w", encoding="utf-8") as f:
+        json.dump(results, f, indent=2)
+    os.replace("monitoring_results.json.tmp", "monitoring_results.json")
+
 def monitor_workflows(github_token, repo, workflow_names, start_time):
     """监控工作流运行"""
     headers = {
@@ -13,20 +19,27 @@ def monitor_workflows(github_token, repo, workflow_names, start_time):
         "Accept": "application/vnd.github.v3+json"
     }
     
-    monitoring_results = []
+    # Include unfinished workflows so a partial snapshot cannot report success.
+    monitoring_results = [{
+        "name": name,
+        "status": "not_monitored",
+        "conclusion": "error",
+        "error": "Monitoring did not complete for this workflow"
+    } for name in workflow_names]
+    save_monitoring_results(monitoring_results)
     
-    for workflow_name in workflow_names:
+    for index, workflow_name in enumerate(workflow_names):
         print(f"\n=== Monitoring {workflow_name} ===")
         
         try:
             workflow_id = get_workflow_id(github_token, repo, workflow_name)
             if not workflow_id:
-                monitoring_results.append({
+                monitoring_results[index] = {
                     "name": workflow_name,
                     "status": "error",
                     "conclusion": "error", 
                     "error": "Workflow not found"
-                })
+                }
                 continue
             
             # 查找开始时间后的运行
@@ -34,27 +47,29 @@ def monitor_workflows(github_token, repo, workflow_names, start_time):
             
             if not runs:
                 print(f"No runs found for {workflow_name} after {start_time}")
-                monitoring_results.append({
+                monitoring_results[index] = {
                     "name": workflow_name,
                     "status": "not_found",
                     "conclusion": "not_found",
                     "error": f"No dispatched runs found after {start_time}"
-                })
+                }
             else:
                 # 监控找到的运行
                 run_to_monitor = min(runs, key=lambda run: run["created_at"])
                 print(f"Monitoring run: {run_to_monitor['id']}")
                 result = monitor_single_run(github_token, repo, run_to_monitor["id"], workflow_name)
-                monitoring_results.append(result)
+                monitoring_results[index] = result
                 
         except Exception as e:
             print(f"Error monitoring {workflow_name}: {str(e)}")
-            monitoring_results.append({
+            monitoring_results[index] = {
                 "name": workflow_name,
                 "status": "error",
                 "conclusion": "error",
                 "error": str(e)
-            })
+            }
+        finally:
+            save_monitoring_results(monitoring_results)
     
     return monitoring_results
 
@@ -129,7 +144,7 @@ def monitor_single_run(github_token, repo, run_id, workflow_name):
                 "updated_at": run_data["updated_at"]
             }
             
-            if conclusion == "failure":
+            if conclusion != "success":
                 result["failure_details"] = get_failure_logs(github_token, repo, run_id)
             
             return result
@@ -143,7 +158,8 @@ def monitor_single_run(github_token, repo, run_id, workflow_name):
         "status": "timed_out",
         "conclusion": "timed_out",
         "html_url": f"https://github.com/{repo}/actions/runs/{run_id}",
-        "error": "Monitoring timed out after 120 minutes"
+        "error": "Monitoring timed out after 120 minutes",
+        "failure_details": get_failure_logs(github_token, repo, run_id)
     }
 
 def get_failure_logs(github_token, repo, run_id):
@@ -164,17 +180,21 @@ def get_failure_logs(github_token, repo, run_id):
             jobs_response.raise_for_status()
             jobs_data = jobs_response.json()["jobs"]
             for job in jobs_data:
-                if job["conclusion"] == "failure":
+                if job.get("conclusion") not in ("success", "skipped", "neutral"):
                     job_info = {
                         "name": job["name"],
+                        "status": job.get("status"),
+                        "conclusion": job.get("conclusion"),
                         "steps": []
                     }
                     
-                    for step in job["steps"]:
-                        if step["conclusion"] == "failure":
+                    for step in job.get("steps", []):
+                        if step.get("conclusion") not in ("success", "skipped", "neutral"):
                             job_info["steps"].append({
                                 "name": step["name"],
-                                "number": step["number"]
+                                "number": step["number"],
+                                "status": step.get("status"),
+                                "conclusion": step.get("conclusion")
                             })
                     
                     failure_details.append(job_info)
@@ -215,9 +235,6 @@ def main():
     
     workflows = json.loads(workflows_json)
     results = monitor_workflows(github_token, repo, workflows, start_time)
-    
-    with open("monitoring_results.json", "w", encoding="utf-8") as f:
-        json.dump(results, f, indent=2)
     
     print(f"\n=== Monitoring Summary ===")
     for result in results:
