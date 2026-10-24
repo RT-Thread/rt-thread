@@ -293,12 +293,12 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
 #else
         USB_HID_SUBCLASS_NOBOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
 #endif
-#if !defined(RT_USB_DEVICE_HID_KEYBOARD)||!defined(RT_USB_DEVICE_HID_MOUSE)||!defined(RT_USB_DEVICE_HID_MEDIA)
-        USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-#elif !defined(RT_USB_DEVICE_HID_MOUSE)
+#if defined(RT_USB_DEVICE_HID_KEYBOARD) && !defined(RT_USB_DEVICE_HID_MOUSE)
         USB_HID_PROTOCOL_KEYBOARD,  /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-#else
+#elif !defined(RT_USB_DEVICE_HID_KEYBOARD) && defined(RT_USB_DEVICE_HID_MOUSE)
         USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#else
+        USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
 #endif
         0x00,
     },
@@ -316,12 +316,12 @@ const static struct uhid_comm_descriptor _hid_comm_desc =
 #else
         USB_HID_SUBCLASS_NOBOOT,    /* bInterfaceSubClass : 1=BOOT, 0=no boot */
 #endif
-#if !defined(RT_USB_DEVICE_HID_KEYBOARD)||!defined(RT_USB_DEVICE_HID_MOUSE)||!defined(RT_USB_DEVICE_HID_MEDIA)
-        USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-#elif !defined(RT_USB_DEVICE_HID_MOUSE)
+#if defined(RT_USB_DEVICE_HID_KEYBOARD) && !defined(RT_USB_DEVICE_HID_MOUSE)
         USB_HID_PROTOCOL_KEYBOARD,  /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-#else
+#elif !defined(RT_USB_DEVICE_HID_KEYBOARD) && defined(RT_USB_DEVICE_HID_MOUSE)
         USB_HID_PROTOCOL_MOUSE,     /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+#else
+        USB_HID_PROTOCOL_NONE,      /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
 #endif
 #ifdef RT_USB_DEVICE_COMPOSITE
         HID_INTF_STR_INDEX,         /* iInterface: Index of string descriptor */
