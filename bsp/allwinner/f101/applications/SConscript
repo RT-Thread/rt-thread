@@ -1,0 +1,18 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = ['main.c']
+
+if GetDepend(['RT_SOC_SUNXI_JPEG_DEC']):
+    src += ['jpegd.c']
+
+if GetDepend(['RT_SOC_SUNXI_G2D']):
+    src += ['g2d.c']
+
+if GetDepend(['RT_GRAPHIC_FB_ST77916', 'RT_USING_FINSH']):
+    src += ['fb_rotate.c']
+
+group = DefineGroup('Applications', src, depend=[''],
+                    CPPPATH=[cwd, cwd + '/../dm/include'])
+
+Return('group')

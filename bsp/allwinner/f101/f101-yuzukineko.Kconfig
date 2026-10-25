@@ -1,0 +1,69 @@
+menu "YuzukiNeko SBC Configuration"
+
+choice
+    prompt "YuzukiNeko boot privilege mode"
+    default SBC_YUZUKINEKO_MMODE
+    help
+      M-mode boots the RT-Thread image directly. S-mode expects an OpenSBI
+      firmware to enter the image with the standard RISC-V boot arguments.
+
+config SBC_YUZUKINEKO_MMODE
+    bool "M-mode (direct boot)"
+    select ARCH_RISCV_M_MODE
+
+config SBC_YUZUKINEKO_SMODE
+    bool "S-mode with Sv32 MMU (OpenSBI)"
+    select ARCH_MM_MMU
+    select RT_USING_CACHE
+
+config SBC_YUZUKINEKO_SMODE_BARE
+    bool "S-mode Bare, no MMU (OpenSBI)"
+    select RT_USING_CACHE
+    help
+      Run in supervisor mode with physical addresses and caches enabled.
+      OpenSBI is still required. Use the fixed reserved DMA pool.
+
+endchoice
+
+choice
+    prompt "YuzukiNeko display"
+    default SBC_YUZUKINEKO_ST77916
+
+config SBC_YUZUKINEKO_ST77916
+    bool "ST77916 360x360 QSPI LCD"
+    select RT_USING_QSPI
+    select RT_QSPI_SUNXI
+    select RT_GRAPHIC_FB_ST77916
+    help
+      Enable the F101 SPI1 display connector configuration for a 360x360
+      ST77916 QSPI panel.
+
+config SBC_YUZUKINEKO_CO6300
+    bool "CO6300 262x928 one-lane MIPI-DSI AMOLED"
+    select RT_GRAPHIC_FB_SUNXI_DE
+    select RT_INPUT_TOUCHSCREEN
+    select RT_INPUT_TOUCHSCREEN_CST3530
+    help
+      Enable the F101 DE0, TCON0, and MIPI-DSI configuration for the OSPTEK
+      AM319M262928ZS AMOLED panel with the CO6300 controller and its CST3530
+      I2C touchscreen.
+
+config SBC_YUZUKINEKO_RADXA_LCD_8HD
+    bool "Radxa LCD 8HD 800x1280 two-lane MIPI-DSI LCD"
+    select RT_GRAPHIC_FB_SUNXI_DE
+    select RT_INPUT_TOUCHSCREEN
+    select RT_INPUT_TOUCHSCREEN_GOODIX
+    help
+      Use the Raspberry Pi 4B 15-pin to 40-pin populated accessory with
+      its auxiliary header and Goodix touchscreen. Backlight enable and
+      LCD reset are tied high; this configuration does not use PWM.
+      Mutually exclusive with other displays. TCON clock programming
+      and DSI video-mode compatibility still need hardware validation.
+
+endchoice
+
+config RT_BUILTIN_FDT_PATH
+    string
+    default "../dm/dts/sun252i-f101-yuzukineko.dtb"
+
+endmenu

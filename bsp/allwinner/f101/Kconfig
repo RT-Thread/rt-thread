@@ -1,0 +1,43 @@
+mainmenu "Allwinner F101 BSP Configuration"
+
+BSP_DIR := .
+
+RTT_DIR := ../../..
+
+PKGS_DIR := packages
+
+SOC_DM_DIR := $BSP_DIR/../dm/
+
+source "$(SOC_DM_DIR)/Kconfig"
+
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+
+config SOC_ALLWINNER_F101
+    bool
+    select ARCH_RISCV
+    select ARCH_RISCV32
+    select ARCH_RISCV_FPU_D
+    select RT_USING_HW_ATOMIC
+    select RT_USING_CACHE
+    select RT_USING_RISCV_NEW_COMMON
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+choice
+    prompt "Allwinner F101 SBC"
+    default SBC_YUZUKINEKO
+    depends on SOC_ALLWINNER_F101
+
+config SBC_YUZUKINEKO
+    bool "YuzukiNeko"
+    select RT_USING_DM
+    select RT_USING_OFW
+    select RT_USING_BUILTIN_FDT
+
+endchoice
+
+if SBC_YUZUKINEKO
+    source "f101-yuzukineko.Kconfig"
+endif

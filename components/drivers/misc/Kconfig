@@ -26,7 +26,7 @@ config RT_USING_PULSE_ENCODER
     bool "Using PULSE ENCODER device drivers"
     default n
 
-config RT_USING_INPUT_CAPTURE
+menuconfig RT_USING_INPUT_CAPTURE
     bool "Using INPUT CAPTURE device drivers"
     default n
 
@@ -34,4 +34,8 @@ if RT_USING_INPUT_CAPTURE
     config RT_INPUT_CAPTURE_RB_SIZE
         int "Set input capture ringbuffer size"
         default 100
+
+if RT_USING_DM
+    osource "$(SOC_DM_INPUT_CAPTURE_DIR)/Kconfig"
+endif
 endif

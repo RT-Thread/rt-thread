@@ -1,0 +1,18 @@
+# RT-Thread building script for the YuzukiNeko F101 BSP
+
+import os
+from building import *
+
+cwd = GetCurrentDir()
+objs = []
+
+for directory in os.listdir(cwd):
+    sconscript = os.path.join(directory, 'SConscript')
+
+    if os.path.isfile(os.path.join(cwd, sconscript)):
+        objs += SConscript(sconscript)
+
+objs += SConscript(os.path.join(cwd, '../dm/SConscript'),
+        variant_dir='dm', duplicate=0)
+
+Return('objs')

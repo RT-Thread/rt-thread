@@ -1,0 +1,15 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_ADC_SUNXI_GPADC']):
+    src += ['adc-sunxi-gpadc.c']
+
+if GetDepend(['RT_INPUT_SUNXI_LRADC']):
+    src += ['input-sunxi-lradc.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
