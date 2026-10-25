@@ -243,6 +243,13 @@ if RT_USING_LWIP
         bool "Enable netif loopback"
         default n
 
+    config RT_LWIP_USING_LOOPBACK
+        bool "Enable lwIP loopback network interface"
+        depends on RT_USING_NETDEV
+        select RT_LWIP_NETIF_LOOPBACK
+        default y if RT_USING_SMART
+        default n
+
     config LWIP_NETIF_LOOPBACK
         int
         default 1 if RT_LWIP_NETIF_LOOPBACK
