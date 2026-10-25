@@ -116,8 +116,16 @@ static int serial_fops_close(struct dfs_file *fd)
 
     device = (rt_device_t)fd->vnode->data;
 
-    rt_device_set_rx_indicate(device, RT_NULL);
+    /* close this file descriptor, but only drop the rx indication callback when
+     * the device is really released. The callback wakes readers (see
+     * serial_fops_rx_ind), so clearing it while another user still holds the
+     * device would make that user stop receiving input. */
     rt_device_close(device);
+
+    if (device->ref_count == 0)
+    {
+        rt_device_set_rx_indicate(device, RT_NULL);
+    }
 
     return 0;
 }
