@@ -1881,6 +1881,9 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         rt_size_t i = 0;
         unsigned long rows, columns;
         char *end;
+        rt_int32_t old_rx_timeout;
+        rt_int32_t no_wait_timeout = RT_WAITING_NO;
+        rt_bool_t rx_timeout_changed = RT_FALSE;
 
         if (winsize == RT_NULL)
         {
@@ -1891,11 +1894,20 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
         rt_memset(winsize, 0, sizeof(*winsize));
         winsize->ws_row = 24;
         winsize->ws_col = 80;
+
+        /* A blocking serial read waits forever if the terminal does not
+         * answer; make the query non-blocking for its duration. */
+        if (rt_device_control(dev, RT_SERIAL_CTRL_GET_RX_TIMEOUT, &old_rx_timeout) == RT_EOK &&
+            rt_device_control(dev, RT_SERIAL_CTRL_SET_RX_TIMEOUT, &no_wait_timeout) == RT_EOK)
+        {
+            rx_timeout_changed = RT_TRUE;
+        }
+
         rt_device_write(dev, -1, query, sizeof(query) - 1);
 
         start_tick = rt_tick_get();
         while (i < sizeof(response) - 1 &&
-               rt_tick_get() - start_tick < rt_tick_from_millisecond(200))
+               rt_tick_get_delta(start_tick) < rt_tick_from_millisecond(200))
         {
             if (rt_device_read(dev, -1, &response[i], 1) == 1)
             {
@@ -1908,6 +1920,11 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             {
                 rt_thread_mdelay(1);
             }
+        }
+
+        if (rx_timeout_changed)
+        {
+            rt_device_control(dev, RT_SERIAL_CTRL_SET_RX_TIMEOUT, &old_rx_timeout);
         }
 
         if (rt_memcmp(response, "\033[8;", 4) != 0)

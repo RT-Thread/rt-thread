@@ -1396,7 +1396,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 
                 start_tick = rt_tick_get();
                 while (i < sizeof(response) - 1 &&
-                       rt_tick_get() - start_tick < rt_tick_from_millisecond(200))
+                       rt_tick_get_delta(start_tick) < rt_tick_from_millisecond(200))
                 {
                     if (rt_device_read(dev, -1, &response[i], 1) == 1)
                     {
