@@ -1110,6 +1110,7 @@ static rt_err_t nvme_scan_device(struct rt_nvme_controller *nvme,
         if ((err = rt_hw_blk_disk_register(&ndev->parent)))
         {
             rt_free(ndev);
+            ndev = RT_NULL;
             goto _free_res;
         }
 
