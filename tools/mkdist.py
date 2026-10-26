@@ -110,8 +110,10 @@ def bsp_update_sconstruct(dist_dir):
     sconstruct_path = os.path.join(dist_dir, 'SConstruct')
     with open(sconstruct_path, 'r') as f:
         data = f.readlines()
-    # idempotency: if the marker is already present, do nothing on re-runs
-    if any(line.find('# set RTT_ROOT') != -1 for line in data):
+    # idempotency: skip when the injection is already effective. Match only the uncommented
+    # form, because some BSPs ship a commented-out copy of this block as source residue, and
+    # treating it as injected would leave the dist project RTT_ROOT pointing at the BSP dir.
+    if any(line.lstrip().startswith('if not os.getenv("RTT_ROOT"):') for line in data):
         return
     with open(sconstruct_path, 'w') as f:
         for line in data:
