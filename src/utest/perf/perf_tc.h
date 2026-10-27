@@ -16,9 +16,9 @@
 #include <rtservice.h>
 #include <rttypes.h>
 
-#define THREAD_STACK_SIZE       2048
-#define THREAD_PRIORITY         10
-#define THREAD_TIMESLICE        5
+#define THREAD_STACK_SIZE 2048
+#define THREAD_PRIORITY   10
+#define THREAD_TIMESLICE  5
 typedef struct rt_perf
 {
     char name[64];
@@ -29,7 +29,7 @@ typedef struct rt_perf
     volatile rt_uint32_t min_time;
     volatile rt_uint32_t count;
     volatile double avg_time;
-    volatile rt_uint32_t tmp_time;  /* Temporary data */
+    volatile rt_uint32_t tmp_time; /* Temporary data */
     rt_mutex_t lock;
     void (*local_modify)(struct rt_perf *perf);
     rt_bool_t dump_head;
@@ -37,7 +37,7 @@ typedef struct rt_perf
 
 void rt_perf_start_impl(rt_perf_t *perf, rt_clock_timerval_t *timeout);
 void rt_perf_stop(rt_perf_t *perf);
-void rt_perf_dump( rt_perf_t *perf);
+void rt_perf_dump(rt_perf_t *perf);
 
 static inline void rt_perf_start(rt_perf_t *perf)
 {

@@ -50,13 +50,15 @@
 
 static rt_device_t hw_dev = RT_NULL;
 static rt_sem_t complete_sem = RT_NULL;
-static rt_clock_timerval_t timeout = {0};
+static rt_clock_timerval_t timeout = { 0 };
 static rt_perf_t *perf_local = RT_NULL;
 
 static void modify_time(rt_perf_t *perf)
 {
-    if(perf)
+    if (perf)
+    {
         perf->real_time = perf->real_time - perf->tmp_time;
+    }
 }
 
 static rt_err_t timer_callback(rt_device_t dev, rt_size_t size)
@@ -73,10 +75,10 @@ static rt_err_t timer_callback(rt_device_t dev, rt_size_t size)
 
 rt_err_t rt_perf_irq_latency(rt_perf_t *perf)
 {
-# if __STDC_VERSION__ >= 199901L
-    rt_strcpy(perf->name,__func__);
+#if __STDC_VERSION__ >= 199901L
+    rt_strcpy(perf->name, __func__);
 #else
-    rt_strcpy(perf->name,"rt_perf_irq_latency");
+    rt_strcpy(perf->name, "rt_perf_irq_latency");
 #endif
     int ret = RT_EOK;
     rt_clock_timer_mode_t mode = CLOCK_TIMER_MODE_PERIOD;
@@ -92,9 +94,9 @@ rt_err_t rt_perf_irq_latency(rt_perf_t *perf)
 
     complete_sem = rt_sem_create("complete", 0, RT_IPC_FLAG_FIFO);
     timeout.sec = 0;
-    timeout.usec = 50;   /* No modification is necessary here, use the fixed value */
+    timeout.usec = 50; /* No modification is necessary here, use the fixed value */
 
-    rt_mutex_take(perf->lock,RT_WAITING_FOREVER);
+    rt_mutex_take(perf->lock, RT_WAITING_FOREVER);
     perf_local->tmp_time = (rt_uint32_t)(timeout.sec * 1000000u + timeout.usec);
     perf_local->local_modify = modify_time;
     rt_mutex_release(perf->lock);

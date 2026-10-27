@@ -217,7 +217,7 @@ static void rt_signal_kill_test(void)
         uassert_int_equal(receive_sig, signo);
     }
     /* case 8:rt_signal_kill, kill illegal thread, return failed; */
-//    uassert_true(rt_thread_kill((rt_thread_t)-1, signo) == -RT_ERROR);
+    //    uassert_true(rt_thread_kill((rt_thread_t)-1, signo) == -RT_ERROR);
 
     /* case 9:rt_signal_kill, kill illegal signo, return -RT_EINVAL; */
     uassert_true(rt_thread_kill(rt_thread_self(), -1) == -RT_EINVAL);

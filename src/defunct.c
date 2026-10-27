@@ -15,7 +15,7 @@
 #ifndef SYSTEM_THREAD_STACK_SIZE
 #define SYSTEM_THREAD_STACK_SIZE IDLE_THREAD_STACK_SIZE
 #endif
-static rt_list_t          _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);
+static rt_list_t _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);
 static struct rt_spinlock _defunct_spinlock;
 #if defined(RT_USING_SMP) || defined(RT_USING_SMART)
 static struct rt_thread rt_system_thread;
@@ -46,9 +46,9 @@ void rt_thread_defunct_enqueue(rt_thread_t thread)
  */
 rt_thread_t rt_thread_defunct_dequeue(void)
 {
-    rt_base_t   level;
+    rt_base_t level;
     rt_thread_t thread = RT_NULL;
-    rt_list_t  *l      = &_rt_thread_defunct;
+    rt_list_t *l = &_rt_thread_defunct;
 
     level = rt_spin_lock_irqsave(&_defunct_spinlock);
     if (!rt_list_isempty(l))
@@ -71,7 +71,7 @@ void rt_defunct_execute(void)
     while (1)
     {
         rt_thread_t thread;
-        rt_bool_t   object_is_systemobject;
+        rt_bool_t object_is_systemobject;
         void (*cleanup)(struct rt_thread *tid);
 
 #ifdef RT_USING_MODULE

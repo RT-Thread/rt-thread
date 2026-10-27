@@ -37,11 +37,11 @@
 #define RT_HW_INCLUDE_CPUPORT
 #include <rthw.h>
 
-#define DBG_TAG           "kernel.service"
+#define DBG_TAG "kernel.service"
 #ifdef RT_DEBUG_DEVICE
-#define DBG_LVL           DBG_LOG
+#define DBG_LVL DBG_LOG
 #else
-#define DBG_LVL           DBG_WARNING
+#define DBG_LVL DBG_WARNING
 #endif /* defined (RT_DEBUG_DEVICE) */
 #include <rtdbg.h>
 
@@ -65,15 +65,15 @@ static rt_device_t _console_device = RT_NULL;
 
 rt_weak void rt_hw_us_delay(rt_uint32_t us)
 {
-    (void) us;
+    (void)us;
     LOG_W("rt_hw_us_delay() doesn't support for this board."
-        "Please consider implementing rt_hw_us_delay() in another file.");
+          "Please consider implementing rt_hw_us_delay() in another file.");
 }
 
 rt_weak void rt_hw_cpu_reset(void)
 {
     LOG_W("rt_hw_cpu_reset() doesn't support for this board."
-        "Please consider implementing rt_hw_cpu_reset() in another file.");
+          "Please consider implementing rt_hw_cpu_reset() in another file.");
     return;
 }
 
@@ -81,7 +81,7 @@ rt_weak void rt_hw_cpu_shutdown(void)
 {
     LOG_I("CPU shutdown...");
     LOG_W("Using default rt_hw_cpu_shutdown()."
-        "Please consider implementing rt_hw_cpu_shutdown() in another file.");
+          "Please consider implementing rt_hw_cpu_shutdown() in another file.");
     rt_hw_interrupt_disable();
     RT_ASSERT(0);
     return;
@@ -93,15 +93,19 @@ rt_weak void rt_hw_cpu_shutdown(void)
 #ifndef RT_HW_BACKTRACE_FRAME_GET_SELF
 
 #ifdef __GNUC__
-    #define RT_HW_BACKTRACE_FRAME_GET_SELF(frame) do {          \
-        (frame)->fp = (rt_uintptr_t)__builtin_frame_address(0U);   \
-        (frame)->pc = ({__label__ pc; pc: (rt_uintptr_t)&&pc;});   \
+#define RT_HW_BACKTRACE_FRAME_GET_SELF(frame)                    \
+    do                                                           \
+    {                                                            \
+        (frame)->fp = (rt_uintptr_t)__builtin_frame_address(0U); \
+        (frame)->pc = ({__label__ pc; pc: (rt_uintptr_t)&&pc; });                                     \
     } while (0)
 
 #else
-    #define RT_HW_BACKTRACE_FRAME_GET_SELF(frame) do {  \
-        (frame)->fp = 0;                                \
-        (frame)->pc = 0;                                \
+#define RT_HW_BACKTRACE_FRAME_GET_SELF(frame) \
+    do                                        \
+    {                                         \
+        (frame)->fp = 0;                      \
+        (frame)->pc = 0;                      \
     } while (0)
 
 #endif /* __GNUC__ */
@@ -430,13 +434,15 @@ RTM_EXPORT(rt_kprintf);
  */
 rt_weak rt_err_t rt_backtrace(void)
 {
-    struct rt_hw_backtrace_frame frame = {0};
+    struct rt_hw_backtrace_frame frame = { 0 };
     rt_thread_t thread = rt_thread_self();
 
     /* cppcheck-suppress uninitvar */
     RT_HW_BACKTRACE_FRAME_GET_SELF(&frame);
     if (!frame.fp)
+    {
         return -RT_EINVAL;
+    }
 
     /* we don't want this frame to be printed which is nearly garbage info */
     rt_hw_backtrace_frame_unwind(thread, &frame);
@@ -490,7 +496,6 @@ rt_weak rt_err_t rt_backtrace_formatted_print(rt_ubase_t *buffer, long buflen)
     return RT_EOK;
 }
 
-
 /**
  * @brief Print backtrace from frame to the given buffer
  *
@@ -512,10 +517,12 @@ rt_weak rt_err_t rt_backtrace_to_buffer(rt_thread_t thread,
                                         long buflen)
 {
     long nesting = 0;
-    struct rt_hw_backtrace_frame cur_frame = {0};
+    struct rt_hw_backtrace_frame cur_frame = { 0 };
 
     if (!thread)
+    {
         return -RT_EINVAL;
+    }
 
     RT_ASSERT(rt_object_get_type(&thread->parent) == RT_Object_Class_Thread);
 
@@ -525,11 +532,14 @@ rt_weak rt_err_t rt_backtrace_to_buffer(rt_thread_t thread,
         /* cppcheck-suppress uninitvar */
         RT_HW_BACKTRACE_FRAME_GET_SELF(frame);
         if (!frame->fp)
+        {
             return -RT_EINVAL;
+        }
     }
 
     /* discard frames as required. The inner most is always threw. */
-    do {
+    do
+    {
         rt_hw_backtrace_frame_unwind(thread, frame);
     } while (skip-- > 0);
 
@@ -544,7 +554,9 @@ rt_weak rt_err_t rt_backtrace_to_buffer(rt_thread_t thread,
     }
 
     if (nesting < buflen)
+    {
         *buffer = RT_NULL;
+    }
 
     return RT_EOK;
 }
@@ -791,8 +803,7 @@ static void cmd_backtrace_format_pid(rt_uintptr_t pid, char *buf, rt_size_t size
     {
         digits[count++] = hex[pid & 0xf];
         pid >>= 4;
-    }
-    while ((pid != 0) && (count < sizeof(digits)));
+    } while ((pid != 0) && (count < sizeof(digits)));
 
     buf[0] = '0';
     buf[1] = 'x';
@@ -856,8 +867,7 @@ static rt_bool_t cmd_backtrace_parse_pid(const char *arg, rt_uintptr_t *pid)
 
 static rt_thread_t cmd_backtrace_find_thread(rt_uintptr_t pid)
 {
-    struct cmd_backtrace_find_ctx ctx =
-    {
+    struct cmd_backtrace_find_ctx ctx = {
         .pid = pid,
         .thread = RT_NULL,
     };
@@ -867,7 +877,7 @@ static rt_thread_t cmd_backtrace_find_thread(rt_uintptr_t pid)
     return ctx.thread;
 }
 
-static void cmd_backtrace(int argc, char** argv)
+static void cmd_backtrace(int argc, char **argv)
 {
     rt_uintptr_t pid;
     rt_thread_t target;
@@ -880,11 +890,11 @@ static void cmd_backtrace(int argc, char** argv)
         if (argc == 1)
         {
             rt_kprintf("[INFO] No thread specified\n"
-                "[HELP] You can use commands like: backtrace %p\n"
-                "Printing backtrace of calling stack...\n",
-                rt_thread_self());
+                       "[HELP] You can use commands like: backtrace %p\n"
+                       "Printing backtrace of calling stack...\n",
+                       rt_thread_self());
             rt_backtrace();
-            return ;
+            return;
         }
         else
         {
@@ -896,7 +906,7 @@ static void cmd_backtrace(int argc, char** argv)
     if (!cmd_backtrace_parse_pid(argv[1], &pid))
     {
         rt_kprintf("Invalid input: %s\n", argv[1]);
-        return ;
+        return;
     }
 
     target = cmd_backtrace_find_thread(pid);
@@ -1007,9 +1017,13 @@ rt_inline rt_base_t _heap_lock(void)
     return rt_spin_lock_irqsave(&_heap_spinlock);
 #elif defined(RT_USING_MUTEX)
     if (rt_thread_self())
+    {
         return rt_mutex_take(&_lock, RT_WAITING_FOREVER);
+    }
     else
+    {
         return RT_EOK;
+    }
 #else
     rt_enter_critical();
     return RT_EOK;
@@ -1023,7 +1037,9 @@ rt_inline void _heap_unlock(rt_base_t level)
 #elif defined(RT_USING_MUTEX)
     RT_ASSERT(level == RT_EOK);
     if (rt_thread_self())
+    {
         rt_mutex_release(&_lock);
+    }
 #else
     rt_exit_critical();
 #endif
@@ -1032,7 +1048,7 @@ rt_inline void _heap_unlock(rt_base_t level)
 #ifdef RT_USING_UTESTCASES
 /* export to utest to observe the inner statements */
 #ifdef _MSC_VER
-#define rt_heap_lock() _heap_lock()
+#define rt_heap_lock()   _heap_lock()
 #define rt_heap_unlock() _heap_unlock()
 #else
 rt_base_t rt_heap_lock(void) __attribute__((alias("_heap_lock")));
@@ -1043,68 +1059,81 @@ void rt_heap_unlock(rt_base_t level) __attribute__((alias("_heap_unlock")));
 #if defined(RT_USING_SMALL_MEM_AS_HEAP)
 static rt_smem_t system_heap;
 rt_inline void _smem_info(rt_size_t *total,
-    rt_size_t *used, rt_size_t *max_used)
+                          rt_size_t *used, rt_size_t *max_used)
 {
     if (total)
+    {
         *total = system_heap->total;
+    }
     if (used)
+    {
         *used = system_heap->used;
+    }
     if (max_used)
+    {
         *max_used = system_heap->max;
+    }
 }
 #define _MEM_INIT(_name, _start, _size) \
     system_heap = rt_smem_init(_name, _start, _size)
-#define _MEM_MALLOC(_size)  \
+#define _MEM_MALLOC(_size) \
     rt_smem_alloc(system_heap, _size)
-#define _MEM_REALLOC(_ptr, _newsize)\
+#define _MEM_REALLOC(_ptr, _newsize) \
     rt_smem_realloc(system_heap, _ptr, _newsize)
 #define _MEM_FREE(_ptr) \
     rt_smem_free(_ptr)
-#define _MEM_INFO(_total, _used, _max)  \
+#define _MEM_INFO(_total, _used, _max) \
     _smem_info(_total, _used, _max)
 #elif defined(RT_USING_MEMHEAP_AS_HEAP)
 static struct rt_memheap system_heap;
 void *_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void _memheap_free(void *rmem);
 void *_memheap_realloc(struct rt_memheap *heap, void *rmem, rt_size_t newsize);
-#define _MEM_INIT(_name, _start, _size) \
-    do {\
+#define _MEM_INIT(_name, _start, _size)                      \
+    do                                                       \
+    {                                                        \
         rt_memheap_init(&system_heap, _name, _start, _size); \
-        system_heap.locked = RT_TRUE; \
-    } while(0)
-#define _MEM_MALLOC(_size)  \
+        system_heap.locked = RT_TRUE;                        \
+    } while (0)
+#define _MEM_MALLOC(_size) \
     _memheap_alloc(&system_heap, _size)
-#define _MEM_REALLOC(_ptr, _newsize)    \
+#define _MEM_REALLOC(_ptr, _newsize) \
     _memheap_realloc(&system_heap, _ptr, _newsize)
-#define _MEM_FREE(_ptr)   \
+#define _MEM_FREE(_ptr) \
     _memheap_free(_ptr)
-#define _MEM_INFO(_total, _used, _max)   \
+#define _MEM_INFO(_total, _used, _max) \
     rt_memheap_info(&system_heap, _total, _used, _max)
 #elif defined(RT_USING_SLAB_AS_HEAP)
 static rt_slab_t system_heap;
 rt_inline void _slab_info(rt_size_t *total,
-    rt_size_t *used, rt_size_t *max_used)
+                          rt_size_t *used, rt_size_t *max_used)
 {
     if (total)
+    {
         *total = system_heap->total;
+    }
     if (used)
+    {
         *used = system_heap->used;
+    }
     if (max_used)
+    {
         *max_used = system_heap->max;
+    }
 }
 #define _MEM_INIT(_name, _start, _size) \
     system_heap = rt_slab_init(_name, _start, _size)
-#define _MEM_MALLOC(_size)  \
+#define _MEM_MALLOC(_size) \
     rt_slab_alloc(system_heap, _size)
-#define _MEM_REALLOC(_ptr, _newsize)    \
+#define _MEM_REALLOC(_ptr, _newsize) \
     rt_slab_realloc(system_heap, _ptr, _newsize)
 #define _MEM_FREE(_ptr) \
     rt_slab_free(system_heap, _ptr)
-#define _MEM_INFO       _slab_info
+#define _MEM_INFO _slab_info
 #else
 #define _MEM_INIT(...)
-#define _MEM_MALLOC(...)     RT_NULL
-#define _MEM_REALLOC(...)    RT_NULL
+#define _MEM_MALLOC(...)  RT_NULL
+#define _MEM_REALLOC(...) RT_NULL
 #define _MEM_FREE(...)
 #define _MEM_INFO(...)
 #endif
@@ -1119,7 +1148,7 @@ rt_inline void _slab_info(rt_size_t *total,
 void rt_system_heap_init_generic(void *begin_addr, void *end_addr)
 {
     rt_uintptr_t begin_align = RT_ALIGN((rt_uintptr_t)begin_addr, RT_ALIGN_SIZE);
-    rt_uintptr_t end_align   = RT_ALIGN_DOWN((rt_uintptr_t)end_addr, RT_ALIGN_SIZE);
+    rt_uintptr_t end_align = RT_ALIGN_DOWN((rt_uintptr_t)end_addr, RT_ALIGN_SIZE);
 
     RT_ASSERT(end_align > begin_align);
 
@@ -1243,7 +1272,10 @@ rt_weak void rt_free(void *ptr)
     /* call 'rt_free' hook */
     RT_OBJECT_HOOK_CALL(rt_free_hook, (&ptr));
     /* NULL check */
-    if (ptr == RT_NULL) return;
+    if (ptr == RT_NULL)
+    {
+        return;
+    }
     /* Enter critical zone */
     level = _heap_lock();
     _MEM_FREE(ptr);
@@ -1323,7 +1355,7 @@ rt_weak void *rt_malloc_align(rt_size_t size, rt_size_t align)
     rt_size_t align_size = 0;
 
     /* sizeof pointer */
-    uintptr_size = sizeof(void*);
+    uintptr_size = sizeof(void *);
     uintptr_size -= 1;
 
     /* align the alignment size to uintptr size byte */
@@ -1366,8 +1398,11 @@ rt_weak void rt_free_align(void *ptr)
     void *real_ptr = RT_NULL;
 
     /* NULL check */
-    if (ptr == RT_NULL) return;
-    real_ptr = (void *) * (rt_uintptr_t *)((rt_uintptr_t)ptr - sizeof(void *));
+    if (ptr == RT_NULL)
+    {
+        return;
+    }
+    real_ptr = (void *)*(rt_uintptr_t *)((rt_uintptr_t)ptr - sizeof(void *));
     rt_free(real_ptr);
 }
 RTM_EXPORT(rt_free_align);
@@ -1425,13 +1460,12 @@ int __rt_fls(int val)
 
 #ifndef RT_USING_CPU_FFS
 #ifdef RT_USING_TINY_FFS
-const rt_uint8_t __lowest_bit_bitmap[] =
-{
-    /*  0 - 7  */  0,  1,  2, 27,  3, 24, 28, 32,
-    /*  8 - 15 */  4, 17, 25, 31, 29, 12, 32, 14,
-    /* 16 - 23 */  5,  8, 18, 32, 26, 23, 32, 16,
-    /* 24 - 31 */ 30, 11, 13,  7, 32, 22, 15, 10,
-    /* 32 - 36 */  6, 21,  9, 20, 19
+const rt_uint8_t __lowest_bit_bitmap[] = {
+    /*  0 - 7  */ 0, 1, 2, 27, 3, 24, 28, 32,
+    /*  8 - 15 */ 4, 17, 25, 31, 29, 12, 32, 14,
+    /* 16 - 23 */ 5, 8, 18, 32, 26, 23, 32, 16,
+    /* 24 - 31 */ 30, 11, 13, 7, 32, 22, 15, 10,
+    /* 32 - 36 */ 6, 21, 9, 20, 19
 };
 
 /**
@@ -1451,8 +1485,7 @@ int __rt_ffs(int value)
     return __lowest_bit_bitmap[(rt_uint32_t)(value & (value - 1) ^ value) % 37];
 }
 #else
-const rt_uint8_t __lowest_bit_bitmap[] =
-{
+const rt_uint8_t __lowest_bit_bitmap[] = {
     /* 00 */ 0, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
     /* 10 */ 4, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,
     /* 20 */ 5, 0, 1, 0, 2, 0, 1, 0, 3, 0, 1, 0, 2, 0, 1, 0,

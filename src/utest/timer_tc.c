@@ -557,10 +557,10 @@ static void test_dynamic_timer_start_twice(void)
         for (int i = 0; i < sizeof(timer_flag_oneshot); i++)
         {
             timer.dynamic_timer = rt_timer_create("dynamic_timer",
-                                          timer_oneshot,
-                                          &timer,
-                                          time_out,
-                                          timer_flag_oneshot[i]);
+                                                  timer_oneshot,
+                                                  &timer,
+                                                  time_out,
+                                                  timer_flag_oneshot[i]);
             /* calc expect tick */
             timer.expect_tick = rt_tick_get() + time_out;
 
@@ -603,10 +603,10 @@ static void test_dynamic_timer_op_in_callback(void)
         for (int i = 0; i < sizeof(timer_flag_oneshot); i++)
         {
             timer.dynamic_timer = rt_timer_create("dynamic_timer",
-                                      timer_start_in_callback,
-                                      &timer,
-                                      time_out,
-                                      timer_flag_oneshot[i]);
+                                                  timer_start_in_callback,
+                                                  &timer,
+                                                  time_out,
+                                                  timer_flag_oneshot[i]);
 
             /* calc expect tick */
             timer.expect_tick = rt_tick_get() + time_out;
@@ -634,10 +634,10 @@ static void test_dynamic_timer_op_in_callback(void)
         for (int i = 0; i < sizeof(timer_flag_periodic); i++)
         {
             timer.dynamic_timer = rt_timer_create("dynamic_timer",
-                                      timer_start_stop_in_callback,
-                                      &timer,
-                                      time_out,
-                                      timer_flag_periodic[i]);
+                                                  timer_start_stop_in_callback,
+                                                  &timer,
+                                                  time_out,
+                                                  timer_flag_periodic[i]);
             /* calc expect tick */
             timer.expect_tick = rt_tick_get() + time_out;
 
@@ -662,7 +662,7 @@ static void test_dynamic_timer_op_in_callback(void)
 }
 #endif /* RT_USING_HEAP */
 
-#define TEST_TIME_S 60      // test 60 seconds
+#define TEST_TIME_S   60 // test 60 seconds
 #define STRESS_TIMERS 100
 
 static struct rt_timer stress_timer[STRESS_TIMERS];
@@ -688,18 +688,18 @@ static void test_timer_stress(void)
     rt_ubase_t cur_tick;
     rt_ubase_t next_print_time;
 
-    LOG_I("timer stress test begin, it will take %d seconds", 3*TEST_TIME_S);
+    LOG_I("timer stress test begin, it will take %d seconds", 3 * TEST_TIME_S);
 
     for (int i = 0; i < sizeof(timer_flag_periodic); i++)
     {
         for (int j = 0; j < STRESS_TIMERS; j++)
         {
             rt_timer_init(&stress_timer[j],
-                  "stress_timer",
-                  timer_stress,
-                  &stress_timer[j],
-                  j + 1,
-                  timer_flag_periodic[i]);
+                          "stress_timer",
+                          timer_stress,
+                          &stress_timer[j],
+                          j + 1,
+                          timer_flag_periodic[i]);
         }
 
         start = rt_tick_get();
@@ -718,7 +718,7 @@ static void test_timer_stress(void)
                     rt_timer_stop(&stress_timer[j]);
                 }
             }
-            iters ++;
+            iters++;
             cur_tick = rt_tick_get();
             if (cur_tick > next_print_time)
             {

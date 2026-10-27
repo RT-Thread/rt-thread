@@ -48,13 +48,13 @@
 static int run_num = 10;
 #define THREAD_STACK_SIZE UTEST_THR_STACK_SIZE
 #define THREAD_PRIORITY   2
-#define LOW_PRIORITY  30
-#define THIGH_PRIORITY  10
-static rt_thread_t        threads[RT_CPUS_NR];
-static rt_thread_t        temp_thread;
+#define LOW_PRIORITY      30
+#define THIGH_PRIORITY    10
+static rt_thread_t threads[RT_CPUS_NR];
+static rt_thread_t temp_thread;
 static struct rt_spinlock lock;
-static int                thread_inc = 0;
-static int                num        = 0;
+static int thread_inc = 0;
+static int num = 0;
 
 static void thread_temp_entry(void *parameter)
 {
@@ -71,7 +71,7 @@ static void thread_temp_entry(void *parameter)
 
 static void thread_entry(void *parameter)
 {
-    int id   = 0;
+    int id = 0;
     int para = *(int *)parameter;
     while (1)
     {
@@ -104,9 +104,9 @@ static void thread_entry(void *parameter)
 
 static void smp_affinity_pri1_tc(void)
 {
-    static int params[RT_CPUS_NR] = {0};
+    static int params[RT_CPUS_NR] = { 0 };
     char thread_name[8];
-    int  i;
+    int i;
 
     for (i = 0; i < RT_CPUS_NR; i++)
     {
