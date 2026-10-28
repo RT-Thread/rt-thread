@@ -361,7 +361,7 @@ static rt_ubase_t dlmodule_common_block(Elf_Sym *symtab, rt_ubase_t nsym,
  */
 rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module_ptr)
 {
-    rt_ubase_t index, rodata_addr = 0, bss_addr = 0, data_addr = 0, common_addr = 0;
+    rt_ubase_t index, common_addr = 0;
     rt_ubase_t module_addr = 0, module_size = 0, common_align = 1;
     rt_ubase_t *section_load_addr = RT_NULL;
     rt_uint8_t *ptr, *strtab, *shstrab;
@@ -471,9 +471,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             rt_memcpy(ptr,
                       (rt_uint8_t *)elf_module + shdr[index].sh_offset,
                       shdr[index].sh_size);
-            rodata_addr = (rt_ubase_t)ptr;
-            LOG_D("load rodata 0x%x, size %d, rodata 0x%x", ptr,
-                shdr[index].sh_size, *(rt_ubase_t *)rodata_addr);
+            LOG_D("load rodata 0x%x, size %d", ptr, shdr[index].sh_size);
             ptr += shdr[index].sh_size;
         }
 
@@ -484,9 +482,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             rt_memcpy(ptr,
                       (rt_uint8_t *)elf_module + shdr[index].sh_offset,
                       shdr[index].sh_size);
-            data_addr = (rt_ubase_t)ptr;
-            LOG_D("load data 0x%x, size %d, data 0x%x", ptr,
-                shdr[index].sh_size, *(rt_ubase_t *)data_addr);
+            LOG_D("load data 0x%x, size %d", ptr, shdr[index].sh_size);
             ptr += shdr[index].sh_size;
         }
 
@@ -495,7 +491,6 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
         {
             section_load_addr[index] = (rt_ubase_t)ptr;
             rt_memset(ptr, 0, shdr[index].sh_size);
-            bss_addr = (rt_ubase_t)ptr;
             LOG_D("load bss 0x%x, size %d", ptr, shdr[index].sh_size);
             ptr += shdr[index].sh_size;
         }
@@ -523,6 +518,12 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             continue;
         #endif
 
+        /* Only relocate sections that were loaded into module memory. */
+        if ((shdr[index].sh_info >= elf_module->e_shnum) ||
+            (section_load_addr[shdr[index].sh_info] == 0))
+        {
+            continue;
+        }
 
         /* get relocate item */
         rel = (Elf_Rel *)((rt_uint8_t *)module_ptr + shdr[index].sh_offset);
@@ -544,6 +545,12 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             #elif (defined(__aarch64__) || defined(__x86_64__) || (__riscv_xlen == 64))
             Elf_Sym *sym = &symtab[ELF64_R_SYM(rel->r_info)];
             #endif
+            Elf_Rel target_rel = *rel;
+
+            /* r_offset is relative to the section being relocated. Convert it
+             * to the module-relative offset expected by the arch relocator. */
+            target_rel.r_offset += section_load_addr[shdr[index].sh_info] -
+                                   (rt_ubase_t)module->mem_space;
 
             LOG_D("relocate symbol: %s", strtab + sym->st_name);
 
@@ -553,62 +560,34 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
 
                 if (sym->st_shndx == SHN_COMMON)
                 {
-                    /* relocate common symbol (uninitialized global variable):
-                     * SHN_COMMON is not a real section index, so it must be
-                     * handled before the section-name checks below */
+                    /* SHN_COMMON is not a real section index. */
                     LOG_D("common symbol");
                     addr = (Elf_Addr)(common_addr + dlmodule_common_block(
                                                         symtab,
                                                         (rt_ubase_t)(shdr[shdr[index].sh_link].sh_size / sizeof(Elf_Sym)),
                                                         sym));
-                    dlmodule_relocate(module, rel, addr);
                 }
-                else if ((ELF_ST_TYPE(sym->st_info) == STT_SECTION) ||
-                         (ELF_ST_TYPE(sym->st_info) == STT_OBJECT))
+                else if (((ELF_ST_TYPE(sym->st_info) == STT_SECTION) ||
+                          (ELF_ST_TYPE(sym->st_info) == STT_OBJECT) ||
+                          (ELF_ST_TYPE(sym->st_info) == STT_FUNC)) &&
+                         (sym->st_shndx < elf_module->e_shnum) &&
+                         (section_load_addr[sym->st_shndx] != 0))
                 {
-                    Elf_Addr sec_sh_addr = shdr[sym->st_shndx].sh_addr;
-                    if (rt_strncmp((const char *)(shstrab +
-                                                  shdr[sym->st_shndx].sh_name),
-                                   ELF_RODATA, 8) == 0)
-                    {
-                        /* relocate rodata section */
-                        LOG_D("rodata");
-                        addr = (Elf_Addr)(rodata_addr - sec_sh_addr + sym->st_value);
-                    }
-                    else if (rt_strncmp((const char *)(shstrab + shdr[sym->st_shndx].sh_name), ELF_BSS, 5) == 0)
-                    {
-                        /* relocate bss section */
-                        LOG_D("bss");
-                        addr = (Elf_Addr)(bss_addr - sec_sh_addr + sym->st_value);
-                    }
-                    else if (rt_strncmp((const char *)(shstrab + shdr[sym->st_shndx].sh_name), ".common", 7) == 0)
-                    {
-                        /* relocate common section (uninitialized globals) */
-                        LOG_D("common");
-                        addr = (Elf_Addr)(bss_addr - sec_sh_addr + sym->st_value);
-                    }
-                    else if (rt_strncmp((const char *)(shstrab + shdr[sym->st_shndx].sh_name),
-                                        ELF_DATA, 6) == 0)
-                    {
-                        /* relocate data section */
-                        LOG_D("data");
-                        addr = (Elf_Addr)(data_addr - sec_sh_addr + sym->st_value);
-                    }
-
-                    if (addr != 0) dlmodule_relocate(module, rel, addr);
+                    /* For ET_REL, st_value is already the offset within the
+                     * symbol's section; sh_addr must not be subtracted. */
+                    addr = (Elf_Addr)(section_load_addr[sym->st_shndx] +
+                                      sym->st_value);
                 }
-                else if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
-                {
-                    addr = (Elf_Addr)((rt_uint8_t *) module->mem_space - module_addr + sym->st_value);
 
-                    /* relocate function */
-                    dlmodule_relocate(module, rel, addr);
+                if (addr != 0)
+                {
+                    dlmodule_relocate(module, &target_rel, addr);
                 }
             }
             else if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
             {
                 /* relocate function */
-                dlmodule_relocate(module, rel,
+                dlmodule_relocate(module, &target_rel,
                                        (Elf_Addr)((rt_uint8_t *)
                                                     module->mem_space
                                                     - module_addr
@@ -626,7 +605,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
                     addr = dlmodule_symbol_find((const char *)(strtab + sym->st_name));
                     if (addr != (Elf_Addr)RT_NULL)
                     {
-                        dlmodule_relocate(module, rel, addr);
+                        dlmodule_relocate(module, &target_rel, addr);
                         LOG_D("symbol addr 0x%x", addr);
                     }
                     else
@@ -636,7 +615,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
                 else
                 {
                     addr = (Elf_Addr)((rt_uint8_t *) module->mem_space - module_addr + sym->st_value);
-                    dlmodule_relocate(module, rel, addr);
+                    dlmodule_relocate(module, &target_rel, addr);
                 }
             }
 
@@ -704,8 +683,8 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
                 length = rt_strlen((const char *)(strtab + symtab[i].st_name)) + 1;
 
                 module->symtab[module->nsym].addr =
-                    (void *)(section_load_addr[symtab[i].st_shndx] -
-                             shdr[symtab[i].st_shndx].sh_addr + symtab[i].st_value);
+                    (void *)(section_load_addr[symtab[i].st_shndx] +
+                             symtab[i].st_value);
                 module->symtab[module->nsym].name = rt_malloc(length);
                 if (module->symtab[module->nsym].name == RT_NULL)
                 {
