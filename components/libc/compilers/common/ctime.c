@@ -1356,10 +1356,28 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
     if (timer->status == ACTIVE)
     {
         unsigned long remain_cnt;
+        rt_uint64_t   total_ns;
+
         rt_clock_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_GET_REMAIN_TIME, &remain_cnt);
-        nanoseconds = ((remain_cnt - rt_clock_time_get_counter()) * rt_clock_time_get_res_scaled()) / RT_CLOCK_TIME_RESMUL;
-        seconds     = nanoseconds / NANOSECOND_PER_SECOND;
-        nanoseconds = nanoseconds % NANOSECOND_PER_SECOND;
+
+        /*
+         * RT_TIMER_CTRL_GET_REMAIN_TIME returns the absolute expiry count, which
+         * lives in the low 32 bits of the counter (struct rt_clock_hrtimer keeps
+         * it as unsigned long). Subtract it from the counter in 32-bit space as
+         * the hrtimer core does, otherwise the 64-bit counter is subtracted from
+         * a 32-bit value and the difference underflows.
+         */
+        remain_cnt -= (unsigned long)rt_clock_time_get_counter();
+        if (remain_cnt > (0xFFFFFFFFUL / 2))
+        {
+            /* the deadline has already passed */
+            remain_cnt = 0;
+        }
+
+        /* a few seconds already exceed UINT32_MAX nanoseconds */
+        total_ns    = ((rt_uint64_t)remain_cnt * rt_clock_time_get_res_scaled()) / RT_CLOCK_TIME_RESMUL;
+        seconds     = (rt_uint32_t)(total_ns / NANOSECOND_PER_SECOND);
+        nanoseconds = (rt_uint32_t)(total_ns % NANOSECOND_PER_SECOND);
         its->it_value.tv_sec = (rt_int32_t)seconds;
         its->it_value.tv_nsec = (rt_int32_t)nanoseconds;
     }
@@ -1449,8 +1467,22 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     if (ns <= 0)
         return 0;
 
-    unsigned long res       = rt_clock_time_get_res_scaled();
-    timer->reload           = (ns * RT_CLOCK_TIME_RESMUL) / res;
+    rt_uint64_t res         = rt_clock_time_get_res_scaled();
+
+    if (res == 0)
+    {
+        rt_set_errno(EINVAL);
+        return -1;
+    }
+
+    /*
+     * rt_clock_time_get_res_scaled() is a 64-bit value and routinely exceeds
+     * UINT32_MAX: it is (1e9 * res_scale) / freq, which is 1e13 for a 100 Hz
+     * source. Keeping it in an unsigned long narrowed it to its low 32 bits and
+     * armed the timer for a wildly wrong duration (a 10 s timer became 7598005
+     * ticks, i.e. about 21 hours). Do the conversion in 64 bits.
+     */
+    timer->reload           = (unsigned long)(((rt_uint64_t)ns * RT_CLOCK_TIME_RESMUL) / res);
     timer->interval.tv_sec  = value->it_interval.tv_sec;
     timer->interval.tv_nsec = value->it_interval.tv_nsec;
     timer->value.tv_sec     = value->it_value.tv_sec;
