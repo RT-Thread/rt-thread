@@ -17,6 +17,31 @@ extern struct cdevsw bsd_ttydev_methods;
 
 extern struct bsd_fileops bsd_ptsdev_methods;
 
+enum lwp_ptmx_ioctl_arg_type
+{
+    LWP_PTMX_IOCTL_UNSUPPORTED,
+    LWP_PTMX_IOCTL_NONE,
+    LWP_PTMX_IOCTL_INT_IN,
+    LWP_PTMX_IOCTL_INT_OUT,
+    LWP_PTMX_IOCTL_UINT_OUT,
+    LWP_PTMX_IOCTL_CHAR_IN,
+    LWP_PTMX_IOCTL_WINSIZE_IN,
+    LWP_PTMX_IOCTL_WINSIZE_OUT,
+    LWP_PTMX_IOCTL_TERMIOS_IN,
+    LWP_PTMX_IOCTL_TERMIOS_OUT,
+};
+
+enum lwp_ptmx_ioctl_arg_type lwp_ptmx_ioctl_arg_type(rt_ubase_t cmd);
+
+typedef rt_size_t (*lwp_ptmx_copy_fn)(void *dst, void *src, rt_size_t size,
+                                      void *context);
+typedef int (*lwp_ptmx_ioctl_fn)(rt_ubase_t cmd, void *arg, void *context);
+
+int lwp_ptmx_ioctl_forward(rt_ubase_t cmd, void *arg,
+                           lwp_ptmx_copy_fn copy_from_user,
+                           lwp_ptmx_copy_fn copy_to_user,
+                           lwp_ptmx_ioctl_fn ioctl, void *context);
+
 /* bsd devsw porting */
 void bsd_devsw_init(struct lwp_ttydevsw *tsw);
 

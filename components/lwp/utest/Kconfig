@@ -6,11 +6,11 @@ config RT_UTEST_LWP
     default n
 
 config RT_UTEST_LWP_TTY_PTMX
-    bool "Enable Utest for tty_ptmx buffer overflow regression (V-004)"
+    bool "Enable tty_ptmx regression tests"
     depends on RT_USING_SMART
     default n
     help
-        Regression guard for the snprintf buffer bounds fix in
-        components/lwp/terminal/tty_ptmx.c.
+        Regression guards for tty_ptmx buffer bounds and ioctl argument
+        handling.
 
 endmenu

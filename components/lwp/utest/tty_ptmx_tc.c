@@ -38,12 +38,78 @@
 
 #include "utest_assert.h"
 
+#include "../terminal/tty_internal.h"
 #include <rtdef.h>
 #include <string.h>
 #include <stdio.h>
 
 #define DEV_REL_PATH "/ptmx"
 #define CANARY       0xAB
+
+struct tty_ptmx_forward_state
+{
+    int copy_from_calls;
+    int copy_to_calls;
+    int ioctl_calls;
+    int fail_copy_from;
+    int fail_copy_to;
+    int output_value;
+    int forwarded_value;
+    rt_size_t copy_size;
+    rt_ubase_t forwarded_cmd;
+    void *forwarded_arg;
+};
+
+static rt_size_t tty_ptmx_copy_from(void *dst, void *src, rt_size_t size,
+                                    void *context)
+{
+    struct tty_ptmx_forward_state *state = context;
+
+    state->copy_from_calls++;
+    state->copy_size = size;
+    if (state->fail_copy_from)
+    {
+        return 0;
+    }
+    memcpy(dst, src, size);
+    return size;
+}
+
+static rt_size_t tty_ptmx_copy_to(void *dst, void *src, rt_size_t size,
+                                  void *context)
+{
+    struct tty_ptmx_forward_state *state = context;
+
+    state->copy_to_calls++;
+    state->copy_size = size;
+    if (state->fail_copy_to)
+    {
+        return 0;
+    }
+    memcpy(dst, src, size);
+    return size;
+}
+
+static int tty_ptmx_forward_ioctl(rt_ubase_t cmd, void *arg, void *context)
+{
+    struct tty_ptmx_forward_state *state = context;
+
+    state->ioctl_calls++;
+    state->forwarded_cmd = cmd;
+    state->forwarded_arg = arg;
+    if (arg)
+    {
+        if (cmd == TIOCMGET)
+        {
+            *(int *)arg = state->output_value;
+        }
+        else
+        {
+            state->forwarded_value = *(int *)arg;
+        }
+    }
+    return 0;
+}
 
 static void tty_ptmx_buffer_bounds_tc(void)
 {
@@ -89,6 +155,87 @@ static void tty_ptmx_buffer_bounds_tc(void)
     }
 }
 
+static void tty_ptmx_ioctl_arg_type_tc(void)
+{
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type(TIOCSPGRP), LWP_PTMX_IOCTL_INT_IN);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type(TIOCMGET), LWP_PTMX_IOCTL_INT_OUT);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type(TIOCSTI), LWP_PTMX_IOCTL_CHAR_IN);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type(TIOCEXCL), LWP_PTMX_IOCTL_NONE);
+    uassert_int_equal(lwp_ptmx_ioctl_arg_type(0xffffffffU), LWP_PTMX_IOCTL_UNSUPPORTED);
+}
+
+static void tty_ptmx_ioctl_forward_tc(void)
+{
+    struct tty_ptmx_forward_state state;
+    int value;
+    int rc;
+
+    memset(&state, 0, sizeof(state));
+    value = 73;
+    rc = lwp_ptmx_ioctl_forward(TIOCSPGRP, &value, tty_ptmx_copy_from,
+                                tty_ptmx_copy_to, tty_ptmx_forward_ioctl, &state);
+    uassert_int_equal(rc, 0);
+    uassert_int_equal(state.copy_from_calls, 1);
+    uassert_int_equal(state.copy_to_calls, 0);
+    uassert_int_equal(state.ioctl_calls, 1);
+    uassert_int_equal(state.copy_size, sizeof(value));
+    uassert_int_equal(state.forwarded_cmd, TIOCSPGRP);
+    uassert_int_equal(state.forwarded_value, value);
+
+    memset(&state, 0, sizeof(state));
+    state.output_value = 41;
+    value = 0;
+    rc = lwp_ptmx_ioctl_forward(TIOCMGET, &value, tty_ptmx_copy_from,
+                                tty_ptmx_copy_to, tty_ptmx_forward_ioctl, &state);
+    uassert_int_equal(rc, 0);
+    uassert_int_equal(state.copy_from_calls, 0);
+    uassert_int_equal(state.copy_to_calls, 1);
+    uassert_int_equal(state.ioctl_calls, 1);
+    uassert_int_equal(value, state.output_value);
+
+    memset(&state, 0, sizeof(state));
+    value = 1;
+    rc = lwp_ptmx_ioctl_forward(FIONBIO, &value, tty_ptmx_copy_from,
+                                tty_ptmx_copy_to, tty_ptmx_forward_ioctl, &state);
+    uassert_int_equal(rc, 0);
+    uassert_int_equal(state.copy_from_calls, 1);
+    uassert_int_equal(state.forwarded_value, value);
+
+    memset(&state, 0, sizeof(state));
+    rc = lwp_ptmx_ioctl_forward(TIOCEXCL, RT_NULL, tty_ptmx_copy_from,
+                                tty_ptmx_copy_to, tty_ptmx_forward_ioctl, &state);
+    uassert_int_equal(rc, 0);
+    uassert_int_equal(state.copy_from_calls, 0);
+    uassert_int_equal(state.copy_to_calls, 0);
+    uassert_int_equal(state.ioctl_calls, 1);
+    uassert_null(state.forwarded_arg);
+
+    memset(&state, 0, sizeof(state));
+    state.fail_copy_from = 1;
+    value = 73;
+    rc = lwp_ptmx_ioctl_forward(TIOCSPGRP, &value, tty_ptmx_copy_from,
+                                tty_ptmx_copy_to, tty_ptmx_forward_ioctl, &state);
+    uassert_int_equal(rc, -EFAULT);
+    uassert_int_equal(state.ioctl_calls, 0);
+
+    memset(&state, 0, sizeof(state));
+    state.fail_copy_to = 1;
+    state.output_value = 41;
+    rc = lwp_ptmx_ioctl_forward(TIOCMGET, &value, tty_ptmx_copy_from,
+                                tty_ptmx_copy_to, tty_ptmx_forward_ioctl, &state);
+    uassert_int_equal(rc, -EFAULT);
+    uassert_int_equal(state.copy_to_calls, 1);
+    uassert_int_equal(state.ioctl_calls, 1);
+
+    memset(&state, 0, sizeof(state));
+    rc = lwp_ptmx_ioctl_forward(0xffffffffU, &value, tty_ptmx_copy_from,
+                                tty_ptmx_copy_to, tty_ptmx_forward_ioctl, &state);
+    uassert_int_equal(rc, -ENOTTY);
+    uassert_int_equal(state.copy_from_calls, 0);
+    uassert_int_equal(state.copy_to_calls, 0);
+    uassert_int_equal(state.ioctl_calls, 0);
+}
+
 static rt_err_t utest_tc_init(void)
 {
     return RT_EOK;
@@ -102,5 +249,7 @@ static rt_err_t utest_tc_cleanup(void)
 static void testcase(void)
 {
     UTEST_UNIT_RUN(tty_ptmx_buffer_bounds_tc);
+    UTEST_UNIT_RUN(tty_ptmx_ioctl_arg_type_tc);
+    UTEST_UNIT_RUN(tty_ptmx_ioctl_forward_tc);
 }
 UTEST_TC_EXPORT(testcase, "testcases.lwp.tty_ptmx.buffer_bounds", utest_tc_init, utest_tc_cleanup, 10);
