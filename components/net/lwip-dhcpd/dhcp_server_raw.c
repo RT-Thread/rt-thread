@@ -35,6 +35,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 
 #include <rtthread.h>
 
@@ -204,7 +205,7 @@ dhcp_client_find(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
     }
 
     opt = dhcp_server_option_find(opt_buf, len, DHCP_OPTION_REQUESTED_IP);
-    if (opt != NULL)
+    if (opt != NULL && opt[1] >= 4)
     {
         node = dhcp_client_find_by_ip(dhcpserver, (ip4_addr_t *)(&opt[2]));
         if (node != NULL)
@@ -240,7 +241,7 @@ dhcp_client_alloc(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
     }
 
     opt = dhcp_server_option_find(opt_buf, len, DHCP_OPTION_REQUESTED_IP);
-    if (opt != NULL)
+    if (opt != NULL && opt[1] >= 4)
     {
         node = dhcp_client_find_by_ip(dhcpserver, (ip4_addr_t *)(&opt[2]));
         if (node != NULL)
@@ -287,8 +288,24 @@ static u8_t *
 dhcp_server_option_find(u8_t *buf, u16_t len, u8_t option)
 {
     u8_t *end = buf + len;
+    u16_t remaining;
+
     while ((buf < end) && (*buf != DHCP_OPTION_END))
     {
+        remaining = end - buf;
+
+        /* need at least option + length */
+        if (remaining < 2)
+        {
+            break;
+        }
+
+        /* option data must stay within the received packet */
+        if (buf[1] > remaining - 2)
+        {
+            break;
+        }
+
         if (*buf == option)
         {
             return buf;
@@ -321,7 +338,7 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
     LWIP_UNUSED_ARG(addr);
     LWIP_UNUSED_ARG(port);
 
-    if (p->len < DHCP_MIN_REQUEST_LEN)
+    if (p->len < DHCP_MIN_REQUEST_LEN || p->tot_len < DHCP_OPTIONS_OFS)
     {
         LWIP_DEBUGF(DHCP_DEBUG | LWIP_DBG_TRACE | LWIP_DBG_LEVEL_WARNING, ("DHCP request message or pbuf too short\n"));
         pbuf_free(p);
@@ -343,6 +360,8 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
         return;
     }
 
+    /* Parse only bytes actually received, not the whole allocated buffer. */
+    length = p->tot_len - DHCP_OPTIONS_OFS;
     pbuf_copy(q, p);
     pbuf_free(p);
 
@@ -365,9 +384,8 @@ dhcp_server_recv(void *arg, struct udp_pcb *pcb, struct pbuf *p, const ip_addr_t
     }
 
     opt_buf = (u8_t *)msg + DHCP_OPTIONS_OFS;
-    length = q->tot_len - DHCP_OPTIONS_OFS;
     opt = dhcp_server_option_find(opt_buf, length, DHCP_OPTION_MESSAGE_TYPE);
-    if (opt)
+    if (opt && opt[1] >= 1)
     {
         msg_type = *(opt + 2);
         if (msg_type == DHCP_DISCOVER)
