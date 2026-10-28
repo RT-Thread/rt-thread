@@ -100,7 +100,36 @@ RT-Thread 既可裁剪用于资源受限的 MCU，也可用于存储和外设更
 
 例如，一个定时读取传感器并控制 LED 的小 MCU 工程，可能只需要内核和少量驱动；一个带 SD 卡、网络和多个传感器的设备，则可能用到文件系统、网络和命令行。FinSH 是嵌入式系统中的可选交互工具，不要求设备具备桌面操作系统那样的终端环境。最终固件包含哪些功能，仍由 BSP 配置和构建脚本决定。
 
-## 5. 沿启动流程阅读内核
+## 5. `examples/` 是给谁看的？
+
+`examples/` 主要面向使用 RT-Thread 开发应用的人，包括单片机开发者。它展示如何调用已有的内核或组件接口，例如 `examples/network/` 中的网络通信示例、`examples/file/` 中的文件操作示例，以及 `examples/ulog/` 中的日志示例。`examples/test/` 还包含功能测试和性能测试代码，维护人员也可以参考。
+
+示例的侧重点是**如何使用功能及观察运行结果**，不是解释实现原理。例如，两个线程的示例能帮助观察调度结果；要理解线程状态与调度算法，应继续阅读 `src/thread.c` 和 `src/scheduler_up.c`。文件操作示例展示文件 API；要理解其实现，应阅读 `components/dfs/`。
+
+| 学习目标 | 优先阅读位置 |
+| --- | --- |
+| 线程、设备、文件或网络 API 如何使用 | `examples/` |
+| 内核如何调度和管理线程 | `src/` 中的线程与调度代码 |
+| 组件如何实现设备、文件或网络接口 | `components/` 中相应组件的源码 |
+| RISC-V 如何保存寄存器、处理异常和切换线程 | `libcpu/risc-v/`，并结合目标 BSP |
+
+示例不一定自动编入当前 BSP，也不一定能在每块板子上运行。运行前应确认其依赖的组件、配置和硬件条件。维护 RISC-V 时，可以把示例作为复现问题的运行场景，再沿“示例 API → 内核或组件 → `libcpu/` 与 BSP”的路径定位原因。
+
+### 例子：`examples/libc/file.c` 调用了哪些接口？
+
+这个例程直接调用的 RT-Thread 内核 API 只有 `rt_thread_delay()`。文件中的 `sleep(int tick)` 是它自己定义的包装函数，后面的 `sleep(1)` 表示延时一个系统 tick，不是 POSIX `sleep()` 所表示的一秒。
+
+| 调用 | 所属层次 | 用途 |
+| --- | --- | --- |
+| `rt_thread_delay()` | RT-Thread 内核 API | 让当前线程延时 |
+| `open()`、`write()`、`lseek()`、`fstat()`、`close()`、`unlink()` | POSIX 风格文件接口 | 创建、写入、定位、查询与删除文件 |
+| `fopen()`、`fdopen()`、`fread()`、`fwrite()`、`fseek()`、`fseeko()`、`fclose()` 等 | C 库文件流接口 | 测试带缓冲的文件读写与定位 |
+| `getenv()`、`mkstemp()`、`asprintf()`、`printf()` 等 | C 库及扩展接口 | 生成临时文件名、输出结果及辅助操作 |
+| `FINSH_FUNCTION_EXPORT(...)` | FinSH 组件的注册宏 | 将测试函数注册为可调用的命令 |
+
+`libc_fstat()` 的主要调用顺序是 `open → write → lseek → fstat → close`；`libc_fseek()` 则集中测试文件流的读写、定位和文件状态。文件操作在相应配置下可通过 C 库适配层进入 DFS，例如 `components/dfs/dfs_v2/src/dfs_posix.c` 中实现了部分 POSIX 风格接口；实际路径取决于所选 C 库和 DFS 配置。`examples/libc/SConscript` 要求启用 `RT_USING_NEWLIBC` 和 `RT_USING_PTHREADS` 才会将该目录的例程纳入对应构建。
+
+## 6. 沿启动流程阅读内核
 
 以启用 `RT_USING_USER_MAIN` 的工程为例，`src/components.c` 中的主要流程是：
 
@@ -124,7 +153,7 @@ CPU / BSP 启动入口
 3. **定时器与通信：**`src/timer.c`、`src/ipc.c`。比较信号量、互斥量、事件、邮箱和消息队列传递的内容与等待行为。
 4. **内存：**`src/mem.c`、`src/mempool.c`、`src/memheap.c` 等。具体编入的实现取决于配置。
 
-## 6. 配置和构建如何决定固件内容
+## 7. 配置和构建如何决定固件内容
 
 RT-Thread 通常从某个 BSP 目录构建。以 `bsp/qemu-virt64-riscv/` 为例：
 
@@ -136,7 +165,7 @@ Kconfig → .config → rtconfig.h → SConstruct / SConscript → 编译链接
 
 具体安装、构建与运行命令以 `bsp/qemu-virt64-riscv/README_cn.md` 为准。该 BSP 可选择 RV32 或 RV64，运行脚本是 `./qemu.py`；脚本可能创建磁盘镜像，编译会生成固件文件。这些生成物不应提交到仓库。
 
-## 7. 维护 RISC-V 支持的切入点
+## 8. 维护 RISC-V 支持的切入点
 
 `libcpu/risc-v/SConscript` 中并存两条移植路径：选择 `RT_USING_RISCV_NEW_COMMON` 的 BSP 使用 `libcpu/risc-v/common/`；其他 BSP 可能仍使用 `common64/` 或 `legacy_common/`。QEMU virt BSP 选择了新公共实现。维护前先确认目标 BSP 实际编入哪条路径。
 
@@ -147,6 +176,14 @@ Kconfig → .config → rtconfig.h → SConstruct / SConscript → 编译链接
 | 某块板子特有的内存布局、外设、中断接线 | 对应的 `bsp/` |
 | 某配置未编入正确文件或编译选项错误 | BSP 与 `libcpu/risc-v/` 的 `Kconfig`、`SConscript`、`rtconfig.py` |
 
+### 维护一块具体的 RISC-V 开发板，从哪里开始？
+
+首先在 `bsp/` 中找到该芯片或开发板的目录，阅读其 `README`、`Kconfig`、`.config`、`SConstruct`、`SConscript`、`rtconfig.py` 和板级驱动代码。没有确定具体板卡时，可用 `bsp/qemu-virt64-riscv/` 了解一个可运行的 BSP 结构。
+
+接着确认该 BSP 实际使用的新公共移植还是旧移植路径：检查 `.config` 中的 `RT_USING_RISCV_NEW_COMMON`，再对照 `libcpu/risc-v/SConscript`。若只有这块板的串口、时钟或外设中断异常，先检查其 BSP；若多个 RISC-V BSP 都在异常处理或上下文切换时出错，再检查它们共用的 `libcpu/risc-v/` 实现。通用设备接口本身出错时，进一步检查 `components/drivers/`。
+
+开始修改前应记录目标板卡型号、RV32/RV64、运行模式、是否使用 MMU 与 SMP，以及可复现的编译或运行故障。这些信息决定应从板级代码、CPU 移植层还是组件层定位。配置更改应从 `.config` 通过配置工具生成 `rtconfig.h`，不要手工编辑它。可结合 [内核移植说明](../3.kernel/kernel-porting/kernel-porting.md) 学习接口要求。
+
 建议先用 QEMU virt BSP 建立可重复的基线，记录提交号、`.config`、工具链版本、QEMU 版本、复现命令和运行结果。随后按问题涉及范围验证：
 
 1. 编译目标 BSP；公共汇编、类型或栈帧修改应考虑 RV32 与 RV64。
@@ -156,7 +193,7 @@ Kconfig → .config → rtconfig.h → SConstruct / SConscript → 编译链接
 
 新公共移植的更具体约定见 [RISC-V 公共移植指南](../../libcpu/risc-v/common/README.md)。修改异常、CSR、页表或 SBI 行为时，还应对照 RISC-V 特权架构和 SBI 规范，确认预期行为。
 
-## 8. 推荐的学习顺序
+## 9. 推荐的学习顺序
 
 1. 读 [仓库介绍](../../README_zh.md)、[内核基础](../3.kernel/basic/basic.md)，建立目录与启动流程全图。
 2. 根据 [QEMU RISC-V BSP 说明](../../bsp/qemu-virt64-riscv/README_cn.md) 跑通构建和启动，观察 `main()` 与命令行。
