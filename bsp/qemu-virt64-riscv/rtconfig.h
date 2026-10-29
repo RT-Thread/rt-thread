@@ -77,7 +77,6 @@
 /* end of rt_strnlen options */
 /* end of klibc options */
 #define RT_NAME_MAX 24
-#define RT_USING_SMART
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
@@ -139,7 +138,6 @@
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
-#define KERNEL_VADDR_START 0xffffffc000000000
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_D
@@ -150,7 +148,6 @@
 #define RT_USING_RISCV_NEW_COMMON
 /* end of RISC-V Architecture Configuration */
 #define ARCH_USING_NEW_CTX_SWITCH
-#define ARCH_REMAP_KERNEL
 
 /* RT-Thread Components */
 
@@ -179,6 +176,8 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 32
+#define RT_USING_DFS_V2
+#define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
 
@@ -194,17 +193,9 @@
 #define RT_DFS_ELM_REENTRANT
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
-#define RT_USING_PAGECACHE
-
-/* page cache config */
-
-#define RT_PAGECACHE_COUNT 4096
-#define RT_PAGECACHE_ASPACE_COUNT 1024
-#define RT_PAGECACHE_PRELOAD 4
-#define RT_PAGECACHE_HASH_NR 1024
-#define RT_PAGECACHE_GC_WORK_LEVEL 90
-#define RT_PAGECACHE_GC_STOP_LEVEL 70
-/* end of page cache config */
+#define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_ROMFS
+#define RT_USING_DFS_TMPFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -283,9 +274,6 @@
 #define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_SELECT
-#define RT_USING_POSIX_EPOLL
-#define RT_USING_POSIX_SIGNALFD
-#define RT_SIGNALFD_MAX_NUM 10
 #define RT_USING_POSIX_SOCKET
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_AIO
@@ -315,12 +303,6 @@
 #define SAL_USING_LWIP
 /* end of Docking with protocol stacks */
 #define SAL_USING_POSIX
-#define RT_USING_AF_UNIX
-#define AF_UNIX_DGRAM_MAX_SIZE 4096
-#define AF_UNIX_DGRAM_QUEUE_LEN 16
-#define AF_UNIX_STREAM_BUFFER_SIZE 4096
-#define AF_UNIX_LISTEN_BACKLOG_MAX 16
-#define AF_UNIX_RIGHTS_MAX 16
 #define RT_USING_NETDEV
 #define NETDEV_USING_IFCONFIG
 #define NETDEV_USING_PING
@@ -402,17 +384,6 @@
 
 /* end of Debugging */
 /* end of Memory management */
-#define RT_USING_LWP
-#define LWP_DEBUG
-#define LWP_USING_RUNTIME
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_TID_MAX_NR 512
-#define RT_LWP_SHM_MAX_NR 512
-#define RT_USING_LDSO
-#define LWP_USING_TERMINAL
-#define LWP_PTY_MAX_PARIS_LIMIT 64
 
 /* Using USB legacy version */
 
@@ -426,6 +397,7 @@
 /* RT-Thread online packages */
 
 /* IoT - internet of things */
+
 
 /* Wi-Fi */
 
@@ -595,6 +567,7 @@
 
 /* Arduino libraries */
 
+
 /* Projects and Demos */
 
 /* end of Projects and Demos */
@@ -638,15 +611,5 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define BSP_USING_QEMU_RISCV_VIRT
-#define RT_USING_DFS_V2
-#define RT_USING_DFS_ELMFAT
-#define RT_USING_DFS_DEVFS
-#define RT_USING_DFS_ROMFS
-#define RT_USING_DFS_PTYFS
-#define RT_USING_DFS_PROCFS
-#define RT_USING_DFS_TMPFS
-#define PKG_USING_LWEXT4
-#define RT_USING_DFS_LWEXT4
-#define PKG_USING_LWEXT4_LATEST_VERSION
 
 #endif

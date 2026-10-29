@@ -278,19 +278,21 @@ jobs:
           # Whether plan to run SMP?
           if [[ "${{ matrix.platform.SMP_RUN }}"  == "smp" ]]; then
             cat $UTEST_CONFIG_ROOT/smp/smp.cfg >> $TEST_BSP_ROOT/.config
+            echo >> $TEST_BSP_ROOT/.config
           fi
 
           # Is the kernel rtsmart?
           if [[ "${{ matrix.platform.KERNEL }}"  == "rtsmart" ]]; then
             cat $UTEST_CONFIG_ROOT/rtsmart/rtsmart.cfg >> $TEST_BSP_ROOT/.config
+            echo >> $TEST_BSP_ROOT/.config
           elif [[ "$TEST_BSP_ROOT" == "bsp/qemu-virt64-riscv" || "$TEST_BSP_ROOT" == "bsp/qemu-virt64-aarch64" ]]; then
-            # Standard kernel tests use the upstream non-SMART BSP configuration.
-            git fetch -q origin master
-            git checkout -q origin/master -- $TEST_BSP_ROOT/.config $TEST_BSP_ROOT/rtconfig.h
+            # Select the standard kernel without overwriting the SMP configuration.
+            echo "# CONFIG_RT_USING_SMART is not set" >> $TEST_BSP_ROOT/.config
           fi
 
           echo CONFIG_RT_USING_UTESTCASES=y >> $TEST_BSP_ROOT/.config
           cat $UTEST_CONFIG_ROOT/$TEST_CONFIG_FILE >> $TEST_BSP_ROOT/.config
+          echo >> $TEST_BSP_ROOT/.config
 
           # Keep standard qemu tests free of PM/tickless side effects.
           if [[ "${{ matrix.platform.KERNEL }}" == "standard" && ( "$TEST_BSP_ROOT" == "bsp/qemu-virt64-riscv" || "$TEST_BSP_ROOT" == "bsp/qemu-virt64-aarch64" ) ]]; then
