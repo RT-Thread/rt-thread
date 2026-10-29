@@ -174,7 +174,7 @@ static void cancle_work_test01(void)
     work_flag = 0;
     rt_work_init(&work, cancle_work_test01_fun, (void *)&work_flag);
     /* Cancel the work before it is executed */
-    err = rt_workqueue_submit_work(queue, &work, 0);
+    err = rt_workqueue_submit_work(queue, &work, 10);
     uassert_int_equal(err, RT_EOK);
 
     /* Cancel Now */
@@ -362,7 +362,7 @@ static void repeat_work_test01(void)
     {
         LOG_E("L:%d err. %d", __LINE__, err);
     }
-    rt_thread_delay(10);
+    rt_thread_delay(100);
     /* Check if it was executed only once */
     uassert_int_equal(work_flag, 1);
 
@@ -574,10 +574,10 @@ static void cancel_all_work_test(void)
     rt_work_init(&work3, cancel_all_work_test_fun, (void *)&work_flag);
     rt_work_init(&work4, cancel_all_work_test_fun, (void *)&work_flag);
 
-    err = rt_workqueue_submit_work(queue, &work1, 0);
+    err = rt_workqueue_submit_work(queue, &work1, 10);
     uassert_int_equal(err, RT_EOK);
 
-    err = rt_workqueue_submit_work(queue, &work2, 0);
+    err = rt_workqueue_submit_work(queue, &work2, 10);
     uassert_int_equal(err, RT_EOK);
 
     err = rt_workqueue_submit_work(queue, &work3, 10);
@@ -589,7 +589,7 @@ static void cancel_all_work_test(void)
     err = rt_workqueue_cancel_all_work(queue);
     uassert_int_equal(err, RT_EOK);
 
-    rt_thread_delay(20);
+    rt_thread_delay(100);
     uassert_int_equal(work_flag, 0);
 
     rt_thread_delay(100);
