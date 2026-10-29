@@ -588,10 +588,9 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             {
                 /* relocate function */
                 dlmodule_relocate(module, &target_rel,
-                                       (Elf_Addr)((rt_uint8_t *)
-                                                    module->mem_space
-                                                    - module_addr
-                                                    + sym->st_value));
+                                  (Elf_Addr)((rt_uint8_t *)
+                                                 module->mem_space -
+                                             module_addr + sym->st_value));
             }
             else
             {
