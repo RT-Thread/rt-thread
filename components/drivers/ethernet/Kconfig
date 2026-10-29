@@ -8,6 +8,7 @@ menuconfig RT_USING_ETHERNET
 
 if RT_USING_ETHERNET
     rsource "cadence/Kconfig"
+    rsource "realtek/Kconfig"
     rsource "synopsys/Kconfig"
     osource "$(SOC_DM_ETHERNET_DIR)/Kconfig"
 endif
