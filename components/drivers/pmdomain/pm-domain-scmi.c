@@ -131,4 +131,11 @@ static struct rt_scmi_driver scmi_pm_domain_driver =
 
     .probe = scmi_pm_domain_probe,
 };
-RT_SCMI_DRIVER_EXPORT(scmi_pm_domain_driver);
+
+static int scmi_pm_domain_drv_register(void)
+{
+    rt_scmi_driver_register(&scmi_pm_domain_driver);
+
+    return 0;
+}
+INIT_SUBSYS_EXPORT(scmi_pm_domain_drv_register);
