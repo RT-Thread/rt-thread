@@ -73,7 +73,6 @@
 /* end of rt_strnlen options */
 /* end of klibc options */
 #define RT_NAME_MAX 16
-#define RT_USING_SMART
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 8
@@ -129,7 +128,7 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_USING_CONSOLE_OUTPUT_CTL
-#define RT_VER_NUM 0x50301
+#define RT_VER_NUM 0x50400
 #define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 /* end of RT-Thread Kernel */
@@ -150,7 +149,6 @@
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
-#define KERNEL_VADDR_START 0xffff000000000000
 #define ARCH_ARMV8
 #define ARCH_USING_ASID
 #define ARCH_USING_HW_THREAD_SELF
@@ -183,6 +181,8 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 512
+#define RT_USING_DFS_V2
+#define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
 
@@ -198,17 +198,9 @@
 #define RT_DFS_ELM_REENTRANT
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
-#define RT_USING_PAGECACHE
-
-/* page cache config */
-
-#define RT_PAGECACHE_COUNT 4096
-#define RT_PAGECACHE_ASPACE_COUNT 1024
-#define RT_PAGECACHE_PRELOAD 4
-#define RT_PAGECACHE_HASH_NR 1024
-#define RT_PAGECACHE_GC_WORK_LEVEL 90
-#define RT_PAGECACHE_GC_STOP_LEVEL 70
-/* end of page cache config */
+#define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_ROMFS
+#define RT_USING_DFS_TMPFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -288,11 +280,6 @@
 #define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_SELECT
-#define RT_USING_POSIX_EVENTFD
-#define RT_USING_POSIX_EPOLL
-#define RT_USING_POSIX_SIGNALFD
-#define RT_SIGNALFD_MAX_NUM 10
-#define RT_USING_POSIX_TIMERFD
 #define RT_USING_POSIX_SOCKET
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_MMAN
@@ -322,12 +309,6 @@
 #define SAL_USING_LWIP
 /* end of Docking with protocol stacks */
 #define SAL_USING_POSIX
-#define RT_USING_AF_UNIX
-#define AF_UNIX_DGRAM_MAX_SIZE 4096
-#define AF_UNIX_DGRAM_QUEUE_LEN 16
-#define AF_UNIX_STREAM_BUFFER_SIZE 4096
-#define AF_UNIX_LISTEN_BACKLOG_MAX 16
-#define AF_UNIX_RIGHTS_MAX 16
 #define RT_USING_NETDEV
 #define NETDEV_USING_IFCONFIG
 #define NETDEV_USING_PING
@@ -409,18 +390,6 @@
 
 /* end of Debugging */
 /* end of Memory management */
-#define RT_USING_LWP
-#define LWP_DEBUG
-#define LWP_DEBUG_INIT
-#define LWP_USING_RUNTIME
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_TID_MAX_NR 512
-#define RT_LWP_SHM_MAX_NR 512
-#define RT_USING_LDSO
-#define LWP_USING_TERMINAL
-#define LWP_PTY_MAX_PARIS_LIMIT 64
 
 /* Using USB legacy version */
 
@@ -434,6 +403,7 @@
 /* RT-Thread online packages */
 
 /* IoT - internet of things */
+
 
 /* Wi-Fi */
 
@@ -603,6 +573,7 @@
 
 /* Arduino libraries */
 
+
 /* Projects and Demos */
 
 /* end of Projects and Demos */
@@ -646,15 +617,5 @@
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
 #define SOC_VIRT64_AARCH64
-#define RT_USING_DFS_V2
-#define RT_USING_DFS_ELMFAT
-#define RT_USING_DFS_DEVFS
-#define RT_USING_DFS_ROMFS
-#define RT_USING_DFS_PTYFS
-#define RT_USING_DFS_PROCFS
-#define RT_USING_DFS_TMPFS
-#define PKG_USING_LWEXT4
-#define RT_USING_DFS_LWEXT4
-#define PKG_USING_LWEXT4_LATEST_VERSION
 
 #endif

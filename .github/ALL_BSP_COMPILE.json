@@ -407,6 +407,7 @@
       "RTT_BSP": "aarch64",
       "RTT_TOOL_CHAIN": "sourcery-aarch64",
       "SUB_RTT_BSP": [
+        "qemu-virt64-aarch64",
         "raspberry-pi/raspi3-64",
         "raspberry-pi/raspi4-64",
         "nxp/imx/imx91",
@@ -418,8 +419,7 @@
       "RTT_TOOL_CHAIN": "sourcery-aarch64",
       "RTT_SMART_TOOL_CHAIN": "aarch64-linux-musleabi",
       "SUB_RTT_BSP": [
-        "rockchip/rk3500",
-        "qemu-virt64-aarch64"
+        "rockchip/rk3500"
       ]
     },
     {
@@ -439,14 +439,8 @@
       "RTT_TOOL_CHAIN": "sourcery-riscv64-unknown-elf",
       "SUB_RTT_BSP": [
         "bluetrum/ab32vg1-ab-prougen",
+        "qemu-virt64-riscv",
         "ultrarisc/ur_dp1000_evb"
-      ]
-    },
-    {
-      "RTT_BSP": "qemu-smart",
-      "RTT_TOOL_CHAIN": "sourcery-riscv64-general-toolchain",
-      "SUB_RTT_BSP": [
-        "qemu-virt64-riscv"
       ]
     },
     {
