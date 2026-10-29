@@ -1114,6 +1114,12 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
     rt_list_t *thread_list;
     rt_err_t ret = RT_EOK;
 
+    /* Signal numbers are 1-based, reject out-of-range values before indexing */
+    if (signo <= 0 || valid_signo_check(signo))
+    {
+        return -RT_EINVAL;
+    }
+
     if (lwp)
     {
         /** acquire READ access to lwp */

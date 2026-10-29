@@ -6752,6 +6752,11 @@ sysret_t sys_sigaction(int sig, const struct k_sigaction *act,
     struct lwp_sigaction kact, *pkact = RT_NULL;
     struct lwp_sigaction koact, *pkoact = RT_NULL;
 
+    if (sig <= 0 || (unsigned long)sig > _LWP_NSIG)
+    {
+        SET_ERRNO(EINVAL);
+        goto out;
+    }
     if (!sigsetsize)
     {
         SET_ERRNO(EINVAL);
