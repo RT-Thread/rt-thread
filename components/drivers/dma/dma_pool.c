@@ -664,7 +664,8 @@ static rt_ubase_t dma_pool_alloc(struct rt_dma_pool *pool, rt_size_t size)
         return RT_NULL;
     }
 
-    max_bits = pool->bits - size;
+    /* The bitmap iterator's limit is exclusive; include the last fit. */
+    max_bits = pool->bits - size + 1;
 
     rt_bitmap_for_each_clear_bit(pool->map, bit, max_bits)
     {
@@ -834,10 +835,13 @@ static void dma_free(struct rt_device *dev, rt_size_t size,
 
     rt_list_for_each_entry(pool, &dma_pool_nodes, list)
     {
-        if (dma_handle >= pool->region.start &&
-            dma_handle <= pool->region.end)
+        /* Adjacent pools share an exclusive end/start boundary. */
+        if (dma_handle >= pool->start && dma_handle < pool->region.end &&
+            size <= pool->region.end - dma_handle)
         {
-            if (pool->flags & RT_DMA_F_NOCACHE || !(pool->flags & RT_DMA_F_LINEAR))
+            if (!(flags & RT_DMA_F_NOMAP) &&
+                ((pool->flags & RT_DMA_F_NOCACHE) ||
+                 (flags & RT_DMA_F_NOCACHE) || !(pool->flags & RT_DMA_F_LINEAR)))
             {
                 rt_iounmap(cpu_addr);
             }
