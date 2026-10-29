@@ -72,6 +72,7 @@ struct rk817_codec_config
 
 struct rk817_codec;
 
+#ifdef RT_AUDIO_ROCKCHIP_CODEC_RK817
 rt_err_t rk817_codec_bind_rk8xx(struct rk817_codec **out_codec, struct rk8xx *rk8xx);
 rt_err_t rk817_codec_hw_params(struct rk817_codec *codec, const struct rk817_codec_config *cfg);
 rt_err_t rk817_codec_start(struct rk817_codec *codec);
@@ -79,5 +80,35 @@ rt_err_t rk817_codec_stop(struct rk817_codec *codec);
 rt_err_t rk817_codec_set_volume(struct rk817_codec *codec, rt_uint8_t volume);
 struct rk817_codec *rk817_codec_find(struct rt_ofw_node *np);
 struct rk8xx *rk817_codec_rk8xx_from_np(struct rt_ofw_node *np);
+#else
+rt_inline rt_err_t rk817_codec_bind_rk8xx(struct rk817_codec **out_codec, struct rk8xx *rk8xx)
+{
+    return -RT_ENOSYS;
+}
+rt_inline rt_err_t rk817_codec_hw_params(struct rk817_codec *codec, const struct rk817_codec_config *cfg)
+{
+    return -RT_ENOSYS;
+}
+rt_inline rt_err_t rk817_codec_start(struct rk817_codec *codec)
+{
+    return -RT_ENOSYS;
+}
+rt_inline rt_err_t rk817_codec_stop(struct rk817_codec *codec)
+{
+    return -RT_ENOSYS;
+}
+rt_inline rt_err_t rk817_codec_set_volume(struct rk817_codec *codec, rt_uint8_t volume)
+{
+    return -RT_ENOSYS;
+}
+rt_inline struct rk817_codec *rk817_codec_find(struct rt_ofw_node *np)
+{
+    return RT_NULL;
+}
+rt_inline struct rk8xx *rk817_codec_rk8xx_from_np(struct rt_ofw_node *np)
+{
+    return RT_NULL;
+}
+#endif
 
 #endif /* __RK817_CODEC_H__ */

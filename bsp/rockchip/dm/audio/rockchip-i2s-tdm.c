@@ -16,9 +16,13 @@
 
 #include "rockchip.h"
 #include "rockchip-i2s-tdm.h"
+#include "rockchip-audio-clock.h"
 
-#define I2S_FIFO_DEPTH      32
-#define I2S_DEFAULT_MCLK_FS 256
+#define I2S_FIFO_DEPTH          32
+#define I2S_DEFAULT_MCLK_FS     256
+#define I2S_CLEAR_TIMEOUT_US    100
+#define I2S_PIO_WAIT_US         10
+#define I2S_PIO_TIMEOUT_US      100000
 
 struct rockchip_i2s_tdm
 {
@@ -37,10 +41,15 @@ struct rockchip_i2s_tdm
 
     rt_bool_t trcm_tx_only;
     rt_bool_t playback_only;
+    rt_bool_t always_on;
+    rt_bool_t hdmi_path;
+    rt_bool_t mclk_enabled;
     rt_bool_t running;
+    rt_uint32_t tx_underruns;
 
     rt_uint32_t mclk_fs;
     struct rockchip_i2s_config config;
+    rt_uint32_t pio_word_delay_us;
 
     struct rt_dma_chan *dma_tx;
     rt_ubase_t dma_addr;
@@ -51,62 +60,6 @@ struct rockchip_i2s_tdm
 
 static rt_list_t i2s_list = RT_LIST_OBJECT_INIT(i2s_list);
 static RT_DEFINE_SPINLOCK(i2s_list_lock);
-
-static rt_err_t rockchip_i2s_tdm_set_mclk(struct rockchip_i2s_tdm *i2s,
-        rt_ubase_t rate)
-{
-    struct rt_clk_cell *cell, *parent;
-    struct rt_clk *clk;
-    rt_err_t err;
-
-    cell = i2s->mclk_tx->cell;
-
-    /* Skip pass-through gates and configure the first programmable clock. */
-    while (cell->parents_nr == 1 && !cell->ops->set_rate)
-    {
-        cell = rt_clk_cell_get_parent_by_index(cell, 0);
-        if (!cell)
-        {
-            return -RT_ENOSYS;
-        }
-    }
-
-    if (cell->ops->set_rate)
-    {
-        clk = rt_clk_cell_get_clk(cell, RT_NULL);
-        return clk ? rt_clk_set_rate(clk, rate) : -RT_ENOMEM;
-    }
-
-    /* Rockchip I2S muxes use an internal fractional clock for audio rates. */
-    for (rt_uint8_t index = 0; index < cell->parents_nr; ++index)
-    {
-        parent = rt_clk_cell_get_parent_by_index(cell, index);
-        if (!parent || !parent->ops->set_rate)
-        {
-            continue;
-        }
-
-        if (rt_clk_cell_round_rate(parent, rate) != rate)
-        {
-            continue;
-        }
-
-        clk = rt_clk_cell_get_clk(parent, RT_NULL);
-        if (!clk || (err = rt_clk_set_rate(clk, rate)))
-        {
-            continue;
-        }
-
-        if ((err = rt_clk_cell_set_parent(cell, parent)))
-        {
-            return err;
-        }
-
-        return RT_EOK;
-    }
-
-    return -RT_ENOSYS;
-}
 
 rt_inline rt_uint32_t i2s_readl(struct rockchip_i2s_tdm *i2s, rt_ubase_t reg)
 {
@@ -187,6 +140,42 @@ static rt_err_t rockchip_i2s_tdm_set_fmt(struct rockchip_i2s_tdm *i2s)
     return RT_EOK;
 }
 
+static rt_err_t rockchip_i2s_tdm_clear_tx(struct rockchip_i2s_tdm *i2s)
+{
+    rt_uint32_t retry;
+
+    i2s_writel(i2s, I2S_CLR, I2S_CLR_TXC);
+
+    for (retry = 0; retry < I2S_CLEAR_TIMEOUT_US / 10; ++retry)
+    {
+        if (!(i2s_readl(i2s, I2S_CLR) & I2S_CLR_TXC))
+        {
+            return RT_EOK;
+        }
+        rt_hw_us_delay(10);
+    }
+
+    /* Match Linux's recovery for a TX FIFO that refuses to clear. */
+    if (!rt_is_err_or_null(i2s->rst_tx))
+    {
+        rt_reset_control_reset(i2s->rst_tx);
+        rt_hw_us_delay(10);
+    }
+
+    i2s_writel(i2s, I2S_CLR, I2S_CLR_TXC);
+    for (retry = 0; retry < I2S_CLEAR_TIMEOUT_US / 10; ++retry)
+    {
+        if (!(i2s_readl(i2s, I2S_CLR) & I2S_CLR_TXC))
+        {
+            return RT_EOK;
+        }
+        rt_hw_us_delay(10);
+    }
+
+    LOG_E("TX FIFO clear timeout, clr=%08x", i2s_readl(i2s, I2S_CLR));
+    return -RT_ETIMEOUT;
+}
+
 rt_err_t rockchip_i2s_tdm_hw_params(struct rockchip_i2s_tdm *i2s,
         const struct rockchip_i2s_config *cfg)
 {
@@ -195,28 +184,32 @@ rt_err_t rockchip_i2s_tdm_hw_params(struct rockchip_i2s_tdm *i2s,
     rt_uint32_t fmt = I2S_TXCR_VDW(cfg->samplebits) | I2S_CHN_2;
     rt_err_t err;
 
-    if (!i2s || !cfg)
+    if (!i2s || !cfg || !cfg->samplerate || !cfg->channels)
     {
         return -RT_EINVAL;
     }
 
     i2s->config = *cfg;
     i2s->mclk_fs = cfg->mclk_fs ? cfg->mclk_fs : I2S_DEFAULT_MCLK_FS;
+    i2s->pio_word_delay_us = RT_DIV_ROUND_UP(1000000U,
+            cfg->samplerate * cfg->channels);
 
     if (i2s->mclk_tx)
     {
         mclk_rate = cfg->samplerate * i2s->mclk_fs;
 
-        if ((err = rockchip_i2s_tdm_set_mclk(i2s, mclk_rate)))
+        if ((err = rockchip_audio_set_mclk(i2s->mclk_tx, mclk_rate)))
         {
             LOG_E("set mclk_tx rate %u failed", mclk_rate);
             return err;
         }
 
-        if ((err = rt_clk_prepare_enable(i2s->mclk_tx)))
+        if (!i2s->mclk_enabled && (err = rt_clk_prepare_enable(i2s->mclk_tx)))
         {
             return err;
         }
+
+        i2s->mclk_enabled = RT_TRUE;
     }
 
     mclk_rate = i2s->mclk_tx ? rt_clk_get_rate(i2s->mclk_tx) : (cfg->samplerate * i2s->mclk_fs);
@@ -248,6 +241,12 @@ rt_err_t rockchip_i2s_tdm_hw_params(struct rockchip_i2s_tdm *i2s,
     i2s_update_bits(i2s, I2S_CKR, I2S_CKR_TSD_MASK, I2S_CKR_TSD(div_lrck));
     i2s_update_bits(i2s, I2S_TXCR, I2S_TXCR_VDW_MASK | I2S_TXCR_CSR_MASK, fmt);
 
+    LOG_D("%s: %u Hz %u ch %u bit, mclk=%u bclk=%u div=%u/%u regs=%08x/%08x/%08x",
+            rt_dm_dev_get_name(&i2s->parent), cfg->samplerate, cfg->channels,
+            cfg->samplebits, mclk_rate, bclk_rate, div_bclk, div_lrck,
+            i2s_readl(i2s, I2S_TXCR), i2s_readl(i2s, I2S_CKR),
+            i2s_readl(i2s, I2S_CLKDIV));
+
     return RT_EOK;
 }
 
@@ -258,12 +257,17 @@ rt_err_t rockchip_i2s_tdm_start(struct rockchip_i2s_tdm *i2s)
         return -RT_EINVAL;
     }
 
-    if (i2s->rst_tx)
+    /*
+     * HDMI I2S is kept clocked between streams.  Match the Linux sequence
+     * for a new stream so stale words cannot keep the DMA request asserted.
+     */
+    if (i2s->always_on && i2s->hdmi_path)
     {
-        rt_reset_control_assert(i2s->rst_tx);
-        rt_reset_control_deassert(i2s->rst_tx);
+        i2s_update_bits(i2s, I2S_XFER, I2S_XFER_TXS_MASK, I2S_XFER_TXS_STOP);
+        rt_hw_us_delay(150);
     }
 
+    /* CLR completes in the SCLK domain, which starts with XFER below. */
     i2s_writel(i2s, I2S_CLR, I2S_CLR_TXC);
 
     if (i2s->trcm_tx_only)
@@ -288,24 +292,34 @@ rt_err_t rockchip_i2s_tdm_stop(struct rockchip_i2s_tdm *i2s)
         return -RT_EINVAL;
     }
 
-    if (i2s->trcm_tx_only)
+    /*
+     * HDMI's always-on path keeps BCLK/LRCK and the transmitter alive
+     * between DMA streams.  This is the equivalent of Linux's
+     * rockchip_i2s_tdm_xfer_stop(..., false), which is intentionally a
+     * no-op for the ALWAYS_ON quirk.
+     */
+    if (!i2s->always_on)
     {
-        i2s_update_bits(i2s, I2S_XFER, I2S_XFER_TXS_MASK | I2S_XFER_RXS_MASK,
-                I2S_XFER_TXS_STOP | I2S_XFER_RXS_STOP);
-        i2s_writel(i2s, I2S_CLR, I2S_CLR_TXC);
-    }
-    else
-    {
-        i2s_update_bits(i2s, I2S_XFER, I2S_XFER_TXS_MASK, I2S_XFER_TXS_STOP);
-        i2s_writel(i2s, I2S_CLR, I2S_CLR_TXC);
-    }
+        if (i2s->trcm_tx_only)
+        {
+            i2s_update_bits(i2s, I2S_XFER, I2S_XFER_TXS_MASK | I2S_XFER_RXS_MASK,
+                    I2S_XFER_TXS_STOP | I2S_XFER_RXS_STOP);
+            rockchip_i2s_tdm_clear_tx(i2s);
+        }
+        else
+        {
+            i2s_update_bits(i2s, I2S_XFER, I2S_XFER_TXS_MASK, I2S_XFER_TXS_STOP);
+            rockchip_i2s_tdm_clear_tx(i2s);
+        }
 
-    rt_hw_us_delay(150);
+        rt_hw_us_delay(150);
+    }
     i2s->running = RT_FALSE;
 
-    if (i2s->mclk_tx)
+    if (!i2s->always_on && i2s->mclk_tx && i2s->mclk_enabled)
     {
         rt_clk_disable_unprepare(i2s->mclk_tx);
+        i2s->mclk_enabled = RT_FALSE;
     }
 
     return RT_EOK;
@@ -315,6 +329,7 @@ rt_ssize_t rockchip_i2s_tdm_push(struct rockchip_i2s_tdm *i2s,
         const rt_uint8_t *buf, rt_size_t size)
 {
     rt_size_t i = 0;
+    rt_uint32_t wait_us = 0;
     rt_uint32_t fifo;
 
     if (!i2s || !buf || !size)
@@ -328,12 +343,28 @@ rt_ssize_t rockchip_i2s_tdm_push(struct rockchip_i2s_tdm *i2s,
 
         if (fifo >= I2S_FIFO_DEPTH)
         {
-            rt_thread_mdelay(1);
+            wait_us += I2S_PIO_WAIT_US;
+            if (wait_us > I2S_PIO_TIMEOUT_US)
+            {
+                LOG_E("TX FIFO stalled: fifo=%u xfer=%08x ckr=%08x txcr=%08x div=%08x",
+                        fifo, i2s_readl(i2s, I2S_XFER), i2s_readl(i2s, I2S_CKR),
+                        i2s_readl(i2s, I2S_TXCR), i2s_readl(i2s, I2S_CLKDIV));
+                return -RT_ETIMEOUT;
+            }
+            rt_hw_us_delay(I2S_PIO_WAIT_US);
             continue;
         }
 
+        wait_us = 0;
         i2s_writel(i2s, I2S_TXDR, buf[i] | (buf[i + 1] << 8));
         i += 2;
+
+        /*
+         * The RK3588 HDMI I2S FIFO level can stay at zero in PIO mode.
+         * Pace each channel word from the configured sample rate so writes
+         * cannot overrun a FIFO whose level is not observable.
+         */
+        rt_hw_us_delay(i2s->pio_word_delay_us);
     }
 
     return i;
@@ -361,8 +392,27 @@ rt_err_t rockchip_i2s_tdm_dma_enable(struct rockchip_i2s_tdm *i2s)
         return -RT_EINVAL;
     }
 
+    /*
+     * The HDMI controller drops its first frame-sync cycle.  Seed one
+     * complete stereo S16 frame before enabling its DMA request, matching
+     * the Rockchip Linux driver's HDMI-path workaround.
+     */
+    if (i2s->hdmi_path)
+    {
+        i2s_writel(i2s, I2S_TXDR, 0);
+    }
+
+    i2s->tx_underruns = 0;
+    i2s_update_bits(i2s, I2S_INTCR, I2S_INTCR_TXUIC, I2S_INTCR_TXUIC);
+
     i2s_update_bits(i2s, I2S_DMACR, I2S_DMACR_TDL_MASK | I2S_DMACR_TDE_MASK,
             I2S_DMACR_TDL(16) | I2S_DMACR_TDE_ENABLE);
+
+    /* Give DMA a head start before the transmitter consumes the FIFO. */
+    if (i2s->hdmi_path)
+    {
+        rt_hw_us_delay(1);
+    }
 
     return RT_EOK;
 }
@@ -377,6 +427,25 @@ rt_err_t rockchip_i2s_tdm_dma_disable(struct rockchip_i2s_tdm *i2s)
     i2s_update_bits(i2s, I2S_DMACR, I2S_DMACR_TDE_MASK, 0);
 
     return RT_EOK;
+}
+
+void rockchip_i2s_tdm_dma_check_underrun(struct rockchip_i2s_tdm *i2s)
+{
+    if (!i2s)
+    {
+        return;
+    }
+
+    if (i2s_readl(i2s, I2S_INTSR) & I2S_INTSR_TXUI)
+    {
+        i2s->tx_underruns++;
+        i2s_update_bits(i2s, I2S_INTCR, I2S_INTCR_TXUIC, I2S_INTCR_TXUIC);
+    }
+}
+
+rt_uint32_t rockchip_i2s_tdm_dma_underruns(struct rockchip_i2s_tdm *i2s)
+{
+    return i2s ? i2s->tx_underruns : 0;
 }
 
 static rt_err_t rockchip_i2s_tdm_probe(struct rt_platform_device *pdev)
@@ -397,6 +466,8 @@ static rt_err_t rockchip_i2s_tdm_probe(struct rt_platform_device *pdev)
     i2s->parent.ofw_node = dev->ofw_node;
     i2s->trcm_tx_only = rt_dm_dev_prop_read_bool(dev, "rockchip,trcm-sync-tx-only");
     i2s->playback_only = rt_dm_dev_prop_read_bool(dev, "rockchip,playback-only");
+    i2s->always_on = rt_dm_dev_prop_read_bool(dev, "rockchip,always-on");
+    i2s->hdmi_path = rt_dm_dev_prop_read_bool(dev, "rockchip,hdmi-path");
 
     i2s->regs = rt_dm_dev_iomap(dev, 0);
 
@@ -428,6 +499,28 @@ static rt_err_t rockchip_i2s_tdm_probe(struct rt_platform_device *pdev)
     if ((err = rockchip_i2s_tdm_grf_init(i2s)))
     {
         goto _fail;
+    }
+
+    if (i2s->always_on)
+    {
+        const struct rockchip_i2s_config default_cfg =
+        {
+            .samplerate = 48000,
+            .channels = 2,
+            .samplebits = 16,
+            .mclk_fs = I2S_DEFAULT_MCLK_FS,
+        };
+
+        if ((err = rockchip_i2s_tdm_hw_params(i2s, &default_cfg)))
+        {
+            goto _fail;
+        }
+
+        /* This must follow every register configuration on HDMI I2S. */
+        if ((err = rockchip_i2s_tdm_start(i2s)))
+        {
+            goto _fail;
+        }
     }
 
     i2s->dma_tx = rt_dma_chan_request(dev, "tx");

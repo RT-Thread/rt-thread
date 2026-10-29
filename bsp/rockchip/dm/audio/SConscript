@@ -4,13 +4,22 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd + '/../include']
 
+if GetDepend(['RT_AUDIO_ROCKCHIP_I2S_TDM']) or GetDepend(['RT_AUDIO_ROCKCHIP_SAI']):
+    src += ['rockchip-audio-clock.c']
+
 if GetDepend(['RT_AUDIO_ROCKCHIP_I2S_TDM']):
     src += ['rockchip-i2s-tdm.c']
+
+if GetDepend(['RT_AUDIO_ROCKCHIP_SAI']):
+    src += ['rockchip-sai.c']
 
 if GetDepend(['RT_AUDIO_ROCKCHIP_CODEC_RK817']):
     src += ['codec/rk817-codec.c']
 
-if GetDepend(['RT_AUDIO_ROCKCHIP_CARD', 'RT_AUDIO_ROCKCHIP_I2S_TDM']):
+if GetDepend(['RT_AUDIO_ROCKCHIP_CODEC_RK3528']):
+    src += ['codec/rk3528-codec.c']
+
+if GetDepend(['RT_AUDIO_ROCKCHIP_CARD']):
     src += ['rockchip-audio-card.c']
 
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)

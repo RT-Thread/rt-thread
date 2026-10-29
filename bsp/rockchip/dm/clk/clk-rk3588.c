@@ -1759,7 +1759,7 @@ static struct rt_clk_cell *rk3588_clk_cells[] =
             &rk3588_i2s9_8ch_rx_fracmux),
     [CLK_I2S9_8CH_RX] = &rk3588_i2s9_8ch_rx_fracmux.cell,
     [MCLK_I2S9_8CH_RX] = GATE(MCLK_I2S9_8CH_RX, "mclk_i2s9_8ch_rx", "clk_i2s9_8ch_rx", 0, RK3588_CLKGATE_CON(65), 3, GFLAGS),
-    [CLK_I2S5_8CH_TX_SRC] = COMPOSITE(CLK_I2S5_8CH_TX_SRC, "clk_i2s5_8ch_tx_src", gpll_aupll_p, 0,
+    [CLK_I2S5_8CH_TX_SRC] = COMPOSITE(CLK_I2S5_8CH_TX_SRC, "clk_i2s5_8ch_tx_src", gpll_aupll_p, RT_CLK_F_SET_RATE_NO_REPARENT,
             RK3588_CLKSEL_CON(140), 10, 1, MFLAGS, 5, 5, DFLAGS,
             RK3588_CLKGATE_CON(62), 6, GFLAGS),
     [CLK_I2S5_8CH_TX_FRAC] = COMPOSITE_FRACMUX(CLK_I2S5_8CH_TX_FRAC, "clk_i2s5_8ch_tx_frac", "clk_i2s5_8ch_tx_src", RT_CLK_F_SET_RATE_PARENT,
