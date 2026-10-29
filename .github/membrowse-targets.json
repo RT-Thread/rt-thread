@@ -155,7 +155,8 @@
   },
   {
     "target_name": "qemu-virt64-aarch64",
-    "toolchain": "aarch64-none-elf",
+    "toolchain": "aarch64-linux-musleabi",
+    "rtt_cc_prefix": "aarch64-linux-musleabi-",
     "bsp_path": "bsp/qemu-virt64-aarch64",
     "elf": "bsp/qemu-virt64-aarch64/rtthread.elf",
     "ld": "libcpu/aarch64/link.lds",
