@@ -38,7 +38,9 @@ static int ptm_fops_open(struct dfs_file *file)
 
             /* detached operation from devfs */
             if (rc == 0)
+            {
                 file->vnode->fops = &ptm_fops;
+            }
         }
         else
         {
@@ -157,6 +159,196 @@ static ssize_t ptm_fops_write(struct dfs_file *file, const void *buf,
     return rc;
 }
 
+enum lwp_ptmx_ioctl_arg_type lwp_ptmx_ioctl_arg_type(rt_ubase_t cmd)
+{
+    switch (cmd)
+    {
+    case TIOCSDTR:
+    case TIOCCDTR:
+    case TIOCNOTTY:
+    case TIOCSCTTY:
+    case TIOCDRAIN:
+    case TIOCEXCL:
+    case TIOCNXCL:
+    case TIOCSTOP:
+    case TIOCSTART:
+    case TIOCSTAT:
+    case TIOCSBRK:
+    case TIOCCBRK:
+        return LWP_PTMX_IOCTL_NONE;
+
+    case TIOCPKT:
+    case TIOCSIG:
+    case FIONBIO:
+    case TIOCSPGRP:
+    case TIOCMSET:
+    case TIOCMBIS:
+    case TIOCMBIC:
+    case FIOASYNC:
+    case FIOSETOWN:
+    case TIOCFLUSH:
+    case TIOCSDRAINWAIT:
+    case TIOCCONS:
+    case TIOCSETD:
+        return LWP_PTMX_IOCTL_INT_IN;
+
+    case TIOCGPGRP:
+    case TIOCGSID:
+    case FIONREAD:
+    case TIOCOUTQ:
+    case FIONWRITE:
+    case TIOCMGET:
+    case FIOGETOWN:
+    case TIOCGETD:
+    case TIOCGDRAINWAIT:
+        return LWP_PTMX_IOCTL_INT_OUT;
+
+    case TIOCGPTN:
+        return LWP_PTMX_IOCTL_UINT_OUT;
+
+    case TIOCSTI:
+        return LWP_PTMX_IOCTL_CHAR_IN;
+
+    case TIOCSWINSZ:
+        return LWP_PTMX_IOCTL_WINSIZE_IN;
+
+    case TIOCGWINSZ:
+        return LWP_PTMX_IOCTL_WINSIZE_OUT;
+
+    case TCSETS:
+    case TCSETSW:
+    case TCSETSF:
+        return LWP_PTMX_IOCTL_TERMIOS_IN;
+
+    case TCGETS:
+        return LWP_PTMX_IOCTL_TERMIOS_OUT;
+
+    default:
+        return LWP_PTMX_IOCTL_UNSUPPORTED;
+    }
+}
+
+int lwp_ptmx_ioctl_forward(rt_ubase_t cmd, void *arg,
+                           lwp_ptmx_copy_fn copy_from_user,
+                           lwp_ptmx_copy_fn copy_to_user,
+                           lwp_ptmx_ioctl_fn ioctl, void *context)
+{
+    int rc;
+    rt_size_t arg_size = 0;
+    rt_bool_t copy_out = RT_FALSE;
+    void *kernel_arg = RT_NULL;
+    enum lwp_ptmx_ioctl_arg_type arg_type;
+    union
+    {
+        int int_value;
+        unsigned int uint_value;
+        char char_value;
+        struct winsize winsize_value;
+        struct termios termios_value;
+    } value;
+
+    arg_type = lwp_ptmx_ioctl_arg_type(cmd);
+    switch (arg_type)
+    {
+    case LWP_PTMX_IOCTL_NONE:
+        break;
+    case LWP_PTMX_IOCTL_INT_IN:
+        kernel_arg = &value.int_value;
+        arg_size = sizeof(value.int_value);
+        break;
+    case LWP_PTMX_IOCTL_INT_OUT:
+        kernel_arg = &value.int_value;
+        arg_size = sizeof(value.int_value);
+        copy_out = RT_TRUE;
+        break;
+    case LWP_PTMX_IOCTL_UINT_OUT:
+        kernel_arg = &value.uint_value;
+        arg_size = sizeof(value.uint_value);
+        copy_out = RT_TRUE;
+        break;
+    case LWP_PTMX_IOCTL_CHAR_IN:
+        kernel_arg = &value.char_value;
+        arg_size = sizeof(value.char_value);
+        break;
+    case LWP_PTMX_IOCTL_WINSIZE_IN:
+        kernel_arg = &value.winsize_value;
+        arg_size = sizeof(value.winsize_value);
+        break;
+    case LWP_PTMX_IOCTL_WINSIZE_OUT:
+        kernel_arg = &value.winsize_value;
+        arg_size = sizeof(value.winsize_value);
+        copy_out = RT_TRUE;
+        break;
+    case LWP_PTMX_IOCTL_TERMIOS_IN:
+        kernel_arg = &value.termios_value;
+        arg_size = sizeof(value.termios_value);
+        break;
+    case LWP_PTMX_IOCTL_TERMIOS_OUT:
+        kernel_arg = &value.termios_value;
+        arg_size = sizeof(value.termios_value);
+        copy_out = RT_TRUE;
+        break;
+    default:
+        return -ENOTTY;
+    }
+
+    if (arg_size && !copy_out &&
+        copy_from_user(kernel_arg, arg, arg_size, context) != arg_size)
+    {
+        return -EFAULT;
+    }
+
+    rc = ioctl(cmd, kernel_arg, context);
+    if (!rc && copy_out &&
+        copy_to_user(arg, kernel_arg, arg_size, context) != arg_size)
+    {
+        rc = -EFAULT;
+    }
+
+    return rc;
+}
+
+struct ptm_ioctl_context
+{
+    struct dfs_file *file;
+    lwp_tty_t tp;
+};
+
+static rt_size_t ptm_copy_from_user(void *dst, void *src, rt_size_t size,
+                                    void *context)
+{
+    RT_UNUSED(context);
+    return lwp_get_from_user(dst, src, size);
+}
+
+static rt_size_t ptm_copy_to_user(void *dst, void *src, rt_size_t size,
+                                  void *context)
+{
+    RT_UNUSED(context);
+    return lwp_put_to_user(dst, src, size);
+}
+
+static int ptm_ioctl_backend(rt_ubase_t cmd, void *arg, void *context)
+{
+    struct ptm_ioctl_context *ptm_context = context;
+
+    return bsd_ptsdev_methods.fo_ioctl(
+        ptm_context->tp, cmd, arg, 0, FFLAGS(ptm_context->file->flags),
+        rt_thread_self());
+}
+
+static int ptm_ioctl_forward(struct dfs_file *file, lwp_tty_t tp,
+                             rt_ubase_t cmd, void *arg)
+{
+    struct ptm_ioctl_context context = {
+        .file = file,
+        .tp = tp,
+    };
+
+    return lwp_ptmx_ioctl_forward(cmd, arg, ptm_copy_from_user,
+                                  ptm_copy_to_user, ptm_ioctl_backend, &context);
+}
+
 static int ptm_fops_ioctl(struct dfs_file *file, int cmd, void *arg)
 {
     int rc;
@@ -171,35 +363,40 @@ static int ptm_fops_ioctl(struct dfs_file *file, int cmd, void *arg)
 
         switch (cmd_normal)
         {
-            case TIOCSPTLCK:
+        case TIOCSPTLCK:
+        {
+            int is_lock;
+            if (lwp_get_from_user(&is_lock, arg, sizeof(int)) != sizeof(int))
             {
-                int is_lock;
-                if (lwp_get_from_user(&is_lock, arg, sizeof(int)) != sizeof(int))
-                    return -EFAULT;
-                pts_set_lock(tp, is_lock);
-                rc = 0;
+                return -EFAULT;
             }
-            break;
-            case TIOCGPTLCK:
+            pts_set_lock(tp, is_lock);
+            rc = 0;
+        }
+        break;
+        case TIOCGPTLCK:
+        {
+            int is_lock = pts_is_locked(tp);
+            if (lwp_put_to_user(arg, &is_lock, sizeof(int)) != sizeof(int))
             {
-                int is_lock = pts_is_locked(tp);
-                if (lwp_put_to_user(arg, &is_lock, sizeof(int)) != sizeof(int))
-                    return -EFAULT;
-                rc = 0;
+                return -EFAULT;
             }
-            break;
-            case TIOCGPKT:
+            rc = 0;
+        }
+        break;
+        case TIOCGPKT:
+        {
+            int pktmode = pts_get_pktmode(tp);
+            if (lwp_put_to_user(arg, &pktmode, sizeof(int)) != sizeof(int))
             {
-                int pktmode = pts_get_pktmode(tp);
-                if (lwp_put_to_user(arg, &pktmode, sizeof(int)) != sizeof(int))
-                    return -EFAULT;
-                rc = 0;
+                return -EFAULT;
             }
+            rc = 0;
+        }
+        break;
+        default:
+            rc = ptm_ioctl_forward(file, tp, cmd_normal, arg);
             break;
-            default:
-                rc = bsd_ptsdev_methods.fo_ioctl(
-                    tp, cmd_normal, arg, 0, FFLAGS(file->flags), rt_thread_self());
-                break;
         }
     }
     else
