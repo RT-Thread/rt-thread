@@ -917,6 +917,18 @@ sysret_t sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
 #ifdef ARCH_MM_MMU
     struct pollfd *kfds = RT_NULL;
 
+    /*
+     * nfds is supplied by the user process. Computing nfds * sizeof(*fds) in a
+     * 32-bit size_t wraps for large counts (0x20000001 * 8 becomes 8), while the
+     * poll loop below still walks the original, un-wrapped nfds and reads and
+     * writes past the end of that allocation. Reject the counts that cannot be
+     * represented before anything is sized from them.
+     */
+    if (nfds > SIZE_MAX / sizeof(*fds))
+    {
+        return -EINVAL;
+    }
+
     if (!lwp_user_accessable((void *)fds, nfds * sizeof *fds))
     {
         return -EFAULT;
@@ -939,6 +951,11 @@ sysret_t sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
     kmem_put(kfds);
     return ret;
 #else
+    if (nfds > SIZE_MAX / sizeof(*fds))
+    {
+        return -EINVAL;
+    }
+
     if (!lwp_user_accessable((void *)fds, nfds * sizeof *fds))
     {
         return -EFAULT;
@@ -10515,6 +10532,17 @@ sysret_t sys_epoll_pwait(int fd,
     int ret = 0;
     struct epoll_event *kev = RT_NULL;
     sigset_t *ksigs = RT_NULL;
+
+    /*
+     * Same problem as sys_poll(): cnt comes from the user process, and the
+     * multiplication below wraps in a 32-bit size_t while the event loop still
+     * walks the original count. cnt is a signed int here, so a negative value
+     * has to be rejected as well.
+     */
+    if (cnt < 0 || (size_t)cnt > SIZE_MAX / sizeof(struct epoll_event))
+    {
+        return -EINVAL;
+    }
 
     if (!lwp_user_accessable((void *)ev, cnt * sizeof(struct epoll_event)))
         return -EFAULT;
