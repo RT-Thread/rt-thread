@@ -34,6 +34,8 @@ typedef struct{
     uint32_t gpio_port;
     uint32_t gpio_af;
     uint16_t gpio_pin;
+    const char *pin_name;
+    const char *alternate;
 }channel_type;
 
 struct gd32_pwm
@@ -86,10 +88,20 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         .timerx = TIMER2,
         .apb_of = CK_APB1,
         .channels = {
+#if defined(BSP_PWM2_CH1_PIN) && defined(BSP_PWM2_CH1_AFIO)
+            {0},
+            {
+                .pin_name = BSP_PWM2_CH1_PIN,
+                .alternate = BSP_PWM2_CH1_AFIO,
+            },
+            {0},
+            {0},
+#else
             {GPIOA, GPIO_AF_1, GPIO_PIN_6},
             {GPIOA, GPIO_AF_1, GPIO_PIN_7},
             {GPIOB, GPIO_AF_2, GPIO_PIN_0},
             {GPIOB, GPIO_AF_2, GPIO_PIN_1},
+#endif
         },
     },
 #endif
@@ -208,6 +220,22 @@ static struct gd32_pwm gd32_pwm_obj[] = {
         }, // L2 general-purpose timer is a single-channel timer
     },
 #endif
+
+#ifdef BSP_USING_PWM30
+    {
+        .name = "pwm30",
+        .timerx = TIMER30,
+        .apb_of = CK_APB1,
+        .channels = {
+            {0},
+            {0},
+            {
+                .pin_name = BSP_PWM30_CH2_PIN,
+                .alternate = BSP_PWM30_CH2_AFIO,
+            },
+        },
+    },
+#endif
 };
 
 static void gpio_clock_enable(rt_uint32_t Port)
@@ -241,6 +269,43 @@ static void gpio_clock_enable(rt_uint32_t Port)
     }
 }
 
+static rt_err_t channel_pin_resolve(channel_type *channel)
+{
+    uint32_t gpio_port;
+    uint32_t gpio_pin;
+    uint32_t gpio_af;
+    rcu_periph_enum gpio_periph;
+
+    if (channel->pin_name == RT_NULL)
+    {
+        if (channel->gpio_port != 0U)
+        {
+            gpio_clock_enable(channel->gpio_port);
+        }
+
+        return RT_EOK;
+    }
+
+    if (get_pin_config(channel->pin_name, &gpio_port, &gpio_pin, &gpio_periph) != RT_EOK)
+    {
+        LOG_E("Invalid PWM pin: %s", channel->pin_name);
+        return -RT_EINVAL;
+    }
+
+    if (pin_alternate_config(channel->alternate, &gpio_af) != RT_EOK)
+    {
+        LOG_E("Invalid PWM alternate function: %s", channel->alternate);
+        return -RT_EINVAL;
+    }
+
+    channel->gpio_port = gpio_port;
+    channel->gpio_pin = (uint16_t)gpio_pin;
+    channel->gpio_af = gpio_af;
+    rcu_periph_clock_enable(gpio_periph);
+
+    return RT_EOK;
+}
+
 static void timer_clock_enable(uint32_t timer)
 {
     switch (timer)
@@ -269,69 +334,67 @@ static void timer_clock_enable(uint32_t timer)
     case TIMER7:
         rcu_periph_clock_enable(RCU_TIMER7);
         break;
+#ifdef TIMER8
     case TIMER8:
         rcu_periph_clock_enable(RCU_TIMER8);
         break;
+#endif
+#ifdef TIMER9
     case TIMER9:
         rcu_periph_clock_enable(RCU_TIMER9);
         break;
+#endif
+#ifdef TIMER10
     case TIMER10:
         rcu_periph_clock_enable(RCU_TIMER10);
         break;
+#endif
+#ifdef TIMER11
     case TIMER11:
         rcu_periph_clock_enable(RCU_TIMER11);
         break;
+#endif
+#ifdef TIMER12
     case TIMER12:
         rcu_periph_clock_enable(RCU_TIMER12);
         break;
+#endif
+#ifdef TIMER13
     case TIMER13:
         rcu_periph_clock_enable(RCU_TIMER13);
         break;
+#endif
+#ifdef TIMER30
+    case TIMER30:
+        rcu_periph_clock_enable(RCU_TIMER30);
+        break;
+#endif
     default:
         LOG_E("Unsport timer periph!\n");
     }
 }
 
-static void rcu_config(void)
+static rt_err_t rcu_config(void)
 {
-    rt_int16_t i;
+    rt_size_t i;
+    rt_size_t j;
 
     for (i = 0; i < sizeof(gd32_pwm_obj) / sizeof(gd32_pwm_obj[0]); ++i)
     {
-        /* enable GPIO clock */
-        switch (gd32_pwm_obj[i].timerx)
+        for (j = 0; j < sizeof(gd32_pwm_obj[i].channels) / sizeof(gd32_pwm_obj[i].channels[0]); ++j)
         {
-        /* Advanced timer */
-        case TIMER0:
-        case TIMER7:
-            gpio_clock_enable(gd32_pwm_obj[i].nchannels[0].gpio_port);
-            gpio_clock_enable(gd32_pwm_obj[i].nchannels[1].gpio_port);
-            gpio_clock_enable(gd32_pwm_obj[i].nchannels[2].gpio_port);
+            if (channel_pin_resolve(&gd32_pwm_obj[i].channels[j]) != RT_EOK)
+            {
+                return -RT_ERROR;
+            }
+        }
 
-        /* L0 general-purpose timer */
-        case TIMER1:
-        case TIMER2:
-        case TIMER3:
-        case TIMER4:
-            gpio_clock_enable(gd32_pwm_obj[i].channels[2].gpio_port);
-            gpio_clock_enable(gd32_pwm_obj[i].channels[3].gpio_port);
-
-        /* L1 general-purpose timer */
-        case TIMER8:
-        case TIMER11:
-            gpio_clock_enable(gd32_pwm_obj[i].channels[1].gpio_port);
-
-        /* L2 general-purpose timer */
-        case TIMER9:
-        case TIMER10:
-        case TIMER12:
-        case TIMER13:
-            gpio_clock_enable(gd32_pwm_obj[i].channels[0].gpio_port);
-            break;
-
-        default:
-            LOG_E("Unsport timer periph at rcu_config!\n");
-            break;
+        for (j = 0; j < sizeof(gd32_pwm_obj[i].nchannels) / sizeof(gd32_pwm_obj[i].nchannels[0]); ++j)
+        {
+            if (channel_pin_resolve(&gd32_pwm_obj[i].nchannels[j]) != RT_EOK)
+            {
+                return -RT_ERROR;
+            }
         }
     }
 
@@ -341,79 +404,72 @@ static void rcu_config(void)
         timer_clock_enable(gd32_pwm_obj[i].timerx);
         timer_deinit(gd32_pwm_obj[i].timerx);
     }
+
+    return RT_EOK;
+}
+
+static const channel_type *pwm_channel_get(const struct gd32_pwm *pwm,
+                                           const struct rt_pwm_configuration *configuration)
+{
+    const channel_type *channel;
+    uint8_t channel_num = configuration->channel;
+
+    if (channel_num == 0U)
+    {
+        LOG_E("PWM channel starts from 1");
+        return RT_NULL;
+    }
+
+    if (configuration->complementary)
+    {
+        if (channel_num > sizeof(pwm->nchannels) / sizeof(pwm->nchannels[0]))
+        {
+            LOG_E("GD32 PWM complementary channel max 3");
+            return RT_NULL;
+        }
+        channel = &pwm->nchannels[channel_num - 1U];
+    }
+    else
+    {
+        if (channel_num > sizeof(pwm->channels) / sizeof(pwm->channels[0]))
+        {
+            LOG_E("GD32 PWM channel max 4");
+            return RT_NULL;
+        }
+        channel = &pwm->channels[channel_num - 1U];
+    }
+
+    if (channel->gpio_port == 0U || channel->gpio_pin == 0U)
+    {
+        LOG_E("%s channel %d is not configured", pwm->name, channel_num);
+        return RT_NULL;
+    }
+
+    return channel;
 }
 
 /**
  * @brief Configure PWM output pin to PWM output mode
- * @param pwm PWM object
- * @param configuration Configuration information passed by PWM driver framework
+ * @param channel PWM channel
  */
-static void gpio_config_pwmout(const struct gd32_pwm *pwm,
-                               const struct rt_pwm_configuration *configuration)
+static void gpio_config_pwmout(const channel_type *channel)
 {
-    channel_type channel;
-    uint8_t channel_num = configuration->channel;
-    if(channel_num == 0)
-    {
-        LOG_E("PWM channel starts from 1!\n");
-        return;
-    }
-    if(configuration->complementary)
-    {
-        if(channel_num > 3)
-        {
-            LOG_E("GD32 PWM complementary channel max 3!\n");
-            return;
-        };
-        channel = pwm->nchannels[channel_num-1];
-    }
-    else
-    {
-        if(channel_num > 4)
-        {
-            LOG_E("GD32 PWM complementary channel max 4!\n");
-            return;
-        };
-        channel = pwm->channels[channel_num-1];
-    }
-    gpio_mode_set(channel.gpio_port, GPIO_MODE_AF, GPIO_PUPD_NONE, channel.gpio_pin);
-    gpio_output_options_set(channel.gpio_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, channel.gpio_pin);
-    gpio_af_set(channel.gpio_port, channel.gpio_af, channel.gpio_pin);
+    gpio_mode_set(channel->gpio_port, GPIO_MODE_AF, GPIO_PUPD_NONE, channel->gpio_pin);
+#if (defined(SOC_SERIES_GD32H7xx) || defined(SOC_SERIES_GD32H77x_H78X)) || defined(SOC_SERIES_GD32H75E)
+    gpio_output_options_set(channel->gpio_port, GPIO_OTYPE_PP, GPIO_OSPEED_60MHZ, channel->gpio_pin);
+#else
+    gpio_output_options_set(channel->gpio_port, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, channel->gpio_pin);
+#endif
+    gpio_af_set(channel->gpio_port, channel->gpio_af, channel->gpio_pin);
 }
 
 /**
  * @brief Configure PWM output pin to PWM floating input mode
- * @param pwm PWM object
- * @param configuration Configuration information passed by PWM driver framework
+ * @param channel PWM channel
  */
-static void gpio_config_input(const struct gd32_pwm *pwm,
-                              const struct rt_pwm_configuration *configuration)
+static void gpio_config_input(const channel_type *channel)
 {
-    channel_type channel = {0};
-    uint8_t channel_num = configuration->channel;
-    if(channel_num == 0)
-    {
-        return;
-    }
-    if(configuration->complementary)
-    {
-        if(channel_num > 3)
-        {
-            LOG_E("GD32 PWM complementary channel max 3!\n");
-            return;
-        };
-        channel = pwm->nchannels[channel_num-1];
-    }
-    else
-    {
-        if(channel_num > 4)
-        {
-            LOG_E("GD32 PWM complementary channel max 4!\n");
-            return;
-        };
-        channel = pwm->channels[channel_num-1];
-    }
-    gpio_mode_set(channel.gpio_port, GPIO_MODE_INPUT, GPIO_PUPD_NONE, channel.gpio_pin);
+    gpio_mode_set(channel->gpio_port, GPIO_MODE_INPUT, GPIO_PUPD_NONE, channel->gpio_pin);
 }
 
 static void channel_output_config(rt_uint32_t timer_periph, timer_oc_parameter_struct *ocpara)
@@ -430,6 +486,9 @@ static void channel_output_config(rt_uint32_t timer_periph, timer_oc_parameter_s
     case TIMER2:
     case TIMER3:
     case TIMER4:
+#ifdef TIMER30
+    case TIMER30:
+#endif
         timer_channel_output_config(timer_periph, TIMER_CH_2, ocpara);
         timer_channel_output_pulse_value_config(timer_periph, TIMER_CH_2, 7999);
         timer_channel_output_mode_config(timer_periph, TIMER_CH_2, TIMER_OC_MODE_PWM0);
@@ -449,8 +508,12 @@ static void channel_output_config(rt_uint32_t timer_periph, timer_oc_parameter_s
         timer_channel_complementary_output_state_config(timer_periph, TIMER_CH_3, TIMER_CCXN_DISABLE);
 
     /* L1 general-purpose timer */
+#ifdef TIMER8
     case TIMER8:
+#endif
+#ifdef TIMER11
     case TIMER11:
+#endif
         timer_channel_output_config(timer_periph, TIMER_CH_1, ocpara);
         timer_channel_output_pulse_value_config(timer_periph, TIMER_CH_1, 7999);
         timer_channel_output_mode_config(timer_periph, TIMER_CH_1, TIMER_OC_MODE_PWM0);
@@ -461,10 +524,18 @@ static void channel_output_config(rt_uint32_t timer_periph, timer_oc_parameter_s
         timer_channel_complementary_output_state_config(timer_periph, TIMER_CH_1, TIMER_CCXN_DISABLE);
 
     /* L2 general-purpose timer */
+#ifdef TIMER9
     case TIMER9:
+#endif
+#ifdef TIMER10
     case TIMER10:
+#endif
+#ifdef TIMER12
     case TIMER12:
+#endif
+#ifdef TIMER13
     case TIMER13:
+#endif
         timer_channel_output_config(timer_periph, TIMER_CH_0, ocpara);
         timer_channel_output_pulse_value_config(timer_periph, TIMER_CH_0, 7999);
         timer_channel_output_mode_config(timer_periph, TIMER_CH_0, TIMER_OC_MODE_PWM0);
@@ -517,32 +588,15 @@ static void timer_config(void)
 static rt_err_t drv_pwm_enable(struct gd32_pwm *pwm, const struct rt_pwm_configuration *configuration,
                                rt_bool_t enable)
 {
-    uint8_t channel_num = configuration->channel;
-    if(channel_num == 0)
+    const channel_type *channel = pwm_channel_get(pwm, configuration);
+
+    if (channel == RT_NULL)
     {
-        LOG_E("GD32 PWM channel starts from 1!\n");
         return -RT_EINVAL;
     }
-    if(configuration->complementary)
-    {
-        if(channel_num > 3)
-        {
-            LOG_E("GD32 PWM complementary channel max 3!\n");
-            return -RT_EINVAL;
-        };
-    }
-    else
-    {
-        if(channel_num > 4)
-        {
-            LOG_E("GD32 PWM complementary channel max 4!\n");
-            return -RT_EINVAL;
-        };
-    }
-
     if (!enable)
     {
-        gpio_config_input(pwm, configuration);
+        gpio_config_input(channel);
         if (configuration->complementary == RT_TRUE)
         {
             timer_channel_complementary_output_state_config(pwm->timerx, configuration->channel-1,
@@ -556,7 +610,7 @@ static rt_err_t drv_pwm_enable(struct gd32_pwm *pwm, const struct rt_pwm_configu
     }
     else
     {
-        gpio_config_pwmout(pwm, configuration);
+        gpio_config_pwmout(channel);
         if (configuration->complementary == RT_TRUE)
         {
             timer_channel_complementary_output_state_config(pwm->timerx, configuration->channel-1,
@@ -578,7 +632,7 @@ static rt_err_t drv_pwm_get(const struct gd32_pwm *pwm, struct rt_pwm_configurat
     rt_uint16_t psc;
     rt_uint32_t chxcv;
 
-    if(configuration->channel == 0)
+    if (pwm_channel_get(pwm, configuration) == RT_NULL)
     {
         return -RT_EINVAL;
     }
@@ -613,7 +667,7 @@ static rt_err_t drv_pwm_set(struct gd32_pwm *pwm, struct rt_pwm_configuration *c
     rt_uint8_t coef = (RCU_CFG1&RCU_CFG1_TIMERSEL)?4:2;
     tim_clock = rcu_clock_freq_get(pwm->apb_of)*coef;
 
-    if(configuration->channel == 0)
+    if (pwm_channel_get(pwm, configuration) == RT_NULL)
     {
         return -RT_EINVAL;
     }
@@ -676,7 +730,10 @@ static struct rt_pwm_ops drv_ops = {drv_pwm_control};
 
 static rt_err_t gd32_hw_pwm_init(void)
 {
-    rcu_config();
+    if (rcu_config() != RT_EOK)
+    {
+        return -RT_ERROR;
+    }
     timer_config();
 
     /*

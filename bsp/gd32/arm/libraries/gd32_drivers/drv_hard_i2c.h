@@ -23,19 +23,12 @@ extern "C" {
 /* GD32 i2c driver */
 struct gd32_i2c_bus
 {
-    uint32_t i2c_periph;             /* Todo: 3bits */
+    uint32_t i2c_periph;
+    rcu_periph_enum per_clk;
 
-    rcu_periph_enum per_clk;         /* Todo: 5bits */
-    rcu_periph_enum scl_gpio_clk;    /* Todo: 5bits */
-    rcu_periph_enum sda_gpio_clk;    /* Todo: 5bits */
-
-    uint32_t scl_port;               /* Todo: 4bits */
-    uint16_t scl_af;                 /* Todo: 4bits */
-    uint16_t scl_pin;                /* Todo: 4bits */
-
-    uint32_t sda_port;               /* Todo: 4bits */
-    uint16_t sda_af;                 /* Todo: 4bits */
-    uint16_t sda_pin;                /* Todo: 4bits */
+    const char *scl_pin_name;
+    const char *sda_pin_name;
+    const char *alternate;
 
     struct rt_i2c_bus_device *i2c_bus;
     char *device_name;
