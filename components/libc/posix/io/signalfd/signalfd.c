@@ -20,10 +20,8 @@
 #include <poll.h>
 
 #define SIGNALFD_MUTEX_NAME "signalfd"
-#define SIGINFO_MAX 10
-#define SIGNALFD_SHART_MAX RT_SIGNALFD_MAX_NUM
-
-static int is_head_init = 0;
+#define SIGINFO_MAX         10
+#define SIGNALFD_SHART_MAX  RT_SIGNALFD_MAX_NUM
 
 struct rt_signalfd_ctx
 {
@@ -44,11 +42,10 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off
 #endif
 static int signalfd_add_notify(struct rt_signalfd_ctx *sfd);
 
-static const struct dfs_file_ops signalfd_fops =
-{
-    .close      = signalfd_close,
-    .poll       = signalfd_poll,
-    .read       = signalfd_read,
+static const struct dfs_file_ops signalfd_fops = {
+    .close = signalfd_close,
+    .poll = signalfd_poll,
+    .read = signalfd_read,
 };
 
 /**
@@ -60,14 +57,49 @@ static int signalfd_close(struct dfs_file *file)
 {
     struct rt_signalfd_ctx *sfd;
 
-    if (file->vnode->ref_count != 1)
+    if (!file || !file->vnode)
+    {
         return 0;
+    }
+
+    if (file->vnode->ref_count != 1)
+    {
+        return 0;
+    }
 
     sfd = file->vnode->data;
 
     if (sfd)
     {
+        rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
+        for (int i = 0; i < SIGNALFD_SHART_MAX; i++)
+        {
+            struct rt_lwp *lwp = sfd->lwp[i];
+            if (lwp)
+            {
+                rt_slist_t *prev = &lwp->signalfd_notify_head;
+                rt_slist_t *curr = prev->next;
+                while (curr != RT_NULL)
+                {
+                    struct rt_lwp_notify *n = rt_slist_entry(curr, struct rt_lwp_notify, list_node);
+                    if (n->signalfd_queue == &sfd->signalfd_queue)
+                    {
+                        prev->next = curr->next;
+                        rt_free(n);
+                        curr = prev->next;
+                    }
+                    else
+                    {
+                        prev = curr;
+                        curr = curr->next;
+                    }
+                }
+                sfd->lwp[i] = RT_NULL;
+            }
+        }
+        rt_mutex_release(&sfd->lock);
         rt_mutex_detach(&sfd->lock);
+        file->vnode->data = RT_NULL;
         rt_free(sfd);
     }
 
@@ -95,7 +127,9 @@ static int signalfd_poll(struct dfs_file *file, struct rt_pollreq *req)
         rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
 
         if (sfd->sig_num)
+        {
             events |= POLLIN;
+        }
 
         rt_mutex_release(&sfd->lock);
     }
@@ -132,10 +166,14 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off
     rt_err_t ret = -1;
 
     if (sizeof(struct signalfd_siginfo) > count)
+    {
         return -1;
+    }
 
     if (buf == RT_NULL)
+    {
         return -1;
+    }
 
     buffer = (struct signalfd_siginfo *)buf;
     user_buf_num = count / sizeof(struct signalfd_siginfo);
@@ -171,9 +209,9 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off
                 }
             }
 
-            for (int j = 0; j < sfd->sig_num; j ++)
+            for (int j = 0; j < sfd->sig_num; j++)
             {
-                memcpy(&sfd->info[j], &sfd->info[i ++], sizeof(struct signalfd_siginfo));
+                memcpy(&sfd->info[j], &sfd->info[i++], sizeof(struct signalfd_siginfo));
             }
 
             rt_mutex_release(&sfd->lock);
@@ -207,7 +245,7 @@ static void signalfd_callback(rt_wqueue_t *signalfd_queue, int signum)
                 sfd->sig_num += 1;
             }
             rt_mutex_release(&sfd->lock);
-            rt_wqueue_wakeup(signalfd_queue, (void*)POLLIN);
+            rt_wqueue_wakeup(signalfd_queue, (void *)POLLIN);
         }
     }
 }
@@ -221,29 +259,51 @@ static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
 {
     struct rt_lwp_notify *lwp_notify;
     rt_err_t ret = -1;
-    rt_slist_t *node;
     int is_lwp = 0;
+    int empty_slot = -1;
+    struct rt_lwp *curr_lwp;
+
+    if (!sfd)
+    {
+        return -EINVAL;
+    }
+
+    curr_lwp = lwp_self();
+    if (!curr_lwp)
+    {
+        return -EINVAL;
+    }
 
     rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
 
-    for (int i = 0; i < is_head_init; i++)
+    for (int i = 0; i < SIGNALFD_SHART_MAX; i++)
     {
-        if (sfd->lwp[i])
+        if (sfd->lwp[i] == curr_lwp)
         {
-            if (sfd->lwp[i] == lwp_self())
-            {
-                is_lwp = 1;
-            }
+            is_lwp = 1;
+            ret = 0;
+            break;
+        }
+        if (sfd->lwp[i] == RT_NULL && empty_slot == -1)
+        {
+            empty_slot = i;
         }
     }
 
     if (is_lwp == 0)
     {
-        sfd->lwp[is_head_init] = lwp_self();
-
-        if (is_head_init == 0)
+        if (empty_slot < 0 || empty_slot >= SIGNALFD_SHART_MAX)
         {
-            rt_slist_init(&sfd->lwp[is_head_init]->signalfd_notify_head);
+            rt_mutex_release(&sfd->lock);
+            rt_set_errno(EMFILE);
+            return -EMFILE;
+        }
+
+        sfd->lwp[empty_slot] = curr_lwp;
+
+        if (rt_slist_len(&curr_lwp->signalfd_notify_head) == 0)
+        {
+            rt_slist_init(&curr_lwp->signalfd_notify_head);
         }
 
         lwp_notify = (struct rt_lwp_notify *)rt_malloc(sizeof(struct rt_lwp_notify));
@@ -251,20 +311,14 @@ static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
         {
             lwp_notify->notify = signalfd_callback;
             lwp_notify->signalfd_queue = &sfd->signalfd_queue;
-            rt_slist_append(&sfd->lwp[is_head_init]->signalfd_notify_head, &(lwp_notify->list_node));
-
-            is_head_init ++;
+            rt_slist_append(&curr_lwp->signalfd_notify_head, &(lwp_notify->list_node));
             ret = 0;
         }
         else
         {
-            rt_slist_for_each(node, &sfd->lwp[is_head_init]->signalfd_notify_head)
-            {
-                struct rt_lwp_notify *n = rt_slist_entry(node, struct rt_lwp_notify, list_node);
-                rt_slist_remove(&sfd->lwp[is_head_init]->signalfd_notify_head, &n->list_node);
-                rt_free(n);
-            }
+            sfd->lwp[empty_slot] = RT_NULL;
             rt_set_errno(ENOMEM);
+            ret = -ENOMEM;
         }
     }
 
@@ -290,7 +344,9 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
     {
         fd = fd_new();
         if (fd < 0)
+        {
             return -1;
+        }
 
         ret = fd;
         df = fd_get(fd);
@@ -306,7 +362,7 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
                     dfs_vnode_init(df->vnode, FT_REGULAR, &signalfd_fops);
                     df->vnode->data = sfd;
 
-                    for (int i = 0; i < is_head_init; i++)
+                    for (int i = 0; i < SIGNALFD_SHART_MAX; i++)
                     {
                         sfd->lwp[i] = RT_NULL;
                     }
@@ -319,8 +375,8 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
 
                     if (signalfd_add_notify(sfd) < 0)
                     {
-                        is_head_init = 0;
                         fd_release(fd);
+                        rt_free(df->vnode);
                         rt_free(sfd);
                         ret = -1;
                     }
@@ -329,9 +385,9 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
 
                     df->flags |= flags;
 
-                    #ifdef RT_USING_DFS_V2
+#ifdef RT_USING_DFS_V2
                     df->fops = &signalfd_fops;
-                    #endif
+#endif
                 }
                 else
                 {
