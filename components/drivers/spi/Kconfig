@@ -351,6 +351,10 @@ menuconfig RT_USING_SPI
             bool "Enable QSPI mode"
             default n
 
+        config RT_USING_OSPI
+            bool "Enable OSPI mode"
+            default n
+
         config RT_USING_SPI_MSD
             bool "Using SD/TF card driver with spi"
             select RT_USING_DFS
@@ -374,6 +378,11 @@ menuconfig RT_USING_SPI
                 config RT_SFUD_USING_QSPI
                 bool "Using QSPI mode support"
                 select RT_USING_QSPI
+                default n
+
+                config RT_SFUD_USING_OSPI
+                bool "Using OSPI mode support"
+                select RT_USING_OSPI
                 default n
 
                 config RT_SFUD_SPI_MAX_HZ

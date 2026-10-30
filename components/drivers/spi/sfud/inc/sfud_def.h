@@ -50,17 +50,17 @@ extern "C" {
 #endif /* SFUD_DEBUG_MODE */
 
 #ifndef SFUD_INFO
-#define SFUD_INFO(...)  sfud_log_info(__VA_ARGS__)
+#define SFUD_INFO(...) sfud_log_info(__VA_ARGS__)
 #endif
 
 /* assert for developer. */
 #ifdef SFUD_DEBUG_MODE
-#define SFUD_ASSERT(EXPR)                                                      \
-if (!(EXPR))                                                                   \
-{                                                                              \
-    SFUD_DEBUG("(%s) has assert failed at %s.", #EXPR, __FUNCTION__);          \
-    while (1);                                                                 \
-}
+#define SFUD_ASSERT(EXPR)                                                 \
+    if (!(EXPR))                                                          \
+    {                                                                     \
+        SFUD_DEBUG("(%s) has assert failed at %s.", #EXPR, __FUNCTION__); \
+        while (1);                                                        \
+    }
 #else
 #define SFUD_ASSERT(EXPR)
 #endif
@@ -72,116 +72,149 @@ if (!(EXPR))                                                                   \
  * @param retry retry counts
  * @param result SFUD_ERR_TIMEOUT: retry timeout
  */
-#define SFUD_RETRY_PROCESS(delay, retry, result)                               \
-    void (*__delay_temp)(void) = (void (*)(void))delay;                        \
-    if (retry == 0) {result = SFUD_ERR_TIMEOUT;break;}                         \
-    else {if (__delay_temp) {__delay_temp();} retry --;}
+#define SFUD_RETRY_PROCESS(delay, retry, result)        \
+    void (*__delay_temp)(void) = (void (*)(void))delay; \
+    if (retry == 0)                                     \
+    {                                                   \
+        result = SFUD_ERR_TIMEOUT;                      \
+        break;                                          \
+    }                                                   \
+    else                                                \
+    {                                                   \
+        if (__delay_temp)                               \
+        {                                               \
+            __delay_temp();                             \
+        }                                               \
+        retry--;                                        \
+    }
 
 /* software version number */
-#define SFUD_SW_VERSION                             "1.1.0"
+#define SFUD_SW_VERSION "1.1.0"
 /*
  * all defined supported command
  */
 #ifndef SFUD_CMD_WRITE_ENABLE
-#define SFUD_CMD_WRITE_ENABLE                          0x06
+#define SFUD_CMD_WRITE_ENABLE 0x06
 #endif
 
 #ifndef SFUD_CMD_WRITE_DISABLE
-#define SFUD_CMD_WRITE_DISABLE                         0x04
+#define SFUD_CMD_WRITE_DISABLE 0x04
 #endif
 
 #ifndef SFUD_CMD_READ_STATUS_REGISTER
-#define SFUD_CMD_READ_STATUS_REGISTER                  0x05
+#define SFUD_CMD_READ_STATUS_REGISTER 0x05
 #endif
 
 #ifndef SFUD_VOLATILE_SR_WRITE_ENABLE
-#define SFUD_VOLATILE_SR_WRITE_ENABLE                  0x50
+#define SFUD_VOLATILE_SR_WRITE_ENABLE 0x50
 #endif
 
 #ifndef SFUD_CMD_WRITE_STATUS_REGISTER
-#define SFUD_CMD_WRITE_STATUS_REGISTER                 0x01
+#define SFUD_CMD_WRITE_STATUS_REGISTER 0x01
 #endif
 
 #ifndef SFUD_CMD_PAGE_PROGRAM
-#define SFUD_CMD_PAGE_PROGRAM                          0x02
+#define SFUD_CMD_PAGE_PROGRAM 0x02
+#endif
+
+#ifndef SFUD_CMD_PAGE_PROGRAM_4B
+#define SFUD_CMD_PAGE_PROGRAM_4B 0x12
 #endif
 
 #ifndef SFUD_CMD_AAI_WORD_PROGRAM
-#define SFUD_CMD_AAI_WORD_PROGRAM                      0xAD
+#define SFUD_CMD_AAI_WORD_PROGRAM 0xAD
 #endif
 
 #ifndef SFUD_CMD_ERASE_CHIP
-#define SFUD_CMD_ERASE_CHIP                            0xC7
+#define SFUD_CMD_ERASE_CHIP 0xC7
+#endif
+
+#ifndef SFUD_CMD_ERASE_SECTOR_4B
+#define SFUD_CMD_ERASE_SECTOR_4B 0x21
 #endif
 
 #ifndef SFUD_CMD_READ_DATA
-#define SFUD_CMD_READ_DATA                             0x03
+#define SFUD_CMD_READ_DATA 0x03
+#endif
+
+#ifndef SFUD_CMD_READ_DATA_OSPI_STR
+#define SFUD_CMD_READ_DATA_OSPI_STR 0xEC
+#endif
+
+#ifndef SFUD_CMD_READ_DATA_OSPI_DTR
+#define SFUD_CMD_READ_DATA_OSPI_DTR 0xEE
 #endif
 
 #ifndef SFUD_CMD_DUAL_OUTPUT_READ_DATA
-#define SFUD_CMD_DUAL_OUTPUT_READ_DATA                 0x3B
+#define SFUD_CMD_DUAL_OUTPUT_READ_DATA 0x3B
 #endif
 
 #ifndef SFUD_CMD_DUAL_IO_READ_DATA
-#define SFUD_CMD_DUAL_IO_READ_DATA                     0xBB
+#define SFUD_CMD_DUAL_IO_READ_DATA 0xBB
 #endif
 
 #ifndef SFUD_CMD_QUAD_IO_READ_DATA
-#define SFUD_CMD_QUAD_IO_READ_DATA                     0xEB
+#define SFUD_CMD_QUAD_IO_READ_DATA 0xEB
 #endif
 
 #ifndef SFUD_CMD_QUAD_OUTPUT_READ_DATA
-#define SFUD_CMD_QUAD_OUTPUT_READ_DATA                 0x6B
+#define SFUD_CMD_QUAD_OUTPUT_READ_DATA 0x6B
 #endif
 
 #ifndef SFUD_CMD_MANUFACTURER_DEVICE_ID
-#define SFUD_CMD_MANUFACTURER_DEVICE_ID                0x90
+#define SFUD_CMD_MANUFACTURER_DEVICE_ID 0x90
 #endif
 
 #ifndef SFUD_CMD_JEDEC_ID
-#define SFUD_CMD_JEDEC_ID                              0x9F
+#define SFUD_CMD_JEDEC_ID 0x9F
 #endif
 
 #ifndef SFUD_CMD_READ_UNIQUE_ID
-#define SFUD_CMD_READ_UNIQUE_ID                        0x4B
+#define SFUD_CMD_READ_UNIQUE_ID 0x4B
 #endif
 
 #ifndef SFUD_CMD_READ_SFDP_REGISTER
-#define SFUD_CMD_READ_SFDP_REGISTER                    0x5A
+#define SFUD_CMD_READ_SFDP_REGISTER 0x5A
 #endif
 
 #ifndef SFUD_CMD_ENABLE_RESET
-#define SFUD_CMD_ENABLE_RESET                          0x66
+#define SFUD_CMD_ENABLE_RESET 0x66
 #endif
 
 #ifndef SFUD_CMD_RESET
-#define SFUD_CMD_RESET                                 0x99
+#define SFUD_CMD_RESET 0x99
 #endif
 
 #ifndef SFUD_CMD_ENTER_4B_ADDRESS_MODE
-#define SFUD_CMD_ENTER_4B_ADDRESS_MODE                 0xB7
+#define SFUD_CMD_ENTER_4B_ADDRESS_MODE 0xB7
 #endif
 
 #ifndef SFUD_CMD_EXIT_4B_ADDRESS_MODE
-#define SFUD_CMD_EXIT_4B_ADDRESS_MODE                  0xE9
+#define SFUD_CMD_EXIT_4B_ADDRESS_MODE 0xE9
 #endif
 
 #ifndef SFUD_WRITE_MAX_PAGE_SIZE
-#define SFUD_WRITE_MAX_PAGE_SIZE                        256
+#define SFUD_WRITE_MAX_PAGE_SIZE 256
 #endif
 
 /* send dummy data for read data */
 #ifndef SFUD_DUMMY_DATA
-#define SFUD_DUMMY_DATA                                0xFF
+#define SFUD_DUMMY_DATA 0xFF
+#endif
+
+/* default dummy cycles in OPI mode*/
+#ifndef SFUD_OSPI_6_DUMMY_CYCLES
+#define SFUD_OSPI_6_DUMMY_CYCLES 6
 #endif
 
 /* maximum number of erase type support on JESD216 (V1.0) */
-#define SFUD_SFDP_ERASE_TYPE_MAX_NUM                      4
+#define SFUD_SFDP_ERASE_TYPE_MAX_NUM 4
 
 /**
  * status register bits
  */
-enum {
+enum
+{
     SFUD_STATUS_REGISTER_BUSY = (1 << 0),                  /**< busing */
     SFUD_STATUS_REGISTER_WEL = (1 << 1),                   /**< write enable latch */
     SFUD_STATUS_REGISTER_SRP = (1 << 7),                   /**< status register protect */
@@ -190,7 +223,8 @@ enum {
 /**
  * error code
  */
-typedef enum {
+typedef enum
+{
     SFUD_SUCCESS = 0,                                      /**< success */
     SFUD_ERR_NOT_FOUND = 1,                                /**< not found or not supported */
     SFUD_ERR_WRITE = 2,                                    /**< write error */
@@ -203,7 +237,8 @@ typedef enum {
 /**
  * QSPI flash read cmd format
  */
-typedef struct {
+typedef struct
+{
     uint8_t instruction;
     uint8_t instruction_lines;
     uint8_t address_size;
@@ -214,6 +249,35 @@ typedef struct {
 } sfud_qspi_read_cmd_format;
 #endif /* SFUD_USING_QSPI */
 
+#ifdef SFUD_USING_OSPI
+/**
+ * OSPI flash read cmd format
+ */
+typedef struct
+{
+    uint16_t instruction;
+    uint8_t instruction_lines;
+    uint8_t instruction_size;
+    uint8_t address_size;
+    uint8_t address_lines;
+    uint8_t alternate_bytes_lines;
+    uint8_t dummy_cycles;
+    uint8_t dtr_mode;
+    uint8_t data_lines;
+    uint8_t dqs_mode;
+} sfud_ospi_cmd_format;
+
+/**
+ * OSPI flash mode
+ */
+typedef enum
+{
+    SFUD_OSPI_MODE_OFF = 0,
+    SFUD_OSPI_MODE_STR = 1,
+    SFUD_OSPI_MODE_DTR = 2,
+} sfud_ospi_mode_t;
+#endif /* SFUD_USING_OSPI */
+
 /* SPI bus write read data function type */
 typedef sfud_err (*spi_write_read_func)(const uint8_t *write_buf, size_t write_size, uint8_t *read_buf, size_t read_size);
 
@@ -221,7 +285,8 @@ typedef sfud_err (*spi_write_read_func)(const uint8_t *write_buf, size_t write_s
 /**
  * the SFDP (Serial Flash Discoverable Parameters) parameter info which used on this library
  */
-typedef struct {
+typedef struct
+{
     bool available;                              /**< available when read SFDP OK */
     uint8_t major_rev;                           /**< SFDP Major Revision */
     uint8_t minor_rev;                           /**< SFDP Minor Revision */
@@ -233,7 +298,8 @@ typedef struct {
     bool addr_3_byte;                            /**< supports 3-Byte addressing */
     bool addr_4_byte;                            /**< supports 4-Byte addressing */
     uint32_t capacity;                           /**< flash capacity (bytes) */
-    struct {
+    struct
+    {
         uint32_t size;                           /**< erase sector size (bytes). 0x00: not available */
         uint8_t cmd;                             /**< erase command */
     } eraser[SFUD_SFDP_ERASE_TYPE_MAX_NUM];      /**< supported eraser types table */
@@ -244,7 +310,8 @@ typedef struct {
 /**
  * SPI device
  */
-typedef struct __sfud_spi {
+typedef struct __sfud_spi
+{
     /* SPI device name */
     char *name;
     /* SPI bus write read data function */
@@ -254,6 +321,13 @@ typedef struct __sfud_spi {
     /* QSPI fast read function */
     sfud_err (*qspi_read)(const struct __sfud_spi *spi, uint32_t addr, sfud_qspi_read_cmd_format *qspi_read_cmd_format,
                           uint8_t *read_buf, size_t read_size);
+#endif
+#ifdef SFUD_USING_OSPI
+    /* OSPI write or read function */
+    sfud_err (*ospi_write_read)(const struct __sfud_spi *spi, uint32_t addr, sfud_ospi_cmd_format *ospi_cmd_format,
+                                const uint8_t *send_buf, size_t send_size, uint8_t *read_buf, size_t read_size);
+    /* get OSPI mode function */
+    sfud_ospi_mode_t (*get_ospi_mode)(const struct __sfud_spi *spi);
 #endif
     /* lock SPI bus */
     void (*lock)(const struct __sfud_spi *spi);
@@ -266,14 +340,16 @@ typedef struct __sfud_spi {
 /**
  * serial flash device
  */
-typedef struct {
+typedef struct
+{
     char *name;                                  /**< serial flash name */
     size_t index;                                /**< index of flash device information table  @see flash_table */
     sfud_flash_chip chip;                        /**< flash chip information */
     sfud_spi spi;                                /**< SPI device */
     bool init_ok;                                /**< initialize OK flag */
     bool addr_in_4_byte;                         /**< flash is in 4-Byte addressing */
-    struct {
+    struct
+    {
         void (*delay)(void);                     /**< every retry's delay */
         size_t times;                            /**< default times for error retry */
     } retry;
@@ -281,6 +357,10 @@ typedef struct {
 
 #ifdef SFUD_USING_QSPI
     sfud_qspi_read_cmd_format read_cmd_format;   /**< fast read cmd format */
+#endif
+
+#ifdef SFUD_USING_OSPI
+    sfud_ospi_cmd_format ospi_cmd_format;        /**< ospi cmd format */
 #endif
 
 #ifdef SFUD_USING_SFDP
