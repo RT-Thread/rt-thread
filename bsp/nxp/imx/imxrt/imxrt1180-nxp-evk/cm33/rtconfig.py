@@ -33,7 +33,7 @@ BUILD = 'debug'
 # BUILD = 'release'
 
 # Read linker script selection from rtconfig.h (set by Kconfig BSP_LINKER_SCRIPT_* choice).
-# Supported types: RAM, FLEXSPI_NOR, FLEXSPI_NOR_HYPERRAM
+# Supported types: RAM, FLEXSPI_NOR, FLEXSPI_NOR_HYPERRAM, RAM_INDUSTRY
 # Default to RAM when no match is found.
 _LINKER_SCRIPT_TYPE = 'RAM'
 _rtconfig_h = os.path.join(os.path.dirname(__file__), 'rtconfig.h')
@@ -50,6 +50,9 @@ if os.path.exists(_rtconfig_h):
             if _s.startswith('#define BSP_LINKER_SCRIPT_FLEXSPI_NOR'):
                 _LINKER_SCRIPT_TYPE = 'FLEXSPI_NOR'
                 break
+            if _s.startswith('#define BSP_LINKER_SCRIPT_RAM_INDUSTRY'):
+                _LINKER_SCRIPT_TYPE = 'RAM_INDUSTRY'
+                break
             if _s.startswith('#define BSP_LINKER_SCRIPT_RAM'):
                 _LINKER_SCRIPT_TYPE = 'RAM'
                 break
@@ -59,6 +62,7 @@ _LINKER_SCRIPT_BASE = {
     'RAM':                  'MIMXRT1189xxxxx_cm33_ram',
     'FLEXSPI_NOR':          'MIMXRT1189xxxxx_cm33_flexspi_nor',
     'FLEXSPI_NOR_HYPERRAM': 'MIMXRT1189xxxxx_cm33_flexspi_nor_hyperram',
+    'RAM_INDUSTRY':         'MIMXRT1189xxxxx_cm33_ram_industry',
 }[_LINKER_SCRIPT_TYPE]
 
 
@@ -234,6 +238,7 @@ _LINKER_SCRIPT_TO_KEIL_TARGET = {
     'RAM':                  'rtthread_ram',
     'FLEXSPI_NOR':          'rtthread_flexspi_nor',
     'FLEXSPI_NOR_HYPERRAM': 'rtthread_flexspi_nor_hyperram',
+    'RAM_INDUSTRY':         'rtthread_ram_industry',
 }
 
 def update_keil_active_target(uvoptx_path='project.uvoptx'):
