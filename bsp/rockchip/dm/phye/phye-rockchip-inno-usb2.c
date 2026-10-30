@@ -11,9 +11,6 @@
 #include <rtdevice.h>
 #include <rtthread.h>
 
-#include <drivers/clk.h>
-#include <drivers/syscon.h>
-
 #define DBG_TAG "phye.rockchip.inno-usb2"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>

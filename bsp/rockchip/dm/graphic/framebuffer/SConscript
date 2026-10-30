@@ -24,7 +24,7 @@ if GetDepend(['RT_GRAPHIC_CONNECTOR_DSI2']):
     src += ['dsi2-rockchip.c']
 
 if GetDepend(['RT_GRAPHIC_CONNECTOR_HDMI']):
-    src += ['hdmi-rockchip.c']
+    src += ['hdmi-rockchip.c', 'hdmi-rk3588.c']
 
 if GetDepend(['RT_GRAPHIC_PANEL_SIMPLE']):
     src += ['panel-simple.c']

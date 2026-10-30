@@ -55,6 +55,9 @@
 #define I2S_DMACR_TDL(x)    ((x) << 0)
 #define I2S_DMACR_TDL_MASK  (0x1f << 0)
 
+#define I2S_INTCR_TXUIC     RT_BIT(2)
+#define I2S_INTSR_TXUI      RT_BIT(1)
+
 #define I2S_XFER_TXS_START  (1 << 0)
 #define I2S_XFER_TXS_STOP   (0 << 0)
 #define I2S_XFER_TXS_MASK   (1 << 0)
@@ -81,6 +84,7 @@ struct rockchip_i2s_config
 
 struct rockchip_i2s_tdm;
 
+#ifdef RT_AUDIO_ROCKCHIP_I2S_TDM
 rt_err_t rockchip_i2s_tdm_hw_params(struct rockchip_i2s_tdm *i2s,
         const struct rockchip_i2s_config *cfg);
 rt_err_t rockchip_i2s_tdm_start(struct rockchip_i2s_tdm *i2s);
@@ -88,12 +92,62 @@ rt_err_t rockchip_i2s_tdm_stop(struct rockchip_i2s_tdm *i2s);
 rt_ssize_t rockchip_i2s_tdm_push(struct rockchip_i2s_tdm *i2s,
         const rt_uint8_t *buf, rt_size_t size);
 struct rockchip_i2s_tdm *rockchip_i2s_tdm_find(struct rt_ofw_node *np);
+#else
+rt_inline rt_err_t rockchip_i2s_tdm_hw_params(struct rockchip_i2s_tdm *i2s,
+        const struct rockchip_i2s_config *cfg)
+{
+    return -RT_ENOSYS;
+}
+rt_inline rt_err_t rockchip_i2s_tdm_start(struct rockchip_i2s_tdm *i2s)
+{
+    return -RT_ENOSYS;
+}
+rt_inline rt_err_t rockchip_i2s_tdm_stop(struct rockchip_i2s_tdm *i2s)
+{
+    return -RT_ENOSYS;
+}
+rt_inline rt_ssize_t rockchip_i2s_tdm_push(struct rockchip_i2s_tdm *i2s,
+        const rt_uint8_t *buf, rt_size_t size)
+{
+    return -RT_ENOSYS;
+}
+rt_inline struct rockchip_i2s_tdm *rockchip_i2s_tdm_find(struct rt_ofw_node *np)
+{
+    return RT_NULL;
+}
+#endif
 
-#ifdef RT_USING_DMA
+#if defined(RT_USING_DMA) && defined(RT_AUDIO_ROCKCHIP_I2S_TDM)
 struct rt_dma_chan *rockchip_i2s_tdm_get_dma_tx(struct rockchip_i2s_tdm *i2s);
 rt_ubase_t rockchip_i2s_tdm_txdr_phys(struct rockchip_i2s_tdm *i2s);
 rt_err_t rockchip_i2s_tdm_dma_enable(struct rockchip_i2s_tdm *i2s);
 rt_err_t rockchip_i2s_tdm_dma_disable(struct rockchip_i2s_tdm *i2s);
+void rockchip_i2s_tdm_dma_check_underrun(struct rockchip_i2s_tdm *i2s);
+rt_uint32_t rockchip_i2s_tdm_dma_underruns(struct rockchip_i2s_tdm *i2s);
+#else
+rt_inline struct rt_dma_chan *rockchip_i2s_tdm_get_dma_tx(struct rockchip_i2s_tdm *i2s)
+{
+    return RT_NULL;
+}
+rt_inline rt_ubase_t rockchip_i2s_tdm_txdr_phys(struct rockchip_i2s_tdm *i2s)
+{
+    return 0;
+}
+rt_inline rt_err_t rockchip_i2s_tdm_dma_enable(struct rockchip_i2s_tdm *i2s)
+{
+    return -RT_ENOSYS;
+}
+rt_inline rt_err_t rockchip_i2s_tdm_dma_disable(struct rockchip_i2s_tdm *i2s)
+{
+    return -RT_ENOSYS;
+}
+rt_inline void rockchip_i2s_tdm_dma_check_underrun(struct rockchip_i2s_tdm *i2s)
+{
+}
+rt_inline rt_uint32_t rockchip_i2s_tdm_dma_underruns(struct rockchip_i2s_tdm *i2s)
+{
+    return 0;
+}
 #endif
 
 #endif /* __ROCKCHIP_I2S_TDM_H__ */
