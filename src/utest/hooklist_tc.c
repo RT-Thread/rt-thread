@@ -89,7 +89,7 @@ static rt_err_t cleanup_thr_tobe_inited(void)
         while (thr_tobe_inited_cleaned == RT_FALSE && timeout > 0)
         {
             rt_thread_mdelay(1);
-            timeout --;
+            timeout--;
         }
 
         if (thr_tobe_inited_cleaned == RT_FALSE)

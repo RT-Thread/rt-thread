@@ -64,12 +64,12 @@
  * Stressful Test for Mutex
  */
 
-#define TEST_SECONDS 30
-#define TEST_LOOP_TICKS (TEST_SECONDS * RT_TICK_PER_SECOND)
-#define TEST_THREAD_COUNTS (RT_CPUS_NR)
-#define TEST_PROGRESS_COUNTS (36)
-#define TEST_PROGRESS_ON (TEST_LOOP_TICKS/TEST_PROGRESS_COUNTS)
-#define TEST_PRIORITY_HIGHEST (UTEST_THR_PRIORITY+1)
+#define TEST_SECONDS            30
+#define TEST_LOOP_TICKS         (TEST_SECONDS * RT_TICK_PER_SECOND)
+#define TEST_THREAD_COUNTS      (RT_CPUS_NR)
+#define TEST_PROGRESS_COUNTS    (36)
+#define TEST_PROGRESS_ON        (TEST_LOOP_TICKS / TEST_PROGRESS_COUNTS)
+#define TEST_PRIORITY_HIGHEST   (UTEST_THR_PRIORITY + 1)
 #define TEST_RANDOM_LATENCY_MAX (1000 * 1000)
 
 static struct rt_semaphore _thr_exit_sem;
@@ -117,7 +117,9 @@ static void mutex_stress_tc(void)
         rt_thread_delay(1);
 
         if (rt_atomic_add(&_progress_counter, 1) % TEST_PROGRESS_ON == 0)
+        {
             uassert_true(1);
+        }
     }
 
     /* trigger exit request for all sub-threads */

@@ -43,12 +43,12 @@
 #include "rtatomic.h"
 #include <rthw.h>
 
-#define THREAD_PRIORITY         25
-#define THREAD_TIMESLICE        1
-#define THREAD_STACKSIZE        UTEST_THR_STACK_SIZE
+#define THREAD_PRIORITY  25
+#define THREAD_TIMESLICE 1
+#define THREAD_STACKSIZE UTEST_THR_STACK_SIZE
 
 /* convenience macro - return either 64-bit or 32-bit value */
-#define ATOMIC_WORD(val_if_64, val_if_32)                                           \
+#define ATOMIC_WORD(val_if_64, val_if_32) \
     ((rt_atomic_t)((sizeof(void *) == sizeof(uint64_t)) ? (val_if_64) : (val_if_32)))
 
 static rt_atomic_t count = 0;

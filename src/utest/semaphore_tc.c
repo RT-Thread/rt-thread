@@ -124,11 +124,15 @@ static void test_static_semaphore_take(void)
         /* first take */
         result = rt_sem_take(&static_semaphore, RT_WAITING_FOREVER);
         if (RT_EOK != result)
+        {
             uassert_true(RT_FALSE);
+        }
         /* second take */
         result = rt_sem_take(&static_semaphore, 100);
         if (-RT_ETIMEOUT != result)
+        {
             uassert_true(RT_FALSE);
+        }
     }
     else
     {
@@ -150,11 +154,15 @@ static void test_static_semaphore_trytake(void)
         /* first take */
         result = rt_sem_trytake(&static_semaphore);
         if (RT_EOK != result)
+        {
             uassert_true(RT_FALSE);
+        }
         /* second take */
         result = rt_sem_trytake(&static_semaphore);
         if (-RT_ETIMEOUT != result)
+        {
             uassert_true(RT_FALSE);
+        }
     }
     else
     {
@@ -176,17 +184,23 @@ static void test_static_semaphore_release(void)
         /* first take */
         result = rt_sem_take(&static_semaphore, 100);
         if (-RT_ETIMEOUT != result)
+        {
             uassert_true(RT_FALSE);
+        }
 
         /* release */
         result = rt_sem_release(&static_semaphore);
         if (RT_EOK != result)
+        {
             uassert_true(RT_FALSE);
+        }
 
         /* second take */
         result = rt_sem_take(&static_semaphore, RT_WAITING_FOREVER);
         if (RT_EOK != result)
+        {
             uassert_true(RT_FALSE);
+        }
     }
     else
     {
@@ -273,9 +287,13 @@ static void test_static_semaphore_release_isr(void)
                                      RT_TIMER_FLAG_SOFT_TIMER | RT_TIMER_FLAG_ONE_SHOT);
     /* start tiemr */
     if (hardware_timer)
+    {
         rt_timer_start(hardware_timer);
+    }
     if (software_timer)
+    {
         rt_timer_start(software_timer);
+    }
 
     result = rt_sem_init(&static_semaphore, "static_sem", 0, RT_IPC_FLAG_PRIO);
     if (RT_EOK == result)
@@ -373,11 +391,15 @@ static void test_dynamic_semaphore_take(void)
         /* first take */
         result = rt_sem_take(dynamic_semaphore, RT_WAITING_FOREVER);
         if (RT_EOK != result)
+        {
             uassert_true(RT_FALSE);
+        }
         /* second take */
         result = rt_sem_take(dynamic_semaphore, 100);
         if (-RT_ETIMEOUT != result)
+        {
             uassert_true(RT_FALSE);
+        }
     }
     else
     {
@@ -399,11 +421,15 @@ static void test_dynamic_semaphore_trytake(void)
         /* first take */
         result = rt_sem_trytake(dynamic_semaphore);
         if (RT_EOK != result)
+        {
             uassert_true(RT_FALSE);
+        }
         /* second take */
         result = rt_sem_trytake(dynamic_semaphore);
         if (-RT_ETIMEOUT != result)
+        {
             uassert_true(RT_FALSE);
+        }
     }
     else
     {
@@ -425,17 +451,23 @@ static void test_dynamic_semaphore_release(void)
         /* first take */
         result = rt_sem_take(dynamic_semaphore, 100);
         if (-RT_ETIMEOUT != result)
+        {
             uassert_true(RT_FALSE);
+        }
 
         /* release */
         result = rt_sem_release(dynamic_semaphore);
         if (RT_EOK != result)
+        {
             uassert_true(RT_FALSE);
+        }
 
         /* second take */
         result = rt_sem_take(dynamic_semaphore, RT_WAITING_FOREVER);
         if (RT_EOK != result)
+        {
             uassert_true(RT_FALSE);
+        }
     }
     else
     {
@@ -522,9 +554,13 @@ static void test_dynamic_semaphore_release_isr(void)
                                      RT_TIMER_FLAG_SOFT_TIMER | RT_TIMER_FLAG_ONE_SHOT);
     /* start tiemr */
     if (hardware_timer)
+    {
         rt_timer_start(hardware_timer);
+    }
     if (software_timer)
+    {
         rt_timer_start(software_timer);
+    }
 
     dynamic_semaphore = rt_sem_create("static_sem", 0, RT_IPC_FLAG_PRIO);
     if (RT_NULL != dynamic_semaphore)

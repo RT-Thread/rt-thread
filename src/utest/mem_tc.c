@@ -90,30 +90,29 @@
 
 struct rt_small_mem_item
 {
-    rt_ubase_t              pool_ptr;         /**< small memory object addr */
-    rt_size_t               next;             /**< next free item */
-    rt_size_t               prev;             /**< prev free item */
+    rt_ubase_t pool_ptr; /**< small memory object addr */
+    rt_size_t next;      /**< next free item */
+    rt_size_t prev;      /**< prev free item */
 #ifdef RT_USING_MEMTRACE
 #ifdef ARCH_CPU_64BIT
-    rt_uint8_t              thread[8];       /**< thread name */
+    rt_uint8_t thread[8]; /**< thread name */
 #else
-    rt_uint8_t              thread[4];       /**< thread name */
+    rt_uint8_t thread[4]; /**< thread name */
 #endif /* ARCH_CPU_64BIT */
 #endif /* RT_USING_MEMTRACE */
 };
 
 struct rt_small_mem
 {
-    struct rt_memory            parent;                 /**< inherit from rt_memory */
-    rt_uint8_t                 *heap_ptr;               /**< pointer to the heap */
-    struct rt_small_mem_item   *heap_end;
-    struct rt_small_mem_item   *lfree;
-    rt_size_t                   mem_size_aligned;       /**< aligned memory size */
+    struct rt_memory parent; /**< inherit from rt_memory */
+    rt_uint8_t *heap_ptr;    /**< pointer to the heap */
+    struct rt_small_mem_item *heap_end;
+    struct rt_small_mem_item *lfree;
+    rt_size_t mem_size_aligned; /**< aligned memory size */
 };
 
-#define MEM_SIZE(_heap, _mem)      \
-    (((struct rt_small_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - \
-    (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE))
+#define MEM_SIZE(_heap, _mem) \
+    (((struct rt_small_mem_item *)(_mem))->next - ((rt_ubase_t)(_mem) - (rt_ubase_t)((_heap)->heap_ptr)) - RT_ALIGN(sizeof(struct rt_small_mem_item), RT_ALIGN_SIZE))
 
 #define TEST_MEM_SIZE 1024
 
@@ -143,7 +142,9 @@ static int _mem_cmp(void *ptr, rt_uint8_t v, rt_size_t size)
     while (size-- != 0)
     {
         if (*(rt_uint8_t *)ptr != v)
+        {
             return *(rt_uint8_t *)ptr - v;
+        }
     }
     return 0;
 }
@@ -371,8 +372,8 @@ struct mem_alloc_head
     rt_tick_t interval;
 };
 
-#define MEM_RANG_ALLOC_BLK_MIN  2
-#define MEM_RANG_ALLOC_BLK_MAX  5
+#define MEM_RANG_ALLOC_BLK_MIN   2
+#define MEM_RANG_ALLOC_BLK_MAX   5
 #define MEM_RANG_ALLOC_TEST_TIME 5
 
 static void mem_alloc_test(void)
@@ -393,7 +394,7 @@ static void mem_alloc_test(void)
     uassert_not_null(buf);
     uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
     rt_memset(buf, 0xAA, TEST_MEM_SIZE);
-    heap =  (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
+    heap = (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
     total_size = max_block(heap);
     uassert_int_not_equal(total_size, 0);
     /* test run */
@@ -430,7 +431,7 @@ static void mem_alloc_test(void)
                     }
                     rt_memset(ctx, 0xAA, ctx->size);
                     rt_smem_free(ctx);
-                    head.count --;
+                    head.count--;
                 }
                 continue;
             }
@@ -464,7 +465,7 @@ static void mem_alloc_test(void)
                 }
                 rt_memset(ctx, 0xAA, ctx->size);
                 rt_smem_free(ctx);
-                head.count --;
+                head.count--;
             }
         }
     }
@@ -481,7 +482,7 @@ static void mem_alloc_test(void)
         }
         rt_memset(ctx, 0xAA, ctx->size);
         rt_smem_free(ctx);
-        head.count --;
+        head.count--;
     }
     uassert_int_equal(head.count, 0);
     uassert_int_equal(max_block(heap), total_size);
@@ -491,8 +492,8 @@ static void mem_alloc_test(void)
     rt_free(buf);
 }
 
-#define MEM_RANG_REALLOC_BLK_MIN  0
-#define MEM_RANG_REALLOC_BLK_MAX  5
+#define MEM_RANG_REALLOC_BLK_MIN   0
+#define MEM_RANG_REALLOC_BLK_MAX   5
 #define MEM_RANG_REALLOC_TEST_TIME 5
 
 struct mem_realloc_context
@@ -531,7 +532,7 @@ static void mem_realloc_test(void)
     uassert_not_null(buf);
     uassert_int_equal(RT_ALIGN((rt_ubase_t)buf, RT_ALIGN_SIZE), (rt_ubase_t)buf);
     rt_memset(buf, 0xAA, TEST_MEM_SIZE);
-    heap =  (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
+    heap = (struct rt_small_mem *)rt_smem_init("mem_tc", buf, TEST_MEM_SIZE);
     total_size = max_block(heap);
     uassert_int_not_equal(total_size, 0);
     /* init ctx tab */
