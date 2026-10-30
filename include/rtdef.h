@@ -1316,26 +1316,40 @@ enum rt_device_class_type
 #define RT_DEVICE_OFLAG_MASK            0xf0f           /**< mask of open flag */
 
 /**
- * general device commands
+ * device control base command
+ */
+#define RT_DEVICE_CTRL_BASE(Type)        ((RT_Device_Class_##Type + 1) * 0x100)
+#define RT_DEVICE_CTRL_CLASS_MASK     0xff00   /* High byte: class */
+#define RT_DEVICE_CTRL_INDEX_MASK     0x00ff   /* Low byte: index within class */
+
+/**
+ * device control commands
+ *
+ * Layout (BASE(Type) = (RT_Device_Class_##Type + 1) * 0x100):
+ *   high byte : class id          (RT_DEVICE_CTRL_CLASS_MASK = 0xff00)
+ *   low  byte : index within class (RT_DEVICE_CTRL_INDEX_MASK = 0x00ff)
+ *
+ * The general-purpose commands below live in the Unknown class
+ * (Class_Unknown is the last entry in rt_device_class_t, so
+ * BASE(Unknown) = 0x2000), giving RESUME = 0x2001 .. CONSOLE_OFLAG = 0x2009.
+ * Class-specific commands should use BASE(Char), BASE(Block), ... instead
+ * of reusing these indices.
  * 0x01 - 0x1F general device control commands
  * 0x20 - 0x3F udevice control commands
  * 0x40 -      special device control commands
  */
-#define RT_DEVICE_CTRL_RESUME           0x01            /**< resume device */
-#define RT_DEVICE_CTRL_SUSPEND          0x02            /**< suspend device */
-#define RT_DEVICE_CTRL_CONFIG           0x03            /**< configure device */
-#define RT_DEVICE_CTRL_CLOSE            0x04            /**< close device */
-#define RT_DEVICE_CTRL_NOTIFY_SET       0x05            /**< set notify func */
-#define RT_DEVICE_CTRL_SET_INT          0x06            /**< set interrupt */
-#define RT_DEVICE_CTRL_CLR_INT          0x07            /**< clear interrupt */
-#define RT_DEVICE_CTRL_GET_INT          0x08            /**< get interrupt status */
-#define RT_DEVICE_CTRL_CONSOLE_OFLAG    0x09            /**< get console open flag */
-#define RT_DEVICE_CTRL_MASK             0x1f            /**< mask for contrl commands */
-
-/**
- * device control
- */
-#define RT_DEVICE_CTRL_BASE(Type)        ((RT_Device_Class_##Type + 1) * 0x100)
+typedef enum
+{
+    RT_DEVICE_CTRL_RESUME = RT_DEVICE_CTRL_BASE(Unknown) + 1,       /**< resume device */
+    RT_DEVICE_CTRL_SUSPEND,                                         /**< suspend device */
+    RT_DEVICE_CTRL_CONFIG,                                          /**< configure device */
+    RT_DEVICE_CTRL_CLOSE,                                           /**< close device */
+    RT_DEVICE_CTRL_NOTIFY_SET,                                      /**< set notify func */
+    RT_DEVICE_CTRL_SET_INT,                                         /**< set interrupt */
+    RT_DEVICE_CTRL_CLR_INT,                                         /**< clear interrupt */
+    RT_DEVICE_CTRL_GET_INT,                                         /**< get interrupt status */
+    RT_DEVICE_CTRL_CONSOLE_OFLAG,                                   /**< get console open flag */
+} rt_device_cmd_t;
 
 typedef struct rt_driver *rt_driver_t;
 typedef struct rt_device *rt_device_t;
