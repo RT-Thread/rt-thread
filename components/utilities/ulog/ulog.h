@@ -40,10 +40,37 @@ void ulog_deinit(void);
  * LOG_D("this is a debug log!");
  * LOG_E("this is a error log!");
  */
-#define LOG_E(...)                      ulog_e(LOG_TAG, __VA_ARGS__)
-#define LOG_W(...)                      ulog_w(LOG_TAG, __VA_ARGS__)
-#define LOG_I(...)                      ulog_i(LOG_TAG, __VA_ARGS__)
-#define LOG_D(...)                      ulog_d(LOG_TAG, __VA_ARGS__)
+/*
+ * Whether to output the calling context (file name / function name / line number)
+ * in the LOG_X API. These three macros can be enabled independently, and the
+ * corresponding context information will be prepended to the log message, e.g.
+ *
+ *   [main.c:42] app_entry(): this is a debug log!
+ *
+ * They are disabled by default to keep the output unchanged.
+ */
+#ifdef ULOG_USING_OUTPUT_FILE
+#define ULOG_FILE_INFO __FILE__
+#else
+#define ULOG_FILE_INFO RT_NULL
+#endif
+
+#ifdef ULOG_USING_OUTPUT_FUNC
+#define ULOG_FUNC_INFO __FUNCTION__
+#else
+#define ULOG_FUNC_INFO RT_NULL
+#endif
+
+#ifdef ULOG_USING_OUTPUT_LINE
+#define ULOG_LINE_INFO __LINE__
+#else
+#define ULOG_LINE_INFO 0
+#endif
+
+#define LOG_E(...)                      ulog_output_ctx(LOG_LVL_ERROR, LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, RT_TRUE, __VA_ARGS__)
+#define LOG_W(...)                      ulog_output_ctx(LOG_LVL_WARNING, LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, RT_TRUE, __VA_ARGS__)
+#define LOG_I(...)                      ulog_output_ctx(LOG_LVL_INFO, LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, RT_TRUE, __VA_ARGS__)
+#define LOG_D(...)                      ulog_output_ctx(LOG_LVL_DBG, LOG_TAG, ULOG_FILE_INFO, ULOG_FUNC_INFO, ULOG_LINE_INFO, RT_TRUE, __VA_ARGS__)
 #define LOG_RAW(...)                    ulog_raw(__VA_ARGS__)
 #define LOG_HEX(name, width, buf, size) ulog_hex(name, width, buf, size)
 
@@ -95,6 +122,7 @@ void ulog_hexdump(const char *tag, rt_size_t width, const rt_uint8_t *buf, rt_si
 void ulog_voutput(rt_uint32_t level, const char *tag, rt_bool_t newline, const rt_uint8_t *hex_buf,
      rt_size_t hex_size, rt_size_t hex_width, rt_base_t hex_addr, const char *format, va_list args);
 void ulog_output(rt_uint32_t level, const char *tag, rt_bool_t newline, const char *format, ...);
+void ulog_output_ctx(rt_uint32_t level, const char *tag, const char *file, const char *func, rt_int32_t line, rt_bool_t newline, const char *format, ...);
 void ulog_raw(const char *format, ...);
 
 #ifdef __cplusplus

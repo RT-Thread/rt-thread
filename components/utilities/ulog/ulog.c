@@ -818,6 +818,65 @@ void ulog_output(rt_uint32_t level, const char *tag, rt_bool_t newline, const ch
 }
 
 /**
+ * output the log with calling context (file name / function name / line number)
+ *
+ * @param level level
+ * @param tag tag
+ * @param file file name, can be RT_NULL
+ * @param func function name, can be RT_NULL
+ * @param line line number, 0 means not enabled
+ * @param newline has newline
+ * @param format output format
+ * @param ... args
+ */
+void ulog_output_ctx(rt_uint32_t level, const char *tag, const char *file, const char *func, rt_int32_t line,
+                     rt_bool_t newline, const char *format, ...)
+{
+    va_list args;
+    char ctx_buf[ULOG_LINE_BUF_SIZE];
+    char fmt[ULOG_LINE_BUF_SIZE];
+    rt_size_t pos = 0;
+    int n;
+
+    RT_ASSERT(tag);
+    RT_ASSERT(format);
+
+    /* build the context prefix, e.g. "main.c:42 app_entry()" */
+    if (file)
+    {
+        n = rt_snprintf(ctx_buf + pos, sizeof(ctx_buf) - pos, "%s", file);
+        pos += (n > 0 && n < (int)(sizeof(ctx_buf) - pos)) ? n : (sizeof(ctx_buf) - pos - 1);
+    }
+    if (line > 0)
+    {
+        n = rt_snprintf(ctx_buf + pos, sizeof(ctx_buf) - pos, ":%d", line);
+        pos += (n > 0 && n < (int)(sizeof(ctx_buf) - pos)) ? n : (sizeof(ctx_buf) - pos - 1);
+    }
+    if (func)
+    {
+        n = rt_snprintf(ctx_buf + pos, sizeof(ctx_buf) - pos, " %s()", func);
+        pos += (n > 0 && n < (int)(sizeof(ctx_buf) - pos)) ? n : (sizeof(ctx_buf) - pos - 1);
+    }
+
+    /* combine the context prefix with the user format */
+    if (pos > 0)
+    {
+        rt_snprintf(fmt, sizeof(fmt), "[%s] %s", ctx_buf, format);
+    }
+    else
+    {
+        rt_snprintf(fmt, sizeof(fmt), "%s", format);
+    }
+
+    /* args point to the first variable parameter */
+    va_start(args, format);
+
+    ulog_voutput(level, tag, newline, RT_NULL, 0, 0, 0, fmt, args);
+
+    va_end(args);
+}
+
+/**
  * output RAW string format log
  *
  * @param format output format

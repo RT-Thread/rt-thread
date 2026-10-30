@@ -95,6 +95,24 @@ menuconfig RT_USING_ULOG
             bool "Enable assert check."
             default y
 
+        config ULOG_USING_OUTPUT_FILE
+            bool "Output the calling file name."
+            default n
+            help
+                The calling file name will be prepended to the log message when using LOG_X API.
+
+        config ULOG_USING_OUTPUT_FUNC
+            bool "Output the calling function name."
+            default n
+            help
+                The calling function name will be prepended to the log message when using LOG_X API.
+
+        config ULOG_USING_OUTPUT_LINE
+            bool "Output the calling line number."
+            default n
+            help
+                The calling line number will be prepended to the log message when using LOG_X API.
+
         config ULOG_LINE_BUF_SIZE
             int "The log's max width."
             default 128
