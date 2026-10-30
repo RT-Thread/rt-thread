@@ -826,6 +826,14 @@ choice
         help
             Link the image to XIP from external NOR flash and use HyperRAM
             as additional RAM.
+
+    config BSP_LINKER_SCRIPT_RAM_INDUSTRY
+        bool "RAM - Industrial Ethernet (256KB TCM + 128KB OCRAM2 + 32KB shared memory)"
+        help
+            Link the image to run from 256KB TCM for industrial Ethernet
+            development. CM33 uses 128KB OCRAM2 exclusively and shares 32KB
+            OCRAM2 with CM7. The ARMCLANG scatter file (.scf) and the IAR
+            linker configuration file (.icf) are provided.
 endchoice
 
 endmenu

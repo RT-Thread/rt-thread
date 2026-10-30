@@ -837,6 +837,15 @@ choice
         help
             Link the image to XIP from external NOR flash and use HyperRAM
             as additional RAM.
+
+    config BSP_LINKER_SCRIPT_FLEXSPI_NOR_INDUSTRY
+        bool "FlexSPI NOR Flash - Industrial Ethernet (XIP + 512KB OCRAM1 + 96KB OCRAM2 + 32KB shared memory)"
+        help
+            Link the image to XIP from external NOR flash for industrial
+            Ethernet development. CM7 uses the whole OCRAM1, 96KB OCRAM2
+            exclusively and shares 32KB OCRAM2 with CM33. The ARMCLANG
+            scatter file (.scf) and the IAR linker configuration file (.icf)
+            are provided.
 endchoice
 
 endmenu
