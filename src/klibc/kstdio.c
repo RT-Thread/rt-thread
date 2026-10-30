@@ -51,7 +51,18 @@ RTM_EXPORT(rt_snprintf);
  */
 int rt_vsprintf(char *buf, const char *format, va_list arg_ptr)
 {
+#ifdef RT_KLIBC_USING_LIBC_VSNPRINTF
+    /*
+     * rt_vsnprintf() delegates to libc here. Passing (size_t)-1 to it is not
+     * safe: libc computes the end of the buffer as buf + size, which overflows
+     * on 64-bit targets, and the call then fails without writing anything
+     * (rt_sprintf() returned -1 and left the buffer untouched). libc has
+     * vsprintf() for exactly this case.
+     */
+    return vsprintf(buf, format, arg_ptr);
+#else
     return rt_vsnprintf(buf, (size_t) - 1, format, arg_ptr);
+#endif
 }
 RTM_EXPORT(rt_vsprintf);
 
