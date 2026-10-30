@@ -874,12 +874,76 @@ static void system_node_init_flag(struct rt_ofw_node *np)
     }
 }
 
+#ifdef RT_USING_DEBUG
+static int fdt_check_depth_limit(void *fdt)
+{ 
+    int root_off = fdt_path_offset(fdt, "/");
+   
+    if (root_off < 0)
+        return -1;
+
+    int max_depth = 0;
+    int depth = 0;
+    int node = root_off;
+    int path[OFW_NODE_MAX_DEPTH]; 
+
+    while (1) 
+    {
+        if (depth > max_depth)
+            max_depth = depth;
+     
+     	if (max_depth >= OFW_NODE_MAX_DEPTH)
+            return max_depth;
+
+        int child = fdt_first_subnode(fdt, node);
+     
+     	if (child >= 0) 
+        {
+            path[depth] = node;
+            node = child;
+            depth++;
+            
+            continue;
+        }
+
+        while (1) 
+        {
+            int sibling = fdt_next_subnode(fdt, node);
+            
+            if (sibling >= 0) 
+            {
+                node = sibling;
+                break;
+            }
+            
+            if (depth == 0)
+                return max_depth;
+            
+            depth--;
+            node = path[depth];
+        }
+    }
+}
+#endif
+
 rt_err_t rt_fdt_unflatten(void)
 {
     rt_err_t err = RT_EOK;
 
     if (_fdt)
     {
+#ifdef RT_USING_DEBUG
+        int max_depth = fdt_check_depth_limit(_fdt);
+        
+    	if (max_depth < 0 || max_depth >= OFW_NODE_MAX_DEPTH)
+        {
+            LOG_E("DTB node depth exceeds limit %d, refuse to unflatten",
+                OFW_NODE_MAX_DEPTH - 1);
+	   
+            while(1);
+        }
+#endif
+
         _phandle_min = OFW_PHANDLE_MAX;
         _phandle_max = OFW_PHANDLE_MIN;
 
