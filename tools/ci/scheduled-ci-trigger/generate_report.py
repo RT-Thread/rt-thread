@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import json
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Any
 
 def load_monitoring_results() -> List[Dict[str, Any]]:
@@ -17,7 +17,7 @@ def load_monitoring_results() -> List[Dict[str, Any]]:
         return []
 
 def get_beijing_time() -> datetime:
-    return datetime.utcnow() + timedelta(hours=8)
+    return datetime.now(timezone(timedelta(hours=8)))
 
 def format_time(dt: datetime) -> str:
     return dt.strftime("%Y-%m-%d %H:%M")
@@ -45,7 +45,7 @@ def generate_report():
     if not results:
         return
 
-    failed_workflows = [r for r in results if r.get('conclusion') == 'failure']
+    failed_workflows = [r for r in results if r.get('conclusion') != 'success']
     if not failed_workflows:
         print("No failed workflows to report")
         return
@@ -55,15 +55,15 @@ def generate_report():
 
     # 时间范围
     created_times = [
-        datetime.fromisoformat(r["created_at"].replace("Z", "+00:00")) + timedelta(hours=8)
-        for r in failed_workflows
+        datetime.fromisoformat(r["created_at"].replace("Z", "+00:00")).astimezone(now.tzinfo)
+        for r in failed_workflows if r.get("created_at")
     ]
     updated_times = [
-        datetime.fromisoformat(r["updated_at"].replace("Z", "+00:00")) + timedelta(hours=8)
-        for r in failed_workflows
+        datetime.fromisoformat(r["updated_at"].replace("Z", "+00:00")).astimezone(now.tzinfo)
+        for r in failed_workflows if r.get("updated_at")
     ]
-    start_time = min(created_times)
-    end_time = max(updated_times)
+    start_time = min(created_times, default=now)
+    end_time = max(updated_times, default=now)
 
     total = len(results)
     failed_count = len(failed_workflows)
@@ -91,26 +91,34 @@ def generate_report():
         details = wf.get("failure_details", [])
 
         report += f"**📌 Run-{run_id}** | [{name}]({html_url})\n"
+        report += f"**运行结果 | Conclusion**: `{wf.get('conclusion', 'unknown')}`\n"
+        if wf.get("error"):
+            report += f"**错误信息 | Error**: {wf['error']}\n"
 
         if not details:
-            report += "└─ 无失败作业详情 | No details of failed jobs\n\n"
+            report += "└─ 无异常作业详情 | No details of affected jobs\n\n"
             continue
 
-        failed_jobs = [j for j in details if j.get("steps")]
-        for i, job in enumerate(failed_jobs):
+        for i, job in enumerate(details):
             job_name = job["name"]
-            steps = job["steps"]
-            job_prefix = "└─" if i == len(failed_jobs) - 1 else "├─"
-            report += f"{job_prefix} **失败作业 | Failed Job**: {job_name}\n"
+            steps = job.get("steps", [])
+            job_status = job.get("conclusion", "failure") or job.get("status") or "unknown"
+            job_prefix = "└─" if i == len(details) - 1 else "├─"
+            report += f"{job_prefix} **异常作业 | Affected Job**: {job_name} (`{job_status}`)\n"
+            if not steps:
+                report += "   └─ 无异常步骤详情 | No details of affected steps\n"
 
             for j, step in enumerate(steps):
                 step_name = step["name"]
                 step_num = step["number"]
-                error_type = classify_error(step_name, job_name)
+                step_conclusion = step.get("conclusion", "failure")
+                step_status = step_conclusion or step.get("status") or "unknown"
                 step_prefix = "   └─" if j == len(steps) - 1 else "   ├─"
-                report += f"{step_prefix} **失败步骤 | Failed Step**: {step_name} (Step {step_num})\n"
-                indent = "      " if j == len(steps) - 1 else "   │   "
-                report += f"{indent}**错误类型 | Error Type**: `{error_type}`\n"
+                report += f"{step_prefix} **异常步骤 | Affected Step**: {step_name} (Step {step_num}, `{step_status}`)\n"
+                if step_conclusion == "failure":
+                    error_type = classify_error(step_name, job_name)
+                    indent = "      " if j == len(steps) - 1 else "   │   "
+                    report += f"{indent}**错误类型 | Error Type**: `{error_type}`\n"
         report += "\n"
 
     # === Team Collaboration & Support ===

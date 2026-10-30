@@ -29,8 +29,8 @@ def wait_for_workflows_to_appear(github_token, repo, workflow_names, start_time,
                 
             workflow_id = get_workflow_id(github_token, repo, workflow_name)
             if not workflow_id:
-                print(f"Workflow {workflow_name} not found, skipping")
-                found_workflows.add(workflow_name)
+                print(f"Workflow {workflow_name} not found")
+                all_found = False
                 continue
             
             # 检查是否有新的运行
@@ -60,7 +60,7 @@ def get_workflow_id(github_token, repo, workflow_name):
     }
     
     url = f"https://api.github.com/repos/{repo}/actions/workflows"
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, params={"per_page": 100}, timeout=30)
     
     if response.status_code == 200:
         workflows = response.json()["workflows"]
@@ -77,9 +77,9 @@ def get_recent_runs(github_token, repo, workflow_id, start_time):
     }
     
     url = f"https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/runs"
-    params = {"per_page": 5}
+    params = {"per_page": 10, "event": "workflow_dispatch", "branch": "master"}
     
-    response = requests.get(url, headers=headers, params=params)
+    response = requests.get(url, headers=headers, params=params, timeout=30)
     if response.status_code != 200:
         return []
     
@@ -107,7 +107,8 @@ def main():
     success = wait_for_workflows_to_appear(github_token, repo, workflows, start_time)
     
     if not success:
-        print("Proceeding anyway, some workflows may not be detected...")
+        print("Some workflows did not start within the waiting period")
+    return 0 if success else 1
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
