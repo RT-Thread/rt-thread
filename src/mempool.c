@@ -82,10 +82,10 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block))
  * @return RT_EOK
  */
 rt_err_t rt_mp_init(struct rt_mempool *mp,
-                    const char        *name,
-                    void              *start,
-                    rt_size_t          size,
-                    rt_size_t          block_size)
+                    const char *name,
+                    void *start,
+                    rt_size_t size,
+                    rt_size_t block_size)
 {
     rt_uint8_t *block_ptr;
     rt_size_t offset;
@@ -109,14 +109,14 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
 
     /* align to align size byte */
     mp->block_total_count = mp->size / (mp->block_size + sizeof(rt_uint8_t *));
-    mp->block_free_count  = mp->block_total_count;
+    mp->block_free_count = mp->block_total_count;
 
     /* initialize suspended thread list */
     rt_list_init(&(mp->suspend_thread));
 
     /* initialize free block list */
     block_ptr = (rt_uint8_t *)mp->start_address;
-    for (offset = 0; offset < mp->block_total_count; offset ++)
+    for (offset = 0; offset < mp->block_total_count; offset++)
     {
         *(rt_uint8_t **)(block_ptr + offset * (block_size + sizeof(rt_uint8_t *))) =
             (rt_uint8_t *)(block_ptr + (offset + 1) * (block_size + sizeof(rt_uint8_t *)));
@@ -174,8 +174,8 @@ RTM_EXPORT(rt_mp_detach);
  * @return the created mempool object
  */
 rt_mp_t rt_mp_create(const char *name,
-                     rt_size_t   block_count,
-                     rt_size_t   block_size)
+                     rt_size_t block_count,
+                     rt_size_t block_size)
 {
     rt_uint8_t *block_ptr;
     struct rt_mempool *mp;
@@ -191,12 +191,14 @@ rt_mp_t rt_mp_create(const char *name,
     mp = (struct rt_mempool *)rt_object_allocate(RT_Object_Class_MemPool, name);
     /* allocate object failed */
     if (mp == RT_NULL)
+    {
         return RT_NULL;
+    }
 
     /* initialize memory pool */
-    block_size     = RT_ALIGN(block_size, RT_ALIGN_SIZE);
+    block_size = RT_ALIGN(block_size, RT_ALIGN_SIZE);
     mp->block_size = block_size;
-    mp->size       = (block_size + sizeof(rt_uint8_t *)) * block_count;
+    mp->size = (block_size + sizeof(rt_uint8_t *)) * block_count;
 
     /* allocate memory */
     mp->start_address = rt_malloc((block_size + sizeof(rt_uint8_t *)) *
@@ -210,21 +212,19 @@ rt_mp_t rt_mp_create(const char *name,
     }
 
     mp->block_total_count = block_count;
-    mp->block_free_count  = mp->block_total_count;
+    mp->block_free_count = mp->block_total_count;
 
     /* initialize suspended thread list */
     rt_list_init(&(mp->suspend_thread));
 
     /* initialize free block list */
     block_ptr = (rt_uint8_t *)mp->start_address;
-    for (offset = 0; offset < mp->block_total_count; offset ++)
+    for (offset = 0; offset < mp->block_total_count; offset++)
     {
-        *(rt_uint8_t **)(block_ptr + offset * (block_size + sizeof(rt_uint8_t *)))
-            = block_ptr + (offset + 1) * (block_size + sizeof(rt_uint8_t *));
+        *(rt_uint8_t **)(block_ptr + offset * (block_size + sizeof(rt_uint8_t *))) = block_ptr + (offset + 1) * (block_size + sizeof(rt_uint8_t *));
     }
 
-    *(rt_uint8_t **)(block_ptr + (offset - 1) * (block_size + sizeof(rt_uint8_t *)))
-        = RT_NULL;
+    *(rt_uint8_t **)(block_ptr + (offset - 1) * (block_size + sizeof(rt_uint8_t *))) = RT_NULL;
 
     mp->block_list = block_ptr;
     rt_spin_lock_init(&(mp->spinlock));
@@ -332,13 +332,17 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
         rt_schedule();
 
         if (thread->error != RT_EOK)
+        {
             return RT_NULL;
+        }
 
         if (time > 0)
         {
             time -= rt_tick_get() - before_sleep;
             if (time < 0)
+            {
                 time = 0;
+            }
         }
         level = rt_spin_lock_irqsave(&(mp->spinlock));
     }
@@ -377,18 +381,21 @@ void rt_mp_free(void *block)
     rt_base_t level;
 
     /* parameter check */
-    if (block == RT_NULL) return;
+    if (block == RT_NULL)
+    {
+        return;
+    }
 
     /* get the control block of pool which the block belongs to */
     block_ptr = (rt_uint8_t **)((rt_uint8_t *)block - sizeof(rt_uint8_t *));
-    mp        = (struct rt_mempool *)*block_ptr;
+    mp = (struct rt_mempool *)*block_ptr;
 
     RT_OBJECT_HOOK_CALL(rt_mp_free_hook, (mp, block));
 
     level = rt_spin_lock_irqsave(&(mp->spinlock));
 
     /* increase the free block count */
-    mp->block_free_count ++;
+    mp->block_free_count++;
 
     /* link the block into the block list */
     *block_ptr = mp->block_list;

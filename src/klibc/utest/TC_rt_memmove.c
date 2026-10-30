@@ -15,7 +15,7 @@
 static void TC_rt_memmove_basic(void)
 {
     char src[] = "Hello";
-    char dest[10] = {0};
+    char dest[10] = { 0 };
     rt_memmove(dest, src, rt_strlen(src) + 1);
     uassert_str_equal(dest, "Hello");
 }
@@ -73,7 +73,7 @@ static void TC_rt_memmove_null_dest(void)
 static void TC_rt_memmove_too_long(void)
 {
     char src[] = "Short";
-    char dest[10] = {0};
+    char dest[10] = { 0 };
     rt_memmove(dest, src, sizeof(src) + 5); /* Should only copy up to src length */
     uassert_str_equal(dest, "Short");
     uassert_int_equal(dest[5], 0); /* Ensure no buffer overflow */
@@ -87,7 +87,7 @@ static void TC_rt_memmove_empty_string(void)
     rt_memmove(dest, src, rt_strlen(src) + 1);
 
     /* Expect dest to only contain '\0' at the start */
-    uassert_str_equal(dest, "");  /* Destination should now be an empty string */
+    uassert_str_equal(dest, "");      /* Destination should now be an empty string */
     uassert_int_equal(dest[0], '\0'); /* First character should be '\0' */
 }
 

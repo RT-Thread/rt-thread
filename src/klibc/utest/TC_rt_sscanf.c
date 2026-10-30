@@ -141,7 +141,7 @@ static void TC_rt_sscanf_suppression(void)
 static void TC_rt_sscanf_match_set(void)
 {
     const char str[] = "abc123";
-    char buffer[10] = {0};
+    char buffer[10] = { 0 };
     int result = rt_sscanf(str, "%[a-z]", buffer);
     uassert_int_equal(result, 1);
     uassert_str_equal(buffer, "abc");

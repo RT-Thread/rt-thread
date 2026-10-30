@@ -20,8 +20,8 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#define DBG_TAG           "kernel.irq"
-#define DBG_LVL           DBG_INFO
+#define DBG_TAG "kernel.irq"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
@@ -100,12 +100,11 @@ void *rt_interrupt_context_get(void)
 rt_weak void rt_interrupt_enter(void)
 {
     rt_atomic_add(&(rt_interrupt_nest), 1);
-    RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
+    RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook, ());
     LOG_D("irq has come..., irq current nest:%d",
           (rt_int32_t)rt_atomic_load(&(rt_interrupt_nest)));
 }
 RTM_EXPORT(rt_interrupt_enter);
-
 
 /**
  * @brief This function will be invoked by BSP, when leave interrupt service routine
@@ -117,13 +116,11 @@ RTM_EXPORT(rt_interrupt_enter);
 rt_weak void rt_interrupt_leave(void)
 {
     LOG_D("irq is going to leave, irq current nest:%d",
-                 (rt_int32_t)rt_atomic_load(&(rt_interrupt_nest)));
-    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());
+          (rt_int32_t)rt_atomic_load(&(rt_interrupt_nest)));
+    RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook, ());
     rt_atomic_sub(&(rt_interrupt_nest), 1);
-
 }
 RTM_EXPORT(rt_interrupt_leave);
-
 
 /**
  * @brief This function will return the nest of interrupt.

@@ -99,10 +99,10 @@ rt_err_t rt_perf_thread_mbox(rt_perf_t *perf)
     rt_thread_t thread1 = RT_NULL;
     rt_thread_t thread2 = RT_NULL;
 
-# if __STDC_VERSION__ >= 199901L
-    rt_strcpy(perf->name,__func__);
+#if __STDC_VERSION__ >= 199901L
+    rt_strcpy(perf->name, __func__);
 #else
-    rt_strcpy(perf->name,"rt_perf_thread_mbox");
+    rt_strcpy(perf->name, "rt_perf_thread_mbox");
 #endif
 
     perf_thread_mbox = rt_mb_create("perf_thread_mbox", 1, RT_IPC_FLAG_PRIO);
@@ -116,7 +116,7 @@ rt_err_t rt_perf_thread_mbox(rt_perf_t *perf)
     complete_sem = rt_sem_create("complete", 0, RT_IPC_FLAG_FIFO);
 
     thread1 = rt_thread_create("perf_thread_mbox1", perf_thread_mbox1, perf,
-                                THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
+                               THREAD_STACK_SIZE, THREAD_PRIORITY, THREAD_TIMESLICE);
     if (thread1 == RT_NULL)
     {
         LOG_E("perf_thread_mbox1 create failed.");
@@ -124,7 +124,7 @@ rt_err_t rt_perf_thread_mbox(rt_perf_t *perf)
     }
 
     thread2 = rt_thread_create("perf_thread_mbox2", perf_thread_mbox2, perf,
-                                THREAD_STACK_SIZE, THREAD_PRIORITY + 1, THREAD_TIMESLICE);
+                               THREAD_STACK_SIZE, THREAD_PRIORITY + 1, THREAD_TIMESLICE);
     if (thread2 == RT_NULL)
     {
         LOG_E("perf_thread_mbox2 create failed.");

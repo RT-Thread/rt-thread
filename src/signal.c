@@ -19,23 +19,23 @@
 #ifdef RT_USING_SIGNALS
 
 #ifndef RT_SIG_INFO_MAX
-    #ifdef ARCH_CPU_64BIT
-        #define RT_SIG_INFO_MAX 64
-    #else
-        #define RT_SIG_INFO_MAX 32
-    #endif /* ARCH_CPU_64BIT */
+#ifdef ARCH_CPU_64BIT
+#define RT_SIG_INFO_MAX 64
+#else
+#define RT_SIG_INFO_MAX 32
+#endif /* ARCH_CPU_64BIT */
 #endif /* RT_SIG_INFO_MAX */
 
-#define DBG_TAG     "SIGN"
-#define DBG_LVL     DBG_WARNING
+#define DBG_TAG "SIGN"
+#define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
 #ifdef RT_USING_MUSLLIBC
-    #define sig_mask(sig_no)    (1u << (sig_no - 1))
+#define sig_mask(sig_no) (1u << (sig_no - 1))
 #else
-    #define sig_mask(sig_no)    (1u << sig_no)
+#define sig_mask(sig_no) (1u << sig_no)
 #endif
-#define sig_valid(sig_no)   (sig_no >= 0 && sig_no < RT_SIG_MAX)
+#define sig_valid(sig_no) (sig_no >= 0 && sig_no < RT_SIG_MAX)
 
 static struct rt_spinlock _thread_signal_lock = RT_SPINLOCK_INIT;
 
@@ -53,7 +53,7 @@ static void _signal_default_handler(int signo)
 {
     RT_UNUSED(signo);
     LOG_I("handled signo[%d] with default action.", signo);
-    return ;
+    return;
 }
 
 static void _signal_entry(void *parameter)
@@ -78,7 +78,7 @@ static void _signal_entry(void *parameter)
 #ifdef RT_USING_SMP
     rt_hw_context_switch_to((rt_uintptr_t)&parameter, tid);
 #else
-    rt_hw_context_switch_to((rt_uintptr_t)&(tid->sp));
+    rt_hw_context_switch_to((rt_uintptr_t) & (tid->sp));
 #endif /* RT_USING_SMP */
 }
 
@@ -176,17 +176,17 @@ static void _signal_deliver(rt_thread_t tid)
 }
 
 #ifdef RT_USING_SMP
-void *rt_signal_check(void* context)
+void *rt_signal_check(void *context)
 {
     rt_sched_lock_level_t level;
     int cpu_id;
-    struct rt_cpu* pcpu;
+    struct rt_cpu *pcpu;
     struct rt_thread *current_thread;
 
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
 
     cpu_id = rt_cpu_get_id();
-    pcpu   = rt_cpu_index(cpu_id);
+    pcpu = rt_cpu_index(cpu_id);
     current_thread = pcpu->current_thread;
 
     if (pcpu->irq_nest)
@@ -205,7 +205,7 @@ void *rt_signal_check(void* context)
 
             rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
             sig_context = rt_hw_stack_init((void *)_signal_entry, context,
-                    (void*)((char*)context - 32), RT_NULL);
+                                           (void *)((char *)context - 32), RT_NULL);
             return sig_context;
         }
     }
@@ -236,7 +236,10 @@ rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
     rt_sighandler_t old = RT_NULL;
     rt_thread_t tid = rt_thread_self();
 
-    if (!sig_valid(signo)) return SIG_ERR;
+    if (!sig_valid(signo))
+    {
+        return SIG_ERR;
+    }
 
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
     if (tid->sig_vectors == RT_NULL)
@@ -252,9 +255,18 @@ rt_sighandler_t rt_signal_install(int signo, rt_sighandler_t handler)
     {
         old = tid->sig_vectors[signo];
 
-        if (handler == SIG_IGN) tid->sig_vectors[signo] = RT_NULL;
-        else if (handler == SIG_DFL) tid->sig_vectors[signo] = _signal_default_handler;
-        else tid->sig_vectors[signo] = handler;
+        if (handler == SIG_IGN)
+        {
+            tid->sig_vectors[signo] = RT_NULL;
+        }
+        else if (handler == SIG_DFL)
+        {
+            tid->sig_vectors[signo] = _signal_default_handler;
+        }
+        else
+        {
+            tid->sig_vectors[signo] = handler;
+        }
     }
     rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 
@@ -341,7 +353,7 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
     RT_DEBUG_IN_THREAD_CONTEXT;
 
     /* parameters check */
-    if (set == NULL || *set == 0 || si == NULL )
+    if (set == NULL || *set == 0 || si == NULL)
     {
         ret = -RT_EINVAL;
         goto __done_return;
@@ -353,7 +365,10 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
 
     /* already pending */
-    if (tid->sig_pending & *set) goto __done;
+    if (tid->sig_pending & *set)
+    {
+        goto __done;
+    }
 
     if (timeout == 0)
     {
@@ -407,10 +422,13 @@ __done:
         signo = si_node->si.si_signo;
         if (sig_mask(signo) & *set)
         {
-            *si  = si_node->si;
+            *si = si_node->si;
 
             LOG_D("sigwait: %d sig raised!", signo);
-            if (si_prev) si_prev->list.next = si_node->list.next;
+            if (si_prev)
+            {
+                si_prev->list.next = si_node->list.next;
+            }
             else
             {
                 struct siginfo_node *node_next;
@@ -441,7 +459,7 @@ __done:
         {
             si_node = RT_NULL;
         }
-     }
+    }
 
 __done_int:
     rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
@@ -469,21 +487,31 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
                 rt_sighandler_t handler;
 
                 si_node = (struct siginfo_node *)tid->si_list;
-                if (!si_node) break;
+                if (!si_node)
+                {
+                    break;
+                }
 
                 /* remove this sig info node from list */
                 if (si_node->list.next == RT_NULL)
+                {
                     tid->si_list = RT_NULL;
+                }
                 else
+                {
                     tid->si_list = (void *)rt_slist_entry(si_node->list.next, struct siginfo_node, list);
+                }
 
-                signo   = si_node->si.si_signo;
+                signo = si_node->si.si_signo;
                 handler = tid->sig_vectors[signo];
                 tid->sig_pending &= ~sig_mask(signo);
                 rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 
                 LOG_D("handle signal: %d, handler 0x%08x", signo, handler);
-                if (handler) handler(signo);
+                if (handler)
+                {
+                    handler(signo);
+                }
 
                 level = rt_spin_lock_irqsave(&_thread_signal_lock);
                 error = -RT_EINTR;
@@ -518,7 +546,7 @@ void rt_thread_alloc_sig(rt_thread_t tid)
     vectors = (rt_sighandler_t *)RT_KERNEL_MALLOC(sizeof(rt_sighandler_t) * RT_SIG_MAX);
     RT_ASSERT(vectors != RT_NULL);
 
-    for (index = 0; index < RT_SIG_MAX; index ++)
+    for (index = 0; index < RT_SIG_MAX; index++)
     {
         vectors[index] = _signal_default_handler;
     }
@@ -597,11 +625,14 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     struct siginfo_node *si_node;
 
     RT_ASSERT(tid != RT_NULL);
-    if (!sig_valid(sig)) return -RT_EINVAL;
+    if (!sig_valid(sig))
+    {
+        return -RT_EINVAL;
+    }
 
     LOG_I("send signal: %d", sig);
     si.si_signo = sig;
-    si.si_code  = SI_USER;
+    si.si_code = SI_USER;
     si.si_value.sival_ptr = RT_NULL;
 
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
@@ -609,13 +640,17 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     {
         /* whether already emits this signal? */
         struct rt_slist_node *node;
-        struct siginfo_node  *entry;
+        struct siginfo_node *entry;
 
         si_node = (struct siginfo_node *)tid->si_list;
         if (si_node)
+        {
             node = (struct rt_slist_node *)&si_node->list;
+        }
         else
+        {
             node = RT_NULL;
+        }
 
         /* update sig info */
         for (; (node) != RT_NULL; node = node->next)
@@ -631,7 +666,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     }
     rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 
-    si_node = (struct siginfo_node *) rt_mp_alloc(_siginfo_pool, 0);
+    si_node = (struct siginfo_node *)rt_mp_alloc(_siginfo_pool, 0);
     if (si_node)
     {
         rt_slist_init(&(si_node->list));

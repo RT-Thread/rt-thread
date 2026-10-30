@@ -47,11 +47,11 @@ static int run_num = 100;
 #define THREAD_PRIORITY   20
 static rt_thread_t threads[RT_CPUS_NR];
 static struct rt_spinlock lock;
-static int thread_inc[RT_CPUS_NR] = {0};
-static int thread_tic[RT_CPUS_NR] = {0};
-static rt_uint32_t thread_core_mask[RT_CPUS_NR] = {0};
+static int thread_inc[RT_CPUS_NR] = { 0 };
+static int thread_tic[RT_CPUS_NR] = { 0 };
+static rt_uint32_t thread_core_mask[RT_CPUS_NR] = { 0 };
 static rt_atomic_t finsh_flag;
-static int                num        = 0;
+static int num = 0;
 
 static void thread_entry(void *parameter)
 {
@@ -89,9 +89,9 @@ static void thread_entry(void *parameter)
 
 static void thread_bind_affinity_tc(void)
 {
-    static int params[RT_CPUS_NR] = {0};
-    char       thread_name[8];
-    int        i, j;
+    static int params[RT_CPUS_NR] = { 0 };
+    char thread_name[8];
+    int i, j;
 
     for (i = 0; i < RT_CPUS_NR; i++)
     {

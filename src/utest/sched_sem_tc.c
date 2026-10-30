@@ -66,10 +66,10 @@
 #include "rthw.h"
 #include "utest.h"
 
-#define KERN_TEST_CONFIG_LOOP_TIMES     160
-#define KERN_TEST_CONCURRENT_THREADS    (RT_CPUS_NR * 2)
-#define KERN_TEST_CONFIG_HIGHEST_PRIO   3
-#define KERN_TEST_CONFIG_LOWEST_PRIO    (RT_THREAD_PRIORITY_MAX - 2)
+#define KERN_TEST_CONFIG_LOOP_TIMES   160
+#define KERN_TEST_CONCURRENT_THREADS  (RT_CPUS_NR * 2)
+#define KERN_TEST_CONFIG_HIGHEST_PRIO 3
+#define KERN_TEST_CONFIG_LOWEST_PRIO  (RT_THREAD_PRIORITY_MAX - 2)
 
 #define TEST_LEVEL_COUNTS (KERN_TEST_CONFIG_LOWEST_PRIO - KERN_TEST_CONFIG_HIGHEST_PRIO + 1)
 #if TEST_LEVEL_COUNTS <= RT_CPUS_NR
@@ -149,7 +149,6 @@ static void _thread_entry(void *param)
     }
     else if (level == TEST_LEVEL_COUNTS - 1)
     {
-
         for (size_t i = 0; i < KERN_TEST_CONFIG_LOOP_TIMES; i++)
         {
             /* waiting for our resource first */
@@ -225,10 +224,12 @@ static rt_err_t utest_tc_init(void)
                                  _thread_entry,
                                  (void *)i,
                                  UTEST_THR_STACK_SIZE,
-                                 KERN_TEST_CONFIG_HIGHEST_PRIO+i,
+                                 KERN_TEST_CONFIG_HIGHEST_PRIO + i,
                                  5);
             if (!_thread_matrix[i][j])
+            {
                 uassert_not_null(_thread_matrix[i][j]);
+            }
         }
     }
     return RT_EOK;
