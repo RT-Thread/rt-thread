@@ -978,6 +978,12 @@ SPRINTF_TEST_CASE(string_length)
     SPRINTF_CHECK("",                        buffer, "%.7s", "");
     SPRINTF_CHECK("1234ab",                  buffer, "%.4s%.2s", "123456", "abcdef");
     SPRINTF_CHECK("123",                     buffer, "%.*s", 3, "123456");
+    SPRINTF_CHECK("123456", buffer, "%.*s", -1, "123456");
+    SPRINTF_CHECK("  abc", buffer, "%5.*s", -1, "abc");
+    SPRINTF_CHECK("", buffer, "%.*s", 0, "123456");
+    SPRINTF_CHECK("", buffer, "%.s", "123456");
+    uassert_int_equal(rt_snprintf(buffer, sizeof(buffer), "%.*s", -1, "abc"), 3);
+    uassert_str_equal(buffer, "abc");
 #ifdef RT_KLIBC_USING_VSNPRINTF_STANDARD
     SPRINTF_CHECK("(null)",                  buffer, "%.*s", 3, (const char *) RT_NULL);
 #else
@@ -988,6 +994,7 @@ SPRINTF_TEST_CASE(string_length)
 SPRINTF_TEST_CASE(misc)
 {
     char buffer[base_buffer_size];
+    SPRINTF_CHECK("0", buffer, "%.*d", -1, 0);
     SPRINTF_CHECK("53000atest-20 bit",       buffer, "%u%u%ctest%d %s", 5, 3000, 'a', -20, "bit");
 #ifdef RT_KLIBC_USING_VSNPRINTF_DECIMAL_SPECIFIERS
     SPRINTF_CHECK("0.33",                    buffer, "%.*f", 2, 0.33333333);

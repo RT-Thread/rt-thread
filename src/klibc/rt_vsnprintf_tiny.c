@@ -373,6 +373,7 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
         if (*fmt == '.')
         {
             ++fmt;
+            precision = 0;
             if (_ISDIGIT(*fmt))
             {
                 precision = skip_atoi(&fmt);
@@ -385,7 +386,8 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
             }
             if (precision < 0)
             {
-                precision = 0;
+                /* A negative dynamic precision means no precision. */
+                precision = -1;
             }
         }
 
@@ -451,12 +453,7 @@ int rt_vsnprintf(char *buf, size_t size, const char *fmt, va_list args)
                 s = "(null)";
             }
 
-            for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
-
-            if (precision > 0 && len > precision)
-            {
-                len = precision;
-            }
+            for (len = 0; (precision < 0 || len < precision) && s[len] != '\0'; len++);
 
             if (!(flags & LEFT))
             {
