@@ -232,6 +232,7 @@ dhcp_client_alloc(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
 {
     u8_t *opt;
     u32_t ipaddr;
+    u32_t first_candidate;
     struct dhcp_client_node *node;
 
     node = dhcp_client_find_by_mac(dhcpserver, msg->chaddr, msg->hlen);
@@ -250,18 +251,30 @@ dhcp_client_alloc(struct dhcp_server *dhcpserver, struct dhcp_msg *msg,
         }
     }
 
-dhcp_alloc_again:
-    node = dhcp_client_find_by_ip(dhcpserver, &dhcpserver->current);
-    if (node != NULL)
+    /* Check each pool address at most once. */
+    first_candidate = dhcpserver->current.addr;
+    do
     {
+        node = dhcp_client_find_by_ip(dhcpserver, &dhcpserver->current);
+        if (node == NULL)
+        {
+            break;
+        }
+
         ipaddr = (ntohl(dhcpserver->current.addr) + 1);
         if (ipaddr > ntohl(dhcpserver->end.addr))
         {
             ipaddr = ntohl(dhcpserver->start.addr);
         }
         dhcpserver->current.addr = htonl(ipaddr);
-        goto dhcp_alloc_again;
     }
+    while (dhcpserver->current.addr != first_candidate);
+
+    if (node != NULL)
+    {
+        return NULL;
+    }
+
     node = (struct dhcp_client_node *)mem_malloc(sizeof(struct dhcp_client_node));
     if (node == NULL)
     {
