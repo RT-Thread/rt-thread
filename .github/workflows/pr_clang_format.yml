@@ -39,8 +39,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           lfs: false
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+
       - name: Install clang-format
-        run: sudo apt-get update && sudo apt-get install -y clang-format
+        run: python -m pip install -r tools/ci/requirements-format.txt
 
       - name: Check clang-format version
         run: |

@@ -218,6 +218,16 @@ submitting C/C++ source files, header files, and related source files, format
 them with the `.clang-format` configuration in the repository root. Do not use
 manual formatting or old astyle parameters that conflict with this configuration.
 
+Use clang-format **22.1.8**, pinned in `tools/ci/requirements-format.txt`.
+Local development, format checks, and the manual formatting workflow use the
+same version to avoid formatting differences. Install it from the repository
+root and verify the version:
+
+    python -m pip install -r tools/ci/requirements-format.txt
+    clang-format --version
+
+Configure your editor to use the same installed clang-format executable.
+
 Common commands:
 
     clang-format -style=file -i path/to/file.c
