@@ -30,6 +30,7 @@
 #endif /* RT_SERIAL_BUF_STRATEGY_DROP */
 
 #ifdef RT_USING_POSIX_STDIO
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <poll.h>
@@ -1873,85 +1874,75 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
     break;
     case TIOCGWINSZ:
     {
-        struct winsize *p_winsize;
-        p_winsize = (struct winsize *)args;
+        struct winsize *winsize = (struct winsize *)args;
+        char response[32] = { 0 };
+        const char query[] = "\033[18t";
+        rt_tick_t start_tick;
+        rt_size_t i = 0;
+        unsigned long rows, columns;
+        char *end;
+        rt_int32_t old_rx_timeout;
+        rt_int32_t no_wait_timeout = RT_WAITING_NO;
+        rt_bool_t rx_timeout_changed = RT_FALSE;
 
-        if (rt_thread_self() != rt_thread_find(FINSH_THREAD_NAME))
+        if (winsize == RT_NULL)
         {
-            /* only can be used in tshell thread; otherwise, return default size */
-            p_winsize->ws_col = 80;
-            p_winsize->ws_row = 24;
+            ret = -RT_EINVAL;
+            break;
         }
-        else
+
+        rt_memset(winsize, 0, sizeof(*winsize));
+        winsize->ws_row = 24;
+        winsize->ws_col = 80;
+
+        /* A blocking serial read waits forever if the terminal does not
+         * answer; make the query non-blocking for its duration. */
+        if (rt_device_control(dev, RT_SERIAL_CTRL_GET_RX_TIMEOUT, &old_rx_timeout) == RT_EOK &&
+            rt_device_control(dev, RT_SERIAL_CTRL_SET_RX_TIMEOUT, &no_wait_timeout) == RT_EOK)
         {
-#include <shell.h>
-#define _TIO_BUFLEN 20
-            char _tio_buf[_TIO_BUFLEN];
-            unsigned char cnt1, cnt2, cnt3, i;
-            char row_s[4], col_s[4];
-            char *p;
+            rx_timeout_changed = RT_TRUE;
+        }
 
-            rt_memset(_tio_buf, 0, _TIO_BUFLEN);
+        rt_device_write(dev, -1, query, sizeof(query) - 1);
 
-            /* send the command to terminal for getting the window size of the terminal */
-            rt_kprintf("\033[18t");
-
-            /* waiting for the response from the terminal */
-            i = 0;
-            while (i < _TIO_BUFLEN)
+        start_tick = rt_tick_get();
+        while (i < sizeof(response) - 1 &&
+               rt_tick_get_delta(start_tick) < rt_tick_from_millisecond(200))
+        {
+            if (rt_device_read(dev, -1, &response[i], 1) == 1)
             {
-                _tio_buf[i] = finsh_getchar();
-                if (_tio_buf[i] != 't')
-                {
-                    i++;
-                }
-                else
+                if (response[i++] == 't')
                 {
                     break;
                 }
             }
-            if (i == _TIO_BUFLEN)
+            else
             {
-                /* buffer overloaded, and return default size */
-                p_winsize->ws_col = 80;
-                p_winsize->ws_row = 24;
-                break;
+                rt_thread_mdelay(1);
             }
-
-            /* interpreting data eg: "\033[8;1;15t" which means row is 1 and col is 15 (unit: size of ONE character) */
-            rt_memset(row_s, 0, 4);
-            rt_memset(col_s, 0, 4);
-            cnt1 = 0;
-            while (cnt1 < _TIO_BUFLEN && _tio_buf[cnt1] != ';')
-            {
-                cnt1++;
-            }
-            cnt2 = ++cnt1;
-            while (cnt2 < _TIO_BUFLEN && _tio_buf[cnt2] != ';')
-            {
-                cnt2++;
-            }
-            p = row_s;
-            while (cnt1 < cnt2)
-            {
-                *p++ = _tio_buf[cnt1++];
-            }
-            p = col_s;
-            cnt2++;
-            cnt3 = rt_strlen(_tio_buf) - 1;
-            while (cnt2 < cnt3)
-            {
-                *p++ = _tio_buf[cnt2++];
-            }
-
-            /* load the window size date */
-            p_winsize->ws_col = atoi(col_s);
-            p_winsize->ws_row = atoi(row_s);
-#undef _TIO_BUFLEN
         }
 
-        p_winsize->ws_xpixel = 0; /* unused */
-        p_winsize->ws_ypixel = 0; /* unused */
+        if (rx_timeout_changed)
+        {
+            rt_device_control(dev, RT_SERIAL_CTRL_SET_RX_TIMEOUT, &old_rx_timeout);
+        }
+
+        if (rt_memcmp(response, "\033[8;", 4) != 0)
+        {
+            break;
+        }
+        rows = strtoul(response + 4, &end, 10);
+        if (*end != ';')
+        {
+            break;
+        }
+        columns = strtoul(end + 1, &end, 10);
+        if (*end == 't' && end[1] == '\0' &&
+            rows != 0 && rows <= 999 && columns != 0 && columns <= 999)
+        {
+            winsize->ws_row = rows;
+            winsize->ws_col = columns;
+        }
     }
     break;
     case FIONREAD:
