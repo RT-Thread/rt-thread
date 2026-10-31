@@ -5,4 +5,9 @@ config RT_UTEST_LIBC_TIME
     default n
     depends on RT_USING_POSIX_CLOCK
 
+config RT_UTEST_LIBC_TIMER
+    bool "timer_gettime() remaining time Test"
+    default n
+    depends on RT_USING_POSIX_TIMER
+
 endmenu

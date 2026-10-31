@@ -8,6 +8,9 @@ CPPPATH = [cwd]
 if GetDepend(['RT_UTEST_LIBC_TIME']):
     src += ['time_tc.c']
 
+if GetDepend(['RT_UTEST_LIBC_TIMER']):
+    src += ['timer_gettime_tc.c']
+
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
 
 Return('group')
