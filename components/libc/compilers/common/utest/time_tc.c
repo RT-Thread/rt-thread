@@ -269,6 +269,74 @@ static void timegm_combined_negative_test(void)
     uassert_int_equal(time_value.tm_sec, 59);
 }
 
+/*
+ * gmtime_r() against timestamps before the epoch.
+ *
+ * Every field is checked, not only the date: the defective implementation returned
+ * a non-NULL struct tm holding impossible values (negative tm_sec, zero tm_mday,
+ * negative tm_wday / tm_yday), so tm_wday and tm_yday are part of the contract
+ * that has to be pinned down here.
+ */
+struct gmtime_r_case
+{
+    const char *name;
+    time_t      timestamp;
+    int         year;   /* tm_year, i.e. years since 1900 */
+    int         mon;    /* tm_mon, 0 based */
+    int         mday;
+    int         hour;
+    int         min;
+    int         sec;
+    int         wday;   /* 0 = Sunday */
+    int         yday;   /* 0 based */
+};
+
+static const struct gmtime_r_case gmtime_r_cases[] =
+{
+    /* 1970-01-01 00:00:00, Thursday */
+    { "epoch zero",    (time_t)0,         70, 0,  1,  0,  0,  0, 4,   0 },
+    /* 1969-12-31 23:59:59, Wednesday */
+    { "t = -1",        (time_t)-1,        69, 11, 31, 23, 59, 59, 3, 364 },
+    /* 1969-12-31 00:00:00, Wednesday */
+    { "t = -86400",    (time_t)-86400,    69, 11, 31,  0,  0,  0, 3, 364 },
+    /* 1969-12-30 23:59:59, Tuesday */
+    { "t = -86401",    (time_t)-86401,    69, 11, 30, 23, 59, 59, 2, 363 },
+    /* 1968-02-29 00:00:00, Thursday, 672 days before the epoch (1968 is a leap year) */
+    { "1968 leap day", (time_t)-58060800, 68,  1, 29,  0,  0,  0, 4,  59 },
+};
+
+/* Check every field gmtime_r() fills in, for timestamps before the epoch. */
+static void gmtime_r_before_epoch_test(void)
+{
+    size_t i;
+
+    for (i = 0; i < sizeof(gmtime_r_cases) / sizeof(gmtime_r_cases[0]); i++)
+    {
+        const struct gmtime_r_case *c = &gmtime_r_cases[i];
+        struct tm r;
+        time_t timestamp = c->timestamp;
+
+        rt_memset(&r, 0, sizeof(r));
+
+        uassert_not_null(gmtime_r(&timestamp, &r));
+
+        LOG_I("%s: %04d-%02d-%02d %02d:%02d:%02d wday=%d yday=%d",
+              c->name,
+              r.tm_year + 1900, r.tm_mon + 1, r.tm_mday,
+              r.tm_hour, r.tm_min, r.tm_sec,
+              r.tm_wday, r.tm_yday);
+
+        uassert_int_equal(r.tm_year, c->year);
+        uassert_int_equal(r.tm_mon,  c->mon);
+        uassert_int_equal(r.tm_mday, c->mday);
+        uassert_int_equal(r.tm_hour, c->hour);
+        uassert_int_equal(r.tm_min,  c->min);
+        uassert_int_equal(r.tm_sec,  c->sec);
+        uassert_int_equal(r.tm_wday, c->wday);
+        uassert_int_equal(r.tm_yday, c->yday);
+    }
+}
+
 /* Initialize the time conversion tests. */
 static rt_err_t utest_tc_init(void)
 {
@@ -301,6 +369,7 @@ static void timegm_all_test(void)
 static void testcase(void)
 {
     UTEST_UNIT_RUN(timegm_all_test);
+    UTEST_UNIT_RUN(gmtime_r_before_epoch_test);
 }
 
 UTEST_TC_EXPORT(testcase, "components.libc.time", utest_tc_init, utest_tc_cleanup, 10);
