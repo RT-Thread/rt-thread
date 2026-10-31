@@ -111,7 +111,7 @@ static int card_busy_detect(struct rt_mmcsd_card *card, unsigned int timeout_ms,
 rt_int32_t mmcsd_num_wr_blocks(struct rt_mmcsd_card *card)
 {
     rt_int32_t err;
-    rt_uint32_t blocks;
+    rt_uint32_t blocks = 0;
 
     struct rt_mmcsd_req req;
     struct rt_mmcsd_cmd cmd;
@@ -391,7 +391,6 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     max_blk_size = host->max_blk_count * host->max_blk_size;
     blk_dev->max_req_size = (max_dma_size < max_blk_size ? max_dma_size : max_blk_size) / MMCSD_SECTOR_SIZE;
     blk_dev->geometry.bytes_per_sector = MMCSD_SECTOR_SIZE;
-    blk_dev->geometry.block_size = card->card_blksize;
     blk_dev->geometry.sector_count = card->card_capacity * (1024 / MMCSD_SECTOR_SIZE);
 
     /* Set blk size before partitions probe, Why? */
@@ -399,6 +398,7 @@ rt_int32_t rt_mmcsd_blk_probe(struct rt_mmcsd_card *card)
     {
         goto _fail;
     }
+    blk_dev->geometry.block_size = blk_dev->geometry.bytes_per_sector;
     rt_thread_mdelay(1);
 
 #ifdef RT_USING_DM
