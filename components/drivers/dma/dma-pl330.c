@@ -264,6 +264,8 @@
 
 /** @brief Maximum microcode program size in bytes (128 instructions) */
 #define PL330_MICROCODE_SIZE 128
+/* Maximum time to drain DMAEND before reusing a channel. */
+#define PL330_STOP_TIMEOUT_US 1000
 /** @brief Maximum number of AMBA IRQs */
 #define AMBA_NR_IRQS 9
 
@@ -596,7 +598,7 @@ static int pl330_cmd_dmalp(rt_uint8_t *microcode, rt_uint8_t lc, rt_uint16_t loo
      * | iter[7:0] |0 0 1 0 0 0 lc 0
      */
     *microcode++ = PL330_CMD_DMALP | ((lc & 1) << 1);
-    *microcode |= loops - 1;
+    *microcode = loops - 1;
 
     LOG_D("DMALP %u (lc: %c)", loops - 1, lc ? '1' : '0');
 
@@ -714,6 +716,35 @@ static rt_uint32_t pl330_chan_id(struct pl330 *pl330, struct pl330_chan *pc)
     return pc - pl330->chans;
 }
 
+static rt_err_t pl330_wait_stopped(struct pl330 *pl330, struct pl330_chan *pc)
+{
+    rt_uint32_t csr;
+    rt_uint32_t id = pl330_chan_id(pl330, pc);
+    rt_uint32_t timeout = PL330_STOP_TIMEOUT_US;
+
+    /* DMASEV does not imply DMAEND has retired; the microcode is still in use. */
+    for (;;)
+    {
+        csr = HWREG32(pl330->regs + PL330_REG_CSR(id)) & 0xf;
+        if (csr == PL330_CS_STOP)
+        {
+            return RT_EOK;
+        }
+        if (csr == PL330_CS_FAULT || csr == PL330_CS_FLTCMP)
+        {
+            return -RT_EIO;
+        }
+        if (!timeout)
+        {
+            LOG_E("Channel[%u] stop timeout, csr=%x", id, csr);
+            return -RT_ETIMEOUT;
+        }
+
+        --timeout;
+        rt_hw_us_delay(1);
+    }
+}
+
 /**
  * @brief Request a DMA channel from the PL330 controller
  *
@@ -792,9 +823,15 @@ static rt_err_t pl330_dma_release_chan(struct rt_dma_chan *chan)
  */
 static rt_err_t pl330_dma_start(struct rt_dma_chan *chan)
 {
+    rt_err_t err;
     rt_uint32_t id, inst0;
     struct pl330_chan *pc = rt_container_of(chan, struct pl330_chan, parent);
     struct pl330 *pl330 = raw_to_pl330(chan->ctrl);
+
+    if ((err = pl330_wait_stopped(pl330, pc)))
+    {
+        return err;
+    }
 
     while (HWREG32(pl330->regs + PL330_REG_DBGSTATUS) & PL330_DBGSTATUS_BUSY)
     {
@@ -846,6 +883,7 @@ static rt_err_t pl330_dma_start(struct rt_dma_chan *chan)
  */
 static rt_err_t pl330_dma_stop(struct rt_dma_chan *chan)
 {
+    rt_err_t err;
     rt_uint32_t id;
     struct pl330_chan *pc = rt_container_of(chan, struct pl330_chan, parent);
     struct pl330 *pl330 = raw_to_pl330(chan->ctrl);
@@ -863,7 +901,10 @@ static rt_err_t pl330_dma_stop(struct rt_dma_chan *chan)
     HWREG32(pl330->regs + PL330_REG_DBGINST1) = 0;
     HWREG32(pl330->regs + PL330_REG_DBGCMD) = 0;
 
-    return RT_EOK;
+    /* Do not release peripheral clocks or buffers until DMAKILL has retired. */
+    err = pl330_wait_stopped(pl330, pc);
+    HWREG32(pl330->regs + PL330_REG_INTCLR) = RT_BIT(id);
+    return err;
 }
 
 /**
@@ -919,6 +960,11 @@ static rt_err_t pl330_dma_prep_memcpy(struct rt_dma_chan *chan,
     struct pl330_chan *pc = rt_container_of(chan, struct pl330_chan, parent);
     struct pl330 *pl330 = raw_to_pl330(chan->ctrl);
     struct rt_dma_slave_config *conf = &chan->conf;
+
+    if ((err = pl330_wait_stopped(pl330, pc)))
+    {
+        return err;
+    }
 
     mc = pc->microcode;
 
@@ -1039,6 +1085,11 @@ static rt_err_t pl330_dma_prep_cyclic(struct rt_dma_chan *chan,
     struct pl330 *pl330 = raw_to_pl330(chan->ctrl);
     struct rt_dma_slave_config *conf = &chan->conf;
 
+    if ((err = pl330_wait_stopped(pl330, pc)))
+    {
+        return err;
+    }
+
     mc = pc->microcode;
 
     if ((err = pl330_ccr_config(conf, pl330->mode_ns, &ccr_val)))
@@ -1149,6 +1200,11 @@ static rt_err_t pl330_dma_prep_single(struct rt_dma_chan *chan,
     struct rt_dma_slave_config *conf = &chan->conf;
     rt_uint32_t cond;
 
+    if ((err = pl330_wait_stopped(pl330, pc)))
+    {
+        return err;
+    }
+
     mc = pc->microcode;
 
     if ((err = pl330_ccr_config(conf, pl330->mode_ns, &ccr_val)))
@@ -1195,6 +1251,12 @@ static rt_err_t pl330_dma_prep_single(struct rt_dma_chan *chan,
     rt_uint8_t ljmp = mc - pc->microcode;
 
     cond = conf->src_maxburst > 1 ? PL330_COND_BURST : PL330_COND_SINGLE;
+
+    /* Some PL330 integrations only expose peripheral requests as bursts. */
+    if (pl330->quirk & PL330_QUIRK_PERIPH_BURST)
+    {
+        cond = PL330_COND_BURST;
+    }
 
     if (pc->is_slave)
     {
@@ -1291,7 +1353,7 @@ static void pl330_isr(int irqno, void *params)
             break;
 
         default:
-            /* DMASEV may be observed before the following DMAEND executes. */
+            /* Cyclic events report a period; only prep/start require STOP. */
             rt_dma_chan_done(&pc->parent, pc->size);
             break;
         }
