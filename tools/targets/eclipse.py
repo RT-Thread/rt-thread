@@ -516,7 +516,151 @@ def HandleExcludingOption(entry, sourceEntries, excluding):
     SubElement(sourceEntries, 'entry', {'excluding': value, 'flags': 'VALUE_WORKSPACE_PATH|RESOLVED', 'kind':'sourcePath', 'name':""})
 
 
-def UpdateCproject(env, project, excluding, reset, prj_name):
+def CollectLocalDefines(env):
+    """
+    Collect the per-group LOCAL_CPPDEFINES and map them to the group source files.
+
+    Returns a dict: relative project path (str) -> list of define strings.
+    The Eclipse project generator only writes global CPPDEFINES into
+    rtconfig_preinc.h; LOCAL_CPPDEFINES must be attached to the corresponding
+    source files as per-file defined symbols (CDT fileInfo), so that the macro
+    scope stays unchanged and other source files are not affected.
+    """
+    local_defines = {}
+    groups = env.get('project', [])
+    if not groups:
+        return local_defines
+
+    for group in groups:
+        if 'LOCAL_CPPDEFINES' not in group:
+            continue
+        defines = []
+        for item in group['LOCAL_CPPDEFINES']:
+            item = str(item).strip()
+            if item and item not in defines:
+                defines.append(item)
+        if not defines:
+            continue
+
+        src = group.get('src')
+        if not src:
+            continue
+
+        for f in src:
+            rp = RelativeProjectPath(env, os.path.abspath(str(f))).replace('\\', '/')
+            if rp.startswith('.'):
+                continue
+            cur = local_defines.setdefault(rp, [])
+            for d in defines:
+                if d not in cur:
+                    cur.append(d)
+
+    return local_defines
+
+
+# marker used in generated per-file option ids, so they can be refreshed
+# (removed and regenerated) on every 'scons --target=eclipse' run
+_rtt_local_marker = '.rttlocal.'
+
+
+def _IsCppFile(rp):
+    return rp.endswith(('.cpp', '.cc', '.cxx', '.C'))
+
+
+def _GetCompilerInstanceId(configuration, rp):
+    """
+    Return the actual compiler tool instance id that owns the source file.
+
+    CDT file-level <tool> nodes must reference an existing per-folder/toolchain
+    compiler *instance* (superClass = instance id), not the base plug-in class:
+    only then does the file-level tool inherit the options that
+    HandleToolOption() writes on the folder/toolchain instance (include paths,
+    '-include rtconfig_preinc.h', global defines, ...). Using the base class
+    would leave kernel sources without the header search paths / preinclude
+    and break the Studio build.
+    """
+    def _first_compiler_tool(container):
+        for tool in container.findall('tool'):
+            sid = tool.get('superClass', '')
+            if 'tool.cpp.compiler' in sid:
+                if _IsCppFile(rp):
+                    return tool.get('id')
+            elif 'tool.c.compiler' in sid and not _IsCppFile(rp):
+                return tool.get('id')
+        return None
+
+    # per-folder compiler instances: relative folder path -> tool instance id
+    # NOTE: match by 'resourcePath' (the real project-relative folder path),
+    # NOT by 'name'. CDT 'name' is a display name that is often just '/'
+    # even for sub-folder configurations (e.g. a root config with
+    # name="/" resourcePath="" and a sub-folder config with name="/"
+    # resourcePath="rt-thread/src"), so 'name' cannot distinguish folders
+    # and the longest-prefix match would always fall back to the root one,
+    # skipping the sub-folder compiler's custom options.
+    folders = []
+    for fi in configuration.findall('folderInfo'):
+        d = fi.get('resourcePath', '').strip().lstrip('/')
+        tid = None
+        tc = fi.find('toolChain')
+        if tc is not None:
+            tid = _first_compiler_tool(tc)
+        if tid is None:
+            tid = _first_compiler_tool(fi)
+        if tid is not None:
+            folders.append((d, tid))
+
+    # pick the folder with the longest matching directory prefix;
+    # covers root ('', matches everything), nested folders and files
+    # outside any configured folder (they fall back to the root one)
+    best = None
+    for d, tid in folders:
+        matched = (d == '') or rp == d or rp.startswith(d + '/')
+        if matched and (best is None or len(d) > len(best[0])):
+            best = (d, tid)
+    if best is not None:
+        return best[1]
+
+    # fallback: toolchain-level compiler instance
+    tc = configuration.find('toolChain')
+    if tc is not None:
+        tid = _first_compiler_tool(tc)
+        if tid is not None:
+            return tid
+    return None
+
+
+def UpdateLocalDefinesFileInfo(configuration, ccfg_id, local_defines):
+    """
+    Generate/refresh CDT per-file <fileInfo> nodes that add the group's
+    LOCAL_CPPDEFINES as defined symbols on the corresponding source files.
+    """
+    # remove previously generated fileInfo nodes
+    for fi in configuration.findall('fileInfo'):
+        if _rtt_local_marker in fi.get('id', ''):
+            configuration.remove(fi)
+
+    for rp, defines in local_defines.items():
+        fi_id = ccfg_id + _rtt_local_marker + rp.replace('/', '.').strip('.')
+        # 'resourcePath' is required by CDT to associate the file (getPath());
+        # 'name' alone cannot replace it, otherwise the project configuration
+        # fails to load (addResourceConfiguration -> getPath().segmentCount()).
+        fi = SubElement(configuration, 'fileInfo',
+                        {'id': fi_id, 'name': '/' + rp, 'resourcePath': rp})
+        # inherit the real compiler instance so folder/toolchain options
+        # (-I, '-include rtconfig_preinc.h', global defines) are kept
+        compiler_id = _GetCompilerInstanceId(configuration, rp)
+        if compiler_id is None:
+            compiler_id = 'ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler'
+        tool = SubElement(fi, 'tool', {'id': fi_id + '.tool',
+                                       'superClass': compiler_id})
+        option = SubElement(tool, 'option', {'id': fi_id + '.defs',
+                                             'superClass': 'ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs',
+                                             'useByScannerDiscovery': 'true'})
+        for d in defines:
+            SubElement(option, 'listOptionValue', {'builtIn': 'false', 'value': d})
+
+
+def UpdateCproject(env, project, excluding, reset, prj_name, local_defines=None):
     excluding = sorted(excluding)
 
     cproject = etree.parse('.cproject')
@@ -526,6 +670,11 @@ def UpdateCproject(env, project, excluding, reset, prj_name):
     for cconfiguration in cconfigurations:
         tools = cconfiguration.findall('storageModule/configuration/folderInfo/toolChain/tool')
         HandleToolOption(tools, env, project, reset)
+
+        # per-file LOCAL_CPPDEFINES: attach them to the corresponding source files
+        cfg = cconfiguration.find('storageModule[@moduleId="cdtBuildSystem"]/configuration')
+        if cfg is not None:
+            UpdateLocalDefinesFileInfo(cfg, cconfiguration.get('id'), local_defines or {})
 
         sourceEntries = cconfiguration.find('storageModule/configuration/sourceEntries')
         if sourceEntries != None:
@@ -603,7 +752,7 @@ def TargetEclipse(env, reset=False, prj_name=None):
     excluding = GenExcluding(env, project)
 
     # update the project configuration on '.cproject' file
-    UpdateCproject(env, project, excluding, reset, prj_name)
+    UpdateCproject(env, project, excluding, reset, prj_name, CollectLocalDefines(env))
 
     print('done!')
 
