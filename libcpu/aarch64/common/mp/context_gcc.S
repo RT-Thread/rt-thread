@@ -33,6 +33,14 @@
 #endif /* ARCH_USING_HW_THREAD_SELF */
 .endm
 
+.macro update_tls, srcx
+#ifdef RT_USING_CPLUSPLUS
+    mov     x0, \srcx
+    bl      rt_hw_thread_tls_base
+    msr     tpidr_el0, x0
+#endif /* RT_USING_CPLUSPLUS */
+.endm
+
 /*
  * void rt_hw_context_switch_to(rt_uint3 to, struct rt_thread *to_thread);
  * X0 --> to (thread stack)
@@ -41,10 +49,11 @@
 rt_hw_context_switch_to:
     ldr     x0, [x0]
     mov     sp, x0
-    update_tidr x1
 
     /* reserved to_thread */
     mov     x19, x1
+    update_tidr x19
+    update_tls x19
 
     mov     x0, x19
     bl      rt_cpus_lock_status_restore
@@ -69,10 +78,11 @@ rt_hw_context_switch:
     str     x3, [x0]            // store sp in preempted tasks TCB
     ldr     x0, [x1]            // get new task stack pointer
     mov     sp, x0
-    update_tidr x2
 
     /* backup thread self */
     mov     x19, x2
+    update_tidr x19
+    update_tls x19
 
     mov     x0, x19
     bl      rt_cpus_lock_status_restore
@@ -128,6 +138,7 @@ rt_hw_context_switch_interrupt:
     ldr     x0, [TO_SPP]
     mov     sp, x0
     update_tidr TO_TCB
+    update_tls TO_TCB
 
     mov     x0, TO_TCB
     bl      rt_cpus_lock_status_restore

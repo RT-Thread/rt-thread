@@ -122,6 +122,30 @@ SECTIONS
         *(.rel.local)
     } :data
 
+#ifdef RT_USING_CPLUSPLUS
+    /*
+     * Keep the static TLS image so the kernel can instantiate it for each
+     * RT-Thread thread.  Musl and Qt both use TPIDR_EL0 on AArch64.
+     */
+    . = ALIGN(16);
+    .tdata :
+    {
+        PROVIDE(__tdata_start = .);
+        *(.tdata)
+        *(.tdata.*)
+        PROVIDE(__tdata_end = .);
+    } :data
+
+    . = ALIGN(16);
+    .tbss :
+    {
+        PROVIDE(__tbss_start = .);
+        *(.tbss)
+        *(.tbss.*)
+        PROVIDE(__tbss_end = .);
+    }
+#endif /* RT_USING_CPLUSPLUS */
+
     . = ALIGN(8);
     .ctors :
     {
