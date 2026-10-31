@@ -139,6 +139,35 @@ SECTIONS
         *(.rel.local)
     } :data
 
+#if defined(RT_USING_CPLUSPLUS) && defined(ARCH_MM_MMU) && !defined(ARCH_RISCV_M_MODE)
+    /*
+     * Keep the static TLS image in the kernel image.  On RISC-V, tp points
+     * at the beginning of the current thread's TLS block.  stack.c makes a
+     * private copy for every RT-Thread thread before its initial context is
+     * built.
+     *
+     * Only S-mode MMU configurations opt in.  Other RISC-V libcpu targets
+     * retain their existing tp policy.
+     */
+    . = ALIGN(16);
+    .tdata :
+    {
+        PROVIDE(__tdata_start = .);
+        *(.tdata)
+        *(.tdata.*)
+        PROVIDE(__tdata_end = .);
+    } :data
+
+    . = ALIGN(16);
+    .tbss (NOLOAD) :
+    {
+        PROVIDE(__tbss_start = .);
+        *(.tbss)
+        *(.tbss.*)
+        PROVIDE(__tbss_end = .);
+    }
+#endif /* RT_USING_CPLUSPLUS && ARCH_MM_MMU && !ARCH_RISCV_M_MODE */
+
     . = ALIGN(RISCV_SZPTR);
     .ctors :
     {

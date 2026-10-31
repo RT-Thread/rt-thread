@@ -16,6 +16,40 @@
 
 #define INITIAL_SPSR_EL1 (PSTATE_EL1 | SP_ELx)
 
+#ifdef RT_USING_CPLUSPLUS
+extern char __tdata_start, __tdata_end;
+extern char __tbss_start, __tbss_end;
+
+static rt_size_t rt_hw_thread_tls_size(void)
+{
+    /* Preserve any linker-inserted alignment gap between .tdata and .tbss. */
+    rt_size_t size = &__tbss_end - &__tdata_start;
+
+    return RT_ALIGN(size, 16);
+}
+
+static void rt_hw_thread_tls_init(void *tls)
+{
+    rt_size_t tdata_size = &__tdata_end - &__tdata_start;
+    rt_size_t tls_size = rt_hw_thread_tls_size();
+
+    rt_memcpy(tls, &__tdata_start, tdata_size);
+    rt_memset((rt_uint8_t *)tls + tdata_size, 0, tls_size - tdata_size);
+}
+
+/*
+ * rt_hw_stack_init() reserves TLS below the initial stack pointer.  Derive
+ * the same aligned address from the TCB for every subsequent context switch.
+ */
+void *rt_hw_thread_tls_base(struct rt_thread *thread)
+{
+    rt_ubase_t top = (rt_ubase_t)thread->stack_addr + thread->stack_size -
+                     sizeof(rt_ubase_t);
+
+    return (void *)RT_ALIGN_DOWN(top - rt_hw_thread_tls_size(), 16);
+}
+#endif /* RT_USING_CPLUSPLUS */
+
 /**
  * This function will initialize thread stack
  *
@@ -30,6 +64,12 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
                              rt_uint8_t *stack_addr, void *texit)
 {
     rt_ubase_t *stk;
+
+#ifdef RT_USING_CPLUSPLUS
+    stack_addr = (rt_uint8_t *)RT_ALIGN_DOWN(
+        (rt_ubase_t)stack_addr - rt_hw_thread_tls_size(), 16);
+    rt_hw_thread_tls_init(stack_addr);
+#endif
 
     /* The AAPCS64 requires 128-bit (16 byte) stack alignment */
     stk = (rt_ubase_t*)RT_ALIGN_DOWN((rt_ubase_t)stack_addr, 16);
