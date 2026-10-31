@@ -41,21 +41,21 @@ static rt_err_t scmi_reset_do(struct scmi_reset *srst, int domain,
 
 static rt_err_t scmi_reset_reset(struct rt_reset_control *rstc)
 {
-    struct scmi_reset *srst = raw_to_scmi_reset(rstc);
+    struct scmi_reset *srst = raw_to_scmi_reset(rstc->rstcer);
 
     return scmi_reset_do(srst, rstc->id, SCMI_RESET_FLAG_RESET, SCMI_ARCH_COLD_RESET);
 }
 
 static rt_err_t scmi_reset_assert(struct rt_reset_control *rstc)
 {
-    struct scmi_reset *srst = raw_to_scmi_reset(rstc);
+    struct scmi_reset *srst = raw_to_scmi_reset(rstc->rstcer);
 
     return scmi_reset_do(srst, rstc->id, SCMI_RESET_FLAG_ASSERT, SCMI_ARCH_COLD_RESET);
 }
 
 static rt_err_t scmi_reset_deassert(struct rt_reset_control *rstc)
 {
-    struct scmi_reset *srst = raw_to_scmi_reset(rstc);
+    struct scmi_reset *srst = raw_to_scmi_reset(rstc->rstcer);
 
     return scmi_reset_do(srst, rstc->id, 0, SCMI_ARCH_COLD_RESET);
 }
@@ -64,10 +64,10 @@ static rt_err_t scmi_reset_ofw_parse(struct rt_reset_control *rstc,
         struct rt_ofw_cell_args *args)
 {
     rt_err_t err;
-    struct scmi_reset *srst = raw_to_scmi_reset(rstc);
+    struct scmi_reset *srst = raw_to_scmi_reset(rstc->rstcer);
     struct scmi_reset_attr_in in =
     {
-        .domain_id = rt_cpu_to_le32(rstc->id),
+        .domain_id = rt_cpu_to_le32(args->args[0]),
     };
     struct scmi_reset_attr_out out;
     struct rt_scmi_msg msg = RT_SCMI_MSG_IN_OUT(SCMI_RESET_DOMAIN_ATTRIBUTES, &in, &out);
@@ -98,6 +98,7 @@ static rt_err_t scmi_reset_probe(struct rt_scmi_device *sdev)
     {
         return -RT_ENOMEM;
     }
+    srst->sdev = sdev;
 
     rstcer = &srst->parent;
 
@@ -126,4 +127,11 @@ static struct rt_scmi_driver scmi_reset_driver =
 
     .probe = scmi_reset_probe,
 };
-RT_SCMI_DRIVER_EXPORT(scmi_reset_driver);
+
+static int scmi_reset_drv_register(void)
+{
+    rt_scmi_driver_register(&scmi_reset_driver);
+
+    return 0;
+}
+INIT_SUBSYS_EXPORT(scmi_reset_drv_register);
