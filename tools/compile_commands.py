@@ -24,6 +24,7 @@
 import os
 import json
 import re
+import shlex
 from SCons.Script import *
 
 def collect_compile_info(env):
@@ -115,6 +116,87 @@ def generate_compile_commands(env):
     print("=> Adding post-build action for compile_commands generation")
     env.AddPostAction(None, write_compile_commands)
 
+def _normalize_compile_path(path, base_dir=None):
+    """Normalize a path from compile_commands.json."""
+    if not path:
+        return None
+
+    path = os.path.expanduser(path)
+    if not os.path.isabs(path) and base_dir:
+        path = os.path.join(base_dir, path)
+
+    return os.path.abspath(os.path.normpath(path))
+
+
+def _is_path_under(path, root):
+    """Check whether path is under root after normalization."""
+    if not path or not root:
+        return False
+
+    try:
+        path = os.path.abspath(os.path.normpath(path))
+        root = os.path.abspath(os.path.normpath(root))
+        return os.path.commonpath([path, root]) == root
+    except ValueError:
+        return False
+
+
+def _strip_argument_quotes(arg):
+    """Strip quotes kept by non-POSIX shlex parsing."""
+    if len(arg) >= 2 and arg[0] == arg[-1] and arg[0] in ('"', "'"):
+        return arg[1:-1]
+
+    return arg
+
+
+def _get_entry_arguments(entry):
+    """Return compiler arguments from a compile database entry."""
+    arguments = entry.get('arguments')
+    if isinstance(arguments, list):
+        return [str(arg) for arg in arguments]
+
+    command = entry.get('command', '')
+    if not command:
+        return []
+
+    try:
+        return shlex.split(command, posix=False)
+    except ValueError:
+        return command.split()
+
+
+def _extract_include_paths(args):
+    """Extract include paths from compiler arguments."""
+    include_paths = []
+    index = 0
+
+    separated_options = {
+        '-I',
+        '-isystem',
+        '-iquote',
+        '-idirafter',
+        '/I',
+    }
+
+    while index < len(args):
+        arg = args[index]
+
+        if arg in separated_options:
+            if index + 1 < len(args):
+                include_paths.append(_strip_argument_quotes(args[index + 1]))
+                index += 2
+                continue
+
+        if arg.startswith('-I') and len(arg) > 2:
+            include_paths.append(_strip_argument_quotes(arg[2:]))
+        elif arg.startswith('/I') and len(arg) > 2:
+            include_paths.append(_strip_argument_quotes(arg[2:]))
+
+        index += 1
+
+    return include_paths
+
+
 def parse_compile_paths(json_path, rt_thread_root=None):
     """解析compile_commands.json并提取RT-Thread相关的包含路径
     
@@ -132,7 +214,7 @@ def parse_compile_paths(json_path, rt_thread_root=None):
         if not rt_thread_root:
             raise ValueError("RT-Thread根目录未指定")
     
-    rt_thread_root = os.path.abspath(rt_thread_root)
+    rt_thread_root = os.path.abspath(os.path.normpath(rt_thread_root))
     result = {
         'sources': set(),
         'includes': set()
@@ -141,20 +223,32 @@ def parse_compile_paths(json_path, rt_thread_root=None):
     try:
         with open(json_path, 'r') as f:
             compile_commands = json.load(f)
+
+        if not isinstance(compile_commands, list):
+            raise ValueError("compile_commands.json should contain a list")
             
         for entry in compile_commands:
+            if not isinstance(entry, dict):
+                continue
+
+            entry_dir = _normalize_compile_path(
+                entry.get('directory', ''),
+                os.path.dirname(os.path.abspath(json_path))
+            )
+
             # 处理源文件
-            src_file = entry.get('file', '')
-            if src_file.startswith(rt_thread_root):
+            src_file = _normalize_compile_path(entry.get('file', ''), entry_dir)
+            if _is_path_under(src_file, rt_thread_root):
                 rel_path = os.path.relpath(src_file, rt_thread_root)
                 result['sources'].add(os.path.dirname(rel_path))
             
-            # 处理包含路径 
-            command = entry.get('command', '')
-            include_paths = [p[2:] for p in command.split() if p.startswith('-I')]
+            # 处理包含路径
+            args = _get_entry_arguments(entry)
+            include_paths = _extract_include_paths(args)
             
             for inc_path in include_paths:
-                if inc_path.startswith(rt_thread_root):
+                inc_path = _normalize_compile_path(inc_path, entry_dir)
+                if _is_path_under(inc_path, rt_thread_root):
                     rel_path = os.path.relpath(inc_path, rt_thread_root)
                     result['includes'].add(rel_path)
         
