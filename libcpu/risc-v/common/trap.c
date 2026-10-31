@@ -33,6 +33,8 @@
 extern long list_thread(void);
 #endif
 
+void rt_hw_show_register(struct rt_hw_stack_frame *regs);
+
 #ifdef RT_USING_LWP
 #include <mm_aspace.h>
 #include <lwp.h>
@@ -46,10 +48,14 @@ static void _check_fault(struct rt_hw_stack_frame *regs, uint32_t pc_adj, char *
 {
     rt_thread_t th;
     rt_bool_t is_user_fault = !(regs->xstatus & SR_PP);
+    rt_base_t saved_stat = 0;
 
     if (is_user_fault)
     {
+        /* User backtrace and process teardown can acquire sleeping locks. */
+        saved_stat = csr_read_set(CSR_STATUS, SR_IE);
         rt_kprintf("%s! pc = %p\n", info, regs->epc - pc_adj);
+        rt_hw_show_register(regs);
     }
 
     /* User stack backtrace */
@@ -65,6 +71,8 @@ static void _check_fault(struct rt_hw_stack_frame *regs, uint32_t pc_adj, char *
         lwp_core_dump(regs, pc_adj);
     #endif
         sys_exit_group(-1);
+        /* Only reached when there is no LWP to terminate */
+        csr_write(CSR_STATUS, saved_stat);
     }
 }
 
@@ -296,6 +304,7 @@ void rt_hw_trap(struct rt_hw_stack_frame *regs)
 {
     rt_ubase_t xcause = regs->xcause;
     rt_ubase_t tval = csr_read_clear(CSR_TVAL, 0);
+    rt_bool_t is_user_fault = !(regs->xstatus & SR_PP);
 
     /* IRQ */
     if (xcause & CAUSE_IRQ_FLAG)
@@ -364,16 +373,23 @@ void rt_hw_trap(struct rt_hw_stack_frame *regs)
         case EXC_INST_PAGE_FAULT:
         case EXC_LOAD_PAGE_FAULT:
         case EXC_STORE_PAGE_FAULT:
-        #ifdef RT_USING_SMART
-            if (!(regs->xstatus & SR_PP) ||
+#ifdef RT_USING_SMART
+            if (is_user_fault ||
                 (tval >= USER_VADDR_START && tval < USER_VADDR_TOP))
             {
                 if (user_fault_fixable(regs, xcause, tval))
                 {
                     return;
                 }
+
+                /* A failed user mapping must terminate only the LWP. */
+                if (is_user_fault && rt_thread_self())
+                {
+                    _check_fault(regs, 0, "user fault");
+                    return;
+                }
             }
-        #endif /* RT_USING_SMART */
+#endif /* RT_USING_SMART */
 
         default:
             LOG_E("Unhandle Execption: (%d) %s, TVAL = %p", xcause,
