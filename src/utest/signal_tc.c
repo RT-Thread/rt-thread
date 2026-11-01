@@ -16,6 +16,10 @@
  * case 7:rt_signal_kill, kill legal thread, return 0;
  * case 8:rt_signal_kill, kill illegal thread, return failed (unused);
  * case 9:rt_signal_kill, kill illegal signo, return -RT_EINVAL;
+ * case 10:rt_signal_kill, a thread blocked in rt_thread_mdelay() receives a signal
+ *         from another thread, should be woken up and run its handler.
+ * case 11:rt_signal_kill, the same thread but with the signal masked, should not run
+ *         the handler and should only wake up when its delay expires.
  *
  *
  * Test Case Name: [rt_signal_tc]
@@ -296,6 +300,91 @@ static void rt_signal_wait_test2(void)
     return;
 }
 
+static rt_bool_t signal_masked;
+
+static void rt_signal_delay_thread(void *parm)
+{
+    rt_signal_install(SIGUSR1, sig_handle_default);
+    rt_signal_unmask(SIGUSR1);
+
+    if (signal_masked)
+    {
+        /* keep the signal pending: the handler must not run, the delay expires */
+        rt_signal_mask(SIGUSR1);
+    }
+
+    /* blocked here until a signal wakes this thread up, or the delay expires */
+    rt_thread_mdelay(1000);
+
+    rt_sem_release(&_received_signal);
+}
+
+static void rt_signal_delay_wait(rt_bool_t masked)
+{
+    rt_thread_t t1;
+    rt_err_t result;
+    rt_tick_t start;
+    rt_tick_t elapsed_ms;
+
+    receive_sig = -1;
+    signal_masked = masked;
+
+    t1 = rt_thread_create("sig_t2", rt_signal_delay_thread, 0, 4096, 14, 10);
+    if (t1 == RT_NULL)
+    {
+        /* uassert_true() only records the failure, it does not return, so bail out
+         * here instead of starting a thread that does not exist */
+        uassert_true(t1 != RT_NULL);
+        return;
+    }
+    rt_thread_startup(t1);
+
+    /* give the thread a chance to enter rt_thread_mdelay() */
+    rt_thread_mdelay(100);
+
+    start = rt_tick_get();
+    uassert_int_equal(rt_thread_kill(t1, SIGUSR1), RT_EOK);
+
+    /* rt_sem_take() takes ticks, so convert the timeout explicitly */
+    result = rt_sem_take(&_received_signal, rt_tick_from_millisecond(1500));
+    elapsed_ms = (rt_tick_get() - start) * 1000 / RT_TICK_PER_SECOND;
+
+    uassert_int_equal(result, RT_EOK);
+
+    if (masked)
+    {
+        /* the signal stays pending: no handler call, and the thread only wakes up
+         * when its 1 s delay expires */
+        uassert_int_not_equal(receive_sig, SIGUSR1);
+        uassert_true(elapsed_ms >= 900);
+    }
+    else
+    {
+        /* delivered: the handler ran in that thread and it woke up well before
+         * the 1 s delay expired */
+        uassert_int_equal(receive_sig, SIGUSR1);
+        uassert_true(elapsed_ms < 900);
+    }
+
+    if (result != RT_EOK)
+    {
+        /* the worker is still sleeping. Let it finish (and drain the semaphore)
+         * before utest_tc_cleanup() detaches it, otherwise the worker could touch
+         * a destroyed object after the delay expires. */
+        rt_thread_mdelay(1100);
+        rt_sem_take(&_received_signal, rt_tick_from_millisecond(100));
+        rt_thread_mdelay(50);
+    }
+}
+
+static void rt_signal_delay_thread_test(void)
+{
+    /* case 10: signal delivered to a thread blocked in rt_thread_mdelay() */
+    rt_signal_delay_wait(RT_FALSE);
+    /* case 11: signal masked, the thread must only wake up when the delay expires */
+    rt_signal_delay_wait(RT_TRUE);
+}
+
 static rt_err_t utest_tc_init(void)
 {
     rt_sem_init(&_received_signal, "utest", 0, RT_IPC_FLAG_PRIO);
@@ -317,6 +406,7 @@ static void testcase(void)
     UTEST_UNIT_RUN(rt_signal_kill_test);
     UTEST_UNIT_RUN(rt_signal_wait_test);
     UTEST_UNIT_RUN(rt_signal_wait_test2);
+    UTEST_UNIT_RUN(rt_signal_delay_thread_test);
 #endif /* RT_USING_HEAP */
 }
 UTEST_TC_EXPORT(testcase, "core.signal", utest_tc_init, utest_tc_cleanup, 1000);
