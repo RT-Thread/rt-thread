@@ -16,6 +16,12 @@
  * case 7:rt_signal_kill, kill legal thread, return 0;
  * case 8:rt_signal_kill, kill illegal thread, return failed (unused);
  * case 9:rt_signal_kill, kill illegal signo, return -RT_EINVAL;
+ * case 10:rt_signal_kill, a thread blocked in rt_thread_mdelay() receives a signal
+ *         from another thread, should be woken up and run its handler.
+ * case 11:rt_signal_kill, the same thread but with the signal masked, should not run
+ *         the handler and should only wake up when its delay expires.
+ * case 12:rt_signal_kill, masked again but the sending thread is scheduled late, the
+ *         verdict must stay the same because the delay is measured inside the worker.
  *
  *
  * Test Case Name: [rt_signal_tc]
@@ -133,6 +139,9 @@
 
 static volatile int receive_sig = 0;
 static struct rt_semaphore _received_signal;
+static struct rt_semaphore _worker_ready;
+static struct rt_semaphore _worker_exit;
+static struct rt_semaphore _worker_done;
 
 #ifdef RT_USING_MUSLLIBC
 #define UTEST_SIGNAL_MIN 1
@@ -296,15 +305,223 @@ static void rt_signal_wait_test2(void)
     return;
 }
 
+static rt_bool_t signal_masked;
+static volatile rt_tick_t delay_start_tick;
+static volatile rt_tick_t delay_end_tick;
+static rt_thread_t delay_worker;
+static rt_bool_t worker_pending;
+
+static void rt_signal_delay_thread(void *parm)
+{
+    rt_signal_install(SIGUSR1, sig_handle_default);
+    rt_signal_unmask(SIGUSR1);
+
+    if (signal_masked)
+    {
+        /* keep the signal pending: the handler must not run, the delay expires */
+        rt_signal_mask(SIGUSR1);
+    }
+
+    /* The delay window is measured inside the worker. Measuring it from the test
+     * thread would already miss the time spent before the signal was sent, which
+     * makes the expected value depend on the tick frequency. */
+    delay_start_tick = rt_tick_get();
+    rt_sem_release(&_worker_ready);
+
+    /* blocked here until a signal wakes this thread up, or the delay expires */
+    rt_thread_mdelay(1000);
+    delay_end_tick = rt_tick_get();
+
+    rt_sem_release(&_received_signal);
+
+    /* Stay alive until the testcase is done, so rt_thread_kill() never targets an
+     * already deleted thread and both semaphores stay valid. */
+    rt_sem_take(&_worker_exit, RT_WAITING_FOREVER);
+
+    /* Last access to the shared state: the test waits for this before it detaches
+     * anything, so a worker that finishes late can never touch a destroyed object. */
+    rt_sem_release(&_worker_done);
+}
+
+/* Unified finalization of one case: let the worker leave, wait until it has really
+ * passed the delay and the exit handshake, then drop notifications that arrived after a
+ * wait had already timed out. Returns RT_TRUE only when the worker acknowledged. */
+static rt_bool_t rt_signal_delay_finish(void)
+{
+    rt_bool_t acked;
+
+    /* Releasing _worker_exit only permits the exit; the acknowledgement is what proves
+     * the worker no longer touches the shared objects. */
+    rt_sem_release(&_worker_exit);
+    acked = (rt_sem_take(&_worker_done, rt_tick_from_millisecond(5000)) == RT_EOK) ? RT_TRUE : RT_FALSE;
+
+    /* A late ready/completion notification would otherwise be consumed by the next case
+     * as if it belonged to that case's worker. */
+    while (rt_sem_take(&_received_signal, 0) == RT_EOK)
+    {
+    }
+    while (rt_sem_take(&_worker_ready, 0) == RT_EOK)
+    {
+    }
+
+    if (acked == RT_TRUE)
+    {
+        worker_pending = RT_FALSE;
+        delay_worker = RT_NULL;
+    }
+
+    return acked;
+}
+
+static rt_bool_t rt_signal_delay_wait(rt_bool_t masked, rt_int32_t send_delay_ms)
+{
+    rt_thread_t t1;
+    rt_err_t ready_result;
+    rt_err_t result = -RT_ETIMEOUT;
+    rt_tick_t full_delay;
+    rt_tick_t margin;
+    rt_tick_t elapsed;
+
+    receive_sig = -1;
+    signal_masked = masked;
+    delay_start_tick = 0;
+    delay_end_tick = 0;
+
+    t1 = rt_thread_create("sig_t2", rt_signal_delay_thread, 0, 4096, 14, 10);
+    if (t1 == RT_NULL)
+    {
+        /* uassert_true() only records the failure, it does not return, so bail out
+         * here instead of starting a thread that does not exist */
+        uassert_true(t1 != RT_NULL);
+        return RT_FALSE;
+    }
+    rt_thread_startup(t1);
+    delay_worker = t1;
+    worker_pending = RT_TRUE;
+
+    /* explicit handshake: the worker is inside the delay now, no fixed guess */
+    ready_result = rt_sem_take(&_worker_ready, rt_tick_from_millisecond(1000));
+    uassert_int_equal(ready_result, RT_EOK);
+
+    if (ready_result == RT_EOK)
+    {
+        /* Defensive yield: with the default UTEST_THR_PRIORITY (20) the worker (14) enters
+         * rt_thread_mdelay() before this thread runs, but a BSP that raises the utest
+         * priority above the worker could send the signal first. One tick is enough for the
+         * worker to reach the delay, and it does not affect the verdict because the delay
+         * window is measured inside the worker. */
+        rt_thread_mdelay(1);
+
+        if (send_delay_ms > 0)
+        {
+            /* the sending thread may be scheduled late: the verdict must not change */
+            rt_thread_mdelay(send_delay_ms);
+        }
+
+        uassert_int_equal(rt_thread_kill(t1, SIGUSR1), RT_EOK);
+
+        /* rt_sem_take() takes ticks, so convert the timeout explicitly */
+        result = rt_sem_take(&_received_signal, rt_tick_from_millisecond(3000));
+        uassert_int_equal(result, RT_EOK);
+    }
+
+    elapsed = delay_end_tick - delay_start_tick;
+    full_delay = rt_tick_from_millisecond(1000);
+    margin = rt_tick_from_millisecond(100);
+
+    uassert_true(delay_end_tick != 0);
+
+    /* Without the end tick the difference above is meaningless (it underflows), so the
+     * timing checks only run when the worker really reported both ends of the delay. */
+    if (delay_end_tick != 0 && ready_result == RT_EOK && result == RT_EOK)
+    {
+        if (masked)
+        {
+            /* the signal stays pending: no handler call, the whole delay must elapse */
+            uassert_int_not_equal(receive_sig, SIGUSR1);
+            uassert_true(elapsed + margin >= full_delay);
+            uassert_true(elapsed <= full_delay + margin);
+        }
+        else
+        {
+            /* delivered: the handler ran in that thread and it woke up well before
+             * the 1 s delay expired */
+            uassert_int_equal(receive_sig, SIGUSR1);
+            uassert_true(elapsed + margin < full_delay);
+        }
+    }
+
+    /* One shared finalization for the normal path and for every failure path. When the
+     * worker cannot be confirmed the caller must not start another case on top of the
+     * same semaphores. */
+    if (rt_signal_delay_finish() != RT_TRUE)
+    {
+        uassert_true(RT_FALSE);
+        return RT_FALSE;
+    }
+
+    return (ready_result == RT_EOK && result == RT_EOK) ? RT_TRUE : RT_FALSE;
+}
+
+static void rt_signal_delay_thread_test(void)
+{
+    /* case 10: signal delivered to a thread blocked in rt_thread_mdelay() */
+    if (rt_signal_delay_wait(RT_FALSE, 0) != RT_TRUE)
+    {
+        return;
+    }
+    /* case 11: signal masked, the thread must only wake up when the delay expires */
+    if (rt_signal_delay_wait(RT_TRUE, 0) != RT_TRUE)
+    {
+        return;
+    }
+    /* case 12: masked again, but the sending thread is scheduled late: the verdict
+     * must stay the same, which is what the in-worker timing guarantees */
+    rt_signal_delay_wait(RT_TRUE, 450);
+}
+
 static rt_err_t utest_tc_init(void)
 {
     rt_sem_init(&_received_signal, "utest", 0, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&_worker_ready, "uwork", 0, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&_worker_exit, "uexit", 0, RT_IPC_FLAG_PRIO);
+    rt_sem_init(&_worker_done, "udone", 0, RT_IPC_FLAG_PRIO);
     return RT_EOK;
 }
 
 static rt_err_t utest_tc_cleanup(void)
 {
+    if (worker_pending == RT_TRUE)
+    {
+        /* A worker that its case could not confirm is still alive and may touch the
+         * semaphores. Give it one last bounded chance, then remove it, so nothing is
+         * detached underneath a thread that is still running. */
+        if (rt_sem_take(&_worker_done, rt_tick_from_millisecond(20000)) != RT_EOK)
+        {
+#ifdef RT_USING_HEAP
+            if (delay_worker != RT_NULL)
+            {
+                rt_thread_delete(delay_worker);
+                rt_thread_mdelay(2);
+            }
+#endif
+        }
+
+        while (rt_sem_take(&_received_signal, 0) == RT_EOK)
+        {
+        }
+        while (rt_sem_take(&_worker_ready, 0) == RT_EOK)
+        {
+        }
+
+        delay_worker = RT_NULL;
+        worker_pending = RT_FALSE;
+    }
+
     rt_sem_detach(&_received_signal);
+    rt_sem_detach(&_worker_ready);
+    rt_sem_detach(&_worker_exit);
+    rt_sem_detach(&_worker_done);
     return RT_EOK;
 }
 
@@ -317,6 +534,7 @@ static void testcase(void)
     UTEST_UNIT_RUN(rt_signal_kill_test);
     UTEST_UNIT_RUN(rt_signal_wait_test);
     UTEST_UNIT_RUN(rt_signal_wait_test2);
+    UTEST_UNIT_RUN(rt_signal_delay_thread_test);
 #endif /* RT_USING_HEAP */
 }
 UTEST_TC_EXPORT(testcase, "core.signal", utest_tc_init, utest_tc_cleanup, 1000);
