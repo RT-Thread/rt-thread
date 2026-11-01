@@ -236,12 +236,24 @@ static void aplic_irq_mask(struct rt_pic_irq *pirq)
 static void aplic_msi_irq_eoi(struct rt_pic_irq *pirq)
 {
     struct riscv_aplic *aplic = pirq->pic->priv_data;
+    rt_uint32_t input;
 
     switch (pirq->mode)
     {
     case RT_IRQ_MODE_LEVEL_HIGH:
     case RT_IRQ_MODE_LEVEL_LOW:
-        HWREG32(aplic->regs + APLIC_SETIPNUM_LE) = pirq->hwirq;
+        /*
+         * in_clrip reads the rectified input, including source polarity.
+         * Retrigger only while the device still asserts its interrupt.
+         * Older QEMU versions also set pending for deasserted inputs on
+         * setipnum_le writes, causing an endless stream of spurious MSIs.
+         */
+        input = HWREG32(aplic->regs + APLIC_CLRIP_BASE +
+                (pirq->hwirq / APLIC_IRQBITS_PER_REG) * sizeof(rt_uint32_t));
+        if (input & RT_BIT(pirq->hwirq % APLIC_IRQBITS_PER_REG))
+        {
+            HWREG32(aplic->regs + APLIC_SETIPNUM_LE) = pirq->hwirq;
+        }
         break;
 
     default:

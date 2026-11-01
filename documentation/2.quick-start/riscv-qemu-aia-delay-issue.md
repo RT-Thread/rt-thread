@@ -1,6 +1,9 @@
 # QEMU RISC-V 启用 AIA 后延时打印停止的现象记录
 
-记录日期：2026-10-31。状态：已在当前环境复现，根因待定位，尚未修复。
+记录日期：2026-10-31。状态：已定位到旧版 QEMU 的 APLIC 电平中断重触发问题，
+已在 RT-Thread APLIC 驱动加入兼容处理，并在当前环境验证通过。
+
+下文的现象及初始对照结果描述修复前的行为；修复和验证结果见文末。
 
 ## 现象
 
@@ -107,7 +110,7 @@ RV64 下脚本默认开启 AIA。实际测试观察窗口为进程启动后的 2
 `python3 qemu.py` 与 `./qemu.py` 都可以启动该脚本，本次已知差异是设备参数，
 没有证据表明异常来自这两种调用形式。
 
-## 当前判断与证据边界
+## 初始判断与证据边界（修复前）
 
 线程的执行顺序为：
 
@@ -123,7 +126,7 @@ RV64 下脚本默认开启 AIA。实际测试观察窗口为进程启动后的 2
 目前没有直接测量 tick、线程状态或中断计数，不能据此断言时钟中断一定停止，
 也不能认定线程一定没有被唤醒。
 
-## 临时使用方式
+## 临时使用方式（修复前）
 
 学习和验证基础线程功能时，可以使用已验证正常的启动参数：
 
@@ -134,7 +137,7 @@ RV64 下脚本默认开启 AIA。实际测试观察窗口为进程启动后的 2
 这是临时绕过方式，不是对 AIA 问题的修复。不需要为此修改延时循环或
 手工编辑 `rtconfig.h`。
 
-## 后续排查方向
+## 初始排查方向
 
 1. 在相同镜像和外设配置下重复开关 AIA，确认复现稳定性，并记录 boot hart。
 2. 通过 GDB 检查延时调用之后线程停在哪里、各 CPU 正在执行什么代码。
@@ -144,3 +147,66 @@ RV64 下脚本默认开启 AIA。实际测试观察窗口为进程启动后的 2
 
 更改核数应通过配置工具生成 `rtconfig.h` 并重新编译，保持 QEMU 核数与
 `RT_CPUS_NR` 一致。后续修复需要同时验证 AIA 和 PLIC/CLINT 两条路径。
+
+## 定位结果
+
+通过 QEMU 的 GDB 调试接口，在仅打印 `0` 后暂停并查看各 CPU 状态：
+
+- 逻辑 CPU0 的 tick 停在 `70`，中断嵌套计数为 `2`。
+- 其他逻辑 CPU 的 tick 已超过 `1200`，仍在计时。
+- 调用栈经过 `riscv_intc_aia_handler_raw()`、`imsic_handler()`、
+  `rt_pic_handle_isr()` 和 `virtio_mmio_isr()`；再次暂停时位于
+  `aplic_msi_irq_eoi()`。
+
+当前 SMP 实现仅由逻辑 CPU0 调用 `rt_timer_check()`。该 CPU 持续处理外部
+中断，无法正常推进其时钟和定时器处理，因此应用延时后没有继续打印。
+
+APLIC 在 MSI 模式下处理电平中断时，设备驱动先确认设备中断；APLIC 驱动
+随后写 `setipnum_le`，使仍然有效的电平中断能够再次送达。按照 AIA 规范，
+设备已经撤销中断时，这次写入不应设置新的 pending 中断。
+
+旧版 QEMU 的相关模拟行为不符合这一条件，导致设备中断已撤销时，EOI 中的
+写入仍产生新的 MSI，形成反复进入处理函数的中断循环。
+QEMU 上游提交 `bf31cf06eb5e709a1a7b082dc7956baadc4b70fa`
+修正了同类 `setipnum_le` 模拟问题。
+
+## 兼容处理
+
+修改文件：`libcpu/risc-v/common/pic/pic-riscv-aplic.c`，
+函数：`aplic_msi_irq_eoi()`。
+
+对高、低电平中断，先读取 `in_clrip` 寄存器中的 rectified input
+（考虑极性后的有效输入），仅在该中断仍被设备置为有效时写 `setipnum_le`。
+输入已经无效时不重新触发，从而避免旧版模拟器产生无休止的虚假 MSI。
+
+这项处理保留 AIA、APLIC/IMSIC 和电平中断重触发能力，不改变应用延时逻辑、
+系统 tick 频率或多核数量。它是 RT-Thread 侧的兼容处理，没有修改 QEMU。
+
+## 修复后的验证
+
+编译命令：在 BSP 目录执行 `scons -j8`，编译和链接通过。
+
+| 运行配置 | 结果 |
+| --- | --- |
+| AIA，4 核，关闭网络、NVMe 和附加串口 | 完整输出 `0` 到 `9` |
+| PLIC/CLINT，4 核，关闭上述设备 | 完整输出 `0` 到 `9` |
+| AIA，4 核，开启全部默认设备 | 完整输出 `0` 到 `9` |
+
+全部默认设备测试保留 virtio 网络、NVMe、virtio-console 和 PCI serial。
+由于宿主机默认串口端口 `4321` 已被其他进程占用，测试使用独立临时磁盘，
+并将宿主机监听端口改为自动分配；虚拟机中的设备组合和 AIA 配置保持开启。
+这不是直接使用所有默认宿主机端口的运行测试。
+
+修复后的镜像可通过 `./qemu.py` 启动，不再需要 `-no-aia`。
+若提示端口或磁盘占用，应先退出使用相同资源的旧 QEMU 实例。
+
+验证范围为当前 QEMU 8.2.2、OpenSBI v1.3、RV64 SMP 配置；尚未覆盖真实
+APLIC 硬件、低电平外设和所有模拟器版本。
+
+## 参考资料
+
+- [RISC-V AIA 规范](https://docs.riscv.org/reference/aia/_attachments/riscv-interrupts.pdf)：
+  4.5.7 节说明读取 `in_clrip` 得到 rectified input，4.7 节说明电平中断
+  在 MSI 模式下的 pending 更新条件。
+- [QEMU 上游修复提交](https://github.com/qemu/qemu/commit/bf31cf06eb5e709a1a7b082dc7956baadc4b70fa)：
+  `hw/intc/riscv_aplic: Fix setipnum_le write emulation for APLIC MSI-mode`。
