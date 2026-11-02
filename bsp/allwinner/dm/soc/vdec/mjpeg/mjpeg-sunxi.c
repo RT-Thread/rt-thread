@@ -15,11 +15,12 @@
 #include <sunxi-jpegd.h>
 #include <sunxi-jpege.h>
 #include <sunxi-pngd.h>
+#include "vdec-sun252i.h"
 
 #define SUNXI_VE_MODE                         0x0000
 #define SUNXI_VE_VERSION                      0x00f0
 #define SUNXI_VE_MODE_DISABLED                0x0007
-/* F101 selects the MPEG decoder with the SoC-specific mode bit set. */
+/* Sun252i selects the MPEG decoder with the SoC-specific mode bit set. */
 #define SUNXI_VE_MODE_DEC_MPEG                RT_BIT(3)
 #define SUNXI_VE_MODE_DEC_PNG                 0x000e
 #define SUNXI_VE_MODE_ENC_AVC                 0x000b
@@ -53,7 +54,7 @@
 
 #define SUNXI_VE_MPEG_CTRL_JPEG_FORCE_420     RT_BIT(18)
 #define SUNXI_VE_MPEG_CTRL_IRQ_MASK           (RT_BIT(5) | RT_BIT(4) | RT_BIT(3))
-#define SUNXI_VE_MPEG_CTRL_F101_420           (RT_BIT(8) | RT_BIT(7) | \
+#define SUNXI_VE_MPEG_CTRL_SUN252I_420         (RT_BIT(8) | RT_BIT(7) | \
                                                 RT_BIT(6) | RT_BIT(5) | \
                                                 RT_BIT(4) | RT_BIT(3))
 #define SUNXI_VE_MPEG_CTRL_H6                 (RT_BIT(27) | RT_BIT(5) | \
@@ -215,7 +216,7 @@ enum sunxi_jpegd_engine
 
 enum sunxi_jpegd_layout
 {
-    SUNXI_JPEGD_LAYOUT_F101,
+    SUNXI_JPEGD_LAYOUT_SUN252I,
     SUNXI_JPEGD_LAYOUT_H6,
 };
 
@@ -224,9 +225,9 @@ struct sunxi_jpegd_soc_data
     enum sunxi_jpegd_layout layout;
 };
 
-static const struct sunxi_jpegd_soc_data sunxi_jpegd_f101_data =
+static const struct sunxi_jpegd_soc_data sunxi_jpegd_sun252i_data =
 {
-    .layout = SUNXI_JPEGD_LAYOUT_F101,
+    .layout = SUNXI_JPEGD_LAYOUT_SUN252I,
 };
 
 static const struct sunxi_jpegd_soc_data sunxi_jpegd_h616_data =
@@ -263,6 +264,7 @@ struct sunxi_jpegd
     rt_bool_t encoder_registered;
     rt_bool_t png_registered;
     rt_bool_t irq_installed;
+    rt_bool_t shared_ve;
     rt_bool_t running;
     enum sunxi_jpegd_layout layout;
     enum sunxi_jpegd_engine engine;
@@ -426,13 +428,21 @@ static const rt_uint8_t sunxi_jpege_zigzag[64] =
 static rt_uint32_t sunxi_jpegd_readl(struct sunxi_jpegd *jpegd,
         rt_uint32_t offset)
 {
-    return HWREG32(jpegd->base + offset);
+    return jpegd->shared_ve ? sunxi_vdec_hw_readl(offset) :
+                             HWREG32(jpegd->base + offset);
 }
 
 static void sunxi_jpegd_writel(struct sunxi_jpegd *jpegd,
         rt_uint32_t offset, rt_uint32_t value)
 {
-    HWREG32(jpegd->base + offset) = value;
+    if (jpegd->shared_ve)
+    {
+        sunxi_vdec_hw_writel(offset, value);
+    }
+    else
+    {
+        HWREG32(jpegd->base + offset) = value;
+    }
 }
 
 static rt_err_t sunxi_jpegd_read_be16(const rt_uint8_t *data,
@@ -924,7 +934,7 @@ static rt_err_t sunxi_jpegd_configure_output(struct sunxi_jpegd *jpegd,
         return -RT_ENOMEM;
     }
 
-    /* The F101 VE writes a 32-pixel aligned YV12 image. */
+    /* The VE writes a 32-pixel aligned YV12 image. */
     sunxi_jpegd_writel(jpegd, SUNXI_VE_TOP_OUTPUT_FORMAT, 0x33);
     sunxi_jpegd_writel(jpegd, SUNXI_VE_TOP_CHROMA_BUF_LEN0,
             chroma_size | RT_BIT(29) | (3U << 30));
@@ -1354,6 +1364,10 @@ static rt_err_t sunxi_jpegd_reset(struct sunxi_jpegd *jpegd)
     rt_err_t err;
 
     sunxi_jpegd_writel(jpegd, SUNXI_VE_MODE, SUNXI_VE_MODE_DISABLED);
+    if (jpegd->shared_ve)
+    {
+        return sunxi_vdec_hw_reset();
+    }
     err = rt_reset_control_assert(jpegd->resets);
     if (err)
     {
@@ -1417,7 +1431,7 @@ static rt_err_t sunxi_jpegd_get_info(struct sunxi_jpegd *jpegd,
     info->width = header.width;
     info->height = header.height;
     info->stride = stride;
-    /* The F101 VE stores JPEG 4:2:0 reconstruction surfaces as MB32. */
+    /* The VE stores JPEG 4:2:0 reconstruction surfaces as MB32. */
     info->format = SUNXI_JPEGD_FORMAT_MB32_420;
     info->luma_size = luma_size;
     info->output_size = luma_size + stride * aligned_height / 2;
@@ -1446,6 +1460,22 @@ static rt_uint32_t sunxi_pngd_read_be32(const rt_uint8_t *data)
     return ((rt_uint32_t)data[0] << 24) |
             ((rt_uint32_t)data[1] << 16) |
             ((rt_uint32_t)data[2] << 8) | data[3];
+}
+
+/*
+ * The Sun252i PNG block is selected as module 6, followed by the W2 mode-bit
+ * inversion documented by Allwinner's PNG driver.  Preserve the unrelated
+ * top-level control bits; the H.264 block uses some of them as well.
+ */
+static void sunxi_pngd_select(struct sunxi_jpegd *jpegd)
+{
+    rt_uint32_t mode;
+
+    mode = sunxi_jpegd_readl(jpegd, SUNXI_VE_MODE);
+    mode &= ~0x0fU;
+    mode |= 6;
+    mode ^= RT_BIT(3);
+    sunxi_jpegd_writel(jpegd, SUNXI_VE_MODE, mode);
 }
 
 static rt_err_t sunxi_pngd_parse_header(const void *data, rt_size_t size,
@@ -1522,7 +1552,7 @@ static rt_err_t sunxi_pngd_get_info(struct sunxi_jpegd *jpegd,
     info->width = header.width;
     info->height = header.height;
     info->stride = stride;
-    info->format = SUNXI_PNGD_FORMAT_RGBA8888;
+    info->format = SUNXI_PNGD_FORMAT_ABGR8888;
     info->output_size = stride * header.height;
 
     return RT_EOK;
@@ -1537,6 +1567,7 @@ static rt_err_t sunxi_pngd_decode(struct sunxi_jpegd *jpegd,
     rt_size_t stride;
     rt_size_t output_size;
     rt_tick_t timeout;
+    rt_uint32_t control;
     rt_err_t err;
 
     if (!request || !request->input || !request->output ||
@@ -1578,8 +1609,17 @@ static rt_err_t sunxi_pngd_decode(struct sunxi_jpegd *jpegd,
         return err;
     }
 
-    sunxi_jpegd_writel(jpegd, SUNXI_VE_MODE, SUNXI_VE_MODE_DEC_PNG);
-    sunxi_jpegd_writel(jpegd, SUNXI_VE_PNG_INT_STATUS, SUNXI_VE_PNG_INT_MASK);
+    sunxi_pngd_select(jpegd);
+    /* The input was populated by the CPU; PNG output is DMA-written. */
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, input->buffer.virt_addr,
+            request->input_size);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, output->buffer.virt_addr,
+            output_size);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, output->buffer.virt_addr,
+            output_size);
+
+    /* The vendor driver acknowledges the completion bit before each run. */
+    sunxi_jpegd_writel(jpegd, SUNXI_VE_PNG_INT_STATUS, SUNXI_VE_PNG_INT_DONE);
     sunxi_jpegd_writel(jpegd, SUNXI_VE_PNG_RX_ADDR, input->buffer.phys_addr);
     sunxi_jpegd_writel(jpegd, SUNXI_VE_PNG_RX_LEN, request->input_size);
     sunxi_jpegd_writel(jpegd, SUNXI_VE_PNG_TX_ADDR, output->buffer.phys_addr);
@@ -1591,7 +1631,18 @@ static rt_err_t sunxi_pngd_decode(struct sunxi_jpegd *jpegd,
     jpegd->irq_status = 0;
     rt_completion_init(&jpegd->completion);
     rt_hw_dsb();
-    sunxi_jpegd_writel(jpegd, SUNXI_VE_PNG_CTRL, SUNXI_VE_PNG_CTRL_START);
+    control = sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_CTRL);
+    sunxi_jpegd_writel(jpegd, SUNXI_VE_PNG_CTRL,
+            control | SUNXI_VE_PNG_CTRL_START);
+    rt_hw_dsb();
+
+    LOG_I("PNG start: mode=%08x ctrl=%08x ien=%08x rx=%08x/%u tx=%08x",
+            sunxi_jpegd_readl(jpegd, SUNXI_VE_MODE),
+            sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_CTRL),
+            sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_INT_EN),
+            sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_RX_ADDR),
+            (rt_uint32_t)sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_RX_LEN),
+            sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_TX_ADDR));
 
     timeout = request->timeout ? request->timeout :
             rt_tick_from_millisecond(SUNXI_PNGD_DEFAULT_TIMEOUT_MS);
@@ -1600,9 +1651,15 @@ static rt_err_t sunxi_pngd_decode(struct sunxi_jpegd *jpegd,
     jpegd->engine = SUNXI_JPEGD_ENGINE_IDLE;
     if (err)
     {
-        LOG_E("PNG decode timed out, status=%08x control=%08x",
+        LOG_E("PNG decode timed out: mode=%08x status=%08x int=%08x ien=%08x ctrl=%08x rx=%08x/%u tx=%08x",
+                sunxi_jpegd_readl(jpegd, SUNXI_VE_MODE),
                 sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_STATUS),
-                sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_CTRL));
+                sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_INT_STATUS),
+                sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_INT_EN),
+                sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_CTRL),
+                sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_RX_ADDR),
+                (rt_uint32_t)sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_RX_LEN),
+                sunxi_jpegd_readl(jpegd, SUNXI_VE_PNG_TX_ADDR));
         sunxi_jpegd_reset(jpegd);
         return -RT_ETIMEOUT;
     }
@@ -1614,7 +1671,10 @@ static rt_err_t sunxi_pngd_decode(struct sunxi_jpegd *jpegd,
     request->width = header.width;
     request->height = header.height;
     request->stride = stride;
-    request->format = SUNXI_PNGD_FORMAT_RGBA8888;
+    request->format = SUNXI_PNGD_FORMAT_ABGR8888;
+
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, output->buffer.virt_addr,
+            output_size);
 
     return RT_EOK;
 }
@@ -1708,7 +1768,7 @@ static rt_err_t sunxi_jpegd_decode(struct sunxi_jpegd *jpegd,
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, output->buffer.virt_addr, output_size);
 
     ctrl = jpegd->layout == SUNXI_JPEGD_LAYOUT_H6 ?
-            SUNXI_VE_MPEG_CTRL_H6 : SUNXI_VE_MPEG_CTRL_F101_420;
+            SUNXI_VE_MPEG_CTRL_H6 : SUNXI_VE_MPEG_CTRL_SUN252I_420;
     jpegd->engine = SUNXI_JPEGD_ENGINE_DECODE;
     jpegd->running = RT_TRUE;
     jpegd->error = RT_EOK;
@@ -1923,6 +1983,61 @@ static rt_err_t sunxi_jpege_encode(struct sunxi_jpegd *jpegd,
     return RT_EOK;
 }
 
+static void sunxi_jpegd_isr(int irqno, void *parameter);
+
+static int sunxi_jpegd_shared_irq(void *parameter)
+{
+    sunxi_jpegd_isr(0, parameter);
+    return 0;
+}
+
+static rt_err_t sunxi_jpegd_run(struct sunxi_jpegd *jpegd,
+        rt_err_t (*execute)(struct sunxi_jpegd *, void *), void *args)
+{
+    rt_err_t err;
+    rt_err_t release_err;
+
+    if (jpegd->running)
+    {
+        return -RT_EBUSY;
+    }
+    if (jpegd->shared_ve)
+    {
+        err = sunxi_vdec_hw_acquire(jpegd, sunxi_jpegd_shared_irq, 0);
+        if (err != RT_EOK)
+        {
+            return err;
+        }
+    }
+    err = execute(jpegd, args);
+    if (jpegd->shared_ve)
+    {
+        release_err = sunxi_vdec_hw_release(jpegd);
+        if (err == RT_EOK)
+        {
+            err = release_err;
+        }
+    }
+    return err;
+}
+
+static rt_err_t sunxi_jpegd_decode_task(struct sunxi_jpegd *jpegd, void *args)
+{
+    return sunxi_jpegd_decode(jpegd, args);
+}
+
+static rt_err_t sunxi_jpege_encode_task(struct sunxi_jpegd *jpegd, void *args)
+{
+    return sunxi_jpege_encode(jpegd, args);
+}
+
+#ifdef RT_SOC_SUNXI_PNG_DEC
+static rt_err_t sunxi_pngd_decode_task(struct sunxi_jpegd *jpegd, void *args)
+{
+    return sunxi_pngd_decode(jpegd, args);
+}
+#endif
+
 static rt_err_t sunxi_jpegd_control(rt_device_t dev, int cmd, void *args)
 {
     struct sunxi_jpegd *jpegd = raw_to_sunxi_jpegd(dev);
@@ -1946,7 +2061,7 @@ static rt_err_t sunxi_jpegd_control(rt_device_t dev, int cmd, void *args)
         err = jpegd->running ? -RT_EBUSY : sunxi_jpegd_free_buffer(jpegd, args);
         break;
     case SUNXI_JPEGD_CMD_DECODE:
-        err = jpegd->running ? -RT_EBUSY : sunxi_jpegd_decode(jpegd, args);
+        err = sunxi_jpegd_run(jpegd, sunxi_jpegd_decode_task, args);
         break;
     case SUNXI_JPEGD_CMD_GET_INFO:
         err = jpegd->running ? -RT_EBUSY : sunxi_jpegd_get_info(jpegd, args);
@@ -1986,7 +2101,7 @@ static rt_err_t sunxi_jpege_control(rt_device_t dev, int cmd, void *args)
         err = jpegd->running ? -RT_EBUSY : sunxi_jpegd_free_buffer(jpegd, args);
         break;
     case SUNXI_JPEGE_CMD_ENCODE:
-        err = jpegd->running ? -RT_EBUSY : sunxi_jpege_encode(jpegd, args);
+        err = sunxi_jpegd_run(jpegd, sunxi_jpege_encode_task, args);
         break;
     case SUNXI_JPEGE_CMD_GET_VERSION:
         if (!args)
@@ -2024,7 +2139,7 @@ static rt_err_t sunxi_pngd_control(rt_device_t dev, int cmd, void *args)
         err = jpegd->running ? -RT_EBUSY : sunxi_jpegd_free_buffer(jpegd, args);
         break;
     case SUNXI_PNGD_CMD_DECODE:
-        err = jpegd->running ? -RT_EBUSY : sunxi_pngd_decode(jpegd, args);
+        err = sunxi_jpegd_run(jpegd, sunxi_pngd_decode_task, args);
         break;
     case SUNXI_PNGD_CMD_GET_INFO:
         err = jpegd->running ? -RT_EBUSY : sunxi_pngd_get_info(jpegd, args);
@@ -2131,7 +2246,7 @@ static void sunxi_jpegd_isr(int irqno, void *parameter)
 
     sunxi_jpegd_writel(jpegd, SUNXI_VE_MPEG_STATUS, status);
     jpegd->irq_status = status;
-    /* F101 reports JPEG completion with any of MPEG status bits 0..3. */
+    /* The Sun252i block reports JPEG completion with any MPEG status bit 0..3. */
     rt_completion_done(&jpegd->completion);
 }
 
@@ -2183,10 +2298,9 @@ static void sunxi_jpegd_release(struct sunxi_jpegd *jpegd)
     rt_free(jpegd);
 }
 
-static rt_err_t sunxi_jpegd_probe(struct rt_platform_device *pdev)
+static rt_err_t sunxi_jpegd_register(struct rt_device *dev,
+        const struct sunxi_jpegd_soc_data *soc_data)
 {
-    struct rt_device *dev = &pdev->parent;
-    const struct sunxi_jpegd_soc_data *soc_data = pdev->id->data;
     struct sunxi_jpegd *jpegd;
     const char *decoder_name;
 #ifdef RT_SOC_SUNXI_JPEG_ENC
@@ -2210,7 +2324,23 @@ static rt_err_t sunxi_jpegd_probe(struct rt_platform_device *pdev)
     jpegd->dev = dev;
     jpegd->irq = -1;
     jpegd->layout = soc_data->layout;
+    jpegd->shared_ve = jpegd->layout == SUNXI_JPEGD_LAYOUT_SUN252I;
     rt_list_init(&jpegd->buffers);
+    if (jpegd->shared_ve)
+    {
+        err = sunxi_vdec_hw_acquire(jpegd, sunxi_jpegd_shared_irq, 0);
+        if (err != RT_EOK)
+        {
+            goto _fail;
+        }
+        jpegd->version = sunxi_jpegd_readl(jpegd, SUNXI_VE_VERSION);
+        err = sunxi_vdec_hw_release(jpegd);
+        if (err != RT_EOK)
+        {
+            goto _fail;
+        }
+        goto _register;
+    }
     jpegd->base = rt_dm_dev_iomap(dev, 0);
     if (!jpegd->base)
     {
@@ -2255,6 +2385,7 @@ static rt_err_t sunxi_jpegd_probe(struct rt_platform_device *pdev)
     }
 
     jpegd->version = sunxi_jpegd_readl(jpegd, SUNXI_VE_VERSION);
+_register:
     rt_dm_dev_set_name_auto(&jpegd->parent, "jpegd");
     decoder_name = rt_dm_dev_get_name(&jpegd->parent);
     jpegd->parent.type = RT_Device_Class_Char;
@@ -2318,10 +2449,13 @@ static rt_err_t sunxi_jpegd_probe(struct rt_platform_device *pdev)
     jpegd->png_registered = RT_TRUE;
 #endif /* RT_SOC_SUNXI_PNG_DEC */
 
-    rt_hw_interrupt_install(jpegd->irq, sunxi_jpegd_isr, jpegd, "ve");
-    rt_hw_interrupt_umask(jpegd->irq);
-    jpegd->irq_installed = RT_TRUE;
-    dev->user_data = jpegd;
+    if (!jpegd->shared_ve)
+    {
+        rt_hw_interrupt_install(jpegd->irq, sunxi_jpegd_isr, jpegd, "ve");
+        rt_hw_interrupt_umask(jpegd->irq);
+        jpegd->irq_installed = RT_TRUE;
+        dev->user_data = jpegd;
+    }
 
     LOG_D("VE codec version %08x", jpegd->version);
     return RT_EOK;
@@ -2347,10 +2481,19 @@ static rt_err_t sunxi_jpegd_remove(struct rt_platform_device *pdev)
 
 static const struct rt_ofw_node_id sunxi_jpegd_ofw_ids[] =
 {
-    { .compatible = "allwinner,sun252i-f101-video-engine", .data = &sunxi_jpegd_f101_data },
     { .compatible = "allwinner,sun50i-h616-video-engine", .data = &sunxi_jpegd_h616_data },
     { /* sentinel */ }
 };
+
+rt_err_t sunxi_vdec_images_register(struct rt_device *dev)
+{
+    return sunxi_jpegd_register(dev, &sunxi_jpegd_sun252i_data);
+}
+
+static rt_err_t sunxi_jpegd_probe(struct rt_platform_device *pdev)
+{
+    return sunxi_jpegd_register(&pdev->parent, pdev->id->data);
+}
 
 static struct rt_platform_driver sunxi_jpegd_driver =
 {

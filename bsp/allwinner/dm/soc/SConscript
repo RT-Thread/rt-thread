@@ -2,14 +2,16 @@ from building import *
 
 cwd = GetCurrentDir()
 src = []
+objs = []
 
 if GetDepend(['RT_SOC_SUNXI_G2D']):
     src += Glob('g2d/*.c')
 
-if GetDepend(['RT_SOC_SUNXI_JPEG_DEC']) or GetDepend(['RT_SOC_SUNXI_JPEG_ENC']) or GetDepend(['RT_SOC_SUNXI_PNG_DEC']):
-    src += ['jpegd-sunxi.c']
-
-group = DefineGroup('DeviceDrivers', src, depend=[''],
+objs += DefineGroup('DeviceDrivers', src, depend=[''],
                     CPPPATH=[cwd + '/../include', cwd + '/g2d'])
 
-Return('group')
+if GetDepend(['RT_SOC_SUNXI_H264_DEC']) or GetDepend(['RT_SOC_SUNXI_JPEG_DEC']) or \
+        GetDepend(['RT_SOC_SUNXI_JPEG_ENC']) or GetDepend(['RT_SOC_SUNXI_PNG_DEC']):
+    objs += SConscript('vdec/SConscript')
+
+Return('objs')

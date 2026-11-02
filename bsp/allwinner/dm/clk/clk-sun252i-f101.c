@@ -74,6 +74,19 @@
       .m_shift = 0, .m_width = 5, .p_shift = 8, .p_width = 0, \
       .mux_shift = 24, .mux_width = 3 }
 
+/*
+ * VE has its own clock layout: five parents, a five-bit M divider and no
+ * P divider.  The first two sources are fixed by the F101 boot firmware;
+ * use them for rate selection instead of treating VE as a gate-only clock.
+ */
+#define SUN252I_F101_VE_MOD_CLK(_id, _name, _property, _reg, _rate) \
+    { .id = (_id), .name = (_name), .rate_property = (_property), \
+      .gate_reg = (_reg), .gate_mask = RT_BIT(31), .rate_default = (_rate), \
+      .parent_rates = sun252i_f101_ve_parents, \
+      .parent_rates_nr = RT_ARRAY_SIZE(sun252i_f101_ve_parents), \
+      .m_shift = 0, .m_width = 5, .p_shift = 0, .p_width = 0, \
+      .mux_shift = 24, .mux_width = 3 }
+
 /* The oscillator and peripheral PLL rates are established by boot firmware. */
 static const rt_ubase_t sun252i_f101_mod_parents[] =
 {
@@ -86,6 +99,12 @@ static const rt_ubase_t sun252i_f101_mod_parents[] =
 
 static const rt_ubase_t sun252i_f101_g2d_parents[] =
 {
+    1200000000,
+};
+
+static const rt_ubase_t sun252i_f101_ve_parents[] =
+{
+    480000000,
     1200000000,
 };
 
@@ -117,8 +136,8 @@ static const struct sunxi_clk_desc sun252i_f101_clks[] =
     SUN252I_F101_CLK(SUN252I_F101_CLK_BUS_CE, "ce-bus",
             "allwinner,apb0-rate", SUN252I_F101_CE_BGR, RT_BIT(0), 100000000),
 
-    SUN252I_F101_CLK(SUN252I_F101_CLK_VE, "ve", RT_NULL,
-            SUN252I_F101_VE_CLK, RT_BIT(31), 300000000),
+    SUN252I_F101_VE_MOD_CLK(SUN252I_F101_CLK_VE, "ve", RT_NULL,
+            SUN252I_F101_VE_CLK, 480000000),
     SUN252I_F101_CLK(SUN252I_F101_CLK_BUS_VE, "ve-bus",
             "allwinner,apb0-rate", SUN252I_F101_VE_BGR, RT_BIT(0), 100000000),
     SUN252I_F101_CLK(SUN252I_F101_CLK_BUS_DMA, "dma-bus",

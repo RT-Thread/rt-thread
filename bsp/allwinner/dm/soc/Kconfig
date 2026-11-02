@@ -42,3 +42,21 @@ config RT_SOC_SUNXI_PNG_DEC
       Enable the PNG decoder in the Allwinner Video Engine. The pngd device
       accepts complete, non-interlaced 8-bit RGB or RGBA PNG streams and
       produces RGBA8888 frames.
+
+config RT_SOC_SUNXI_H264_DEC
+    bool "Allwinner VE H.264 decoder"
+    depends on RT_USING_OFW
+    depends on RT_USING_DMA
+    depends on RT_USING_CLK
+    depends on RT_USING_RESET
+    default y
+    help
+      Enable the H.264 video decoder. The driver uses the Video Engine
+      clocks, reset, interrupt and dedicated SRAM described by the device
+      tree, and accepts progressive Annex-B H.264 access units through the
+      vdec API. The current implementation accepts one-slice I/P pictures
+      using pic_order_cnt_type 0 or 2; B pictures, field pictures and stream
+      reconfiguration return -ENOTSUP.
+      Codecs share one VE resource owner at runtime. H.264 holds the
+      engine until stream close; JPEG/PNG tasks return busy while it is held.
+      JPEG, PNG and H.264 may be built into the same firmware.

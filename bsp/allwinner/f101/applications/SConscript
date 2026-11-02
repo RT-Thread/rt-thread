@@ -9,6 +9,12 @@ if GetDepend(['RT_SOC_SUNXI_JPEG_DEC']):
 if GetDepend(['RT_SOC_SUNXI_G2D']):
     src += ['g2d.c']
 
+if GetDepend(['RT_SOC_SUNXI_JPEG_DEC', 'RT_SOC_SUNXI_G2D', 'RT_USING_GRAPHIC']):
+    src += ['avi_mjpeg.c']
+
+if GetDepend(['RT_SOC_SUNXI_H264_DEC', 'RT_SOC_SUNXI_G2D', 'RT_USING_GRAPHIC']):
+    src += ['h264play.c']
+
 if GetDepend(['RT_GRAPHIC_FB_ST77916', 'RT_USING_FINSH']):
     src += ['fb_rotate.c']
 
