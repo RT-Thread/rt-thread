@@ -291,6 +291,15 @@ rt_timer + 动词短语的形式表示能够应用于 timer 对象的方法。
 
 RT-Thread 现在使用 clang-format 作为统一的代码格式化工具。提交 C/C++、头文件及相关源文件前，请优先使用仓库根目录的 `.clang-format` 配置进行格式化，不要再使用与该配置不一致的手工排版或旧的 astyle 参数。
 
+统一使用 clang-format **22.1.8**，版本固定在 `tools/ci/requirements-format.txt`。本地开发、格式检查 CI 和手动格式化工作流使用同一版本，避免不同版本产生格式差异。在仓库根目录安装并确认版本：
+
+```shell
+python -m pip install -r tools/ci/requirements-format.txt
+clang-format --version
+```
+
+编辑器也应使用上述安装的 clang-format 可执行文件。
+
 常用命令如下：
 
 ```shell

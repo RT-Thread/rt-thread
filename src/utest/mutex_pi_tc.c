@@ -49,7 +49,7 @@
 #define THREAD_STACKSIZE 4096
 #endif
 
-#define MUTEX_NUM 3
+#define MUTEX_NUM  3
 #define THREAD_NUM 5
 
 static struct rt_mutex _mutex[MUTEX_NUM];
@@ -79,7 +79,7 @@ static void test_thread_entry(void *para)
     uassert_true(ret == RT_EOK);
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == RT_SCHED_PRIV(rt_thread_self()).init_priority);
 
-    _sync_flag ++;
+    _sync_flag++;
 }
 
 static void test_main_thread_entry(void *para)
@@ -94,60 +94,60 @@ static void test_main_thread_entry(void *para)
     ret = rt_mutex_take(&_mutex[0], RT_WAITING_FOREVER);
     uassert_true(ret == RT_EOK);
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 12);
-    rt_thread_mdelay(100);         // wait for t0 take mutex0
+    rt_thread_mdelay(100); // wait for t0 take mutex0
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 12);
 
     ret = rt_mutex_take(&_mutex[1], RT_WAITING_FOREVER);
     uassert_true(ret == RT_EOK);
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 12);
-    rt_thread_mdelay(100);         // wait for t1 take mutex1
+    rt_thread_mdelay(100); // wait for t1 take mutex1
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 9);
 
     ret = rt_mutex_take(&_mutex[2], RT_WAITING_FOREVER);
     uassert_true(ret == RT_EOK);
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 9);
-    rt_thread_mdelay(100);         // wait for t2 take mutex2
+    rt_thread_mdelay(100); // wait for t2 take mutex2
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 8);
 
-    rt_thread_mdelay(100);         // wait for t3 take mutex0
+    rt_thread_mdelay(100); // wait for t3 take mutex0
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 7);
 
-    rt_thread_mdelay(100);         // wait for t4 take mutex1
+    rt_thread_mdelay(100); // wait for t4 take mutex1
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 7);
 
     rt_thread_mdelay(100);
-    rt_mutex_release(&_mutex[0]);   // give _mutex0 to t3
+    rt_mutex_release(&_mutex[0]); // give _mutex0 to t3
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 8);
 
     rt_thread_mdelay(100);
-    rt_mutex_release(&_mutex[1]);   // give _mutex1 to t1
+    rt_mutex_release(&_mutex[1]); // give _mutex1 to t1
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 8);
 
     rt_thread_mdelay(50);
-    rt_mutex_take(&_mutex[1], RT_WAITING_FOREVER);   // re-get _mutex1, which is hold by t1
+    rt_mutex_take(&_mutex[1], RT_WAITING_FOREVER); // re-get _mutex1, which is hold by t1
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 8);
-    rt_mutex_release(&_mutex[1]);   // give _mutex1 to thread t1
+    rt_mutex_release(&_mutex[1]); // give _mutex1 to thread t1
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 8);
 
     rt_thread_mdelay(100);
     rt_mutex_release(&_mutex[2]);
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 12);
 
-    _sync_flag ++;
+    _sync_flag++;
 }
 
 static void test_mutex_pi(void)
 {
     rt_thread_t t_main;
     rt_thread_t t[THREAD_NUM];
-    rt_uint8_t prio[THREAD_NUM] = {13, 9, 8, 7, 11}; // prio of threads
+    rt_uint8_t prio[THREAD_NUM] = { 13, 9, 8, 7, 11 }; // prio of threads
 
     for (int i = 0; i < MUTEX_NUM; i++)
     {
         rt_mutex_init(&_mutex[i], "test1", 0);
     }
 
-    _sync_flag  = 0;
+    _sync_flag = 0;
 
     t_main = rt_thread_create("t_main", test_main_thread_entry, RT_NULL, THREAD_STACKSIZE, 12, 10000);
     uassert_true(t_main != RT_NULL);
@@ -186,7 +186,7 @@ static void test_main_timeout_entry(void *para)
     rt_thread_mdelay(100);
     uassert_true(RT_SCHED_PRIV(rt_thread_self()).current_priority == 12);
     rt_mutex_release(&_timeout_mutex);
-    _sync_flag ++;
+    _sync_flag++;
 }
 
 static void test_timeout_entry(void *para)
@@ -196,7 +196,7 @@ static void test_timeout_entry(void *para)
     rt_thread_mdelay(50);
     ret = rt_mutex_take(&_timeout_mutex, rt_tick_from_millisecond(100));
     uassert_true(ret == -RT_ETIMEOUT);
-    _sync_flag ++;
+    _sync_flag++;
 }
 
 static void test_mutex_pi_timeout(void)
@@ -222,7 +222,7 @@ static void test_mutex_pi_timeout(void)
 }
 
 #define TC_THREAD_NUM 4
-#define TC_MUTEX_NUM TC_THREAD_NUM
+#define TC_MUTEX_NUM  TC_THREAD_NUM
 static rt_thread_t t[TC_THREAD_NUM], t_hi_prio;
 static struct rt_mutex m[TC_MUTEX_NUM];
 
@@ -249,7 +249,7 @@ static void test_recursive_mutex_depend_entry(void *para)
         rt_mutex_release(&m[id - 1]);
         rt_mutex_release(&m[id]);
     }
-    _sync_flag ++;
+    _sync_flag++;
 }
 
 static void test_recursive_mutex_depend_hi_pri_entry(void *para)
@@ -257,7 +257,7 @@ static void test_recursive_mutex_depend_hi_pri_entry(void *para)
     rt_thread_mdelay(100);
     rt_err_t err = rt_mutex_take(&m[TC_MUTEX_NUM - 1], rt_tick_from_millisecond(100));
     uassert_true(err == -RT_ETIMEOUT);
-    _sync_flag ++;
+    _sync_flag++;
 }
 
 static void test_mutex_pi_recursive_prio_update(void)
@@ -300,7 +300,7 @@ static void test_mutex_pi_recursive_prio_update(void)
     {
         rt_mutex_detach(&m[i]);
     }
-    _sync_flag ++;
+    _sync_flag++;
 }
 
 static void test_mutex_waiter_to_wakeup_entry(void *para)
@@ -308,7 +308,7 @@ static void test_mutex_waiter_to_wakeup_entry(void *para)
     rt_thread_mdelay(100);
     rt_err_t err = rt_mutex_take(&m[TC_MUTEX_NUM - 1], RT_WAITING_FOREVER);
     uassert_true(err == -RT_EINTR);
-    _sync_flag ++;
+    _sync_flag++;
 }
 
 static void wakeup_func(void *para)
