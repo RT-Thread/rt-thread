@@ -1,8 +1,4 @@
 import os
-import sys
-import shutil
-cwd_path = os.getcwd()
-sys.path.append(os.path.join(os.path.dirname(cwd_path), 'rt-thread', 'tools'))
 
 def update_rtt_root_path(path):
     if not os.path.isfile(path):
@@ -38,7 +34,6 @@ def update_dist_project_paths(dist_dir):
 # BSP dist function
 def dist_do_building(BSP_ROOT, dist_dir):
     from mkdist import bsp_copy_files
-    import rtconfig
 
     library_dir  = os.path.join(dist_dir, 'libraries')
 

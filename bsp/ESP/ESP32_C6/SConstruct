@@ -111,6 +111,57 @@ def _use_c6_idf_when_official_has_none():
 
 _use_c6_idf_when_official_has_none()
 
+def _match_idf_spi_lock_stub_to_spi_config():
+    """components/esp_hw_support/port/esp32c6/spi_lock_stub.c defines
+    spicommon_bus_using_iomux() and spi_bus_lock_get_by_id() as
+    always-true/always-0, and the package's C6 block compiles it because its
+    directory scan takes every .c under that port directory that is not in
+    skip_name. It is there because the package does not build
+    components/driver/spi_common.c for C6, and components/spi_flash/
+    esp_flash_spi_init.c needs those two names: with SPI off this BSP has the
+    same hole, so the stub stays.
+
+    idf_port/SConscript compiles spi_common.c itself once BSP_USING_SPI is
+    selected, and spi_common.c:726 and :743 define the same two names -- the
+    real ones, the second of which hands the master driver a bus lock instead of
+    the stub's 0. Two strong definitions of both names in one image is a link
+    error, so the scan has to skip the stub in that configuration only. The
+    switch is written into the package's own SConscript because that scan lives
+    nowhere else; packages/ is not in the repository, so this is redone on every
+    build and on every re-fetch of the package, and it is written as bytes to
+    keep the file's own line endings.
+    """
+    import re
+    from env_package import find_package_path
+
+    with open(os.path.join(SDK_ROOT, 'rtconfig.h'), 'r',
+              encoding='utf-8', errors='replace') as f:
+        spi_selected = re.search(r'^[ \t]*#[ \t]*define[ \t]+BSP_USING_SPI[ \t]*$',
+                                 f.read(), re.M) is not None
+
+    sc = os.path.join(os.path.abspath(
+        find_package_path(SDK_ROOT, 'ESP-IDF-latest')), 'SConscript')
+    if not os.path.isfile(sc):
+        return
+    with open(sc, 'rb') as f:
+        text = f.read()
+    entry = b"\n        'spi_lock_stub',"
+    have = entry in text
+    if have == spi_selected:
+        return
+    if spi_selected:
+        marker = b'skip_name = ('
+        if marker not in text:
+            # In ESP-IDF v6.1+, spi_lock_stub is no longer present; spi_common.c is built directly.
+            return
+        text = text.replace(marker, marker + entry, 1)
+    else:
+        text = text.replace(entry, b'', 1)
+    with open(sc, 'wb') as f:
+        f.write(text)
+
+_match_idf_spi_lock_stub_to_spi_config()
+
 objs = PrepareBuilding(env, RTT_ROOT, remove_components = ['libc'])
 
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))

@@ -15,7 +15,7 @@ extern "C" {
 void init_uart_pins(UART_Type *ptr);
 void init_uart_pin_as_gpio(UART_Type *ptr);
 void init_lcd_pins(LCDC_Type *ptr);
-void init_i2c_pins(I2C_Type *ptr);
+hpm_stat_t init_i2c_pins(I2C_Type *ptr);
 void init_cap_pins(void);
 void init_femc_pins(void);
 void init_gpio_pins(void);
@@ -46,7 +46,7 @@ void init_adc12_pins(void);
 void init_adc16_pins(void);
 void init_adc_bldc_pins(void);
 
-void init_i2c_pins_as_gpio(I2C_Type *ptr);
+hpm_stat_t init_i2c_pins_as_gpio(I2C_Type *ptr);
 
 void init_beep_pwm_pins(void);
 void init_led_pins_as_pwm(void);

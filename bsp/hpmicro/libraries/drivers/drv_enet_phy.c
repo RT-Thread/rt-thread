@@ -7,6 +7,7 @@
  * Date         Author      Notes
  * 2023-12-20   Jiading     Optimization for all-in-one version
  * 2024-04-17   Jiading     Support multiple PHYs
+ * 2026-09-28   Jiading     Wait for enet_phy_speed_valid before announcing link-up
  */
 
 #include "rtthread.h"
@@ -18,12 +19,13 @@
 #ifdef RT_USING_PHY
 #include <rtdevice.h>
 #include <rtdbg.h>
-#include "hpm_enet_drv.h"
+#include "drv_enet.h"
 #include "drv_enet_phy.h"
 #include "hpm_enet_phy.h"
 #include "hpm_soc.h"
 #include "netif/ethernetif.h"
 #include "board.h"
+#include "hpm_enet_drv.h"
 
 typedef struct
 {
@@ -117,9 +119,9 @@ static rt_phy_status phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t sr
     {
         rtl8211_config_t phy_config;
 
-        rtl8211_reset((ENET_Type *)object);
+        rtl8211_reset((ENET_Type *)object, RTL8211_ADDR);
         rtl8211_basic_mode_default_config((ENET_Type *)object, &phy_config);
-        if (rtl8211_basic_mode_init((ENET_Type *)object, &phy_config) == true) {
+        if (rtl8211_basic_mode_init((ENET_Type *)object, RTL8211_ADDR, &phy_config) == true) {
             return PHY_STATUS_OK;
         } else {
             return PHY_STATUS_FAIL;
@@ -131,10 +133,11 @@ static rt_phy_status phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t sr
     if ((ENET_Type *)object == HPM_ENET0)
     {
         rtl8201_config_t phy_config;
-
-        rtl8201_reset((ENET_Type *)object);
+        rtl8201_reset((ENET_Type *)object, RTL8201_ADDR);
         rtl8201_basic_mode_default_config((ENET_Type *)object, &phy_config);
-        if (rtl8201_basic_mode_init((ENET_Type *)object, &phy_config) == true) {
+        phy_config.media_interface = ((enet_device *)eth0_phy_handle.eth_dev->parent.user_data)->media_interface;
+        phy_config.rmii_refclk_dir = ((enet_device *)eth0_phy_handle.eth_dev->parent.user_data)->int_refclk;
+        if (rtl8201_basic_mode_init((ENET_Type *)object, RTL8201_ADDR, &phy_config) == true) {
             return PHY_STATUS_OK;
         } else {
             return PHY_STATUS_FAIL;
@@ -162,9 +165,11 @@ static rt_phy_status phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t sr
     {
         rtl8201_config_t phy_config;
 
-        rtl8201_reset((ENET_Type *)object);
+        rtl8201_reset((ENET_Type *)object, RTL8201_ADDR);
         rtl8201_basic_mode_default_config((ENET_Type *)object, &phy_config);
-        if (rtl8201_basic_mode_init((ENET_Type *)object, &phy_config) == true) {
+        phy_config.media_interface = ((enet_device *)eth1_phy_handle.eth_dev->parent.user_data)->media_interface;
+        phy_config.rmii_refclk_dir = ((enet_device *)eth1_phy_handle.eth_dev->parent.user_data)->int_refclk;
+        if (rtl8201_basic_mode_init((ENET_Type *)object, RTL8201_ADDR, &phy_config) == true) {
             return PHY_STATUS_OK;
         } else {
             return PHY_STATUS_FAIL;
@@ -177,20 +182,22 @@ static rt_phy_status phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t sr
     {
         lan8720_config_t phy_config;
 
-        lan8720_reset((ENET_Type *)object);
+        lan8720_reset((ENET_Type *)object, LAN8720_ADDR);
         lan8720_basic_mode_default_config((ENET_Type *)object, &phy_config);
-        if (lan8720_basic_mode_init((ENET_Type *)object, &phy_config) == true) {
+        if (lan8720_basic_mode_init((ENET_Type *)object, LAN8720_ADDR, &phy_config) == true) {
             return PHY_STATUS_OK;
         } else {
             return PHY_STATUS_FAIL;
         }
     }
 #endif
+
+    return PHY_STATUS_FAIL;
 }
 
 static rt_size_t phy_read(void *bus, rt_uint32_t addr, rt_uint32_t reg, void *data, rt_uint32_t size)
 {
-    *(uint16_t *)data = enet_read_phy(((struct rt_mdio_bus *)bus)->hw_obj, addr, reg);
+    enet_read_phy(((struct rt_mdio_bus *)bus)->hw_obj, addr, reg, (uint16_t *)data);
 
     return size;
 }
@@ -202,22 +209,24 @@ static rt_size_t phy_write(void *bus, rt_uint32_t addr, rt_uint32_t reg, void *d
     return size;
 }
 
-static rt_phy_status phy_get_link_status(rt_phy_t *phy, rt_bool_t *status)
+static rt_phy_status phy_query_status(rt_phy_t *phy, enet_phy_status_t *phy_status)
 {
-    enet_phy_status_t phy_status = {0};
+    hpm_stat_t stat = status_fail;
+
+    *phy_status = (enet_phy_status_t){0};
 
     if (phy->bus->hw_obj == HPM_ENET0)
     {
         #if defined(__USE_DP83867) && __USE_DP83867
-        dp83867_get_phy_status(phy->bus->hw_obj, &phy_status);
+        stat = dp83867_get_phy_status(phy->bus->hw_obj, DP83867_ADDR, phy_status);
         #endif
 
         #if defined(__USE_RTL8211) && __USE_RTL8211
-        rtl8211_get_phy_status(phy->bus->hw_obj, &phy_status);
+        stat = rtl8211_get_phy_status(phy->bus->hw_obj, RTL8211_ADDR, phy_status);
         #endif
 
         #if defined(__USE_RTL8201) && __USE_RTL8201 && !defined(BSP_USING_ETH1)
-        rtl8201_get_phy_status(phy->bus->hw_obj, &phy_status);
+        stat = rtl8201_get_phy_status(phy->bus->hw_obj, RTL8201_ADDR, phy_status);
         #endif
     }
 
@@ -225,20 +234,48 @@ static rt_phy_status phy_get_link_status(rt_phy_t *phy, rt_bool_t *status)
     if (phy->bus->hw_obj == HPM_ENET1)
     {
         #if defined(__USE_DP83848) && __USE_DP83848
-        dp83848_get_phy_status(phy->bus->hw_obj, &phy_status);
+        stat = dp83848_get_phy_status(phy->bus->hw_obj, DP83848_ADDR, phy_status);
         #endif
 
         #if defined(__USE_RTL8201) && __USE_RTL8201
-        rtl8201_get_phy_status(phy->bus->hw_obj, &phy_status);
+        stat = rtl8201_get_phy_status(phy->bus->hw_obj, RTL8201_ADDR, phy_status);
         #endif
 
         #if defined(__USE_LAN8720) && __USE_LAN8720
-        lan8720_get_phy_status(phy->bus->hw_obj, &phy_status);
+        stat = lan8720_get_phy_status(phy->bus->hw_obj, LAN8720_ADDR, phy_status);
         #endif
     }
 #endif
 
-    *status = phy_status.enet_phy_link;
+    if (stat != status_success) {
+        return PHY_STATUS_FAIL;
+    }
+
+    return PHY_STATUS_OK;
+}
+
+static void phy_apply_mac(ENET_Type *instance, const phy_info_t *phy_info)
+{
+    enet_line_speed_t line_speed[] = {enet_line_speed_10mbps, enet_line_speed_100mbps, enet_line_speed_1000mbps};
+
+    if (phy_info->phy_speed >= ARRAY_SIZE(line_speed)) {
+        return;
+    }
+
+    enet_set_line_speed(instance, line_speed[phy_info->phy_speed]);
+    enet_set_duplex_mode(instance, phy_info->phy_duplex);
+}
+
+static rt_phy_status phy_get_link_status(rt_phy_t *phy, rt_bool_t *status)
+{
+    enet_phy_status_t phy_status;
+
+    if (phy_query_status(phy, &phy_status) != PHY_STATUS_OK) {
+        *status = RT_FALSE;
+        return PHY_STATUS_FAIL;
+    }
+
+    *status = (phy_status.enet_phy_link == enet_phy_link_up) ? RT_TRUE : RT_FALSE;
 
     return PHY_STATUS_OK;
 }
@@ -247,37 +284,13 @@ static rt_phy_status phy_get_link_speed_duplex(rt_phy_t *phy, rt_uint32_t *speed
 {
     enet_phy_status_t phy_status;
 
-    if (phy->bus->hw_obj == HPM_ENET0)
-    {
-        #if defined(__USE_DP83867) && __USE_DP83867
-        dp83867_get_phy_status(phy->bus->hw_obj, &phy_status);
-        #endif
-
-        #if defined(__USE_RTL8211) && __USE_RTL8211
-        rtl8211_get_phy_status(phy->bus->hw_obj, &phy_status);
-        #endif
-
-        #if defined(__USE_RTL8201) && __USE_RTL8201 && !defined(BSP_USING_ETH1)
-        rtl8201_get_phy_status(phy->bus->hw_obj, &phy_status);
-        #endif
+    if (phy_query_status(phy, &phy_status) != PHY_STATUS_OK) {
+        return PHY_STATUS_FAIL;
     }
 
-#if defined(HPM_ENET1_BASE)
-    if (phy->bus->hw_obj == HPM_ENET1)
-    {
-        #if defined(__USE_DP83848) && __USE_DP83848
-        dp83848_get_phy_status(phy->bus->hw_obj, &phy_status);
-        #endif
-
-        #if defined(__USE_RTL8201) && __USE_RTL8201
-        rtl8201_get_phy_status(phy->bus->hw_obj, &phy_status);
-        #endif
-
-        #if defined(__USE_LAN8720) && __USE_LAN8720
-        lan8720_get_phy_status(phy->bus->hw_obj, &phy_status);
-        #endif
+    if (!enet_phy_link_up_with_valid_speed(&phy_status)) {
+        return PHY_STATUS_FAIL;
     }
-#endif
 
     *speed  = phy_status.enet_phy_speed;
     *duplex = phy_status.enet_phy_duplex;
@@ -289,15 +302,10 @@ static void phy_poll_status(void *parameter)
 {
     int ret;
     phy_info_t phy_info;
-    rt_bool_t status;
-    rt_device_t dev;
-    rt_phy_msg_t msg;
-    rt_uint32_t speed, duplex;
+    enet_phy_status_t phy_status;
     phy_device_t *phy_dev;
-    struct eth_device* eth_dev;
+    struct eth_device *eth_dev;
     char const *ps[] = {"10Mbps", "100Mbps", "1000Mbps"};
-    enet_line_speed_t line_speed[] = {enet_line_speed_10mbps, enet_line_speed_100mbps, enet_line_speed_1000mbps};
-
     eth_phy_monitor_handle_t *phy_monitor_handle = (eth_phy_monitor_handle_t *)parameter;
 
     for (uint32_t i = 0; i < phy_monitor_handle->phy_handle_cnt; i++)
@@ -305,32 +313,51 @@ static void phy_poll_status(void *parameter)
         eth_dev = phy_monitor_handle->phy_handle[i]->eth_dev;
         phy_dev = phy_monitor_handle->phy_handle[i]->phy_dev;
 
-        phy_dev->phy.ops->get_link_status(&phy_dev->phy, &status);
+        if (phy_dev->phy.ops == NULL) {
+            LOG_E("phy.ops is NULL! Please check your initialization of phy.ops in phy_device_register()!\n");
+            return;
+        }
 
-        if (status)
-        {
-            phy_dev->phy.ops->get_link_speed_duplex(&phy_dev->phy, &phy_info.phy_speed, &phy_info.phy_duplex);
+        if (phy_query_status(&phy_dev->phy, &phy_status) != PHY_STATUS_OK) {
+            continue;
+        }
 
-            ret = memcmp(&phy_dev->phy_info, &phy_info, sizeof(phy_info_t));
-            if (ret != 0)
-            {
-                memcpy(&phy_dev->phy_info, &phy_info, sizeof(phy_info_t));
+        if (phy_status.enet_phy_link == enet_phy_link_down) {
+            if (phy_dev->phy_link != PHY_LINK_DOWN) {
+                phy_dev->phy_link = PHY_LINK_DOWN;
+                eth_device_linkchange(eth_dev, RT_FALSE);
+                LOG_I("%s", phy_dev->phy.bus->hw_obj == HPM_ENET0 ? "ENET0" : "ENET1");
+                LOG_I("PHY Status: %s", "Link down\n");
+            }
+            continue;
+        }
+
+        if (!enet_phy_link_up_with_valid_speed(&phy_status)) {
+            continue;
+        }
+
+        phy_info.phy_speed = phy_status.enet_phy_speed;
+        phy_info.phy_duplex = phy_status.enet_phy_duplex;
+
+        ret = memcmp(&phy_dev->phy_info, &phy_info, sizeof(phy_info_t));
+        if (ret != 0) {
+            memcpy(&phy_dev->phy_info, &phy_info, sizeof(phy_info_t));
+            if (phy_dev->phy_link == PHY_LINK_UP) {
+                phy_apply_mac(phy_monitor_handle->phy_handle[i]->instance, &phy_dev->phy_info);
+                LOG_I("%s", phy_dev->phy.bus->hw_obj == HPM_ENET0 ? "ENET0" : "ENET1");
+                LOG_I("PHY Speed: %s", ps[phy_dev->phy_info.phy_speed]);
+                LOG_I("PHY Duplex: %s\n", phy_dev->phy_info.phy_duplex & PHY_FULL_DUPLEX ? "full duplex" : "half duplex");
             }
         }
 
-        if (phy_dev->phy_link != status)
-        {
-            phy_dev->phy_link = status ? PHY_LINK_UP : PHY_LINK_DOWN;
-            eth_device_linkchange(eth_dev, status);
+        if (phy_dev->phy_link != PHY_LINK_UP) {
+            phy_dev->phy_link = PHY_LINK_UP;
+            eth_device_linkchange(eth_dev, RT_TRUE);
             LOG_I("%s", phy_dev->phy.bus->hw_obj == HPM_ENET0 ? "ENET0" : "ENET1");
-            LOG_I("PHY Status: %s", status ? "Link up" : "Link down\n");
-            if (status == PHY_LINK_UP)
-            {
-                LOG_I("PHY Speed: %s", ps[phy_dev->phy_info.phy_speed]);
-                LOG_I("PHY Duplex: %s\n", phy_dev->phy_info.phy_duplex & PHY_FULL_DUPLEX ? "full duplex" : "half duplex");
-                enet_set_line_speed(phy_monitor_handle->phy_handle[i]->instance, line_speed[phy_dev->phy_info.phy_speed]);
-                enet_set_duplex_mode(phy_monitor_handle->phy_handle[i]->instance, phy_dev->phy_info.phy_duplex);
-            }
+            LOG_I("PHY Status: %s", "Link up");
+            LOG_I("PHY Speed: %s", ps[phy_dev->phy_info.phy_speed]);
+            LOG_I("PHY Duplex: %s\n", phy_dev->phy_info.phy_duplex & PHY_FULL_DUPLEX ? "full duplex" : "half duplex");
+            phy_apply_mac(phy_monitor_handle->phy_handle[i]->instance, &phy_dev->phy_info);
         }
     }
 }
@@ -343,9 +370,6 @@ static void phy_detection(void *parameter)
     {
         LOG_E("No any PHY device is detected! Please check your hardware!\n");
     }
-
-    return;
-
 }
 
 static void phy_monitor_thread_entry(void *args)
@@ -372,6 +396,7 @@ int phy_device_register(void)
 {
     rt_err_t err = -RT_ERROR;
     rt_thread_t thread_phy_monitor;
+    char phy_dev_name[8]={0};
 
     /* Set ops for PHY */
     phy_ops.init = phy_init;
@@ -383,7 +408,7 @@ int phy_device_register(void)
         /* Set PHY address */
         s_gphys[i]->phy_dev->phy.addr = 0xffff;
 
-        /* Set MIDO bus */
+        /* Set MDIO bus */
         s_gphys[i]->mdio_bus->hw_obj     = s_gphys[i]->instance;
         s_gphys[i]->mdio_bus->name       = s_gphys[i]->mdio_name;
         s_gphys[i]->mdio_bus->ops->read  = phy_read;
@@ -391,7 +416,8 @@ int phy_device_register(void)
         s_gphys[i]->phy_dev->phy.bus     = s_gphys[i]->mdio_bus;
         s_gphys[i]->phy_dev->phy.ops     = &phy_ops;
 
-        rt_hw_phy_register(&s_gphys[i]->phy_dev->phy, NULL);
+        sprintf(phy_dev_name, "PHYDev%d", i);
+        rt_hw_phy_register(&s_gphys[i]->phy_dev->phy, phy_dev_name);
     }
 
     /* Start PHY monitor */
@@ -400,6 +426,7 @@ int phy_device_register(void)
     if (thread_phy_monitor != RT_NULL)
     {
         rt_thread_startup(thread_phy_monitor);
+        err = RT_EOK;
     }
     else
     {

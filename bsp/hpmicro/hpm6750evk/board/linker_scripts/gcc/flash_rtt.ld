@@ -14,9 +14,9 @@ SDRAM_SIZE = DEFINED(_sdram_size) ? _sdram_size : 32M;
 MEMORY
 {
     XPI0 (rx) : ORIGIN = 0x80000000, LENGTH = FLASH_SIZE
-    ILM (wx) : ORIGIN = 0x00000000, LENGTH = 256K
-    DLM (w) : ORIGIN = 0x00080000, LENGTH = 256K
-    AXI_SRAM (wx) : ORIGIN = 0x01080000, LENGTH = 1280K
+    ILM (wx) : ORIGIN = 0, LENGTH = 256K
+    DLM (w) : ORIGIN = 0x80000, LENGTH = 256K
+    AXI_SRAM (wx) : ORIGIN = 0x1080000, LENGTH = 1280K
     NONCACHEABLE_RAM (wx) : ORIGIN = 0x11C0000, LENGTH = NONCACHEABLE_SIZE
     SDRAM (wx) : ORIGIN = 0x40000000, LENGTH = SDRAM_SIZE
     AHB_SRAM (w) : ORIGIN = 0xF0300000, LENGTH = 32k
@@ -31,6 +31,15 @@ __app_offset__ = __app_load_addr__ - __boot_header_load_addr__;
 
 SECTIONS
 {
+    /* Anchor the lowest LMA at the flash base address (0x80000000): objcopy takes the
+     * lowest LMA as the start address of the generated .bin, so without this marker the
+     * .bin starts at .nor_cfg_option (0x80000400). The value is all ones (erased flash),
+     * so programming it does not change the flash state.
+     */
+    .flash_base ORIGIN(XPI0) : {
+        LONG(0xFFFFFFFF)
+    } > XPI0
+
     .nor_cfg_option __nor_cfg_option_load_addr__ : {
         KEEP(*(.nor_cfg_option))
     } > XPI0
@@ -46,26 +55,24 @@ SECTIONS
     .start __app_load_addr__ : {
         . = ALIGN(8);
         KEEP(*(.start))
-        . = ALIGN(16);
     } > XPI0
 
     __vector_load_addr__ = ADDR(.start) + SIZEOF(.start);
     .vectors : AT(__vector_load_addr__) {
-        . = ALIGN(16);
+        . = ALIGN(8);
         __vector_ram_start__ = .;
         KEEP(*(.vector_table))
         KEEP(*(.isr_vector))
 
-        . = ALIGN(16);
+        . = ALIGN(8);
         __vector_ram_end__ = .;
     } > AXI_SRAM
 
-    .fast : AT(__fast_load_addr__) {
-        . = ALIGN(16);
+    __fast_load_addr__ = etext + __data_end__ - __tdata_start__;
+    .fast : AT(etext + __data_end__ - __tdata_start__) {
+        . = ALIGN(8);
         __ramfunc_start__ = .;
         *(.fast)
-        *(.fast.*)
-        . = ALIGN(16);
 
         /* RT-Thread Core Start */
         KEEP(*context_gcc.o(.text* .rodata*))
@@ -89,12 +96,12 @@ SECTIONS
         /* HPMicro Driver Wrapper */
         KEEP(*drv_*.o (.text .text* .rodata .rodata*))
 
-        . = ALIGN(16);
+        . = ALIGN(8);
         __ramfunc_end__ = .;
     } > AXI_SRAM
 
-    .text (__vector_load_addr__ + SIZEOF(.vectors)) : {
-        . = ALIGN(16);
+    .text (__vector_load_addr__ + __vector_ram_end__ - __vector_ram_start__) : {
+        . = ALIGN(8);
         *(.text)
         *(.text*)
         *(.rodata)
@@ -152,20 +159,6 @@ SECTIONS
 
     } > XPI0
 
-    .eh_frame :
-    {
-        __eh_frame_start = .;
-        KEEP(*(.eh_frame))
-        __eh_frame_end = .;
-    }  > XPI0
-
-    .eh_frame_hdr :
-    {
-        KEEP(*(.eh_frame_hdr))
-    }  > XPI0
-    __eh_frame_hdr_start = SIZEOF(.eh_frame_hdr) > 0 ? ADDR(.eh_frame_hdr) : 0;
-    __eh_frame_hdr_end = SIZEOF(.eh_frame_hdr) > 0 ? . : 0;
-
     .rel : {
         KEEP(*(.rel*))
     } > XPI0
@@ -178,13 +171,22 @@ SECTIONS
         KEEP(*(.fast_ram))
     } > DLM
 
-    __fast_ram_init_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.fast) + SIZEOF(.tdata) + SIZEOF(.noncacheable.init);
-        .fast_ram.init : AT(__fast_ram_init_load_addr__) {
+    __fast_ram_init_load_addr__ = __noncacheable_init_load_addr__ + SIZEOF(.noncacheable.init);
+    .fast_ram.init : AT(__fast_ram_init_load_addr__) {
         . = ALIGN(8);
         __fast_ram_init_start__ = .;
         KEEP(*(.fast_ram.init))
         KEEP(*(.fast_ram.init.*))
         __fast_ram_init_end__ = .;
+        . = ALIGN(8);
+    } > DLM
+
+    .fast_ram.bss (NOLOAD) : {
+        . = ALIGN(8);
+        __fast_ram_bss_start__ = .;
+        *(.fast_ram.bss)
+        *(.fast_ram.bss.*)
+        __fast_ram_bss_end__ = .;
         . = ALIGN(8);
     } > DLM
 
@@ -208,26 +210,24 @@ SECTIONS
         . = ALIGN(8);
         __tbss_start__ = .;
         *(.tbss*)
-        *(.gnu.linkonce.tb.*)
         *(.tcommon*)
         _end = .;
         __tbss_end__ = .;
     } > AXI_SRAM
 
     __tdata_load_addr__ = etext;
-    .tdata : AT(__tdata_load_addr__) {
+    .tdata : AT(etext) {
         . = ALIGN(8);
         __tdata_start__ = .;
         __thread_pointer = .;
         *(.tdata)
         *(.tdata*)
-        *(.gnu.linkonce.td.*)
         . = ALIGN(8);
         __tdata_end__ = .;
     } > AXI_SRAM
 
-    __data_load_addr__ = etext + SIZEOF(.tdata);
-    .data : AT(__data_load_addr__) {
+    __data_load_addr__ = etext + __tdata_end__ - __tdata_start__;
+    .data : AT(etext + __tdata_end__ - __tdata_start__) {
         . = ALIGN(8);
         __data_start__ = .;
         __global_pointer$ = . + 0x800;
@@ -279,9 +279,7 @@ SECTIONS
         PROVIDE (_edata = .);
         PROVIDE (edata = .);
     } > AXI_SRAM
-    __fast_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.tdata);
-
-    __fw_size__ = SIZEOF(.start) + SIZEOF(.vectors) + SIZEOF(.rel) + SIZEOF(.text) + SIZEOF(.data) + SIZEOF(.fast) + SIZEOF(.tdata) + SIZEOF(.noncacheable.init) + SIZEOF(.fast_ram.init) + SIZEOF(.eh_frame) + SIZEOF(.eh_frame_hdr);
+    __fw_size__ = __data_end__ - __tdata_start__ + etext - __app_load_addr__;
 
     .heap(NOLOAD) : {
         . = ALIGN(8);
@@ -306,8 +304,8 @@ SECTIONS
         PROVIDE( __rt_rvstack = . );
     } > AXI_SRAM
 
-    __noncacheable_init_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.tdata) + SIZEOF(.fast);
-    .noncacheable.init : AT(__noncacheable_init_load_addr__) {
+    __noncacheable_init_load_addr__ = etext + __data_end__ - __tdata_start__ + __ramfunc_end__ - __ramfunc_start__;
+    .noncacheable.init : AT(etext + __data_end__ - __tdata_start__ + __ramfunc_end__ - __ramfunc_start__) {
         . = ALIGN(8);
         __noncacheable_init_start__ = .;
         KEEP(*(.noncacheable.init))

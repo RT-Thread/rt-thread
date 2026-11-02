@@ -3,4 +3,4 @@ clean2:
 	-$(RM) $(OBJS) *.elf
 	-@echo ' '
 
-*.elf: $(wildcard ../board/linker_scripts/flash_xip_rtt.ld)
+*.elf: $(wildcard board/linker_scripts/gcc/*.ld)

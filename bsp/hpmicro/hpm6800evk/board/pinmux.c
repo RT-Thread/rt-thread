@@ -56,7 +56,7 @@ void init_cap_pins(void)
     HPM_PIOC->PAD[IOC_PAD_PY07].FUNC_CTL = PIOC_PY07_FUNC_CTL_SOC_PY_07;
 }
 
-void init_i2c_pins(I2C_Type *ptr)
+hpm_stat_t init_i2c_pins(I2C_Type *ptr)
 {
     if (ptr == HPM_I2C3) {            /* Audio */
         HPM_IOC->PAD[IOC_PAD_PD28].FUNC_CTL = IOC_PD28_FUNC_CTL_I2C3_SDA
@@ -80,8 +80,9 @@ void init_i2c_pins(I2C_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PF09].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
         HPM_IOC->PAD[IOC_PAD_PF08].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
     } else {
-        ;
+        return status_invalid_argument;
     }
+    return status_success;
 }
 
 void init_cam_pins(void)

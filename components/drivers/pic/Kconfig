@@ -18,12 +18,6 @@ config MAX_HANDLERS
     range 1 4294967294
     default 256
 
-config RT_PIC_ARM_GIC
-    bool "ARM GICv2/v1"
-    depends on RT_USING_PIC
-    select RT_USING_OFW
-    default n
-
 config RT_PIC_ARM_NVIC
     bool "ARM Cortex-M NVIC"
     depends on RT_USING_PIC
@@ -31,8 +25,16 @@ config RT_PIC_ARM_NVIC
     select RT_USING_OFW
     default n
 
+config RT_PIC_ARM_GIC
+    bool "ARM GICv2/v1"
+    depends on RT_USING_PIC
+    select RT_USING_OFW
+    default n
+
 config RT_PIC_ARM_GIC_V2M
-    bool "ARM GIC V2M" if RT_PIC_ARM_GIC && RT_PCI_MSI
+    bool "ARM GIC V2M"
+    depends on RT_USING_PIC
+    depends on RT_PCI_MSI
     depends on RT_USING_OFW
     default n
 
@@ -43,7 +45,9 @@ config RT_PIC_ARM_GIC_V3
     default n
 
 config RT_PIC_ARM_GIC_V3_ITS
-    bool "ARM GICv3 ITS (Interrupt Translation Service)" if RT_PIC_ARM_GIC_V3 && RT_PCI_MSI
+    bool "ARM GICv3 ITS (Interrupt Translation Service)"
+    depends on RT_PIC_ARM_GIC_V3
+    depends on RT_PCI_MSI
     depends on RT_USING_OFW
     select RT_USING_ADT_REF
     default n

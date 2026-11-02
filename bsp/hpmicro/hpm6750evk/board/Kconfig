@@ -15,11 +15,23 @@ config BSP_USING_ENET_PHY_DP83848
     bool
     default n
 
+if BSP_USING_ETH
+    config LWIP_SUPPORT_CUSTOM_PBUF
+    int
+    default 1
+endif
+
 menu "On-chip Peripheral Drivers"
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN if BSP_USING_GPIO
         default n
+        if BSP_USING_GPIO
+            config BSP_GPIO_IRQ_PRIORITY
+            int "GPIO Interrupt Priority"
+            range 1 7
+            default 1
+        endif
 
     menuconfig BSP_USING_UART
         bool "Enable UART"
@@ -122,8 +134,6 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
-
-
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
         default n
@@ -134,36 +144,63 @@ menu "On-chip Peripheral Drivers"
                 default y
                 if BSP_USING_SPI1
                     config BSP_SPI1_USING_DMA
-                    bool "Enable SPI1 DMA"
-                    default n
+                        bool "Enable SPI1 DMA"
+                        default n
+                    choice
+                        prompt "Select SPI1 CS TYPE"
+                        default BSP_SPI1_USING_SOFT_CS
+                        config BSP_SPI1_USING_SOFT_CS
+                            bool "Enable SPI1 software cs"
+                        config BSP_SPI1_USING_HARD_CS
+                            bool "Enable SPI1 hardware cs"
+                    endchoice
                 endif
             config BSP_USING_SPI2
                 bool "Enable SPI2"
                 default n
                 if BSP_USING_SPI2
                     config BSP_SPI2_USING_DMA
-                    bool "Enable SPI2 DMA"
-                    default n
+                        bool "Enable SPI2 DMA"
+                        default n
+                    choice
+                        prompt "Select SPI2 CS TYPE"
+                        default BSP_SPI2_USING_SOFT_CS
+                        config BSP_SPI2_USING_SOFT_CS
+                            bool "Enable SPI2 software cs"
+                        config BSP_SPI2_USING_HARD_CS
+                            bool "Enable SPI2 hardware cs"
+                    endchoice
                 endif
             config BSP_USING_SPI3
                 bool "Enable SPI3"
                 default n
                 if BSP_USING_SPI3
                     config BSP_SPI3_USING_DMA
-                    bool "Enable SPI3 DMA"
-                    default n
+                        bool "Enable SPI3 DMA"
+                        default n
+                    choice
+                        prompt "Select SPI3 CS TYPE"
+                        default BSP_SPI3_USING_SOFT_CS
+                        config BSP_SPI3_USING_SOFT_CS
+                            bool "Enable SPI3 software cs"
+                        config BSP_SPI3_USING_HARD_CS
+                            bool "Enable SPI3 hardware cs"
+                    endchoice
                 endif
         endif
 
     menuconfig BSP_USING_RTC
        bool "Enable RTC"
        default n
+       select RT_USING_RTC if BSP_USING_RTC
 
     menuconfig BSP_USING_ETH
        bool "Enable Ethernet"
        default n
 
-       select RT_USING_ETH
+       select RT_USING_ETH if BSP_USING_ETH
+       select RT_USING_PHY if BSP_USING_ETH
+
        if BSP_USING_ETH
                config BSP_USING_ETH0
                bool "Enable ETH0"
@@ -180,12 +217,23 @@ menu "On-chip Peripheral Drivers"
         bool "Enable SDXC"
         default n
         select RT_USING_SDIO if BSP_USING_SDXC
+        select RT_USING_PIN if BSP_USING_SDXC
         if BSP_USING_SDXC
             config BSP_USING_SDXC0
                 bool "Enable SDXC0"
                 default n
             if BSP_USING_SDXC0
-                choice BSP_SDXC0_BUS_WIDTH_SEL
+                config BSP_SDXC0_ENABLE_INTERRUPT_DRIVEN
+                        bool "Enable Interrupt-driven mode"
+                        default n
+                    config BSP_SDXC0_REQUIRE_CACHELINE_ALIGNED_BUF
+                        bool "Always require cache-line aligned buffer"
+                        default n
+                    config BSP_SDXC0_IRQ_PRIORITY
+                        int "SDXC Interrupt Priority"
+                        range 1 7
+                        default 1
+                choice
                     prompt "Select BUS_WIDTH"
                     default BSP_SDXC0_BUS_WIDTH_8BIT
                     config BSP_SDXC0_BUS_WIDTH_1BIT
@@ -195,7 +243,7 @@ menu "On-chip Peripheral Drivers"
                     config BSP_SDXC0_BUS_WIDTH_8BIT
                         bool "8-bit"
                 endchoice
-                choice BSP_SDXC0_VOLT_SEL
+                choice
                     prompt "Select Voltage"
                     default BSP_SDXC0_VOLTAGE_3V3
                     config BSP_SDXC0_VOLTAGE_3V3
@@ -217,7 +265,17 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable SDXC1"
                 default n
             if BSP_USING_SDXC1
-                choice BSP_SDXC1_BUS_WIDTH_SEL
+                config BSP_SDXC1_ENABLE_INTERRUPT_DRIVEN
+                        bool "Enable Interrupt-driven mode"
+                        default n
+                    config BSP_SDXC1_REQUIRE_CACHELINE_ALIGNED_BUF
+                        bool "Always require cache-line aligned buffer"
+                        default n
+                    config BSP_SDXC1_IRQ_PRIORITY
+                        int "SDXC Interrupt Priority"
+                        range 1 7
+                        default 1
+                choice
                     prompt "Select BUS_WIDTH"
                     default BSP_SDXC1_BUS_WIDTH_4BIT
                     config BSP_SDXC1_BUS_WIDTH_1BIT
@@ -225,7 +283,7 @@ menu "On-chip Peripheral Drivers"
                     config BSP_SDXC1_BUS_WIDTH_4BIT
                         bool "4-bit"
                 endchoice
-                choice BSP_SDXC1_VOLT_SEL
+                choice
                     prompt "Select Voltage"
                     default BSP_SDXC1_VOLTAGE_3V3
                     config BSP_SDXC1_VOLTAGE_3V3
@@ -248,8 +306,8 @@ menu "On-chip Peripheral Drivers"
        bool "Enable touch"
        default n
         if BSP_USING_TOUCH
-            config BSP_USING_TOUCH_GT911
-                bool "Enable GT911"
+            config BSP_USING_TOUCH_GT9xx
+                bool "Enable GT9xx"
                 default y
 
             config BSP_USING_TOUCH_FT5406
@@ -326,7 +384,6 @@ menu "On-chip Peripheral Drivers"
         bool "INIT_EXT_RAM_FOR_DATA"
         default y
 
-
     menuconfig BSP_USING_XPI_FLASH
         bool "Enable XPI FLASH"
         default n
@@ -335,6 +392,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         default n
+        select RT_USING_PWM
 
     menuconfig BSP_USING_DAO
         bool "Enable Audio DAO play"
@@ -371,7 +429,6 @@ menu "On-chip Peripheral Drivers"
                 select RT_USING_CACHE
                 default n
        endif
-
 
     menuconfig BSP_USING_WDG
         bool "Enable Watchdog"
@@ -414,7 +471,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
         default n
-        select RT_USING_ADC if BSP_USING_ADC
+        select RT_USING_ADC
         if BSP_USING_ADC
             menuconfig BSP_USING_ADC12
                 bool "Enable ADC12"
@@ -479,7 +536,51 @@ menu "On-chip Peripheral Drivers"
         select BSP_USING_LCD
         default n
 
+endmenu
 
+menu "HPMicro Interrupt Config"
+endmenu
+
+menu "HPMicro RT-Thread Interrupt Framework"
+endmenu
+
+menu "HPMicro Use Generic Startup Implementation"
+    config HPM_BSP_USING_GENERIC_STARTUP
+        bool "Enable this to use the common/startup/generic implementation"
+        default n
+        depends on HPM_USING_RTTHREAD_INTERRUPT_FRAMEWORK
+        help
+            Enable this to use the common/startup/generic implementation.
+            This option is only available when RT-Thread Interrupt Framework is enabled.
+endmenu
+
+endmenu
+
+menu "Third-Party Add-ons"
+
+menu "Segger SystemView Config"
+    config BSP_USING_SYSTEMVIEW
+        select RT_USING_SYSTEMVIEW
+        select RT_USING_LEGACY
+        bool "Enable Segger SystemView"
+        default n
+
+    if BSP_USING_SYSTEMVIEW
+        menuconfig BSP_SYSTEMVIEW_RTT_SECTION
+            bool "enable SystemView RTT section"
+            default y
+            if BSP_SYSTEMVIEW_RTT_SECTION
+                config SEGGER_RTT_SECTION
+                    string "segger rtt section"
+                    default ".noncacheable.bss"
+                config SEGGER_RTT_BUFFER_SECTION
+                    string "segger rtt buffer section"
+                    default ".noncacheable.bss"
+                config SEGGER_SYSVIEW_SECTION
+                    string "segger sysview section"
+                    default ".noncacheable.bss"
+            endif
+    endif
 endmenu
 
 endmenu

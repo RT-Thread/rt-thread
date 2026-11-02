@@ -74,9 +74,9 @@
 #include <rtthread.h>
 #include <string.h>
 
-#define TEST_RT_NAME_MAX        RT_NAME_MAX
-#define OBJECT_STRESS_BATCH     24
-#define OBJECT_STRESS_ROUNDS    3
+#define TEST_RT_NAME_MAX         RT_NAME_MAX
+#define OBJECT_STRESS_BATCH      24
+#define OBJECT_STRESS_ROUNDS     3
 #define OBJECT_THREAD_STACK_SIZE 1024
 
 #ifndef ARRAY_SIZE
@@ -89,21 +89,29 @@ static rt_uint32_t name_counter;
 static rt_bool_t name_in_use(const char *name, enum rt_object_class_type type)
 {
     if (!name)
+    {
         return RT_FALSE;
+    }
 
     if (rt_object_find(name, (rt_uint8_t)type))
+    {
         return RT_TRUE;
+    }
 
     if (type == RT_Object_Class_Thread)
     {
         if (rt_thread_find((char *)name))
+        {
             return RT_TRUE;
+        }
     }
 #ifdef RT_USING_DEVICE
     if (type == RT_Object_Class_Device)
     {
         if (rt_device_find(name))
+        {
             return RT_TRUE;
+        }
     }
 #endif
 
@@ -118,7 +126,9 @@ static rt_err_t generate_unique_name(char *buf,
     rt_size_t prefix_len, max_prefix_len;
 
     if (!buf || !prefix || size < TEST_RT_NAME_MAX)
+    {
         return -RT_EINVAL;
+    }
 
     /* Reserve space for up to 5-digit counter (99999) plus '\0' */
     max_prefix_len = TEST_RT_NAME_MAX - 6;
@@ -126,7 +136,9 @@ static rt_err_t generate_unique_name(char *buf,
 
     /* Limit prefix length to fit within name constraints */
     if (prefix_len > max_prefix_len)
+    {
         prefix_len = max_prefix_len;
+    }
 
     for (int i = 0; i < 2000; i++)
     {
@@ -135,7 +147,9 @@ static rt_err_t generate_unique_name(char *buf,
         buf[TEST_RT_NAME_MAX - 1] = '\0';
 
         if (!name_in_use(buf, type))
+        {
             return RT_EOK;
+        }
     }
 
     return -RT_ENOMEM;
@@ -257,9 +271,13 @@ static void test_object_find_operations(void)
 
 static void test_object_info_enumeration(void)
 {
-    enum { STATIC_OBJ_COUNT = 2, DYNAMIC_OBJ_COUNT = 2 };
+    enum
+    {
+        STATIC_OBJ_COUNT = 2,
+        DYNAMIC_OBJ_COUNT = 2
+    };
     struct rt_object static_objs[STATIC_OBJ_COUNT];
-    rt_object_t dyn_objs[DYNAMIC_OBJ_COUNT] = {RT_NULL};
+    rt_object_t dyn_objs[DYNAMIC_OBJ_COUNT] = { RT_NULL };
     char names[STATIC_OBJ_COUNT + DYNAMIC_OBJ_COUNT][TEST_RT_NAME_MAX];
     int baseline;
 
@@ -339,7 +357,9 @@ static void test_object_info_enumeration(void)
     for (int i = 0; i < DYNAMIC_OBJ_COUNT; i++)
     {
         if (dyn_objs[i])
+        {
             rt_object_delete(dyn_objs[i]);
+        }
     }
 }
 
@@ -348,7 +368,7 @@ static void test_object_type_handling(void)
     struct rt_object obj;
     char name[TEST_RT_NAME_MAX];
     char name_buf[TEST_RT_NAME_MAX];
-    char small_buf[4] = {0};
+    char small_buf[4] = { 0 };
     rt_err_t ret;
 
     uassert_true(generate_unique_name(name, sizeof(name), "typ", RT_Object_Class_Thread) == RT_EOK);
@@ -390,15 +410,21 @@ static rt_err_t for_each_iter(struct rt_object *obj, void *data)
     struct for_each_ctx *ctx = (struct for_each_ctx *)data;
 
     if (!ctx || !ctx->target)
+    {
         return -RT_EINVAL;
+    }
 
     if (rt_strcmp(obj->name, ctx->target) == 0)
     {
         ctx->matched = RT_TRUE;
         if (ctx->mode == 0)
+        {
             return 1; /* early break */
+        }
         else
+        {
             return -RT_ERROR;
+        }
     }
 
     return RT_EOK;
@@ -406,7 +432,7 @@ static rt_err_t for_each_iter(struct rt_object *obj, void *data)
 
 static void test_object_error_paths(void)
 {
-    rt_object_t list_sample[2] = {RT_NULL};
+    rt_object_t list_sample[2] = { RT_NULL };
     struct rt_object obj;
     char name[TEST_RT_NAME_MAX];
     struct for_each_ctx ctx;
@@ -463,7 +489,7 @@ static void test_custom_object_lifecycle(void)
 
 static void test_object_pressure(void)
 {
-    rt_object_t objects[OBJECT_STRESS_BATCH] = {RT_NULL};
+    rt_object_t objects[OBJECT_STRESS_BATCH] = { RT_NULL };
     char names[OBJECT_STRESS_BATCH][TEST_RT_NAME_MAX];
     int baseline = rt_object_get_length(RT_Object_Class_Thread);
 

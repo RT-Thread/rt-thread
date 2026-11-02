@@ -40,9 +40,23 @@ struct n32_i2c_config
 {
     const char *name;
     I2C_Module *Instance;
-#if defined(SOC_SERIES_N32H7xx)
+
+    /* SCL rate, in the unit the series' I2C IP takes.  As on STM32, one field
+     * carries both meanings, selected by the SoC:
+     *   N32H7xx                  - raw I2C_TIMINGR value
+     *   N32H47x_48x / N32H49x    - bus speed in Hz; the vendor I2C_Init()
+     *                              derives CLKCTRL and TMRISE from it.  The
+     *                              two families diverge above 400 kHz and
+     *                              neither one rejects the value: N32H49x
+     *                              keeps F/S set and moves to the fast-mode+
+     *                              rise time, while N32H47x_48x falls
+     *                              through to the standard-mode divider with
+     *                              F/S left clear.  Keep it at or below
+     *                              400 kHz.
+     * Never leave it 0; n32_i2c_init() substitutes DEFAULT_I2C_TIMING_VALUE.
+     */
     rt_uint32_t timing;
-#endif
+
     rt_uint32_t timeout;
     IRQn_Type evirq_type;
     IRQn_Type erirq_type;

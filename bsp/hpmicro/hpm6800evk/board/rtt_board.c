@@ -41,13 +41,19 @@ void os_tick_config(void)
 void rtt_board_init(void)
 {
     board_init_clock();
+
+    /* initialize memory system
+     * NOTE: this must happen before board_init_console(), because the SDK console_init()
+     * calls setvbuf(), which allocates through the C library malloc() -> rt_malloc() and
+     * therefore requires the RT-Thread heap to be ready. Otherwise RT_ASSERT() fires in
+     * rt_smem_alloc() whenever RT_USING_DEBUG is enabled.
+     */
+    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
+
     board_init_console();
     board_init_pmp();
 
     dma_mgr_init();
-
-    /* initialize memory system */
-    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 
     /* Configure the OS Tick */
     os_tick_config();

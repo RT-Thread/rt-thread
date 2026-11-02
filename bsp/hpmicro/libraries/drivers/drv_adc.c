@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2024 HPMicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -17,11 +17,17 @@
 #endif
 #include "hpm_sysctl_drv.h"
 
+#if defined(BSP_USING_ADC16) && defined(ADC16_SOC_TEMP_CH_EN) && ADC16_SOC_TEMP_CH_EN
+#define HPM_ADC16_HAS_TEMP_SENSOR (1)
+#define HPM_ADC16_TEMP_SAMPLE_CYCLE (511U)
+#else
+#define HPM_ADC16_HAS_TEMP_SENSOR (0)
+#endif
 
-typedef struct
-{
-    bool enabled;
-} adc_channel_state_t;
+#ifndef BOARD_ADC_VREF_MV
+#define BOARD_ADC_VREF_MV (3300)
+#endif
+
 
 typedef struct
 {
@@ -30,16 +36,17 @@ typedef struct
     bool is_adc12;
     bool adc_enabled;
     uint32_t adc_base;
-    adc_channel_state_t chn_state[16];
+    rt_atomic_t enabled_channels;
 }hpm_rtt_adc;
 
 #if defined(ADC12_SOC_MAX_CH_NUM)
-extern uint32_t rtt_board_init_adc12_clock(ADC16_Type *ptr);
+extern uint32_t rtt_board_init_adc12_clock(ADC12_Type *ptr, bool clk_src_ahb);
 #endif
 extern uint32_t rtt_board_init_adc16_clock(ADC16_Type *ptr, bool clk_src_ahb);
 
 static uint32_t hpm_adc_init_clock(struct rt_adc_device *device);
 static void hpm_adc_init_pins(struct rt_adc_device *device);
+static bool hpm_adc_get_channel(const hpm_rtt_adc *adc, rt_int8_t channel, uint8_t *adc_chn);
 
 static rt_err_t hpm_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled);
 static rt_err_t hpm_get_adc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value);
@@ -106,6 +113,39 @@ static hpm_rtt_adc hpm_adc_config_tbl[] =
 static uint8_t adc_nums = sizeof(hpm_adc_config_tbl) / sizeof(hpm_rtt_adc);
 
 
+static bool hpm_adc_get_channel(const hpm_rtt_adc *adc, rt_int8_t channel, uint8_t *adc_chn)
+{
+    RT_ASSERT(adc_chn != RT_NULL);
+
+#if HPM_ADC16_HAS_TEMP_SENSOR
+    if (!adc->is_adc12 && channel == RT_ADC_INTERN_CH_TEMPER) {
+        *adc_chn = ADC16_SOC_TEMP_CH_NUM;
+        return true;
+    }
+#endif
+
+    if (channel < 0) {
+        return false;
+    }
+
+    *adc_chn = (uint8_t)channel;
+
+    if (adc->is_adc12) {
+#ifdef BSP_USING_ADC12
+        return !ADC12_IS_CHANNEL_INVALID(*adc_chn);
+#else
+        return false;
+#endif
+    }
+
+#ifdef BSP_USING_ADC16
+    return !ADC16_IS_CHANNEL_INVALID(*adc_chn);
+#else
+    return false;
+#endif
+}
+
+
 static uint32_t hpm_adc_init_clock(struct rt_adc_device *device)
 {
     hpm_rtt_adc *hpm_adc;
@@ -116,7 +156,7 @@ static uint32_t hpm_adc_init_clock(struct rt_adc_device *device)
 #if defined(ADC12_SOC_MAX_CH_NUM)
     if (hpm_adc->is_adc12)
     {
-        clock_freq = rtt_board_init_adc12_clock((ADC12_Type*)hpm_adc->adc_base,true);
+        clock_freq = rtt_board_init_adc12_clock((ADC12_Type *)hpm_adc->adc_base, true);
     } else
 #endif
     {
@@ -151,8 +191,8 @@ static rt_err_t init_adc_config(hpm_rtt_adc *adc)
         adc12_get_default_config(&cfg);
         cfg.res            = adc12_res_12_bits;
         cfg.conv_mode      = adc12_conv_mode_oneshot;
-        cfg.adc_ahb_en     = true;
         cfg.adc_clk_div    = 3;
+        cfg.wait_dis       = false;
         ret = adc12_init((ADC12_Type *)adc->adc_base, &cfg);
         if (ret != status_success) {
             return -RT_ERROR;
@@ -166,8 +206,9 @@ static rt_err_t init_adc_config(hpm_rtt_adc *adc)
         cfg.conv_mode      = adc16_conv_mode_oneshot;
         cfg.res            = adc16_res_16_bits;
         cfg.adc_clk_div    = 4;
+#if !defined(HPM_IP_FEATURE_ADC16_FORCE_SYNC_AHB) || !HPM_IP_FEATURE_ADC16_FORCE_SYNC_AHB
         cfg.sel_sync_ahb   = true;
-        cfg.adc_ahb_en     = true;
+#endif
         cfg.wait_dis = 0;
         ret = adc16_init((ADC16_Type *)adc->adc_base, &cfg);
         if (ret != status_success) {
@@ -206,11 +247,23 @@ static rt_err_t init_channel_config(hpm_rtt_adc *adc, uint16_t channel)
 
         adc16_get_channel_default_config(&ch_cfg);
         ch_cfg.ch           = channel;
-        ch_cfg.sample_cycle = 20;
+#if HPM_ADC16_HAS_TEMP_SENSOR
+        if (channel == ADC16_SOC_TEMP_CH_NUM) {
+            ch_cfg.sample_cycle = HPM_ADC16_TEMP_SAMPLE_CYCLE;
+        } else
+#endif
+        {
+            ch_cfg.sample_cycle = 20;
+        }
         ret = adc16_init_channel((ADC16_Type *)adc->adc_base, &ch_cfg);
         if (ret != status_success) {
             return -RT_ERROR;
         }
+#if HPM_ADC16_HAS_TEMP_SENSOR
+        if (channel == ADC16_SOC_TEMP_CH_NUM) {
+            adc16_enable_temp_sensor((ADC16_Type *)adc->adc_base);
+        }
+#endif
 #endif
     }
     return RT_EOK;
@@ -219,12 +272,21 @@ static rt_err_t init_channel_config(hpm_rtt_adc *adc, uint16_t channel)
 static rt_err_t hpm_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     hpm_rtt_adc *hpm_adc;
-    rt_err_t ret;
+    rt_err_t ret = RT_EOK;
+    rt_base_t critical_level;
+    rt_atomic_t channel_mask;
+    uint8_t adc_chn;
 
     RT_ASSERT(device != RT_NULL);
     hpm_adc = (hpm_rtt_adc *)device->parent.user_data;
+    if (!hpm_adc_get_channel(hpm_adc, channel, &adc_chn)) {
+        return -RT_EINVAL;
+    }
+
+    channel_mask = (rt_atomic_t)1U << adc_chn;
+    critical_level = rt_enter_critical();
     if (enabled == RT_TRUE) {
-        if (!hpm_adc->chn_state[channel].enabled)
+        if ((rt_atomic_load(&hpm_adc->enabled_channels) & channel_mask) == 0)
         {
             if (!hpm_adc->adc_enabled)
             {
@@ -232,48 +294,75 @@ static rt_err_t hpm_adc_enabled(struct rt_adc_device *device, rt_int8_t channel,
                 (void)hpm_adc_init_clock(device);
                 ret = init_adc_config(hpm_adc);
                 if (ret != RT_EOK) {
-                    return -RT_ERROR;
+                    goto exit;
                 }
                 hpm_adc->adc_enabled = true;
             }
-            hpm_adc->chn_state[channel].enabled = true;
 
-            ret = init_channel_config(hpm_adc, channel);
+            ret = init_channel_config(hpm_adc, adc_chn);
             if (ret != RT_EOK) {
-                return -RT_ERROR;
+                goto exit;
             }
+            (void)rt_atomic_or(&hpm_adc->enabled_channels, channel_mask);
         }
     }
     else
     {
-        /* Since the ADC channel cannot be truly disabled, do nothing here */
+        /* The hardware has no per-channel disable in oneshot mode. */
+#if HPM_ADC16_HAS_TEMP_SENSOR
+        rt_atomic_t old_channels;
+
+        old_channels = rt_atomic_and(&hpm_adc->enabled_channels, ~channel_mask);
+        if (!hpm_adc->is_adc12 && adc_chn == ADC16_SOC_TEMP_CH_NUM
+            && (old_channels & channel_mask) != 0) {
+            adc16_disable_temp_sensor((ADC16_Type *)hpm_adc->adc_base);
+        }
+#else
+        (void)rt_atomic_and(&hpm_adc->enabled_channels, ~channel_mask);
+#endif
     }
 
-    return RT_EOK;
+exit:
+    rt_exit_critical_safe(critical_level);
+    return ret;
 }
 
 static rt_err_t hpm_get_adc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     hpm_rtt_adc *hpm_adc;
-    rt_err_t ret;
+    hpm_stat_t status;
     rt_uint16_t val;
+    uint8_t adc_chn;
 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(value != RT_NULL);
 
     hpm_adc = (hpm_rtt_adc *)device->parent.user_data;
-    uint32_t adc_chn = (uint16_t)channel;
+    if (!hpm_adc_get_channel(hpm_adc, channel, &adc_chn)) {
+        return -RT_EINVAL;
+    }
+    if ((rt_atomic_load(&hpm_adc->enabled_channels) & ((rt_atomic_t)1U << adc_chn)) == 0) {
+        return -RT_EINVAL;
+    }
+
     if (hpm_adc->is_adc12) {
 #ifdef BSP_USING_ADC12
-        adc12_get_oneshot_result((ADC12_Type *)hpm_adc->adc_base, adc_chn, &val);
-        *value = val;
+        status = adc12_get_oneshot_result((ADC12_Type *)hpm_adc->adc_base, adc_chn, &val);
+#else
+        return -RT_ENOSYS;
 #endif
     } else {
 #ifdef BSP_USING_ADC16
-        hpm_stat_t status = adc16_get_oneshot_result((ADC16_Type *)hpm_adc->adc_base, adc_chn, &val);
-        *value = val;
+        status = adc16_get_oneshot_result((ADC16_Type *)hpm_adc->adc_base, adc_chn, &val);
+#else
+        return -RT_ENOSYS;
 #endif
     }
+
+    if (status != status_success) {
+        return -RT_ERROR;
+    }
+    *value = val;
 
     return RT_EOK;
 }
@@ -293,7 +382,9 @@ static rt_uint8_t hpm_get_resolution(struct rt_adc_device *device)
 
 static rt_int16_t hpm_get_vref(struct rt_adc_device *device)
 {
-    return -RT_EIO;
+    RT_UNUSED(device);
+
+    return BOARD_ADC_VREF_MV;
 }
 
 int rt_hw_adc_init(void)
@@ -306,7 +397,7 @@ int rt_hw_adc_init(void)
                                 &hpm_adc_ops,
                                 &hpm_adc_config_tbl[i]);
        if (ret != RT_EOK) {
-           ret = RT_ERROR;
+           ret = -RT_ERROR;
            break;
        }
     }

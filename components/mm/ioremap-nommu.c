@@ -7,9 +7,30 @@
 #include <rtthread.h>
 
 #include <ioremap.h>
+#include <mm_aspace.h>
 
 void *rt_ioremap_start;
 size_t rt_ioremap_size;
+
+const rt_ubase_t rt_kmem_pvoff(void)
+{
+    return 0;
+}
+
+void rt_kmem_pvoff_set(rt_ubase_t pvoff)
+{
+    RT_UNUSED(pvoff);
+}
+
+void *rt_kmem_v2p(void *vaddr)
+{
+    return vaddr;
+}
+
+void *rt_kmem_p2v(void *paddr)
+{
+    return paddr;
+}
 
 void *rt_ioremap_early(void *paddr, size_t size)
 {

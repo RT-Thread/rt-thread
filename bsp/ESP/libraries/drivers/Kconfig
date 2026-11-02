@@ -123,7 +123,7 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_SPI
         bool "Enable SPI"
-        depends on SOC_ESP32_C3
+        depends on SOC_ESP32_C3 || SOC_ESP32_C6
         default n
         select RT_USING_SPI
         if BSP_USING_SPI

@@ -13,6 +13,7 @@
 #include <drivers/platform.h>
 #include <drivers/core/bus.h>
 #include <drivers/serial_dm.h>
+#include <drivers/misc.h>
 
 #define DBG_TAG "rtdm.ofw"
 #define DBG_LVL DBG_INFO
@@ -678,9 +679,12 @@ void rt_ofw_node_dump_dts(struct rt_ofw_node *np, rt_bool_t sibling_too)
 
             for (int i = header->rsvmap_nr - 1; i >= 0; --i)
             {
-                rt_kprintf("/memreserve/\t%p %p;\n",
-                        ofw_static_cast(rt_size_t, fdt64_to_cpu(rsvmap->address)),
-                        ofw_static_cast(rt_size_t, fdt64_to_cpu(rsvmap->size)));
+                rt_uint64_t address = fdt64_to_cpu(rsvmap->address);
+                rt_uint64_t size = fdt64_to_cpu(rsvmap->size);
+
+                rt_kprintf("/memreserve/\t0x%08x%08x 0x%08x%08x;\n",
+                        rt_upper_32_bits(address), rt_lower_32_bits(address),
+                        rt_upper_32_bits(size), rt_lower_32_bits(size));
 
                 ++rsvmap;
             }

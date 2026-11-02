@@ -1,0 +1,15 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd + '/../include']
+
+if GetDepend(['RT_HWCRYPTO_SPACEMIT']):
+    src += ['hw-crypto-spacemit.c']
+
+if GetDepend(['RT_HWCRYPTO_RNG_SPACEMIT']):
+    src += ['hw-rng-spacemit.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

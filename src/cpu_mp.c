@@ -168,7 +168,7 @@ struct rt_cpu *rt_cpu_index(int index)
 rt_base_t rt_cpus_lock(void)
 {
     rt_base_t level;
-    struct rt_cpu* pcpu;
+    struct rt_cpu *pcpu;
 
     level = rt_hw_local_irq_disable();
     pcpu = rt_cpu_self();
@@ -205,7 +205,7 @@ RTM_EXPORT(rt_cpus_lock);
  */
 void rt_cpus_unlock(rt_base_t level)
 {
-    struct rt_cpu* pcpu = rt_cpu_self();
+    struct rt_cpu *pcpu = rt_cpu_self();
 
     if (pcpu->current_thread != RT_NULL)
     {
@@ -261,7 +261,6 @@ RTM_EXPORT(rt_cpus_lock_status_restore);
  */
 rt_base_t rt_cpu_get_id(void)
 {
-
     RT_ASSERT(rt_sched_thread_is_binding(RT_NULL) ||
               rt_hw_interrupt_is_disabled() ||
               !rt_scheduler_is_available());
